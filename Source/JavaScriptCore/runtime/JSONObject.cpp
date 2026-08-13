@@ -707,6 +707,8 @@ public:
     static constexpr unsigned staticBufferSize = bufferMode == BufferMode::StaticBuffer ? 8192 : 8;
     static constexpr unsigned dynamicBufferInlineCapacity = bufferMode == BufferMode::StaticBuffer ? 0 : 1024;
 
+    static constexpr bool useShortCopyTier = bufferMode == BufferMode::DynamicBuffer;
+
 private:
     explicit FastStringifier(JSGlobalObject&);
     template<HasGap hasGap> void append(JSValue);
@@ -1167,6 +1169,13 @@ static ALWAYS_INLINE uint64_t copyEightBytesAndLoad(const CharType* source, Char
     return word;
 }
 
+static ALWAYS_INLINE uint32_t copyFourBytesAndLoad(const Latin1Character* source, Latin1Character* destination)
+{
+    uint32_t word = WTF::unalignedLoad<uint32_t>(source);
+    WTF::unalignedStore<uint32_t>(destination, word);
+    return word;
+}
+
 static ALWAYS_INLINE uint64_t upconvertEightBytesAndLoad(const Latin1Character* source, char16_t* destination)
 {
     uint64_t word = WTF::unalignedLoad<uint64_t>(source);
@@ -1177,10 +1186,18 @@ static ALWAYS_INLINE uint64_t upconvertEightBytesAndLoad(const Latin1Character* 
     return word;
 }
 
-template<typename CharType>
+#if (CPU(ARM64) || CPU(X86_64)) && COMPILER(CLANG)
+#define JSON_STRING_COPY_HAS_SIMD 1
+#else
+#define JSON_STRING_COPY_HAS_SIMD 0
+#endif
+
+static constexpr size_t narrowStride = sizeof(uint64_t);
+
+template<typename CharType, bool useShortCopyTier = false>
 static ALWAYS_INLINE bool stringCopySameType(std::span<const CharType> span, CharType* cursor)
 {
-#if (CPU(ARM64) || CPU(X86_64)) && COMPILER(CLANG)
+#if JSON_STRING_COPY_HAS_SIMD
     constexpr size_t stride = SIMD::stride<CharType>;
     if (span.size() >= stride) {
         using UnsignedType = SameSizeUnsignedInteger<CharType>;
@@ -1222,17 +1239,33 @@ static ALWAYS_INLINE bool stringCopySameType(std::span<const CharType> span, Cha
     }
 #endif
     if constexpr (sizeof(CharType) == 1) {
-        constexpr size_t narrowStride = 8;
         if (span.size() >= narrowStride) {
             const auto* ptr = span.data();
             const auto* end = ptr + span.size();
             auto* cursorEnd = cursor + span.size();
             uint64_t accumulated = 0;
+#if JSON_STRING_COPY_HAS_SIMD
+            static_assert(stride <= 2 * narrowStride);
+            ASSERT(span.size() < 2 * narrowStride);
+            accumulated = eightByteRangeNeedsJSONEscape(copyEightBytesAndLoad(ptr, cursor));
+            accumulated |= eightByteRangeNeedsJSONEscape(copyEightBytesAndLoad(end - narrowStride, cursorEnd - narrowStride));
+#else
             for (; ptr + narrowStride <= end; ptr += narrowStride, cursor += narrowStride)
                 accumulated |= eightByteRangeNeedsJSONEscape(copyEightBytesAndLoad(ptr, cursor));
             if (ptr < end)
                 accumulated |= eightByteRangeNeedsJSONEscape(copyEightBytesAndLoad(end - narrowStride, cursorEnd - narrowStride));
+#endif
             return accumulated;
+        }
+        if constexpr (useShortCopyTier) {
+            if (span.size() >= 4) {
+                const auto* ptr = span.data();
+                const auto* end = ptr + span.size();
+                auto* cursorEnd = cursor + span.size();
+                uint64_t low = copyFourBytesAndLoad(ptr, cursor);
+                uint64_t high = copyFourBytesAndLoad(end - 4, cursorEnd - 4);
+                return eightByteRangeNeedsJSONEscape(low | (high << 32));
+            }
         }
     }
     for (auto character : span) {
@@ -1249,7 +1282,7 @@ static ALWAYS_INLINE bool stringCopySameType(std::span<const CharType> span, Cha
 
 static ALWAYS_INLINE bool stringCopyUpconvert(std::span<const Latin1Character> span, char16_t* cursor)
 {
-#if (CPU(ARM64) || CPU(X86_64)) && COMPILER(CLANG)
+#if JSON_STRING_COPY_HAS_SIMD
     constexpr size_t stride = SIMD::stride<Latin1Character>;
     if (span.size() >= stride) {
         using UnsignedType = uint8_t;
@@ -1281,15 +1314,22 @@ static ALWAYS_INLINE bool stringCopyUpconvert(std::span<const Latin1Character> s
         return SIMD::isNonZero(accumulated);
     }
 #endif
-    if (span.size() >= 8) {
+    if (span.size() >= narrowStride) {
         const auto* ptr = span.data();
         const auto* end = ptr + span.size();
         auto* cursorEnd = cursor + span.size();
         uint64_t accumulated = 0;
-        for (; ptr + 8 <= end; ptr += 8, cursor += 8)
+#if JSON_STRING_COPY_HAS_SIMD
+        static_assert(stride <= 2 * narrowStride);
+        ASSERT(span.size() < 2 * narrowStride);
+        accumulated = eightByteRangeNeedsJSONEscape(upconvertEightBytesAndLoad(ptr, cursor));
+        accumulated |= eightByteRangeNeedsJSONEscape(upconvertEightBytesAndLoad(end - narrowStride, cursorEnd - narrowStride));
+#else
+        for (; ptr + narrowStride <= end; ptr += narrowStride, cursor += narrowStride)
             accumulated |= eightByteRangeNeedsJSONEscape(upconvertEightBytesAndLoad(ptr, cursor));
         if (ptr < end)
-            accumulated |= eightByteRangeNeedsJSONEscape(upconvertEightBytesAndLoad(end - 8, cursorEnd - 8));
+            accumulated |= eightByteRangeNeedsJSONEscape(upconvertEightBytesAndLoad(end - narrowStride, cursorEnd - narrowStride));
+#endif
         return accumulated;
     }
     for (auto character : span) {
@@ -1299,6 +1339,8 @@ static ALWAYS_INLINE bool stringCopyUpconvert(std::span<const Latin1Character> s
     }
     return false;
 }
+
+#undef JSON_STRING_COPY_HAS_SIMD
 
 template<typename CharType, BufferMode bufferMode>
 template<HasGap hasGap>
@@ -1380,7 +1422,7 @@ void FastStringifier<CharType, bufferMode>::append(JSValue value)
 
         if constexpr (std::same_as<CharType, Latin1Character>) {
             if (string.data.is8Bit()) [[likely]] {
-                if (!stringCopySameType(string.data.span8(), buffer() + m_length + 1)) [[likely]] {
+                if (!stringCopySameType<CharType, useShortCopyTier>(string.data.span8(), buffer() + m_length + 1)) [[likely]] {
                     buffer()[m_length + 1 + stringLength] = '"';
                     m_length += 1 + stringLength + 1;
                     return;
@@ -1559,7 +1601,7 @@ void FastStringifier<CharType, bufferMode>::append(JSValue value)
                         return false;
                     }
                 } else {
-                    if (stringCopySameType(span, out + length + 1)) [[unlikely]] {
+                    if (stringCopySameType<CharType, useShortCopyTier>(span, out + length + 1)) [[unlikely]] {
                         m_length = length;
                         recordFailure("property name character needs escaping"_s);
                         return false;
@@ -1588,7 +1630,7 @@ void FastStringifier<CharType, bufferMode>::append(JSValue value)
                             return false;
                         }
                         buffer()[m_length] = '"';
-                        if (!stringCopySameType(valueString.data.span8(), buffer() + m_length + 1)) [[likely]] {
+                        if (!stringCopySameType<CharType, useShortCopyTier>(valueString.data.span8(), buffer() + m_length + 1)) [[likely]] {
                             buffer()[m_length + 1 + valueLength] = '"';
                             m_length += 1 + valueLength + 1;
                             return true;
