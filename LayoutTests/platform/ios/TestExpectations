@@ -8711,3 +8711,5 @@ webkit.org/b/321528 [ Release ] imported/w3c/web-platform-tests/background-fetch
 webkit.org/b/321312 imported/w3c/web-platform-tests/webrtc/RTCRtpReceiver-getSynchronizationSources.https.html [ Pass Failure ]
 
 webkit.org/b/321691 [ Release ] imported/w3c/web-platform-tests/web-locks/bfcache/abort.tentative.https.html [ Pass Crash ]
+
+webkit.org/b/321726 imported/w3c/web-platform-tests/largest-contentful-paint/observe-svg-data-uri-image.html [ Pass Failure ]
