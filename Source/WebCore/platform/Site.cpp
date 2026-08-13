@@ -82,6 +82,13 @@ bool Site::matches(const URL& url) const
     return protocolForURL(url) == m_protocol && m_domain.matches(url);
 }
 
+bool Site::matches(const SecurityOriginData& origin) const
+{
+    // Site(URL) keeps the case of a non-special URL's host, but SecurityOriginData lowercases it.
+    Site originSite { origin };
+    return m_protocol == originSite.m_protocol && equalIgnoringASCIICase(m_domain.string(), originSite.m_domain.string());
+}
+
 String Site::toString() const
 {
     return isEmpty() ? emptyString() : makeString(m_protocol, "://"_s, m_domain.string());

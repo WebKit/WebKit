@@ -43,6 +43,7 @@ public:
     WEBCORE_EXPORT String loggingString() const;
     bool isEmpty() const { return m_domain.isEmpty(); }
     WEBCORE_EXPORT bool matches(const URL&) const;
+    WEBCORE_EXPORT bool matches(const SecurityOriginData&) const;
 
     Site(WTF::HashTableEmptyValueType) { }
     Site(WTF::HashTableDeletedValueType deleted)
