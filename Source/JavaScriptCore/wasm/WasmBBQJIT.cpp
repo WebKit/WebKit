@@ -638,8 +638,7 @@ void ControlData::fillLabels(CCallHelpers::Label label)
 }
 
 BBQJIT::BBQJIT(CompilationContext& compilationContext, const RTT& signature, Module& module, CalleeGroup& calleeGroup, IPIntCallee& profiledCallee, BBQCallee& callee, const FunctionData& function, FunctionCodeIndex functionIndex, const ModuleInformation& info, Vector<UnlinkedWasmToWasmCall>& unlinkedWasmToWasmCalls, MemoryMode mode, InternalFunction* compilation)
-    : m_context(compilationContext)
-    , m_jit(*compilationContext.wasmEntrypointJIT)
+    : m_jit(*compilationContext.wasmEntrypointJIT)
     , m_module(module)
     , m_calleeGroup(calleeGroup)
     , m_profiledCallee(profiledCallee)
@@ -4930,10 +4929,22 @@ WasmOrigin BBQJIT::origin()
         break;
     }
     ASSERT(isValidOpType(static_cast<uint8_t>(opcodeOrigin.opcode())));
-    WasmOrigin result { CallSiteIndex(m_callSiteIndex), opcodeOrigin };
-    if (m_context.origins.isEmpty() || m_context.origins.last() != result)
-        m_context.origins.append(result);
-    return m_context.origins.last();
+    return { CallSiteIndex(m_callSiteIndex), opcodeOrigin };
+}
+
+ALWAYS_INLINE void BBQJIT::recordOpcodeOrigin()
+{
+    // Opcode origins in BBQ feed only the sampling profiler's PC map and the disassembler; exception
+    // handling instead stores call site indices into the frame as it emits them. The label is not a
+    // branch target, so use one that does not invalidate the assembler's cached scratch registers.
+    if (!m_pcToCodeOriginMapBuilder.didBuildMapping() && !m_disassembler) [[likely]]
+        return;
+
+    auto origin = this->origin();
+    auto label = m_jit.labelIgnoringWatchpoints();
+    m_pcToCodeOriginMapBuilder.appendItem(label, CodeOrigin(BytecodeIndex(origin.m_opcodeOrigin.location())));
+    if (m_disassembler)
+        m_disassembler->setOpcode(label, origin.m_opcodeOrigin);
 }
 
 ALWAYS_INLINE void BBQJIT::willParseOpcode()
@@ -4949,10 +4960,7 @@ ALWAYS_INLINE void BBQJIT::willParseOpcode()
         break;
     }
 
-    auto origin = this->origin();
-    m_pcToCodeOriginMapBuilder.appendItem(m_jit.label(), CodeOrigin(BytecodeIndex(origin.m_opcodeOrigin.location())));
-    if (m_disassembler) [[unlikely]]
-        m_disassembler->setOpcode(m_jit.label(), origin.m_opcodeOrigin);
+    recordOpcodeOrigin();
 
     m_gprAllocator.assertAllValidRegistersAreUnlocked();
     m_fprAllocator.assertAllValidRegistersAreUnlocked();
@@ -4976,10 +4984,7 @@ ALWAYS_INLINE void BBQJIT::willParseOpcode()
 
 ALWAYS_INLINE void BBQJIT::willParseExtendedOpcode()
 {
-    auto origin = this->origin();
-    m_pcToCodeOriginMapBuilder.appendItem(m_jit.label(), CodeOrigin(BytecodeIndex(origin.m_opcodeOrigin.location())));
-    if (m_disassembler) [[unlikely]]
-        m_disassembler->setOpcode(m_jit.label(), origin.m_opcodeOrigin);
+    recordOpcodeOrigin();
 
     m_gprAllocator.assertAllValidRegistersAreUnlocked();
     m_fprAllocator.assertAllValidRegistersAreUnlocked();

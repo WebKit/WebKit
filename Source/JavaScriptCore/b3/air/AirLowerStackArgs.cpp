@@ -39,15 +39,15 @@ void lowerStackArgs(Code& code)
 {
     PhaseScope phaseScope(code, "lowerStackArgs"_s);
     
-    // Now we need to deduce how much argument area we need.
+    // Now we need to deduce how much argument area we need. We always reserve the conservative
+    // register bytes for Bank::FP because CallArgs do not record which bank they are.
+    unsigned conservativeCallArgBytes = code.usesSIMD() ? conservativeRegisterBytes(Bank::FP) : conservativeRegisterBytesWithoutVectors(Bank::FP);
     for (BasicBlock* block : code) {
         for (Inst& inst : *block) {
             for (Arg& arg : inst.args()) {
                 if (arg.isCallArg()) {
                     ASSERT(arg.offset() >= 0);
-                    // We always check the conservative register bytes for Bank::FP because
-                    // CallArgs do not store which bank they are.
-                    code.requestCallArgAreaSizeInBytes(arg.offset() + (code.usesSIMD() ? conservativeRegisterBytes(Bank::FP) : conservativeRegisterBytesWithoutVectors(Bank::FP)));
+                    code.requestCallArgAreaSizeInBytes(arg.offset() + conservativeCallArgBytes);
                 }
             }
         }
@@ -181,6 +181,19 @@ void lowerStackArgs(Code& code)
                 }
                 // Fall through to handle remainder of the original or modified inst, including potential ZDef handling.
             }
+
+            // The scan below only ever acts on Stack and CallArg operands, and after register
+            // allocation most instructions have neither. Checking that does not need the Arg roles,
+            // and iterating args() directly can only over-approximate what forEachArg reports.
+            bool mayHaveStackArg = false;
+            for (Arg& arg : inst.args()) {
+                if (arg.isStack() || arg.isCallArg()) {
+                    mayHaveStackArg = true;
+                    break;
+                }
+            }
+            if (!mayHaveStackArg)
+                continue;
 
             inst.forEachArg(
                 [&] (Arg& arg, Arg::Role role, Bank, Width width) {

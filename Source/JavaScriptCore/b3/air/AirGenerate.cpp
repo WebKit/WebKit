@@ -200,8 +200,9 @@ static void generateWithAlreadyAllocatedRegisters(Code& code, CCallHelpers& jit)
     };
 
     PCToOriginMap& pcToOriginMap = code.proc().pcToOriginMap();
+    bool shouldPreserveB3Origins = code.shouldPreserveB3Origins();
     auto addItem = [&] (Inst& inst) {
-        if (!code.shouldPreserveB3Origins())
+        if (!shouldPreserveB3Origins)
             return;
         if (inst.origin)
             pcToOriginMap.appendItem(jit.labelIgnoringWatchpoints(), inst.origin->origin());
@@ -239,12 +240,11 @@ static void generateWithAlreadyAllocatedRegisters(Code& code, CCallHelpers& jit)
             context.indexInBlock = i;
             Inst& inst = block->at(i);
             addItem(inst);
-            auto start = jit.labelIgnoringWatchpoints();
+            auto start = disassembler ? jit.labelIgnoringWatchpoints() : CCallHelpers::Label();
             CCallHelpers::Jump jump = inst.generate(jit, context);
             ASSERT_UNUSED(jump, !jump.isSet());
-            auto end = jit.labelIgnoringWatchpoints();
             if (disassembler)
-                disassembler->addInst(&inst, start, end);
+                disassembler->addInst(&inst, start, jit.labelIgnoringWatchpoints());
         }
 
         context.indexInBlock = block->size() - 1;
@@ -257,20 +257,18 @@ static void generateWithAlreadyAllocatedRegisters(Code& code, CCallHelpers& jit)
             // We currently don't represent the full prologue/epilogue in Air, so we need to
             // have this override.
             addItem(block->last());
-            auto start = jit.labelIgnoringWatchpoints();
+            auto start = disassembler ? jit.labelIgnoringWatchpoints() : CCallHelpers::Label();
             code.emitEpilogue(jit);
-            auto end = jit.labelIgnoringWatchpoints();
             if (disassembler)
-                disassembler->addInst(&block->last(), start, end);
+                disassembler->addInst(&block->last(), start, jit.labelIgnoringWatchpoints());
             continue;
         }
 
         addItem(block->last());
-        auto start = jit.labelIgnoringWatchpoints();
+        auto start = disassembler ? jit.labelIgnoringWatchpoints() : CCallHelpers::Label();
         CCallHelpers::Jump jump = block->last().generate(jit, context);
-        auto end = jit.labelIgnoringWatchpoints();
         if (disassembler)
-            disassembler->addInst(&block->last(), start, end);
+            disassembler->addInst(&block->last(), start, jit.labelIgnoringWatchpoints());
 
         // The jump won't be set for patchpoints. It won't be set for Oops because then it won't have
         // any successors.

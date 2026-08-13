@@ -2241,8 +2241,8 @@ private:
     void emitRestoreCalleeSaves();
 
     WasmOrigin origin();
+    void recordOpcodeOrigin();
 
-    CompilationContext& m_context;
     CCallHelpers& m_jit;
     Module& m_module;
     CalleeGroup& m_calleeGroup;
