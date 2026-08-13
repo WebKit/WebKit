@@ -729,12 +729,7 @@ TEST(WebTransport, CreateStreamsBeforeReady)
     EXPECT_WK_STREQ([webView _test_waitForAlert], "successfully read abc");
 }
 
-// FIXME: Re-enable this test on iOS when rdar://161858543 is resolved.
-#if PLATFORM(MAC)
 TEST(WebTransport, CSP)
-#else
-TEST(WebTransport, DISABLED_CSP)
-#endif
 {
     WebTransportServer server([](ConnectionGroup group) -> ConnectionTask {
         co_return;
