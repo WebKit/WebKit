@@ -67,7 +67,7 @@ typedef NS_ENUM(uint8_t, _WKRestrictedOpenerType) {
 @property (nonatomic, setter=_setBoundInterfaceIdentifier:) NSString *_boundInterfaceIdentifier WK_API_DEPRECATED_WITH_REPLACEMENT("_WKWebsiteDataStoreConfiguration.boundInterfaceIdentifier", macos(10.13.4, 10.15.4), ios(11.3, 13.4));
 @property (nonatomic, setter=_setAllowsCellularAccess:) BOOL _allowsCellularAccess WK_API_DEPRECATED_WITH_REPLACEMENT("_WKWebsiteDataStoreConfiguration.allowsCellularAccess", macos(10.13.4, 10.15.4), ios(11.3, 13.4));
 @property (nonatomic, setter=_setProxyConfiguration:) NSDictionary *_proxyConfiguration WK_API_DEPRECATED_WITH_REPLACEMENT("_WKWebsiteDataStoreConfiguration.proxyConfiguration", macos(10.14, 10.15.4), ios(12.0, 13.4));
-@property (nonatomic, setter=_setAllowsTLSFallback:) BOOL _allowsTLSFallback WK_API_AVAILABLE(macos(10.15), ios(13.0));
+@property (nonatomic, setter=_setAllowsTLSFallback:) BOOL _allowsTLSFallback WK_API_DEPRECATED("TLS fallback is no longer supported", macos(10.15, WK_MAC_TBA), ios(13.0, WK_IOS_TBA));
 @property (nonatomic, setter=_setStorageSiteValidationEnabled:) BOOL _storageSiteValidationEnabled WK_API_AVAILABLE(macos(15.0), ios(18.0), visionos(2.0));
 @property (nonatomic, setter=_setPersistedSites:) NSArray<NSURL *> *_persistedSites WK_API_AVAILABLE(macos(15.2), ios(18.2), visionos(2.2));
 

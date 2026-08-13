@@ -5531,12 +5531,10 @@ static void convertAndAddHighlight(Vector<Ref<WebCore::SharedMemory>>& buffers, 
 
 - (void)_setUserContentExtensionsEnabled:(BOOL)userContentExtensionsEnabled
 {
-    // This is kept for binary compatibility with iOS 9.
 }
 
 - (BOOL)_userContentExtensionsEnabled
 {
-    // This is kept for binary compatibility with iOS 9.
     return true;
 }
 

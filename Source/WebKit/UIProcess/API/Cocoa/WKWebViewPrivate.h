@@ -221,7 +221,7 @@ typedef NS_ENUM(NSInteger, _WKImmediateActionType) {
 @property (copy, setter=_setCustomUserAgent:) NSString *_customUserAgent;
 
 @property (nonatomic, readonly, getter=_isPlayingAudio) BOOL _playingAudio WK_API_AVAILABLE(macos(10.13.4), ios(11.3));
-@property (nonatomic, setter=_setUserContentExtensionsEnabled:) BOOL _userContentExtensionsEnabled WK_API_AVAILABLE(macos(10.11), ios(9.0));
+@property (nonatomic, setter=_setUserContentExtensionsEnabled:) BOOL _userContentExtensionsEnabled WK_API_DEPRECATED("No longer supported", macos(10.11, WK_MAC_TBA), ios(9.0, WK_IOS_TBA));
 
 @property (nonatomic, readonly) pid_t _webProcessIdentifier;
 @property (nonatomic, readonly) pid_t _provisionalWebProcessIdentifier WK_API_AVAILABLE(macos(10.14.4), ios(12.2));
@@ -393,7 +393,7 @@ for this property.
 // Set to 0 to have the page length equal the view length.
 @property (nonatomic, setter=_setPageLength:) CGFloat _pageLength;
 @property (nonatomic, setter=_setGapBetweenPages:) CGFloat _gapBetweenPages;
-@property (nonatomic, setter=_setPaginationLineGridEnabled:) BOOL _paginationLineGridEnabled;
+@property (nonatomic, setter=_setPaginationLineGridEnabled:) BOOL _paginationLineGridEnabled WK_API_DEPRECATED("Line grid pagination is no longer supported", macos(10.10, WK_MAC_TBA), ios(8.0, WK_IOS_TBA));
 @property (readonly) NSUInteger _pageCount;
 
 @property (nonatomic, readonly) BOOL _supportsTextZoom;
@@ -760,7 +760,7 @@ typedef NS_OPTIONS(NSUInteger, _WKWebViewDataType) {
 @property (nonatomic, readonly) BOOL _shouldAvoidResizingWhenInputViewBoundsChange WK_API_AVAILABLE(ios(13.0));
 @property (nonatomic, readonly) BOOL _contentViewIsFirstResponder WK_API_AVAILABLE(ios(12.2));
 
-@property (nonatomic, readonly) CGRect _uiTextCaretRect WK_API_AVAILABLE(ios(10.3));
+@property (nonatomic, readonly) CGRect _uiTextCaretRect WK_API_DEPRECATED("No longer supported", ios(10.3, WK_IOS_TBA));
 
 @property (nonatomic, readonly) UIView *_safeBrowsingWarning WK_API_AVAILABLE(macos(10.14.4), ios(12.2));
 
