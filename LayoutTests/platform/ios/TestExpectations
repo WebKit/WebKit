@@ -8711,3 +8711,5 @@ webkit.org/b/321629 [ Debug ] imported/w3c/web-platform-tests/css/css-grid/grid-
 webkit.org/b/321629 [ Debug ] imported/w3c/web-platform-tests/css/css-grid/grid-lanes/track-sizing/auto-repeat/intrinsic-auto-repeat/row-auto-repeat-auto-019.html [ Skip ]
 webkit.org/b/321629 [ Debug ] imported/w3c/web-platform-tests/css/css-grid/grid-lanes/track-sizing/auto-repeat/row-auto-repeat-015.html [ Skip ]
 webkit.org/b/321629 [ Debug ] imported/w3c/web-platform-tests/css/css-grid/grid-lanes/track-sizing/auto-repeat/row-auto-repeat-021.html [ Skip ]
+
+webkit.org/b/321312 imported/w3c/web-platform-tests/webrtc/RTCRtpReceiver-getSynchronizationSources.https.html [ Pass Failure ]
