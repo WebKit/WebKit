@@ -957,15 +957,17 @@ static bool calendarUsesISOFallbackForExtremeYear(CalendarID calendarId, int32_t
 // same fields one at a time and must agree with these: they feed the getters, these feed resolution.
 TemporalResult<CalendarFields> isoToCalendarFields(CalendarID calendarId, const ISO8601::PlainDate& isoDate)
 {
-    if (calendarId == rocCalendarID() || calendarId == buddhistCalendarID()) {
-        auto yearFields = gregorianArithmeticYearFieldsFor(calendarId, isoDate.year());
+    // Proleptic Gregorian fields; only the arithmetic year differs (roc/buddhist offset it, japanese doesn't).
+    if (calendarIsGregorianStructured(calendarId)) {
         CalendarFields fields;
-        fields.year = yearFields.year;
-        fields.era = String(yearFields.era);
-        fields.eraYear = yearFields.eraYear;
+        fields.year = calendarId == japaneseCalendarID() ? isoDate.year() : gregorianArithmeticYearFieldsFor(calendarId, isoDate.year()).year;
         fields.month = isoDate.month();
         fields.day = isoDate.day();
         fields.monthCode = ISO8601::monthCode(isoDate.month());
+        if (auto era = emitEraProleptic(calendarId, isoDate)) {
+            fields.era = era->era;
+            fields.eraYear = era->eraYear;
+        }
         return fields;
     }
 
@@ -1050,20 +1052,11 @@ TemporalResult<CalendarFields> isoToCalendarFields(CalendarID calendarId, const 
     fields.day = static_cast<uint8_t>(raw.day);
     fields.monthCode = WTF::move(*raw.monthCode);
 
-    if (calendarId == japaneseCalendarID()) {
-        // Japanese uses proleptic Gregorian for its date fields, so year/month/day/monthCode are
-        // always the ISO values regardless of era. Only era/eraYear differ.
-        fields.year = isoDate.year();
-        fields.month = isoDate.month();
-        fields.day = isoDate.day();
-        fields.monthCode = ISO8601::monthCode(isoDate.month());
-    }
-
     // isLeapMonth is re-derived from the month code (avoids needing UCAL_IS_LEAP_MONTH in raw)
     fields.isLeapMonth = fields.monthCode.endsWith("L"_s);
 
     if (raw.hasEra) {
-        auto emitted = emitEraProleptic(calendarId, isoDate).value_or(emitEraFromICU(calendarId, raw.ucalEra, raw.ucalYear, raw.extendedYear));
+        auto emitted = emitEraFromICU(calendarId, raw.ucalEra, raw.ucalYear, raw.extendedYear);
         fields.era = emitted.era;
         fields.eraYear = emitted.eraYear;
     }
@@ -2590,13 +2583,20 @@ static TemporalResult<void> validateRejectMode(UCalendar* cal, CalendarID calend
 // https://tc39.es/proposal-intl-era-monthcode/#sup-temporal-nonisocalendardatetoiso
 TemporalResult<ISO8601::PlainDate> nonISOCalendarDateToISO(CalendarID calendarId, std::optional<int32_t> year, uint8_t month, uint8_t day, std::optional<ParsedMonthCode> monthCode, TemporalOverflow overflow)
 {
+    // month == 0 means "resolve by monthCode" (no ordinal exists yet). The fast paths below still
+    // need one: monthNumber works for indian/gregorian-structured (no leap months) and for
+    // chinese/dangi's extreme-year fallback too, which ignores leap-ness regardless.
+    uint8_t effectiveMonth = month;
+    if (!effectiveMonth && monthCode)
+        effectiveMonth = static_cast<uint8_t>(monthCode->monthNumber);
+
     if (year && calendarUsesISOFallbackForExtremeYear(calendarId, *year)) {
         int32_t isoYear = *year;
-        if (month > 12) {
+        if (effectiveMonth > 12) {
             if (overflow == TemporalOverflow::Reject) [[unlikely]]
                 return makeUnexpected(rangeError("month is out of range"_s));
         }
-        uint8_t isoMonth = std::clamp<uint8_t>(month, 1, 12);
+        uint8_t isoMonth = std::clamp<uint8_t>(effectiveMonth, 1, 12);
         uint8_t maxDay = ISO8601::daysInMonth(isoYear, isoMonth);
         if (day > maxDay) {
             if (overflow == TemporalOverflow::Reject) [[unlikely]]
@@ -2617,11 +2617,11 @@ TemporalResult<ISO8601::PlainDate> nonISOCalendarDateToISO(CalendarID calendarId
                     return makeUnexpected(rangeError("month is out of range"_s));
                 sakaMonth = static_cast<uint8_t>(monthCode->monthNumber);
             } else {
-                if (month > 12) {
+                if (effectiveMonth > 12) {
                     if (overflow == TemporalOverflow::Reject) [[unlikely]]
                         return makeUnexpected(rangeError("month is out of range"_s));
                 }
-                sakaMonth = std::clamp<uint8_t>(month, 1, 12);
+                sakaMonth = std::clamp<uint8_t>(effectiveMonth, 1, 12);
             }
             uint8_t monthLen = indianSakaDaysInMonth(*year, sakaMonth);
             uint8_t sakaDay = day;
@@ -2647,8 +2647,8 @@ TemporalResult<ISO8601::PlainDate> nonISOCalendarDateToISO(CalendarID calendarId
                 return makeUnexpected(rangeError("month is out of range"_s));
             ASSERT(year);
             int32_t isoYear = gregorianStructuredCalendarISOYear(calendarId, *year);
-            uint8_t resolvedMonth = month;
-            if (month > 12) {
+            uint8_t resolvedMonth = effectiveMonth;
+            if (effectiveMonth > 12) {
                 if (overflow == TemporalOverflow::Reject) [[unlikely]]
                     return makeUnexpected(rangeError("month is out of range for this calendar"_s));
                 resolvedMonth = 12;
