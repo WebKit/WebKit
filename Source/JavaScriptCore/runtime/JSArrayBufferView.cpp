@@ -43,6 +43,7 @@ const ClassInfo JSArrayBufferView::s_info = {
 };
 
 const ASCIILiteral typedArrayBufferHasBeenDetachedErrorMessage { "Underlying ArrayBuffer has been detached from the view or out-of-bounds"_s };
+const ASCIILiteral typedArrayBufferIsImmutableErrorMessage { "Underlying ArrayBuffer is immutable and cannot be written to"_s };
 
 JSArrayBufferView::ConstructionContext::ConstructionContext(Structure* structure, size_t length, void* vector)
     : m_structure(structure)
@@ -112,7 +113,9 @@ JSArrayBufferView::ConstructionContext::ConstructionContext(VM& vm, Structure* s
     , m_byteOffset(byteOffset)
     , m_mode(WastefulTypedArray)
 {
-    if (!arrayBuffer->isResizableOrGrowableShared())
+    if (arrayBuffer->isImmutable())
+        m_mode = ImmutableWastefulTypedArray;
+    else if (!arrayBuffer->isResizableOrGrowableShared())
         m_mode = WastefulTypedArray;
     else {
         if (arrayBuffer->isGrowableShared())
@@ -127,6 +130,10 @@ JSArrayBufferView::ConstructionContext::ConstructionContext(VM& vm, Structure* s
         ASSERT(isResizableOrGrowableSharedTypedArrayIncludingDataView(structure->classInfoForCells()));
     else
         ASSERT(!isResizableOrGrowableSharedTypedArrayIncludingDataView(structure->classInfoForCells()));
+    if (JSC::isImmutable(m_mode))
+        ASSERT(isImmutableTypedArrayIncludingDataView(structure->classInfoForCells()));
+    else
+        ASSERT(!isImmutableTypedArrayIncludingDataView(structure->classInfoForCells()));
 #endif
 
     m_vector = VectorType(static_cast<uint8_t*>(arrayBuffer->data()) + byteOffset);
@@ -142,7 +149,9 @@ JSArrayBufferView::ConstructionContext::ConstructionContext(Structure* structure
     , m_mode(DataViewMode)
     , m_butterfly(nullptr)
 {
-    if (!arrayBuffer->isResizableOrGrowableShared())
+    if (arrayBuffer->isImmutable())
+        m_mode = ImmutableDataViewMode;
+    else if (!arrayBuffer->isResizableOrGrowableShared())
         m_mode = DataViewMode;
     else {
         if (arrayBuffer->isGrowableShared())
@@ -157,6 +166,10 @@ JSArrayBufferView::ConstructionContext::ConstructionContext(Structure* structure
         ASSERT(isResizableOrGrowableSharedTypedArrayIncludingDataView(structure->classInfoForCells()));
     else
         ASSERT(!isResizableOrGrowableSharedTypedArrayIncludingDataView(structure->classInfoForCells()));
+    if (JSC::isImmutable(m_mode))
+        ASSERT(isImmutableTypedArrayIncludingDataView(structure->classInfoForCells()));
+    else
+        ASSERT(!isImmutableTypedArrayIncludingDataView(structure->classInfoForCells()));
 #endif
 
     m_vector = VectorType(static_cast<uint8_t*>(arrayBuffer->data()) + byteOffset);
@@ -183,6 +196,7 @@ void JSArrayBufferView::finishCreation(VM& vm)
         vm.heap.addFinalizer(this, finalize);
         return;
     case WastefulTypedArray:
+    case ImmutableWastefulTypedArray:
     case ResizableNonSharedWastefulTypedArray:
     case ResizableNonSharedAutoLengthWastefulTypedArray:
     case GrowableSharedWastefulTypedArray:
@@ -190,6 +204,7 @@ void JSArrayBufferView::finishCreation(VM& vm)
         vm.heap.addReference(this, butterfly()->indexingHeader()->arrayBuffer());
         return;
     case DataViewMode:
+    case ImmutableDataViewMode:
     case ResizableNonSharedDataViewMode:
     case ResizableNonSharedAutoLengthDataViewMode:
     case GrowableSharedDataViewMode:
@@ -399,6 +414,9 @@ void printInternal(PrintStream& out, TypedArrayMode mode)
     case WastefulTypedArray:
         out.print("WastefulTypedArray");
         return;
+    case ImmutableWastefulTypedArray:
+        out.print("ImmutableWastefulTypedArray");
+        return;
     case ResizableNonSharedWastefulTypedArray:
         out.print("ResizableNonSharedWastefulTypedArray");
         return;
@@ -425,6 +443,9 @@ void printInternal(PrintStream& out, TypedArrayMode mode)
         return;
     case GrowableSharedAutoLengthDataViewMode:
         out.print("GrowableSharedAutoLengthDataViewMode");
+        return;
+    case ImmutableDataViewMode:
+        out.print("ImmutableDataViewMode");
         return;
     }
     RELEASE_ASSERT_NOT_REACHED();

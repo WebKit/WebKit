@@ -56,6 +56,7 @@ public:
     JS_EXPORT_PRIVATE bool NODELETE isShared() const;
     ArrayBufferSharingMode NODELETE sharingMode() const;
     bool isResizableOrGrowableShared() const { return m_impl->isResizableOrGrowableShared(); }
+    bool isImmutable() const { return m_impl->isImmutable(); }
 
 #if ENABLE(WEBASSEMBLY)
     JSWebAssemblyMemory* associatedWasmMemoryWrapper() const;

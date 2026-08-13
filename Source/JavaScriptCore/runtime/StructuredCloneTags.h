@@ -158,6 +158,7 @@ namespace JSC {
  * ArrayBuffer :-
  *    ArrayBufferTag <byteLength:uint64_t> <contents:byte{length}>
  *    ResizableArrayBufferTag <byteLength:uint64_t> <maxLength:uint64_t> <contents:byte{length}>
+ *    ImmutableArrayBufferTag <byteLength:uint64_t> <contents:byte{length}>
  *    ArrayBufferTransferTag <value:uint32_t>
  *    SharedArrayBufferTag <value:uint32_t>
  *
@@ -325,6 +326,7 @@ enum SerializationTag {
     WritableStreamTag = 66,
     TransformStreamTag = 67,
     FileSystemHandleTag = 68,
+    ImmutableArrayBufferTag = 69,
     ErrorTag = 255
 };
 
@@ -422,7 +424,7 @@ inline ErrorType toErrorType(SerializableErrorType value)
 }
 
 constexpr unsigned CurrentMajorVersion = 16;
-constexpr unsigned CurrentMinorVersion = 0;
+constexpr unsigned CurrentMinorVersion = 1;
 inline constexpr unsigned NODELETE majorVersionFor(unsigned version) { return version & 0x00FFFFFF; }
 inline constexpr unsigned NODELETE minorVersionFor(unsigned version) { return version >> 24; }
 inline constexpr unsigned NODELETE makeVersion(unsigned major, unsigned minor)
@@ -453,6 +455,7 @@ inline constexpr unsigned NODELETE makeVersion(unsigned major, unsigned minor)
  * Version 14. encode booleans as uint8_t instead of int32_t.
  * Version 15. changed the terminator of the indexed property section in array.
  * Version 16. added line/column/sourceURL/stack information to DOMException.
+ * Version 16.1. added support for immutable ArrayBuffers (ImmutableArrayBufferTag).
  */
 // FIXME: We should have two versions one for JSC version changes and one for WebCore version changes.
 inline constexpr unsigned NODELETE currentVersion() { return makeVersion(CurrentMajorVersion, CurrentMinorVersion); }
@@ -482,6 +485,7 @@ inline constexpr bool NODELETE canBeAddedToObjectPool(SerializationTag tag)
     case BigIntObjectTag:
     case EmptyStringObjectTag:
     case FalseObjectTag:
+    case ImmutableArrayBufferTag:
     case MapObjectTag:
     case NumberObjectTag:
     case ObjectTag:
@@ -590,6 +594,7 @@ inline ASCIILiteral name(SerializationTag tag)
     case WritableStreamTag: return "WritableStreamTag"_s;
     case TransformStreamTag : return "TransformStreamTag"_s;
     case FileSystemHandleTag: return "FileSystemHandleTag"_s;
+    case ImmutableArrayBufferTag: return "ImmutableArrayBufferTag"_s;
     case ErrorTag: return "ErrorTag"_s;
     }
     return "<unknown tag>"_s;

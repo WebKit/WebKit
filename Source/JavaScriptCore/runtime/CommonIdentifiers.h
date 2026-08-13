@@ -162,6 +162,7 @@
     macro(id) \
     macro(ignoreCase) \
     macro(ignorePunctuation) \
+    macro(immutable) \
     macro(includes) \
     macro(index) \
     macro(indices) \
@@ -268,6 +269,7 @@
     macro(set) \
     macro(size) \
     macro(slice) \
+    macro(sliceToImmutable) \
     macro(smallestUnit) \
     macro(sort) \
     macro(source) \
@@ -303,6 +305,7 @@
     macro(trailingZeroDisplay) \
     macro(transfer) \
     macro(transferToFixedLength) \
+    macro(transferToImmutable) \
     macro(type) \
     macro(uid) \
     macro(unicode) \

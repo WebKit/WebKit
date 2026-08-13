@@ -251,6 +251,7 @@ void ArrayBufferContents::shareWith(ArrayBufferContents& other)
 {
     ASSERT(!other.m_data);
     ASSERT(m_shared);
+    ASSERT(!m_isImmutable); // Immutable ArrayBuffers are never shared.
     other.m_data = m_data;
     other.m_destructor = nullptr;
     other.m_shared = m_shared;

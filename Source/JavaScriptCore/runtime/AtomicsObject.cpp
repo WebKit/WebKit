@@ -186,6 +186,13 @@ EncodedJSValue atomicReadModifyWrite(JSGlobalObject* globalObject, VM& vm, const
     JSArrayBufferView* typedArrayView = validateIntegerTypedArray<TypedArrayOperationMode::ReadWrite>(globalObject, args[0]);
     RETURN_IF_EXCEPTION(scope, { });
 
+    // https://tc39.es/proposal-immutable-arraybuffer/: mutating atomic operations throw on
+    // immutable-backed typed arrays before coercing the index and value.
+    if constexpr (Func::isWrite) {
+        if (typedArrayView->isImmutable()) [[unlikely]]
+            return throwVMTypeError(globalObject, scope, typedArrayBufferIsImmutableErrorMessage);
+    }
+
     uint64_t accessIndex = validateAtomicAccess(globalObject, vm, typedArrayView, args[1]);
     RETURN_IF_EXCEPTION(scope, { });
 
@@ -223,6 +230,7 @@ EncodedJSValue atomicReadModifyWrite(JSGlobalObject* globalObject, CallFrame* ca
 }
 
 struct AddFunc {
+    static constexpr bool isWrite = true;
     static constexpr unsigned numExtraArgs = 1;
     
     template<typename T>
@@ -233,6 +241,7 @@ struct AddFunc {
 };
 
 struct AndFunc {
+    static constexpr bool isWrite = true;
     static constexpr unsigned numExtraArgs = 1;
     
     template<typename T>
@@ -243,6 +252,7 @@ struct AndFunc {
 };
 
 struct CompareExchangeFunc {
+    static constexpr bool isWrite = true;
     static constexpr unsigned numExtraArgs = 2;
     
     template<typename T>
@@ -255,6 +265,7 @@ struct CompareExchangeFunc {
 };
 
 struct ExchangeFunc {
+    static constexpr bool isWrite = true;
     static constexpr unsigned numExtraArgs = 1;
     
     template<typename T>
@@ -265,6 +276,7 @@ struct ExchangeFunc {
 };
 
 struct LoadFunc {
+    static constexpr bool isWrite = false;
     static constexpr unsigned numExtraArgs = 0;
     
     template<typename T>
@@ -275,6 +287,7 @@ struct LoadFunc {
 };
 
 struct OrFunc {
+    static constexpr bool isWrite = true;
     static constexpr unsigned numExtraArgs = 1;
     
     template<typename T>
@@ -285,6 +298,7 @@ struct OrFunc {
 };
 
 struct SubFunc {
+    static constexpr bool isWrite = true;
     static constexpr unsigned numExtraArgs = 1;
     
     template<typename T>
@@ -295,6 +309,7 @@ struct SubFunc {
 };
 
 struct XorFunc {
+    static constexpr bool isWrite = true;
     static constexpr unsigned numExtraArgs = 1;
     
     template<typename T>
@@ -363,6 +378,11 @@ EncodedJSValue atomicStore(JSGlobalObject* globalObject, VM& vm, JSValue base, J
 
     JSArrayBufferView* typedArrayView = validateIntegerTypedArray<TypedArrayOperationMode::ReadWrite>(globalObject, base);
     RETURN_IF_EXCEPTION(scope, { });
+
+    // https://tc39.es/proposal-immutable-arraybuffer/: Atomics.store throws on immutable-backed
+    // typed arrays before coercing the index and value.
+    if (typedArrayView->isImmutable()) [[unlikely]]
+        return throwVMTypeError(globalObject, scope, typedArrayBufferIsImmutableErrorMessage);
 
     uint64_t accessIndex = validateAtomicAccess(globalObject, vm, typedArrayView, index);
     RETURN_IF_EXCEPTION(scope, { });

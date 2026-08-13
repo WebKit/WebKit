@@ -55,10 +55,27 @@ using JSResizableOrGrowableSharedFloat32Array = JSGenericResizableOrGrowableShar
 using JSResizableOrGrowableSharedFloat64Array = JSGenericResizableOrGrowableSharedTypedArrayView<Float64Adaptor>;
 using JSResizableOrGrowableSharedBigInt64Array = JSGenericResizableOrGrowableSharedTypedArrayView<BigInt64Adaptor>;
 using JSResizableOrGrowableSharedBigUint64Array = JSGenericResizableOrGrowableSharedTypedArrayView<BigUint64Adaptor>;
+using JSImmutableInt8Array = JSGenericImmutableTypedArrayView<Int8Adaptor>;
+using JSImmutableInt16Array = JSGenericImmutableTypedArrayView<Int16Adaptor>;
+using JSImmutableInt32Array = JSGenericImmutableTypedArrayView<Int32Adaptor>;
+using JSImmutableUint8Array = JSGenericImmutableTypedArrayView<Uint8Adaptor>;
+using JSImmutableUint8ClampedArray = JSGenericImmutableTypedArrayView<Uint8ClampedAdaptor>;
+using JSImmutableUint16Array = JSGenericImmutableTypedArrayView<Uint16Adaptor>;
+using JSImmutableUint32Array = JSGenericImmutableTypedArrayView<Uint32Adaptor>;
+using JSImmutableFloat16Array = JSGenericImmutableTypedArrayView<Float16Adaptor>;
+using JSImmutableFloat32Array = JSGenericImmutableTypedArrayView<Float32Adaptor>;
+using JSImmutableFloat64Array = JSGenericImmutableTypedArrayView<Float64Adaptor>;
+using JSImmutableBigInt64Array = JSGenericImmutableTypedArrayView<BigInt64Adaptor>;
+using JSImmutableBigUint64Array = JSGenericImmutableTypedArrayView<BigUint64Adaptor>;
 
 inline bool isResizableOrGrowableSharedTypedArrayIncludingDataView(const ClassInfo* classInfo)
 {
     return classInfo->isResizableOrGrowableSharedTypedArray;
+}
+
+inline bool isImmutableTypedArrayIncludingDataView(const ClassInfo* classInfo)
+{
+    return classInfo->isImmutableTypedArray;
 }
 
 } // namespace JSC

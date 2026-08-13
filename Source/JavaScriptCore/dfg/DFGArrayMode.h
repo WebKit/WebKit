@@ -165,7 +165,7 @@ public:
         u.asBytes.mayBeResizableOrGrowableSharedTypedArray = false;
     }
 
-    ArrayMode(Array::Type type, Array::Class arrayClass, Array::Speculation speculation, Array::Conversion conversion, Array::Action action, bool mayBeLargeTypedArray = false, bool mayBeResizableOrGrowableSharedTypedArray = false)
+    ArrayMode(Array::Type type, Array::Class arrayClass, Array::Speculation speculation, Array::Conversion conversion, Array::Action action, bool mayBeLargeTypedArray = false, bool mayBeResizableOrGrowableSharedTypedArray = false, bool mayBeImmutableTypedArray = false)
     {
         u.asWord = 0;
         u.asBytes.type = type;
@@ -175,6 +175,7 @@ public:
         u.asBytes.action = action;
         u.asBytes.mayBeLargeTypedArray = mayBeLargeTypedArray;
         u.asBytes.mayBeResizableOrGrowableSharedTypedArray = mayBeResizableOrGrowableSharedTypedArray;
+        u.asBytes.mayBeImmutableTypedArray = mayBeImmutableTypedArray;
     }
 
     ArrayMode(Array::Type type, Array::Class arrayClass, Array::Conversion conversion, Array::Action action)
@@ -196,6 +197,7 @@ public:
     Array::Action action() const { return static_cast<Array::Action>(u.asBytes.action); }
     bool mayBeLargeTypedArray() const { return u.asBytes.mayBeLargeTypedArray; }
     bool mayBeResizableOrGrowableSharedTypedArray() const { return u.asBytes.mayBeResizableOrGrowableSharedTypedArray; }
+    bool mayBeImmutableTypedArray() const { return u.asBytes.mayBeImmutableTypedArray; }
 
     void setSpeculation(Array::Speculation speculation)
     {
@@ -213,37 +215,37 @@ public:
 
     ArrayMode withType(Array::Type type) const
     {
-        return ArrayMode(type, arrayClass(), speculation(), conversion(), action(), mayBeLargeTypedArray(), mayBeResizableOrGrowableSharedTypedArray());
+        return ArrayMode(type, arrayClass(), speculation(), conversion(), action(), mayBeLargeTypedArray(), mayBeResizableOrGrowableSharedTypedArray(), mayBeImmutableTypedArray());
     }
 
     ArrayMode withAction(Array::Action action) const
     {
-        return ArrayMode(type(), arrayClass(), speculation(), conversion(), action, mayBeLargeTypedArray(), mayBeResizableOrGrowableSharedTypedArray());
+        return ArrayMode(type(), arrayClass(), speculation(), conversion(), action, mayBeLargeTypedArray(), mayBeResizableOrGrowableSharedTypedArray(), mayBeImmutableTypedArray());
     }
 
     ArrayMode withSpeculation(Array::Speculation speculation) const
     {
-        return ArrayMode(type(), arrayClass(), speculation, conversion(), action(), mayBeLargeTypedArray(), mayBeResizableOrGrowableSharedTypedArray());
+        return ArrayMode(type(), arrayClass(), speculation, conversion(), action(), mayBeLargeTypedArray(), mayBeResizableOrGrowableSharedTypedArray(), mayBeImmutableTypedArray());
     }
 
     ArrayMode withConversion(Array::Conversion conversion) const
     {
-        return ArrayMode(type(), arrayClass(), speculation(), conversion, action(), mayBeLargeTypedArray(), mayBeResizableOrGrowableSharedTypedArray());
+        return ArrayMode(type(), arrayClass(), speculation(), conversion, action(), mayBeLargeTypedArray(), mayBeResizableOrGrowableSharedTypedArray(), mayBeImmutableTypedArray());
     }
 
     ArrayMode withTypeAndConversion(Array::Type type, Array::Conversion conversion) const
     {
-        return ArrayMode(type, arrayClass(), speculation(), conversion, action(), mayBeLargeTypedArray(), mayBeResizableOrGrowableSharedTypedArray());
+        return ArrayMode(type, arrayClass(), speculation(), conversion, action(), mayBeLargeTypedArray(), mayBeResizableOrGrowableSharedTypedArray(), mayBeImmutableTypedArray());
     }
 
     ArrayMode withArrayClassAndSpeculation(Array::Class arrayClass, Array::Speculation speculation, bool mayBeLargeTypedArray, bool mayBeResizableOrGrowableSharedTypedArray) const
     {
-        return ArrayMode(type(), arrayClass, speculation, conversion(), action(), mayBeLargeTypedArray, mayBeResizableOrGrowableSharedTypedArray);
+        return ArrayMode(type(), arrayClass, speculation, conversion(), action(), mayBeLargeTypedArray, mayBeResizableOrGrowableSharedTypedArray, mayBeImmutableTypedArray());
     }
 
     ArrayMode withArrayClass(Array::Class arrayClass) const
     {
-        return ArrayMode(type(), arrayClass, speculation(), conversion(), action(), mayBeLargeTypedArray(), mayBeResizableOrGrowableSharedTypedArray());
+        return ArrayMode(type(), arrayClass, speculation(), conversion(), action(), mayBeLargeTypedArray(), mayBeResizableOrGrowableSharedTypedArray(), mayBeImmutableTypedArray());
     }
 
     static Array::Speculation speculationFromProfile(ArrayProfile profile, bool makeSafe)
@@ -295,9 +297,14 @@ public:
 
         Array::Speculation speculation = speculationFromProfile(profile, makeSafe);
 
-        return withArrayClassAndSpeculation(myArrayClass, speculation, profile.mayBeLargeTypedArray(), profile.mayBeResizableOrGrowableSharedTypedArray());
+        return withArrayClassAndSpeculation(myArrayClass, speculation, profile.mayBeLargeTypedArray(), profile.mayBeResizableOrGrowableSharedTypedArray()).withMayBeImmutableTypedArray(profile.mayBeImmutableTypedArray());
     }
-    
+
+    ArrayMode withMayBeImmutableTypedArray(bool mayBeImmutableTypedArray) const
+    {
+        return ArrayMode(type(), arrayClass(), speculation(), conversion(), action(), mayBeLargeTypedArray(), mayBeResizableOrGrowableSharedTypedArray(), mayBeImmutableTypedArray);
+    }
+
     static constexpr SpeculatedType unusedIndexSpeculatedType = SpecInt32Only;
     ArrayMode refine(Graph&, Node*, SpeculatedType base, SpeculatedType index, SpeculatedType value = SpecNone) const;
     
@@ -596,7 +603,8 @@ public:
             && speculation() == other.speculation()
             && conversion() == other.conversion()
             && mayBeLargeTypedArray() == other.mayBeLargeTypedArray()
-            && mayBeResizableOrGrowableSharedTypedArray() == other.mayBeResizableOrGrowableSharedTypedArray();
+            && mayBeResizableOrGrowableSharedTypedArray() == other.mayBeResizableOrGrowableSharedTypedArray()
+            && mayBeImmutableTypedArray() == other.mayBeImmutableTypedArray();
     }
     
 private:
@@ -649,6 +657,7 @@ private:
             uint8_t action : 1;
             uint8_t mayBeLargeTypedArray : 1;
             uint8_t mayBeResizableOrGrowableSharedTypedArray : 1;
+            uint8_t mayBeImmutableTypedArray : 1;
         } asBytes;
         unsigned asWord;
     } u;

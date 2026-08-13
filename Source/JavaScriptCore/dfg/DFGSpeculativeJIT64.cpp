@@ -6666,6 +6666,13 @@ void SpeculativeJIT::compile(Node* node)
             isLittleEndianOperand.emplace(this, m_graph.varArgChild(node, 3));
         GPRReg isLittleEndianGPR = isLittleEndianOperand ? isLittleEndianOperand->gpr() : InvalidGPRReg;
 
+        // Stores to DataViews on immutable ArrayBuffers always fail; exit so the site falls back to the generic call.
+        if (!m_graph.isNeverImmutableTypedArrayIncludingDataView(m_state.forNode(m_graph.varArgChild(node, 0)))) {
+            load8(Address(dataViewGPR, JSArrayBufferView::offsetOfMode()), t1);
+            and32(TrustedImm32(immutableModeMask), t1);
+            speculationCheck(UnexpectedImmutableArrayBufferView, JSValueSource(dataViewGPR), node, branch32(Equal, t1, TrustedImm32(immutableModeMask)));
+        }
+
         if (data.isResizable)
             loadTypedArrayLength(dataViewGPR, t1, t2, t1, TypeDataView);
         else {
@@ -9895,6 +9902,13 @@ void SpeculativeJIT::compileMultiPutByVal(Node* node)
             JSType jsType = typeForTypedArrayType(*singleTypedArrayType);
             Jump notMatching = branch8(NotEqual, Address(baseGPR, JSCell::typeInfoTypeOffset()), TrustedImm32(jsType));
             bailoutCases.append(notMatching);
+        }
+
+        // Stores to views on immutable ArrayBuffers always fail; exit so the site eventually goes generic.
+        if (!m_graph.isNeverImmutableTypedArrayIncludingDataView(m_state.forNode(baseEdge))) {
+            load8(Address(baseGPR, JSArrayBufferView::offsetOfMode()), scratch1GPR);
+            and32(TrustedImm32(immutableModeMask), scratch1GPR);
+            speculationCheck(UnexpectedImmutableArrayBufferView, JSValueSource(baseGPR), node, branch32(Equal, scratch1GPR, TrustedImm32(immutableModeMask)));
         }
 
         if (!arrayMode.mayBeResizableOrGrowableSharedTypedArray()) {

@@ -181,6 +181,8 @@ protected:
     {
         if (m_majorVersion > CurrentMajorVersion)
             return false;
+        if (m_majorVersion == CurrentMajorVersion)
+            return m_minorVersion <= CurrentMinorVersion;
         if (m_majorVersion == 12)
             return m_minorVersion <= 1;
         return !m_minorVersion;

@@ -1381,6 +1381,9 @@ static InlineCacheAction tryCacheArrayPutByVal(JSGlobalObject* globalObject, Cod
             }
         } else if (isTypedView(base->type())) {
             auto* typedArray = uncheckedDowncast<JSArrayBufferView>(base);
+            // Stores to immutable-backed typed arrays always fail; leave them to the generic slow path.
+            if (typedArray->isImmutable())
+                return GiveUpOnCache;
             switch (typedArray->type()) {
             case Int8ArrayType:
                 accessType = typedArray->isResizableOrGrowableShared() ? AccessCase::IndexedResizableTypedArrayInt8Store : AccessCase::IndexedTypedArrayInt8Store;

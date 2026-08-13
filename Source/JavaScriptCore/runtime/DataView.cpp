@@ -70,7 +70,7 @@ RefPtr<DataView> DataView::wrappedAs(Ref<ArrayBuffer>&& buffer, size_t byteOffse
 JSArrayBufferView* DataView::wrapImpl(JSGlobalObject* lexicalGlobalObject, JSGlobalObject* globalObject)
 {
     return JSDataView::create(
-        lexicalGlobalObject, globalObject->typedArrayStructure(TypeDataView, isResizableOrGrowableShared()), possiblySharedBuffer(), byteOffsetRaw(),
+        lexicalGlobalObject, globalObject->typedArrayStructure(TypeDataView, isResizableOrGrowableShared(), isImmutable()), possiblySharedBuffer(), byteOffsetRaw(),
         isAutoLength() ? std::nullopt : std::optional { byteLengthRaw() });
 }
 

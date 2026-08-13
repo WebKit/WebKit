@@ -46,6 +46,11 @@ JSC_DEFINE_HOST_FUNCTION(uint8ArrayPrototypeSetFromBase64, (JSGlobalObject* glob
     if (!uint8Array) [[unlikely]]
         return throwVMTypeError(globalObject, scope, "Uint8Array.prototype.setFromBase64 requires that |this| be a Uint8Array"_s);
 
+    // https://tc39.es/proposal-immutable-arraybuffer/#sec-validateuint8array: writing to an
+    // immutable-backed Uint8Array throws before reading the string and options arguments.
+    if (uint8Array->isImmutable()) [[unlikely]]
+        return throwVMTypeError(globalObject, scope, typedArrayBufferIsImmutableErrorMessage);
+
     JSString* jsString = dynamicDowncast<JSString>(callFrame->argument(0));
     if (!jsString) [[unlikely]]
         return throwVMTypeError(globalObject, scope, "Uint8Array.prototype.setFromBase64 requires a string"_s);
@@ -120,6 +125,11 @@ JSC_DEFINE_HOST_FUNCTION(uint8ArrayPrototypeSetFromHex, (JSGlobalObject* globalO
     JSUint8Array* uint8Array = dynamicDowncast<JSUint8Array>(callFrame->thisValue());
     if (!uint8Array) [[unlikely]]
         return throwVMTypeError(globalObject, scope, "Uint8Array.prototype.setFromHex requires that |this| be a Uint8Array"_s);
+
+    // https://tc39.es/proposal-immutable-arraybuffer/#sec-validateuint8array: writing to an
+    // immutable-backed Uint8Array throws before reading the string argument.
+    if (uint8Array->isImmutable()) [[unlikely]]
+        return throwVMTypeError(globalObject, scope, typedArrayBufferIsImmutableErrorMessage);
 
     IdempotentArrayBufferByteLengthGetter<std::memory_order_seq_cst> byteLengthGetter;
     if (isIntegerIndexedObjectOutOfBounds(uint8Array, byteLengthGetter)) [[unlikely]]

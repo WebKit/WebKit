@@ -187,6 +187,14 @@ public:
     bool isResizableOrGrowableShared() const { return m_hasMaxByteLength; }
     bool isGrowableShared() const { return isResizableOrGrowableShared() && isShared(); }
     bool isResizableNonShared() const { return isResizableOrGrowableShared() && !isShared(); }
+    bool isImmutable() const { return m_isImmutable; }
+
+    void makeImmutable()
+    {
+        ASSERT(!isShared());
+        ASSERT(!isResizableOrGrowableShared());
+        m_isImmutable = true;
+    }
     
     void refreshAfterWasmMemoryGrow(Wasm::Memory*);
 
@@ -200,10 +208,12 @@ public:
         swap(m_sizeInBytes, other.m_sizeInBytes);
         swap(m_maxByteLength, other.m_maxByteLength);
         swap(m_hasMaxByteLength, other.m_hasMaxByteLength);
+        swap(m_isImmutable, other.m_isImmutable);
     }
 
     ArrayBufferContents detach()
     {
+        ASSERT(!m_isImmutable); // Immutable ArrayBuffers cannot be detached.
         ArrayBufferContents contents(WTF::move(*this));
         m_hasMaxByteLength = contents.m_hasMaxByteLength; // m_maxByteLength needs to be cleared while we need to keep the information that we had m_hasMaxByteLength.
         return contents;
@@ -221,6 +231,7 @@ private:
         m_sizeInBytes = 0;
         m_maxByteLength = 0;
         m_hasMaxByteLength = false;
+        m_isImmutable = false;
     }
 
     friend class ArrayBuffer;
@@ -243,6 +254,7 @@ private:
     size_t m_sizeInBytes { 0 };
     size_t m_maxByteLength { 0 };
     bool m_hasMaxByteLength { false };
+    bool m_isImmutable { false };
 };
 
 class ArrayBuffer final : public GCIncomingRefCounted<ArrayBuffer> {
@@ -279,6 +291,8 @@ public:
     inline bool isFixedLength() const { return !isResizableOrGrowableShared(); }
     inline bool isGrowableShared() const { return m_contents.isGrowableShared(); }
     inline bool isResizableNonShared() const { return m_contents.isResizableNonShared(); }
+    inline bool isImmutable() const { return m_contents.isImmutable(); }
+    inline void makeImmutable() { m_contents.makeImmutable(); }
 
     inline size_t gcSizeEstimateInBytes() const;
 

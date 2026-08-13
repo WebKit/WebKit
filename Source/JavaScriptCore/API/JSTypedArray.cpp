@@ -119,9 +119,10 @@ static JSObject* createTypedArray(JSGlobalObject* globalObject, JSTypedArrayType
     }
     constexpr JSTypedArrayType kJSTypedArrayTypeFloat16Array = static_cast<JSTypedArrayType>(kJSTypedArrayTypeBigUint64Array + 1);
     bool isResizableOrGrowableShared = buffer->isResizableOrGrowableShared();
+    bool isImmutable = buffer->isImmutable();
     switch (static_cast<int>(type)) {
 #define JSC_TYPED_ARRAY_FACTORY(type) case kJSTypedArrayType##type##Array: { \
-        return JS##type##Array::create(globalObject, globalObject->typedArrayStructure(Type##type, isResizableOrGrowableShared), WTF::move(buffer), offset, length.value()); \
+        return JS##type##Array::create(globalObject, globalObject->typedArrayStructure(Type##type, isResizableOrGrowableShared, isImmutable), WTF::move(buffer), offset, length.value()); \
     }
     FOR_EACH_TYPED_ARRAY_TYPE_EXCLUDING_DATA_VIEW(JSC_TYPED_ARRAY_FACTORY)
 #undef JSC_TYPED_ARRAY_CHECK

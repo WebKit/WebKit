@@ -4253,6 +4253,19 @@ ImageControlsEnabled:
     WebCore:
       default: false
 
+ImmutableArrayBufferEnabled:
+  type: bool
+  status: unstable
+  category: javascript
+  humanReadableName: "Immutable ArrayBuffer"
+  humanReadableDescription: "Enable immutable ArrayBuffer methods."
+  webcoreBinding: none
+  jscOptionName: useImmutableArrayBuffer
+  sharedPreferenceForWebProcess: true
+  defaultValue:
+    WebKit:
+      default: false
+
 ImportDeferEnabled:
   type: bool
   status: stable
