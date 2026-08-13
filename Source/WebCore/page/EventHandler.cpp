@@ -742,8 +742,11 @@ bool EventHandler::handleMousePressEventDoubleClick(const MouseEventWithHitTestR
 #if ENABLE(DRAG_SUPPORT)
         m_dragStartSelection = getWeakSimpleRangeFromSelection(m_frame->selection().selection());
 #endif
-    } else if (mouseDownMayStartSelect())
+    } else if (mouseDownMayStartSelect() && event.event().inputSource() != MouseEventInputSource::Automation) {
+        // If the event is an Automation event, avoid interfering with the platform text interaction,
+        // which handles selection itself.
         selectClosestWordFromHitTestResult(event.hitTestResult(), shouldAppendTrailingWhitespace(event, protect(m_frame)));
+    }
 
     return true;
 }

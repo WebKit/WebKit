@@ -199,6 +199,7 @@
 		0772811D21234FF600C8EF2E /* UserMediaPermissionRequestManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 4A410F4319AF7B27002EBAB5 /* UserMediaPermissionRequestManager.h */; };
 		0773A93B3023B0FB002C57FE /* SpatialShim.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0773A93A3023B0FB002C57FE /* SpatialShim.swift */; };
 		077FD1A02CC7569200C5D9E0 /* WKIntelligenceReplacementTextEffectCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 077FD19F2CC7569200C5D9E0 /* WKIntelligenceReplacementTextEffectCoordinator.swift */; };
+		078074F93029A874005492F5 /* WKDOMDoubleClickGestureRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 078074F83029A874005492F5 /* WKDOMDoubleClickGestureRecognizer.swift */; };
 		0785E8002CBCDFFD00F68126 /* PlatformIntelligenceTextEffectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0785E7FF2CBCDFFD00F68126 /* PlatformIntelligenceTextEffectView.swift */; };
 		078B04442CF1149200B453A6 /* URLSchemeHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 078B04432CF1149200B453A6 /* URLSchemeHandler.swift */; };
 		078B04462CF1154B00B453A6 /* WebPage+Configuration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 078B04452CF1154B00B453A6 /* WebPage+Configuration.swift */; };
@@ -3527,6 +3528,7 @@
 		0779D7BC2EA8101800C389D5 /* RemoteMediaSessionProxy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteMediaSessionProxy.cpp; sourceTree = "<group>"; };
 		077BA570260E8F630072F19F /* MediaSessionCoordinatorProxyPrivate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MediaSessionCoordinatorProxyPrivate.h; sourceTree = "<group>"; };
 		077FD19F2CC7569200C5D9E0 /* WKIntelligenceReplacementTextEffectCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WKIntelligenceReplacementTextEffectCoordinator.swift; sourceTree = "<group>"; };
+		078074F83029A874005492F5 /* WKDOMDoubleClickGestureRecognizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WKDOMDoubleClickGestureRecognizer.swift; sourceTree = "<group>"; };
 		0785E7FF2CBCDFFD00F68126 /* PlatformIntelligenceTextEffectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlatformIntelligenceTextEffectView.swift; sourceTree = "<group>"; };
 		078B04432CF1149200B453A6 /* URLSchemeHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLSchemeHandler.swift; sourceTree = "<group>"; };
 		078B04452CF1154B00B453A6 /* WebPage+Configuration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WebPage+Configuration.swift"; sourceTree = "<group>"; };
@@ -9622,6 +9624,19 @@
 				CDF1B90D266F395E0007EC10 /* WKGroupSession.swift */,
 			);
 			path = GroupActivities;
+			sourceTree = "<group>";
+		};
+		078074F53029A77E005492F5 /* AppKitGestures */ = {
+			isa = PBXGroup;
+			children = (
+				336E07462EBCC1C100B4D635 /* WKAppKitGestureController.h */,
+				336E07472EBCC1C100B4D635 /* WKAppKitGestureController.mm */,
+				073B19992FEFB66B00BD5D69 /* WKAppKitGestureController.swift */,
+				07F0337D3B2E1A0044AABBCC /* WKDirectionalScrollLockTracker.swift */,
+				078074F83029A874005492F5 /* WKDOMDoubleClickGestureRecognizer.swift */,
+				07F0337B30107D3900B69551 /* WKFastScrollTracker.swift */,
+			);
+			path = AppKitGestures;
 			sourceTree = "<group>";
 		};
 		0785E7FE2CBCDFDD00F68126 /* WritingTools */ = {
@@ -17093,6 +17108,7 @@
 		BCCF085C113F3B7500C650C5 /* mac */ = {
 			isa = PBXGroup;
 			children = (
+				078074F53029A77E005492F5 /* AppKitGestures */,
 				97AD28882ECFA4AE00039097 /* _WKCaptionStyleMenuControllerAVKitMac.h */,
 				97AD28872ECFA49800039097 /* _WKCaptionStyleMenuControllerAVKitMac.mm */,
 				CD89ACBB2EA696A300C76423 /* _WKCaptionStyleMenuControllerMac.mm */,
@@ -17131,11 +17147,6 @@
 				0FD07E4F28A3413700B38C81 /* WebViewImpl.mm */,
 				868160CD18763D4B0021E79D /* WindowServerConnection.h */,
 				868160CF187645370021E79D /* WindowServerConnection.mm */,
-				336E07462EBCC1C100B4D635 /* WKAppKitGestureController.h */,
-				336E07472EBCC1C100B4D635 /* WKAppKitGestureController.mm */,
-				073B19992FEFB66B00BD5D69 /* WKAppKitGestureController.swift */,
-				07F0337D3B2E1A0044AABBCC /* WKDirectionalScrollLockTracker.swift */,
-				07F0337B30107D3900B69551 /* WKFastScrollTracker.swift */,
 				CDCA85C7132ABA4E00E961DF /* WKFullScreenWindowController.h */,
 				CDCA85C6132ABA4E00E961DF /* WKFullScreenWindowController.mm */,
 				9321D5851A38EE3C008052BE /* WKImmediateActionController.h */,
@@ -22601,6 +22612,7 @@
 				0739EAF13015620C0066ED1B /* WKDefaultPDFHUDView.swift in Sources */,
 				079DD3032FAC583900592E03 /* WKDeferringGestureRecognizer.swift in Sources */,
 				07F0337E3B2E1A0044AABBCC /* WKDirectionalScrollLockTracker.swift in Sources */,
+				078074F93029A874005492F5 /* WKDOMDoubleClickGestureRecognizer.swift in Sources */,
 				637281A321ADC744009E0DE6 /* WKDownloadProgress.mm in Sources */,
 				07F0337C30107D3900B69551 /* WKFastScrollTracker.swift in Sources */,
 				5CE9120D2293C219005BEC78 /* WKMain.mm in Sources */,

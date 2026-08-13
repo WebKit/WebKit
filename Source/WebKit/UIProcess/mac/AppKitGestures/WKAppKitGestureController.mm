@@ -42,6 +42,7 @@
 #import "WKDeferringGestureRecognizer.h"
 #import "WKWebView.h"
 #import "WKWebViewInternal.h"
+#import "WebEventFactory.h"
 #import "WebEventModifier.h"
 #import "WebEventType.h"
 #import "WebKit-Swift.h"
@@ -195,6 +196,7 @@ static NSString *gestureLogDescription(NSGestureRecognizer *gesture)
     RetainPtr<NSPressGestureRecognizer> _mouseTrackingGestureRecognizer;
     RetainPtr<NSPressGestureRecognizer> _singleClickGestureRecognizer;
     RetainPtr<NSClickGestureRecognizer> _doubleClickGestureRecognizer;
+    RetainPtr<NSClickGestureRecognizer> _domDoubleClickGestureRecognizer;
 
     // Auxiliary gesture recognizers to support context menus.
     RetainPtr<NSPressGestureRecognizer> _secondaryClickGestureRecognizer;
@@ -277,12 +279,23 @@ static NSString *gestureLogDescription(NSGestureRecognizer *gesture)
     _panGestureRecognizer = recognizer;
 }
 
+- (NSClickGestureRecognizer *)domDoubleClickGestureRecognizer
+{
+    return _domDoubleClickGestureRecognizer.get();
+}
+
+- (void)setDOMDoubleClickGestureRecognizer:(NSClickGestureRecognizer *)recognizer
+{
+    _domDoubleClickGestureRecognizer = recognizer;
+}
+
 - (void)setUpGestureRecognizers
 {
     [self setUpPanGestureRecognizer];
     [self setUpMouseTrackingGestureRecognizer];
     [self setUpSingleClickGestureRecognizer];
     [self setUpDoubleClickGestureRecognizer];
+    [self setUpDOMDoubleClickGestureRecognizer];
 
     [self setUpSecondaryClickGestureRecognizer];
     [self setUpSecondaryClickDeferringGestureRecognizer];
@@ -378,6 +391,7 @@ static NSString *gestureLogDescription(NSGestureRecognizer *gesture)
     [webView addGestureRecognizer:_mouseTrackingGestureRecognizer.get()];
     [webView addGestureRecognizer:_singleClickGestureRecognizer.get()];
     [webView addGestureRecognizer:_doubleClickGestureRecognizer.get()];
+    [webView addGestureRecognizer:_domDoubleClickGestureRecognizer.get()];
 
     [webView addGestureRecognizer:_secondaryClickGestureRecognizer.get()];
     [webView addGestureRecognizer:_secondaryClickDeferringGestureRecognizer.get()];
@@ -396,6 +410,7 @@ static NSString *gestureLogDescription(NSGestureRecognizer *gesture)
     [self enableGestureIfNeeded:_mouseTrackingGestureRecognizer.get()];
     [self enableGestureIfNeeded:_singleClickGestureRecognizer.get()];
     [self enableGestureIfNeeded:_doubleClickGestureRecognizer.get()];
+    [self enableGestureIfNeeded:_domDoubleClickGestureRecognizer.get()];
     [self enableGestureIfNeeded:_secondaryClickGestureRecognizer.get()];
     [self enableGestureIfNeeded:_dragPressGestureRecognizer.get()];
     [self enableGestureIfNeeded:_imageAnalysisGestureRecognizer.get()];
@@ -413,6 +428,7 @@ static NSString *gestureLogDescription(NSGestureRecognizer *gesture)
     [_mouseTrackingGestureRecognizer setShouldBeArchived:NO];
     [_singleClickGestureRecognizer setShouldBeArchived:NO];
     [_doubleClickGestureRecognizer setShouldBeArchived:NO];
+    [_domDoubleClickGestureRecognizer setShouldBeArchived:NO];
 
     [_secondaryClickGestureRecognizer setShouldBeArchived:NO];
     [_secondaryClickDeferringGestureRecognizer setShouldBeArchived:NO];
@@ -519,6 +535,9 @@ static NSString *gestureLogDescription(NSGestureRecognizer *gesture)
 
     RELEASE_ASSERT(_singleClickGestureRecognizer == gesture);
 
+    if (protect([webView _impl])->ignoresAllEvents())
+        return;
+
     if (_caughtDeceleratingScroll) {
         // This gesture is interrupting a decelerating scroll; it should stop the scroll (and may
         // turn into a pan) but must never perform a click.
@@ -582,6 +601,32 @@ static NSString *gestureLogDescription(NSGestureRecognizer *gesture)
 
     auto magnificationOrigin = [webView convertPoint:[gesture locationInView:nil] fromView:nil];
     protect(impl->ensureGestureController())->handleSmartMagnificationGesture(magnificationOrigin);
+}
+
+- (void)domDoubleClickGestureRecognized:(NSGestureRecognizer *)gesture
+{
+    RetainPtr webView = _view.get();
+    if (!webView)
+        return;
+
+    WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG_DEBUG([webView _protectedPage]->logIdentifier(), "%@", gestureLogDescription(gesture));
+
+    RELEASE_ASSERT(_domDoubleClickGestureRecognizer == gesture);
+
+    if (protect([webView _impl])->ignoresAllEvents())
+        return;
+
+    auto location = [gesture locationInView:webView];
+
+    if (!_layerTreeTransactionIdAtLastInteractionStart)
+        [self _updateLayerTreeTransactionIdAtLastInteractionStart];
+
+    if (!_layerTreeTransactionIdAtLastInteractionStart)
+        return;
+
+    auto modifiers = WebKit::WebEventFactory::toWebEventModifierFlags([gesture modifierFlags]);
+
+    handleDoubleClickForDoubleClickAtPoint(*[webView _protectedPage], WebCore::roundedIntPoint(location), modifiers, *_layerTreeTransactionIdAtLastInteractionStart, WebKit::WebEventInputSource::Automation);
 }
 
 - (void)secondaryClickGestureRecognized:(NSGestureRecognizer *)gesture
@@ -973,6 +1018,8 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
 - (void)didCommitLoadForMainFrame
 {
     _positionInformationManager->invalidate();
+    [self resetDOMDoubleClickGestureRecognizer];
+    _layerTreeTransactionIdAtLastInteractionStart.reset();
 }
 
 - (void)positionInformationDidChange:(const WebKit::InteractionInformationAtPosition&)info
@@ -1148,6 +1195,23 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
 
 #pragma mark - Click Handling
 
+- (void)_updateLayerTreeTransactionIdAtLastInteractionStart
+{
+    RetainPtr webView = _view.get();
+    if (!webView)
+        return;
+
+    RefPtr drawingArea = [webView _protectedPage]->drawingArea();
+    if (!drawingArea)
+        return;
+
+    RefPtr remoteDrawingArea = dynamicDowncast<WebKit::RemoteLayerTreeDrawingAreaProxy>(*drawingArea);
+    if (!remoteDrawingArea)
+        return;
+
+    _layerTreeTransactionIdAtLastInteractionStart = remoteDrawingArea->lastCommittedMainFrameLayerTreeTransactionID();
+}
+
 - (void)_handleClickBegan:(NSGestureRecognizer *)gesture
 {
     RetainPtr webView = _view.get();
@@ -1159,10 +1223,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
 
     WebCore::FloatPoint position = [gesture locationInView:webView.get()];
 
-    if (RefPtr drawingArea = [webView _protectedPage]->drawingArea()) {
-        if (RefPtr remoteDrawingArea = dynamicDowncast<WebKit::RemoteLayerTreeDrawingAreaProxy>(*drawingArea))
-            _layerTreeTransactionIdAtLastInteractionStart = remoteDrawingArea->lastCommittedMainFrameLayerTreeTransactionID();
-    }
+    [self _updateLayerTreeTransactionIdAtLastInteractionStart];
 
     _latestClickID = WebKit::ClickIdentifier::generate();
     _potentialClickInProgress = true;
@@ -1522,6 +1583,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     _mouseTrackingHasSentMouseDown = false;
     _isMomentumActive = false;
     [self _resetCaughtDeceleratingScroll];
+    [self resetDOMDoubleClickGestureRecognizer];
     _fastScrollTracker->reset();
     _directionalScrollLockTracker->reset();
     _isSuppressingSingleClickGestureForTextSelection = false;
@@ -1561,6 +1623,9 @@ static inline bool isSamePair(NSGestureRecognizer *a, NSGestureRecognizer *b, NS
     // recognizes simultaneously with everything -- it must never block, or be blocked by, the
     // interaction it measures.
     if (gestureRecognizer == _imageAnalysisGestureRecognizer || otherGestureRecognizer == _imageAnalysisGestureRecognizer)
+        return YES;
+
+    if (gestureRecognizer == _domDoubleClickGestureRecognizer || otherGestureRecognizer == _domDoubleClickGestureRecognizer)
         return YES;
 
     if (isSamePair(gestureRecognizer, otherGestureRecognizer, _mouseTrackingGestureRecognizer.get(), _singleClickGestureRecognizer.get()))
@@ -1672,6 +1737,9 @@ static inline bool isSamePair(NSGestureRecognizer *a, NSGestureRecognizer *b, NS
     if (gestureRecognizer == _imageAnalysisGestureRecognizer)
         return YES;
 
+    if (gestureRecognizer == _domDoubleClickGestureRecognizer)
+        return YES;
+
     if (gestureRecognizer == _secondaryClickGestureRecognizer)
         return [self _secondaryClickShouldBeginAtLocation:locationInViewCoordinates];
 
@@ -1712,6 +1780,9 @@ static inline bool isSamePair(NSGestureRecognizer *a, NSGestureRecognizer *b, NS
     // Live Text (see the Image Analysis design note): the preflight is a passive observer, so it prevents
     // nothing.
     if (preventingGestureRecognizer == _imageAnalysisGestureRecognizer)
+        return NO;
+
+    if (preventingGestureRecognizer == _domDoubleClickGestureRecognizer || preventedGestureRecognizer == _domDoubleClickGestureRecognizer)
         return NO;
 
     // Live Text: when the fallback deferral recognizes to block drag / context menu (text found), it must

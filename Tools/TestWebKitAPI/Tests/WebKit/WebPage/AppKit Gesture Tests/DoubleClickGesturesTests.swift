@@ -66,43 +66,7 @@ extension AppKitGesturesTests {
 extension AppKitGesturesTests.DoubleClick {
     // MARK: - DOM dblclick / detail==2 coverage
 
-    @Test(.disabled())
-    func doubleClickWithListenerFiresDblclick() async throws {
-        try await loadHTML(dblclickHandler: true)
-        try await page.callJavaScript(JavaScriptMessages.InstallEventLog(in: "div", for: [.click, .dblclick]))
-
-        let crazyBounds = try await screenBoundsOfText("crazy")
-
-        await recap.play { composer in
-            composer._wk_click(at: crazyBounds.center, for: .seconds(0.1))
-            composer.advanceTime(0.1)
-            composer._wk_click(at: crazyBounds.center, for: .seconds(0.1))
-        }
-        await page.waitForPendingMouseEvents()
-        await page.waitForNextPresentationUpdate()
-
-        #expect(try await page.callJavaScript(JavaScriptMessages.EventLog()).contains(.init(type: .dblclick, detail: 2)))
-    }
-
-    @Test(.disabled())
-    func doubleClickReportsDetailTwo() async throws {
-        try await loadHTML(dblclickHandler: true)
-        try await page.callJavaScript(JavaScriptMessages.InstallEventLog(in: "div", for: [.click, .dblclick]))
-
-        let crazyBounds = try await screenBoundsOfText("crazy")
-
-        await recap.play { composer in
-            composer._wk_click(at: crazyBounds.center, for: .seconds(0.1))
-            composer.advanceTime(0.1)
-            composer._wk_click(at: crazyBounds.center, for: .seconds(0.1))
-        }
-        await page.waitForPendingMouseEvents()
-        await page.waitForNextPresentationUpdate()
-
-        #expect(try await page.callJavaScript(JavaScriptMessages.EventLog()).contains(.init(type: .click, detail: 2)))
-    }
-
-    @Test(.disabled())
+    @Test
     func doubleClickWithListenerFiresDblclickAndSelectsWord() async throws {
         // A dblclick listener and a word selection coexist (only smart magnification
         // could suppress the selection, and this content is not zoomable).
@@ -124,13 +88,23 @@ extension AppKitGesturesTests.DoubleClick {
             composer.advanceTime(0.1)
             composer._wk_click(at: crazyBounds.center, for: .seconds(0.1))
         }
+
+        await page.waitForPendingMouseEvents()
         await page.waitForNextPresentationUpdate()
 
-        #expect(try await page.callJavaScript(JavaScriptMessages.EventLog()).contains(.init(type: .dblclick, detail: 2)))
+        let actual = try await page.callJavaScript(JavaScriptMessages.EventLog())
+        let expected = [
+            DOMEvent(type: .click, detail: 1),
+            DOMEvent(type: .click, detail: 2),
+            DOMEvent(type: .dblclick, detail: 2),
+        ]
+
+        #expect(actual == expected)
+
         #expect(try await page.callJavaScript(JavaScriptMessages.GetSelection()) == crazySelection)
     }
 
-    @Test(.disabled(), arguments: [true, false])
+    @Test(arguments: [true, false])
     func doubleClickWithListenerFiresDblclickRegardlessOfEditability(contentEditable: Bool) async throws {
         try await loadHTML(contentEditable: contentEditable, dblclickHandler: true)
         try await page.callJavaScript(JavaScriptMessages.InstallEventLog(in: "div", for: [.click, .dblclick]))
@@ -151,7 +125,14 @@ extension AppKitGesturesTests.DoubleClick {
         await page.waitForPendingMouseEvents()
         await page.waitForNextPresentationUpdate()
 
-        #expect(try await page.callJavaScript(JavaScriptMessages.EventLog()).contains(.init(type: .dblclick, detail: 2)))
+        let actual = try await page.callJavaScript(JavaScriptMessages.EventLog())
+        let expected = [
+            DOMEvent(type: .click, detail: 1),
+            DOMEvent(type: .click, detail: 2),
+            DOMEvent(type: .dblclick, detail: 2),
+        ]
+
+        #expect(actual == expected)
     }
 
     @Test
@@ -164,15 +145,19 @@ extension AppKitGesturesTests.DoubleClick {
         await recap.play { composer in
             composer._wk_click(at: toBounds.center, for: .seconds(0.05))
         }
+
         await page.waitForPendingMouseEvents()
         await page.waitForNextPresentationUpdate()
 
-        let eventLog = try await page.callJavaScript(JavaScriptMessages.EventLog())
-        #expect(eventLog.contains(.init(type: .click, detail: 1)))
-        #expect(!eventLog.contains { $0.type == .dblclick })
+        let actual = try await page.callJavaScript(JavaScriptMessages.EventLog())
+        let expected = [
+            DOMEvent(type: .click, detail: 1)
+        ]
+
+        #expect(actual == expected)
     }
 
-    @Test(.disabled())
+    @Test
     func clickingTwoDifferentWordsDoesNotFireDblclick() async throws {
         // Two clicks far apart in space are two single clicks, disambiguated by location — not a double click.
         try await loadHTML(dblclickHandler: true)
@@ -186,11 +171,60 @@ extension AppKitGesturesTests.DoubleClick {
             composer.advanceTime(0.1)
             composer._wk_click(at: onesBounds.center, for: .seconds(0.1))
         }
+
         await page.waitForPendingMouseEvents()
         await page.waitForNextPresentationUpdate()
 
-        let eventLog = try await page.callJavaScript(JavaScriptMessages.EventLog())
-        #expect(!eventLog.contains { $0.type == .dblclick })
+        let actual = try await page.callJavaScript(JavaScriptMessages.EventLog())
+        let expected = [
+            DOMEvent(type: .click, detail: 1),
+            DOMEvent(type: .click, detail: 1),
+        ]
+
+        #expect(actual == expected)
+    }
+
+    @Test(arguments: [true, false])
+    func doubleClickInsideExistingRangeSelectionFiresDblclick(afterSameProcessNavigation: Bool) async throws {
+        try await loadHTML(dblclickHandler: true)
+
+        if afterSameProcessNavigation {
+            let toBounds = try await screenBoundsOfText("to")
+            await recap.play { composer in
+                composer._wk_click(at: toBounds.center, for: .seconds(0.05))
+            }
+            await page.waitForPendingMouseEvents()
+            await page.waitForNextPresentationUpdate()
+
+            try await loadHTML(dblclickHandler: true)
+            await page.waitForNextPresentationUpdate()
+        }
+
+        try await page.callJavaScript(JavaScriptMessages.InstallEventLog(in: "div", for: [.click, .dblclick]))
+
+        let crazyRange = try #require(Self.text.utf16Range(of: "crazy"))
+        let crazyBounds = try await screenBoundsOfText("crazy")
+
+        try await page.callJavaScript(JavaScriptMessages.SetSelection(in: "div", range: crazyRange))
+        await page.waitForNextPresentationUpdate()
+
+        await recap.play { composer in
+            composer._wk_click(at: crazyBounds.center, for: .seconds(0.1))
+            composer.advanceTime(0.1)
+            composer._wk_click(at: crazyBounds.center, for: .seconds(0.1))
+        }
+
+        await page.waitForPendingMouseEvents()
+        await page.waitForNextPresentationUpdate()
+
+        let actual = try await page.callJavaScript(JavaScriptMessages.EventLog())
+        // FIXME: Consider if it's expected that a `.click` event with `detail = 1` is never fired first.
+        let expected = [
+            DOMEvent(type: .click, detail: 2),
+            DOMEvent(type: .dblclick, detail: 2),
+        ]
+
+        #expect(actual == expected)
     }
 
     // MARK: - Smart magnification

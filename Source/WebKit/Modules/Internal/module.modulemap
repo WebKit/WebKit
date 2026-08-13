@@ -400,7 +400,7 @@ module WebKit_Internal [system] {
 
     module WKAppKitGestureController {
         requires cplusplus20
-        header "../../UIProcess/mac/WKAppKitGestureController.h"
+        header "../../UIProcess/mac/AppKitGestures/WKAppKitGestureController.h"
         export *
     }
 

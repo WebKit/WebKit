@@ -90,15 +90,20 @@ NS_SWIFT_UI_ACTOR
 // Exposed for Swift
 @property (nonatomic, readonly, nullable) WKWebView *webView;
 @property (nonatomic, strong, nullable) NSPanGestureRecognizer *panGestureRecognizer;
+@property (nonatomic, strong, nullable, setter=setDOMDoubleClickGestureRecognizer:) NSClickGestureRecognizer *domDoubleClickGestureRecognizer;
 - (void)configureForScrolling:(NSPanGestureRecognizer *)gesture;
+- (void)configureForDOMDoubleClick:(NSClickGestureRecognizer *)gesture;
 - (void)configureForImageAnalysisDeferral:(WKDeferringGestureRecognizer *)gesture;
 - (void)panGestureRecognized:(NSGestureRecognizer *)gesture;
+- (void)domDoubleClickGestureRecognized:(NSGestureRecognizer *)gesture;
 
 @end
 
 @interface WKAppKitGestureController (Swift)
 
 - (void)setUpPanGestureRecognizer;
+- (void)setUpDOMDoubleClickGestureRecognizer;
+- (void)resetDOMDoubleClickGestureRecognizer;
 - (WKDeferringGestureRecognizer *)makeImageAnalysisDeferringGestureRecognizerWithName:(NSString *)name;
 
 + (NSString *)loggingDescriptionForGestureRecognizer:(nullable NSGestureRecognizer *)gestureRecognizer;

@@ -101,6 +101,22 @@ extension WKAppKitGestureController {
         self.panGestureRecognizer = panGestureRecognizer
     }
 
+    func setUpDOMDoubleClickGestureRecognizer() {
+        let recognizer = WKDOMDoubleClickGestureRecognizer(target: self, action: #selector(domDoubleClickGestureRecognized))
+        configure(forDOMDoubleClick: recognizer)
+
+        recognizer.delegate = self
+        recognizer.name = "WKDOMDoubleClickGesture"
+
+        self.domDoubleClickGestureRecognizer = recognizer
+    }
+
+    func resetDOMDoubleClickGestureRecognizer() {
+        // Guaranteed to be non-nil because `domDoubleClickGestureRecognizer` is always created as an `WKDOMDoubleClickGestureRecognizer`.
+        // swift-format-ignore: NeverForceUnwrap
+        (domDoubleClickGestureRecognizer as! WKDOMDoubleClickGestureRecognizer).resetClick()
+    }
+
     @objc(makeImageAnalysisDeferringGestureRecognizerWithName:)
     func makeImageAnalysisDeferringGestureRecognizer(withName name: String) -> WKDeferringGestureRecognizer {
         let deferringGestureRecognizer = WKDeferringGestureRecognizer(deferringGestureDelegate: self)
