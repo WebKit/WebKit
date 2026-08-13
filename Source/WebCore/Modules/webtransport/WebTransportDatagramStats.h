@@ -28,21 +28,7 @@
 namespace WebCore {
 
 struct WebTransportDatagramStats {
-
-    uint64_t droppedIncoming { 0 };
-    uint64_t expiredIncoming { 0 };
-    uint64_t expiredOutgoing { 0 };
-    uint64_t lostOutgoing { 0 };
-
-    WebTransportDatagramStats isolatedCopy() const
-    {
-        return {
-            droppedIncoming,
-            expiredIncoming,
-            expiredOutgoing,
-            lostOutgoing
-        };
-    }
+    WebTransportDatagramStats isolatedCopy() const { return { }; }
 };
 
 }

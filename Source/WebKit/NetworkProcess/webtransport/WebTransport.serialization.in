@@ -23,13 +23,12 @@
 struct WebCore::WebTransportConnectionStats {
     uint64_t bytesSent
     uint64_t bytesReceived
+    WebCore::WebTransportDatagramStats datagrams
+    std::optional<uint64_t> estimatedSendRate
+    bool atSendCapacity
 }
 
 struct WebCore::WebTransportDatagramStats {
-    uint64_t droppedIncoming
-    uint64_t expiredIncoming
-    uint64_t expiredOutgoing
-    uint64_t lostOutgoing
 }
 
 struct WebCore::WebTransportSendStreamStats {

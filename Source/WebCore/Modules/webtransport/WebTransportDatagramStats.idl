@@ -29,8 +29,9 @@
     JSGenerateToJSObject,
     JSGenerateToNativeObject,
 ] dictionary WebTransportDatagramStats {
-    [ImplementationDefaultValue=0] unsigned long long droppedIncoming;
-    [ImplementationDefaultValue=0] unsigned long long expiredIncoming;
-    [ImplementationDefaultValue=0] unsigned long long expiredOutgoing;
-    [ImplementationDefaultValue=0] unsigned long long lostOutgoing;
+    // Commented members are not supported.
+    // [ImplementationDefaultValue=0] unsigned long long droppedIncoming;
+    // [ImplementationDefaultValue=0] unsigned long long expiredIncoming;
+    // [ImplementationDefaultValue=0] unsigned long long expiredOutgoing;
+    // [ImplementationDefaultValue=0] unsigned long long lostOutgoing;
 };

@@ -32,12 +32,18 @@ namespace WebCore {
 struct WebTransportConnectionStats {
     uint64_t bytesSent { 0 };
     uint64_t bytesReceived { 0 };
+    WebTransportDatagramStats datagrams { };
+    std::optional<uint64_t> estimatedSendRate { };
+    bool atSendCapacity { false };
 
     WebTransportConnectionStats isolatedCopy() const
     {
         return {
             bytesSent,
-            bytesReceived
+            bytesReceived,
+            datagrams,
+            estimatedSendRate,
+            atSendCapacity
         };
     }
 };
