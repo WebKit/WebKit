@@ -1,0 +1,16 @@
+$(WK_SDK_DIR_macosx)/usr/include/readline
+$(WK_SDK_DIR_macosx)/usr/include/libxslt
+$(WK_SDK_DIR_macosx)/usr/include/mach/mach_types.defs
+$(WK_SDK_DIR_macosx)/usr/include/mach/machine/machine_types.defs
+$(WK_SDK_DIR_macosx)/usr/include/mach/std_types.defs
+$(WK_SDK_DIR_macosx)/usr/include/objc/Protocol.h
+$(WK_SDK_DIR_macosx)/usr/include/objc/objc-class.h
+$(WK_SDK_DIR_macosx)/usr/include/objc/objc-runtime.h
+$(WK_SDK_DIR_macosx)/usr/include/readline/history.h
+$(WK_SDK_DIR_macosx)/usr/include/readline/readline.h
+$(WK_SDK_DIR_iphoneos)/System/Library/Frameworks/AVKit.framework
+$(WK_SDK_DIR_iphoneos)/System/Library/Frameworks/AudioToolbox.framework
+$(WK_SDK_DIR_iphoneos)/System/Library/Frameworks/MediaAccessibility.framework
+$(WK_SDK_DIR_iphoneos)/System/Library/Frameworks/Metal.framework
+$(WK_SDK_DIR_iphoneos)/System/Library/Frameworks/OpenGLES.framework
+$(WK_SDK_DIR_iphoneos)/System/Library/Frameworks/UIKit.framework

@@ -35,7 +35,20 @@
 
 #ifndef WK_HAS_DEFINED_NS_RECT_EDGE
 #ifndef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
+// Keep aligned with the definition in WAKAppKitStubs.h.
 typedef NS_ENUM(NSUInteger, NSRectEdge) {
+#ifndef NSMinXEdge
+    NSMinXEdge = CGRectMinXEdge,
+#endif
+#ifndef NSMinYEdge
+    NSMinYEdge = CGRectMinYEdge,
+#endif
+#ifndef NSMaxXEdge
+    NSMaxXEdge = CGRectMaxXEdge,
+#endif
+#ifndef NSMaxYEdge
+    NSMaxYEdge = CGRectMaxYEdge,
+#endif
     NSRectEdgeMinX = CGRectMinXEdge,
     NSRectEdgeMinY = CGRectMinYEdge,
     NSRectEdgeMaxX = CGRectMaxXEdge,
@@ -560,6 +573,16 @@ typedef NS_ENUM(NSUInteger, _UIClickInteractionShouldBeginResult) {
 
 #if __has_include(<UIFoundation/NSTextTable.h>) && (!PLATFORM(MACCATALYST) || __has_include(<UIKit/NSTextTable.h>))
 #import <UIFoundation/NSTextTable.h>
+#elif __has_include(<UIKit/NSTextTable.h>)
+#import <UIKit/NSTextTable.h>
+
+// NSTextBlock and its subclasses became public API in iOS 27. Its NSRectEdge-based
+// accessors remain SPI, deprecated in favor of CGRectEdge equivalents that are only
+// available in iOS 27 and later.
+@interface NSTextBlock (IPI)
+- (CGFloat)widthForLayer:(NSTextBlockLayer)layer edge:(NSRectEdge)edge;
+@end
+
 #elifndef __swift__
 
 typedef NS_ENUM(NSInteger, NSTextBlockLayer) {

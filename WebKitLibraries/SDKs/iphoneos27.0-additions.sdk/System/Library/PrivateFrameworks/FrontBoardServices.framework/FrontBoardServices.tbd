@@ -1,0 +1,32 @@
+--- !tapi-tbd
+tbd-version: 4
+targets: [arm64e-ios, arm64e.x1-ios]
+install-name: /System/Library/PrivateFrameworks/FrontBoardServices.framework/FrontBoardServices
+current-version: 1150
+reexported-libraries:
+-       targets: [arm64e-ios, arm64e.x1-ios]
+        libraries: [/System/Library/PrivateFrameworks/BaseBoard.framework/BaseBoard, /System/Library/PrivateFrameworks/BoardServices.framework/BoardServices]
+exports:
+-       targets: [arm64e-ios, arm64e.x1-ios]
+        symbols: [_FBSActivateForEventOptionTypeBackgroundContentFetching, _FBSOpenApplicationOptionKeyActions, _FBSOpenApplicationOptionKeyActivateForEvent,
+                _FBSOpenApplicationOptionKeyActivateSuspended, _FBSOpenApplicationOptionKeyLaunchIntent, _FBSOpenApplicationOptionKeyPayloadOptions,
+                _FBSOpenApplicationOptionKeyPayloadURL, _FBSOpenApplicationOptionKeyUnlockDevice, _FBSSceneVisibilityEndowmentNamespace]
+        objc-classes: [FBSOpenApplicationOptions, FBSOpenApplicationService]
+...
+--- !tapi-tbd
+tbd-version: 4
+targets: [arm64e-ios, arm64e.x1-ios]
+install-name: /System/Library/PrivateFrameworks/BaseBoard.framework/BaseBoard
+current-version: 0
+exports:
+-       targets: [arm64e-ios, arm64e.x1-ios]
+        objc-classes: [BSAction, BSActionResponder, BSActionResponse, BSMutableSettings]
+...
+--- !tapi-tbd
+tbd-version: 4
+targets: [arm64e-ios, arm64e.x1-ios]
+install-name: /System/Library/PrivateFrameworks/BoardServices.framework/BoardServices
+current-version: 0
+swift-abi-version: 7
+exports: []
+...

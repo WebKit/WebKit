@@ -36,7 +36,8 @@ scripts_dir = os.path.dirname(sys.argv[0])
 
 if not opts.build_dir:
     opts.build_dir = subprocess.check_output(
-        ['webkit-build-directory', *webkitdirs_args, '--configuration'],
+        [f'{scripts_dir}/webkit-build-directory', *webkitdirs_args,
+         '--configuration'],
         text=True
     ).rstrip()
 if not opts.base_sdk or not opts.src_sdk:
