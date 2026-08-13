@@ -1,0 +1,13 @@
+Tests that SameSite=Strict and SameSite=Lax cookies for 127.0.0.1 are not sent with an <img> sub-resource request initiated from a srcdoc iframe nested inside a cross-origin iframe. The srcdoc inherits its parent's origin, so the image request back to the top-level origin is cross-site and must not receive SameSite-restricted cookies.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Cookies sent with cross-site <img> request initiated from srcdoc iframe inside cross-origin iframe:
+PASS Do not have cookie "strict".
+PASS Do not have cookie "lax".
+PASS Has cookie "implicit-default" with value 9.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
