@@ -356,6 +356,7 @@ Structure::Structure(VM& vm, StructureVariant variant, Structure* previous)
     setDidTransition(true);
     setStaticPropertiesReified(previous->staticPropertiesReified());
     setHasBeenDictionary(previous->hasBeenDictionary());
+    setHasSharedPolyProtoWatchpoint(previous->hasSharedPolyProtoWatchpoint());
     setProtectPropertyTableWhileTransitioning(false);
     setTransitionOffset(vm, invalidOffset);
     setMaxOffset(vm, invalidOffset);
@@ -1117,6 +1118,12 @@ void Structure::pinForCaching(const AbstractLocker&, VM& vm, PropertyTable* tabl
     m_transitionPropertyName = nullptr;
 }
 
+void Structure::pinSharedPolyProtoWatchpoint(VM& vm)
+{
+    ASSERT(vm.heap.isDeferred());
+    setSharedPolyProtoWatchpoint(vm, findSharedPolyProtoWatchpoint());
+}
+
 void Structure::allocateRareData(VM& vm)
 {
     ASSERT(!hasRareData());
@@ -1713,6 +1720,7 @@ Structure* Structure::setBrandTransition(VM& vm, Structure* structure, Symbol* b
     if (existingTransition) 
         return existingTransition;
 
+    DeferGC deferGC(vm);
     Structure* transition = BrandedStructure::create(vm, structure, &brand->uid(), deferred);
     transition->setTransitionKind(TransitionKind::SetBrand);
 

@@ -480,8 +480,32 @@ inline void Structure::pin(const AbstractLocker&, VM& vm, PropertyTable* table)
 {
     setIsPinnedPropertyTable(true);
     setPropertyTable(vm, table);
+    if (hasSharedPolyProtoWatchpoint() && previousID())
+        pinSharedPolyProtoWatchpoint(vm);
     clearPreviousID();
     m_transitionPropertyName = nullptr;
+}
+
+inline const Box<InlineWatchpointSet>& Structure::findSharedPolyProtoWatchpoint() const
+{
+    ASSERT(hasSharedPolyProtoWatchpoint());
+    const Structure* current = this;
+    while (!current->hasRareData() || !current->rareData()->m_polyProtoWatchpoint)
+        current = current->previousID();
+    return current->rareData()->m_polyProtoWatchpoint;
+}
+
+inline InlineWatchpointSet* Structure::sharedPolyProtoWatchpoint() const
+{
+    if (!hasSharedPolyProtoWatchpoint())
+        return nullptr;
+    return findSharedPolyProtoWatchpoint().get();
+}
+
+inline void Structure::setSharedPolyProtoWatchpoint(VM& vm, Box<InlineWatchpointSet> watchpoint)
+{
+    ensureRareData(vm)->m_polyProtoWatchpoint = WTF::move(watchpoint);
+    setHasSharedPolyProtoWatchpoint(true);
 }
 
 ALWAYS_INLINE bool Structure::shouldConvertToPolyProto(const Structure* a, const Structure* b)
@@ -496,22 +520,19 @@ ALWAYS_INLINE bool Structure::shouldConvertToPolyProto(const Structure* a, const
         return false;
 
     // We only care about objects created via a constructor's to_this. These
-    // all have Structures with rare data and a sharedPolyProtoWatchpoint.
-    if (!a->hasRareData() || !b->hasRareData())
+    // all have Structures with a sharedPolyProtoWatchpoint.
+    if (!a->hasSharedPolyProtoWatchpoint() || !b->hasSharedPolyProtoWatchpoint())
         return false;
-
-    // We only care about Structure's generated from functions that share
-    // the same executable.
-    const Box<InlineWatchpointSet>& aInlineWatchpointSet = a->rareData()->sharedPolyProtoWatchpoint();
-    const Box<InlineWatchpointSet>& bInlineWatchpointSet = b->rareData()->sharedPolyProtoWatchpoint();
-    if (!aInlineWatchpointSet || !bInlineWatchpointSet || aInlineWatchpointSet.get() != bInlineWatchpointSet.get())
-        return false;
-    ASSERT(aInlineWatchpointSet && bInlineWatchpointSet && aInlineWatchpointSet.get() == bInlineWatchpointSet.get());
 
     if (a->hasPolyProto() || b->hasPolyProto())
         return false;
 
     if (a->storedPrototype() == b->storedPrototype())
+        return false;
+
+    // We only care about Structure's generated from functions that share
+    // the same executable.
+    if (a->sharedPolyProtoWatchpoint() != b->sharedPolyProtoWatchpoint())
         return false;
 
     JSObject* aObj = a->storedPrototypeObject();
@@ -621,13 +642,6 @@ inline void StructureTransitionTable::finalizeUnconditionally(VM& vm, Collection
 inline void Structure::finishCreation(VM& vm, const Structure* previous, DeferredStructureTransitionWatchpointFire* deferred)
 {
     this->finishCreation(vm);
-    if (previous->hasRareData()) {
-        const StructureRareData* previousRareData = previous->rareData();
-        if (previousRareData->hasSharedPolyProtoWatchpoint()) {
-            ensureRareData(vm);
-            rareData()->setSharedPolyProtoWatchpoint(previousRareData->copySharedPolyProtoWatchpoint());
-        }
-    }
     previous->fireStructureTransitionWatchpoint(deferred);
 }
 

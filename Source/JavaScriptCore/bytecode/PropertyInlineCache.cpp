@@ -136,10 +136,11 @@ AccessGenerationResult PropertyInlineCache::upgradeForPolyProtoIfNecessary(const
                 // The reason we don't immediately fire this watchpoint is that we may be already
                 // watching the poly proto watchpoint, which if fired, would destroy us. We let
                 // the person handling the result to do a delayed fire.
-                ASSERT(a->rareData()->sharedPolyProtoWatchpoint().get() == b->rareData()->sharedPolyProtoWatchpoint().get());
-                if (a->rareData()->sharedPolyProtoWatchpoint()->isStillValid()) {
+                InlineWatchpointSet* watchpoint = a->sharedPolyProtoWatchpoint();
+                ASSERT(watchpoint == b->sharedPolyProtoWatchpoint());
+                if (watchpoint->isStillValid()) {
                     shouldReset = true;
-                    resetResult.addWatchpointToFire(*a->rareData()->sharedPolyProtoWatchpoint(), StringFireDetail("Detected poly proto optimization opportunity."));
+                    resetResult.addWatchpointToFire(*watchpoint, StringFireDetail("Detected poly proto optimization opportunity."));
                 }
             }
         };

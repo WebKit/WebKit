@@ -4641,12 +4641,9 @@ static Vector<WatchpointSet*, 3> collectAdditionalWatchpoints(VM& vm, AccessCase
     if (WatchpointSet* set  = accessCase.additionalSet())
         result.append(set);
 
-    if (structure
-        && structure->hasRareData()
-        && structure->rareData()->hasSharedPolyProtoWatchpoint()
-        && structure->rareData()->sharedPolyProtoWatchpoint()->isStillValid()) {
-        WatchpointSet* set = structure->rareData()->sharedPolyProtoWatchpoint()->inflate();
-        result.append(set);
+    if (structure) {
+        if (InlineWatchpointSet* set = structure->sharedPolyProtoWatchpoint(); set && set->isStillValid())
+            result.append(set->inflate());
     }
 
     return result;
@@ -8208,10 +8205,11 @@ AccessGenerationResult PolymorphicAccess::addCases(const GCSafeConcurrentJSLocke
                 // The reason we don't immediately fire this watchpoint is that we may be already
                 // watching the poly proto watchpoint, which if fired, would destroy us. We let
                 // the person handling the result to do a delayed fire.
-                ASSERT(a->rareData()->sharedPolyProtoWatchpoint().get() == b->rareData()->sharedPolyProtoWatchpoint().get());
-                if (a->rareData()->sharedPolyProtoWatchpoint()->isStillValid()) {
+                InlineWatchpointSet* watchpoint = a->sharedPolyProtoWatchpoint();
+                ASSERT(watchpoint == b->sharedPolyProtoWatchpoint());
+                if (watchpoint->isStillValid()) {
                     shouldReset = true;
-                    resetResult.addWatchpointToFire(*a->rareData()->sharedPolyProtoWatchpoint(), StringFireDetail("Detected poly proto optimization opportunity."));
+                    resetResult.addWatchpointToFire(*watchpoint, StringFireDetail("Detected poly proto optimization opportunity."));
                 }
             }
         };

@@ -775,6 +775,8 @@ public:
     SeenProperties seenProperties() const { return m_seenProperties; }
 
     static bool shouldConvertToPolyProto(const Structure* a, const Structure* b);
+    inline InlineWatchpointSet* sharedPolyProtoWatchpoint() const; // Defined in StructureInlines.h
+    inline void setSharedPolyProtoWatchpoint(VM&, Box<InlineWatchpointSet>); // Defined in StructureInlines.h
 
     UniquedStringImpl* transitionPropertyName() const { return m_transitionPropertyName.get(); }
 
@@ -823,6 +825,7 @@ public:
     DEFINE_BITFIELD(bool, hasNonEnumerableProperties, HasNonEnumerableProperties, 1, 6);
     DEFINE_BITFIELD(bool, hasSpecialProperties, HasSpecialProperties, 1, 7);
     DEFINE_BITFIELD(DefinitelyNonThenableState, definitelyNonThenableState, DefinitelyNonThenableState, 2, 8); // This flag can be flipped on the main thread at any timing.
+    DEFINE_BITFIELD(bool, hasSharedPolyProtoWatchpoint, HasSharedPolyProtoWatchpoint, 1, 10);
     DEFINE_BITFIELD(TransitionKind, transitionKind, TransitionKind, 5, 13);
     DEFINE_BITFIELD(bool, isWatchingReplacement, IsWatchingReplacement, 1, 18); // This flag can be fliped on the main thread at any timing.
     DEFINE_BITFIELD(bool, mayBePrototype, MayBePrototype, 1, 19);
@@ -970,6 +973,9 @@ private:
     // Keep them inlined function since they are used in the critical path of Dictionary JSObject modification.
     void pin(const AbstractLocker&, VM&, PropertyTable*);
     void pinForCaching(const AbstractLocker&, VM&, PropertyTable*);
+
+    inline const Box<InlineWatchpointSet>& findSharedPolyProtoWatchpoint() const; // Defined in StructureInlines.h
+    JS_EXPORT_PRIVATE void pinSharedPolyProtoWatchpoint(VM&);
     
     static bool isRareData(JSCell* cell)
     {

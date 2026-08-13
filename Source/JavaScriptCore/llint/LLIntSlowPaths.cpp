@@ -752,8 +752,8 @@ LLINT_SLOW_PATH_DECL(slow_path_get_by_id_direct)
                 Structure* b = baseValue.asCell()->structure();
 
                 if (Structure::shouldConvertToPolyProto(a, b)) {
-                    ASSERT(a->rareData()->sharedPolyProtoWatchpoint().get() == b->rareData()->sharedPolyProtoWatchpoint().get());
-                    a->rareData()->sharedPolyProtoWatchpoint()->invalidate(vm, StringFireDetail("Detected poly proto opportunity."));
+                    ASSERT(a->sharedPolyProtoWatchpoint() == b->sharedPolyProtoWatchpoint());
+                    a->sharedPolyProtoWatchpoint()->invalidate(vm, StringFireDetail("Detected poly proto opportunity."));
                 }
             }
         }
@@ -881,8 +881,8 @@ static JSValue performLLIntGetByID(BytecodeIndex bytecodeIndex, CodeBlock* codeB
                 Structure* b = baseValue.asCell()->structure();
 
                 if (Structure::shouldConvertToPolyProto(a, b)) {
-                    ASSERT(a->rareData()->sharedPolyProtoWatchpoint().get() == b->rareData()->sharedPolyProtoWatchpoint().get());
-                    a->rareData()->sharedPolyProtoWatchpoint()->invalidate(vm, StringFireDetail("Detected poly proto opportunity."));
+                    ASSERT(a->sharedPolyProtoWatchpoint() == b->sharedPolyProtoWatchpoint());
+                    a->sharedPolyProtoWatchpoint()->invalidate(vm, StringFireDetail("Detected poly proto opportunity."));
                 }
             }
         }
@@ -1096,8 +1096,8 @@ LLINT_SLOW_PATH_DECL(slow_path_put_by_id)
                     b = b->previousID();
 
                 if (Structure::shouldConvertToPolyProto(a, b)) {
-                    a->rareData()->sharedPolyProtoWatchpoint()->invalidate(vm, StringFireDetail("Detected poly proto opportunity."));
-                    b->rareData()->sharedPolyProtoWatchpoint()->invalidate(vm, StringFireDetail("Detected poly proto opportunity."));
+                    ASSERT(a->sharedPolyProtoWatchpoint() == b->sharedPolyProtoWatchpoint());
+                    a->sharedPolyProtoWatchpoint()->invalidate(vm, StringFireDetail("Detected poly proto opportunity."));
                 }
             }
         }
@@ -1269,8 +1269,8 @@ LLINT_SLOW_PATH_DECL(slow_path_get_private_name)
                 Structure* b = baseValue.asCell()->structure();
 
                 if (Structure::shouldConvertToPolyProto(a, b)) {
-                    ASSERT(a->rareData()->sharedPolyProtoWatchpoint().get() == b->rareData()->sharedPolyProtoWatchpoint().get());
-                    a->rareData()->sharedPolyProtoWatchpoint()->invalidate(vm, StringFireDetail("Detected poly proto opportunity."));
+                    ASSERT(a->sharedPolyProtoWatchpoint() == b->sharedPolyProtoWatchpoint());
+                    a->sharedPolyProtoWatchpoint()->invalidate(vm, StringFireDetail("Detected poly proto opportunity."));
                 }
             }
         }
@@ -1404,8 +1404,8 @@ LLINT_SLOW_PATH_DECL(slow_path_put_private_name)
                     b = b->previousID();
 
                 if (Structure::shouldConvertToPolyProto(a, b)) {
-                    a->rareData()->sharedPolyProtoWatchpoint()->invalidate(vm, StringFireDetail("Detected poly proto opportunity."));
-                    b->rareData()->sharedPolyProtoWatchpoint()->invalidate(vm, StringFireDetail("Detected poly proto opportunity."));
+                    ASSERT(a->sharedPolyProtoWatchpoint() == b->sharedPolyProtoWatchpoint());
+                    a->sharedPolyProtoWatchpoint()->invalidate(vm, StringFireDetail("Detected poly proto opportunity."));
                 }
             }
         }

@@ -120,7 +120,7 @@ ALWAYS_INLINE void ObjectAllocationProfileBase<Derived>::initializeProfile(VM& v
             ASSERT(constructor);
             ASSERT(functionRareData);
             InlineWatchpointSet& polyProtoWatchpointSet = executable->ensurePolyProtoWatchpoint();
-            structure->ensureRareData(vm)->setSharedPolyProtoWatchpoint(executable->sharedPolyProtoWatchpoint());
+            structure->setSharedPolyProtoWatchpoint(vm, executable->sharedPolyProtoWatchpoint());
             if (polyProtoWatchpointSet.isStillValid() && !functionRareData->hasAllocationProfileClearingWatchpoint()) {
                 // If we happen to go poly proto in the future, we want to clear this particular
                 // object allocation profile so we can transition to allocating poly proto objects.
