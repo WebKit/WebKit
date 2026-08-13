@@ -57,28 +57,9 @@ dictionary NavigationUpdateCurrentEntryOptions {
   required any state;
 };
 
-dictionary NavigationOptions {
-  any info;
-};
-
-dictionary NavigationNavigateOptions : NavigationOptions {
-  any state;
-  NavigationHistoryBehavior history = "auto";
-};
-
-dictionary NavigationReloadOptions : NavigationOptions {
-  any state;
-};
-
 [
     JSGenerateToJSObject,
 ] dictionary NavigationResult {
   [BypassDocumentFullyActiveCheck] Promise<NavigationHistoryEntry> committed;
   [BypassDocumentFullyActiveCheck] Promise<NavigationHistoryEntry> finished;
-};
-
-enum NavigationHistoryBehavior {
-  "auto",
-  "push",
-  "replace"
 };

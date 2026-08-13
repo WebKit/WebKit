@@ -1,0 +1,4 @@
+
+PASS handler added in addHandler() delays navigation finish
+PASS handler added in addHandler() is executed in the correct order
+

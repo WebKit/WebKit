@@ -1435,9 +1435,15 @@ set(WebCore_NON_SVG_IDL_FILES
     page/NavigationActivation.idl
     page/NavigationCurrentEntryChangeEvent.idl
     page/NavigationDestination.idl
+    page/NavigationHistoryBehavior.idl
     page/NavigationHistoryEntry.idl
     page/NavigationInterceptHandler.idl
+    page/NavigationNavigateOptions.idl
     page/NavigationNavigationType.idl
+    page/NavigationOptions.idl
+    page/NavigationPrecommitController.idl
+    page/NavigationPrecommitHandler.idl
+    page/NavigationReloadOptions.idl
     page/NavigationTransition.idl
     page/Navigator.idl
     page/NavigatorUABrandVersion.idl

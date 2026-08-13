@@ -6309,6 +6309,20 @@ NavigationAPIEnabled:
       "PLATFORM(COCOA) || PLATFORM(GTK) || PLATFORM(WPE)": true
       default: false
 
+NavigationAPIPrecommitHandlerEnabled:
+  type: bool
+  status: testable
+  category: dom
+  humanReadableName: "Navigation API Precommit Handler"
+  humanReadableDescription: "Enable Navigation API Precommit Handler"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 NavigatorUserAgentDataJavaScriptAPIEnabled:
   type: bool
   status: internal

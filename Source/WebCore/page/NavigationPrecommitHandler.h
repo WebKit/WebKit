@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Igalia S.L. All rights reserved.
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,41 +25,28 @@
 
 #pragma once
 
-#include "JSDOMPromise.h"
-#include "NavigationHistoryEntry.h"
-#include "NavigationNavigationType.h"
+#include "ActiveDOMCallback.h"
+#include "CallbackResult.h"
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
 class DOMPromise;
-class DeferredPromise;
-class Exception;
+class NavigationPrecommitController;
 
-class NavigationTransition final : public RefCounted<NavigationTransition> {
-    WTF_MAKE_TZONE_ALLOCATED(NavigationTransition);
+class NavigationPrecommitHandler : public RefCounted<NavigationPrecommitHandler>, public ActiveDOMCallback {
 public:
-    static Ref<NavigationTransition> create(NavigationNavigationType, Ref<NavigationHistoryEntry>&& fromEntry, Ref<DeferredPromise>&& committed, Ref<DeferredPromise>&& finished);
+    using ActiveDOMCallback::ActiveDOMCallback;
 
-    NavigationNavigationType navigationType() { return m_navigationType; };
-    NavigationHistoryEntry& from() { return m_from; };
-    DOMPromise& committed();
-    DOMPromise& finished();
+    // ContextDestructionObserver.
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
 
-    void resolveCommitted();
-    void resolvePromise();
-    void rejectPromise(Exception&, JSC::JSValue exceptionObject);
-    void rejectPromise(JSC::JSValue exceptionObject);
+    virtual bool isJSNavigationPrecommitHandler() const { return false; }
+    virtual CallbackResult<Ref<DOMPromise>> invoke(NavigationPrecommitController&) = 0;
 
 private:
-    explicit NavigationTransition(NavigationNavigationType, Ref<NavigationHistoryEntry>&& fromEntry, Ref<DeferredPromise>&& committed, Ref<DeferredPromise>&& finished);
-
-    NavigationNavigationType m_navigationType;
-    bool m_committedSettled { false };
-    const Ref<NavigationHistoryEntry> m_from;
-    const Ref<DeferredPromise> m_committed;
-    const Ref<DeferredPromise> m_finished;
-    RefPtr<DOMPromise> m_committedDOMPromise;
-    RefPtr<DOMPromise> m_finishedDOMPromise;
+    virtual bool hasCallback() const = 0;
 };
 
 } // namespace WebCore

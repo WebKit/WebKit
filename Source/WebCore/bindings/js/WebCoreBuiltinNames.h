@@ -342,6 +342,7 @@ namespace WebCore {
     macro(NavigationCurrentEntryChangeEvent) \
     macro(NavigationDestination) \
     macro(NavigationHistoryEntry) \
+    macro(NavigationPrecommitController) \
     macro(NavigationPreloadManager) \
     macro(NavigationTransition) \
     macro(NavigatorCredentials) \

@@ -3878,6 +3878,7 @@
 		93B70D6C09EB0C7C009D8468 /* JSPluginElementFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B70D5009EB0C7C009D8468 /* JSPluginElementFunctions.h */; };
 		93B70D7009EB0C7C009D8468 /* ScriptController.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B70D5409EB0C7C009D8468 /* ScriptController.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93B77A380ADD792500EA4B81 /* FrameLoaderTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B77A370ADD792500EA4B81 /* FrameLoaderTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		AE01B20C0D0E0F1011121401 /* NavigationHistoryBehavior.h in Headers */ = {isa = PBXBuildFile; fileRef = AE01B20C0D0E0F1011121308 /* NavigationHistoryBehavior.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93C09A530B064DB3005ABD4D /* EventHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 93C09A520B064DB3005ABD4D /* EventHandler.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93C09C860B0657AA005ABD4D /* ScrollTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 93C09C850B0657AA005ABD4D /* ScrollTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93C38BFF164473C700091EB2 /* ScrollingStateFixedNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 93C38BFD164473C700091EB2 /* ScrollingStateFixedNode.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -11964,6 +11965,7 @@
 		46037DD428400F3500D464FC /* WebCoreOpaqueRoot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreOpaqueRoot.h; sourceTree = "<group>"; };
 		4607DC642C6AC0AC00AB00D4 /* NavigationIdentifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NavigationIdentifier.h; sourceTree = "<group>"; };
 		460A3C5D2CA4EF7900D043CA /* JSNavigateEventCustom.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSNavigateEventCustom.cpp; sourceTree = "<group>"; };
+		AE01B20C0D0E0F1011121306 /* JSNavigationPrecommitControllerCustom.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSNavigationPrecommitControllerCustom.cpp; sourceTree = "<group>"; };
 		460BB52127A9FC2E00CB782F /* WorkerFetchResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WorkerFetchResult.h; sourceTree = "<group>"; };
 		460C70FB28E662D4005F4D74 /* JSObservableArray.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSObservableArray.h; sourceTree = "<group>"; };
 		460C70FC28E662D5005F4D74 /* JSObservableArray.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = JSObservableArray.cpp; sourceTree = "<group>"; };
@@ -18269,6 +18271,13 @@
 		A9C6E65D0D746694006442E9 /* Navigator.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = Navigator.idl; sourceTree = "<group>"; };
 		A9C6E65D0D74B694006442E9 /* NavigateEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = NavigateEvent.cpp; sourceTree = "<group>"; };
 		A9C6E65D0D74C694006442E9 /* NavigateEvent.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = NavigateEvent.h; sourceTree = "<group>"; };
+		AE01B20C0D0E0F1011121301 /* NavigationPrecommitController.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = NavigationPrecommitController.cpp; sourceTree = "<group>"; };
+		AE01B20C0D0E0F1011121302 /* NavigationPrecommitController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NavigationPrecommitController.h; sourceTree = "<group>"; };
+		AE01B20C0D0E0F1011121304 /* NavigationPrecommitHandler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NavigationPrecommitHandler.h; sourceTree = "<group>"; };
+		AE01B20C0D0E0F1011121308 /* NavigationHistoryBehavior.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NavigationHistoryBehavior.h; sourceTree = "<group>"; };
+		AE01B20C0D0E0F101112130A /* NavigationOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NavigationOptions.h; sourceTree = "<group>"; };
+		AE01B20C0D0E0F101112130C /* NavigationNavigateOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NavigationNavigateOptions.h; sourceTree = "<group>"; };
+		AE01B20C0D0E0F101112130E /* NavigationReloadOptions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NavigationReloadOptions.h; sourceTree = "<group>"; };
 		A9C6E65D0D74E694006442E9 /* Navigation.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = Navigation.cpp; sourceTree = "<group>"; };
 		A9C6E65D0D74F694006442E9 /* NavigationCurrentEntryChangeEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = NavigationCurrentEntryChangeEvent.cpp; sourceTree = "<group>"; };
 		A9C6E65E0D7466F2006442E9 /* DOMMimeType.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = DOMMimeType.idl; sourceTree = "<group>"; };
@@ -19829,6 +19838,12 @@
 		BC63AD522F085C50007B62C4 /* StyleSVGNonInheritedMiscData.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleSVGNonInheritedMiscData.h; sourceTree = "<group>"; };
 		BC63AD532F085C50007B62C4 /* StyleSVGNonInheritedMiscData.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StyleSVGNonInheritedMiscData.cpp; sourceTree = "<group>"; };
 		BC63ADDF2F158517007B62C4 /* NavigateEvent.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = NavigateEvent.idl; sourceTree = "<group>"; };
+		AE01B20C0D0E0F1011121303 /* NavigationPrecommitController.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = NavigationPrecommitController.idl; sourceTree = "<group>"; };
+		AE01B20C0D0E0F1011121305 /* NavigationPrecommitHandler.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = NavigationPrecommitHandler.idl; sourceTree = "<group>"; };
+		AE01B20C0D0E0F1011121307 /* NavigationHistoryBehavior.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = NavigationHistoryBehavior.idl; sourceTree = "<group>"; };
+		AE01B20C0D0E0F1011121309 /* NavigationOptions.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = NavigationOptions.idl; sourceTree = "<group>"; };
+		AE01B20C0D0E0F101112130B /* NavigationNavigateOptions.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = NavigationNavigateOptions.idl; sourceTree = "<group>"; };
+		AE01B20C0D0E0F101112130D /* NavigationReloadOptions.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = NavigationReloadOptions.idl; sourceTree = "<group>"; };
 		BC64640811D7F304006455B0 /* DOMStringMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMStringMap.h; sourceTree = "<group>"; };
 		BC64641A11D7F416006455B0 /* DatasetDOMStringMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DatasetDOMStringMap.h; sourceTree = "<group>"; };
 		BC64641B11D7F416006455B0 /* DatasetDOMStringMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DatasetDOMStringMap.cpp; sourceTree = "<group>"; };
@@ -31310,13 +31325,26 @@
 				A9C6E65D0D740C94006442E9 /* NavigationDestination.cpp */,
 				A9C6E65D0D740D94006442E9 /* NavigationDestination.h */,
 				A9C6E65D0D740E94006442E9 /* NavigationDestination.idl */,
+				AE01B20C0D0E0F1011121308 /* NavigationHistoryBehavior.h */,
+				AE01B20C0D0E0F1011121307 /* NavigationHistoryBehavior.idl */,
 				A9C6E65D0D7400A4006442E9 /* NavigationHistoryEntry.cpp */,
 				A9C6E65D0D7400B4006442E9 /* NavigationHistoryEntry.h */,
 				A9C6E65D0D7400C4006442E9 /* NavigationHistoryEntry.idl */,
 				A9C6E65D0D7400E4006442E9 /* NavigationInterceptHandler.h */,
 				A9C6E65D0D7400F4006442E9 /* NavigationInterceptHandler.idl */,
+				AE01B20C0D0E0F101112130C /* NavigationNavigateOptions.h */,
+				AE01B20C0D0E0F101112130B /* NavigationNavigateOptions.idl */,
 				A9C6E65D0D74000A006442E9 /* NavigationNavigationType.h */,
 				A9C6E65D0D74000E006442E9 /* NavigationNavigationType.idl */,
+				AE01B20C0D0E0F101112130A /* NavigationOptions.h */,
+				AE01B20C0D0E0F1011121309 /* NavigationOptions.idl */,
+				AE01B20C0D0E0F1011121301 /* NavigationPrecommitController.cpp */,
+				AE01B20C0D0E0F1011121302 /* NavigationPrecommitController.h */,
+				AE01B20C0D0E0F1011121303 /* NavigationPrecommitController.idl */,
+				AE01B20C0D0E0F1011121304 /* NavigationPrecommitHandler.h */,
+				AE01B20C0D0E0F1011121305 /* NavigationPrecommitHandler.idl */,
+				AE01B20C0D0E0F101112130E /* NavigationReloadOptions.h */,
+				AE01B20C0D0E0F101112130D /* NavigationReloadOptions.idl */,
 				A9C6E65D0D74000B006442E9 /* NavigationTransition.cpp */,
 				A9C6E65D0D74000C006442E9 /* NavigationTransition.h */,
 				A9C6E65D0D74000D006442E9 /* NavigationTransition.idl */,
@@ -32524,6 +32552,7 @@
 				9B9CADA72165DC7600E8D858 /* JSMutationRecordCustom.cpp */,
 				460A3C5D2CA4EF7900D043CA /* JSNavigateEventCustom.cpp */,
 				46199AAA2EB9B994006C50D9 /* JSNavigationCustom.cpp */,
+				AE01B20C0D0E0F1011121306 /* JSNavigationPrecommitControllerCustom.cpp */,
 				83B5DA451FA9079300B59DF4 /* JSNavigatorCustom.cpp */,
 				BCD9C2600C17AA67005C90A2 /* JSNodeCustom.cpp */,
 				BC9439C2116CF4940048C750 /* JSNodeCustom.h */,
@@ -47645,6 +47674,7 @@
 				E10B9B6C0B747599003ED890 /* NativeXPathNSResolver.h in Headers */,
 				93CCF0270AF6C52900018E89 /* NavigationAction.h in Headers */,
 				EE1A93AA2F2AE00A0054FAE4 /* NavigationActivation.h in Headers */,
+				AE01B20C0D0E0F1011121401 /* NavigationHistoryBehavior.h in Headers */,
 				EE1A93AB2F2AE7D20054FAE4 /* NavigationHistoryEntry.h in Headers */,
 				4607DC652C6AC0AC00AB00D4 /* NavigationIdentifier.h in Headers */,
 				41E2F199274FAECF00A089EE /* NavigationPreloadManager.h in Headers */,

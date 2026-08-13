@@ -37,6 +37,7 @@
 #include <WebCore/LayoutMilestone.h>
 #include <WebCore/LoaderMalloc.h>
 #include <WebCore/NavigationAction.h>
+#include <WebCore/NavigationHistoryBehavior.h>
 #include <WebCore/NavigationRequester.h>
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/PrivateClickMeasurement.h>

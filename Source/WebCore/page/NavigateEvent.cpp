@@ -41,6 +41,7 @@
 #include "Navigation.h"
 #include "NavigationNavigationType.h"
 #include "ScriptWrappableInlines.h"
+#include "Settings.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -114,6 +115,12 @@ JSC::JSValue NavigateEvent::info()
     return m_info.getValue();
 }
 
+void NavigateEvent::setInfo(JSC::JSGlobalObject& globalObject, JSC::JSValue info)
+{
+    Locker<JSC::JSLock> locker(globalObject.vm().apiLock());
+    m_info.set(globalObject, wrapper(), info);
+}
+
 // https://html.spec.whatwg.org/multipage/nav-history-apis.html#dom-navigateevent-intercept
 ExceptionOr<void> NavigateEvent::intercept(Document& document, NavigationInterceptOptions&& options)
 {
@@ -125,6 +132,13 @@ ExceptionOr<void> NavigateEvent::intercept(Document& document, NavigationInterce
 
     if (!isBeingDispatched())
         return Exception { ExceptionCode::InvalidStateError, "Event is not being dispatched"_s };
+
+    if (document.settings().navigationAPIPrecommitHandlerEnabled() && options.precommitHandler) {
+        if (!cancelable())
+            return Exception { ExceptionCode::InvalidStateError, "A precommitHandler can only be used on a cancelable navigation"_s };
+
+        m_precommitHandlers.append(options.precommitHandler.releaseNonNull());
+    }
 
     ASSERT(!m_interceptionState || m_interceptionState == InterceptionState::Intercepted);
 

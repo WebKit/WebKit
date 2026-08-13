@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Igalia S.L. All rights reserved.
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,41 +25,38 @@
 
 #pragma once
 
-#include "EventHandler.h"
-#include "LocalDOMWindowProperty.h"
-#include "NavigationHistoryEntry.h"
 #include "ScriptWrappable.h"
-#include "SerializedScriptValue.h"
+#include <wtf/Forward.h>
+#include <wtf/Ref.h>
+#include <wtf/RefCounted.h>
 
 namespace JSC {
-class JSValue;
+class JSGlobalObject;
 }
 
 namespace WebCore {
 
-class NavigationDestination final : public RefCounted<NavigationDestination>, public ScriptWrappable {
-    WTF_MAKE_TZONE_ALLOCATED(NavigationDestination);
+class Document;
+class NavigateEvent;
+class NavigationInterceptHandler;
+struct NavigationNavigateOptions;
+template<typename> class ExceptionOr;
+
+class NavigationPrecommitController final : public RefCounted<NavigationPrecommitController>, public ScriptWrappable {
+    WTF_MAKE_TZONE_ALLOCATED(NavigationPrecommitController);
 public:
-    static Ref<NavigationDestination> create(const URL& url, RefPtr<NavigationHistoryEntry>&& entry, bool isSameDocument) { return adoptRef(*new NavigationDestination(url, WTF::move(entry), isSameDocument)); };
+    static Ref<NavigationPrecommitController> create(NavigateEvent& event) { return adoptRef(*new NavigationPrecommitController(event)); }
+    ~NavigationPrecommitController();
 
-    ~NavigationDestination();
+    ExceptionOr<void> redirect(JSC::JSGlobalObject&, Document&, const String& url, NavigationNavigateOptions&&);
+    ExceptionOr<void> addHandler(Document&, Ref<NavigationInterceptHandler>&&);
 
-    const URL& url() const LIFETIME_BOUND { return m_url; };
-    void setURL(URL&& url) { m_url = WTF::move(url); }
-    String key() const { return m_entry ? m_entry->key() : String(); };
-    String id() const { return m_entry ? m_entry->id() : String(); };
-    int64_t index() const { return m_entry ? m_entry->index() : -1; };
-    bool sameDocument() const { return m_isSameDocument; };
-    JSC::JSValue getState(JSDOMGlobalObject&) const;
-    void setStateObject(SerializedScriptValue* stateObject) { m_stateObject = stateObject; }
+    NavigateEvent& event() { return m_event.get(); }
 
 private:
-    explicit NavigationDestination(const URL&, RefPtr<NavigationHistoryEntry>&&, bool isSameDocument);
+    explicit NavigationPrecommitController(NavigateEvent&);
 
-    RefPtr<NavigationHistoryEntry> m_entry;
-    URL m_url;
-    bool m_isSameDocument;
-    RefPtr<SerializedScriptValue> m_stateObject;
+    const Ref<NavigateEvent> m_event;
 };
 
 } // namespace WebCore

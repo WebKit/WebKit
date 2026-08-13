@@ -1,0 +1,6 @@
+
+
+PASS addHandler() after finish
+PASS addHandler() after commit
+PASS addHandler() in detached iframe
+

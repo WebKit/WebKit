@@ -29,6 +29,7 @@
 #include <WebCore/BackForwardItemIdentifier.h>
 #include <WebCore/Element.h>
 #include <WebCore/FrameLoaderTypes.h>
+#include <WebCore/NavigationHistoryBehavior.h>
 #include <WebCore/ReferrerPolicy.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/ShouldTreatAsContinuingLoad.h>

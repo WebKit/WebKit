@@ -32,6 +32,7 @@
 
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/LoaderMalloc.h>
+#include <WebCore/NavigationHistoryBehavior.h>
 #include <WebCore/Timer.h>
 #include <wtf/CanMakeWeakPtr.h>
 #include <wtf/CompletionHandler.h>

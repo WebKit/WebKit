@@ -2050,6 +2050,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/MemoryRelease.h
     page/ModalContainerTypes.h
     page/NavigationActivation.h
+    page/NavigationHistoryBehavior.h
     page/NavigationNavigationType.h
     page/Navigator.h
     page/NavigatorBase.h

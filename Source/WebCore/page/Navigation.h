@@ -32,7 +32,10 @@
 #include "LocalDOMWindowProperty.h"
 #include "NavigateEvent.h"
 #include "NavigationHistoryEntry.h"
+#include "NavigationNavigateOptions.h"
 #include "NavigationNavigationType.h"
+#include "NavigationOptions.h"
+#include "NavigationReloadOptions.h"
 #include "NavigationTransition.h"
 #include <JavaScriptCore/JSCJSValue.h>
 #include <wtf/MonotonicTime.h>
@@ -66,6 +69,7 @@ public:
     void setKey(const String& key) { m_key = key; }
     JSValueInWrappedObject& info() { return m_info; }
     SerializedScriptValue* serializedState() const { return m_serializedState.get(); }
+    void setSerializedState(RefPtr<SerializedScriptValue>&& serializedState) { m_serializedState = WTF::move(serializedState); }
     DeferredPromise& committedPromise() { return m_committedPromise; }
     const DeferredPromise& committedPromise() const { return m_committedPromise; }
     DeferredPromise& finishedPromise() { return m_finishedPromise; }
@@ -123,22 +127,7 @@ public:
     using RefCounted::ref;
     using RefCounted::deref;
 
-    using HistoryBehavior = NavigationHistoryBehavior;
-
     struct UpdateCurrentEntryOptions {
-        JSC::JSValue state;
-    };
-
-    struct Options {
-        JSC::JSValue info;
-    };
-
-    struct NavigateOptions : Options {
-        JSC::JSValue state;
-        HistoryBehavior history;
-    };
-
-    struct ReloadOptions : Options {
         JSC::JSValue state;
     };
 
@@ -157,13 +146,13 @@ public:
 
     void initializeForNewWindow(std::optional<NavigationNavigationType>, LocalDOMWindow* previousWindow);
 
-    Result navigate(JSC::JSGlobalObject&, const String& url, NavigateOptions&&, Ref<DeferredPromise>&&, Ref<DeferredPromise>&&);
+    Result navigate(JSC::JSGlobalObject&, const String& url, NavigationNavigateOptions&&, Ref<DeferredPromise>&&, Ref<DeferredPromise>&&);
 
-    Result reload(JSC::JSGlobalObject&, ReloadOptions&&, Ref<DeferredPromise>&&, Ref<DeferredPromise>&&);
+    Result reload(JSC::JSGlobalObject&, NavigationReloadOptions&&, Ref<DeferredPromise>&&, Ref<DeferredPromise>&&);
 
-    Result traverseTo(JSC::JSGlobalObject&, const String& key, Options&&, Ref<DeferredPromise>&&, Ref<DeferredPromise>&&);
-    Result back(JSC::JSGlobalObject&, Options&&, Ref<DeferredPromise>&&, Ref<DeferredPromise>&&);
-    Result forward(JSC::JSGlobalObject&, Options&&, Ref<DeferredPromise>&&, Ref<DeferredPromise>&&);
+    Result traverseTo(JSC::JSGlobalObject&, const String& key, NavigationOptions&&, Ref<DeferredPromise>&&, Ref<DeferredPromise>&&);
+    Result back(JSC::JSGlobalObject&, NavigationOptions&&, Ref<DeferredPromise>&&, Ref<DeferredPromise>&&);
+    Result forward(JSC::JSGlobalObject&, NavigationOptions&&, Ref<DeferredPromise>&&, Ref<DeferredPromise>&&);
 
     ExceptionOr<void> updateCurrentEntry(UpdateCurrentEntryOptions&&);
 
@@ -182,13 +171,19 @@ public:
     NavigationHistoryEntry* findEntryByKey(const String&) const;
     bool suppressNormalScrollRestoration() const { return m_suppressNormalScrollRestorationDuringOngoingNavigation; }
 
+    static bool documentCanHaveURLRewritten(const Document&, const URL&);
+
+    ExceptionOr<RefPtr<SerializedScriptValue>> serializeState(JSC::JSValue state);
+
     void setFocusChanged(FocusDidChange changed) { m_focusChangedDuringOngoingNavigation = changed; }
 
     // EventTarget.
     ScriptExecutionContext* scriptExecutionContext() const final;
 
     void rejectFinishedPromise(NavigationAPIMethodTracker*);
+
     NavigationAPIMethodTracker* upcomingTraverseMethodTracker(const String& key) const;
+    NavigationAPIMethodTracker* ongoingAPIMethodTracker() const { return m_methodTrackers.ongoing(); }
 
     void visitAdditionalChildrenInGCThread(JSC::AbstractSlotVisitor&);
 
@@ -267,11 +262,12 @@ private:
     void derefEventTarget() final { deref(); }
 
     bool hasEntriesAndEventsDisabled() const;
-    Result performTraversal(JSC::JSGlobalObject&, const String& key, Navigation::Options, Ref<DeferredPromise>&& committed, Ref<DeferredPromise>&& finished);
-    ExceptionOr<RefPtr<SerializedScriptValue>> serializeState(JSC::JSValue state);
+    Result performTraversal(JSC::JSGlobalObject&, const String& key, NavigationOptions, Ref<DeferredPromise>&& committed, Ref<DeferredPromise>&& finished);
     DispatchResult innerDispatchNavigateEvent(NavigationNavigationType, Ref<NavigationDestination>&&, const String& downloadRequestFilename, FormState* = nullptr, SerializedScriptValue* classicHistoryAPIState = nullptr, Element* sourceElement = nullptr);
     void setupInterceptionState(NavigateEvent&, NavigationNavigationType, NavigationDestination&, Document&, SerializedScriptValue* classicHistoryAPIState);
+    bool createTransitionForInterception(NavigateEvent&, NavigationNavigationType, Document&);
     std::optional<DispatchResult> handleSameDocumentNavigation(NavigateEvent&, NavigationNavigationType, NavigationAPIMethodTracker*, AbortController&, Document&);
+    void runNavigatePrecommitHandlers(NavigateEvent&, NavigationAPIMethodTracker*, AbortController&, Document&, RefPtr<SerializedScriptValue>&& classicHistoryAPIState);
 
     void setActivation(HistoryItem* previousItem, std::optional<NavigationNavigationType>);
 

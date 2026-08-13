@@ -1,3 +1,5 @@
 
-FAIL  precommitHandler with window.stop() before commit assert_equals: expected "" but got "#ShouldNotCommit"
+PASS Setup
+PASS  precommitHandler with window.stop() before navigation commit
+PASS  precommitHandler with window.stop() before fragment navigation commit
 

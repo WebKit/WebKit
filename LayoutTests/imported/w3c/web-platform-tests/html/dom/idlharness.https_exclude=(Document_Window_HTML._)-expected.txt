@@ -981,7 +981,7 @@ PASS NavigationTransition interface: existence and properties of interface proto
 PASS NavigationTransition interface: existence and properties of interface prototype object's @@unscopables property
 PASS NavigationTransition interface: attribute navigationType
 PASS NavigationTransition interface: attribute from
-FAIL NavigationTransition interface: attribute committed assert_true: The prototype object must have a property "committed" expected true got false
+PASS NavigationTransition interface: attribute committed
 PASS NavigationTransition interface: attribute finished
 PASS NavigationActivation interface: existence and properties of interface object
 PASS NavigationActivation interface object length
@@ -1011,13 +1011,13 @@ PASS NavigateEvent interface: attribute hasUAVisualTransition
 PASS NavigateEvent interface: attribute sourceElement
 PASS NavigateEvent interface: operation intercept(optional NavigationInterceptOptions)
 PASS NavigateEvent interface: operation scroll()
-FAIL NavigationPrecommitController interface: existence and properties of interface object assert_own_property: self does not have own property "NavigationPrecommitController" expected property "NavigationPrecommitController" missing
-FAIL NavigationPrecommitController interface object length assert_own_property: self does not have own property "NavigationPrecommitController" expected property "NavigationPrecommitController" missing
-FAIL NavigationPrecommitController interface object name assert_own_property: self does not have own property "NavigationPrecommitController" expected property "NavigationPrecommitController" missing
-FAIL NavigationPrecommitController interface: existence and properties of interface prototype object assert_own_property: self does not have own property "NavigationPrecommitController" expected property "NavigationPrecommitController" missing
-FAIL NavigationPrecommitController interface: existence and properties of interface prototype object's "constructor" property assert_own_property: self does not have own property "NavigationPrecommitController" expected property "NavigationPrecommitController" missing
-FAIL NavigationPrecommitController interface: existence and properties of interface prototype object's @@unscopables property assert_own_property: self does not have own property "NavigationPrecommitController" expected property "NavigationPrecommitController" missing
-FAIL NavigationPrecommitController interface: operation redirect(USVString, optional NavigationNavigateOptions) assert_own_property: self does not have own property "NavigationPrecommitController" expected property "NavigationPrecommitController" missing
+PASS NavigationPrecommitController interface: existence and properties of interface object
+PASS NavigationPrecommitController interface object length
+PASS NavigationPrecommitController interface object name
+PASS NavigationPrecommitController interface: existence and properties of interface prototype object
+PASS NavigationPrecommitController interface: existence and properties of interface prototype object's "constructor" property
+PASS NavigationPrecommitController interface: existence and properties of interface prototype object's @@unscopables property
+PASS NavigationPrecommitController interface: operation redirect(USVString, optional NavigationNavigateOptions)
 PASS NavigationDestination interface: existence and properties of interface object
 PASS NavigationDestination interface object length
 PASS NavigationDestination interface object name

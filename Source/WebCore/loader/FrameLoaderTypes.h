@@ -107,13 +107,6 @@ enum class NavigationType : uint8_t {
     Other
 };
 
-enum class NavigationHistoryBehavior : uint8_t {
-    Auto,
-    Push,
-    Replace,
-    Reload // Internal, not part of the specification
-};
-
 enum class NavigationUpgradeToHTTPSBehavior : uint8_t {
     Disabled,
     HTTPFallback,

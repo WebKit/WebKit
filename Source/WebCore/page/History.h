@@ -29,6 +29,7 @@
 #include "FrameLoaderTypes.h"
 #include "JSValueInWrappedObject.h"
 #include "LocalDOMWindowProperty.h"
+#include "NavigationHistoryBehavior.h"
 #include "ScriptWrappable.h"
 #include "SerializedScriptValue.h"
 #include <wtf/WallTime.h>

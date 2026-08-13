@@ -34,16 +34,25 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(NavigationTransition);
 
-Ref<NavigationTransition> NavigationTransition::create(NavigationNavigationType type, Ref<NavigationHistoryEntry>&& fromEntry, Ref<DeferredPromise>&& finished)
+Ref<NavigationTransition> NavigationTransition::create(NavigationNavigationType type, Ref<NavigationHistoryEntry>&& fromEntry, Ref<DeferredPromise>&& committed, Ref<DeferredPromise>&& finished)
 {
-    return adoptRef(*new NavigationTransition(type, WTF::move(fromEntry), WTF::move(finished)));
+    return adoptRef(*new NavigationTransition(type, WTF::move(fromEntry), WTF::move(committed), WTF::move(finished)));
 }
 
-NavigationTransition::NavigationTransition(NavigationNavigationType type, Ref<NavigationHistoryEntry>&& fromEntry, Ref<DeferredPromise>&& finished)
+NavigationTransition::NavigationTransition(NavigationNavigationType type, Ref<NavigationHistoryEntry>&& fromEntry, Ref<DeferredPromise>&& committed, Ref<DeferredPromise>&& finished)
     : m_navigationType(type)
     , m_from(WTF::move(fromEntry))
+    , m_committed(WTF::move(committed))
     , m_finished(WTF::move(finished))
 {
+}
+
+void NavigationTransition::resolveCommitted()
+{
+    if (m_committedSettled)
+        return;
+    m_committedSettled = true;
+    m_committed->resolve();
 }
 
 void NavigationTransition::resolvePromise()
@@ -53,12 +62,30 @@ void NavigationTransition::resolvePromise()
 
 void NavigationTransition::rejectPromise(Exception& exception, JSC::JSValue exceptionObject)
 {
+    if (!m_committedSettled) {
+        m_committedSettled = true;
+        m_committed->reject(exception, RejectAsHandled::Yes, exceptionObject);
+    }
     m_finished->reject(exception, RejectAsHandled::Yes, exceptionObject);
 }
 
 void NavigationTransition::rejectPromise(JSC::JSValue exceptionObject)
 {
+    if (!m_committedSettled) {
+        m_committedSettled = true;
+        m_committed->reject<IDLAny>(exceptionObject, RejectAsHandled::Yes);
+    }
     m_finished->reject<IDLAny>(exceptionObject, RejectAsHandled::Yes);
+}
+
+DOMPromise& NavigationTransition::committed()
+{
+    if (!m_committedDOMPromise) {
+        auto& promise = *downcast<JSC::JSPromise>(m_committed->promise());
+        m_committedDOMPromise = DOMPromise::create(*m_committed->globalObject(), promise);
+    }
+
+    return *m_committedDOMPromise;
 }
 
 DOMPromise& NavigationTransition::finished()

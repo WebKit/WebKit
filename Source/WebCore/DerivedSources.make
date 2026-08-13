@@ -1590,9 +1590,15 @@ JS_BINDING_IDLS := \
     $(WebCore)/page/NavigationActivation.idl \
     $(WebCore)/page/NavigationCurrentEntryChangeEvent.idl \
     $(WebCore)/page/NavigationDestination.idl \
+    $(WebCore)/page/NavigationHistoryBehavior.idl \
     $(WebCore)/page/NavigationHistoryEntry.idl \
     $(WebCore)/page/NavigationInterceptHandler.idl \
+    $(WebCore)/page/NavigationNavigateOptions.idl \
     $(WebCore)/page/NavigationNavigationType.idl \
+    $(WebCore)/page/NavigationOptions.idl \
+    $(WebCore)/page/NavigationPrecommitController.idl \
+    $(WebCore)/page/NavigationPrecommitHandler.idl \
+    $(WebCore)/page/NavigationReloadOptions.idl \
     $(WebCore)/page/NavigationTransition.idl \
     $(WebCore)/page/Navigator.idl \
     $(WebCore)/page/NavigatorUA.idl \
