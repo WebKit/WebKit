@@ -269,6 +269,70 @@ TEST(VerifyUserGesture, PopunderPreventedByConsumedAction)
     // during popup creation.
     EXPECT_FALSE(focusCalled);
 }
+
+TEST(VerifyUserGesture, PopunderPreventedViaDualEventListeners)
+{
+    auto openerHTML = "<script>"
+        "window.name = 'opener';"
+        "let popup;"
+        "let opened = false;"
+        "addEventListener('pointerdown', () => {"
+        "    if (!opened) {"
+        "        opened = true;"
+        "        popup = window.open('https://domain2.com/popup');"
+        "    }"
+        "});"
+        "addEventListener('click', () => {"
+        "    if (popup && popup.refocusOpener) popup.refocusOpener();"
+        "});"
+        "</script>"_s;
+    auto popupHTML = "<script>"
+        "function refocusOpener() { window.open('', 'opener'); }"
+        "</script>"_s;
+    HTTPServer server({
+        { "/opener"_s, { openerHTML } },
+        { "/popup"_s, { popupHTML } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    RetainPtr navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [navigationDelegate allowAnyTLSCertificate];
+    RetainPtr uiDelegate = adoptNS([TestUIDelegate new]);
+    RetainPtr openerWebView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    [openerWebView setNavigationDelegate:navigationDelegate.get()];
+    [openerWebView setUIDelegate:uiDelegate.get()];
+    [openerWebView configuration].preferences.javaScriptCanOpenWindowsAutomatically = YES;
+
+    __block RetainPtr<TestWKWebView> popupWebView;
+    __block RetainPtr<TestNavigationDelegate> popupNavigationDelegate;
+    uiDelegate.get().createWebViewWithConfiguration = ^(WKWebViewConfiguration *configuration, WKNavigationAction *navigationAction, WKWindowFeatures *) {
+        [navigationAction._userInitiatedAction consume];
+        popupNavigationDelegate = adoptNS([TestNavigationDelegate new]);
+        [popupNavigationDelegate allowAnyTLSCertificate];
+        popupWebView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration]);
+        [popupWebView setNavigationDelegate:popupNavigationDelegate.get()];
+        return popupWebView.get();
+    };
+
+    __block bool focusCalled = false;
+    uiDelegate.get().focusWebView = ^(WKWebView *) {
+        focusCalled = true;
+    };
+
+    [openerWebView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://domain1.com/opener"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    [openerWebView mouseDownAtPoint:CGPointMake(50, 50) simulatePressure:NO];
+    [openerWebView mouseUpAtPoint:CGPointMake(50, 50)];
+    [openerWebView waitForPendingMouseEvents];
+    while (!popupWebView)
+        Util::spinRunLoop();
+    [popupNavigationDelegate waitForDidFinishNavigation];
+
+    Util::spinRunLoop(10);
+
+    EXPECT_FALSE(focusCalled);
+}
 #endif
 
 }
