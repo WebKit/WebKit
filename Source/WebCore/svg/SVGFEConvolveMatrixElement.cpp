@@ -90,14 +90,10 @@ void SVGFEConvolveMatrixElement::attributeChanged(const QualifiedName& name, con
         }
         break;
     }
-    case AttributeNames::edgeModeAttr: {
-        EdgeModeType propertyValue = SVGPropertyTraits<EdgeModeType>::fromString(*this, newValue);
-        if (propertyValue != EdgeModeType::Unknown)
-            Ref { m_edgeMode }->setBaseValInternal<EdgeModeType>(propertyValue);
-        else
+    case AttributeNames::edgeModeAttr:
+        if (!protect(m_edgeMode)->parseBaseVal<EdgeModeType>(*this, newValue) && !newValue.isNull())
             protect(protect(document())->svgExtensions())->reportWarning(makeString("feConvolveMatrix: problem parsing edgeMode=\""_s, newValue, "\". Filtered element will not be displayed."_s));
         break;
-    }
     case AttributeNames::kernelMatrixAttr:
         protect(m_kernelMatrix)->baseVal()->parse(newValue);
         break;

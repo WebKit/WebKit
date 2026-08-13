@@ -57,21 +57,15 @@ SVGGradientElement::SVGGradientElement(const QualifiedName& tagName, Document& d
 void SVGGradientElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
     switch (name.nodeName()) {
-    case AttributeNames::gradientUnitsAttr: {
-        auto propertyValue = SVGPropertyTraits<SVGUnitTypes::SVGUnitType>::fromString(*this, newValue);
-        if (propertyValue > 0)
-            protect(m_gradientUnits)->setBaseValInternal<SVGUnitTypes::SVGUnitType>(propertyValue);
+    case AttributeNames::gradientUnitsAttr:
+        protect(m_gradientUnits)->parseBaseVal<SVGUnitTypes::SVGUnitType>(*this, newValue);
         break;
-    }
     case AttributeNames::gradientTransformAttr:
         protect(m_gradientTransform)->baseVal()->parse(newValue);
         break;
-    case AttributeNames::spreadMethodAttr: {
-        auto propertyValue = SVGPropertyTraits<SVGSpreadMethodType>::fromString(*this, newValue);
-        if (propertyValue > 0)
-            protect(m_spreadMethod)->setBaseValInternal<SVGSpreadMethodType>(propertyValue);
+    case AttributeNames::spreadMethodAttr:
+        protect(m_spreadMethod)->parseBaseVal<SVGSpreadMethodType>(*this, newValue);
         break;
-    }
     default:
         break;
     }

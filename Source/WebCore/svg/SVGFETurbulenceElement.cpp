@@ -59,18 +59,12 @@ Ref<SVGFETurbulenceElement> SVGFETurbulenceElement::create(const QualifiedName& 
 void SVGFETurbulenceElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
     switch (name.nodeName()) {
-    case AttributeNames::typeAttr: {
-        TurbulenceType propertyValue = SVGPropertyTraits<TurbulenceType>::fromString(*this, newValue);
-        if (propertyValue != TurbulenceType::Unknown)
-            Ref { m_type }->setBaseValInternal<TurbulenceType>(propertyValue);
+    case AttributeNames::typeAttr:
+        protect(m_type)->parseBaseVal<TurbulenceType>(*this, newValue);
         break;
-    }
-    case AttributeNames::stitchTilesAttr: {
-        SVGStitchOptions propertyValue = SVGPropertyTraits<SVGStitchOptions>::fromString(*this, newValue);
-        if (propertyValue > 0)
-            Ref { m_stitchTiles }->setBaseValInternal<SVGStitchOptions>(propertyValue);
+    case AttributeNames::stitchTilesAttr:
+        protect(m_stitchTiles)->parseBaseVal<SVGStitchOptions>(*this, newValue);
         break;
-    }
     case AttributeNames::baseFrequencyAttr:
         if (auto result = parseNumberOptionalNumber(newValue)) {
             m_baseFrequencyX->setBaseValInternal(result->first);

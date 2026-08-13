@@ -30,7 +30,6 @@ namespace WebCore {
 template<>
 struct SVGPropertyTraits<EdgeModeType> {
     static unsigned highestEnumValue() { return static_cast<unsigned>(EdgeModeType::None); }
-    static EdgeModeType initialValue() { return EdgeModeType::None; }
 
     static String toString(EdgeModeType type)
     {

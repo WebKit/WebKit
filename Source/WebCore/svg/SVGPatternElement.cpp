@@ -78,18 +78,12 @@ void SVGPatternElement::attributeChanged(const QualifiedName& name, const AtomSt
 {
     auto parseError = SVGParsingError::None;
     switch (name.nodeName()) {
-    case AttributeNames::patternUnitsAttr: {
-        auto propertyValue = SVGPropertyTraits<SVGUnitTypes::SVGUnitType>::fromString(*this, newValue);
-        if (propertyValue > 0)
-            Ref { m_patternUnits }->setBaseValInternal<SVGUnitTypes::SVGUnitType>(propertyValue);
+    case AttributeNames::patternUnitsAttr:
+        protect(m_patternUnits)->parseBaseVal<SVGUnitTypes::SVGUnitType>(*this, newValue);
         break;
-    }
-    case AttributeNames::patternContentUnitsAttr: {
-        auto propertyValue = SVGPropertyTraits<SVGUnitTypes::SVGUnitType>::fromString(*this, newValue);
-        if (propertyValue > 0)
-            Ref { m_patternContentUnits }->setBaseValInternal<SVGUnitTypes::SVGUnitType>(propertyValue);
+    case AttributeNames::patternContentUnitsAttr:
+        protect(m_patternContentUnits)->parseBaseVal<SVGUnitTypes::SVGUnitType>(*this, newValue);
         break;
-    }
     case AttributeNames::patternTransformAttr: {
         protect(m_patternTransform)->baseVal()->parse(newValue);
         break;

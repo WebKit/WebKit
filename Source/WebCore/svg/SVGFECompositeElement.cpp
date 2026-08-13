@@ -58,12 +58,9 @@ Ref<SVGFECompositeElement> SVGFECompositeElement::create(const QualifiedName& ta
 void SVGFECompositeElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
     switch (name.nodeName()) {
-    case AttributeNames::operatorAttr: {
-        CompositeOperationType propertyValue = SVGPropertyTraits<CompositeOperationType>::fromString(*this, newValue);
-        if (std::to_underlying(propertyValue))
-            Ref { m_svgOperator }->setBaseValInternal<CompositeOperationType>(propertyValue);
+    case AttributeNames::operatorAttr:
+        protect(m_svgOperator)->parseBaseVal<CompositeOperationType>(*this, newValue);
         break;
-    }
     case AttributeNames::inAttr:
         Ref { m_in1 }->setBaseValInternal(newValue);
         break;

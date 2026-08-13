@@ -55,12 +55,9 @@ Ref<SVGFEBlendElement> SVGFEBlendElement::create(const QualifiedName& tagName, D
 void SVGFEBlendElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
     switch (name.nodeName()) {
-    case AttributeNames::modeAttr: {
-        BlendMode mode = BlendMode::Normal;
-        if (parseBlendMode(newValue, mode))
-        Ref { m_mode }->setBaseValInternal<BlendMode>(mode);
+    case AttributeNames::modeAttr:
+        protect(m_mode)->parseBaseVal<BlendMode>(*this, newValue);
         break;
-    }
     case AttributeNames::inAttr:
         Ref { m_in1 }->setBaseValInternal(newValue);
         break;

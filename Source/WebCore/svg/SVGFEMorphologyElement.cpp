@@ -56,12 +56,9 @@ Ref<SVGFEMorphologyElement> SVGFEMorphologyElement::create(const QualifiedName& 
 void SVGFEMorphologyElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
     switch (name.nodeName()) {
-    case AttributeNames::operatorAttr: {
-        MorphologyOperatorType propertyValue = SVGPropertyTraits<MorphologyOperatorType>::fromString(*this, newValue);
-        if (propertyValue != MorphologyOperatorType::Unknown)
-            Ref { m_svgOperator }->setBaseValInternal<MorphologyOperatorType>(propertyValue);
+    case AttributeNames::operatorAttr:
+        protect(m_svgOperator)->parseBaseVal<MorphologyOperatorType>(*this, newValue);
         break;
-    }
     case AttributeNames::inAttr:
         Ref { m_in1 }->setBaseValInternal(newValue);
         break;

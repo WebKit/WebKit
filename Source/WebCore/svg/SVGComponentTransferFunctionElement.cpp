@@ -53,12 +53,9 @@ SVGComponentTransferFunctionElement::SVGComponentTransferFunctionElement(const Q
 void SVGComponentTransferFunctionElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
     switch (name.nodeName()) {
-    case AttributeNames::typeAttr: {
-        ComponentTransferType propertyValue = SVGPropertyTraits<ComponentTransferType>::fromString(*this, newValue);
-        if (std::to_underlying(propertyValue))
-            m_type->setBaseValInternal<ComponentTransferType>(propertyValue);
+    case AttributeNames::typeAttr:
+        protect(m_type)->parseBaseVal<ComponentTransferType>(*this, newValue);
         break;
-    }
     case AttributeNames::tableValuesAttr:
         protect(m_tableValues)->baseVal()->parse(newValue);
         break;

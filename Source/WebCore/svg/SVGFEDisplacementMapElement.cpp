@@ -56,18 +56,12 @@ Ref<SVGFEDisplacementMapElement> SVGFEDisplacementMapElement::create(const Quali
 void SVGFEDisplacementMapElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
     switch (name.nodeName()) {
-    case AttributeNames::xChannelSelectorAttr: {
-        auto propertyValue = SVGPropertyTraits<ChannelSelectorType>::fromString(*this, newValue);
-        if (std::to_underlying(propertyValue))
-            Ref { m_xChannelSelector }->setBaseValInternal<ChannelSelectorType>(propertyValue);
+    case AttributeNames::xChannelSelectorAttr:
+        protect(m_xChannelSelector)->parseBaseVal<ChannelSelectorType>(*this, newValue);
         break;
-    }
-    case AttributeNames::yChannelSelectorAttr: {
-        auto propertyValue = SVGPropertyTraits<ChannelSelectorType>::fromString(*this, newValue);
-        if (std::to_underlying(propertyValue))
-            Ref { m_yChannelSelector }->setBaseValInternal<ChannelSelectorType>(propertyValue);
+    case AttributeNames::yChannelSelectorAttr:
+        protect(m_yChannelSelector)->parseBaseVal<ChannelSelectorType>(*this, newValue);
         break;
-    }
     case AttributeNames::inAttr:
         Ref { m_in1 }->setBaseValInternal(newValue);
         break;

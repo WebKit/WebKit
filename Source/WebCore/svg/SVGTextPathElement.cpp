@@ -79,18 +79,12 @@ void SVGTextPathElement::attributeChanged(const QualifiedName& name, const AtomS
     case AttributeNames::startOffsetAttr:
         Ref { m_startOffset }->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Other, newValue, parseError));
         break;
-    case AttributeNames::methodAttr: {
-        SVGTextPathMethodType propertyValue = SVGPropertyTraits<SVGTextPathMethodType>::fromString(*this, newValue);
-        if (propertyValue > 0)
-            Ref { m_method }->setBaseValInternal<SVGTextPathMethodType>(propertyValue);
+    case AttributeNames::methodAttr:
+        protect(m_method)->parseBaseVal<SVGTextPathMethodType>(*this, newValue);
         break;
-    }
-    case AttributeNames::spacingAttr: {
-        SVGTextPathSpacingType propertyValue = SVGPropertyTraits<SVGTextPathSpacingType>::fromString(*this, newValue);
-        if (propertyValue > 0)
-            Ref { m_spacing }->setBaseValInternal<SVGTextPathSpacingType>(propertyValue);
+    case AttributeNames::spacingAttr:
+        protect(m_spacing)->parseBaseVal<SVGTextPathSpacingType>(*this, newValue);
         break;
-    }
     default:
         break;
     }

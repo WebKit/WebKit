@@ -172,11 +172,9 @@ void SVGTextContentElement::attributeChanged(const QualifiedName& name, const At
 {
     auto parseError = SVGParsingError::None;
 
-    if (name == SVGNames::lengthAdjustAttr) {
-        auto propertyValue = SVGPropertyTraits<SVGLengthAdjustType>::fromString(*this, newValue);
-        if (propertyValue > 0)
-            m_lengthAdjust->setBaseValInternal<SVGLengthAdjustType>(propertyValue);
-    } else if (name == SVGNames::textLengthAttr)
+    if (name == SVGNames::lengthAdjustAttr)
+        protect(m_lengthAdjust)->parseBaseVal<SVGLengthAdjustType>(*this, newValue);
+    else if (name == SVGNames::textLengthAttr)
         m_textLength->setBaseValInternal(SVGLengthValue::construct(SVGLengthMode::Other, newValue, parseError, SVGLengthNegativeValuesMode::Forbid));
 
     reportAttributeParsingError(parseError, name, newValue);

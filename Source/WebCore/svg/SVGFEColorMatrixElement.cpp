@@ -54,12 +54,9 @@ Ref<SVGFEColorMatrixElement> SVGFEColorMatrixElement::create(const QualifiedName
 void SVGFEColorMatrixElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
 {
     switch (name.nodeName()) {
-    case AttributeNames::typeAttr: {
-        auto propertyValue = SVGPropertyTraits<ColorMatrixType>::fromString(*this, newValue);
-        if (std::to_underlying(propertyValue))
-            Ref { m_type }->setBaseValInternal<ColorMatrixType>(propertyValue);
+    case AttributeNames::typeAttr:
+        protect(m_type)->parseBaseVal<ColorMatrixType>(*this, newValue);
         break;
-    }
     case AttributeNames::inAttr:
         Ref { m_in1 }->setBaseValInternal(newValue);
         break;
