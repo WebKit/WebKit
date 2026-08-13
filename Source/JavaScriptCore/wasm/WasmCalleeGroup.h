@@ -40,6 +40,7 @@
 #include <wtf/RefPtr.h>
 #include <wtf/SharedTask.h>
 #include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace JSC {
@@ -59,13 +60,60 @@ public:
 
     struct OptimizedCallees {
 #if ENABLE(WEBASSEMBLY_BBQJIT)
-        // ThreadSafeWeakOrStrongPtr is a tagged union of RefPtr and ThreadSafeWeakPtr whose
-        // transitions are not atomic, so every access needs this lock: readers that peek callees
-        // without m_lock (tryGetBBQCalleeForLoopOSRConcurrently) would otherwise race the
-        // strong->weak conversion in releaseBBQCallee and the assignment in installOptimizedCallee.
-        // The lock is per function index, so it is effectively uncontended.
-        mutable Lock m_bbqCalleeLock;
-        ThreadSafeWeakOrStrongPtr<BBQCallee> m_bbqCallee WTF_GUARDED_BY_LOCK(m_bbqCalleeLock);
+        class BBQCalleeReference {
+        public:
+            BBQCalleeReference() = default;
+
+            ~BBQCalleeReference()
+            {
+                if (m_isWeak)
+                    std::destroy_at(&m_pointer.weak);
+                else
+                    std::destroy_at(&m_pointer.strong);
+            }
+
+            Lock& lock() const LIFETIME_BOUND WTF_RETURNS_LOCK(m_bbqCalleeLock) { return m_bbqCalleeLock; }
+
+            bool isWeak() const WTF_REQUIRES_LOCK(m_bbqCalleeLock) { return m_isWeak; }
+            bool isStrong() const WTF_REQUIRES_LOCK(m_bbqCalleeLock) { return !isWeak(); }
+
+            RefPtr<BBQCallee> get() const WTF_REQUIRES_LOCK(m_bbqCalleeLock) { return isWeak() ? m_pointer.weak.get() : m_pointer.strong; }
+
+            RefPtr<BBQCallee> convertToWeak() WTF_REQUIRES_LOCK(m_bbqCalleeLock)
+            {
+                ASSERT(isStrong());
+                RefPtr<BBQCallee> strong = WTF::move(m_pointer.strong);
+                std::destroy_at(&m_pointer.strong);
+                std::construct_at(&m_pointer.weak, strong);
+                m_isWeak = true;
+                return strong;
+            }
+
+            BBQCalleeReference& operator=(Ref<BBQCallee>&& strongReference) WTF_REQUIRES_LOCK(m_bbqCalleeLock)
+            {
+                if (m_isWeak) {
+                    std::destroy_at(&m_pointer.weak);
+                    std::construct_at(&m_pointer.strong);
+                    m_isWeak = false;
+                }
+                m_pointer.strong = WTF::move(strongReference);
+                return *this;
+            }
+
+        private:
+            union Pointer {
+                // Whichever member is active is destroyed by ~BBQCalleeReference().
+                ~Pointer() { }
+                RefPtr<BBQCallee> strong { };
+                ThreadSafeWeakPtr<BBQCallee> weak;
+            };
+
+            mutable Lock m_bbqCalleeLock;
+            bool m_isWeak WTF_GUARDED_BY_LOCK(m_bbqCalleeLock) { false };
+            Pointer m_pointer WTF_GUARDED_BY_LOCK(m_bbqCalleeLock);
+        };
+
+        BBQCalleeReference m_bbqCallee;
 #endif
 #if ENABLE(WEBASSEMBLY_OMGJIT)
         RefPtr<OMGCallee> m_omgCallee;
@@ -120,7 +168,7 @@ public:
 #endif
 #if ENABLE(WEBASSEMBLY_BBQJIT)
             {
-                Locker bbqLocker { tuple->m_bbqCalleeLock };
+                Locker bbqLocker { tuple->m_bbqCallee.lock() };
                 if (RefPtr callee = tuple->m_bbqCallee.get())
                     return callee;
             }
@@ -181,7 +229,7 @@ public:
     RefPtr<BBQCallee> bbqCallee(const AbstractLocker& locker, FunctionCodeIndex functionIndex) WTF_REQUIRES_LOCK(m_lock)
     {
         if (auto* tuple = optimizedCalleesTuple(locker, functionIndex)) {
-            Locker bbqLocker { tuple->m_bbqCalleeLock };
+            Locker bbqLocker { tuple->m_bbqCallee.lock() };
             return tuple->m_bbqCallee.get();
         }
         return nullptr;

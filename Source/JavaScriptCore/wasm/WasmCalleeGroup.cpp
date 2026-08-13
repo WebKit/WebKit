@@ -171,7 +171,7 @@ RefPtr<BBQCallee> CalleeGroup::tryGetBBQCalleeForLoopOSRConcurrently(VM& vm, Fun
     {
         // get() and isStrong() must be read as one atomic pair: split, we could see a strong callee
         // and then miss that it was retired, skipping the report below.
-        Locker bbqLocker { tuple->m_bbqCalleeLock };
+        Locker bbqLocker { tuple->m_bbqCallee.lock() };
         bbqCallee = tuple->m_bbqCallee.get();
         if (!bbqCallee)
             return nullptr;
@@ -203,7 +203,7 @@ void CalleeGroup::releaseBBQCallee(const AbstractLocker& locker, FunctionCodeInd
 
     RefPtr<BBQCallee> bbqCallee;
     {
-        Locker bbqLocker { tuple->m_bbqCalleeLock };
+        Locker bbqLocker { tuple->m_bbqCallee.lock() };
         if (!tuple->m_bbqCallee.isStrong() || !tuple->m_bbqCallee.get())
             return;
         bbqCallee = tuple->m_bbqCallee.convertToWeak();
@@ -376,7 +376,7 @@ bool CalleeGroup::installOptimizedCallee(Locker<Lock>& locker, const ModuleInfor
 #endif
 #if ENABLE(WEBASSEMBLY_BBQJIT)
     if (callee->compilationMode() == CompilationMode::BBQMode) {
-        Locker bbqLocker { slot->m_bbqCalleeLock };
+        Locker bbqLocker { slot->m_bbqCallee.lock() };
         // A retired BBQCallee may still be here: releaseBBQCallee re-arms IPInt's tier-up counter, so
         // a function can be compiled to BBQ again before the previous callee is destroyed. Overwriting
         // that weak reference is fine, it does not own the callee. Overwriting a strong one would drop
@@ -438,7 +438,7 @@ void CalleeGroup::updateCallsitesToCallUs(const AbstractLocker& locker, CodeLoca
         // that we're going to want to destroy.
         RefPtr<BBQCallee> bbqCallee;
         {
-            Locker bbqLocker { tuple->m_bbqCalleeLock };
+            Locker bbqLocker { tuple->m_bbqCallee.lock() };
             bbqCallee = tuple->m_bbqCallee.get();
         }
         if (bbqCallee) {
@@ -537,7 +537,7 @@ TriState CalleeGroup::calleeIsReferenced(const AbstractLocker& locker, Wasm::Cal
         if (!tuple)
             return TriState::Indeterminate;
 
-        Locker locker { tuple->m_bbqCalleeLock };
+        Locker bbqLocker { tuple->m_bbqCallee.lock() };
         RefPtr bbqCallee = tuple->m_bbqCallee.get();
         if (tuple->m_bbqCallee.isWeak())
             return bbqCallee ? TriState::Indeterminate : TriState::False;
@@ -560,7 +560,7 @@ TriState CalleeGroup::calleeIsReferenced(const AbstractLocker& locker, Wasm::Cal
             if (!tuple)
                 return TriState::Indeterminate;
 
-            Locker bbqLocker { tuple->m_bbqCalleeLock };
+            Locker bbqLocker { tuple->m_bbqCallee.lock() };
             if (tuple->m_bbqCallee.get())
                 return TriState::True;
             return TriState::Indeterminate;
