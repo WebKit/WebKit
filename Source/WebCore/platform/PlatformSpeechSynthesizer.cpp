@@ -52,10 +52,16 @@ void PlatformSpeechSynthesizer::resetVoiceList()
     m_voiceList.clear();
 }
 
+RefPtr<PlatformSpeechSynthesizerClient> PlatformSpeechSynthesizer::client() const
+{
+    return m_speechSynthesizerClient.get();
+}
+
 void PlatformSpeechSynthesizer::voicesDidChange()
 {
     resetVoiceList();
-    m_speechSynthesizerClient.voicesDidChange();
+    if (RefPtr client = m_speechSynthesizerClient.get())
+        client->voicesDidChange();
 }
 
 } // namespace WebCore
