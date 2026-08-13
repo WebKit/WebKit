@@ -528,6 +528,7 @@ heap/FastMallocAlignedMemoryAllocator.cpp
 heap/FullGCActivityCallback.cpp
 heap/FreeList.cpp
 heap/GCActivityCallback.cpp
+heap/GCCompletionCallback.cpp
 heap/GCConductor.cpp
 heap/GCLogging.cpp
 heap/GCOwnedDataScope.cpp
@@ -537,7 +538,6 @@ heap/GigacageAlignedMemoryAllocator.cpp
 heap/Heap.cpp
 heap/HeapCell.cpp
 heap/HeapCellType.cpp
-heap/HeapFinalizerCallback.cpp
 heap/HeapHelperPool.cpp
 heap/HeapProfiler.cpp
 heap/HeapSnapshot.cpp

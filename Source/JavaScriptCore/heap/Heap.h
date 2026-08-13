@@ -27,10 +27,10 @@
 #include <JavaScriptCore/CollectorPhase.h>
 #include <JavaScriptCore/CompleteSubspace.h>
 #include <JavaScriptCore/DeleteAllCodeEffort.h>
+#include <JavaScriptCore/GCCompletionCallback.h>
 #include <JavaScriptCore/GCConductor.h>
 #include <JavaScriptCore/GCIncomingRefCountedSet.h>
 #include <JavaScriptCore/GCRequest.h>
-#include <JavaScriptCore/HeapFinalizerCallback.h>
 #include <JavaScriptCore/HeapObserver.h>
 #include <JavaScriptCore/IsoCellSet.h>
 #include <JavaScriptCore/IsoHeapCellType.h>
@@ -604,8 +604,8 @@ public:
     
     HeapVerifier* verifier() const LIFETIME_BOUND { return m_verifier.get(); }
     
-    void addHeapFinalizerCallback(const HeapFinalizerCallback&);
-    void removeHeapFinalizerCallback(const HeapFinalizerCallback&);
+    void addGCCompletionCallback(const GCCompletionCallback&);
+    void removeGCCompletionCallback(const GCCompletionCallback&);
     
     void runTaskInParallel(RefPtr<SharedTask<void(SlotVisitor&)>>);
     
@@ -949,7 +949,7 @@ private:
 
     Vector<HeapObserver*> m_observers;
     
-    Vector<HeapFinalizerCallback> m_heapFinalizerCallbacks;
+    Vector<GCCompletionCallback> m_gcCompletionCallbacks;
     
     std::unique_ptr<HeapVerifier> m_verifier;
 

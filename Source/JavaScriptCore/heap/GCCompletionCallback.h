@@ -32,25 +32,25 @@ namespace JSC {
 
 class VM;
 
-class HeapFinalizerCallback {
+class GCCompletionCallback {
 public:
-    HeapFinalizerCallback(JSHeapFinalizer finalizer = nullptr, void *userData = nullptr)
+    GCCompletionCallback(JSHeapFinalizer finalizer = nullptr, void *userData = nullptr)
         : m_finalizer(finalizer)
         , m_userData(userData)
     {
     }
-    
-    friend bool operator==(const HeapFinalizerCallback&, const HeapFinalizerCallback&) = default;
-    
+
+    friend bool operator==(const GCCompletionCallback&, const GCCompletionCallback&) = default;
+
     explicit operator bool() const
     {
-        return *this != HeapFinalizerCallback();
+        return *this != GCCompletionCallback();
     }
-    
+
     void dump(PrintStream&) const;
-    
+
     void run(VM&) const;
-    
+
 private:
     JSHeapFinalizer m_finalizer;
     void *m_userData;

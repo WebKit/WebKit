@@ -2383,7 +2383,7 @@ void Heap::runCollectionEpilogue()
 
     immutableButterflyToStringCache.clear();
     
-    for (const HeapFinalizerCallback& callback : m_heapFinalizerCallbacks)
+    for (const GCCompletionCallback& callback : m_gcCompletionCallbacks)
         callback.run(vm());
     
     if (shouldSweepSynchronously())
@@ -3411,14 +3411,14 @@ void Heap::performIncrement(size_t bytes)
     m_incrementBalance -= bytesVisited;
 }
 
-void Heap::addHeapFinalizerCallback(const HeapFinalizerCallback& callback)
+void Heap::addGCCompletionCallback(const GCCompletionCallback& callback)
 {
-    m_heapFinalizerCallbacks.append(callback);
+    m_gcCompletionCallbacks.append(callback);
 }
 
-void Heap::removeHeapFinalizerCallback(const HeapFinalizerCallback& callback)
+void Heap::removeGCCompletionCallback(const GCCompletionCallback& callback)
 {
-    m_heapFinalizerCallbacks.removeFirst(callback);
+    m_gcCompletionCallbacks.removeFirst(callback);
 }
 
 void Heap::setBonusVisitorTask(RefPtr<SharedTask<void(SlotVisitor&)>> task)

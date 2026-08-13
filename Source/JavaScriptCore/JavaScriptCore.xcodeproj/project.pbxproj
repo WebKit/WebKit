@@ -123,7 +123,7 @@
 		0F0B83A914BCF56200885B4F /* HandlerInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F0B83A814BCF55E00885B4F /* HandlerInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F0B83B114BCF71800885B4F /* CallLinkInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F0B83AF14BCF71400885B4F /* CallLinkInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F0CAEFC1EC4DA6B00970D12 /* JSHeapFinalizerPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F0CAEFA1EC4DA6200970D12 /* JSHeapFinalizerPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		0F0CAEFF1EC4DA8800970D12 /* HeapFinalizerCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F0CAEFE1EC4DA8500970D12 /* HeapFinalizerCallback.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0F0CAEFF1EC4DA8800970D12 /* GCCompletionCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F0CAEFE1EC4DA8500970D12 /* GCCompletionCallback.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F0CD4C215F1A6070032F1C0 /* PutDirectIndexMode.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F0CD4C015F1A6040032F1C0 /* PutDirectIndexMode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F10F1A31C420BF0001C07D2 /* AirCustom.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F10F1A21C420BF0001C07D2 /* AirCustom.h */; };
 		0F12DE101979D5FD0006FF4E /* ExceptionFuzz.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F12DE0E1979D5FD0006FF4E /* ExceptionFuzz.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2892,8 +2892,8 @@
 		0F0C03A92995FB710064230A /* HasOwnPropertyCache.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = HasOwnPropertyCache.cpp; sourceTree = "<group>"; };
 		0F0CAEF91EC4DA6200970D12 /* JSHeapFinalizerPrivate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHeapFinalizerPrivate.cpp; sourceTree = "<group>"; };
 		0F0CAEFA1EC4DA6200970D12 /* JSHeapFinalizerPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSHeapFinalizerPrivate.h; sourceTree = "<group>"; };
-		0F0CAEFD1EC4DA8500970D12 /* HeapFinalizerCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HeapFinalizerCallback.cpp; sourceTree = "<group>"; };
-		0F0CAEFE1EC4DA8500970D12 /* HeapFinalizerCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HeapFinalizerCallback.h; sourceTree = "<group>"; };
+		0F0CAEFD1EC4DA8500970D12 /* GCCompletionCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GCCompletionCallback.cpp; sourceTree = "<group>"; };
+		0F0CAEFE1EC4DA8500970D12 /* GCCompletionCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCCompletionCallback.h; sourceTree = "<group>"; };
 		0F0CD4C015F1A6040032F1C0 /* PutDirectIndexMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PutDirectIndexMode.h; sourceTree = "<group>"; };
 		0F0CD4C315F6B6B50032F1C0 /* SparseArrayValueMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SparseArrayValueMap.cpp; sourceTree = "<group>"; };
 		0F10F1A21C420BF0001C07D2 /* AirCustom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AirCustom.h; path = b3/air/AirCustom.h; sourceTree = "<group>"; };
@@ -7641,6 +7641,8 @@
 				2AACE63A18CA5A0300ED0191 /* GCActivityCallback.cpp */,
 				2AACE63B18CA5A0300ED0191 /* GCActivityCallback.h */,
 				BCBE2CAD14E985AA000593AD /* GCAssertions.h */,
+				0F0CAEFD1EC4DA8500970D12 /* GCCompletionCallback.cpp */,
+				0F0CAEFE1EC4DA8500970D12 /* GCCompletionCallback.h */,
 				0FD0E5E71E43D3470006AB08 /* GCConductor.cpp */,
 				0FD0E5E81E43D3470006AB08 /* GCConductor.h */,
 				0FB4767C1D99AEA7008EA6CB /* GCDeferralContext.h */,
@@ -7673,8 +7675,6 @@
 				0F070A441D543A89006E7232 /* HeapCellInlines.h */,
 				0FDCE1201FAE8587006F3901 /* HeapCellType.cpp */,
 				0FDCE11F1FAE8587006F3901 /* HeapCellType.h */,
-				0F0CAEFD1EC4DA8500970D12 /* HeapFinalizerCallback.cpp */,
-				0F0CAEFE1EC4DA8500970D12 /* HeapFinalizerCallback.h */,
 				0F32BD0E1BB34F190093A57F /* HeapHelperPool.cpp */,
 				0F32BD0F1BB34F190093A57F /* HeapHelperPool.h */,
 				C2DA778218E259990066FCB6 /* HeapInlines.h */,
@@ -11799,6 +11799,7 @@
 				2AACE63D18CA5A0300ED0191 /* GCActivityCallback.h in Headers */,
 				BCBE2CAE14E985AA000593AD /* GCAssertions.h in Headers */,
 				0F766D3015A8DCE2008F363E /* GCAwareJITStubRoutine.h in Headers */,
+				0F0CAEFF1EC4DA8800970D12 /* GCCompletionCallback.h in Headers */,
 				0FD0E5EA1E43D34D0006AB08 /* GCConductor.h in Headers */,
 				0FB4767E1D99AEA9008EA6CB /* GCDeferralContext.h in Headers */,
 				0FB4767F1D99AEAD008EA6CB /* GCDeferralContextInlines.h in Headers */,
@@ -11872,7 +11873,6 @@
 				DC3D2B0A1D34316200BA918C /* HeapCell.h in Headers */,
 				0F070A491D543A93006E7232 /* HeapCellInlines.h in Headers */,
 				0FDCE1221FAE858C006F3901 /* HeapCellType.h in Headers */,
-				0F0CAEFF1EC4DA8800970D12 /* HeapFinalizerCallback.h in Headers */,
 				0F32BD111BB34F190093A57F /* HeapHelperPool.h in Headers */,
 				C2DA778318E259990066FCB6 /* HeapInlines.h in Headers */,
 				2AD8932B17E3868F00668276 /* HeapIterationScope.h in Headers */,

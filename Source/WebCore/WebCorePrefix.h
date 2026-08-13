@@ -342,6 +342,7 @@
 #include <JavaScriptCore/FreeList.h>
 #include <JavaScriptCore/FunctionHasExecutedCache.h>
 #include <JavaScriptCore/GCAssertions.h>
+#include <JavaScriptCore/GCCompletionCallback.h>
 #include <JavaScriptCore/GCConductor.h>
 #include <JavaScriptCore/GCIncomingRefCountedSet.h>
 #include <JavaScriptCore/GCOwnedDataScope.h>
@@ -354,7 +355,6 @@
 #include <JavaScriptCore/Heap.h>
 #include <JavaScriptCore/HeapCell.h>
 #include <JavaScriptCore/HeapCellType.h>
-#include <JavaScriptCore/HeapFinalizerCallback.h>
 #include <JavaScriptCore/HeapObserver.h>
 #include <JavaScriptCore/Identifier.h>
 #include <JavaScriptCore/ImplementationVisibility.h>

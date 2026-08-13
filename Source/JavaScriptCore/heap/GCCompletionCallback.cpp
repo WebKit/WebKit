@@ -24,19 +24,19 @@
  */
 
 #include "config.h"
-#include "HeapFinalizerCallback.h"
+#include "GCCompletionCallback.h"
 
 #include "APICast.h"
 #include "IntegrityInlines.h"
 
 namespace JSC {
 
-void HeapFinalizerCallback::dump(PrintStream& out) const
+void GCCompletionCallback::dump(PrintStream& out) const
 {
     out.print(RawPointer(m_finalizer), ":", RawPointer(m_userData));
 }
 
-void HeapFinalizerCallback::run(VM& vm) const
+void GCCompletionCallback::run(VM& vm) const
 {
     m_finalizer(toRef(&vm), m_userData);
 }
