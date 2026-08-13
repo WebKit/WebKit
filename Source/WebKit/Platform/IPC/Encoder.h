@@ -95,6 +95,7 @@ public:
     std::span<const uint8_t> span() const LIFETIME_BOUND { return capacityBuffer().first(m_bufferSize); }
 
     void addAttachment(Attachment&&);
+    size_t attachmentCount() const { return m_attachments.size(); }
     Vector<Attachment> releaseAttachments();
     void reserve(size_t);
 

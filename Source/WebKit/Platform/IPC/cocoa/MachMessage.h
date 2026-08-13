@@ -25,44 +25,80 @@
 
 #pragma once
 
-#if PLATFORM(COCOA)
+#if OS(DARWIN)
 
-#include "MessageNames.h"
+#include "Encoder.h"
+#include "Timeout.h"
 #include <mach/message.h>
 #include <memory>
-#include <wtf/CheckedArithmetic.h>
+#include <wtf/Expected.h>
+#include <wtf/FastMalloc.h>
 #include <wtf/StdLibExtras.h>
-#include <wtf/text/CString.h>
+#include <wtf/UniqueRef.h>
 
 namespace IPC {
 
+class Decoder;
+
+// A mach message that the kernel returned from a send that failed after it had copied the message in,
+// i.e. from a Mach pseudo receive. Such a message owns everything it names -- a reference to the
+// destination, the port rights of its attachments and a mapping of its body -- and sending it again as
+// it is, with send(), is the only way to deliver it. Messages that are sent without failing this way
+// never need an instance: sendEncoder() builds and sends them without one.
 class MachMessage {
+    WTF_MAKE_NONCOPYABLE(MachMessage);
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(MachMessage);
 public:
-    static std::unique_ptr<MachMessage> create(MessageName, size_t);
+    static constexpr size_t inlinePortDescriptorMaxCount = 127;
+    static constexpr size_t maxAttachmentCount = 16383;
+
+    enum class SendResult : uint8_t {
+        Success, // The message was sent.
+        Timeout, // The destination had no room for the message. Sending it again as it is can send it.
+        InvalidDestinationPort, // The destination does not receive messages anymore.
+        InvalidEncoder, // The encoder holds more than a mach message can carry, so no message was built.
+        OutOfMemory, // The message could not be built or kept for a retry, so it was dropped.
+    };
+
+    struct SendEncoderResult {
+        SendResult result;
+        // The message, set when the result is Timeout: the kernel returned it, and sending it again with
+        // send() is the only way to deliver it.
+        std::unique_ptr<MachMessage> retryableMessage;
+    };
+
     ~MachMessage();
 
-    static CheckedSize NODELETE messageSize(size_t bodySize, size_t portDescriptorCount, size_t memoryDescriptorCount);
+    // Sends `encoder` to `destination` as a mach message, returns a message to retry or a failure.
+    // Always consumes the encoder.
+    static SendEncoderResult sendEncoder(UniqueRef<Encoder>&&, mach_port_t destination, Timeout = Timeout::now());
 
-    size_t size() const { return m_size; }
-    mach_msg_header_t* header() LIFETIME_BOUND { return m_messageHeader; }
+    // Sends the message as it is. Releases the message resources on success, and retains them for
+    // another retry otherwise.
+    SendResult send(Timeout = Timeout::now());
 
-    std::span<uint8_t> span() LIFETIME_BOUND { return unsafeMakeSpan(reinterpret_cast<uint8_t*>(m_messageHeader), m_size); }
+    enum class ReceiveResult : uint8_t {
+        NoMessage,
+        NoSenders,
+        Notification,
+        InvalidMessage,
+    };
 
-    void NODELETE leakDescriptors();
+    static Expected<UniqueRef<Decoder>, ReceiveResult> receiveDecoder(mach_port_t, Timeout = Timeout::now());
 
-    ReceiverName messageReceiverName() const { return receiverName(m_messageName); }
+    ReceiverName messageReceiverName() const { return receiverName(messageName()); }
     MessageName messageName() const { return m_messageName; }
 
 private:
-    MachMessage(MessageName, size_t);
+    MachMessage(MessageName);
+
+    static std::unique_ptr<MachMessage> adoptPseudoReceived(MessageName, std::span<const std::byte>);
 
     MessageName m_messageName;
-    size_t m_size;
-    bool m_shouldFreeDescriptors { true };
+    bool m_shouldDestroy { true };
     mach_msg_header_t m_messageHeader[];
 };
 
-}
+} // namespace IPC
 
-#endif // PLATFORM(COCOA)
+#endif // OS(DARWIN)

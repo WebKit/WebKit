@@ -1325,6 +1325,7 @@
 				IPC/EventTests.cpp,
 				IPC/IPCSerialization.mm,
 				IPC/IPCTestUtilities.cpp,
+				IPC/MachMessageTests.cpp,
 				IPC/MessageLogEndToEndTests.cpp,
 				IPC/MessageLogTests.cpp,
 				IPC/MessageSenderTests.cpp,
