@@ -948,6 +948,70 @@ if (NOT APPLE AND SWIFT_REQUIRED)
     list(APPEND WebKit_SWIFT_CLANG_FLAG_PAIRS "-Xcc -ivfsoverlay")
     list(APPEND WebKit_SWIFT_CLANG_FLAG_PAIRS "-Xcc ${_vfs_overlay}")
 
+    if (WIN32)
+        # The Swift SDK wraps the MSVC STL in a clang module (SDKROOT/usr/
+        # share/vcruntime.modulemap, mounted by the Swift driver over the MSVC
+        # include dir), but its `std` module names only two of the STL's
+        # __msvc_*.hpp internal headers. The rest get absorbed into whichever
+        # submodule textually includes them first, leaving their declarations
+        # invisible at use sites that imported the intended umbrella: e.g.
+        # std::views::transform (declared in __msvc_ranges_to.hpp, included by
+        # <ranges>) fails with "missing '#include <__msvc_ranges_to.hpp>';
+        # 'transform' must be declared before it is used". Generate an amended
+        # copy of the SDK's modulemap that lists every __msvc_*.hpp as an
+        # explicit submodule of std._Private (mirroring the SDK's own
+        # __msvc_string_view entry) and mount it over the MSVC include dir
+        # with a VFS overlay; a later -ivfsoverlay wins over the driver's.
+        cmake_path(CONVERT "$ENV{SDKROOT}" TO_CMAKE_PATH_LIST _swift_sdkroot)
+        cmake_path(CONVERT "$ENV{VCToolsInstallDir}" TO_CMAKE_PATH_LIST _vc_tools_dir)
+        set(_sdk_vcruntime_mm "${_swift_sdkroot}/usr/share/vcruntime.modulemap")
+        set(_mm_anchor "    explicit module __msvc_bit_utils {")
+        set(_win_mm_ok FALSE)
+        if (_swift_sdkroot AND _vc_tools_dir AND EXISTS "${_sdk_vcruntime_mm}")
+            file(READ "${_sdk_vcruntime_mm}" _mm_text)
+            string(FIND "${_mm_text}" "${_mm_anchor}" _mm_anchor_pos)
+            file(GLOB _msvc_internal_headers RELATIVE "${_vc_tools_dir}/include"
+                "${_vc_tools_dir}/include/__msvc_*.hpp")
+            list(REMOVE_ITEM _msvc_internal_headers "__msvc_all_public_headers.hpp")
+            set(_mm_additions "")
+            foreach (_h IN LISTS _msvc_internal_headers)
+                string(FIND "${_mm_text}" "header \"${_h}\"" _mm_have_header)
+                if (NOT _mm_have_header EQUAL -1)
+                    continue()
+                endif ()
+                string(REGEX REPLACE "\\.hpp$" "" _mod_name "${_h}")
+                string(APPEND _mm_additions "    explicit module ${_mod_name} {\n      header \"${_h}\"\n      export *\n    }\n\n")
+            endforeach ()
+            if (NOT _mm_anchor_pos EQUAL -1)
+                set(_win_mm_dir "${CMAKE_BINARY_DIR}/windows-modulemaps")
+                file(MAKE_DIRECTORY "${_win_mm_dir}")
+                string(REPLACE "${_mm_anchor}" "${_mm_additions}${_mm_anchor}" _mm_text "${_mm_text}")
+                file(WRITE "${_win_mm_dir}/vcruntime.modulemap" "${_mm_text}")
+                file(WRITE "${_win_mm_dir}/vfs-overlay.yaml"
+                    "{\n"
+                    "  'version': 0,\n"
+                    "  'case-sensitive': 'false',\n"
+                    "  'roots': [\n"
+                    "    { 'name': '${_vc_tools_dir}/include', 'type': 'directory',\n"
+                    "      'contents': [\n"
+                    "        { 'name': 'module.modulemap', 'type': 'file',\n"
+                    "          'external-contents': '${_win_mm_dir}/vcruntime.modulemap' }\n"
+                    "      ]\n"
+                    "    }\n"
+                    "  ]\n"
+                    "}\n")
+                # One list entry: target_compile_options de-duplicates, so a
+                # separate "-Xcc -ivfsoverlay" entry would collapse into the
+                # Linux overlay's identical one and orphan the yaml path.
+                list(APPEND WebKit_SWIFT_CLANG_FLAG_PAIRS "-Xcc -ivfsoverlay -Xcc ${_win_mm_dir}/vfs-overlay.yaml")
+                set(_win_mm_ok TRUE)
+            endif ()
+        endif ()
+        if (NOT _win_mm_ok)
+            message(WARNING "Could not generate the amended MSVC STL modulemap for the Swift clang importer (SDKROOT='$ENV{SDKROOT}', VCToolsInstallDir='$ENV{VCToolsInstallDir}'); Swift C++ interop will likely fail to import WTF headers.")
+        endif ()
+    endif ()
+
     foreach (_pair IN LISTS WebKit_SWIFT_CLANG_FLAG_PAIRS)
         target_compile_options(WebKit PRIVATE "$<$<COMPILE_LANGUAGE:Swift>:SHELL:${_pair}>")
     endforeach ()

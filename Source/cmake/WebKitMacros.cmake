@@ -1134,6 +1134,22 @@ function(_webkit_generate_platform_swift_args _target _resp_path)
     list(APPEND _clang_cmd ${_cxx_defs})
     # -fsanitize=* drives ASAN_ENABLED etc; keep this preprocess in sync with C++.
     list(APPEND _clang_cmd ${ENABLED_COMPILER_SANITIZERS})
+    set(_stl_feature_macros_arg "")
+    if (WIN32 AND COMPILER_IS_CLANG_CL)
+        # The Swift SDK's vcruntime.modulemap wraps the MSVC STL in a clang
+        # module whose yvals_core.h lives in an `explicit` submodule; the
+        # __cpp_lib_* feature-test macros it defines never become visible to
+        # headers that reach <version> through a module import, so WTF/simdutf
+        # take pre-C++20 paths while __cplusplus-driven guards take C++23
+        # paths and the mix fails to compile. Seed the macros through the
+        # response file instead (same idea as the libstdc++
+        # __glibcxx_want_coroutine workaround in Source/WebKit/CMakeLists.txt;
+        # yvals_core.h's own identical #defines are then permitted
+        # redefinitions). -include version puts them in the -dM output;
+        # --stl-feature-macros makes the script pass them through.
+        list(APPEND _clang_cmd -include version)
+        set(_stl_feature_macros_arg --stl-feature-macros)
+    endif ()
     list(APPEND _clang_cmd "${_empty_input}")
 
     set(_script "${CMAKE_SOURCE_DIR}/Source/WTF/Scripts/generate-platform-args")
@@ -1144,6 +1160,7 @@ function(_webkit_generate_platform_swift_args _target _resp_path)
             --cmake
             --output "${_resp_path}"
             --cmakeconfig "${CMAKE_BINARY_DIR}/cmakeconfig.h"
+            ${_stl_feature_macros_arg}
             --
             ${_clang_cmd}
         DEPFILE "${_depfile}"

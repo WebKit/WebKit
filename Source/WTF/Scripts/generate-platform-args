@@ -28,6 +28,7 @@ import sys
 
 DEFINE_RE = re.compile(r'^#define (\w+) (.+)', re.MULTILINE)
 PLATFORM_PREFIX_RE = re.compile(r'^(HAVE_|USE_|ENABLE_|WTF_PLATFORM|ASSERT_)')
+STL_FEATURE_MACRO_RE = re.compile(r'^#define (__cpp_lib_\w+) (.+)', re.MULTILINE)
 
 
 def platform_defines_from_dM(stdout):
@@ -150,7 +151,8 @@ def run_clang_command(command):
 
 
 def run_cmake_mode(args):
-    swift_defines = platform_defines_from_dM(run_clang_command(args.command))
+    dM_output = run_clang_command(args.command)
+    swift_defines = platform_defines_from_dM(dM_output)
 
     cmake_seeds = []
     with open(args.cmakeconfig) as f:
@@ -165,6 +167,17 @@ def run_cmake_mode(args):
     for name, value in cmake_seeds:
         out_lines.append('-Xcc')
         out_lines.append(f'-D{name}={value}')
+    if args.stl_feature_macros:
+        # Windows: pre-define the MSVC STL's __cpp_lib_* feature-test macros
+        # for the clang importer. The Swift SDK's vcruntime.modulemap keeps
+        # yvals_core.h's macros private to an explicit submodule, so headers
+        # that reach <version> via a module import never see them otherwise.
+        # cmake adds `-include version` to the preprocess so they appear in
+        # the -dM output. yvals_core.h's own #defines match token-for-token,
+        # which the preprocessor allows.
+        for m in re.finditer(STL_FEATURE_MACRO_RE, dM_output):
+            out_lines.append('-Xcc')
+            out_lines.append(f'-D{m.group(1)}={m.group(2)}')
     write_if_changed(args.output, '\n'.join(out_lines) + '\n')
 
 
@@ -202,6 +215,9 @@ def main():
                          '--print-feature-defines names).')
     ap.add_argument('--cmakeconfig',
                     help='cmake mode: path to cmakeconfig.h to seed the clang importer.')
+    ap.add_argument('--stl-feature-macros', action='store_true',
+                    help='cmake mode: also pass through __cpp_lib_* feature-test '
+                         'macros from the preprocess as -Xcc -D seeds (Windows).')
     ap.add_argument('command', nargs=argparse.REMAINDER,
                     help='cmake mode: clang preprocess command (preceded by --).')
     args = ap.parse_args()

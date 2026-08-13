@@ -21,10 +21,21 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 // THE POSSIBILITY OF SUCH DAMAGE.
 
+#if os(Windows)
+// The umbrella Foundation module pulls in FoundationInternationalization and
+// with it the _FoundationICU clang module, whose ICU enum definitions clash
+// with the ICU headers the wtf module uses. FoundationEssentials is the
+// ICU-free subset and provides everything WebKit's Swift uses.
+import FoundationEssentials
+
+typealias String = Swift.String
+typealias URL = FoundationEssentials.URL
+#else
 import Foundation
 
 typealias String = Swift.String
 typealias URL = Foundation.URL
+#endif
 
 struct UncheckedSendableKeyPathBox<Root, Value>: @unchecked Sendable {
     let keyPath: KeyPath<Root, Value>
