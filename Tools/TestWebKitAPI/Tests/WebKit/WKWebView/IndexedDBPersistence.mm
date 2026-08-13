@@ -28,6 +28,8 @@
 #import "Helpers/DeprecatedGlobalValues.h"
 #import "Helpers/PlatformUtilities.h"
 #import "Helpers/Test.h"
+#import "Helpers/cocoa/HTTPServer.h"
+#import "Helpers/cocoa/TestNavigationDelegate.h"
 #import "TestURLSchemeHandler.h"
 #import "Helpers/cocoa/TestWKWebView.h"
 #import <WebCore/SQLiteFileSystem.h>
@@ -620,6 +622,43 @@ TEST(IndexedDB, IndexedDBGetDatabases)
     EXPECT_TRUE([defaultFileManager fileExistsAtPath:appleDirectoryURL.get().path]);
     EXPECT_FALSE([defaultFileManager fileExistsAtPath:appleWebkitDirectoryURL.get().path]);
     EXPECT_FALSE([defaultFileManager fileExistsAtPath:webkitDirectoryURL.get().path]);
+}
+
+TEST(IndexedDB, IndexedDBGetDatabasesFromCrossOriginIframe)
+{
+    readyToContinue = false;
+    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[NSSet setWithObjects:WKWebsiteDataTypeIndexedDBDatabases, nil] modifiedSince:[NSDate distantPast] completionHandler:^() {
+        readyToContinue = true;
+    }];
+    TestWebKitAPI::Util::run(&readyToContinue);
+
+    TestWebKitAPI::HTTPServer server({
+        { "/main"_s, { "<script>"
+            "window.addEventListener('message', function(event) {"
+            "    window.webkit.messageHandlers.testHandler.postMessage(event.data);"
+            "});"
+            "</script>"
+            "<iframe src='https://webkit.org/iframe'></iframe>"_s } },
+        { "/iframe"_s, { "<script>"
+            "var request = indexedDB.open('CrossOriginIframeDB');"
+            "request.onsuccess = function(event) {"
+            "    indexedDB.databases().then(function(databases) {"
+            "        parent.postMessage('databases: ' + JSON.stringify(databases), '*');"
+            "    });"
+            "};"
+            "</script>"_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    RetainPtr handler = adoptNS([[IndexedDBMessageHandler alloc] init]);
+    [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"testHandler"];
+    RetainPtr navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [navigationDelegate allowAnyTLSCertificate];
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    webView.get().navigationDelegate = navigationDelegate.get();
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://apple.com/main"]]];
+    EXPECT_WK_STREQ(@"databases: [{\"name\":\"CrossOriginIframeDB\",\"version\":1}]", [getNextMessage() body]);
 }
 
 static NSString *openFileHTMLString = @"<input style='width: 100vw; height: 100vh;' id='file' type='file'> \
