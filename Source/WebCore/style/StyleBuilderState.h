@@ -305,6 +305,10 @@ private:
     bool m_fontDirty { false };
     Vector<RegisteredSubstitutionAttribute> m_registeredSubstitutionAttributes;
 
+    // <random-key> indexes for the random() functions in the value being resolved, in source order.
+    // Substitution assigns them alongside random-item(), which is gone by the time the value is parsed.
+    Vector<unsigned> m_randomFunctionIndexes;
+
     bool m_isBuildingKeyframeStyle { false };
     bool m_hasRevertRuleOrLayerInKeyframeStyle { false };
     bool m_isResolvingContainerQueries { false };

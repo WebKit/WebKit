@@ -119,7 +119,9 @@ private:
     Vector<WTF::String> m_intermediateTokenStrings;
     Vector<RefPtr<const CustomProperty>> m_intermediateCustomProperties;
     unsigned m_urlContextDepth { 0 };
-    unsigned m_randomItemAutoIndex { 0 };
+    // Indexes run in one source-order sequence across random() and random-item(). The list of those
+    // assigned to random() lives on BuilderState, which outlives this resolver in the custom property path.
+    unsigned m_randomFunctionIndex { 0 };
     bool m_isAttrTainted { false };
     bool m_hasTaintedURL { false };
 };

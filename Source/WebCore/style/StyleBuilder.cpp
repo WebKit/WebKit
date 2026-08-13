@@ -814,7 +814,7 @@ std::optional<Builder::CustomPropertyOrKeyword> Builder::resolveCustomPropertyVa
         }
     }
 
-    return CSSPropertyParser::parseTypedCustomPropertyValue(name, registered->syntax, resolvedData->tokens(), m_state, resolvedData->context(), isAttrTainted);
+    return CSSPropertyParser::parseTypedCustomPropertyValue(name, registered->syntax, resolvedData->tokens(), m_state, resolvedData->context(), isAttrTainted, m_state->m_randomFunctionIndexes.span());
 }
 
 void Builder::applyPageSizeDescriptor(CSSValue& value)

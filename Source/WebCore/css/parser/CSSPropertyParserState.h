@@ -28,6 +28,7 @@
 #include "CSSPropertyNames.h"
 #include "CSSValuePool.h"
 #include "StyleRuleType.h"
+#include <span>
 #include <wtf/text/AtomString.h>
 
 namespace WebCore {
@@ -48,6 +49,11 @@ struct PropertyParserState {
 
     // Count of CSS random() functions seen so far for the current property.
     unsigned cssRandomFunctionCount { 0 };
+
+    // <random-key> indexes reserved for the random() functions in this value, in source order, when
+    // substitution has already assigned them alongside random-item(). Empty when there was no
+    // substitution, in which case cssRandomFunctionCount is the index.
+    std::span<const unsigned> cssRandomFunctionIndexes { };
 
     // Set where there is no element to key a random draw to: a @container style() query value or an @property initial value.
     // FIXME: Should cover every function needing an element context, like the tree counting ones, not just random(). https://github.com/w3c/csswg-drafts/issues/10982

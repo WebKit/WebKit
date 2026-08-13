@@ -1083,7 +1083,7 @@ std::optional<double> SubstitutionResolver::randomItemBaseValue(Vector<CSSParser
         .autoElementScoped = CSS::Keyword::ElementScoped { }
     };
     auto sharing = CSSPropertyParserHelpers::consumeUnresolvedRandomKey(randomKeyRange, parserState, keySource, [&] {
-        return m_randomItemAutoIndex++;
+        return m_randomFunctionIndex++;
     });
     if (!sharing || !randomKeyRange.atEnd())
         return { };
@@ -1258,6 +1258,9 @@ std::optional<Vector<CSSParserToken>> SubstitutionResolver::substituteTokenRange
 
         updateURLContext(token);
 
+        if (token.type() == FunctionToken && token.functionId() == CSSValueRandom)
+            m_styleBuilder.state().m_randomFunctionIndexes.append(m_randomFunctionIndex++);
+
         tokens.append(range.consume());
     }
     if (!success)
@@ -1312,7 +1315,8 @@ RefPtr<CSSVariableData> SubstitutionResolver::substitute(const CSSSubstitutionVa
 {
     m_isAttrTainted = false;
     m_hasTaintedURL = false;
-    m_randomItemAutoIndex = 0;
+    m_randomFunctionIndex = 0;
+    m_styleBuilder.state().m_randomFunctionIndexes.clear();
     m_substitutionValue = &value;
 
     if (auto data = trySimpleSubstitution(value)) {
@@ -1346,7 +1350,7 @@ RefPtr<CSSValue> SubstitutionResolver::substituteAndParse(const CSSSubstitutionV
         return nullptr;
 
     if (!arePointingToEqualData(substitutionValue.m_cache.dependencyData, data) || substitutionValue.m_cache.propertyID != propertyID) {
-        substitutionValue.m_cache.value = CSSPropertyParser::parseStylePropertyLonghand(propertyID, data->tokens(), substitutionValue.context());
+        substitutionValue.m_cache.value = CSSPropertyParser::parseStylePropertyLonghand(propertyID, data->tokens(), substitutionValue.context(), m_styleBuilder.state().m_randomFunctionIndexes.span());
         substitutionValue.m_cache.propertyID = propertyID;
     }
     substitutionValue.m_cache.dependencyData = WTF::move(data);
@@ -1372,7 +1376,7 @@ RefPtr<CSSValue> SubstitutionResolver::substituteAndParseShorthand(const CSSShor
 
     if (!arePointingToEqualData(substitutionValue.m_cache.dependencyData, data)) {
         ParsedPropertyVector parsedProperties;
-        if (!CSSPropertyParser::parseValue(substitution.m_shorthandPropertyId, IsImportant::No, data->tokens(), data->context(), parsedProperties, StyleRuleType::Style))
+        if (!CSSPropertyParser::parseValue(substitution.m_shorthandPropertyId, IsImportant::No, data->tokens(), data->context(), parsedProperties, StyleRuleType::Style, { }, m_styleBuilder.state().m_randomFunctionIndexes.span()))
             substitution.m_cachedPropertyValues = { };
         else
             substitution.m_cachedPropertyValues = parsedProperties;

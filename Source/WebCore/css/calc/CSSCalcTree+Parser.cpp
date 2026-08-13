@@ -678,9 +678,19 @@ static std::optional<TypedChild> consumeRandom(CSSParserTokenRange& tokens, int 
         .autoElementScoped = CSS::Keyword::ElementScoped { }
     };
 
+    // Substitution assigns indexes when a value mixes random() with random-item(), since random-item()
+    // is resolved and gone before this parse. Replay them rather than counting from zero.
+    auto& parserState = state.propertyParserState;
+    auto indexForThisFunction = [&] {
+        auto reserved = parserState.cssRandomFunctionIndexes;
+        if (parserState.cssRandomFunctionCount < reserved.size())
+            return reserved[parserState.cssRandomFunctionCount];
+        return parserState.cssRandomFunctionCount;
+    };
+
     std::optional<Random::Sharing> sharing;
     if (auto optionalSharing = CSSPropertyParserHelpers::consumeUnresolvedRandomKey(tokens, state.propertyParserState, keySource, [&] {
-        return state.propertyParserState.cssRandomFunctionCount;
+        return indexForThisFunction();
     })) {
         if (!CSSPropertyParserHelpers::consumeCommaIncludingWhitespace(tokens)) {
             LOG_WITH_STREAM(Calc, stream << "Failed '" << nameLiteralForSerialization(Op::id) << "' function - missing comma after <random-key>");
@@ -689,7 +699,7 @@ static std::optional<TypedChild> consumeRandom(CSSParserTokenRange& tokens, int 
 
         sharing = WTF::move(optionalSharing);
     } else
-        sharing = CSSPropertyParserHelpers::randomSharingAuto(keySource, state.propertyParserState.cssRandomFunctionCount);
+        sharing = CSSPropertyParserHelpers::randomSharingAuto(keySource, indexForThisFunction());
 
     // Increment the random function count early, but after processing the the sharing production to
     // ensure that any nested random() functions in the <calc-sum> productions have an incremented value.

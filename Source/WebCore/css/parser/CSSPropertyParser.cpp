@@ -94,7 +94,7 @@ static std::optional<Variant<Ref<const Style::CustomProperty>, CSSWideKeyword>> 
 // MARK: - Root consumers
 
 // Style properties.
-static bool consumeStyleProperty(CSSParserTokenRange&, const CSSParserContext&, CSSPropertyID, IsImportant, StyleRuleType, CSS::PropertyParserResult&, const CSSNamespacePrefixMap& = { });
+static bool consumeStyleProperty(CSSParserTokenRange&, const CSSParserContext&, CSSPropertyID, IsImportant, StyleRuleType, CSS::PropertyParserResult&, const CSSNamespacePrefixMap& = { }, std::span<const unsigned> randomFunctionIndexes = { });
 
 // @font-face descriptors.
 static bool consumeFontFaceDescriptor(CSSParserTokenRange&, const CSSParserContext&, CSSPropertyID, CSS::PropertyParserResult&);
@@ -221,7 +221,7 @@ static RefPtr<CSSValue> consumeCSSWideKeywordValue(CSSParserTokenRange& range)
 
 using namespace CSSPropertyParserHelpers;
 
-bool CSSPropertyParser::parseValue(CSSPropertyID property, IsImportant important, CSSParserTokenRange range, const CSSParserContext& context, ParsedPropertyVector& parsedProperties, StyleRuleType ruleType, const CSSNamespacePrefixMap& namespaceMap)
+bool CSSPropertyParser::parseValue(CSSPropertyID property, IsImportant important, CSSParserTokenRange range, const CSSParserContext& context, ParsedPropertyVector& parsedProperties, StyleRuleType ruleType, const CSSNamespacePrefixMap& namespaceMap, std::span<const unsigned> randomFunctionIndexes)
 {
     int initialParsedPropertiesSize = parsedProperties.size();
 
@@ -259,7 +259,7 @@ bool CSSPropertyParser::parseValue(CSSPropertyID property, IsImportant important
         parseSuccess = consumeFunctionDescriptor(range, context, property, result);
         break;
     default:
-        parseSuccess = consumeStyleProperty(range, context, property, important, ruleType, result, namespaceMap);
+        parseSuccess = consumeStyleProperty(range, context, property, important, ruleType, result, namespaceMap, randomFunctionIndexes);
         break;
     }
 
@@ -300,7 +300,7 @@ RefPtr<CSSValue> CSSPropertyParser::parseStylePropertyLonghand(CSSPropertyID pro
     return value;
 }
 
-RefPtr<CSSValue> CSSPropertyParser::parseStylePropertyLonghand(CSSPropertyID property, CSSParserTokenRange range, const CSSParserContext& context)
+RefPtr<CSSValue> CSSPropertyParser::parseStylePropertyLonghand(CSSPropertyID property, CSSParserTokenRange range, const CSSParserContext& context, std::span<const unsigned> randomFunctionIndexes)
 {
     ASSERT(!WebCore::isShorthand(property));
 
@@ -314,6 +314,7 @@ RefPtr<CSSValue> CSSPropertyParser::parseStylePropertyLonghand(CSSPropertyID pro
         .currentRule = StyleRuleType::Style,
         .currentProperty = property,
         .important = IsImportant::No,
+        .cssRandomFunctionIndexes = randomFunctionIndexes,
     };
 
     RefPtr value = CSSPropertyParsing::parseStylePropertyLonghand(range, property, state);
@@ -353,7 +354,7 @@ RefPtr<CSSValue> CSSPropertyParser::parseCounterStyleDescriptor(CSSPropertyID pr
 
 // MARK: - Custom properties
 
-std::optional<Variant<Ref<const Style::CustomProperty>, CSSWideKeyword>> CSSPropertyParser::parseTypedCustomPropertyValue(const AtomString& name, const CSSCustomPropertySyntax& syntax, CSSParserTokenRange range, Style::BuilderState& builderState, const CSSParserContext& context, Style::IsAttrTainted isAttrTainted)
+std::optional<Variant<Ref<const Style::CustomProperty>, CSSWideKeyword>> CSSPropertyParser::parseTypedCustomPropertyValue(const AtomString& name, const CSSCustomPropertySyntax& syntax, CSSParserTokenRange range, Style::BuilderState& builderState, const CSSParserContext& context, Style::IsAttrTainted isAttrTainted, std::span<const unsigned> randomFunctionIndexes)
 {
     auto state = CSS::PropertyParserState {
         .context = context,
@@ -361,6 +362,7 @@ std::optional<Variant<Ref<const Style::CustomProperty>, CSSWideKeyword>> CSSProp
         .currentProperty = CSSPropertyCustom,
         .currentCustomPropertyName = name,
         .important = IsImportant::No,
+        .cssRandomFunctionIndexes = randomFunctionIndexes,
         .randomFunctionsDisallowed = builderState.isResolvingContainerQueries(),
     };
 
@@ -608,7 +610,7 @@ std::optional<Variant<Ref<const Style::CustomProperty>, CSSWideKeyword>> consume
 
 // MARK: - Root consumers
 
-bool consumeStyleProperty(CSSParserTokenRange& range, const CSSParserContext& context, CSSPropertyID property, IsImportant important, StyleRuleType ruleType, CSS::PropertyParserResult& result, const CSSNamespacePrefixMap& namespaceMap)
+bool consumeStyleProperty(CSSParserTokenRange& range, const CSSParserContext& context, CSSPropertyID property, IsImportant important, StyleRuleType ruleType, CSS::PropertyParserResult& result, const CSSNamespacePrefixMap& namespaceMap, std::span<const unsigned> randomFunctionIndexes)
 {
     if (CSSProperty::isDescriptorOnly(property))
         return false;
@@ -618,6 +620,7 @@ bool consumeStyleProperty(CSSParserTokenRange& range, const CSSParserContext& co
         .currentRule = ruleType,
         .currentProperty = property,
         .important = important,
+        .cssRandomFunctionIndexes = randomFunctionIndexes,
     };
 
     if (WebCore::isShorthand(property)) {

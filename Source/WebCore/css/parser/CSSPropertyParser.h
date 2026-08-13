@@ -54,17 +54,17 @@ enum class IsAttrTainted : bool;
 class CSSPropertyParser {
 public:
     // Parses any CSS property or descriptor. If successful, the result will be appended to the `result` Vector and the function will return true, otherwise, the function will return false and the `result` Vector will be unmodified.
-    static bool parseValue(CSSPropertyID, IsImportant, CSSParserTokenRange, const CSSParserContext&, Vector<CSSProperty, 256>& result, StyleRuleType, const CSSNamespacePrefixMap& = { });
+    static bool parseValue(CSSPropertyID, IsImportant, CSSParserTokenRange, const CSSParserContext&, Vector<CSSProperty, 256>& result, StyleRuleType, const CSSNamespacePrefixMap& = { }, std::span<const unsigned> randomFunctionIndexes = { });
 
     // Parses a longhand style property.
     static RefPtr<CSSValue> parseStylePropertyLonghand(CSSPropertyID, const String&, const CSSParserContext&);
-    static RefPtr<CSSValue> parseStylePropertyLonghand(CSSPropertyID, CSSParserTokenRange, const CSSParserContext&);
+    static RefPtr<CSSValue> parseStylePropertyLonghand(CSSPropertyID, CSSParserTokenRange, const CSSParserContext&, std::span<const unsigned> randomFunctionIndexes = { });
 
     // Parses a @counter-style descriptor.
     static RefPtr<CSSValue> parseCounterStyleDescriptor(CSSPropertyID, const String&, const CSSParserContext&);
 
     static RefPtr<const Style::CustomProperty> parseTypedCustomPropertyInitialValue(const AtomString&, const CSSCustomPropertySyntax&, CSSParserTokenRange, Style::BuilderState&, const CSSParserContext&);
-    static std::optional<Variant<Ref<const Style::CustomProperty>, CSSWideKeyword>> parseTypedCustomPropertyValue(const AtomString& name, const CSSCustomPropertySyntax&, CSSParserTokenRange, Style::BuilderState&, const CSSParserContext&, Style::IsAttrTainted);
+    static std::optional<Variant<Ref<const Style::CustomProperty>, CSSWideKeyword>> parseTypedCustomPropertyValue(const AtomString& name, const CSSCustomPropertySyntax&, CSSParserTokenRange, Style::BuilderState&, const CSSParserContext&, Style::IsAttrTainted, std::span<const unsigned> randomFunctionIndexes = { });
 
     static ComputedStyleDependencies collectParsedCustomPropertyValueDependencies(const CSSCustomPropertySyntax&, CSSParserTokenRange, const CSSParserContext&);
     static bool isValidCustomPropertyValueForSyntax(const CSSCustomPropertySyntax&, CSSParserTokenRange, const CSSParserContext&);
