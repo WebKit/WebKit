@@ -25,9 +25,9 @@ import json
 import time
 
 from cassandra.cqlengine import columns
+from cassandra.cqlengine.models import Model
 from datetime import datetime
 
-from resultsdbpy.model.commit_context import CommitContext
 from resultsdbpy.model.configuration_context import ClusteredByConfiguration
 from resultsdbpy.model.upload_context import UploadCallbackContext
 
@@ -61,12 +61,19 @@ class EWSContext(UploadCallbackContext):
 
     class EWSFlakyTestsByStartTime(EWSResultsBase):
         __table_name__ = 'ews_flaky_tests_by_start_time'
-        flaky_type = columns.Text(required=True)  # WithChangeStep, WithoutChangeStep, WithChangeInterStep, InterBuild
+        flaky_type = columns.Text(required=True)  # WithinStepDirtyTree, BetweenStepsDirtyTree, WithinStepCleanTree
 
         def unpack(self):
             results = super().unpack()
             results['flaky_type'] = self.flaky_type
             return results
+
+    class EWSTestNameBySuite(Model):
+        """Which tests each table holds, across every configuration and branch."""
+        __table_name__ = 'ews_test_names_by_suite'
+        suite = columns.Text(partition_key=True, required=True)
+        flaky = columns.Boolean(partition_key=True, required=True)
+        test = columns.Text(primary_key=True, required=True)
 
     def __init__(self, *args, **kwargs):
         super(EWSContext, self).__init__('ews-results', *args, **kwargs)
@@ -74,51 +81,55 @@ class EWSContext(UploadCallbackContext):
         with self:
             self.cassandra.create_table(self.EWSFailedTestsByStartTime)
             self.cassandra.create_table(self.EWSFlakyTestsByStartTime)
+            self.cassandra.create_table(self.EWSTestNameBySuite)
 
-    def register(self, configuration, commits, suite, test_results, timestamp=None, flaky_type=None, details=None):
-        try:
-            if not isinstance(suite, str):
-                raise TypeError(f'Expected type {str}, got {type(suite)}')
+    def record_results(self, configuration, commits, suite, test_results, timestamp=None, flaky_type=None, details=None):
+        stored = set()
+        uuid = self.commit_context.uuid_for_commits(commits)
+        timestamp = timestamp or time.time()
+        if isinstance(timestamp, datetime):
+            timestamp = calendar.timegm(timestamp.timetuple())
 
-            uuid = self.commit_context.uuid_for_commits(commits)
-            timestamp = timestamp or time.time()
-            if isinstance(timestamp, datetime):
-                timestamp = calendar.timegm(timestamp.timetuple())
+        # Not relative to commit timestamp since an old commit may cause the short FLAKY TTL to expire immediately.
+        ttl = self.FLAKY_TTL_SECONDS if flaky_type is not None else self.ttl_seconds
+        ttl = int(ttl) if ttl else None
 
-            table = self.EWSFlakyTestsByStartTime if flaky_type is not None else self.EWSFailedTestsByStartTime
-            ttl = self.FLAKY_TTL_SECONDS if flaky_type is not None else self.ttl_seconds
-            extra = dict(flaky_type=flaky_type) if flaky_type is not None else {}
+        extra = dict(flaky_type=flaky_type) if flaky_type is not None else {}
+        table = self.EWSFlakyTestsByStartTime if flaky_type is not None else self.EWSFailedTestsByStartTime
 
-            with self, self.cassandra.batch_query_context():
-                for branch in self.commit_context.branch_keys_for_commits(commits):
-                    for test, result in (test_results.get('results') or {}).items():
-                        self.configuration_context.insert_row_with_configuration(
-                            table.__table_name__, configuration=configuration, suite=suite, branch=branch,
-                            test=test, result=json.dumps(result),
-                            uuid=uuid, start_time=timestamp, ttl=ttl,
-                            details=json.dumps(details) if details else None,
-                            **extra,
-                        )
-                    self.configuration_context.register_configuration(configuration, branch=branch, timestamp=timestamp)
+        with self, self.cassandra.batch_query_context():
+            for branch in self.commit_context.branch_keys_for_commits(commits):
+                for test, result in (test_results.get('results') or {}).items():
+                    self.configuration_context.insert_row_with_configuration(
+                        table.__table_name__, configuration=configuration, suite=suite, branch=branch,
+                        test=test, result=json.dumps(result),
+                        uuid=uuid, start_time=timestamp, ttl=ttl,
+                        details=json.dumps(details) if details else None,
+                        **extra,
+                    )
+                    stored.add(test)
+                self.configuration_context.register_configuration(configuration, branch=branch, timestamp=timestamp)
 
-        except Exception as e:
-            return self.partial_status(e)
-        return self.partial_status()
+            for test in stored:
+                self.cassandra.insert_row(
+                    self.EWSTestNameBySuite.__table_name__,
+                    suite=suite, flaky=flaky_type is not None, test=test, ttl=ttl,
+                )
+        return sorted(stored)
 
-    def find_for_test(self, configurations, suite, test, flaky=True, branch=None, recent=True, begin=None, end=None, begin_query_time=None, end_query_time=None, limit=100):
-        if not isinstance(suite, str):
-            raise TypeError(f'Expected type {str} for suite, got {type(suite)}')
-        if not isinstance(test, str):
-            raise TypeError(f'Expected type {str} for test, got {type(test)}')
+    def names(self, suite, flaky, test=None, limit=100):
+        """Test names recorded for a suite, optionally restricted to a name prefix."""
+        with self:
+            args = {'suite': suite, 'flaky': flaky, 'limit': limit}
+            if test:
+                args.update(test__gte=test, test__lte=test + '~')
+            return [row.test for row in self.cassandra.select_from_table(self.EWSTestNameBySuite.__table_name__, **args)]
 
+    def find_for_test(self, configurations, suite, test, flaky, branch=None, recent=True, begin_query_time=None, end_query_time=None, limit=100):
         table = self.EWSFlakyTestsByStartTime if flaky else self.EWSFailedTestsByStartTime
 
         def get_time(time):
-            if isinstance(time, datetime):
-                return time
-            elif time:
-                return datetime.utcfromtimestamp(int(time))
-            return None
+            return time if isinstance(time, datetime) else datetime.utcfromtimestamp(int(time)) if time else None
 
         with self:
             return {
@@ -126,10 +137,7 @@ class EWSContext(UploadCallbackContext):
                 for config, rows in self.configuration_context.select_from_table_with_configurations(
                     table.__table_name__, configurations=configurations,
                     suite=suite, branch=branch or self.commit_context.DEFAULT_BRANCH_KEY, test=test,
-                    recent=recent,
-                    uuid__gte=CommitContext.convert_to_uuid(begin),
-                    uuid__lte=CommitContext.convert_to_uuid(end, CommitContext.timestamp_to_uuid()),
                     start_time__gte=get_time(begin_query_time), start_time__lte=get_time(end_query_time),
-                    limit=limit,
+                    recent=recent, limit=limit,
                 ).items()
             }

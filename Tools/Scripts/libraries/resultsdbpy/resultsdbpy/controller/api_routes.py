@@ -25,6 +25,7 @@ import traceback
 
 from flask import abort, jsonify
 from resultsdbpy.controller.archive_controller import ArchiveController
+from resultsdbpy.controller.ews_controller import EWSController
 from resultsdbpy.controller.commit_controller import CommitController
 from resultsdbpy.controller.ci_controller import CIController
 from resultsdbpy.controller.failure_controller import FailureController
@@ -50,6 +51,7 @@ class APIRoutes(AuthedBlueprint):
 
         self.ci_controller = CIController(ci_context=model.ci_context, upload_context=model.upload_context)
         self.archive_controller = ArchiveController(commit_controller=self.commit_controller, archive_context=model.archive_context, upload_context=model.upload_context)
+        self.ews_controller = EWSController(commit_controller=self.commit_controller, ews_context=model.ews_context)
 
         self.bug_tracker_configs = [WebKitBugzilla()] if not len(bug_tracker_configs) else bug_tracker_configs
         self.bug_tracker_controller = BugTrackerController(bug_tracker_configs=self.bug_tracker_configs, commit_context=model.commit_context)
@@ -70,6 +72,7 @@ class APIRoutes(AuthedBlueprint):
 
         self.add_url_rule('/upload', 'upload', self.upload_controller.upload, methods=('GET', 'POST'))
         self.add_url_rule('/upload/archive', 'upload_archive', self.archive_controller.endpoint, methods=('GET', 'POST'))
+        self.add_url_rule('/upload/ews', 'upload_ews', self.ews_controller.upload, methods=('POST',))
         self.add_url_rule('/upload/process', 'process', self.upload_controller.process, methods=('POST',))
         self.add_url_rule('/suites', 'suites', self.upload_controller.suites, methods=('GET',))
         self.add_url_rule('/<path:suite>/tests', 'tests-in-suite', self.test_controller.list_tests, methods=('GET',))
@@ -77,6 +80,8 @@ class APIRoutes(AuthedBlueprint):
         self.add_url_rule('/results/<path:suite>', 'suite-results', self.suite_controller.find_run_results, methods=('GET',))
         self.add_url_rule('/results/<path:suite>/<path:test>', 'test-results', self.test_controller.find_test_result, methods=('GET',))
         self.add_url_rule('/results-summary/<path:suite>/<path:test>', 'test-aggregate-results', self.test_controller.summarize_test_results, methods=('GET',))
+        self.add_url_rule('/results-ews', 'results-ews', self.ews_controller.find, methods=('GET',))
+        self.add_url_rule('/results-ews/tests', 'tests-ews', self.ews_controller.list_tests, methods=('GET',))
 
         self.add_url_rule('/failures/<path:suite>', 'suite-failures', self.failure_controller.failures, methods=('GET',))
 

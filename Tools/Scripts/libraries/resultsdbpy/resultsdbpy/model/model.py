@@ -106,6 +106,7 @@ class Model(object):
         self.ews_context = EWSContext(
             configuration_context=self.configuration_context,
             commit_context=self.commit_context,
+            ttl_seconds=self.default_ttl_seconds,
         )
 
     def healthy(self, writable=True):

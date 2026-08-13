@@ -64,6 +64,37 @@ class EWSContextTest(WaitForDockerTestCase):
         )
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
+    def test_ttl_is_an_integer(self, redis=StrictRedis, cassandra=CassandraContext):
+        """cqlengine formats the TTL into the CQL verbatim, so a float reaches Cassandra as an InvalidRequest."""
+        self.init_database(redis=redis, cassandra=cassandra)
+
+        ttls = []
+        context = self.model.ews_context
+        originals = [
+            (context.cassandra, 'insert_row'),
+            (context.configuration_context, 'insert_row_with_configuration'),
+        ]
+
+        def record(original):
+            def wrapper(*args, ttl=None, **kwargs):
+                ttls.append(ttl)
+                return original(*args, ttl=ttl, **kwargs)
+            return wrapper
+
+        try:
+            for owner, name in originals:
+                setattr(owner, name, record(getattr(owner, name)))
+            MockModelFactory.add_mock_ews_results(test_results=self.DEFAULT_TEST_RESULTS, model=self.model)
+        finally:
+            for owner, name in originals:
+                delattr(owner, name)
+
+        self.assertTrue(ttls)
+        for ttl in ttls:
+            self.assertIsInstance(ttl, (int, type(None)))
+            self.assertNotIsInstance(ttl, bool)
+
+    @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
     def test_stores_all_reported_results(self, redis=StrictRedis, cassandra=CassandraContext):
         self.init_database(redis=redis, cassandra=cassandra)
 
@@ -86,14 +117,14 @@ class EWSContextTest(WaitForDockerTestCase):
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
     def test_flaky_results_stored(self, redis=StrictRedis, cassandra=CassandraContext):
         """Flaky results land in a separate table, tagged with their flaky_type. These should not be stored in the failure table."""
-        self.init_database(redis=redis, cassandra=cassandra, flaky_type='InterStep')
+        self.init_database(redis=redis, cassandra=cassandra, flaky_type='BetweenStepsDirtyTree')
 
         results = self._find(self.REGRESSION_TEST, flaky=True)
         self.assertGreater(len(results), 0)
 
         entry = list(results.values())[0][0]
         self.assertEqual(entry['result']['actual'], 'TEXT')
-        self.assertEqual(entry['flaky_type'], 'InterStep')
+        self.assertEqual(entry['flaky_type'], 'BetweenStepsDirtyTree')
         self.assertEqual(len(self._find(self.REGRESSION_TEST, flaky=False)), 0)
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
@@ -136,3 +167,68 @@ class EWSContextTest(WaitForDockerTestCase):
             cassandra.drop_keyspace(keyspace=self.KEYSPACE)
             self.model = MockModelFactory.create(redis=redis(), cassandra=cassandra(keyspace=self.KEYSPACE, create_keyspace=True))
         self.assertEqual(len(self._find(self.REGRESSION_TEST)), 0)
+
+    @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
+    def test_record_results_reports_the_tests_it_stored(self, redis=StrictRedis, cassandra=CassandraContext):
+        """Callers cannot see the write, so registering has to tell them which tests it recorded."""
+        with MockModelFactory.safari(), MockModelFactory.webkit() as webkit:
+            cassandra.drop_keyspace(keyspace=self.KEYSPACE)
+            self.model = MockModelFactory.create(redis=redis(), cassandra=cassandra(keyspace=self.KEYSPACE, create_keyspace=True))
+
+            stored = self.model.ews_context.record_results(
+                Configuration(platform='Mac', version='13.0.0', is_simulator=False, architecture='arm64', style='Release', flavor='wk1'),
+                [webkit.commits['main'][-1]], 'layout-tests', self.DEFAULT_TEST_RESULTS,
+            )
+
+        self.assertEqual(stored, sorted(self.DEFAULT_TEST_RESULTS['results']))
+
+    @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
+    def test_record_results_raises_when_the_write_is_rejected(self, redis=StrictRedis, cassandra=CassandraContext):
+        with MockModelFactory.safari(), MockModelFactory.webkit() as webkit:
+            cassandra.drop_keyspace(keyspace=self.KEYSPACE)
+            self.model = MockModelFactory.create(redis=redis(), cassandra=cassandra(keyspace=self.KEYSPACE, create_keyspace=True))
+
+            # A partial configuration cannot be written, and must not be reported as stored.
+            with self.assertRaises(TypeError):
+                self.model.ews_context.record_results(
+                    Configuration(platform='Mac', style='Release'),
+                    [webkit.commits['main'][-1]], 'layout-tests', self.DEFAULT_TEST_RESULTS,
+                )
+
+    @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
+    def test_names_enumerates_reported_tests(self, redis=StrictRedis, cassandra=CassandraContext):
+        """Results can only be read back by exact test name, so registering must record the names."""
+        self.init_database(redis=redis, cassandra=cassandra)
+
+        self.assertEqual(
+            sorted(self.model.ews_context.names(suite='layout-tests', flaky=False)),
+            sorted(self.DEFAULT_TEST_RESULTS['results']),
+        )
+        self.assertEqual(sorted(self.model.ews_context.names(suite='layout-tests', flaky=True)), [])
+        self.assertEqual(sorted(self.model.ews_context.names(suite='javascriptcore-tests', flaky=False)), [])
+
+    @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
+    def test_names_separates_flaky_from_failed(self, redis=StrictRedis, cassandra=CassandraContext):
+        self.init_database(redis=redis, cassandra=cassandra, flaky_type='WithinStepDirtyTree')
+
+        expected = sorted(self.DEFAULT_TEST_RESULTS['results'])
+        self.assertEqual(sorted(self.model.ews_context.names(suite='layout-tests', flaky=True)), expected)
+        self.assertEqual(sorted(self.model.ews_context.names(suite='layout-tests', flaky=False)), [])
+
+    @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
+    def test_names_filters_by_prefix(self, redis=StrictRedis, cassandra=CassandraContext):
+        self.init_database(redis=redis, cassandra=cassandra, test_results=dict(results={
+            'fast/encoding/css-cached-bom.html': {'expected': 'PASS', 'actual': 'TEXT'},
+            'fast/forms/submit.html': {'expected': 'PASS', 'actual': 'TEXT'},
+            'http/tests/xhr/basic.html': {'expected': 'PASS', 'actual': 'TIMEOUT'},
+        }))
+
+        self.assertEqual(
+            sorted(self.model.ews_context.names(suite='layout-tests', test='fast/', flaky=False)),
+            ['fast/encoding/css-cached-bom.html', 'fast/forms/submit.html'],
+        )
+        self.assertEqual(
+            sorted(self.model.ews_context.names(suite='layout-tests', test='http/', flaky=False)),
+            ['http/tests/xhr/basic.html'],
+        )
+        self.assertEqual(sorted(self.model.ews_context.names(suite='layout-tests', test='nonexistent/', flaky=False)), [])

@@ -226,7 +226,7 @@ class MockModelFactory(object):
             if complete_configuration != configuration:
                 continue
 
-            cls.iterate_all_commits(model, lambda commits: model.ews_context.register(
+            cls.iterate_all_commits(model, lambda commits: model.ews_context.record_results(
                 complete_configuration, commits, suite='layout-tests',
                 test_results=test_results, flaky_type=flaky_type,
                 timestamp=timestamp, details=details,
