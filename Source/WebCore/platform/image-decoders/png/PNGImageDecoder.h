@@ -59,7 +59,7 @@ namespace WebCore {
 
         // Callbacks from libpng
         void headerAvailable();
-        void rowAvailable(unsigned char* rowBuffer, unsigned rowIndex, int interlacePass);
+        void rowAvailable(png_structp, unsigned char* rowBuffer, unsigned rowIndex, int interlacePass);
         void pngComplete();
         void readChunks(png_unknown_chunkp);
         void frameHeader();
@@ -98,6 +98,7 @@ namespace WebCore {
         // data coming, sets the "decode failure" flag.
         void decode(bool onlySize, unsigned haltAtFrame, bool allDataReceived);
         void initFrameBuffer(size_t frameIndex);
+        void updateFrameRect(ScalableImageDecoderFrame&);
         void frameComplete();
         int processingStart(png_unknown_chunkp);
         int processingFinish();
@@ -108,6 +109,8 @@ namespace WebCore {
         std::unique_ptr<PNGImageReader> m_reader;
         bool m_doNothingOnFailure;
         unsigned m_currentFrame;
+        unsigned m_rowWidth;
+        bool m_composeCurrentFrame;
         png_structp m_png;
         png_infop m_info;
         bool m_isAnimated;

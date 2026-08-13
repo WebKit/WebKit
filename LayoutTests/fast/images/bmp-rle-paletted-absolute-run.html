@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+An RLE8 or RLE4 BMP absolute-mode run that starts partway into a row must decode<br>
+from the run's own pixel bytes. For RLE4 that also means the nibbles are packed<br>
+from the run's first pixel, not from the parity of the column it lands on.<br><br>
+
+<pre id="log">PASS</pre>
+
+<script>
+if (window.testRunner) {
+    window.testRunner.waitUntilDone();
+    window.testRunner.dumpAsText();
+}
+
+// Both bitmaps are 8x2 and bottom-up, with a 4-entry palette: 000000, 332211, 665544, 998877.
+// The bottom row is an encoded run of 5 pixels followed by an absolute run of 3, so the absolute
+// run starts at column 5.
+var tests = [
+    {
+        source: "resources/rle8-absolute-run.bmp",
+        // Absolute run of palette indexes 2, 3, 2.
+        expected: [
+            "998877", "998877", "998877", "998877", "998877", "998877", "998877", "998877",
+            "332211", "332211", "332211", "332211", "332211", "665544", "998877", "665544",
+        ],
+    },
+    {
+        source: "resources/rle4-absolute-run.bmp",
+        // Encoded run alternating indexes 1 and 2, then an absolute run of nibbles 3, 2, 3.
+        expected: [
+            "000000", "000000", "000000", "000000", "000000", "000000", "000000", "000000",
+            "332211", "665544", "332211", "665544", "332211", "998877", "665544", "998877",
+        ],
+    },
+];
+
+var pendingImages = tests.length;
+
+function log(message)
+{
+    document.getElementById("log").textContent += "\n" + message;
+}
+
+function hex(pixels, index)
+{
+    var result = "";
+    for (var component = 0; component < 3; ++component)
+        result += ("0" + pixels[index * 4 + component].toString(16)).slice(-2);
+    return result;
+}
+
+function testPixels(test, image)
+{
+    // Loading an image only decodes its header; drawing is what decodes the pixels.
+    var canvas = document.createElement("canvas");
+    canvas.width = 8;
+    canvas.height = 2;
+    var context = canvas.getContext("2d");
+    context.drawImage(image, 0, 0);
+    var pixels = context.getImageData(0, 0, 8, 2).data;
+
+    for (var index = 0; index < test.expected.length; ++index) {
+        var expected = test.expected[index];
+        for (var component = 0; component < 3; ++component) {
+            var delta = pixels[index * 4 + component] - parseInt(expected.substr(component * 2, 2), 16);
+            if (Math.abs(delta) > 2) {
+                log("FAIL: " + test.source + " pixel " + (index % 8) + "," + Math.floor(index / 8)
+                    + " is " + hex(pixels, index) + ", expected " + expected);
+                break;
+            }
+        }
+    }
+}
+
+function imageSettled(test, image)
+{
+    try {
+        // Unlike OS/2 RLE24, RLE4 and RLE8 are universally supported, so failing to decode one is
+        // itself a failure -- and it is how this test catches a decoder that reads an absolute run's
+        // bytes from the wrong place and lands on an out-of-range palette index.
+        if (!image.naturalWidth)
+            log("FAIL: " + test.source + " did not decode");
+        else
+            testPixels(test, image);
+    } catch (exception) {
+        log("FAIL: " + test.source + ": " + exception.message);
+    }
+
+    if (--pendingImages)
+        return;
+    if (window.testRunner)
+        window.testRunner.notifyDone();
+}
+
+tests.forEach(function (test) {
+    var image = new Image();
+    image.onload = function () { imageSettled(test, image); };
+    image.onerror = function () { imageSettled(test, image); };
+    image.src = test.source;
+});
+</script>

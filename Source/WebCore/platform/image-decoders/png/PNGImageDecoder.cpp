@@ -103,7 +103,7 @@ static void PNGAPI headerAvailable(png_structp png, png_infop)
 // Called when a row is ready.
 static void PNGAPI rowAvailable(png_structp png, png_bytep rowBuffer, png_uint_32 rowIndex, int interlacePass)
 {
-    static_cast<PNGImageDecoder*>(png_get_progressive_ptr(png))->rowAvailable(rowBuffer, rowIndex, interlacePass);
+    static_cast<PNGImageDecoder*>(png_get_progressive_ptr(png))->rowAvailable(png, rowBuffer, rowIndex, interlacePass);
 }
 
 // Called when we have completely finished decoding the image.
@@ -206,6 +206,8 @@ PNGImageDecoder::PNGImageDecoder(AlphaOption alphaOption, GammaAndColorProfileOp
     : ScalableImageDecoder(alphaOption, gammaAndColorProfileOption)
     , m_doNothingOnFailure(false)
     , m_currentFrame(0)
+    , m_rowWidth(0)
+    , m_composeCurrentFrame(false)
     , m_png(nullptr)
     , m_info(nullptr)
     , m_isAnimated(false)
@@ -317,6 +319,8 @@ void PNGImageDecoder::headerAvailable()
         longjmp(JMPBUF(png), 1);
         return;
     }
+
+    m_rowWidth = width;
 
     int bitDepth, colorType, interlaceType, compressionType, filterType, channels;
     png_get_IHDR(png, info, &width, &height, &bitDepth, &colorType, &interlaceType, &compressionType, &filterType);
@@ -435,9 +439,13 @@ void PNGImageDecoder::headerAvailable()
     }
 }
 
-void PNGImageDecoder::rowAvailable(unsigned char* rowBuffer, unsigned rowIndex, int)
+void PNGImageDecoder::rowAvailable(png_structp png, unsigned char* rowBuffer, unsigned rowIndex, int)
 {
     assertIsHeld(m_lock);
+    // m_png is only ever an animation frame's stream, so this distinguishes a row that covers the
+    // canvas from one that covers only a frame. m_currentFrame does not: a hidden default image
+    // leaves it at 0 for the first animation frame.
+    bool inFrameStream = png == m_png;
     if (m_frameBufferCache.isEmpty())
         return;
 
@@ -453,8 +461,7 @@ void PNGImageDecoder::rowAvailable(unsigned char* rowBuffer, unsigned rowIndex, 
         }
 
         unsigned colorChannels = m_reader->hasAlpha() ? 4 : 3;
-        if (PNG_INTERLACE_ADAM7 == png_get_interlace_type(png, m_reader->infoPtr())
-            || m_currentFrame) {
+        if (PNG_INTERLACE_ADAM7 == png_get_interlace_type(m_reader->pngPtr(), m_reader->infoPtr())) {
             if (!m_reader->interlaceBuffer())
                 m_reader->createInterlaceBuffer(colorChannels * size().width() * size().height());
             if (!m_reader->interlaceBuffer()) {
@@ -465,9 +472,27 @@ void PNGImageDecoder::rowAvailable(unsigned char* rowBuffer, unsigned rowIndex, 
 
         buffer.setDecodingStatus(DecodingStatus::Partial);
         buffer.setHasAlpha(false);
+    }
 
+    // The first row of an animation frame. Its rows are combined in the interlace buffer and
+    // composited at the frame's own offset once the frame is complete, so this cannot live in the
+    // branch above: a hidden default image leaves this frame's buffer already initialized.
+    if (inFrameStream && !m_composeCurrentFrame) {
+        if (!m_reader->interlaceBuffer()) {
+            unsigned colorChannels = m_reader->hasAlpha() ? 4 : 3;
+            m_reader->createInterlaceBuffer(colorChannels * size().width() * size().height());
+            if (!m_reader->interlaceBuffer()) {
+                longjmp(JMPBUF(m_reader->pngPtr()), 1);
+                return;
+            }
+        }
+
+        // initFrameBuffer() reads the previous frame, which does not exist for frame 0; that frame
+        // only needs its rect, since it has nothing to composite over.
         if (m_currentFrame)
             initFrameBuffer(m_currentFrame);
+        else
+            updateFrameRect(buffer);
     }
 
     /* libpng comments (here to explain what follows).
@@ -515,9 +540,10 @@ void PNGImageDecoder::rowAvailable(unsigned char* rowBuffer, unsigned rowIndex, 
     if (png_bytep interlaceBuffer = m_reader->interlaceBuffer()) {
         unsigned colorChannels = hasAlpha ? 4 : 3;
         row = interlaceBuffer + (rowIndex * colorChannels * size().width());
-        if (m_currentFrame) {
+        if (inFrameStream) {
             png_progressive_combine_row(m_png, row, rowBuffer);
-            return; // Only do incremental image display for the first frame.
+            m_composeCurrentFrame = true;
+            return; // A frame's rows are composited at its own offset once the frame is complete.
         }
         png_progressive_combine_row(m_reader->pngPtr(), row, rowBuffer);
     }
@@ -525,7 +551,9 @@ void PNGImageDecoder::rowAvailable(unsigned char* rowBuffer, unsigned rowIndex, 
     // Write the decoded row pixels to the frame buffer.
     auto destinationRow = buffer.backingStore()->pixelsStartingAt(0, rowIndex);
     auto address = destinationRow;
-    int width = size().width();
+    // Only the canvas stream reaches here, so its rows are this wide; the clamp keeps that true for
+    // any future caller, since walking wider than the row libpng handed us would read past its end.
+    int width = std::min<int>(size().width(), m_rowWidth);
     unsigned char nonTrivialAlphaMask = 0;
 
     png_bytep pixel = row;
@@ -725,6 +753,8 @@ void PNGImageDecoder::frameHeader()
     png_set_interlace_handling(m_png);
 
     png_read_update_info(m_png, m_info);
+
+    m_rowWidth = png_get_image_width(m_png, m_info);
 }
 
 void PNGImageDecoder::init()
@@ -734,6 +764,7 @@ void PNGImageDecoder::init()
     m_frameIsHidden = false;
     m_hasInfo = false;
     m_currentFrame = 0;
+    m_composeCurrentFrame = false;
     m_totalFrames = 0;
     m_sequenceNumber = 0;
 }
@@ -812,6 +843,11 @@ void PNGImageDecoder::initFrameBuffer(size_t frameIndex)
         }
     }
     
+    updateFrameRect(buffer);
+}
+
+void PNGImageDecoder::updateFrameRect(ScalableImageDecoderFrame& buffer)
+{
     IntRect frameRect(m_xOffset, m_yOffset, m_width, m_height);
 
     // Make sure the frameRect doesn't extend outside the buffer.
@@ -834,7 +870,7 @@ void PNGImageDecoder::frameComplete()
 
     png_bytep interlaceBuffer = m_reader->interlaceBuffer();
 
-    if (m_currentFrame && interlaceBuffer) {
+    if (m_composeCurrentFrame && interlaceBuffer) {
         IntRect rect = buffer.backingStore()->frameRect();
         bool hasAlpha = m_reader->hasAlpha();
         bool nonTrivialAlpha = false;
@@ -857,8 +893,11 @@ void PNGImageDecoder::frameComplete()
                 address = address.subspan(1);
             }
 #if USE(LCMS)
+            // destinationRow already starts at the frame's left edge, so the count is the frame's
+            // width. Passing maxX() would convert a whole canvas width from there, running off the
+            // end of the row.
             if (m_iccTransform)
-                cmsDoTransform(m_iccTransform.get(), destinationRow.data(), destinationRow.data(), rect.maxX());
+                cmsDoTransform(m_iccTransform.get(), destinationRow.data(), destinationRow.data(), rect.width());
 #endif
         }
 
@@ -866,7 +905,9 @@ void PNGImageDecoder::frameComplete()
             IntRect rect = buffer.backingStore()->frameRect();
             if (rect.contains(IntRect(IntPoint(), size())))
                 buffer.setHasAlpha(false);
-            else {
+            else if (m_currentFrame) {
+                // Whether this frame is opaque depends on the frame it was composited over. Frame 0
+                // has none, so leave its alpha alone rather than reading past the start of the cache.
                 size_t frameIndex = m_currentFrame;
                 const auto* prevBuffer = &m_frameBufferCache[--frameIndex];
                 while (frameIndex && (prevBuffer->disposalMethod() == ScalableImageDecoderFrame::DisposalMethod::RestoreToPrevious))
@@ -878,6 +919,8 @@ void PNGImageDecoder::frameComplete()
             }
         } else if (!m_blend && !buffer.hasAlpha())
             buffer.setHasAlpha(nonTrivialAlpha);
+
+        m_composeCurrentFrame = false;
     }
     m_currentFrame++;
 }
@@ -896,6 +939,8 @@ int PNGImageDecoder::processingStart(png_unknown_chunkp chunk)
     m_info = png_create_info_struct(m_png);
     if (setjmp(JMPBUF(m_png)))
         return 1;
+
+    m_composeCurrentFrame = false;
 
     png_set_crc_action(m_png, PNG_CRC_QUIET_USE, PNG_CRC_QUIET_USE);
     png_set_progressive_read_fn(m_png, static_cast<png_voidp>(this),

@@ -1,0 +1,6 @@
+An animated WebP whose frames are larger than the canvas the container declares must not write
+outside the frame buffer. WEBPImageDecoder indexes the decoded frame by the canvas-clipped rect
+while libwebp writes it at the frame's own width, so it relies on the demuxer rejecting such a
+file. Nothing about the result is checked; the test is that the web process survives it.
+
+PASS

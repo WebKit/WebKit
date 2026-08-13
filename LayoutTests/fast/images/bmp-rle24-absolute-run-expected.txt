@@ -1,0 +1,6 @@
+An RLE24 BMP absolute-mode run that starts partway into a row must decode from
+the run's own pixel bytes, and must not read past the end of the bitmap when
+the file is truncated right after the run. Ports whose image decoder does not
+support RLE24 BMPs pass without decoding anything.
+
+PASS

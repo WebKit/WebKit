@@ -1,0 +1,6 @@
+An APNG whose default image is hidden, because its first fcTL follows the IDAT, must paint that
+animation frame at the offset the fcTL gives it. A decoder that treats the frame's rows as canvas
+rows paints them at the origin instead, and walks each row to the canvas width, past the end of a
+row the frame only made forty pixels wide.
+
+PASS

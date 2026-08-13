@@ -649,8 +649,10 @@ BMPImageReader::ProcessingResult BMPImageReader::processNonRLEData(bool inRLE, i
     if (!inRLE)
         numPixels = m_parent->size().width();
 
+    const int startX = m_coord.x();
+
     // Fail if we're being asked to decode more pixels than remain in the row.
-    const int endX = m_coord.x() + numPixels;
+    const int endX = startX + numPixels;
     if (endX > m_parent->size().width())
         return Failure;
 
@@ -702,7 +704,7 @@ BMPImageReader::ProcessingResult BMPImageReader::processNonRLEData(bool inRLE, i
         } else {
             // RGB data.  Decode pixels one at a time, left to right.
             while (m_coord.x() < endX) {
-                const uint32_t pixel = readCurrentPixel(bytesPerPixel);
+                const uint32_t pixel = readCurrentPixel(bytesPerPixel, m_coord.x() - startX);
 
                 // Some BMPs specify an alpha channel but don't actually use it
                 // (it contains all 0s).  To avoid displaying these images as

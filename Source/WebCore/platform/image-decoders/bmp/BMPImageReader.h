@@ -183,14 +183,13 @@ private:
         return m_isTopDown ? ((m_coord.y() + numRows) >= m_parent->size().height()) : ((m_coord.y() - numRows) < 0);
     }
 
-    // Returns the pixel data for the current X coordinate in a uint32_t.
-    // Assumes m_decodedOffset has been set to the beginning of the current
-    // row.
+    // Returns the pixel data |relativeX| pixels into the run of pixel data
+    // starting at m_decodedOffset, in a uint32_t.
     // NOTE: Only as many bytes of the return value as are needed to hold
     // the pixel data will actually be set.
-    inline uint32_t readCurrentPixel(int bytesPerPixel) const
+    inline uint32_t readCurrentPixel(int bytesPerPixel, int relativeX) const
     {
-        const int offset = m_coord.x() * bytesPerPixel;
+        const int offset = relativeX * bytesPerPixel;
         switch (bytesPerPixel) {
         case 2:
             return readUint16(offset);

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+An animated WebP whose frames are larger than the canvas the container declares must not write<br>
+outside the frame buffer. WEBPImageDecoder indexes the decoded frame by the canvas-clipped rect<br>
+while libwebp writes it at the frame's own width, so it relies on the demuxer rejecting such a<br>
+file. Nothing about the result is checked; the test is that the web process survives it.<br><br>
+
+<pre id="log">PASS</pre>
+
+<script>
+if (window.testRunner) {
+    window.testRunner.waitUntilDone();
+    window.testRunner.dumpAsText();
+}
+
+function log(message)
+{
+    document.getElementById("log").textContent += "\n" + message;
+}
+
+function imageSettled(image)
+{
+    try {
+        // Loading an image only decodes its header; drawing is what decodes the pixels.
+        if (image.naturalWidth) {
+            var canvas = document.createElement("canvas");
+            canvas.width = 32;
+            canvas.height = 32;
+            canvas.getContext("2d").drawImage(image, 0, 0);
+        }
+    } catch (exception) {
+        log("FAIL: " + exception.message);
+    }
+
+    if (window.testRunner)
+        window.testRunner.notifyDone();
+}
+
+// A 63x63 ten-frame animation whose VP8X canvas says 32x32, so every frame rect is clipped to the
+// canvas while the frame's own pixel data stays 63 pixels wide.
+var image = new Image();
+image.onload = function () { imageSettled(image); };
+image.onerror = function () { imageSettled(image); };
+image.src = "resources/awebp-frame-exceeds-canvas.webp";
+</script>
