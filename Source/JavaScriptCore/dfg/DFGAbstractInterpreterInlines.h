@@ -3845,8 +3845,11 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                     // Symbol.iterator, and any mutation to Set.prototype[Symbol.iterator] invalidates this code
                     // via the prototype-change watchpoints installed during compilation, so the slow path can
                     // never reach a user-defined iterator from here.
+                    //
+                    // FixupPhase arms the Set iterator protocol watchpoint on node->child1(), so child1's global
+                    // object must be used.
                     bool canFold = false;
-                    JSGlobalObject* globalObject = m_graph.globalObjectFor(node->origin.semantic);
+                    JSGlobalObject* globalObject = m_graph.globalObjectFor(node->child1()->origin.semantic);
                     if (Structure* originalSetStructure = globalObject->setStructureConcurrently()) {
                         if (forNode(node->child1()).m_structure.isSubsetOf(RegisteredStructureSet(m_graph.registerStructure(originalSetStructure))))
                             canFold = true;
