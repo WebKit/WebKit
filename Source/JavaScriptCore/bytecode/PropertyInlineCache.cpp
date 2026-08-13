@@ -431,7 +431,7 @@ void PropertyInlineCache::visitAggregateImpl(Visitor& visitor)
 
 DEFINE_VISIT_AGGREGATE(PropertyInlineCache);
 
-void PropertyInlineCache::visitWeak(const ConcurrentJSLockerBase& locker, CodeBlock* codeBlock)
+void PropertyInlineCache::reconcileWeakReferencesAtGCEnd(const ConcurrentJSLockerBase& locker, CodeBlock* codeBlock)
 {
     VM& vm = codeBlock->vm();
     {
@@ -456,18 +456,18 @@ void PropertyInlineCache::visitWeak(const ConcurrentJSLockerBase& locker, CodeBl
 
     if (auto* handlerIC = dynamicDowncast<HandlerPropertyInlineCache>(*this)) {
         if (handlerIC->m_inlinedHandler)
-            isValid &= handlerIC->m_inlinedHandler->visitWeak(vm);
+            isValid &= handlerIC->m_inlinedHandler->reconcileWeakReferencesAtGCEnd(vm);
     }
     if (auto* cursor = m_handler.get()) {
         while (cursor) {
-            isValid &= cursor->visitWeak(vm);
+            isValid &= cursor->reconcileWeakReferencesAtGCEnd(vm);
             cursor = cursor->next();
         }
     }
 
     if (auto* repatchingIC = dynamicDowncast<RepatchingPropertyInlineCache>(*this)) {
         if (repatchingIC->m_stub)
-            isValid &= repatchingIC->m_stub->visitWeak(vm);
+            isValid &= repatchingIC->m_stub->isStillLive(vm);
     }
 
     if (isValid)

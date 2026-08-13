@@ -246,17 +246,17 @@ void InlineCacheHandler::aboutToDie()
     m_watchpoint.reset();
 }
 
-bool InlineCacheHandler::visitWeak(VM& vm)
+bool InlineCacheHandler::reconcileWeakReferencesAtGCEnd(VM& vm)
 {
     bool isValid = true;
     if (auto* withJSCall = dynamicDowncast<InlineCacheHandlerWithJSCall>(*this))
-        withJSCall->m_callLinkInfo.visitWeak(vm);
+        withJSCall->m_callLinkInfo.reconcileWeakReferencesAtGCEnd(vm);
 
     if (m_accessCase)
-        isValid &= m_accessCase->visitWeak(vm);
+        isValid &= m_accessCase->isStillLive(vm);
 
     if (m_stubRoutine)
-        isValid &= m_stubRoutine->visitWeak(vm);
+        isValid &= m_stubRoutine->reconcileWeakReferencesAtGCEnd(vm);
 
     return isValid;
 }

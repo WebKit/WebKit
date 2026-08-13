@@ -8247,11 +8247,11 @@ AccessGenerationResult PolymorphicAccess::addCases(const GCSafeConcurrentJSLocke
     return AccessGenerationResult::Buffered;
 }
 
-bool PolymorphicAccess::visitWeak(VM& vm)
+bool PolymorphicAccess::isStillLive(VM& vm)
 {
     bool isValid = true;
     for (unsigned i = 0; i < size(); ++i)
-        isValid &= at(i).visitWeak(vm);
+        isValid &= at(i).isStillLive(vm);
     return isValid;
 }
 

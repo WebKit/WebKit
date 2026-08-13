@@ -68,7 +68,7 @@ public:
     void unlinkOrUpgradeImpl(VM&, CodeBlock* oldCodeBlock, CodeBlock* newCodeBlock);
     void relink(VM&, JSFunction*);
 
-    void visitWeak(VM&);
+    void reconcileWeakReferencesAtGCEnd(VM&);
 
 private:
     CodeBlock* m_codeBlock { nullptr };
@@ -112,7 +112,7 @@ public:
     void reconcileWeakReferencesAtGCEnd(VM& vm)
     {
         for (auto& entry : m_entries)
-            entry.visitWeak(vm);
+            entry.reconcileWeakReferencesAtGCEnd(vm);
     }
 
 private:

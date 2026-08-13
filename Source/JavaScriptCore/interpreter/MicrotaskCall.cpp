@@ -73,7 +73,7 @@ void MicrotaskCall::unlinkOrUpgradeImpl(VM&, CodeBlock* oldCodeBlock, CodeBlock*
     m_addressForCall = nullptr;
 }
 
-void MicrotaskCall::visitWeak(VM& vm)
+void MicrotaskCall::reconcileWeakReferencesAtGCEnd(VM& vm)
 {
     if ((m_functionExecutable && !vm.heap.isMarked(m_functionExecutable)) || (m_codeBlock && !vm.heap.isMarked(m_codeBlock))) {
         if (isOnList())

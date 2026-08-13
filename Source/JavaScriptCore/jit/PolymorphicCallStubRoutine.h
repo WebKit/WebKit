@@ -124,7 +124,7 @@ private:
     void NODELETE markRequiredObjectsImpl(AbstractSlotVisitor&);
     void markRequiredObjectsImpl(SlotVisitor&);
 
-    bool visitWeakImpl(VM&);
+    bool reconcileWeakReferencesAtGCEndImpl(VM&);
 
     CallLinkInfo* m_callLinkInfo { nullptr };
     bool m_notUsingCounting : 1 { false };

@@ -164,12 +164,12 @@ void PolymorphicAccessJITStubRoutine::addedToSharedJITStubSet()
     m_isInSharedJITStubSet = true;
 }
 
-bool PolymorphicAccessJITStubRoutine::visitWeakImpl(VM& vm)
+bool PolymorphicAccessJITStubRoutine::reconcileWeakReferencesAtGCEndImpl(VM& vm)
 {
     bool isValid = true;
     for (StructureID weakReference : m_weakStructures)
         isValid &= vm.heap.isMarked(weakReference.decode());
-    isValid &= Base::visitWeakImpl(vm);
+    isValid &= Base::reconcileWeakReferencesAtGCEndImpl(vm);
     return isValid;
 }
 
@@ -204,13 +204,13 @@ void MarkingGCAwareJITStubRoutine::markRequiredObjectsImpl(SlotVisitor& visitor)
     markRequiredObjectsInternalImpl(visitor);
 }
 
-bool MarkingGCAwareJITStubRoutine::visitWeakImpl(VM& vm)
+bool MarkingGCAwareJITStubRoutine::reconcileWeakReferencesAtGCEndImpl(VM& vm)
 {
     for (auto& callLinkInfo : m_callLinkInfos) {
         if (callLinkInfo)
-            callLinkInfo->visitWeak(vm);
+            callLinkInfo->reconcileWeakReferencesAtGCEnd(vm);
     }
-    return Base::visitWeakImpl(vm);
+    return Base::reconcileWeakReferencesAtGCEndImpl(vm);
 }
 
 CallLinkInfo* MarkingGCAwareJITStubRoutine::callLinkInfoAtImpl(const ConcurrentJSLocker&, unsigned index)

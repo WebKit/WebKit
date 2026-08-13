@@ -149,7 +149,7 @@ public:
             m_owners.remove(codeBlock);
     }
 
-    bool visitWeakImpl(VM&);
+    bool reconcileWeakReferencesAtGCEndImpl(VM&);
 
 protected:
     void observeZeroRefCountImpl();
@@ -173,7 +173,7 @@ public:
 
     MarkingGCAwareJITStubRoutine(Type, const MacroAssemblerCodeRef<JITStubRoutinePtrTag>&, VM&, FixedVector<Ref<AccessCase>>&&, FixedVector<StructureID>&&, JSCell* owner, const Vector<JSCell*>&, Vector<std::unique_ptr<OptimizingCallLinkInfo>, 16>&&, bool isCodeImmutable);
 
-    bool visitWeakImpl(VM&);
+    bool reconcileWeakReferencesAtGCEndImpl(VM&);
     CallLinkInfo* NODELETE callLinkInfoAtImpl(const ConcurrentJSLocker&, unsigned);
 
 protected:

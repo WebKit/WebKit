@@ -1751,19 +1751,19 @@ void CodeBlock::reconcileJITInlineCachesAtGCEnd()
 #if ENABLE(DFG_JIT)
     if (JSC::JITCode::isOptimizingJIT(jitType())) {
         for (auto* callLinkInfo : m_jitCode->dfgCommon()->m_callLinkInfos)
-            callLinkInfo->visitWeak(vm());
+            callLinkInfo->reconcileWeakReferencesAtGCEnd(vm());
         for (auto* callLinkInfo : m_jitCode->dfgCommon()->m_directCallLinkInfos)
-            callLinkInfo->visitWeak(vm());
+            callLinkInfo->reconcileWeakReferencesAtGCEnd(vm());
         if (auto* jitData = dfgJITData()) {
             for (auto& callLinkInfo : jitData->callLinkInfos())
-                callLinkInfo.visitWeak(vm());
+                callLinkInfo.reconcileWeakReferencesAtGCEnd(vm());
         }
     }
 #endif
 
     forEachPropertyInlineCache([&](PropertyInlineCache& propertyCache) {
         ConcurrentJSLockerBase locker(NoLockingNecessary);
-        propertyCache.visitWeak(locker, this);
+        propertyCache.reconcileWeakReferencesAtGCEnd(locker, this);
         return IterationStatus::Continue;
     });
 }
@@ -1782,7 +1782,7 @@ void CodeBlock::reconcileWeakReferencesAtGCEnd(VM& vm, CollectionScope)
         reconcileLLIntInlineCachesAtGCEnd();
         // If the CodeBlock is DFG or FTL, CallLinkInfo in metadata is not related.
         forEachLLIntOrBaselineCallLinkInfo([&](DataOnlyCallLinkInfo& callLinkInfo) {
-            callLinkInfo.visitWeak(vm);
+            callLinkInfo.reconcileWeakReferencesAtGCEnd(vm);
         });
     }
 

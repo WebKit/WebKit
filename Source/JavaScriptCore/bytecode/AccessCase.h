@@ -390,7 +390,7 @@ private:
     void forEachDependentCell(VM&, const Functor&) const;
 
     DECLARE_VISIT_AGGREGATE_WITH_MODIFIER(const);
-    bool visitWeak(VM&) const;
+    bool isStillLive(VM&) const;
     template<typename Visitor> void propagateTransitions(Visitor&) const;
 
     AccessType m_type;

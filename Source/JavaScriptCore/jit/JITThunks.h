@@ -125,9 +125,9 @@ class NativeExecutable;
     macro(PutByValWithFalseKeyReplaceHandler, putByValWithFalseKeyReplaceHandler) \
 
 // VM-dependent thunks that must exist before any code runs, because they are requested from
-// contexts that cannot take a lock. In particular CallLinkInfo::visitWeak runs during GC with the
-// JIT worklist threads suspended, and reaches getCTIVirtualCall; if a suspended compiler thread held
-// the lock, taking it here would deadlock.
+// contexts that cannot take a lock. In particular CallLinkInfo::reconcileWeakReferencesAtGCEnd
+// runs during GC with the JIT worklist threads suspended, and reaches getCTIVirtualCall; if a
+// suspended compiler thread held the lock, taking it here would deadlock.
 #define JSC_FOR_EACH_VM_DEPENDENT_EAGER_COMMON_THUNK(macro) \
     macro(HandleException, handleExceptionGenerator) \
     macro(CheckException, checkExceptionGenerator) \

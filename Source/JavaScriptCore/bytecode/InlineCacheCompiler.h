@@ -134,7 +134,7 @@ public:
     DECLARE_VISIT_AGGREGATE;
 
     // If this returns false then we are requesting a reset of the owning PropertyInlineCache.
-    bool visitWeak(VM&);
+    bool isStillLive(VM&);
 
     // This returns true if it has marked everything it will ever marked. This can be used as an
     // optimization to then avoid calling this method again during the fixpoint.

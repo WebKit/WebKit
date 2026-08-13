@@ -159,7 +159,7 @@ void PolymorphicCallStubRoutine::unlinkForcefully()
         callNode.unlinkForcefully();
 }
 
-bool PolymorphicCallStubRoutine::visitWeakImpl(VM& vm)
+bool PolymorphicCallStubRoutine::reconcileWeakReferencesAtGCEndImpl(VM& vm)
 {
     bool isStillLive = true;
     for (unsigned i = 0, size = std::size(trailingSpan()) - 1; i < size; ++i) {
