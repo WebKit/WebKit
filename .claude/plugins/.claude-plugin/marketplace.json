@@ -5,6 +5,11 @@
   },
   "plugins": [
     {
+      "name": "build-webkit",
+      "source": "./build-webkit",
+      "description": "Build WebKit on Apple platforms with Xcode"
+    },
+    {
       "name": "git-webkit",
       "source": "./git-webkit",
       "description": "Teaches Claude to use git-webkit tools for working with the WebKit repository"
