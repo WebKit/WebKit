@@ -294,7 +294,7 @@ template<auto R, typename V> struct ToStyle<CSS::UnevaluatedCalc<CSS::AnglePerce
 
         auto simplifiedPrimitiveType = simplifiedCalc.primitiveType();
 
-        if (simplifiedPrimitiveType == CSSUnitType::Deg) {
+        if (simplifiedPrimitiveType == CSSUnitType::Degree) {
             auto doubleValue = simplifiedCalc.evaluate(rest...);
             return canonicalize(CSS::AngleRaw<R, V> { To::Dimension::unit, doubleValue }, std::forward<Rest>(rest)...);
         }
@@ -344,7 +344,7 @@ template<auto R, typename V> struct ToStyle<CSS::UnevaluatedCalc<CSS::LengthPerc
 
         auto simplifiedPrimitiveType = simplifiedCalc.primitiveType();
 
-        if (simplifiedPrimitiveType == CSSUnitType::Px) {
+        if (simplifiedPrimitiveType == CSSUnitType::Pixel) {
             auto doubleValue = simplifiedCalc.evaluate(rest...);
             return canonicalize(CSS::LengthRaw<R, V> { To::Dimension::unit, doubleValue }, std::forward<Rest>(rest)...);
         }

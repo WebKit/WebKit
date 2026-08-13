@@ -109,7 +109,7 @@ static Ref<CSSVariableData> variableDataForPositivePixelLength(float lengthInPx)
     ASSERT(lengthInPx >= 0);
 
     CSSParserToken token(lengthInPx, NumberValueType, NoSign, { });
-    token.convertToDimensionWithUnit(CSSUnitType::Px);
+    token.convertToDimensionWithUnit(CSSUnitType::Pixel);
 
     Vector<CSSParserToken> tokens { token };
     CSSParserTokenRange tokenRange(tokens);
@@ -121,7 +121,7 @@ static Ref<CSSVariableData> variableDataForPositiveDuration(Seconds durationInSe
     ASSERT(durationInSeconds >= 0_s);
 
     CSSParserToken token(durationInSeconds.value(), NumberValueType, NoSign, { });
-    token.convertToDimensionWithUnit(CSSUnitType::S);
+    token.convertToDimensionWithUnit(CSSUnitType::Second);
 
     Vector<CSSParserToken> tokens { token };
     CSSParserTokenRange tokenRange(tokens);

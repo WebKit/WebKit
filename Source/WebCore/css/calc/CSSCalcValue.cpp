@@ -160,26 +160,26 @@ CSSUnitType Value::primitiveType() const
     case CSS::Category::Percentage:
         return CSSUnitType::Percentage;
     case CSS::Category::Length:
-        return CSSUnitType::Px;
+        return CSSUnitType::Pixel;
     case CSS::Category::Angle:
-        return CSSUnitType::Deg;
+        return CSSUnitType::Degree;
     case CSS::Category::Time:
-        return CSSUnitType::S;
+        return CSSUnitType::Second;
     case CSS::Category::Frequency:
-        return CSSUnitType::Hz;
+        return CSSUnitType::Hertz;
     case CSS::Category::Resolution:
-        return CSSUnitType::Dppx;
+        return CSSUnitType::DotsPerPixel;
     case CSS::Category::Flex:
-        return CSSUnitType::Fr;
+        return CSSUnitType::Fraction;
     case CSS::Category::LengthPercentage:
         if (!m_tree.type.percentHint)
-            return CSSUnitType::Px;
+            return CSSUnitType::Pixel;
         if (WTF::holdsAlternative<Percentage>(m_tree.root))
             return CSSUnitType::Percentage;
         return CSSUnitType::CalcPercentageWithLength;
     case CSS::Category::AnglePercentage:
         if (!m_tree.type.percentHint)
-            return CSSUnitType::Deg;
+            return CSSUnitType::Degree;
         if (WTF::holdsAlternative<Percentage>(m_tree.root))
             return CSSUnitType::Percentage;
         return CSSUnitType::CalcPercentageWithAngle;

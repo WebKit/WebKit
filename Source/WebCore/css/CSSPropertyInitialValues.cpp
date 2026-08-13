@@ -212,13 +212,13 @@ ASCIILiteral initialValueTextForLonghand(CSSPropertyID longhand)
                 if (initialValue.value == 100.0)
                     return "100%"_s;
                 break;
-            case CSSUnitType::Px:
+            case CSSUnitType::Pixel:
                 if (initialValue.value == 0.0)
                     return "0px"_s;
                 if (initialValue.value == 1.0)
                     return "1px"_s;
                 break;
-            case CSSUnitType::S:
+            case CSSUnitType::Second:
                 if (initialValue.value == 0.0)
                     return "0s"_s;
                 break;

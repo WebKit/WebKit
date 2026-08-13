@@ -40,7 +40,7 @@ bool BorderImageWidthValue::isLength() const
 
     return WTF::switchOn(*lengthPercentage,
         [](const LengthPercentage::Calc& calc) {
-            return calc.primitiveType() == CSSUnitType::Px;
+            return calc.primitiveType() == CSSUnitType::Pixel;
         },
         [](const LengthPercentage::Raw& raw) {
             return raw.unit != CSS::PercentageUnit::Percentage;

@@ -460,9 +460,9 @@ enum class ConstrainHeight : bool { No, Yes };
 static RotatedRect fitElementToQuad(HTMLElement& container, const FloatQuad& quad, ConstrainHeight constrainHeight = ConstrainHeight::Yes)
 {
     auto bounds = rotatedBoundingRectWithMinimumAngleOfRotation(quad, 0.01);
-    container.setInlineStyleProperty(CSSPropertyWidth, bounds.size.width(), CSSUnitType::Px);
+    container.setInlineStyleProperty(CSSPropertyWidth, bounds.size.width(), CSSUnitType::Pixel);
     if (constrainHeight == ConstrainHeight::Yes)
-        container.setInlineStyleProperty(CSSPropertyHeight, bounds.size.height(), CSSUnitType::Px);
+        container.setInlineStyleProperty(CSSPropertyHeight, bounds.size.height(), CSSUnitType::Pixel);
     container.setInlineStyleProperty(CSSPropertyTransform, makeString(
         "translate("_s,
         std::round(bounds.center.x() - (bounds.size.width() / 2)), "px, "_s,
@@ -631,12 +631,12 @@ void updateWithTextRecognitionResult(HTMLElement& element, const TextRecognition
     auto setInlineStylesForBlock = [&](HTMLElement& block, float scale, float targetHeight) {
         float fontSize = scale * targetHeight;
         float borderRadius = fontSize / 5 + (targetHeight - fontSize) / 50;
-        block.setInlineStyleProperty(CSSPropertyFontSize, fontSize, CSSUnitType::Px);
+        block.setInlineStyleProperty(CSSPropertyFontSize, fontSize, CSSUnitType::Pixel);
         block.setInlineStyleProperty(CSSPropertyBorderRadius, makeString(borderRadius, "px"_s));
-        block.setInlineStyleProperty(CSSPropertyPaddingLeft, 2 * borderRadius, CSSUnitType::Px);
-        block.setInlineStyleProperty(CSSPropertyPaddingRight, 2 * borderRadius, CSSUnitType::Px);
-        block.setInlineStyleProperty(CSSPropertyPaddingTop, borderRadius, CSSUnitType::Px);
-        block.setInlineStyleProperty(CSSPropertyPaddingBottom, borderRadius, CSSUnitType::Px);
+        block.setInlineStyleProperty(CSSPropertyPaddingLeft, 2 * borderRadius, CSSUnitType::Pixel);
+        block.setInlineStyleProperty(CSSPropertyPaddingRight, 2 * borderRadius, CSSUnitType::Pixel);
+        block.setInlineStyleProperty(CSSPropertyPaddingTop, borderRadius, CSSUnitType::Pixel);
+        block.setInlineStyleProperty(CSSPropertyPaddingBottom, borderRadius, CSSUnitType::Pixel);
     };
 
     ASSERT(result.blocks.size() == elements.blocks.size());
@@ -685,7 +685,7 @@ void updateWithTextRecognitionResult(HTMLElement& element, const TextRecognition
         if (++currentIteration > iterationLimit) {
             // Fall back to the largest font size that still vertically fits within the container.
             for (auto& state : elementsToAdjust)
-                protect(state.container)->setInlineStyleProperty(CSSPropertyFontSize, state.targetSize.height() * state.minScale, CSSUnitType::Px);
+                protect(state.container)->setInlineStyleProperty(CSSPropertyFontSize, state.targetSize.height() * state.minScale, CSSUnitType::Pixel);
             break;
         }
     }

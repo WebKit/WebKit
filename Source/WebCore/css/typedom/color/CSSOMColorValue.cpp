@@ -79,7 +79,7 @@ ExceptionOr<RectifiedCSSColorAngle> CSSOMColorValue::rectifyCSSColorAngle(CSSCol
 {
     return switchOn(WTF::move(colorAngle),
         [](double value) -> ExceptionOr<RectifiedCSSColorAngle> {
-            return { Ref<CSSNumericValue> { CSSUnitValue::create(value, CSSUnitType::Deg) } };
+            return { Ref<CSSNumericValue> { CSSUnitValue::create(value, CSSUnitType::Degree) } };
         },
         [](Ref<CSSNumericValue>&& numericValue) -> ExceptionOr<RectifiedCSSColorAngle> {
             if (numericValue->type().matches<CSSNumericBaseType::Angle>())

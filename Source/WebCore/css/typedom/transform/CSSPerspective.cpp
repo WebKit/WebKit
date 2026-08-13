@@ -153,7 +153,7 @@ ExceptionOr<Ref<DOMMatrix>> CSSPerspective::toMatrix()
     if (!length)
         return Exception { ExceptionCode::TypeError };
 
-    auto valuePx = length->convertTo(CSSUnitType::Px);
+    auto valuePx = length->convertTo(CSSUnitType::Pixel);
     if (!valuePx)
         return Exception { ExceptionCode::TypeError, "Length unit is not compatible with 'px'"_s };
 

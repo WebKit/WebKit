@@ -93,7 +93,7 @@ template<auto R, typename V> struct DeprecatedToStyle<CSS::UnevaluatedCalc<CSS::
 
         auto simplifiedPrimitiveType = simplifiedCalc.primitiveType();
 
-        if (simplifiedPrimitiveType == CSSUnitType::Px) {
+        if (simplifiedPrimitiveType == CSSUnitType::Pixel) {
             auto doubleValue = simplifiedCalc.evaluateDeprecated();
             return canonicalize(CSS::LengthRaw<R, V> { To::Dimension::unit, doubleValue }, NoConversionDataRequiredToken { });
         }

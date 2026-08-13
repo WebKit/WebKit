@@ -186,13 +186,13 @@ void ValidationMessage::adjustBubblePosition()
         }
     }
 
-    protect(m_bubble)->setInlineStyleProperty(CSSPropertyTop, hostY + hostRect.height(), CSSUnitType::Px);
+    protect(m_bubble)->setInlineStyleProperty(CSSPropertyTop, hostY + hostRect.height(), CSSUnitType::Pixel);
     // The 'left' value of ::-webkit-validation-bubble-arrow.
     const int bubbleArrowTopOffset = 32;
     double bubbleX = hostX;
     if (hostRect.width() / 2 < bubbleArrowTopOffset)
         bubbleX = std::max(hostX + hostRect.width() / 2 - bubbleArrowTopOffset, 0.0);
-    protect(m_bubble)->setInlineStyleProperty(CSSPropertyLeft, bubbleX, CSSUnitType::Px);
+    protect(m_bubble)->setInlineStyleProperty(CSSPropertyLeft, bubbleX, CSSUnitType::Pixel);
 }
 
 void ValidationMessage::buildBubbleTree()

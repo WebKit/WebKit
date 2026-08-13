@@ -186,7 +186,7 @@ ExceptionOr<Ref<DOMMatrix>> CSSRotate::toMatrix()
     if (!angleUnitValue || !xUnitValue || !yUnitValue || !zUnitValue)
         return Exception { ExceptionCode::TypeError };
 
-    auto angle = angleUnitValue->convertTo(CSSUnitType::Deg);
+    auto angle = angleUnitValue->convertTo(CSSUnitType::Degree);
     if (!angle)
         return Exception { ExceptionCode::TypeError };
 

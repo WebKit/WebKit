@@ -272,6 +272,17 @@ class NumericLiteral(object):
                     return kind
             raise Exception(f"Invalid numeric literal suffix: {suffix}")
 
+    # The CSSUnitType member each kind maps to. Spelled out explicitly rather
+    # than derived from the kind's name, as the C++ enum uses whole words.
+    CPP_UNIT_TYPES = {
+        Kind.NUMBER: 'Number',
+        Kind.PERCENTAGE: 'Percentage',
+        Kind.PX: 'Pixel',
+        Kind.S: 'Second',
+        Kind.MS: 'Millisecond',
+        Kind.DEG: 'Degree',
+    }
+
     def __init__(self, string):
         match = re.fullmatch(r"(\d+)([a-z%]*)", string)
         if not match:
@@ -289,12 +300,7 @@ class NumericLiteral(object):
 
     @property
     def cpp_unit_type(self):
-        if self.kind == NumericLiteral.Kind.NUMBER:
-            return f"CSSUnitType::Number"
-        elif self.kind == NumericLiteral.Kind.PERCENTAGE:
-            return f"CSSUnitType::Percentage"
-        else:
-            return f"CSSUnitType::{self.kind.name.capitalize()}"
+        return f"CSSUnitType::{NumericLiteral.CPP_UNIT_TYPES[self.kind]}"
 
     @property
     def cpp_literal(self):

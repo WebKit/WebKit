@@ -82,7 +82,7 @@ private:
 
 static void applyFontCascade(HTMLElement& element, const FontCascade& font)
 {
-    element.setInlineStyleProperty(CSSPropertyFontSize, font.size(), CSSUnitType::Px);
+    element.setInlineStyleProperty(CSSPropertyFontSize, font.size(), CSSUnitType::Pixel);
     element.setInlineStyleProperty(CSSPropertyFontWeight, static_cast<double>(font.weight()), CSSUnitType::Number);
     if (font.fontStyleSlope())
         element.setInlineStyleProperty(CSSPropertyFontStyle, CSSValueItalic);
@@ -286,8 +286,8 @@ void FallbackPopupMenu::buildPopupTree(const IntRect& elementRect, LocalFrameVie
     container->setUserAgentPart(UserAgentParts::internalFallbackPopupMenu());
     applyMenuStyle(container, element->menuStyle());
     container->setInlineStyleProperty(CSSPropertyPosition, CSSValueFixed);
-    container->setInlineStyleProperty(CSSPropertyLeft, elementRect.x() - scrollX, CSSUnitType::Px);
-    container->setInlineStyleProperty(CSSPropertyWidth, elementRect.width(), CSSUnitType::Px);
+    container->setInlineStyleProperty(CSSPropertyLeft, elementRect.x() - scrollX, CSSUnitType::Pixel);
+    container->setInlineStyleProperty(CSSPropertyWidth, elementRect.width(), CSSUnitType::Pixel);
 
     if (viewportHeight) {
         // There are some heuristics here to try and position the popup in a pleasing way.
@@ -303,14 +303,14 @@ void FallbackPopupMenu::buildPopupTree(const IntRect& elementRect, LocalFrameVie
         static constexpr int minSpaceBelow = 96;
         static constexpr int popupPadding = 12; // It doesn't look nice to touch the edges of the viewport.
         if (spaceBelow < minSpaceBelow) {
-            container->setInlineStyleProperty(CSSPropertyBottom, viewportHeight - elementTop, CSSUnitType::Px);
-            container->setInlineStyleProperty(CSSPropertyMaxHeight, std::min(spaceAbove - popupPadding, halfViewport), CSSUnitType::Px);
+            container->setInlineStyleProperty(CSSPropertyBottom, viewportHeight - elementTop, CSSUnitType::Pixel);
+            container->setInlineStyleProperty(CSSPropertyMaxHeight, std::min(spaceAbove - popupPadding, halfViewport), CSSUnitType::Pixel);
         } else {
-            container->setInlineStyleProperty(CSSPropertyTop, elementBottom, CSSUnitType::Px);
-            container->setInlineStyleProperty(CSSPropertyMaxHeight, std::min(spaceBelow - popupPadding, halfViewport), CSSUnitType::Px);
+            container->setInlineStyleProperty(CSSPropertyTop, elementBottom, CSSUnitType::Pixel);
+            container->setInlineStyleProperty(CSSPropertyMaxHeight, std::min(spaceBelow - popupPadding, halfViewport), CSSUnitType::Pixel);
         }
     } else
-        container->setInlineStyleProperty(CSSPropertyTop, elementRect.maxY() - scrollY, CSSUnitType::Px);
+        container->setInlineStyleProperty(CSSPropertyTop, elementRect.maxY() - scrollY, CSSUnitType::Pixel);
 
     int size = element->listSize();
     for (int i = 0; i < size; ++i) {

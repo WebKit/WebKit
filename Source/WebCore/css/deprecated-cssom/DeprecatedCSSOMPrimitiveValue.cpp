@@ -159,24 +159,24 @@ unsigned short DeprecatedCSSOMPrimitiveValue::primitiveType() const
 {
     auto convertUnitType = [](CSSUnitType unitType) -> unsigned short {
         switch (unitType) {
-        case CSSUnitType::Cm:                           return CSS_CM;
-        case CSSUnitType::Deg:                          return CSS_DEG;
+        case CSSUnitType::Centimeter:                           return CSS_CM;
+        case CSSUnitType::Degree:                          return CSS_DEG;
         case CSSUnitType::Em:                           return CSS_EMS;
         case CSSUnitType::Ex:                           return CSS_EXS;
-        case CSSUnitType::Grad:                         return CSS_GRAD;
-        case CSSUnitType::Hz:                           return CSS_HZ;
+        case CSSUnitType::Gradian:                         return CSS_GRAD;
+        case CSSUnitType::Hertz:                           return CSS_HZ;
         case CSSUnitType::Integer:                      return CSS_NUMBER;
-        case CSSUnitType::In:                           return CSS_IN;
-        case CSSUnitType::Khz:                          return CSS_KHZ;
-        case CSSUnitType::Mm:                           return CSS_MM;
-        case CSSUnitType::Ms:                           return CSS_MS;
+        case CSSUnitType::Inch:                           return CSS_IN;
+        case CSSUnitType::Kilohertz:                          return CSS_KHZ;
+        case CSSUnitType::Millimeter:                           return CSS_MM;
+        case CSSUnitType::Millisecond:                           return CSS_MS;
         case CSSUnitType::Number:                       return CSS_NUMBER;
-        case CSSUnitType::Pc:                           return CSS_PC;
+        case CSSUnitType::Pica:                           return CSS_PC;
         case CSSUnitType::Percentage:                   return CSS_PERCENTAGE;
-        case CSSUnitType::Pt:                           return CSS_PT;
-        case CSSUnitType::Px:                           return CSS_PX;
-        case CSSUnitType::Rad:                          return CSS_RAD;
-        case CSSUnitType::S:                            return CSS_S;
+        case CSSUnitType::Point:                           return CSS_PT;
+        case CSSUnitType::Pixel:                           return CSS_PX;
+        case CSSUnitType::Radian:                          return CSS_RAD;
+        case CSSUnitType::Second:                            return CSS_S;
 
         // All other, including newer types, should return UNKNOWN.
         default:                                            return CSS_UNKNOWN;
@@ -251,23 +251,23 @@ ExceptionOr<float> DeprecatedCSSOMPrimitiveValue::getFloatValue(unsigned short u
 
     auto requestedUnitType = [&] -> std::optional<CSSUnitType> {
         switch (unitType) {
-        case CSS_CM:            return CSSUnitType::Cm;
-        case CSS_DEG:           return CSSUnitType::Deg;
+        case CSS_CM:            return CSSUnitType::Centimeter;
+        case CSS_DEG:           return CSSUnitType::Degree;
         case CSS_EMS:           return CSSUnitType::Em;
         case CSS_EXS:           return CSSUnitType::Ex;
-        case CSS_GRAD:          return CSSUnitType::Grad;
-        case CSS_HZ:            return CSSUnitType::Hz;
-        case CSS_IN:            return CSSUnitType::In;
-        case CSS_KHZ:           return CSSUnitType::Khz;
-        case CSS_MM:            return CSSUnitType::Mm;
-        case CSS_MS:            return CSSUnitType::Ms;
+        case CSS_GRAD:          return CSSUnitType::Gradian;
+        case CSS_HZ:            return CSSUnitType::Hertz;
+        case CSS_IN:            return CSSUnitType::Inch;
+        case CSS_KHZ:           return CSSUnitType::Kilohertz;
+        case CSS_MM:            return CSSUnitType::Millimeter;
+        case CSS_MS:            return CSSUnitType::Millisecond;
         case CSS_NUMBER:        return CSSUnitType::Number;
-        case CSS_PC:            return CSSUnitType::Pc;
+        case CSS_PC:            return CSSUnitType::Pica;
         case CSS_PERCENTAGE:    return CSSUnitType::Percentage;
-        case CSS_PT:            return CSSUnitType::Pt;
-        case CSS_PX:            return CSSUnitType::Px;
-        case CSS_RAD:           return CSSUnitType::Rad;
-        case CSS_S:             return CSSUnitType::S;
+        case CSS_PT:            return CSSUnitType::Point;
+        case CSS_PX:            return CSSUnitType::Pixel;
+        case CSS_RAD:           return CSSUnitType::Radian;
+        case CSS_S:             return CSSUnitType::Second;
         default:                return std::nullopt;
         }
     }();

@@ -80,10 +80,10 @@ WebAnimationTime::WebAnimationTime(const CSSNumberish& value)
         if (unitValue->unitEnum() == CSSUnitType::Number) {
             m_type = Type::Time;
             m_value = unitValue->value() / 1000;
-        } else if (auto milliseconds = unitValue->convertTo(CSSUnitType::Ms)) {
+        } else if (auto milliseconds = unitValue->convertTo(CSSUnitType::Millisecond)) {
             m_type = Type::Time;
             m_value = milliseconds->value() / 1000;
-        } else if (auto seconds = unitValue->convertTo(CSSUnitType::S)) {
+        } else if (auto seconds = unitValue->convertTo(CSSUnitType::Second)) {
             m_type = Type::Time;
             m_value = seconds->value();
         } else if (auto percentage = unitValue->convertTo(CSSUnitType::Percentage)) {

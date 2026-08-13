@@ -180,95 +180,95 @@ std::optional<CanonicalDimension> canonicalize(NonCanonicalDimension root, const
 
     switch (root.unit) {
     // Absolute Lengths (can be canonicalized without conversion data).
-    case CSSUnitType::Cm:
+    case CSSUnitType::Centimeter:
         return makeCanonical(root.value * CSS::pixelsPerCm,              CanonicalDimension::Dimension::Length);
-    case CSSUnitType::Mm:
+    case CSSUnitType::Millimeter:
         return makeCanonical(root.value * CSS::pixelsPerMm,              CanonicalDimension::Dimension::Length);
-    case CSSUnitType::Q:
+    case CSSUnitType::QuarterMillimeter:
         return makeCanonical(root.value * CSS::pixelsPerQ,               CanonicalDimension::Dimension::Length);
-    case CSSUnitType::In:
+    case CSSUnitType::Inch:
         return makeCanonical(root.value * CSS::pixelsPerInch,            CanonicalDimension::Dimension::Length);
-    case CSSUnitType::Pt:
+    case CSSUnitType::Point:
         return makeCanonical(root.value * CSS::pixelsPerPt,              CanonicalDimension::Dimension::Length);
-    case CSSUnitType::Pc:
+    case CSSUnitType::Pica:
         return makeCanonical(root.value * CSS::pixelsPerPc,              CanonicalDimension::Dimension::Length);
 
     // Font, Viewport and Container relative Lengths (require conversion data for canonicalization).
     case CSSUnitType::Em:
     case CSSUnitType::Ex:
-    case CSSUnitType::Lh:
+    case CSSUnitType::LineHeight:
     case CSSUnitType::Cap:
     case CSSUnitType::Ch:
     case CSSUnitType::Ic:
-    case CSSUnitType::Rcap:
-    case CSSUnitType::Rch:
-    case CSSUnitType::Rem:
-    case CSSUnitType::Rex:
-    case CSSUnitType::Ric:
-    case CSSUnitType::Rlh:
-    case CSSUnitType::Vw:
-    case CSSUnitType::Vh:
-    case CSSUnitType::Vmin:
-    case CSSUnitType::Vmax:
-    case CSSUnitType::Vb:
-    case CSSUnitType::Vi:
-    case CSSUnitType::Svw:
-    case CSSUnitType::Svh:
-    case CSSUnitType::Svmin:
-    case CSSUnitType::Svmax:
-    case CSSUnitType::Svb:
-    case CSSUnitType::Svi:
-    case CSSUnitType::Lvw:
-    case CSSUnitType::Lvh:
-    case CSSUnitType::Lvmin:
-    case CSSUnitType::Lvmax:
-    case CSSUnitType::Lvb:
-    case CSSUnitType::Lvi:
-    case CSSUnitType::Dvw:
-    case CSSUnitType::Dvh:
-    case CSSUnitType::Dvmin:
-    case CSSUnitType::Dvmax:
-    case CSSUnitType::Dvb:
-    case CSSUnitType::Dvi:
-    case CSSUnitType::Cqw:
-    case CSSUnitType::Cqh:
-    case CSSUnitType::Cqi:
-    case CSSUnitType::Cqb:
-    case CSSUnitType::Cqmin:
-    case CSSUnitType::Cqmax:
+    case CSSUnitType::RootCap:
+    case CSSUnitType::RootCh:
+    case CSSUnitType::RootEm:
+    case CSSUnitType::RootEx:
+    case CSSUnitType::RootIc:
+    case CSSUnitType::RootLineHeight:
+    case CSSUnitType::ViewportWidth:
+    case CSSUnitType::ViewportHeight:
+    case CSSUnitType::ViewportMin:
+    case CSSUnitType::ViewportMax:
+    case CSSUnitType::ViewportBlock:
+    case CSSUnitType::ViewportInline:
+    case CSSUnitType::SmallViewportWidth:
+    case CSSUnitType::SmallViewportHeight:
+    case CSSUnitType::SmallViewportMin:
+    case CSSUnitType::SmallViewportMax:
+    case CSSUnitType::SmallViewportBlock:
+    case CSSUnitType::SmallViewportInline:
+    case CSSUnitType::LargeViewportWidth:
+    case CSSUnitType::LargeViewportHeight:
+    case CSSUnitType::LargeViewportMin:
+    case CSSUnitType::LargeViewportMax:
+    case CSSUnitType::LargeViewportBlock:
+    case CSSUnitType::LargeViewportInline:
+    case CSSUnitType::DynamicViewportWidth:
+    case CSSUnitType::DynamicViewportHeight:
+    case CSSUnitType::DynamicViewportMin:
+    case CSSUnitType::DynamicViewportMax:
+    case CSSUnitType::DynamicViewportBlock:
+    case CSSUnitType::DynamicViewportInline:
+    case CSSUnitType::ContainerQueryWidth:
+    case CSSUnitType::ContainerQueryHeight:
+    case CSSUnitType::ContainerQueryInline:
+    case CSSUnitType::ContainerQueryBlock:
+    case CSSUnitType::ContainerQueryMin:
+    case CSSUnitType::ContainerQueryMax:
         return tryMakeCanonical(root.value, *CSS::toLengthUnit(root.unit));
 
     // <angle>
-    case CSSUnitType::Rad:
+    case CSSUnitType::Radian:
         return makeCanonical(root.value * degreesPerRadianDouble,        CanonicalDimension::Dimension::Angle);
-    case CSSUnitType::Grad:
+    case CSSUnitType::Gradian:
         return makeCanonical(root.value * degreesPerGradientDouble,      CanonicalDimension::Dimension::Angle);
     case CSSUnitType::Turn:
         return makeCanonical(root.value * degreesPerTurnDouble,          CanonicalDimension::Dimension::Angle);
 
     // <time>
-    case CSSUnitType::Ms:
+    case CSSUnitType::Millisecond:
         return makeCanonical(root.value * CSS::secondsPerMillisecond,    CanonicalDimension::Dimension::Time);
 
     // <frequency>
-    case CSSUnitType::Khz:
+    case CSSUnitType::Kilohertz:
         return makeCanonical(root.value * CSS::hertzPerKilohertz,        CanonicalDimension::Dimension::Frequency);
 
     // <resolution>
     case CSSUnitType::X:
         return makeCanonical(root.value * CSS::dppxPerX,                 CanonicalDimension::Dimension::Resolution);
-    case CSSUnitType::Dpi:
+    case CSSUnitType::DotsPerInch:
         return makeCanonical(root.value * CSS::dppxPerDpi,               CanonicalDimension::Dimension::Resolution);
-    case CSSUnitType::Dpcm:
+    case CSSUnitType::DotsPerCentimeter:
         return makeCanonical(root.value * CSS::dppxPerDpcm,              CanonicalDimension::Dimension::Resolution);
 
     // Canonical dimensional types should never be stored in a NonCanonicalDimension.
-    case CSSUnitType::Px:
-    case CSSUnitType::Deg:
-    case CSSUnitType::S:
-    case CSSUnitType::Hz:
-    case CSSUnitType::Dppx:
-    case CSSUnitType::Fr:
+    case CSSUnitType::Pixel:
+    case CSSUnitType::Degree:
+    case CSSUnitType::Second:
+    case CSSUnitType::Hertz:
+    case CSSUnitType::DotsPerPixel:
+    case CSSUnitType::Fraction:
     // Non-dimensional types should never be stored in a NonCanonicalDimension.
     case CSSUnitType::Number:
     case CSSUnitType::Integer:
