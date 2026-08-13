@@ -36,13 +36,14 @@ namespace WebKit {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(FileSystemStorageManager);
 
-Ref<FileSystemStorageManager> FileSystemStorageManager::create(String&& path, FileSystemStorageHandleRegistry& registry, QuotaCheckFunction&& quotaCheckFunction)
+Ref<FileSystemStorageManager> FileSystemStorageManager::create(String&& path, FileSystemStorageHandleRegistry& registry, const WebCore::ClientOrigin& origin, QuotaCheckFunction&& quotaCheckFunction)
 {
-    return adoptRef(*new FileSystemStorageManager(WTF::move(path), registry, WTF::move(quotaCheckFunction)));
+    return adoptRef(*new FileSystemStorageManager(WTF::move(path), registry, origin, WTF::move(quotaCheckFunction)));
 }
 
-FileSystemStorageManager::FileSystemStorageManager(String&& path, FileSystemStorageHandleRegistry& registry, QuotaCheckFunction&& quotaCheckFunction)
+FileSystemStorageManager::FileSystemStorageManager(String&& path, FileSystemStorageHandleRegistry& registry, const WebCore::ClientOrigin& origin, QuotaCheckFunction&& quotaCheckFunction)
     : m_path(WTF::move(path))
+    , m_origin(origin)
     , m_registry(registry)
     , m_quotaCheckFunction(WTF::move(quotaCheckFunction))
 {
