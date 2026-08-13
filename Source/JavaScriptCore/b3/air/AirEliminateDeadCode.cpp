@@ -90,18 +90,22 @@ bool eliminateDeadCode(Code& code)
         }
     };
 
-    Vector<Inst*> possiblyDead;
+    Vector<Inst*> deadCandidatesInBackwardOrder;
 
-    for (BasicBlock* block : code) {
-        for (Inst& inst : *block) {
+    for (unsigned blockIndex = code.size(); blockIndex--;) {
+        BasicBlock* block = code[blockIndex];
+        if (!block)
+            continue;
+        for (unsigned instIndex = block->size(); instIndex--;) {
+            Inst& inst = block->at(instIndex);
             if (!isInstLive(inst))
-                possiblyDead.append(&inst);
+                deadCandidatesInBackwardOrder.append(&inst);
             else
                 markArgsLive(inst);
         }
     }
 
-    // Inst in possiblyDead already have hasNonArgEffects() == false, invariant
+    // Inst in deadCandidatesInBackwardOrder already have hasNonArgEffects() == false, invariant
     // under live-set growth, so the fixpoint skips that re-check.
     auto handleInst = [&] (Inst& inst) -> bool {
         if (!isInstLiveByDefs(inst))
@@ -110,9 +114,9 @@ bool eliminateDeadCode(Code& code)
         return true;
     };
 
-    auto runForward = [&] () -> bool {
+    auto runBackward = [&] () -> bool {
         changed = false;
-        possiblyDead.removeAllMatching(
+        deadCandidatesInBackwardOrder.removeAllMatching(
             [&] (Inst* inst) -> bool {
                 bool result = handleInst(*inst);
                 changed |= result;
@@ -121,13 +125,13 @@ bool eliminateDeadCode(Code& code)
         return changed;
     };
 
-    auto runBackward = [&] () -> bool {
+    auto runForward = [&] () -> bool {
         changed = false;
-        for (unsigned i = possiblyDead.size(); i--;) {
-            bool result = handleInst(*possiblyDead[i]);
+        for (unsigned i = deadCandidatesInBackwardOrder.size(); i--;) {
+            bool result = handleInst(*deadCandidatesInBackwardOrder[i]);
             if (result) {
-                possiblyDead[i] = possiblyDead.last();
-                possiblyDead.removeLast();
+                deadCandidatesInBackwardOrder[i] = deadCandidatesInBackwardOrder.last();
+                deadCandidatesInBackwardOrder.removeLast();
                 changed = true;
             }
         }
@@ -146,12 +150,12 @@ bool eliminateDeadCode(Code& code)
             break;
     }
 
-    // After the fixpoint, possiblyDead holds exactly the dead Insts. Null them
+    // After the fixpoint, deadCandidatesInBackwardOrder holds exactly the dead Insts. Null them
     // out and sweep with the cheap !inst predicate.
-    if (possiblyDead.isEmpty())
+    if (deadCandidatesInBackwardOrder.isEmpty())
         return false;
 
-    for (Inst* inst : possiblyDead)
+    for (Inst* inst : deadCandidatesInBackwardOrder)
         *inst = Inst();
 
     for (BasicBlock* block : code) {
