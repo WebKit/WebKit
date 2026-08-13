@@ -1,0 +1,3 @@
+
+FAIL test that PAC metadata is respected promise_test: Unhandled rejection with value: object "TypeError: Load failed"
+

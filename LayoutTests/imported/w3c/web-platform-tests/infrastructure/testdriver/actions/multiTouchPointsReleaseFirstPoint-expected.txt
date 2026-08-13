@@ -1,0 +1,3 @@
+
+FAIL TestDriver actions: two touch points with one moving one pause assert_equals: Expected number of events expected 5 but got 0
+

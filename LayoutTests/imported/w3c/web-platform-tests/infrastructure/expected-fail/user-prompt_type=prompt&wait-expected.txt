@@ -1,0 +1,4 @@
+PROMPT: this user prompt should be dismissed, default text:
+
+PASS Unhandled user prompt dismisses and notifies
+

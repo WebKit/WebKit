@@ -1,0 +1,5 @@
+
+
+PASS <audio> autoplay
+PASS <video> autoplay
+

@@ -1,0 +1,5 @@
+
+Harness Error (FAIL), message = Error: bidi.bluetooth.simulate_adapter is not implemented by testdriver-vendor.js
+
+NOTRUN simulate a preconnected peripheral.
+

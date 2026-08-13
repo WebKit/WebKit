@@ -1,0 +1,4 @@
+
+
+PASS TestDriver click method with multiple windows and nested iframe
+

@@ -1,0 +1,3 @@
+
+PASS TestDriver actions: test the mouse click counts at different cases
+

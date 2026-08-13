@@ -1,0 +1,3 @@
+
+FAIL TestDriver actions: element position assert_array_equals: expected property 0 to be 50 but got 0 (expected array [50, 25] got [0, 12])
+

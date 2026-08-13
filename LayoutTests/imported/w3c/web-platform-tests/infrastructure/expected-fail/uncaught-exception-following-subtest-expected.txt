@@ -1,0 +1,5 @@
+
+Harness Error (FAIL), message = Error: error outside any setup or test
+
+PASS Uncaught exception following subtest
+

@@ -1,0 +1,3 @@
+
+FAIL TestDriver actions: two touch points with both moving assert_equals: expected 6 but got 0
+

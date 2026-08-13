@@ -1,0 +1,9 @@
+
+FAIL Can create an authenticator promise_test: Unhandled rejection with value: object "Error: add_virtual_authenticator() is not implemented by testdriver-vendor.js"
+FAIL Can add a credential promise_test: Unhandled rejection with value: object "Error: add_credential() is not implemented by testdriver-vendor.js"
+FAIL Can get the credentials promise_test: Unhandled rejection with value: object "Error: get_credentials() is not implemented by testdriver-vendor.js"
+FAIL Can remove a credential promise_test: Unhandled rejection with value: object "Error: remove_credential() is not implemented by testdriver-vendor.js"
+FAIL Can remove all credentials promise_test: Unhandled rejection with value: object "Error: add_credential() is not implemented by testdriver-vendor.js"
+FAIL Can set user verified promise_test: Unhandled rejection with value: object "Error: set_user_verified() is not implemented by testdriver-vendor.js"
+FAIL Can remove a virtual authenticator promise_test: Unhandled rejection with value: object "Error: remove_virtual_authenticator() is not implemented by testdriver-vendor.js"
+

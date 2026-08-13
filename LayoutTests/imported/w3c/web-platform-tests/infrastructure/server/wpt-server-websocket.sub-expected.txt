@@ -1,0 +1,14 @@
+
+PASS WS protocol, no subdomain
+PASS WS protocol, www subdomain #1
+PASS WS protocol, www subdomain #2
+PASS WS protocol, www subdomain #3
+PASS WS protocol, punycode subdomain #1
+PASS WS protocol, punycode subdomain #2
+PASS WSS protocol, no subdomain
+PASS WSS protocol, www subdomain #1
+PASS WSS protocol, www subdomain #2
+PASS WSS protocol, www subdomain #3
+PASS WSS protocol, punycode subdomain #1
+PASS WSS protocol, punycode subdomain #2
+

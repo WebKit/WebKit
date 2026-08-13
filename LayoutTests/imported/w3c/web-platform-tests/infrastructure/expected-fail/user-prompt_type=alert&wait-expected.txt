@@ -1,0 +1,4 @@
+ALERT: this user prompt should be dismissed
+
+PASS Unhandled user prompt dismisses and notifies
+

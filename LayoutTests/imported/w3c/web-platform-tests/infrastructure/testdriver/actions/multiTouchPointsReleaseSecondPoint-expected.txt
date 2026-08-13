@@ -1,0 +1,3 @@
+
+FAIL TestDriver actions: two touch points with one moving one pause promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'e[prop]')"
+

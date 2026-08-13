@@ -1,0 +1,3 @@
+
+FAIL TestDriver actions: actions with key pressed promise_test: Unhandled rejection with value: object "Error: testdriver-vendor.js for WebKit does not yet support mixing key and pointer sources"
+

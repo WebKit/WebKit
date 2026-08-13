@@ -1,0 +1,3 @@
+
+FAIL TestDriver actions: two touch points with one moving one pause assert_array_equals: lengths differ, expected array ["pointerdown", "pointermove", "pointerdown", "pointerup", "pointerup"] length 5, got [] length 0
+

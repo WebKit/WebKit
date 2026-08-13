@@ -1,0 +1,3 @@
+
+PASS Use testdriver to check window is not minimized
+
