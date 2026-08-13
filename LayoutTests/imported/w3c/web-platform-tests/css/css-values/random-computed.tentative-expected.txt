@@ -130,6 +130,12 @@ PASS Shared by property name and value index: random(property-index-scoped, a, b
 PASS Shared by property and index in list value: random(a, b)
 FAIL Nested in fixed value random() function used for custom property: 'random(a, b)' assert_false: Different custom properties on the same element should not have equal values expected false got true
 PASS random() in different custom properties on the same element should not be shared
+PASS random() in different registered <length> custom properties on the same element should not be shared
+PASS random() in a custom property should be element-scoped by default
+PASS random() in a custom property should not be shared with a non-custom property at the same index
+PASS random(property-scoped, ...) in a custom property should be equal between elements
+PASS two random() functions in the same custom property should not be shared
+PASS random() keyed on a custom property should not collide with an author <dashed-ident> naming it
 PASS Shared by name within an element: 'random(--identifier element-scoped, a, b)'
 PASS Shared by name within an element - shorthand: random(--identifier element-scoped, a, b))
 PASS Shared between elements within a property: random(property-index-scoped, a, b)
