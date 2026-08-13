@@ -1076,20 +1076,6 @@ CSS3DTransformBackfaceVisibilityInteroperabilityEnabled:
     WebCore:
       default: false
 
-CSSAnchorPositioningEnabled:
-  type: bool
-  status: stable
-  category: css
-  humanReadableName: "CSS Anchor Positioning"
-  humanReadableDescription: "Enable CSS Anchor Positioning"
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
-    WebCore:
-      default: true
-
 CSSAppearanceBaseEnabled:
   type: bool
   status: testable

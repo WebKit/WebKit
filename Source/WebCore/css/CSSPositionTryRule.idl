@@ -28,7 +28,6 @@
 typedef USVString CSSOMString;
 
 [
-    EnabledBySetting=CSSAnchorPositioningEnabled,
     Exposed=Window
 ] interface CSSPositionTryRule : CSSRule {
     readonly attribute CSSOMString name;

@@ -1043,9 +1043,6 @@ static std::optional<TypedChild> consumeAnchor(CSSParserTokenRange& tokens, int 
     if (state.parserOptions.propertyOptions.anchorPolicy != AnchorPolicy::Allow)
         return { };
 
-    if (!state.propertyParserState.context.propertySettings.cssAnchorPositioningEnabled)
-        return { };
-
     auto anchorElement = CSSPropertyParserHelpers::consumeUnresolvedDashedIdent(tokens, state.propertyParserState);
 
     // <anchor-side> = inside | outside | top | left | right | bottom | start | end | self-start | self-end | <percentage> | center
@@ -1137,9 +1134,6 @@ static std::optional<TypedChild> consumeAnchorSize(CSSParserTokenRange& tokens, 
     // <anchor-size> = width | height | block | inline | self-block | self-inline
 
     if (state.parserOptions.propertyOptions.anchorSizePolicy != AnchorSizePolicy::Allow)
-        return { };
-
-    if (!state.propertyParserState.context.propertySettings.cssAnchorPositioningEnabled)
         return { };
 
     // parse <anchor-element>

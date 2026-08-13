@@ -13592,7 +13592,6 @@
                 "none"
             ],
             "codegen-properties": {
-                "settings-flag": "cssAnchorPositioningEnabled",
                 "computed-style-name-for-methods": "AnchorNames",
                 "computed-style-storage-path": ["m_nonInheritedData", "rareData"],
                 "computed-style-storage-kind": "reference",
@@ -13611,8 +13610,7 @@
                 "computed-style-storage-path": ["m_nonInheritedData", "rareData"],
                 "computed-style-storage-kind": "reference",
                 "computed-style-type": "Style::NameScope",
-                "parser-grammar": "none | all | <dashed-ident>#",
-                "settings-flag": "cssAnchorPositioningEnabled"
+                "parser-grammar": "none | all | <dashed-ident>#"
             },
             "specification": {
                 "category": "css-anchor-position",
@@ -13628,7 +13626,6 @@
                 "auto"
             ],
             "codegen-properties": {
-                "settings-flag": "cssAnchorPositioningEnabled",
                 "computed-style-storage-path": ["m_nonInheritedData", "rareData"],
                 "computed-style-storage-kind": "reference",
                 "computed-style-type": "Style::PositionAnchor",
@@ -13647,7 +13644,6 @@
                 "none"
             ],
             "codegen-properties": {
-                "settings-flag": "cssAnchorPositioningEnabled",
                 "computed-style-storage-path": ["m_nonInheritedData", "rareData"],
                 "computed-style-storage-kind": "value",
                 "computed-style-type": "Style::PositionArea",
@@ -13666,7 +13662,6 @@
                     "position-try-order",
                     "position-try-fallbacks"
                 ],
-                "settings-flag": "cssAnchorPositioningEnabled",
                 "parser-function": "consumePositionTryShorthand",
                 "parser-grammar-unused": "<'position-try-order'>? <'position-try-fallbacks'>",
                 "parser-grammar-unused-reason": "Needs support for shorthand grammars."
@@ -13687,7 +13682,6 @@
                 "most-inline-size"
             ],
             "codegen-properties": {
-                "settings-flag": "cssAnchorPositioningEnabled",
                 "computed-style-storage-path": ["m_nonInheritedData", "rareData"],
                 "computed-style-storage-kind": "enum",
                 "computed-style-type": "Style::PositionTryOrder",
@@ -13705,7 +13699,6 @@
                 "none"
             ],
             "codegen-properties": {
-                "settings-flag": "cssAnchorPositioningEnabled",
                 "computed-style-storage-path": ["m_nonInheritedData", "rareData"],
                 "computed-style-storage-kind": "reference",
                 "computed-style-type": "Style::PositionTryFallbacks",
@@ -13730,7 +13723,6 @@
                 "no-overflow"
             ],
             "codegen-properties": {
-                "settings-flag": "cssAnchorPositioningEnabled",
                 "computed-style-initial-custom": true,
                 "computed-style-storage-path": ["m_nonInheritedData", "rareData"],
                 "computed-style-storage-kind": "raw",

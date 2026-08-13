@@ -211,9 +211,6 @@ RefPtr<CSSValue> consumeAlignSelf(CSSParserTokenRange& range, CSS::PropertyParse
 
     // <self-position>
     case CSSValueAnchorCenter:
-        if (!state.context.propertySettings.cssAnchorPositioningEnabled)
-            return nullptr;
-        [[fallthrough]];
     case CSSValueStart:
     case CSSValueEnd:
     case CSSValueCenter:
@@ -238,9 +235,6 @@ RefPtr<CSSValue> consumeAlignSelf(CSSParserTokenRange& range, CSS::PropertyParse
         return consumeAlignmentOverflowPosition(range, state, initial, [&](auto second) {
             switch (second) {
             case CSSValueAnchorCenter:
-                if (!state.context.propertySettings.cssAnchorPositioningEnabled)
-                    return false;
-                [[fallthrough]];
             case CSSValueStart:
             case CSSValueEnd:
             case CSSValueCenter:
@@ -276,9 +270,6 @@ RefPtr<CSSValue> consumeJustifySelf(CSSParserTokenRange& range, CSS::PropertyPar
 
     // [ <self-position> | left | right ]
     case CSSValueAnchorCenter:
-        if (!state.context.propertySettings.cssAnchorPositioningEnabled)
-            return nullptr;
-        [[fallthrough]];
     case CSSValueStart:
     case CSSValueEnd:
     case CSSValueCenter:
@@ -305,9 +296,6 @@ RefPtr<CSSValue> consumeJustifySelf(CSSParserTokenRange& range, CSS::PropertyPar
         return consumeAlignmentOverflowPosition(range, state, initial, [&](auto second) {
             switch (second) {
             case CSSValueAnchorCenter:
-                if (!state.context.propertySettings.cssAnchorPositioningEnabled)
-                    return false;
-                [[fallthrough]];
             case CSSValueStart:
             case CSSValueEnd:
             case CSSValueCenter:
@@ -343,9 +331,6 @@ RefPtr<CSSValue> consumeAlignItems(CSSParserTokenRange& range, CSS::PropertyPars
 
     // <self-position>
     case CSSValueAnchorCenter:
-        if (!state.context.propertySettings.cssAnchorPositioningEnabled)
-            return nullptr;
-        [[fallthrough]];
     case CSSValueStart:
     case CSSValueEnd:
     case CSSValueCenter:
@@ -370,9 +355,6 @@ RefPtr<CSSValue> consumeAlignItems(CSSParserTokenRange& range, CSS::PropertyPars
         return consumeAlignmentOverflowPosition(range, state, initial, [&](auto second) {
             switch (second) {
             case CSSValueAnchorCenter:
-                if (!state.context.propertySettings.cssAnchorPositioningEnabled)
-                    return false;
-                [[fallthrough]];
             case CSSValueStart:
             case CSSValueEnd:
             case CSSValueCenter:
@@ -406,9 +388,6 @@ RefPtr<CSSValue> consumeJustifyItems(CSSParserTokenRange& range, CSS::PropertyPa
 
     // [ <self-position> | left | right ] - NOTE: `left`, `right`, and `center` handled further below to account for additional `legacy` keyword.
     case CSSValueAnchorCenter:
-        if (!state.context.propertySettings.cssAnchorPositioningEnabled)
-            return nullptr;
-        [[fallthrough]];
     case CSSValueStart:
     case CSSValueEnd:
     case CSSValueSelfStart:
@@ -432,9 +411,6 @@ RefPtr<CSSValue> consumeJustifyItems(CSSParserTokenRange& range, CSS::PropertyPa
         return consumeAlignmentOverflowPosition(range, state, initial, [&](auto second) {
             switch (second) {
             case CSSValueAnchorCenter:
-                if (!state.context.propertySettings.cssAnchorPositioningEnabled)
-                    return false;
-                [[fallthrough]];
             case CSSValueStart:
             case CSSValueEnd:
             case CSSValueCenter:

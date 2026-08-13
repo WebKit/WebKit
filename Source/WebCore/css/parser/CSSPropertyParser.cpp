@@ -814,8 +814,6 @@ static bool propertyAllowedInPositionTryRule(CSSPropertyID property)
 
 bool consumePositionTryDescriptor(CSSParserTokenRange& range, const CSSParserContext& context, CSSPropertyID property, IsImportant important, CSS::PropertyParserResult& result)
 {
-    ASSERT(context.propertySettings.cssAnchorPositioningEnabled);
-
     // Per spec, !important is not allowed and makes the whole declaration invalid.
     if (important == IsImportant::Yes)
         return false;
