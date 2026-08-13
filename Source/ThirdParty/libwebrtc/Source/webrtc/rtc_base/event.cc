@@ -17,6 +17,7 @@
 
 #include "api/units/time_delta.h"
 #include "rtc_base/checks.h"
+#include "rtc_base/logging.h"
 #include "rtc_base/synchronization/yield_policy.h"
 #include "rtc_base/system/warn_current_thread_is_deadlocked.h"
 
@@ -161,9 +162,30 @@ bool Event::Wait(TimeDelta give_up_after, TimeDelta warn_after) {
   ScopedYieldPolicy::YieldExecution();
   pthread_mutex_lock(&event_mutex_);
 
+  bool has_logged_error = false;
   // Wait for `event_cond_` to trigger and `event_status_` to be set, with the
   // given timeout (or without a timeout if none is given).
   const auto wait = [&](const std::optional<timespec> timeout_ts) {
+#if WEBRTC_WEBKIT_BUILD
+    while (!event_status_) {
+      if (timeout_ts == std::nullopt) {
+        auto result = pthread_cond_wait(&event_cond_, &event_mutex_);
+        if (result && result != ETIMEDOUT && !has_logged_error) {
+          has_logged_error = true;
+          RTC_LOG(LS_ERROR) << "Event::Wait pthread_cond_wait failed with error " << result;
+        }
+      } else {
+        auto result = pthread_cond_timedwait(&event_cond_, &event_mutex_, &*timeout_ts);
+        if (result == ETIMEDOUT) {
+          return ETIMEDOUT;
+        } else if (result && !has_logged_error) {
+          has_logged_error = true;
+          RTC_LOG(LS_ERROR) << "Event::Wait pthread_cond_timedwait failed with error " << result;
+        }
+      }
+    }
+    return 0;
+#else
     int error = 0;
     while (!event_status_ && error == 0) {
       if (timeout_ts == std::nullopt) {
@@ -179,6 +201,7 @@ bool Event::Wait(TimeDelta give_up_after, TimeDelta warn_after) {
       }
     }
     return error;
+#endif
   };
 
   int error;
