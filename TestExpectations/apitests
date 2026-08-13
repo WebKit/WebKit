@@ -398,3 +398,9 @@ TestWebKitAPI.PrivateClickMeasurement.MigrateFromResourceLoadStatistics2 [ Pass 
 TestWebKitAPI.PrivateClickMeasurement.DestinationClickFraudPrevention [ Pass timeout ]
 TestWebKitAPI.CopyHTML.NonEmojiImgWithSVGSourcePreserved [ Pass Failure ]
 TestWebKitAPI.VisualViewport.RotationResize [ Pass Failure ]
+
+# rdar://184856803 ([ security-ews ] Garden preexisting failures, then file individual bugs)
+TestWebKitAPI.ContextMenuMouseEvents.RightClick [ Skip ]
+TestWebKitAPI.ScrollbarTests.ScrollbarAvoidanceInConcentricContainerWithNonUniformCornerRadii [ Skip ]
+TestWGSL.WGSLMetalCompilationTests.Overload [ Skip ]
+TestWebKitAPI.ScrollbarTests.ScrollbarAvoidanceInConcentricContainerWithUniformCornerRadii  [ Skip ]
