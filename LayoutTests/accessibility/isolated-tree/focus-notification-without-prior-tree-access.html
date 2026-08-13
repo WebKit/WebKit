@@ -1,0 +1,49 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN"><!-- webkit-test-runner [ IsAccessibilityIsolatedTreeEnabled=true ] -->
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="item" role="listitem" tabindex="0" aria-posinset="1" aria-setsize="10">Item 1</div>
+
+<script>
+let output = "This test verifies that a focus notification is delivered even when nothing has " +
+    "queried the accessibility tree before the focus change (e.g. accessibleElementById, " +
+    "rootElement or focusedElement). This matters because some platform implementations only " +
+    "create the AXObjectCache lazily, and a naive implementation may only do so as a side effect " +
+    "of an earlier tree query rather than in response to the focus change itself.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var sawFocusNotification = false;
+    // Intentionally register the listener without calling accessibleElementById,
+    // rootElement, or focusedElement first, so nothing has forced the platform
+    // accessibility tree/cache into existence yet.
+    accessibilityController.addNotificationListener((axElement, notification) => {
+        if (notification == "AXFocusChanged" || notification == "AXFocusedUIElementChanged")
+            sawFocusNotification = true;
+    });
+
+    // A plain DOM focus call, not going through any accessibility API.
+    document.getElementById("item").focus();
+
+    setTimeout(async () => {
+        await waitFor(() => sawFocusNotification);
+        output += expect("sawFocusNotification", "true");
+        if (sawFocusNotification)
+            output += expect("accessibilityController.focusedElement.domIdentifier", "'item'");
+
+        document.getElementById("item").style.visibility = "hidden";
+        accessibilityController.removeNotificationListener();
+        debug(output);
+        finishJSTest();
+    }, 0);
+} else {
+    debug(output);
+}
+</script>
+</body>
+</html>

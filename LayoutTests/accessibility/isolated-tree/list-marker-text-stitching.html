@@ -1,0 +1,67 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN"><!-- webkit-test-runner [ runSingly=true AccessibilityTextStitchingEnabled=true IsAccessibilityIsolatedTreeEnabled=true ] -->
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<!-- Test <ol>. -->
+<ol id="ol">
+    <li style="font-family: Monospace; font-size: 14px" id="foo">Foo</li>
+    <li>Bar</li>
+</ol>
+
+<!-- Test <ul>. -->
+<ul id="ul">
+    <li>Light <b>blue</b></li>
+    <li>Red</li>
+</ul>
+
+<ol>
+    <!-- Make sure unstitched list markers still work. -->
+    <li></li>
+    <li></li>
+</ol>
+
+<script>
+var output = "This test ensures we handle text stitching appropriately for list markers.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var webArea = accessibilityController.rootElement.childAtIndex(0);
+    var initialTraversalOutput = dumpAXSearchTraversal(webArea, { excludeRoles: ["group"] });
+
+    var fooListItem = accessibilityController.accessibleElementById("foo");
+    var fooText = fooListItem.childAtIndex(0);
+    // Verify that the bounding box includes all members of the stitch group, including the list marker.
+    output += expectNumber("fooText.pageX", 22, /* allowedVariance */ 1);
+    output += expectNumber("fooText.pageY", 8, /* allowedVariance */ 1);
+    output += expectNumber("fooText.width", 52, /* allowedVariance */ 1);
+    output += expectNumber("fooText.height", 15, /* allowedVariance */ 1);
+
+    output += initialTraversalOutput;
+    output += "\nSecond traversal:\n";
+
+    // Prevent list markers from being generated and ensure text stitching is updated accordingly.
+    let listItems = document.getElementsByTagName("li");
+    for (const listItem of listItems)
+        listItem.style.display = "inline";
+
+    var newTraversalOutput;
+    setTimeout(async function() {
+        await waitFor(() => {
+            newTraversalOutput = dumpAXSearchTraversal(webArea, { excludeRoles: ["group"] });
+            return newTraversalOutput !== initialTraversalOutput;
+        });
+        output += newTraversalOutput;
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
+

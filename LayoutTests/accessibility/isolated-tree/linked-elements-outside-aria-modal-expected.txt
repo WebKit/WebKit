@@ -1,0 +1,19 @@
+This test verifies that when an input inside something that is aria-modal is linked to elements outside the modal, that those elements are still accessible.
+
+Checking aria-activedescendant relationship:
+PASS: accessibilityController.accessibleElementById('list1').isIgnored === false
+PASS: accessibilityController.accessibleElementById('list1-option1').isIgnored === false
+PASS: accessibilityController.accessibleElementById('list1-option2').isIgnored === false
+
+Checking aria-controls relationship:
+PASS: accessibilityController.accessibleElementById('list2-option1').isIgnored === false
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+
+Apples
+Bananas
+Apples
+Bananas

@@ -1,0 +1,51 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN"><!-- webkit-test-runner [ IsAccessibilityIsolatedTreeEnabled=true ] -->
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="otherbutton" tabindex="0">a</div>
+
+<div aria-hidden="true">
+    <p id="backgroundContent">
+        <div tabindex="0" id="button" role="button" aria-label="BUTTON">test</div>
+    </p>
+</div>
+
+<script>
+var output = "This tests that a focusable object inside an aria-hidden is visible to accessibility when it gains focus.\n\n";
+
+if (window.accessibilityController) {
+    jsTestIsAsync = true;
+
+    // By default, if it doesn't have focus it should be hidden because it's inside aria-hidden.
+    var button = accessibilityController.accessibleElementById("button");
+    output += expect("!button || !button.isValid", "true");
+
+    // Gain focus and this element should be visible to AX.
+    document.getElementById("button").focus();
+    setTimeout(async function() {
+        await waitFor(() => {
+            button = accessibilityController.focusedElement;
+            return button && button.role.toLowerCase().includes("button");
+        });
+        if (accessibilityController.platformName == "atspi")
+            output += expect("button.title", "'AXTitle: BUTTON'");
+        else
+            output += expect("button.description", "'AXDescription: BUTTON'");
+
+        button = accessibilityController.accessibleElementById("button");
+        if (accessibilityController.platformName == "atspi")
+            output += expect("button.title", "'AXTitle: BUTTON'");
+        else
+            output += expect("button.description", "'AXDescription: BUTTON'");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

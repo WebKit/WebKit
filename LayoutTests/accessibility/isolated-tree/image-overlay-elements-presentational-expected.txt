@@ -1,0 +1,9 @@
+This test ensures image overlay elements are not exposed for presentational images.
+
+PASS: webArea.childrenCount === 0
+PASS: webArea.childrenCount > 0 === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

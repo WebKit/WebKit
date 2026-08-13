@@ -151,6 +151,7 @@ fast/screen-orientation/orientation-in-resize-event.html [ Skip ]
 accessibility/aria-listbox-clear-selection-crash.html
 accessibility/isolated-tree/aria-listbox-clear-selection-crash.html
 accessibility/listbox-clear-selection.html
+accessibility/isolated-tree/listbox-clear-selection.html
 
 # The dismiss action doesn't return a result on macOS
 accessibility/dismiss-action-returns-whether-keyevent-handled.html
