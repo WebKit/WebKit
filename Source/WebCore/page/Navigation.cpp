@@ -1178,7 +1178,7 @@ bool Navigation::createTransitionForInterception(NavigateEvent& event, Navigatio
     Ref committedPromise = DeferredPromise::create(domGlobalObject, DeferredPromise::Mode::RetainPromiseOnResolve).releaseNonNull();
     Ref finishedPromise = DeferredPromise::create(domGlobalObject, DeferredPromise::Mode::RetainPromiseOnResolve).releaseNonNull();
 
-    m_transition = NavigationTransition::create(navigationType, *fromNavigationHistoryEntry, WTF::move(committedPromise), WTF::move(finishedPromise));
+    m_transition = NavigationTransition::create(navigationType, *fromNavigationHistoryEntry, event.destination(), WTF::move(committedPromise), WTF::move(finishedPromise));
     return true;
 }
 

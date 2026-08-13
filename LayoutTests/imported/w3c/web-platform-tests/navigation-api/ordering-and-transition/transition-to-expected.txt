@@ -1,5 +1,3 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT navigation.transition.to matches the navigate event's destination Test timed out
+PASS navigation.transition.to matches the navigate event's destination
 

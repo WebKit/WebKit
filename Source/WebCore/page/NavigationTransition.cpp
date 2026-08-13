@@ -34,14 +34,15 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(NavigationTransition);
 
-Ref<NavigationTransition> NavigationTransition::create(NavigationNavigationType type, Ref<NavigationHistoryEntry>&& fromEntry, Ref<DeferredPromise>&& committed, Ref<DeferredPromise>&& finished)
+Ref<NavigationTransition> NavigationTransition::create(NavigationNavigationType type, Ref<NavigationHistoryEntry>&& fromEntry, Ref<NavigationDestination>&& destination, Ref<DeferredPromise>&& committed, Ref<DeferredPromise>&& finished)
 {
-    return adoptRef(*new NavigationTransition(type, WTF::move(fromEntry), WTF::move(committed), WTF::move(finished)));
+    return adoptRef(*new NavigationTransition(type, WTF::move(fromEntry), WTF::move(destination), WTF::move(committed), WTF::move(finished)));
 }
 
-NavigationTransition::NavigationTransition(NavigationNavigationType type, Ref<NavigationHistoryEntry>&& fromEntry, Ref<DeferredPromise>&& committed, Ref<DeferredPromise>&& finished)
+NavigationTransition::NavigationTransition(NavigationNavigationType type, Ref<NavigationHistoryEntry>&& fromEntry, Ref<NavigationDestination>&& destination, Ref<DeferredPromise>&& committed, Ref<DeferredPromise>&& finished)
     : m_navigationType(type)
     , m_from(WTF::move(fromEntry))
+    , m_destination(WTF::move(destination))
     , m_committed(WTF::move(committed))
     , m_finished(WTF::move(finished))
 {

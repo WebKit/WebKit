@@ -7130,7 +7130,6 @@ imported/w3c/web-platform-tests/navigation-api/navigate-event/dangling-navigate-
 imported/w3c/web-platform-tests/navigation-api/navigate-event/replaceState-inside-back-handler-infinite.optional.html [ Skip ]
 imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-multiple-history-pushState.html [ Skip ]
 imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-multiple-location.html [ Skip ]
-imported/w3c/web-platform-tests/navigation-api/ordering-and-transition/transition-to.html [ Skip ]
 
 # Require enabling CSS Scroll Anchoring
 imported/w3c/web-platform-tests/navigation-api/scroll-behavior/after-transition-reload.html [ Skip ]
