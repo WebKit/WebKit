@@ -26,6 +26,7 @@
 #pragma once
 
 #include "Connection.h"
+#include <WebCore/ClientOrigin.h>
 #include <WebCore/DOMCacheEngine.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/TZoneMalloc.h>
@@ -36,7 +37,6 @@ class CacheStorageManager;
 }
 
 namespace WebCore {
-struct ClientOrigin;
 struct RetrieveRecordsOptions;
 }
 
@@ -47,6 +47,7 @@ class CacheStorageRegistry;
 class CacheStorageStore;
 struct CacheStorageRecord;
 
+enum class ShouldWriteOriginFile : bool { No, Yes };
 
 class CacheStorageManager : public RefCountedAndCanMakeWeakPtr<CacheStorageManager> {
     WTF_MAKE_TZONE_ALLOCATED(CacheStorageManager);
@@ -58,8 +59,9 @@ public:
     static bool hasCacheList(const String& cacheListDirectory);
 
     using QuotaCheckFunction = Function<void(uint64_t spaceRequested, CompletionHandler<void(bool)>&&)>;
-    static Ref<CacheStorageManager> create(const String& path, CacheStorageRegistry&, const std::optional<WebCore::ClientOrigin>&, QuotaCheckFunction&&, Ref<WorkQueue>&&);
+    static Ref<CacheStorageManager> create(const String& path, CacheStorageRegistry&, const WebCore::ClientOrigin&, ShouldWriteOriginFile, QuotaCheckFunction&&, Ref<WorkQueue>&&);
     ~CacheStorageManager();
+    const WebCore::ClientOrigin& origin() const { return m_origin; }
     void openCache(const String& name, WebCore::DOMCacheEngine::CacheIdentifierCallback&&);
     void removeCache(WebCore::DOMCacheIdentifier, WebCore::DOMCacheEngine::RemoveCacheIdentifierCallback&&);
     void allCaches(uint64_t updateCounter, WebCore::DOMCacheEngine::CacheInfosCallback&&);
@@ -81,7 +83,7 @@ public:
     void query(WebCore::RetrieveRecordsOptions&&, String&&, CompletionHandler<void(std::optional<WebCore::DOMCacheEngine::CrossThreadRecord>&&)>&&);
 
 private:
-    CacheStorageManager(const String& path, CacheStorageRegistry&, const std::optional<WebCore::ClientOrigin>&, QuotaCheckFunction&&, Ref<WorkQueue>&&);
+    CacheStorageManager(const String& path, CacheStorageRegistry&, const WebCore::ClientOrigin&, ShouldWriteOriginFile, QuotaCheckFunction&&, Ref<WorkQueue>&&);
     void makeDirty();
     bool initializeCaches();
     void removeUnusedCache(WebCore::DOMCacheIdentifier);
@@ -94,6 +96,7 @@ private:
     std::optional<uint64_t> m_size;
     std::pair<uint64_t, HashSet<WebCore::DOMCacheIdentifier>> m_pendingSize;
     String m_path;
+    WebCore::ClientOrigin m_origin;
     FileSystem::Salt m_salt;
     const Ref<CacheStorageRegistry> m_registry;
     QuotaCheckFunction m_quotaCheckFunction;
