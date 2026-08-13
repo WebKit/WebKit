@@ -971,8 +971,9 @@ if (SWIFT_REQUIRED)
             UIProcess/API/mac/WKWebViewMac.mm
             UIProcess/ios/ViewGestureControllerIOS.mm
             UIProcess/mac/ViewGestureControllerMac.mm
-            UIProcess/mac/WKAppKitGestureController.mm
             UIProcess/mac/WebViewImpl.mm
+
+            UIProcess/mac/AppKitGestures/WKAppKitGestureController.mm
         )
     endif ()
     foreach (_f IN LISTS WebKit_SWIFT_INTEROP_SOURCES)

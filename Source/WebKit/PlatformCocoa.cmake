@@ -218,6 +218,7 @@ list(APPEND WebKit_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/UIProcess/ios/forms"
     "${WEBKIT_DIR}/UIProcess/ios/fullscreen"
     "${WEBKIT_DIR}/UIProcess/mac"
+    "${WEBKIT_DIR}/UIProcess/mac/AppKitGestures"
     "${WEBKIT_DIR}/WebKitSwift/GroupActivities"
     "${WEBKIT_DIR}/WebKitSwift/IdentityDocumentServices"
     "${WEBKIT_DIR}/WebKitSwift/MarketplaceKit"
@@ -472,10 +473,11 @@ list(APPEND WebKit_SOURCES
     ${WEBKIT_DIR}/UIProcess/WebPageProxy.swift
     ${WEBKIT_DIR}/UIProcess/mac/_WKCaptionStyleMenuControllerAVKitMac.mm
     ${WEBKIT_DIR}/UIProcess/mac/_WKCaptionStyleMenuControllerMac.mm
+    ${WEBKIT_DIR}/UIProcess/mac/AppKitGestures/WKAppKitGestureController.swift
+    ${WEBKIT_DIR}/UIProcess/mac/AppKitGestures/WKDOMDoubleClickGestureRecognizer.swift
+    ${WEBKIT_DIR}/UIProcess/mac/AppKitGestures/WKDirectionalScrollLockTracker.swift
+    ${WEBKIT_DIR}/UIProcess/mac/AppKitGestures/WKFastScrollTracker.swift
     ${WEBKIT_DIR}/UIProcess/mac/SpatialShim.swift
-    ${WEBKIT_DIR}/UIProcess/mac/WKAppKitGestureController.swift
-    ${WEBKIT_DIR}/UIProcess/mac/WKDirectionalScrollLockTracker.swift
-    ${WEBKIT_DIR}/UIProcess/mac/WKFastScrollTracker.swift
     ${WEBKIT_DIR}/UIProcess/mac/WKTextSelectionController.swift
     ${WEBKIT_DIR}/UIProcess/PDF/WKAlternatePDFHUDView.swift
     ${WEBKIT_DIR}/UIProcess/PDF/WKDefaultPDFHUDView.swift

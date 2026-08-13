@@ -91,7 +91,7 @@ function(WEBKIT_XCRUN OUTPUT_VAR)
 endfunction()
 
 function(WEBKIT_RESOLVE_TOOL OUTPUT_VAR _tool)
-    if (DEFINED ${OUTPUT_VAR})
+    if (DEFINED ${OUTPUT_VAR} AND EXISTS "${${OUTPUT_VAR}}")
         return()
     endif ()
     WEBKIT_XCRUN(_path -f ${_tool})
