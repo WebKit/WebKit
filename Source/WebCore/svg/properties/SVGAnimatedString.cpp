@@ -38,8 +38,13 @@ ExceptionOr<void> SVGAnimatedString::setBaseVal(const StringOrTrustedScriptURL& 
     auto stringValueHolder = WTF::switchOn(baseVal,
         [&](const String& str) -> ExceptionOr<String> {
             RefPtr el = contextElement();
-            if (el && isScriptElement(*el) && m_isHrefProperty == IsHrefProperty::Yes)
+            if (el && isScriptElement(*el) && m_isHrefProperty == IsHrefProperty::Yes) {
+#ifdef RC_REMOVE_SEC_ACCEL_3
                 return trustedTypeCompliantString(TrustedType::TrustedScriptURL, *protect(contextElement())->scriptExecutionContext(), str, "SVGScriptElement href"_s);
+#else
+                return trustedTypeCompliantString(TrustedType::TrustedScriptURL, protect(*protect(contextElement())->scriptExecutionContext()), str, "SVGScriptElement href"_s);
+#endif
+            }
             return String(str);
         },
         [](const Ref<TrustedScriptURL>& trustedScriptURL) -> ExceptionOr<String> {

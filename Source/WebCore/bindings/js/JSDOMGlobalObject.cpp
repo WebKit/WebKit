@@ -417,7 +417,13 @@ bool JSDOMGlobalObject::canCompileStrings(JSGlobalObject* globalObject, Compilat
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
     auto& thisObject = *downcast<JSDOMGlobalObject>(globalObject);
+#ifdef RC_REMOVE_SEC_ACCEL_3
     CheckedPtr scriptExecutionContext = thisObject.scriptExecutionContext();
+#else
+    RefPtr scriptExecutionContext = thisObject.scriptExecutionContext();
+    if (!scriptExecutionContext) [[unlikely]]
+        return false;
+#endif
 
     auto result = canCompile(*scriptExecutionContext, compilationType, codeString, args);
 
