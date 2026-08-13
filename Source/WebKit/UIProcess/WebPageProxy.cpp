@@ -19088,8 +19088,18 @@ void WebPageProxy::focusRemoteFrame(IPC::Connection& connection, WebCore::FrameI
     setFocus(true);
 }
 
-void WebPageProxy::postMessageToRemote(WebCore::FrameIdentifier source, const WebCore::SecurityOriginData& sourceOrigin, WebCore::FrameIdentifier target, std::optional<WebCore::SecurityOriginData> targetOrigin, const WebCore::MessageWithMessagePorts& message, std::optional<WebCore::UserGestureTokenData>&& userGestureToken)
+void WebPageProxy::postMessageToRemote(IPC::Connection& connection, WebCore::FrameIdentifier source, const WebCore::SecurityOriginData& sourceOrigin, WebCore::FrameIdentifier target, std::optional<WebCore::SecurityOriginData> targetOrigin, const WebCore::MessageWithMessagePorts& message, std::optional<WebCore::UserGestureTokenData>&& userGestureToken)
 {
+    Ref process = WebProcessProxy::fromConnection(connection);
+
+    // sourceOrigin becomes MessageEvent.origin in the receiving document, so the sender must host the frame
+    // it claims to be sending from and be allowed to claim that origin. The frame can legitimately belong to
+    // another process while a process swap is in flight, so ignore the message instead of terminating.
+    RefPtr sourceFrame = WebFrameProxy::webFrame(source);
+    if (!sourceFrame || &sourceFrame->process() != process.ptr())
+        return;
+    MESSAGE_CHECK(process, sourceFrame->frameProcess().isAllowedToClaimOrigin(sourceOrigin));
+
     if (message.transferredPorts.isEmpty()) {
         sendToProcessContainingFrame(target, Messages::WebPage::RemotePostMessage(source, sourceOrigin, target, targetOrigin, message, userGestureToken));
         return;

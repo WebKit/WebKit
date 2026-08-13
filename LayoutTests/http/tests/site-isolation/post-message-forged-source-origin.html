@@ -1,0 +1,30 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true IPCTestingAPIEnabled=true IgnoreInvalidMessageWhenIPCTestingAPIEnabled=true ] -->
+<script src="/js-test-resources/js-test.js"></script>
+<script>
+description("A WebContent process must not be able to forge MessageEvent.origin with PostMessageToRemote");
+jsTestIsAsync = true;
+
+let originsSeen = [];
+let report = "the iframe did not report anything";
+
+addEventListener("message", (event) => {
+    if (!event.data.startsWith("done")) {
+        originsSeen.push(event.origin);
+        return;
+    }
+
+    report = event.data;
+    if (report == "done skipped") {
+        testPassed("the IPC testing API is not enabled in this configuration");
+        finishJSTest();
+        return;
+    }
+
+    shouldBeEqualToString("report", "done forged");
+    shouldBeEqualToString("originsSeen.join()", "http://localhost:8000");
+    finishJSTest();
+});
+</script>
+<body>
+<iframe src="http://localhost:8000/site-isolation/resources/post-message-forged-source-origin-frame.html"></iframe>
+</body>

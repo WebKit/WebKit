@@ -31,6 +31,7 @@
 #include "WebPageProxy.h"
 #include "WebPreferences.h"
 #include "WebProcessProxy.h"
+#include <WebCore/SecurityOriginData.h>
 #include <WebCore/Site.h>
 
 namespace WebKit {
@@ -72,6 +73,20 @@ FrameProcess::~FrameProcess()
 BrowsingContextGroup* FrameProcess::browsingContextGroup() const
 {
     return m_browsingContextGroup.get();
+}
+
+bool FrameProcess::isAllowedToClaimOrigin(const WebCore::SecurityOriginData& origin) const
+{
+    // Opaque origins are exposed to script as "null", and any process can host a document with one.
+    if (origin.isOpaque())
+        return true;
+
+    // A shared process is deliberately not locked to a single site.
+    if (isSharedProcess())
+        return true;
+
+    // Site Isolation separates sites rather than origins, so any origin within the site is allowed.
+    return WebCore::Site { origin } == *m_site;
 }
 
 }
