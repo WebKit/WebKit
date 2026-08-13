@@ -6011,7 +6011,7 @@ MediaVideoCodecIDsAllowedInLockdownMode:
 
 MetaViewportInteractiveWidgetEnabled:
   type: bool
-  status: testable
+  status: stable
   category: css
   humanReadableName: "Meta Viewport Interactive Widget"
   humanReadableDescription: "Enable the interactive-widget attribute on the viewport meta element"
@@ -6019,6 +6019,7 @@ MetaViewportInteractiveWidgetEnabled:
     WebKitLegacy:
       default: false
     WebKit:
+      "PLATFORM(COCOA)": true
       default: false
     WebCore:
       default: false
