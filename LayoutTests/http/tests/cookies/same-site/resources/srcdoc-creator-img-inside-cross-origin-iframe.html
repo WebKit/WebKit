@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Attacker iframe (cross-origin to the top-level victim) that creates a srcdoc loading an img</title>
+</head>
+<body>
+<script>
+// Loaded at http://localhost:8000 inside an iframe of a top-level page at
+// http://127.0.0.1:8000. Creates a nested srcdoc iframe; the srcdoc loads an
+// <img> back to the top-level origin and reports load completion to the top
+// frame. The top frame then reads the cookies the image request actually saw
+// from a server-side recorder.
+//
+// rdar://175498842 / https://bugs.webkit.org/show_bug.cgi?id=313220
+
+const params = new URLSearchParams(window.location.search);
+const token = params.get("token") || "default";
+const recorderURL = "http://127.0.0.1:8000/cookies/same-site/resources/record-image-cookies.py?mode=record&token=" + encodeURIComponent(token);
+
+const srcdocContent = `<!DOCTYPE html><body><script>
+let img = new Image();
+img.onload = () => window.top.postMessage({type: "srcdoc-img-loaded"}, "*");
+img.onerror = () => window.top.postMessage({type: "srcdoc-img-error"}, "*");
+img.src = ${JSON.stringify(recorderURL)};
+<\/script></body>`;
+
+let srcdocIframe = document.createElement("iframe");
+srcdocIframe.style.display = "none";
+srcdocIframe.srcdoc = srcdocContent;
+document.body.appendChild(srcdocIframe);
+</script>
+</body>
+</html>
