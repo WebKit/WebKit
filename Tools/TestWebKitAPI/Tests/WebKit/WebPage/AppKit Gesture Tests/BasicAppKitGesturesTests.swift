@@ -1405,6 +1405,34 @@ extension AppKitGesturesTests.Basic {
         #expect(abs(end.y - start.y) < 1)
     }
 
+    @Test(
+        .bug("https://webkit.org/b/321650", "Certain diagonal scrolls should be able to bypass directional locking")
+    )
+    func diagonallySwipingBetweenSpacesScrollsBothAxes() async throws {
+        try await loadScrollableGrid()
+        await page.waitForNextPresentationUpdate()
+
+        try await page.callJavaScript { "window.scrollTo(2000, 8000);" }
+        await page.waitForNextPresentationUpdate()
+        let start = try await page.callJavaScript(JavaScriptMessages.ScrollPosition())
+
+        let center = screenBounds(ofPointInWindowCoordinates: window.frame.center)
+        await recap.play { composer in
+            composer._wk_scroll(
+                withStart: center,
+                end: CGPoint(x: center.x - 250, y: center.y - 80),
+                duration: .seconds(0.3),
+                multiFinger: true
+            )
+        }
+        await page.waitForNextPresentationUpdate()
+
+        let end = try await settledScrollPosition()
+
+        #expect(end.x - start.x > 20)
+        #expect(end.y - start.y > 20)
+    }
+
     @Test
     func steepScrollLocksToVerticalAxis() async throws {
         try await loadScrollableGrid()

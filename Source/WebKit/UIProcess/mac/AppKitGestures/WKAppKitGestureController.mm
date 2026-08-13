@@ -1367,9 +1367,10 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
         gestureDelta = { };
 
     auto pinnedState = [webView _protectedPage]->pinnedStateIncludingAncestorsAtPoint(locationInView);
+    bool prefersUnlockedScroll = [self prefersUnlockedScroll:_panGestureRecognizer];
     bool canScrollHorizontally = [_panGestureRecognizer _canPanHorizontally] && !(pinnedState.left() && pinnedState.right());
     bool canScrollVertically = [_panGestureRecognizer _canPanVertically] && !(pinnedState.top() && pinnedState.bottom());
-    gestureDelta = WebCore::FloatSize { _directionalScrollLockTracker->update(gestureDelta, canScrollHorizontally, canScrollVertically, [gesture timestamp]) };
+    gestureDelta = WebCore::FloatSize { _directionalScrollLockTracker->update(gestureDelta, canScrollHorizontally, canScrollVertically, prefersUnlockedScroll, [gesture timestamp]) };
 
     auto wheelTicks { gestureDelta.scaled(1. / static_cast<float>(WebCore::Scrollbar::pixelsPerLineStep())) };
     auto granularity = WebKit::WebWheelEvent::Granularity::ScrollByPixelWheelEvent;
@@ -1428,7 +1429,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
 
     // Continue the scroll along the same axis the drag was locked to rather than reintroducing
     // diagonal drift; also keeps _fastScrollTracker's velocity heuristics off-axis-clean.
-    auto velocity = WebCore::FloatSize { _directionalScrollLockTracker->filterVelocity(unfilteredVelocity) };
+    auto velocity = WebCore::FloatSize { _directionalScrollLockTracker->filterVelocity(unfilteredVelocity, [self prefersUnlockedScroll:gesture]) };
 
     static constexpr float minimumVelocityForMomentum = 20;
 

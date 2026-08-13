@@ -44,7 +44,13 @@ struct WKDirectionalScrollLockTracker {
 
     // Takes one incremental (per-event) gesture delta and returns it with the locked-out axis zeroed,
     // or unchanged while unlocked.
-    mutating func update(delta: CGSize, canScrollHorizontally: Bool, canScrollVertically: Bool, time: TimeInterval) -> CGSize {
+    mutating func update(
+        delta: CGSize,
+        canScrollHorizontally: Bool,
+        canScrollVertically: Bool,
+        prefersUnlocked: Bool,
+        time: TimeInterval
+    ) -> CGSize {
         // A long gap between events without mouse up re-opens the axis decision, but deliberately
         // leaves any existing lock in place until a new definite axis replaces it below.
         if lastEventTime != 0, time - lastEventTime >= Constants.pauseInterval {
@@ -83,13 +89,13 @@ struct WKDirectionalScrollLockTracker {
             }
         }
 
-        return Self.apply(lockedAxis, to: delta)
+        return Self.apply(prefersUnlocked ? nil : lockedAxis, to: delta)
     }
 
     // Applies the current lock to a velocity vector without mutating state, so a locked drag continues
     // its scroll on the locked axis rather than reintroducing diagonal drift.
-    func filterVelocity(_ velocity: CGSize) -> CGSize {
-        Self.apply(lockedAxis, to: velocity)
+    func filterVelocity(_ velocity: CGSize, prefersUnlocked: Bool) -> CGSize {
+        Self.apply(prefersUnlocked ? nil : lockedAxis, to: velocity)
     }
 
     // A fresh gesture re-decides its axis, seeded from the previous drag's axis if it caught that
