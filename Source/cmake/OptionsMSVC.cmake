@@ -68,7 +68,10 @@ MSVC_ADD_COMPILE_OPTIONS(/Zi /GS)
 
 # Disable ICF (identical code folding) optimization,
 # as it makes it unsafe to pointer-compare functions with identical definitions.
-add_link_options(/DEBUG /OPT:NOICF /OPT:REF)
+# Swift-driven links (targets with Swift sources link via swiftc's gcc-style
+# driver) need the MSVC linker flags forwarded with -Xlinker.
+add_link_options("$<$<NOT:$<LINK_LANGUAGE:Swift>>:/DEBUG;/OPT:NOICF;/OPT:REF>")
+add_link_options("$<$<LINK_LANGUAGE:Swift>:SHELL:-Xlinker /DEBUG -Xlinker /OPT:NOICF -Xlinker /OPT:REF>")
 
 # We do not use exceptions
 add_definitions(-D_HAS_EXCEPTIONS=0)
@@ -111,7 +114,8 @@ string(REPLACE "/INCREMENTAL[:A-Z]+" "" CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO ${
 string(REPLACE "/INCREMENTAL[:A-Z]+" "" CMAKE_SHARED_LINKER_FLAGS ${CMAKE_SHARED_LINKER_FLAGS})
 string(REPLACE "/INCREMENTAL[:A-Z]+" "" CMAKE_SHARED_LINKER_FLAGS_DEBUG ${CMAKE_SHARED_LINKER_FLAGS_DEBUG})
 string(REPLACE "/INCREMENTAL[:A-Z]+" "" CMAKE_SHARED_LINKER_FLAGS_RELWITHDEBINFO ${CMAKE_SHARED_LINKER_FLAGS_RELWITHDEBINFO})
-add_link_options(/INCREMENTAL:NO)
+add_link_options("$<$<NOT:$<LINK_LANGUAGE:Swift>>:/INCREMENTAL:NO>")
+add_link_options("$<$<LINK_LANGUAGE:Swift>:SHELL:-Xlinker /INCREMENTAL:NO>")
 
 # Link clang runtime builtins library
 string(REGEX MATCH "^[0-9]+" CLANG_CL_MAJOR_VERSION ${CMAKE_CXX_COMPILER_VERSION})
