@@ -16,7 +16,6 @@
       <dep package="libjxl"/>
       <dep package="libsoup"/>
       <dep package="libvpx"/>
-      <dep package="wpebackend-fdo"/>
     </dependencies>
   </metamodule>
 
@@ -33,7 +32,6 @@
       <dep package="libjxl"/>
       <dep package="libsoup"/>
       <dep package="libvpx"/>
-      <dep package="wpebackend-fdo"/>
     </dependencies>
   </metamodule>
 
@@ -65,24 +63,6 @@
 <!-- This moduleset is used when the environment variable WEBKIT_JHBUILD_MODULESET=minimal is set -->
 <!-- Its intended to allow building WebKit using as much as libraries from your distribution as possible -->
 <!-- In order to ensure its minimal, all the modules should have a pkg-config declaration line -->
-
-  <cmake id="libwpe" cmakeargs="-DCMAKE_POLICY_VERSION_MINIMUM=3.5">
-    <branch repo="github-tarball"
-            module="WebPlatformForEmbedded/libwpe/releases/download/${version}/libwpe-${version}.tar.xz"
-            version="1.16.0"
-            hash="sha256:c7f3a3c6b3d006790d486dc7cceda2b6d2e329de07f33bc47dfc53f00f334b2a"/>
-  </cmake>
-
-  <meson id="wpebackend-fdo">
-    <dependencies>
-      <dep package="libwpe"/>
-    </dependencies>
-    <branch repo="github-tarball"
-            module="Igalia/WPEBackend-fdo/releases/download/${version}/wpebackend-fdo-${version}.tar.xz"
-            version="1.14.3"
-            hash="sha256:10121842595a850291db3e82f3db0b9984df079022d386ce42c2b8508159dc6c">
-    </branch>
-  </meson>
 
   <autotools id="icu" autogen-sh="./source/configure" autogenargs="--disable-samples --disable-tests">
      <pkg-config>icu-i18n.pc</pkg-config>
