@@ -434,6 +434,7 @@
 		0F4966AB1DB40C4300A274BB /* JSDOMPoint.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F4966A51DB40C4300A274BB /* JSDOMPoint.h */; };
 		0F4966AD1DB40C4300A274BB /* JSDOMPointInit.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F4966A71DB40C4300A274BB /* JSDOMPointInit.h */; };
 		0F4966AF1DB40C4300A274BB /* JSDOMPointReadOnly.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F4966A91DB40C4300A274BB /* JSDOMPointReadOnly.h */; };
+		0F4C8C1D301D6C8C000E9646 /* StyleBorderShape.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F4C8C1B301D6C8C000E9646 /* StyleBorderShape.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F4D5D1826CCC4AE00A9DFC1 /* LayerTreeAsTextOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F736ECA26CCB97A000AD7CA /* LayerTreeAsTextOptions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F53FB84213B7A6400C40D34 /* RenderLayerScrollableArea.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F53FB84213B786400C40D34 /* RenderLayerScrollableArea.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F54DCE61881051D003EEDBB /* TextAutoSizing.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F54DCE41881051D003EEDBB /* TextAutoSizing.h */; };
@@ -8436,6 +8437,8 @@
 		0F4966A71DB40C4300A274BB /* JSDOMPointInit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMPointInit.h; sourceTree = "<group>"; };
 		0F4966A81DB40C4300A274BB /* JSDOMPointReadOnly.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMPointReadOnly.cpp; sourceTree = "<group>"; };
 		0F4966A91DB40C4300A274BB /* JSDOMPointReadOnly.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMPointReadOnly.h; sourceTree = "<group>"; };
+		0F4C8C1B301D6C8C000E9646 /* StyleBorderShape.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleBorderShape.h; sourceTree = "<group>"; };
+		0F4C8C1C301D6C8C000E9646 /* StyleBorderShape.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StyleBorderShape.cpp; sourceTree = "<group>"; };
 		0F4CDEAA23D91A8A00251B02 /* ScrollTypes.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ScrollTypes.cpp; sourceTree = "<group>"; };
 		0F53074A2EF7A88300F0B6B2 /* FEFloodCoreImageApplier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FEFloodCoreImageApplier.h; sourceTree = "<group>"; };
 		0F53074B2EF7A88300F0B6B2 /* FEFloodCoreImageApplier.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = FEFloodCoreImageApplier.mm; sourceTree = "<group>"; };
@@ -37699,6 +37702,8 @@
 			children = (
 				BCB271C82CBD7D7A00265123 /* StyleBorderRadius.cpp */,
 				BCB271C72CBD7D7A00265123 /* StyleBorderRadius.h */,
+				0F4C8C1C301D6C8C000E9646 /* StyleBorderShape.cpp */,
+				0F4C8C1B301D6C8C000E9646 /* StyleBorderShape.h */,
 				BC9BE3EA2CFE1CFF00D8C2CA /* StyleBoxShadow.cpp */,
 				BC9BE3E92CFE1CFF00D8C2CA /* StyleBoxShadow.h */,
 				BC23BAB32D6E3AAB0069A80B /* StyleCornerShapeValue.cpp */,
@@ -48956,6 +48961,7 @@
 				BC34D3272E3E727D001EAD95 /* StyleBorderImageSource.h in Headers */,
 				BC34D3292E3E72DA001EAD95 /* StyleBorderImageWidth.h in Headers */,
 				BCB2720F2CC1F1F100265123 /* StyleBorderRadius.h in Headers */,
+				0F4C8C1D301D6C8C000E9646 /* StyleBorderShape.h in Headers */,
 				BC63AD422F084C2F007B62C4 /* StyleBoxData.h in Headers */,
 				BC3CC2272DE79F4F0032971C /* StyleBoxShadow.h in Headers */,
 				BC95FBE12F19DA5800AC941B /* StyleBrightnessFunction.h in Headers */,

@@ -3259,6 +3259,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     style/values/backgrounds/StyleRepeatStyle.h
 
     style/values/borders/StyleBorderRadius.h
+    style/values/borders/StyleBorderShape.h
     style/values/borders/StyleBoxShadow.h
     style/values/borders/StyleCornerShapeValue.h
     style/values/borders/StyleShadow.h

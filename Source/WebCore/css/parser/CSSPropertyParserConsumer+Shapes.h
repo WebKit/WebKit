@@ -26,6 +26,7 @@
 #pragma once
 
 #include <wtf/Forward.h>
+#include <wtf/OptionSet.h>
 
 namespace WebCore {
 
@@ -47,7 +48,7 @@ enum class BasicShapeParsingOptions : uint8_t {
 
 // <basic-shape> = <circle()> | <ellipse() | <inset()> | <path()> | <polygon()> | <rect()> | <shape()> | <xywh()>
 // https://drafts.csswg.org/css-shapes/#typedef-basic-shape
-RefPtr<CSSValue> consumeBasicShape(CSSParserTokenRange&, CSS::PropertyParserState&, OptionSet<BasicShapeParsingOptions>);
+RefPtr<CSSValue> consumeBasicShape(CSSParserTokenRange&, CSS::PropertyParserState&, OptionSet<BasicShapeParsingOptions> = { });
 
 // <basic-shape-rect> = <inset()> | <rect()> | <xywh()>
 // https://drafts.csswg.org/css-shapes-1/#typedef-basic-shape-rect
