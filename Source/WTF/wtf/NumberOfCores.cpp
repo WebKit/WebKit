@@ -28,6 +28,7 @@
 
 #include <array>
 #include <cstdio>
+#include <wtf/text/ASCIILiteral.h>
 #include <wtf/text/StringToIntegerConversion.h>
 
 #if OS(DARWIN)
@@ -50,12 +51,18 @@ int numberOfProcessorCores()
     if (s_numberOfCores > 0)
         return s_numberOfCores;
     
-    if (CString coresEnv = getenv("WTF_numberOfProcessorCores"); !coresEnv.isNull()) {
+    ASCIILiteral coresEnvName = "WTF_numberOfProcessorCores";
+    CString coresEnv = getenv(coresEnvName);
+    if (coresEnv.isNull()) {
+        coresEnvName = "NUMBER_OF_PROCESSORS";
+        coresEnv = getenv(coresEnvName);
+    }
+    if (!coresEnv.isNull()) {
         if (auto numberOfCores = parseInteger<unsigned>(coresEnv.span())) {
             s_numberOfCores = *numberOfCores;
             return s_numberOfCores;
         }
-        SAFE_FPRINTF(stderr, "WARNING: failed to parse WTF_numberOfProcessorCores=%s\n", coresEnv);
+        SAFE_FPRINTF(stderr, "WARNING: failed to parse %s=%s\n", coresEnvName, coresEnv);
     }
 
 #if OS(DARWIN)
