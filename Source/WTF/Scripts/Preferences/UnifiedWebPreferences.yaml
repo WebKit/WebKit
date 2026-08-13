@@ -9354,6 +9354,20 @@ UseAppKitGestures:
     WebCore:
       default: false
 
+UseAppKitGesturesForGestureEvents:
+  type: bool
+  status: internal
+  humanReadableName: "AppKit gestures for gesture events"
+  humanReadableDescription: "Use AppKit gestures to drive gesture event synthesis"
+  condition: PLATFORM(MAC)
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 UseAsyncUIKitInteractions:
   type: bool
   status: internal
