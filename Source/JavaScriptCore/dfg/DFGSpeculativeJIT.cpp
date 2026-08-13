@@ -9637,7 +9637,9 @@ void SpeculativeJIT::compileSpread(Node* node)
         // which performs the authoritative isIteratorProtocolFastAndNonObservable
         // check. The check can be folded when an upstream CheckStructure has
         // already proven that the operand carries the original Set structure.
-        JSGlobalObject* globalObject = m_graph.globalObjectFor(node->origin.semantic);
+        // FixupPhase arms the Set iterator protocol watchpoint on node->child1(), so
+        // child1's global object must be used.
+        JSGlobalObject* globalObject = m_graph.globalObjectFor(node->child1()->origin.semantic);
         Structure* originalSetStructure = globalObject->setStructureConcurrently();
         if (!originalSetStructure)
             slowPath.append(jump());
