@@ -34,8 +34,12 @@ template <class Collection, class Iterator>
 inline unsigned CollectionIndexCache<Collection, Iterator>::nodeCount(const Collection& collection)
 {
     if (!m_nodeCountValid) {
-        if (!hasValidCache())
+        if (!hasValidCache()) {
             collection.willValidateIndexCache();
+#ifndef RC_REMOVE_SEC_ACCEL_3
+            m_hasValidCache = true;
+#endif
+        }
         m_nodeCount = computeNodeCountUpdatingListCache(collection);
         m_nodeCountValid = true;
     }
@@ -106,8 +110,12 @@ inline typename CollectionIndexCache<Collection, Iterator>::NodeType* Collection
         return &*m_current;
     }
 
-    if (!hasValidCache())
+    if (!hasValidCache()) {
         collection.willValidateIndexCache();
+#ifndef RC_REMOVE_SEC_ACCEL_3
+        m_hasValidCache = true;
+#endif
+    }
 
     unsigned traversedCount;
     collection.collectionTraverseForward(m_current, index - m_currentIndex, traversedCount);
@@ -152,8 +160,12 @@ inline typename CollectionIndexCache<Collection, Iterator>::NodeType* Collection
         return &*m_current;
     }
 
-    if (!hasValidCache())
+    if (!hasValidCache()) {
         collection.willValidateIndexCache();
+#ifndef RC_REMOVE_SEC_ACCEL_3
+        m_hasValidCache = true;
+#endif
+    }
 
     m_current = collection.collectionBegin();
     m_currentIndex = 0;
@@ -176,6 +188,9 @@ template <class Collection, class Iterator>
 void CollectionIndexCache<Collection, Iterator>::invalidate()
 {
     m_current = { };
+#ifndef RC_REMOVE_SEC_ACCEL_3
+    m_hasValidCache = false;
+#endif
     m_nodeCountValid = false;
     m_listValid = false;
     m_cachedList.shrink(0);

@@ -43,7 +43,14 @@ public:
     inline unsigned nodeCount(const Collection&);
     inline NodeType* nodeAt(const Collection&, unsigned index);
 
-    bool hasValidCache() const { return m_current || m_nodeCountValid || m_listValid; }
+    bool hasValidCache() const
+    {
+#ifdef RC_REMOVE_SEC_ACCEL_3
+        return m_current || m_nodeCountValid || m_listValid;
+#else
+        return m_hasValidCache;
+#endif
+    }
     inline void invalidate();
     size_t memoryCost() const
     {
@@ -64,11 +71,17 @@ private:
     Vector<WeakPtr<NodeType, WeakPtrImplWithEventTargetData>> m_cachedList;
     bool m_nodeCountValid : 1;
     bool m_listValid : 1;
+#ifndef RC_REMOVE_SEC_ACCEL_3
+    bool m_hasValidCache : 1;
+#endif
 };
 
 template<class Collection, class Iterator> CollectionIndexCache<Collection, Iterator>::CollectionIndexCache()
     : m_nodeCountValid(false)
     , m_listValid(false)
+#ifndef RC_REMOVE_SEC_ACCEL_3
+    , m_hasValidCache(false)
+#endif
 {
 }
 
