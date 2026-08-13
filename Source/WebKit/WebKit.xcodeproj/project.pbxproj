@@ -5426,6 +5426,7 @@
 		337042052B58A2550077FF78 /* WebExtensionAPIWebRequestEventCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebExtensionAPIWebRequestEventCocoa.mm; sourceTree = "<group>"; };
 		337042072B58A8390077FF78 /* _WKWebExtensionWebRequestFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKWebExtensionWebRequestFilter.h; sourceTree = "<group>"; };
 		337042082B58A8390077FF78 /* _WKWebExtensionWebRequestFilter.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKWebExtensionWebRequestFilter.mm; sourceTree = "<group>"; };
+		33750522302D355C00FDB37C /* SystemTracePoints.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = SystemTracePoints.plist; sourceTree = "<group>"; };
 		3375A37029429DDA0028536D /* WebExtensionAPIWebNavigationCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebExtensionAPIWebNavigationCocoa.mm; sourceTree = "<group>"; };
 		3375A37329429DF50028536D /* WebExtensionAPIWebNavigation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebExtensionAPIWebNavigation.h; sourceTree = "<group>"; };
 		3375A3762942A19C0028536D /* JSWebExtensionAPIWebNavigation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = JSWebExtensionAPIWebNavigation.mm; sourceTree = "<group>"; };
@@ -9949,6 +9950,7 @@
 				372887982000AA3700F4EF5D /* ios */,
 				6BE969BF1E54D452008B7483 /* ResourceLoadStatistics */,
 				A78CCDD5193AC9E3005ECC25 /* SandboxProfiles */,
+				33750523302D355C00FDB37C /* Signposts */,
 				6D8A91A511F0EFD100DD01FE /* com.apple.WebProcess.sb.in */,
 				E3E1B33F2F85084300B584C4 /* com.apple.WebProcess.x86.sb.in */,
 				D246E13B2C61292700B41DE2 /* HTTPSBrowsingWarning.xcassets */,
@@ -12739,6 +12741,15 @@
 				3309344E1315B94D0097A7BC /* WebCookieManager.messages.in */,
 			);
 			path = Cookies;
+			sourceTree = "<group>";
+		};
+		33750523302D355C00FDB37C /* Signposts */ = {
+			isa = PBXGroup;
+			children = (
+				33750522302D355C00FDB37C /* SystemTracePoints.plist */,
+			);
+			name = Signposts;
+			path = Resources/Signposts;
 			sourceTree = "<group>";
 		};
 		33D3A3BD1339609800709BE4 /* MediaCache */ = {
