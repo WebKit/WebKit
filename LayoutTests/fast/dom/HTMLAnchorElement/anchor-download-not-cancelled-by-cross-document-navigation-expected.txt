@@ -1,0 +1,13 @@
+Download started.
+Downloading URL with suggested filename "test.html"
+Download completed.
+Test that a subframe navigating to another document right after clicking a link with a download attribute neither cancels the download nor disturbs the new navigation.
+
+This test passes if you see a 'Download started' message above.
+
+
+
+--------
+Frame: '<!--frame1-->'
+--------
+Navigated.

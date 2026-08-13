@@ -2024,7 +2024,22 @@ void FrameLoader::loadWithDocumentLoader(DocumentLoader* loader, FrameLoadType t
 
     auto policyDecisionMode = loader->triggeringAction().isFromNavigationAPI() ? PolicyDecisionMode::Synchronous : PolicyDecisionMode::Asynchronous;
     RELEASE_ASSERT(!isBackForwardLoadType(policyChecker().loadType()) || history().provisionalItem());
-    policyChecker().checkNavigationPolicy(ResourceRequest(loader->request()), ResourceResponse { } /* redirectResponse */, loader, WTF::move(formSubmission), [this, protectedThis = Ref { *this }, allowNavigationToInvalidURL, shouldRestoreFromBackForwardCache, completionHandler = completionHandlerCaller.release()] (const ResourceRequest& request, WeakPtr<const FormSubmission>&& weakFormSubmission, NavigationPolicyDecision navigationPolicyDecision) mutable {
+    policyChecker().checkNavigationPolicy(ResourceRequest(loader->request()), ResourceResponse { } /* redirectResponse */, loader, WTF::move(formSubmission), [
+        this,
+        protectedThis = Ref { *this },
+        allowNavigationToInvalidURL,
+        shouldRestoreFromBackForwardCache,
+        expectedPolicyDocumentLoader = RefPtr { loader },
+        completionHandler = completionHandlerCaller.release()
+    ] (const ResourceRequest& request, WeakPtr<const FormSubmission>&& weakFormSubmission, NavigationPolicyDecision navigationPolicyDecision) mutable {
+        // A download attribute check is not cancelled by the navigation that follows it, so it can be
+        // answered once a newer navigation owns m_policyDocumentLoader. Continuing would tear that
+        // newer navigation down; the download, if any, has already started.
+        if (m_policyDocumentLoader != expectedPolicyDocumentLoader) {
+            FRAMELOADER_RELEASE_LOG(ResourceLoading, "loadWithDocumentLoader: not continuing because a newer navigation owns the policy document loader");
+            completionHandler();
+            return;
+        }
         continueLoadAfterNavigationPolicy(request, RefPtr { weakFormSubmission.get() }.get(), navigationPolicyDecision, allowNavigationToInvalidURL, shouldRestoreFromBackForwardCache);
         completionHandler();
     }, IsSameDocumentNavigation::No, policyDecisionMode, determineNavigationType(type, NavigationHistoryBehavior::Auto));

@@ -44,6 +44,8 @@
 #import <WebKit/WKNavigationResponsePrivate.h>
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKUIDelegatePrivate.h>
+#import <WebKit/WKURLSchemeHandler.h>
+#import <WebKit/WKURLSchemeTask.h>
 #import <WebKit/WKWebView.h>
 #import <WebKit/WKWebViewConfiguration.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
@@ -1464,6 +1466,29 @@ TEST(_WKDownload, SubframeSecurityOrigin)
     TestWebKitAPI::Util::run(&isDone);
 }
 
+@interface DownloadAttributeAllowedSchemeHandler : NSObject <WKURLSchemeHandler>
+@end
+
+@implementation DownloadAttributeAllowedSchemeHandler
+
+- (void)webView:(WKWebView *)webView startURLSchemeTask:(id<WKURLSchemeTask>)task
+{
+    // Same scheme and host for both, so the download attribute is not dropped as cross origin.
+    NSString *html = [task.request.URL.absoluteString containsString:@"target"]
+        ? @"<body>target</body>"
+        : @"<a id='dl' download='name.html' href='download-attribute-allowed://host/target'>dl</a>";
+    RetainPtr response = adoptNS([[NSHTTPURLResponse alloc] initWithURL:task.request.URL statusCode:200 HTTPVersion:@"HTTP/1.1" headerFields:@{ @"Content-Type": @"text/html" }]);
+    [task didReceiveResponse:response.get()];
+    [task didReceiveData:[html dataUsingEncoding:NSUTF8StringEncoding]];
+    [task didFinish];
+}
+
+- (void)webView:(WKWebView *)webView stopURLSchemeTask:(id<WKURLSchemeTask>)task
+{
+}
+
+@end
+
 namespace TestWebKitAPI {
 
 static void checkCallbackRecord(TestDownloadDelegate *delegate, Vector<DownloadCallback> expectedCallbacks)
@@ -2785,6 +2810,113 @@ TEST(WKDownload, BlobResponse)
 #endif
         DownloadCallback::DidFinish
     });
+}
+
+// A download attribute link the client answers Use for is an ordinary navigation, so the navigation
+// identifier the UI process assigned still has to reach the document loader. Without it the UI process
+// cannot match the load to its API::Navigation and the client sees a null WKNavigation.
+TEST(WKDownload, DownloadAttributeAllowedByClientIsANavigation)
+{
+    RetainPtr configuration = adoptNS([WKWebViewConfiguration new]);
+    RetainPtr schemeHandler = adoptNS([DownloadAttributeAllowedSchemeHandler new]);
+    [configuration setURLSchemeHandler:schemeHandler.get() forURLScheme:@"download-attribute-allowed"];
+    RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+
+    RetainPtr delegate = adoptNS([TestNavigationDelegate new]);
+    [webView setNavigationDelegate:delegate.get()];
+
+    __block bool sawDownloadAttributeAction = false;
+    delegate.get().decidePolicyForNavigationAction = ^(WKNavigationAction *action, void (^completionHandler)(WKNavigationActionPolicy)) {
+        if (action.shouldPerformDownload)
+            sawDownloadAttributeAction = true;
+        completionHandler(WKNavigationActionPolicyAllow);
+    };
+    delegate.get().decidePolicyForNavigationResponse = ^(WKNavigationResponse *, void (^completionHandler)(WKNavigationResponsePolicy)) {
+        completionHandler(WKNavigationResponsePolicyAllow);
+    };
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"download-attribute-allowed://host/main"]]];
+    [delegate waitForDidFinishNavigation];
+
+    __block RetainPtr<WKNavigation> startedNavigation;
+    __block RetainPtr<WKNavigation> finishedNavigation;
+    __block bool done = false;
+    delegate.get().didStartProvisionalNavigation = ^(WKWebView *, WKNavigation *navigation) {
+        startedNavigation = navigation;
+    };
+    delegate.get().didFinishNavigation = ^(WKWebView *, WKNavigation *navigation) {
+        finishedNavigation = navigation;
+        done = true;
+    };
+
+    [webView evaluateJavaScript:@"document.getElementById('dl').click()" completionHandler:nil];
+    Util::run(&done);
+
+    EXPECT_TRUE(sawDownloadAttributeAction);
+    EXPECT_NOT_NULL(startedNavigation.get());
+    EXPECT_NOT_NULL(finishedNavigation.get());
+    EXPECT_EQ(startedNavigation.get(), finishedNavigation.get());
+}
+
+TEST(WKDownload, DownloadAttributeSurvivesLaterNavigation)
+{
+    // A link with a download attribute does not navigate:
+    // https://html.spec.whatwg.org/multipage/links.html#downloading-hyperlinks runs its fetch in
+    // parallel with the navigable. So navigating the frame afterwards must not cancel the download.
+    //
+    // The navigation delegate here does not answer the download decision when it is asked; it holds it
+    // until a later navigation has come through. That is what a real browser's asynchronous delegate
+    // does. A delegate that answers immediately never leaves the decision outstanding long enough to be
+    // cancelled, which is why WebKitTestRunner, and so any layout test, cannot cover this.
+    NSString *html = @"<script>"
+    "function downloadThenNavigate() {"
+    "    var a = document.createElement('a');"
+    "    var b = new Blob([1,2,3]);"
+    "    a.href = URL.createObjectURL(b);"
+    "    a.download = 'downloadFilename';"
+    "    a.click();"
+    "    location.href = 'about:blank';"
+    "}"
+    "</script><body onload='downloadThenNavigate()'></body>";
+
+    RetainPtr expectedDownloadFile = tempFileThatDoesNotExist();
+    RetainPtr webView = adoptNS([WKWebView new]);
+    RetainPtr delegate = adoptNS([TestDownloadDelegate new]);
+    [webView setNavigationDelegate:delegate.get()];
+
+    __block RetainPtr<id> heldDownloadDecision;
+    __block bool answeredDownloadAfterNavigation = false;
+    delegate.get().decidePolicyForNavigationAction = ^(WKNavigationAction *action, void (^completionHandler)(WKNavigationActionPolicy)) {
+        if (action.shouldPerformDownload) {
+            EXPECT_WK_STREQ(action.request.URL.scheme, "blob");
+            heldDownloadDecision = adoptNS([completionHandler copy]);
+            return;
+        }
+
+        completionHandler(WKNavigationActionPolicyAllow);
+
+        if (heldDownloadDecision && !answeredDownloadAfterNavigation) {
+            answeredDownloadAfterNavigation = true;
+            ((void (^)(WKNavigationActionPolicy))heldDownloadDecision.get())(WKNavigationActionPolicyDownload);
+        }
+    };
+    delegate.get().navigationActionDidBecomeDownload = ^(WKWebView *, WKNavigationAction *, WKDownload *download) {
+        download.delegate = delegate.get();
+    };
+    delegate.get().decideDestinationUsingResponse = ^(WKDownload *, NSURLResponse *, NSString *suggestedFilename, void (^completionHandler)(NSURL *)) {
+        EXPECT_WK_STREQ(suggestedFilename, "downloadFilename");
+        completionHandler(expectedDownloadFile.get());
+    };
+    __block bool done = false;
+    delegate.get().downloadDidFinish = ^(WKDownload *) {
+        done = true;
+    };
+
+    [webView loadHTMLString:html baseURL:[NSURL URLWithString:@"https://webkit.org/"]];
+    Util::run(&done);
+
+    EXPECT_TRUE(answeredDownloadAfterNavigation);
+    checkFileContents(expectedDownloadFile.get(), "123"_s);
 }
 
 TEST(WKDownload, BlobResponseNoFilename)

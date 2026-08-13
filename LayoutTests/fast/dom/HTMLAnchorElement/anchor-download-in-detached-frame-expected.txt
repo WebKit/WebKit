@@ -1,0 +1,5 @@
+Test that detaching a frame that just clicked a link with a download attribute does not crash. The download's policy check outlives the navigation that started it, so it can be answered after the frame is gone; it must be discarded rather than applied to a frame that is no longer in a page.
+
+This test passes if it does not crash and no download callbacks are logged.
+
+

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.testRunner) {
+  testRunner.dumpAsText();
+  testRunner.setShouldLogDownloadCallbacks(true);
+  testRunner.waitUntilDownloadFinished();
+}
+</script>
+</head>
+<body>
+<p>Test that a same-document navigation started right after clicking a link with a download attribute
+does not cancel the download. Activating an element with a download attribute runs "download the
+hyperlink", whose steps run in parallel with the navigable, so a later navigation must not cancel it.</p>
+<p>This test passes if you see a 'Download started' message above.</p>
+<script>
+var link = document.createElement("a");
+link.href = "data:text/html,HelloWorld!";
+link.download = "test.html";
+link.click();
+
+// Toggling between two values keeps this a real fragment navigation whatever fragment the document was
+// loaded with, so the test behaves the same when repeated.
+location.hash = location.hash === "#a" ? "#b" : "#a";
+</script>
+</body>
+</html>

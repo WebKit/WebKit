@@ -44,9 +44,11 @@
 #include <WebCore/LocalFrameLoaderClient.h>
 #include <WebCore/MarkupExclusionRule.h>
 #include <WebCore/ProcessIdentifier.h>
+#include <WebCore/ScriptExecutionContextIdentifier.h>
 #include <WebCore/ShareableBitmap.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
+#include <wtf/Markable.h>
 #include <wtf/RefPtr.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/WeakPtr.h>
@@ -153,7 +155,8 @@ public:
     WebCore::FrameIdentifier frameID() const { return m_frameID; }
 
     enum class ForNavigationAction : bool { No, Yes };
-    uint64_t setUpPolicyListener(WebCore::FramePolicyFunction&&, ForNavigationAction);
+    // A non-null initiating document marks this as a download attribute check.
+    uint64_t setUpPolicyListener(WebCore::FramePolicyFunction&&, ForNavigationAction, Markable<WebCore::ScriptExecutionContextIdentifier> downloadAttributeInitiatingDocument = { });
     void invalidatePolicyListeners();
     void didReceivePolicyDecision(uint64_t listenerID, PolicyDecision&&);
 
@@ -333,9 +336,12 @@ private:
 
     struct PolicyCheck {
         ForNavigationAction forNavigationAction { ForNavigationAction::No };
+        Markable<WebCore::ScriptExecutionContextIdentifier> downloadAttributeInitiatingDocument;
         WebCore::FramePolicyFunction policyFunction;
     };
     HashMap<uint64_t, PolicyCheck> m_pendingPolicyChecks;
+
+    bool shouldHonorDownloadAttributePolicyCheck(const PolicyCheck&) const;
 
     std::optional<DownloadID> m_policyDownloadID;
 

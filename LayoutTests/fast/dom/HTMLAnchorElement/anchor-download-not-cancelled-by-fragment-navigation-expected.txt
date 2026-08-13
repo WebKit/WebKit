@@ -1,0 +1,6 @@
+Download started.
+Downloading URL with suggested filename "test.html"
+Download completed.
+Test that a same-document navigation started right after clicking a link with a download attribute does not cancel the download. Activating an element with a download attribute runs "download the hyperlink", whose steps run in parallel with the navigable, so a later navigation must not cancel it.
+
+This test passes if you see a 'Download started' message above.

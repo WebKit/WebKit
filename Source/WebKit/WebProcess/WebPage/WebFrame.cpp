@@ -375,6 +375,12 @@ FrameTreeNodeData WebFrame::frameTreeData() const
 void WebFrame::invalidate()
 {
     ASSERT(!WebProcess::singleton().webFrame(m_frameID) || WebProcess::singleton().webFrame(m_frameID) == this);
+
+    // A download check survives navigation, including the navigation that tears this frame down.
+    auto pendingPolicyChecks = std::exchange(m_pendingPolicyChecks, { });
+    for (auto& policyCheck : pendingPolicyChecks.values())
+        policyCheck.policyFunction(PolicyAction::Ignore);
+
     RefPtr page = m_page.get();
     WebProcess::singleton().removeWebFrame(frameID(), page.get());
     m_coreFrame = nullptr;
@@ -387,15 +393,30 @@ ScopeExit<Function<void()>> WebFrame::makeInvalidator()
     });
 }
 
-uint64_t WebFrame::setUpPolicyListener(WebCore::FramePolicyFunction&& policyFunction, ForNavigationAction forNavigationAction)
+uint64_t WebFrame::setUpPolicyListener(WebCore::FramePolicyFunction&& policyFunction, ForNavigationAction forNavigationAction, Markable<WebCore::ScriptExecutionContextIdentifier> downloadAttributeInitiatingDocument)
 {
     auto policyListenerID = generateListenerID();
     m_pendingPolicyChecks.add(policyListenerID, PolicyCheck {
         forNavigationAction,
+        downloadAttributeInitiatingDocument,
         WTF::move(policyFunction)
     });
 
     return policyListenerID;
+}
+
+// Unlike a navigation check, a download check is not cancelled by what this frame does next, so it can be
+// answered once the frame is no longer in a page - which startDownload() requires - or once another
+// document has committed. The document matters because PolicyChecker::checkNavigationPolicy() decides
+// against live frame state, including the sandbox allow-downloads flag that
+// LocalFrame::effectiveSandboxFlags() takes from the current document.
+bool WebFrame::shouldHonorDownloadAttributePolicyCheck(const PolicyCheck& policyCheck) const
+{
+    RefPtr localFrame = dynamicDowncast<LocalFrame>(m_coreFrame.get());
+    if (!localFrame || !localFrame->page())
+        return false;
+    RefPtr document = localFrame->document();
+    return document && document->identifier() == policyCheck.downloadAttributeInitiatingDocument;
 }
 
 void WebFrame::loadDidCommitInAnotherProcess(WebCore::ProcessIdentifier hostingProcessID, std::optional<WebCore::LayerHostingContextIdentifier> layerHostingContextIdentifier)
@@ -627,10 +648,20 @@ void WebFrame::invalidatePolicyListeners()
 {
     Ref protectedThis { *this };
 
+    // "Download the hyperlink" runs in parallel with the navigable, so a later navigation must not cancel a
+    // download: https://html.spec.whatwg.org/multipage/links.html#downloading-hyperlinks
     m_policyDownloadID = { };
 
-    auto pendingPolicyChecks = std::exchange(m_pendingPolicyChecks, { });
-    for (auto& policyCheck : pendingPolicyChecks.values())
+    HashMap<uint64_t, PolicyCheck> policyChecksToCancel;
+    for (auto& [listenerID, policyCheck] : std::exchange(m_pendingPolicyChecks, { })) {
+        if (policyCheck.downloadAttributeInitiatingDocument && shouldHonorDownloadAttributePolicyCheck(policyCheck))
+            m_pendingPolicyChecks.add(listenerID, WTF::move(policyCheck));
+        else
+            policyChecksToCancel.add(listenerID, WTF::move(policyCheck));
+    }
+
+    // Survivors go back before this point because cancelling can start a load, adding new checks.
+    for (auto& policyCheck : policyChecksToCancel.values())
         policyCheck.policyFunction(PolicyAction::Ignore);
 }
 
@@ -644,8 +675,12 @@ void WebFrame::didReceivePolicyDecision(uint64_t listenerID, PolicyDecision&& po
             page->addConsoleMessage(m_frameID, message->messageSource, message->messageLevel, message->message);
     }
 
-    if (!m_coreFrame)
+    if (!m_coreFrame) {
+        // Answer rather than drop the check: FramePolicyFunction is a CompletionHandler.
+        if (auto policyCheck = m_pendingPolicyChecks.take(listenerID); policyCheck.policyFunction)
+            policyCheck.policyFunction(PolicyAction::Ignore);
         return;
+    }
     setIsSafeBrowsingCheckOngoing(policyDecision.isSafeBrowsingCheckOngoing);
 
     auto policyCheck = m_pendingPolicyChecks.take(listenerID);
@@ -655,6 +690,9 @@ void WebFrame::didReceivePolicyDecision(uint64_t listenerID, PolicyDecision&& po
     FramePolicyFunction function = WTF::move(policyCheck.policyFunction);
     bool forNavigationAction = policyCheck.forNavigationAction == ForNavigationAction::Yes;
 
+    if (policyCheck.downloadAttributeInitiatingDocument && !shouldHonorDownloadAttributePolicyCheck(policyCheck))
+        return function(PolicyAction::Ignore);
+
     if (forNavigationAction && localFrameLoaderClient() && policyDecision.websitePoliciesData) {
         ASSERT(page());
         if (page())
@@ -663,14 +701,18 @@ void WebFrame::didReceivePolicyDecision(uint64_t listenerID, PolicyDecision&& po
     }
 
     m_policyDownloadID = policyDecision.downloadID;
-    if (RefPtr localFrame = dynamicDowncast<LocalFrame>(m_coreFrame.get())) {
-        auto& loader = localFrame->loader();
-        if (RefPtr policyDocumentLoader = loader.policyDocumentLoader()) {
-            if (policyDecision.navigationID)
-                policyDocumentLoader->setNavigationID(*policyDecision.navigationID);
-            policyDocumentLoader->setIsOriginKeyedFromUIProcess(policyDecision.isOriginKeyed);
-        } else if (RefPtr provisionalDocumentLoader = loader.provisionalDocumentLoader())
-            provisionalDocumentLoader->setIsOriginKeyedFromUIProcess(policyDecision.isOriginKeyed);
+    // Only a download skips this: a download attribute link the client answered Use for is a
+    // navigation like any other, and m_policyDocumentLoader is its own.
+    if (policyDecision.policyAction != PolicyAction::Download) {
+        if (RefPtr localFrame = dynamicDowncast<LocalFrame>(m_coreFrame.get())) {
+            auto& loader = localFrame->loader();
+            if (RefPtr policyDocumentLoader = loader.policyDocumentLoader()) {
+                if (policyDecision.navigationID)
+                    policyDocumentLoader->setNavigationID(*policyDecision.navigationID);
+                policyDocumentLoader->setIsOriginKeyedFromUIProcess(policyDecision.isOriginKeyed);
+            } else if (RefPtr provisionalDocumentLoader = loader.provisionalDocumentLoader())
+                provisionalDocumentLoader->setIsOriginKeyedFromUIProcess(policyDecision.isOriginKeyed);
+        }
     }
 
     if (policyDecision.backForwardFrameState) {
