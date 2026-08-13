@@ -565,7 +565,11 @@ LayoutUnit inlineMaximumSize(const PlacedGridItem& gridItem, LayoutUnit borderAn
     auto& maximumSize = gridItem.inlineAxisSizes().maximumSize;
     if (maximumSize.isNone())
         return BorderBoxSize::maxSized().value;
-    return BorderBoxSize { ContentBoxSize { LayoutUnit { maximumSize.tryFixed()->resolveZoom(gridItem.usedZoom()) } }, borderAndPadding }.value;
+    if (auto fixedMaximumSize = maximumSize.tryFixed())
+        return BorderBoxSize { ContentBoxSize { LayoutUnit { fixedMaximumSize->resolveZoom(gridItem.usedZoom()) } }, borderAndPadding }.value;
+    // FIXME: Resolve percentage and calculated maximum sizes against the grid area.
+    ASSERT_NOT_IMPLEMENTED_YET();
+    return BorderBoxSize::maxSized().value;
 }
 
 LayoutUnit blockMaximumSize(const PlacedGridItem& gridItem, LayoutUnit borderAndPadding)
@@ -573,7 +577,11 @@ LayoutUnit blockMaximumSize(const PlacedGridItem& gridItem, LayoutUnit borderAnd
     auto& maximumSize = gridItem.blockAxisSizes().maximumSize;
     if (maximumSize.isNone())
         return BorderBoxSize::maxSized().value;
-    return BorderBoxSize { ContentBoxSize { LayoutUnit { maximumSize.tryFixed()->resolveZoom(gridItem.usedZoom()) } }, borderAndPadding }.value;
+    if (auto fixedMaximumSize = maximumSize.tryFixed())
+        return BorderBoxSize { ContentBoxSize { LayoutUnit { fixedMaximumSize->resolveZoom(gridItem.usedZoom()) } }, borderAndPadding }.value;
+    // FIXME: Resolve percentage and calculated maximum sizes against the grid area.
+    ASSERT_NOT_IMPLEMENTED_YET();
+    return BorderBoxSize::maxSized().value;
 }
 
 // https://drafts.csswg.org/css-grid-1/#grid-item-sizing
