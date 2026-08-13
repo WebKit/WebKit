@@ -173,6 +173,15 @@ static bool hasValidBoundingBoxForContainer(const RenderObject& object)
     return false;
 }
 
+// Maps a child's bounding boxes into the container's coordinate space. See LegacyRenderSVGForeignObject.h for
+// why a <foreignObject> uses localTransform() rather than localToParentTransform() here.
+static AffineTransform boundingBoxToParentTransform(const RenderObject& renderer)
+{
+    if (is<LegacyRenderSVGForeignObject>(renderer))
+        return renderer.localTransform();
+    return renderer.localToParentTransform();
+}
+
 auto SVGRenderSupport::computeContainerBoundingBoxes(const RenderElement& container, RepaintRectCalculation repaintRectCalculation) -> ContainerBoundingBoxes
 {
     ContainerBoundingBoxes result;
@@ -195,8 +204,9 @@ auto SVGRenderSupport::computeContainerBoundingBoxes(const RenderElement& contai
             continue;
 
         auto objectBounds = current->objectBoundingBox();
-        if (!transform.isIdentity())
-            objectBounds = transform.mapRect(objectBounds);
+        auto boundingBoxTransform = boundingBoxToParentTransform(current);
+        if (!boundingBoxTransform.isIdentity())
+            objectBounds = boundingBoxTransform.mapRect(objectBounds);
 
         if (!result.objectBoundingBox)
             result.objectBoundingBox = objectBounds;
@@ -226,7 +236,7 @@ FloatRect SVGRenderSupport::computeContainerStrokeBoundingBox(const RenderElemen
 
         if (auto* currentElement = dynamicDowncast<RenderElement>(current.get()))
             SVGRenderSupport::intersectRepaintRectWithResources(*currentElement, childStrokeBoundingBox, RepaintRectCalculation::Accurate);
-        const AffineTransform& transform = current->localToParentTransform();
+        auto transform = boundingBoxToParentTransform(current);
         if (!transform.isIdentity())
             childStrokeBoundingBox = transform.mapRect(childStrokeBoundingBox);
 
@@ -401,7 +411,7 @@ FloatRect SVGRenderSupport::computeContainerDecoratedBoundingBox(const RenderEle
 
         FloatRect childDecoratedBox = current.decoratedBoundingBox();
 
-        const AffineTransform& transform = current.localToParentTransform();
+        auto transform = boundingBoxToParentTransform(current);
         if (!transform.isIdentity())
             childDecoratedBox = transform.mapRect(childDecoratedBox);
 
@@ -426,18 +436,17 @@ bool SVGRenderSupport::filtersForceContainerLayout(const RenderElement& renderer
     return true;
 }
 
-FloatSize SVGRenderSupport::svgContentLocationOffset(const RenderObject& renderer)
+FloatQuad SVGRenderSupport::mapSVGBoundingBoxToAbsoluteQuad(const RenderElement& renderer, FloatRect boundingBox, OptionSet<MapCoordinatesMode> mode, bool* wasFixed)
 {
-    // A <foreignObject> keeps its bounding boxes origin-relative, but paints its content at location().
     if (CheckedPtr foreignObject = dynamicDowncast<LegacyRenderSVGForeignObject>(renderer))
-        return toFloatSize(FloatPoint { foreignObject->location() });
-    return { };
+        boundingBox.moveBy(-foreignObject->objectBoundingBox().location());
+
+    return renderer.localToAbsoluteQuad(boundingBox, mode, wasFixed);
 }
 
 inline FloatRect clipPathReferenceBox(const RenderElement& renderer, CSSBoxType boxType)
 {
     FloatRect referenceBox;
-    bool isBoxRelativeToRendererGeometry = true;
     switch (boxType) {
     case CSSBoxType::BorderBox:
     case CSSBoxType::MarginBox:
@@ -451,7 +460,6 @@ inline FloatRect clipPathReferenceBox(const RenderElement& renderer, CSSBoxType 
             auto viewportSize = SVGLengthContext(downcast<SVGElement>(renderer.element())).viewportSize();
             if (viewportSize) {
                 referenceBox.setSize(*viewportSize);
-                isBoxRelativeToRendererGeometry = false;
                 break;
             }
         }
@@ -462,9 +470,6 @@ inline FloatRect clipPathReferenceBox(const RenderElement& renderer, CSSBoxType 
         referenceBox = renderer.objectBoundingBox();
         break;
     }
-
-    if (isBoxRelativeToRendererGeometry)
-        referenceBox.move(SVGRenderSupport::svgContentLocationOffset(renderer));
 
     return referenceBox;
 }
