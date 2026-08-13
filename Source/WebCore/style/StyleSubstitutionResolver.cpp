@@ -1073,12 +1073,6 @@ std::optional<double> SubstitutionResolver::randomItemBaseValue(Vector<CSSParser
 
     auto parserState = CSS::PropertyParserState { .context = m_substitutionValue->context() };
 
-    // FIXME: § 9.4.1 turns `auto` into element-scoped property-index-scoped unconditionally, for both
-    // random() and random-item(), but this keys random-item()'s `auto` on the current property
-    // document-wide instead. This is pre-existing behavior, kept because there is no element to scope to
-    // in every substitution context (element-scoping would make the value invalid at computed-value time
-    // where there is none). Reconciling it with the spec is a follow-up.
-    //
     // FIXME: This index is counted here, at substitution time, in a separate space from random()'s
     // parse-time cssRandomFunctionCount. An auto random-item() and an auto random() in the same
     // property value can therefore land on the same RandomCachingKey and share a base value, and the
@@ -1086,7 +1080,7 @@ std::optional<double> SubstitutionResolver::randomItemBaseValue(Vector<CSSParser
     // counter is a follow-up.
     auto keySource = CSSPropertyParserHelpers::RandomKeySource {
         .property = { m_styleBuilder.state().cssPropertyID(), m_styleBuilder.state().customPropertyName() },
-        .autoElementScoped = std::nullopt
+        .autoElementScoped = CSS::Keyword::ElementScoped { }
     };
     auto sharing = CSSPropertyParserHelpers::consumeUnresolvedRandomKey(randomKeyRange, parserState, keySource, [&] {
         return m_randomItemAutoIndex++;

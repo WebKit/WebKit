@@ -25,6 +25,10 @@ PASS random-item() into a registered <number>
 PASS Selecting an empty item is invalid at computed-value time
 PASS random-item() selection is stable across style recalculation
 PASS Independent auto random-item() instances each resolve to a valid item
+PASS random-item() with an auto <random-key> is element-scoped
+PASS random-item() with a bare element-scoped <random-key> is not shared between elements
+PASS random-item() with a <dashed-ident> element-scoped <random-key> is not shared between elements
+PASS random-item() with a <dashed-ident> <random-key> is shared between elements
 PASS A shared dashed-ident key selects the same item across properties
 PASS random() and random-item() using auto in one declaration both resolve
 PASS A bare element-scoped key selects the same item across random-item() instances
