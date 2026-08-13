@@ -14,6 +14,8 @@
   const t_below_viewport =
     async_test('Below-viewport iframes load lazily');
 
+  const expected_url = "http://{{hosts[alt][]}}:{{ports[http][0]}}/html/semantics/embedded-content/the-iframe-element/cross-site/resources/subframe-post-msg.html?below-viewport";
+
   let has_window_loaded = false;
 
   const in_viewport_iframe_onload = t_in_viewport.step_func_done(() => {
@@ -26,25 +28,26 @@
     document.getElementById("below_viewport").scrollIntoView();
   });
 
-  const below_viewport_iframe_onload = t_below_viewport.step_func_done(() => {
+  window.addEventListener("message", t_below_viewport.step_func_done(event => {
+    assert_equals(event.data, expected_url,
+                  "The below-viewport iframe should have loaded its cross-site document");
     assert_true(has_window_loaded,
-                "The window load event should have fired before " +
-                "the below-viewport iframe loads");
-  });
+                "The window load event should have fired before the below-viewport iframe loads");
+  }));
 
 </script>
 
 <body>
-  <iframe id="in_viewport" src="http://{{hosts[alt][]}}:{{ports[http][0]}}/html/semantics/embedded-content/
-  the-iframe-element/resources/subframe.html?in-viewport"
+  <iframe id="in_viewport"
+          src="http://{{hosts[alt][]}}:{{ports[http][0]}}/html/semantics/embedded-content/the-iframe-element/resources/subframe.html?in-viewport"
           loading="lazy" width="200px" height="100px"
           onload="in_viewport_iframe_onload();"></iframe>
 
 
  <div style="height:2000vh;"></div>
-  <iframe id="below_viewport" src="http://{{hosts[alt][]}}:{{ports[http][0]}}/html/semantics/embedded-content/the-iframe-element/resources/subframe.html?below-viewport"
-          loading="lazy" width="200px" height="100px"
-          onload="below_viewport_iframe_onload();"></iframe>
+  <iframe id="below_viewport"
+          src="http://{{hosts[alt][]}}:{{ports[http][0]}}/html/semantics/embedded-content/the-iframe-element/cross-site/resources/subframe-post-msg.html?below-viewport"
+          loading="lazy" width="200px" height="100px"></iframe>
 
 
   <!-- This async script loads very slowly in order to ensure that, if the
