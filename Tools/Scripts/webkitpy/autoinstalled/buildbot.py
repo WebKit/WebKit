@@ -54,6 +54,10 @@ AutoInstall.install(Package('Mako', Version(1, 3, 10)))
 AutoInstall.install(Package('croniter', Version(6, 0, 0)))
 AutoInstall.install(Package('pytz', Version(2025, 2)))
 
+AutoInstall.install(Package('boto3', Version(1, 33, 10), wheel=True))
+AutoInstall.install(Package('botocore', Version(1, 34, 5), wheel=True))
+AutoInstall.install(Package('jmespath', Version(1, 0, 1), wheel=True))
+
 AutoInstall.install(Package('buildbot', Version(4, 3, 0)))
 AutoInstall.install(Package('buildbot_worker', Version(4, 3, 0), pypi_name='buildbot-worker'))
 
