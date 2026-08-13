@@ -49,7 +49,7 @@ messages -> NetworkProcess : AuxiliaryProcess WantsAsyncDispatchMessage {
     DestroySession(PAL::SessionID sessionID) -> ()
     EnsureSessionWithDataStoreIdentifierRemoved(WTF::UUID identifier) -> ()
 
-    FetchWebsitesWithUserInteractions(PAL::SessionID sessionID) -> (HashSet<WebCore::RegistrableDomain> websites)
+    FetchWebsitesWithUserInteractions(PAL::SessionID sessionID) -> (std::optional<HashMap<WebCore::RegistrableDomain, WallTime>> websites)
 
     FetchWebsiteData(PAL::SessionID sessionID, OptionSet<WebKit::WebsiteDataType> websiteDataTypes, OptionSet<WebKit::WebsiteDataFetchOption> fetchOptions) -> (struct WebKit::WebsiteData websiteData)
     DeleteWebsiteData(PAL::SessionID sessionID, OptionSet<WebKit::WebsiteDataType> websiteDataTypes, WallTime modifiedSince, HashSet<WebCore::ProcessIdentifier> activeWebProcesses) -> ()

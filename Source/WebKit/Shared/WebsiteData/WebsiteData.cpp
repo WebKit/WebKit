@@ -84,6 +84,7 @@ WebsiteDataProcessType WebsiteData::ownerProcess(WebsiteDataType dataType)
         return WebsiteDataProcessType::UI;
 #endif
     case WebsiteDataType::EnhancedSecurityRecord:
+    case WebsiteDataType::IsolatedSiteRecord:
         return WebsiteDataProcessType::UI;
     }
 

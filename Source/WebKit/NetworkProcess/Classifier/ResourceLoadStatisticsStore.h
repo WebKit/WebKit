@@ -125,7 +125,7 @@ public:
     void requestStorageAccessUnderOpener(DomainInNeedOfStorageAccess&&, WebCore::PageIdentifier openerID, OpenerDomain&&, CanRequestStorageAccessWithoutUserInteraction);
     void removeAllStorageAccess(CompletionHandler<void()>&&);
 
-    HashSet<RegistrableDomain> loadWebsitesWithUserInteraction();
+    std::optional<HashMap<RegistrableDomain, WallTime>> loadWebsitesWithUserInteraction();
 
     void grandfatherExistingWebsiteData(CompletionHandler<void()>&&);
     void setGrandfathered(const RegistrableDomain&, bool value);

@@ -31,6 +31,8 @@
 #import "Helpers/cocoa/HTTPServer.h"
 #import "Helpers/cocoa/TestNavigationDelegate.h"
 #import "Helpers/cocoa/TestWKWebView.h"
+#import <WebCore/SQLiteDatabase.h>
+#import <WebCore/SQLiteStatement.h>
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
@@ -2250,6 +2252,13 @@ static NSUInteger isolatedSiteSignals(WKWebsiteDataStore *dataStore, NSString *u
     return [[dataStore _isolatedSiteSignalsForTesting:[NSURL URLWithString:urlString]] unsignedIntegerValue];
 }
 
+static NSURL *temporaryDirectoryForIsolatedSiteStoreTest(NSString *name)
+{
+    NSURL *directory = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:name] isDirectory:YES];
+    [[NSFileManager defaultManager] removeItemAtPath:directory.path error:nil];
+    return directory;
+}
+
 static std::pair<RetainPtr<TestWKWebView>, RetainPtr<TestNavigationDelegate>> webViewForIsolatedSiteStoreTest(const HTTPServer& server)
 {
     RetainPtr navigationDelegate = adoptNS([TestNavigationDelegate new]);
@@ -2342,5 +2351,272 @@ TEST(WKWebsiteDataStore, FirstPartyUserGestureInSubframeDoesNotMarkSubframeSite)
 }
 
 #endif // PLATFORM(MAC)
+
+struct IsolatedSiteStoreTestOptions {
+    NSURL *resourceLoadStatisticsDirectory { nil };
+    bool trackingPreventionEnabled { false };
+};
+
+static RetainPtr<WKWebsiteDataStore> persistentDataStore(const HTTPServer& server, NSURL *directory, IsolatedSiteStoreTestOptions options = { })
+{
+    RetainPtr storeConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initWithDirectory:directory]);
+    [storeConfiguration setHTTPSProxy:[NSURL URLWithString:[NSString stringWithFormat:@"https://127.0.0.1:%d/", server.port()]]];
+    if (options.resourceLoadStatisticsDirectory)
+        storeConfiguration.get()._resourceLoadStatisticsDirectory = options.resourceLoadStatisticsDirectory;
+
+    RetainPtr dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:storeConfiguration.get()]);
+    [dataStore _setResourceLoadStatisticsEnabled:options.trackingPreventionEnabled];
+    return dataStore;
+}
+
+static std::pair<RetainPtr<WKWebView>, RetainPtr<TestNavigationDelegate>> webViewForDataStore(WKWebsiteDataStore *dataStore)
+{
+    RetainPtr viewConfiguration = adoptNS([WKWebViewConfiguration new]);
+    [viewConfiguration setWebsiteDataStore:dataStore];
+
+    RetainPtr navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [navigationDelegate allowAnyTLSCertificate];
+    RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:viewConfiguration.get()]);
+    webView.get().navigationDelegate = navigationDelegate.get();
+    return { WTF::move(webView), WTF::move(navigationDelegate) };
+}
+
+static NSDate *seededInteractionDate()
+{
+    // Old enough that a cleared range of an hour cannot cover it.
+    return [NSDate dateWithTimeIntervalSinceNow:-30 * 24 * 3600];
+}
+
+static void writeResourceLoadStatisticsDatabase(NSURL *directory)
+{
+    // Seeds a tracking prevention database whose only interacted-with domain is webkit.org.
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    [fileManager createDirectoryAtURL:directory withIntermediateDirectories:YES attributes:nil error:nil];
+
+    NSURL *databaseFile = [directory URLByAppendingPathComponent:@"observations.db"];
+    NSURL *sourceFile = [NSBundle.test_resourcesBundle URLForResource:@"basicITPDatabase" withExtension:@"db"];
+    EXPECT_TRUE([fileManager fileExistsAtPath:sourceFile.path]);
+    [fileManager copyItemAtPath:sourceFile.path toPath:databaseFile.path error:nil];
+
+    auto database = makeUniqueRef<WebCore::SQLiteDatabase>();
+    EXPECT_TRUE(database->open(databaseFile.path));
+    auto statement = database->prepareStatement("UPDATE ObservedDomains SET hadUserInteraction = 1, mostRecentUserInteractionTime = ? WHERE registrableDomain = 'webkit.org'"_s);
+    EXPECT_TRUE(!!statement);
+    EXPECT_TRUE(statement->bindDouble(1, seededInteractionDate().timeIntervalSince1970) == SQLITE_OK);
+    EXPECT_TRUE(statement->executeCommand());
+    statement = nullptr;
+    database->close();
+}
+
+TEST(IsolatedSiteStore, PersistsAcrossSessions)
+{
+    HTTPServer server({
+        { "/example"_s, { "example as a top-level page"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    NSURL *directory = temporaryDirectoryForIsolatedSiteStoreTest(@"IsolatedSiteStorePersistsAcrossSessions");
+
+    @autoreleasepool {
+        RetainPtr dataStore = persistentDataStore(server, directory);
+        auto [webView, navigationDelegate] = webViewForDataStore(dataStore.get());
+
+        [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+        [navigationDelegate waitForDidFinishNavigation];
+
+        EXPECT_TRUE(isolatedSiteSignals(dataStore.get(), @"https://example.com/") & firstPartyVisitSignal);
+    }
+
+    // No web view this time, so the signal can only have come from the database.
+    @autoreleasepool {
+        RetainPtr dataStore = persistentDataStore(server, directory);
+        EXPECT_TRUE(Util::waitFor([&] {
+            return !!(isolatedSiteSignals(dataStore.get(), @"https://example.com/") & firstPartyVisitSignal);
+        }));
+        EXPECT_NULL([dataStore _isolatedSiteSignalsForTesting:[NSURL URLWithString:@"https://webkit.org/"]]);
+    }
+}
+
+static RetainPtr<WKWebsiteDataRecord> isolatedSiteRecordForDisplayName(WKWebsiteDataStore *dataStore, NSString *displayName)
+{
+    __block RetainPtr<NSArray<WKWebsiteDataRecord *>> records;
+    __block bool done = false;
+    [dataStore fetchDataRecordsOfTypes:[NSSet setWithObject:_WKWebsiteDataTypeIsolatedSiteRecord] completionHandler:^(NSArray<WKWebsiteDataRecord *> *fetchedRecords) {
+        records = fetchedRecords;
+        done = true;
+    }];
+    Util::run(&done);
+
+    for (WKWebsiteDataRecord *record in records.get()) {
+        if ([record.displayName isEqualToString:displayName])
+            return record;
+    }
+    return nil;
+}
+
+static void removeIsolatedSiteData(WKWebsiteDataStore *dataStore, NSArray<WKWebsiteDataRecord *> *records)
+{
+    __block bool done = false;
+    [dataStore removeDataOfTypes:[NSSet setWithObject:_WKWebsiteDataTypeIsolatedSiteRecord] forDataRecords:records completionHandler:^{
+        done = true;
+    }];
+    Util::run(&done);
+}
+
+static void removeIsolatedSiteDataSince(WKWebsiteDataStore *dataStore, NSDate *modifiedSince)
+{
+    __block bool done = false;
+    [dataStore removeDataOfTypes:[NSSet setWithObject:_WKWebsiteDataTypeIsolatedSiteRecord] modifiedSince:modifiedSince completionHandler:^{
+        done = true;
+    }];
+    Util::run(&done);
+}
+
+TEST(IsolatedSiteStore, DataRemoval)
+{
+    HTTPServer server({
+        { "/example"_s, { "example as a top-level page"_s } },
+        { "/webkit"_s, { "webkit as a top-level page"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    NSURL *directory = temporaryDirectoryForIsolatedSiteStoreTest(@"IsolatedSiteStoreDataRemoval");
+
+    @autoreleasepool {
+        RetainPtr dataStore = persistentDataStore(server, directory);
+        auto [webView, navigationDelegate] = webViewForDataStore(dataStore.get());
+
+        [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+        [navigationDelegate waitForDidFinishNavigation];
+        [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://webkit.org/webkit"]]];
+        [navigationDelegate waitForDidFinishNavigation];
+
+        RetainPtr exampleRecord = isolatedSiteRecordForDisplayName(dataStore.get(), @"example.com");
+        EXPECT_NOT_NULL(exampleRecord.get());
+        removeIsolatedSiteData(dataStore.get(), @[exampleRecord.get()]);
+
+        EXPECT_NULL([dataStore _isolatedSiteSignalsForTesting:[NSURL URLWithString:@"https://example.com/"]]);
+        EXPECT_TRUE(isolatedSiteSignals(dataStore.get(), @"https://webkit.org/") & firstPartyVisitSignal);
+    }
+
+    // A store over the same database, so what the per-record removal did on disk is what is read back
+    // here rather than what the previous store had in memory.
+    @autoreleasepool {
+        RetainPtr dataStore = persistentDataStore(server, directory);
+        EXPECT_TRUE(Util::waitFor([&] {
+            return !!(isolatedSiteSignals(dataStore.get(), @"https://webkit.org/") & firstPartyVisitSignal);
+        }));
+        EXPECT_NULL([dataStore _isolatedSiteSignalsForTesting:[NSURL URLWithString:@"https://example.com/"]]);
+
+        removeIsolatedSiteDataSince(dataStore.get(), [NSDate distantPast]);
+        EXPECT_NULL([dataStore _isolatedSiteSignalsForTesting:[NSURL URLWithString:@"https://webkit.org/"]]);
+    }
+
+    @autoreleasepool {
+        RetainPtr dataStore = persistentDataStore(server, directory);
+        EXPECT_TRUE(Util::waitFor([&] {
+            return ![dataStore _isolatedSiteSignalsForTesting:[NSURL URLWithString:@"https://webkit.org/"]];
+        }));
+    }
+}
+
+TEST(IsolatedSiteStore, PartialDataRemovalAllowsImport)
+{
+    HTTPServer server({
+        { "/example"_s, { "example as a top-level page"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    NSURL *directory = temporaryDirectoryForIsolatedSiteStoreTest(@"IsolatedSiteStorePartialRemoval");
+    NSURL *statisticsDirectory = temporaryDirectoryForIsolatedSiteStoreTest(@"IsolatedSiteStorePartialRemovalITP");
+    writeResourceLoadStatisticsDatabase(statisticsDirectory);
+
+    // Clearing a time range says nothing about history predating this store, so unlike clearing
+    // everything it must leave the import to happen on a later launch.
+    @autoreleasepool {
+        RetainPtr dataStore = persistentDataStore(server, directory, { .resourceLoadStatisticsDirectory = statisticsDirectory, .trackingPreventionEnabled = false });
+        auto [webView, navigationDelegate] = webViewForDataStore(dataStore.get());
+
+        [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+        [navigationDelegate waitForDidFinishNavigation];
+
+        removeIsolatedSiteDataSince(dataStore.get(), [NSDate dateWithTimeIntervalSinceNow:-3600]);
+    }
+
+    @autoreleasepool {
+        RetainPtr dataStore = persistentDataStore(server, directory, { .resourceLoadStatisticsDirectory = statisticsDirectory, .trackingPreventionEnabled = true });
+        EXPECT_TRUE(Util::waitFor([&] {
+            return !!(isolatedSiteSignals(dataStore.get(), @"https://webkit.org/") & firstPartyVisitSignal);
+        }));
+        // Recorded within the cleared range, and not something the import brings back.
+        EXPECT_NULL([dataStore _isolatedSiteSignalsForTesting:[NSURL URLWithString:@"https://example.com/"]]);
+    }
+}
+
+TEST(IsolatedSiteStore, DataRemovalDoesNotImport)
+{
+    HTTPServer server({
+        { "/example"_s, { "example as a top-level page"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    NSURL *directory = temporaryDirectoryForIsolatedSiteStoreTest(@"IsolatedSiteStoreRemovalDoesNotImport");
+    NSURL *statisticsDirectory = temporaryDirectoryForIsolatedSiteStoreTest(@"IsolatedSiteStoreRemovalDoesNotImportITP");
+    writeResourceLoadStatisticsDatabase(statisticsDirectory);
+
+    @autoreleasepool {
+        RetainPtr dataStore = persistentDataStore(server, directory, { .resourceLoadStatisticsDirectory = statisticsDirectory, .trackingPreventionEnabled = true });
+
+        // The removal must also record the import as done, or the next launch brings the entries back.
+        removeIsolatedSiteDataSince(dataStore.get(), [NSDate distantPast]);
+        EXPECT_NULL([dataStore _isolatedSiteSignalsForTesting:[NSURL URLWithString:@"https://webkit.org/"]]);
+    }
+
+    @autoreleasepool {
+        RetainPtr dataStore = persistentDataStore(server, directory, { .resourceLoadStatisticsDirectory = statisticsDirectory, .trackingPreventionEnabled = true });
+        auto [webView, navigationDelegate] = webViewForDataStore(dataStore.get());
+
+        // Waited on so that the check below cannot pass merely by being early.
+        [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+        [navigationDelegate waitForDidFinishNavigation];
+        EXPECT_TRUE(Util::waitFor([&] {
+            return !!(isolatedSiteSignals(dataStore.get(), @"https://example.com/") & firstPartyVisitSignal);
+        }));
+
+        EXPECT_NULL([dataStore _isolatedSiteSignalsForTesting:[NSURL URLWithString:@"https://webkit.org/"]]);
+    }
+}
+
+TEST(IsolatedSiteStore, ImportsWhenTrackingPreventionIsTurnedOnLater)
+{
+    HTTPServer server({
+        { "/example"_s, { "example as a top-level page"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    NSURL *directory = temporaryDirectoryForIsolatedSiteStoreTest(@"IsolatedSiteStoreImport");
+    NSURL *statisticsDirectory = temporaryDirectoryForIsolatedSiteStoreTest(@"IsolatedSiteStoreImportITP");
+    writeResourceLoadStatisticsDatabase(statisticsDirectory);
+
+    // Tracking prevention is off, so the store must not record that it has imported.
+    @autoreleasepool {
+        RetainPtr dataStore = persistentDataStore(server, directory, { .resourceLoadStatisticsDirectory = statisticsDirectory, .trackingPreventionEnabled = false });
+        auto [webView, navigationDelegate] = webViewForDataStore(dataStore.get());
+
+        [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+        [navigationDelegate waitForDidFinishNavigation];
+
+        EXPECT_TRUE(isolatedSiteSignals(dataStore.get(), @"https://example.com/") & firstPartyVisitSignal);
+        EXPECT_NULL([dataStore _isolatedSiteSignalsForTesting:[NSURL URLWithString:@"https://webkit.org/"]]);
+    }
+
+    @autoreleasepool {
+        RetainPtr dataStore = persistentDataStore(server, directory, { .resourceLoadStatisticsDirectory = statisticsDirectory, .trackingPreventionEnabled = true });
+        EXPECT_TRUE(Util::waitFor([&] {
+            return !!(isolatedSiteSignals(dataStore.get(), @"https://webkit.org/") & firstPartyVisitSignal);
+        }));
+        EXPECT_TRUE(isolatedSiteSignals(dataStore.get(), @"https://webkit.org/") & firstPartyUserGestureSignal);
+
+        // Surviving a cleared range that does not reach back to the seeded interaction is what says
+        // the entry carries that time rather than the time it was imported.
+        removeIsolatedSiteDataSince(dataStore.get(), [NSDate dateWithTimeIntervalSinceNow:-3600]);
+        EXPECT_TRUE(isolatedSiteSignals(dataStore.get(), @"https://webkit.org/") & firstPartyVisitSignal);
+    }
+}
 
 } // namespace TestWebKitAPI

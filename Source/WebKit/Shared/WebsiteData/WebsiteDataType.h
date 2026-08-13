@@ -56,6 +56,7 @@ enum class WebsiteDataType : uint32_t {
     ScreenTime = 1 << 21,
 #endif
     EnhancedSecurityRecord = 1 << 22,
+    IsolatedSiteRecord = 1 << 23,
 };
 
 inline ASCIILiteral toString(WebsiteDataType type)
@@ -109,6 +110,8 @@ inline ASCIILiteral toString(WebsiteDataType type)
 #endif
     case WebsiteDataType::EnhancedSecurityRecord:
         return "EnhancedSecurityRecord"_s;
+    case WebsiteDataType::IsolatedSiteRecord:
+        return "IsolatedSiteRecord"_s;
     default:
         break;
     }
@@ -147,7 +150,8 @@ template<> struct EnumTraitsForPersistence<WebKit::WebsiteDataType> {
 #if ENABLE(SCREEN_TIME)
         WebKit::WebsiteDataType::ScreenTime,
 #endif
-        WebKit::WebsiteDataType::EnhancedSecurityRecord
+        WebKit::WebsiteDataType::EnhancedSecurityRecord,
+        WebKit::WebsiteDataType::IsolatedSiteRecord
     >;
 };
 

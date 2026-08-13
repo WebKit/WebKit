@@ -8324,6 +8324,8 @@ TEST(SiteIsolation, SharedProcessWithResourceLoadStatistics)
     NSURL *itpRoot = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:@"SharedProcessWithResourceLoadStatisticsTestITP"] isDirectory:YES];
     auto defaultFileManager = [NSFileManager defaultManager];
     [defaultFileManager removeItemAtPath:itpRoot.path error:nil];
+    // Its recorded import would make a second run of this binary skip the import entirely.
+    [defaultFileManager removeItemAtPath:dataStoreRoot.path error:nil];
 
     [defaultFileManager createDirectoryAtURL:itpRoot withIntermediateDirectories:YES attributes:nil error:nil];
     NSURL *itpDatabaseFile = [itpRoot URLByAppendingPathComponent:@"observations.db"];
@@ -8422,6 +8424,8 @@ TEST(SiteIsolation, SharedProcessAfterClick)
     NSURL *itpRoot = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:@"SharedProcessAfterClickTestITP"] isDirectory:YES];
     auto defaultFileManager = [NSFileManager defaultManager];
     [defaultFileManager removeItemAtPath:itpRoot.path error:nil];
+    // Its recorded import would make a second run of this binary skip the import entirely.
+    [defaultFileManager removeItemAtPath:dataStoreRoot.path error:nil];
 
     [defaultFileManager createDirectoryAtURL:itpRoot withIntermediateDirectories:YES attributes:nil error:nil];
     NSURL *itpDatabaseFile = [itpRoot URLByAppendingPathComponent:@"observations.db"];
@@ -8482,6 +8486,8 @@ TEST(SiteIsolation, SharedProcessAfterKeyDown)
     NSURL *itpRoot = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:@"SharedProcessAfterKeyDownTestITP"] isDirectory:YES];
     auto defaultFileManager = [NSFileManager defaultManager];
     [defaultFileManager removeItemAtPath:itpRoot.path error:nil];
+    // Its recorded import would make a second run of this binary skip the import entirely.
+    [defaultFileManager removeItemAtPath:dataStoreRoot.path error:nil];
 
     [defaultFileManager createDirectoryAtURL:itpRoot withIntermediateDirectories:YES attributes:nil error:nil];
     NSURL *itpDatabaseFile = [itpRoot URLByAppendingPathComponent:@"observations.db"];

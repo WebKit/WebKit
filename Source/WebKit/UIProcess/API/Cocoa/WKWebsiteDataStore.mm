@@ -729,7 +729,8 @@ struct WKWebsiteData {
             _WKWebsiteDataTypeAdClickAttributions,
             _WKWebsiteDataTypePrivateClickMeasurements,
             _WKWebsiteDataTypeAlternativeServices,
-            _WKWebsiteDataTypeEnhancedSecurityRecord
+            _WKWebsiteDataTypeEnhancedSecurityRecord,
+            _WKWebsiteDataTypeIsolatedSiteRecord
         ];
 
         return [retainPtr([self allWebsiteDataTypes]) setByAddingObjectsFromArray:privateTypes];

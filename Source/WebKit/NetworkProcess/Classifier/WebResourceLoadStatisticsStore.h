@@ -129,7 +129,7 @@ public:
     SuspendableWorkQueue& statisticsQueue() { return m_statisticsQueue.get(); }
 
     void populateMemoryStoreFromDisk(CompletionHandler<void()>&&);
-    void loadWebsitesWithUserInteraction(CompletionHandler<void(HashSet<RegistrableDomain>&&)>&&);
+    void loadWebsitesWithUserInteraction(CompletionHandler<void(std::optional<HashMap<RegistrableDomain, WallTime>>&&)>&&);
     void setShouldClassifyResourcesBeforeDataRecordsRemoval(bool, CompletionHandler<void()>&&);
 
     void grantStorageAccess(SubFrameDomain&&, TopFrameDomain&&, WebCore::FrameIdentifier, WebCore::PageIdentifier, WebPageProxyIdentifier, StorageAccessPromptWasShown, StorageAccessScope, CompletionHandler<void(RequestStorageAccessResult)>&&);

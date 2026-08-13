@@ -476,6 +476,9 @@ static void resolveDirectories(WebsiteDataStoreConfiguration::Directories& direc
 
     if (!directories.enhancedSecurityDirectory.isEmpty())
         directories.enhancedSecurityDirectory = resolveAndCreateReadWriteDirectoryForSandboxExtension(directories.enhancedSecurityDirectory);
+
+    if (!directories.isolatedSitesDirectory.isEmpty())
+        directories.isolatedSitesDirectory = resolveAndCreateReadWriteDirectoryForSandboxExtension(directories.isolatedSitesDirectory);
 }
 
 const WebsiteDataStoreConfiguration::Directories& WebsiteDataStore::resolvedDirectories() const
@@ -549,27 +552,9 @@ void WebsiteDataStore::handleResolvedDirectoriesAsynchronously(const WebsiteData
     });
 }
 
-void WebsiteDataStore::fetchDomainsWithUserInteraction(CompletionHandler<void(const HashSet<WebCore::RegistrableDomain>&)>&& completionHandler)
+void WebsiteDataStore::fetchDomainsWithUserInteraction(CompletionHandler<void(std::optional<HashMap<WebCore::RegistrableDomain, WallTime>>&&)>&& completionHandler)
 {
-    if (m_domainsWithUserInteractions)
-        return completionHandler(*m_domainsWithUserInteractions);
-
-    bool shouldFetch = m_domainsWithUserInteractionsCompletionHandler.isEmpty();
-    m_domainsWithUserInteractionsCompletionHandler.append(WTF::move(completionHandler));
-
-    if (!shouldFetch)
-        return;
-
-    protect(networkProcess())->sendWithAsyncReply(Messages::NetworkProcess::FetchWebsitesWithUserInteractions(sessionID()), [this, protectedThis = Ref { *this }](HashSet<WebCore::RegistrableDomain>&& domains) {
-        domains.addAll(platformAdditionalDomainsWithUserInteraction());
-        m_domainsWithUserInteractions = WTF::move(domains);
-
-        for (auto& domain : std::exchange(m_pendingDomainsWithUserInteractions, { }))
-            m_domainsWithUserInteractions->add(domain);
-
-        for (auto& completionHandler : std::exchange(m_domainsWithUserInteractionsCompletionHandler, { }))
-            completionHandler(*m_domainsWithUserInteractions);
-    });
+    protect(networkProcess())->sendWithAsyncReply(Messages::NetworkProcess::FetchWebsitesWithUserInteractions(sessionID()), WTF::move(completionHandler));
 }
 
 #if !PLATFORM(COCOA)
@@ -824,6 +809,16 @@ private:
             callbackAggregator->addWebsiteData(WTF::move(websiteData));
         });
     }
+
+    if (dataTypes.contains(WebsiteDataType::IsolatedSiteRecord)) {
+        protect(isolatedSiteStore())->allDomains([callbackAggregator] (Vector<WebCore::RegistrableDomain>&& isolatedSites) {
+            WebsiteData websiteData;
+            websiteData.entries = WTF::map(isolatedSites, [](auto& domain) {
+                return WebsiteData::Entry { WebCore::SecurityOriginData { "https"_s, domain.string(), std::nullopt }, WebsiteDataType::IsolatedSiteRecord, 0 };
+            });
+            callbackAggregator->addWebsiteData(WTF::move(websiteData));
+        });
+    }
 }
 
 void WebsiteDataStore::fetchDataForRegistrableDomains(OptionSet<WebsiteDataType> dataTypes, OptionSet<WebsiteDataFetchOption> fetchOptions, Vector<WebCore::RegistrableDomain>&& domains, CompletionHandler<void(Vector<WebsiteDataRecord>&&, HashSet<WebCore::RegistrableDomain>&&)>&& completionHandler)
@@ -982,6 +977,14 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, WallTime
 
     if (dataTypes.contains(WebsiteDataType::EnhancedSecurityRecord) && isPersistent())
         removeAllEnhancedSecuritySites([callbackAggregator] { });
+
+    if (dataTypes.contains(WebsiteDataType::IsolatedSiteRecord)) {
+        Ref siteStore = isolatedSiteStore();
+        if (modifiedSince <= WallTime())
+            siteStore->removeAllSites([callbackAggregator] { });
+        else
+            siteStore->removeSitesUpdatedSince(modifiedSince, [callbackAggregator] { });
+    }
 }
 
 void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, const Vector<WebsiteDataRecord>& dataRecords, Function<void()>&& completionHandler)
@@ -1089,6 +1092,17 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, const Ve
 #endif
     if (dataTypes.contains(WebsiteDataType::EnhancedSecurityRecord) && isPersistent())
         removeEnhancedSecuritySites(origins, [callbackAggregator] { });
+
+    if (dataTypes.contains(WebsiteDataType::IsolatedSiteRecord)) {
+        HashSet<WebCore::RegistrableDomain> domainsToRemove;
+        for (auto& origin : origins)
+            domainsToRemove.add(WebCore::RegistrableDomain { origin });
+        for (auto& dataRecord : dataRecords) {
+            for (auto& domain : dataRecord.resourceLoadStatisticsRegistrableDomains)
+                domainsToRemove.add(domain);
+        }
+        protect(isolatedSiteStore())->removeSites(copyToVector(domainsToRemove), [callbackAggregator] { });
+    }
 }
 
 DeviceIdHashSaltStorage& WebsiteDataStore::ensureDeviceIdHashSaltStorage()
@@ -1529,29 +1543,33 @@ void WebsiteDataStore::setTimeToLiveUserInteraction(Seconds seconds, CompletionH
     protect(networkProcess())->setTimeToLiveUserInteraction(m_sessionID, seconds, WTF::move(completionHandler));
 }
 
-void WebsiteDataStore::didHaveUserInteractionForSiteIsolation(const URL& url)
+IsolatedSiteStore& WebsiteDataStore::isolatedSiteStore()
 {
-    if (url.protocolIsAbout() || url.isEmpty())
-        return;
+    ASSERT(RunLoop::isMain());
 
-    WebCore::RegistrableDomain registrableDomain { url };
-    if (m_domainsWithUserInteractions)
-        m_domainsWithUserInteractions->add(registrableDomain);
-    else if (!m_domainsWithUserInteractionsCompletionHandler.isEmpty()) {
-        // Currently waiting for the network process's reply.
-        // Add this domain to the hash set we get from the network process
-        // since the network process may have replied before it had
-        // notififed of user interaction by the web content process.
-        m_pendingDomainsWithUserInteractions.append(registrableDomain);
+    if (!m_isolatedSiteStore) {
+        IsolatedSiteStore::UserInteractionDomainFetcher fetcher = [weakThis = WeakPtr { *this }](CompletionHandler<void(std::optional<HashMap<WebCore::RegistrableDomain, WallTime>>&&)>&& completionHandler) mutable {
+            RefPtr protectedThis = weakThis.get();
+            if (!protectedThis || !protectedThis->trackingPreventionEnabled())
+                return completionHandler(std::nullopt);
+
+            protectedThis->fetchDomainsWithUserInteraction(WTF::move(completionHandler));
+        };
+
+        lazyInitialize(m_isolatedSiteStore, IsolatedSiteStore::create(isPersistent() ? resolvedDirectories().isolatedSitesDirectory : String { }, WTF::move(fetcher), platformAdditionalDomainsWithUserInteraction()));
     }
+
+    return *m_isolatedSiteStore;
 }
 
-std::optional<OptionSet<IsolatedSiteStore::Signal>> WebsiteDataStore::isolatedSiteSignalsForTesting(const URL& url) const
+std::optional<OptionSet<IsolatedSiteStore::Signal>> WebsiteDataStore::isolatedSiteSignalsForTesting(const URL& url)
 {
     WebCore::Site site { url };
-    if (!m_isolatedSiteStore.contains(site))
+    Ref siteStore = isolatedSiteStore();
+    if (!siteStore->contains(site))
         return std::nullopt;
-    return m_isolatedSiteStore.reasonsFor(site);
+
+    return siteStore->reasonsFor(site);
 }
 
 void WebsiteDataStore::logUserInteraction(const URL& url, CompletionHandler<void()>&& completionHandler)
@@ -2401,6 +2419,15 @@ String WebsiteDataStore::defaultIndexedDBDatabaseDirectory(const String& baseDat
     return websiteDataDirectoryFileSystemRepresentation(String::fromUTF8("databases" G_DIR_SEPARATOR_S "indexeddb"), baseDataDirectory);
 #else
     return websiteDataDirectoryFileSystemRepresentation("IndexedDB"_s, baseDataDirectory);
+#endif
+}
+
+String WebsiteDataStore::defaultIsolatedSitesDirectory(const String& baseDataDirectory)
+{
+#if PLATFORM(PLAYSTATION) || USE(GLIB)
+    return websiteDataDirectoryFileSystemRepresentation("isolatedsites"_s, baseDataDirectory);
+#else
+    return websiteDataDirectoryFileSystemRepresentation("IsolatedSites"_s, baseDataDirectory);
 #endif
 }
 

@@ -27,25 +27,75 @@
 
 #include <WebCore/RegistrableDomain.h>
 #include <WebCore/Site.h>
+#include <wtf/CompletionHandler.h>
+#include <wtf/Function.h>
 #include <wtf/HashMap.h>
+#include <wtf/HashSet.h>
 #include <wtf/OptionSet.h>
+#include <wtf/TZoneMalloc.h>
+#include <wtf/ThreadSafeWeakPtr.h>
+#include <wtf/WallTime.h>
+#include <wtf/WorkQueue.h>
 
 namespace WebKit {
 
-class IsolatedSiteStore {
+class IsolatedSitePersistence;
+
+class IsolatedSiteStore final : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<IsolatedSiteStore, WTF::DestructionThread::MainRunLoop> {
+    WTF_MAKE_TZONE_ALLOCATED(IsolatedSiteStore);
 public:
     enum class Signal : uint8_t {
         Autofill = 1 << 0,
         FirstPartyVisit = 1 << 1,
         FirstPartyUserGesture = 1 << 2,
     };
+    static constexpr OptionSet<Signal> allSignals { Signal::Autofill, Signal::FirstPartyVisit, Signal::FirstPartyUserGesture };
+
+    using UserInteractionDomainFetcher = Function<void(CompletionHandler<void(std::optional<HashMap<WebCore::RegistrableDomain, WallTime>>&&)>&&)>;
+    static Ref<IsolatedSiteStore> create(const String& databaseDirectoryPath, UserInteractionDomainFetcher&&, HashSet<WebCore::RegistrableDomain>&& additionalSitesForTesting);
+    ~IsolatedSiteStore();
 
     void addSite(const WebCore::Site&, Signal);
     OptionSet<Signal> reasonsFor(const WebCore::Site&) const;
     bool contains(const WebCore::Site&) const;
+    bool containsDomain(const WebCore::RegistrableDomain&) const;
+    void allDomains(CompletionHandler<void(Vector<WebCore::RegistrableDomain>&&)>&&);
+    void removeAllSites(CompletionHandler<void()>&&);
+    void removeSitesUpdatedSince(WallTime, CompletionHandler<void()>&&);
+    void removeSites(Vector<WebCore::RegistrableDomain>&&, CompletionHandler<void()>&&);
+
+    bool isReady() const { return m_isReady; }
+    void whenReady(CompletionHandler<void()>&&);
 
 private:
-    HashMap<WebCore::RegistrableDomain, OptionSet<Signal>> m_sites;
+    IsolatedSiteStore(const String& databaseDirectoryPath, UserInteractionDomainFetcher&&, HashSet<WebCore::RegistrableDomain>&&);
+
+    static WorkQueue& sharedWorkQueueSingleton();
+
+    struct Entry {
+        OptionSet<Signal> signals;
+        WallTime lastUpdated;
+    };
+
+    void didLoadSites(HashMap<WebCore::RegistrableDomain, Entry>&&, bool didImportUserInteractions);
+    void whenLoaded(CompletionHandler<void()>&&);
+    void importUserInteractions();
+    void becomeReady();
+
+    void skipImport();
+    void recordSignals(const WebCore::RegistrableDomain&, OptionSet<Signal>, WallTime lastUpdated);
+    void saveSite(const WebCore::RegistrableDomain&, const Entry&);
+
+    HashMap<WebCore::RegistrableDomain, Entry> m_sites;
+    Vector<CompletionHandler<void()>> m_loadCompletionHandlers;
+    Vector<CompletionHandler<void()>> m_readyCompletionHandlers;
+    UserInteractionDomainFetcher m_userInteractionDomainFetcher;
+    HashSet<WebCore::RegistrableDomain> m_additionalSitesForTesting;
+    const bool m_isPersistent { false };
+    bool m_isLoaded { false };
+    bool m_isReady { false };
+    bool m_importSuppressed { false };
+    std::unique_ptr<IsolatedSitePersistence> m_persistence WTF_GUARDED_BY_CAPABILITY(sharedWorkQueueSingleton());
 };
 
 } // namespace WebKit

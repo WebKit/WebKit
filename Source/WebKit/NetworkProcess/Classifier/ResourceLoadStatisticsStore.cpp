@@ -124,7 +124,7 @@ constexpr auto updateMostRecentWebPushInteractionTimeQuery = "UPDATE ObservedDom
 // SELECT Queries
 constexpr auto domainIDFromStringQuery = "SELECT domainID FROM ObservedDomains WHERE registrableDomain = ?"_s;
 constexpr auto domainStringFromDomainIDQuery = "SELECT registrableDomain FROM ObservedDomains WHERE domainID = ?"_s;
-constexpr auto domainWithUserInteractionQuery = "SELECT registrableDomain FROM ObservedDomains WHERE hadUserInteraction = 1"_s;
+constexpr auto domainWithUserInteractionQuery = "SELECT registrableDomain, mostRecentUserInteractionTime FROM ObservedDomains WHERE hadUserInteraction = 1"_s;
 constexpr auto isPrevalentResourceQuery = "SELECT isPrevalent FROM ObservedDomains WHERE registrableDomain = ?"_s;
 constexpr auto isVeryPrevalentResourceQuery = "SELECT isVeryPrevalent FROM ObservedDomains WHERE registrableDomain = ?"_s;
 constexpr auto hadUserInteractionQuery = "SELECT hadUserInteraction, mostRecentUserInteractionTime FROM ObservedDomains WHERE registrableDomain = ?"_s;
@@ -464,17 +464,17 @@ void ResourceLoadStatisticsStore::processStatisticsAndDataRecords(CompletionHand
     });
 }
 
-HashSet<RegistrableDomain> ResourceLoadStatisticsStore::loadWebsitesWithUserInteraction()
+std::optional<HashMap<RegistrableDomain, WallTime>> ResourceLoadStatisticsStore::loadWebsitesWithUserInteraction()
 {
     ASSERT(!RunLoop::isMain());
 
-    HashSet<RegistrableDomain> results;
+    HashMap<RegistrableDomain, WallTime> results;
     auto statement = m_database->prepareStatement(domainWithUserInteractionQuery);
     if (!statement)
-        return { };
+        return std::nullopt;
 
     while (statement->step() == SQLITE_ROW)
-        results.add(RegistrableDomain::uncheckedCreateFromRegistrableDomainString(statement->columnText(0)));
+        results.set(RegistrableDomain::uncheckedCreateFromRegistrableDomainString(statement->columnText(0)), WallTime::fromRawSeconds(statement->columnDouble(1)));
 
     return results;
 }

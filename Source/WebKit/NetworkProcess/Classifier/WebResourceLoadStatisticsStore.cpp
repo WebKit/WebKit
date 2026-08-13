@@ -225,17 +225,27 @@ void WebResourceLoadStatisticsStore::populateMemoryStoreFromDisk(CompletionHandl
     });
 }
 
-void WebResourceLoadStatisticsStore::loadWebsitesWithUserInteraction(CompletionHandler<void(HashSet<RegistrableDomain>&&)>&& completionHandler)
+void WebResourceLoadStatisticsStore::loadWebsitesWithUserInteraction(CompletionHandler<void(std::optional<HashMap<RegistrableDomain, WallTime>>&&)>&& completionHandler)
 {
     if (isEphemeral())
-        return completionHandler({ });
+        return completionHandler(std::nullopt);
 
     ASSERT(RunLoop::isMain());
     postTask([completionHandler = WTF::move(completionHandler)](auto& store) mutable {
-        HashSet<RegistrableDomain> domains;
+        std::optional<HashMap<RegistrableDomain, WallTime>> domains;
         if (RefPtr statisticsStore = store.m_statisticsStore)
             domains = statisticsStore->loadWebsitesWithUserInteraction();
-        store.postTaskReply([domains = crossThreadCopy(WTF::move(domains)), completionHandler = WTF::move(completionHandler)] mutable {
+
+        std::optional<HashMap<RegistrableDomain, WallTime>> isolatedDomains;
+        if (domains) {
+            // crossThreadCopy() has no WallTime specialization, and only the keys need isolating.
+            isolatedDomains = HashMap<RegistrableDomain, WallTime> { };
+            isolatedDomains->reserveInitialCapacity(domains->size());
+            for (auto& [domain, time] : *domains)
+                isolatedDomains->set(crossThreadCopy(domain), time);
+        }
+
+        store.postTaskReply([domains = WTF::move(isolatedDomains), completionHandler = WTF::move(completionHandler)] mutable {
             completionHandler(WTF::move(domains));
         });
     });

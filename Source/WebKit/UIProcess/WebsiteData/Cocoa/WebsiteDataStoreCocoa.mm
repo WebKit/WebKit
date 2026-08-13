@@ -447,6 +447,14 @@ String WebsiteDataStore::defaultIndexedDBDatabaseDirectory(const String& baseDir
     return websiteDataDirectoryFileSystemRepresentation("IndexedDB"_s);
 }
 
+String WebsiteDataStore::defaultIsolatedSitesDirectory(const String& baseDirectory)
+{
+    if (!baseDirectory.isEmpty())
+        return FileSystem::pathByAppendingComponent(baseDirectory, "IsolatedSites"_s);
+
+    return websiteDataDirectoryFileSystemRepresentation("IsolatedSites"_s, { }, ShouldCreateDirectory::No);
+}
+
 String WebsiteDataStore::defaultServiceWorkerRegistrationDirectory(const String& baseDirectory)
 {
     if (!baseDirectory.isEmpty())

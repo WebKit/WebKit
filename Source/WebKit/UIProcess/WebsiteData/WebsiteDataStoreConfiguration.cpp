@@ -111,6 +111,7 @@ void WebsiteDataStoreConfiguration::initializePaths()
 
     setAlternativeServicesDirectory(WebsiteDataStore::defaultAlternativeServicesDirectory(m_baseDataDirectory));
     setIndexedDBDatabaseDirectory(WebsiteDataStore::defaultIndexedDBDatabaseDirectory(m_baseDataDirectory));
+    setIsolatedSitesDirectory(WebsiteDataStore::defaultIsolatedSitesDirectory(m_baseDataDirectory));
     setServiceWorkerRegistrationDirectory(WebsiteDataStore::defaultServiceWorkerRegistrationDirectory(m_baseDataDirectory));
     setWebSQLDatabaseDirectory(WebsiteDataStore::defaultWebSQLDatabaseDirectory(m_baseDataDirectory));
     setLocalStorageDirectory(WebsiteDataStore::defaultLocalStorageDirectory(m_baseDataDirectory));
@@ -215,6 +216,7 @@ WebsiteDataStoreConfiguration::Directories WebsiteDataStoreConfiguration::Direct
         crossThreadCopy(generalStorageDirectory),
         crossThreadCopy(hstsStorageDirectory),
         crossThreadCopy(indexedDBDatabaseDirectory),
+        crossThreadCopy(isolatedSitesDirectory),
         crossThreadCopy(javaScriptConfigurationDirectory),
         crossThreadCopy(localStorageDirectory),
         crossThreadCopy(mediaCacheDirectory),
@@ -244,6 +246,7 @@ WebsiteDataStoreConfiguration::Directories WebsiteDataStoreConfiguration::Direct
         crossThreadCopy(WTF::move(generalStorageDirectory)),
         crossThreadCopy(WTF::move(hstsStorageDirectory)),
         crossThreadCopy(WTF::move(indexedDBDatabaseDirectory)),
+        crossThreadCopy(WTF::move(isolatedSitesDirectory)),
         crossThreadCopy(WTF::move(javaScriptConfigurationDirectory)),
         crossThreadCopy(WTF::move(localStorageDirectory)),
         crossThreadCopy(WTF::move(mediaCacheDirectory)),

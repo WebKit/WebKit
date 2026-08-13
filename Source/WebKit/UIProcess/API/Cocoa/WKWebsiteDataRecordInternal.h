@@ -84,6 +84,9 @@ static inline std::optional<WebsiteDataType> toWebsiteDataType(NSString *website
 #endif
     if ([websiteDataType isEqualToString:_WKWebsiteDataTypeEnhancedSecurityRecord])
         return WebsiteDataType::EnhancedSecurityRecord;
+
+    if ([websiteDataType isEqualToString:_WKWebsiteDataTypeIsolatedSiteRecord])
+        return WebsiteDataType::IsolatedSiteRecord;
     return std::nullopt;
 }
 
@@ -147,6 +150,9 @@ static inline RetainPtr<NSSet> toWKWebsiteDataTypes(OptionSet<WebKit::WebsiteDat
 #endif
     if (websiteDataTypes.contains(WebsiteDataType::EnhancedSecurityRecord))
         [wkWebsiteDataTypes addObject:_WKWebsiteDataTypeEnhancedSecurityRecord];
+
+    if (websiteDataTypes.contains(WebsiteDataType::IsolatedSiteRecord))
+        [wkWebsiteDataTypes addObject:_WKWebsiteDataTypeIsolatedSiteRecord];
 
     return wkWebsiteDataTypes;
 }

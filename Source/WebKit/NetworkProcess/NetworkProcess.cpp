@@ -1771,16 +1771,16 @@ void NetworkProcess::setSessionIsControlledByAutomation(PAL::SessionID sessionID
         m_sessionsControlledByAutomation.remove(sessionID);
 }
 
-void NetworkProcess::fetchWebsitesWithUserInteractions(PAL::SessionID sessionID, CompletionHandler<void(HashSet<RegistrableDomain>&&)>&& completionHandler)
+void NetworkProcess::fetchWebsitesWithUserInteractions(PAL::SessionID sessionID, CompletionHandler<void(std::optional<HashMap<RegistrableDomain, WallTime>>&&)>&& completionHandler)
 {
     CheckedPtr session = networkSession(sessionID);
     ASSERT(session);
     if (!session)
-        return completionHandler({ });
+        return completionHandler(std::nullopt);
 
     RefPtr resourceLoadStatistics = session->resourceLoadStatistics();
     if (!resourceLoadStatistics)
-        return completionHandler({ });
+        return completionHandler(std::nullopt);
 
     resourceLoadStatistics->loadWebsitesWithUserInteraction(WTF::move(completionHandler));
 }

@@ -274,6 +274,9 @@ public:
     const String& enhancedSecurityDirectory() const LIFETIME_BOUND { return m_directories.enhancedSecurityDirectory; }
     void setEnhancedSecurityDirectory(String&& directory) { m_directories.enhancedSecurityDirectory = WTF::move(directory); }
 
+    const String& isolatedSitesDirectory() const LIFETIME_BOUND { return m_directories.isolatedSitesDirectory; }
+    void setIsolatedSitesDirectory(String&& directory) { m_directories.isolatedSitesDirectory = WTF::move(directory); }
+
     std::optional<unsigned> overridePersistentNotificationMinimumLifetimeForTesting() const { return m_overrideServiceWorkerRegistrationCountTestingValue; }
     void setOverridePersistentNotificationMinimumLifetimeForTesting(unsigned count) { m_overrideServiceWorkerRegistrationCountTestingValue = count; }
 
@@ -288,6 +291,7 @@ public:
         String generalStorageDirectory;
         String hstsStorageDirectory;
         String indexedDBDatabaseDirectory;
+        String isolatedSitesDirectory;
         String javaScriptConfigurationDirectory;
         String localStorageDirectory;
         String mediaCacheDirectory;

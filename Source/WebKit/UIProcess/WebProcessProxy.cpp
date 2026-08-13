@@ -1708,13 +1708,8 @@ bool WebProcessProxy::hasGrantedSandboxExtensionForFile(const URL& url) const
         || wasPreviouslyApprovedFileURL(url);
 }
 
-void WebProcessProxy::recordUserGestureAuthorizationToken(FrameIdentifier frameID, PageIdentifier pageID, WTF::UUID authorizationToken)
+void WebProcessProxy::recordUserGestureAuthorizationToken(PageIdentifier pageID, WTF::UUID authorizationToken)
 {
-    if (RefPtr dataStore = websiteDataStore()) {
-        if (RefPtr frame = WebFrameProxy::webFrame(frameID); frame && frame->isMainFrame())
-            dataStore->didHaveUserInteractionForSiteIsolation(frame->url());
-    }
-
     if (!UserInitiatedActionByAuthorizationTokenMap::isValidKey(authorizationToken) || !authorizationToken)
         return;
 
@@ -2450,14 +2445,14 @@ void WebProcessProxy::didCompleteAutofill(const WebCore::Site& site)
 {
     MESSAGE_CHECK(!site.isEmpty());
     if (RefPtr dataStore = websiteDataStore())
-        dataStore->isolatedSiteStore().addSite(site, IsolatedSiteStore::Signal::Autofill);
+        protect(dataStore->isolatedSiteStore())->addSite(site, IsolatedSiteStore::Signal::Autofill);
 }
 
 void WebProcessProxy::didObserveFirstPartyUserGesture(const WebCore::Site& site)
 {
     MESSAGE_CHECK(!site.isEmpty());
     if (RefPtr dataStore = websiteDataStore())
-        dataStore->isolatedSiteStore().addSite(site, IsolatedSiteStore::Signal::FirstPartyUserGesture);
+        protect(dataStore->isolatedSiteStore())->addSite(site, IsolatedSiteStore::Signal::FirstPartyUserGesture);
 }
 
 void WebProcessProxy::activePagesDomainsForTesting(CompletionHandler<void(Vector<String>&&)>&& completionHandler)

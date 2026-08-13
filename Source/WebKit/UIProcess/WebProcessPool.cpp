@@ -1265,12 +1265,17 @@ void WebProcessPool::disconnectProcess(WebProcessProxy& process)
 #endif
 }
 
-Ref<WebProcessProxy> WebProcessPool::processForSite(WebsiteDataStore& websiteDataStore, WebProcessProxy::IsolatedProcessType isolatedProcessType, const std::optional<Site>& site, const std::optional<Site>& mainFrameSite, const HashSet<RegistrableDomain>& isolatedDomains, WebProcessProxy::LockdownMode lockdownMode, EnhancedSecurity enhancedSecurity, const API::PageConfiguration& pageConfiguration, ProcessSwapDisposition processSwapDisposition)
+Ref<WebProcessProxy> WebProcessPool::processForSite(WebsiteDataStore& websiteDataStore, WebProcessProxy::IsolatedProcessType isolatedProcessType, const std::optional<Site>& site, const std::optional<Site>& mainFrameSite, WebProcessProxy::LockdownMode lockdownMode, EnhancedSecurity enhancedSecurity, const API::PageConfiguration& pageConfiguration, ProcessSwapDisposition processSwapDisposition)
 {
     if (isolatedProcessType == WebProcessProxy::IsolatedProcessType::Shared) {
         ASSERT(mainFrameSite);
         if (RefPtr process = webProcessCache().takeSharedProcess(*mainFrameSite, websiteDataStore, lockdownMode, enhancedSecurity, pageConfiguration)) {
-            if (process->sharedProcessDomains().intersectionWith(isolatedDomains).isEmpty()) {
+            Ref isolatedSiteStore = websiteDataStore.isolatedSiteStore();
+            ASSERT(isolatedSiteStore->isReady());
+            bool containsIsolatedDomain = std::ranges::any_of(process->sharedProcessDomains(), [&](auto& domain) {
+                return isolatedSiteStore->containsDomain(domain);
+            });
+            if (!containsIsolatedDomain) {
                 ASSERT(m_processes.containsIf([&](auto& item) { return item.ptr() == process; }));
                 WEBPROCESSPOOL_RELEASE_LOG(ProcessSwapping, "processForSite: Using shared WebProcess from WebProcess cache (process=%p, PID=%i)", process.get(), process->processID());
                 ASSERT(!process->isInProcessCache());
@@ -1385,7 +1390,7 @@ Ref<WebPageProxy> WebProcessPool::createWebPage(PageClient& pageClient, Ref<API:
         }
     } else {
         WEBPROCESSPOOL_RELEASE_LOG(Process, "createWebPage: Not delaying WebProcess launch");
-        process = processForSite(protect(pageConfiguration->websiteDataStore()), WebProcessProxy::IsolatedProcessType::MainFrame, std::nullopt, std::nullopt, { }, lockdownMode, enhancedSecurity, pageConfiguration, WebCore::ProcessSwapDisposition::None);
+        process = processForSite(protect(pageConfiguration->websiteDataStore()), WebProcessProxy::IsolatedProcessType::MainFrame, std::nullopt, std::nullopt, lockdownMode, enhancedSecurity, pageConfiguration, WebCore::ProcessSwapDisposition::None);
     }
 
     Ref userContentController = pageConfiguration->userContentController();
@@ -2265,7 +2270,7 @@ void WebProcessPool::prepareProcessForNavigation(Ref<WebProcessProxy>&& process,
         if (process->state() == AuxiliaryProcessProxy::State::Terminated && previousAttemptsCount < maximumNumberOfAttempts) {
             // The destination process crashed during the IPC to the network process, use a new process.
             ASSERT(isolatedProcessType != WebProcessProxy::IsolatedProcessType::Shared);
-            Ref fallbackProcess = processForSite(dataStore, isolatedProcessType, site, mainFrameSite, { }, lockdownMode, enhancedSecurity, page->configuration(), WebCore::ProcessSwapDisposition::None);
+            Ref fallbackProcess = processForSite(dataStore, isolatedProcessType, site, mainFrameSite, lockdownMode, enhancedSecurity, page->configuration(), WebCore::ProcessSwapDisposition::None);
             prepareProcessForNavigation(WTF::move(fallbackProcess), page, nullptr, reason, isolatedProcessType, site, mainFrameSite, navigation, lockdownMode, enhancedSecurity, loadedWebArchive, WTF::move(dataStore), WTF::move(completionHandler), previousAttemptsCount + 1);
             return;
         }
@@ -2293,7 +2298,7 @@ std::tuple<Ref<WebProcessProxy>, RefPtr<SuspendedPageProxy>, ASCIILiteral> WebPr
 
     auto createNewProcess = [&] () -> Ref<WebProcessProxy> {
         ASSERT(isolatedProcessType != WebProcessProxy::IsolatedProcessType::Shared);
-        return processForSite(dataStore, isolatedProcessType, targetSite, mainFrameSite, { }, lockdownMode, enhancedSecurity, pageConfiguration, WebCore::ProcessSwapDisposition::None);
+        return processForSite(dataStore, isolatedProcessType, targetSite, mainFrameSite, lockdownMode, enhancedSecurity, pageConfiguration, WebCore::ProcessSwapDisposition::None);
     };
 
     if (usesSingleWebProcess())
