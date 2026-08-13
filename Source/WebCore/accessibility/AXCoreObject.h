@@ -972,6 +972,10 @@ public:
     // text field or the controls of a <video>. TextIterator walks the light DOM and so never emits
     // this text, and neither do the text-marker walks over document text.
     virtual bool isInUserAgentShadowTree() const = 0;
+    // True for the <br> a text control keeps at the end of its inner text when its value ends in a
+    // line break. It renders the empty final line but is not a character of the control's value,
+    // which strips it (see AccessibilityObject::isCollapsedTrailingLineBreak).
+    virtual bool isCollapsedTrailingLineBreak() const = 0;
     virtual AXTextRunLineID listMarkerLineID() const = 0;
     virtual String listMarkerText() const = 0;
     virtual FontOrientation fontOrientation() const = 0;

@@ -2559,6 +2559,9 @@ accessibility/text-marker/text-marker-bidi-element-hebrew.html [ Skip ]
 # TextMarkerDebugDescription not implemented on iOS:
 accessibility/text-marker/text-marker-debug-description.html [ Skip ]
 
+# numberOfCharacters not implemented on iOS
+accessibility/text-marker/textarea-character-count-with-trailing-newline.html [ Skip ]
+
 # More flaky tests (Sept 18, 2015)
 
 fast/forms/select-element-focus-ring.html [ Failure Pass ]

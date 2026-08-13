@@ -118,6 +118,7 @@
 #include "SharedBuffer.h"
 #include "TextCheckerClient.h"
 #include "TextCheckingHelper.h"
+#include "TextControlInnerElements.h"
 #include "TextIterator.h"
 #include "UserGestureIndicator.h"
 #include "VisibleUnits.h"
@@ -2127,6 +2128,25 @@ bool AccessibilityObject::isInUserAgentShadowTree() const
 {
     RefPtr node = this->node();
     return node && node->isInUserAgentShadowTree();
+}
+
+bool AccessibilityObject::isCollapsedTrailingLineBreak() const
+{
+    // True for the <br> that HTMLTextFormControlElement::setInnerTextValue appends to a text
+    // control's inner text when its value ends in a line break, so that the empty final line gets a
+    // line box.
+    //
+    // This <br> is rendered but is not part of the value: innerTextValueFrom() strips one trailing
+    // newline, which stripTrailingNewline() in HTMLTextFormControlElement.cpp explains is always
+    // collapsed out by rendering. So no main-thread position lies past it, and the value's character
+    // count and line ranges don't count it. Text runs model rendered text instead, so this <br> does
+    // carry a "\n" run — which is why the AX-thread implementations of those answers must not count
+    // it or step over it.
+    RefPtr node = this->node();
+    if (!node || !node->hasTagName(brTag))
+        return false;
+    RefPtr parent = node->parentNode();
+    return is<TextControlInnerTextElement>(parent) && parent->lastChild() == node;
 }
 #endif // ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 

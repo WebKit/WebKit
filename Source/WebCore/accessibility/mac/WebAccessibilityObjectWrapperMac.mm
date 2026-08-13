@@ -4230,7 +4230,7 @@ static id handleLengthForTextMarkerRangeAttribute(WebAccessibilityObjectWrapper*
 {
     if (!isMainThread()) {
         AXTextMarkerRange range = { context.textMarkerRange };
-        return @(range.toString().length());
+        return @(range.length());
     }
 
     RefPtr<AXCoreObject> backingObject = wrapper.axBackingObject;

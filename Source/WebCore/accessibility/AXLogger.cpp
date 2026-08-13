@@ -932,6 +932,9 @@ TextStream& operator<<(WTF::TextStream& stream, AXProperty property)
     case AXProperty::IsColumnHeader:
         stream << "IsColumnHeader";
         break;
+    case AXProperty::IsCollapsedTrailingLineBreak:
+        stream << "IsCollapsedTrailingLineBreak";
+        break;
     case AXProperty::IsEnabled:
         stream << "IsEnabled";
         break;

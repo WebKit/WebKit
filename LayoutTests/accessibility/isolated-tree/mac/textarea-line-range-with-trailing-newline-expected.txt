@@ -1,0 +1,60 @@
+Asserts the caret's line range for text control values that end in a line break.
+
+no trailing newline: value "one two ", caret at 8
+PASS: axField.numberOfCharacters === 8
+PASS: axField.stringForTextMarkerRange(lineRange) === "one two "
+PASS: axField.textMarkerRangeLength(lineRange) === 8
+
+trailing newline, caret on the blank final line: value "one two \n", caret at 9
+PASS: axField.numberOfCharacters === 9
+PASS: axField.stringForTextMarkerRange(lineRange) === ""
+PASS: axField.textMarkerRangeLength(lineRange) === 0
+PASS: lineEnd.isEqual(caret) === true
+
+trailing newline, caret on the first line: value "one two \n", caret at 4
+PASS: axField.numberOfCharacters === 9
+PASS: axField.stringForTextMarkerRange(lineRange) === "one two \n"
+PASS: axField.textMarkerRangeLength(lineRange) === 9
+
+two lines, caret starting the second: value "one two \nthree", caret at 9
+PASS: axField.numberOfCharacters === 14
+PASS: axField.stringForTextMarkerRange(lineRange) === "three"
+PASS: axField.textMarkerRangeLength(lineRange) === 5
+
+leading newline: value "one \ntwo three", caret at 5
+PASS: axField.numberOfCharacters === 14
+PASS: axField.stringForTextMarkerRange(lineRange) === "two three"
+PASS: axField.textMarkerRangeLength(lineRange) === 9
+
+only a newline, caret after it: value "\n", caret at 1
+PASS: axField.numberOfCharacters === 1
+PASS: axField.stringForTextMarkerRange(lineRange) === ""
+PASS: axField.textMarkerRangeLength(lineRange) === 0
+PASS: lineEnd.isEqual(caret) === true
+
+only a newline, caret before it: value "\n", caret at 0
+PASS: axField.numberOfCharacters === 1
+PASS: axField.stringForTextMarkerRange(lineRange) === "\n"
+PASS: axField.textMarkerRangeLength(lineRange) === 1
+
+two trailing newlines, caret on the blank final line: value "a\n\n", caret at 3
+PASS: axField.numberOfCharacters === 3
+PASS: axField.stringForTextMarkerRange(lineRange) === ""
+PASS: axField.textMarkerRangeLength(lineRange) === 0
+PASS: lineEnd.isEqual(caret) === true
+
+two trailing newlines, caret on the blank middle line: value "a\n\n", caret at 2
+PASS: axField.numberOfCharacters === 3
+PASS: axField.stringForTextMarkerRange(lineRange) === "\n"
+PASS: axField.textMarkerRangeLength(lineRange) === 1
+
+whitespace either side of a newline: value "  \n  ", caret at 5
+PASS: axField.numberOfCharacters === 5
+PASS: axField.stringForTextMarkerRange(lineRange) === "  "
+PASS: axField.textMarkerRangeLength(lineRange) === 2
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
