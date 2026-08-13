@@ -544,7 +544,7 @@ void IDBConnectionProxy::handleMainThreadTasks()
 
 void IDBConnectionProxy::getAllDatabaseNamesAndVersions(ScriptExecutionContext& context, Function<void(std::optional<Vector<IDBDatabaseNameAndVersion>>&&)>&& callback)
 {
-    ClientOrigin origin { context.securityOrigin()->data(), context.topOrigin().data() };
+    ClientOrigin origin { context.topOrigin().data(), context.securityOrigin()->data() };
 
     RefPtr<IDBDatabaseNameAndVersionRequest> request;
     {
