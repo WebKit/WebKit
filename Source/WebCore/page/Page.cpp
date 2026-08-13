@@ -4455,9 +4455,11 @@ bool Page::useDarkAppearance() const
     if (m_useDarkAppearanceOverride)
         return m_useDarkAppearanceOverride.value();
 
+    if (mainFrame().isPrinting())
+        return false;
+
     if (RefPtr localMainFrame = this->localMainFrame()) {
-        // Printed page should always use light appearance (i.e return false)
-        // FIXME: implement this logic for remote main frames.
+        // Media type can be non-screen without printing (Inspector emulation, client override).
         RefPtr view = localMainFrame->view();
         if (!view || view->mediaType() != screenAtom())
             return false;
