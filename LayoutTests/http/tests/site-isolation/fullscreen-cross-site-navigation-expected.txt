@@ -1,0 +1,5 @@
+
+after enter: fullscreenElement = IFRAME
+after cross-site self-navigation: fullscreenElement = null
+iframe size: 300x100
+matches :fullscreen: false
