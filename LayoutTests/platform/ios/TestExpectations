@@ -8705,13 +8705,6 @@ webkit.org/b/321191 imported/w3c/web-platform-tests/service-workers/service-work
 
 webkit.org/b/321528 [ Release ] imported/w3c/web-platform-tests/background-fetch/match.https.window.html [ Pass Failure ]
 
-# REGRESSION(317976@main): stale ASSERT(rowEnd.isExplicit()) in LayoutIntegrationGridCoverage.cpp
-# newly reachable after 317976@main relaxed the justify-items alignment gate for GridFormattingContext.
-webkit.org/b/321629 [ Debug ] imported/w3c/web-platform-tests/css/css-grid/grid-lanes/track-sizing/auto-repeat/intrinsic-auto-repeat/row-auto-repeat-auto-014.html [ Skip ]
-webkit.org/b/321629 [ Debug ] imported/w3c/web-platform-tests/css/css-grid/grid-lanes/track-sizing/auto-repeat/intrinsic-auto-repeat/row-auto-repeat-auto-019.html [ Skip ]
-webkit.org/b/321629 [ Debug ] imported/w3c/web-platform-tests/css/css-grid/grid-lanes/track-sizing/auto-repeat/row-auto-repeat-015.html [ Skip ]
-webkit.org/b/321629 [ Debug ] imported/w3c/web-platform-tests/css/css-grid/grid-lanes/track-sizing/auto-repeat/row-auto-repeat-021.html [ Skip ]
-
 webkit.org/b/321312 imported/w3c/web-platform-tests/webrtc/RTCRtpReceiver-getSynchronizationSources.https.html [ Pass Failure ]
 
 webkit.org/b/321691 [ Release ] imported/w3c/web-platform-tests/web-locks/bfcache/abort.tentative.https.html [ Pass Crash ]

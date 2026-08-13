@@ -587,7 +587,6 @@ static EnumSet<GridAvoidanceReason> gridLayoutAvoidanceReason(const RenderGrid& 
                 if (!hasValidRowEnd(explicitPosition, rowEnd, linesFromGridTemplateRowsCount))
                     return GridAvoidanceReason::GridItemHasUnsupportedRowEnd;
 
-                ASSERT(rowEnd.isExplicit());
                 size_t rowIndex = rowStartLineNumber + 1;
                 auto rowsCount = explicitlyPlacedItemsInRowCount.size();
                 if (rowIndex > rowsCount)
