@@ -1,5 +1,0 @@
-
-PASS document.createEvent('TouchEvent') should throw if 'expose legacy touch event APIs' is false
-PASS document.createEvent('touchevent') should throw if 'expose legacy touch event APIs' is false
-PASS document.createEvent('TOUCHEVENT') should throw if 'expose legacy touch event APIs' is false
-
