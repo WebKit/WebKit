@@ -56,7 +56,7 @@ private:
     bool platformCALayerContentsOpaque() const override { return false; }
     bool platformCALayerDrawsContent() const override { return true; }
     float platformCALayerDeviceScaleFactor() const override;
-    OptionSet<ContentsFormat> screenContentsFormats() const override { return { }; }
+    OptionSet<ContentsFormat> screenContentsFormats() const override;
 
     const PlatformLayerIdentifier m_layerIdentifier { PlatformLayerIdentifier::generate() };
     const WeakPtr<GraphicsLayer> m_graphicsLayer;
