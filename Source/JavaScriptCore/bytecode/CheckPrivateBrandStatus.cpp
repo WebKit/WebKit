@@ -240,10 +240,10 @@ void CheckPrivateBrandStatus::markIfCheap(Visitor& visitor)
 template void CheckPrivateBrandStatus::markIfCheap(AbstractSlotVisitor&);
 template void CheckPrivateBrandStatus::markIfCheap(SlotVisitor&);
 
-bool CheckPrivateBrandStatus::finalize(VM& vm)
+bool CheckPrivateBrandStatus::isStillLive(VM& vm)
 {
     for (auto& variant : m_variants) {
-        if (!variant.finalize(vm))
+        if (!variant.isStillLive(vm))
             return false;
     }
     return true;

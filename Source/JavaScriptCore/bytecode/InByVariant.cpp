@@ -120,13 +120,13 @@ void InByVariant::markIfCheap(Visitor& visitor)
 template void InByVariant::markIfCheap(AbstractSlotVisitor&);
 template void InByVariant::markIfCheap(SlotVisitor&);
 
-bool InByVariant::finalize(VM& vm)
+bool InByVariant::isStillLive(VM& vm)
 {
     if (!m_structureSet.isStillAlive(vm))
         return false;
     if (!m_conditionSet.areStillLive(vm))
         return false;
-    if (m_callLinkStatus && !m_callLinkStatus->finalize(vm))
+    if (m_callLinkStatus && !m_callLinkStatus->isStillLive(vm))
         return false;
     return true;
 }

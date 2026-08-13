@@ -370,7 +370,7 @@ void PutByVariant::markIfCheap(Visitor& visitor)
 template void PutByVariant::markIfCheap(AbstractSlotVisitor&);
 template void PutByVariant::markIfCheap(SlotVisitor&);
 
-bool PutByVariant::finalize(VM& vm)
+bool PutByVariant::isStillLive(VM& vm)
 {
     if (!m_oldStructure.isStillAlive(vm))
         return false;
@@ -378,7 +378,7 @@ bool PutByVariant::finalize(VM& vm)
         return false;
     if (!m_conditionSet.areStillLive(vm))
         return false;
-    if (m_callLinkStatus && !m_callLinkStatus->finalize(vm))
+    if (m_callLinkStatus && !m_callLinkStatus->isStillLive(vm))
         return false;
     return true;
 }

@@ -143,7 +143,7 @@ public:
     
     DECLARE_VISIT_AGGREGATE;
     template<typename Visitor> void markIfCheap(Visitor&);
-    bool finalize(VM&); // Return true if this gets to live.
+    bool isStillLive(VM&);
 
     bool appendVariant(const GetByVariant&);
     void shrinkToFit();

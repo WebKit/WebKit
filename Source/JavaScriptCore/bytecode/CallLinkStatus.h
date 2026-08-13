@@ -109,7 +109,7 @@ public:
 
     unsigned maxArgumentCountIncludingThisForVarargs() const { return m_maxArgumentCountIncludingThisForVarargs; }
     
-    bool finalize(VM&);
+    bool isStillLive(VM&);
     
     void merge(const CallLinkStatus&);
     

@@ -534,10 +534,10 @@ void PutByStatus::markIfCheap(Visitor& visitor)
 template void PutByStatus::markIfCheap(AbstractSlotVisitor&);
 template void PutByStatus::markIfCheap(SlotVisitor&);
 
-bool PutByStatus::finalize(VM& vm)
+bool PutByStatus::isStillLive(VM& vm)
 {
     for (PutByVariant& variant : m_variants) {
-        if (!variant.finalize(vm))
+        if (!variant.isStillLive(vm))
             return false;
     }
     return true;

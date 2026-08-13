@@ -60,7 +60,7 @@ void CheckPrivateBrandVariant::markIfCheap(Visitor& visitor)
 template void CheckPrivateBrandVariant::markIfCheap(AbstractSlotVisitor&);
 template void CheckPrivateBrandVariant::markIfCheap(SlotVisitor&);
 
-bool CheckPrivateBrandVariant::finalize(VM& vm)
+bool CheckPrivateBrandVariant::isStillLive(VM& vm)
 {
     if (!m_structureSet.isStillAlive(vm))
         return false;

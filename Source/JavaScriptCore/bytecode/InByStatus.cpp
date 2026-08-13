@@ -311,10 +311,10 @@ void InByStatus::markIfCheap(Visitor& visitor)
 template void InByStatus::markIfCheap(AbstractSlotVisitor&);
 template void InByStatus::markIfCheap(SlotVisitor&);
 
-bool InByStatus::finalize(VM& vm)
+bool InByStatus::isStillLive(VM& vm)
 {
     for (InByVariant& variant : m_variants) {
-        if (!variant.finalize(vm))
+        if (!variant.isStillLive(vm))
             return false;
     }
     return true;

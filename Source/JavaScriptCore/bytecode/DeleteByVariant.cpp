@@ -99,7 +99,7 @@ void DeleteByVariant::dump(PrintStream& out) const
     dumpInContext(out, nullptr);
 }
 
-bool DeleteByVariant::finalize(VM& vm)
+bool DeleteByVariant::isStillLive(VM& vm)
 {
     if (!vm.heap.isMarked(m_oldStructure))
         return false;

@@ -765,10 +765,10 @@ void GetByStatus::markIfCheap(Visitor& visitor)
 template void GetByStatus::markIfCheap(AbstractSlotVisitor&);
 template void GetByStatus::markIfCheap(SlotVisitor&);
 
-bool GetByStatus::finalize(VM& vm)
+bool GetByStatus::isStillLive(VM& vm)
 {
     for (GetByVariant& variant : m_variants) {
-        if (!variant.finalize(vm))
+        if (!variant.isStillLive(vm))
             return false;
     }
     if (isModuleNamespace()) {

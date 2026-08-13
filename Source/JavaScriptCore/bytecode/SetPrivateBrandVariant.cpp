@@ -66,7 +66,7 @@ void SetPrivateBrandVariant::markIfCheap(Visitor& visitor)
 template void SetPrivateBrandVariant::markIfCheap(AbstractSlotVisitor&);
 template void SetPrivateBrandVariant::markIfCheap(SlotVisitor&);
 
-bool SetPrivateBrandVariant::finalize(VM& vm)
+bool SetPrivateBrandVariant::isStillLive(VM& vm)
 {
     if (!vm.heap.isMarked(m_oldStructure))
         return false;

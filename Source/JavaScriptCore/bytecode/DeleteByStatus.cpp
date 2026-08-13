@@ -266,10 +266,10 @@ void DeleteByStatus::markIfCheap(Visitor& visitor)
 template void DeleteByStatus::markIfCheap(AbstractSlotVisitor&);
 template void DeleteByStatus::markIfCheap(SlotVisitor&);
 
-bool DeleteByStatus::finalize(VM& vm)
+bool DeleteByStatus::isStillLive(VM& vm)
 {
     for (auto& variant : m_variants) {
-        if (!variant.finalize(vm))
+        if (!variant.isStillLive(vm))
             return false;
     }
     return true;

@@ -132,7 +132,7 @@ void RecordedStatuses::reconcileWeakReferencesWithoutDeleting(VM& vm)
 
     auto reconcile = [&] (auto& vector) {
         for (auto& pair : vector) {
-            if (!pair.second->finalize(vm))
+            if (!pair.second->isStillLive(vm))
                 *pair.second = { };
         }
     };
@@ -144,7 +144,7 @@ void RecordedStatuses::reconcileWeakReferences(VM& vm)
     auto reconcile = [&] (auto& vector) {
         vector.removeAllMatching(
             [&] (auto& pair) -> bool {
-                return !*pair.second || !pair.second->finalize(vm);
+                return !*pair.second || !pair.second->isStillLive(vm);
             });
         vector.shrinkToFit();
     };
