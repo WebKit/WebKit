@@ -3627,10 +3627,19 @@ void AXObjectCache::onScrollbarUpdate(ScrollView& view)
 void AXObjectCache::handleScrollbarUpdate(ScrollView& view)
 {
     // We don't want to create a scroll view from this method, only update an existing one.
-    if (RefPtr scrollViewObject = get(&view)) {
-        stopCachingComputedObjectAttributes();
-        scrollViewObject->updateChildrenIfNecessary();
-    }
+    RefPtr scrollViewObject = get(&view);
+    if (!scrollViewObject)
+        return;
+
+    stopCachingComputedObjectAttributes();
+    scrollViewObject->updateChildrenIfNecessary();
+
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    // AccessibilityScrollView::updateChildrenIfNecessary() rebuilds the live children
+    // but doesn't mark the scroll view as needing a children update.
+    if (RefPtr tree = AXIsolatedTree::treeForFrameID(m_frameID))
+        tree->queueNodeUpdate(scrollViewObject->objectID(), NodeUpdateOptions::childrenUpdate());
+#endif
 }
 
 void AXObjectCache::handleAriaExpandedChange(Element& element)

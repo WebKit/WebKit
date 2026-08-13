@@ -1,0 +1,54 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ IsAccessibilityIsolatedTreeEnabled=true ] -->
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+<style>
+/* Hidden content which, once revealed, is wider than the viewport, making the
+   document scrollable and giving the frame view a horizontal scrollbar. */
+#wide-content { display: none; position: absolute; width: 200vw; height: 20px; }
+</style>
+</head>
+<body>
+
+<div id="wide-content"></div>
+
+<script>
+var output = "This test ensures the document's scrollbar is exposed when revealing hidden content makes the document scrollable.\n\n";
+
+function scrollBarCount()
+{
+    // Scrollbars synthesized for a scroll view are direct children of it.
+    var root = accessibilityController.rootElement;
+    var count = 0;
+    for (var i = 0; i < root.childrenCount; i++) {
+        if (root.childAtIndex(i).role === "AXRole: AXScrollBar")
+            count++;
+    }
+    return count;
+}
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    setTimeout(async function() {
+        // Realize the accessibility tree before revealing anything. This ordering is the point of
+        // the test: a scroll view rebuilds its children in place when a scrollbar comes or goes,
+        // and nothing about that is driven by a DOM or render tree mutation, so the children
+        // cached here have to be invalidated explicitly.
+        window.scrollBarsBefore = scrollBarCount();
+        output += expect("scrollBarsBefore", "0");
+
+        document.getElementById("wide-content").style.display = "block";
+        await waitFor(() => scrollBarCount() === 1);
+
+        window.scrollBarsAfter = scrollBarCount();
+        output += expect("scrollBarsAfter", "1");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

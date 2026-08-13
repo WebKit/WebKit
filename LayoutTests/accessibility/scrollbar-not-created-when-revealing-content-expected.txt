@@ -1,0 +1,9 @@
+This test ensures the document's scrollbar is exposed when revealing hidden content makes the document scrollable.
+
+PASS: scrollBarsBefore === 0
+PASS: scrollBarsAfter === 1
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
