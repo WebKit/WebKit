@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+<script src="../resources/cookie-utilities.js"></script>
+</head>
+<body>
+<script>
+window.jsTestIsAsync = true;
+
+description("Tests that SameSite=Strict and SameSite=Lax cookies for 127.0.0.1 are not sent with an &lt;img&gt; sub-resource request initiated from a srcdoc iframe nested inside a cross-origin iframe. The srcdoc inherits its parent's origin, so the image request back to the top-level origin is cross-site and must not receive SameSite-restricted cookies.");
+
+const kCookieValue = "9";
+const kRecorderBase = "/cookies/same-site/resources/record-image-cookies.py";
+const kToken = "srcdoc-img-test-" + Date.now();
+
+async function fetchRecordedCookies()
+{
+    let response = await fetch(`${kRecorderBase}?mode=read&token=${encodeURIComponent(kToken)}`, {credentials: "same-origin"});
+    return response.json();
+}
+
+async function resetRecordedCookies()
+{
+    await fetch(`${kRecorderBase}?mode=reset&token=${encodeURIComponent(kToken)}`, {credentials: "same-origin"});
+}
+
+function checkCookies(cookies)
+{
+    debug("Cookies sent with cross-site &lt;img&gt; request initiated from srcdoc iframe inside cross-origin iframe:");
+    if (cookies.strict === undefined)
+        testPassed('Do not have cookie "strict".');
+    else
+        testFailed(`Should not have cookie "strict". But do with value ${cookies.strict}.`);
+
+    if (cookies.lax === undefined)
+        testPassed('Do not have cookie "lax".');
+    else
+        testFailed(`Should not have cookie "lax". But do with value ${cookies.lax}.`);
+
+    // Positive control: WebKit treats a cookie with no SameSite attribute as
+    // SameSite=None (see coreSameSitePolicy() in CookieCocoa.mm), so it must
+    // still be sent on a cross-site image request that includes credentials.
+    // Without this assertion, the negative checks above could pass simply
+    // because cookies aren't being delivered at all.
+    if (cookies["implicit-default"] === kCookieValue)
+        testPassed(`Has cookie "implicit-default" with value ${kCookieValue}.`);
+    else
+        testFailed(`Should have cookie "implicit-default" with value ${kCookieValue}. Got ${cookies["implicit-default"]}.`);
+}
+
+async function runTest()
+{
+    await resetCookies();
+    await resetRecordedCookies();
+    await setCookie("strict", kCookieValue, {"SameSite": "Strict", "Max-Age": 100, "path": "/"});
+    await setCookie("lax", kCookieValue, {"SameSite": "Lax", "Max-Age": 100, "path": "/"});
+    await setCookie("implicit-default", kCookieValue, {"SameSite": null, "Max-Age": 100, "path": "/"});
+
+    let imgLoadedPromise = new Promise((resolve, reject) => {
+        window.addEventListener("message", (event) => {
+            if (!event.data)
+                return;
+            if (event.data.type === "srcdoc-img-loaded")
+                resolve();
+            else if (event.data.type === "srcdoc-img-error")
+                reject(new Error("srcdoc <img> failed to load"));
+        }, {once: false});
+    });
+
+    let attackerIframe = document.createElement("iframe");
+    attackerIframe.src = "http://localhost:8000/cookies/same-site/resources/srcdoc-creator-img-inside-cross-origin-iframe.html?token=" + encodeURIComponent(kToken);
+    document.body.appendChild(attackerIframe);
+
+    try {
+        await imgLoadedPromise;
+    } catch (e) {
+        testFailed(String(e));
+        document.body.removeChild(attackerIframe);
+        await resetCookies();
+        finishJSTest();
+        return;
+    }
+
+    let cookies = await fetchRecordedCookies();
+    checkCookies(cookies);
+
+    document.body.removeChild(attackerIframe);
+
+    await resetRecordedCookies();
+    await resetCookies();
+    finishJSTest();
+}
+runTest();
+</script>
+</body>
+</html>
