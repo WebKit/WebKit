@@ -340,6 +340,42 @@ public:
         return Iterable(*this, { }, &sparseTail(block->index()), Storage::Sparse);
     }
 
+    void forEachLiveAtHead(typename CFG::Node block, const Invocable<void(const Thing&)> auto& func)
+    {
+        if (m_storage == Storage::Dense) {
+            forEachInDense(denseHeadSlice(block->index()), func);
+            return;
+        }
+        forEachInSparse(sparseHead(block->index()), func);
+    }
+
+    void forEachLiveAtTail(typename CFG::Node block, const Invocable<void(const Thing&)> auto& func)
+    {
+        if (m_storage == Storage::Dense) {
+            forEachInDense(denseTailSlice(block->index()), func);
+            return;
+        }
+        forEachInSparse(sparseTail(block->index()), func);
+    }
+
+    void forEachLiveAtHeadNotLiveAtTail(typename CFG::Node headBlock, typename CFG::Node tailBlock, const Invocable<void(const Thing&)> auto& func)
+    {
+        if (m_storage == Storage::Dense) {
+            forEachInDenseDifference(denseHeadSlice(headBlock->index()), denseTailSlice(tailBlock->index()), func);
+            return;
+        }
+        forEachInSparseDifference(sparseHead(headBlock->index()), sparseTail(tailBlock->index()), func);
+    }
+
+    void forEachLiveAtTailNotLiveAtHead(typename CFG::Node tailBlock, typename CFG::Node headBlock, const Invocable<void(const Thing&)> auto& func)
+    {
+        if (m_storage == Storage::Dense) {
+            forEachInDenseDifference(denseTailSlice(tailBlock->index()), denseHeadSlice(headBlock->index()), func);
+            return;
+        }
+        forEachInSparseDifference(sparseTail(tailBlock->index()), sparseHead(headBlock->index()), func);
+    }
+
     class LiveAtHead {
         WTF_DEPRECATED_MAKE_FAST_ALLOCATED(LiveAtHead);
     public:
@@ -399,7 +435,7 @@ protected:
         Vector<uint64_t> genStore(matrixWords);
         Vector<uint64_t> killStore(matrixWords);
         // Vector's sized constructor does not zero POD storage, and the dataflow ORs into these.
-        std::ranges::fill(genStore, 0);
+        // gen is initialized with a value, zero initialization is not necessary (costly).
         std::ranges::fill(killStore, 0);
         std::span<uint64_t> store = m_denseStore.mutableSpan();
         std::span<uint64_t> liveInMatrix = store.subspan(0, matrixWords);
@@ -426,21 +462,22 @@ protected:
             auto genSet = setFor(genMatrix, blockIndex);
             auto liveOutSet = setFor(liveOutMatrix, blockIndex);
 
-            for (size_t boundary = 0; boundary <= Adapter::blockSize(block); ++boundary) {
-                Adapter::forEachDef(block, boundary, [&] (unsigned index) {
-                    setBit(killSet, index);
-                });
-            }
-
             // gen = transfer function applied to an empty live-out: the uses exposed at the head.
             // The fixpoint below works purely on gen/kill/liveOut, so this is the only place that
-            // walks instructions.
+            // walks instructions. This sweep reaches boundary blockSize down to 1 and then boundary
+            // 0, which is every boundary, so it collects kill as well.
             m_workset.clear();
             for (size_t instIndex = Adapter::blockSize(block); instIndex--;) {
-                Adapter::forEachDef(block, instIndex + 1, [&] (unsigned index) { m_workset.remove(index); });
+                Adapter::forEachDef(block, instIndex + 1, [&] (unsigned index) {
+                    m_workset.remove(index);
+                    setBit(killSet, index);
+                });
                 Adapter::forEachUse(block, instIndex, [&] (unsigned index) { m_workset.add(index); });
             }
-            Adapter::forEachDef(block, 0, [&] (unsigned index) { m_workset.remove(index); });
+            Adapter::forEachDef(block, 0, [&] (unsigned index) {
+                m_workset.remove(index);
+                setBit(killSet, index);
+            });
             std::span<const uint64_t> worksetSpan = m_workset.denseSpan();
             for (size_t i = 0; i < m_wordsPerSet; ++i)
                 genSet[i] = worksetSpan[i];
@@ -584,6 +621,47 @@ private:
     friend class LocalCalc::Iterable;
     friend class Iterable;
     friend class LiveAtHead;
+
+    void forEachInDense(std::span<const uint64_t> set, const Invocable<void(const Thing&)> auto& func)
+    {
+        for (size_t wordIndex = 0; wordIndex < m_wordsPerSet; ++wordIndex) {
+            uint64_t word = set[wordIndex];
+            while (word) {
+                unsigned bit = std::countr_zero(word);
+                word &= word - 1;
+                func(this->indexToValue(static_cast<unsigned>(wordIndex * wordBits + bit)));
+            }
+        }
+    }
+
+    void forEachInSparse(const SparseBitVector<>& set, const Invocable<void(const Thing&)> auto& func)
+    {
+        set.forEachSetBit(
+            [&](auto index) {
+                func(this->indexToValue(static_cast<unsigned>(index)));
+            });
+    }
+
+    void forEachInDenseDifference(std::span<const uint64_t> a, std::span<const uint64_t> b, const Invocable<void(const Thing&)> auto& func)
+    {
+        for (size_t wordIndex = 0; wordIndex < m_wordsPerSet; ++wordIndex) {
+            uint64_t word = a[wordIndex] & ~b[wordIndex];
+            while (word) {
+                unsigned bit = std::countr_zero(word);
+                word &= word - 1;
+                func(this->indexToValue(static_cast<unsigned>(wordIndex * wordBits + bit)));
+            }
+        }
+    }
+
+    void forEachInSparseDifference(const SparseBitVector<>& a, const SparseBitVector<>& b, const Invocable<void(const Thing&)> auto& func)
+    {
+        a.forEachSetBit(
+            [&](auto index) {
+                if (!b.contains(index))
+                    func(this->indexToValue(static_cast<unsigned>(index)));
+            });
+    }
 
     size_t denseHalfWords() const { return m_denseStore.size() / 2; }
     std::span<const uint64_t> denseHeadSlice(unsigned blockIndex) const LIFETIME_BOUND

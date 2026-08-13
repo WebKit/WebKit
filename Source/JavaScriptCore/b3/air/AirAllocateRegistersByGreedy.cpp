@@ -1263,7 +1263,6 @@ private:
         CompilerTimingScope timingScope("Air"_s, "GreedyRegAlloc::buildLiveRanges"_s);
         UnifiedTmpLiveness liveness(m_code);
         TmpMap<Point> activeEnds(m_code);
-        TmpMap<Point> liveAtTailMarkers(m_code, std::numeric_limits<Point>::max());
 #if ASSERT_ENABLED
         UnifiedTmpLiveness::LiveAtHead assertOnlyLiveAtHead = liveness.liveAtHead();
 #endif
@@ -1414,21 +1413,28 @@ private:
                 dataLog("  positionOfTail = ", positionOfTail, "\n");
             }
 
-            for (Tmp tmp : liveness.liveAtTail(block)) {
-                markUse(tmp, positionOfTail);
-                liveAtTailMarkers[tmp] = positionOfTail;
-            }
             if (blockAfter) {
+                // On entry activeEnds is open for exactly the Tmps live at the head of blockAfter,
+                // so the only Tmps whose state changes at this boundary are the two differences
+                // between that set and the set live at this block's tail.
+
+                // If tmp was live at the head of the next block but not live at the
+                // tail of the current block, close the interval.
                 Point blockAfterPositionOfHead = this->positionOfHead(blockAfter);
-                for (Tmp tmp : liveness.liveAtHead(blockAfter)) {
-                    ASSERT(activeEnds[tmp]);
-                    // If tmp was live at the head of the next block but not live at the
-                    // tail of the current block, close the interval.
-                    if (liveAtTailMarkers[tmp] > positionOfTail) {
+                liveness.forEachLiveAtHeadNotLiveAtTail(blockAfter, block,
+                    [&](Tmp tmp) {
                         if (activeEnds[tmp]) [[likely]]
                             markDef(tmp, blockAfterPositionOfHead);
-                    }
-                }
+                    });
+                liveness.forEachLiveAtTailNotLiveAtHead(block, blockAfter,
+                    [&](Tmp tmp) {
+                        markUse(tmp, positionOfTail);
+                    });
+            } else {
+                liveness.forEachLiveAtTail(block,
+                    [&](Tmp tmp) {
+                        markUse(tmp, positionOfTail);
+                    });
             }
             assertPinnedRegsAreLive();
 
@@ -1501,8 +1507,10 @@ private:
         }
         if (blockAfter) {
             Point firstBlockPositionOfHead = this->positionOfHead(blockAfter);
-            for (Tmp tmp : liveness.liveAtHead(blockAfter))
-                markDef(tmp, firstBlockPositionOfHead);
+            liveness.forEachLiveAtHead(blockAfter,
+                [&](Tmp tmp) {
+                    markDef(tmp, firstBlockPositionOfHead);
+                });
         }
         assertPinnedRegsAreLive();
         // Pinned registers are never killed, so markDef never completes their live-range. Do it now.
