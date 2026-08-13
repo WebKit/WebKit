@@ -56,7 +56,7 @@ NavigationRequester NavigationRequester::from(Document& document)
     RefPtr parentFrame = frame ? frame->tree().parent() : nullptr;
 
     return {
-        document.url(),
+        document.url().isEmpty() ? aboutBlankURL() : document.url(),
         document.securityOrigin(),
         document.topOrigin(),
         document.policyContainer(),
