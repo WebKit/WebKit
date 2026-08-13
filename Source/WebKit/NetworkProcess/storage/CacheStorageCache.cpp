@@ -97,6 +97,13 @@ CacheStorageManager* CacheStorageCache::manager()
     return m_manager.get();
 }
 
+std::optional<WebCore::ClientOrigin> CacheStorageCache::origin() const
+{
+    if (RefPtr manager = m_manager.get())
+        return manager->origin();
+    return std::nullopt;
+}
+
 void CacheStorageCache::getSize(CompletionHandler<void(uint64_t)>&& callback)
 {
     assertIsOnCorrectQueue();
