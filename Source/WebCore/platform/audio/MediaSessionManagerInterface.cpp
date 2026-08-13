@@ -600,9 +600,17 @@ void MediaSessionManagerInterface::enforceConcurrentPlaybackRestriction(Platform
     if (!restrictions.contains(MediaSessionRestriction::ConcurrentPlaybackNotPermitted))
         return;
 
+    // Only the current session claims exclusivity. A session that stopped being current while its
+    // admission was in flight, or whose mediaType changed after another session started, would
+    // otherwise pause the session that started last.
+    if (currentSession() != &newSession)
+        return;
+
     forEachMatchingSession([&newSession](auto& otherSession) {
         bool isOther = &otherSession == &newSession;
-        bool isPlaying = otherSession.state() == PlatformMediaSession::State::Playing;
+        // preparingToPlay() covers a session whose own admission has not completed yet: it intends to
+        // play, so it must not survive this restriction just because its state is not Playing.
+        bool isPlaying = otherSession.state() == PlatformMediaSession::State::Playing || otherSession.preparingToPlay();
         bool canConcurrent = otherSession.canPlayConcurrently(newSession);
         if (isOther)
             return false;

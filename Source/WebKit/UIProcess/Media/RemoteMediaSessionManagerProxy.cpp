@@ -347,11 +347,7 @@ void RemoteMediaSessionManagerProxy::setCurrentSession(WebCore::PlatformMediaSes
         }
     }
 
-    // Make this the current session (moves it to the front) so currentSession() returns it, rather
-    // than addSession() which moves it to the back and leaves a stale session current -- which would
-    // make tryToSetActiveInternal activate the wrong web process. PlatformMediaSessionManager's
-    // implementation only reorders the list; NowPlaying routing is a separate follow-up.
-    WebCore::PlatformMediaSessionManager::setCurrentSession(session);
+    REMOTE_MEDIA_SESSION_MANAGER_BASE_CLASS::setCurrentSession(session);
 }
 
 void RemoteMediaSessionManagerProxy::mediaSessionWillBeginPlayback(IPC::Connection& connection, RemoteMediaSessionState&& state, CompletionHandler<void(bool, WebCore::AudioSessionCategory, WebCore::AudioSessionMode, WebCore::RouteSharingPolicy)>&& completionHandler)

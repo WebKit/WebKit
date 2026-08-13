@@ -243,7 +243,8 @@ public:
     using PlayPromiseVector = Vector<DOMPromiseDeferred<void>>;
     void rejectPendingPlayPromises(PlayPromiseVector&&, Ref<DOMException>&&);
     void resolvePendingPlayPromises(PlayPromiseVector&&);
-    void scheduleNotifyAboutPlaying(bool deferWhileSeeking = true);
+    enum class ShouldResolvePlayPromises : bool { No, Yes };
+    void scheduleNotifyAboutPlaying(bool deferWhileSeeking = true, ShouldResolvePlayPromises = ShouldResolvePlayPromises::Yes);
     void maybeFirePendingPlaying();
     void handlePlaybackPositionChanged();
     void notifyAboutPlaying(PlayPromiseVector&&);
@@ -1023,7 +1024,7 @@ private:
     // These "internal" functions do not check user gesture restrictions.
     void playInternal();
     void pauseInternal();
-    void completePlayInternal(bool shouldSeekToStart);
+    void completePlayInternal();
 
     enum class IsExplicitLoad : bool { No, Yes };
     void prepareForLoad(IsExplicitLoad = IsExplicitLoad::No);
@@ -1245,7 +1246,7 @@ private:
     TaskCancellationGroup m_periodicTimeupdateCancellationGroup;
     TaskCancellationGroup m_volumeRevertTaskCancellationGroup;
 
-    const Ref<NativePromiseRequest> m_playRequest;
+    const Ref<NativePromiseRequest> m_beginPlaybackRequest;
     PlayPromiseVector m_pendingPlayPromises;
     bool m_playPromiseSettlementGuaranteed { false };
 

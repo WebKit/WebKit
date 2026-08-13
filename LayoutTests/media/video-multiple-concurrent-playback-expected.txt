@@ -32,6 +32,7 @@ EVENT(playing)
 
 *** Play the fourth video, the third should pause ***
 RUN(videos[3].play())
+EVENT(playing)
 EVENT(pause)
 
 EXPECTED (videos[0].paused == 'false') OK
