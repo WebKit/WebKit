@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <wtf/Function.h>
+
 typedef struct OpaqueJSContext* JSGlobalContextRef;
 
 namespace WTF {
@@ -36,5 +38,7 @@ namespace WTR {
 void sendTestRenderedEvent(JSGlobalContextRef);
 bool hasTestWaitAttribute(JSGlobalContextRef);
 bool isWebPlatformTestURL(const WTF::URL&);
+void waitForDoubleRequestAnimationFrame(JSGlobalContextRef, WTF::Function<void()>&& completionHandler);
+void cancelPendingDoubleRequestAnimationFrameWait(JSGlobalContextRef);
 
 }

@@ -274,6 +274,8 @@ void InjectedBundlePage::resetAfterTest()
 
     InjectedBundle::singleton().resetUserScriptInjectedCount();
 
+    cancelPendingDoubleRequestAnimationFrameWait(WKBundleFrameGetJavaScriptContext(frame));
+
     m_didCommitMainFrameLoad = false;
 }
 
@@ -1060,18 +1062,25 @@ static bool hasTestWaitAttribute(WKBundlePageRef page)
     return frame && hasTestWaitAttribute(WKBundleFrameGetJavaScriptContext(frame));
 }
 
-static void dumpAfterWaitAttributeIsRemoved(WKBundlePageRef page)
+static void dumpAfterWaitAttributeIsRemoved(WKBundlePageRef);
+
+static void pollAgainAfterDelay(WKBundlePageRef page)
+{
+    WKRetain(page);
+    // Use a 1ms interval between tries to allow lower priority run loop sources with zero delays to run.
+    RunLoop::currentSingleton().dispatchAfter(1_ms, [page] {
+        WKBundlePageCallAfterTasksAndTimers(page, [] (void* typelessPage) {
+            auto page = static_cast<WKBundlePageRef>(typelessPage);
+            dumpAfterWaitAttributeIsRemoved(page);
+            WKRelease(page);
+        }, const_cast<OpaqueWKBundlePage*>(page));
+    });
+}
+
+static void dumpIfStillReady(WKBundlePageRef page)
 {
     if (hasTestWaitAttribute(page)) {
-        WKRetain(page);
-        // Use a 1ms interval between tries to allow lower priority run loop sources with zero delays to run.
-        RunLoop::currentSingleton().dispatchAfter(1_ms, [page] {
-            WKBundlePageCallAfterTasksAndTimers(page, [] (void* typelessPage) {
-                auto page = static_cast<WKBundlePageRef>(typelessPage);
-                dumpAfterWaitAttributeIsRemoved(page);
-                WKRelease(page);
-            }, const_cast<OpaqueWKBundlePage*>(page));
-        });
+        pollAgainAfterDelay(page);
         return;
     }
 
@@ -1081,6 +1090,29 @@ static void dumpAfterWaitAttributeIsRemoved(WKBundlePageRef page)
         return;
     if (auto currentPage = bundle.page(); currentPage && currentPage->page() == page)
         currentPage->dump();
+}
+
+static void dumpAfterWaitAttributeIsRemoved(WKBundlePageRef page)
+{
+    if (hasTestWaitAttribute(page)) {
+        pollAgainAfterDelay(page);
+        return;
+    }
+
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    auto frame = WKBundlePageGetMainFrame(page);
+    ALLOW_DEPRECATED_DECLARATIONS_END
+    auto context = frame ? WKBundleFrameGetJavaScriptContext(frame) : nullptr;
+    if (!context) {
+        dumpIfStillReady(page);
+        return;
+    }
+
+    WKRetain(page);
+    waitForDoubleRequestAnimationFrame(context, [page] {
+        dumpIfStillReady(page);
+        WKRelease(page);
+    });
 }
 
 void InjectedBundlePage::frameDidChangeLocation(WKBundleFrameRef frame)
