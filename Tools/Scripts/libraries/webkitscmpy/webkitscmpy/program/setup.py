@@ -36,7 +36,19 @@ HTTPBasicAuth = CallByNeed(lambda: __import__('requests.auth', fromlist=['HTTPBa
 
 def _fetch(path, remote):
     log.info('    Fetching {}...'.format(remote))
-    return run([local.Git.executable(), 'fetch', '--prune', remote], cwd=path, capture_output=True).returncode
+    result = run(
+        [local.Git.executable(), 'fetch', '--prune', '--quiet', remote],
+        cwd=path, capture_output=True, encoding='utf-8', errors='replace',
+    )
+    if result.returncode:
+        if result.stderr:
+            log.warning("    Failed to fetch '{}':\n        {}".format(
+                remote,
+                '\n        '.join(result.stderr.rstrip().splitlines()),
+            ))
+        else:
+            log.warning("    Failed to fetch '{}'".format(remote))
+    return result.returncode
 
 
 class Setup(Command):
