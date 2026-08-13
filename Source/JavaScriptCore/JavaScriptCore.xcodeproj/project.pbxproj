@@ -642,6 +642,7 @@
 		0FEC857C1BDACDC70080FF74 /* AirHandleCalleeSaves.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FEC85571BDACDC70080FF74 /* AirHandleCalleeSaves.h */; };
 		0FEC857E1BDACDC70080FF74 /* AirInsertionSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FEC85591BDACDC70080FF74 /* AirInsertionSet.h */; };
 		0FEC85801BDACDC70080FF74 /* AirInst.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FEC855B1BDACDC70080FF74 /* AirInst.h */; };
+		B44D5339A33349BEB6C351CC /* AirInstAnalyzer.h in Headers */ = {isa = PBXBuildFile; fileRef = BD331F0A2D7C479E858667D8 /* AirInstAnalyzer.h */; };
 		0FEC85811BDACDC70080FF74 /* AirInstInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FEC855C1BDACDC70080FF74 /* AirInstInlines.h */; };
 		0FEC85841BDACDC70080FF74 /* AirPhaseScope.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FEC855F1BDACDC70080FF74 /* AirPhaseScope.h */; };
 		0FEC85881BDACDC70080FF74 /* AirSpecial.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FEC85631BDACDC70080FF74 /* AirSpecial.h */; };
@@ -3771,6 +3772,7 @@
 		0FEC85591BDACDC70080FF74 /* AirInsertionSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AirInsertionSet.h; path = b3/air/AirInsertionSet.h; sourceTree = "<group>"; };
 		0FEC855A1BDACDC70080FF74 /* AirInst.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AirInst.cpp; path = b3/air/AirInst.cpp; sourceTree = "<group>"; };
 		0FEC855B1BDACDC70080FF74 /* AirInst.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AirInst.h; path = b3/air/AirInst.h; sourceTree = "<group>"; };
+		BD331F0A2D7C479E858667D8 /* AirInstAnalyzer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AirInstAnalyzer.h; path = b3/air/AirInstAnalyzer.h; sourceTree = "<group>"; };
 		0FEC855C1BDACDC70080FF74 /* AirInstInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AirInstInlines.h; path = b3/air/AirInstInlines.h; sourceTree = "<group>"; };
 		0FEC855E1BDACDC70080FF74 /* AirPhaseScope.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AirPhaseScope.cpp; path = b3/air/AirPhaseScope.cpp; sourceTree = "<group>"; };
 		0FEC855F1BDACDC70080FF74 /* AirPhaseScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AirPhaseScope.h; path = b3/air/AirPhaseScope.h; sourceTree = "<group>"; };
@@ -7256,6 +7258,7 @@
 				0FEC85591BDACDC70080FF74 /* AirInsertionSet.h */,
 				0FEC855A1BDACDC70080FF74 /* AirInst.cpp */,
 				0FEC855B1BDACDC70080FF74 /* AirInst.h */,
+				BD331F0A2D7C479E858667D8 /* AirInstAnalyzer.h */,
 				0FEC855C1BDACDC70080FF74 /* AirInstInlines.h */,
 				0FDF67D41D9DC43E001B9825 /* AirKind.cpp */,
 				0FDF67D51D9DC43E001B9825 /* AirKind.h */,
@@ -11064,6 +11067,7 @@
 				53C2CE9C22FCC3D6008B2853 /* AirHelpers.h in Headers */,
 				0FEC857E1BDACDC70080FF74 /* AirInsertionSet.h in Headers */,
 				0FEC85801BDACDC70080FF74 /* AirInst.h in Headers */,
+				B44D5339A33349BEB6C351CC /* AirInstAnalyzer.h in Headers */,
 				0FEC85811BDACDC70080FF74 /* AirInstInlines.h in Headers */,
 				0FDF67D71D9DC442001B9825 /* AirKind.h in Headers */,
 				2684D4381C00161C0081D663 /* AirLiveness.h in Headers */,

@@ -848,9 +848,44 @@ public:
         , m_spillSlotTable(FillWith { }, 1, nullptr) // Sacrifice index 0.
         , m_regRanges(Reg::maxIndex() + 1)
         , m_insertionSets(code.size())
-        , m_useCounts(m_code)
-        , m_tmpWidth(m_code)
     {
+        TmpWidth::Analyzer tmpWidthAnalyzer(m_tmpWidth);
+        UseCounts::Analyzer useCountsAnalyzer(m_useCounts);
+        analyzeCode(m_code, tmpWidthAnalyzer, useCountsAnalyzer);
+
+        if (Options::airValidateGreedRegAlloc()) [[unlikely]]
+            validateFusedAnalyses();
+    }
+
+    void validateFusedAnalyses()
+    {
+        TmpWidth referenceWidth(m_code);
+        UseCounts referenceUseCounts(m_code);
+
+        auto checkWidths = [&](Tmp tmp) {
+            RELEASE_ASSERT(m_tmpWidth.useWidth(tmp) == referenceWidth.useWidth(tmp));
+            RELEASE_ASSERT(m_tmpWidth.defWidth(tmp) == referenceWidth.defWidth(tmp));
+        };
+        m_code.forEachTmp(checkWidths);
+        RegisterSet::allRegisters().forEach([&](Reg reg) {
+            checkWidths(Tmp(reg));
+        });
+
+        for (unsigned i = 0; i < AbsoluteTmpMapper<GP>::absoluteIndex(m_code.numTmps(GP)); ++i) {
+            RELEASE_ASSERT(m_useCounts.numWarmUsesAndDefs<GP>(i) == referenceUseCounts.numWarmUsesAndDefs<GP>(i));
+            RELEASE_ASSERT(m_useCounts.isConstDef<GP>(i) == referenceUseCounts.isConstDef<GP>(i));
+            if (m_useCounts.isConstDef<GP>(i))
+                RELEASE_ASSERT(m_useCounts.constant<GP>(i) == referenceUseCounts.constant<GP>(i));
+        }
+        for (unsigned i = 0; i < AbsoluteTmpMapper<FP>::absoluteIndex(m_code.numTmps(FP)); ++i) {
+            RELEASE_ASSERT(m_useCounts.numWarmUsesAndDefs<FP>(i) == referenceUseCounts.numWarmUsesAndDefs<FP>(i));
+            RELEASE_ASSERT(m_useCounts.isConstDef<FP>(i) == referenceUseCounts.isConstDef<FP>(i));
+            if (m_useCounts.isConstDef<FP>(i)) {
+                RELEASE_ASSERT(m_useCounts.constant<FP>(i).u64x2[0] == referenceUseCounts.constant<FP>(i).u64x2[0]);
+                RELEASE_ASSERT(m_useCounts.constant<FP>(i).u64x2[1] == referenceUseCounts.constant<FP>(i).u64x2[1]);
+                RELEASE_ASSERT(m_useCounts.constantWidth<FP>(i) == referenceUseCounts.constantWidth<FP>(i));
+            }
+        }
     }
 
     void run()

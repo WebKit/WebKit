@@ -30,6 +30,7 @@
 #include "AirArgInlines.h"
 #include "AirBlockWorklist.h"
 #include "AirCode.h"
+#include "AirInstAnalyzer.h"
 #include "AirInstInlines.h"
 #include "AirTmpInlines.h"
 #include <wtf/CommaPrinter.h>
@@ -43,125 +44,10 @@ class Code;
 // that are only reachable by rare edges is scaled by Options::rareBlockPenalty().
 class UseCounts {
 public:
-    UseCounts(Code& code)
-    {
-        // Find non-rare blocks.
-        BlockWorklist fastWorklist;
-        fastWorklist.push(code[0]);
-        while (BasicBlock* block = fastWorklist.pop()) {
-            for (FrequentedBlock& successor : block->successors()) {
-                if (!successor.isRare())
-                    fastWorklist.push(successor.block());
-            }
-        }
+    class Analyzer;
 
-
-        unsigned gpArraySize = AbsoluteTmpMapper<GP>::absoluteIndex(code.numTmps(GP));
-        m_gpNumWarmUsesAndDefs = FixedVector<float>(FillWith { }, gpArraySize, 0);
-        m_gpConstDefs.ensureSize(gpArraySize);
-        BitVector gpNonConstDefs = m_gpConstDefs;
-        m_gpConstants = FixedVector<int64_t>(FillWith { }, gpArraySize, 0);
-
-        unsigned fpArraySize = AbsoluteTmpMapper<FP>::absoluteIndex(code.numTmps(FP));
-        m_fpNumWarmUsesAndDefs = FixedVector<float>(FillWith { }, fpArraySize, 0);
-        m_fpConstDefs.ensureSize(fpArraySize);
-        BitVector fpNonConstDefs = m_fpConstDefs;
-        m_fpConstants = FixedVector<v128_t>(FillWith { }, fpArraySize, v128_t { });
-        m_fpConstantWidths = FixedVector<Width>(FillWith { }, fpArraySize, Width8);
-
-        auto extractGPConstant = [&](Air::Opcode opcode, const Air::Arg& arg) -> int64_t {
-            return opcode == Move32 ? static_cast<int64_t>(static_cast<uint64_t>(static_cast<uint32_t>(static_cast<uint64_t>(arg.value())))) : arg.value();
-        };
-
-        auto extractFPConstant = [&](Air::Opcode, Air::Arg arg) -> v128_t {
-            if (arg.isFPImm128())
-                return arg.asV128();
-
-            v128_t v { };
-            v.u64x2[0] = static_cast<uint64_t>(arg.value());
-            return v;
-        };
-
-        for (BasicBlock* block : code) {
-            double frequency = block->frequency();
-            if (!fastWorklist.saw(block))
-                frequency *= Options::rareBlockPenalty();
-            for (Inst& inst : *block) {
-                switch (inst.kind.opcode) {
-                case Move:
-                case Move32: {
-                    if (inst.args()[0].isSomeImm() && inst.args()[1].is<Tmp>()) {
-                        Tmp tmp = inst.args()[1].as<Tmp>();
-                        if (tmp.bank() == GP) {
-                            auto index = AbsoluteTmpMapper<GP>::absoluteIndex(tmp);
-                            if (!m_gpConstDefs.quickGet(index)) {
-                                m_gpConstDefs.quickSet(index);
-                                m_gpConstants[index] = extractGPConstant(inst.kind.opcode, inst.args()[0]);
-                            } else
-                                gpNonConstDefs.quickSet(index);
-                            m_gpNumWarmUsesAndDefs[index] += frequency;
-                            continue;
-                        }
-                    }
-                    break;
-                }
-                case MoveFloat:
-                case MoveDouble:
-                case MoveVector: {
-                    if (inst.args()[0].isSomeImm() && inst.args()[1].is<Tmp>()) {
-                        Tmp tmp = inst.args()[1].as<Tmp>();
-                        if (tmp.bank() == FP) {
-                            auto index = AbsoluteTmpMapper<FP>::absoluteIndex(tmp);
-                            if (!m_fpConstDefs.quickGet(index)) {
-                                m_fpConstDefs.quickSet(index);
-                                m_fpConstants[index] = extractFPConstant(inst.kind.opcode, inst.args()[0]);
-                                switch (inst.kind.opcode) {
-                                case MoveFloat:
-                                    m_fpConstantWidths[index] = Width32;
-                                    break;
-                                case MoveDouble:
-                                    m_fpConstantWidths[index] = Width64;
-                                    break;
-                                case MoveVector:
-                                    m_fpConstantWidths[index] = Width128;
-                                    break;
-                                default:
-                                    RELEASE_ASSERT_NOT_REACHED();
-                                }
-                            } else
-                                fpNonConstDefs.quickSet(index);
-                            m_fpNumWarmUsesAndDefs[index] += frequency;
-                            continue;
-                        }
-                    }
-                    break;
-                }
-                default:
-                    break;
-                }
-
-                inst.forEach<Tmp>(
-                    [&] (Tmp& tmp, Arg::Role role, Bank bank, Width) {
-                        if (Arg::isWarmUse(role) || Arg::isAnyDef(role)) {
-                            if (bank == GP) {
-                                auto index = AbsoluteTmpMapper<GP>::absoluteIndex(tmp);
-                                m_gpNumWarmUsesAndDefs[index] += frequency;
-                                if (Arg::isAnyDef(role))
-                                    gpNonConstDefs.quickSet(index);
-                            } else {
-                                auto index = AbsoluteTmpMapper<FP>::absoluteIndex(tmp);
-                                m_fpNumWarmUsesAndDefs[index] += frequency;
-                                if (Arg::isAnyDef(role))
-                                    fpNonConstDefs.quickSet(index);
-                            }
-                        }
-                    });
-            }
-        }
-
-        m_gpConstDefs.exclude(gpNonConstDefs);
-        m_fpConstDefs.exclude(fpNonConstDefs);
-    }
+    UseCounts() = default;
+    inline UseCounts(Code&);
 
     template<Bank bank>
     bool isConstDef(unsigned absoluteIndex) const
@@ -215,6 +101,158 @@ private:
     FixedVector<v128_t> m_fpConstants;
     FixedVector<Width> m_fpConstantWidths;
 };
+
+class UseCounts::Analyzer final : public InstAnalyzer<UseCounts::Analyzer> {
+public:
+    Analyzer(UseCounts& useCounts)
+        : m_useCounts(useCounts)
+    {
+    }
+
+    void prepare(Code& code)
+    {
+        // Find non-rare blocks.
+        m_fastBlocks.push(code[0]);
+        while (BasicBlock* block = m_fastBlocks.pop()) {
+            for (FrequentedBlock& successor : block->successors()) {
+                if (!successor.isRare())
+                    m_fastBlocks.push(successor.block());
+            }
+        }
+
+        unsigned gpArraySize = AbsoluteTmpMapper<GP>::absoluteIndex(code.numTmps(GP));
+        m_useCounts.m_gpNumWarmUsesAndDefs = FixedVector<float>(FillWith { }, gpArraySize, 0);
+        m_useCounts.m_gpConstDefs.ensureSize(gpArraySize);
+        m_gpNonConstDefs.ensureSize(gpArraySize);
+        m_useCounts.m_gpConstants = FixedVector<int64_t>(FillWith { }, gpArraySize, 0);
+
+        unsigned fpArraySize = AbsoluteTmpMapper<FP>::absoluteIndex(code.numTmps(FP));
+        m_useCounts.m_fpNumWarmUsesAndDefs = FixedVector<float>(FillWith { }, fpArraySize, 0);
+        m_useCounts.m_fpConstDefs.ensureSize(fpArraySize);
+        m_fpNonConstDefs.ensureSize(fpArraySize);
+        m_useCounts.m_fpConstants = FixedVector<v128_t>(FillWith { }, fpArraySize, v128_t { });
+        m_useCounts.m_fpConstantWidths = FixedVector<Width>(FillWith { }, fpArraySize, Width8);
+    }
+
+    void startBlock(BasicBlock* block)
+    {
+        m_frequency = block->frequency();
+        if (!m_fastBlocks.saw(block))
+            m_frequency *= Options::rareBlockPenalty();
+    }
+
+    // A Tmp that a constant is moved into is counted here rather than by visitTmp, because we also
+    // want to remember the constant itself.
+    bool visitInst(Inst& inst)
+    {
+        switch (inst.kind.opcode) {
+        case Move:
+        case Move32: {
+            if (inst.args()[0].isSomeImm() && inst.args()[1].is<Tmp>()) {
+                Tmp tmp = inst.args()[1].as<Tmp>();
+                if (tmp.bank() == GP) {
+                    auto index = AbsoluteTmpMapper<GP>::absoluteIndex(tmp);
+                    if (!m_useCounts.m_gpConstDefs.quickGet(index)) {
+                        m_useCounts.m_gpConstDefs.quickSet(index);
+                        m_useCounts.m_gpConstants[index] = extractGPConstant(inst.kind.opcode, inst.args()[0]);
+                    } else
+                        m_gpNonConstDefs.quickSet(index);
+                    m_useCounts.m_gpNumWarmUsesAndDefs[index] += m_frequency;
+                    return true;
+                }
+            }
+            break;
+        }
+        case MoveFloat:
+        case MoveDouble:
+        case MoveVector: {
+            if (inst.args()[0].isSomeImm() && inst.args()[1].is<Tmp>()) {
+                Tmp tmp = inst.args()[1].as<Tmp>();
+                if (tmp.bank() == FP) {
+                    auto index = AbsoluteTmpMapper<FP>::absoluteIndex(tmp);
+                    if (!m_useCounts.m_fpConstDefs.quickGet(index)) {
+                        m_useCounts.m_fpConstDefs.quickSet(index);
+                        m_useCounts.m_fpConstants[index] = extractFPConstant(inst.args()[0]);
+                        switch (inst.kind.opcode) {
+                        case MoveFloat:
+                            m_useCounts.m_fpConstantWidths[index] = Width32;
+                            break;
+                        case MoveDouble:
+                            m_useCounts.m_fpConstantWidths[index] = Width64;
+                            break;
+                        case MoveVector:
+                            m_useCounts.m_fpConstantWidths[index] = Width128;
+                            break;
+                        default:
+                            RELEASE_ASSERT_NOT_REACHED();
+                        }
+                    } else
+                        m_fpNonConstDefs.quickSet(index);
+                    m_useCounts.m_fpNumWarmUsesAndDefs[index] += m_frequency;
+                    return true;
+                }
+            }
+            break;
+        }
+        default:
+            break;
+        }
+
+        return false;
+    }
+
+    void visitTmp(Tmp& tmp, Arg::Role role, Bank bank, Width)
+    {
+        if (!Arg::isWarmUse(role) && !Arg::isAnyDef(role))
+            return;
+
+        if (bank == GP) {
+            auto index = AbsoluteTmpMapper<GP>::absoluteIndex(tmp);
+            m_useCounts.m_gpNumWarmUsesAndDefs[index] += m_frequency;
+            if (Arg::isAnyDef(role))
+                m_gpNonConstDefs.quickSet(index);
+        } else {
+            auto index = AbsoluteTmpMapper<FP>::absoluteIndex(tmp);
+            m_useCounts.m_fpNumWarmUsesAndDefs[index] += m_frequency;
+            if (Arg::isAnyDef(role))
+                m_fpNonConstDefs.quickSet(index);
+        }
+    }
+
+    void finish()
+    {
+        m_useCounts.m_gpConstDefs.exclude(m_gpNonConstDefs);
+        m_useCounts.m_fpConstDefs.exclude(m_fpNonConstDefs);
+    }
+
+private:
+    static int64_t extractGPConstant(Air::Opcode opcode, const Air::Arg& arg)
+    {
+        return opcode == Move32 ? static_cast<int64_t>(static_cast<uint64_t>(static_cast<uint32_t>(static_cast<uint64_t>(arg.value())))) : arg.value();
+    }
+
+    static v128_t extractFPConstant(const Air::Arg& arg)
+    {
+        if (arg.isFPImm128())
+            return arg.asV128();
+
+        v128_t v { };
+        v.u64x2[0] = static_cast<uint64_t>(arg.value());
+        return v;
+    }
+
+    UseCounts& m_useCounts;
+    BlockWorklist m_fastBlocks;
+    BitVector m_gpNonConstDefs;
+    BitVector m_fpNonConstDefs;
+    double m_frequency { 0 };
+};
+
+inline UseCounts::UseCounts(Code& code)
+{
+    Analyzer analyzer(*this);
+    analyzer.run(code);
+}
 
 } } } // namespace JSC::B3::Air
 
