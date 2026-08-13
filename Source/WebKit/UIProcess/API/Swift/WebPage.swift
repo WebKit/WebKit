@@ -223,7 +223,10 @@ final public class WebPage {
     let configuration: Configuration
 
     /// The webpage's back-forward list.
-    public internal(set) var backForwardList: BackForwardList = BackForwardList()
+    public var backForwardList: BackForwardList {
+        access(keyPath: \.backForwardList)
+        return BackForwardList(backingWebView.backForwardList)
+    }
 
     /// A sequence of all the navigation events that occur throughout the webpage, including both user navigation
     /// and programmatic navigation.
@@ -382,6 +385,7 @@ final public class WebPage {
     public lazy var backingWebView: WebPageWebView = {
         let webView = WebPageWebView(frame: Self.defaultFrame, configuration: WKWebViewConfiguration(configuration))
         webView.navigationDelegate = backingNavigationDelegate
+        webView._historyDelegate = backingNavigationDelegate
         webView.uiDelegate = backingUIDelegate
         #if WTF_PLATFORM_MAC
         webView._usePlatformFindUI = false
@@ -677,6 +681,12 @@ extension WebPage {
                 observation.invalidate()
             }
         }
+    }
+
+    func didChangeBackForwardList() {
+        // `backForwardList` reads through to the backing web view, so there is no stored value to update
+        // here; the mutation exists solely to notify observers that the list has changed.
+        withMutation(keyPath: \.backForwardList) {}
     }
 
     func addEditorStateUpdate(_ newEditorState: [AnyHashable: Any]) {

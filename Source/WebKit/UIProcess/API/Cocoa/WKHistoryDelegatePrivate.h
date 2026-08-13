@@ -33,6 +33,7 @@ NS_ASSUME_NONNULL_BEGIN
 @class WKWebView;
 @class SSBLookupResult;
 
+NS_SWIFT_UI_ACTOR
 @protocol WKHistoryDelegatePrivate <NSObject>
 
 @optional

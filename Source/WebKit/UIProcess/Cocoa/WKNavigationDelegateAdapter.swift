@@ -30,7 +30,8 @@ private struct DefaultNavigationDecider: WebPage.NavigationDeciding {
 }
 
 @MainActor
-final class WKNavigationDelegateAdapter: NSObject, WKNavigationDelegate {
+@_expose(!Cxx)
+final class WKNavigationDelegateAdapter: NSObject, WKNavigationDelegate, WKHistoryDelegatePrivate {
     init(navigationDecider: (any WebPage.NavigationDeciding)?) {
         self.navigationDecider = navigationDecider ?? DefaultNavigationDecider()
     }
@@ -95,7 +96,13 @@ final class WKNavigationDelegateAdapter: NSObject, WKNavigationDelegate {
         backForwardListItemAdded itemAdded: WKBackForwardListItem!,
         removed itemsRemoved: [WKBackForwardListItem]!
     ) {
-        owner?.backForwardList = .init(webView.backForwardList)
+        owner?.didChangeBackForwardList()
+    }
+
+    // swift-format-ignore: NoLeadingUnderscores
+    @objc(_webView:didUpdateHistoryTitle:forURL:)
+    func _webView(_ webView: WKWebView, didUpdateHistoryTitle title: String, for url: URL) {
+        owner?.didChangeBackForwardList()
     }
 
     // MARK: Navigation decisions

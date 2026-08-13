@@ -103,3 +103,17 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
 }
 
 @end
+
+@implementation WKBackForwardListItem (NonCpp)
+
+- (uint64_t)_identifier
+{
+    return _item->identifier().object().toUInt64();
+}
+
+- (uint64_t)_identifierProcess
+{
+    return _item->identifier().processIdentifier().toUInt64();
+}
+
+@end

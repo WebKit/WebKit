@@ -24,6 +24,7 @@
 #if ENABLE_SWIFTUI
 
 public import Foundation
+private import WebKit_Internal.WKBackForwardListItemInternal
 
 @available(anyAppleOSAndDownlevels 26.0, *)
 @_spi_available(watchOSAndOpenSourceTBA, *)
@@ -108,20 +109,33 @@ extension WebPage {
         public struct Item: Equatable, Identifiable, Sendable {
             /// An opaque type representing the identifier for an item.
             public struct ID: Hashable, Sendable {
-                private let value = UUID()
+                @MainActor
+                init(_ wrapped: WKBackForwardListItem) {
+                    self.value = wrapped._identifier
+                    self.processIdentifier = wrapped._identifierProcess
+                }
+
+                private let value: UInt64
+                private let processIdentifier: UInt64
             }
 
             @MainActor
             init(_ wrapped: WKBackForwardListItem) {
                 self.wrapped = wrapped
 
+                self.id = ID(wrapped)
                 self.title = wrapped.title
                 self.url = wrapped.url
                 self.initialURL = wrapped.initialURL
             }
 
+            // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
+            public static func == (lhs: Self, rhs: Self) -> Bool {
+                lhs.id == rhs.id && lhs.title == rhs.title && lhs.url == rhs.url && lhs.initialURL == rhs.initialURL
+            }
+
             /// The unique identifier for the item.
-            public let id: ID = ID()
+            public let id: ID
 
             /// The title of the page this item represents.
             ///
@@ -138,32 +152,26 @@ extension WebPage {
             let wrapped: WKBackForwardListItem
         }
 
-        init(_ wrapped: WKBackForwardList? = nil) {
-            self.wrapped = wrapped
+        init(_ wrapped: WKBackForwardList) {
+            self.backList = wrapped.backList.map(Item.init(_:))
+            self.currentItem = wrapped.currentItem.map(Item.init(_:))
+            self.forwardList = wrapped.forwardList.map(Item.init(_:))
         }
 
         /// The array of items that precede the current item.
         ///
         /// The items are in the order in which the page originally visited them.
-        public var backList: [Item] {
-            wrapped?.backList.map(Item.init(_:)) ?? []
-        }
+        public let backList: [Item]
 
         /// The current item.
         ///
         /// When the webpage has not loaded any resources, this value will be `nil`.
-        public var currentItem: Item? {
-            wrapped?.currentItem.map(Item.init(_:))
-        }
+        public let currentItem: Item?
 
         /// The array of items that follow the current item.
         ///
         /// The items are in the order in which they were originally visited.
-        public var forwardList: [Item] {
-            wrapped?.forwardList.map(Item.init(_:)) ?? []
-        }
-
-        private var wrapped: WKBackForwardList? = nil
+        public let forwardList: [Item]
 
         /// Accesses the item at the relative offset from the current item.
         ///
@@ -171,7 +179,13 @@ extension WebPage {
         /// `-1` for the immediately preceding item, `1` for the immediately following item, and so on.
         /// - Returns: The item at the specified offset from the current item, or `nil` if the index exceeds the limits of the list.
         public subscript(_ index: Int) -> Item? {
-            wrapped?.item(at: index).map(Item.init(_:))
+            if index < 0 {
+                backList.count + index >= 0 ? backList[backList.count + index] : nil
+            } else if index > 0 {
+                index - 1 < forwardList.count ? forwardList[index - 1] : nil
+            } else {
+                currentItem
+            }
         }
     }
 }
