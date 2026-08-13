@@ -1,6 +1,6 @@
 
 PASS random() should not be allowed in if() style() condition
 PASS random() in var() should not be allowed in if() style() condition
-FAIL random() with different property names should not be shared in if() declaration value assert_false: Random values should be equal expected false got true
+PASS random() with different property names should not be shared in if() declaration value
 PASS random() with same property name on different elements in if() declaration value should be equal
 

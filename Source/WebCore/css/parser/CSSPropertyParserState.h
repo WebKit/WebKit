@@ -28,6 +28,7 @@
 #include "CSSPropertyNames.h"
 #include "CSSValuePool.h"
 #include "StyleRuleType.h"
+#include <wtf/text/AtomString.h>
 
 namespace WebCore {
 
@@ -41,6 +42,8 @@ struct PropertyParserState {
 
     StyleRuleType currentRule { StyleRuleType::Style };
     CSSPropertyID currentProperty { CSSPropertyInvalid };
+    // Set when currentProperty is CSSPropertyCustom, which every custom property shares.
+    AtomString currentCustomPropertyName { };
     IsImportant important { IsImportant::No };
 
     // Count of CSS random() functions seen so far for the current property.

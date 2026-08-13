@@ -47,14 +47,14 @@ namespace CSSPropertyParserHelpers {
 //
 // <random-ua-ident> is intentionally not yet supported by this consumer (follow-up).
 //
-// The implementation-derived parts of a <random-key> come from the caller: `property` is the property the
-// value is being parsed for, `autoElementScoped` is the scoping `auto` resolves to, and `consumeIndex`
-// yields the value index under the caller's own scheme (parse-time for random(), substitution-time for
-// random-item()). `property` is a plain value, and `consumeIndex` is only called for the productions that
-// actually carry an index (`auto` and property-index-scoped), so property-scoped cannot disturb a caller's
-// index counter.
+// The implementation-derived parts of a <random-key> come from the caller: `property` identifies the
+// property the value is being parsed for, `autoElementScoped` is the scoping `auto` resolves to, and
+// `consumeIndex` yields the value index under the caller's own scheme (parse-time for random(),
+// substitution-time for random-item()). `consumeIndex` is only called for the productions that actually
+// carry an index (`auto` and property-index-scoped), so property-scoped cannot disturb a caller's index
+// counter.
 struct RandomKeySource {
-    CSSPropertyID property { CSSPropertyInvalid };
+    CSSCalc::RandomScopedProperty property;
     std::optional<CSS::Keyword::ElementScoped> autoElementScoped;
 };
 

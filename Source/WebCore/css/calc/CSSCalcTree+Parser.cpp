@@ -673,11 +673,8 @@ static std::optional<TypedChild> consumeRandom(CSSParserTokenRange& tokens, int 
 
     using Op = Random;
 
-    // FIXME: currentProperty is CSSPropertyCustom for every custom property, so an `auto` or
-    // property-scoped key in one collapses all custom properties onto a single base value. The name
-    // needs to be part of the key.
     auto keySource = CSSPropertyParserHelpers::RandomKeySource {
-        .property = state.propertyParserState.currentProperty,
+        .property = { state.propertyParserState.currentProperty, state.propertyParserState.currentCustomPropertyName },
         .autoElementScoped = CSS::Keyword::ElementScoped { }
     };
 

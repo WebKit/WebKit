@@ -359,6 +359,7 @@ std::optional<Variant<Ref<const Style::CustomProperty>, CSSWideKeyword>> CSSProp
         .context = context,
         .currentRule = StyleRuleType::Style,
         .currentProperty = CSSPropertyCustom,
+        .currentCustomPropertyName = name,
         .important = IsImportant::No,
         .randomFunctionsDisallowed = builderState.isResolvingContainerQueries(),
     };

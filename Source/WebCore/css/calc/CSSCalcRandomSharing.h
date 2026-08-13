@@ -28,7 +28,9 @@
 #include <WebCore/CSSCustomIdent.h>
 #include <WebCore/CSSValueKeywords.h>
 #include <optional>
+#include <wtf/Hasher.h>
 #include <wtf/Variant.h>
+#include <wtf/text/AtomString.h>
 
 namespace WebCore {
 
@@ -36,13 +38,28 @@ enum CSSPropertyID : uint16_t;
 
 namespace CSSCalc {
 
+// The property a random key is scoped to. Every custom property shares CSSPropertyCustom, so the name
+// is what tells them apart and is empty for everything else.
+// FIXME: Same concept as AssociatedProperty and AnimatableCSSProperty.
+struct RandomScopedProperty {
+    CSSPropertyID property { CSSPropertyInvalid };
+    AtomString customPropertyName { };
+
+    bool operator==(const RandomScopedProperty&) const = default;
+};
+
+inline void add(Hasher& hasher, const RandomScopedProperty& scopedProperty)
+{
+    add(hasher, scopedProperty.property, scopedProperty.customPropertyName);
+}
+
 // `auto` is a top-level <random-key> alternative; its scoping is chosen per-usage by the caller.
 // The (property, index) pair is the implementation-derived caching identity.
 //
 // `index` is 0-based. § 9.4.1 spells the simplified form ua-PROPERTY-INDEX with a 1-indexed INDEX, so
 // the <random-ua-ident> serialization follow-up has to add one when serializing.
 struct RandomSharingAuto {
-    CSSPropertyID property;
+    RandomScopedProperty property;
     unsigned index;
     std::optional<CSS::Keyword::ElementScoped> elementScoped;
 
@@ -53,13 +70,13 @@ struct RandomSharingAuto {
 // NOTE: <random-ua-ident> is intentionally not yet supported (follow-up).
 struct RandomSharingKey {
     struct PropertyScoped {
-        CSSPropertyID property;
+        RandomScopedProperty property;
 
         bool operator==(const PropertyScoped&) const = default;
     };
     // `index` is 0-based; see the note on RandomSharingAuto.
     struct PropertyIndexScoped {
-        CSSPropertyID property;
+        RandomScopedProperty property;
         unsigned index;
 
         bool operator==(const PropertyIndexScoped&) const = default;

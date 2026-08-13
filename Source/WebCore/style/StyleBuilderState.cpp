@@ -305,6 +305,16 @@ CSSPropertyID BuilderState::cssPropertyID() const
     return m_currentProperty ? m_currentProperty->id : CSSPropertyInvalid;
 }
 
+// Every custom property shares CSSPropertyCustom, so anything keying on cssPropertyID() needs this to
+// tell them apart. Null unless a custom property is being applied.
+AtomString BuilderState::customPropertyName() const
+{
+    if (cssPropertyID() != CSSPropertyCustom)
+        return nullAtom();
+    RefPtr customPropertyValue = dynamicDowncast<CSSCustomPropertyValue>(m_currentProperty->cssValue[SelectorChecker::MatchDefault]);
+    return customPropertyValue ? customPropertyValue->name() : nullAtom();
+}
+
 bool BuilderState::isCurrentPropertyInvalidAtComputedValueTime() const
 {
     return m_invalidAtComputedValueTimeProperties.get(cssPropertyID());
