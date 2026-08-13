@@ -23,6 +23,7 @@
 #include "common/base/anglebase/no_destructor.h"
 #include "common/debug.h"
 #include "common/platform.h"
+#include "common/platform_helpers.h"
 #include "common/string_utils.h"
 #include "common/system_utils.h"
 #include "platform/PlatformMethods.h"
@@ -177,6 +178,7 @@ constexpr char kGTestFilter[]               = "--gtest_filter=";
 constexpr char kdEQPSurfaceWidth[]          = "--deqp-surface-width=";
 constexpr char kdEQPSurfaceHeight[]         = "--deqp-surface-height=";
 constexpr char kdEQPBaseSeed[]              = "--deqp-base-seed";
+constexpr char kdEQPVisibility[]            = "--deqp-visibility";
 constexpr const char gdEQPLogImagesString[] = "--deqp-log-images=";
 
 // Use the config name defined in gTestSuiteConfigParameters by default
@@ -671,8 +673,18 @@ void dEQPTest::SetUpTestSuite()
         argv.push_back(configParam);
     }
 
+    // Hide the test windows on Mac to avoid stealing focus during the long test runs. Skipped when
+    // --deqp-visibility was already given since dEQP rejects a repeated option.
+    bool visibilitySpecifiedFromCmdLine = false;
+    for (const char *flag : gdEQPForwardFlags)
+    {
+        visibilitySpecifiedFromCmdLine |=
+            strncmp(flag, kdEQPVisibility, strlen(kdEQPVisibility)) == 0;
+    }
+
     // Hide SwiftShader window to prevent a race with Xvfb causing hangs on test bots
-    if (gInitAPI && gInitAPI->second == GPUTestConfig::kAPISwiftShader)
+    const bool isSwiftShader = (gInitAPI && gInitAPI->second == GPUTestConfig::kAPISwiftShader);
+    if (!visibilitySpecifiedFromCmdLine && (IsMac() || isSwiftShader))
     {
         argv.push_back("--deqp-visibility=hidden");
     }
