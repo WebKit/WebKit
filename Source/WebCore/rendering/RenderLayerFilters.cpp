@@ -169,7 +169,8 @@ GraphicsContext* RenderLayerFilters::beginFilterEffect(RenderElement& renderer, 
     // LBSE seeds the filter region with objectBoundingBox, expandFilterRegionForSVGReferences()
     // grows it to cover <filter> reference regions. The caller passes the nominal SVG position
     // as the offset, so the buffer shares the SVG coordinate space and needs no shift compensation.
-    if (renderer.isSVGLayerAwareRenderer()) {
+    bool usesSVGUserSpace = renderer.isSVGLayerAwareRenderer() && !renderer.isRenderSVGRoot();
+    if (usesSVGUserSpace) {
         auto boundingBox = renderer.objectBoundingBox();
         filterRegion = dirtyFilterRegion = enclosingLayoutRect(boundingBox);
     } else {
@@ -189,7 +190,7 @@ GraphicsContext* RenderLayerFilters::beginFilterEffect(RenderElement& renderer, 
             filterRegion.expand(toLayoutBoxExtent(outsets));
     }
 
-    if (filterRegion.isEmpty() && !renderer.isSVGLayerAwareRenderer())
+    if (filterRegion.isEmpty() && !usesSVGUserSpace)
         return nullptr;
 
     auto geometryReferenceGeometryChanged = [](auto& existingGeometry, auto& newGeometry) {
@@ -199,11 +200,11 @@ GraphicsContext* RenderLayerFilters::beginFilterEffect(RenderElement& renderer, 
     // The reference box must stay in the original SVG coordinate system (objectBoundingBox,
     // as legacy does) with no shift, otherwise filter region resolution is wrong.
     auto referenceBox = filterBoxRect;
-    if (renderer.isSVGLayerAwareRenderer())
+    if (usesSVGUserSpace)
         referenceBox = enclosingLayoutRect(renderer.objectBoundingBox());
 
     auto filterScale = m_filterScale;
-    if (renderer.isSVGLayerAwareRenderer())
+    if (usesSVGUserSpace)
         filterScale = m_filterScale * SVGTransformComputation(downcast<RenderLayerModelObject>(renderer)).calculateAccumulatedSVGAncestorTransformScale();
 
     auto geometry = FilterGeometry {
@@ -221,19 +222,19 @@ GraphicsContext* RenderLayerFilters::beginFilterEffect(RenderElement& renderer, 
             renderingOptions.add(FilterRenderingOption::ShowDebugOverlay);
         if (paintBehavior.contains(PaintBehavior::FastAndLowQualityFilters))
             renderingOptions.add(FilterRenderingOption::FastAndLowQuality);
-        if (renderer.isSVGLayerAwareRenderer())
+        if (usesSVGUserSpace)
             renderingOptions.add(FilterRenderingOption::ApplyToSVGRenderer);
         m_filter = CSSFilterRenderer::create(renderer, renderer.style().filter(), geometry, preferredFilterRenderingModes, renderingOptions, context);
         m_lastUnclampedFilterScale = filterScale;
         hasUpdatedBackingStore = true;
-    } else if (!renderer.isSVGLayerAwareRenderer() && filterRegion != m_filter->filterRegion()) {
+    } else if (!usesSVGUserSpace && filterRegion != m_filter->filterRegion()) {
         m_filter->setFilterRegion(filterRegion);
         hasUpdatedBackingStore = true;
     }
 
     // Read back the region expandFilterRegionForSVGReferences() produced - it may have
     // grown to cover SVG reference regions and clamped the scale.
-    if (renderer.isSVGLayerAwareRenderer() && m_filter) {
+    if (usesSVGUserSpace && m_filter) {
         filterRegion = enclosingLayoutRect(m_filter->filterRegion());
         dirtyFilterRegion = filterRegion;
     }
@@ -258,7 +259,7 @@ GraphicsContext* RenderLayerFilters::beginFilterEffect(RenderElement& renderer, 
 
     if (!m_targetSwitcher || hasUpdatedBackingStore) {
         FloatRect sourceImageRect;
-        if (renderer.isSVGLayerAwareRenderer()) {
+        if (usesSVGUserSpace) {
             // If the region was clamped to MaxClampedArea, source from the bounding box to
             // avoid a huge mostly-transparent buffer. Otherwise source the full region.
             bool filterRegionOversized = !referenceBox.isEmpty() && m_filter->filterScale() != m_lastUnclampedFilterScale;
@@ -270,7 +271,7 @@ GraphicsContext* RenderLayerFilters::beginFilterEffect(RenderElement& renderer, 
         // operations should happen in linear color space. Match legacy SVG filter behavior.
         auto colorSpace = DestinationColorSpace::SRGB();
 #if !USE(CAIRO)
-        if (renderer.isSVGLayerAwareRenderer())
+        if (usesSVGUserSpace)
             colorSpace = DestinationColorSpace::LinearSRGB();
 #endif
 
@@ -294,7 +295,7 @@ void RenderLayerFilters::applyFilterEffect(GraphicsContext& destinationContext)
     auto colorSpace = DestinationColorSpace::SRGB();
 #if !USE(CAIRO)
     if (CheckedPtr layer = m_layer.get()) {
-        if (layer->renderer().isSVGLayerAwareRenderer())
+        if (layer->renderer().isSVGLayerAwareRenderer() && !layer->renderer().isRenderSVGRoot())
             colorSpace = DestinationColorSpace::LinearSRGB();
     }
 #endif

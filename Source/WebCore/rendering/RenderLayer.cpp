@@ -1055,7 +1055,7 @@ bool RenderLayer::shouldPaintWithFilters(OptionSet<PaintBehavior> paintBehavior)
     if (filter.isNone())
         return false;
 
-    if (renderer().isRenderOrLegacyRenderSVGRoot() && filter.isReferenceFilter())
+    if (renderer().isLegacyRenderSVGRoot() && filter.isReferenceFilter())
         return false;
 
     if (RenderLayerFilters::isIdentity(renderer()))
@@ -3771,6 +3771,11 @@ void RenderLayer::paintLayerContents(GraphicsContext& context, const LayerPainti
 
         LayerPaintingInfo localPaintingInfo(paintingInfo);
 
+        // The outermost <svg> is a replaced element in the CSS box tree, so its filter is set up in
+        // CSS box coordinates (see RenderLayerFilters::beginFilterEffect) and none of the SVG user
+        // space corrections in this scope apply to it.
+        bool filtersInSVGUserSpace = renderer().isSVGLayerAwareRenderer() && !renderer().isRenderSVGRoot();
+
         // Position the filter buffer and composite its result at the element's
         // nominalSVGLayoutLocation, independent of intermediate force-layers that perturb offsetFromRoot.
         auto svgFilterOffset = columnAwareOffsetFromRoot;
@@ -3783,29 +3788,16 @@ void RenderLayer::paintLayerContents(GraphicsContext& context, const LayerPainti
 
         auto* filterContext = setupFilters(context, localPaintingInfo, localPaintFlags, svgFilterOffset, backgroundRect);
 
-        // Non-layer content drawn into the buffer uses a distinct offset. The buffer coordinate
-        // system is the filter region (transform-aware objectBoundingBox), whereas svgFilterOffset is
-        // based on objectBoundingBoxWithoutTransformations. The two differ by the child-transform delta
-        // only when the filtered element has a transformed child (e.g. a layered <use> with x/y), and
-        // are equal otherwise. This positions non-layer fragment collection only. A layer child already
-        // carries its transform in its CTM, so it uses svgFilterOffset (the buffer origin). Adding the
-        // delta there would double-count the transform (svg/filters/filter-refresh.svg).
         auto svgFilterContentOffset = svgFilterOffset;
-        if (filterContext && renderer().isSVGLayerAwareRenderer())
+        if (filterContext && filtersInSVGUserSpace)
             svgFilterContentOffset += renderer().objectBoundingBoxLocation() - renderer().nominalSVGLayoutLocation();
 
-        // Layer children reset their CTM via offsetFromAncestor(rootLayer) and miss the buffer origin
-        // that non-layer children pick up through containerBaseOffset, so translate them by
-        // svgFilterOffset to match. Needed when rootLayer == this, and when this filter is nested
-        // inside another filter whose buffer was coordinate-origin shifted (our buffer inherits the
-        // shift but the layer child does not, svg/filters/filter-refresh.svg). The nested case is read
-        // from rootLayer directly: a descendant painting inside a shifted buffer always has that
-        // shifting ancestor (transformed, hence rootLayer-establishing, and filtered) as its rootLayer.
         // A failed filter does not paint its descendants, so a rootLayer with hasFilter() set up a buffer.
         CheckedPtr currentRootLayer = localPaintingInfo.rootLayer;
         bool rootLayerShiftedFilterBuffer = currentRootLayer && currentRootLayer != this
-            && currentRootLayer->hasFilter() && currentRootLayer->renderer().isSVGLayerAwareRenderer();
-        bool appliesFilterChildCorrection = filterContext && renderer().isSVGLayerAwareRenderer()
+            && currentRootLayer->hasFilter() && currentRootLayer->renderer().isSVGLayerAwareRenderer()
+            && !currentRootLayer->renderer().isRenderSVGRoot();
+        bool appliesFilterChildCorrection = filterContext && filtersInSVGUserSpace
             && (currentRootLayer == this || rootLayerShiftedFilterBuffer);
 
         // This applies to this layer's immediate child layers only, and a nested filter re-derives its own.
@@ -3933,7 +3925,7 @@ void RenderLayer::paintLayerContents(GraphicsContext& context, const LayerPainti
             // element is its own rootLayer, or a force-created ancestor layer baked it in). In the plain
             // non-layer case offsetFromRoot equals the nominal position and isZero() skips.
             GraphicsContextStateSaver filterCompensationSaver(context, false);
-            if (renderer().isSVGLayerAwareRenderer()) {
+            if (filtersInSVGUserSpace) {
                 auto svgFilterCompensation = columnAwareOffsetFromRoot - svgFilterOffset;
                 if (!svgFilterCompensation.isZero()) {
                     filterCompensationSaver.save();

@@ -49,12 +49,10 @@ svg/filters/feImage-filterUnits-userSpaceOnUse-primitiveUnits-objectBoundingBox.
 svg/filters/feImage-filterUnits-userSpaceOnUse-primitiveUnits-userSpaceOnUse.svg       [ ImageOnlyFailure ]
 svg/filters/feImage-late-indirect-update.svg                                           [ ImageOnlyFailure ]
 svg/filters/feImage-reference-svg-primitive.svg                                        [ ImageOnlyFailure ]
-svg/filters/filter-image-ref-root.html                                                 [ ImageOnlyFailure ]
 svg/filters/filter-on-root-tile-boundary.html                                          [ ImageOnlyFailure ]
 svg/filters/filter-on-tspan.svg                                                        [ ImageOnlyFailure ]
 svg/filters/filter-placement-issue.svg                                                 [ ImageOnlyFailure ]
 svg/filters/filter-source-position.svg                                                 [ ImageOnlyFailure ]
-svg/filters/filter-specified-on-svg-root.html                                          [ ImageOnlyFailure ]
 
 # Regressed by conditional layer creation (bugs.webkit.org/b/308565). Filter and resource-buffer
 # painting for non-layered SVG renderers is corrected by a follow-up PR, which restores these.
