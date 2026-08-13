@@ -6124,6 +6124,7 @@ class YarrGenerator final : public YarrJITInfo {
         case PatternTerm::Type::AssertionBOI:
         case PatternTerm::Type::AssertionEOI:
         case PatternTerm::Type::AssertionWordBoundary:
+        case PatternTerm::Type::ParentheticalAssertion:
             // Conservatively say any assertions just match.
             return cursor;
 
@@ -6192,9 +6193,6 @@ class YarrGenerator final : public YarrJITInfo {
             }
             return cursor;
         }
-
-        case PatternTerm::Type::ParentheticalAssertion:
-            return std::nullopt;
 
         case PatternTerm::Type::DotStarEnclosure:
             return std::nullopt;
