@@ -61,12 +61,17 @@ public:
     {
         if (formattingContextRoot().writingMode().isLineInverted() || !m_lineIndex)
             return contentLogicalTop();
-        auto precedingLineBox = LineBoxIteratorModernPath { *m_inlineContent, m_lineIndex - 1 };
-        // A line with a block level box on it does not share the space below it with this line. That space is the box's
-        // margin, and the box covers it itself.
-        if (precedingLineBox.hasBlockLevelBox())
-            return contentLogicalTop();
-        return precedingLineBox.contentLogicalBottom();
+        for (auto precedingLineIndex = m_lineIndex; precedingLineIndex--;) {
+            auto precedingLineBox = LineBoxIteratorModernPath { *m_inlineContent, precedingLineIndex };
+            if (!precedingLineBox.line().hasContentfulInFlowBox())
+                continue;
+            if (precedingLineBox.hasBlockLevelBox())
+                break;
+            if (precedingLineBox.logicalBottom() < logicalTop())
+                break;
+            return precedingLineBox.contentLogicalBottom();
+        }
+        return contentLogicalTop();
     }
     float contentLogicalBottomAdjustedForFollowingLineBox() const
     {

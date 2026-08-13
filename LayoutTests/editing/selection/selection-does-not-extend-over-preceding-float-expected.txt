@@ -1,0 +1,11 @@
+This test verifies that selecting text on the first line of a block whose first line is pushed below an intrusive float does not extend the selection up over that float. To run the test manually, select the word below the gray box and make sure the gray box does not get highlighted.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS Selection did not start above the float's bottom edge.
+PASS Selection height did not extend over the float.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Selected
