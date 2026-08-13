@@ -870,6 +870,20 @@ void CodeBlock::setupWithUnlinkedBaselineCode(Ref<BaselineJITCode> jitCode)
         break;
     }
 
+    // Milestone 1: op_get_by_id dispatches on a metadata-resident PIC that is created per CodeBlock in
+    // finishCreation, while doneLocation/slowPathStartLocation belong to this BaselineJITCode, which is
+    // shared by every CodeBlock linked from the same UnlinkedCodeBlock. Copy them in here so that
+    // CodeBlocks adopting already-compiled baseline code -- and therefore never running JIT::link -- get
+    // them too. A null doneLocation reaches DFG OSR exit as the return address of a reconstructed inlined
+    // getter frame, and a null slowPathStartLocation is the far jump target of a handler stub's failure exit.
+    for (auto& locations : jitCode->m_metadataPropertyInlineCacheLocations) {
+        auto& metadata = instructions().at(locations.bytecodeIndex.offset())->as<OpGetById>().metadata(this);
+        auto* propertyCache = std::bit_cast<PropertyInlineCache*>(metadata.m_propertyInlineCache);
+        ASSERT(propertyCache);
+        propertyCache->doneLocation = locations.doneLocation;
+        propertyCache->slowPathStartLocation = locations.slowPathStartLocation;
+    }
+
     if (jitCode->m_isShareable && !unlinkedCodeBlock()->m_unlinkedBaselineCode && Options::useBaselineJITCodeSharing())
         unlinkedCodeBlock()->m_unlinkedBaselineCode = WTF::move(jitCode);
 }

@@ -927,18 +927,23 @@ RefPtr<BaselineJITCode> JIT::link(LinkBuffer& patchBuffer)
         patchBuffer.link<JSInternalPtrTag>(call, consistencyCheck);
 #endif
 
+    Vector<BaselineMetadataPropertyInlineCacheLocations> metadataPropertyInlineCacheLocations;
     auto finalizeICs = [&] (auto& generators) {
         for (auto& gen : generators) {
-            // get_by_id (Milestone 1) dispatches on a shared metadata-resident PIC and carries no
-            // unlinked cache; stamp the resume locations into that PIC directly. All other IC kinds
-            // stamp their per-site BaselineUnlinkedPropertyInlineCache (materialized later).
+            auto doneLocation = patchBuffer.locationOf<JSInternalPtrTag>(gen.m_done);
+            auto slowPathStartLocation = patchBuffer.locationOf<JITStubRoutinePtrTag>(gen.m_slowPathBegin);
             if (gen.m_unlinkedPropertyCache) {
-                gen.m_unlinkedPropertyCache->doneLocation = patchBuffer.locationOf<JSInternalPtrTag>(gen.m_done);
-                gen.m_unlinkedPropertyCache->slowPathStartLocation = patchBuffer.locationOf<JITStubRoutinePtrTag>(gen.m_slowPathBegin);
-            } else if (auto* propertyCache = gen.propertyCache()) {
-                propertyCache->doneLocation = patchBuffer.locationOf<JSInternalPtrTag>(gen.m_done);
-                propertyCache->slowPathStartLocation = patchBuffer.locationOf<JITStubRoutinePtrTag>(gen.m_slowPathBegin);
+                gen.m_unlinkedPropertyCache->doneLocation = doneLocation;
+                gen.m_unlinkedPropertyCache->slowPathStartLocation = slowPathStartLocation;
+                continue;
             }
+            // op_get_by_id (Milestone 1) has no unlinked cache: its PropertyInlineCache is
+            // metadata-resident and thus per-CodeBlock, while these two locations belong to this
+            // BaselineJITCode, which is shared by every CodeBlock linked from the same UnlinkedCodeBlock.
+            // Record them per bytecode index; CodeBlock::setupWithUnlinkedBaselineCode copies them into
+            // each CodeBlock's metadata PIC. Do not write a PIC from here: JIT::link runs on the baseline
+            // compiler thread, and the compiling CodeBlock's PIC is live on the main thread.
+            metadataPropertyInlineCacheLocations.append({ gen.bytecodeIndex(), doneLocation, slowPathStartLocation });
         }
     };
 
@@ -1021,6 +1026,7 @@ RefPtr<BaselineJITCode> JIT::link(LinkBuffer& patchBuffer)
     jitCode->m_unlinkedPropertyInlineCaches = FixedVector<BaselineUnlinkedPropertyInlineCache>(m_unlinkedPropertyInlineCaches.size());
     if (jitCode->m_unlinkedPropertyInlineCaches.size())
         std::move(m_unlinkedPropertyInlineCaches.begin(), m_unlinkedPropertyInlineCaches.end(), jitCode->m_unlinkedPropertyInlineCaches.begin());
+    jitCode->m_metadataPropertyInlineCacheLocations = FixedVector<BaselineMetadataPropertyInlineCacheLocations>(WTF::move(metadataPropertyInlineCacheLocations));
     jitCode->m_switchJumpTables = WTF::move(m_switchJumpTables);
     jitCode->m_stringSwitchJumpTables = WTF::move(m_stringSwitchJumpTables);
     jitCode->m_jitCodeMap = jitCodeMapBuilder.finalize();

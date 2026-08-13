@@ -62,8 +62,9 @@ static void emitDataICHandlerDispatch(CCallHelpers& jit, GPRReg propertyCacheGPR
     jit.call(CCallHelpers::Address(GPRInfo::handlerGPR, InlineCacheHandler::offsetOfCallTarget()), JITStubRoutinePtrTag);
 }
 
-JITInlineCacheGenerator::JITInlineCacheGenerator(CodeBlock*, CompileTimePropertyInlineCache propertyCache, JITType, CodeOrigin, AccessType accessType)
-    : m_accessType(accessType)
+JITInlineCacheGenerator::JITInlineCacheGenerator(CodeBlock*, CompileTimePropertyInlineCache propertyCache, JITType, CodeOrigin codeOrigin, AccessType accessType)
+    : m_bytecodeIndex(codeOrigin.bytecodeIndex())
+    , m_accessType(accessType)
 {
     WTF::visit(WTF::makeVisitor(
         [&](PropertyInlineCache* propertyCache) {

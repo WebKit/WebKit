@@ -571,18 +571,18 @@ void JIT::emit_op_get_by_id(const JSInstruction* currentInstruction)
 
     emitGetVirtualRegister(baseVReg, baseJSR);
 
-    // Milestone 1: dispatch on the shared metadata-resident PIC (created at CodeBlock::finishCreation,
-    // LLInt link time). Baseline no longer allocates its own get_by_id PIC in BaselineJITData. Load it
-    // for runtime dispatch, and also hand it to the generator so JIT::link stamps this PIC's
-    // doneLocation/slowPathStartLocation (read by compiled getter/setter handlers).
-    auto* metadataPropertyCache = std::bit_cast<PropertyInlineCache*>(bytecode.metadata(m_profiledCodeBlock).m_propertyInlineCache);
+    // Milestone 1: dispatch on the metadata-resident PIC (created at CodeBlock::finishCreation, LLInt
+    // link time). Baseline no longer allocates its own get_by_id PIC in BaselineJITData, and it must not
+    // touch any particular CodeBlock's PIC at compile time -- this code is shared by every CodeBlock
+    // linked from m_unlinkedCodeBlock. The PIC is a purely runtime load, and JIT::link records this
+    // site's resume locations on the BaselineJITCode for setupWithUnlinkedBaselineCode to distribute.
     loadPtrFromMetadata(bytecode, OpGetById::Metadata::offsetOfPropertyInlineCache(), propertyCacheGPR);
 
     emitJumpSlowCaseIfNotJSCell(baseJSR, baseVReg);
 
     // CacheType::Unset -> plain per-node chain dispatch (no inline structure check), exactly like get_by_val.
     JITGetByIdGenerator gen(
-        nullptr, metadataPropertyCache, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), RegisterSet::stubUnavailableRegisters(),
+        nullptr, static_cast<PropertyInlineCache*>(nullptr), JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), RegisterSet::stubUnavailableRegisters(),
         CacheableIdentifier::createFromIdentifierOwnedByCodeBlock(m_unlinkedCodeBlock, *ident), baseJSR, resultJSR, propertyCacheGPR, AccessType::GetById, CacheType::Unset);
 
     gen.generateDataICFastPath(*this);

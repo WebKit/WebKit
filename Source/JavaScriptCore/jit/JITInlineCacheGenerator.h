@@ -109,10 +109,13 @@ public:
 
     AccessType accessType() const { return m_accessType; }
 
+    BytecodeIndex bytecodeIndex() const { return m_bytecodeIndex; }
+
 protected:
     void generateDataICFastPath(CCallHelpers&, GPRReg propertyCacheGPR);
 
     PropertyInlineCache* m_propertyCache { nullptr };
+    BytecodeIndex m_bytecodeIndex;
     AccessType m_accessType;
 
 public:
