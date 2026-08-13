@@ -64,11 +64,13 @@ NativeImage::NativeImage(PlatformImagePtr&& platformImage, std::optional<GainMap
 
 IntSize NativeImage::size() const
 {
-    return m_platformImage ? IntSize(m_platformImage->width(), m_platformImage->height()) : IntSize();
+    Locker locker { m_lock };
+    return IntSize(m_platformImage->width(), m_platformImage->height());
 }
 
 bool NativeImage::hasAlpha() const
 {
+    Locker locker { m_lock };
     switch (m_platformImage->imageInfo().alphaType()) {
     case kUnknown_SkAlphaType:
     case kOpaque_SkAlphaType:
@@ -82,7 +84,8 @@ bool NativeImage::hasAlpha() const
 
 DestinationColorSpace NativeImage::colorSpace() const
 {
-    if (auto colorSpace = platformImage()->refColorSpace())
+    Locker locker { m_lock };
+    if (auto colorSpace = m_platformImage->refColorSpace())
         return DestinationColorSpace(colorSpace);
     // No color space means the default - SRGB.
     return DestinationColorSpace::SRGB();
@@ -121,9 +124,7 @@ void NativeImage::clearSubimages()
 
 uint64_t NativeImage::uniqueID() const
 {
-    if (auto& image = platformImage())
-        return image->uniqueID();
-    return 0;
+    return platformImage()->uniqueID();
 }
 
 } // namespace WebCore

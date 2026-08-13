@@ -62,7 +62,7 @@ static GRefPtr<GdkTexture> dragIconTexture(RefPtr<ShareableBitmap>&& iconImage)
     if (!nativeImage)
         return nullptr;
 
-    auto& platformImage = nativeImage->platformImage();
+    auto platformImage = nativeImage->platformImage();
     return skiaImageToGdkTexture(*platformImage.get());
 }
 

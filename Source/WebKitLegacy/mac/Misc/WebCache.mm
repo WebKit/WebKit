@@ -169,7 +169,7 @@ class DefaultStorageSessionProvider : public WebCore::StorageSessionProvider {
     if (!nativeImage)
         return nullptr;
 
-    return nativeImage->platformImage().get();
+    return nativeImage->platformImage().unsafeGet();
 }
 
 #endif // PLATFORM(IOS_FAMILY)

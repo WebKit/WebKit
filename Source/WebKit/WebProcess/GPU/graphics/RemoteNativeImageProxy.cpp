@@ -32,6 +32,7 @@
 #include <WebCore/Color.h>
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/ImageBuffer.h>
+#include <wtf/Locker.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
@@ -73,15 +74,24 @@ RemoteNativeImageProxy::~RemoteNativeImageProxy()
         resourceCache->willDestroyRemoteNativeImageProxy(*this);
 }
 
-const PlatformImagePtr& RemoteNativeImageProxy::platformImage() const
+PlatformImagePtr RemoteNativeImageProxy::platformImage() const
 {
-    if (!m_platformImage) {
-        if (CheckedPtr resourceCache = m_resourceCache.get())
-            m_platformImage = resourceCache->platformImage(*this);
+    {
+        Locker locker { m_lock };
+        if (m_platformImage)
+            return m_platformImage;
     }
+    PlatformImagePtr platformImage;
+    // Currently calls made here are always to a cache that is local to the thread.
+    if (CheckedPtr resourceCache = m_resourceCache.get())
+        platformImage = resourceCache->platformImage(*this);
     // The callers do not expect !platformImage().
-    if (!m_platformImage)
-        m_platformImage = placeholderPlatformImage();
+    if (!platformImage)
+        platformImage = placeholderPlatformImage();
+    Locker locker { m_lock };
+    if (m_platformImage)
+        return m_platformImage;
+    m_platformImage = WTF::move(platformImage);
     return m_platformImage;
 }
 

@@ -60,11 +60,11 @@ static cairo_status_t writeFunction(void* output, const unsigned char* data, uns
 Vector<uint8_t> platformEncodeData(const NativeImage& nativeImage, const String& mimeType, std::optional<double>)
 {
     ASSERT_UNUSED(mimeType, mimeType == "image/png"_s); // Only PNG output is supported for now.
-    auto* image = nativeImage.platformImage().get();
-    if (!image)
+    auto platformImage = nativeImage.platformImage();
+    if (!platformImage)
         return { };
     Vector<uint8_t> output;
-    if (cairo_surface_write_to_png_stream(image, writeFunction, &output) != CAIRO_STATUS_SUCCESS)
+    if (cairo_surface_write_to_png_stream(platformImage.get(), writeFunction, &output) != CAIRO_STATUS_SUCCESS)
         return { };
     return output;
 }

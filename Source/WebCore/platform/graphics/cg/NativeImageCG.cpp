@@ -70,17 +70,20 @@ RefPtr<NativeImage> NativeImage::createTransient(PlatformImagePtr&& image)
 
 IntSize NativeImage::size() const
 {
+    Locker locker { m_lock };
     return IntSize(CGImageGetWidth(m_platformImage.get()), CGImageGetHeight(m_platformImage.get()));
 }
 
 bool NativeImage::hasAlpha() const
 {
+    Locker locker { m_lock };
     CGImageAlphaInfo info = CGImageGetAlphaInfo(m_platformImage.get());
     return (info >= kCGImageAlphaPremultipliedLast) && (info <= kCGImageAlphaFirst);
 }
 
 size_t NativeImage::sizeInBytes() const
 {
+    Locker locker { m_lock };
     CheckedSize height = CGImageGetHeight(m_platformImage);
     CheckedSize sizeInBytes = height * CGImageGetBytesPerRow(m_platformImage);
     if (m_gainMap)
@@ -90,6 +93,7 @@ size_t NativeImage::sizeInBytes() const
 
 DestinationColorSpace NativeImage::colorSpace() const
 {
+    Locker locker { m_lock };
     return DestinationColorSpace(CGImageGetColorSpace(m_platformImage.get()));
 }
 

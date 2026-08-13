@@ -236,7 +236,7 @@ GRefPtr<GdkPixbuf> selectionDataImageAsGdkPixbuf(const SelectionData& selectionD
     if (!nativeImage)
         return nullptr;
 
-    auto& platformImage = nativeImage->platformImage();
+    auto platformImage = nativeImage->platformImage();
     return skiaImageToGdkPixbuf(*platformImage.get());
 }
 

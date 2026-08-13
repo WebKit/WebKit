@@ -122,9 +122,9 @@ bool CoordinatedPlatformLayerBufferNativeImage::tryEnsureBuffer(UseSkiaForCompos
     auto texture = BitmapTexturePool::singleton().acquireTexture(m_size, textureFlags);
 
 #if USE(CAIRO)
-    auto* surface = m_image->platformImage().get();
-    auto* imageData = cairo_image_surface_get_data(surface);
-    texture->updateContents(imageData, IntRect(IntPoint(), m_size), IntPoint(), cairo_image_surface_get_stride(surface), PixelFormat::BGRA8);
+    auto surface = m_image->platformImage();
+    auto* imageData = cairo_image_surface_get_data(surface.get());
+    texture->updateContents(imageData, IntRect(IntPoint(), m_size), IntPoint(), cairo_image_surface_get_stride(surface.get()), PixelFormat::BGRA8);
     UNUSED_PARAM(useSkiaForCompositing);
 #elif USE(SKIA)
     const auto& image = m_image->platformImage();

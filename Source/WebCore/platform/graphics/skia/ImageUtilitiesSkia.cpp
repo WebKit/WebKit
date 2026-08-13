@@ -85,20 +85,20 @@ static sk_sp<SkData> encodeAcceleratedImage(const NativeImage& nativeImage, cons
         return nullptr;
 
     auto* grContext = nativeImage.grContext();
-    auto* image = nativeImage.platformImage().get();
+    auto platformImage = nativeImage.platformImage();
 
     if (MIMETypeRegistry::isJPEGMIMEType(mimeType)) {
         SkJpegEncoder::Options options;
         if (quality && *quality >= 0.0 && *quality <= 1.0)
             options.fQuality = static_cast<int>(*quality * 100.0 + 0.5);
-        return SkJpegEncoder::Encode(grContext, image, options);
+        return SkJpegEncoder::Encode(grContext, platformImage.get(), options);
     }
 
     if (equalLettersIgnoringASCIICase(mimeType, "image/webp"_s))
-        return SkWebpEncoder::Encode(grContext, image, webpEncoderOptions(quality));
+        return SkWebpEncoder::Encode(grContext, platformImage.get(), webpEncoderOptions(quality));
 
     if (equalLettersIgnoringASCIICase(mimeType, "image/png"_s))
-        return SkPngEncoder::Encode(grContext, image, { });
+        return SkPngEncoder::Encode(grContext, platformImage.get(), { });
 
     return nullptr;
 }
