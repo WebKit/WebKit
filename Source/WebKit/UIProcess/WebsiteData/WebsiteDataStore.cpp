@@ -2976,16 +2976,6 @@ void WebsiteDataStore::isStorageSuspendedForTesting(CompletionHandler<void(bool)
     protect(networkProcess())->isStorageSuspendedForTesting(m_sessionID, WTF::move(completionHandler));
 }
 
-void WebsiteDataStore::canPrefetchDNSForTesting(CompletionHandler<void(bool)>&& completionHandler) const
-{
-    protect(networkProcess())->canPrefetchDNSForTesting(m_sessionID, WTF::move(completionHandler));
-}
-
-void WebsiteDataStore::prefetchedDNSHostnameCountForTesting(CompletionHandler<void(uint64_t)>&& completionHandler) const
-{
-    protect(networkProcess())->prefetchedDNSHostnameCountForTesting(WTF::move(completionHandler));
-}
-
 #if HAVE(WEBCONTENTRESTRICTIONS)
 void WebsiteDataStore::installMockParentalControlsURLFilterForTesting(Vector<URL>&& blockedURLs, CompletionHandler<void()>&& completionHandler)
 {

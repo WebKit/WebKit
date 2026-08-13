@@ -92,8 +92,6 @@ messages -> NetworkProcess : AuxiliaryProcess WantsAsyncDispatchMessage {
 
     ProcessWillSuspendImminentlyForTestingSync() -> () Synchronous
     IsStorageSuspendedForTesting(PAL::SessionID sessionID) -> (bool isStorageSuspended)
-    CanPrefetchDNSForTesting(PAL::SessionID sessionID) -> (bool canPrefetchDNS)
-    PrefetchedDNSHostnameCountForTesting() -> (uint64_t count)
     PrepareToSuspend(bool isSuspensionImminent, MonotonicTime estimatedSuspendTime) -> ()
     ProcessDidResume(bool forForegroundActivity)
 

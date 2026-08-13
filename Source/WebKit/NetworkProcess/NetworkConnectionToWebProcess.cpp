@@ -771,8 +771,7 @@ void NetworkConnectionToWebProcess::browsingContextRemoved(WebPageProxyIdentifie
 
 void NetworkConnectionToWebProcess::prefetchDNS(const String& hostname)
 {
-    if (CheckedPtr networkSession = this->networkSession(); networkSession && networkSession->canPrefetchDNS())
-        WebCore::prefetchDNS(hostname);
+    m_networkProcess->prefetchDNS(hostname);
 }
 
 void NetworkConnectionToWebProcess::sendH2Ping(URL&& url, WebPageProxyIdentifier webPageProxyID, WebCore::PageIdentifier webPageID, WebCore::FrameIdentifier webFrameID, std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, CompletionHandler<void(Expected<Seconds, ResourceError>&&)>&& completionHandler)

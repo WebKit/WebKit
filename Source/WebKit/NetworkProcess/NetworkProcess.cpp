@@ -2633,20 +2633,6 @@ void NetworkProcess::isStorageSuspendedForTesting(PAL::SessionID sessionID, Comp
     completionHandler(session->storageManager().isSuspended());
 }
 
-void NetworkProcess::canPrefetchDNSForTesting(PAL::SessionID sessionID, CompletionHandler<void(bool)>&& completionHandler)
-{
-    CheckedPtr session = networkSession(sessionID);
-    if (!session)
-        return completionHandler(true);
-
-    completionHandler(session->canPrefetchDNS());
-}
-
-void NetworkProcess::prefetchedDNSHostnameCountForTesting(CompletionHandler<void(uint64_t)>&& completionHandler) const
-{
-    completionHandler(WebCore::prefetchedHostnameCountForTesting());
-}
-
 void NetworkProcess::prepareToSuspend(bool isSuspensionImminent, MonotonicTime estimatedSuspendTime, CompletionHandler<void()>&& completionHandler)
 {
 #if !RELEASE_LOG_DISABLED
@@ -2711,12 +2697,10 @@ void NetworkProcess::systemDidWake()
 }
 #endif
 
-#if USE(SOUP)
 void NetworkProcess::prefetchDNS(const String& hostname)
 {
     WebCore::prefetchDNS(hostname);
 }
-#endif
 
 void NetworkProcess::registerURLSchemeAsSecure(const String& scheme) const
 {

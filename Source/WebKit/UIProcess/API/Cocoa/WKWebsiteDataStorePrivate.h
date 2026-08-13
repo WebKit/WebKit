@@ -163,8 +163,6 @@ typedef NS_ENUM(uint8_t, _WKRestrictedOpenerType) {
 - (void)_restoreData:(NSData *)data completionHandler:(WK_SWIFT_UI_ACTOR void(^)(BOOL))completionHandler WK_API_DEPRECATED_WITH_REPLACEMENT("-restoreData:completionHandler:", macos(15.4, 27.0), ios(18.4, 27.0), visionos(2.4, 27.0));
 
 - (void)_isStorageSuspendedForTesting:(WK_SWIFT_UI_ACTOR void(^)(BOOL))completionHandler WK_API_AVAILABLE(macos(26.4), ios(26.4), visionos(26.4));
-- (void)_canPrefetchDNSForTesting:(void(^)(BOOL))completionHandler WK_API_AVAILABLE(macos(27.0), ios(27.0));
-- (void)_prefetchedDNSHostnameCountForTesting:(void(^)(NSUInteger))completionHandler WK_API_AVAILABLE(macos(27.0), ios(27.0));
 
 - (void)_installMockParentalControlsURLFilterForTestingWithBlockedURLs:(NSArray<NSURL *> *)blockedURLs completionHandler:(void(^)(void))completionHandler WK_API_AVAILABLE(macos(27.0), ios(27.0));
 

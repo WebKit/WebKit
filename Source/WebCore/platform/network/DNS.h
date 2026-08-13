@@ -96,7 +96,6 @@ WEBCORE_EXPORT void prefetchDNS(const String& hostname);
 WEBCORE_EXPORT void resolveDNS(const String& hostname, uint64_t identifier, DNSCompletionHandler&&);
 WEBCORE_EXPORT void stopResolveDNS(uint64_t identifier);
 WEBCORE_EXPORT bool isIPAddressDisallowed(const URL&);
-WEBCORE_EXPORT uint64_t prefetchedHostnameCountForTesting();
 
 } // namespace WebCore
 

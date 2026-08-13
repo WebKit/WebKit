@@ -1598,22 +1598,6 @@ struct WKWebsiteData {
     });
 }
 
-- (void)_canPrefetchDNSForTesting:(void(^)(BOOL))completionHandler
-{
-    auto completionHandlerCopy = makeBlockPtr(completionHandler);
-    protect(*_websiteDataStore)->canPrefetchDNSForTesting([completionHandlerCopy = WTF::move(completionHandlerCopy)](auto result) {
-        completionHandlerCopy(result);
-    });
-}
-
-- (void)_prefetchedDNSHostnameCountForTesting:(void(^)(NSUInteger))completionHandler
-{
-    auto completionHandlerCopy = makeBlockPtr(completionHandler);
-    protect(*_websiteDataStore)->prefetchedDNSHostnameCountForTesting([completionHandlerCopy = WTF::move(completionHandlerCopy)](uint64_t result) {
-        completionHandlerCopy(result);
-    });
-}
-
 - (void)_installMockParentalControlsURLFilterForTestingWithBlockedURLs:(NSArray<NSURL *> *)blockedURLs completionHandler:(void(^)(void))completionHandler
 {
 #if HAVE(WEBCONTENTRESTRICTIONS)

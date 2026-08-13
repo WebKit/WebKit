@@ -2160,15 +2160,6 @@ void NetworkSessionCocoa::applyProxyConfigurationToSessionConfiguration(NSURLSes
 }
 #endif // HAVE(NW_PROXY_CONFIG)
 
-bool NetworkSessionCocoa::canPrefetchDNS() const
-{
-#if HAVE(NW_PROXY_CONFIG)
-    if (!m_nwProxyConfigs.isEmpty())
-        return false;
-#endif
-    return true;
-}
-
 #if USE(APPLE_INTERNAL_SDK)
 
 #if ENABLE(APP_PRIVACY_REPORT) && HAVE(SYMPTOMS_FRAMEWORK)

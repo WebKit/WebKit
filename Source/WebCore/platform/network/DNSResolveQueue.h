@@ -58,14 +58,11 @@ public:
         --m_requestsInFlight;
     }
 
-    uint64_t prefetchedHostnameCountForTesting() const { return m_prefetchedHostnameCountForTesting; }
-
 protected:
     DNSResolveQueue();
     bool isUsingProxy();
 
     bool m_isUsingProxy { true };
-    uint64_t m_prefetchedHostnameCountForTesting { 0 };
 
 private:
     virtual void updateIsUsingProxy() = 0;
