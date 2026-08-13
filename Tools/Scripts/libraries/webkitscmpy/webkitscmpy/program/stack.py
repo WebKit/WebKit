@@ -20,12 +20,17 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import os
+import re
 import sys
 
+from collections import namedtuple
 from .command import Command
 
-from webkitcorepy import run
+from webkitcorepy import run, Version
 from webkitscmpy import local, log
+
+Rebase = namedtuple('Rebase', ('branch', 'onto', 'base', 'update_refs'))
 
 
 class Stack(Command):
@@ -33,10 +38,16 @@ class Stack(Command):
     help = 'Manage a stack of dependent development branches'
 
     PARENT_KEY = 'stack-parent'
+    BASE_KEY = 'stack-base'
     HEADER = 'Stacked pull requests, bottom of the stack first:'
+    UPDATE_REFS_VERSION = Version(2, 38)
 
     @classmethod
     def parser(cls, parser, loggers=None):
+        parser.add_argument(
+            '--rebase', dest='rebase', action='store_true', default=False,
+            help='Rebase every branch in the stack onto the branch beneath it',
+        )
         parser.add_argument(
             '--on', '--stacked-on',
             dest='parent', type=str, default=None,
@@ -49,12 +60,29 @@ class Stack(Command):
         )
         parser.add_argument(
             '--remote', dest='remote', type=str, default=None,
-            help="Look for the stack's pull requests on the provided remote",
+            help='Rebase the bottom of the stack on the production branch of the provided remote',
         )
 
     @classmethod
-    def _key_for(cls, branch):
-        return f'branch.{branch}.{cls.PARENT_KEY}'
+    def _key_for(cls, branch, key=None):
+        return f'branch.{branch}.{key or cls.PARENT_KEY}'
+
+    @classmethod
+    def _base(cls, git, branch):
+        """The parent's tip as of the last time 'branch' was known to sit on top of it."""
+        return git.config().get(cls._key_for(branch, cls.BASE_KEY)) or None
+
+    @classmethod
+    def _set_base(cls, git, branch, parent):
+        if not (tip := git.commit(branch=parent, include_log=False, include_identifier=False)):
+            sys.stderr.write(f"Failed to resolve the tip of '{parent}'\n")
+            return 1
+        command = [git.executable(), 'config', cls._key_for(branch, cls.BASE_KEY), tip.hash]
+        if run(command, cwd=git.root_path, capture_output=True).returncode:
+            sys.stderr.write(f"Failed to record where '{branch}' sits on '{parent}'\n")
+            return 1
+        git.config(cached=False)
+        return 0
 
     @classmethod
     def _parent(cls, git, branch):
@@ -72,23 +100,20 @@ class Stack(Command):
 
     @classmethod
     def _set_parent(cls, git, branch, parent):
-        if run(
-            [git.executable(), 'config', cls._key_for(branch), parent],
-            cwd=git.root_path, capture_output=True,
-        ).returncode:
+        command = [git.executable(), 'config', cls._key_for(branch), parent]
+        if run(command, cwd=git.root_path, capture_output=True).returncode:
             sys.stderr.write(f"Failed to record that '{branch}' is stacked on '{parent}'\n")
             return 1
         git.config(cached=False)
-        return 0
+        return cls._set_base(git, branch, parent)
 
     @classmethod
     def _unset_parent(cls, git, branch):
-        if run(
-            [git.executable(), 'config', '--unset', cls._key_for(branch)],
-            cwd=git.root_path, capture_output=True,
-        ).returncode:
-            sys.stderr.write(f"Failed to forget which branch '{branch}' is stacked on\n")
-            return 1
+        for key in (cls.PARENT_KEY, cls.BASE_KEY):
+            command = [git.executable(), 'config', '--unset', cls._key_for(branch, key)]
+            if run(command, cwd=git.root_path, capture_output=True).returncode and key == cls.PARENT_KEY:
+                sys.stderr.write(f"Failed to forget which branch '{branch}' is stacked on\n")
+                return 1
         git.config(cached=False)
         return 0
 
@@ -149,7 +174,7 @@ class Stack(Command):
         return result
 
     @classmethod
-    def _members(cls, git, branch):
+    def members(cls, git, branch):
         if (below := cls._ancestors(git, branch)) is None:
             return None
         root = below[0] if below else branch
@@ -170,7 +195,7 @@ class Stack(Command):
 
     @classmethod
     def _describe(cls, git, branch, remote_repo=None):
-        if (members := cls._members(git, branch)) is None:
+        if (members := cls.members(git, branch)) is None:
             return None
         if len(members) < 2:
             return []
@@ -195,6 +220,99 @@ class Stack(Command):
             described = f" ({', '.join(annotations)})" if annotations else ''
             lines.append(f"{'    ' * depth[member]}- {number}{member}{described}")
         return lines
+
+    @classmethod
+    def _supports_update_refs(cls, git):
+        """git rebase --update-ref is available in 2.38."""
+        result = run([git.executable(), '--version'], cwd=git.root_path, capture_output=True, encoding='utf-8')
+        if result.returncode or not (match := re.search(r'(\d+)\.(\d+)(?:\.(\d+))?', result.stdout)):
+            return False
+        return Version(*[int(group) for group in match.groups(default='0')]) >= cls.UPDATE_REFS_VERSION
+
+    @classmethod
+    def _is_contiguous(cls, git, branch, parent):
+        """Whether 'branch' still descends from its parent's tip, so both can replay in one rebase."""
+        tip = git.commit(branch=parent, include_log=False, include_identifier=False)
+        return bool(tip) and cls._base(git, branch) == tip.hash
+
+    @classmethod
+    def _rebase_plan(cls, git, members, trunk, branch_point) -> list[Rebase]:
+        """One rebase per run of branches that can replay together, bottom of the stack first."""
+        def rebase_for(member, parent):
+            if member == members[0]:
+                return Rebase(member, trunk, branch_point.hash, False)
+            return Rebase(member, parent, cls._base(git, member) or parent, False)
+
+        result = []
+        update_refs = cls._supports_update_refs(git)
+
+        for member in members:
+            parent = cls._parent(git, member)
+            is_first_child = result and result[-1].branch == parent
+
+            if update_refs and is_first_child and cls._is_contiguous(git, member, parent):
+                result[-1] = result[-1]._replace(branch=member, update_refs=True)
+            else:
+                result.append(rebase_for(member, parent))
+        return result
+
+    @classmethod
+    def rebase(cls, git, remote=None, prune=None):
+        # CHECKS
+        if not (branch := git.branch):
+            sys.stderr.write('HEAD is not on a branch, so there is no stack to rebase\n')
+            if any(os.path.isdir(os.path.join(git.git_directory, candidate)) for candidate in ('rebase-merge', 'rebase-apply')):
+                sys.stderr.write("Finish the rebase in progress with 'git rebase --continue' or 'git rebase --abort'\n")
+            return 1
+
+        if (members := cls.members(git, branch)) is None:
+            return 1
+
+        remote = remote or git.default_remote
+        root = members[0]
+        if not (branch_point := git.branch_point(ref=root)):
+            sys.stderr.write(f"Failed to determine where '{root}' diverged from a production branch\n")
+            return 1
+
+        if git.branch != branch_point.branch and not git.is_worktree and git.fetch(
+            branch=branch_point.branch, remote=remote, prune=prune,
+        ):
+            sys.stderr.write(f"Failed to fetch '{branch_point.branch}' from '{remote}'\n")
+            return 1
+
+        # REBASE
+        trunk = f'remotes/{remote}/{branch_point.branch}'
+        plan = cls._rebase_plan(git, members, trunk, branch_point)
+        for step in plan:
+            if cls._rebase_onto(git, step):
+                return 1
+
+        for member in members[1:]:
+            if cls._set_base(git, member, cls._parent(git, member)):
+                return 1
+
+        # CLEANUP
+        command = [git.executable(), 'checkout', branch]
+        if plan[-1].branch != branch and run(command, cwd=git.root_path, capture_output=True).returncode:
+            sys.stderr.write(f"Failed to return to '{branch}'\n")
+            return 1
+        return 0
+
+    @classmethod
+    def _rebase_onto(cls, git, step):
+        log.info(f"Rebasing '{step.branch}' on '{step.onto}'...")
+        command = [git.executable(), 'rebase', '--onto', step.onto, step.base, step.branch, '--autostash']
+        if step.update_refs:
+            command.append('--update-refs')
+
+        if run(command, cwd=git.root_path).returncode:
+            sys.stderr.write(f"Failed to rebase '{step.branch}' on '{step.onto},' please resolve conflicts\n")
+            sys.stderr.write(
+                f"Then run 'git rebase --continue' followed by "
+                f"'{os.path.basename(sys.argv[0])} stack --rebase' to replay the rest of the stack\n"
+            )
+            return 1
+        return 0
 
     @classmethod
     def main(cls, args, repository, **kwargs):
@@ -231,6 +349,9 @@ class Stack(Command):
                 return 1
             print(f"'{branch}' is no longer stacked on another branch")
             return 0
+
+        if args.rebase and (result := cls.rebase(git, remote=args.remote)):
+            return result
 
         remote_repo = git.remote(name=args.remote or git.default_remote)
         if (lines := cls._describe(git, branch, remote_repo=remote_repo)) is None:

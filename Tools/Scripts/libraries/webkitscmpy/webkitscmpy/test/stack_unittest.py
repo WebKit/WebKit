@@ -20,6 +20,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import logging
 import os
 from unittest.mock import patch
 
@@ -71,6 +72,13 @@ class TestStack(testing.PathTestCase):
         repo.head = repo.commits['eng/child'][-1]
         return repo
 
+    @classmethod
+    def record_into(cls, recorded):
+        def capture(git, step):
+            recorded.append(step)
+            return 0
+        return capture
+
     def test_set_parent(self):
         with OutputCapture() as captured, mocks.local.Git(self.path) as repo, mocks.local.Svn(), \
                 patch('webkitbugspy.Tracker._trackers', []), MockTime:
@@ -78,9 +86,12 @@ class TestStack(testing.PathTestCase):
             self.assertEqual(0, program.main(args=('stack', '--on', 'eng/parent'), path=self.path))
             # Recording the same parent again is not an error
             self.assertEqual(0, program.main(args=('stack', '--on', 'eng/parent'), path=self.path))
+
+            config = local.Git(self.path).config()
+            self.assertEqual(config.get('branch.eng/child.stack-parent'), 'eng/parent')
             self.assertEqual(
-                local.Git(self.path).config().get('branch.eng/child.stack-parent'),
-                'eng/parent',
+                config.get('branch.eng/child.stack-base'),
+                repo.commits['eng/parent'][-1].hash,
             )
 
         self.assertEqual(captured.stderr.getvalue(), '')
@@ -222,7 +233,10 @@ class TestStack(testing.PathTestCase):
             self.add_stack(repo)
             self.assertEqual(0, program.main(args=('stack', '--on', 'eng/parent'), path=self.path))
             self.assertEqual(0, program.main(args=('stack', '--unstack'), path=self.path))
-            self.assertIsNone(local.Git(self.path).config().get('branch.eng/child.stack-parent'))
+
+            config = local.Git(self.path).config()
+            self.assertIsNone(config.get('branch.eng/child.stack-parent'))
+            self.assertIsNone(config.get('branch.eng/child.stack-base'))
 
         self.assertEqual(captured.stderr.getvalue(), '')
         self.assertEqual(
@@ -334,3 +348,181 @@ class TestStack(testing.PathTestCase):
             self.assertEqual(1, program.main(args=('stack',), path=self.path))
 
         self.assertIn('is part of a cycle of stacked branches\n', captured.stderr.getvalue())
+
+    def test_rebase(self):
+        with OutputCapture(level=logging.INFO) as captured, mocks.local.Git(self.path) as repo, mocks.local.Svn(), \
+                patch('webkitbugspy.Tracker._trackers', []), MockTime:
+            self.add_stack(repo)
+            self.assertEqual(0, program.main(args=('stack', '--on', 'eng/parent'), path=self.path))
+
+            landed = Commit(
+                hash='c37b6b6ba1c99f2b4c6b53c1e1a1e0c9f3f2bd3d',
+                branch='main',
+                author=CONTRIBUTOR,
+                identifier='6@main',
+                timestamp=1601670000,
+                message='[Testing] Landed on main\n',
+            )
+            repo.commits['main'].append(landed)
+            repo.remotes['origin/main'] = repo.commits['main'][:]
+
+            repo.head = repo.commits['eng/parent'][-1]
+            self.assertEqual(0, program.main(args=('stack', '--rebase', '-v'), path=self.path))
+            self.assertEqual(repo.commits['eng/parent'][0].hash, landed.hash)
+            self.assertEqual(repo.commits['eng/child'][0].hash, repo.commits['eng/parent'][-1].hash)
+
+            # The run ends on top of the stack, so the cascade has to come back
+            self.assertEqual(repo.head.branch, 'eng/parent')
+
+        self.assertEqual(captured.stderr.getvalue(), '')
+        self.assertEqual(
+            [line for line in captured.root.log.getvalue().splitlines() if 'Mock process' not in line],
+            ["Rebasing 'eng/child' on 'remotes/origin/main'..."],
+        )
+
+    def test_rebase_falls_back_when_git_cannot_update_refs(self):
+        recorded = []
+
+        with OutputCapture(level=logging.INFO), mocks.local.Git(self.path, git_version='2.37.0') as repo, \
+                mocks.local.Svn(), patch('webkitbugspy.Tracker._trackers', []), MockTime:
+            self.add_stack(repo)
+            self.assertEqual(0, program.main(args=('stack', '--on', 'eng/parent'), path=self.path))
+
+            with patch.object(program.Stack, '_rebase_onto', self.record_into(recorded)):
+                self.assertEqual(0, program.Stack.rebase(local.Git(self.path)))
+
+        # Without '--update-refs' every branch has to be replayed on its own
+        self.assertEqual(
+            [(branch, update_refs) for branch, _, _, update_refs in recorded],
+            [('eng/parent', False), ('eng/child', False)],
+        )
+
+    def test_rebase_records_missing_base(self):
+        with OutputCapture(level=logging.INFO), mocks.local.Git(self.path) as repo, mocks.local.Svn(), \
+                patch('webkitbugspy.Tracker._trackers', []), MockTime:
+            self.add_stack(repo)
+            self.assertEqual(0, program.main(args=('stack', '--on', 'eng/parent'), path=self.path))
+
+            # A stack recorded before stack-base existed, or one whose base was hand-removed
+            repo.edit_config('branch.eng/child.stack-base', None)
+            self.assertIsNone(local.Git(self.path).config().get('branch.eng/child.stack-base'))
+
+            self.assertEqual(0, program.main(args=('stack', '--rebase'), path=self.path))
+
+            self.assertEqual(
+                local.Git(self.path).config().get('branch.eng/child.stack-base'),
+                repo.commits['eng/parent'][-1].hash,
+            )
+
+    def test_rebase_uses_recorded_base(self):
+        recorded = []
+
+        with OutputCapture(level=logging.INFO), mocks.local.Git(self.path) as repo, mocks.local.Svn(), \
+                patch('webkitbugspy.Tracker._trackers', []), MockTime:
+            self.add_stack(repo)
+            self.assertEqual(0, program.main(args=('stack', '--on', 'eng/parent'), path=self.path))
+            base = local.Git(self.path).config().get('branch.eng/child.stack-base')
+
+            # Amending the parent rewrites its tip, so the child no longer descends from it
+            repo.commits['eng/parent'][-1] = Commit(
+                hash='9a1c0e5f4b7d2a8e3c6b1f0d9e8a7c5b4d3e2f10',
+                branch='eng/parent',
+                author=CONTRIBUTOR,
+                identifier='5.1@eng/parent',
+                timestamp=1601668500,
+                message='[Testing] Parent change, amended\n',
+            )
+
+            with patch.object(program.Stack, '_rebase_onto', self.record_into(recorded)):
+                self.assertEqual(0, program.Stack.rebase(local.Git(self.path)))
+
+            # The child replays from the parent's tip as of the last cascade rather than being swept
+            # into the parent's rebase, which is what lets an amended parent be recovered from
+            self.assertEqual(recorded[-1], ('eng/child', 'eng/parent', base, False))
+
+    def test_rebase_branches_from_the_fork_point(self):
+        recorded = []
+
+        with OutputCapture(level=logging.INFO), mocks.local.Git(self.path) as repo, mocks.local.Svn(), \
+                patch('webkitbugspy.Tracker._trackers', []), MockTime:
+            self.add_stack(repo)
+            self.assertEqual(0, program.main(args=('stack', '--on', 'eng/parent'), path=self.path))
+            repo.commits['eng/sibling'] = [
+                repo.commits['eng/parent'][-1],
+                Commit(
+                    hash='2f0c1cbb7e5b6f2a3ba0a4c1e0f79c1c7d4a3b12',
+                    branch='eng/sibling',
+                    author=CONTRIBUTOR,
+                    identifier='5.2@eng/sibling',
+                    timestamp=1601669500,
+                    message='[Testing] Sibling change\n',
+                ),
+            ]
+            repo.head = repo.commits['eng/sibling'][-1]
+            self.assertEqual(0, program.main(args=('stack', '--on', 'eng/parent'), path=self.path))
+            fork = local.Git(self.path).config().get('branch.eng/sibling.stack-base')
+
+            repo.commits['eng/nephew'] = [
+                repo.commits['eng/sibling'][-1],
+                Commit(
+                    hash='7d1e4a9c0b5f3e8a2d6c4b1f9e0a8c7b5d3f2e14',
+                    branch='eng/nephew',
+                    author=CONTRIBUTOR,
+                    identifier='5.3@eng/nephew',
+                    timestamp=1601669800,
+                    message='[Testing] Nephew change\n',
+                ),
+            ]
+            repo.head = repo.commits['eng/nephew'][-1]
+            self.assertEqual(0, program.main(args=('stack', '--on', 'eng/sibling'), path=self.path))
+
+            repo.head = repo.commits['eng/child'][-1]
+            with patch.object(program.Stack, '_rebase_onto', self.record_into(recorded)):
+                self.assertEqual(0, program.Stack.rebase(local.Git(self.path)))
+
+            # The first leaf carries the shared parent with it, so the second subtree replays from
+            # where it forked rather than sweeping the parent in a second time, and then batches
+            self.assertEqual(recorded, [
+                ('eng/child', 'remotes/origin/main', repo.commits['main'][-1].hash, True),
+                ('eng/nephew', 'eng/parent', fork, True),
+            ])
+
+            repo.remotes['origin/main'] = repo.commits['main'][:]
+            self.assertEqual(0, program.Stack.rebase(local.Git(self.path)))
+
+            # The cascade ends on top of the last run, so it has to come back
+            self.assertEqual(repo.head.branch, 'eng/child')
+
+    def test_rebase_refuses_detached_head(self):
+        with OutputCapture() as captured, mocks.local.Git(self.path, detached=True) as repo, mocks.local.Svn(), \
+                patch('webkitbugspy.Tracker._trackers', []), MockTime:
+            self.add_stack(repo)
+            self.assertEqual(1, program.main(args=('stack', '--rebase'), path=self.path))
+
+        self.assertEqual(
+            captured.stderr.getvalue(),
+            'HEAD is not on a branch, so there is no stack to rebase\n',
+        )
+
+    def test_pull_cascades_stack(self):
+        with OutputCapture(level=logging.INFO) as captured, mocks.local.Git(self.path) as repo, mocks.local.Svn(), \
+                patch('webkitbugspy.Tracker._trackers', []), MockTime:
+            self.add_stack(repo)
+            self.assertEqual(0, program.main(args=('stack', '--on', 'eng/parent'), path=self.path))
+            self.assertEqual(0, program.main(args=('pull', '-v'), path=self.path))
+
+        self.assertEqual(captured.stderr.getvalue(), '')
+        self.assertEqual(
+            [line for line in captured.root.log.getvalue().splitlines() if 'Mock process' not in line],
+            ["Rebasing 'eng/child' on 'remotes/origin/main'..."],
+        )
+
+    def test_pull_unstacked_branch_unchanged(self):
+        with OutputCapture(level=logging.INFO) as captured, mocks.local.Git(self.path) as repo, mocks.local.Svn(), \
+                patch('webkitbugspy.Tracker._trackers', []), MockTime:
+            self.add_parent(repo)
+            repo.head = repo.commits['eng/parent'][-1]
+            self.assertEqual(0, program.main(args=('pull', '-v'), path=self.path))
+
+        self.assertEqual(captured.stderr.getvalue(), '')
+        self.assertNotIn('Rebasing', captured.root.log.getvalue())
