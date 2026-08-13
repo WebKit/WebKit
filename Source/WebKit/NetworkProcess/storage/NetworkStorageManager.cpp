@@ -2401,11 +2401,14 @@ void NetworkStorageManager::cacheStorageOpenCache(IPC::Connection& connection, c
     protect(originStorageManager(origin, ShouldWriteOriginFile::Yes, ShouldUpdateOriginAccessTime::Yes)->cacheStorageManager(*m_cacheStorageRegistry, origin, m_queue.copyRef()))->openCache(cacheName, WTF::move(callback));
 }
 
-void NetworkStorageManager::cacheStorageRemoveCache(WebCore::DOMCacheIdentifier cacheIdentifier, WebCore::DOMCacheEngine::RemoveCacheIdentifierCallback&& callback)
+void NetworkStorageManager::cacheStorageRemoveCache(IPC::Connection& connection, WebCore::DOMCacheIdentifier cacheIdentifier, WebCore::DOMCacheEngine::RemoveCacheIdentifierCallback&& callback)
 {
     RefPtr cache = m_cacheStorageRegistry->cache(cacheIdentifier);
     if (!cache)
         return callback(makeUnexpected(WebCore::DOMCacheEngine::Error::Internal));
+
+    auto origin = cache->origin();
+    MESSAGE_CHECK_COMPLETION(origin && isSiteAllowedForConnection(connection.uniqueID(), WebCore::RegistrableDomain { origin->topOrigin }), connection, callback(makeUnexpected(WebCore::DOMCacheEngine::Error::Internal)));
 
     RefPtr cacheStorageManager = cache->manager();
     if (!cacheStorageManager)
@@ -2427,6 +2430,9 @@ void NetworkStorageManager::cacheStorageReference(IPC::Connection& connection, W
     if (!cache)
         return;
 
+    auto origin = cache->origin();
+    MESSAGE_CHECK(origin && isSiteAllowedForConnection(connection.uniqueID(), WebCore::RegistrableDomain { origin->topOrigin }), connection);
+
     RefPtr cacheStorageManager = cache->manager();
     if (!cacheStorageManager)
         return;
@@ -2439,6 +2445,9 @@ void NetworkStorageManager::cacheStorageDereference(IPC::Connection& connection,
     RefPtr cache = m_cacheStorageRegistry->cache(cacheIdentifier);
     if (!cache)
         return;
+
+    auto origin = cache->origin();
+    MESSAGE_CHECK(origin && isSiteAllowedForConnection(connection.uniqueID(), WebCore::RegistrableDomain { origin->topOrigin }), connection);
 
     RefPtr cacheStorageManager = cache->manager();
     if (!cacheStorageManager)
@@ -2462,20 +2471,26 @@ void NetworkStorageManager::unlockCacheStorage(IPC::Connection& connection, cons
         cacheStorageManager->unlockStorage(connection.uniqueID());
 }
 
-void NetworkStorageManager::cacheStorageRetrieveRecords(WebCore::DOMCacheIdentifier cacheIdentifier, WebCore::RetrieveRecordsOptions&& options, WebCore::DOMCacheEngine::CrossThreadRecordsCallback&& callback)
+void NetworkStorageManager::cacheStorageRetrieveRecords(IPC::Connection& connection, WebCore::DOMCacheIdentifier cacheIdentifier, WebCore::RetrieveRecordsOptions&& options, WebCore::DOMCacheEngine::CrossThreadRecordsCallback&& callback)
 {
     RefPtr cache = m_cacheStorageRegistry->cache(cacheIdentifier);
     if (!cache)
         return callback(makeUnexpected(WebCore::DOMCacheEngine::Error::Internal));
+
+    auto origin = cache->origin();
+    MESSAGE_CHECK_COMPLETION(origin && isSiteAllowedForConnection(connection.uniqueID(), WebCore::RegistrableDomain { origin->topOrigin }), connection, callback(makeUnexpected(WebCore::DOMCacheEngine::Error::Internal)));
 
     cache->retrieveRecords(WTF::move(options), WTF::move(callback));
 }
 
-void NetworkStorageManager::cacheStorageRemoveRecords(WebCore::DOMCacheIdentifier cacheIdentifier, WebCore::ResourceRequest&& request, WebCore::CacheQueryOptions&& options, WebCore::DOMCacheEngine::RecordIdentifiersCallback&& callback)
+void NetworkStorageManager::cacheStorageRemoveRecords(IPC::Connection& connection, WebCore::DOMCacheIdentifier cacheIdentifier, WebCore::ResourceRequest&& request, WebCore::CacheQueryOptions&& options, WebCore::DOMCacheEngine::RecordIdentifiersCallback&& callback)
 {
     RefPtr cache = m_cacheStorageRegistry->cache(cacheIdentifier);
     if (!cache)
         return callback(makeUnexpected(WebCore::DOMCacheEngine::Error::Internal));
+
+    auto origin = cache->origin();
+    MESSAGE_CHECK_COMPLETION(origin && isSiteAllowedForConnection(connection.uniqueID(), WebCore::RegistrableDomain { origin->topOrigin }), connection, callback(makeUnexpected(WebCore::DOMCacheEngine::Error::Internal)));
 
     cache->removeRecords(WTF::move(request), WTF::move(options), WTF::move(callback));
 }
@@ -2485,6 +2500,9 @@ void NetworkStorageManager::cacheStoragePutRecords(IPC::Connection& connection, 
     RefPtr cache = m_cacheStorageRegistry->cache(cacheIdentifier);
     if (!cache)
         return callback(makeUnexpected(WebCore::DOMCacheEngine::Error::Internal));
+
+    auto origin = cache->origin();
+    MESSAGE_CHECK_COMPLETION(origin && isSiteAllowedForConnection(connection.uniqueID(), WebCore::RegistrableDomain { origin->topOrigin }), connection, callback(makeUnexpected(WebCore::DOMCacheEngine::Error::Internal)));
 
     for (auto& record : records)
         MESSAGE_CHECK_COMPLETION(record.responseBodySize >= CacheStorageDiskStore::computeRealBodySizeForStorage(record.responseBody), connection, callback(makeUnexpected(WebCore::DOMCacheEngine::Error::Internal)));
