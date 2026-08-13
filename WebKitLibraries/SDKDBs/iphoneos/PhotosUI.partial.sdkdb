@@ -11,7 +11,7 @@
      ],
      "interface": "PHPhotoLibrary",
      "introduced": "14",
-     "name": "PhotosUISupport"
+     "name": "PhotosUISupport_LimitedLibraryPicker"
     }
    ],
    "enums": [
@@ -71,11 +71,30 @@
     {
      "access": "public",
      "constants": [
+      {"access": "public", "name": "PHPickerMetadataOptionsNone"},
+      {"access": "public", "name": "PHPickerMetadataOptionsRemoveLocation"},
+      {"access": "public", "name": "PHPickerMetadataOptionsRemoveCaptions"}
+     ],
+     "introduced": "27",
+     "name": "PHPickerMetadataOptions"
+    },
+    {
+     "access": "public",
+     "constants": [
       {"access": "public", "introduced": "17", "name": "PHPickerModeDefault"},
       {"access": "public", "introduced": "17", "name": "PHPickerModeCompact"}
      ],
      "introduced": "17",
      "name": "PHPickerMode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "27", "name": "PHSharedAlbumCreationSharingPolicyPrivate"},
+      {"access": "public", "introduced": "27", "name": "PHSharedAlbumCreationSharingPolicyPublic"}
+     ],
+     "introduced": "27",
+     "name": "PHSharedAlbumCreationSharingPolicy"
     }
    ],
    "interfaces": [
@@ -117,7 +136,9 @@
       {"access": "public", "getter": "preselectedAssetIdentifiers", "introduced": "15", "name": "preselectedAssetIdentifiers", "setter": "setPreselectedAssetIdentifiers:"},
       {"access": "public", "getter": "mode", "introduced": "17", "name": "mode", "setter": "setMode:"},
       {"access": "public", "getter": "edgesWithoutContentMargins", "introduced": "17", "name": "edgesWithoutContentMargins", "setter": "setEdgesWithoutContentMargins:"},
-      {"access": "public", "getter": "disabledCapabilities", "introduced": "17", "name": "disabledCapabilities", "setter": "setDisabledCapabilities:"}
+      {"access": "public", "getter": "disabledCapabilities", "introduced": "17", "name": "disabledCapabilities", "setter": "setDisabledCapabilities:"},
+      {"access": "public", "getter": "metadataOptions", "introduced": "27", "name": "metadataOptions", "setter": "setMetadataOptions:"},
+      {"access": "public", "getter": "searchText", "introduced": "27", "name": "searchText", "setter": "setSearchText:"}
      ],
      "protocols": [
       "NSCopying"
@@ -130,8 +151,7 @@
       {"access": "public", "introduced": "15", "name": "playbackStyleFilter:"},
       {"access": "public", "introduced": "14", "name": "anyFilterMatchingSubfilters:"},
       {"access": "public", "introduced": "15", "name": "allFilterMatchingSubfilters:"},
-      {"access": "public", "introduced": "15", "name": "notFilterOfSubfilter:"},
-      {"access": "public", "introduced": "14", "name": "new", "unavailable": true}
+      {"access": "public", "introduced": "15", "name": "notFilterOfSubfilter:"}
      ],
      "instanceMethods": [
       {"access": "public", "introduced": "14", "name": "init", "unavailable": true}
@@ -160,9 +180,6 @@
     },
     {
      "access": "public",
-     "classMethods": [
-      {"access": "public", "introduced": "14", "name": "new", "unavailable": true}
-     ],
      "instanceMethods": [
       {"access": "public", "introduced": "14", "name": "init", "unavailable": true}
      ],
@@ -177,12 +194,27 @@
     },
     {
      "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "27", "name": "initWithString:"},
+      {"access": "public", "introduced": "14", "name": "init", "unavailable": true}
+     ],
+     "introduced": "27",
+     "linkage": "exported",
+     "name": "PHPickerSearchText",
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
      "introduced": "17",
      "linkage": "exported",
      "name": "PHPickerUpdateConfiguration",
      "properties": [
       {"access": "public", "getter": "selectionLimit", "introduced": "17", "name": "selectionLimit", "setter": "setSelectionLimit:"},
-      {"access": "public", "getter": "edgesWithoutContentMargins", "introduced": "17", "name": "edgesWithoutContentMargins", "setter": "setEdgesWithoutContentMargins:"}
+      {"access": "public", "getter": "edgesWithoutContentMargins", "introduced": "17", "name": "edgesWithoutContentMargins", "setter": "setEdgesWithoutContentMargins:"},
+      {"access": "public", "getter": "searchText", "introduced": "27", "name": "searchText", "setter": "setSearchText:"}
      ],
      "protocols": [
       "NSCopying"
@@ -191,9 +223,6 @@
     },
     {
      "access": "public",
-     "classMethods": [
-      {"access": "public", "introduced": "14", "name": "new", "unavailable": true}
-     ],
      "instanceMethods": [
       {"access": "public", "introduced": "14", "name": "initWithConfiguration:"},
       {"access": "public", "introduced": "17", "name": "updatePickerUsingConfiguration:"},
@@ -212,6 +241,87 @@
      "properties": [
       {"access": "public", "attr": [ "readonly" ], "getter": "configuration", "introduced": "14", "name": "configuration"},
       {"access": "public", "getter": "delegate", "introduced": "14", "name": "delegate", "setter": "setDelegate:"}
+     ],
+     "super": "UIViewController"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "27", "name": "initWithPhotoLibrary:"},
+      {"access": "public", "introduced": "27", "name": "init", "unavailable": true}
+     ],
+     "introduced": "27",
+     "linkage": "exported",
+     "name": "PHSharedAlbumCreationConfiguration",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "photoLibrary", "introduced": "27", "name": "photoLibrary"},
+      {"access": "public", "getter": "defaultTitle", "introduced": "27", "name": "defaultTitle", "setter": "setDefaultTitle:"},
+      {"access": "public", "getter": "defaultPolicy", "introduced": "27", "name": "defaultPolicy", "setter": "setDefaultPolicy:"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "27", "name": "init", "unavailable": true}
+     ],
+     "introduced": "27",
+     "linkage": "exported",
+     "name": "PHSharedAlbumCreationResult",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "albumIdentifier", "introduced": "27", "name": "albumIdentifier"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "albumURL", "introduced": "27", "name": "albumURL"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "27", "name": "initWithConfiguration:"},
+      {"access": "public", "introduced": "27", "name": "init", "unavailable": true},
+      {"access": "public", "introduced": "27", "name": "initWithNibName:bundle:", "unavailable": true},
+      {"access": "public", "introduced": "27", "name": "initWithCoder:", "unavailable": true}
+     ],
+     "introduced": "27",
+     "linkage": "exported",
+     "name": "PHSharedAlbumCreationViewController",
+     "properties": [
+      {"access": "public", "getter": "delegate", "introduced": "27", "name": "delegate", "setter": "setDelegate:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "creationResult", "introduced": "27", "name": "creationResult"}
+     ],
+     "super": "UIViewController"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "27", "name": "initWithAlbumIdentifier:photoLibrary:"},
+      {"access": "public", "introduced": "27", "name": "init", "unavailable": true},
+      {"access": "public", "introduced": "27", "name": "initWithNibName:bundle:", "unavailable": true},
+      {"access": "public", "introduced": "27", "name": "initWithCoder:", "unavailable": true}
+     ],
+     "introduced": "27",
+     "linkage": "exported",
+     "name": "PHSharedAlbumCustomizationViewController",
+     "properties": [
+      {"access": "public", "getter": "delegate", "introduced": "27", "name": "delegate", "setter": "setDelegate:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "albumIdentifier", "introduced": "27", "name": "albumIdentifier"}
+     ],
+     "super": "UIViewController"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "27", "name": "initWithItems:defaultAlbumIdentifier:photoLibrary:"},
+      {"access": "public", "introduced": "27", "name": "init", "unavailable": true},
+      {"access": "public", "introduced": "27", "name": "initWithNibName:bundle:", "unavailable": true},
+      {"access": "public", "introduced": "27", "name": "initWithCoder:", "unavailable": true}
+     ],
+     "introduced": "27",
+     "linkage": "exported",
+     "name": "PHSharedAlbumPostingViewController",
+     "properties": [
+      {"access": "public", "getter": "delegate", "introduced": "27", "name": "delegate", "setter": "setDelegate:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "albumIdentifier", "introduced": "27", "name": "albumIdentifier"}
      ],
      "super": "UIViewController"
     }
@@ -258,9 +368,42 @@
      "protocols": [
       "NSObject"
      ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "27", "name": "sharedAlbumCreationViewController:didCompleteWithError:"}
+     ],
+     "introduced": "27",
+     "name": "PHSharedAlbumCreationViewControllerDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "27", "name": "sharedAlbumCustomizationViewController:didCompleteWithError:"}
+     ],
+     "introduced": "27",
+     "name": "PHSharedAlbumCustomizationViewControllerDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "27", "name": "sharedAlbumPostingViewController:didCompleteWithError:"}
+     ],
+     "introduced": "27",
+     "name": "PHSharedAlbumPostingViewControllerDelegate",
+     "protocols": [
+      "NSObject"
+     ]
     }
    ],
-   "target": "arm64e-apple-ios26.5",
+   "target": "arm64e-apple-ios27",
    "typedefs": [
     {"access": "public", "introduced": "8", "name": "PHAssetPlaybackStyle"},
     {"access": "public", "introduced": "9.1", "name": "PHLivePhotoBadgeOptions"},
@@ -268,7 +411,424 @@
     {"access": "public", "name": "PHPickerCapabilities"},
     {"access": "public", "name": "PHPickerConfigurationAssetRepresentationMode"},
     {"access": "public", "name": "PHPickerConfigurationSelection"},
-    {"access": "public", "name": "PHPickerMode"}
+    {"access": "public", "name": "PHPickerMetadataOptions"},
+    {"access": "public", "name": "PHPickerMode"},
+    {"access": "public", "introduced": "27", "name": "PHSharedAlbumCreationSharingPolicy"}
+   ]
+  },
+  {
+   "categories": [
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "14", "name": "presentLimitedLibraryPickerFromViewController:"},
+      {"access": "public", "introduced": "15", "name": "presentLimitedLibraryPickerFromViewController:completionHandler:"}
+     ],
+     "interface": "PHPhotoLibrary",
+     "introduced": "14",
+     "name": "PhotosUISupport_LimitedLibraryPicker"
+    }
+   ],
+   "enums": [
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "9.1", "name": "PHLivePhotoBadgeOptionsOverContent"},
+      {"access": "public", "introduced": "9.1", "name": "PHLivePhotoBadgeOptionsLiveOff"}
+     ],
+     "introduced": "9.1",
+     "name": "PHLivePhotoBadgeOptions"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "9.1", "name": "PHLivePhotoViewPlaybackStyleUndefined"},
+      {"access": "public", "introduced": "9.1", "name": "PHLivePhotoViewPlaybackStyleFull"},
+      {"access": "public", "introduced": "9.1", "name": "PHLivePhotoViewPlaybackStyleHint"}
+     ],
+     "introduced": "9.1",
+     "name": "PHLivePhotoViewPlaybackStyle"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "PHPickerCapabilitiesNone"},
+      {"access": "public", "name": "PHPickerCapabilitiesSearch"},
+      {"access": "public", "name": "PHPickerCapabilitiesStagingArea"},
+      {"access": "public", "name": "PHPickerCapabilitiesCollectionNavigation"},
+      {"access": "public", "name": "PHPickerCapabilitiesSelectionActions"},
+      {"access": "public", "name": "PHPickerCapabilitiesSensitivityAnalysisIntervention"}
+     ],
+     "introduced": "17",
+     "name": "PHPickerCapabilities"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "PHPickerConfigurationAssetRepresentationModeAutomatic"},
+      {"access": "public", "name": "PHPickerConfigurationAssetRepresentationModeCurrent"},
+      {"access": "public", "name": "PHPickerConfigurationAssetRepresentationModeCompatible"}
+     ],
+     "introduced": "14",
+     "name": "PHPickerConfigurationAssetRepresentationMode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "PHPickerConfigurationSelectionDefault"},
+      {"access": "public", "name": "PHPickerConfigurationSelectionOrdered"},
+      {"access": "public", "introduced": "17", "name": "PHPickerConfigurationSelectionContinuous"},
+      {"access": "public", "introduced": "17", "name": "PHPickerConfigurationSelectionContinuousAndOrdered"}
+     ],
+     "introduced": "15",
+     "name": "PHPickerConfigurationSelection"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "PHPickerMetadataOptionsNone"},
+      {"access": "public", "name": "PHPickerMetadataOptionsRemoveLocation"},
+      {"access": "public", "name": "PHPickerMetadataOptionsRemoveCaptions"}
+     ],
+     "introduced": "27",
+     "name": "PHPickerMetadataOptions"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "17", "name": "PHPickerModeDefault"},
+      {"access": "public", "introduced": "17", "name": "PHPickerModeCompact"}
+     ],
+     "introduced": "17",
+     "name": "PHPickerMode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "27", "name": "PHSharedAlbumCreationSharingPolicyPrivate"},
+      {"access": "public", "introduced": "27", "name": "PHSharedAlbumCreationSharingPolicyPublic"}
+     ],
+     "introduced": "27",
+     "name": "PHSharedAlbumCreationSharingPolicy"
+    }
+   ],
+   "interfaces": [
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "introduced": "9.1", "name": "livePhotoBadgeImageWithOptions:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "introduced": "9.1", "name": "startPlaybackWithStyle:"},
+      {"access": "public", "introduced": "9.1", "name": "stopPlayback"}
+     ],
+     "introduced": "9.1",
+     "linkage": "exported",
+     "name": "PHLivePhotoView",
+     "properties": [
+      {"access": "public", "getter": "delegate", "introduced": "9.1", "name": "delegate", "setter": "setDelegate:"},
+      {"access": "public", "getter": "livePhoto", "introduced": "9.1", "name": "livePhoto", "setter": "setLivePhoto:"},
+      {"access": "public", "getter": "contentsRect", "introduced": "17", "name": "contentsRect", "setter": "setContentsRect:"},
+      {"access": "public", "getter": "isMuted", "introduced": "9.1", "name": "muted", "setter": "setMuted:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "playbackGestureRecognizer", "introduced": "9.1", "name": "playbackGestureRecognizer"}
+     ],
+     "super": "UIView"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "14", "name": "initWithPhotoLibrary:"},
+      {"access": "public", "introduced": "14", "name": "init"}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "PHPickerConfiguration",
+     "properties": [
+      {"access": "public", "getter": "preferredAssetRepresentationMode", "introduced": "14", "name": "preferredAssetRepresentationMode", "setter": "setPreferredAssetRepresentationMode:"},
+      {"access": "public", "getter": "selection", "introduced": "15", "name": "selection", "setter": "setSelection:"},
+      {"access": "public", "getter": "selectionLimit", "introduced": "14", "name": "selectionLimit", "setter": "setSelectionLimit:"},
+      {"access": "public", "getter": "filter", "introduced": "14", "name": "filter", "setter": "setFilter:"},
+      {"access": "public", "getter": "preselectedAssetIdentifiers", "introduced": "15", "name": "preselectedAssetIdentifiers", "setter": "setPreselectedAssetIdentifiers:"},
+      {"access": "public", "getter": "mode", "introduced": "17", "name": "mode", "setter": "setMode:"},
+      {"access": "public", "getter": "edgesWithoutContentMargins", "introduced": "17", "name": "edgesWithoutContentMargins", "setter": "setEdgesWithoutContentMargins:"},
+      {"access": "public", "getter": "disabledCapabilities", "introduced": "17", "name": "disabledCapabilities", "setter": "setDisabledCapabilities:"},
+      {"access": "public", "getter": "metadataOptions", "introduced": "27", "name": "metadataOptions", "setter": "setMetadataOptions:"},
+      {"access": "public", "getter": "searchText", "introduced": "27", "name": "searchText", "setter": "setSearchText:"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "introduced": "15", "name": "playbackStyleFilter:"},
+      {"access": "public", "introduced": "14", "name": "anyFilterMatchingSubfilters:"},
+      {"access": "public", "introduced": "15", "name": "allFilterMatchingSubfilters:"},
+      {"access": "public", "introduced": "15", "name": "notFilterOfSubfilter:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "introduced": "14", "name": "init", "unavailable": true}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "PHPickerFilter",
+     "properties": [
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "imagesFilter", "introduced": "14", "name": "imagesFilter"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "videosFilter", "introduced": "14", "name": "videosFilter"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "livePhotosFilter", "introduced": "14", "name": "livePhotosFilter"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "depthEffectPhotosFilter", "introduced": "16", "name": "depthEffectPhotosFilter"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "burstsFilter", "introduced": "16", "name": "burstsFilter"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "panoramasFilter", "introduced": "15", "name": "panoramasFilter"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "screenshotsFilter", "introduced": "15", "name": "screenshotsFilter"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "screenRecordingsFilter", "introduced": "15", "name": "screenRecordingsFilter"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "cinematicVideosFilter", "introduced": "16", "name": "cinematicVideosFilter"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "slomoVideosFilter", "introduced": "15", "name": "slomoVideosFilter"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "timelapseVideosFilter", "introduced": "15", "name": "timelapseVideosFilter"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "spatialMediaFilter", "introduced": "18", "name": "spatialMediaFilter"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "14", "name": "init", "unavailable": true}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "PHPickerResult",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "itemProvider", "introduced": "14", "name": "itemProvider"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "assetIdentifier", "introduced": "14", "name": "assetIdentifier"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "27", "name": "initWithString:"},
+      {"access": "public", "introduced": "14", "name": "init", "unavailable": true}
+     ],
+     "introduced": "27",
+     "linkage": "exported",
+     "name": "PHPickerSearchText",
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "17",
+     "linkage": "exported",
+     "name": "PHPickerUpdateConfiguration",
+     "properties": [
+      {"access": "public", "getter": "selectionLimit", "introduced": "17", "name": "selectionLimit", "setter": "setSelectionLimit:"},
+      {"access": "public", "getter": "edgesWithoutContentMargins", "introduced": "17", "name": "edgesWithoutContentMargins", "setter": "setEdgesWithoutContentMargins:"},
+      {"access": "public", "getter": "searchText", "introduced": "27", "name": "searchText", "setter": "setSearchText:"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "14", "name": "initWithConfiguration:"},
+      {"access": "public", "introduced": "17", "name": "updatePickerUsingConfiguration:"},
+      {"access": "public", "introduced": "16", "name": "deselectAssetsWithIdentifiers:"},
+      {"access": "public", "introduced": "16", "name": "moveAssetWithIdentifier:afterAssetWithIdentifier:"},
+      {"access": "public", "introduced": "17", "name": "scrollToInitialPosition"},
+      {"access": "public", "introduced": "17", "name": "zoomIn"},
+      {"access": "public", "introduced": "17", "name": "zoomOut"},
+      {"access": "public", "introduced": "14", "name": "init", "unavailable": true},
+      {"access": "public", "introduced": "14", "name": "initWithNibName:bundle:", "unavailable": true},
+      {"access": "public", "introduced": "14", "name": "initWithCoder:", "unavailable": true}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "PHPickerViewController",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "configuration", "introduced": "14", "name": "configuration"},
+      {"access": "public", "getter": "delegate", "introduced": "14", "name": "delegate", "setter": "setDelegate:"}
+     ],
+     "super": "UIViewController"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "27", "name": "initWithPhotoLibrary:"},
+      {"access": "public", "introduced": "27", "name": "init", "unavailable": true}
+     ],
+     "introduced": "27",
+     "linkage": "exported",
+     "name": "PHSharedAlbumCreationConfiguration",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "photoLibrary", "introduced": "27", "name": "photoLibrary"},
+      {"access": "public", "getter": "defaultTitle", "introduced": "27", "name": "defaultTitle", "setter": "setDefaultTitle:"},
+      {"access": "public", "getter": "defaultPolicy", "introduced": "27", "name": "defaultPolicy", "setter": "setDefaultPolicy:"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "27", "name": "init", "unavailable": true}
+     ],
+     "introduced": "27",
+     "linkage": "exported",
+     "name": "PHSharedAlbumCreationResult",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "albumIdentifier", "introduced": "27", "name": "albumIdentifier"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "albumURL", "introduced": "27", "name": "albumURL"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "27", "name": "initWithConfiguration:"},
+      {"access": "public", "introduced": "27", "name": "init", "unavailable": true},
+      {"access": "public", "introduced": "27", "name": "initWithNibName:bundle:", "unavailable": true},
+      {"access": "public", "introduced": "27", "name": "initWithCoder:", "unavailable": true}
+     ],
+     "introduced": "27",
+     "linkage": "exported",
+     "name": "PHSharedAlbumCreationViewController",
+     "properties": [
+      {"access": "public", "getter": "delegate", "introduced": "27", "name": "delegate", "setter": "setDelegate:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "creationResult", "introduced": "27", "name": "creationResult"}
+     ],
+     "super": "UIViewController"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "27", "name": "initWithAlbumIdentifier:photoLibrary:"},
+      {"access": "public", "introduced": "27", "name": "init", "unavailable": true},
+      {"access": "public", "introduced": "27", "name": "initWithNibName:bundle:", "unavailable": true},
+      {"access": "public", "introduced": "27", "name": "initWithCoder:", "unavailable": true}
+     ],
+     "introduced": "27",
+     "linkage": "exported",
+     "name": "PHSharedAlbumCustomizationViewController",
+     "properties": [
+      {"access": "public", "getter": "delegate", "introduced": "27", "name": "delegate", "setter": "setDelegate:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "albumIdentifier", "introduced": "27", "name": "albumIdentifier"}
+     ],
+     "super": "UIViewController"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "27", "name": "initWithItems:defaultAlbumIdentifier:photoLibrary:"},
+      {"access": "public", "introduced": "27", "name": "init", "unavailable": true},
+      {"access": "public", "introduced": "27", "name": "initWithNibName:bundle:", "unavailable": true},
+      {"access": "public", "introduced": "27", "name": "initWithCoder:", "unavailable": true}
+     ],
+     "introduced": "27",
+     "linkage": "exported",
+     "name": "PHSharedAlbumPostingViewController",
+     "properties": [
+      {"access": "public", "getter": "delegate", "introduced": "27", "name": "delegate", "setter": "setDelegate:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "albumIdentifier", "introduced": "27", "name": "albumIdentifier"}
+     ],
+     "super": "UIViewController"
+    }
+   ],
+   "protocols": [
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "8", "name": "canHandleAdjustmentData:"},
+      {"access": "public", "introduced": "8", "name": "startContentEditingWithInput:placeholderImage:"},
+      {"access": "public", "introduced": "8", "name": "finishContentEditingWithCompletionHandler:"},
+      {"access": "public", "introduced": "8", "name": "cancelContentEditing"}
+     ],
+     "introduced": "8",
+     "name": "PHContentEditingController",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "shouldShowCancelConfirmation", "introduced": "8", "name": "shouldShowCancelConfirmation"}
+     ],
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "9.1", "name": "livePhotoView:canBeginPlaybackWithStyle:", "optional": true},
+      {"access": "public", "introduced": "9.1", "name": "livePhotoView:willBeginPlaybackWithStyle:", "optional": true},
+      {"access": "public", "introduced": "9.1", "name": "livePhotoView:didEndPlaybackWithStyle:", "optional": true},
+      {"access": "public", "introduced": "9.1", "name": "livePhotoView:extraMinimumTouchDurationForTouch:withStyle:", "optional": true}
+     ],
+     "introduced": "9.1",
+     "name": "PHLivePhotoViewDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "14", "name": "picker:didFinishPicking:"}
+     ],
+     "introduced": "14",
+     "name": "PHPickerViewControllerDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "27", "name": "sharedAlbumCreationViewController:didCompleteWithError:"}
+     ],
+     "introduced": "27",
+     "name": "PHSharedAlbumCreationViewControllerDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "27", "name": "sharedAlbumCustomizationViewController:didCompleteWithError:"}
+     ],
+     "introduced": "27",
+     "name": "PHSharedAlbumCustomizationViewControllerDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "27", "name": "sharedAlbumPostingViewController:didCompleteWithError:"}
+     ],
+     "introduced": "27",
+     "name": "PHSharedAlbumPostingViewControllerDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    }
+   ],
+   "target": "arm64e.x1-apple-ios27",
+   "typedefs": [
+    {"access": "public", "introduced": "8", "name": "PHAssetPlaybackStyle"},
+    {"access": "public", "introduced": "9.1", "name": "PHLivePhotoBadgeOptions"},
+    {"access": "public", "introduced": "9.1", "name": "PHLivePhotoViewPlaybackStyle"},
+    {"access": "public", "name": "PHPickerCapabilities"},
+    {"access": "public", "name": "PHPickerConfigurationAssetRepresentationMode"},
+    {"access": "public", "name": "PHPickerConfigurationSelection"},
+    {"access": "public", "name": "PHPickerMetadataOptions"},
+    {"access": "public", "name": "PHPickerMode"},
+    {"access": "public", "introduced": "27", "name": "PHSharedAlbumCreationSharingPolicy"}
    ]
   },
   {
@@ -338,11 +898,29 @@
     {"access": "public", "introduced": "14", "linkage": "exported", "name": "_$s8PhotosUI14PHPickerResultVN"},
     {"access": "public", "introduced": "14", "linkage": "exported", "name": "_$s8PhotosUI14PHPickerResultVSHAAMc"},
     {"access": "public", "introduced": "14", "linkage": "exported", "name": "_$s8PhotosUI14PHPickerResultVSQAAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s8PhotosUI18PHPickerSearchTextV2eeoiySbAC_ACtFZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s8PhotosUI18PHPickerSearchTextV4hash4intoys6HasherVz_tF"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s8PhotosUI18PHPickerSearchTextV9hashValueSivg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s8PhotosUI18PHPickerSearchTextV9hashValueSivpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s8PhotosUI18PHPickerSearchTextVMa"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s8PhotosUI18PHPickerSearchTextVMn"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s8PhotosUI18PHPickerSearchTextVN"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s8PhotosUI18PHPickerSearchTextVSHAAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s8PhotosUI18PHPickerSearchTextVSQAAMc"},
+    {"access": "public", "linkage": "exported", "name": "_$s8PhotosUI18PHPickerSearchTextVyACSScfC"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s8PhotosUI21PHPickerConfigurationV10searchTextAA0c6SearchF0VSgvM"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s8PhotosUI21PHPickerConfigurationV10searchTextAA0c6SearchF0VSgvg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s8PhotosUI21PHPickerConfigurationV10searchTextAA0c6SearchF0VSgvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s8PhotosUI21PHPickerConfigurationV10searchTextAA0c6SearchF0VSgvs"},
     {"access": "public", "introduced": "14", "linkage": "exported", "name": "_$s8PhotosUI21PHPickerConfigurationV12photoLibraryACSo07PHPhotoF0C_tcfC"},
     {"access": "public", "introduced": "14", "linkage": "exported", "name": "_$s8PhotosUI21PHPickerConfigurationV14selectionLimitSivM"},
     {"access": "public", "introduced": "14", "linkage": "exported", "name": "_$s8PhotosUI21PHPickerConfigurationV14selectionLimitSivg"},
     {"access": "public", "introduced": "14", "linkage": "exported", "name": "_$s8PhotosUI21PHPickerConfigurationV14selectionLimitSivpMV"},
     {"access": "public", "introduced": "14", "linkage": "exported", "name": "_$s8PhotosUI21PHPickerConfigurationV14selectionLimitSivs"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s8PhotosUI21PHPickerConfigurationV15metadataOptionsSo0c8MetadataF0VvM"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s8PhotosUI21PHPickerConfigurationV15metadataOptionsSo0c8MetadataF0Vvg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s8PhotosUI21PHPickerConfigurationV15metadataOptionsSo0c8MetadataF0VvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s8PhotosUI21PHPickerConfigurationV15metadataOptionsSo0c8MetadataF0Vvs"},
     {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$s8PhotosUI21PHPickerConfigurationV20disabledCapabilitiesSo0cF0VvM"},
     {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$s8PhotosUI21PHPickerConfigurationV20disabledCapabilitiesSo0cF0Vvg"},
     {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$s8PhotosUI21PHPickerConfigurationV20disabledCapabilitiesSo0cF0VvpMV"},
@@ -377,6 +955,10 @@
     {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$s8PhotosUI21PHPickerConfigurationV4modeAA0C4ModeVvg"},
     {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$s8PhotosUI21PHPickerConfigurationV4modeAA0C4ModeVvpMV"},
     {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$s8PhotosUI21PHPickerConfigurationV4modeAA0C4ModeVvs"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s8PhotosUI21PHPickerConfigurationV6UpdateV10searchTextAA0c6SearchG0VSgvM"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s8PhotosUI21PHPickerConfigurationV6UpdateV10searchTextAA0c6SearchG0VSgvg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s8PhotosUI21PHPickerConfigurationV6UpdateV10searchTextAA0c6SearchG0VSgvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s8PhotosUI21PHPickerConfigurationV6UpdateV10searchTextAA0c6SearchG0VSgvs"},
     {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$s8PhotosUI21PHPickerConfigurationV6UpdateV14selectionLimitSiSgvM"},
     {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$s8PhotosUI21PHPickerConfigurationV6UpdateV14selectionLimitSiSgvg"},
     {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$s8PhotosUI21PHPickerConfigurationV6UpdateV14selectionLimitSiSgvpMV"},
@@ -424,10 +1006,43 @@
     {"access": "public", "introduced": "14", "linkage": "exported", "name": "_$s8PhotosUI21PHPickerConfigurationVN"},
     {"access": "public", "introduced": "14", "linkage": "exported", "name": "_$s8PhotosUI21PHPickerConfigurationVSHAAMc"},
     {"access": "public", "introduced": "14", "linkage": "exported", "name": "_$s8PhotosUI21PHPickerConfigurationVSQAAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s8PhotosUI27PHSharedAlbumCreationResultV15albumIdentifierSSvg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s8PhotosUI27PHSharedAlbumCreationResultV15albumIdentifierSSvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s8PhotosUI27PHSharedAlbumCreationResultV2eeoiySbAC_ACtFZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s8PhotosUI27PHSharedAlbumCreationResultV4hash4intoys6HasherVz_tF"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s8PhotosUI27PHSharedAlbumCreationResultV8albumURL10Foundation0H0Vvg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s8PhotosUI27PHSharedAlbumCreationResultV8albumURL10Foundation0H0VvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s8PhotosUI27PHSharedAlbumCreationResultV9hashValueSivg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s8PhotosUI27PHSharedAlbumCreationResultV9hashValueSivpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s8PhotosUI27PHSharedAlbumCreationResultVMa"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s8PhotosUI27PHSharedAlbumCreationResultVMn"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s8PhotosUI27PHSharedAlbumCreationResultVN"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s8PhotosUI27PHSharedAlbumCreationResultVSHAAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s8PhotosUI27PHSharedAlbumCreationResultVSQAAMc"},
     {"access": "public", "introduced": "14", "linkage": "exported", "name": "_$s8PhotosUI30PHPickerViewControllerDelegateMp"},
     {"access": "public", "introduced": "14", "linkage": "exported", "name": "_$s8PhotosUI30PHPickerViewControllerDelegateP6picker_16didFinishPickingySo0cdE0C_SayAA0C6ResultVGtFTj"},
     {"access": "public", "introduced": "14", "linkage": "exported", "name": "_$s8PhotosUI30PHPickerViewControllerDelegateP6picker_16didFinishPickingySo0cdE0C_SayAA0C6ResultVGtFTq"},
     {"access": "public", "introduced": "14", "linkage": "exported", "name": "_$s8PhotosUI30PHPickerViewControllerDelegateTL"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s8PhotosUI34PHSharedAlbumCreationConfigurationV12defaultTitleSSSgvM"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s8PhotosUI34PHSharedAlbumCreationConfigurationV12defaultTitleSSSgvg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s8PhotosUI34PHSharedAlbumCreationConfigurationV12defaultTitleSSSgvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s8PhotosUI34PHSharedAlbumCreationConfigurationV12defaultTitleSSSgvs"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s8PhotosUI34PHSharedAlbumCreationConfigurationV12photoLibraryACSo07PHPhotoH0C_tcfC"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s8PhotosUI34PHSharedAlbumCreationConfigurationV12photoLibrarySo07PHPhotoH0Cvg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s8PhotosUI34PHSharedAlbumCreationConfigurationV12photoLibrarySo07PHPhotoH0CvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s8PhotosUI34PHSharedAlbumCreationConfigurationV13defaultPolicySo0cde7SharingH0VvM"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s8PhotosUI34PHSharedAlbumCreationConfigurationV13defaultPolicySo0cde7SharingH0Vvg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s8PhotosUI34PHSharedAlbumCreationConfigurationV13defaultPolicySo0cde7SharingH0VvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s8PhotosUI34PHSharedAlbumCreationConfigurationV13defaultPolicySo0cde7SharingH0Vvs"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s8PhotosUI34PHSharedAlbumCreationConfigurationV2eeoiySbAC_ACtFZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s8PhotosUI34PHSharedAlbumCreationConfigurationV4hash4intoys6HasherVz_tF"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s8PhotosUI34PHSharedAlbumCreationConfigurationV9hashValueSivg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s8PhotosUI34PHSharedAlbumCreationConfigurationV9hashValueSivpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s8PhotosUI34PHSharedAlbumCreationConfigurationVMa"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s8PhotosUI34PHSharedAlbumCreationConfigurationVMn"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s8PhotosUI34PHSharedAlbumCreationConfigurationVN"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s8PhotosUI34PHSharedAlbumCreationConfigurationVSHAAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s8PhotosUI34PHSharedAlbumCreationConfigurationVSQAAMc"},
     {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$sSo22PHPickerViewControllerC8PhotosUIE12updatePicker5usingyAC0A13ConfigurationV6UpdateV_tF"},
     {"access": "public", "introduced": "14", "linkage": "exported", "name": "_$sSo22PHPickerViewControllerC8PhotosUIE13configurationAC0A13ConfigurationVvg"},
     {"access": "public", "introduced": "14", "linkage": "exported", "name": "_$sSo22PHPickerViewControllerC8PhotosUIE13configurationAC0A13ConfigurationVvpMV"},
@@ -436,9 +1051,13 @@
     {"access": "public", "introduced": "14", "linkage": "exported", "name": "_$sSo22PHPickerViewControllerC8PhotosUIE8delegateAC0abC8Delegate_pSgvM"},
     {"access": "public", "introduced": "14", "linkage": "exported", "name": "_$sSo22PHPickerViewControllerC8PhotosUIE8delegateAC0abC8Delegate_pSgvg"},
     {"access": "public", "introduced": "14", "linkage": "exported", "name": "_$sSo22PHPickerViewControllerC8PhotosUIE8delegateAC0abC8Delegate_pSgvpMV"},
-    {"access": "public", "introduced": "14", "linkage": "exported", "name": "_$sSo22PHPickerViewControllerC8PhotosUIE8delegateAC0abC8Delegate_pSgvs"}
+    {"access": "public", "introduced": "14", "linkage": "exported", "name": "_$sSo22PHPickerViewControllerC8PhotosUIE8delegateAC0abC8Delegate_pSgvs"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$sSo34PHSharedAlbumPostingViewControllerC8PhotosUIE5items07defaultB10Identifier12photoLibraryABSayAC14PHPickerResultVG_SSSgSo07PHPhotoL0CtcfC"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$sSo34PHSharedAlbumPostingViewControllerC8PhotosUIE5items07defaultB10Identifier12photoLibraryABSayAC14PHPickerResultVG_SSSgSo07PHPhotoL0Ctcfc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$sSo35PHSharedAlbumCreationViewControllerC8PhotosUIE13configurationAbC0abC13ConfigurationV_tcfC"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$sSo35PHSharedAlbumCreationViewControllerC8PhotosUIE13configurationAbC0abC13ConfigurationV_tcfc"}
    ],
-   "target": "arm64e-apple-ios26.5"
+   "target": "arm64e-apple-ios27.0"
   },
   {
    "globals": [
@@ -538,36 +1157,52 @@
     {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$s7SwiftUI4ViewP07_Photosb1_aB0E12photosPicker11isPresented9selection8matching21preferredItemEncodingQrAA7BindingVySbG_AKyAD0dfL0VSgG0dB014PHPickerFilterVSgAN0M20DisambiguationPolicyVtFQOMQ"},
     {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$s7SwiftUI4ViewP07_Photosb1_aB0E17photosPickerStyleyQrAD0dfG0VF"},
     {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$s7SwiftUI4ViewP07_Photosb1_aB0E17photosPickerStyleyQrAD0dfG0VFQOMQ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s7SwiftUI4ViewP07_Photosb1_aB0E22photosPickerSearchTextyQr0dB008PHPickergH0VSgF"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s7SwiftUI4ViewP07_Photosb1_aB0E22photosPickerSearchTextyQr0dB008PHPickergH0VSgFQOMQ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s7SwiftUI4ViewP07_Photosb1_aB0E22photosPickerSearchTextyQrSSSgF"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s7SwiftUI4ViewP07_Photosb1_aB0E22photosPickerSearchTextyQrSSSgFQOMQ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s7SwiftUI4ViewP07_Photosb1_aB0E27photosPickerMetadataOptionsyQrSo08PHPickergH0VF"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s7SwiftUI4ViewP07_Photosb1_aB0E27photosPickerMetadataOptionsyQrSo08PHPickergH0VFQOMQ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s7SwiftUI4ViewP07_Photosb1_aB0E29photosSharedAlbumPostingSheet11isPresented5items07defaultG10Identifier12photoLibrary10completionQrAA7BindingVySbG_Say0dB014PHPickerResultVGSSSgSo07PHPhotoP0Cys0T0OySSs5Error_pGcSgtF"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s7SwiftUI4ViewP07_Photosb1_aB0E29photosSharedAlbumPostingSheet11isPresented5items07defaultG10Identifier12photoLibrary10completionQrAA7BindingVySbG_Say0dB014PHPickerResultVGSSSgSo07PHPhotoP0Cys0T0OySSs5Error_pGcSgtFQOMQ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s7SwiftUI4ViewP07_Photosb1_aB0E29photosSharedAlbumPostingSheet11isPresented5items07defaultG10Identifier12photoLibrary10completionQrAA7BindingVySbG_SayAD0D10PickerItemVGSSSgSo07PHPhotoP0Cys6ResultOySSs5Error_pGcSgtF"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s7SwiftUI4ViewP07_Photosb1_aB0E29photosSharedAlbumPostingSheet11isPresented5items07defaultG10Identifier12photoLibrary10completionQrAA7BindingVySbG_SayAD0D10PickerItemVGSSSgSo07PHPhotoP0Cys6ResultOySSs5Error_pGcSgtFQOMQ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s7SwiftUI4ViewP07_Photosb1_aB0E30photosSharedAlbumCreationSheet11isPresented12defaultTitle0L13SharingPolicy12photoLibrary12onCompletionQrAA7BindingVySbG_SSSgSo08PHSharedghnO0VSgSo07PHPhotoQ0Cy0dB00ugH6ResultVSgcSgtF"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s7SwiftUI4ViewP07_Photosb1_aB0E30photosSharedAlbumCreationSheet11isPresented12defaultTitle0L13SharingPolicy12photoLibrary12onCompletionQrAA7BindingVySbG_SSSgSo08PHSharedghnO0VSgSo07PHPhotoQ0Cy0dB00ugH6ResultVSgcSgtFQOMQ"},
     {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$s7SwiftUI4ViewP07_Photosb1_aB0E31photosPickerAccessoryVisibility_5edgesQrAA0H0O_AA4EdgeO3SetVtF"},
     {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$s7SwiftUI4ViewP07_Photosb1_aB0E31photosPickerAccessoryVisibility_5edgesQrAA0H0O_AA4EdgeO3SetVtFQOMQ"},
     {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$s7SwiftUI4ViewP07_Photosb1_aB0E32photosPickerDisabledCapabilitiesyQrSo08PHPickerH0VF"},
     {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$s7SwiftUI4ViewP07_Photosb1_aB0E32photosPickerDisabledCapabilitiesyQrSo08PHPickerH0VFQOMQ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s7SwiftUI4ViewP07_Photosb1_aB0E35photosSharedAlbumCustomizationSheet11isPresented15albumIdentifier12photoLibrary12onCompletionQrAA7BindingVySbG_SSSgSo07PHPhotoO0CyycSgtF"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s7SwiftUI4ViewP07_Photosb1_aB0E35photosSharedAlbumCustomizationSheet11isPresented15albumIdentifier12photoLibrary12onCompletionQrAA7BindingVySbG_SSSgSo07PHPhotoO0CyycSgtFQOMQ"},
     {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$sSo11PHLivePhotoC015_PhotosUI_SwiftD0E22transferRepresentationQrvgZ"},
     {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$sSo11PHLivePhotoC015_PhotosUI_SwiftD0E22transferRepresentationQrvpZMV"},
     {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$sSo11PHLivePhotoC015_PhotosUI_SwiftD0E22transferRepresentationQrvpZQOMQ"},
     {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$sSo11PHLivePhotoC16CoreTransferable0D0015_PhotosUI_SwiftF0Mc"}
    ],
-   "target": "arm64e-apple-ios26.5"
+   "target": "arm64e-apple-ios27.0"
   },
   {
    "globals": [
-    {"access": "public", "introduced": "26.4", "linkage": "exported", "name": "_$sSo7PHAssetC10AppIntents12_IntentValue08_Photos_bC0Mc"},
-    {"access": "public", "introduced": "26.4", "linkage": "exported", "name": "_$sSo7PHAssetC10AppIntents18_SystemIntentValue08_Photos_bC0Mc"},
-    {"access": "public", "introduced": "26.4", "linkage": "exported", "name": "_$sSo7PHAssetC10AppIntents20DisplayRepresentable08_Photos_bC0Mc"},
-    {"access": "public", "introduced": "26.4", "linkage": "exported", "name": "_$sSo7PHAssetC10AppIntents24PersistentlyIdentifiable08_Photos_bC0Mc"},
-    {"access": "public", "introduced": "26.4", "linkage": "exported", "name": "_$sSo7PHAssetC10AppIntents24TypeDisplayRepresentable08_Photos_bC0Mc"},
-    {"access": "public", "introduced": "26.4", "linkage": "exported", "name": "_$sSo7PHAssetC10AppIntents28InstanceDisplayRepresentable08_Photos_bC0Mc"},
-    {"access": "public", "introduced": "26.4", "linkage": "exported", "name": "_$sSo7PHAssetC10Foundation40CustomLocalizedStringResourceConvertible18_Photos_AppIntentsMc"},
-    {"access": "public", "introduced": "26.4", "linkage": "exported", "name": "_$sSo7PHAssetC18_Photos_AppIntentsE20persistentIdentifierSSvgZ"},
-    {"access": "public", "introduced": "26.4", "linkage": "exported", "name": "_$sSo7PHAssetC18_Photos_AppIntentsE20persistentIdentifierSSvpZMV"},
-    {"access": "public", "introduced": "26.4", "linkage": "exported", "name": "_$sSo7PHAssetC18_Photos_AppIntentsE21displayRepresentation0cD007DisplayF0Vvg"},
-    {"access": "public", "introduced": "26.4", "linkage": "exported", "name": "_$sSo7PHAssetC18_Photos_AppIntentsE21displayRepresentation0cD007DisplayF0VvpMV"},
-    {"access": "public", "introduced": "26.4", "linkage": "exported", "name": "_$sSo7PHAssetC18_Photos_AppIntentsE25typeDisplayRepresentation0cD004TypefG0VvgZ"},
-    {"access": "public", "introduced": "26.4", "linkage": "exported", "name": "_$sSo7PHAssetC18_Photos_AppIntentsE25typeDisplayRepresentation0cD004TypefG0VvpZMV"},
-    {"access": "public", "introduced": "26.4", "linkage": "exported", "name": "_$sSo7PHAssetC18_Photos_AppIntentsE28defaultResolverSpecification0cD005EmptyfG0VyA2bE12_IntentValueACyHCg_GvgZ"},
-    {"access": "public", "introduced": "26.4", "linkage": "exported", "name": "_$sSo7PHAssetC18_Photos_AppIntentsE28defaultResolverSpecification0cD005EmptyfG0VyA2bE12_IntentValueACyHCg_GvpZMV"}
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$sSo7PHAssetC10AppIntents12_IntentValue08_Photos_bC0Mc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$sSo7PHAssetC10AppIntents18_SystemIntentValue08_Photos_bC0Mc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$sSo7PHAssetC10AppIntents20DisplayRepresentable08_Photos_bC0Mc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$sSo7PHAssetC10AppIntents24PersistentlyIdentifiable08_Photos_bC0Mc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$sSo7PHAssetC10AppIntents24TypeDisplayRepresentable08_Photos_bC0Mc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$sSo7PHAssetC10AppIntents28InstanceDisplayRepresentable08_Photos_bC0Mc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$sSo7PHAssetC10Foundation40CustomLocalizedStringResourceConvertible18_Photos_AppIntentsMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$sSo7PHAssetC18_Photos_AppIntentsE20persistentIdentifierSSvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$sSo7PHAssetC18_Photos_AppIntentsE20persistentIdentifierSSvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$sSo7PHAssetC18_Photos_AppIntentsE21displayRepresentation0cD007DisplayF0Vvg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$sSo7PHAssetC18_Photos_AppIntentsE21displayRepresentation0cD007DisplayF0VvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$sSo7PHAssetC18_Photos_AppIntentsE25typeDisplayRepresentation0cD004TypefG0VvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$sSo7PHAssetC18_Photos_AppIntentsE25typeDisplayRepresentation0cD004TypefG0VvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$sSo7PHAssetC18_Photos_AppIntentsE28defaultResolverSpecification0cD005EmptyfG0VyA2bE12_IntentValueACyHCg_GvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$sSo7PHAssetC18_Photos_AppIntentsE28defaultResolverSpecification0cD005EmptyfG0VyA2bE12_IntentValueACyHCg_GvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$sSo7PHAssetC21AppIntentsTypeSupport21IntentValueExpressing08_Photos_bC0Mc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$sSo7PHAssetC21AppIntentsTypeSupport22IntentValueConvertible08_Photos_bC0Mc"}
    ],
-   "target": "arm64e-apple-ios26.5"
+   "target": "arm64e-apple-ios27.0"
   }
  ],
  "version": "1.0"

@@ -1611,9 +1611,10 @@
     {"access": "public", "linkage": "exported", "name": "_$ss5SIMD3V4simdE19_descriptionAsArraySSvg"},
     {"access": "public", "linkage": "exported", "name": "_$ss5SIMD3V4simdE19_descriptionAsArraySSvpMV"},
     {"access": "public", "linkage": "exported", "name": "_$ss5SIMD4V4simdE19_descriptionAsArraySSvg"},
-    {"access": "public", "linkage": "exported", "name": "_$ss5SIMD4V4simdE19_descriptionAsArraySSvpMV"}
+    {"access": "public", "linkage": "exported", "name": "_$ss5SIMD4V4simdE19_descriptionAsArraySSvpMV"},
+    {"access": "public", "linkage": "exported", "name": "__swift_FORCE_LOAD_$_swiftsimd"}
    ],
-   "target": "arm64e-apple-ios26.5"
+   "target": "arm64e-apple-ios27.0"
   }
  ],
  "version": "1.0"

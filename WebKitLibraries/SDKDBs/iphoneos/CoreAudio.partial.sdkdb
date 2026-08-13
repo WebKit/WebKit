@@ -2,7 +2,1040 @@
 {
  "PublicSDKContentRoot": [
   {
-   "target": "arm64e-apple-ios26.5"
+   "enums": [
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kAudioDeviceClockAlgorithmRaw"},
+      {"access": "public", "name": "kAudioDeviceClockAlgorithmSimpleIIR"},
+      {"access": "public", "name": "kAudioDeviceClockAlgorithm12PtMovingWindowAverage"}
+     ],
+     "name": "AudioDeviceClockAlgorithmSelector"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kAudioServerPlugInIOOperationThread"},
+      {"access": "public", "name": "kAudioServerPlugInIOOperationCycle"},
+      {"access": "public", "name": "kAudioServerPlugInIOOperationReadInput"},
+      {"access": "public", "name": "kAudioServerPlugInIOOperationConvertInput"},
+      {"access": "public", "name": "kAudioServerPlugInIOOperationProcessInput"},
+      {"access": "public", "name": "kAudioServerPlugInIOOperationProcessOutput"},
+      {"access": "public", "name": "kAudioServerPlugInIOOperationMixOutput"},
+      {"access": "public", "name": "kAudioServerPlugInIOOperationProcessMix"},
+      {"access": "public", "name": "kAudioServerPlugInIOOperationConvertMix"},
+      {"access": "public", "name": "kAudioServerPlugInIOOperationWriteMix"}
+     ],
+     "name": "AudioServerPlugInIOOperation"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kAudioStreamClassID"}
+     ],
+     "name": "enum (unnamed at AudioHardwareBase.h:10181)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kAudioStreamTerminalTypeUnknown"},
+      {"access": "public", "name": "kAudioStreamTerminalTypeLine"},
+      {"access": "public", "name": "kAudioStreamTerminalTypeDigitalAudioInterface"},
+      {"access": "public", "name": "kAudioStreamTerminalTypeSpeaker"},
+      {"access": "public", "name": "kAudioStreamTerminalTypeHeadphones"},
+      {"access": "public", "name": "kAudioStreamTerminalTypeLFESpeaker"},
+      {"access": "public", "name": "kAudioStreamTerminalTypeReceiverSpeaker"},
+      {"access": "public", "name": "kAudioStreamTerminalTypeMicrophone"},
+      {"access": "public", "name": "kAudioStreamTerminalTypeHeadsetMicrophone"},
+      {"access": "public", "name": "kAudioStreamTerminalTypeReceiverMicrophone"},
+      {"access": "public", "name": "kAudioStreamTerminalTypeTTY"},
+      {"access": "public", "name": "kAudioStreamTerminalTypeHDMI"},
+      {"access": "public", "name": "kAudioStreamTerminalTypeDisplayPort"}
+     ],
+     "name": "enum (unnamed at AudioHardwareBase.h:10561)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kAudioStreamPropertyIsActive"},
+      {"access": "public", "name": "kAudioStreamPropertyDirection"},
+      {"access": "public", "name": "kAudioStreamPropertyTerminalType"},
+      {"access": "public", "name": "kAudioStreamPropertyStartingChannel"},
+      {"access": "public", "name": "kAudioStreamPropertyLatency"},
+      {"access": "public", "name": "kAudioStreamPropertyVirtualFormat"},
+      {"access": "public", "name": "kAudioStreamPropertyAvailableVirtualFormats"},
+      {"access": "public", "name": "kAudioStreamPropertyPhysicalFormat"},
+      {"access": "public", "name": "kAudioStreamPropertyAvailablePhysicalFormats"}
+     ],
+     "name": "enum (unnamed at AudioHardwareBase.h:11181)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kAudioControlClassID"}
+     ],
+     "name": "enum (unnamed at AudioHardwareBase.h:11401)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kAudioControlPropertyScope"},
+      {"access": "public", "name": "kAudioControlPropertyElement"}
+     ],
+     "name": "enum (unnamed at AudioHardwareBase.h:11571)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kAudioSliderControlClassID"}
+     ],
+     "name": "enum (unnamed at AudioHardwareBase.h:11731)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kAudioSliderControlPropertyValue"},
+      {"access": "public", "name": "kAudioSliderControlPropertyRange"}
+     ],
+     "name": "enum (unnamed at AudioHardwareBase.h:11891)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kAudioLevelControlClassID"},
+      {"access": "public", "name": "kAudioVolumeControlClassID"},
+      {"access": "public", "name": "kAudioLFEVolumeControlClassID"}
+     ],
+     "name": "enum (unnamed at AudioHardwareBase.h:12121)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kAudioLevelControlPropertyScalarValue"},
+      {"access": "public", "name": "kAudioLevelControlPropertyDecibelValue"},
+      {"access": "public", "name": "kAudioLevelControlPropertyDecibelRange"},
+      {"access": "public", "name": "kAudioLevelControlPropertyConvertScalarToDecibels"},
+      {"access": "public", "name": "kAudioLevelControlPropertyConvertDecibelsToScalar"}
+     ],
+     "name": "enum (unnamed at AudioHardwareBase.h:12491)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kAudioBooleanControlClassID"},
+      {"access": "public", "name": "kAudioMuteControlClassID"},
+      {"access": "public", "name": "kAudioSoloControlClassID"},
+      {"access": "public", "name": "kAudioJackControlClassID"},
+      {"access": "public", "name": "kAudioLFEMuteControlClassID"},
+      {"access": "public", "name": "kAudioPhantomPowerControlClassID"},
+      {"access": "public", "name": "kAudioPhaseInvertControlClassID"},
+      {"access": "public", "name": "kAudioClipLightControlClassID"},
+      {"access": "public", "name": "kAudioTalkbackControlClassID"},
+      {"access": "public", "name": "kAudioListenbackControlClassID"}
+     ],
+     "name": "enum (unnamed at AudioHardwareBase.h:13041)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kAudioBooleanControlPropertyValue"}
+     ],
+     "name": "enum (unnamed at AudioHardwareBase.h:13261)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kAudioSelectorControlClassID"},
+      {"access": "public", "name": "kAudioDataSourceControlClassID"},
+      {"access": "public", "name": "kAudioDataDestinationControlClassID"},
+      {"access": "public", "name": "kAudioClockSourceControlClassID"},
+      {"access": "public", "name": "kAudioLineLevelControlClassID"},
+      {"access": "public", "name": "kAudioHighPassFilterControlClassID"}
+     ],
+     "name": "enum (unnamed at AudioHardwareBase.h:13581)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kAudioSelectorControlPropertyCurrentItem"},
+      {"access": "public", "name": "kAudioSelectorControlPropertyAvailableItems"},
+      {"access": "public", "name": "kAudioSelectorControlPropertyItemName"},
+      {"access": "public", "name": "kAudioSelectorControlPropertyItemKind"}
+     ],
+     "name": "enum (unnamed at AudioHardwareBase.h:13881)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kAudioSelectorControlItemKindSpacer"}
+     ],
+     "name": "enum (unnamed at AudioHardwareBase.h:14031)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kAudioClockSourceItemKindInternal"}
+     ],
+     "name": "enum (unnamed at AudioHardwareBase.h:14141)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kAudioStereoPanControlClassID"}
+     ],
+     "name": "enum (unnamed at AudioHardwareBase.h:14291)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kAudioStereoPanControlPropertyValue"},
+      {"access": "public", "name": "kAudioStereoPanControlPropertyPanningChannels"}
+     ],
+     "name": "enum (unnamed at AudioHardwareBase.h:14451)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kAudioHardwareNoError"},
+      {"access": "public", "name": "kAudioHardwareNotRunningError"},
+      {"access": "public", "name": "kAudioHardwareUnspecifiedError"},
+      {"access": "public", "name": "kAudioHardwareUnknownPropertyError"},
+      {"access": "public", "name": "kAudioHardwareBadPropertySizeError"},
+      {"access": "public", "name": "kAudioHardwareIllegalOperationError"},
+      {"access": "public", "name": "kAudioHardwareBadObjectError"},
+      {"access": "public", "name": "kAudioHardwareBadDeviceError"},
+      {"access": "public", "name": "kAudioHardwareBadStreamError"},
+      {"access": "public", "name": "kAudioHardwareUnsupportedOperationError"},
+      {"access": "public", "name": "kAudioHardwareNotReadyError"},
+      {"access": "public", "name": "kAudioDeviceUnsupportedFormatError"},
+      {"access": "public", "name": "kAudioDevicePermissionsError"}
+     ],
+     "name": "enum (unnamed at AudioHardwareBase.h:1521)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kAudioObjectUnknown"}
+     ],
+     "name": "enum (unnamed at AudioHardwareBase.h:1751)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kAudioObjectPropertyScopeGlobal"},
+      {"access": "public", "name": "kAudioObjectPropertyScopeInput"},
+      {"access": "public", "name": "kAudioObjectPropertyScopeOutput"},
+      {"access": "public", "name": "kAudioObjectPropertyScopePlayThrough"},
+      {"access": "public", "name": "kAudioObjectPropertyElementMain"},
+      {"access": "public", "introduced": "2", "name": "kAudioObjectPropertyElementMaster"}
+     ],
+     "name": "enum (unnamed at AudioHardwareBase.h:2011)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kAudioObjectPropertySelectorWildcard"}
+     ],
+     "name": "enum (unnamed at AudioHardwareBase.h:2251)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kAudioObjectPropertyScopeWildcard"}
+     ],
+     "name": "enum (unnamed at AudioHardwareBase.h:2301)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kAudioObjectPropertyElementWildcard"}
+     ],
+     "name": "enum (unnamed at AudioHardwareBase.h:2351)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kAudioObjectClassIDWildcard"}
+     ],
+     "name": "enum (unnamed at AudioHardwareBase.h:2401)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kAudioObjectClassID"}
+     ],
+     "name": "enum (unnamed at AudioHardwareBase.h:2561)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kAudioObjectPropertyBaseClass"},
+      {"access": "public", "name": "kAudioObjectPropertyClass"},
+      {"access": "public", "name": "kAudioObjectPropertyOwner"},
+      {"access": "public", "name": "kAudioObjectPropertyName"},
+      {"access": "public", "name": "kAudioObjectPropertyModelName"},
+      {"access": "public", "name": "kAudioObjectPropertyManufacturer"},
+      {"access": "public", "name": "kAudioObjectPropertyElementName"},
+      {"access": "public", "name": "kAudioObjectPropertyElementCategoryName"},
+      {"access": "public", "name": "kAudioObjectPropertyElementNumberName"},
+      {"access": "public", "name": "kAudioObjectPropertyOwnedObjects"},
+      {"access": "public", "name": "kAudioObjectPropertyIdentify"},
+      {"access": "public", "name": "kAudioObjectPropertySerialNumber"},
+      {"access": "public", "name": "kAudioObjectPropertyFirmwareVersion"}
+     ],
+     "name": "enum (unnamed at AudioHardwareBase.h:3291)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kAudioPlugInClassID"}
+     ],
+     "name": "enum (unnamed at AudioHardwareBase.h:3561)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kAudioPlugInPropertyBundleID"},
+      {"access": "public", "name": "kAudioPlugInPropertyDeviceList"},
+      {"access": "public", "name": "kAudioPlugInPropertyTranslateUIDToDevice"},
+      {"access": "public", "name": "kAudioPlugInPropertyBoxList"},
+      {"access": "public", "name": "kAudioPlugInPropertyTranslateUIDToBox"},
+      {"access": "public", "name": "kAudioPlugInPropertyClockDeviceList"},
+      {"access": "public", "name": "kAudioPlugInPropertyTranslateUIDToClockDevice"}
+     ],
+     "name": "enum (unnamed at AudioHardwareBase.h:4031)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kAudioTransportManagerClassID"}
+     ],
+     "name": "enum (unnamed at AudioHardwareBase.h:4301)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kAudioTransportManagerPropertyEndPointList"},
+      {"access": "public", "name": "kAudioTransportManagerPropertyTranslateUIDToEndPoint"},
+      {"access": "public", "name": "kAudioTransportManagerPropertyTransportType"}
+     ],
+     "name": "enum (unnamed at AudioHardwareBase.h:4601)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kAudioBoxClassID"}
+     ],
+     "name": "enum (unnamed at AudioHardwareBase.h:4771)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kAudioBoxPropertyBoxUID"},
+      {"access": "public", "name": "kAudioBoxPropertyTransportType"},
+      {"access": "public", "name": "kAudioBoxPropertyHasAudio"},
+      {"access": "public", "name": "kAudioBoxPropertyHasVideo"},
+      {"access": "public", "name": "kAudioBoxPropertyHasMIDI"},
+      {"access": "public", "name": "kAudioBoxPropertyIsProtected"},
+      {"access": "public", "name": "kAudioBoxPropertyAcquired"},
+      {"access": "public", "name": "kAudioBoxPropertyAcquisitionFailed"},
+      {"access": "public", "name": "kAudioBoxPropertyDeviceList"},
+      {"access": "public", "name": "kAudioBoxPropertyClockDeviceList"}
+     ],
+     "name": "enum (unnamed at AudioHardwareBase.h:5291)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kAudioDeviceClassID"}
+     ],
+     "name": "enum (unnamed at AudioHardwareBase.h:5531)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kAudioDeviceTransportTypeUnknown"},
+      {"access": "public", "name": "kAudioDeviceTransportTypeBuiltIn"},
+      {"access": "public", "name": "kAudioDeviceTransportTypeAggregate"},
+      {"access": "public", "name": "kAudioDeviceTransportTypeVirtual"},
+      {"access": "public", "name": "kAudioDeviceTransportTypePCI"},
+      {"access": "public", "name": "kAudioDeviceTransportTypeUSB"},
+      {"access": "public", "name": "kAudioDeviceTransportTypeFireWire"},
+      {"access": "public", "name": "kAudioDeviceTransportTypeBluetooth"},
+      {"access": "public", "name": "kAudioDeviceTransportTypeBluetoothLE"},
+      {"access": "public", "name": "kAudioDeviceTransportTypeHDMI"},
+      {"access": "public", "name": "kAudioDeviceTransportTypeDisplayPort"},
+      {"access": "public", "name": "kAudioDeviceTransportTypeAirPlay"},
+      {"access": "public", "name": "kAudioDeviceTransportTypeAVB"},
+      {"access": "public", "name": "kAudioDeviceTransportTypeThunderbolt"},
+      {"access": "public", "name": "kAudioDeviceTransportTypeContinuityCaptureWired"},
+      {"access": "public", "name": "kAudioDeviceTransportTypeContinuityCaptureWireless"},
+      {"access": "public", "name": "kAudioDeviceTransportTypeRemoteScreen"},
+      {"access": "public", "name": "kAudioDeviceTransportTypeRemoteStreaming"}
+     ],
+     "name": "enum (unnamed at AudioHardwareBase.h:6051)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kAudioDevicePropertyConfigurationApplication"},
+      {"access": "public", "name": "kAudioDevicePropertyDeviceUID"},
+      {"access": "public", "name": "kAudioDevicePropertyModelUID"},
+      {"access": "public", "name": "kAudioDevicePropertyTransportType"},
+      {"access": "public", "name": "kAudioDevicePropertyRelatedDevices"},
+      {"access": "public", "name": "kAudioDevicePropertyClockDomain"},
+      {"access": "public", "name": "kAudioDevicePropertyDeviceIsAlive"},
+      {"access": "public", "name": "kAudioDevicePropertyDeviceIsRunning"},
+      {"access": "public", "name": "kAudioDevicePropertyDeviceCanBeDefaultDevice"},
+      {"access": "public", "name": "kAudioDevicePropertyDeviceCanBeDefaultSystemDevice"},
+      {"access": "public", "name": "kAudioDevicePropertyLatency"},
+      {"access": "public", "name": "kAudioDevicePropertyStreams"},
+      {"access": "public", "name": "kAudioObjectPropertyControlList"},
+      {"access": "public", "name": "kAudioDevicePropertySafetyOffset"},
+      {"access": "public", "name": "kAudioDevicePropertyNominalSampleRate"},
+      {"access": "public", "name": "kAudioDevicePropertyAvailableNominalSampleRates"},
+      {"access": "public", "name": "kAudioDevicePropertyIcon"},
+      {"access": "public", "name": "kAudioDevicePropertyIsHidden"},
+      {"access": "public", "name": "kAudioDevicePropertyPreferredChannelsForStereo"},
+      {"access": "public", "name": "kAudioDevicePropertyPreferredChannelLayout"},
+      {"access": "public", "name": "kAudioDevicePropertyWantsControlsRestored"},
+      {"access": "public", "name": "kAudioDevicePropertyWantsStreamFormatsRestored"}
+     ],
+     "name": "enum (unnamed at AudioHardwareBase.h:7381)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kAudioClockDeviceClassID"}
+     ],
+     "name": "enum (unnamed at AudioHardwareBase.h:7741)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kAudioClockDevicePropertyDeviceUID"},
+      {"access": "public", "name": "kAudioClockDevicePropertyTransportType"},
+      {"access": "public", "name": "kAudioClockDevicePropertyClockDomain"},
+      {"access": "public", "name": "kAudioClockDevicePropertyDeviceIsAlive"},
+      {"access": "public", "name": "kAudioClockDevicePropertyDeviceIsRunning"},
+      {"access": "public", "name": "kAudioClockDevicePropertyLatency"},
+      {"access": "public", "name": "kAudioClockDevicePropertyControlList"},
+      {"access": "public", "name": "kAudioClockDevicePropertyNominalSampleRate"},
+      {"access": "public", "name": "kAudioClockDevicePropertyAvailableNominalSampleRates"}
+     ],
+     "name": "enum (unnamed at AudioHardwareBase.h:8271)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kAudioEndPointDeviceClassID"}
+     ],
+     "name": "enum (unnamed at AudioHardwareBase.h:8491)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kAudioEndPointDevicePropertyComposition"},
+      {"access": "public", "name": "kAudioEndPointDevicePropertyEndPointList"},
+      {"access": "public", "name": "kAudioEndPointDevicePropertyIsPrivate"}
+     ],
+     "name": "enum (unnamed at AudioHardwareBase.h:9191)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kAudioEndPointClassID"}
+     ],
+     "name": "enum (unnamed at AudioHardwareBase.h:9401)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kAudioObjectPlugInObject"}
+     ],
+     "name": "enum (unnamed at AudioServerPlugIn.h:2611)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kAudioServerPlugInHostClientID"}
+     ],
+     "name": "enum (unnamed at AudioServerPlugIn.h:2721)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kAudioServerPlugInCustomPropertyDataTypeNone"},
+      {"access": "public", "name": "kAudioServerPlugInCustomPropertyDataTypeCFString"},
+      {"access": "public", "name": "kAudioServerPlugInCustomPropertyDataTypeCFPropertyList"}
+     ],
+     "name": "enum (unnamed at AudioServerPlugIn.h:2911)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kAudioObjectPropertyCustomPropertyInfoList"}
+     ],
+     "name": "enum (unnamed at AudioServerPlugIn.h:3681)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kAudioPlugInPropertyResourceBundle"}
+     ],
+     "name": "enum (unnamed at AudioServerPlugIn.h:3861)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kAudioDevicePropertyZeroTimeStampPeriod"},
+      {"access": "public", "name": "kAudioDevicePropertyClockAlgorithm"},
+      {"access": "public", "name": "kAudioDevicePropertyClockIsStable"}
+     ],
+     "name": "enum (unnamed at AudioServerPlugIn.h:4431)"
+    }
+   ],
+   "globals": [
+    {"access": "public", "introduced": "27", "kind": "function", "linkage": "exported", "name": "_AudioServerPlugInRegisterMediaDeviceExtension"}
+   ],
+   "target": "arm64e-apple-ios27",
+   "typedefs": [
+    {"access": "public", "name": "AudioClassID"},
+    {"access": "public", "name": "AudioDeviceClockAlgorithmSelector"},
+    {"access": "public", "name": "AudioObjectID"},
+    {"access": "public", "name": "AudioObjectPropertyAddress"},
+    {"access": "public", "name": "AudioObjectPropertyElement"},
+    {"access": "public", "name": "AudioObjectPropertyScope"},
+    {"access": "public", "name": "AudioObjectPropertySelector"},
+    {"access": "public", "name": "AudioServerPlugInClientInfo"},
+    {"access": "public", "name": "AudioServerPlugInCustomPropertyDataType"},
+    {"access": "public", "name": "AudioServerPlugInCustomPropertyInfo"},
+    {"access": "public", "name": "AudioServerPlugInDriverInterface"},
+    {"access": "public", "name": "AudioServerPlugInDriverRef"},
+    {"access": "public", "name": "AudioServerPlugInHostInterface"},
+    {"access": "public", "name": "AudioServerPlugInHostRef"},
+    {"access": "public", "name": "AudioServerPlugInIOCycleInfo"},
+    {"access": "public", "name": "AudioServerPlugInIOOperation"},
+    {"access": "public", "name": "AudioStreamRangedDescription"}
+   ]
+  },
+  {
+   "enums": [
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kAudioDeviceClockAlgorithmRaw"},
+      {"access": "public", "name": "kAudioDeviceClockAlgorithmSimpleIIR"},
+      {"access": "public", "name": "kAudioDeviceClockAlgorithm12PtMovingWindowAverage"}
+     ],
+     "name": "AudioDeviceClockAlgorithmSelector"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kAudioServerPlugInIOOperationThread"},
+      {"access": "public", "name": "kAudioServerPlugInIOOperationCycle"},
+      {"access": "public", "name": "kAudioServerPlugInIOOperationReadInput"},
+      {"access": "public", "name": "kAudioServerPlugInIOOperationConvertInput"},
+      {"access": "public", "name": "kAudioServerPlugInIOOperationProcessInput"},
+      {"access": "public", "name": "kAudioServerPlugInIOOperationProcessOutput"},
+      {"access": "public", "name": "kAudioServerPlugInIOOperationMixOutput"},
+      {"access": "public", "name": "kAudioServerPlugInIOOperationProcessMix"},
+      {"access": "public", "name": "kAudioServerPlugInIOOperationConvertMix"},
+      {"access": "public", "name": "kAudioServerPlugInIOOperationWriteMix"}
+     ],
+     "name": "AudioServerPlugInIOOperation"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kAudioStreamClassID"}
+     ],
+     "name": "enum (unnamed at AudioHardwareBase.h:10181)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kAudioStreamTerminalTypeUnknown"},
+      {"access": "public", "name": "kAudioStreamTerminalTypeLine"},
+      {"access": "public", "name": "kAudioStreamTerminalTypeDigitalAudioInterface"},
+      {"access": "public", "name": "kAudioStreamTerminalTypeSpeaker"},
+      {"access": "public", "name": "kAudioStreamTerminalTypeHeadphones"},
+      {"access": "public", "name": "kAudioStreamTerminalTypeLFESpeaker"},
+      {"access": "public", "name": "kAudioStreamTerminalTypeReceiverSpeaker"},
+      {"access": "public", "name": "kAudioStreamTerminalTypeMicrophone"},
+      {"access": "public", "name": "kAudioStreamTerminalTypeHeadsetMicrophone"},
+      {"access": "public", "name": "kAudioStreamTerminalTypeReceiverMicrophone"},
+      {"access": "public", "name": "kAudioStreamTerminalTypeTTY"},
+      {"access": "public", "name": "kAudioStreamTerminalTypeHDMI"},
+      {"access": "public", "name": "kAudioStreamTerminalTypeDisplayPort"}
+     ],
+     "name": "enum (unnamed at AudioHardwareBase.h:10561)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kAudioStreamPropertyIsActive"},
+      {"access": "public", "name": "kAudioStreamPropertyDirection"},
+      {"access": "public", "name": "kAudioStreamPropertyTerminalType"},
+      {"access": "public", "name": "kAudioStreamPropertyStartingChannel"},
+      {"access": "public", "name": "kAudioStreamPropertyLatency"},
+      {"access": "public", "name": "kAudioStreamPropertyVirtualFormat"},
+      {"access": "public", "name": "kAudioStreamPropertyAvailableVirtualFormats"},
+      {"access": "public", "name": "kAudioStreamPropertyPhysicalFormat"},
+      {"access": "public", "name": "kAudioStreamPropertyAvailablePhysicalFormats"}
+     ],
+     "name": "enum (unnamed at AudioHardwareBase.h:11181)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kAudioControlClassID"}
+     ],
+     "name": "enum (unnamed at AudioHardwareBase.h:11401)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kAudioControlPropertyScope"},
+      {"access": "public", "name": "kAudioControlPropertyElement"}
+     ],
+     "name": "enum (unnamed at AudioHardwareBase.h:11571)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kAudioSliderControlClassID"}
+     ],
+     "name": "enum (unnamed at AudioHardwareBase.h:11731)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kAudioSliderControlPropertyValue"},
+      {"access": "public", "name": "kAudioSliderControlPropertyRange"}
+     ],
+     "name": "enum (unnamed at AudioHardwareBase.h:11891)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kAudioLevelControlClassID"},
+      {"access": "public", "name": "kAudioVolumeControlClassID"},
+      {"access": "public", "name": "kAudioLFEVolumeControlClassID"}
+     ],
+     "name": "enum (unnamed at AudioHardwareBase.h:12121)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kAudioLevelControlPropertyScalarValue"},
+      {"access": "public", "name": "kAudioLevelControlPropertyDecibelValue"},
+      {"access": "public", "name": "kAudioLevelControlPropertyDecibelRange"},
+      {"access": "public", "name": "kAudioLevelControlPropertyConvertScalarToDecibels"},
+      {"access": "public", "name": "kAudioLevelControlPropertyConvertDecibelsToScalar"}
+     ],
+     "name": "enum (unnamed at AudioHardwareBase.h:12491)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kAudioBooleanControlClassID"},
+      {"access": "public", "name": "kAudioMuteControlClassID"},
+      {"access": "public", "name": "kAudioSoloControlClassID"},
+      {"access": "public", "name": "kAudioJackControlClassID"},
+      {"access": "public", "name": "kAudioLFEMuteControlClassID"},
+      {"access": "public", "name": "kAudioPhantomPowerControlClassID"},
+      {"access": "public", "name": "kAudioPhaseInvertControlClassID"},
+      {"access": "public", "name": "kAudioClipLightControlClassID"},
+      {"access": "public", "name": "kAudioTalkbackControlClassID"},
+      {"access": "public", "name": "kAudioListenbackControlClassID"}
+     ],
+     "name": "enum (unnamed at AudioHardwareBase.h:13041)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kAudioBooleanControlPropertyValue"}
+     ],
+     "name": "enum (unnamed at AudioHardwareBase.h:13261)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kAudioSelectorControlClassID"},
+      {"access": "public", "name": "kAudioDataSourceControlClassID"},
+      {"access": "public", "name": "kAudioDataDestinationControlClassID"},
+      {"access": "public", "name": "kAudioClockSourceControlClassID"},
+      {"access": "public", "name": "kAudioLineLevelControlClassID"},
+      {"access": "public", "name": "kAudioHighPassFilterControlClassID"}
+     ],
+     "name": "enum (unnamed at AudioHardwareBase.h:13581)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kAudioSelectorControlPropertyCurrentItem"},
+      {"access": "public", "name": "kAudioSelectorControlPropertyAvailableItems"},
+      {"access": "public", "name": "kAudioSelectorControlPropertyItemName"},
+      {"access": "public", "name": "kAudioSelectorControlPropertyItemKind"}
+     ],
+     "name": "enum (unnamed at AudioHardwareBase.h:13881)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kAudioSelectorControlItemKindSpacer"}
+     ],
+     "name": "enum (unnamed at AudioHardwareBase.h:14031)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kAudioClockSourceItemKindInternal"}
+     ],
+     "name": "enum (unnamed at AudioHardwareBase.h:14141)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kAudioStereoPanControlClassID"}
+     ],
+     "name": "enum (unnamed at AudioHardwareBase.h:14291)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kAudioStereoPanControlPropertyValue"},
+      {"access": "public", "name": "kAudioStereoPanControlPropertyPanningChannels"}
+     ],
+     "name": "enum (unnamed at AudioHardwareBase.h:14451)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kAudioHardwareNoError"},
+      {"access": "public", "name": "kAudioHardwareNotRunningError"},
+      {"access": "public", "name": "kAudioHardwareUnspecifiedError"},
+      {"access": "public", "name": "kAudioHardwareUnknownPropertyError"},
+      {"access": "public", "name": "kAudioHardwareBadPropertySizeError"},
+      {"access": "public", "name": "kAudioHardwareIllegalOperationError"},
+      {"access": "public", "name": "kAudioHardwareBadObjectError"},
+      {"access": "public", "name": "kAudioHardwareBadDeviceError"},
+      {"access": "public", "name": "kAudioHardwareBadStreamError"},
+      {"access": "public", "name": "kAudioHardwareUnsupportedOperationError"},
+      {"access": "public", "name": "kAudioHardwareNotReadyError"},
+      {"access": "public", "name": "kAudioDeviceUnsupportedFormatError"},
+      {"access": "public", "name": "kAudioDevicePermissionsError"}
+     ],
+     "name": "enum (unnamed at AudioHardwareBase.h:1521)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kAudioObjectUnknown"}
+     ],
+     "name": "enum (unnamed at AudioHardwareBase.h:1751)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kAudioObjectPropertyScopeGlobal"},
+      {"access": "public", "name": "kAudioObjectPropertyScopeInput"},
+      {"access": "public", "name": "kAudioObjectPropertyScopeOutput"},
+      {"access": "public", "name": "kAudioObjectPropertyScopePlayThrough"},
+      {"access": "public", "name": "kAudioObjectPropertyElementMain"},
+      {"access": "public", "introduced": "2", "name": "kAudioObjectPropertyElementMaster"}
+     ],
+     "name": "enum (unnamed at AudioHardwareBase.h:2011)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kAudioObjectPropertySelectorWildcard"}
+     ],
+     "name": "enum (unnamed at AudioHardwareBase.h:2251)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kAudioObjectPropertyScopeWildcard"}
+     ],
+     "name": "enum (unnamed at AudioHardwareBase.h:2301)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kAudioObjectPropertyElementWildcard"}
+     ],
+     "name": "enum (unnamed at AudioHardwareBase.h:2351)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kAudioObjectClassIDWildcard"}
+     ],
+     "name": "enum (unnamed at AudioHardwareBase.h:2401)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kAudioObjectClassID"}
+     ],
+     "name": "enum (unnamed at AudioHardwareBase.h:2561)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kAudioObjectPropertyBaseClass"},
+      {"access": "public", "name": "kAudioObjectPropertyClass"},
+      {"access": "public", "name": "kAudioObjectPropertyOwner"},
+      {"access": "public", "name": "kAudioObjectPropertyName"},
+      {"access": "public", "name": "kAudioObjectPropertyModelName"},
+      {"access": "public", "name": "kAudioObjectPropertyManufacturer"},
+      {"access": "public", "name": "kAudioObjectPropertyElementName"},
+      {"access": "public", "name": "kAudioObjectPropertyElementCategoryName"},
+      {"access": "public", "name": "kAudioObjectPropertyElementNumberName"},
+      {"access": "public", "name": "kAudioObjectPropertyOwnedObjects"},
+      {"access": "public", "name": "kAudioObjectPropertyIdentify"},
+      {"access": "public", "name": "kAudioObjectPropertySerialNumber"},
+      {"access": "public", "name": "kAudioObjectPropertyFirmwareVersion"}
+     ],
+     "name": "enum (unnamed at AudioHardwareBase.h:3291)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kAudioPlugInClassID"}
+     ],
+     "name": "enum (unnamed at AudioHardwareBase.h:3561)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kAudioPlugInPropertyBundleID"},
+      {"access": "public", "name": "kAudioPlugInPropertyDeviceList"},
+      {"access": "public", "name": "kAudioPlugInPropertyTranslateUIDToDevice"},
+      {"access": "public", "name": "kAudioPlugInPropertyBoxList"},
+      {"access": "public", "name": "kAudioPlugInPropertyTranslateUIDToBox"},
+      {"access": "public", "name": "kAudioPlugInPropertyClockDeviceList"},
+      {"access": "public", "name": "kAudioPlugInPropertyTranslateUIDToClockDevice"}
+     ],
+     "name": "enum (unnamed at AudioHardwareBase.h:4031)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kAudioTransportManagerClassID"}
+     ],
+     "name": "enum (unnamed at AudioHardwareBase.h:4301)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kAudioTransportManagerPropertyEndPointList"},
+      {"access": "public", "name": "kAudioTransportManagerPropertyTranslateUIDToEndPoint"},
+      {"access": "public", "name": "kAudioTransportManagerPropertyTransportType"}
+     ],
+     "name": "enum (unnamed at AudioHardwareBase.h:4601)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kAudioBoxClassID"}
+     ],
+     "name": "enum (unnamed at AudioHardwareBase.h:4771)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kAudioBoxPropertyBoxUID"},
+      {"access": "public", "name": "kAudioBoxPropertyTransportType"},
+      {"access": "public", "name": "kAudioBoxPropertyHasAudio"},
+      {"access": "public", "name": "kAudioBoxPropertyHasVideo"},
+      {"access": "public", "name": "kAudioBoxPropertyHasMIDI"},
+      {"access": "public", "name": "kAudioBoxPropertyIsProtected"},
+      {"access": "public", "name": "kAudioBoxPropertyAcquired"},
+      {"access": "public", "name": "kAudioBoxPropertyAcquisitionFailed"},
+      {"access": "public", "name": "kAudioBoxPropertyDeviceList"},
+      {"access": "public", "name": "kAudioBoxPropertyClockDeviceList"}
+     ],
+     "name": "enum (unnamed at AudioHardwareBase.h:5291)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kAudioDeviceClassID"}
+     ],
+     "name": "enum (unnamed at AudioHardwareBase.h:5531)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kAudioDeviceTransportTypeUnknown"},
+      {"access": "public", "name": "kAudioDeviceTransportTypeBuiltIn"},
+      {"access": "public", "name": "kAudioDeviceTransportTypeAggregate"},
+      {"access": "public", "name": "kAudioDeviceTransportTypeVirtual"},
+      {"access": "public", "name": "kAudioDeviceTransportTypePCI"},
+      {"access": "public", "name": "kAudioDeviceTransportTypeUSB"},
+      {"access": "public", "name": "kAudioDeviceTransportTypeFireWire"},
+      {"access": "public", "name": "kAudioDeviceTransportTypeBluetooth"},
+      {"access": "public", "name": "kAudioDeviceTransportTypeBluetoothLE"},
+      {"access": "public", "name": "kAudioDeviceTransportTypeHDMI"},
+      {"access": "public", "name": "kAudioDeviceTransportTypeDisplayPort"},
+      {"access": "public", "name": "kAudioDeviceTransportTypeAirPlay"},
+      {"access": "public", "name": "kAudioDeviceTransportTypeAVB"},
+      {"access": "public", "name": "kAudioDeviceTransportTypeThunderbolt"},
+      {"access": "public", "name": "kAudioDeviceTransportTypeContinuityCaptureWired"},
+      {"access": "public", "name": "kAudioDeviceTransportTypeContinuityCaptureWireless"},
+      {"access": "public", "name": "kAudioDeviceTransportTypeRemoteScreen"},
+      {"access": "public", "name": "kAudioDeviceTransportTypeRemoteStreaming"}
+     ],
+     "name": "enum (unnamed at AudioHardwareBase.h:6051)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kAudioDevicePropertyConfigurationApplication"},
+      {"access": "public", "name": "kAudioDevicePropertyDeviceUID"},
+      {"access": "public", "name": "kAudioDevicePropertyModelUID"},
+      {"access": "public", "name": "kAudioDevicePropertyTransportType"},
+      {"access": "public", "name": "kAudioDevicePropertyRelatedDevices"},
+      {"access": "public", "name": "kAudioDevicePropertyClockDomain"},
+      {"access": "public", "name": "kAudioDevicePropertyDeviceIsAlive"},
+      {"access": "public", "name": "kAudioDevicePropertyDeviceIsRunning"},
+      {"access": "public", "name": "kAudioDevicePropertyDeviceCanBeDefaultDevice"},
+      {"access": "public", "name": "kAudioDevicePropertyDeviceCanBeDefaultSystemDevice"},
+      {"access": "public", "name": "kAudioDevicePropertyLatency"},
+      {"access": "public", "name": "kAudioDevicePropertyStreams"},
+      {"access": "public", "name": "kAudioObjectPropertyControlList"},
+      {"access": "public", "name": "kAudioDevicePropertySafetyOffset"},
+      {"access": "public", "name": "kAudioDevicePropertyNominalSampleRate"},
+      {"access": "public", "name": "kAudioDevicePropertyAvailableNominalSampleRates"},
+      {"access": "public", "name": "kAudioDevicePropertyIcon"},
+      {"access": "public", "name": "kAudioDevicePropertyIsHidden"},
+      {"access": "public", "name": "kAudioDevicePropertyPreferredChannelsForStereo"},
+      {"access": "public", "name": "kAudioDevicePropertyPreferredChannelLayout"},
+      {"access": "public", "name": "kAudioDevicePropertyWantsControlsRestored"},
+      {"access": "public", "name": "kAudioDevicePropertyWantsStreamFormatsRestored"}
+     ],
+     "name": "enum (unnamed at AudioHardwareBase.h:7381)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kAudioClockDeviceClassID"}
+     ],
+     "name": "enum (unnamed at AudioHardwareBase.h:7741)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kAudioClockDevicePropertyDeviceUID"},
+      {"access": "public", "name": "kAudioClockDevicePropertyTransportType"},
+      {"access": "public", "name": "kAudioClockDevicePropertyClockDomain"},
+      {"access": "public", "name": "kAudioClockDevicePropertyDeviceIsAlive"},
+      {"access": "public", "name": "kAudioClockDevicePropertyDeviceIsRunning"},
+      {"access": "public", "name": "kAudioClockDevicePropertyLatency"},
+      {"access": "public", "name": "kAudioClockDevicePropertyControlList"},
+      {"access": "public", "name": "kAudioClockDevicePropertyNominalSampleRate"},
+      {"access": "public", "name": "kAudioClockDevicePropertyAvailableNominalSampleRates"}
+     ],
+     "name": "enum (unnamed at AudioHardwareBase.h:8271)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kAudioEndPointDeviceClassID"}
+     ],
+     "name": "enum (unnamed at AudioHardwareBase.h:8491)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kAudioEndPointDevicePropertyComposition"},
+      {"access": "public", "name": "kAudioEndPointDevicePropertyEndPointList"},
+      {"access": "public", "name": "kAudioEndPointDevicePropertyIsPrivate"}
+     ],
+     "name": "enum (unnamed at AudioHardwareBase.h:9191)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kAudioEndPointClassID"}
+     ],
+     "name": "enum (unnamed at AudioHardwareBase.h:9401)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kAudioObjectPlugInObject"}
+     ],
+     "name": "enum (unnamed at AudioServerPlugIn.h:2611)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kAudioServerPlugInHostClientID"}
+     ],
+     "name": "enum (unnamed at AudioServerPlugIn.h:2721)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kAudioServerPlugInCustomPropertyDataTypeNone"},
+      {"access": "public", "name": "kAudioServerPlugInCustomPropertyDataTypeCFString"},
+      {"access": "public", "name": "kAudioServerPlugInCustomPropertyDataTypeCFPropertyList"}
+     ],
+     "name": "enum (unnamed at AudioServerPlugIn.h:2911)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kAudioObjectPropertyCustomPropertyInfoList"}
+     ],
+     "name": "enum (unnamed at AudioServerPlugIn.h:3681)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kAudioPlugInPropertyResourceBundle"}
+     ],
+     "name": "enum (unnamed at AudioServerPlugIn.h:3861)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kAudioDevicePropertyZeroTimeStampPeriod"},
+      {"access": "public", "name": "kAudioDevicePropertyClockAlgorithm"},
+      {"access": "public", "name": "kAudioDevicePropertyClockIsStable"}
+     ],
+     "name": "enum (unnamed at AudioServerPlugIn.h:4431)"
+    }
+   ],
+   "globals": [
+    {"access": "public", "introduced": "27", "kind": "function", "linkage": "exported", "name": "_AudioServerPlugInRegisterMediaDeviceExtension"}
+   ],
+   "target": "arm64e.x1-apple-ios27",
+   "typedefs": [
+    {"access": "public", "name": "AudioClassID"},
+    {"access": "public", "name": "AudioDeviceClockAlgorithmSelector"},
+    {"access": "public", "name": "AudioObjectID"},
+    {"access": "public", "name": "AudioObjectPropertyAddress"},
+    {"access": "public", "name": "AudioObjectPropertyElement"},
+    {"access": "public", "name": "AudioObjectPropertyScope"},
+    {"access": "public", "name": "AudioObjectPropertySelector"},
+    {"access": "public", "name": "AudioServerPlugInClientInfo"},
+    {"access": "public", "name": "AudioServerPlugInCustomPropertyDataType"},
+    {"access": "public", "name": "AudioServerPlugInCustomPropertyInfo"},
+    {"access": "public", "name": "AudioServerPlugInDriverInterface"},
+    {"access": "public", "name": "AudioServerPlugInDriverRef"},
+    {"access": "public", "name": "AudioServerPlugInHostInterface"},
+    {"access": "public", "name": "AudioServerPlugInHostRef"},
+    {"access": "public", "name": "AudioServerPlugInIOCycleInfo"},
+    {"access": "public", "name": "AudioServerPlugInIOOperation"},
+    {"access": "public", "name": "AudioStreamRangedDescription"}
+   ]
   },
   {
    "globals": [
@@ -137,9 +1170,10 @@
     {"access": "public", "introduced": "13", "linkage": "exported", "name": "_$sSo18AudioChannelLayoutV04CoreA0E20UnsafeMutablePointerVySo0aB11DescriptionVSicis"},
     {"access": "public", "introduced": "13", "linkage": "exported", "name": "_$sSo18AudioChannelLayoutV04CoreA0E8allocate19maximumDescriptionsAbCE20UnsafeMutablePointerVSi_tFZ"},
     {"access": "public", "introduced": "13", "linkage": "exported", "name": "_$sSo23AudioChannelDescriptionV04CoreA0E2eeoiySbAB_ABtFZ"},
-    {"access": "public", "linkage": "exported", "name": "_$sSr9CoreAudioEySryxGSo0B6BufferVcfC"}
+    {"access": "public", "linkage": "exported", "name": "_$sSr9CoreAudioEySryxGSo0B6BufferVcfC"},
+    {"access": "public", "linkage": "exported", "name": "__swift_FORCE_LOAD_$_swiftCoreAudio"}
    ],
-   "target": "arm64e-apple-ios26.5"
+   "target": "arm64e-apple-ios27.0"
   }
  ],
  "version": "1.0"

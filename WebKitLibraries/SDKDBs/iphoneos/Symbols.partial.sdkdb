@@ -306,7 +306,314 @@
      "super": "NSSymbolEffect"
     }
    ],
-   "target": "arm64e-apple-ios26.5"
+   "target": "arm64e-apple-ios27"
+  },
+  {
+   "interfaces": [
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "effect"},
+      {"access": "public", "name": "appearUpEffect"},
+      {"access": "public", "name": "appearDownEffect"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "effectWithByLayer"},
+      {"access": "public", "name": "effectWithWholeSymbol"}
+     ],
+     "introduced": "17",
+     "linkage": "exported",
+     "name": "NSSymbolAppearEffect",
+     "super": "NSSymbolEffect"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "transition"}
+     ],
+     "introduced": "17",
+     "linkage": "exported",
+     "name": "NSSymbolAutomaticContentTransition",
+     "super": "NSSymbolContentTransition"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "effect"},
+      {"access": "public", "name": "bounceUpEffect"},
+      {"access": "public", "name": "bounceDownEffect"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "effectWithByLayer"},
+      {"access": "public", "name": "effectWithWholeSymbol"}
+     ],
+     "introduced": "17",
+     "linkage": "exported",
+     "name": "NSSymbolBounceEffect",
+     "super": "NSSymbolEffect"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "effect"},
+      {"access": "public", "name": "breathePulseEffect"},
+      {"access": "public", "name": "breathePlainEffect"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "effectWithByLayer"},
+      {"access": "public", "name": "effectWithWholeSymbol"}
+     ],
+     "introduced": "18",
+     "linkage": "exported",
+     "name": "NSSymbolBreatheEffect",
+     "super": "NSSymbolEffect"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "17",
+     "linkage": "exported",
+     "name": "NSSymbolContentTransition",
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "effect"},
+      {"access": "public", "name": "disappearUpEffect"},
+      {"access": "public", "name": "disappearDownEffect"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "effectWithByLayer"},
+      {"access": "public", "name": "effectWithWholeSymbol"}
+     ],
+     "introduced": "17",
+     "linkage": "exported",
+     "name": "NSSymbolDisappearEffect",
+     "super": "NSSymbolEffect"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "effect"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "effectWithByLayer"},
+      {"access": "public", "name": "effectWithWholeSymbol"},
+      {"access": "public", "name": "effectWithIndividually"},
+      {"access": "public", "name": "effectWithReversed"},
+      {"access": "public", "name": "effectWithNonReversed"}
+     ],
+     "introduced": "26",
+     "linkage": "exported",
+     "name": "NSSymbolDrawOffEffect",
+     "super": "NSSymbolEffect"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "effect"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "effectWithByLayer"},
+      {"access": "public", "name": "effectWithWholeSymbol"},
+      {"access": "public", "name": "effectWithIndividually"}
+     ],
+     "introduced": "26",
+     "linkage": "exported",
+     "name": "NSSymbolDrawOnEffect",
+     "super": "NSSymbolEffect"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "17",
+     "linkage": "exported",
+     "name": "NSSymbolEffect",
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true},
+      {"access": "public", "name": "options"},
+      {"access": "public", "introduced": "17", "name": "optionsWithRepeating"},
+      {"access": "public", "name": "optionsWithNonRepeating"},
+      {"access": "public", "introduced": "17", "name": "optionsWithRepeatCount:"},
+      {"access": "public", "name": "optionsWithSpeed:"},
+      {"access": "public", "introduced": "18", "name": "optionsWithRepeatBehavior:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "introduced": "17", "name": "optionsWithRepeating"},
+      {"access": "public", "name": "optionsWithNonRepeating"},
+      {"access": "public", "introduced": "17", "name": "optionsWithRepeatCount:"},
+      {"access": "public", "name": "optionsWithSpeed:"},
+      {"access": "public", "introduced": "18", "name": "optionsWithRepeatBehavior:"}
+     ],
+     "introduced": "17",
+     "linkage": "exported",
+     "name": "NSSymbolEffectOptions",
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true},
+      {"access": "public", "name": "behaviorPeriodic"},
+      {"access": "public", "name": "behaviorPeriodicWithCount:"},
+      {"access": "public", "name": "behaviorPeriodicWithDelay:"},
+      {"access": "public", "name": "behaviorPeriodicWithCount:delay:"},
+      {"access": "public", "name": "behaviorContinuous"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "18",
+     "linkage": "exported",
+     "name": "NSSymbolEffectOptionsRepeatBehavior",
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "18",
+     "linkage": "exported",
+     "name": "NSSymbolMagicReplaceContentTransition",
+     "super": "NSSymbolContentTransition"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "effect"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "effectWithByLayer"},
+      {"access": "public", "name": "effectWithWholeSymbol"}
+     ],
+     "introduced": "17",
+     "linkage": "exported",
+     "name": "NSSymbolPulseEffect",
+     "super": "NSSymbolEffect"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "transition"},
+      {"access": "public", "name": "replaceDownUpTransition"},
+      {"access": "public", "name": "replaceUpUpTransition"},
+      {"access": "public", "name": "replaceOffUpTransition"},
+      {"access": "public", "introduced": "18", "name": "magicTransitionWithFallback:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "transitionWithByLayer"},
+      {"access": "public", "name": "transitionWithWholeSymbol"}
+     ],
+     "introduced": "17",
+     "linkage": "exported",
+     "name": "NSSymbolReplaceContentTransition",
+     "super": "NSSymbolContentTransition"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "effect"},
+      {"access": "public", "name": "rotateClockwiseEffect"},
+      {"access": "public", "name": "rotateCounterClockwiseEffect"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "effectWithByLayer"},
+      {"access": "public", "name": "effectWithWholeSymbol"}
+     ],
+     "introduced": "18",
+     "linkage": "exported",
+     "name": "NSSymbolRotateEffect",
+     "super": "NSSymbolEffect"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "effect"},
+      {"access": "public", "name": "scaleUpEffect"},
+      {"access": "public", "name": "scaleDownEffect"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "effectWithByLayer"},
+      {"access": "public", "name": "effectWithWholeSymbol"}
+     ],
+     "introduced": "17",
+     "linkage": "exported",
+     "name": "NSSymbolScaleEffect",
+     "super": "NSSymbolEffect"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "effect"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "effectWithIterative"},
+      {"access": "public", "name": "effectWithCumulative"},
+      {"access": "public", "name": "effectWithReversing"},
+      {"access": "public", "name": "effectWithNonReversing"},
+      {"access": "public", "name": "effectWithHideInactiveLayers"},
+      {"access": "public", "name": "effectWithDimInactiveLayers"}
+     ],
+     "introduced": "17",
+     "linkage": "exported",
+     "name": "NSSymbolVariableColorEffect",
+     "super": "NSSymbolEffect"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "effect"},
+      {"access": "public", "name": "wiggleClockwiseEffect"},
+      {"access": "public", "name": "wiggleCounterClockwiseEffect"},
+      {"access": "public", "name": "wiggleLeftEffect"},
+      {"access": "public", "name": "wiggleRightEffect"},
+      {"access": "public", "name": "wiggleUpEffect"},
+      {"access": "public", "name": "wiggleDownEffect"},
+      {"access": "public", "name": "wiggleForwardEffect"},
+      {"access": "public", "name": "wiggleBackwardEffect"},
+      {"access": "public", "name": "wiggleCustomAngleEffect:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "effectWithByLayer"},
+      {"access": "public", "name": "effectWithWholeSymbol"}
+     ],
+     "introduced": "18",
+     "linkage": "exported",
+     "name": "NSSymbolWiggleEffect",
+     "super": "NSSymbolEffect"
+    }
+   ],
+   "target": "arm64e.x1-apple-ios27"
   },
   {
    "globals": [
@@ -684,7 +991,7 @@
     {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$s7Symbols25VariableColorSymbolEffectVSHAAMc"},
     {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$s7Symbols25VariableColorSymbolEffectVSQAAMc"}
    ],
-   "target": "arm64e-apple-ios26.5"
+   "target": "arm64e-apple-ios27.0"
   }
  ],
  "version": "1.0"

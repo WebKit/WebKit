@@ -1304,7 +1304,1326 @@
      ]
     }
    ],
-   "target": "arm64e-apple-ios26.5",
+   "target": "arm64e-apple-ios27",
+   "typedefs": [
+    {"access": "public", "name": "MLComputeUnits"},
+    {"access": "public", "name": "MLFeatureType"},
+    {"access": "public", "name": "MLFeatureValueImageOption"},
+    {"access": "public", "name": "MLImageSizeConstraintType"},
+    {"access": "public", "name": "MLModelError"},
+    {"access": "public", "name": "MLModelMetadataKey"},
+    {"access": "public", "name": "MLMultiArrayDataType"},
+    {"access": "public", "introduced": "12", "name": "MLMultiArrayShapeConstraintType"},
+    {"access": "public", "name": "MLReshapeFrequencyHint"},
+    {"access": "public", "name": "MLSpecializationStrategy"},
+    {"access": "public", "introduced": "13", "name": "MLTaskState"},
+    {"access": "public", "introduced": "13", "name": "MLUpdateProgressEvent"}
+   ]
+  },
+  {
+   "categories": [
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "introduced": "14", "name": "multiArrayByConcatenatingMultiArrays:alongAxis:dataType:"}
+     ],
+     "interface": "MLMultiArray",
+     "name": "Concatenating"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithShape:dataType:error:"},
+      {"access": "public", "introduced": "18", "name": "initWithShape:dataType:strides:"},
+      {"access": "public", "name": "initWithDataPointer:shape:dataType:strides:deallocator:error:"},
+      {"access": "public", "introduced": "16", "name": "initWithPixelBuffer:shape:"}
+     ],
+     "interface": "MLMultiArray",
+     "name": "Creation"
+    },
+    {
+     "access": "public",
+     "interface": "MLModel",
+     "introduced": "17",
+     "name": "MLComputeDevice",
+     "properties": [
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "availableComputeDevices", "introduced": "17", "name": "availableComputeDevices"}
+     ]
+    },
+    {
+     "access": "public",
+     "interface": "MLFeatureDescription",
+     "introduced": "11",
+     "name": "MLFeatureValueConstraints",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "multiArrayConstraint", "name": "multiArrayConstraint"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "imageConstraint", "name": "imageConstraint"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "dictionaryConstraint", "name": "dictionaryConstraint"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "sequenceConstraint", "introduced": "12", "name": "sequenceConstraint"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "stateConstraint", "introduced": "18", "name": "stateConstraint"}
+     ]
+    },
+    {
+     "access": "public",
+     "interface": "MLModelConfiguration",
+     "introduced": "13",
+     "name": "MLGPUConfigurationOptions",
+     "properties": [
+      {"access": "public", "getter": "allowLowPrecisionAccumulationOnGPU", "name": "allowLowPrecisionAccumulationOnGPU", "setter": "setAllowLowPrecisionAccumulationOnGPU:"},
+      {"access": "public", "getter": "preferredMetalDevice", "name": "preferredMetalDevice", "setter": "setPreferredMetalDevice:"}
+     ]
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "featureValueWithImageAtURL:pixelsWide:pixelsHigh:pixelFormatType:options:error:"},
+      {"access": "public", "name": "featureValueWithImageAtURL:constraint:options:error:"},
+      {"access": "public", "name": "featureValueWithCGImage:pixelsWide:pixelsHigh:pixelFormatType:options:error:"},
+      {"access": "public", "name": "featureValueWithCGImage:constraint:options:error:"},
+      {"access": "public", "name": "featureValueWithImageAtURL:orientation:pixelsWide:pixelsHigh:pixelFormatType:options:error:"},
+      {"access": "public", "name": "featureValueWithImageAtURL:orientation:constraint:options:error:"},
+      {"access": "public", "name": "featureValueWithCGImage:orientation:pixelsWide:pixelsHigh:pixelFormatType:options:error:"},
+      {"access": "public", "name": "featureValueWithCGImage:orientation:constraint:options:error:"}
+     ],
+     "interface": "MLFeatureValue",
+     "introduced": "13",
+     "name": "MLImageConversion"
+    },
+    {
+     "access": "public",
+     "interface": "MLParameterKey",
+     "name": "MLLinkedModelParameters",
+     "properties": [
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "linkedModelFileName", "name": "linkedModelFileName"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "linkedModelSearchPath", "name": "linkedModelSearchPath"}
+     ]
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "introduced": "11", "name": "compileModelAtURL:error:"},
+      {"access": "public", "introduced": "16", "name": "compileModelAtURL:completionHandler:"}
+     ],
+     "interface": "MLModel",
+     "name": "MLModelCompilation"
+    },
+    {
+     "access": "public",
+     "interface": "MLModelConfiguration",
+     "introduced": "13",
+     "name": "MLModelParameterAdditions",
+     "properties": [
+      {"access": "public", "getter": "parameters", "name": "parameters", "setter": "setParameters:"}
+     ]
+    },
+    {
+     "access": "public",
+     "interface": "MLParameterKey",
+     "name": "MLNeuralNetworkParameters",
+     "properties": [
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "weights", "name": "weights"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "biases", "name": "biases"}
+     ]
+    },
+    {
+     "access": "public",
+     "interface": "MLModelDescription",
+     "introduced": "13",
+     "name": "MLParameters",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "parameterDescriptionsByKey", "name": "parameterDescriptionsByKey"}
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "scopedTo:"}
+     ],
+     "interface": "MLParameterKey",
+     "name": "MLScopedParameters"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "18", "name": "newState"},
+      {"access": "public", "introduced": "18", "name": "predictionFromFeatures:usingState:error:"},
+      {"access": "public", "introduced": "18", "name": "predictionFromFeatures:usingState:options:error:"},
+      {"access": "public", "introduced": "18", "name": "predictionFromFeatures:usingState:options:completionHandler:"}
+     ],
+     "interface": "MLModel",
+     "introduced": "18",
+     "name": "MLState"
+    },
+    {
+     "access": "public",
+     "interface": "MLModelDescription",
+     "introduced": "13",
+     "name": "MLUpdateAdditions",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "isUpdatable", "name": "isUpdatable"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "trainingInputDescriptionsByName", "name": "trainingInputDescriptionsByName"}
+     ]
+    },
+    {
+     "access": "public",
+     "interface": "MLModelConfiguration",
+     "introduced": "18",
+     "name": "MultiFunctions",
+     "properties": [
+      {"access": "public", "getter": "functionName", "introduced": "18", "name": "functionName", "setter": "setFunctionName:"}
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "objectAtIndexedSubscript:"},
+      {"access": "public", "name": "objectForKeyedSubscript:"},
+      {"access": "public", "name": "setObject:atIndexedSubscript:"},
+      {"access": "public", "name": "setObject:forKeyedSubscript:"}
+     ],
+     "interface": "MLMultiArray",
+     "name": "NSNumberDataAccess"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "15.4", "name": "getBytesWithHandler:"},
+      {"access": "public", "introduced": "15.4", "name": "getMutableBytesWithHandler:"}
+     ],
+     "interface": "MLMultiArray",
+     "name": "ScopedBufferAccess"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "18", "name": "transferToMultiArray:"}
+     ],
+     "interface": "MLMultiArray",
+     "name": "Transferring"
+    }
+   ],
+   "enums": [
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MLComputeUnitsCPUOnly"},
+      {"access": "public", "name": "MLComputeUnitsCPUAndGPU"},
+      {"access": "public", "name": "MLComputeUnitsAll"},
+      {"access": "public", "introduced": "16", "name": "MLComputeUnitsCPUAndNeuralEngine"}
+     ],
+     "introduced": "12",
+     "name": "MLComputeUnits"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MLFeatureTypeInvalid"},
+      {"access": "public", "name": "MLFeatureTypeInt64"},
+      {"access": "public", "name": "MLFeatureTypeDouble"},
+      {"access": "public", "name": "MLFeatureTypeString"},
+      {"access": "public", "name": "MLFeatureTypeImage"},
+      {"access": "public", "name": "MLFeatureTypeMultiArray"},
+      {"access": "public", "name": "MLFeatureTypeDictionary"},
+      {"access": "public", "introduced": "12", "name": "MLFeatureTypeSequence"},
+      {"access": "public", "introduced": "18", "name": "MLFeatureTypeState"}
+     ],
+     "introduced": "11",
+     "name": "MLFeatureType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MLImageSizeConstraintTypeUnspecified"},
+      {"access": "public", "name": "MLImageSizeConstraintTypeEnumerated"},
+      {"access": "public", "name": "MLImageSizeConstraintTypeRange"}
+     ],
+     "introduced": "12",
+     "name": "MLImageSizeConstraintType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MLModelErrorGeneric"},
+      {"access": "public", "name": "MLModelErrorFeatureType"},
+      {"access": "public", "name": "MLModelErrorIO"},
+      {"access": "public", "introduced": "11.2", "name": "MLModelErrorCustomLayer"},
+      {"access": "public", "introduced": "12", "name": "MLModelErrorCustomModel"},
+      {"access": "public", "introduced": "13", "name": "MLModelErrorUpdate"},
+      {"access": "public", "introduced": "13", "name": "MLModelErrorParameters"},
+      {"access": "public", "introduced": "14", "name": "MLModelErrorModelDecryptionKeyFetch"},
+      {"access": "public", "introduced": "14", "name": "MLModelErrorModelDecryption"},
+      {"access": "public", "introduced": "14", "name": "MLModelErrorModelCollection"},
+      {"access": "public", "introduced": "17", "name": "MLModelErrorPredictionCancelled"}
+     ],
+     "introduced": "11",
+     "name": "MLModelError"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MLMultiArrayDataTypeDouble"},
+      {"access": "public", "introduced": "14", "name": "MLMultiArrayDataTypeFloat64"},
+      {"access": "public", "name": "MLMultiArrayDataTypeFloat32"},
+      {"access": "public", "introduced": "16", "name": "MLMultiArrayDataTypeFloat16"},
+      {"access": "public", "introduced": "14", "name": "MLMultiArrayDataTypeFloat"},
+      {"access": "public", "name": "MLMultiArrayDataTypeInt32"},
+      {"access": "public", "introduced": "26", "name": "MLMultiArrayDataTypeInt8"}
+     ],
+     "introduced": "11",
+     "name": "MLMultiArrayDataType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MLMultiArrayShapeConstraintTypeUnspecified"},
+      {"access": "public", "name": "MLMultiArrayShapeConstraintTypeEnumerated"},
+      {"access": "public", "name": "MLMultiArrayShapeConstraintTypeRange"}
+     ],
+     "name": "MLMultiArrayShapeConstraintType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MLReshapeFrequencyHintFrequent"},
+      {"access": "public", "name": "MLReshapeFrequencyHintInfrequent"}
+     ],
+     "introduced": "17.4",
+     "name": "MLReshapeFrequencyHint"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MLSpecializationStrategyDefault"},
+      {"access": "public", "name": "MLSpecializationStrategyFastPrediction"}
+     ],
+     "introduced": "18",
+     "name": "MLSpecializationStrategy"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MLTaskStateSuspended"},
+      {"access": "public", "name": "MLTaskStateRunning"},
+      {"access": "public", "name": "MLTaskStateCancelling"},
+      {"access": "public", "name": "MLTaskStateCompleted"},
+      {"access": "public", "name": "MLTaskStateFailed"}
+     ],
+     "name": "MLTaskState"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MLUpdateProgressEventTrainingBegin"},
+      {"access": "public", "name": "MLUpdateProgressEventEpochEnd"},
+      {"access": "public", "name": "MLUpdateProgressEventMiniBatchEnd"}
+     ],
+     "name": "MLUpdateProgressEvent"
+    }
+   ],
+   "globals": [
+    {"access": "public", "introduced": "17", "kind": "function", "linkage": "exported", "name": "_MLAllComputeDevices"},
+    {"access": "public", "introduced": "13", "kind": "variable", "linkage": "exported", "name": "_MLFeatureValueImageOptionCropAndScale"},
+    {"access": "public", "introduced": "13", "kind": "variable", "linkage": "exported", "name": "_MLFeatureValueImageOptionCropRect"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_MLModelAuthorKey"},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_MLModelCollectionDidChangeNotification", "unavailable": true},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_MLModelCreatorDefinedKey"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_MLModelDescriptionKey"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_MLModelErrorDomain"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_MLModelLicenseKey"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_MLModelVersionStringKey"}
+   ],
+   "interfaces": [
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithFeatureProviderArray:"},
+      {"access": "public", "name": "initWithDictionary:error:"}
+     ],
+     "introduced": "12",
+     "linkage": "exported",
+     "name": "MLArrayBatchProvider",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "array", "name": "array"}
+     ],
+     "protocols": [
+      "MLBatchProvider"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "17",
+     "linkage": "exported",
+     "name": "MLCPUComputeDevice",
+     "protocols": [
+      "MLComputeDeviceProtocol"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true},
+      {"access": "public", "name": "loadContentsOfURL:configuration:completionHandler:"},
+      {"access": "public", "name": "loadModelAsset:configuration:completionHandler:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "estimatedCostOfMLProgramOperation:"},
+      {"access": "public", "name": "computeDeviceUsageForNeuralNetworkLayer:"},
+      {"access": "public", "name": "computeDeviceUsageForMLProgramOperation:"}
+     ],
+     "introduced": "17.4",
+     "linkage": "exported",
+     "name": "MLComputePlan",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "modelStructure", "name": "modelStructure"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "17.4",
+     "linkage": "exported",
+     "name": "MLComputePlanCost",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "weight", "name": "weight"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "17.4",
+     "linkage": "exported",
+     "name": "MLComputePlanDeviceUsage",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "supportedComputeDevices", "name": "supportedComputeDevices"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "preferredComputeDevice", "name": "preferredComputeDevice"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "11",
+     "linkage": "exported",
+     "name": "MLDictionaryConstraint",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "keyType", "name": "keyType"}
+     ],
+     "protocols": [
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithDictionary:error:"},
+      {"access": "public", "name": "objectForKeyedSubscript:"}
+     ],
+     "introduced": "11",
+     "linkage": "exported",
+     "name": "MLDictionaryFeatureProvider",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "dictionary", "name": "dictionary"}
+     ],
+     "protocols": [
+      "MLFeatureProvider",
+      "NSFastEnumeration",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "categories": [
+      "MLFeatureValueConstraints"
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "isAllowedValue:"}
+     ],
+     "introduced": "11",
+     "linkage": "exported",
+     "name": "MLFeatureDescription",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "name", "name": "name"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "type", "name": "type"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isOptional", "name": "optional"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "categories": [
+      "MLImageConversion"
+     ],
+     "classMethods": [
+      {"access": "public", "name": "featureValueWithInt64:"},
+      {"access": "public", "name": "featureValueWithDouble:"},
+      {"access": "public", "name": "featureValueWithString:"},
+      {"access": "public", "name": "featureValueWithMultiArray:"},
+      {"access": "public", "name": "featureValueWithPixelBuffer:"},
+      {"access": "public", "introduced": "12", "name": "featureValueWithSequence:"},
+      {"access": "public", "name": "undefinedFeatureValueWithType:"},
+      {"access": "public", "name": "featureValueWithDictionary:error:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "isEqualToFeatureValue:"}
+     ],
+     "introduced": "11",
+     "linkage": "exported",
+     "name": "MLFeatureValue",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "type", "name": "type"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isUndefined", "name": "undefined"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "int64Value", "name": "int64Value"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "doubleValue", "name": "doubleValue"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "stringValue", "name": "stringValue"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "multiArrayValue", "name": "multiArrayValue"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "dictionaryValue", "name": "dictionaryValue"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "imageBufferValue", "name": "imageBufferValue"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "sequenceValue", "introduced": "12", "name": "sequenceValue"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "17",
+     "linkage": "exported",
+     "name": "MLGPUComputeDevice",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "metalDevice", "name": "metalDevice"}
+     ],
+     "protocols": [
+      "MLComputeDeviceProtocol"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "11",
+     "linkage": "exported",
+     "name": "MLImageConstraint",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "pixelsHigh", "name": "pixelsHigh"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "pixelsWide", "name": "pixelsWide"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "pixelFormatType", "name": "pixelFormatType"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "sizeConstraint", "introduced": "12", "name": "sizeConstraint"}
+     ],
+     "protocols": [
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "12",
+     "linkage": "exported",
+     "name": "MLImageSize",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "pixelsWide", "name": "pixelsWide"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "pixelsHigh", "name": "pixelsHigh"}
+     ],
+     "protocols": [
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "12",
+     "linkage": "exported",
+     "name": "MLImageSizeConstraint",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "type", "name": "type"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "pixelsWideRange", "name": "pixelsWideRange"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "pixelsHighRange", "name": "pixelsHighRange"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "enumeratedImageSizes", "name": "enumeratedImageSizes"}
+     ],
+     "protocols": [
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "13",
+     "linkage": "exported",
+     "name": "MLKey",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "name", "name": "name"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "scope", "name": "scope"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "13",
+     "linkage": "exported",
+     "name": "MLMetricKey",
+     "properties": [
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "lossValue", "name": "lossValue"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "epochIndex", "name": "epochIndex"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "miniBatchIndex", "name": "miniBatchIndex"}
+     ],
+     "super": "MLKey"
+    },
+    {
+     "access": "public",
+     "categories": [
+      "MLModelCompilation",
+      "MLComputeDevice",
+      "MLState"
+     ],
+     "classMethods": [
+      {"access": "public", "name": "modelWithContentsOfURL:error:"},
+      {"access": "public", "introduced": "12", "name": "modelWithContentsOfURL:configuration:error:"},
+      {"access": "public", "introduced": "14", "name": "loadContentsOfURL:configuration:completionHandler:"},
+      {"access": "public", "introduced": "16", "name": "loadModelAsset:configuration:completionHandler:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "predictionFromFeatures:error:"},
+      {"access": "public", "name": "predictionFromFeatures:options:error:"},
+      {"access": "public", "introduced": "17", "name": "predictionFromFeatures:completionHandler:"},
+      {"access": "public", "introduced": "17", "name": "predictionFromFeatures:options:completionHandler:"},
+      {"access": "public", "introduced": "12", "name": "predictionsFromBatch:error:"},
+      {"access": "public", "introduced": "12", "name": "predictionsFromBatch:options:error:"},
+      {"access": "public", "introduced": "13", "name": "parameterValueForKey:error:"}
+     ],
+     "introduced": "11",
+     "linkage": "exported",
+     "name": "MLModel",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "modelDescription", "name": "modelDescription"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "configuration", "introduced": "12", "name": "configuration"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "introduced": "16", "name": "modelAssetWithSpecificationData:error:"},
+      {"access": "public", "introduced": "18", "name": "modelAssetWithSpecificationData:blobMapping:error:"},
+      {"access": "public", "introduced": "18", "name": "modelAssetWithURL:error:"},
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "introduced": "18", "name": "modelDescriptionWithCompletionHandler:"},
+      {"access": "public", "introduced": "18", "name": "modelDescriptionOfFunctionNamed:completionHandler:"},
+      {"access": "public", "introduced": "18", "name": "functionNamesWithCompletionHandler:"},
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "16",
+     "linkage": "exported",
+     "name": "MLModelAsset",
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "beginAccessingModelCollectionWithIdentifier:completionHandler:", "unavailable": true},
+      {"access": "public", "name": "endAccessingModelCollectionWithIdentifier:completionHandler:", "unavailable": true},
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "linkage": "exported",
+     "name": "MLModelCollection",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "identifier", "name": "identifier", "unavailable": true},
+      {"access": "public", "attr": [ "readonly" ], "getter": "entries", "name": "entries", "unavailable": true},
+      {"access": "public", "attr": [ "readonly" ], "getter": "deploymentID", "name": "deploymentID", "unavailable": true}
+     ],
+     "super": "NSObject",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "isEqualToModelCollectionEntry:", "unavailable": true},
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "linkage": "exported",
+     "name": "MLModelCollectionEntry",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "modelIdentifier", "name": "modelIdentifier", "unavailable": true},
+      {"access": "public", "attr": [ "readonly" ], "getter": "modelURL", "name": "modelURL", "unavailable": true}
+     ],
+     "super": "NSObject",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "categories": [
+      "MLGPUConfigurationOptions",
+      "MLModelParameterAdditions",
+      "MultiFunctions"
+     ],
+     "introduced": "12",
+     "linkage": "exported",
+     "name": "MLModelConfiguration",
+     "properties": [
+      {"access": "public", "getter": "modelDisplayName", "introduced": "16", "name": "modelDisplayName", "setter": "setModelDisplayName:"},
+      {"access": "public", "getter": "computeUnits", "name": "computeUnits", "setter": "setComputeUnits:"},
+      {"access": "public", "getter": "optimizationHints", "introduced": "17.4", "name": "optimizationHints", "setter": "setOptimizationHints:"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "categories": [
+      "MLUpdateAdditions",
+      "MLParameters"
+     ],
+     "introduced": "11",
+     "linkage": "exported",
+     "name": "MLModelDescription",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "inputDescriptionsByName", "name": "inputDescriptionsByName"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "outputDescriptionsByName", "name": "outputDescriptionsByName"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "stateDescriptionsByName", "introduced": "18", "name": "stateDescriptionsByName"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "predictedFeatureName", "name": "predictedFeatureName"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "predictedProbabilitiesName", "name": "predictedProbabilitiesName"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "metadata", "name": "metadata"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "classLabels", "introduced": "14", "name": "classLabels"}
+     ],
+     "protocols": [
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true},
+      {"access": "public", "name": "loadContentsOfURL:completionHandler:"},
+      {"access": "public", "name": "loadModelAsset:completionHandler:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "17.4",
+     "linkage": "exported",
+     "name": "MLModelStructure",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "neuralNetwork", "name": "neuralNetwork"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "program", "name": "program"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "pipeline", "name": "pipeline"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "17.4",
+     "linkage": "exported",
+     "name": "MLModelStructureNeuralNetwork",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "layers", "name": "layers"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "17.4",
+     "linkage": "exported",
+     "name": "MLModelStructureNeuralNetworkLayer",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "name", "name": "name"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "type", "name": "type"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "inputNames", "name": "inputNames"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "outputNames", "name": "outputNames"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "17.4",
+     "linkage": "exported",
+     "name": "MLModelStructurePipeline",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "subModelNames", "name": "subModelNames"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "subModels", "name": "subModels"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "17.4",
+     "linkage": "exported",
+     "name": "MLModelStructureProgram",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "functions", "name": "functions"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "17.4",
+     "linkage": "exported",
+     "name": "MLModelStructureProgramArgument",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "bindings", "name": "bindings"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "17.4",
+     "linkage": "exported",
+     "name": "MLModelStructureProgramBinding",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "name", "name": "name"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "value", "name": "value"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "17.4",
+     "linkage": "exported",
+     "name": "MLModelStructureProgramBlock",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "inputs", "name": "inputs"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "outputNames", "name": "outputNames"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "operations", "name": "operations"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "17.4",
+     "linkage": "exported",
+     "name": "MLModelStructureProgramFunction",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "inputs", "name": "inputs"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "block", "name": "block"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "17.4",
+     "linkage": "exported",
+     "name": "MLModelStructureProgramNamedValueType",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "name", "name": "name"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "type", "name": "type"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "17.4",
+     "linkage": "exported",
+     "name": "MLModelStructureProgramOperation",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "operatorName", "name": "operatorName"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "inputs", "name": "inputs"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "outputs", "name": "outputs"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "blocks", "name": "blocks"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "17.4",
+     "linkage": "exported",
+     "name": "MLModelStructureProgramValue",
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "17.4",
+     "linkage": "exported",
+     "name": "MLModelStructureProgramValueType",
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "categories": [
+      "Creation",
+      "ScopedBufferAccess",
+      "Concatenating",
+      "NSNumberDataAccess",
+      "Transferring"
+     ],
+     "introduced": "11",
+     "linkage": "exported",
+     "name": "MLMultiArray",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "dataPointer", "introduced": "11", "name": "dataPointer"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "dataType", "name": "dataType"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "shape", "name": "shape"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "strides", "name": "strides"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "count", "name": "count"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "pixelBuffer", "introduced": "16", "name": "pixelBuffer"}
+     ],
+     "protocols": [
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "11",
+     "linkage": "exported",
+     "name": "MLMultiArrayConstraint",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "shape", "name": "shape"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "dataType", "name": "dataType"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "shapeConstraint", "introduced": "12", "name": "shapeConstraint"}
+     ],
+     "protocols": [
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "12",
+     "linkage": "exported",
+     "name": "MLMultiArrayShapeConstraint",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "type", "name": "type"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "sizeRangeForDimension", "name": "sizeRangeForDimension"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "enumeratedShapes", "name": "enumeratedShapes"}
+     ],
+     "protocols": [
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "17",
+     "linkage": "exported",
+     "name": "MLNeuralEngineComputeDevice",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "totalCoreCount", "name": "totalCoreCount"}
+     ],
+     "protocols": [
+      "MLComputeDeviceProtocol"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "13",
+     "linkage": "exported",
+     "name": "MLNumericConstraint",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "minNumber", "name": "minNumber"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "maxNumber", "name": "maxNumber"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "enumeratedNumbers", "name": "enumeratedNumbers"}
+     ],
+     "protocols": [
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "17.4",
+     "linkage": "exported",
+     "name": "MLOptimizationHints",
+     "properties": [
+      {"access": "public", "getter": "reshapeFrequency", "name": "reshapeFrequency", "setter": "setReshapeFrequency:"},
+      {"access": "public", "getter": "specializationStrategy", "introduced": "18", "name": "specializationStrategy", "setter": "setSpecializationStrategy:"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "13",
+     "linkage": "exported",
+     "name": "MLParameterDescription",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "key", "name": "key"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "defaultValue", "name": "defaultValue"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "numericConstraint", "name": "numericConstraint"}
+     ],
+     "protocols": [
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "categories": [
+      "MLLinkedModelParameters",
+      "MLNeuralNetworkParameters",
+      "MLScopedParameters"
+     ],
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "13",
+     "linkage": "exported",
+     "name": "MLParameterKey",
+     "properties": [
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "learningRate", "name": "learningRate"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "momentum", "name": "momentum"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "miniBatchSize", "name": "miniBatchSize"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "beta1", "name": "beta1"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "beta2", "name": "beta2"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "eps", "name": "eps"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "epochs", "name": "epochs"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "shuffle", "name": "shuffle"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "seed", "name": "seed"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "numberOfNeighbors", "name": "numberOfNeighbors"}
+     ],
+     "super": "MLKey"
+    },
+    {
+     "access": "public",
+     "introduced": "11",
+     "linkage": "exported",
+     "name": "MLPredictionOptions",
+     "properties": [
+      {"access": "public", "getter": "usesCPUOnly", "introduced": "11", "name": "usesCPUOnly", "setter": "setUsesCPUOnly:"},
+      {"access": "public", "getter": "outputBackings", "introduced": "16", "name": "outputBackings", "setter": "setOutputBackings:"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "emptySequenceWithType:"},
+      {"access": "public", "name": "sequenceWithStringArray:"},
+      {"access": "public", "name": "sequenceWithInt64Array:"}
+     ],
+     "introduced": "12",
+     "linkage": "exported",
+     "name": "MLSequence",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "type", "name": "type"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "stringValues", "name": "stringValues"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "int64Values", "name": "int64Values"}
+     ],
+     "protocols": [
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "12",
+     "linkage": "exported",
+     "name": "MLSequenceConstraint",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "valueDescription", "name": "valueDescription"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "countRange", "name": "countRange"}
+     ],
+     "protocols": [
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "introduced": "18", "name": "getMultiArrayForStateNamed:handler:"},
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "18",
+     "linkage": "exported",
+     "name": "MLState",
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "18",
+     "linkage": "exported",
+     "name": "MLStateConstraint",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "bufferShape", "introduced": "18", "name": "bufferShape"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "dataType", "introduced": "18", "name": "dataType"}
+     ],
+     "protocols": [
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "resume"},
+      {"access": "public", "name": "cancel"},
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "13",
+     "linkage": "exported",
+     "name": "MLTask",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "taskIdentifier", "name": "taskIdentifier"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "state", "name": "state"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "error", "name": "error"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "13",
+     "linkage": "exported",
+     "name": "MLUpdateContext",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "task", "name": "task"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "model", "name": "model"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "event", "name": "event"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "metrics", "name": "metrics"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "parameters", "name": "parameters"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initForEvents:progressHandler:completionHandler:"},
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "13",
+     "linkage": "exported",
+     "name": "MLUpdateProgressHandlers",
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "updateTaskForModelAtURL:trainingData:configuration:completionHandler:error:"},
+      {"access": "public", "introduced": "14", "name": "updateTaskForModelAtURL:trainingData:completionHandler:error:"},
+      {"access": "public", "name": "updateTaskForModelAtURL:trainingData:configuration:progressHandlers:error:"},
+      {"access": "public", "introduced": "14", "name": "updateTaskForModelAtURL:trainingData:progressHandlers:error:"},
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "resumeWithParameters:"},
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "13",
+     "linkage": "exported",
+     "name": "MLUpdateTask",
+     "super": "MLTask"
+    }
+   ],
+   "protocols": [
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "featuresAtIndex:"}
+     ],
+     "introduced": "12",
+     "name": "MLBatchProvider",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "count", "name": "count"}
+     ]
+    },
+    {
+     "access": "public",
+     "introduced": "17",
+     "name": "MLComputeDeviceProtocol",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithParameterDictionary:error:"},
+      {"access": "public", "name": "setWeightData:error:"},
+      {"access": "public", "name": "outputShapesForInputShapes:error:"},
+      {"access": "public", "name": "evaluateOnCPUWithInputs:outputs:error:"},
+      {"access": "public", "name": "encodeToCommandBuffer:inputs:outputs:error:", "optional": true}
+     ],
+     "introduced": "11.2",
+     "name": "MLCustomLayer"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithModelDescription:parameterDictionary:error:"},
+      {"access": "public", "name": "predictionFromFeatures:options:error:"},
+      {"access": "public", "name": "predictionsFromBatch:options:error:", "optional": true}
+     ],
+     "introduced": "12",
+     "name": "MLCustomModel"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "featureValueForName:"}
+     ],
+     "introduced": "11",
+     "name": "MLFeatureProvider",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "featureNames", "name": "featureNames"}
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "writeToURL:error:"}
+     ],
+     "introduced": "13",
+     "name": "MLWritable",
+     "protocols": [
+      "NSObject"
+     ]
+    }
+   ],
+   "target": "arm64e.x1-apple-ios27",
    "typedefs": [
     {"access": "public", "name": "MLComputeUnits"},
     {"access": "public", "name": "MLFeatureType"},
@@ -2192,7 +3511,7 @@
     {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$ss7Float16V6CoreMLE18multiArrayDataTypeSo07MLMultiefG0VvgZ"},
     {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$ss7Float16V6CoreMLE18multiArrayDataTypeSo07MLMultiefG0VvpZMV"}
    ],
-   "target": "arm64e-apple-ios26.5"
+   "target": "arm64e-apple-ios27.0"
   }
  ],
  "version": "1.0"

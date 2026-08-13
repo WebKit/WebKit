@@ -14,9 +14,10 @@
     {"access": "public", "introduced": "15", "linkage": "exported", "name": "_$sSo16CAFrameRateRangeV10QuartzCoreE9preferredSfSgvg"},
     {"access": "public", "introduced": "15", "linkage": "exported", "name": "_$sSo16CAFrameRateRangeV10QuartzCoreE9preferredSfSgvpMV"},
     {"access": "public", "introduced": "15", "linkage": "exported", "name": "_$sSo16CAFrameRateRangeV10QuartzCoreE9preferredSfSgvs"},
-    {"access": "public", "introduced": "15", "linkage": "exported", "name": "_$sSo16CAFrameRateRangeVSQ10QuartzCoreMc"}
+    {"access": "public", "introduced": "15", "linkage": "exported", "name": "_$sSo16CAFrameRateRangeVSQ10QuartzCoreMc"},
+    {"access": "public", "linkage": "exported", "name": "__swift_FORCE_LOAD_$_swiftQuartzCore"}
    ],
-   "target": "arm64e-apple-ios26.5"
+   "target": "arm64e-apple-ios27.0"
   }
  ],
  "version": "1.0"

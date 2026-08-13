@@ -2,7 +2,10 @@
 {
  "PublicSDKContentRoot": [
   {
-   "target": "arm64e-apple-ios26.5"
+   "target": "arm64e-apple-ios27"
+  },
+  {
+   "target": "arm64e.x1-apple-ios27"
   },
   {
    "globals": [
@@ -81,7 +84,7 @@
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$s19ExtensionFoundation03AppA5PointV5ErrorON"},
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$s19ExtensionFoundation03AppA5PointV5ErrorOsAdAMc"},
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$s19ExtensionFoundation03AppA5PointV5ScopeV11RestrictionO11applicationyA2GmFWC"},
-    {"access": "public", "linkage": "exported", "name": "_$s19ExtensionFoundation03AppA5PointV5ScopeV11RestrictionO4noneyA2GmFWC"},
+    {"access": "public", "linkage": "exported", "name": "_$s19ExtensionFoundation03AppA5PointV5ScopeV11RestrictionO4noneyA2GmFWC", "unavailable": true},
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$s19ExtensionFoundation03AppA5PointV5ScopeV11RestrictionOMa"},
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$s19ExtensionFoundation03AppA5PointV5ScopeV11RestrictionOMn"},
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$s19ExtensionFoundation03AppA5PointV5ScopeV11RestrictionON"},
@@ -220,7 +223,7 @@
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$s19ExtensionFoundation17ConnectionHandlerVMn"},
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$s19ExtensionFoundation17ConnectionHandlerVN"}
    ],
-   "target": "arm64e-apple-ios26.5"
+   "target": "arm64e-apple-ios27.0"
   }
  ],
  "version": "1.0"

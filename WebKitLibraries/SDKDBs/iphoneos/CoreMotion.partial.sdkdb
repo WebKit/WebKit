@@ -1,0 +1,1805 @@
+
+{
+ "PublicSDKContentRoot": [
+  {
+   "enums": [
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "CMAttitudeReferenceFrameXArbitraryZVertical"},
+      {"access": "public", "name": "CMAttitudeReferenceFrameXArbitraryCorrectedZVertical"},
+      {"access": "public", "name": "CMAttitudeReferenceFrameXMagneticNorthZVertical"},
+      {"access": "public", "name": "CMAttitudeReferenceFrameXTrueNorthZVertical"}
+     ],
+     "name": "CMAttitudeReferenceFrame"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "CMAuthorizationStatusNotDetermined"},
+      {"access": "public", "name": "CMAuthorizationStatusRestricted"},
+      {"access": "public", "name": "CMAuthorizationStatusDenied"},
+      {"access": "public", "name": "CMAuthorizationStatusAuthorized"}
+     ],
+     "introduced": "11",
+     "name": "CMAuthorizationStatus"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "CMDeviceMotionSensorLocationDefault"},
+      {"access": "public", "name": "CMDeviceMotionSensorLocationHeadphoneLeft"},
+      {"access": "public", "name": "CMDeviceMotionSensorLocationHeadphoneRight"}
+     ],
+     "name": "CMDeviceMotionSensorLocation"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "CMErrorNULL"},
+      {"access": "public", "name": "CMErrorDeviceRequiresMovement"},
+      {"access": "public", "name": "CMErrorTrueNorthNotAvailable"},
+      {"access": "public", "name": "CMErrorUnknown"},
+      {"access": "public", "name": "CMErrorMotionActivityNotAvailable"},
+      {"access": "public", "name": "CMErrorMotionActivityNotAuthorized"},
+      {"access": "public", "name": "CMErrorMotionActivityNotEntitled"},
+      {"access": "public", "name": "CMErrorInvalidParameter"},
+      {"access": "public", "name": "CMErrorInvalidAction"},
+      {"access": "public", "name": "CMErrorNotAvailable"},
+      {"access": "public", "name": "CMErrorNotEntitled"},
+      {"access": "public", "name": "CMErrorNotAuthorized"},
+      {"access": "public", "name": "CMErrorNilData"},
+      {"access": "public", "name": "CMErrorSize"}
+     ],
+     "name": "CMError"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "CMFallDetectionEventUserResolutionConfirmed"},
+      {"access": "public", "name": "CMFallDetectionEventUserResolutionDismissed"},
+      {"access": "public", "name": "CMFallDetectionEventUserResolutionRejected"},
+      {"access": "public", "name": "CMFallDetectionEventUserResolutionUnresponsive"}
+     ],
+     "name": "CMFallDetectionEventUserResolution"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "CMHeadphoneActivityStatusDisconnected"},
+      {"access": "public", "name": "CMHeadphoneActivityStatusConnected"}
+     ],
+     "name": "CMHeadphoneActivityStatus"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "CMHighFrequencyHeartRateDataConfidenceLow"},
+      {"access": "public", "name": "CMHighFrequencyHeartRateDataConfidenceMedium"},
+      {"access": "public", "name": "CMHighFrequencyHeartRateDataConfidenceHigh"},
+      {"access": "public", "name": "CMHighFrequencyHeartRateDataConfidenceHighest"}
+     ],
+     "introduced": "17",
+     "name": "CMHighFrequencyHeartRateDataConfidence"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "CMMagneticFieldCalibrationAccuracyUncalibrated"},
+      {"access": "public", "name": "CMMagneticFieldCalibrationAccuracyLow"},
+      {"access": "public", "name": "CMMagneticFieldCalibrationAccuracyMedium"},
+      {"access": "public", "name": "CMMagneticFieldCalibrationAccuracyHigh"}
+     ],
+     "name": "CMMagneticFieldCalibrationAccuracy"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "CMMotionActivityConfidenceLow"},
+      {"access": "public", "name": "CMMotionActivityConfidenceMedium"},
+      {"access": "public", "name": "CMMotionActivityConfidenceHigh"}
+     ],
+     "name": "CMMotionActivityConfidence"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "CMOdometerOriginDeviceUnknown"},
+      {"access": "public", "name": "CMOdometerOriginDeviceLocal"},
+      {"access": "public", "name": "CMOdometerOriginDeviceRemote"}
+     ],
+     "introduced": "15.4",
+     "name": "CMOdometerOriginDevice"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "CMPedometerEventTypePause"},
+      {"access": "public", "name": "CMPedometerEventTypeResume"}
+     ],
+     "introduced": "10",
+     "name": "CMPedometerEventType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "CMWaterSubmersionDepthStateUnknown"},
+      {"access": "public", "name": "CMWaterSubmersionDepthStateNotSubmerged"},
+      {"access": "public", "name": "CMWaterSubmersionDepthStateSubmergedShallow"},
+      {"access": "public", "name": "CMWaterSubmersionDepthStateSubmergedDeep"},
+      {"access": "public", "name": "CMWaterSubmersionDepthStateApproachingMaxDepth"},
+      {"access": "public", "name": "CMWaterSubmersionDepthStatePastMaxDepth"},
+      {"access": "public", "name": "CMWaterSubmersionDepthStateSensorDepthError"}
+     ],
+     "name": "CMWaterSubmersionDepthState"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "CMWaterSubmersionStateUnknown"},
+      {"access": "public", "name": "CMWaterSubmersionStateNotSubmerged"},
+      {"access": "public", "name": "CMWaterSubmersionStateSubmerged"}
+     ],
+     "name": "CMWaterSubmersionState"
+    }
+   ],
+   "globals": [
+    {"access": "public", "introduced": "4", "kind": "variable", "linkage": "exported", "name": "_CMErrorDomain"}
+   ],
+   "interfaces": [
+    {
+     "access": "public",
+     "introduced": "15",
+     "linkage": "exported",
+     "name": "CMAbsoluteAltitudeData",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "altitude", "name": "altitude"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "accuracy", "name": "accuracy"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "precision", "name": "precision"}
+     ],
+     "super": "CMLogItem"
+    },
+    {
+     "access": "public",
+     "introduced": "4",
+     "ivars": [
+      {"access": "public", "accessControl": "private", "linkage": "exported", "name": "_internal"}
+     ],
+     "linkage": "exported",
+     "name": "CMAccelerometerData",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "acceleration", "name": "acceleration"}
+     ],
+     "super": "CMLogItem"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "isRelativeAltitudeAvailable"},
+      {"access": "public", "introduced": "11", "name": "authorizationStatus"},
+      {"access": "public", "introduced": "15", "name": "isAbsoluteAltitudeAvailable"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "startRelativeAltitudeUpdatesToQueue:withHandler:"},
+      {"access": "public", "name": "stopRelativeAltitudeUpdates"},
+      {"access": "public", "introduced": "15", "name": "startAbsoluteAltitudeUpdatesToQueue:withHandler:"},
+      {"access": "public", "introduced": "15", "name": "stopAbsoluteAltitudeUpdates"}
+     ],
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "CMAltimeter",
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "CMAltitudeData",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "relativeAltitude", "name": "relativeAltitude"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "pressure", "name": "pressure"}
+     ],
+     "super": "CMLogItem"
+    },
+    {
+     "access": "public",
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "CMAmbientPressureData",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "pressure", "name": "pressure"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "temperature", "name": "temperature"}
+     ],
+     "super": "CMLogItem"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "multiplyByInverseOfAttitude:"}
+     ],
+     "introduced": "4",
+     "ivars": [
+      {"access": "public", "accessControl": "private", "linkage": "exported", "name": "_internal"}
+     ],
+     "linkage": "exported",
+     "name": "CMAttitude",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "roll", "name": "roll"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "pitch", "name": "pitch"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "yaw", "name": "yaw"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "rotationMatrix", "name": "rotationMatrix"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "quaternion", "name": "quaternion"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "startAccelerometerUpdates"},
+      {"access": "public", "name": "startAccelerometerUpdatesWithHandler:"},
+      {"access": "public", "name": "stopAccelerometerUpdates"},
+      {"access": "public", "name": "startDeviceMotionUpdates"},
+      {"access": "public", "name": "startDeviceMotionUpdatesWithHandler:"},
+      {"access": "public", "name": "stopDeviceMotionUpdates"}
+     ],
+     "linkage": "exported",
+     "name": "CMBatchedSensorManager",
+     "properties": [
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "authorizationStatus", "name": "authorizationStatus"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "isAccelerometerSupported", "name": "accelerometerSupported"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isAccelerometerActive", "name": "accelerometerActive"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "accelerometerDataFrequency", "name": "accelerometerDataFrequency"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "accelerometerBatch", "name": "accelerometerBatch"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "isDeviceMotionSupported", "name": "deviceMotionSupported"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "deviceMotionDataFrequency", "name": "deviceMotionDataFrequency"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isDeviceMotionActive", "name": "deviceMotionActive"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "deviceMotionBatch", "name": "deviceMotionBatch"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "4",
+     "ivars": [
+      {"access": "public", "accessControl": "private", "linkage": "exported", "name": "_internal"}
+     ],
+     "linkage": "exported",
+     "name": "CMDeviceMotion",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "attitude", "name": "attitude"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "rotationRate", "name": "rotationRate"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "gravity", "name": "gravity"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "userAcceleration", "name": "userAcceleration"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "magneticField", "introduced": "5", "name": "magneticField"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "heading", "introduced": "11", "name": "heading"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "headingAccuracy", "introduced": "27", "name": "headingAccuracy"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "sensorLocation", "introduced": "14", "name": "sensorLocation"}
+     ],
+     "super": "CMLogItem"
+    },
+    {
+     "access": "public",
+     "introduced": "12",
+     "linkage": "exported",
+     "name": "CMDyskineticSymptomResult",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "startDate", "name": "startDate"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "endDate", "name": "endDate"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "percentUnlikely", "name": "percentUnlikely"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "percentLikely", "name": "percentLikely"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "linkage": "exported",
+     "name": "CMFallDetectionEvent",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "date", "name": "date"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "resolution", "name": "resolution"}
+     ],
+     "super": "NSObject",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "requestAuthorizationWithHandler:"}
+     ],
+     "linkage": "exported",
+     "name": "CMFallDetectionManager",
+     "properties": [
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "isAvailable", "name": "available"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "authorizationStatus", "name": "authorizationStatus"},
+      {"access": "public", "getter": "delegate", "name": "delegate", "setter": "setDelegate:"}
+     ],
+     "super": "NSObject",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "introduced": "4",
+     "ivars": [
+      {"access": "public", "accessControl": "private", "linkage": "exported", "name": "_internal"}
+     ],
+     "linkage": "exported",
+     "name": "CMGyroData",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "rotationRate", "name": "rotationRate"}
+     ],
+     "super": "CMLogItem"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "authorizationStatus"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "startActivityUpdatesToQueue:withHandler:"},
+      {"access": "public", "name": "stopActivityUpdates"},
+      {"access": "public", "name": "startStatusUpdatesToQueue:withHandler:"},
+      {"access": "public", "name": "stopStatusUpdates"}
+     ],
+     "introduced": "18",
+     "linkage": "exported",
+     "name": "CMHeadphoneActivityManager",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "isActivityAvailable", "name": "activityAvailable"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isActivityActive", "name": "activityActive"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isStatusAvailable", "name": "statusAvailable"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isStatusActive", "name": "statusActive"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "authorizationStatus"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "startDeviceMotionUpdates"},
+      {"access": "public", "name": "startDeviceMotionUpdatesToQueue:withHandler:"},
+      {"access": "public", "name": "stopDeviceMotionUpdates"},
+      {"access": "public", "name": "startConnectionStatusUpdates"},
+      {"access": "public", "name": "stopConnectionStatusUpdates"}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "CMHeadphoneMotionManager",
+     "properties": [
+      {"access": "public", "getter": "delegate", "name": "delegate", "setter": "setDelegate:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isConnectionStatusActive", "name": "connectionStatusActive"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isDeviceMotionAvailable", "name": "deviceMotionAvailable"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isDeviceMotionActive", "name": "deviceMotionActive"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "deviceMotion", "name": "deviceMotion"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "17",
+     "linkage": "exported",
+     "name": "CMHighFrequencyHeartRateData",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "heartRate", "name": "heartRate"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "confidence", "name": "confidence"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "date", "name": "date"}
+     ],
+     "super": "CMLogItem"
+    },
+    {
+     "access": "public",
+     "introduced": "4",
+     "ivars": [
+      {"access": "public", "accessControl": "private", "linkage": "exported", "name": "_internalLogItem"}
+     ],
+     "linkage": "exported",
+     "name": "CMLogItem",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "timestamp", "name": "timestamp"}
+     ],
+     "protocols": [
+      "NSSecureCoding",
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "5",
+     "ivars": [
+      {"access": "public", "accessControl": "private", "linkage": "exported", "name": "_internal"}
+     ],
+     "linkage": "exported",
+     "name": "CMMagnetometerData",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "magneticField", "name": "magneticField"}
+     ],
+     "super": "CMLogItem"
+    },
+    {
+     "access": "public",
+     "introduced": "7",
+     "linkage": "exported",
+     "name": "CMMotionActivity",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "confidence", "name": "confidence"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "startDate", "name": "startDate"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "unknown", "name": "unknown"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "stationary", "name": "stationary"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "walking", "name": "walking"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "running", "name": "running"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "automotive", "name": "automotive"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "cycling", "introduced": "8", "name": "cycling"}
+     ],
+     "super": "CMLogItem"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "isActivityAvailable"},
+      {"access": "public", "introduced": "11", "name": "authorizationStatus"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "queryActivityStartingFromDate:toDate:toQueue:withHandler:"},
+      {"access": "public", "name": "startActivityUpdatesToQueue:withHandler:"},
+      {"access": "public", "name": "stopActivityUpdates"}
+     ],
+     "introduced": "7",
+     "linkage": "exported",
+     "name": "CMMotionActivityManager",
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "introduced": "5", "name": "availableAttitudeReferenceFrames"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "startAccelerometerUpdates"},
+      {"access": "public", "name": "startAccelerometerUpdatesToQueue:withHandler:"},
+      {"access": "public", "name": "stopAccelerometerUpdates"},
+      {"access": "public", "name": "startGyroUpdates"},
+      {"access": "public", "name": "startGyroUpdatesToQueue:withHandler:"},
+      {"access": "public", "name": "stopGyroUpdates"},
+      {"access": "public", "introduced": "5", "name": "startMagnetometerUpdates"},
+      {"access": "public", "introduced": "5", "name": "startMagnetometerUpdatesToQueue:withHandler:"},
+      {"access": "public", "introduced": "5", "name": "stopMagnetometerUpdates"},
+      {"access": "public", "name": "startDeviceMotionUpdates"},
+      {"access": "public", "name": "startDeviceMotionUpdatesToQueue:withHandler:"},
+      {"access": "public", "introduced": "5", "name": "startDeviceMotionUpdatesUsingReferenceFrame:"},
+      {"access": "public", "introduced": "5", "name": "startDeviceMotionUpdatesUsingReferenceFrame:toQueue:withHandler:"},
+      {"access": "public", "name": "stopDeviceMotionUpdates"}
+     ],
+     "introduced": "4",
+     "ivars": [
+      {"access": "public", "accessControl": "private", "linkage": "exported", "name": "_internal"}
+     ],
+     "linkage": "exported",
+     "name": "CMMotionManager",
+     "properties": [
+      {"access": "public", "getter": "accelerometerUpdateInterval", "name": "accelerometerUpdateInterval", "setter": "setAccelerometerUpdateInterval:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isAccelerometerAvailable", "name": "accelerometerAvailable"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isAccelerometerActive", "name": "accelerometerActive"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "accelerometerData", "name": "accelerometerData"},
+      {"access": "public", "getter": "gyroUpdateInterval", "name": "gyroUpdateInterval", "setter": "setGyroUpdateInterval:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isGyroAvailable", "name": "gyroAvailable"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isGyroActive", "name": "gyroActive"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "gyroData", "name": "gyroData"},
+      {"access": "public", "getter": "magnetometerUpdateInterval", "introduced": "5", "name": "magnetometerUpdateInterval", "setter": "setMagnetometerUpdateInterval:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isMagnetometerAvailable", "introduced": "5", "name": "magnetometerAvailable"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isMagnetometerActive", "introduced": "5", "name": "magnetometerActive"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "magnetometerData", "introduced": "5", "name": "magnetometerData"},
+      {"access": "public", "getter": "deviceMotionUpdateInterval", "name": "deviceMotionUpdateInterval", "setter": "setDeviceMotionUpdateInterval:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "attitudeReferenceFrame", "introduced": "5", "name": "attitudeReferenceFrame"},
+      {"access": "public", "getter": "deviceMotionBody", "introduced": "27", "name": "deviceMotionBody", "setter": "setDeviceMotionBody:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isDeviceMotionAvailable", "name": "deviceMotionAvailable"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isDeviceMotionActive", "name": "deviceMotionActive"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "deviceMotion", "name": "deviceMotion"},
+      {"access": "public", "getter": "showsDeviceMovementDisplay", "introduced": "5", "name": "showsDeviceMovementDisplay", "setter": "setShowsDeviceMovementDisplay:"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "isAvailable"},
+      {"access": "public", "name": "version"},
+      {"access": "public", "name": "authorizationStatus"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "monitorKinesiasForDuration:"},
+      {"access": "public", "name": "queryDyskineticSymptomFromDate:toDate:withHandler:"},
+      {"access": "public", "name": "queryTremorFromDate:toDate:withHandler:"},
+      {"access": "public", "name": "lastProcessedDate"},
+      {"access": "public", "name": "monitorKinesiasExpirationDate"}
+     ],
+     "linkage": "exported",
+     "name": "CMMovementDisorderManager",
+     "super": "NSObject",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "CMOdometerData",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "startDate", "name": "startDate"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "endDate", "name": "endDate"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "deltaDistance", "introduced": "17", "name": "deltaDistance"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "deltaDistanceAccuracy", "introduced": "17", "name": "deltaDistanceAccuracy"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "speed", "introduced": "17", "name": "speed"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "speedAccuracy", "introduced": "17", "name": "speedAccuracy"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "gpsDate", "introduced": "17", "name": "gpsDate"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "deltaAltitude", "introduced": "17", "name": "deltaAltitude"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "verticalAccuracy", "introduced": "17", "name": "verticalAccuracy"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "originDevice", "introduced": "15.4", "name": "originDevice"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "slope", "introduced": "17", "name": "slope"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "maxAbsSlope", "introduced": "17", "name": "maxAbsSlope"}
+     ],
+     "protocols": [
+      "NSSecureCoding",
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "isStepCountingAvailable"},
+      {"access": "public", "name": "isDistanceAvailable"},
+      {"access": "public", "name": "isFloorCountingAvailable"},
+      {"access": "public", "introduced": "9", "name": "isPaceAvailable"},
+      {"access": "public", "introduced": "9", "name": "isCadenceAvailable"},
+      {"access": "public", "introduced": "10", "name": "isPedometerEventTrackingAvailable"},
+      {"access": "public", "introduced": "11", "name": "authorizationStatus"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "queryPedometerDataFromDate:toDate:withHandler:"},
+      {"access": "public", "name": "startPedometerUpdatesFromDate:withHandler:"},
+      {"access": "public", "name": "stopPedometerUpdates"},
+      {"access": "public", "introduced": "10", "name": "startPedometerEventUpdatesWithHandler:"},
+      {"access": "public", "introduced": "10", "name": "stopPedometerEventUpdates"}
+     ],
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "CMPedometer",
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "CMPedometerData",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "startDate", "name": "startDate"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "endDate", "name": "endDate"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "numberOfSteps", "name": "numberOfSteps"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "distance", "name": "distance"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "floorsAscended", "name": "floorsAscended"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "floorsDescended", "name": "floorsDescended"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "currentPace", "introduced": "9", "name": "currentPace"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "currentCadence", "introduced": "9", "name": "currentCadence"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "averageActivePace", "introduced": "10", "name": "averageActivePace"}
+     ],
+     "protocols": [
+      "NSSecureCoding",
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "CMPedometerEvent",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "date", "name": "date"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "type", "name": "type"}
+     ],
+     "protocols": [
+      "NSSecureCoding",
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "9",
+     "linkage": "exported",
+     "name": "CMRecordedAccelerometerData",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "identifier", "name": "identifier"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "startDate", "name": "startDate"}
+     ],
+     "super": "CMAccelerometerData"
+    },
+    {
+     "access": "public",
+     "introduced": "27",
+     "linkage": "exported",
+     "name": "CMRecordedDeviceMotion",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "identifier", "name": "identifier"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "startDate", "name": "startDate"}
+     ],
+     "super": "CMDeviceMotion"
+    },
+    {
+     "access": "public",
+     "introduced": "12",
+     "linkage": "exported",
+     "name": "CMRecordedPressureData",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "identifier", "name": "identifier"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "startDate", "name": "startDate"}
+     ],
+     "super": "CMAmbientPressureData"
+    },
+    {
+     "access": "public",
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "CMRecordedRotationRateData",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "startDate", "name": "startDate"}
+     ],
+     "super": "CMRotationRateData"
+    },
+    {
+     "access": "public",
+     "introduced": "14",
+     "ivars": [
+      {"access": "public", "accessControl": "private", "linkage": "exported", "name": "_internal"}
+     ],
+     "linkage": "exported",
+     "name": "CMRotationRateData",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "rotationRate", "name": "rotationRate"}
+     ],
+     "super": "CMLogItem"
+    },
+    {
+     "access": "public",
+     "introduced": "9",
+     "linkage": "exported",
+     "name": "CMSensorDataList",
+     "protocols": [
+      "NSFastEnumeration"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "isAccelerometerRecordingAvailable"},
+      {"access": "public", "introduced": "11", "name": "authorizationStatus"},
+      {"access": "public", "introduced": "9", "name": "isAuthorizedForRecording"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "accelerometerDataFromDate:toDate:"},
+      {"access": "public", "name": "recordAccelerometerForDuration:"}
+     ],
+     "introduced": "9",
+     "linkage": "exported",
+     "name": "CMSensorRecorder",
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "isStepCountingAvailable"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "queryStepCountStartingFrom:to:toQueue:withHandler:"},
+      {"access": "public", "name": "startStepCountingUpdatesToQueue:updateOn:withHandler:"},
+      {"access": "public", "name": "stopStepCountingUpdates"}
+     ],
+     "introduced": "7",
+     "linkage": "exported",
+     "name": "CMStepCounter",
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "12",
+     "linkage": "exported",
+     "name": "CMTremorResult",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "startDate", "name": "startDate"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "endDate", "name": "endDate"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "percentUnknown", "name": "percentUnknown"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "percentNone", "name": "percentNone"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "percentSlight", "name": "percentSlight"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "percentMild", "name": "percentMild"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "percentModerate", "name": "percentModerate"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "percentStrong", "name": "percentStrong"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "16",
+     "linkage": "exported",
+     "name": "CMWaterSubmersionEvent",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "date", "name": "date"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "state", "name": "state"}
+     ],
+     "protocols": [
+      "NSSecureCoding",
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "16",
+     "linkage": "exported",
+     "name": "CMWaterSubmersionManager",
+     "properties": [
+      {"access": "public", "getter": "delegate", "name": "delegate", "setter": "setDelegate:"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "waterSubmersionAvailable", "name": "waterSubmersionAvailable"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "authorizationStatus", "name": "authorizationStatus"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "maximumDepth", "name": "maximumDepth"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "16",
+     "linkage": "exported",
+     "name": "CMWaterSubmersionMeasurement",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "date", "name": "date"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "depth", "name": "depth"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "pressure", "name": "pressure"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "surfacePressure", "name": "surfacePressure"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "submersionState", "name": "submersionState"}
+     ],
+     "protocols": [
+      "NSSecureCoding",
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "16",
+     "linkage": "exported",
+     "name": "CMWaterTemperature",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "date", "name": "date"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "temperature", "name": "temperature"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "temperatureUncertainty", "name": "temperatureUncertainty"}
+     ],
+     "protocols": [
+      "NSSecureCoding",
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    }
+   ],
+   "protocols": [
+    {
+     "access": "public",
+     "introduced": "27",
+     "name": "CMBodyIdentifiable",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "fallDetectionManager:didDetectEvent:completionHandler:", "optional": true},
+      {"access": "public", "name": "fallDetectionManagerDidChangeAuthorization:", "optional": true}
+     ],
+     "name": "CMFallDetectionDelegate",
+     "protocols": [
+      "NSObject"
+     ],
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "headphoneMotionManagerDidConnect:", "optional": true},
+      {"access": "public", "name": "headphoneMotionManagerDidDisconnect:", "optional": true}
+     ],
+     "introduced": "14",
+     "name": "CMHeadphoneMotionManagerDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "manager:didUpdateEvent:", "optional": true},
+      {"access": "public", "name": "manager:didUpdateMeasurement:", "optional": true},
+      {"access": "public", "name": "manager:didUpdateTemperature:", "optional": true},
+      {"access": "public", "name": "manager:errorOccurred:", "optional": true}
+     ],
+     "introduced": "16",
+     "name": "CMWaterSubmersionManagerDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    }
+   ],
+   "target": "arm64e-apple-ios27",
+   "typedefs": [
+    {"access": "public", "introduced": "15", "name": "CMAbsoluteAltitudeHandler"},
+    {"access": "public", "name": "CMAcceleration"},
+    {"access": "public", "name": "CMAccelerometerHandler"},
+    {"access": "public", "introduced": "8", "name": "CMAltitudeHandler"},
+    {"access": "public", "name": "CMAttitudeReferenceFrame"},
+    {"access": "public", "name": "CMAuthorizationStatus"},
+    {"access": "public", "name": "CMCalibratedMagneticField"},
+    {"access": "public", "name": "CMDeviceMotionHandler"},
+    {"access": "public", "name": "CMDeviceMotionSensorLocation"},
+    {"access": "public", "name": "CMDyskineticSymptomResultHandler", "unavailable": true},
+    {"access": "public", "name": "CMError"},
+    {"access": "public", "name": "CMFallDetectionEventUserResolution", "unavailable": true},
+    {"access": "public", "name": "CMGyroHandler"},
+    {"access": "public", "name": "CMHeadphoneActivityHandler"},
+    {"access": "public", "name": "CMHeadphoneActivityStatus"},
+    {"access": "public", "name": "CMHeadphoneActivityStatusHandler"},
+    {"access": "public", "name": "CMHeadphoneDeviceMotionHandler"},
+    {"access": "public", "name": "CMHighFrequencyHeartRateDataConfidence"},
+    {"access": "public", "name": "CMMagneticField"},
+    {"access": "public", "name": "CMMagneticFieldCalibrationAccuracy"},
+    {"access": "public", "introduced": "5", "name": "CMMagnetometerHandler"},
+    {"access": "public", "name": "CMMotionActivityConfidence"},
+    {"access": "public", "introduced": "7", "name": "CMMotionActivityHandler"},
+    {"access": "public", "introduced": "7", "name": "CMMotionActivityQueryHandler"},
+    {"access": "public", "name": "CMOdometerOriginDevice"},
+    {"access": "public", "introduced": "10", "name": "CMPedometerEventHandler"},
+    {"access": "public", "name": "CMPedometerEventType"},
+    {"access": "public", "name": "CMPedometerHandler"},
+    {"access": "public", "name": "CMQuaternion"},
+    {"access": "public", "name": "CMRotationMatrix"},
+    {"access": "public", "name": "CMRotationRate"},
+    {"access": "public", "name": "CMStepQueryHandler"},
+    {"access": "public", "name": "CMStepUpdateHandler"},
+    {"access": "public", "name": "CMTremorResultHandler", "unavailable": true},
+    {"access": "public", "name": "CMWaterSubmersionDepthState"},
+    {"access": "public", "name": "CMWaterSubmersionState"}
+   ]
+  },
+  {
+   "enums": [
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "CMAttitudeReferenceFrameXArbitraryZVertical"},
+      {"access": "public", "name": "CMAttitudeReferenceFrameXArbitraryCorrectedZVertical"},
+      {"access": "public", "name": "CMAttitudeReferenceFrameXMagneticNorthZVertical"},
+      {"access": "public", "name": "CMAttitudeReferenceFrameXTrueNorthZVertical"}
+     ],
+     "name": "CMAttitudeReferenceFrame"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "CMAuthorizationStatusNotDetermined"},
+      {"access": "public", "name": "CMAuthorizationStatusRestricted"},
+      {"access": "public", "name": "CMAuthorizationStatusDenied"},
+      {"access": "public", "name": "CMAuthorizationStatusAuthorized"}
+     ],
+     "introduced": "11",
+     "name": "CMAuthorizationStatus"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "CMDeviceMotionSensorLocationDefault"},
+      {"access": "public", "name": "CMDeviceMotionSensorLocationHeadphoneLeft"},
+      {"access": "public", "name": "CMDeviceMotionSensorLocationHeadphoneRight"}
+     ],
+     "name": "CMDeviceMotionSensorLocation"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "CMErrorNULL"},
+      {"access": "public", "name": "CMErrorDeviceRequiresMovement"},
+      {"access": "public", "name": "CMErrorTrueNorthNotAvailable"},
+      {"access": "public", "name": "CMErrorUnknown"},
+      {"access": "public", "name": "CMErrorMotionActivityNotAvailable"},
+      {"access": "public", "name": "CMErrorMotionActivityNotAuthorized"},
+      {"access": "public", "name": "CMErrorMotionActivityNotEntitled"},
+      {"access": "public", "name": "CMErrorInvalidParameter"},
+      {"access": "public", "name": "CMErrorInvalidAction"},
+      {"access": "public", "name": "CMErrorNotAvailable"},
+      {"access": "public", "name": "CMErrorNotEntitled"},
+      {"access": "public", "name": "CMErrorNotAuthorized"},
+      {"access": "public", "name": "CMErrorNilData"},
+      {"access": "public", "name": "CMErrorSize"}
+     ],
+     "name": "CMError"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "CMFallDetectionEventUserResolutionConfirmed"},
+      {"access": "public", "name": "CMFallDetectionEventUserResolutionDismissed"},
+      {"access": "public", "name": "CMFallDetectionEventUserResolutionRejected"},
+      {"access": "public", "name": "CMFallDetectionEventUserResolutionUnresponsive"}
+     ],
+     "name": "CMFallDetectionEventUserResolution"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "CMHeadphoneActivityStatusDisconnected"},
+      {"access": "public", "name": "CMHeadphoneActivityStatusConnected"}
+     ],
+     "name": "CMHeadphoneActivityStatus"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "CMHighFrequencyHeartRateDataConfidenceLow"},
+      {"access": "public", "name": "CMHighFrequencyHeartRateDataConfidenceMedium"},
+      {"access": "public", "name": "CMHighFrequencyHeartRateDataConfidenceHigh"},
+      {"access": "public", "name": "CMHighFrequencyHeartRateDataConfidenceHighest"}
+     ],
+     "introduced": "17",
+     "name": "CMHighFrequencyHeartRateDataConfidence"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "CMMagneticFieldCalibrationAccuracyUncalibrated"},
+      {"access": "public", "name": "CMMagneticFieldCalibrationAccuracyLow"},
+      {"access": "public", "name": "CMMagneticFieldCalibrationAccuracyMedium"},
+      {"access": "public", "name": "CMMagneticFieldCalibrationAccuracyHigh"}
+     ],
+     "name": "CMMagneticFieldCalibrationAccuracy"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "CMMotionActivityConfidenceLow"},
+      {"access": "public", "name": "CMMotionActivityConfidenceMedium"},
+      {"access": "public", "name": "CMMotionActivityConfidenceHigh"}
+     ],
+     "name": "CMMotionActivityConfidence"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "CMOdometerOriginDeviceUnknown"},
+      {"access": "public", "name": "CMOdometerOriginDeviceLocal"},
+      {"access": "public", "name": "CMOdometerOriginDeviceRemote"}
+     ],
+     "introduced": "15.4",
+     "name": "CMOdometerOriginDevice"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "CMPedometerEventTypePause"},
+      {"access": "public", "name": "CMPedometerEventTypeResume"}
+     ],
+     "introduced": "10",
+     "name": "CMPedometerEventType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "CMWaterSubmersionDepthStateUnknown"},
+      {"access": "public", "name": "CMWaterSubmersionDepthStateNotSubmerged"},
+      {"access": "public", "name": "CMWaterSubmersionDepthStateSubmergedShallow"},
+      {"access": "public", "name": "CMWaterSubmersionDepthStateSubmergedDeep"},
+      {"access": "public", "name": "CMWaterSubmersionDepthStateApproachingMaxDepth"},
+      {"access": "public", "name": "CMWaterSubmersionDepthStatePastMaxDepth"},
+      {"access": "public", "name": "CMWaterSubmersionDepthStateSensorDepthError"}
+     ],
+     "name": "CMWaterSubmersionDepthState"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "CMWaterSubmersionStateUnknown"},
+      {"access": "public", "name": "CMWaterSubmersionStateNotSubmerged"},
+      {"access": "public", "name": "CMWaterSubmersionStateSubmerged"}
+     ],
+     "name": "CMWaterSubmersionState"
+    }
+   ],
+   "globals": [
+    {"access": "public", "introduced": "4", "kind": "variable", "linkage": "exported", "name": "_CMErrorDomain"}
+   ],
+   "interfaces": [
+    {
+     "access": "public",
+     "introduced": "15",
+     "linkage": "exported",
+     "name": "CMAbsoluteAltitudeData",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "altitude", "name": "altitude"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "accuracy", "name": "accuracy"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "precision", "name": "precision"}
+     ],
+     "super": "CMLogItem"
+    },
+    {
+     "access": "public",
+     "introduced": "4",
+     "ivars": [
+      {"access": "public", "accessControl": "private", "linkage": "exported", "name": "_internal"}
+     ],
+     "linkage": "exported",
+     "name": "CMAccelerometerData",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "acceleration", "name": "acceleration"}
+     ],
+     "super": "CMLogItem"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "isRelativeAltitudeAvailable"},
+      {"access": "public", "introduced": "11", "name": "authorizationStatus"},
+      {"access": "public", "introduced": "15", "name": "isAbsoluteAltitudeAvailable"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "startRelativeAltitudeUpdatesToQueue:withHandler:"},
+      {"access": "public", "name": "stopRelativeAltitudeUpdates"},
+      {"access": "public", "introduced": "15", "name": "startAbsoluteAltitudeUpdatesToQueue:withHandler:"},
+      {"access": "public", "introduced": "15", "name": "stopAbsoluteAltitudeUpdates"}
+     ],
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "CMAltimeter",
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "CMAltitudeData",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "relativeAltitude", "name": "relativeAltitude"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "pressure", "name": "pressure"}
+     ],
+     "super": "CMLogItem"
+    },
+    {
+     "access": "public",
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "CMAmbientPressureData",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "pressure", "name": "pressure"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "temperature", "name": "temperature"}
+     ],
+     "super": "CMLogItem"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "multiplyByInverseOfAttitude:"}
+     ],
+     "introduced": "4",
+     "ivars": [
+      {"access": "public", "accessControl": "private", "linkage": "exported", "name": "_internal"}
+     ],
+     "linkage": "exported",
+     "name": "CMAttitude",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "roll", "name": "roll"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "pitch", "name": "pitch"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "yaw", "name": "yaw"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "rotationMatrix", "name": "rotationMatrix"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "quaternion", "name": "quaternion"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "startAccelerometerUpdates"},
+      {"access": "public", "name": "startAccelerometerUpdatesWithHandler:"},
+      {"access": "public", "name": "stopAccelerometerUpdates"},
+      {"access": "public", "name": "startDeviceMotionUpdates"},
+      {"access": "public", "name": "startDeviceMotionUpdatesWithHandler:"},
+      {"access": "public", "name": "stopDeviceMotionUpdates"}
+     ],
+     "linkage": "exported",
+     "name": "CMBatchedSensorManager",
+     "properties": [
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "authorizationStatus", "name": "authorizationStatus"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "isAccelerometerSupported", "name": "accelerometerSupported"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isAccelerometerActive", "name": "accelerometerActive"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "accelerometerDataFrequency", "name": "accelerometerDataFrequency"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "accelerometerBatch", "name": "accelerometerBatch"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "isDeviceMotionSupported", "name": "deviceMotionSupported"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "deviceMotionDataFrequency", "name": "deviceMotionDataFrequency"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isDeviceMotionActive", "name": "deviceMotionActive"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "deviceMotionBatch", "name": "deviceMotionBatch"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "4",
+     "ivars": [
+      {"access": "public", "accessControl": "private", "linkage": "exported", "name": "_internal"}
+     ],
+     "linkage": "exported",
+     "name": "CMDeviceMotion",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "attitude", "name": "attitude"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "rotationRate", "name": "rotationRate"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "gravity", "name": "gravity"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "userAcceleration", "name": "userAcceleration"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "magneticField", "introduced": "5", "name": "magneticField"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "heading", "introduced": "11", "name": "heading"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "headingAccuracy", "introduced": "27", "name": "headingAccuracy"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "sensorLocation", "introduced": "14", "name": "sensorLocation"}
+     ],
+     "super": "CMLogItem"
+    },
+    {
+     "access": "public",
+     "introduced": "12",
+     "linkage": "exported",
+     "name": "CMDyskineticSymptomResult",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "startDate", "name": "startDate"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "endDate", "name": "endDate"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "percentUnlikely", "name": "percentUnlikely"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "percentLikely", "name": "percentLikely"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "linkage": "exported",
+     "name": "CMFallDetectionEvent",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "date", "name": "date"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "resolution", "name": "resolution"}
+     ],
+     "super": "NSObject",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "requestAuthorizationWithHandler:"}
+     ],
+     "linkage": "exported",
+     "name": "CMFallDetectionManager",
+     "properties": [
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "isAvailable", "name": "available"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "authorizationStatus", "name": "authorizationStatus"},
+      {"access": "public", "getter": "delegate", "name": "delegate", "setter": "setDelegate:"}
+     ],
+     "super": "NSObject",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "introduced": "4",
+     "ivars": [
+      {"access": "public", "accessControl": "private", "linkage": "exported", "name": "_internal"}
+     ],
+     "linkage": "exported",
+     "name": "CMGyroData",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "rotationRate", "name": "rotationRate"}
+     ],
+     "super": "CMLogItem"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "authorizationStatus"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "startActivityUpdatesToQueue:withHandler:"},
+      {"access": "public", "name": "stopActivityUpdates"},
+      {"access": "public", "name": "startStatusUpdatesToQueue:withHandler:"},
+      {"access": "public", "name": "stopStatusUpdates"}
+     ],
+     "introduced": "18",
+     "linkage": "exported",
+     "name": "CMHeadphoneActivityManager",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "isActivityAvailable", "name": "activityAvailable"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isActivityActive", "name": "activityActive"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isStatusAvailable", "name": "statusAvailable"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isStatusActive", "name": "statusActive"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "authorizationStatus"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "startDeviceMotionUpdates"},
+      {"access": "public", "name": "startDeviceMotionUpdatesToQueue:withHandler:"},
+      {"access": "public", "name": "stopDeviceMotionUpdates"},
+      {"access": "public", "name": "startConnectionStatusUpdates"},
+      {"access": "public", "name": "stopConnectionStatusUpdates"}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "CMHeadphoneMotionManager",
+     "properties": [
+      {"access": "public", "getter": "delegate", "name": "delegate", "setter": "setDelegate:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isConnectionStatusActive", "name": "connectionStatusActive"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isDeviceMotionAvailable", "name": "deviceMotionAvailable"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isDeviceMotionActive", "name": "deviceMotionActive"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "deviceMotion", "name": "deviceMotion"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "17",
+     "linkage": "exported",
+     "name": "CMHighFrequencyHeartRateData",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "heartRate", "name": "heartRate"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "confidence", "name": "confidence"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "date", "name": "date"}
+     ],
+     "super": "CMLogItem"
+    },
+    {
+     "access": "public",
+     "introduced": "4",
+     "ivars": [
+      {"access": "public", "accessControl": "private", "linkage": "exported", "name": "_internalLogItem"}
+     ],
+     "linkage": "exported",
+     "name": "CMLogItem",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "timestamp", "name": "timestamp"}
+     ],
+     "protocols": [
+      "NSSecureCoding",
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "5",
+     "ivars": [
+      {"access": "public", "accessControl": "private", "linkage": "exported", "name": "_internal"}
+     ],
+     "linkage": "exported",
+     "name": "CMMagnetometerData",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "magneticField", "name": "magneticField"}
+     ],
+     "super": "CMLogItem"
+    },
+    {
+     "access": "public",
+     "introduced": "7",
+     "linkage": "exported",
+     "name": "CMMotionActivity",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "confidence", "name": "confidence"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "startDate", "name": "startDate"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "unknown", "name": "unknown"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "stationary", "name": "stationary"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "walking", "name": "walking"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "running", "name": "running"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "automotive", "name": "automotive"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "cycling", "introduced": "8", "name": "cycling"}
+     ],
+     "super": "CMLogItem"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "isActivityAvailable"},
+      {"access": "public", "introduced": "11", "name": "authorizationStatus"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "queryActivityStartingFromDate:toDate:toQueue:withHandler:"},
+      {"access": "public", "name": "startActivityUpdatesToQueue:withHandler:"},
+      {"access": "public", "name": "stopActivityUpdates"}
+     ],
+     "introduced": "7",
+     "linkage": "exported",
+     "name": "CMMotionActivityManager",
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "introduced": "5", "name": "availableAttitudeReferenceFrames"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "startAccelerometerUpdates"},
+      {"access": "public", "name": "startAccelerometerUpdatesToQueue:withHandler:"},
+      {"access": "public", "name": "stopAccelerometerUpdates"},
+      {"access": "public", "name": "startGyroUpdates"},
+      {"access": "public", "name": "startGyroUpdatesToQueue:withHandler:"},
+      {"access": "public", "name": "stopGyroUpdates"},
+      {"access": "public", "introduced": "5", "name": "startMagnetometerUpdates"},
+      {"access": "public", "introduced": "5", "name": "startMagnetometerUpdatesToQueue:withHandler:"},
+      {"access": "public", "introduced": "5", "name": "stopMagnetometerUpdates"},
+      {"access": "public", "name": "startDeviceMotionUpdates"},
+      {"access": "public", "name": "startDeviceMotionUpdatesToQueue:withHandler:"},
+      {"access": "public", "introduced": "5", "name": "startDeviceMotionUpdatesUsingReferenceFrame:"},
+      {"access": "public", "introduced": "5", "name": "startDeviceMotionUpdatesUsingReferenceFrame:toQueue:withHandler:"},
+      {"access": "public", "name": "stopDeviceMotionUpdates"}
+     ],
+     "introduced": "4",
+     "ivars": [
+      {"access": "public", "accessControl": "private", "linkage": "exported", "name": "_internal"}
+     ],
+     "linkage": "exported",
+     "name": "CMMotionManager",
+     "properties": [
+      {"access": "public", "getter": "accelerometerUpdateInterval", "name": "accelerometerUpdateInterval", "setter": "setAccelerometerUpdateInterval:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isAccelerometerAvailable", "name": "accelerometerAvailable"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isAccelerometerActive", "name": "accelerometerActive"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "accelerometerData", "name": "accelerometerData"},
+      {"access": "public", "getter": "gyroUpdateInterval", "name": "gyroUpdateInterval", "setter": "setGyroUpdateInterval:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isGyroAvailable", "name": "gyroAvailable"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isGyroActive", "name": "gyroActive"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "gyroData", "name": "gyroData"},
+      {"access": "public", "getter": "magnetometerUpdateInterval", "introduced": "5", "name": "magnetometerUpdateInterval", "setter": "setMagnetometerUpdateInterval:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isMagnetometerAvailable", "introduced": "5", "name": "magnetometerAvailable"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isMagnetometerActive", "introduced": "5", "name": "magnetometerActive"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "magnetometerData", "introduced": "5", "name": "magnetometerData"},
+      {"access": "public", "getter": "deviceMotionUpdateInterval", "name": "deviceMotionUpdateInterval", "setter": "setDeviceMotionUpdateInterval:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "attitudeReferenceFrame", "introduced": "5", "name": "attitudeReferenceFrame"},
+      {"access": "public", "getter": "deviceMotionBody", "introduced": "27", "name": "deviceMotionBody", "setter": "setDeviceMotionBody:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isDeviceMotionAvailable", "name": "deviceMotionAvailable"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isDeviceMotionActive", "name": "deviceMotionActive"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "deviceMotion", "name": "deviceMotion"},
+      {"access": "public", "getter": "showsDeviceMovementDisplay", "introduced": "5", "name": "showsDeviceMovementDisplay", "setter": "setShowsDeviceMovementDisplay:"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "isAvailable"},
+      {"access": "public", "name": "version"},
+      {"access": "public", "name": "authorizationStatus"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "monitorKinesiasForDuration:"},
+      {"access": "public", "name": "queryDyskineticSymptomFromDate:toDate:withHandler:"},
+      {"access": "public", "name": "queryTremorFromDate:toDate:withHandler:"},
+      {"access": "public", "name": "lastProcessedDate"},
+      {"access": "public", "name": "monitorKinesiasExpirationDate"}
+     ],
+     "linkage": "exported",
+     "name": "CMMovementDisorderManager",
+     "super": "NSObject",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "CMOdometerData",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "startDate", "name": "startDate"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "endDate", "name": "endDate"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "deltaDistance", "introduced": "17", "name": "deltaDistance"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "deltaDistanceAccuracy", "introduced": "17", "name": "deltaDistanceAccuracy"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "speed", "introduced": "17", "name": "speed"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "speedAccuracy", "introduced": "17", "name": "speedAccuracy"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "gpsDate", "introduced": "17", "name": "gpsDate"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "deltaAltitude", "introduced": "17", "name": "deltaAltitude"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "verticalAccuracy", "introduced": "17", "name": "verticalAccuracy"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "originDevice", "introduced": "15.4", "name": "originDevice"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "slope", "introduced": "17", "name": "slope"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "maxAbsSlope", "introduced": "17", "name": "maxAbsSlope"}
+     ],
+     "protocols": [
+      "NSSecureCoding",
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "isStepCountingAvailable"},
+      {"access": "public", "name": "isDistanceAvailable"},
+      {"access": "public", "name": "isFloorCountingAvailable"},
+      {"access": "public", "introduced": "9", "name": "isPaceAvailable"},
+      {"access": "public", "introduced": "9", "name": "isCadenceAvailable"},
+      {"access": "public", "introduced": "10", "name": "isPedometerEventTrackingAvailable"},
+      {"access": "public", "introduced": "11", "name": "authorizationStatus"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "queryPedometerDataFromDate:toDate:withHandler:"},
+      {"access": "public", "name": "startPedometerUpdatesFromDate:withHandler:"},
+      {"access": "public", "name": "stopPedometerUpdates"},
+      {"access": "public", "introduced": "10", "name": "startPedometerEventUpdatesWithHandler:"},
+      {"access": "public", "introduced": "10", "name": "stopPedometerEventUpdates"}
+     ],
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "CMPedometer",
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "CMPedometerData",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "startDate", "name": "startDate"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "endDate", "name": "endDate"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "numberOfSteps", "name": "numberOfSteps"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "distance", "name": "distance"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "floorsAscended", "name": "floorsAscended"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "floorsDescended", "name": "floorsDescended"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "currentPace", "introduced": "9", "name": "currentPace"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "currentCadence", "introduced": "9", "name": "currentCadence"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "averageActivePace", "introduced": "10", "name": "averageActivePace"}
+     ],
+     "protocols": [
+      "NSSecureCoding",
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "CMPedometerEvent",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "date", "name": "date"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "type", "name": "type"}
+     ],
+     "protocols": [
+      "NSSecureCoding",
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "9",
+     "linkage": "exported",
+     "name": "CMRecordedAccelerometerData",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "identifier", "name": "identifier"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "startDate", "name": "startDate"}
+     ],
+     "super": "CMAccelerometerData"
+    },
+    {
+     "access": "public",
+     "introduced": "27",
+     "linkage": "exported",
+     "name": "CMRecordedDeviceMotion",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "identifier", "name": "identifier"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "startDate", "name": "startDate"}
+     ],
+     "super": "CMDeviceMotion"
+    },
+    {
+     "access": "public",
+     "introduced": "12",
+     "linkage": "exported",
+     "name": "CMRecordedPressureData",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "identifier", "name": "identifier"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "startDate", "name": "startDate"}
+     ],
+     "super": "CMAmbientPressureData"
+    },
+    {
+     "access": "public",
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "CMRecordedRotationRateData",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "startDate", "name": "startDate"}
+     ],
+     "super": "CMRotationRateData"
+    },
+    {
+     "access": "public",
+     "introduced": "14",
+     "ivars": [
+      {"access": "public", "accessControl": "private", "linkage": "exported", "name": "_internal"}
+     ],
+     "linkage": "exported",
+     "name": "CMRotationRateData",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "rotationRate", "name": "rotationRate"}
+     ],
+     "super": "CMLogItem"
+    },
+    {
+     "access": "public",
+     "introduced": "9",
+     "linkage": "exported",
+     "name": "CMSensorDataList",
+     "protocols": [
+      "NSFastEnumeration"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "isAccelerometerRecordingAvailable"},
+      {"access": "public", "introduced": "11", "name": "authorizationStatus"},
+      {"access": "public", "introduced": "9", "name": "isAuthorizedForRecording"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "accelerometerDataFromDate:toDate:"},
+      {"access": "public", "name": "recordAccelerometerForDuration:"}
+     ],
+     "introduced": "9",
+     "linkage": "exported",
+     "name": "CMSensorRecorder",
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "isStepCountingAvailable"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "queryStepCountStartingFrom:to:toQueue:withHandler:"},
+      {"access": "public", "name": "startStepCountingUpdatesToQueue:updateOn:withHandler:"},
+      {"access": "public", "name": "stopStepCountingUpdates"}
+     ],
+     "introduced": "7",
+     "linkage": "exported",
+     "name": "CMStepCounter",
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "12",
+     "linkage": "exported",
+     "name": "CMTremorResult",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "startDate", "name": "startDate"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "endDate", "name": "endDate"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "percentUnknown", "name": "percentUnknown"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "percentNone", "name": "percentNone"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "percentSlight", "name": "percentSlight"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "percentMild", "name": "percentMild"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "percentModerate", "name": "percentModerate"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "percentStrong", "name": "percentStrong"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "16",
+     "linkage": "exported",
+     "name": "CMWaterSubmersionEvent",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "date", "name": "date"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "state", "name": "state"}
+     ],
+     "protocols": [
+      "NSSecureCoding",
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "16",
+     "linkage": "exported",
+     "name": "CMWaterSubmersionManager",
+     "properties": [
+      {"access": "public", "getter": "delegate", "name": "delegate", "setter": "setDelegate:"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "waterSubmersionAvailable", "name": "waterSubmersionAvailable"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "authorizationStatus", "name": "authorizationStatus"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "maximumDepth", "name": "maximumDepth"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "16",
+     "linkage": "exported",
+     "name": "CMWaterSubmersionMeasurement",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "date", "name": "date"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "depth", "name": "depth"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "pressure", "name": "pressure"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "surfacePressure", "name": "surfacePressure"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "submersionState", "name": "submersionState"}
+     ],
+     "protocols": [
+      "NSSecureCoding",
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "16",
+     "linkage": "exported",
+     "name": "CMWaterTemperature",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "date", "name": "date"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "temperature", "name": "temperature"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "temperatureUncertainty", "name": "temperatureUncertainty"}
+     ],
+     "protocols": [
+      "NSSecureCoding",
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    }
+   ],
+   "protocols": [
+    {
+     "access": "public",
+     "introduced": "27",
+     "name": "CMBodyIdentifiable",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "fallDetectionManager:didDetectEvent:completionHandler:", "optional": true},
+      {"access": "public", "name": "fallDetectionManagerDidChangeAuthorization:", "optional": true}
+     ],
+     "name": "CMFallDetectionDelegate",
+     "protocols": [
+      "NSObject"
+     ],
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "headphoneMotionManagerDidConnect:", "optional": true},
+      {"access": "public", "name": "headphoneMotionManagerDidDisconnect:", "optional": true}
+     ],
+     "introduced": "14",
+     "name": "CMHeadphoneMotionManagerDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "manager:didUpdateEvent:", "optional": true},
+      {"access": "public", "name": "manager:didUpdateMeasurement:", "optional": true},
+      {"access": "public", "name": "manager:didUpdateTemperature:", "optional": true},
+      {"access": "public", "name": "manager:errorOccurred:", "optional": true}
+     ],
+     "introduced": "16",
+     "name": "CMWaterSubmersionManagerDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    }
+   ],
+   "target": "arm64e.x1-apple-ios27",
+   "typedefs": [
+    {"access": "public", "introduced": "15", "name": "CMAbsoluteAltitudeHandler"},
+    {"access": "public", "name": "CMAcceleration"},
+    {"access": "public", "name": "CMAccelerometerHandler"},
+    {"access": "public", "introduced": "8", "name": "CMAltitudeHandler"},
+    {"access": "public", "name": "CMAttitudeReferenceFrame"},
+    {"access": "public", "name": "CMAuthorizationStatus"},
+    {"access": "public", "name": "CMCalibratedMagneticField"},
+    {"access": "public", "name": "CMDeviceMotionHandler"},
+    {"access": "public", "name": "CMDeviceMotionSensorLocation"},
+    {"access": "public", "name": "CMDyskineticSymptomResultHandler", "unavailable": true},
+    {"access": "public", "name": "CMError"},
+    {"access": "public", "name": "CMFallDetectionEventUserResolution", "unavailable": true},
+    {"access": "public", "name": "CMGyroHandler"},
+    {"access": "public", "name": "CMHeadphoneActivityHandler"},
+    {"access": "public", "name": "CMHeadphoneActivityStatus"},
+    {"access": "public", "name": "CMHeadphoneActivityStatusHandler"},
+    {"access": "public", "name": "CMHeadphoneDeviceMotionHandler"},
+    {"access": "public", "name": "CMHighFrequencyHeartRateDataConfidence"},
+    {"access": "public", "name": "CMMagneticField"},
+    {"access": "public", "name": "CMMagneticFieldCalibrationAccuracy"},
+    {"access": "public", "introduced": "5", "name": "CMMagnetometerHandler"},
+    {"access": "public", "name": "CMMotionActivityConfidence"},
+    {"access": "public", "introduced": "7", "name": "CMMotionActivityHandler"},
+    {"access": "public", "introduced": "7", "name": "CMMotionActivityQueryHandler"},
+    {"access": "public", "name": "CMOdometerOriginDevice"},
+    {"access": "public", "introduced": "10", "name": "CMPedometerEventHandler"},
+    {"access": "public", "name": "CMPedometerEventType"},
+    {"access": "public", "name": "CMPedometerHandler"},
+    {"access": "public", "name": "CMQuaternion"},
+    {"access": "public", "name": "CMRotationMatrix"},
+    {"access": "public", "name": "CMRotationRate"},
+    {"access": "public", "name": "CMStepQueryHandler"},
+    {"access": "public", "name": "CMStepUpdateHandler"},
+    {"access": "public", "name": "CMTremorResultHandler", "unavailable": true},
+    {"access": "public", "name": "CMWaterSubmersionDepthState"},
+    {"access": "public", "name": "CMWaterSubmersionState"}
+   ]
+  },
+  {
+   "globals": [
+    {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$sSo14CMOdometerDataC10CoreMotionE11maxAbsSlopeSdSgvg"},
+    {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$sSo14CMOdometerDataC10CoreMotionE11maxAbsSlopeSdSgvpMV"},
+    {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$sSo14CMOdometerDataC10CoreMotionE5slopeSdSgvg"},
+    {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$sSo14CMOdometerDataC10CoreMotionE5slopeSdSgvpMV"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo22CMBatchedSensorManagerC10CoreMotionE06DeviceE7UpdatesV17makeAsyncIteratorAE0J0VyF", "unavailable": true},
+    {"access": "public", "linkage": "exported", "name": "_$sSo22CMBatchedSensorManagerC10CoreMotionE06DeviceE7UpdatesV8IteratorV4nextSaySo08CMDeviceE0CGSgyYaKF", "unavailable": true},
+    {"access": "public", "linkage": "exported", "name": "_$sSo22CMBatchedSensorManagerC10CoreMotionE06DeviceE7UpdatesV8IteratorV4nextSaySo08CMDeviceE0CGSgyYaKFTu", "unavailable": true},
+    {"access": "public", "linkage": "exported", "name": "_$sSo22CMBatchedSensorManagerC10CoreMotionE06DeviceE7UpdatesV8IteratorVMa", "unavailable": true},
+    {"access": "public", "linkage": "exported", "name": "_$sSo22CMBatchedSensorManagerC10CoreMotionE06DeviceE7UpdatesV8IteratorVMn", "unavailable": true},
+    {"access": "public", "linkage": "exported", "name": "_$sSo22CMBatchedSensorManagerC10CoreMotionE06DeviceE7UpdatesV8IteratorVN", "unavailable": true},
+    {"access": "public", "linkage": "exported", "name": "_$sSo22CMBatchedSensorManagerC10CoreMotionE06DeviceE7UpdatesV8IteratorVScIACMc", "unavailable": true},
+    {"access": "public", "linkage": "exported", "name": "_$sSo22CMBatchedSensorManagerC10CoreMotionE06DeviceE7UpdatesVMa", "unavailable": true},
+    {"access": "public", "linkage": "exported", "name": "_$sSo22CMBatchedSensorManagerC10CoreMotionE06DeviceE7UpdatesVMn", "unavailable": true},
+    {"access": "public", "linkage": "exported", "name": "_$sSo22CMBatchedSensorManagerC10CoreMotionE06DeviceE7UpdatesVN", "unavailable": true},
+    {"access": "public", "linkage": "exported", "name": "_$sSo22CMBatchedSensorManagerC10CoreMotionE06DeviceE7UpdatesVSciACMc", "unavailable": true},
+    {"access": "public", "linkage": "exported", "name": "_$sSo22CMBatchedSensorManagerC10CoreMotionE06deviceE7UpdatesAbCE06DeviceeG0VyF", "unavailable": true},
+    {"access": "public", "linkage": "exported", "name": "_$sSo22CMBatchedSensorManagerC10CoreMotionE20AccelerometerUpdatesV17makeAsyncIteratorAE0J0VyF", "unavailable": true},
+    {"access": "public", "linkage": "exported", "name": "_$sSo22CMBatchedSensorManagerC10CoreMotionE20AccelerometerUpdatesV8IteratorV4nextSaySo19CMAccelerometerDataCGSgyYaKF", "unavailable": true},
+    {"access": "public", "linkage": "exported", "name": "_$sSo22CMBatchedSensorManagerC10CoreMotionE20AccelerometerUpdatesV8IteratorV4nextSaySo19CMAccelerometerDataCGSgyYaKFTu", "unavailable": true},
+    {"access": "public", "linkage": "exported", "name": "_$sSo22CMBatchedSensorManagerC10CoreMotionE20AccelerometerUpdatesV8IteratorVMa", "unavailable": true},
+    {"access": "public", "linkage": "exported", "name": "_$sSo22CMBatchedSensorManagerC10CoreMotionE20AccelerometerUpdatesV8IteratorVMn", "unavailable": true},
+    {"access": "public", "linkage": "exported", "name": "_$sSo22CMBatchedSensorManagerC10CoreMotionE20AccelerometerUpdatesV8IteratorVN", "unavailable": true},
+    {"access": "public", "linkage": "exported", "name": "_$sSo22CMBatchedSensorManagerC10CoreMotionE20AccelerometerUpdatesV8IteratorVScIACMc", "unavailable": true},
+    {"access": "public", "linkage": "exported", "name": "_$sSo22CMBatchedSensorManagerC10CoreMotionE20AccelerometerUpdatesVMa", "unavailable": true},
+    {"access": "public", "linkage": "exported", "name": "_$sSo22CMBatchedSensorManagerC10CoreMotionE20AccelerometerUpdatesVMn", "unavailable": true},
+    {"access": "public", "linkage": "exported", "name": "_$sSo22CMBatchedSensorManagerC10CoreMotionE20AccelerometerUpdatesVN", "unavailable": true},
+    {"access": "public", "linkage": "exported", "name": "_$sSo22CMBatchedSensorManagerC10CoreMotionE20AccelerometerUpdatesVSciACMc", "unavailable": true},
+    {"access": "public", "linkage": "exported", "name": "_$sSo22CMBatchedSensorManagerC10CoreMotionE20accelerometerUpdatesAbCE013AccelerometerG0VyF", "unavailable": true}
+   ],
+   "target": "arm64e-apple-ios27.0"
+  }
+ ],
+ "version": "1.0"
+}

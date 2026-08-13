@@ -2,7 +2,10 @@
 {
  "PublicSDKContentRoot": [
   {
-   "target": "arm64e-apple-ios26.5"
+   "target": "arm64e-apple-ios27"
+  },
+  {
+   "target": "arm64e.x1-apple-ios27"
   },
   {
    "globals": [
@@ -11219,7 +11222,7 @@
     {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$s10AppIntents15RelevantContextVMn"},
     {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$s10AppIntents15RelevantContextVN"}
    ],
-   "target": "arm64e-apple-ios26.5"
+   "target": "arm64e-apple-ios27.0"
   }
  ],
  "version": "1.0"

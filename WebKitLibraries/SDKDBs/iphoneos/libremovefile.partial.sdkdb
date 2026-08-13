@@ -1,0 +1,248 @@
+
+{
+ "PublicSDKContentRoot": [
+  {
+   "enums": [
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "CHECKINT_NO_ERROR"},
+      {"access": "public", "name": "CHECKINT_OVERFLOW_ERROR"},
+      {"access": "public", "name": "CHECKINT_TYPE_ERROR"}
+     ],
+     "name": "enum (unnamed at checkint.h:201)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "REMOVEFILE_RECURSIVE"},
+      {"access": "public", "name": "REMOVEFILE_KEEP_PARENT"},
+      {"access": "public", "name": "REMOVEFILE_SECURE_7_PASS"},
+      {"access": "public", "name": "REMOVEFILE_SECURE_35_PASS"},
+      {"access": "public", "name": "REMOVEFILE_SECURE_1_PASS"},
+      {"access": "public", "name": "REMOVEFILE_SECURE_3_PASS"},
+      {"access": "public", "name": "REMOVEFILE_SECURE_1_PASS_ZERO"},
+      {"access": "public", "name": "REMOVEFILE_CROSS_MOUNT"},
+      {"access": "public", "name": "REMOVEFILE_ALLOW_LONG_PATHS"},
+      {"access": "public", "name": "REMOVEFILE_CLEAR_PURGEABLE"},
+      {"access": "public", "name": "REMOVEFILE_SYSTEM_DISCARDED"},
+      {"access": "public", "name": "REMOVEFILE_RECURSIVE_SLIM"}
+     ],
+     "name": "enum (unnamed at removefile.h:211)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "REMOVEFILE_STATE_CONFIRM_CALLBACK"},
+      {"access": "public", "name": "REMOVEFILE_STATE_CONFIRM_CONTEXT"},
+      {"access": "public", "name": "REMOVEFILE_STATE_ERROR_CALLBACK"},
+      {"access": "public", "name": "REMOVEFILE_STATE_ERROR_CONTEXT"},
+      {"access": "public", "name": "REMOVEFILE_STATE_ERRNO"},
+      {"access": "public", "name": "REMOVEFILE_STATE_STATUS_CALLBACK"},
+      {"access": "public", "name": "REMOVEFILE_STATE_STATUS_CONTEXT"},
+      {"access": "public", "name": "REMOVEFILE_STATE_FTSENT"}
+     ],
+     "name": "enum (unnamed at removefile.h:471)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "REMOVEFILE_PROCEED"},
+      {"access": "public", "name": "REMOVEFILE_SKIP"},
+      {"access": "public", "name": "REMOVEFILE_STOP"}
+     ],
+     "name": "enum (unnamed at removefile.h:631)"
+    }
+   ],
+   "globals": [
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "___checkint_int32_add"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "___checkint_int32_div_signed_signed"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "___checkint_int32_div_signed_unsigned"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "___checkint_int32_div_unsigned_signed"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "___checkint_int32_div_unsigned_unsigned"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "___checkint_int32_mul"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "___checkint_int32_sub"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "___checkint_int32_type_error"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "___checkint_int64_add_signed_signed"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "___checkint_int64_add_signed_unsigned"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "___checkint_int64_add_unsigned_signed"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "___checkint_int64_add_unsigned_unsigned"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "___checkint_int64_div_signed_signed"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "___checkint_int64_div_signed_unsigned"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "___checkint_int64_div_unsigned_signed"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "___checkint_int64_div_unsigned_unsigned"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "___checkint_int64_mul_signed_signed"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "___checkint_int64_mul_signed_unsigned"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "___checkint_int64_mul_unsigned_signed"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "___checkint_int64_mul_unsigned_unsigned"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "___checkint_int64_sub_signed_signed"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "___checkint_int64_sub_signed_unsigned"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "___checkint_int64_sub_unsigned_signed"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "___checkint_int64_sub_unsigned_unsigned"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "___checkint_int64_type_error"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "___checkint_is_mixed_sign32"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "___checkint_is_mixed_sign64"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "___checkint_uint32_add"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "___checkint_uint32_div_signed_signed"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "___checkint_uint32_div_signed_unsigned"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "___checkint_uint32_div_unsigned_signed"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "___checkint_uint32_div_unsigned_unsigned"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "___checkint_uint32_mul"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "___checkint_uint32_sub"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "___checkint_uint32_type_error"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "___checkint_uint64_add_signed_signed"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "___checkint_uint64_add_signed_unsigned"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "___checkint_uint64_add_unsigned_signed"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "___checkint_uint64_add_unsigned_unsigned"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "___checkint_uint64_div_signed_signed"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "___checkint_uint64_div_signed_unsigned"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "___checkint_uint64_div_unsigned_signed"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "___checkint_uint64_div_unsigned_unsigned"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "___checkint_uint64_mul_signed_signed"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "___checkint_uint64_mul_signed_unsigned"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "___checkint_uint64_mul_unsigned_signed"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "___checkint_uint64_mul_unsigned_unsigned"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "___checkint_uint64_sub_signed_signed"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "___checkint_uint64_sub_signed_unsigned"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "___checkint_uint64_sub_unsigned_signed"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "___checkint_uint64_sub_unsigned_unsigned"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "___checkint_uint64_type_error"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_removefile"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_removefile_cancel"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_removefile_state_alloc"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_removefile_state_free"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_removefile_state_get"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_removefile_state_set"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_removefileat"}
+   ],
+   "target": "arm64e-apple-ios27",
+   "typedefs": [
+    {"access": "public", "name": "removefile_callback_t"},
+    {"access": "public", "name": "removefile_flags_t"},
+    {"access": "public", "name": "removefile_state_t"}
+   ]
+  },
+  {
+   "enums": [
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "CHECKINT_NO_ERROR"},
+      {"access": "public", "name": "CHECKINT_OVERFLOW_ERROR"},
+      {"access": "public", "name": "CHECKINT_TYPE_ERROR"}
+     ],
+     "name": "enum (unnamed at checkint.h:201)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "REMOVEFILE_RECURSIVE"},
+      {"access": "public", "name": "REMOVEFILE_KEEP_PARENT"},
+      {"access": "public", "name": "REMOVEFILE_SECURE_7_PASS"},
+      {"access": "public", "name": "REMOVEFILE_SECURE_35_PASS"},
+      {"access": "public", "name": "REMOVEFILE_SECURE_1_PASS"},
+      {"access": "public", "name": "REMOVEFILE_SECURE_3_PASS"},
+      {"access": "public", "name": "REMOVEFILE_SECURE_1_PASS_ZERO"},
+      {"access": "public", "name": "REMOVEFILE_CROSS_MOUNT"},
+      {"access": "public", "name": "REMOVEFILE_ALLOW_LONG_PATHS"},
+      {"access": "public", "name": "REMOVEFILE_CLEAR_PURGEABLE"},
+      {"access": "public", "name": "REMOVEFILE_SYSTEM_DISCARDED"},
+      {"access": "public", "name": "REMOVEFILE_RECURSIVE_SLIM"}
+     ],
+     "name": "enum (unnamed at removefile.h:211)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "REMOVEFILE_STATE_CONFIRM_CALLBACK"},
+      {"access": "public", "name": "REMOVEFILE_STATE_CONFIRM_CONTEXT"},
+      {"access": "public", "name": "REMOVEFILE_STATE_ERROR_CALLBACK"},
+      {"access": "public", "name": "REMOVEFILE_STATE_ERROR_CONTEXT"},
+      {"access": "public", "name": "REMOVEFILE_STATE_ERRNO"},
+      {"access": "public", "name": "REMOVEFILE_STATE_STATUS_CALLBACK"},
+      {"access": "public", "name": "REMOVEFILE_STATE_STATUS_CONTEXT"},
+      {"access": "public", "name": "REMOVEFILE_STATE_FTSENT"}
+     ],
+     "name": "enum (unnamed at removefile.h:471)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "REMOVEFILE_PROCEED"},
+      {"access": "public", "name": "REMOVEFILE_SKIP"},
+      {"access": "public", "name": "REMOVEFILE_STOP"}
+     ],
+     "name": "enum (unnamed at removefile.h:631)"
+    }
+   ],
+   "globals": [
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "___checkint_int32_add"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "___checkint_int32_div_signed_signed"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "___checkint_int32_div_signed_unsigned"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "___checkint_int32_div_unsigned_signed"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "___checkint_int32_div_unsigned_unsigned"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "___checkint_int32_mul"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "___checkint_int32_sub"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "___checkint_int32_type_error"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "___checkint_int64_add_signed_signed"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "___checkint_int64_add_signed_unsigned"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "___checkint_int64_add_unsigned_signed"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "___checkint_int64_add_unsigned_unsigned"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "___checkint_int64_div_signed_signed"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "___checkint_int64_div_signed_unsigned"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "___checkint_int64_div_unsigned_signed"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "___checkint_int64_div_unsigned_unsigned"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "___checkint_int64_mul_signed_signed"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "___checkint_int64_mul_signed_unsigned"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "___checkint_int64_mul_unsigned_signed"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "___checkint_int64_mul_unsigned_unsigned"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "___checkint_int64_sub_signed_signed"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "___checkint_int64_sub_signed_unsigned"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "___checkint_int64_sub_unsigned_signed"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "___checkint_int64_sub_unsigned_unsigned"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "___checkint_int64_type_error"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "___checkint_is_mixed_sign32"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "___checkint_is_mixed_sign64"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "___checkint_uint32_add"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "___checkint_uint32_div_signed_signed"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "___checkint_uint32_div_signed_unsigned"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "___checkint_uint32_div_unsigned_signed"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "___checkint_uint32_div_unsigned_unsigned"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "___checkint_uint32_mul"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "___checkint_uint32_sub"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "___checkint_uint32_type_error"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "___checkint_uint64_add_signed_signed"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "___checkint_uint64_add_signed_unsigned"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "___checkint_uint64_add_unsigned_signed"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "___checkint_uint64_add_unsigned_unsigned"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "___checkint_uint64_div_signed_signed"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "___checkint_uint64_div_signed_unsigned"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "___checkint_uint64_div_unsigned_signed"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "___checkint_uint64_div_unsigned_unsigned"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "___checkint_uint64_mul_signed_signed"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "___checkint_uint64_mul_signed_unsigned"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "___checkint_uint64_mul_unsigned_signed"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "___checkint_uint64_mul_unsigned_unsigned"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "___checkint_uint64_sub_signed_signed"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "___checkint_uint64_sub_signed_unsigned"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "___checkint_uint64_sub_unsigned_signed"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "___checkint_uint64_sub_unsigned_unsigned"},
+    {"access": "public", "kind": "function", "linkage": "internal", "name": "___checkint_uint64_type_error"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_removefile"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_removefile_cancel"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_removefile_state_alloc"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_removefile_state_free"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_removefile_state_get"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_removefile_state_set"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_removefileat"}
+   ],
+   "target": "arm64e.x1-apple-ios27",
+   "typedefs": [
+    {"access": "public", "name": "removefile_callback_t"},
+    {"access": "public", "name": "removefile_flags_t"},
+    {"access": "public", "name": "removefile_state_t"}
+   ]
+  }
+ ],
+ "version": "1.0"
+}

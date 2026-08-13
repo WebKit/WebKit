@@ -2,7 +2,10 @@
 {
  "PublicSDKContentRoot": [
   {
-   "target": "arm64e-apple-ios26.5"
+   "globals": [
+    {"access": "public", "linkage": "exported", "name": "__swift_FORCE_LOAD_$_swiftCoreImage"}
+   ],
+   "target": "arm64e-apple-ios27.0"
   }
  ],
  "version": "1.0"

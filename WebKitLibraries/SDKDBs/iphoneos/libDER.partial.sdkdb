@@ -15,6 +15,21 @@
     {"access": "public", "name": "DERSize"},
     {"access": "public", "name": "DERTag"}
    ]
+  },
+  {
+   "target": "arm64e.x1-apple-ios",
+   "typedefs": [
+    {"access": "public", "name": "DERBool"},
+    {"access": "public", "name": "DERByte"},
+    {"access": "public", "name": "DERInt"},
+    {"access": "public", "name": "DERItem"},
+    {"access": "public", "name": "DERLong"},
+    {"access": "public", "name": "DERShort"},
+    {"access": "public", "name": "DERSignedInt"},
+    {"access": "public", "name": "DERSignedLong"},
+    {"access": "public", "name": "DERSize"},
+    {"access": "public", "name": "DERTag"}
+   ]
   }
  ],
  "version": "1.0"

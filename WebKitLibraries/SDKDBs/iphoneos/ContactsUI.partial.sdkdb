@@ -87,7 +87,95 @@
      ]
     }
    ],
-   "target": "arm64e-apple-ios26.5"
+   "target": "arm64e-apple-ios27"
+  },
+  {
+   "categories": [
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "iconWithContact:"}
+     ],
+     "interface": "UIApplicationShortcutIcon",
+     "introduced": "9",
+     "name": "ContactsUI"
+    }
+   ],
+   "interfaces": [
+    {
+     "access": "public",
+     "introduced": "9",
+     "linkage": "exported",
+     "name": "CNContactPickerViewController",
+     "properties": [
+      {"access": "public", "getter": "displayedPropertyKeys", "name": "displayedPropertyKeys", "setter": "setDisplayedPropertyKeys:"},
+      {"access": "public", "getter": "delegate", "name": "delegate", "setter": "setDelegate:"},
+      {"access": "public", "getter": "predicateForEnablingContact", "name": "predicateForEnablingContact", "setter": "setPredicateForEnablingContact:"},
+      {"access": "public", "getter": "predicateForSelectionOfContact", "name": "predicateForSelectionOfContact", "setter": "setPredicateForSelectionOfContact:"},
+      {"access": "public", "getter": "predicateForSelectionOfProperty", "name": "predicateForSelectionOfProperty", "setter": "setPredicateForSelectionOfProperty:"}
+     ],
+     "super": "UIViewController"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "descriptorForRequiredKeys"},
+      {"access": "public", "name": "viewControllerForContact:"},
+      {"access": "public", "name": "viewControllerForUnknownContact:"},
+      {"access": "public", "name": "viewControllerForNewContact:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "highlightPropertyWithKey:identifier:"}
+     ],
+     "introduced": "9",
+     "linkage": "exported",
+     "name": "CNContactViewController",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "contact", "name": "contact"},
+      {"access": "public", "getter": "displayedPropertyKeys", "name": "displayedPropertyKeys", "setter": "setDisplayedPropertyKeys:"},
+      {"access": "public", "getter": "delegate", "name": "delegate", "setter": "setDelegate:"},
+      {"access": "public", "getter": "contactStore", "name": "contactStore", "setter": "setContactStore:"},
+      {"access": "public", "getter": "parentGroup", "name": "parentGroup", "setter": "setParentGroup:"},
+      {"access": "public", "getter": "parentContainer", "name": "parentContainer", "setter": "setParentContainer:"},
+      {"access": "public", "getter": "alternateName", "name": "alternateName", "setter": "setAlternateName:"},
+      {"access": "public", "getter": "message", "name": "message", "setter": "setMessage:"},
+      {"access": "public", "getter": "allowsEditing", "name": "allowsEditing", "setter": "setAllowsEditing:"},
+      {"access": "public", "getter": "allowsActions", "name": "allowsActions", "setter": "setAllowsActions:"},
+      {"access": "public", "getter": "shouldShowLinkedContacts", "name": "shouldShowLinkedContacts", "setter": "setShouldShowLinkedContacts:"}
+     ],
+     "super": "UIViewController"
+    }
+   ],
+   "protocols": [
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "contactPickerDidCancel:", "optional": true},
+      {"access": "public", "name": "contactPicker:didSelectContact:", "optional": true},
+      {"access": "public", "name": "contactPicker:didSelectContactProperty:", "optional": true},
+      {"access": "public", "name": "contactPicker:didSelectContacts:", "optional": true},
+      {"access": "public", "name": "contactPicker:didSelectContactProperties:", "optional": true}
+     ],
+     "introduced": "9",
+     "name": "CNContactPickerDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "contactViewController:shouldPerformDefaultActionForContactProperty:", "optional": true},
+      {"access": "public", "name": "contactViewController:didCompleteWithContact:", "optional": true}
+     ],
+     "introduced": "9",
+     "name": "CNContactViewControllerDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    }
+   ],
+   "target": "arm64e.x1-apple-ios27"
   },
   {
    "categories": [
@@ -128,6 +216,23 @@
     {"access": "public", "introduced": "18", "linkage": "exported", "name": "_$s10ContactsUI19ContactAccessButtonVMa"},
     {"access": "public", "introduced": "18", "linkage": "exported", "name": "_$s10ContactsUI19ContactAccessButtonVMn"},
     {"access": "public", "introduced": "18", "linkage": "exported", "name": "_$s10ContactsUI19ContactAccessButtonVN"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s10ContactsUI39CNContactSavedAutoFillDetailsControllerC23checkShouldShowAutofill10completionyySo8NSNumberCSg_So7NSErrorCSgtc_tFTj"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s10ContactsUI39CNContactSavedAutoFillDetailsControllerC23checkShouldShowAutofill10completionyySo8NSNumberCSg_So7NSErrorCSgtc_tFTq"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s10ContactsUI39CNContactSavedAutoFillDetailsControllerC7contactSo0C0CSgvMTj"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s10ContactsUI39CNContactSavedAutoFillDetailsControllerC7contactSo0C0CSgvMTq"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s10ContactsUI39CNContactSavedAutoFillDetailsControllerC7contactSo0C0CSgvgTj"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s10ContactsUI39CNContactSavedAutoFillDetailsControllerC7contactSo0C0CSgvgTq"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s10ContactsUI39CNContactSavedAutoFillDetailsControllerC7contactSo0C0CSgvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s10ContactsUI39CNContactSavedAutoFillDetailsControllerC7contactSo0C0CSgvsTj"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s10ContactsUI39CNContactSavedAutoFillDetailsControllerC7contactSo0C0CSgvsTq"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s10ContactsUI39CNContactSavedAutoFillDetailsControllerCACycfC"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s10ContactsUI39CNContactSavedAutoFillDetailsControllerCACycfc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s10ContactsUI39CNContactSavedAutoFillDetailsControllerCMa"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s10ContactsUI39CNContactSavedAutoFillDetailsControllerCMn"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s10ContactsUI39CNContactSavedAutoFillDetailsControllerCMo"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s10ContactsUI39CNContactSavedAutoFillDetailsControllerCMu"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s10ContactsUI39CNContactSavedAutoFillDetailsControllerCN"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s10ContactsUI39CNContactSavedAutoFillDetailsControllerCfD"},
     {"access": "public", "introduced": "18", "linkage": "exported", "name": "_$s7SwiftUI4ViewP08ContactsB0E19contactAccessPicker11isPresented17completionHandlerQrAA7BindingVySbG_ySaySSGctF"},
     {"access": "public", "introduced": "18", "linkage": "exported", "name": "_$s7SwiftUI4ViewP08ContactsB0E19contactAccessPicker11isPresented17completionHandlerQrAA7BindingVySbG_ySaySSGctFQOMQ"},
     {"access": "public", "introduced": "18", "linkage": "exported", "name": "_$s7SwiftUI4ViewP08ContactsB0E24contactAccessButtonStyleyQrAD07ContactfG0V0H0VF"},
@@ -136,7 +241,22 @@
     {"access": "public", "introduced": "18", "linkage": "exported", "name": "_$s7SwiftUI4ViewP08ContactsB0E26contactAccessButtonCaptionyQrAD07ContactfG0V0H0OFQOMQ"},
     {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$sSo16CNMutableContactC10ContactsUIE2id10Foundation4UUIDVvg"}
    ],
-   "target": "arm64e-apple-ios26.5"
+   "interfaces": [
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "27", "name": "contact"},
+      {"access": "public", "introduced": "27", "name": "setContact:"},
+      {"access": "public", "introduced": "27", "name": "init"},
+      {"access": "public", "introduced": "27", "name": "checkShouldShowAutofillWithCompletion:"}
+     ],
+     "introduced": "27",
+     "linkage": "exported",
+     "name": "CNContactSavedAutoFillDetailsController",
+     "super": "NSObject"
+    }
+   ],
+   "target": "arm64e-apple-ios27.0"
   }
  ],
  "version": "1.0"

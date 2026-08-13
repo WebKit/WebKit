@@ -1,0 +1,250 @@
+
+{
+ "PublicSDKContentRoot": [
+  {
+   "categories": [
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "beginAnalysisOfDecompressionSession:error:"},
+      {"access": "public", "name": "beginAnalysisOfCaptureDeviceInput:error:"},
+      {"access": "public", "name": "endAnalysis"},
+      {"access": "public", "name": "continueStream"}
+     ],
+     "interface": "SCVideoStreamAnalyzer",
+     "introduced": "26",
+     "name": "SessionManagement"
+    },
+    {
+     "access": "public",
+     "interface": "SCSensitivityAnalysis",
+     "introduced": "26",
+     "name": "VideoStreamAnalysis",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "shouldInterruptVideo", "name": "shouldInterruptVideo"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "shouldIndicateSensitivity", "name": "shouldIndicateSensitivity"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "shouldMuteAudio", "name": "shouldMuteAudio"}
+     ]
+    }
+   ],
+   "enums": [
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "SCSensitivityAnalysisPolicyDisabled"},
+      {"access": "public", "name": "SCSensitivityAnalysisPolicySimpleInterventions"},
+      {"access": "public", "name": "SCSensitivityAnalysisPolicyDescriptiveInterventions"}
+     ],
+     "introduced": "17",
+     "name": "SCSensitivityAnalysisPolicy"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "SCVideoStreamAnalyzerStreamDirectionOutgoing"},
+      {"access": "public", "name": "SCVideoStreamAnalyzerStreamDirectionIncoming"}
+     ],
+     "introduced": "26",
+     "name": "SCVideoStreamAnalyzerStreamDirection"
+    }
+   ],
+   "globals": [
+    {"access": "public", "introduced": "27", "kind": "variable", "linkage": "exported", "name": "_SCSensitiveContentTypeGoreOrViolence"},
+    {"access": "public", "introduced": "27", "kind": "variable", "linkage": "exported", "name": "_SCSensitiveContentTypeSexuallyExplicit"}
+   ],
+   "interfaces": [
+    {
+     "access": "public",
+     "categories": [
+      "VideoStreamAnalysis"
+     ],
+     "introduced": "17",
+     "linkage": "exported",
+     "name": "SCSensitivityAnalysis",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "isSensitive", "name": "sensitive"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "detectedTypes", "introduced": "27", "name": "detectedTypes"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "init"},
+      {"access": "public", "name": "analyzeImageFile:completionHandler:"},
+      {"access": "public", "name": "analyzeCGImage:completionHandler:"},
+      {"access": "public", "name": "analyzeVideoFile:completionHandler:"}
+     ],
+     "introduced": "17",
+     "linkage": "exported",
+     "name": "SCSensitivityAnalyzer",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "analysisPolicy", "name": "analysisPolicy"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "categories": [
+      "SessionManagement"
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithParticipantUUID:streamDirection:error:"},
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "new", "unavailable": true},
+      {"access": "public", "name": "analyzePixelBuffer:"}
+     ],
+     "introduced": "26",
+     "linkage": "exported",
+     "name": "SCVideoStreamAnalyzer",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "analysis", "name": "analysis"},
+      {"access": "public", "getter": "analysisChangedHandler", "name": "analysisChangedHandler", "setter": "setAnalysisChangedHandler:"}
+     ],
+     "super": "NSObject"
+    }
+   ],
+   "target": "arm64e-apple-ios27",
+   "typedefs": [
+    {"access": "public", "introduced": "27", "name": "SCSensitiveContentType"},
+    {"access": "public", "name": "SCSensitivityAnalysisPolicy"},
+    {"access": "public", "introduced": "26", "name": "SCVideoStreamAnalysisChangeHandler"},
+    {"access": "public", "name": "SCVideoStreamAnalyzerStreamDirection"}
+   ]
+  },
+  {
+   "categories": [
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "beginAnalysisOfDecompressionSession:error:"},
+      {"access": "public", "name": "beginAnalysisOfCaptureDeviceInput:error:"},
+      {"access": "public", "name": "endAnalysis"},
+      {"access": "public", "name": "continueStream"}
+     ],
+     "interface": "SCVideoStreamAnalyzer",
+     "introduced": "26",
+     "name": "SessionManagement"
+    },
+    {
+     "access": "public",
+     "interface": "SCSensitivityAnalysis",
+     "introduced": "26",
+     "name": "VideoStreamAnalysis",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "shouldInterruptVideo", "name": "shouldInterruptVideo"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "shouldIndicateSensitivity", "name": "shouldIndicateSensitivity"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "shouldMuteAudio", "name": "shouldMuteAudio"}
+     ]
+    }
+   ],
+   "enums": [
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "SCSensitivityAnalysisPolicyDisabled"},
+      {"access": "public", "name": "SCSensitivityAnalysisPolicySimpleInterventions"},
+      {"access": "public", "name": "SCSensitivityAnalysisPolicyDescriptiveInterventions"}
+     ],
+     "introduced": "17",
+     "name": "SCSensitivityAnalysisPolicy"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "SCVideoStreamAnalyzerStreamDirectionOutgoing"},
+      {"access": "public", "name": "SCVideoStreamAnalyzerStreamDirectionIncoming"}
+     ],
+     "introduced": "26",
+     "name": "SCVideoStreamAnalyzerStreamDirection"
+    }
+   ],
+   "globals": [
+    {"access": "public", "introduced": "27", "kind": "variable", "linkage": "exported", "name": "_SCSensitiveContentTypeGoreOrViolence"},
+    {"access": "public", "introduced": "27", "kind": "variable", "linkage": "exported", "name": "_SCSensitiveContentTypeSexuallyExplicit"}
+   ],
+   "interfaces": [
+    {
+     "access": "public",
+     "categories": [
+      "VideoStreamAnalysis"
+     ],
+     "introduced": "17",
+     "linkage": "exported",
+     "name": "SCSensitivityAnalysis",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "isSensitive", "name": "sensitive"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "detectedTypes", "introduced": "27", "name": "detectedTypes"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "init"},
+      {"access": "public", "name": "analyzeImageFile:completionHandler:"},
+      {"access": "public", "name": "analyzeCGImage:completionHandler:"},
+      {"access": "public", "name": "analyzeVideoFile:completionHandler:"}
+     ],
+     "introduced": "17",
+     "linkage": "exported",
+     "name": "SCSensitivityAnalyzer",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "analysisPolicy", "name": "analysisPolicy"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "categories": [
+      "SessionManagement"
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithParticipantUUID:streamDirection:error:"},
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "new", "unavailable": true},
+      {"access": "public", "name": "analyzePixelBuffer:"}
+     ],
+     "introduced": "26",
+     "linkage": "exported",
+     "name": "SCVideoStreamAnalyzer",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "analysis", "name": "analysis"},
+      {"access": "public", "getter": "analysisChangedHandler", "name": "analysisChangedHandler", "setter": "setAnalysisChangedHandler:"}
+     ],
+     "super": "NSObject"
+    }
+   ],
+   "target": "arm64e.x1-apple-ios27",
+   "typedefs": [
+    {"access": "public", "introduced": "27", "name": "SCSensitiveContentType"},
+    {"access": "public", "name": "SCSensitivityAnalysisPolicy"},
+    {"access": "public", "introduced": "26", "name": "SCVideoStreamAnalysisChangeHandler"},
+    {"access": "public", "name": "SCVideoStreamAnalyzerStreamDirection"}
+   ]
+  },
+  {
+   "globals": [
+    {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$sSo21SCSensitivityAnalyzerC24SensitiveContentAnalysisE05VideoE7HandlerC03hascD0So0aE0CyYaKF"},
+    {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$sSo21SCSensitivityAnalyzerC24SensitiveContentAnalysisE05VideoE7HandlerC03hascD0So0aE0CyYaKFTu"},
+    {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$sSo21SCSensitivityAnalyzerC24SensitiveContentAnalysisE05VideoE7HandlerC8progressSo10NSProgressCvM"},
+    {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$sSo21SCSensitivityAnalyzerC24SensitiveContentAnalysisE05VideoE7HandlerC8progressSo10NSProgressCvg"},
+    {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$sSo21SCSensitivityAnalyzerC24SensitiveContentAnalysisE05VideoE7HandlerC8progressSo10NSProgressCvpMV"},
+    {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$sSo21SCSensitivityAnalyzerC24SensitiveContentAnalysisE05VideoE7HandlerC8progressSo10NSProgressCvs"},
+    {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$sSo21SCSensitivityAnalyzerC24SensitiveContentAnalysisE05VideoE7HandlerCMa"},
+    {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$sSo21SCSensitivityAnalyzerC24SensitiveContentAnalysisE05VideoE7HandlerCMm"},
+    {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$sSo21SCSensitivityAnalyzerC24SensitiveContentAnalysisE05VideoE7HandlerCMn"},
+    {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$sSo21SCSensitivityAnalyzerC24SensitiveContentAnalysisE05VideoE7HandlerCMo"},
+    {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$sSo21SCSensitivityAnalyzerC24SensitiveContentAnalysisE05VideoE7HandlerCN"},
+    {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$sSo21SCSensitivityAnalyzerC24SensitiveContentAnalysisE05VideoE7HandlerCfD"},
+    {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$sSo21SCSensitivityAnalyzerC24SensitiveContentAnalysisE05VideoE7HandlerCfd"},
+    {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$sSo21SCSensitivityAnalyzerC24SensitiveContentAnalysisE05videoE09forFileAtAbCE05VideoE7HandlerC10Foundation3URLV_tF"},
+    {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$sSo21SCVideoStreamAnalyzerC24SensitiveContentAnalysisE15analysisChangesQrvg"},
+    {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$sSo21SCVideoStreamAnalyzerC24SensitiveContentAnalysisE15analysisChangesQrvpMV"},
+    {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$sSo21SCVideoStreamAnalyzerC24SensitiveContentAnalysisE15analysisChangesQrvpQOMQ"}
+   ],
+   "target": "arm64e-apple-ios27.0"
+  }
+ ],
+ "version": "1.0"
+}

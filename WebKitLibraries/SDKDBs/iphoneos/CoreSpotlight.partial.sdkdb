@@ -79,7 +79,8 @@
       {"access": "public", "name": "fetchDataForBundleIdentifier:itemIdentifier:contentType:completionHandler:"}
      ],
      "interface": "CSSearchableIndex",
-     "name": "CSExternalProvider"
+     "name": "CSExternalProvider",
+     "unavailable": true
     },
     {
      "access": "public",
@@ -93,7 +94,7 @@
       {"access": "public", "getter": "contentURL", "name": "contentURL", "setter": "setContentURL:"},
       {"access": "public", "getter": "thumbnailURL", "name": "thumbnailURL", "setter": "setThumbnailURL:"},
       {"access": "public", "getter": "thumbnailData", "name": "thumbnailData", "setter": "setThumbnailData:"},
-      {"access": "public", "getter": "darkThumbnailURL", "name": "darkThumbnailURL", "setter": "setDarkThumbnailURL:"},
+      {"access": "public", "getter": "darkThumbnailURL", "introduced": "15", "name": "darkThumbnailURL", "setter": "setDarkThumbnailURL:"},
       {"access": "public", "getter": "relatedUniqueIdentifier", "name": "relatedUniqueIdentifier", "setter": "setRelatedUniqueIdentifier:"},
       {"access": "public", "getter": "weakRelatedUniqueIdentifier", "introduced": "10", "name": "weakRelatedUniqueIdentifier", "setter": "setWeakRelatedUniqueIdentifier:"},
       {"access": "public", "getter": "metadataModificationDate", "name": "metadataModificationDate", "setter": "setMetadataModificationDate:"},
@@ -276,25 +277,19 @@
     },
     {
      "access": "public",
-     "interface": "CSSearchableIndex",
-     "introduced": "17",
-     "name": "CSOptionalBatchingWithExpectedState"
-    },
-    {
-     "access": "public",
      "interface": "CSSearchableItemAttributeSet",
      "introduced": "9",
      "name": "CSPlaces",
      "properties": [
       {"access": "public", "getter": "headline", "name": "headline", "setter": "setHeadline:"},
       {"access": "public", "getter": "instructions", "name": "instructions", "setter": "setInstructions:"},
-      {"access": "public", "getter": "thoroughfare", "name": "thoroughfare", "setter": "setThoroughfare:"},
-      {"access": "public", "getter": "subThoroughfare", "name": "subThoroughfare", "setter": "setSubThoroughfare:"},
-      {"access": "public", "getter": "postalCode", "name": "postalCode", "setter": "setPostalCode:"},
+      {"access": "public", "getter": "thoroughfare", "introduced": "10", "name": "thoroughfare", "setter": "setThoroughfare:"},
+      {"access": "public", "getter": "subThoroughfare", "introduced": "10", "name": "subThoroughfare", "setter": "setSubThoroughfare:"},
+      {"access": "public", "getter": "postalCode", "introduced": "10", "name": "postalCode", "setter": "setPostalCode:"},
       {"access": "public", "getter": "city", "name": "city", "setter": "setCity:"},
       {"access": "public", "getter": "stateOrProvince", "name": "stateOrProvince", "setter": "setStateOrProvince:"},
       {"access": "public", "getter": "country", "name": "country", "setter": "setCountry:"},
-      {"access": "public", "getter": "fullyFormattedAddress", "name": "fullyFormattedAddress", "setter": "setFullyFormattedAddress:"},
+      {"access": "public", "getter": "fullyFormattedAddress", "introduced": "10", "name": "fullyFormattedAddress", "setter": "setFullyFormattedAddress:"},
       {"access": "public", "getter": "altitude", "name": "altitude", "setter": "setAltitude:"},
       {"access": "public", "getter": "latitude", "name": "latitude", "setter": "setLatitude:"},
       {"access": "public", "getter": "longitude", "name": "longitude", "setter": "setLongitude:"},
@@ -338,7 +333,7 @@
       {"access": "public", "name": "CSIndexErrorCodeRemoteConnectionError"},
       {"access": "public", "name": "CSIndexErrorCodeQuotaExceeded"},
       {"access": "public", "name": "CSIndexErrorCodeIndexingUnsupported"},
-      {"access": "public", "name": "CSIndexErrorCodeMismatchedClientState"}
+      {"access": "public", "introduced": "18", "name": "CSIndexErrorCodeMismatchedClientState"}
      ],
      "introduced": "9",
      "name": "CSIndexErrorCode"
@@ -360,7 +355,8 @@
       {"access": "public", "name": "CSSearchQuerySourceOptionDefault"},
       {"access": "public", "name": "CSSearchQuerySourceOptionAllowMail"}
      ],
-     "name": "CSSearchQuerySourceOptions"
+     "name": "CSSearchQuerySourceOptions",
+     "unavailable": true
     },
     {
      "access": "public",
@@ -511,14 +507,14 @@
     },
     {
      "access": "public",
-     "introduced": "10",
+     "introduced": "16",
      "linkage": "exported",
      "name": "CSSearchQueryContext",
      "properties": [
       {"access": "public", "getter": "fetchAttributes", "name": "fetchAttributes", "setter": "setFetchAttributes:"},
       {"access": "public", "getter": "filterQueries", "name": "filterQueries", "setter": "setFilterQueries:"},
       {"access": "public", "getter": "keyboardLanguage", "name": "keyboardLanguage", "setter": "setKeyboardLanguage:"},
-      {"access": "public", "getter": "sourceOptions", "name": "sourceOptions", "setter": "setSourceOptions:"}
+      {"access": "public", "getter": "sourceOptions", "name": "sourceOptions", "setter": "setSourceOptions:", "unavailable": true}
      ],
      "protocols": [
       "NSSecureCoding",
@@ -530,8 +526,7 @@
      "access": "public",
      "categories": [
       "CSOptionalBatching",
-      "CSExternalProvider",
-      "CSOptionalBatchingWithExpectedState"
+      "CSExternalProvider"
      ],
      "classMethods": [
       {"access": "public", "name": "isIndexingAvailable"},
@@ -549,7 +544,22 @@
      "linkage": "exported",
      "name": "CSSearchableIndex",
      "properties": [
-      {"access": "public", "getter": "indexDelegate", "name": "indexDelegate", "setter": "setIndexDelegate:"}
+      {"access": "public", "getter": "indexDelegate", "name": "indexDelegate", "setter": "setIndexDelegate:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "protectionClass", "introduced": "27", "name": "protectionClass"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "27",
+     "linkage": "exported",
+     "name": "CSSearchableIndexDescription",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "protectionClass", "name": "protectionClass"}
+     ],
+     "protocols": [
+      "NSSecureCoding",
+      "NSCopying"
      ],
      "super": "NSObject"
     },
@@ -567,7 +577,7 @@
       {"access": "public", "getter": "domainIdentifier", "name": "domainIdentifier", "setter": "setDomainIdentifier:"},
       {"access": "public", "getter": "expirationDate", "name": "expirationDate", "setter": "setExpirationDate:"},
       {"access": "public", "getter": "attributeSet", "name": "attributeSet", "setter": "setAttributeSet:"},
-      {"access": "public", "getter": "isUpdate", "introduced": "9", "name": "isUpdate", "setter": "setIsUpdate:"},
+      {"access": "public", "getter": "isUpdate", "name": "isUpdate", "setter": "setIsUpdate:"},
       {"access": "public", "getter": "updateListenerOptions", "introduced": "18.4", "name": "updateListenerOptions", "setter": "setUpdateListenerOptions:"}
      ],
      "protocols": [
@@ -676,6 +686,7 @@
       {"access": "public", "introduced": "11", "name": "dataForSearchableIndex:itemIdentifier:typeIdentifier:error:", "optional": true},
       {"access": "public", "introduced": "11", "name": "fileURLForSearchableIndex:itemIdentifier:typeIdentifier:inPlace:error:", "optional": true},
       {"access": "public", "introduced": "18.4", "name": "searchableItemsForIdentifiers:searchableItemsHandler:", "optional": true},
+      {"access": "public", "introduced": "27", "name": "searchableItemsForIdentifiers:protectionClass:searchableItemsHandler:", "optional": true},
       {"access": "public", "introduced": "18.4", "name": "searchableItemsDidUpdate:", "optional": true}
      ],
      "introduced": "9",
@@ -685,7 +696,712 @@
      ]
     }
    ],
-   "target": "arm64e-apple-ios26.5",
+   "target": "arm64e-apple-ios27",
+   "typedefs": [
+    {"access": "public", "name": "CSIndexErrorCode"},
+    {"access": "public", "name": "CSSearchQueryErrorCode"},
+    {"access": "public", "name": "CSSearchQuerySourceOptions"},
+    {"access": "public", "name": "CSSearchableItemUpdateListenerOptions"},
+    {"access": "public", "introduced": "16", "name": "CSSuggestionKind"},
+    {"access": "public", "introduced": "18", "name": "CSUserInteraction"}
+   ]
+  },
+  {
+   "categories": [
+    {
+     "access": "public",
+     "interface": "CSSearchableItemAttributeSet",
+     "introduced": "9",
+     "name": "CSActionExtras",
+     "properties": [
+      {"access": "public", "getter": "supportsPhoneCall", "name": "supportsPhoneCall", "setter": "setSupportsPhoneCall:"},
+      {"access": "public", "getter": "supportsNavigation", "name": "supportsNavigation", "setter": "setSupportsNavigation:"},
+      {"access": "public", "getter": "actionIdentifiers", "introduced": "15", "name": "actionIdentifiers", "setter": "setActionIdentifiers:"},
+      {"access": "public", "getter": "sharedItemContentType", "introduced": "15", "name": "sharedItemContentType", "setter": "setSharedItemContentType:"}
+     ]
+    },
+    {
+     "access": "public",
+     "interface": "CSSearchableItemAttributeSet",
+     "introduced": "9",
+     "name": "CSContainment",
+     "properties": [
+      {"access": "public", "getter": "containerTitle", "name": "containerTitle", "setter": "setContainerTitle:"},
+      {"access": "public", "getter": "containerDisplayName", "name": "containerDisplayName", "setter": "setContainerDisplayName:"},
+      {"access": "public", "getter": "containerIdentifier", "name": "containerIdentifier", "setter": "setContainerIdentifier:"},
+      {"access": "public", "getter": "containerOrder", "name": "containerOrder", "setter": "setContainerOrder:"}
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "setValue:forCustomKey:"},
+      {"access": "public", "name": "valueForCustomKey:"}
+     ],
+     "interface": "CSSearchableItemAttributeSet",
+     "introduced": "9",
+     "name": "CSCustomAttributes"
+    },
+    {
+     "access": "public",
+     "interface": "CSSearchableItemAttributeSet",
+     "introduced": "9",
+     "name": "CSDocuments",
+     "properties": [
+      {"access": "public", "getter": "subject", "name": "subject", "setter": "setSubject:"},
+      {"access": "public", "getter": "theme", "name": "theme", "setter": "setTheme:"},
+      {"access": "public", "getter": "contentDescription", "name": "contentDescription", "setter": "setContentDescription:"},
+      {"access": "public", "getter": "identifier", "name": "identifier", "setter": "setIdentifier:"},
+      {"access": "public", "getter": "audiences", "name": "audiences", "setter": "setAudiences:"},
+      {"access": "public", "getter": "fileSize", "name": "fileSize", "setter": "setFileSize:"},
+      {"access": "public", "getter": "pageCount", "name": "pageCount", "setter": "setPageCount:"},
+      {"access": "public", "getter": "pageWidth", "name": "pageWidth", "setter": "setPageWidth:"},
+      {"access": "public", "getter": "pageHeight", "name": "pageHeight", "setter": "setPageHeight:"},
+      {"access": "public", "getter": "securityMethod", "name": "securityMethod", "setter": "setSecurityMethod:"},
+      {"access": "public", "getter": "creator", "name": "creator", "setter": "setCreator:"},
+      {"access": "public", "getter": "encodingApplications", "name": "encodingApplications", "setter": "setEncodingApplications:"},
+      {"access": "public", "getter": "kind", "name": "kind", "setter": "setKind:"},
+      {"access": "public", "getter": "fontNames", "name": "fontNames", "setter": "setFontNames:"}
+     ]
+    },
+    {
+     "access": "public",
+     "interface": "CSSearchableItemAttributeSet",
+     "introduced": "9",
+     "name": "CSEvents",
+     "properties": [
+      {"access": "public", "getter": "dueDate", "name": "dueDate", "setter": "setDueDate:"},
+      {"access": "public", "getter": "completionDate", "name": "completionDate", "setter": "setCompletionDate:"},
+      {"access": "public", "getter": "startDate", "name": "startDate", "setter": "setStartDate:"},
+      {"access": "public", "getter": "endDate", "name": "endDate", "setter": "setEndDate:"},
+      {"access": "public", "getter": "importantDates", "name": "importantDates", "setter": "setImportantDates:"},
+      {"access": "public", "getter": "allDay", "name": "allDay", "setter": "setAllDay:"}
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "fetchDataForBundleIdentifier:itemIdentifier:contentType:completionHandler:"}
+     ],
+     "interface": "CSSearchableIndex",
+     "name": "CSExternalProvider",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "interface": "CSSearchableItemAttributeSet",
+     "introduced": "9",
+     "name": "CSGeneral",
+     "properties": [
+      {"access": "public", "getter": "displayName", "name": "displayName", "setter": "setDisplayName:"},
+      {"access": "public", "getter": "alternateNames", "name": "alternateNames", "setter": "setAlternateNames:"},
+      {"access": "public", "getter": "path", "name": "path", "setter": "setPath:"},
+      {"access": "public", "getter": "contentURL", "name": "contentURL", "setter": "setContentURL:"},
+      {"access": "public", "getter": "thumbnailURL", "name": "thumbnailURL", "setter": "setThumbnailURL:"},
+      {"access": "public", "getter": "thumbnailData", "name": "thumbnailData", "setter": "setThumbnailData:"},
+      {"access": "public", "getter": "darkThumbnailURL", "introduced": "15", "name": "darkThumbnailURL", "setter": "setDarkThumbnailURL:"},
+      {"access": "public", "getter": "relatedUniqueIdentifier", "name": "relatedUniqueIdentifier", "setter": "setRelatedUniqueIdentifier:"},
+      {"access": "public", "getter": "weakRelatedUniqueIdentifier", "introduced": "10", "name": "weakRelatedUniqueIdentifier", "setter": "setWeakRelatedUniqueIdentifier:"},
+      {"access": "public", "getter": "metadataModificationDate", "name": "metadataModificationDate", "setter": "setMetadataModificationDate:"},
+      {"access": "public", "getter": "contentType", "name": "contentType", "setter": "setContentType:"},
+      {"access": "public", "getter": "contentTypeTree", "name": "contentTypeTree", "setter": "setContentTypeTree:"},
+      {"access": "public", "getter": "keywords", "name": "keywords", "setter": "setKeywords:"},
+      {"access": "public", "getter": "title", "name": "title", "setter": "setTitle:"},
+      {"access": "public", "getter": "version", "name": "version", "setter": "setVersion:"},
+      {"access": "public", "getter": "isUserCreated", "introduced": "11", "name": "userCreated", "setter": "setUserCreated:"},
+      {"access": "public", "getter": "isUserOwned", "introduced": "11", "name": "userOwned", "setter": "setUserOwned:"},
+      {"access": "public", "getter": "isUserCurated", "introduced": "11", "name": "userCurated", "setter": "setUserCurated:"},
+      {"access": "public", "getter": "rankingHint", "introduced": "11", "name": "rankingHint", "setter": "setRankingHint:"},
+      {"access": "public", "getter": "domainIdentifier", "introduced": "10", "name": "domainIdentifier", "setter": "setDomainIdentifier:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "textContentSummary", "introduced": "18.4", "name": "textContentSummary"},
+      {"access": "public", "getter": "transcribedTextContent", "introduced": "18.4", "name": "transcribedTextContent", "setter": "setTranscribedTextContent:"}
+     ]
+    },
+    {
+     "access": "public",
+     "interface": "CSSearchableItemAttributeSet",
+     "introduced": "9",
+     "name": "CSImages",
+     "properties": [
+      {"access": "public", "getter": "pixelHeight", "name": "pixelHeight", "setter": "setPixelHeight:"},
+      {"access": "public", "getter": "pixelWidth", "name": "pixelWidth", "setter": "setPixelWidth:"},
+      {"access": "public", "getter": "pixelCount", "name": "pixelCount", "setter": "setPixelCount:"},
+      {"access": "public", "getter": "colorSpace", "name": "colorSpace", "setter": "setColorSpace:"},
+      {"access": "public", "getter": "bitsPerSample", "name": "bitsPerSample", "setter": "setBitsPerSample:"},
+      {"access": "public", "getter": "isFlashOn", "name": "flashOn", "setter": "setFlashOn:"},
+      {"access": "public", "getter": "focalLength", "name": "focalLength", "setter": "setFocalLength:"},
+      {"access": "public", "getter": "isFocalLength35mm", "name": "focalLength35mm", "setter": "setFocalLength35mm:"},
+      {"access": "public", "getter": "acquisitionMake", "name": "acquisitionMake", "setter": "setAcquisitionMake:"},
+      {"access": "public", "getter": "acquisitionModel", "name": "acquisitionModel", "setter": "setAcquisitionModel:"},
+      {"access": "public", "getter": "cameraOwner", "name": "cameraOwner", "setter": "setCameraOwner:"},
+      {"access": "public", "getter": "lensModel", "name": "lensModel", "setter": "setLensModel:"},
+      {"access": "public", "getter": "ISOSpeed", "name": "ISOSpeed", "setter": "setISOSpeed:"},
+      {"access": "public", "getter": "orientation", "name": "orientation", "setter": "setOrientation:"},
+      {"access": "public", "getter": "layerNames", "name": "layerNames", "setter": "setLayerNames:"},
+      {"access": "public", "getter": "whiteBalance", "name": "whiteBalance", "setter": "setWhiteBalance:"},
+      {"access": "public", "getter": "aperture", "name": "aperture", "setter": "setAperture:"},
+      {"access": "public", "getter": "profileName", "name": "profileName", "setter": "setProfileName:"},
+      {"access": "public", "getter": "resolutionWidthDPI", "name": "resolutionWidthDPI", "setter": "setResolutionWidthDPI:"},
+      {"access": "public", "getter": "resolutionHeightDPI", "name": "resolutionHeightDPI", "setter": "setResolutionHeightDPI:"},
+      {"access": "public", "getter": "exposureMode", "name": "exposureMode", "setter": "setExposureMode:"},
+      {"access": "public", "getter": "exposureTime", "name": "exposureTime", "setter": "setExposureTime:"},
+      {"access": "public", "getter": "EXIFVersion", "name": "EXIFVersion", "setter": "setEXIFVersion:"},
+      {"access": "public", "getter": "EXIFGPSVersion", "name": "EXIFGPSVersion", "setter": "setEXIFGPSVersion:"},
+      {"access": "public", "getter": "hasAlphaChannel", "name": "hasAlphaChannel", "setter": "setHasAlphaChannel:"},
+      {"access": "public", "getter": "isRedEyeOn", "name": "redEyeOn", "setter": "setRedEyeOn:"},
+      {"access": "public", "getter": "meteringMode", "name": "meteringMode", "setter": "setMeteringMode:"},
+      {"access": "public", "getter": "maxAperture", "name": "maxAperture", "setter": "setMaxAperture:"},
+      {"access": "public", "getter": "fNumber", "name": "fNumber", "setter": "setFNumber:"},
+      {"access": "public", "getter": "exposureProgram", "name": "exposureProgram", "setter": "setExposureProgram:"},
+      {"access": "public", "getter": "exposureTimeString", "name": "exposureTimeString", "setter": "setExposureTimeString:"}
+     ]
+    },
+    {
+     "access": "public",
+     "interface": "CSSearchableItemAttributeSet",
+     "introduced": "9",
+     "name": "CSItemProvider",
+     "properties": [
+      {"access": "public", "getter": "providerDataTypeIdentifiers", "introduced": "11", "name": "providerDataTypeIdentifiers", "setter": "setProviderDataTypeIdentifiers:"},
+      {"access": "public", "getter": "providerFileTypeIdentifiers", "introduced": "11", "name": "providerFileTypeIdentifiers", "setter": "setProviderFileTypeIdentifiers:"},
+      {"access": "public", "getter": "providerInPlaceFileTypeIdentifiers", "introduced": "11", "name": "providerInPlaceFileTypeIdentifiers", "setter": "setProviderInPlaceFileTypeIdentifiers:"}
+     ]
+    },
+    {
+     "access": "public",
+     "interface": "CSSearchableItemAttributeSet",
+     "introduced": "9",
+     "name": "CSMedia",
+     "properties": [
+      {"access": "public", "getter": "editors", "name": "editors", "setter": "setEditors:"},
+      {"access": "public", "getter": "participants", "name": "participants", "setter": "setParticipants:"},
+      {"access": "public", "getter": "projects", "name": "projects", "setter": "setProjects:"},
+      {"access": "public", "getter": "contentSources", "name": "contentSources", "setter": "setContentSources:"},
+      {"access": "public", "getter": "comment", "name": "comment", "setter": "setComment:"},
+      {"access": "public", "getter": "copyright", "name": "copyright", "setter": "setCopyright:"},
+      {"access": "public", "getter": "lastUsedDate", "name": "lastUsedDate", "setter": "setLastUsedDate:"},
+      {"access": "public", "getter": "contentCreationDate", "name": "contentCreationDate", "setter": "setContentCreationDate:"},
+      {"access": "public", "getter": "contentModificationDate", "name": "contentModificationDate", "setter": "setContentModificationDate:"},
+      {"access": "public", "getter": "addedDate", "name": "addedDate", "setter": "setAddedDate:"},
+      {"access": "public", "getter": "downloadedDate", "name": "downloadedDate", "setter": "setDownloadedDate:"},
+      {"access": "public", "getter": "duration", "name": "duration", "setter": "setDuration:"},
+      {"access": "public", "getter": "contactKeywords", "name": "contactKeywords", "setter": "setContactKeywords:"},
+      {"access": "public", "getter": "codecs", "name": "codecs", "setter": "setCodecs:"},
+      {"access": "public", "getter": "mediaTypes", "name": "mediaTypes", "setter": "setMediaTypes:"},
+      {"access": "public", "getter": "isStreamable", "name": "streamable", "setter": "setStreamable:"},
+      {"access": "public", "getter": "totalBitRate", "name": "totalBitRate", "setter": "setTotalBitRate:"},
+      {"access": "public", "getter": "videoBitRate", "name": "videoBitRate", "setter": "setVideoBitRate:"},
+      {"access": "public", "getter": "audioBitRate", "name": "audioBitRate", "setter": "setAudioBitRate:"},
+      {"access": "public", "getter": "deliveryType", "name": "deliveryType", "setter": "setDeliveryType:"},
+      {"access": "public", "getter": "organizations", "name": "organizations", "setter": "setOrganizations:"},
+      {"access": "public", "getter": "role", "name": "role", "setter": "setRole:"},
+      {"access": "public", "getter": "languages", "name": "languages", "setter": "setLanguages:"},
+      {"access": "public", "getter": "rights", "name": "rights", "setter": "setRights:"},
+      {"access": "public", "getter": "publishers", "name": "publishers", "setter": "setPublishers:"},
+      {"access": "public", "getter": "contributors", "name": "contributors", "setter": "setContributors:"},
+      {"access": "public", "getter": "coverage", "name": "coverage", "setter": "setCoverage:"},
+      {"access": "public", "getter": "rating", "name": "rating", "setter": "setRating:"},
+      {"access": "public", "getter": "ratingDescription", "name": "ratingDescription", "setter": "setRatingDescription:"},
+      {"access": "public", "getter": "playCount", "name": "playCount", "setter": "setPlayCount:"},
+      {"access": "public", "getter": "information", "name": "information", "setter": "setInformation:"},
+      {"access": "public", "getter": "director", "name": "director", "setter": "setDirector:"},
+      {"access": "public", "getter": "producer", "name": "producer", "setter": "setProducer:"},
+      {"access": "public", "getter": "genre", "name": "genre", "setter": "setGenre:"},
+      {"access": "public", "getter": "performers", "name": "performers", "setter": "setPerformers:"},
+      {"access": "public", "getter": "originalFormat", "name": "originalFormat", "setter": "setOriginalFormat:"},
+      {"access": "public", "getter": "originalSource", "name": "originalSource", "setter": "setOriginalSource:"},
+      {"access": "public", "getter": "isLocal", "name": "local", "setter": "setLocal:"},
+      {"access": "public", "getter": "contentRating", "name": "contentRating", "setter": "setContentRating:"},
+      {"access": "public", "getter": "URL", "name": "URL", "setter": "setURL:"}
+     ]
+    },
+    {
+     "access": "public",
+     "interface": "CSSearchableItemAttributeSet",
+     "introduced": "9",
+     "name": "CSMessaging",
+     "properties": [
+      {"access": "public", "getter": "accountIdentifier", "name": "accountIdentifier", "setter": "setAccountIdentifier:"},
+      {"access": "public", "getter": "accountHandles", "name": "accountHandles", "setter": "setAccountHandles:"},
+      {"access": "public", "getter": "HTMLContentData", "name": "HTMLContentData", "setter": "setHTMLContentData:"},
+      {"access": "public", "getter": "textContent", "name": "textContent", "setter": "setTextContent:"},
+      {"access": "public", "getter": "authors", "name": "authors", "setter": "setAuthors:"},
+      {"access": "public", "getter": "primaryRecipients", "name": "primaryRecipients", "setter": "setPrimaryRecipients:"},
+      {"access": "public", "getter": "additionalRecipients", "name": "additionalRecipients", "setter": "setAdditionalRecipients:"},
+      {"access": "public", "getter": "hiddenAdditionalRecipients", "name": "hiddenAdditionalRecipients", "setter": "setHiddenAdditionalRecipients:"},
+      {"access": "public", "getter": "emailHeaders", "name": "emailHeaders", "setter": "setEmailHeaders:"},
+      {"access": "public", "getter": "mailboxIdentifiers", "name": "mailboxIdentifiers", "setter": "setMailboxIdentifiers:"},
+      {"access": "public", "getter": "authorNames", "name": "authorNames", "setter": "setAuthorNames:"},
+      {"access": "public", "getter": "recipientNames", "name": "recipientNames", "setter": "setRecipientNames:"},
+      {"access": "public", "getter": "authorEmailAddresses", "name": "authorEmailAddresses", "setter": "setAuthorEmailAddresses:"},
+      {"access": "public", "getter": "recipientEmailAddresses", "name": "recipientEmailAddresses", "setter": "setRecipientEmailAddresses:"},
+      {"access": "public", "getter": "authorAddresses", "name": "authorAddresses", "setter": "setAuthorAddresses:"},
+      {"access": "public", "getter": "recipientAddresses", "name": "recipientAddresses", "setter": "setRecipientAddresses:"},
+      {"access": "public", "getter": "phoneNumbers", "name": "phoneNumbers", "setter": "setPhoneNumbers:"},
+      {"access": "public", "getter": "emailAddresses", "name": "emailAddresses", "setter": "setEmailAddresses:"},
+      {"access": "public", "getter": "instantMessageAddresses", "name": "instantMessageAddresses", "setter": "setInstantMessageAddresses:"},
+      {"access": "public", "getter": "isLikelyJunk", "name": "likelyJunk", "setter": "setLikelyJunk:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isPriority", "introduced": "18.4", "name": "isPriority"}
+     ]
+    },
+    {
+     "access": "public",
+     "interface": "CSSearchableItemAttributeSet",
+     "introduced": "9",
+     "name": "CSMusic",
+     "properties": [
+      {"access": "public", "getter": "audioSampleRate", "name": "audioSampleRate", "setter": "setAudioSampleRate:"},
+      {"access": "public", "getter": "audioChannelCount", "name": "audioChannelCount", "setter": "setAudioChannelCount:"},
+      {"access": "public", "getter": "tempo", "name": "tempo", "setter": "setTempo:"},
+      {"access": "public", "getter": "keySignature", "name": "keySignature", "setter": "setKeySignature:"},
+      {"access": "public", "getter": "timeSignature", "name": "timeSignature", "setter": "setTimeSignature:"},
+      {"access": "public", "getter": "audioEncodingApplication", "name": "audioEncodingApplication", "setter": "setAudioEncodingApplication:"},
+      {"access": "public", "getter": "composer", "name": "composer", "setter": "setComposer:"},
+      {"access": "public", "getter": "lyricist", "name": "lyricist", "setter": "setLyricist:"},
+      {"access": "public", "getter": "album", "name": "album", "setter": "setAlbum:"},
+      {"access": "public", "getter": "artist", "name": "artist", "setter": "setArtist:"},
+      {"access": "public", "getter": "audioTrackNumber", "name": "audioTrackNumber", "setter": "setAudioTrackNumber:"},
+      {"access": "public", "getter": "recordingDate", "name": "recordingDate", "setter": "setRecordingDate:"},
+      {"access": "public", "getter": "musicalGenre", "name": "musicalGenre", "setter": "setMusicalGenre:"},
+      {"access": "public", "getter": "isGeneralMIDISequence", "name": "generalMIDISequence", "setter": "setGeneralMIDISequence:"},
+      {"access": "public", "getter": "musicalInstrumentCategory", "name": "musicalInstrumentCategory", "setter": "setMusicalInstrumentCategory:"},
+      {"access": "public", "getter": "musicalInstrumentName", "name": "musicalInstrumentName", "setter": "setMusicalInstrumentName:"}
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "beginIndexBatch"},
+      {"access": "public", "introduced": "18", "name": "endIndexBatchWithExpectedClientState:newClientState:completionHandler:"},
+      {"access": "public", "name": "endIndexBatchWithClientState:completionHandler:"},
+      {"access": "public", "name": "fetchLastClientStateWithCompletionHandler:"}
+     ],
+     "interface": "CSSearchableIndex",
+     "introduced": "9",
+     "name": "CSOptionalBatching"
+    },
+    {
+     "access": "public",
+     "interface": "CSSearchableItemAttributeSet",
+     "introduced": "9",
+     "name": "CSPlaces",
+     "properties": [
+      {"access": "public", "getter": "headline", "name": "headline", "setter": "setHeadline:"},
+      {"access": "public", "getter": "instructions", "name": "instructions", "setter": "setInstructions:"},
+      {"access": "public", "getter": "thoroughfare", "introduced": "10", "name": "thoroughfare", "setter": "setThoroughfare:"},
+      {"access": "public", "getter": "subThoroughfare", "introduced": "10", "name": "subThoroughfare", "setter": "setSubThoroughfare:"},
+      {"access": "public", "getter": "postalCode", "introduced": "10", "name": "postalCode", "setter": "setPostalCode:"},
+      {"access": "public", "getter": "city", "name": "city", "setter": "setCity:"},
+      {"access": "public", "getter": "stateOrProvince", "name": "stateOrProvince", "setter": "setStateOrProvince:"},
+      {"access": "public", "getter": "country", "name": "country", "setter": "setCountry:"},
+      {"access": "public", "getter": "fullyFormattedAddress", "introduced": "10", "name": "fullyFormattedAddress", "setter": "setFullyFormattedAddress:"},
+      {"access": "public", "getter": "altitude", "name": "altitude", "setter": "setAltitude:"},
+      {"access": "public", "getter": "latitude", "name": "latitude", "setter": "setLatitude:"},
+      {"access": "public", "getter": "longitude", "name": "longitude", "setter": "setLongitude:"},
+      {"access": "public", "getter": "speed", "name": "speed", "setter": "setSpeed:"},
+      {"access": "public", "getter": "timestamp", "name": "timestamp", "setter": "setTimestamp:"},
+      {"access": "public", "getter": "imageDirection", "name": "imageDirection", "setter": "setImageDirection:"},
+      {"access": "public", "getter": "namedLocation", "name": "namedLocation", "setter": "setNamedLocation:"},
+      {"access": "public", "getter": "GPSTrack", "name": "GPSTrack", "setter": "setGPSTrack:"},
+      {"access": "public", "getter": "GPSStatus", "name": "GPSStatus", "setter": "setGPSStatus:"},
+      {"access": "public", "getter": "GPSMeasureMode", "name": "GPSMeasureMode", "setter": "setGPSMeasureMode:"},
+      {"access": "public", "getter": "GPSDOP", "name": "GPSDOP", "setter": "setGPSDOP:"},
+      {"access": "public", "getter": "GPSMapDatum", "name": "GPSMapDatum", "setter": "setGPSMapDatum:"},
+      {"access": "public", "getter": "GPSDestLatitude", "name": "GPSDestLatitude", "setter": "setGPSDestLatitude:"},
+      {"access": "public", "getter": "GPSDestLongitude", "name": "GPSDestLongitude", "setter": "setGPSDestLongitude:"},
+      {"access": "public", "getter": "GPSDestBearing", "name": "GPSDestBearing", "setter": "setGPSDestBearing:"},
+      {"access": "public", "getter": "GPSDestDistance", "name": "GPSDestDistance", "setter": "setGPSDestDistance:"},
+      {"access": "public", "getter": "GPSProcessingMethod", "name": "GPSProcessingMethod", "setter": "setGPSProcessingMethod:"},
+      {"access": "public", "getter": "GPSAreaInformation", "name": "GPSAreaInformation", "setter": "setGPSAreaInformation:"},
+      {"access": "public", "getter": "GPSDateStamp", "name": "GPSDateStamp", "setter": "setGPSDateStamp:"},
+      {"access": "public", "getter": "GPSDifferental", "name": "GPSDifferental", "setter": "setGPSDifferental:"}
+     ]
+    },
+    {
+     "access": "public",
+     "interface": "NSUserActivity",
+     "introduced": "9",
+     "name": "CSSearchableItemAttributeSet",
+     "properties": [
+      {"access": "public", "getter": "contentAttributeSet", "name": "contentAttributeSet", "setter": "setContentAttributeSet:"}
+     ]
+    }
+   ],
+   "enums": [
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "CSIndexErrorCodeUnknownError"},
+      {"access": "public", "name": "CSIndexErrorCodeIndexUnavailableError"},
+      {"access": "public", "name": "CSIndexErrorCodeInvalidItemError"},
+      {"access": "public", "name": "CSIndexErrorCodeInvalidClientStateError"},
+      {"access": "public", "name": "CSIndexErrorCodeRemoteConnectionError"},
+      {"access": "public", "name": "CSIndexErrorCodeQuotaExceeded"},
+      {"access": "public", "name": "CSIndexErrorCodeIndexingUnsupported"},
+      {"access": "public", "introduced": "18", "name": "CSIndexErrorCodeMismatchedClientState"}
+     ],
+     "introduced": "9",
+     "name": "CSIndexErrorCode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "CSSearchQueryErrorCodeUnknown"},
+      {"access": "public", "name": "CSSearchQueryErrorCodeIndexUnreachable"},
+      {"access": "public", "name": "CSSearchQueryErrorCodeInvalidQuery"},
+      {"access": "public", "name": "CSSearchQueryErrorCodeCancelled"}
+     ],
+     "introduced": "10",
+     "name": "CSSearchQueryErrorCode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "CSSearchQuerySourceOptionDefault"},
+      {"access": "public", "name": "CSSearchQuerySourceOptionAllowMail"}
+     ],
+     "name": "CSSearchQuerySourceOptions",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "CSSearchableItemUpdateListenerOptionDefault"},
+      {"access": "public", "name": "CSSearchableItemUpdateListenerOptionSummarization"},
+      {"access": "public", "name": "CSSearchableItemUpdateListenerOptionPriority"}
+     ],
+     "introduced": "18.4",
+     "name": "CSSearchableItemUpdateListenerOptions"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "CSSuggestionKindNone"},
+      {"access": "public", "name": "CSSuggestionKindCustom"},
+      {"access": "public", "name": "CSSuggestionKindDefault"}
+     ],
+     "name": "CSSuggestionKind"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "CSUserInteractionSelect"},
+      {"access": "public", "name": "CSUserInteractionDefault"},
+      {"access": "public", "name": "CSUserInteractionFocus"}
+     ],
+     "name": "CSUserInteraction"
+    }
+   ],
+   "globals": [
+    {"access": "public", "introduced": "15", "kind": "variable", "linkage": "exported", "name": "_CSActionIdentifier"},
+    {"access": "public", "introduced": "9", "kind": "variable", "linkage": "exported", "name": "_CSIndexErrorDomain"},
+    {"access": "public", "introduced": "9", "kind": "variable", "linkage": "exported", "name": "_CSMailboxArchive"},
+    {"access": "public", "introduced": "9", "kind": "variable", "linkage": "exported", "name": "_CSMailboxDrafts"},
+    {"access": "public", "introduced": "9", "kind": "variable", "linkage": "exported", "name": "_CSMailboxInbox"},
+    {"access": "public", "introduced": "9", "kind": "variable", "linkage": "exported", "name": "_CSMailboxJunk"},
+    {"access": "public", "introduced": "9", "kind": "variable", "linkage": "exported", "name": "_CSMailboxSent"},
+    {"access": "public", "introduced": "9", "kind": "variable", "linkage": "exported", "name": "_CSMailboxTrash"},
+    {"access": "public", "introduced": "10", "kind": "variable", "linkage": "exported", "name": "_CSQueryContinuationActionType"},
+    {"access": "public", "introduced": "10", "kind": "variable", "linkage": "exported", "name": "_CSSearchQueryErrorDomain"},
+    {"access": "public", "introduced": "10", "kind": "variable", "linkage": "exported", "name": "_CSSearchQueryString"},
+    {"access": "public", "introduced": "9", "kind": "variable", "linkage": "exported", "name": "_CSSearchableItemActionType"},
+    {"access": "public", "introduced": "9", "kind": "variable", "linkage": "exported", "name": "_CSSearchableItemActivityIdentifier"},
+    {"access": "public", "introduced": "16", "kind": "variable", "linkage": "exported", "name": "_CSSuggestionHighlightAttributeName"},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_CoreSpotlightVersionNumber"},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_CoreSpotlightVersionString"}
+   ],
+   "interfaces": [
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "initWithKeyName:"},
+      {"access": "public", "name": "initWithKeyName:searchable:searchableByDefault:unique:multiValued:"}
+     ],
+     "introduced": "9",
+     "linkage": "exported",
+     "name": "CSCustomAttributeKey",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "keyName", "name": "keyName"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isSearchable", "name": "searchable"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isSearchableByDefault", "name": "searchableByDefault"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isUnique", "name": "unique"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isMultiValued", "name": "multiValued"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "updateAttributes:forFileAtURL:error:"}
+     ],
+     "introduced": "15",
+     "linkage": "exported",
+     "name": "CSImportExtension",
+     "protocols": [
+      "NSExtensionRequestHandling"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "9",
+     "linkage": "exported",
+     "name": "CSIndexExtensionRequestHandler",
+     "protocols": [
+      "NSExtensionRequestHandling",
+      "CSSearchableIndexDelegate"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithLocalizedStrings:"},
+      {"access": "public", "name": "localizedString"}
+     ],
+     "introduced": "9",
+     "linkage": "exported",
+     "name": "CSLocalizedString",
+     "super": "NSString"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithDisplayName:handles:handleIdentifier:"}
+     ],
+     "introduced": "9",
+     "linkage": "exported",
+     "name": "CSPerson",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "displayName", "name": "displayName"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "handles", "name": "handles"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "handleIdentifier", "name": "handleIdentifier"},
+      {"access": "public", "getter": "contactIdentifier", "name": "contactIdentifier", "setter": "setContactIdentifier:"}
+     ],
+     "protocols": [
+      "NSSecureCoding",
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "introduced": "16", "name": "initWithQueryString:queryContext:"},
+      {"access": "public", "introduced": "10", "name": "initWithQueryString:attributes:"},
+      {"access": "public", "name": "start"},
+      {"access": "public", "name": "cancel"}
+     ],
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "CSSearchQuery",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "isCancelled", "name": "cancelled"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "foundItemCount", "name": "foundItemCount"},
+      {"access": "public", "getter": "foundItemsHandler", "name": "foundItemsHandler", "setter": "setFoundItemsHandler:"},
+      {"access": "public", "getter": "completionHandler", "name": "completionHandler", "setter": "setCompletionHandler:"},
+      {"access": "public", "getter": "protectionClasses", "name": "protectionClasses", "setter": "setProtectionClasses:"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "16",
+     "linkage": "exported",
+     "name": "CSSearchQueryContext",
+     "properties": [
+      {"access": "public", "getter": "fetchAttributes", "name": "fetchAttributes", "setter": "setFetchAttributes:"},
+      {"access": "public", "getter": "filterQueries", "name": "filterQueries", "setter": "setFilterQueries:"},
+      {"access": "public", "getter": "keyboardLanguage", "name": "keyboardLanguage", "setter": "setKeyboardLanguage:"},
+      {"access": "public", "getter": "sourceOptions", "name": "sourceOptions", "setter": "setSourceOptions:", "unavailable": true}
+     ],
+     "protocols": [
+      "NSSecureCoding",
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "categories": [
+      "CSOptionalBatching",
+      "CSExternalProvider"
+     ],
+     "classMethods": [
+      {"access": "public", "name": "isIndexingAvailable"},
+      {"access": "public", "name": "defaultSearchableIndex"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithName:"},
+      {"access": "public", "name": "initWithName:protectionClass:"},
+      {"access": "public", "name": "indexSearchableItems:completionHandler:"},
+      {"access": "public", "name": "deleteSearchableItemsWithIdentifiers:completionHandler:"},
+      {"access": "public", "name": "deleteSearchableItemsWithDomainIdentifiers:completionHandler:"},
+      {"access": "public", "name": "deleteAllSearchableItemsWithCompletionHandler:"}
+     ],
+     "introduced": "9",
+     "linkage": "exported",
+     "name": "CSSearchableIndex",
+     "properties": [
+      {"access": "public", "getter": "indexDelegate", "name": "indexDelegate", "setter": "setIndexDelegate:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "protectionClass", "introduced": "27", "name": "protectionClass"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "27",
+     "linkage": "exported",
+     "name": "CSSearchableIndexDescription",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "protectionClass", "name": "protectionClass"}
+     ],
+     "protocols": [
+      "NSSecureCoding",
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithUniqueIdentifier:domainIdentifier:attributeSet:"},
+      {"access": "public", "introduced": "16", "name": "compareByRank:"}
+     ],
+     "introduced": "9",
+     "linkage": "exported",
+     "name": "CSSearchableItem",
+     "properties": [
+      {"access": "public", "getter": "uniqueIdentifier", "name": "uniqueIdentifier", "setter": "setUniqueIdentifier:"},
+      {"access": "public", "getter": "domainIdentifier", "name": "domainIdentifier", "setter": "setDomainIdentifier:"},
+      {"access": "public", "getter": "expirationDate", "name": "expirationDate", "setter": "setExpirationDate:"},
+      {"access": "public", "getter": "attributeSet", "name": "attributeSet", "setter": "setAttributeSet:"},
+      {"access": "public", "getter": "isUpdate", "name": "isUpdate", "setter": "setIsUpdate:"},
+      {"access": "public", "getter": "updateListenerOptions", "introduced": "18.4", "name": "updateListenerOptions", "setter": "setUpdateListenerOptions:"}
+     ],
+     "protocols": [
+      "NSSecureCoding",
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "categories": [
+      "CSCustomAttributes",
+      "CSGeneral",
+      "CSActionExtras",
+      "CSContainment",
+      "CSItemProvider",
+      "CSDocuments",
+      "CSEvents",
+      "CSMessaging",
+      "CSMedia",
+      "CSMusic",
+      "CSImages",
+      "CSPlaces"
+     ],
+     "instanceMethods": [
+      {"access": "public", "introduced": "9", "name": "initWithItemContentType:"},
+      {"access": "public", "introduced": "14", "name": "initWithContentType:"}
+     ],
+     "introduced": "9",
+     "linkage": "exported",
+     "name": "CSSearchableItemAttributeSet",
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "compareByRank:"},
+      {"access": "public", "name": "compare:"}
+     ],
+     "introduced": "16",
+     "linkage": "exported",
+     "name": "CSSuggestion",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "localizedAttributedSuggestion", "name": "localizedAttributedSuggestion"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "suggestionKind", "name": "suggestionKind"}
+     ],
+     "protocols": [
+      "NSSecureCoding",
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "introduced": "18", "name": "prepare"},
+      {"access": "public", "introduced": "18", "name": "prepareProtectionClasses:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithUserQueryString:userQueryContext:"},
+      {"access": "public", "introduced": "18", "name": "userEngagedWithItem:visibleItems:userInteractionType:"},
+      {"access": "public", "introduced": "18", "name": "userEngagedWithSuggestion:visibleSuggestions:userInteractionType:"},
+      {"access": "public", "name": "start"},
+      {"access": "public", "name": "cancel"}
+     ],
+     "introduced": "16",
+     "linkage": "exported",
+     "name": "CSUserQuery",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "foundSuggestionCount", "name": "foundSuggestionCount"},
+      {"access": "public", "getter": "foundSuggestionsHandler", "name": "foundSuggestionsHandler", "setter": "setFoundSuggestionsHandler:"}
+     ],
+     "super": "CSSearchQuery"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "userQueryContext"},
+      {"access": "public", "name": "userQueryContextWithCurrentSuggestion:"}
+     ],
+     "introduced": "16",
+     "linkage": "exported",
+     "name": "CSUserQueryContext",
+     "properties": [
+      {"access": "public", "getter": "enableRankedResults", "name": "enableRankedResults", "setter": "setEnableRankedResults:"},
+      {"access": "public", "getter": "disableSemanticSearch", "introduced": "18", "name": "disableSemanticSearch", "setter": "setDisableSemanticSearch:"},
+      {"access": "public", "getter": "maxResultCount", "name": "maxResultCount", "setter": "setMaxResultCount:"},
+      {"access": "public", "getter": "maxSuggestionCount", "name": "maxSuggestionCount", "setter": "setMaxSuggestionCount:"},
+      {"access": "public", "getter": "maxRankedResultCount", "introduced": "18", "name": "maxRankedResultCount", "setter": "setMaxRankedResultCount:"}
+     ],
+     "super": "CSSearchQueryContext"
+    }
+   ],
+   "protocols": [
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "searchableIndex:reindexAllSearchableItemsWithAcknowledgementHandler:"},
+      {"access": "public", "name": "searchableIndex:reindexSearchableItemsWithIdentifiers:acknowledgementHandler:"},
+      {"access": "public", "name": "searchableIndexDidThrottle:", "optional": true},
+      {"access": "public", "name": "searchableIndexDidFinishThrottle:", "optional": true},
+      {"access": "public", "introduced": "11", "name": "dataForSearchableIndex:itemIdentifier:typeIdentifier:error:", "optional": true},
+      {"access": "public", "introduced": "11", "name": "fileURLForSearchableIndex:itemIdentifier:typeIdentifier:inPlace:error:", "optional": true},
+      {"access": "public", "introduced": "18.4", "name": "searchableItemsForIdentifiers:searchableItemsHandler:", "optional": true},
+      {"access": "public", "introduced": "27", "name": "searchableItemsForIdentifiers:protectionClass:searchableItemsHandler:", "optional": true},
+      {"access": "public", "introduced": "18.4", "name": "searchableItemsDidUpdate:", "optional": true}
+     ],
+     "introduced": "9",
+     "name": "CSSearchableIndexDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    }
+   ],
+   "target": "arm64e.x1-apple-ios27",
    "typedefs": [
     {"access": "public", "name": "CSIndexErrorCode"},
     {"access": "public", "name": "CSSearchQueryErrorCode"},
@@ -697,6 +1413,367 @@
   },
   {
    "globals": [
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV10colorSpaceACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV10colorSpaceACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV10contentURLACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV10contentURLACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV10identifierACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV10identifierACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV10layerNamesACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV10layerNamesACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV10likelyJunkACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV10likelyJunkACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV10mediaTypesACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV10mediaTypesACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV10pageHeightACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV10pageHeightACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV10performersACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV10performersACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV10pixelCountACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV10pixelCountACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV10pixelWidthACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV10pixelWidthACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV10postalCodeACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV10postalCodeACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV10publishersACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV10publishersACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV10streamableACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV10streamableACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV11authorNamesACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV11authorNamesACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV11cameraOwnerACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV11cameraOwnerACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV11contentTypeACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV11contentTypeACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV11displayNameACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV11displayNameACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV11exifVersionACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV11exifVersionACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV11focalLengthACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV11focalLengthACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV11gpsMapDatumACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV11gpsMapDatumACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV11informationACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV11informationACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV11orientationACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV11orientationACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV11pixelHeightACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV11pixelHeightACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV11profileNameACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV11profileNameACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV11rankingHintACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV11rankingHintACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV11textContentACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV11textContentACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV11userCreatedACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV11userCreatedACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV11userCuratedACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV11userCuratedACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV12audioBitRateACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV12audioBitRateACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV12contributorsACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV12contributorsACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV12deliveryTypeACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV12deliveryTypeACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV12exposureModeACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV12exposureModeACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV12exposureTimeACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV12exposureTimeACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV12gpsDateStampACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV12gpsDateStampACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV12instructionsACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV12instructionsACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV12keySignatureACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV12keySignatureACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV12lastUsedDateACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV12lastUsedDateACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV12meteringModeACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV12meteringModeACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV12musicalGenreACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV12musicalGenreACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV12participantsACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV12participantsACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV12phoneNumbersACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV12phoneNumbersACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV12thoroughfareACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV12thoroughfareACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV12thumbnailURLACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV12thumbnailURLACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV12totalBitRateACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV12totalBitRateACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV12videoBitRateACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV12videoBitRateACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV12whiteBalanceACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV12whiteBalanceACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV13bitsPerSampleACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV13bitsPerSampleACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV13contentRatingACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV13contentRatingACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV13namedLocationACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV13namedLocationACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV13organizationsACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV13organizationsACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV13recordingDateACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV13recordingDateACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV13thumbnailDataACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV13thumbnailDataACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV13timeSignatureACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV13timeSignatureACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV14accountHandlesACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV14accountHandlesACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV14alternateNamesACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV14alternateNamesACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV14completionDateACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV14completionDateACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV14containerOrderACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV14containerOrderACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV14containerTitleACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV14containerTitleACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV14contentSourcesACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV14contentSourcesACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV14downloadedDateACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV14downloadedDateACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV14emailAddressesACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV14emailAddressesACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV14exifGPSVersionACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV14exifGPSVersionACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV14gpsMeasureModeACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV14gpsMeasureModeACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV14imageDirectionACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV14imageDirectionACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV14importantDatesACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV14importantDatesACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV14originalFormatACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV14originalFormatACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV14originalSourceACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV14originalSourceACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV14recipientNamesACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV14recipientNamesACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV14securityMethodACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV14securityMethodACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV15acquisitionMakeACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV15acquisitionMakeACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV15audioSampleRateACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV15audioSampleRateACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV15authorAddressesACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV15authorAddressesACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV15contactKeywordsACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV15contactKeywordsACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV15contentTypeTreeACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV15contentTypeTreeACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV15exposureProgramACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV15exposureProgramACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV15gpsDifferentialACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV15gpsDifferentialACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV15hasAlphaChannelACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV15hasAlphaChannelACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV15maximumApertureACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV15maximumApertureACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV15stateOrProvinceACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV15stateOrProvinceACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV15subThoroughfareACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV15subThoroughfareACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV16acquisitionModelACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV16acquisitionModelACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV16audioTrackNumberACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV16audioTrackNumberACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV16darkThumbnailURLACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV16darkThumbnailURLACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV16domainIdentifierACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV16domainIdentifierACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV17accountIdentifierACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV17accountIdentifierACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV17audioChannelCountACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV17audioChannelCountACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV17ratingDescriptionACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV17ratingDescriptionACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV17supportsPhoneCallACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV17supportsPhoneCallACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV18contentDescriptionACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV18contentDescriptionACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV18exposureTimeStringACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV18exposureTimeStringACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV18gpsAreaInformationACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV18gpsAreaInformationACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV18mailboxIdentifiersACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV18mailboxIdentifiersACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV18recipientAddressesACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV18recipientAddressesACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV18resolutionWidthDPIACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV18resolutionWidthDPIACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV18supportsNavigationACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV18supportsNavigationACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV19containerIdentifierACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV19containerIdentifierACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV19contentCreationDateACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV19contentCreationDateACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV19generalMIDISequenceACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV19generalMIDISequenceACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV19gpsProcessingMethodACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV19gpsProcessingMethodACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV19resolutionHeightDPIACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV19resolutionHeightDPIACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV20authorEmailAddressesACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV20authorEmailAddressesACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV20containerDisplayNameACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV20containerDisplayNameACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV20encodingApplicationsACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV20encodingApplicationsACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV21fullyFormattedAddressACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV21fullyFormattedAddressACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV21gpsDestinationBearingACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV21gpsDestinationBearingACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV21musicalInstrumentNameACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV21musicalInstrumentNameACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV22gpsDestinationDistanceACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV22gpsDestinationDistanceACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV22gpsDestinationLatitudeACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV22gpsDestinationLatitudeACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV22gpsDilutionOfPrecisionACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV22gpsDilutionOfPrecisionACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV23contentModificationDateACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV23contentModificationDateACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV23gpsDestinationLongitudeACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV23gpsDestinationLongitudeACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV23instantMessageAddressesACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV23instantMessageAddressesACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV23recipientEmailAddressesACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV23recipientEmailAddressesACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV23relatedUniqueIdentifierACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV23relatedUniqueIdentifierACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV24audioEncodingApplicationACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV24audioEncodingApplicationACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV24metadataModificationDateACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV24metadataModificationDateACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV25focalLength35mmEquivalentACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV25focalLength35mmEquivalentACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV25musicalInstrumentCategoryACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV25musicalInstrumentCategoryACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV27weakRelatedUniqueIdentifierACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV27weakRelatedUniqueIdentifierACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV3urlACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV3urlACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV4cityACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV4cityACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV4kindACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV4kindACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV4pathACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV4pathACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV4roleACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV4roleACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV5albumACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV5albumACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV5genreACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV5genreACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV5localACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV5localACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV5speedACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV5speedACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV5tempoACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV5tempoACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV5themeACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV5themeACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV5titleACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV5titleACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV6allDayACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV6allDayACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV6artistACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV6artistACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV6codecsACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV6codecsACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV6ratingACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV6ratingACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV6rightsACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV6rightsACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV7commentACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV7commentACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV7countryACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV7countryACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV7creatorACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV7creatorACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV7dueDateACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV7dueDateACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV7editorsACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV7editorsACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV7endDateACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV7endDateACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV7fNumberACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV7fNumberACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV7flashOnACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV7flashOnACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV7subjectACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV7subjectACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV7versionACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV7versionACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV8altitudeACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV8altitudeACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV8apertureACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV8apertureACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV8composerACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV8composerACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV8coverageACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV8coverageACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV8directorACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV8directorACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV8durationACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV8durationACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV8fileSizeACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV8fileSizeACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV8gpsTrackACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV8gpsTrackACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV8headlineACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV8headlineACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV8isoSpeedACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV8isoSpeedACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV8keywordsACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV8keywordsACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV8latitudeACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV8latitudeACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV8lyricistACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV8lyricistACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV8producerACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV8producerACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV8projectsACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV8projectsACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV8rawValueACSS_tcfC"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV8rawValueSSvg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV8rawValueSSvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV8redEyeOnACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV8redEyeOnACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV9addedDateACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV9addedDateACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV9audiencesACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV9audiencesACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV9copyrightACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV9copyrightACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV9fontNamesACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV9fontNamesACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV9gpsStatusACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV9gpsStatusACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV9languagesACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV9languagesACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV9lensModelACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV9lensModelACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV9longitudeACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV9longitudeACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV9pageCountACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV9pageCountACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV9pageWidthACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV9pageWidthACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV9playCountACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV9playCountACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV9startDateACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV9startDateACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV9timestampACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV9timestampACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV9userOwnedACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeV9userOwnedACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeVMa"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeVMn"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeVN"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeVSHAAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeVSQAAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreSpotlight23SearchableItemAttributeVSYAAMc"},
     {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$sSo11CSUserQueryC13CoreSpotlightE10SuggestionV10suggestionSo12CSSuggestionCvM"},
     {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$sSo11CSUserQueryC13CoreSpotlightE10SuggestionV10suggestionSo12CSSuggestionCvg"},
     {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$sSo11CSUserQueryC13CoreSpotlightE10SuggestionV10suggestionSo12CSSuggestionCvpMV"},
@@ -812,7 +1889,7 @@
     {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$sSo13CSSearchQueryC13CoreSpotlightE7resultsAbCE7ResultsVvg"},
     {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$sSo13CSSearchQueryC13CoreSpotlightE7resultsAbCE7ResultsVvpMV"}
    ],
-   "target": "arm64e-apple-ios26.5"
+   "target": "arm64e-apple-ios27.0"
   }
  ],
  "version": "1.0"

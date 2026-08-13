@@ -1,0 +1,736 @@
+
+{
+ "PublicSDKContentRoot": [
+  {
+   "target": "arm64e-apple-ios27"
+  },
+  {
+   "target": "arm64e.x1-apple-ios27"
+  },
+  {
+   "categories": [
+    {
+     "access": "public",
+     "interface": "AVSystemRoute",
+     "introduced": "27",
+     "name": "CustomExtensionCommunication",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "routeDataChannel", "name": "routeDataChannel"}
+     ]
+    }
+   ],
+   "enums": [
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "AVSystemRouteEventReasonActivate"},
+      {"access": "public", "name": "AVSystemRouteEventReasonDeactivate"}
+     ],
+     "name": "AVSystemRouteEventReason"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "AVSystemRouteLaunchModeApplication"},
+      {"access": "public", "name": "AVSystemRouteLaunchModePlayer"}
+     ],
+     "name": "AVSystemRouteLaunchMode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "AVSystemRoutingErrorConnectionFailed"}
+     ],
+     "name": "AVSystemRoutingError"
+    }
+   ],
+   "globals": [
+    {"access": "public", "introduced": "27", "kind": "variable", "linkage": "exported", "name": "_AVSystemRoutingErrorDomain"}
+   ],
+   "interfaces": [
+    {
+     "access": "public",
+     "categories": [
+      "CustomExtensionCommunication"
+     ],
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "addSession:"},
+      {"access": "public", "name": "removeSession:"}
+     ],
+     "introduced": "27",
+     "linkage": "exported",
+     "name": "AVSystemRoute",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "protocolType", "name": "protocolType"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "routeSymbolName", "name": "routeSymbolName"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "routeDisplayName", "name": "routeDisplayName"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "addObserver:"},
+      {"access": "public", "name": "removeObserver:"}
+     ],
+     "introduced": "27",
+     "linkage": "exported",
+     "name": "AVSystemRouteController",
+     "properties": [
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "sharedController", "name": "sharedController"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "isSupportedExtensionAvailable", "name": "supportedExtensionAvailable"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "sendData:completionHandler:"}
+     ],
+     "introduced": "27",
+     "linkage": "exported",
+     "name": "AVSystemRouteDataChannel",
+     "properties": [
+      {"access": "public", "getter": "dataDelegate", "name": "dataDelegate", "setter": "setDataDelegate:"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "27",
+     "linkage": "exported",
+     "name": "AVSystemRouteEvent",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "reason", "name": "reason"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "route", "name": "route"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "27",
+     "linkage": "exported",
+     "name": "AVSystemRouteMediaSession",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "playbackControl", "name": "playbackControl"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "dataChannel", "name": "dataChannel"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "initWithURL:mode:"},
+      {"access": "public", "name": "startWithCompletionHandler:"},
+      {"access": "public", "name": "stop"}
+     ],
+     "introduced": "27",
+     "linkage": "exported",
+     "name": "AVSystemRouteSession",
+     "super": "NSObject"
+    }
+   ],
+   "protocols": [
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "systemRouteController:handleEvent:completionHandler:"}
+     ],
+     "introduced": "27",
+     "name": "AVSystemRouteControllerObserver",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "receiveData:completionHandler:"}
+     ],
+     "introduced": "27",
+     "name": "AVSystemRouteDataDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    }
+   ],
+   "target": "arm64e-apple-ios27",
+   "typedefs": [
+    {"access": "public", "introduced": "27", "name": "AVSystemRouteEventReason"},
+    {"access": "public", "introduced": "27", "name": "AVSystemRouteLaunchMode"},
+    {"access": "public", "introduced": "27", "name": "AVSystemRoutingError"}
+   ]
+  },
+  {
+   "categories": [
+    {
+     "access": "public",
+     "interface": "AVSystemRoute",
+     "introduced": "27",
+     "name": "CustomExtensionCommunication",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "routeDataChannel", "name": "routeDataChannel"}
+     ]
+    }
+   ],
+   "enums": [
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "AVSystemRouteEventReasonActivate"},
+      {"access": "public", "name": "AVSystemRouteEventReasonDeactivate"}
+     ],
+     "name": "AVSystemRouteEventReason"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "AVSystemRouteLaunchModeApplication"},
+      {"access": "public", "name": "AVSystemRouteLaunchModePlayer"}
+     ],
+     "name": "AVSystemRouteLaunchMode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "AVSystemRoutingErrorConnectionFailed"}
+     ],
+     "name": "AVSystemRoutingError"
+    }
+   ],
+   "globals": [
+    {"access": "public", "introduced": "27", "kind": "variable", "linkage": "exported", "name": "_AVSystemRoutingErrorDomain"}
+   ],
+   "interfaces": [
+    {
+     "access": "public",
+     "categories": [
+      "CustomExtensionCommunication"
+     ],
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "addSession:"},
+      {"access": "public", "name": "removeSession:"}
+     ],
+     "introduced": "27",
+     "linkage": "exported",
+     "name": "AVSystemRoute",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "protocolType", "name": "protocolType"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "routeSymbolName", "name": "routeSymbolName"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "routeDisplayName", "name": "routeDisplayName"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "addObserver:"},
+      {"access": "public", "name": "removeObserver:"}
+     ],
+     "introduced": "27",
+     "linkage": "exported",
+     "name": "AVSystemRouteController",
+     "properties": [
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "sharedController", "name": "sharedController"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "isSupportedExtensionAvailable", "name": "supportedExtensionAvailable"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "sendData:completionHandler:"}
+     ],
+     "introduced": "27",
+     "linkage": "exported",
+     "name": "AVSystemRouteDataChannel",
+     "properties": [
+      {"access": "public", "getter": "dataDelegate", "name": "dataDelegate", "setter": "setDataDelegate:"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "27",
+     "linkage": "exported",
+     "name": "AVSystemRouteEvent",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "reason", "name": "reason"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "route", "name": "route"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "27",
+     "linkage": "exported",
+     "name": "AVSystemRouteMediaSession",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "playbackControl", "name": "playbackControl"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "dataChannel", "name": "dataChannel"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "initWithURL:mode:"},
+      {"access": "public", "name": "startWithCompletionHandler:"},
+      {"access": "public", "name": "stop"}
+     ],
+     "introduced": "27",
+     "linkage": "exported",
+     "name": "AVSystemRouteSession",
+     "super": "NSObject"
+    }
+   ],
+   "protocols": [
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "systemRouteController:handleEvent:completionHandler:"}
+     ],
+     "introduced": "27",
+     "name": "AVSystemRouteControllerObserver",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "receiveData:completionHandler:"}
+     ],
+     "introduced": "27",
+     "name": "AVSystemRouteDataDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    }
+   ],
+   "target": "arm64e.x1-apple-ios27",
+   "typedefs": [
+    {"access": "public", "introduced": "27", "name": "AVSystemRouteEventReason"},
+    {"access": "public", "introduced": "27", "name": "AVSystemRouteLaunchMode"},
+    {"access": "public", "introduced": "27", "name": "AVSystemRoutingError"}
+   ]
+  },
+  {
+   "globals": [
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0A10RouteEventC5routeAA0aC0Cvg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0A10RouteEventC5routeAA0aC0CvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0A10RouteEventC6ReasonO10deactivateyA2EmFWC"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0A10RouteEventC6ReasonO2eeoiySbAE_AEtFZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0A10RouteEventC6ReasonO4hash4intoys6HasherVz_tF"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0A10RouteEventC6ReasonO8activateyA2EmFWC"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0A10RouteEventC6ReasonO9hashValueSivg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0A10RouteEventC6ReasonO9hashValueSivpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0A10RouteEventC6ReasonOMa"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0A10RouteEventC6ReasonOMn"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0A10RouteEventC6ReasonON"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0A10RouteEventC6ReasonOSHAAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0A10RouteEventC6ReasonOSQAAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0A10RouteEventC6reasonAC6ReasonOvg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0A10RouteEventC6reasonAC6ReasonOvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0A10RouteEventCMa"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0A10RouteEventCMm"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0A10RouteEventCMn"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0A10RouteEventCMo"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0A10RouteEventCN"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0A10RouteEventCfD"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0A10RouteEventCfd"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0A12RouteSessionC3url4modeAC10Foundation3URLV_AA0aC0C10LaunchModeOtcfC"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0A12RouteSessionC3url4modeAC10Foundation3URLV_AA0aC0C10LaunchModeOtcfCTj"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0A12RouteSessionC3url4modeAC10Foundation3URLV_AA0aC0C10LaunchModeOtcfCTq"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0A12RouteSessionC3url4modeAC10Foundation3URLV_AA0aC0C10LaunchModeOtcfc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0A12RouteSessionC4stopyyF"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0A12RouteSessionC5startAA0ac5MediaD0CyYaKF"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0A12RouteSessionC5startAA0ac5MediaD0CyYaKFTu"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0A12RouteSessionCMa"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0A12RouteSessionCMm"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0A12RouteSessionCMn"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0A12RouteSessionCMo"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0A12RouteSessionCMu"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0A12RouteSessionCN"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0A12RouteSessionCfD"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0A12RouteSessionCfd"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0A15RouteControllerC11addObserverySbAA0acdF0_pF"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0A15RouteControllerC14removeObserveryyAA0acdF0_pF"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0A15RouteControllerC27supportedExtensionAvailableSbvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0A15RouteControllerC27supportedExtensionAvailableSbvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0A15RouteControllerC6sharedACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0A15RouteControllerC6sharedACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0A15RouteControllerCMa"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0A15RouteControllerCMm"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0A15RouteControllerCMn"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0A15RouteControllerCMo"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0A15RouteControllerCN"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0A15RouteControllerCfD"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0A15RouteControllerCfd"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0A17RouteDataDelegateMp"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0A17RouteDataDelegateP7receiveyy10Foundation0D0VYaKFTj"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0A17RouteDataDelegateP7receiveyy10Foundation0D0VYaKFTjTu"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0A17RouteDataDelegateP7receiveyy10Foundation0D0VYaKFTq"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0A17RouteDataDelegateTL"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0A17RouteMediaSessionC11dataChannelAA0aC0C04DataG0CSgvg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0A17RouteMediaSessionC11dataChannelAA0aC0C04DataG0CSgvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0A17RouteMediaSessionC15playbackControl5AVKit35AVPlaybackUserInterfaceControllable_pSgvg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0A17RouteMediaSessionC15playbackControl5AVKit35AVPlaybackUserInterfaceControllable_pSgvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0A17RouteMediaSessionCMa"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0A17RouteMediaSessionCMm"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0A17RouteMediaSessionCMn"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0A17RouteMediaSessionCMo"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0A17RouteMediaSessionCN"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0A17RouteMediaSessionCfD"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0A17RouteMediaSessionCfd"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0A23RouteControllerObserverMp"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0A23RouteControllerObserverP06systemcD0_6handleSbAA0acD0C_AA0aC5EventCtYaFTj"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0A23RouteControllerObserverP06systemcD0_6handleSbAA0acD0C_AA0aC5EventCtYaFTjTu"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0A23RouteControllerObserverP06systemcD0_6handleSbAA0acD0C_AA0aC5EventCtYaFTq"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0A23RouteControllerObserverPAAE06systemcD0_6handleSbAA0acD0C_AA0aC5EventCtYaF"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0A23RouteControllerObserverPAAE06systemcD0_6handleSbAA0acD0C_AA0aC5EventCtYaFTu"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0A23RouteControllerObserverTL"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0A5RouteC10LaunchModeO11applicationyA2EmFWC"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0A5RouteC10LaunchModeO2eeoiySbAE_AEtFZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0A5RouteC10LaunchModeO4hash4intoys6HasherVz_tF"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0A5RouteC10LaunchModeO6playeryA2EmFWC"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0A5RouteC10LaunchModeO9hashValueSivg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0A5RouteC10LaunchModeO9hashValueSivpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0A5RouteC10LaunchModeOMa"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0A5RouteC10LaunchModeOMn"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0A5RouteC10LaunchModeON"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0A5RouteC10LaunchModeOSHAAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0A5RouteC10LaunchModeOSQAAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0A5RouteC10addSessionySbAA0acE0CF"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0A5RouteC11DataChannelC12dataDelegateAA0acdG0_pSgvM"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0A5RouteC11DataChannelC12dataDelegateAA0acdG0_pSgvg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0A5RouteC11DataChannelC12dataDelegateAA0acdG0_pSgvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0A5RouteC11DataChannelC12dataDelegateAA0acdG0_pSgvs"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0A5RouteC11DataChannelC4sendyy10Foundation0D0VYaKF"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0A5RouteC11DataChannelC4sendyy10Foundation0D0VYaKFTu"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0A5RouteC11DataChannelCMa"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0A5RouteC11DataChannelCMm"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0A5RouteC11DataChannelCMn"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0A5RouteC11DataChannelCMo"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0A5RouteC11DataChannelCN"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0A5RouteC11DataChannelCfD"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0A5RouteC11DataChannelCfd"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0A5RouteC12protocolType07UniformE11Identifiers6UTTypeVvg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0A5RouteC12protocolType07UniformE11Identifiers6UTTypeVvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0A5RouteC13removeSessionyyAA0acE0CF"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0A5RouteC15routeSymbolNameSSvg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0A5RouteC15routeSymbolNameSSvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0A5RouteC16routeDataChannelAC0eF0Cvg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0A5RouteC16routeDataChannelAC0eF0CvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0A5RouteC16routeDisplayNameSSvg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0A5RouteC16routeDisplayNameSSvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0A5RouteCMa"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0A5RouteCMm"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0A5RouteCMn"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0A5RouteCMo"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0A5RouteCN"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0A5RouteCfD"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0A5RouteCfd"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0aB5ErrorV10Foundation09LocalizedC0AAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0aB5ErrorV10helpAnchorSSSgvg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0aB5ErrorV10helpAnchorSSSgvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0aB5ErrorV13failureReasonSSSgvg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0aB5ErrorV13failureReasonSSSgvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0aB5ErrorV16errorDescriptionSSSgvg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0aB5ErrorV16errorDescriptionSSSgvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0aB5ErrorV18recoverySuggestionSSSgvg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0aB5ErrorV18recoverySuggestionSSSgvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0aB5ErrorV4CodeO16connectionFailedyA2EmFWC"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0aB5ErrorV4CodeO2eeoiySbAE_AEtFZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0aB5ErrorV4CodeO4hash4intoys6HasherVz_tF"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0aB5ErrorV4CodeO9hashValueSivg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0aB5ErrorV4CodeO9hashValueSivpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0aB5ErrorV4CodeOMa"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0aB5ErrorV4CodeOMn"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0aB5ErrorV4CodeON"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0aB5ErrorV4CodeOSHAAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0aB5ErrorV4CodeOSQAAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0aB5ErrorV4codeAC4CodeOvg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0aB5ErrorV4codeAC4CodeOvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0aB5ErrorVMa"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0aB5ErrorVMn"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0aB5ErrorVN"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0aB5ErrorVs0C0AAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s15AVSystemRouting0aB5ErrorVyA2C4CodeOcfC"}
+   ],
+   "target": "arm64e-apple-ios27.0"
+  },
+  {
+   "globals": [
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0A13OutputSessionC2idSSvg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0A13OutputSessionC2idSSvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0A13OutputSessionCMa"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0A13OutputSessionCMm"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0A13OutputSessionCMn"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0A13OutputSessionCMo"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0A13OutputSessionCN"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0A13OutputSessionCfD"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0A13OutputSessionCfd"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0A13OutputSessionCs12IdentifiableAAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0a6OutputB0V0B4TypeO10mediaStickyA2EmFWC"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0a6OutputB0V0B4TypeO11hifiSpeakeryA2EmFWC"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0a6OutputB0V0B4TypeO13tvAndMediaboxyA2EmFWC"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0a6OutputB0V0B4TypeO14hifiSpeakerTwoyA2EmFWC"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0a6OutputB0V0B4TypeO14laptopComputeryA2EmFWC"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0a6OutputB0V0B4TypeO15desktopComputeryA2EmFWC"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0a6OutputB0V0B4TypeO16tvAndHifiSpeakeryA2EmFWC"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0a6OutputB0V0B4TypeO2eeoiySbAE_AEtFZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0a6OutputB0V0B4TypeO2tvyA2EmFWC"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0a6OutputB0V0B4TypeO4hash4intoys6HasherVz_tF"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0a6OutputB0V0B4TypeO9hashValueSivg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0a6OutputB0V0B4TypeO9hashValueSivpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0a6OutputB0V0B4TypeOMa"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0a6OutputB0V0B4TypeOMn"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0a6OutputB0V0B4TypeON"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0a6OutputB0V0B4TypeOSHAAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0a6OutputB0V0B4TypeOSQAAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0a6OutputB0V10deviceTypeAC0bE0Ovg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0a6OutputB0V10deviceTypeAC0bE0OvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0a6OutputB0V10txtRecordsSay7Network11NWTXTRecordVGvg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0a6OutputB0V10txtRecordsSay7Network11NWTXTRecordVGvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0a6OutputB0V11descriptionSSvg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0a6OutputB0V11descriptionSSvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0a6OutputB0V11displayNameSSvg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0a6OutputB0V11displayNameSSvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0a6OutputB0V12CapabilitiesV11descriptionSSvg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0a6OutputB0V12CapabilitiesV11descriptionSSvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0a6OutputB0V12CapabilitiesV11urlPlaybackAEvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0a6OutputB0V12CapabilitiesV11urlPlaybackAEvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0a6OutputB0V12CapabilitiesV22realtimeAudioStreamingAEvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0a6OutputB0V12CapabilitiesV22realtimeAudioStreamingAEvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0a6OutputB0V12CapabilitiesV22realtimeVideoStreamingAEvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0a6OutputB0V12CapabilitiesV22realtimeVideoStreamingAEvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0a6OutputB0V12CapabilitiesV8rawValueAESi_tcfC"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0a6OutputB0V12CapabilitiesV8rawValueSivg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0a6OutputB0V12CapabilitiesV8rawValueSivpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0a6OutputB0V12CapabilitiesV9appLaunchAEvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0a6OutputB0V12CapabilitiesV9appLaunchAEvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0a6OutputB0V12CapabilitiesVMa"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0a6OutputB0V12CapabilitiesVMn"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0a6OutputB0V12CapabilitiesVN"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0a6OutputB0V12CapabilitiesVSQAAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0a6OutputB0V12CapabilitiesVSYAAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0a6OutputB0V12CapabilitiesVs10SetAlgebraAAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0a6OutputB0V12CapabilitiesVs23CustomStringConvertibleAAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0a6OutputB0V12CapabilitiesVs25ExpressibleByArrayLiteralAAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0a6OutputB0V12CapabilitiesVs9OptionSetAAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0a6OutputB0V12capabilitiesAC12CapabilitiesVvg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0a6OutputB0V12capabilitiesAC12CapabilitiesVvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0a6OutputB0V13VolumeControlO2eeoiySbAE_AEtFZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0a6OutputB0V13VolumeControlO4hash4intoys6HasherVz_tF"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0a6OutputB0V13VolumeControlO4noneyA2EmFWC"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0a6OutputB0V13VolumeControlO8absoluteyA2EmFWC"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0a6OutputB0V13VolumeControlO8relativeyA2EmFWC"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0a6OutputB0V13VolumeControlO9hashValueSivg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0a6OutputB0V13VolumeControlO9hashValueSivpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0a6OutputB0V13VolumeControlOMa"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0a6OutputB0V13VolumeControlOMn"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0a6OutputB0V13VolumeControlON"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0a6OutputB0V13VolumeControlOSHAAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0a6OutputB0V13VolumeControlOSQAAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0a6OutputB0V13volumeControlAC06VolumeE0Ovg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0a6OutputB0V13volumeControlAC06VolumeE0OvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0a6OutputB0V16networkEndpointsSay7Network10NWEndpointOGvg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0a6OutputB0V16networkEndpointsSay7Network10NWEndpointOGvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0a6OutputB0V19AuthorizationMethodV10CodeLengthV12sixCharacterAGvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0a6OutputB0V19AuthorizationMethodV10CodeLengthV12sixCharacterAGvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0a6OutputB0V19AuthorizationMethodV10CodeLengthV13fourCharacterAGvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0a6OutputB0V19AuthorizationMethodV10CodeLengthV13fourCharacterAGvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0a6OutputB0V19AuthorizationMethodV10CodeLengthV2eeoiySbAG_AGtFZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0a6OutputB0V19AuthorizationMethodV10CodeLengthVMa"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0a6OutputB0V19AuthorizationMethodV10CodeLengthVMn"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0a6OutputB0V19AuthorizationMethodV10CodeLengthVN"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0a6OutputB0V19AuthorizationMethodV10CodeLengthVSQAAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0a6OutputB0V19AuthorizationMethodV11numericCode6lengthA2E0G6LengthV_tFZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0a6OutputB0V19AuthorizationMethodV2eeoiySbAE_AEtFZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0a6OutputB0V19AuthorizationMethodV4noneAEvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0a6OutputB0V19AuthorizationMethodV4noneAEvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0a6OutputB0V19AuthorizationMethodV8passwordAEvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0a6OutputB0V19AuthorizationMethodV8passwordAEvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0a6OutputB0V19AuthorizationMethodVMa"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0a6OutputB0V19AuthorizationMethodVMn"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0a6OutputB0V19AuthorizationMethodVN"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0a6OutputB0V19AuthorizationMethodVSQAAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0a6OutputB0V28supportsSimultaneousSessionsSbvg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0a6OutputB0V28supportsSimultaneousSessionsSbvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0a6OutputB0V2eeoiySbAC_ACtFZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0a6OutputB0V2id10Foundation4UUIDVvg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0a6OutputB0V2id10Foundation4UUIDVvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0a6OutputB0V2id11displayName12capabilities37canGroupWithCurrentlyActivatedDevices10deviceType13volumeControl0H4Mute24requiredNetworkEndpoints10txtRecords28supportsSimultaneousSessionsACSg10Foundation4UUIDV_SSAC12CapabilitiesVSbAC0bO0OAC06VolumeQ0OSbSay0T010NWEndpointOGSayAX11NWTXTRecordVGSbtcfC"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0a6OutputB0V37canGroupWithCurrentlyActivatedDevicesSbvg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0a6OutputB0V37canGroupWithCurrentlyActivatedDevicesSbvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0a6OutputB0V4hash4intoys6HasherVz_tF"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0a6OutputB0V7canMuteSbvg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0a6OutputB0V7canMuteSbvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0a6OutputB0V9hashValueSivg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0a6OutputB0V9hashValueSivpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0a6OutputB0VMa"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0a6OutputB0VMn"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0a6OutputB0VN"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0a6OutputB0VSHAAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0a6OutputB0VSQAAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0a6OutputB0Vs12IdentifiableAAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0a6OutputB0Vs23CustomStringConvertibleAAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0aB14RoutingManagerC016failedToActivateB0_7session5erroryAA0a6OutputB0V_AA0aJ7SessionCAA0aB5ErrorVtF"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0aB14RoutingManagerC04lostB0yyAA0a6OutputB0VF"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0aB14RoutingManagerC05foundB0yyAA0a6OutputB0VF"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0aB14RoutingManagerC07routingD03forAcA0aB9Extension_p_tFZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0aB14RoutingManagerC09activatedB0_7sessionyAA0a6OutputB0V_AA0aG7SessionCtF"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0aB14RoutingManagerC11receiveData_15fromApplication7sessiony10Foundation0F0V_SSAA0A13OutputSessionCtF"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0aB14RoutingManagerC13sessionFailed_5erroryAA0A13OutputSessionC_AA0aB5ErrorVtF"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0aB14RoutingManagerC13updateDevicesyySayAA0a6OutputB0VGF"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0aB14RoutingManagerC13volumeChanged3foryAA0a6OutputB0V_tF"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0aB14RoutingManagerC15discoveryFailedyyAA0aB5ErrorVF"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0aB14RoutingManagerC18requestPairingCode3for7session6reason19authorizationMethodyAA0a6OutputB0V_AA0aM7SessionC10Foundation23LocalizedStringResourceVAJ013AuthorizationL0VtF"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0aB14RoutingManagerC32reportRealtimeSampleDeliveryKPIs7session03metI0yAA0A13OutputSessionC_SbtF"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0aB14RoutingManagerC7started11application15playbackControl7sessionySSSg_xAA0A13OutputSessionCt5AVKit35AVPlaybackUserInterfaceControllableRzlF"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0aB14RoutingManagerCMa"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0aB14RoutingManagerCMm"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0aB14RoutingManagerCMn"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0aB14RoutingManagerCMo"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0aB14RoutingManagerCN"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0aB14RoutingManagerCfD"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0aB14RoutingManagerCfd"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0aB22ExtensionConfigurationMp"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0aB22ExtensionConfigurationP0C10Foundation03AppcD0Tb"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0aB22ExtensionConfigurationTL"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0aB5ErrorV10Foundation09LocalizedC0AAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0aB5ErrorV10helpAnchorSSSgvg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0aB5ErrorV10helpAnchorSSSgvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0aB5ErrorV13failureReasonSSSgvg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0aB5ErrorV13failureReasonSSSgvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0aB5ErrorV16errorDescriptionSSSgvg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0aB5ErrorV16errorDescriptionSSSgvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0aB5ErrorV18recoverySuggestionSSSgvg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0aB5ErrorV18recoverySuggestionSSSgvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0aB5ErrorV4CodeO11deviceInUseyA2EmFWC"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0aB5ErrorV4CodeO13sessionFailedyA2EmFWC"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0aB5ErrorV4CodeO15discoveryFailedyA2EmFWC"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0aB5ErrorV4CodeO16connectionFailedyA2EmFWC"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0aB5ErrorV4CodeO19authorizationFailedyA2EmFWC"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0aB5ErrorV4CodeO2eeoiySbAE_AEtFZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0aB5ErrorV4CodeO4hash4intoys6HasherVz_tF"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0aB5ErrorV4CodeO9hashValueSivg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0aB5ErrorV4CodeO9hashValueSivpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0aB5ErrorV4CodeOMa"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0aB5ErrorV4CodeOMn"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0aB5ErrorV4CodeON"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0aB5ErrorV4CodeOSHAAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0aB5ErrorV4CodeOSQAAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0aB5ErrorV4codeAC4CodeOvg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0aB5ErrorV4codeAC4CodeOvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0aB5ErrorVMa"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0aB5ErrorVMn"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0aB5ErrorVN"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0aB5ErrorVs0C0AAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0aB5ErrorVyA2C4CodeOcfC"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0aB9ExtensionMp"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0aB9ExtensionP010deactivateB0_7sessionyAA0a6OutputB0V_AA0aF7SessionCtFTj"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0aB9ExtensionP010deactivateB0_7sessionyAA0a6OutputB0V_AA0aF7SessionCtFTq"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0aB9ExtensionP02isB5MutedySbAA0a6OutputB0VFTj"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0aB9ExtensionP02isB5MutedySbAA0a6OutputB0VFTq"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0aB9ExtensionP04muteB0yyAA0a6OutputB0VFTj"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0aB9ExtensionP04muteB0yyAA0a6OutputB0VFTq"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0aB9ExtensionP04stopB9DiscoveryyyFTj"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0aB9ExtensionP04stopB9DiscoveryyyFTq"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0aB9ExtensionP05startB9DiscoveryyyFTj"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0aB9ExtensionP05startB9DiscoveryyyFTq"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0aB9ExtensionP08activateB0_7session3foryAA0a6OutputB0V_AA0aG7SessionCAH12CapabilitiesVtFTj"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0aB9ExtensionP08activateB0_7session3foryAA0a6OutputB0V_AA0aG7SessionCAH12CapabilitiesVtFTq"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0aB9ExtensionP0C10Foundation03AppC0Tb"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0aB9ExtensionP11stopSessionyyAA0a6OutputE0CFTj"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0aB9ExtensionP11stopSessionyyAA0a6OutputE0CFTq"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0aB9ExtensionP12changeVolume2by3forySi_AA0a6OutputB0VtFTj"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0aB9ExtensionP12changeVolume2by3forySi_AA0a6OutputB0VtFTq"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0aB9ExtensionP12protocolType07UniformE11Identifiers6UTTypeVvgTj"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0aB9ExtensionP12protocolType07UniformE11Identifiers6UTTypeVvgTq"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0aB9ExtensionP12startSession_10identifier3urlyAA0a6OutputE0C_SSSg10Foundation3URLVtFTj"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0aB9ExtensionP12startSession_10identifier3urlyAA0a6OutputE0C_SSSg10Foundation3URLVtFTq"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0aB9ExtensionP23connectUsingPairingCode_2to7sessionySSSg_AA0a6OutputB0VAA0aJ7SessionCtFTj"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0aB9ExtensionP23connectUsingPairingCode_2to7sessionySSSg_AA0a6OutputB0VAA0aJ7SessionCtFTq"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0aB9ExtensionP28supportsSimultaneousSessionsSbvgTj"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0aB9ExtensionP28supportsSimultaneousSessionsSbvgTq"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0aB9ExtensionP6volume3forSfAA0a6OutputB0V_tFTj"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0aB9ExtensionP6volume3forSfAA0a6OutputB0V_tFTq"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0aB9ExtensionP8sendData_13toApplication7sessiony10Foundation0E0V_SSAA0A13OutputSessionCtFTj"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0aB9ExtensionP8sendData_13toApplication7sessiony10Foundation0E0V_SSAA0A13OutputSessionCtFTq"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0aB9ExtensionP9setVolume_3forySf_AA0a6OutputB0VtFTj"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0aB9ExtensionP9setVolume_3forySf_AA0a6OutputB0VtFTq"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0aB9ExtensionPAAE13configurationQrvg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0aB9ExtensionPAAE13configurationQrvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0aB9ExtensionPAAE13configurationQrvpQOMQ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice0aB9ExtensionTL"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice22RealtimeSampleHandlingMp"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice22RealtimeSampleHandlingP04stopcD8Delivery7sessionyAA0A13OutputSessionC_tFTj"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice22RealtimeSampleHandlingP04stopcD8Delivery7sessionyAA0A13OutputSessionC_tFTq"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice22RealtimeSampleHandlingP05startcD8Delivery7sessionyAA0A13OutputSessionC_tFTj"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice22RealtimeSampleHandlingP05startcD8Delivery7sessionyAA0A13OutputSessionC_tFTq"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice22RealtimeSampleHandlingPAA0aB9ExtensionTb"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s11MediaDevice22RealtimeSampleHandlingTL"}
+   ],
+   "target": "arm64e-apple-ios27.0"
+  }
+ ],
+ "version": "1.0"
+}

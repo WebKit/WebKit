@@ -98,6 +98,27 @@
     {
      "access": "public",
      "constants": [
+      {"access": "public", "name": "AVInterfacePlaybackStateNormal"},
+      {"access": "public", "name": "AVInterfacePlaybackStateScanning"},
+      {"access": "public", "name": "AVInterfacePlaybackStateScrubbing"}
+     ],
+     "introduced": "27",
+     "name": "AVInterfacePlaybackState"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "AVInterfaceSeekCapabilitiesNone"},
+      {"access": "public", "name": "AVInterfaceSeekCapabilitiesScanForward"},
+      {"access": "public", "name": "AVInterfaceSeekCapabilitiesScanBackward"},
+      {"access": "public", "name": "AVInterfaceSeekCapabilitiesSeek"}
+     ],
+     "introduced": "27",
+     "name": "AVInterfaceSeekCapabilities"
+    },
+    {
+     "access": "public",
+     "constants": [
       {"access": "public", "name": "AVKitErrorUnknown"},
       {"access": "public", "name": "AVKitErrorPictureInPictureStartFailed"},
       {"access": "public", "name": "AVKitErrorContentRatingUnknown", "unavailable": true},
@@ -133,8 +154,44 @@
       {"access": "public", "name": "AVLegibleMediaOptionsMenuTypeDefault"},
       {"access": "public", "name": "AVLegibleMediaOptionsMenuTypeCaptionAppearance"}
      ],
-     "name": "AVLegibleMediaOptionsMenuType",
-     "unavailable": true
+     "introduced": "26.4",
+     "name": "AVLegibleMediaOptionsMenuType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "AVPlaybackUserInterfacePlaybackStateNormal"},
+      {"access": "public", "name": "AVPlaybackUserInterfacePlaybackStateScanning"},
+      {"access": "public", "name": "AVPlaybackUserInterfacePlaybackStateScrubbing"}
+     ],
+     "introduced": "27",
+     "name": "AVPlaybackUserInterfacePlaybackState"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "AVPlaybackUserInterfaceSeekCapabilitiesNone"},
+      {"access": "public", "name": "AVPlaybackUserInterfaceSeekCapabilitiesScanForward"},
+      {"access": "public", "name": "AVPlaybackUserInterfaceSeekCapabilitiesScanBackward"},
+      {"access": "public", "name": "AVPlaybackUserInterfaceSeekCapabilitiesSeek"}
+     ],
+     "introduced": "27",
+     "name": "AVPlaybackUserInterfaceSeekCapabilities"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "AVPlaybackUserInterfaceTimelineSegmentTypePrimary"},
+      {"access": "public", "name": "AVPlaybackUserInterfaceTimelineSegmentTypeAdvertisement"},
+      {"access": "public", "name": "AVPlaybackUserInterfaceTimelineSegmentTypeBonus"},
+      {"access": "public", "name": "AVPlaybackUserInterfaceTimelineSegmentTypeCredits"},
+      {"access": "public", "name": "AVPlaybackUserInterfaceTimelineSegmentTypeIntro"},
+      {"access": "public", "name": "AVPlaybackUserInterfaceTimelineSegmentTypeRecap"},
+      {"access": "public", "name": "AVPlaybackUserInterfaceTimelineSegmentTypeTrailer"},
+      {"access": "public", "name": "AVPlaybackUserInterfaceTimelineSegmentTypeOther"}
+     ],
+     "introduced": "27",
+     "name": "AVPlaybackUserInterfaceTimelineSegmentType"
     },
     {
      "access": "public",
@@ -266,6 +323,139 @@
     },
     {
      "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true},
+      {"access": "public", "name": "artworkWithURL:contentType:size:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "introduced": "27", "name": "initWithURL:contentType:size:"}
+     ],
+     "introduced": "27",
+     "linkage": "exported",
+     "name": "AVInterfaceAlbumArtwork",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "url", "introduced": "27", "name": "url"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "contentType", "introduced": "27", "name": "contentType"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "size", "name": "size"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "initWithDisplayName:identifier:extendedLanguageTag:"}
+     ],
+     "introduced": "27",
+     "linkage": "exported",
+     "name": "AVInterfaceMediaSelectionOptionSource",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "displayName", "name": "displayName"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "identifier", "name": "identifier"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "extendedLanguageTag", "name": "extendedLanguageTag"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "initWithAudioOnly:presentationSize:title:subtitle:albumArtworkRepresentations:"},
+      {"access": "public", "name": "initWithTemplate:"}
+     ],
+     "introduced": "27",
+     "linkage": "exported",
+     "name": "AVInterfaceMetadata",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "isAudioOnly", "name": "audioOnly"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "presentationSize", "name": "presentationSize"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "title", "name": "title"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "subtitle", "name": "subtitle"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "albumArtworkRepresentations", "name": "albumArtworkRepresentations"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "27",
+     "linkage": "exported",
+     "name": "AVInterfaceMetadataTemplate",
+     "properties": [
+      {"access": "public", "getter": "isAudioOnly", "name": "audioOnly", "setter": "setAudioOnly:"},
+      {"access": "public", "getter": "presentationSize", "name": "presentationSize", "setter": "setPresentationSize:"},
+      {"access": "public", "getter": "title", "name": "title", "setter": "setTitle:"},
+      {"access": "public", "getter": "subtitle", "name": "subtitle", "setter": "setSubtitle:"},
+      {"access": "public", "getter": "albumArtworkRepresentations", "name": "albumArtworkRepresentations", "setter": "setAlbumArtworkRepresentations:"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "initWithTimeRange:auxiliaryContent:marked:requiresLinearPlayback:identifier:"}
+     ],
+     "introduced": "27",
+     "linkage": "exported",
+     "name": "AVInterfaceTimelineSegment",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "timeRange", "name": "timeRange"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isAuxiliaryContent", "name": "auxiliaryContent"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isMarked", "name": "marked"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "requiresLinearPlayback", "name": "requiresLinearPlayback"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "identifier", "name": "identifier"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "27",
+     "linkage": "exported",
+     "name": "AVInterfaceURLAlbumArtwork",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "url", "name": "url"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "contentType", "name": "contentType"}
+     ],
+     "super": "AVInterfaceAlbumArtwork"
+    },
+    {
+     "access": "public",
      "instanceMethods": [
       {"access": "public", "name": "initWithTimeRange:", "unavailable": true}
      ],
@@ -379,6 +569,179 @@
     },
     {
      "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true},
+      {"access": "public", "name": "artworkWithURL:contentType:size:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "27",
+     "linkage": "exported",
+     "name": "AVPlaybackUserInterfaceContentArtwork",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "size", "name": "size"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "initWithVideoProperties:title:subtitle:artworkRepresentations:"},
+      {"access": "public", "name": "initWithTemplate:"}
+     ],
+     "introduced": "27",
+     "linkage": "exported",
+     "name": "AVPlaybackUserInterfaceContentMetadata",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "videoProperties", "name": "videoProperties"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "title", "name": "title"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "subtitle", "name": "subtitle"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "artworkRepresentations", "name": "artworkRepresentations"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "27",
+     "linkage": "exported",
+     "name": "AVPlaybackUserInterfaceContentMetadataTemplate",
+     "properties": [
+      {"access": "public", "getter": "videoProperties", "name": "videoProperties", "setter": "setVideoProperties:"},
+      {"access": "public", "getter": "title", "name": "title", "setter": "setTitle:"},
+      {"access": "public", "getter": "subtitle", "name": "subtitle", "setter": "setSubtitle:"},
+      {"access": "public", "getter": "artworkRepresentations", "name": "artworkRepresentations", "setter": "setArtworkRepresentations:"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "27",
+     "linkage": "exported",
+     "name": "AVPlaybackUserInterfaceContentURLArtwork",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "url", "name": "url"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "contentType", "name": "contentType"}
+     ],
+     "super": "AVPlaybackUserInterfaceContentArtwork"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "initWithPresentationSize:"}
+     ],
+     "introduced": "27",
+     "linkage": "exported",
+     "name": "AVPlaybackUserInterfaceContentVideoProperties",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "presentationSize", "name": "presentationSize"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "initWithDisplayName:identifier:extendedLanguageTag:mediaCharacteristics:"}
+     ],
+     "introduced": "27",
+     "linkage": "exported",
+     "name": "AVPlaybackUserInterfaceMediaSelectionOption",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "displayName", "name": "displayName"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "identifier", "name": "identifier"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "extendedLanguageTag", "name": "extendedLanguageTag"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "mediaCharacteristics", "name": "mediaCharacteristics"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "initWithPosition:hostTime:rate:"}
+     ],
+     "introduced": "27",
+     "linkage": "exported",
+     "name": "AVPlaybackUserInterfacePlaybackPosition",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "position", "name": "position"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "hostTime", "name": "hostTime"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "rate", "name": "rate"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "initWithTimeRange:segmentType:marked:requiresLinearPlayback:identifier:"}
+     ],
+     "introduced": "27",
+     "linkage": "exported",
+     "name": "AVPlaybackUserInterfaceTimelineSegment",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "timeRange", "name": "timeRange"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "segmentType", "name": "segmentType"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isMarked", "name": "marked"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "requiresLinearPlayback", "name": "requiresLinearPlayback"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "identifier", "name": "identifier"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
      "categories": [
       "Deprecated"
      ],
@@ -396,6 +759,7 @@
       {"access": "public", "getter": "videoGravity", "name": "videoGravity", "setter": "setVideoGravity:"},
       {"access": "public", "attr": [ "readonly" ], "getter": "isReadyForDisplay", "name": "readyForDisplay"},
       {"access": "public", "attr": [ "readonly" ], "getter": "videoBounds", "name": "videoBounds"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "viewport", "name": "viewport", "unavailable": true},
       {"access": "public", "attr": [ "readonly" ], "getter": "contentOverlayView", "name": "contentOverlayView"},
       {"access": "public", "getter": "allowsPictureInPicturePlayback", "introduced": "9", "name": "allowsPictureInPicturePlayback", "setter": "setAllowsPictureInPicturePlayback:"},
       {"access": "public", "getter": "allowsVideoFrameAnalysis", "introduced": "16", "name": "allowsVideoFrameAnalysis", "setter": "setAllowsVideoFrameAnalysis:"},
@@ -473,6 +837,90 @@
     },
     {
      "access": "public",
+     "introduced": "27",
+     "name": "AVInterfaceControllable",
+     "protocols": [
+      "AVInterfaceTimeControllable",
+      "AVInterfacePlaybackControllable",
+      "AVInterfaceMediaSelectionControllable",
+      "AVInterfaceVolumeControllable",
+      "AVInterfaceMetadataProviding"
+     ]
+    },
+    {
+     "access": "public",
+     "introduced": "27",
+     "name": "AVInterfaceMediaSelectionControllable",
+     "properties": [
+      {"access": "public", "getter": "currentAudioOption", "name": "currentAudioOption", "setter": "setCurrentAudioOption:"},
+      {"access": "public", "getter": "currentLegibleOption", "name": "currentLegibleOption", "setter": "setCurrentLegibleOption:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "audioOptions", "name": "audioOptions"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "legibleOptions", "name": "legibleOptions"}
+     ],
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "introduced": "27",
+     "name": "AVInterfaceMetadataProviding",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "metadata", "name": "metadata"}
+     ],
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "introduced": "27",
+     "name": "AVInterfacePlaybackControllable",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "isReady", "name": "ready"},
+      {"access": "public", "getter": "isPlaying", "name": "playing", "setter": "setPlaying:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isBuffering", "name": "buffering"},
+      {"access": "public", "getter": "playbackSpeed", "name": "playbackSpeed", "setter": "setPlaybackSpeed:"},
+      {"access": "public", "getter": "scanSpeed", "name": "scanSpeed", "setter": "setScanSpeed:"},
+      {"access": "public", "getter": "state", "name": "state", "setter": "setState:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "supportedSeekCapabilities", "name": "supportedSeekCapabilities"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "containsLiveStreamingContent", "name": "containsLiveStreamingContent"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "playbackError", "name": "playbackError"}
+     ],
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "introduced": "27",
+     "name": "AVInterfaceTimeControllable",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "timeRange", "name": "timeRange"},
+      {"access": "public", "getter": "currentPlaybackPosition", "name": "currentPlaybackPosition", "setter": "setCurrentPlaybackPosition:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "segments", "name": "segments"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "currentSegment", "name": "currentSegment"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "seekableTimeRanges", "name": "seekableTimeRanges"}
+     ],
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "introduced": "27",
+     "name": "AVInterfaceVolumeControllable",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "hasAudio", "name": "hasAudio"},
+      {"access": "public", "getter": "isMuted", "name": "muted", "setter": "setMuted:"},
+      {"access": "public", "getter": "volume", "name": "volume", "setter": "setVolume:"}
+     ],
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
      "instanceMethods": [
       {"access": "public", "name": "legibleMenuController:didChangeMenuState:", "optional": true},
       {"access": "public", "name": "legibleMenuController:didRequestCaptionPreviewForProfileID:", "optional": true},
@@ -512,6 +960,95 @@
      ],
      "introduced": "15",
      "name": "AVPictureInPictureSampleBufferPlaybackDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "introduced": "27",
+     "name": "AVPlaybackUserInterfaceControllable",
+     "protocols": [
+      "AVPlaybackUserInterfaceTimeControllable",
+      "AVPlaybackUserInterfacePlaybackControllable",
+      "AVPlaybackUserInterfaceMediaSelectionControllable",
+      "AVPlaybackUserInterfaceVolumeControllable",
+      "AVPlaybackUserInterfaceMetadataProviding"
+     ]
+    },
+    {
+     "access": "public",
+     "introduced": "27",
+     "name": "AVPlaybackUserInterfaceMediaSelectionControllable",
+     "properties": [
+      {"access": "public", "getter": "currentAudioOption", "name": "currentAudioOption", "setter": "setCurrentAudioOption:"},
+      {"access": "public", "getter": "currentAudioDescriptionOption", "name": "currentAudioDescriptionOption", "setter": "setCurrentAudioDescriptionOption:"},
+      {"access": "public", "getter": "currentLegibleOption", "name": "currentLegibleOption", "setter": "setCurrentLegibleOption:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "audioOptions", "name": "audioOptions"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "audioDescriptionOptions", "name": "audioDescriptionOptions"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "legibleOptions", "name": "legibleOptions"}
+     ],
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "introduced": "27",
+     "name": "AVPlaybackUserInterfaceMetadataProviding",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "metadata", "name": "metadata"}
+     ],
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "introduced": "27",
+     "name": "AVPlaybackUserInterfacePlaybackControllable",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "isReady", "name": "ready"},
+      {"access": "public", "getter": "isPlaying", "name": "playing", "setter": "setPlaying:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isBuffering", "name": "buffering"},
+      {"access": "public", "getter": "playbackSpeed", "name": "playbackSpeed", "setter": "setPlaybackSpeed:"},
+      {"access": "public", "getter": "scanSpeed", "name": "scanSpeed", "setter": "setScanSpeed:"},
+      {"access": "public", "getter": "state", "name": "state", "setter": "setState:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "supportedSeekCapabilities", "name": "supportedSeekCapabilities"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "containsLiveStreamingContent", "name": "containsLiveStreamingContent"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "error", "name": "error"}
+     ],
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "seekToPosition:tolerance:"}
+     ],
+     "introduced": "27",
+     "name": "AVPlaybackUserInterfaceTimeControllable",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "timeRange", "name": "timeRange"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "playbackPosition", "name": "playbackPosition"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "segments", "name": "segments"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "currentSegment", "name": "currentSegment"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "seekableTimeRanges", "name": "seekableTimeRanges"}
+     ],
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "introduced": "27",
+     "name": "AVPlaybackUserInterfaceVolumeControllable",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "hasAudio", "name": "hasAudio"},
+      {"access": "public", "getter": "isMuted", "name": "muted", "setter": "setMuted:"},
+      {"access": "public", "getter": "volume", "name": "volume", "setter": "setVolume:"}
+     ],
      "protocols": [
       "NSObject"
      ]
@@ -579,16 +1116,1157 @@
      ]
     }
    ],
-   "target": "arm64e-apple-ios26.5",
+   "target": "arm64e-apple-ios27",
    "typedefs": [
     {"access": "public", "name": "AVAudioSessionRouteSelection"},
     {"access": "public", "name": "AVCaptureEventPhase"},
     {"access": "public", "name": "AVDisplayDynamicRange"},
+    {"access": "public", "name": "AVInterfacePlaybackState"},
+    {"access": "public", "name": "AVInterfaceSeekCapabilities"},
     {"access": "public", "name": "AVKitError"},
     {"access": "public", "name": "AVLegibleMediaOptionsMenuContents"},
     {"access": "public", "introduced": "26.4", "name": "AVLegibleMediaOptionsMenuState"},
     {"access": "public", "name": "AVLegibleMediaOptionsMenuStateChangeReason"},
     {"access": "public", "name": "AVLegibleMediaOptionsMenuType"},
+    {"access": "public", "name": "AVPlaybackUserInterfacePlaybackState"},
+    {"access": "public", "name": "AVPlaybackUserInterfaceSeekCapabilities"},
+    {"access": "public", "name": "AVPlaybackUserInterfaceTimelineSegmentType"},
+    {"access": "public", "name": "AVPlayerViewControllerSkippingBehavior"},
+    {"access": "public", "name": "AVRoutePickerViewButtonState"},
+    {"access": "public", "name": "AVRoutePickerViewButtonStyle"},
+    {"access": "public", "name": "AVVideoFrameAnalysisType"}
+   ]
+  },
+  {
+   "categories": [
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "15", "name": "invalidatePlaybackState"}
+     ],
+     "interface": "AVPictureInPictureController",
+     "name": ""
+    },
+    {
+     "access": "public",
+     "interface": "AVPlayerItem",
+     "name": "AVKitAdditions",
+     "properties": [
+      {"access": "public", "getter": "externalMetadata", "introduced": "12.2", "name": "externalMetadata", "setter": "setExternalMetadata:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "interstitialTimeRanges", "introduced": "16", "name": "interstitialTimeRanges"}
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "prepareRouteSelectionForPlaybackWithCompletionHandler:"}
+     ],
+     "interface": "AVAudioSession",
+     "introduced": "13",
+     "name": "AVPlaybackRouteSelecting"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithSampleBufferDisplayLayer:playbackDelegate:"}
+     ],
+     "interface": "AVPictureInPictureControllerContentSource",
+     "introduced": "15",
+     "name": "AVSampleBufferDisplayLayerSupport",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "sampleBufferDisplayLayer", "name": "sampleBufferDisplayLayer"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "sampleBufferPlaybackDelegate", "name": "sampleBufferPlaybackDelegate"}
+     ]
+    },
+    {
+     "access": "public",
+     "interface": "AVPlayerViewController",
+     "name": "Deprecated",
+     "properties": [
+      {"access": "public", "getter": "customInfoViewController", "name": "customInfoViewController", "setter": "setCustomInfoViewController:", "unavailable": true}
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "15", "name": "initWithActiveVideoCallSourceView:contentViewController:"}
+     ],
+     "interface": "AVPictureInPictureControllerContentSource",
+     "name": "VideoCallSupport",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "activeVideoCallSourceView", "introduced": "15", "name": "activeVideoCallSourceView"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "activeVideoCallContentViewController", "introduced": "15", "name": "activeVideoCallContentViewController"}
+     ]
+    }
+   ],
+   "enums": [
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "AVAudioSessionRouteSelectionNone"},
+      {"access": "public", "name": "AVAudioSessionRouteSelectionLocal"},
+      {"access": "public", "name": "AVAudioSessionRouteSelectionExternal"}
+     ],
+     "introduced": "13",
+     "name": "AVAudioSessionRouteSelection"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "AVCaptureEventPhaseBegan"},
+      {"access": "public", "name": "AVCaptureEventPhaseEnded"},
+      {"access": "public", "name": "AVCaptureEventPhaseCancelled"}
+     ],
+     "introduced": "17.2",
+     "name": "AVCaptureEventPhase"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "AVDisplayDynamicRangeAutomatic"},
+      {"access": "public", "name": "AVDisplayDynamicRangeStandard"},
+      {"access": "public", "name": "AVDisplayDynamicRangeConstrainedHigh"},
+      {"access": "public", "name": "AVDisplayDynamicRangeHigh"}
+     ],
+     "introduced": "26",
+     "name": "AVDisplayDynamicRange"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "AVInterfacePlaybackStateNormal"},
+      {"access": "public", "name": "AVInterfacePlaybackStateScanning"},
+      {"access": "public", "name": "AVInterfacePlaybackStateScrubbing"}
+     ],
+     "introduced": "27",
+     "name": "AVInterfacePlaybackState"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "AVInterfaceSeekCapabilitiesNone"},
+      {"access": "public", "name": "AVInterfaceSeekCapabilitiesScanForward"},
+      {"access": "public", "name": "AVInterfaceSeekCapabilitiesScanBackward"},
+      {"access": "public", "name": "AVInterfaceSeekCapabilitiesSeek"}
+     ],
+     "introduced": "27",
+     "name": "AVInterfaceSeekCapabilities"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "AVKitErrorUnknown"},
+      {"access": "public", "name": "AVKitErrorPictureInPictureStartFailed"},
+      {"access": "public", "name": "AVKitErrorContentRatingUnknown", "unavailable": true},
+      {"access": "public", "name": "AVKitErrorContentDisallowedByPasscode", "unavailable": true},
+      {"access": "public", "name": "AVKitErrorContentDisallowedByProfile", "unavailable": true},
+      {"access": "public", "name": "AVKitErrorRecordingFailed", "unavailable": true}
+     ],
+     "introduced": "9",
+     "name": "AVKitError"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "AVLegibleMediaOptionsMenuContentsLegible"},
+      {"access": "public", "name": "AVLegibleMediaOptionsMenuContentsCaptionAppearance"},
+      {"access": "public", "name": "AVLegibleMediaOptionsMenuContentsAll"}
+     ],
+     "introduced": "26.4",
+     "name": "AVLegibleMediaOptionsMenuContents"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "AVLegibleMediaOptionsMenuStateChangeReasonNone"},
+      {"access": "public", "name": "AVLegibleMediaOptionsMenuStateChangeReasonLanguageMismatch"}
+     ],
+     "introduced": "26.4",
+     "name": "AVLegibleMediaOptionsMenuStateChangeReason"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "AVLegibleMediaOptionsMenuTypeDefault"},
+      {"access": "public", "name": "AVLegibleMediaOptionsMenuTypeCaptionAppearance"}
+     ],
+     "introduced": "26.4",
+     "name": "AVLegibleMediaOptionsMenuType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "AVPlaybackUserInterfacePlaybackStateNormal"},
+      {"access": "public", "name": "AVPlaybackUserInterfacePlaybackStateScanning"},
+      {"access": "public", "name": "AVPlaybackUserInterfacePlaybackStateScrubbing"}
+     ],
+     "introduced": "27",
+     "name": "AVPlaybackUserInterfacePlaybackState"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "AVPlaybackUserInterfaceSeekCapabilitiesNone"},
+      {"access": "public", "name": "AVPlaybackUserInterfaceSeekCapabilitiesScanForward"},
+      {"access": "public", "name": "AVPlaybackUserInterfaceSeekCapabilitiesScanBackward"},
+      {"access": "public", "name": "AVPlaybackUserInterfaceSeekCapabilitiesSeek"}
+     ],
+     "introduced": "27",
+     "name": "AVPlaybackUserInterfaceSeekCapabilities"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "AVPlaybackUserInterfaceTimelineSegmentTypePrimary"},
+      {"access": "public", "name": "AVPlaybackUserInterfaceTimelineSegmentTypeAdvertisement"},
+      {"access": "public", "name": "AVPlaybackUserInterfaceTimelineSegmentTypeBonus"},
+      {"access": "public", "name": "AVPlaybackUserInterfaceTimelineSegmentTypeCredits"},
+      {"access": "public", "name": "AVPlaybackUserInterfaceTimelineSegmentTypeIntro"},
+      {"access": "public", "name": "AVPlaybackUserInterfaceTimelineSegmentTypeRecap"},
+      {"access": "public", "name": "AVPlaybackUserInterfaceTimelineSegmentTypeTrailer"},
+      {"access": "public", "name": "AVPlaybackUserInterfaceTimelineSegmentTypeOther"}
+     ],
+     "introduced": "27",
+     "name": "AVPlaybackUserInterfaceTimelineSegmentType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "AVPlayerViewControllerSkippingBehaviorDefault"},
+      {"access": "public", "name": "AVPlayerViewControllerSkippingBehaviorSkipItem"}
+     ],
+     "name": "AVPlayerViewControllerSkippingBehavior",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "AVRoutePickerViewButtonStateNormal"},
+      {"access": "public", "name": "AVRoutePickerViewButtonStateNormalHighlighted"},
+      {"access": "public", "name": "AVRoutePickerViewButtonStateActive"},
+      {"access": "public", "name": "AVRoutePickerViewButtonStateActiveHighlighted"}
+     ],
+     "name": "AVRoutePickerViewButtonState",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "AVRoutePickerViewButtonStyleSystem"},
+      {"access": "public", "name": "AVRoutePickerViewButtonStylePlain"},
+      {"access": "public", "name": "AVRoutePickerViewButtonStyleCustom"}
+     ],
+     "name": "AVRoutePickerViewButtonStyle",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "AVVideoFrameAnalysisTypeNone"},
+      {"access": "public", "name": "AVVideoFrameAnalysisTypeDefault"},
+      {"access": "public", "name": "AVVideoFrameAnalysisTypeText"},
+      {"access": "public", "name": "AVVideoFrameAnalysisTypeSubject"},
+      {"access": "public", "name": "AVVideoFrameAnalysisTypeVisualSearch"},
+      {"access": "public", "introduced": "17", "name": "AVVideoFrameAnalysisTypeMachineReadableCode"}
+     ],
+     "introduced": "17",
+     "name": "AVVideoFrameAnalysisType"
+    }
+   ],
+   "globals": [
+    {"access": "public", "introduced": "9", "kind": "variable", "linkage": "exported", "name": "_AVKitErrorDomain"}
+   ],
+   "interfaces": [
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "introduced": "26", "name": "playSound:"}
+     ],
+     "introduced": "17.2",
+     "linkage": "exported",
+     "name": "AVCaptureEvent",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "phase", "name": "phase"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "shouldPlaySound", "introduced": "26", "name": "shouldPlaySound"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "initWithEventHandler:"},
+      {"access": "public", "name": "initWithPrimaryEventHandler:secondaryEventHandler:"}
+     ],
+     "introduced": "17.2",
+     "linkage": "exported",
+     "name": "AVCaptureEventInteraction",
+     "properties": [
+      {"access": "public", "getter": "isEnabled", "name": "enabled", "setter": "setEnabled:"},
+      {"access": "public", "attr": [ "class" ], "getter": "defaultCaptureSoundDisabled", "introduced": "26", "name": "defaultCaptureSoundDisabled", "setter": "setDefaultCaptureSoundDisabled:"}
+     ],
+     "protocols": [
+      "UIInteraction"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "initWithURL:error:"}
+     ],
+     "introduced": "26",
+     "linkage": "exported",
+     "name": "AVCaptureEventSound",
+     "properties": [
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "cameraShutterSound", "name": "cameraShutterSound"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "beginVideoRecordingSound", "name": "beginVideoRecordingSound"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "endVideoRecordingSound", "name": "endVideoRecordingSound"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "present"},
+      {"access": "public", "name": "dismiss"},
+      {"access": "public", "name": "init"},
+      {"access": "public", "name": "initWithAudioSession:"}
+     ],
+     "introduced": "26",
+     "linkage": "exported",
+     "name": "AVInputPickerInteraction",
+     "properties": [
+      {"access": "public", "getter": "delegate", "name": "delegate", "setter": "setDelegate:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isPresented", "name": "presented"},
+      {"access": "public", "getter": "audioSession", "name": "audioSession", "setter": "setAudioSession:"}
+     ],
+     "protocols": [
+      "UIInteraction"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true},
+      {"access": "public", "name": "artworkWithURL:contentType:size:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "introduced": "27", "name": "initWithURL:contentType:size:"}
+     ],
+     "introduced": "27",
+     "linkage": "exported",
+     "name": "AVInterfaceAlbumArtwork",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "url", "introduced": "27", "name": "url"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "contentType", "introduced": "27", "name": "contentType"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "size", "name": "size"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "initWithDisplayName:identifier:extendedLanguageTag:"}
+     ],
+     "introduced": "27",
+     "linkage": "exported",
+     "name": "AVInterfaceMediaSelectionOptionSource",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "displayName", "name": "displayName"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "identifier", "name": "identifier"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "extendedLanguageTag", "name": "extendedLanguageTag"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "initWithAudioOnly:presentationSize:title:subtitle:albumArtworkRepresentations:"},
+      {"access": "public", "name": "initWithTemplate:"}
+     ],
+     "introduced": "27",
+     "linkage": "exported",
+     "name": "AVInterfaceMetadata",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "isAudioOnly", "name": "audioOnly"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "presentationSize", "name": "presentationSize"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "title", "name": "title"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "subtitle", "name": "subtitle"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "albumArtworkRepresentations", "name": "albumArtworkRepresentations"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "27",
+     "linkage": "exported",
+     "name": "AVInterfaceMetadataTemplate",
+     "properties": [
+      {"access": "public", "getter": "isAudioOnly", "name": "audioOnly", "setter": "setAudioOnly:"},
+      {"access": "public", "getter": "presentationSize", "name": "presentationSize", "setter": "setPresentationSize:"},
+      {"access": "public", "getter": "title", "name": "title", "setter": "setTitle:"},
+      {"access": "public", "getter": "subtitle", "name": "subtitle", "setter": "setSubtitle:"},
+      {"access": "public", "getter": "albumArtworkRepresentations", "name": "albumArtworkRepresentations", "setter": "setAlbumArtworkRepresentations:"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "initWithTimeRange:auxiliaryContent:marked:requiresLinearPlayback:identifier:"}
+     ],
+     "introduced": "27",
+     "linkage": "exported",
+     "name": "AVInterfaceTimelineSegment",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "timeRange", "name": "timeRange"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isAuxiliaryContent", "name": "auxiliaryContent"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isMarked", "name": "marked"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "requiresLinearPlayback", "name": "requiresLinearPlayback"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "identifier", "name": "identifier"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "27",
+     "linkage": "exported",
+     "name": "AVInterfaceURLAlbumArtwork",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "url", "name": "url"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "contentType", "name": "contentType"}
+     ],
+     "super": "AVInterfaceAlbumArtwork"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithTimeRange:", "unavailable": true}
+     ],
+     "introduced": "16",
+     "linkage": "exported",
+     "name": "AVInterstitialTimeRange",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "timeRange", "name": "timeRange"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "initWithPlayer:"},
+      {"access": "public", "name": "menuWithContents:"}
+     ],
+     "introduced": "26.4",
+     "linkage": "exported",
+     "name": "AVLegibleMediaOptionsMenuController",
+     "properties": [
+      {"access": "public", "getter": "player", "name": "player", "setter": "setPlayer:"},
+      {"access": "public", "getter": "delegate", "name": "delegate", "setter": "setDelegate:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "menuState", "name": "menuState"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "isPictureInPictureSupported"},
+      {"access": "public", "name": "pictureInPictureButtonStartImageCompatibleWithTraitCollection:"},
+      {"access": "public", "name": "pictureInPictureButtonStopImageCompatibleWithTraitCollection:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "introduced": "15", "name": "initWithContentSource:"},
+      {"access": "public", "name": "initWithPlayerLayer:"},
+      {"access": "public", "name": "startPictureInPicture"},
+      {"access": "public", "name": "stopPictureInPicture"}
+     ],
+     "introduced": "9",
+     "linkage": "exported",
+     "name": "AVPictureInPictureController",
+     "properties": [
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "pictureInPictureButtonStartImage", "introduced": "13", "name": "pictureInPictureButtonStartImage"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "pictureInPictureButtonStopImage", "introduced": "13", "name": "pictureInPictureButtonStopImage"},
+      {"access": "public", "getter": "contentSource", "introduced": "15", "name": "contentSource", "setter": "setContentSource:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "playerLayer", "name": "playerLayer"},
+      {"access": "public", "getter": "delegate", "name": "delegate", "setter": "setDelegate:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isPictureInPicturePossible", "name": "pictureInPicturePossible"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isPictureInPictureActive", "name": "pictureInPictureActive"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isPictureInPictureSuspended", "name": "pictureInPictureSuspended"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "canStopPictureInPicture", "name": "canStopPictureInPicture", "unavailable": true},
+      {"access": "public", "getter": "requiresLinearPlayback", "introduced": "14", "name": "requiresLinearPlayback", "setter": "setRequiresLinearPlayback:"},
+      {"access": "public", "getter": "canStartPictureInPictureAutomaticallyFromInline", "introduced": "14.2", "name": "canStartPictureInPictureAutomaticallyFromInline", "setter": "setCanStartPictureInPictureAutomaticallyFromInline:"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "categories": [
+      "AVSampleBufferDisplayLayerSupport",
+      "VideoCallSupport"
+     ],
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "initWithPlayerLayer:"}
+     ],
+     "introduced": "15",
+     "linkage": "exported",
+     "name": "AVPictureInPictureControllerContentSource",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "playerLayer", "name": "playerLayer"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "15",
+     "linkage": "exported",
+     "name": "AVPictureInPictureVideoCallViewController",
+     "super": "UIViewController"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "initWithRate:localizedName:"}
+     ],
+     "introduced": "16",
+     "linkage": "exported",
+     "name": "AVPlaybackSpeed",
+     "properties": [
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "systemDefaultSpeeds", "name": "systemDefaultSpeeds"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "rate", "name": "rate"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "localizedName", "name": "localizedName"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "localizedNumericName", "name": "localizedNumericName"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true},
+      {"access": "public", "name": "artworkWithURL:contentType:size:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "27",
+     "linkage": "exported",
+     "name": "AVPlaybackUserInterfaceContentArtwork",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "size", "name": "size"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "initWithVideoProperties:title:subtitle:artworkRepresentations:"},
+      {"access": "public", "name": "initWithTemplate:"}
+     ],
+     "introduced": "27",
+     "linkage": "exported",
+     "name": "AVPlaybackUserInterfaceContentMetadata",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "videoProperties", "name": "videoProperties"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "title", "name": "title"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "subtitle", "name": "subtitle"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "artworkRepresentations", "name": "artworkRepresentations"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "27",
+     "linkage": "exported",
+     "name": "AVPlaybackUserInterfaceContentMetadataTemplate",
+     "properties": [
+      {"access": "public", "getter": "videoProperties", "name": "videoProperties", "setter": "setVideoProperties:"},
+      {"access": "public", "getter": "title", "name": "title", "setter": "setTitle:"},
+      {"access": "public", "getter": "subtitle", "name": "subtitle", "setter": "setSubtitle:"},
+      {"access": "public", "getter": "artworkRepresentations", "name": "artworkRepresentations", "setter": "setArtworkRepresentations:"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "27",
+     "linkage": "exported",
+     "name": "AVPlaybackUserInterfaceContentURLArtwork",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "url", "name": "url"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "contentType", "name": "contentType"}
+     ],
+     "super": "AVPlaybackUserInterfaceContentArtwork"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "initWithPresentationSize:"}
+     ],
+     "introduced": "27",
+     "linkage": "exported",
+     "name": "AVPlaybackUserInterfaceContentVideoProperties",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "presentationSize", "name": "presentationSize"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "initWithDisplayName:identifier:extendedLanguageTag:mediaCharacteristics:"}
+     ],
+     "introduced": "27",
+     "linkage": "exported",
+     "name": "AVPlaybackUserInterfaceMediaSelectionOption",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "displayName", "name": "displayName"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "identifier", "name": "identifier"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "extendedLanguageTag", "name": "extendedLanguageTag"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "mediaCharacteristics", "name": "mediaCharacteristics"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "initWithPosition:hostTime:rate:"}
+     ],
+     "introduced": "27",
+     "linkage": "exported",
+     "name": "AVPlaybackUserInterfacePlaybackPosition",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "position", "name": "position"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "hostTime", "name": "hostTime"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "rate", "name": "rate"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "initWithTimeRange:segmentType:marked:requiresLinearPlayback:identifier:"}
+     ],
+     "introduced": "27",
+     "linkage": "exported",
+     "name": "AVPlaybackUserInterfaceTimelineSegment",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "timeRange", "name": "timeRange"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "segmentType", "name": "segmentType"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isMarked", "name": "marked"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "requiresLinearPlayback", "name": "requiresLinearPlayback"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "identifier", "name": "identifier"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "categories": [
+      "Deprecated"
+     ],
+     "instanceMethods": [
+      {"access": "public", "introduced": "16", "name": "selectSpeed:"},
+      {"access": "public", "name": "beginTrimmingWithCompletionHandler:", "unavailable": true}
+     ],
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "AVPlayerViewController",
+     "properties": [
+      {"access": "public", "getter": "player", "name": "player", "setter": "setPlayer:"},
+      {"access": "public", "getter": "showsPlaybackControls", "name": "showsPlaybackControls", "setter": "setShowsPlaybackControls:"},
+      {"access": "public", "getter": "showsTimecodes", "introduced": "13", "name": "showsTimecodes", "setter": "setShowsTimecodes:"},
+      {"access": "public", "getter": "videoGravity", "name": "videoGravity", "setter": "setVideoGravity:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isReadyForDisplay", "name": "readyForDisplay"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "videoBounds", "name": "videoBounds"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "viewport", "name": "viewport", "unavailable": true},
+      {"access": "public", "attr": [ "readonly" ], "getter": "contentOverlayView", "name": "contentOverlayView"},
+      {"access": "public", "getter": "allowsPictureInPicturePlayback", "introduced": "9", "name": "allowsPictureInPicturePlayback", "setter": "setAllowsPictureInPicturePlayback:"},
+      {"access": "public", "getter": "allowsVideoFrameAnalysis", "introduced": "16", "name": "allowsVideoFrameAnalysis", "setter": "setAllowsVideoFrameAnalysis:"},
+      {"access": "public", "getter": "videoFrameAnalysisTypes", "introduced": "17", "name": "videoFrameAnalysisTypes", "setter": "setVideoFrameAnalysisTypes:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "toggleLookupAction", "introduced": "17", "name": "toggleLookupAction"},
+      {"access": "public", "getter": "canStartPictureInPictureAutomaticallyFromInline", "introduced": "14.2", "name": "canStartPictureInPictureAutomaticallyFromInline", "setter": "setCanStartPictureInPictureAutomaticallyFromInline:"},
+      {"access": "public", "getter": "updatesNowPlayingInfoCenter", "introduced": "10", "name": "updatesNowPlayingInfoCenter", "setter": "setUpdatesNowPlayingInfoCenter:"},
+      {"access": "public", "getter": "entersFullScreenWhenPlaybackBegins", "introduced": "11", "name": "entersFullScreenWhenPlaybackBegins", "setter": "setEntersFullScreenWhenPlaybackBegins:"},
+      {"access": "public", "getter": "exitsFullScreenWhenPlaybackEnds", "introduced": "11", "name": "exitsFullScreenWhenPlaybackEnds", "setter": "setExitsFullScreenWhenPlaybackEnds:"},
+      {"access": "public", "getter": "requiresLinearPlayback", "introduced": "11", "name": "requiresLinearPlayback", "setter": "setRequiresLinearPlayback:"},
+      {"access": "public", "getter": "appliesPreferredDisplayCriteriaAutomatically", "name": "appliesPreferredDisplayCriteriaAutomatically", "setter": "setAppliesPreferredDisplayCriteriaAutomatically:", "unavailable": true},
+      {"access": "public", "getter": "pixelBufferAttributes", "introduced": "9", "name": "pixelBufferAttributes", "setter": "setPixelBufferAttributes:"},
+      {"access": "public", "getter": "delegate", "introduced": "9", "name": "delegate", "setter": "setDelegate:"},
+      {"access": "public", "getter": "speeds", "introduced": "16", "name": "speeds", "setter": "setSpeeds:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "selectedSpeed", "introduced": "16", "name": "selectedSpeed"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "unobscuredContentGuide", "name": "unobscuredContentGuide", "unavailable": true},
+      {"access": "public", "getter": "allowedSubtitleOptionLanguages", "name": "allowedSubtitleOptionLanguages", "setter": "setAllowedSubtitleOptionLanguages:", "unavailable": true},
+      {"access": "public", "getter": "requiresFullSubtitles", "name": "requiresFullSubtitles", "setter": "setRequiresFullSubtitles:", "unavailable": true},
+      {"access": "public", "getter": "skippingBehavior", "name": "skippingBehavior", "setter": "setSkippingBehavior:", "unavailable": true},
+      {"access": "public", "getter": "isSkipForwardEnabled", "name": "skipForwardEnabled", "setter": "setSkipForwardEnabled:", "unavailable": true},
+      {"access": "public", "getter": "isSkipBackwardEnabled", "name": "skipBackwardEnabled", "setter": "setSkipBackwardEnabled:", "unavailable": true},
+      {"access": "public", "getter": "playbackControlsIncludeTransportBar", "name": "playbackControlsIncludeTransportBar", "setter": "setPlaybackControlsIncludeTransportBar:", "unavailable": true},
+      {"access": "public", "getter": "playbackControlsIncludeInfoViews", "name": "playbackControlsIncludeInfoViews", "setter": "setPlaybackControlsIncludeInfoViews:", "unavailable": true},
+      {"access": "public", "getter": "transportBarIncludesTitleView", "name": "transportBarIncludesTitleView", "setter": "setTransportBarIncludesTitleView:", "unavailable": true},
+      {"access": "public", "getter": "customOverlayViewController", "name": "customOverlayViewController", "setter": "setCustomOverlayViewController:", "unavailable": true},
+      {"access": "public", "getter": "transportBarCustomMenuItems", "name": "transportBarCustomMenuItems", "setter": "setTransportBarCustomMenuItems:", "unavailable": true},
+      {"access": "public", "getter": "requiresMonoscopicViewingMode", "name": "requiresMonoscopicViewingMode", "setter": "setRequiresMonoscopicViewingMode:", "unavailable": true},
+      {"access": "public", "getter": "preferredDisplayDynamicRange", "introduced": "26", "name": "preferredDisplayDynamicRange", "setter": "setPreferredDisplayDynamicRange:"},
+      {"access": "public", "getter": "contextualActions", "name": "contextualActions", "setter": "setContextualActions:", "unavailable": true},
+      {"access": "public", "attr": [ "readonly" ], "getter": "contextualActionsInfoView", "name": "contextualActionsInfoView", "unavailable": true},
+      {"access": "public", "getter": "contextualActionsPreviewImage", "name": "contextualActionsPreviewImage", "setter": "setContextualActionsPreviewImage:", "unavailable": true},
+      {"access": "public", "attr": [ "readonly" ], "getter": "groupExperienceCoordinator", "name": "groupExperienceCoordinator", "unavailable": true},
+      {"access": "public", "getter": "customInfoViewControllers", "name": "customInfoViewControllers", "setter": "setCustomInfoViewControllers:", "unavailable": true},
+      {"access": "public", "getter": "infoViewActions", "name": "infoViewActions", "setter": "setInfoViewActions:", "unavailable": true},
+      {"access": "public", "attr": [ "readonly" ], "getter": "canBeginTrimming", "name": "canBeginTrimming", "unavailable": true},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "mediaCharacteristicsForSupportedCustomMediaSelectionSchemes", "introduced": "26", "name": "mediaCharacteristicsForSupportedCustomMediaSelectionSchemes"}
+     ],
+     "super": "UIViewController"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "routePickerButtonColorForState:", "unavailable": true},
+      {"access": "public", "name": "setRoutePickerButtonColor:forState:", "unavailable": true}
+     ],
+     "introduced": "11",
+     "linkage": "exported",
+     "name": "AVRoutePickerView",
+     "properties": [
+      {"access": "public", "getter": "delegate", "name": "delegate", "setter": "setDelegate:"},
+      {"access": "public", "getter": "player", "name": "player", "setter": "setPlayer:", "unavailable": true},
+      {"access": "public", "getter": "isRoutePickerButtonBordered", "name": "routePickerButtonBordered", "setter": "setRoutePickerButtonBordered:", "unavailable": true},
+      {"access": "public", "getter": "activeTintColor", "introduced": "11", "name": "activeTintColor", "setter": "setActiveTintColor:"},
+      {"access": "public", "getter": "routePickerButtonStyle", "name": "routePickerButtonStyle", "setter": "setRoutePickerButtonStyle:", "unavailable": true},
+      {"access": "public", "getter": "prioritizesVideoDevices", "introduced": "13", "name": "prioritizesVideoDevices", "setter": "setPrioritizesVideoDevices:"},
+      {"access": "public", "getter": "customRoutingController", "introduced": "16", "name": "customRoutingController", "setter": "setCustomRoutingController:"}
+     ],
+     "super": "UIView"
+    }
+   ],
+   "protocols": [
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "inputPickerInteractionWillBeginPresenting:", "optional": true},
+      {"access": "public", "name": "inputPickerInteractionDidEndPresenting:", "optional": true},
+      {"access": "public", "name": "inputPickerInteractionWillBeginDismissing:", "optional": true},
+      {"access": "public", "name": "inputPickerInteractionDidEndDismissing:", "optional": true}
+     ],
+     "introduced": "26",
+     "name": "AVInputPickerInteractionDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "introduced": "27",
+     "name": "AVInterfaceControllable",
+     "protocols": [
+      "AVInterfaceTimeControllable",
+      "AVInterfacePlaybackControllable",
+      "AVInterfaceMediaSelectionControllable",
+      "AVInterfaceVolumeControllable",
+      "AVInterfaceMetadataProviding"
+     ]
+    },
+    {
+     "access": "public",
+     "introduced": "27",
+     "name": "AVInterfaceMediaSelectionControllable",
+     "properties": [
+      {"access": "public", "getter": "currentAudioOption", "name": "currentAudioOption", "setter": "setCurrentAudioOption:"},
+      {"access": "public", "getter": "currentLegibleOption", "name": "currentLegibleOption", "setter": "setCurrentLegibleOption:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "audioOptions", "name": "audioOptions"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "legibleOptions", "name": "legibleOptions"}
+     ],
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "introduced": "27",
+     "name": "AVInterfaceMetadataProviding",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "metadata", "name": "metadata"}
+     ],
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "introduced": "27",
+     "name": "AVInterfacePlaybackControllable",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "isReady", "name": "ready"},
+      {"access": "public", "getter": "isPlaying", "name": "playing", "setter": "setPlaying:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isBuffering", "name": "buffering"},
+      {"access": "public", "getter": "playbackSpeed", "name": "playbackSpeed", "setter": "setPlaybackSpeed:"},
+      {"access": "public", "getter": "scanSpeed", "name": "scanSpeed", "setter": "setScanSpeed:"},
+      {"access": "public", "getter": "state", "name": "state", "setter": "setState:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "supportedSeekCapabilities", "name": "supportedSeekCapabilities"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "containsLiveStreamingContent", "name": "containsLiveStreamingContent"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "playbackError", "name": "playbackError"}
+     ],
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "introduced": "27",
+     "name": "AVInterfaceTimeControllable",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "timeRange", "name": "timeRange"},
+      {"access": "public", "getter": "currentPlaybackPosition", "name": "currentPlaybackPosition", "setter": "setCurrentPlaybackPosition:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "segments", "name": "segments"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "currentSegment", "name": "currentSegment"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "seekableTimeRanges", "name": "seekableTimeRanges"}
+     ],
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "introduced": "27",
+     "name": "AVInterfaceVolumeControllable",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "hasAudio", "name": "hasAudio"},
+      {"access": "public", "getter": "isMuted", "name": "muted", "setter": "setMuted:"},
+      {"access": "public", "getter": "volume", "name": "volume", "setter": "setVolume:"}
+     ],
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "legibleMenuController:didChangeMenuState:", "optional": true},
+      {"access": "public", "name": "legibleMenuController:didRequestCaptionPreviewForProfileID:", "optional": true},
+      {"access": "public", "name": "legibleMenuControllerDidRequestStoppingSubtitleCaptionPreview:", "optional": true}
+     ],
+     "introduced": "26.4",
+     "name": "AVLegibleMediaOptionsMenuControllerDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "pictureInPictureControllerWillStartPictureInPicture:", "optional": true},
+      {"access": "public", "name": "pictureInPictureControllerDidStartPictureInPicture:", "optional": true},
+      {"access": "public", "name": "pictureInPictureController:failedToStartPictureInPictureWithError:", "optional": true},
+      {"access": "public", "name": "pictureInPictureControllerWillStopPictureInPicture:", "optional": true},
+      {"access": "public", "name": "pictureInPictureControllerDidStopPictureInPicture:", "optional": true},
+      {"access": "public", "name": "pictureInPictureController:restoreUserInterfaceForPictureInPictureStopWithCompletionHandler:", "optional": true}
+     ],
+     "introduced": "9",
+     "name": "AVPictureInPictureControllerDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "pictureInPictureController:setPlaying:"},
+      {"access": "public", "name": "pictureInPictureControllerTimeRangeForPlayback:"},
+      {"access": "public", "name": "pictureInPictureControllerIsPlaybackPaused:"},
+      {"access": "public", "name": "pictureInPictureController:didTransitionToRenderSize:"},
+      {"access": "public", "name": "pictureInPictureController:skipByInterval:completionHandler:"},
+      {"access": "public", "name": "pictureInPictureControllerShouldProhibitBackgroundAudioPlayback:", "optional": true}
+     ],
+     "introduced": "15",
+     "name": "AVPictureInPictureSampleBufferPlaybackDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "introduced": "27",
+     "name": "AVPlaybackUserInterfaceControllable",
+     "protocols": [
+      "AVPlaybackUserInterfaceTimeControllable",
+      "AVPlaybackUserInterfacePlaybackControllable",
+      "AVPlaybackUserInterfaceMediaSelectionControllable",
+      "AVPlaybackUserInterfaceVolumeControllable",
+      "AVPlaybackUserInterfaceMetadataProviding"
+     ]
+    },
+    {
+     "access": "public",
+     "introduced": "27",
+     "name": "AVPlaybackUserInterfaceMediaSelectionControllable",
+     "properties": [
+      {"access": "public", "getter": "currentAudioOption", "name": "currentAudioOption", "setter": "setCurrentAudioOption:"},
+      {"access": "public", "getter": "currentAudioDescriptionOption", "name": "currentAudioDescriptionOption", "setter": "setCurrentAudioDescriptionOption:"},
+      {"access": "public", "getter": "currentLegibleOption", "name": "currentLegibleOption", "setter": "setCurrentLegibleOption:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "audioOptions", "name": "audioOptions"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "audioDescriptionOptions", "name": "audioDescriptionOptions"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "legibleOptions", "name": "legibleOptions"}
+     ],
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "introduced": "27",
+     "name": "AVPlaybackUserInterfaceMetadataProviding",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "metadata", "name": "metadata"}
+     ],
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "introduced": "27",
+     "name": "AVPlaybackUserInterfacePlaybackControllable",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "isReady", "name": "ready"},
+      {"access": "public", "getter": "isPlaying", "name": "playing", "setter": "setPlaying:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isBuffering", "name": "buffering"},
+      {"access": "public", "getter": "playbackSpeed", "name": "playbackSpeed", "setter": "setPlaybackSpeed:"},
+      {"access": "public", "getter": "scanSpeed", "name": "scanSpeed", "setter": "setScanSpeed:"},
+      {"access": "public", "getter": "state", "name": "state", "setter": "setState:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "supportedSeekCapabilities", "name": "supportedSeekCapabilities"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "containsLiveStreamingContent", "name": "containsLiveStreamingContent"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "error", "name": "error"}
+     ],
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "seekToPosition:tolerance:"}
+     ],
+     "introduced": "27",
+     "name": "AVPlaybackUserInterfaceTimeControllable",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "timeRange", "name": "timeRange"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "playbackPosition", "name": "playbackPosition"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "segments", "name": "segments"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "currentSegment", "name": "currentSegment"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "seekableTimeRanges", "name": "seekableTimeRanges"}
+     ],
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "introduced": "27",
+     "name": "AVPlaybackUserInterfaceVolumeControllable",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "hasAudio", "name": "hasAudio"},
+      {"access": "public", "getter": "isMuted", "name": "muted", "setter": "setMuted:"},
+      {"access": "public", "getter": "volume", "name": "volume", "setter": "setVolume:"}
+     ],
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "addCoordinatedAnimations:completion:"}
+     ],
+     "name": "AVPlayerViewControllerAnimationCoordinator",
+     "protocols": [
+      "NSObject"
+     ],
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "12", "name": "playerViewController:willBeginFullScreenPresentationWithAnimationCoordinator:", "optional": true},
+      {"access": "public", "introduced": "12", "name": "playerViewController:willEndFullScreenPresentationWithAnimationCoordinator:", "optional": true},
+      {"access": "public", "introduced": "15", "name": "playerViewController:restoreUserInterfaceForFullScreenExitWithCompletionHandler:", "optional": true},
+      {"access": "public", "name": "playerViewControllerShouldDismiss:", "optional": true, "unavailable": true},
+      {"access": "public", "name": "playerViewControllerWillBeginDismissalTransition:", "optional": true, "unavailable": true},
+      {"access": "public", "name": "playerViewControllerDidEndDismissalTransition:", "optional": true, "unavailable": true},
+      {"access": "public", "introduced": "9", "name": "playerViewControllerWillStartPictureInPicture:", "optional": true},
+      {"access": "public", "introduced": "9", "name": "playerViewControllerDidStartPictureInPicture:", "optional": true},
+      {"access": "public", "introduced": "9", "name": "playerViewController:failedToStartPictureInPictureWithError:", "optional": true},
+      {"access": "public", "introduced": "9", "name": "playerViewControllerWillStopPictureInPicture:", "optional": true},
+      {"access": "public", "introduced": "9", "name": "playerViewControllerDidStopPictureInPicture:", "optional": true},
+      {"access": "public", "introduced": "9", "name": "playerViewControllerShouldAutomaticallyDismissAtPictureInPictureStart:", "optional": true},
+      {"access": "public", "introduced": "9", "name": "playerViewController:restoreUserInterfaceForPictureInPictureStopWithCompletionHandler:", "optional": true},
+      {"access": "public", "introduced": "16", "name": "playerViewController:willPresentInterstitialTimeRange:", "optional": true},
+      {"access": "public", "introduced": "16", "name": "playerViewController:didPresentInterstitialTimeRange:", "optional": true},
+      {"access": "public", "name": "playerViewController:willResumePlaybackAfterUserNavigatedFromTime:toTime:", "optional": true, "unavailable": true},
+      {"access": "public", "name": "playerViewController:timeToSeekAfterUserNavigatedFromTime:toTime:", "optional": true, "unavailable": true},
+      {"access": "public", "name": "playerViewController:didSelectMediaSelectionOption:inMediaSelectionGroup:", "optional": true, "unavailable": true},
+      {"access": "public", "name": "playerViewController:didSelectExternalSubtitleOptionLanguage:", "optional": true, "unavailable": true},
+      {"access": "public", "name": "skipToNextItemForPlayerViewController:", "optional": true, "unavailable": true},
+      {"access": "public", "name": "skipToPreviousItemForPlayerViewController:", "optional": true, "unavailable": true},
+      {"access": "public", "name": "playerViewController:skipToNextChannel:", "optional": true, "unavailable": true},
+      {"access": "public", "name": "playerViewController:skipToPreviousChannel:", "optional": true, "unavailable": true},
+      {"access": "public", "name": "nextChannelInterstitialViewControllerForPlayerViewController:", "optional": true, "unavailable": true},
+      {"access": "public", "name": "previousChannelInterstitialViewControllerForPlayerViewController:", "optional": true, "unavailable": true},
+      {"access": "public", "name": "playerViewController:shouldPresentContentProposal:", "optional": true, "unavailable": true},
+      {"access": "public", "name": "playerViewController:didAcceptContentProposal:", "optional": true, "unavailable": true},
+      {"access": "public", "name": "playerViewController:didRejectContentProposal:", "optional": true, "unavailable": true},
+      {"access": "public", "name": "playerViewController:willTransitionToVisibilityOfTransportBar:withAnimationCoordinator:", "optional": true, "unavailable": true}
+     ],
+     "introduced": "9",
+     "name": "AVPlayerViewControllerDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "routePickerViewWillBeginPresentingRoutes:", "optional": true},
+      {"access": "public", "name": "routePickerViewDidEndPresentingRoutes:", "optional": true}
+     ],
+     "introduced": "11",
+     "name": "AVRoutePickerViewDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    }
+   ],
+   "target": "arm64e.x1-apple-ios27",
+   "typedefs": [
+    {"access": "public", "name": "AVAudioSessionRouteSelection"},
+    {"access": "public", "name": "AVCaptureEventPhase"},
+    {"access": "public", "name": "AVDisplayDynamicRange"},
+    {"access": "public", "name": "AVInterfacePlaybackState"},
+    {"access": "public", "name": "AVInterfaceSeekCapabilities"},
+    {"access": "public", "name": "AVKitError"},
+    {"access": "public", "name": "AVLegibleMediaOptionsMenuContents"},
+    {"access": "public", "introduced": "26.4", "name": "AVLegibleMediaOptionsMenuState"},
+    {"access": "public", "name": "AVLegibleMediaOptionsMenuStateChangeReason"},
+    {"access": "public", "name": "AVLegibleMediaOptionsMenuType"},
+    {"access": "public", "name": "AVPlaybackUserInterfacePlaybackState"},
+    {"access": "public", "name": "AVPlaybackUserInterfaceSeekCapabilities"},
+    {"access": "public", "name": "AVPlaybackUserInterfaceTimelineSegmentType"},
     {"access": "public", "name": "AVPlayerViewControllerSkippingBehavior"},
     {"access": "public", "name": "AVRoutePickerViewButtonState"},
     {"access": "public", "name": "AVRoutePickerViewButtonStyle"},
@@ -616,6 +2294,52 @@
     {"access": "public", "linkage": "exported", "name": "_$s5AVKit18AVMultiviewManagerCN", "unavailable": true},
     {"access": "public", "linkage": "exported", "name": "_$s5AVKit18AVMultiviewManagerCfD", "unavailable": true},
     {"access": "public", "linkage": "exported", "name": "_$s5AVKit18AVMultiviewManagerCfd", "unavailable": true},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit19AVInterfaceMetadataV11isAudioOnly16presentationSize5title8subtitle27albumArtworkRepresentationsACSb_So6CGSizeVSSSgAKSaySo0b5AlbumL0CGtcfC"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit19AVInterfaceMetadataV11isAudioOnlySbvM"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit19AVInterfaceMetadataV11isAudioOnlySbvg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit19AVInterfaceMetadataV11isAudioOnlySbvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit19AVInterfaceMetadataV11isAudioOnlySbvs"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit19AVInterfaceMetadataV16presentationSizeSo6CGSizeVvM"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit19AVInterfaceMetadataV16presentationSizeSo6CGSizeVvg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit19AVInterfaceMetadataV16presentationSizeSo6CGSizeVvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit19AVInterfaceMetadataV16presentationSizeSo6CGSizeVvs"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit19AVInterfaceMetadataV27albumArtworkRepresentationsSaySo0b5AlbumE0CGvM"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit19AVInterfaceMetadataV27albumArtworkRepresentationsSaySo0b5AlbumE0CGvg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit19AVInterfaceMetadataV27albumArtworkRepresentationsSaySo0b5AlbumE0CGvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit19AVInterfaceMetadataV27albumArtworkRepresentationsSaySo0b5AlbumE0CGvs"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit19AVInterfaceMetadataV2eeoiySbAC_ACtFZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit19AVInterfaceMetadataV4hash4intoys6HasherVz_tF"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit19AVInterfaceMetadataV5titleSSSgvM"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit19AVInterfaceMetadataV5titleSSSgvg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit19AVInterfaceMetadataV5titleSSSgvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit19AVInterfaceMetadataV5titleSSSgvs"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit19AVInterfaceMetadataV8subtitleSSSgvM"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit19AVInterfaceMetadataV8subtitleSSSgvg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit19AVInterfaceMetadataV8subtitleSSSgvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit19AVInterfaceMetadataV8subtitleSSSgvs"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit19AVInterfaceMetadataV9MediaModeO2eeoiySbAE_AEtFZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit19AVInterfaceMetadataV9MediaModeO4hash4intoys6HasherVz_tF"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit19AVInterfaceMetadataV9MediaModeO5videoyAESo6CGSizeV_tcAEmFWC"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit19AVInterfaceMetadataV9MediaModeO9audioOnlyyA2EmFWC"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit19AVInterfaceMetadataV9MediaModeO9hashValueSivg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit19AVInterfaceMetadataV9MediaModeO9hashValueSivpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit19AVInterfaceMetadataV9MediaModeOMa"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit19AVInterfaceMetadataV9MediaModeOMn"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit19AVInterfaceMetadataV9MediaModeON"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit19AVInterfaceMetadataV9MediaModeOSHAAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit19AVInterfaceMetadataV9MediaModeOSQAAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit19AVInterfaceMetadataV9hashValueSivg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit19AVInterfaceMetadataV9hashValueSivpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit19AVInterfaceMetadataV9mediaMode5title8subtitle27albumArtworkRepresentationsA2C05MediaE0O_SSSgAJSaySo0b5AlbumI0CGtcfC"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit19AVInterfaceMetadataV9mediaModeAC05MediaE0OvM"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit19AVInterfaceMetadataV9mediaModeAC05MediaE0Ovg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit19AVInterfaceMetadataV9mediaModeAC05MediaE0OvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit19AVInterfaceMetadataV9mediaModeAC05MediaE0Ovs"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit19AVInterfaceMetadataVMa"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit19AVInterfaceMetadataVMn"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit19AVInterfaceMetadataVN"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit19AVInterfaceMetadataVSHAAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit19AVInterfaceMetadataVSQAAMc"},
     {"access": "public", "linkage": "exported", "name": "_$s5AVKit22AVExperienceControllerC10ExperienceO2eeoiySbAE_AEtFZ", "unavailable": true},
     {"access": "public", "linkage": "exported", "name": "_$s5AVKit22AVExperienceControllerC10ExperienceO4hash4intoys6HasherVz_tF", "unavailable": true},
     {"access": "public", "linkage": "exported", "name": "_$s5AVKit22AVExperienceControllerC10ExperienceO8embeddedyA2EmFWC", "unavailable": true},
@@ -712,6 +2436,104 @@
     {"access": "public", "linkage": "exported", "name": "_$s5AVKit22AVExperienceControllerCN", "unavailable": true},
     {"access": "public", "linkage": "exported", "name": "_$s5AVKit22AVExperienceControllerCfD", "unavailable": true},
     {"access": "public", "linkage": "exported", "name": "_$s5AVKit22AVExperienceControllerCfd", "unavailable": true},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit23AVInterfaceControllableMp"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit23AVInterfaceControllablePAA0B17MetadataProvidingTb"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit23AVInterfaceControllablePAA0b14MediaSelectionC0Tb"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit23AVInterfaceControllablePAA0b4TimeC0Tb"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit23AVInterfaceControllablePAA0b6VolumeC0Tb"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit23AVInterfaceControllablePAA0b8PlaybackC0Tb"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit23AVInterfaceControllableTL"},
+    {"access": "public", "linkage": "exported", "name": "_$s5AVKit25AVInterfaceVideoProvidingMp", "unavailable": true},
+    {"access": "public", "linkage": "exported", "name": "_$s5AVKit25AVInterfaceVideoProvidingP10videoLayerSo7CALayerCSgvgTj", "unavailable": true},
+    {"access": "public", "linkage": "exported", "name": "_$s5AVKit25AVInterfaceVideoProvidingP10videoLayerSo7CALayerCSgvgTq", "unavailable": true},
+    {"access": "public", "linkage": "exported", "name": "_$s5AVKit25AVInterfaceVideoProvidingP11Observation10ObservableTb", "unavailable": true},
+    {"access": "public", "linkage": "exported", "name": "_$s5AVKit25AVInterfaceVideoProvidingP12captionLayerSo7CALayerCSgvgTj", "unavailable": true},
+    {"access": "public", "linkage": "exported", "name": "_$s5AVKit25AVInterfaceVideoProvidingP12captionLayerSo7CALayerCSgvgTq", "unavailable": true},
+    {"access": "public", "linkage": "exported", "name": "_$s5AVKit25AVInterfaceVideoProvidingP13captionInsetsSo06UIEdgeF0VvMTj", "unavailable": true},
+    {"access": "public", "linkage": "exported", "name": "_$s5AVKit25AVInterfaceVideoProvidingP13captionInsetsSo06UIEdgeF0VvMTq", "unavailable": true},
+    {"access": "public", "linkage": "exported", "name": "_$s5AVKit25AVInterfaceVideoProvidingP13captionInsetsSo06UIEdgeF0VvgTj", "unavailable": true},
+    {"access": "public", "linkage": "exported", "name": "_$s5AVKit25AVInterfaceVideoProvidingP13captionInsetsSo06UIEdgeF0VvgTq", "unavailable": true},
+    {"access": "public", "linkage": "exported", "name": "_$s5AVKit25AVInterfaceVideoProvidingP13captionInsetsSo06UIEdgeF0VvsTj", "unavailable": true},
+    {"access": "public", "linkage": "exported", "name": "_$s5AVKit25AVInterfaceVideoProvidingP13captionInsetsSo06UIEdgeF0VvsTq", "unavailable": true},
+    {"access": "public", "linkage": "exported", "name": "_$s5AVKit25AVInterfaceVideoProvidingP9videoSizeSo6CGSizeVvgTj", "unavailable": true},
+    {"access": "public", "linkage": "exported", "name": "_$s5AVKit25AVInterfaceVideoProvidingP9videoSizeSo6CGSizeVvgTq", "unavailable": true},
+    {"access": "public", "linkage": "exported", "name": "_$s5AVKit25AVInterfaceVideoProvidingTL", "unavailable": true},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit27AVInterfaceTimeControllableMp"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit27AVInterfaceTimeControllableP08seekableC6RangesSaySo11CMTimeRangeaGSgvgTj"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit27AVInterfaceTimeControllableP08seekableC6RangesSaySo11CMTimeRangeaGSgvgTq"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit27AVInterfaceTimeControllableP11Observation10ObservableTb"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit27AVInterfaceTimeControllableP14currentSegmentSo0b8TimelineF0CvgTj"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit27AVInterfaceTimeControllableP14currentSegmentSo0b8TimelineF0CvgTq"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit27AVInterfaceTimeControllableP23currentPlaybackPositionSo6CMTimeavMTj"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit27AVInterfaceTimeControllableP23currentPlaybackPositionSo6CMTimeavMTq"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit27AVInterfaceTimeControllableP23currentPlaybackPositionSo6CMTimeavgTj"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit27AVInterfaceTimeControllableP23currentPlaybackPositionSo6CMTimeavgTq"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit27AVInterfaceTimeControllableP23currentPlaybackPositionSo6CMTimeavsTj"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit27AVInterfaceTimeControllableP23currentPlaybackPositionSo6CMTimeavsTq"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit27AVInterfaceTimeControllableP8segmentsSaySo0B15TimelineSegmentCGvgTj"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit27AVInterfaceTimeControllableP8segmentsSaySo0B15TimelineSegmentCGvgTq"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit27AVInterfaceTimeControllableP9timeRangeSo06CMTimeF0avgTj"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit27AVInterfaceTimeControllableP9timeRangeSo06CMTimeF0avgTq"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit27AVInterfaceTimeControllableTL"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit28AVInterfaceMetadataProvidingMp"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit28AVInterfaceMetadataProvidingP11Observation10ObservableTb"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit28AVInterfaceMetadataProvidingP8metadataAA0bC0VvgTj"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit28AVInterfaceMetadataProvidingP8metadataAA0bC0VvgTq"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit28AVInterfaceMetadataProvidingTL"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit29AVInterfaceVolumeControllableMp"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit29AVInterfaceVolumeControllableP11Observation10ObservableTb"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit29AVInterfaceVolumeControllableP6volumeSfvMTj"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit29AVInterfaceVolumeControllableP6volumeSfvMTq"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit29AVInterfaceVolumeControllableP6volumeSfvgTj"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit29AVInterfaceVolumeControllableP6volumeSfvgTq"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit29AVInterfaceVolumeControllableP6volumeSfvsTj"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit29AVInterfaceVolumeControllableP6volumeSfvsTq"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit29AVInterfaceVolumeControllableP7isMutedSbvMTj"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit29AVInterfaceVolumeControllableP7isMutedSbvMTq"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit29AVInterfaceVolumeControllableP7isMutedSbvgTj"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit29AVInterfaceVolumeControllableP7isMutedSbvgTq"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit29AVInterfaceVolumeControllableP7isMutedSbvsTj"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit29AVInterfaceVolumeControllableP7isMutedSbvsTq"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit29AVInterfaceVolumeControllableP8hasAudioSbvgTj"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit29AVInterfaceVolumeControllableP8hasAudioSbvgTq"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit29AVInterfaceVolumeControllableTL"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit31AVInterfacePlaybackControllableMp"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit31AVInterfacePlaybackControllableP11Observation10ObservableTb"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit31AVInterfacePlaybackControllableP11isBufferingSbvgTj"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit31AVInterfacePlaybackControllableP11isBufferingSbvgTq"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit31AVInterfacePlaybackControllableP13playbackErrors0F0_pSgvgTj"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit31AVInterfacePlaybackControllableP13playbackErrors0F0_pSgvgTq"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit31AVInterfacePlaybackControllableP13playbackSpeedSfvMTj"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit31AVInterfacePlaybackControllableP13playbackSpeedSfvMTq"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit31AVInterfacePlaybackControllableP13playbackSpeedSfvgTj"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit31AVInterfacePlaybackControllableP13playbackSpeedSfvgTq"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit31AVInterfacePlaybackControllableP13playbackSpeedSfvsTj"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit31AVInterfacePlaybackControllableP13playbackSpeedSfvsTq"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit31AVInterfacePlaybackControllableP25supportedSeekCapabilitiesSo0bfG0VvgTj"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit31AVInterfacePlaybackControllableP25supportedSeekCapabilitiesSo0bfG0VvgTq"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit31AVInterfacePlaybackControllableP28containsLiveStreamingContentSbvgTj"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit31AVInterfacePlaybackControllableP28containsLiveStreamingContentSbvgTq"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit31AVInterfacePlaybackControllableP5stateSo0bC5StateVvMTj"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit31AVInterfacePlaybackControllableP5stateSo0bC5StateVvMTq"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit31AVInterfacePlaybackControllableP5stateSo0bC5StateVvgTj"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit31AVInterfacePlaybackControllableP5stateSo0bC5StateVvgTq"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit31AVInterfacePlaybackControllableP5stateSo0bC5StateVvsTj"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit31AVInterfacePlaybackControllableP5stateSo0bC5StateVvsTq"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit31AVInterfacePlaybackControllableP7isReadySbvgTj"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit31AVInterfacePlaybackControllableP7isReadySbvgTq"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit31AVInterfacePlaybackControllableP9isPlayingSbvMTj"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit31AVInterfacePlaybackControllableP9isPlayingSbvMTq"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit31AVInterfacePlaybackControllableP9isPlayingSbvgTj"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit31AVInterfacePlaybackControllableP9isPlayingSbvgTq"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit31AVInterfacePlaybackControllableP9isPlayingSbvsTj"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit31AVInterfacePlaybackControllableP9isPlayingSbvsTq"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit31AVInterfacePlaybackControllableP9scanSpeedSfvMTj"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit31AVInterfacePlaybackControllableP9scanSpeedSfvMTq"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit31AVInterfacePlaybackControllableP9scanSpeedSfvgTj"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit31AVInterfacePlaybackControllableP9scanSpeedSfvgTq"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit31AVInterfacePlaybackControllableP9scanSpeedSfvsTj"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit31AVInterfacePlaybackControllableP9scanSpeedSfvsTq"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit31AVInterfacePlaybackControllableTL"},
     {"access": "public", "linkage": "exported", "name": "_$s5AVKit32AVContentSelectionViewControllerC5coderACSgSo7NSCoderC_tcfC", "unavailable": true},
     {"access": "public", "linkage": "exported", "name": "_$s5AVKit32AVContentSelectionViewControllerC5coderACSgSo7NSCoderC_tcfc", "unavailable": true},
     {"access": "public", "linkage": "exported", "name": "_$s5AVKit32AVContentSelectionViewControllerC7nibName6bundleACSSSg_So8NSBundleCSgtcfC", "unavailable": true},
@@ -721,8 +2543,210 @@
     {"access": "public", "linkage": "exported", "name": "_$s5AVKit32AVContentSelectionViewControllerCMo", "unavailable": true},
     {"access": "public", "linkage": "exported", "name": "_$s5AVKit32AVContentSelectionViewControllerCN", "unavailable": true},
     {"access": "public", "linkage": "exported", "name": "_$s5AVKit32AVContentSelectionViewControllerCfD", "unavailable": true},
+    {"access": "public", "linkage": "exported", "name": "_$s5AVKit32AVInterfaceThumbnailControllableMp", "unavailable": true},
+    {"access": "public", "linkage": "exported", "name": "_$s5AVKit32AVInterfaceThumbnailControllableP11Observation10ObservableTb", "unavailable": true},
+    {"access": "public", "linkage": "exported", "name": "_$s5AVKit32AVInterfaceThumbnailControllableTL", "unavailable": true},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit35AVPlaybackUserInterfaceControllableMp"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit35AVPlaybackUserInterfaceControllablePAA0bcD17MetadataProvidingTb"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit35AVPlaybackUserInterfaceControllablePAA0bcd14MediaSelectionE0Tb"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit35AVPlaybackUserInterfaceControllablePAA0bcd4TimeE0Tb"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit35AVPlaybackUserInterfaceControllablePAA0bcd6VolumeE0Tb"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit35AVPlaybackUserInterfaceControllablePAA0bcd8PlaybackE0Tb"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit35AVPlaybackUserInterfaceControllableTL"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit37AVInterfaceMediaSelectionControllableMp"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit37AVInterfaceMediaSelectionControllableP11Observation10ObservableTb"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit37AVInterfaceMediaSelectionControllableP12audioOptionsSaySo0bcD12OptionSourceCGvgTj"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit37AVInterfaceMediaSelectionControllableP12audioOptionsSaySo0bcD12OptionSourceCGvgTq"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit37AVInterfaceMediaSelectionControllableP14legibleOptionsSaySo0bcD12OptionSourceCGvgTj"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit37AVInterfaceMediaSelectionControllableP14legibleOptionsSaySo0bcD12OptionSourceCGvgTq"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit37AVInterfaceMediaSelectionControllableP18currentAudioOptionSo0bcdH6SourceCSgvMTj"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit37AVInterfaceMediaSelectionControllableP18currentAudioOptionSo0bcdH6SourceCSgvMTq"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit37AVInterfaceMediaSelectionControllableP18currentAudioOptionSo0bcdH6SourceCSgvgTj"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit37AVInterfaceMediaSelectionControllableP18currentAudioOptionSo0bcdH6SourceCSgvgTq"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit37AVInterfaceMediaSelectionControllableP18currentAudioOptionSo0bcdH6SourceCSgvsTj"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit37AVInterfaceMediaSelectionControllableP18currentAudioOptionSo0bcdH6SourceCSgvsTq"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit37AVInterfaceMediaSelectionControllableP20currentLegibleOptionSo0bcdH6SourceCSgvMTj"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit37AVInterfaceMediaSelectionControllableP20currentLegibleOptionSo0bcdH6SourceCSgvMTq"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit37AVInterfaceMediaSelectionControllableP20currentLegibleOptionSo0bcdH6SourceCSgvgTj"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit37AVInterfaceMediaSelectionControllableP20currentLegibleOptionSo0bcdH6SourceCSgvgTq"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit37AVInterfaceMediaSelectionControllableP20currentLegibleOptionSo0bcdH6SourceCSgvsTj"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit37AVInterfaceMediaSelectionControllableP20currentLegibleOptionSo0bcdH6SourceCSgvsTq"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit37AVInterfaceMediaSelectionControllableTL"},
+    {"access": "public", "linkage": "exported", "name": "_$s5AVKit37AVPlaybackUserInterfaceVideoProvidingMp", "unavailable": true},
+    {"access": "public", "linkage": "exported", "name": "_$s5AVKit37AVPlaybackUserInterfaceVideoProvidingP10videoLayerSo7CALayerCSgvgTj", "unavailable": true},
+    {"access": "public", "linkage": "exported", "name": "_$s5AVKit37AVPlaybackUserInterfaceVideoProvidingP10videoLayerSo7CALayerCSgvgTq", "unavailable": true},
+    {"access": "public", "linkage": "exported", "name": "_$s5AVKit37AVPlaybackUserInterfaceVideoProvidingP11Observation10ObservableTb", "unavailable": true},
+    {"access": "public", "linkage": "exported", "name": "_$s5AVKit37AVPlaybackUserInterfaceVideoProvidingP12captionLayerSo7CALayerCSgvgTj", "unavailable": true},
+    {"access": "public", "linkage": "exported", "name": "_$s5AVKit37AVPlaybackUserInterfaceVideoProvidingP12captionLayerSo7CALayerCSgvgTq", "unavailable": true},
+    {"access": "public", "linkage": "exported", "name": "_$s5AVKit37AVPlaybackUserInterfaceVideoProvidingP13captionInsetsSo06UIEdgeH0VvMTj", "unavailable": true},
+    {"access": "public", "linkage": "exported", "name": "_$s5AVKit37AVPlaybackUserInterfaceVideoProvidingP13captionInsetsSo06UIEdgeH0VvMTq", "unavailable": true},
+    {"access": "public", "linkage": "exported", "name": "_$s5AVKit37AVPlaybackUserInterfaceVideoProvidingP13captionInsetsSo06UIEdgeH0VvgTj", "unavailable": true},
+    {"access": "public", "linkage": "exported", "name": "_$s5AVKit37AVPlaybackUserInterfaceVideoProvidingP13captionInsetsSo06UIEdgeH0VvgTq", "unavailable": true},
+    {"access": "public", "linkage": "exported", "name": "_$s5AVKit37AVPlaybackUserInterfaceVideoProvidingP13captionInsetsSo06UIEdgeH0VvsTj", "unavailable": true},
+    {"access": "public", "linkage": "exported", "name": "_$s5AVKit37AVPlaybackUserInterfaceVideoProvidingP13captionInsetsSo06UIEdgeH0VvsTq", "unavailable": true},
+    {"access": "public", "linkage": "exported", "name": "_$s5AVKit37AVPlaybackUserInterfaceVideoProvidingP9videoSizeSo6CGSizeVvgTj", "unavailable": true},
+    {"access": "public", "linkage": "exported", "name": "_$s5AVKit37AVPlaybackUserInterfaceVideoProvidingP9videoSizeSo6CGSizeVvgTq", "unavailable": true},
+    {"access": "public", "linkage": "exported", "name": "_$s5AVKit37AVPlaybackUserInterfaceVideoProvidingTL", "unavailable": true},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit38AVPlaybackUserInterfaceContentMetadataV15VideoPropertiesV16presentationSizeAESo6CGSizeV_tcfC"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit38AVPlaybackUserInterfaceContentMetadataV15VideoPropertiesV16presentationSizeSo6CGSizeVvM"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit38AVPlaybackUserInterfaceContentMetadataV15VideoPropertiesV16presentationSizeSo6CGSizeVvg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit38AVPlaybackUserInterfaceContentMetadataV15VideoPropertiesV16presentationSizeSo6CGSizeVvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit38AVPlaybackUserInterfaceContentMetadataV15VideoPropertiesV16presentationSizeSo6CGSizeVvs"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit38AVPlaybackUserInterfaceContentMetadataV15VideoPropertiesV2eeoiySbAE_AEtFZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit38AVPlaybackUserInterfaceContentMetadataV15VideoPropertiesV4hash4intoys6HasherVz_tF"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit38AVPlaybackUserInterfaceContentMetadataV15VideoPropertiesV9hashValueSivg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit38AVPlaybackUserInterfaceContentMetadataV15VideoPropertiesV9hashValueSivpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit38AVPlaybackUserInterfaceContentMetadataV15VideoPropertiesVMa"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit38AVPlaybackUserInterfaceContentMetadataV15VideoPropertiesVMn"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit38AVPlaybackUserInterfaceContentMetadataV15VideoPropertiesVN"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit38AVPlaybackUserInterfaceContentMetadataV15VideoPropertiesVSHAAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit38AVPlaybackUserInterfaceContentMetadataV15VideoPropertiesVSQAAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit38AVPlaybackUserInterfaceContentMetadataV15videoProperties5title8subtitle22artworkRepresentationsA2C05VideoH0VSg_SSSgAKSaySo0bcdE7ArtworkCGtcfC"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit38AVPlaybackUserInterfaceContentMetadataV15videoPropertiesAC05VideoH0VSgvM"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit38AVPlaybackUserInterfaceContentMetadataV15videoPropertiesAC05VideoH0VSgvg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit38AVPlaybackUserInterfaceContentMetadataV15videoPropertiesAC05VideoH0VSgvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit38AVPlaybackUserInterfaceContentMetadataV15videoPropertiesAC05VideoH0VSgvs"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit38AVPlaybackUserInterfaceContentMetadataV22artworkRepresentationsSaySo0bcdE7ArtworkCGvM"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit38AVPlaybackUserInterfaceContentMetadataV22artworkRepresentationsSaySo0bcdE7ArtworkCGvg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit38AVPlaybackUserInterfaceContentMetadataV22artworkRepresentationsSaySo0bcdE7ArtworkCGvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit38AVPlaybackUserInterfaceContentMetadataV22artworkRepresentationsSaySo0bcdE7ArtworkCGvs"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit38AVPlaybackUserInterfaceContentMetadataV2eeoiySbAC_ACtFZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit38AVPlaybackUserInterfaceContentMetadataV4hash4intoys6HasherVz_tF"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit38AVPlaybackUserInterfaceContentMetadataV5titleSSSgvM"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit38AVPlaybackUserInterfaceContentMetadataV5titleSSSgvg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit38AVPlaybackUserInterfaceContentMetadataV5titleSSSgvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit38AVPlaybackUserInterfaceContentMetadataV5titleSSSgvs"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit38AVPlaybackUserInterfaceContentMetadataV8subtitleSSSgvM"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit38AVPlaybackUserInterfaceContentMetadataV8subtitleSSSgvg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit38AVPlaybackUserInterfaceContentMetadataV8subtitleSSSgvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit38AVPlaybackUserInterfaceContentMetadataV8subtitleSSSgvs"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit38AVPlaybackUserInterfaceContentMetadataV9hashValueSivg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit38AVPlaybackUserInterfaceContentMetadataV9hashValueSivpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit38AVPlaybackUserInterfaceContentMetadataVMa"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit38AVPlaybackUserInterfaceContentMetadataVMn"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit38AVPlaybackUserInterfaceContentMetadataVN"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit38AVPlaybackUserInterfaceContentMetadataVSHAAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit38AVPlaybackUserInterfaceContentMetadataVSQAAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit39AVPlaybackUserInterfaceTimeControllableMp"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit39AVPlaybackUserInterfaceTimeControllableP08seekableE6RangesSaySo11CMTimeRangeaGSgvgTj"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit39AVPlaybackUserInterfaceTimeControllableP08seekableE6RangesSaySo11CMTimeRangeaGSgvgTq"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit39AVPlaybackUserInterfaceTimeControllableP11Observation10ObservableTb"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit39AVPlaybackUserInterfaceTimeControllableP14currentSegmentSo0bcd8TimelineH0CvgTj"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit39AVPlaybackUserInterfaceTimeControllableP14currentSegmentSo0bcd8TimelineH0CvgTq"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit39AVPlaybackUserInterfaceTimeControllableP16playbackPositionSo0bcd8PlaybackH0CvgTj"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit39AVPlaybackUserInterfaceTimeControllableP16playbackPositionSo0bcd8PlaybackH0CvgTq"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit39AVPlaybackUserInterfaceTimeControllableP4seek2to9toleranceySo6CMTimea_AHtFTj"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit39AVPlaybackUserInterfaceTimeControllableP4seek2to9toleranceySo6CMTimea_AHtFTq"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit39AVPlaybackUserInterfaceTimeControllableP8segmentsSaySo0bcD15TimelineSegmentCGvgTj"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit39AVPlaybackUserInterfaceTimeControllableP8segmentsSaySo0bcD15TimelineSegmentCGvgTq"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit39AVPlaybackUserInterfaceTimeControllableP9timeRangeSo06CMTimeH0avgTj"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit39AVPlaybackUserInterfaceTimeControllableP9timeRangeSo06CMTimeH0avgTq"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit39AVPlaybackUserInterfaceTimeControllableTL"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit40AVPlaybackUserInterfaceMetadataProvidingMp"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit40AVPlaybackUserInterfaceMetadataProvidingP11Observation10ObservableTb"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit40AVPlaybackUserInterfaceMetadataProvidingP8metadataAA0bcd7ContentE0VvgTj"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit40AVPlaybackUserInterfaceMetadataProvidingP8metadataAA0bcd7ContentE0VvgTq"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit40AVPlaybackUserInterfaceMetadataProvidingTL"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit41AVPlaybackUserInterfaceVolumeControllableMp"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit41AVPlaybackUserInterfaceVolumeControllableP11Observation10ObservableTb"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit41AVPlaybackUserInterfaceVolumeControllableP6volumeSfvMTj"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit41AVPlaybackUserInterfaceVolumeControllableP6volumeSfvMTq"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit41AVPlaybackUserInterfaceVolumeControllableP6volumeSfvgTj"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit41AVPlaybackUserInterfaceVolumeControllableP6volumeSfvgTq"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit41AVPlaybackUserInterfaceVolumeControllableP6volumeSfvsTj"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit41AVPlaybackUserInterfaceVolumeControllableP6volumeSfvsTq"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit41AVPlaybackUserInterfaceVolumeControllableP7isMutedSbvMTj"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit41AVPlaybackUserInterfaceVolumeControllableP7isMutedSbvMTq"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit41AVPlaybackUserInterfaceVolumeControllableP7isMutedSbvgTj"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit41AVPlaybackUserInterfaceVolumeControllableP7isMutedSbvgTq"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit41AVPlaybackUserInterfaceVolumeControllableP7isMutedSbvsTj"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit41AVPlaybackUserInterfaceVolumeControllableP7isMutedSbvsTq"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit41AVPlaybackUserInterfaceVolumeControllableP8hasAudioSbvgTj"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit41AVPlaybackUserInterfaceVolumeControllableP8hasAudioSbvgTq"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit41AVPlaybackUserInterfaceVolumeControllableTL"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit43AVPlaybackUserInterfacePlaybackControllableMp"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit43AVPlaybackUserInterfacePlaybackControllableP11Observation10ObservableTb"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit43AVPlaybackUserInterfacePlaybackControllableP11isBufferingSbvgTj"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit43AVPlaybackUserInterfacePlaybackControllableP11isBufferingSbvgTq"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit43AVPlaybackUserInterfacePlaybackControllableP13playbackSpeedSfvMTj"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit43AVPlaybackUserInterfacePlaybackControllableP13playbackSpeedSfvMTq"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit43AVPlaybackUserInterfacePlaybackControllableP13playbackSpeedSfvgTj"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit43AVPlaybackUserInterfacePlaybackControllableP13playbackSpeedSfvgTq"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit43AVPlaybackUserInterfacePlaybackControllableP13playbackSpeedSfvsTj"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit43AVPlaybackUserInterfacePlaybackControllableP13playbackSpeedSfvsTq"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit43AVPlaybackUserInterfacePlaybackControllableP25supportedSeekCapabilitiesSo0bcdhI0VvgTj"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit43AVPlaybackUserInterfacePlaybackControllableP25supportedSeekCapabilitiesSo0bcdhI0VvgTq"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit43AVPlaybackUserInterfacePlaybackControllableP28containsLiveStreamingContentSbvgTj"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit43AVPlaybackUserInterfacePlaybackControllableP28containsLiveStreamingContentSbvgTq"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit43AVPlaybackUserInterfacePlaybackControllableP5errors5Error_pSgvgTj"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit43AVPlaybackUserInterfacePlaybackControllableP5errors5Error_pSgvgTq"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit43AVPlaybackUserInterfacePlaybackControllableP5stateSo0bcdE5StateVvMTj"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit43AVPlaybackUserInterfacePlaybackControllableP5stateSo0bcdE5StateVvMTq"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit43AVPlaybackUserInterfacePlaybackControllableP5stateSo0bcdE5StateVvgTj"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit43AVPlaybackUserInterfacePlaybackControllableP5stateSo0bcdE5StateVvgTq"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit43AVPlaybackUserInterfacePlaybackControllableP5stateSo0bcdE5StateVvsTj"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit43AVPlaybackUserInterfacePlaybackControllableP5stateSo0bcdE5StateVvsTq"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit43AVPlaybackUserInterfacePlaybackControllableP7isReadySbvgTj"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit43AVPlaybackUserInterfacePlaybackControllableP7isReadySbvgTq"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit43AVPlaybackUserInterfacePlaybackControllableP9isPlayingSbvMTj"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit43AVPlaybackUserInterfacePlaybackControllableP9isPlayingSbvMTq"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit43AVPlaybackUserInterfacePlaybackControllableP9isPlayingSbvgTj"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit43AVPlaybackUserInterfacePlaybackControllableP9isPlayingSbvgTq"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit43AVPlaybackUserInterfacePlaybackControllableP9isPlayingSbvsTj"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit43AVPlaybackUserInterfacePlaybackControllableP9isPlayingSbvsTq"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit43AVPlaybackUserInterfacePlaybackControllableP9scanSpeedSfvMTj"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit43AVPlaybackUserInterfacePlaybackControllableP9scanSpeedSfvMTq"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit43AVPlaybackUserInterfacePlaybackControllableP9scanSpeedSfvgTj"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit43AVPlaybackUserInterfacePlaybackControllableP9scanSpeedSfvgTq"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit43AVPlaybackUserInterfacePlaybackControllableP9scanSpeedSfvsTj"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit43AVPlaybackUserInterfacePlaybackControllableP9scanSpeedSfvsTq"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit43AVPlaybackUserInterfacePlaybackControllableTL"},
+    {"access": "public", "linkage": "exported", "name": "_$s5AVKit44AVPlaybackUserInterfaceThumbnailControllableMp", "unavailable": true},
+    {"access": "public", "linkage": "exported", "name": "_$s5AVKit44AVPlaybackUserInterfaceThumbnailControllableP11Observation10ObservableTb", "unavailable": true},
+    {"access": "public", "linkage": "exported", "name": "_$s5AVKit44AVPlaybackUserInterfaceThumbnailControllableTL", "unavailable": true},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit49AVPlaybackUserInterfaceMediaSelectionControllableMp"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit49AVPlaybackUserInterfaceMediaSelectionControllableP11Observation10ObservableTb"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit49AVPlaybackUserInterfaceMediaSelectionControllableP12audioOptionsSaySo0bcdeF6OptionCGvgTj"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit49AVPlaybackUserInterfaceMediaSelectionControllableP12audioOptionsSaySo0bcdeF6OptionCGvgTq"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit49AVPlaybackUserInterfaceMediaSelectionControllableP14legibleOptionsSaySo0bcdeF6OptionCGvgTj"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit49AVPlaybackUserInterfaceMediaSelectionControllableP14legibleOptionsSaySo0bcdeF6OptionCGvgTq"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit49AVPlaybackUserInterfaceMediaSelectionControllableP18currentAudioOptionSo0bcdefJ0CSgvMTj"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit49AVPlaybackUserInterfaceMediaSelectionControllableP18currentAudioOptionSo0bcdefJ0CSgvMTq"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit49AVPlaybackUserInterfaceMediaSelectionControllableP18currentAudioOptionSo0bcdefJ0CSgvgTj"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit49AVPlaybackUserInterfaceMediaSelectionControllableP18currentAudioOptionSo0bcdefJ0CSgvgTq"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit49AVPlaybackUserInterfaceMediaSelectionControllableP18currentAudioOptionSo0bcdefJ0CSgvsTj"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit49AVPlaybackUserInterfaceMediaSelectionControllableP18currentAudioOptionSo0bcdefJ0CSgvsTq"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit49AVPlaybackUserInterfaceMediaSelectionControllableP20currentLegibleOptionSo0bcdefJ0CSgvMTj"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit49AVPlaybackUserInterfaceMediaSelectionControllableP20currentLegibleOptionSo0bcdefJ0CSgvMTq"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit49AVPlaybackUserInterfaceMediaSelectionControllableP20currentLegibleOptionSo0bcdefJ0CSgvgTj"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit49AVPlaybackUserInterfaceMediaSelectionControllableP20currentLegibleOptionSo0bcdefJ0CSgvgTq"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit49AVPlaybackUserInterfaceMediaSelectionControllableP20currentLegibleOptionSo0bcdefJ0CSgvsTj"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit49AVPlaybackUserInterfaceMediaSelectionControllableP20currentLegibleOptionSo0bcdefJ0CSgvsTq"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit49AVPlaybackUserInterfaceMediaSelectionControllableP23audioDescriptionOptionsSaySo0bcdeF6OptionCGvgTj"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit49AVPlaybackUserInterfaceMediaSelectionControllableP23audioDescriptionOptionsSaySo0bcdeF6OptionCGvgTq"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit49AVPlaybackUserInterfaceMediaSelectionControllableP29currentAudioDescriptionOptionSo0bcdefK0CSgvMTj"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit49AVPlaybackUserInterfaceMediaSelectionControllableP29currentAudioDescriptionOptionSo0bcdefK0CSgvMTq"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit49AVPlaybackUserInterfaceMediaSelectionControllableP29currentAudioDescriptionOptionSo0bcdefK0CSgvgTj"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit49AVPlaybackUserInterfaceMediaSelectionControllableP29currentAudioDescriptionOptionSo0bcdefK0CSgvgTq"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit49AVPlaybackUserInterfaceMediaSelectionControllableP29currentAudioDescriptionOptionSo0bcdefK0CSgvsTj"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit49AVPlaybackUserInterfaceMediaSelectionControllableP29currentAudioDescriptionOptionSo0bcdefK0CSgvsTq"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5AVKit49AVPlaybackUserInterfaceMediaSelectionControllableTL"},
     {"access": "public", "linkage": "exported", "name": "_$sSo22AVPlayerViewControllerC5AVKitE010experienceC0AC012AVExperienceC0Cvg", "unavailable": true},
-    {"access": "public", "linkage": "exported", "name": "_$sSo22AVPlayerViewControllerC5AVKitE010experienceC0AC012AVExperienceC0CvpMV", "unavailable": true}
+    {"access": "public", "linkage": "exported", "name": "_$sSo22AVPlayerViewControllerC5AVKitE010experienceC0AC012AVExperienceC0CvpMV", "unavailable": true},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$sSo37AVInterfaceMediaSelectionOptionSourceC5AVKitE11displayName10identifier19extendedLanguageTagABSS_S2SSgtcfC"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$sSo37AVInterfaceMediaSelectionOptionSourceC5AVKitE11displayName10identifier19extendedLanguageTagABSS_S2SSgtcfc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$sSo37AVInterfaceMediaSelectionOptionSourceC5AVKitE11displayName10identifier23extendedLanguageTagTempABSS_SS10Foundation6LocaleV0K0VSgtcfC"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$sSo37AVInterfaceMediaSelectionOptionSourceC5AVKitE11displayName10identifier23extendedLanguageTagTempABSS_SS10Foundation6LocaleV0K0VSgtcfc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$sSo37AVInterfaceMediaSelectionOptionSourceC5AVKitE11displayName10identifier8languageABSS_SS10Foundation6LocaleV8LanguageVSgtcfC"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$sSo37AVInterfaceMediaSelectionOptionSourceC5AVKitE11displayName10identifier8languageABSS_SS10Foundation6LocaleV8LanguageVSgtcfc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$sSo37AVInterfaceMediaSelectionOptionSourceC5AVKitE23extendedLanguageTagTemp10Foundation6LocaleV0H0VSgvg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$sSo37AVInterfaceMediaSelectionOptionSourceC5AVKitE23extendedLanguageTagTemp10Foundation6LocaleV0H0VSgvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$sSo37AVInterfaceMediaSelectionOptionSourceC5AVKitE8language10Foundation6LocaleV8LanguageVSgvg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$sSo37AVInterfaceMediaSelectionOptionSourceC5AVKitE8language10Foundation6LocaleV8LanguageVSgvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$sSo43AVPlaybackUserInterfaceMediaSelectionOptionC5AVKitE11displayName10identifier8language20mediaCharacteristicsABSS_SS10Foundation6LocaleV8LanguageVSgSaySo21AVMediaCharacteristicaGtcfC"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$sSo43AVPlaybackUserInterfaceMediaSelectionOptionC5AVKitE11displayName10identifier8language20mediaCharacteristicsABSS_SS10Foundation6LocaleV8LanguageVSgSaySo21AVMediaCharacteristicaGtcfc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$sSo43AVPlaybackUserInterfaceMediaSelectionOptionC5AVKitE8language10Foundation6LocaleV8LanguageVSgvg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$sSo43AVPlaybackUserInterfaceMediaSelectionOptionC5AVKitE8language10Foundation6LocaleV8LanguageVSgvpMV"}
    ],
    "interfaces": [
     {
@@ -737,7 +2761,7 @@
      "unavailable": true
     }
    ],
-   "target": "arm64e-apple-ios26.5"
+   "target": "arm64e-apple-ios27.0"
   }
  ],
  "version": "1.0"

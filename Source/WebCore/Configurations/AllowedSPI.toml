@@ -173,21 +173,3 @@ cleanup = "rdar://170480216"
 symbols = [
     "CTFontHasComplexColorFormatForGlyph",
 ]
-
-[[staging]]
-request = "rdar://160159492"
-classes = [
-    "AVInterfaceMediaSelectionOptionSource",
-    "AVInterfaceMetadata",
-    "AVInterfaceTimelineSegment",
-]
-requires-sdk = ["iOS < 27.0"]
-
-[[temporary-usage]]
-request = "rdar://182597756"
-cleanup = "rdar://182597920"
-requires-sdk = ["iOS >= 27"]
-allow-unused = true
-swift-decls = [
-    { name = "Foundation.ContiguousBytes.withBytes(_:)", type_kinds = { "ContiguousBytes" = "protocol" } },
-]

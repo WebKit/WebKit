@@ -35,6 +35,45 @@
     {
      "access": "public",
      "constants": [
+      {"access": "public", "name": "CTCellularPlanStatusAuthorizationNotAuthorized"},
+      {"access": "public", "name": "CTCellularPlanStatusAuthorizationAuthorized"},
+      {"access": "public", "name": "CTCellularPlanStatusAuthorizationRestricted"}
+     ],
+     "introduced": "27",
+     "name": "CTCellularPlanStatusAuthorization"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "CTCellularPlanStatusAvailabilityUnavailable"},
+      {"access": "public", "name": "CTCellularPlanStatusAvailabilityAvailable"}
+     ],
+     "introduced": "27",
+     "name": "CTCellularPlanStatusAvailability"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "CTCellularPlanStatusAvailabilityConfidenceLow"},
+      {"access": "public", "name": "CTCellularPlanStatusAvailabilityConfidenceHigh"}
+     ],
+     "introduced": "27",
+     "name": "CTCellularPlanStatusAvailabilityConfidence"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "CTQuickSwitchStateFailed"},
+      {"access": "public", "name": "CTQuickSwitchStateNotEnrolled"},
+      {"access": "public", "name": "CTQuickSwitchStateActive"},
+      {"access": "public", "name": "CTQuickSwitchStatePassive"}
+     ],
+     "introduced": "27",
+     "name": "CTQuickSwitchState"
+    },
+    {
+     "access": "public",
+     "constants": [
       {"access": "public", "name": "kCTErrorDomainNoError"},
       {"access": "public", "name": "kCTErrorDomainPOSIX"},
       {"access": "public", "name": "kCTErrorDomainMach"}
@@ -183,11 +222,32 @@
      "access": "public",
      "classMethods": [
       {"access": "public", "introduced": "26", "name": "getTokenWithCompletion:"},
-      {"access": "public", "introduced": "26", "name": "checkValidityOfToken:completionHandler:"}
+      {"access": "public", "introduced": "26", "name": "checkValidityOfToken:completionHandler:"},
+      {"access": "public", "introduced": "27", "name": "requestAuthorizationForPhoneNumber:completion:"},
+      {"access": "public", "introduced": "27", "name": "getAuthorizationStatusForPhoneNumber:completion:"},
+      {"access": "public", "introduced": "27", "name": "getStatusHintForPhoneNumber:completion:"}
      ],
      "introduced": "26",
      "linkage": "exported",
      "name": "CTCellularPlanStatus",
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "registerForLaunchOnQuickSwitchStateEvents:"},
+      {"access": "public", "name": "unregisterForLaunchOnQuickSwitchStateEvents:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "getPhoneNumberStateForSuffix:completion:"},
+      {"access": "public", "name": "getDeviceState:"}
+     ],
+     "introduced": "27",
+     "linkage": "exported",
+     "name": "CTQuickSwitchManager",
+     "properties": [
+      {"access": "public", "getter": "delegate", "name": "delegate", "setter": "setDelegate:"}
+     ],
      "super": "NSObject"
     },
     {
@@ -239,6 +299,17 @@
     {
      "access": "public",
      "instanceMethods": [
+      {"access": "public", "name": "quickSwitchManager:didChangeToState:", "optional": true}
+     ],
+     "introduced": "27",
+     "name": "CTQuickSwitchManagerDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
       {"access": "public", "name": "subscriberTokenRefreshed:"}
      ],
      "introduced": "12.1",
@@ -256,20 +327,365 @@
      ]
     }
    ],
-   "target": "arm64e-apple-ios26.5",
+   "target": "arm64e-apple-ios27",
    "typedefs": [
     {"access": "public", "name": "CTCellularDataRestrictedState"},
     {"access": "public", "introduced": "26", "name": "CTCellularPlanCapability"},
     {"access": "public", "introduced": "12", "name": "CTCellularPlanProvisioningAddPlanResult"},
+    {"access": "public", "name": "CTCellularPlanStatusAuthorization"},
+    {"access": "public", "name": "CTCellularPlanStatusAvailability"},
+    {"access": "public", "name": "CTCellularPlanStatusAvailabilityConfidence"},
     {"access": "public", "name": "CTError"},
+    {"access": "public", "name": "CTQuickSwitchState"},
+    {"access": "public", "name": "CellularDataRestrictionDidUpdateNotifier"}
+   ]
+  },
+  {
+   "enums": [
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kCTCellularDataRestrictedStateUnknown"},
+      {"access": "public", "name": "kCTCellularDataRestricted"},
+      {"access": "public", "name": "kCTCellularDataNotRestricted"}
+     ],
+     "name": "CTCellularDataRestrictedState"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "26", "name": "CTCellularPlanCapabilityDataOnly"},
+      {"access": "public", "introduced": "26", "name": "CTCellularPlanCapabilityDataAndVoice"}
+     ],
+     "introduced": "26",
+     "name": "CTCellularPlanCapability"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "12", "name": "CTCellularPlanProvisioningAddPlanResultUnknown"},
+      {"access": "public", "introduced": "12", "name": "CTCellularPlanProvisioningAddPlanResultFail"},
+      {"access": "public", "introduced": "12", "name": "CTCellularPlanProvisioningAddPlanResultSuccess"},
+      {"access": "public", "introduced": "17", "name": "CTCellularPlanProvisioningAddPlanResultCancel"}
+     ],
+     "introduced": "12",
+     "name": "CTCellularPlanProvisioningAddPlanResult"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "CTCellularPlanStatusAuthorizationNotAuthorized"},
+      {"access": "public", "name": "CTCellularPlanStatusAuthorizationAuthorized"},
+      {"access": "public", "name": "CTCellularPlanStatusAuthorizationRestricted"}
+     ],
+     "introduced": "27",
+     "name": "CTCellularPlanStatusAuthorization"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "CTCellularPlanStatusAvailabilityUnavailable"},
+      {"access": "public", "name": "CTCellularPlanStatusAvailabilityAvailable"}
+     ],
+     "introduced": "27",
+     "name": "CTCellularPlanStatusAvailability"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "CTCellularPlanStatusAvailabilityConfidenceLow"},
+      {"access": "public", "name": "CTCellularPlanStatusAvailabilityConfidenceHigh"}
+     ],
+     "introduced": "27",
+     "name": "CTCellularPlanStatusAvailabilityConfidence"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "CTQuickSwitchStateFailed"},
+      {"access": "public", "name": "CTQuickSwitchStateNotEnrolled"},
+      {"access": "public", "name": "CTQuickSwitchStateActive"},
+      {"access": "public", "name": "CTQuickSwitchStatePassive"}
+     ],
+     "introduced": "27",
+     "name": "CTQuickSwitchState"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "kCTErrorDomainNoError"},
+      {"access": "public", "name": "kCTErrorDomainPOSIX"},
+      {"access": "public", "name": "kCTErrorDomainMach"}
+     ],
+     "name": "enum (unnamed at CoreTelephonyDefines.h:281)"
+    }
+   ],
+   "globals": [
+    {"access": "public", "introduced": "4", "kind": "variable", "linkage": "exported", "name": "_CTCallStateConnected"},
+    {"access": "public", "introduced": "4", "kind": "variable", "linkage": "exported", "name": "_CTCallStateDialing"},
+    {"access": "public", "introduced": "4", "kind": "variable", "linkage": "exported", "name": "_CTCallStateDisconnected"},
+    {"access": "public", "introduced": "4", "kind": "variable", "linkage": "exported", "name": "_CTCallStateIncoming"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_CTRadioAccessTechnologyCDMA1x"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_CTRadioAccessTechnologyCDMAEVDORev0"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_CTRadioAccessTechnologyCDMAEVDORevA"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_CTRadioAccessTechnologyCDMAEVDORevB"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_CTRadioAccessTechnologyDidChangeNotification"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_CTRadioAccessTechnologyEdge"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_CTRadioAccessTechnologyGPRS"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_CTRadioAccessTechnologyHSDPA"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_CTRadioAccessTechnologyHSUPA"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_CTRadioAccessTechnologyLTE"},
+    {"access": "public", "introduced": "14.1", "kind": "variable", "linkage": "exported", "name": "_CTRadioAccessTechnologyNR"},
+    {"access": "public", "introduced": "14.1", "kind": "variable", "linkage": "exported", "name": "_CTRadioAccessTechnologyNRNSA"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_CTRadioAccessTechnologyWCDMA"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_CTRadioAccessTechnologyeHRPD"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_CTServiceRadioAccessTechnologyDidChangeNotification"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_CTSubscriberTokenRefreshed"}
+   ],
+   "interfaces": [
+    {
+     "access": "public",
+     "introduced": "4",
+     "ivars": [
+      {"access": "public", "accessControl": "private", "linkage": "exported", "name": "_callState"},
+      {"access": "public", "accessControl": "private", "linkage": "exported", "name": "_callID"}
+     ],
+     "linkage": "exported",
+     "name": "CTCall",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "callState", "introduced": "4", "name": "callState"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "callID", "introduced": "4", "name": "callID"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "4",
+     "linkage": "exported",
+     "name": "CTCallCenter",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "currentCalls", "introduced": "4", "name": "currentCalls"},
+      {"access": "public", "getter": "callEventHandler", "introduced": "4", "name": "callEventHandler", "setter": "setCallEventHandler:"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "4",
+     "linkage": "exported",
+     "name": "CTCarrier",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "carrierName", "introduced": "4", "name": "carrierName"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "mobileCountryCode", "introduced": "4", "name": "mobileCountryCode"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "mobileNetworkCode", "introduced": "4", "name": "mobileNetworkCode"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isoCountryCode", "introduced": "4", "name": "isoCountryCode"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "allowsVOIP", "introduced": "4", "name": "allowsVOIP"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "9",
+     "linkage": "exported",
+     "name": "CTCellularData",
+     "properties": [
+      {"access": "public", "getter": "cellularDataRestrictionDidUpdateNotifier", "introduced": "9", "name": "cellularDataRestrictionDidUpdateNotifier", "setter": "setCellularDataRestrictionDidUpdateNotifier:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "restrictedState", "introduced": "9", "name": "restrictedState"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "26.4",
+     "linkage": "exported",
+     "name": "CTCellularPlanLifecycleProperties",
+     "properties": [
+      {"access": "public", "getter": "expirationDate", "introduced": "26", "name": "expirationDate", "setter": "setExpirationDate:"}
+     ],
+     "protocols": [
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "26",
+     "linkage": "exported",
+     "name": "CTCellularPlanProperties",
+     "properties": [
+      {"access": "public", "getter": "associatedIccid", "introduced": "26", "name": "associatedIccid", "setter": "setAssociatedIccid:"},
+      {"access": "public", "getter": "simCapability", "introduced": "26", "name": "simCapability", "setter": "setSimCapability:"},
+      {"access": "public", "getter": "supportedRegionCodes", "introduced": "26", "name": "supportedRegionCodes", "setter": "setSupportedRegionCodes:"},
+      {"access": "public", "getter": "lifecycleProperties", "introduced": "26.4", "name": "lifecycleProperties", "setter": "setLifecycleProperties:"}
+     ],
+     "protocols": [
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "12", "name": "supportsCellularPlan"},
+      {"access": "public", "introduced": "12", "name": "addPlanWith:completionHandler:"},
+      {"access": "public", "introduced": "26", "name": "addPlanWithRequest:properties:completionHandler:"},
+      {"access": "public", "introduced": "26", "name": "updateCellularPlanProperties:completionHandler:"}
+     ],
+     "introduced": "12",
+     "linkage": "exported",
+     "name": "CTCellularPlanProvisioning",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "supportsEmbeddedSIM", "introduced": "16", "name": "supportsEmbeddedSIM"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "12",
+     "linkage": "exported",
+     "name": "CTCellularPlanProvisioningRequest",
+     "properties": [
+      {"access": "public", "getter": "address", "introduced": "12", "name": "address", "setter": "setAddress:"},
+      {"access": "public", "getter": "matchingID", "introduced": "12", "name": "matchingID", "setter": "setMatchingID:"},
+      {"access": "public", "getter": "OID", "introduced": "12", "name": "OID", "setter": "setOID:"},
+      {"access": "public", "getter": "confirmationCode", "introduced": "12", "name": "confirmationCode", "setter": "setConfirmationCode:"},
+      {"access": "public", "getter": "ICCID", "introduced": "12", "name": "ICCID", "setter": "setICCID:"},
+      {"access": "public", "getter": "EID", "introduced": "12", "name": "EID", "setter": "setEID:"}
+     ],
+     "protocols": [
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "introduced": "26", "name": "getTokenWithCompletion:"},
+      {"access": "public", "introduced": "26", "name": "checkValidityOfToken:completionHandler:"},
+      {"access": "public", "introduced": "27", "name": "requestAuthorizationForPhoneNumber:completion:"},
+      {"access": "public", "introduced": "27", "name": "getAuthorizationStatusForPhoneNumber:completion:"},
+      {"access": "public", "introduced": "27", "name": "getStatusHintForPhoneNumber:completion:"}
+     ],
+     "introduced": "26",
+     "linkage": "exported",
+     "name": "CTCellularPlanStatus",
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "registerForLaunchOnQuickSwitchStateEvents:"},
+      {"access": "public", "name": "unregisterForLaunchOnQuickSwitchStateEvents:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "getPhoneNumberStateForSuffix:completion:"},
+      {"access": "public", "name": "getDeviceState:"}
+     ],
+     "introduced": "27",
+     "linkage": "exported",
+     "name": "CTQuickSwitchManager",
+     "properties": [
+      {"access": "public", "getter": "delegate", "name": "delegate", "setter": "setDelegate:"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "6", "name": "refreshCarrierToken"}
+     ],
+     "introduced": "7",
+     "linkage": "exported",
+     "name": "CTSubscriber",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "carrierToken", "introduced": "7", "name": "carrierToken"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "identifier", "introduced": "12.1", "name": "identifier"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isSIMInserted", "introduced": "18", "name": "SIMInserted"},
+      {"access": "public", "getter": "delegate", "introduced": "12.1", "name": "delegate", "setter": "setDelegate:"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "introduced": "12.1", "name": "subscribers"},
+      {"access": "public", "introduced": "6", "name": "subscriber"}
+     ],
+     "introduced": "6",
+     "linkage": "exported",
+     "name": "CTSubscriberInfo",
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "4",
+     "linkage": "exported",
+     "name": "CTTelephonyNetworkInfo",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "dataServiceIdentifier", "introduced": "13", "name": "dataServiceIdentifier"},
+      {"access": "public", "getter": "delegate", "introduced": "13", "name": "delegate", "setter": "setDelegate:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "serviceSubscriberCellularProviders", "introduced": "12", "name": "serviceSubscriberCellularProviders"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "subscriberCellularProvider", "introduced": "4", "name": "subscriberCellularProvider"},
+      {"access": "public", "getter": "serviceSubscriberCellularProvidersDidUpdateNotifier", "introduced": "12", "name": "serviceSubscriberCellularProvidersDidUpdateNotifier", "setter": "setServiceSubscriberCellularProvidersDidUpdateNotifier:"},
+      {"access": "public", "getter": "subscriberCellularProviderDidUpdateNotifier", "introduced": "4", "name": "subscriberCellularProviderDidUpdateNotifier", "setter": "setSubscriberCellularProviderDidUpdateNotifier:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "serviceCurrentRadioAccessTechnology", "introduced": "12", "name": "serviceCurrentRadioAccessTechnology"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "currentRadioAccessTechnology", "introduced": "7", "name": "currentRadioAccessTechnology"}
+     ],
+     "super": "NSObject"
+    }
+   ],
+   "protocols": [
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "quickSwitchManager:didChangeToState:", "optional": true}
+     ],
+     "introduced": "27",
+     "name": "CTQuickSwitchManagerDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "subscriberTokenRefreshed:"}
+     ],
+     "introduced": "12.1",
+     "name": "CTSubscriberDelegate"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "dataServiceIdentifierDidChange:", "optional": true}
+     ],
+     "introduced": "13",
+     "name": "CTTelephonyNetworkInfoDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    }
+   ],
+   "target": "arm64e.x1-apple-ios27",
+   "typedefs": [
+    {"access": "public", "name": "CTCellularDataRestrictedState"},
+    {"access": "public", "introduced": "26", "name": "CTCellularPlanCapability"},
+    {"access": "public", "introduced": "12", "name": "CTCellularPlanProvisioningAddPlanResult"},
+    {"access": "public", "name": "CTCellularPlanStatusAuthorization"},
+    {"access": "public", "name": "CTCellularPlanStatusAvailability"},
+    {"access": "public", "name": "CTCellularPlanStatusAvailabilityConfidence"},
+    {"access": "public", "name": "CTError"},
+    {"access": "public", "name": "CTQuickSwitchState"},
     {"access": "public", "name": "CellularDataRestrictionDidUpdateNotifier"}
    ]
   },
   {
    "globals": [
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreTelephony16CTSlicingManagerC11AppCategoryO10webBrowseryA2EmFWC"},
     {"access": "public", "introduced": "26.3", "linkage": "exported", "name": "_$s13CoreTelephony16CTSlicingManagerC11AppCategoryO11descriptionSSvg"},
     {"access": "public", "introduced": "26.3", "linkage": "exported", "name": "_$s13CoreTelephony16CTSlicingManagerC11AppCategoryO11descriptionSSvpMV"},
     {"access": "public", "introduced": "26.3", "linkage": "exported", "name": "_$s13CoreTelephony16CTSlicingManagerC11AppCategoryO13communicationyA2EmFWC"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s13CoreTelephony16CTSlicingManagerC11AppCategoryO15missionCriticalyA2EmFWC"},
     {"access": "public", "introduced": "26.3", "linkage": "exported", "name": "_$s13CoreTelephony16CTSlicingManagerC11AppCategoryO6gamingyA2EmFWC"},
     {"access": "public", "introduced": "26.3", "linkage": "exported", "name": "_$s13CoreTelephony16CTSlicingManagerC11AppCategoryO8allCasesSayAEGvgZ"},
     {"access": "public", "introduced": "26.3", "linkage": "exported", "name": "_$s13CoreTelephony16CTSlicingManagerC11AppCategoryO8allCasesSayAEGvpZMV"},
@@ -336,12 +752,26 @@
     {"access": "public", "introduced": "26.3", "linkage": "exported", "name": "_$s13CoreTelephony16CTSlicingManagerCN"},
     {"access": "public", "introduced": "26.3", "linkage": "exported", "name": "_$s13CoreTelephony16CTSlicingManagerCfD"},
     {"access": "public", "introduced": "26.3", "linkage": "exported", "name": "_$s13CoreTelephony16CTSlicingManagerCfd"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$sSo20NSNotificationCenterC10FoundationE17MessageIdentifierP13CoreTelephonyAbCE04BasedE0Vy_So22CTTelephonyNetworkInfoCAFE030RadioAccessTechnologyDidChangeD0VGRszrlE05radiomnoP0AMvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$sSo20NSNotificationCenterC10FoundationE17MessageIdentifierP13CoreTelephonyAbCE04BasedE0Vy_So22CTTelephonyNetworkInfoCAFE030RadioAccessTechnologyDidChangeD0VGRszrlE05radiomnoP0AMvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$sSo22CTTelephonyNetworkInfoC13CoreTelephonyE37RadioAccessTechnologyDidChangeMessageV04makeK0yAESg10Foundation12NotificationVFZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$sSo22CTTelephonyNetworkInfoC13CoreTelephonyE37RadioAccessTechnologyDidChangeMessageV16makeNotificationy10Foundation0M0VAEFZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$sSo22CTTelephonyNetworkInfoC13CoreTelephonyE37RadioAccessTechnologyDidChangeMessageV17serviceIdentifierSSvM"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$sSo22CTTelephonyNetworkInfoC13CoreTelephonyE37RadioAccessTechnologyDidChangeMessageV17serviceIdentifierSSvg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$sSo22CTTelephonyNetworkInfoC13CoreTelephonyE37RadioAccessTechnologyDidChangeMessageV17serviceIdentifierSSvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$sSo22CTTelephonyNetworkInfoC13CoreTelephonyE37RadioAccessTechnologyDidChangeMessageV17serviceIdentifierSSvs"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$sSo22CTTelephonyNetworkInfoC13CoreTelephonyE37RadioAccessTechnologyDidChangeMessageV4nameSo18NSNotificationNameavgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$sSo22CTTelephonyNetworkInfoC13CoreTelephonyE37RadioAccessTechnologyDidChangeMessageV4nameSo18NSNotificationNameavpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$sSo22CTTelephonyNetworkInfoC13CoreTelephonyE37RadioAccessTechnologyDidChangeMessageVMa"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$sSo22CTTelephonyNetworkInfoC13CoreTelephonyE37RadioAccessTechnologyDidChangeMessageVMn"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$sSo22CTTelephonyNetworkInfoC13CoreTelephonyE37RadioAccessTechnologyDidChangeMessageVN"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$sSo22CTTelephonyNetworkInfoC13CoreTelephonyE37RadioAccessTechnologyDidChangeMessageVSo20NSNotificationCenterC10FoundationE05AsyncK0ACMc"},
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$sSo24CTCellularPlanPropertiesC13CoreTelephonyE20supportedRegionCodesSay10Foundation6LocaleV0G0VGvM"},
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$sSo24CTCellularPlanPropertiesC13CoreTelephonyE20supportedRegionCodesSay10Foundation6LocaleV0G0VGvg"},
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$sSo24CTCellularPlanPropertiesC13CoreTelephonyE20supportedRegionCodesSay10Foundation6LocaleV0G0VGvpMV"},
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$sSo24CTCellularPlanPropertiesC13CoreTelephonyE20supportedRegionCodesSay10Foundation6LocaleV0G0VGvs"}
    ],
-   "target": "arm64e-apple-ios26.5"
+   "target": "arm64e-apple-ios27.0"
   }
  ],
  "version": "1.0"

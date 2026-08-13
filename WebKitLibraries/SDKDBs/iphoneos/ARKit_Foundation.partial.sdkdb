@@ -2,6 +2,12 @@
 {
  "PublicSDKContentRoot": [
   {
+   "target": "arm64e-apple-ios"
+  },
+  {
+   "target": "arm64e.x1-apple-ios"
+  },
+  {
    "enums": [
     {
      "access": "public",
@@ -27,7 +33,38 @@
      "super": "NSObject"
     }
    ],
-   "target": "arm64e-apple-ios",
+   "target": "arm64e-apple-ios27",
+   "typedefs": [
+    {"access": "public", "name": "ARConfidenceLevel"}
+   ]
+  },
+  {
+   "enums": [
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "ARConfidenceLevelLow"},
+      {"access": "public", "name": "ARConfidenceLevelMedium"},
+      {"access": "public", "name": "ARConfidenceLevelHigh"}
+     ],
+     "introduced": "14",
+     "name": "ARConfidenceLevel"
+    }
+   ],
+   "interfaces": [
+    {
+     "access": "public",
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "ARDepthData",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "depthMap", "name": "depthMap"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "confidenceMap", "name": "confidenceMap"}
+     ],
+     "super": "NSObject"
+    }
+   ],
+   "target": "arm64e.x1-apple-ios27",
    "typedefs": [
     {"access": "public", "name": "ARConfidenceLevel"}
    ]

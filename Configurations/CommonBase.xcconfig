@@ -99,6 +99,8 @@ WK_DEFAULT_WK_AUDIT_SPI[sdk=iphoneos*] = $(WK_AND_$(WK_NOT_$(WK_ANY_SANITIZER_EN
 WK_DEFAULT_WK_AUDIT_SPI[sdk=appletvos*] = ;
 WK_DEFAULT_WK_AUDIT_SPI[sdk=watchos*] = ;
 WK_DEFAULT_WK_AUDIT_SPI[sdk=xros*] = ;
+// Disable auditing on internal builds of already-shipped releases.
+WK_DEFAULT_WK_AUDIT_SPI[sdk=iphoneos26*.internal] = ;
 
 WK_AUDIT_SPI = $(WK_DEFAULT_WK_AUDIT_SPI);
 

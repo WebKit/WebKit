@@ -6,7 +6,7 @@
     {
      "access": "public",
      "instanceMethods": [
-      {"access": "public", "name": "loadBroadcastingApplicationInfoWithCompletion:"},
+      {"access": "public", "introduced": "10", "name": "loadBroadcastingApplicationInfoWithCompletion:"},
       {"access": "public", "introduced": "10", "name": "completeRequestWithBroadcastURL:broadcastConfiguration:setupInfo:"},
       {"access": "public", "introduced": "11", "name": "completeRequestWithBroadcastURL:setupInfo:"}
      ],
@@ -177,6 +177,7 @@
     },
     {
      "access": "public",
+     "introduced": "9",
      "linkage": "exported",
      "name": "RPPreviewViewController",
      "properties": [
@@ -193,9 +194,9 @@
       {"access": "public", "name": "init", "unavailable": true},
       {"access": "public", "introduced": "9", "name": "startRecordingWithMicrophoneEnabled:handler:"},
       {"access": "public", "introduced": "10", "name": "startRecordingWithHandler:"},
-      {"access": "public", "name": "stopRecordingWithHandler:"},
+      {"access": "public", "introduced": "9", "name": "stopRecordingWithHandler:"},
       {"access": "public", "introduced": "14", "name": "stopRecordingWithOutputURL:completionHandler:"},
-      {"access": "public", "name": "discardRecordingWithHandler:"},
+      {"access": "public", "introduced": "9", "name": "discardRecordingWithHandler:"},
       {"access": "public", "introduced": "11", "name": "startCaptureWithHandler:completionHandler:"},
       {"access": "public", "introduced": "11", "name": "stopCaptureWithHandler:"},
       {"access": "public", "introduced": "15", "name": "startClipBufferingWithCompletionHandler:"},
@@ -205,10 +206,10 @@
      "linkage": "exported",
      "name": "RPScreenRecorder",
      "properties": [
-      {"access": "public", "getter": "delegate", "name": "delegate", "setter": "setDelegate:"},
-      {"access": "public", "attr": [ "readonly" ], "getter": "isAvailable", "name": "available"},
-      {"access": "public", "attr": [ "readonly" ], "getter": "isRecording", "name": "recording"},
-      {"access": "public", "getter": "isMicrophoneEnabled", "name": "microphoneEnabled", "setter": "setMicrophoneEnabled:"},
+      {"access": "public", "getter": "delegate", "introduced": "9", "name": "delegate", "setter": "setDelegate:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isAvailable", "introduced": "9", "name": "available"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isRecording", "introduced": "9", "name": "recording"},
+      {"access": "public", "getter": "isMicrophoneEnabled", "introduced": "9", "name": "microphoneEnabled", "setter": "setMicrophoneEnabled:"},
       {"access": "public", "getter": "isCameraEnabled", "introduced": "10", "name": "cameraEnabled", "setter": "setCameraEnabled:"},
       {"access": "public", "getter": "cameraPosition", "introduced": "11", "name": "cameraPosition", "setter": "setCameraPosition:"},
       {"access": "public", "attr": [ "readonly" ], "getter": "cameraPreviewView", "introduced": "10", "name": "cameraPreviewView"}
@@ -261,6 +262,7 @@
       {"access": "public", "name": "previewControllerDidFinish:", "optional": true},
       {"access": "public", "name": "previewController:didFinishWithActivityTypes:", "optional": true}
      ],
+     "introduced": "9",
      "name": "RPPreviewViewControllerDelegate",
      "protocols": [
       "NSObject"
@@ -271,7 +273,7 @@
      "instanceMethods": [
       {"access": "public", "introduced": "9", "name": "screenRecorder:didStopRecordingWithError:previewViewController:", "optional": true},
       {"access": "public", "introduced": "11", "name": "screenRecorder:didStopRecordingWithPreviewViewController:error:", "optional": true},
-      {"access": "public", "name": "screenRecorderDidChangeAvailability:", "optional": true}
+      {"access": "public", "introduced": "9", "name": "screenRecorderDidChangeAvailability:", "optional": true}
      ],
      "introduced": "9",
      "name": "RPScreenRecorderDelegate",
@@ -280,12 +282,1608 @@
      ]
     }
    ],
-   "target": "arm64e-apple-ios26.5",
+   "target": "arm64e-apple-ios27",
    "typedefs": [
     {"access": "public", "introduced": "11", "name": "RPCameraPosition"},
     {"access": "public", "introduced": "9", "name": "RPRecordingErrorCode"},
     {"access": "public", "introduced": "10", "name": "RPSampleBufferType"}
    ]
+  },
+  {
+   "categories": [
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "10", "name": "loadBroadcastingApplicationInfoWithCompletion:"},
+      {"access": "public", "introduced": "10", "name": "completeRequestWithBroadcastURL:broadcastConfiguration:setupInfo:"},
+      {"access": "public", "introduced": "11", "name": "completeRequestWithBroadcastURL:setupInfo:"}
+     ],
+     "interface": "NSExtensionContext",
+     "name": "RPBroadcastExtension"
+    }
+   ],
+   "enums": [
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "RPCameraPositionFront"},
+      {"access": "public", "name": "RPCameraPositionBack"}
+     ],
+     "name": "RPCameraPosition"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "RPRecordingErrorUnknown"},
+      {"access": "public", "name": "RPRecordingErrorUserDeclined"},
+      {"access": "public", "name": "RPRecordingErrorDisabled"},
+      {"access": "public", "name": "RPRecordingErrorFailedToStart"},
+      {"access": "public", "name": "RPRecordingErrorFailed"},
+      {"access": "public", "name": "RPRecordingErrorInsufficientStorage"},
+      {"access": "public", "name": "RPRecordingErrorInterrupted"},
+      {"access": "public", "name": "RPRecordingErrorContentResize"},
+      {"access": "public", "name": "RPRecordingErrorBroadcastInvalidSession"},
+      {"access": "public", "name": "RPRecordingErrorSystemDormancy"},
+      {"access": "public", "name": "RPRecordingErrorEntitlements"},
+      {"access": "public", "name": "RPRecordingErrorActivePhoneCall"},
+      {"access": "public", "name": "RPRecordingErrorFailedToSave"},
+      {"access": "public", "name": "RPRecordingErrorCarPlay"},
+      {"access": "public", "name": "RPRecordingErrorFailedApplicationConnectionInvalid"},
+      {"access": "public", "name": "RPRecordingErrorFailedApplicationConnectionInterrupted"},
+      {"access": "public", "name": "RPRecordingErrorFailedNoMatchingApplicationContext"},
+      {"access": "public", "name": "RPRecordingErrorFailedMediaServicesFailure"},
+      {"access": "public", "name": "RPRecordingErrorVideoMixingFailure"},
+      {"access": "public", "name": "RPRecordingErrorBroadcastSetupFailed"},
+      {"access": "public", "name": "RPRecordingErrorFailedToObtainURL"},
+      {"access": "public", "name": "RPRecordingErrorFailedIncorrectTimeStamps"},
+      {"access": "public", "name": "RPRecordingErrorFailedToProcessFirstSample"},
+      {"access": "public", "name": "RPRecordingErrorFailedAssetWriterFailedToSave"},
+      {"access": "public", "name": "RPRecordingErrorFailedNoAssetWriter"},
+      {"access": "public", "name": "RPRecordingErrorFailedAssetWriterInWrongState"},
+      {"access": "public", "name": "RPRecordingErrorFailedAssetWriterExportFailed"},
+      {"access": "public", "name": "RPRecordingErrorFailedToRemoveFile"},
+      {"access": "public", "name": "RPRecordingErrorFailedAssetWriterExportCanceled"},
+      {"access": "public", "name": "RPRecordingErrorAttemptToStopNonRecording"},
+      {"access": "public", "name": "RPRecordingErrorAttemptToStartInRecordingState"},
+      {"access": "public", "name": "RPRecordingErrorPhotoFailure"},
+      {"access": "public", "name": "RPRecordingErrorRecordingInvalidSession"},
+      {"access": "public", "name": "RPRecordingErrorFailedToStartCaptureStack"},
+      {"access": "public", "name": "RPRecordingErrorInvalidParameter"},
+      {"access": "public", "name": "RPRecordingErrorFilePermissions"},
+      {"access": "public", "name": "RPRecordingErrorExportClipToURLInProgress"},
+      {"access": "public", "name": "RPRecordingErrorCodeSuccessful"}
+     ],
+     "name": "RPRecordingErrorCode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "RPSampleBufferTypeVideo"},
+      {"access": "public", "name": "RPSampleBufferTypeAudioApp"},
+      {"access": "public", "name": "RPSampleBufferTypeAudioMic"}
+     ],
+     "name": "RPSampleBufferType"
+    }
+   ],
+   "globals": [
+    {"access": "public", "introduced": "11.2", "kind": "variable", "linkage": "exported", "name": "_RPApplicationInfoBundleIdentifierKey"},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_RPRecordingErrorDomain"},
+    {"access": "public", "introduced": "11", "kind": "variable", "linkage": "exported", "name": "_RPVideoSampleOrientationKey"},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_SCStreamErrorDomain"}
+   ],
+   "interfaces": [
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "loadBroadcastActivityViewControllerWithHandler:"},
+      {"access": "public", "introduced": "11", "name": "loadBroadcastActivityViewControllerWithPreferredExtension:handler:"}
+     ],
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "RPBroadcastActivityViewController",
+     "properties": [
+      {"access": "public", "getter": "delegate", "name": "delegate", "setter": "setDelegate:"}
+     ],
+     "super": "UIViewController"
+    },
+    {
+     "access": "public",
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "RPBroadcastConfiguration",
+     "properties": [
+      {"access": "public", "getter": "clipDuration", "name": "clipDuration", "setter": "setClipDuration:"},
+      {"access": "public", "getter": "videoCompressionProperties", "name": "videoCompressionProperties", "setter": "setVideoCompressionProperties:"}
+     ],
+     "protocols": [
+      "NSCoding",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "startBroadcastWithHandler:"},
+      {"access": "public", "name": "pauseBroadcast"},
+      {"access": "public", "name": "resumeBroadcast"},
+      {"access": "public", "name": "finishBroadcastWithHandler:"}
+     ],
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "RPBroadcastController",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "isBroadcasting", "name": "broadcasting"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isPaused", "name": "paused"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "broadcastURL", "name": "broadcastURL"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "serviceInfo", "name": "serviceInfo"},
+      {"access": "public", "getter": "delegate", "name": "delegate", "setter": "setDelegate:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "broadcastExtensionBundleID", "introduced": "10", "name": "broadcastExtensionBundleID"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "updateServiceInfo:"},
+      {"access": "public", "introduced": "11", "name": "updateBroadcastURL:"}
+     ],
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "RPBroadcastHandler",
+     "protocols": [
+      "NSExtensionRequestHandling"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "processMP4ClipWithURL:setupInfo:finished:"},
+      {"access": "public", "name": "finishedProcessingMP4ClipWithUpdatedBroadcastConfiguration:error:"}
+     ],
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "RPBroadcastMP4ClipHandler",
+     "super": "RPBroadcastHandler"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "broadcastStartedWithSetupInfo:"},
+      {"access": "public", "name": "broadcastPaused"},
+      {"access": "public", "name": "broadcastResumed"},
+      {"access": "public", "name": "broadcastFinished"},
+      {"access": "public", "introduced": "11.2", "name": "broadcastAnnotatedWithApplicationInfo:"},
+      {"access": "public", "name": "processSampleBuffer:withType:"},
+      {"access": "public", "name": "finishBroadcastWithError:"}
+     ],
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "RPBroadcastSampleHandler",
+     "super": "RPBroadcastHandler"
+    },
+    {
+     "access": "public",
+     "introduced": "9",
+     "linkage": "exported",
+     "name": "RPPreviewViewController",
+     "properties": [
+      {"access": "public", "getter": "previewControllerDelegate", "name": "previewControllerDelegate", "setter": "setPreviewControllerDelegate:"}
+     ],
+     "super": "UIViewController"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "sharedRecorder"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "introduced": "9", "name": "startRecordingWithMicrophoneEnabled:handler:"},
+      {"access": "public", "introduced": "10", "name": "startRecordingWithHandler:"},
+      {"access": "public", "introduced": "9", "name": "stopRecordingWithHandler:"},
+      {"access": "public", "introduced": "14", "name": "stopRecordingWithOutputURL:completionHandler:"},
+      {"access": "public", "introduced": "9", "name": "discardRecordingWithHandler:"},
+      {"access": "public", "introduced": "11", "name": "startCaptureWithHandler:completionHandler:"},
+      {"access": "public", "introduced": "11", "name": "stopCaptureWithHandler:"},
+      {"access": "public", "introduced": "15", "name": "startClipBufferingWithCompletionHandler:"},
+      {"access": "public", "introduced": "15", "name": "stopClipBufferingWithCompletionHandler:"},
+      {"access": "public", "introduced": "15", "name": "exportClipToURL:duration:completionHandler:"}
+     ],
+     "linkage": "exported",
+     "name": "RPScreenRecorder",
+     "properties": [
+      {"access": "public", "getter": "delegate", "introduced": "9", "name": "delegate", "setter": "setDelegate:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isAvailable", "introduced": "9", "name": "available"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isRecording", "introduced": "9", "name": "recording"},
+      {"access": "public", "getter": "isMicrophoneEnabled", "introduced": "9", "name": "microphoneEnabled", "setter": "setMicrophoneEnabled:"},
+      {"access": "public", "getter": "isCameraEnabled", "introduced": "10", "name": "cameraEnabled", "setter": "setCameraEnabled:"},
+      {"access": "public", "getter": "cameraPosition", "introduced": "11", "name": "cameraPosition", "setter": "setCameraPosition:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "cameraPreviewView", "introduced": "10", "name": "cameraPreviewView"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "12",
+     "linkage": "exported",
+     "name": "RPSystemBroadcastPickerView",
+     "properties": [
+      {"access": "public", "getter": "preferredExtension", "name": "preferredExtension", "setter": "setPreferredExtension:"},
+      {"access": "public", "getter": "showsMicrophoneButton", "name": "showsMicrophoneButton", "setter": "setShowsMicrophoneButton:"}
+     ],
+     "protocols": [
+      "NSCoding"
+     ],
+     "super": "UIView"
+    }
+   ],
+   "protocols": [
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "10", "name": "broadcastActivityViewController:didFinishWithBroadcastController:error:"}
+     ],
+     "introduced": "10",
+     "name": "RPBroadcastActivityViewControllerDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "broadcastController:didFinishWithError:", "optional": true},
+      {"access": "public", "name": "broadcastController:didUpdateServiceInfo:", "optional": true},
+      {"access": "public", "introduced": "11", "name": "broadcastController:didUpdateBroadcastURL:", "optional": true}
+     ],
+     "introduced": "10",
+     "name": "RPBroadcastControllerDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "previewControllerDidFinish:", "optional": true},
+      {"access": "public", "name": "previewController:didFinishWithActivityTypes:", "optional": true}
+     ],
+     "introduced": "9",
+     "name": "RPPreviewViewControllerDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "9", "name": "screenRecorder:didStopRecordingWithError:previewViewController:", "optional": true},
+      {"access": "public", "introduced": "11", "name": "screenRecorder:didStopRecordingWithPreviewViewController:error:", "optional": true},
+      {"access": "public", "introduced": "9", "name": "screenRecorderDidChangeAvailability:", "optional": true}
+     ],
+     "introduced": "9",
+     "name": "RPScreenRecorderDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    }
+   ],
+   "target": "arm64e.x1-apple-ios27",
+   "typedefs": [
+    {"access": "public", "introduced": "11", "name": "RPCameraPosition"},
+    {"access": "public", "introduced": "9", "name": "RPRecordingErrorCode"},
+    {"access": "public", "introduced": "10", "name": "RPSampleBufferType"}
+   ]
+  },
+  {
+   "enums": [
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "SCCaptureDynamicRangeSDR"},
+      {"access": "public", "name": "SCCaptureDynamicRangeHDRLocalDisplay", "unavailable": true},
+      {"access": "public", "name": "SCCaptureDynamicRangeHDRCanonicalDisplay"}
+     ],
+     "introduced": "27",
+     "name": "SCCaptureDynamicRange"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "SCCaptureResolutionAutomatic"},
+      {"access": "public", "name": "SCCaptureResolutionBest"},
+      {"access": "public", "name": "SCCaptureResolutionNominal"}
+     ],
+     "name": "SCCaptureResolutionType",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "SCContentSharingPickerModeSingleWindow"},
+      {"access": "public", "name": "SCContentSharingPickerModeMultipleWindows"},
+      {"access": "public", "name": "SCContentSharingPickerModeSingleApplication"},
+      {"access": "public", "name": "SCContentSharingPickerModeMultipleApplications"},
+      {"access": "public", "name": "SCContentSharingPickerModeSingleDisplay"}
+     ],
+     "name": "SCContentSharingPickerMode",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "SCFrameStatusComplete"},
+      {"access": "public", "name": "SCFrameStatusIdle"},
+      {"access": "public", "name": "SCFrameStatusBlank"},
+      {"access": "public", "name": "SCFrameStatusSuspended"},
+      {"access": "public", "name": "SCFrameStatusStarted"},
+      {"access": "public", "name": "SCFrameStatusStopped"}
+     ],
+     "introduced": "27",
+     "name": "SCFrameStatus"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "SCPresenterOverlayAlertSettingSystem"},
+      {"access": "public", "name": "SCPresenterOverlayAlertSettingNever"},
+      {"access": "public", "name": "SCPresenterOverlayAlertSettingAlways"}
+     ],
+     "name": "SCPresenterOverlayAlertSetting",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "SCRecordingEditorModePreview"},
+      {"access": "public", "name": "SCRecordingEditorModeShare"}
+     ],
+     "name": "SCRecordingEditorMode",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "SCScreenshotDisplayIntentCanonical"},
+      {"access": "public", "name": "SCScreenshotDisplayIntentLocal"}
+     ],
+     "name": "SCScreenshotDisplayIntent"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "SCScreenshotDynamicRangeSDR"},
+      {"access": "public", "name": "SCScreenshotDynamicRangeHDR"},
+      {"access": "public", "name": "SCScreenshotDynamicRangeSDRAndHDR"}
+     ],
+     "name": "SCScreenshotDynamicRange"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "SCShareableContentStyleNone"},
+      {"access": "public", "introduced": "27", "name": "SCShareableContentStyleWindow"},
+      {"access": "public", "introduced": "27", "name": "SCShareableContentStyleDisplay"},
+      {"access": "public", "name": "SCShareableContentStyleApplication", "unavailable": true}
+     ],
+     "introduced": "27",
+     "name": "SCShareableContentStyle"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "SCStreamConfigurationPresetCaptureHDRStreamLocalDisplay", "unavailable": true},
+      {"access": "public", "name": "SCStreamConfigurationPresetCaptureHDRStreamCanonicalDisplay", "unavailable": true},
+      {"access": "public", "name": "SCStreamConfigurationPresetCaptureHDRScreenshotLocalDisplay", "unavailable": true},
+      {"access": "public", "name": "SCStreamConfigurationPresetCaptureHDRScreenshotCanonicalDisplay", "unavailable": true},
+      {"access": "public", "introduced": "27", "name": "SCStreamConfigurationPresetCaptureHDRRecordingPreservedSDRHDR10"}
+     ],
+     "introduced": "27",
+     "name": "SCStreamConfigurationPreset"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "27", "name": "SCStreamErrorUserDeclined"},
+      {"access": "public", "introduced": "27", "name": "SCStreamErrorFailedToStart"},
+      {"access": "public", "introduced": "27", "name": "SCStreamErrorMissingEntitlements"},
+      {"access": "public", "introduced": "27", "name": "SCStreamErrorFailedApplicationConnectionInvalid"},
+      {"access": "public", "introduced": "27", "name": "SCStreamErrorFailedApplicationConnectionInterrupted"},
+      {"access": "public", "introduced": "27", "name": "SCStreamErrorFailedNoMatchingApplicationContext"},
+      {"access": "public", "introduced": "27", "name": "SCStreamErrorAttemptToStartStreamState"},
+      {"access": "public", "introduced": "27", "name": "SCStreamErrorAttemptToStopStreamState"},
+      {"access": "public", "introduced": "27", "name": "SCStreamErrorAttemptToUpdateFilterState"},
+      {"access": "public", "introduced": "27", "name": "SCStreamErrorAttemptToConfigState"},
+      {"access": "public", "introduced": "27", "name": "SCStreamErrorInternalError"},
+      {"access": "public", "introduced": "27", "name": "SCStreamErrorInvalidParameter"},
+      {"access": "public", "introduced": "27", "name": "SCStreamErrorNoWindowList"},
+      {"access": "public", "introduced": "27", "name": "SCStreamErrorNoDisplayList"},
+      {"access": "public", "introduced": "27", "name": "SCStreamErrorNoCaptureSource"},
+      {"access": "public", "introduced": "27", "name": "SCStreamErrorRemovingStream"},
+      {"access": "public", "introduced": "27", "name": "SCStreamErrorUserStopped"},
+      {"access": "public", "introduced": "27", "name": "SCStreamErrorFailedToStartAudioCapture"},
+      {"access": "public", "introduced": "27", "name": "SCStreamErrorFailedToStopAudioCapture"},
+      {"access": "public", "introduced": "27", "name": "SCStreamErrorFailedToStartMicrophoneCapture"},
+      {"access": "public", "introduced": "27", "name": "SCStreamErrorSystemStoppedStream"},
+      {"access": "public", "introduced": "27", "name": "SCStreamErrorInsufficientStorage"},
+      {"access": "public", "introduced": "27", "name": "SCStreamErrorNotSupported"},
+      {"access": "public", "introduced": "27", "name": "SCStreamErrorMissingBackgroundMode"}
+     ],
+     "name": "SCStreamErrorCode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "SCStreamOutputTypeScreen"},
+      {"access": "public", "introduced": "27", "name": "SCStreamOutputTypeAudio"},
+      {"access": "public", "introduced": "27", "name": "SCStreamOutputTypeMicrophone"}
+     ],
+     "introduced": "27",
+     "name": "SCStreamOutputType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "SCStreamTypeWindow"},
+      {"access": "public", "name": "SCStreamTypeDisplay"}
+     ],
+     "name": "SCStreamType",
+     "unavailable": true
+    }
+   ],
+   "globals": [
+    {"access": "public", "introduced": "27", "kind": "variable", "linkage": "exported", "name": "_SCStreamErrorDomain"},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_SCStreamFrameInfoBoundingRect", "unavailable": true},
+    {"access": "public", "introduced": "27", "kind": "variable", "linkage": "exported", "name": "_SCStreamFrameInfoContentRect"},
+    {"access": "public", "introduced": "27", "kind": "variable", "linkage": "exported", "name": "_SCStreamFrameInfoContentScale"},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_SCStreamFrameInfoDirtyRects", "unavailable": true},
+    {"access": "public", "introduced": "27", "kind": "variable", "linkage": "exported", "name": "_SCStreamFrameInfoDisplayTime"},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_SCStreamFrameInfoPresenterOverlayContentRect", "unavailable": true},
+    {"access": "public", "introduced": "27", "kind": "variable", "linkage": "exported", "name": "_SCStreamFrameInfoScaleFactor"},
+    {"access": "public", "introduced": "27", "kind": "variable", "linkage": "exported", "name": "_SCStreamFrameInfoScreenRect"},
+    {"access": "public", "introduced": "27", "kind": "variable", "linkage": "exported", "name": "_SCStreamFrameInfoStatus"},
+    {"access": "public", "introduced": "27", "kind": "variable", "linkage": "exported", "name": "_SCStreamFrameInfoVideoOrientation"}
+   ],
+   "interfaces": [
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithDelegate:"},
+      {"access": "public", "name": "exportClipToURL:duration:completionHandler:"}
+     ],
+     "introduced": "27",
+     "linkage": "exported",
+     "name": "SCClipBufferingOutput",
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithDesktopIndependentWindow:", "unavailable": true},
+      {"access": "public", "name": "initWithDisplay:excludingWindows:", "unavailable": true},
+      {"access": "public", "name": "initWithDisplay:includingWindows:", "unavailable": true},
+      {"access": "public", "name": "initWithDisplay:includingApplications:exceptingWindows:", "unavailable": true},
+      {"access": "public", "name": "initWithDisplay:excludingApplications:exceptingWindows:", "unavailable": true}
+     ],
+     "introduced": "27",
+     "linkage": "exported",
+     "name": "SCContentFilter",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "streamType", "name": "streamType", "unavailable": true},
+      {"access": "public", "attr": [ "readonly" ], "getter": "style", "introduced": "27", "name": "style"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "pointPixelScale", "introduced": "27", "name": "pointPixelScale"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "contentRect", "introduced": "27", "name": "contentRect"},
+      {"access": "public", "getter": "includeMenuBar", "name": "includeMenuBar", "setter": "setIncludeMenuBar:", "unavailable": true},
+      {"access": "public", "attr": [ "readonly" ], "getter": "includedDisplays", "name": "includedDisplays", "unavailable": true},
+      {"access": "public", "attr": [ "readonly" ], "getter": "includedApplications", "name": "includedApplications", "unavailable": true},
+      {"access": "public", "attr": [ "readonly" ], "getter": "includedWindows", "name": "includedWindows", "unavailable": true},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isMicrophoneEnabled", "introduced": "27", "name": "microphoneEnabled"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isCameraEnabled", "introduced": "27", "name": "cameraEnabled"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "addObserver:"},
+      {"access": "public", "name": "removeObserver:"},
+      {"access": "public", "name": "setConfiguration:forStream:"},
+      {"access": "public", "introduced": "27", "name": "present"},
+      {"access": "public", "introduced": "27", "name": "presentPickerUsingContentStyle:"},
+      {"access": "public", "name": "presentPickerForStream:", "unavailable": true},
+      {"access": "public", "name": "presentPickerForStream:usingContentStyle:", "unavailable": true},
+      {"access": "public", "introduced": "27", "name": "presentPickerForCurrentApplication"}
+     ],
+     "introduced": "27",
+     "linkage": "exported",
+     "name": "SCContentSharingPicker",
+     "properties": [
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "sharedPicker", "name": "sharedPicker"},
+      {"access": "public", "getter": "defaultConfiguration", "name": "defaultConfiguration", "setter": "setDefaultConfiguration:"},
+      {"access": "public", "getter": "maximumStreamCount", "name": "maximumStreamCount", "setter": "setMaximumStreamCount:", "unavailable": true},
+      {"access": "public", "getter": "isActive", "name": "active", "setter": "setActive:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isAvailable", "introduced": "27", "name": "available"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "27",
+     "linkage": "exported",
+     "name": "SCContentSharingPickerConfiguration",
+     "properties": [
+      {"access": "public", "getter": "allowedPickerModes", "name": "allowedPickerModes", "setter": "setAllowedPickerModes:", "unavailable": true},
+      {"access": "public", "getter": "excludedWindowIDs", "name": "excludedWindowIDs", "setter": "setExcludedWindowIDs:", "unavailable": true},
+      {"access": "public", "getter": "excludedBundleIDs", "name": "excludedBundleIDs", "setter": "setExcludedBundleIDs:", "unavailable": true},
+      {"access": "public", "getter": "allowsChangingSelectedContent", "name": "allowsChangingSelectedContent", "setter": "setAllowsChangingSelectedContent:", "unavailable": true},
+      {"access": "public", "getter": "showsMicrophoneControl", "introduced": "27", "name": "showsMicrophoneControl", "setter": "setShowsMicrophoneControl:"},
+      {"access": "public", "getter": "showsCameraControl", "introduced": "27", "name": "showsCameraControl", "setter": "setShowsCameraControl:"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "linkage": "exported",
+     "name": "SCDisplay",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "width", "name": "width"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "height", "name": "height"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "frame", "name": "frame"}
+     ],
+     "super": "NSObject",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "initWithURL:"},
+      {"access": "public", "introduced": "27", "name": "presentFromWindowScene:completionHandler:"},
+      {"access": "public", "name": "presentFromWindowScene:mode:completionHandler:", "unavailable": true}
+     ],
+     "introduced": "27",
+     "linkage": "exported",
+     "name": "SCRecordingEditor",
+     "properties": [
+      {"access": "public", "getter": "delegate", "name": "delegate", "setter": "setDelegate:"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithConfiguration:delegate:"}
+     ],
+     "introduced": "27",
+     "linkage": "exported",
+     "name": "SCRecordingOutput",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "recordedDuration", "name": "recordedDuration"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "recordedFileSize", "name": "recordedFileSize"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "27",
+     "linkage": "exported",
+     "name": "SCRecordingOutputConfiguration",
+     "properties": [
+      {"access": "public", "getter": "outputURL", "name": "outputURL", "setter": "setOutputURL:"},
+      {"access": "public", "getter": "videoCodecType", "name": "videoCodecType", "setter": "setVideoCodecType:"},
+      {"access": "public", "getter": "outputFileType", "name": "outputFileType", "setter": "setOutputFileType:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "availableVideoCodecTypes", "name": "availableVideoCodecTypes"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "availableOutputFileTypes", "name": "availableOutputFileTypes"},
+      {"access": "public", "getter": "mixesAudioWithMicrophone", "introduced": "27", "name": "mixesAudioWithMicrophone", "setter": "setMixesAudioWithMicrophone:"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "linkage": "exported",
+     "name": "SCRunningApplication",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "bundleIdentifier", "name": "bundleIdentifier"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "applicationName", "name": "applicationName"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "processID", "name": "processID"}
+     ],
+     "super": "NSObject",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "linkage": "exported",
+     "name": "SCScreenshotConfiguration",
+     "properties": [
+      {"access": "public", "getter": "width", "name": "width", "setter": "setWidth:"},
+      {"access": "public", "getter": "height", "name": "height", "setter": "setHeight:"},
+      {"access": "public", "getter": "showsCursor", "name": "showsCursor", "setter": "setShowsCursor:"},
+      {"access": "public", "getter": "sourceRect", "name": "sourceRect", "setter": "setSourceRect:"},
+      {"access": "public", "getter": "destinationRect", "name": "destinationRect", "setter": "setDestinationRect:"},
+      {"access": "public", "getter": "ignoreShadows", "name": "ignoreShadows", "setter": "setIgnoreShadows:"},
+      {"access": "public", "getter": "ignoreClipping", "name": "ignoreClipping", "setter": "setIgnoreClipping:"},
+      {"access": "public", "getter": "includeChildWindows", "name": "includeChildWindows", "setter": "setIncludeChildWindows:"},
+      {"access": "public", "getter": "displayIntent", "name": "displayIntent", "setter": "setDisplayIntent:"},
+      {"access": "public", "getter": "dynamicRange", "name": "dynamicRange", "setter": "setDynamicRange:"},
+      {"access": "public", "getter": "contentType", "name": "contentType", "setter": "setContentType:"},
+      {"access": "public", "getter": "fileURL", "name": "fileURL", "setter": "setFileURL:"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "supportedContentTypes", "name": "supportedContentTypes"}
+     ],
+     "super": "NSObject",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "captureSampleBufferWithFilter:configuration:completionHandler:"},
+      {"access": "public", "name": "captureImageWithFilter:configuration:completionHandler:"},
+      {"access": "public", "name": "captureImageInRect:completionHandler:", "unavailable": true},
+      {"access": "public", "name": "captureScreenshotWithFilter:configuration:completionHandler:", "unavailable": true},
+      {"access": "public", "name": "captureScreenshotWithRect:configuration:completionHandler:", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "linkage": "exported",
+     "name": "SCScreenshotManager",
+     "super": "NSObject",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "linkage": "exported",
+     "name": "SCScreenshotOutput",
+     "properties": [
+      {"access": "public", "getter": "sdrImage", "name": "sdrImage", "setter": "setSdrImage:"},
+      {"access": "public", "getter": "hdrImage", "name": "hdrImage", "setter": "setHdrImage:"},
+      {"access": "public", "getter": "fileURL", "name": "fileURL", "setter": "setFileURL:"}
+     ],
+     "super": "NSObject",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "getShareableContentWithCompletionHandler:"},
+      {"access": "public", "name": "getCurrentProcessShareableContentWithCompletionHandler:", "unavailable": true},
+      {"access": "public", "name": "getShareableContentExcludingDesktopWindows:onScreenWindowsOnly:completionHandler:"},
+      {"access": "public", "name": "getShareableContentExcludingDesktopWindows:onScreenWindowsOnlyBelowWindow:completionHandler:"},
+      {"access": "public", "name": "getShareableContentExcludingDesktopWindows:onScreenWindowsOnlyAboveWindow:completionHandler:"},
+      {"access": "public", "name": "infoForFilter:"},
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "linkage": "exported",
+     "name": "SCShareableContent",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "windows", "name": "windows"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "displays", "name": "displays"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "applications", "name": "applications"}
+     ],
+     "super": "NSObject",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "linkage": "exported",
+     "name": "SCShareableContentInfo",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "style", "name": "style"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "pointPixelScale", "name": "pointPixelScale"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "contentRect", "name": "contentRect"}
+     ],
+     "super": "NSObject",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "initWithFilter:configuration:delegate:"},
+      {"access": "public", "name": "addStreamOutput:type:sampleHandlerQueue:error:"},
+      {"access": "public", "name": "removeStreamOutput:type:error:"},
+      {"access": "public", "name": "updateContentFilter:completionHandler:", "unavailable": true},
+      {"access": "public", "name": "updateConfiguration:completionHandler:", "unavailable": true},
+      {"access": "public", "name": "startCaptureWithCompletionHandler:"},
+      {"access": "public", "name": "stopCaptureWithCompletionHandler:"},
+      {"access": "public", "introduced": "27", "name": "addRecordingOutput:error:"},
+      {"access": "public", "introduced": "27", "name": "removeRecordingOutput:error:"},
+      {"access": "public", "introduced": "27", "name": "addClipBufferingOutput:error:"},
+      {"access": "public", "introduced": "27", "name": "removeClipBufferingOutput:error:"},
+      {"access": "public", "introduced": "27", "name": "addVideoEffectOutput:error:"},
+      {"access": "public", "introduced": "27", "name": "removeVideoEffectOutput:error:"}
+     ],
+     "introduced": "27",
+     "linkage": "exported",
+     "name": "SCStream",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "synchronizationClock", "introduced": "27", "name": "synchronizationClock"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isCapturing", "introduced": "27", "name": "capturing"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "introduced": "27", "name": "streamConfigurationWithPreset:"}
+     ],
+     "introduced": "27",
+     "linkage": "exported",
+     "name": "SCStreamConfiguration",
+     "properties": [
+      {"access": "public", "getter": "width", "introduced": "27", "name": "width", "setter": "setWidth:"},
+      {"access": "public", "getter": "height", "introduced": "27", "name": "height", "setter": "setHeight:"},
+      {"access": "public", "getter": "minimumFrameInterval", "name": "minimumFrameInterval", "setter": "setMinimumFrameInterval:", "unavailable": true},
+      {"access": "public", "getter": "pixelFormat", "name": "pixelFormat", "setter": "setPixelFormat:", "unavailable": true},
+      {"access": "public", "getter": "scalesToFit", "name": "scalesToFit", "setter": "setScalesToFit:", "unavailable": true},
+      {"access": "public", "getter": "preservesAspectRatio", "name": "preservesAspectRatio", "setter": "setPreservesAspectRatio:", "unavailable": true},
+      {"access": "public", "getter": "streamName", "name": "streamName", "setter": "setStreamName:", "unavailable": true},
+      {"access": "public", "getter": "showsCursor", "name": "showsCursor", "setter": "setShowsCursor:", "unavailable": true},
+      {"access": "public", "getter": "showMouseClicks", "name": "showMouseClicks", "setter": "setShowMouseClicks:", "unavailable": true},
+      {"access": "public", "getter": "backgroundColor", "name": "backgroundColor", "setter": "setBackgroundColor:", "unavailable": true},
+      {"access": "public", "getter": "sourceRect", "name": "sourceRect", "setter": "setSourceRect:", "unavailable": true},
+      {"access": "public", "getter": "destinationRect", "name": "destinationRect", "setter": "setDestinationRect:", "unavailable": true},
+      {"access": "public", "getter": "queueDepth", "name": "queueDepth", "setter": "setQueueDepth:", "unavailable": true},
+      {"access": "public", "getter": "colorMatrix", "name": "colorMatrix", "setter": "setColorMatrix:", "unavailable": true},
+      {"access": "public", "getter": "colorSpaceName", "name": "colorSpaceName", "setter": "setColorSpaceName:", "unavailable": true},
+      {"access": "public", "getter": "capturesAudio", "introduced": "27", "name": "capturesAudio", "setter": "setCapturesAudio:"},
+      {"access": "public", "getter": "sampleRate", "introduced": "27", "name": "sampleRate", "setter": "setSampleRate:"},
+      {"access": "public", "getter": "channelCount", "introduced": "27", "name": "channelCount", "setter": "setChannelCount:"},
+      {"access": "public", "getter": "excludesCurrentProcessAudio", "introduced": "27", "name": "excludesCurrentProcessAudio", "setter": "setExcludesCurrentProcessAudio:"},
+      {"access": "public", "getter": "ignoreShadowsDisplay", "name": "ignoreShadowsDisplay", "setter": "setIgnoreShadowsDisplay:", "unavailable": true},
+      {"access": "public", "getter": "ignoreShadowsSingleWindow", "name": "ignoreShadowsSingleWindow", "setter": "setIgnoreShadowsSingleWindow:", "unavailable": true},
+      {"access": "public", "getter": "captureResolution", "name": "captureResolution", "setter": "setCaptureResolution:", "unavailable": true},
+      {"access": "public", "getter": "capturesShadowsOnly", "name": "capturesShadowsOnly", "setter": "setCapturesShadowsOnly:", "unavailable": true},
+      {"access": "public", "getter": "shouldBeOpaque", "name": "shouldBeOpaque", "setter": "setShouldBeOpaque:", "unavailable": true},
+      {"access": "public", "getter": "ignoreGlobalClipDisplay", "name": "ignoreGlobalClipDisplay", "setter": "setIgnoreGlobalClipDisplay:", "unavailable": true},
+      {"access": "public", "getter": "ignoreGlobalClipSingleWindow", "name": "ignoreGlobalClipSingleWindow", "setter": "setIgnoreGlobalClipSingleWindow:", "unavailable": true},
+      {"access": "public", "getter": "presenterOverlayPrivacyAlertSetting", "name": "presenterOverlayPrivacyAlertSetting", "setter": "setPresenterOverlayPrivacyAlertSetting:", "unavailable": true},
+      {"access": "public", "getter": "includeChildWindows", "name": "includeChildWindows", "setter": "setIncludeChildWindows:", "unavailable": true},
+      {"access": "public", "getter": "captureMicrophone", "name": "captureMicrophone", "setter": "setCaptureMicrophone:", "unavailable": true},
+      {"access": "public", "getter": "microphoneCaptureDeviceID", "name": "microphoneCaptureDeviceID", "setter": "setMicrophoneCaptureDeviceID:", "unavailable": true},
+      {"access": "public", "getter": "captureDynamicRange", "introduced": "27", "name": "captureDynamicRange", "setter": "setCaptureDynamicRange:"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithCameraDevice:"},
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "27",
+     "linkage": "exported",
+     "name": "SCVideoEffectOutput",
+     "properties": [
+      {"access": "public", "getter": "cameraDevice", "name": "cameraDevice", "setter": "setCameraDevice:"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "linkage": "exported",
+     "name": "SCWindow",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "frame", "name": "frame"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "title", "name": "title"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "windowLayer", "name": "windowLayer"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "owningApplication", "name": "owningApplication"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isOnScreen", "name": "onScreen"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isActive", "name": "active", "unavailable": true}
+     ],
+     "super": "NSObject",
+     "unavailable": true
+    }
+   ],
+   "protocols": [
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "clipBufferingOutputDidStartBuffering:", "optional": true},
+      {"access": "public", "name": "clipBufferingOutput:didFailWithError:", "optional": true},
+      {"access": "public", "name": "clipBufferingOutputDidStopBuffering:", "optional": true}
+     ],
+     "introduced": "27",
+     "name": "SCClipBufferingOutputDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "contentSharingPicker:didCancelForStream:"},
+      {"access": "public", "name": "contentSharingPicker:didUpdateWithFilter:forStream:"},
+      {"access": "public", "name": "contentSharingPickerStartDidFailWithError:"}
+     ],
+     "introduced": "27",
+     "name": "SCContentSharingPickerObserver",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "recordingEditorDidDismiss:", "optional": true},
+      {"access": "public", "name": "recordingEditor:didFailWithError:", "optional": true}
+     ],
+     "introduced": "27",
+     "name": "SCRecordingEditorDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "recordingOutputDidStartRecording:", "optional": true},
+      {"access": "public", "name": "recordingOutput:didFailWithError:", "optional": true},
+      {"access": "public", "name": "recordingOutputDidFinishRecording:", "optional": true}
+     ],
+     "introduced": "27",
+     "name": "SCRecordingOutputDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "stream:didStopWithError:", "optional": true},
+      {"access": "public", "introduced": "27", "name": "outputVideoEffectDidStartForStream:", "optional": true},
+      {"access": "public", "introduced": "27", "name": "outputVideoEffectDidStopForStream:", "optional": true},
+      {"access": "public", "introduced": "27", "name": "outputVideoEffectDidFailForStream:withError:", "optional": true},
+      {"access": "public", "name": "streamDidBecomeActive:", "optional": true},
+      {"access": "public", "name": "streamDidBecomeInactive:", "optional": true}
+     ],
+     "introduced": "27",
+     "name": "SCStreamDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "stream:didOutputSampleBuffer:ofType:", "optional": true}
+     ],
+     "introduced": "27",
+     "name": "SCStreamOutput",
+     "protocols": [
+      "NSObject"
+     ]
+    }
+   ],
+   "target": "arm64e-apple-ios27",
+   "typedefs": [
+    {"access": "public", "name": "SCCaptureDynamicRange"},
+    {"access": "public", "name": "SCCaptureResolutionType"},
+    {"access": "public", "name": "SCContentSharingPickerMode"},
+    {"access": "public", "name": "SCFrameStatus"},
+    {"access": "public", "name": "SCPresenterOverlayAlertSetting"},
+    {"access": "public", "name": "SCRecordingEditorMode"},
+    {"access": "public", "name": "SCScreenshotDisplayIntent"},
+    {"access": "public", "name": "SCScreenshotDynamicRange"},
+    {"access": "public", "name": "SCShareableContentStyle"},
+    {"access": "public", "name": "SCStreamConfigurationPreset"},
+    {"access": "public", "introduced": "27", "name": "SCStreamErrorCode"},
+    {"access": "public", "introduced": "27", "name": "SCStreamFrameInfo"},
+    {"access": "public", "name": "SCStreamOutputType"},
+    {"access": "public", "name": "SCStreamType"}
+   ]
+  },
+  {
+   "enums": [
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "SCCaptureDynamicRangeSDR"},
+      {"access": "public", "name": "SCCaptureDynamicRangeHDRLocalDisplay", "unavailable": true},
+      {"access": "public", "name": "SCCaptureDynamicRangeHDRCanonicalDisplay"}
+     ],
+     "introduced": "27",
+     "name": "SCCaptureDynamicRange"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "SCCaptureResolutionAutomatic"},
+      {"access": "public", "name": "SCCaptureResolutionBest"},
+      {"access": "public", "name": "SCCaptureResolutionNominal"}
+     ],
+     "name": "SCCaptureResolutionType",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "SCContentSharingPickerModeSingleWindow"},
+      {"access": "public", "name": "SCContentSharingPickerModeMultipleWindows"},
+      {"access": "public", "name": "SCContentSharingPickerModeSingleApplication"},
+      {"access": "public", "name": "SCContentSharingPickerModeMultipleApplications"},
+      {"access": "public", "name": "SCContentSharingPickerModeSingleDisplay"}
+     ],
+     "name": "SCContentSharingPickerMode",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "SCFrameStatusComplete"},
+      {"access": "public", "name": "SCFrameStatusIdle"},
+      {"access": "public", "name": "SCFrameStatusBlank"},
+      {"access": "public", "name": "SCFrameStatusSuspended"},
+      {"access": "public", "name": "SCFrameStatusStarted"},
+      {"access": "public", "name": "SCFrameStatusStopped"}
+     ],
+     "introduced": "27",
+     "name": "SCFrameStatus"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "SCPresenterOverlayAlertSettingSystem"},
+      {"access": "public", "name": "SCPresenterOverlayAlertSettingNever"},
+      {"access": "public", "name": "SCPresenterOverlayAlertSettingAlways"}
+     ],
+     "name": "SCPresenterOverlayAlertSetting",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "SCRecordingEditorModePreview"},
+      {"access": "public", "name": "SCRecordingEditorModeShare"}
+     ],
+     "name": "SCRecordingEditorMode",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "SCScreenshotDisplayIntentCanonical"},
+      {"access": "public", "name": "SCScreenshotDisplayIntentLocal"}
+     ],
+     "name": "SCScreenshotDisplayIntent"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "SCScreenshotDynamicRangeSDR"},
+      {"access": "public", "name": "SCScreenshotDynamicRangeHDR"},
+      {"access": "public", "name": "SCScreenshotDynamicRangeSDRAndHDR"}
+     ],
+     "name": "SCScreenshotDynamicRange"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "SCShareableContentStyleNone"},
+      {"access": "public", "introduced": "27", "name": "SCShareableContentStyleWindow"},
+      {"access": "public", "introduced": "27", "name": "SCShareableContentStyleDisplay"},
+      {"access": "public", "name": "SCShareableContentStyleApplication", "unavailable": true}
+     ],
+     "introduced": "27",
+     "name": "SCShareableContentStyle"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "SCStreamConfigurationPresetCaptureHDRStreamLocalDisplay", "unavailable": true},
+      {"access": "public", "name": "SCStreamConfigurationPresetCaptureHDRStreamCanonicalDisplay", "unavailable": true},
+      {"access": "public", "name": "SCStreamConfigurationPresetCaptureHDRScreenshotLocalDisplay", "unavailable": true},
+      {"access": "public", "name": "SCStreamConfigurationPresetCaptureHDRScreenshotCanonicalDisplay", "unavailable": true},
+      {"access": "public", "introduced": "27", "name": "SCStreamConfigurationPresetCaptureHDRRecordingPreservedSDRHDR10"}
+     ],
+     "introduced": "27",
+     "name": "SCStreamConfigurationPreset"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "27", "name": "SCStreamErrorUserDeclined"},
+      {"access": "public", "introduced": "27", "name": "SCStreamErrorFailedToStart"},
+      {"access": "public", "introduced": "27", "name": "SCStreamErrorMissingEntitlements"},
+      {"access": "public", "introduced": "27", "name": "SCStreamErrorFailedApplicationConnectionInvalid"},
+      {"access": "public", "introduced": "27", "name": "SCStreamErrorFailedApplicationConnectionInterrupted"},
+      {"access": "public", "introduced": "27", "name": "SCStreamErrorFailedNoMatchingApplicationContext"},
+      {"access": "public", "introduced": "27", "name": "SCStreamErrorAttemptToStartStreamState"},
+      {"access": "public", "introduced": "27", "name": "SCStreamErrorAttemptToStopStreamState"},
+      {"access": "public", "introduced": "27", "name": "SCStreamErrorAttemptToUpdateFilterState"},
+      {"access": "public", "introduced": "27", "name": "SCStreamErrorAttemptToConfigState"},
+      {"access": "public", "introduced": "27", "name": "SCStreamErrorInternalError"},
+      {"access": "public", "introduced": "27", "name": "SCStreamErrorInvalidParameter"},
+      {"access": "public", "introduced": "27", "name": "SCStreamErrorNoWindowList"},
+      {"access": "public", "introduced": "27", "name": "SCStreamErrorNoDisplayList"},
+      {"access": "public", "introduced": "27", "name": "SCStreamErrorNoCaptureSource"},
+      {"access": "public", "introduced": "27", "name": "SCStreamErrorRemovingStream"},
+      {"access": "public", "introduced": "27", "name": "SCStreamErrorUserStopped"},
+      {"access": "public", "introduced": "27", "name": "SCStreamErrorFailedToStartAudioCapture"},
+      {"access": "public", "introduced": "27", "name": "SCStreamErrorFailedToStopAudioCapture"},
+      {"access": "public", "introduced": "27", "name": "SCStreamErrorFailedToStartMicrophoneCapture"},
+      {"access": "public", "introduced": "27", "name": "SCStreamErrorSystemStoppedStream"},
+      {"access": "public", "introduced": "27", "name": "SCStreamErrorInsufficientStorage"},
+      {"access": "public", "introduced": "27", "name": "SCStreamErrorNotSupported"},
+      {"access": "public", "introduced": "27", "name": "SCStreamErrorMissingBackgroundMode"}
+     ],
+     "name": "SCStreamErrorCode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "SCStreamOutputTypeScreen"},
+      {"access": "public", "introduced": "27", "name": "SCStreamOutputTypeAudio"},
+      {"access": "public", "introduced": "27", "name": "SCStreamOutputTypeMicrophone"}
+     ],
+     "introduced": "27",
+     "name": "SCStreamOutputType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "SCStreamTypeWindow"},
+      {"access": "public", "name": "SCStreamTypeDisplay"}
+     ],
+     "name": "SCStreamType",
+     "unavailable": true
+    }
+   ],
+   "globals": [
+    {"access": "public", "introduced": "27", "kind": "variable", "linkage": "exported", "name": "_SCStreamErrorDomain"},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_SCStreamFrameInfoBoundingRect", "unavailable": true},
+    {"access": "public", "introduced": "27", "kind": "variable", "linkage": "exported", "name": "_SCStreamFrameInfoContentRect"},
+    {"access": "public", "introduced": "27", "kind": "variable", "linkage": "exported", "name": "_SCStreamFrameInfoContentScale"},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_SCStreamFrameInfoDirtyRects", "unavailable": true},
+    {"access": "public", "introduced": "27", "kind": "variable", "linkage": "exported", "name": "_SCStreamFrameInfoDisplayTime"},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_SCStreamFrameInfoPresenterOverlayContentRect", "unavailable": true},
+    {"access": "public", "introduced": "27", "kind": "variable", "linkage": "exported", "name": "_SCStreamFrameInfoScaleFactor"},
+    {"access": "public", "introduced": "27", "kind": "variable", "linkage": "exported", "name": "_SCStreamFrameInfoScreenRect"},
+    {"access": "public", "introduced": "27", "kind": "variable", "linkage": "exported", "name": "_SCStreamFrameInfoStatus"},
+    {"access": "public", "introduced": "27", "kind": "variable", "linkage": "exported", "name": "_SCStreamFrameInfoVideoOrientation"}
+   ],
+   "interfaces": [
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithDelegate:"},
+      {"access": "public", "name": "exportClipToURL:duration:completionHandler:"}
+     ],
+     "introduced": "27",
+     "linkage": "exported",
+     "name": "SCClipBufferingOutput",
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithDesktopIndependentWindow:", "unavailable": true},
+      {"access": "public", "name": "initWithDisplay:excludingWindows:", "unavailable": true},
+      {"access": "public", "name": "initWithDisplay:includingWindows:", "unavailable": true},
+      {"access": "public", "name": "initWithDisplay:includingApplications:exceptingWindows:", "unavailable": true},
+      {"access": "public", "name": "initWithDisplay:excludingApplications:exceptingWindows:", "unavailable": true}
+     ],
+     "introduced": "27",
+     "linkage": "exported",
+     "name": "SCContentFilter",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "streamType", "name": "streamType", "unavailable": true},
+      {"access": "public", "attr": [ "readonly" ], "getter": "style", "introduced": "27", "name": "style"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "pointPixelScale", "introduced": "27", "name": "pointPixelScale"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "contentRect", "introduced": "27", "name": "contentRect"},
+      {"access": "public", "getter": "includeMenuBar", "name": "includeMenuBar", "setter": "setIncludeMenuBar:", "unavailable": true},
+      {"access": "public", "attr": [ "readonly" ], "getter": "includedDisplays", "name": "includedDisplays", "unavailable": true},
+      {"access": "public", "attr": [ "readonly" ], "getter": "includedApplications", "name": "includedApplications", "unavailable": true},
+      {"access": "public", "attr": [ "readonly" ], "getter": "includedWindows", "name": "includedWindows", "unavailable": true},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isMicrophoneEnabled", "introduced": "27", "name": "microphoneEnabled"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isCameraEnabled", "introduced": "27", "name": "cameraEnabled"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "addObserver:"},
+      {"access": "public", "name": "removeObserver:"},
+      {"access": "public", "name": "setConfiguration:forStream:"},
+      {"access": "public", "introduced": "27", "name": "present"},
+      {"access": "public", "introduced": "27", "name": "presentPickerUsingContentStyle:"},
+      {"access": "public", "name": "presentPickerForStream:", "unavailable": true},
+      {"access": "public", "name": "presentPickerForStream:usingContentStyle:", "unavailable": true},
+      {"access": "public", "introduced": "27", "name": "presentPickerForCurrentApplication"}
+     ],
+     "introduced": "27",
+     "linkage": "exported",
+     "name": "SCContentSharingPicker",
+     "properties": [
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "sharedPicker", "name": "sharedPicker"},
+      {"access": "public", "getter": "defaultConfiguration", "name": "defaultConfiguration", "setter": "setDefaultConfiguration:"},
+      {"access": "public", "getter": "maximumStreamCount", "name": "maximumStreamCount", "setter": "setMaximumStreamCount:", "unavailable": true},
+      {"access": "public", "getter": "isActive", "name": "active", "setter": "setActive:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isAvailable", "introduced": "27", "name": "available"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "27",
+     "linkage": "exported",
+     "name": "SCContentSharingPickerConfiguration",
+     "properties": [
+      {"access": "public", "getter": "allowedPickerModes", "name": "allowedPickerModes", "setter": "setAllowedPickerModes:", "unavailable": true},
+      {"access": "public", "getter": "excludedWindowIDs", "name": "excludedWindowIDs", "setter": "setExcludedWindowIDs:", "unavailable": true},
+      {"access": "public", "getter": "excludedBundleIDs", "name": "excludedBundleIDs", "setter": "setExcludedBundleIDs:", "unavailable": true},
+      {"access": "public", "getter": "allowsChangingSelectedContent", "name": "allowsChangingSelectedContent", "setter": "setAllowsChangingSelectedContent:", "unavailable": true},
+      {"access": "public", "getter": "showsMicrophoneControl", "introduced": "27", "name": "showsMicrophoneControl", "setter": "setShowsMicrophoneControl:"},
+      {"access": "public", "getter": "showsCameraControl", "introduced": "27", "name": "showsCameraControl", "setter": "setShowsCameraControl:"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "linkage": "exported",
+     "name": "SCDisplay",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "width", "name": "width"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "height", "name": "height"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "frame", "name": "frame"}
+     ],
+     "super": "NSObject",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "initWithURL:"},
+      {"access": "public", "introduced": "27", "name": "presentFromWindowScene:completionHandler:"},
+      {"access": "public", "name": "presentFromWindowScene:mode:completionHandler:", "unavailable": true}
+     ],
+     "introduced": "27",
+     "linkage": "exported",
+     "name": "SCRecordingEditor",
+     "properties": [
+      {"access": "public", "getter": "delegate", "name": "delegate", "setter": "setDelegate:"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithConfiguration:delegate:"}
+     ],
+     "introduced": "27",
+     "linkage": "exported",
+     "name": "SCRecordingOutput",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "recordedDuration", "name": "recordedDuration"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "recordedFileSize", "name": "recordedFileSize"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "27",
+     "linkage": "exported",
+     "name": "SCRecordingOutputConfiguration",
+     "properties": [
+      {"access": "public", "getter": "outputURL", "name": "outputURL", "setter": "setOutputURL:"},
+      {"access": "public", "getter": "videoCodecType", "name": "videoCodecType", "setter": "setVideoCodecType:"},
+      {"access": "public", "getter": "outputFileType", "name": "outputFileType", "setter": "setOutputFileType:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "availableVideoCodecTypes", "name": "availableVideoCodecTypes"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "availableOutputFileTypes", "name": "availableOutputFileTypes"},
+      {"access": "public", "getter": "mixesAudioWithMicrophone", "introduced": "27", "name": "mixesAudioWithMicrophone", "setter": "setMixesAudioWithMicrophone:"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "linkage": "exported",
+     "name": "SCRunningApplication",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "bundleIdentifier", "name": "bundleIdentifier"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "applicationName", "name": "applicationName"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "processID", "name": "processID"}
+     ],
+     "super": "NSObject",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "linkage": "exported",
+     "name": "SCScreenshotConfiguration",
+     "properties": [
+      {"access": "public", "getter": "width", "name": "width", "setter": "setWidth:"},
+      {"access": "public", "getter": "height", "name": "height", "setter": "setHeight:"},
+      {"access": "public", "getter": "showsCursor", "name": "showsCursor", "setter": "setShowsCursor:"},
+      {"access": "public", "getter": "sourceRect", "name": "sourceRect", "setter": "setSourceRect:"},
+      {"access": "public", "getter": "destinationRect", "name": "destinationRect", "setter": "setDestinationRect:"},
+      {"access": "public", "getter": "ignoreShadows", "name": "ignoreShadows", "setter": "setIgnoreShadows:"},
+      {"access": "public", "getter": "ignoreClipping", "name": "ignoreClipping", "setter": "setIgnoreClipping:"},
+      {"access": "public", "getter": "includeChildWindows", "name": "includeChildWindows", "setter": "setIncludeChildWindows:"},
+      {"access": "public", "getter": "displayIntent", "name": "displayIntent", "setter": "setDisplayIntent:"},
+      {"access": "public", "getter": "dynamicRange", "name": "dynamicRange", "setter": "setDynamicRange:"},
+      {"access": "public", "getter": "contentType", "name": "contentType", "setter": "setContentType:"},
+      {"access": "public", "getter": "fileURL", "name": "fileURL", "setter": "setFileURL:"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "supportedContentTypes", "name": "supportedContentTypes"}
+     ],
+     "super": "NSObject",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "captureSampleBufferWithFilter:configuration:completionHandler:"},
+      {"access": "public", "name": "captureImageWithFilter:configuration:completionHandler:"},
+      {"access": "public", "name": "captureImageInRect:completionHandler:", "unavailable": true},
+      {"access": "public", "name": "captureScreenshotWithFilter:configuration:completionHandler:", "unavailable": true},
+      {"access": "public", "name": "captureScreenshotWithRect:configuration:completionHandler:", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "linkage": "exported",
+     "name": "SCScreenshotManager",
+     "super": "NSObject",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "linkage": "exported",
+     "name": "SCScreenshotOutput",
+     "properties": [
+      {"access": "public", "getter": "sdrImage", "name": "sdrImage", "setter": "setSdrImage:"},
+      {"access": "public", "getter": "hdrImage", "name": "hdrImage", "setter": "setHdrImage:"},
+      {"access": "public", "getter": "fileURL", "name": "fileURL", "setter": "setFileURL:"}
+     ],
+     "super": "NSObject",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "getShareableContentWithCompletionHandler:"},
+      {"access": "public", "name": "getCurrentProcessShareableContentWithCompletionHandler:", "unavailable": true},
+      {"access": "public", "name": "getShareableContentExcludingDesktopWindows:onScreenWindowsOnly:completionHandler:"},
+      {"access": "public", "name": "getShareableContentExcludingDesktopWindows:onScreenWindowsOnlyBelowWindow:completionHandler:"},
+      {"access": "public", "name": "getShareableContentExcludingDesktopWindows:onScreenWindowsOnlyAboveWindow:completionHandler:"},
+      {"access": "public", "name": "infoForFilter:"},
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "linkage": "exported",
+     "name": "SCShareableContent",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "windows", "name": "windows"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "displays", "name": "displays"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "applications", "name": "applications"}
+     ],
+     "super": "NSObject",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "linkage": "exported",
+     "name": "SCShareableContentInfo",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "style", "name": "style"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "pointPixelScale", "name": "pointPixelScale"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "contentRect", "name": "contentRect"}
+     ],
+     "super": "NSObject",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "initWithFilter:configuration:delegate:"},
+      {"access": "public", "name": "addStreamOutput:type:sampleHandlerQueue:error:"},
+      {"access": "public", "name": "removeStreamOutput:type:error:"},
+      {"access": "public", "name": "updateContentFilter:completionHandler:", "unavailable": true},
+      {"access": "public", "name": "updateConfiguration:completionHandler:", "unavailable": true},
+      {"access": "public", "name": "startCaptureWithCompletionHandler:"},
+      {"access": "public", "name": "stopCaptureWithCompletionHandler:"},
+      {"access": "public", "introduced": "27", "name": "addRecordingOutput:error:"},
+      {"access": "public", "introduced": "27", "name": "removeRecordingOutput:error:"},
+      {"access": "public", "introduced": "27", "name": "addClipBufferingOutput:error:"},
+      {"access": "public", "introduced": "27", "name": "removeClipBufferingOutput:error:"},
+      {"access": "public", "introduced": "27", "name": "addVideoEffectOutput:error:"},
+      {"access": "public", "introduced": "27", "name": "removeVideoEffectOutput:error:"}
+     ],
+     "introduced": "27",
+     "linkage": "exported",
+     "name": "SCStream",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "synchronizationClock", "introduced": "27", "name": "synchronizationClock"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isCapturing", "introduced": "27", "name": "capturing"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "introduced": "27", "name": "streamConfigurationWithPreset:"}
+     ],
+     "introduced": "27",
+     "linkage": "exported",
+     "name": "SCStreamConfiguration",
+     "properties": [
+      {"access": "public", "getter": "width", "introduced": "27", "name": "width", "setter": "setWidth:"},
+      {"access": "public", "getter": "height", "introduced": "27", "name": "height", "setter": "setHeight:"},
+      {"access": "public", "getter": "minimumFrameInterval", "name": "minimumFrameInterval", "setter": "setMinimumFrameInterval:", "unavailable": true},
+      {"access": "public", "getter": "pixelFormat", "name": "pixelFormat", "setter": "setPixelFormat:", "unavailable": true},
+      {"access": "public", "getter": "scalesToFit", "name": "scalesToFit", "setter": "setScalesToFit:", "unavailable": true},
+      {"access": "public", "getter": "preservesAspectRatio", "name": "preservesAspectRatio", "setter": "setPreservesAspectRatio:", "unavailable": true},
+      {"access": "public", "getter": "streamName", "name": "streamName", "setter": "setStreamName:", "unavailable": true},
+      {"access": "public", "getter": "showsCursor", "name": "showsCursor", "setter": "setShowsCursor:", "unavailable": true},
+      {"access": "public", "getter": "showMouseClicks", "name": "showMouseClicks", "setter": "setShowMouseClicks:", "unavailable": true},
+      {"access": "public", "getter": "backgroundColor", "name": "backgroundColor", "setter": "setBackgroundColor:", "unavailable": true},
+      {"access": "public", "getter": "sourceRect", "name": "sourceRect", "setter": "setSourceRect:", "unavailable": true},
+      {"access": "public", "getter": "destinationRect", "name": "destinationRect", "setter": "setDestinationRect:", "unavailable": true},
+      {"access": "public", "getter": "queueDepth", "name": "queueDepth", "setter": "setQueueDepth:", "unavailable": true},
+      {"access": "public", "getter": "colorMatrix", "name": "colorMatrix", "setter": "setColorMatrix:", "unavailable": true},
+      {"access": "public", "getter": "colorSpaceName", "name": "colorSpaceName", "setter": "setColorSpaceName:", "unavailable": true},
+      {"access": "public", "getter": "capturesAudio", "introduced": "27", "name": "capturesAudio", "setter": "setCapturesAudio:"},
+      {"access": "public", "getter": "sampleRate", "introduced": "27", "name": "sampleRate", "setter": "setSampleRate:"},
+      {"access": "public", "getter": "channelCount", "introduced": "27", "name": "channelCount", "setter": "setChannelCount:"},
+      {"access": "public", "getter": "excludesCurrentProcessAudio", "introduced": "27", "name": "excludesCurrentProcessAudio", "setter": "setExcludesCurrentProcessAudio:"},
+      {"access": "public", "getter": "ignoreShadowsDisplay", "name": "ignoreShadowsDisplay", "setter": "setIgnoreShadowsDisplay:", "unavailable": true},
+      {"access": "public", "getter": "ignoreShadowsSingleWindow", "name": "ignoreShadowsSingleWindow", "setter": "setIgnoreShadowsSingleWindow:", "unavailable": true},
+      {"access": "public", "getter": "captureResolution", "name": "captureResolution", "setter": "setCaptureResolution:", "unavailable": true},
+      {"access": "public", "getter": "capturesShadowsOnly", "name": "capturesShadowsOnly", "setter": "setCapturesShadowsOnly:", "unavailable": true},
+      {"access": "public", "getter": "shouldBeOpaque", "name": "shouldBeOpaque", "setter": "setShouldBeOpaque:", "unavailable": true},
+      {"access": "public", "getter": "ignoreGlobalClipDisplay", "name": "ignoreGlobalClipDisplay", "setter": "setIgnoreGlobalClipDisplay:", "unavailable": true},
+      {"access": "public", "getter": "ignoreGlobalClipSingleWindow", "name": "ignoreGlobalClipSingleWindow", "setter": "setIgnoreGlobalClipSingleWindow:", "unavailable": true},
+      {"access": "public", "getter": "presenterOverlayPrivacyAlertSetting", "name": "presenterOverlayPrivacyAlertSetting", "setter": "setPresenterOverlayPrivacyAlertSetting:", "unavailable": true},
+      {"access": "public", "getter": "includeChildWindows", "name": "includeChildWindows", "setter": "setIncludeChildWindows:", "unavailable": true},
+      {"access": "public", "getter": "captureMicrophone", "name": "captureMicrophone", "setter": "setCaptureMicrophone:", "unavailable": true},
+      {"access": "public", "getter": "microphoneCaptureDeviceID", "name": "microphoneCaptureDeviceID", "setter": "setMicrophoneCaptureDeviceID:", "unavailable": true},
+      {"access": "public", "getter": "captureDynamicRange", "introduced": "27", "name": "captureDynamicRange", "setter": "setCaptureDynamicRange:"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithCameraDevice:"},
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "27",
+     "linkage": "exported",
+     "name": "SCVideoEffectOutput",
+     "properties": [
+      {"access": "public", "getter": "cameraDevice", "name": "cameraDevice", "setter": "setCameraDevice:"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "linkage": "exported",
+     "name": "SCWindow",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "frame", "name": "frame"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "title", "name": "title"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "windowLayer", "name": "windowLayer"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "owningApplication", "name": "owningApplication"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isOnScreen", "name": "onScreen"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isActive", "name": "active", "unavailable": true}
+     ],
+     "super": "NSObject",
+     "unavailable": true
+    }
+   ],
+   "protocols": [
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "clipBufferingOutputDidStartBuffering:", "optional": true},
+      {"access": "public", "name": "clipBufferingOutput:didFailWithError:", "optional": true},
+      {"access": "public", "name": "clipBufferingOutputDidStopBuffering:", "optional": true}
+     ],
+     "introduced": "27",
+     "name": "SCClipBufferingOutputDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "contentSharingPicker:didCancelForStream:"},
+      {"access": "public", "name": "contentSharingPicker:didUpdateWithFilter:forStream:"},
+      {"access": "public", "name": "contentSharingPickerStartDidFailWithError:"}
+     ],
+     "introduced": "27",
+     "name": "SCContentSharingPickerObserver",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "recordingEditorDidDismiss:", "optional": true},
+      {"access": "public", "name": "recordingEditor:didFailWithError:", "optional": true}
+     ],
+     "introduced": "27",
+     "name": "SCRecordingEditorDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "recordingOutputDidStartRecording:", "optional": true},
+      {"access": "public", "name": "recordingOutput:didFailWithError:", "optional": true},
+      {"access": "public", "name": "recordingOutputDidFinishRecording:", "optional": true}
+     ],
+     "introduced": "27",
+     "name": "SCRecordingOutputDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "stream:didStopWithError:", "optional": true},
+      {"access": "public", "introduced": "27", "name": "outputVideoEffectDidStartForStream:", "optional": true},
+      {"access": "public", "introduced": "27", "name": "outputVideoEffectDidStopForStream:", "optional": true},
+      {"access": "public", "introduced": "27", "name": "outputVideoEffectDidFailForStream:withError:", "optional": true},
+      {"access": "public", "name": "streamDidBecomeActive:", "optional": true},
+      {"access": "public", "name": "streamDidBecomeInactive:", "optional": true}
+     ],
+     "introduced": "27",
+     "name": "SCStreamDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "stream:didOutputSampleBuffer:ofType:", "optional": true}
+     ],
+     "introduced": "27",
+     "name": "SCStreamOutput",
+     "protocols": [
+      "NSObject"
+     ]
+    }
+   ],
+   "target": "arm64e.x1-apple-ios27",
+   "typedefs": [
+    {"access": "public", "name": "SCCaptureDynamicRange"},
+    {"access": "public", "name": "SCCaptureResolutionType"},
+    {"access": "public", "name": "SCContentSharingPickerMode"},
+    {"access": "public", "name": "SCFrameStatus"},
+    {"access": "public", "name": "SCPresenterOverlayAlertSetting"},
+    {"access": "public", "name": "SCRecordingEditorMode"},
+    {"access": "public", "name": "SCScreenshotDisplayIntent"},
+    {"access": "public", "name": "SCScreenshotDynamicRange"},
+    {"access": "public", "name": "SCShareableContentStyle"},
+    {"access": "public", "name": "SCStreamConfigurationPreset"},
+    {"access": "public", "introduced": "27", "name": "SCStreamErrorCode"},
+    {"access": "public", "introduced": "27", "name": "SCStreamFrameInfo"},
+    {"access": "public", "name": "SCStreamOutputType"},
+    {"access": "public", "name": "SCStreamType"}
+   ]
+  },
+  {
+   "globals": [
+    {"access": "public", "linkage": "exported", "name": "_$s16ScreenCaptureKit35SCContentSharingPickerConfigurationV07allowedF5ModesSo0deF4ModeVvM", "unavailable": true},
+    {"access": "public", "linkage": "exported", "name": "_$s16ScreenCaptureKit35SCContentSharingPickerConfigurationV07allowedF5ModesSo0deF4ModeVvg", "unavailable": true},
+    {"access": "public", "linkage": "exported", "name": "_$s16ScreenCaptureKit35SCContentSharingPickerConfigurationV07allowedF5ModesSo0deF4ModeVvpMV", "unavailable": true},
+    {"access": "public", "linkage": "exported", "name": "_$s16ScreenCaptureKit35SCContentSharingPickerConfigurationV07allowedF5ModesSo0deF4ModeVvs", "unavailable": true},
+    {"access": "public", "linkage": "exported", "name": "_$s16ScreenCaptureKit35SCContentSharingPickerConfigurationV17excludedBundleIDsSaySSGvM", "unavailable": true},
+    {"access": "public", "linkage": "exported", "name": "_$s16ScreenCaptureKit35SCContentSharingPickerConfigurationV17excludedBundleIDsSaySSGvg", "unavailable": true},
+    {"access": "public", "linkage": "exported", "name": "_$s16ScreenCaptureKit35SCContentSharingPickerConfigurationV17excludedBundleIDsSaySSGvpMV", "unavailable": true},
+    {"access": "public", "linkage": "exported", "name": "_$s16ScreenCaptureKit35SCContentSharingPickerConfigurationV17excludedBundleIDsSaySSGvs", "unavailable": true},
+    {"access": "public", "linkage": "exported", "name": "_$s16ScreenCaptureKit35SCContentSharingPickerConfigurationV17excludedWindowIDsSaySiGvM", "unavailable": true},
+    {"access": "public", "linkage": "exported", "name": "_$s16ScreenCaptureKit35SCContentSharingPickerConfigurationV17excludedWindowIDsSaySiGvg", "unavailable": true},
+    {"access": "public", "linkage": "exported", "name": "_$s16ScreenCaptureKit35SCContentSharingPickerConfigurationV17excludedWindowIDsSaySiGvpMV", "unavailable": true},
+    {"access": "public", "linkage": "exported", "name": "_$s16ScreenCaptureKit35SCContentSharingPickerConfigurationV17excludedWindowIDsSaySiGvs", "unavailable": true},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s16ScreenCaptureKit35SCContentSharingPickerConfigurationV18showsCameraControlSbvM"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s16ScreenCaptureKit35SCContentSharingPickerConfigurationV18showsCameraControlSbvg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s16ScreenCaptureKit35SCContentSharingPickerConfigurationV18showsCameraControlSbvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s16ScreenCaptureKit35SCContentSharingPickerConfigurationV18showsCameraControlSbvs"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s16ScreenCaptureKit35SCContentSharingPickerConfigurationV22showsMicrophoneControlSbvM"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s16ScreenCaptureKit35SCContentSharingPickerConfigurationV22showsMicrophoneControlSbvg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s16ScreenCaptureKit35SCContentSharingPickerConfigurationV22showsMicrophoneControlSbvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s16ScreenCaptureKit35SCContentSharingPickerConfigurationV22showsMicrophoneControlSbvs"},
+    {"access": "public", "linkage": "exported", "name": "_$s16ScreenCaptureKit35SCContentSharingPickerConfigurationV29allowsChangingSelectedContentSbvM", "unavailable": true},
+    {"access": "public", "linkage": "exported", "name": "_$s16ScreenCaptureKit35SCContentSharingPickerConfigurationV29allowsChangingSelectedContentSbvg", "unavailable": true},
+    {"access": "public", "linkage": "exported", "name": "_$s16ScreenCaptureKit35SCContentSharingPickerConfigurationV29allowsChangingSelectedContentSbvpMV", "unavailable": true},
+    {"access": "public", "linkage": "exported", "name": "_$s16ScreenCaptureKit35SCContentSharingPickerConfigurationV29allowsChangingSelectedContentSbvs", "unavailable": true},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s16ScreenCaptureKit35SCContentSharingPickerConfigurationVACycfC"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s16ScreenCaptureKit35SCContentSharingPickerConfigurationVMa"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s16ScreenCaptureKit35SCContentSharingPickerConfigurationVMn"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s16ScreenCaptureKit35SCContentSharingPickerConfigurationVN"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$sSo22SCContentSharingPickerC16ScreenCaptureKitE13configurationAC0abC13ConfigurationVSgvM"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$sSo22SCContentSharingPickerC16ScreenCaptureKitE13configurationAC0abC13ConfigurationVSgvg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$sSo22SCContentSharingPickerC16ScreenCaptureKitE13configurationAC0abC13ConfigurationVSgvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$sSo22SCContentSharingPickerC16ScreenCaptureKitE13configurationAC0abC13ConfigurationVSgvs"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$sSo22SCContentSharingPickerC16ScreenCaptureKitE16setConfiguration_3foryAC0abcH0VSg_So8SCStreamCtF"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo22SCContentSharingPickerC16ScreenCaptureKitE18maximumStreamCountSiSgvM", "unavailable": true},
+    {"access": "public", "linkage": "exported", "name": "_$sSo22SCContentSharingPickerC16ScreenCaptureKitE18maximumStreamCountSiSgvg", "unavailable": true},
+    {"access": "public", "linkage": "exported", "name": "_$sSo22SCContentSharingPickerC16ScreenCaptureKitE18maximumStreamCountSiSgvpMV", "unavailable": true},
+    {"access": "public", "linkage": "exported", "name": "_$sSo22SCContentSharingPickerC16ScreenCaptureKitE18maximumStreamCountSiSgvs", "unavailable": true},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$sSo22SCContentSharingPickerC16ScreenCaptureKitE20defaultConfigurationAC0abcH0VvM"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$sSo22SCContentSharingPickerC16ScreenCaptureKitE20defaultConfigurationAC0abcH0Vvg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$sSo22SCContentSharingPickerC16ScreenCaptureKitE20defaultConfigurationAC0abcH0VvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$sSo22SCContentSharingPickerC16ScreenCaptureKitE20defaultConfigurationAC0abcH0Vvs"}
+   ],
+   "target": "arm64e-apple-ios27.0"
   }
  ],
  "version": "1.0"

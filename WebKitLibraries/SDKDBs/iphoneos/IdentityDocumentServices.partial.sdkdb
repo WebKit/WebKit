@@ -27,11 +27,16 @@
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$s24IdentityDocumentServices014ISO18013MobileB7RequestV0bF0V10namespacesSDySSSDySSAC11ElementInfoVGGvg"},
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$s24IdentityDocumentServices014ISO18013MobileB7RequestV0bF0V10namespacesSDySSSDySSAC11ElementInfoVGGvpMV"},
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$s24IdentityDocumentServices014ISO18013MobileB7RequestV0bF0V10namespacesSDySSSDySSAC11ElementInfoVGGvs"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s24IdentityDocumentServices014ISO18013MobileB7RequestV0bF0V12documentType10namespaces20issuerKeyIdentifiersAESS_SDySSSDySSAC11ElementInfoVGGSay10Foundation4DataVGtcfC"},
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$s24IdentityDocumentServices014ISO18013MobileB7RequestV0bF0V12documentType10namespacesAESS_SDySSSDySSAC11ElementInfoVGGtcfC"},
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$s24IdentityDocumentServices014ISO18013MobileB7RequestV0bF0V12documentTypeSSvM"},
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$s24IdentityDocumentServices014ISO18013MobileB7RequestV0bF0V12documentTypeSSvg"},
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$s24IdentityDocumentServices014ISO18013MobileB7RequestV0bF0V12documentTypeSSvpMV"},
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$s24IdentityDocumentServices014ISO18013MobileB7RequestV0bF0V12documentTypeSSvs"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s24IdentityDocumentServices014ISO18013MobileB7RequestV0bF0V20issuerKeyIdentifiersSay10Foundation4DataVGvM"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s24IdentityDocumentServices014ISO18013MobileB7RequestV0bF0V20issuerKeyIdentifiersSay10Foundation4DataVGvg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s24IdentityDocumentServices014ISO18013MobileB7RequestV0bF0V20issuerKeyIdentifiersSay10Foundation4DataVGvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s24IdentityDocumentServices014ISO18013MobileB7RequestV0bF0V20issuerKeyIdentifiersSay10Foundation4DataVGvs"},
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$s24IdentityDocumentServices014ISO18013MobileB7RequestV0bF0VMa"},
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$s24IdentityDocumentServices014ISO18013MobileB7RequestV0bF0VMn"},
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$s24IdentityDocumentServices014ISO18013MobileB7RequestV0bF0VN"},
@@ -73,6 +78,7 @@
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$s24IdentityDocumentServices014ISO18013MobileB8ResponseVMa"},
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$s24IdentityDocumentServices014ISO18013MobileB8ResponseVMn"},
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$s24IdentityDocumentServices014ISO18013MobileB8ResponseVN"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s24IdentityDocumentServices06MobileB12RegistrationV06mobileB4Type29supportedIssuerKeyIdentifiers0h9AuthorityjK018documentIdentifier16invalidationDateACSS_Say10Foundation4DataVGALSSAI0P0VSgtcfC"},
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$s24IdentityDocumentServices06MobileB12RegistrationV06mobileB4Type32supportedAuthorityKeyIdentifiers18documentIdentifier16invalidationDateACSS_Say10Foundation4DataVGSSAH0O0VSgtcfC"},
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$s24IdentityDocumentServices06MobileB12RegistrationV06mobileB4TypeSSvM"},
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$s24IdentityDocumentServices06MobileB12RegistrationV06mobileB4TypeSSvg"},
@@ -86,6 +92,10 @@
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$s24IdentityDocumentServices06MobileB12RegistrationV18documentIdentifierSSvg"},
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$s24IdentityDocumentServices06MobileB12RegistrationV18documentIdentifierSSvpMV"},
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$s24IdentityDocumentServices06MobileB12RegistrationV18documentIdentifierSSvs"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s24IdentityDocumentServices06MobileB12RegistrationV29supportedIssuerKeyIdentifiersSay10Foundation4DataVGvM"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s24IdentityDocumentServices06MobileB12RegistrationV29supportedIssuerKeyIdentifiersSay10Foundation4DataVGvg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s24IdentityDocumentServices06MobileB12RegistrationV29supportedIssuerKeyIdentifiersSay10Foundation4DataVGvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s24IdentityDocumentServices06MobileB12RegistrationV29supportedIssuerKeyIdentifiersSay10Foundation4DataVGvs"},
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$s24IdentityDocumentServices06MobileB12RegistrationV32supportedAuthorityKeyIdentifiersSay10Foundation4DataVGvM"},
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$s24IdentityDocumentServices06MobileB12RegistrationV32supportedAuthorityKeyIdentifiersSay10Foundation4DataVGvg"},
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$s24IdentityDocumentServices06MobileB12RegistrationV32supportedAuthorityKeyIdentifiersSay10Foundation4DataVGvpMV"},
@@ -222,7 +232,7 @@
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$s24IdentityDocumentServices0aB33WebPresentmentRawRequestValidatorVMn"},
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$s24IdentityDocumentServices0aB33WebPresentmentRawRequestValidatorVN"}
    ],
-   "target": "arm64e-apple-ios26.5"
+   "target": "arm64e-apple-ios27.0"
   },
   {
    "globals": [
@@ -307,7 +317,7 @@
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$s26IdentityDocumentServicesUI0aB8ProviderTL"},
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$s4Body26IdentityDocumentServicesUI0bC8ProviderPTl"}
    ],
-   "target": "arm64e-apple-ios26.5"
+   "target": "arm64e-apple-ios27.0"
   }
  ],
  "version": "1.0"

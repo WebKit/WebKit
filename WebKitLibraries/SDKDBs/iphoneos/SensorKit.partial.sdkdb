@@ -316,6 +316,37 @@
     {
      "access": "public",
      "constants": [
+      {"access": "public", "name": "SRHeadphoneSettingsAdaptiveAudioStrengthLow"},
+      {"access": "public", "name": "SRHeadphoneSettingsAdaptiveAudioStrengthMedium"},
+      {"access": "public", "name": "SRHeadphoneSettingsAdaptiveAudioStrengthHigh"}
+     ],
+     "introduced": "27",
+     "name": "SRHeadphoneSettingsAdaptiveAudioStrength"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "SRHeadphoneSettingsListeningModeNormal"},
+      {"access": "public", "name": "SRHeadphoneSettingsListeningModeActiveNoiseCancelling"},
+      {"access": "public", "name": "SRHeadphoneSettingsListeningModeTransparency"},
+      {"access": "public", "name": "SRHeadphoneSettingsListeningModeAutoActiveNoiseCancelling"}
+     ],
+     "introduced": "27",
+     "name": "SRHeadphoneSettingsListeningMode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "SRHeadphoneSettingsSettingEnablementUnsupported"},
+      {"access": "public", "name": "SRHeadphoneSettingsSettingEnablementEnabled"},
+      {"access": "public", "name": "SRHeadphoneSettingsSettingEnablementDisabled"}
+     ],
+     "introduced": "27",
+     "name": "SRHeadphoneSettingsSettingEnablement"
+    },
+    {
+     "access": "public",
+     "constants": [
       {"access": "public", "name": "SRKeyboardMetricsSentimentCategoryAbsolutist"},
       {"access": "public", "name": "SRKeyboardMetricsSentimentCategoryDown"},
       {"access": "public", "name": "SRKeyboardMetricsSentimentCategoryDeath"},
@@ -464,6 +495,8 @@
     {"access": "public", "introduced": "14", "kind": "variable", "linkage": "exported", "name": "_SRSensorDeviceUsageReport"},
     {"access": "public", "introduced": "17.4", "kind": "variable", "linkage": "exported", "name": "_SRSensorElectrocardiogram"},
     {"access": "public", "introduced": "17", "kind": "variable", "linkage": "exported", "name": "_SRSensorFaceMetrics"},
+    {"access": "public", "introduced": "27", "kind": "variable", "linkage": "exported", "name": "_SRSensorHeadphoneMotion"},
+    {"access": "public", "introduced": "27", "kind": "variable", "linkage": "exported", "name": "_SRSensorHeadphoneSettings"},
     {"access": "public", "introduced": "17", "kind": "variable", "linkage": "exported", "name": "_SRSensorHeartRate"},
     {"access": "public", "introduced": "14", "kind": "variable", "linkage": "exported", "name": "_SRSensorKeyboardMetrics"},
     {"access": "public", "introduced": "16.4", "kind": "variable", "linkage": "exported", "name": "_SRSensorMediaEvents"},
@@ -810,9 +843,59 @@
      "name": "SRFetchResult",
      "properties": [
       {"access": "public", "attr": [ "readonly" ], "getter": "sample", "name": "sample"},
-      {"access": "public", "attr": [ "readonly" ], "getter": "timestamp", "name": "timestamp"}
+      {"access": "public", "attr": [ "readonly" ], "getter": "timestamp", "name": "timestamp"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "sourceDevice", "introduced": "27", "name": "sourceDevice"}
      ],
      "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "27",
+     "linkage": "exported",
+     "name": "SRHeadphoneSettings",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "adaptiveAudioStrength", "name": "adaptiveAudioStrength"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "listeningMode", "name": "listeningMode"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "personalizedVolumeEnabled", "name": "personalizedVolumeEnabled"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "conversationAwarenessEnabled", "name": "conversationAwarenessEnabled"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "spatialAudioEnabled", "name": "spatialAudioEnabled"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "personalizedSpatialAudioEnabled", "name": "personalizedSpatialAudioEnabled"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "hearingAssistance", "name": "hearingAssistance"}
+     ],
+     "protocols": [
+      "NSSecureCoding",
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "27",
+     "linkage": "exported",
+     "name": "SRHeadphoneSettingsHearingAssistance",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "hearingAidEnabled", "name": "hearingAidEnabled"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "mediaAssistEnabled", "name": "mediaAssistEnabled"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "adjustMediaEnabled", "name": "adjustMediaEnabled"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "adjustVoiceEnabled", "name": "adjustVoiceEnabled"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "hearingProtectionEnabled", "name": "hearingProtectionEnabled"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "conversationBoostEnabled", "name": "conversationBoostEnabled"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "hearingAidAmplification", "name": "hearingAidAmplification"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "hearingAidBalance", "name": "hearingAidBalance"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "hearingAidTone", "name": "hearingAidTone"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "ambientNoiseReduction", "name": "ambientNoiseReduction"}
+     ],
+     "protocols": [
+      "NSSecureCoding",
       "NSCopying"
      ],
      "super": "NSObject"
@@ -998,7 +1081,7 @@
       {"access": "public", "name": "fetchDevices"},
       {"access": "public", "name": "fetch:"}
      ],
-     "introduced": "14",
+     "introduced": "13",
      "linkage": "exported",
      "name": "SRSensorReader",
      "properties": [
@@ -1027,6 +1110,30 @@
      "protocols": [
       "NSCopying",
       "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "27",
+     "linkage": "exported",
+     "name": "SRSourceDevice",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "localIdentifier", "name": "localIdentifier"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "manufacturer", "name": "manufacturer"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "model", "name": "model"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "hardwareVersion", "name": "hardwareVersion"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "firmwareVersion", "name": "firmwareVersion"}
+     ],
+     "protocols": [
+      "NSSecureCoding",
+      "NSCopying"
      ],
      "super": "NSObject"
     },
@@ -1215,14 +1322,14 @@
       {"access": "public", "name": "sensorReader:didFetchDevices:", "optional": true},
       {"access": "public", "name": "sensorReader:fetchDevicesDidFailWithError:", "optional": true}
      ],
-     "introduced": "14",
+     "introduced": "13",
      "name": "SRSensorReaderDelegate",
      "protocols": [
       "NSObject"
      ]
     }
    ],
-   "target": "arm64e-apple-ios26.5",
+   "target": "arm64e-apple-ios27",
    "typedefs": [
     {"access": "public", "introduced": "14", "name": "SRAbsoluteTime"},
     {"access": "public", "name": "SRAcousticSettingsAccessibilityBackgroundSoundsName"},
@@ -1242,6 +1349,1373 @@
     {"access": "public", "name": "SRElectrocardiogramSessionState"},
     {"access": "public", "name": "SRErrorCode"},
     {"access": "public", "name": "SRFaceMetricsContext"},
+    {"access": "public", "name": "SRHeadphoneSettingsAdaptiveAudioStrength"},
+    {"access": "public", "name": "SRHeadphoneSettingsListeningMode"},
+    {"access": "public", "name": "SRHeadphoneSettingsSettingEnablement"},
+    {"access": "public", "name": "SRKeyboardMetricsSentimentCategory"},
+    {"access": "public", "name": "SRLocationCategory"},
+    {"access": "public", "name": "SRMediaEventType"},
+    {"access": "public", "name": "SRNotificationEvent"},
+    {"access": "public", "introduced": "17.4", "name": "SRPhotoplethysmogramOpticalSampleCondition"},
+    {"access": "public", "introduced": "17.4", "name": "SRPhotoplethysmogramSampleUsage"},
+    {"access": "public", "introduced": "14", "name": "SRSensor"},
+    {"access": "public", "name": "SRSpeechMetricsSessionFlags"},
+    {"access": "public", "name": "SRTextInputSessionType"},
+    {"access": "public", "name": "SRWristLocation"},
+    {"access": "public", "name": "SRWristTemperatureCondition"}
+   ]
+  },
+  {
+   "categories": [
+    {
+     "access": "public",
+     "interface": "SRKeyboardMetrics",
+     "introduced": "14",
+     "name": "PositionalMetrics",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "longWordUpErrorDistance", "name": "longWordUpErrorDistance"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "longWordDownErrorDistance", "name": "longWordDownErrorDistance"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "longWordTouchDownUp", "name": "longWordTouchDownUp"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "longWordTouchDownDown", "name": "longWordTouchDownDown"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "longWordTouchUpDown", "introduced": "16.4", "name": "longWordTouchUpDown"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "deleteToDeletes", "name": "deleteToDeletes"}
+     ]
+    },
+    {
+     "access": "public",
+     "interface": "SRKeyboardMetrics",
+     "introduced": "14",
+     "name": "ProbabilityMetrics",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "upErrorDistance", "name": "upErrorDistance"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "downErrorDistance", "name": "downErrorDistance"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "spaceUpErrorDistance", "name": "spaceUpErrorDistance"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "spaceDownErrorDistance", "name": "spaceDownErrorDistance"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "deleteUpErrorDistance", "name": "deleteUpErrorDistance"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "deleteDownErrorDistance", "name": "deleteDownErrorDistance"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "shortWordCharKeyUpErrorDistance", "name": "shortWordCharKeyUpErrorDistance"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "shortWordCharKeyDownErrorDistance", "name": "shortWordCharKeyDownErrorDistance"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "touchDownUp", "name": "touchDownUp"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "spaceTouchDownUp", "name": "spaceTouchDownUp"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "deleteTouchDownUp", "name": "deleteTouchDownUp"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "shortWordCharKeyTouchDownUp", "name": "shortWordCharKeyTouchDownUp"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "touchDownDown", "name": "touchDownDown"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "touchUpDown", "introduced": "16.4", "name": "touchUpDown"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "charKeyToPrediction", "name": "charKeyToPrediction"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "shortWordCharKeyToCharKey", "name": "shortWordCharKeyToCharKey"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "charKeyToAnyTapKey", "name": "charKeyToAnyTapKey"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "anyTapToCharKey", "name": "anyTapToCharKey"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "spaceToCharKey", "name": "spaceToCharKey"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "charKeyToSpaceKey", "name": "charKeyToSpaceKey"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "spaceToDeleteKey", "name": "spaceToDeleteKey"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "deleteToSpaceKey", "name": "deleteToSpaceKey"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "spaceToSpaceKey", "name": "spaceToSpaceKey"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "spaceToShiftKey", "name": "spaceToShiftKey"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "spaceToPlaneChangeKey", "name": "spaceToPlaneChangeKey"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "spaceToPredictionKey", "name": "spaceToPredictionKey"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "deleteToCharKey", "name": "deleteToCharKey"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "charKeyToDelete", "name": "charKeyToDelete"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "deleteToDelete", "name": "deleteToDelete"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "deleteToShiftKey", "name": "deleteToShiftKey"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "deleteToPlaneChangeKey", "name": "deleteToPlaneChangeKey"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "anyTapToPlaneChangeKey", "name": "anyTapToPlaneChangeKey"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "planeChangeToAnyTap", "name": "planeChangeToAnyTap"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "charKeyToPlaneChangeKey", "name": "charKeyToPlaneChangeKey"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "planeChangeKeyToCharKey", "name": "planeChangeKeyToCharKey"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "pathErrorDistanceRatio", "name": "pathErrorDistanceRatio"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "deleteToPath", "name": "deleteToPath"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "pathToDelete", "name": "pathToDelete"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "spaceToPath", "name": "spaceToPath"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "pathToSpace", "name": "pathToSpace"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "pathToPath", "name": "pathToPath"}
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "sr_sensorForDeletionRecordsFromSensor"}
+     ],
+     "interface": "NSString",
+     "introduced": "14",
+     "name": "SRDeletionRecord"
+    },
+    {
+     "access": "public",
+     "interface": "SRKeyboardMetrics",
+     "introduced": "14",
+     "name": "ScalarMetrics",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "totalWords", "name": "totalWords"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "totalAlteredWords", "name": "totalAlteredWords"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "totalTaps", "name": "totalTaps"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "totalDrags", "name": "totalDrags"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "totalDeletes", "name": "totalDeletes"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "totalEmojis", "name": "totalEmojis"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "totalPaths", "name": "totalPaths"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "totalPathTime", "name": "totalPathTime"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "totalPathLength", "name": "totalPathLength"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "totalAutoCorrections", "name": "totalAutoCorrections"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "totalSpaceCorrections", "name": "totalSpaceCorrections"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "totalRetroCorrections", "name": "totalRetroCorrections"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "totalTranspositionCorrections", "name": "totalTranspositionCorrections"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "totalInsertKeyCorrections", "name": "totalInsertKeyCorrections"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "totalSkipTouchCorrections", "name": "totalSkipTouchCorrections"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "totalNearKeyCorrections", "name": "totalNearKeyCorrections"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "totalSubstitutionCorrections", "name": "totalSubstitutionCorrections"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "totalHitTestCorrections", "name": "totalHitTestCorrections"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "totalTypingDuration", "name": "totalTypingDuration"}
+     ]
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "dateWithSRAbsoluteTime:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithSRAbsoluteTime:"}
+     ],
+     "interface": "NSDate",
+     "introduced": "14",
+     "name": "SensorKit",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "srAbsoluteTime", "name": "srAbsoluteTime"}
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "wordCountForSentimentCategory:"},
+      {"access": "public", "name": "emojiCountForSentimentCategory:"}
+     ],
+     "interface": "SRKeyboardMetrics",
+     "introduced": "15",
+     "name": "SentimentCounts"
+    },
+    {
+     "access": "public",
+     "interface": "SRKeyboardMetrics",
+     "introduced": "15",
+     "name": "SpeedMetrics",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "totalPauses", "name": "totalPauses"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "totalPathPauses", "name": "totalPathPauses"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "typingSpeed", "name": "typingSpeed"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "pathTypingSpeed", "name": "pathTypingSpeed"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "totalTypingEpisodes", "name": "totalTypingEpisodes"}
+     ]
+    }
+   ],
+   "enums": [
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "SRAcousticSettingsAccessibilityBackgroundSoundsNameBalancedNoise"},
+      {"access": "public", "name": "SRAcousticSettingsAccessibilityBackgroundSoundsNameBrightNoise"},
+      {"access": "public", "name": "SRAcousticSettingsAccessibilityBackgroundSoundsNameDarkNoise"},
+      {"access": "public", "name": "SRAcousticSettingsAccessibilityBackgroundSoundsNameOcean"},
+      {"access": "public", "name": "SRAcousticSettingsAccessibilityBackgroundSoundsNameRain"},
+      {"access": "public", "name": "SRAcousticSettingsAccessibilityBackgroundSoundsNameStream"},
+      {"access": "public", "name": "SRAcousticSettingsAccessibilityBackgroundSoundsNameNight"},
+      {"access": "public", "name": "SRAcousticSettingsAccessibilityBackgroundSoundsNameFire"},
+      {"access": "public", "name": "SRAcousticSettingsAccessibilityBackgroundSoundsNameBabble"},
+      {"access": "public", "name": "SRAcousticSettingsAccessibilityBackgroundSoundsNameSteam"},
+      {"access": "public", "name": "SRAcousticSettingsAccessibilityBackgroundSoundsNameAirplane"},
+      {"access": "public", "name": "SRAcousticSettingsAccessibilityBackgroundSoundsNameBoat"},
+      {"access": "public", "name": "SRAcousticSettingsAccessibilityBackgroundSoundsNameBus"},
+      {"access": "public", "name": "SRAcousticSettingsAccessibilityBackgroundSoundsNameTrain"},
+      {"access": "public", "name": "SRAcousticSettingsAccessibilityBackgroundSoundsNameRainOnRoof"},
+      {"access": "public", "name": "SRAcousticSettingsAccessibilityBackgroundSoundsNameQuietNight"}
+     ],
+     "introduced": "26",
+     "name": "SRAcousticSettingsAccessibilityBackgroundSoundsName"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "SRAcousticSettingsAccessibilityHeadphoneAccommodationsMediaEnhanceApplicationNone"},
+      {"access": "public", "name": "SRAcousticSettingsAccessibilityHeadphoneAccommodationsMediaEnhanceApplicationPhone"},
+      {"access": "public", "name": "SRAcousticSettingsAccessibilityHeadphoneAccommodationsMediaEnhanceApplicationMedia"},
+      {"access": "public", "name": "SRAcousticSettingsAccessibilityHeadphoneAccommodationsMediaEnhanceApplicationPhoneAndMedia"}
+     ],
+     "introduced": "26",
+     "name": "SRAcousticSettingsAccessibilityHeadphoneAccommodationsMediaEnhanceApplication"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "26.4", "name": "SRAcousticSettingsAccessibilityHeadphoneAccommodationsMediaEnhanceBoostingNone"},
+      {"access": "public", "name": "SRAcousticSettingsAccessibilityHeadphoneAccommodationsMediaEnhanceBoostingSlight"},
+      {"access": "public", "name": "SRAcousticSettingsAccessibilityHeadphoneAccommodationsMediaEnhanceBoostingModerate"},
+      {"access": "public", "name": "SRAcousticSettingsAccessibilityHeadphoneAccommodationsMediaEnhanceBoostingStrong"}
+     ],
+     "introduced": "26",
+     "name": "SRAcousticSettingsAccessibilityHeadphoneAccommodationsMediaEnhanceBoosting"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "26.4", "name": "SRAcousticSettingsAccessibilityHeadphoneAccommodationsMediaEnhanceTuningNone"},
+      {"access": "public", "name": "SRAcousticSettingsAccessibilityHeadphoneAccommodationsMediaEnhanceTuningBalancedTone"},
+      {"access": "public", "name": "SRAcousticSettingsAccessibilityHeadphoneAccommodationsMediaEnhanceTuningVocalRange"},
+      {"access": "public", "name": "SRAcousticSettingsAccessibilityHeadphoneAccommodationsMediaEnhanceTuningBrightness"}
+     ],
+     "introduced": "26",
+     "name": "SRAcousticSettingsAccessibilityHeadphoneAccommodationsMediaEnhanceTuning"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "SRAcousticSettingsSampleLifetimeEightDays"},
+      {"access": "public", "name": "SRAcousticSettingsSampleLifetimeUntilUserDeletes"}
+     ],
+     "introduced": "26",
+     "name": "SRAcousticSettingsSampleLifetime"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "SRAmbientLightSensorPlacementUnknown"},
+      {"access": "public", "name": "SRAmbientLightSensorPlacementFrontTop"},
+      {"access": "public", "name": "SRAmbientLightSensorPlacementFrontBottom"},
+      {"access": "public", "name": "SRAmbientLightSensorPlacementFrontRight"},
+      {"access": "public", "name": "SRAmbientLightSensorPlacementFrontLeft"},
+      {"access": "public", "name": "SRAmbientLightSensorPlacementFrontTopRight"},
+      {"access": "public", "name": "SRAmbientLightSensorPlacementFrontTopLeft"},
+      {"access": "public", "name": "SRAmbientLightSensorPlacementFrontBottomRight"},
+      {"access": "public", "name": "SRAmbientLightSensorPlacementFrontBottomLeft"}
+     ],
+     "introduced": "14",
+     "name": "SRAmbientLightSensorPlacement"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "SRAuthorizationStatusNotDetermined"},
+      {"access": "public", "name": "SRAuthorizationStatusAuthorized"},
+      {"access": "public", "name": "SRAuthorizationStatusDenied"}
+     ],
+     "introduced": "14",
+     "name": "SRAuthorizationStatus"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "SRCrownOrientationLeft"},
+      {"access": "public", "name": "SRCrownOrientationRight"}
+     ],
+     "introduced": "14",
+     "name": "SRCrownOrientation"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "SRDeletionReasonUserInitiated"},
+      {"access": "public", "name": "SRDeletionReasonLowDiskSpace"},
+      {"access": "public", "name": "SRDeletionReasonAgeLimit"},
+      {"access": "public", "name": "SRDeletionReasonNoInterestedClients"},
+      {"access": "public", "name": "SRDeletionReasonSystemInitiated"}
+     ],
+     "introduced": "14",
+     "name": "SRDeletionReason"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "SRElectrocardiogramDataFlagsNone"},
+      {"access": "public", "name": "SRElectrocardiogramDataFlagsSignalInvalid"},
+      {"access": "public", "name": "SRElectrocardiogramDataFlagsCrownTouched"}
+     ],
+     "introduced": "17.4",
+     "name": "SRElectrocardiogramDataFlags"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "SRElectrocardiogramLeadRightArmMinusLeftArm"},
+      {"access": "public", "name": "SRElectrocardiogramLeadLeftArmMinusRightArm"}
+     ],
+     "introduced": "17.4",
+     "name": "SRElectrocardiogramLead"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "SRElectrocardiogramSessionGuidanceGuided"},
+      {"access": "public", "name": "SRElectrocardiogramSessionGuidanceUnguided"}
+     ],
+     "introduced": "17.4",
+     "name": "SRElectrocardiogramSessionGuidance"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "SRElectrocardiogramSessionStateBegin"},
+      {"access": "public", "name": "SRElectrocardiogramSessionStateActive"},
+      {"access": "public", "name": "SRElectrocardiogramSessionStateEnd"}
+     ],
+     "introduced": "17.4",
+     "name": "SRElectrocardiogramSessionState"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "SRErrorInvalidEntitlement"},
+      {"access": "public", "name": "SRErrorNoAuthorization"},
+      {"access": "public", "name": "SRErrorDataInaccessible"},
+      {"access": "public", "name": "SRErrorFetchRequestInvalid"},
+      {"access": "public", "name": "SRErrorPromptDeclined"}
+     ],
+     "introduced": "14",
+     "name": "SRErrorCode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "SRFaceMetricsContextDeviceUnlock"},
+      {"access": "public", "name": "SRFaceMetricsContextMessagingAppUsage"}
+     ],
+     "introduced": "17",
+     "name": "SRFaceMetricsContext"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "SRHeadphoneSettingsAdaptiveAudioStrengthLow"},
+      {"access": "public", "name": "SRHeadphoneSettingsAdaptiveAudioStrengthMedium"},
+      {"access": "public", "name": "SRHeadphoneSettingsAdaptiveAudioStrengthHigh"}
+     ],
+     "introduced": "27",
+     "name": "SRHeadphoneSettingsAdaptiveAudioStrength"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "SRHeadphoneSettingsListeningModeNormal"},
+      {"access": "public", "name": "SRHeadphoneSettingsListeningModeActiveNoiseCancelling"},
+      {"access": "public", "name": "SRHeadphoneSettingsListeningModeTransparency"},
+      {"access": "public", "name": "SRHeadphoneSettingsListeningModeAutoActiveNoiseCancelling"}
+     ],
+     "introduced": "27",
+     "name": "SRHeadphoneSettingsListeningMode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "SRHeadphoneSettingsSettingEnablementUnsupported"},
+      {"access": "public", "name": "SRHeadphoneSettingsSettingEnablementEnabled"},
+      {"access": "public", "name": "SRHeadphoneSettingsSettingEnablementDisabled"}
+     ],
+     "introduced": "27",
+     "name": "SRHeadphoneSettingsSettingEnablement"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "SRKeyboardMetricsSentimentCategoryAbsolutist"},
+      {"access": "public", "name": "SRKeyboardMetricsSentimentCategoryDown"},
+      {"access": "public", "name": "SRKeyboardMetricsSentimentCategoryDeath"},
+      {"access": "public", "name": "SRKeyboardMetricsSentimentCategoryAnxiety"},
+      {"access": "public", "name": "SRKeyboardMetricsSentimentCategoryAnger"},
+      {"access": "public", "name": "SRKeyboardMetricsSentimentCategoryHealth"},
+      {"access": "public", "name": "SRKeyboardMetricsSentimentCategoryPositive"},
+      {"access": "public", "name": "SRKeyboardMetricsSentimentCategorySad"},
+      {"access": "public", "name": "SRKeyboardMetricsSentimentCategoryLowEnergy"},
+      {"access": "public", "name": "SRKeyboardMetricsSentimentCategoryConfused"}
+     ],
+     "introduced": "15",
+     "name": "SRKeyboardMetricsSentimentCategory"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "SRLocationCategoryUnknown"},
+      {"access": "public", "name": "SRLocationCategoryHome"},
+      {"access": "public", "name": "SRLocationCategoryWork"},
+      {"access": "public", "name": "SRLocationCategorySchool"},
+      {"access": "public", "name": "SRLocationCategoryGym"}
+     ],
+     "introduced": "14",
+     "name": "SRLocationCategory"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "SRMediaEventOnScreen"},
+      {"access": "public", "name": "SRMediaEventOffScreen"}
+     ],
+     "introduced": "16.4",
+     "name": "SRMediaEventType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "SRNotificationEventUnknown"},
+      {"access": "public", "name": "SRNotificationEventReceived"},
+      {"access": "public", "name": "SRNotificationEventDefaultAction"},
+      {"access": "public", "name": "SRNotificationEventSupplementaryAction"},
+      {"access": "public", "name": "SRNotificationEventClear"},
+      {"access": "public", "name": "SRNotificationEventNotificationCenterClearAll"},
+      {"access": "public", "name": "SRNotificationEventRemoved"},
+      {"access": "public", "name": "SRNotificationEventHide"},
+      {"access": "public", "name": "SRNotificationEventLongLook"},
+      {"access": "public", "name": "SRNotificationEventSilence"},
+      {"access": "public", "name": "SRNotificationEventAppLaunch"},
+      {"access": "public", "name": "SRNotificationEventExpired"},
+      {"access": "public", "name": "SRNotificationEventBannerPulldown"},
+      {"access": "public", "name": "SRNotificationEventTapCoalesce"},
+      {"access": "public", "name": "SRNotificationEventDeduped"},
+      {"access": "public", "name": "SRNotificationEventDeviceActivated"},
+      {"access": "public", "name": "SRNotificationEventDeviceUnlocked"}
+     ],
+     "introduced": "14",
+     "name": "SRNotificationEvent"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "SRSpeechMetricsSessionFlagsDefault"},
+      {"access": "public", "name": "SRSpeechMetricsSessionFlagsBypassVoiceProcessing"}
+     ],
+     "introduced": "17",
+     "name": "SRSpeechMetricsSessionFlags"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "SRTextInputSessionTypeKeyboard"},
+      {"access": "public", "name": "SRTextInputSessionTypeThirdPartyKeyboard"},
+      {"access": "public", "name": "SRTextInputSessionTypePencil"},
+      {"access": "public", "name": "SRTextInputSessionTypeDictation"}
+     ],
+     "introduced": "15",
+     "name": "SRTextInputSessionType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "SRWristLocationLeft"},
+      {"access": "public", "name": "SRWristLocationRight"}
+     ],
+     "introduced": "14",
+     "name": "SRWristLocation"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "SRWristTemperatureConditionNone"},
+      {"access": "public", "name": "SRWristTemperatureConditionOffWrist"},
+      {"access": "public", "name": "SRWristTemperatureConditionOnCharger"},
+      {"access": "public", "name": "SRWristTemperatureConditionInMotion"}
+     ],
+     "introduced": "17",
+     "name": "SRWristTemperatureCondition"
+    }
+   ],
+   "globals": [
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_SRAbsoluteTimeFromCFAbsoluteTime"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_SRAbsoluteTimeFromContinuousTime"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_SRAbsoluteTimeGetCurrent"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_SRAbsoluteTimeToCFAbsoluteTime"},
+    {"access": "public", "introduced": "14", "kind": "variable", "linkage": "exported", "name": "_SRDeviceUsageCategoryBooks"},
+    {"access": "public", "introduced": "14", "kind": "variable", "linkage": "exported", "name": "_SRDeviceUsageCategoryBusiness"},
+    {"access": "public", "introduced": "14", "kind": "variable", "linkage": "exported", "name": "_SRDeviceUsageCategoryCatalogs"},
+    {"access": "public", "introduced": "14", "kind": "variable", "linkage": "exported", "name": "_SRDeviceUsageCategoryDeveloperTools"},
+    {"access": "public", "introduced": "14", "kind": "variable", "linkage": "exported", "name": "_SRDeviceUsageCategoryEducation"},
+    {"access": "public", "introduced": "14", "kind": "variable", "linkage": "exported", "name": "_SRDeviceUsageCategoryEntertainment"},
+    {"access": "public", "introduced": "14", "kind": "variable", "linkage": "exported", "name": "_SRDeviceUsageCategoryFinance"},
+    {"access": "public", "introduced": "14", "kind": "variable", "linkage": "exported", "name": "_SRDeviceUsageCategoryFoodAndDrink"},
+    {"access": "public", "introduced": "14", "kind": "variable", "linkage": "exported", "name": "_SRDeviceUsageCategoryGames"},
+    {"access": "public", "introduced": "14", "kind": "variable", "linkage": "exported", "name": "_SRDeviceUsageCategoryGraphicsAndDesign"},
+    {"access": "public", "introduced": "14", "kind": "variable", "linkage": "exported", "name": "_SRDeviceUsageCategoryHealthAndFitness"},
+    {"access": "public", "introduced": "14", "kind": "variable", "linkage": "exported", "name": "_SRDeviceUsageCategoryKids"},
+    {"access": "public", "introduced": "14", "kind": "variable", "linkage": "exported", "name": "_SRDeviceUsageCategoryLifestyle"},
+    {"access": "public", "introduced": "14", "kind": "variable", "linkage": "exported", "name": "_SRDeviceUsageCategoryMedical"},
+    {"access": "public", "introduced": "14", "kind": "variable", "linkage": "exported", "name": "_SRDeviceUsageCategoryMiscellaneous"},
+    {"access": "public", "introduced": "14", "kind": "variable", "linkage": "exported", "name": "_SRDeviceUsageCategoryMusic"},
+    {"access": "public", "introduced": "14", "kind": "variable", "linkage": "exported", "name": "_SRDeviceUsageCategoryNavigation"},
+    {"access": "public", "introduced": "14", "kind": "variable", "linkage": "exported", "name": "_SRDeviceUsageCategoryNews"},
+    {"access": "public", "introduced": "14", "kind": "variable", "linkage": "exported", "name": "_SRDeviceUsageCategoryNewsstand"},
+    {"access": "public", "introduced": "14", "kind": "variable", "linkage": "exported", "name": "_SRDeviceUsageCategoryPhotoAndVideo"},
+    {"access": "public", "introduced": "14", "kind": "variable", "linkage": "exported", "name": "_SRDeviceUsageCategoryProductivity"},
+    {"access": "public", "introduced": "14", "kind": "variable", "linkage": "exported", "name": "_SRDeviceUsageCategoryReference"},
+    {"access": "public", "introduced": "14", "kind": "variable", "linkage": "exported", "name": "_SRDeviceUsageCategoryShopping"},
+    {"access": "public", "introduced": "14", "kind": "variable", "linkage": "exported", "name": "_SRDeviceUsageCategorySocialNetworking"},
+    {"access": "public", "introduced": "14", "kind": "variable", "linkage": "exported", "name": "_SRDeviceUsageCategorySports"},
+    {"access": "public", "introduced": "14", "kind": "variable", "linkage": "exported", "name": "_SRDeviceUsageCategoryStickers"},
+    {"access": "public", "introduced": "14", "kind": "variable", "linkage": "exported", "name": "_SRDeviceUsageCategoryTravel"},
+    {"access": "public", "introduced": "14", "kind": "variable", "linkage": "exported", "name": "_SRDeviceUsageCategoryUtilities"},
+    {"access": "public", "introduced": "14", "kind": "variable", "linkage": "exported", "name": "_SRDeviceUsageCategoryWeather"},
+    {"access": "public", "introduced": "14", "kind": "variable", "linkage": "exported", "name": "_SRErrorDomain"},
+    {"access": "public", "introduced": "17.4", "kind": "variable", "linkage": "exported", "name": "_SRPhotoplethysmogramOpticalSampleConditionSignalSaturation"},
+    {"access": "public", "introduced": "17.4", "kind": "variable", "linkage": "exported", "name": "_SRPhotoplethysmogramOpticalSampleConditionUnreliableNoise"},
+    {"access": "public", "introduced": "17.4", "kind": "variable", "linkage": "exported", "name": "_SRPhotoplethysmogramSampleUsageBackgroundSystem"},
+    {"access": "public", "introduced": "17.4", "kind": "variable", "linkage": "exported", "name": "_SRPhotoplethysmogramSampleUsageDeepBreathing"},
+    {"access": "public", "introduced": "17.4", "kind": "variable", "linkage": "exported", "name": "_SRPhotoplethysmogramSampleUsageForegroundBloodOxygen"},
+    {"access": "public", "introduced": "17.4", "kind": "variable", "linkage": "exported", "name": "_SRPhotoplethysmogramSampleUsageForegroundHeartRate"},
+    {"access": "public", "introduced": "14", "kind": "variable", "linkage": "exported", "name": "_SRSensorAccelerometer"},
+    {"access": "public", "introduced": "26", "kind": "variable", "linkage": "exported", "name": "_SRSensorAcousticSettings"},
+    {"access": "public", "introduced": "14", "kind": "variable", "linkage": "exported", "name": "_SRSensorAmbientLightSensor"},
+    {"access": "public", "introduced": "15.4", "kind": "variable", "linkage": "exported", "name": "_SRSensorAmbientPressure"},
+    {"access": "public", "introduced": "14", "kind": "variable", "linkage": "exported", "name": "_SRSensorDeviceUsageReport"},
+    {"access": "public", "introduced": "17.4", "kind": "variable", "linkage": "exported", "name": "_SRSensorElectrocardiogram"},
+    {"access": "public", "introduced": "17", "kind": "variable", "linkage": "exported", "name": "_SRSensorFaceMetrics"},
+    {"access": "public", "introduced": "27", "kind": "variable", "linkage": "exported", "name": "_SRSensorHeadphoneMotion"},
+    {"access": "public", "introduced": "27", "kind": "variable", "linkage": "exported", "name": "_SRSensorHeadphoneSettings"},
+    {"access": "public", "introduced": "17", "kind": "variable", "linkage": "exported", "name": "_SRSensorHeartRate"},
+    {"access": "public", "introduced": "14", "kind": "variable", "linkage": "exported", "name": "_SRSensorKeyboardMetrics"},
+    {"access": "public", "introduced": "16.4", "kind": "variable", "linkage": "exported", "name": "_SRSensorMediaEvents"},
+    {"access": "public", "introduced": "14", "kind": "variable", "linkage": "exported", "name": "_SRSensorMessagesUsageReport"},
+    {"access": "public", "introduced": "17", "kind": "variable", "linkage": "exported", "name": "_SRSensorOdometer"},
+    {"access": "public", "introduced": "14", "kind": "variable", "linkage": "exported", "name": "_SRSensorOnWristState"},
+    {"access": "public", "introduced": "14", "kind": "variable", "linkage": "exported", "name": "_SRSensorPedometerData"},
+    {"access": "public", "introduced": "14", "kind": "variable", "linkage": "exported", "name": "_SRSensorPhoneUsageReport"},
+    {"access": "public", "introduced": "17.4", "kind": "variable", "linkage": "exported", "name": "_SRSensorPhotoplethysmogram"},
+    {"access": "public", "introduced": "14", "kind": "variable", "linkage": "exported", "name": "_SRSensorRotationRate"},
+    {"access": "public", "introduced": "15", "kind": "variable", "linkage": "exported", "name": "_SRSensorSiriSpeechMetrics"},
+    {"access": "public", "introduced": "26", "kind": "variable", "linkage": "exported", "name": "_SRSensorSleepSessions"},
+    {"access": "public", "introduced": "15", "kind": "variable", "linkage": "exported", "name": "_SRSensorTelephonySpeechMetrics"},
+    {"access": "public", "introduced": "14", "kind": "variable", "linkage": "exported", "name": "_SRSensorVisits"},
+    {"access": "public", "introduced": "17", "kind": "variable", "linkage": "exported", "name": "_SRSensorWristTemperature"}
+   ],
+   "interfaces": [
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "26",
+     "linkage": "exported",
+     "name": "SRAcousticSettings",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "isEnvironmentalSoundMeasurementsEnabled", "name": "environmentalSoundMeasurementsEnabled"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "audioExposureSampleLifetime", "name": "audioExposureSampleLifetime"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "headphoneSafetyAudioLevel", "name": "headphoneSafetyAudioLevel"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "musicEQSettings", "name": "musicEQSettings"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "accessibilitySettings", "name": "accessibilitySettings"}
+     ],
+     "protocols": [
+      "NSSecureCoding",
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "26",
+     "linkage": "exported",
+     "name": "SRAcousticSettingsAccessibility",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "leftRightBalance", "name": "leftRightBalance"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isMonoAudioEnabled", "name": "monoAudioEnabled"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "backgroundSounds", "name": "backgroundSounds"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "headphoneAccommodations", "name": "headphoneAccommodations"}
+     ],
+     "protocols": [
+      "NSSecureCoding",
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "26",
+     "linkage": "exported",
+     "name": "SRAcousticSettingsAccessibilityBackgroundSounds",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "isEnabled", "name": "enabled"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "soundName", "name": "soundName"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "relativeVolume", "name": "relativeVolume"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isPlayWithMediaEnabled", "name": "playWithMediaEnabled"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "relativeVolumeWithMedia", "name": "relativeVolumeWithMedia"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isStopOnLockEnabled", "name": "stopOnLockEnabled"}
+     ],
+     "protocols": [
+      "NSSecureCoding",
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "26",
+     "linkage": "exported",
+     "name": "SRAcousticSettingsAccessibilityHeadphoneAccommodations",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "isEnabled", "name": "enabled"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "mediaEnhanceTuning", "name": "mediaEnhanceTuning"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "mediaEnhanceBoosting", "name": "mediaEnhanceBoosting"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "mediaEnhanceApplication", "name": "mediaEnhanceApplication"}
+     ],
+     "protocols": [
+      "NSSecureCoding",
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "26",
+     "linkage": "exported",
+     "name": "SRAcousticSettingsMusicEQ",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "isSoundCheckEnabled", "name": "soundCheckEnabled"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isLateNightModeEnabled", "name": "lateNightModeEnabled"}
+     ],
+     "protocols": [
+      "NSSecureCoding",
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "SRAmbientLightSample",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "placement", "name": "placement"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "chromaticity", "name": "chromaticity"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "lux", "name": "lux"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "SRApplicationUsage",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "bundleIdentifier", "name": "bundleIdentifier"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "usageTime", "name": "usageTime"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "reportApplicationIdentifier", "introduced": "15", "name": "reportApplicationIdentifier"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "textInputSessions", "introduced": "15", "name": "textInputSessions"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "supplementalCategories", "introduced": "16.4", "name": "supplementalCategories"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "relativeStartTime", "introduced": "16.4", "name": "relativeStartTime"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "17",
+     "linkage": "exported",
+     "name": "SRAudioLevel",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "timeRange", "name": "timeRange"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "loudness", "name": "loudness"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "SRDeletionRecord",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "startTime", "name": "startTime"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "endTime", "name": "endTime"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "reason", "name": "reason"}
+     ],
+     "protocols": [
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "SRDevice",
+     "properties": [
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "currentDevice", "name": "currentDevice"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "name", "name": "name"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "model", "name": "model"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "systemName", "name": "systemName"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "systemVersion", "name": "systemVersion"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "productType", "introduced": "17", "name": "productType"}
+     ],
+     "protocols": [
+      "NSSecureCoding",
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "SRDeviceUsageReport",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "duration", "name": "duration"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "applicationUsageByCategory", "name": "applicationUsageByCategory"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "notificationUsageByCategory", "name": "notificationUsageByCategory"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "webUsageByCategory", "name": "webUsageByCategory"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "totalScreenWakes", "name": "totalScreenWakes"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "totalUnlocks", "name": "totalUnlocks"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "totalUnlockDuration", "name": "totalUnlockDuration"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "version", "introduced": "16.4", "name": "version"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "17.4",
+     "linkage": "exported",
+     "name": "SRElectrocardiogramData",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "flags", "name": "flags"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "value", "name": "value"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "17.4",
+     "linkage": "exported",
+     "name": "SRElectrocardiogramSample",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "date", "name": "date"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "frequency", "name": "frequency"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "session", "name": "session"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "lead", "name": "lead"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "data", "name": "data"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "17.4",
+     "linkage": "exported",
+     "name": "SRElectrocardiogramSession",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "state", "name": "state"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "sessionGuidance", "name": "sessionGuidance"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "identifier", "name": "identifier"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "17",
+     "linkage": "exported",
+     "name": "SRFaceMetrics",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "version", "name": "version"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "sessionIdentifier", "name": "sessionIdentifier"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "context", "name": "context"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "faceAnchor", "name": "faceAnchor"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "wholeFaceExpressions", "name": "wholeFaceExpressions"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "partialFaceExpressions", "name": "partialFaceExpressions"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "17",
+     "linkage": "exported",
+     "name": "SRFaceMetricsExpression",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "identifier", "name": "identifier"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "value", "name": "value"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "SRFetchRequest",
+     "properties": [
+      {"access": "public", "getter": "from", "name": "from", "setter": "setFrom:"},
+      {"access": "public", "getter": "to", "name": "to", "setter": "setTo:"},
+      {"access": "public", "getter": "device", "name": "device", "setter": "setDevice:"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "SRFetchResult",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "sample", "name": "sample"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "timestamp", "name": "timestamp"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "sourceDevice", "introduced": "27", "name": "sourceDevice"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "27",
+     "linkage": "exported",
+     "name": "SRHeadphoneSettings",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "adaptiveAudioStrength", "name": "adaptiveAudioStrength"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "listeningMode", "name": "listeningMode"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "personalizedVolumeEnabled", "name": "personalizedVolumeEnabled"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "conversationAwarenessEnabled", "name": "conversationAwarenessEnabled"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "spatialAudioEnabled", "name": "spatialAudioEnabled"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "personalizedSpatialAudioEnabled", "name": "personalizedSpatialAudioEnabled"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "hearingAssistance", "name": "hearingAssistance"}
+     ],
+     "protocols": [
+      "NSSecureCoding",
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "27",
+     "linkage": "exported",
+     "name": "SRHeadphoneSettingsHearingAssistance",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "hearingAidEnabled", "name": "hearingAidEnabled"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "mediaAssistEnabled", "name": "mediaAssistEnabled"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "adjustMediaEnabled", "name": "adjustMediaEnabled"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "adjustVoiceEnabled", "name": "adjustVoiceEnabled"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "hearingProtectionEnabled", "name": "hearingProtectionEnabled"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "conversationBoostEnabled", "name": "conversationBoostEnabled"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "hearingAidAmplification", "name": "hearingAidAmplification"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "hearingAidBalance", "name": "hearingAidBalance"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "hearingAidTone", "name": "hearingAidTone"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "ambientNoiseReduction", "name": "ambientNoiseReduction"}
+     ],
+     "protocols": [
+      "NSSecureCoding",
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "categories": [
+      "ScalarMetrics",
+      "ProbabilityMetrics",
+      "PositionalMetrics",
+      "SpeedMetrics",
+      "SentimentCounts"
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "SRKeyboardMetrics",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "duration", "name": "duration"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "keyboardIdentifier", "name": "keyboardIdentifier"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "version", "name": "version"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "width", "name": "width"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "height", "name": "height"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "inputModes", "introduced": "15", "name": "inputModes"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "sessionIdentifiers", "introduced": "16.4", "name": "sessionIdentifiers"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "SRKeyboardProbabilityMetric",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "distributionSampleValues", "name": "distributionSampleValues"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "16.4",
+     "linkage": "exported",
+     "name": "SRMediaEvent",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "mediaIdentifier", "name": "mediaIdentifier"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "eventType", "name": "eventType"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "SRMessagesUsageReport",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "duration", "name": "duration"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "totalOutgoingMessages", "name": "totalOutgoingMessages"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "totalIncomingMessages", "name": "totalIncomingMessages"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "totalUniqueContacts", "name": "totalUniqueContacts"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "SRNotificationUsage",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "bundleIdentifier", "name": "bundleIdentifier"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "event", "name": "event"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "SRPhoneUsageReport",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "duration", "name": "duration"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "totalOutgoingCalls", "name": "totalOutgoingCalls"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "totalIncomingCalls", "name": "totalIncomingCalls"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "totalUniqueContacts", "name": "totalUniqueContacts"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "totalPhoneCallDuration", "name": "totalPhoneCallDuration"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "17.4",
+     "linkage": "exported",
+     "name": "SRPhotoplethysmogramAccelerometerSample",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "nanosecondsSinceStart", "name": "nanosecondsSinceStart"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "samplingFrequency", "name": "samplingFrequency"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "x", "name": "x"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "y", "name": "y"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "z", "name": "z"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "17.4",
+     "linkage": "exported",
+     "name": "SRPhotoplethysmogramOpticalSample",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "emitter", "name": "emitter"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "activePhotodiodeIndexes", "name": "activePhotodiodeIndexes"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "signalIdentifier", "name": "signalIdentifier"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "nominalWavelength", "name": "nominalWavelength"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "effectiveWavelength", "name": "effectiveWavelength"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "samplingFrequency", "name": "samplingFrequency"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "nanosecondsSinceStart", "name": "nanosecondsSinceStart"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "normalizedReflectance", "name": "normalizedReflectance"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "whiteNoise", "name": "whiteNoise"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "pinkNoise", "name": "pinkNoise"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "backgroundNoise", "name": "backgroundNoise"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "backgroundNoiseOffset", "name": "backgroundNoiseOffset"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "conditions", "name": "conditions"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "17.4",
+     "linkage": "exported",
+     "name": "SRPhotoplethysmogramSample",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "startDate", "name": "startDate"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "nanosecondsSinceStart", "name": "nanosecondsSinceStart"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "usage", "name": "usage"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "opticalSamples", "name": "opticalSamples"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "accelerometerSamples", "name": "accelerometerSamples"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "temperature", "name": "temperature"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true},
+      {"access": "public", "name": "requestAuthorizationForSensors:completion:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithSensor:"},
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "startRecording"},
+      {"access": "public", "name": "stopRecording"},
+      {"access": "public", "name": "fetchDevices"},
+      {"access": "public", "name": "fetch:"}
+     ],
+     "introduced": "13",
+     "linkage": "exported",
+     "name": "SRSensorReader",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "authorizationStatus", "name": "authorizationStatus"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "sensor", "name": "sensor"},
+      {"access": "public", "getter": "delegate", "name": "delegate", "setter": "setDelegate:"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "26",
+     "linkage": "exported",
+     "name": "SRSleepSession",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "startDate", "name": "startDate"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "duration", "name": "duration"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "identifier", "name": "identifier"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "27",
+     "linkage": "exported",
+     "name": "SRSourceDevice",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "localIdentifier", "name": "localIdentifier"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "manufacturer", "name": "manufacturer"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "model", "name": "model"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "hardwareVersion", "name": "hardwareVersion"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "firmwareVersion", "name": "firmwareVersion"}
+     ],
+     "protocols": [
+      "NSSecureCoding",
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "17",
+     "linkage": "exported",
+     "name": "SRSpeechExpression",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "version", "name": "version"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "timeRange", "name": "timeRange"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "confidence", "name": "confidence"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "mood", "name": "mood"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "valence", "name": "valence"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "activation", "name": "activation"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "dominance", "name": "dominance"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "17",
+     "linkage": "exported",
+     "name": "SRSpeechMetrics",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "sessionIdentifier", "name": "sessionIdentifier"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "sessionFlags", "name": "sessionFlags"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "timestamp", "name": "timestamp"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "timeSinceAudioStart", "introduced": "17.2", "name": "timeSinceAudioStart"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "audioLevel", "name": "audioLevel"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "speechRecognition", "name": "speechRecognition"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "soundClassification", "name": "soundClassification"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "speechExpression", "name": "speechExpression"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "16.4",
+     "linkage": "exported",
+     "name": "SRSupplementalCategory",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "identifier", "name": "identifier"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "15",
+     "linkage": "exported",
+     "name": "SRTextInputSession",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "duration", "name": "duration"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "sessionType", "name": "sessionType"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "sessionIdentifier", "introduced": "16.4", "name": "sessionIdentifier"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "SRVisit",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "distanceFromHome", "name": "distanceFromHome"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "arrivalDateInterval", "name": "arrivalDateInterval"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "departureDateInterval", "name": "departureDateInterval"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "locationCategory", "name": "locationCategory"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "identifier", "name": "identifier"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "SRWebUsage",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "totalUsageTime", "name": "totalUsageTime"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "SRWristDetection",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "onWrist", "name": "onWrist"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "wristLocation", "name": "wristLocation"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "crownOrientation", "name": "crownOrientation"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "onWristDate", "introduced": "16.4", "name": "onWristDate"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "offWristDate", "introduced": "16.4", "name": "offWristDate"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "17",
+     "linkage": "exported",
+     "name": "SRWristTemperature",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "timestamp", "name": "timestamp"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "value", "name": "value"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "condition", "name": "condition"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "errorEstimate", "name": "errorEstimate"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "17",
+     "linkage": "exported",
+     "name": "SRWristTemperatureSession",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "startDate", "name": "startDate"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "duration", "name": "duration"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "version", "name": "version"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "temperatures", "name": "temperatures"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    }
+   ],
+   "protocols": [
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "sensorReader:fetchingRequest:didFetchResult:", "optional": true},
+      {"access": "public", "name": "sensorReader:didCompleteFetch:", "optional": true},
+      {"access": "public", "name": "sensorReader:fetchingRequest:failedWithError:", "optional": true},
+      {"access": "public", "name": "sensorReader:didChangeAuthorizationStatus:", "optional": true},
+      {"access": "public", "name": "sensorReaderWillStartRecording:", "optional": true},
+      {"access": "public", "name": "sensorReader:startRecordingFailedWithError:", "optional": true},
+      {"access": "public", "name": "sensorReaderDidStopRecording:", "optional": true},
+      {"access": "public", "name": "sensorReader:stopRecordingFailedWithError:", "optional": true},
+      {"access": "public", "name": "sensorReader:didFetchDevices:", "optional": true},
+      {"access": "public", "name": "sensorReader:fetchDevicesDidFailWithError:", "optional": true}
+     ],
+     "introduced": "13",
+     "name": "SRSensorReaderDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    }
+   ],
+   "target": "arm64e.x1-apple-ios27",
+   "typedefs": [
+    {"access": "public", "introduced": "14", "name": "SRAbsoluteTime"},
+    {"access": "public", "name": "SRAcousticSettingsAccessibilityBackgroundSoundsName"},
+    {"access": "public", "name": "SRAcousticSettingsAccessibilityHeadphoneAccommodationsMediaEnhanceApplication"},
+    {"access": "public", "name": "SRAcousticSettingsAccessibilityHeadphoneAccommodationsMediaEnhanceBoosting"},
+    {"access": "public", "name": "SRAcousticSettingsAccessibilityHeadphoneAccommodationsMediaEnhanceTuning"},
+    {"access": "public", "name": "SRAcousticSettingsSampleLifetime"},
+    {"access": "public", "introduced": "14", "name": "SRAmbientLightChromaticity"},
+    {"access": "public", "name": "SRAmbientLightSensorPlacement"},
+    {"access": "public", "name": "SRAuthorizationStatus"},
+    {"access": "public", "name": "SRCrownOrientation"},
+    {"access": "public", "name": "SRDeletionReason"},
+    {"access": "public", "name": "SRDeviceUsageCategoryKey"},
+    {"access": "public", "name": "SRElectrocardiogramDataFlags"},
+    {"access": "public", "name": "SRElectrocardiogramLead"},
+    {"access": "public", "name": "SRElectrocardiogramSessionGuidance"},
+    {"access": "public", "name": "SRElectrocardiogramSessionState"},
+    {"access": "public", "name": "SRErrorCode"},
+    {"access": "public", "name": "SRFaceMetricsContext"},
+    {"access": "public", "name": "SRHeadphoneSettingsAdaptiveAudioStrength"},
+    {"access": "public", "name": "SRHeadphoneSettingsListeningMode"},
+    {"access": "public", "name": "SRHeadphoneSettingsSettingEnablement"},
     {"access": "public", "name": "SRKeyboardMetricsSentimentCategory"},
     {"access": "public", "name": "SRLocationCategory"},
     {"access": "public", "name": "SRMediaEventType"},
@@ -1257,8 +2731,484 @@
   },
   {
    "globals": [
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s6Sample9SensorKit06SRDataB0PTl"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit010SROdometerA0V2eeoiySbAC_ACtFZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit010SROdometerA0V4hash4intoys6HasherVz_tF"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit010SROdometerA0V8_profileAA07_SRDataA7ProfileVyACGvM"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit010SROdometerA0V8_profileAA07_SRDataA7ProfileVyACGvg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit010SROdometerA0V8_profileAA07_SRDataA7ProfileVyACGvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit010SROdometerA0V8_profileAA07_SRDataA7ProfileVyACGvs"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit010SROdometerA0V9hashValueSivg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit010SROdometerA0V9hashValueSivpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit010SROdometerA0VAA06SRDataA0AAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit010SROdometerA0VAA06SRDataA0AAWP"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit010SROdometerA0VACycfC"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit010SROdometerA0VMa"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit010SROdometerA0VMn"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit010SROdometerA0VN"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit010SROdometerA0VSHAAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit010SROdometerA0VSQAAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit011SRHeartRateA0V2eeoiySbAC_ACtFZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit011SRHeartRateA0V4hash4intoys6HasherVz_tF"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit011SRHeartRateA0V8_profileAA07_SRDataA7ProfileVyACGvM"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit011SRHeartRateA0V8_profileAA07_SRDataA7ProfileVyACGvg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit011SRHeartRateA0V8_profileAA07_SRDataA7ProfileVyACGvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit011SRHeartRateA0V8_profileAA07_SRDataA7ProfileVyACGvs"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit011SRHeartRateA0V9hashValueSivg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit011SRHeartRateA0V9hashValueSivpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit011SRHeartRateA0VAA06SRDataA0AAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit011SRHeartRateA0VAA06SRDataA0AAWP"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit011SRHeartRateA0VACycfC"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit011SRHeartRateA0VMa"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit011SRHeartRateA0VMn"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit011SRHeartRateA0VN"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit011SRHeartRateA0VSHAAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit011SRHeartRateA0VSQAAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit012SRPhoneUsageA0V2eeoiySbAC_ACtFZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit012SRPhoneUsageA0V4hash4intoys6HasherVz_tF"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit012SRPhoneUsageA0V8_profileAA07_SRDataA7ProfileVyACGvM"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit012SRPhoneUsageA0V8_profileAA07_SRDataA7ProfileVyACGvg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit012SRPhoneUsageA0V8_profileAA07_SRDataA7ProfileVyACGvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit012SRPhoneUsageA0V8_profileAA07_SRDataA7ProfileVyACGvs"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit012SRPhoneUsageA0V9hashValueSivg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit012SRPhoneUsageA0V9hashValueSivpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit012SRPhoneUsageA0VAA06SRDataA0AAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit012SRPhoneUsageA0VAA06SRDataA0AAWP"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit012SRPhoneUsageA0VACycfC"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit012SRPhoneUsageA0VMa"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit012SRPhoneUsageA0VMn"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit012SRPhoneUsageA0VN"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit012SRPhoneUsageA0VSHAAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit012SRPhoneUsageA0VSQAAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit013SRDeviceUsageA0V2eeoiySbAC_ACtFZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit013SRDeviceUsageA0V4hash4intoys6HasherVz_tF"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit013SRDeviceUsageA0V8_profileAA07_SRDataA7ProfileVyACGvM"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit013SRDeviceUsageA0V8_profileAA07_SRDataA7ProfileVyACGvg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit013SRDeviceUsageA0V8_profileAA07_SRDataA7ProfileVyACGvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit013SRDeviceUsageA0V8_profileAA07_SRDataA7ProfileVyACGvs"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit013SRDeviceUsageA0V9hashValueSivg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit013SRDeviceUsageA0V9hashValueSivpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit013SRDeviceUsageA0VAA06SRDataA0AAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit013SRDeviceUsageA0VAA06SRDataA0AAWP"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit013SRDeviceUsageA0VACycfC"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit013SRDeviceUsageA0VMa"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit013SRDeviceUsageA0VMn"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit013SRDeviceUsageA0VN"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit013SRDeviceUsageA0VSHAAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit013SRDeviceUsageA0VSQAAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit013SRFaceMetricsA0V2eeoiySbAC_ACtFZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit013SRFaceMetricsA0V4hash4intoys6HasherVz_tF"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit013SRFaceMetricsA0V8_profileAA07_SRDataA7ProfileVyACGvM"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit013SRFaceMetricsA0V8_profileAA07_SRDataA7ProfileVyACGvg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit013SRFaceMetricsA0V8_profileAA07_SRDataA7ProfileVyACGvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit013SRFaceMetricsA0V8_profileAA07_SRDataA7ProfileVyACGvs"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit013SRFaceMetricsA0V9hashValueSivg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit013SRFaceMetricsA0V9hashValueSivpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit013SRFaceMetricsA0VAA06SRDataA0AAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit013SRFaceMetricsA0VAA06SRDataA0AAWP"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit013SRFaceMetricsA0VACycfC"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit013SRFaceMetricsA0VMa"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit013SRFaceMetricsA0VMn"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit013SRFaceMetricsA0VN"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit013SRFaceMetricsA0VSHAAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit013SRFaceMetricsA0VSQAAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit013SRMediaEventsA0V2eeoiySbAC_ACtFZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit013SRMediaEventsA0V4hash4intoys6HasherVz_tF"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit013SRMediaEventsA0V8_profileAA07_SRDataA7ProfileVyACGvM"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit013SRMediaEventsA0V8_profileAA07_SRDataA7ProfileVyACGvg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit013SRMediaEventsA0V8_profileAA07_SRDataA7ProfileVyACGvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit013SRMediaEventsA0V8_profileAA07_SRDataA7ProfileVyACGvs"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit013SRMediaEventsA0V9hashValueSivg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit013SRMediaEventsA0V9hashValueSivpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit013SRMediaEventsA0VAA06SRDataA0AAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit013SRMediaEventsA0VAA06SRDataA0AAWP"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit013SRMediaEventsA0VACycfC"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit013SRMediaEventsA0VMa"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit013SRMediaEventsA0VMn"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit013SRMediaEventsA0VN"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit013SRMediaEventsA0VSHAAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit013SRMediaEventsA0VSQAAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit014SRAmbientLightA0V2eeoiySbAC_ACtFZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit014SRAmbientLightA0V4hash4intoys6HasherVz_tF"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit014SRAmbientLightA0V8_profileAA07_SRDataA7ProfileVyACGvM"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit014SRAmbientLightA0V8_profileAA07_SRDataA7ProfileVyACGvg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit014SRAmbientLightA0V8_profileAA07_SRDataA7ProfileVyACGvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit014SRAmbientLightA0V8_profileAA07_SRDataA7ProfileVyACGvs"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit014SRAmbientLightA0V9hashValueSivg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit014SRAmbientLightA0V9hashValueSivpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit014SRAmbientLightA0VAA06SRDataA0AAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit014SRAmbientLightA0VAA06SRDataA0AAWP"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit014SRAmbientLightA0VACycfC"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit014SRAmbientLightA0VMa"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit014SRAmbientLightA0VMn"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit014SRAmbientLightA0VN"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit014SRAmbientLightA0VSHAAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit014SRAmbientLightA0VSQAAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit014SROnWristStateA0V2eeoiySbAC_ACtFZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit014SROnWristStateA0V4hash4intoys6HasherVz_tF"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit014SROnWristStateA0V8_profileAA07_SRDataA7ProfileVyACGvM"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit014SROnWristStateA0V8_profileAA07_SRDataA7ProfileVyACGvg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit014SROnWristStateA0V8_profileAA07_SRDataA7ProfileVyACGvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit014SROnWristStateA0V8_profileAA07_SRDataA7ProfileVyACGvs"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit014SROnWristStateA0V9hashValueSivg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit014SROnWristStateA0V9hashValueSivpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit014SROnWristStateA0VAA06SRDataA0AAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit014SROnWristStateA0VAA06SRDataA0AAWP"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit014SROnWristStateA0VACycfC"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit014SROnWristStateA0VMa"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit014SROnWristStateA0VMn"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit014SROnWristStateA0VN"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit014SROnWristStateA0VSHAAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit014SROnWristStateA0VSQAAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit014SRRotationRateA0V2eeoiySbAC_ACtFZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit014SRRotationRateA0V4hash4intoys6HasherVz_tF"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit014SRRotationRateA0V8_profileAA07_SRDataA7ProfileVyACGvM"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit014SRRotationRateA0V8_profileAA07_SRDataA7ProfileVyACGvg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit014SRRotationRateA0V8_profileAA07_SRDataA7ProfileVyACGvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit014SRRotationRateA0V8_profileAA07_SRDataA7ProfileVyACGvs"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit014SRRotationRateA0V9hashValueSivg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit014SRRotationRateA0V9hashValueSivpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit014SRRotationRateA0VAA06SRDataA0AAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit014SRRotationRateA0VAA06SRDataA0AAWP"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit014SRRotationRateA0VACycfC"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit014SRRotationRateA0VMa"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit014SRRotationRateA0VMn"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit014SRRotationRateA0VN"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit014SRRotationRateA0VSHAAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit014SRRotationRateA0VSQAAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit015SRAccelerometerA0V2eeoiySbAC_ACtFZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit015SRAccelerometerA0V4hash4intoys6HasherVz_tF"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit015SRAccelerometerA0V8_profileAA07_SRDataA7ProfileVyACGvM"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit015SRAccelerometerA0V8_profileAA07_SRDataA7ProfileVyACGvg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit015SRAccelerometerA0V8_profileAA07_SRDataA7ProfileVyACGvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit015SRAccelerometerA0V8_profileAA07_SRDataA7ProfileVyACGvs"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit015SRAccelerometerA0V9hashValueSivg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit015SRAccelerometerA0V9hashValueSivpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit015SRAccelerometerA0VAA06SRDataA0AAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit015SRAccelerometerA0VAA06SRDataA0AAWP"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit015SRAccelerometerA0VACycfC"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit015SRAccelerometerA0VMa"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit015SRAccelerometerA0VMn"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit015SRAccelerometerA0VN"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit015SRAccelerometerA0VSHAAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit015SRAccelerometerA0VSQAAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit015SRMessagesUsageA0V2eeoiySbAC_ACtFZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit015SRMessagesUsageA0V4hash4intoys6HasherVz_tF"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit015SRMessagesUsageA0V8_profileAA07_SRDataA7ProfileVyACGvM"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit015SRMessagesUsageA0V8_profileAA07_SRDataA7ProfileVyACGvg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit015SRMessagesUsageA0V8_profileAA07_SRDataA7ProfileVyACGvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit015SRMessagesUsageA0V8_profileAA07_SRDataA7ProfileVyACGvs"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit015SRMessagesUsageA0V9hashValueSivg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit015SRMessagesUsageA0V9hashValueSivpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit015SRMessagesUsageA0VAA06SRDataA0AAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit015SRMessagesUsageA0VAA06SRDataA0AAWP"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit015SRMessagesUsageA0VACycfC"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit015SRMessagesUsageA0VMa"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit015SRMessagesUsageA0VMn"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit015SRMessagesUsageA0VN"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit015SRMessagesUsageA0VSHAAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit015SRMessagesUsageA0VSQAAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit015SRPedometerDataA0V2eeoiySbAC_ACtFZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit015SRPedometerDataA0V4hash4intoys6HasherVz_tF"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit015SRPedometerDataA0V8_profileAA07_SRDataA7ProfileVyACGvM"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit015SRPedometerDataA0V8_profileAA07_SRDataA7ProfileVyACGvg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit015SRPedometerDataA0V8_profileAA07_SRDataA7ProfileVyACGvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit015SRPedometerDataA0V8_profileAA07_SRDataA7ProfileVyACGvs"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit015SRPedometerDataA0V9hashValueSivg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit015SRPedometerDataA0V9hashValueSivpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit015SRPedometerDataA0VAA06SRDataA0AAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit015SRPedometerDataA0VAA06SRDataA0AAWP"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit015SRPedometerDataA0VACycfC"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit015SRPedometerDataA0VMa"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit015SRPedometerDataA0VMn"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit015SRPedometerDataA0VN"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit015SRPedometerDataA0VSHAAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit015SRPedometerDataA0VSQAAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit015SRSleepSessionsA0V2eeoiySbAC_ACtFZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit015SRSleepSessionsA0V4hash4intoys6HasherVz_tF"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit015SRSleepSessionsA0V8_profileAA07_SRDataA7ProfileVyACGvM"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit015SRSleepSessionsA0V8_profileAA07_SRDataA7ProfileVyACGvg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit015SRSleepSessionsA0V8_profileAA07_SRDataA7ProfileVyACGvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit015SRSleepSessionsA0V8_profileAA07_SRDataA7ProfileVyACGvs"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit015SRSleepSessionsA0V9hashValueSivg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit015SRSleepSessionsA0V9hashValueSivpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit015SRSleepSessionsA0VAA06SRDataA0AAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit015SRSleepSessionsA0VAA06SRDataA0AAWP"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit015SRSleepSessionsA0VACycfC"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit015SRSleepSessionsA0VMa"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit015SRSleepSessionsA0VMn"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit015SRSleepSessionsA0VN"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit015SRSleepSessionsA0VSHAAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit015SRSleepSessionsA0VSQAAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit017SRAmbientPressureA0V2eeoiySbAC_ACtFZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit017SRAmbientPressureA0V4hash4intoys6HasherVz_tF"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit017SRAmbientPressureA0V8_profileAA07_SRDataA7ProfileVyACGvM"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit017SRAmbientPressureA0V8_profileAA07_SRDataA7ProfileVyACGvg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit017SRAmbientPressureA0V8_profileAA07_SRDataA7ProfileVyACGvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit017SRAmbientPressureA0V8_profileAA07_SRDataA7ProfileVyACGvs"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit017SRAmbientPressureA0V9hashValueSivg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit017SRAmbientPressureA0V9hashValueSivpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit017SRAmbientPressureA0VAA06SRDataA0AAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit017SRAmbientPressureA0VAA06SRDataA0AAWP"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit017SRAmbientPressureA0VACycfC"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit017SRAmbientPressureA0VMa"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit017SRAmbientPressureA0VMn"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit017SRAmbientPressureA0VN"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit017SRAmbientPressureA0VSHAAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit017SRAmbientPressureA0VSQAAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit017SRHeadphoneMotionA0V2eeoiySbAC_ACtFZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit017SRHeadphoneMotionA0V4hash4intoys6HasherVz_tF"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit017SRHeadphoneMotionA0V8_profileAA07_SRDataA7ProfileVyACGvM"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit017SRHeadphoneMotionA0V8_profileAA07_SRDataA7ProfileVyACGvg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit017SRHeadphoneMotionA0V8_profileAA07_SRDataA7ProfileVyACGvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit017SRHeadphoneMotionA0V8_profileAA07_SRDataA7ProfileVyACGvs"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit017SRHeadphoneMotionA0V9hashValueSivg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit017SRHeadphoneMotionA0V9hashValueSivpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit017SRHeadphoneMotionA0VAA06SRDataA0AAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit017SRHeadphoneMotionA0VAA06SRDataA0AAWP"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit017SRHeadphoneMotionA0VACycfC"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit017SRHeadphoneMotionA0VMa"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit017SRHeadphoneMotionA0VMn"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit017SRHeadphoneMotionA0VN"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit017SRHeadphoneMotionA0VSHAAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit017SRHeadphoneMotionA0VSQAAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit017SRKeyboardMetricsA0V2eeoiySbAC_ACtFZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit017SRKeyboardMetricsA0V4hash4intoys6HasherVz_tF"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit017SRKeyboardMetricsA0V8_profileAA07_SRDataA7ProfileVyACGvM"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit017SRKeyboardMetricsA0V8_profileAA07_SRDataA7ProfileVyACGvg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit017SRKeyboardMetricsA0V8_profileAA07_SRDataA7ProfileVyACGvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit017SRKeyboardMetricsA0V8_profileAA07_SRDataA7ProfileVyACGvs"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit017SRKeyboardMetricsA0V9hashValueSivg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit017SRKeyboardMetricsA0V9hashValueSivpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit017SRKeyboardMetricsA0VAA06SRDataA0AAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit017SRKeyboardMetricsA0VAA06SRDataA0AAWP"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit017SRKeyboardMetricsA0VACycfC"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit017SRKeyboardMetricsA0VMa"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit017SRKeyboardMetricsA0VMn"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit017SRKeyboardMetricsA0VN"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit017SRKeyboardMetricsA0VSHAAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit017SRKeyboardMetricsA0VSQAAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit018SRAcousticSettingsA0V2eeoiySbAC_ACtFZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit018SRAcousticSettingsA0V4hash4intoys6HasherVz_tF"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit018SRAcousticSettingsA0V8_profileAA07_SRDataA7ProfileVyACGvM"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit018SRAcousticSettingsA0V8_profileAA07_SRDataA7ProfileVyACGvg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit018SRAcousticSettingsA0V8_profileAA07_SRDataA7ProfileVyACGvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit018SRAcousticSettingsA0V8_profileAA07_SRDataA7ProfileVyACGvs"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit018SRAcousticSettingsA0V9hashValueSivg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit018SRAcousticSettingsA0V9hashValueSivpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit018SRAcousticSettingsA0VAA06SRDataA0AAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit018SRAcousticSettingsA0VAA06SRDataA0AAWP"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit018SRAcousticSettingsA0VACycfC"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit018SRAcousticSettingsA0VMa"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit018SRAcousticSettingsA0VMn"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit018SRAcousticSettingsA0VN"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit018SRAcousticSettingsA0VSHAAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit018SRAcousticSettingsA0VSQAAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit018SRWristTemperatureA0V2eeoiySbAC_ACtFZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit018SRWristTemperatureA0V4hash4intoys6HasherVz_tF"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit018SRWristTemperatureA0V8_profileAA07_SRDataA7ProfileVyACGvM"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit018SRWristTemperatureA0V8_profileAA07_SRDataA7ProfileVyACGvg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit018SRWristTemperatureA0V8_profileAA07_SRDataA7ProfileVyACGvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit018SRWristTemperatureA0V8_profileAA07_SRDataA7ProfileVyACGvs"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit018SRWristTemperatureA0V9hashValueSivg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit018SRWristTemperatureA0V9hashValueSivpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit018SRWristTemperatureA0VAA06SRDataA0AAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit018SRWristTemperatureA0VAA06SRDataA0AAWP"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit018SRWristTemperatureA0VACycfC"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit018SRWristTemperatureA0VMa"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit018SRWristTemperatureA0VMn"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit018SRWristTemperatureA0VN"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit018SRWristTemperatureA0VSHAAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit018SRWristTemperatureA0VSQAAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit019SRElectrocardiogramA0V2eeoiySbAC_ACtFZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit019SRElectrocardiogramA0V4hash4intoys6HasherVz_tF"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit019SRElectrocardiogramA0V8_profileAA07_SRDataA7ProfileVyACGvM"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit019SRElectrocardiogramA0V8_profileAA07_SRDataA7ProfileVyACGvg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit019SRElectrocardiogramA0V8_profileAA07_SRDataA7ProfileVyACGvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit019SRElectrocardiogramA0V8_profileAA07_SRDataA7ProfileVyACGvs"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit019SRElectrocardiogramA0V9hashValueSivg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit019SRElectrocardiogramA0V9hashValueSivpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit019SRElectrocardiogramA0VAA06SRDataA0AAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit019SRElectrocardiogramA0VAA06SRDataA0AAWP"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit019SRElectrocardiogramA0VACycfC"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit019SRElectrocardiogramA0VMa"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit019SRElectrocardiogramA0VMn"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit019SRElectrocardiogramA0VN"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit019SRElectrocardiogramA0VSHAAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit019SRElectrocardiogramA0VSQAAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit019SRHeadphoneSettingsA0V2eeoiySbAC_ACtFZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit019SRHeadphoneSettingsA0V4hash4intoys6HasherVz_tF"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit019SRHeadphoneSettingsA0V8_profileAA07_SRDataA7ProfileVyACGvM"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit019SRHeadphoneSettingsA0V8_profileAA07_SRDataA7ProfileVyACGvg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit019SRHeadphoneSettingsA0V8_profileAA07_SRDataA7ProfileVyACGvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit019SRHeadphoneSettingsA0V8_profileAA07_SRDataA7ProfileVyACGvs"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit019SRHeadphoneSettingsA0V9hashValueSivg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit019SRHeadphoneSettingsA0V9hashValueSivpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit019SRHeadphoneSettingsA0VAA06SRDataA0AAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit019SRHeadphoneSettingsA0VAA06SRDataA0AAWP"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit019SRHeadphoneSettingsA0VACycfC"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit019SRHeadphoneSettingsA0VMa"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit019SRHeadphoneSettingsA0VMn"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit019SRHeadphoneSettingsA0VN"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit019SRHeadphoneSettingsA0VSHAAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit019SRHeadphoneSettingsA0VSQAAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit019SRSiriSpeechMetricsA0V2eeoiySbAC_ACtFZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit019SRSiriSpeechMetricsA0V4hash4intoys6HasherVz_tF"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit019SRSiriSpeechMetricsA0V8_profileAA07_SRDataA7ProfileVyACGvM"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit019SRSiriSpeechMetricsA0V8_profileAA07_SRDataA7ProfileVyACGvg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit019SRSiriSpeechMetricsA0V8_profileAA07_SRDataA7ProfileVyACGvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit019SRSiriSpeechMetricsA0V8_profileAA07_SRDataA7ProfileVyACGvs"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit019SRSiriSpeechMetricsA0V9hashValueSivg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit019SRSiriSpeechMetricsA0V9hashValueSivpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit019SRSiriSpeechMetricsA0VAA06SRDataA0AAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit019SRSiriSpeechMetricsA0VAA06SRDataA0AAWP"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit019SRSiriSpeechMetricsA0VACycfC"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit019SRSiriSpeechMetricsA0VMa"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit019SRSiriSpeechMetricsA0VMn"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit019SRSiriSpeechMetricsA0VN"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit019SRSiriSpeechMetricsA0VSHAAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit019SRSiriSpeechMetricsA0VSQAAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit020SRPhotoplethysmogramA0V2eeoiySbAC_ACtFZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit020SRPhotoplethysmogramA0V4hash4intoys6HasherVz_tF"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit020SRPhotoplethysmogramA0V8_profileAA07_SRDataA7ProfileVyACGvM"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit020SRPhotoplethysmogramA0V8_profileAA07_SRDataA7ProfileVyACGvg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit020SRPhotoplethysmogramA0V8_profileAA07_SRDataA7ProfileVyACGvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit020SRPhotoplethysmogramA0V8_profileAA07_SRDataA7ProfileVyACGvs"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit020SRPhotoplethysmogramA0V9hashValueSivg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit020SRPhotoplethysmogramA0V9hashValueSivpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit020SRPhotoplethysmogramA0VAA06SRDataA0AAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit020SRPhotoplethysmogramA0VAA06SRDataA0AAWP"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit020SRPhotoplethysmogramA0VACycfC"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit020SRPhotoplethysmogramA0VMa"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit020SRPhotoplethysmogramA0VMn"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit020SRPhotoplethysmogramA0VN"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit020SRPhotoplethysmogramA0VSHAAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit020SRPhotoplethysmogramA0VSQAAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit024SRTelephonySpeechMetricsA0V2eeoiySbAC_ACtFZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit024SRTelephonySpeechMetricsA0V4hash4intoys6HasherVz_tF"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit024SRTelephonySpeechMetricsA0V8_profileAA07_SRDataA7ProfileVyACGvM"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit024SRTelephonySpeechMetricsA0V8_profileAA07_SRDataA7ProfileVyACGvg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit024SRTelephonySpeechMetricsA0V8_profileAA07_SRDataA7ProfileVyACGvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit024SRTelephonySpeechMetricsA0V8_profileAA07_SRDataA7ProfileVyACGvs"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit024SRTelephonySpeechMetricsA0V9hashValueSivg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit024SRTelephonySpeechMetricsA0V9hashValueSivpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit024SRTelephonySpeechMetricsA0VAA06SRDataA0AAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit024SRTelephonySpeechMetricsA0VAA06SRDataA0AAWP"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit024SRTelephonySpeechMetricsA0VACycfC"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit024SRTelephonySpeechMetricsA0VMa"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit024SRTelephonySpeechMetricsA0VMn"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit024SRTelephonySpeechMetricsA0VN"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit024SRTelephonySpeechMetricsA0VSHAAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit024SRTelephonySpeechMetricsA0VSQAAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit06SRDataA0Mp"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit06SRDataA0P8_profileAA01_cA7ProfileVyxGvgTj"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit06SRDataA0P8_profileAA01_cA7ProfileVyxGvgTq"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit06SRDataA0PA2A010SROdometerA0VRszrlE8odometerAEvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit06SRDataA0PA2A010SROdometerA0VRszrlE8odometerAEvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit06SRDataA0PA2A011SRHeartRateA0VRszrlE05heartE0AEvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit06SRDataA0PA2A011SRHeartRateA0VRszrlE05heartE0AEvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit06SRDataA0PA2A012SRPhoneUsageA0VRszrlE05phoneE0AEvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit06SRDataA0PA2A012SRPhoneUsageA0VRszrlE05phoneE0AEvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit06SRDataA0PA2A013SRDeviceUsageA0VRszrlE06deviceE0AEvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit06SRDataA0PA2A013SRDeviceUsageA0VRszrlE06deviceE0AEvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit06SRDataA0PA2A013SRFaceMetricsA0VRszrlE04faceE0AEvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit06SRDataA0PA2A013SRFaceMetricsA0VRszrlE04faceE0AEvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit06SRDataA0PA2A013SRMediaEventsA0VRszrlE05mediaE0AEvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit06SRDataA0PA2A013SRMediaEventsA0VRszrlE05mediaE0AEvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit06SRDataA0PA2A014SRAmbientLightA0VRszrlE07ambientE0AEvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit06SRDataA0PA2A014SRAmbientLightA0VRszrlE07ambientE0AEvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit06SRDataA0PA2A014SROnWristStateA0VRszrlE02oneF0AEvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit06SRDataA0PA2A014SROnWristStateA0VRszrlE02oneF0AEvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit06SRDataA0PA2A014SRRotationRateA0VRszrlE08rotationE0AEvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit06SRDataA0PA2A014SRRotationRateA0VRszrlE08rotationE0AEvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit06SRDataA0PA2A015SRAccelerometerA0VRszrlE13accelerometerAEvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit06SRDataA0PA2A015SRAccelerometerA0VRszrlE13accelerometerAEvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit06SRDataA0PA2A015SRMessagesUsageA0VRszrlE08messagesE0AEvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit06SRDataA0PA2A015SRMessagesUsageA0VRszrlE08messagesE0AEvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit06SRDataA0PA2A015SRPedometerDataA0VRszrlE09pedometerE0AEvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit06SRDataA0PA2A015SRPedometerDataA0VRszrlE09pedometerE0AEvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit06SRDataA0PA2A015SRSleepSessionsA0VRszrlE05sleepE0AEvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit06SRDataA0PA2A015SRSleepSessionsA0VRszrlE05sleepE0AEvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit06SRDataA0PA2A017SRAmbientPressureA0VRszrlE07ambientE0AEvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit06SRDataA0PA2A017SRAmbientPressureA0VRszrlE07ambientE0AEvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit06SRDataA0PA2A017SRHeadphoneMotionA0VRszrlE09headphoneE0AEvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit06SRDataA0PA2A017SRHeadphoneMotionA0VRszrlE09headphoneE0AEvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit06SRDataA0PA2A017SRKeyboardMetricsA0VRszrlE08keyboardE0AEvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit06SRDataA0PA2A017SRKeyboardMetricsA0VRszrlE08keyboardE0AEvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit06SRDataA0PA2A018SRAcousticSettingsA0VRszrlE08acousticE0AEvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit06SRDataA0PA2A018SRAcousticSettingsA0VRszrlE08acousticE0AEvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit06SRDataA0PA2A018SRWristTemperatureA0VRszrlE05wristE0AEvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit06SRDataA0PA2A018SRWristTemperatureA0VRszrlE05wristE0AEvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit06SRDataA0PA2A019SRElectrocardiogramA0VRszrlE17electrocardiogramAEvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit06SRDataA0PA2A019SRElectrocardiogramA0VRszrlE17electrocardiogramAEvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit06SRDataA0PA2A019SRHeadphoneSettingsA0VRszrlE09headphoneE0AEvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit06SRDataA0PA2A019SRHeadphoneSettingsA0VRszrlE09headphoneE0AEvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit06SRDataA0PA2A019SRSiriSpeechMetricsA0VRszrlE04sirieF0AEvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit06SRDataA0PA2A019SRSiriSpeechMetricsA0VRszrlE04sirieF0AEvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit06SRDataA0PA2A020SRPhotoplethysmogramA0VRszrlE18photoplethysmogramAEvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit06SRDataA0PA2A020SRPhotoplethysmogramA0VRszrlE18photoplethysmogramAEvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit06SRDataA0PA2A024SRTelephonySpeechMetricsA0VRszrlE09telephonyeF0AEvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit06SRDataA0PA2A024SRTelephonySpeechMetricsA0VRszrlE09telephonyeF0AEvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit06SRDataA0PA2A08SRVisitsA0VRszrlE6visitsAEvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit06SRDataA0PA2A08SRVisitsA0VRszrlE6visitsAEvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit06SRDataA0PSHTb"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit06SRDataA0TL"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit07_SRDataA7ProfileVMa"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit07_SRDataA7ProfileVMn"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit08SRVisitsA0V2eeoiySbAC_ACtFZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit08SRVisitsA0V4hash4intoys6HasherVz_tF"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit08SRVisitsA0V8_profileAA07_SRDataA7ProfileVyACGvM"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit08SRVisitsA0V8_profileAA07_SRDataA7ProfileVyACGvg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit08SRVisitsA0V8_profileAA07_SRDataA7ProfileVyACGvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit08SRVisitsA0V8_profileAA07_SRDataA7ProfileVyACGvs"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit08SRVisitsA0V9hashValueSivg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit08SRVisitsA0V9hashValueSivpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit08SRVisitsA0VAA06SRDataA0AAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit08SRVisitsA0VAA06SRDataA0AAWP"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit08SRVisitsA0VACycfC"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit08SRVisitsA0VMa"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit08SRVisitsA0VMn"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit08SRVisitsA0VN"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit08SRVisitsA0VSHAAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit08SRVisitsA0VSQAAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit15SRFetchResponseV12sourceDeviceSo08SRSourceF0CSgvg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit15SRFetchResponseV12sourceDeviceSo08SRSourceF0CSgvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit15SRFetchResponseV6samples6ResultOyxs5Error_pGvg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit15SRFetchResponseV6samples6ResultOyxs5Error_pGvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit15SRFetchResponseV9timestampSo14SRAbsoluteTimeavg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit15SRFetchResponseV9timestampSo14SRAbsoluteTimeavpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit15SRFetchResponseVMa"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit15SRFetchResponseVMn"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit8SRReaderC13stopRecordingyyYaKF"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit8SRReaderC13stopRecordingyyYaKFTu"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit8SRReaderC14startRecordingyyYaKF"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit8SRReaderC14startRecordingyyYaKFTu"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit8SRReaderC15deletionRecords8matchingQrSo14SRFetchRequestC_tF"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit8SRReaderC15deletionRecords8matchingQrSo14SRFetchRequestC_tFQOMQ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit8SRReaderC19authorizationStatusSo015SRAuthorizationE0Vvg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit8SRReaderC19authorizationStatusSo015SRAuthorizationE0VvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit8SRReaderC6sensorACyxGx_tKcfC"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit8SRReaderC6sensorACyxGx_tKcfCTj"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit8SRReaderC6sensorACyxGx_tKcfCTq"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit8SRReaderC6sensorACyxGx_tKcfc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit8SRReaderC6sensorxvg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit8SRReaderC6sensorxvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit8SRReaderC7devicesSaySo8SRDeviceCGvg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit8SRReaderC7devicesSaySo8SRDeviceCGvgTu"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit8SRReaderC7devicesSaySo8SRDeviceCGvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit8SRReaderC7samples8matchingQrSo14SRFetchRequestC_tF"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit8SRReaderC7samples8matchingQrSo14SRFetchRequestC_tFQOMQ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit8SRReaderCMa"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit8SRReaderCMn"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit8SRReaderCMo"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit8SRReaderCMu"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit8SRReaderCfD"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit8SRReaderCfd"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9SensorKit8SRReaderCyxG11Observation10ObservableAAMc"},
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$sSo18SRAcousticSettingsC9SensorKitE25headphoneSafetyAudioLevelSdSgvg"},
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$sSo18SRAcousticSettingsC9SensorKitE25headphoneSafetyAudioLevelSdSgvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$sSo21SRAuthorizationStatusV9SensorKitE20requestAuthorization3forySayAC06SRDataC0_pG_tYaKFZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$sSo21SRAuthorizationStatusV9SensorKitE20requestAuthorization3forySayAC06SRDataC0_pG_tYaKFZTu"},
     {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$sSo25SRWristTemperatureSessionC9SensorKitE12temperaturesQrvg"},
     {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$sSo25SRWristTemperatureSessionC9SensorKitE12temperaturesQrvpMV"},
     {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$sSo25SRWristTemperatureSessionC9SensorKitE12temperaturesQrvpQOMQ"},
@@ -1278,7 +3228,7 @@
     {"access": "public", "introduced": "17.4", "linkage": "exported", "name": "_$sSo33SRPhotoplethysmogramOpticalSampleC9SensorKitE21normalizedReflectanceSdSgvg"},
     {"access": "public", "introduced": "17.4", "linkage": "exported", "name": "_$sSo33SRPhotoplethysmogramOpticalSampleC9SensorKitE21normalizedReflectanceSdSgvpMV"}
    ],
-   "target": "arm64e-apple-ios26.5"
+   "target": "arm64e-apple-ios27.0"
   }
  ],
  "version": "1.0"

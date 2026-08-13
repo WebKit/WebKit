@@ -81,9 +81,10 @@
     {"access": "public", "introduced": "1", "linkage": "exported", "name": "_$sSo8NSObjectC10ObjectiveCE9hashValueSivpMV"},
     {"access": "public", "introduced": "1", "linkage": "exported", "name": "_$sSo8NSObjectCSH10ObjectiveCMc"},
     {"access": "public", "introduced": "1", "linkage": "exported", "name": "_$sSo8NSObjectCSQ10ObjectiveCMc"},
-    {"access": "public", "introduced": "1", "linkage": "exported", "name": "_$sSo8NSObjectCs7CVarArg10ObjectiveCMc"}
+    {"access": "public", "introduced": "1", "linkage": "exported", "name": "_$sSo8NSObjectCs7CVarArg10ObjectiveCMc"},
+    {"access": "public", "linkage": "exported", "name": "__swift_FORCE_LOAD_$_swiftObjectiveC"}
    ],
-   "target": "arm64e-apple-ios26.5"
+   "target": "arm64e-apple-ios27.0"
   }
  ],
  "version": "1.0"

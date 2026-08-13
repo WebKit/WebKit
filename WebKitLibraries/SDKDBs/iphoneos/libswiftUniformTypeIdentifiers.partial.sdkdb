@@ -43,6 +43,7 @@
     {"access": "public", "introduced": "14", "linkage": "exported", "name": "_$s22UniformTypeIdentifiers6UTTypeV10executableACvgZ"},
     {"access": "public", "introduced": "14", "linkage": "exported", "name": "_$s22UniformTypeIdentifiers6UTTypeV10executableACvpZMV"},
     {"access": "public", "introduced": "14", "linkage": "exported", "name": "_$s22UniformTypeIdentifiers6UTTypeV10exportedAs12conformingToACSS_ACSgtcfC"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s22UniformTypeIdentifiers6UTTypeV10identifier15allowUndeclaredACSgSS_SbtcfC"},
     {"access": "public", "introduced": "14", "linkage": "exported", "name": "_$s22UniformTypeIdentifiers6UTTypeV10identifierSSvg"},
     {"access": "public", "introduced": "14", "linkage": "exported", "name": "_$s22UniformTypeIdentifiers6UTTypeV10identifierSSvpMV"},
     {"access": "public", "introduced": "14", "linkage": "exported", "name": "_$s22UniformTypeIdentifiers6UTTypeV10importedAs12conformingToACSS_ACSgtcfC"},
@@ -333,6 +334,8 @@
     {"access": "public", "introduced": "14", "linkage": "exported", "name": "_$s22UniformTypeIdentifiers6UTTypeV8isPublicSbvpMV"},
     {"access": "public", "introduced": "15", "linkage": "exported", "name": "_$s22UniformTypeIdentifiers6UTTypeV8makefileACvgZ"},
     {"access": "public", "introduced": "15", "linkage": "exported", "name": "_$s22UniformTypeIdentifiers6UTTypeV8makefileACvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s22UniformTypeIdentifiers6UTTypeV8markdownACvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s22UniformTypeIdentifiers6UTTypeV8markdownACvpZMV"},
     {"access": "public", "introduced": "14", "linkage": "exported", "name": "_$s22UniformTypeIdentifiers6UTTypeV8playlistACvgZ"},
     {"access": "public", "introduced": "14", "linkage": "exported", "name": "_$s22UniformTypeIdentifiers6UTTypeV8playlistACvpZMV"},
     {"access": "public", "introduced": "14", "linkage": "exported", "name": "_$s22UniformTypeIdentifiers6UTTypeV8rawImageACvgZ"},
@@ -378,9 +381,10 @@
     {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$sSo14NSItemProviderC22UniformTypeIdentifiersE22loadDataRepresentation3for17completionHandlerSo10NSProgressCAC6UTTypeV_y10Foundation0G0VSg_s5Error_pSgtYbctF"},
     {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$sSo14NSItemProviderC22UniformTypeIdentifiersE22loadFileRepresentation3for11openInPlace17completionHandlerSo10NSProgressCAC6UTTypeV_Sby10Foundation3URLVSg_Sbs5Error_pSgtYbctF"},
     {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$sSo14NSItemProviderC22UniformTypeIdentifiersE26registerDataRepresentation3for10visibility11loadHandleryAC6UTTypeV_So0abH10VisibilityVSo10NSProgressCSgy10Foundation0G0VSg_s5Error_pSgtcYbctF"},
-    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$sSo14NSItemProviderC22UniformTypeIdentifiersE26registerFileRepresentation3for10visibility11openInPlace11loadHandleryAC6UTTypeV_So0abH10VisibilityVSbSo10NSProgressCSgy10Foundation3URLVSg_Sbs5Error_pSgtcYbctF"}
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$sSo14NSItemProviderC22UniformTypeIdentifiersE26registerFileRepresentation3for10visibility11openInPlace11loadHandleryAC6UTTypeV_So0abH10VisibilityVSbSo10NSProgressCSgy10Foundation3URLVSg_Sbs5Error_pSgtcYbctF"},
+    {"access": "public", "linkage": "exported", "name": "__swift_FORCE_LOAD_$_swiftUniformTypeIdentifiers"}
    ],
-   "target": "arm64e-apple-ios26.5"
+   "target": "arm64e-apple-ios27.0"
   }
  ],
  "version": "1.0"

@@ -631,9 +631,10 @@
     {"access": "public", "introduced": "12", "linkage": "exported", "name": "_$sSo9OS_os_logC0B0E9subsystem8categoryABSS_AbCE8CategoryVtcfC"},
     {"access": "public", "introduced": "12", "linkage": "exported", "name": "_$sSo9OS_os_logC0B0E9subsystem8categoryABSS_AbCE8CategoryVtcfc"},
     {"access": "public", "introduced": "10", "linkage": "exported", "name": "_$sSo9OS_os_logC0B0E9subsystem8categoryABSS_SStcfC"},
-    {"access": "public", "introduced": "10", "linkage": "exported", "name": "_$sSo9OS_os_logC0B0E9subsystem8categoryABSS_SStcfc"}
+    {"access": "public", "introduced": "10", "linkage": "exported", "name": "_$sSo9OS_os_logC0B0E9subsystem8categoryABSS_SStcfc"},
+    {"access": "public", "linkage": "exported", "name": "__swift_FORCE_LOAD_$_swiftos"}
    ],
-   "target": "arm64e-apple-ios26.5"
+   "target": "arm64e-apple-ios27.0"
   }
  ],
  "version": "1.0"

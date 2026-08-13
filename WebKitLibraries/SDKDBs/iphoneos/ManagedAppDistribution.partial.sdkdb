@@ -2,7 +2,10 @@
 {
  "PublicSDKContentRoot": [
   {
-   "target": "arm64e-apple-ios26.5"
+   "target": "arm64e-apple-ios27"
+  },
+  {
+   "target": "arm64e.x1-apple-ios27"
   },
   {
    "globals": [
@@ -61,10 +64,13 @@
     {"access": "public", "introduced": "17.2", "linkage": "exported", "name": "_$s22ManagedAppDistribution0aB0V14screenshotURLs7fittingSay10Foundation3URLVGSo6CGSizeV_tF"},
     {"access": "public", "introduced": "17.2", "linkage": "exported", "name": "_$s22ManagedAppDistribution0aB0V16developerWebsite10Foundation3URLVSgvg"},
     {"access": "public", "introduced": "17.2", "linkage": "exported", "name": "_$s22ManagedAppDistribution0aB0V16developerWebsite10Foundation3URLVSgvpMV"},
-    {"access": "public", "introduced": "17.2", "linkage": "exported", "name": "_$s22ManagedAppDistribution0aB0V16licenseAgreement10Foundation3URLVSgvg"},
-    {"access": "public", "introduced": "17.2", "linkage": "exported", "name": "_$s22ManagedAppDistribution0aB0V16licenseAgreement10Foundation3URLVSgvpMV"},
+    {"access": "public", "introduced": "17.4", "linkage": "exported", "name": "_$s22ManagedAppDistribution0aB0V16licenseAgreement10Foundation3URLVSgvg"},
+    {"access": "public", "introduced": "17.4", "linkage": "exported", "name": "_$s22ManagedAppDistribution0aB0V16licenseAgreement10Foundation3URLVSgvpMV"},
     {"access": "public", "introduced": "17.2", "linkage": "exported", "name": "_$s22ManagedAppDistribution0aB0V16metadataLanguage10Foundation6LocaleV0E0VSgvg"},
     {"access": "public", "introduced": "17.2", "linkage": "exported", "name": "_$s22ManagedAppDistribution0aB0V16metadataLanguage10Foundation6LocaleV0E0VSgvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s22ManagedAppDistribution0aB0V20licenseAgreementText10Foundation16AttributedStringVSgvg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s22ManagedAppDistribution0aB0V20licenseAgreementText10Foundation16AttributedStringVSgvgTu"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s22ManagedAppDistribution0aB0V20licenseAgreementText10Foundation16AttributedStringVSgvpMV"},
     {"access": "public", "introduced": "17.4", "linkage": "exported", "name": "_$s22ManagedAppDistribution0aB0V2eeoiySbAC_ACtFZ"},
     {"access": "public", "introduced": "17.2", "linkage": "exported", "name": "_$s22ManagedAppDistribution0aB0V2idSSvg"},
     {"access": "public", "introduced": "17.2", "linkage": "exported", "name": "_$s22ManagedAppDistribution0aB0V2idSSvpMV"},
@@ -197,7 +203,7 @@
     {"access": "public", "introduced": "17.2", "linkage": "exported", "name": "_$s22ManagedAppDistribution8PlatformVSQAAMc"},
     {"access": "public", "introduced": "17.2", "linkage": "exported", "name": "_$s22ManagedAppDistribution8PlatformVs23CustomStringConvertibleAAMc"}
    ],
-   "target": "arm64e-apple-ios26.5"
+   "target": "arm64e-apple-ios27.0"
   },
   {
    "globals": [
@@ -494,7 +500,7 @@
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$s14MarketplaceKit20TransactionReportingOMn"},
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$s14MarketplaceKit20TransactionReportingON"}
    ],
-   "target": "arm64e-apple-ios26.5"
+   "target": "arm64e-apple-ios27.0"
   }
  ],
  "version": "1.0"

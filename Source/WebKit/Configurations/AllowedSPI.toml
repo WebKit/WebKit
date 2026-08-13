@@ -263,13 +263,6 @@ selectors = [
     { name = "requestProofreadingReviewOfString:range:language:options:completionHandler:", class = "UITextChecker" },
 ]
 
- [[temporary-usage]]
- request = "rdar://165789536"
- cleanup = "rdar://179184814"
- selectors = [
-     { name = "requestGrammarCheckingOfString:range:waitForAllResults:completionHandler:", class = "UITextChecker" },
- ]
-
 [[temporary-usage]]
 request = "rdar://165789536"
 cleanup = "rdar://165842824"
@@ -300,14 +293,6 @@ selectors = [
     { name = "_setUseVisionAlternateScrollIndicatorRendering:", class = "UIScrollView" },
 ]
 requires = ["PLATFORM_VISION"]
-
-[[staging]]
-request = "rdar://170178645"
-selectors = [
-    { name = "screenCaptureWithEnvironment:", class = "BEProcessCapability" },
-]
-requires = ["ENABLE_EXTENSION_CAPABILITIES"]
-requires-sdk = ["iOS <= 26.*"]
 
 [[temporary-usage]]
 request = "rdar://171730075"

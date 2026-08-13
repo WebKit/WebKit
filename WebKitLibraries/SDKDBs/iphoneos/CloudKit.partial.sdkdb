@@ -1568,7 +1568,8 @@
       {"access": "public", "introduced": "18", "name": "oneTimeURLParticipant"}
      ],
      "instanceMethods": [
-      {"access": "public", "name": "init", "unavailable": true}
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "isEqual:"}
      ],
      "introduced": "10",
      "linkage": "exported",
@@ -2234,7 +2235,2278 @@
      ]
     }
    ],
-   "target": "arm64e-apple-ios26.5",
+   "target": "arm64e-apple-ios27",
+   "typedefs": [
+    {"access": "public", "name": "CKAccountStatus"},
+    {"access": "public", "introduced": "8", "name": "CKApplicationPermissionBlock"},
+    {"access": "public", "name": "CKApplicationPermissionStatus"},
+    {"access": "public", "name": "CKApplicationPermissions"},
+    {"access": "public", "name": "CKDatabaseScope"},
+    {"access": "public", "introduced": "8", "name": "CKErrorCode"},
+    {"access": "public", "name": "CKNotificationType"},
+    {"access": "public", "name": "CKOperationGroupTransferSize"},
+    {"access": "public", "name": "CKOperationID"},
+    {"access": "public", "name": "CKQueryNotificationReason"},
+    {"access": "public", "name": "CKQuerySubscriptionOptions"},
+    {"access": "public", "name": "CKRecordFieldKey"},
+    {"access": "public", "name": "CKRecordSavePolicy"},
+    {"access": "public", "name": "CKRecordType"},
+    {"access": "public", "name": "CKRecordZoneCapabilities"},
+    {"access": "public", "introduced": "26", "name": "CKRecordZoneEncryptionScope"},
+    {"access": "public", "name": "CKReferenceAction"},
+    {"access": "public", "name": "CKShareParticipantAcceptanceStatus"},
+    {"access": "public", "name": "CKShareParticipantPermission"},
+    {"access": "public", "name": "CKShareParticipantRole"},
+    {"access": "public", "name": "CKShareParticipantType"},
+    {"access": "public", "name": "CKSharePreparationCompletionHandler"},
+    {"access": "public", "name": "CKSharePreparationHandler"},
+    {"access": "public", "name": "CKSharingParticipantAccessOption"},
+    {"access": "public", "name": "CKSharingParticipantPermissionOption"},
+    {"access": "public", "name": "CKSubscriptionID"},
+    {"access": "public", "name": "CKSubscriptionType"},
+    {"access": "public", "introduced": "17", "name": "CKSyncEngineAccountChangeType"},
+    {"access": "public", "introduced": "17", "name": "CKSyncEngineEventType"},
+    {"access": "public", "introduced": "17", "name": "CKSyncEnginePendingDatabaseChangeType"},
+    {"access": "public", "introduced": "17", "name": "CKSyncEnginePendingRecordZoneChangeType"},
+    {"access": "public", "introduced": "17", "name": "CKSyncEngineSyncReason"},
+    {"access": "public", "introduced": "17", "name": "CKSyncEngineZoneDeletionReason"}
+   ]
+  },
+  {
+   "categories": [
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "accountStatusWithCompletionHandler:"}
+     ],
+     "interface": "CKContainer",
+     "name": "AccountStatus"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "8", "name": "statusForApplicationPermission:completionHandler:"},
+      {"access": "public", "introduced": "8", "name": "requestApplicationPermission:completionHandler:"}
+     ],
+     "interface": "CKContainer",
+     "name": "ApplicationPermission"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "9.3", "name": "fetchAllLongLivedOperationIDsWithCompletionHandler:"},
+      {"access": "public", "introduced": "9.3", "name": "fetchLongLivedOperationWithID:completionHandler:"}
+     ],
+     "interface": "CKContainer",
+     "name": "CKLongLivedOperations"
+    },
+    {
+     "access": "public",
+     "interface": "CKOperation",
+     "name": "CKOperationDeprecated",
+     "properties": [
+      {"access": "public", "getter": "container", "introduced": "8", "name": "container", "setter": "setContainer:"},
+      {"access": "public", "getter": "allowsCellularAccess", "introduced": "8", "name": "allowsCellularAccess", "setter": "setAllowsCellularAccess:"},
+      {"access": "public", "getter": "isLongLived", "introduced": "9.3", "name": "longLived", "setter": "setLongLived:"},
+      {"access": "public", "getter": "timeoutIntervalForRequest", "introduced": "10", "name": "timeoutIntervalForRequest", "setter": "setTimeoutIntervalForRequest:"},
+      {"access": "public", "getter": "timeoutIntervalForResource", "introduced": "10", "name": "timeoutIntervalForResource", "setter": "setTimeoutIntervalForResource:"}
+     ]
+    },
+    {
+     "access": "public",
+     "interface": "CKRecord",
+     "introduced": "9",
+     "name": "CKRecordKeyValueSettingConformance",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "encryptedValues", "introduced": "15", "name": "encryptedValues"}
+     ],
+     "protocols": [
+      "CKRecordKeyValueSetting"
+     ]
+    },
+    {
+     "access": "public",
+     "interface": "NSString",
+     "name": "CKRecordValue",
+     "protocols": [
+      "CKRecordValue"
+     ]
+    },
+    {
+     "access": "public",
+     "interface": "NSNumber",
+     "name": "CKRecordValue",
+     "protocols": [
+      "CKRecordValue"
+     ]
+    },
+    {
+     "access": "public",
+     "interface": "NSArray",
+     "name": "CKRecordValue",
+     "protocols": [
+      "CKRecordValue"
+     ]
+    },
+    {
+     "access": "public",
+     "interface": "NSDate",
+     "name": "CKRecordValue",
+     "protocols": [
+      "CKRecordValue"
+     ]
+    },
+    {
+     "access": "public",
+     "interface": "NSData",
+     "name": "CKRecordValue",
+     "protocols": [
+      "CKRecordValue"
+     ]
+    },
+    {
+     "access": "public",
+     "interface": "CKReference",
+     "name": "CKRecordValue",
+     "protocols": [
+      "CKRecordValue"
+     ]
+    },
+    {
+     "access": "public",
+     "interface": "CKAsset",
+     "name": "CKRecordValue",
+     "protocols": [
+      "CKRecordValue"
+     ]
+    },
+    {
+     "access": "public",
+     "interface": "CLLocation",
+     "name": "CKRecordValue",
+     "protocols": [
+      "CKRecordValue"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "16", "name": "registerCKShareWithContainer:allowedSharingOptions:preparationHandler:"},
+      {"access": "public", "introduced": "16", "name": "registerCKShare:container:allowedSharingOptions:"}
+     ],
+     "interface": "NSItemProvider",
+     "name": "CKSharingSupport"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "fetchRecordWithID:completionHandler:"},
+      {"access": "public", "name": "saveRecord:completionHandler:"},
+      {"access": "public", "name": "deleteRecordWithID:completionHandler:"},
+      {"access": "public", "name": "performQuery:inZoneWithID:completionHandler:"},
+      {"access": "public", "name": "fetchAllRecordZonesWithCompletionHandler:"},
+      {"access": "public", "name": "fetchRecordZoneWithID:completionHandler:"},
+      {"access": "public", "name": "saveRecordZone:completionHandler:"},
+      {"access": "public", "name": "deleteRecordZoneWithID:completionHandler:"},
+      {"access": "public", "introduced": "8", "name": "fetchSubscriptionWithID:completionHandler:"},
+      {"access": "public", "introduced": "8", "name": "fetchAllSubscriptionsWithCompletionHandler:"},
+      {"access": "public", "introduced": "8", "name": "saveSubscription:completionHandler:"},
+      {"access": "public", "introduced": "8", "name": "deleteSubscriptionWithID:completionHandler:"}
+     ],
+     "interface": "CKDatabase",
+     "name": "ConvenienceMethods"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "10", "name": "databaseWithDatabaseScope:"}
+     ],
+     "interface": "CKContainer",
+     "name": "Database",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "privateCloudDatabase", "name": "privateCloudDatabase"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "publicCloudDatabase", "name": "publicCloudDatabase"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "sharedCloudDatabase", "introduced": "10", "name": "sharedCloudDatabase"}
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "10", "name": "initWithRecordZoneIDs:optionsByRecordZoneID:"}
+     ],
+     "interface": "CKFetchRecordZoneChangesOperation",
+     "name": "Deprecated",
+     "properties": [
+      {"access": "public", "getter": "optionsByRecordZoneID", "introduced": "10", "name": "optionsByRecordZoneID", "setter": "setOptionsByRecordZoneID:"}
+     ]
+    },
+    {
+     "access": "public",
+     "interface": "CKNotification",
+     "introduced": "8",
+     "name": "DeprecatedAPSProperties",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "alertBody", "introduced": "8", "name": "alertBody"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "alertLocalizationKey", "introduced": "8", "name": "alertLocalizationKey"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "alertLocalizationArgs", "introduced": "8", "name": "alertLocalizationArgs"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "title", "introduced": "11", "name": "title"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "titleLocalizationKey", "introduced": "11", "name": "titleLocalizationKey"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "titleLocalizationArgs", "introduced": "11", "name": "titleLocalizationArgs"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "subtitle", "introduced": "11", "name": "subtitle"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "subtitleLocalizationKey", "introduced": "11", "name": "subtitleLocalizationKey"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "subtitleLocalizationArgs", "introduced": "11", "name": "subtitleLocalizationArgs"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "alertActionLocalizationKey", "introduced": "8", "name": "alertActionLocalizationKey"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "alertLaunchImage", "introduced": "8", "name": "alertLaunchImage"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "badge", "introduced": "8", "name": "badge"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "soundName", "introduced": "8", "name": "soundName"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "category", "introduced": "9", "name": "category"}
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "10", "name": "fetchShareParticipantWithEmailAddress:completionHandler:"},
+      {"access": "public", "introduced": "10", "name": "fetchShareParticipantWithPhoneNumber:completionHandler:"},
+      {"access": "public", "introduced": "10", "name": "fetchShareParticipantWithUserRecordID:completionHandler:"},
+      {"access": "public", "introduced": "10", "name": "fetchShareMetadataWithURL:completionHandler:"},
+      {"access": "public", "introduced": "10", "name": "acceptShareMetadata:completionHandler:"}
+     ],
+     "interface": "CKContainer",
+     "name": "Sharing"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "fetchUserRecordIDWithCompletionHandler:"},
+      {"access": "public", "introduced": "10", "name": "discoverAllIdentitiesWithCompletionHandler:"},
+      {"access": "public", "introduced": "10", "name": "discoverUserIdentityWithEmailAddress:completionHandler:"},
+      {"access": "public", "introduced": "10", "name": "discoverUserIdentityWithPhoneNumber:completionHandler:"},
+      {"access": "public", "introduced": "10", "name": "discoverUserIdentityWithUserRecordID:completionHandler:"}
+     ],
+     "interface": "CKContainer",
+     "name": "UserRecords"
+    }
+   ],
+   "enums": [
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "CKAccountStatusCouldNotDetermine"},
+      {"access": "public", "name": "CKAccountStatusAvailable"},
+      {"access": "public", "name": "CKAccountStatusRestricted"},
+      {"access": "public", "name": "CKAccountStatusNoAccount"},
+      {"access": "public", "introduced": "15", "name": "CKAccountStatusTemporarilyUnavailable"}
+     ],
+     "introduced": "8",
+     "name": "CKAccountStatus"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "CKApplicationPermissionStatusInitialState"},
+      {"access": "public", "name": "CKApplicationPermissionStatusCouldNotComplete"},
+      {"access": "public", "name": "CKApplicationPermissionStatusDenied"},
+      {"access": "public", "name": "CKApplicationPermissionStatusGranted"}
+     ],
+     "introduced": "8",
+     "name": "CKApplicationPermissionStatus"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "8", "name": "CKApplicationPermissionUserDiscoverability"}
+     ],
+     "introduced": "8",
+     "name": "CKApplicationPermissions"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "CKDatabaseScopePublic"},
+      {"access": "public", "name": "CKDatabaseScopePrivate"},
+      {"access": "public", "name": "CKDatabaseScopeShared"}
+     ],
+     "introduced": "10",
+     "name": "CKDatabaseScope"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "8", "name": "CKErrorInternalError"},
+      {"access": "public", "introduced": "8", "name": "CKErrorPartialFailure"},
+      {"access": "public", "introduced": "8", "name": "CKErrorNetworkUnavailable"},
+      {"access": "public", "introduced": "8", "name": "CKErrorNetworkFailure"},
+      {"access": "public", "introduced": "8", "name": "CKErrorBadContainer"},
+      {"access": "public", "introduced": "8", "name": "CKErrorServiceUnavailable"},
+      {"access": "public", "introduced": "8", "name": "CKErrorRequestRateLimited"},
+      {"access": "public", "introduced": "8", "name": "CKErrorMissingEntitlement"},
+      {"access": "public", "introduced": "8", "name": "CKErrorNotAuthenticated"},
+      {"access": "public", "introduced": "8", "name": "CKErrorPermissionFailure"},
+      {"access": "public", "introduced": "8", "name": "CKErrorUnknownItem"},
+      {"access": "public", "introduced": "8", "name": "CKErrorInvalidArguments"},
+      {"access": "public", "introduced": "8", "name": "CKErrorResultsTruncated"},
+      {"access": "public", "introduced": "8", "name": "CKErrorServerRecordChanged"},
+      {"access": "public", "introduced": "8", "name": "CKErrorServerRejectedRequest"},
+      {"access": "public", "introduced": "8", "name": "CKErrorAssetFileNotFound"},
+      {"access": "public", "introduced": "8", "name": "CKErrorAssetFileModified"},
+      {"access": "public", "introduced": "8", "name": "CKErrorIncompatibleVersion"},
+      {"access": "public", "introduced": "8", "name": "CKErrorConstraintViolation"},
+      {"access": "public", "introduced": "8", "name": "CKErrorOperationCancelled"},
+      {"access": "public", "introduced": "8", "name": "CKErrorChangeTokenExpired"},
+      {"access": "public", "introduced": "8", "name": "CKErrorBatchRequestFailed"},
+      {"access": "public", "introduced": "8", "name": "CKErrorZoneBusy"},
+      {"access": "public", "introduced": "8", "name": "CKErrorBadDatabase"},
+      {"access": "public", "introduced": "8", "name": "CKErrorQuotaExceeded"},
+      {"access": "public", "introduced": "8", "name": "CKErrorZoneNotFound"},
+      {"access": "public", "introduced": "8", "name": "CKErrorLimitExceeded"},
+      {"access": "public", "introduced": "8", "name": "CKErrorUserDeletedZone"},
+      {"access": "public", "introduced": "10", "name": "CKErrorTooManyParticipants"},
+      {"access": "public", "introduced": "10", "name": "CKErrorAlreadyShared"},
+      {"access": "public", "introduced": "10", "name": "CKErrorReferenceViolation"},
+      {"access": "public", "introduced": "10", "name": "CKErrorManagedAccountRestricted"},
+      {"access": "public", "introduced": "10", "name": "CKErrorParticipantMayNeedVerification"},
+      {"access": "public", "introduced": "11", "name": "CKErrorServerResponseLost"},
+      {"access": "public", "introduced": "11.3", "name": "CKErrorAssetNotAvailable"},
+      {"access": "public", "introduced": "15", "name": "CKErrorAccountTemporarilyUnavailable"},
+      {"access": "public", "introduced": "26", "name": "CKErrorParticipantAlreadyInvited"}
+     ],
+     "introduced": "8",
+     "name": "CKErrorCode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "CKNotificationTypeQuery"},
+      {"access": "public", "name": "CKNotificationTypeRecordZone"},
+      {"access": "public", "name": "CKNotificationTypeReadNotification"},
+      {"access": "public", "introduced": "10", "name": "CKNotificationTypeDatabase"}
+     ],
+     "introduced": "8",
+     "name": "CKNotificationType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "CKOperationGroupTransferSizeUnknown"},
+      {"access": "public", "name": "CKOperationGroupTransferSizeKilobytes"},
+      {"access": "public", "name": "CKOperationGroupTransferSizeMegabytes"},
+      {"access": "public", "name": "CKOperationGroupTransferSizeTensOfMegabytes"},
+      {"access": "public", "name": "CKOperationGroupTransferSizeHundredsOfMegabytes"},
+      {"access": "public", "name": "CKOperationGroupTransferSizeGigabytes"},
+      {"access": "public", "name": "CKOperationGroupTransferSizeTensOfGigabytes"},
+      {"access": "public", "name": "CKOperationGroupTransferSizeHundredsOfGigabytes"}
+     ],
+     "introduced": "11",
+     "name": "CKOperationGroupTransferSize"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "CKQueryNotificationReasonRecordCreated"},
+      {"access": "public", "name": "CKQueryNotificationReasonRecordUpdated"},
+      {"access": "public", "name": "CKQueryNotificationReasonRecordDeleted"}
+     ],
+     "introduced": "8",
+     "name": "CKQueryNotificationReason"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "CKQuerySubscriptionOptionsFiresOnRecordCreation"},
+      {"access": "public", "name": "CKQuerySubscriptionOptionsFiresOnRecordUpdate"},
+      {"access": "public", "name": "CKQuerySubscriptionOptionsFiresOnRecordDeletion"},
+      {"access": "public", "name": "CKQuerySubscriptionOptionsFiresOnce"}
+     ],
+     "introduced": "10",
+     "name": "CKQuerySubscriptionOptions"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "CKRecordSaveIfServerRecordUnchanged"},
+      {"access": "public", "name": "CKRecordSaveChangedKeys"},
+      {"access": "public", "name": "CKRecordSaveAllKeys"}
+     ],
+     "introduced": "8",
+     "name": "CKRecordSavePolicy"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "CKRecordZoneCapabilityFetchChanges"},
+      {"access": "public", "name": "CKRecordZoneCapabilityAtomic"},
+      {"access": "public", "introduced": "10", "name": "CKRecordZoneCapabilitySharing"},
+      {"access": "public", "introduced": "15", "name": "CKRecordZoneCapabilityZoneWideSharing"}
+     ],
+     "introduced": "8",
+     "name": "CKRecordZoneCapabilities"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "CKRecordZoneEncryptionScopePerRecord"},
+      {"access": "public", "name": "CKRecordZoneEncryptionScopePerZone"}
+     ],
+     "name": "CKRecordZoneEncryptionScope"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "CKReferenceActionNone"},
+      {"access": "public", "name": "CKReferenceActionDeleteSelf"}
+     ],
+     "introduced": "8",
+     "name": "CKReferenceAction"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "CKShareParticipantAcceptanceStatusUnknown"},
+      {"access": "public", "name": "CKShareParticipantAcceptanceStatusPending"},
+      {"access": "public", "name": "CKShareParticipantAcceptanceStatusAccepted"},
+      {"access": "public", "name": "CKShareParticipantAcceptanceStatusRemoved"}
+     ],
+     "introduced": "10",
+     "name": "CKShareParticipantAcceptanceStatus"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "CKShareParticipantPermissionUnknown"},
+      {"access": "public", "name": "CKShareParticipantPermissionNone"},
+      {"access": "public", "name": "CKShareParticipantPermissionReadOnly"},
+      {"access": "public", "name": "CKShareParticipantPermissionReadWrite"}
+     ],
+     "introduced": "10",
+     "name": "CKShareParticipantPermission"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "CKShareParticipantRoleUnknown"},
+      {"access": "public", "name": "CKShareParticipantRoleOwner"},
+      {"access": "public", "name": "CKShareParticipantRolePrivateUser"},
+      {"access": "public", "name": "CKShareParticipantRolePublicUser"},
+      {"access": "public", "introduced": "26", "name": "CKShareParticipantRoleAdministrator"}
+     ],
+     "introduced": "12",
+     "name": "CKShareParticipantRole"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "CKShareParticipantTypeUnknown"},
+      {"access": "public", "name": "CKShareParticipantTypeOwner"},
+      {"access": "public", "name": "CKShareParticipantTypePrivateUser"},
+      {"access": "public", "name": "CKShareParticipantTypePublicUser"}
+     ],
+     "introduced": "10",
+     "name": "CKShareParticipantType",
+     "obsoleted": "26"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "CKSharingParticipantAccessOptionAnyoneWithLink"},
+      {"access": "public", "name": "CKSharingParticipantAccessOptionSpecifiedRecipientsOnly"},
+      {"access": "public", "name": "CKSharingParticipantAccessOptionAny"}
+     ],
+     "introduced": "16",
+     "name": "CKSharingParticipantAccessOption"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "CKSharingParticipantPermissionOptionReadOnly"},
+      {"access": "public", "name": "CKSharingParticipantPermissionOptionReadWrite"},
+      {"access": "public", "name": "CKSharingParticipantPermissionOptionAny"}
+     ],
+     "introduced": "16",
+     "name": "CKSharingParticipantPermissionOption"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "CKSubscriptionTypeQuery"},
+      {"access": "public", "name": "CKSubscriptionTypeRecordZone"},
+      {"access": "public", "introduced": "10", "name": "CKSubscriptionTypeDatabase"}
+     ],
+     "introduced": "8",
+     "name": "CKSubscriptionType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "CKSyncEngineAccountChangeTypeSignIn"},
+      {"access": "public", "name": "CKSyncEngineAccountChangeTypeSignOut"},
+      {"access": "public", "name": "CKSyncEngineAccountChangeTypeSwitchAccounts"}
+     ],
+     "name": "CKSyncEngineAccountChangeType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "CKSyncEngineEventTypeStateUpdate"},
+      {"access": "public", "name": "CKSyncEngineEventTypeAccountChange"},
+      {"access": "public", "name": "CKSyncEngineEventTypeFetchedDatabaseChanges"},
+      {"access": "public", "name": "CKSyncEngineEventTypeFetchedRecordZoneChanges"},
+      {"access": "public", "name": "CKSyncEngineEventTypeSentDatabaseChanges"},
+      {"access": "public", "name": "CKSyncEngineEventTypeSentRecordZoneChanges"},
+      {"access": "public", "name": "CKSyncEngineEventTypeWillFetchChanges"},
+      {"access": "public", "name": "CKSyncEngineEventTypeWillFetchRecordZoneChanges"},
+      {"access": "public", "name": "CKSyncEngineEventTypeDidFetchRecordZoneChanges"},
+      {"access": "public", "name": "CKSyncEngineEventTypeDidFetchChanges"},
+      {"access": "public", "name": "CKSyncEngineEventTypeWillSendChanges"},
+      {"access": "public", "name": "CKSyncEngineEventTypeDidSendChanges"}
+     ],
+     "name": "CKSyncEngineEventType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "CKSyncEnginePendingDatabaseChangeTypeSaveZone"},
+      {"access": "public", "name": "CKSyncEnginePendingDatabaseChangeTypeDeleteZone"}
+     ],
+     "name": "CKSyncEnginePendingDatabaseChangeType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "CKSyncEnginePendingRecordZoneChangeTypeSaveRecord"},
+      {"access": "public", "name": "CKSyncEnginePendingRecordZoneChangeTypeDeleteRecord"}
+     ],
+     "name": "CKSyncEnginePendingRecordZoneChangeType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "CKSyncEngineSyncReasonScheduled"},
+      {"access": "public", "name": "CKSyncEngineSyncReasonManual"}
+     ],
+     "name": "CKSyncEngineSyncReason"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "CKSyncEngineZoneDeletionReasonDeleted"},
+      {"access": "public", "name": "CKSyncEngineZoneDeletionReasonPurged"},
+      {"access": "public", "name": "CKSyncEngineZoneDeletionReasonEncryptedDataReset"}
+     ],
+     "name": "CKSyncEngineZoneDeletionReason"
+    }
+   ],
+   "globals": [
+    {"access": "public", "introduced": "9", "kind": "variable", "linkage": "exported", "name": "_CKAccountChangedNotification"},
+    {"access": "public", "introduced": "10", "kind": "variable", "linkage": "exported", "name": "_CKCurrentUserDefaultName"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_CKErrorDomain"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_CKErrorRetryAfterKey"},
+    {"access": "public", "introduced": "15", "kind": "variable", "linkage": "exported", "name": "_CKErrorUserDidResetEncryptedDataKey"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_CKOwnerDefaultName"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_CKPartialErrorsByItemIDKey"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_CKQueryOperationMaximumResults"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_CKRecordChangedErrorAncestorRecordKey"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_CKRecordChangedErrorClientRecordKey"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_CKRecordChangedErrorServerRecordKey"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_CKRecordCreationDateKey"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_CKRecordCreatorUserRecordIDKey"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_CKRecordLastModifiedUserRecordIDKey"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_CKRecordModificationDateKey"},
+    {"access": "public", "introduced": "15", "kind": "variable", "linkage": "exported", "name": "_CKRecordNameZoneWideShare"},
+    {"access": "public", "introduced": "10", "kind": "variable", "linkage": "exported", "name": "_CKRecordParentKey"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_CKRecordRecordIDKey"},
+    {"access": "public", "introduced": "10", "kind": "variable", "linkage": "exported", "name": "_CKRecordShareKey"},
+    {"access": "public", "introduced": "10", "kind": "variable", "linkage": "exported", "name": "_CKRecordTypeShare"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_CKRecordTypeUserRecord"},
+    {"access": "public", "introduced": "8", "kind": "variable", "linkage": "exported", "name": "_CKRecordZoneDefaultName"},
+    {"access": "public", "introduced": "10", "kind": "variable", "linkage": "exported", "name": "_CKShareThumbnailImageDataKey"},
+    {"access": "public", "introduced": "10", "kind": "variable", "linkage": "exported", "name": "_CKShareTitleKey"},
+    {"access": "public", "introduced": "10", "kind": "variable", "linkage": "exported", "name": "_CKShareTypeKey"}
+   ],
+   "interfaces": [
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "init"},
+      {"access": "public", "name": "initWithShareMetadatas:"}
+     ],
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "CKAcceptSharesOperation",
+     "properties": [
+      {"access": "public", "getter": "shareMetadatas", "name": "shareMetadatas", "setter": "setShareMetadatas:"},
+      {"access": "public", "getter": "perShareCompletionBlock", "name": "perShareCompletionBlock", "setter": "setPerShareCompletionBlock:"},
+      {"access": "public", "getter": "acceptSharesCompletionBlock", "name": "acceptSharesCompletionBlock", "setter": "setAcceptSharesCompletionBlock:"}
+     ],
+     "super": "CKOperation"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithAllowedParticipantPermissionOptions:allowedParticipantAccessOptions:"}
+     ],
+     "introduced": "16",
+     "linkage": "exported",
+     "name": "CKAllowedSharingOptions",
+     "properties": [
+      {"access": "public", "getter": "allowedParticipantPermissionOptions", "name": "allowedParticipantPermissionOptions", "setter": "setAllowedParticipantPermissionOptions:"},
+      {"access": "public", "getter": "allowedParticipantAccessOptions", "name": "allowedParticipantAccessOptions", "setter": "setAllowedParticipantAccessOptions:"},
+      {"access": "public", "getter": "allowsParticipantsToInviteOthers", "introduced": "26", "name": "allowsParticipantsToInviteOthers", "setter": "setAllowsParticipantsToInviteOthers:"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "standardOptions", "name": "standardOptions"},
+      {"access": "public", "getter": "allowsAccessRequests", "introduced": "26", "name": "allowsAccessRequests", "setter": "setAllowsAccessRequests:"}
+     ],
+     "protocols": [
+      "NSSecureCoding",
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "categories": [
+      "CKRecordValue"
+     ],
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "initWithFileURL:"}
+     ],
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "CKAsset",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "fileURL", "name": "fileURL"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "categories": [
+      "Database",
+      "AccountStatus",
+      "ApplicationPermission",
+      "UserRecords",
+      "Sharing",
+      "CKLongLivedOperations"
+     ],
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true},
+      {"access": "public", "name": "defaultContainer"},
+      {"access": "public", "name": "containerWithIdentifier:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "addOperation:"}
+     ],
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "CKContainer",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "containerIdentifier", "name": "containerIdentifier"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "categories": [
+      "ConvenienceMethods"
+     ],
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "addOperation:"}
+     ],
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "CKDatabase",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "databaseScope", "introduced": "10", "name": "databaseScope"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "CKDatabaseNotification",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "databaseScope", "name": "databaseScope"}
+     ],
+     "super": "CKNotification"
+    },
+    {
+     "access": "public",
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "CKDatabaseOperation",
+     "properties": [
+      {"access": "public", "getter": "database", "name": "database", "setter": "setDatabase:"}
+     ],
+     "super": "CKOperation"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "introduced": "10", "name": "init"},
+      {"access": "public", "name": "initWithSubscriptionID:"},
+      {"access": "public", "name": "initWithCoder:"}
+     ],
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "CKDatabaseSubscription",
+     "properties": [
+      {"access": "public", "getter": "recordType", "name": "recordType", "setter": "setRecordType:"}
+     ],
+     "protocols": [
+      "NSSecureCoding",
+      "NSCopying"
+     ],
+     "super": "CKSubscription"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "init"}
+     ],
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "CKDiscoverAllUserIdentitiesOperation",
+     "properties": [
+      {"access": "public", "getter": "userIdentityDiscoveredBlock", "name": "userIdentityDiscoveredBlock", "setter": "setUserIdentityDiscoveredBlock:"},
+      {"access": "public", "getter": "discoverAllUserIdentitiesCompletionBlock", "name": "discoverAllUserIdentitiesCompletionBlock", "setter": "setDiscoverAllUserIdentitiesCompletionBlock:"}
+     ],
+     "super": "CKOperation"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "init"},
+      {"access": "public", "name": "initWithUserIdentityLookupInfos:"}
+     ],
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "CKDiscoverUserIdentitiesOperation",
+     "properties": [
+      {"access": "public", "getter": "userIdentityLookupInfos", "name": "userIdentityLookupInfos", "setter": "setUserIdentityLookupInfos:"},
+      {"access": "public", "getter": "userIdentityDiscoveredBlock", "name": "userIdentityDiscoveredBlock", "setter": "setUserIdentityDiscoveredBlock:"},
+      {"access": "public", "getter": "discoverUserIdentitiesCompletionBlock", "name": "discoverUserIdentitiesCompletionBlock", "setter": "setDiscoverUserIdentitiesCompletionBlock:"}
+     ],
+     "super": "CKOperation"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "init"},
+      {"access": "public", "name": "initWithPreviousServerChangeToken:"}
+     ],
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "CKFetchDatabaseChangesOperation",
+     "properties": [
+      {"access": "public", "getter": "previousServerChangeToken", "name": "previousServerChangeToken", "setter": "setPreviousServerChangeToken:"},
+      {"access": "public", "getter": "resultsLimit", "name": "resultsLimit", "setter": "setResultsLimit:"},
+      {"access": "public", "getter": "fetchAllChanges", "name": "fetchAllChanges", "setter": "setFetchAllChanges:"},
+      {"access": "public", "getter": "recordZoneWithIDChangedBlock", "name": "recordZoneWithIDChangedBlock", "setter": "setRecordZoneWithIDChangedBlock:"},
+      {"access": "public", "getter": "recordZoneWithIDWasDeletedBlock", "name": "recordZoneWithIDWasDeletedBlock", "setter": "setRecordZoneWithIDWasDeletedBlock:"},
+      {"access": "public", "getter": "recordZoneWithIDWasPurgedBlock", "introduced": "11", "name": "recordZoneWithIDWasPurgedBlock", "setter": "setRecordZoneWithIDWasPurgedBlock:"},
+      {"access": "public", "getter": "recordZoneWithIDWasDeletedDueToUserEncryptedDataResetBlock", "introduced": "15", "name": "recordZoneWithIDWasDeletedDueToUserEncryptedDataResetBlock", "setter": "setRecordZoneWithIDWasDeletedDueToUserEncryptedDataResetBlock:"},
+      {"access": "public", "getter": "changeTokenUpdatedBlock", "name": "changeTokenUpdatedBlock", "setter": "setChangeTokenUpdatedBlock:"},
+      {"access": "public", "getter": "fetchDatabaseChangesCompletionBlock", "name": "fetchDatabaseChangesCompletionBlock", "setter": "setFetchDatabaseChangesCompletionBlock:"}
+     ],
+     "super": "CKDatabaseOperation"
+    },
+    {
+     "access": "public",
+     "linkage": "exported",
+     "name": "CKFetchNotificationChangesOperation",
+     "super": "CKOperation",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "init"},
+      {"access": "public", "name": "initWithRecordZoneID:previousServerChangeToken:"}
+     ],
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "CKFetchRecordChangesOperation",
+     "properties": [
+      {"access": "public", "getter": "recordZoneID", "name": "recordZoneID", "setter": "setRecordZoneID:"},
+      {"access": "public", "getter": "previousServerChangeToken", "name": "previousServerChangeToken", "setter": "setPreviousServerChangeToken:"},
+      {"access": "public", "getter": "resultsLimit", "name": "resultsLimit", "setter": "setResultsLimit:"},
+      {"access": "public", "getter": "desiredKeys", "name": "desiredKeys", "setter": "setDesiredKeys:"},
+      {"access": "public", "getter": "recordChangedBlock", "name": "recordChangedBlock", "setter": "setRecordChangedBlock:"},
+      {"access": "public", "getter": "recordWithIDWasDeletedBlock", "name": "recordWithIDWasDeletedBlock", "setter": "setRecordWithIDWasDeletedBlock:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "moreComing", "name": "moreComing"},
+      {"access": "public", "getter": "fetchRecordChangesCompletionBlock", "name": "fetchRecordChangesCompletionBlock", "setter": "setFetchRecordChangesCompletionBlock:"}
+     ],
+     "super": "CKDatabaseOperation"
+    },
+    {
+     "access": "public",
+     "introduced": "12",
+     "linkage": "exported",
+     "name": "CKFetchRecordZoneChangesConfiguration",
+     "properties": [
+      {"access": "public", "getter": "previousServerChangeToken", "name": "previousServerChangeToken", "setter": "setPreviousServerChangeToken:"},
+      {"access": "public", "getter": "resultsLimit", "name": "resultsLimit", "setter": "setResultsLimit:"},
+      {"access": "public", "getter": "desiredKeys", "name": "desiredKeys", "setter": "setDesiredKeys:"}
+     ],
+     "protocols": [
+      "NSSecureCoding",
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "categories": [
+      "Deprecated"
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init"},
+      {"access": "public", "introduced": "12", "name": "initWithRecordZoneIDs:configurationsByRecordZoneID:"}
+     ],
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "CKFetchRecordZoneChangesOperation",
+     "properties": [
+      {"access": "public", "getter": "recordZoneIDs", "name": "recordZoneIDs", "setter": "setRecordZoneIDs:"},
+      {"access": "public", "getter": "configurationsByRecordZoneID", "introduced": "12", "name": "configurationsByRecordZoneID", "setter": "setConfigurationsByRecordZoneID:"},
+      {"access": "public", "getter": "fetchAllChanges", "name": "fetchAllChanges", "setter": "setFetchAllChanges:"},
+      {"access": "public", "getter": "recordChangedBlock", "introduced": "10", "name": "recordChangedBlock", "setter": "setRecordChangedBlock:"},
+      {"access": "public", "getter": "recordWasChangedBlock", "introduced": "15", "name": "recordWasChangedBlock", "setter": "setRecordWasChangedBlock:"},
+      {"access": "public", "getter": "recordWithIDWasDeletedBlock", "name": "recordWithIDWasDeletedBlock", "setter": "setRecordWithIDWasDeletedBlock:"},
+      {"access": "public", "getter": "recordZoneChangeTokensUpdatedBlock", "name": "recordZoneChangeTokensUpdatedBlock", "setter": "setRecordZoneChangeTokensUpdatedBlock:"},
+      {"access": "public", "getter": "recordZoneFetchCompletionBlock", "name": "recordZoneFetchCompletionBlock", "setter": "setRecordZoneFetchCompletionBlock:"},
+      {"access": "public", "getter": "fetchRecordZoneChangesCompletionBlock", "name": "fetchRecordZoneChangesCompletionBlock", "setter": "setFetchRecordZoneChangesCompletionBlock:"}
+     ],
+     "super": "CKDatabaseOperation"
+    },
+    {
+     "access": "public",
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "CKFetchRecordZoneChangesOptions",
+     "properties": [
+      {"access": "public", "getter": "previousServerChangeToken", "name": "previousServerChangeToken", "setter": "setPreviousServerChangeToken:"},
+      {"access": "public", "getter": "resultsLimit", "name": "resultsLimit", "setter": "setResultsLimit:"},
+      {"access": "public", "getter": "desiredKeys", "name": "desiredKeys", "setter": "setDesiredKeys:"}
+     ],
+     "protocols": [
+      "NSSecureCoding",
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "fetchAllRecordZonesOperation"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init"},
+      {"access": "public", "name": "initWithRecordZoneIDs:"}
+     ],
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "CKFetchRecordZonesOperation",
+     "properties": [
+      {"access": "public", "getter": "recordZoneIDs", "name": "recordZoneIDs", "setter": "setRecordZoneIDs:"},
+      {"access": "public", "getter": "perRecordZoneCompletionBlock", "introduced": "15", "name": "perRecordZoneCompletionBlock", "setter": "setPerRecordZoneCompletionBlock:"},
+      {"access": "public", "getter": "fetchRecordZonesCompletionBlock", "name": "fetchRecordZonesCompletionBlock", "setter": "setFetchRecordZonesCompletionBlock:"}
+     ],
+     "super": "CKDatabaseOperation"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "fetchCurrentUserRecordOperation"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init"},
+      {"access": "public", "name": "initWithRecordIDs:"}
+     ],
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "CKFetchRecordsOperation",
+     "properties": [
+      {"access": "public", "getter": "recordIDs", "name": "recordIDs", "setter": "setRecordIDs:"},
+      {"access": "public", "getter": "desiredKeys", "name": "desiredKeys", "setter": "setDesiredKeys:"},
+      {"access": "public", "getter": "perRecordProgressBlock", "name": "perRecordProgressBlock", "setter": "setPerRecordProgressBlock:"},
+      {"access": "public", "getter": "perRecordCompletionBlock", "name": "perRecordCompletionBlock", "setter": "setPerRecordCompletionBlock:"},
+      {"access": "public", "getter": "fetchRecordsCompletionBlock", "name": "fetchRecordsCompletionBlock", "setter": "setFetchRecordsCompletionBlock:"}
+     ],
+     "super": "CKDatabaseOperation"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "init"},
+      {"access": "public", "name": "initWithShareURLs:"}
+     ],
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "CKFetchShareMetadataOperation",
+     "properties": [
+      {"access": "public", "getter": "shareURLs", "name": "shareURLs", "setter": "setShareURLs:"},
+      {"access": "public", "getter": "shouldFetchRootRecord", "name": "shouldFetchRootRecord", "setter": "setShouldFetchRootRecord:"},
+      {"access": "public", "getter": "rootRecordDesiredKeys", "name": "rootRecordDesiredKeys", "setter": "setRootRecordDesiredKeys:"},
+      {"access": "public", "getter": "perShareMetadataBlock", "name": "perShareMetadataBlock", "setter": "setPerShareMetadataBlock:"},
+      {"access": "public", "getter": "fetchShareMetadataCompletionBlock", "name": "fetchShareMetadataCompletionBlock", "setter": "setFetchShareMetadataCompletionBlock:"}
+     ],
+     "super": "CKOperation"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "init"},
+      {"access": "public", "name": "initWithUserIdentityLookupInfos:"}
+     ],
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "CKFetchShareParticipantsOperation",
+     "properties": [
+      {"access": "public", "getter": "userIdentityLookupInfos", "name": "userIdentityLookupInfos", "setter": "setUserIdentityLookupInfos:"},
+      {"access": "public", "getter": "shareParticipantFetchedBlock", "introduced": "10", "name": "shareParticipantFetchedBlock", "setter": "setShareParticipantFetchedBlock:"},
+      {"access": "public", "getter": "perShareParticipantCompletionBlock", "name": "perShareParticipantCompletionBlock", "setter": "setPerShareParticipantCompletionBlock:"},
+      {"access": "public", "getter": "fetchShareParticipantsCompletionBlock", "name": "fetchShareParticipantsCompletionBlock", "setter": "setFetchShareParticipantsCompletionBlock:"}
+     ],
+     "super": "CKOperation"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "fetchAllSubscriptionsOperation"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init"},
+      {"access": "public", "name": "initWithSubscriptionIDs:"}
+     ],
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "CKFetchSubscriptionsOperation",
+     "properties": [
+      {"access": "public", "getter": "subscriptionIDs", "name": "subscriptionIDs", "setter": "setSubscriptionIDs:"},
+      {"access": "public", "getter": "perSubscriptionCompletionBlock", "introduced": "15", "name": "perSubscriptionCompletionBlock", "setter": "setPerSubscriptionCompletionBlock:"},
+      {"access": "public", "getter": "fetchSubscriptionCompletionBlock", "name": "fetchSubscriptionCompletionBlock", "setter": "setFetchSubscriptionCompletionBlock:"}
+     ],
+     "super": "CKDatabaseOperation"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "init"},
+      {"access": "public", "name": "initWithAPIToken:"}
+     ],
+     "introduced": "9.2",
+     "linkage": "exported",
+     "name": "CKFetchWebAuthTokenOperation",
+     "properties": [
+      {"access": "public", "getter": "APIToken", "name": "APIToken", "setter": "setAPIToken:"},
+      {"access": "public", "getter": "fetchWebAuthTokenCompletionBlock", "name": "fetchWebAuthTokenCompletionBlock", "setter": "setFetchWebAuthTokenCompletionBlock:"}
+     ],
+     "super": "CKDatabaseOperation"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "initWithKey:relativeLocation:"},
+      {"access": "public", "name": "initWithCoder:"}
+     ],
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "CKLocationSortDescriptor",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "relativeLocation", "name": "relativeLocation"}
+     ],
+     "protocols": [
+      "NSSecureCoding"
+     ],
+     "super": "NSSortDescriptor"
+    },
+    {
+     "access": "public",
+     "linkage": "exported",
+     "name": "CKMarkNotificationsReadOperation",
+     "super": "CKOperation",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "linkage": "exported",
+     "name": "CKModifyBadgeOperation",
+     "super": "CKOperation",
+     "unavailable": true
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "init"},
+      {"access": "public", "name": "initWithRecordZonesToSave:recordZoneIDsToDelete:"}
+     ],
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "CKModifyRecordZonesOperation",
+     "properties": [
+      {"access": "public", "getter": "recordZonesToSave", "name": "recordZonesToSave", "setter": "setRecordZonesToSave:"},
+      {"access": "public", "getter": "recordZoneIDsToDelete", "name": "recordZoneIDsToDelete", "setter": "setRecordZoneIDsToDelete:"},
+      {"access": "public", "getter": "perRecordZoneSaveBlock", "introduced": "15", "name": "perRecordZoneSaveBlock", "setter": "setPerRecordZoneSaveBlock:"},
+      {"access": "public", "getter": "perRecordZoneDeleteBlock", "introduced": "15", "name": "perRecordZoneDeleteBlock", "setter": "setPerRecordZoneDeleteBlock:"},
+      {"access": "public", "getter": "modifyRecordZonesCompletionBlock", "name": "modifyRecordZonesCompletionBlock", "setter": "setModifyRecordZonesCompletionBlock:"}
+     ],
+     "super": "CKDatabaseOperation"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "init"},
+      {"access": "public", "name": "initWithRecordsToSave:recordIDsToDelete:"}
+     ],
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "CKModifyRecordsOperation",
+     "properties": [
+      {"access": "public", "getter": "recordsToSave", "name": "recordsToSave", "setter": "setRecordsToSave:"},
+      {"access": "public", "getter": "recordIDsToDelete", "name": "recordIDsToDelete", "setter": "setRecordIDsToDelete:"},
+      {"access": "public", "getter": "savePolicy", "name": "savePolicy", "setter": "setSavePolicy:"},
+      {"access": "public", "getter": "clientChangeTokenData", "name": "clientChangeTokenData", "setter": "setClientChangeTokenData:"},
+      {"access": "public", "getter": "atomic", "name": "atomic", "setter": "setAtomic:"},
+      {"access": "public", "getter": "perRecordProgressBlock", "name": "perRecordProgressBlock", "setter": "setPerRecordProgressBlock:"},
+      {"access": "public", "getter": "perRecordCompletionBlock", "introduced": "8", "name": "perRecordCompletionBlock", "setter": "setPerRecordCompletionBlock:"},
+      {"access": "public", "getter": "perRecordSaveBlock", "introduced": "15", "name": "perRecordSaveBlock", "setter": "setPerRecordSaveBlock:"},
+      {"access": "public", "getter": "perRecordDeleteBlock", "introduced": "15", "name": "perRecordDeleteBlock", "setter": "setPerRecordDeleteBlock:"},
+      {"access": "public", "getter": "modifyRecordsCompletionBlock", "name": "modifyRecordsCompletionBlock", "setter": "setModifyRecordsCompletionBlock:"}
+     ],
+     "super": "CKDatabaseOperation"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "init"},
+      {"access": "public", "name": "initWithSubscriptionsToSave:subscriptionIDsToDelete:"}
+     ],
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "CKModifySubscriptionsOperation",
+     "properties": [
+      {"access": "public", "getter": "subscriptionsToSave", "name": "subscriptionsToSave", "setter": "setSubscriptionsToSave:"},
+      {"access": "public", "getter": "subscriptionIDsToDelete", "name": "subscriptionIDsToDelete", "setter": "setSubscriptionIDsToDelete:"},
+      {"access": "public", "getter": "perSubscriptionSaveBlock", "introduced": "15", "name": "perSubscriptionSaveBlock", "setter": "setPerSubscriptionSaveBlock:"},
+      {"access": "public", "getter": "perSubscriptionDeleteBlock", "introduced": "15", "name": "perSubscriptionDeleteBlock", "setter": "setPerSubscriptionDeleteBlock:"},
+      {"access": "public", "getter": "modifySubscriptionsCompletionBlock", "name": "modifySubscriptionsCompletionBlock", "setter": "setModifySubscriptionsCompletionBlock:"}
+     ],
+     "super": "CKDatabaseOperation"
+    },
+    {
+     "access": "public",
+     "categories": [
+      "DeprecatedAPSProperties"
+     ],
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true},
+      {"access": "public", "name": "notificationFromRemoteNotificationDictionary:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "CKNotification",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "notificationType", "name": "notificationType"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "notificationID", "name": "notificationID"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "containerIdentifier", "name": "containerIdentifier"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "subscriptionOwnerUserRecordID", "introduced": "13", "name": "subscriptionOwnerUserRecordID"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isPruned", "name": "isPruned"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "subscriptionID", "introduced": "9", "name": "subscriptionID"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "CKNotificationID",
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "CKNotificationInfo",
+     "properties": [
+      {"access": "public", "getter": "alertBody", "name": "alertBody", "setter": "setAlertBody:"},
+      {"access": "public", "getter": "alertLocalizationKey", "name": "alertLocalizationKey", "setter": "setAlertLocalizationKey:"},
+      {"access": "public", "getter": "alertLocalizationArgs", "name": "alertLocalizationArgs", "setter": "setAlertLocalizationArgs:"},
+      {"access": "public", "getter": "title", "introduced": "11", "name": "title", "setter": "setTitle:"},
+      {"access": "public", "getter": "titleLocalizationKey", "introduced": "11", "name": "titleLocalizationKey", "setter": "setTitleLocalizationKey:"},
+      {"access": "public", "getter": "titleLocalizationArgs", "introduced": "11", "name": "titleLocalizationArgs", "setter": "setTitleLocalizationArgs:"},
+      {"access": "public", "getter": "subtitle", "introduced": "11", "name": "subtitle", "setter": "setSubtitle:"},
+      {"access": "public", "getter": "subtitleLocalizationKey", "introduced": "11", "name": "subtitleLocalizationKey", "setter": "setSubtitleLocalizationKey:"},
+      {"access": "public", "getter": "subtitleLocalizationArgs", "introduced": "11", "name": "subtitleLocalizationArgs", "setter": "setSubtitleLocalizationArgs:"},
+      {"access": "public", "getter": "alertActionLocalizationKey", "name": "alertActionLocalizationKey", "setter": "setAlertActionLocalizationKey:"},
+      {"access": "public", "getter": "alertLaunchImage", "name": "alertLaunchImage", "setter": "setAlertLaunchImage:"},
+      {"access": "public", "getter": "soundName", "name": "soundName", "setter": "setSoundName:"},
+      {"access": "public", "getter": "desiredKeys", "name": "desiredKeys", "setter": "setDesiredKeys:"},
+      {"access": "public", "getter": "shouldBadge", "name": "shouldBadge", "setter": "setShouldBadge:"},
+      {"access": "public", "getter": "shouldSendContentAvailable", "name": "shouldSendContentAvailable", "setter": "setShouldSendContentAvailable:"},
+      {"access": "public", "getter": "shouldSendMutableContent", "introduced": "11", "name": "shouldSendMutableContent", "setter": "setShouldSendMutableContent:"},
+      {"access": "public", "getter": "category", "introduced": "9", "name": "category", "setter": "setCategory:"},
+      {"access": "public", "getter": "collapseIDKey", "introduced": "11", "name": "collapseIDKey", "setter": "setCollapseIDKey:"}
+     ],
+     "protocols": [
+      "NSSecureCoding",
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "categories": [
+      "CKOperationDeprecated"
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init"}
+     ],
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "CKOperation",
+     "properties": [
+      {"access": "public", "getter": "configuration", "introduced": "11", "name": "configuration", "setter": "setConfiguration:"},
+      {"access": "public", "getter": "group", "introduced": "11", "name": "group", "setter": "setGroup:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "operationID", "introduced": "9.3", "name": "operationID"},
+      {"access": "public", "getter": "longLivedOperationWasPersistedBlock", "introduced": "9.3", "name": "longLivedOperationWasPersistedBlock", "setter": "setLongLivedOperationWasPersistedBlock:"}
+     ],
+     "super": "NSOperation"
+    },
+    {
+     "access": "public",
+     "introduced": "11",
+     "linkage": "exported",
+     "name": "CKOperationConfiguration",
+     "properties": [
+      {"access": "public", "getter": "container", "name": "container", "setter": "setContainer:"},
+      {"access": "public", "getter": "qualityOfService", "name": "qualityOfService", "setter": "setQualityOfService:"},
+      {"access": "public", "getter": "allowsCellularAccess", "name": "allowsCellularAccess", "setter": "setAllowsCellularAccess:"},
+      {"access": "public", "getter": "isLongLived", "name": "longLived", "setter": "setLongLived:"},
+      {"access": "public", "getter": "timeoutIntervalForRequest", "name": "timeoutIntervalForRequest", "setter": "setTimeoutIntervalForRequest:"},
+      {"access": "public", "getter": "timeoutIntervalForResource", "name": "timeoutIntervalForResource", "setter": "setTimeoutIntervalForResource:"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "init"},
+      {"access": "public", "name": "initWithCoder:"}
+     ],
+     "introduced": "11",
+     "linkage": "exported",
+     "name": "CKOperationGroup",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "operationGroupID", "name": "operationGroupID"},
+      {"access": "public", "getter": "defaultConfiguration", "name": "defaultConfiguration", "setter": "setDefaultConfiguration:"},
+      {"access": "public", "getter": "name", "name": "name", "setter": "setName:"},
+      {"access": "public", "getter": "quantity", "name": "quantity", "setter": "setQuantity:"},
+      {"access": "public", "getter": "expectedSendSize", "name": "expectedSendSize", "setter": "setExpectedSendSize:"},
+      {"access": "public", "getter": "expectedReceiveSize", "name": "expectedReceiveSize", "setter": "setExpectedReceiveSize:"}
+     ],
+     "protocols": [
+      "NSSecureCoding",
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "initWithCoder:"},
+      {"access": "public", "name": "initWithRecordType:predicate:"}
+     ],
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "CKQuery",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "recordType", "name": "recordType"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "predicate", "name": "predicate"},
+      {"access": "public", "getter": "sortDescriptors", "name": "sortDescriptors", "setter": "setSortDescriptors:"}
+     ],
+     "protocols": [
+      "NSSecureCoding",
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "CKQueryCursor",
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "CKQueryNotification",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "queryNotificationReason", "name": "queryNotificationReason"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "recordFields", "name": "recordFields"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "recordID", "name": "recordID"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "databaseScope", "introduced": "10", "name": "databaseScope"}
+     ],
+     "super": "CKNotification"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "init"},
+      {"access": "public", "name": "initWithQuery:"},
+      {"access": "public", "name": "initWithCursor:"}
+     ],
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "CKQueryOperation",
+     "properties": [
+      {"access": "public", "getter": "query", "name": "query", "setter": "setQuery:"},
+      {"access": "public", "getter": "cursor", "name": "cursor", "setter": "setCursor:"},
+      {"access": "public", "getter": "zoneID", "name": "zoneID", "setter": "setZoneID:"},
+      {"access": "public", "getter": "resultsLimit", "name": "resultsLimit", "setter": "setResultsLimit:"},
+      {"access": "public", "getter": "desiredKeys", "name": "desiredKeys", "setter": "setDesiredKeys:"},
+      {"access": "public", "getter": "recordFetchedBlock", "introduced": "8", "name": "recordFetchedBlock", "setter": "setRecordFetchedBlock:"},
+      {"access": "public", "getter": "recordMatchedBlock", "introduced": "15", "name": "recordMatchedBlock", "setter": "setRecordMatchedBlock:"},
+      {"access": "public", "getter": "queryCompletionBlock", "name": "queryCompletionBlock", "setter": "setQueryCompletionBlock:"}
+     ],
+     "super": "CKDatabaseOperation"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "10", "name": "initWithRecordType:predicate:options:"},
+      {"access": "public", "name": "initWithRecordType:predicate:subscriptionID:options:"},
+      {"access": "public", "name": "initWithCoder:"}
+     ],
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "CKQuerySubscription",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "recordType", "name": "recordType"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "predicate", "name": "predicate"},
+      {"access": "public", "getter": "zoneID", "name": "zoneID", "setter": "setZoneID:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "querySubscriptionOptions", "name": "querySubscriptionOptions"}
+     ],
+     "protocols": [
+      "NSSecureCoding",
+      "NSCopying"
+     ],
+     "super": "CKSubscription"
+    },
+    {
+     "access": "public",
+     "categories": [
+      "CKRecordKeyValueSettingConformance"
+     ],
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "initWithRecordType:"},
+      {"access": "public", "name": "initWithRecordType:recordID:"},
+      {"access": "public", "name": "initWithRecordType:zoneID:"},
+      {"access": "public", "name": "objectForKey:"},
+      {"access": "public", "name": "setObject:forKey:"},
+      {"access": "public", "name": "allKeys"},
+      {"access": "public", "name": "allTokens"},
+      {"access": "public", "name": "objectForKeyedSubscript:"},
+      {"access": "public", "name": "setObject:forKeyedSubscript:"},
+      {"access": "public", "name": "changedKeys"},
+      {"access": "public", "name": "encodeSystemFieldsWithCoder:"},
+      {"access": "public", "introduced": "10", "name": "setParentReferenceFromRecord:"},
+      {"access": "public", "introduced": "10", "name": "setParentReferenceFromRecordID:"}
+     ],
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "CKRecord",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "recordType", "name": "recordType"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "recordID", "name": "recordID"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "recordChangeTag", "name": "recordChangeTag"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "creatorUserRecordID", "name": "creatorUserRecordID"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "creationDate", "name": "creationDate"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "lastModifiedUserRecordID", "name": "lastModifiedUserRecordID"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "modificationDate", "name": "modificationDate"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "share", "introduced": "10", "name": "share"},
+      {"access": "public", "getter": "parent", "introduced": "10", "name": "parent", "setter": "setParent:"}
+     ],
+     "protocols": [
+      "NSSecureCoding",
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "initWithRecordName:"},
+      {"access": "public", "name": "initWithRecordName:zoneID:"}
+     ],
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "CKRecordID",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "recordName", "name": "recordName"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "zoneID", "name": "zoneID"}
+     ],
+     "protocols": [
+      "NSSecureCoding",
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "defaultRecordZone"},
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "initWithZoneName:"},
+      {"access": "public", "name": "initWithZoneID:"}
+     ],
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "CKRecordZone",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "zoneID", "name": "zoneID"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "capabilities", "name": "capabilities"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "share", "introduced": "15", "name": "share"},
+      {"access": "public", "getter": "encryptionScope", "introduced": "26", "name": "encryptionScope", "setter": "setEncryptionScope:"}
+     ],
+     "protocols": [
+      "NSSecureCoding",
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "initWithZoneName:ownerName:"}
+     ],
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "CKRecordZoneID",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "zoneName", "name": "zoneName"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "ownerName", "name": "ownerName"}
+     ],
+     "protocols": [
+      "NSSecureCoding",
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "CKRecordZoneNotification",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "recordZoneID", "name": "recordZoneID"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "databaseScope", "introduced": "10", "name": "databaseScope"}
+     ],
+     "super": "CKNotification"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "10", "name": "initWithZoneID:"},
+      {"access": "public", "name": "initWithZoneID:subscriptionID:"},
+      {"access": "public", "name": "initWithCoder:"}
+     ],
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "CKRecordZoneSubscription",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "zoneID", "name": "zoneID"},
+      {"access": "public", "getter": "recordType", "name": "recordType", "setter": "setRecordType:"}
+     ],
+     "protocols": [
+      "NSSecureCoding",
+      "NSCopying"
+     ],
+     "super": "CKSubscription"
+    },
+    {
+     "access": "public",
+     "categories": [
+      "CKRecordValue"
+     ],
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "initWithRecordID:action:"},
+      {"access": "public", "name": "initWithRecord:action:"}
+     ],
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "CKReference",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "referenceAction", "name": "referenceAction"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "recordID", "name": "recordID"}
+     ],
+     "protocols": [
+      "NSSecureCoding",
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "CKServerChangeToken",
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithRootRecord:"},
+      {"access": "public", "name": "initWithRootRecord:shareID:"},
+      {"access": "public", "introduced": "15", "name": "initWithRecordZoneID:"},
+      {"access": "public", "name": "initWithCoder:"},
+      {"access": "public", "name": "addParticipant:"},
+      {"access": "public", "name": "removeParticipant:"},
+      {"access": "public", "introduced": "18", "name": "oneTimeURLForParticipantID:"},
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "initWithRecordType:", "unavailable": true},
+      {"access": "public", "name": "initWithRecordType:recordID:", "unavailable": true},
+      {"access": "public", "name": "initWithRecordType:zoneID:", "unavailable": true},
+      {"access": "public", "introduced": "26", "name": "denyRequesters:"},
+      {"access": "public", "introduced": "26", "name": "blockRequesters:"},
+      {"access": "public", "introduced": "26", "name": "unblockIdentities:"}
+     ],
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "CKShare",
+     "properties": [
+      {"access": "public", "getter": "publicPermission", "name": "publicPermission", "setter": "setPublicPermission:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "URL", "name": "URL"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "participants", "name": "participants"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "owner", "name": "owner"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "currentUserParticipant", "name": "currentUserParticipant"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "requesters", "introduced": "26", "name": "requesters"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "blockedIdentities", "introduced": "26", "name": "blockedIdentities"},
+      {"access": "public", "getter": "allowsAccessRequests", "introduced": "26", "name": "allowsAccessRequests", "setter": "setAllowsAccessRequests:"}
+     ],
+     "protocols": [
+      "NSSecureCoding",
+      "NSCopying"
+     ],
+     "super": "CKRecord"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "26",
+     "linkage": "exported",
+     "name": "CKShareAccessRequester",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "userIdentity", "name": "userIdentity"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "participantLookupInfo", "name": "participantLookupInfo"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "contact", "name": "contact"}
+     ],
+     "protocols": [
+      "NSSecureCoding",
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "26",
+     "linkage": "exported",
+     "name": "CKShareBlockedIdentity",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "userIdentity", "name": "userIdentity"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "contact", "name": "contact"}
+     ],
+     "protocols": [
+      "NSSecureCoding",
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "CKShareMetadata",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "containerIdentifier", "name": "containerIdentifier"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "share", "name": "share"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "hierarchicalRootRecordID", "introduced": "15", "name": "hierarchicalRootRecordID"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "participantRole", "introduced": "12", "name": "participantRole"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "participantStatus", "name": "participantStatus"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "participantPermission", "name": "participantPermission"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "ownerIdentity", "name": "ownerIdentity"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "rootRecord", "name": "rootRecord"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "participantType", "introduced": "10", "name": "participantType", "obsoleted": "26"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "rootRecordID", "introduced": "10", "name": "rootRecordID"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true},
+      {"access": "public", "introduced": "18", "name": "oneTimeURLParticipant"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "isEqual:"}
+     ],
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "CKShareParticipant",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "userIdentity", "name": "userIdentity"},
+      {"access": "public", "getter": "role", "introduced": "12", "name": "role", "setter": "setRole:"},
+      {"access": "public", "getter": "type", "introduced": "10", "name": "type", "obsoleted": "26", "setter": "setType:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "acceptanceStatus", "name": "acceptanceStatus"},
+      {"access": "public", "getter": "permission", "name": "permission", "setter": "setPermission:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "participantID", "introduced": "10", "name": "participantID"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isApprovedRequester", "introduced": "26", "name": "isApprovedRequester"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "dateAddedToShare", "introduced": "26", "name": "dateAddedToShare"}
+     ],
+     "protocols": [
+      "NSSecureCoding",
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "init"},
+      {"access": "public", "name": "initWithShareURLs:"}
+     ],
+     "introduced": "26",
+     "linkage": "exported",
+     "name": "CKShareRequestAccessOperation",
+     "properties": [
+      {"access": "public", "getter": "shareURLs", "name": "shareURLs", "setter": "setShareURLs:"},
+      {"access": "public", "getter": "perShareAccessRequestCompletionBlock", "name": "perShareAccessRequestCompletionBlock", "setter": "setPerShareAccessRequestCompletionBlock:"},
+      {"access": "public", "getter": "shareRequestAccessCompletionBlock", "name": "shareRequestAccessCompletionBlock", "setter": "setShareRequestAccessCompletionBlock:"}
+     ],
+     "super": "CKOperation"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "8",
+     "linkage": "exported",
+     "name": "CKSubscription",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "subscriptionID", "name": "subscriptionID"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "subscriptionType", "name": "subscriptionType"},
+      {"access": "public", "getter": "notificationInfo", "name": "notificationInfo", "setter": "setNotificationInfo:"}
+     ],
+     "protocols": [
+      "NSSecureCoding",
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithConfiguration:"},
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "fetchChangesWithCompletionHandler:"},
+      {"access": "public", "name": "fetchChangesWithOptions:completionHandler:"},
+      {"access": "public", "name": "sendChangesWithCompletionHandler:"},
+      {"access": "public", "name": "sendChangesWithOptions:completionHandler:"},
+      {"access": "public", "name": "cancelOperationsWithCompletionHandler:"}
+     ],
+     "introduced": "17",
+     "linkage": "exported",
+     "name": "CKSyncEngine",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "database", "name": "database"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "state", "name": "state"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "17",
+     "linkage": "exported",
+     "name": "CKSyncEngineAccountChangeEvent",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "changeType", "name": "changeType"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "previousUser", "name": "previousUser"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "currentUser", "name": "currentUser"}
+     ],
+     "super": "CKSyncEngineEvent"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithDatabase:stateSerialization:delegate:"},
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "17",
+     "linkage": "exported",
+     "name": "CKSyncEngineConfiguration",
+     "properties": [
+      {"access": "public", "getter": "database", "name": "database", "setter": "setDatabase:"},
+      {"access": "public", "getter": "stateSerialization", "name": "stateSerialization", "setter": "setStateSerialization:"},
+      {"access": "public", "getter": "delegate", "name": "delegate", "setter": "setDelegate:"},
+      {"access": "public", "getter": "automaticallySync", "name": "automaticallySync", "setter": "setAutomaticallySync:"},
+      {"access": "public", "getter": "subscriptionID", "name": "subscriptionID", "setter": "setSubscriptionID:"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "17",
+     "linkage": "exported",
+     "name": "CKSyncEngineDidFetchChangesEvent",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "context", "introduced": "17.2", "name": "context"}
+     ],
+     "super": "CKSyncEngineEvent"
+    },
+    {
+     "access": "public",
+     "introduced": "17",
+     "linkage": "exported",
+     "name": "CKSyncEngineDidFetchRecordZoneChangesEvent",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "zoneID", "name": "zoneID"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "error", "name": "error"}
+     ],
+     "super": "CKSyncEngineEvent"
+    },
+    {
+     "access": "public",
+     "introduced": "17",
+     "linkage": "exported",
+     "name": "CKSyncEngineDidSendChangesEvent",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "context", "name": "context"}
+     ],
+     "super": "CKSyncEngineEvent"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "17",
+     "linkage": "exported",
+     "name": "CKSyncEngineEvent",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "type", "name": "type"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "stateUpdateEvent", "name": "stateUpdateEvent"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "accountChangeEvent", "name": "accountChangeEvent"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "willFetchChangesEvent", "name": "willFetchChangesEvent"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "fetchedDatabaseChangesEvent", "name": "fetchedDatabaseChangesEvent"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "didFetchChangesEvent", "name": "didFetchChangesEvent"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "willFetchRecordZoneChangesEvent", "name": "willFetchRecordZoneChangesEvent"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "fetchedRecordZoneChangesEvent", "name": "fetchedRecordZoneChangesEvent"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "didFetchRecordZoneChangesEvent", "name": "didFetchRecordZoneChangesEvent"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "willSendChangesEvent", "name": "willSendChangesEvent"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "sentDatabaseChangesEvent", "name": "sentDatabaseChangesEvent"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "sentRecordZoneChangesEvent", "name": "sentRecordZoneChangesEvent"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "didSendChangesEvent", "name": "didSendChangesEvent"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "17",
+     "linkage": "exported",
+     "name": "CKSyncEngineFailedRecordSave",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "record", "name": "record"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "error", "name": "error"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "17",
+     "linkage": "exported",
+     "name": "CKSyncEngineFailedZoneSave",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "recordZone", "name": "recordZone"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "error", "name": "error"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "17",
+     "linkage": "exported",
+     "name": "CKSyncEngineFetchChangesContext",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "reason", "name": "reason"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "options", "name": "options"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithScope:"}
+     ],
+     "introduced": "17",
+     "linkage": "exported",
+     "name": "CKSyncEngineFetchChangesOptions",
+     "properties": [
+      {"access": "public", "getter": "scope", "name": "scope", "setter": "setScope:"},
+      {"access": "public", "getter": "operationGroup", "name": "operationGroup", "setter": "setOperationGroup:"},
+      {"access": "public", "getter": "prioritizedZoneIDs", "name": "prioritizedZoneIDs", "setter": "setPrioritizedZoneIDs:"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithZoneIDs:"},
+      {"access": "public", "name": "initWithExcludedZoneIDs:"},
+      {"access": "public", "introduced": "17.2", "name": "containsZoneID:"}
+     ],
+     "introduced": "17",
+     "linkage": "exported",
+     "name": "CKSyncEngineFetchChangesScope",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "zoneIDs", "name": "zoneIDs"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "excludedZoneIDs", "name": "excludedZoneIDs"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "17",
+     "linkage": "exported",
+     "name": "CKSyncEngineFetchedDatabaseChangesEvent",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "modifications", "name": "modifications"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "deletions", "name": "deletions"}
+     ],
+     "super": "CKSyncEngineEvent"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "17",
+     "linkage": "exported",
+     "name": "CKSyncEngineFetchedRecordDeletion",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "recordID", "name": "recordID"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "recordType", "name": "recordType"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "17",
+     "linkage": "exported",
+     "name": "CKSyncEngineFetchedRecordZoneChangesEvent",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "modifications", "name": "modifications"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "deletions", "name": "deletions"}
+     ],
+     "super": "CKSyncEngineEvent"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "17",
+     "linkage": "exported",
+     "name": "CKSyncEngineFetchedZoneDeletion",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "zoneID", "name": "zoneID"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "reason", "name": "reason"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "17",
+     "linkage": "exported",
+     "name": "CKSyncEnginePendingDatabaseChange",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "zoneID", "name": "zoneID"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "type", "name": "type"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithRecordID:type:"},
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "17",
+     "linkage": "exported",
+     "name": "CKSyncEnginePendingRecordZoneChange",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "recordID", "name": "recordID"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "type", "name": "type"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithZoneID:"}
+     ],
+     "introduced": "17",
+     "linkage": "exported",
+     "name": "CKSyncEnginePendingZoneDelete",
+     "super": "CKSyncEnginePendingDatabaseChange"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithZone:"}
+     ],
+     "introduced": "17",
+     "linkage": "exported",
+     "name": "CKSyncEnginePendingZoneSave",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "zone", "name": "zone"}
+     ],
+     "super": "CKSyncEnginePendingDatabaseChange"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithPendingChanges:recordProvider:"},
+      {"access": "public", "name": "initWithRecordsToSave:recordIDsToDelete:atomicByZone:"},
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "17",
+     "linkage": "exported",
+     "name": "CKSyncEngineRecordZoneChangeBatch",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "recordsToSave", "name": "recordsToSave"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "recordIDsToDelete", "name": "recordIDsToDelete"},
+      {"access": "public", "getter": "atomicByZone", "name": "atomicByZone", "setter": "setAtomicByZone:"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "17",
+     "linkage": "exported",
+     "name": "CKSyncEngineSendChangesContext",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "reason", "name": "reason"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "options", "name": "options"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithScope:"}
+     ],
+     "introduced": "17",
+     "linkage": "exported",
+     "name": "CKSyncEngineSendChangesOptions",
+     "properties": [
+      {"access": "public", "getter": "scope", "name": "scope", "setter": "setScope:"},
+      {"access": "public", "getter": "operationGroup", "name": "operationGroup", "setter": "setOperationGroup:"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithZoneIDs:"},
+      {"access": "public", "name": "initWithExcludedZoneIDs:"},
+      {"access": "public", "name": "initWithRecordIDs:"},
+      {"access": "public", "name": "containsRecordID:"},
+      {"access": "public", "name": "containsPendingRecordZoneChange:"}
+     ],
+     "introduced": "17",
+     "linkage": "exported",
+     "name": "CKSyncEngineSendChangesScope",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "zoneIDs", "name": "zoneIDs"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "excludedZoneIDs", "name": "excludedZoneIDs"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "recordIDs", "name": "recordIDs"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "17",
+     "linkage": "exported",
+     "name": "CKSyncEngineSentDatabaseChangesEvent",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "savedZones", "name": "savedZones"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "failedZoneSaves", "name": "failedZoneSaves"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "deletedZoneIDs", "name": "deletedZoneIDs"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "failedZoneDeletes", "name": "failedZoneDeletes"}
+     ],
+     "super": "CKSyncEngineEvent"
+    },
+    {
+     "access": "public",
+     "introduced": "17",
+     "linkage": "exported",
+     "name": "CKSyncEngineSentRecordZoneChangesEvent",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "savedRecords", "name": "savedRecords"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "failedRecordSaves", "name": "failedRecordSaves"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "deletedRecordIDs", "name": "deletedRecordIDs"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "failedRecordDeletes", "name": "failedRecordDeletes"}
+     ],
+     "super": "CKSyncEngineEvent"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "addPendingRecordZoneChanges:"},
+      {"access": "public", "name": "removePendingRecordZoneChanges:"},
+      {"access": "public", "name": "addPendingDatabaseChanges:"},
+      {"access": "public", "name": "removePendingDatabaseChanges:"}
+     ],
+     "introduced": "17",
+     "linkage": "exported",
+     "name": "CKSyncEngineState",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "pendingRecordZoneChanges", "name": "pendingRecordZoneChanges"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "pendingDatabaseChanges", "name": "pendingDatabaseChanges"},
+      {"access": "public", "getter": "hasPendingUntrackedChanges", "name": "hasPendingUntrackedChanges", "setter": "setHasPendingUntrackedChanges:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "zoneIDsWithUnfetchedServerChanges", "name": "zoneIDsWithUnfetchedServerChanges"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "17",
+     "linkage": "exported",
+     "name": "CKSyncEngineStateSerialization",
+     "protocols": [
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "17",
+     "linkage": "exported",
+     "name": "CKSyncEngineStateUpdateEvent",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "stateSerialization", "name": "stateSerialization"}
+     ],
+     "super": "CKSyncEngineEvent"
+    },
+    {
+     "access": "public",
+     "introduced": "17",
+     "linkage": "exported",
+     "name": "CKSyncEngineWillFetchChangesEvent",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "context", "introduced": "17.2", "name": "context"}
+     ],
+     "super": "CKSyncEngineEvent"
+    },
+    {
+     "access": "public",
+     "introduced": "17",
+     "linkage": "exported",
+     "name": "CKSyncEngineWillFetchRecordZoneChangesEvent",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "zoneID", "name": "zoneID"}
+     ],
+     "super": "CKSyncEngineEvent"
+    },
+    {
+     "access": "public",
+     "introduced": "17",
+     "linkage": "exported",
+     "name": "CKSyncEngineWillSendChangesEvent",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "context", "name": "context"}
+     ],
+     "super": "CKSyncEngineEvent"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "initWithContainer:"}
+     ],
+     "introduced": "16",
+     "linkage": "exported",
+     "name": "CKSystemSharingUIObserver",
+     "properties": [
+      {"access": "public", "getter": "systemSharingUIDidSaveShareBlock", "name": "systemSharingUIDidSaveShareBlock", "setter": "setSystemSharingUIDidSaveShareBlock:"},
+      {"access": "public", "getter": "systemSharingUIDidStopSharingBlock", "name": "systemSharingUIDidStopSharingBlock", "setter": "setSystemSharingUIDidStopSharingBlock:"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "CKUserIdentity",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "userRecordID", "name": "userRecordID"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "lookupInfo", "name": "lookupInfo"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "nameComponents", "name": "nameComponents"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "hasiCloudAccount", "name": "hasiCloudAccount"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "contactIdentifiers", "introduced": "11", "name": "contactIdentifiers"}
+     ],
+     "protocols": [
+      "NSSecureCoding",
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true},
+      {"access": "public", "name": "lookupInfosWithEmails:"},
+      {"access": "public", "name": "lookupInfosWithPhoneNumbers:"},
+      {"access": "public", "name": "lookupInfosWithRecordIDs:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "initWithEmailAddress:"},
+      {"access": "public", "name": "initWithPhoneNumber:"},
+      {"access": "public", "name": "initWithUserRecordID:"}
+     ],
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "CKUserIdentityLookupInfo",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "emailAddress", "name": "emailAddress"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "phoneNumber", "name": "phoneNumber"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "userRecordID", "name": "userRecordID"}
+     ],
+     "protocols": [
+      "NSSecureCoding",
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    }
+   ],
+   "protocols": [
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "objectForKey:"},
+      {"access": "public", "name": "setObject:forKey:"},
+      {"access": "public", "name": "objectForKeyedSubscript:"},
+      {"access": "public", "name": "setObject:forKeyedSubscript:"},
+      {"access": "public", "name": "allKeys"},
+      {"access": "public", "name": "changedKeys"}
+     ],
+     "introduced": "9",
+     "name": "CKRecordKeyValueSetting",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "name": "CKRecordValue",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "syncEngine:handleEvent:"},
+      {"access": "public", "name": "syncEngine:nextRecordZoneChangeBatchForContext:"},
+      {"access": "public", "name": "syncEngine:nextFetchChangesOptionsForContext:", "optional": true}
+     ],
+     "introduced": "17",
+     "name": "CKSyncEngineDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    }
+   ],
+   "target": "arm64e.x1-apple-ios27",
    "typedefs": [
     {"access": "public", "name": "CKAccountStatus"},
     {"access": "public", "introduced": "8", "name": "CKApplicationPermissionBlock"},
@@ -2725,10 +4997,14 @@
     {"access": "public", "introduced": "8", "linkage": "exported", "name": "_$sSf8CloudKit21CKRecordValueProtocolAAWP"},
     {"access": "public", "introduced": "8", "linkage": "exported", "name": "_$sSi8CloudKit21CKRecordValueProtocolAAMc"},
     {"access": "public", "introduced": "8", "linkage": "exported", "name": "_$sSi8CloudKit21CKRecordValueProtocolAAWP"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo10CKDatabaseC8CloudKitE11_recordZone3forSo08CKRecordE0CSo0gE2IDC_tYaKF"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo10CKDatabaseC8CloudKitE11_recordZone3forSo08CKRecordE0CSo0gE2IDC_tYaKFTu"},
     {"access": "public", "introduced": "15", "linkage": "exported", "name": "_$sSo10CKDatabaseC8CloudKitE11recordZones3forSDySo14CKRecordZoneIDCs6ResultOySo0gH0Cs5Error_pGGSayAGG_tYaKF"},
     {"access": "public", "introduced": "15", "linkage": "exported", "name": "_$sSo10CKDatabaseC8CloudKitE11recordZones3forSDySo14CKRecordZoneIDCs6ResultOySo0gH0Cs5Error_pGGSayAGG_tYaKFTu"},
     {"access": "public", "introduced": "15", "linkage": "exported", "name": "_$sSo10CKDatabaseC8CloudKitE12subscription3forSo14CKSubscriptionCSS_tYaKF"},
     {"access": "public", "introduced": "15", "linkage": "exported", "name": "_$sSo10CKDatabaseC8CloudKitE12subscription3forSo14CKSubscriptionCSS_tYaKFTu"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo10CKDatabaseC8CloudKitE13_deleteRecord6withIDSo08CKRecordG0CAG_tYaKF"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo10CKDatabaseC8CloudKitE13_deleteRecord6withIDSo08CKRecordG0CAG_tYaKFTu"},
     {"access": "public", "introduced": "15", "linkage": "exported", "name": "_$sSo10CKDatabaseC8CloudKitE13modifyRecords6saving8deleting10savePolicy10atomically17completionHandlerySaySo8CKRecordCG_SaySo0M2IDCGSo0m4SaveI0VSbys6ResultOySDyAnSyAKs5Error_pGG0H7Results_SDyAnSyytsAT_pGG06deleteR0tsAT_pGctF"},
     {"access": "public", "introduced": "15", "linkage": "exported", "name": "_$sSo10CKDatabaseC8CloudKitE13modifyRecords6saving8deleting10savePolicy10atomicallySDySo10CKRecordIDCs6ResultOySo0K0Cs5Error_pGG0H7Results_SDyAjLyytsAO_pGG06deleteO0tSayANG_SayAJGSo0k4SaveI0VSbtYaKF"},
     {"access": "public", "introduced": "15", "linkage": "exported", "name": "_$sSo10CKDatabaseC8CloudKitE13modifyRecords6saving8deleting10savePolicy10atomicallySDySo10CKRecordIDCs6ResultOySo0K0Cs5Error_pGG0H7Results_SDyAjLyytsAO_pGG06deleteO0tSayANG_SayAJGSo0k4SaveI0VSbtYaKFTu"},
@@ -2778,6 +5054,8 @@
     {"access": "public", "introduced": "15", "linkage": "exported", "name": "_$sSo10CKDatabaseC8CloudKitE14configuredWith13configuration5group4bodyxSo24CKOperationConfigurationCSg_So0I5GroupCSgxABKXEtKlF"},
     {"access": "public", "introduced": "15", "linkage": "exported", "name": "_$sSo10CKDatabaseC8CloudKitE14configuredWith13configuration5group4bodyxSo24CKOperationConfigurationCSg_So0I5GroupCSgxABYaKXEtYaKlF"},
     {"access": "public", "introduced": "15", "linkage": "exported", "name": "_$sSo10CKDatabaseC8CloudKitE14configuredWith13configuration5group4bodyxSo24CKOperationConfigurationCSg_So0I5GroupCSgxABYaKXEtYaKlFTu"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo10CKDatabaseC8CloudKitE15_allRecordZonesSaySo12CKRecordZoneCGyYaKF"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo10CKDatabaseC8CloudKitE15_allRecordZonesSaySo12CKRecordZoneCGyYaKFTu"},
     {"access": "public", "introduced": "15", "linkage": "exported", "name": "_$sSo10CKDatabaseC8CloudKitE15databaseChanges5since12resultsLimitSayAbCE14DatabaseChangeO12ModificationVG13modifications_SayAH8DeletionVG9deletionsSo08CKServerJ5TokenC06changeP0Sb10moreComingtARSg_SiSgtYaKF"},
     {"access": "public", "introduced": "15", "linkage": "exported", "name": "_$sSo10CKDatabaseC8CloudKitE15databaseChanges5since12resultsLimitSayAbCE14DatabaseChangeO12ModificationVG13modifications_SayAH8DeletionVG9deletionsSo08CKServerJ5TokenC06changeP0Sb10moreComingtARSg_SiSgtYaKFTu"},
     {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$sSo10CKDatabaseC8CloudKitE16RecordZoneChangeO12ModificationV2eeoiySbAG_AGtFZ"},
@@ -2807,6 +5085,10 @@
     {"access": "public", "introduced": "15", "linkage": "exported", "name": "_$sSo10CKDatabaseC8CloudKitE16RecordZoneChangeOMa"},
     {"access": "public", "introduced": "15", "linkage": "exported", "name": "_$sSo10CKDatabaseC8CloudKitE16RecordZoneChangeOMn"},
     {"access": "public", "introduced": "15", "linkage": "exported", "name": "_$sSo10CKDatabaseC8CloudKitE16RecordZoneChangeON"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo10CKDatabaseC8CloudKitE17_allSubscriptionsSaySo14CKSubscriptionCGyYaKF"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo10CKDatabaseC8CloudKitE17_allSubscriptionsSaySo14CKSubscriptionCGyYaKFTu"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo10CKDatabaseC8CloudKitE17_deleteRecordZone6withIDSo08CKRecordfH0CAG_tYaKF"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo10CKDatabaseC8CloudKitE17_deleteRecordZone6withIDSo08CKRecordfH0CAG_tYaKFTu"},
     {"access": "public", "introduced": "15", "linkage": "exported", "name": "_$sSo10CKDatabaseC8CloudKitE17modifyRecordZones6saving8deleting17completionHandlerySaySo12CKRecordZoneCG_SaySo0kL2IDCGys6ResultOySDyAlOyAIs5Error_pGG11saveResults_SDyAlOyytsAP_pGG06deleteQ0tsAP_pGctF"},
     {"access": "public", "introduced": "15", "linkage": "exported", "name": "_$sSo10CKDatabaseC8CloudKitE17modifyRecordZones6saving8deletingSDySo14CKRecordZoneIDCs6ResultOySo0iJ0Cs5Error_pGG11saveResults_SDyAhJyytsAM_pGG06deleteO0tSayALG_SayAHGtYaKF"},
     {"access": "public", "introduced": "15", "linkage": "exported", "name": "_$sSo10CKDatabaseC8CloudKitE17modifyRecordZones6saving8deletingSDySo14CKRecordZoneIDCs6ResultOySo0iJ0Cs5Error_pGG11saveResults_SDyAhJyytsAM_pGG06deleteO0tSayALG_SayAHGtYaKFTu"},
@@ -2819,6 +5101,12 @@
     {"access": "public", "introduced": "15", "linkage": "exported", "name": "_$sSo10CKDatabaseC8CloudKitE19modifySubscriptions6saving8deletingSDySSs6ResultOySo14CKSubscriptionCs5Error_pGG11saveResults_SDySSAHyytsAK_pGG06deleteL0tSayAJG_SaySSGtYaKFTu"},
     {"access": "public", "introduced": "15", "linkage": "exported", "name": "_$sSo10CKDatabaseC8CloudKitE20fetchDatabaseChanges5since12resultsLimit17completionHandlerySo19CKServerChangeTokenCSg_SiSgys6ResultOySayAbCE0eM0O12ModificationVG13modifications_SayAO8DeletionVG9deletionsAI06changeN0Sb10moreComingts5Error_pGctF"},
     {"access": "public", "introduced": "15", "linkage": "exported", "name": "_$sSo10CKDatabaseC8CloudKitE22fetchRecordZoneChanges02inF4With5since11desiredKeys12resultsLimit17completionHandlerySo08CKRecordF2IDC_So19CKServerChangeTokenCSgSaySSGSgSiSgys6ResultOySDySo0qR0CASyAbCE0efT0O12ModificationVs5Error_pGG021modificationResultsByR0_SayAW8DeletionVG9deletionsAM06changeU0Sb10moreComingtsAZ_pGctF"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo10CKDatabaseC8CloudKitE5_saveySo12CKRecordZoneCAFYaKF"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo10CKDatabaseC8CloudKitE5_saveySo12CKRecordZoneCAFYaKFTu"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo10CKDatabaseC8CloudKitE5_saveySo14CKSubscriptionCAFYaKF"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo10CKDatabaseC8CloudKitE5_saveySo14CKSubscriptionCAFYaKFTu"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo10CKDatabaseC8CloudKitE5_saveySo8CKRecordCAFYaKF"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo10CKDatabaseC8CloudKitE5_saveySo8CKRecordCAFYaKFTu"},
     {"access": "public", "introduced": "15", "linkage": "exported", "name": "_$sSo10CKDatabaseC8CloudKitE5fetch10withCursor11desiredKeys12resultsLimit17completionHandlerySo07CKQueryF0C_SaySSGSgSiys6ResultOySaySo10CKRecordIDC_ANySo0O0Cs5Error_pGtG12matchResults_AJSg05queryF0tsAS_pGctF"},
     {"access": "public", "introduced": "15", "linkage": "exported", "name": "_$sSo10CKDatabaseC8CloudKitE5fetch13withRecordIDs11desiredKeys17completionHandlerySaySo10CKRecordIDCG_SaySSGSgys6ResultOySDyAiNySo0L0Cs5Error_pGGsAQ_pGctF"},
     {"access": "public", "introduced": "15", "linkage": "exported", "name": "_$sSo10CKDatabaseC8CloudKitE5fetch17withRecordZoneIDs17completionHandlerySaySo08CKRecordG2IDCG_ys6ResultOySDyAhKySo0kG0Cs5Error_pGGsAN_pGctF"},
@@ -2826,6 +5114,8 @@
     {"access": "public", "introduced": "15", "linkage": "exported", "name": "_$sSo10CKDatabaseC8CloudKitE5fetch19withSubscriptionIDs17completionHandlerySaySSG_ys6ResultOySDySSAIySo14CKSubscriptionCs5Error_pGGsAL_pGctF"},
     {"access": "public", "introduced": "15", "linkage": "exported", "name": "_$sSo10CKDatabaseC8CloudKitE5fetch9withQuery10inZoneWith11desiredKeys12resultsLimit17completionHandlerySo7CKQueryC_So08CKRecordH2IDCSgSaySSGSgSiys6ResultOySaySo0qR0C_ARySo0Q0Cs5Error_pGtG12matchResults_So0P6CursorCSg05queryW0tsAW_pGctF"},
     {"access": "public", "linkage": "exported", "name": "_$sSo10CKDatabaseC8CloudKitE6delete18withSubscriptionID17completionHandlerySS_ySSSg_s5Error_pSgtctF"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo10CKDatabaseC8CloudKitE7_record3forSo8CKRecordCSo0F2IDC_tYaKF"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo10CKDatabaseC8CloudKitE7_record3forSo8CKRecordCSo0F2IDC_tYaKFTu"},
     {"access": "public", "introduced": "15", "linkage": "exported", "name": "_$sSo10CKDatabaseC8CloudKitE7records19continuingMatchFrom11desiredKeys12resultsLimitSaySo10CKRecordIDC_s6ResultOySo0L0Cs5Error_pGtG12matchResults_So13CKQueryCursorCSg05queryS0tAS_SaySSGSgSitYaKF"},
     {"access": "public", "introduced": "15", "linkage": "exported", "name": "_$sSo10CKDatabaseC8CloudKitE7records19continuingMatchFrom11desiredKeys12resultsLimitSaySo10CKRecordIDC_s6ResultOySo0L0Cs5Error_pGtG12matchResults_So13CKQueryCursorCSg05queryS0tAS_SaySSGSgSitYaKFTu"},
     {"access": "public", "introduced": "15", "linkage": "exported", "name": "_$sSo10CKDatabaseC8CloudKitE7records3for11desiredKeysSDySo10CKRecordIDCs6ResultOySo0H0Cs5Error_pGGSayAHG_SaySSGSgtYaKF"},
@@ -2841,6 +5131,14 @@
     {"access": "public", "linkage": "exported", "name": "_$sSo11CKContainerC8CloudKitE11ApplicationOMa"},
     {"access": "public", "linkage": "exported", "name": "_$sSo11CKContainerC8CloudKitE11ApplicationOMn"},
     {"access": "public", "linkage": "exported", "name": "_$sSo11CKContainerC8CloudKitE11ApplicationON"},
+    {"access": "public", "introduced": "15", "linkage": "exported", "name": "_$sSo11CKContainerC8CloudKitE13_userIdentity14forPhoneNumberSo06CKUserE0CSgSS_tYaKF"},
+    {"access": "public", "introduced": "15", "linkage": "exported", "name": "_$sSo11CKContainerC8CloudKitE13_userIdentity14forPhoneNumberSo06CKUserE0CSgSS_tYaKFTu"},
+    {"access": "public", "introduced": "15", "linkage": "exported", "name": "_$sSo11CKContainerC8CloudKitE13_userIdentity15forEmailAddressSo06CKUserE0CSgSS_tYaKF"},
+    {"access": "public", "introduced": "15", "linkage": "exported", "name": "_$sSo11CKContainerC8CloudKitE13_userIdentity15forEmailAddressSo06CKUserE0CSgSS_tYaKFTu"},
+    {"access": "public", "introduced": "15", "linkage": "exported", "name": "_$sSo11CKContainerC8CloudKitE13_userIdentity15forUserRecordIDSo06CKUserE0CSgSo08CKRecordI0C_tYaKF"},
+    {"access": "public", "introduced": "15", "linkage": "exported", "name": "_$sSo11CKContainerC8CloudKitE13_userIdentity15forUserRecordIDSo06CKUserE0CSgSo08CKRecordI0C_tYaKFTu"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo11CKContainerC8CloudKitE14_shareMetadata3forSo07CKShareE0C10Foundation3URLV_tYaKF"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo11CKContainerC8CloudKitE14_shareMetadata3forSo07CKShareE0C10Foundation3URLV_tYaKFTu"},
     {"access": "public", "introduced": "15", "linkage": "exported", "name": "_$sSo11CKContainerC8CloudKitE14configuredWith13configuration5group4bodyxSo24CKOperationConfigurationCSg_So0I5GroupCSgxABKXEtKlF"},
     {"access": "public", "introduced": "15", "linkage": "exported", "name": "_$sSo11CKContainerC8CloudKitE14configuredWith13configuration5group4bodyxSo24CKOperationConfigurationCSg_So0I5GroupCSgxABYaKXEtYaKlF"},
     {"access": "public", "introduced": "15", "linkage": "exported", "name": "_$sSo11CKContainerC8CloudKitE14configuredWith13configuration5group4bodyxSo24CKOperationConfigurationCSg_So0I5GroupCSgxABYaKXEtYaKlFTu"},
@@ -2852,18 +5150,24 @@
     {"access": "public", "introduced": "15", "linkage": "exported", "name": "_$sSo11CKContainerC8CloudKitE14userIdentities16forUserRecordIDsSDySo10CKRecordIDCSo14CKUserIdentityCGSayAGG_tYaKFTu"},
     {"access": "public", "introduced": "15", "linkage": "exported", "name": "_$sSo11CKContainerC8CloudKitE14userIdentities17forEmailAddressesSDySSSo14CKUserIdentityCGSaySSG_tYaKF"},
     {"access": "public", "introduced": "15", "linkage": "exported", "name": "_$sSo11CKContainerC8CloudKitE14userIdentities17forEmailAddressesSDySSSo14CKUserIdentityCGSaySSG_tYaKFTu"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo11CKContainerC8CloudKitE17_shareParticipant14forPhoneNumberSo07CKShareE0CSS_tYaKF"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo11CKContainerC8CloudKitE17_shareParticipant14forPhoneNumberSo07CKShareE0CSS_tYaKFTu"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo11CKContainerC8CloudKitE17_shareParticipant15forEmailAddressSo07CKShareE0CSS_tYaKF"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo11CKContainerC8CloudKitE17_shareParticipant15forEmailAddressSo07CKShareE0CSS_tYaKFTu"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo11CKContainerC8CloudKitE17_shareParticipant15forUserRecordIDSo07CKShareE0CSo08CKRecordI0C_tYaKF"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo11CKContainerC8CloudKitE17_shareParticipant15forUserRecordIDSo07CKShareE0CSo08CKRecordI0C_tYaKFTu"},
     {"access": "public", "introduced": "15", "linkage": "exported", "name": "_$sSo11CKContainerC8CloudKitE17shareParticipants15forPhoneNumbersSDySSs6ResultOySo18CKShareParticipantCs5Error_pGGSaySSG_tYaKF"},
     {"access": "public", "introduced": "15", "linkage": "exported", "name": "_$sSo11CKContainerC8CloudKitE17shareParticipants15forPhoneNumbersSDySSs6ResultOySo18CKShareParticipantCs5Error_pGGSaySSG_tYaKFTu"},
     {"access": "public", "introduced": "15", "linkage": "exported", "name": "_$sSo11CKContainerC8CloudKitE17shareParticipants16forUserRecordIDsSDySo10CKRecordIDCs6ResultOySo18CKShareParticipantCs5Error_pGGSayAGG_tYaKF"},
     {"access": "public", "introduced": "15", "linkage": "exported", "name": "_$sSo11CKContainerC8CloudKitE17shareParticipants16forUserRecordIDsSDySo10CKRecordIDCs6ResultOySo18CKShareParticipantCs5Error_pGGSayAGG_tYaKFTu"},
     {"access": "public", "introduced": "15", "linkage": "exported", "name": "_$sSo11CKContainerC8CloudKitE17shareParticipants17forEmailAddressesSDySSs6ResultOySo18CKShareParticipantCs5Error_pGGSaySSG_tYaKF"},
     {"access": "public", "introduced": "15", "linkage": "exported", "name": "_$sSo11CKContainerC8CloudKitE17shareParticipants17forEmailAddressesSDySSs6ResultOySo18CKShareParticipantCs5Error_pGGSaySSG_tYaKFTu"},
-    {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$sSo11CKContainerC8CloudKitE17shareParticipants3forSDySo24CKUserIdentityLookupInfoCs6ResultOySo18CKShareParticipantCs5Error_pGGSayAGG_tYaKF"},
-    {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$sSo11CKContainerC8CloudKitE17shareParticipants3forSDySo24CKUserIdentityLookupInfoCs6ResultOySo18CKShareParticipantCs5Error_pGGSayAGG_tYaKFTu"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo11CKContainerC8CloudKitE17shareParticipants3forSDySo24CKUserIdentityLookupInfoCs6ResultOySo18CKShareParticipantCs5Error_pGGSayAGG_tYaKF"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo11CKContainerC8CloudKitE17shareParticipants3forSDySo24CKUserIdentityLookupInfoCs6ResultOySo18CKShareParticipantCs5Error_pGGSayAGG_tYaKFTu"},
     {"access": "public", "introduced": "15", "linkage": "exported", "name": "_$sSo11CKContainerC8CloudKitE18longLivedOperation3forSo11CKOperationCSgSS_tYaKF"},
     {"access": "public", "introduced": "15", "linkage": "exported", "name": "_$sSo11CKContainerC8CloudKitE18longLivedOperation3forSo11CKOperationCSgSS_tYaKFTu"},
-    {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$sSo11CKContainerC8CloudKitE18requestShareAccess3forSDy10Foundation3URLVs6ResultOyyts5Error_pGGSayAHG_tYaKF"},
-    {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$sSo11CKContainerC8CloudKitE18requestShareAccess3forSDy10Foundation3URLVs6ResultOyyts5Error_pGGSayAHG_tYaKFTu"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo11CKContainerC8CloudKitE18requestShareAccess3forSDy10Foundation3URLVs6ResultOyyts5Error_pGGSayAHG_tYaKF"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo11CKContainerC8CloudKitE18requestShareAccess3forSDy10Foundation3URLVs6ResultOyyts5Error_pGGSayAHG_tYaKFTu"},
     {"access": "public", "introduced": "15", "linkage": "exported", "name": "_$sSo11CKContainerC8CloudKitE19fetchShareMetadatas3for17completionHandlerySay10Foundation3URLVG_ys6ResultOySDyAiLySo15CKShareMetadataCs5Error_pGGsAO_pGctF"},
     {"access": "public", "introduced": "15", "linkage": "exported", "name": "_$sSo11CKContainerC8CloudKitE22discoverUserIdentities03forE9RecordIDs17completionHandlerySaySo10CKRecordIDCG_ys6ResultOySDyAHSo14CKUserIdentityCGs5Error_pGctF"},
     {"access": "public", "introduced": "15", "linkage": "exported", "name": "_$sSo11CKContainerC8CloudKitE22discoverUserIdentities15forPhoneNumbers17completionHandlerySaySSG_ys6ResultOySDySSSo14CKUserIdentityCGs5Error_pGctF"},
@@ -2875,9 +5179,13 @@
     {"access": "public", "introduced": "15", "linkage": "exported", "name": "_$sSo11CKContainerC8CloudKitE24allLongLivedOperationIDsSaySSGyYaKF"},
     {"access": "public", "introduced": "15", "linkage": "exported", "name": "_$sSo11CKContainerC8CloudKitE24allLongLivedOperationIDsSaySSGyYaKFTu"},
     {"access": "public", "linkage": "exported", "name": "_$sSo11CKContainerC8CloudKitE29fetchAllLongLivedOperationIDs17completionHandleryySaySSGSg_s5Error_pSgtc_tF"},
+    {"access": "public", "introduced": "15", "linkage": "exported", "name": "_$sSo11CKContainerC8CloudKitE30_allUserIdentitiesFromContactsSaySo14CKUserIdentityCGyYaKF"},
+    {"access": "public", "introduced": "15", "linkage": "exported", "name": "_$sSo11CKContainerC8CloudKitE30_allUserIdentitiesFromContactsSaySo14CKUserIdentityCGyYaKFTu"},
     {"access": "public", "introduced": "15", "linkage": "exported", "name": "_$sSo11CKContainerC8CloudKitE6accept_17completionHandlerySaySo15CKShareMetadataCG_ys6ResultOySDyAgJySo0G0Cs5Error_pGGsAM_pGctF"},
     {"access": "public", "introduced": "15", "linkage": "exported", "name": "_$sSo11CKContainerC8CloudKitE6acceptySDySo15CKShareMetadataCs6ResultOySo0E0Cs5Error_pGGSayAFGYaKF"},
     {"access": "public", "introduced": "15", "linkage": "exported", "name": "_$sSo11CKContainerC8CloudKitE6acceptySDySo15CKShareMetadataCs6ResultOySo0E0Cs5Error_pGGSayAFGYaKFTu"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo11CKContainerC8CloudKitE7_acceptySo7CKShareCSo0E8MetadataCYaKF"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo11CKContainerC8CloudKitE7_acceptySo7CKShareCSo0E8MetadataCYaKFTu"},
     {"access": "public", "introduced": "9.3", "linkage": "exported", "name": "_$sSo11CKOperationC8CloudKitE11operationIDSSvg"},
     {"access": "public", "introduced": "9.3", "linkage": "exported", "name": "_$sSo11CKOperationC8CloudKitE11operationIDSSvpMV"},
     {"access": "public", "introduced": "8", "linkage": "exported", "name": "_$sSo11CKReferenceC8CloudKit21CKRecordValueProtocolACMc"},
@@ -3048,14 +5356,14 @@
     {"access": "public", "introduced": "8", "linkage": "exported", "name": "_$sSo29CKFetchSubscriptionsOperationC8CloudKitE32fetchSubscriptionCompletionBlockySDySSSo14CKSubscriptionCGSg_s5Error_pSgtcSgvg"},
     {"access": "public", "introduced": "8", "linkage": "exported", "name": "_$sSo29CKFetchSubscriptionsOperationC8CloudKitE32fetchSubscriptionCompletionBlockySDySSSo14CKSubscriptionCGSg_s5Error_pSgtcSgvpMV"},
     {"access": "public", "introduced": "8", "linkage": "exported", "name": "_$sSo29CKFetchSubscriptionsOperationC8CloudKitE32fetchSubscriptionCompletionBlockySDySSSo14CKSubscriptionCGSg_s5Error_pSgtcSgvs"},
-    {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$sSo29CKShareRequestAccessOperationC8CloudKitE05sharecB11ResultBlockys0H0Oyyts5Error_pGcSgvM"},
-    {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$sSo29CKShareRequestAccessOperationC8CloudKitE05sharecB11ResultBlockys0H0Oyyts5Error_pGcSgvg"},
-    {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$sSo29CKShareRequestAccessOperationC8CloudKitE05sharecB11ResultBlockys0H0Oyyts5Error_pGcSgvpMV"},
-    {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$sSo29CKShareRequestAccessOperationC8CloudKitE05sharecB11ResultBlockys0H0Oyyts5Error_pGcSgvs"},
-    {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$sSo29CKShareRequestAccessOperationC8CloudKitE08perSharecB11ResultBlocky10Foundation3URLV_s0I0Oyyts5Error_pGtcSgvM"},
-    {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$sSo29CKShareRequestAccessOperationC8CloudKitE08perSharecB11ResultBlocky10Foundation3URLV_s0I0Oyyts5Error_pGtcSgvg"},
-    {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$sSo29CKShareRequestAccessOperationC8CloudKitE08perSharecB11ResultBlocky10Foundation3URLV_s0I0Oyyts5Error_pGtcSgvpMV"},
-    {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$sSo29CKShareRequestAccessOperationC8CloudKitE08perSharecB11ResultBlocky10Foundation3URLV_s0I0Oyyts5Error_pGtcSgvs"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo29CKShareRequestAccessOperationC8CloudKitE05sharecB11ResultBlockys0H0Oyyts5Error_pGcSgvM"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo29CKShareRequestAccessOperationC8CloudKitE05sharecB11ResultBlockys0H0Oyyts5Error_pGcSgvg"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo29CKShareRequestAccessOperationC8CloudKitE05sharecB11ResultBlockys0H0Oyyts5Error_pGcSgvpMV"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo29CKShareRequestAccessOperationC8CloudKitE05sharecB11ResultBlockys0H0Oyyts5Error_pGcSgvs"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo29CKShareRequestAccessOperationC8CloudKitE08perSharecB11ResultBlocky10Foundation3URLV_s0I0Oyyts5Error_pGtcSgvM"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo29CKShareRequestAccessOperationC8CloudKitE08perSharecB11ResultBlocky10Foundation3URLV_s0I0Oyyts5Error_pGtcSgvg"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo29CKShareRequestAccessOperationC8CloudKitE08perSharecB11ResultBlocky10Foundation3URLV_s0I0Oyyts5Error_pGtcSgvpMV"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo29CKShareRequestAccessOperationC8CloudKitE08perSharecB11ResultBlocky10Foundation3URLV_s0I0Oyyts5Error_pGtcSgvs"},
     {"access": "public", "introduced": "15", "linkage": "exported", "name": "_$sSo30CKModifySubscriptionsOperationC8CloudKitE06modifyB11ResultBlockys0G0Oyyts5Error_pGcSgvM"},
     {"access": "public", "introduced": "15", "linkage": "exported", "name": "_$sSo30CKModifySubscriptionsOperationC8CloudKitE06modifyB11ResultBlockys0G0Oyyts5Error_pGcSgvg"},
     {"access": "public", "introduced": "15", "linkage": "exported", "name": "_$sSo30CKModifySubscriptionsOperationC8CloudKitE06modifyB11ResultBlockys0G0Oyyts5Error_pGcSgvpMV"},
@@ -3128,11 +5436,20 @@
     {"access": "public", "introduced": "8", "linkage": "exported", "name": "_$sSo6NSDateC8CloudKit21CKRecordValueProtocolACWP"},
     {"access": "public", "introduced": "8", "linkage": "exported", "name": "_$sSo7CKAssetC8CloudKit21CKRecordValueProtocolACMc"},
     {"access": "public", "introduced": "8", "linkage": "exported", "name": "_$sSo7CKAssetC8CloudKit21CKRecordValueProtocolACWP"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$sSo7CKAssetC8CloudKitE15ExportedAssetIDV4fromAEs7Decoder_p_tKcfC"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$sSo7CKAssetC8CloudKitE15ExportedAssetIDV6encode2toys7Encoder_p_tKF"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$sSo7CKAssetC8CloudKitE15ExportedAssetIDVMa"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$sSo7CKAssetC8CloudKitE15ExportedAssetIDVMn"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$sSo7CKAssetC8CloudKitE15ExportedAssetIDVN"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$sSo7CKAssetC8CloudKitE15ExportedAssetIDVSEACMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$sSo7CKAssetC8CloudKitE15ExportedAssetIDVSeACMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$sSo7CKAssetC8CloudKitE9importingA2bCE15ExportedAssetIDV_tcfC"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$sSo7CKAssetC8CloudKitE9importingA2bCE15ExportedAssetIDV_tcfc"},
     {"access": "public", "linkage": "exported", "name": "_$sSo7CKQueryC8CloudKitE10recordType9predicateABSS_So11NSPredicateCtcfC"},
     {"access": "public", "linkage": "exported", "name": "_$sSo7CKQueryC8CloudKitE10recordType9predicateABSS_So11NSPredicateCtcfc"},
     {"access": "public", "linkage": "exported", "name": "_$sSo7CKQueryC8CloudKitE10recordTypeSSvg"},
     {"access": "public", "linkage": "exported", "name": "_$sSo7CKQueryC8CloudKitE10recordTypeSSvpMV"},
-    {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$sSo7CKShareC8CloudKitE10oneTimeURL3for10Foundation0F0VSgSS_tF"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo7CKShareC8CloudKitE10oneTimeURL3for10Foundation0F0VSgSS_tF"},
     {"access": "public", "introduced": "10", "linkage": "exported", "name": "_$sSo7CKShareC8CloudKitE14SystemFieldKeyO18thumbnailImageDataSSvgZ"},
     {"access": "public", "introduced": "10", "linkage": "exported", "name": "_$sSo7CKShareC8CloudKitE14SystemFieldKeyO18thumbnailImageDataSSvpZMV"},
     {"access": "public", "introduced": "10", "linkage": "exported", "name": "_$sSo7CKShareC8CloudKitE14SystemFieldKeyO5titleSSvgZ"},
@@ -3207,7 +5524,7 @@
     {"access": "public", "introduced": "8", "linkage": "exported", "name": "_$ss6UInt64V8CloudKit21CKRecordValueProtocolACMc"},
     {"access": "public", "introduced": "8", "linkage": "exported", "name": "_$ss6UInt64V8CloudKit21CKRecordValueProtocolACWP"}
    ],
-   "target": "arm64e-apple-ios26.5"
+   "target": "arm64e-apple-ios27.0"
   }
  ],
  "version": "1.0"

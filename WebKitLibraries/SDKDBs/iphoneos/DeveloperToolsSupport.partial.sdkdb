@@ -943,6 +943,8 @@
     {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$s21DeveloperToolsSupport15PreviewRegistryPAAE7previewAA0D0VvgZ"},
     {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$s21DeveloperToolsSupport15PreviewRegistryPAAE7previewAA0D0VvpZMV"},
     {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$s21DeveloperToolsSupport15PreviewRegistryTL"},
+    {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$s21DeveloperToolsSupport16PreviewArgumentsVMa"},
+    {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$s21DeveloperToolsSupport16PreviewArgumentsVMn"},
     {"access": "public", "introduced": "13", "linkage": "exported", "name": "_$s21DeveloperToolsSupport17__designTimeFloat_8fallbackxSS_xts013ExpressibleByF7LiteralRzlF"},
     {"access": "public", "introduced": "18", "linkage": "exported", "name": "_$s21DeveloperToolsSupport18PreviewBodyBuilderV10buildBlockyxxFZ"},
     {"access": "public", "linkage": "exported", "name": "_$s21DeveloperToolsSupport18PreviewBodyBuilderV10buildBlockyxxd_tFZ", "unavailable": true},
@@ -958,6 +960,7 @@
     {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$s21DeveloperToolsSupport18PreviewUnavailableVN"},
     {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$s21DeveloperToolsSupport18PreviewUnavailableVs5ErrorAAMc"},
     {"access": "public", "introduced": "14", "linkage": "exported", "name": "_$s21DeveloperToolsSupport18__designTimeString_8fallback2os12OSLogMessageVSS_AFtF"},
+    {"access": "public", "introduced": "13", "linkage": "exported", "name": "_$s21DeveloperToolsSupport18__designTimeString_8fallbacks7UnicodeO6ScalarVSS_AGtF"},
     {"access": "public", "introduced": "13", "linkage": "exported", "name": "_$s21DeveloperToolsSupport18__designTimeString_8fallbackxSS_xts013ExpressibleByF7LiteralRzlF"},
     {"access": "public", "introduced": "13", "linkage": "exported", "name": "_$s21DeveloperToolsSupport18__designTimeString_8fallbackxSS_xts43ExpressibleByExtendedGraphemeClusterLiteralRzlF"},
     {"access": "public", "introduced": "13", "linkage": "exported", "name": "_$s21DeveloperToolsSupport19__designTimeBoolean_8fallbackxSS_xts013ExpressibleByF7LiteralRzlF"},
@@ -1008,7 +1011,7 @@
     {"access": "public", "introduced": "13", "linkage": "exported", "name": "_$s7SwiftUI13PreviewLayoutOMn"},
     {"access": "public", "introduced": "13", "linkage": "exported", "name": "_$s7SwiftUI13PreviewLayoutON"}
    ],
-   "target": "arm64e-apple-ios26.5"
+   "target": "arm64e-apple-ios27.0"
   }
  ],
  "version": "1.0"

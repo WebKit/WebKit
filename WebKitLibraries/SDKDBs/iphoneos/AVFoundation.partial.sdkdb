@@ -2,7 +2,10 @@
 {
  "PublicSDKContentRoot": [
   {
-   "target": "arm64e-apple-ios26.5"
+   "target": "arm64e-apple-ios27"
+  },
+  {
+   "target": "arm64e.x1-apple-ios27"
   }
  ],
  "version": "1.0"

@@ -27,6 +27,8 @@
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$s9WiFiAware10WAEndpointV16publishedServiceAA013WAPublishableF0VSgvpMV"},
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$s9WiFiAware10WAEndpointV17subscribedServiceAA014WASubscribableF0VSgvg"},
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$s9WiFiAware10WAEndpointV17subscribedServiceAA014WASubscribableF0VSgvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9WiFiAware10WAEndpointV19performanceForecastSDyAA17WAPerformanceModeOAA0gF0VGvg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9WiFiAware10WAEndpointV19performanceForecastSDyAA17WAPerformanceModeOAA0gF0VGvpMV"},
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$s9WiFiAware10WAEndpointV2eeoiySbAC_ACtFZ"},
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$s9WiFiAware10WAEndpointV4hash4intoys6HasherVz_tF"},
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$s9WiFiAware10WAEndpointV6deviceAA14WAPairedDeviceVvg"},
@@ -355,6 +357,25 @@
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$s9WiFiAware20WAPublishableServiceVSeAAMc"},
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$s9WiFiAware20WAPublishableServiceVs12IdentifiableAAMc"},
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$s9WiFiAware20WAPublishableServiceVs23CustomStringConvertibleAAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9WiFiAware21WAPerformanceForecastV14localTimestamps15ContinuousClockV7InstantVvg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9WiFiAware21WAPerformanceForecastV14localTimestamps15ContinuousClockV7InstantVvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9WiFiAware21WAPerformanceForecastV14signalStrengthSdSgvg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9WiFiAware21WAPerformanceForecastV14signalStrengthSdSgvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9WiFiAware21WAPerformanceForecastV22localThroughputCeilingSdSgvg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9WiFiAware21WAPerformanceForecastV22localThroughputCeilingSdSgvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9WiFiAware21WAPerformanceForecastV23localThroughputCapacitySdSgvg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9WiFiAware21WAPerformanceForecastV23localThroughputCapacitySdSgvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9WiFiAware21WAPerformanceForecastV28localThroughputCapacityRatioSdSgvg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9WiFiAware21WAPerformanceForecastV28localThroughputCapacityRatioSdSgvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9WiFiAware21WAPerformanceForecastV28unavailabilityLatencyCeilings8DurationVSgvg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9WiFiAware21WAPerformanceForecastV28unavailabilityLatencyCeilings8DurationVSgvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9WiFiAware21WAPerformanceForecastV42localInfrastructureThroughputCapacityRatioSdSgvg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9WiFiAware21WAPerformanceForecastV42localInfrastructureThroughputCapacityRatioSdSgvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9WiFiAware21WAPerformanceForecastV9timestamp10Foundation4DateVvg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9WiFiAware21WAPerformanceForecastV9timestamp10Foundation4DateVvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9WiFiAware21WAPerformanceForecastVMa"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9WiFiAware21WAPerformanceForecastVMn"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s9WiFiAware21WAPerformanceForecastVN"},
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$s9WiFiAware21WASubscribableServiceV11allServicesSDySSACGvgZ"},
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$s9WiFiAware21WASubscribableServiceV11allServicesSDySSACGvpZMV"},
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$s9WiFiAware21WASubscribableServiceV11descriptionSSvg"},
@@ -530,7 +551,7 @@
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$s9WiFiAware9WAServicePs23CustomStringConvertibleTb"},
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$s9WiFiAware9WAServiceTL"}
    ],
-   "target": "arm64e-apple-ios26.5"
+   "target": "arm64e-apple-ios27.0"
   }
  ],
  "version": "1.0"

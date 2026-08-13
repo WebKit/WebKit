@@ -185,9 +185,10 @@
     {"access": "public", "linkage": "exported", "name": "_$sSo9MTLBufferP5MetalE14didModifyRangeyySnySiGF", "unavailable": true},
     {"access": "public", "introduced": "14", "linkage": "exported", "name": "_$sSo9MTLDeviceP5MetalE16sampleTimestampss6UInt64V3cpu_AF3gputyF"},
     {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$sSo9MTLDeviceP5MetalE23makeRenderPipelineState10descriptor7optionsSo09MTLRendereF0_p_So0iE10ReflectionCSgtSo07MTLMeshdE10DescriptorC_So17MTLPipelineOptionVtKF"},
-    {"access": "public", "introduced": "11", "linkage": "exported", "name": "_$sSo9MTLDeviceP5MetalE25getDefaultSamplePositions11sampleCountSaySo17MTLSamplePositionaGSi_tF"}
+    {"access": "public", "introduced": "11", "linkage": "exported", "name": "_$sSo9MTLDeviceP5MetalE25getDefaultSamplePositions11sampleCountSaySo17MTLSamplePositionaGSi_tF"},
+    {"access": "public", "linkage": "exported", "name": "__swift_FORCE_LOAD_$_swiftMetal"}
    ],
-   "target": "arm64e-apple-ios26.5"
+   "target": "arm64e-apple-ios27.0"
   }
  ],
  "version": "1.0"

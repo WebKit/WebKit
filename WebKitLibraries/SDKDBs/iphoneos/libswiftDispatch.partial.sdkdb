@@ -743,9 +743,10 @@
     {"access": "public", "linkage": "exported", "name": "_$sSo33OS_dispatch_source_memorypressureP8DispatchE4dataSo0a1_b1_C0CACE19MemoryPressureEventVvg"},
     {"access": "public", "linkage": "exported", "name": "_$sSo33OS_dispatch_source_memorypressureP8DispatchE4dataSo0a1_b1_C0CACE19MemoryPressureEventVvpMV"},
     {"access": "public", "linkage": "exported", "name": "_$sSo33OS_dispatch_source_memorypressureP8DispatchE4maskSo0a1_b1_C0CACE19MemoryPressureEventVvg"},
-    {"access": "public", "linkage": "exported", "name": "_$sSo33OS_dispatch_source_memorypressureP8DispatchE4maskSo0a1_b1_C0CACE19MemoryPressureEventVvpMV"}
+    {"access": "public", "linkage": "exported", "name": "_$sSo33OS_dispatch_source_memorypressureP8DispatchE4maskSo0a1_b1_C0CACE19MemoryPressureEventVvpMV"},
+    {"access": "public", "linkage": "exported", "name": "__swift_FORCE_LOAD_$_swiftDispatch"}
    ],
-   "target": "arm64e-apple-ios26.5"
+   "target": "arm64e-apple-ios27.0"
   }
  ],
  "version": "1.0"
