@@ -34,6 +34,7 @@ maybe_enter_webkit_container_sdk()
 import argparse
 import json
 import logging
+import subprocess
 import traceback
 import urllib3
 from selenium.webdriver.common.by import By
@@ -171,7 +172,7 @@ class MVTWebDriverRunner():
         if retry_if_failure_to_start:
             return self._retry_if_timeout(self.start_driver, None, False)
         # Start the service (WebDriver) in its own process group to ensure cleaning everything at stop_driver()
-        self.driver_service = self.driver_service_class(executable_path=self._run_webdriver_script_path, env=self.environ_for_test,
+        self.driver_service = self.driver_service_class(executable_path=self._run_webdriver_script_path, env=self.environ_for_test, log_output=subprocess.STDOUT,
                           service_args=[f"--{self.configuration}", f"--{self.platform}"], popen_kw={"process_group": 0})
         self.driver = self.driver_class(options=self.driver_options, service=self.driver_service)
         self.driver.maximize_window()
