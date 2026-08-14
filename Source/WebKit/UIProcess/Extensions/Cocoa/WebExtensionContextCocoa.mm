@@ -2538,7 +2538,11 @@ WKWebViewConfiguration *WebExtensionContext::webViewConfiguration(WebViewPurpose
     auto *preferences = configuration.preferences;
     preferences._javaScriptCanAccessClipboard = hasPermission(WebExtensionPermission::clipboardWrite());
 
-    if (purpose == WebViewPurpose::Background || purpose == WebViewPurpose::Inspector) {
+    bool shouldDisableThrottling = purpose == WebViewPurpose::Background || purpose == WebViewPurpose::Inspector;
+#if ENABLE(WK_WEB_EXTENSIONS_OFFSCREEN)
+    shouldDisableThrottling = shouldDisableThrottling || purpose == WebViewPurpose::Offscreen;
+#endif
+    if (shouldDisableThrottling) {
         // FIXME: <https://webkit.org/b/263286> Consider allowing the background page to throttle or be suspended.
         preferences._hiddenPageDOMTimerThrottlingEnabled = NO;
         preferences._pageVisibilityBasedProcessSuppressionEnabled = NO;

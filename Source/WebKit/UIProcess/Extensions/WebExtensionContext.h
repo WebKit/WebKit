@@ -129,7 +129,12 @@ OBJC_PROTOCOL(WKWebExtensionWindow);
 #if PLATFORM(MAC)
 OBJC_CLASS NSEvent;
 OBJC_CLASS NSMenu;
+OBJC_CLASS NSWindow;
 OBJC_CLASS WKOpenPanelParameters;
+#endif
+
+#if PLATFORM(IOS_FAMILY)
+OBJC_CLASS UIWindow;
 #endif
 
 namespace PAL {
@@ -1140,6 +1145,11 @@ private:
     RetainPtr<WKWebView> m_offscreenWebView;
     Variant<std::monostate, Ref<ProcessThrottlerActivity>, Ref<ProcessActivityGroup>> m_offscreenWebViewActivity;
     Vector<CompletionHandler<void(Expected<void, WebExtensionError>&&)>> m_offscreenDocumentLoadCompletionHandlers;
+#if PLATFORM(MAC)
+    RetainPtr<NSWindow> m_offscreenWebViewWindow;
+#elif PLATFORM(IOS_FAMILY)
+    RetainPtr<UIWindow> m_offscreenWebViewWindow;
+#endif
 #endif
 
     RetainPtr<_WKWebExtensionContextDelegate> m_delegate;
