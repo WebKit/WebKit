@@ -187,23 +187,27 @@ InterpolationQuality ImageQualityController::chooseInterpolationQuality(Graphics
     }
 
     auto saveEntryIfNewOrSizeChanged = [&]() {
-        if (!oldSize || oldSize.value() != size)
+        bool isNewOrChanged = !oldSize || oldSize.value() != size;
+        if (isNewOrChanged)
             set(object, innerMap, layer, size);
+        return isNewOrChanged;
     };
 
-    // If an animated resize is active, paint in low quality and kick the timer ahead.
+    // If an animated resize is active, paint in low quality. Only push the
+    // "resize settled" timer back out when this object's size actually changed,
+    // otherwise every repaint will perpetually restart the timer and
+    // m_animatedResizeIsActive would never get a chance to clear.
     if (m_animatedResizeIsActive) {
-        saveEntryIfNewOrSizeChanged();
-        restartTimer();
+        if (saveEntryIfNewOrSizeChanged())
+            restartTimer();
         return InterpolationQuality::Low;
     }
 
     // If this is the first time resizing this image, or its size is the
-    // same as the last resize, draw at high res, but record the paint
-    // size and set the timer.
+    // same as the last resize, draw at high res.
     if (!oldSize || oldSize.value() == size) {
-        saveEntryIfNewOrSizeChanged();
-        restartTimer();
+        if (saveEntryIfNewOrSizeChanged())
+            restartTimer();
         return InterpolationQuality::Default;
     }
 
