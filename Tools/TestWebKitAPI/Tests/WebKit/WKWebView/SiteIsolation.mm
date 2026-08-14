@@ -5098,6 +5098,38 @@ TEST(SiteIsolation, GoBackReloadsDynamicallyCreatedCrossSiteIframe)
     EXPECT_WK_STREQ("https://webkit.org/a2", [webView objectByEvaluatingJavaScript:@"location.href" inFrame:[webView firstChildFrame]]);
 }
 
+TEST(SiteIsolation, GoBackToCrossSiteIframeAfterPersistedSessionRestore)
+{
+    HTTPServer server({
+        { "/example"_s, { "<iframe src='https://webkit.org/source'></iframe>"_s } },
+        { "/source"_s, { "<script> alert('source'); </script>"_s } },
+        { "/destination"_s, { "<script> alert('destination'); </script>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server);
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "source");
+
+    [webView evaluateJavaScript:@"location.href = 'https://apple.com/destination'" inFrame:[webView firstChildFrame] completionHandler:nil];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "destination");
+
+    RetainPtr sessionState = [webView _sessionState];
+    RetainPtr persistedSessionState = adoptNS([[_WKSessionState alloc] initWithData:[sessionState data]]);
+
+    auto [newWebView, newNavigationDelegate] = siteIsolatedViewAndDelegate(server);
+    [newWebView _restoreSessionState:persistedSessionState.get() andNavigate:YES];
+    EXPECT_WK_STREQ([newWebView _test_waitForAlert], "destination");
+
+    RetainPtr childFrame = [newWebView firstChildFrame];
+
+    [newWebView goBack];
+    EXPECT_WK_STREQ("source", [newWebView _test_waitForAlert]);
+    EXPECT_WK_STREQ("https://webkit.org/source", [newWebView objectByEvaluatingJavaScript:@"location.href" inFrame:childFrame.get()]);
+
+    [newWebView goForward];
+    EXPECT_WK_STREQ("destination", [newWebView _test_waitForAlert]);
+}
+
 TEST(SiteIsolation, AdvancedPrivacyProtectionsHideScreenMetricsFromBindings)
 {
     auto frameHTML = [NSString stringWithContentsOfFile:[NSBundle.test_resourcesBundle pathForResource:@"simple" ofType:@"html"] encoding:NSUTF8StringEncoding error:NULL];

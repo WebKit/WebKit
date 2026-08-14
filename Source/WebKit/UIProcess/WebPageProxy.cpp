@@ -2934,10 +2934,9 @@ bool WebPageProxy::dispatchPerFrameTraversals(WebBackForwardListFrameItem& fromF
     for (size_t i = 0; i < toChildren.size(); ++i) {
         Ref toChild = toChildren[i];
         auto childFrameID = toChild->frameID();
-        if (!childFrameID)
-            continue;
-        // Stored frameIDs can disagree across entries after a process swap; fall back to position, which is stable across history.
-        RefPtr fromChild = fromFrame.childItemForFrameID(*childFrameID);
+        // Stored frameIDs can disagree across entries, or be entirely unset after a persisted session restore
+        // Fall back to position, which is stable across history, whenever ID-based lookup isn't possible or doesn't find a match.
+        RefPtr fromChild = childFrameID ? fromFrame.childItemForFrameID(*childFrameID) : nullptr;
         // A duplicated frameID in the to tree can resolve two siblings to the same from child; pairing both
         // would dispatch a second traversal to the same live frame and clobber the intended navigation. Fall
         // back to position when the resolved from child is already paired.
@@ -2945,6 +2944,12 @@ bool WebPageProxy::dispatchPerFrameTraversals(WebBackForwardListFrameItem& fromF
             fromChild = fromFrame.childItemAtIndex(i);
         if (!fromChild || !pairedFromChildren.add(fromChild->identifier()).isNewEntry)
             continue;
+
+        if (toChild->frameState().wasRestoredFromSession && !childFrameID) {
+            if (auto fromFrameID = fromChild->frameID(); fromFrameID && !toChild->frameID())
+                toChild->updateFrameID(*fromFrameID);
+        }
+
         if (dispatchPerFrameTraversals(*fromChild, toChild, navigationID, frameLoadType, shouldRestore, publicSuffix))
             anySent = true;
     }
