@@ -241,10 +241,12 @@ bool AuxiliaryProcessProxy::LogXPCEventHandler::handleXPCEvent(xpc_object_t even
 }
 
 #if ENABLE(STREAMING_IPC_IN_LOG_FORWARDING)
-void AuxiliaryProcessProxy::createLogStream(IPC::StreamServerConnectionHandle&& serverConnection, LogStreamIdentifier identifier, CompletionHandler<void(IPC::Semaphore& streamWakeUpSemaphore, IPC::Semaphore& streamClientWaitSemaphore)>&& completionHandler)
+void AuxiliaryProcessProxy::createLogStream(IPC::StreamServerConnectionHandle&& serverConnection, LogStreamIdentifier identifier, CompletionHandler<void()>&& completionHandler)
 {
-    MESSAGE_CHECK_BASE(!m_logStream.get(), connection());
-    m_logStream = LogStream::create(*this, processName(), WTF::move(serverConnection), identifier, WTF::move(completionHandler));
+    MESSAGE_CHECK_COMPLETION_BASE(!m_logStream.get(), connection(), completionHandler());
+    m_logStream = LogStream::create(*this, processName(), WTF::move(serverConnection), identifier);
+    // The child starts forwarding log messages only after this reply: nothing drains the stream before.
+    completionHandler();
 }
 #else
 void AuxiliaryProcessProxy::createLogStream(LogStreamIdentifier identifier, CompletionHandler<void()>&& completionHandler)

@@ -855,7 +855,7 @@ RetainPtr<NSDictionary> WebProcess::additionalStateForDiagnosticReport() const
 
 #if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
 #if ENABLE(STREAMING_IPC_IN_LOG_FORWARDING)
-void WebProcess::sendCreateLogStreamToParent(IPC::Connection& parentConnection, IPC::StreamServerConnectionHandle&& handle, LogStreamIdentifier identifier, CompletionHandler<void(IPC::Semaphore&&, IPC::Semaphore&&)>&& completionHandler)
+void WebProcess::sendCreateLogStreamToParent(IPC::Connection& parentConnection, IPC::StreamServerConnectionHandle&& handle, LogStreamIdentifier identifier, CompletionHandler<void()>&& completionHandler)
 {
     parentConnection.sendWithAsyncReply(Messages::WebProcessProxy::CreateLogStream(WTF::move(handle), identifier), WTF::move(completionHandler));
 }

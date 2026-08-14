@@ -23,13 +23,6 @@ promise_test(async t => {
 
     const remoteRenderingBackend = streamConnection.newInterface("RemoteRenderingBackend", renderingBackendIdentifier);
 
-    const didInitializeReply = streamConnection.connection.waitForMessage(
-        renderingBackendIdentifier,
-        IPC.messages.RemoteRenderingBackendProxy_DidInitialize.name,
-        1
-    );
-    streamConnection.connection.setSemaphores(didInitializeReply[0].value, didInitializeReply[1].value);
-
     const imageBufferSetIdentifier = randomIPCID();
     const graphicsContextIdentifier = randomIPCID();
 

@@ -323,7 +323,6 @@ public:
         auto [clientConnection, serverConnectionHandle] = WTF::move(*connectionPair);
         auto serverConnection = IPC::StreamServerConnection::tryCreate(WTF::move(serverConnectionHandle), { }).releaseNonNull();
         m_clientConnection = WTF::move(clientConnection);
-        m_clientConnection->setSemaphores(copyViaEncoder(serverQueue().wakeUpSemaphore()).value(), copyViaEncoder(serverConnection->clientWaitSemaphore()).value());
         m_clientConnection->open(m_mockClientReceiver);
         m_mockServerReceiver = MockStreamServerConnectionClient::create();
         m_mockServerReceiver->setAsyncMessageHandler([] (IPC::StreamServerConnection& connection, IPC::Decoder& decoder) {
@@ -650,7 +649,6 @@ public:
         auto [clientConnection, serverConnectionHandle] = WTF::move(*connectionPair);
         auto serverConnection = IPC::StreamServerConnection::tryCreate(WTF::move(serverConnectionHandle), { }).releaseNonNull();
         m_clientConnection = WTF::move(clientConnection);
-        m_clientConnection->setSemaphores(copyViaEncoder(serverQueue().wakeUpSemaphore()).value(), copyViaEncoder(serverConnection->clientWaitSemaphore()).value());
         m_clientConnection->open(m_mockClientReceiver);
         m_mockServerReceiver = MockStreamServerConnectionClient::create();
         if (testType() == InvalidMessageTestType::DecodeError) {

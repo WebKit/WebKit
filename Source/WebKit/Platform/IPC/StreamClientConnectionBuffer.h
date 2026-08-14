@@ -25,17 +25,19 @@
 
 #pragma once
 
+#include "IPCEvent.h"
 #include "IPCSemaphore.h"
 #include "StreamConnectionBuffer.h"
 #include "StreamConnectionEncoder.h"
+#include <atomic>
 
 namespace IPC {
 
 class StreamClientConnectionBuffer : public StreamConnectionBuffer {
 public:
-    static std::optional<StreamClientConnectionBuffer> create(unsigned dataSizeLog2);
-    StreamClientConnectionBuffer(StreamClientConnectionBuffer&&) = default;
-    StreamClientConnectionBuffer& operator=(StreamClientConnectionBuffer&&) = default;
+    static std::optional<StreamClientConnectionBuffer> create(unsigned dataSizeLog2, Event&& clientWait);
+    StreamClientConnectionBuffer(StreamClientConnectionBuffer&&);
+    StreamClientConnectionBuffer& operator=(StreamClientConnectionBuffer&&);
 
     std::optional<std::span<uint8_t>> tryAcquire(Timeout);
     std::optional<std::span<uint8_t>> tryAcquireAll(Timeout);
@@ -44,14 +46,15 @@ public:
     WakeUpServer release(size_t writeSize);
     void resetClientOffset();
     std::span<uint8_t> alignedMutableSpan(size_t offset, size_t limit);
-    void setSemaphores(IPC::Semaphore&& wakeUp, IPC::Semaphore&& clientWait);
-    bool hasSemaphores() const { return m_semaphores.has_value(); }
+    // Called once, from the connection receive thread, when the server sends its wake up semaphore.
+    void setWakeUpSemaphore(IPC::Semaphore&&);
+    bool hasWakeUpSemaphore() const { return m_hasWakeUpSemaphore.load(std::memory_order_acquire); }
     void wakeUpServer();
 
 private:
     static constexpr size_t minimumMessageSize = StreamConnectionEncoder::minimumMessageSize;
     static constexpr size_t messageAlignment = StreamConnectionEncoder::messageAlignment;
-    explicit StreamClientConnectionBuffer(Ref<WebCore::SharedMemory>);
+    StreamClientConnectionBuffer(Ref<WebCore::SharedMemory>, Event&& clientWait);
 
     size_t size(size_t offset, size_t limit) const;
     size_t alignOffset(size_t offset) const { return StreamConnectionBuffer::alignOffset<messageAlignment>(offset, minimumMessageSize); }
@@ -61,14 +64,40 @@ private:
     size_t toLimit(ClientLimit) const;
 
     size_t m_clientOffset { 0 };
-    struct Semaphores {
-        Semaphore wakeUp;
-        Semaphore clientWait;
-    };
-    std::optional<Semaphores> m_semaphores;
+    // Waited on for ring buffer backpressure. The client owns this end from the start, so senders can
+    // always wait, even before the server has opened its end of the connection. The matching Signal
+    // travels to the server in StreamServerConnectionHandle, so the wait is also interrupted if the
+    // server process dies and no senders remain.
+    Event m_clientWait;
+    // The work queue's wake up semaphore is per work queue, so it can only come from the server, in
+    // MessageName::InitializeStreamClientConnection. It is written by the connection receive thread
+    // and read by the sender, exactly once and never reset, so m_hasWakeUpSemaphore publishes it:
+    // only access m_wakeUp after hasWakeUpSemaphore() has returned true.
+    std::optional<Semaphore> m_wakeUp;
+    std::atomic<bool> m_hasWakeUpSemaphore { false };
 };
 
-inline std::optional<StreamClientConnectionBuffer> StreamClientConnectionBuffer::create(unsigned dataSizeLog2)
+inline StreamClientConnectionBuffer::StreamClientConnectionBuffer(StreamClientConnectionBuffer&& other)
+    : StreamConnectionBuffer(WTF::move(other))
+    , m_clientOffset(other.m_clientOffset)
+    , m_clientWait(WTF::move(other.m_clientWait))
+    , m_wakeUp(WTF::move(other.m_wakeUp))
+    , m_hasWakeUpSemaphore(other.m_hasWakeUpSemaphore.load(std::memory_order_relaxed))
+{
+    // The buffer is moved only during construction, before it is shared with other threads.
+}
+
+inline StreamClientConnectionBuffer& StreamClientConnectionBuffer::operator=(StreamClientConnectionBuffer&& other)
+{
+    StreamConnectionBuffer::operator=(WTF::move(other));
+    m_clientOffset = other.m_clientOffset;
+    m_clientWait = WTF::move(other.m_clientWait);
+    m_wakeUp = WTF::move(other.m_wakeUp);
+    m_hasWakeUpSemaphore.store(other.m_hasWakeUpSemaphore.load(std::memory_order_relaxed), std::memory_order_relaxed);
+    return *this;
+}
+
+inline std::optional<StreamClientConnectionBuffer> StreamClientConnectionBuffer::create(unsigned dataSizeLog2, Event&& clientWait)
 {
     // Currently expected to be not that big, and offset to fit in size_t with the tag bits.
     if (dataSizeLog2 >= 31)
@@ -84,11 +113,12 @@ inline std::optional<StreamClientConnectionBuffer> StreamClientConnectionBuffer:
     auto memory = WebCore::SharedMemory::allocate(size);
     if (!memory)
         return std::nullopt;
-    return StreamClientConnectionBuffer { memory.releaseNonNull() };
+    return StreamClientConnectionBuffer { memory.releaseNonNull(), WTF::move(clientWait) };
 }
 
-inline StreamClientConnectionBuffer::StreamClientConnectionBuffer(Ref<WebCore::SharedMemory> memory)
+inline StreamClientConnectionBuffer::StreamClientConnectionBuffer(Ref<WebCore::SharedMemory> memory, Event&& clientWait)
     : StreamConnectionBuffer(WTF::move(memory))
+    , m_clientWait(WTF::move(clientWait))
 {
     RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(sharedMemorySizeIsValid(m_sharedMemory->size()));
 
@@ -115,7 +145,7 @@ inline std::optional<std::span<uint8_t>> StreamClientConnectionBuffer::tryAcquir
             break;
         ClientLimit oldClientLimit = sharedClientLimit().compareExchangeStrong(clientLimit, ClientLimit::clientIsWaitingTag, std::memory_order_acq_rel, std::memory_order_acquire);
         if (clientLimit == oldClientLimit) {
-            if (!m_semaphores || !m_semaphores->clientWait.waitFor(timeout))
+            if (!m_clientWait.waitFor(timeout))
                 return std::nullopt;
             clientLimit = sharedClientLimit().load(std::memory_order_acquire);
         } else
@@ -147,7 +177,7 @@ inline std::optional<std::span<uint8_t>> StreamClientConnectionBuffer::tryAcquir
         if (!clientLimit && (clientOffset == ClientOffset::serverIsSleepingTag || !clientOffset))
             break;
 
-        if (!m_semaphores || !m_semaphores->clientWait.waitFor(timeout))
+        if (!m_clientWait.waitFor(timeout))
             return std::nullopt;
         if (timeout.didTimeOut())
             return std::nullopt;
@@ -209,17 +239,20 @@ inline size_t StreamClientConnectionBuffer::toLimit(ClientLimit clientLimit) con
     return static_cast<size_t>(clientLimit);
 }
 
-inline void StreamClientConnectionBuffer::setSemaphores(IPC::Semaphore&& wakeUp, IPC::Semaphore&& clientWait)
+inline void StreamClientConnectionBuffer::setWakeUpSemaphore(IPC::Semaphore&& wakeUp)
 {
-    m_semaphores = { WTF::move(wakeUp), WTF::move(clientWait) };
-    m_semaphores->wakeUp.signal();
+    ASSERT(!hasWakeUpSemaphore());
+    m_wakeUp = WTF::move(wakeUp);
+    m_hasWakeUpSemaphore.store(true, std::memory_order_release);
+    // Let the server drain whatever was written before its semaphore arrived.
+    m_wakeUp->signal();
 }
 
 inline void StreamClientConnectionBuffer::wakeUpServer()
 {
-    if (!m_semaphores)
+    if (!hasWakeUpSemaphore())
         return;
-    m_semaphores->wakeUp.signal();
+    m_wakeUp->signal();
 }
 
 }

@@ -414,7 +414,7 @@ private:
     static Ref<RemoteGraphicsContextGLProxy> platformCreate(const WebCore::GraphicsContextGLAttributes&, RemoteRenderingBackendProxy&);
     void initializeIPC(Ref<IPC::StreamClientConnection>&&, RemoteRenderingBackendIdentifier, IPC::StreamServerConnection::Handle&&, SerialFunctionDispatcher&);
     // Messages to be received.
-    void wasCreated(IPC::Semaphore&&, IPC::Semaphore&&, std::optional<RemoteGraphicsContextGLInitializationState>&&);
+    void wasCreated(std::optional<RemoteGraphicsContextGLInitializationState>&&);
     void wasLost();
     void addDebugMessage(GCGLenum, GCGLenum, GCGLenum, CString&&);
     void memoryCostChanged(std::optional<uint64_t>);

@@ -18,9 +18,6 @@
     CoreIPC.GPU.GPUConnectionToWebProcess.CreateRenderingBackend(0, { renderingBackendIdentifier: renderingBackendIdentifier, connectionHandle: connection });
     const remoteBackend = connection.newInterface("RemoteRenderingBackend", renderingBackendIdentifier);
 
-    const didInitializeReply = connection.connection.waitForMessage(renderingBackendIdentifier, IPC.messages.RemoteRenderingBackendProxy_DidInitialize.name, 1)
-    connection.connection.setSemaphores(didInitializeReply[0].value, didInitializeReply[1].value);
-
     // The pixel formats to test
     const pixelFormats = [
       0, // RGBA8

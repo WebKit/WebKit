@@ -62,9 +62,6 @@ async function main() {
             connectionHandle: streamConnection
         });
         const remoteRenderingBackend = streamConnection.newInterface("RemoteRenderingBackend", renderingBackendIdentifier);
-        const didInitializeReply = streamConnection.connection.waitForMessage(
-            renderingBackendIdentifier, IPC.messages.RemoteRenderingBackendProxy_DidInitialize.name, 5);
-        streamConnection.connection.setSemaphores(didInitializeReply[0].value, didInitializeReply[1].value);
         return { streamConnection, remoteRenderingBackend, remoteRenderingBackendIdentifier: renderingBackendIdentifier };
     }
 

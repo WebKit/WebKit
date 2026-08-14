@@ -99,10 +99,6 @@ public:
     static JSIPCSemaphore* toWrapped(JSContextRef, JSValueRef);
 
     void encode(IPC::Encoder& encoder) const { encoder << m_semaphore; }
-    IPC::Semaphore exchange(IPC::Semaphore&& semaphore = { })
-    {
-        return std::exchange(m_semaphore, WTF::move(semaphore));
-    }
 
 private:
     JSIPCSemaphore(IPC::Semaphore&& semaphore)
@@ -222,8 +218,6 @@ private:
     {
     }
 
-    void setSemaphores(JSIPCSemaphore& jsWakeUpSemaphore, JSIPCSemaphore& jsClientWaitSemaphore) { m_streamConnection->setSemaphores(jsWakeUpSemaphore.exchange(), jsClientWaitSemaphore.exchange()); }
-
     static JSClassRef wrapperClass();
     static JSIPCStreamClientConnection* unwrap(JSObjectRef);
     static void initialize(JSContextRef, JSObjectRef);
@@ -235,7 +229,6 @@ private:
     static JSValueRef open(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
     static JSValueRef invalidate(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
     static JSValueRef streamBuffer(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
-    static JSValueRef setSemaphores(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
     static JSValueRef sendMessage(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
     static JSValueRef sendWithAsyncReply(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
     static JSValueRef sendSyncMessage(JSContextRef, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
@@ -1060,7 +1053,6 @@ const JSStaticFunction* JSIPCStreamClientConnection::staticFunctions()
         { "open", open, kJSPropertyAttributeDontDelete | kJSPropertyAttributeReadOnly },
         { "invalidate", invalidate, kJSPropertyAttributeDontDelete | kJSPropertyAttributeReadOnly },
         { "streamBuffer", streamBuffer, kJSPropertyAttributeDontDelete | kJSPropertyAttributeReadOnly },
-        { "setSemaphores", setSemaphores, kJSPropertyAttributeDontDelete | kJSPropertyAttributeReadOnly },
         { "sendMessage", sendMessage, kJSPropertyAttributeDontDelete | kJSPropertyAttributeReadOnly },
         { "sendWithAsyncReply", sendWithAsyncReply, kJSPropertyAttributeDontDelete | kJSPropertyAttributeReadOnly },
         { "sendSyncMessage", sendSyncMessage, kJSPropertyAttributeDontDelete | kJSPropertyAttributeReadOnly },
@@ -1105,39 +1097,6 @@ JSValueRef JSIPCStreamClientConnection::streamBuffer(JSContextRef context, JSObj
     }
 
     return JSIPCStreamConnectionBuffer::create(*jsStreamConnection)->createJSWrapper(context);
-}
-
-JSValueRef JSIPCStreamClientConnection::setSemaphores(JSContextRef context, JSObjectRef, JSObjectRef thisObject, size_t rawArgumentCount, const JSValueRef rawArguments[], JSValueRef* exception)
-{
-    auto arguments = unsafeMakeSpan(rawArguments, rawArgumentCount);
-
-    auto* globalObject = toJS(context);
-    JSC::JSLockHolder lock(globalObject->vm());
-    RefPtr jsStreamConnection = toWrapped(context, thisObject);
-    if (!jsStreamConnection) {
-        *exception = createTypeError(context, "Wrong type"_s);
-        return JSValueMakeUndefined(context);
-    }
-
-    if (arguments.size() < 2) {
-        *exception = createTypeError(context, "Must specify an IPC semaphore as the first and second argument"_s);
-        return JSValueMakeUndefined(context);
-    }
-
-    RefPtr jsWakeUpSemaphore = JSIPCSemaphore::toWrapped(context, arguments[0]);
-    if (!jsWakeUpSemaphore) {
-        *exception = createTypeError(context, "Wrong type (expected Semaphore)"_s);
-        return JSValueMakeUndefined(context);
-    }
-
-    RefPtr jsClientWaitSemaphore = JSIPCSemaphore::toWrapped(context, arguments[1]);
-    if (!jsClientWaitSemaphore) {
-        *exception = createTypeError(context, "Wrong type (expected Semaphore)"_s);
-        return JSValueMakeUndefined(context);
-    }
-
-    jsStreamConnection->setSemaphores(*jsWakeUpSemaphore, *jsClientWaitSemaphore);
-    return JSValueMakeUndefined(context);
 }
 
 struct IPCStreamMessageInfo {

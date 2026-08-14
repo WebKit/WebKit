@@ -194,8 +194,7 @@ void AuxiliaryProcess::initializeLogForwarding(bool isDebugLoggingEnabled)
     protect(connection)->open(protect(*this), RunLoop::currentSingleton());
     auto newLogClient = makeUnique<LogClient>(Ref { connection });
     auto identifier = newLogClient->identifier();
-    sendCreateLogStreamToParent(*parentConnection, WTF::move(handle), identifier, [newLogClient = WTF::move(newLogClient), connection = WTF::move(connection), isDebugLoggingEnabled] (IPC::Semaphore&& wakeUpSemaphore, IPC::Semaphore&& clientWaitSemaphore) mutable {
-        connection->setSemaphores(WTF::move(wakeUpSemaphore), WTF::move(clientWaitSemaphore));
+    sendCreateLogStreamToParent(*parentConnection, WTF::move(handle), identifier, [newLogClient = WTF::move(newLogClient), isDebugLoggingEnabled] () mutable {
         registerLogClient(isDebugLoggingEnabled, WTF::move(newLogClient));
     });
 #else

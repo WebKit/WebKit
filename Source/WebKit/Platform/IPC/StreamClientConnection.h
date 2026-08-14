@@ -56,7 +56,7 @@ namespace IPC {
 // The whole IPC::Connection message order is not preserved.
 //
 // The StreamClientConnection trusts the StreamServerConnection.
-class StreamClientConnection final : public ThreadSafeRefCounted<StreamClientConnection>, public CanMakeThreadSafeCheckedPtr<StreamClientConnection> {
+class StreamClientConnection final : public ThreadSafeRefCounted<StreamClientConnection>, public CanMakeThreadSafeCheckedPtr<StreamClientConnection>, private MessageReceiveQueue {
     WTF_MAKE_TZONE_ALLOCATED(StreamClientConnection);
     WTF_MAKE_NONCOPYABLE(StreamClientConnection);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(StreamClientConnection);
@@ -71,8 +71,6 @@ public:
 
     ~StreamClientConnection();
 
-    void setSemaphores(IPC::Semaphore&& wakeUp, IPC::Semaphore&& clientWait);
-    bool NODELETE hasSemaphores() const;
     void setMaxBatchSize(unsigned);
 
     void open(Connection::Client&, SerialFunctionDispatcher& = RunLoop::currentSingleton());
@@ -121,6 +119,10 @@ public:
 private:
     StreamClientConnection(Ref<Connection>, StreamClientConnectionBuffer&&, Seconds defaultTimeoutDuration);
 
+    // MessageReceiveQueue. Receives the builtin MessageName::InitializeStreamClientConnection from
+    // the server on the connection receive thread.
+    void enqueueMessage(Connection&, UniqueRef<Decoder>&&) final;
+
     template<typename T, typename... AdditionalData>
     bool trySendStream(std::span<uint8_t>, T& message, AdditionalData&&...);
     template<typename T>
@@ -162,6 +164,7 @@ private:
     unsigned m_maxBatchSize { 100 }; // Number of messages marked as StreamBatched to accumulate before notifying the server.
     unsigned m_batchSize { 0 };
     const Seconds m_defaultTimeoutDuration;
+    bool m_hasMessageReceiveQueue { false };
 
     friend class WebKit::IPCTestingAPI::JSIPCStreamClientConnection;
 };

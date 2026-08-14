@@ -564,7 +564,7 @@ void RemoteGraphicsContextGLProxy::setDrawingBufferColorSpace(const WebCore::Des
     m_drawingBufferColorSpace = colorSpace;
 }
 
-void RemoteGraphicsContextGLProxy::wasCreated(IPC::Semaphore&& wakeUpSemaphore, IPC::Semaphore&& clientWaitSemaphore, std::optional<RemoteGraphicsContextGLInitializationState>&& initializationState)
+void RemoteGraphicsContextGLProxy::wasCreated(std::optional<RemoteGraphicsContextGLInitializationState>&& initializationState)
 {
     if (isContextLost())
         return;
@@ -573,7 +573,6 @@ void RemoteGraphicsContextGLProxy::wasCreated(IPC::Semaphore&& wakeUpSemaphore, 
         return;
     }
     ASSERT(!m_didInitialize);
-    protect(m_streamConnection)->setSemaphores(WTF::move(wakeUpSemaphore), WTF::move(clientWaitSemaphore));
     m_didInitialize = true;
     initialize(initializationState.value());
 }

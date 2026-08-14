@@ -102,7 +102,7 @@ messages -> WebProcessProxy WantsDispatchMessage {
 
 #if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
 #if ENABLE(STREAMING_IPC_IN_LOG_FORWARDING)
-    CreateLogStream(IPC::StreamServerConnectionHandle connectionHandle, WebKit::LogStreamIdentifier identifier) -> (IPC::Semaphore streamWakeUpSemaphore, IPC::Semaphore streamClientWaitSemaphore)
+    CreateLogStream(IPC::StreamServerConnectionHandle connectionHandle, WebKit::LogStreamIdentifier identifier) -> ()
 #endif
 #if !ENABLE(STREAMING_IPC_IN_LOG_FORWARDING)
     CreateLogStream(WebKit::LogStreamIdentifier identifier) -> ()

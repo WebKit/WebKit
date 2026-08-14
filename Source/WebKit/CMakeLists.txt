@@ -288,7 +288,6 @@ set(WebKit_MESSAGES_IN_FILES
     Shared/AuxiliaryProcess
     Shared/IPCConnectionTester
     Shared/IPCStreamTester
-    Shared/IPCStreamTesterProxy
     Shared/IPCTester
     Shared/IPCTesterReceiver
 

@@ -156,7 +156,6 @@ MESSAGE_RECEIVERS = \
 	Shared/Notifications/NotificationManagerMessageHandler \
 	Shared/IPCConnectionTester \
 	Shared/IPCStreamTester \
-	Shared/IPCStreamTesterProxy \
 	Shared/IPCTester \
 	Shared/IPCTesterReceiver \
 	UIProcess/WebFullScreenManagerProxy \

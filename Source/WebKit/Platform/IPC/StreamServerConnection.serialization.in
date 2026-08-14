@@ -25,4 +25,5 @@ header: "StreamServerConnection.h"
 [CustomHeader, RValue] struct IPC::StreamServerConnectionHandle {
     IPC::ConnectionHandle outOfStreamConnection;
     [Validator='IPC::StreamConnectionBuffer::sharedMemorySizeIsValid(buffer->size())'] WebCore::SharedMemoryHandle buffer;
+    IPC::Signal clientWaitSignal;
 }

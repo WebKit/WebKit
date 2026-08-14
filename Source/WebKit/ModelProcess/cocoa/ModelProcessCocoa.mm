@@ -47,7 +47,7 @@ void ModelProcess::dispatchSimulatedNotificationsForPreferenceChange(const Strin
 #endif // ENABLE(CFPREFS_DIRECT_MODE)
 
 #if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT) && ENABLE(STREAMING_IPC_IN_LOG_FORWARDING)
-void ModelProcess::sendCreateLogStreamToParent(IPC::Connection& parentConnection, IPC::StreamServerConnectionHandle&& handle, LogStreamIdentifier identifier, CompletionHandler<void(IPC::Semaphore&&, IPC::Semaphore&&)>&& completionHandler)
+void ModelProcess::sendCreateLogStreamToParent(IPC::Connection& parentConnection, IPC::StreamServerConnectionHandle&& handle, LogStreamIdentifier identifier, CompletionHandler<void()>&& completionHandler)
 {
     parentConnection.sendWithAsyncReply(Messages::ModelProcessProxy::CreateLogStream(WTF::move(handle), identifier), WTF::move(completionHandler));
 }

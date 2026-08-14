@@ -153,20 +153,15 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #if ENABLE(STREAMING_IPC_IN_LOG_FORWARDING)
 
-RefPtr<LogStream> LogStream::create(AuxiliaryProcessProxy& process, ASCIILiteral processName, IPC::StreamServerConnectionHandle&& serverConnection, LogStreamIdentifier identifier, CompletionHandler<void(IPC::Semaphore& streamWakeUpSemaphore, IPC::Semaphore& streamClientWaitSemaphore)>&& completionHandler)
+RefPtr<LogStream> LogStream::create(AuxiliaryProcessProxy& process, ASCIILiteral processName, IPC::StreamServerConnectionHandle&& serverConnection, LogStreamIdentifier identifier)
 {
     RefPtr connection = IPC::StreamServerConnection::tryCreate(WTF::move(serverConnection), { });
-    if (!connection) {
-        IPC::Semaphore invalidWakeUpSemaphore;
-        IPC::Semaphore invalidClientWaitSemaphore;
-        completionHandler(invalidWakeUpSemaphore, invalidClientWaitSemaphore);
+    if (!connection)
         return nullptr;
-    }
 
     Ref instance = adoptRef(*new LogStream(process, processName, connection.releaseNonNull(), identifier));
     instance->m_connection->open(instance.get(), logWorkQueueSingleton());
     instance->m_connection->startReceivingMessages(instance, Messages::LogStream::messageReceiverName(), identifier.toUInt64());
-    completionHandler(logWorkQueueSingleton().wakeUpSemaphore(), instance->m_connection->clientWaitSemaphore());
     return instance;
 }
 

@@ -67,7 +67,7 @@ class LogStream final :
 #endif
 public:
 #if ENABLE(STREAMING_IPC_IN_LOG_FORWARDING)
-    static RefPtr<LogStream> create(AuxiliaryProcessProxy&, ASCIILiteral processName, IPC::StreamServerConnectionHandle&&, LogStreamIdentifier, CompletionHandler<void(IPC::Semaphore& streamWakeUpSemaphore, IPC::Semaphore& streamClientWaitSemaphore)>&&);
+    static RefPtr<LogStream> create(AuxiliaryProcessProxy&, ASCIILiteral processName, IPC::StreamServerConnectionHandle&&, LogStreamIdentifier);
 #else
     static Ref<LogStream> create(AuxiliaryProcessProxy&, ASCIILiteral processName, Ref<IPC::Connection>&&, LogStreamIdentifier);
 #endif

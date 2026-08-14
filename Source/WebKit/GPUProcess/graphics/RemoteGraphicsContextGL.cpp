@@ -160,10 +160,10 @@ void RemoteGraphicsContextGL::workQueueInitialize(WebCore::GraphicsContextGLAttr
             initializationState.max3DTextureSize = context->max3DTextureSize();
             initializationState.maxArrayTextureLayers = context->maxArrayTextureLayers();
         }
-        send(Messages::RemoteGraphicsContextGLProxy::WasCreated(workQueue().wakeUpSemaphore(), m_connection->clientWaitSemaphore(), { initializationState }));
+        send(Messages::RemoteGraphicsContextGLProxy::WasCreated({ initializationState }));
         m_connection->startReceivingMessages(*this, Messages::RemoteGraphicsContextGL::messageReceiverName(), m_identifier.toUInt64());
     } else
-        send(Messages::RemoteGraphicsContextGLProxy::WasCreated({ }, { }, std::nullopt));
+        send(Messages::RemoteGraphicsContextGLProxy::WasCreated(std::nullopt));
 }
 
 void RemoteGraphicsContextGL::workQueueUninitialize()

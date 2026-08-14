@@ -244,6 +244,7 @@ enum class MessageName : uint16_t {
 #if PLATFORM(COCOA)
     InitializeConnection,
 #endif
+    InitializeStreamClientConnection,
     LegacySessionState,
     ProcessOutOfStreamMessage,
     SetStreamDestinationID,

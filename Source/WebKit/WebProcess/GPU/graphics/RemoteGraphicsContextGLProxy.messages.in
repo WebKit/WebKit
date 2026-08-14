@@ -27,7 +27,7 @@
     DispatchedTo=WebContent
 ]
 messages -> RemoteGraphicsContextGLProxy {
-    void WasCreated(IPC::Semaphore streamWakeUpSemaphore, IPC::Semaphore streamClientWaitSemaphore, struct std::optional<WebKit::RemoteGraphicsContextGLInitializationState> initializationState) CanDispatchOutOfOrder
+    void WasCreated(struct std::optional<WebKit::RemoteGraphicsContextGLInitializationState> initializationState) CanDispatchOutOfOrder
     void WasLost()
     void addDebugMessage(unsigned type, unsigned id, unsigned severity, CString message) CanDispatchOutOfOrder
     void MemoryCostChanged(std::optional<uint64_t> memoryCost)

@@ -523,7 +523,6 @@ public:
         auto serverConnection = IPC::StreamServerConnection::tryCreate(WTF::move(serverConnectionHandle), { }).releaseNonNull();
 
         m_clientConnection = WTF::move(clientConnection);
-        m_clientConnection->setSemaphores(copyViaEncoder(m_serverQueue->wakeUpSemaphore()).value(), copyViaEncoder(serverConnection->clientWaitSemaphore()).value());
 
         m_clientConnection->open(m_mockClientReceiver);
 
@@ -540,7 +539,6 @@ public:
             });
             semaphore.wait();
         }
-
         m_initialLogIndex = IPC::messageLog().indexForTesting();
     }
 

@@ -18,8 +18,6 @@ if (window.testRunner) {
         const streamConnection = CoreIPC.newStreamConnection();
         CoreIPC.GPU.GPUConnectionToWebProcess.CreateRenderingBackend(0, { renderingBackendIdentifier: id, connectionHandle: streamConnection });
         const backend = streamConnection.newInterface("RemoteRenderingBackend", id);
-        const didInitialize = streamConnection.connection.waitForMessage(id, IPC.messages.RemoteRenderingBackendProxy_DidInitialize.name, 1);
-        streamConnection.connection.setSemaphores(didInitialize[0].value, didInitialize[1].value);
         return { id, streamConnection, backend };
     }
 

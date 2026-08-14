@@ -122,9 +122,9 @@ void RemoteGPU::workQueueInitialize()
 #endif
     if (backing) {
         m_backing = backing.releaseNonNull();
-        send(Messages::RemoteGPUProxy::WasCreated(true, workQueue->wakeUpSemaphore(), streamConnection->clientWaitSemaphore()));
+        send(Messages::RemoteGPUProxy::WasCreated(true));
     } else
-        send(Messages::RemoteGPUProxy::WasCreated(false, { }, { }));
+        send(Messages::RemoteGPUProxy::WasCreated(false));
 }
 
 void RemoteGPU::workQueueUninitialize()

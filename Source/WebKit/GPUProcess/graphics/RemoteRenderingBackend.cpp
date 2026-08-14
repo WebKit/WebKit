@@ -152,7 +152,6 @@ void RemoteRenderingBackend::workQueueInitialize()
     assertIsCurrent(workQueue());
     m_streamConnection->open(*this, m_workQueue.get());
     m_streamConnection->startReceivingMessages(*this, Messages::RemoteRenderingBackend::messageReceiverName(), m_renderingBackendIdentifier.toUInt64());
-    send(Messages::RemoteRenderingBackendProxy::DidInitialize(workQueue().wakeUpSemaphore(), m_streamConnection->clientWaitSemaphore()));
 }
 
 void RemoteRenderingBackend::workQueueUninitialize()

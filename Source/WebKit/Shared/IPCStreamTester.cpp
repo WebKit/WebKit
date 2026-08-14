@@ -30,7 +30,6 @@
 
 #include "Decoder.h"
 #include "IPCStreamTesterMessages.h"
-#include "IPCStreamTesterProxyMessages.h"
 #include "IPCUtilities.h"
 #include "StreamConnectionWorkQueue.h"
 #include "StreamServerConnection.h"
@@ -65,7 +64,6 @@ void IPCStreamTester::initialize()
     protect(workQueue())->dispatch([this] {
         m_streamConnection->open(*this, protect(workQueue()));
         m_streamConnection->startReceivingMessages(*this, Messages::IPCStreamTester::messageReceiverName(), m_identifier.toUInt64());
-        m_streamConnection->send(Messages::IPCStreamTesterProxy::WasCreated(workQueue().wakeUpSemaphore(), m_streamConnection->clientWaitSemaphore()), m_identifier);
     });
 }
 

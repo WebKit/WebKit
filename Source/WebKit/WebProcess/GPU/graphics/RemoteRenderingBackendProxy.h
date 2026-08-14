@@ -189,8 +189,6 @@ public:
 
     bool isGPUProcessConnectionClosed() const { return !m_connection; }
 
-    void didInitialize(IPC::Semaphore&& wakeUpSemaphore, IPC::Semaphore&& clientWaitSemaphore);
-
     RefPtr<IPC::StreamClientConnection> connection();
 
     bool isCurrent() const final;

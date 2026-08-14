@@ -510,6 +510,7 @@ if (ENABLE_WEBKIT)
             Tests/IPC/ArgumentCoderTests.cpp
             Tests/IPC/ConnectionTests.cpp
             Tests/IPC/EventTests.cpp
+            Tests/IPC/IPCEventTests.cpp
             Tests/IPC/IPCTestUtilities.cpp
             Tests/IPC/MachMessageTests.cpp
             Tests/IPC/MessageLogEndToEndTests.cpp

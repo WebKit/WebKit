@@ -33,18 +33,6 @@ function fuzz() {
             debug("Failed: " + error)
     }
     try {
-        resp = o35.waitForMessage(backendID, IPC.messages.RemoteRenderingBackendProxy_DidInitialize.name)
-    } catch (error) {
-        if (!(error instanceof TypeError))
-            debug("Failed: " + error)
-    }
-    try {
-        o35.setSemaphores(resp[0].value, resp[1].value);
-    } catch (error) {
-        if (!(error instanceof TypeError))
-            debug("Failed: " + error)
-    }
-    try {
         o35.sendMessage(backendID, IPC.messages.RemoteRenderingBackend_CreateImageBuffer.name,
                   [{type: 'float', value: 804},
                    {type: 'float', value: 486},

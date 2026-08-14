@@ -133,13 +133,11 @@ bool RemoteGPUProxy::isCurrent() const
     return dispatcher && dispatcher->isCurrent();
 }
 
-void RemoteGPUProxy::wasCreated(bool didSucceed, IPC::Semaphore&& wakeUpSemaphore, IPC::Semaphore&& clientWaitSemaphore)
+void RemoteGPUProxy::wasCreated(bool didSucceed)
 {
     ASSERT(!m_didInitialize);
     m_didInitialize = true;
-    if (didSucceed)
-        protect(m_streamConnection)->setSemaphores(WTF::move(wakeUpSemaphore), WTF::move(clientWaitSemaphore));
-    else
+    if (!didSucceed)
         abandonGPUProcess();
 }
 

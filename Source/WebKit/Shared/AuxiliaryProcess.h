@@ -140,7 +140,7 @@ protected:
 #if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
     void initializeLogForwarding(bool isDebugLoggingEnabled);
 #if ENABLE(STREAMING_IPC_IN_LOG_FORWARDING)
-    virtual void sendCreateLogStreamToParent(IPC::Connection&, IPC::StreamServerConnectionHandle&&, LogStreamIdentifier, CompletionHandler<void(IPC::Semaphore&&, IPC::Semaphore&&)>&&) { ASSERT_NOT_REACHED(); }
+    virtual void sendCreateLogStreamToParent(IPC::Connection&, IPC::StreamServerConnectionHandle&&, LogStreamIdentifier, CompletionHandler<void()>&&) { ASSERT_NOT_REACHED(); }
 #else
     virtual void sendCreateLogStreamToParent(IPC::Connection&, LogStreamIdentifier, CompletionHandler<void()>&&) { ASSERT_NOT_REACHED(); }
 #endif

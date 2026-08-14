@@ -34,10 +34,6 @@ window.setTimeout(async () => {
     });
     const remoteBackend = connection.newInterface("RemoteRenderingBackend", renderingBackendIdentifier);
 
-    const didInit = connection.connection.waitForMessage(renderingBackendIdentifier,
-        IPC.messages.RemoteRenderingBackendProxy_DidInitialize.name, 1);
-    connection.connection.setSemaphores(didInit[0].value, didInit[1].value);
-
     // Create display list recorders without sinking them.
     // Each CreateDisplayListRecorder adds an entry to
     // m_remoteDisplayListRecorders with a ScopedActiveMessageReceiveQueue

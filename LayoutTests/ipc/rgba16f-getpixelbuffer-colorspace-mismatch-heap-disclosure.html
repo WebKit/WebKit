@@ -47,8 +47,6 @@ window.setTimeout(async () => {
         connectionHandle: sc
     });
     const rb = sc.newInterface('RemoteRenderingBackend', rbId);
-    const init = sc.connection.waitForMessage(rbId, IPC.messages.RemoteRenderingBackendProxy_DidInitialize.name);
-    sc.connection.setSemaphores(init[0].value, init[1].value);
 
     const bufId = Math.floor(Math.random() * 0x1000000);
     const ctxId = Math.floor(Math.random() * 0x1000000);

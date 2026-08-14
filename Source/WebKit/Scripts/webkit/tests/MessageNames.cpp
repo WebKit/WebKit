@@ -194,6 +194,7 @@ const MessageDescriptionsArray messageDescriptions {
 #if PLATFORM(COCOA)
     MessageDescription { "InitializeConnection"_s, ReceiverName::IPC, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
 #endif
+    MessageDescription { "InitializeStreamClientConnection"_s, ReceiverName::IPC, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
     MessageDescription { "LegacySessionState"_s, ReceiverName::IPC, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
     MessageDescription { "ProcessOutOfStreamMessage"_s, ReceiverName::IPC, false, false, false, ProcessName::Unknown, ProcessName::Unknown },
     MessageDescription { "SetStreamDestinationID"_s, ReceiverName::IPC, false, false, false, ProcessName::Unknown, ProcessName::Unknown },

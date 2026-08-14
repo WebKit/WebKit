@@ -31,6 +31,7 @@
 #include <mach/mach_init.h>
 #include <mach/mach_port.h>
 #include <mach/message.h>
+#include <mach/notify.h>
 #include <wtf/StdLibExtras.h>
 
 namespace IPC {
@@ -69,8 +70,8 @@ void Signal::signal()
     message.msgh_bits = MACH_MSGH_BITS(MACH_MSG_TYPE_COPY_SEND, 0);
     message.msgh_id = inlineBodyMessageID;
 
-    auto ret = mach_msg(&message, MACH_SEND_MSG, sizeof(message), 0, MACH_PORT_NULL, MACH_MSG_TIMEOUT_NONE, MACH_PORT_NULL);
-    if (ret != KERN_SUCCESS)
+    auto ret = mach_msg(&message, MACH_SEND_MSG | MACH_SEND_TIMEOUT, sizeof(message), 0, MACH_PORT_NULL, 0, MACH_PORT_NULL);
+    if (ret != KERN_SUCCESS && ret != MACH_SEND_TIMED_OUT)
         RELEASE_LOG_ERROR(Process, "IPC::Signal::signal Could not send mach message, error %x", ret);
 }
 
@@ -103,32 +104,48 @@ Event::~Event()
     }
 }
 
+// Big enough for both the inline body message from Signal::signal() and the no-senders
+// notification. A too small receive buffer would make mach_msg() destroy the notification and
+// return MACH_RCV_TOO_LARGE, and the next wait would then block forever.
 typedef struct {
-    mach_msg_header_t header;
+    union {
+        mach_msg_header_t header;
+        mach_no_senders_notification_t noSenders;
+    };
     mach_msg_trailer_t trailer;
 } ReceiveMessage;
 
 bool Event::wait()
 {
+    if (m_peerDied)
+        return false;
     ReceiveMessage receiveMessage;
     zeroBytes(receiveMessage);
     mach_msg_return_t ret = mach_msg(&receiveMessage.header, MACH_RCV_MSG, 0, sizeof(receiveMessage), m_receiveRight, MACH_MSG_TIMEOUT_NONE, MACH_PORT_NULL);
     if (ret != MACH_MSG_SUCCESS)
         return false;
-    if (receiveMessage.header.msgh_id != inlineBodyMessageID)
+    if (receiveMessage.header.msgh_id != inlineBodyMessageID) {
+        // The no-senders notification. Remember it: it is sent only once.
+        m_peerDied = true;
         return false;
+    }
     return true;
 }
 
 bool Event::waitFor(Timeout timeout)
 {
+    if (m_peerDied)
+        return false;
     ReceiveMessage receiveMessage;
     zeroBytes(receiveMessage);
     mach_msg_return_t ret = mach_msg(&receiveMessage.header, MACH_RCV_MSG | MACH_RCV_TIMEOUT, 0, sizeof(receiveMessage), m_receiveRight, timeout.secondsUntilDeadline().milliseconds(), MACH_PORT_NULL);
     if (ret != MACH_MSG_SUCCESS)
         return false;
-    if (receiveMessage.header.msgh_id != inlineBodyMessageID)
+    if (receiveMessage.header.msgh_id != inlineBodyMessageID) {
+        // The no-senders notification. Remember it: it is sent only once.
+        m_peerDied = true;
         return false;
+    }
     return true;
 }
 

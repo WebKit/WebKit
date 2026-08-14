@@ -7067,7 +7067,6 @@
 		7B16191227198AA900C40EAC /* RemoteGraphicsContextGLProxyCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = RemoteGraphicsContextGLProxyCocoa.mm; sourceTree = "<group>"; };
 		7B22007029B625020034C826 /* ImageBufferShareableMappedIOSurfaceBitmapBackend.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ImageBufferShareableMappedIOSurfaceBitmapBackend.cpp; sourceTree = "<group>"; };
 		7B22007129B625020034C826 /* ImageBufferShareableMappedIOSurfaceBitmapBackend.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImageBufferShareableMappedIOSurfaceBitmapBackend.h; sourceTree = "<group>"; };
-		7B2DDD5E27CCD9710060ABAB /* IPCStreamTesterProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IPCStreamTesterProxy.h; sourceTree = "<group>"; };
 		7B2E73472CA2C611002C1A84 /* SyncRequestID.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SyncRequestID.h; sourceTree = "<group>"; };
 		7B43C1292D79B0EA00B119F7 /* RemoteGraphicsContextIdentifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteGraphicsContextIdentifier.h; sourceTree = "<group>"; };
 		7B483F1B25CDDA9B00120486 /* MessageReceiveQueueMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessageReceiveQueueMap.h; sourceTree = "<group>"; };
@@ -10447,7 +10446,6 @@
 				7BE37F9427C7CD51007A6CD3 /* IPCStreamTester.h */,
 				86EFFA3F2B03A6B900ABE77D /* IPCStreamTester.messages.in */,
 				7BE37F9227C7C518007A6CD3 /* IPCStreamTesterIdentifier.h */,
-				7B2DDD5E27CCD9710060ABAB /* IPCStreamTesterProxy.h */,
 				7B50E97F2771F6CE003DAAC4 /* IPCTester.cpp */,
 				7B50E9802771F6CF003DAAC4 /* IPCTester.h */,
 				86EFFA402B03A6B900ABE77D /* IPCTester.messages.in */,

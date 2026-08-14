@@ -107,7 +107,7 @@ private:
     // Message Handlers
     void initializeModelProcess(ModelProcessCreationParameters&&, CompletionHandler<void()>&&);
 #if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT) && ENABLE(STREAMING_IPC_IN_LOG_FORWARDING)
-    void sendCreateLogStreamToParent(IPC::Connection&, IPC::StreamServerConnectionHandle&&, LogStreamIdentifier, CompletionHandler<void(IPC::Semaphore&&, IPC::Semaphore&&)>&&) override;
+    void sendCreateLogStreamToParent(IPC::Connection&, IPC::StreamServerConnectionHandle&&, LogStreamIdentifier, CompletionHandler<void()>&&) override;
 #endif
     void createModelConnectionToWebProcess(WebCore::ProcessIdentifier, PAL::SessionID, IPC::Connection::Handle&&, ModelProcessConnectionParameters&&, const std::optional<String>& attributionTaskID, CompletionHandler<void()>&&);
     void sharedPreferencesForWebProcessDidChange(WebCore::ProcessIdentifier, SharedPreferencesForWebProcess&&, CompletionHandler<void()>&&);

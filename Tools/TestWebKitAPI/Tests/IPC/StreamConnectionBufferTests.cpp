@@ -25,17 +25,34 @@
 
 #include "config.h"
 
+#include "IPCEvent.h"
 #include "StreamClientConnectionBuffer.h"
 #include "StreamServerConnectionBuffer.h"
 #include "Helpers/Test.h"
 
 namespace TestWebKitAPI {
 
+// The client waits on an Event for ring buffer backpressure, and the matching Signal normally
+// travels to the server in StreamServerConnectionHandle. These tests exercise the buffer on its
+// own, so they hold on to the Signal to keep the Event's sender alive.
+struct ClientBuffer {
+    std::optional<IPC::Signal> signal;
+    std::optional<IPC::StreamClientConnectionBuffer> buffer;
+};
+
+static ClientBuffer createClientBuffer(unsigned dataSizeLog2)
+{
+    auto pair = IPC::createEventSignalPair();
+    if (!pair)
+        return { };
+    return { WTF::move(pair->signal), IPC::StreamClientConnectionBuffer::create(dataSizeLog2, WTF::move(pair->event)) };
+}
+
 TEST(StreamConnectionBufferTests, CreateWorks)
 {
-    auto buffer = IPC::StreamClientConnectionBuffer::create(8);
-    ASSERT_TRUE(buffer.has_value());
-    auto& b = *buffer;
+    auto client = createClientBuffer(8);
+    ASSERT_TRUE(client.buffer.has_value());
+    auto& b = *client.buffer;
     EXPECT_NE(b.span().data(), nullptr);
     EXPECT_EQ(b.dataSize(), 256u);
     {
@@ -43,9 +60,9 @@ TEST(StreamConnectionBufferTests, CreateWorks)
         ASSERT_TRUE(server.has_value());
         EXPECT_EQ(b.dataSize(), server->dataSize());
     }
-    auto buffer2 = IPC::StreamClientConnectionBuffer::create(24);
-    ASSERT_TRUE(buffer2.has_value());
-    auto& b2 = *buffer2;
+    auto client2 = createClientBuffer(24);
+    ASSERT_TRUE(client2.buffer.has_value());
+    auto& b2 = *client2.buffer;
     EXPECT_NE(b2.span().data(), nullptr);
     EXPECT_EQ(b2.dataSize(), 16777216u);
     {
@@ -64,18 +81,18 @@ public:
 
     void SetUp() override
     {
-        m_client = IPC::StreamClientConnectionBuffer::create(bufferSizeLog2());
-        ASSERT(m_client);
-        m_maybeServer = IPC::StreamServerConnectionBuffer::map(m_client->createHandle());
+        m_client = createClientBuffer(bufferSizeLog2());
+        ASSERT(m_client.buffer);
+        m_maybeServer = IPC::StreamServerConnectionBuffer::map(m_client.buffer->createHandle());
     }
 
-    IPC::StreamClientConnectionBuffer& client() { return *m_client; }
+    IPC::StreamClientConnectionBuffer& client() { return *m_client.buffer; }
     IPC::StreamServerConnectionBuffer& server() { return *m_maybeServer; }
     bool isValid() const { return m_maybeServer.has_value(); }
 
 protected:
     static constexpr size_t minimumSize = IPC::StreamConnectionEncoder::minimumMessageSize;
-    std::optional<IPC::StreamClientConnectionBuffer> m_client;
+    ClientBuffer m_client;
     std::optional<IPC::StreamServerConnectionBuffer> m_maybeServer;
 };
 

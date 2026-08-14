@@ -38,8 +38,6 @@ setTimeout(async () => {
             connectionHandle: sc
         });
         const rrb = sc.newInterface('RemoteRenderingBackend', RBID);
-        const init = sc.connection.waitForMessage(RBID, IPC.messages.RemoteRenderingBackendProxy_DidInitialize.name);
-        sc.connection.setSemaphores(init[0].value, init[1].value);
 
         function createImageBuffer(id, ctx) {
             rrb.CreateImageBuffer({

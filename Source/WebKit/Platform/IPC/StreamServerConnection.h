@@ -28,6 +28,7 @@
 #include "Connection.h"
 #include "Decoder.h"
 #include "Encoder.h"
+#include "IPCEvent.h"
 #include "MessageNames.h"
 #include "StreamMessageReceiver.h"
 #include "StreamServerConnectionBuffer.h"
@@ -40,15 +41,19 @@ class StreamConnectionWorkQueue;
 
 struct StreamServerConnectionHandle {
     WTF_MAKE_NONCOPYABLE(StreamServerConnectionHandle);
-    StreamServerConnectionHandle(Connection::Handle&& connection, StreamConnectionBuffer::Handle&& bufferHandle)
+    StreamServerConnectionHandle(Connection::Handle&& connection, StreamConnectionBuffer::Handle&& bufferHandle, Signal&& clientWaitSignal)
         : outOfStreamConnection(WTF::move(connection))
         , buffer(WTF::move(bufferHandle))
+        , clientWaitSignal(WTF::move(clientWaitSignal))
     { }
     StreamServerConnectionHandle(StreamServerConnectionHandle&&) = default;
     StreamServerConnectionHandle& operator=(StreamServerConnectionHandle&&) = default;
 
     Connection::Handle outOfStreamConnection;
     StreamConnectionBuffer::Handle buffer;
+    // Signals the client's clientWait Event to release it from ring buffer backpressure. The client
+    // creates the pair so that the wait is interrupted if this process dies and no senders remain.
+    Signal clientWaitSignal;
 };
 
 struct StreamServerConnectionParameters {
@@ -120,10 +125,8 @@ public:
     template<typename T, typename... Arguments>
     void sendAsyncReply(AsyncReplyID, Arguments&&...);
 
-    Semaphore& clientWaitSemaphore() LIFETIME_BOUND { return m_clientWaitSemaphore; }
-
 private:
-    StreamServerConnection(Ref<Connection>, StreamServerConnectionBuffer&&);
+    StreamServerConnection(Ref<Connection>, StreamServerConnectionBuffer&&, Signal&& clientWaitSignal);
 
     // MessageReceiveQueue
     void enqueueMessage(Connection&, UniqueRef<Decoder>&&) final;
@@ -154,7 +157,8 @@ private:
     using ReceiversMap = HashMap<std::pair<uint8_t, uint64_t>, Ref<StreamMessageReceiver>>;
     ReceiversMap m_receivers WTF_GUARDED_BY_LOCK(m_receiversLock);
     uint64_t m_currentDestinationID { 0 };
-    Semaphore m_clientWaitSemaphore;
+    // Signalled to release the client from ring buffer backpressure.
+    Signal m_clientWaitSignal;
     bool m_isProcessingStreamMessage { false };
     bool m_didReceiveInvalidMessage { false };
 #if ASSERT_ENABLED

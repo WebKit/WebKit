@@ -659,27 +659,7 @@ RefPtr<IPC::StreamClientConnection> RemoteRenderingBackendProxy::connection()
     if (!m_isResponsive)
         return nullptr;
 
-    RefPtr connection = m_connection;
-    if (!connection->hasSemaphores()) [[unlikely]] {
-        auto error = connection->waitForAndDispatchImmediately<Messages::RemoteRenderingBackendProxy::DidInitialize>(renderingBackendIdentifier());
-        if (error != IPC::Error::NoError) {
-            RELEASE_LOG(RemoteLayerBuffers, "[renderingBackend=%" PRIu64 "] RemoteRenderingBackendProxy::connection() - waitForAndDispatchImmediately returned error: %" PUBLIC_LOG_STRING, renderingBackendIdentifier().toUInt64(), IPC::errorAsString(error).characters());
-            didBecomeUnresponsive();
-        }
-    }
-    if (!m_isResponsive)
-        return nullptr;
-    return connection;
-}
-
-void RemoteRenderingBackendProxy::didInitialize(IPC::Semaphore&& wakeUp, IPC::Semaphore&& clientWait)
-{
-    RefPtr connection = m_connection;
-    if (!connection) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-    connection->setSemaphores(WTF::move(wakeUp), WTF::move(clientWait));
+    return m_connection;
 }
 
 RefPtr<RemoteImageBufferProxy> RemoteRenderingBackendProxy::cachedImageBuffer(const ImageBuffer& imageBuffer) const

@@ -98,7 +98,7 @@ private:
     void didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName, const Vector<uint32_t>& indicesOfObjectsFailingDecoding) final { }
 
     // Messages to be received.
-    void wasCreated(bool didSucceed, IPC::Semaphore&& wakeUpSemaphore, IPC::Semaphore&& clientWaitSemaphore);
+    void wasCreated(bool didSucceed);
 
     void waitUntilInitialized();
 

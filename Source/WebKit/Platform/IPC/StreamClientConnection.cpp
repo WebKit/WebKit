@@ -74,7 +74,10 @@ std::optional<StreamClientConnection::StreamConnectionPair> StreamClientConnecti
     auto connectionIdentifiers = Connection::createConnectionIdentifierPair();
     if (!connectionIdentifiers)
         return std::nullopt;
-    auto buffer = StreamClientConnectionBuffer::create(bufferSizeLog2);
+    auto clientWait = createEventSignalPair();
+    if (!clientWait)
+        return std::nullopt;
+    auto buffer = StreamClientConnectionBuffer::create(bufferSizeLog2, WTF::move(clientWait->event));
     if (!buffer)
         return std::nullopt;
     // Create StreamClientConnection with "server" type Connection. The caller will send the "client" type connection identifier via
@@ -87,7 +90,8 @@ std::optional<StreamClientConnection::StreamConnectionPair> StreamClientConnecti
     auto clientConnection = adoptRef(*new StreamClientConnection(WTF::move(dedicatedConnection), WTF::move(*buffer), defaultTimeoutDuration));
     StreamServerConnection::Handle serverHandle {
         WTF::move(connectionIdentifiers->client),
-        clientConnection->m_buffer.createHandle()
+        clientConnection->m_buffer.createHandle(),
+        WTF::move(clientWait->signal)
     };
     return StreamClientConnection::StreamConnectionPair { WTF::move(clientConnection), WTF::move(serverHandle) };
 }
@@ -104,14 +108,21 @@ StreamClientConnection::~StreamClientConnection()
     ASSERT(!m_connection->isValid());
 }
 
-void StreamClientConnection::setSemaphores(IPC::Semaphore&& wakeUp, IPC::Semaphore&& clientWait)
+void StreamClientConnection::enqueueMessage(Connection& connection, UniqueRef<Decoder>&& messageIn)
 {
-    m_buffer.setSemaphores(WTF::move(wakeUp), WTF::move(clientWait));
-}
-
-bool StreamClientConnection::hasSemaphores() const
-{
-    return m_buffer.hasSemaphores();
+    auto message = WTF::move(messageIn);
+    if (message->messageName() != MessageName::InitializeStreamClientConnection || m_buffer.hasWakeUpSemaphore()) {
+        // Currently sender is trusted, this is just a implementation error.
+        // In the future, these error modes are eliminated by client allocating the wake up signal, too.
+        ASSERT_NOT_REACHED();
+        return;
+    }
+    auto wakeUp = message->decode<Semaphore>();
+    if (!wakeUp) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+    m_buffer.setWakeUpSemaphore(WTF::move(*wakeUp));
 }
 
 void StreamClientConnection::setMaxBatchSize(unsigned size)
@@ -123,6 +134,8 @@ void StreamClientConnection::setMaxBatchSize(unsigned size)
 void StreamClientConnection::open(Connection::Client& receiver, SerialFunctionDispatcher& dispatcher)
 {
     lazyInitialize(m_dedicatedConnectionClient, makeUniqueWithoutRefCountedCheck<DedicatedConnectionClient>(*this, receiver));
+    m_hasMessageReceiveQueue = true;
+    m_connection->addMessageReceiveQueue(*this, { ReceiverName::IPC, 0 });
     m_connection->open(protect(*m_dedicatedConnectionClient), dispatcher);
 }
 
@@ -136,6 +149,10 @@ Error StreamClientConnection::flushSentMessages()
 void StreamClientConnection::invalidate()
 {
     m_connection->invalidate();
+    if (!m_hasMessageReceiveQueue)
+        return;
+    m_hasMessageReceiveQueue = false;
+    m_connection->removeMessageReceiveQueue({ ReceiverName::IPC, 0 });
 }
 
 void StreamClientConnection::wakeUpServer(WakeUpServer wakeUpResult)

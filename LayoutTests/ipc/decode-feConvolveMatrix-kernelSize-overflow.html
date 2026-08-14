@@ -16,9 +16,6 @@ setTimeout(async () => {
         0, { renderingBackendIdentifier : renderingBackendIdentifier, connectionHandle : o58 });
     o60 = o58.newInterface("RemoteRenderingBackend", renderingBackendIdentifier);
 
-    const didInitializeReply = o58.connection.waitForMessage(renderingBackendIdentifier, IPC.messages.RemoteRenderingBackendProxy_DidInitialize.name, 1)
-    o58.connection.setSemaphores(didInitializeReply[0].value, didInitializeReply[1].value);
-
     s7 = 'A';
     s10 = '';
         o60.CacheFilter({
