@@ -8689,11 +8689,6 @@ imported/w3c/web-platform-tests/css/CSS2/css1/c5526-fltclr-000.xht [ ImageOnlyFa
 imported/w3c/web-platform-tests/css/CSS2/css1/c562-white-sp-000.xht [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/CSS2/css1/c62-percent-000.xht [ ImageOnlyFailure ]
 
-# webkit.org/b/321110 NEW TEST(317810@main): [iOS macOS]4 tests in imported/w3c/web-platform-tests/webtransport/idlharness are constant failure
-imported/w3c/web-platform-tests/webtransport/idlharness.https.sub.any.html [ Failure ]
-imported/w3c/web-platform-tests/webtransport/idlharness.https.sub.any.serviceworker.html [ Failure ]
-imported/w3c/web-platform-tests/webtransport/idlharness.https.sub.any.sharedworker.html [ Failure ]
-imported/w3c/web-platform-tests/webtransport/idlharness.https.sub.any.worker.html [ Failure ]
 
 # testdriver-vendor.js dispatches key actions through a UI script that references eventSender,
 # which does not exist in the UI-script context, and uiController has no leapForward equivalent,

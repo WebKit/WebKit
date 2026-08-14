@@ -41,6 +41,7 @@
 #import <WebCore/ClientOrigin.h>
 #import <WebCore/Exception.h>
 #import <WebCore/ExceptionCode.h>
+#import <WebCore/HTTPParsers.h>
 #import <WebCore/RFC8941.h>
 #import <WebCore/WebTransportConnectionInfo.h>
 #import <WebCore/WebTransportConnectionStats.h>
@@ -197,14 +198,15 @@ static String joinProtocolStrings(const Vector<String>& protocols)
     return builder.toString();
 }
 
-static RetainPtr<nw_parameters_t> createParameters(NetworkConnectionToWebProcess& connectionToWebProcess, URL&& url, WebCore::WebTransportOptions& options, WebKit::WebPageProxyIdentifier&& pageID, WebCore::ClientOrigin&& clientOrigin, RefPtr<NetworkTransportSession::SecurityProtocolMetadata> securityMetadata)
+static RetainPtr<nw_parameters_t> createParameters(NetworkConnectionToWebProcess& connectionToWebProcess, URL&& url, WebCore::WebTransportOptions& options, Vector<KeyValuePair<String, String>>&& additionalHeaders, WebKit::WebPageProxyIdentifier&& pageID, WebCore::ClientOrigin&& clientOrigin, RefPtr<NetworkTransportSession::SecurityProtocolMetadata> securityMetadata)
 {
     // https://www.w3.org/TR/webtransport/#web-transport-configuration
     auto configureWebTransport = [
         clientOrigin = clientOrigin.clientOrigin.toString(),
         maxStreamsUni = options.anticipatedConcurrentIncomingUnidirectionalStreams.value_or(100),
         maxStreamsBidi = options.anticipatedConcurrentIncomingBidirectionalStreams.value_or(100),
-        protocols = joinProtocolStrings(options.protocols)
+        protocols = joinProtocolStrings(options.protocols),
+        additionalHeaders = WTF::move(additionalHeaders)
     ](nw_protocol_options_t options) {
         nw_webtransport_options_set_is_unidirectional(options, false);
         nw_webtransport_options_set_is_datagram(options, true);
@@ -212,6 +214,8 @@ static RetainPtr<nw_parameters_t> createParameters(NetworkConnectionToWebProcess
         nw_webtransport_options_set_allow_joining_before_ready(options, true);
         nw_webtransport_options_set_initial_max_streams_uni(options, maxStreamsUni);
         nw_webtransport_options_set_initial_max_streams_bidi(options, maxStreamsBidi);
+        for (auto& header : additionalHeaders)
+            nw_webtransport_options_add_connect_request_header(options, header.key.latin1().data(), header.value.latin1().data());
         nw_webtransport_options_add_connect_request_header(options, "wt-available-protocols", protocols.utf8().data());
     };
 
@@ -258,7 +262,7 @@ static RetainPtr<nw_parameters_t> createParameters(NetworkConnectionToWebProcess
     return adoptNS(nw_parameters_create_webtransport_http(configureWebTransport, configureTLS, configureQUIC, configureTCP));
 }
 
-RefPtr<NetworkTransportSession> NetworkTransportSession::create(NetworkConnectionToWebProcess& connectionToWebProcess, WebTransportSessionIdentifier identifier, URL&& url, WebCore::WebTransportOptions&& options, WebKit::WebPageProxyIdentifier&& pageID, WebCore::ClientOrigin&& clientOrigin)
+RefPtr<NetworkTransportSession> NetworkTransportSession::create(NetworkConnectionToWebProcess& connectionToWebProcess, WebTransportSessionIdentifier identifier, URL&& url, WebCore::WebTransportOptions&& options, Vector<KeyValuePair<String, String>>&& additionalHeaders, WebKit::WebPageProxyIdentifier&& pageID, WebCore::ClientOrigin&& clientOrigin)
 {
     RetainPtr endpoint = adoptNS(nw_endpoint_create_url(url.string().utf8().data()));
     if (!endpoint) {
@@ -269,7 +273,7 @@ RefPtr<NetworkTransportSession> NetworkTransportSession::create(NetworkConnectio
     // FIXME: Remove SecurityProtocolMetadata once we no longer support platforms without nw_webtransport_metadata_copy_sec_protocol_metadata.
     RefPtr metadata = canLoad_Network_nw_webtransport_metadata_copy_sec_protocol_metadata() ? nullptr : SecurityProtocolMetadata::create();
 
-    RetainPtr parameters = createParameters(connectionToWebProcess, WTF::move(url), options, WTF::move(pageID), WTF::move(clientOrigin), metadata);
+    RetainPtr parameters = createParameters(connectionToWebProcess, WTF::move(url), options, WTF::move(additionalHeaders), WTF::move(pageID), WTF::move(clientOrigin), metadata);
     if (!parameters) {
         ASSERT_NOT_REACHED();
         return nullptr;
@@ -311,6 +315,7 @@ void NetworkTransportSession::initialize(CompletionHandler<void(std::optional<We
             return; // We will get another callback with another state change.
         case nw_connection_group_state_ready: {
             __block String protocol;
+            __block Vector<KeyValuePair<String, String>> responseHeaders;
             WebCore::WebTransportReliabilityMode reliabilityMode = WebCore::WebTransportReliabilityMode::Pending;
             if (RefPtr protectedThis = weakThis.get()) {
                 protectedThis->m_sessionMetadata = nw_connection_group_copy_protocol_metadata(protectedThis->m_connectionGroup.get(), adoptNS(nw_protocol_copy_webtransport_definition()).get());
@@ -330,6 +335,16 @@ void NetworkTransportSession::initialize(CompletionHandler<void(std::optional<We
                             }
                         }
                     });
+                    nw_http_fields_enumerate(response.get(), ^bool(const char *name, size_t nameLength, const char *value, size_t valueLength) {
+                        auto headerName = String(unsafeMakeSpan(name, nameLength)).convertToASCIILowercase();
+                        // Forbidden response header names must never reach WebContent.
+                        // https://fetch.spec.whatwg.org/#forbidden-response-header-name
+                        if (headerName != "wt-protocol"_s && !WebCore::isForbiddenResponseHeaderName(headerName)) {
+                            KeyValuePair<String, String> pair(WTF::move(headerName), String(unsafeMakeSpan(value, valueLength)));
+                            responseHeaders.append(WTF::move(pair));
+                        }
+                        return true;
+                    });
                     nw_webtransport_transport_mode_t transportMode = nw_webtransport_metadata_get_transport_mode(metadata.get());
                     if (transportMode == nw_webtransport_transport_mode_http3)
                         reliabilityMode = WebCore::WebTransportReliabilityMode::SupportsUnreliable;
@@ -337,7 +352,7 @@ void NetworkTransportSession::initialize(CompletionHandler<void(std::optional<We
                         reliabilityMode = WebCore::WebTransportReliabilityMode::ReliableOnly;
                 }
             }
-            return creationCompletionHandler(WebCore::WebTransportConnectionInfo { WTF::move(protocol), reliabilityMode });
+            return creationCompletionHandler(WebCore::WebTransportConnectionInfo { WTF::move(protocol), reliabilityMode, WTF::move(responseHeaders) });
         }
         case nw_connection_group_state_failed:
             if (RefPtr protectedThis = weakThis.get()) {

@@ -146,11 +146,11 @@ void WorkerWebTransportSession::streamSendError(WebTransportStreamIdentifier ide
     });
 }
 
-Ref<WebTransportSessionInitializationPromise> WorkerWebTransportSession::initialize(ScriptExecutionContext& context, const URL& url, const WebTransportOptions& options, const ClientOrigin& origin)
+Ref<WebTransportSessionInitializationPromise> WorkerWebTransportSession::initialize(ScriptExecutionContext& context, const URL& url, const WebTransportOptions& options, const Vector<KeyValuePair<String, String>>& additionalHeaders, const ClientOrigin& origin)
 {
     ASSERT(!RunLoop::isMain());
     if (RefPtr session = m_session)
-        return session->initialize(context, url, options, origin);
+        return session->initialize(context, url, options, additionalHeaders, origin);
     return WebTransportSessionInitializationPromise::createAndReject();
 }
 

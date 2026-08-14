@@ -827,6 +827,7 @@
 				WebCore/URLParserTextEncoding.cpp,
 				WebCore/UserAgentStringParser.cpp,
 				WebCore/WebGPUFramePacer.cpp,
+				WebCore/WebTransportHeaderValidation.cpp,
 				WebCore/WritingModeTests.cpp,
 				WebCore/XRCompositionLayer.cpp,
 				WebCore/YouTubePluginReplacement.cpp,

@@ -85,7 +85,7 @@ private:
     WebTransportSession(Ref<IPC::Connection>&&, ThreadSafeWeakPtr<WebCore::WebTransportSessionClient>&&, WebTransportSessionIdentifier, WebPageProxyIdentifier);
 
     // WebTransportSession
-    Ref<WebCore::WebTransportSessionInitializationPromise> initialize(WebCore::ScriptExecutionContext&, const URL&, const WebCore::WebTransportOptions&, const WebCore::ClientOrigin&) final;
+    Ref<WebCore::WebTransportSessionInitializationPromise> initialize(WebCore::ScriptExecutionContext&, const URL&, const WebCore::WebTransportOptions&, const Vector<KeyValuePair<String, String>>&, const WebCore::ClientOrigin&) final;
     Ref<WebCore::WebTransportSendPromise> sendDatagram(std::optional<WebCore::WebTransportSendGroupIdentifier>, std::span<const uint8_t>) final;
     Ref<WebCore::WebTransportStreamPromise> createOutgoingUnidirectionalStream() final;
     Ref<WebCore::WebTransportStreamPromise> createBidirectionalStream() final;

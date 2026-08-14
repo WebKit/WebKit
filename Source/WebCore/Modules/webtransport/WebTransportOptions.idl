@@ -23,6 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+typedef (sequence<sequence<ByteString>> or record<ByteString, ByteString>) HeadersInit;
+
 // https://w3c.github.io/webtransport/#dictdef-webtransportoptions
 [
     EnabledBySetting=WebTransportEnabled,
@@ -35,4 +37,5 @@
     [EnforceRange] unsigned short? anticipatedConcurrentIncomingBidirectionalStreams = null;
     sequence<DOMString> protocols = [];
     ReadableStreamType datagramsReadableType;
+    [ImplementedAs=headersInit] HeadersInit headers;
 };

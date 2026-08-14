@@ -7346,6 +7346,7 @@
 		FAC8498F2A9EA1CE00D407EF /* WebTransportSession.h in Headers */ = {isa = PBXBuildFile; fileRef = FAC8497A2A9E68E900D407EF /* WebTransportSession.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FAC849902A9EA1D900D407EF /* WebTransportSessionClient.h in Headers */ = {isa = PBXBuildFile; fileRef = FAC8497E2A9E6CEF00D407EF /* WebTransportSessionClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FACC82B02E8E093F00EBAFED /* WebTransportCongestionControl.h in Headers */ = {isa = PBXBuildFile; fileRef = FAC3C3F92A996703001E2EB8 /* WebTransportCongestionControl.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		CA7C3E0D2F31A94700AA1147 /* WebTransportHeaderValidation.h in Headers */ = {isa = PBXBuildFile; fileRef = CA7C3E0B2F31A94700AA1147 /* WebTransportHeaderValidation.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FACC82B92E8EF2AF00EBAFED /* WebTransportOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = FAC3C3FB2A996704001E2EB8 /* WebTransportOptions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FACC82BA2E8EF33A00EBAFED /* WebTransportHash.h in Headers */ = {isa = PBXBuildFile; fileRef = FAC3C3FD2A996705001E2EB8 /* WebTransportHash.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FADAF3C92EA2FC80001ACE2E /* WebKitBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = FADAF3BE2EA1D011001ACE2E /* WebKitBuffer.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -23670,6 +23671,8 @@
 		FAC3C3FA2A996704001E2EB8 /* WebTransportDatagramDuplexStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebTransportDatagramDuplexStream.h; sourceTree = "<group>"; };
 		FAC3C3FB2A996704001E2EB8 /* WebTransportOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebTransportOptions.h; sourceTree = "<group>"; };
 		FAC3C3FD2A996705001E2EB8 /* WebTransportHash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebTransportHash.h; sourceTree = "<group>"; };
+		CA7C3E0C2F31A94700AA1147 /* WebTransportHeaderValidation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebTransportHeaderValidation.cpp; sourceTree = "<group>"; };
+		CA7C3E0B2F31A94700AA1147 /* WebTransportHeaderValidation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebTransportHeaderValidation.h; sourceTree = "<group>"; };
 		FAC3C3FF2A996705001E2EB8 /* WebTransportReceiveStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebTransportReceiveStream.h; sourceTree = "<group>"; };
 		FAC3C4002A996706001E2EB8 /* WebTransportError.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebTransportError.cpp; sourceTree = "<group>"; };
 		FAC3C4012A996706001E2EB8 /* WebTransportSendStream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebTransportSendStream.cpp; sourceTree = "<group>"; };
@@ -43487,6 +43490,8 @@
 				FAC3C3DF2A9960E0001E2EB8 /* WebTransportErrorSource.idl */,
 				FAC3C3FD2A996705001E2EB8 /* WebTransportHash.h */,
 				FAC3C3D02A9960DA001E2EB8 /* WebTransportHash.idl */,
+				CA7C3E0C2F31A94700AA1147 /* WebTransportHeaderValidation.cpp */,
+				CA7C3E0B2F31A94700AA1147 /* WebTransportHeaderValidation.h */,
 				FAC3C3FB2A996704001E2EB8 /* WebTransportOptions.h */,
 				FAC3C3D22A9960DB001E2EB8 /* WebTransportOptions.idl */,
 				FAC3C3EC2A9966FF001E2EB8 /* WebTransportReceiveStream.cpp */,
@@ -50268,6 +50273,7 @@
 				FA0B46D42E8CBF780073E9B3 /* WebTransportConnectionStats.h in Headers */,
 				FA0B46CE2E8C7FEB0073E9B3 /* WebTransportDatagramStats.h in Headers */,
 				FACC82BA2E8EF33A00EBAFED /* WebTransportHash.h in Headers */,
+				CA7C3E0D2F31A94700AA1147 /* WebTransportHeaderValidation.h in Headers */,
 				FACC82B92E8EF2AF00EBAFED /* WebTransportOptions.h in Headers */,
 				FA93D69F2AA40DD5006444FB /* WebTransportReceiveStreamStats.h in Headers */,
 				244447FB2ECD1F8E00EED177 /* WebTransportReliabilityMode.h in Headers */,

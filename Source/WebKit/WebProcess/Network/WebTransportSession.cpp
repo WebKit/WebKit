@@ -133,14 +133,14 @@ void WebTransportSession::didDrain()
         strongClient->didDrain();
 }
 
-Ref<WebCore::WebTransportSessionInitializationPromise> WebTransportSession::initialize(WebCore::ScriptExecutionContext& context, const URL& url, const WebCore::WebTransportOptions& options, const WebCore::ClientOrigin& origin)
+Ref<WebCore::WebTransportSessionInitializationPromise> WebTransportSession::initialize(WebCore::ScriptExecutionContext& context, const URL& url, const WebCore::WebTransportOptions& options, const Vector<KeyValuePair<String, String>>& additionalHeaders, const WebCore::ClientOrigin& origin)
 {
     std::optional<TextPosition> sourcePosition;
     if (RefPtr document = dynamicDowncast<WebCore::Document>(context))
         sourcePosition = document->currentParserSourcePosition();
     if (CheckedPtr csp = context.contentSecurityPolicy(); !csp || !csp->allowConnectToSource(url, WTF::move(sourcePosition)))
         return WebCore::WebTransportSessionInitializationPromise::createAndReject();
-    return sendWithPromisedReply(Messages::NetworkConnectionToWebProcess::InitializeWebTransportSession(m_identifier, url, options, m_pageID, origin))->whenSettled(RunLoop::mainSingleton(), [] (auto&& result) {
+    return sendWithPromisedReply(Messages::NetworkConnectionToWebProcess::InitializeWebTransportSession(m_identifier, url, options, additionalHeaders, m_pageID, origin))->whenSettled(RunLoop::mainSingleton(), [] (auto&& result) {
         if (result && *result)
             return WebCore::WebTransportSessionInitializationPromise::createAndResolve(WTF::move(**result));
         return WebCore::WebTransportSessionInitializationPromise::createAndReject();

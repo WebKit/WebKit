@@ -35,6 +35,7 @@ PASS WebTransport interface: attribute reliability
 PASS WebTransport interface: attribute congestionControl
 PASS WebTransport interface: attribute anticipatedConcurrentIncomingUnidirectionalStreams
 PASS WebTransport interface: attribute anticipatedConcurrentIncomingBidirectionalStreams
+PASS WebTransport interface: attribute responseHeaders
 PASS WebTransport interface: attribute protocol
 PASS WebTransport interface: attribute closed
 PASS WebTransport interface: attribute draining
@@ -56,6 +57,7 @@ PASS WebTransport interface: webTransport must inherit property "reliability" wi
 PASS WebTransport interface: webTransport must inherit property "congestionControl" with the proper type
 PASS WebTransport interface: webTransport must inherit property "anticipatedConcurrentIncomingUnidirectionalStreams" with the proper type
 PASS WebTransport interface: webTransport must inherit property "anticipatedConcurrentIncomingBidirectionalStreams" with the proper type
+PASS WebTransport interface: webTransport must inherit property "responseHeaders" with the proper type
 PASS WebTransport interface: webTransport must inherit property "protocol" with the proper type
 PASS WebTransport interface: webTransport must inherit property "closed" with the proper type
 PASS WebTransport interface: webTransport must inherit property "draining" with the proper type

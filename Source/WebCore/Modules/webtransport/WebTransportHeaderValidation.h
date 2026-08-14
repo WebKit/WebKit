@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,26 +25,22 @@
 
 #pragma once
 
-#include <WebCore/WebTransportReliabilityMode.h>
+#include <WebCore/FetchHeaders.h>
+#include <wtf/KeyValuePair.h>
+#include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-struct WebTransportConnectionInfo {
-    String protocol;
-    WebTransportReliabilityMode reliabilityMode;
-    Vector<KeyValuePair<String, String>> responseHeaders;
+template<typename> class ExceptionOr;
 
-    WebTransportConnectionInfo isolatedCopy() const & {
-        return { protocol.isolatedCopy(), reliabilityMode, WTF::map(responseHeaders, [](auto& header) {
-            return KeyValuePair<String, String> { header.key.isolatedCopy(), header.value.isolatedCopy() };
-        }) };
-    }
-    WebTransportConnectionInfo isolatedCopy() && {
-        return { WTF::move(protocol).isolatedCopy(), reliabilityMode, WTF::map(WTF::move(responseHeaders), [](KeyValuePair<String, String>&& header) {
-            return KeyValuePair<String, String> { WTF::move(header.key).isolatedCopy(), WTF::move(header.value).isolatedCopy() };
-        }) };
-    }
-};
+// https://w3c.github.io/webtransport/#dom-webtransportoptions-headers
+WEBCORE_EXPORT ExceptionOr<Vector<KeyValuePair<String, String>>> validateAndNormalizeWebTransportHeaders(const FetchHeaders::Init&);
 
-}
+// Defense-in-depth re-validation of WebTransport request headers received by the NetworkProcess
+// over IPC from a WebContent process. The WebContent side already performs this validation in
+// validateAndNormalizeWebTransportHeaders; a compromised WebContent process could bypass
+// it, so the NetworkProcess must re-check before acting on the headers.
+WEBCORE_EXPORT bool areValidWebTransportHeaders(const Vector<KeyValuePair<String, String>>&);
+
+} // namespace WebCore

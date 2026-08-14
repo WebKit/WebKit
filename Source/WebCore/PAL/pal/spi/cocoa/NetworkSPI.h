@@ -144,6 +144,9 @@ void nw_connection_abort_writes(nw_connection_t, uint64_t);
 void nw_http_fields_access_value_by_name(nw_http_fields_t, const char*, NW_NOESCAPE nw_http_optional_string_accessor_t);
 OS_OBJECT_RETURNS_RETAINED sec_protocol_metadata_t nw_webtransport_metadata_copy_sec_protocol_metadata(nw_protocol_metadata_t);
 
+typedef bool (^nw_http_fields_enumerate_block_t)(const char* name, size_t nameLength, const char* value, size_t valueLength);
+bool nw_http_fields_enumerate(nw_http_fields_t, NW_NOESCAPE nw_http_fields_enumerate_block_t);
+
 WTF_EXTERN_C_END
 
 // ------------------------------------------------------------

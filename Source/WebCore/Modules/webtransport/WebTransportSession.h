@@ -27,8 +27,11 @@
 
 #include <span>
 #include <wtf/AbstractThreadSafeRefCountedAndCanMakeWeakPtr.h>
+#include <wtf/KeyValuePair.h>
 #include <wtf/NativePromise.h>
 #include <wtf/ThreadSafeWeakPtr.h>
+#include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -65,7 +68,7 @@ class WEBCORE_EXPORT WebTransportSession : public AbstractThreadSafeRefCountedAn
 public:
     virtual ~WebTransportSession();
 
-    virtual Ref<WebTransportSessionInitializationPromise> initialize(ScriptExecutionContext&, const URL&, const WebTransportOptions&, const ClientOrigin&) = 0;
+    virtual Ref<WebTransportSessionInitializationPromise> initialize(ScriptExecutionContext&, const URL&, const WebTransportOptions&, const Vector<KeyValuePair<String, String>>& additionalHeaders, const ClientOrigin&) = 0;
     virtual Ref<WebTransportSendPromise> sendDatagram(std::optional<WebTransportSendGroupIdentifier>, std::span<const uint8_t>) = 0;
     virtual Ref<WebTransportStreamPromise> createOutgoingUnidirectionalStream() = 0;
     virtual Ref<WebTransportStreamPromise> createBidirectionalStream() = 0;

@@ -1,0 +1,21 @@
+
+PASS Setting wt-available-protocols header should throw TypeError
+PASS Setting wt-available-protocols header should throw TypeError (case-insensitive)
+PASS Setting wt-available-protocols header should throw TypeError (mixed case)
+PASS Forbidden request headers should be silently dropped
+PASS Empty headers object should be accepted
+PASS Custom headers should be accepted
+PASS Multiple custom headers should be accepted
+PASS Headers as sequence of sequences should be accepted
+PASS Duplicate header names in sequence form should be accepted
+PASS Header names should be lowercased
+PASS Mixed-case duplicate header names should be lowercased and preserved
+PASS Sequence with wrong inner length should throw TypeError
+PASS Invalid header name should throw TypeError
+PASS Header value with CR/LF should throw TypeError
+PASS responseHeaders is null before the connection is established
+PASS Custom request headers are received by the server
+PASS responseHeaders exposes headers from the server CONNECT response
+PASS Forbidden response header names are not exposed in responseHeaders
+PASS wt-protocol is stripped from responseHeaders
+

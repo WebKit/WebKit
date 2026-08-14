@@ -35,7 +35,7 @@
 #include "DocumentInlines.h"
 #include "EmptyClients.h"
 #include "ExceptionOr.h"
-#include "HTTPParsers.h"
+#include "FetchHeaders.h"
 #include "JSDOMConvertDictionary.h"
 #include "JSDOMConvertInterface.h"
 #include "JSDOMException.h"
@@ -58,6 +58,7 @@
 #include "WebTransportDatagramDuplexStream.h"
 #include "WebTransportDatagramsWritable.h"
 #include "WebTransportError.h"
+#include "WebTransportHeaderValidation.h"
 #include "WebTransportOptions.h"
 #include "WebTransportReceiveStream.h"
 #include "WebTransportReceiveStreamByteSource.h"
@@ -99,6 +100,15 @@ ExceptionOr<Ref<WebTransport>> WebTransport::create(ScriptExecutionContext& cont
         escapedProtocols.append(WTF::move(*escapedProtocol));
     }
     options.protocols = WTF::move(escapedProtocols);
+
+    // https://w3c.github.io/webtransport/#dom-webtransportoptions-headers
+    Vector<KeyValuePair<String, String>> additionalHeaders;
+    if (options.headersInit) {
+        auto validatedHeaders = validateAndNormalizeWebTransportHeaders(*options.headersInit);
+        if (validatedHeaders.hasException())
+            return validatedHeaders.releaseException();
+        additionalHeaders = validatedHeaders.releaseReturnValue();
+    }
 
     auto* globalObject = context.globalObject();
     if (!globalObject) {
@@ -149,7 +159,7 @@ ExceptionOr<Ref<WebTransport>> WebTransport::create(ScriptExecutionContext& cont
 
     auto datagrams = WebTransportDatagramDuplexStream::create(incomingDatagrams.releaseNonNull());
 
-    Ref transport = adoptRef(*new WebTransport(context, domGlobalObject, incomingBidirectionalStreams.releaseReturnValue(), incomingUnidirectionalStreams.releaseReturnValue(), options, WTF::move(datagrams), datagramSource.releaseNonNull(), WTF::move(receiveStreamSource), WTF::move(bidirectionalStreamSource), WTF::move(parsedURL)));
+    Ref transport = adoptRef(*new WebTransport(context, domGlobalObject, incomingBidirectionalStreams.releaseReturnValue(), incomingUnidirectionalStreams.releaseReturnValue(), options, WTF::move(datagrams), datagramSource.releaseNonNull(), WTF::move(receiveStreamSource), WTF::move(bidirectionalStreamSource), WTF::move(parsedURL), WTF::move(additionalHeaders)));
     transport->suspendIfNeeded();
     return transport;
 }
@@ -163,7 +173,7 @@ static ClientOrigin clientOrigin(ScriptExecutionContext& context)
 
 // FIXME: Rename SocketProvider to NetworkProvider or something to reflect that it provides a little more than just simple sockets. SocketAndTransportProvider?
 
-WebTransport::WebTransport(ScriptExecutionContext& context, JSDOMGlobalObject& globalObject, Ref<ReadableStream>&& incomingBidirectionalStreams, Ref<ReadableStream>&& incomingUnidirectionalStreams, const WebTransportOptions& options, Ref<WebTransportDatagramDuplexStream>&& datagrams, Ref<DatagramSource>&& datagramSource, Ref<WebTransportReceiveStreamSource>&& receiveStreamSource, Ref<WebTransportBidirectionalStreamSource>&& bidirectionalStreamSource, URL&& url)
+WebTransport::WebTransport(ScriptExecutionContext& context, JSDOMGlobalObject& globalObject, Ref<ReadableStream>&& incomingBidirectionalStreams, Ref<ReadableStream>&& incomingUnidirectionalStreams, const WebTransportOptions& options, Ref<WebTransportDatagramDuplexStream>&& datagrams, Ref<DatagramSource>&& datagramSource, Ref<WebTransportReceiveStreamSource>&& receiveStreamSource, Ref<WebTransportBidirectionalStreamSource>&& bidirectionalStreamSource, URL&& url, Vector<KeyValuePair<String, String>>&& additionalHeaders)
     : ActiveDOMObject(&context)
     , m_incomingBidirectionalStreams(WTF::move(incomingBidirectionalStreams))
     , m_incomingUnidirectionalStreams(WTF::move(incomingUnidirectionalStreams))
@@ -181,7 +191,7 @@ WebTransport::WebTransport(ScriptExecutionContext& context, JSDOMGlobalObject& g
 {
     m_datagrams->attachTo(*this);
     m_datagramSource->setTransport(*this);
-    context.enqueueTaskWhenSettled(m_session->initialize(context, url, options, WebCore::clientOrigin(context)), WebCore::TaskSource::Networking, [weakThis = WeakPtr { *this }] (auto&& info) mutable {
+    context.enqueueTaskWhenSettled(m_session->initialize(context, url, options, additionalHeaders, WebCore::clientOrigin(context)), WebCore::TaskSource::Networking, [weakThis = WeakPtr { *this }] (auto&& info) mutable {
         RefPtr strongThis = weakThis.get();
         if (!strongThis)
             return;
@@ -191,6 +201,14 @@ WebTransport::WebTransport(ScriptExecutionContext& context, JSDOMGlobalObject& g
             return strongThis->cleanupWithSessionError();
         strongThis->m_protocol = WTF::move(info->protocol);
         strongThis->m_reliability = info->reliabilityMode;
+        HTTPHeaderMap headerMap;
+        for (auto& header : info->responseHeaders)
+            headerMap.add(header.key, header.value);
+        Ref responseHeaders = FetchHeaders::create(FetchHeaders::Guard::Immutable);
+        // Fill under a response guard so forbidden response header names are dropped.
+        // https://fetch.spec.whatwg.org/#forbidden-response-header-name
+        responseHeaders->filterAndFill(headerMap, FetchHeaders::Guard::Response);
+        strongThis->m_responseHeaders = WTF::move(responseHeaders);
         strongThis->m_state = State::Connected;
         protect(strongThis->m_ready.second)->resolve();
     });
@@ -434,6 +452,11 @@ void WebTransport::setAnticipatedConcurrentIncomingBidirectionalStreams(std::opt
 String& WebTransport::protocol()
 {
     return m_protocol;
+}
+
+FetchHeaders* WebTransport::responseHeaders()
+{
+    return m_responseHeaders.get();
 }
 
 bool WebTransport::supportsReliableOnly()

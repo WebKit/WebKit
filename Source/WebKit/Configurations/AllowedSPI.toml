@@ -94,6 +94,7 @@ symbols = [
     "nw_connection_abort_reads",
     "nw_connection_abort_writes",
     "nw_http_fields_access_value_by_name",
+    "nw_http_fields_enumerate",
     "nw_parameters_create_webtransport_http",
     "nw_protocol_copy_webtransport_definition",
     "nw_webtransport_create_options",

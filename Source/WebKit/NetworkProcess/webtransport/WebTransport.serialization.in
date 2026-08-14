@@ -56,6 +56,7 @@ struct WebCore::WebTransportOptions {
     std::optional<uint16_t> anticipatedConcurrentIncomingBidirectionalStreams
     Vector<String> protocols
     std::optional<WebCore::ReadableStreamType> datagramsReadableType;
+    [NotSerialized] std::optional<WebCore::FetchHeaders::Init> headersInit;
 };
 
 enum class WebCore::WebTransportCongestionControl : uint8_t {
@@ -77,4 +78,5 @@ enum class WebCore::ReadableStreamType : uint8_t {
 struct WebCore::WebTransportConnectionInfo {
     String protocol
     WebCore::WebTransportReliabilityMode reliabilityMode
+    Vector<KeyValuePair<String, String>> responseHeaders
 };

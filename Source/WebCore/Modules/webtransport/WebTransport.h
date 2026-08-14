@@ -47,6 +47,7 @@ class DOMPromise;
 class DatagramSource;
 class DeferredPromise;
 class Exception;
+class FetchHeaders;
 class JSDOMGlobalObject;
 class ReadableStream;
 class ReadableStreamSource;
@@ -92,6 +93,7 @@ public:
     std::optional<uint16_t> NODELETE anticipatedConcurrentIncomingBidirectionalStreams();
     void NODELETE setAnticipatedConcurrentIncomingBidirectionalStreams(std::optional<uint16_t>);
     String& NODELETE protocol();
+    FetchHeaders* NODELETE responseHeaders();
     DOMPromise& NODELETE closed();
     DOMPromise& NODELETE draining();
     void close(WebTransportCloseInfo&&);
@@ -111,7 +113,7 @@ public:
     void receiveStreamClosed(WebTransportStreamIdentifier);
 
 private:
-    WebTransport(ScriptExecutionContext&, JSDOMGlobalObject&, Ref<ReadableStream>&&, Ref<ReadableStream>&&, const WebTransportOptions&, Ref<WebTransportDatagramDuplexStream>&&, Ref<DatagramSource>&&, Ref<WebTransportReceiveStreamSource>&&, Ref<WebTransportBidirectionalStreamSource>&&, URL&&);
+    WebTransport(ScriptExecutionContext&, JSDOMGlobalObject&, Ref<ReadableStream>&&, Ref<ReadableStream>&&, const WebTransportOptions&, Ref<WebTransportDatagramDuplexStream>&&, Ref<DatagramSource>&&, Ref<WebTransportReceiveStreamSource>&&, Ref<WebTransportBidirectionalStreamSource>&&, URL&&, Vector<KeyValuePair<String, String>>&&);
 
     void cleanup(Ref<DOMException>&&, std::optional<WebTransportCloseInfo>&&);
     void cleanupWithSessionError();
@@ -151,6 +153,7 @@ private:
     std::optional<uint16_t> m_anticipatedConcurrentIncomingUnidirectionalStreams;
     std::optional<uint16_t> m_anticipatedConcurrentIncomingBidirectionalStreams;
     String m_protocol;
+    RefPtr<FetchHeaders> m_responseHeaders;
     const PromiseAndWrapper m_closed;
     const PromiseAndWrapper m_draining;
     const Ref<WebTransportDatagramDuplexStream> m_datagrams;
