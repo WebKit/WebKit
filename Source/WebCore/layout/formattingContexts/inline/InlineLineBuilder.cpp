@@ -910,8 +910,12 @@ Vector<std::pair<size_t, size_t>> LineBuilder::collectShapeRanges(const LineCand
                 auto hasMatchingFontCascade = *lastFontCascade.get() == styleToUse.fontCascade();
                 if (isEligibleText && hasMatchingFontCascade)
                     trailingContentRunIndex = entry.index;
-                else
-                    resetCandidateRange();
+                else {
+                    commitIfHasContentAndReset();
+                    if (isEligibleText)
+                        leadingContentRunIndex = entry.index;
+                    lastFontCascade = &styleToUse.fontCascade();
+                }
             } else if (!isEligibleText)
                 resetCandidateRange();
             break;
