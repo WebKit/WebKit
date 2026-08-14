@@ -117,7 +117,7 @@ private:
         RefPtr<ShadowRoot> shadowRoot;
         RefPtr<Scope> enclosingScope;
 
-        Scope(Document&, Update&);
+        Scope(Document&, Box<NewStyleDuringResolutionMap>);
         Scope(ShadowRoot&, Scope& enclosingScope);
         ~Scope();
     };
@@ -254,6 +254,15 @@ private:
     bool m_allAnchorNamesInvalid { false };
 
     std::unique_ptr<Update> m_update;
+
+    // Stores new styles that was produced during style resolution.
+    // This is different then m_update: m_update is updated after styles of
+    // pseudo-elements are resolved. On the other hands, this map is updated
+    // immediately after the (non-pseudo) element style is resolved. This is
+    // threaded to ContainerQueryEvaluator for evaluating style queries. See
+    // ContainerQueryEvaluationState for more details.
+    // NOTE: stored styles do not contain pseudo-element's styles.
+    Box<NewStyleDuringResolutionMap> m_newStyleDuringResolutionMap { Box<NewStyleDuringResolutionMap>::create() };
 };
 
 // Integrate with the HTML5 event loop instead, see EventLoop.cpp and consumers.
