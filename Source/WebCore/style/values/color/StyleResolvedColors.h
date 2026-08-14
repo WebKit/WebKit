@@ -37,7 +37,7 @@ class ResolvedColors {
     WTF_MAKE_TZONE_ALLOCATED(ResolvedColors);
 
 public:
-    explicit ResolvedColors(WebCore::Color);
+    explicit ResolvedColors(WebCore::Color currentColor, WebCore::Color accentColor);
 
     static ResolvedColors fromStyle(const ComputedStyleProperties&);
 
@@ -45,9 +45,11 @@ public:
     static ResolvedColors fromVisitedLinkStyle(const ComputedStyleProperties&);
 
     WebCore::Color currentColor() const { return m_currentColor; }
+    WebCore::Color accentColor() const { return m_accentColor; }
 
 private:
     WebCore::Color m_currentColor;
+    WebCore::Color m_accentColor;
 };
 
 } // namespace Style

@@ -45,6 +45,9 @@ void serializationForCSSTokenization(StringBuilder& builder, const CSS::Serializ
     case CurrentColor::Property::Color:
         builder.append("currentcolor"_s);
         return;
+    case CurrentColor::Property::AccentColor:
+        builder.append("AccentColor"_s);
+        return;
     default:
         ASSERT_NOT_REACHED();
         builder.append("<invalid color>"_s);
@@ -57,6 +60,8 @@ WTF::String serializationForCSSTokenization(const CSS::SerializationContext&, co
     switch (currentColor.property()) {
     case CurrentColor::Property::Color:
         return "currentcolor"_s;
+    case CurrentColor::Property::AccentColor:
+        return "AccentColor"_s;
     default:
         break;
     }
@@ -72,6 +77,8 @@ WTF::TextStream& operator<<(WTF::TextStream& ts, const CurrentColor& currentColo
     switch (currentColor.property()) {
     case CurrentColor::Property::Color:
         return ts << "currentcolor"_s;
+    case CurrentColor::Property::AccentColor:
+        return ts << "AccentColor"_s;
     default:
         break;
     }

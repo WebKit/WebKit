@@ -1,0 +1,6 @@
+
+PASS accent-color: currentColor when color: AccentColorText and parent doesn't specify accent color should result in the system default AccentColorText
+PASS accent-color: currentColor when color: AccentColorText and parent specifies accent-color: auto should result in the system default AccentColorText
+PASS accent-color: currentColor when color: AccentColorText and parent specifies accent-color: currentColor should result in the parent's AccentColorText
+PASS accent-color: currentColor when color: AccentColorText and parent specifies a resolved accent color should result in the parent's AccentColorText
+

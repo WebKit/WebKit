@@ -50,7 +50,10 @@ public:
     // Represents the CSS property in which to obtain the color from.
     enum class Property {
         // 'color' property.
-        Color
+        Color,
+
+        // CSS 'accent-color' property
+        AccentColor
     };
 
     WEBCORE_EXPORT CurrentColor(Property);
@@ -68,6 +71,9 @@ inline WebCore::Color resolveColor(const CurrentColor& currentColor, const Resol
     switch (currentColor.property()) {
     case CurrentColor::Property::Color:
         return resolvedColors.currentColor();
+
+    case CurrentColor::Property::AccentColor:
+        return resolvedColors.accentColor();
 
     default:
         ASSERT_NOT_REACHED();

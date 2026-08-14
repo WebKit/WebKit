@@ -1,0 +1,4 @@
+
+PASS accent-color: currentColor uses the element's current color
+PASS accent-color: currentColor when color: currentColor uses the parent element's current color
+

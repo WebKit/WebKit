@@ -29,19 +29,36 @@
 namespace WebCore {
 namespace Style {
 
-ResolvedColors::ResolvedColors(WebCore::Color currentColor)
+ResolvedColors::ResolvedColors(WebCore::Color currentColor, WebCore::Color accentColor)
     : m_currentColor(currentColor)
+    , m_accentColor(accentColor)
 {
 }
 
 ResolvedColors ResolvedColors::fromStyle(const ComputedStyleProperties& style)
 {
-    return ResolvedColors(style.color());
+    auto currentColor = style.color();
+    WebCore::Color resolvedAccentColor = [&] () {
+        auto accentColorOrDefault = style.accentColor().colorOrDefaultColor();
+
+        // We're sure that style.accentColor() won't have any AccentColor, since those got
+        // replaced with the parent's accent color during style building. So just give a null
+        // color for AccentColor, it doesn't matter since we won't need to use it.
+        return resolveColor(accentColorOrDefault, ResolvedColors { currentColor, { } });
+    }();
+
+    return ResolvedColors(style.color(), resolvedAccentColor);
 }
 
 ResolvedColors ResolvedColors::fromVisitedLinkStyle(const ComputedStyleProperties& style)
 {
-    return ResolvedColors(style.visitedLinkColorResolvingCurrentColor());
+    auto currentColor = style.color();
+    WebCore::Color resolvedAccentColor = [&] () {
+        auto accentColorOrDefault = style.accentColor().colorOrDefaultColor();
+        return resolveColor(accentColorOrDefault, ResolvedColors { currentColor, { } });
+    }();
+
+    return ResolvedColors(style.visitedLinkColorResolvingCurrentColor(), resolvedAccentColor);
 }
 
 } // namespace Style

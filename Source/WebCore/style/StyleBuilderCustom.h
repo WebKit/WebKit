@@ -63,6 +63,7 @@
 #include "StyleTextEdge+CSSValueConversion.h"
 #include "StyleValueTypes+CSSValueConversion.h"
 #include "TextSpacing.h"
+#include "TransformCurrentColor.h"
 #include "ViewTimeline.h"
 #include <ranges>
 
@@ -113,6 +114,7 @@ public:
     static void applyHighlightValueColor(BuilderState&, CSSValue&);
 
     // Custom handling of value setting only.
+    static void applyValueAccentColor(BuilderState&, CSSValue&);
     static void applyValueWebkitLocale(BuilderState&, CSSValue&);
     static void applyValueTextOrientation(BuilderState&, CSSValue&);
 #if ENABLE(TEXT_AUTOSIZING)
@@ -745,6 +747,24 @@ inline void BuilderCustom::applyHighlightValueColor(BuilderState& builderState, 
 
     if (builderState.applyPropertyToRegularStyle())
         builderState.style().setColorIsCurrentColorForHighlight(valueID(value) == CSSValueCurrentcolor);
+}
+
+inline void BuilderCustom::applyValueAccentColor(BuilderState& builderState, CSSValue& value)
+{
+    auto styleAccentColor = toStyleFromCSSValue<AccentColor>(builderState, value);
+    if (auto accentColor = styleAccentColor.tryColor()) {
+        auto transformedColor = transformCurrentColor(*accentColor, [&](const CurrentColor& currentColor) -> Color {
+            if (currentColor.property() == CurrentColor::Property::AccentColor) {
+                // FIXME: it's unclear what's the behavior when the parent's accent-color is auto.
+                // See https://github.com/w3c/csswg-drafts/issues/14329.
+                return ResolvedColor { builderState.parentStyle().accentColorResolvingCurrentColor() };
+            }
+            return CurrentColor { currentColor.property() };
+        });
+        styleAccentColor = AccentColor { WTF::move(transformedColor) };
+    }
+
+    builderState.style().setAccentColor(WTF::move(styleAccentColor));
 }
 
 } // namespace Style

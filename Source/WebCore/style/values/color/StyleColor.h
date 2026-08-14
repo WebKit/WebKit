@@ -178,6 +178,8 @@ private:
 WebCore::Color resolveColor(const Color&, const ResolvedColors&);
 bool containsCurrentColor(const Color&);
 
+template<class F> Color transformCurrentColor(const Color&, F&&);
+
 void serializationForCSSTokenization(StringBuilder&, const CSS::SerializationContext&, const Color&);
 WTF::String serializationForCSSTokenization(const CSS::SerializationContext&, const Color&);
 
