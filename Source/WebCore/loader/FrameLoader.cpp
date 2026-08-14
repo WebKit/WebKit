@@ -1568,7 +1568,7 @@ void FrameLoader::loadFrameRequest(FrameLoadRequest&& request, Event* event, Ref
                 RefPtr<SerializedScriptValue> stateObject;
                 if (RefPtr currentItem = history().currentItem())
                     stateObject = currentItem->navigationAPIStateObject();
-                if (!dispatchNavigateEvent(loadType, request, false, formState.get(), event, stateObject.get()))
+                if (!dispatchNavigateEvent(loadType, request, request.resourceRequest().url(), false, formState.get(), event, stateObject.get()))
                     return;
                 if (!frame->page())
                     return;
@@ -1676,6 +1676,8 @@ void FrameLoader::loadURL(FrameLoadRequest&& frameLoadRequest, const String& ref
     action.setIsInitialFrameSrcLoad(frameLoadRequest.isInitialFrameSrcLoad());
     action.setIsFromNavigationAPI(frameLoadRequest.isFromNavigationAPI());
     action.setNewFrameOpenerPolicy(frameLoadRequest.newFrameOpenerPolicy());
+    if (!action.sourceElement() && event)
+        action.setSourceElement(dynamicDowncast<Element>(event->target()));
     auto historyHandling = frameLoadRequest.navigationHistoryBehavior();
     RefPtr document = m_frame->document();
     bool isSameOrigin = protect(frameLoadRequest.requesterSecurityOrigin())->isSameOriginDomain(protect(document->securityOrigin()).get());
@@ -1693,6 +1695,7 @@ void FrameLoader::loadURL(FrameLoadRequest&& frameLoadRequest, const String& ref
             historyHandling = NavigationHistoryBehavior::Replace;
     }
     frameLoadRequest.setNavigationHistoryBehavior(historyHandling);
+    action.setNavigationHistoryBehavior(historyHandling);
     action.setNavigationAPIType(determineNavigationType(newLoadType, historyHandling));
     if (privateClickMeasurement && frame->isMainFrame())
         action.setPrivateClickMeasurement(WTF::move(*privateClickMeasurement));
@@ -1731,7 +1734,7 @@ void FrameLoader::loadURL(FrameLoadRequest&& frameLoadRequest, const String& ref
     // exactly the same so pages with '#' links and DHTML side effects
     // work properly.
     if (shouldPerformFragmentNavigation(isFormSubmission, httpMethod, newLoadType, newURL)) {
-        if (!dispatchNavigateEvent(newLoadType, frameLoadRequest, true, formState.get(), event))
+        if (!dispatchNavigateEvent(newLoadType, frameLoadRequest, frameLoadRequest.resourceRequest().url(), true, formState.get(), event))
             return;
 
         oldDocumentLoader->setTriggeringAction(WTF::move(action));
@@ -1745,14 +1748,10 @@ void FrameLoader::loadURL(FrameLoadRequest&& frameLoadRequest, const String& ref
         return;
     }
 
-    if (isSameOrigin && newLoadType != FrameLoadType::Reload && !frameLoadRequest.isInitialFrameSrcLoad()) {
-        // FIXME: Ideally, we'd call dispatchNavigateEvent() directly from continueLoadAfterNavigationPolicy()
-        // instead of storing a lambda on the NavigationAction.
-        action.setPendingDispatchNavigateEvent([weakThis = WeakPtr { *this }, newLoadType, frameLoadRequest, formState, event = RefPtr { event }] {
-            RefPtr protectedThis = weakThis.get();
-            return protectedThis && protectedThis->dispatchNavigateEvent(newLoadType, frameLoadRequest, false, formState.get(), event.get());
-        });
-    }
+    action.setSkipNavigateEvent(frameLoadRequest.skipNavigateEvent()
+        || !isSameOrigin
+        || newLoadType == FrameLoadType::Reload
+        || frameLoadRequest.isInitialFrameSrcLoad());
 
     // Must grab this now, since this load may stop the previous load and clear this flag.
     bool isRedirect = m_quickRedirectComing;
@@ -3752,7 +3751,7 @@ void FrameLoader::loadPostRequest(FrameLoadRequest&& request, const String& refe
 
     if (protect(request.requesterSecurityOrigin())->isSameOriginDomain(protect(protect(frame->document())->securityOrigin()).get())) {
         RefPtr formState = formSubmission ? protect(formSubmission->state()): nullptr;
-        if (!dispatchNavigateEvent(loadType, request, false, formState.get()))
+        if (!dispatchNavigateEvent(loadType, request, request.resourceRequest().url(), false, formState.get()))
             return completionHandler();
     }
 
@@ -4275,8 +4274,11 @@ void FrameLoader::continueLoadAfterNavigationPolicy(const ResourceRequest& reque
         return;
     }
 
-    if (auto pendingDispatchNavigateEvent = m_policyDocumentLoader ? m_policyDocumentLoader->triggeringAction().takePendingDispatchNavigateEvent() : std::function<bool()> { }) {
-        if (!pendingDispatchNavigateEvent())
+    if (RefPtr policyDocumentLoader = m_policyDocumentLoader) {
+        auto& action = policyDocumentLoader->triggeringAction();
+        bool proceed = dispatchNavigateEvent(policyChecker().loadType(), action, action.url(), false, formSubmission ? formSubmission->state() : nullptr);
+        action.setSkipNavigateEvent(true); // Dispatch at most once.
+        if (!proceed)
             return;
     }
 
@@ -4552,7 +4554,7 @@ RefPtr<Frame> FrameLoader::findFrameForNavigation(const AtomString& name, Docume
     return frame;
 }
 
-bool FrameLoader::dispatchNavigateEvent(FrameLoadType loadType, const FrameLoadRequest& request, bool isSameDocument, FormState* formState, Event* event, SerializedScriptValue* classicHistoryAPIState)
+bool FrameLoader::dispatchNavigateEvent(FrameLoadType loadType, const FrameLoadRequestBase& request, const URL& destinationURL, bool isSameDocument, FormState* formState, Event* event, SerializedScriptValue* classicHistoryAPIState)
 {
     RefPtr document = m_frame->document();
     if (!document || !document->settings().navigationAPIEnabled())
@@ -4566,8 +4568,7 @@ bool FrameLoader::dispatchNavigateEvent(FrameLoadType loadType, const FrameLoadR
     if (!request.downloadAttribute().isNull())
         return true;
 
-    const URL& newURL = request.resourceRequest().url();
-    if (!isSameDocument && !newURL.hasFetchScheme())
+    if (!isSameDocument && !destinationURL.hasFetchScheme())
         return true;
 
     auto navigationType = determineNavigationType(loadType, request.navigationHistoryBehavior());
@@ -4588,7 +4589,7 @@ bool FrameLoader::dispatchNavigateEvent(FrameLoadType loadType, const FrameLoadR
     if (!sourceElement && event)
         sourceElement = dynamicDowncast<Element>(event->target());
 
-    return protect(window->navigation())->dispatchPushReplaceReloadNavigateEvent(newURL, navigationType, isSameDocument, formState, classicHistoryAPIState, sourceElement.get());
+    return protect(window->navigation())->dispatchPushReplaceReloadNavigateEvent(destinationURL, navigationType, isSameDocument, formState, classicHistoryAPIState, sourceElement.get());
 }
 
 void FrameLoader::loadSameDocumentItem(HistoryItem& item)

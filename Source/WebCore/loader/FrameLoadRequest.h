@@ -68,6 +68,12 @@ public:
     Element* sourceElement() const { return m_sourceElement.get(); }
     void setSourceElement(Element* sourceElement) { m_sourceElement = sourceElement; }
 
+    NavigationHistoryBehavior navigationHistoryBehavior() const { return m_navigationHistoryBehavior; }
+    void setNavigationHistoryBehavior(NavigationHistoryBehavior historyHandling) { m_navigationHistoryBehavior = historyHandling; }
+
+    bool skipNavigateEvent() const { return m_skipNavigateEvent; }
+    void setSkipNavigateEvent(bool value) { m_skipNavigateEvent = value; }
+
     InitiatedByMainFrame initiatedByMainFrame() const { return m_initiatedByMainFrame; }
 
     bool isRequestFromClientOrUserInput() const { return m_isRequestFromClientOrUserInput; }
@@ -106,10 +112,12 @@ private:
     RefPtr<Element> m_sourceElement;
     InitiatedByMainFrame m_initiatedByMainFrame { InitiatedByMainFrame::Unknown };
     std::optional<BackForwardItemIdentifier> m_targetBackForwardItemIdentifier;
+    NavigationHistoryBehavior m_navigationHistoryBehavior { NavigationHistoryBehavior::Auto };
     bool m_isRequestFromClientOrUserInput { false };
     bool m_isInitialFrameSrcLoad { false };
     bool m_isContentRuleListRedirect { false };
     bool m_isFromNavigationAPI { false };
+    bool m_skipNavigateEvent { false };
 };
 
 class FrameLoadRequest : public FrameLoadRequestBase {
@@ -170,15 +178,8 @@ public:
     void setAdvancedPrivacyProtections(OptionSet<AdvancedPrivacyProtections> policy) { m_advancedPrivacyProtections = policy; }
     std::optional<OptionSet<AdvancedPrivacyProtections>> advancedPrivacyProtections() const { return m_advancedPrivacyProtections; }
 
-    NavigationHistoryBehavior navigationHistoryBehavior() const { return m_navigationHistoryBehavior; }
-    void setNavigationHistoryBehavior(NavigationHistoryBehavior historyHandling) { m_navigationHistoryBehavior = historyHandling; }
-
-
     bool isHandledByAboutSchemeHandler() const { return m_isHandledByAboutSchemeHandler; }
     void setIsHandledByAboutSchemeHandler(bool isHandledByAboutSchemeHandler) { m_isHandledByAboutSchemeHandler = isHandledByAboutSchemeHandler; }
-
-    bool skipNavigateEvent() const { return m_skipNavigateEvent; }
-    void setSkipNavigateEvent(bool value) { m_skipNavigateEvent = value; }
 
     MonotonicTime originalNavigationStartTime() const { return m_originalNavigationStartTime; }
     void setOriginalNavigationStartTime(MonotonicTime time) { m_originalNavigationStartTime = time; }
@@ -197,10 +198,8 @@ private:
     ReferrerPolicy m_referrerPolicy { ReferrerPolicy::EmptyString };
     AllowNavigationToInvalidURL m_allowNavigationToInvalidURL { AllowNavigationToInvalidURL::Yes };
     std::optional<OptionSet<AdvancedPrivacyProtections>> m_advancedPrivacyProtections;
-    NavigationHistoryBehavior m_navigationHistoryBehavior { NavigationHistoryBehavior::Auto };
     MonotonicTime m_originalNavigationStartTime;
     bool m_isHandledByAboutSchemeHandler { false };
-    bool m_skipNavigateEvent { false };
 };
 
 } // namespace WebCore
