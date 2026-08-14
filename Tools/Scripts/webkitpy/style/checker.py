@@ -49,6 +49,7 @@ from webkitpy.style.checkers.cpp import CppChecker
 from webkitpy.style.checkers.cmake import CMakeChecker
 from webkitpy.style.checkers.deprecated_js_test_includes import categories as DeprecatedJSTestIncludesCategories
 from webkitpy.style.checkers.deprecated_js_test_includes import DeprecatedJSTestIncludesChecker
+from webkitpy.style.checkers.eslint import ESLintChecker
 from webkitpy.style.checkers.featuredefines import FeatureDefinesChecker
 from webkitpy.style.checkers.js import JSChecker
 from webkitpy.style.checkers.jsonchecker import JSONChecker
@@ -687,6 +688,7 @@ def _all_categories():
     categories = categories.union(CMakeChecker.categories)
     categories = categories.union(DeprecatedJSTestIncludesCategories)
     categories = categories.union(ComputedStyleInlineIncludesCategories)
+    categories = categories.union(ESLintChecker.categories)
     categories = categories.union(JSChecker.categories)
     categories = categories.union(JSONChecker.categories)
     categories = categories.union(JSTestChecker.categories)
@@ -1364,6 +1366,8 @@ class StyleProcessor(ProcessorBase):
         APITestExpectationsChecker.lint_test_expectations(files, self._configuration, cwd, self._increment_error_count, host=host)
 
         SwiftAssociationChecker.check_associations(files, self._configuration, cwd, self._increment_error_count, host=host)
+
+        ESLintChecker.check(files, self._configuration, cwd, self._increment_error_count, host=host)
 
         wpt_dir = os.path.join('LayoutTests', *IMPORTED_WPT_DIR.split('/'))
         wpt_paths = []
