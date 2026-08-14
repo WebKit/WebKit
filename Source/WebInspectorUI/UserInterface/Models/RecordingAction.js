@@ -140,17 +140,30 @@ WI.RecordingAction = class RecordingAction extends WI.Object
         return typeof propertyDescriptor.value === "function";
     }
 
-    static bitfieldNamesForParameter(type, name, value, index, count)
+    static bitfieldNamesForParameter(type, name, value, index, count, path = [])
     {
         if (!value)
             return null;
 
-        let prototype = WI.RecordingAction._prototypeForType(type);
-        if (!prototype)
+        let bitfield = WI.RecordingAction._bitfields[type]?.[name]?.[index];
+        for (let propertyName of path)
+            bitfield = bitfield?.[propertyName];
+        if (!bitfield)
             return null;
 
-        function testAndClearBit(name) {
-            let bit = prototype[name];
+        let namespaceName = typeof bitfield === "string" ? bitfield : "context";
+        let namespace = namespaceName === "context" ? WI.RecordingAction._prototypeForType(type) : window[namespaceName];
+        if (!namespace)
+            return null;
+
+        let constantNames = Array.isArray(bitfield) ? bitfield : Object.getOwnPropertyNames(namespace);
+        for (let name of constantNames) {
+            let bit = namespace[name];
+            if (typeof bit === "number" && bit === value)
+                return [`${namespaceName}.${name}`];
+        }
+
+        function testAndClearBit(bit, name) {
             if (!bit)
                 return;
 
@@ -166,27 +179,15 @@ WI.RecordingAction = class RecordingAction extends WI.Object
 
         let names = [];
 
-        let isWebGL = type === WI.Recording.Type.CanvasWebGL || type === WI.Recording.Type.OffscreenCanvasWebGL;
-        let isWebGL2 = type === WI.Recording.Type.CanvasWebGL2 || type === WI.Recording.Type.OffscreenCanvasWebGL2;
-
-        if ((name === "clear" && index === 0 && (isWebGL || isWebGL2)) || (name === "blitFramebuffer" && index === 8 && isWebGL2)) {
-            testAndClearBit("COLOR_BUFFER_BIT");
-            testAndClearBit("DEPTH_BUFFER_BIT");
-            testAndClearBit("STENCIL_BUFFER_BIT");
-            if (value)
-                names.push(hexString(value));
+        for (let name of constantNames) {
+            let bit = namespace[name];
+            if (typeof bit === "number" && !(bit & (bit - 1)))
+                testAndClearBit(bit, `${namespaceName}.${name}`);
         }
+        if (value)
+            names.push(hexString(value));
 
-        if (name === "clientWaitSync" && index === 1 && isWebGL2) {
-            testAndClearBit("SYNC_FLUSH_COMMANDS_BIT");
-            if (value)
-                names.push(hexString(value));
-        }
-
-        if (!names.length)
-            return null;
-
-        return names;
+        return names.length ? names : null;
     }
 
     static constantNameForParameter(type, name, value, index, count)
@@ -608,6 +609,72 @@ WI.RecordingAction = class RecordingAction extends WI.Object
 WI.RecordingAction.Event = {
     ValidityChanged: "recording-action-marked-invalid",
 };
+
+WI.RecordingAction._bitfields = {
+    [WI.Recording.Type.CanvasWebGL]: {
+        "clear": {
+            0: ["COLOR_BUFFER_BIT", "DEPTH_BUFFER_BIT", "STENCIL_BUFFER_BIT"],
+        },
+    },
+    [WI.Recording.Type.CanvasWebGL2]: {
+        "blitFramebuffer": {
+            8: ["COLOR_BUFFER_BIT", "DEPTH_BUFFER_BIT", "STENCIL_BUFFER_BIT"],
+        },
+        "clear": {
+            0: ["COLOR_BUFFER_BIT", "DEPTH_BUFFER_BIT", "STENCIL_BUFFER_BIT"],
+        },
+        "clientWaitSync": {
+            1: ["SYNC_FLUSH_COMMANDS_BIT"],
+        },
+    },
+    [WI.Recording.Type.CanvasWebGPU]: {
+        "createBindGroupLayout": {
+            0: {
+                "entries": {
+                    "visibility": "GPUShaderStage",
+                },
+            },
+        },
+        "createBuffer": {
+            0: {
+                "usage": "GPUBufferUsage",
+            },
+        },
+        "createRenderPipeline": {
+            0: {
+                "fragment": {
+                    "targets": {
+                        "writeMask": "GPUColorWrite",
+                    },
+                },
+            },
+        },
+        "createRenderPipelineAsync": {
+            0: {
+                "fragment": {
+                    "targets": {
+                        "writeMask": "GPUColorWrite",
+                    },
+                },
+            },
+        },
+        "createTexture": {
+            0: {
+                "usage": "GPUTextureUsage",
+            },
+        },
+        "createView": {
+            0: {
+                "usage": "GPUTextureUsage",
+            },
+        },
+        "mapAsync": {
+            0: "GPUMapMode",
+        },
+    },
+};
+WI.RecordingAction._bitfields[WI.Recording.Type.OffscreenCanvasWebGL] = WI.RecordingAction._bitfields[WI.Recording.Type.CanvasWebGL];
+WI.RecordingAction._bitfields[WI.Recording.Type.OffscreenCanvasWebGL2] = WI.RecordingAction._bitfields[WI.Recording.Type.CanvasWebGL2];
 
 WI.RecordingAction._constantIndexes = {
     [WI.Recording.Type.CanvasWebGL]: {
