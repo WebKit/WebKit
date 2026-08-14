@@ -30,8 +30,8 @@ FAIL Test AVIF image YUV 4:2:0 decoding. assert_equals: expected "I420" but got 
 FAIL Test AVIF image YUV 4:2:2 decoding. assert_equals: expected "I422" but got "RGBA"
 FAIL Test AVIF image YUV 4:4:4 decoding. assert_equals: expected "I444" but got "RGBA"
 FAIL Test WEBP image YUV 4:2:0 decoding. assert_equals: expected "I420" but got "RGBA"
-FAIL Test invalid mime type rejects decode() requests assert_unreached: Should have rejected: undefined Reached unreachable code
-FAIL Test invalid mime type rejects decodeMetadata() requests assert_unreached: Should have rejected: undefined Reached unreachable code
+PASS Test invalid mime type rejects decode() requests
+PASS Test invalid mime type rejects decodeMetadata() requests
 FAIL Test out of range index returns RangeError promise_rejects_js: function "function() { throw e; }" threw object "DataError: Decoding error" ("DataError") expected instance of function "function RangeError() {
     [native code]
 }" ("RangeError")

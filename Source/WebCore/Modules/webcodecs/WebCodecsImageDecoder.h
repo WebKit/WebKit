@@ -91,6 +91,7 @@ public:
     ExceptionOr<void> reset();
     ExceptionOr<void> close();
 
+    static bool isTypeSupported(const String& type);
     static void isTypeSupported(ScriptExecutionContext&, String&& type, DOMPromiseDeferred<IDLBoolean>&&);
 
 private:
@@ -100,8 +101,8 @@ private:
     void NODELETE suspend(ReasonForSuspension) final;
     void stop() final;
 
-    void sinkStreamToInternalDecoder(const Ref<ReadableStream>&, const String& type);
-    void setInternalDecoderData(FragmentedSharedBuffer&, const String& type, bool allDataReceived);
+    void sinkStreamToInternalDecoder(const Ref<ReadableStream>&);
+    void setInternalDecoderData(FragmentedSharedBuffer&, bool allDataReceived);
     void establishTrackList();
 
     static WorkQueue& queueSingleton();

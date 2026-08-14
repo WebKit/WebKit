@@ -62,6 +62,7 @@ Ref<WebCodecsImageDecoder> WebCodecsImageDecoder::create(ScriptExecutionContext&
 
 WebCodecsImageDecoder::WebCodecsImageDecoder(ScriptExecutionContext& context, Init&& init)
     : WebCodecsControlMessageQueue(context)
+    , m_type(init.type)
     , m_completedPromise(makeUniqueRef<CompletedPromise>())
     , m_tracks(WebCodecsImageTrackList::create())
 {
@@ -71,35 +72,35 @@ WebCodecsImageDecoder::WebCodecsImageDecoder(ScriptExecutionContext& context, In
     WTF::switchOn(init.data,
         [&](const Ref<JSC::ArrayBuffer>& data) {
             if (RefPtr buffer = SharedBuffer::create(data->span()))
-                setInternalDecoderData(*buffer, init.type, true);
+                setInternalDecoderData(*buffer, true);
         },
         [&](const Ref<JSC::ArrayBufferView>& data) {
             if (RefPtr buffer = SharedBuffer::create(data->span()))
-                setInternalDecoderData(*buffer, init.type, true);
+                setInternalDecoderData(*buffer, true);
         },
         [&](const Ref<ReadableStream>& stream) {
-            sinkStreamToInternalDecoder(stream, init.type);
+            sinkStreamToInternalDecoder(stream);
         }
     );
 }
 
 WebCodecsImageDecoder::~WebCodecsImageDecoder() = default;
 
-void WebCodecsImageDecoder::sinkStreamToInternalDecoder(const Ref<ReadableStream>& stream, const String& type)
+void WebCodecsImageDecoder::sinkStreamToInternalDecoder(const Ref<ReadableStream>& stream)
 {
-    m_sink = ReadableStreamToSharedBufferSink::create([weakThis = ThreadSafeWeakPtr { *this }, type](auto&& result) mutable {
+    m_sink = ReadableStreamToSharedBufferSink::create([weakThis = ThreadSafeWeakPtr { *this }](auto&& result) mutable {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
         WTF::switchOn(WTF::move(result),
             [&](std::nullptr_t) {
                 if (RefPtr buffer = protectedThis->m_bufferBuilder.copyBuffer())
-                    protectedThis->setInternalDecoderData(*buffer, type, true);
+                    protectedThis->setInternalDecoderData(*buffer, true);
             },
             [&](std::span<const uint8_t>&& chunk) {
                 protectedThis->m_bufferBuilder.append(chunk);
                 if (RefPtr buffer = protectedThis->m_bufferBuilder.copyBuffer())
-                    protectedThis->setInternalDecoderData(*buffer, type, false);
+                    protectedThis->setInternalDecoderData(*buffer, false);
             },
             [&](JSC::JSValue) {
                 protectedThis->closeDecoder(Exception { ExceptionCode::AbortError, "ReadableStream cancelled"_s });
@@ -112,13 +113,17 @@ void WebCodecsImageDecoder::sinkStreamToInternalDecoder(const Ref<ReadableStream
     protect(m_sink)->pipeFrom(stream);
 }
 
-void WebCodecsImageDecoder::setInternalDecoderData(FragmentedSharedBuffer& buffer, const String& type, bool allDataReceived)
+void WebCodecsImageDecoder::setInternalDecoderData(FragmentedSharedBuffer& buffer, bool allDataReceived)
 {
+    // If type is not supported, run the Close ImageDecoder algorithm with a NotSupportedError.
+    if (!isTypeSupported(m_type))
+        closeDecoder(Exception { ExceptionCode::NotSupportedError, "Type not supported"_s });
+
     if (state() == WebCodecsCodecState::Closed)
         return;
 
     if (!m_internalDecoder)
-        m_internalDecoder = ImageDecoder::create(buffer, type, AlphaOption::Premultiplied, GammaAndColorProfileOption::Applied);
+        m_internalDecoder = ImageDecoder::create(buffer, m_type, AlphaOption::Premultiplied, GammaAndColorProfileOption::Applied);
 
     if (!m_internalDecoder)
         return;
@@ -241,6 +246,11 @@ void WebCodecsImageDecoder::queuePendingDecodeRequests()
 
 void WebCodecsImageDecoder::decode(std::optional<DecodeOptions>&& options, Ref<DeferredPromise>&& promise)
 {
+    if (!isTypeSupported(m_type)) {
+        promise->reject(Exception { ExceptionCode::NotSupportedError, "Type not supported"_s });
+        return;
+    }
+
     // If state is closed, return a Promise rejected.
     if (state() == WebCodecsCodecState::Closed) {
         promise->reject(Exception { ExceptionCode::InvalidStateError, "ImageDecoder is closed"_s });
@@ -319,15 +329,18 @@ ExceptionOr<void> WebCodecsImageDecoder::close()
     return closeDecoder(Exception { ExceptionCode::AbortError, "Close called"_s });
 }
 
-void WebCodecsImageDecoder::isTypeSupported(ScriptExecutionContext&, String&& mimeType, DOMPromiseDeferred<IDLBoolean>&& promise)
+bool WebCodecsImageDecoder::isTypeSupported(const String& type)
 {
 #if USE(CG)
-    bool isTypeSupported = isSupportedImageType(UTIFromMIMEType(mimeType));
+    return isSupportedImageType(UTIFromMIMEType(type));
 #else
-    bool isTypeSupported = MIMETypeRegistry::isSupportedImageMIMEType(mimeType);
+    return MIMETypeRegistry::isSupportedImageMIMEType(type);
 #endif
+}
 
-    if (isTypeSupported)
+void WebCodecsImageDecoder::isTypeSupported(ScriptExecutionContext&, String&& type, DOMPromiseDeferred<IDLBoolean>&& promise)
+{
+    if (isTypeSupported(type))
         promise.resolve(true);
     else
         promise.reject(Exception { ExceptionCode::TypeError, "Image type is not supported"_s });
