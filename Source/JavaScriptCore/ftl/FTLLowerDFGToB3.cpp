@@ -10841,7 +10841,10 @@ IGNORE_CLANG_WARNINGS_END
             // Guard: route prototype-mutated or own-Symbol.iterator Sets to slowPath.
             // The check can be folded when an upstream CheckStructure has already
             // proven that the operand carries the original Set structure.
-            Structure* originalSetStructure = globalObject->setStructureConcurrently();
+            // FixupPhase arms the Set iterator protocol watchpoint on m_node->child1(), so
+            // child1's global object must be used.
+            JSGlobalObject* childGlobalObject = m_graph.globalObjectFor(m_node->child1()->origin.semantic);
+            Structure* originalSetStructure = childGlobalObject->setStructureConcurrently();
             if (!originalSetStructure)
                 m_out.jump(slowPath);
             else {
