@@ -353,11 +353,18 @@ shouldBe(Intl.DateTimeFormat('en-u-ca-islamic-rgsa', { timeZone: 'America/Los_An
     // islamic-civil/islamic-umalqura epoch is ISO 622-07-19T07:52:58.000Z; islamic-tbla's is one
     // day earlier. A date in February 622 is before both real epochs but was previously missed by
     // an overly early hardcoded threshold, so it incorrectly reported "Anno Hegirae".
-    shouldBeOneOf(Intl.DateTimeFormat('en-u-ca-islamic-civil', opts).format(Date.UTC(622, 1, 1)), ['Before Hijra 0', '0 Before Hijra']);
+    // Year is 1 - year (no year zero), matching Temporal's eraYear; used to show the raw ICU year (0).
+    shouldBeOneOf(Intl.DateTimeFormat('en-u-ca-islamic-civil', opts).format(Date.UTC(622, 1, 1)), ['Before Hijra 1', '1 Before Hijra']);
+    // Well before the epoch, not just at the boundary -- the only case that distinguishes "1 - year" from other conventions.
+    shouldBeOneOf(Intl.DateTimeFormat('en-u-ca-islamic-civil', opts).format(Date.UTC(300, 0, 1)), ['Before Hijra 333', '333 Before Hijra']);
+    // year:"2-digit": the flip must use the true year, not ICU's already-truncated 2-digit text
+    // (raw year -199 renders as "-99" under 2-digit; flipping -99 gives 100, not the correct
+    // 00 = (1 - (-199)) mod 100).
+    shouldBeOneOf(Intl.DateTimeFormat('en-u-ca-islamic-civil', { year: '2-digit', era: 'long', timeZone: 'UTC' }).format(Date.UTC(429, 0, 1)), ['Before Hijra 00', '00 Before Hijra']);
     // ICU < 78 has no distinct long-form "Anno Hegirae" era string for islamic-civil in this locale and falls back to the short form ("AH").
     shouldBeOneOfForICUVersion(78, Intl.DateTimeFormat('en-u-ca-islamic-civil', opts).format(Date.UTC(650, 0, 1)), ['Anno Hegirae 29', '29 Anno Hegirae']);
-    shouldBeOneOf(Intl.DateTimeFormat('en-u-ca-islamic-tbla', opts).format(Date.UTC(622, 1, 1)), ['Before Hijra 0', '0 Before Hijra']);
-    shouldBeOneOf(Intl.DateTimeFormat('en-u-ca-islamic-umalqura', opts).format(Date.UTC(622, 1, 1)), ['Before Hijra 0', '0 Before Hijra']);
+    shouldBeOneOf(Intl.DateTimeFormat('en-u-ca-islamic-tbla', opts).format(Date.UTC(622, 1, 1)), ['Before Hijra 1', '1 Before Hijra']);
+    shouldBeOneOf(Intl.DateTimeFormat('en-u-ca-islamic-umalqura', opts).format(Date.UTC(622, 1, 1)), ['Before Hijra 1', '1 Before Hijra']);
     // coptic AM epoch is ISO 284-08-29T07:52:58.000Z.
     shouldBeOneOf(Intl.DateTimeFormat('en-u-ca-coptic', opts).format(Date.UTC(200, 0, 1)), ['Anno Martyrum 85', '85 Anno Martyrum']);
     // ICU < 78 has no distinct long-form "Anno Martyrum" era string for coptic in this locale and falls back to the generic "ERA1" placeholder.
@@ -384,6 +391,11 @@ shouldBe(Intl.DateTimeFormat('en-u-ca-islamic-rgsa', { timeZone: 'America/Los_An
         const eraPart = Intl.DateTimeFormat('en-u-ca-islamic-civil', { ...base, era: width }).formatToParts(pre).find(p => p.type === 'era');
         shouldBe(eraPart && eraPart.value, 'Before Hijra');
     }
+
+    // The year part's VALUE must also be flipped -- formatToParts is a separate codepath from
+    // format()'s string splicing, with its own copy of this logic.
+    const yearPart = Intl.DateTimeFormat('en-u-ca-islamic-civil', { ...base, era: 'long' }).formatToParts(pre).find(p => p.type === 'year');
+    shouldBe(yearPart && yearPart.value, '1');
 
     // Locale ignored: ja gets the English text glued onto Japanese-formatted output.
     const ja = Intl.DateTimeFormat('ja-u-ca-islamic-civil', { ...base, era: 'long' }).format(pre);
