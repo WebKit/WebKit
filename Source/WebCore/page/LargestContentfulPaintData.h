@@ -65,7 +65,7 @@ public:
     ~LargestContentfulPaintData();
 
     void didLoadImage(Element&, CachedImage*);
-    void didPaintImage(Element&, CachedImage*, FloatRect localRect);
+    bool didPaintImage(Element&, CachedImage*, FloatRect localRect);
     void didPaintText(const RenderBlockFlow& formattingContextRoot, FloatRect localRect, bool isOnlyTextBoxForElement);
 
     RefPtr<LargestContentfulPaint> generateLargestContentfulPaintEntry(DOMHighResTimeStamp);

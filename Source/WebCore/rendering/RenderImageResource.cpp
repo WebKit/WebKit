@@ -86,6 +86,8 @@ void RenderImageResource::setCachedImage(CachedImage* newImage)
     if (existingCachedImage == newImage)
         return;
 
+    m_largestContentfulPaintTrackingConfirmed = false;
+
     if (m_styleImage && m_renderer) {
         RefPtr styleImage = m_styleImage;
         styleImage->removeClient(*m_renderer);
