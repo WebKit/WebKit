@@ -22,6 +22,7 @@
 
 import argparse
 import os
+import shlex
 import sys
 import tempfile
 
@@ -51,6 +52,10 @@ class Apply(Command):
         parser.add_argument(
             '--no-commit', default=True, action='store_false', dest='commit',
             help='Apply the patch to the working tree only, instead of committing it with `git am`',
+        )
+        parser.add_argument(
+            '--reset-author', default=False, action='store_true', dest='reset_author',
+            help='Attribute the commit to you instead of the patch\'s author, refreshing the author date',
         )
 
     @classmethod
@@ -111,9 +116,60 @@ class Apply(Command):
     @classmethod
     def edit_commit_message(cls, repository):
         '''Amend the just-applied commit without a message flag, so git opens its message in the editor.
-        No --date, so `git am`'s preserved author date survives.'''
+        No --date, so the author date `git am` preserved (or --reset-author refreshed) survives.'''
         if run([repository.executable(), 'commit', '--amend'], cwd=repository.root_path).returncode:
             sys.stderr.write("Applied the patch, but couldn't open the commit message for editing; it keeps the patch's message.\n")
+
+    @classmethod
+    def head(cls, repository):
+        '''Hash of the current HEAD, or None on an unborn branch.'''
+        result = run(
+            [repository.executable(), 'rev-parse', 'HEAD'],
+            cwd=repository.root_path, capture_output=True, encoding='utf-8',
+        )
+        return None if result.returncode else result.stdout.strip()
+
+    @classmethod
+    def commit_count(cls, repository, since):
+        '''Number of commits `since` is behind HEAD, or None when git won't say.'''
+        result = run(
+            [repository.executable(), 'rev-list', '--count', '{}..HEAD'.format(since)],
+            cwd=repository.root_path, capture_output=True, encoding='utf-8',
+        )
+        if result.returncode:
+            return None
+        try:
+            return int(result.stdout.strip())
+        except ValueError:
+            return None
+
+    @classmethod
+    def reset_author(cls, repository, since=None):
+        '''Re-attribute the commits `git am` just created to the local git identity, which `git am` has
+        no way to do while applying them. One commit is amended in place; an mbox that produced several
+        is replayed with that amend after each one, since amending only reaches the last. --reset-author
+        also refreshes the author date. `since` is HEAD from before the patch was applied.'''
+        applied = cls.commit_count(repository, since) if since else None
+        if applied and applied > 1:
+            # --no-autosquash so a patch whose message starts with fixup!/squash! is replayed as its
+            # own commit, whatever the checkout's rebase.autoSquash says.
+            result = run(
+                [
+                    repository.executable(), 'rebase', '--no-autosquash',
+                    '--exec', '{} commit --amend --reset-author --no-edit'.format(shlex.quote(repository.executable())),
+                    since,
+                ],
+                cwd=repository.root_path,
+            )
+            if result.returncode:
+                run([repository.executable(), 'rebase', '--abort'], cwd=repository.root_path, capture_output=True)
+                sys.stderr.write("Applied the patch, but couldn't reset its commits' authors; they keep the patch's authors.\n")
+            return
+        if run(
+            [repository.executable(), 'commit', '--amend', '--reset-author', '--no-edit'],
+            cwd=repository.root_path,
+        ).returncode:
+            sys.stderr.write("Applied the patch, but couldn't reset the commit's author; it keeps the patch's author.\n")
 
     @classmethod
     def offer_pull_request(cls, repository, **kwargs):
@@ -134,6 +190,9 @@ class Apply(Command):
             return 1
         if repository.modified():
             sys.stderr.write('Please commit or stash your changes before applying a patch\n')
+            return 1
+        if args.reset_author and not args.commit:
+            sys.stderr.write('--reset-author requires a commit to re-attribute, so it cannot be combined with --no-commit\n')
             return 1
 
         issue = cls.resolve_issue(args.issue)
@@ -170,6 +229,10 @@ class Apply(Command):
             sys.stderr.write("'{}' on {} is empty\n".format(patch.name, issue.link))
             return 1
 
+        # Remember where the branch stood, so resetting the author can tell how many commits `git am`
+        # went on to create.
+        head = cls.head(repository) if args.commit and args.reset_author else None
+
         handle, patch_path = tempfile.mkstemp(suffix='.patch')
         try:
             with os.fdopen(handle, 'wb') as patch_file:
@@ -190,6 +253,9 @@ class Apply(Command):
                 return 1
         finally:
             os.remove(patch_path)
+
+        if args.commit and args.reset_author:
+            cls.reset_author(repository, since=head)
 
         if args.commit and interactive:
             cls.edit_commit_message(repository)
