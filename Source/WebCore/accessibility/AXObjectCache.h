@@ -941,7 +941,7 @@ private:
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     void selectedTextRangeTimerFired();
     Seconds NODELETE platformSelectedTextRangeDebounceInterval() const;
-    void updateTreeSnapshotTimerFired();
+    void updateTreeSnapshotTimerFired() { processQueuedIsolatedNodeUpdates(); }
     void processQueuedIsolatedNodeUpdates();
 
     void deferAddUnconnectedNode(AccessibilityObject&);

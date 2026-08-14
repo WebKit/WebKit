@@ -403,7 +403,10 @@ bool AXObjectCache::shouldServeInitialCachedFrame()
     return !clientIsInTestMode() || forceInitialFrameCaching();
 }
 
-static constexpr Seconds updateTreeSnapshotTimerInterval { 100_ms };
+// Just over one frame at 60Hz (16.67ms). The timer is scheduled on demand when the isolated
+// tree first queues work, so this is "publish one frame after the first change in this batch",
+// with any further changes in the window coalescing into the same commit.
+static constexpr Seconds updateTreeSnapshotTimerDuration { 17_ms };
 #endif
 
 AXObjectCache::AXObjectCache(LocalFrame& localFrame, Document* document)
@@ -2125,6 +2128,9 @@ void AXObjectCache::notificationPostTimerFired()
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     updateIsolatedTree(notificationsToPost);
+    // We're going to post platform notifications, so make sure to publish isolated tree
+    // changes so we provide up-to-date information.
+    processQueuedIsolatedNodeUpdates();
 #endif
 
     for (const auto& note : notificationsToPost) {
@@ -3078,7 +3084,6 @@ void AXObjectCache::onAccessibilityPaintFinished()
     }
 
     tree->markMostRecentlyPaintedTextDirty();
-    startUpdateTreeSnapshotTimer();
 }
 
 bool AXObjectCache::onFontChange(Element& element, const Style::ComputedStyle* oldStyle, const Style::ComputedStyle* newStyle)
@@ -4294,7 +4299,6 @@ void AXObjectCache::dirtyIsolatedTreeRelations()
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     if (RefPtr tree = AXIsolatedTree::treeForFrameID(m_frameID))
         tree->markRelationsDirty();
-    startUpdateTreeSnapshotTimer();
 #endif
 }
 
@@ -6294,7 +6298,7 @@ void AXObjectCache::updateIsolatedTree(AccessibilityObject& axObject, AXProperty
 void AXObjectCache::startUpdateTreeSnapshotTimer()
 {
     if (!m_updateTreeSnapshotTimer.isActive())
-        m_updateTreeSnapshotTimer.startOneShot(updateTreeSnapshotTimerInterval);
+        m_updateTreeSnapshotTimer.startOneShot(updateTreeSnapshotTimerDuration);
 }
 
 void AXObjectCache::onPaint(const RenderObject& renderer, IntRect&& paintRect) const
@@ -7302,12 +7306,6 @@ void AXObjectCache::selectedTextRangeTimerFired()
     }
 
     m_lastDebouncedTextRangeObject = std::nullopt;
-}
-
-void AXObjectCache::updateTreeSnapshotTimerFired()
-{
-    m_updateTreeSnapshotTimer.stop();
-    processQueuedIsolatedNodeUpdates();
 }
 
 void AXObjectCache::processQueuedIsolatedNodeUpdates()

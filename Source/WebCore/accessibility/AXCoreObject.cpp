@@ -322,7 +322,7 @@ AXCoreObject::AccessibilityChildrenVector AXCoreObject::unignoredChildren(bool u
     // NOTE: The per-object properties read below (role, IsExposableTable, IsIgnored) participate
     // in AXIsolatedTree's cache invalidation for stitchedUnignoredChildren. If a new property
     // becomes a dependency of this walk, update the trigger list in
-    // AXIsolatedTree::applyPendingChangesFromSnapshot.
+    // AXIsolatedTree::applyCommittedChanges.
 
     if (onlyAddsUnignoredChildren())
         return children(updateChildrenIfNeeded);

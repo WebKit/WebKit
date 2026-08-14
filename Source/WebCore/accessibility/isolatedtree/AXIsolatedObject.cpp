@@ -874,7 +874,7 @@ RefPtr<AXIsolatedObject> AXIsolatedObject::approximateHitTest(const IntPoint& po
             // RemoteFrames don't have this problem since they have a wrapper that points to the remote accessibility
             // object, and the frameworks recursively hit test in the bridged process.
             // This also helps guard against potential frame wrapper issues, like the one noted in
-            // AXIsolatedTree::applyPendingChangesLocked.
+            // AXIsolatedTree::applyCommittedChanges.
             if (RefPtr crossFrameChild = child->crossFrameChildObject()) {
                 if (RefPtr hitChild = crossFrameChild->approximateHitTest(point))
                     return hitChild;

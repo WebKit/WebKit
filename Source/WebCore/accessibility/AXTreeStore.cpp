@@ -40,7 +40,7 @@ WEBCORE_EXPORT void AXTreeStore<AXIsolatedTree>::applyPendingChangesForAllIsolat
 
     // Snapshot all live trees while holding the lock, then release it before
     // calling applyPendingChangesOrTearDown. This is necessary because
-    // applyPendingChangesLocked can call attachPlatformWrapper ->
+    // applyCommittedChanges can call attachPlatformWrapper ->
     // crossFrameChildObject -> treeForFrameID, which needs to acquire
     // s_storeLock. Holding s_storeLock across that call would self-deadlock.
     Vector<std::pair<AXTreeID, Ref<AXIsolatedTree>>> trees;
