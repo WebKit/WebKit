@@ -9868,16 +9868,17 @@ static bool canUseQuickboardControllerFor(UITextContentType type)
 #endif
 }
 
-- (void)_showRunOpenPanel:(API::OpenPanelParameters*)parameters frameInfo:(const WebKit::FrameInfoData&)frameInfo resultListener:(WebKit::WebOpenPanelResultListenerProxy*)listener
+- (BOOL)_showRunOpenPanel:(API::OpenPanelParameters*)parameters frameInfo:(const WebKit::FrameInfoData&)frameInfo resultListener:(WebKit::WebOpenPanelResultListenerProxy*)listener
 {
-    ASSERT(!_fileUploadPanel);
+    // The panel still showing may belong to a frame whose process has exited.
     if (_fileUploadPanel)
-        return;
+        return NO;
 
     _frameInfoForFileUploadPanel = frameInfo;
     _fileUploadPanel = adoptNS([[WKFileUploadPanel alloc] initWithView:self]);
     [_fileUploadPanel setDelegate:self];
     [_fileUploadPanel presentWithParameters:parameters resultListener:listener];
+    return YES;
 }
 
 - (void)fileUploadPanelDidDismiss:(WKFileUploadPanel *)fileUploadPanel
