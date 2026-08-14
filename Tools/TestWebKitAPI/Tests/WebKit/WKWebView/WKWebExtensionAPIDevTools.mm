@@ -679,6 +679,73 @@ TEST(WKWebExtensionAPIDevTools, PortMessagePassingFromPanelToDevToolsBackground)
     [manager run];
 }
 
+// With site isolation enabled, WebExtensionContext::loadInspectorBackgroundPage deliberately skips
+// setAlwaysUseRelatedPageProcess (WebExtensionContextCocoa.mm), so the Web Inspector frontend page and
+// the extension's devtools background page no longer share a web content process — the ASSERT directly
+// above the sends documents exactly that divergence. It then sends AddInspectorPageIdentifier carrying
+// the *frontend* page's webPageIDInMainFrameProcess() to the *background* page's process. Web-process
+// side, WebExtensionContextProxy::addInspectorPageIdentifier resolves it with
+// WebProcess::singleton().webPage(pageIdentifier), which misses and silently no-ops, so
+// m_inspectorPageMap is never populated.
+//
+// A devtools panel resolves its tab through that map (WebExtensionContextProxy::tabIdentifier, reached
+// from WebExtensionAPIDevToolsInspectedWindow::tabId), so devtools.inspectedWindow.tabId comes back as
+// WebExtensionTabConstants::None (-1) instead of the inspected tab. Note that the devtools_page itself
+// is unaffected: AddInspectorBackgroundPageIdentifier sends the background page's own identifier to the
+// background page's own process, which is self-consistent either way.
+TEST(WKWebExtensionAPIDevTools, InspectedWindowTabIdFromPanel)
+{
+    Util::SiteIsolationScope siteIsolationScope;
+
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, ""_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *devToolsScript = Util::constructScript(@[
+        @"let panel = await browser.devtools.panels.create('Test Panel', 'icon.svg', 'panel.html')",
+        @"browser.test.assertEq(typeof panel, 'object', 'Panel should be created successfully')",
+
+        // The devtools_page resolves through m_inspectorBackgroundPageMap, which is populated
+        // correctly, so this half should hold with or without site isolation.
+        @"browser.test.assertTrue(browser.devtools.inspectedWindow.tabId > 0, 'inspectedWindow.tabId should identify the inspected tab from the devtools page')",
+
+        @"browser.test.sendMessage('Panel Created')",
+    ]);
+
+    auto *panelScript = Util::constructScript(@[
+        @"const tabId = browser.devtools.inspectedWindow.tabId",
+        @"browser.test.assertEq(typeof tabId, 'number', 'inspectedWindow.tabId should be a number in a panel')",
+        @"browser.test.assertTrue(tabId > 0, 'inspectedWindow.tabId should identify the inspected tab from a panel, not be the none value')",
+
+        @"browser.test.notifyPass()",
+    ]);
+
+    auto *iconSVG = @"<svg width='16' height='16' xmlns='http://www.w3.org/2000/svg'><circle cx='8' cy='8' r='8' fill='red' /></svg>";
+
+    auto *resources = @{
+        @"background.js": @"// This script is intentionally left blank.",
+        @"devtools.html": @"<script type='module' src='devtools.js'></script>",
+        @"devtools.js": devToolsScript,
+        @"panel.html": @"<script type='module' src='panel.js'></script>",
+        @"panel.js": panelScript,
+        @"icon.svg": iconSVG,
+    };
+
+    auto manager = Util::loadExtension(devToolsManifest, resources);
+
+    [manager.get().defaultTab.webView loadRequest:server.requestWithLocalhost()];
+    [manager.get().defaultTab.webView._inspector show];
+
+    [manager runUntilTestMessage:@"Panel Created"];
+
+    auto *extensionIdentifier = [NSString stringWithFormat:@"WebExtensionTab-%@-1", manager.get().context.uniqueIdentifier];
+    [manager.get().defaultTab.webView._inspector showExtensionTabWithIdentifier:extensionIdentifier completionHandler:^(NSError *error) {
+        EXPECT_NULL(error);
+    }];
+
+    [manager run];
+}
+
 } // namespace TestWebKitAPI
 
 #endif // ENABLE(WK_WEB_EXTENSIONS) && ENABLE(INSPECTOR_EXTENSIONS)

@@ -30,19 +30,37 @@
 #include "UserStyleSheetIdentifier.h"
 #include <WebCore/UserStyleSheet.h>
 #include <wtf/Identified.h>
+#include <wtf/WeakPtr.h>
+
+namespace WebKit {
+class WebPageProxy;
+}
 
 namespace API {
 
 class UserStyleSheet final : public ObjectImpl<Object::Type::UserStyleSheet>, public Identified<WebKit::UserStyleSheetIdentifier> {
 public:
-    static Ref<UserStyleSheet> create(WebCore::UserStyleSheet userStyleSheet, API::ContentWorld& world)
+    static Ref<UserStyleSheet> create(WebCore::UserStyleSheet userStyleSheet, API::ContentWorld& world, WebKit::WebPageProxy* page = nullptr)
     {
-        return adoptRef(*new UserStyleSheet(WTF::move(userStyleSheet), world));
+        return adoptRef(*new UserStyleSheet(WTF::move(userStyleSheet), world, page));
     }
 
-    UserStyleSheet(WebCore::UserStyleSheet, API::ContentWorld&);
+    UserStyleSheet(WebCore::UserStyleSheet, API::ContentWorld&, WebKit::WebPageProxy* = nullptr);
+    ~UserStyleSheet();
 
     const WebCore::UserStyleSheet& userStyleSheet() const LIFETIME_BOUND { return m_userStyleSheet; }
+
+    // The page this sheet is scoped to, or null if it applies to every page using the controller.
+    // Deliberately not a WebCore::PageIdentifier: that names a WebPage in one web content process, and
+    // under site isolation a page has one per process. The identifier is derived from this page for
+    // each destination process in WebUserContentControllerProxy::dataFromUserStyleSheet().
+    WebKit::WebPageProxy* page() const;
+
+    // True if this sheet was created for a specific page. Distinct from page() being non-null: once that
+    // page goes away the sheet must not be sent at all, because a sheet carrying no page identifier means
+    // "apply to every page" to the web process (see ExtensionStyleSheets::updateInjectedStyleSheetCache).
+    bool isPageScoped() const { return m_isPageScoped; }
+    bool isOrphaned() const { return m_isPageScoped && !page(); }
 
     ContentWorld& contentWorld() { return m_world; }
     const ContentWorld& contentWorld() const { return m_world; }
@@ -50,6 +68,8 @@ public:
 private:
     WebCore::UserStyleSheet m_userStyleSheet;
     Ref<ContentWorld> m_world;
+    WeakPtr<WebKit::WebPageProxy> m_page;
+    bool m_isPageScoped { false };
 };
 
 } // namespace API

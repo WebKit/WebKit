@@ -75,13 +75,9 @@ void WebExtensionContext::offscreenCreateDocument(const WebExtensionOffscreenDoc
     m_offscreenWebView.get().inspectable = m_inspectable;
 
     Ref offscreenPage = *m_offscreenWebView.get()._page;
-    Ref offscreenProcess = offscreenPage->siteIsolatedProcess();
 
     constexpr ASCIILiteral activityName = "Web Extension offscreen document"_s;
-    if (protect(offscreenPage->preferences())->siteIsolationEnabled())
-        m_offscreenWebViewActivity = protect(offscreenPage->activityGroupContext())->foregroundProcessActivityGroup(activityName);
-    else
-        m_offscreenWebViewActivity = protect(offscreenProcess->throttler())->foregroundActivity(activityName);
+    m_offscreenWebViewActivity = protect(offscreenPage->activityGroupContext())->foregroundProcessActivityGroup(activityName);
 
     [m_offscreenWebView loadRequest:[NSURLRequest requestWithURL:documentURL.createNSURL().get()]];
 

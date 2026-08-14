@@ -1645,8 +1645,7 @@ void WebExtensionContext::didCommitLoadForFrame(WebPageProxyIdentifier pageID, c
         // FIXME: <https://webkit.org/b/262491> There is currently no way to inject CSS in specific frames based on ID's.
         Ref userContentController = page.get()->userContentController();
         m_dynamicallyInjectedUserStyleSheets.removeAllMatching([&](auto& styleSheet) {
-            auto styleSheetPageID = styleSheet->userStyleSheet().pageID();
-            if (!styleSheetPageID || styleSheetPageID.value() != page->webPageIDInMainFrameProcess())
+            if (styleSheet->page() != page.get())
                 return false;
 
             userContentController->removeUserStyleSheet(styleSheet);
@@ -2334,16 +2333,30 @@ void WebExtensionContext::clearUserGesture(WebExtensionTab& tab)
         permissionsDidChange(PermissionNotification::GrantedPermissionMatchPatternsWereRemoved, MatchPatternSet { *oldTemporaryPermissionMatchPattern });
 }
 
-std::optional<WebCore::PageIdentifier> WebExtensionContext::backgroundPageIdentifier() const
+std::optional<WebCore::PageIdentifier> WebExtensionContext::backgroundPageIdentifier(WebProcessProxy& destinationProcess) const
 {
     if (!m_backgroundWebView || protect(extension())->backgroundContentIsServiceWorker())
         return std::nullopt;
 
-    return m_backgroundWebView.get()._page->webPageIDInMainFrameProcess();
+    Ref backgroundPage = *m_backgroundWebView.get()._page;
+    return backgroundPage->webPageIDInProcess(destinationProcess);
+}
+
+std::optional<WebCore::PageIdentifier> WebExtensionContext::backgroundPageIdentifierInOwnProcess() const
+{
+    if (!m_backgroundWebView || protect(extension())->backgroundContentIsServiceWorker())
+        return std::nullopt;
+
+    Ref backgroundPage = *m_backgroundWebView.get()._page;
+    RefPtr mainFrame = backgroundPage->mainFrame();
+    if (!mainFrame)
+        return std::nullopt;
+
+    return mainFrame->webPageIDInCurrentProcess();
 }
 
 #if ENABLE(INSPECTOR_EXTENSIONS)
-Vector<WebExtensionContext::PageIdentifierTuple> WebExtensionContext::inspectorBackgroundPageIdentifiers() const
+Vector<WebExtensionContext::PageIdentifierTuple> WebExtensionContext::inspectorBackgroundPageIdentifiers(WebProcessProxy& destinationProcess) const
 {
     Vector<PageIdentifierTuple> result;
 
@@ -2355,13 +2368,14 @@ Vector<WebExtensionContext::PageIdentifierTuple> WebExtensionContext::inspectorB
         auto windowIdentifier = window ? std::optional(window->identifier()) : std::nullopt;
 
         auto *webView = entry.value.backgroundWebView.get();
-        result.append({ webView._page->webPageIDInMainFrameProcess(), tabIdentifier, windowIdentifier });
+        Ref page = *webView._page;
+        result.append({ page->webPageIDInProcess(destinationProcess), tabIdentifier, windowIdentifier });
     }
 
     return result;
 }
 
-Vector<WebExtensionContext::PageIdentifierTuple> WebExtensionContext::inspectorPageIdentifiers() const
+Vector<WebExtensionContext::PageIdentifierTuple> WebExtensionContext::inspectorPageIdentifiers(WebProcessProxy& destinationProcess) const
 {
     Vector<PageIdentifierTuple> result;
 
@@ -2372,18 +2386,20 @@ Vector<WebExtensionContext::PageIdentifierTuple> WebExtensionContext::inspectorP
         auto windowIdentifier = window ? std::optional(window->identifier()) : std::nullopt;
 
         Ref protectedInspector = inspector;
-        result.append({ protectedInspector->inspectorPage()->webPageIDInMainFrameProcess(), tabIdentifier, windowIdentifier });
+        if (RefPtr inspectorPage = protectedInspector->inspectorPage())
+            result.append({ inspectorPage->webPageIDInProcess(destinationProcess), tabIdentifier, windowIdentifier });
     }
 
     return result;
 }
 #endif // ENABLE(INSPECTOR_EXTENSIONS)
 
-Vector<WebExtensionContext::PageIdentifierTuple> WebExtensionContext::popupPageIdentifiers() const
+Vector<WebExtensionContext::PageIdentifierTuple> WebExtensionContext::popupPageIdentifiers(WebProcessProxy& destinationProcess) const
 {
     Vector<PageIdentifierTuple> result;
 
     for (auto entry : m_popupPageActionMap) {
+        Ref page = entry.key;
         Ref value = entry.value;
         RefPtr tab = value->tab();
         RefPtr window = tab ? tab->window() : value->window();
@@ -2391,13 +2407,13 @@ Vector<WebExtensionContext::PageIdentifierTuple> WebExtensionContext::popupPageI
         auto tabIdentifier = tab ? std::optional(tab->identifier()) : std::nullopt;
         auto windowIdentifier = window ? std::optional(window->identifier()) : std::nullopt;
 
-        result.append({ entry.key.webPageIDInMainFrameProcess(), tabIdentifier, windowIdentifier });
+        result.append({ page->webPageIDInProcess(destinationProcess), tabIdentifier, windowIdentifier });
     }
 
     return result;
 }
 
-Vector<WebExtensionContext::PageIdentifierTuple> WebExtensionContext::tabPageIdentifiers() const
+Vector<WebExtensionContext::PageIdentifierTuple> WebExtensionContext::tabPageIdentifiers(WebProcessProxy& destinationProcess) const
 {
     Vector<PageIdentifierTuple> result;
 
@@ -2406,10 +2422,11 @@ Vector<WebExtensionContext::PageIdentifierTuple> WebExtensionContext::tabPageIde
         if (!tab)
             continue;
 
+        Ref page = entry.key;
         RefPtr window = tab->window();
         auto windowIdentifier = window ? std::optional(window->identifier()) : std::nullopt;
 
-        result.append({ entry.key.webPageIDInMainFrameProcess(), tab->identifier(), windowIdentifier });
+        result.append({ page->webPageIDInProcess(destinationProcess), tab->identifier(), windowIdentifier });
     }
 
     return result;
@@ -2629,19 +2646,16 @@ void WebExtensionContext::loadBackgroundWebView()
     m_backgroundContentLoadError = nullptr;
 
     Ref backgroundPage = *m_backgroundWebView.get()._page;
-    Ref backgroundProcess = backgroundPage->siteIsolatedProcess();
 
-    bool siteIsolationEnabled = protect(backgroundPage->preferences())->siteIsolationEnabled();
     constexpr ASCIILiteral activityName = "Web Extension background content"_s;
 
     // Use foreground activity to keep background content responsive to events.
-    if (siteIsolationEnabled)
-        m_backgroundWebViewActivity = protect(backgroundPage->activityGroupContext())->foregroundProcessActivityGroup(activityName);
-    else
-        m_backgroundWebViewActivity = protect(backgroundProcess->throttler())->foregroundActivity(activityName);
+    m_backgroundWebViewActivity = protect(backgroundPage->activityGroupContext())->foregroundProcessActivityGroup(activityName);
 
     if (!protect(extension())->backgroundContentIsServiceWorker()) {
-        backgroundProcess->send(Messages::WebExtensionContextProxy::SetBackgroundPageIdentifier(backgroundPage->webPageIDInMainFrameProcess()), identifier());
+        backgroundPage->forEachWebContentProcess([&](auto& webProcess, auto pageID) {
+            webProcess.send(Messages::WebExtensionContextProxy::SetBackgroundPageIdentifier(pageID), identifier());
+        });
 
         [m_backgroundWebView loadRequest:[NSURLRequest requestWithURL:backgroundContentURL().createNSURL().get()]];
         return;
@@ -3055,8 +3069,21 @@ HashSet<Ref<WebProcessProxy>> WebExtensionContext::processes(const API::Inspecto
     ASSERT(m_inspectorContextMap.contains(*inspectorProxy));
 
     const auto& inspectorContext = m_inspectorContextMap.get(*inspectorProxy);
-    if (auto *backgroundWebView = inspectorContext.backgroundWebView.get())
-        result.add(backgroundWebView._page->siteIsolatedProcess());
+    if (auto *backgroundWebView = inspectorContext.backgroundWebView.get()) {
+        Ref backgroundPage = *backgroundWebView._page;
+        backgroundPage->forEachWebContentProcess([&](auto& webProcess, auto) {
+            result.addVoid(webProcess);
+        });
+    }
+
+    // Extension panels are hosted by the Inspector's frontend page, not by the devtools background page,
+    // and with site isolation those are no longer forced into the same process. Panels listen for these
+    // events too, so the frontend page's processes have to be included or the panels never hear them.
+    if (RefPtr inspectorFrontendPage = inspectorProxy->inspectorPage()) {
+        inspectorFrontendPage->forEachWebContentProcess([&](auto& webProcess, auto) {
+            result.addVoid(webProcess);
+        });
+    }
 
     return result;
 }
@@ -3218,16 +3245,10 @@ void WebExtensionContext::loadInspectorBackgroundPage(WebInspectorUIProxy& inspe
         inspectorExtension->setClient(makeUniqueRef<InspectorExtensionClient>(inspectorExtension, *this));
 
         // Use foreground activity to keep background content responsive to events.
-        Ref inspectorPage = *inspectorBackgroundWebView._page;
-        Ref process = inspectorPage->legacyMainFrameProcess();
+        Ref inspectorBackgroundPage = *inspectorBackgroundWebView._page;
 
-        Variant<std::monostate, Ref<ProcessThrottlerActivity>, Ref<ProcessActivityGroup>> inspectorBackgroundWebViewActivity;
         constexpr ASCIILiteral activityName = "Web Extension Inspector background content"_s;
-
-        if (siteIsolationEnabled)
-            inspectorBackgroundWebViewActivity = protect(inspectorPage->activityGroupContext())->foregroundProcessActivityGroup(activityName);
-        else
-            inspectorBackgroundWebViewActivity = protect(process->throttler())->foregroundActivity(activityName);
+        Variant<std::monostate, Ref<ProcessThrottlerActivity>, Ref<ProcessActivityGroup>> inspectorBackgroundWebViewActivity = protect(inspectorBackgroundPage->activityGroupContext())->foregroundProcessActivityGroup(activityName);
 
         InspectorContext inspectorContext {
             tab->identifier(),
@@ -3243,10 +3264,22 @@ void WebExtensionContext::loadInspectorBackgroundPage(WebInspectorUIProxy& inspe
 
         auto appearance = protect(inspector->inspectorPage())->useDarkAppearance() ? Inspector::ExtensionAppearance::Dark : Inspector::ExtensionAppearance::Light;
 
-        ASSERT(siteIsolationEnabled || inspectorWebView._page->legacyMainFrameProcess() == process);
-        process->send(Messages::WebExtensionContextProxy::AddInspectorPageIdentifier(inspectorWebView._page->webPageIDInMainFrameProcess(), tab->identifier(), windowIdentifier), identifier());
-        process->send(Messages::WebExtensionContextProxy::AddInspectorBackgroundPageIdentifier(inspectorBackgroundWebView._page->webPageIDInMainFrameProcess(), tab->identifier(), windowIdentifier), identifier());
-        process->send(Messages::WebExtensionContextProxy::DispatchDevToolsPanelsThemeChangedEvent(appearance), identifier());
+        // The Inspector frontend page and the extension's devtools background page are two different
+        // pages, and when site isolation is enabled they are no longer forced into a single process by
+        // setAlwaysUseRelatedPageProcess above. Each identifier therefore has to be delivered to the
+        // processes that actually host the page it names, carrying that process's own identifier for the
+        // page. Sending the frontend page's identifier to the background page's process leaves
+        // m_inspectorPageMap empty, which makes devtools.inspectedWindow.tabId fail in extension panels.
+        Ref inspectorFrontendPage = *inspectorWebView._page;
+        inspectorFrontendPage->forEachWebContentProcess([&](auto& webProcess, auto pageID) {
+            webProcess.send(Messages::WebExtensionContextProxy::AddInspectorPageIdentifier(pageID, tab->identifier(), windowIdentifier), identifier());
+        });
+
+        inspectorBackgroundPage->forEachWebContentProcess([&](auto& webProcess, auto pageID) {
+            webProcess.send(Messages::WebExtensionContextProxy::AddInspectorBackgroundPageIdentifier(pageID, tab->identifier(), windowIdentifier), identifier());
+        });
+
+        sendToProcesses(processes(inspectorExtension.get()), Messages::WebExtensionContextProxy::DispatchDevToolsPanelsThemeChangedEvent(appearance));
 
         [inspectorBackgroundWebView loadRequest:[NSURLRequest requestWithURL:inspectorBackgroundPageURL().createNSURL().get()]];
     });

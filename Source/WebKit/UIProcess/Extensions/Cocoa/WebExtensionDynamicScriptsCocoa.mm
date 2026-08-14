@@ -178,10 +178,12 @@ void executeScript(const SourcePairs& scriptPairs, WKWebView *webView, API::Cont
 void injectStyleSheets(const SourcePairs& styleSheetPairs, WKWebView *webView, API::ContentWorld& executionWorld, WebCore::UserStyleLevel styleLevel, WebCore::UserContentInjectedFrames injectedFrames, WebExtensionContext& context)
 {
     auto page = webView._page;
-    auto pageID = page->webPageIDInMainFrameProcess();
 
     for (auto& styleSheet : styleSheetPairs) {
-        auto userStyleSheet = API::UserStyleSheet::create(WebCore::UserStyleSheet { styleSheet.first, styleSheet.second, { }, { }, injectedFrames, WebCore::UserContentMatchParentFrame::Never, styleLevel, pageID }, executionWorld);
+        // Scope the sheet to this page by handing the API object the page itself. The PageIdentifier each
+        // web content process needs is derived from it per destination when the sheet is sent, so the
+        // sheet also reaches the processes hosting cross-site frames under site isolation.
+        auto userStyleSheet = API::UserStyleSheet::create(WebCore::UserStyleSheet { styleSheet.first, styleSheet.second, { }, { }, injectedFrames, WebCore::UserContentMatchParentFrame::Never, styleLevel, std::nullopt }, executionWorld, page.get());
 
         Ref controller = page.get()->userContentController();
         controller->addUserStyleSheet(userStyleSheet);
