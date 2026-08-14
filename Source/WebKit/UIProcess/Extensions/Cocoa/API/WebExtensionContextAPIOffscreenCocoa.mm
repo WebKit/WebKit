@@ -37,12 +37,16 @@
 #import "WKWebViewInternal.h"
 #import "WebExtensionContextProxyMessages.h"
 #import "WebExtensionOffscreenDocumentParameters.h"
+#import "WebPageProxy.h"
 
 namespace WebKit {
 
 bool WebExtensionContext::isOffscreenMessageAllowed(IPC::Decoder& message)
 {
-    return isLoadedAndPrivilegedMessage(message) && hasPermission(WebExtensionPermission::offscreen());
+    if (RefPtr controller = extensionController())
+        return isLoadedAndPrivilegedMessage(message) && hasPermission(WebExtensionPermission::offscreen()) && controller->isFeatureEnabled(@"WebExtensionOffscreenEnabled");
+
+    return false;
 }
 
 void WebExtensionContext::offscreenCreateDocument(const WebExtensionOffscreenDocumentParameters& parameters, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&& completionHandler)

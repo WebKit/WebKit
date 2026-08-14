@@ -32,7 +32,7 @@
 #include "WebExtensionControllerProxy.h"
 #include "WebExtensionPermission.h"
 
-#if ENABLE(INSPECTOR_EXTENSIONS) || ENABLE(WK_WEB_EXTENSIONS_SIDEBAR) ||  ENABLE(WK_WEB_EXTENSIONS_BOOKMARKS)
+#if ENABLE(INSPECTOR_EXTENSIONS) || ENABLE(WK_WEB_EXTENSIONS_SIDEBAR) ||  ENABLE(WK_WEB_EXTENSIONS_BOOKMARKS) || ENABLE(WK_WEB_EXTENSIONS_OFFSCREEN)
 #include "WebPage.h"
 #include <WebCore/Page.h>
 #include <WebCore/Settings.h>
@@ -65,6 +65,9 @@ bool WebExtensionAPINamespace::isPropertyAllowed(const ASCIILiteral& name, WebPa
         return extensionContext->inTestingMode();
 
 #if ENABLE(WK_WEB_EXTENSIONS_OFFSCREEN)
+    if (name == "offscreen"_s)
+        return page->corePage()->settings().webExtensionOffscreenEnabled() && extensionContext->hasPermission("offscreen"_s);
+
     // The offscreen document is not a full extension environment; only runtime and test are reachable from it.
     if (page && extensionContext->isOffscreenPage(*page))
         return name == "runtime"_s;
