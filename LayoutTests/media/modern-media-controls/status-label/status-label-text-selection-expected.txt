@@ -3,7 +3,10 @@ Testing that text selection is turned off for StatusLabel.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS window.getComputedStyle(mediaControls.statusLabel.element).webkitUserSelect is "none"
+PASS selectedText.includes("text selection is turned off") is true
+PASS mediaControls.statusLabel.element.textContent is "Hello"
+PASS mediaControls.statusLabel.element.getClientRects().length > 0 is true
+PASS selectedText.includes("Hello") is false
 PASS window.getComputedStyle(mediaControls.statusLabel.element).cursor is "default"
 
 PASS successfullyParsed is true

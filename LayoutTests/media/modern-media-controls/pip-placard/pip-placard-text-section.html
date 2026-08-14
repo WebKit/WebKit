@@ -14,7 +14,14 @@ document.body.appendChild(mediaControls.element);
 
 scheduler.frameDidFire = function()
 {
-    shouldBeEqualToString("window.getComputedStyle(document.querySelector('.description')).webkitUserSelect", "none");
+    const selection = getSelection();
+    selection.removeAllRanges();
+    selection.selectAllChildren(document.body);
+    window.selectedText = selection.toString();
+    shouldBeTrue('selectedText.includes("text selection is turned off")');
+    shouldBeEqualToString("document.querySelector('.description').textContent", "This video is playing in picture in picture.");
+    shouldBeTrue("document.querySelector('.description').getClientRects().length > 0");
+    shouldBeFalse('selectedText.includes("This video is playing in picture in picture.")');
     shouldBeEqualToString("window.getComputedStyle(document.querySelector('.description')).cursor", "default");
 
     mediaControls.element.remove();

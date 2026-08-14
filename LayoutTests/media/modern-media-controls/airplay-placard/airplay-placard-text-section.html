@@ -13,9 +13,18 @@ mediaControls.placard = mediaControls.airplayPlacard;
 document.body.appendChild(mediaControls.element);
 
 shouldBecomeEqual("!!document.querySelector('.placard')", "true", () => {
-    shouldBeEqualToString("window.getComputedStyle(document.querySelector('.title')).webkitUserSelect", "none");
+    const selection = getSelection();
+    selection.removeAllRanges();
+    selection.selectAllChildren(document.body);
+    window.selectedText = selection.toString();
+    shouldBeTrue('selectedText.includes("text selection is turned off")');
+    shouldBeEqualToString("document.querySelector('.title').textContent", "AirPlay");
+    shouldBeTrue("document.querySelector('.title').getClientRects().length > 0");
+    shouldBeFalse('selectedText.includes("AirPlay")');
     shouldBeEqualToString("window.getComputedStyle(document.querySelector('.title')).cursor", "default");
-    shouldBeEqualToString("window.getComputedStyle(document.querySelector('.description')).webkitUserSelect", "none");
+    shouldBeEqualToString("document.querySelector('.description').textContent", "This video is playing on the TV.");
+    shouldBeTrue("document.querySelector('.description').getClientRects().length > 0");
+    shouldBeFalse('selectedText.includes("This video is playing on the TV.")');
     shouldBeEqualToString("window.getComputedStyle(document.querySelector('.description')).cursor", "default");
 
     mediaControls.element.remove();
