@@ -241,10 +241,9 @@ WI.CallFrame = class CallFrame
         let nativeCode = false;
         let sourceCodeLocation = null;
 
-        if (url === "[native code]") {
+        if (url === "[native code]")
             nativeCode = true;
-            url = null;
-        } else if (url || scriptId) {
+        else if (url || scriptId) {
             let sourceCode = null;
             if (scriptId) {
                 sourceCode = WI.debuggerManager.scriptForIdentifier(scriptId, target);
@@ -264,7 +263,6 @@ WI.CallFrame = class CallFrame
                 // Treat this as native code if we were unable to find a source.
                 console.assert(!url, "We should have detected source code for something with a url");
                 nativeCode = true;
-                url = null;
             }
         }
 

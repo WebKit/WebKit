@@ -243,7 +243,7 @@ WI.ResourceContentView = class ResourceContentView extends WI.ContentView
     {
         if (parameters.error) {
             // A 304 Not Modified request that is missing content means we didn't have a cached copy.
-            if (parameters.sourceCode.statusCode == 304 && parameters.reason === "Missing content of resource for given requestId") {
+            if (parameters.sourceCode.statusCode === 304 && parameters.reason === "Missing content of resource for given requestId") {
                 this.showNoCachedContentMessage();
                 return;
             }

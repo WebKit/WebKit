@@ -39,7 +39,7 @@
         if (state._linkQuoteCharacter)
             stream.eatWhile(new RegExp("[^" + state._linkQuoteCharacter + "]"));
         else
-            stream.eatWhile(/[^\s\u00a0=<>\"\']/);
+            stream.eatWhile(/[^\s\u00a0=<>"']/);
 
         // If the stream isn't at the end of line then we found the end quote.
         // In the case, change _linkTokenize to parse the end of the link next.
@@ -80,7 +80,7 @@
             if (state._linkQuoteCharacter)
                 stream.eatWhile(new RegExp("[^\\s," + state._linkQuoteCharacter + "]"));
             else
-                stream.eatWhile(/[^\s,\u00a0=<>\"\']/);
+                stream.eatWhile(/[^\s,\u00a0=<>"']/);
         } else {
             // Eat the string until a comma, or ending quote.
             // If this is unquoted, then eat until whitespace or common parse errors.
@@ -88,7 +88,7 @@
             if (state._linkQuoteCharacter)
                 stream.eatWhile(new RegExp("[^," + state._linkQuoteCharacter + "]"));
             else
-                stream.eatWhile(/[^\s\u00a0=<>\"\']/);
+                stream.eatWhile(/[^\s\u00a0=<>"']/);
             stream.eatWhile(/[\s,]/);
         }
 
@@ -202,14 +202,14 @@
         if (state._unquotedURLString && stream.eatSpace())
             return null;
 
-        var ch = null;
+        let ch;
         var escaped = false;
         var reachedEndOfURL = false;
         var lastNonWhitespace = stream.pos;
         var quote = state._urlQuoteCharacter;
 
         // Parse characters until the end of the stream/line or a proper end quote character.
-        while ((ch = stream.next()) != null) {
+        while ((ch = stream.next()) !== null && ch !== undefined) {
             if (ch === quote && !escaped) {
                 reachedEndOfURL = true;
                 break;

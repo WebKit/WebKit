@@ -310,7 +310,7 @@ WI.ColorPicker = class ColorPicker extends WI.Object
 
         let format = this._color.format;
         let gamut = this._color.gamut;
-        let components = null;
+        let components;
         if (format === WI.Color.Format.HSL || format === WI.Color.Format.HSLA) {
             components = this._colorSquare.tintedColor.hsl.concat(opacity);
             if (opacity !== 1)

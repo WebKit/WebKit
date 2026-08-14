@@ -59,7 +59,7 @@ function parseSecurityOrigin(securityOrigin)
 {
     securityOrigin = securityOrigin ? securityOrigin.trim() : "";
 
-    let match = securityOrigin.match(/^(?<scheme>[^:]+):\/\/(?<host>[^\/:]*)(?::(?<port>[\d]+))?$/i);
+    let match = securityOrigin.match(/^(?<scheme>[^:]+):\/\/(?<host>[^/:]*)(?::(?<port>[\d]+))?$/i);
     if (!match)
         return {scheme: null, host: null, port: null};
 
@@ -113,7 +113,7 @@ function parseURL(url)
     if (isWebKitInternalScript(url))
         return result;
 
-    let parsed = null;
+    let parsed;
     try {
         parsed = new URL(url);
     } catch {

@@ -264,16 +264,12 @@ WI.FontDetailsPanel = class FontDetailsPanel extends WI.StyleDetailsPanel
         switch (propertyName) {
         case "font-size":
             return new WI.DetailsSectionSimpleRow(WI.UIString("Size", "Size @ Font Details Sidebar Property", "Property title for `font-size`."));
-            break;
         case "font-style":
             return new WI.DetailsSectionSimpleRow(WI.UIString("Style", "Style @ Font Details Sidebar Property", "Property title for `font-style`."));
-            break;
         case "font-weight":
             return new WI.DetailsSectionSimpleRow(WI.UIString("Weight", "Weight @ Font Details Sidebar Property", "Property title for `font-weight` and `wght` variation axis."));
-            break;
         case "font-stretch":
             return new WI.DetailsSectionSimpleRow(WI.UIString("Stretch", "Stretch @ Font Details Sidebar Property", "Property title for `font-stretch`."));
-            break;
         }
 
         console.assert(false, "Should not be reached.", propertyName);

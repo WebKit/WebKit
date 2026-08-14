@@ -205,8 +205,8 @@ WI.ProfileDataGridNode = class ProfileDataGridNode extends WI.DataGridNode
 
     _recalculateData()
     {
-        let {timestamps, duration} = this._node.filteredTimestampsAndDuration(this._tree.startTime, this._tree.endTime);
-        let {leafTimestamps, leafDuration} = this._node.filteredLeafTimestampsAndDuration(this._tree.startTime, this._tree.endTime);
+        let {duration} = this._node.filteredTimestampsAndDuration(this._tree.startTime, this._tree.endTime);
+        let {leafDuration} = this._node.filteredLeafTimestampsAndDuration(this._tree.startTime, this._tree.endTime);
 
         let totalTime = duration;
         let selfTime = leafDuration + this._extraSelfTimeFromChargedChildren;

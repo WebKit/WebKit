@@ -174,7 +174,7 @@ WI.AuditTestBase = class AuditTestBase extends WI.Object
 
         let target = WI.assumingMainTarget();
 
-        let agentCommandFunction = null;
+        let agentCommandFunction;
         let agentCommandArguments = {};
         if (target.hasDomain("Audit")) {
             agentCommandFunction = target.AuditAgent.run;

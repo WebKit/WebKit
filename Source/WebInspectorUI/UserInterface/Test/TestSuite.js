@@ -136,6 +136,8 @@ AsyncTestSuite = class AsyncTestSuite extends TestSuite
         // Avoid adding newlines if nothing was logged.
         let priorLogCount = this._harness.logCount;
 
+        // The executor may resolve either after the test case finishes or independently when its timeout fires.
+        // eslint-disable-next-line no-async-promise-executor
         return Promise.resolve().then(() => Promise.chain(this.testcases.map((testcase, i) => () => new Promise(async (resolve, reject) => {
             if (i > 0 && priorLogCount < this._harness.logCount)
                 this._harness.log("");

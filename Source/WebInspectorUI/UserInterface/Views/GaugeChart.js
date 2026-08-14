@@ -158,7 +158,7 @@ WI.GaugeChart = class GaugeChart extends WI.View
     {
         let lastLimit = -1;
 
-        for (let {className, limit} of segments) {
+        for (let {limit} of segments) {
             console.assert(limit >= 1 && limit <= 100, "limit should be between 1 and 100", limit);
             console.assert(limit >= (lastLimit + 1), "limits should always increase between segments");
             lastLimit = limit;

@@ -76,7 +76,7 @@ WI.NetworkManager = class NetworkManager extends WI.Object
                     if (localResourceOverride.isRegex) {
                         // FIXME <https://webkit.org/b/294126> Remove fix for stored local overrides created before URL regex checking was added
                         try {
-                            localResourceOverride._urlRegex;
+                            void localResourceOverride._urlRegex;
                         } catch {
                             const key = null;
                             WI.objectStores.localResourceOverrides.associateObject(localResourceOverride, key, serializedLocalResourceOverride);
@@ -671,7 +671,7 @@ WI.NetworkManager = class NetworkManager extends WI.Object
             // There was a provisional load in progress, commit it.
             frame.commitProvisionalLoad(framePayload.name, framePayload.securityOrigin);
         } else {
-            let mainResource = null;
+            let mainResource;
             if (frame.mainResource.url !== framePayload.url || frame.loaderIdentifier !== framePayload.loaderId) {
                 // Navigations like back/forward do not have provisional loads, so create a new main resource here.
                 mainResource = new WI.Resource(framePayload.url, {
@@ -1212,7 +1212,7 @@ WI.NetworkManager = class NetworkManager extends WI.Object
     {
         console.assert(!this._waitingForMainFrameResourceTreePayload);
 
-        let resource = null;
+        let resource;
 
         if (!frameIdentifier && resourceOptions.targetId) {
             // This is a new resource for a ServiceWorker target.

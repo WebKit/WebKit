@@ -50,7 +50,12 @@ WI.WebInspectorExtensionTabContentView = class WebInspectorExtensionTabContentVi
     // Static
 
     static shouldSaveTab() { return false; }
-    static shouldNotRemoveFromDOMWhenHidden() { return true; }
+
+    static shouldNotRemoveFromDOMWhenHidden()
+    {
+        // This is necessary to avoid the <iframe> content from being reloaded when the extension tab is hidden.
+        return true;
+    }
 
     static isTabAllowed()
     {
@@ -111,13 +116,6 @@ WI.WebInspectorExtensionTabContentView = class WebInspectorExtensionTabContentVi
     tabInfo()
     {
         return this._tabInfo;
-    }
-
-    static shouldSaveTab() { return false; }
-
-    static shouldNotRemoveFromDOMWhenHidden() {
-        // This is necessary to avoid the <iframe> content from being reloaded when the extension tab is hidden.
-        return true;
     }
 
     // Private

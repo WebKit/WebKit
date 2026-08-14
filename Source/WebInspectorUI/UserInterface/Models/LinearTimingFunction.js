@@ -46,7 +46,7 @@ WI.LinearTimingFunction = class LinearTimingFunction
         if (trimmedText in WI.LinearTimingFunction.keywordValues)
             return new WI.LinearTimingFunction(WI.LinearTimingFunction.keywordValues[trimmedText].map((point) => new WI.LinearTimingFunction.Point(...point)));
 
-        let args = trimmedText.match(/^linear\(\s*([^\)]+)\s*\)$/)?.[1]?.split(/\s*,\s*/) ?? [];
+        let args = trimmedText.match(/^linear\(\s*([^)]+)\s*\)$/)?.[1]?.split(/\s*,\s*/) ?? [];
         if (args.length < 2)
             return null;
 
@@ -54,7 +54,7 @@ WI.LinearTimingFunction = class LinearTimingFunction
         let largestInput = -Infinity;
         let lastStopIsExtraPoint = false;
         for (let arg of args) {
-            let [_, output, input, extraPoint] = arg.match(/([\d\.-]+)\s*(?:([\d\.-]+)%)?\s*(?:([\d\.-]+)%)?/) ?? [];
+            let [_, output, input, extraPoint] = arg.match(/([\d.-]+)\s*(?:([\d.-]+)%)?\s*(?:([\d.-]+)%)?/) ?? [];
 
             output = parseFloat(output);
             if (isNaN(output))

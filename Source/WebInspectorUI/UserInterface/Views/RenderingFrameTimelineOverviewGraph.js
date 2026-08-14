@@ -249,7 +249,7 @@ WI.RenderingFrameTimelineOverviewGraph = class RenderingFrameTimelineOverviewGra
 
     _mouseClicked(event)
     {
-        let position = 0;
+        let position;
         if (WI.resolvedLayoutDirection() === WI.LayoutDirection.RTL)
             position = this.element.totalOffsetRight - event.pageX;
         else

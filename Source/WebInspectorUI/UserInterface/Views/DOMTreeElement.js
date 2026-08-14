@@ -1462,7 +1462,7 @@ WI.DOMTreeElement = class DOMTreeElement extends WI.TreeElement
         let attrSpanElement = parentElement.createChild("span", "html-attribute");
         let attrNameElement = attrSpanElement.createChild("span", "html-attribute-name");
         attrNameElement.textContent = name;
-        let attrValueElement = null;
+        let attrValueElement;
 
         let quote = value.includes('"') ? "'" : "\"";
         if (hasText)

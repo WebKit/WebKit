@@ -948,7 +948,7 @@ WI.LogContentView = class LogContentView extends WI.ContentView
     _filterMessageElements(messageElements)
     {
         messageElements.forEach(function(messageElement) {
-            let visible = false;
+            let visible;
             if (messageElement.__commandView instanceof WI.ConsoleCommandView || messageElement.__message instanceof WI.ConsoleCommandResultMessage)
                 visible = this._scopeBar.selectedItems.some((item) => item.id === WI.LogContentView.Scopes.Evaluations || item.id === WI.LogContentView.Scopes.All);
             else

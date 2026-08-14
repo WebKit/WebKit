@@ -257,6 +257,7 @@ WI.SourceCode = class SourceCode extends WI.Object
     {
         // Implemented by subclasses.
         console.error("Needs to be implemented by a subclass.");
+        return null;
     }
 
     // Private

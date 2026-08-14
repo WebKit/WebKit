@@ -166,7 +166,7 @@ WI.EventListenerSectionGroup = class EventListenerSectionGroup extends WI.Detail
         let currentNode = domNode;
         do {
             generateSectionForTarget(currentNode);
-        } while (currentNode = currentNode.parentNode);
+        } while ((currentNode = currentNode.parentNode));
 
         generateSectionForTarget(windowTargetIdentifier);
 

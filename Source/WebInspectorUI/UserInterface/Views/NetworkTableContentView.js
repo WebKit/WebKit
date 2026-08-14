@@ -850,16 +850,12 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         // For redirect entries, show the previous redirect or parent resource as the initiator.
         if (entry.redirect && entry.resource) {
             let initiatorName;
-            let initiatorObject;
-
             if (entry.previousRedirect) {
                 // Show the previous redirect in the chain
                 initiatorName = WI.displayNameForURL(entry.previousRedirect.url, entry.previousRedirect.urlComponents);
-                initiatorObject = entry.previousRedirect;
             } else {
                 // First redirect - show the parent resource
                 initiatorName = entry.resource.displayName;
-                initiatorObject = entry.resource;
             }
 
             let linkElement = cell.appendChild(document.createElement("a"));
@@ -1000,7 +996,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         }
 
         if (entry.redirect) {
-            let {redirect, time, startTime} = entry;
+            let {time, startTime} = entry;
 
             if (isNaN(time) || isNaN(startTime)) {
                 cell.textContent = zeroWidthSpace;

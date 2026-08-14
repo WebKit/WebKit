@@ -206,7 +206,7 @@ WI.ContextMenu = class ContextMenu extends WI.ContextSubMenuItem
             WI.ContextMenu._lastContextMenu = this;
 
             if (this._event.type !== "contextmenu" && typeof InspectorFrontendHost.dispatchEventAsContextMenuEvent === "function") {
-                console.assert(event.type !== "mousedown" || this._beforeShowCallbacks.length > 0, "Calling show() in a mousedown handler should have a before show callback to enable quick selection.");
+                console.assert(this._event.type !== "mousedown" || this._beforeShowCallbacks.length > 0, "Calling show() in a mousedown handler should have a before show callback to enable quick selection.");
 
                 this._menuObject = menuObject;
                 this._event.target.addEventListener("contextmenu", this, true);

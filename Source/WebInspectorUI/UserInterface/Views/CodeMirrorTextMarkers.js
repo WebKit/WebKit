@@ -96,8 +96,8 @@ function createCodeMirrorColorTextMarkers(codeMirror, range, options = {})
         // funciton whose name can be checked to see if it matches a gradient.
         let openParenthesis = 0;
         let index = match.index;
-        let c = null;
-        while (c = lineContent[index]) {
+        let c;
+        while ((c = lineContent[index])) {
             if (c === "(")
                 ++openParenthesis;
             if (c === ")")
@@ -115,7 +115,7 @@ function createCodeMirrorColorTextMarkers(codeMirror, range, options = {})
             return false;
 
         // Act as a negative look-behind and disallow the color from being prefixing with certain characters.
-        return !(match.index > 0 && /[-.\"\']/.test(lineContent[match.index - 1]));
+        return !(match.index > 0 && /[-."']/.test(lineContent[match.index - 1]));
     }
 
     return createCodeMirrorTextMarkers({codeMirror, range, type: "Color", pattern, matchFunction, ...options});
@@ -139,8 +139,8 @@ function createCodeMirrorGradientTextMarkers(codeMirror, range, options = {})
             var endChar = match.index + match[0].length;
 
             var openParentheses = 0;
-            var c = null;
-            while (c = lineContent[endChar]) {
+            let c;
+            while ((c = lineContent[endChar])) {
                 if (c === "(")
                     openParentheses++;
                 if (c === ")")

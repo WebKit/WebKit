@@ -402,7 +402,7 @@ WI.AuditTestContentView = class AuditTestContentView extends WI.ContentView
                 return;
             }
 
-            let message = null;
+            let message;
             if (result.didError)
                 message = WI.UIString("The \u201C%s\u201D audit threw an error");
             else if (result.didFail)

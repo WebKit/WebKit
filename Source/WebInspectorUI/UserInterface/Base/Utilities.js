@@ -1198,7 +1198,7 @@ Object.defineProperty(String.prototype, "insertWordBreakCharacters",
         // Add zero width spaces after characters that are good to break after.
         // Otherwise a string with no spaces will not break and overflow its container.
         // This is mainly used on URL strings, so the characters are tailored for URLs.
-        return this.replace(/([\/;:\)\]\}&?])/g, "$1\u200b");
+        return this.replace(/([/;:)\]}&?])/g, "$1\u200b");
     }
 });
 
@@ -1634,7 +1634,9 @@ Object.defineProperty(Promise, "delay",
 {
     value(delay)
     {
-        return new Promise((resolve) => setTimeout(resolve, delay || 0));
+        return new Promise((resolve) => {
+            setTimeout(resolve, delay || 0);
+        });
     }
 });
 

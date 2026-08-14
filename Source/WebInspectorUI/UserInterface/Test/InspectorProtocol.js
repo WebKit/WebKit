@@ -195,8 +195,9 @@ InspectorProtocol.dispatchMessageFromBackend = function(messageObject)
 
         if (typeof handler === "function")
             handler(messageObject);
-        else if (handler instanceof Array) {
-            handler.map((listener) => { listener.call(null, messageObject); });
+        else if (Array.isArray(handler)) {
+            for (let listener of handler)
+                listener(messageObject);
         } else if (typeof handler === "object") {
             let {resolve, reject} = handler;
             if ("error" in messageObject)

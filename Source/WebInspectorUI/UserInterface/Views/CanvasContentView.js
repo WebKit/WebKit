@@ -372,7 +372,7 @@ WI.CanvasContentView = class CanvasContentView extends WI.ContentView
             this.addSubview(this._progressView);
         }
 
-        let title = null;
+        let title;
         if (this.representedObject.recordingFrameCount) {
             let formatString = this.representedObject.recordingFrameCount === 1 ? WI.UIString("%d Frame") : WI.UIString("%d Frames");
             title = formatString.format(this.representedObject.recordingFrameCount);

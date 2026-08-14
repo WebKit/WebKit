@@ -166,7 +166,7 @@ function createErrorSheet() {
 
     // Inlined from Utilities.js, because that file may not have loaded.
     function insertWordBreakCharacters(text) {
-        return text.replace(/([\/;:\)\]\}&?])/g, "$1\u200b");
+        return text.replace(/([/;:)\]}&?])/g, "$1\u200b");
     }
 
     // This trampoline is necessary since none of our functions will be

@@ -62,7 +62,7 @@ WI.AuditTestGroupContentView = class AuditTestGroupContentView extends WI.AuditT
         let actionsRowElement = controlsTableElement.appendChild(document.createElement("tr"));
         actionsRowElement.className = "actions";
 
-        let actionsHeaderElement = controlsTableElement.appendChild(document.createElement("th"));
+        controlsTableElement.appendChild(document.createElement("th"));
         let actionsDataElement = controlsTableElement.appendChild(document.createElement("td"));
 
         let addTestCaseButtonElement = actionsDataElement.appendChild(document.createElement("button"));

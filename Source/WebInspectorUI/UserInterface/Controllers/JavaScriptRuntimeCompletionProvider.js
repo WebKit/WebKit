@@ -132,7 +132,7 @@ WI.JavaScriptRuntimeCompletionProvider = class JavaScriptRuntimeCompletionProvid
 
             // Don't allow non-forced empty prefix completions if the user is entering a number, since it might be a float.
             // But allow number completions if the base already has a decimal, so "10.0." will suggest Number properties.
-            if (!forced && !prefix && dotNotation && base.indexOf(".") === -1 && parseInt(base, 10) == base) {
+            if (!forced && !prefix && dotNotation && base.indexOf(".") === -1 && parseInt(base, 10) === Number(base)) {
                 completionController.updateCompletions(null);
                 return;
             }
@@ -236,7 +236,7 @@ WI.JavaScriptRuntimeCompletionProvider = class JavaScriptRuntimeCompletionProvid
                         var names = Object.getOwnPropertyNames(o);
                         for (var i = 0; i < names.length; ++i)
                             resultSet[names[i]] = true;
-                    } catch (e) { }
+                    } catch { }
                 }
 
                 return resultSet;
@@ -369,7 +369,7 @@ WI.JavaScriptRuntimeCompletionProvider = class JavaScriptRuntimeCompletionProvid
                     continue;
 
                 if (bracketNotation) {
-                    if (parseInt(property) != property)
+                    if (parseInt(property) !== Number(property))
                         property = quoteUsed + property.escapeCharacters(quoteUsed + "\\") + (suffix !== quoteUsed ? quoteUsed : "");
                 }
 

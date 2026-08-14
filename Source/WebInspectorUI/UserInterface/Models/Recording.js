@@ -67,7 +67,7 @@ WI.Recording = class Recording extends WI.Object
             payload.version = parseInt(payload.version);
         }
 
-        let type = null;
+        let type;
         switch (payload.type) {
         case InspectorBackend.Enum.Recording.Type.Canvas2D:
             type = WI.Recording.Type.Canvas2D;
@@ -186,7 +186,7 @@ WI.Recording = class Recording extends WI.Object
 
     static displayNameForReference([identifier, swizzleType])
     {
-        let name = null;
+        let name;
         switch (swizzleType) {
         case WI.Recording.Swizzle.WebGLBuffer:
             name = WI.unlocalizedString("buffer");
@@ -904,12 +904,18 @@ WI.Recording = class Recording extends WI.Object
                     points = await Promise.all(points.map((item) => this.swizzle(item, WI.Recording.Swizzle.Number)));
 
                     WI.ImageUtilities.scratchCanvasContext2D((context) => {
-                        if (gradientType == "radial-gradient")
+                        switch (gradientType) {
+                        case "radial-gradient":
                             this._swizzle[index][type] = context.createRadialGradient(...points);
-                        else if (gradientType == "linear-gradient")
+                            return;
+                        case "linear-gradient":
                             this._swizzle[index][type] = context.createLinearGradient(...points);
-                        else
+                            return;
+                        case "conic-gradient":
                             this._swizzle[index][type] = context.createConicGradient(...points);
+                            return;
+                        }
+                        console.assert(false, gradientType);
                     });
 
                     let stops = [];
@@ -1152,7 +1158,7 @@ WI.Recording = class Recording extends WI.Object
                     contextString = `    ` + contextString;
                 }
 
-                let callString = ``;
+                let callString;
                 if (WI.RecordingAction.isFunctionForType(this._type, name))
                     callString = `(` + value.map(processValue).join(`, `) + `)`;
                 else

@@ -170,7 +170,7 @@ WI.AuditTestCase = class AuditTestCase extends WI.AuditTestBase
 
             function checkResultProperty(key, value, type, subtype) {
                 function addErrorForValueType(valueType) {
-                    let errorString = null;
+                    let errorString;
                     if (valueType === "object" || valueType === "array")
                         errorString = WI.UIString("\u0022%s\u0022 must be an %s");
                     else
@@ -199,7 +199,9 @@ WI.AuditTestCase = class AuditTestCase extends WI.AuditTestBase
                 if (!array)
                     return;
 
-                let arrayProperties = await new Promise((resolve, reject) => array.getPropertyDescriptors(resolve, options));
+                let arrayProperties = await new Promise((resolve, reject) => {
+                    array.getPropertyDescriptors(resolve, options);
+                });
                 for (let i = 0; i < array.size; ++i) {
                     let arrayPropertyForIndex = arrayProperties.find((arrayProperty) => arrayProperty.name === String(i));
                     if (arrayPropertyForIndex)
@@ -207,7 +209,9 @@ WI.AuditTestCase = class AuditTestCase extends WI.AuditTestBase
                 }
             }
 
-            let properties = await new Promise((resolve, reject) => remoteObject.getPropertyDescriptors(resolve, options));
+            let properties = await new Promise((resolve, reject) => {
+                remoteObject.getPropertyDescriptors(resolve, options);
+            });
             for (let property of properties) {
                 let key = property.name;
                 if (key === "__proto__")
@@ -255,7 +259,9 @@ WI.AuditTestCase = class AuditTestCase extends WI.AuditTestBase
                             return;
                         }
 
-                        let domNodeId = await new Promise((resolve, reject) => item.value.pushNodeToFrontend(resolve));
+                        let domNodeId = await new Promise((resolve, reject) => {
+                            item.value.pushNodeToFrontend(resolve);
+                        });
                         let domNode = WI.domManager.nodeForId(domNodeId);
                         if (!domNode)
                             return;
@@ -314,7 +320,7 @@ WI.AuditTestCase = class AuditTestCase extends WI.AuditTestBase
 
         let target = WI.assumingMainTarget();
 
-        let agentCommandFunction = null;
+        let agentCommandFunction;
         let agentCommandArguments = {};
         if (target.hasDomain("Audit")) {
             agentCommandFunction = target.AuditAgent.run;

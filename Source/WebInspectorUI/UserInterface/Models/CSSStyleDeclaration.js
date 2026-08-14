@@ -468,8 +468,14 @@ WI.CSSStyleDeclaration = class CSSStyleDeclaration extends WI.Object
 
     newBlankProperty(propertyIndex)
     {
-        let text, name, value, priority, overridden, implicit, anonymous;
+        const text = undefined;
+        const name = undefined;
+        const value = undefined;
+        const priority = undefined;
         let enabled = true;
+        const overridden = undefined;
+        const implicit = undefined;
+        const anonymous = undefined;
         let valid = false;
         let styleSheetTextRange = this._rangeAfterPropertyAtIndex(propertyIndex - 1);
 

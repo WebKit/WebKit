@@ -515,7 +515,7 @@ WI.RecordingAction = class RecordingAction extends WI.Object
                 context[name](...this._parameters);
             else {
                 if (this.isGetter)
-                    context[name];
+                    void context[name];
                 else
                     context[name] = this._parameters[0];
             }

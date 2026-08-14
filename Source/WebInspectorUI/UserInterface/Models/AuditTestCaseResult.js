@@ -140,7 +140,7 @@ WI.AuditTestCaseResult = class AuditTestCaseResult extends WI.AuditTestResultBas
 
                 if (key === "domNodes") {
                     if (InspectorBackend.hasDomain("DOM") && (!payload.metadata.url || payload.metadata.url === WI.networkManager.mainFrame.url)) {
-                        let documentNode = await new Promise((resolve) => WI.domManager.requestDocument(resolve));
+                        let documentNode = await WI.domManager.requestDocument();
                         options.resolvedDOMNodes = await Promise.all(payload.data.domNodes.map(async (domNodeString) => {
                             let nodeId = 0;
                             try {

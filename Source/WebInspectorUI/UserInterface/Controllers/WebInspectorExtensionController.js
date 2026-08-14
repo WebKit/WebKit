@@ -167,8 +167,7 @@ WI.WebInspectorExtensionController = class WebInspectorExtensionController exten
         }).then((payload) => {
             let resultOrError = payload.result;
             let wasThrown = payload.wasThrown;
-            let {type, value} = resultOrError;
-            return wasThrown ? {"error": resultOrError.description} : {"result": value};
+            return wasThrown ? {"error": resultOrError.description} : {"result": resultOrError.value};
         }).catch((error) => error.description);
     }
 
@@ -347,7 +346,7 @@ WI.WebInspectorExtensionController = class WebInspectorExtensionController exten
                 if (!(tabBarItem.representedObject instanceof WI.WebInspectorExtensionTabContentView))
                     continue;
 
-                let {anchorTabType, anchorTabIndex, distanceFromAnchorTab} = this._computeIndicesForExtensionTab(tabBarItem.representedObject, {recomputePositions: true});
+                let {anchorTabType, distanceFromAnchorTab} = this._computeIndicesForExtensionTab(tabBarItem.representedObject, {recomputePositions: true});
                 this._extensionTabPositions[tabBarItem.representedObject.savedTabPositionKey] = {anchorTabType, distanceFromAnchorTab};
             }
 
@@ -358,7 +357,7 @@ WI.WebInspectorExtensionController = class WebInspectorExtensionController exten
 
     _insertionIndexForExtensionTab(tabContentView, options = {})
     {
-        let {anchorTabType, anchorTabIndex, distanceFromAnchorTab} = this._computeIndicesForExtensionTab(tabContentView, options);
+        let {anchorTabIndex, distanceFromAnchorTab} = this._computeIndicesForExtensionTab(tabContentView, options);
         return anchorTabIndex + distanceFromAnchorTab + 1;
     }
 

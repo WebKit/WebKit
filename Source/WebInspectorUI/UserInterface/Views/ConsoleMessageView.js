@@ -964,7 +964,6 @@ WI.ConsoleMessageView = class ConsoleMessageView extends WI.Object
                     if (!columnRendered) {
                         if (userProvidedColumnNames || columnNames.length === maxColumnsToRender)
                             continue;
-                        columnRendered = true;
                         columnNames.push(cellProperty.name);
                     }
 

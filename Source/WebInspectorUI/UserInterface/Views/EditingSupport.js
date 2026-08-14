@@ -290,7 +290,7 @@ WI.incrementElementValue = function(element, delta)
     let word = wordRange.toString();
     let wordPrefix = "";
     let wordSuffix = "";
-    let nonNumberInWord = /[^\d-\.]+/.exec(word);
+    let nonNumberInWord = /[^\d.-]+/.exec(word);
     if (nonNumberInWord) {
         let nonNumberEndOffset = nonNumberInWord.index + nonNumberInWord[0].length;
         if (range.startOffset > wordRange.startOffset + nonNumberInWord.index && nonNumberEndOffset < word.length && range.startOffset !== wordRange.startOffset) {

@@ -125,7 +125,7 @@ WI.AnimationContentView = class AnimationContentView extends WI.ContentView
         let displayName = this.representedObject.displayName;
 
         let showIdentifierIfDifferent = (cssName) => {
-            let formatString = "";
+            let formatString;
             let substitutions = [];
 
             if (cssName === displayName)

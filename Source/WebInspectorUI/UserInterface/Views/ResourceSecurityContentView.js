@@ -301,7 +301,7 @@ WI.ResourceSecurityContentView = class ResourceSecurityContentView extends WI.Co
             let matchRanges = [];
             let text = element.textContent;
             let match;
-            while (match = searchRegex.exec(text))
+            while ((match = searchRegex.exec(text)))
                 matchRanges.push({offset: match.index, length: match[0].length});
 
             if (matchRanges.length) {

@@ -65,7 +65,7 @@ if (!window.InspectorFrontendHost) {
             const match = navigator.platform.match(/mac|win|linux/i);
             if (match) {
                 const platform = match[0].toLowerCase();
-                if (platform == "win")
+                if (platform === "win")
                     return "windows";
                 return platform;
             }

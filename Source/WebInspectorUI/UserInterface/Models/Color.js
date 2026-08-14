@@ -289,7 +289,7 @@ WI.Color = class Color
         let delta = max - min;
 
         let h = 0;
-        let s = 0;
+        let s;
         let l = (max + min) / 2;
 
         if (delta === 0)

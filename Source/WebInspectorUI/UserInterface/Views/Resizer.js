@@ -66,7 +66,7 @@ WI.Resizer = class Resizer extends WI.Object
 
     // Private
 
-    _currentPosition()
+    _currentPosition(event)
     {
         if (this._orientation === WI.Resizer.RuleOrientation.Vertical)
             return event.pageX;
@@ -81,7 +81,7 @@ WI.Resizer = class Resizer extends WI.Object
         if (event.button !== 0 || event.ctrlKey)
             return;
 
-        this._resizerMouseDownPosition = this._currentPosition();
+        this._resizerMouseDownPosition = this._currentPosition(event);
 
         var delegateRequestedAbort = false;
         if (typeof this._delegate.resizerDragStarted === "function")
@@ -124,7 +124,7 @@ WI.Resizer = class Resizer extends WI.Object
         event.stopPropagation();
 
         if (typeof this._delegate.resizerDragging === "function")
-            this._delegate.resizerDragging(this, this._resizerMouseDownPosition - this._currentPosition());
+            this._delegate.resizerDragging(this, this._resizerMouseDownPosition - this._currentPosition(event));
     }
 
     _resizerMouseUp(event)

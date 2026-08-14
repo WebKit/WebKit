@@ -766,7 +766,7 @@ WI.DataGrid = class DataGrid extends WI.View
 
         this.orderedColumns.splice(insertionIndex, 0, columnIdentifier);
 
-        for (var [identifier, existingColumn] of this.columns) {
+        for (let existingColumn of this.columns.values()) {
             var ordinal = existingColumn["ordinal"];
             if (ordinal >= insertionIndex) // Also adjust the "old" column at insertion index.
                 existingColumn["ordinal"] = ordinal + 1;
@@ -862,7 +862,7 @@ WI.DataGrid = class DataGrid extends WI.View
         this.orderedColumns.splice(this.orderedColumns.indexOf(columnIdentifier), 1);
 
         var removedOrdinal = removedColumn["ordinal"];
-        for (var [identifier, column] of this.columns) {
+        for (let column of this.columns.values()) {
             var ordinal = column["ordinal"];
             if (ordinal > removedOrdinal)
                 column["ordinal"] = ordinal - 1;
@@ -1938,8 +1938,6 @@ WI.DataGrid = class DataGrid extends WI.View
             child.didResizeColumn(rightColumnIdentifier);
             child = child.traverseNextNode(skipHidden, this, dontPopulate);
         }
-
-        event.preventDefault();
     }
 
     resizerDragEnded(resizer)
@@ -2108,7 +2106,7 @@ WI.DataGrid = class DataGrid extends WI.View
 
         const skipUnrevealed = true;
         const dontPopulate = true;
-        while (dataGridNode = dataGridNode.traversePreviousNode(skipUnrevealed, dontPopulate)) {
+        while ((dataGridNode = dataGridNode.traversePreviousNode(skipUnrevealed, dontPopulate))) {
             if (dataGridNode.selectable && (!dataGridNode.isPlaceholderNode || operation === WI.SelectionController.Operation.Direct))
                 return this.selectionItemForDataGridNode(dataGridNode);
         }
@@ -2126,7 +2124,7 @@ WI.DataGrid = class DataGrid extends WI.View
         const skipUnrevealed = true;
         const stayWithin = null;
         const dontPopulate = true;
-        while (dataGridNode = dataGridNode.traverseNextNode(skipUnrevealed, stayWithin, dontPopulate)) {
+        while ((dataGridNode = dataGridNode.traverseNextNode(skipUnrevealed, stayWithin, dontPopulate))) {
             if (dataGridNode.selectable && (!dataGridNode.isPlaceholderNode || operation === WI.SelectionController.Operation.Direct))
                 return this.selectionItemForDataGridNode(dataGridNode);
         }

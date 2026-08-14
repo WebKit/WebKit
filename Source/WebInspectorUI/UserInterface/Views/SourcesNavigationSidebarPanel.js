@@ -1196,7 +1196,7 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
                 parentTreeElement = originTreeElement.createFoldersAsNeededForSubpath(subpath, this._boundCompareTreeElements);
             }
 
-            let resourceTreeElement = null;
+            let resourceTreeElement;
             if (resource instanceof WI.CSSStyleSheet)
                 resourceTreeElement = new WI.CSSStyleSheetTreeElement(resource);
             else {
@@ -1241,7 +1241,7 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         if (styleSheet.anonymous)
             return;
 
-        let parentTreeElement = null;
+        let parentTreeElement;
 
         if (WI.browserManager.isExtensionScheme(styleSheet.urlComponents.scheme)) {
             if (!this._extensionStyleSheetsFolderTreeElement)
@@ -1322,7 +1322,7 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
             let index = insertionIndexForObjectInListSortedByFunction(scriptTreeElement, this._resourcesTreeOutline.children, this._boundCompareTreeElements);
             this._resourcesTreeOutline.insertChild(scriptTreeElement, index);
         } else {
-            let parentFolderTreeElement = null;
+            let parentFolderTreeElement;
 
             if (WI.browserManager.isExtensionScheme(script.urlComponents.scheme)) {
                 if (!this._extensionScriptsFolderTreeElement) {
@@ -2065,7 +2065,7 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
             if (!pauseData)
                 break;
 
-            let urlBreakpoint = null;
+            let urlBreakpoint;
             if (pauseData.breakpointURL)
                 urlBreakpoint = WI.domDebuggerManager.urlBreakpointForURL(pauseData.breakpointURL);
             else {

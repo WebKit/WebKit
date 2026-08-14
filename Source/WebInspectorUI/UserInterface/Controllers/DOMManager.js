@@ -194,8 +194,7 @@ WI.DOMManager = class DOMManager extends WI.Object
                     let docURL = new URL(frameDocURL);
                     if (srcURL.href === docURL.href)
                         matched = true;
-                } catch (e) {
-                }
+                } catch { }
             }
 
             if (matched) {

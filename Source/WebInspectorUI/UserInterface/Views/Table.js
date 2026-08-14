@@ -923,15 +923,12 @@ WI.Table = class Table extends WI.View
 
         let lockedWidth = 0;
         let lockedColumnCount = 0;
-        let totalMinimumWidth = 0;
 
         for (let column of this._visibleColumns) {
             if (column.locked) {
                 lockedWidth += column.width;
                 lockedColumnCount++;
-                totalMinimumWidth += column.width;
-            } else if (column.minWidth)
-                totalMinimumWidth += column.minWidth;
+            }
         }
 
         let flexibleWidth = availableWidth - lockedWidth;
@@ -1414,7 +1411,7 @@ WI.Table = class Table extends WI.View
 
         let didAppendHeaderItem = false;
 
-        for (let [columnIdentifier, column] of this._columnSpecs) {
+        for (let column of this._columnSpecs.values()) {
             if (column.locked)
                 continue;
             if (!column.hideable)

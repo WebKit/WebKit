@@ -355,8 +355,8 @@ WI.ChartDetailsSectionRow = class ChartDetailsSectionRow extends WI.DetailsSecti
 
         const center = this._chartSize / 2;
         let startAngle = -Math.PI / 2;
-        let endAngle = 0;
-        for (let [id, item] of this._items) {
+        let endAngle;
+        for (let item of this._items.values()) {
             let path = item[WI.ChartDetailsSectionRow.ChartSegmentPathSymbol];
             if (!path) {
                 path = createSVGElement("path");

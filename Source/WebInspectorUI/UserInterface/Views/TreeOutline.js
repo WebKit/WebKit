@@ -781,7 +781,7 @@ WI.TreeOutline = class TreeOutline extends WI.Object
         const stayWithin = null;
         const dontPopulate = true;
 
-        while (treeElement = treeElement.traversePreviousTreeElement(skipUnrevealed, stayWithin, dontPopulate)) {
+        while ((treeElement = treeElement.traversePreviousTreeElement(skipUnrevealed, stayWithin, dontPopulate))) {
             if (this.canSelectTreeElement(treeElement))
                 return this.objectForSelection(treeElement);
         }
@@ -800,7 +800,7 @@ WI.TreeOutline = class TreeOutline extends WI.Object
         const stayWithin = null;
         const dontPopulate = true;
 
-        while (treeElement = treeElement.traverseNextTreeElement(skipUnrevealed, stayWithin, dontPopulate)) {
+        while ((treeElement = treeElement.traverseNextTreeElement(skipUnrevealed, stayWithin, dontPopulate))) {
             if (this.canSelectTreeElement(treeElement))
                 return this.objectForSelection(treeElement);
         }
@@ -870,7 +870,7 @@ WI.TreeOutline = class TreeOutline extends WI.Object
         // and seeing if we hit the same element each time.
         let elementUnderMouse = this.treeElementFromPoint(x, y);
         let elementAboveMouse = this.treeElementFromPoint(x, y - 2);
-        let element = null;
+        let element;
         if (elementUnderMouse === elementAboveMouse)
             element = elementUnderMouse;
         else

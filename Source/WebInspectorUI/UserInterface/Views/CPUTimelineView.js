@@ -592,7 +592,7 @@ WI.CPUTimelineView = class CPUTimelineView extends WI.TimelineView
         webkitThreadAverage /= visibleRecords.length;
         unknownThreadAverage /= visibleRecords.length;
 
-        for (let [workerId, workerData] of workersDataMap) {
+        for (let workerData of workersDataMap.values()) {
             workerData.average = workerData.average / workerData.recordsCount;
             if (workerData.max > workerMax)
                 workerMax = workerData.max;
@@ -1707,7 +1707,6 @@ WI.CPUTimelineView = class CPUTimelineView extends WI.TimelineView
         let visibleEndTime = Math.min(this.endTime, this.currentTime);
         let distance = Math.abs(time - visibleEndTime);
         if (distance < nearestDistance) {
-            nearestDistance = distance;
             bestTime = visibleEndTime;
         }
 

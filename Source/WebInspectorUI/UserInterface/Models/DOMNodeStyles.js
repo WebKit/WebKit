@@ -713,7 +713,7 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
         let selectors = DOMNodeStyles.parseSelectorListPayload(payload.selectorList);
         var type = WI.CSSManager.protocolStyleSheetOriginToEnum(payload.origin);
 
-        var sourceCodeLocation = null;
+        let sourceCodeLocation;
         var sourceRange = payload.selectorList.range;
         if (sourceRange) {
             sourceCodeLocation = DOMNodeStyles.createSourceCodeLocation(payload.sourceURL, {

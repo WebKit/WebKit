@@ -146,16 +146,6 @@ WI.ScriptTimelineRecord = class ScriptTimelineRecord extends WI.TimelineRecord
             return new WI.ProfileNode(nodePayload.id, type, functionName, sourceCodeLocation, nodePayload.callInfo, nodePayload.children);
         };
 
-        function profileNodeCallFromPayload(nodeCallPayload)
-        {
-            console.assert("startTime" in nodeCallPayload);
-            console.assert("totalTime" in nodeCallPayload);
-
-            var startTime = WI.timelineManager.computeElapsedTime(nodeCallPayload.startTime);
-
-            return new WI.ProfileNodeCall(startTime, nodeCallPayload.totalTime);
-        }
-
         var rootNodes = payload.rootNodes;
 
         // Iterate over the node tree using a stack. Doing this recursively can easily cause a stack overflow.

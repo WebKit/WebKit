@@ -60,7 +60,7 @@ WI.SelectionController = class SelectionController extends WI.Object
 
             let getLevel = (item) => {
                 let level = 0;
-                while (item = item.parent)
+                while ((item = item.parent))
                     level++;
                 return level;
             };

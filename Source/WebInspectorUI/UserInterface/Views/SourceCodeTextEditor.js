@@ -264,7 +264,7 @@ WI.SourceCodeTextEditor = class SourceCodeTextEditor extends WI.TextEditor
                 queryRegex.lastIndex = 0;
 
                 // Search the line and mark the ranges.
-                var lineMatch = null;
+                let lineMatch;
                 while (queryRegex.lastIndex + query.length <= line.length && (lineMatch = queryRegex.exec(line))) {
                     var resultTextRange = new WI.TextRange(matchLineNumber, lineMatch.index, matchLineNumber, queryRegex.lastIndex);
                     searchResults.push(resultTextRange);

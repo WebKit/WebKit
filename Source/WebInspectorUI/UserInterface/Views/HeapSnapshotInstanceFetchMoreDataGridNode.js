@@ -44,7 +44,7 @@ WI.HeapSnapshotInstanceFetchMoreDataGridNode = class HeapSnapshotInstanceFetchMo
     hasVisibleSiblingNodes()
     {
         let node = this;
-        while (node = node.previousSibling) {
+        while ((node = node.previousSibling)) {
             if (!node.hidden)
                 return true;
         }

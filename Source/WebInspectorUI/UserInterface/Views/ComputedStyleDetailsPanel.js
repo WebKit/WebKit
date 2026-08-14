@@ -217,7 +217,7 @@ WI.ComputedStyleDetailsPanel = class ComputedStyleDetailsPanel extends WI.StyleD
     {
         super.layout();
 
-        for (let [styleSection, detailsSection] of this._detailsSectionByStyleSectionMap) {
+        for (let styleSection of this._detailsSectionByStyleSectionMap.keys()) {
             // The details section for computed properties is updated in-place by WI.ComputedStyleDetailsPanel.refresh().
             if (styleSection === this._computedStyleSection)
                 continue;

@@ -603,7 +603,7 @@ WI.Layers3DContentView = class Layers3DContentView extends WI.ContentView
 
     _refreshAllLayers()
     {
-        for (let [layerId, layerGroup] of this._layerGroupsById) {
+        for (let layerGroup of this._layerGroupsById.values()) {
             let layer = layerGroup.userData.layer;
             for (let child of layerGroup.children) {
                 child.geometry?.dispose();

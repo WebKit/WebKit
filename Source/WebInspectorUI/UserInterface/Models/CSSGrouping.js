@@ -85,7 +85,7 @@ WI.CSSGrouping = class CSSGrouping extends WI.Object
         WI.domUndoCoordinator.markUndoableState(target);
         await this._nodeStyles.refresh();
 
-        console.assert(groupingPayload.type == this._type);
+        console.assert(groupingPayload.type === this._type);
 
         console.assert(groupingPayload.ruleId);
         console.assert(groupingPayload.text);

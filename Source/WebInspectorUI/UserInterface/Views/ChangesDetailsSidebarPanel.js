@@ -133,7 +133,7 @@ WI.ChangesDetailsSidebarPanel = class ChangesDetailsSidebarPanel extends WI.DOMD
         selectorLineElement.append(" {\n");
 
         function onEach(cssProperty, action) {
-            let className = "";
+            let className;
             if (action === 1)
                 className = "added";
             else if (action === -1)

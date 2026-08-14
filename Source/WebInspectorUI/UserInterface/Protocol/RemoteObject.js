@@ -153,7 +153,7 @@ WI.RemoteObject = class RemoteObject
 
     static resolveCanvasContext(canvas, objectGroup)
     {
-        let promise = null;
+        let promise;
 
         // COMPATIBILITY (iOS 13): Canvas.resolveCanvasContext was renamed to Canvas.resolveContext.
         if (!canvas.target.hasCommand("Canvas.resolveContext"))

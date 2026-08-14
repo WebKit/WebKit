@@ -563,7 +563,7 @@ WI.ScriptSyntaxTree = class ScriptSyntaxTree
         if (!node)
             return null;
 
-        var result = null;
+        let result;
         switch (node.type) {
         case "ArrayExpression":
             result = {

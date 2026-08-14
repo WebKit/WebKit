@@ -134,8 +134,8 @@ class IterableWeakSet
 
     get _finalizationRegistry()
     {
-        return IterableWeakSet._finalizationRegistry ??= new FinalizationRegistry(function(heldValue) {
+        return (IterableWeakSet._finalizationRegistry ??= new FinalizationRegistry(function(heldValue) {
             heldValue.weakThis.deref()?._wrappers.delete(heldValue.wrapper);
-        });
+        }));
     }
 }

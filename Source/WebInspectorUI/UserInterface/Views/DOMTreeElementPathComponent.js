@@ -29,7 +29,7 @@ WI.DOMTreeElementPathComponent = class DOMTreeElementPathComponent extends WI.Hi
     {
         var node = domTreeElement.representedObject;
 
-        var title = null;
+        let title;
 
         switch (node.nodeType()) {
         case Node.ELEMENT_NODE:

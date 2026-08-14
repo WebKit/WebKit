@@ -101,10 +101,9 @@ FrontendTestHarness = class FrontendTestHarness extends TestHarness
         }
 
         let response = target.RuntimeAgent.evaluate.invoke({expression, objectGroup: "test", includeCommandLineAPI: false});
-        if (callback && typeof callback === "function") {
-            response = response.then(({result, wasThrown}) => callback(null, translateResult(result), wasThrown));
-            response = response.catch((error) => callback(error, null, false));
-        } else {
+        if (callback && typeof callback === "function")
+            response.then(({result, wasThrown}) => callback(null, translateResult(result), wasThrown)).catch((error) => callback(error, null, false));
+        else {
             // Turn a thrown Error result into a promise rejection.
             return response.then(({result, wasThrown}) => {
                 result = translateResult(result);

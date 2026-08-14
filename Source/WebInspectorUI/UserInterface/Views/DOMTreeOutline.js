@@ -349,7 +349,7 @@ WI.DOMTreeOutline = class DOMTreeOutline extends WI.TreeOutline
             if (isNaN(level)) {
                 level = 0;
                 let current = treeElement;
-                while (current = current.parent)
+                while ((current = current.parent))
                     level++;
                 levelMap.set(treeElement, level);
             }
@@ -614,7 +614,7 @@ WI.DOMTreeOutline = class DOMTreeOutline extends WI.TreeOutline
 
         let treeElement = this.treeElementFromEvent(event);
         if (this._nodeBeingDragged && treeElement) {
-            let parentNode = null;
+            let parentNode;
             let anchorNode = null;
 
             if (treeElement.isElementCloseTag) {

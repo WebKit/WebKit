@@ -143,7 +143,7 @@ WI.CircleChart = class CircleChart extends WI.View
 
         const center = this._size / 2;
         let startAngle = -Math.PI / 2;
-        let endAngle = 0;
+        let endAngle;
 
         for (let i = 0; i < this._values.length; ++i) {
             let value = this._values[i];

@@ -169,7 +169,9 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
 
         WI.Target.registerInitializationPromise((async () => {
             // Wait one microtask so that `WI.debuggerManager` can be initialized.
-            await new Promise((resolve, reject) => queueMicrotask(resolve));
+            await new Promise((resolve, reject) => {
+                queueMicrotask(resolve);
+            });
 
             let loadSpecialBreakpoint = (setting, enabledSettingsKey, shownSettingsKey) => {
                 let serializedBreakpoint = setting.value;
@@ -361,7 +363,7 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
 
     get paused()
     {
-        for (let [target, targetData] of this._targetDebuggerDataMap) {
+        for (let targetData of this._targetDebuggerDataMap.values()) {
             if (targetData.paused)
                 return true;
         }
@@ -707,7 +709,7 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
             return Promise.resolve();
 
         let promises = [this.awaitEvent(WI.DebuggerManager.Event.Resumed, this)];
-        for (let [target, targetData] of this._targetDebuggerDataMap) {
+        for (let targetData of this._targetDebuggerDataMap.values()) {
             // Only resume targets that are actually paused. Frame targets in separate
             // processes should not receive spurious resume commands.
             if (targetData.paused || targetData.pausing)

@@ -564,7 +564,7 @@ WI.DOMNodeDetailsSidebarPanel = class DOMNodeDetailsSidebarPanel extends WI.DOMD
                 var childNodeLinkList = linkListForNodeIds(accessibilityProperties.childNodeIds);
                 var controlledNodeLinkList = linkListForNodeIds(accessibilityProperties.controlledNodeIds);
 
-                var current = "";
+                let current;
                 switch (accessibilityProperties.current) {
                 case InspectorBackend.Enum.DOM.AccessibilityPropertiesCurrent.True:
                     current = WI.UIString("True");
@@ -612,7 +612,7 @@ WI.DOMNodeDetailsSidebarPanel = class DOMNodeDetailsSidebarPanel extends WI.DOMD
 
                 var label = accessibilityProperties.label;
 
-                var liveRegionStatus = "";
+                let liveRegionStatus;
                 var liveRegionStatusNode = null;
                 var liveRegionStatusToken = accessibilityProperties.liveRegionStatus;
                 switch (liveRegionStatusToken) {

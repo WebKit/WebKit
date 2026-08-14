@@ -587,7 +587,7 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
 
             if (!WI.CSSManager.PseudoElementNames.some((className) => this._style.selectorText.includes(":" + className))) {
                 let addPseudoRule = (pseudoSelector, text) => {
-                    let selector = null;
+                    let selector;
                     if (this._style.ownerRule)
                         selector = this._style.ownerRule.selectors.map((selector) => selector.text + pseudoSelector).join(", ");
                     else
@@ -630,7 +630,7 @@ WI.SpreadsheetCSSStyleDeclarationSection = class SpreadsheetCSSStyleDeclarationS
         if (this._style.ownerRule && this._style.ownerRule.sourceCodeLocation) {
             contextMenu.appendSeparator();
 
-            let label = null;
+            let label;
             let sourceCode = this._style.ownerRule.sourceCodeLocation.displaySourceCode;
             if (sourceCode instanceof WI.CSSStyleSheet || (sourceCode instanceof WI.Resource && sourceCode.type === WI.Resource.Type.StyleSheet))
                 label = WI.UIString("Reveal in Style Sheet");

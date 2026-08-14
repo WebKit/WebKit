@@ -248,7 +248,7 @@ WI.ObjectPreviewView = class ObjectPreviewView extends WI.Object
             if (numberAdded++ > 0)
                 element.append(", ");
 
-            if (!isArray || property.name != i) {
+            if (!isArray || Number(property.name) !== i) {
                 let nameElement = element.appendChild(document.createElement("span"));
                 nameElement.className = "name";
                 nameElement.textContent = property.name;

@@ -330,7 +330,7 @@ WI.ResourceClusterContentView = class ResourceClusterContentView extends WI.Clus
 
     _showContentViewForIdentifier(identifier, {saveAsPreference} = {})
     {
-        let contentViewToShow = null;
+        let contentViewToShow;
 
         // This is expected to fall through all the way to the `default`.
         switch (identifier) {

@@ -200,7 +200,7 @@ WI.ScopeChainDetailsSidebarPanel = class ScopeChainDetailsSidebarPanel extends W
             let collapsedByDefault = false;
 
             let count = sectionCountByType.get(scope.type);
-            sectionCountByType.set(scope.type, ++count);
+            sectionCountByType.set(scope.type, count + 1);
 
             switch (scope.type) {
             case WI.ScopeChainNode.Type.Local:

@@ -69,19 +69,6 @@ WI.FormatterWorkerProxy = class FormatterWorkerProxy
 
     performAction(actionName)
     {
-        let callId = this._nextCallId++;
-        let callback = arguments[arguments.length - 1];
-        let actionArguments = Array.prototype.slice.call(arguments, 1, arguments.length - 1);
-
-        console.assert(typeof actionName === "string", "performAction should always have an actionName");
-        console.assert(typeof callback === "function", "performAction should always have a callback");
-
-        this._callbacks.set(callId, callback);
-        this._postMessage({callId, actionName, actionArguments});
-    }
-
-     performAction(actionName)
-     {
         console.assert(typeof actionName === "string", "performAction should always have an actionName");
 
         let callId = this._nextCallId++;

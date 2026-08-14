@@ -82,7 +82,7 @@ WI.StyleOriginView = class StyleOriginView
                     this.element.append(originString);
 
                 if (!style.editable) {
-                    let styleTitle = "";
+                    let styleTitle;
                     if (style.ownerRule && style.ownerRule.type === WI.CSSStyleSheet.Type.UserAgent)
                         styleTitle = WI.UIString("User Agent Style Sheet");
                     else

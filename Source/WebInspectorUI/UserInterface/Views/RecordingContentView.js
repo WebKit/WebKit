@@ -285,7 +285,7 @@ WI.RecordingContentView = class RecordingContentView extends WI.ContentView
                 snapshot.context.save();
             }
 
-            let lastPathPoint = {};
+            let lastPathPoint;
             let subPathStartPoint = {};
 
             for (let i = from; i <= to; ++i) {

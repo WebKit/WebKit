@@ -1063,7 +1063,7 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
 
     _resolveVariables(cssText)
     {
-        return cssText.replace(/var\(--[^\)]+\)/g, (match) => this._property.ownerStyle.nodeStyles.computedStyle.resolveVariableValue(match) || match);
+        return cssText.replace(/var\(--[^)]+\)/g, (match) => this._property.ownerStyle.nodeStyles.computedStyle.resolveVariableValue(match) || match);
     }
 
     _handleNameChange()

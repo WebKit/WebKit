@@ -98,7 +98,7 @@ JSFormatter = class JSFormatter
     _appendNewline(node, force)
     {
         if (!force && node.type !== "TemplateElement") {
-            while (node = node.parent) {
+            while ((node = node.parent)) {
                 if (node.type === "TemplateLiteral")
                     return;
             }

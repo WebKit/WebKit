@@ -30,7 +30,6 @@ WI.ContentBrowserTabContentView = class ContentBrowserTabContentView extends WI.
         super(tabInfo, {navigationSidebarPanelConstructor, detailsSidebarPanelConstructors});
 
         const contentBrowserElement = null;
-        const disableFindBanner = false;
         this._contentBrowser = new WI.ContentBrowser(contentBrowserElement, this, {hideBackForwardButtons, disableBackForwardNavigation, flexibleNavigationItem});
 
         this._ignoreNavigationSidebarPanelCollapsedEvent = false;

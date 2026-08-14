@@ -151,9 +151,9 @@ WI.SettingEditor = class SettingEditor extends WI.Object
             });
             break;
 
-        case WI.SettingEditor.Type.Select:
+        case WI.SettingEditor.Type.Select: {
             editorElement = document.createElement("select");
-            var keyValuePairs = [];
+            let keyValuePairs;
 
             console.assert(Array.isArray(options.values), "Expected values array for select editor.", options);
 
@@ -175,6 +175,7 @@ WI.SettingEditor = class SettingEditor extends WI.Object
 
             editorElement.addEventListener("change", (event) => { this.value = event.target.value; });
             break;
+        }
 
         default:
             console.error("Unknown editor type: " + this._type);

@@ -841,7 +841,7 @@ WI.TimelineRuler = class TimelineRuler extends WI.View
         if (this._selectionIsMove) {
             currentMousePosition = Math.max(this._moveSelectionMaximumLeftOffset, Math.min(this._moveSelectionMaximumRightOffset, event.pageX));
 
-            let positionDelta = 0;
+            let positionDelta;
             if (isRTL)
                 positionDelta = this._lastMousePosition - currentMousePosition;
             else
@@ -895,7 +895,7 @@ WI.TimelineRuler = class TimelineRuler extends WI.View
 
             if (this.selectionEndTime - this.selectionStartTime < this.minimumSelectionDuration) {
                 // The section is smaller than allowed, grow in the direction of the drag to meet the minumum.
-                let currentMousePosition = 0;
+                let currentMousePosition;
                 if (WI.resolvedLayoutDirection() === WI.LayoutDirection.RTL)
                     currentMousePosition = this._rulerBoundingClientRect.right - event.pageX;
                 else
@@ -959,7 +959,7 @@ WI.TimelineRuler = class TimelineRuler extends WI.View
     {
         console.assert(event.button === 0);
 
-        let currentMousePosition = 0;
+        let currentMousePosition;
         if (WI.resolvedLayoutDirection() === WI.LayoutDirection.RTL)
             currentMousePosition = this.element.totalOffsetRight - event.pageX;
         else

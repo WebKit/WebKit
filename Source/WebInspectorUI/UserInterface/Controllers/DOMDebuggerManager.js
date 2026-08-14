@@ -997,7 +997,7 @@ WI.DOMDebuggerManager = class DOMDebuggerManager extends WI.Object
             return;
 
         for (let [breakpointOwner, breakpoints] of domBreakpointNodeIdentifierMap.sets()) {
-            if (breakpointOwner == node || node.isAncestor(breakpointOwner)) {
+            if (breakpointOwner === node || node.isAncestor(breakpointOwner)) {
                 this._clearingDOMBreakpointsForRemovedDOMNode = true;
                 for (let breakpoint of breakpoints)
                     breakpoint.domNode = null;

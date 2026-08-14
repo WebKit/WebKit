@@ -101,6 +101,8 @@ HeapSnapshot = class HeapSnapshot
         this._title = title;
 
         let json = JSON.parse(snapshotDataString);
+        // Allow the large snapshot string to be collected before initialization finishes.
+        // eslint-disable-next-line no-useless-assignment
         snapshotDataString = null;
 
         let {version, type, nodes, nodeClassNames, edges, edgeTypes, edgeNames, roots, labels} = json;
@@ -150,11 +152,15 @@ HeapSnapshot = class HeapSnapshot
         this._nodeOrdinalIsGCRoot = new Uint8Array(this._nodeCount);
         this._buildDominatorIndexes(nodeOrdinalToPostOrderIndex, postOrderIndexToNodeOrdinal);
 
+        // Allow the large temporary index to be collected before initialization finishes.
+        // eslint-disable-next-line no-useless-assignment
         nodeOrdinalToPostOrderIndex = null;
 
         this._nodeOrdinalToRetainedSizes = new Uint32Array(this._nodeCount);
         this._buildRetainedSizes(postOrderIndexToNodeOrdinal);
 
+        // Allow the large temporary index to be collected before initialization finishes.
+        // eslint-disable-next-line no-useless-assignment
         postOrderIndexToNodeOrdinal = null;
 
         this._nodeOrdinalIsDead = new Uint8Array(this._nodeCount);
@@ -863,7 +869,7 @@ HeapSnapshotDiff = class HeapSnapshotDiff
             }
         }
 
-        let {liveSize, categories} = HeapSnapshot.updateCategoriesAndMetadata(this._snapshot2, (nodeIdentifier) => this._addedNodeIdentifiers.has(nodeIdentifier));
+        let {categories} = HeapSnapshot.updateCategoriesAndMetadata(this._snapshot2, (nodeIdentifier) => this._addedNodeIdentifiers.has(nodeIdentifier));
         this._categories = categories;
     }
 

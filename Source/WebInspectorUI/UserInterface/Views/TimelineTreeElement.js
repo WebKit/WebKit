@@ -88,7 +88,7 @@ WI.TimelineTreeElement = class TimelineTreeElement extends WI.GeneralTreeElement
         checkboxElement.type = "checkbox";
         checkboxElement.checked = !this._placeholder;
 
-        let button = new WI.TreeElementStatusButton(checkboxElement);
+        new WI.TreeElementStatusButton(checkboxElement);
         checkboxElement.addEventListener("change", () => { this._dispatchEnabledDidChangeEvent(); });
 
         this.status = checkboxElement;

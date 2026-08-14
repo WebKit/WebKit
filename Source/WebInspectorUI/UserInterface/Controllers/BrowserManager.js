@@ -84,7 +84,7 @@ WI.BrowserManager = class BrowserManager
     {
         console.assert(this.isExtensionScheme(parseURL(url).scheme));
 
-        let match = url.match(/^[a-z\-]*extension:\/\/([0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12})\//);
+        let match = url.match(/^[a-z-]*extension:\/\/([0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12})\//);
         if (!match)
             return null;
 

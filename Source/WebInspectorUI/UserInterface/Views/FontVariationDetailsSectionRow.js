@@ -180,7 +180,7 @@ WI.FontVariationDetailsSectionRow = class FontVariationDetailsSectionRow extends
         let valueAsString = event.target.value;
         let valueAsNumber = parseFloat(event.target.value);
 
-        if (!/^\-?\d+(\.\d+)?$/.test(valueAsString)) {
+        if (!/^-?\d+(\.\d+)?$/.test(valueAsString)) {
             this._hasValidValue = false;
 
             // Don't warn when preparing to type a new value or starting to type a negative number.
@@ -208,7 +208,7 @@ WI.FontVariationDetailsSectionRow = class FontVariationDetailsSectionRow extends
     _handleValueTextFieldKeydown(event)
     {
         // The value field is a text input but is treated as a number input.
-        if (event.key.length === 1 && !/[0-9\.\-]/.test(event.key)) {
+        if (event.key.length === 1 && !/[0-9.-]/.test(event.key)) {
             event.preventDefault();
             return;
         }

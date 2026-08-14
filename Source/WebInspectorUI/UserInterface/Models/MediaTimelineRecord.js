@@ -59,7 +59,7 @@ WI.MediaTimelineRecord = class MediaTimelineRecord extends WI.TimelineRecord
 
         let documentNode = null;
         if (InspectorBackend.hasDomain("DOM"))
-            documentNode = await new Promise((resolve) => WI.domManager.requestDocument(resolve));
+            documentNode = await WI.domManager.requestDocument();
 
         let domNode = null;
         if (documentNode && domNodeCSSPath) {

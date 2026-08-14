@@ -253,11 +253,11 @@ WI.AuditTestCaseContentView = class AuditTestCaseContentView extends WI.AuditTes
 
                     if (resultData.domAttributes) {
                         for (let domAttribute of resultData.domAttributes) {
-                            let regex = null;
+                            let regex;
                             if (domAttribute === "id")
-                                regex = /(\#[^\#|\.|\[|\s|$]+)/g;
+                                regex = /(#[^#|.\[\s$]+)/g;
                             else if (domAttribute === "class")
-                                regex = /(\.[^\#|\.|\[|\s|$]+)/g;
+                                regex = /(\.[^#|.\[\s$]+)/g;
                             else
                                 regex = new RegExp(`\\[\\s*(${domAttribute})\\s*=`, "g");
 

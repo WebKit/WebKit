@@ -40,13 +40,8 @@ WI.ScriptTimelineDataGridNode = class ScriptTimelineDataGridNode extends WI.Time
             return this._cachedData;
 
         let baseStartTime = 0;
-        let rangeStartTime = 0;
-        let rangeEndTime = Infinity;
-        if (this.graphDataSource) {
+        if (this.graphDataSource)
             baseStartTime = this.graphDataSource.zeroTime;
-            rangeStartTime = this.graphDataSource.startTime;
-            rangeEndTime = this.graphDataSource.endTime;
-        }
 
         let startTime = this.record.startTime;
         let duration = this.record.startTime + this.record.duration - startTime;

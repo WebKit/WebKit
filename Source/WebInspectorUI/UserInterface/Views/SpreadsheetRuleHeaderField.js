@@ -64,7 +64,7 @@ WI.SpreadsheetRuleHeaderField = class SpreadsheetRuleHeaderField extends WI.Obje
         element.focus();
 
         // Disable syntax highlighting.
-        element.textContent = element.textContent;
+        element.replaceChildren(element.textContent);
 
         this._selectText();
 

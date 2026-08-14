@@ -223,7 +223,7 @@ WI.LayoutTimelineView = class LayoutTimelineView extends WI.TimelineView
                 const options = {
                     graphDataSource: this,
                 };
-                let childDataGridNode = null;
+                let childDataGridNode;
                 if (childRecord.type === WI.TimelineRecord.Type.Script)
                     childDataGridNode = new WI.ScriptTimelineDataGridNode(childRecord, options);
                 else {
