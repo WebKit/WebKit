@@ -60,7 +60,15 @@ public:
         String lastRequestCookies;
     };
 
-    enum class Protocol : uint8_t { Http, Https, HttpsWithLegacyTLS, Http2, HttpsProxy, HttpsProxyWithAuthentication };
+    enum class Protocol : uint8_t {
+        Http,
+        Https,
+        HttpsWithLegacyTLS,
+        Http2Raw,
+        Http2,
+        HttpsProxy,
+        HttpsProxyWithAuthentication
+    };
     enum class DeferListening : bool { No, Yes };
     using CertificateVerifier = Function<void(sec_protocol_metadata_t, sec_trust_t, sec_protocol_verify_complete_t)>;
     using ResponseMap = HashMap<String, HTTPResponse>;
@@ -100,6 +108,9 @@ public:
 private:
     static RetainPtr<nw_parameters_t> listenerParameters(Protocol, CertificateVerifier&&, RetainPtr<SecIdentityRef>&&, std::optional<uint16_t> port);
     static void respondToRequests(Connection, Ref<RequestData>);
+#if HAVE(NETWORK_FRAMEWORK_HTTP_MESSAGING)
+    static void respondToHTTPMessagingRequests(Connection, Ref<RequestData>);
+#endif
     const char* scheme() const;
 
     Ref<RequestData> m_requestData;

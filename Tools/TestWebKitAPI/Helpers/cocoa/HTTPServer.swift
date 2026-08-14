@@ -111,6 +111,9 @@ public struct HTTPServer: ~Copyable {
         /// The HTTPS protocol, using a legacy version of TLS.
         case httpsWithLegacyTLS
 
+        /// The HTTP2 protocol without framing, using raw bytes instead.
+        case http2Raw
+
         /// The HTTP2 protocol.
         case http2
 
@@ -219,6 +222,7 @@ extension TestWebKitAPI.__CxxHTTPServer.`Protocol` {
             case .http: .Http
             case .https: .Https
             case .httpsWithLegacyTLS: .HttpsWithLegacyTLS
+            case .http2Raw: .Http2Raw
             case .http2: .Http2
             case .httpsProxy: .HttpsProxy
             case .httpsProxyWithAuthentication: .HttpsProxyWithAuthentication

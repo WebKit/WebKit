@@ -27,7 +27,7 @@
 #import "Helpers/cocoa/NetworkConnection.h"
 
 #import "Helpers/cocoa/HTTPServer.h"
-#import <pal/spi/cocoa/NetworkSPI.h>
+#import "Helpers/cocoa/NetworkSPI.h"
 #import <wtf/BlockPtr.h>
 #import <wtf/SHA1.h>
 #import <wtf/StdLibExtras.h>
@@ -35,6 +35,7 @@
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/darwin/DispatchExtras.h>
 #import <wtf/text/Base64.h>
+#import <wtf/text/MakeString.h>
 #import <wtf/text/StringToIntegerConversion.h>
 
 namespace TestWebKitAPI {
@@ -98,6 +99,75 @@ void ReceiveHTTPRequestOperation::await_suspend(std::coroutine_handle<> handle)
         handle();
     });
 }
+
+#if HAVE(NETWORK_FRAMEWORK_HTTP_MESSAGING)
+
+void Connection::receiveHTTPMessagingRequest(CompletionHandler<void(HTTPRequestData&&)>&& completionHandler, HTTPRequestData&& partial) const
+{
+    nw_connection_receive_message(m_connection.get(), makeBlockPtr([connection = *this, completionHandler = WTF::move(completionHandler), partial = WTF::move(partial)](dispatch_data_t content, nw_content_context_t context, bool isComplete, nw_error_t error) mutable {
+        __block HTTPRequestData blockPartial = WTF::move(partial);
+        // Discard any headers/body already accumulated from earlier chunks: an error mid-stream (e.g. the
+        // client resets the stream after sending headers but before finishing the body) must not be mistaken
+        // by callers for a successfully-received request just because path happens to already be set.
+        if (error)
+            return completionHandler({ });
+
+        if (context) {
+            if (RetainPtr metadata = adoptNS(nw_content_context_copy_protocol_metadata(context, adoptNS(nw_protocol_copy_http_definition()).get()))) {
+                if (nw_http_metadata_get_type(metadata.get()) == nw_http_metadata_type_request) {
+                    if (RetainPtr request = adoptNS(nw_http_metadata_copy_request(metadata.get()))) {
+                        nw_http_request_access_method(request.get(), ^(const char* method) {
+                            blockPartial.method = String::fromUTF8(method);
+                        });
+                        nw_http_request_access_path(request.get(), ^(const char* path) {
+                            if (path)
+                                blockPartial.path = String::fromUTF8(path);
+                        });
+                        if (RetainPtr fields = adoptNS(nw_http_request_copy_header_fields(request.get()))) {
+                            nw_http_fields_enumerate(fields.get(), ^bool(const char* name, size_t nameLength, const char* value, size_t valueLength) {
+                                String fieldValue = String::fromUTF8(std::span(value, valueLength));
+                                auto addResult = blockPartial.headerFields.add(String::fromUTF8(std::span(name, nameLength)), fieldValue);
+                                // RFC 7230 3.2.2: repeated fields with the same name are combined by joining with a comma.
+                                if (!addResult.isNewEntry)
+                                    addResult.iterator->value = makeString(addResult.iterator->value, ", "_s, fieldValue);
+                                return true;
+                            });
+                        }
+                    }
+                }
+            }
+        }
+
+        if (content)
+            blockPartial.body.appendVector(vectorFromData(content));
+
+        if (isComplete)
+            return completionHandler(WTF::move(blockPartial));
+
+        connection.receiveHTTPMessagingRequest(WTF::move(completionHandler), WTF::move(blockPartial));
+    }).get());
+}
+
+void Connection::sendHTTPMessagingResponse(const HTTPResponse& response, CompletionHandler<void()>&& completionHandler) const
+{
+    RetainPtr httpResponse = adoptNS(nw_http_response_create(response.statusCode, nullptr));
+    RetainPtr fields = adoptNS(nw_http_fields_create());
+    for (auto& pair : response.headerFields)
+        nw_http_fields_append(fields.get(), pair.key.utf8().data(), pair.value.utf8().data());
+    nw_http_response_set_header_fields(httpResponse.get(), fields.get());
+
+    RetainPtr metadata = adoptNS(nw_http_create_metadata_for_response(httpResponse.get()));
+    RetainPtr context = adoptNS(nw_content_context_create("response"));
+    nw_content_context_set_metadata_for_protocol(context.get(), metadata.get());
+
+    nw_connection_send(m_connection.get(), makeDispatchData(Vector<uint8_t>(response.body)).get(), context.get(), true, makeBlockPtr([completionHandler = WTF::move(completionHandler)](nw_error_t error) mutable {
+        ASSERT_UNUSED(error, !error);
+        if (completionHandler)
+            completionHandler();
+    }).get());
+}
+
+#endif // HAVE(NETWORK_FRAMEWORK_HTTP_MESSAGING)
 
 ReceiveBytesOperation Connection::awaitableReceiveBytes() const
 {

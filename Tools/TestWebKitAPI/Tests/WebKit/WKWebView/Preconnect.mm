@@ -162,7 +162,7 @@ TEST(Preconnect, H2Ping)
     size_t headersCount = 0;
     HTTPServer server([headersCount = &headersCount] (Connection tlsConnection) {
         pingPong(H2::Connection::create(tlsConnection), headersCount);
-    }, HTTPServer::Protocol::Http2);
+    }, HTTPServer::Protocol::Http2Raw);
     
     RetainPtr delegate = adoptNS([SessionDelegate new]);
     NSURLSession *session = [NSURLSession sessionWithConfiguration:[NSURLSessionConfiguration ephemeralSessionConfiguration] delegate:delegate.get() delegateQueue:[NSOperationQueue mainQueue]];
@@ -202,7 +202,7 @@ TEST(Preconnect, H2PingFromWebCoreNSURLSession)
     size_t headersCount = 0;
     HTTPServer server([headersCount = &headersCount] (Connection tlsConnection) {
         pingPong(H2::Connection::create(tlsConnection), headersCount);
-    }, HTTPServer::Protocol::Http2);
+    }, HTTPServer::Protocol::Http2Raw);
 
     WKWebViewConfiguration *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
     RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration]);

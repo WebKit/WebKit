@@ -165,6 +165,7 @@
 		DDB3724628ECE32F00A2F32D /* libbmalloc.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DDB3724528ECE32F00A2F32D /* libbmalloc.a */; };
 		DDD2187627A21750002B7025 /* WebKit.framework in Product Dependencies */ = {isa = PBXBuildFile; fileRef = C081224813FC1B0300DC39AE /* WebKit.framework */; };
 		DDFBE4AC2A90556700CA7023 /* libWTF.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C83E0291D0A5CDF00FEBCF3 /* libWTF.a */; };
+		F5971BD071D50EA78EF87EE5 /* UnifiedSource53-nonARC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0DBC072EC3DC8EA98F7B7BEE /* UnifiedSource53-nonARC.mm */; };
 		FE9CD7E42D10CE7500266FDD /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 574F55D0204D471C002948C6 /* Security.framework */; };
 /* End PBXBuildFile section */
 
@@ -417,6 +418,7 @@
 /* Begin PBXFileReference section */
 		07275CBB2D01398C002315A5 /* _WebKit_SwiftUI.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = _WebKit_SwiftUI.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		07597D7E2F81DD59000C96D0 /* config.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; };
+		0DBC072EC3DC8EA98F7B7BEE /* UnifiedSource53-nonARC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "UnifiedSource53-nonARC.mm"; sourceTree = "<group>"; };
 		0F4FFAA01ED3D0DE00F7111F /* ImageIO.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ImageIO.framework; path = System/Library/Frameworks/ImageIO.framework; sourceTree = SDKROOT; };
 		1AEDE22413E5E7A000E62FE8 /* InjectedBundleControllerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = InjectedBundleControllerMac.mm; path = mac/InjectedBundleControllerMac.mm; sourceTree = "<group>"; };
 		2B648DBA28C1C1F700791F2B /* WebKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WebKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1881,6 +1883,7 @@
 				5CABDB932735C9BA00B88BCB /* UnifiedSource50-nonARC.mm */,
 				5CABDB952735C9BB00B88BC0 /* UnifiedSource51-nonARC.mm */,
 				51A97F062FD0B59400FBDD0C /* UnifiedSource52-nonARC.mm */,
+				0DBC072EC3DC8EA98F7B7BEE /* UnifiedSource53-nonARC.mm */,
 			);
 			path = "unified-sources";
 			sourceTree = "<group>";
@@ -2506,6 +2509,7 @@
 				5CABDBC02735C9BD00B88BCB /* UnifiedSource50-nonARC.mm in Sources */,
 				5CABDBC22735C9BE00B88BC0 /* UnifiedSource51-nonARC.mm in Sources */,
 				51A97F1B2FD0B5A400FBDD0C /* UnifiedSource52-nonARC.mm in Sources */,
+				F5971BD071D50EA78EF87EE5 /* UnifiedSource53-nonARC.mm in Sources */,
 				07792FA62F9D9AE9009EF126 /* WebProcessPlugInWithInternals.mm in Sources */,
 			);
 		};

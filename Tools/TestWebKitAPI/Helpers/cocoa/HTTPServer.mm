@@ -27,6 +27,7 @@
 #import "Helpers/cocoa/HTTPServer.h"
 
 #import "Helpers/Utilities.h"
+#import "Helpers/cocoa/NetworkSPI.h"
 #import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <wtf/BlockPtr.h>
@@ -118,6 +119,7 @@ static bool shouldDisableTLS(HTTPServer::Protocol protocol)
         return true;
     case HTTPServer::Protocol::Https:
     case HTTPServer::Protocol::HttpsWithLegacyTLS:
+    case HTTPServer::Protocol::Http2Raw:
     case HTTPServer::Protocol::Http2:
         return false;
     }
@@ -144,7 +146,7 @@ RetainPtr<nw_parameters_t> HTTPServer::listenerParameters(Protocol protocol, Cer
                 verifier(metadata, trust, completion);
             }).get(), mainDispatchQueueSingleton());
         }
-        if (protocol == Protocol::Http2)
+        if (protocol == Protocol::Http2Raw || protocol == Protocol::Http2)
             sec_protocol_options_add_tls_application_protocol(options.get(), "h2");
     };
 
@@ -162,6 +164,16 @@ RetainPtr<nw_parameters_t> HTTPServer::listenerParameters(Protocol protocol, Cer
         configureTLS(tlsOptions.get());
         nw_protocol_stack_prepend_application_protocol(stack.get(), tlsOptions.get());
     }
+
+#if HAVE(NETWORK_FRAMEWORK_HTTP_MESSAGING)
+    if (protocol == Protocol::Http2) {
+        nw_parameters_set_server_mode(parameters.get(), true);
+        nw_parameters_set_attach_protocol_listener(parameters.get(), true);
+        RetainPtr stack = adoptNS(nw_parameters_copy_default_protocol_stack(parameters.get()));
+        RetainPtr httpOptions = adoptNS(nw_http_messaging_create_options());
+        nw_protocol_stack_prepend_application_protocol(stack.get(), httpOptions.get());
+    }
+#endif
 
     return parameters;
 }
@@ -232,11 +244,18 @@ HTTPServer::HTTPServer(
     , m_protocol(protocol)
 {
     nw_listener_set_queue(m_listener.get(), mainDispatchQueueSingleton());
-    nw_listener_set_new_connection_handler(m_listener.get(), makeBlockPtr([requestData = m_requestData](nw_connection_t connection) {
+    nw_listener_set_new_connection_handler(m_listener.get(), makeBlockPtr([requestData = m_requestData, protocol](nw_connection_t connection) {
         requestData->connections.append(Connection(connection));
         nw_connection_set_queue(connection, mainDispatchQueueSingleton());
         nw_connection_start(connection);
-        respondToRequests(Connection(connection), requestData);
+        if (protocol == Protocol::Http2) {
+#if HAVE(NETWORK_FRAMEWORK_HTTP_MESSAGING)
+            respondToHTTPMessagingRequests(Connection(connection), requestData);
+#else
+            RELEASE_ASSERT_NOT_REACHED();
+#endif
+        } else
+            respondToRequests(Connection(connection), requestData);
     }).get());
 
     if (deferListening == DeferListening::No) {
@@ -495,6 +514,43 @@ void HTTPServer::respondToRequests(Connection connection, Ref<RequestData> reque
     });
 }
 
+#if HAVE(NETWORK_FRAMEWORK_HTTP_MESSAGING)
+
+// Each HTTP/2 stream (i.e. each request) arrives as its own one-shot pseudo-connection via
+// nw_parameters_set_attach_protocol_listener(); unlike respondToRequests(), this must not recurse
+// to await a second message on the same Connection, since a second request never arrives here.
+void HTTPServer::respondToHTTPMessagingRequests(Connection connection, Ref<RequestData> requestData)
+{
+    connection.receiveHTTPMessagingRequest([connection, requestData] (HTTPRequestData&& request) mutable {
+        // receiveHTTPMessagingRequest() leaves an empty (null-path) HTTPRequestData on error/reset before any data arrives.
+        if (request.path.isNull())
+            return;
+
+        requestData->requestCount++;
+        // HTTP/2 requires lowercase header field names on the wire (RFC 7540 8.1.2).
+        requestData->lastRequestCookies = request.headerFields.get("cookie"_s);
+
+        ASSERT_WITH_MESSAGE(requestData->requestMap.contains(request.path), "This HTTPServer does not know how to respond to a request for %s", request.path.utf8().data());
+
+        auto response = requestData->requestMap.get(request.path);
+        if (response.shouldRespondWith304ToConditionalRequests) {
+            if (request.headerFields.contains("if-none-match"_s))
+                return connection.sendHTTPMessagingResponse(HTTPResponse(304, WTF::move(response.headerFieldsFor304)));
+        }
+
+        switch (response.behavior) {
+        case HTTPResponse::Behavior::TerminateConnectionAfterReceivingRequest:
+            return connection.terminate();
+        case HTTPResponse::Behavior::SendResponseNormally:
+            return connection.sendHTTPMessagingResponse(response);
+        case HTTPResponse::Behavior::NeverSendResponse:
+            return;
+        }
+    });
+}
+
+#endif // HAVE(NETWORK_FRAMEWORK_HTTP_MESSAGING)
+
 uint16_t HTTPServer::port() const
 {
     return nw_listener_get_port(m_listener.get());
@@ -509,6 +565,7 @@ const char* HTTPServer::scheme() const
         break;
     case Protocol::Https:
     case Protocol::HttpsWithLegacyTLS:
+    case Protocol::Http2Raw:
     case Protocol::Http2:
         scheme = "https";
         break;
