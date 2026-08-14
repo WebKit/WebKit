@@ -932,15 +932,6 @@ bool Quirks::needsGeforcenowWarningDisplayNoneQuirk() const
     return m_quirksData.quirkIsEnabled(QuirksData::SiteSpecificQuirk::NeedsGeforcenowWarningDisplayNoneQuirk);
 }
 
-// zillow.com rdar://171279940
-// FIXME: Remove after rdar://172303198 is implemented.
-bool Quirks::needsZillowFloorplanMarginQuirk() const
-{
-    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
-
-    return m_quirksData.quirkIsEnabled(QuirksData::SiteSpecificQuirk::NeedsZillowFloorplanMarginQuirk);
-}
-
 // yahoo.com rdar://170502516
 bool Quirks::needsYahooVolumeSliderQuirk() const
 {
@@ -4078,7 +4069,6 @@ static void handleZillowQuirks(QuirksData& quirksData, const URL& quirksURL, con
     // zillow.com rdar://53103732
     bool topDocumentHostIsZillow = quirksURL.host() == "www.zillow.com"_s;
     quirksData.setQuirkState(QuirksData::SiteSpecificQuirk::ShouldAvoidScrollingWhenFocusedContentIsVisibleQuirk, topDocumentHostIsZillow);
-    quirksData.enableQuirk(QuirksData::SiteSpecificQuirk::NeedsZillowFloorplanMarginQuirk);
 #if PLATFORM(IOS) || PLATFORM(VISION)
     // rdar://110097836
     quirksData.enableQuirk(QuirksData::SiteSpecificQuirk::ShouldSilenceResizeObservers);

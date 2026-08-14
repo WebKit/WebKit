@@ -277,7 +277,6 @@ struct QuirksData {
         ShouldAllowNotificationPermissionWithoutUserGesture,
         NeedsInstagramResizingReelsQuirk,
         NeedsYahooVolumeSliderQuirk,
-        NeedsZillowFloorplanMarginQuirk,
 #if PLATFORM(IOS_FAMILY)
         NeedsChromeOSNavigatorUserAgentQuirk,
         ShouldSendFakeTouchForceChangeEvent,
