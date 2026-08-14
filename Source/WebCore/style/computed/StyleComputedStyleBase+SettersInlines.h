@@ -199,6 +199,11 @@ inline void ComputedStyleBase::setUsedAppearance(StyleAppearance a)
     SET_NESTED(m_nonInheritedData, miscData, usedAppearance, static_cast<unsigned>(a));
 }
 
+inline void ComputedStyleBase::setUsedUserSelect(UserSelect userSelect)
+{
+    SET(m_inheritedRareData, usedUserSelect, static_cast<unsigned>(userSelect));
+}
+
 inline void ComputedStyleBase::setUsedContentVisibility(ContentVisibility usedContentVisibility)
 {
     SET(m_inheritedRareData, usedContentVisibility, static_cast<unsigned>(usedContentVisibility));

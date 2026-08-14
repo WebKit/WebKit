@@ -528,11 +528,7 @@ UserSelect ComputedStyle::usedUserSelect() const
     if (effectiveInert())
         return UserSelect::None;
 
-    auto value = webkitUserSelect();
-    if (userModify() != UserModify::ReadOnly && userDrag() != UserDrag::Element)
-        return value == UserSelect::None ? UserSelect::Text : value;
-
-    return value;
+    return static_cast<UserSelect>(m_inheritedRareData->usedUserSelect);
 }
 
 WebCore::Color ComputedStyle::usedScrollbarThumbColor() const

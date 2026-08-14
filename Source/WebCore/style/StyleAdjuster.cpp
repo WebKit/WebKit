@@ -826,6 +826,24 @@ void Adjuster::adjust(Style::ComputedStyle& style) const
 #endif
 
     adjustForSiteSpecificQuirks(style);
+
+    adjustUsedUserSelect(style);
+}
+
+void Adjuster::adjustUsedUserSelect(Style::ComputedStyle& style) const
+{
+    auto value = style.webkitUserSelect();
+
+    // On editable, non-draggable content, 'none' is overridden so that the content can
+    // still be selected and carets can be placed in it.
+    if (style.userModify() != UserModify::ReadOnly && style.userDrag() != UserDrag::Element && value == UserSelect::None)
+        value = UserSelect::Text;
+
+    // 'auto' means nothing stronger was inherited, so it is handled as 'text'.
+    if (value == UserSelect::Auto)
+        value = UserSelect::Text;
+
+    style.setUsedUserSelect(value);
 }
 
 static bool NODELETE hasEffectiveDisplayNoneForDisplayContents(const Element& element)

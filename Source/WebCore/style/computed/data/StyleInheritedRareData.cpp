@@ -92,6 +92,7 @@ InheritedRareData::InheritedRareData()
     , nbspMode(static_cast<unsigned>(NBSPMode::Normal))
     , lineBreak(static_cast<unsigned>(LineBreak::Auto))
     , webkitUserSelect(static_cast<unsigned>(ComputedStyle::initialWebkitUserSelect()))
+    , usedUserSelect(static_cast<unsigned>(UserSelect::Text))
     , speakAs(ComputedStyle::initialSpeakAs().toRaw())
     , hyphens(static_cast<unsigned>(Hyphens::Manual))
     , textCombine(static_cast<unsigned>(ComputedStyle::initialTextCombine()))
@@ -199,6 +200,7 @@ inline InheritedRareData::InheritedRareData(const InheritedRareData& o)
     , nbspMode(o.nbspMode)
     , lineBreak(o.lineBreak)
     , webkitUserSelect(o.webkitUserSelect)
+    , usedUserSelect(o.usedUserSelect)
     , speakAs(o.speakAs)
     , hyphens(o.hyphens)
     , textCombine(o.textCombine)
@@ -296,6 +298,7 @@ bool InheritedRareData::operator==(const InheritedRareData& o) const
         && textSizeAdjust == o.textSizeAdjust
 #endif
         && webkitUserSelect == o.webkitUserSelect
+        && usedUserSelect == o.usedUserSelect
         && speakAs == o.speakAs
         && hyphens == o.hyphens
         && hyphenateLimitBefore == o.hyphenateLimitBefore
@@ -413,6 +416,7 @@ void InheritedRareData::dumpDifferences(TextStream& ts, const InheritedRareData&
     LOG_IF_DIFFERENT_WITH_CAST(NBSPMode, nbspMode);
     LOG_IF_DIFFERENT_WITH_CAST(LineBreak, lineBreak);
     LOG_IF_DIFFERENT_WITH_CAST(UserSelect, webkitUserSelect);
+    LOG_IF_DIFFERENT_WITH_CAST(UserSelect, usedUserSelect);
 
     LOG_IF_DIFFERENT_WITH_FROM_RAW(SpeakAs, speakAs);
 

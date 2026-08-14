@@ -49,6 +49,7 @@
 #include "ScriptController.h"
 #include "ScriptDisallowedScope.h"
 #include "ShadowRoot.h"
+#include "StyleAdjuster.h"
 #include "StyleComputedStyle+SettersInlines.h"
 #include "StyleLengthResolution.h"
 #include "StyleResolver.h"
@@ -132,6 +133,11 @@ std::optional<Style::UnadjustedStyle> TextControlInnerElement::resolveCustomStyl
     newStyle->setDirection(TextDirection::LTR);
     // We don't want the shadow DOM to be editable, so we set this block to read-only in case the input itself is editable.
     newStyle->setUserModify(UserModify::ReadOnly);
+
+    // The used value of user-select needs adjusting here because the adjuster won't run
+    // on this style later (because it was not produced by the cascade).
+    Style::Adjuster adjuster(document(), *shadowHostStyle, nullptr, nullptr);
+    adjuster.adjustUsedUserSelect(*newStyle);
 
     if (isStrongPasswordTextField(shadowHost())) {
         newStyle->setFlexShrink(0);

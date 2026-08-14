@@ -59,6 +59,7 @@
 #include "RenderTheme.h"
 #include "ScriptDisallowedScope.h"
 #include "ShadowRoot.h"
+#include "StyleAdjuster.h"
 #include "StyleComputedStyle+SettersInlines.h"
 #include "StyleKeyword+Mappings.h"
 #include "Text.h"
@@ -959,6 +960,11 @@ void HTMLTextFormControlElement::adjustInnerTextStyle(const Style::ComputedStyle
                 textBlockStyle.setUserModify(fromCSSValueID<UserModify>(*value));
         }
     }
+
+    // The used value of user-select needs adjusting here because the adjuster won't run
+    // on this style later (because it was not produced by the cascade).
+    Style::Adjuster adjuster(document(), parentStyle, nullptr, nullptr);
+    adjuster.adjustUsedUserSelect(textBlockStyle);
 
     if (parentStyle.fieldSizing() == FieldSizing::Content)
         textBlockStyle.setLogicalMinWidth(Style::MinimumSize::Fixed { static_cast<float>(caretWidth()) });
