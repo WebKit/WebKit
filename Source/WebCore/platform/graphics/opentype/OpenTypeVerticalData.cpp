@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2012 Koji Ishii <kojiishi@gmail.com>
  * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -109,7 +110,7 @@ struct VORGTable {
         OpenType::Int16 vertOriginY;
     } vertOriginYMetrics[1];
 
-    size_t requiredSize() const { return sizeof(*this) + sizeof(VertOriginYMetrics) * (numVertOriginYMetrics - 1); }
+    size_t requiredSize() const { return sizeof(*this) - sizeof(VertOriginYMetrics) + sizeof(VertOriginYMetrics) * static_cast<size_t>(numVertOriginYMetrics); }
 };
 
 struct SubstitutionSubTable : TableBase {

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -109,8 +110,7 @@ namespace WebCore {
         std::unique_ptr<PNGImageReader> m_reader;
         bool m_doNothingOnFailure;
         unsigned m_currentFrame;
-        unsigned m_rowWidth;
-        bool m_composeCurrentFrame;
+        unsigned m_composedRowCount;
         png_structp m_png;
         png_infop m_info;
         bool m_isAnimated;

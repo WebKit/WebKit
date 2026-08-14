@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2021 Sony Interactive Entertainment Inc.
  * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -131,6 +132,7 @@ void JPEGXLImageDecoder::clearDecodedPixelDataIfNeeded(size_t clearBeforeFrame)
 
     // Unlike the png and gif cases, we can always try to clear frames before "clearBeforeFrame" because
     // the dependenciy to the previous frame is handled by libjxl.
+    clearBeforeFrame = std::min(clearBeforeFrame, m_frameBufferCache.size());
     const Vector<ScalableImageDecoderFrame>::iterator end(m_frameBufferCache.begin() + clearBeforeFrame);
 
     for (Vector<ScalableImageDecoderFrame>::iterator i(m_frameBufferCache.begin()); i != end; ++i) {
@@ -396,6 +398,13 @@ void JPEGXLImageDecoder::imageOut(size_t x, size_t y, size_t numPixels, const ui
     auto& buffer = m_frameBufferCache[m_currentFrame];
     if (buffer.isInvalid())
         return;
+
+    // x, y and numPixels come from libjxl. maybePerformColorSpaceConversion() below converts
+    // numPixels pixels through a raw pointer, so the run has to be clipped to the row first.
+    auto canvasSize = size();
+    if (x >= static_cast<size_t>(canvasSize.width()) || y >= static_cast<size_t>(canvasSize.height()))
+        return;
+    numPixels = std::min(numPixels, static_cast<size_t>(canvasSize.width()) - x);
 
     auto row = buffer.backingStore()->pixelsStartingAt(x, y);
     auto currentAddress = row;

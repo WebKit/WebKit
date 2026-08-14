@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<p>An APNG whose acTL declares zero frames is not an animation, so the default image must still
+decode as a static PNG rather than being reported as a zero-frame image and dropped.</p>
+<pre id="log">PASS</pre>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function log(message)
+{
+    document.getElementById("log").textContent += "\n" + message;
+}
+
+function imageSettled(image)
+{
+    try {
+        var canvas = document.createElement("canvas");
+        canvas.width = 4;
+        canvas.height = 4;
+        var context = canvas.getContext("2d");
+        context.drawImage(image, 0, 0);
+        var pixel = context.getImageData(0, 0, 1, 1).data;
+        if (pixel[0] != 255 || pixel[1] || pixel[2] || pixel[3] != 255)
+            log("FAIL: expected an opaque red pixel, got " + [pixel[0], pixel[1], pixel[2], pixel[3]]);
+    } catch (exception) {
+        log("FAIL: " + exception.message);
+    }
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+var image = new Image();
+image.onload = function () { imageSettled(image); };
+image.onerror = function () { imageSettled(image); };
+image.src = "resources/apng-acTL-zero-frame-count.png";
+</script>

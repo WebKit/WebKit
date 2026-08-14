@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Igalia S.L.
  * Copyright (C) 2007-2009 Torch Mobile, Inc.
  * Copyright (C) Research In Motion Limited 2009-2010. All rights reserved.
  *
@@ -206,8 +207,7 @@ PNGImageDecoder::PNGImageDecoder(AlphaOption alphaOption, GammaAndColorProfileOp
     : ScalableImageDecoder(alphaOption, gammaAndColorProfileOption)
     , m_doNothingOnFailure(false)
     , m_currentFrame(0)
-    , m_rowWidth(0)
-    , m_composeCurrentFrame(false)
+    , m_composedRowCount(0)
     , m_png(nullptr)
     , m_info(nullptr)
     , m_isAnimated(false)
@@ -258,11 +258,11 @@ ScalableImageDecoderFrame* PNGImageDecoder::frameBufferAtIndex(size_t index)
     if (ScalableImageDecoder::encodedDataStatus() < EncodedDataStatus::SizeAvailable)
         return nullptr;
 
-    if (index >= decodeIfNeededAndGetFrameCount())
-        index = decodeIfNeededAndGetFrameCount() - 1;
-
     if (m_frameBufferCache.isEmpty())
         m_frameBufferCache.grow(1);
+
+    // A malformed acTL can advertise more frames than there are buffers.
+    index = std::min(index, m_frameBufferCache.size() - 1);
 
     auto& frame = m_frameBufferCache[index];
     if (!frame.isComplete())
@@ -319,8 +319,6 @@ void PNGImageDecoder::headerAvailable()
         longjmp(JMPBUF(png), 1);
         return;
     }
-
-    m_rowWidth = width;
 
     int bitDepth, colorType, interlaceType, compressionType, filterType, channels;
     png_get_IHDR(png, info, &width, &height, &bitDepth, &colorType, &interlaceType, &compressionType, &filterType);
@@ -477,7 +475,7 @@ void PNGImageDecoder::rowAvailable(png_structp png, unsigned char* rowBuffer, un
     // The first row of an animation frame. Its rows are combined in the interlace buffer and
     // composited at the frame's own offset once the frame is complete, so this cannot live in the
     // branch above: a hidden default image leaves this frame's buffer already initialized.
-    if (inFrameStream && !m_composeCurrentFrame) {
+    if (inFrameStream && !m_composedRowCount) {
         if (!m_reader->interlaceBuffer()) {
             unsigned colorChannels = m_reader->hasAlpha() ? 4 : 3;
             m_reader->createInterlaceBuffer(colorChannels * size().width() * size().height());
@@ -542,7 +540,7 @@ void PNGImageDecoder::rowAvailable(png_structp png, unsigned char* rowBuffer, un
         row = interlaceBuffer + (rowIndex * colorChannels * size().width());
         if (inFrameStream) {
             png_progressive_combine_row(m_png, row, rowBuffer);
-            m_composeCurrentFrame = true;
+            m_composedRowCount = std::max<unsigned>(m_composedRowCount, rowIndex + 1);
             return; // A frame's rows are composited at its own offset once the frame is complete.
         }
         png_progressive_combine_row(m_reader->pngPtr(), row, rowBuffer);
@@ -551,9 +549,8 @@ void PNGImageDecoder::rowAvailable(png_structp png, unsigned char* rowBuffer, un
     // Write the decoded row pixels to the frame buffer.
     auto destinationRow = buffer.backingStore()->pixelsStartingAt(0, rowIndex);
     auto address = destinationRow;
-    // Only the canvas stream reaches here, so its rows are this wide; the clamp keeps that true for
-    // any future caller, since walking wider than the row libpng handed us would read past its end.
-    int width = std::min<int>(size().width(), m_rowWidth);
+    // Only the canvas stream reaches here. Walking wider than libpng's row would read past its end.
+    int width = std::min<int>(size().width(), png_get_image_width(m_reader->pngPtr(), m_reader->infoPtr()));
     unsigned char nonTrivialAlphaMask = 0;
 
     png_bytep pixel = row;
@@ -617,13 +614,18 @@ void PNGImageDecoder::readChunks(png_unknown_chunkp chunk)
         if (m_hasInfo || m_isAnimated)
             return;
 
-        m_frameCount = png_get_uint_32(chunk->data);
-        m_playCount = png_get_uint_32(chunk->data + 4);
+        // frameCount() reports m_frameCount and callers size per-frame containers from it, so a
+        // rejected count must not be stored.
+        size_t frameCount = png_get_uint_32(chunk->data);
+        unsigned playCount = png_get_uint_32(chunk->data + 4);
 
-        if (!m_frameCount || m_frameCount > cMaxFrameCount || m_playCount > PNG_UINT_31_MAX) {
+        if (!frameCount || frameCount > cMaxFrameCount || playCount > PNG_UINT_31_MAX) {
             fallbackNotAnimated();
             return;
         }
+
+        m_frameCount = frameCount;
+        m_playCount = playCount;
 
         m_isAnimated = true;
         if (!m_frameInfo)
@@ -753,8 +755,6 @@ void PNGImageDecoder::frameHeader()
     png_set_interlace_handling(m_png);
 
     png_read_update_info(m_png, m_info);
-
-    m_rowWidth = png_get_image_width(m_png, m_info);
 }
 
 void PNGImageDecoder::init()
@@ -764,7 +764,7 @@ void PNGImageDecoder::init()
     m_frameIsHidden = false;
     m_hasInfo = false;
     m_currentFrame = 0;
-    m_composeCurrentFrame = false;
+    m_composedRowCount = 0;
     m_totalFrames = 0;
     m_sequenceNumber = 0;
 }
@@ -826,6 +826,9 @@ void PNGImageDecoder::initFrameBuffer(size_t frameIndex)
     } else {
         // We want to clear the previous frame to transparent, without
         // affecting pixels in the image outside of the frame.
+        if (!prevBuffer->backingStore())
+            longjmp(JMPBUF(png), 1);
+
         IntRect prevRect = prevBuffer->backingStore()->frameRect();
         if (!frameIndex || prevRect.contains(IntRect(IntPoint(), size()))) {
             // Clearing the first frame, or a frame the size of the whole
@@ -850,11 +853,8 @@ void PNGImageDecoder::updateFrameRect(ScalableImageDecoderFrame& buffer)
 {
     IntRect frameRect(m_xOffset, m_yOffset, m_width, m_height);
 
-    // Make sure the frameRect doesn't extend outside the buffer.
-    if (frameRect.maxX() > size().width())
-        frameRect.setWidth(size().width() - m_xOffset);
-    if (frameRect.maxY() > size().height())
-        frameRect.setHeight(size().height() - m_yOffset);
+    // m_xOffset and m_yOffset can exceed the canvas, which a subtracted extent would make negative.
+    frameRect.intersect(IntRect(IntPoint(), size()));
 
     buffer.backingStore()->setFrameRect(frameRect);
 }
@@ -870,7 +870,7 @@ void PNGImageDecoder::frameComplete()
 
     png_bytep interlaceBuffer = m_reader->interlaceBuffer();
 
-    if (m_composeCurrentFrame && interlaceBuffer) {
+    if (m_composedRowCount && interlaceBuffer) {
         IntRect rect = buffer.backingStore()->frameRect();
         bool hasAlpha = m_reader->hasAlpha();
         bool nonTrivialAlpha = false;
@@ -879,7 +879,10 @@ void PNGImageDecoder::frameComplete()
 
         png_bytep row = interlaceBuffer;
         unsigned colorChannels = hasAlpha ? 4 : 3;
-        for (int y = rect.y(); y < rect.maxY(); ++y, row += colorChannels * size().width()) {
+        // The interlace buffer outlives each frame, so rows this frame never delivered still hold
+        // the previous frame's pixels.
+        int maxY = std::min<int>(rect.maxY(), rect.y() + m_composedRowCount);
+        for (int y = rect.y(); y < maxY; ++y, row += colorChannels * size().width()) {
             png_bytep pixel = row;
             auto destinationRow = buffer.backingStore()->pixelsStartingAt(rect.x(), y);
             auto address = destinationRow;
@@ -913,14 +916,18 @@ void PNGImageDecoder::frameComplete()
                 while (frameIndex && (prevBuffer->disposalMethod() == ScalableImageDecoderFrame::DisposalMethod::RestoreToPrevious))
                     prevBuffer = &m_frameBufferCache[--frameIndex];
 
-                IntRect prevRect = prevBuffer->backingStore()->frameRect();
-                if ((prevBuffer->disposalMethod() == ScalableImageDecoderFrame::DisposalMethod::RestoreToBackground) && !prevBuffer->hasAlpha() && rect.contains(prevRect))
-                    buffer.setHasAlpha(false);
+                // A frame dropped from the cache has no backing store, so its rect is unknown and
+                // this frame's opacity cannot be established from it.
+                if (prevBuffer->backingStore()) {
+                    IntRect prevRect = prevBuffer->backingStore()->frameRect();
+                    if ((prevBuffer->disposalMethod() == ScalableImageDecoderFrame::DisposalMethod::RestoreToBackground) && !prevBuffer->hasAlpha() && rect.contains(prevRect))
+                        buffer.setHasAlpha(false);
+                }
             }
         } else if (!m_blend && !buffer.hasAlpha())
             buffer.setHasAlpha(nonTrivialAlpha);
 
-        m_composeCurrentFrame = false;
+        m_composedRowCount = 0;
     }
     m_currentFrame++;
 }
@@ -940,7 +947,7 @@ int PNGImageDecoder::processingStart(png_unknown_chunkp chunk)
     if (setjmp(JMPBUF(m_png)))
         return 1;
 
-    m_composeCurrentFrame = false;
+    m_composedRowCount = 0;
 
     png_set_crc_action(m_png, PNG_CRC_QUIET_USE, PNG_CRC_QUIET_USE);
     png_set_progressive_read_fn(m_png, static_cast<png_voidp>(this),

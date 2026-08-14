@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2006 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -312,9 +313,13 @@ bool GIFImageDecoder::frameComplete(unsigned frameIndex, unsigned frameDuration,
             // The only remaining case is a DisposalMethod::RestoreToBackground frame. If
             // it had no alpha, and its rect is contained in the current frame's
             // rect, we know the current frame has no alpha.
-            IntRect prevRect = prevBuffer->backingStore()->frameRect();
-            if ((prevBuffer->disposalMethod() == ScalableImageDecoderFrame::DisposalMethod::RestoreToBackground) && !prevBuffer->hasAlpha() && rect.contains(prevRect))
-                buffer.setHasAlpha(false);
+            // A frame dropped from the cache has no backing store, so its rect is unknown and
+            // this frame's opacity cannot be established from it.
+            if (prevBuffer->backingStore()) {
+                IntRect prevRect = prevBuffer->backingStore()->frameRect();
+                if ((prevBuffer->disposalMethod() == ScalableImageDecoderFrame::DisposalMethod::RestoreToBackground) && !prevBuffer->hasAlpha() && rect.contains(prevRect))
+                    buffer.setHasAlpha(false);
+            }
         }
     }
 
@@ -405,6 +410,9 @@ bool GIFImageDecoder::initFrameBuffer(unsigned frameIndex)
         } else {
             // We want to clear the previous frame to transparent, without
             // affecting pixels in the image outside of the frame.
+            if (!prevBuffer->backingStore())
+                return setFailed();
+
             IntRect prevRect = prevBuffer->backingStore()->frameRect();
             const IntSize& bufferSize = size();
             if (!frameIndex || prevRect.contains(IntRect(IntPoint(), size()))) {
@@ -422,11 +430,9 @@ bool GIFImageDecoder::initFrameBuffer(unsigned frameIndex)
         }
     }
 
-    // Make sure the frameRect doesn't extend outside the buffer.
-    if (frameRect.maxX() > size().width())
-        frameRect.setWidth(size().width() - frameContext->xOffset);
-    if (frameRect.maxY() > size().height())
-        frameRect.setHeight(size().height() - frameContext->yOffset);
+    // A frame offset can exceed the canvas, since the logical screen size is only published for the
+    // first frame. A subtracted extent would be negative there.
+    frameRect.intersect(IntRect(IntPoint(), size()));
 
     buffer->backingStore()->setFrameRect(frameRect);
 

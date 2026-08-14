@@ -1211,6 +1211,16 @@ unsigned Internals::imageFrameCount(HTMLImageElement& element)
     return bitmapImage ? bitmapImage->frameCount() : 0;
 }
 
+// Decodes a specific frame synchronously. Drawing an image only decodes what the renderer needs,
+// and does nothing at all for an image that has not finished loading.
+bool Internals::decodeImageFrameAtIndex(HTMLImageElement& element, unsigned index)
+{
+    auto* bitmapImage = bitmapImageFromImageElement(element);
+    if (!bitmapImage)
+        return false;
+    return !!bitmapImage->nativeImageAtIndex(index);
+}
+
 float Internals::imageFrameDurationAtIndex(HTMLImageElement& element, unsigned index)
 {
     auto* bitmapImage = bitmapImageFromImageElement(element);

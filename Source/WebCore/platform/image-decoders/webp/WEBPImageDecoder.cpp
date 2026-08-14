@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2026 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -81,6 +82,11 @@ ScalableImageDecoderFrame* WEBPImageDecoder::frameBufferAtIndex(size_t index)
         return &m_frameBufferCache[index];
 
     decode(index, isAllDataReceived());
+
+    // decode() leaves the cache untouched when it bails out early, and m_frameCount comes from a
+    // demuxer that may since have rejected the file.
+    if (index >= m_frameBufferCache.size())
+        return nullptr;
 
     return &m_frameBufferCache[index];
 }
@@ -273,18 +279,20 @@ void WEBPImageDecoder::applyPostProcessing(size_t frameIndex, WebPIDecoder* deco
         return;
 
     const IntRect& frameRect = buffer.backingStore()->frameRect();
-    ASSERT_WITH_SECURITY_IMPLICATION(decodedWidth == frameRect.width());
-    ASSERT_WITH_SECURITY_IMPLICATION(decodedHeight <= frameRect.height());
     const int left = frameRect.x();
     const int top = frameRect.y();
+    // frameRect is the frame clipped to the canvas, while libwebp decoded at the frame's own
+    // dimensions. Walking the decoded extent from the clipped origin would leave the backing store.
+    const int width = std::min(decodedWidth, frameRect.width());
+    const int height = std::min(decodedHeight, frameRect.height());
 
-    for (int y = 0; y < decodedHeight; y++) {
+    for (int y = 0; y < height; y++) {
         const int canvasY = top + y;
-        for (int x = 0; x < decodedWidth; x++) {
+        for (int x = 0; x < width; x++) {
             const int canvasX = left + x;
             auto& destinationPixel = buffer.backingStore()->pixelAt(canvasX, canvasY);
             WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // non-Apple ports
-            uint8_t* sourcePixels = decoderBuffer.u.RGBA.rgba + (y * frameRect.width() + x) * sizeof(uint32_t);
+            uint8_t* sourcePixels = decoderBuffer.u.RGBA.rgba + y * decoderBuffer.u.RGBA.stride + x * sizeof(uint32_t);
             if (blend && (sourcePixels[3] < 255))
                 buffer.backingStore()->blendPixel(destinationPixel, sourcePixels[0], sourcePixels[1], sourcePixels[2], sourcePixels[3]);
             else

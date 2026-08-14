@@ -768,6 +768,7 @@ enum ContentsFormat {
 
     unsigned long imageFrameIndex(HTMLImageElement element);
     unsigned long imageFrameCount(HTMLImageElement element);
+    boolean decodeImageFrameAtIndex(HTMLImageElement element, unsigned long index);
     float imageFrameDurationAtIndex(HTMLImageElement element, unsigned long index);
     undefined setImageFrameDecodingDuration(HTMLImageElement element, unrestricted float duration);
     undefined resetImageAnimation(HTMLImageElement element);

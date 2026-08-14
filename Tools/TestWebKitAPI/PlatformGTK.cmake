@@ -41,6 +41,7 @@ list(APPEND TestJavaScriptCore_LIBRARIES
 
 # TestWebCore
 list(APPEND TestWebCore_SOURCES
+    Tests/WebCore/ImageDecoderTests.cpp
     Tests/WebCore/UserAgentQuirks.cpp
 
     Tests/WebCore/glib/Damage.cpp
