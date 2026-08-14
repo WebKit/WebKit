@@ -86,6 +86,20 @@ static RectCorners<float> cornerCurvaturesFromStyle(const Style::ComputedStyle& 
     };
 }
 
+static void buildCornerInputs(const FloatRoundedRect&, const RectCorners<float>&,
+    double leftWidth, double topWidth, double rightWidth, double bottomWidth, RectCorners<CornerInput>&);
+
+static float constrainedRadiiScale(const LayoutRect& borderRect, const LayoutRoundedRectRadii& radii, const RectCorners<float>& cornerCurvatures)
+{
+    auto adjacent = calcBorderRadiiConstraintScaleFor(borderRect, radii);
+
+    RectCorners<CornerInput> cornerRects;
+    buildCornerInputs(FloatRoundedRect { LayoutRoundedRect { borderRect, radii } }, cornerCurvatures, 0, 0, 0, 0, cornerRects);
+    auto opposite = static_cast<float>(oppositeCornerScaleFactor(cornerRects));
+
+    return std::min(adjacent, opposite);
+}
+
 BorderShape BorderShape::shapeForBorderRect(const Style::ComputedStyle& style, const LayoutRect& borderRect, RectEdges<bool> closedEdges)
 {
     auto zoom = style.usedZoomForLength();
@@ -102,13 +116,14 @@ BorderShape BorderShape::shapeForBorderRect(const Style::ComputedStyle& style, c
 
     if (style.border().hasBorderRadius()) {
         auto radii = Style::evaluate<LayoutRoundedRectRadii>(style.borderRadii(), borderRect.size(), style.usedZoomForLength());
-        radii.scale(calcBorderRadiiConstraintScaleFor(borderRect, radii));
+        auto cornerCurvatures = cornerCurvaturesFromStyle(style);
+        radii.scale(constrainedRadiiScale(borderRect, radii, cornerCurvatures));
         zeroRadiiForOpenEdges(radii, closedEdges);
 
         if (!radii.areRenderableInRect(borderRect))
             radii.makeRenderableInRect(borderRect);
 
-        return BorderShape { borderRect, usedBorderWidths, radii, cornerCurvaturesFromStyle(style) };
+        return BorderShape { borderRect, usedBorderWidths, radii, cornerCurvatures };
     }
 
     return BorderShape { borderRect, usedBorderWidths };
@@ -316,45 +331,8 @@ static void buildCornerInputs(const FloatRoundedRect& outerSnapped, const RectCo
     cornerRects.topLeft() = { tl.x(), tl.y(), tl.width(), tl.height(), cornerCurvatures.topLeft(), leftWidth, topWidth, BoxCorner::TopLeft };
 }
 
-static void buildScaledCornerInputs(const FloatRoundedRect& outerSnapped, const RectCorners<float>& cornerCurvatures,
-    double leftWidth, double topWidth, double rightWidth, double bottomWidth, RectCorners<CornerInput>& cornerRects)
-{
-    // Measure unmodified outer corners
-    RectCorners<CornerInput> outerRects;
-    buildCornerInputs(outerSnapped, cornerCurvatures, 0, 0, 0, 0, outerRects);
-    double scale = oppositeCornerScaleFactor(outerRects);
-
-    // Build corners with border insets
-    buildCornerInputs(outerSnapped, cornerCurvatures, leftWidth, topWidth, rightWidth, bottomWidth, cornerRects);
-    if (scale >= 1.0)
-        return;
-
-    for (auto key : { BoxCorner::TopLeft, BoxCorner::TopRight, BoxCorner::BottomLeft, BoxCorner::BottomRight }) {
-        CornerInput& corner = cornerRects[key];
-
-        if (!corner.startInset && !corner.endInset)
-            continue;
-
-        double scaledWidth = corner.width * scale;
-        double scaledHeight = corner.height * scale;
-
-        bool anchorRight = corner.orientation == BoxCorner::TopRight || corner.orientation == BoxCorner::BottomRight;
-        bool anchorBottom = corner.orientation == BoxCorner::BottomRight || corner.orientation == BoxCorner::BottomLeft;
-
-        // Push right/down to compensate for shrink
-        if (anchorRight)
-            corner.x += corner.width - scaledWidth;
-        if (anchorBottom)
-            corner.y += corner.height - scaledHeight;
-        corner.width = scaledWidth;
-        corner.height = scaledHeight;
-    }
-}
-
-enum class UseScaledInputs : bool { No, Yes };
-
 // Bevel, notch, and square have no radius to expand or inset (the way round/superellipse corners are offset), so they're rebuilt by offsetting the border-box corner to the moved rect.
-static void rebuildOffsetCornersFromReference(RectCorners<CornerInput>& contourCorners, const std::optional<FloatRoundedRect>& borderBoxReference, const RectCorners<float>& cornerCurvatures, const FloatRect& contourRect, UseScaledInputs useScaledInputs)
+static void rebuildOffsetCornersFromReference(RectCorners<CornerInput>& contourCorners, const std::optional<FloatRoundedRect>& borderBoxReference, const RectCorners<float>& cornerCurvatures, const FloatRect& contourRect)
 {
     if (!borderBoxReference)
         return;
@@ -376,10 +354,7 @@ static void rebuildOffsetCornersFromReference(RectCorners<CornerInput>& contourC
     double bottomOffset = contourRect.maxY() - snappedReferenceRect.maxY();
 
     RectCorners<CornerInput> rebuiltCorners;
-    if (useScaledInputs == UseScaledInputs::Yes)
-        buildScaledCornerInputs(snappedReference, cornerCurvatures, -leftOffset, -topOffset, -rightOffset, -bottomOffset, rebuiltCorners);
-    else
-        buildCornerInputs(snappedReference, cornerCurvatures, -leftOffset, -topOffset, -rightOffset, -bottomOffset, rebuiltCorners);
+    buildCornerInputs(snappedReference, cornerCurvatures, -leftOffset, -topOffset, -rightOffset, -bottomOffset, rebuiltCorners);
 
     if (needsRebuild(cornerCurvatures.topLeft()))
         contourCorners.topLeft() = rebuiltCorners.topLeft();
@@ -463,7 +438,7 @@ static void addOuterCornerShapeToPath(Path& path, const FloatRoundedRect& outerS
 {
     RectCorners<CornerInput> cornerRects;
     buildCornerInputs(outerSnapped, cornerCurvatures, 0, 0, 0, 0, cornerRects);
-    rebuildOffsetCornersFromReference(cornerRects, offsetReferenceRect, cornerCurvatures, outerSnapped.rect(), UseScaledInputs::No);
+    rebuildOffsetCornersFromReference(cornerRects, offsetReferenceRect, cornerCurvatures, outerSnapped.rect());
     borderContourPath(path, cornerRects);
 }
 
@@ -495,8 +470,8 @@ static void addInnerCornerShapeToPath(Path& path, const FloatRoundedRect& outerS
     double bottomWidth = outerRect.maxY() - innerRect.maxY();
 
     RectCorners<CornerInput> cornerRects;
-    buildScaledCornerInputs(outerSnapped, cornerCurvatures, leftWidth, topWidth, rightWidth, bottomWidth, cornerRects);
-    rebuildOffsetCornersFromReference(cornerRects, offsetReferenceRect, cornerCurvatures, innerRect, UseScaledInputs::Yes);
+    buildCornerInputs(outerSnapped, cornerCurvatures, leftWidth, topWidth, rightWidth, bottomWidth, cornerRects);
+    rebuildOffsetCornersFromReference(cornerRects, offsetReferenceRect, cornerCurvatures, innerRect);
     borderContourPath(path, cornerRects, &innerRect);
 }
 

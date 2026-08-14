@@ -35,6 +35,7 @@
 #include <algorithm>
 #include <array>
 #include <cmath>
+#include <limits>
 #include <numbers>
 #include <utility>
 
@@ -660,11 +661,95 @@ void borderContourPath(Path& path, const RectCorners<CornerInput>& cornerRects, 
     path.closeSubpath();
 }
 
-// https://drafts.csswg.org/css-borders-4/#corner-shape-constrain-radii
-double oppositeCornerScaleFactor(const RectCorners<CornerInput>&)
+static Vector<FloatPoint> normalizedInnerCornerHull(double curvature)
 {
-    // TODO: implement opposite-corner scale factor computation.
-    return 1.0;
+    if (curvature >= 0.0)
+        return { { 1, 1 }, { 1, 0 }, { 0, 1 } };
+
+    auto tangentIntercept = float(2.0 * normalizedSuperellipseHalfCorner(curvature));
+    return { { 1, 1 }, { 1, 0 }, { tangentIntercept, 0 }, { 0, tangentIntercept }, { 0, 1 } };
+}
+
+static Vector<FloatPoint> cornerHullPolygon(const CornerInput& input)
+{
+    auto corner = makeCorner(input);
+    auto normalizedHull = normalizedInnerCornerHull(input.curvature);
+    return WTF::map(normalizedHull, [&](auto& point) {
+        return mapPointToCorner(corner, FloatSize(point.x(), point.y()));
+    });
+}
+
+static std::pair<double, double> offsetExtentAlongAxis(const Vector<FloatPoint>& hull, FloatSize axis)
+{
+    auto origin = hull.first();
+    double low = 0.0;
+    double high = 0.0;
+    for (auto& point : hull) {
+        double projection = (point.x() - origin.x()) * axis.width() + (point.y() - origin.y()) * axis.height();
+        low = std::min(low, projection);
+        high = std::max(high, projection);
+    }
+    return { low, high };
+}
+
+static double largestScaleWithoutIntersection(const Vector<FloatPoint>& first, const Vector<FloatPoint>& second)
+{
+    auto appendAxesOf = [](const Vector<FloatPoint>& hull, Vector<FloatSize>& axes) {
+        for (size_t index = 0; index < hull.size(); ++index) {
+            auto edgeStart = hull[index];
+            auto edgeEnd = hull[(index + 1) % hull.size()];
+            FloatSize axis { -(edgeEnd.y() - edgeStart.y()), edgeEnd.x() - edgeStart.x() };
+            // A notch collapses two vertices onto the centre, leaving an edge with no normal.
+            if (!axis.isZero())
+                axes.append(axis);
+        }
+    };
+
+    Vector<FloatSize> axes;
+    appendAxesOf(first, axes);
+    appendAxesOf(second, axes);
+
+    auto projectPoint = [](const FloatPoint& point, FloatSize axis) {
+        return point.x() * axis.width() + point.y() * axis.height();
+    };
+
+    double largest = 0.0;
+    for (auto axis : axes) {
+        auto [firstLow, firstHigh] = offsetExtentAlongAxis(first, axis);
+        auto [secondLow, secondHigh] = offsetExtentAlongAxis(second, axis);
+        double originGap = projectPoint(first.first(), axis) - projectPoint(second.first(), axis);
+
+        auto consider = [&](double gap, double closing) {
+            if (closing <= 0.0)
+                return gap >= 0.0;
+            if (gap >= 0.0)
+                largest = std::max(largest, gap / closing);
+            return false;
+        };
+
+        if (consider(originGap, secondHigh - firstLow) || consider(-originGap, firstHigh - secondLow))
+            return 1.0;
+    }
+
+    return std::min(1.0, largest);
+}
+
+// https://drafts.csswg.org/css-borders-4/#corner-shape-constrain-radii
+double oppositeCornerScaleFactor(const RectCorners<CornerInput>& cornerRects)
+{
+    auto pairScale = [](const CornerInput& first, const CornerInput& second) -> double {
+        if (first.curvature >= 0.0 && second.curvature >= 0.0)
+            return 1.0;
+
+        if (!first.width || !first.height || !second.width || !second.height)
+            return 1.0;
+
+        return largestScaleWithoutIntersection(cornerHullPolygon(first), cornerHullPolygon(second));
+    };
+
+    return std::min({ 1.0,
+        pairScale(cornerRects.topLeft(), cornerRects.bottomRight()),
+        pairScale(cornerRects.topRight(), cornerRects.bottomLeft()) });
 }
 
 } // namespace WebCore
