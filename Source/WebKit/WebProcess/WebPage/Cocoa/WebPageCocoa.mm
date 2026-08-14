@@ -3174,7 +3174,7 @@ void WebPage::handleSyntheticClick(std::optional<WebCore::FrameIdentifier> frame
     });
 }
 
-Awaitable<std::optional<WebCore::RemoteUserInputEventData>> WebPage::potentialTapAtPosition(std::optional<WebCore::FrameIdentifier> frameID, WebKit::TapIdentifier requestID, WebCore::FloatPoint position, bool shouldRequestMagnificationInformation, WebKit::WebEventInputSource inputSource)
+Awaitable<std::optional<WebCore::RemoteUserInputEventData>> WebPage::potentialTapAtPosition(std::optional<WebCore::FrameIdentifier> frameID, WebKit::TapIdentifier requestID, WebCore::FloatPoint positionInRootView, bool shouldRequestMagnificationInformation, WebKit::WebEventInputSource inputSource)
 {
     m_potentialTapInputSource = platform(inputSource);
 
@@ -3182,16 +3182,17 @@ Awaitable<std::optional<WebCore::RemoteUserInputEventData>> WebPage::potentialTa
 
     RefPtr localRootFrame = this->localRootFrame(frameID);
     if (localRootFrame)
-        m_potentialTapNode = localRootFrame->nodeRespondingToClickEvents(position, m_potentialTapLocation, m_potentialTapSecurityOrigin.get());
+        m_potentialTapNode = localRootFrame->nodeRespondingToClickEvents(positionInRootView, m_potentialTapLocation, m_potentialTapSecurityOrigin.get());
 
     RefPtr frameOwner = dynamicDowncast<HTMLFrameOwnerElement>(m_potentialTapNode.get());
     if (RefPtr remoteFrame = frameOwner ? dynamicDowncast<RemoteFrame>(frameOwner->contentFrame()) : nullptr) {
         RefPtr localRootView = localRootFrame ? localRootFrame->view() : nullptr;
         if (RefPtr remoteFrameView = remoteFrame->view(); remoteFrameView && localRootView) {
+            auto positionInContents = localRootView->rootViewToContents(positionInRootView);
             RemoteFrameGeometryTransformer transformer(remoteFrameView.releaseNonNull(), localRootView.releaseNonNull(), remoteFrame->frameID());
             co_return WebCore::RemoteUserInputEventData {
                 remoteFrame->frameID(),
-                transformer.transformToRemoteFrameCoordinates(position)
+                transformer.transformToRemoteFrameCoordinates(positionInContents)
             };
         }
     }
@@ -3209,7 +3210,7 @@ Awaitable<std::optional<WebCore::RemoteUserInputEventData>> WebPage::potentialTa
             return false;
 
         static constexpr auto maxAllowedMovementSquared = 200 * 200;
-        if ((position - *lastTouchLocation).diagonalLengthSquared() <= maxAllowedMovementSquared)
+        if ((positionInRootView - *lastTouchLocation).diagonalLengthSquared() <= maxAllowedMovementSquared)
             return false;
 
         FloatPoint adjustedLocation;
@@ -3218,7 +3219,7 @@ Awaitable<std::optional<WebCore::RemoteUserInputEventData>> WebPage::potentialTa
     }();
 
     if (ignorePotentialTap) {
-        RELEASE_LOG(ViewGestures, "Ignoring potential tap (distance from last touch: %.0f)", (position - *lastTouchLocation).diagonalLength());
+        RELEASE_LOG(ViewGestures, "Ignoring potential tap (distance from last touch: %.0f)", (positionInRootView - *lastTouchLocation).diagonalLength());
         m_potentialTapNode = nullptr;
         co_return std::nullopt;
     }
@@ -3228,7 +3229,7 @@ Awaitable<std::optional<WebCore::RemoteUserInputEventData>> WebPage::potentialTa
     RefPtr viewGestureGeometryCollector = m_viewGestureGeometryCollector;
 
     if (shouldRequestMagnificationInformation && m_potentialTapNode && viewGestureGeometryCollector) {
-        FloatPoint origin = position;
+        FloatPoint origin = positionInRootView;
         FloatRect absoluteBoundingRect;
         bool fitEntireRect;
         double viewportMinimumScale;
@@ -3241,7 +3242,7 @@ Awaitable<std::optional<WebCore::RemoteUserInputEventData>> WebPage::potentialTa
         send(Messages::WebPageProxy::HandleSmartMagnificationInformationForPotentialTap(requestID, absoluteBoundingRect, fitEntireRect, viewportMinimumScale, viewportMaximumScale, nodeIsRootLevel, nodeIsPluginElement));
     }
 
-    sendTapHighlightForNodeIfNecessary(requestID, m_potentialTapNode.get(), position);
+    sendTapHighlightForNodeIfNecessary(requestID, m_potentialTapNode.get(), positionInRootView);
 #if ENABLE(TWO_PHASE_CLICKS)
     if (RefPtr potentialTapNode = m_potentialTapNode; potentialTapNode && !potentialTapNode->allowsDoubleTapGesture())
         send(Messages::WebPageProxy::DisableDoubleTapGesturesDuringTapIfNecessary(requestID));
