@@ -1580,10 +1580,15 @@ TemporalResult<bool> yearContainsMonthCode(CalendarID calendarId, int32_t year, 
 }
 
 // https://tc39.es/proposal-intl-era-monthcode/#sec-temporal-constrainmonthcode
-static TemporalResult<ParsedMonthCode> constrainMonthCodeGivenContainment(CalendarID calendarId, ParsedMonthCode monthCode, bool contained, TemporalOverflow overflow)
+TemporalResult<ParsedMonthCode> constrainMonthCode(CalendarID calendarId, int32_t year, ParsedMonthCode monthCode, TemporalOverflow overflow)
 {
+    // Step 1: Assert IsValidMonthCodeForCalendar.
+    ASSERT(isValidMonthCodeForCalendar(calendarId, monthCode));
+    auto contained = yearContainsMonthCode(calendarId, year, monthCode);
+    if (!contained) [[unlikely]]
+        return makeUnexpected(contained.error());
     // Step 2: If YearContainsMonthCode, return monthCode.
-    if (contained)
+    if (*contained)
         return monthCode;
     // Step 3: If overflow is ~reject~, throw RangeError.
     if (overflow == TemporalOverflow::Reject)
@@ -1596,30 +1601,6 @@ static TemporalResult<ParsedMonthCode> constrainMonthCodeGivenContainment(Calend
     // Step 8: hebrew row → ~skip-forward~ → assert "M05L" (8.a), return "M06" (8.b).
     ASSERT(monthCode.monthNumber == 5 && monthCode.isLeapMonth);
     return ParsedMonthCode { 6, false };
-}
-TemporalResult<ParsedMonthCode> constrainMonthCode(CalendarID calendarId, int32_t year, ParsedMonthCode monthCode, TemporalOverflow overflow)
-{
-    // Step 1: Assert IsValidMonthCodeForCalendar.
-    ASSERT(isValidMonthCodeForCalendar(calendarId, monthCode));
-    // Steps 2-8: delegate to algorithm extract with cursor-computed containment.
-    auto contained = yearContainsMonthCode(calendarId, year, monthCode);
-    if (!contained) [[unlikely]]
-        return makeUnexpected(contained.error());
-    return constrainMonthCodeGivenContainment(calendarId, monthCode, *contained, overflow);
-}
-static TemporalResult<ParsedMonthCode> constrainMonthCodeInternal(UCalendar* cal, CalendarID calendarId, ParsedMonthCode monthCode, TemporalOverflow overflow)
-{
-    // Step 1: Assert IsValidMonthCodeForCalendar.
-    ASSERT(isValidMonthCodeForCalendar(calendarId, monthCode));
-    UErrorCode status = U_ZERO_ERROR;
-    int32_t year = ucal_get(cal, UCAL_EXTENDED_YEAR, &status);
-    if (U_FAILURE(status)) [[unlikely]]
-        return makeUnexpected(rangeError(icuReadCalendarFailed));
-    // Steps 2-8: delegate to algorithm extract with cursor-computed containment.
-    auto contained = yearContainsMonthCodeInternal(cal, calendarId, year, monthCode);
-    if (!contained) [[unlikely]]
-        return makeUnexpected(rangeError(icuReadCalendarFailed));
-    return constrainMonthCodeGivenContainment(calendarId, monthCode, *contained, overflow);
 }
 
 // https://tc39.es/proposal-intl-era-monthcode/#sec-temporal-monthcodetoordinal
@@ -2511,29 +2492,16 @@ static void setICUCalendarYear(UCalendar* cal, CalendarID calendarId, std::optio
     ucal_set(cal, UCAL_EXTENDED_YEAR, year.value_or(0));
 }
 
-static TemporalResult<void> positionCursorAtConstrainedMonthCode(UCalendar* cal, CalendarID calendarId, const ParsedMonthCode& monthCode, TemporalOverflow overflow)
+static TemporalResult<void> positionCursorAtConstrainedMonthCode(UCalendar* cal, CalendarID calendarId, const ParsedMonthCode& monthCode)
 {
     if (!isValidMonthCodeForCalendar(calendarId, monthCode)) [[unlikely]]
         return makeUnexpected(rangeError("monthCode is not valid for this calendar"_s));
 
-    auto constrained = constrainMonthCodeInternal(cal, calendarId, monthCode, overflow);
-    if (!constrained) [[unlikely]]
-        return makeUnexpected(constrained.error());
+    ASSERT(!monthCode.isLeapMonth);
 
-    // Position the cursor at the constrained monthCode.
-    UErrorCode status = U_ZERO_ERROR;
-    if (calendarIsLunisolar(calendarId)) {
-        String targetCode = makeString("M"_s, constrained->monthNumber < 10 ? "0"_s : ""_s,
-            constrained->monthNumber, constrained->isLeapMonth ? "L"_s : ""_s);
-        auto probe = setCalendarToMonthCode(cal, calendarId, targetCode);
-        if (!probe) [[unlikely]]
-            return makeUnexpected(rangeError(icuCalendarArithmeticFailed));
-        return { };
-    }
     // Non-lunisolar: direct set (M13 for coptic/ethiopic/ethioaa; M01..M12 otherwise).
-    ucal_set(cal, UCAL_MONTH, constrained->monthNumber - 1);
-    if (constrained->isLeapMonth)
-        ucal_set(cal, UCAL_IS_LEAP_MONTH, 1);
+    UErrorCode status = U_ZERO_ERROR;
+    ucal_set(cal, UCAL_MONTH, monthCode.monthNumber - 1);
     ucal_set(cal, UCAL_DAY_OF_MONTH, 1);
     ucal_getMillis(cal, &status);
     if (U_FAILURE(status)) [[unlikely]]
@@ -2715,7 +2683,7 @@ TemporalResult<ISO8601::PlainDate> nonISOCalendarDateToISO(CalendarID calendarId
                     return makeUnexpected(rangeError("monthCode does not exist in this calendar year"_s));
             } else {
                 // Non-lunisolar with monthCode (Gregorian-based calendars).
-                if (auto r = positionCursorAtConstrainedMonthCode(cal, calendarId, *monthCode, overflow); !r)
+                if (auto r = positionCursorAtConstrainedMonthCode(cal, calendarId, *monthCode); !r)
                     return makeUnexpected(r.error());
             }
         } else {
