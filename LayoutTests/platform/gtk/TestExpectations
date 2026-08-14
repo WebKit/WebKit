@@ -1331,3 +1331,5 @@ webkit.org/b/321278 imported/w3c/web-platform-tests/css/CSS2/tables/table-anonym
 webkit.org/b/321281 [ Debug ] webrtc/video-disabled-black.html [ Crash Pass ]
 webkit.org/b/320649 [ Debug ] webrtc/disable-encryption.html [ Crash Pass ]
 webkit.org/b/321451 [ Debug ] inspector/unit-tests/debouncer.html [ Failure Pass ]
+
+webkit.org/b/321789 animations/no-style-recalc-during-accelerated-animation.html [ Failure Pass ]
