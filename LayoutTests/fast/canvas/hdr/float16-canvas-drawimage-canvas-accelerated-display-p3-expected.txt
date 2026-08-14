@@ -1,0 +1,83 @@
+Tests that drawImage() from a 2D canvas preserves HDR (extended-range float16) values, and clamps them when the destination is SDR.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+canvas.dataset.colorSpace: display-p3
+canvas.dataset.renderingMode: Accelerated
+
+Simple drawImage (globalCompositeOperation = "source-over")
+PASS float16 -> float16 (simple): red is 3.5
+PASS float16 -> float16 (simple): green is 0.6
+PASS float16 -> float16 (simple): blue is 0
+PASS float16 -> float16 (simple): alpha is 1
+PASS float16 -> unorm8 (simple): red is 1
+PASS float16 -> unorm8 (simple): green is 0.6
+PASS float16 -> unorm8 (simple): blue is 0
+PASS float16 -> unorm8 (simple): alpha is 1
+PASS unorm8 -> float16 (simple): red is 0.6
+PASS unorm8 -> float16 (simple): green is 0.6
+PASS unorm8 -> float16 (simple): blue is 0
+PASS unorm8 -> float16 (simple): alpha is 1
+PASS unorm8 -> unorm8 (simple): red is 0.6
+PASS unorm8 -> unorm8 (simple): green is 0.6
+PASS unorm8 -> unorm8 (simple): blue is 0
+PASS unorm8 -> unorm8 (simple): alpha is 1
+
+Self-copy (globalCompositeOperation = "copy")
+PASS float16 self-draw (copy-self): red is 3.5
+PASS float16 self-draw (copy-self): green is 0.6
+PASS float16 self-draw (copy-self): blue is 0
+PASS float16 self-draw (copy-self): alpha is 1
+PASS unorm8 self-draw (copy-self): red is 0.6
+PASS unorm8 self-draw (copy-self): green is 0.6
+PASS unorm8 self-draw (copy-self): blue is 0
+PASS unorm8 self-draw (copy-self): alpha is 1
+
+Full-canvas composite (globalCompositeOperation = "source-in")
+PASS float16 -> float16 (source-in): red is 3.5
+PASS float16 -> float16 (source-in): green is 0.6
+PASS float16 -> float16 (source-in): blue is 0
+PASS float16 -> float16 (source-in): alpha is 1
+PASS float16 -> unorm8 (source-in): red is 1
+PASS float16 -> unorm8 (source-in): green is 0.6
+PASS float16 -> unorm8 (source-in): blue is 0
+PASS float16 -> unorm8 (source-in): alpha is 1
+PASS unorm8 -> float16 (source-in): red is 0.6
+PASS unorm8 -> float16 (source-in): green is 0.6
+PASS unorm8 -> float16 (source-in): blue is 0
+PASS unorm8 -> float16 (source-in): alpha is 1
+PASS unorm8 -> unorm8 (source-in): red is 0.6
+PASS unorm8 -> unorm8 (source-in): green is 0.6
+PASS unorm8 -> unorm8 (source-in): blue is 0
+PASS unorm8 -> unorm8 (source-in): alpha is 1
+PASS float16 self-draw (source-in): red is 3.5
+PASS float16 self-draw (source-in): green is 0.6
+PASS float16 self-draw (source-in): blue is 0
+PASS float16 self-draw (source-in): alpha is 1
+PASS unorm8 self-draw (source-in): red is 0.6
+PASS unorm8 self-draw (source-in): green is 0.6
+PASS unorm8 self-draw (source-in): blue is 0
+PASS unorm8 self-draw (source-in): alpha is 1
+
+Cross-canvas copy (globalCompositeOperation = "copy")
+PASS float16 -> float16 (copy-cross): red is 3.5
+PASS float16 -> float16 (copy-cross): green is 0.6
+PASS float16 -> float16 (copy-cross): blue is 0
+PASS float16 -> float16 (copy-cross): alpha is 1
+PASS float16 -> unorm8 (copy-cross): red is 1
+PASS float16 -> unorm8 (copy-cross): green is 0.6
+PASS float16 -> unorm8 (copy-cross): blue is 0
+PASS float16 -> unorm8 (copy-cross): alpha is 1
+PASS unorm8 -> float16 (copy-cross): red is 0.6
+PASS unorm8 -> float16 (copy-cross): green is 0.6
+PASS unorm8 -> float16 (copy-cross): blue is 0
+PASS unorm8 -> float16 (copy-cross): alpha is 1
+PASS unorm8 -> unorm8 (copy-cross): red is 0.6
+PASS unorm8 -> unorm8 (copy-cross): green is 0.6
+PASS unorm8 -> unorm8 (copy-cross): blue is 0
+PASS unorm8 -> unorm8 (copy-cross): alpha is 1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

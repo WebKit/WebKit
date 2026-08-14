@@ -1862,7 +1862,7 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(CanvasBase& sourceCanv
         repaintEntireCanvas = true;
     } else if (state().globalComposite == CompositeOperator::Copy) {
         if (&sourceCanvas == &canvasBase()) {
-            if (auto copy = c->createImageBuffer(normalizedSrcRect.size(), 1, colorSpace())) {
+            if (auto copy = createCompatibleImageBuffer(*c, normalizedSrcRect.size())) {
                 copy->context().drawImageBuffer(*buffer, -normalizedSrcRect.location());
                 clearCanvas();
                 c->drawImageBuffer(*copy, normalizedDstRect, { { }, normalizedSrcRect.size() }, { state().globalComposite, state().globalBlend });
@@ -2097,7 +2097,7 @@ template<class T> void CanvasRenderingContext2DBase::fullCanvasCompositedDrawIma
     if (!c)
         return;
 
-    auto buffer = c->createImageBuffer(bufferRect.size());
+    auto buffer = createCompatibleImageBuffer(*c, bufferRect.size());
     if (!buffer)
         return;
 
@@ -3396,6 +3396,11 @@ RefPtr<ImageBuffer> CanvasRenderingContext2DBase::allocateImageBuffer() const
     if (auto renderingModeForTesting = this->renderingModeForTesting())
         renderingMode = *renderingModeForTesting;
     return ImageBuffer::create(canvasBase().size(), renderingMode, RenderingPurpose::Canvas, 1, colorSpace(), pixelFormat(), scriptExecutionContext->graphicsClient());
+}
+
+RefPtr<ImageBuffer> CanvasRenderingContext2DBase::createCompatibleImageBuffer(GraphicsContext& context, const FloatSize& size) const
+{
+    return context.createImageBuffer(size, colorSpace(), pixelFormat());
 }
 
 } // namespace WebCore
