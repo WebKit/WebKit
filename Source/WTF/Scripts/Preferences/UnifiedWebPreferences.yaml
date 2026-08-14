@@ -6298,7 +6298,7 @@ NavigationAPIEnabled:
 
 NavigationAPIPrecommitHandlerEnabled:
   type: bool
-  status: testable
+  status: stable
   category: dom
   humanReadableName: "Navigation API Precommit Handler"
   humanReadableDescription: "Enable Navigation API Precommit Handler"
@@ -6306,8 +6306,10 @@ NavigationAPIPrecommitHandlerEnabled:
     WebKitLegacy:
       default: false
     WebKit:
+      "PLATFORM(COCOA) || PLATFORM(GTK) || PLATFORM(WPE)": true
       default: false
     WebCore:
+      "PLATFORM(COCOA) || PLATFORM(GTK) || PLATFORM(WPE)": true
       default: false
 
 NavigatorUserAgentDataJavaScriptAPIEnabled:
