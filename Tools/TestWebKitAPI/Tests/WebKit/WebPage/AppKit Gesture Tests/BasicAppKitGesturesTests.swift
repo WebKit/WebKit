@@ -90,11 +90,29 @@ extension AppKitGesturesTests.Basic {
         await page.waitForPendingMouseEvents()
         await page.waitForNextPresentationUpdate()
 
-        let eventLog = try await page.callJavaScript(JavaScriptMessages.EventLog())
+        let actual = try await page.callJavaScript(JavaScriptMessages.EventLog())
+        #expect(actual.map(\.type) == expectedEvents)
+    }
 
-        for eventType in expectedEvents {
-            #expect(eventLog.contains { $0.type == eventType })
+    @Test
+    func singleClickFiresEventsForListenersOnTheDocument() async throws {
+        try await loadHTML()
+
+        let expectedEvents: [DOMEventType] = [.pointerdown, .mousedown, .pointerup, .mouseup, .click]
+
+        try await page.callJavaScript(JavaScriptMessages.InstallEventLog(in: .document, for: expectedEvents))
+
+        let toBounds = try await screenBoundsOfText("to")
+
+        await recap.play { composer in
+            composer._wk_click(at: toBounds.center, for: .seconds(0.05))
         }
+
+        await page.waitForPendingMouseEvents()
+        await page.waitForNextPresentationUpdate()
+
+        let actual = try await page.callJavaScript(JavaScriptMessages.EventLog())
+        #expect(actual.map(\.type) == expectedEvents)
     }
 
     @Test(arguments: [true, false])
