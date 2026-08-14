@@ -10225,7 +10225,7 @@ WebCodecsHEVCEnabled:
 
 WebCodecsImageEnabled:
   type: bool
-  status: testable
+  status: stable
   category: media
   humanReadableName: "WebCodecs Image API"
   humanReadableDescription: "Enable WebCodecs Image API"
@@ -10234,9 +10234,9 @@ WebCodecsImageEnabled:
     WebKitLegacy:
       default: false
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 WebCodecsVideoEnabled:
   type: bool
