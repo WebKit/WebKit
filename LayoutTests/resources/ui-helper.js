@@ -532,6 +532,19 @@ window.UIHelper = class UIHelper {
         });
     }
 
+    static ensureVisibleContentRectAndStablePresentationUpdate()
+    {
+        if (!this.isWebKit2() || !this.isIOSFamily())
+            return UIHelper.renderingUpdate();
+
+        return new Promise(resolve => {
+            testRunner.runUIScript(`
+                uiController.doAfterNextVisibleContentRectAndStablePresentationUpdate(function() {
+                    uiController.uiScriptComplete();
+                });`, resolve);
+        });
+    }
+
     static ensurePositionInformationUpdateForElement(element)
     {
         const boundingRect = element.getBoundingClientRect();

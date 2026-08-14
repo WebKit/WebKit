@@ -1,0 +1,23 @@
+
+Before rotation:
+PASS window.visualViewportBeforeRotations.width == window.initialVisualViewport.width is true
+PASS window.visualViewportBeforeRotations.height == window.initialVisualViewport.height is true
+
+After rotation to landscape:
+PASS window.visualViewportAfterLandscapeRotation.width == internals.layoutViewportRect().width is true
+PASS window.visualViewportAfterLandscapeRotation.height == internals.layoutViewportRect().height is true
+
+Visual viewport's height should be smaller than portrait mode's visual viewport height:
+PASS window.visualViewportAfterLandscapeRotation.height < window.visualViewportBeforeRotations.height is true
+
+After keyboard dismissal while still in landscape mode:
+PASS internals.visualViewportRect().height == internals.layoutViewportRect().height is true
+PASS internals.visualViewportRect().height == window.visualViewportAfterLandscapeRotation.height is true
+
+After rotation back to portrait:
+PASS window.visualViewportBeforeRotations.height == internals.layoutViewportRect().height is true
+PASS internals.visualViewportRect().height > window.visualViewportAfterLandscapeRotation.height is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,46 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, interactive-widget=resizes-content"/>
+    <style>
+        input {
+            width: 400px;
+            height: 50px;
+        }
+    </style>
+    <script src="../../../../resources/js-test.js"></script>
+    <script src="../../../../resources/ui-helper.js"></script>
+</head>
+<body>
+    <input id="input" type="text">
+    <script>
+        jsTestIsAsync = true;
+        addEventListener("load", async () => {
+            let textField = document.querySelector("input");
+            await UIHelper.setHardwareKeyboardAttached(true);
+
+            window.initialLayoutViewport = internals.layoutViewportRect();
+
+            await UIHelper.activateElementAndWaitForInputSession(textField);
+            await UIHelper.ensureVisibleContentRectUpdate();
+            window.inputViewBoundsTopInView = (await UIHelper.inputViewBoundsInWebView()).top;
+            debug("\nAfter focusing the text field with a hardware keyboard attached:");
+
+            shouldBeTrue('internals.visualViewportRect().width == internals.layoutViewportRect().width');
+            shouldBeTrue('Math.abs(internals.visualViewportRect().height - internals.layoutViewportRect().height) <= 1');
+            shouldBeTrue('Math.abs(internals.layoutViewportRect().height - window.inputViewBoundsTopInView) <= 1');
+
+            textField.blur();
+            await UIHelper.ensureVisibleContentRectUpdate();
+            debug("\nAfter blurring the text field:");
+
+            shouldBeTrue('internals.visualViewportRect().width == internals.layoutViewportRect().width');
+            shouldBeTrue('internals.visualViewportRect().height == internals.layoutViewportRect().height');
+            shouldBeTrue('internals.visualViewportRect().height == window.initialLayoutViewport.height');
+
+            finishJSTest();
+        });
+    </script>
+</body>
+
+</html>

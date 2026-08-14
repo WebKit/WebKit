@@ -29,6 +29,13 @@
             shouldBeTrue('window.visualViewport.height == internals.layoutViewportRect().height');
             shouldBeTrue('window.initialLayoutViewportHeight == internals.layoutViewportRect().height');
 
+            // Dismiss the keyboard: the content should remain the same.
+            textField.blur();
+            await UIHelper.waitForKeyboardToHide();
+            await UIHelper.ensurePresentationUpdate();
+
+            shouldBeTrue('window.visualViewport.height == window.initialLayoutViewportHeight');
+            shouldBeTrue('internals.layoutViewportRect().height == window.initialLayoutViewportHeight');
             finishJSTest();
         });
     </script>
