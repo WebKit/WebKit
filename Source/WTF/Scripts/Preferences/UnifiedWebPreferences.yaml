@@ -1504,16 +1504,16 @@ CSSRandomFunctionEnabled:
 CSSRandomItemFunctionEnabled:
   type: bool
   category: css
-  status: testable
+  status: stable
   humanReadableName: "CSS random-item()"
   humanReadableDescription: "Enable support for CSS Values and Units Module Level 5 random-item()"
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 CSSRhythmicSizingEnabled:
   type: bool
