@@ -55,12 +55,13 @@ body:not(.window-inactive, .window-docked-inactive) .tree-outline:focus-within .
 }
 
 .item.recording-action > .titles :is(.object-handle, .receiver, .subtitle) {
-    color: var(--text-color-gray-medium);
+    color: var(--syntax-highlight-symbol-color);
     font-style: italic;
 }
 
 .item.recording-action > .titles .parameter.swizzled {
     color: var(--text-color-gray-medium);
+    font-style: italic;
 }
 
 .item.recording-action > .titles .parameter.constant {
@@ -72,6 +73,11 @@ body:not(.window-inactive, .window-docked-inactive) .tree-outline:focus-within .
 body:not(.window-inactive, .window-docked-inactive) .tree-outline:focus-within .item.recording-action.selected > .titles :is(.object-handle, .parameter.swizzled, .receiver, .subtitle),
 body:not(.window-inactive, .window-docked-inactive) .tree-outline:focus-within .item.recording-action.selected::before {
     color: var(--selected-secondary-text-color);
+}
+
+body:not(.window-inactive, .window-docked-inactive) .tree-outline:focus-within .item.recording-action.selected > .titles :is(.formatted-bigint, .formatted-boolean, .formatted-null, .formatted-number, .formatted-string, .formatted-symbol, .formatted-undefined),
+body:not(.window-inactive, .window-docked-inactive) .tree-outline:focus-within .item.recording-action.selected > .titles .object-preview .name {
+    color: var(--selected-foreground-color);
 }
 
 .tree-outline[data-indent="1"] .item.recording-action::before,
@@ -113,6 +119,10 @@ body:not(.window-inactive, .window-docked-inactive) .tree-outline:focus-within .
 
 .item.recording-action > .titles .parameters > .inline-swatch {
     vertical-align: -1px;
+}
+
+.item.recording-action > .titles .parameter > .formatted-string {
+    white-space: nowrap;
 }
 
 .item.recording-action.composite > .icon {
