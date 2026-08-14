@@ -45,14 +45,30 @@ class TestLayoutTestFailures(unittest.TestCase):
             f"ADD_RESULTS({sample_json});"
         )
         self.assertEqual(sample_failing_tests, failures.failing_tests)
-        self.assertEqual(sample_flaky_tests, failures.flaky_tests)
+        self.assertEqual(sample_flaky_tests, list(failures.flaky_results))
         self.assertEqual(False, failures.did_exceed_test_failure_limit)
 
     def test_results_from_string_valid_json(self):
         failures = LayoutTestFailures.results_from_string(sample_json)
         self.assertEqual(sample_failing_tests, failures.failing_tests)
-        self.assertEqual(sample_flaky_tests, failures.flaky_tests)
+        self.assertEqual(sample_flaky_tests, list(failures.flaky_results))
         self.assertEqual(False, failures.did_exceed_test_failure_limit)
+
+    def test_results_records_the_result_leaf_for_every_reported_test(self):
+        failures = LayoutTestFailures.results_from_string(sample_json)
+        self.assertEqual(sorted(failures.results), sorted(sample_failing_tests + sample_flaky_tests))
+        self.assertEqual(
+            failures.results['fast/scrolling/ios/reconcile-layer-position-recursive.html'],
+            {'report': 'REGRESSION', 'expected': 'PASS', 'actual': 'TEXT'},
+        )
+
+    def test_results_skips_tests_that_are_neither_failing_nor_flaky(self):
+        json_dict = json.loads(sample_json)
+        json_dict['tests']['fast']['expected-crash.html'] = {'expected': 'CRASH', 'actual': 'CRASH'}
+        failures = LayoutTestFailures.results_from_string(json.dumps(json_dict))
+        self.assertNotIn('fast/expected-crash.html', failures.results)
+        self.assertNotIn('fast/expected-crash.html', failures.failing_tests)
+        self.assertNotIn('fast/expected-crash.html', failures.flaky_results)
 
     def test_results_from_string_invalid_json(self):
         failures = LayoutTestFailures.results_from_string(sample_json + " invalid JSON")
@@ -104,5 +120,5 @@ class TestLayoutTestFailures(unittest.TestCase):
 
         failures = LayoutTestFailures.results_from_string(new_json)
         self.assertEqual(sample_failing_tests, failures.failing_tests)
-        self.assertEqual(sample_flaky_tests, failures.flaky_tests)
+        self.assertEqual(sample_flaky_tests, list(failures.flaky_results))
         self.assertEqual(False, failures.did_exceed_test_failure_limit)

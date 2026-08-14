@@ -59,9 +59,9 @@ class EWSContext(UploadCallbackContext):
     class EWSFailedTestsByStartTime(EWSResultsBase):
         __table_name__ = 'ews_failed_tests_by_start_time'
 
-    class EWSFlakyTestsByStartTime(EWSResultsBase):
-        __table_name__ = 'ews_flaky_tests_by_start_time'
-        flaky_type = columns.Text(required=True)  # WithinStepDirtyTree, BetweenStepsDirtyTree, WithinStepCleanTree
+    class EWSFlakesByStartTime(EWSResultsBase):
+        __table_name__ = 'ews_flakes_by_start_time'
+        flaky_type = columns.Text(primary_key=True, required=True)
 
         def unpack(self):
             results = super().unpack()
@@ -80,7 +80,7 @@ class EWSContext(UploadCallbackContext):
 
         with self:
             self.cassandra.create_table(self.EWSFailedTestsByStartTime)
-            self.cassandra.create_table(self.EWSFlakyTestsByStartTime)
+            self.cassandra.create_table(self.EWSFlakesByStartTime)
             self.cassandra.create_table(self.EWSTestNameBySuite)
 
     def record_results(self, configuration, commits, suite, test_results, timestamp=None, flaky_type=None, details=None):
@@ -95,7 +95,7 @@ class EWSContext(UploadCallbackContext):
         ttl = int(ttl) if ttl else None
 
         extra = dict(flaky_type=flaky_type) if flaky_type is not None else {}
-        table = self.EWSFlakyTestsByStartTime if flaky_type is not None else self.EWSFailedTestsByStartTime
+        table = self.EWSFlakesByStartTime if flaky_type is not None else self.EWSFailedTestsByStartTime
 
         with self, self.cassandra.batch_query_context():
             for branch in self.commit_context.branch_keys_for_commits(commits):
@@ -126,7 +126,7 @@ class EWSContext(UploadCallbackContext):
             return [row.test for row in self.cassandra.select_from_table(self.EWSTestNameBySuite.__table_name__, **args)]
 
     def find_for_test(self, configurations, suite, test, flaky, branch=None, recent=True, begin_query_time=None, end_query_time=None, limit=100):
-        table = self.EWSFlakyTestsByStartTime if flaky else self.EWSFailedTestsByStartTime
+        table = self.EWSFlakesByStartTime if flaky else self.EWSFailedTestsByStartTime
 
         def get_time(time):
             return time if isinstance(time, datetime) else datetime.utcfromtimestamp(int(time)) if time else None

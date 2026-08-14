@@ -30,10 +30,15 @@ class LayoutTestFailures(object):
     _JSON_PREFIX = "ADD_RESULTS("
     _JSON_SUFFIX = ");"
 
-    def __init__(self, failing_tests, flaky_tests, did_exceed_test_failure_limit):
-        self.failing_tests = failing_tests
-        self.flaky_tests = flaky_tests
+    # run-webkit-tests reports these for all non-pass results.
+    FAILURE_REPORTS = ('REGRESSION', 'MISSING')
+    FLAKY_REPORTS = ('FLAKY',)
+
+    def __init__(self, results, did_exceed_test_failure_limit):
+        self.results = results
         self.did_exceed_test_failure_limit = did_exceed_test_failure_limit
+        self.flaky_results = {test: result for test, result in results.items() if result.get('report') in self.FLAKY_REPORTS}
+        self.failing_tests = [test for test, result in results.items() if result.get('report') in self.FAILURE_REPORTS]
 
     @classmethod
     def _strip_json_wrapper(cls, json_content):
@@ -56,17 +61,14 @@ class LayoutTestFailures(object):
             _log.info('Exception while parsing layout-test json: %s, json data being parsed: %s', e, string)
             return None
 
-        failing_tests = []
-        flaky_tests = []
+        results = {}
 
-        def get_failing_tests(test, result):
-            if result.get('report') in ['REGRESSION', 'MISSING']:
-                failing_tests.append(test)
-            elif result.get('report') in ['FLAKY']:
-                flaky_tests.append(test)
+        def collect_tests_that_did_not_pass(test, result):
+            if result.get('report') in cls.FAILURE_REPORTS + cls.FLAKY_REPORTS:
+                results[test] = result
 
-        cls.parse_full_results_json(json_dict['tests'], get_failing_tests)
-        return cls(failing_tests, flaky_tests, json_dict.get('interrupted', False))
+        cls.parse_full_results_json(json_dict['tests'], collect_tests_that_did_not_pass)
+        return cls(results, json_dict.get('interrupted', False))
 
     @classmethod
     def parse_full_results_json(cls, tree, handler, prefix=''):

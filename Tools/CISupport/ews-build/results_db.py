@@ -35,7 +35,7 @@ from twisted.internet import defer, reactor
 
 
 class ResultsDatabase(object):
-    HOSTNAME = 'https://results.webkit.org'
+    HOSTNAME = os.environ.get('RESULTS_SERVER_HOST', 'https://results.webkit.org').rstrip('/')
     # TODO: Support more suites (Note, the API we're talking to already does)
     DEFAULT_SUITE = 'layout-tests'
     SUITES = ('layout-tests', 'api-tests', 'safer-cpp-checks', 'javascriptcore-tests')
@@ -78,16 +78,17 @@ class ResultsDatabase(object):
         if commit:
             params['ref'] = commit
 
-        response = yield TwistedAdditions.request(f"{cls.HOSTNAME}/api/{endpoint}/{urllib.parse.quote(suite)}{f'/{urllib.parse.quote(test)}' if test else ''}", params=params, logger=logger)
+        url = f"{cls.HOSTNAME}/api/{endpoint}/{urllib.parse.quote(suite)}{f'/{urllib.parse.quote(test)}' if test else ''}"
+        response = yield TwistedAdditions.request(url, params=params, logger=logger)
 
         if not response:
-            logger(f'No response from {cls.HOSTNAME}\n')
+            logger(f'No response from {url}\n')
             defer.returnValue(None)
             return
         if response.status_code == 200:
             defer.returnValue(response.json())
             return
-        logger(f'Failed to query results summary with status code {response.status_code}\n')
+        logger(f'Failed to query {url} (status {response.status_code})\n{response.content}\n')
         defer.returnValue(None)
 
     @classmethod
@@ -181,10 +182,58 @@ class ResultsDatabase(object):
     @defer.inlineCallbacks
     def has_commit(cls, commit, logger=None):
         response = yield TwistedAdditions.request(f'{cls.HOSTNAME}/api/commits', params=dict(ref=commit), logger=logger)
-        if not response or response.status_code != 200:
-            defer.returnValue(False)
-        else:
-            defer.returnValue(True)
+        defer.returnValue(response and response.status_code == 200)
+
+    @classmethod
+    @defer.inlineCallbacks
+    def report_ews(cls, suite, results, configuration, commits, timestamp, details, flaky_type=None, logger=lambda _: None):
+        if not results:
+            return False
+
+        payload = {
+            'suite': suite,
+            'flaky_type': flaky_type,
+            'configuration': configuration,
+            'commits': commits,
+            'test_results': {'results': results},
+            'timestamp': timestamp,
+            'details': details,
+            'api_key': os.environ.get('RESULTS_SERVER_API_KEY', ''),
+        }
+
+        url = f'{cls.HOSTNAME}/api/upload/ews'
+        label = f'{flaky_type} flaky tests' if flaky_type else 'failed tests'
+        logger(f"Reporting {label} to {url}: {', '.join(sorted(results))}\n")
+        # FIXME: Remove the request and response dumps once reporting has been validated against a
+        # deployed results database. api_key must stay redacted, build logs are not private.
+        logger(f"Request:\n{json.dumps({**payload, 'api_key': '<redacted>'}, indent=2, sort_keys=True)}\n")
+
+        response = yield TwistedAdditions.request(url, type=b'POST', json=payload, logger=logger)
+        if not response:
+            logger(f'No response from {url}, so {label} were not reported\n')
+            return False
+
+        logger(f'Response from {url} ({response.status_code}):\n{response.content}\n')
+        if response.status_code != 200:
+            logger(f'Failed to report {label} (status {response.status_code})\n{response.content}\n')
+            return False
+
+        try:
+            stored = (response.json() or {}).get('tests')
+        except ValueError:
+            logger(f'{url} answered 200 with a body that is not JSON\n{response.content}\n')
+            return False
+
+        if stored is None:
+            logger(f'{url} stored {label}, but does not report which tests\n')
+            return True
+
+        logger(f"Reported {label}: {', '.join(sorted(stored))}\n")
+        dropped = sorted(set(results) - set(stored))
+        if dropped:
+            logger(f"{url} did not store {', '.join(dropped)}\n")
+            return False
+        return True
 
     @classmethod
     def main(cls, args=None):

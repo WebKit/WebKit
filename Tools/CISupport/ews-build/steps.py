@@ -38,6 +38,7 @@ from .results_db import ResultsDatabase
 from .twisted_additions import TwistedAdditions
 from .utils import load_password, get_custom_suffix
 
+import abc
 import json
 import os
 import re
@@ -561,6 +562,134 @@ class AddToLogMixin(object):
         log.addStdout(message)
 
 
+class ResultsDBReportMixin(abc.ABC):
+    """
+    Reports test results to the results database. Hosts supply AddToLogMixin, a `suite`, and
+    call report_to_results_db() once per report as soon as that report is derived.
+    """
+    results_db_log_name = 'results-db'
+    reports_to_results_db = True
+
+    # From Tools/Scripts/libraries/resultsdbpy/resultsdbpy/controller/configuration.py
+    RESULTS_REQUIRED_CONFIG = ['platform', 'is_simulator', 'version', 'architecture']
+    RESULTS_OPTIONAL_CONFIG = ['version_name', 'model', 'style', 'flavor']
+
+    @property
+    @abc.abstractmethod
+    def suite(self) -> str:
+        """The resultsdb suite this step's tests belong to."""
+
+    def results_db_query_configuration(self) -> dict:
+        """Partial config for querying. Fetches all values from the missing dimensions."""
+        configuration = {}
+        if platform := self.getProperty('platform', None):
+            configuration['platform'] = ResultsDatabase.platform_for_query(platform)
+        if (style := self.getProperty('configuration', None)) in ('debug', 'release'):
+            configuration['style'] = style
+        if (flavor := self.getProperty('flavor', None)) in ('wk1', 'wk2'):
+            configuration['flavor'] = flavor
+        return configuration
+
+    def results_db_configuration(self):
+        architecture = self.getProperty('machine_architecture', None) or self.getProperty('architecture', None)
+        return {
+            **self.results_db_query_configuration(),
+            'version': self.getProperty('os_version', None) or None,
+            'architecture': architecture if architecture and ' ' not in architecture else None,
+            'is_simulator': 'simulator' in (self.getProperty('fullPlatform', '') or ''),
+        }
+
+    def results_db_details(self):
+        """Extra build metadata folded into each row's `details` blob, non-queryable."""
+        authors = self.getProperty('owners', []) or [self.getProperty('patch_author', None)]
+        return {
+            'worker': self.getProperty('workername', None),
+            'remote': self.getProperty('remote', None),
+            'pr_number': self.getProperty('github.number', None),
+            'commit_hash': self.getProperty('github.head.sha', None),
+            'retry_count': self.getProperty('retry_count', 0),
+            'authors': [author for author in authors if author],
+            'build_url': f'{self.master.config.buildbotURL}#/builders/{self.build._builderid}/builds/{self.build.number}',
+        }
+
+    def merged_results(self, test_filter, runs):
+        """
+        One result per test in test_filter, across every run in `runs`, which maps a stage name to
+        the property holding that stage's results.
+
+        A single run already reports `actual` as the outcomes of its own retries in the order they
+        happened ('TIMEOUT PASS'), so merging concatenates those sequences and drops repeats without
+        reordering. That flattening loses the run boundaries — 'TEXT PASS TIMEOUT' could be
+        'TEXT PASS' then 'TIMEOUT' or 'TEXT' then 'PASS TIMEOUT' — so each run's own outcome is kept
+        alongside it in actual_by_run. `actual` keeps the shape run-webkit-tests uses, since that is
+        what anything reading it will expect.
+
+        ```
+        self.setProperty('first_run_results', {'foo.html': {'actual': 'CRASH'}})
+        self.setProperty('second_run_results', {'foo.html': {'actual': 'TEXT'}})
+        self.merged_results({'foo.html'}, {'first-run': 'first_run_results', 'second-run': 'second_run_results'})
+        {'foo.html': {'actual': 'CRASH TEXT', 'actual_by_run': {'first-run': 'CRASH', 'second-run': 'TEXT'}}}
+        ```
+        """
+        merged = {}
+        for stage, name in runs.items():
+            for test, result in self.getProperty(name, {}).items():
+                if test not in test_filter:
+                    continue
+
+                prev = merged.get(test, {})
+                seen = f"{prev.get('actual', '')} {result.get('actual', '')}".split()
+                merged[test] = {
+                    **result,
+                    'actual': ' '.join(dict.fromkeys(seen)),
+                    'actual_by_run': {**prev.get('actual_by_run', {}), stage: result.get('actual', '')},
+                }
+        return merged
+
+    @defer.inlineCallbacks
+    def report_to_results_db(self, results, flaky_type=None, stage=None):
+        """
+        Never raises and never returns a step result: an unreachable results database does not
+        change the verdict of the step that ran the tests.
+        """
+        if not self.reports_to_results_db or not results:
+            return False
+
+        config = self.results_db_configuration()
+        if missing := [m for m in self.RESULTS_REQUIRED_CONFIG if config.get(m) is None]:
+            yield self._addToLog(self.results_db_log_name, f"Not reporting to the resultsdb, this build has no {', '.join(missing)}\n")
+            return False
+
+        commit = {
+            'repository_id': 'webkit',
+            'hash': self.getProperty('ews_revision') or self.getProperty('got_revision'),
+            'branch': self.getProperty('github.base.ref', DEFAULT_BRANCH),
+        }
+
+        if commit_timestamp := self.getProperty('commit_timestamp'):
+            commit['timestamp'] = commit_timestamp
+            if identifier := self.getProperty('identifier', None):
+                commit['identifier'] = identifier
+        else:
+            yield self._addToLog(self.results_db_log_name, 'No commit timestamp, so the commit has to be looked up instead of registered\n')
+
+        try:
+            reported = yield ResultsDatabase.report_ews(
+                configuration=config,
+                suite=self.suite,
+                commits=[commit],
+                flaky_type=flaky_type,
+                results=results,
+                timestamp=getattr(self, 'run_started_at', None) or int(time.time()),
+                details={**self.results_db_details(), 'stage': stage},
+                logger=lambda log: self._addToLog(self.results_db_log_name, log),
+            )
+        except Exception as error:
+            yield self._addToLog(self.results_db_log_name, f'Failed to report to the results database: {error}\n')
+            return False
+        return reported
+
+
 class Contributors(object):
     url = f'https://raw.githubusercontent.com/{CANONICAL_GITHUB_PROJECT}/main/metadata/contributors.json'
     contributors = {}
@@ -936,7 +1065,6 @@ class FetchBranches(steps.ShellSequence, ShellMixin):
 
 class ShowIdentifier(shell.ShellCommand):
     name = 'show-identifier'
-    identifier_re = r'^Identifier: (.*)$'
     flunkOnFailure = False
     haltOnFailure = False
 
@@ -956,18 +1084,23 @@ class ShowIdentifier(shell.ShellCommand):
                 revision = candidate
                 break
 
-        self.command = ['python3', 'Tools/Scripts/git-webkit', 'find', revision]
+        # --json reports the commit timestamp as a Unix timestamp
+        self.command = ['python3', 'Tools/Scripts/git-webkit', 'find', revision, '--json']
         rc = yield super().run()
 
         if rc != SUCCESS:
             return defer.returnValue(rc)
 
-        log_text = self.log_observer.getStdout()
-        match = re.search(self.identifier_re, log_text, re.MULTILINE)
-        if match:
-            identifier = match.group(1)
-            if identifier:
-                identifier = identifier.replace('master', DEFAULT_BRANCH)
+        try:
+            commit = json.loads(self.log_observer.getStdout())
+        except json.JSONDecodeError:
+            commit = {}
+
+        if commit_timestamp := commit.get('timestamp'):
+            self.setProperty('commit_timestamp', commit_timestamp)
+
+        if identifier := commit.get('identifier'):
+            identifier = identifier.replace('master', DEFAULT_BRANCH)
             self.setProperty('identifier', identifier)
             if CheckOutSpecificRevision.doCheckOutSpecificRevision(self):
                 step = self.getLastBuildStepByName(CheckOutSpecificRevision.name)
@@ -4203,7 +4336,7 @@ class WaitForCrashCollection(shell.Compile):
         return super().getResultSummary()
 
 
-class RunWebKitTests(shell.Test, AddToLogMixin, ShellMixin):
+class RunWebKitTests(shell.Test, ResultsDBReportMixin, AddToLogMixin, ShellMixin):
     name = 'layout-tests'
     description = ['layout-tests running']
     descriptionDone = ['layout-tests']
@@ -4212,6 +4345,7 @@ class RunWebKitTests(shell.Test, AddToLogMixin, ShellMixin):
     logfiles = {'json': jsonFileName}
     test_failures_log_name = 'test-failures'
     results_db_log_name = 'results-db'
+    suite = 'layout-tests'
     ENABLE_GUARD_MALLOC = False
     ENABLE_ADDITIONAL_ARGUMENTS = True
     EXIT_AFTER_FAILURES = '60'
@@ -4284,6 +4418,12 @@ class RunWebKitTests(shell.Test, AddToLogMixin, ShellMixin):
         self.log_observer_json = logobserver.BufferLogObserver()
         self.addLogObserver('json', self.log_observer_json)
         self.setLayoutTestCommand()
+
+        if self.layout_test_driver == 'DumpRenderTree':
+            self.setProperty('flavor', 'wk1')
+        elif self.layout_test_driver == 'WebKitTestRunner':
+            self.setProperty('flavor', 'wk2')
+
         if SHOULD_FILTER_LOGS is True:
             self.command = self.shell_command(' '.join(quote(str(c)) for c in self.command) + ' 2>&1 | Tools/Scripts/filter-test-logs layout')
         rc = yield super().run()
@@ -4328,6 +4468,7 @@ class RunWebKitTests(shell.Test, AddToLogMixin, ShellMixin):
 
     @defer.inlineCallbacks
     def runCommand(self, command):
+        self.run_started_at = int(time.time())
         yield super().runCommand(command)
 
         yield self._addToLog('json', '\n')
@@ -4340,7 +4481,9 @@ class RunWebKitTests(shell.Test, AddToLogMixin, ShellMixin):
         if first_results:
             self.setProperty('first_results_exceed_failure_limit', first_results.did_exceed_test_failure_limit)
             self.setProperty('first_run_failures', sorted(first_results.failing_tests))
-            self.setProperty('first_run_flakies', sorted(first_results.flaky_tests))
+            self.setProperty('first_run_flakies', sorted(first_results.flaky_results))
+            self.setProperty('first_run_results', first_results.results)
+
             if first_results.failing_tests:
                 yield self._addToLog(self.test_failures_log_name, '\n'.join(first_results.failing_tests))
 
@@ -4349,26 +4492,17 @@ class RunWebKitTests(shell.Test, AddToLogMixin, ShellMixin):
                 self.setProperty('first_run_failures_filtered', sorted(self.failing_tests_filtered))
                 self.setProperty('results-db_first_run_pre_existing', sorted(self.preexisting_failures_in_results_db))
 
+            yield self.report_to_results_db(first_results.flaky_results, flaky_type='WithinStepDirtyTree', stage='first-run')
+
         self._parseRunWebKitTestsOutput(logText)
 
     @defer.inlineCallbacks
     def filter_failures_using_results_db(self, failing_tests):
         self.failing_tests_filtered = failing_tests.copy()
         identifier = self.getProperty('identifier', None)
-        platform = self.getProperty('platform', None)
-        configuration = {}
-        if platform:
-            configuration['platform'] = ResultsDatabase.platform_for_query(platform)
-        style = self.getProperty('configuration', None)
-        if style and style in ['debug', 'release']:
-            configuration['style'] = style
+        configuration = self.results_db_query_configuration()
 
-        if self.layout_test_driver == 'DumpRenderTree':
-            configuration['flavor'] = 'wk1'
-        elif self.layout_test_driver == 'WebKitTestRunner':
-            configuration['flavor'] = 'wk2'
-
-        yield self._addToLog(self.results_db_log_name, f'Checking Results database for failing tests. Identifier: {identifier}, configuration: {configuration}')
+        yield self._addToLog(self.results_db_log_name, f'Checking Results database for failing tests. Identifier: {identifier}, configuration: {configuration}\n')
         has_commit = False
         if failing_tests and identifier:
             has_commit = yield ResultsDatabase.has_commit(commit=identifier)
@@ -4380,6 +4514,7 @@ class RunWebKitTests(shell.Test, AddToLogMixin, ShellMixin):
                 test, configuration=configuration,
                 commit=identifier if has_commit else None,
             )
+
             yield self._addToLog(self.results_db_log_name, f"\n{test}: pass_rate: {data['pass_rate']}, pre-existing-failure={data['is_existing_failure']}\nResponse from results-db: {data['raw_data']}\n{data['logs']}")
             if data['is_existing_failure']:
                 self.preexisting_failures_in_results_db.append(test)
@@ -4494,6 +4629,7 @@ class RunWebKitTests(shell.Test, AddToLogMixin, ShellMixin):
 
 
 class RunWebKitTestsInStressMode(RunWebKitTests):
+    reports_to_results_db = False
     name = 'run-layout-tests-in-stress-mode'
     suffix = 'stress-mode'
     EXIT_AFTER_FAILURES = '10'
@@ -4588,20 +4724,24 @@ class RunWebKitTestsInSiteIsolationMode(RunWebKitTestsInStressMode):
 
 
 class RunWebKitTestsEWSSiteIsolation(RunWebKitTests):
+    reports_to_results_db = False
     name = 'layout-tests-site-isolation'
+
+    def results_db_query_configuration(self) -> dict:
+        # Use flavor='site-isolation' without a platform filter so that results from
+        # Apple-Tahoe-Release-WK2-Site-Isolation-Tree-Tests (the closest post-commit queue)
+        # are consulted. Once a mac-sequoia site-isolation post-commit bot exists its
+        # results will automatically be included as well.
+        configuration = super().results_db_query_configuration()
+        configuration['flavor'] = 'site-isolation'
+        configuration.pop('platform')
+        return configuration
 
     @defer.inlineCallbacks
     def filter_failures_using_results_db(self, failing_tests):
         self.failing_tests_filtered = failing_tests.copy()
         identifier = self.getProperty('identifier', None)
-        # Use flavor='site-isolation' without a platform filter so that results from
-        # Apple-Tahoe-Release-WK2-Site-Isolation-Tree-Tests (the closest post-commit queue)
-        # are consulted. Once a mac-sequoia site-isolation post-commit bot exists its
-        # results will automatically be included as well.
-        configuration = {'flavor': 'site-isolation'}
-        style = self.getProperty('configuration', None)
-        if style and style in ['debug', 'release']:
-            configuration['style'] = style
+        configuration = self.results_db_query_configuration()
 
         yield self._addToLog(self.results_db_log_name, f'Checking Results database for failing tests. Identifier: {identifier}, configuration: {configuration}')
         has_commit = False
@@ -4765,6 +4905,7 @@ class ReRunWebKitTests(RunWebKitTests):
 
     @defer.inlineCallbacks
     def runCommand(self, command):
+        self.run_started_at = int(time.time())
         yield shell.Test.runCommand(self, command)
 
         yield self._addToLog('json', '\n')
@@ -4777,7 +4918,8 @@ class ReRunWebKitTests(RunWebKitTests):
         if second_results:
             self.setProperty('second_results_exceed_failure_limit', second_results.did_exceed_test_failure_limit)
             self.setProperty('second_run_failures', sorted(second_results.failing_tests))
-            self.setProperty('second_run_flakies', sorted(second_results.flaky_tests))
+            self.setProperty('second_run_flakies', sorted(second_results.flaky_results))
+            self.setProperty('second_run_results', second_results.results)
             if second_results.failing_tests:
                 yield self._addToLog(self.test_failures_log_name, '\n'.join(second_results.failing_tests))
 
@@ -4785,6 +4927,17 @@ class ReRunWebKitTests(RunWebKitTests):
                 yield self.filter_failures_using_results_db(second_results.failing_tests)
                 self.setProperty('second_run_failures_filtered', sorted(self.failing_tests_filtered))
                 self.setProperty('results-db_second_run_pre_existing', sorted(self.preexisting_failures_in_results_db))
+
+            yield self.report_to_results_db(second_results.flaky_results, flaky_type='WithinStepDirtyTree', stage='second-run')
+
+            # A test failing one of the two runs and passing the other flaked across the steps.
+            if (first_run_failures := self.getProperty('first_run_failures', None)) is not None:
+                if self.getProperty('first_results_exceed_failure_limit', False) or second_results.did_exceed_test_failure_limit:
+                    yield self._addToLog(self.results_db_log_name, 'A run exceeded the failure limit, so the two runs are not comparable\n')
+                else:
+                    unique_fails = set(first_run_failures) ^ set(second_results.failing_tests)
+                    results = self.merged_results(unique_fails, {'first-run': 'first_run_results', 'second-run': 'second_run_results'})
+                    yield self.report_to_results_db(results, flaky_type='BetweenStepsDirtyTree')
         self._parseRunWebKitTestsOutput(logText)
 
     def send_email_for_flaky_failure(self, test_name):
@@ -4841,6 +4994,7 @@ class RunWebKitTestsWithoutChange(RunWebKitTests):
 
     @defer.inlineCallbacks
     def runCommand(self, command):
+        self.run_started_at = int(time.time())
         yield shell.Test.runCommand(self, command)
 
         yield self._addToLog('json', '\n')
@@ -4852,9 +5006,11 @@ class RunWebKitTestsWithoutChange(RunWebKitTests):
         if clean_tree_results:
             self.setProperty('clean_tree_results_exceed_failure_limit', clean_tree_results.did_exceed_test_failure_limit)
             self.setProperty('clean_tree_run_failures', clean_tree_results.failing_tests)
-            self.setProperty('clean_tree_run_flakies', sorted(clean_tree_results.flaky_tests))
+            self.setProperty('clean_tree_run_flakies', sorted(clean_tree_results.flaky_results))
             if clean_tree_results.failing_tests:
                 yield self._addToLog(self.test_failures_log_name, '\n'.join(clean_tree_results.failing_tests))
+
+            yield self.report_to_results_db(clean_tree_results.flaky_results, flaky_type='WithinStepCleanTree', stage='clean-tree')
         self._parseRunWebKitTestsOutput(logText)
 
     def setLayoutTestCommand(self):
@@ -4911,8 +5067,9 @@ class RunWebKitTestsWithoutChange(RunWebKitTests):
         return positional_test_paths
 
 
-class AnalyzeLayoutTestsResults(buildstep.BuildStep, BugzillaMixin, GitHubMixin):
+class AnalyzeLayoutTestsResults(ResultsDBReportMixin, buildstep.BuildStep, BugzillaMixin, GitHubMixin):
     name = 'analyze-layout-tests-results'
+    suite = 'layout-tests'
     description = ['analyze-layout-test-results']
     descriptionDone = ['analyze-layout-tests-results']
     NUM_FAILURES_TO_DISPLAY = 10
@@ -4923,6 +5080,14 @@ class AnalyzeLayoutTestsResults(buildstep.BuildStep, BugzillaMixin, GitHubMixin)
         if not new_failures:
             message = 'Found unexpected failure with change' if not failure_message else failure_message
         else:
+            self.setProperty('new_failures_introduced_by_patch', sorted(new_failures))
+            runs = {
+                'first-run': 'first_run_results',
+                'second-run': 'second_run_results',
+                'redtree-with-change': 'with_change_repeat_results',
+            }
+            yield self.report_to_results_db(self.merged_results(new_failures, runs))
+
             pluralSuffix = 's' if len(new_failures) > 1 else ''
             if exceed_failure_limit:
                 message = 'Failure limit exceed. At least found'
@@ -5161,7 +5326,7 @@ class AnalyzeLayoutTestsResults(buildstep.BuildStep, BugzillaMixin, GitHubMixin)
                 return defer.returnValue(rc)
             return defer.returnValue(self.retry_build())
 
-        # FIXME: Here it could be a good idea to also use the info of results.flaky_tests from the runs
+        # FIXME: Here it could be a good idea to also use the info of results.flaky_results from the runs
         if self._results_failed_different_tests(first_results_failing_tests, second_results_failing_tests):
             tests_that_only_failed_first = first_results_failing_tests.difference(second_results_failing_tests)
             self._report_flaky_tests(tests_that_only_failed_first)
@@ -5340,6 +5505,7 @@ class RunWebKitTestsRepeatFailuresRedTree(RunWebKitTestsRedTree):
 
     @defer.inlineCallbacks
     def runCommand(self, command):
+        self.run_started_at = int(time.time())
         yield shell.Test.runCommand(self, command)
         yield self._addToLog('json', '\n')
         logText = self.log_observer.getStdout() + self.log_observer.getStderr()
@@ -5348,9 +5514,15 @@ class RunWebKitTestsRepeatFailuresRedTree(RunWebKitTestsRedTree):
         if with_change_repeat_failures_results:
             self.setProperty('with_change_repeat_failures_results_exceed_failure_limit', with_change_repeat_failures_results.did_exceed_test_failure_limit)
             self.setProperty('with_change_repeat_failures_results_nonflaky_failures', sorted(with_change_repeat_failures_results.failing_tests))
-            self.setProperty('with_change_repeat_failures_results_flakies', sorted(with_change_repeat_failures_results.flaky_tests))
+            self.setProperty('with_change_repeat_failures_results_flakies', sorted(with_change_repeat_failures_results.flaky_results))
+            self.setProperty('with_change_repeat_results', with_change_repeat_failures_results.results)
             if with_change_repeat_failures_results.failing_tests:
                 yield self._addToLog(self.test_failures_log_name, '\n'.join(with_change_repeat_failures_results.failing_tests))
+
+            yield self.report_to_results_db(
+                with_change_repeat_failures_results.flaky_results,
+                flaky_type='WithinStepDirtyTree', stage='redtree-with-change',
+            )
         command_timedout = self._did_command_timed_out(self.log_observer.getHeaders())
         self.setProperty('with_change_repeat_failures_timedout', command_timedout)
         self._parseRunWebKitTestsOutput(logText)
@@ -5409,6 +5581,7 @@ class RunWebKitTestsRepeatFailuresWithoutChangeRedTree(RunWebKitTestsRedTree):
 
     @defer.inlineCallbacks
     def runCommand(self, command):
+        self.run_started_at = int(time.time())
         yield shell.Test.runCommand(self, command)
         yield self._addToLog('json', '\n')
         logText = self.log_observer.getStdout() + self.log_observer.getStderr()
@@ -5417,9 +5590,14 @@ class RunWebKitTestsRepeatFailuresWithoutChangeRedTree(RunWebKitTestsRedTree):
         if without_change_repeat_failures_results:
             self.setProperty('without_change_repeat_failures_results_exceed_failure_limit', without_change_repeat_failures_results.did_exceed_test_failure_limit)
             self.setProperty('without_change_repeat_failures_results_nonflaky_failures', sorted(without_change_repeat_failures_results.failing_tests))
-            self.setProperty('without_change_repeat_failures_results_flakies', sorted(without_change_repeat_failures_results.flaky_tests))
+            self.setProperty('without_change_repeat_failures_results_flakies', sorted(without_change_repeat_failures_results.flaky_results))
             if without_change_repeat_failures_results.failing_tests:
                 yield self._addToLog(self.test_failures_log_name, '\n'.join(without_change_repeat_failures_results.failing_tests))
+
+            yield self.report_to_results_db(
+                without_change_repeat_failures_results.flaky_results,
+                flaky_type='WithinStepCleanTree', stage='redtree-without-change',
+            )
         command_timedout = self._did_command_timed_out(self.log_observer.getHeaders())
         self.setProperty('without_change_repeat_failures_timedout', command_timedout)
         self._parseRunWebKitTestsOutput(logText)

@@ -128,6 +128,28 @@ class EWSContextTest(WaitForDockerTestCase):
         self.assertEqual(len(self._find(self.REGRESSION_TEST, flaky=False)), 0)
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
+    def test_both_flaky_types_from_one_run_are_kept(self, redis=StrictRedis, cassandra=CassandraContext):
+        """A re-run reports a test flaky within its own step and flaky across the two steps. Those
+        share a start_time and a commit, so flaky_type has to be part of the key to keep both."""
+        timestamp = int(time.time())
+        self.init_database(redis=redis, cassandra=cassandra, flaky_type='WithinStepDirtyTree', timestamps=[timestamp])
+
+        with MockModelFactory.safari(), MockModelFactory.webkit():
+            MockModelFactory.add_mock_ews_results(
+                test_results=self.DEFAULT_TEST_RESULTS, model=self.model,
+                flaky_type='BetweenStepsDirtyTree', timestamp=timestamp,
+            )
+
+        rows = list(self._find(self.REGRESSION_TEST, flaky=True).values())[0]
+        types_by_run = {}
+        for row in rows:
+            types_by_run.setdefault((row['uuid'], row['start_time']), set()).add(row['flaky_type'])
+
+        self.assertTrue(types_by_run)
+        for run, flaky_types in types_by_run.items():
+            self.assertEqual(flaky_types, {'WithinStepDirtyTree', 'BetweenStepsDirtyTree'}, run)
+
+    @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
     def test_retries_preserved_for_same_commit(self, redis=StrictRedis, cassandra=CassandraContext):
         """EWS may run the same commit more than once. Each run should be preserved as a distinct row in the database."""
         base = int(time.time())
