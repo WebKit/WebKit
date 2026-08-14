@@ -25,13 +25,26 @@
 
 #import "WebPDFDocumentExtras.h"
 
+#import <JavaScriptCore/RegularExpression.h>
 #import <pal/spi/cg/CoreGraphicsSPI.h>
+#import <wtf/NeverDestroyed.h>
+#import <wtf/OptionSet.h>
 #import <wtf/Vector.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/text/ASCIILiteral.h>
+#import <wtf/text/StringView.h>
+#import <wtf/text/WTFString.h>
 
 #if !PLATFORM(IOS_FAMILY)
 #import <Quartz/Quartz.h>
 #endif
+
+static bool isPrintScript(const String& script)
+{
+    static constexpr ASCIILiteral searchExpression = "^.*.\\.print(.*)$"_s;
+    static NeverDestroyed<const JSC::Yarr::RegularExpression> printRegex { StringView { searchExpression }, OptionSet<JSC::Yarr::Flags> { JSC::Yarr::Flags::IgnoreCase } };
+    return printRegex->match(script) != -1;
+}
 
 static void appendValuesInPDFNameSubtreeToVector(CGPDFDictionaryRef subtree, Vector<CGPDFObjectRef>& values)
 {
@@ -64,25 +77,24 @@ static void getAllValuesInPDFNameTree(CGPDFDictionaryRef tree, Vector<CGPDFObjec
     appendValuesInPDFNameSubtreeToVector(tree, allValues);
 }
 
-NSArray *allScriptsInPDFDocument(CGPDFDocumentRef pdfDocument)
+bool pdfDocumentContainsPrintScript(CGPDFDocumentRef pdfDocument)
 {
-    NSMutableArray *scripts = [NSMutableArray array];
     if (!pdfDocument)
-        return scripts;
+        return false;
 
     CGPDFDictionaryRef pdfCatalog = CGPDFDocumentGetCatalog(pdfDocument);
     if (!pdfCatalog)
-        return scripts;
+        return false;
 
     // Get the dictionary of all document-level name trees.
     CGPDFDictionaryRef namesDictionary;
     if (!CGPDFDictionaryGetDictionary(pdfCatalog, "Names", &namesDictionary))
-        return scripts;
+        return false;
 
     // Get the document-level "JavaScript" name tree.
     CGPDFDictionaryRef javaScriptNameTree;
     if (!CGPDFDictionaryGetDictionary(namesDictionary, "JavaScript", &javaScriptNameTree))
-        return scripts;
+        return false;
 
     // The names are arbitrary. We are only interested in the values.
     Vector<CGPDFObjectRef> objects;
@@ -122,15 +134,16 @@ NSArray *allScriptsInPDFDocument(CGPDFDocumentRef pdfDocument)
         if (!script)
             continue;
 
-        [scripts addObject:script.get()];
+        if (isPrintScript(script.get()))
+            return true;
     }
 
-    return scripts;
+    return false;
 }
 
 #if !PLATFORM(IOS_FAMILY)
-NSArray *allScriptsInPDFDocument(PDFDocument *document)
+bool pdfDocumentContainsPrintScript(PDFDocument *document)
 {
-    return allScriptsInPDFDocument([document documentRef]);
+    return pdfDocumentContainsPrintScript([document documentRef]);
 }
 #endif

@@ -216,7 +216,6 @@ list(APPEND WebKitLegacy_SOURCES
     mac/WebView/WebGeolocationPosition.mm
     mac/WebView/WebHTMLRepresentation.mm
     mac/WebView/WebIndicateLayer.mm
-    mac/WebView/WebJSPDFDoc.mm
     mac/WebView/WebMediaPlaybackTargetPicker.mm
     mac/WebView/WebNavigationData.mm
     mac/WebView/WebNotification.mm
@@ -667,7 +666,6 @@ set(WebKitLegacy_LEGACY_FORWARDING_HEADERS_FILES
     mac/WebView/WebHistoryDelegate.h
     mac/WebView/WebImmediateActionController.h
     mac/WebView/WebIndicateLayer.h
-    mac/WebView/WebJSPDFDoc.h
     mac/WebView/WebMediaPlaybackTargetPicker.h
     mac/WebView/WebNavigationData.h
     mac/WebView/WebNotification.h
@@ -1013,7 +1011,6 @@ set(_wkl_excluded_for_ios
     WebIndicateLayer.h
     WebInspectorClient.h
     WebInspectorFrontend.h
-    WebJSPDFDoc.h
     WebJavaScriptTextInputPanel.h
     WebKitFullScreenListener.h
     WebKitLogging.h
@@ -1705,7 +1702,6 @@ set(WebKitLegacy_PROJECT_HEADERS
     mac/WebView/WebHistoryDelegate.h
     mac/WebView/WebImmediateActionController.h
     mac/WebView/WebIndicateLayer.h
-    mac/WebView/WebJSPDFDoc.h
     mac/WebView/WebMediaPlaybackTargetPicker.h
     mac/WebView/WebNotificationInternal.h
     mac/WebView/WebPDFDocumentExtras.h

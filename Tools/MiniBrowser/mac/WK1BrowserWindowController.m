@@ -485,6 +485,11 @@ static BOOL areEssentiallyEqual(double a, double b)
     return WebDragDestinationActionAny;
 }
 
+- (void)webView:(WebView *)sender printFrameView:(WebFrameView *)frameView
+{
+    [[frameView printOperationWithPrintInfo:[NSPrintInfo sharedPrintInfo]] runOperationModalForWindow:self.window delegate:nil didRunSelector:nil contextInfo:nil];
+}
+
 - (NSImage *)windowSnapshotInRect:(CGRect)rect
 {
     return [_webView _windowSnapshotInRect:rect withOptions:kCGWindowImageBoundsIgnoreFraming];

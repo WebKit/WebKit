@@ -1132,6 +1132,7 @@
 				WebKitLegacy/mac/DownloadThread.mm,
 				WebKitLegacy/mac/EarlyKVOCrash.mm,
 				WebKitLegacy/mac/EmbeddedPrintPagination.mm,
+				WebKitLegacy/mac/PDFEmbeddedPrintScript.mm,
 				WebKitLegacy/mac/PreventImageLoadWithAutoResizing.mm,
 				WebKitLegacy/mac/URLExtras.mm,
 				WebKitLegacy/mac/UserContentTest.mm,

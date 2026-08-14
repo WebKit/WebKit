@@ -61,7 +61,7 @@ mac/WebView/WebGeolocationPosition.mm
 mac/WebView/WebHTMLRepresentation.mm
 mac/WebView/WebHTMLView.mm
 [ Mac ] mac/WebView/WebImmediateActionController.mm
-mac/WebView/WebJSPDFDoc.mm
+[ macOS ] mac/WebView/WebJSPDFDoc.mm
 mac/WebView/WebNavigationData.mm
 mac/WebView/WebNotification.mm
 [ Mac ] mac/WebView/WebPDFDocumentExtras.mm
