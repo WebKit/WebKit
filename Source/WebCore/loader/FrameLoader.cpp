@@ -3434,6 +3434,13 @@ void FrameLoader::frameDetached()
     // Calling stopAllLoadersAndCheckCompleteness() can cause the frame to be deallocated, including the frame loader.
     Ref frame = m_frame.get();
 
+    // https://html.spec.whatwg.org/multipage/document-sequences.html#destroy-a-child-navigable
+    // Step 4: Inform the navigation API about child navigable destruction
+    if (RefPtr document = frame->document(); document && document->settings().navigationAPIEnabled()) {
+        if (RefPtr window = document->window())
+            protect(window->navigation())->informAboutChildNavigableDestruction();
+    }
+
     if (m_checkTimer.isActive()) {
         m_checkTimer.stop();
         checkCompletenessNow();

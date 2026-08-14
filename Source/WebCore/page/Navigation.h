@@ -166,6 +166,8 @@ public:
 
     RefPtr<NavigationActivation> createForPageswapEvent(HistoryItem* newItem, DocumentLoader*, bool fromBackForwardCache);
 
+    void informAboutChildNavigableDestruction();
+
     void abortOngoingNavigationIfNeeded();
 
     NavigationHistoryEntry* findEntryByKey(const String&) const;
@@ -291,6 +293,7 @@ private:
         void setUpcomingNonTraverse(Ref<NavigationAPIMethodTracker>&&) WTF_EXCLUDES_LOCK(m_lock);
         void addUpcomingTraverse(const String& key, Ref<NavigationAPIMethodTracker>&&) WTF_EXCLUDES_LOCK(m_lock);
         NavigationAPIMethodTracker* upcomingTraverse(const String& key) const WTF_EXCLUDES_LOCK(m_lock);
+        Vector<Ref<NavigationAPIMethodTracker>> upcomingTraverseTrackers() const WTF_EXCLUDES_LOCK(m_lock);
         NavigationAPIMethodTracker* ongoing() const WTF_EXCLUDES_LOCK(m_lock);
 
         RefPtr<NavigationAPIMethodTracker> takeUpcomingNonTraverseIfEquals(NavigationAPIMethodTracker&) WTF_EXCLUDES_LOCK(m_lock);

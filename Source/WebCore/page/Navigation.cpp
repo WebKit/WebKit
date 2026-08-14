@@ -924,6 +924,15 @@ NavigationAPIMethodTracker* Navigation::MethodTrackerRegistry::upcomingTraverse(
     return m_upcomingTraverse.get(key);
 }
 
+Vector<Ref<NavigationAPIMethodTracker>> Navigation::MethodTrackerRegistry::upcomingTraverseTrackers() const
+{
+    assertIsMainThread();
+    Locker locker { m_lock };
+    return WTF::map(m_upcomingTraverse.values(), [](auto& tracker) {
+        return Ref { tracker };
+    });
+}
+
 NavigationAPIMethodTracker* Navigation::MethodTrackerRegistry::ongoing() const
 {
     assertIsMainThread();
@@ -1607,6 +1616,19 @@ void Navigation::abortOngoingNavigationIfNeeded()
 {
     if (RefPtr ongoingNavigateEvent = m_ongoingNavigateEvent)
         abortOngoingNavigation(*ongoingNavigateEvent);
+}
+
+// https://html.spec.whatwg.org/multipage/nav-history-apis.html#inform-the-navigation-api-about-child-navigable-destruction
+void Navigation::informAboutChildNavigableDestruction()
+{
+    RefPtr context = scriptExecutionContext();
+    if (!context || context->activeDOMObjectsAreSuspended() || context->activeDOMObjectsAreStopped())
+        return;
+
+    abortOngoingNavigationIfNeeded();
+
+    for (Ref tracker : m_methodTrackers.upcomingTraverseTrackers())
+        rejectFinishedPromise(tracker.ptr());
 }
 
 // https://html.spec.whatwg.org/multipage/browsing-the-web.html#getting-session-history-entries-for-the-navigation-api
