@@ -27,6 +27,7 @@
 #include <JavaScriptCore/JSContextRef.h>
 #include <jsc/jsc.h>
 #include <wtf/HashSet.h>
+#include <wtf/MainThread.h>
 #include <wtf/Threading.h>
 #include <wtf/Vector.h>
 #include <wtf/glib/GRefPtr.h>
@@ -4822,6 +4823,7 @@ static void testJSCJSON()
 int main(int argc, char** argv)
 {
     g_test_init(&argc, &argv, nullptr);
+    WTF::initializeMainThread();
 
     // options should always be the first test, since changing options
     // is not allowed after the first VM instance is created.
