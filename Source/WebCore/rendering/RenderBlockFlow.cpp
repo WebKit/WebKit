@@ -102,6 +102,7 @@ bool RenderBlock::s_canPropagateFloatIntoSibling = false;
 struct SameSizeAsMarginInfo {
     uint32_t bitfields : 16;
     LayoutUnit margins[2];
+    LayoutUnit marginBeforeWithClearance;
 };
 
 static_assert(sizeof(MarginValues) == sizeof(LayoutUnit[4]), "MarginValues should stay small");
@@ -160,7 +161,7 @@ RenderBlockFlow::MarginInfo::MarginInfo(const RenderBlockFlow& block, IgnoreScro
     m_negativeMargin = m_canCollapseMarginBeforeWithChildren ? block.maxNegativeMarginBefore() : 0_lu;
 }
 
-RenderBlockFlow::MarginInfo::MarginInfo(bool canCollapseWithChildren, bool canCollapseMarginBeforeWithChildren, bool canCollapseMarginAfterWithChildren, bool quirkContainer, bool atBeforeSideOfBlock, bool atAfterSideOfBlock,  bool hasMarginBeforeQuirk, bool hasMarginAfterQuirk, bool determinedMarginBeforeQuirk, LayoutUnit positiveMargin, LayoutUnit negativeMargin)
+RenderBlockFlow::MarginInfo::MarginInfo(bool canCollapseWithChildren, bool canCollapseMarginBeforeWithChildren, bool canCollapseMarginAfterWithChildren, bool quirkContainer, bool atBeforeSideOfBlock, bool atAfterSideOfBlock,  bool hasMarginBeforeQuirk, bool hasMarginAfterQuirk, bool determinedMarginBeforeQuirk, LayoutUnit positiveMargin, LayoutUnit negativeMargin, LayoutUnit marginBeforeWithClearance)
     : m_canCollapseWithChildren(canCollapseWithChildren)
     , m_canCollapseMarginBeforeWithChildren(canCollapseMarginBeforeWithChildren)
     , m_canCollapseMarginAfterWithChildren(canCollapseMarginAfterWithChildren)
@@ -172,6 +173,7 @@ RenderBlockFlow::MarginInfo::MarginInfo(bool canCollapseWithChildren, bool canCo
     , m_determinedMarginBeforeQuirk(determinedMarginBeforeQuirk)
     , m_positiveMargin(positiveMargin)
     , m_negativeMargin(negativeMargin)
+    , m_marginBeforeWithClearance(marginBeforeWithClearance)
 {
 }
 

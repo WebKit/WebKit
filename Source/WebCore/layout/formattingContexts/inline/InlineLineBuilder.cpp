@@ -1428,6 +1428,8 @@ void LineBuilder::handleBlockContent(const InlineItem& blockItem)
         if (auto blockMargin = marginState.margin())
             m_lineLogicalRect = { m_lineLogicalRect.top() - blockMargin, m_lineInitialLogicalRect.left(), m_lineInitialLogicalRect.width(), m_lineInitialLogicalRect.height() };
     }
+    // Block layout places this margin from its own position, where the clearance is accounted for already.
+    marginState.marginBeforeWithClearance = { };
 
     formattingContext().integrationUtils().layoutWithFormattingContextForBlockInInline(downcast<ElementBox>(blockItem.layoutBox()), LayoutPoint { m_lineLogicalRect.topLeft() }, layoutState());
     auto contentWidth = InlineLayoutUnit { };

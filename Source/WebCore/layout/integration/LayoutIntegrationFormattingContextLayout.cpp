@@ -240,7 +240,7 @@ void layoutWithFormattingContextForBlockInInline(const Layout::ElementBox& block
         auto& blockGeometry = layoutState.ensureGeometryForBox(block);
         auto borderBoxTop = LayoutUnit { };
 
-        auto contentOffsetAfterSelfCollapsingBlock = blockRenderer->isSelfCollapsingBlock() ? positionAndMargin.childLogicalTop - positionAndMargin.containerLogicalBottom : 0_lu;
+        auto contentOffsetAfterSelfCollapsingBlock = blockRenderer->isSelfCollapsingBlock() ? std::max(0_lu, positionAndMargin.childLogicalTop - positionAndMargin.containerLogicalBottom) : 0_lu;
         if (contentOffsetAfterSelfCollapsingBlock) {
             // This is where "next line top position" diverges from "current line's bottom".
             // See the last paragraph at https://www.w3.org/TR/CSS22/box.html#collapsing-margins
@@ -250,19 +250,23 @@ void layoutWithFormattingContextForBlockInInline(const Layout::ElementBox& block
             blockGeometry.setVerticalMargin({ { }, { } });
         } else {
             borderBoxTop = positionAndMargin.childLogicalTop - blockLineLogicalTopLeft.y();
-            auto forcedBreakAfterAdvance = LayoutUnit { };
-            if (alwaysPageBreak(blockRenderer->style().breakAfter())) {
-                // A forced break after the box moves the container's logical height to the top of the next page.
-                forcedBreakAfterAdvance = std::max(0_lu, positionAndMargin.containerLogicalBottom - positionAndMargin.childLogicalTop - blockRenderer->logicalHeight());
-            }
-            blockGeometry.setVerticalMargin({ borderBoxTop, forcedBreakAfterAdvance });
+            auto advanceAfter = LayoutUnit { };
+            if (alwaysPageBreak(blockRenderer->style().breakAfter()) || blockRenderer->isSelfCollapsingBlock())
+                advanceAfter = std::max(0_lu, positionAndMargin.containerLogicalBottom - positionAndMargin.childLogicalTop - blockRenderer->logicalHeight());
+            blockGeometry.setVerticalMargin({ borderBoxTop, advanceAfter });
         }
         blockGeometry.setTopLeft(LayoutPoint { blockGeometry.marginStart(), borderBoxTop });
 
         updateIFCLineClampAfterLayout(inlineLayoutState, renderTreeLayoutState, blockRenderer.get());
         // Floats are positioned relative to their containing block's border box, which sits at borderBoxTop within the line (see setTopLeft above) and not at the line's top left.
         populateIFCWithNewlyPlacedFloats(blockRenderer.get(), placedFloats, blockLineLogicalTopLeft + LayoutSize { blockGeometry.marginStart(), borderBoxTop });
-        parentBlockLayoutState.marginState() = Layout::IntegrationUtils::toMarginState(positionAndMargin.marginInfo);
+        auto marginState = Layout::IntegrationUtils::toMarginState(positionAndMargin.marginInfo);
+        // This box's clearance sits above its margin before, so that margin is behind the position the content after
+        // the box starts at, even though the box keeps it for that content (CSS 2.2 8.3.1, 9.5.2). A negative margin
+        // before is not above the border box at all, which is why this is the positive part only.
+        if (auto marginBeforeWithClearance = rootBlockContainer->selfCollapsingMarginBeforeWithClear(blockRenderer.ptr()))
+            marginState.marginBeforeWithClearance = *marginBeforeWithClearance;
+        parentBlockLayoutState.marginState() = marginState;
     };
     updateIFCAfterLayout();
 }
