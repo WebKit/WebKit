@@ -1,0 +1,9 @@
+cssom
+class
+selection
+PASS CONTROL element's own background-color
+PASS CSSOM edit of a matching ::highlight() rule
+PASS CSSOM edit after getComputedStyle() cached the pseudo style
+PASS class change that starts matching .classy::highlight()
+FAIL (no repaint) CSSOM edit of a matching ::selection rule
+

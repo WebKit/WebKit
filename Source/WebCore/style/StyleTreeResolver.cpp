@@ -436,8 +436,10 @@ auto TreeResolver::resolveElement(Element& element, const Style::ComputedStyle* 
     // Re-resolve any that were previously cached.
     if (existingStyle) {
         for (auto& [identifier, _] : existingStyle->pseudoElementStyles()) {
-            if (isHighlightPseudoElement(identifier.type))
-                resolveAndAddPseudoElementStyle(identifier);
+            // Highlight pseudo-elements inherit from the corresponding pseudo-element of the parent,
+            // so a change has to reach the descendants too.
+            if (isHighlightPseudoElement(identifier.type) && resolveAndAddPseudoElementStyle(identifier))
+                descendantsToResolve = DescendantsToResolve::All;
         }
     }
 

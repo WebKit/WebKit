@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Repaint tracking for ::highlight() and ::selection rule changes</title>
+<style>
+  body { margin: 0; font: 40px/1.5 monospace; }
+  #cssomTarget::highlight(h) { background-color: yellow; }
+  .classy::highlight(h) { background-color: lime; }
+  #selectionTarget::selection { background-color: yellow; }
+</style>
+<div id="cssomTarget">cssom</div>
+<div id="classTarget">class</div>
+<div id="selectionTarget">selection</div>
+<pre id="log"></pre>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText(false);
+    testRunner.waitUntilDone();
+}
+
+const log = message => document.getElementById("log").textContent += message + "\n";
+
+const range = element => {
+    const r = new Range();
+    r.selectNodeContents(element);
+    return r;
+};
+
+CSS.highlights.set("h", new Highlight(range(cssomTarget), range(classTarget)));
+getSelection().removeAllRanges();
+getSelection().addRange(range(selectionTarget));
+
+const ruleFor = id => [...document.styleSheets[0].cssRules].find(rule => rule.selectorText && rule.selectorText.includes(id));
+
+// A mutation confined to a highlight pseudo-element must still repaint the originating element.
+// FIXME: ::selection still reports NO REPAINT, because selectionPseudoStyle() resolves without
+// caching, so there is no previous value to compare against.
+// These cases depend on the highlight pseudo styles having been resolved and cached by painting,
+// the way they are on a real page. A display with nothing dirty may not repaint the text at all, so
+// dirty the page first, otherwise there is no previous style to compare against and the test is flaky.
+async function paint() {
+    document.body.style.backgroundColor = document.body.style.backgroundColor === "white" ? "rgb(255, 255, 254)" : "white";
+    await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+    await testRunner.displayAndTrackRepaints();
+}
+
+async function check(name, mutate) {
+    await paint();
+    internals.startTrackingRepaints();
+    mutate();
+    document.body.offsetTop;
+    const rects = internals.repaintRectsAsText();
+    internals.stopTrackingRepaints();
+    // Every case here should repaint the originating element.
+    log(`${rects.trim() ? "PASS" : "FAIL (no repaint)"} ${name}`);
+}
+
+async function run() {
+    // Control: an ordinary change to an element's own style must repaint.
+    await check("CONTROL element's own background-color", () => {
+        cssomTarget.style.outline = "2px solid blue";
+    });
+
+    await check("CSSOM edit of a matching ::highlight() rule", () => {
+        ruleFor("cssomTarget").style.backgroundColor = "red";
+    });
+
+    // Same edit, but the pseudo style has been cached on the element by a getComputedStyle() query.
+    getComputedStyle(cssomTarget, "::highlight(h)").backgroundColor;
+    await check("CSSOM edit after getComputedStyle() cached the pseudo style", () => {
+        ruleFor("cssomTarget").style.backgroundColor = "blue";
+    });
+
+    await check("class change that starts matching .classy::highlight()", () => {
+        classTarget.className = "classy";
+    });
+
+    await check("CSSOM edit of a matching ::selection rule", () => {
+        ruleFor("selectionTarget").style.backgroundColor = "red";
+    });
+    testRunner.notifyDone();
+}
+
+if (window.testRunner && window.internals)
+    run();
+else
+    log("needs testRunner and internals");
+</script>

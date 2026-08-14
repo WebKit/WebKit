@@ -777,11 +777,23 @@ void Scope::didChangeViewportSize()
         return;
     }
 
+    // Lazily resolved pseudo-element styles are cached on the element's style and only re-resolved
+    // when the element is invalidated, so their viewport units have to be accounted for here too.
+    auto usesViewportUnits = [](const Style::ComputedStyle& style) {
+        if (style.usesViewportUnits())
+            return true;
+        for (auto& [identifier, pseudoElementStyle] : style.pseudoElementStyles()) {
+            if (pseudoElementStyle->usesViewportUnits())
+                return true;
+        }
+        return false;
+    };
+
     // FIXME: Ideally, we should save the list of elements that have viewport units and only iterate over those.
     for (RefPtr element = ElementTraversal::firstWithin(rootNode); element; element = ElementTraversal::nextIncludingPseudo(*element)) {
         bool styleableHasViewportUnitAnimation = Styleable::fromElement(*element).viewportSizeDidChange();
         auto* renderer = element->renderer();
-        if (styleableHasViewportUnitAnimation || (renderer && renderer->style().usesViewportUnits()))
+        if (styleableHasViewportUnitAnimation || (renderer && usesViewportUnits(renderer->style())))
             element->invalidateStyle();
     }
 }
