@@ -758,11 +758,19 @@ void Navigation::recursivelyDisposeOfForwardEntriesInParents(BackForwardItemIden
     if (!index)
         return;
 
-    for (size_t i = *index + 1; i < m_entries.size(); i++)
-        Ref { m_entries[i] }->dispatchDisposeEvent();
+    auto disposedEntries = m_entries.subvector(*index + 1);
 
     m_currentEntryIndex = index;
     m_entries.resize(*m_currentEntryIndex + 1);
+
+    // The entry list and current entry index must be updated before dispatching, so that
+    // dispose handlers do not observe the entries they are being notified about.
+    for (auto& disposedEntry : disposedEntries)
+        disposedEntry->dispatchDisposeEvent();
+
+    // Dispatching above ran author script, which may have detached this frame.
+    if (!frame())
+        return;
 
     for (RefPtr child = frame()->tree().firstChild(); child; child = child->tree().nextSibling()) {
         RefPtr localChild = dynamicDowncast<LocalFrame>(child.get());
