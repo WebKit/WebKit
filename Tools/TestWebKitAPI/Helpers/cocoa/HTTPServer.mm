@@ -121,14 +121,57 @@ static bool shouldDisableTLS(HTTPServer::Protocol protocol)
     case HTTPServer::Protocol::HttpsWithLegacyTLS:
     case HTTPServer::Protocol::Http2Raw:
     case HTTPServer::Protocol::Http2:
+    case HTTPServer::Protocol::Http3:
         return false;
     }
 }
+
+#if HAVE(NETWORK_FRAMEWORK_HTTP_MESSAGING)
+
+static void attachHTTPMessagingListener(nw_parameters_t parameters)
+{
+    nw_parameters_set_server_mode(parameters, true);
+    nw_parameters_set_attach_protocol_listener(parameters, true);
+    RetainPtr stack = adoptNS(nw_parameters_copy_default_protocol_stack(parameters));
+    RetainPtr httpOptions = adoptNS(nw_http_messaging_create_options());
+    nw_protocol_stack_prepend_application_protocol(stack.get(), httpOptions.get());
+}
+
+static RetainPtr<nw_parameters_t> quicListenerParameters(HTTPServer::CertificateVerifier&& verifier, RetainPtr<SecIdentityRef>&& testIdentity, std::optional<uint16_t> port)
+{
+    RetainPtr identity = adoptNS(sec_identity_create(testIdentity.get()));
+    auto configureQuicConnection = [verifier = WTF::move(verifier), identity = WTF::move(identity)] (nw_protocol_options_t quicConnectionOptions) mutable {
+        RetainPtr options = adoptNS(nw_quic_connection_copy_sec_protocol_options(quicConnectionOptions));
+        sec_protocol_options_set_local_identity(options.get(), identity.get());
+        if (verifier) {
+            sec_protocol_options_set_peer_authentication_required(options.get(), true);
+            sec_protocol_options_set_verify_block(options.get(), makeBlockPtr([verifier = WTF::move(verifier)](sec_protocol_metadata_t metadata, sec_trust_t trust, sec_protocol_verify_complete_t completion) {
+                verifier(metadata, trust, completion);
+            }).get(), mainDispatchQueueSingleton());
+        }
+        sec_protocol_options_add_transport_specific_application_protocol(options.get(), "h3", sec_protocol_transport_quic);
+    };
+
+    RetainPtr parameters = adoptNS(nw_parameters_create_quic_stream(^(nw_protocol_options_t options) {
+        nw_quic_stream_set_is_unidirectional(options, true);
+    }, makeBlockPtr(WTF::move(configureQuicConnection)).get()));
+    if (port)
+        nw_parameters_set_local_endpoint(parameters.get(), nw_endpoint_create_host("::", makeString(*port).utf8().data()));
+    attachHTTPMessagingListener(parameters.get());
+    return parameters;
+}
+
+#endif // HAVE(NETWORK_FRAMEWORK_HTTP_MESSAGING)
 
 RetainPtr<nw_parameters_t> HTTPServer::listenerParameters(Protocol protocol, CertificateVerifier&& verifier, RetainPtr<SecIdentityRef>&& customTestIdentity, std::optional<uint16_t> port)
 {
     if (protocol != Protocol::Http && !customTestIdentity)
         customTestIdentity = testIdentity();
+
+#if HAVE(NETWORK_FRAMEWORK_HTTP_MESSAGING)
+    if (protocol == Protocol::Http3)
+        return quicListenerParameters(WTF::move(verifier), WTF::move(customTestIdentity), port);
+#endif
 
     auto configureTLS = [protocol, verifier = WTF::move(verifier), testIdentity = WTF::move(customTestIdentity)] (nw_protocol_options_t protocolOptions) mutable {
         RetainPtr options = adoptNS(nw_tls_copy_sec_protocol_options(protocolOptions));
@@ -166,13 +209,8 @@ RetainPtr<nw_parameters_t> HTTPServer::listenerParameters(Protocol protocol, Cer
     }
 
 #if HAVE(NETWORK_FRAMEWORK_HTTP_MESSAGING)
-    if (protocol == Protocol::Http2) {
-        nw_parameters_set_server_mode(parameters.get(), true);
-        nw_parameters_set_attach_protocol_listener(parameters.get(), true);
-        RetainPtr stack = adoptNS(nw_parameters_copy_default_protocol_stack(parameters.get()));
-        RetainPtr httpOptions = adoptNS(nw_http_messaging_create_options());
-        nw_protocol_stack_prepend_application_protocol(stack.get(), httpOptions.get());
-    }
+    if (protocol == Protocol::Http2)
+        attachHTTPMessagingListener(parameters.get());
 #endif
 
     return parameters;
@@ -248,7 +286,7 @@ HTTPServer::HTTPServer(
         requestData->connections.append(Connection(connection));
         nw_connection_set_queue(connection, mainDispatchQueueSingleton());
         nw_connection_start(connection);
-        if (protocol == Protocol::Http2) {
+        if (protocol == Protocol::Http2 || protocol == Protocol::Http3) {
 #if HAVE(NETWORK_FRAMEWORK_HTTP_MESSAGING)
             respondToHTTPMessagingRequests(Connection(connection), requestData);
 #else
@@ -567,6 +605,7 @@ const char* HTTPServer::scheme() const
     case Protocol::HttpsWithLegacyTLS:
     case Protocol::Http2Raw:
     case Protocol::Http2:
+    case Protocol::Http3:
         scheme = "https";
         break;
     case Protocol::HttpsProxy:

@@ -66,6 +66,7 @@ public:
         HttpsWithLegacyTLS,
         Http2Raw,
         Http2,
+        Http3,
         HttpsProxy,
         HttpsProxyWithAuthentication
     };
