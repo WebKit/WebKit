@@ -20,12 +20,12 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  */
 
 #include "config.h"
-#include "ConstantPropertyMap.h"
+#include "StyleEnvironmentVariables.h"
 
 #include "CSSCustomPropertyValue.h"
 #include "CSSParserTokenRange.h"
@@ -36,22 +36,23 @@
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+namespace Style {
 
-WTF_MAKE_TZONE_ALLOCATED_IMPL(ConstantPropertyMap);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(EnvironmentVariables);
 
-ConstantPropertyMap::ConstantPropertyMap(Document& document)
+EnvironmentVariables::EnvironmentVariables(Document& document)
     : m_document(document)
 {
 }
 
-const ConstantPropertyMap::Values& ConstantPropertyMap::values() const
+const EnvironmentVariables::Values& EnvironmentVariables::values() const
 {
     if (!m_values)
-        const_cast<ConstantPropertyMap&>(*this).buildValues();
+        const_cast<EnvironmentVariables&>(*this).buildValues();
     return *m_values;
 }
 
-const AtomString& ConstantPropertyMap::nameForProperty(ConstantProperty property) const
+const AtomString& EnvironmentVariables::nameForVariable(UADefinedVariable variable) const
 {
     static MainThreadNeverDestroyed<const AtomString> safeAreaInsetTopName("safe-area-inset-top"_s);
     static MainThreadNeverDestroyed<const AtomString> safeAreaInsetRightName("safe-area-inset-right"_s);
@@ -63,45 +64,45 @@ const AtomString& ConstantPropertyMap::nameForProperty(ConstantProperty property
     static MainThreadNeverDestroyed<const AtomString> fullscreenInsetRightName("fullscreen-inset-right"_s);
     static MainThreadNeverDestroyed<const AtomString> fullscreenAutoHideDurationName("fullscreen-auto-hide-duration"_s);
 
-    switch (property) {
-    case ConstantProperty::SafeAreaInsetTop:
+    switch (variable) {
+    case UADefinedVariable::SafeAreaInsetTop:
         return safeAreaInsetTopName;
-    case ConstantProperty::SafeAreaInsetRight:
+    case UADefinedVariable::SafeAreaInsetRight:
         return safeAreaInsetRightName;
-    case ConstantProperty::SafeAreaInsetBottom:
+    case UADefinedVariable::SafeAreaInsetBottom:
         return safeAreaInsetBottomName;
-    case ConstantProperty::SafeAreaInsetLeft:
+    case UADefinedVariable::SafeAreaInsetLeft:
         return safeAreaInsetLeftName;
-    case ConstantProperty::FullscreenInsetTop:
+    case UADefinedVariable::FullscreenInsetTop:
         return fullscreenInsetTopName;
-    case ConstantProperty::FullscreenInsetLeft:
+    case UADefinedVariable::FullscreenInsetLeft:
         return fullscreenInsetLeftName;
-    case ConstantProperty::FullscreenInsetBottom:
+    case UADefinedVariable::FullscreenInsetBottom:
         return fullscreenInsetBottomName;
-    case ConstantProperty::FullscreenInsetRight:
+    case UADefinedVariable::FullscreenInsetRight:
         return fullscreenInsetRightName;
-    case ConstantProperty::FullscreenAutoHideDuration:
+    case UADefinedVariable::FullscreenAutoHideDuration:
         return fullscreenAutoHideDurationName;
     }
 
     return nullAtom();
 }
 
-void ConstantPropertyMap::setValueForProperty(ConstantProperty property, Ref<CSSVariableData>&& data)
+void EnvironmentVariables::setValueForVariable(UADefinedVariable variable, Ref<CSSVariableData>&& data)
 {
     if (!m_values)
         buildValues();
 
-    auto& name = nameForProperty(property);
-    m_values->set(name, Style::CustomProperty::createForVariableData(name, WTF::move(data)));
+    auto& name = nameForVariable(variable);
+    m_values->set(name, CustomProperty::createForVariableData(name, WTF::move(data)));
 }
 
-void ConstantPropertyMap::buildValues()
+void EnvironmentVariables::buildValues()
 {
     m_values = Values { };
 
-    updateConstantsForSafeAreaInsets();
-    updateConstantsForFullscreen();
+    updateSafeAreaInsetVariables();
+    updateFullscreenVariables();
 }
 
 static Ref<CSSVariableData> variableDataForPositivePixelLength(float lengthInPx)
@@ -128,45 +129,46 @@ static Ref<CSSVariableData> variableDataForPositiveDuration(Seconds durationInSe
     return CSSVariableData::create(tokenRange);
 }
 
-void ConstantPropertyMap::updateConstantsForSafeAreaInsets()
+void EnvironmentVariables::updateSafeAreaInsetVariables()
 {
     RefPtr page = m_document->page();
     FloatBoxExtent unobscuredSafeAreaInsets = page ? page->unobscuredSafeAreaInsets() : FloatBoxExtent();
-    setValueForProperty(ConstantProperty::SafeAreaInsetTop, variableDataForPositivePixelLength(unobscuredSafeAreaInsets.top()));
-    setValueForProperty(ConstantProperty::SafeAreaInsetRight, variableDataForPositivePixelLength(unobscuredSafeAreaInsets.right()));
-    setValueForProperty(ConstantProperty::SafeAreaInsetBottom, variableDataForPositivePixelLength(unobscuredSafeAreaInsets.bottom()));
-    setValueForProperty(ConstantProperty::SafeAreaInsetLeft, variableDataForPositivePixelLength(unobscuredSafeAreaInsets.left()));
+    setValueForVariable(UADefinedVariable::SafeAreaInsetTop, variableDataForPositivePixelLength(unobscuredSafeAreaInsets.top()));
+    setValueForVariable(UADefinedVariable::SafeAreaInsetRight, variableDataForPositivePixelLength(unobscuredSafeAreaInsets.right()));
+    setValueForVariable(UADefinedVariable::SafeAreaInsetBottom, variableDataForPositivePixelLength(unobscuredSafeAreaInsets.bottom()));
+    setValueForVariable(UADefinedVariable::SafeAreaInsetLeft, variableDataForPositivePixelLength(unobscuredSafeAreaInsets.left()));
 }
 
-void ConstantPropertyMap::didChangeSafeAreaInsets()
+void EnvironmentVariables::didChangeSafeAreaInsets()
 {
-    updateConstantsForSafeAreaInsets();
+    updateSafeAreaInsetVariables();
     protect(m_document)->invalidateMatchedPropertiesCacheAndForceStyleRecalc();
 }
 
-void ConstantPropertyMap::updateConstantsForFullscreen()
+void EnvironmentVariables::updateFullscreenVariables()
 {
     RefPtr page = m_document->page();
     FloatBoxExtent fullscreenInsets = page ? page->fullscreenInsets() : FloatBoxExtent();
-    setValueForProperty(ConstantProperty::FullscreenInsetTop, variableDataForPositivePixelLength(fullscreenInsets.top()));
-    setValueForProperty(ConstantProperty::FullscreenInsetRight, variableDataForPositivePixelLength(fullscreenInsets.right()));
-    setValueForProperty(ConstantProperty::FullscreenInsetBottom, variableDataForPositivePixelLength(fullscreenInsets.bottom()));
-    setValueForProperty(ConstantProperty::FullscreenInsetLeft, variableDataForPositivePixelLength(fullscreenInsets.left()));
+    setValueForVariable(UADefinedVariable::FullscreenInsetTop, variableDataForPositivePixelLength(fullscreenInsets.top()));
+    setValueForVariable(UADefinedVariable::FullscreenInsetRight, variableDataForPositivePixelLength(fullscreenInsets.right()));
+    setValueForVariable(UADefinedVariable::FullscreenInsetBottom, variableDataForPositivePixelLength(fullscreenInsets.bottom()));
+    setValueForVariable(UADefinedVariable::FullscreenInsetLeft, variableDataForPositivePixelLength(fullscreenInsets.left()));
 
     Seconds fullscreenAutoHideDuration = page ? page->fullscreenAutoHideDuration() : 0_s;
-    setValueForProperty(ConstantProperty::FullscreenAutoHideDuration, variableDataForPositiveDuration(fullscreenAutoHideDuration));
+    setValueForVariable(UADefinedVariable::FullscreenAutoHideDuration, variableDataForPositiveDuration(fullscreenAutoHideDuration));
 }
 
-void ConstantPropertyMap::didChangeFullscreenInsets()
+void EnvironmentVariables::didChangeFullscreenInsets()
 {
-    updateConstantsForFullscreen();
+    updateFullscreenVariables();
     protect(m_document)->invalidateMatchedPropertiesCacheAndForceStyleRecalc();
 }
 
-void ConstantPropertyMap::setFullscreenAutoHideDuration(Seconds duration)
+void EnvironmentVariables::setFullscreenAutoHideDuration(Seconds duration)
 {
-    setValueForProperty(ConstantProperty::FullscreenAutoHideDuration, variableDataForPositiveDuration(duration));
+    setValueForVariable(UADefinedVariable::FullscreenAutoHideDuration, variableDataForPositiveDuration(duration));
     protect(m_document)->invalidateMatchedPropertiesCacheAndForceStyleRecalc();
 }
 
+}
 }

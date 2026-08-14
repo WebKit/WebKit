@@ -1329,7 +1329,6 @@ dom/CommandEvent.cpp
 dom/Comment.cpp
 dom/ComposedTreeIterator.cpp
 dom/CompositionEvent.cpp
-dom/ConstantPropertyMap.cpp
 dom/ContainerNode.cpp @header:RenderStyleGetters
 dom/ContainerNodeAlgorithms.cpp
 dom/ContentVisibilityAutoStateChangeEvent.cpp
@@ -3303,6 +3302,7 @@ style/StyleColorResolver.cpp @header:RenderStyleGetters @cost:4
 style/StyleCustomProperty.cpp
 style/StyleCustomPropertyRegistry.cpp @header:RenderStyleGetters @cost:6
 style/StyleDifference.cpp @header:RenderStyleGetters @cost:5
+style/StyleEnvironmentVariables.cpp
 style/StyleExtractor.cpp @header:RenderStyleGetters @cost:6
 style/StyleFontSizeFunctions.cpp @header:RenderStyleGetters @cost:5
 style/StyleInterpolation.cpp @header:RenderStyleGetters @cost:6

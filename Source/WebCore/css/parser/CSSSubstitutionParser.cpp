@@ -56,13 +56,13 @@ bool CSSSubstitutionParser::isValidCustomPropertyName(const CSSParserToken& toke
     return isCustomPropertyName(token.value());
 }
 
-static bool NODELETE isValidConstantName(const CSSParserToken& token)
+static bool NODELETE isValidEnvVariableName(const CSSParserToken& token)
 {
     return token.type() == IdentToken;
 }
 
 static bool isValidVariableReference(CSSParserTokenRange, const CSSParserContext&);
-static bool isValidConstantReference(CSSParserTokenRange, const CSSParserContext&);
+static bool isValidEnvReference(CSSParserTokenRange, const CSSParserContext&);
 static bool isValidDashedFunction(CSSParserTokenRange, const CSSParserContext&);
 static bool isValidAttrReference(CSSParserTokenRange, const CSSParserContext&);
 static bool isValidRandomItemReference(CSSParserTokenRange, const CSSParserContext&);
@@ -131,7 +131,7 @@ static std::optional<ClassifyBlockResult> classifyBlock(CSSParserTokenRange rang
                 continue;
             }
             if (token.functionId() == CSSValueEnv) {
-                if (!isValidConstantReference(block, parserContext))
+                if (!isValidEnvReference(block, parserContext))
                     return { };
                 result.hasSubstitutionFunctions = true;
                 continue;
@@ -254,10 +254,10 @@ bool isValidVariableReference(CSSParserTokenRange range, const CSSParserContext&
     return !!classifyBlock(range, parserContext);
 }
 
-bool isValidConstantReference(CSSParserTokenRange range, const CSSParserContext& parserContext)
+bool isValidEnvReference(CSSParserTokenRange range, const CSSParserContext& parserContext)
 {
     range.consumeWhitespace();
-    if (!isValidConstantName(range.consumeIncludingWhitespace()))
+    if (!isValidEnvVariableName(range.consumeIncludingWhitespace()))
         return false;
     if (range.atEnd())
         return true;

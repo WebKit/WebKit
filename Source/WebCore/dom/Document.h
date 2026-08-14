@@ -117,7 +117,6 @@ class CanvasRenderingContext2D;
 class CaretPosition;
 class CharacterData;
 class Comment;
-class ConstantPropertyMap;
 class ContentVisibilityDocumentState;
 class CustomElementRegistry;
 class DOMImplementation;
@@ -1847,8 +1846,6 @@ public:
     void attachToCachedFrame(CachedFrameBase&);
     void detachFromCachedFrame(CachedFrameBase&);
 
-    ConstantPropertyMap& constantProperties() const;
-
     void orientationChanged(IntDegrees orientation);
     OrientationNotifier& orientationNotifier();
 
@@ -2466,8 +2463,6 @@ private:
     bool m_deferResizeEventForVisibilityChange { false };
 
     std::optional<HashMap<String, WeakPtr<Element, WeakPtrImplWithEventTargetData>, ASCIICaseInsensitiveHash>> m_accessKeyCache;
-
-    std::unique_ptr<ConstantPropertyMap> m_constantPropertyMap;
 
     RenderPtr<RenderView> m_renderView;
     std::unique_ptr<Style::ComputedStyle> m_initialContainingBlockStyle;

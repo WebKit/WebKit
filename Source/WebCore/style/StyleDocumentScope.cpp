@@ -50,6 +50,7 @@
 #include "ShadowRoot.h"
 #include "StyleableInlines.h"
 #include "StyleCustomPropertyRegistry.h"
+#include "StyleEnvironmentVariables.h"
 #include "StyleInvalidator.h"
 #include "StyleResolver.h"
 #include "StyleSheetContents.h"
@@ -380,6 +381,15 @@ MatchResultCache& DocumentScope::matchResultCache()
     if (!m_matchResultCache)
         m_matchResultCache = makeUnique<MatchResultCache>();
     return *m_matchResultCache;
+}
+
+EnvironmentVariables& DocumentScope::environmentVariables() const
+{
+    if (!m_environmentVariables) {
+        auto& thisScope = const_cast<DocumentScope&>(*this);
+        thisScope.m_environmentVariables = makeUnique<EnvironmentVariables>(m_document.get());
+    }
+    return *m_environmentVariables;
 }
 
 void DocumentScope::updateAnchorPositioningStateAfterStyleResolution()

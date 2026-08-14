@@ -49,7 +49,6 @@
 #include "ChromeClient.h"
 #include "CommonAtomStrings.h"
 #include "CommonVM.h"
-#include "ConstantPropertyMap.h"
 #include "ContainerNodeInlines.h"
 #include "ContextMenuClient.h"
 #include "ContextMenuController.h"
@@ -195,6 +194,7 @@
 #include "StringCallback.h"
 #include "StyleAdjuster.h"
 #include "StyleDocumentScope.h"
+#include "StyleEnvironmentVariables.h"
 #include "StyleResolver.h"
 #include "SubframeLoader.h"
 #include "SubresourceLoader.h"
@@ -4400,7 +4400,7 @@ void Page::setUnobscuredSafeAreaInsets(const FloatBoxExtent& insets)
     m_unobscuredSafeAreaInsets = insets;
 
     forEachDocument([&] (Document& document) {
-        document.constantProperties().didChangeSafeAreaInsets();
+        document.styleScope().environmentVariables().didChangeSafeAreaInsets();
     });
 }
 
@@ -4493,7 +4493,7 @@ void Page::setFullscreenInsets(const FloatBoxExtent& insets)
     m_fullscreenInsets = insets;
 
     forEachDocument([] (Document& document) {
-        document.constantProperties().didChangeFullscreenInsets();
+        document.styleScope().environmentVariables().didChangeFullscreenInsets();
     });
 }
 
@@ -4505,7 +4505,7 @@ void Page::setFullscreenAutoHideDuration(Seconds duration)
     m_fullscreenAutoHideDuration = duration;
 
     forEachDocument([&] (Document& document) {
-        document.constantProperties().setFullscreenAutoHideDuration(duration);
+        document.styleScope().environmentVariables().setFullscreenAutoHideDuration(duration);
     });
 }
 

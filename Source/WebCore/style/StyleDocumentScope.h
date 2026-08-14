@@ -28,6 +28,8 @@ class StyleRuleKeyframes;
 
 namespace Style {
 
+class EnvironmentVariables;
+
 // Style scope for the document tree. Owns the document-level state that is shared
 // by all the tree scopes (the document scope and its descendant shadow tree scopes).
 class DocumentScope final : public Scope {
@@ -57,6 +59,8 @@ public:
     void addViewTransitionKeyframes(Ref<StyleRuleKeyframes>&&);
 
     MatchResultCache& matchResultCache() LIFETIME_BOUND;
+
+    EnvironmentVariables& environmentVariables() const LIFETIME_BOUND;
 
     struct LayoutDependencyUpdateContext {
         HashSet<CheckedRef<const Element>> invalidatedContainers;
@@ -106,6 +110,8 @@ private:
     HashMap<WeakStyleable, size_t> m_lastSuccessfulPositionOptionIndexes;
 
     std::unique_ptr<MatchResultCache> m_matchResultCache;
+
+    std::unique_ptr<EnvironmentVariables> m_environmentVariables;
 
     HashMap<ResolverSharingKey, Ref<Resolver>> m_sharedShadowTreeResolvers;
 

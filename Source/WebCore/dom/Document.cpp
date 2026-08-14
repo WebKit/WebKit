@@ -62,7 +62,6 @@
 #include "ComposedTreeAncestorIterator.h"
 #include "ComposedTreeIterator.h"
 #include "CompositionEvent.h"
-#include "ConstantPropertyMap.h"
 #include "ContentSecurityPolicy.h"
 #include "ContentVisibilityDocumentState.h"
 #include "ContentfulPaintChecker.h"
@@ -10694,15 +10693,6 @@ void Document::didRemoveInDocumentShadowRoot(ShadowRoot& shadowRoot)
 {
     ASSERT(m_inDocumentShadowRoots.contains(shadowRoot));
     m_inDocumentShadowRoots.remove(shadowRoot);
-}
-
-ConstantPropertyMap& Document::constantProperties() const
-{
-    if (!m_constantPropertyMap) {
-        auto& thisDocument = const_cast<Document&>(*this);
-        thisDocument.m_constantPropertyMap = makeUnique<ConstantPropertyMap>(thisDocument);
-    }
-    return *m_constantPropertyMap;
 }
 
 void Document::orientationChanged(IntDegrees orientation)

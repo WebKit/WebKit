@@ -41,10 +41,10 @@ class Document;
 class WeakPtrImplWithEventTargetData;
 
 namespace Style {
-class CustomProperty;
-}
 
-enum class ConstantProperty {
+class CustomProperty;
+
+enum class UADefinedVariable {
     SafeAreaInsetTop,
     SafeAreaInsetRight,
     SafeAreaInsetBottom,
@@ -56,12 +56,12 @@ enum class ConstantProperty {
     FullscreenAutoHideDuration,
 };
 
-class ConstantPropertyMap {
-    WTF_MAKE_TZONE_ALLOCATED(ConstantPropertyMap);
+class EnvironmentVariables {
+    WTF_MAKE_TZONE_ALLOCATED(EnvironmentVariables);
 public:
-    explicit ConstantPropertyMap(Document&);
+    explicit EnvironmentVariables(Document&);
 
-    using Values = HashMap<AtomString, Ref<const Style::CustomProperty>>;
+    using Values = HashMap<AtomString, Ref<const CustomProperty>>;
     const Values& values() const LIFETIME_BOUND;
 
     void didChangeSafeAreaInsets();
@@ -71,11 +71,11 @@ public:
 private:
     void buildValues();
 
-    const AtomString& nameForProperty(ConstantProperty) const;
-    void setValueForProperty(ConstantProperty, Ref<CSSVariableData>&&);
+    const AtomString& nameForVariable(UADefinedVariable) const;
+    void setValueForVariable(UADefinedVariable, Ref<CSSVariableData>&&);
 
-    void updateConstantsForSafeAreaInsets();
-    void updateConstantsForFullscreen();
+    void updateSafeAreaInsetVariables();
+    void updateFullscreenVariables();
 
 
     std::optional<Values> m_values;
@@ -83,4 +83,5 @@ private:
     WeakRef<Document, WeakPtrImplWithEventTargetData> m_document;
 };
 
+} // namespace Style
 } // namespace WebCore

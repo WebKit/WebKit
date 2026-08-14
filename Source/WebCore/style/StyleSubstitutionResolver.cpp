@@ -49,7 +49,6 @@
 #include "CSSValueKeywords.h"
 #include "CSSVariableData.h"
 #include "CSSWideKeyword.h"
-#include "ConstantPropertyMap.h"
 #include "ContainerQueryEvaluator.h"
 #include "CustomFunctionRegistry.h"
 #include "Document.h"
@@ -65,6 +64,8 @@
 #include "StyleComputedStyle+SettersInlines.h"
 #include "StyleCustomProperty.h"
 #include "StyleCustomPropertyRegistry.h"
+#include "StyleDocumentScope.h"
+#include "StyleEnvironmentVariables.h"
 #include "StyleLocalPropertyRegistry.h"
 #include "StylePrimitiveNumericTypes+Conversions.h"
 #include "StyleResolver.h"
@@ -143,7 +144,7 @@ SubstitutionResolver::SubstitutionResolver(Builder& builder, const CSSRegistered
 RefPtr<const CustomProperty> SubstitutionResolver::propertyValueForVariableName(const AtomString& variableName, CSSValueID functionId)
 {
     if (functionId == CSSValueEnv)
-        return m_styleBuilder.state().document().constantProperties().values().get(variableName);
+        return m_styleBuilder.state().document().styleScope().environmentVariables().values().get(variableName);
 
     // Apply this variable first, in case it is still unresolved
     m_styleBuilder.applyCustomProperty(variableName);
