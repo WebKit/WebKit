@@ -397,6 +397,7 @@
 		1A8E7D3D18C15149005A702A /* VisitedLinkTableControllerMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A8E7D3B18C15149005A702A /* VisitedLinkTableControllerMessages.h */; };
 		1A90C1EE1264FD50003E44D4 /* WebFindOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A90C1ED1264FD50003E44D4 /* WebFindOptions.h */; };
 		1A90C1F41264FD71003E44D4 /* FindController.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A90C1F21264FD71003E44D4 /* FindController.h */; };
+		B30F930A64E768A23B853C1A /* EmulationManager.h in Headers */ = {isa = PBXBuildFile; fileRef = FB02A447B24852317767595B /* EmulationManager.h */; };
 		1A92DC1112F8BA460017AF65 /* LayerTreeContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A92DC1012F8BA460017AF65 /* LayerTreeContext.h */; };
 		1A9E32891821636900F5D04C /* _WKRemoteObjectRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A9E32871821636900F5D04C /* _WKRemoteObjectRegistry.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1A9E328D182165A900F5D04C /* _WKRemoteObjectInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A9E328B182165A900F5D04C /* _WKRemoteObjectInterface.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2341,6 +2342,7 @@
 		C1E123BA20A11573002646F4 /* PDFContextMenu.h in Headers */ = {isa = PBXBuildFile; fileRef = C1E123B920A11572002646F4 /* PDFContextMenu.h */; };
 		C3EE0FDA0234F84002CAF7FB /* ProxyingNetworkAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = EB43329193327F9D842EE004 /* ProxyingNetworkAgent.h */; };
 		C3EE0FDA0234F84002CAF7FC /* ProxyingPageAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = EB43329193327F9D842EE005 /* ProxyingPageAgent.h */; };
+		C3EE0FDA0234F84002CAF7FD /* InspectorBackendSyncState.h in Headers */ = {isa = PBXBuildFile; fileRef = EB43329193327F9D842EE006 /* InspectorBackendSyncState.h */; };
 		C4450D54570C4383A25745E6 /* _WKAutomationSessionPrivateForTesting.h in Headers */ = {isa = PBXBuildFile; fileRef = BC35BB81026B48A6A3BDAA80 /* _WKAutomationSessionPrivateForTesting.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C517388112DF8F4F00EE3F47 /* DragControllerAction.h in Headers */ = {isa = PBXBuildFile; fileRef = C517388012DF8F4F00EE3F47 /* DragControllerAction.h */; };
 		C54256B518BEC18C00DE4179 /* WKDateTimeInputControl.h in Headers */ = {isa = PBXBuildFile; fileRef = C54256AF18BEC18B00DE4179 /* WKDateTimeInputControl.h */; };
@@ -3977,6 +3979,7 @@
 		1A8E7D3B18C15149005A702A /* VisitedLinkTableControllerMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VisitedLinkTableControllerMessages.h; sourceTree = "<group>"; };
 		1A90C1ED1264FD50003E44D4 /* WebFindOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebFindOptions.h; sourceTree = "<group>"; };
 		1A90C1F21264FD71003E44D4 /* FindController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FindController.h; sourceTree = "<group>"; };
+		FB02A447B24852317767595B /* EmulationManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EmulationManager.h; sourceTree = "<group>"; };
 		1A90C1F31264FD71003E44D4 /* FindController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FindController.cpp; sourceTree = "<group>"; };
 		1A92DC1012F8BA460017AF65 /* LayerTreeContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LayerTreeContext.h; sourceTree = "<group>"; };
 		1A9E32871821636900F5D04C /* _WKRemoteObjectRegistry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKRemoteObjectRegistry.h; sourceTree = "<group>"; };
@@ -8626,6 +8629,7 @@
 		D246E13B2C61292700B41DE2 /* HTTPSBrowsingWarning.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = HTTPSBrowsingWarning.xcassets; sourceTree = "<group>"; };
 		D2CB01DAB4428B76CDA8AECC /* ProxyingNetworkAgent.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ProxyingNetworkAgent.cpp; sourceTree = "<group>"; };
 		D2CB01DAB4428B76CDA8AEDD /* ProxyingPageAgent.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ProxyingPageAgent.cpp; sourceTree = "<group>"; };
+		D2CB01DAB4428B76CDA8AEDE /* InspectorBackendSyncState.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorBackendSyncState.cpp; sourceTree = "<group>"; };
 		D2E2FE6D29C8C30D00023E6B /* NetworkTaskCocoa.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NetworkTaskCocoa.h; sourceTree = "<group>"; };
 		D2E2FE6F29C8C4F900023E6B /* NetworkTaskCocoa.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = NetworkTaskCocoa.mm; sourceTree = "<group>"; };
 		D2FB53952E13020F00AF9D5C /* PageClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PageClient.cpp; sourceTree = "<group>"; };
@@ -8885,6 +8889,7 @@
 		EB36B16727A7B4500050E00D /* PushService.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PushService.mm; sourceTree = "<group>"; };
 		EB43329193327F9D842EE004 /* ProxyingNetworkAgent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ProxyingNetworkAgent.h; sourceTree = "<group>"; };
 		EB43329193327F9D842EE005 /* ProxyingPageAgent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ProxyingPageAgent.h; sourceTree = "<group>"; };
+		EB43329193327F9D842EE006 /* InspectorBackendSyncState.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = InspectorBackendSyncState.h; sourceTree = "<group>"; };
 		EB44A6992C8A4F6E006595BF /* WebClipCache.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebClipCache.h; sourceTree = "<group>"; };
 		EB44A69A2C8A4F6E006595BF /* WebClipCache.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WebClipCache.mm; sourceTree = "<group>"; };
 		EB450E0D2996C7A1009724B1 /* WKWebsiteDataStoreRefPrivateMac.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WKWebsiteDataStoreRefPrivateMac.h; path = mac/WKWebsiteDataStoreRefPrivateMac.h; sourceTree = "<group>"; };
@@ -15325,6 +15330,8 @@
 			isa = PBXGroup;
 			children = (
 				9197940423DBC4BB00257892 /* InspectorBrowserAgent.cpp */,
+				D2CB01DAB4428B76CDA8AEDE /* InspectorBackendSyncState.cpp */,
+				EB43329193327F9D842EE006 /* InspectorBackendSyncState.h */,
 				9197940323DBC4BB00257892 /* InspectorBrowserAgent.h */,
 				AA1057000000000000000001 /* InspectorStorageAgent.cpp */,
 				AA1057000000000000000002 /* InspectorStorageAgent.h */,
@@ -16058,6 +16065,7 @@
 				0214701B2995D3860077AFD6 /* DrawingArea.cpp */,
 				BC8452A61162C80900CAB9B5 /* DrawingArea.h */,
 				1A64228A12DD024700CAAE2C /* DrawingArea.messages.in */,
+				FB02A447B24852317767595B /* EmulationManager.h */,
 				1AA575F81496B52600A4EE06 /* EventDispatcher.cpp */,
 				1AA575F91496B52600A4EE06 /* EventDispatcher.h */,
 				1AA575FD1496B6F300A4EE06 /* EventDispatcher.messages.in */,
@@ -18430,6 +18438,7 @@
 				93B42F2F29834B2600DF1D45 /* FileSystemSyncAccessHandleInfo.h in Headers */,
 				00B9661A18E25AE100CE1F88 /* FindClient.h in Headers */,
 				1A90C1F41264FD71003E44D4 /* FindController.h in Headers */,
+				B30F930A64E768A23B853C1A /* EmulationManager.h in Headers */,
 				D6F6CDF82F60DB30007B93C6 /* FindIndicator.h in Headers */,
 				DD4DB789280F9471001700D4 /* FindNodes.js in Headers */,
 				0250C2512B5DCB2000D05C0B /* FindStringCallbackAggregator.h in Headers */,
@@ -18758,6 +18767,7 @@
 				1ADC268E29E89FDA005990CA /* ProvisionalFrameCreationParameters.h in Headers */,
 				C3EE0FDA0234F84002CAF7FB /* ProxyingNetworkAgent.h in Headers */,
 				C3EE0FDA0234F84002CAF7FC /* ProxyingPageAgent.h in Headers */,
+				C3EE0FDA0234F84002CAF7FD /* InspectorBackendSyncState.h in Headers */,
 				517B5F7D275E97B6002DC22D /* PushClientConnection.h in Headers */,
 				51EE7B5B2A95B5820016FF78 /* PushClientConnectionMessages.h in Headers */,
 				517B5F95275EBA63002DC22D /* PushMessageForTesting.h in Headers */,

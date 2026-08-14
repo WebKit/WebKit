@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "InspectorBackendSyncState.h"
 #include "MessageReceiver.h"
 #include "WebPageInspectorAgentBase.h"
 #include <JavaScriptCore/InspectorBackendDispatchers.h>
@@ -114,6 +115,11 @@ private:
 
     void removeAllRegisteredReceivers();
 
+    // Invoke a callback for each WebContent process currently under page instrumentation, with the
+    // per-process page identifier. Used to broadcast a newly-set override (e.g. setEmulatedMedia) to
+    // every existing process; late-joining processes instead inherit it via m_syncState.
+    void forEachInstrumentedProcess(NOESCAPE const Function<void(WebKit::WebProcessProxy&, WebCore::PageIdentifier)>&);
+
     Ref<Protocol::Page::FrameResourceTree> buildFrameTree(const WebKit::WebFrameProxy&, const String* parentProtocolId, const HashMap<WebCore::FrameIdentifier, FrameResourceData>& resourcesByFrame) const;
 
     const UniqueRef<PageFrontendDispatcher> m_frontendDispatcher;
@@ -126,6 +132,10 @@ private:
     // Latest paint-rects toggle, fanned out to every WebContent process and replayed to any
     // process that registers later (e.g. a cross-origin navigation spawns a new one).
     bool m_showPaintRects { false };
+
+    // Source-side counterpart to the WebProcess EmulationManager sink; sends the typed overrides to
+    // late-joining processes at the shared join seam. See webkit.org/b/308897.
+    InspectorBackendSyncState m_syncState;
 
     // Pin each instrumented WebProcessProxy alive while we hold an IPC message
     // receiver registration on it. Without this, the process can be destructed

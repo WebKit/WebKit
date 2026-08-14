@@ -716,6 +716,12 @@ void InspectorInstrumentation::applyEmulatedMediaImpl(InstrumentingAgents& instr
 {
     if (CheckedPtr pageAgent = instrumentingAgents.enabledPageAgent())
         pageAgent->applyEmulatedMedia(media);
+
+    // Under Site Isolation a cross-origin frame's process has no page-level InspectorPageAgent; its
+    // PageAgentProxy carries the emulated-media override forwarded from the UIProcess ProxyingPageAgent,
+    // so its media queries evaluate under the override too. See webkit.org/b/308898.
+    if (CheckedPtr pageProxy = instrumentingAgents.enabledPageProxy())
+        pageProxy->applyEmulatedMedia(media);
 }
 
 void InspectorInstrumentation::flexibleBoxRendererBeganLayoutImpl(InstrumentingAgents& instrumentingAgents, const RenderObject& renderer)

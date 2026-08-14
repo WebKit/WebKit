@@ -742,7 +742,7 @@ public:
     void setGotoAnchorNeededAfterStylesheetsLoad(bool b) { m_gotoAnchorNeededAfterStylesheetsLoad = b; }
 
     void updateElementsAffectedByMediaQueries();
-    void evaluateMediaQueriesAndReportChanges();
+    WEBCORE_EXPORT void evaluateMediaQueriesAndReportChanges();
 
     WEBCORE_EXPORT FormController& formController();
     Vector<AtomString> formElementsState() const;

@@ -80,6 +80,21 @@ void ProxyingPageAgent::removeAllRegisteredReceivers()
     m_pinnedInstrumentedProcesses.clear();
 }
 
+void ProxyingPageAgent::forEachInstrumentedProcess(NOESCAPE const Function<void(WebProcessProxy&, PageIdentifier)>& callback)
+{
+    // Iterate the registration map rather than forEachWebContentProcess(): under Site Isolation a
+    // process may have swapped out while still holding our receiver, so it would no longer be
+    // enumerated. The pinned refs keep each WebProcessProxy alive for the send.
+    for (auto& [key, count] : m_instrumentedProcessPageCounts) {
+        auto [processID, pageID] = key;
+        auto it = m_pinnedInstrumentedProcesses.find(processID);
+        ASSERT(it != m_pinnedInstrumentedProcesses.end());
+        if (it == m_pinnedInstrumentedProcesses.end())
+            continue;
+        callback(it->value.get(), pageID);
+    }
+}
+
 // MARK: - IPC event handlers
 
 // Resolve a frame's protocol ID from the authoritative UIProcess frame tree so the
@@ -191,6 +206,10 @@ void ProxyingPageAgent::enableInstrumentationForProcess(WebProcessProxy& webProc
     // exactly once per (process, page) registration, guarded above.
     if (m_showPaintRects)
         webProcess.send(Messages::WebInspectorBackend::SetShowPaintRects { true }, pageID);
+
+    // Serialize the active emulation overrides to this newly-joined process so a cross-origin frame
+    // spawn or process swap inherits the same config as the existing processes. See webkit.org/b/308897.
+    m_syncState.sendTo(webProcess, pageID);
 }
 
 void ProxyingPageAgent::disableInstrumentationForProcess(WebProcessProxy& webProcess, PageIdentifier pageID)
@@ -244,6 +263,7 @@ CommandResult<void> ProxyingPageAgent::disable()
 
     m_enabled = false;
     m_cachedFrameDocumentInfo.clear();
+    m_syncState.clear();
 
     // Reset so a later frontend reconnect doesn't replay a stale "on" toggle via
     // enableInstrumentationForProcess. The processes are torn down below, so no "off" send is needed.
@@ -696,8 +716,21 @@ CommandResult<void> ProxyingPageAgent::setShowPaintRects(bool show)
     return { };
 }
 
-CommandResult<void> ProxyingPageAgent::setEmulatedMedia(const String&)
+CommandResult<void> ProxyingPageAgent::setEmulatedMedia(const String& media)
 {
+    if (!m_enabled)
+        return { };
+
+    // Store the override so a late-joining process inherits it at the shared join seam, then
+    // broadcast it to every process already hosting a frame of the inspected page via the same
+    // SetEmulationOverrides message the join path sends. The WebContent WebInspectorBackend applies
+    // it to its local frames' media queries. See webkit.org/b/308898.
+    m_syncState.setEmulatedMedia(media);
+
+    forEachInstrumentedProcess([&](WebProcessProxy& process, PageIdentifier pageID) {
+        m_syncState.sendTo(process, pageID);
+    });
+
     return { };
 }
 

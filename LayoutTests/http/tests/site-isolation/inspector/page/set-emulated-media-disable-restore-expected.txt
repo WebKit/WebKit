@@ -1,0 +1,12 @@
+Test that disabling Page instrumentation reverts a cross-origin iframe from an emulated-media override back to its real platform media under site isolation.
+
+
+== Running test suite: SiteIsolation.Page.SetEmulatedMediaDisableRestore
+-- Running test case: SiteIsolation.Page.SetEmulatedMedia.DisableRestoresRealMedia
+PASS: Added target should have Frame type.
+PASS: Cross-origin iframe should start with screen styles (blue).
+Emulating print media...
+PASS: Cross-origin iframe should switch to print styles (green).
+Disabling Page instrumentation on the backend target...
+PASS: Cross-origin iframe should revert to real screen media (blue) after Page instrumentation is disabled.
+

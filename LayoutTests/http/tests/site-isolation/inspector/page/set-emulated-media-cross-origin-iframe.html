@@ -18,10 +18,16 @@ function addCrossOriginIFrame() {
 
 function test() {
     async function addIFrameAndGetTarget() {
-        let targetAddedPromise = WI.targetManager.awaitEvent(WI.TargetManager.Event.TargetAdded);
+        // Under Site Isolation, TargetAdded fires for the iframe's provisional about:blank target
+        // before the cross-origin document commits; evaluating then hits the empty realm. Await the
+        // committed target + its execution context, mirroring executionContextCreated-frame-target.html.
+        let committedPromise = WI.targetManager.awaitEvent(WI.TargetManager.Event.DidCommitProvisionalTarget);
         InspectorTest.evaluateInPage("addCrossOriginIFrame()");
-        let event = await targetAddedPromise;
-        return event.data.target;
+        let event = await committedPromise;
+        let target = event.data.target;
+        if (!target.executionContext)
+            await target.awaitEvent(WI.FrameTarget.Event.ExecutionContextAdded);
+        return target;
     }
 
     async function getComputedColorInTarget(target) {
@@ -36,6 +42,26 @@ function test() {
         let response = await target.RuntimeAgent.evaluate.invoke({expression: "window.getComputedStyle(document.body).getPropertyValue('color')", objectGroup: "test", returnByValue: true});
         InspectorTest.assert(response.result.value, "Should be able to evaluate computed style in cross-origin target.");
         return response.result.value;
+    }
+
+    // Page.setEmulatedMedia under Site Isolation is hosted by the UIProcess ProxyingPageAgent on the
+    // web-page (backend) target -- invoked via WI.backendTarget, not the bare (page sub-target) PageAgent,
+    // which would relay only to the main frame's WebContent process. The proxy broadcasts to every hosting
+    // process, so the override reaches cross-origin iframe processes too. The broadcast is not ordered
+    // against the cross-origin target's own RuntimeAgent channel, so the computed style may not reflect the
+    // override on the very first read. Poll silently until it settles (or give up) so the assertion stays
+    // deterministic without logging retry noise.
+    async function awaitComputedColorInTarget(target, expectedColor) {
+        let color = await getComputedColorInTarget(target);
+        for (let attempt = 0; attempt < 20 && color !== expectedColor; ++attempt) {
+            await target.RuntimeAgent.evaluate.invoke({
+                expression: "new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)))",
+                objectGroup: "test",
+                awaitPromise: true,
+            });
+            color = await getComputedColorInTarget(target);
+        }
+        return color;
     }
 
     let suite = InspectorTest.createAsyncSuite("SiteIsolation.Page.SetEmulatedMediaCrossOriginIFrame");
@@ -56,11 +82,33 @@ function test() {
     });
 
     suite.addTestCase({
+        name: "SiteIsolation.Page.SetEmulatedMedia.EmulateExistingFrame",
+        description: "Emulating print media should propagate to a cross-origin iframe that already exists, without reloading.",
+        async test() {
+            let target = await addIFrameAndGetTarget();
+
+            let iframeColorBefore = await getComputedColorInTarget(target);
+            InspectorTest.expectEqual(iframeColorBefore, "rgb(0, 0, 255)", "Existing cross-origin iframe should start with screen styles (blue).");
+
+            InspectorTest.log("Setting emulated media to print (no reload)...");
+            await WI.backendTarget.PageAgent.setEmulatedMedia("print");
+
+            let iframeColorAfter = await awaitComputedColorInTarget(target, "rgb(0, 128, 0)");
+            InspectorTest.expectEqual(iframeColorAfter, "rgb(0, 128, 0)", "Existing cross-origin iframe should switch to print styles (green).");
+
+            InspectorTest.log("Resetting emulated media...");
+            await WI.backendTarget.PageAgent.setEmulatedMedia("");
+            let iframeColorReset = await awaitComputedColorInTarget(target, "rgb(0, 0, 255)");
+            InspectorTest.expectEqual(iframeColorReset, "rgb(0, 0, 255)", "Existing cross-origin iframe should return to screen styles (blue).");
+        }
+    });
+
+    suite.addTestCase({
         name: "SiteIsolation.Page.SetEmulatedMedia.EmulateAndReload",
         description: "Emulating print media and reloading should apply print styles in the cross-origin iframe.",
         async test() {
             InspectorTest.log("Setting emulated media to print...");
-            await PageAgent.setEmulatedMedia("print");
+            await WI.backendTarget.PageAgent.setEmulatedMedia("print");
 
             InspectorTest.log("Reloading...");
             await InspectorTest.reloadPage();
@@ -88,7 +136,7 @@ function test() {
         description: "Resetting emulated media and reloading should restore screen styles in both frames.",
         async test() {
             InspectorTest.log("Resetting emulated media...");
-            await PageAgent.setEmulatedMedia("");
+            await WI.backendTarget.PageAgent.setEmulatedMedia("");
 
             InspectorTest.log("Reloading...");
             await InspectorTest.reloadPage();
