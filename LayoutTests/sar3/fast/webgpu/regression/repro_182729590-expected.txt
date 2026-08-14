@@ -1,0 +1,3 @@
+CONSOLE MESSAGE: PASS baseline: arrayLength(&ownerB)=32, arrayLength(&ownerA)=4
+CONSOLE MESSAGE: PASS collide: arrayLength(&ownerB)=32, arrayLength(&ownerA)=4
+
