@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<script src="../../../resources/dump-as-markup.js"></script>
+<div id="editor" contenteditable="true"><div id="target" style="position: relative; min-height: 1px;"></div></div>
+<script>
+Markup.description("Committing an IME composition should preserve the empty positioned block that received the composition.");
+
+const target = document.getElementById("target");
+getSelection().setPosition(target, 0);
+Markup.dump("editor", "Before composition");
+
+if (window.textInputController) {
+    textInputController.setMarkedText("日本語", 3, 0);
+    Markup.dump("editor", "During composition");
+    textInputController.insertText("日本語");
+    Markup.dump("editor", "After committing composition");
+}
+</script>

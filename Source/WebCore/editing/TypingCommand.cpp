@@ -926,7 +926,8 @@ void TypingCommand::deleteSelection(bool smartDelete)
     if (!willAddTypingToOpenCommand(Type::DeleteSelection, TextGranularity::CharacterGranularity))
         return;
 
-    CompositeEditCommand::deleteSelection(smartDelete);
+    bool expandForSpecialElements = m_compositionType == TextCompositionType::None;
+    CompositeEditCommand::deleteSelection(smartDelete, /* mergeBlocksAfterDelete */ true, /* replace */ false, expandForSpecialElements);
     typingAddedToOpenCommand(Type::DeleteSelection);
 }
 

@@ -1,0 +1,19 @@
+Committing an IME composition should preserve the empty positioned block that received the composition.
+
+Before composition:
+| <div>
+|   id="target"
+|   style="position: relative; min-height: 1px;"
+|   <#selection-caret>
+
+During composition:
+| <div>
+|   id="target"
+|   style="position: relative; min-height: 1px;"
+|   "日本語<#selection-caret>"
+
+After committing composition:
+| <div>
+|   id="target"
+|   style="position: relative; min-height: 1px;"
+|   "日本語<#selection-caret>"
