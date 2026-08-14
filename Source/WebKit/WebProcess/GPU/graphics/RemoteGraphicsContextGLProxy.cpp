@@ -35,6 +35,7 @@
 #include "RemoteGraphicsContextGLProxyMessages.h"
 #include "RemoteNativeImageProxy.h"
 #include "RemoteRenderingBackendProxy.h"
+#include "RemoteSharedResourceCacheProxy.h"
 #include "RemoteVideoFrameObjectHeapProxy.h"
 #include "WebPage.h"
 #include "WebProcess.h"
@@ -126,6 +127,7 @@ void RemoteGraphicsContextGLProxy::initializeIPC(Ref<IPC::StreamClientConnection
         Ref gpuProcessConnection = WebProcess::singleton().ensureGPUProcessConnection();
         gpuProcessConnection->createGraphicsContextGL(m_identifier, contextAttributes(), renderingBackend, WTF::move(serverHandle));
         m_gpuProcessConnection = gpuProcessConnection.get();
+        m_sharedResourceCache = gpuProcessConnection->sharedResourceCache();
 #if ENABLE(VIDEO)
         m_videoFrameObjectHeapProxy = gpuProcessConnection->videoFrameObjectHeapProxy();
 #endif
@@ -196,20 +198,25 @@ RefPtr<NativeImage> RemoteGraphicsContextGLProxy::copyNativeImageYFlipped(Surfac
     RefPtr renderingBackend = m_renderingBackend.get();
     if (!renderingBackend) [[unlikely]]
         return nullptr;
+    RefPtr sharedResourceCache = m_sharedResourceCache;
+    if (!sharedResourceCache) [[unlikely]]
+        return nullptr;
     auto size = getInternalFramebufferSize();
     if (size.isEmpty()) [[unlikely]]
         return nullptr;
     if (buffer == SurfaceBuffer::DisplayBuffer && !m_hasPreparedForDisplay) [[unlikely]]
         return nullptr;
     auto attributes = contextAttributes();
-    Ref nativeImage = renderingBackend->remoteResourceCacheProxy().createNativeImage(size, m_drawingBufferColorSpace.platformColorSpace(), attributes.alpha);
+    // The image contents will be published in the shared resource cache by the GPU process. Adopt it
+    // into this backend's cache right away, so that drawing it needs no further set up.
+    Ref nativeImage = RemoteNativeImageProxy::create(size, m_drawingBufferColorSpace.platformColorSpace(), attributes.alpha, sharedResourceCache.releaseNonNull());
     renderingBackend->cacheNativeImageFromSharedNativeImage(nativeImage);
-    auto sendResult = send(Messages::RemoteGraphicsContextGL::copyNativeImageYFlipped(buffer, nativeImage->renderingResourceIdentifier()));
+    auto sendResult = send(Messages::RemoteGraphicsContextGL::copyNativeImageYFlipped(buffer, nativeImage->reference()));
     if (sendResult != IPC::Error::NoError) [[unlikely]] {
         markContextLost();
         return nullptr;
     }
-    return nativeImage;
+    return RefPtr<NativeImage> { WTF::move(nativeImage) };
 }
 
 #if ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)

@@ -7595,6 +7595,7 @@
 		96418A5D2DFA4B8100C19CDC /* JSWebExtensionAPIBookmarks.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JSWebExtensionAPIBookmarks.h; sourceTree = "<group>"; };
 		96418A5F2DFA4BA900C19CDC /* JSWebExtensionAPIBookmarks.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = JSWebExtensionAPIBookmarks.mm; sourceTree = "<group>"; };
 		966F42B3BF3CA9AFEE64F9BF /* RemoteSerializedImageBufferIdentifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteSerializedImageBufferIdentifier.h; sourceTree = "<group>"; };
+		A1B2C3D4E5F6071829304050 /* RemoteNativeImageIdentifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteNativeImageIdentifier.h; sourceTree = "<group>"; };
 		96CC7DBD2E15DA2900233E69 /* WebExtensionContextAPIBookmarksCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebExtensionContextAPIBookmarksCocoa.mm; sourceTree = "<group>"; };
 		96CC7DBF2E15EC2800233E69 /* WebExtensionBookmarksParameters.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebExtensionBookmarksParameters.h; sourceTree = "<group>"; };
 		96CC7DC02E15F19500233E69 /* WebExtensionBookmarksParameters.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebExtensionBookmarksParameters.serialization.in; sourceTree = "<group>"; };
@@ -14677,6 +14678,7 @@
 				A78A5FEA2B0EE939005036D3 /* RemoteImageBufferSet.cpp */,
 				A78A5FE92B0EE849005036D3 /* RemoteImageBufferSet.h */,
 				A7E1503B2B1D6F500000E921 /* RemoteImageBufferSet.messages.in */,
+				A1B2C3D4E5F6071829304050 /* RemoteNativeImageIdentifier.h */,
 				72A87BBB287678A700289098 /* RemoteRenderingBackend.cpp */,
 				550640A324071A6100AAE045 /* RemoteRenderingBackend.h */,
 				550640A424071C2100AAE045 /* RemoteRenderingBackend.messages.in */,

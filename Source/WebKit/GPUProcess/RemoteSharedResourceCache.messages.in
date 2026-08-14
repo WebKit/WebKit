@@ -29,6 +29,7 @@
 ]
 messages -> RemoteSharedResourceCache {
     void ReleaseSerializedImageBuffer(WebKit::RemoteSerializedImageBufferIdentifier identifier)
+    void ReleaseNativeImage(WebKit::RemoteNativeImageWriteReference reference)
 }
 
 #endif

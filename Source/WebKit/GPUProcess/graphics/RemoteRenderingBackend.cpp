@@ -403,10 +403,11 @@ void RemoteRenderingBackend::cacheNativeImage(ShareableBitmap::Handle&& handle, 
     MESSAGE_CHECK(success, "NativeImage already cached.");
 }
 
-void RemoteRenderingBackend::cacheNativeImageFromSharedNativeImage(WebCore::RenderingResourceIdentifier identifier)
+void RemoteRenderingBackend::cacheNativeImageFromSharedNativeImage(RemoteNativeImageReadReference&& reference)
 {
     assertIsCurrent(workQueue());
-    RefPtr image = m_sharedResourceCache->takeNativeImage(identifier);
+    auto identifier = reference.identifier();
+    RefPtr image = m_sharedResourceCache->readNativeImage(WTF::move(reference), defaultRemoteSharedResourceCacheTimeout);
     MESSAGE_CHECK(image, "Shared NativeImage not found.");
     bool success = m_remoteResourceCache.cacheNativeImage(identifier, image.releaseNonNull());
     MESSAGE_CHECK(success, "NativeImage already cached.");

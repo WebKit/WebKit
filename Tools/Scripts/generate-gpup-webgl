@@ -133,7 +133,7 @@ messages -> RemoteGraphicsContextGL Stream {{
 #endif
     void EnsureExtensionEnabled(WebCore::GCGLExtension extension) StreamBatched
     void GetErrors() -> (GCGLErrorCodeSet returnValue) Synchronous
-    void copyNativeImageYFlipped(enum:bool WebCore::GraphicsContextGLSurfaceBuffer buffer, WebCore::RenderingResourceIdentifier nativeImageIdentifier)
+    void copyNativeImageYFlipped(enum:bool WebCore::GraphicsContextGLSurfaceBuffer buffer, WebKit::RemoteNativeImageReference nativeImageReference)
 #if ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)
     void SurfaceBufferToVideoFrame(enum:bool WebCore::GraphicsContextGLSurfaceBuffer buffer) -> (struct std::optional<WebKit::RemoteVideoFrameProxyProperties> properties) Synchronous
 #endif

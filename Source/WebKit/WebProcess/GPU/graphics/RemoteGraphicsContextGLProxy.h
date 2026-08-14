@@ -48,6 +48,7 @@
 namespace WebKit {
 
 struct RemoteGraphicsContextGLInitializationState;
+class RemoteSharedResourceCacheProxy;
 #if ENABLE(VIDEO)
 class RemoteVideoFrameObjectHeapProxy;
 #endif
@@ -449,6 +450,7 @@ private:
     uint32_t m_nextObjectName { 0 };
     WebCore::DestinationColorSpace m_drawingBufferColorSpace { WebCore::DestinationColorSpace::SRGB() };
     WeakPtr<RemoteRenderingBackendProxy> m_renderingBackend;
+    RefPtr<RemoteSharedResourceCacheProxy> m_sharedResourceCache;
 };
 
 // The GCGL types map to following WebKit IPC types. The list is used by generate-gpup-webgl script.

@@ -68,4 +68,21 @@ header: "RemoteSerializedImageBufferIdentifier.h"
     WebKit::RemoteSerializedImageBufferReference reference();
 };
 
+header: "RemoteNativeImageIdentifier.h"
+[Alias=class IPC::ObjectIdentifierReference<WebCore::RenderingResourceIdentifier>, AdditionalEncoder=StreamConnectionEncoder, CustomHeader] alias WebKit::RemoteNativeImageReference {
+    WebCore::RenderingResourceIdentifier identifier();
+    uint64_t version();
+};
+
+header: "RemoteNativeImageIdentifier.h"
+[Alias=class IPC::ObjectIdentifierWriteReference<WebCore::RenderingResourceIdentifier>, AdditionalEncoder=StreamConnectionEncoder, CustomHeader] alias WebKit::RemoteNativeImageWriteReference {
+    WebKit::RemoteNativeImageReference reference();
+    uint64_t pendingReads();
+};
+
+header: "RemoteNativeImageIdentifier.h"
+[Alias=class IPC::ObjectIdentifierReadReference<WebCore::RenderingResourceIdentifier>, AdditionalEncoder=StreamConnectionEncoder, CustomHeader] alias WebKit::RemoteNativeImageReadReference {
+    WebKit::RemoteNativeImageReference reference();
+};
+
 #endif

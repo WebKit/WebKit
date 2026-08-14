@@ -27,20 +27,33 @@
 
 #if ENABLE(GPU_PROCESS)
 #include "RemoteSharedResourceCacheProxy.h"
+
+#include "RemoteNativeImageProxy.h"
+#include "RemoteSharedResourceCacheMessages.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteSharedResourceCacheProxy);
 
-Ref<RemoteSharedResourceCacheProxy> RemoteSharedResourceCacheProxy::create()
+Ref<RemoteSharedResourceCacheProxy> RemoteSharedResourceCacheProxy::create(IPC::Connection& connection)
 {
-    return adoptRef(*new RemoteSharedResourceCacheProxy());
+    return adoptRef(*new RemoteSharedResourceCacheProxy(connection));
 }
 
-RemoteSharedResourceCacheProxy::RemoteSharedResourceCacheProxy() = default;
+RemoteSharedResourceCacheProxy::RemoteSharedResourceCacheProxy(IPC::Connection& connection)
+    : m_connection(connection)
+{
+}
 
 RemoteSharedResourceCacheProxy::~RemoteSharedResourceCacheProxy() = default;
+
+void RemoteSharedResourceCacheProxy::releaseNativeImage(const RemoteNativeImageProxy& image)
+{
+    // The write reference carries the number of reads handed out (pendingReads), so the GPU process
+    // removes the entry once that many reads have been retired.
+    m_connection->send(Messages::RemoteSharedResourceCache::ReleaseNativeImage(image.writeReference()), 0);
+}
 
 }
 

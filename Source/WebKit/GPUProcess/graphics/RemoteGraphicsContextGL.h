@@ -31,6 +31,7 @@
 #include "GPUConnectionToWebProcess.h"
 #include "GPUProcess.h"
 #include "RemoteGraphicsContextGLIdentifier.h"
+#include "RemoteNativeImageIdentifier.h"
 #include "RemoteRenderingBackend.h"
 #include "RemoteSharedResourceCache.h"
 #include "ScopedWebGLRenderingResourcesRequest.h"
@@ -129,7 +130,7 @@ protected:
     void prepareForDisplay(CompletionHandler<void()>&&);
 #endif
     void getErrors(CompletionHandler<void(GCGLErrorCodeSet)>&&);
-    void copyNativeImageYFlipped(WebCore::GraphicsContextGL::SurfaceBuffer, WebCore::RenderingResourceIdentifier);
+    void copyNativeImageYFlipped(WebCore::GraphicsContextGL::SurfaceBuffer, RemoteNativeImageReference);
 #if ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)
     void surfaceBufferToVideoFrame(WebCore::GraphicsContextGL::SurfaceBuffer, CompletionHandler<void(std::optional<WebKit::RemoteVideoFrameProxy::Properties>&&)>&&);
 #endif

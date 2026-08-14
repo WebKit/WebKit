@@ -262,13 +262,13 @@ void RemoteGraphicsContextGL::ensureExtensionEnabled(GCGLExtension extension)
     MESSAGE_CHECK(success);
 }
 
-void RemoteGraphicsContextGL::copyNativeImageYFlipped(WebCore::GraphicsContextGL::SurfaceBuffer buffer, WebCore::RenderingResourceIdentifier nativeImageIdentifier)
+void RemoteGraphicsContextGL::copyNativeImageYFlipped(WebCore::GraphicsContextGL::SurfaceBuffer buffer, RemoteNativeImageReference nativeImageReference)
 {
     assertIsCurrent(workQueue());
     RefPtr image = protect(m_context)->copyNativeImageYFlipped(buffer);
     // FIXME: Handle OOM.
     MESSAGE_CHECK(image);
-    bool success = m_sharedResourceCache->addNativeImage(nativeImageIdentifier, image.releaseNonNull());
+    bool success = m_sharedResourceCache->addNativeImage(nativeImageReference, image.releaseNonNull());
     MESSAGE_CHECK(success);
 }
 

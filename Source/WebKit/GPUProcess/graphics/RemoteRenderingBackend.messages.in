@@ -37,7 +37,7 @@ messages -> RemoteRenderingBackend Stream {
     DestroyGetPixelBufferSharedMemory()
     NativeImageBitmap(WebCore::RenderingResourceIdentifier identifier) -> (std::optional<WebCore::ShareableBitmapHandle> handle) Synchronous NotStreamEncodableReply
     CacheNativeImage(WebCore::ShareableBitmapHandle handle, WebCore::RenderingResourceIdentifier renderingResourceIdentifier) NotStreamEncodable
-    CacheNativeImageFromSharedNativeImage(WebCore::RenderingResourceIdentifier sharedNativeImageIdentifier)
+    CacheNativeImageFromSharedNativeImage(WebKit::RemoteNativeImageReadReference nativeImageReference)
     ReleaseNativeImage(WebCore::RenderingResourceIdentifier identifier)
     CachePathImpl(Ref<WebCore::PathImpl> path, WebKit::RemotePathImplIdentifier identifier)
     ReleasePathImpl(WebKit::RemotePathImplIdentifier identifier)

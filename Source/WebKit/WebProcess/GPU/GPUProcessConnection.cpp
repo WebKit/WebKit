@@ -159,7 +159,7 @@ std::optional<audit_token_t> GPUProcessConnection::auditToken()
 Ref<RemoteSharedResourceCacheProxy> GPUProcessConnection::sharedResourceCache()
 {
     if (!m_sharedResourceCache)
-        m_sharedResourceCache = RemoteSharedResourceCacheProxy::create();
+        m_sharedResourceCache = RemoteSharedResourceCacheProxy::create(connection());
     return *m_sharedResourceCache;
 }
 

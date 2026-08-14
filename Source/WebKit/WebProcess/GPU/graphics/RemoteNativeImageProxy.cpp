@@ -29,6 +29,7 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "RemoteResourceCacheProxy.h"
+#include "RemoteSharedResourceCacheProxy.h"
 #include <WebCore/Color.h>
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/ImageBuffer.h>
@@ -57,21 +58,40 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteNativeImageProxy);
 
 Ref<RemoteNativeImageProxy> RemoteNativeImageProxy::create(const IntSize& size, PlatformColorSpace&& colorSpace, bool hasAlpha, WeakRef<RemoteResourceCacheProxy>&& resourceCache)
 {
-    return adoptRef(*new RemoteNativeImageProxy(size, WTF::move(colorSpace), hasAlpha, WTF::move(resourceCache)));
+    return adoptRef(*new RemoteNativeImageProxy(size, WTF::move(colorSpace), hasAlpha, WTF::move(resourceCache), nullptr));
 }
 
-RemoteNativeImageProxy::RemoteNativeImageProxy(const IntSize& size, PlatformColorSpace&& colorSpace, bool hasAlpha, WeakRef<RemoteResourceCacheProxy>&& resourceCache)
+Ref<RemoteNativeImageProxy> RemoteNativeImageProxy::create(const IntSize& size, PlatformColorSpace&& colorSpace, bool hasAlpha, Ref<RemoteSharedResourceCacheProxy>&& sharedResourceCache)
+{
+    return adoptRef(*new RemoteNativeImageProxy(size, WTF::move(colorSpace), hasAlpha, nullptr, WTF::move(sharedResourceCache)));
+}
+
+RemoteNativeImageProxy::RemoteNativeImageProxy(const IntSize& size, PlatformColorSpace&& colorSpace, bool hasAlpha, WeakPtr<RemoteResourceCacheProxy>&& resourceCache, RefPtr<RemoteSharedResourceCacheProxy>&& sharedResourceCache)
     : m_resourceCache(WTF::move(resourceCache))
+    , m_sharedResourceCache(WTF::move(sharedResourceCache))
     , m_size(size)
     , m_colorSpace(WTF::move(colorSpace))
     , m_hasAlpha(hasAlpha)
 {
+    if (m_sharedResourceCache)
+        m_referenceTracker.emplace(renderingResourceIdentifier());
 }
 
 RemoteNativeImageProxy::~RemoteNativeImageProxy()
 {
+    // For a shared image both apply: the RemoteResourceCacheProxy that adopted it releases the
+    // rendering backend's cache entry, and the shared resource cache releases the shared entry.
     if (CheckedPtr resourceCache = m_resourceCache.get())
         resourceCache->willDestroyRemoteNativeImageProxy(*this);
+    if (m_sharedResourceCache)
+        m_sharedResourceCache->releaseNativeImage(*this);
+}
+
+void RemoteNativeImageProxy::attachResourceCache(WeakRef<RemoteResourceCacheProxy>&& resourceCache)
+{
+    ASSERT(isSharedNativeImage());
+    ASSERT(!m_resourceCache);
+    m_resourceCache = WTF::move(resourceCache);
 }
 
 PlatformImagePtr RemoteNativeImageProxy::platformImage() const

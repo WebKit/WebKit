@@ -416,9 +416,9 @@ void RemoteRenderingBackendProxy::cacheNativeImage(ShareableBitmap::Handle&& han
     send(Messages::RemoteRenderingBackend::CacheNativeImage(WTF::move(handle), renderingResourceIdentifier));
 }
 
-void RemoteRenderingBackendProxy::cacheNativeImageFromSharedNativeImage(const RemoteNativeImageProxy& image)
+void RemoteRenderingBackendProxy::cacheNativeImageFromSharedNativeImage(RemoteNativeImageProxy& image)
 {
-    send(Messages::RemoteRenderingBackend::CacheNativeImageFromSharedNativeImage(image.renderingResourceIdentifier()));
+    send(Messages::RemoteRenderingBackend::CacheNativeImageFromSharedNativeImage(m_remoteResourceCacheProxy->recordSharedNativeImageUse(image)));
 }
 
 void RemoteRenderingBackendProxy::releaseNativeImage(RenderingResourceIdentifier identifier)

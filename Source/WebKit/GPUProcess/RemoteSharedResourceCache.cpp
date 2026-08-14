@@ -38,8 +38,6 @@
 namespace WebKit {
 using namespace WebCore;
 
-constexpr Seconds defaultRemoteSharedResourceCacheTimeout = 15_s;
-
 // Per GPU process limit of accelerated image buffers. These consume limited global OS resources.
 constexpr size_t globalAcceleratedImageBufferLimit = 10000;
 
@@ -86,14 +84,19 @@ RefPtr<ImageBuffer> RemoteSharedResourceCache::takeSerializedImageBuffer(RemoteS
     return imageBuffer;
 }
 
-bool RemoteSharedResourceCache::addNativeImage(RenderingResourceIdentifier identifier, Ref<NativeImage> image)
+bool RemoteSharedResourceCache::addNativeImage(RemoteNativeImageReference reference, Ref<NativeImage> image)
 {
-    return m_nativeImages.add({ identifier, 0 }, WTF::move(image));
+    return m_nativeImages.add(reference, WTF::move(image));
 }
 
-RefPtr<NativeImage> RemoteSharedResourceCache::takeNativeImage(RenderingResourceIdentifier identifier)
+RefPtr<NativeImage> RemoteSharedResourceCache::readNativeImage(RemoteNativeImageReadReference&& read, Seconds timeout)
 {
-    return m_nativeImages.take({ { identifier, 0 }, 0 }, defaultRemoteSharedResourceCacheTimeout);
+    return m_nativeImages.read(WTF::move(read), timeout);
+}
+
+void RemoteSharedResourceCache::releaseNativeImage(RemoteNativeImageWriteReference&& write)
+{
+    m_nativeImages.remove(WTF::move(write));
 }
 
 void RemoteSharedResourceCache::releaseSerializedImageBuffer(RemoteSerializedImageBufferIdentifier identifier)

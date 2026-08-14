@@ -29,6 +29,7 @@
 
 #include "RemoteDisplayListIdentifier.h"
 #include "RemoteGradientIdentifier.h"
+#include "RemoteNativeImageIdentifier.h"
 #include "RemotePathImplIdentifier.h"
 #include "RenderingUpdateID.h"
 #include <WebCore/FilterFunction.h>
@@ -64,6 +65,11 @@ public:
     Ref<RemoteNativeImageProxy> createNativeImage(const WebCore::IntSize&, WebCore::PlatformColorSpace&&, bool hasAlpha);
 
     [[nodiscard]] bool recordNativeImageUse(const WebCore::NativeImage&, const WebCore::DestinationColorSpace&);
+
+    // Starts tracking a shared NativeImage whose contents live in the GPU process's
+    // RemoteSharedResourceCache, and returns the read reference the rendering backend uses to adopt it
+    // into its own cache.
+    RemoteNativeImageReadReference recordSharedNativeImageUse(RemoteNativeImageProxy&);
     RemotePathImplIdentifier recordPathImplUse(const WebCore::PathImpl&);
     void recordFontUse(WebCore::Font&);
     RemoteGradientIdentifier recordGradientUse(WebCore::Gradient&);

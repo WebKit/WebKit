@@ -27,22 +27,32 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "Connection.h"
 #include <wtf/Ref.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebKit {
 
+class RemoteNativeImageProxy;
+
 // Class for maintaining view of GPU process RemoteSharedResourceCache state in Web process.
 // Thread-safe.
+//
+// Owns the connection over which the shared resource cache is manipulated, so that the resources it
+// holds (see RemoteNativeImageProxy) do not need a connection of their own.
 class RemoteSharedResourceCacheProxy : public ThreadSafeRefCounted<RemoteSharedResourceCacheProxy> {
     WTF_MAKE_TZONE_ALLOCATED(RemoteSharedResourceCacheProxy);
 public:
-    static Ref<RemoteSharedResourceCacheProxy> create();
+    static Ref<RemoteSharedResourceCacheProxy> create(IPC::Connection&);
     virtual ~RemoteSharedResourceCacheProxy();
 
+    void releaseNativeImage(const RemoteNativeImageProxy&);
+
 private:
-    RemoteSharedResourceCacheProxy();
+    explicit RemoteSharedResourceCacheProxy(IPC::Connection&);
+
+    const Ref<IPC::Connection> m_connection;
 };
 
 }

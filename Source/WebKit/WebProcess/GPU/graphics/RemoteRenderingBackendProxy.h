@@ -77,6 +77,7 @@ class ImageBufferSetClient;
 class WebPage;
 class RemoteSnapshotRecorderProxy;
 class RemoteImageBufferProxy;
+class RemoteNativeImageProxy;
 class RemoteSerializedImageBufferProxy;
 class RemoteSharedResourceCacheProxy;
 class RemoteLayerBackingStore;
@@ -118,7 +119,9 @@ public:
     // Returns backing store bitmap for the RemoteNativeImageProxy.
     RefPtr<WebCore::ShareableBitmap> nativeImageBitmap(const RemoteNativeImageProxy&);
     void cacheNativeImage(WebCore::ShareableBitmap::Handle&&, WebCore::RenderingResourceIdentifier);
-    void cacheNativeImageFromSharedNativeImage(const RemoteNativeImageProxy&);
+    // Adopts a shared NativeImage (whose contents the GPU process publishes in the shared resource
+    // cache) into this backend's cache, so that drawing it needs no further set up.
+    void cacheNativeImageFromSharedNativeImage(RemoteNativeImageProxy&);
     void releaseNativeImage(WebCore::RenderingResourceIdentifier);
     void cachePathImpl(Ref<WebCore::PathImpl>&&, RemotePathImplIdentifier);
     void releasePathImpl(RemotePathImplIdentifier);
