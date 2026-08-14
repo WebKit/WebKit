@@ -767,6 +767,7 @@ frames:
         2: ignoreException
         3: (anonymous function)
         4: executeFrameFunction
+      snapshot: <filtered>
   95: (duration)
     0: queue.submit(["<commandBuffer>"])
       swizzleTypes: [ArrayOf]

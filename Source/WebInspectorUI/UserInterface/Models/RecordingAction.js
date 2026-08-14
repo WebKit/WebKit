@@ -1059,6 +1059,7 @@ WI.RecordingAction._visualNames = {
         "multiDrawElementsWEBGL",
     ]),
     [WI.Recording.Type.CanvasWebGPU]: new Set([
+        "copyElementImageToTexture",
         "copyExternalImageToTexture",
         "submit",
         "writeTexture",

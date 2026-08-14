@@ -424,7 +424,8 @@ static bool shouldSnapshotWebGPUAction(RecordingSwizzleType receiverSwizzleType,
     if (receiverSwizzleType == RecordingSwizzleType::GPUQueue) {
         return name == "submit"_s
             || name == "writeTexture"_s
-            || name == "copyExternalImageToTexture"_s;
+            || name == "copyExternalImageToTexture"_s
+            || name == "copyElementImageToTexture"_s;
     }
     return false;
 }
