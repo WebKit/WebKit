@@ -106,6 +106,14 @@ struct UnsizedTrack {
         // Growth limits: an infinitely-growable track has no ceiling; otherwise its growth limit.
         return infinitelyGrowable ? LayoutUnit::max() : growthLimit;
     }
+
+    // https://drafts.csswg.org/css-grid-1/#algo-single-span-items
+    // "In all cases, if a track's growth limit is now less than its base size,
+    // increase the growth limit to match the base size."
+    void ensureGrowthLimitIsBiggerThanBaseSize()
+    {
+        growthLimit = std::max(growthLimit, baseSize);
+    }
 };
 
 using GridItemIndexes = Vector<size_t>;
@@ -445,6 +453,10 @@ static void sizeTracksToFitNonSpanningItems(const ResolveIntrinsicTrackSizesCont
                 return { };
             }
         );
+
+        // In all cases, if a track’s growth limit is now less than its base size, increase the
+        // growth limit to match the base size.
+        track.ensureGrowthLimitIsBiggerThanBaseSize();
     }
 }
 
