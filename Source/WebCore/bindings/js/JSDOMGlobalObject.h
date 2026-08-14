@@ -90,7 +90,7 @@ public:
     ScriptExecutionContext* scriptExecutionContext() const;
 
     static String codeForEval(JSC::JSGlobalObject*, JSC::JSValue);
-    static bool canCompileStrings(JSC::JSGlobalObject*, JSC::CompilationType, String, const JSC::ArgList&);
+    static bool canCompileStrings(JSC::JSGlobalObject*, JSC::CompilationType, String);
     static JSC::Structure* trustedScriptStructure(JSC::JSGlobalObject*);
 
     // Make binding code generation easier.
