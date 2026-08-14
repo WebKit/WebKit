@@ -156,7 +156,7 @@ public:
 
     ExceptionOr<void> updateCurrentEntry(UpdateCurrentEntryOptions&&);
 
-    enum class DispatchResult : uint8_t { Completed, Aborted, Intercepted };
+    enum class DispatchResult : uint8_t { Completed, Aborted, Intercepted, DeferredCommit };
     DispatchResult dispatchTraversalNavigateEvent(HistoryItem&);
     bool dispatchPushReplaceReloadNavigateEvent(const URL&, NavigationNavigationType, bool isSameDocument, FormState*, SerializedScriptValue* classicHistoryAPIState = nullptr, Element* sourceElement = nullptr);
     bool dispatchDownloadNavigateEvent(const URL&, const String& downloadFilename, Element* sourceElement = nullptr);
@@ -286,6 +286,9 @@ private:
 
     void disposeOfForwardEntriesInParents(BackForwardItemIdentifier);
     void recursivelyDisposeOfForwardEntriesInParents(BackForwardItemIdentifier, LocalFrame* navigatedFrame);
+
+    void clearDeferredTraversalIfNeeded();
+    void resumeDeferredTraversalIfNeeded();
 
     // https://html.spec.whatwg.org/multipage/nav-history-apis.html#navigation-api-method-tracker
     class MethodTrackerRegistry {

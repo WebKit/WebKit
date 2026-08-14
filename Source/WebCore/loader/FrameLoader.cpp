@@ -4636,6 +4636,21 @@ void FrameLoader::loadSameDocumentItem(HistoryItem& item)
         history->restoreScrollPositionAndViewState();
 }
 
+void FrameLoader::clearDeferredTraversal()
+{
+    m_deferredTraversalItem = nullptr;
+}
+
+void FrameLoader::resumeDeferredTraversal()
+{
+    RefPtr item = std::exchange(m_deferredTraversalItem, nullptr);
+    if (!item)
+        return;
+
+    m_loadType = m_deferredTraversalLoadType;
+    loadSameDocumentItem(*item);
+}
+
 // FIXME: This function should really be split into a couple pieces, some of
 // which should be methods of HistoryController and some of which should be
 // methods of FrameLoader.
@@ -4789,8 +4804,17 @@ void FrameLoader::loadItem(HistoryItem& item, HistoryItem* fromItem, FrameLoadTy
             // https://html.spec.whatwg.org/multipage/nav-history-apis.html#fire-a-traverse-navigate-event
             if (RefPtr window = frame().document()->window()) {
                 if (RefPtr navigation = window->navigation(); navigation->frame()) {
-                    if (navigation->dispatchTraversalNavigateEvent(item) == Navigation::DispatchResult::Aborted)
+                    auto dispatchResult = navigation->dispatchTraversalNavigateEvent(item);
+                    if (dispatchResult == Navigation::DispatchResult::Aborted)
                         return;
+                    if (dispatchResult == Navigation::DispatchResult::DeferredCommit) {
+                        // A precommit handler is still pending, so the traverse history step must
+                        // not be applied yet. Navigation resumes it once the precommit handler
+                        // promises fulfill, and discards it if the navigation is aborted before.
+                        m_deferredTraversalItem = &item;
+                        m_deferredTraversalLoadType = loadType;
+                        return;
+                    }
                     // In case the event detached the frame.
                     if (!navigation->frame())
                         return;

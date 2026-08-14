@@ -1,5 +1,5 @@
 
-FAIL precommitHandler for a traverse navigation, reject before commit assert_equals: expected object "Error: assert_equals: hash after first async step expected "#4" but got """ but got object "Error: boo!"
-FAIL precommitHandler for a traverse navigation, reject after commit assert_equals: hash after first async step expected "" but got "#1"
-FAIL precommitHandler for a traverse navigation, success assert_equals: hash after first async step expected "#1" but got "#3"
+PASS precommitHandler for a traverse navigation, reject before commit
+PASS precommitHandler for a traverse navigation, reject after commit
+PASS precommitHandler for a traverse navigation, success
 

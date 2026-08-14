@@ -365,6 +365,9 @@ public:
 
     void updateURLAndHistory(const URL&, RefPtr<SerializedScriptValue>&& stateObject, NavigationHistoryBehavior = NavigationHistoryBehavior::Replace);
 
+    void clearDeferredTraversal();
+    void resumeDeferredTraversal();
+
     WEBCORE_EXPORT void NODELETE setPendingAsyncBackForwardNavigation();
     WEBCORE_EXPORT void cancelPendingAsyncBackForwardNavigation();
     bool asyncBackForwardNavigationWasCancelled() const { return m_asyncBackForwardNavigationState == AsyncBackForwardNavigationState::Cancelled; }
@@ -580,6 +583,8 @@ private:
     bool m_doNotAbortNavigationAPI { false };
     bool m_isDispatchingPageSwapEvent { false };
     RefPtr<HistoryItem> m_pendingNavigationAPIItem;
+    RefPtr<HistoryItem> m_deferredTraversalItem;
+    FrameLoadType m_deferredTraversalLoadType { FrameLoadType::IndexedBackForward };
     uint64_t m_requiredCookiesVersion { 0 };
 
     const Ref<DocumentPrefetcher> m_documentPrefetcher;
