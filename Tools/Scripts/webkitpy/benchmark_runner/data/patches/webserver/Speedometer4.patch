@@ -13,7 +13,7 @@
 +
 +        const scores = [];
 +        const resultsSuites = {};
-+        const results = {'Speedometer-4.0': {
++        const results = {'Speedometer-4': {
 +            'metrics': {
 +                'Score': {'current': [scores]},
 +                'Time': ['Total', 'Geometric']},
