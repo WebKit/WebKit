@@ -2657,7 +2657,6 @@ webgl/webgl-backend-type.html [ Skip ]
 # Failing with ANGLE backend
 fast/canvas/webgl/oes-texture-float-linear.html [ Failure ]
 fast/canvas/webgl/webgl-compressed-texture-size-limit.html [ Failure ]
-fast/canvas/webgl/colorspaces-test.html [ Failure ]
 http/tests/webgl/1.0.x/conformance/textures/misc/origin-clean-conformance-offscreencanvas.html [ Failure ]
 
 webgl/webgl-draft-extensions-flag-default.html [ Skip ]
@@ -4152,14 +4151,17 @@ fast/text/line-break-with-locale.html [ ImageOnlyFailure ]
 
 webkit.org/b/225423 fast/canvas/canvas-composite-text-alpha.html [ Failure ]
 
-# Non-sRGB color spaces are not currently supported by the glib ports.
-fast/canvas/canvas-color-space-display-p3.html [ Skip ]
-fast/canvas/canvas-color-space-display-p3-ImageData.html [ Skip ]
-imported/w3c/web-platform-tests/html/canvas/element/wide-gamut-canvas/ [ Skip ]
-imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/ [ Skip ]
-imported/w3c/web-platform-tests/html/canvas/offscreen/wide-gamut-canvas/ [ Skip ]
-
-storage/indexeddb/structured-clone-image-data-display-p3.html [ Skip ]
+# Decoded images/video frames are always tagged as sRGB regardless of their embedded ICC
+# profile: PNGImageDecoder/JPEGImageDecoder convert via LCMS straight to sRGB during decode,
+# and ImageBackingStoreSkia.cpp hardcodes SkColorSpace::MakeSRGB() on the result. Wide-gamut
+# sources (Display-P3, Adobe RGB) lose saturation before they ever reach a P3 canvas.
+imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage-ImageBitmap-Blob.html [ Failure ]
+imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage-ImageBitmap-cloned.html [ Failure ]
+imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage-ImageBitmap-image.html [ Failure ]
+imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage-ImageBitmap-video.html [ Failure ]
+imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage-video.html [ Failure ]
+imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-drawImage.https.html [ Failure ]
+imported/w3c/web-platform-tests/html/canvas/element/manual/wide-gamut-canvas/canvas-display-p3-pattern-image.html [ Failure ]
 
 webkit.org/b/205159 fast/scrolling/overflow-scroll-past-max.html [ Skip ]
 
@@ -4635,8 +4637,6 @@ webkit.org/b/278719 imported/w3c/web-platform-tests/touch-events/touch-toucheven
 
 # EWS indicates this test is too slow on bots.
 security/decode-buffer-size.html [ Skip ]
-
-fast/canvas/webgl/context-lost-restored-p3.html [ Failure ]
 
 webkit.org/b/210374 http/tests/media/user-gesture-preserved-across-xmlhttprequest.html [ Timeout Failure ]
 

@@ -45,7 +45,24 @@ sk_sp<SkColorSpace> linearSRGBColorSpaceSingleton()
 #if ENABLE(DESTINATION_COLOR_SPACE_DISPLAY_P3)
 sk_sp<SkColorSpace> displayP3ColorSpaceSingleton()
 {
-    return SkColorSpace::MakeRGB(SkNamedTransferFn::kSRGB, SkNamedGamut::kDisplayP3);
+    static sk_sp<SkColorSpace> colorSpace = SkColorSpace::MakeRGB(SkNamedTransferFn::kSRGB, SkNamedGamut::kDisplayP3);
+    return colorSpace;
+}
+
+sk_sp<SkColorSpace> extendedDisplayP3ColorSpaceSingleton()
+{
+    return displayP3ColorSpaceSingleton();
+}
+
+sk_sp<SkColorSpace> linearDisplayP3ColorSpaceSingleton()
+{
+    static sk_sp<SkColorSpace> colorSpace = SkColorSpace::MakeRGB(SkNamedTransferFn::kLinear, SkNamedGamut::kDisplayP3);
+    return colorSpace;
+}
+
+sk_sp<SkColorSpace> extendedLinearDisplayP3ColorSpaceSingleton()
+{
+    return linearDisplayP3ColorSpaceSingleton();
 }
 #endif
 

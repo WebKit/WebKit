@@ -28,6 +28,7 @@
 
 #if USE(SKIA)
 #include "AffineTransform.h"
+#include "ColorSpaceSkia.h"
 #include "FloatRect.h"
 #include "FloatRoundedRect.h"
 #include "FontRenderOptions.h"
@@ -68,6 +69,47 @@ WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 #endif
 
 namespace WebCore {
+
+static sk_sp<SkColorSpace> skColorSpaceForColorSpace(ColorSpace colorSpace)
+{
+    switch (colorSpace) {
+    case ColorSpace::SRGB:
+        return sRGBColorSpaceSingleton();
+    case ColorSpace::LinearSRGB:
+    case ColorSpace::ExtendedLinearSRGB:
+        return linearSRGBColorSpaceSingleton();
+#if ENABLE(DESTINATION_COLOR_SPACE_DISPLAY_P3)
+    case ColorSpace::DisplayP3:
+    case ColorSpace::ExtendedDisplayP3:
+        return displayP3ColorSpaceSingleton();
+    case ColorSpace::LinearDisplayP3:
+    case ColorSpace::ExtendedLinearDisplayP3:
+        return linearDisplayP3ColorSpaceSingleton();
+#endif
+    default:
+        break;
+    }
+    return nullptr;
+}
+
+static std::pair<SkColor4f, sk_sp<SkColorSpace>> skColor4fAndColorSpaceForColor(const Color& color)
+{
+    auto [colorSpace, components] = color.colorSpaceAndResolvedColorComponents();
+    if (auto skColorSpace = skColorSpaceForColorSpace(colorSpace)) {
+        auto [r, g, b, a] = components;
+        return { SkColor4f { r, g, b, a }, skColorSpace };
+    }
+
+    // Fall back to a clamped sRGB for color spaces without a direct Skia-managed
+    // representation yet.
+    return { SkColor4f::FromColor(SkColor(color)), nullptr };
+}
+
+static void setPaintColor(SkPaint& paint, const Color& color)
+{
+    auto [skColor, skColorSpace] = skColor4fAndColorSpaceForColor(color);
+    paint.setColor4f(skColor, skColorSpace.get());
+}
 
 GraphicsContextSkia::GraphicsContextSkia(SkCanvas& canvas, RenderingMode renderingMode, RenderingPurpose renderingPurpose, CompletionHandler<void()>&& destroyNotify)
     : m_canvas(canvas)
@@ -310,7 +352,7 @@ void GraphicsContextSkia::drawLine(const FloatPoint& point1, const FloatPoint& p
         return;
 
     SkPaint paint = createStrokePaint();
-    paint.setColor(SkColor(strokeColor().colorWithAlphaMultipliedBy(alpha())));
+    setPaintColor(paint, strokeColor().colorWithAlphaMultipliedBy(alpha()));
 
     const bool isVertical = (point1.x() + strokeThickness() == point2.x());
     float strokeWidth = isVertical ? point2.y() - point1.y() : point2.x() - point1.x();
@@ -502,28 +544,29 @@ sk_sp<SkImageFilter> GraphicsContextSkia::createDropShadowFilterIfNeeded(ShadowS
 
     const auto& state = this->state();
     auto sigma = shadow->radius / 2.0;
+    auto [skShadowColor, skShadowColorSpace] = skColor4fAndColorSpaceForColor(shadowColor);
 
     if (shadowStyle == ShadowStyle::Inset) {
         auto dropShadow = SkImageFilters::DropShadowOnly(offset.width(), offset.height(), sigma, sigma, SK_ColorBLACK, nullptr);
-        return SkImageFilters::ColorFilter(SkColorFilters::Blend(shadowColor, SkBlendMode::kSrcIn), dropShadow);
+        return SkImageFilters::ColorFilter(SkColorFilters::Blend(skShadowColor, skShadowColorSpace, SkBlendMode::kSrcIn), dropShadow);
     }
 
     RELEASE_ASSERT(shadowStyle == ShadowStyle::Outset);
 
     if (!state.shadowsIgnoreTransforms())
-        return SkImageFilters::DropShadowOnly(offset.width(), offset.height(), sigma, sigma, shadowColor, nullptr);
+        return SkImageFilters::DropShadowOnly(offset.width(), offset.height(), sigma, sigma, skShadowColor, skShadowColorSpace, nullptr);
 
     // Fast path: identity CTM doesn't need the transform compensation
     AffineTransform ctm = getCTM(GraphicsContext::IncludeDeviceScale::PossiblyIncludeDeviceScale);
     if (ctm.isIdentity())
-        return SkImageFilters::DropShadowOnly(offset.width(), offset.height(), sigma, sigma, shadowColor, nullptr);
+        return SkImageFilters::DropShadowOnly(offset.width(), offset.height(), sigma, sigma, skShadowColor, skShadowColorSpace, nullptr);
 
     // Ignoring the CTM is practically equal as applying the inverse of
     // the CTM when post-processing the drop shadow.
     if (const std::optional<SkMatrix>& inverse = ctm.inverse()) {
         SkPoint3 p = inverse->mapHomogeneousPoint(SkPoint3::Make(offset.width(), offset.height(), 0));
         sigma = inverse->mapRadius(sigma);
-        return SkImageFilters::DropShadowOnly(p.x(), p.y(), sigma, sigma, shadowColor, nullptr);
+        return SkImageFilters::DropShadowOnly(p.x(), p.y(), sigma, sigma, skShadowColor, skShadowColorSpace, nullptr);
     }
 
     return nullptr;
@@ -567,7 +610,7 @@ void GraphicsContextSkia::setupFillSource(SkPaint& paint)
     } else if (auto fillGradient = fillBrush().gradient())
         paint.setShader(fillGradient->shader(alpha(), fillBrush().gradientSpaceTransform()));
     else
-        paint.setColor(SkColor(fillColor().colorWithAlphaMultipliedBy(alpha())));
+        setPaintColor(paint, fillColor().colorWithAlphaMultipliedBy(alpha()));
 }
 
 SkPaint GraphicsContextSkia::createStrokePaint() const
@@ -593,7 +636,7 @@ void GraphicsContextSkia::setupStrokeSource(SkPaint& paint)
     } else if (auto strokeGradient = strokeBrush().gradient())
         paint.setShader(strokeGradient->shader(alpha(), strokeBrush().gradientSpaceTransform()));
     else
-        paint.setColor(SkColor(strokeBrush().color().colorWithAlphaMultipliedBy(alpha())));
+        setPaintColor(paint, strokeBrush().color().colorWithAlphaMultipliedBy(alpha()));
 }
 
 void GraphicsContextSkia::drawSkiaRect(const SkRect& boundaries, SkPaint& paint)
@@ -625,7 +668,7 @@ void GraphicsContextSkia::fillRect(const FloatRect& boundaries, const Color& fil
         return;
 
     SkPaint paint = createFillPaint();
-    paint.setColor(SkColor(fillColor));
+    setPaintColor(paint, fillColor);
     drawSkiaRect(boundaries, paint);
 }
 

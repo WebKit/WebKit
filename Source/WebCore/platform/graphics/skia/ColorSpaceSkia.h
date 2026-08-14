@@ -37,6 +37,9 @@ WEBCORE_EXPORT sk_sp<SkColorSpace> sRGBColorSpaceSingleton();
 WEBCORE_EXPORT sk_sp<SkColorSpace> linearSRGBColorSpaceSingleton();
 #if ENABLE(DESTINATION_COLOR_SPACE_DISPLAY_P3)
 WEBCORE_EXPORT sk_sp<SkColorSpace> displayP3ColorSpaceSingleton();
+WEBCORE_EXPORT sk_sp<SkColorSpace> extendedDisplayP3ColorSpaceSingleton();
+WEBCORE_EXPORT sk_sp<SkColorSpace> linearDisplayP3ColorSpaceSingleton();
+WEBCORE_EXPORT sk_sp<SkColorSpace> extendedLinearDisplayP3ColorSpaceSingleton();
 #endif
 
 } // namespace WebCore
