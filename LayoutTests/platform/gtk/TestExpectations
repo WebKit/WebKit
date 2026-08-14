@@ -1268,7 +1268,6 @@ webkit.org/b/318025 animations/font-variations/font-stretch.html [ Pass Timeout 
 webkit.org/b/318026 [ Release ] fast/canvas/canvas-layer-drawing.html [ Pass ImageOnlyFailure ]
 webkit.org/b/318027 [ Release ] fast/events/mouse-focus-imagemap.html [ Pass Failure ]
 webkit.org/b/318028 [ Release ] fast/parser/entity-end-xmp-tag.html [ Pass Timeout ]
-webkit.org/b/318029 [ Release ] media/media-source/media-source-seek-twice.html [ Pass Timeout ]
 webkit.org/b/318030 inspector/canvas/create-context-2d.html [ Crash Pass Failure ]
 webkit.org/b/318031 imported/w3c/web-platform-tests/css/filter-effects/filtered-inline-applies-to-block.html [ Pass ImageOnlyFailure ]
 webkit.org/b/318032 svg/filters/feImage-element-primitive-subregion.svg [ Pass ImageOnlyFailure ]
@@ -1309,7 +1308,6 @@ webkit.org/b/319318 http/tests/inspector/network/har/har-page-aggressive-gc.html
 webkit.org/b/319319 [ Debug ] imported/w3c/web-platform-tests/css/css-contain/contain-inline-size-replaced.html [ Failure Pass ]
 webkit.org/b/319323 imported/w3c/web-platform-tests/css/css-scroll-snap/input/keyboard-snap-interruption.html [ Failure Pass ]
 webkit.org/b/319324 inspector/canvas/create-context-webgl.html [ Failure Pass ]
-webkit.org/b/319325 fast/body-propagation/background-color/010.html [ ImageOnlyFailure Pass ]
 
 webkit.org/b/320055 [ Release ] imported/w3c/web-platform-tests/html/interaction/focus/the-autofocus-attribute/update-the-rendering.html [ Failure Pass ]
 webkit.org/b/320058 [ Debug ] ipc/send-filter.html [ Crash Pass ]

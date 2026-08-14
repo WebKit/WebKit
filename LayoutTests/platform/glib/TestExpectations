@@ -1525,6 +1525,8 @@ webkit.org/b/306017 [ Release ] imported/w3c/web-platform-tests/css/css-view-tra
 
 webkit.org/b/318778 [ Release ] fast/body-propagation/background-color/009.html [ ImageOnlyFailure Pass ]
 
+webkit.org/b/319325 fast/body-propagation/background-color/010.html [ ImageOnlyFailure Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of CSS-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -3089,7 +3091,8 @@ imported/w3c/web-platform-tests/content-security-policy/reporting/report-origina
 
 webkit.org/b/231083 imported/w3c/web-platform-tests/content-security-policy/generic/policy-inherited-correctly-by-plznavigate.html [ Failure Pass ]
 
-webkit.org/b/321358 [ Release ] imported/w3c/web-platform-tests/content-security-policy/inheritance/history.sub.html [ Pass Crash ]
+# Started to fail more on interval [318765@main-318767@main]
+webkit.org/b/321358 [ Release ] imported/w3c/web-platform-tests/content-security-policy/inheritance/history.sub.html [ Pass Crash Failure Timeout ]
 
 # Failing since deferred async loading enabled until document is loaded enabled.
 webkit.org/b/208104 [ Release ] imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/execution-timing/085.html [ Failure Pass ]
@@ -5271,6 +5274,7 @@ webkit.org/b/319954 [ arm64 ] imported/w3c/web-platform-tests/css/css-text/white
 webkit.org/b/317966 http/tests/web-locks/web-lock-in-serviceworker.html [ Crash Failure Pass ]
 webkit.org/b/320245 [ x86_64 ] imported/w3c/web-platform-tests/web-locks/bfcache/abort.tentative.https.html [ Pass Failure ]
 webkit.org/b/317968 [ x86_64 ] imported/w3c/web-platform-tests/navigation-timing/nav2-test-redirect-server.html [ Pass Failure ]
+webkit.org/b/321706 imported/w3c/web-platform-tests/web-locks/acquire.https.any.sharedworker.html [ Failure Pass ]
 
 webkit.org/b/319044 imported/w3c/web-platform-tests/html/rendering/widgets/shadow-dom.html [ Failure ]
 webkit.org/b/319045 [ Debug ] accessibility/button-in-deep-dom.html [ Timeout ]
@@ -5355,6 +5359,13 @@ webkit.org/b/321285 [ x86_64 ] imported/w3c/web-platform-tests/webrtc-extensions
 webkit.org/b/321282 [ Debug ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworkletglobalscope-creation-time.https.html [ Failure Pass ]
 
 webkit.org/b/321482 imported/w3c/web-platform-tests/css/filter-effects/filtered-inline-is-container.html [ ImageOnlyFailure ]
+
+webkit.org/b/321708 webaudio/MediaElementAudioSource/mediaelementaudiosourcenode-channel-count-on-src-change.html [ Crash Failure Timeout Pass ]
+webkit.org/b/321708 webaudio/MediaElementAudioSource/mediaelementaudiosourcenode-channel-count.html [ Crash Failure Timeout Pass ]
+
+webkit.org/b/318029 [ Release ] media/media-source/media-source-seek-twice.html [ Pass Timeout ]
+
+webkit.org/b/321711 [ Release ] http/tests/multipart/multipart-async-image.html [ Failure Pass ]
 
 # End: Common failures between GTK and WPE.
 
