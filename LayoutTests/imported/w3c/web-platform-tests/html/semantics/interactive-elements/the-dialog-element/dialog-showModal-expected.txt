@@ -7,6 +7,6 @@ PASS when opening multiple dialogs, only the newest one is non-inert
 PASS opening dialog without focusable children
 PASS opening dialog with multiple focusable children
 PASS opening dialog with multiple focusable children, one having the autofocus attribute
-FAIL when opening multiple dialogs, the most recently opened is rendered on top assert_equals: expected Element node <dialog id="d10" open=""></dialog> but got Element node <dialog id="d11" open=""></dialog>
+PASS when opening multiple dialogs, the most recently opened is rendered on top
 PASS When the document is not attached to any pages, showModal() should throw.
 OK
