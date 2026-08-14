@@ -119,6 +119,16 @@ inline const Color& ComputedStyleBase::colorForHighlight() const
     return m_inheritedRareData->colorForHighlight;
 }
 
+inline bool ComputedStyleBase::usesCurrentBackgroundColorKeyword() const
+{
+    return m_nonInheritedFlags.usesCurrentBackgroundColorKeyword;
+}
+
+inline const WebCore::Color& ComputedStyleBase::currentBackgroundColor() const
+{
+    return m_inheritedData->currentBackgroundColor;
+}
+
 inline InsideLink ComputedStyleBase::insideLink() const
 {
     return static_cast<InsideLink>(m_inheritedFlags.insideLink);

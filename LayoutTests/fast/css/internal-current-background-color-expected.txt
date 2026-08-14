@@ -1,0 +1,31 @@
+
+PASS internals is available
+PASS background-color uses the nearest ancestor background-color, ignoring its own
+PASS color uses the nearest ancestor background-color, ignoring its own
+PASS accent-color uses the nearest ancestor background-color, ignoring its own
+PASS text-decoration-color uses the element's own background-color
+PASS text-emphasis-color uses the element's own background-color
+PASS border-color uses the element's own background-color
+PASS background-color walks past transparent ancestors to the nearest non-transparent one
+PASS color walks past transparent ancestors to the nearest non-transparent one
+PASS accent-color walks past transparent ancestors to the nearest non-transparent one
+PASS text-decoration-color walks past transparent ancestors to the nearest non-transparent one
+PASS text-emphasis-color walks past transparent ancestors to the nearest non-transparent one
+PASS border-color walks past transparent ancestors to the nearest non-transparent one
+PASS background-color falls back to the Canvas color when every ancestor is transparent
+PASS color falls back to the Canvas color when every ancestor is transparent
+PASS accent-color falls back to the Canvas color when every ancestor is transparent
+PASS text-decoration-color falls back to the Canvas color when every ancestor is transparent
+PASS text-emphasis-color falls back to the Canvas color when every ancestor is transparent
+PASS border-color falls back to the Canvas color when every ancestor is transparent
+PASS background-color skips a display:contents ancestor and uses the box-generating one
+PASS color skips a display:contents ancestor and uses the box-generating one
+PASS accent-color skips a display:contents ancestor and uses the box-generating one
+PASS text-decoration-color skips a display:contents ancestor and uses the box-generating one
+PASS text-emphasis-color skips a display:contents ancestor and uses the box-generating one
+PASS border-color skips a display:contents ancestor and uses the box-generating one
+PASS background-color re-resolves when an ancestor's background-color changes
+PASS background-color re-resolves when a nearer ancestor becomes non-transparent
+PASS background-color re-resolves when a nearer ancestor's background-color is removed
+PASS background-color re-resolves when the element is reparented to a new ancestor chain
+

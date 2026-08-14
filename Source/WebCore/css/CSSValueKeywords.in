@@ -331,6 +331,7 @@ activebuttontext
 -webkit-link
 -webkit-focus-ring-color
 -internal-document-text-color
+-internal-current-background-color
 
 //
 // CSS_PROP_BACKGROUND_REPEAT:

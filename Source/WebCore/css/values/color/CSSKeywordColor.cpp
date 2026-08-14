@@ -132,6 +132,9 @@ WebCore::Color createColor(const KeywordColor& unresolved, PlatformColorResoluti
         return state.webkitFocusRingColor();
     case CSSValueCurrentcolor:
         return state.currentColor();
+    case CSSValueInternalCurrentBackgroundColor:
+        // Resolved during style computation; fall back to Canvas color.
+        return colorFromKeyword(CSSValueCanvas, state.keywordOptions);
     default:
         return colorFromKeyword(unresolved.valueID, state.keywordOptions);
     }

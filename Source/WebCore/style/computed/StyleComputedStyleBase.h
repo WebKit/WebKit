@@ -482,6 +482,12 @@ public:
     inline const Color& colorForHighlight() const;
     inline void setColorForHighlight(Color&&);
 
+    inline bool usesCurrentBackgroundColorKeyword() const;
+    inline void setUsesCurrentBackgroundColorKeyword();
+
+    inline const WebCore::Color& currentBackgroundColor() const;
+    inline void setCurrentBackgroundColor(WebCore::Color);
+
     inline bool isLink() const;
     inline void setIsLink(bool);
 
@@ -780,6 +786,7 @@ public:
         PREFERRED_TYPE(bool) unsigned usesViewportUnits : 1;
         PREFERRED_TYPE(bool) unsigned isContainerDependent : 1;
         PREFERRED_TYPE(bool) unsigned useTreeCountingFunctions : 1;
+        PREFERRED_TYPE(bool) unsigned usesCurrentBackgroundColorKeyword : 1;
         PREFERRED_TYPE(bool) unsigned hasExplicitlyInheritedProperties : 1; // Explicitly inherits a non-inherited property.
         PREFERRED_TYPE(bool) unsigned disallowsFastPathInheritance : 1;
 
