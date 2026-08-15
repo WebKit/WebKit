@@ -19077,10 +19077,9 @@ INSTANTIATE_SEND_SYNC_TO_PROCESS_CONTAINING_FRAME(WebPage::SyncApplyAutocorrecti
 void WebPageProxy::focusRemoteFrame(IPC::Connection& connection, WebCore::FrameIdentifier frameID, std::optional<WebCore::UserGestureTokenIdentifier> userGestureTokenIdentifier)
 {
     RefPtr destinationFrame = WebFrameProxy::webFrame(frameID);
-    if (!destinationFrame || !destinationFrame->isMainFrame())
+    if (!destinationFrame || !destinationFrame->isMainFrame() || !destinationFrame->page())
         return;
-
-    ASSERT(destinationFrame->page() == this);
+    MESSAGE_CHECK_BASE(destinationFrame->page() == this, connection);
 
     if (userGestureTokenIdentifier) {
         if (RefPtr userInitiatedAction = WebProcessProxy::fromConnection(connection)->userInitiatedActivity(userGestureTokenIdentifier)) {
@@ -19094,8 +19093,30 @@ void WebPageProxy::focusRemoteFrame(IPC::Connection& connection, WebCore::FrameI
     setFocus(true);
 }
 
-void WebPageProxy::postMessageToRemote(WebCore::FrameIdentifier source, const WebCore::SecurityOriginData& sourceOrigin, WebCore::FrameIdentifier target, std::optional<WebCore::SecurityOriginData> targetOrigin, const WebCore::MessageWithMessagePorts& message, std::optional<WebCore::UserGestureTokenData>&& userGestureToken)
+void WebPageProxy::postMessageToRemote(IPC::Connection& connection, WebCore::FrameIdentifier source, const WebCore::SecurityOriginData& sourceOrigin, WebCore::FrameIdentifier target, std::optional<WebCore::SecurityOriginData> targetOrigin, const WebCore::MessageWithMessagePorts& message, std::optional<WebCore::UserGestureTokenData>&& userGestureToken)
 {
+    // This message is posted on the page owning the target frame, so another page's frame is forged.
+    // The source frame belongs to any page referencing the target, such as an opener.
+    RefPtr sourceFrame = WebFrameProxy::webFrame(source);
+    RefPtr targetFrame = WebFrameProxy::webFrame(target);
+    if (!sourceFrame || !targetFrame || !targetFrame->page())
+        return;
+    MESSAGE_CHECK_BASE(targetFrame->page() == this, connection);
+
+    // event.source and event.origin come from source and sourceOrigin, so the sending process must
+    // host the source frame. A frame that just committed elsewhere still runs pageswap and unload
+    // handlers here, which is a race, so drop the message instead of terminating the sender.
+    if (&sourceFrame->process() != WebProcessProxy::fromConnection(connection).ptr()) {
+        WEBPAGEPROXY_RELEASE_LOG_ERROR(Process, "postMessageToRemote: the sending process does not host the source frame");
+        return;
+    }
+
+    // A frame may only claim the origin the UI process derives for it, or an opaque one. Claiming
+    // opaque is a downgrade to "null" and is the one case the UI process cannot derive: a
+    // Content-Security-Policy sandbox header makes a document opaque without a sandbox flag here.
+    auto expectedSourceOrigin = sourceFrame->documentSecurityOriginData();
+    MESSAGE_CHECK_BASE(sourceOrigin.isOpaque() || sourceOrigin == expectedSourceOrigin, connection);
+
     if (message.transferredPorts.isEmpty()) {
         sendToProcessContainingFrame(target, Messages::WebPage::RemotePostMessage(source, sourceOrigin, target, targetOrigin, message, userGestureToken));
         return;

@@ -1,0 +1,81 @@
+<!DOCTYPE html><!-- webkit-test-runner [ SiteIsolationEnabled=true IPCTestingAPIEnabled=true IgnoreInvalidMessageWhenIPCTestingAPIEnabled=true ] -->
+<html>
+<body>
+<!-- Cross-site, so the iframe runs in another process and can replay a message this process sent. -->
+<iframe id="frame" src="http://localhost:8000/site-isolation/resources/post-message-forged-source-iframe.html"></iframe>
+<script>
+// The IPC testing API is compiled into debug and ASan builds only, so this test reports the same
+// result whether or not it can forge a message.
+const summary = "Tests that a WebContent process cannot postMessage as a frame it does not host.";
+
+let captured = false;
+let replayed = false;
+let finished = false;
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function finish(result) {
+    if (finished)
+        return;
+    finished = true;
+    document.body.innerText = summary + "\n" + result;
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+addEventListener("message", (event) => {
+    if (event.data == "loaded") {
+        if (!window.IPC) {
+            finish("PASS");
+            return;
+        }
+
+        IPC.addOutgoingMessageListener("UI", (description) => {
+            if (captured || !description || !description.buffer)
+                return;
+            if (description.name !== IPC.messages.WebPageProxy_PostMessageToRemote.name)
+                return;
+            captured = true;
+
+            // slice(16) drops the message header, which IPC.sendMessage writes itself.
+            frame.contentWindow.postMessage({
+                replay: true,
+                name: description.name,
+                bytes: new Uint8Array(description.buffer).slice(16),
+            }, "*");
+        });
+
+        // This message names this frame as its source, and the iframe's process does not host it.
+        frame.contentWindow.postMessage("probe", "*");
+        return;
+    }
+
+    if (event.data == "ipc unavailable") {
+        finish("PASS");
+        return;
+    }
+
+    if (event.data == "replayed") {
+        replayed = true;
+        frame.contentWindow.postMessage("count", "*");
+        return;
+    }
+
+    if (typeof event.data != "string" || !event.data.startsWith("probe count "))
+        return;
+
+    if (!replayed)
+        finish("FAIL: the iframe did not replay the message.");
+    else if (event.data != "probe count 1")
+        finish("FAIL: the iframe reported \"" + event.data + "\", expected \"probe count 1\".");
+    else
+        finish("PASS");
+});
+
+setTimeout(() => finish("FAIL: timed out."), 20000);
+</script>
+</body>
+</html>

@@ -1,0 +1,31 @@
+<script>
+let probeCount = 0;
+
+addEventListener("message", (event) => {
+    if (event.data == "probe") {
+        ++probeCount;
+        return;
+    }
+
+    if (event.data == "count") {
+        parent.postMessage("probe count " + probeCount, "*");
+        return;
+    }
+
+    if (!event.data || !event.data.replay)
+        return;
+
+    if (!window.IPC) {
+        parent.postMessage("ipc unavailable", "*");
+        return;
+    }
+
+    // Address the page by this process's own PageIdentifier; each process has its own for one page.
+    IPC.sendMessage("UI", IPC.pageID, event.data.name, event.data.bytes);
+    parent.postMessage("replayed", "*");
+});
+
+onload = () => {
+    parent.postMessage("loaded", "*");
+};
+</script>
