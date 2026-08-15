@@ -99,7 +99,6 @@ mac/WebView/WebFrame.mm
 mac/WebView/WebFrameView.mm
 mac/WebView/WebHTMLRepresentation.mm
 mac/WebView/WebHTMLView.mm
-[ Mac ] mac/WebView/WebPDFRepresentation.mm
 mac/WebView/WebScriptDebugger.mm
 [ Mac ] mac/WebView/WebVideoFullscreenController.mm
 mac/WebView/WebView.mm
