@@ -858,7 +858,6 @@ CharacterRange AXTextMarker::characterRangeForLine(unsigned lineIndex) const
     if (!textRunMarker.isValid())
         return { };
 
-    unsigned precedingLength = 0;
     // Use IncludeTrailingLineBreak::Yes to match AccessibilityRenderObject::doAXRangeForLine, which behaves this way (specifically):
     //   if (isHardLineBreak(lineEnd))
     //     ++lineEndIndex;
@@ -866,12 +865,21 @@ CharacterRange AXTextMarker::characterRangeForLine(unsigned lineIndex) const
     // meaning we will compute a different length between these two APIs for the same logical range.
     auto currentLineRange = textRunMarker.lineRange(LineRangeType::Current, IncludeTrailingLineBreak::Yes);
     while (lineIndex && currentLineRange) {
-        precedingLength += currentLineRange.length();
         currentLineRange = nextLineRange(currentLineRange, IncludeTrailingLineBreak::Yes, stopAtID);
         --lineIndex;
     }
     if (!currentLineRange)
         return { };
+
+    // Measure the location by walking from the control's first text position to this line's start,
+    // rather than by summing the preceding lines' own lengths. Text emitted between two lines — the
+    // newline synthesized at a block boundary, as in <div>one</div><div>two</div> — occupies a
+    // character index but sits outside either line's range, so summing line lengths falls one
+    // character short per boundary and yields a location in a different index space than the one
+    // AXStringForRange indexes with. A <br> line break leaves no such gap (the newline is part of
+    // the preceding line's range), which is why only block-separated lines were affected.
+    unsigned precedingLength = AXTextMarkerRange { textRunMarker, currentLineRange.start() }.length();
+
     // Report the trailing blank line of a value ending in a line break as an empty range at the
     // document end, so it reads as an empty line rather than a line whose content is a newline.
     unsigned lineLength = currentLineRange.length();
@@ -917,7 +925,14 @@ int AXTextMarker::lineNumberForIndex(unsigned index) const
     auto currentLineRange = textRunMarker.lineRange(LineRangeType::Current, IncludeTrailingLineBreak::Yes);
     while (currentLineRange) {
         unsigned lineLength = currentLineRange.length();
-        if (index < lineStart + lineLength) {
+        auto nextRange = nextLineRange(currentLineRange, IncludeTrailingLineBreak::Yes, stopAtID);
+        // A line occupies the index space up to the start of the next line, which is not the same as
+        // the length of its own range: the newline synthesized at a block boundary belongs to no
+        // line's range but still occupies an index, and the non-isolated AccessibilityRenderObject
+        // path attributes that index to the preceding line. Walking start-to-start counts it, and
+        // keeps this API's line boundaries aligned with characterRangeForLine's locations.
+        unsigned lineSpan = nextRange ? AXTextMarkerRange { currentLineRange.start(), nextRange.start() }.length() : lineLength;
+        if (index < lineStart + lineSpan) {
             // Report an index on the trailing blank line of a value ending in a line break as
             // out of range, matching the non-isolated AccessibilityRenderObject path: that line
             // sits at the document end and is surfaced by characterRangeForLine (an empty range)
@@ -926,8 +941,10 @@ int AXTextMarker::lineNumberForIndex(unsigned index) const
                 return -1;
             return static_cast<int>(lineNumber);
         }
-        lineStart += lineLength;
-        currentLineRange = nextLineRange(currentLineRange, IncludeTrailingLineBreak::Yes, stopAtID);
+        if (!nextRange)
+            break;
+        lineStart += lineSpan;
+        currentLineRange = WTF::move(nextRange);
         ++lineNumber;
     }
     return -1;

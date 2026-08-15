@@ -1,0 +1,112 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<!-- AXRangeForLine and AXLineForIndex speak the same character index space as AXStringForRange, so
+     every character of the value occupies an index in it. When lines are separated by block
+     boundaries rather than <br> elements — which is what pressing Return in a contenteditable
+     produces — the newline between two lines is synthesized at the boundary and belongs to neither
+     line's own range. The isolated tree built these answers by summing each line's own length, so it
+     lost one character per boundary and the drift accumulated down the control: line N's location
+     came back N characters short, and AXStringForRange on that range returned text shifted off the
+     line ("\nbb" instead of "bbb"). The <br> cases are here to hold the line that already agreed. -->
+<div id="pair" contenteditable role="textbox" aria-multiline="true" style="width: 300px"></div>
+<div id="blocks" contenteditable role="textbox" aria-multiline="true" style="width: 300px"></div>
+<div id="brs" contenteditable role="textbox" aria-multiline="true" style="width: 300px"></div>
+<textarea id="ta" style="width: 300px; height: 90px"></textarea>
+
+<script>
+var output = "Asserts AXRangeForLine and AXLineForIndex for multi-line text controls whose lines are separated by block boundaries rather than <br> elements.\n\n";
+
+// Each case's markup is set before the accessibility tree is first built, so no case depends on the
+// isolated tree observing a mutation. `lineStrings` are the expected AXStringForRange results for
+// the corresponding `ranges`, and are what actually catch a location in the wrong index space --
+// a shifted range still has a plausible length. `lines` is the expected AXLineForIndex for every
+// index from 0 through the value's length inclusive, so the past-the-end answer is covered too.
+var cases = [
+    {
+        id: "pair",
+        label: "two block-separated lines",
+        html: "<div>one two </div><div>three</div>",
+        value: "one two\nthree",
+        ranges: ["{0, 7}", "{8, 5}"],
+        lineStrings: ["one two", "three"],
+        lines: [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, -1],
+    },
+    {
+        id: "blocks",
+        label: "four block-separated lines",
+        html: "<div>aaa</div><div>bbb</div><div>ccc</div><div>ddd</div>",
+        value: "aaa\nbbb\nccc\nddd",
+        ranges: ["{0, 3}", "{4, 3}", "{8, 3}", "{12, 3}"],
+        lineStrings: ["aaa", "bbb", "ccc", "ddd"],
+        lines: [0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, -1],
+    },
+    {
+        id: "brs",
+        label: "four <br>-separated lines",
+        html: "aaa<br>bbb<br>ccc<br>ddd",
+        value: "aaa\nbbb\nccc\nddd",
+        ranges: ["{0, 4}", "{4, 4}", "{8, 4}", "{12, 3}"],
+        lineStrings: ["aaa\n", "bbb\n", "ccc\n", "ddd"],
+        lines: [0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, -1],
+    },
+    {
+        id: "ta",
+        label: "textarea, newlines in the value",
+        value: "aaa\nbbb\nccc\nddd",
+        ranges: ["{0, 4}", "{4, 4}", "{8, 4}", "{12, 3}"],
+        lineStrings: ["aaa\n", "bbb\n", "ccc\n", "ddd"],
+        lines: [0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, -1],
+    },
+];
+
+for (var testCase of cases) {
+    var field = document.getElementById(testCase.id);
+    if (testCase.html !== undefined)
+        field.innerHTML = testCase.html;
+    else
+        field.value = testCase.value;
+    // Force layout so the value is laid out before the accessibility tree is built.
+    field.offsetHeight;
+}
+
+// expect() evaluates its expressions in its own scope, so the values it reads are globals.
+var axField, lineRange, lineIndexes;
+
+if (window.accessibilityController) {
+    for (var testCase of cases) {
+        axField = accessibilityController.accessibleElementById(testCase.id);
+        output += `${testCase.label}: value ${JSON.stringify(testCase.value)}\n`;
+        if (!axField) {
+            output += `FAIL: no accessibility element for #${testCase.id}\n\n`;
+            continue;
+        }
+
+        output += expect("axField.numberOfCharacters", `${testCase.value.length}`);
+
+        for (var line = 0; line < testCase.ranges.length; ++line) {
+            lineRange = axField.rangeForLine(line);
+            output += expect("lineRange", JSON.stringify(testCase.ranges[line]));
+            // Read the range back as text: a location in the wrong index space yields a range of
+            // the right length holding the wrong characters, which only this catches.
+            var bounds = JSON.parse(testCase.ranges[line].replace("{", "[").replace("}", "]"));
+            output += expect(`axField.stringForRange(${bounds[0]}, ${bounds[1]})`, JSON.stringify(testCase.lineStrings[line]));
+        }
+
+        lineIndexes = [];
+        for (var i = 0; i <= testCase.value.length; ++i)
+            lineIndexes.push(axField.lineForIndex(i));
+        output += expect("lineIndexes.join(',')", JSON.stringify(testCase.lines.join(",")));
+        output += "\n";
+    }
+
+    debugEscaped(output);
+}
+</script>
+</body>
+</html>
