@@ -47,7 +47,7 @@ messages -> ModelProcessModelPlayerProxy {
     SetEnvironmentMap(Ref<WebCore::SharedBuffer> data)
     SetHasPortal(bool hasPortal)
 #if ENABLE(SPATIAL_PORTAL)
-    [EnabledBy=SpatialPortalEnabled] SetPortalTransform(enum:uint8_t WebCore::PortalTransformKind kind)
+    [EnabledBy=SpatialPortalEnabled] SetPortalTransform(struct WebCore::UsedPortalTransform portalTransform)
     [EnabledBy=SpatialPortalEnabled] SetPortalAction(enum:bool WebCore::PortalActionKind kind)
 #endif
     SetStageMode(enum:bool WebCore::StageModeOperation stagemodeOp)

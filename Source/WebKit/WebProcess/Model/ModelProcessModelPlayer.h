@@ -134,7 +134,7 @@ private:
     void setEnvironmentMap(Ref<WebCore::SharedBuffer>&& data) final;
     void setHasPortal(bool) final;
 #if ENABLE(SPATIAL_PORTAL)
-    void setPortalTransform(WebCore::PortalTransformKind) final;
+    void setPortalTransform(const WebCore::UsedPortalTransform&) final;
     void setPortalAction(WebCore::PortalActionKind) final;
 #endif
     void setStageMode(WebCore::StageModeOperation) final;
@@ -160,7 +160,7 @@ private:
     std::optional<WebCore::FloatPoint3D> m_boundingBoxExtents;
     bool m_hasPortal { true };
 #if ENABLE(SPATIAL_PORTAL)
-    WebCore::PortalTransformKind m_portalTransform { WebCore::PortalTransformKind::Auto };
+    WebCore::UsedPortalTransform m_portalTransform;
     WebCore::PortalActionKind m_portalAction { WebCore::PortalActionKind::None };
 #endif
     WebCore::StageModeOperation m_stageModeOperation { WebCore::StageModeOperation::None };

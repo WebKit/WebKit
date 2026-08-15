@@ -1,3 +1,5 @@
 portal-transform is supported: false
+portal-transform list is supported: false
 portal-transform computed style is exposed: false
 portal-transform survives in cssText: false
+portal-transform list survives in cssText: false

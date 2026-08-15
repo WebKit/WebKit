@@ -1,0 +1,74 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ SpatialPortalEnabled=true ] -->
+<html>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script src="../model-element/resources/model-utils.js"></script>
+<script src="resources/spatial-portal-utils.js"></script>
+<style>
+    .portal { spatial: portal; width: 300px; height: 150px; }
+</style>
+<body>
+<script>
+'use strict';
+
+const computedPortalTransform = portal => getComputedStyle(portal).portalTransform;
+
+const animateAndSampleAt = (portal, keyframes, progress) => {
+    const animation = portal.animate({ portalTransform: keyframes }, { duration: 1000, easing: "linear", fill: "both" });
+    animation.pause();
+    animation.currentTime = 1000 * progress;
+    return animation;
+};
+
+promise_test(async t => {
+    const portal = createPortal(t);
+    const from = "auto scale3d(1, 1, 1)";
+    const to = "auto scale3d(2, 2, 2)";
+
+    portal.style.portalTransform = from;
+    assert_equals(computedPortalTransform(portal), from, "before the transition");
+
+    portal.style.transition = "portal-transform 1s linear";
+    portal.style.portalTransform = to;
+
+    const seen = new Set();
+    for (let frame = 0; frame < 600 && !seen.has(to); ++frame) {
+        await new Promise(requestAnimationFrame);
+        seen.add(computedPortalTransform(portal));
+    }
+
+    assert_true(seen.has(to), "the transition reaches its target");
+    const between = [...seen].filter(value => value !== from && value !== to);
+    assert_greater_than(between.length, 0, `the transition passes through values between its endpoints, saw ${[...seen]}`);
+}, `portal-transform transitions rather than snapping to its target`);
+
+promise_test(async t => {
+    const portal = createPortal(t);
+    const animation = animateAndSampleAt(portal, ["auto", "auto scale3d(2, 2, 2)"], 0.5);
+
+    assert_equals(computedPortalTransform(portal), "auto scale3d(1.5, 1.5, 1.5)", "halfway through");
+    animation.currentTime = 1000;
+    assert_equals(computedPortalTransform(portal), "auto scale3d(2, 2, 2)", "at the end");
+}, `portal-transform interpolates when only one side of the animation has a transform list`);
+
+promise_test(async t => {
+    const portal = createPortal(t);
+    const animation = animateAndSampleAt(portal, ["auto", "none"], 0.25);
+
+    assert_equals(computedPortalTransform(portal), "auto", "a quarter of the way through");
+    animation.currentTime = 750;
+    assert_equals(computedPortalTransform(portal), "none", "three quarters of the way through");
+}, `portal-transform is discrete between auto and none`);
+
+promise_test(async t => {
+    const portal = createPortal(t);
+    const animation = animateAndSampleAt(portal, ["scale3d(2, 2, 2) auto", "auto rotate3d(0, 1, 0, 90deg)"], 0.5);
+
+    assert_equals(computedPortalTransform(portal), "scale3d(1.5, 1.5, 1.5) auto rotate3d(0, 1, 0, 45deg)", "halfway through");
+    animation.currentTime = 1000;
+    assert_equals(computedPortalTransform(portal), "scale3d(1, 1, 1) auto rotate3d(0, 1, 0, 90deg)", "at the end");
+}, `portal-transform blends the lists on either side of auto independently`);
+
+</script>
+</body>
+</html>

@@ -1,7 +1,8 @@
 
 PASS portal-transform initial value is auto, whether or not the element establishes a portal
-PASS portal-transform accepts none and auto
+PASS portal-transform accepts auto, none and a transform list with auto anywhere in it
 PASS portal-transform is a supported property
+PASS portal-transform computes the lengths in its transform list
+PASS portal-transform computes calc() in its transform list
 PASS portal-transform ignores invalid values
-PASS portal-transform ignores not yet supported values
 

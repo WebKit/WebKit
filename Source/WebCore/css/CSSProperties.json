@@ -7964,22 +7964,20 @@
             "status": "in development"
         },
         "portal-transform": {
-            "animation-type": "discrete",
+            "animation-type": "by computed value",
             "initial": "auto",
-            "values": [
-                "none",
-                "auto"
-            ],
             "codegen-properties": {
                 "enable-if": "ENABLE_SPATIAL_PORTAL",
                 "settings-flag": "spatialPortalEnabled",
                 "computed-style-storage-path": ["m_nonInheritedData", "rareData"],
                 "computed-style-storage-kind": "reference",
                 "computed-style-type": "Style::PortalTransform",
-                "parser-grammar": "<<values>>"
+                "parser-function": "consumePortalTransform",
+                "parser-grammar-unused": "none | auto | [ auto? <transform-list> ] | [ <transform-list> auto <transform-list>? ]",
+                "parser-grammar-unused-reason": "The position of the `auto` keyword is significant."
             },
             "specification": {
-                "url": "https://webkit.github.io/explainers/css-spatial/Overview.html#portals"
+                "url": "https://webkit.github.io/explainers/css-spatial/Overview.html#stage-transform"
             },
             "status": "in development"
         },

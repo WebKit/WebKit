@@ -15,10 +15,14 @@
     const lines = [];
 
     lines.push(`portal-transform is supported: ${CSS.supports("portal-transform", "auto")}`);
+    lines.push(`portal-transform list is supported: ${CSS.supports("portal-transform", "auto rotateY(45deg)")}`);
     lines.push(`portal-transform computed style is exposed: ${getComputedStyle(portal).portalTransform !== undefined}`);
 
     portal.style.portalTransform = "none";
     lines.push(`portal-transform survives in cssText: ${portal.style.cssText.includes("portal-transform")}`);
+
+    portal.style.portalTransform = "auto rotateY(45deg)";
+    lines.push(`portal-transform list survives in cssText: ${portal.style.cssText.includes("portal-transform")}`);
 
     results.textContent = lines.join("\n");
 

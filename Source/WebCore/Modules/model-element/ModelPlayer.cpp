@@ -191,7 +191,7 @@ void ModelPlayer::setHasPortal(bool)
 
 #if ENABLE(SPATIAL_PORTAL)
 
-void ModelPlayer::setPortalTransform(PortalTransformKind)
+void ModelPlayer::setPortalTransform(const UsedPortalTransform&)
 {
 }
 

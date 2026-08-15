@@ -48,6 +48,20 @@ promise_test(async t => {
 }, `portal-action: orbit only sets up interaction when portal-transform contains auto`);
 
 promise_test(async t => {
+    for (const portalTransform of ["auto rotate3d(0, 1, 0, 45deg)", "rotate3d(0, 1, 0, 45deg) auto"]) {
+        const before = internals.touchEventHandlerCount();
+        createPortal(t, { portalTransform, portalAction: "orbit" });
+        await UIHelper.ensureStablePresentationUpdate();
+        assert_greater_than(internals.touchEventHandlerCount(), before, `orbit registers touch handlers for "${portalTransform}"`);
+    }
+
+    const before = internals.touchEventHandlerCount();
+    createPortal(t, { portalTransform: "rotate3d(0, 1, 0, 45deg)", portalAction: "orbit" });
+    await UIHelper.ensureStablePresentationUpdate();
+    assert_equals(internals.touchEventHandlerCount(), before, "orbit registers no touch handlers for a transform list without auto");
+}, `portal-action: orbit follows the auto keyword through a portal-transform list`);
+
+promise_test(async t => {
     const portal = createPortal(t, { portalAction: "orbit" });
     const model = appendModel(portal, centeredCube);
 

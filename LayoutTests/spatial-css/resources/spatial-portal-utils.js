@@ -50,6 +50,13 @@ const portalTransformScaleIsUnit = transform => {
 const portalTransformIsResolved = transform => !!transform;
 const portalTransformIsCleared = transform => transform === null;
 
+const resolvedTransformForPortal = async (test, asset, portalTransform, portalOptions = { }) => {
+    const portal = createPortal(test, { ...portalOptions, portalTransform });
+    const model = appendModel(portal, asset);
+    await model.ready;
+    return await waitForPortalTransform(portal, portalTransformIsResolved, `portal-transform: ${portalTransform ?? "auto"}`);
+};
+
 async function waitFor(predicate, description, timeout = 5000) {
     const startTime = Date.now();
 
