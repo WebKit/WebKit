@@ -509,6 +509,27 @@ void BitmapImageSource::cacheNativeImageAtIndex(unsigned index, SubsamplingLevel
     decodedSizeIncreased(destination.sizeInBytes());
 }
 
+void BitmapImageSource::drawNativeImage(GraphicsContext& context, NativeImage& nativeImage, const FloatRect& destinationRect, const FloatRect& sourceRect, ImagePaintingOptions options)
+{
+    Ref protectedNativeImage { nativeImage };
+    auto sizeBeforeDrawing = protectedNativeImage->sizeInBytes();
+    context.drawNativeImage(protectedNativeImage, destinationRect, sourceRect, options);
+    auto sizeAfterDrawing = protectedNativeImage->sizeInBytes();
+
+    if (sizeBeforeDrawing == sizeAfterDrawing)
+        return;
+
+    // Only fold the change while the frame still owns this NativeImage.
+    auto& frame = frameAtIndex(currentFrameIndex());
+    if (!frame.hasNativeImage(protectedNativeImage))
+        return;
+
+    if (sizeAfterDrawing > sizeBeforeDrawing)
+        decodedSizeIncreased(static_cast<unsigned>(sizeAfterDrawing - sizeBeforeDrawing));
+    else
+        decodedSizeDecreased(static_cast<unsigned>(sizeBeforeDrawing - sizeAfterDrawing));
+}
+
 const ImageFrame& BitmapImageSource::frameAtIndex(unsigned index) const
 {
     if (index >= m_frames.size())

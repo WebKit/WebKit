@@ -140,7 +140,7 @@ ImageDrawResult BitmapImage::draw(GraphicsContext& context, const FloatRect& des
             if (headroom == Headroom::FromImage)
                 headroom = nativeImage->headroom();
 
-            context.drawNativeImage(nativeImage, destinationRect, adjustedSourceRect, { options, orientation, headroom });
+            m_source->drawNativeImage(context, nativeImage, destinationRect, adjustedSourceRect, { options, orientation, headroom });
 #if !HAVE(SUPPORT_HDR_DISPLAY_APIS)
         }
 #endif

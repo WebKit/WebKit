@@ -80,6 +80,8 @@ public:
     RefPtr<NativeImage> primaryNativeImageIfExists() { return frameAtIndex(primaryFrameIndex()).nativeImage(std::nullopt); }
     RefPtr<NativeImage> primaryNativeImage() final { return nativeImageAtIndex(primaryFrameIndex()); }
 
+    void drawNativeImage(GraphicsContext&, NativeImage&, const FloatRect& destinationRect, const FloatRect& sourceRect, ImagePaintingOptions) final;
+
     // Image Metadata
     unsigned frameCount() const final { return m_descriptor.frameCount(); }
     RepetitionCount repetitionCount() const { return m_descriptor.repetitionCount(); }
