@@ -76,7 +76,13 @@ WTTextSuggestionState convertToPlatformTextSuggestionState(WebCore::WritingTools
 
 RetainPtr<WTContext> convertToPlatformContext(const WebCore::WritingTools::Context& contextData)
 {
-    return adoptNS([[WTContext alloc] initWithAttributedText:contextData.attributedText.nsAttributedString().get() range:NSMakeRange(contextData.range.location, contextData.range.length)]);
+    RetainPtr attributedText = contextData.attributedText.nsAttributedString();
+
+    auto length = [attributedText length];
+    auto location = std::min<NSUInteger>(contextData.range.location, length);
+    auto rangeLength = std::min<NSUInteger>(contextData.range.length, length - location);
+
+    return adoptNS([[WTContext alloc] initWithAttributedText:attributedText.get() range:NSMakeRange(location, rangeLength)]);
 }
 
 #pragma mark - Conversions from platform types to web types.
