@@ -1275,7 +1275,7 @@ class YarrGenerator final : public YarrJITInfo {
         ASSERT(term->type == PatternTerm::Type::CharacterClass);
 
         auto processCharacterClass = [&] (CharacterClass* characterClassToProcess) {
-            if (m_decodeSurrogatePairs && term->invert())
+            if (m_decodeSurrogatePairs && (term->invert() || characterClassToProcess->m_anyCharacter))
                 failures.append(m_jit.branch32(MacroAssembler::Equal, character, MacroAssembler::TrustedImm32(errorCodePoint)));
             if (term->invert())
                 matchCharacterClass(character, scratch, failures, characterClassToProcess);
@@ -1308,16 +1308,16 @@ class YarrGenerator final : public YarrJITInfo {
     {
         ASSERT(term->type == PatternTerm::Type::CharacterClass);
 
-        m_jit.add32(MacroAssembler::TrustedImm32(1), m_regs.index);
+        consumeIndex(MacroAssembler::TrustedImm32(1));
         if (term->isFixedWidthCharacterClass()) {
             if (term->characterClass->hasNonBMPCharacters()) {
                 failuresAfterIncrementingIndex.append(atEndOfInput());
-                m_jit.add32(MacroAssembler::TrustedImm32(1), m_regs.index);
+                consumeIndex(MacroAssembler::TrustedImm32(1));
             }
         } else {
             MacroAssembler::Jump isBMPChar = m_jit.branch32(MacroAssembler::LessThan, character, MacroAssembler::TrustedImm32(0x10000));
             failuresAfterIncrementingIndex.append(atEndOfInput());
-            m_jit.add32(MacroAssembler::TrustedImm32(1), m_regs.index);
+            consumeIndex(MacroAssembler::TrustedImm32(1));
             isBMPChar.link(&m_jit);
         }
     }
@@ -1448,14 +1448,42 @@ class YarrGenerator final : public YarrJITInfo {
         tryReadUnicodeCharImpl(*m_vm, m_jit, resultReg);
     }
 
-    void tryReadNonBMPUnicodeChar(Checked<unsigned> negativeCharacterOffset, MacroAssembler::RegisterID resultReg, MacroAssembler::RegisterID indexReg)
+    void tryReadUnicodeCharBackward(MacroAssembler::BaseIndex address, MacroAssembler::RegisterID resultReg)
     {
         ASSERT(m_charSize == CharSize::Char16);
+        ASSERT(m_direction == Backward);
 
-        MacroAssembler::BaseIndex address = negativeOffsetIndexedAddress(negativeCharacterOffset, resultReg, indexReg);
+        MacroAssembler::JumpList done;
 
         m_jit.getEffectiveAddress(address, m_regs.regUnicodeInputAndTrail);
-        tryReadUnicodeCharImpl(*m_vm, m_jit, resultReg);
+        m_jit.load16Unaligned(MacroAssembler::Address(m_regs.regUnicodeInputAndTrail), resultReg);
+        m_jit.urshift32(resultReg, MacroAssembler::TrustedImm32(11), m_regs.unicodeAndSubpatternIdTemp);
+        done.append(m_jit.branch32(MacroAssembler::NotEqual, m_regs.unicodeAndSubpatternIdTemp, surrogateTagShiftedRight11));
+        MacroAssembler::Jump isLeadSurrogate = m_jit.branchTest32(MacroAssembler::Zero, resultReg, MacroAssembler::TrustedImm32(0x400));
+
+        done.append(m_jit.branchPtr(MacroAssembler::BelowOrEqual, m_regs.regUnicodeInputAndTrail, m_regs.input));
+        m_jit.load16Unaligned(MacroAssembler::Address(m_regs.regUnicodeInputAndTrail, -2), m_regs.unicodeAndSubpatternIdTemp);
+        m_jit.sub32(MacroAssembler::TrustedImm32(0xd800), m_regs.unicodeAndSubpatternIdTemp);
+        done.append(m_jit.branch32(MacroAssembler::AboveOrEqual, m_regs.unicodeAndSubpatternIdTemp, MacroAssembler::TrustedImm32(0x400)));
+#if CPU(ARM64)
+        m_jit.insertBitField32(m_regs.unicodeAndSubpatternIdTemp, MacroAssembler::TrustedImm32(10), MacroAssembler::TrustedImm32(10), resultReg);
+        m_jit.add32(MacroAssembler::TrustedImm32(0x10000), resultReg);
+#else
+        m_jit.lshift32(MacroAssembler::TrustedImm32(10), m_regs.unicodeAndSubpatternIdTemp);
+        m_jit.getEffectiveAddress(MacroAssembler::BaseIndex(m_regs.unicodeAndSubpatternIdTemp, resultReg, MacroAssembler::TimesOne, 0x10000 - 0xdc00), resultReg);
+#endif
+        done.append(m_jit.jump());
+
+        // A leading surrogate followed by a trailing surrogate is the middle of a code point, which reads as errorCodePoint like it does forward.
+        isLeadSurrogate.link(&m_jit);
+        m_jit.add64(MacroAssembler::TrustedImm32(4), m_regs.regUnicodeInputAndTrail, m_regs.unicodeAndSubpatternIdTemp);
+        done.append(m_jit.branchPtr(MacroAssembler::Above, m_regs.unicodeAndSubpatternIdTemp, m_regs.endOfStringAddress));
+        m_jit.load16Unaligned(MacroAssembler::Address(m_regs.regUnicodeInputAndTrail, 2), m_regs.unicodeAndSubpatternIdTemp);
+        m_jit.and32(MacroAssembler::TrustedImm32(0xfc00), m_regs.unicodeAndSubpatternIdTemp);
+        done.append(m_jit.branch32(MacroAssembler::NotEqual, m_regs.unicodeAndSubpatternIdTemp, MacroAssembler::TrustedImm32(0xdc00)));
+        m_jit.move(MacroAssembler::TrustedImm32(errorCodePoint), resultReg);
+
+        done.link(&m_jit);
     }
 
     // Specialized read+match for character classes whose codepoints all share a single UTF-16
@@ -1617,10 +1645,12 @@ class YarrGenerator final : public YarrJITInfo {
 
         if (m_charSize == CharSize::Char8)
             m_jit.load8(address, resultReg);
-        else if (m_decodeSurrogatePairs)
-            tryReadUnicodeChar(address, resultReg);
-        else
+        else if (!m_decodeSurrogatePairs)
             m_jit.load16Unaligned(address, resultReg);
+        else if (m_direction == Backward)
+            tryReadUnicodeCharBackward(address, resultReg);
+        else
+            tryReadUnicodeChar(address, resultReg);
     }
 
     void readCharacterForCharacterClassTerm(Checked<unsigned> negativeCharacterOffset, MacroAssembler::RegisterID resultReg, const PatternTerm* term)
@@ -3239,10 +3269,7 @@ class YarrGenerator final : public YarrJITInfo {
         }
 
         op.m_jumps.append(m_jit.branch32(MacroAssembler::NotEqual, character, MacroAssembler::Imm32(ch)));
-        if (m_decodeSurrogatePairs && !U_IS_BMP(ch))
-            m_jit.add32(MacroAssembler::TrustedImm32(2), countRegister);
-        else
-            advance(countRegister, MacroAssembler::TrustedImm32(1));
+        advance(countRegister, MacroAssembler::TrustedImm32(m_decodeSurrogatePairs && !U_IS_BMP(ch) ? 2 : 1));
         m_jit.branch32(MacroAssembler::NotEqual, countRegister, m_regs.index).linkTo(loop, &m_jit);
     }
     void backtrackPatternCharacterFixed(size_t opIndex)
@@ -3271,10 +3298,10 @@ class YarrGenerator final : public YarrJITInfo {
             consumeIndex(MacroAssembler::TrustedImm32(1));
             if (m_decodeSurrogatePairs && !U_IS_BMP(ch)) {
                 MacroAssembler::Jump surrogatePairOk = notAtEndOfInput();
-                m_jit.sub32(MacroAssembler::TrustedImm32(1), m_regs.index);
+                rewindIndex(MacroAssembler::TrustedImm32(1));
                 failures.append(m_jit.jump());
                 surrogatePairOk.link(&m_jit);
-                m_jit.add32(MacroAssembler::TrustedImm32(1), m_regs.index);
+                consumeIndex(MacroAssembler::TrustedImm32(1));
             }
             m_jit.add32(MacroAssembler::TrustedImm32(1), countRegister);
 
@@ -3312,10 +3339,7 @@ class YarrGenerator final : public YarrJITInfo {
         loadFromFrame(term->frameLocation + BackTrackInfoPatternCharacter::matchAmountIndex(), countRegister);
         m_backtrackingState.append(m_jit.branchTest32(MacroAssembler::Zero, countRegister));
         m_jit.sub32(MacroAssembler::TrustedImm32(1), countRegister);
-        if (!m_decodeSurrogatePairs || U_IS_BMP(term->patternCharacter))
-            rewindIndex(MacroAssembler::TrustedImm32(1));
-        else
-            m_jit.sub32(MacroAssembler::TrustedImm32(2), m_regs.index);
+        rewindIndex(MacroAssembler::TrustedImm32(m_decodeSurrogatePairs && !U_IS_BMP(term->patternCharacter) ? 2 : 1));
         m_jit.jump(op.m_reentry);
     }
 
@@ -3354,10 +3378,10 @@ class YarrGenerator final : public YarrJITInfo {
             consumeIndex(MacroAssembler::TrustedImm32(1));
             if (m_decodeSurrogatePairs && !U_IS_BMP(ch)) {
                 MacroAssembler::Jump surrogatePairOk = notAtEndOfInput();
-                m_jit.sub32(MacroAssembler::TrustedImm32(1), m_regs.index);
+                rewindIndex(MacroAssembler::TrustedImm32(1));
                 nonGreedyFailures.append(m_jit.jump());
                 surrogatePairOk.link(&m_jit);
-                m_jit.add32(MacroAssembler::TrustedImm32(1), m_regs.index);
+                consumeIndex(MacroAssembler::TrustedImm32(1));
             }
             m_jit.add32(MacroAssembler::TrustedImm32(1), countRegister);
 
@@ -3387,7 +3411,7 @@ class YarrGenerator final : public YarrJITInfo {
             storeToFrame(m_regs.index, term->frameLocation + BackTrackInfoCharacterClass::beginIndex());
         }
 
-        if (m_decodeSurrogatePairs && !term->invert()) {
+        if (m_decodeSurrogatePairs && !term->invert() && m_direction == Forward) {
             if (auto sharedLead = term->characterClass->hasSharedLeadSurrogate()) {
                 CharacterClass trailsOnlyClass;
                 buildTrailsOnlyClass(*term->characterClass, trailsOnlyClass);
@@ -3403,7 +3427,7 @@ class YarrGenerator final : public YarrJITInfo {
         if (m_decodeSurrogatePairs && (!term->characterClass->hasOneCharacterSize() || term->invert())) {
             MacroAssembler::Jump isBMPChar = m_jit.branch32(MacroAssembler::LessThan, character, MacroAssembler::TrustedImm32(0x10000));
             op.m_jumps.append(atEndOfInput());
-            m_jit.add32(MacroAssembler::TrustedImm32(1), m_regs.index);
+            consumeIndex(MacroAssembler::TrustedImm32(1));
             isBMPChar.link(&m_jit);
         }
     }
@@ -3434,8 +3458,6 @@ class YarrGenerator final : public YarrJITInfo {
         const MacroAssembler::RegisterID scratch = m_regs.regT2;
         m_usesT2 = true;
 
-        MacroAssembler::JumpList done;
-
         if (m_decodeSurrogatePairs) {
             if (!term->isFixedWidthCharacterClass())
                 storeToFrame(m_regs.index, term->frameLocation + BackTrackInfoCharacterClass::beginIndex());
@@ -3444,11 +3466,11 @@ class YarrGenerator final : public YarrJITInfo {
 
         Checked<unsigned> scaledMaxCount = term->quantityMaxCount;
 
-        bool nonBMPOnly = false;
-        if (m_decodeSurrogatePairs && !term->invert() && term->characterClass->hasOnlyNonBMPCharacters()) {
+        bool nonBMPOnly = m_decodeSurrogatePairs && !term->invert() && term->characterClass->hasOnlyNonBMPCharacters();
+        if (nonBMPOnly)
             scaledMaxCount *= 2;
-            nonBMPOnly = true;
 
+        if (nonBMPOnly && m_direction == Forward) {
             if (auto sharedLead = term->characterClass->hasSharedLeadSurrogate()) {
                 // Replace tryReadUnicodeCharImpl + full-codepoint class match
                 // with a single 32-bit pair load + lead check + trail-only class match.
@@ -3471,32 +3493,23 @@ class YarrGenerator final : public YarrJITInfo {
         MacroAssembler::Label loop(&m_jit);
         readCharacterForCharacterClassTerm(op.m_checkedOffset - term->inputPosition - scaledMaxCount, character, countRegister, term);
 
-        MacroAssembler::Label nonBMPLoop(&m_jit);
-
         matchCharacterClassTermInner(term, op.m_jumps, character, scratch);
 
         if (m_decodeSurrogatePairs) {
             if (term->isFixedWidthCharacterClass())
-                m_jit.add32(MacroAssembler::TrustedImm32(term->characterClass->hasNonBMPCharacters() ? 2 : 1), countRegister);
+                advance(countRegister, MacroAssembler::TrustedImm32(term->characterClass->hasNonBMPCharacters() ? 2 : 1));
             else {
-                m_jit.add32(MacroAssembler::TrustedImm32(1), countRegister);
+                advance(countRegister, MacroAssembler::TrustedImm32(1));
                 MacroAssembler::Jump isBMPChar = m_jit.branch32(MacroAssembler::LessThan, character, MacroAssembler::TrustedImm32(0x10000));
                 op.m_jumps.append(atEndOfInput());
-                m_jit.add32(MacroAssembler::TrustedImm32(1), countRegister);
-                m_jit.add32(MacroAssembler::TrustedImm32(1), m_regs.index);
+                advance(countRegister, MacroAssembler::TrustedImm32(1));
+                consumeIndex(MacroAssembler::TrustedImm32(1));
                 isBMPChar.link(&m_jit);
             }
         } else
             advance(countRegister, MacroAssembler::TrustedImm32(1));
 
-        if (nonBMPOnly) {
-            done.append(m_jit.branch32(MacroAssembler::Equal, countRegister, m_regs.index));
-            tryReadNonBMPUnicodeChar(op.m_checkedOffset - term->inputPosition - scaledMaxCount, character, countRegister);
-            m_jit.jump().linkTo(nonBMPLoop, &m_jit);
-        } else
-            m_jit.branch32(MacroAssembler::NotEqual, countRegister, m_regs.index).linkTo(loop, &m_jit);
-
-        done.link(&m_jit);
+        m_jit.branch32(MacroAssembler::NotEqual, countRegister, m_regs.index).linkTo(loop, &m_jit);
     }
 
     void backtrackCharacterClassFixed(size_t opIndex)
@@ -3529,7 +3542,7 @@ class YarrGenerator final : public YarrJITInfo {
             storeToFrame(m_regs.index, term->frameLocation + BackTrackInfoCharacterClass::beginIndex());
         m_jit.move(MacroAssembler::TrustedImm32(0), countRegister);
 
-        if (m_decodeSurrogatePairs && !term->invert()) {
+        if (m_decodeSurrogatePairs && !term->invert() && m_direction == Forward) {
             if (auto sharedLead = term->characterClass->hasSharedLeadSurrogate()) {
                 ASSERT(term->isFixedWidthCharacterClass());
                 CharacterClass trailsOnlyClass;
@@ -3586,7 +3599,7 @@ class YarrGenerator final : public YarrJITInfo {
 
         if (!failuresDecrementIndex.empty()) {
             failuresDecrementIndex.link(&m_jit);
-            m_jit.sub32(MacroAssembler::TrustedImm32(1), m_regs.index);
+            rewindIndex(MacroAssembler::TrustedImm32(1));
         }
 
         failures.link(&m_jit);
@@ -3622,19 +3635,19 @@ class YarrGenerator final : public YarrJITInfo {
         if (!m_decodeSurrogatePairs)
             rewindIndex(MacroAssembler::TrustedImm32(1));
         else if (term->isFixedWidthCharacterClass())
-            m_jit.sub32(MacroAssembler::TrustedImm32(term->characterClass->hasNonBMPCharacters() ? 2 : 1), m_regs.index);
+            rewindIndex(MacroAssembler::TrustedImm32(term->characterClass->hasNonBMPCharacters() ? 2 : 1));
         else {
             // The last matched character occupied two code units iff the two code units
-            // preceding the current position form a surrogate pair.
+            // preceding the current position (following it when matching backward) form a surrogate pair.
             const MacroAssembler::RegisterID character = m_regs.regT0;
 
             MacroAssembler::Jump backtrackToBegin = m_jit.branchTest32(MacroAssembler::Zero, countRegister);
 
-            m_jit.load32WithUnalignedHalfWords(negativeOffsetIndexedAddress(op.m_checkedOffset - term->inputPosition + 2, character), character);
+            m_jit.load32WithUnalignedHalfWords(negativeOffsetIndexedAddress(op.m_checkedOffset - term->inputPosition + (m_direction == Backward ? 1 : 2), character), character);
             m_jit.and32(surrogateTagMask, character);
             m_jit.compare32(MacroAssembler::Equal, character, surrogatePairTags, character);
             m_jit.add32(MacroAssembler::TrustedImm32(1), character);
-            m_jit.sub32(character, m_regs.index);
+            rewindIndex(character);
             m_jit.jump(op.m_reentry);
 
             backtrackToBegin.link(&m_jit);
@@ -3694,7 +3707,7 @@ class YarrGenerator final : public YarrJITInfo {
 
         if (!nonGreedyFailuresDecrementIndex.empty()) {
             nonGreedyFailuresDecrementIndex.link(&m_jit);
-            m_jit.sub32(MacroAssembler::TrustedImm32(1), m_regs.index);
+            rewindIndex(MacroAssembler::TrustedImm32(1));
         }
         nonGreedyFailures.link(&m_jit);
 
@@ -5727,7 +5740,6 @@ class YarrGenerator final : public YarrJITInfo {
 
     std::unique_ptr<PatternDisjunction> reverseDisjunctionForBackward(PatternDisjunction* disjunction, unsigned initialInputPosition)
     {
-        ASSERT(!m_pattern.eitherUnicode());
         if (!isSafeToRecurse()) [[unlikely]] {
             m_failureReason = JITFailureReason::ParenthesisNestedTooDeep;
             return nullptr;
@@ -5767,10 +5779,15 @@ class YarrGenerator final : public YarrJITInfo {
                     break;
 
                 case PatternTerm::Type::PatternCharacter:
+                    term.inputPosition = inputPosition;
+                    if (term.quantityType == QuantifierType::FixedCount)
+                        inputPosition += term.quantityMaxCount.value() * (m_pattern.eitherUnicode() ? U16_LENGTH(term.patternCharacter) : 1);
+                    break;
+
                 case PatternTerm::Type::CharacterClass:
                     term.inputPosition = inputPosition;
                     if (term.quantityType == QuantifierType::FixedCount)
-                        inputPosition += term.quantityMaxCount.value();
+                        inputPosition += term.quantityMaxCount.value() * (m_pattern.eitherUnicode() && term.isFixedWidthCharacterClass() && term.characterClass->hasNonBMPCharacters() ? 2 : 1);
                     break;
 
                 case PatternTerm::Type::ParenthesesSubpattern:
@@ -7156,11 +7173,6 @@ public:
     void compile(YarrCodeBlock& codeBlock)
     {
         MacroAssembler::Label startOfMainCode;
-
-        if (m_pattern.m_containsLookbehinds && m_pattern.eitherUnicode()) {
-            codeBlock.setFallBackWithFailureReason(JITFailureReason::Lookbehind);
-            return;
-        }
 
 #if ENABLE(YARR_JIT_UNICODE_CAN_INCREMENT_INDEX_FOR_NON_BMP)
         // A zero minimum-size alternative (e.g. /aa|\B/u) can match in the middle of a surrogate pair, so it must not be skipped.
