@@ -26,6 +26,9 @@
 #include "config.h"
 #include "ImageSource.h"
 
+#include "GraphicsContext.h"
+#include "NativeImage.h"
+
 namespace WebCore {
 
 Expected<Ref<NativeImage>, DecodingStatus> ImageSource::primaryNativeImageForDrawing(SubsamplingLevel, const DecodingOptions&)
@@ -38,6 +41,11 @@ Expected<Ref<NativeImage>, DecodingStatus> ImageSource::primaryNativeImageForDra
 Expected<Ref<NativeImage>, DecodingStatus> ImageSource::currentNativeImageForDrawing(SubsamplingLevel subsamplingLevel, const DecodingOptions& options)
 {
     return primaryNativeImageForDrawing(subsamplingLevel, options);
+}
+
+void ImageSource::drawNativeImage(GraphicsContext& context, NativeImage& nativeImage, const FloatRect& destinationRect, const FloatRect& sourceRect, ImagePaintingOptions options)
+{
+    context.drawNativeImage(protect(nativeImage), destinationRect, sourceRect, options);
 }
 
 bool ImageSource::hasSolidColor() const

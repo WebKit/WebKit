@@ -5,6 +5,14 @@ import sys
 import time
 from urllib.parse import parse_qs
 
+# Serves `name`, but stalls after `stallAt` bytes for `stallFor` seconds, holding
+# the response open server-side to keep a resource load incomplete. Because the
+# response is held for the whole stall, a test that reuses the identical URL while
+# repeated in one web process (run-layout-tests in stress mode) can leave a later
+# run's request unserviced and time out on the EWS stress bots; append a
+# cache-busting query parameter (e.g. `"&rand=" + Math.random()`) so each run
+# requests a unique URL.
+
 query = parse_qs(os.environ.get('QUERY_STRING', ''), keep_blank_values=True)
 name = query.get('name', [''])[0]
 stall_at = query.get('stallAt', [None])[0]

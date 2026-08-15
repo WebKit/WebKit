@@ -38,6 +38,7 @@
 
 namespace WebCore {
 
+class FloatRect;
 class FragmentedSharedBuffer;
 
 class ImageSource : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<ImageSource> {
@@ -80,6 +81,10 @@ public:
 
     virtual Expected<Ref<NativeImage>, DecodingStatus> primaryNativeImageForDrawing(SubsamplingLevel, const DecodingOptions&);
     virtual Expected<Ref<NativeImage>, DecodingStatus> currentNativeImageForDrawing(SubsamplingLevel, const DecodingOptions&);
+
+    // Overridden by BitmapImageSource to keep decoded-size accounting in step with the
+    // platform-image replacement the GPU process performs while the image is drawn.
+    virtual void drawNativeImage(GraphicsContext&, NativeImage&, const FloatRect& destinationRect, const FloatRect& sourceRect, ImagePaintingOptions);
 
     // Image Metadata
     virtual IntSize size(ImageOrientation = ImageOrientation::Orientation::FromImage) const = 0;

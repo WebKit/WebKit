@@ -91,6 +91,14 @@ public:
 
     bool hasNativeImage(DecodingDestination decodingDestination) const { return m_destinations[decodingDestination].hasNativeImage(); }
     bool NODELETE hasNativeImage(DecodingDestination, SubsamplingLevel) const;
+    bool hasNativeImage(const NativeImage& nativeImage) const
+    {
+        for (auto& destination : m_destinations) {
+            if (destination.nativeImage.get() == &nativeImage)
+                return true;
+        }
+        return false;
+    }
     bool NODELETE hasFullSizeNativeImage(DecodingDestination, SubsamplingLevel) const;
     std::optional<DecodingDestination> compatibleDecodingDestinationWithOptions(const DecodingOptions&, SubsamplingLevel) const;
     bool hasMetadata() const { return !size().isEmpty(); }

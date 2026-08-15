@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<canvas id="canvas" width="400" height="400"></canvas>
+<script>
+description("Destroying the decoded data of an image must not underflow the MemoryCache size when the NativeImage's backing platform image was replaced with a larger one after it was cached.");
+
+jsTestIsAsync = true;
+
+// A grayscale PNG decodes to one byte per pixel, while the platform image the
+// GPU process substitutes for it is at least four bytes per pixel and its rows
+// are aligned. Unless the decoded-size accounting is updated when drawing
+// replaces the platform image, the subtraction when the decoded data is
+// destroyed would be several times larger than the addition and the
+// MemoryCache size would underflow.
+var image = new Image();
+image.onload = function() {
+    var context = document.getElementById("canvas").getContext("2d");
+    context.drawImage(image, 0, 0);
+
+    // Round-tripping to the GPU process flushes the drawImage() above, which is
+    // what replaces the NativeImage's platform image.
+    context.getImageData(0, 0, 1, 1);
+
+    sizeBeforeDestroyingDecodedData = internals.memoryCacheSize();
+    shouldBeTrue("sizeBeforeDestroyingDecodedData > 0");
+
+    internals.destroyDecodedDataForAllImages();
+
+    sizeAfterDestroyingDecodedData = internals.memoryCacheSize();
+    shouldBeTrue("sizeAfterDestroyingDecodedData >= 0");
+    shouldBeTrue("sizeAfterDestroyingDecodedData <= sizeBeforeDestroyingDecodedData");
+
+    finishJSTest();
+};
+
+if (window.internals) {
+    internals.clearMemoryCache();
+    image.src = "resources/mu.png";
+} else {
+    testFailed("This test requires internals.");
+    finishJSTest();
+}
+</script>
+</body>
+</html>
