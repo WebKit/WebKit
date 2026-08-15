@@ -352,8 +352,10 @@ public:
 
                 if (memory)
                     data.memoryValuesAtTail.add(memory);
-                if (wasmStructField)
+                if (wasmStructField) {
                     data.wasmStructValuesAtTail.add(wasmStructField);
+                    noteStructKeyFilter(wasmStructField);
+                }
                 if (wasmArrayElem)
                     data.wasmArrayValuesAtTail.add(wasmArrayElem);
 
@@ -1100,6 +1102,23 @@ private:
         if (replaceWasmStructValue(matches, structGet))
             return;
         m_data.wasmStructValuesAtTail.add(structGet);
+        noteStructKeyFilter(structGet);
+    }
+
+    void noteStructKeyFilter(WasmStructFieldValue* value)
+    {
+        auto& holders = m_structKeyFilters.add(WasmStructFieldKey(value->child(0), value->fieldHeapKey()), StructKeyFilters { }).iterator->value;
+        if (!holders.count)
+            holders.first = value;
+        ++holders.count;
+    }
+
+    bool isOnlyHolderOfStructKey(const WasmStructFieldKey& key) const
+    {
+        auto iter = m_structKeyFilters.find(key);
+        if (iter == m_structKeyFilters.end())
+            return true;
+        return iter->value.count == 1 && iter->value.first == m_value;
     }
 
     template<typename Filter>
@@ -1119,6 +1138,11 @@ private:
         // Check if current block has clobbering writes
         if (readsMutability != Mutability::Immutable && m_data.writes.overlaps(range)) {
             dataLogLnIf(B3EliminateCommonSubexpressionsInternal::verbose, "    Giving up because of writes.");
+            return { };
+        }
+
+        if (isOnlyHolderOfStructKey(WasmStructFieldKey(structPtr, fieldHeapKey))) {
+            dataLogLnIf(B3EliminateCommonSubexpressionsInternal::verbose, "    Giving up because nothing else holds this key.");
             return { };
         }
 
@@ -1287,6 +1311,7 @@ private:
         }
 
         m_data.wasmStructValuesAtTail.add(structSet);
+        noteStructKeyFilter(structSet);
     }
 
     bool findWasmStructSetAfterClobber(Value* structPtr, HeapRange range, uint64_t fieldHeapKey)
@@ -1572,6 +1597,17 @@ private:
     IndexSet<Value*> m_matched;
     // Blocks that own at least one m_sets key, so finalize() can skip whole blocks.
     IndexSet<BasicBlock*> m_blocksWithSets;
+
+    // Every value ever entered into some block's wasmStructValuesAtTail, tallied by field key.
+    // findWasmStructValue can only succeed by matching a value other than the one it is called
+    // for, so a key whose sole holder is that value makes its whole predecessor walk futile.
+    // Entries are never removed, which keeps the test conservative once clobber() prunes a
+    // block's map, and an overcount only means a walk we could have skipped still happens.
+    struct StructKeyFilters {
+        Value* first { nullptr };
+        unsigned count { 0 };
+    };
+    UncheckedKeyHashMap<WasmStructFieldKey, StructKeyFilters> m_structKeyFilters;
 
     InsertionSet m_insertionSet;
 
