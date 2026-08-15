@@ -1635,7 +1635,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
         .gestureScale = static_cast<float>(magnification),
         .gestureRotation = 0,
         .timestamp = MonotonicTime::fromRawSeconds(GetCurrentEventTime()),
-        .allowsNativeZoom = [self magnificationGestureRecognizerCanZoom]
+        .allowsNativeZoom = static_cast<bool>([self magnificationGestureRecognizerCanZoom])
     };
     auto webEvent = WebKit::NativeWebGestureEvent::create(init, webView.getAutoreleased());
 
