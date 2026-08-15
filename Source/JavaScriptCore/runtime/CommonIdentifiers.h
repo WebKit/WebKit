@@ -40,7 +40,6 @@
     macro(DisplayNames) \
     macro(Error) \
     macro(EvalError) \
-    macro(FinalizationRegistry) \
     macro(Function) \
     macro(Infinity) \
     macro(Intl) \
@@ -66,7 +65,6 @@
     macro(String) \
     macro(Symbol) \
     macro(Temporal) \
-    macro(WeakRef) \
     macro(__defineGetter__) \
     macro(__defineSetter__) \
     macro(__lookupGetter__) \

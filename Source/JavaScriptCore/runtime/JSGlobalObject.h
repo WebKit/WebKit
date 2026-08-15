@@ -172,8 +172,6 @@ constexpr bool typeExposedByDefault = true;
     macro(JSPromise, promise, promise, JSPromise, Promise, object, typeExposedByDefault) \
     macro(BigInt, bigInt, bigIntObject, BigIntObject, BigInt, object, typeExposedByDefault) \
     macro(Symbol, symbol, symbolObject, SymbolObject, Symbol, object, typeExposedByDefault) \
-    macro(WeakObjectRef, weakObjectRef, weakObjectRef, JSWeakObjectRef, WeakRef, object, typeExposedByDefault) \
-    macro(FinalizationRegistry, finalizationRegistry, finalizationRegistry, JSFinalizationRegistry, FinalizationRegistry, object, typeExposedByDefault) \
 
 
 #define FOR_EACH_BUILTIN_DERIVED_ITERATOR_TYPE(macro) \
@@ -191,6 +189,8 @@ constexpr bool typeExposedByDefault = true;
     macro(Set, set, set, JSSet, Set, object, typeExposedByDefault) \
     DEFINE_STANDARD_BUILTIN(macro, WeakMap, weakMap) \
     DEFINE_STANDARD_BUILTIN(macro, WeakSet, weakSet) \
+    macro(WeakObjectRef, weakObjectRef, weakObjectRef, JSWeakObjectRef, WeakRef, object, typeExposedByDefault) \
+    macro(FinalizationRegistry, finalizationRegistry, finalizationRegistry, JSFinalizationRegistry, FinalizationRegistry, object, typeExposedByDefault) \
 
 #define FOR_EACH_LAZY_BUILTIN_TYPE(macro) \
     FOR_EACH_LAZY_BUILTIN_TYPE_WITH_DECLARATION(macro) \
