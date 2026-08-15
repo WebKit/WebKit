@@ -610,6 +610,107 @@ TEST(WKWebExtensionAPIScripting, InsertAndRemoveCSS)
     [manager run];
 }
 
+// The main frame is served from 127.0.0.1 and the subframe from localhost. Those are different sites,
+// so with site isolation enabled the subframe is hosted by its own web content process.
+//
+// injectStyleSheets() stamps page->webPageIDInMainFrameProcess() into every UserStyleSheet
+// (WebExtensionDynamicScriptsCocoa.mm). WebUserContentControllerProxy::addUserStyleSheet then
+// correctly delivers the sheet to every enrolled process, but each receiver resolves the sheet's
+// pageID with WebProcess::singleton().webPage(*pageID) before injecting it
+// (WebUserContentController::addUserStyleSheetInternal). A PageIdentifier naming a WebPage in the
+// main frame's process names nothing in the subframe's process, so the lookup misses and the sheet
+// is not injected there. The non-page-specific path doesn't pick it up either, because
+// ExtensionStyleSheets::updateInjectedStyleSheetCache skips any sheet carrying a pageID. The sheet
+// is silently dropped, which is exactly the third-party-iframe case content blockers exist for.
+TEST(WKWebExtensionAPIScripting, InsertCSSInAllFramesWithCrossSiteFrame)
+{
+    Util::SiteIsolationScope siteIsolationScope;
+
+    // Unlike scriptingManifest, this needs access to both of the sites the test serves.
+    auto *manifest = @{
+        @"manifest_version": @3,
+
+        @"name": @"Scripting Test",
+        @"description": @"Scripting Test",
+        @"version": @"1",
+
+        @"permissions": @[ @"scripting" ],
+        @"host_permissions": @[ @"*://localhost/*", @"*://127.0.0.1/*" ],
+
+        @"background": @{
+            @"scripts": @[ @"background.js" ],
+            @"type": @"module",
+            @"persistent": @NO,
+        },
+    };
+
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, "<script>onload = () => { const frame = document.createElement('iframe'); frame.src = 'http://localhost:' + window.location.port + '/frame.html'; document.body.appendChild(frame); }</script>"_s } },
+        { "/frame.html"_s, { { { "Content-Type"_s, "text/html"_s } }, "<body style='background-color: blue'></body>"_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"const pinkValue = 'rgb(255, 192, 203)'",
+        @"const blueValue = 'rgb(0, 0, 255)'",
+
+        @"function getBackgroundColor() { return window.getComputedStyle(document.body).getPropertyValue('background-color') }",
+
+        @"function readAllFrames(tabId) {",
+        @"  return browser.scripting.executeScript({ target: { tabId, allFrames: true }, func: getBackgroundColor })",
+        @"}",
+
+        // The subframe is appended from script and is cross-site, so it is not loaded yet when the
+        // main frame reaches 'complete'. Poll until both frames are visible to executeScript.
+        @"async function readBothFrames(tabId) {",
+        @"  for (let attempt = 0; attempt < 200; ++attempt) {",
+        @"    const results = await readAllFrames(tabId)",
+        @"    if (results.length === 2)",
+        @"      return results",
+        @"    await new Promise((resolve) => setTimeout(resolve, 50))",
+        @"  }",
+        @"  browser.test.notifyFail('Timed out waiting for the cross-site subframe to appear')",
+        @"}",
+
+        @"browser.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {",
+        @"  if (tab.status !== 'complete')",
+        @"    return",
+
+        // Sanity check that the subframe really is the blue localhost document, and that reading from
+        // it works. executeScript is frame-routed, so it is unaffected by this bug.
+        @"  let results = await readBothFrames(tabId)",
+        @"  browser.test.assertTrue(results.some((result) => result.result === blueValue), 'The cross-site subframe should start out blue')",
+
+        @"  await browser.scripting.insertCSS({ target: { tabId, allFrames: true }, css: 'body { background-color: pink !important }' })",
+
+        @"  results = await readAllFrames(tabId)",
+        @"  browser.test.assertEq(results.length, 2, 'Both frames should be reachable')",
+
+        @"  for (const result of results)",
+        @"    browser.test.assertEq(result.result, pinkValue, `Frame ${result.frameId} should be styled by insertCSS with allFrames`)",
+
+        @"  browser.test.notifyPass()",
+        @"})",
+
+        @"browser.test.sendMessage('Load Tab')",
+    ]);
+
+    auto manager = Util::loadExtension(manifest, @{ @"background.js": backgroundScript });
+
+    auto *urlRequest = server.request();
+
+    // The extension needs access to both sites, since it styles a frame on each.
+    for (NSURL *url in @[ urlRequest.URL, server.requestWithLocalhost().URL ]) {
+        auto *matchPattern = [WKWebExtensionMatchPattern matchPatternWithScheme:url.scheme host:url.host path:@"/*"];
+        [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
+    }
+
+    [manager runUntilTestMessage:@"Load Tab"];
+
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
+
+    [manager run];
+}
+
 TEST(WKWebExtensionAPIScripting, InsertAndRemoveCSSWithFrameIds)
 {
     TestWebKitAPI::HTTPServer server({

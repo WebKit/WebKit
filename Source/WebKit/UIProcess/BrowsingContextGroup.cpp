@@ -169,14 +169,14 @@ void BrowsingContextGroup::addFrameProcessAndInjectPageContextIf(FrameProcess& p
             return HashSet<Ref<RemotePageProxy>> { };
         }).iterator->value;
         Ref newRemotePage = RemotePageProxy::create(page, processProxy, site);
-        newRemotePage->injectPageIntoNewProcess();
 #if ASSERT_ENABLED
         for (auto& existingPage : set) {
             ASSERT(existingPage->process().coreProcessIdentifier() != newRemotePage->process().coreProcessIdentifier() || existingPage->site() != newRemotePage->site());
             ASSERT(existingPage->page() == newRemotePage->page());
         }
 #endif
-        set.add(WTF::move(newRemotePage));
+        set.add(newRemotePage.copyRef());
+        newRemotePage->injectPageIntoNewProcess();
     };
 
     if (process.isSharedProcess()) {
@@ -280,14 +280,14 @@ void BrowsingContextGroup::addPage(WebPageProxy& page)
             return false;
         Ref processProxy = process->process();
         Ref newRemotePage = RemotePageProxy::create(page, processProxy, site);
-        newRemotePage->injectPageIntoNewProcess();
 #if ASSERT_ENABLED
         for (auto& existingPage : set) {
             ASSERT(existingPage->process().coreProcessIdentifier() != newRemotePage->process().coreProcessIdentifier() || existingPage->site() != newRemotePage->site());
             ASSERT(existingPage->page() == newRemotePage->page());
         }
 #endif
-        set.add(WTF::move(newRemotePage));
+        set.add(newRemotePage.copyRef());
+        newRemotePage->injectPageIntoNewProcess();
         return false;
     });
 }

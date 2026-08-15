@@ -90,7 +90,7 @@ WebExtensionController::~WebExtensionController()
     unloadAll();
 }
 
-WebExtensionControllerParameters WebExtensionController::parameters(const API::PageConfiguration& pageConfiguration) const
+WebExtensionControllerParameters WebExtensionController::parameters(const API::PageConfiguration& pageConfiguration, WebProcessProxy& destinationProcess) const
 {
     return {
         .identifier = identifier(),
@@ -98,7 +98,7 @@ WebExtensionControllerParameters WebExtensionController::parameters(const API::P
         .contextParameters = WTF::map(extensionContexts(), [&](auto& context) {
             bool isForThisExtension = context->isURLForThisExtension(pageConfiguration.requiredWebExtensionBaseURL());
             auto includePrivilegedIdentifier = isForThisExtension ? WebExtensionContext::IncludePrivilegedIdentifier::Yes : WebExtensionContext::IncludePrivilegedIdentifier::No;
-            return context->parameters(includePrivilegedIdentifier);
+            return context->parameters(includePrivilegedIdentifier, destinationProcess);
         })
     };
 }

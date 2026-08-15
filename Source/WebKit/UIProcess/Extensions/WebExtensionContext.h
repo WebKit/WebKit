@@ -350,7 +350,7 @@ public:
 
     WebExtensionContextIdentifier NODELETE privilegedIdentifier() const;
 
-    WebExtensionContextParameters parameters(IncludePrivilegedIdentifier) const;
+    WebExtensionContextParameters parameters(IncludePrivilegedIdentifier, WebProcessProxy& destinationProcess) const;
 
     bool operator==(const WebExtensionContext& other) const { return (this == &other); }
 
@@ -648,13 +648,16 @@ public:
 
     UserStyleSheetVector& dynamicallyInjectedUserStyleSheets() LIFETIME_BOUND { return m_dynamicallyInjectedUserStyleSheets; };
 
-    std::optional<WebCore::PageIdentifier> backgroundPageIdentifier() const;
+    // Maps page identifiers appropriately, even with site isolation enabled.
+    std::optional<WebCore::PageIdentifier> backgroundPageIdentifier(WebProcessProxy& destinationProcess) const;
+    std::optional<WebCore::PageIdentifier> backgroundPageIdentifierInOwnProcess() const;
+
 #if ENABLE(INSPECTOR_EXTENSIONS)
-    Vector<PageIdentifierTuple> inspectorBackgroundPageIdentifiers() const;
-    Vector<PageIdentifierTuple> inspectorPageIdentifiers() const;
+    Vector<PageIdentifierTuple> inspectorBackgroundPageIdentifiers(WebProcessProxy& destinationProcess) const;
+    Vector<PageIdentifierTuple> inspectorPageIdentifiers(WebProcessProxy& destinationProcess) const;
 #endif
-    Vector<PageIdentifierTuple> popupPageIdentifiers() const;
-    Vector<PageIdentifierTuple> tabPageIdentifiers() const;
+    Vector<PageIdentifierTuple> popupPageIdentifiers(WebProcessProxy& destinationProcess) const;
+    Vector<PageIdentifierTuple> tabPageIdentifiers(WebProcessProxy& destinationProcess) const;
 
     void addExtensionTabPage(WebPageProxy&, WebExtensionTab&);
     void addPopupPage(WebPageProxy&, WebExtensionAction&);

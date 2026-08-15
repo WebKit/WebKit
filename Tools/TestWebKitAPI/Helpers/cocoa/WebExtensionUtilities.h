@@ -169,6 +169,20 @@ void performWithAppearance(Appearance, void (^block)(void));
 
 #endif
 
+// TestWebExtensionManager creates its web views lazily: when the manager itself is created, when a
+// window or tab is opened, and when a tab navigates to a URL that needs a different configuration.
+// That makes site isolation awkward to pass in as an argument at the point a test wants it. Declare
+// this at the top of a test body instead, and every web view the manager creates while it is in
+// scope gets `_siteIsolationEnabled` set.
+class SiteIsolationScope {
+public:
+    SiteIsolationScope();
+    ~SiteIsolationScope();
+
+    SiteIsolationScope(const SiteIsolationScope&) = delete;
+    SiteIsolationScope& operator=(const SiteIsolationScope&) = delete;
+};
+
 RetainPtr<TestWebExtensionManager> parseExtension(NSDictionary *manifest, NSDictionary *resources, WKWebExtensionControllerConfiguration * = nil, BOOL usesEnhancedSecurity = NO);
 RetainPtr<TestWebExtensionManager> loadExtension(NSDictionary *manifest, NSDictionary *resources, WKWebExtensionControllerConfiguration * = nil, BOOL usesEnhancedSecurity = NO);
 void loadAndRunExtension(NSDictionary *manifest, NSDictionary *resources, WKWebExtensionControllerConfiguration * = nil);

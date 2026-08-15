@@ -367,7 +367,12 @@ void WebExtensionController::unloadAll()
 
 void WebExtensionController::dispatchDidLoad(WebExtensionContext& context)
 {
-    sendToAllProcesses(Messages::WebExtensionControllerProxy::Load(context.parameters(WebExtensionContext::IncludePrivilegedIdentifier::No)), identifier());
+    for (Ref process : allProcesses()) {
+        if (!process->canSendMessage())
+            continue;
+
+        process->send(Messages::WebExtensionControllerProxy::Load(context.parameters(WebExtensionContext::IncludePrivilegedIdentifier::No, process)), identifier());
+    }
 }
 
 void WebExtensionController::addPage(WebPageProxy& page)

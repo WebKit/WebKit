@@ -53,7 +53,7 @@ namespace WebKit {
 void WebExtensionContext::runtimeGetBackgroundPage(CompletionHandler<void(Expected<std::optional<WebCore::PageIdentifier>, WebExtensionError>&&)>&& completionHandler)
 {
     wakeUpBackgroundContentIfNecessary([this, protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)]() mutable {
-        completionHandler(backgroundPageIdentifier());
+        completionHandler(backgroundPageIdentifierInOwnProcess());
     });
 }
 

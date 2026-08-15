@@ -14352,10 +14352,10 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
 
 #if ENABLE(WK_WEB_EXTENSIONS) && PLATFORM(COCOA)
     if (RefPtr webExtensionController = m_webExtensionController)
-        parameters.webExtensionControllerParameters = webExtensionController->parameters(m_configuration);
+        parameters.webExtensionControllerParameters = webExtensionController->parameters(m_configuration, process);
 
     if (RefPtr weakWebExtensionController = m_weakWebExtensionController.get())
-        parameters.webExtensionControllerParameters = weakWebExtensionController->parameters(m_configuration);
+        parameters.webExtensionControllerParameters = weakWebExtensionController->parameters(m_configuration, process);
 #endif
 
     // FIXME: This is also being passed over the to WebProcess via the PreferencesStore.
