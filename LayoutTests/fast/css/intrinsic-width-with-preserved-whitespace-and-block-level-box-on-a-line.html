@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>This tests the intrinsic widths of a container whose line holds a block level box, where the text around it has preserved whitespace.</title>
+<style>
+  body { margin: 0; }
+  /* Shrink-to-fit, so the box takes its own intrinsic width. The narrow container makes the minimum win. */
+  .narrow { width: 50px; }
+  pre { float: left; clear: both; word-spacing: 20px; }
+</style>
+</head>
+<body>
+<div class="narrow">
+<pre id="consecutiveSpaces"><span><h3>a</h3></span>
+xx   yy
+</pre>
+</div>
+
+<div class="narrow">
+<pre id="lineSplitByInlineBox"><span><h3>a</h3></span>
+xx <em>yy</em> zz
+</pre>
+</div>
+
+<pre id="console"></pre>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+// A pre does not wrap, so the box has to be as wide as its widest line whichever intrinsic width it takes.
+function widestLine(container)
+{
+    var containerLeft = container.getBoundingClientRect().left;
+    var widest = 0;
+    var range = document.createRange();
+    for (var node of container.childNodes) {
+        range.selectNodeContents(node);
+        for (var rect of range.getClientRects())
+            widest = Math.max(widest, rect.right - containerLeft);
+    }
+    return Math.round(widest);
+}
+
+var log = [];
+for (var id of ["consecutiveSpaces", "lineSplitByInlineBox"]) {
+    var container = document.getElementById(id);
+    var widest = widestLine(container);
+    log.push((container.offsetWidth === widest ? "PASS " : "FAIL ") + id + ": width " + container.offsetWidth + ", widest line " + widest);
+}
+document.getElementById("console").textContent = log.join("\n");
+</script>
+</body>
+</html>

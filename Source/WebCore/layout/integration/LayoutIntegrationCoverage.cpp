@@ -62,6 +62,9 @@ bool canUseForIntrinsicWidthComputation(const RenderBlockFlow& blockContainer)
         if (isFullySupportedInFlowRenderer)
             continue;
 
+        if (CheckedPtr renderBlock = dynamicDowncast<RenderBlock>(renderer.get()); renderBlock && renderBlock->isBlockLevelBox())
+            continue;
+
         if (CheckedPtr renderBlock = dynamicDowncast<RenderBlock>(renderer.get()); renderBlock && renderBlock->isAtomicInlineLevelBox() && !renderBlock->firstChild()) {
             if (renderBlock->style().usedAppearance() != StyleAppearance::None || (renderBlock->element() && renderBlock->element()->firstChild())) {
                 // FIXME: Various widgets with or without appearance.

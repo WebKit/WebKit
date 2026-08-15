@@ -401,8 +401,10 @@ std::pair<LayoutUnit, LayoutUnit> LineLayout::computeIntrinsicWidthConstraints()
 {
     auto parentBlockLayoutState = Layout::BlockLayoutState { m_blockFormattingState.placedFloats(), { } };
     auto inlineFormattingContext = Layout::InlineFormattingContext { rootLayoutBox(), layoutState(), parentBlockLayoutState };
-    if (m_lineDamage)
+    if (m_lineDamage || flow().hasInvalidContentLogicalWidths()) {
+        // Content inside a block level box on a line does not damage the lines around it, but it does invalidate the width this box contributes to them.
         m_inlineContentCache.resetMinimumMaximumContentSizes();
+    }
     // FIXME: This is where we need to switch between minimum and maximum box geometries.
     // Currently we only support content where min == max.
     m_boxGeometryUpdater.setFormattingContextContentGeometry({ }, Layout::IntrinsicWidthMode::Minimum);

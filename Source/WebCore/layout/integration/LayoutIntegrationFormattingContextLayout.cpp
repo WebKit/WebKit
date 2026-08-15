@@ -273,7 +273,9 @@ void layoutWithFormattingContextForBlockInInline(const Layout::ElementBox& block
 
 LayoutUnit formattingContextRootLogicalWidthForType(const Layout::ElementBox& box, LogicalWidthType logicalWidthType)
 {
-    ASSERT(box.establishesFormattingContext());
+    // Either a box inline layout treats as atomic, or a block level box on a line: the render tree lays both of them
+    // out, so it is the render tree that knows what they cost (see LineBuilder::handleBlockContent).
+    ASSERT(box.establishesFormattingContext() || box.isBlockLevelBox());
 
     CheckedRef renderer = downcast<RenderBox>(*box.rendererForIntegration());
     switch (logicalWidthType) {

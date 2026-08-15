@@ -167,15 +167,16 @@ LayoutUnit IntegrationUtils::maxContentContributionHeightForGridItem(const Eleme
 
 LayoutUnit IntegrationUtils::minContentLogicalWidthContribution(const ElementBox& box) const
 {
-    ASSERT(box.isGridItem());
-    return inlineWidthForGridItemWithGridArea(m_globalLayoutState, box, LayoutIntegration::LogicalWidthType::MinContentContribution, 0_lu);
+    if (box.isGridItem())
+        return inlineWidthForGridItemWithGridArea(m_globalLayoutState, box, LayoutIntegration::LogicalWidthType::MinContentContribution, 0_lu);
+    return m_globalLayoutState->logicalWidthWithFormattingContextForBox(box, LayoutIntegration::LogicalWidthType::MinContentContribution);
 }
-
 
 LayoutUnit IntegrationUtils::maxContentLogicalWidthContribution(const ElementBox& box) const
 {
-    ASSERT(box.isGridItem());
-    return inlineWidthForGridItemWithGridArea(m_globalLayoutState, box, LayoutIntegration::LogicalWidthType::MaxContentContribution, 0_lu);
+    if (box.isGridItem())
+        return inlineWidthForGridItemWithGridArea(m_globalLayoutState, box, LayoutIntegration::LogicalWidthType::MaxContentContribution, 0_lu);
+    return m_globalLayoutState->logicalWidthWithFormattingContextForBox(box, LayoutIntegration::LogicalWidthType::MaxContentContribution);
 }
 
 void IntegrationUtils::layoutWithFormattingContextForBlockInInline(const ElementBox& block, LayoutPoint blockLineLogicalTopLeft, const InlineLayoutState& inlineLayoutState) const

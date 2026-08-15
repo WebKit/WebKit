@@ -647,7 +647,7 @@ void BoxGeometryUpdater::updateLayoutBoxDimensions(const RenderBox& renderBox, s
         boxGeometry.setHorizontalSpaceForScrollbar(scrollbarSize.width());
         auto contentBoxLogicalWidth = [&] {
             auto widthContribution = *intrinsicWidthMode == Layout::IntrinsicWidthMode::Minimum ? renderBox.minContentLogicalWidthContribution() : renderBox.maxContentLogicalWidthContribution();
-            return widthContribution - (border.horizontal.start + border.horizontal.end + padding.horizontal.start + padding.horizontal.end);
+            return widthContribution - (border.horizontal.start + border.horizontal.end + padding.horizontal.start + padding.horizontal.end + scrollbarSize.width());
         };
         boxGeometry.setContentBoxWidth(contentBoxLogicalWidth());
         boxGeometry.setHorizontalMargin(inlineMargin);

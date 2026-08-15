@@ -1417,8 +1417,14 @@ void LineBuilder::handleBlockContent(const InlineItem& blockItem)
     ASSERT(blockItem.isBlock());
     // Blocks are always the only content on the line.
     ASSERT(!m_line.hasContent(Line::IncludeInsideListMarker::Yes));
-    if (isInIntrinsicWidthMode())
-        return m_line.appendBlock(blockItem, formattingContext().formattingUtils().inlineItemWidth(blockItem, { }, false));
+    if (isInIntrinsicWidthMode()) {
+        CheckedRef blockBox = downcast<ElementBox>(blockItem.layoutBox());
+        auto& boxGeometry = formattingContext().geometryForBox(blockBox.get());
+        auto& integrationUtils = formattingContext().integrationUtils();
+        auto contribution = *intrinsicWidthMode() == IntrinsicWidthMode::Minimum ? integrationUtils.minContentLogicalWidthContribution(blockBox.get()) : integrationUtils.maxContentLogicalWidthContribution(blockBox.get());
+        auto marginBoxWidth = contribution + boxGeometry.marginStart() + boxGeometry.marginEnd();
+        return m_line.appendBlock(blockItem, marginBoxWidth);
+    }
 
     if (rootStyle().writingMode().isBidiRTL())
         m_line.setContentNeedsBidiReordering();
