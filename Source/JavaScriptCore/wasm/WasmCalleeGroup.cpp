@@ -376,13 +376,14 @@ bool CalleeGroup::installOptimizedCallee(Locker<Lock>& locker, const ModuleInfor
 #endif
 #if ENABLE(WEBASSEMBLY_BBQJIT)
     if (callee->compilationMode() == CompilationMode::BBQMode) {
-        Locker bbqLocker { slot->m_bbqCallee.lock() };
+        auto& bbqCallee = slot->m_bbqCallee;
+        Locker bbqLocker { bbqCallee.lock() };
         // A retired BBQCallee may still be here: releaseBBQCallee re-arms IPInt's tier-up counter, so
         // a function can be compiled to BBQ again before the previous callee is destroyed. Overwriting
         // that weak reference is fine, it does not own the callee. Overwriting a strong one would drop
         // the last reference to code that may still be executing.
-        RELEASE_ASSERT(!slot->m_bbqCallee.isStrong() || !slot->m_bbqCallee.get());
-        slot->m_bbqCallee = Ref { uncheckedDowncast<BBQCallee>(callee.get()) };
+        RELEASE_ASSERT(!bbqCallee.isStrong() || !bbqCallee.get());
+        bbqCallee = Ref { uncheckedDowncast<BBQCallee>(callee.get()) };
     }
 #endif
 

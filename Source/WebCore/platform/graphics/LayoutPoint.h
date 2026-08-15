@@ -39,7 +39,7 @@ namespace WebCore {
 class LayoutPoint {
 public:
     constexpr LayoutPoint() = default;
-    template<typename T, typename U> LayoutPoint(T x, U y) : m_x(x), m_y(y) { }
+    template<typename T, typename U> constexpr LayoutPoint(T x, U y) : m_x(x), m_y(y) { }
     LayoutPoint(const IntPoint& point) : m_x(point.x()), m_y(point.y()) { }
     explicit LayoutPoint(const FloatPoint& size)
         : m_x(size.x()), m_y(size.y()) { }
@@ -240,4 +240,3 @@ struct LayoutPointLimits {
 };
 
 } // namespace WebCore
-
