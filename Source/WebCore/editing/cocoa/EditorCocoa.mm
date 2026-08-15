@@ -203,7 +203,11 @@ void populateRichTextDataIfNeeded(PasteboardContent& content, const Document& do
     if (!document.settings().writeRichTextDataWhenCopyingOrDragging())
         return;
 
-    auto string = attributedStringByReplacingRemoteFrameMarkers(selectionAsAttributedString(document), remoteFrameContent);
+    RetainPtr stringWithRemoteFrameMarkers = selectionAsAttributedString(document);
+    if (!stringWithRemoteFrameMarkers)
+        return;
+
+    auto string = attributedStringByReplacingRemoteFrameMarkers(WTF::move(stringWithRemoteFrameMarkers), remoteFrameContent);
     content.dataInRTFDFormat = [string containsAttachments] ? Editor::dataInRTFDFormat(string.get()) : nullptr;
     content.dataInRTFFormat = Editor::dataInRTFFormat(string.get());
     content.dataInAttributedStringFormat = AttributedString::fromNSAttributedString(string.get());

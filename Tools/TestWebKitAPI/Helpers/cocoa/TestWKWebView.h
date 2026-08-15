@@ -56,6 +56,7 @@
 
 @interface WKWebView (AdditionalDeclarations)
 #if PLATFORM(MAC)
+- (void)copy:(id)sender;
 - (void)paste:(id)sender;
 - (void)changeAttributes:(id)sender;
 - (void)changeColor:(id)sender;

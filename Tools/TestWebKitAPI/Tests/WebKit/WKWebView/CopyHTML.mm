@@ -46,7 +46,6 @@
 #endif
 
 @interface WKWebView ()
-- (void)copy:(id)sender;
 - (void)paste:(id)sender;
 @end
 

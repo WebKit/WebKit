@@ -32,11 +32,13 @@
 #import "InstanceMethodSwizzler.h"
 #import "Helpers/PlatformUtilities.h"
 #import "Helpers/Test.h"
+#import "Helpers/cocoa/PasteboardUtilities.h"
 #import "TestInputDelegate.h"
 #import "Helpers/ios/TestUIMenuBuilder.h"
 #import "Helpers/cocoa/TestWKWebView.h"
 #import "UIKitSPIForTesting.h"
 #import "Helpers/cocoa/WKWebViewConfigurationExtras.h"
+#import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
 #import <WebCore/LocalizedStrings.h>
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
@@ -483,6 +485,58 @@ TEST(ImageAnalysisTests, AllowRemoveBackgroundOnce)
 }
 
 #endif // PLATFORM(IOS_FAMILY)
+
+#if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
+
+static bool generalPasteboardContainsRichTextData()
+{
+#if PLATFORM(MAC)
+    RetainPtr pasteboard = [NSPasteboard generalPasteboard];
+    return !![pasteboard dataForType:NSPasteboardTypeRTF] || !![pasteboard dataForType:NSPasteboardTypeRTFD];
+#else
+    for (NSItemProvider *itemProvider in UIPasteboard.generalPasteboard.itemProviders) {
+        for (NSString *identifier in itemProvider.registeredTypeIdentifiers) {
+            RetainPtr type = [UTType typeWithIdentifier:identifier];
+            if ([type conformsToType:UTTypeRTF] || [type conformsToType:UTTypeFlatRTFD])
+                return true;
+        }
+    }
+    return false;
+#endif
+}
+
+static NSString *stringFromGeneralPasteboard()
+{
+#if PLATFORM(MAC)
+    return [NSPasteboard.generalPasteboard stringForType:NSPasteboardTypeString];
+#else
+    return UIPasteboard.generalPasteboard.string;
+#endif
+}
+
+TEST(ImageAnalysisTests, CopyImageOverlayTextWithoutAttributedString)
+{
+    RetainPtr configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
+    for (_WKFeature *feature in WKPreferences._features) {
+        if ([feature.key isEqualToString:@"WriteRichTextDataWhenCopyingOrDragging"])
+            [[configuration preferences] _setEnabled:YES forFeature:feature];
+    }
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 300, 300) configuration:configuration]);
+    [webView synchronouslyLoadTestPageNamed:@"simple-image-overlay"];
+    [webView stringByEvaluatingJavaScript:@"selectImageOverlay()"];
+    [webView waitForNextPresentationUpdate];
+
+    clearPasteboard();
+    [webView copy:nil];
+    [webView waitForNextPresentationUpdate];
+
+    EXPECT_FALSE(generalPasteboardContainsRichTextData());
+    EXPECT_TRUE([stringFromGeneralPasteboard() containsString:@"foobar"]);
+    EXPECT_WK_STREQ("IMG", [webView stringByEvaluatingJavaScript:@"document.querySelector('img').tagName"]);
+}
+
+#endif // !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
 
 #if ENABLE(SERVICE_CONTROLS)
 

@@ -63,10 +63,6 @@
 #import <wtf/darwin/DispatchExtras.h>
 #import <wtf/text/MakeString.h>
 
-@interface WKWebView ()
-- (void)copy:(id)sender;
-@end
-
 #if PLATFORM(IOS_FAMILY)
 @interface UIPrintInteractionController ()
 - (BOOL)_setupPrintPanel:(void (^)(UIPrintInteractionController *printInteractionController, BOOL completed, NSError *error))completion;
