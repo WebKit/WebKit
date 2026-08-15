@@ -1616,8 +1616,12 @@ bool Navigation::dispatchDownloadNavigateEvent(const URL& url, const String& dow
 // https://html.spec.whatwg.org/multipage/nav-history-apis.html#inform-the-navigation-api-about-aborting-navigation
 void Navigation::abortOngoingNavigationIfNeeded()
 {
-    if (RefPtr ongoingNavigateEvent = m_ongoingNavigateEvent)
+    while (RefPtr ongoingNavigateEvent = m_ongoingNavigateEvent) {
         abortOngoingNavigation(*ongoingNavigateEvent);
+        // abortOngoingNavigation() bails without clearing the event when there is no global object.
+        if (m_ongoingNavigateEvent == ongoingNavigateEvent)
+            break;
+    }
 }
 
 // https://html.spec.whatwg.org/multipage/nav-history-apis.html#inform-the-navigation-api-about-child-navigable-destruction
