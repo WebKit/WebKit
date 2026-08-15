@@ -326,15 +326,30 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(const 
         const auto& returnType = signature.returnType(0);
         switch (returnType.kind()) {
         case TypeKind::I64: {
-            // FIXME: Optimize I64 extraction from BigInt.
-            // https://bugs.webkit.org/show_bug.cgi?id=220053
-            JSValueRegs dest = wasmCallInfo.results[0].location.jsr();
+            CCallHelpers::JumpList done;
+            CCallHelpers::JumpList slowPath;
+            JSValueRegs destJSR = wasmCallInfo.results[0].location.jsr();
+            GPRReg destGPR = destJSR.payloadGPR();
+            GPRReg cellGPR = JSRInfo::returnValueJSR.payloadGPR();
+
+            slowPath.append(jit.branchIfNotCell(JSRInfo::returnValueJSR, DoNotHaveTagRegisters));
+            slowPath.append(jit.branchIfNotHeapBigInt(cellGPR));
+            if (cellGPR == destGPR) {
+                GPRReg scratch = GPRInfo::nonPreservedNonReturnGPR;
+                jit.move(cellGPR, scratch);
+                jit.toBigInt64(scratch, destGPR);
+            } else
+                jit.toBigInt64(cellGPR, destGPR);
+            done.append(jit.jump());
+
+            slowPath.link(&jit);
             jit.prepareWasmCallOperation(GPRInfo::wasmContextInstancePointer);
             jit.setupArguments<decltype(operationConvertToI64)>(GPRInfo::wasmContextInstancePointer, JSRInfo::returnValueJSR);
             jit.callOperation<OperationPtrTag>(operationConvertToI64);
             using ResultType = typename FunctionTraits<decltype(operationConvertToI64)>::ResultType;
             exceptionChecks.append(jit.branchTestPtr(CCallHelpers::NonZero, CCallHelpers::operationExceptionRegister<ResultType>()));
-            jit.moveValueRegs(JSRInfo::returnValueJSR, dest);
+            jit.moveValueRegs(JSRInfo::returnValueJSR, destJSR);
+            done.link(&jit);
             break;
         }
         case TypeKind::I32: {
