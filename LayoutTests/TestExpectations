@@ -7120,8 +7120,6 @@ imported/w3c/web-platform-tests/navigation-api/navigate-event/defer/tentative/de
 imported/w3c/web-platform-tests/navigation-api/navigation-history-entry/opaque-origin.html [ Skip ]
 imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/back-forward-opaque-origin.html [ Skip ]
 
-webkit.org/b/300006 imported/w3c/web-platform-tests/navigation-api/navigate-event/navigation-back-cross-document-preventDefault.html [ Skip ]
-
 # Crashing. rdar://179168475
 imported/w3c/web-platform-tests/navigation-api/navigate-event/dangling-navigate-event-after-bfcache-restore.html [ Skip ]
 

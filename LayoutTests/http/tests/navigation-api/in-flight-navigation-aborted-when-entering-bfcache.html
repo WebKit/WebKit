@@ -1,0 +1,56 @@
+<!-- webkit-test-runner [ UsesBackForwardCache=true ] -->
+<script src="/js-test-resources/js-test.js"></script>
+
+<script>
+description("An intercepted navigation still in flight when its document is navigated away must be aborted rather than carried live into the back/forward cache. The navigation here is started by a cross-origin opener, so no navigate event is fired on the popup and nothing else aborts it.");
+jsTestIsAsync = true;
+
+const POPUP_URL = 'http://localhost:8000/navigation-api/resources/in-flight-navigation-popup.html';
+const GO_BACK_URL = 'http://localhost:8000/navigation-api/resources/page-that-goes-back.html';
+
+if (window.testRunner && testRunner.setCanOpenWindows)
+    testRunner.setCanOpenWindows();
+
+let popup = null;
+let readyCount = 0;
+
+// Globals so that the shouldBe* helpers, which evaluate their argument as a string, can see them.
+window.transitionBeforeLeaving = false;
+window.restoredFromBackForwardCache = false;
+window.transitionAfterRestore = true;
+window.finishedState = '';
+
+window.addEventListener('message', function(event) {
+    const data = event.data;
+
+    if (data.stage === 'ready') {
+        if (++readyCount > 1) {
+            testFailed('The popup was reloaded instead of being restored from the back/forward cache.');
+            finishJSTest();
+            return;
+        }
+
+        window.transitionBeforeLeaving = data.transitionBeforeLeaving;
+        shouldBeTrue("transitionBeforeLeaving");
+
+        debug('Navigating the popup from its cross-origin opener');
+        popup.location = GO_BACK_URL;
+        return;
+    }
+
+    if (data.stage === 'restored') {
+        window.restoredFromBackForwardCache = data.persisted;
+        window.transitionAfterRestore = data.transitionAfterRestore;
+        window.finishedState = data.finished;
+
+        shouldBeTrue("restoredFromBackForwardCache");
+        shouldBeFalse("transitionAfterRestore");
+        shouldBeEqualToString("finishedState", "rejected: AbortError");
+
+        popup.close();
+        finishJSTest();
+    }
+});
+
+popup = window.open(POPUP_URL);
+</script>

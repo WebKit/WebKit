@@ -1,0 +1,14 @@
+An intercepted navigation still in flight when its document is navigated away must be aborted rather than carried live into the back/forward cache. The navigation here is started by a cross-origin opener, so no navigate event is fired on the popup and nothing else aborts it.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS transitionBeforeLeaving is true
+Navigating the popup from its cross-origin opener
+PASS restoredFromBackForwardCache is true
+PASS transitionAfterRestore is false
+PASS finishedState is "rejected: AbortError"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

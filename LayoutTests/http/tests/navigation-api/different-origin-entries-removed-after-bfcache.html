@@ -15,12 +15,16 @@ window.addEventListener('pageshow', function() {
         }, 0);
     } else {
         sessionStorage.removeItem('hasVisited');
+        debug('Visiting Page 1 for the second time');
 
-        window.navigation.addEventListener('navigate', function() {
-            debug('Visiting Page 1 for the second time');
+        window.navigateFired = false;
+        window.navigation.addEventListener('navigate', () => { window.navigateFired = true; });
+
+        setTimeout(() => {
+            shouldBeFalse("navigateFired");
             shouldBeEqualToNumber("window.navigation.entries().length", 1);
             finishJSTest();
-        });
+        }, 0);
     }
 });
 </script>

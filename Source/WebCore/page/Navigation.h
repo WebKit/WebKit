@@ -169,6 +169,7 @@ public:
     void informAboutChildNavigableDestruction();
 
     void abortOngoingNavigationIfNeeded();
+    void discardOngoingNavigationForBackForwardCache();
 
     NavigationHistoryEntry* findEntryByKey(const String&) const;
     bool suppressNormalScrollRestoration() const { return m_suppressNormalScrollRestorationDuringOngoingNavigation; }

@@ -1,0 +1,44 @@
+<script>
+// Establishes an intercepted same-document navigation that never completes, so this document has a
+// live navigation.transition and an in-flight navigation API method tracker. The opener (which is
+// cross-origin) then navigates this window away, and this page reports its state if it is later
+// restored from the back/forward cache.
+window.inFlightFinishedState = 'pending';
+
+window.addEventListener('pageshow', function(event) {
+    if (!event.persisted) {
+        // Only intercept the fragment navigation below, so the navigation the opener triggers later
+        // is not turned into a same-document one.
+        navigation.addEventListener('navigate', function(navigateEvent) {
+            if (navigateEvent.destination.url.indexOf('#intercepted') === -1)
+                return;
+            navigateEvent.intercept({ handler: () => new Promise(() => { }) });
+        });
+
+        const result = navigation.navigate('#intercepted');
+        result.finished.then(
+            () => window.inFlightFinishedState = 'fulfilled',
+            e => window.inFlightFinishedState = 'rejected: ' + ((e && e.name) || e));
+
+        result.committed.then(() => {
+            opener.postMessage({
+                stage: 'ready',
+                transitionBeforeLeaving: !!navigation.transition
+            }, '*');
+        });
+        return;
+    }
+
+    // The finished promise's rejection reaction is queued while this document is being deactivated,
+    // and cannot run until the document is reactivated and its microtask queue drains, which is after
+    // pageshow. So report on the next task rather than synchronously here.
+    setTimeout(() => {
+        opener.postMessage({
+            stage: 'restored',
+            persisted: event.persisted,
+            transitionAfterRestore: !!navigation.transition,
+            finished: window.inFlightFinishedState
+        }, '*');
+    }, 0);
+});
+</script>

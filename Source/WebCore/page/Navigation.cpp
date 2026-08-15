@@ -1637,6 +1637,19 @@ void Navigation::informAboutChildNavigableDestruction()
         rejectFinishedPromise(tracker.ptr());
 }
 
+void Navigation::discardOngoingNavigationForBackForwardCache()
+{
+    if (hasInterceptedOngoingNavigateEvent())
+        return;
+
+    m_ongoingNavigateEvent = nullptr;
+    m_focusChangedDuringOngoingNavigation = FocusDidChange::No;
+    m_suppressNormalScrollRestorationDuringOngoingNavigation = false;
+
+    if (RefPtr ongoingAPIMethodTracker = m_methodTrackers.ongoing())
+        m_methodTrackers.unregister(*ongoingAPIMethodTracker);
+}
+
 // https://html.spec.whatwg.org/multipage/browsing-the-web.html#getting-session-history-entries-for-the-navigation-api
 Vector<Ref<HistoryItem>> Navigation::filterHistoryItemsForNavigationAPI(Vector<Ref<HistoryItem>>&& allItems, HistoryItem& currentItem)
 {

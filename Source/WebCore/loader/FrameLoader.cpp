@@ -628,8 +628,11 @@ void FrameLoader::stopLoading(UnloadEventPolicy unloadEventPolicy)
         DatabaseManager::singleton().stopDatabases(*document, nullptr);
 
         if (document->settings().navigationAPIEnabled() && !m_doNotAbortNavigationAPI && unloadEventPolicy != UnloadEventPolicy::UnloadAndPageHide) {
-            RefPtr window = frame->document()->window();
-            protect(window->navigation())->abortOngoingNavigationIfNeeded();
+            if (RefPtr window = document->window()) {
+                Ref navigation = window->navigation();
+                if (document->backForwardCacheState() == Document::NotInBackForwardCache || navigation->hasInterceptedOngoingNavigateEvent())
+                    navigation->abortOngoingNavigationIfNeeded();
+            }
         }
     }
 
@@ -2569,16 +2572,6 @@ void FrameLoader::commitProvisionalLoad()
         RefPtr page = frame->page();
         cachedPage->restore(*page);
 
-        // Dispatch any pending navigate event after BFCache restoration is complete.
-        if (RefPtr item = std::exchange(m_pendingNavigationAPIItem, nullptr)) {
-            // Ensure we use the restored document context, not the previous one
-            if (m_frame->document() && m_frame->document()->window()) {
-                RefPtr navigation = protect(m_frame->document()->window())->navigation();
-                if (navigation && navigation->frame())
-                    navigation->dispatchTraversalNavigateEvent(*item);
-            }
-        }
-
 #if PLATFORM(IOS_FAMILY)
         page->chrome().setDispatchViewportDataDidChangeSuppressed(false);
 #endif
@@ -4220,25 +4213,18 @@ void FrameLoader::continueLoadAfterNavigationPolicy(const ResourceRequest& reque
     bool navigateEventAborted = false;
     bool shouldCloseResult = true;
 
-    if (m_pendingNavigationAPIItem) {
-        // Check if this will be a BFCache load - if so, defer navigate event until after restoration
-        bool willLoadFromBFCache = false;
-        if (RefPtr provisionalItem = history().provisionalItem(); provisionalItem && provisionalItem->isInBackForwardCache())
-            willLoadFromBFCache = true;
-
+    if (RefPtr pendingItem = std::exchange(m_pendingNavigationAPIItem, nullptr)) {
         // Only call shouldClose() early for Navigation API traversals
         shouldCloseResult = shouldClose();
 
-        if (shouldCloseResult && !willLoadFromBFCache) {
-            // For non-BFCache traversals, dispatch navigate event now
-            if (RefPtr window = frame->document()->window()) {
-                if (RefPtr navigation = window->navigation(); navigation->frame()) {
-                    if (navigation->dispatchTraversalNavigateEvent(Ref { *m_pendingNavigationAPIItem }) == Navigation::DispatchResult::Aborted)
+        if (shouldCloseResult) {
+            RefPtr document = frame->document();
+            if (RefPtr window = document ? document->window() : nullptr) {
+                if (Ref navigation = window->navigation(); navigation->frame()) {
+                    if (navigation->dispatchTraversalNavigateEvent(*pendingItem) == Navigation::DispatchResult::Aborted)
                         navigateEventAborted = true;
                 }
             }
-
-            m_pendingNavigationAPIItem = nullptr;
         }
     } else {
         // For non-Navigation API traversals, use original behavior with short-circuit evaluation

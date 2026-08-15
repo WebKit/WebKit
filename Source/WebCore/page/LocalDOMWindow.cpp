@@ -643,6 +643,9 @@ void LocalDOMWindow::suspendForBackForwardCache()
     SetForScope isSuspendingObservers(m_isSuspendingObservers, true);
     RELEASE_ASSERT(frame());
 
+    if (RefPtr navigation = m_navigation)
+        navigation->discardOngoingNavigationForBackForwardCache();
+
     m_observers.forEach([](auto& observer) {
         Ref { observer }->suspendForBackForwardCache();
     });
