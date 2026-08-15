@@ -482,9 +482,9 @@ template<typename CharacterType> StringView ContentSecurityPolicySourceList::par
     return begin.first(buffer.position() - begin.data());
 }
 
-// host              = [ "*." ] 1*host-char *( "." 1*host-char )
-//                   / "*"
-// host-char         = ALPHA / DIGIT / "-"
+// https://w3c.github.io/webappsec-csp/#grammardef-host-char
+// host-part = "*" / [ "*." ] 1*host-char *( "." 1*host-char ) [ "." ]
+// host-char = ALPHA / DIGIT / "-"
 //
 template<typename CharacterType> std::optional<ContentSecurityPolicySourceList::Host> ContentSecurityPolicySourceList::parseHost(std::span<const CharacterType> span)
 {
@@ -503,6 +503,9 @@ template<typename CharacterType> std::optional<ContentSecurityPolicySourceList::
             return host;
 
         if (!skipExactly(buffer, '.'))
+            return std::nullopt;
+
+        if (buffer.atEnd())
             return std::nullopt;
     }
 

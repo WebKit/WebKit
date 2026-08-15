@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<!-- host-part   = "*" / [ "*." ] 1*host-char *( "." 1*host-char ) [ "." ] -->
+<meta http-equiv="Content-Security-Policy" content="connect-src *">
+<meta http-equiv="Content-Security-Policy" content="connect-src *?" class="invalid">
+<meta http-equiv="Content-Security-Policy" content="connect-src *."  class="invalid">
+<meta http-equiv="Content-Security-Policy" content="connect-src *.?"  class="invalid">
+<meta http-equiv="Content-Security-Policy" content="connect-src *.A1">
+<meta http-equiv="Content-Security-Policy" content="connect-src *.A1?" class="invalid">
+<meta http-equiv="Content-Security-Policy" content="connect-src *.A1.">
+<meta http-equiv="Content-Security-Policy" content="connect-src *.A1.?" class="invalid">
+<meta http-equiv="Content-Security-Policy" content="connect-src *.A1.B2">
+<meta http-equiv="Content-Security-Policy" content="connect-src *.A1.B2.">
+<meta http-equiv="Content-Security-Policy" content="connect-src *.A1.B2.?" class="invalid">
+<meta http-equiv="Content-Security-Policy" content="connect-src *.A1.B2.C3">
+<div id="log"></div>
+<script>
+  window.testRunner?.dumpAsText();
+  let invalidMetas = Array.from(document.getElementsByClassName("invalid")).
+      map(meta => meta.content.replace('connect-src ', '')).
+      map(value => `"${value}" `);
+  log.textContent = `PASS if you see console ${invalidMetas.length} messages about CSP directive 'connect-src' containing invalid source: ${invalidMetas}`;
+</script>

@@ -1,0 +1,7 @@
+CONSOLE MESSAGE: The source list for Content Security Policy directive 'connect-src' contains an invalid source: '*?'. It will be ignored.
+CONSOLE MESSAGE: The source list for Content Security Policy directive 'connect-src' contains an invalid source: '*.'. It will be ignored.
+CONSOLE MESSAGE: The source list for Content Security Policy directive 'connect-src' contains an invalid source: '*.?'. It will be ignored.
+CONSOLE MESSAGE: The source list for Content Security Policy directive 'connect-src' contains an invalid source: '*.A1?'. It will be ignored.
+CONSOLE MESSAGE: The source list for Content Security Policy directive 'connect-src' contains an invalid source: '*.A1.?'. It will be ignored.
+CONSOLE MESSAGE: The source list for Content Security Policy directive 'connect-src' contains an invalid source: '*.A1.B2.?'. It will be ignored.
+PASS if you see console 6 messages about CSP directive 'connect-src' containing invalid source: "*?" ,"*." ,"*.?" ,"*.A1?" ,"*.A1.?" ,"*.A1.B2.?"
