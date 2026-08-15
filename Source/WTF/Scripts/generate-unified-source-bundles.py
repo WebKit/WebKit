@@ -129,6 +129,11 @@ class SourceFile:
         else:
             return str(self._args.derived_sources_path / self.path)
 
+    @property
+    def arc(self) -> bool:
+        # .mm compiles with -fobjc-arc unless the source list marks it @nonARC.
+        return self.path.suffix == '.mm' and not self._non_arc
+
     def bundled_source_form(self) -> str:
         # String form for the --print-bundled-sources list: derived sources are
         # rooted under derived_sources_path, source-tree files stay relative.
@@ -239,6 +244,10 @@ def parse_args():
     mode_group.add_argument('--generate-xcfilelists', action='store_true', default=False,
                             help='Generate .xcfilelist files.')
 
+    parser.add_argument('--print-arc-sources', type=Path, metavar='PATH',
+                        help='Write the ARC .mm sources that are emitted as standalone files '
+                             '(one per line) to PATH. Bundled ARC sources carry their ARC-ness '
+                             'in the -ARC.mm bundle name instead.')
     parser.add_argument('--input-xcfilelist-path', type=Path,
                         help='Path of the generated input .xcfilelist file.')
     parser.add_argument('--output-xcfilelist-path', type=Path,
@@ -304,6 +313,7 @@ def main() -> None:
     input_sources: list[str] = []
     output_sources: list[str] = []
     bundled_members: list[str] = []
+    standalone_arc_sources: list[str] = []
 
     bundle_managers = {
         '.cpp': BundleManager('cpp', '.cpp', args.max_cpp_bundle_count, args, generated_sources, output_sources),
@@ -356,13 +366,19 @@ def main() -> None:
     log(args, "Found sources: {}".format(sorted(source_files, key=SourceFile.sort_key)))
 
     for source_file in sorted(source_files, key=SourceFile.sort_key):
+        bundled = False
         if args.mode in ('GenerateBundles', 'GenerateXCFilelists'):
             process_file_for_unified_source_generation(source_file, args, bundle_managers, generated_sources, input_sources)
-            if args.mode == 'GenerateBundles' and args.print_bundled_sources \
-                    and bundle_managers.get(source_file.bundle_manager_key) and source_file.unifiable:
+            bundled = bool(bundle_managers.get(source_file.bundle_manager_key)) and source_file.unifiable
+            if args.mode == 'GenerateBundles' and args.print_bundled_sources and bundled:
                 bundled_members.append(source_file.bundled_source_form())
         elif args.mode == 'PrintAllSources':
             generated_sources.append(str(source_file))
+
+        # An ARC .mm that is not folded into an -ARC.mm bundle has nothing in its
+        # name to tell CMake it needs -fobjc-arc, so report it separately.
+        if args.print_arc_sources and source_file.arc and not bundled:
+            standalone_arc_sources.append(str(source_file))
 
     if args.mode != 'PrintAllSources':
         for manager in bundle_managers.values():
@@ -394,6 +410,13 @@ def main() -> None:
         with open(args.print_bundled_sources, 'w') as f:
             f.write("\n".join(bundled_members))
             if bundled_members:
+                f.write("\n")
+
+    # Always written, even when empty: CMake reads it with file(STRINGS).
+    if args.print_arc_sources:
+        with open(args.print_arc_sources, 'w') as f:
+            f.write("\n".join(standalone_arc_sources))
+            if standalone_arc_sources:
                 f.write("\n")
 
     # We use stdout to report our unified source list to CMake.

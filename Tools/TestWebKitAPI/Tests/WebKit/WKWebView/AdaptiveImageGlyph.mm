@@ -30,6 +30,7 @@
 #import "Helpers/mac/AppKitSPI.h"
 #import "Helpers/cocoa/DragAndDropSimulator.h"
 #import "Helpers/PlatformUtilities.h"
+#import "Helpers/Test.h"
 #import "TestInputDelegate.h"
 #import "Helpers/cocoa/TestWKWebView.h"
 #import "UIKitSPIForTesting.h"

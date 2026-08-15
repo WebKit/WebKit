@@ -569,7 +569,9 @@ static BOOL s_didSetCacheModel;
 static WebCacheModel s_cacheModel = WebCacheModelDocumentViewer;
 
 const auto WKLockdownModeEnabledKeyCFString = CFSTR(STRINGIZE_VALUE_OF(WKLockdownModeEnabled));
+#if !HAVE(LOCKDOWN_MODE_FRAMEWORK)
 const auto LDMEnabledKey = CFSTR("LDMGlobalEnabled");
+#endif
 
 #if PLATFORM(IOS_FAMILY)
 static Class s_pdfRepresentationClass;

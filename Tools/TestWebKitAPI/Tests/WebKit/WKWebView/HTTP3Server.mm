@@ -27,6 +27,7 @@
 
 #if HAVE(NETWORK_FRAMEWORK_HTTP_MESSAGING)
 
+#import "Helpers/PlatformUtilities.h"
 #import "Helpers/Utilities.h"
 #import "Helpers/cocoa/HTTPServer.h"
 #import "Helpers/cocoa/TestUIDelegate.h"

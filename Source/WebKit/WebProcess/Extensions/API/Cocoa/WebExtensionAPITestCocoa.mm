@@ -32,8 +32,11 @@
 #import "WebExtensionAPITest.h"
 
 #import "CocoaHelpers.h"
+#import "MessageSenderInlines.h"
 #import "WebExtensionControllerMessages.h"
 #import "WebExtensionControllerProxy.h"
+#import "WebPage.h"
+#import "WebProcess.h"
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 

@@ -23,12 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import <WebKit/_WKActivatedElementInfo.h>
+
 #if PLATFORM(IOS_FAMILY)
 
 #import "InteractionInformationAtPosition.h"
 #import <WebCore/ElementAnimationContext.h>
 #import <WebCore/IntPoint.h>
-#import <WebKit/_WKActivatedElementInfo.h>
 
 namespace WebCore {
 class ShareableBitmap;

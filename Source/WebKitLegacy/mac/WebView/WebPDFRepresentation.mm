@@ -40,6 +40,7 @@
 #import "WebView.h"
 #import <wtf/Assertions.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 @implementation WebPDFRepresentation
 
