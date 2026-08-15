@@ -464,6 +464,12 @@ static NSString *gestureLogDescription(NSGestureRecognizer *gesture)
     // The deferring gesture recognizers are intentionally not enabled.
 }
 
+- (void)preferencesDidChange
+{
+    [self enableGesturesIfNeeded];
+    [self configureForScrolling:_panGestureRecognizer];
+}
+
 - (void)ensureGesturesAreNotArchived
 {
     // The set of gestures managed by WKAppKitGestureController are configured

@@ -60,7 +60,7 @@ NS_SWIFT_UI_ACTOR
 
 - (instancetype)initWithView:(WKWebView *)view;
 - (void)setUp;
-- (void)enableGesturesIfNeeded;
+- (void)preferencesDidChange;
 - (void)beginSuppressingSingleClickGestureForTextSelection;
 - (void)endSuppressingSingleClickGestureForTextSelection;
 - (NSGestureRecognizer *)activeDragGestureRecognizer;
