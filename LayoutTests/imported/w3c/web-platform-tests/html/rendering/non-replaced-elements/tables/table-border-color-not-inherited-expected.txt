@@ -1,0 +1,8 @@
+cell
+cell
+cell
+
+FAIL A <table border> cell border does not inherit the table's CSS border-color; it resolves to the cell's currentColor assert_equals: expected "rgb(0, 0, 255)" but got "rgb(255, 0, 0)"
+FAIL A <table rules=all> cell border does not inherit the table's CSS border-color; it resolves to the cell's currentColor assert_equals: expected "rgb(0, 0, 255)" but got "rgb(255, 0, 0)"
+PASS The legacy bordercolor attribute still propagates to interior cell borders
+

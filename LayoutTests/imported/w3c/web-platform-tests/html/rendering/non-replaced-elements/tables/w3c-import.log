@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/WEB_FEATURES.yml
@@ -41,6 +39,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-border-3q.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-border-3s-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-border-3s.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-border-attributes-computed-style.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-border-color-not-inherited.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-border-presentational-hints-ascii-case-insensitive-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-border-presentational-hints-ascii-case-insensitive-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-border-presentational-hints-ascii-case-insensitive.html
@@ -83,6 +83,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-row-pagination-002-print-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-row-pagination-002-print.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-rowspan-height-distribution.html
+/LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-rules-computed-style.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-ua-stylesheet.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-valign-baseline-ascii-case-insensitive.html
 /LayoutTests/imported/w3c/web-platform-tests/html/rendering/non-replaced-elements/tables/table-vspace-hspace-s.html
