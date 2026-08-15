@@ -125,8 +125,8 @@ public:
     void getDataRecord(OptionSet<WebExtensionDataType>, WebExtensionContext&, CompletionHandler<void(RefPtr<WebExtensionDataRecord>)>&&);
     void removeData(OptionSet<WebExtensionDataType>, const Vector<Ref<WebExtensionDataRecord>>&, CompletionHandler<void()>&&);
 
-    void calculateStorageSize(RefPtr<WebExtensionStorageSQLiteStore>, WebExtensionDataType, CompletionHandler<void(Expected<size_t, WebExtensionError>&&)>&&);
-    void removeStorage(RefPtr<WebExtensionStorageSQLiteStore>, WebExtensionDataType, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);
+    void calculateStorageSize(WebExtensionStorageSQLiteStore&, WebExtensionDataType, CompletionHandler<void(Expected<size_t, WebExtensionError>&&)>&&);
+    void removeStorage(WebExtensionStorageSQLiteStore&, WebExtensionDataType, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);
 
     bool hasLoadedContexts() const { return !m_extensionContexts.isEmpty(); }
     bool isFreshlyCreated() const { return m_freshlyCreated; }
