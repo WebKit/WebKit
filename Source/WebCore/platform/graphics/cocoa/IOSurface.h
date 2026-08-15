@@ -151,6 +151,7 @@ public:
     WEBCORE_EXPORT static std::unique_ptr<IOSurface> createFromImage(IOSurfacePool*, CGImageRef);
 
     WEBCORE_EXPORT static std::unique_ptr<IOSurface> createFromSendRight(const WTF::MachSendRight&&);
+    WEBCORE_EXPORT static std::unique_ptr<IOSurface> createFromUntrustedUncompressedWebKitSendRight(const WTF::MachSendRight&&);
     // If the colorSpace argument is non-null, it replaces any colorspace metadata on the surface.
     WEBCORE_EXPORT static std::unique_ptr<IOSurface> createFromSurface(IOSurfaceRef, std::optional<DestinationColorSpace>&&);
 

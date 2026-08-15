@@ -60,6 +60,39 @@ TEST(IOSurfaceTest, CreatePlatformContext)
     EXPECT_FALSE(s1->isInUse());
 }
 
+TEST(IOSurfaceTest, createFromUntrustedUncompressedWebKitSendRightSRGB)
+{
+    auto original = WebCore::IOSurface::create(nullptr, { 5, 5 }, WebCore::DestinationColorSpace::SRGB());
+    ASSERT_NE(original, nullptr);
+
+    auto roundTripped = WebCore::IOSurface::createFromUntrustedUncompressedWebKitSendRight(original->createSendRight());
+    ASSERT_NE(roundTripped, nullptr);
+    EXPECT_EQ(roundTripped->size(), original->size());
+    EXPECT_EQ(roundTripped->colorSpace(), original->colorSpace());
+}
+
+#if ENABLE(PIXEL_FORMAT_RGBA16F)
+TEST(IOSurfaceTest, createFromUntrustedUncompressedWebKitSendRightRGBA16F)
+{
+    auto original = WebCore::IOSurface::create(nullptr, { 5, 5 }, WebCore::DestinationColorSpace::ExtendedDisplayP3(), WebCore::IOSurface::Name::Default, WebCore::IOSurface::Format::RGBA16F);
+    ASSERT_NE(original, nullptr);
+
+    auto roundTripped = WebCore::IOSurface::createFromUntrustedUncompressedWebKitSendRight(original->createSendRight());
+    ASSERT_NE(roundTripped, nullptr);
+    EXPECT_EQ(roundTripped->size(), original->size());
+    EXPECT_EQ(roundTripped->colorSpace(), original->colorSpace());
+}
+#endif // ENABLE(PIXEL_FORMAT_RGBA16F)
+
+TEST(IOSurfaceTest, createFromUntrustedUncompressedWebKitSendRightYUV422)
+{
+    auto original = WebCore::IOSurface::create(nullptr, { 5, 5 }, WebCore::DestinationColorSpace::ExtendedRec2020(), WebCore::IOSurface::Name::Default, WebCore::IOSurface::Format::YUV422);
+    ASSERT_NE(original, nullptr);
+
+    auto roundTripped = WebCore::IOSurface::createFromUntrustedUncompressedWebKitSendRight(original->createSendRight());
+    ASSERT_EQ(roundTripped, nullptr);
+}
+
 TEST(IOSurfaceTest, IOSurfaceNames)
 {
     {
