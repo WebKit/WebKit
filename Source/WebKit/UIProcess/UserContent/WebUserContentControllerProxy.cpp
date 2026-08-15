@@ -134,9 +134,15 @@ WebCoreUserScriptData WebUserContentControllerProxy::dataFromUserScript(const We
     return { cachedTransferString(script.source()), script.url(), script.allowlist(), script.blocklist(), script.injectionTime(), script.injectedFrames(), script.matchParentFrame() };
 }
 
-WebCoreUserStyleSheetData WebUserContentControllerProxy::dataFromUserStyleSheet(const WebCore::UserStyleSheet& sheet) const
+WebCoreUserStyleSheetData WebUserContentControllerProxy::dataFromUserStyleSheet(const API::UserStyleSheet& userStyleSheet, WebProcessProxy& process) const
 {
-    return { cachedTransferString(sheet.source()), sheet.url(), sheet.allowlist(), sheet.blocklist(), sheet.injectedFrames(), sheet.matchParentFrame(), sheet.level(), sheet.pageID() };
+    auto& sheet = userStyleSheet.userStyleSheet();
+
+    std::optional<WebCore::PageIdentifier> pageID;
+    if (RefPtr page = userStyleSheet.page())
+        pageID = page->webPageIDInProcess(process);
+
+    return { cachedTransferString(sheet.source()), sheet.url(), sheet.allowlist(), sheet.blocklist(), sheet.injectedFrames(), sheet.matchParentFrame(), sheet.level(), pageID };
 }
 
 UserContentControllerParameters WebUserContentControllerProxy::parametersForProcess(WebProcessProxy& process) const
@@ -148,8 +154,11 @@ UserContentControllerParameters WebUserContentControllerProxy::parametersForProc
         userScripts.append({ userScript->identifier(), Ref { userScript->contentWorld() }->worldDataForProcess(process), dataFromUserScript(userScript->userScript()) });
 
     Vector<WebUserStyleSheetData> userStyleSheets;
-    for (RefPtr userStyleSheet : m_userStyleSheets->elementsOfType<API::UserStyleSheet>())
-        userStyleSheets.append({ userStyleSheet->identifier(), Ref { userStyleSheet->contentWorld() }->worldDataForProcess(process), dataFromUserStyleSheet(userStyleSheet->userStyleSheet()) });
+    for (RefPtr userStyleSheet : m_userStyleSheets->elementsOfType<API::UserStyleSheet>()) {
+        if (userStyleSheet->isOrphaned())
+            continue;
+        userStyleSheets.append({ userStyleSheet->identifier(), Ref { userStyleSheet->contentWorld() }->worldDataForProcess(process), dataFromUserStyleSheet(*userStyleSheet, process) });
+    }
 
     Vector<WebJSBufferData> buffers;
     for (auto& [pair, buffer] : m_buffers) {
@@ -262,8 +271,11 @@ void WebUserContentControllerProxy::addUserStyleSheet(API::UserStyleSheet& userS
 
     m_userStyleSheets->elements().append(&userStyleSheet);
 
+    if (userStyleSheet.isOrphaned())
+        return;
+
     for (Ref process : m_processes)
-        process->send(Messages::WebUserContentController::AddUserStyleSheets({ { userStyleSheet.identifier(), world->worldDataForProcess(process), dataFromUserStyleSheet(userStyleSheet.userStyleSheet()) } }), identifier());
+        process->send(Messages::WebUserContentController::AddUserStyleSheets({ { userStyleSheet.identifier(), world->worldDataForProcess(process), dataFromUserStyleSheet(userStyleSheet, process) } }), identifier());
 }
 
 void WebUserContentControllerProxy::removeUserStyleSheet(API::UserStyleSheet& userStyleSheet)

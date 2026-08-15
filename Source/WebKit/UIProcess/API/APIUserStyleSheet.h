@@ -30,19 +30,34 @@
 #include "UserStyleSheetIdentifier.h"
 #include <WebCore/UserStyleSheet.h>
 #include <wtf/Identified.h>
+#include <wtf/WeakPtr.h>
+
+namespace WebKit {
+class WebPageProxy;
+}
 
 namespace API {
 
 class UserStyleSheet final : public ObjectImpl<Object::Type::UserStyleSheet>, public Identified<WebKit::UserStyleSheetIdentifier> {
 public:
-    static Ref<UserStyleSheet> create(WebCore::UserStyleSheet userStyleSheet, API::ContentWorld& world)
+    static Ref<UserStyleSheet> create(WebCore::UserStyleSheet userStyleSheet, API::ContentWorld& world, WebKit::WebPageProxy* page = nullptr)
     {
-        return adoptRef(*new UserStyleSheet(WTF::move(userStyleSheet), world));
+        return adoptRef(*new UserStyleSheet(WTF::move(userStyleSheet), world, page));
     }
 
-    UserStyleSheet(WebCore::UserStyleSheet, API::ContentWorld&);
+    UserStyleSheet(WebCore::UserStyleSheet, API::ContentWorld&, WebKit::WebPageProxy* = nullptr);
+    ~UserStyleSheet();
 
     const WebCore::UserStyleSheet& userStyleSheet() const LIFETIME_BOUND { return m_userStyleSheet; }
+
+    WebKit::WebPageProxy* page() const;
+
+    // Sheets that are not page scoped apply to every page.
+    bool isPageScoped() const { return m_isPageScoped; }
+
+    // Sheets that are page scoped but whose page has gone away are orphaned,
+    // and should not message anywhere.
+    bool isOrphaned() const { return m_isPageScoped && !page(); }
 
     ContentWorld& contentWorld() { return m_world; }
     const ContentWorld& contentWorld() const { return m_world; }
@@ -50,6 +65,8 @@ public:
 private:
     WebCore::UserStyleSheet m_userStyleSheet;
     Ref<ContentWorld> m_world;
+    WeakPtr<WebKit::WebPageProxy> m_page;
+    bool m_isPageScoped { false };
 };
 
 } // namespace API

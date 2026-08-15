@@ -1645,8 +1645,7 @@ void WebExtensionContext::didCommitLoadForFrame(WebPageProxyIdentifier pageID, c
         // FIXME: <https://webkit.org/b/262491> There is currently no way to inject CSS in specific frames based on ID's.
         Ref userContentController = page.get()->userContentController();
         m_dynamicallyInjectedUserStyleSheets.removeAllMatching([&](auto& styleSheet) {
-            auto styleSheetPageID = styleSheet->userStyleSheet().pageID();
-            if (!styleSheetPageID || styleSheetPageID.value() != page->webPageIDInMainFrameProcess())
+            if (styleSheet->page() != page.get())
                 return false;
 
             userContentController->removeUserStyleSheet(styleSheet);

@@ -169,6 +169,8 @@ void performWithAppearance(Appearance, void (^block)(void));
 
 #endif
 
+extern bool shouldEnableSiteIsolationForWebExtensionsTest;
+
 RetainPtr<TestWebExtensionManager> parseExtension(NSDictionary *manifest, NSDictionary *resources, WKWebExtensionControllerConfiguration * = nil, BOOL usesEnhancedSecurity = NO);
 RetainPtr<TestWebExtensionManager> loadExtension(NSDictionary *manifest, NSDictionary *resources, WKWebExtensionControllerConfiguration * = nil, BOOL usesEnhancedSecurity = NO);
 void loadAndRunExtension(NSDictionary *manifest, NSDictionary *resources, WKWebExtensionControllerConfiguration * = nil);

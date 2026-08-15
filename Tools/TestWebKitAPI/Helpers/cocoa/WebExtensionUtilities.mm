@@ -43,9 +43,6 @@
 #import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/darwin/DispatchExtras.h>
 
-// Enable this to test all web extension tests with site isolation.
-static constexpr BOOL shouldEnableSiteIsolation = NO;
-
 @interface TestWebExtensionManager () <WKWebExtensionControllerDelegatePrivate>
 @end
 
@@ -75,7 +72,7 @@ static constexpr BOOL shouldEnableSiteIsolation = NO;
     if (!configuration)
         configuration = WKWebExtensionControllerConfiguration.nonPersistentConfiguration;
 
-    configuration.webViewConfiguration.preferences._siteIsolationEnabled = shouldEnableSiteIsolation;
+    configuration.webViewConfiguration.preferences._siteIsolationEnabled = TestWebKitAPI::Util::shouldEnableSiteIsolationForWebExtensionsTest;
 
     _extension = extension;
     _context = [[WKWebExtensionContext alloc] initForExtension:extension];
@@ -462,7 +459,7 @@ static WKUserContentController *userContentController(BOOL usingPrivateBrowsing)
         configuration.userContentController = userContentController(usingPrivateBrowsing);
 
         auto *preferences = configuration.preferences;
-        preferences._siteIsolationEnabled = shouldEnableSiteIsolation;
+        preferences._siteIsolationEnabled = TestWebKitAPI::Util::shouldEnableSiteIsolationForWebExtensionsTest;
         preferences._developerExtrasEnabled = YES;
 
         if (_window.usingEnhancedSecurity) {
@@ -524,7 +521,7 @@ static WKUserContentController *userContentController(BOOL usingPrivateBrowsing)
     configuration.userContentController = userContentController(usingPrivateBrowsing);
 
     auto *preferences = configuration.preferences;
-    preferences._siteIsolationEnabled = shouldEnableSiteIsolation;
+    preferences._siteIsolationEnabled = TestWebKitAPI::Util::shouldEnableSiteIsolationForWebExtensionsTest;
     preferences._developerExtrasEnabled = YES;
 
     _webView = [[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration];
@@ -1015,6 +1012,8 @@ static WKUserContentController *userContentController(BOOL usingPrivateBrowsing)
 
 namespace TestWebKitAPI {
 namespace Util {
+
+bool shouldEnableSiteIsolationForWebExtensionsTest = false;
 
 RetainPtr<TestWebExtensionManager> parseExtension(NSDictionary *manifest, NSDictionary *resources, WKWebExtensionControllerConfiguration *configuration, BOOL usesEnhancedSecurity)
 {

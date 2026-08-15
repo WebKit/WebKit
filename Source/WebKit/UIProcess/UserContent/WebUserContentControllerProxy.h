@@ -115,7 +115,7 @@ public:
 #else
     void removeAllUserStyleSheets();
 #endif
-    WebCoreUserStyleSheetData dataFromUserStyleSheet(const WebCore::UserStyleSheet&) const;
+    WebCoreUserStyleSheetData dataFromUserStyleSheet(const API::UserStyleSheet&, WebProcessProxy&) const;
 
     void addJSBuffer(Ref<WebCore::SharedMemory>&&, API::ContentWorld&, const String&);
     void removeJSBuffer(API::ContentWorld&, const String&);

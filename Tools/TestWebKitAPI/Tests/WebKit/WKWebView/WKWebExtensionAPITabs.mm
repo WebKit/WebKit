@@ -31,6 +31,7 @@
 #import "Helpers/cocoa/TestWKWebView.h"
 #import "Helpers/cocoa/WebExtensionUtilities.h"
 #import <JavaScriptCore/MathCommon.h>
+#import <wtf/SetForScope.h>
 #import <wtf/darwin/DispatchExtras.h>
 
 namespace TestWebKitAPI {
@@ -3911,6 +3912,90 @@ TEST(WKWebExtensionAPITabs, InsertAndRemoveCSSInAllFrames)
     [manager runUntilTestMessage:@"Load Tab"];
 
     [manager.get().defaultTab.webView loadRequest:urlRequest.get()];
+
+    [manager run];
+}
+
+// tabs.insertCSS shares injectStyleSheets() with scripting.insertCSS. The main frame is served from
+// 127.0.0.1 and the subframe from localhost, so with site isolation the subframe gets its own process.
+TEST(WKWebExtensionAPITabs, InsertCSSInAllFramesWithCrossSiteFrame)
+{
+    SetForScope siteIsolation { Util::shouldEnableSiteIsolationForWebExtensionsTest, true };
+
+    auto *manifest = @{
+        @"manifest_version": @2,
+
+        @"name": @"Tabs Test",
+        @"description": @"Tabs Test",
+        @"version": @"1",
+
+        @"permissions": @[ @"*://localhost/*", @"*://127.0.0.1/*" ],
+
+        @"background": @{
+            @"scripts": @[ @"background.js" ],
+            @"type": @"module",
+            @"persistent": @NO,
+        },
+    };
+
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, "<script>onload = () => { const frame = document.createElement('iframe'); frame.src = 'http://localhost:' + window.location.port + '/frame.html'; document.body.appendChild(frame); }</script>"_s } },
+        { "/frame.html"_s, { { { "Content-Type"_s, "text/html"_s } }, "<body style='background-color: blue'></body>"_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"const pinkValue = 'rgb(255, 192, 203)'",
+        @"const blueValue = 'rgb(0, 0, 255)'",
+        @"const readBackgroundColor = \"window.getComputedStyle(document.body).getPropertyValue('background-color')\"",
+
+        @"function readAllFrames(tabId) {",
+        @"  return browser.tabs.executeScript(tabId, { allFrames: true, code: readBackgroundColor })",
+        @"}",
+
+        // The cross-site subframe is not loaded yet when the main frame reaches 'complete'.
+        @"async function readBothFrames(tabId) {",
+        @"  for (let attempt = 0; attempt < 200; ++attempt) {",
+        @"    const result = await readAllFrames(tabId)",
+        @"    if (result.length === 2)",
+        @"      return result",
+        @"    await new Promise((resolve) => setTimeout(resolve, 50))",
+        @"  }",
+        @"  browser.test.notifyFail('Timed out waiting for the cross-site subframe to appear')",
+        @"}",
+
+        @"browser.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {",
+        @"  if (tab.status !== 'complete')",
+        @"    return",
+
+        @"  let result = await readBothFrames(tabId)",
+        @"  browser.test.assertTrue(result.includes(blueValue), 'The cross-site subframe should start out blue')",
+
+        @"  await browser.tabs.insertCSS(tabId, { allFrames: true, code: 'body { background-color: pink !important }' })",
+
+        @"  result = await readAllFrames(tabId)",
+        @"  browser.test.assertEq(result.length, 2, 'Both frames should be reachable')",
+
+        @"  for (const value of result)",
+        @"    browser.test.assertEq(value, pinkValue, 'Every frame should be styled by insertCSS with allFrames')",
+
+        @"  browser.test.notifyPass()",
+        @"})",
+
+        @"browser.test.sendMessage('Load Tab')",
+    ]);
+
+    auto manager = Util::loadExtension(manifest, @{ @"background.js": backgroundScript });
+
+    RetainPtr crossSiteURLRequest = server.request();
+
+    for (NSURL *url in @[ crossSiteURLRequest.get().URL, server.requestWithLocalhost().URL ]) {
+        auto *matchPattern = [WKWebExtensionMatchPattern matchPatternWithScheme:url.scheme host:url.host path:@"/*"];
+        [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
+    }
+
+    [manager runUntilTestMessage:@"Load Tab"];
+
+    [manager.get().defaultTab.webView loadRequest:crossSiteURLRequest.get()];
 
     [manager run];
 }

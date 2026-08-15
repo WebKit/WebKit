@@ -26,12 +26,23 @@
 #include "config.h"
 #include "APIUserStyleSheet.h"
 
+#include "WebPageProxy.h"
+
 namespace API {
 
-UserStyleSheet::UserStyleSheet(WebCore::UserStyleSheet userStyleSheet, API::ContentWorld& world)
+UserStyleSheet::UserStyleSheet(WebCore::UserStyleSheet userStyleSheet, API::ContentWorld& world, WebKit::WebPageProxy* page)
     : m_userStyleSheet(userStyleSheet)
     , m_world(world)
+    , m_page(page)
+    , m_isPageScoped(!!page)
 {
+}
+
+UserStyleSheet::~UserStyleSheet() = default;
+
+WebKit::WebPageProxy* UserStyleSheet::page() const
+{
+    return m_page.get();
 }
 
 } // namespace API

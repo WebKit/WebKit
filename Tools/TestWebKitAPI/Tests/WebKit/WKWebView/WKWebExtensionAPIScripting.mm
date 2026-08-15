@@ -31,6 +31,7 @@
 #import "Helpers/cocoa/WebExtensionUtilities.h"
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKUserContentControllerPrivate.h>
+#import <wtf/SetForScope.h>
 
 namespace TestWebKitAPI {
 
@@ -602,6 +603,92 @@ TEST(WKWebExtensionAPIScripting, InsertAndRemoveCSS)
 
     auto *matchPattern = [WKWebExtensionMatchPattern matchPatternWithScheme:url.scheme host:url.host path:@"/*"];
     [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
+
+    [manager runUntilTestMessage:@"Load Tab"];
+
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
+
+    [manager run];
+}
+
+// The main frame is served from 127.0.0.1 and the subframe from localhost, so with site isolation the
+// subframe gets its own web content process.
+TEST(WKWebExtensionAPIScripting, InsertCSSInAllFramesWithCrossSiteFrame)
+{
+    SetForScope siteIsolation { Util::shouldEnableSiteIsolationForWebExtensionsTest, true };
+
+    auto *manifest = @{
+        @"manifest_version": @3,
+
+        @"name": @"Scripting Test",
+        @"description": @"Scripting Test",
+        @"version": @"1",
+
+        @"permissions": @[ @"scripting" ],
+        @"host_permissions": @[ @"*://localhost/*", @"*://127.0.0.1/*" ],
+
+        @"background": @{
+            @"scripts": @[ @"background.js" ],
+            @"type": @"module",
+            @"persistent": @NO,
+        },
+    };
+
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, "<script>onload = () => { const frame = document.createElement('iframe'); frame.src = 'http://localhost:' + window.location.port + '/frame.html'; document.body.appendChild(frame); }</script>"_s } },
+        { "/frame.html"_s, { { { "Content-Type"_s, "text/html"_s } }, "<body style='background-color: blue'></body>"_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"const pinkValue = 'rgb(255, 192, 203)'",
+        @"const blueValue = 'rgb(0, 0, 255)'",
+
+        @"function getBackgroundColor() { return window.getComputedStyle(document.body).getPropertyValue('background-color') }",
+
+        @"function readAllFrames(tabId) {",
+        @"  return browser.scripting.executeScript({ target: { tabId, allFrames: true }, func: getBackgroundColor })",
+        @"}",
+
+        // The cross-site subframe is not loaded yet when the main frame reaches 'complete'.
+        @"async function readBothFrames(tabId) {",
+        @"  for (let attempt = 0; attempt < 200; ++attempt) {",
+        @"    const results = await readAllFrames(tabId)",
+        @"    if (results.length === 2)",
+        @"      return results",
+        @"    await new Promise((resolve) => setTimeout(resolve, 50))",
+        @"  }",
+        @"  browser.test.notifyFail('Timed out waiting for the cross-site subframe to appear')",
+        @"}",
+
+        @"browser.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {",
+        @"  if (tab.status !== 'complete')",
+        @"    return",
+
+        @"  let results = await readBothFrames(tabId)",
+        @"  browser.test.assertTrue(results.some((result) => result.result === blueValue), 'The cross-site subframe should start out blue')",
+
+        @"  await browser.scripting.insertCSS({ target: { tabId, allFrames: true }, css: 'body { background-color: pink !important }' })",
+
+        @"  results = await readAllFrames(tabId)",
+        @"  browser.test.assertEq(results.length, 2, 'Both frames should be reachable')",
+
+        @"  for (const result of results)",
+        @"    browser.test.assertEq(result.result, pinkValue, `Frame ${result.frameId} should be styled by insertCSS with allFrames`)",
+
+        @"  browser.test.notifyPass()",
+        @"})",
+
+        @"browser.test.sendMessage('Load Tab')",
+    ]);
+
+    auto manager = Util::loadExtension(manifest, @{ @"background.js": backgroundScript });
+
+    auto *urlRequest = server.request();
+
+    for (NSURL *url in @[ urlRequest.URL, server.requestWithLocalhost().URL ]) {
+        auto *matchPattern = [WKWebExtensionMatchPattern matchPatternWithScheme:url.scheme host:url.host path:@"/*"];
+        [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
+    }
 
     [manager runUntilTestMessage:@"Load Tab"];
 
