@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<html>
+Test passes if it does not crash.
+<script>
+testRunner?.dumpAsText();
+testRunner?.waitUntilDone();
+onmessage = function () { setTimeout(function () { testRunner?.notifyDone(); }, 0); };
+</script>
+<iframe src="resources/xml-parser-end-detach-frame.xhtml" style="display: none"></iframe>
+</html>

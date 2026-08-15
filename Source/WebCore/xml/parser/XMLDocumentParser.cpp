@@ -208,14 +208,25 @@ void XMLDocumentParser::end()
             return;
     } else {
         updateLeafTextNode();
+
+        // Appending to the leaf text node may have fired mutation events, which can run arbitrary scripts.
+        if (isDetached())
+            return;
         document()->styleScope().didChangeStyleSheetEnvironment();
     }
 
     if (isParsing())
         prepareToStopParsing();
-    protect(document())->setReadyState(Document::ReadyState::Interactive);
+
+    Ref document = *this->document();
+    document->setReadyState(Document::ReadyState::Interactive);
+
+    // Setting the ready state above dispatches readystatechange, which can run arbitrary scripts.
+    if (isDetached())
+        return;
+
     clearCurrentNodeStack();
-    protect(document())->finishedParsing();
+    document->finishedParsing();
 }
 
 void XMLDocumentParser::finish()
