@@ -897,17 +897,17 @@ static PAS_ALWAYS_INLINE uintptr_t pas_bitfit_page_deallocate_with_page_impl(
 
         pas_bitfit_page_testing_verify(page);
 
-        pas_lock_unlock(&owner->ownership_lock);
-        break;
-    } }
+        switch (mode) {
+        case pas_bitfit_page_deallocate_with_page_impl_deallocate_mode: {
+            PAS_PROFILE(BITFIT_PAGE_DEALLOCATION, page_config, begin, (num_bits << page_config.base.min_align_shift));
+            PAS_MTE_HANDLE(BITFIT_PAGE_DEALLOCATION, page_config, begin, (num_bits << page_config.base.min_align_shift));
+            break;
+        case pas_bitfit_page_deallocate_with_page_impl_get_allocation_size_mode:
+        case pas_bitfit_page_deallocate_with_page_impl_shrink_mode:
+            break;
+        } }
 
-    switch (mode) {
-    case pas_bitfit_page_deallocate_with_page_impl_deallocate_mode: {
-        PAS_PROFILE(BITFIT_PAGE_DEALLOCATION, page_config, begin, (num_bits << page_config.base.min_align_shift));
-        PAS_MTE_HANDLE(BITFIT_PAGE_DEALLOCATION, page_config, begin, (num_bits << page_config.base.min_align_shift));
-        break;
-    case pas_bitfit_page_deallocate_with_page_impl_get_allocation_size_mode:
-    case pas_bitfit_page_deallocate_with_page_impl_shrink_mode:
+        pas_lock_unlock(&owner->ownership_lock);
         break;
     } }
 
