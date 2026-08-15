@@ -548,7 +548,7 @@ TEST_F(WKContentRuleListStoreTest, NonASCIISource)
     TestWebKitAPI::Util::run(&done);
 }
 
-static size_t alertCount { 0 };
+static size_t contentExtensionAlertCount { 0 };
 static bool contentExtensionReceivedAlert { false };
 
 @interface ContentRuleListDelegate : NSObject <WKUIDelegate>
@@ -558,7 +558,7 @@ static bool contentExtensionReceivedAlert { false };
 
 - (void)webView:(WKWebView *)webView runJavaScriptAlertPanelWithMessage:(NSString *)message initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(void))completionHandler
 {
-    switch (alertCount++) {
+    switch (contentExtensionAlertCount++) {
     case 0:
         // Default behavior.
         EXPECT_STREQ("content blockers enabled", message.UTF8String);
@@ -600,7 +600,7 @@ TEST_F(WKContentRuleListStoreTest, AddRemove)
     [webView setUIDelegate:delegate.get()];
 
     NSURLRequest *request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"contentBlockerCheck" withExtension:@"html"]];
-    alertCount = 0;
+    contentExtensionAlertCount = 0;
     contentExtensionReceivedAlert = false;
     [webView loadRequest:request];
     TestWebKitAPI::Util::run(&contentExtensionReceivedAlert);
