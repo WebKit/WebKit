@@ -38,12 +38,13 @@ namespace JSC::B3 {
 namespace {
 
 #if HAVE(INT128_T)
-using WidestCopyUnit = UInt128;
+using WidestUnit = UInt128;
 #else
-using WidestCopyUnit = uint64_t;
+using WidestUnit = uint64_t;
 #endif
 
-constexpr size_t maxFastCopyCount = 4 * sizeof(WidestCopyUnit);
+constexpr size_t maxFastCopyCount = 4 * sizeof(WidestUnit);
+constexpr size_t maxFastFillCount = 4 * sizeof(WidestUnit);
 
 // Copies count bytes as two overlapping sizeof(T) accesses, so it needs
 // sizeof(T) <= count <= 2 * sizeof(T). Both source reads happen before either destination write,
@@ -72,6 +73,18 @@ ALWAYS_INLINE void copyOverlappingEndPairs(uint8_t* dst, const uint8_t* src, siz
     WTF::unalignedStore<T>(dst + count - sizeof(T), high1);
 }
 
+// Writes count bytes as two overlapping runs of unitsPerEnd stores, so it needs
+// unitsPerEnd * sizeof(T) <= count <= 2 * unitsPerEnd * sizeof(T). Every store writes the same
+// splatted value, so unlike the copy case the order of the stores does not matter.
+template<typename T, unsigned unitsPerEnd>
+ALWAYS_INLINE void fillOverlappingEnds(uint8_t* dst, T value, size_t count)
+{
+    for (unsigned i = 0; i < unitsPerEnd; ++i)
+        WTF::unalignedStore<T>(dst + i * sizeof(T), value);
+    for (unsigned i = 0; i < unitsPerEnd; ++i)
+        WTF::unalignedStore<T>(dst + count - (unitsPerEnd - i) * sizeof(T), value);
+}
+
 } // namespace
 
 JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMemoryCopy, void, (void* dst, const void* src, size_t count))
@@ -87,10 +100,10 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMemoryCopy, void, (void* dst, const v
             copyOverlappingEnds<uint32_t>(to, from, count);
         else if (count < 2 * sizeof(uint64_t))
             copyOverlappingEnds<uint64_t>(to, from, count);
-        else if (count < 2 * sizeof(WidestCopyUnit))
-            copyOverlappingEnds<WidestCopyUnit>(to, from, count);
+        else if (count < 2 * sizeof(WidestUnit))
+            copyOverlappingEnds<WidestUnit>(to, from, count);
         else
-            copyOverlappingEndPairs<WidestCopyUnit>(to, from, count);
+            copyOverlappingEndPairs<WidestUnit>(to, from, count);
         return;
     }
     memmove(dst, src, count);
@@ -98,6 +111,26 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMemoryCopy, void, (void* dst, const v
 
 JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMemoryFill, void, (void* dst, int32_t target, size_t count))
 {
+    if (count - 1 <= maxFastFillCount - 1) {
+        auto* to = static_cast<uint8_t*>(dst);
+        uint64_t splat = static_cast<uint8_t>(target) * 0x0101010101010101ULL;
+        WidestUnit widest = splat;
+        if constexpr (sizeof(WidestUnit) > sizeof(uint64_t))
+            widest = (static_cast<WidestUnit>(splat) << 64) | splat;
+        if (count < sizeof(uint16_t))
+            fillOverlappingEnds<uint8_t, 1>(to, static_cast<uint8_t>(splat), count);
+        else if (count < sizeof(uint32_t))
+            fillOverlappingEnds<uint16_t, 1>(to, static_cast<uint16_t>(splat), count);
+        else if (count < sizeof(uint64_t))
+            fillOverlappingEnds<uint32_t, 1>(to, static_cast<uint32_t>(splat), count);
+        else if (count < 2 * sizeof(uint64_t))
+            fillOverlappingEnds<uint64_t, 1>(to, splat, count);
+        else if (count < 2 * sizeof(WidestUnit))
+            fillOverlappingEnds<WidestUnit, 1>(to, widest, count);
+        else
+            fillOverlappingEnds<WidestUnit, 2>(to, widest, count);
+        return;
+    }
     memset(dst, target, count);
 }
 
