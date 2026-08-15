@@ -64,7 +64,7 @@ public:
 protected:
     explicit MediaSessionManagerCocoa(std::optional<PageIdentifier>);
 
-    Ref<GenericPromise> updateSessionState() override;
+    void updateSessionState() override;
     void beginInterruption(PlatformMediaSession::InterruptionType) final;
 
     bool hasActiveNowPlayingSession() const final { return m_nowPlayingActive; }

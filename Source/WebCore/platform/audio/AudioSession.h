@@ -70,7 +70,6 @@ public:
     virtual void bufferSizeDidChange(const AudioSession&) { }
     virtual void sampleRateDidChange(const AudioSession&) { }
     virtual void routingContextUIDDidChange(const AudioSession&) { }
-    virtual void categoryDidChange(const AudioSession&) { }
 };
 
 class WEBCORE_EXPORT AudioSession : public AbstractThreadSafeRefCountedAndCanMakeWeakPtr {
@@ -128,6 +127,10 @@ public:
 
     virtual void beginInterruptionForTesting() { beginInterruption(); }
     virtual void endInterruptionForTesting() { endInterruption(MayResume::Yes); }
+
+    // The category applied to the real audio session.
+    using CategoryPromise = NativePromise<AudioSessionCategory, void>;
+    virtual Ref<CategoryPromise> systemCategoryForTesting() { return CategoryPromise::createAndResolve(category()); }
     virtual void clearInterruptionFlagForTesting() { }
 
     static void addInterruptionObserver(AudioSessionInterruptionObserver&);

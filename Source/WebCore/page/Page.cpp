@@ -1004,12 +1004,15 @@ void Page::updateTopDocumentSyncData(const DocumentSyncSerializationData& data)
     case DocumentSyncDataType::IsAutofocusProcessed:
     case DocumentSyncDataType::IsClosing:
     case DocumentSyncDataType::UserDidInteractWithPage:
-#if ENABLE(DOM_AUDIO_SESSION)
-    case DocumentSyncDataType::AudioSessionType:
-#endif
         protect(m_topDocumentSyncData)->update(data);
         break;
 #if ENABLE(DOM_AUDIO_SESSION)
+    case DocumentSyncDataType::AudioSessionType:
+        protect(m_topDocumentSyncData)->update(data);
+        // The type was set by a document in another process. Each process computes its own audio
+        // session category, so apply the override the type implies here too.
+        DOMAudioSession::applyTypeToAudioSessionCategoryOverride(m_topDocumentSyncData->audioSessionType);
+        break;
     case DocumentSyncDataType::AudioSessionState:
         protect(m_topDocumentSyncData)->update(data);
         forEachDocument([](Document& document) {
@@ -1028,6 +1031,12 @@ void Page::updateTopDocumentSyncData(const DocumentSyncSerializationData& data)
 void Page::updateTopDocumentSyncData(Ref<DocumentSyncData>&& data)
 {
     m_topDocumentSyncData = WTF::move(data);
+
+#if ENABLE(DOM_AUDIO_SESSION)
+    // This path carries the whole state at once, when a remote page is set up in this process. Apply
+    // the override the type implies, as the per-field path does for later changes.
+    DOMAudioSession::applyTypeToAudioSessionCategoryOverride(m_topDocumentSyncData->audioSessionType);
+#endif
 }
 
 void Page::setMainFrameURLFragment(String&& fragment)

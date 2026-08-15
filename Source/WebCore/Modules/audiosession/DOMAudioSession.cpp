@@ -110,6 +110,11 @@ ExceptionOr<void> DOMAudioSession::setType(Type type)
     return { };
 }
 
+void DOMAudioSession::applyTypeToAudioSessionCategoryOverride(Type type)
+{
+    AudioSession::singleton().setCategoryOverride(fromDOMAudioSessionType(type));
+}
+
 DOMAudioSession::Type DOMAudioSession::type() const
 {
     RefPtr document = downcast<Document>(scriptExecutionContext());

@@ -5105,15 +5105,6 @@ void HTMLMediaElement::routingContextUIDDidChange(const AudioSession& session)
     });
 }
 
-void HTMLMediaElement::categoryDidChange(const AudioSession& session)
-{
-    if (paused())
-        return;
-
-    m_categoryAtMostRecentPlayback = session.category();
-    m_modeAtMostRecentPlayback = session.mode();
-}
-
 #endif // USE(AUDIO_SESSION)
 
 void HTMLMediaElement::togglePlayState()

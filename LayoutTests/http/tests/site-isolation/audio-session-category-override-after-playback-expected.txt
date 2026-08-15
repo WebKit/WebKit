@@ -1,0 +1,18 @@
+A navigator.audioSession.type override set while another frame of the same page is already playing audible media replaces the audio session's category, both when it is lower than what that frame computes and when it is higher. The sibling test covers a frame that joins a page whose type is already set, which travels a different path: this one changes the type afterwards, so the other frame's process learns about it from the per-field DocumentSyncData broadcast rather than from the state it was created with. This test deliberately does not enable site isolation, so the site-isolated run is compared against the same expectations.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS playingFrameCategory is "MediaPlayback"
+PASS the real audio session's category is MediaPlayback before the override is set
+PASS navigator.audioSession.type is "ambient"
+PASS playingFrameCategoryAfterOverride is "AmbientSound"
+PASS overridingFrameCategory is "AmbientSound"
+PASS the real audio session's category is AmbientSound once the override is set
+PASS playingFrameState is "playing"
+PASS playingFrameCategoryAfterRaise is "PlayAndRecord"
+PASS the real audio session's category is PlayAndRecord once the override is raised
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

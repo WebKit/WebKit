@@ -133,22 +133,6 @@ static constexpr unsigned stateChangeQueryMaxCount = 30;
 
 namespace TestWebKitAPI {
 
-// media-session-capture.html records MediaSession action handler calls, track mute/unmute events and
-// setXXXActive() promise resolutions into a single list. Those are delivered asynchronously, so a test
-// that triggers several operations at once has no guaranteed interleaving between them — arm a wait
-// before triggering an operation and await it before triggering the next.
-static void armActionState(TestWKWebView *webView, NSString *state)
-{
-    [webView objectByCallingAsyncFunction:@"return armActionState(state)" withArguments:@{ @"state": state }];
-}
-
-static void waitForActionState(TestWKWebView *webView, NSString *state)
-{
-    NSError *error = nil;
-    [webView objectByCallingAsyncFunction:@"return awaitActionState(state)" withArguments:@{ @"state": state } error:&error];
-    EXPECT_NULL(error);
-}
-
 TEST(WebKit2, GetDisplayMediaWindowAndScreenPrompt)
 {
     RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -330,13 +314,11 @@ TEST(WebKit2, ToggleScreenshare)
 
     // Mute capture.
     __block bool completionCalled = false;
-    armActionState(webView.get(), @"muting screenshare");
     [webView _setDisplayCaptureState:WKDisplayCaptureStateMuted completionHandler:^() {
         completionCalled = true;
     }];
     TestWebKitAPI::Util::run(&completionCalled);
     EXPECT_EQ([webView _displayCaptureState], WKDisplayCaptureStateMuted);
-    waitForActionState(webView.get(), @"muting screenshare");
 
     [delegate resetWasPrompted];
     [delegate setGetDisplayMediaDecision:WKDisplayCapturePermissionDecisionDeny];
@@ -354,13 +336,11 @@ TEST(WebKit2, ToggleScreenshare)
 
     // Unmute via MediaSession.
     messageReceived = false;
-    armActionState(webView.get(), @"unmuting screenshare");
     [webView stringByEvaluatingJavaScript:@"setScreenshareActive(true, true)"];
     TestWebKitAPI::Util::run(&messageReceived);
 
     EXPECT_EQ([webView _displayCaptureState], WKDisplayCaptureStateActive);
     EXPECT_TRUE([delegate wasPrompted]);
-    waitForActionState(webView.get(), @"unmuting screenshare");
 
     // Validate handlers/events order.
     messageReceived = false;
@@ -371,23 +351,19 @@ TEST(WebKit2, ToggleScreenshare)
 
     // Mute via MediaSession.
     messageReceived = false;
-    armActionState(webView.get(), @"muting screenshare");
     [webView stringByEvaluatingJavaScript:@"setScreenshareActive(false, true)"];
     TestWebKitAPI::Util::run(&messageReceived);
 
     EXPECT_EQ([webView _displayCaptureState], WKDisplayCaptureStateMuted);
     EXPECT_FALSE([delegate wasPrompted]);
-    waitForActionState(webView.get(), @"muting screenshare");
 
     // Unmute via MediaSession.
     messageReceived = false;
-    armActionState(webView.get(), @"unmuting screenshare");
     [webView stringByEvaluatingJavaScript:@"setScreenshareActive(true, true)"];
     TestWebKitAPI::Util::run(&messageReceived);
 
     EXPECT_EQ([webView _displayCaptureState], WKDisplayCaptureStateActive);
     EXPECT_FALSE([delegate wasPrompted]);
-    waitForActionState(webView.get(), @"unmuting screenshare");
 
     // Validate handlers/events order.
     messageReceived = false;

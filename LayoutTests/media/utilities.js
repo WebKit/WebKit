@@ -164,3 +164,35 @@ function waitForAudioSessionActiveState(active) {
         check();
     });
 }
+
+// Waits for the category applied to the real audio session, which the process owning it derives from
+// what every web process reported, so it can lag this process asking for its own category.
+async function waitForSystemAudioSessionCategory(category) {
+    if (!window.internals)
+        throw new Error("waitForSystemAudioSessionCategory requires window.internals");
+
+    let observed;
+    for (let tries = 0; tries < 200; ++tries) {
+        observed = await internals.systemAudioSessionCategory();
+        if (observed === category)
+            return;
+        await new Promise(resolve => setTimeout(resolve, 10));
+    }
+    throw new Error(`system audio session category is "${observed}", expected "${category}"`);
+}
+
+// Waits for the category this process computed for its own sessions. The category is applied from a
+// task, so a caller that has just changed what a session reports has to wait for it.
+async function waitForAudioSessionCategory(category, description) {
+    if (!window.internals)
+        throw new Error("waitForAudioSessionCategory requires window.internals");
+
+    let observed;
+    for (let tries = 0; tries < 200; ++tries) {
+        observed = internals.audioSessionCategory();
+        if (observed === category)
+            return;
+        await new Promise(resolve => setTimeout(resolve, 10));
+    }
+    throw new Error(`audio session category is "${observed}", expected "${category}"${description ? ` (${description})` : ""}`);
+}

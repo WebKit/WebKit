@@ -208,12 +208,7 @@ protected:
     bool computeSupportsSeeking() const;
 
     void scheduleUpdateSessionState();
-    // Applies the computed audio session category for the current set of sessions/capture sources.
-    // The returned promise settles once the category has been applied to AudioSession::singleton() in
-    // this process — synchronously for in-process managers (already-resolved promise), asynchronously
-    // for RemoteMediaSessionManager which applies it from an IPC reply. Callers that don't need to
-    // observe completion may ignore the result.
-    virtual Ref<GenericPromise> updateSessionState();
+    virtual void updateSessionState() { }
 
     std::optional<PageIdentifier> pageIdentifier() const { return m_pageIdentifier; }
 

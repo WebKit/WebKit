@@ -1,0 +1,44 @@
+<script src="/media-resources/utilities.js"></script>
+<video id="video" loop src="/media-resources/content/test.mp4"></video>
+<script>
+// Plays audible media and reports the category its own process computed, then reports again once that
+// process reaches a category the parent asks for. Used by the tests that check a
+// navigator.audioSession.type override set by another frame of the same page reaches this process.
+// "playing?" reports whether the media is still playing, which the parent needs to tell a category it
+// computed from an override apart from one it computed from having nothing left to play.
+window.onmessage = async event => {
+    try {
+        if (event.data === "playing?") {
+            window.parent.postMessage(video.ended ? "ended" : video.paused ? "paused" : "playing", "*");
+            return;
+        }
+        await waitForAudioSessionCategory(event.data);
+        window.parent.postMessage(internals.audioSessionCategory(), "*");
+    } catch (e) {
+        window.parent.postMessage(`error: ${e.message}`, "*");
+    }
+};
+
+async function playAndReport()
+{
+    try {
+        await new Promise(resolve => {
+            video.addEventListener("canplaythrough", resolve, { once: true });
+            video.load();
+        });
+        internals.withUserGesture(() => video.play());
+        await new Promise(resolve => video.addEventListener("playing", resolve, { once: true }));
+
+        // Wait for the category rather than sampling it at the 'playing' event. Which category it is
+        // depends on whether the page has a navigator.audioSession.type override, so wait for any but None.
+        for (let tries = 0; internals.audioSessionCategory() === "None" && tries < 200; ++tries)
+            await new Promise(resolve => setTimeout(resolve, 10));
+
+        window.parent.postMessage(internals.audioSessionCategory(), "*");
+    } catch (e) {
+        window.parent.postMessage(`error: ${e.message}`, "*");
+    }
+}
+
+playAndReport();
+</script>

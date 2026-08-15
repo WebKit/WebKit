@@ -7029,6 +7029,22 @@ auto Internals::audioSessionCategory() const -> AudioSessionCategory
 #endif
 }
 
+void Internals::systemAudioSessionCategory(DOMPromiseDeferred<IDLEnumeration<AudioSessionCategory>>&& promise)
+{
+#if USE(AUDIO_SESSION)
+    AudioSession::singleton().systemCategoryForTesting()->whenSettled(RunLoop::mainSingleton(),
+        [promise = WTF::move(promise)](auto&& result) mutable {
+            if (!result) {
+                promise.reject(Exception { ExceptionCode::InvalidStateError, "Could not read the system audio session category"_s });
+                return;
+            }
+            promise.resolve(*result);
+        });
+#else
+    promise.resolve(AudioSessionCategory::None);
+#endif
+}
+
 auto Internals::audioSessionMode() const -> AudioSessionMode
 {
 #if USE(AUDIO_SESSION)

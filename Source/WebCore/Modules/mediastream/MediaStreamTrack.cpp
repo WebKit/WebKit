@@ -549,10 +549,14 @@ void MediaStreamTrack::trackMutedChanged(MediaStreamTrackPrivate&)
         return;
 
     bool muted = m_private->muted();
-    Ref categoryApplied = GenericPromise::createAndResolve();
+    RefPtr<GenericPromise> sessionActivated;
     if (isAudio() && isCaptureTrack()) {
-        if (RefPtr manager = mediaSessionManager())
-            categoryApplied = manager->audioCaptureSourceStateChanged(muted ? MediaSessionManagerInterface::IsCaptureStarting::No : MediaSessionManagerInterface::IsCaptureStarting::Yes);
+        if (RefPtr manager = mediaSessionManager()) {
+            Ref stateChanged = manager->audioCaptureSourceStateChanged(muted ? MediaSessionManagerInterface::IsCaptureStarting::No : MediaSessionManagerInterface::IsCaptureStarting::Yes);
+            // Only unmuting has something to wait for: muting requests deactivation without waiting.
+            if (!muted)
+                sessionActivated = WTF::move(stateChanged);
+        }
     }
 
     Function<void()> updateMuted = [this, protectedThis = Ref { *this }, muted] {
@@ -575,12 +579,14 @@ void MediaStreamTrack::trackMutedChanged(MediaStreamTrackPrivate&)
 
     if (m_shouldFireMuteEventImmediately)
         updateMuted();
-    else {
-        // Under site isolation the audio session category is applied to this process asynchronously
-        // (via IPC reply). Delay the mute/unmute event until it has been applied so listeners observe
-        // the up-to-date category. In the non-isolated case categoryApplied is already resolved, so
-        // this is equivalent to queueing the event on the event loop as before.
-        context->enqueueTaskWhenSettled(WTF::move(categoryApplied), TaskSource::Networking, [updateMuted = WTF::move(updateMuted)](auto&&) mutable {
+    else if (sessionActivated) {
+        // Unmuting an audio capture track activates the audio session asynchronously. Delay the event
+        // until it has, so listeners observe an active session.
+        context->enqueueTaskWhenSettled(sessionActivated.releaseNonNull(), TaskSource::Networking, [updateMuted = WTF::move(updateMuted)](auto&&) mutable {
+            updateMuted();
+        });
+    } else {
+        queueTaskKeepingObjectAlive(*this, TaskSource::Networking, [updateMuted = WTF::move(updateMuted)](auto&) {
             updateMuted();
         });
     }

@@ -1,0 +1,25 @@
+<script src="/media-resources/utilities.js"></script>
+<script>
+// Captures microphone audio and reports the category its own process computed, then stops capturing
+// when asked. Used by the test that checks the real audio session's category while one process plays
+// audio and another captures, and once capture stops.
+window.onmessage = event => {
+    if (event.data !== "stop")
+        return;
+    window.stream.getTracks().forEach(track => track.stop());
+    window.parent.postMessage("stopped", "*");
+};
+
+async function captureAndReport()
+{
+    try {
+        window.stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        await waitForAudioSessionActiveState(true);
+        window.parent.postMessage(internals.audioSessionCategory(), "*");
+    } catch (e) {
+        window.parent.postMessage(`error: ${e.message}`, "*");
+    }
+}
+
+captureAndReport();
+</script>

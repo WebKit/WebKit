@@ -36,7 +36,6 @@ messages -> RemoteMediaSessionManager {
     void SetCurrentMediaSession(std::optional<WebCore::MediaSessionIdentifier> identifier);
 
 #if USE(AUDIO_SESSION)
-    void SetAudioSessionCategory(enum:uint8_t WebCore::AudioSessionCategory type, enum:uint8_t WebCore::AudioSessionMode mode, enum:uint8_t WebCore::RouteSharingPolicy policy)
     void SetAudioSessionPreferredBufferSize(uint64_t preferredBufferSize)
 #endif
 }

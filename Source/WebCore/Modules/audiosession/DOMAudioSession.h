@@ -58,6 +58,11 @@ public:
 
     ExceptionOr<void> setType(Type);
     Type type() const;
+
+    // Applies the category override a type implies to this process's audio session. Called when the
+    // type set by another process's document arrives through DocumentSyncData, so that every process
+    // of the page computes its category with the same override.
+    static void applyTypeToAudioSessionCategoryOverride(Type);
     State state() const;
 
     void topDocumentAudioSessionStateChanged();

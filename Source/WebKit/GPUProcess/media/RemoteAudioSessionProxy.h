@@ -102,6 +102,7 @@ private:
     void tryToSetActive(bool, SetActiveCompletion&&);
     void tryToSetActiveSync(bool, SetActiveCompletion&&);
     void setIsPlayingToBluetoothOverride(std::optional<bool>&& value);
+    void systemCategoryForTesting(CompletionHandler<void(WebCore::AudioSessionCategory)>&&);
     void triggerBeginInterruptionForTesting();
     void triggerEndInterruptionForTesting();
 

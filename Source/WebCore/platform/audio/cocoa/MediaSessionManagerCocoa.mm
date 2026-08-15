@@ -99,7 +99,7 @@ MediaSessionManagerCocoa::MediaSessionManagerCocoa(std::optional<PageIdentifier>
 {
 }
 
-Ref<GenericPromise> MediaSessionManagerCocoa::updateSessionState()
+void MediaSessionManagerCocoa::updateSessionState()
 {
     constexpr auto delayBeforeSettingCategoryNone = 2_s;
     int videoCount = 0;
@@ -174,7 +174,7 @@ Ref<GenericPromise> MediaSessionManagerCocoa::updateSessionState()
     sharedSession->setPreferredBufferSize(bufferSize);
 
     if (!DeprecatedGlobalSettings::shouldManageAudioSessionCategory())
-        return GenericPromise::createAndResolve();
+        return;
 
     auto category = AudioSession::CategoryType::None;
     auto mode = AudioSession::Mode::Default;
@@ -220,8 +220,6 @@ Ref<GenericPromise> MediaSessionManagerCocoa::updateSessionState()
     forEachSession([&] (auto& session) {
         session.audioSessionCategoryChanged(category, mode, policy);
     });
-
-    return GenericPromise::createAndResolve();
 }
 
 void MediaSessionManagerCocoa::possiblyChangeAudioCategory()

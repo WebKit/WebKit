@@ -1700,9 +1700,9 @@ TEST(WebKit2, DoNotUnmuteWhenTakingAThumbnail)
 
 #if WK_HAVE_C_SPI
 // media-session-capture.html records MediaSession action handler calls, track mute/unmute events and
-// setXXXActive() promise resolutions into a single list. Those are delivered asynchronously, so a test
-// that triggers several operations at once has no guaranteed interleaving between them — arm a wait
-// before triggering an operation and await it before triggering the next.
+// setXXXActive() promise resolutions into a single list. Unmuting an audio capture track waits on the
+// audio session activation, so arm a wait before triggering it and await it before triggering the next
+// operation.
 static void armActionState(TestWKWebView *webView, NSString *state)
 {
     [webView objectByCallingAsyncFunction:@"return armActionState(state)" withArguments:@{ @"state": state }];
@@ -1837,23 +1837,18 @@ TEST(WebKit2, ToggleCameraCaptureWhenRestarting)
     EXPECT_TRUE(waitUntilCameraState(webView.get(), WKMediaCaptureStateActive));
     EXPECT_TRUE(waitUntilMicrophoneState(webView.get(), WKMediaCaptureStateActive));
 
-    // Mute capture, one device at a time: the mute event is dispatched asynchronously, so muting both
-    // and then expecting a particular interleaving of the two would be assuming an ordering that isn't
-    // guaranteed.
+    // Mute capture.
     cameraCaptureStateChange = false;
     microphoneCaptureStateChange = false;
 
-    armActionState(webView.get(), @"muting camera");
     [webView setCameraCaptureState:WKMediaCaptureStateMuted completionHandler:nil];
-    EXPECT_TRUE(waitUntilCameraState(webView.get(), WKMediaCaptureStateMuted));
-    waitForActionState(webView.get(), @"muting camera");
-
-    armActionState(webView.get(), @"muting microphone");
     [webView setMicrophoneCaptureState:WKMediaCaptureStateMuted completionHandler:nil];
-    EXPECT_TRUE(waitUntilMicrophoneState(webView.get(), WKMediaCaptureStateMuted));
-    waitForActionState(webView.get(), @"muting microphone");
 
-    // Unmute via MediaSession.
+    EXPECT_TRUE(waitUntilCameraState(webView.get(), WKMediaCaptureStateMuted));
+    EXPECT_TRUE(waitUntilMicrophoneState(webView.get(), WKMediaCaptureStateMuted));
+
+    // Unmute via MediaSession. Unmuting waits on the audio session activation, so arm a wait before
+    // triggering it and await it before checking the recorded order.
     cameraCaptureStateChange = false;
     done = false;
     armActionState(webView.get(), @"unmuting camera");
@@ -1911,23 +1906,18 @@ TEST(WebKit2, ToggleMicrophoneCaptureWhenRestarting)
     EXPECT_TRUE(waitUntilCameraState(webView.get(), WKMediaCaptureStateActive));
     EXPECT_TRUE(waitUntilMicrophoneState(webView.get(), WKMediaCaptureStateActive));
 
-    // Mute capture, one device at a time: the mute event is dispatched asynchronously, so muting both
-    // and then expecting a particular interleaving of the two would be assuming an ordering that isn't
-    // guaranteed.
+    // Mute capture.
     cameraCaptureStateChange = false;
     microphoneCaptureStateChange = false;
 
-    armActionState(webView.get(), @"muting camera");
     [webView setCameraCaptureState:WKMediaCaptureStateMuted completionHandler:nil];
-    EXPECT_TRUE(waitUntilCameraState(webView.get(), WKMediaCaptureStateMuted));
-    waitForActionState(webView.get(), @"muting camera");
-
-    armActionState(webView.get(), @"muting microphone");
     [webView setMicrophoneCaptureState:WKMediaCaptureStateMuted completionHandler:nil];
-    EXPECT_TRUE(waitUntilMicrophoneState(webView.get(), WKMediaCaptureStateMuted));
-    waitForActionState(webView.get(), @"muting microphone");
 
-    // Unmute via MediaSession.
+    EXPECT_TRUE(waitUntilCameraState(webView.get(), WKMediaCaptureStateMuted));
+    EXPECT_TRUE(waitUntilMicrophoneState(webView.get(), WKMediaCaptureStateMuted));
+
+    // Unmute via MediaSession. Unmuting waits on the audio session activation, so arm a wait before
+    // triggering it and await it before checking the recorded order.
     cameraCaptureStateChange = false;
     microphoneCaptureStateChange = false;
     done = false;

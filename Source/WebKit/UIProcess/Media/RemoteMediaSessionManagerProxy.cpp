@@ -37,7 +37,6 @@
 #include "SharedPreferencesForWebProcess.h"
 #include "WebPageProxy.h"
 #include "WebProcessProxy.h"
-#include <WebCore/DeprecatedGlobalSettings.h>
 #include <WebCore/MediaSessionManagerClient.h>
 #include <WebCore/PlatformMediaSessionInterface.h>
 #include <WebCore/PlatformMediaSessionManager.h>
@@ -165,10 +164,6 @@ RemoteMediaSessionManagerProxy::RemoteMediaSessionManagerProxy()
     setClient(makeUnique<RemoteMediaSessionManagerProxyClient>(*this));
 #endif
 
-#if PLATFORM(IOS_FAMILY) || ENABLE(ROUTING_ARBITRATION)
-    WebCore::DeprecatedGlobalSettings::setShouldManageAudioSessionCategory(true);
-#endif
-
 #if PLATFORM(COCOA)
     WebCore::AudioHardwareListener::setCreationFunction([protectedThis = Ref { *this }] (WebCore::AudioHardwareListener::Client& client) {
         return protectedThis->ensureAudioHardwareListenerProxy(client);
@@ -180,7 +175,7 @@ RemoteMediaSessionManagerProxy::~RemoteMediaSessionManagerProxy()
 {
 }
 
-void RemoteMediaSessionManagerProxy::addMediaSession(IPC::Connection& connection, RemoteMediaSessionState&& state, CompletionHandler<void(WebCore::AudioSessionCategory, WebCore::AudioSessionMode, WebCore::RouteSharingPolicy)>&& completionHandler)
+void RemoteMediaSessionManagerProxy::addMediaSession(IPC::Connection& connection, RemoteMediaSessionState&& state)
 {
     Ref process = WebProcessProxy::fromConnection(connection);
 
@@ -193,12 +188,6 @@ void RemoteMediaSessionManagerProxy::addMediaSession(IPC::Connection& connection
         session->updateState(state);
 
     REMOTE_MEDIA_SESSION_MANAGER_BASE_CLASS::addSession(session);
-
-#if USE(AUDIO_SESSION)
-    completionHandler(m_category, m_mode, m_routeSharingPolicy);
-#else
-    completionHandler(WebCore::AudioSessionCategory::None, WebCore::AudioSessionMode::Default, WebCore::RouteSharingPolicy::Default);
-#endif
 }
 
 void RemoteMediaSessionManagerProxy::removeMediaSession(IPC::Connection& connection, RemoteMediaSessionState&& state)
@@ -252,12 +241,6 @@ void RemoteMediaSessionManagerProxy::webProcessWillShutDown(WebCore::ProcessIden
         updateSessionState();
 
 #if USE(AUDIO_SESSION)
-    // Drop any override that process had set, so it no longer affects the category.
-    if (m_categoryOverridesByPage.removeIf([processIdentifier](auto& entry) {
-        return entry.key.processIdentifier() == processIdentifier;
-    }))
-        updateSessionState();
-
     // The process is gone; drop the activation state we tracked for it (keyed by ProcessIdentifier, so a
     // reused process starts clean). The pending activations' waiters are AutoRejectProducers, so removing the
     // entry rejects any still-pending promises as it is destroyed. setAudioSessionActiveForProcess() relies on
@@ -281,7 +264,7 @@ void RemoteMediaSessionManagerProxy::refreshSessionStates(IPC::Connection& conne
     }
 }
 
-void RemoteMediaSessionManagerProxy::updateMediaSessionStates(IPC::Connection& connection, WebCore::PageIdentifier pageIdentifier, Vector<RemoteMediaSessionState>&& sessions, uint64_t audioCaptureSourceCount, WebCore::AudioSessionCategory categoryOverride, CompletionHandler<void(WebCore::AudioSessionCategory, WebCore::AudioSessionMode, WebCore::RouteSharingPolicy)>&& completionHandler)
+void RemoteMediaSessionManagerProxy::updateMediaSessionStates(IPC::Connection& connection, WebCore::PageIdentifier pageIdentifier, Vector<RemoteMediaSessionState>&& sessions, uint64_t audioCaptureSourceCount)
 {
     refreshSessionStates(connection, sessions);
 
@@ -296,19 +279,6 @@ void RemoteMediaSessionManagerProxy::updateMediaSessionStates(IPC::Connection& c
         m_audioCaptureSourceCountsByPage.set(key, audioCaptureSourceCount);
 
 #if USE(AUDIO_SESSION)
-    // Each page reports its own override. Keep them separate so that a page without one does not clear
-    // the override another page has set.
-    if (categoryOverride == WebCore::AudioSessionCategory::None)
-        m_categoryOverridesByPage.remove(key);
-    else
-        m_categoryOverridesByPage.set(key, categoryOverride);
-#else
-    UNUSED_PARAM(categoryOverride);
-#endif
-
-    updateSessionState();
-
-#if USE(AUDIO_SESSION)
     // Drive audio-session activation for this process's audio capture: activeAudioSessionRequired() can't see
     // capture from the UI process (only the count is forwarded, not the AudioCaptureSource objects), so key off
     // the capture-count transition -- activate when it starts, deactivate when it stops and nothing else needs it.
@@ -316,10 +286,6 @@ void RemoteMediaSessionManagerProxy::updateMediaSessionStates(IPC::Connection& c
         enqueueAudioSessionActivation(process, true)->whenSettled(RunLoop::mainSingleton(), [](auto&&) { });
     else if (!audioCaptureSourceCount && previousPageCaptureCount && !processRequiresAudioSession(process))
         enqueueAudioSessionActivation(process, false)->whenSettled(RunLoop::mainSingleton(), [](auto&&) { });
-
-    completionHandler(m_category, m_mode, m_routeSharingPolicy);
-#else
-    completionHandler(WebCore::AudioSessionCategory::None, WebCore::AudioSessionMode::Default, WebCore::RouteSharingPolicy::Default);
 #endif
 }
 
@@ -350,22 +316,11 @@ void RemoteMediaSessionManagerProxy::setCurrentSession(WebCore::PlatformMediaSes
     REMOTE_MEDIA_SESSION_MANAGER_BASE_CLASS::setCurrentSession(session);
 }
 
-void RemoteMediaSessionManagerProxy::mediaSessionWillBeginPlayback(IPC::Connection& connection, RemoteMediaSessionState&& state, CompletionHandler<void(bool, WebCore::AudioSessionCategory, WebCore::AudioSessionMode, WebCore::RouteSharingPolicy)>&& completionHandler)
+void RemoteMediaSessionManagerProxy::mediaSessionWillBeginPlayback(IPC::Connection& connection, RemoteMediaSessionState&& state, CompletionHandler<void(bool)>&& completionHandler)
 {
-    // Reply with the current audio session category so the WebContent process applies it before
-    // resuming playback. This makes the play() promise observe the up-to-date category — the
-    // capture count has already been folded in via a prior UpdateMediaSessionStates round-trip.
-    auto reply = [protectedThis = Ref { *this }, completionHandler = WTF::move(completionHandler)](bool granted) mutable {
-#if USE(AUDIO_SESSION)
-        completionHandler(granted, protectedThis->m_category, protectedThis->m_mode, protectedThis->m_routeSharingPolicy);
-#else
-        completionHandler(granted, WebCore::AudioSessionCategory::None, WebCore::AudioSessionMode::Default, WebCore::RouteSharingPolicy::Default);
-#endif
-    };
-
     RefPtr session = findAndUpdateSession(connection, state);
     if (!session) {
-        reply(false);
+        completionHandler(false);
         return;
     }
 
@@ -382,7 +337,7 @@ void RemoteMediaSessionManagerProxy::mediaSessionWillBeginPlayback(IPC::Connecti
     AudioSession::setActive(it != m_activationByProcess.end() && it->value.active);
 #endif
 
-    REMOTE_MEDIA_SESSION_MANAGER_BASE_CLASS::sessionWillBeginPlayback(*session, WTF::move(reply));
+    REMOTE_MEDIA_SESSION_MANAGER_BASE_CLASS::sessionWillBeginPlayback(*session, WTF::move(completionHandler));
 }
 
 void RemoteMediaSessionManagerProxy::addMediaSessionRestriction(WebCore::PlatformMediaSessionMediaType type, WebCore::MediaSessionRestrictions restrictions)
@@ -401,16 +356,6 @@ void RemoteMediaSessionManagerProxy::resetMediaSessionRestrictions()
 }
 
 #if USE(AUDIO_SESSION)
-WebCore::AudioSessionCategory RemoteMediaSessionManagerProxy::categoryOverride() const
-{
-    // Use the override of any page that has set one. Pages without an override have no entry here.
-    for (auto category : m_categoryOverridesByPage.values()) {
-        if (category != WebCore::AudioSessionCategory::None)
-            return category;
-    }
-    return WebCore::AudioSessionCategory::None;
-}
-
 void RemoteMediaSessionManagerProxy::remoteAudioConfigurationChanged(RemoteAudioSessionConfiguration&& configuration)
 {
     // configuration.isActive is NOT trusted for the activation gate: it is relayed by the (untrusted)
@@ -438,24 +383,6 @@ void RemoteMediaSessionManagerProxy::setAudioSessionActiveForProcess(WebCore::Pr
     if (state.ipcInFlight || !state.pendingChain.isEmpty())
         return;
     state.active = active;
-}
-
-void RemoteMediaSessionManagerProxy::setCategory(CategoryType type, Mode mode, WebCore::RouteSharingPolicy policy)
-{
-#if PLATFORM(COCOA)
-    if (type == m_category && mode == m_mode && policy == m_routeSharingPolicy)
-        return;
-
-    m_category = type;
-    m_mode = mode;
-    m_routeSharingPolicy = policy;
-
-    for (Ref session : m_sessionProxies.values())
-        session->send(Messages::RemoteMediaSessionManager::SetAudioSessionCategory(type, mode, policy));
-#else
-    UNUSED_PARAM(type);
-    UNUSED_PARAM(policy);
-#endif
 }
 
 Ref<WebCore::AudioSession::SetActivePromise> RemoteMediaSessionManagerProxy::tryToSetActiveInternal(bool active)

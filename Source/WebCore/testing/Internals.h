@@ -1151,6 +1151,7 @@ public:
 
     bool NODELETE supportsAudioSession() const;
     AudioSessionCategory audioSessionCategory() const;
+    void systemAudioSessionCategory(DOMPromiseDeferred<IDLEnumeration<AudioSessionCategory>>&&);
     AudioSessionMode audioSessionMode() const;
     RouteSharingPolicy routeSharingPolicy() const;
 #if ENABLE(VIDEO)

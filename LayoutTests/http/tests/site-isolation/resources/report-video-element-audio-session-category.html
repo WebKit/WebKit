@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/media-resources/utilities.js"></script>
+<script>
+let video;
+
+// Reports the category this process computed for its own sessions, on request rather than as soon as it
+// changes, so the opener can sample it at a point of its choosing.
+window.addEventListener("message", (event) => {
+    if (event.data === "category?")
+        window.opener.postMessage({ type: "category", category: internals.audioSessionCategory() }, "*");
+});
+
+window.addEventListener("load", async () => {
+    if (!window.opener || !window.internals)
+        return;
+
+    video = document.querySelector("video");
+    video.src = "/media/resources/test.mp4";
+    video.loop = true;
+    video.volume = 0.001;
+    playIgnoringAbort(video);
+
+    await new Promise(resolve => video.addEventListener("playing", resolve, { once: true }));
+    window.opener.postMessage({ type: "playing" }, "*");
+});
+</script>
+</head>
+<body>
+<video></video>
+This page plays a near-silent &lt;video&gt; on a loop and reports the audio session category its own process computed to its opener.
+</body>
+</html>

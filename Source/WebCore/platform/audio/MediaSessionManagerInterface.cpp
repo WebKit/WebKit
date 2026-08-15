@@ -726,28 +726,21 @@ void MediaSessionManagerInterface::removeAudioCaptureSource(AudioCaptureSource& 
 
 Ref<GenericPromise> MediaSessionManagerInterface::audioCaptureSourceStateChanged(IsCaptureStarting isCaptureStarting)
 {
-    Ref categoryApplied = updateSessionState();
+    updateSessionState();
 #if USE(AUDIO_SESSION)
     // Activation and deactivation are requested synchronously, so a caller that does not wait on the
-    // returned promise observes AudioSession::isActive() as soon as this returns (RemoteAudioSession
-    // reflects the requested state optimistically). navigator.mediaSession.setMicrophoneActive() for
-    // instance resolves its promise from the UIProcess ValidateCaptureStateUpdate reply, which does not
-    // wait for the UpdateMediaSessionStates round-trip that applies the category under site isolation.
-    // The returned promise settles once both the category has been applied and the activation has
-    // completed, so a caller that does wait — the getUserMedia promise, the track mute/unmute events —
-    // sees a session that is both categorised and active.
-    if (isCaptureStarting == IsCaptureStarting::Yes) {
-        GenericPromise::Producer producer;
-        Ref promise = producer.promise();
-        GenericPromise::all({ WTF::move(categoryApplied), maybeActivateAudioSession() })->chainTo(WTF::move(producer));
-        return promise;
-    }
+    // returned promise still observes AudioSession::isActive() as soon as this returns
+    // (RemoteAudioSession reflects the requested state optimistically). The promise settles once the
+    // activation has completed, for callers that need an active session — the getUserMedia promise and
+    // the track unmute event.
+    if (isCaptureStarting == IsCaptureStarting::Yes)
+        return maybeActivateAudioSession();
 
     maybeDeactivateAudioSession();
 #else
     UNUSED_PARAM(isCaptureStarting);
 #endif
-    return categoryApplied;
+    return GenericPromise::createAndResolve();
 }
 
 int MediaSessionManagerInterface::countActiveAudioCaptureSources()
@@ -959,11 +952,6 @@ void MediaSessionManagerInterface::scheduleUpdateSessionState()
         updateSessionState();
         m_hasScheduledSessionStateUpdate = false;
     });
-}
-
-Ref<GenericPromise> MediaSessionManagerInterface::updateSessionState()
-{
-    return GenericPromise::createAndResolve();
 }
 
 #if !RELEASE_LOG_DISABLED

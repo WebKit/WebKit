@@ -1,0 +1,77 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true allowTestOnlyIPC=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/media-resources/utilities.js"></script>
+</head>
+<body>
+<video id="video" src="/media-resources/content/test.mp4"></video>
+<script>
+description("Under site isolation, when one process plays audible media and another captures the microphone, the real audio session resolves to PlayAndRecord. Each process computes the category for its own sessions only, so this checks that the process owning the session reconciles them: MediaPlayback from the playing process, PlayAndRecord from the capturing process, and the higher priority of the two wins.");
+jsTestIsAsync = true;
+
+onload = async () => {
+    try {
+        // The main frame's own process plays audible media, and computes MediaPlayback for itself.
+        await new Promise(resolve => {
+            video.addEventListener("canplaythrough", resolve, { once: true });
+            video.load();
+        });
+        internals.withUserGesture(() => video.play());
+        await new Promise(resolve => video.addEventListener("playing", resolve, { once: true }));
+
+        // Wait for the category rather than sampling it at the 'playing' event, which does not
+        // guarantee that the element's session has reached the state the category is computed from.
+        await waitForAudioSessionCategory("MediaPlayback");
+        playingProcessCategory = internals.audioSessionCategory();
+        shouldBeEqualToString("playingProcessCategory", "MediaPlayback");
+        await waitForSystemAudioSessionCategory("MediaPlayback");
+        testPassed("the real audio session's category is MediaPlayback while only media is playing");
+
+        // localhost and 127.0.0.1 are different sites, so the iframe captures in its own process.
+        capturingProcessCategory = await new Promise((resolve, reject) => {
+            window.onmessage = event => {
+                if (event.origin !== "http://localhost:8000") {
+                    reject(new Error(`unexpected origin ${event.origin}`));
+                    return;
+                }
+                resolve(event.data);
+            };
+            const iframe = document.createElement("iframe");
+            iframe.allow = "microphone";
+            iframe.src = "http://localhost:8000/site-isolation/resources/audio-session-capture-frame.html";
+            document.body.appendChild(iframe);
+        });
+
+        shouldBeEqualToString("capturingProcessCategory", "PlayAndRecord");
+
+        // The playing process has no capture source of its own, so its own category is unchanged.
+        playingProcessCategoryWhileCapturing = internals.audioSessionCategory();
+        shouldBeEqualToString("playingProcessCategoryWhileCapturing", "MediaPlayback");
+
+        // The real session takes the higher priority of the two.
+        await waitForSystemAudioSessionCategory("PlayAndRecord");
+        testPassed("the real audio session's category is PlayAndRecord once one process captures");
+
+        // Stopping capture releases the category the capturing process asked for, leaving the playing
+        // process's. PlayAndRecord is exempt from the delay before a category is dropped, so this does
+        // not wait out that timer.
+        await new Promise(resolve => {
+            window.onmessage = event => {
+                if (event.data === "stopped")
+                    resolve();
+            };
+            frames[0].postMessage("stop", "http://localhost:8000");
+        });
+        await waitForSystemAudioSessionCategory("MediaPlayback");
+        testPassed("the real audio session's category is MediaPlayback again once capture stops");
+    } catch (e) {
+        testFailed(e.message);
+    }
+
+    finishJSTest();
+};
+</script>
+</body>
+</html>
