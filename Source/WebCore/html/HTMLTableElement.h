@@ -69,6 +69,7 @@ public:
 
     const MutableStyleProperties* additionalCellStyle() const;
     const MutableStyleProperties* additionalGroupStyle(bool rows) const;
+    const MutableStyleProperties* additionalRowStyle() const;
 
 private:
     HTMLTableElement(const QualifiedName&, Document&);
