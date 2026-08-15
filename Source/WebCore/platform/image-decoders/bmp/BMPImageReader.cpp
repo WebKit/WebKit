@@ -649,8 +649,10 @@ BMPImageReader::ProcessingResult BMPImageReader::processNonRLEData(bool inRLE, i
     if (!inRLE)
         numPixels = m_parent->size().width();
 
+    // THe nonRLE data can start in the middle of a row.
+    const int nonRLEDataStartX = m_coord.x();
+    const int endX = nonRLEDataStartX + numPixels;
     // Fail if we're being asked to decode more pixels than remain in the row.
-    const int endX = m_coord.x() + numPixels;
     if (endX > m_parent->size().width())
         return Failure;
 
@@ -701,8 +703,37 @@ BMPImageReader::ProcessingResult BMPImageReader::processNonRLEData(bool inRLE, i
             }
         } else {
             // RGB data.  Decode pixels one at a time, left to right.
+            auto readCurrentPixel = [this, bytesPerPixel, nonRLEDataStartX]() -> uint32_t {
+                // Returns the pixel data for the current X coordinate in a uint32_t.
+                // Assumes m_decodedOffset has been set to the beginning of the current
+                // row.
+                // NOTE: Only as many bytes of the return value as are needed to hold
+                // the pixel data will actually be set.
+                const int offset = (m_coord.x() - nonRLEDataStartX) * bytesPerPixel;
+                switch (bytesPerPixel) {
+                case 2:
+                    return readUint16(offset);
+        
+                case 3: {
+                    // It doesn't matter that we never set the most significant byte
+                    // of the return value here in little-endian mode, the caller
+                    // won't read it.
+                    uint32_t pixel;
+                    memcpySpan(asMutableByteSpan(pixel), m_data->span().subspan(m_decodedOffset + offset, 3));
+                    return pixel;
+                }
+        
+                case 4:
+                    return readUint32(offset);
+        
+                default:
+                    ASSERT_NOT_REACHED();
+                    return 0;
+                }
+            };
+
             while (m_coord.x() < endX) {
-                const uint32_t pixel = readCurrentPixel(bytesPerPixel);
+                const uint32_t pixel = readCurrentPixel();
 
                 // Some BMPs specify an alpha channel but don't actually use it
                 // (it contains all 0s).  To avoid displaying these images as

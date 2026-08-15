@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+An RLE24 BMP absolute-mode run that starts partway into a row must decode from<br>
+the run's own pixel bytes, and must not read past the end of the bitmap when<br>
+the file is truncated right after the run. Ports whose image decoder does not<br>
+support RLE24 BMPs pass without decoding anything.<br><br>
+
+<pre id="log">PASS</pre>
+
+<script>
+if (window.testRunner) {
+    window.testRunner.waitUntilDone();
+    window.testRunner.dumpAsText();
+}
+
+// An 8x3 OS/2 2.x RLE24 bitmap whose bottom row is an encoded run of 5 pixels
+// followed by an absolute run of 3, so the absolute run starts at column 5.
+// Indexing that run's pixel bytes by absolute column instead reads 15 bytes
+// into it, which lands on its padding byte, the end-of-line marker and the
+// encoded runs for the rows above, decoding the last three pixels of the bottom
+// row as 000066, 887708 and 010099.
+var expectedPixels = [
+    "998877", "998877", "998877", "998877", "998877", "998877", "998877", "998877",
+    "665544", "665544", "665544", "665544", "665544", "665544", "665544", "665544",
+    "332211", "332211", "332211", "332211", "332211", "a2a1a0", "a5a4a3", "a8a7a6",
+];
+
+var pendingImages = 3;
+
+function log(message)
+{
+    document.getElementById("log").textContent += "\n" + message;
+}
+
+function hex(pixels, index)
+{
+    var result = "";
+    for (var component = 0; component < 3; ++component)
+        result += ("0" + pixels[index * 4 + component].toString(16)).slice(-2);
+    return result;
+}
+
+// Loading an image only decodes its header, so the pixel data is never touched
+// until something asks for the frame. Drawing is what does that; the canvas can
+// be smaller than the image, the whole frame is decoded either way.
+function decodeIntoCanvas(image)
+{
+    var canvas = document.createElement("canvas");
+    canvas.width = 8;
+    canvas.height = 3;
+    canvas.getContext("2d").drawImage(image, 0, 0);
+    return canvas;
+}
+
+function testPixels(canvas)
+{
+    var pixels = canvas.getContext("2d").getImageData(0, 0, 8, 3).data;
+
+    for (var index = 0; index < expectedPixels.length; ++index) {
+        var expected = expectedPixels[index];
+        for (var component = 0; component < 3; ++component) {
+            var delta = pixels[index * 4 + component] - parseInt(expected.substr(component * 2, 2), 16);
+            if (Math.abs(delta) > 2) {
+                log("FAIL: pixel " + (index % 8) + "," + Math.floor(index / 8) + " is "
+                    + hex(pixels, index) + ", expected " + expected);
+                break;
+            }
+        }
+    }
+}
+
+function imageSettled(image, checkPixels)
+{
+    try {
+        // A decoder that rejects RLE24 bitmaps outright has nothing to decode.
+        if (image.naturalWidth) {
+            var canvas = decodeIntoCanvas(image);
+            if (checkPixels)
+                testPixels(canvas);
+        }
+    } catch (exception) {
+        log("FAIL: " + exception.message);
+    }
+
+    if (--pendingImages)
+        return;
+    if (window.testRunner)
+        window.testRunner.notifyDone();
+}
+
+function load(source, checkPixels)
+{
+    var image = new Image();
+    image.onload = function () { imageSettled(image, checkPixels); };
+    image.onerror = function () { imageSettled(image, false); };
+    image.src = source;
+}
+
+load("resources/rle24-absolute-run.bmp", true);
+
+// Truncated right after the bytes the absolute run declares: these decode to
+// nothing in particular, so no pixel is checked, but decoding them must not
+// read past the end of the file. The test is that the web process survives it.
+load("resources/rle24-absolute-run-truncated.bmp", false);
+load("resources/rle24-absolute-run-truncated-wide.bmp", false);
+</script>

@@ -1,0 +1,5 @@
+An RLE8 or RLE4 BMP absolute-mode run that starts partway into a row must decode
+from the run's own pixel bytes. For RLE4 that also means the nibbles are packed
+from the run's first pixel, not from the parity of the column it lands on.
+
+PASS
