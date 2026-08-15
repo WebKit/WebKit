@@ -1,0 +1,10 @@
+--- !tapi-tbd
+tbd-version: 4
+targets: [arm64e-ios, arm64e.x1-ios]
+install-name: /System/Library/PrivateFrameworks/ApplePushService.framework/ApplePushService
+swift-abi-version: 7
+exports:
+-       targets: [arm64e-ios, arm64e.x1-ios]
+        symbols: [_APSEnvironmentProduction]
+        objc-classes: [APSConnection, APSURLTokenInfo]
+...

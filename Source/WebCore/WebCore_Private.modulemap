@@ -12,6 +12,22 @@ framework module WebCore_Private [system] {
 
         requires cplusplus
 
+        // These headers are also present in WebKitLegacy's PrivateHeaders. When
+        // <Foundation/NSGeometry.h> is unavailable (i.e. when building against a
+        // public SDK), WAKAppKitStubs.h declares its own NSPoint/NSRect/NSSize,
+        // so each module would get its own definitions of the WAK classes and
+        // fail the cross-module ODR check. Let WebKitLegacy own them.
+        exclude header "WAKAppKitStubs.h"
+        exclude header "WAKClipView.h"
+        exclude header "WAKResponder.h"
+        exclude header "WAKScrollView.h"
+        exclude header "WAKView.h"
+        exclude header "WAKWindow.h"
+
+        // Defines a category on NSView, which WAKAppKitStubs.h maps to WAKView
+        // on iOS, so it needs the definition of the class excluded above.
+        exclude header "WebCoreView.h"
+
         module * {
             export *
         }

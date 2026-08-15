@@ -1,0 +1,8 @@
+--- !tapi-tbd
+tbd-version: 4
+targets: [arm64e-ios, arm64e.x1-ios]
+install-name: /System/Library/PrivateFrameworks/IdleTimerServices.framework/IdleTimerServices
+exports:
+-       targets: [arm64e-ios, arm64e.x1-ios]
+        objc-classes: [ITIdleTimerState]
+...

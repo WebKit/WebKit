@@ -1,0 +1,8 @@
+--- !tapi-tbd
+tbd-version: 4
+targets: [arm64e-ios, arm64e.x1-ios]
+install-name: /System/Library/PrivateFrameworks/AuthKit.framework/AuthKit
+exports:
+-       targets: [arm64e-ios, arm64e.x1-ios]
+        objc-classes: [AKAuthorizationController]
+...

@@ -1,0 +1,9 @@
+--- !tapi-tbd
+tbd-version: 4
+targets: [arm64e-ios, arm64e.x1-ios]
+install-name: /System/Library/PrivateFrameworks/IOSurfaceAccelerator.framework/IOSurfaceAccelerator
+exports:
+-       targets: [arm64e-ios, arm64e.x1-ios]
+        symbols: [_IOSurfaceAcceleratorCreate, _IOSurfaceAcceleratorGetRunLoopSource, _IOSurfaceAcceleratorTransformSurface,
+                _kIOSurfaceAcceleratorUnwireSurfaceKey]
+...
