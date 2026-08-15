@@ -51,7 +51,6 @@ BoxData::BoxData()
     , verticalAlign(ComputedStyle::initialVerticalAlign())
     , hasAutoSpecifiedZIndex(static_cast<uint8_t>(ComputedStyle::initialSpecifiedZIndex().m_isAuto))
     , hasAutoUsedZIndex(static_cast<uint8_t>(ComputedStyle::initialUsedZIndex().m_isAuto))
-    , boxSizing(static_cast<uint8_t>(BoxSizing::ContentBox))
     , boxDecorationBreak(static_cast<uint8_t>(BoxDecorationBreak::Slice))
     , baselineSource(static_cast<uint8_t>(ComputedStyle::initialBaselineSource()))
     , specifiedZIndexValue(ComputedStyle::initialSpecifiedZIndex().m_value)
@@ -70,7 +69,6 @@ inline BoxData::BoxData(const BoxData& o)
     , verticalAlign(o.verticalAlign)
     , hasAutoSpecifiedZIndex(o.hasAutoSpecifiedZIndex)
     , hasAutoUsedZIndex(o.hasAutoUsedZIndex)
-    , boxSizing(o.boxSizing)
     , boxDecorationBreak(o.boxDecorationBreak)
     , baselineSource(o.baselineSource)
     , specifiedZIndexValue(o.specifiedZIndexValue)
@@ -94,7 +92,6 @@ bool BoxData::operator==(const BoxData& o) const
         && verticalAlign == o.verticalAlign
         && usedZIndexValue == o.usedZIndexValue
         && hasAutoUsedZIndex == o.hasAutoUsedZIndex
-        && boxSizing == o.boxSizing
         && boxDecorationBreak == o.boxDecorationBreak
         && baselineSource == o.baselineSource
         && specifiedZIndexValue == o.specifiedZIndexValue
@@ -118,7 +115,6 @@ void BoxData::dumpDifferences(TextStream& ts, const BoxData& other) const
     LOG_IF_DIFFERENT_WITH_CAST(bool, hasAutoSpecifiedZIndex);
     LOG_IF_DIFFERENT_WITH_CAST(bool, hasAutoUsedZIndex);
 
-    LOG_IF_DIFFERENT_WITH_CAST(BoxSizing, boxSizing);
     LOG_IF_DIFFERENT_WITH_CAST(BoxDecorationBreak, boxDecorationBreak);
     LOG_IF_DIFFERENT_WITH_CAST(BaselineSource, baselineSource);
 

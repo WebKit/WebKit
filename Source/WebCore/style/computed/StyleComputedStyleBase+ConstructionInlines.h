@@ -62,6 +62,7 @@ inline ComputedStyleBase::ComputedStyleBase(CreateDefaultStyleTag)
     m_inheritedFlags.printColorAdjust = static_cast<unsigned>(ComputedStyle::initialPrintColorAdjust());
     m_inheritedFlags.pointerEvents = static_cast<unsigned>(ComputedStyle::initialPointerEvents());
     m_inheritedFlags.insideLink = static_cast<unsigned>(InsideLink::NotInside);
+    m_inheritedFlags.colorIsCurrentColorForHighlight = 0;
     m_inheritedFlags.isZoomed = 0;
 #if ENABLE(TEXT_AUTOSIZING)
     m_inheritedFlags.autosizeStatus = 0;
@@ -71,10 +72,11 @@ inline ComputedStyleBase::ComputedStyleBase(CreateDefaultStyleTag)
     m_nonInheritedFlags.originalDisplay = ComputedStyle::initialDisplay().toRaw();
     m_nonInheritedFlags.overflowX = static_cast<unsigned>(ComputedStyle::initialOverflowX());
     m_nonInheritedFlags.overflowY = static_cast<unsigned>(ComputedStyle::initialOverflowY());
-    m_nonInheritedFlags.clear = static_cast<unsigned>(ComputedStyle::initialClear());
     m_nonInheritedFlags.position = static_cast<unsigned>(ComputedStyle::initialPosition());
-    m_nonInheritedFlags.unicodeBidi = static_cast<unsigned>(ComputedStyle::initialUnicodeBidi());
     m_nonInheritedFlags.floating = static_cast<unsigned>(ComputedStyle::initialFloating());
+    m_nonInheritedFlags.clear = static_cast<unsigned>(ComputedStyle::initialClear());
+    m_nonInheritedFlags.boxSizing = static_cast<unsigned>(ComputedStyle::initialBoxSizing());
+    m_nonInheritedFlags.unicodeBidi = static_cast<unsigned>(ComputedStyle::initialUnicodeBidi());
     m_nonInheritedFlags.textDecorationLine = ComputedStyle::initialTextDecorationLine().toRaw();
     m_nonInheritedFlags.usesViewportUnits = false;
     m_nonInheritedFlags.isContainerDependent = false;
@@ -119,10 +121,11 @@ inline void ComputedStyleBase::NonInheritedFlags::copyNonInheritedFrom(const Non
     originalDisplay = other.originalDisplay;
     overflowX = other.overflowX;
     overflowY = other.overflowY;
-    clear = other.clear;
     position = other.position;
-    unicodeBidi = other.unicodeBidi;
     floating = other.floating;
+    clear = other.clear;
+    boxSizing = other.boxSizing;
+    unicodeBidi = other.unicodeBidi;
     textDecorationLine = other.textDecorationLine;
     usesViewportUnits = other.usesViewportUnits;
     isContainerDependent = other.isContainerDependent;

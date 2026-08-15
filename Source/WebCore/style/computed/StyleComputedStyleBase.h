@@ -451,11 +451,6 @@ using WebkitBoxFlex = Number<CSS::All, float>;
 using WebkitBoxFlexGroup = Integer<CSS::Nonnegative>;
 using WebkitBoxOrdinalGroup = Integer<CSS::Positive>;
 
-constexpr auto PublicPseudoIDBits = 19;
-constexpr auto TextDecorationLineBits = 5;
-constexpr auto TextTransformBits = 6;
-constexpr auto PseudoElementTypeBits = 5;
-
 using PseudoElementStyles = HashMap<PseudoElementIdentifier, std::unique_ptr<ComputedStyle>>;
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(ComputedStyleBase);
@@ -752,6 +747,11 @@ public:
     inline const PageSize& pageSize() const LIFETIME_BOUND;
     inline void setPageSize(PageSize&&);
 
+    static constexpr auto PseudoElementTypeBits = 5;
+    static constexpr auto PublicPseudoIDBits = 19;
+    static constexpr auto TextTransformBits = 6;
+    static constexpr auto TextDecorationLineBits = 5;
+
     struct NonInheritedFlags {
         bool operator==(const NonInheritedFlags&) const = default;
 
@@ -765,14 +765,17 @@ public:
         void dumpDifferences(TextStream&, const NonInheritedFlags&) const;
 #endif
 
+        // If you add more style bits here, update ComputedStyleBase::NonInheritedFlags::copyNonInheritedFrom().
         PREFERRED_TYPE(Style::DisplayType) unsigned display : 5;
         PREFERRED_TYPE(Style::DisplayType) unsigned originalDisplay : 5;
         PREFERRED_TYPE(Overflow) unsigned overflowX : 3;
         PREFERRED_TYPE(Overflow) unsigned overflowY : 3;
-        PREFERRED_TYPE(Clear) unsigned clear : 3;
         PREFERRED_TYPE(PositionType) unsigned position : 3;
-        PREFERRED_TYPE(UnicodeBidi) unsigned unicodeBidi : 3;
         PREFERRED_TYPE(Float) unsigned floating : 3;
+        PREFERRED_TYPE(Clear) unsigned clear : 3;
+        PREFERRED_TYPE(BoxSizing) unsigned boxSizing : 1;
+        PREFERRED_TYPE(UnicodeBidi) unsigned unicodeBidi : 3;
+        unsigned textDecorationLine : TextDecorationLineBits; // Text decorations defined *only* by this element. PREFERRED_TYPE elided to avoid header inclusion.
 
         PREFERRED_TYPE(bool) unsigned usesViewportUnits : 1;
         PREFERRED_TYPE(bool) unsigned isContainerDependent : 1;
@@ -780,15 +783,12 @@ public:
         PREFERRED_TYPE(bool) unsigned hasExplicitlyInheritedProperties : 1; // Explicitly inherits a non-inherited property.
         PREFERRED_TYPE(bool) unsigned disallowsFastPathInheritance : 1;
 
-        // Non-property related state bits.
+        // Non-property related state bits. These do not get copied by copyNonInheritedFrom().
         PREFERRED_TYPE(bool) unsigned firstChildState : 1;
         PREFERRED_TYPE(bool) unsigned lastChildState : 1;
         PREFERRED_TYPE(bool) unsigned isLink : 1;
         PREFERRED_TYPE(PseudoElementType) unsigned pseudoElementType : PseudoElementTypeBits;
         unsigned pseudoBits : PublicPseudoIDBits;
-        unsigned textDecorationLine : TextDecorationLineBits; // Text decorations defined *only* by this element. PREFERRED_TYPE elided to avoid header inclusion.
-
-        // If you add more style bits here, you will also need to update ComputedStyleBase::NonInheritedFlags::copyNonInheritedFrom().
     };
 
     struct InheritedFlags {
@@ -801,16 +801,21 @@ public:
         // Writing Mode = 8 bits (can be packed into 6 if needed)
         WritingMode writingMode;
 
-        // Text Formatting = 19 bits aligned onto 2 bytes + 4 trailing bits
+        // Pay attention to field alignment here to make sure this stays compact.
+        // See also static_assert in ComputedStyleBase::ComputedStyleBase(CreateDefaultStyleTag).
+
+        // Text Formatting = 21 bits
         PREFERRED_TYPE(WhiteSpaceCollapse) unsigned char whiteSpaceCollapse : 3;
         PREFERRED_TYPE(TextWrapMode) unsigned char textWrapMode : 1;
         PREFERRED_TYPE(TextAlign) unsigned char textAlign : 4;
         PREFERRED_TYPE(TextWrapStyle) unsigned char textWrapStyle : 2;
         unsigned char textTransform : TextTransformBits; // PREFERRED_TYPE elided to avoid header inclusion.
-        unsigned char : 1; // byte alignment
         unsigned char textDecorationLineInEffect : TextDecorationLineBits; // PREFERRED_TYPE elided to avoid header inclusion.
 
-        // Cursors and Visibility = 13 bits aligned onto 4 bits + 1 byte + 1 bit
+        // Zoom = 1 bit
+        PREFERRED_TYPE(bool) unsigned char isZoomed : 1;
+
+        // Cursors and Visibility = 13 bits
         PREFERRED_TYPE(PointerEvents) unsigned char pointerEvents : 4;
         PREFERRED_TYPE(Visibility) unsigned char visibility : 2;
         PREFERRED_TYPE(CursorType) unsigned char cursorType : 6;
@@ -828,17 +833,22 @@ public:
         PREFERRED_TYPE(BoxDirection) unsigned char boxDirection : 1;
         PREFERRED_TYPE(WebCore::Order) unsigned char rtlOrdering : 1;
 
-        // Color Stuff = 4 bits
+        // Color Stuff = 5 bits
         PREFERRED_TYPE(bool) unsigned char hasExplicitlySetColor : 1;
         PREFERRED_TYPE(PrintColorAdjust) unsigned char printColorAdjust : 1;
         PREFERRED_TYPE(InsideLink) unsigned char insideLink : 2;
-
-        PREFERRED_TYPE(bool) unsigned char isZoomed : 1;
+        // Whether color came from the currentcolor keyword. A highlight pseudo-element resolves
+        // currentcolor against its originating element, so the chain inherits the keyword rather than
+        // the color it resolved to. Highlight styles always set this, so it doesn't depend on being
+        // inherited with the color. https://drafts.csswg.org/css-pseudo-4/#highlight-cascade
+        // FIXME: A value that merely references currentcolor, like color-mix(in oklab, teal,
+        // currentcolor), is not covered. See BuilderCustom::applyHighlightInheritColor().
+        PREFERRED_TYPE(bool) unsigned char colorIsCurrentColorForHighlight : 1;
 
 #if ENABLE(TEXT_AUTOSIZING)
         unsigned autosizeStatus : 5;
 #endif
-        // Total = 63 bits (fits in 8 bytes)
+        // Total = 60 bits (fits in 8 bytes)
     };
 
 protected:

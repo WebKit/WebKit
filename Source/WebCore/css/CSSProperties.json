@@ -4004,7 +4004,8 @@
                 "aliases": [
                     "-webkit-box-sizing"
                 ],
-                "computed-style-storage-path": ["m_nonInheritedData", "boxData"],
+                "computed-style-storage-path": ["m_nonInheritedFlags"],
+                "computed-style-storage-container": "struct",
                 "computed-style-storage-kind": "enum",
                 "computed-style-type": "BoxSizing",
                 "parser-grammar": "<<values>>"

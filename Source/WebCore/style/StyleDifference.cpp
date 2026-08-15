@@ -425,9 +425,6 @@ public:
                 if (a.nonInheritedData().boxData->verticalAlign != b.nonInheritedData().boxData->verticalAlign)
                     return true;
 
-                if (a.nonInheritedData().boxData->boxSizing != b.nonInheritedData().boxData->boxSizing)
-                    return true;
-
                 if (a.nonInheritedData().boxData->hasAutoUsedZIndex != b.nonInheritedData().boxData->hasAutoUsedZIndex)
                     return true;
             }
@@ -493,6 +490,7 @@ public:
             || a.inheritedFlags().rtlOrdering != b.inheritedFlags().rtlOrdering
             || a.nonInheritedFlags().position != b.nonInheritedFlags().position
             || a.nonInheritedFlags().floating != b.nonInheritedFlags().floating
+            || a.nonInheritedFlags().boxSizing != b.nonInheritedFlags().boxSizing
             || a.nonInheritedFlags().originalDisplay != b.nonInheritedFlags().originalDisplay)
             return true;
 
