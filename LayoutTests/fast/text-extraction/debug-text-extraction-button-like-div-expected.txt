@@ -6,6 +6,25 @@ PASS inertHasUID is false
 PASS wrapperHasUID is false
 PASS linkHasUID is true
 PASS pointerHasUID is true
+PASS flexCenteredHasUID is true
+PASS flexCenteredIsClickable is true
+PASS lineHeightHasUID is true
+PASS headingPillHasUID is false
+PASS hasUID("PreBlock") is false
+PASS hasUID("BlockquoteBlock") is false
+PASS hasUID("AddressBlock") is false
+PASS hasUID("FigcaptionBlock") is false
+PASS hasUID("LegendText") is false
+PASS hasUID("TableCaptionText") is false
+PASS hasUID("SampInlineBlock") is false
+PASS hasUID("AlertRole") is false
+PASS hasUID("TooltipRole") is false
+PASS hasUID("StatusRole") is false
+PASS hasUID("NoteRole") is false
+PASS hasUID("ImgRole") is true
+PASS hasUID("PresentationRole") is true
+PASS hasUID("ProgressbarRole") is true
+PASS hasUID("SeparatorRole") is true
 PASS successfullyParsed is true
 
 TEST COMPLETE

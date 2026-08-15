@@ -53,6 +53,7 @@
 #include "HTMLButtonElement.h"
 #include "HTMLCanvasElement.h"
 #include "HTMLFrameOwnerElement.h"
+#include "HTMLHeadingElement.h"
 #include "HTMLIFrameElement.h"
 #include "HTMLImageElement.h"
 #include "HTMLInputElement.h"
@@ -974,6 +975,44 @@ static bool containsInteractiveDescendant(const Element& element)
     return false;
 }
 
+static bool isProbablyNotInteractiveBasedOnTagName(const Element& element)
+{
+    return is<HTMLHeadingElement>(element)
+        || element.hasTagName(HTMLNames::addressTag)
+        || element.hasTagName(HTMLNames::blockquoteTag)
+        || element.hasTagName(HTMLNames::captionTag)
+        || element.hasTagName(HTMLNames::figcaptionTag)
+        || element.hasTagName(HTMLNames::legendTag)
+        || element.hasTagName(HTMLNames::preTag)
+        || element.hasTagName(HTMLNames::sampTag);
+}
+
+static bool isProbablyNotInteractiveBasedOnRole(const Element& element)
+{
+    auto role = element.attributeWithoutSynchronization(HTMLNames::roleAttr);
+    if (role.isEmpty())
+        return false;
+
+    switch (AccessibilityObject::ariaRoleToWebCoreRole(role)) {
+    case AccessibilityRole::ApplicationAlert:
+    case AccessibilityRole::ApplicationLog:
+    case AccessibilityRole::ApplicationMarquee:
+    case AccessibilityRole::ApplicationStatus:
+    case AccessibilityRole::ApplicationTimer:
+    case AccessibilityRole::Caption:
+    case AccessibilityRole::Definition:
+    case AccessibilityRole::DocumentNote:
+    case AccessibilityRole::Footnote:
+    case AccessibilityRole::Heading:
+    case AccessibilityRole::Paragraph:
+    case AccessibilityRole::Term:
+    case AccessibilityRole::UserInterfaceTooltip:
+        return true;
+    default:
+        return false;
+    }
+}
+
 static bool looksLikeButton(const RenderObject& renderer)
 {
     CheckedRef style = renderer.style();
@@ -994,12 +1033,19 @@ static bool looksLikeButton(const RenderObject& renderer)
     if (!element)
         return false;
 
+    Ref protectedElement = *element;
+    if (isProbablyNotInteractiveBasedOnTagName(protectedElement))
+        return false;
+
+    if (isProbablyNotInteractiveBasedOnRole(protectedElement))
+        return false;
+
     static constexpr auto maxButtonLabelLength = 64;
-    auto text = element->textContent();
+    auto text = protectedElement->textContent();
     if (text.isEmpty() || text.length() > maxButtonLabelLength || text.containsOnly<isASCIIWhitespace>())
         return false;
 
-    return !containsInteractiveDescendant(*element);
+    return !containsInteractiveDescendant(protectedElement);
 }
 
 static bool looksVisuallyClickable(const RenderObject& renderer)
