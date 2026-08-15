@@ -1418,7 +1418,7 @@ void Element::scrollTo(const ScrollToOptions& options, ScrollClamping clamping, 
     if (canShortCircuitScroll())
         return;
 
-    document->updateLayoutIgnorePendingStylesheets(LayoutOptions::UpdateCompositingLayers);
+    document->updateLayoutIgnorePendingStylesheets({ LayoutOptions::UpdateCompositingLayers, LayoutOptions::TreatContentVisibilityHiddenAsVisible, LayoutOptions::TreatContentVisibilityAutoAsVisible }, this);
 
     if (document->scrollingElement() == this) {
         // If the element is the scrolling element and is not potentially scrollable,
