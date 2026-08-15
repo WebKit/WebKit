@@ -1,22 +1,32 @@
 
 PASS 0px
 PASS -0px
-FAIL 0.1px assert_equals: expected "1px" but got "0.1px"
-FAIL -0.1px assert_equals: expected "-1px" but got "-0.1px"
-FAIL 0.25px assert_equals: expected "1px" but got "0.25px"
-FAIL -0.25px assert_equals: expected "-1px" but got "-0.25px"
-FAIL 0.5px assert_equals: expected "1px" but got "0.5px"
-FAIL -0.5px assert_equals: expected "-1px" but got "-0.5px"
-FAIL 0.9px assert_equals: expected "1px" but got "0.9px"
-FAIL -0.9px assert_equals: expected "-1px" but got "-0.9px"
+PASS 0px snaps the same way as outline-width
+PASS 0.1px
+PASS -0.1px
+PASS 0.1px snaps the same way as outline-width
+PASS 0.25px
+PASS -0.25px
+PASS 0.25px snaps the same way as outline-width
+PASS 0.5px
+PASS -0.5px
+PASS 0.5px snaps the same way as outline-width
+PASS 0.9px
+PASS -0.9px
+PASS 0.9px snaps the same way as outline-width
 PASS 1px
 PASS -1px
-FAIL 1.25px assert_equals: expected "1px" but got "1.25px"
-FAIL -1.25px assert_equals: expected "-1px" but got "-1.25px"
-FAIL 1.5px assert_equals: expected "1px" but got "1.5px"
-FAIL -1.5px assert_equals: expected "-1px" but got "-1.5px"
+PASS 1px snaps the same way as outline-width
+PASS 1.25px
+PASS -1.25px
+PASS 1.25px snaps the same way as outline-width
+PASS 1.5px
+PASS -1.5px
+PASS 1.5px snaps the same way as outline-width
 PASS 2px
 PASS -2px
-FAIL 2.75px assert_equals: expected "2px" but got "2.75px"
-FAIL -2.75px assert_equals: expected "-2px" but got "-2.75px"
+PASS 2px snaps the same way as outline-width
+PASS 2.75px
+PASS -2.75px
+PASS 2.75px snaps the same way as outline-width
 

@@ -786,8 +786,8 @@ Path AccessibilityRenderObject::elementPath() const
         if (!rectsSpanMultipleLines(rects, style->writingMode().isHorizontal()))
             return { };
 
-        auto outlineOffset = Style::evaluate<float>(style->usedOutlineOffset(), style->usedZoomForLength());
         float deviceScaleFactor = protect(renderText->document())->deviceScaleFactor();
+        auto outlineOffset = Style::evaluate<float>(style->usedOutlineOffset(), style->usedZoomForLength(), deviceScaleFactor);
         Vector<FloatRect> pixelSnappedRects;
         for (auto rect : rects) {
             rect.inflate(outlineOffset);

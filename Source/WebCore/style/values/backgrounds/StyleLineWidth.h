@@ -50,9 +50,6 @@ struct LineWidth {
     constexpr LineWidth(CSS::Keyword::Medium) : value { 3 } { }
     constexpr LineWidth(CSS::Keyword::Thick) : value { 5 } { }
 
-    static Length snapLengthAsBorderWidth(float, float deviceScaleFactor);
-    static Length snapLengthAsBorderWidth(Length, float deviceScaleFactor);
-
     constexpr auto unresolvedValue() const { return value.unresolvedValue(); }
 
     constexpr bool isZero() const { return value.isZero(); }

@@ -3516,6 +3516,7 @@ style/values/non-standard/StyleWebKitLocale.cpp
 style/values/non-standard/StyleWebKitOverflowScrolling.cpp
 style/values/non-standard/StyleWebKitTextStrokeWidth.cpp
 style/values/non-standard/StyleWebKitTouchCallout.cpp
+style/values/outline/StyleOutlineOffset.cpp @header:RenderStyleGetters
 style/values/overflow/StyleBlockEllipsis.cpp
 style/values/overflow/StyleScrollbarGutter.cpp
 style/values/overflow/StyleOverflowClipMargin.cpp
@@ -3526,6 +3527,7 @@ style/values/primitives/StyleLengthResolution.cpp @header:RenderStyleGetters @co
 style/values/primitives/StylePosition.cpp
 style/values/primitives/StylePrimitiveData.cpp
 style/values/primitives/StyleRatio.cpp
+style/values/primitives/StyleSnapLengthAsBorderWidth.cpp
 style/values/primitives/StyleString.cpp
 style/values/primitives/StyleURL.cpp
 style/values/primitives/StyleUnevaluatedCalculation.cpp

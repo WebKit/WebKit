@@ -24,6 +24,7 @@
 
 #pragma once
 
+#include <WebCore/LayoutUnit.h>
 #include <WebCore/StylePrimitiveNumeric.h>
 #include <WebCore/StyleValueTypes.h>
 
@@ -37,6 +38,40 @@ struct OutlineOffset : ValueOrKeyword<Length<>, CSS::Keyword::Inset> {
 
     bool isInset() const { return isKeyword(); }
     std::optional<Length<>> tryLength() const { return tryValue(); }
+};
+
+// The used value of `outline-offset`: either the specified <length> or, for the `inset` keyword,
+// the negated used `outline-width`. Like a line width, it is snapped to an integer number of
+// device pixels when evaluated, but unlike a line width it may be negative.
+struct UsedOutlineOffset {
+    Length<> value;
+
+    constexpr UsedOutlineOffset(Length<> length) : value { length } { }
+    constexpr UsedOutlineOffset(CSS::ValueLiteral<CSS::LengthUnit::Px> literal) : value { literal } { }
+
+    constexpr auto unresolvedValue() const { return value.unresolvedValue(); }
+
+    constexpr bool operator==(const UsedOutlineOffset&) const = default;
+};
+
+// MARK: - Conversion
+
+template<> struct CSSValueConversion<OutlineOffset> { OutlineOffset operator()(BuilderState&, const CSSValue&); };
+
+// MARK: - Blending
+
+template<> struct Blending<OutlineOffset> {
+    auto canBlend(const OutlineOffset&, const OutlineOffset&) -> bool;
+    auto blend(const OutlineOffset&, const OutlineOffset&, const Style::ComputedStyle&, const Style::ComputedStyle&, const Interpolation::Context&) -> OutlineOffset;
+};
+
+// MARK: - Evaluation
+
+template<> struct Evaluation<UsedOutlineOffset, float> {
+    WEBCORE_EXPORT auto operator()(const UsedOutlineOffset&, ZoomFactor, float deviceScaleFactor) -> float;
+};
+template<> struct Evaluation<UsedOutlineOffset, LayoutUnit> {
+    auto operator()(const UsedOutlineOffset&, ZoomFactor, float deviceScaleFactor) -> LayoutUnit;
 };
 
 } // namespace WebCore::Style

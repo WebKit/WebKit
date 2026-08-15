@@ -374,6 +374,7 @@ struct Transform;
 struct TransformOrigin;
 struct Transition;
 struct Translate;
+struct UsedOutlineOffset;
 struct VerticalAlign;
 struct ViewTimeline;
 struct ViewTransitionClasses;

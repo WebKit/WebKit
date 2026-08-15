@@ -591,7 +591,7 @@ Style::LineWidth ComputedStyle::usedColumnRuleWidth() const
     return columnRuleWidth();
 }
 
-Style::Length<> ComputedStyle::usedOutlineOffset() const
+Style::UsedOutlineOffset ComputedStyle::usedOutlineOffset() const
 {
     auto& outline = this->outline();
     if (outline.outlineOffset.isInset())
@@ -611,7 +611,7 @@ Style::LineWidth ComputedStyle::usedOutlineWidth() const
 
 float ComputedStyle::usedOutlineSize(Style::ZoomFactor zoom, float deviceScaleFactor) const
 {
-    return std::max(0.0f, Style::evaluate<float>(usedOutlineWidth(), zoom, deviceScaleFactor) + Style::evaluate<float>(usedOutlineOffset(), zoom));
+    return std::max(0.0f, Style::evaluate<float>(usedOutlineWidth(), zoom, deviceScaleFactor) + Style::evaluate<float>(usedOutlineOffset(), zoom, deviceScaleFactor));
 }
 
 // MARK: - Derived Values

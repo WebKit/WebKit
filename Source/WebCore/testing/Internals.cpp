@@ -1642,7 +1642,7 @@ float Internals::usedOutlineOffset(Element& element)
     auto* style = element.computedStyle();
     if (!style)
         return 0;
-    return Style::evaluate<float>(style->usedOutlineOffset(), style->usedZoomForLength());
+    return Style::evaluate<float>(style->usedOutlineOffset(), style->usedZoomForLength(), style->deviceScaleFactor());
 }
 
 Node& Internals::ensureUserAgentShadowRoot(Element& host)

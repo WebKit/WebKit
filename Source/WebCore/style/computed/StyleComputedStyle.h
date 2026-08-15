@@ -167,7 +167,7 @@ public:
 
     Style::LineWidth NODELETE usedColumnRuleWidth() const;
 
-    WEBCORE_EXPORT Style::Length<> usedOutlineOffset() const;
+    WEBCORE_EXPORT Style::UsedOutlineOffset usedOutlineOffset() const;
     Style::LineWidth usedOutlineWidth() const;
     float usedOutlineSize(Style::ZoomFactor, float deviceScaleFactor) const; // used value combining `outline-width` and `outline-offset`
 
