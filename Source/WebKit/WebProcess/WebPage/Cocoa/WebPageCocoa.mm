@@ -321,31 +321,42 @@ bool WebPage::shouldUsePDFPlugin(const String& contentType, StringView path) con
 }
 #endif
 
-void WebPage::performDictionaryLookupAtLocation(const FloatPoint& floatPoint)
+void WebPage::performDictionaryLookupAtLocation(FrameIdentifier frameID, const FloatPoint& floatPoint, CompletionHandler<void(std::optional<RemoteUserInputEventData>)>&& completionHandler)
 {
 #if ENABLE(PDF_PLUGIN)
     if (RefPtr pluginView = mainFramePlugIn()) {
         if (pluginView->performDictionaryLookupAtLocation(floatPoint))
-            return;
+            return completionHandler(std::nullopt);
     }
 #endif
-    
-    RefPtr localMainFrame = corePage()->localMainFrame();
-    if (!localMainFrame)
-        return;
+
+    RefPtr webFrame = WebFrame::webFrame(frameID);
+    RefPtr localFrame = webFrame ? webFrame->coreLocalFrame() : nullptr;
+    RefPtr view = localFrame ? localFrame->view() : nullptr;
+    if (!view)
+        return completionHandler(std::nullopt);
+
     // Find the frame the point is over.
     constexpr OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::DisallowUserAgentShadowContent, HitTestRequest::Type::AllowChildFrameContent };
-    auto result = localMainFrame->eventHandler().hitTestResultAtPoint(protect(localMainFrame->view())->windowToContents(roundedIntPoint(floatPoint)), hitType);
+    auto result = localFrame->eventHandler().hitTestResultAtPoint(view->rootViewToContents(roundedIntPoint(floatPoint)), hitType);
+
+    // AllowChildFrameContent cannot descend into a RemoteFrameView, so over a site-isolated iframe the
+    // hit test stops at its owner element and finds no text. Report the frame back instead so the UI
+    // process can retry the lookup in that frame's process, as the immediate action path does.
+    auto subframe = EventHandler::subframeForTargetNode(protect(result.targetNode()).get());
+    if (RefPtr remoteFrame = dynamicDowncast<RemoteFrame>(subframe).get()) {
+        if (RefPtr remoteFrameView = remoteFrame->view())
+            return completionHandler(RemoteUserInputEventData { remoteFrame->frameID(), remoteFrameView->convertFromRootView(roundedIntPoint(floatPoint)) });
+    }
 
     RefPtr frame = result.innerNonSharedNode() ? result.innerNonSharedNode()->document().frame() : corePage()->focusController().focusedOrMainFrame();
     if (!frame)
-        return;
+        return completionHandler(std::nullopt);
 
-    auto rangeResult = DictionaryLookup::rangeAtHitTestResult(result);
-    if (!rangeResult)
-        return;
+    if (auto rangeResult = DictionaryLookup::rangeAtHitTestResult(result))
+        performDictionaryLookupForRange(*frame, *rangeResult, TextIndicatorPresentationTransition::Bounce);
 
-    performDictionaryLookupForRange(*frame, *rangeResult, TextIndicatorPresentationTransition::Bounce);
+    completionHandler(std::nullopt);
 }
 
 void WebPage::performDictionaryLookupForSelection(LocalFrame& frame, const VisibleSelection& selection, TextIndicatorPresentationTransition presentationTransition)
@@ -430,6 +441,42 @@ DictionaryPopupInfo WebPage::dictionaryPopupInfoForRange(LocalFrame& frame, cons
 #endif
 
 #endif
+
+    // In a site-isolated subframe the rects above are all in the local root frame's root view
+    // coordinates, because Widget::convertToRootView() stops at the local root -- the parent frame
+    // lives in another process. Map them the rest of the way to the top-level frame here, applying the
+    // CSS transforms on the remote ancestor frames rather than a plain translation, so the UI process
+    // can position the popover and the text indicator without an IPC round trip per nesting level.
+    //
+    // The conversion runs on the local root frame's view, not this frame's view, because the rects
+    // have already been walked up the widget tree to the local root. Starting from this frame's view
+    // would count the offset of any same-origin frame between it and the local root twice.
+    if (!frame.localMainFrame()) {
+        if (RefPtr rootView = frame.rootFrame().view()) {
+            auto convertRect = [&](FloatRect rect) {
+                return rootView->convertToRootViewAcrossIsolatedFrames(rect);
+            };
+
+            dictionaryPopupInfo.origin = rootView->convertToRootViewAcrossIsolatedFrames(dictionaryPopupInfo.origin);
+
+            // textRectsInBoundingRectCoordinates are offsets from the text bounding rect's location,
+            // so lift each one back into root view coordinates to convert it, then re-relativize it
+            // against the converted bounding rect.
+            auto boundingRect = textIndicator->textBoundingRectInRootViewCoordinates();
+            auto convertedBoundingRect = convertRect(boundingRect);
+            auto textRects = textIndicator->textRectsInBoundingRectCoordinates().map([&](auto rect) {
+                rect.moveBy(boundingRect.location());
+                rect = convertRect(rect);
+                rect.moveBy(-convertedBoundingRect.location());
+                return rect;
+            });
+
+            textIndicator->setTextBoundingRectInRootViewCoordinates(convertedBoundingRect);
+            textIndicator->setTextRectsInBoundingRectCoordinates(WTF::move(textRects));
+            textIndicator->setSelectionRectInRootViewCoordinates(convertRect(textIndicator->selectionRectInRootViewCoordinates()));
+            textIndicator->setContentImageWithoutSelectionRectInRootViewCoordinates(convertRect(textIndicator->contentImageWithoutSelectionRectInRootViewCoordinates()));
+        }
+    }
 
     editor->setIsGettingDictionaryPopupInfo(false);
     return dictionaryPopupInfo;
