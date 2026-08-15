@@ -204,6 +204,10 @@ extension WebPage {
         /// Indicates whether the page is controlled by automation, used for testing.
         @_spi(Testing)
         public var isControlledByAutomation: Bool = false
+
+        /// Indicates whether background text extraction is enabled, used for testing.
+        @_spi(Testing)
+        public var backgroundTextExtractionEnabled: Bool = false
     }
 }
 

@@ -87,6 +87,8 @@ extension WKWebViewConfiguration {
         #if WTF_PLATFORM_MAC
         self._imageControlsEnabled = wrapped.imageControlsEnabled
         #endif
+
+        self._backgroundTextExtractionEnabled = wrapped.backgroundTextExtractionEnabled
     }
 }
 
