@@ -1,0 +1,100 @@
+<!-- webkit-test-runner [ enableMetalShaderValidation=true ] -->
+<script src="../../../resources/js-test.js"></script>
+<script>
+window.jsTestIsAsync = true;
+
+// dot(vec2<i32>(a, 0), vec2<i32>(a, 0)) with a = 46341 (a * a > INT_MAX).
+// The __wgslDot prelude helper must not emit raw signed '*'/'+' that Metal
+// lowers to 'mul nsw'/'add nsw', otherwise the optimizer can prove idx >= 0
+// under 'a > 0', delete the '< 0' clamp, and fold the injected __wgslMin
+// bounds guard, yielding a device address-space out-of-bounds load.
+
+const shader = `
+struct U {
+    a: i32,
+    b: vec3<i32>,
+    v: array<vec4<u32>, 8>,
+}
+@group(0) @binding(0) var<storage, read> buf: U;
+@group(0) @binding(1) var<storage, read_write> outbuf: array<u32>;
+
+@compute @workgroup_size(1)
+fn main() {
+    let a = buf.a;
+    var idx: i32 = 0;
+    if (a > 0) {
+        idx = dot(vec2<i32>(a, 0), vec2<i32>(a, 0));
+    }
+    if (idx > 7) { idx = 7; }
+    if (idx < 0) { idx = 0; }
+    outbuf[0] = buf.v[idx].x;
+    outbuf[1] = u32(idx);
+    let b = buf.b;
+    outbuf[2] = u32(dot(b, vec3<i32>(6, 7, 8)));
+    outbuf[3] = dot(vec4<u32>(u32(b.x), u32(b.z), 2, 4), vec4<u32>(5, 6, 7, 8));
+    outbuf[4] = u32(dot(vec2<f32>(f32(b.x), 4.0), vec2<f32>(3.0, 4.0)));
+}
+`;
+
+onload = async () => {
+    let adapter = await navigator.gpu.requestAdapter();
+    let device = await adapter.requestDevice();
+
+    let module = device.createShaderModule({ code: shader });
+    let bindGroupLayout = device.createBindGroupLayout({
+        entries: [
+            { binding: 0, buffer: { type: 'read-only-storage' }, visibility: GPUShaderStage.COMPUTE },
+            { binding: 1, buffer: { type: 'storage' }, visibility: GPUShaderStage.COMPUTE },
+        ],
+    });
+
+    // struct U: a @0, b @16, v[8] @32; total 160.
+    let inputData = new Int32Array(64);
+    inputData[0] = 46341;
+    inputData[4] = 3;
+    inputData[5] = -4;
+    inputData[6] = 5;
+    for (let i = 0; i < 8; ++i)
+        inputData[8 + i * 4] = 0x11110000 | i;
+    let inputBuf = device.createBuffer({ size: 256, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST });
+    device.queue.writeBuffer(inputBuf, 0, inputData);
+
+    let outputBuf = device.createBuffer({ size: 32, usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC });
+    let readbackBuf = device.createBuffer({ size: 32, usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ });
+
+    let bindGroup = device.createBindGroup({
+        layout: bindGroupLayout,
+        entries: [
+            { binding: 0, resource: { buffer: inputBuf } },
+            { binding: 1, resource: { buffer: outputBuf } },
+        ],
+    });
+
+    let pipelineLayout = device.createPipelineLayout({ bindGroupLayouts: [bindGroupLayout] });
+    let pipeline = device.createComputePipeline({
+        layout: pipelineLayout,
+        compute: { module, entryPoint: 'main' },
+    });
+
+    let enc = device.createCommandEncoder();
+    let pass = enc.beginComputePass();
+    pass.setPipeline(pipeline);
+    pass.setBindGroup(0, bindGroup);
+    pass.dispatchWorkgroups(1);
+    pass.end();
+    enc.copyBufferToBuffer(outputBuf, 0, readbackBuf, 0, 32);
+    device.queue.submit([enc.finish()]);
+
+    await device.queue.onSubmittedWorkDone();
+    await readbackBuf.mapAsync(GPUMapMode.READ);
+    output = new Uint32Array(readbackBuf.getMappedRange());
+    shouldBeTrue('output[0] >= 0x11110000 && output[0] <= 0x11110007');
+    shouldBeTrue('output[1] <= 7');
+    shouldBe('output[2]', '30');
+    shouldBe('output[3]', '91');
+    shouldBe('output[4]', '25');
+    readbackBuf.unmap();
+
+    finishJSTest();
+};
+</script>
