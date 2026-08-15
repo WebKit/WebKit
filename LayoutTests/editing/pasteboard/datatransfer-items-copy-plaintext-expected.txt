@@ -14,7 +14,7 @@ PASS clipboardData.items[0] is initialItem
 PASS clipboardData.clearData(); clipboardData.items.length is 0
 PASS clipboardData.items.add("scissors", "text/plain"); clipboardData.items.length is 1
 PASS clipboardData.items[0] is not initialItem
-PASS initialItem.kind is "string"
+PASS initialItem.kind is ""
 PASS initialItem.type is ""
 PASS initialItem.getAsFile() is null
 PASS initialItem.getAsString(() => testFailed("getAsString should exit immeidately if item is disabled")) is undefined

@@ -1,0 +1,7 @@
+
+PASS remove() puts a string item into the disabled mode
+PASS remove() puts a File item into the disabled mode
+PASS clear() puts every item into the disabled mode
+PASS clearData() puts the removed string item into the disabled mode
+PASS setData() puts the replaced string item into the disabled mode
+
