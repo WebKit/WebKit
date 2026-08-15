@@ -76,6 +76,51 @@ TEST(Fullscreen, RemoveNodeBeforeEnter)
     } while (++tries <= 100);
 
     ASSERT_FALSE([webView _isInFullscreen]);
+    EXPECT_EQ([webView fullscreenState], WKFullscreenStateNotInFullscreen);
+}
+
+TEST(Fullscreen, RemoveFrameBeforeEnter)
+{
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [configuration preferences].elementFullscreenEnabled = YES;
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100) configuration:configuration.get() addToWindow:YES]);
+
+    [webView synchronouslyLoadHTMLString:
+        @"<html><head><script>"
+        @"function enterFullscreenThenRemoveFrame() { "
+        @"    let frame = document.querySelector('iframe');"
+        @"    frame.contentDocument.querySelector('div').webkitRequestFullscreen();"
+        @"    setTimeout(() => { "
+        @"        frame.parentNode.removeChild(frame);"
+        @"        window.webkit.messageHandlers.testHandler.postMessage(\"frameremoved\");"
+        @"    });"
+        @"}"
+        @"</script></head><body>"
+        @"<iframe allowfullscreen srcdoc=\"<div>some text</div>\"></iframe>"
+        @"</body></html>"];
+
+    ASSERT_FALSE([webView _isInFullscreen]);
+
+    __block bool frameRemoved = false;
+    [webView performAfterReceivingMessage:@"frameremoved" action:^{ frameRemoved = true; }];
+
+    [webView evaluateJavaScript:@"enterFullscreenThenRemoveFrame()" completionHandler:nil];
+
+    TestWebKitAPI::Util::run(&frameRemoved);
+
+    // Allow the potential negative result time to occur.
+    TestWebKitAPI::Util::runFor(0.5_s);
+
+    // Fullscreen mode should eventually close.
+    int tries = 0;
+    do {
+        if (![webView _isInFullscreen] && [webView fullscreenState] == WKFullscreenStateNotInFullscreen)
+            break;
+        TestWebKitAPI::Util::runFor(0.1_s);
+    } while (++tries <= 100);
+
+    ASSERT_FALSE([webView _isInFullscreen]);
+    EXPECT_EQ([webView fullscreenState], WKFullscreenStateNotInFullscreen);
 }
 
 } // namespace TestWebKitAPI

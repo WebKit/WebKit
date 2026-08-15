@@ -35,6 +35,6 @@ messages -> WebFullScreenManagerProxy {
     ExitFullScreen() -> ()
     BeganEnterFullScreen(WebCore::FrameIdentifier frameID, WebCore::IntRect initialRect, WebCore::IntRect finalRect) -> (bool success)
     BeganExitFullScreen(WebCore::IntRect initialRect, WebCore::IntRect finalRect) -> ()
-    Close()
+    CloseFullScreen()
 }
 #endif

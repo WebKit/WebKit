@@ -172,25 +172,32 @@ void WebFullScreenManagerProxy::setFullscreenAutoHideDuration(Seconds duration)
     sendToWebProcess(Messages::WebFullScreenManager::SetFullscreenAutoHideDuration(duration));
 }
 
+void WebFullScreenManagerProxy::closeFullScreen(IPC::Connection& connection)
+{
+    MESSAGE_CHECK_BASE(isFullScreenInSendingProcess(connection), connection);
+    close();
+}
+
 void WebFullScreenManagerProxy::close()
 {
     if (CheckedPtr client = m_client)
         client->closeFullScreenManager();
+
+    if (m_fullscreenState == FullscreenState::NotInFullscreen)
+        return;
+
+    m_fullscreenState = FullscreenState::NotInFullscreen;
+
+    if (auto frameID = std::exchange(m_fullScreenFrameID, { }))
+        exitFullScreenInOtherProcesses(*frameID, [] { });
+
+    if (RefPtr page = m_page.get())
+        page->fullscreenClient().didExitFullscreen(page.get());
 }
 
 void WebFullScreenManagerProxy::detachFromClient()
 {
     close();
-
-    // If we were in fullscreen, notify the client that fullscreen has exited,
-    // since the normal IPC round-trip through the web process won't complete
-    // after the page is closed.
-    if (m_fullscreenState != FullscreenState::NotInFullscreen) {
-        m_fullscreenState = FullscreenState::NotInFullscreen;
-        if (RefPtr page = m_page.get())
-            page->fullscreenClient().didExitFullscreen(page.get());
-    }
-
     m_client = nullptr;
 }
 
@@ -219,6 +226,16 @@ bool WebFullScreenManagerProxy::isFrameInSendingProcess(FrameIdentifier frameID,
     if (!page || !frame)
         return true;
     return frame->page() == page.get() && &frame->process() == WebProcessProxy::fromConnection(connection).ptr();
+}
+
+bool WebFullScreenManagerProxy::isFullScreenInSendingProcess(IPC::Connection& connection) const
+{
+    if (m_fullScreenFrameID)
+        return isFrameInSendingProcess(*m_fullScreenFrameID, connection);
+    RefPtr fullScreenProcess = m_fullScreenProcess.get();
+    if (!fullScreenProcess)
+        return true;
+    return fullScreenProcess.get() == WebProcessProxy::fromConnection(connection).ptr();
 }
 
 Awaitable<bool> WebFullScreenManagerProxy::enterFullScreen(IPC::Connection& connection, FrameIdentifier frameID, bool blocksReturnToFullscreenFromPictureInPicture, FullScreenMediaDetails mediaDetails)
