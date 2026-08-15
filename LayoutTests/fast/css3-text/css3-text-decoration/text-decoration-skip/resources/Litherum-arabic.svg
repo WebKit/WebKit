@@ -1,0 +1,17 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd" >
+<svg xmlns="http://www.w3.org/2000/svg">
+<metadata></metadata>
+<defs>
+<font id="LitherumArabic" horiz-adv-x="1024">
+<font-face units-per-em="56" ascent="56" descent="-28"/>
+<glyph unicode="ب" horiz-adv-x="56" d="M20 -28v84h16v-84z"/>
+<glyph unicode="ݐ" horiz-adv-x="56" d="M20 -28v84h16v-84z"/>
+<glyph unicode="ࢠ" horiz-adv-x="56" d="M20 -28v84h16v-84z"/>
+<glyph unicode="ࡰ" horiz-adv-x="56" d="M20 -28v84h16v-84z"/>
+<glyph unicode="𐻀" horiz-adv-x="56" d="M20 -28v84h16v-84z"/>
+<glyph unicode="ﭐ" horiz-adv-x="56" d="M20 -28v84h16v-84z"/>
+<glyph unicode="ﹰ" horiz-adv-x="56" d="M20 -28v84h16v-84z"/>
+</font>
+</defs>
+</svg>
