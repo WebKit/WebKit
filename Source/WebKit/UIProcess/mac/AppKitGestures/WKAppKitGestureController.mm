@@ -33,6 +33,7 @@
 #import "ImageAnalysisUtilities.h"
 #import "InteractionInformationAtPosition.h"
 #import "InteractionInformationRequest.h"
+#import "NativeWebGestureEvent.h"
 #import "NativeWebWheelEvent.h"
 #import "PositionInformationManager.h"
 #import "RemoteLayerTreeDrawingAreaProxy.h"
@@ -86,9 +87,9 @@ static WebCore::FloatSize translationInView(NSPanGestureRecognizer *gesture, WKW
     return translation;
 }
 
-static WebKit::WebWheelEvent::Phase toWheelEventPhase(NSGestureRecognizerState state)
+static WebKit::WebEventPhase toWebEventPhase(NSGestureRecognizerState state)
 {
-    using enum WebKit::WebWheelEvent::Phase;
+    using enum WebKit::WebEventPhase;
     switch (state) {
     case NSGestureRecognizerStatePossible:
         return MayBegin;
@@ -232,6 +233,17 @@ static NSString *gestureLogDescription(NSGestureRecognizer *gesture)
     std::unique_ptr<WebKit::PositionInformationManager> _positionInformationManager;
     std::unique_ptr<WebKit::WKFastScrollTracker> _fastScrollTracker;
     std::unique_ptr<WebKit::WKDirectionalScrollLockTracker> _directionalScrollLockTracker;
+
+    RetainPtr<NSMagnificationGestureRecognizer> _magnificationGestureRecognizer;
+#if ENABLE(MAC_GESTURE_EVENTS)
+    RetainPtr<NSRotationGestureRecognizer> _rotationGestureRecognizer;
+#endif
+
+    // FIXME: <webkit.org/b/321828> Avoid further bloating this class and instead manage state through a separate/independent entity.
+    // Magnification and rotation GRs report their values cumulatively over a gesture.
+    // These variables track the last reported value so that we can forward deltas.
+    double _lastCumulativeMagnification;
+    double _lastCumulativeRotation;
 }
 
 #if __has_include(<WebKitAdditions/WKAppKitGestureControllerAdditionsImpl.mm>)
@@ -305,6 +317,11 @@ static NSString *gestureLogDescription(NSGestureRecognizer *gesture)
 
     [self setUpImageAnalysisGestureRecognizer];
     [self setUpImageAnalysisDeferringGestureRecognizers];
+
+    [self setUpMagnificationGestureRecognizer];
+#if ENABLE(MAC_GESTURE_EVENTS)
+    [self setUpRotationGestureRecognizer];
+#endif
 }
 
 - (void)setUpMouseTrackingGestureRecognizer
@@ -381,6 +398,26 @@ static NSString *gestureLogDescription(NSGestureRecognizer *gesture)
     _imageAnalysisDragAndContextMenuDeferringGestureRecognizer = [self makeImageAnalysisDeferringGestureRecognizerWithName:@"WKImageAnalysisDragAndContextMenuDeferringGesture"];
 }
 
+- (void)setUpMagnificationGestureRecognizer
+{
+    _magnificationGestureRecognizer = adoptNS([[NSMagnificationGestureRecognizer alloc] initWithTarget:self action:@selector(magnificationGestureRecognized:)]);
+    [self configureForMagnification:_magnificationGestureRecognizer];
+    [_magnificationGestureRecognizer setDelegate:self];
+    [_magnificationGestureRecognizer setName:@"WKMagnificationGesture"];
+}
+
+#if ENABLE(MAC_GESTURE_EVENTS)
+
+- (void)setUpRotationGestureRecognizer
+{
+    _rotationGestureRecognizer = adoptNS([[NSRotationGestureRecognizer alloc] initWithTarget:self action:@selector(rotationGestureRecognized:)]);
+    [self configureForRotation:_rotationGestureRecognizer];
+    [_rotationGestureRecognizer setDelegate:self];
+    [_rotationGestureRecognizer setName:@"WKRotationGesture"];
+}
+
+#endif
+
 - (void)addGesturesToWebView
 {
     RetainPtr webView = _view.get();
@@ -402,6 +439,11 @@ static NSString *gestureLogDescription(NSGestureRecognizer *gesture)
     [webView addGestureRecognizer:_imageAnalysisGestureRecognizer.get()];
     [webView addGestureRecognizer:_imageAnalysisTextSelectionDeferringGestureRecognizer.get()];
     [webView addGestureRecognizer:_imageAnalysisDragAndContextMenuDeferringGestureRecognizer.get()];
+
+    [webView addGestureRecognizer:_magnificationGestureRecognizer];
+#if ENABLE(MAC_GESTURE_EVENTS)
+    [webView addGestureRecognizer:_rotationGestureRecognizer];
+#endif
 }
 
 - (void)enableGesturesIfNeeded
@@ -414,6 +456,10 @@ static NSString *gestureLogDescription(NSGestureRecognizer *gesture)
     [self enableGestureIfNeeded:_secondaryClickGestureRecognizer.get()];
     [self enableGestureIfNeeded:_dragPressGestureRecognizer.get()];
     [self enableGestureIfNeeded:_imageAnalysisGestureRecognizer.get()];
+    [self enableGestureIfNeeded:_magnificationGestureRecognizer];
+#if ENABLE(MAC_GESTURE_EVENTS)
+    [self enableGestureIfNeeded:_rotationGestureRecognizer];
+#endif
 
     // The deferring gesture recognizers are intentionally not enabled.
 }
@@ -439,6 +485,11 @@ static NSString *gestureLogDescription(NSGestureRecognizer *gesture)
     [_imageAnalysisGestureRecognizer setShouldBeArchived:NO];
     [_imageAnalysisTextSelectionDeferringGestureRecognizer setShouldBeArchived:NO];
     [_imageAnalysisDragAndContextMenuDeferringGestureRecognizer setShouldBeArchived:NO];
+
+    [_magnificationGestureRecognizer setShouldBeArchived:NO];
+#if ENABLE(MAC_GESTURE_EVENTS)
+    [_rotationGestureRecognizer setShouldBeArchived:NO];
+#endif
 }
 
 - (void)enableGestureIfNeeded:(NSGestureRecognizer *)gesture
@@ -451,6 +502,14 @@ static NSString *gestureLogDescription(NSGestureRecognizer *gesture)
 
     if (gesture == _imageAnalysisGestureRecognizer)
         gestureEnabled = gestureEnabled && WebKit::isLiveTextAvailableAndEnabled();
+
+    bool gestureEventRecognizersEnabled = gestureEnabled && protect([webView _protectedPage]->preferences())->useAppKitGesturesForGestureEvents();
+    if (gesture == _magnificationGestureRecognizer)
+        gestureEnabled = gestureEventRecognizersEnabled;
+#if ENABLE(MAC_GESTURE_EVENTS)
+    if (gesture == _rotationGestureRecognizer)
+        gestureEnabled = gestureEventRecognizersEnabled;
+#endif
 
     WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG([webView _protectedPage]->logIdentifier(), "%@ setEnabled:%d", gestureLogDescription(gesture), static_cast<int>(gestureEnabled));
     [gesture setEnabled:gestureEnabled];
@@ -1375,7 +1434,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     auto wheelTicks { gestureDelta.scaled(1. / static_cast<float>(WebCore::Scrollbar::pixelsPerLineStep())) };
     auto granularity = WebKit::WebWheelEvent::Granularity::ScrollByPixelWheelEvent;
     bool directionInvertedFromDevice = false;
-    auto phase = toWheelEventPhase(gesture.state);
+    auto phase = toWebEventPhase(gesture.state);
     auto momentumPhase = WebKit::WebWheelEvent::Phase::None;
     bool hasPreciseScrollingDeltas = true;
     uint32_t scrollCount = 1;
@@ -1530,6 +1589,102 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     _suppressNextPanScrollDelta = false;
 }
 
+#pragma mark - Magnification and Rotation
+
+- (double)currentMagnification:(double)magnification atPhase:(WebKit::WebEventPhase)phase
+{
+    using enum WebKit::WebEventPhase;
+    if (phase == Began)
+        _lastCumulativeMagnification = 0;
+    auto currentMagnification = magnification - _lastCumulativeMagnification;
+    _lastCumulativeMagnification = magnification;
+    return currentMagnification;
+}
+
+#if ENABLE(MAC_GESTURE_EVENTS)
+- (double)currentRotation:(double)rotation atPhase:(WebKit::WebEventPhase)phase
+{
+    using enum WebKit::WebEventPhase;
+    if (phase == Began)
+        _lastCumulativeRotation = 0;
+    auto currentRotation = rotation - _lastCumulativeRotation;
+    _lastCumulativeRotation = rotation;
+    return currentRotation;
+}
+#endif
+
+- (void)magnificationGestureRecognized:(NSMagnificationGestureRecognizer *)gesture
+{
+    RetainPtr webView = _view.get();
+    if (!webView)
+        return;
+
+    auto phase = toWebEventPhase(gesture.state);
+    auto magnification = [self currentMagnification:gesture.magnification atPhase:phase];
+
+    WebKit::NativeWebGestureEvent::Init init {
+        .kind = WebKit::NativeWebGestureEvent::Kind::Magnification,
+        .phase = phase,
+        .locationInWindow = WebCore::FloatPoint { [gesture locationInView:nil] },
+        .gestureScale = static_cast<float>(magnification),
+        .gestureRotation = 0,
+        .timestamp = MonotonicTime::fromRawSeconds(GetCurrentEventTime()),
+        .allowsNativeZoom = [self magnificationGestureRecognizerCanZoom]
+    };
+    auto webEvent = WebKit::NativeWebGestureEvent::create(init, webView.getAutoreleased());
+
+    CheckedPtr viewImpl = [webView _impl];
+    RefPtr page = [webView _protectedPage];
+    if (!viewImpl->allowsMagnification()) {
+#if ENABLE(MAC_GESTURE_EVENTS)
+        if (webEvent)
+            page->handleGestureEvent(*webEvent);
+#endif
+        return;
+    }
+
+    if (phase == WebKit::WebEventPhase::Began)
+        viewImpl->dismissContentRelativeChildWindowsWithAnimation(false);
+
+    Ref gestureController = viewImpl->ensureGestureController();
+
+#if ENABLE(MAC_GESTURE_EVENTS)
+    if (gestureController->hasActiveMagnificationGesture()) {
+        gestureController->handleMagnificationGesture(magnification, phase, webEvent ? webEvent->position() : WebCore::FloatPoint { });
+        return;
+    }
+
+    if (webEvent)
+        page->handleGestureEvent(*webEvent);
+#else
+    gestureController->handleMagnificationGesture(magnification, phase, webEvent ? webEvent->position() : WebCore::FloatPoint { });
+#endif
+}
+
+#if ENABLE(MAC_GESTURE_EVENTS)
+
+- (void)rotationGestureRecognized:(NSRotationGestureRecognizer *)gesture
+{
+    RetainPtr webView = _view.get();
+    if (!webView)
+        return;
+
+    auto phase = toWebEventPhase(gesture.state);
+
+    WebKit::NativeWebGestureEvent::Init init {
+        .kind = WebKit::NativeWebGestureEvent::Kind::Rotation,
+        .phase = phase,
+        .locationInWindow = WebCore::FloatPoint { [gesture locationInView:nil] },
+        .gestureScale = 0,
+        .gestureRotation = static_cast<float>([self currentRotation:gesture.rotationInDegrees atPhase:phase]),
+        .timestamp = MonotonicTime::fromRawSeconds(GetCurrentEventTime())
+    };
+    if (auto webEvent = WebKit::NativeWebGestureEvent::create(init, webView.getAutoreleased()))
+        [webView _protectedPage]->handleGestureEvent(*webEvent);
+}
+
+#endif
+
 #pragma mark - Drag Gesture State
 
 - (NSGestureRecognizer *)activeDragGestureRecognizer
@@ -1601,6 +1756,11 @@ static BOOL isBuiltInScrollViewPanGestureRecognizer(NSGestureRecognizer *recogni
     return [recognizer isKindOfClass:scrollViewPanGestureClass];
 }
 
+static inline bool isBuiltInScrollViewMagnificationGestureRecognizer(NSGestureRecognizer *gesture)
+{
+    return [gesture isKindOfClass:NSMagnificationGestureRecognizer.class] && gesture._isScrollGestureRecognizer;
+}
+
 static inline bool isSamePair(NSGestureRecognizer *a, NSGestureRecognizer *b, NSGestureRecognizer *x, NSGestureRecognizer *y)
 {
     return (a == x && b == y) || (b == x && a == y);
@@ -1616,6 +1776,17 @@ static inline bool isSamePair(NSGestureRecognizer *a, NSGestureRecognizer *b, NS
 
     if (isSamePair(gestureRecognizer, otherGestureRecognizer, _singleClickGestureRecognizer.get(), _panGestureRecognizer.get()))
         return YES;
+
+    if (isSamePair(gestureRecognizer, otherGestureRecognizer, _magnificationGestureRecognizer.get(), _panGestureRecognizer.get()))
+        return YES;
+
+#if ENABLE(MAC_GESTURE_EVENTS)
+    if (isSamePair(gestureRecognizer, otherGestureRecognizer, _rotationGestureRecognizer.get(), _panGestureRecognizer.get()))
+        return YES;
+
+    if (isSamePair(gestureRecognizer, otherGestureRecognizer, _magnificationGestureRecognizer.get(), _rotationGestureRecognizer.get()))
+        return YES;
+#endif
 
     if ([gestureRecognizer isKindOfClass:WKDeferringGestureRecognizer.class] || [otherGestureRecognizer isKindOfClass:WKDeferringGestureRecognizer.class])
         return YES;
@@ -1759,9 +1930,13 @@ static inline bool isSamePair(NSGestureRecognizer *a, NSGestureRecognizer *b, NS
     return YES;
 }
 
-- (BOOL)_isScrollOrZoomGestureRecognizer:(NSGestureRecognizer *)gesture
+- (BOOL)_isSomeManipulationGestureRecognizer:(NSGestureRecognizer *)gesture
 {
-    return gesture == _panGestureRecognizer || isBuiltInScrollViewPanGestureRecognizer(gesture) || [gesture isKindOfClass:[NSMagnificationGestureRecognizer class]];
+    return gesture == _panGestureRecognizer
+        || isBuiltInScrollViewPanGestureRecognizer(gesture)
+        || gesture == _magnificationGestureRecognizer
+        || isBuiltInScrollViewMagnificationGestureRecognizer(gesture)
+        || gesture == _rotationGestureRecognizer;
 }
 
 - (BOOL)_gestureRecognizer:(NSGestureRecognizer *)preventingGestureRecognizer canPreventGestureRecognizer:(NSGestureRecognizer *)preventedGestureRecognizer
@@ -1775,7 +1950,7 @@ static inline bool isSamePair(NSGestureRecognizer *a, NSGestureRecognizer *b, NS
     // None of our gesture recognizers may prevent an enclosing scroll view's pan (or any other
     // scroll/zoom) gesture, so that a scroll can always be handed off to the enclosing scroll view
     // e.g. a scroll over a draggable <img> in a non-scrollable web view.
-    if ([self _isScrollOrZoomGestureRecognizer:preventedGestureRecognizer])
+    if ([self _isSomeManipulationGestureRecognizer:preventedGestureRecognizer])
         return NO;
 
     // Live Text (see the Image Analysis design note): the preflight is a passive observer, so it prevents

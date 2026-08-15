@@ -5826,7 +5826,7 @@ void WebViewImpl::gestureEventWasNotHandledByWebCore(const NativeWebGestureEvent
         return;
     }
 
-    if (event.kind() != NativeWebGestureEvent::Kind::Magnification)
+    if (event.kind() != NativeWebGestureEvent::Kind::Magnification || !event.allowsNativeZoom())
         return;
 
     magnificationGestureWasNotHandledByWebCoreFromViewOnly(event.gestureScale(), event.phase(), event.position());

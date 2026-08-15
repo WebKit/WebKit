@@ -273,6 +273,10 @@ NS_HEADER_AUDIT_BEGIN(nullability, sendability)
 
 NS_HEADER_AUDIT_END(nullability, sendability)
 
+@interface NSGestureRecognizer (IPI)
+@property (setter=_setIsScrollGestureRecognizer:) BOOL _isScrollGestureRecognizer;
+@end
+
 #endif // HAVE(APPKIT_GESTURES_SUPPORT)
 
 #if HAVE(NSREFRESHCONTROLLER)

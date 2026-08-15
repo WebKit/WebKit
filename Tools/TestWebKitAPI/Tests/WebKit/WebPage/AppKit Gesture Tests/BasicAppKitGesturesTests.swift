@@ -1427,6 +1427,8 @@ extension AppKitGesturesTests.Basic {
         .bug("https://webkit.org/b/321650", "Certain diagonal scrolls should be able to bypass directional locking")
     )
     func diagonallySwipingBetweenSpacesScrollsBothAxes() async throws {
+        page.setWebFeature("UseAppKitGesturesForGestureEvents", enabled: true)
+
         try await loadScrollableGrid()
         await page.waitForNextPresentationUpdate()
 
