@@ -71,6 +71,7 @@ ALWAYS_INLINE unsigned UnlinkedMetadataTable::addEntry(OpcodeID opcodeID)
 ALWAYS_INLINE unsigned UnlinkedMetadataTable::addValueProfile()
 {
     ASSERT(!m_isFinalized);
+    RELEASE_ASSERT(m_numValueProfiles < s_maxNumValueProfiles);
     m_hasMetadata = true;
     // Preinecrement because we want the first value profile's offset to be 1, since it's negative indexed.
     return ++m_numValueProfiles;

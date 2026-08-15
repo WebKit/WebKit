@@ -98,8 +98,8 @@ public:
 
     unsigned numValueProfiles() const { return m_numValueProfiles; }
 
-    TriState didOptimize() const { return m_didOptimize; }
-    void setDidOptimize(TriState didOptimize) { m_didOptimize = didOptimize; }
+    TriState didOptimize() const { return static_cast<TriState>(m_didOptimize); }
+    void setDidOptimize(TriState didOptimize) { m_didOptimize = static_cast<unsigned>(didOptimize); }
 
 private:
     enum EmptyTag { Empty };
@@ -165,12 +165,15 @@ private:
         return std::bit_cast<Offset32*>(m_rawBuffer + m_numValueProfiles * sizeof(ValueProfile) + sizeof(LinkingData) + s_offset16TableSize);
     }
 
-    bool m_hasMetadata : 1;
-    bool m_isFinalized : 1;
-    bool m_isLinked : 1;
-    bool m_is32Bit : 1;
-    TriState m_didOptimize : 2 { TriState::Indeterminate };
-    unsigned m_numValueProfiles { 0 };
+    static constexpr unsigned s_numValueProfilesBits = 26;
+    static constexpr unsigned s_maxNumValueProfiles = (1U << s_numValueProfilesBits) - 1;
+
+    unsigned m_hasMetadata : 1;
+    unsigned m_isFinalized : 1;
+    unsigned m_isLinked : 1;
+    unsigned m_is32Bit : 1;
+    unsigned m_didOptimize : 2 { static_cast<unsigned>(TriState::Indeterminate) };
+    unsigned m_numValueProfiles : s_numValueProfilesBits { 0 };
     uint8_t* m_rawBuffer;
 };
 
