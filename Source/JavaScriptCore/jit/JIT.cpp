@@ -925,10 +925,8 @@ RefPtr<BaselineJITCode> JIT::link(LinkBuffer& patchBuffer)
 #endif
 
     auto finalizeICs = [&] (auto& generators) {
-        for (auto& gen : generators) {
+        for (auto& gen : generators)
             gen.m_unlinkedPropertyCache->doneLocation = patchBuffer.locationOf<JSInternalPtrTag>(gen.m_done);
-            gen.m_unlinkedPropertyCache->slowPathStartLocation = patchBuffer.locationOf<JITStubRoutinePtrTag>(gen.m_slowPathBegin);
-        }
     };
 
     finalizeICs(m_getByIds);

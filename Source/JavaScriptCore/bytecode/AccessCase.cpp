@@ -233,9 +233,9 @@ RefPtr<AccessCase> AccessCase::createTransition(
         // 1 register for the base.
         ++requiredRegisters;
 
-        if (propertyCache.m_propertyCacheGPR != InvalidGPRReg)
+        if (propertyCache.propertyCacheGPR() != InvalidGPRReg)
             ++requiredRegisters;
-        if (propertyCache.m_arrayProfileGPR != InvalidGPRReg)
+        if (propertyCache.arrayProfileGPR() != InvalidGPRReg)
             ++requiredRegisters;
 
         // One extra register for scratchGPR

@@ -427,7 +427,6 @@ void JIT::emitSlowIteratorOpenGeneric(const JSInstruction*, Vector<SlowCaseEntry
 
     JITGetByIdGenerator& gen = m_getByIds[m_getByIdIndex++];
     gen.generateDataICSlowPath(*this);
-    gen.reportBaselineDataICSlowPathBegin(label());
     nearCallThunk(CodeLocationLabel { InlineCacheCompiler::generateSlowPathCode(vm(), gen.accessType()).retaggedCode<NoPtrTag>() });
     static_assert(BaselineJITRegisters::GetById::resultJSR == returnValueJSR);
     jump().linkTo(fastPathResumePoint(), this);
@@ -570,7 +569,6 @@ void JIT::emitSlow_op_iterator_next(const JSInstruction*, Vector<SlowCaseEntry>:
     {
         JITGetByIdGenerator& gen = m_getByIds[m_getByIdIndex++];
         gen.generateDataICSlowPath(*this);
-        gen.reportBaselineDataICSlowPathBegin(label());
         nearCallThunk(CodeLocationLabel { InlineCacheCompiler::generateSlowPathCode(vm(), gen.accessType()).retaggedCode<NoPtrTag>() });
         static_assert(BaselineJITRegisters::GetById::resultJSR == returnValueJSR);
         emitJumpSlowToHotForCheckpoint(jump());
@@ -580,7 +578,6 @@ void JIT::emitSlow_op_iterator_next(const JSInstruction*, Vector<SlowCaseEntry>:
         linkAllSlowCases(iter);
         JITGetByIdGenerator& gen = m_getByIds[m_getByIdIndex++];
         gen.generateDataICSlowPath(*this);
-        gen.reportBaselineDataICSlowPathBegin(label());
         nearCallThunk(CodeLocationLabel { InlineCacheCompiler::generateSlowPathCode(vm(), gen.accessType()).retaggedCode<NoPtrTag>() });
         static_assert(BaselineJITRegisters::GetById::resultJSR == returnValueJSR);
     }
@@ -763,7 +760,6 @@ void JIT::emitSlow_op_instanceof(const JSInstruction* instruction, Vector<SlowCa
     {
         JITGetByIdGenerator& gen = m_getByIds[m_getByIdIndex++];
         gen.generateDataICSlowPath(*this);
-        gen.reportBaselineDataICSlowPathBegin(label());
         nearCallThunk(CodeLocationLabel { InlineCacheCompiler::generateSlowPathCode(vm(), gen.accessType()).retaggedCode<NoPtrTag>() });
         static_assert(GetById::resultJSR == returnValueJSR);
         emitJumpSlowToHotForCheckpoint(jump());
@@ -788,7 +784,6 @@ void JIT::emitSlow_op_instanceof(const JSInstruction* instruction, Vector<SlowCa
     {
         JITGetByIdGenerator& gen = m_getByIds[m_getByIdIndex++];
         gen.generateDataICSlowPath(*this);
-        gen.reportBaselineDataICSlowPathBegin(label());
         nearCallThunk(CodeLocationLabel { InlineCacheCompiler::generateSlowPathCode(vm(), gen.accessType()).retaggedCode<NoPtrTag>() });
         static_assert(GetById::resultJSR == returnValueJSR);
         emitJumpSlowToHotForCheckpoint(jump());
@@ -798,7 +793,6 @@ void JIT::emitSlow_op_instanceof(const JSInstruction* instruction, Vector<SlowCa
     linkAllSlowCases(iter);
     {
         JITInstanceOfGenerator& gen = m_instanceOfs[m_instanceOfIndex++];
-        gen.reportBaselineDataICSlowPathBegin(label());
         nearCallThunk(CodeLocationLabel { InlineCacheCompiler::generateSlowPathCode(vm(), gen.accessType()).retaggedCode<NoPtrTag>() });
     }
 

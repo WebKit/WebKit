@@ -89,7 +89,7 @@ void JITInlineCacheGenerator::finalize(
     repatchingIC.startLocation = start;
     m_propertyCache->doneLocation = fastPath.locationOf<JSInternalPtrTag>(m_done);
     repatchingIC.m_slowPathCallLocation = slowPath.locationOf<JSInternalPtrTag>(m_slowPathCall);
-    m_propertyCache->slowPathStartLocation = slowPath.locationOf<JITStubRoutinePtrTag>(m_slowPathBegin);
+    repatchingIC.slowPathStartLocation = slowPath.locationOf<JITStubRoutinePtrTag>(m_slowPathBegin);
 }
 
 void JITInlineCacheGenerator::generateDataICFastPath(CCallHelpers& jit, GPRReg propertyCacheGPR)

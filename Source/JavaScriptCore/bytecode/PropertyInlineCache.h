@@ -146,8 +146,6 @@ public:
     void deref();
     void aboutToDie();
 
-    void NODELETE initializePredefinedRegisters();
-
     DECLARE_VISIT_AGGREGATE;
 
     // Check if the stub has weak references that are dead. If it does, then it resets itself,
@@ -165,23 +163,9 @@ public:
 
     bool NODELETE containsPC(void* pc) const;
 
-    JSValueRegs valueRegs() const
-    {
-        return JSValueRegs(
-            m_valueGPR);
-    }
-
-    JSValueRegs propertyRegs() const
-    {
-        return JSValueRegs(
-            propertyGPR());
-    }
-
-    JSValueRegs baseRegs() const
-    {
-        return JSValueRegs(
-            m_baseGPR);
-    }
+    JSValueRegs valueRegs() const { return JSValueRegs(valueGPR()); }
+    JSValueRegs propertyRegs() const { return JSValueRegs(propertyGPR()); }
+    JSValueRegs baseRegs() const { return JSValueRegs(baseGPR()); }
 
     bool thisValueIsInExtraGPR() const { return accessType == AccessType::GetByIdWithThis || accessType == AccessType::GetByValWithThis; }
 
@@ -369,7 +353,6 @@ public:
     static constexpr ptrdiff_t offsetOfDoneLocation() { return OBJECT_OFFSETOF(PropertyInlineCache, doneLocation); }
     static constexpr ptrdiff_t offsetOfCountdown() { return OBJECT_OFFSETOF(PropertyInlineCache, countdown); }
     static constexpr ptrdiff_t offsetOfCallSiteIndex() { return OBJECT_OFFSETOF(PropertyInlineCache, callSiteIndex); }
-    static constexpr ptrdiff_t offsetOfSlowPathStartLocation() { return OBJECT_OFFSETOF(PropertyInlineCache, slowPathStartLocation); }
     static constexpr ptrdiff_t offsetOfHandler() { return OBJECT_OFFSETOF(PropertyInlineCache, m_handler); }
     static constexpr ptrdiff_t offsetOfGlobalObject() { return OBJECT_OFFSETOF(PropertyInlineCache, m_globalObject); }
 
@@ -378,21 +361,37 @@ public:
     JSGlobalObject* globalObject() const { return m_globalObject; }
 
     inline ScalarRegisterSet usedRegisters() const;
-    inline void setUsedRegisters(ScalarRegisterSet);
-    inline void removeUsedRegister(GPRReg);
+
+    struct Registers {
+        GPRReg baseGPR { InvalidGPRReg };
+        GPRReg valueGPR { InvalidGPRReg };
+        GPRReg extraGPR { InvalidGPRReg };
+        GPRReg extra2GPR { InvalidGPRReg };
+        GPRReg propertyCacheGPR { InvalidGPRReg };
+        GPRReg arrayProfileGPR { InvalidGPRReg };
+    };
+
+    Registers registers() const;
+
+    GPRReg baseGPR() const { return registers().baseGPR; }
+    GPRReg valueGPR() const { return registers().valueGPR; }
+    GPRReg extraGPR() const { return registers().extraGPR; }
+    GPRReg extra2GPR() const { return registers().extra2GPR; }
+    GPRReg propertyCacheGPR() const { return registers().propertyCacheGPR; }
+    GPRReg arrayProfileGPR() const { return registers().arrayProfileGPR; }
 
     void resetStubAsJumpInAccess(CodeBlock*);
 
-    GPRReg thisGPR() const { return m_extraGPR; }
-    GPRReg prototypeGPR() const { return m_extraGPR; }
-    GPRReg brandGPR() const { return m_extraGPR; }
+    GPRReg thisGPR() const { return extraGPR(); }
+    GPRReg prototypeGPR() const { return extraGPR(); }
+    GPRReg brandGPR() const { return extraGPR(); }
     GPRReg propertyGPR() const
     {
         switch (accessType) {
         case AccessType::GetByValWithThis:
-            return m_extra2GPR;
+            return extra2GPR();
         default:
-            return m_extraGPR;
+            return extraGPR();
         }
     }
 
@@ -402,7 +401,6 @@ public:
     JSCell* m_inlineHolder { nullptr };
     CacheableIdentifier m_identifier;
     CodeLocationLabel<JSInternalPtrTag> doneLocation;
-    CodeLocationLabel<JITStubRoutinePtrTag> slowPathStartLocation;
 
     JSGlobalObject* m_globalObject { nullptr };
 private:
@@ -418,14 +416,6 @@ private:
 public:
 
     CallSiteIndex callSiteIndex;
-
-    // FIXME: These should only be needed by the repatching ICs but it's slightly non-trivial to move them there as different AccessTypes use different pinned registers.
-    GPRReg m_baseGPR { InvalidGPRReg };
-    GPRReg m_valueGPR { InvalidGPRReg };
-    GPRReg m_extraGPR { InvalidGPRReg };
-    GPRReg m_extra2GPR { InvalidGPRReg };
-    GPRReg m_propertyCacheGPR { InvalidGPRReg };
-    GPRReg m_arrayProfileGPR { InvalidGPRReg };
 
     AccessType accessType { AccessType::GetById };
 protected:
@@ -659,10 +649,12 @@ public:
 
     // This is either the start of the inline IC for *byId caches, or the location of patchable jump for 'instanceof' caches.
     CodeLocationLabel<JITStubRoutinePtrTag> startLocation;
+    CodeLocationLabel<JITStubRoutinePtrTag> slowPathStartLocation;
     CodeLocationCall<JSInternalPtrTag> m_slowPathCallLocation;
     std::unique_ptr<PolymorphicAccess> m_stub;
 
     ScalarRegisterSet m_usedRegisters;
+    Registers m_registers;
 
     uint32_t inlineCodeSize() const
     {
@@ -677,18 +669,6 @@ inline ScalarRegisterSet PropertyInlineCache::usedRegisters() const
     if (auto* repatching = dynamicDowncast<RepatchingPropertyInlineCache>(*this))
         return repatching->m_usedRegisters;
     return RegisterSet::stubUnavailableRegisters().toScalarRegisterSet();
-}
-
-inline void PropertyInlineCache::setUsedRegisters(ScalarRegisterSet value)
-{
-    ASSERT(is<RepatchingPropertyInlineCache>(*this));
-    downcast<RepatchingPropertyInlineCache>(*this).m_usedRegisters = value;
-}
-
-inline void PropertyInlineCache::removeUsedRegister(GPRReg reg)
-{
-    ASSERT(is<RepatchingPropertyInlineCache>(*this));
-    downcast<RepatchingPropertyInlineCache>(*this).m_usedRegisters.remove(reg);
 }
 
 inline auto appropriateGetByIdOptimizeFunction(AccessType type) -> decltype(&operationGetByIdOptimize)
@@ -795,7 +775,6 @@ struct UnlinkedPropertyInlineCache {
     bool canBeMegamorphic : 1 { false };
     CacheableIdentifier m_identifier; // This only comes from already marked one. Thus, we do not mark it via GC.
     CodeLocationLabel<JSInternalPtrTag> doneLocation;
-    CodeLocationLabel<JITStubRoutinePtrTag> slowPathStartLocation;
 };
 
 struct BaselineUnlinkedPropertyInlineCache : JSC::UnlinkedPropertyInlineCache {
