@@ -81,6 +81,7 @@
 #include "CSSNamedImageValue.h"
 #include "CSSOffsetRotateValue.h"
 #include "CSSPaintImageValue.h"
+#include "CSSParamValue.h"
 #include "CSSPathValue.h"
 #include "CSSPositionValue.h"
 #include "CSSPrimitiveValue.h"
@@ -228,6 +229,8 @@ template<typename Visitor> constexpr decltype(auto) CSSValue::visitDerived(Visit
         return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<CSSOffsetRotateValue>(*this));
     case PaintImage:
         return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<CSSPaintImageValue>(*this));
+    case Param:
+        return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<CSSParamValue>(*this));
     case Path:
         return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<CSSPathValue>(*this));
     case ShorthandSubstitution:

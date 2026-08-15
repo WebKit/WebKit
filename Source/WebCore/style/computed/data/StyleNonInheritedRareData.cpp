@@ -74,6 +74,7 @@ NonInheritedRareData::NonInheritedRareData()
     , portalTransform(CSS::Keyword::Auto { })
 #endif
     , containerNames(ComputedStyle::initialContainerNames())
+    , linkParameters(ComputedStyle::initialLinkParameters())
     , viewTransitionClasses(ComputedStyle::initialViewTransitionClasses())
     , viewTransitionName(ComputedStyle::initialViewTransitionName())
     , columnGap(ComputedStyle::initialColumnGap())
@@ -188,6 +189,7 @@ inline NonInheritedRareData::NonInheritedRareData(const NonInheritedRareData& o)
     , translate(o.translate)
     , portalTransform(o.portalTransform)
     , containerNames(o.containerNames)
+    , linkParameters(o.linkParameters)
     , viewTransitionClasses(o.viewTransitionClasses)
     , viewTransitionName(o.viewTransitionName)
     , columnGap(o.columnGap)
@@ -310,6 +312,7 @@ bool NonInheritedRareData::operator==(const NonInheritedRareData& o) const
         && translate == o.translate
         && portalTransform == o.portalTransform
         && containerNames == o.containerNames
+        && linkParameters == o.linkParameters
         && columnGap == o.columnGap
         && rowGap == o.rowGap
         && offsetPath == o.offsetPath
@@ -453,6 +456,7 @@ void NonInheritedRareData::dumpDifferences(TextStream& ts, const NonInheritedRar
     LOG_IF_DIFFERENT(portalTransform);
 
     LOG_IF_DIFFERENT(containerNames);
+    LOG_IF_DIFFERENT(linkParameters);
 
     LOG_IF_DIFFERENT(viewTransitionClasses);
     LOG_IF_DIFFERENT(viewTransitionName);

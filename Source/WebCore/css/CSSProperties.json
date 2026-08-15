@@ -5524,6 +5524,24 @@
                 "url": "https://www.w3.org/TR/css-inline-3/#line-height-property"
             }
         },
+        "link-parameters": {
+            "animation-type": "discrete",
+            "initial": "none",
+            "values": [
+                "none"
+            ],
+            "codegen-properties": {
+                "settings-flag": "cssLinkParametersEnabled",
+                "computed-style-storage-path": ["m_nonInheritedData", "rareData"],
+                "computed-style-storage-kind": "reference",
+                "computed-style-type": "Style::LinkParameters",
+                "parser-grammar": "none | <param()>#"
+            },
+            "specification": {
+                "category": "css-link-params",
+                "url": "https://drafts.csswg.org/css-link-params/#propdef-link-parameters"
+            }
+        },
         "list-style": {
             "inherited": true,
             "codegen-properties": {
@@ -14502,6 +14520,11 @@
             "longname": "CSS Line Grid Module",
             "url": "https://www.w3.org/TR/css-line-grid-1/"
         },
+        "css-link-params": {
+            "shortname": "CSS Linked Parameters",
+            "longname": "CSS Linked Parameters Module",
+            "url": "https://drafts.csswg.org/css-link-params/"
+        },
         "css-lists": {
             "shortname": "CSS Lists and Counters",
             "longname": "CSS Lists and Counters Module",
@@ -15852,6 +15875,15 @@
             "specification": {
                 "category": "css-fonts-4",
                 "url": "https://drafts.csswg.org/css-fonts-4/#feature-value-name-value"
+            }
+        },
+        "<param()>": {
+            "grammar-unused": "param( <dashed-ident> , <declaration-value>? )",
+            "grammar-unused-reason": "Needs support for an optional <declaration-value> whose preceding comma is still required.",
+            "grammar-function": "consumeParamFunction",
+            "specification": {
+                "category": "css-link-params",
+                "url": "https://drafts.csswg.org/css-link-params/#funcdef-param"
             }
         }
     }

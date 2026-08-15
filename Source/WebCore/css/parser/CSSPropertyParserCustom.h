@@ -69,6 +69,7 @@
 #include "CSSPropertyParserConsumer+IntegerDefinitions.h"
 #include "CSSPropertyParserConsumer+LengthDefinitions.h"
 #include "CSSPropertyParserConsumer+LengthPercentageDefinitions.h"
+#include "CSSPropertyParserConsumer+LinkParameters.h"
 #include "CSSPropertyParserConsumer+List.h"
 #include "CSSPropertyParserConsumer+Lists.h"
 #include "CSSPropertyParserConsumer+Masking.h"

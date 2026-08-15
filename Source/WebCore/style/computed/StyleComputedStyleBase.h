@@ -287,6 +287,7 @@ struct LetterSpacing;
 struct LineHeight;
 struct LineWidth;
 struct LineFitEdge;
+struct LinkParameters;
 struct ListStyleType;
 struct MarginEdge;
 struct MarginTrim;

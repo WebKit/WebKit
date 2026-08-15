@@ -123,6 +123,7 @@ public:
     bool isOffsetRotateValue() const { return m_classType == ClassType::OffsetRotate; }
     bool isPaintImageValue() const { return m_classType == ClassType::PaintImage; }
     bool isPair() const { return m_classType == ClassType::ValuePair; }
+    bool isParamValue() const { return m_classType == ClassType::Param; }
     bool isPath() const { return m_classType == ClassType::Path; }
     bool isShorthandSubstitutionValue() const { return m_classType == ClassType::ShorthandSubstitution; }
     bool isPositionValue() const { return m_classType == ClassType::Position; }
@@ -251,6 +252,7 @@ protected:
         MaskBorderSource,
         MaskBorderWidth,
         OffsetRotate,
+        Param,
         Path,
         ShorthandSubstitution,
         Position,

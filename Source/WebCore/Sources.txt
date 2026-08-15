@@ -1025,6 +1025,7 @@ css/CSSOffsetRotateValue.cpp
 css/CSSPageDescriptors.cpp
 css/CSSPageRule.cpp
 css/CSSPaintImageValue.cpp
+css/CSSParamValue.cpp
 css/CSSPathValue.cpp
 css/CSSShorthandSubstitutionValue.cpp
 css/CSSPositionTryDescriptors.cpp
@@ -1145,6 +1146,7 @@ css/parser/CSSPropertyParserConsumer+Grid.cpp
 css/parser/CSSPropertyParserConsumer+Ident.cpp
 css/parser/CSSPropertyParserConsumer+Image.cpp
 css/parser/CSSPropertyParserConsumer+Inline.cpp
+css/parser/CSSPropertyParserConsumer+LinkParameters.cpp
 css/parser/CSSPropertyParserConsumer+Lists.cpp
 css/parser/CSSPropertyParserConsumer+Masking.cpp
 css/parser/CSSPropertyParserConsumer+Motion.cpp
@@ -1282,6 +1284,7 @@ css/values/masking/CSSMaskBorder.cpp
 css/values/motion/CSSRayFunction.cpp
 css/values/non-standard/CSSWebkitBoxReflect.cpp
 css/values/primitives/CSSCustomIdent.cpp
+css/values/primitives/CSSDeclarationValue.cpp
 css/values/primitives/CSSKeyword.cpp
 css/values/primitives/CSSPosition.cpp
 css/values/primitives/CSSPrimitiveNumericCategory.cpp
@@ -3490,6 +3493,7 @@ style/values/images/StyleObjectViewBox.cpp
 style/values/inline/StyleLineHeight.cpp @header:RenderStyleGetters @cost:5
 style/values/inline/StyleVerticalAlign.cpp
 style/values/inline/StyleWebKitInitialLetter.cpp
+style/values/link-params/StyleLinkParameters.cpp
 style/values/lists/StyleCounterIncrement.cpp
 style/values/lists/StyleCounterReset.cpp
 style/values/lists/StyleCounterSet.cpp
@@ -3523,6 +3527,7 @@ style/values/overflow/StyleOverflowClipMargin.cpp
 style/values/page/StylePageSize.cpp
 style/values/pointerevents/StyleTouchAction.cpp
 style/values/primitives/StyleCustomIdent.cpp
+style/values/primitives/StyleDeclarationValue.cpp
 style/values/primitives/StyleLengthResolution.cpp @header:RenderStyleGetters @cost:6
 style/values/primitives/StylePosition.cpp
 style/values/primitives/StylePrimitiveData.cpp

@@ -1211,9 +1211,12 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     css/values/images/CSSGradient.h
 
+    css/values/link-params/CSSLinkParameter.h
+
     css/values/motion/CSSRayFunction.h
 
     css/values/primitives/CSSCustomIdent.h
+    css/values/primitives/CSSDeclarationValue.h
     css/values/primitives/CSSKeyword.h
     css/values/primitives/CSSKeywordList.h
     css/values/primitives/CSSPosition.h
@@ -3372,6 +3375,8 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     style/values/line-grid/StyleWebKitLineGrid.h
 
+    style/values/link-params/StyleLinkParameters.h
+
     style/values/lists/StyleCounterIncrement.h
     style/values/lists/StyleCounterReset.h
     style/values/lists/StyleCounterSet.h
@@ -3428,6 +3433,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     style/values/position/StyleInset.h
 
     style/values/primitives/StyleCustomIdent.h
+    style/values/primitives/StyleDeclarationValue.h
     style/values/primitives/StyleCoordinatedValueList.h
     style/values/primitives/StyleCoordinatedValueListValue.h
     style/values/primitives/StylePosition.h

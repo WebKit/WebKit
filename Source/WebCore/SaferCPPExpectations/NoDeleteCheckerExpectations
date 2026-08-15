@@ -1,3 +1,4 @@
+css/DOMMatrixReadOnly.cpp
 dom/Document.cpp
 dom/FragmentDirectiveRangeFinder.cpp
 dom/UserGestureIndicator.cpp

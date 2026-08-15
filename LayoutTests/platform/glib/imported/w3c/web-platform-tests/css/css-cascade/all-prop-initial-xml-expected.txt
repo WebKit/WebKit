@@ -204,6 +204,7 @@ PASS letter-spacing
 PASS lighting-color
 PASS line-break
 PASS line-height
+PASS link-parameters
 PASS list-style-image
 PASS list-style-position
 PASS list-style-type

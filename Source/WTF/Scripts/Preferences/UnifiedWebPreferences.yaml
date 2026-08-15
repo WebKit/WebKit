@@ -1399,6 +1399,20 @@ CSSLineFitEdgeEnabled:
     WebCore:
       default: false
 
+CSSLinkParametersEnabled:
+  type: bool
+  status: testable
+  category: css
+  humanReadableName: "CSS Linked Parameters"
+  humanReadableDescription: "Enable passing CSS link parameters to linked resources"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 CSSMarkerContentEnabled:
   type: bool
   status: stable

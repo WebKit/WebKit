@@ -40,6 +40,7 @@
 #include <WebCore/StyleCounterReset.h>
 #include <WebCore/StyleCounterSet.h>
 #include <WebCore/StyleGapGutter.h>
+#include <WebCore/StyleLinkParameters.h>
 #include <WebCore/StyleMarginTrim.h>
 #include <WebCore/StyleMaskBorder.h>
 #include <WebCore/StyleMaximumLines.h>
@@ -172,6 +173,8 @@ public:
     PortalTransform portalTransform;
 
     ContainerNames containerNames;
+
+    LinkParameters linkParameters;
 
     ViewTransitionClasses viewTransitionClasses;
     ViewTransitionName viewTransitionName;
