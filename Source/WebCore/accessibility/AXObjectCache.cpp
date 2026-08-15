@@ -3165,7 +3165,7 @@ void AXObjectCache::onStyleChange(RenderText& renderText, Style::Difference diff
     if (oldStyle->visitedDependentBackgroundColor() != newStyle.visitedDependentBackgroundColor())
         tree->queueNodeUpdate(object->objectID(), { AXProperty::BackgroundColor });
 
-    if (oldStyle->verticalAlign() != newStyle.verticalAlign())
+    if (oldStyle->alignmentBaseline() != newStyle.alignmentBaseline() || oldStyle->baselineShift() != newStyle.baselineShift())
         tree->queueNodeUpdate(object->objectID(), { { AXProperty::IsSuperscript, AXProperty::IsSubscript } });
 
     if (oldStyle->textShadow().isNone() != newStyle.textShadow().isNone())

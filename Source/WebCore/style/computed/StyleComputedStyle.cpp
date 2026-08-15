@@ -737,11 +737,6 @@ SpeakAs speakAs(const ComputedStyle& style)
     return style.speakAs();
 }
 
-const VerticalAlign& verticalAlign(const ComputedStyle& style)
-{
-    return style.verticalAlign();
-}
-
 const TextShadows& textShadow(const ComputedStyle& style)
 {
     return style.textShadow();

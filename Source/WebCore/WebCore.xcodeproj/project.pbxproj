@@ -5131,7 +5131,7 @@
 		BC22AA662E357BBA009AC0C3 /* StyleSVGStrokeDashoffset.h in Headers */ = {isa = PBXBuildFile; fileRef = BC22AA652E357BBA009AC0C3 /* StyleSVGStrokeDashoffset.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC22AA6A2E357D38009AC0C3 /* StyleSVGStrokeDasharray.h in Headers */ = {isa = PBXBuildFile; fileRef = BC22AA692E357D38009AC0C3 /* StyleSVGStrokeDasharray.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC22AA6E2E35C74C009AC0C3 /* StyleSVGBaselineShift.h in Headers */ = {isa = PBXBuildFile; fileRef = BC22AA6D2E359F42009AC0C3 /* StyleSVGBaselineShift.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		BC22AA812E367D83009AC0C3 /* StyleVerticalAlign.h in Headers */ = {isa = PBXBuildFile; fileRef = BC22AA7F2E367D83009AC0C3 /* StyleVerticalAlign.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BC22AA812E367D83009AC0C3 /* StyleBaselineShift.h in Headers */ = {isa = PBXBuildFile; fileRef = BC22AA7F2E367D83009AC0C3 /* StyleBaselineShift.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC22AA8E2E369EB1009AC0C3 /* StyleShapeMargin.h in Headers */ = {isa = PBXBuildFile; fileRef = BC22AA8A2E36996F009AC0C3 /* StyleShapeMargin.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC22AA8F2E369EB1009AC0C3 /* StyleShapeOutside.h in Headers */ = {isa = PBXBuildFile; fileRef = BC22AA8B2E369AB7009AC0C3 /* StyleShapeOutside.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC22AA9C2E369F16009AC0C3 /* StyleShapeImageThreshold.h in Headers */ = {isa = PBXBuildFile; fileRef = BC22AA9B2E369F12009AC0C3 /* StyleShapeImageThreshold.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -19276,8 +19276,8 @@
 		BC22AA6B2E35988A009AC0C3 /* StyleSVGStrokeDasharray.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StyleSVGStrokeDasharray.cpp; sourceTree = "<group>"; };
 		BC22AA6C2E359F42009AC0C3 /* StyleSVGBaselineShift.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StyleSVGBaselineShift.cpp; sourceTree = "<group>"; };
 		BC22AA6D2E359F42009AC0C3 /* StyleSVGBaselineShift.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleSVGBaselineShift.h; sourceTree = "<group>"; };
-		BC22AA7E2E367D83009AC0C3 /* StyleVerticalAlign.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StyleVerticalAlign.cpp; sourceTree = "<group>"; };
-		BC22AA7F2E367D83009AC0C3 /* StyleVerticalAlign.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleVerticalAlign.h; sourceTree = "<group>"; };
+		BC22AA7E2E367D83009AC0C3 /* StyleBaselineShift.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StyleBaselineShift.cpp; sourceTree = "<group>"; };
+		BC22AA7F2E367D83009AC0C3 /* StyleBaselineShift.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleBaselineShift.h; sourceTree = "<group>"; };
 		BC22AA8A2E36996F009AC0C3 /* StyleShapeMargin.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleShapeMargin.h; sourceTree = "<group>"; };
 		BC22AA8B2E369AB7009AC0C3 /* StyleShapeOutside.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleShapeOutside.h; sourceTree = "<group>"; };
 		BC22AA902E369EBD009AC0C3 /* StyleShapeOutside.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StyleShapeOutside.cpp; sourceTree = "<group>"; };
@@ -37714,14 +37714,14 @@
 		BC2387AA2D8742AB00698102 /* inline */ = {
 			isa = PBXGroup;
 			children = (
+				BC22AA7E2E367D83009AC0C3 /* StyleBaselineShift.cpp */,
+				BC22AA7F2E367D83009AC0C3 /* StyleBaselineShift.h */,
 				BC10DA8B2E80D597000EE742 /* StyleLineFitEdge.h */,
 				BC7826262E820D8800FB0C7E /* StyleLineHeight.cpp */,
 				BC7826252E820D8800FB0C7E /* StyleLineHeight.h */,
 				BC10DA902E80DB7C000EE742 /* StyleTextBoxEdge.h */,
 				BC10DA8F2E80DA5E000EE742 /* StyleTextEdge+CSSValueConversion.h */,
 				BC10DA882E80D1DB000EE742 /* StyleTextEdge.h */,
-				BC22AA7E2E367D83009AC0C3 /* StyleVerticalAlign.cpp */,
-				BC22AA7F2E367D83009AC0C3 /* StyleVerticalAlign.h */,
 				BC731EA92E64CE3C00A6584F /* StyleWebKitInitialLetter.cpp */,
 				BC731EA62E64CCBD00A6584F /* StyleWebKitInitialLetter.h */,
 			);
@@ -48982,6 +48982,7 @@
 				BC4631F02EAC585B00EA911F /* StyleBackgroundLayers.h in Headers */,
 				BC2E5C972E47B80A0083FFF5 /* StyleBackgroundSize.h in Headers */,
 				BC76ADBA2EB9411300331BEC /* StyleBaselineAlignmentPreference.h in Headers */,
+				BC22AA812E367D83009AC0C3 /* StyleBaselineShift.h in Headers */,
 				BCB2720A2CC1F1DB00265123 /* StyleBasicShape.h in Headers */,
 				DDCF765D2C7F85E2005DDAFF /* StyleBlockEllipsis.h in Headers */,
 				BC092A772E300E5D002ACB2C /* StyleBlockStepSize.h in Headers */,
@@ -49348,7 +49349,6 @@
 				BCC0F3DA2D99D4860065B859 /* StyleURL.h in Headers */,
 				E48137B91DB3B526005C59BF /* StyleValidity.h in Headers */,
 				BCA408182CA394CE006B037F /* StyleValueTypes.h in Headers */,
-				BC22AA812E367D83009AC0C3 /* StyleVerticalAlign.h in Headers */,
 				BC73202F2E734E3E00A6584F /* StyleViewFunction.h in Headers */,
 				BC1777542F417D4E00E318C5 /* StyleViewTimeline.h in Headers */,
 				BC17775A2F42383600E318C5 /* StyleViewTimelineInsetItem.h in Headers */,

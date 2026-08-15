@@ -37,14 +37,34 @@ namespace Layout {
 
 template<typename PreferredLineHeightFunctor> InlineLevelBox::VerticalAlignment toInlineBoxLevelVerticalAlign(const Style::ComputedStyle& style, NOESCAPE PreferredLineHeightFunctor&& preferredLineHeightFunctor)
 {
-    return WTF::switchOn(style.verticalAlign(),
-        [](CSS::SpecificKeyword auto const& keyword) -> InlineLevelBox::VerticalAlignment {
-            return keyword;
-        },
-        [&](const Style::VerticalAlign::LengthPercentage& value) -> InlineLevelBox::VerticalAlignment {
-            return Style::evaluate<InlineLayoutUnit>(value, std::forward<PreferredLineHeightFunctor>(preferredLineHeightFunctor), style.usedZoomForLength());
-        }
-    );
+    // `vertical-align` storage is decomposed into the box alignment-baseline and
+    // baseline-shift longhands; reconstruct the effective alignment. A `baseline`
+    // baseline-shift is the initial (unshifted) value, so the alignment-baseline
+    // component determines the result.
+    auto& baselineShift = style.baselineShift();
+    if (baselineShift.isSub())
+        return CSS::Keyword::Sub { };
+    if (baselineShift.isSuper())
+        return CSS::Keyword::Super { };
+    if (baselineShift.isTop())
+        return CSS::Keyword::Top { };
+    if (baselineShift.isBottom())
+        return CSS::Keyword::Bottom { };
+    if (auto length = baselineShift.tryLengthPercentage())
+        return Style::evaluate<InlineLayoutUnit>(*length, std::forward<PreferredLineHeightFunctor>(preferredLineHeightFunctor), style.usedZoomForLength());
+
+    switch (style.alignmentBaseline()) {
+    case AlignmentBaseline::TextBeforeEdge:
+        return CSS::Keyword::TextTop { };
+    case AlignmentBaseline::TextAfterEdge:
+        return CSS::Keyword::TextBottom { };
+    case AlignmentBaseline::Middle:
+        return CSS::Keyword::Middle { };
+    case AlignmentBaseline::WebkitBaselineMiddle:
+        return CSS::Keyword::WebkitBaselineMiddle { };
+    default:
+        return CSS::Keyword::Baseline { };
+    }
 }
 
 inline InlineLevelBox::InlineLevelBox(const Box& layoutBox, const WebCore::Style::ComputedStyle& style, InlineLayoutUnit logicalLeft, InlineLayoutSize logicalSize, Type type, EnumSet<PositionWithinLayoutBox> positionWithinLayoutBox)

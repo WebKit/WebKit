@@ -263,18 +263,37 @@ bool RenderTableCell::computeIntrinsicPadding(LayoutUnit heightConstraint)
     auto borderBoxLogicalHeightWithoutIntrinsicPadding = borderBoxLogicalHeight - (oldIntrinsicPaddingBefore + oldIntrinsicPaddingAfter);
 
     auto intrinsicPaddingBefore = oldIntrinsicPaddingBefore;
-    auto alignment = style().verticalAlign();
+
+    // `vertical-align` storage is decomposed into the box alignment-baseline and
+    // baseline-shift longhands. Collapse it into the categories that affect a cell's
+    // intrinsic padding: `top`/`-webkit-baseline-middle` do nothing, `middle` and
+    // `bottom` center/bottom-align, and everything else uses the standard baseline.
+    enum class CellVerticalAlignment { Standard, DoNothing, Middle, Bottom };
+    auto alignment = [&] {
+        auto& baselineShift = style().baselineShift();
+        if (baselineShift.isTop())
+            return CellVerticalAlignment::DoNothing;
+        if (baselineShift.isBottom())
+            return CellVerticalAlignment::Bottom;
+        if (baselineShift.isBaseline()) {
+            if (style().alignmentBaseline() == AlignmentBaseline::Middle)
+                return CellVerticalAlignment::Middle;
+            if (style().alignmentBaseline() == AlignmentBaseline::WebkitBaselineMiddle)
+                return CellVerticalAlignment::DoNothing;
+        }
+        return CellVerticalAlignment::Standard;
+    }();
     if (auto alignContent = style().alignContent(); !alignContent.isNormal()) {
         auto resolveAlignedContent = alignContent.resolve();
         // align-content overrides vertical-align
         if (resolveAlignedContent.position() == ContentPosition::Baseline)
-            alignment = CSS::Keyword::Baseline { };
+            alignment = CellVerticalAlignment::Standard;
         else if (resolveAlignedContent.isCentered())
-            alignment = CSS::Keyword::Middle { };
+            alignment = CellVerticalAlignment::Middle;
         else if (resolveAlignedContent.isStartward())
-            alignment = CSS::Keyword::Top { };
+            alignment = CellVerticalAlignment::DoNothing;
         else if (resolveAlignedContent.isEndward())
-            alignment = CSS::Keyword::Bottom { };
+            alignment = CellVerticalAlignment::Bottom;
     }
 
     auto applyStandard = [&] {
@@ -290,38 +309,19 @@ bool RenderTableCell::computeIntrinsicPadding(LayoutUnit heightConstraint)
             intrinsicPaddingBefore = section()->rowBaseline(rowIndex()) - (baseline - oldIntrinsicPaddingBefore);
     };
 
-    WTF::switchOn(alignment,
-        [&](const CSS::Keyword::Sub&) {
-            applyStandard();
-        },
-        [&](const CSS::Keyword::Super&) {
-            applyStandard();
-        },
-        [&](const CSS::Keyword::TextTop&) {
-            applyStandard();
-        },
-        [&](const CSS::Keyword::TextBottom&) {
-            applyStandard();
-        },
-        [&](const CSS::Keyword::Baseline&) {
-            applyStandard();
-        },
-        [&](const CSS::Keyword::Top&) {
-            // Do nothing.
-        },
-        [&](const CSS::Keyword::Middle&) {
-            intrinsicPaddingBefore = (heightConstraint - borderBoxLogicalHeightWithoutIntrinsicPadding) / 2;
-        },
-        [&](const CSS::Keyword::Bottom&) {
-            intrinsicPaddingBefore = heightConstraint - borderBoxLogicalHeightWithoutIntrinsicPadding;
-        },
-        [&](const CSS::Keyword::WebkitBaselineMiddle&) {
-            // Do nothing.
-        },
-        [&](const Style::VerticalAlign::LengthPercentage&) {
-            applyStandard();
-        }
-    );
+    switch (alignment) {
+    case CellVerticalAlignment::Standard:
+        applyStandard();
+        break;
+    case CellVerticalAlignment::DoNothing:
+        break;
+    case CellVerticalAlignment::Middle:
+        intrinsicPaddingBefore = (heightConstraint - borderBoxLogicalHeightWithoutIntrinsicPadding) / 2;
+        break;
+    case CellVerticalAlignment::Bottom:
+        intrinsicPaddingBefore = heightConstraint - borderBoxLogicalHeightWithoutIntrinsicPadding;
+        break;
+    }
 
     LayoutUnit intrinsicPaddingAfter = heightConstraint - borderBoxLogicalHeightWithoutIntrinsicPadding - intrinsicPaddingBefore;
     setIntrinsicPaddingBefore(intrinsicPaddingBefore);
@@ -643,7 +643,7 @@ void RenderTableCell::styleDidChange(Style::Difference diff, const Style::Comput
 
     // Our intrinsic padding pushes us down to align with the baseline of other cells on the row. If our vertical-align
     // has changed then so will the padding needed to align with other cells - clear it so we can recalculate it from scratch.
-    if (oldStyle && (style().verticalAlign() != oldStyle->verticalAlign() || style().alignContent() != oldStyle->alignContent()))
+    if (oldStyle && (style().alignmentBaseline() != oldStyle->alignmentBaseline() || style().baselineShift() != oldStyle->baselineShift() || style().alignContent() != oldStyle->alignContent()))
         clearIntrinsicPadding();
 
     if (CheckedPtr table = this->table(); table && oldStyle) {
@@ -1693,7 +1693,8 @@ void RenderTableCell::scrollbarsChanged(bool horizontalScrollbarChanged, bool ve
         return;
 
     // Shrink our intrinsic padding as much as possible to accommodate the scrollbar.
-    if ((WTF::holdsAlternative<CSS::Keyword::Middle>(style().verticalAlign()) && style().alignContent().isNormal())
+    bool isVerticalAlignMiddle = style().baselineShift().isBaseline() && style().alignmentBaseline() == AlignmentBaseline::Middle;
+    if ((isVerticalAlignMiddle && style().alignContent().isNormal())
         || style().alignContent().resolve().isCentered()) {
         LayoutUnit totalHeight = logicalHeight();
         LayoutUnit heightWithoutIntrinsicPadding = totalHeight - intrinsicPaddingBefore() - intrinsicPaddingAfter();

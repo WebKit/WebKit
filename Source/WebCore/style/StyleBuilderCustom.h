@@ -91,6 +91,10 @@ public:
     static void applyInitialLetterSpacing(BuilderState&);
     static void applyValueLetterSpacing(BuilderState&, CSSValue&);
 
+    static void applyInheritVerticalAlign(BuilderState&);
+    static void applyInitialVerticalAlign(BuilderState&);
+    static void applyValueVerticalAlign(BuilderState&, CSSValue&);
+
 #if ENABLE(TEXT_AUTOSIZING)
     static void applyInheritLineHeight(BuilderState&);
     static void applyInitialLineHeight(BuilderState&);
@@ -304,6 +308,60 @@ inline void BuilderCustom::applyValueLetterSpacing(BuilderState& builderState, C
     maybeUpdateFontForLetterSpacingOrWordSpacing(builderState, value);
     builderState.style().setLetterSpacing(toStyleFromCSSValue<LetterSpacing>(builderState, value));
     builderState.setFontDirty();
+}
+
+inline void BuilderCustom::applyInheritVerticalAlign(BuilderState& builderState)
+{
+    builderState.style().setAlignmentBaseline(forwardInheritedValue(builderState.parentStyle().alignmentBaseline()));
+    builderState.style().setBaselineShift(forwardInheritedValue(builderState.parentStyle().baselineShift()));
+}
+
+inline void BuilderCustom::applyInitialVerticalAlign(BuilderState& builderState)
+{
+    builderState.style().setAlignmentBaseline(ComputedStyle::initialAlignmentBaseline());
+    builderState.style().setBaselineShift(ComputedStyle::initialBaselineShift());
+}
+
+inline void BuilderCustom::applyValueVerticalAlign(BuilderState& builderState, CSSValue& value)
+{
+    // The CSS 2 `vertical-align` value decomposes into the box `alignment-baseline`
+    // and `baseline-shift` longhands per CSS Inline 3. The keyword -> pair mapping is
+    // injective, so the value can be reconstructed for `getComputedStyle`.
+    auto setPair = [&](AlignmentBaseline alignmentBaseline, BaselineShift&& baselineShift) {
+        builderState.style().setAlignmentBaseline(alignmentBaseline);
+        builderState.style().setBaselineShift(WTF::move(baselineShift));
+    };
+
+    if (RefPtr keywordValue = dynamicDowncast<CSSKeywordValue>(value)) {
+        switch (keywordValue->valueID()) {
+        case CSSValueBaseline:
+            return setPair(AlignmentBaseline::Baseline, ComputedStyle::initialBaselineShift());
+        case CSSValueSub:
+            return setPair(AlignmentBaseline::Baseline, CSS::Keyword::Sub { });
+        case CSSValueSuper:
+            return setPair(AlignmentBaseline::Baseline, CSS::Keyword::Super { });
+        case CSSValueTop:
+            return setPair(AlignmentBaseline::Baseline, CSS::Keyword::Top { });
+        case CSSValueBottom:
+            return setPair(AlignmentBaseline::Baseline, CSS::Keyword::Bottom { });
+        case CSSValueTextTop:
+            return setPair(AlignmentBaseline::TextBeforeEdge, ComputedStyle::initialBaselineShift());
+        case CSSValueTextBottom:
+            return setPair(AlignmentBaseline::TextAfterEdge, ComputedStyle::initialBaselineShift());
+        case CSSValueMiddle:
+            return setPair(AlignmentBaseline::Middle, ComputedStyle::initialBaselineShift());
+        case CSSValueWebkitBaselineMiddle:
+            return setPair(AlignmentBaseline::WebkitBaselineMiddle, ComputedStyle::initialBaselineShift());
+        default:
+            break;
+        }
+
+        builderState.setCurrentPropertyInvalidAtComputedValueTime();
+        return setPair(AlignmentBaseline::Baseline, ComputedStyle::initialBaselineShift());
+    }
+
+    // <length-percentage> shifts relative to the baseline.
+    setPair(AlignmentBaseline::Baseline, toStyleFromCSSValue<BaselineShift::LengthPercentage>(builderState, value));
 }
 
 #if ENABLE(TEXT_AUTOSIZING)

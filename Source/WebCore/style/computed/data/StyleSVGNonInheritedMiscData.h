@@ -54,7 +54,7 @@ public:
     Opacity floodOpacity;
     Color floodColor;
     Color lightingColor;
-    SVGBaselineShift baselineShift;
+    SVGBaselineShift svgBaselineShift;
 
 private:
     SVGNonInheritedMiscData();

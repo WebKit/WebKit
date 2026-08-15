@@ -134,7 +134,6 @@
 #include "StylePropertiesInlines.h"
 #include "StyleTextShadow.h"
 #include "StyleTreeResolver.h"
-#include "StyleVerticalAlign.h"
 #include "SystemSoundManager.h"
 #include "TelephoneNumberDetector.h"
 #include "Text.h"
@@ -4761,18 +4760,15 @@ FontAttributes Editor::fontAttributesAtSelectionStart()
         }
     );
 
-    attributes.subscriptOrSuperscript = WTF::switchOn(style->verticalAlign(),
-        [](const CSS::Keyword::Baseline&) { return FontAttributes::SubscriptOrSuperscript::None; },
-        [](const CSS::Keyword::Sub&) { return FontAttributes::SubscriptOrSuperscript::Subscript; },
-        [](const CSS::Keyword::Super&) { return FontAttributes::SubscriptOrSuperscript::Superscript; },
-        [](const CSS::Keyword::Bottom&) { return FontAttributes::SubscriptOrSuperscript::None; },
-        [](const CSS::Keyword::Middle&) { return FontAttributes::SubscriptOrSuperscript::None; },
-        [](const CSS::Keyword::TextBottom&) { return FontAttributes::SubscriptOrSuperscript::None; },
-        [](const CSS::Keyword::TextTop&) { return FontAttributes::SubscriptOrSuperscript::None; },
-        [](const CSS::Keyword::Top&) { return FontAttributes::SubscriptOrSuperscript::None; },
-        [](const CSS::Keyword::WebkitBaselineMiddle&) { return FontAttributes::SubscriptOrSuperscript::None; },
-        [](const Style::VerticalAlign::LengthPercentage&) { return FontAttributes::SubscriptOrSuperscript::None; }
-    );
+    // `vertical-align` is stored decomposed into the box alignment-baseline and
+    // baseline-shift longhands; only the `sub`/`super` shifts map to sub/superscript.
+    auto& verticalAlignBaselineShift = style->baselineShift();
+    if (verticalAlignBaselineShift.isSub())
+        attributes.subscriptOrSuperscript = FontAttributes::SubscriptOrSuperscript::Subscript;
+    else if (verticalAlignBaselineShift.isSuper())
+        attributes.subscriptOrSuperscript = FontAttributes::SubscriptOrSuperscript::Superscript;
+    else
+        attributes.subscriptOrSuperscript = FontAttributes::SubscriptOrSuperscript::None;
 
     attributes.textLists = editableTextListsAtPositionInDescendingOrder(document().selection().selection().start());
 

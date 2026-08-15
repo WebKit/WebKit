@@ -70,13 +70,21 @@ inline bool RenderTableCell::isBaselineAligned() const
     if (auto alignContent = style().alignContent(); !alignContent.isNormal())
         return alignContent.isFirstBaseline();
 
-    auto& verticalAlign = style().verticalAlign();
-    return WTF::holdsAlternative<CSS::Keyword::Baseline>(verticalAlign)
-        || WTF::holdsAlternative<CSS::Keyword::TextBottom>(verticalAlign)
-        || WTF::holdsAlternative<CSS::Keyword::TextTop>(verticalAlign)
-        || WTF::holdsAlternative<CSS::Keyword::Super>(verticalAlign)
-        || WTF::holdsAlternative<CSS::Keyword::Sub>(verticalAlign)
-        || WTF::holdsAlternative<Style::VerticalAlign::LengthPercentage>(verticalAlign);
+    // `vertical-align` is stored decomposed into the box alignment-baseline and
+    // baseline-shift longhands. A cell participates in baseline alignment for
+    // baseline / text-top / text-bottom / super / sub / <length-percentage>, but
+    // not for top / bottom / middle / -webkit-baseline-middle.
+    auto& baselineShift = style().baselineShift();
+    if (baselineShift.isTop() || baselineShift.isBottom())
+        return false;
+    if (baselineShift.isSub() || baselineShift.isSuper())
+        return true;
+    if (baselineShift.isLengthPercentage())
+        return true;
+    auto alignmentBaseline = style().alignmentBaseline();
+    return alignmentBaseline == AlignmentBaseline::Baseline
+        || alignmentBaseline == AlignmentBaseline::TextBeforeEdge
+        || alignmentBaseline == AlignmentBaseline::TextAfterEdge;
 }
 
 inline bool RenderTableCell::isOrthogonal() const

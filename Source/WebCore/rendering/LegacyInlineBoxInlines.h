@@ -30,9 +30,4 @@
 
 namespace WebCore {
 
-inline const Style::VerticalAlign& LegacyInlineBox::verticalAlign() const
-{
-    return lineStyle().verticalAlign();
-}
-
 } // namespace WebCore

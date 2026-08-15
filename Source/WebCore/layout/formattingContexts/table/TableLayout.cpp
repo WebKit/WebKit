@@ -416,7 +416,7 @@ TableFormattingContext::TableLayout::DistributedSpaces TableFormattingContext::T
             CheckedRef cell = slot.cell();
             CheckedRef cellBox = cell->box();
             auto height = formattingContext().geometryForBox(cellBox).borderBoxHeight();
-            if (WTF::holdsAlternative<CSS::Keyword::Baseline>(cellBox->style().verticalAlign())) {
+            if (cellBox->style().alignmentBaseline() == AlignmentBaseline::Baseline && cellBox->style().baselineShift().isBaseline()) {
                 maximumColumnAscent = std::max(maximumColumnAscent, cell->baseline());
                 maximumColumnDescent = std::max(maximumColumnDescent, height - cell->baseline());
                 rowHeight[rowIndex] = std::max(rowHeight[rowIndex], LayoutUnit { maximumColumnAscent + maximumColumnDescent });

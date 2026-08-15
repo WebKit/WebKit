@@ -214,8 +214,6 @@ public:
 
     CheckedRef<const Style::ComputedStyle> lineStyle() const;
 
-    inline const Style::VerticalAlign& verticalAlign() const LIFETIME_BOUND; // Defined in LegacyInlineBoxInlines.h
-
     // Use with caution! The type is not checked!
     RenderBoxModelObject* boxModelObject() const
     { 
