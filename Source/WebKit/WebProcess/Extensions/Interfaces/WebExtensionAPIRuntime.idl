@@ -23,6 +23,31 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+enum WebExtensionPortDisconnectReason {
+    "disconnect",
+    "connection_error"
+};
+
+dictionary WebExtensionMessageSender {
+    DOMString id;
+    DOMString url;
+    WebExtensionTab tab;
+    double frameId;
+    DOMString tlsChannelId;
+};
+
+dictionary WebExtensionMessageOptions {
+    boolean includeTlsChannelId;
+};
+
+dictionary WebExtensionConnectOptions {
+    DOMString name;
+};
+
+dictionary WebExtensionSendMessageOptions {
+    boolean includeTlsChannelId;
+};
+
 [
     Conditional=WK_WEB_EXTENSIONS,
     ReturnsPromiseWhenCallbackIsOmitted,

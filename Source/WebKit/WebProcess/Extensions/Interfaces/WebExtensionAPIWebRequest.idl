@@ -23,6 +23,50 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+enum WebExtensionWebRequestResourceType {
+    "main_frame",
+    "sub_frame",
+    "stylesheet",
+    "script",
+    "image",
+    "font",
+    "object",
+    "xmlhttprequest",
+    "ping",
+    "csp_report",
+    "media",
+    "websocket",
+    "other"
+};
+
+dictionary WebExtensionWebRequestFilter {
+    sequence<DOMString> types;
+    sequence<DOMString> urls;
+    double tabId;
+    double windowId;
+};
+
+dictionary WebExtensionWebRequestDetails {
+    DOMString documentId;
+    DOMString error;
+    double frameId;
+    DOMString frameType;
+    DOMString initiator;
+    DOMString method;
+    double parentFrameId;
+    DOMString proxyInfo;
+    DOMString redirectUrl;
+    DOMString requestId;
+    sequence<any> requestHeaders;
+    sequence<any> responseHeaders;
+    double statusCode;
+    DOMString statusLine;
+    double tabId;
+    double timeStamp;
+    DOMString type;
+    DOMString url;
+};
+
 [
     Conditional=WK_WEB_EXTENSIONS,
     MainWorldOnly,

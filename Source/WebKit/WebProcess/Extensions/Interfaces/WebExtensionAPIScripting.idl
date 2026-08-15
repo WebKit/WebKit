@@ -23,6 +23,38 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+enum WebExtensionScriptInjectionExecutionWorld {
+    "ISOLATED",
+    "MAIN"
+};
+
+enum WebExtensionCSSOrigin {
+    "USER",
+    "AUTHOR"
+};
+
+dictionary WebExtensionScriptInjectionTarget {
+    boolean allFrames;
+    sequence<DOMString> documentIds;
+    sequence<double> frameIds;
+    required double tabId;
+};
+
+dictionary WebExtensionScriptInjection {
+    sequence<any> args;
+    sequence<DOMString> files;
+    any func;
+    required WebExtensionScriptInjectionTarget target;
+    DOMString world;
+};
+
+dictionary WebExtensionCSSInjection {
+    DOMString css;
+    sequence<DOMString> files;
+    DOMString origin;
+    required WebExtensionScriptInjectionTarget target;
+};
+
 [
     Conditional=WK_WEB_EXTENSIONS,
     MainWorldOnly,

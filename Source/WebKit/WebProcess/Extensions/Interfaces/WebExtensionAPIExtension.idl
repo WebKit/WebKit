@@ -23,6 +23,12 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+dictionary WebExtensionViewFilter {
+    DOMString type;
+    double windowId;
+    double tabId;
+};
+
 [
     Conditional=WK_WEB_EXTENSIONS,
     ReturnsPromiseWhenCallbackIsOmitted,

@@ -23,6 +23,50 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+enum WebExtensionTabStatus {
+    "loading",
+    "complete"
+};
+
+dictionary WebExtensionTabMutedInfo {
+    boolean muted;
+};
+
+dictionary WebExtensionTab {
+    double id;
+    double index;
+    double windowId;
+    double openerTabId;
+    boolean selected;
+    boolean highlighted;
+    boolean active;
+    boolean pinned;
+    boolean audible;
+    boolean incognito;
+    boolean isArticle;
+    boolean isInReaderMode;
+    WebExtensionTabMutedInfo mutedInfo;
+    DOMString url;
+    DOMString title;
+    WebExtensionTabStatus status;
+    double width;
+    double height;
+};
+
+dictionary WebExtensionTabCreateProperties {
+    double windowId;
+    double index;
+    DOMString url;
+    DOMString title;
+    boolean active;
+    boolean selected;
+    boolean highlighted;
+    boolean pinned;
+    boolean muted;
+    double openerTabId;
+    boolean openInReaderMode;
+};
+
 [
     Conditional=WK_WEB_EXTENSIONS,
     MainWorldOnly,
