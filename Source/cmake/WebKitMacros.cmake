@@ -158,6 +158,12 @@ macro(WEBKIT_COMPUTE_SOURCES _framework)
         list(APPEND gusb_args --max-bundle-size ${WEBKIT_MAX_BUNDLE_SIZE} --enforce-cost)
     endif ()
 
+    # ARC .mm sources that the bundler emits standalone (non-unified builds, and
+    # @no-unify/@no-unify-when files in unified builds) have nothing in their name
+    # to distinguish them, so the bundler lists them here.
+    set(_arcSourcesFile "${CMAKE_CURRENT_BINARY_DIR}/${_framework}ARCSources.txt")
+    list(APPEND gusb_args --print-arc-sources "${_arcSourcesFile}")
+
     if (ENABLE_UNIFIED_BUILDS)
         # One pass generates the bundles (stdout = files to compile) and writes the
         # bundled member list to a side file via --print-bundled-sources.
@@ -180,33 +186,10 @@ macro(WEBKIT_COMPUTE_SOURCES _framework)
             list(APPEND ${_framework}_HEADERS ${_sourceFileTmp})
         endforeach ()
         unset(_sourceFileTmp)
-
-        foreach (_file IN LISTS _outputTmp)
-            # Disambiguate top-level generated sources in DerivedSources vs top-level regular sources.
-            get_filename_component(_fileDir "${_file}" DIRECTORY)
-            if (NOT _fileDir AND NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${_file}")
-                set(_file "${_derivedSourcesPath}/${_file}")
-            endif ()
-            if (_file MATCHES "\\.c$")
-                list(APPEND ${_framework}_C_SOURCES ${_file})
-            elseif (_file MATCHES "-ARC\\.mm$")
-                # generate-unified-source-bundles.rb emits *-ARC.mm and *-nonARC.mm bundles based
-                # on @nonARC annotations in Sources*.txt. The ARC bundles compile in a separate
-                # OBJECT library so the OBJCXX precompiled header agrees on -fobjc-arc.
-                list(APPEND ${_framework}_ARC_SOURCES ${_file})
-            else ()
-                list(APPEND ${_framework}_SOURCES ${_file})
-            endif ()
-        endforeach ()
-
-        unset(_resultTmp)
-        unset(_outputTmp)
     else ()
-        set(_arcSourcesFile "${CMAKE_CURRENT_BINARY_DIR}/${_framework}ARCSources.txt")
         execute_process(COMMAND ${Python_EXECUTABLE} ${WTF_SCRIPTS_DIR}/generate-unified-source-bundles.py
             ${gusb_args}
             "--print-all-sources"
-            --print-arc-sources "${_arcSourcesFile}"
             ${_sourceListFileTruePaths}
             RESULT_VARIABLE _resultTmp
             OUTPUT_VARIABLE _outputTmp)
@@ -214,21 +197,35 @@ macro(WEBKIT_COMPUTE_SOURCES _framework)
         if (${_resultTmp})
              message(FATAL_ERROR "generate-unified-source-bundles.py exited with non-zero status, exiting")
         endif ()
-
-        # Without bundles there is no *-ARC.mm to key off, so take the @nonARC
-        # annotations straight from the source lists to keep the ARC sources in the
-        # OBJECT library whose OBJCXX precompiled header agrees on -fobjc-arc.
-        file(STRINGS "${_arcSourcesFile}" _arcSources)
-        foreach (_file IN LISTS _outputTmp)
-            if (_file IN_LIST _arcSources)
-                list(APPEND ${_framework}_ARC_SOURCES ${_file})
-            else ()
-                list(APPEND ${_framework}_SOURCES ${_file})
-            endif ()
-        endforeach ()
-        unset(_resultTmp)
-        unset(_outputTmp)
     endif ()
+
+    file(STRINGS "${_arcSourcesFile}" _standaloneARCSources)
+    foreach (_file IN LISTS _outputTmp)
+        if (_file IN_LIST _standaloneARCSources)
+            set(_fileIsARC ON)
+        else ()
+            set(_fileIsARC OFF)
+        endif ()
+        # Disambiguate top-level generated sources in DerivedSources vs top-level regular sources.
+        get_filename_component(_fileDir "${_file}" DIRECTORY)
+        if (NOT _fileDir AND NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${_file}")
+            set(_file "${_derivedSourcesPath}/${_file}")
+        endif ()
+        if (_file MATCHES "\\.c$")
+            list(APPEND ${_framework}_C_SOURCES ${_file})
+        elseif (_fileIsARC OR _file MATCHES "-ARC\\.mm$")
+            # generate-unified-source-bundles.py emits *-ARC.mm and *-nonARC.mm bundles based
+            # on @nonARC annotations in Sources*.txt. The ARC sources compile in a separate
+            # OBJECT library so the OBJCXX precompiled header agrees on -fobjc-arc.
+            list(APPEND ${_framework}_ARC_SOURCES ${_file})
+        else ()
+            list(APPEND ${_framework}_SOURCES ${_file})
+        endif ()
+    endforeach ()
+
+    unset(_fileIsARC)
+    unset(_resultTmp)
+    unset(_outputTmp)
 endmacro()
 
 macro(WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS)
