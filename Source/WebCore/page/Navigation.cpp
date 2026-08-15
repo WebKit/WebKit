@@ -300,7 +300,7 @@ void Navigation::setActivation(HistoryItem* previousItem, std::optional<Navigati
         previousEntry = m_entries.at(previousEntryIndex.value()).ptr();
     if (type == NavigationNavigationType::Reload)
         previousEntry = currentEntry();
-    else if (type == NavigationNavigationType::Replace && (isSameOrigin || wasAboutBlank))
+    else if (type == NavigationNavigationType::Replace && isSameOrigin && !wasAboutBlank)
         previousEntry = NavigationHistoryEntry::create(*this, *previousItem);
 
     m_activation = NavigationActivation::create(*type, *currentEntry(), WTF::move(previousEntry));
