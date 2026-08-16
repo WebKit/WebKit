@@ -1122,9 +1122,6 @@ enum class AlignmentBaseline : uint8_t {
 
 enum class DominantBaseline : uint8_t {
     Auto,
-    UseScript,
-    NoChange,
-    ResetSize,
     Ideographic,
     Alphabetic,
     Hanging,

@@ -4839,9 +4839,6 @@
             "initial": "auto",
             "values": [
                 "auto",
-                "use-script",
-                "no-change",
-                "reset-size",
                 "ideographic",
                 "alphabetic",
                 "hanging",
@@ -4860,7 +4857,7 @@
             },
             "specification": {
                 "category": "svg",
-                "url": "https://www.w3.org/TR/SVG11/text.html#DominantBaselineProperty"
+                "url": "https://w3c.github.io/svgwg/svg2-draft/text.html#DominantBaselineProperty"
             }
         },
         "dynamic-range-limit": {

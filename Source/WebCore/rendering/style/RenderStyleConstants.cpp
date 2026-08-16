@@ -1434,9 +1434,6 @@ TextStream& operator<<(TextStream& ts, DominantBaseline value)
 {
     switch (value) {
     case DominantBaseline::Auto: ts << "auto"_s; break;
-    case DominantBaseline::UseScript: ts << "use-script"_s; break;
-    case DominantBaseline::NoChange: ts << "no-change"_s; break;
-    case DominantBaseline::ResetSize: ts << "reset-size"_s; break;
     case DominantBaseline::Ideographic: ts << "ideographic"_s; break;
     case DominantBaseline::Alphabetic: ts << "alphabetic"_s; break;
     case DominantBaseline::Hanging: ts << "hanging"_s; break;

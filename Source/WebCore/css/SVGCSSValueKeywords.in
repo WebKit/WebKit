@@ -241,9 +241,6 @@ mathematical
 
 // CSS_PROP_DOMINANT_BASELINE
 //auto
-use-script
-no-change
-reset-size
 
 // CSS_PROP_TEXT_BOX_TRIM
 // none
