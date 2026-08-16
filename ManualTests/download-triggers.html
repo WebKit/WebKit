@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Download triggers</title>
+<style>
+li { margin-bottom: 0.75em; }
+code { background-color: #eee; padding: 0 2px; }
+</style>
+</head>
+<body>
+<p>Test for <a href="https://bugs.webkit.org/show_bug.cgi?id=138673">bug 138673</a>:
+MiniBrowser should support downloads for testing purposes.</p>
+
+<p><b>Open this in a WK2 window</b>, from <code>file://</code> or over HTTP,
+either works. One thing that will look like a failure and is not: in a
+<b>WK1</b> window steps 1 to 4 do nothing whatever the browser does with
+downloads, because the <code>download</code> attribute is off by default in
+legacy WebKit (<code>DownloadAttributeEnabled</code> in
+<code>Source/WTF/Scripts/Preferences/UnifiedWebPreferences.yaml</code>).</p>
+
+<p>Steps 5 and 7 use blob URLs on purpose. They are decided from the response
+rather than from the link, so they need a navigation the browser will really
+perform, and a top-frame navigation to a <code>data:</code> URL is refused
+whatever the response says &mdash; see <code>disallowDataRequest</code> in
+<code>Source/WebCore/loader/DocumentLoader.cpp</code>. Do not simplify them back
+to <code>data:</code>; both would then report the wrong result, the control
+loudest of all.</p>
+
+<p><b>STEPS TO TEST:</b> click every link and button below. None of them should
+navigate this page away, and none of them should show the file's contents
+inline.</p>
+
+<p id="success" style="background-color: palegreen; padding: 3px;"><b>TEST PASS:</b>
+each of the six numbered steps saves a file, and the control link in step 7
+navigates. Three of the files are named by the browser rather than by the test,
+so the expected set is: <code>download-attribute.txt</code>,
+<code>blob.txt</code>, <code>Unknown.txt</code>, <code>from-script.txt</code>,
+<code>Unknown</code>, <code>Unknown-1.txt</code>.</p>
+
+<p id="failure" style="background-color: #FF3300; padding: 3px;"><b>TEST FAIL:</b>
+any step leaves the download folder unchanged, or replaces this page with the
+file's contents, or shows a blank page.</p>
+
+<ol>
+<li>
+    <a download="download-attribute.txt" href="data:text/plain,download attribute on a data: URL">
+    download attribute, named
+    </a>
+    &mdash; saves <code>download-attribute.txt</code>.
+</li>
+<li>
+    <a id="blob-link" download="blob.txt">
+    download attribute on a blob: URL
+    </a>
+    &mdash; saves <code>blob.txt</code>. The response here is synthesized by
+    WebKit rather than coming from a server.
+</li>
+<li>
+    <a download href="data:text/plain,bare download attribute">
+    download attribute, unnamed
+    </a>
+    &mdash; saves a file whose name the browser picks, with a
+    <code>.txt</code> extension taken from the MIME type.
+</li>
+<li>
+    <button id="programmatic">download attribute, clicked from script</button>
+    &mdash; saves <code>from-script.txt</code>. Same code path as step 1, but
+    with no user click on the link itself.
+</li>
+<li>
+    <a id="octet-stream-link">
+    no download attribute, MIME type the browser cannot display
+    </a>
+    &mdash; saves a file. A blob URL carries no filename and
+    <code>application/octet-stream</code> implies no extension, so expect a
+    browser-picked name with no extension, currently <code>Unknown</code>. That
+    is what tells it apart from step 3's file. Here the decision comes from the
+    response, not from the link, so it exercises a different delegate than steps
+    1 to 4.
+</li>
+<li>
+    Right-click <a href="data:text/plain,downloaded from the context menu">this
+    link</a> and choose <b>Download Linked File</b> &mdash; saves a file. This
+    is a third code path again: the download is created by the context menu,
+    with no policy decision involved.
+</li>
+<li>
+    <b>Control:</b>
+    <a id="control-link">
+    no download attribute, MIME type the browser can display
+    </a>
+    &mdash; must <em>navigate</em> and show its text, not download. If this one
+    downloads, the fix is too aggressive.
+</li>
+</ol>
+
+<p>Downloading a file whose name is already taken should also work: run step 1
+twice and check that the second file is saved next to the first under a
+different name, rather than failing silently.</p>
+
+<p>A response carrying <code>Content-Disposition: attachment</code> with a
+displayable MIME type is a further case that this page cannot cover, because it
+needs a server that sets the header. See bug 138673 for a page and a server
+command that do.</p>
+
+<script>
+document.getElementById("blob-link").href =
+    URL.createObjectURL(new Blob(["download attribute on a blob: URL"], { type: "text/plain" }));
+
+// Steps 5 and 7 are decided from the response rather than from the link, so they
+// have to be navigations the browser will actually perform. A data: URL is no use
+// here: a top-frame navigation to one is refused outright, whatever the response
+// says, so both steps would report the wrong thing. See DocumentLoader's
+// disallowDataRequest. Blob URLs are same origin and navigable.
+document.getElementById("octet-stream-link").href =
+    URL.createObjectURL(new Blob(["This is a download.\n"], { type: "application/octet-stream" }));
+
+document.getElementById("control-link").href =
+    URL.createObjectURL(new Blob(["This page should have replaced the test.\n"], { type: "text/plain" }));
+
+document.getElementById("programmatic").addEventListener("click", () => {
+    const link = document.createElement("a");
+    link.href = "data:text/plain,download attribute clicked from script";
+    link.download = "from-script.txt";
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+});
+</script>
+</body>
+</html>
