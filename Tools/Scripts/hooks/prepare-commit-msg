@@ -94,22 +94,24 @@ def get_bugs_string():
         bugs_string += '\n' + need_the_radar
     return bugs_string
 
-def parseChanges(command, commit_message):
-    dirname = None
+def startChanges(command):
+    return subprocess.Popen(
+        command,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        encoding='utf-8',
+    )
+
+def parseChanges(proc, commit_message):
     changes = []
 
-    try:
-        for line in subprocess.run(
-            command,
-            encoding='utf-8',
-            capture_output=True,
-            check=True
-        ).stdout.splitlines():
-            commit_message.append(line[SPACING:])
-            changes.append(line[SPACING:])
-    except subprocess.CalledProcessError:
+    stdout, _ = proc.communicate()
+    if proc.returncode:
         commit_message.append('')
         return
+    for line in stdout.splitlines():
+        commit_message.append(line[SPACING:])
+        changes.append(line[SPACING:])
     return changes
 
 def message(source=None, sha=None, mention_tests=True):
@@ -120,15 +122,21 @@ def message(source=None, sha=None, mention_tests=True):
     if not mention_tests:
         command = command + ["--no-mention-tests"]
 
+    # Start both prepare-ChangeLog invocations up-front so they run concurrently.
+    amend_proc = None
     if sha:
+        amend_proc = startChanges(command)
+        command = command + ['--git-commit', 'HEAD']
+    combined_proc = startChanges(command)
+
+    if amend_proc:
         commit_message.append('Amend changes:')
-        amend_changes = parseChanges(command, commit_message)
+        amend_changes = parseChanges(amend_proc, commit_message)
         commit_message.append('')
 
         commit_message.append('Combined changes:')
-        command += ['--git-commit', 'HEAD']
 
-    combined_changes = parseChanges(command, commit_message)
+    combined_changes = parseChanges(combined_proc, commit_message)
 
     revert_msg = os.environ.get('COMMIT_MESSAGE_REVERT', '')
     if revert_msg:

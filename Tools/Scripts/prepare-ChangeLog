@@ -103,7 +103,9 @@ sub method_decl_to_selector($);
 sub normalizeLineEndings($$);
 sub openChangeLogs($);
 sub originalFile($$$$);
+sub parseAttributeValue($);
 sub pluralizeAndList($$@);
+sub populateAttributeCache($$$);
 sub printDiff($$$$);
 sub processPaths(\@);
 sub propertyChangeDescription($);
@@ -2078,20 +2080,35 @@ sub statusCommand($$$$)
     return @command;
 }
 
+sub parseAttributeValue($)
+{
+    my ($value) = @_;
+
+    $value = "" unless defined $value;
+    $value =~ s/\D//g;
+    return int($value || 0);
+}
+
+sub populateAttributeCache($$$)
+{
+    my ($attributeCache, $attrs, $files) = @_;
+
+    return unless isGit() && @$files;
+
+    my $result = runCommand(GIT, "check-attr", "-z", @$attrs, "--", @$files);
+    my @fields = split(/\0/, $result->{stdout} || "");
+    while (@fields >= 3) {
+        my ($file, $attr, $value) = splice(@fields, 0, 3);
+        $attributeCache->{$file}{$attr} = parseAttributeValue($value);
+    }
+}
+
 sub attributeCommand($$$)
 {
     my ($attributeCache, $file, $attr) = @_;
 
-    my $result;
-    if (isGit()) {
-        my $command = GIT . " check-attr $attr -- '$file'";
-        $result = `$command`;
-        chomp $result;
-        $result =~ s/.*\W(\w)/$1/;
-    }
-
-    $result =~ s/\D//g;
-    return int($result || 0);
+    populateAttributeCache($attributeCache, [$attr], [$file]) if !exists $attributeCache->{$file}{$attr};
+    return $attributeCache->{$file}{$attr} || 0;
 }
 
 sub createPatchCommand($$$$)
@@ -2125,6 +2142,7 @@ sub generateFileList(\%$$$\%)
     my %functionLists;
     my @addedRegressionTests;
     my @requiresTests;
+    my @attributeCheckFiles;
     print STDERR "  Running status to find changed, added, or removed files.\n";
     open STAT, "-|", statusCommand($paths, $gitCommit, $gitIndex, $mergeBase) or die "The status failed: $!.\n";
     while (<STAT>) {
@@ -2168,10 +2186,8 @@ sub generateFileList(\%$$$\%)
                     if isAddedStatus($status)
                        && $file =~ /\.js$/
                        && !scalar(grep(/^resources$/i, @components));
-            } elsif (attributeCommand($attributeCache, $file, "test")) {
-                push @addedRegressionTests, $file;
-            } elsif (attributeCommand($attributeCache, $file, "requiresTests")) {
-                push @requiresTests, $file;
+            } else {
+                push @attributeCheckFiles, $file;
             }
             push @changedFiles, $file if $components[$#components] ne "ChangeLog";
         } elsif (isConflictStatus($status, $gitCommit, $gitIndex) || isConflictStatus($propertyStatus, $gitCommit, $gitIndex)) {
@@ -2183,6 +2199,18 @@ sub generateFileList(\%$$$\%)
         }
     }
     close STAT;
+
+    if (@attributeCheckFiles) {
+        populateAttributeCache($attributeCache, ["test", "requiresTests"], \@attributeCheckFiles);
+        foreach my $file (@attributeCheckFiles) {
+            if (attributeCommand($attributeCache, $file, "test")) {
+                push @addedRegressionTests, $file;
+            } elsif (attributeCommand($attributeCache, $file, "requiresTests")) {
+                push @requiresTests, $file;
+            }
+        }
+    }
+
     return (\@changedFiles, \@conflictFiles, \%functionLists, \@addedRegressionTests, \@requiresTests);
 }
 
