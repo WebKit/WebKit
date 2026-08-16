@@ -71,7 +71,7 @@ WI.DOMSearchMatchObject = class DOMSearchMatchObject
             return title + ">";
 
         case Node.CDATA_SECTION_NODE:
-            return "<![CDATA[" + domNode + "]]>";
+            return "<![CDATA[" + domNode.nodeValue() + "]]>";
 
         case Node.PROCESSING_INSTRUCTION_NODE:
             var data = domNode.nodeValue();

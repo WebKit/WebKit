@@ -57,7 +57,7 @@ WI.DOMTreeElementPathComponent = class DOMTreeElementPathComponent extends WI.Hi
             break;
 
         case Node.CDATA_SECTION_NODE:
-            title = "<![CDATA[" + node.truncateEnd(32) + "]]>";
+            title = "<![CDATA[" + node.nodeValue().truncateEnd(32) + "]]>";
             break;
 
         case Node.DOCUMENT_FRAGMENT_NODE:
