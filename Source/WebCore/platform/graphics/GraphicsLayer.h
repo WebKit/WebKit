@@ -344,6 +344,9 @@ public:
     // Set a rounded rect that will be used to clip the layer contents.
     FloatRoundedRect contentsClippingRect() const { return m_contentsClippingRect; }
     virtual void setContentsClippingRect(const FloatRoundedRect& roundedRect) { m_contentsClippingRect = roundedRect; }
+
+    const Path& contentsClipShapePath() const { return m_contentsClipShapePath; }
+    virtual void setContentsClipShapePath(const Path& path) { m_contentsClipShapePath = path; }
     
     // If true, contentsClippingRect is used to clip child GraphicsLayers.
     bool contentsRectClipsDescendants() const { return m_contentsRectClipsDescendants; }
@@ -686,6 +689,7 @@ protected:
 
     FloatRect m_contentsRect;
     FloatRoundedRect m_contentsClippingRect;
+    Path m_contentsClipShapePath;
     FloatSize m_contentsTilePhase;
     FloatSize m_contentsTileSize;
     ScalingFilter m_contentsMinificationFilter = ScalingFilter::Linear;

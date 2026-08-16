@@ -87,6 +87,7 @@ public:
         Markable<ScrollingNodeID> overflowScrollProxyNodeID; // The node for repositioning the scrolling proxy layer.
         RefPtr<GraphicsLayer> clippingLayer;
         RefPtr<GraphicsLayer> scrollingLayer; // Only present for scrolling entries.
+        RefPtr<GraphicsLayer> shapeMaskLayer; // Only present when the clip is not a rounded rect.
 
         GraphicsLayer* parentForSublayers() const
         {

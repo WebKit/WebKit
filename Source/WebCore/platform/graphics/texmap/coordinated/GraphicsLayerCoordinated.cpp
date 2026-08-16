@@ -356,6 +356,15 @@ void GraphicsLayerCoordinated::setContentsClippingRect(const FloatRoundedRect& c
     noteLayerPropertyChanged(Change::ContentsClippingRect, ScheduleFlush::Yes);
 }
 
+void GraphicsLayerCoordinated::setContentsClipShapePath(const Path& path)
+{
+    if (contentsClipShapePath().definitelyEqual(path))
+        return;
+
+    GraphicsLayer::setContentsClipShapePath(path);
+    noteLayerPropertyChanged(Change::ContentsClipShapePath, ScheduleFlush::Yes);
+}
+
 void GraphicsLayerCoordinated::setContentsNeedsDisplay()
 {
     if (m_contentsDisplayDelegate)
@@ -525,7 +534,9 @@ void GraphicsLayerCoordinated::setEventRegion(EventRegion&& eventRegion)
 
 void GraphicsLayerCoordinated::setShapeLayerPath(const Path& path)
 {
-    // FIXME: need to check for path equality. No bool Path::operator==(const Path&)!.
+    if (!path.isEmpty() && shapeLayerPath().definitelyEqual(path))
+        return;
+
     GraphicsLayer::setShapeLayerPath(path);
     noteLayerPropertyChanged(Change::Shape, ScheduleFlush::Yes);
 }
@@ -1132,6 +1143,9 @@ void GraphicsLayerCoordinated::commitLayerChanges(CommitState& commitState, floa
 
     if (m_pendingChanges.contains(Change::ContentsClippingRect))
         m_platformLayer->setContentsClippingRect(m_contentsClippingRect);
+
+    if (m_pendingChanges.contains(Change::ContentsClipShapePath))
+        m_platformLayer->setContentsClipShapePath(contentsClipShapePath());
 
     updateRootRelativeScale(); // Needs to happen before Change::ContentsScale.
 

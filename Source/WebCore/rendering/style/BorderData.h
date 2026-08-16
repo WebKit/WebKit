@@ -52,6 +52,10 @@ struct BorderData {
 
     bool hasBorderRadius() const;
 
+    bool hasNonRoundCornerShape() const;
+
+    bool hasCornerShapeOutsideRoundedRect() const;
+
     bool hasVisibleBorderDecoration() const
     {
         return hasVisibleBorder() || hasBorderImage();

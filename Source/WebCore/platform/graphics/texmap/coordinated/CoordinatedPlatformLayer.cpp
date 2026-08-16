@@ -470,6 +470,18 @@ void CoordinatedPlatformLayer::setContentsClippingRect(const FloatRoundedRect& c
     notifyCompositionRequired();
 }
 
+void CoordinatedPlatformLayer::setContentsClipShapePath(const Path& path)
+{
+    assertIsHeld(m_lock);
+    if (m_contentsClipShapePath.definitelyEqual(path))
+        return;
+
+    m_contentsClipShapePath = path;
+    m_pendingChanges.add(Change::ContentsClipShapePath);
+    damageWholeLayer();
+    notifyCompositionRequired();
+}
+
 void CoordinatedPlatformLayer::setContentsScale(float contentsScale)
 {
     assertIsMainThread();
@@ -1084,6 +1096,12 @@ void CoordinatedPlatformLayer::flushCompositingStateOnTarget(const OptionSet<Com
             layer.setContentsClippingRect(m_contentsClippingRect);
             m_pendingChanges.remove(Change::ContentsClippingRect);
         }
+
+        // FIXME: clip the contents to the corner-shape contour here too. TextureMapper::beginClip()
+        // takes a ClipPath, a triangulated vertex buffer, so this needs a Path tessellation step that
+        // does not exist yet; until then a non-round corner shape on composited contents is clipped
+        // only by the rect above.
+        m_pendingChanges.remove(Change::ContentsClipShapePath);
     }
 
     if (reasons.contains(CompositionReason::RenderingUpdate)) {
@@ -1272,6 +1290,17 @@ void CoordinatedPlatformLayer::flushCompositingStateOnSkiaTarget(const OptionSet
         if (m_pendingChanges.contains(Change::ContentsClippingRect)) {
             layer.setContentsClippingRect(m_contentsClippingRect);
             m_pendingChanges.remove(Change::ContentsClippingRect);
+        }
+
+        if (m_pendingChanges.contains(Change::ContentsClipShapePath)) {
+            if (m_contentsClipShapePath.isEmpty())
+                layer.setContentsClipPath(std::nullopt);
+            else {
+                auto contentsClipPath = *m_contentsClipShapePath.platformPath();
+                contentsClipPath.setFillType(SkPathFillType::kWinding);
+                layer.setContentsClipPath(WTF::move(contentsClipPath));
+            }
+            m_pendingChanges.remove(Change::ContentsClipShapePath);
         }
 
         if (m_pendingChanges.contains(Change::ContentsImage)) {

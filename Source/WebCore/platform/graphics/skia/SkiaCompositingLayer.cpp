@@ -708,6 +708,9 @@ void SkiaCompositingLayer::paintContents(SkCanvas& canvas, PaintContext& context
         drawRectRestricted(canvas, context.damageRegionOrNull(), SkRect(m_contentsRect), paint);
     } else if (m_contentsBuffer || m_imageBackingStore) {
         bool shouldPaintNow = [&] {
+            if (m_contentsClipPath)
+                return true;
+
             if (m_contentsClippingRect.hasNonZeroRadii())
                 return true;
 
@@ -730,7 +733,11 @@ void SkiaCompositingLayer::paintContents(SkCanvas& canvas, PaintContext& context
         if (shouldPaintNow) {
             canvas.concat(transform);
 
-            if (m_contentsClippingRect.hasNonZeroRadii() || !m_contentsClippingRect.rect().contains(m_contentsRect))
+            // A corner shape the clipping rect cannot express arrives as a path instead; the rect has had
+            // its radii dropped in that case, so the path is the whole clip.
+            if (m_contentsClipPath)
+                canvas.clipPath(*m_contentsClipPath, true);
+            else if (m_contentsClippingRect.hasNonZeroRadii() || !m_contentsClippingRect.rect().contains(m_contentsRect))
                 clipRect(canvas, m_contentsClippingRect);
         }
 
@@ -963,7 +970,7 @@ void SkiaCompositingLayer::paintSelfAndChildren(SkCanvas& canvas, PaintContext& 
         return matrix.mapRect(SkRect(rect.rect())).contains(childMatrix.mapRect(SkRect(childBounds)));
     };
 
-    const bool contentsRectClipsDescendants = !m_preserves3D && m_contentsRectClipsDescendants && (m_contentsClippingRect.hasNonZeroRadii() || !m_contentsClippingRect.rect().contains(m_contentsRect));
+    const bool contentsRectClipsDescendants = !m_preserves3D && m_contentsRectClipsDescendants && (m_contentsClipPath || m_contentsClippingRect.hasNonZeroRadii() || !m_contentsClippingRect.rect().contains(m_contentsRect));
     const bool masksToBounds = !m_preserves3D && m_masksToBounds;
     TransformationMatrix clipTransform;
     FloatRoundedRect clippingRect;

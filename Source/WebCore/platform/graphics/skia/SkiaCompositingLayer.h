@@ -82,6 +82,7 @@ public:
     void setContentsOpaque(bool opaque) { m_contentsOpaque = opaque; }
     void setMasksToBounds(bool masksToBounds) { m_masksToBounds = masksToBounds; }
     void setContentsClippingRect(const FloatRoundedRect& rect) { m_contentsClippingRect = rect; }
+    void setContentsClipPath(std::optional<SkPath>&& clipPath) { m_contentsClipPath = WTF::move(clipPath); }
     void setContentsRectClipsDescendants(bool clips) { m_contentsRectClipsDescendants = clips; }
     void setOpacity(float);
     void setBlendMode(BlendMode);
@@ -312,6 +313,7 @@ private:
     float m_opacity { 1 };
     std::optional<SkBlendMode> m_blendMode;
     std::optional<SkPath> m_clipPath;
+    std::optional<SkPath> m_contentsClipPath;
     sk_sp<SkImage> m_maskImage;
     RefPtr<SkiaCompositingLayer> m_mask;
     RefPtr<SkiaCompositingLayer> m_replica;

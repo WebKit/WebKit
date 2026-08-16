@@ -157,6 +157,7 @@ public:
     void setContentsRect(const FloatRect&) WTF_REQUIRES_LOCK(m_lock);
     void setContentsRectClipsDescendants(bool) WTF_REQUIRES_LOCK(m_lock);
     void setContentsClippingRect(const FloatRoundedRect&) WTF_REQUIRES_LOCK(m_lock);
+    void setContentsClipShapePath(const Path&) WTF_REQUIRES_LOCK(m_lock);
     void setContentsScale(float) WTF_REQUIRES_LOCK(m_lock);
     float contentsScale() const WTF_REQUIRES_LOCK(m_lock);
     enum class RequireComposition : bool { No, Yes };
@@ -248,6 +249,7 @@ private:
         ClipPath,
         ContentsBuffer,
         ContentsClippingRect,
+        ContentsClipShapePath,
         ContentsColor,
         ContentsImage,
         ContentsOpaque,
@@ -312,6 +314,7 @@ private:
     FloatRect m_contentsRect WTF_GUARDED_BY_LOCK(m_lock);
     bool m_contentsRectClipsDescendants WTF_GUARDED_BY_LOCK(m_lock) { false };
     FloatRoundedRect m_contentsClippingRect WTF_GUARDED_BY_LOCK(m_lock);
+    Path m_contentsClipShapePath WTF_GUARDED_BY_LOCK(m_lock);
     Color m_contentsColor WTF_GUARDED_BY_LOCK(m_lock);
     FloatSize m_contentsTileSize WTF_GUARDED_BY_LOCK(m_lock);
     FloatSize m_contentsTilePhase WTF_GUARDED_BY_LOCK(m_lock);

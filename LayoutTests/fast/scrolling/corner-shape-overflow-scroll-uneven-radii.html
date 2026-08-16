@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
+<head>
+    <meta charset="utf-8">
+    <title>CSS Borders and Box Decorations 4: 'corner-shape' with uneven radii on a bordered overflow scroller</title>
+    <meta name="fuzzy" content="maxDifference=0-119; totalPixels=0-263">
+    <style>
+        body {
+            margin: 0;
+            background-color: white;
+        }
+
+        ::-webkit-scrollbar {
+            display: none;
+        }
+
+        .scroller {
+            position: relative;
+            margin: 50px;
+            width: 400px;
+            height: 300px;
+            overflow: scroll;
+            border: 30px solid rgba(0, 0, 128, 0.5);
+            padding: 20px;
+            border-top-right-radius: 150px 100px;
+            border-bottom-left-radius: 150px 100px;
+            border-top-left-radius: 60px 40px;
+            border-bottom-right-radius: 60px 40px;
+            corner-shape: scoop bevel notch squircle;
+        }
+
+        .contents {
+            width: 520px;
+            height: 420px;
+            background-color: green;
+            transform: translateZ(0);
+        }
+    </style>
+</head>
+<body>
+    <div class="scroller">
+        <div class="contents"></div>
+    </div>
+</body>
+</html>

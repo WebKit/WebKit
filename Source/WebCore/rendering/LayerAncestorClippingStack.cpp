@@ -38,7 +38,7 @@ namespace WebCore {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(LayerAncestorClippingStack);
 
 LayerAncestorClippingStack::LayerAncestorClippingStack(Vector<CompositedClipData>&& clipDataStack)
-    : m_stack(WTF::map(WTF::move(clipDataStack), [](CompositedClipData&& clipDataEntry) { return ClippingStackEntry { WTF::move(clipDataEntry), std::nullopt, nullptr, nullptr }; }))
+    : m_stack(WTF::map(WTF::move(clipDataStack), [](CompositedClipData&& clipDataEntry) { return ClippingStackEntry { WTF::move(clipDataEntry), std::nullopt, nullptr, nullptr, nullptr }; }))
 {
 }
 
@@ -129,7 +129,7 @@ bool LayerAncestorClippingStack::updateWithClipData(ScrollingCoordinator* scroll
         auto& clipDataEntry = clipDataStack[i];
         
         if (i >= stackEntryCount) {
-            m_stack.append({ WTF::move(clipDataEntry), { }, nullptr, nullptr });
+            m_stack.append({ WTF::move(clipDataEntry), { }, nullptr, nullptr, nullptr });
             stackChanged = true;
             continue;
         }
@@ -182,6 +182,8 @@ static TextStream& operator<<(TextStream& ts, const LayerAncestorClippingStack::
         ts.dumpProperty("overflowScrollProxyNodeID"_s, entry.overflowScrollProxyNodeID);
     if (entry.clippingLayer)
         ts.dumpProperty("clippingLayer"_s, entry.clippingLayer->primaryLayerID());
+    if (entry.shapeMaskLayer)
+        ts.dumpProperty("shapeMaskLayer"_s, entry.shapeMaskLayer->primaryLayerID());
     if (entry.scrollingLayer)
         ts.dumpProperty("scrollingLayer"_s, entry.scrollingLayer->primaryLayerID());
     return ts;

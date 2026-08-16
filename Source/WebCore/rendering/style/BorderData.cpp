@@ -54,6 +54,26 @@ bool BorderData::hasBorderRadius() const
     return radii.anyOf([](auto& corner) { return !Style::isKnownEmpty(corner); });
 }
 
+bool BorderData::hasNonRoundCornerShape() const
+{
+    if (!hasBorderRadius())
+        return false;
+
+    return cornerShapes.anyOf([](auto& shape) {
+        return shape != Style::CornerShapeValue { CSS::Keyword::Round { } };
+    });
+}
+
+bool BorderData::hasCornerShapeOutsideRoundedRect() const
+{
+    if (!hasNonRoundCornerShape())
+        return false;
+
+    return !cornerShapes.allOf([](auto& shape) {
+        return shape == Style::CornerShapeValue { CSS::Keyword::Square { } };
+    });
+}
+
 bool BorderData::containsCurrentColor() const
 {
     return edges.anyOf([](const auto& edge) {

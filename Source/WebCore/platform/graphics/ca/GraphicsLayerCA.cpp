@@ -1071,6 +1071,25 @@ void GraphicsLayerCA::setContentsClippingRect(const FloatRoundedRect& rect)
     noteLayerPropertyChanged(ContentsRectsChanged);
 }
 
+static bool contentsClipShapePathsAreEqual(const Path& a, const Path& b)
+{
+    if (a.isEmpty() || b.isEmpty())
+        return a.isEmpty() && b.isEmpty();
+
+    auto* aSegments = a.segmentsIfExists();
+    auto* bSegments = b.segmentsIfExists();
+    return aSegments && bSegments && *aSegments == *bSegments;
+}
+
+void GraphicsLayerCA::setContentsClipShapePath(const Path& path)
+{
+    if (contentsClipShapePathsAreEqual(contentsClipShapePath(), path))
+        return;
+
+    GraphicsLayer::setContentsClipShapePath(path);
+    noteLayerPropertyChanged(ContentsRectsChanged);
+}
+
 void GraphicsLayerCA::setContentsRectClipsDescendants(bool contentsRectClipsDescendants)
 {
     if (contentsRectClipsDescendants == m_contentsRectClipsDescendants)
@@ -1091,7 +1110,9 @@ void GraphicsLayerCA::setVideoGravity(MediaPlayerVideoGravity gravity)
 
 void GraphicsLayerCA::setShapeLayerPath(const Path& path)
 {
-    // FIXME: need to check for path equality. No bool Path::operator==(const Path&)!.
+    if (!path.isEmpty() && shapeLayerPath().definitelyEqual(path))
+        return;
+
     GraphicsLayer::setShapeLayerPath(path);
     noteLayerPropertyChanged(ShapeChanged);
 }
@@ -3238,15 +3259,17 @@ void GraphicsLayerCA::updateContentsColorLayer()
 // roundedRect is in the coordinate space of clippingLayer.
 void GraphicsLayerCA::updateClippingStrategy(PlatformCALayer& clippingLayer, RefPtr<PlatformCALayer>& shapeMaskLayer, const FloatRoundedRect& roundedRect)
 {
+    bool hasShapePath = !contentsClipShapePath().isEmpty();
+
 #if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
-    if (m_isSeparated && roundedRect.radii().hasEvenCorners() && clippingLayer.bounds() == roundedRect.rect()) {
+    if (!hasShapePath && m_isSeparated && roundedRect.radii().hasEvenCorners() && clippingLayer.bounds() == roundedRect.rect()) {
         m_layer->setCornerRadius(roundedRect.radii().topLeft().width());
         return;
     }
     m_layer->setCornerRadius(0);
 #endif
 
-    if (roundedRect.radii().isUniformCornerRadius() && clippingLayer.bounds() == roundedRect.rect()) {
+    if (!hasShapePath && roundedRect.radii().isUniformCornerRadius() && clippingLayer.bounds() == roundedRect.rect()) {
         clippingLayer.setMaskLayer(nullptr);
         if (shapeMaskLayer) {
             shapeMaskLayer->setOwner(nullptr);
@@ -3272,9 +3295,15 @@ void GraphicsLayerCA::updateClippingStrategy(PlatformCALayer& clippingLayer, Ref
     auto shapeBounds = FloatRect { { }, roundedRect.rect().size() };
     shapeMaskLayer->setBounds(shapeBounds);
     
-    auto localRoundedRect = roundedRect;
-    localRoundedRect.setLocation({ });
-    shapeMaskLayer->setShapeRoundedRect(localRoundedRect);
+    if (hasShapePath) {
+        auto localPath = contentsClipShapePath();
+        localPath.translate(-toFloatSize(rectLocation));
+        shapeMaskLayer->setShapePath(localPath);
+    } else {
+        auto localRoundedRect = roundedRect;
+        localRoundedRect.setLocation({ });
+        shapeMaskLayer->setShapeRoundedRect(localRoundedRect);
+    }
 
     clippingLayer.setCornerRadius(0);
     RefPtr maskLayer = shapeMaskLayer;
@@ -3289,7 +3318,8 @@ void GraphicsLayerCA::updateContentsRects()
     auto contentBounds = FloatRect { { }, m_contentsRect.size() };
     
     bool gainedOrLostClippingLayer = false;
-    if (m_contentsClippingRect.hasNonZeroRadii() || !m_contentsClippingRect.rect().contains(m_contentsRect)) {
+    if (m_contentsClippingRect.hasNonZeroRadii() || !contentsClipShapePath().isEmpty()
+        || !m_contentsClippingRect.rect().contains(m_contentsRect)) {
         if (!m_contentsClippingLayer) {
             Ref contentsClippingLayer = createPlatformCALayer(PlatformCALayer::LayerType::LayerTypeLayer, this);
             m_contentsClippingLayer = contentsClippingLayer.copyRef();

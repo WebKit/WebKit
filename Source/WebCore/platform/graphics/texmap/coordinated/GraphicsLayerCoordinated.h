@@ -80,6 +80,7 @@ private:
     void setContentsTileSize(const FloatSize&) override;
     void setContentsTilePhase(const FloatSize&) override;
     void setContentsClippingRect(const FloatRoundedRect&) override;
+    void setContentsClipShapePath(const Path&) override;
     void setContentsNeedsDisplay() override;
     void setContentsNeedsDisplayInRect(const FloatRect&) override;
     void setContentsToPlatformLayer(PlatformLayer*, ContentsLayerPurpose) override;
@@ -147,6 +148,7 @@ private:
         ContentsBuffer,
         ContentsBufferNeedsDisplay,
         ContentsClippingRect,
+        ContentsClipShapePath,
         ContentsColor,
         ContentsImage,
         ContentsOpaque,

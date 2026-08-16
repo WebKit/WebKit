@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
+<head>
+    <meta charset="utf-8">
+    <title>CSS Borders and Box Decorations 4: 'corner-shape' on two nested clips, the inner one an overflow scroller — reference</title>
+    <style>
+        body {
+            margin: 0;
+            background-color: white;
+        }
+        ::-webkit-scrollbar {
+            display: none;
+        }
+        .outer {
+            position: absolute;
+            top: 40px;
+            left: 40px;
+            width: 320px;
+            height: 260px;
+            overflow: hidden;
+            border-radius: 70px;
+            corner-shape: notch scoop bevel squircle;
+        }
+        .scroller {
+            position: absolute;
+            top: 30px;
+            left: 30px;
+            width: 300px;
+            height: 240px;
+            overflow: scroll;
+            border-radius: 60px;
+            corner-shape: scoop squircle notch bevel;
+        }
+        .contents {
+            width: 460px;
+            height: 420px;
+            background-color: blue;
+        }
+    </style>
+</head>
+<body>
+    <div class="outer">
+        <div class="scroller">
+            <div class="contents"></div>
+        </div>
+    </div>
+</body>
+</html>
