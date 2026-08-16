@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<body>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+const phaseKey = "modulepreload-reload-after-failure-phase";
+const tokenKey = "modulepreload-reload-after-failure-token";
+let token = sessionStorage.getItem(tokenKey);
+if (!token) {
+    token = Math.random().toString(36).slice(2);
+    sessionStorage.setItem(tokenKey, token);
+}
+
+const moduleURL = `./resources/fail-once-module.py?token=${token}`;
+const setServerMode = mode => {
+    document.cookie = `modulepreload-reload-after-failure=${token}-${mode}; Path=/preload/resources; SameSite=Strict`;
+};
+const clearState = () => {
+    sessionStorage.removeItem(phaseKey);
+    sessionStorage.removeItem(tokenKey);
+    document.cookie = "modulepreload-reload-after-failure=; Max-Age=0; Path=/preload/resources; SameSite=Strict";
+};
+
+const isFirstLoad = !sessionStorage.getItem(phaseKey);
+// The endpoint fails on the first load and succeeds after the reload. The
+// second import must request it again instead of reusing the failed preload.
+setServerMode(isFirstLoad ? "fail" : "pass");
+
+const preload = document.createElement("link");
+preload.rel = "modulepreload";
+preload.href = moduleURL;
+document.head.appendChild(preload);
+
+import(moduleURL).then(() => {
+    if (isFirstLoad) {
+        clearState();
+        document.body.textContent = "FAIL: initial module load unexpectedly succeeded";
+        if (window.testRunner)
+            testRunner.notifyDone();
+    } else {
+        clearState();
+        document.body.textContent = "PASS";
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }
+}).catch(error => {
+    if (isFirstLoad) {
+        sessionStorage.setItem(phaseKey, "reloaded");
+        setServerMode("pass");
+        location.reload();
+    } else {
+        clearState();
+        document.body.textContent = `FAIL: ${error}`;
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }
+});
+</script>
+</body>
