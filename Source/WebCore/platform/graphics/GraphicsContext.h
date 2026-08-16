@@ -123,8 +123,8 @@ public:
     std::optional<GraphicsDropShadow> dropShadow() const { return m_state.dropShadow(); }
     void setDropShadow(const GraphicsDropShadow& dropShadow) { m_state.setDropShadow(dropShadow); didUpdateSingleState(m_state, GraphicsContextState::toIndex(GraphicsContextState::Change::DropShadow)); }
     void clearDropShadow() { m_state.setDropShadow(std::nullopt); didUpdateSingleState(m_state, GraphicsContextState::toIndex(GraphicsContextState::Change::DropShadow)); }
-    bool hasBlurredDropShadow() const { return dropShadow() && dropShadow()->isBlurred(); }
-    bool hasDropShadow() const { return dropShadow() && dropShadow()->hasOutsets(); }
+    bool hasBlurredDropShadow() const { return m_state.dropShadow() && m_state.dropShadow()->isBlurred(); }
+    bool hasDropShadow() const { return m_state.dropShadow() && m_state.dropShadow()->hasOutsets(); }
 
     std::optional<GraphicsStyle> style() const { return m_state.style(); }
     void setStyle(const std::optional<GraphicsStyle>& style) { m_state.setStyle(style); didUpdateSingleState(m_state, GraphicsContextState::toIndex(GraphicsContextState::Change::Style)); }
