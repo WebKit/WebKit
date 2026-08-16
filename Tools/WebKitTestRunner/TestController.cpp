@@ -1474,7 +1474,7 @@ void TestController::resetPreferencesToConsistentValues(const TestOptions& optio
         WKPreferencesResetAllInternalDebugFeatures(preferences);
 
         WKPreferencesSetProcessSwapOnNavigationEnabled(preferences, options.shouldEnableProcessSwapOnNavigation());
-        WKPreferencesSetStorageBlockingPolicy(preferences, kWKAllowAllStorage); // FIXME: We should be testing the default.
+        WKPreferencesSetStorageBlockingPolicy(preferences, kWKBlockThirdPartyStorage);
         WKPreferencesSetMinimumFontSize(preferences, 0);
         WKPreferencesSetAllowsPictureInPictureMediaPlayback(preferences, true);
 
