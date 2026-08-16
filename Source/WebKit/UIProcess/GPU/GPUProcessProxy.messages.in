@@ -45,10 +45,6 @@ messages -> GPUProcessProxy {
 #endif
 #endif
 
-#if ENABLE(VIDEO) || ENABLE(WEB_AUDIO)
-    AudioSessionActiveStateChangedForProcess(WebCore::ProcessIdentifier webProcessIdentifier, bool active)
-#endif
-
     ProcessIsReadyToExit()
     TerminateWebProcess(WebCore::ProcessIdentifier webProcessIdentifier, enum:uint16_t IPC::MessageName invalidMessageName)
 }

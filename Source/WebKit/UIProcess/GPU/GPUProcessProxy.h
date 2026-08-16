@@ -124,10 +124,6 @@ public:
     void cancelGetDisplayMediaPrompt();
 #endif
 
-#if ENABLE(VIDEO) || ENABLE(WEB_AUDIO)
-    Ref<GenericPromise> tryToSetAudioSessionActiveForProcess(WebCore::ProcessIdentifier, bool);
-#endif
-
     void removeSession(PAL::SessionID);
 
 #if PLATFORM(MAC)
@@ -234,10 +230,6 @@ private:
     void statusBarWasTapped(CompletionHandler<void()>&&);
 #endif
 #endif // ENABLE(MEDIA_STREAM)
-
-#if ENABLE(VIDEO) || ENABLE(WEB_AUDIO)
-    void audioSessionActiveStateChangedForProcess(WebCore::ProcessIdentifier, bool active);
-#endif
 
     GPUProcessCreationParameters processCreationParameters();
     void platformInitializeGPUProcessParameters(GPUProcessCreationParameters&);

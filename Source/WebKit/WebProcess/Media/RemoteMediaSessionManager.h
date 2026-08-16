@@ -98,8 +98,6 @@ private:
     void sessionWillBeginPlayback(WebCore::PlatformMediaSessionInterface&, CompletionHandler<void(bool)>&&) final;
     void updateSessionState() final;
     void sessionStateChanged(WebCore::PlatformMediaSessionInterface&) final;
-    void processWillSuspend() final;
-    void processDidResume() final;
 
     void addRestriction(WebCore::PlatformMediaSessionMediaType, WebCore::MediaSessionRestrictions) final;
     void removeRestriction(WebCore::PlatformMediaSessionMediaType, WebCore::MediaSessionRestrictions) final;

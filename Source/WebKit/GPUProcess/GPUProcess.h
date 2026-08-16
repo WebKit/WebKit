@@ -231,9 +231,6 @@ private:
     void promptForGetDisplayMedia(WebCore::DisplayCapturePromptType, CompletionHandler<void(std::optional<WebCore::CaptureDevice>)>&&);
     void cancelGetDisplayMediaPrompt();
 #endif
-#if ENABLE(VIDEO) || ENABLE(WEB_AUDIO)
-    void tryToSetAudioSessionActiveForProcess(WebCore::ProcessIdentifier, bool, CompletionHandler<void(GenericPromise::Result&&)>&&);
-#endif
 #if PLATFORM(MAC)
     void NODELETE setScreenProperties(const WebCore::ScreenProperties&);
     void updateProcessName();

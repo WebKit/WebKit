@@ -161,19 +161,6 @@ void RemoteAudioSession::sendNextActivationIPC()
     if (m_activationIPCInFlight || m_pendingActivationChain.isEmpty())
         return;
 
-    // Under site isolation the UI process is the sole driver of the shared audio session; the content
-    // process keeps only an optimistic local view (set in tryToSetActiveInternal) and must not send
-    // TryToSetActive to the GPU, or it would race the UI process. Resolve the pending waiters and let the
-    // GPU push the authoritative state back via configurationChanged.
-    if (WebProcess::singleton().sharedPreferencesForWebProcessValue().remoteMediaSessionManagerEnabled) {
-        while (!m_pendingActivationChain.isEmpty()) {
-            auto pending = m_pendingActivationChain.takeFirst();
-            for (auto& waiter : pending.waiters)
-                waiter.resolve();
-        }
-        return;
-    }
-
     bool active = m_pendingActivationChain.first().active;
     m_activationIPCInFlight = true;
 
@@ -245,10 +232,9 @@ void RemoteAudioSession::configurationChanged(RemoteAudioSessionConfiguration&& 
 
     m_configuration = WTF::move(configuration);
 
-    // The GPU process is the source of truth for whether the audio session is active. Mirror it
-    // here so AudioSession::isActive() and its observers behave the same with and without site
-    // isolation, even with the site isolation activation is decided in the UI process which
-    // talks to the RemoteAudioSessionProxy in the GPU directly.
+    // The GPU process is the source of truth for whether the audio session is active. Mirror it here so
+    // AudioSession::isActive() and its observers see an active-state change the GPU process decided on its
+    // own, such as this process losing the session to another one.
     if (activeChanged) {
         setActive(m_configuration->isActive);
         activeStateChanged();
@@ -268,13 +254,7 @@ void RemoteAudioSession::configurationChanged(RemoteAudioSessionConfiguration&& 
             observer.routingContextUIDDidChange(*this);
     });
 
-    // Forward the configuration to the UI process on an active-state change too (not only on
-    // muted/buffer/sampleRate/routing changes) so the RemoteMediaSessionManagerProxy singleton's
-    // per-process activation state mirrors this web process's real audio session state. Under site
-    // isolation the UI process has no other signal for a GPU-driven active-state change (e.g. after a
-    // same-origin navigation reuses the process), so without this its cached state drifts and it can
-    // wrongly skip activating the reused process.
-    if (!mutedStateChanged && !bufferSizeChanged && !sampleRateChanged && !routingContextUIDChanged && !activeChanged)
+    if (!mutedStateChanged && !bufferSizeChanged && !sampleRateChanged && !routingContextUIDChanged)
         return;
 
     RefPtr protectedProcess = m_webProcess.get();

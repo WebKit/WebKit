@@ -34,7 +34,6 @@
 #include <WebCore/MediaSessionIdentifier.h>
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/ProcessQualified.h>
-#include <wtf/Deque.h>
 #include <wtf/HashMap.h>
 #include <wtf/NativePromise.h>
 #include <wtf/Ref.h>
@@ -61,7 +60,6 @@ class PlatformMediaSessionInterface;
 namespace WebKit {
 
 class RemoteMediaSessionManagerAudioHardwareListener;
-class RemoteMediaSessionManagerProxyClient;
 class RemoteMediaSessionProxy;
 class WebPageProxy;
 class WebProcessProxy;
@@ -75,7 +73,6 @@ class RemoteMediaSessionManagerProxy
 #endif
     , public IPC::MessageReceiver {
     WTF_MAKE_TZONE_ALLOCATED(RemoteMediaSessionManagerProxy);
-    friend class RemoteMediaSessionManagerProxyClient;
 public:
     USING_CAN_MAKE_WEAKPTR(MessageReceiver);
 
@@ -85,19 +82,6 @@ public:
     virtual ~RemoteMediaSessionManagerProxy();
 
     void webProcessWillShutDown(WebCore::ProcessIdentifier);
-
-#if USE(AUDIO_SESSION)
-    // Called by a RemoteMediaSessionProxy when its session's state changes. Under site isolation the content
-    // process keeps only an optimistic local audio-session state and does not drive the GPU (see
-    // RemoteAudioSession::sendNextActivationIPC); the UI process is the sole activation driver, so it activates
-    // the given session's process here when the session requires an active audio session (e.g. WebAudio, which
-    // becomes audible only after begin).
-    void reevaluateAudioSessionActivation(WebCore::PlatformMediaSessionInterface&);
-
-    // Called by GPUProcessProxy with the GPU-authoritative per-process audio-session active state (the
-    // trusted source), so the activation gate never depends on a value sent by the WebContent process.
-    void setAudioSessionActiveForProcess(WebCore::ProcessIdentifier, bool active);
-#endif
 
     // IPC::MessageReceiver, WebCore::AudioSession.
     void ref() const final { WebCore::REMOTE_MEDIA_SESSION_MANAGER_BASE_CLASS::ref(); }
@@ -120,7 +104,7 @@ private:
     void setCurrentMediaSession(IPC::Connection&, RemoteMediaSessionState&&);
     void updateMediaSessionStates(IPC::Connection&, WebCore::PageIdentifier, Vector<RemoteMediaSessionState>&&, uint64_t audioCaptureSourceCount);
     void mediaSessionStateChanged(IPC::Connection&, WebKit::RemoteMediaSessionState&&);
-    void mediaSessionWillBeginPlayback(IPC::Connection&, RemoteMediaSessionState&&, CompletionHandler<void(bool)>&&);
+    void mediaSessionWillBeginPlayback(IPC::Connection&, RemoteMediaSessionState&&);
 
     // The audio session category is computed by each content process for its own sessions; the GPU
     // process reconciles them. Nothing is computed here.
@@ -142,8 +126,6 @@ private:
 
 #if USE(AUDIO_SESSION)
     void remoteAudioConfigurationChanged(RemoteAudioSessionConfiguration&&);
-    void remoteProcessWillSuspend(IPC::Connection&);
-    void remoteProcessDidResume(IPC::Connection&);
 
     // AudioSession
     String routingContextUID() const final { return m_audioConfiguration.routingContextUID; }
@@ -155,12 +137,6 @@ private:
     size_t outputLatency() const final { return m_audioConfiguration.outputLatency; }
 
     Ref<SetActivePromise> tryToSetActiveInternal(bool) final;
-    bool hasActiveAudioSession(WebCore::PlatformMediaSessionInterface&) const final;
-    std::optional<WebCore::ProcessIdentifier> processForSession(const WebCore::PlatformMediaSessionInterface&) const;
-    bool processRequiresAudioSession(WebCore::ProcessIdentifier) const;
-    Ref<SetActivePromise> enqueueAudioSessionActivation(WebCore::ProcessIdentifier, bool active);
-    void deactivateAllAudioSessions();
-    void sendNextActivationIPC(WebCore::ProcessIdentifier);
 
     size_t preferredBufferSize() const final { return m_audioConfiguration.preferredBufferSize; }
     void setPreferredBufferSize(size_t) final;
@@ -187,19 +163,8 @@ private:
 #if USE(AUDIO_SESSION)
     mutable RemoteAudioSessionConfiguration m_audioConfiguration;
 
-    struct PendingActivation {
-        bool active;
-        Vector<WebCore::AudioSession::SetActivePromise::AutoRejectProducer> waiters;
-    };
-    struct ProcessActivationState {
-        bool active { false };
-        Deque<PendingActivation> pendingChain;
-        bool ipcInFlight { false };
-    };
-    HashMap<WebCore::ProcessIdentifier, ProcessActivationState> m_activationByProcess;
 #endif
 
-    bool m_isInterruptedForTesting { false };
     bool m_isInSetCurrentSession { false };
 };
 

@@ -28,7 +28,6 @@
 
 #if ENABLE(VIDEO) || ENABLE(WEB_AUDIO)
 
-#include "GPUProcessProxy.h"
 #include "MessageSenderInlines.h"
 #include "RemoteMediaSessionManagerMessages.h"
 #include "RemoteMediaSessionManagerProxyMessages.h"
@@ -37,10 +36,8 @@
 #include "SharedPreferencesForWebProcess.h"
 #include "WebPageProxy.h"
 #include "WebProcessProxy.h"
-#include <WebCore/MediaSessionManagerClient.h>
 #include <WebCore/PlatformMediaSessionInterface.h>
 #include <WebCore/PlatformMediaSessionManager.h>
-#include <wtf/RunLoop.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
@@ -89,51 +86,6 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteMediaSessionManagerAudioHardwareListener);
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteMediaSessionManagerProxy);
 
-#if USE(AUDIO_SESSION)
-// Routes the UI-process singleton's audio-session activation to the GPU process, on behalf of the
-// web process that owns the triggering session. NowPlaying routing will be added in a follow-up.
-class RemoteMediaSessionManagerProxyClient final : public WebCore::MediaSessionManagerClient {
-    WTF_MAKE_TZONE_ALLOCATED(RemoteMediaSessionManagerProxyClient);
-public:
-    explicit RemoteMediaSessionManagerProxyClient(RemoteMediaSessionManagerProxy& manager)
-        : m_manager(manager) { }
-
-private:
-    Ref<GenericPromise> tryToSetAudioSessionActive(bool active, WebCore::PlatformMediaSessionInterface* session) final
-    {
-        RefPtr manager = m_manager.get();
-        if (!manager)
-            return GenericPromise::createAndReject();
-
-        if (!active) {
-            // The base class only asks to deactivate once no session needs the audio session anymore
-            // (hasNoSession), so drop activation for every web process we activated.
-            manager->deactivateAllAudioSessions();
-            return GenericPromise::createAndResolve();
-        }
-
-        // Activate the audio session for the web process that owns the triggering session.
-        if (!session)
-            return GenericPromise::createAndReject();
-
-        auto target = manager->processForSession(*session);
-        if (!target)
-            return GenericPromise::createAndReject();
-
-        return manager->enqueueAudioSessionActivation(*target, true);
-    }
-
-    void hasActiveNowPlayingSessionChanged(WebCore::PlatformMediaSessionInterface*) final
-    {
-        // FIXME: route to the top-level WebPageProxy for the session's page (follow-up).
-    }
-
-    WeakPtr<RemoteMediaSessionManagerProxy> m_manager;
-};
-
-WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteMediaSessionManagerProxyClient);
-#endif // USE(AUDIO_SESSION)
-
 static WeakPtr<RemoteMediaSessionManagerProxy>& NODELETE singletonWeakPtr()
 {
     static NeverDestroyed<WeakPtr<RemoteMediaSessionManagerProxy>> singleton;
@@ -156,12 +108,10 @@ RemoteMediaSessionManagerProxy::RemoteMediaSessionManagerProxy()
     : REMOTE_MEDIA_SESSION_MANAGER_BASE_CLASS(std::nullopt) // No need to access a WebCore::Page in the UI process
 {
 #if USE(AUDIO_SESSION)
-    // The UI-process singleton is the audio-session authority under site isolation, so it must
-    // deactivate the shared session once no web process needs it. Page::ensureMediaSessionManager
-    // sets this on a page's manager, but the singleton has no Page, so set it here.
-    setShouldDeactivateAudioSession(true);
+    // This manager has no audio session of its own to drive: each content process activates its own with
+    // the GPU process. Being the UI process's shared session keeps the configuration this process reports
+    // in sync with the content processes and stops a real one being created here.
     AudioSession::setSharedSession(*this);
-    setClient(makeUnique<RemoteMediaSessionManagerProxyClient>(*this));
 #endif
 
 #if PLATFORM(COCOA)
@@ -196,26 +146,6 @@ void RemoteMediaSessionManagerProxy::removeMediaSession(IPC::Connection& connect
     if (RefPtr session = findAndUpdateSession(connection, state))
         removeSession(*session);
     m_sessionProxies.remove({ state.sessionIdentifier, processIdentifier });
-
-#if USE(AUDIO_SESSION)
-    // If that was the process's last session and it is not still capturing audio, drive its audio session
-    // inactive and clear the per-process activation state now -- decoupled from the global
-    // maybeDeactivateAudioSession() path (gated on m_becameActive, which can't track per-process state).
-    // Otherwise a reused process (same-origin navigation) keeps a stale "active" flag and the next document's
-    // sessionWillBeginPlayback skips activation even though the process's audio session was reset.
-    bool processStillHasSession = false;
-    for (auto& key : m_sessionProxies.keys()) {
-        if (key.processIdentifier() == processIdentifier) {
-            processStillHasSession = true;
-            break;
-        }
-    }
-    if (!processStillHasSession && !processRequiresAudioSession(processIdentifier)) {
-        auto it = m_activationByProcess.find(processIdentifier);
-        if (it != m_activationByProcess.end() && it->value.active)
-            enqueueAudioSessionActivation(processIdentifier, false)->whenSettled(RunLoop::mainSingleton(), [](auto&&) { });
-    }
-#endif
 }
 
 void RemoteMediaSessionManagerProxy::webProcessWillShutDown(WebCore::ProcessIdentifier processIdentifier)
@@ -239,14 +169,6 @@ void RemoteMediaSessionManagerProxy::webProcessWillShutDown(WebCore::ProcessIden
         return entry.key.processIdentifier() == processIdentifier;
     }))
         updateSessionState();
-
-#if USE(AUDIO_SESSION)
-    // The process is gone; drop the activation state we tracked for it (keyed by ProcessIdentifier, so a
-    // reused process starts clean). The pending activations' waiters are AutoRejectProducers, so removing the
-    // entry rejects any still-pending promises as it is destroyed. setAudioSessionActiveForProcess() relies on
-    // this removal (it uses find(), not ensure(), so it never resurrects a departed process's entry).
-    m_activationByProcess.remove(processIdentifier);
-#endif
 }
 
 void RemoteMediaSessionManagerProxy::setCurrentMediaSession(IPC::Connection& connection, RemoteMediaSessionState&& state)
@@ -270,23 +192,10 @@ void RemoteMediaSessionManagerProxy::updateMediaSessionStates(IPC::Connection& c
 
     auto process = WebProcessProxy::fromConnection(connection)->coreProcessIdentifier();
     WebCore::ProcessQualified<WebCore::PageIdentifier> key { WTF::move(pageIdentifier), process };
-#if USE(AUDIO_SESSION)
-    uint64_t previousPageCaptureCount = m_audioCaptureSourceCountsByPage.get(key);
-#endif
     if (!audioCaptureSourceCount)
         m_audioCaptureSourceCountsByPage.remove(key);
     else
         m_audioCaptureSourceCountsByPage.set(key, audioCaptureSourceCount);
-
-#if USE(AUDIO_SESSION)
-    // Drive audio-session activation for this process's audio capture: activeAudioSessionRequired() can't see
-    // capture from the UI process (only the count is forwarded, not the AudioCaptureSource objects), so key off
-    // the capture-count transition -- activate when it starts, deactivate when it stops and nothing else needs it.
-    if (audioCaptureSourceCount && !previousPageCaptureCount)
-        enqueueAudioSessionActivation(process, true)->whenSettled(RunLoop::mainSingleton(), [](auto&&) { });
-    else if (!audioCaptureSourceCount && previousPageCaptureCount && !processRequiresAudioSession(process))
-        enqueueAudioSessionActivation(process, false)->whenSettled(RunLoop::mainSingleton(), [](auto&&) { });
-#endif
 }
 
 int RemoteMediaSessionManagerProxy::countActiveAudioCaptureSources()
@@ -316,28 +225,12 @@ void RemoteMediaSessionManagerProxy::setCurrentSession(WebCore::PlatformMediaSes
     REMOTE_MEDIA_SESSION_MANAGER_BASE_CLASS::setCurrentSession(session);
 }
 
-void RemoteMediaSessionManagerProxy::mediaSessionWillBeginPlayback(IPC::Connection& connection, RemoteMediaSessionState&& state, CompletionHandler<void(bool)>&& completionHandler)
+void RemoteMediaSessionManagerProxy::mediaSessionWillBeginPlayback(IPC::Connection& connection, RemoteMediaSessionState&& state)
 {
-    RefPtr session = findAndUpdateSession(connection, state);
-    if (!session) {
-        completionHandler(false);
-        return;
-    }
-
-#if USE(AUDIO_SESSION)
-    // Mirror this process's real audio-session active state onto the shared session's active flag (which
-    // the base sessionWillBeginPlayback reads via AudioSession::singleton().isActive() on its fast-activation
-    // path) before the base activation gate, so the gate decides on this process's reality. The value is the
-    // authoritative per-process state the GPU process reports (via setAudioSessionActiveForProcess()) plus the
-    // activation chain (NOT a WebContent-supplied bool); the per-process entry the base reads via hasActiveAudioSession()
-    // is already up to date. Key by the connection's process (trusted), not by any value the web process
-    // sent. setActive() only sets the flag; it fires no observers.
-    auto processIdentifier = WebProcessProxy::fromConnection(connection)->coreProcessIdentifier();
-    auto it = m_activationByProcess.find(processIdentifier);
-    AudioSession::setActive(it != m_activationByProcess.end() && it->value.active);
-#endif
-
-    REMOTE_MEDIA_SESSION_MANAGER_BASE_CLASS::sessionWillBeginPlayback(*session, WTF::move(completionHandler));
+    // The content process decided whether playback may begin; this runs the part that needs every
+    // process's sessions: making this one current, and the concurrent playback restriction.
+    if (RefPtr session = findAndUpdateSession(connection, state))
+        REMOTE_MEDIA_SESSION_MANAGER_BASE_CLASS::sessionWillBeginPlayback(*session, [](bool) { });
 }
 
 void RemoteMediaSessionManagerProxy::addMediaSessionRestriction(WebCore::PlatformMediaSessionMediaType type, WebCore::MediaSessionRestrictions restrictions)
@@ -358,205 +251,16 @@ void RemoteMediaSessionManagerProxy::resetMediaSessionRestrictions()
 #if USE(AUDIO_SESSION)
 void RemoteMediaSessionManagerProxy::remoteAudioConfigurationChanged(RemoteAudioSessionConfiguration&& configuration)
 {
-    // configuration.isActive is NOT trusted for the activation gate: it is relayed by the (untrusted)
-    // WebContent process. Each process's active state is derived from the GPU process via
-    // setAudioSessionActiveForProcess(); this message carries only the descriptive configuration
-    // (category, sample rate, buffer size, routing, ...).
+    // configuration.isActive is NOT trusted: it is relayed by the (untrusted) WebContent process. This
+    // message carries only the descriptive configuration (category, sample rate, buffer size, routing, ...).
     m_audioConfiguration = WTF::move(configuration);
 }
 
-void RemoteMediaSessionManagerProxy::setAudioSessionActiveForProcess(WebCore::ProcessIdentifier process, bool active)
+Ref<WebCore::AudioSession::SetActivePromise> RemoteMediaSessionManagerProxy::tryToSetActiveInternal(bool)
 {
-    // Correct the cached active state of a process the UI process is already tracking, pushed by the GPU
-    // process (see GPUProcessProxy::audioSessionActiveStateChangedForProcess). Use find(), NOT ensure():
-    // creating an entry here could resurrect one that webProcessWillShutDown() removed while an activation
-    // IPC was still in flight, and the stale reply would then crash sendNextActivationIPC()'s completion on
-    // an empty chain. A process we aren't tracking has no cache to correct -- its next gate just activates.
-    auto it = m_activationByProcess.find(process);
-    if (it == m_activationByProcess.end())
-        return;
-    // Don't clobber an in-flight UI-driven activation/deactivation: while its chain is pending the
-    // optimistic state governs (that is what lets stop->replay re-activate), and the chain reverts on
-    // failure / otherwise converges to what the GPU process reports. Adopt the GPU process's value only
-    // when the process's chain is quiescent.
-    auto& state = it->value;
-    if (state.ipcInFlight || !state.pendingChain.isEmpty())
-        return;
-    state.active = active;
-}
-
-Ref<WebCore::AudioSession::SetActivePromise> RemoteMediaSessionManagerProxy::tryToSetActiveInternal(bool active)
-{
-    if (active && m_isInterruptedForTesting)
-        return SetActivePromise::createAndReject();
-
-    return client().tryToSetAudioSessionActive(active, currentSession().get());
-}
-
-void RemoteMediaSessionManagerProxy::reevaluateAudioSessionActivation(WebCore::PlatformMediaSessionInterface& session)
-{
-    scheduleUpdateSessionState();
-
-    auto process = processForSession(session);
-    if (!process)
-        return;
-
-    // Gate on the session's own process, not the manager-wide activeAudioSessionRequired(): otherwise an
-    // unrelated process holding an audible session would let this process -- driven by its own untrusted
-    // state update -- activate the shared session and cache active=true for itself, short-circuiting its
-    // later playback-activation gate. Mirrors remoteProcessDidResume().
-    if (!processRequiresAudioSession(*process))
-        return;
-
-    enqueueAudioSessionActivation(*process, true);
-}
-
-void RemoteMediaSessionManagerProxy::remoteProcessWillSuspend(IPC::Connection& connection)
-{
-    // The content process is suspending and no longer drives the shared audio session, so release it here;
-    // otherwise a suspended process would keep the system session active (matching the pre-site-isolation
-    // behavior where the web process released it on suspend).
-    auto process = WebProcessProxy::fromConnection(connection)->coreProcessIdentifier();
-    enqueueAudioSessionActivation(process, false);
-}
-
-void RemoteMediaSessionManagerProxy::remoteProcessDidResume(IPC::Connection& connection)
-{
-    auto process = WebProcessProxy::fromConnection(connection)->coreProcessIdentifier();
-    if (processRequiresAudioSession(process))
-        enqueueAudioSessionActivation(process, true);
-}
-
-bool RemoteMediaSessionManagerProxy::hasActiveAudioSession(WebCore::PlatformMediaSessionInterface& session) const
-{
-    // Track activation per web process instead of with the base class's single flag: under site
-    // isolation one manager serves every process, so a session in one process must not make
-    // sessionWillBeginPlayback treat a session in another process as already active (which would skip
-    // activating the latter). Emulates the non-site-isolation model where each process has its own manager.
-    auto process = processForSession(session);
-    if (!process)
-        return false;
-    auto it = m_activationByProcess.find(*process);
-    return it != m_activationByProcess.end() && it->value.active;
-}
-
-std::optional<WebCore::ProcessIdentifier> RemoteMediaSessionManagerProxy::processForSession(const WebCore::PlatformMediaSessionInterface& session) const
-{
-    for (auto& entry : m_sessionProxies) {
-        if (entry.value.ptr() == &session)
-            return entry.key.processIdentifier();
-    }
-    return std::nullopt;
-}
-
-bool RemoteMediaSessionManagerProxy::processRequiresAudioSession(WebCore::ProcessIdentifier process) const
-{
-    for (auto& entry : m_audioCaptureSourceCountsByPage) {
-        if (entry.key.processIdentifier() == process && entry.value)
-            return true;
-    }
-    for (auto& entry : m_sessionProxies) {
-        if (entry.key.processIdentifier() != process)
-            continue;
-        Ref session = entry.value;
-        if (session->activeAudioSessionRequired())
-            return true;
-    }
-    return false;
-}
-
-Ref<WebCore::AudioSession::SetActivePromise> RemoteMediaSessionManagerProxy::enqueueAudioSessionActivation(WebCore::ProcessIdentifier process, bool active)
-{
-    auto& state = m_activationByProcess.ensure(process, [] {
-        return ProcessActivationState { };
-    }).iterator->value;
-
-    SetActivePromise::AutoRejectProducer producer;
-    Ref promise = producer.promise();
-
-    // Optimistically reflect the requested state so hasActiveAudioSession() sees it without waiting
-    // for the GPU process round-trip. This is what lets a stop->replay re-activate: the replay's gate sees the
-    // process as inactive (set when the deactivation was enqueued) even while that deactivation IPC is
-    // still in flight. Mirrors RemoteAudioSession's optimistic setActive.
-    state.active = active;
-
-    // Keep at most one activation IPC per process in flight, coalescing consecutive same-state requests
-    // against the tail; a different-state request appends a new entry dispatched when the previous reply
-    // arrives. This serializes an in-flight deactivation and a following activation so the last state wins.
-    if (!state.pendingChain.isEmpty() && state.pendingChain.last().active == active) {
-        state.pendingChain.last().waiters.append(WTF::move(producer));
-        return promise;
-    }
-
-    PendingActivation entry { active, { } };
-    entry.waiters.append(WTF::move(producer));
-    state.pendingChain.append(WTF::move(entry));
-
-    sendNextActivationIPC(process);
-    return promise;
-}
-
-void RemoteMediaSessionManagerProxy::deactivateAllAudioSessions()
-{
-    Vector<WebCore::ProcessIdentifier> processes;
-    for (auto& entry : m_activationByProcess) {
-        if (entry.value.active)
-            processes.append(entry.key);
-    }
-    for (auto process : processes)
-        enqueueAudioSessionActivation(process, false);
-}
-
-void RemoteMediaSessionManagerProxy::sendNextActivationIPC(WebCore::ProcessIdentifier process)
-{
-    auto it = m_activationByProcess.find(process);
-    if (it == m_activationByProcess.end() || it->value.ipcInFlight || it->value.pendingChain.isEmpty())
-        return;
-
-    bool active = it->value.pendingChain.first().active;
-    it->value.ipcInFlight = true;
-
-    auto processResult = [protectedThis = Ref { *this }, process, active](bool succeeded) mutable {
-        auto it = protectedThis->m_activationByProcess.find(process);
-        if (it == protectedThis->m_activationByProcess.end())
-            return;
-
-        // The chain should be non-empty while an IPC we sent is outstanding. An empty chain here means a
-        // stale reply for an entry that was reset (e.g. removed at process shutdown then re-created) --
-        // unexpected, so ASSERT to catch it in debug (this assert is what surfaced the ensure()-resurrection
-        // bug on the bots), but tolerate it in release rather than take from an empty chain.
-        ASSERT(!it->value.pendingChain.isEmpty());
-        if (it->value.pendingChain.isEmpty())
-            return;
-
-        ASSERT(it->value.pendingChain.first().active == active);
-        auto pending = it->value.pendingChain.takeFirst();
-        it->value.ipcInFlight = false;
-
-        // If the request failed and nothing newer superseded it, revert the optimistic state.
-        if (!succeeded && it->value.pendingChain.isEmpty())
-            it->value.active = !active;
-
-        protectedThis->sendNextActivationIPC(process);
-
-        for (auto& waiter : pending.waiters) {
-            if (succeeded)
-                waiter.resolve();
-            else
-                waiter.reject();
-        }
-    };
-
-    RefPtr gpuProcess = GPUProcessProxy::singletonIfCreated();
-    if (!gpuProcess) {
-        processResult(false);
-        return;
-    }
-
-    gpuProcess->tryToSetAudioSessionActiveForProcess(process, active)->whenSettled(RunLoop::mainSingleton(),
-        [processResult = WTF::move(processResult)](auto&& result) mutable {
-            processResult(result.has_value());
-        });
+    // Each content process activates its own audio session with the GPU process, so the UI process has
+    // no session of its own to activate.
+    return SetActivePromise::createAndResolve();
 }
 
 void RemoteMediaSessionManagerProxy::setPreferredBufferSize(size_t size)

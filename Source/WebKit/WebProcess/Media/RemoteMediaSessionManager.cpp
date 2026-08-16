@@ -112,23 +112,14 @@ void RemoteMediaSessionManager::setCurrentSession(WebCore::PlatformMediaSessionI
 
 void RemoteMediaSessionManager::sessionWillBeginPlayback(WebCore::PlatformMediaSessionInterface& session, CompletionHandler<void(bool)>&& completionHandler)
 {
-    // MediaSession never calls PlatformMediaSession::setActive(), so setCurrentSession() is the only
-    // thing that registers it here, and beginInterruption() only reaches registered sessions.
-    REMOTE_MEDIA_SESSION_MANAGER_BASE_CLASS::setCurrentSession(session);
-
-    // The UI process runs the rest of the admission on this session's RemoteMediaSessionProxy. Ending
-    // the interruption the session was under has to happen here, where the interrupted sessions are.
-    bool sessionWasAlreadyInterrupted = session.state() == WebCore::PlatformMediaSessionState::Interrupted;
-
-    // The UI-process proxy decides activation using each process's audio-session active state as reported
-    // by the GPU process (the source of truth); this process does not send its own view, which the proxy
-    // could not trust.
-    sendWithAsyncReply(Messages::RemoteMediaSessionManagerProxy::MediaSessionWillBeginPlayback(currentSessionState(session)),
-        [protectedThis = Ref { *this }, sessionWasAlreadyInterrupted, completionHandler = WTF::move(completionHandler)](bool granted) mutable {
-            if (granted && sessionWasAlreadyInterrupted && protectedThis->isInterrupted())
-                protectedThis->endInterruption(WebCore::PlatformMediaSessionEndInterruptionFlags::NoFlags);
-            completionHandler(granted);
-        });
+    // Whether playback may begin is decided here: the session, its state and the restrictions are all
+    // in this process. The UI process is told so that it can make this session current and enforce the
+    // concurrent playback restriction across every process's sessions.
+    REMOTE_MEDIA_SESSION_MANAGER_BASE_CLASS::sessionWillBeginPlayback(session, [protectedThis = Ref { *this }, state = currentSessionState(session), completionHandler = WTF::move(completionHandler)](bool granted) mutable {
+        if (granted)
+            protectedThis->send(Messages::RemoteMediaSessionManagerProxy::MediaSessionWillBeginPlayback(state));
+        completionHandler(granted);
+    });
 }
 
 void RemoteMediaSessionManager::addRestriction(WebCore::PlatformMediaSessionMediaType type, WebCore::MediaSessionRestrictions restrictions)
@@ -170,24 +161,6 @@ void RemoteMediaSessionManager::sessionStateChanged(WebCore::PlatformMediaSessio
 {
     send(Messages::RemoteMediaSessionManagerProxy::MediaSessionStateChanged(currentSessionState(session)));
     REMOTE_MEDIA_SESSION_MANAGER_BASE_CLASS::sessionStateChanged(session);
-}
-
-void RemoteMediaSessionManager::processWillSuspend()
-{
-    REMOTE_MEDIA_SESSION_MANAGER_BASE_CLASS::processWillSuspend();
-#if USE(AUDIO_SESSION)
-    // The base class only updated this process's optimistic local state; under site isolation the UI process
-    // owns the shared audio session, so ask it to release this process's session on suspend.
-    send(Messages::RemoteMediaSessionManagerProxy::RemoteProcessWillSuspend());
-#endif
-}
-
-void RemoteMediaSessionManager::processDidResume()
-{
-    REMOTE_MEDIA_SESSION_MANAGER_BASE_CLASS::processDidResume();
-#if USE(AUDIO_SESSION)
-    send(Messages::RemoteMediaSessionManagerProxy::RemoteProcessDidResume());
-#endif
 }
 
 RefPtr<WebCore::PlatformMediaSessionInterface> RemoteMediaSessionManager::sessionWithIdentifier(WebCore::MediaSessionIdentifier identifier)

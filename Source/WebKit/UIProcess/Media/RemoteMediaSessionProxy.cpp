@@ -68,13 +68,6 @@ void RemoteMediaSessionProxy::updateState(const RemoteMediaSessionState& remoteS
 {
     m_sessionState = remoteState;
     downcast<RemoteMediaSessionClientProxy>(protect(client())).updateState(remoteState);
-
-#if USE(AUDIO_SESSION)
-    // Re-evaluate activation for this session when its state changes: WebAudio becomes audible (canProduceAudio)
-    // only after sessionWillBeginPlayback, so the begin-time activation gate can't catch it.
-    if (RefPtr manager = RemoteMediaSessionManagerProxy::singletonIfCreated())
-        manager->reevaluateAudioSessionActivation(*this);
-#endif
 }
 
 void RemoteMediaSessionProxy::setState(WebCore::PlatformMediaSessionState state)
