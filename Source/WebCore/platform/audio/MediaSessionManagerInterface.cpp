@@ -629,7 +629,11 @@ void MediaSessionManagerInterface::sessionWillEndPlayback(PlatformMediaSessionIn
     RefPtr<PlatformMediaSessionInterface> firstPausedSession;
     for (auto it = sessions.begin(); it != sessions.end(); ++it) {
         RefPtr session = *it.get();
-        if (&pausingSession == session.get() || session->state() == PlatformMediaSession::State::Playing)
+        // preparingToPlay() counts as playing here, as it does in enforceConcurrentPlaybackRestriction().
+        // A session whose admission is in flight is not Playing yet, and the session it evicts must not be
+        // inserted ahead of it: currentSession() is the front of the list, and the guard in
+        // enforceConcurrentPlaybackRestriction() relies on it naming the session that claimed playback last.
+        if (&pausingSession == session.get() || session->state() == PlatformMediaSession::State::Playing || session->preparingToPlay())
             continue;
 
         firstPausedSession = session.get();

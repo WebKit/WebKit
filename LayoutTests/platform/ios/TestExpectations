@@ -8710,5 +8710,3 @@ webkit.org/b/321691 [ Release ] imported/w3c/web-platform-tests/web-locks/bfcach
 webkit.org/b/321726 imported/w3c/web-platform-tests/largest-contentful-paint/observe-svg-data-uri-image.html [ Pass Failure ]
 
 webkit.org/b/321701 imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/button-in-popover.html [ Failure ]
-
-webkit.org/b/321819 media/video-multiple-concurrent-playback.html [ Pass Failure ]
