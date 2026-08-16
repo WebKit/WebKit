@@ -1671,7 +1671,7 @@ bool WebExtensionContext::isPrivilegedMessage(IPC::Decoder& message) const
     return m_privilegedIdentifier.value().toRawValue() == message.destinationID();
 }
 
-WebExtensionContextParameters WebExtensionContext::parameters(IncludePrivilegedIdentifier includePrivilegedIdentifier) const
+WebExtensionContextParameters WebExtensionContext::parameters(IncludePrivilegedIdentifier includePrivilegedIdentifier, WebProcessProxy& destinationProcess) const
 {
     RefPtr extension = m_extension;
 
@@ -1687,13 +1687,13 @@ WebExtensionContextParameters WebExtensionContext::parameters(IncludePrivilegedI
         extension->manifestVersion(),
         m_storageAccessLevels,
         extensionController()->configuration().defaultWebsiteDataStore().sessionID(),
-        backgroundPageIdentifier(),
+        backgroundPageIdentifier(destinationProcess),
 #if ENABLE(INSPECTOR_EXTENSIONS)
         inspectorPageIdentifiers(),
         inspectorBackgroundPageIdentifiers(),
 #endif
-        popupPageIdentifiers(),
-        tabPageIdentifiers()
+        popupPageIdentifiers(destinationProcess),
+        tabPageIdentifiers(destinationProcess)
     };
 }
 

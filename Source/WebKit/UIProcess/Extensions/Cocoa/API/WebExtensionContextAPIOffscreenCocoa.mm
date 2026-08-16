@@ -80,15 +80,11 @@ void WebExtensionContext::offscreenCreateDocument(const WebExtensionOffscreenDoc
     m_offscreenWebView.get().inspectable = m_inspectable;
 
     Ref offscreenPage = *m_offscreenWebView.get()._page;
-    Ref offscreenProcess = offscreenPage->siteIsolatedProcess();
 
     offscreenProcess->send(Messages::WebExtensionContextProxy::SetOffscreenPageIdentifier(offscreenPage->webPageIDInMainFrameProcess()), identifier());
 
     constexpr ASCIILiteral activityName = "Web Extension offscreen document"_s;
-    if (protect(offscreenPage->preferences())->siteIsolationEnabled())
-        m_offscreenWebViewActivity = protect(offscreenPage->activityGroupContext())->foregroundProcessActivityGroup(activityName);
-    else
-        m_offscreenWebViewActivity = protect(offscreenProcess->throttler())->foregroundActivity(activityName);
+    m_offscreenWebViewActivity = protect(offscreenPage->activityGroupContext())->foregroundProcessActivityGroup(activityName);
 
     // Put the offscreen web view into a window so that it can be used to play audio (a common use case for the API).
 #if PLATFORM(MAC)

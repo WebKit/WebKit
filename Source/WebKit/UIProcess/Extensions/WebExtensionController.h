@@ -112,7 +112,7 @@ public:
     enum class ForPrivateBrowsing { No, Yes };
 
     WebExtensionControllerConfiguration& configuration() const LIFETIME_BOUND { return m_configuration.get(); }
-    WebExtensionControllerParameters parameters(const API::PageConfiguration&) const;
+    WebExtensionControllerParameters parameters(const API::PageConfiguration&, WebProcessProxy& destinationProcess) const;
 
     bool operator==(const WebExtensionController& other) const { return (this == &other); }
 

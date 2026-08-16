@@ -2333,12 +2333,26 @@ void WebExtensionContext::clearUserGesture(WebExtensionTab& tab)
         permissionsDidChange(PermissionNotification::GrantedPermissionMatchPatternsWereRemoved, MatchPatternSet { *oldTemporaryPermissionMatchPattern });
 }
 
-std::optional<WebCore::PageIdentifier> WebExtensionContext::backgroundPageIdentifier() const
+std::optional<WebCore::PageIdentifier> WebExtensionContext::backgroundPageIdentifier(WebProcessProxy& destinationProcess) const
 {
     if (!m_backgroundWebView || protect(extension())->backgroundContentIsServiceWorker())
         return std::nullopt;
 
-    return m_backgroundWebView.get()._page->webPageIDInMainFrameProcess();
+    Ref backgroundPage = *m_backgroundWebView.get()._page;
+    return backgroundPage->webPageIDInProcess(destinationProcess);
+}
+
+std::optional<WebCore::PageIdentifier> WebExtensionContext::backgroundPageIdentifierInOwnProcess() const
+{
+    if (!m_backgroundWebView || protect(extension())->backgroundContentIsServiceWorker())
+        return std::nullopt;
+
+    Ref backgroundPage = *m_backgroundWebView.get()._page;
+    RefPtr mainFrame = backgroundPage->mainFrame();
+    if (!mainFrame)
+        return std::nullopt;
+
+    return mainFrame->webPageIDInCurrentProcess();
 }
 
 #if ENABLE(INSPECTOR_EXTENSIONS)
@@ -2378,11 +2392,12 @@ Vector<WebExtensionContext::PageIdentifierTuple> WebExtensionContext::inspectorP
 }
 #endif // ENABLE(INSPECTOR_EXTENSIONS)
 
-Vector<WebExtensionContext::PageIdentifierTuple> WebExtensionContext::popupPageIdentifiers() const
+Vector<WebExtensionContext::PageIdentifierTuple> WebExtensionContext::popupPageIdentifiers(WebProcessProxy& destinationProcess) const
 {
     Vector<PageIdentifierTuple> result;
 
     for (auto entry : m_popupPageActionMap) {
+        Ref page = entry.key;
         Ref value = entry.value;
         RefPtr tab = value->tab();
         RefPtr window = tab ? tab->window() : value->window();
@@ -2390,13 +2405,13 @@ Vector<WebExtensionContext::PageIdentifierTuple> WebExtensionContext::popupPageI
         auto tabIdentifier = tab ? std::optional(tab->identifier()) : std::nullopt;
         auto windowIdentifier = window ? std::optional(window->identifier()) : std::nullopt;
 
-        result.append({ entry.key.webPageIDInMainFrameProcess(), tabIdentifier, windowIdentifier });
+        result.append({ page->webPageIDInProcess(destinationProcess), tabIdentifier, windowIdentifier });
     }
 
     return result;
 }
 
-Vector<WebExtensionContext::PageIdentifierTuple> WebExtensionContext::tabPageIdentifiers() const
+Vector<WebExtensionContext::PageIdentifierTuple> WebExtensionContext::tabPageIdentifiers(WebProcessProxy& destinationProcess) const
 {
     Vector<PageIdentifierTuple> result;
 
@@ -2405,10 +2420,11 @@ Vector<WebExtensionContext::PageIdentifierTuple> WebExtensionContext::tabPageIde
         if (!tab)
             continue;
 
+        Ref page = entry.key;
         RefPtr window = tab->window();
         auto windowIdentifier = window ? std::optional(window->identifier()) : std::nullopt;
 
-        result.append({ entry.key.webPageIDInMainFrameProcess(), tab->identifier(), windowIdentifier });
+        result.append({ page->webPageIDInProcess(destinationProcess), tab->identifier(), windowIdentifier });
     }
 
     return result;
@@ -2632,19 +2648,16 @@ void WebExtensionContext::loadBackgroundWebView()
     m_backgroundContentLoadError = nullptr;
 
     Ref backgroundPage = *m_backgroundWebView.get()._page;
-    Ref backgroundProcess = backgroundPage->siteIsolatedProcess();
 
-    bool siteIsolationEnabled = protect(backgroundPage->preferences())->siteIsolationEnabled();
     constexpr ASCIILiteral activityName = "Web Extension background content"_s;
 
     // Use foreground activity to keep background content responsive to events.
-    if (siteIsolationEnabled)
-        m_backgroundWebViewActivity = protect(backgroundPage->activityGroupContext())->foregroundProcessActivityGroup(activityName);
-    else
-        m_backgroundWebViewActivity = protect(backgroundProcess->throttler())->foregroundActivity(activityName);
+    m_backgroundWebViewActivity = protect(backgroundPage->activityGroupContext())->foregroundProcessActivityGroup(activityName);
 
     if (!protect(extension())->backgroundContentIsServiceWorker()) {
-        backgroundProcess->send(Messages::WebExtensionContextProxy::SetBackgroundPageIdentifier(backgroundPage->webPageIDInMainFrameProcess()), identifier());
+        backgroundPage->forEachWebContentProcess([&](auto& webProcess, auto pageID) {
+            webProcess.send(Messages::WebExtensionContextProxy::SetBackgroundPageIdentifier(pageID), identifier());
+        });
 
         [m_backgroundWebView loadRequest:[NSURLRequest requestWithURL:backgroundContentURL().createNSURL().get()]];
         return;
