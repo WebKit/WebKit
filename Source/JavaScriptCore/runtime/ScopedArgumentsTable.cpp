@@ -38,7 +38,6 @@ const ClassInfo ScopedArgumentsTable::s_info = { "ScopedArgumentsTable"_s, nullp
 
 ScopedArgumentsTable::ScopedArgumentsTable(VM& vm)
     : Base(vm, vm.scopedArgumentsTableStructure.get())
-    , m_length(0)
     , m_locked(false)
 {
 }
@@ -66,21 +65,20 @@ ScopedArgumentsTable* ScopedArgumentsTable::tryCreate(VM& vm, uint32_t length)
     ScopedArgumentsTable* result = new (NotNull, buffer) ScopedArgumentsTable(vm);
     result->finishCreation(vm);
 
-    result->m_length = length;
-    result->m_arguments = ArgumentsPtr::tryCreate(length);
-    if (!result->m_arguments) [[unlikely]]
+    if (!result->m_arguments.tryGrow(length)) [[unlikely]]
         return nullptr;
-    result->m_watchpointSets.fill(nullptr, length);
+    if (!result->m_watchpointSets.tryGrow(length)) [[unlikely]]
+        return nullptr;
+    std::ranges::fill(result->m_watchpointSets.mutableSpan(), nullptr);
     return result;
 }
 
 ScopedArgumentsTable* ScopedArgumentsTable::tryClone(VM& vm)
 {
-    ScopedArgumentsTable* result = tryCreate(vm, m_length);
+    ScopedArgumentsTable* result = tryCreate(vm, m_arguments.size());
     if (!result) [[unlikely]]
         return nullptr;
-    for (unsigned i = m_length; i--;)
-        result->at(i) = this->at(i);
+    result->m_arguments = m_arguments;
     result->m_watchpointSets = this->m_watchpointSets;
     return result;
 }
@@ -88,23 +86,21 @@ ScopedArgumentsTable* ScopedArgumentsTable::tryClone(VM& vm)
 ScopedArgumentsTable* ScopedArgumentsTable::trySetLength(VM& vm, uint32_t newLength)
 {
     if (!m_locked) [[likely]] {
-        ArgumentsPtr newArguments = ArgumentsPtr::tryCreate(newLength, newLength);
-        if (!newArguments) [[unlikely]]
+        size_t oldSize = m_watchpointSets.size();
+        if (!m_arguments.tryGrow(newLength))
             return nullptr;
-        for (unsigned i = std::min(m_length, newLength); i--;)
-            newArguments.at(i) = this->at(i);
-        m_length = newLength;
-        m_arguments = WTF::move(newArguments);
-        m_watchpointSets.resize(newLength);
+        if (!m_watchpointSets.tryGrow(newLength))
+            return nullptr;
+        if (newLength > oldSize)
+            std::ranges::fill(m_watchpointSets.mutableSpan().subspan(oldSize), nullptr);
         return this;
     }
-    
+
     ScopedArgumentsTable* result = tryCreate(vm, newLength);
     if (!result) [[unlikely]]
         return nullptr;
-    m_watchpointSets.resize(newLength);
-    for (unsigned i = std::min(m_length, newLength); i--;) {
-        result->at(i) = this->at(i);
+    for (unsigned i = std::min<uint32_t>(m_arguments.size(), newLength); i--;) {
+        result->m_arguments[i] = this->m_arguments[i];
         result->m_watchpointSets[i] = this->m_watchpointSets[i];
     }
     return result;
@@ -121,7 +117,7 @@ ScopedArgumentsTable* ScopedArgumentsTable::trySet(VM& vm, uint32_t i, ScopeOffs
             return nullptr;
     } else
         result = this;
-    result->at(i) = value;
+    result->m_arguments[i] = value;
     return result;
 }
 

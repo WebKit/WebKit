@@ -719,6 +719,7 @@ public:
     size_t size() const { return m_size; }
     size_t sizeInBytes() const { return static_cast<size_t>(m_size) * sizeof(T); }
     static constexpr ptrdiff_t sizeMemoryOffset() { return OBJECT_OFFSETOF(Vector, m_size); }
+    static constexpr ptrdiff_t bufferMemoryOffset() { return Base::bufferMemoryOffset(); }
     size_t capacity() const { return Base::capacity(); }
     bool isEmpty() const { return !size(); }
     std::span<const T> span() const LIFETIME_BOUND { return { data(), size() }; }
