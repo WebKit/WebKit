@@ -662,7 +662,7 @@ id<DOMEventTarget> kit(WebCore::EventTarget* target)
     auto* renderer = core(self)->renderer();
     if (!renderer)
         return nil;
-    return WebCore::Style::fontCascade(renderer->style()).primaryFont().ctFont();
+    return renderer->style().primaryFont().ctFont();
 }
 
 #if PLATFORM(MAC)

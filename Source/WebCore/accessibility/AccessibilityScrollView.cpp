@@ -649,7 +649,7 @@ bool AccessibilityScrollView::isHostingFrameInert() const
 
     RefPtr frameOwner = frameOwnerElement();
     if (auto* renderer = frameOwner ? frameOwner->renderer() : nullptr)
-        return Style::effectiveInert(renderer->style());
+        return renderer->style().effectiveInertOutOfLine();
 
     return false;
 }

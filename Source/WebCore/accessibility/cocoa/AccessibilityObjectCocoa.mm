@@ -52,7 +52,7 @@ namespace WebCore {
 Style::SpeakAs AccessibilityObject::speakAs() const
 {
     if (auto* style = this->style())
-        return Style::speakAs(*style);
+        return style->speakAsOutOfLine();
     return CSS::Keyword::Normal { };
 }
 
@@ -196,7 +196,7 @@ RetainPtr<NSAttributedString> AccessibilityObject::attributedStringForRange(cons
 
 RetainPtr<CTFontRef> fontFrom(const Style::ComputedStyle& style)
 {
-    return Style::fontCascade(style).primaryFont().ctFont();
+    return style.primaryFont().ctFont();
 }
 
 Color textColorFrom(const Style::ComputedStyle& style)
@@ -239,19 +239,19 @@ Color AccessibilityObject::backgroundColor() const
 bool AccessibilityObject::isSubscript() const
 {
     const CheckedPtr style = this->style();
-    return style && WTF::holdsAlternative<CSS::Keyword::Sub>(Style::verticalAlign(*style));
+    return style && WTF::holdsAlternative<CSS::Keyword::Sub>(style->verticalAlignOutOfLine());
 }
 
 bool AccessibilityObject::isSuperscript() const
 {
     const CheckedPtr style = this->style();
-    return style && WTF::holdsAlternative<CSS::Keyword::Super>(Style::verticalAlign(*style));
+    return style && WTF::holdsAlternative<CSS::Keyword::Super>(style->verticalAlignOutOfLine());
 }
 
 bool AccessibilityObject::hasTextShadow() const
 {
     const CheckedPtr style = this->style();
-    return style && !Style::textShadow(*style).isNone();
+    return style && !style->textShadowOutOfLine().isNone();
 }
 
 LineDecorationStyle AccessibilityObject::lineDecorationStyle() const
@@ -266,14 +266,14 @@ AttributedStringStyle AccessibilityObject::stylesForAttributedString() const
     if (!style)
         return { };
 
-    auto& alignment = Style::verticalAlign(*style);
+    auto& alignment = style->verticalAlignOutOfLine();
     return {
         fontFrom(*style),
         textColorFrom(*style),
         backgroundColorFrom(*style),
         WTF::holdsAlternative<CSS::Keyword::Sub>(alignment),
         WTF::holdsAlternative<CSS::Keyword::Super>(alignment),
-        !Style::textShadow(*style).isNone(),
+        !style->textShadowOutOfLine().isNone(),
         lineDecorationStyle()
     };
 }

@@ -47,6 +47,7 @@ class FloatPoint;
 class FloatSize;
 class FloatPoint3D;
 class FloatRect;
+class Font;
 class FontCascade;
 class FontCascadeDescription;
 class FontMetrics;
@@ -542,7 +543,8 @@ public:
     inline std::optional<size_t> usedPositionOptionIndex() const;
     inline void setUsedPositionOptionIndex(std::optional<size_t>);
 
-    inline bool effectiveInert() const;
+    inline bool NODELETE effectiveInert() const;
+    bool NODELETE effectiveInertOutOfLine() const;
     inline void setEffectiveInert(bool);
 
     inline bool isEffectivelyTransparent() const; // This or any ancestor has opacity 0.
@@ -639,6 +641,7 @@ public:
     // MARK: - Fonts
 
     inline const FontCascade& fontCascade() const;
+    const FontCascade& fontCascadeOutOfLine() const;
     WEBCORE_EXPORT FontCascade& mutableFontCascadeWithoutUpdate();
     void setFontCascade(FontCascade&&);
 
@@ -647,6 +650,7 @@ public:
     WEBCORE_EXPORT void setFontDescription(FontCascadeDescription&&);
     bool setFontDescriptionWithoutUpdate(FontCascadeDescription&&);
 
+    WEBCORE_EXPORT const Font& primaryFont() const LIFETIME_BOUND;
     WEBCORE_EXPORT const FontMetrics& metricsOfPrimaryFont() const LIFETIME_BOUND;
     std::pair<FontOrientation, NonCJKGlyphOrientation> NODELETE fontAndGlyphOrientation();
     float NODELETE computedFontSize() const;

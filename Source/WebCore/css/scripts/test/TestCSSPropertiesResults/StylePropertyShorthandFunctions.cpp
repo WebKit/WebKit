@@ -92,6 +92,7 @@ StylePropertyShorthand allShorthand()
         CSSPropertyID::CSSPropertyTestMatchOneWithSettingsFlag,
         CSSPropertyID::CSSPropertyTestNumericValueRange,
         CSSPropertyID::CSSPropertyTestProperty,
+        CSSPropertyID::CSSPropertyTestRenderStyleGetterNodeleteFalse,
         CSSPropertyID::CSSPropertyTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin,
         CSSPropertyID::CSSPropertyTestRenderStyleHasExplicitlySetPolicyAllBorderRadius,
         CSSPropertyID::CSSPropertyTestRenderStyleHasExplicitlySetPolicyValueOnly,
@@ -261,6 +262,7 @@ StylePropertyShorthandVector matchingShorthandsForLonghand(CSSPropertyID id)
     case CSSPropertyID::CSSPropertyTestMediumPriority:
     case CSSPropertyID::CSSPropertyTestNumericValueRange:
     case CSSPropertyID::CSSPropertyTestProperty:
+    case CSSPropertyID::CSSPropertyTestRenderStyleGetterNodeleteFalse:
     case CSSPropertyID::CSSPropertyTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin:
     case CSSPropertyID::CSSPropertyTestRenderStyleHasExplicitlySetPolicyAllBorderRadius:
     case CSSPropertyID::CSSPropertyTestRenderStyleHasExplicitlySetPolicyValueOnly:

@@ -51,6 +51,7 @@ static constexpr InitialValue initialValueForLonghand(CSSPropertyID longhand)
         return CSSValueCurrentColor;
     case CSSPropertyID::CSSPropertyTestKeyword:
     case CSSPropertyID::CSSPropertyTestKeywordWithAliasedTo:
+    case CSSPropertyID::CSSPropertyTestRenderStyleGetterNodeleteFalse:
     case CSSPropertyID::CSSPropertyTestRenderStyleStorageOneLevelEnum:
     case CSSPropertyID::CSSPropertyTestRenderStyleStorageOneLevelRaw:
     case CSSPropertyID::CSSPropertyTestRenderStyleStorageTwoLevelEnum:

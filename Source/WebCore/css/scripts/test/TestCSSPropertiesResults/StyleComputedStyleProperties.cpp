@@ -8,6 +8,11 @@
 namespace WebCore {
 namespace Style {
 
+const Style::Color& ComputedStyleProperties::testColorOutOfLine() const
+{
+    return testColor();
+}
+
 WebCore::Color ComputedStyleProperties::testColorResolvingCurrentColor() const
 {
     return testColorResolver().colorResolvingCurrentColor();
@@ -28,6 +33,11 @@ WebCore::Color ComputedStyleProperties::visitedDependentTestColorApplyingColorFi
     return testColorResolver().visitedDependentColorApplyingColorFilter(paintBehavior);
 }
 
+const Style::Color& ComputedStyleProperties::testColorAllowsTypesAbsoluteOutOfLine() const
+{
+    return testColorAllowsTypesAbsolute();
+}
+
 WebCore::Color ComputedStyleProperties::testColorAllowsTypesAbsoluteResolvingCurrentColor() const
 {
     return testColorAllowsTypesAbsoluteResolver().colorResolvingCurrentColor();
@@ -46,6 +56,11 @@ WebCore::Color ComputedStyleProperties::visitedDependentTestColorAllowsTypesAbso
 WebCore::Color ComputedStyleProperties::visitedDependentTestColorAllowsTypesAbsoluteApplyingColorFilter(OptionSet<PaintBehavior> paintBehavior) const
 {
     return testColorAllowsTypesAbsoluteResolver().visitedDependentColorApplyingColorFilter(paintBehavior);
+}
+
+const Style::Color& ComputedStyleProperties::testColorPropertyWithVisitedLinkSupportOutOfLine() const
+{
+    return testColorPropertyWithVisitedLinkSupport();
 }
 
 WebCore::Color ComputedStyleProperties::testColorPropertyWithVisitedLinkSupportResolvingCurrentColor() const
@@ -76,6 +91,76 @@ WebCore::Color ComputedStyleProperties::visitedDependentTestColorPropertyWithVis
 WebCore::Color ComputedStyleProperties::visitedDependentTestColorPropertyWithVisitedLinkSupportApplyingColorFilter(OptionSet<PaintBehavior> paintBehavior) const
 {
     return testColorPropertyWithVisitedLinkSupportResolver().visitedDependentColorApplyingColorFilter(paintBehavior);
+}
+
+Style::TestEnumeration ComputedStyleProperties::testRenderStyleGetterNodeleteFalseOutOfLine() const
+{
+    return testRenderStyleGetterNodeleteFalse();
+}
+
+Style::Number<> ComputedStyleProperties::testRenderStyleHasExplicitlySetPolicyAllAuthorOriginOutOfLine() const
+{
+    return testRenderStyleHasExplicitlySetPolicyAllAuthorOrigin();
+}
+
+Style::Number<> ComputedStyleProperties::testRenderStyleHasExplicitlySetPolicyAllBorderRadiusOutOfLine() const
+{
+    return testRenderStyleHasExplicitlySetPolicyAllBorderRadius();
+}
+
+Style::Number<> ComputedStyleProperties::testRenderStyleHasExplicitlySetPolicyValueOnlyOutOfLine() const
+{
+    return testRenderStyleHasExplicitlySetPolicyValueOnly();
+}
+
+Style::TestEnumeration ComputedStyleProperties::testRenderStyleStorageOneLevelEnumOutOfLine() const
+{
+    return testRenderStyleStorageOneLevelEnum();
+}
+
+Style::TestRaw ComputedStyleProperties::testRenderStyleStorageOneLevelRawOutOfLine() const
+{
+    return testRenderStyleStorageOneLevelRaw();
+}
+
+const Style::Number<>& ComputedStyleProperties::testRenderStyleStorageOneLevelReferenceOutOfLine() const
+{
+    return testRenderStyleStorageOneLevelReference();
+}
+
+Style::Number<> ComputedStyleProperties::testRenderStyleStorageOneLevelValueOutOfLine() const
+{
+    return testRenderStyleStorageOneLevelValue();
+}
+
+Style::TestEnumeration ComputedStyleProperties::testRenderStyleStorageTwoLevelEnumOutOfLine() const
+{
+    return testRenderStyleStorageTwoLevelEnum();
+}
+
+Style::TestRaw ComputedStyleProperties::testRenderStyleStorageTwoLevelRawOutOfLine() const
+{
+    return testRenderStyleStorageTwoLevelRaw();
+}
+
+const Style::Number<>& ComputedStyleProperties::testRenderStyleStorageTwoLevelReferenceOutOfLine() const
+{
+    return testRenderStyleStorageTwoLevelReference();
+}
+
+Style::Number<> ComputedStyleProperties::testRenderStyleStorageTwoLevelValueOutOfLine() const
+{
+    return testRenderStyleStorageTwoLevelValue();
+}
+
+Style::Number<> ComputedStyleProperties::testLogicalPropertyGroupPhysicalHorizontalOutOfLine() const
+{
+    return testLogicalPropertyGroupPhysicalHorizontal();
+}
+
+Style::Number<> ComputedStyleProperties::testLogicalPropertyGroupPhysicalVerticalOutOfLine() const
+{
+    return testLogicalPropertyGroupPhysicalVertical();
 }
 
 } // namespace WebCore

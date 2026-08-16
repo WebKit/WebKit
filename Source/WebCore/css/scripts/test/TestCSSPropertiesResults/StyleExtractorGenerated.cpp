@@ -99,6 +99,14 @@ public:
         }
         serializationForCSS(builder, context, extractorState.style, extractorState.style.testColorPropertyWithVisitedLinkSupport());
     }
+    static RefPtr<CSSValue> extractTestRenderStyleGetterNodeleteFalse(ExtractorState& extractorState)
+    {
+        return createCSSValue(extractorState.pool, extractorState.style, extractorState.style.testRenderStyleGetterNodeleteFalse());
+    }
+    static void extractTestRenderStyleGetterNodeleteFalseSerialization(ExtractorState& extractorState, StringBuilder& builder, const CSS::SerializationContext& context)
+    {
+        serializationForCSS(builder, context, extractorState.style, extractorState.style.testRenderStyleGetterNodeleteFalse());
+    }
     static RefPtr<CSSValue> extractTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin(ExtractorState& extractorState)
     {
         return createCSSValue(extractorState.pool, extractorState.style, extractorState.style.testRenderStyleHasExplicitlySetPolicyAllAuthorOrigin());
@@ -456,6 +464,8 @@ RefPtr<CSSValue> ExtractorGenerated::extractValue(ExtractorState& extractorState
     case CSSPropertyID::CSSPropertyTestProperty:
         // Skipped - Not computable
         return nullptr;
+    case CSSPropertyID::CSSPropertyTestRenderStyleGetterNodeleteFalse:
+        return ExtractorFunctions::extractTestRenderStyleGetterNodeleteFalse(extractorState);
     case CSSPropertyID::CSSPropertyTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin:
         return ExtractorFunctions::extractTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin(extractorState);
     case CSSPropertyID::CSSPropertyTestRenderStyleHasExplicitlySetPolicyAllBorderRadius:
@@ -810,6 +820,9 @@ void ExtractorGenerated::extractValueSerialization(ExtractorState& extractorStat
         return;
     case CSSPropertyID::CSSPropertyTestProperty:
         // Skipped - Not computable
+        return;
+    case CSSPropertyID::CSSPropertyTestRenderStyleGetterNodeleteFalse:
+        ExtractorFunctions::extractTestRenderStyleGetterNodeleteFalseSerialization(extractorState, builder, context);
         return;
     case CSSPropertyID::CSSPropertyTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin:
         ExtractorFunctions::extractTestRenderStyleHasExplicitlySetPolicyAllAuthorOriginSerialization(extractorState, builder, context);

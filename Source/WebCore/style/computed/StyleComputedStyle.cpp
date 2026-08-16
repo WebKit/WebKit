@@ -707,50 +707,5 @@ const BorderValue& ComputedStyle::borderEnd(const WritingMode writingMode) const
     return writingMode.isInlineTopToBottom() ? borderBottom() : borderTop();
 }
 
-TextAlign textAlign(const ComputedStyle& style)
-{
-    return style.textAlign();
-}
-
-FontWeight fontWeight(const ComputedStyle& style)
-{
-    return style.fontWeight();
-}
-
-FontStyle fontStyle(const ComputedStyle& style)
-{
-    return style.fontStyle();
-}
-
-TextDecorationLine textDecorationLineInEffect(const ComputedStyle& style)
-{
-    return style.textDecorationLineInEffect();
-}
-
-const FontCascade& fontCascade(const ComputedStyle& style)
-{
-    return style.fontCascade();
-}
-
-SpeakAs speakAs(const ComputedStyle& style)
-{
-    return style.speakAs();
-}
-
-const VerticalAlign& verticalAlign(const ComputedStyle& style)
-{
-    return style.verticalAlign();
-}
-
-const TextShadows& textShadow(const ComputedStyle& style)
-{
-    return style.textShadow();
-}
-
-bool effectiveInert(const ComputedStyle& style)
-{
-    return style.effectiveInert();
-}
-
 } // namespace Style
 } // namespace WebCore

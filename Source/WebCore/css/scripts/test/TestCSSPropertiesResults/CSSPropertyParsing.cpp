@@ -84,6 +84,17 @@ static bool isKeywordValidForTestMatchOneWithReferenceWithSettingsFlag(CSSValueI
     }
 }
 
+static bool isKeywordValidForTestRenderStyleGetterNodeleteFalse(CSSValueID keyword)
+{
+    switch (keyword) {
+    case CSSValueID::CSSValueBar:
+    case CSSValueID::CSSValueFoo:
+        return true;
+    default:
+        return false;
+    }
+}
+
 static bool isKeywordValidForTestRenderStyleStorageOneLevelEnum(CSSValueID keyword)
 {
     switch (keyword) {
@@ -3469,6 +3480,8 @@ RefPtr<CSSValue> CSSPropertyParsing::parseStylePropertyLonghand(CSSParserTokenRa
         return consumeTestMatchOneWithSettingsFlag(range, state);
     case CSSPropertyID::CSSPropertyTestNumericValueRange:
         return consumeTestNumericValueRange(range, state);
+    case CSSPropertyID::CSSPropertyTestRenderStyleGetterNodeleteFalse:
+        return consumeIdent(range, isKeywordValidForTestRenderStyleGetterNodeleteFalse);
     case CSSPropertyID::CSSPropertyTestRenderStyleStorageOneLevelEnum:
         return consumeIdent(range, isKeywordValidForTestRenderStyleStorageOneLevelEnum);
     case CSSPropertyID::CSSPropertyTestRenderStyleStorageOneLevelRaw:
@@ -3543,6 +3556,8 @@ bool CSSPropertyParsing::isKeywordValidForStyleProperty(CSSPropertyID id, CSSVal
         return isKeywordValidForTestMatchOneWithMultipleKeywords(keyword);
     case CSSPropertyID::CSSPropertyTestMatchOneWithReferenceWithSettingsFlag:
         return isKeywordValidForTestMatchOneWithReferenceWithSettingsFlag(keyword);
+    case CSSPropertyID::CSSPropertyTestRenderStyleGetterNodeleteFalse:
+        return isKeywordValidForTestRenderStyleGetterNodeleteFalse(keyword);
     case CSSPropertyID::CSSPropertyTestRenderStyleStorageOneLevelEnum:
         return isKeywordValidForTestRenderStyleStorageOneLevelEnum(keyword);
     case CSSPropertyID::CSSPropertyTestRenderStyleStorageTwoLevelEnum:
@@ -3571,6 +3586,7 @@ bool CSSPropertyParsing::isKeywordFastPathEligibleStyleProperty(CSSPropertyID id
     case CSSPropertyID::CSSPropertyTestMatchOneWithKeywordWithSettingsFlag:
     case CSSPropertyID::CSSPropertyTestMatchOneWithMultipleKeywords:
     case CSSPropertyID::CSSPropertyTestMatchOneWithReferenceWithSettingsFlag:
+    case CSSPropertyID::CSSPropertyTestRenderStyleGetterNodeleteFalse:
     case CSSPropertyID::CSSPropertyTestRenderStyleStorageOneLevelEnum:
     case CSSPropertyID::CSSPropertyTestRenderStyleStorageTwoLevelEnum:
     case CSSPropertyID::CSSPropertyTestUrlWithModifiers:

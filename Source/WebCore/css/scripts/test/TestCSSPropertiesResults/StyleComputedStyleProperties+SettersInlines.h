@@ -39,6 +39,13 @@ inline void ComputedStyleProperties::setVisitedLinkTestColorPropertyWithVisitedL
     }
 }
 
+inline void ComputedStyleProperties::setTestRenderStyleGetterNodeleteFalse(Style::TestEnumeration value)
+{
+    if (value != static_cast<Style::TestEnumeration>(level1->testRenderStyleGetterNodeleteFalse)) {
+        level1.access().testRenderStyleGetterNodeleteFalse = static_cast<unsigned>(value);
+    }
+}
+
 inline void ComputedStyleProperties::setTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin(Style::Number<> value)
 {
     if (value != level1->level2->testRenderStyleHasExplicitlySetPolicyAllAuthorOrigin) {

@@ -9345,7 +9345,7 @@ FORWARD(toggleUnderline)
 static NSTextAlignment NODELETE nsTextAlignmentFromRenderStyle(const WebCore::Style::ComputedStyle* style)
 {
     NSTextAlignment textAlignment;
-    switch (WebCore::Style::textAlign(*style)) {
+    switch (style->textAlignOutOfLine()) {
     case WebCore::Style::TextAlign::Right:
     case WebCore::Style::TextAlign::WebKitRight:
         textAlignment = NSTextAlignmentRight;
@@ -9458,15 +9458,15 @@ static NSTextAlignment NODELETE nsTextAlignmentFromRenderStyle(const WebCore::St
         if (!selection.isNone()) {
             RefPtr<Node> nodeToRemove;
             if (auto* style = coreFrame->editor().styleForSelectionStart(nodeToRemove)) {
-                [_private->_textTouchBarItemController setTextIsBold:WebCore::Style::fontWeight(*style).isConsideredBold()];
-                [_private->_textTouchBarItemController setTextIsItalic:WebCore::Style::fontStyle(*style).isConsideredItalic()];
+                [_private->_textTouchBarItemController setTextIsBold:style->fontWeightOutOfLine().isConsideredBold()];
+                [_private->_textTouchBarItemController setTextIsItalic:style->fontStyleOutOfLine().isConsideredItalic()];
 
                 RefPtr<EditingStyle> typingStyle = coreFrame->selection().typingStyle();
                 if (typingStyle && typingStyle->style()) {
                     String value = typingStyle->style()->getPropertyValue(CSSPropertyWebkitTextDecorationsInEffect);
                     [_private->_textTouchBarItemController setTextIsUnderlined:value.contains("underline"_s)];
                 } else
-                    [_private->_textTouchBarItemController setTextIsUnderlined:WebCore::Style::textDecorationLineInEffect(*style).hasUnderline()];
+                    [_private->_textTouchBarItemController setTextIsUnderlined:style->textDecorationLineInEffectOutOfLine().hasUnderline()];
 
                 auto textColor = style->visitedDependentColor();
                 if (textColor.isValid())

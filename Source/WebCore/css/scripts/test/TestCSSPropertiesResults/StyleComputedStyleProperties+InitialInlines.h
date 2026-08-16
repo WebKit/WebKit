@@ -26,6 +26,11 @@ inline Style::Color ComputedStyleProperties::initialTestColorPropertyWithVisited
     return CSS::Keyword::CurrentColor { };
 }
 
+constexpr Style::TestEnumeration ComputedStyleProperties::initialTestRenderStyleGetterNodeleteFalse()
+{
+    return Style::TestEnumeration::Foo;
+}
+
 inline Style::Number<> ComputedStyleProperties::initialTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin()
 {
     using namespace CSS::Literals;

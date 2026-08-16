@@ -58,6 +58,8 @@ public:
             changingProperties.m_properties.set(CSSPropertyTestLogicalPropertyGroupPhysicalHorizontal);
         if (a.testLogicalPropertyGroupPhysicalVertical != b.testLogicalPropertyGroupPhysicalVertical)
             changingProperties.m_properties.set(CSSPropertyTestLogicalPropertyGroupPhysicalVertical);
+        if (a.testRenderStyleGetterNodeleteFalse != b.testRenderStyleGetterNodeleteFalse)
+            changingProperties.m_properties.set(CSSPropertyTestRenderStyleGetterNodeleteFalse);
         if (a.testRenderStyleStorageOneLevelEnum != b.testRenderStyleStorageOneLevelEnum)
             changingProperties.m_properties.set(CSSPropertyTestRenderStyleStorageOneLevelEnum);
         if (a.testRenderStyleStorageOneLevelRaw != b.testRenderStyleStorageOneLevelRaw)

@@ -21,7 +21,6 @@ accessibility/AccessibilityObject.cpp
 accessibility/AccessibilityObjectInlines.h
 accessibility/AccessibilityProgressIndicator.cpp
 accessibility/AccessibilityRenderObject.cpp
-accessibility/cocoa/AccessibilityObjectCocoa.mm
 [ iOS ] accessibility/ios/AXObjectCacheIOS.mm
 [ iOS ] accessibility/ios/AccessibilityObjectIOS.mm
 [ iOS ] accessibility/ios/WebAccessibilityObjectWrapperIOS.mm
@@ -199,7 +198,6 @@ layout/integration/inline/InlineIteratorLineBoxInlines.h
 layout/integration/inline/InlineIteratorLineBoxLegacyPath.h
 layout/integration/inline/InlineIteratorLineBoxLegacyPathInlines.h
 layout/integration/inline/InlineIteratorLogicalOrderTraversal.cpp
-layout/integration/inline/InlineIteratorLogicalOrderTraversal.h
 layout/integration/inline/InlineIteratorSVGTextBox.cpp
 layout/integration/inline/LayoutIntegrationInlineContentBuilder.cpp
 layout/integration/inline/LayoutIntegrationInlineContentPainter.cpp

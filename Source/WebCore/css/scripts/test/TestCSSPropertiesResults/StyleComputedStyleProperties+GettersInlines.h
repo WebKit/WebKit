@@ -46,6 +46,11 @@ inline decltype(auto) ComputedStyleProperties::testColorPropertyWithVisitedLinkS
     return ColorPropertyResolver<ColorPropertyTraits<PropertyNameConstant<CSSPropertyTestColorPropertyWithVisitedLinkSupport>>> { *this };
 }
 
+inline Style::TestEnumeration ComputedStyleProperties::testRenderStyleGetterNodeleteFalse() const
+{
+    return static_cast<Style::TestEnumeration>(level1->testRenderStyleGetterNodeleteFalse);
+}
+
 inline Style::Number<> ComputedStyleProperties::testRenderStyleHasExplicitlySetPolicyAllAuthorOrigin() const
 {
     return level1->level2->testRenderStyleHasExplicitlySetPolicyAllAuthorOrigin;

@@ -250,16 +250,5 @@ private:
     ComputedStyle(ComputedStyle&, ComputedStyle&&);
 };
 
-WEBCORE_EXPORT TextAlign NODELETE textAlign(const ComputedStyle&);
-WEBCORE_EXPORT FontWeight NODELETE fontWeight(const ComputedStyle&);
-WEBCORE_EXPORT FontStyle NODELETE fontStyle(const ComputedStyle&);
-WEBCORE_EXPORT TextDecorationLine NODELETE textDecorationLineInEffect(const ComputedStyle&);
-WEBCORE_EXPORT const FontCascade& NODELETE fontCascade(const ComputedStyle&);
-
-SpeakAs NODELETE speakAs(const ComputedStyle&);
-const VerticalAlign& NODELETE verticalAlign(const ComputedStyle&);
-const TextShadows& NODELETE textShadow(const ComputedStyle&);
-bool NODELETE effectiveInert(const ComputedStyle&);
-
 } // namespace Style
 } // namespace WebCore

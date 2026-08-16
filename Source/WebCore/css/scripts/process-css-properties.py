@@ -598,6 +598,7 @@ class StylePropertyCodeGenProperties:
         Schema.Entry("computed-style-getter-custom", allowed_types=[bool], default_value=False),
         Schema.Entry("computed-style-getter-exported", allowed_types=[bool], default_value=False),
         Schema.Entry("computed-style-getter-inline", allowed_types=[bool], default_value=True),
+        Schema.Entry("computed-style-getter-nodelete", allowed_types=[bool], default_value=True),
         Schema.Entry("computed-style-getter", allowed_types=[str]),
         Schema.Entry("computed-style-has-explicitly-set-getter-custom", allowed_types=[bool], default_value=False),
         Schema.Entry("computed-style-has-explicitly-set-policy", allowed_types=[str]),
@@ -6271,13 +6272,14 @@ class ComputedStylePropertyFunctionSignature(object):
         def value_for_function_definition(self):
             return f"{self.type} {self.name}"
 
-    def __init__(self, *, function_scope="ComputedStyleProperties", function_name, function_exported=False, function_constexpr=False, function_static=False, function_inline=False, function_return_type, function_arguments, function_qualifiers):
+    def __init__(self, *, function_scope="ComputedStyleProperties", function_name, function_exported=False, function_constexpr=False, function_static=False, function_inline=False, function_nodelete=False, function_return_type, function_arguments, function_qualifiers):
         self.function_scope = function_scope
         self.function_name = function_name
+        self.function_exported = function_exported
         self.function_static = function_static
         self.function_constexpr = function_constexpr
         self.function_inline = function_inline
-        self.function_exported = function_exported
+        self.function_nodelete = function_nodelete
         self.function_return_type = function_return_type
         self.function_arguments = function_arguments
         self.function_qualifiers = function_qualifiers
@@ -6295,6 +6297,7 @@ class ComputedStylePropertyFunctionSignature(object):
         to.write(
               f"{''.join(map(lambda x: x + ' ', function_specifiers))}"
             + f"{self.function_return_type} "
+            + f"{'NODELETE ' if self.function_nodelete else ''}"
             + f"{self.function_name}"
             + f"({', '.join(map(lambda x: x.value_for_function_declaration, self.function_arguments))})"
             + f"{''.join(map(lambda x: ' ' + x, self.function_qualifiers))};"
@@ -6408,6 +6411,7 @@ class ComputedStylePropertyPrincipleGetter(ComputedStyleFunctionBase):
                 function_constexpr=property.codegen_properties.computed_style_getter_constexpr,
                 function_inline=property.codegen_properties.computed_style_getter_inline,
                 function_exported=property.codegen_properties.computed_style_getter_exported,
+                function_nodelete=property.codegen_properties.computed_style_getter_nodelete,
                 function_return_type=property.getter_return_type,
                 function_arguments=[],
                 function_qualifiers=['const']
@@ -6437,6 +6441,36 @@ class ComputedStylePropertyPrincipleGetter(ComputedStyleFunctionBase):
             to=to,
             function_signature=self.signature,
             get_expression=self.storage_access.compute_get_expression()
+        )
+
+
+class ComputedStylePropertyPrincipleGetterOutOfLine(ComputedStyleFunctionBase):
+    def __init__(self, property):
+        super().__init__(
+            ComputedStylePropertyFunctionSignature(
+                function_name=f"{property.codegen_properties.computed_style_getter}OutOfLine",
+                function_exported=property.codegen_properties.computed_style_getter_exported,
+                function_nodelete=property.codegen_properties.computed_style_getter_nodelete,
+                function_return_type=property.getter_return_type,
+                function_arguments=[],
+                function_qualifiers=['const']
+            )
+        )
+        self.property = property
+
+    @property
+    def is_skipped(self):
+        return self.property.codegen_properties.skip_computed_style_getter
+
+    @property
+    def includes_needed_for_definition(self):
+        return {*self.storage_access.includes_needed_for_use, self.property.computed_style_type_filename}
+
+    def generate_function_definition(self, *, to):
+        _generate_getter_function_definition_shared(
+            to=to,
+            function_signature=self.signature,
+            get_expression=f"{self.property.codegen_properties.computed_style_getter}()"
         )
 
 
@@ -7559,6 +7593,7 @@ class ComputedStylePropertyPrinciple(object):
             container_path=self.property.codegen_properties.computed_style_storage_path
         )
         self.getter = ComputedStylePropertyPrincipleGetter(self.property, self.storage_access)
+        self.getter_out_of_line = ComputedStylePropertyPrincipleGetterOutOfLine(self.property)
         self.setter = ComputedStylePropertyPrincipleSetter(self.property, self.storage_access)
         self.did_set = ComputedStylePropertyPrincipleDidSet(self.property, self.storage_access)
         self.initial = ComputedStylePropertyPrincipleInitial(self.property, self.storage_access)
@@ -7646,6 +7681,7 @@ class ComputedStylePropertyGenerator:
     def all_functions(self):
         return ComputedStylePropertyFunctionSet([
             self.principle.getter,
+            self.principle.getter_out_of_line,
             self.principle.setter,
             self.principle.initial,
             self.principle.did_set,
@@ -7666,6 +7702,7 @@ class ComputedStylePropertyGenerator:
     def getter_functions(self):
         return ComputedStylePropertyFunctionSet([
             self.principle.getter,
+            self.principle.getter_out_of_line,
             self.has_explicitly_set.getter,
             self.visited_link.getter,
             self.color.color_resolver_getter,

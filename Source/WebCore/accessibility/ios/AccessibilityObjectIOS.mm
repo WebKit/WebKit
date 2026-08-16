@@ -249,9 +249,9 @@ static void attributeStringSetStyle(NSMutableAttributedString *attrString, Rende
     auto& style = renderer->style();
 
     // Set basic font info.
-    attributedStringSetFont(attrString, Style::fontCascade(style).primaryFont().ctFont(), range);
+    attributedStringSetFont(attrString, style.primaryFont().ctFont(), range);
 
-    if (Style::textDecorationLineInEffect(style).hasUnderline())
+    if (style.textDecorationLineInEffectOutOfLine().hasUnderline())
         attributedStringSetNumber(attrString, AccessibilityTokenUnderline, @YES, range);
 
     // Add code context if this node is within a <code> block.

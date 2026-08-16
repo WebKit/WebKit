@@ -1143,6 +1143,7 @@
             "initial": "0",
             "codegen-properties": {
                 "parser-grammar": "<number>",
+                "computed-style-getter-exported": true,
                 "computed-style-storage-path": ["level1"],
                 "computed-style-storage-kind": "value",
                 "computed-style-type": "Style::Number<>"
@@ -1244,6 +1245,17 @@
                 "computed-style-storage-path": ["level1", "level2"],
                 "computed-style-storage-kind": "value",
                 "computed-style-type": "Style::Number<>"
+            }
+        },
+        "test-render-style-getter-nodelete-false": {
+            "animation-type": "discrete",
+            "initial": "foo",
+            "codegen-properties": {
+                "parser-grammar": "foo | bar",
+                "computed-style-getter-nodelete": false,
+                "computed-style-storage-path": ["level1"],
+                "computed-style-storage-kind": "enum",
+                "computed-style-type": "Style::TestEnumeration"
             }
         }
     },

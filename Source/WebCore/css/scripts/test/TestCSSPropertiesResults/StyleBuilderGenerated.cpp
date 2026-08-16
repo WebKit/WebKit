@@ -134,6 +134,18 @@ public:
         if (builderState.applyPropertyToVisitedLinkStyle())
             builderState.style().setVisitedLinkTestColorPropertyWithVisitedLinkSupport(toStyleFromCSSValue<Style::Color>(builderState, value, ForVisitedLink::Yes));
     }
+    static void applyInitialTestRenderStyleGetterNodeleteFalse(BuilderState& builderState)
+    {
+        builderState.style().setTestRenderStyleGetterNodeleteFalse(Style::ComputedStyle::initialTestRenderStyleGetterNodeleteFalse());
+    }
+    static void applyInheritTestRenderStyleGetterNodeleteFalse(BuilderState& builderState)
+    {
+        builderState.style().setTestRenderStyleGetterNodeleteFalse(forwardInheritedValue(builderState.parentStyle().testRenderStyleGetterNodeleteFalse()));
+    }
+    static void applyValueTestRenderStyleGetterNodeleteFalse(BuilderState& builderState, CSSValue& value)
+    {
+        builderState.style().setTestRenderStyleGetterNodeleteFalse(toStyleFromCSSValue<Style::TestEnumeration>(builderState, value));
+    }
     static void applyInitialTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin(BuilderState& builderState)
     {
         builderState.style().setTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin(Style::ComputedStyle::initialTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin());
@@ -572,6 +584,19 @@ void BuilderGenerated::applyProperty(CSSPropertyID id, BuilderState& builderStat
     case CSSPropertyID::CSSPropertyTestNumericValueRange:
         break;
     case CSSPropertyID::CSSPropertyTestProperty:
+        break;
+    case CSSPropertyID::CSSPropertyTestRenderStyleGetterNodeleteFalse:
+        switch (valueType) {
+        case ApplyValueType::Initial:
+            BuilderFunctions::applyInitialTestRenderStyleGetterNodeleteFalse(builderState);
+            break;
+        case ApplyValueType::Inherit:
+            BuilderFunctions::applyInheritTestRenderStyleGetterNodeleteFalse(builderState);
+            break;
+        case ApplyValueType::Value:
+            BuilderFunctions::applyValueTestRenderStyleGetterNodeleteFalse(builderState, value);
+            break;
+        }
         break;
     case CSSPropertyID::CSSPropertyTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin:
         switch (valueType) {

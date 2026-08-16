@@ -27,7 +27,7 @@ namespace WebCore {
 
 static_assert(cssPropertyIDEnumValueCount <= (std::numeric_limits<uint16_t>::max() + 1), "CSSPropertyID should fit into uint16_t.");
 
-const std::array<CSSPropertyID, 22> computedPropertyIDs {
+const std::array<CSSPropertyID, 23> computedPropertyIDs {
     CSSPropertyID::CSSPropertyBackgroundCoordinatedValueListPropertyTestDiscrete,
     CSSPropertyID::CSSPropertyBackgroundCoordinatedValueListPropertyTestTwo,
     CSSPropertyID::CSSPropertyTestAnimationWrapper,
@@ -38,6 +38,7 @@ const std::array<CSSPropertyID, 22> computedPropertyIDs {
     CSSPropertyID::CSSPropertyTestColorPropertyWithVisitedLinkSupport,
     CSSPropertyID::CSSPropertyTestLogicalPropertyGroupLogicalBlock,
     CSSPropertyID::CSSPropertyTestLogicalPropertyGroupPhysicalVertical,
+    CSSPropertyID::CSSPropertyTestRenderStyleGetterNodeleteFalse,
     CSSPropertyID::CSSPropertyTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin,
     CSSPropertyID::CSSPropertyTestRenderStyleHasExplicitlySetPolicyAllBorderRadius,
     CSSPropertyID::CSSPropertyTestRenderStyleHasExplicitlySetPolicyValueOnly,
@@ -52,7 +53,7 @@ const std::array<CSSPropertyID, 22> computedPropertyIDs {
     CSSPropertyID::CSSPropertyTestSettingsOne,
 };
 
-static constexpr std::array<StringImpl::StaticStringImpl, 118> propertyNameData = {{
+static constexpr std::array<StringImpl::StaticStringImpl, 119> propertyNameData = {{
     StringImpl::StaticStringImpl("test-top-priority", StringImpl::StringAtom),
     StringImpl::StaticStringImpl("test-high-priority", StringImpl::StringAtom),
     StringImpl::StaticStringImpl("test-medium-priority", StringImpl::StringAtom),
@@ -137,6 +138,7 @@ static constexpr std::array<StringImpl::StaticStringImpl, 118> propertyNameData 
     StringImpl::StaticStringImpl("test-match-one-with-settings-flag", StringImpl::StringAtom),
     StringImpl::StaticStringImpl("test-numeric-value-range", StringImpl::StringAtom),
     StringImpl::StaticStringImpl("test-property", StringImpl::StringAtom),
+    StringImpl::StaticStringImpl("test-render-style-getter-nodelete-false", StringImpl::StringAtom),
     StringImpl::StaticStringImpl("test-render-style-has-explicitly-set-policy-all-author-origin", StringImpl::StringAtom),
     StringImpl::StaticStringImpl("test-render-style-has-explicitly-set-policy-all-border-radius", StringImpl::StringAtom),
     StringImpl::StaticStringImpl("test-render-style-has-explicitly-set-policy-value-only", StringImpl::StringAtom),
@@ -277,6 +279,7 @@ test-match-one-with-settings-flag, CSSPropertyID::CSSPropertyTestMatchOneWithSet
 test-medium-priority, CSSPropertyID::CSSPropertyTestMediumPriority
 test-numeric-value-range, CSSPropertyID::CSSPropertyTestNumericValueRange
 test-property, CSSPropertyID::CSSPropertyTestProperty
+test-render-style-getter-nodelete-false, CSSPropertyID::CSSPropertyTestRenderStyleGetterNodeleteFalse
 test-render-style-has-explicitly-set-policy-all-author-origin, CSSPropertyID::CSSPropertyTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin
 test-render-style-has-explicitly-set-policy-all-border-radius, CSSPropertyID::CSSPropertyTestRenderStyleHasExplicitlySetPolicyAllBorderRadius
 test-render-style-has-explicitly-set-policy-value-only, CSSPropertyID::CSSPropertyTestRenderStyleHasExplicitlySetPolicyValueOnly
@@ -517,6 +520,7 @@ constexpr bool isInheritedPropertyTable[cssPropertyIDEnumValueCount] = {
     false, // CSSPropertyID::CSSPropertyTestMatchOneWithSettingsFlag
     false, // CSSPropertyID::CSSPropertyTestNumericValueRange
     false, // CSSPropertyID::CSSPropertyTestProperty
+    false, // CSSPropertyID::CSSPropertyTestRenderStyleGetterNodeleteFalse
     false, // CSSPropertyID::CSSPropertyTestRenderStyleHasExplicitlySetPolicyAllAuthorOrigin
     false, // CSSPropertyID::CSSPropertyTestRenderStyleHasExplicitlySetPolicyAllBorderRadius
     false, // CSSPropertyID::CSSPropertyTestRenderStyleHasExplicitlySetPolicyValueOnly
