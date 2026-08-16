@@ -4195,9 +4195,6 @@ webkit.org/b/212202 fast/scrolling/iframe-scrollable-after-back.html [ Skip ]
 webkit.org/b/212202 fast/scrolling/programmatic-scroll-to-zero-zero.html [ Skip ]
 webkit.org/b/212202 fast/scrolling/rtl-point-in-iframe.html [ Skip ]
 
-# Failing since r277091.
-webkit.org/b/225499 imported/w3c/web-platform-tests/css/css-fonts/font-feature-resolution-002.html [ ImageOnlyFailure ]
-
 webkit.org/b/227053 fast/canvas/canvas-imageSmoothingQuality.html [ Failure ]
 
 # Require expect file for dumped render tree.
