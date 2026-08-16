@@ -43,8 +43,7 @@ DECLARE_SYSTEM_HEADER
 
 #if HAVE(VK_IMAGE_ANALYSIS)
 
-// FIXME: Remove the `__has_feature(modules)` condition when possible.
-#if USE(APPLE_INTERNAL_SDK) && !__has_feature(modules)
+#if USE(APPLE_INTERNAL_SDK)
 
 #if __has_include(<TextRecognition/CRRegion.h>)
 #import <TextRecognition/CRRegion.h>
@@ -229,7 +228,7 @@ NS_ASSUME_NONNULL_END
 
 #if ENABLE(IMAGE_ANALYSIS)
 
-#if __has_include(<VisionKitCore/VKCImageAnalysisTranslation.h>) && !__has_feature(modules)
+#if __has_include(<VisionKitCore/VKCImageAnalysisTranslation.h>)
 #import <VisionKitCore/VKCImageAnalysisTranslation.h>
 #elif defined(__OBJC__)
 
@@ -254,7 +253,7 @@ NS_ASSUME_NONNULL_END
 
 #endif
 
-#if __has_include(<VisionKitCore/VKCImageAnalysis.h>) && !__has_feature(modules)
+#if __has_include(<VisionKitCore/VKCImageAnalysis.h>)
 #import <VisionKitCore/VKCImageAnalysis.h>
 #elif defined(__OBJC__)
 
@@ -274,7 +273,7 @@ NS_ASSUME_NONNULL_END
 
 #endif
 
-#if __has_include(<VisionKitCore/VKImageClass_Private.h>) && !__has_feature(modules)
+#if __has_include(<VisionKitCore/VKImageClass_Private.h>)
 #import <VisionKitCore/VKImageClass_Private.h>
 #elif defined(__OBJC__)
 
@@ -293,7 +292,7 @@ NS_ASSUME_NONNULL_END
 
 #endif
 
-#if __has_include(<VisionKitCore/VKCRemoveBackgroundRequestHandler.h>) && !__has_feature(modules)
+#if __has_include(<VisionKitCore/VKCRemoveBackgroundRequestHandler.h>)
 #import <VisionKitCore/VKCRemoveBackgroundRequest.h>
 #import <VisionKitCore/VKCRemoveBackgroundRequestHandler.h>
 #import <VisionKitCore/VKCRemoveBackgroundResult.h>
@@ -325,7 +324,7 @@ NS_ASSUME_NONNULL_END
 
 #endif
 
-#if __has_include(<VisionKitCore/VKCImageAnalyzer.h>) && !__has_feature(modules)
+#if __has_include(<VisionKitCore/VKCImageAnalyzer.h>)
 #import <VisionKitCore/VKCImageAnalyzer.h>
 #import <VisionKitCore/VKCImageAnalyzerRequest.h>
 #elif defined(__OBJC__)
@@ -357,7 +356,7 @@ NS_ASSUME_NONNULL_END
 #endif
 
 #if PLATFORM(MAC)
-#if __has_include(<VisionKitCore/VKCImageAnalysisOverlayView.h>) && !__has_feature(modules)
+#if __has_include(<VisionKitCore/VKCImageAnalysisOverlayView.h>)
 #import <VisionKitCore/VKCImageAnalysisOverlayView.h>
 #elif defined(__OBJC__)
 
@@ -384,7 +383,7 @@ NS_ASSUME_NONNULL_END
 #endif // PLATFORM(MAC)
 
 #if PLATFORM(IOS) || PLATFORM(VISION) || PLATFORM(MACCATALYST)
-#if __has_include(<VisionKitCore/VKCImageAnalysisInteraction.h>) && !__has_feature(modules)
+#if __has_include(<VisionKitCore/VKCImageAnalysisInteraction.h>)
 #import <VisionKitCore/VKCImageAnalysisInteraction.h>
 #elif defined(__OBJC__)
 
