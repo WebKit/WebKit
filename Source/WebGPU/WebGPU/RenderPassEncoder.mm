@@ -861,28 +861,49 @@ RenderPassEncoder::DrawIndexResult RenderPassEncoder::clampIndexBufferToValidVal
     return clampIndexBufferToValidValues(indexCount, instanceCount, baseVertex, firstInstance, indexType, indexBufferOffsetInBytes, m_indexBuffer.get(), minVertexCount, minInstanceCount, *this, m_device.get(), m_rasterSampleCount, m_primitiveType);
 }
 
-static void checkForIndirectDrawDeviceLost(Device &device, RenderPassEncoder &encoder, id<MTLBuffer> indirectBuffer, uint64_t indirectBufferOffset = 0, id<MTLBuffer> alsoRetain = nil)
+// Records one clamp's scratch for a deferred lostOrOOBRead check. The first call in a pass installs the
+// completion handler; later calls only append, so N clamping draws cost one handler, not N.
+void RenderPassEncoder::trackIndirectDeviceLostCheck(id<MTLBuffer> scratch, uint64_t scratchOffset, id<MTLBuffer> alsoRetain)
 {
-    auto encoderHandle = device.getQueue()->retainCounterSampleBuffer(encoder.parentEncoder());
-    [encoder.parentEncoder().commandBuffer() addCompletedHandler:[encoderHandle, protectedDevice = protect(device), indirectBuffer, indirectBufferOffset, alsoRetain](id<MTLCommandBuffer> completedCommandBuffer) {
-        if (completedCommandBuffer.status != MTLCommandBufferStatusCompleted) {
-            protectedDevice->getQueue()->releaseCounterSampleBuffer(encoderHandle);
-            return;
-        }
-        protectedDevice->getQueue()->scheduleWork([encoderHandle, indirectBuffer, indirectBufferOffset, alsoRetain, protectedDevice]() mutable {
-            protectedDevice->getQueue()->releaseCounterSampleBuffer(encoderHandle);
-            (void)alsoRetain; // Held only to keep a companion scratch buffer alive until GPU completion.
-            // The clamped args live at indirectBufferOffset (0 for a per-Buffer slot, non-zero for per-draw scratch).
-            auto checkedEnd = checkedSum<uint64_t>(indirectBufferOffset, sizeof(WebKitMTLDrawPrimitivesIndirectArguments));
-            if (!indirectBuffer.contents || checkedEnd.hasOverflowed() || checkedEnd.value() > indirectBuffer.length)
+    if (!m_indirectDeviceLostChecks) {
+        m_indirectDeviceLostChecks = adoptRef(*new IndirectDeviceLostChecks);
+        auto encoderHandle = m_device->getQueue()->retainCounterSampleBuffer(m_parentEncoder);
+        [m_parentEncoder->commandBuffer() addCompletedHandler:[encoderHandle, protectedDevice = protect(m_device.get()), checks = m_indirectDeviceLostChecks](id<MTLCommandBuffer> completedCommandBuffer) {
+            if (completedCommandBuffer.status != MTLCommandBufferStatusCompleted) {
+                protectedDevice->getQueue()->releaseCounterSampleBuffer(encoderHandle);
                 return;
+            }
+            protectedDevice->getQueue()->scheduleWork([encoderHandle, checks, protectedDevice]() mutable {
+                protectedDevice->getQueue()->releaseCounterSampleBuffer(encoderHandle);
+                for (auto& entry : checks->entries) {
+                    id<MTLBuffer> buffer = entry.scratch.get();
+                    auto checkedEnd = checkedSum<uint64_t>(entry.offset, sizeof(WebKitMTLDrawPrimitivesIndirectArguments));
+                    if (!buffer.contents || checkedEnd.hasOverflowed() || checkedEnd.value() > buffer.length)
+                        continue;
 
-            auto* contents = static_cast<uint8_t*>(indirectBuffer.contents) + indirectBufferOffset;
-            auto& args = *static_cast<WebKitMTLDrawPrimitivesIndirectArguments*>(static_cast<void*>(contents));
-            if (args.lostOrOOBRead)
-                protectedDevice->loseTheDevice(WGPUDeviceLostReason_Undefined);
-        });
-    }];
+                    auto* contents = static_cast<uint8_t*>(buffer.contents) + entry.offset;
+                    auto& args = *static_cast<WebKitMTLDrawPrimitivesIndirectArguments*>(static_cast<void*>(contents));
+                    if (args.lostOrOOBRead) {
+                        protectedDevice->loseTheDevice(WGPUDeviceLostReason_Undefined);
+                        break;
+                    }
+                }
+                checks->entries.clear();
+            });
+        }];
+    }
+
+    // alsoRetain has no flag of its own; it is held so a companion scratch outlives the GPU work.
+    m_indirectDeviceLostChecks->entries.append(IndirectDeviceLostChecks::Entry { scratch, scratchOffset, alsoRetain });
+}
+
+// The clamp shaders store lostOrOOBRead only on failure, so scratch must arrive zeroed or a stale 1 loses the
+// device. Vector does not initialize POD, hence zeroSpan; the inline capacity fits either argument struct.
+std::pair<id<MTLBuffer>, uint64_t> RenderPassEncoder::newZeroedIndirectScratch(Device& device, size_t size)
+{
+    Vector<uint8_t, 32> zero(size);
+    zeroSpan(zero.mutableSpan());
+    return device.getQueue()->newTemporaryBufferWithBytes(zero.mutableSpan(), false);
 }
 
 std::pair<id<MTLBuffer>, uint64_t> RenderPassEncoder::clampIndirectIndexBufferToValidValues(Buffer* apiIndexBuffer, Buffer& indexedIndirectBuffer, MTLIndexType indexType, NSUInteger indexBufferOffsetInBytes, uint64_t indirectOffset, uint32_t minVertexCount, uint32_t minInstanceCount, MTLPrimitiveType primitiveType, Device& device, uint32_t rasterSampleCount, RenderPassEncoder& encoder, bool& splitEncoder)
@@ -894,24 +915,24 @@ std::pair<id<MTLBuffer>, uint64_t> RenderPassEncoder::clampIndirectIndexBufferTo
     if (!indexBuffer || apiIndexBuffer->isDestroyed() || indexedIndirectBuffer.isDestroyed())
         return std::make_pair(nil, 0ull);
 
-    id<MTLBuffer> indirectBuffer = indexedIndirectBuffer.indirectBuffer();
     auto indexSize = indexType == MTLIndexTypeUInt16 ? sizeof(uint16_t) : sizeof(uint32_t);
     auto checkedOffsetPlusSize = checkedSum<uint32_t>(indexBufferOffsetInBytes, indexSize);
     // '>' not '>=': offset + indexSize == length is a valid single-element index buffer
-    if (!indirectBuffer || !minVertexCount || !minInstanceCount || checkedOffsetPlusSize.hasOverflowed() || checkedOffsetPlusSize.value() > indexBuffer.length)
+    if (!minVertexCount || !minInstanceCount || checkedOffsetPlusSize.hasOverflowed() || checkedOffsetPlusSize.value() > indexBuffer.length)
         return std::make_pair(nil, 0ull);
 
-    if (!indexedIndirectBuffer.indirectIndexedBufferRequiresRecomputation(indexType, indexBufferOffsetInBytes, indirectOffset, minVertexCount, minInstanceCount)) {
-        indexedIndirectBuffer.skippedDrawIndirectIndexedValidation(encoder.parentEncoder(), apiIndexBuffer, indexType, indexBufferOffsetInBytes, indirectOffset, minVertexCount, minInstanceCount, primitiveType);
-        return std::make_pair(indexedIndirectBuffer.indirectIndexedBuffer(), 0ull);
-    }
+    // Per-draw for the reason in clampIndirectBufferToValidValues; both records are fetched as arguments.
+    auto [finalScratch, finalScratchOffset] = newZeroedIndirectScratch(device, sizeof(WebKitMTLDrawIndexedPrimitivesIndirectArguments));
+    auto [intermediateScratch, intermediateScratchOffset] = newZeroedIndirectScratch(device, sizeof(WebKitMTLDrawPrimitivesIndirectArguments));
+    if (!finalScratch || !intermediateScratch)
+        return std::make_pair(nil, 0ull);
 
     id<MTLRenderCommandEncoder> renderCommandEncoder = encoder.renderCommandEncoder();
     CHECKED_SET_PSO(renderCommandEncoder, device, device.indexedIndirectBufferClampPipeline(rasterSampleCount), std::make_pair(nil, 0ull));
     uint32_t indexBufferCount = static_cast<uint32_t>((indexBuffer.length - indexBufferOffsetInBytes) / indexSize);
     encoder.setVertexBuffer(renderCommandEncoder, indexedIndirectBuffer.buffer(), indirectOffset, 0);
-    encoder.setVertexBuffer(renderCommandEncoder, indexedIndirectBuffer.indirectIndexedBuffer(), 0, 1);
-    encoder.setVertexBuffer(renderCommandEncoder, indirectBuffer, 0, 2);
+    encoder.setVertexBuffer(renderCommandEncoder, finalScratch, finalScratchOffset, 1);
+    encoder.setVertexBuffer(renderCommandEncoder, intermediateScratch, intermediateScratchOffset, 2);
     uint32_t indirectData[] = { indexBufferCount, minInstanceCount };
     encoder.setVertexBytes(renderCommandEncoder, asByteSpan(indirectData), 3);
     [renderCommandEncoder drawPrimitives:MTLPrimitiveTypePoint vertexStart:0 vertexCount:1];
@@ -921,18 +942,20 @@ std::pair<id<MTLBuffer>, uint64_t> RenderPassEncoder::clampIndirectIndexBufferTo
         renderCommandEncoder = encoder.renderCommandEncoder();
     CHECKED_SET_PSO(renderCommandEncoder, device, device.indexBufferClampPipeline(indexType, rasterSampleCount), std::make_pair(nil, 0ull));
     encoder.setVertexBuffer(renderCommandEncoder, indexBuffer, indexBufferOffsetInBytes, 0);
-    encoder.setVertexBuffer(renderCommandEncoder, indexedIndirectBuffer.indirectIndexedBuffer(), 0, 1);
+    encoder.setVertexBuffer(renderCommandEncoder, finalScratch, finalScratchOffset, 1);
     auto primitiveOffset = primitiveType == MTLPrimitiveTypeLineStrip || primitiveType == MTLPrimitiveTypeTriangleStrip ? 1u : 0u;
     uint32_t data[] = { minVertexCount == RenderBundleEncoder::invalidVertexInstanceCount ? minVertexCount - primitiveOffset : minVertexCount, primitiveOffset, indexBufferCount - 1 };
     encoder.setVertexBytes(renderCommandEncoder, asByteSpan(data), 2);
-    [renderCommandEncoder drawPrimitives:MTLPrimitiveTypePoint indirectBuffer:indirectBuffer indirectBufferOffset:0];
+    [renderCommandEncoder drawPrimitives:MTLPrimitiveTypePoint indirectBuffer:intermediateScratch indirectBufferOffset:intermediateScratchOffset];
     encoder.emitMemoryBarrier(renderCommandEncoder);
 
     splitEncoder = true;
-    indexedIndirectBuffer.indirectIndexedBufferRecomputed(indexType, indexBufferOffsetInBytes, indirectOffset, minVertexCount, minInstanceCount);
-    checkForIndirectDrawDeviceLost(device, encoder, indirectBuffer);
+    encoder.parentEncoder().addBuffer(finalScratch);
+    encoder.parentEncoder().addBuffer(intermediateScratch);
+    // Device-loss flag lives in intermediateScratch; also retain finalScratch until GPU completion.
+    encoder.trackIndirectDeviceLostCheck(intermediateScratch, intermediateScratchOffset, finalScratch);
 
-    return std::make_pair(indexedIndirectBuffer.indirectIndexedBuffer(), 0ull);
+    return std::make_pair(finalScratch, finalScratchOffset);
 }
 
 std::pair<id<MTLBuffer>, uint64_t> RenderPassEncoder::clampIndirectIndexBufferToValidValues(Buffer& indexedIndirectBuffer, MTLIndexType indexType, NSUInteger indexBufferOffsetInBytes, uint64_t indirectOffset, uint32_t minVertexCount, uint32_t minInstanceCount, bool& splitEncoder)
@@ -948,26 +971,28 @@ std::pair<id<MTLBuffer>, uint64_t> RenderPassEncoder::clampIndirectBufferToValid
     if (minVertexCount == RenderBundleEncoder::invalidVertexInstanceCount && minInstanceCount == RenderBundleEncoder::invalidVertexInstanceCount)
         return std::make_pair(indirectBuffer.buffer(), indirectOffset);
 
-    if (!indirectBuffer.indirectBufferRequiresRecomputation(indirectOffset, minVertexCount, minInstanceCount)) {
-        indirectBuffer.skippedDrawIndirectValidation(encoder.parentEncoder(), indirectOffset, minVertexCount, minInstanceCount);
-        return std::make_pair(indirectBuffer.indirectBuffer(), 0ull);
-    }
+    // Scratch must be per-draw, not one slot shared by every draw against this Buffer. emitMemoryBarrier()
+    // below orders the clamp against its own draw, but MTLRenderStages cannot name an indirect argument fetch,
+    // so nothing can order draw N's fetch against draw N+1's clamp store into the same slot.
+    auto [scratch, scratchOffset] = newZeroedIndirectScratch(device, sizeof(WebKitMTLDrawPrimitivesIndirectArguments));
+    if (!scratch)
+        return std::make_pair(nil, 0ull);
 
     id<MTLRenderCommandEncoder> renderCommandEncoder = encoder.renderCommandEncoder();
     id<MTLRenderPipelineState> renderPipelineState = device.indirectBufferClampPipeline(rasterSampleCount);
     CHECKED_SET_PSO(renderCommandEncoder, device, renderPipelineState, std::make_pair(nil, 0ull));
     encoder.setVertexBuffer(renderCommandEncoder, indirectBuffer.buffer(), indirectOffset, 0);
-    encoder.setVertexBuffer(renderCommandEncoder, indirectBuffer.indirectBuffer(), 0, 1);
+    encoder.setVertexBuffer(renderCommandEncoder, scratch, scratchOffset, 1);
     uint32_t data[] = { minVertexCount, minInstanceCount };
     encoder.setVertexBytes(renderCommandEncoder, asByteSpan(data), 2);
     [renderCommandEncoder drawPrimitives:MTLPrimitiveTypePoint vertexStart:0 vertexCount:1];
     encoder.emitMemoryBarrier(renderCommandEncoder);
 
     splitEncoder = true;
-    indirectBuffer.indirectBufferRecomputed(indirectOffset, minVertexCount, minInstanceCount);
-    checkForIndirectDrawDeviceLost(device, encoder, indirectBuffer.indirectBuffer());
+    encoder.parentEncoder().addBuffer(scratch);
+    encoder.trackIndirectDeviceLostCheck(scratch, scratchOffset, nil);
 
-    return std::make_pair(indirectBuffer.indirectBuffer(), 0ull);
+    return std::make_pair(scratch, scratchOffset);
 }
 
 std::pair<id<MTLBuffer>, uint64_t> RenderPassEncoder::clampIndirectBufferToValidValues(Buffer& indirectBuffer, uint64_t indirectOffset, uint32_t minVertexCount, uint32_t minInstanceCount, bool& splitEncoder)
@@ -978,14 +1003,6 @@ std::pair<id<MTLBuffer>, uint64_t> RenderPassEncoder::clampIndirectBufferToValid
 // --- Batched indirect clamp (executeBundles only) ------------------------------------------------
 // These mirror clampIndirect*ToValidValues but write caller-supplied per-draw scratch and emit no
 // internal memory barrier, so executeBundles can batch one barrier around all draws instead of per draw.
-
-// Zeroed scratch is required because the clamp shaders write lostOrOOBRead only on failure.
-std::pair<id<MTLBuffer>, uint64_t> RenderPassEncoder::newZeroedIndirectScratch(Device& device, size_t size)
-{
-    Vector<uint8_t> zero(size);
-    zeroSpan(zero.mutableSpan());
-    return device.getQueue()->newTemporaryBufferWithBytes(zero.mutableSpan(), false);
-}
 
 // One dispatch; writes the clamped MTLDrawPrimitivesIndirectArguments (+lostOrOOBRead) into finalScratch.
 bool RenderPassEncoder::clampIndirectBufferDispatchBatched(Buffer& indirectBuffer, uint64_t indirectOffset, uint32_t minVertexCount, uint32_t minInstanceCount, Device& device, uint32_t rasterSampleCount, RenderPassEncoder& encoder, id<MTLBuffer> finalScratch, uint64_t finalScratchOffset)
@@ -1000,7 +1017,7 @@ bool RenderPassEncoder::clampIndirectBufferDispatchBatched(Buffer& indirectBuffe
     uint32_t data[] = { minVertexCount, minInstanceCount };
     encoder.setVertexBytes(renderCommandEncoder, asByteSpan(data), 2);
     [renderCommandEncoder drawPrimitives:MTLPrimitiveTypePoint vertexStart:0 vertexCount:1];
-    checkForIndirectDrawDeviceLost(device, encoder, finalScratch, finalScratchOffset);
+    encoder.trackIndirectDeviceLostCheck(finalScratch, finalScratchOffset, nil);
     return true;
 }
 
@@ -1029,7 +1046,7 @@ bool RenderPassEncoder::clampIndirectIndexBufferDispatch1Batched(Buffer* apiInde
     encoder.setVertexBytes(renderCommandEncoder, asByteSpan(indirectData), 3);
     [renderCommandEncoder drawPrimitives:MTLPrimitiveTypePoint vertexStart:0 vertexCount:1];
     // Device-loss flag lives in intermediateScratch; also retain finalScratch until GPU completion.
-    checkForIndirectDrawDeviceLost(device, encoder, intermediateScratch, intermediateScratchOffset, finalScratch);
+    encoder.trackIndirectDeviceLostCheck(intermediateScratch, intermediateScratchOffset, finalScratch);
     return true;
 }
 
@@ -1166,7 +1183,10 @@ void RenderPassEncoder::drawIndexedIndirect(Buffer& indirectBuffer, uint64_t ind
     if (splitEncoder)
         splitEncoder = splitRenderPass();
 
-    if (!executePreDrawCommands(0, 0, splitEncoder, &indirectBuffer, needsValidationLayerWorkaround) || m_indexBuffer->isDestroyed() || mtlIndirectBuffer.length < sizeof(MTLDrawIndexedPrimitivesIndirectArguments))
+    // Range-check offset + size, not size alone: the args now sit at a non-zero offset in pooled scratch.
+    // Also rejects a nil buffer from a failed clamp, whose length is 0.
+    auto checkedIndirectEnd = checkedSum<uint64_t>(modifiedIndirectOffset, sizeof(MTLDrawIndexedPrimitivesIndirectArguments));
+    if (!executePreDrawCommands(0, 0, splitEncoder, &indirectBuffer, needsValidationLayerWorkaround) || m_indexBuffer->isDestroyed() || checkedIndirectEnd.hasOverflowed() || checkedIndirectEnd.value() > mtlIndirectBuffer.length)
         return;
 
     uint32_t indexSizeInBytes = m_indexType == MTLIndexTypeUInt16 ? sizeof(uint16_t) : sizeof(uint32_t);
@@ -1247,7 +1267,9 @@ void RenderPassEncoder::drawIndirect(Buffer& indirectBuffer, uint64_t indirectOf
     if (splitEncoder)
         splitEncoder = splitRenderPass();
 
-    if (!executePreDrawCommands(0, 0, splitEncoder, &indirectBuffer, needsValidationLayerWorkaround) || mtlIndirectBuffer.length < sizeof(MTLDrawPrimitivesIndirectArguments) || indirectBuffer.isDestroyed())
+    // See drawIndexedIndirect.
+    auto checkedIndirectEnd = checkedSum<uint64_t>(adjustedIndirectBufferOffset, sizeof(MTLDrawPrimitivesIndirectArguments));
+    if (!executePreDrawCommands(0, 0, splitEncoder, &indirectBuffer, needsValidationLayerWorkaround) || checkedIndirectEnd.hasOverflowed() || checkedIndirectEnd.value() > mtlIndirectBuffer.length || indirectBuffer.isDestroyed())
         return;
 
     [renderCommandEncoder() drawPrimitives:m_primitiveType indirectBuffer:mtlIndirectBuffer indirectBufferOffset:adjustedIndirectBufferOffset];

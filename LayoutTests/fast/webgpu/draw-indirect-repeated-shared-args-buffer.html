@@ -1,0 +1,107 @@
+<script src="../../resources/js-test.js"></script>
+<script>
+
+jsTestIsAsync = true;
+
+description("Two drawIndirect calls in one render pass, reading two different argument records out of one " +
+           "GPUBuffer, with a pipeline that declares a required vertex buffer layout so both draws take the " +
+           "min-count clamp path. The clamped arguments must land in per-draw scratch: a single per-Buffer " +
+           "scratch slot is written by the second draw's clamp dispatch at the same address the first draw " +
+           "fetches its arguments from, and no barrier can order a vertex-stage write against an indirect " +
+           "argument fetch. Each draw selects a differently coloured triangle via firstVertex and is scissored " +
+           "to its own pixel, so a clobbered record shows up as the wrong colour.");
+
+async function main() {
+    let adapter = await navigator.gpu.requestAdapter({});
+    let device = await adapter.requestDevice({});
+    device.pushErrorScope('validation');
+
+    const format = 'rgba8unorm';
+    // A real @location vertex-step-mode buffer, so computeMininumVertexInstanceCount lowers minVertexCount off
+    // the invalid sentinel and clampIndirectBufferToValidValues does not early-out to the app's own buffer.
+    let module = device.createShaderModule({ code: `
+        struct VSOut {
+            @builtin(position) position: vec4f,
+            @location(0) color: vec4f,
+        };
+        @vertex fn vs(@location(0) p: vec2f, @location(1) c: vec4f) -> VSOut {
+            return VSOut(vec4f(p, 0, 1), c);
+        }
+        @fragment fn fs(in: VSOut) -> @location(0) vec4f { return in.color; }
+    ` });
+    let pipeline = device.createRenderPipeline({
+        layout: 'auto',
+        vertex: {
+            module,
+            entryPoint: 'vs',
+            buffers: [{
+                arrayStride: 24,
+                attributes: [
+                    { shaderLocation: 0, offset: 0, format: 'float32x2' },
+                    { shaderLocation: 1, offset: 8, format: 'float32x4' },
+                ],
+            }],
+        },
+        fragment: { module, entryPoint: 'fs', targets: [{ format }] },
+        primitive: { topology: 'triangle-list' },
+    });
+
+    // Six vertices, two full-target triangles: 0..2 green, 3..5 blue. 6 * 24 == 144 bytes, so minVertexCount
+    // is exactly 6 and neither draw's (firstVertex + vertexCount) is clamped down.
+    let v = [];
+    for (const color of [[0, 1, 0, 1], [0, 0, 1, 1]]) {
+        for (const p of [[-1, -3], [-1, 1], [3, 1]])
+            v.push(p[0], p[1], ...color);
+    }
+    let vertexData = new Float32Array(v);
+    let vertexBuffer = device.createBuffer({ size: vertexData.byteLength, usage: GPUBufferUsage.VERTEX | GPUBufferUsage.COPY_DST });
+    device.queue.writeBuffer(vertexBuffer, 0, vertexData);
+
+    // Two MTLDrawPrimitivesIndirectArguments records in one buffer: vertexCount, instanceCount, firstVertex,
+    // firstInstance. The second is read at offset 16, which also misses the one-entry recomputation cache the
+    // old shared-slot path kept, so both draws really do run a clamp dispatch.
+    let args = new Uint32Array([3, 1, 0, 0, 3, 1, 3, 0]);
+    let argsBuffer = device.createBuffer({ size: args.byteLength, usage: GPUBufferUsage.INDIRECT | GPUBufferUsage.COPY_DST });
+    device.queue.writeBuffer(argsBuffer, 0, args);
+
+    let texture = device.createTexture({ size: [2, 1], format, usage: GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.COPY_SRC });
+    let readback = device.createBuffer({ size: 256, usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ });
+
+    let commandEncoder = device.createCommandEncoder();
+    let pass = commandEncoder.beginRenderPass({
+        colorAttachments: [{ view: texture.createView(), loadOp: 'clear', storeOp: 'store', clearValue: { r: 1, g: 0, b: 0, a: 1 } }],
+    });
+    pass.setPipeline(pipeline);
+    pass.setVertexBuffer(0, vertexBuffer);
+    // Left pixel from the record at offset 0 (firstVertex 0, green).
+    pass.setScissorRect(0, 0, 1, 1);
+    pass.drawIndirect(argsBuffer, 0);
+    // Right pixel from the record at offset 16 (firstVertex 3, blue).
+    pass.setScissorRect(1, 0, 1, 1);
+    pass.drawIndirect(argsBuffer, 16);
+    pass.end();
+    commandEncoder.copyTextureToBuffer({ texture }, { buffer: readback, bytesPerRow: 256 }, [2, 1]);
+    device.queue.submit([commandEncoder.finish()]);
+
+    await device.queue.onSubmittedWorkDone();
+    await readback.mapAsync(GPUMapMode.READ);
+    let pixels = new Uint8Array(readback.getMappedRange(0, 8));
+    window.leftPixel = [...pixels.subarray(0, 4)];
+    window.rightPixel = [...pixels.subarray(4, 8)];
+    readback.unmap();
+
+    shouldBeEqualToString('leftPixel.join()', '0,255,0,255');
+    shouldBeEqualToString('rightPixel.join()', '0,0,255,255');
+
+    let error = await device.popErrorScope();
+    if (error)
+        testFailed(error.message);
+}
+
+main().catch(e => {
+    testFailed("Exception: " + e);
+}).finally(() => {
+    finishJSTest();
+});
+
+</script>

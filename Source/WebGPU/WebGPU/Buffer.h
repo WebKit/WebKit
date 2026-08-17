@@ -96,8 +96,6 @@ public:
     };
 
     id<MTLBuffer> buffer() const { return m_buffer; }
-    id<MTLBuffer> NODELETE indirectBuffer() const;
-    id<MTLBuffer> indirectIndexedBuffer() const { return m_indirectIndexedBuffer; }
 
     uint64_t NODELETE initialSize() const;
     uint64_t currentSize() const;
@@ -110,17 +108,9 @@ public:
     void setCommandEncoder(CommandEncoder&, bool mayModifyBuffer = false) const;
     std::span<uint8_t> getBufferContents();
 
-    bool NODELETE indirectIndexedBufferRequiresRecomputation(MTLIndexType, NSUInteger indexBufferOffsetInBytes, uint64_t indirectOffset, uint32_t minVertexCount, uint32_t minInstanceCount) const;
-    bool NODELETE indirectBufferRequiresRecomputation(uint64_t indirectOffset, uint32_t minVertexCount, uint32_t minInstanceCount) const;
-
-    void NODELETE indirectBufferRecomputed(uint64_t indirectOffset, uint32_t minVertexCount, uint32_t minInstanceCount);
-    void NODELETE indirectIndexedBufferRecomputed(MTLIndexType, NSUInteger indexBufferOffsetInBytes, uint64_t indirectOffset, uint32_t minVertexCount, uint32_t minInstanceCount);
-
     std::optional<DrawIndexCacheContainerIterator> canSkipDrawIndexedValidation(uint32_t firstIndex, uint32_t indexCount, uint32_t vertexCount, MTLIndexType, uint32_t primitiveOffset, id<MTLIndirectCommandBuffer> = nil) const;
     void drawIndexedValidated(uint32_t firstIndex, uint32_t indexCount, uint32_t vertexCount, MTLIndexType, uint32_t primitiveOffset, uint64_t validationGeneration, id<MTLIndirectCommandBuffer> = nil);
     void skippedDrawIndexedValidation(CommandEncoder&, DrawIndexCacheContainerIterator);
-    void skippedDrawIndirectIndexedValidation(CommandEncoder&, Buffer*, MTLIndexType, uint32_t indexBufferOffsetInBytes, uint64_t indirectOffset, uint32_t minVertexCount, uint32_t minInstanceCount, MTLPrimitiveType);
-    void skippedDrawIndirectValidation(CommandEncoder&, uint64_t indirectOffset, uint32_t minVertexCount, uint32_t minInstanceCount);
 
     bool didReadOOB(id<MTLIndirectCommandBuffer> = nil) const;
     void didReadOOB(uint32_t v, id<MTLIndirectCommandBuffer> = nil);
@@ -156,12 +146,8 @@ private:
     void NODELETE setState(State);
     void incrementBufferMapCount();
     void decrementBufferMapCount();
-    void takeSlowIndirectIndexValidationPath(CommandBuffer&, Buffer&, MTLIndexType, uint32_t indexBufferOffsetInBytes, uint32_t indirectOffset, uint32_t minVertexCount, MTLPrimitiveType);
-    void takeSlowIndirectValidationPath(CommandBuffer&, uint64_t indirectOffset, uint32_t minVertexCount, uint32_t minInstanceCount);
 
     id<MTLBuffer> m_buffer { nil };
-    id<MTLBuffer> _Nullable m_indirectBuffer { nil };
-    id<MTLBuffer> _Nullable m_indirectIndexedBuffer { nil };
 
     // https://gpuweb.github.io/gpuweb/#buffer-interface
 
@@ -175,19 +161,6 @@ private:
     WGPUMapModeFlags m_mapMode { WGPUMapMode_None };
     uint32_t m_maxUnsignedIndex { 0 };
     uint16_t m_maxUshortIndex { 0 };
-
-    struct IndirectArgsCache {
-        uint64_t indirectOffset { UINT64_MAX };
-        uint64_t indexBufferOffsetInBytes { UINT64_MAX };
-        uint32_t minVertexCount { 0 };
-        uint32_t minInstanceCount { 0 };
-        MTLIndexType indexType { MTLIndexTypeUInt16 };
-        enum {
-            NoDraw,
-            IndirectDraw,
-            IndirectIndexedDraw
-        } drawType { NoDraw };
-    } m_indirectCache;
 
     DrawIndexCacheContainer m_drawIndexedCache;
 
