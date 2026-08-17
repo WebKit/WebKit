@@ -55,6 +55,7 @@ public:
     const CSSCounterStyleDescriptors::Ranges& ranges() const LIFETIME_BOUND { return m_descriptors.m_ranges; }
     const CSSCounterStyleDescriptors::Pad& pad() const LIFETIME_BOUND { return m_descriptors.m_pad; }
     const CSSCounterStyleDescriptors::Name& fallbackName() const LIFETIME_BOUND { return m_descriptors.m_fallbackName; }
+    RefPtr<const CSSRegisteredCounterStyle> fallbackStyle() const { return m_fallbackReference.get(); }
     const Vector<CSSCounterStyleDescriptors::Symbol>& symbols() const LIFETIME_BOUND { return m_descriptors.m_symbols; }
     const CSSCounterStyleDescriptors::AdditiveSymbols& additiveSymbols() const LIFETIME_BOUND { return m_descriptors.m_additiveSymbols; }
     CSSCounterStyleDescriptors::SpeakAs speakAs() const { return m_descriptors.m_speakAs; }

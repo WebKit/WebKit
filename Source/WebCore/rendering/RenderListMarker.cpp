@@ -25,6 +25,7 @@
 #include "config.h"
 #include "RenderListMarker.h"
 
+#include "BaselineAlignment.h"
 #include "CSSCounterStyleDescriptors.h"
 #include "CSSCounterStyleRegistry.h"
 #include "CSSFontSelector.h"
@@ -46,6 +47,7 @@
 #include "RenderMultiColumnSpannerPlaceholder.h"
 #include "RenderObjectInlines.h"
 #include "RenderTable.h"
+#include "RenderText.h"
 #include "RenderView.h"
 #include "Settings.h"
 #include "StyleComputedStyle+GettersInlines.h"
@@ -54,10 +56,10 @@
 #include "StyleListStyleType.h"
 #include "StyleScope.h"
 #include "TextUtil.h"
+#include <wtf/HashSet.h>
 #include <wtf/StackStats.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
-#include <wtf/unicode/CharacterNames.h>
 
 namespace WebCore {
 
@@ -118,12 +120,77 @@ bool RenderListMarker::isImage() const
 {
     // `content` supersedes list-style-image (css-lists-3 §3.3), so a marker with generated content
     // is never treated as an image marker (affects inline margins, baseline, and layout attributes).
-    return m_image && !protect(m_image)->errorOccurred() && !hasContent();
+    return m_image && !protect(m_image)->errorOccurred() && !hasContentProperty();
 }
 
-bool RenderListMarker::hasContent() const
+bool RenderListMarker::hasContentProperty() const
 {
     return document().settings().cssMarkerContentEnabled() && style().content().isData();
+}
+
+static bool symbolsContainStrongDirectionalityText(const CSSRegisteredCounterStyle& counterStyle)
+{
+    auto isStrongDirectionalitySymbol = [](auto& symbol) {
+        return Layout::TextUtil::containsStrongDirectionalityText(symbol.text);
+    };
+    return isStrongDirectionalitySymbol(counterStyle.prefix())
+        || isStrongDirectionalitySymbol(counterStyle.suffix())
+        || isStrongDirectionalitySymbol(counterStyle.negative().m_prefix)
+        || isStrongDirectionalitySymbol(counterStyle.negative().m_suffix)
+        || isStrongDirectionalitySymbol(counterStyle.pad().m_padSymbol)
+        || std::ranges::any_of(counterStyle.symbols(), isStrongDirectionalitySymbol)
+        || std::ranges::any_of(counterStyle.additiveSymbols(), [&](auto& additiveSymbol) {
+            return isStrongDirectionalitySymbol(additiveSymbol.first);
+        });
+}
+
+static bool counterStyleChainHasStrongDirectionalitySymbols(const CSSRegisteredCounterStyle& counterStyle)
+{
+    // A counter style draws its fallback's text whenever a value is out of range or its own system cannot
+    // represent it (CSSRegisteredCounterStyle::text), so every style the chain can reach has to be
+    // left-to-right before the marker can go without content renderers. Measuring and painting the text
+    // directly follows memory order, so text this gets wrong is painted wrong.
+    HashSet<const CSSRegisteredCounterStyle*> visitedCounterStyles;
+    RefPtr currentCounterStyle = &counterStyle;
+    while (true) {
+        // A cycle draws decimal instead (see fallbackText), which never reorders.
+        if (!visitedCounterStyles.add(currentCounterStyle.get()).isNewEntry)
+            return false;
+
+        if (symbolsContainStrongDirectionalityText(*currentCounterStyle))
+            return true;
+
+        // No fallback to follow is the same condition fallbackText draws decimal on, whether the chain
+        // ends here or its reference was never resolved.
+        RefPtr fallbackCounterStyle = currentCounterStyle->fallbackStyle();
+        if (!fallbackCounterStyle)
+            return false;
+
+        currentCounterStyle = WTF::move(fallbackCounterStyle);
+    }
+}
+
+bool RenderListMarker::textNeedsBidiResolution() const
+{
+    if (hasContentProperty() || isImage() || drawsBulletShape() || style().listStyleType().isNone())
+        return false;
+
+    if (auto markerString = style().listStyleType().tryString())
+        return !style().writingMode().isBidiLTR() || Layout::TextUtil::containsStrongDirectionalityText(*markerString);
+
+    RefPtr counterStyle = this->counterStyle();
+    if (!counterStyle)
+        return false;
+
+    if (!style().writingMode().isBidiLTR())
+        return true;
+
+    return counterStyleChainHasStrongDirectionalitySymbols(*counterStyle);
+}
+
+bool RenderListMarker::needsContentContainer() const
+{
+    return hasContentProperty() || textNeedsBidiResolution();
 }
 
 RenderBlockFlow* RenderListMarker::contentContainer() const
@@ -136,18 +203,6 @@ RenderBlockFlow* RenderListMarker::contentContainer() const
 LayoutRect RenderListMarker::localSelectionRect()
 {
     return LayoutRect(LayoutPoint(), borderBoxSize());
-}
-
-static String reversed(StringView string)
-{
-    auto length = string.length();
-    if (length <= 1)
-        return string.toString();
-    std::span<char16_t> characters;
-    auto result = String::createUninitialized(length, characters);
-    for (unsigned i = 0; i < length; ++i)
-        characters[i] = string[length - i - 1];
-    return result;
 }
 
 struct TextRunWithUnderlyingString {
@@ -169,20 +224,7 @@ static auto textRunForContent(ListMarkerTextContent textContent, const Style::Co
 {
     ASSERT(!textContent.isEmpty());
 
-    // Since the bidi algorithm doesn't run on this text, we instead reorder the characters here.
-    // We use u_charDirection to figure out if the marker text is RTL and assume the suffix matches the surrounding direction.
-    String textForRun;
-    if (textContent.textDirection == TextDirection::LTR) {
-        if (style.writingMode().isBidiLTR())
-            textForRun = textContent.textWithSuffix;
-        else
-            textForRun = makeString(reversed(textContent.suffix()), textContent.textWithoutSuffix());
-    } else {
-        if (!style.writingMode().isBidiLTR())
-            textForRun = reversed(textContent.textWithSuffix);
-        else
-            textForRun = makeString(reversed(textContent.textWithoutSuffix()), textContent.suffix());
-    }
+    auto textForRun = textContent.textWithSuffix;
     auto textRun = RenderBlock::constructTextRun(textForRun, style);
     return { WTF::move(textRun), WTF::move(textForRun) };
 }
@@ -220,7 +262,7 @@ void RenderListMarker::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffse
 
         // Paint the generated-content subtree as an atomic inline: paintAsInlineBlock fans out all
         // sub-phases for Foreground and forwards Selection/EventRegion/TextClip to the child's paint().
-        container->paintAsInlineBlock(paintInfo, boxOrigin);
+        container->paintAsInlineBlock(paintInfo, flipForWritingModeForChild(*container, boxOrigin));
         return;
     }
 
@@ -266,17 +308,14 @@ void RenderListMarker::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffse
     context.setStrokeThickness(1.0f);
     context.setFillColor(color);
 
-    auto listStyleType = style().listStyleType();
-    if (listStyleType.isDisc()) {
-        context.fillEllipse(markerRect);
-        return;
-    }
-    if (listStyleType.isCircle()) {
-        context.strokeEllipse(markerRect);
-        return;
-    }
-    if (listStyleType.isSquare()) {
-        context.fillRect(markerRect);
+    if (drawsBulletShape()) {
+        auto listStyleType = style().listStyleType();
+        if (listStyleType.isDisc())
+            context.fillEllipse(markerRect);
+        else if (listStyleType.isCircle())
+            context.strokeEllipse(markerRect);
+        else
+            context.fillRect(markerRect);
         return;
     }
 
@@ -373,18 +412,23 @@ void RenderListMarker::layoutContentContainer(RenderBlockFlow& container)
     container.clearOverridingBorderBoxLogicalWidth();
 
     setLogicalWidth(container.logicalWidth());
-    setLogicalHeight(container.logicalHeight());
 
     // The inline formatting context aligns the marker box on the marker's primary-font baseline
     // (like a text marker; see InlineLineBoxBuilder), then we paint the content box at the marker
     // box origin. Offset the content box along the block axis so its own first-line baseline lands
     // on that font baseline — otherwise the content's line-box half-leading shifts it off the list
     // item's baseline. Logical setters keep this correct in vertical writing modes.
-    auto markerAscent = LayoutUnit { style().metricsOfPrimaryFont().ascent() };
+    auto markerAscent = LayoutUnit { style().metricsOfPrimaryFont().ascent(BaselineAlignment::dominantBaseline(writingMode())) };
     auto contentBaseline = container.firstLineBaseline().value_or(container.logicalHeight());
     container.setLogicalTop(markerAscent - contentBaseline);
 
-    m_layoutBounds = { contentBaseline, container.logicalHeight() - contentBaseline };
+    if (textNeedsBidiResolution()) {
+        setLogicalHeight(style().metricsOfPrimaryFont().intHeight());
+        m_layoutBounds = layoutBoundForTextContent(textWithSuffix());
+    } else {
+        setLogicalHeight(container.logicalHeight());
+        m_layoutBounds = { contentBaseline, container.logicalHeight() - contentBaseline };
+    }
 
     // The content box can extend outside the marker's border box (its baseline offset may be
     // negative, or the content taller than the marker font), so record its overflow. The marker
@@ -401,6 +445,11 @@ void RenderListMarker::imageChanged(WrappedImagePtr o, const IntRect* rect)
     if (parent()) {
         RefPtr image = m_image;
         if (image && o == image->data()) {
+            if (image->errorOccurred()) {
+                // A failed image turns this into a text marker, and that text may need content subtree.
+                if (RefPtr element = m_listItem ? m_listItem->element() : nullptr)
+                    element->invalidateStyle();
+            }
             if (borderBoxWidth() != image->imageSize(this, style().usedZoom()).width() || borderBoxHeight() != image->imageSize(this, style().usedZoom()).height() || image->errorOccurred())
                 setNeedsLayoutAndInvalidateContentLogicalWidths();
             else
@@ -420,7 +469,7 @@ void RenderListMarker::updateInlineMarginsAndContent()
 
 void RenderListMarker::updateContent()
 {
-    if (hasContent()) {
+    if (hasContentProperty()) {
         // css-lists-3 §3.3: `content` (not normal) supersedes list-style-image/type. The generated
         // content lives in the anonymous inline-block contentContainer(); the marker has no text/image.
         m_textContent = { };
@@ -436,36 +485,21 @@ void RenderListMarker::updateContent()
         m_textContent = {
             .textWithSuffix = emptyString(),
             .textWithoutSuffixLength = 0,
-            .textDirection = TextDirection::LTR,
         };
         return;
     }
-
-    auto contentTextDirection = [&](auto content) {
-        if (!content.length())
-            return TextDirection::LTR;
-        // FIXME: Depending on the string value, we may need the real bidi algorithm. (rdar://106139180)
-        // Also we may need to start checking for the entire content for directionality (and whether we need to check for additional
-        // directionality characters like U_RIGHT_TO_LEFT_EMBEDDING).
-        auto bidiCategory = u_charDirection(content[0]);
-        if (bidiCategory != U_RIGHT_TO_LEFT && bidiCategory != U_RIGHT_TO_LEFT_ARABIC)
-            return TextDirection::LTR;
-        return TextDirection::RTL;
-    };
 
     WTF::switchOn(style().listStyleType(),
         [&](const CSS::Keyword::None&) {
             m_textContent = {
                 .textWithSuffix = " "_s,
                 .textWithoutSuffixLength = 0,
-                .textDirection = TextDirection::LTR,
             };
         },
         [&](const Style::String& identifier) {
             m_textContent = {
                 .textWithSuffix = identifier.value,
                 .textWithoutSuffixLength = identifier.value.length(),
-                .textDirection = contentTextDirection(StringView { identifier.value }),
             };
         },
         [&](const Style::CounterStyle&) {
@@ -476,10 +510,31 @@ void RenderListMarker::updateContent()
             m_textContent = {
                 .textWithSuffix = makeString(text, counter->suffix().text),
                 .textWithoutSuffixLength = text.length(),
-                .textDirection = contentTextDirection(text),
             };
         }
     );
+
+    // The marker text is only known here (counter values resolve at layout), while the renderers
+    // holding it were created from style. Push the text down so the inline formatting context has something to lay out.
+    if (textNeedsBidiResolution())
+        updateContentContainerText();
+}
+
+void RenderListMarker::updateContentContainerText()
+{
+    CheckedPtr container = contentContainer();
+    if (!container) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    CheckedPtr textRenderer = dynamicDowncast<RenderText>(container->firstChild());
+    if (!textRenderer) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    textRenderer->setText(m_textContent.textWithSuffix);
 }
 
 void RenderListMarker::computeIntrinsicLogicalWidthContributions()
@@ -515,7 +570,7 @@ void RenderListMarker::computeIntrinsicLogicalWidthContributions()
     auto& font = systemUIFontCascade ? *systemUIFontCascade : style().fontCascade();
 
     LayoutUnit logicalWidth;
-    if (widthUsesMetricsOfPrimaryFont())
+    if (drawsBulletShape())
         logicalWidth = (font.metricsOfPrimaryFont().intAscent() * 2 / 3 + 1) / 2 + 2;
     else if (!m_textContent.isEmpty())
         logicalWidth = font.width(textRunForContent(m_textContent, style()));
@@ -537,7 +592,7 @@ void RenderListMarker::updateInlineMargins()
         if (isImage())
             return { 0, markerPadding };
 
-        if (widthUsesMetricsOfPrimaryFont())
+        if (drawsBulletShape())
             return { -1, fontMetrics.intAscent() - minContentLogicalWidthContribution() + 1 };
 
         return { };
@@ -548,7 +603,7 @@ void RenderListMarker::updateInlineMargins()
             return { -minContentLogicalWidthContribution() - markerPadding, markerPadding };
 
         int offset = fontMetrics.intAscent() * 2 / 3;
-        if (widthUsesMetricsOfPrimaryFont())
+        if (drawsBulletShape())
             return { -offset - markerPadding - 1, offset + markerPadding + 1 - minContentLogicalWidthContribution() };
 
         if (m_textContent.isEmpty() && !contentContainer())
@@ -632,7 +687,7 @@ FloatRect RenderListMarker::relativeMarkerRect()
         return { 0.f, 0.f, protect(m_image)->imageSize(this, style().usedZoom()).width(), protect(m_image)->imageSize(this, style().usedZoom()).height() };
 
     FloatRect relativeRect;
-    if (widthUsesMetricsOfPrimaryFont()) {
+    if (drawsBulletShape()) {
         auto& fontMetrics = style().metricsOfPrimaryFont();
         auto ascent = fontMetrics.ascent();
         auto bulletWidth = (ascent * 2 / 3 + 1) / 2;
@@ -679,10 +734,10 @@ RefPtr<CSSRegisteredCounterStyle> RenderListMarker::counterStyle() const
     return document().counterStyleRegistry().resolvedCounterStyle(*counterStyle);
 }
 
-bool RenderListMarker::widthUsesMetricsOfPrimaryFont() const
+bool RenderListMarker::drawsBulletShape() const
 {
     // `content` supersedes list-style-type, so a content marker never draws a bullet glyph.
-    if (hasContent())
+    if (hasContentProperty())
         return false;
     auto& listType = style().listStyleType();
     return listType.isCircle() || listType.isDisc() || listType.isSquare();

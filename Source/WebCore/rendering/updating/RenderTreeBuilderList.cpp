@@ -135,17 +135,20 @@ void RenderTreeBuilder::List::updateItemMarker(RenderListItem& listItemRenderer)
         m_builder.destroyAndCleanUpAnonymousWrappers(*markerRenderer, { });
 
     if (auto* markerRenderer = listItemRenderer.markerRenderer()) {
-        auto contentChanged = markerRenderer->style().content() != newStyle.content();
-        // Tear down any existing generated content while the current style still permits children:
-        // setStyle below may flip canHaveChildren() to false (content: normal/none), and destroying
-        // the container afterwards would trip the detach assertion.
-        if (contentChanged) {
+        // Whether the marker box holds inline content depends on `content` and on list-style-type
+        // (only text markers with right-to-left content need it). The container also inherits
+        // unicode-bidi, so rebuild on that too, to carry the new value into it.
+        auto contentChanged = markerRenderer->style().content() != newStyle.content() || markerRenderer->style().unicodeBidi() != newStyle.unicodeBidi() || markerRenderer->style().listStyleType() != newStyle.listStyleType();
+        markerRenderer->setStyle(WTF::move(newStyle));
+
+        // Recomputing this here rather than diffing the style properties it is made of also picks up
+        // what is not the marker's own style: its direction, and what the document's counter style
+        // registry currently resolves list-style-type to.
+        auto needsContentContainer = markerRenderer->needsContentContainer();
+        if (contentChanged || needsContentContainer != !!markerRenderer->contentContainer()) {
             if (auto* existingContainer = markerRenderer->contentContainer())
                 m_builder.destroy(*existingContainer);
-        }
-        markerRenderer->setStyle(WTF::move(newStyle));
-        if (contentChanged) {
-            if (markerHasContent)
+            if (needsContentContainer)
                 buildMarkerContentRenderers(*markerRenderer);
         } else if (auto* container = markerRenderer->contentContainer()) {
             // Content unchanged but other style changed: refresh the generated image/quote children
@@ -203,13 +206,13 @@ void RenderTreeBuilder::List::updateItemMarker(RenderListItem& listItemRenderer)
     // child (e.g., <img>), we should collapse the anonymous block's height so it doesn't inflate the list item.
     listItemRenderer.markerRenderer()->setShouldCollapseAnonymousBlockParent(shouldCollapseAnonymousBlockParent);
 
-    if (markerHasContent)
+    if (listItemRenderer.markerRenderer()->needsContentContainer())
         buildMarkerContentRenderers(*listItemRenderer.markerRenderer());
 }
 
 void RenderTreeBuilder::List::buildMarkerContentRenderers(RenderListMarker& marker)
 {
-    ASSERT(marker.style().content().isData());
+    ASSERT(marker.needsContentContainer());
     ASSERT(!marker.contentContainer());
 
     // css-lists-3 §3.3 generates the marker contents "exactly as for ::before": an anonymous
@@ -220,6 +223,15 @@ void RenderTreeBuilder::List::buildMarkerContentRenderers(RenderListMarker& mark
     newContainer->initializeStyle();
     CheckedRef container = *newContainer;
     m_builder.attach(marker, WTF::move(newContainer));
+
+    if (!marker.hasContentProperty()) {
+        // list-style-type text that needs renderers of its own, so inline layout can bidi-resolve it.
+        // The text itself is only known once counter values resolve, so start empty and let
+        // RenderListMarker::updateContent() fill it in at layout time.
+        auto textRenderer = WebCore::createRenderer<RenderText>(RenderObject::Type::Text, marker.document(), emptyString());
+        m_builder.attach(container.get(), WTF::move(textRenderer));
+        return;
+    }
 
     RenderTreeUpdater::GeneratedContent::createContentRenderers(m_builder, container.get(), marker.style(), PseudoElementType::Marker);
 }

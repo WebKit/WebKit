@@ -34,7 +34,6 @@ class StyleRuleCounterStyle;
 struct ListMarkerTextContent {
     String textWithSuffix;
     uint32_t textWithoutSuffixLength { 0 };
-    TextDirection textDirection { TextDirection::LTR };
     bool isEmpty() const
     {
         return textWithSuffix.isEmpty();
@@ -43,11 +42,6 @@ struct ListMarkerTextContent {
     StringView textWithoutSuffix() const LIFETIME_BOUND
     {
         return StringView { textWithSuffix }.left(textWithoutSuffixLength);
-    }
-
-    StringView suffix() const LIFETIME_BOUND
-    {
-        return StringView { textWithSuffix }.substring(textWithoutSuffixLength);
     }
 };
 
@@ -73,7 +67,9 @@ public:
     // True when the ::marker's `content` property generates the marker box contents
     // (css-lists-3 §3.3). In that case the contents live in an anonymous inline-block
     // child (contentContainer()) that this marker lays out and paints itself.
-    bool hasContent() const;
+    bool hasContentProperty() const;
+    bool needsContentContainer() const;
+
     RenderBlockFlow* contentContainer() const;
 
     LayoutUnit lineLogicalOffsetForListItem() const { return m_lineLogicalOffsetForListItem; }
@@ -106,7 +102,8 @@ private:
     void willBeDestroyed() final;
     ASCIILiteral renderName() const final { return "RenderListMarker"_s; }
     void computeIntrinsicLogicalWidthContributions() final;
-    bool canHaveChildren() const final { return hasContent(); }
+    bool canHaveChildren() const final { return needsContentContainer(); }
+    bool canHaveGeneratedChildren() const final { return true; }
     void paint(PaintInfo&, const LayoutPoint&) final;
     void layout() final;
     void imageChanged(WrappedImagePtr, const IntRect*) final;
@@ -122,6 +119,7 @@ private:
 
     void updateInlineMargins();
     void updateContent();
+    void updateContentContainerText();
     RenderBox* parentBox(RenderBox&);
     void layoutContentContainer(RenderBlockFlow&);
 
@@ -130,7 +128,8 @@ private:
     void paintDisclosureMarker(GraphicsContext&, const FloatRect& markerRect);
 
     RefPtr<CSSRegisteredCounterStyle> counterStyle() const;
-    bool widthUsesMetricsOfPrimaryFont() const;
+    bool drawsBulletShape() const;
+    bool textNeedsBidiResolution() const;
 
 private:
     ListMarkerTextContent m_textContent;
