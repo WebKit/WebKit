@@ -107,6 +107,8 @@ public:
     id<MTLIndirectCommandBuffer> trimICB(id<MTLIndirectCommandBuffer> dest, id<MTLIndirectCommandBuffer> src, NSUInteger newSize);
     id<MTLDevice> _Nullable metalDevice() const;
     std::pair<id<MTLBuffer>, uint64_t> newTemporaryBufferWithBytes(std::span<uint8_t> data, bool noCopy);
+    void stageBufferWrite(id<MTLBuffer>, uint64_t bufferOffset, std::span<uint8_t> data);
+    void encodeStagedCopy(id<MTLBuffer> temporaryBuffer, uint64_t temporaryBufferOffset, id<MTLBuffer>, uint64_t bufferOffset, uint64_t size, bool finalizeAfterCopy);
 
 private:
     Queue(id<MTLCommandQueue>, Adapter&, Device&);
@@ -118,6 +120,8 @@ private:
 
     bool NODELETE isIdle() const;
     bool isSchedulingIdle() const { return m_submittedCommandBufferCount == m_scheduledCommandBufferCount; }
+    id<MTLComputeCommandEncoder> _Nullable ensureStagedCopyEncoder();
+    id<MTLComputePipelineState> _Nullable stagedCopyPipelineState();
     void removeMTLCommandBufferInternal(id<MTLCommandBuffer>);
     void clearTextureIfNeeded(Texture&, uint32_t mipLevelCount, uint32_t arrayLayerCount, uint32_t baseMipLevel, uint32_t baseArrayLayer);
 
@@ -126,6 +130,9 @@ private:
     id<MTLCommandQueue> _Nullable m_commandQueue { nil };
     id<MTLCommandBuffer> _Nullable m_commandBuffer { nil };
     id<MTLBlitCommandEncoder> _Nullable m_blitCommandEncoder { nil };
+    id<MTLComputeCommandEncoder> _Nullable m_stagedCopyEncoder { nil };
+    id<MTLComputePipelineState> _Nullable m_stagedCopyPipelineState { nil };
+    bool m_stagedCopyPipelineCreationFailed { false };
     ThreadSafeWeakPtr<Device> m_device; // The only kind of queues that exist right now are default queues, which are owned by Devices.
     uint64_t m_submittedCommandBufferCount { 0 };
     uint64_t m_completedCommandBufferCount { 0 };

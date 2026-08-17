@@ -77,8 +77,11 @@ Queue::~Queue()
     // that would cause them to be committed, which ends up retaining this in the completed handler.
     // It's actually fine, though, because we can just drop any pending copies on the floor.
     // If the queue is being destroyed, this is unobservable.
-    if (m_blitCommandEncoder)
-        endEncoding(m_blitCommandEncoder, m_commandBuffer);
+    id<MTLCommandEncoder> stagingEncoder = m_blitCommandEncoder;
+    if (!stagingEncoder)
+        stagingEncoder = m_stagedCopyEncoder;
+    if (stagingEncoder)
+        endEncoding(stagingEncoder, m_commandBuffer);
 }
 
 id<MTLBlitCommandEncoder> Queue::ensureBlitCommandEncoder()
@@ -86,22 +89,127 @@ id<MTLBlitCommandEncoder> Queue::ensureBlitCommandEncoder()
     if (m_blitCommandEncoder && m_blitCommandEncoder == encoderForBuffer(m_commandBuffer))
         return m_blitCommandEncoder;
 
+    if (m_stagedCopyEncoder && m_stagedCopyEncoder == encoderForBuffer(m_commandBuffer)) {
+        // Switch encoder types on the open staging command buffer rather than minting a second one.
+        endEncoding(m_stagedCopyEncoder, m_commandBuffer);
+        m_stagedCopyEncoder = nil;
+        m_blitCommandEncoder = [m_commandBuffer blitCommandEncoder];
+        if (!m_blitCommandEncoder) {
+            // See ensureStagedCopyEncoder(): committing beats orphaning the work already encoded.
+            commitMTLCommandBuffer(m_commandBuffer);
+            m_commandBuffer = nil;
+            return nil;
+        }
+        setEncoderForBuffer(m_commandBuffer, m_blitCommandEncoder);
+        return m_blitCommandEncoder;
+    }
+
     auto *commandBufferDescriptor = [MTLCommandBufferDescriptor new];
     auto blitCommandBuffer = commandBufferWithDescriptor(commandBufferDescriptor);
     m_commandBuffer = blitCommandBuffer;
+    m_stagedCopyEncoder = nil;
     m_blitCommandEncoder = [m_commandBuffer blitCommandEncoder];
     setEncoderForBuffer(m_commandBuffer, m_blitCommandEncoder);
     return m_blitCommandEncoder;
 }
 
+id<MTLComputeCommandEncoder> Queue::ensureStagedCopyEncoder()
+{
+    if (m_stagedCopyEncoder && m_stagedCopyEncoder == encoderForBuffer(m_commandBuffer))
+        return m_stagedCopyEncoder;
+
+    if (m_blitCommandEncoder && m_blitCommandEncoder == encoderForBuffer(m_commandBuffer)) {
+        // Switch encoder types on the open staging command buffer rather than minting a second one.
+        endEncoding(m_blitCommandEncoder, m_commandBuffer);
+        m_blitCommandEncoder = nil;
+        m_stagedCopyEncoder = [m_commandBuffer computeCommandEncoder];
+        if (!m_stagedCopyEncoder) {
+            // Encoder creation failed after the previous encoder was ended, so the staging command
+            // buffer now holds real work with nothing open on it. finalizeBlitCommandEncoder() keys
+            // off the encoders, so leaving it here would orphan it and drop that work; commit it.
+            commitMTLCommandBuffer(m_commandBuffer);
+            m_commandBuffer = nil;
+            return nil;
+        }
+        setEncoderForBuffer(m_commandBuffer, m_stagedCopyEncoder);
+        return m_stagedCopyEncoder;
+    }
+
+    auto *commandBufferDescriptor = [MTLCommandBufferDescriptor new];
+    auto stagingCommandBuffer = commandBufferWithDescriptor(commandBufferDescriptor);
+    m_commandBuffer = stagingCommandBuffer;
+    m_blitCommandEncoder = nil;
+    m_stagedCopyEncoder = [m_commandBuffer computeCommandEncoder];
+    setEncoderForBuffer(m_commandBuffer, m_stagedCopyEncoder);
+    return m_stagedCopyEncoder;
+}
+
 void Queue::finalizeBlitCommandEncoder()
 {
-    if (m_blitCommandEncoder) {
-        endEncoding(m_blitCommandEncoder, m_commandBuffer);
+    // Finalizes the queue-owned staging command buffer, whichever encoder type is
+    // currently open on it (blit, or the compute staged-copy encoder).
+    if (m_blitCommandEncoder || m_stagedCopyEncoder) {
+        id<MTLCommandEncoder> stagingEncoder = m_blitCommandEncoder;
+        if (!stagingEncoder)
+            stagingEncoder = m_stagedCopyEncoder;
+        endEncoding(stagingEncoder, m_commandBuffer);
         commitMTLCommandBuffer(m_commandBuffer);
         m_blitCommandEncoder = nil;
+        m_stagedCopyEncoder = nil;
+        m_commandBuffer = nil;
+    } else if (m_commandBuffer) {
+        // A staging command buffer with no encoder open: reachable if encoder creation failed. Its
+        // already-encoded work must still reach the GPU in order, so commit rather than drop.
+        commitMTLCommandBuffer(m_commandBuffer);
         m_commandBuffer = nil;
     }
+}
+
+// Host mirror of the MSL `WebKitStagedCopyArgs` declared in the kernel source below. The two
+// declarations are adjacent deliberately: they are a hand-maintained ABI, and getting the field
+// widths wrong produces silently wrong offsets rather than a compile error. MSL `ulong` is 64-bit,
+// so the static_asserts below pin size and every offset.
+struct StagedCopyArguments {
+    uint64_t sourceWordOffset;
+    uint64_t destinationWordOffset;
+    uint64_t wordCount;
+};
+static_assert(sizeof(StagedCopyArguments) == 24, "StagedCopyArguments must match MSL WebKitStagedCopyArgs (3 x ulong)");
+static_assert(!offsetof(StagedCopyArguments, sourceWordOffset), "sourceWordOffset must be at offset 0");
+static_assert(offsetof(StagedCopyArguments, destinationWordOffset) == 8, "destinationWordOffset must be at offset 8");
+static_assert(offsetof(StagedCopyArguments, wordCount) == 16, "wordCount must be at offset 16");
+
+id<MTLComputePipelineState> Queue::stagedCopyPipelineState()
+{
+    if (m_stagedCopyPipelineState || m_stagedCopyPipelineCreationFailed)
+        return m_stagedCopyPipelineState;
+
+    auto device = m_device.get();
+    id<MTLDevice> mtlDevice = device ? device->device() : nil;
+    if (!mtlDevice)
+        return nil;
+
+    NSError *error = nil;
+    /* NOLINT */ id<MTLLibrary> library = [mtlDevice newLibraryWithSource:@R"(#include <metal_stdlib>
+using namespace metal;
+struct WebKitStagedCopyArgs {
+    ulong sourceWordOffset;
+    ulong destinationWordOffset;
+    ulong wordCount;
+};
+[[kernel]] void csStagedBufferCopy(device const uint* source [[buffer(0)]], device uint* destination [[buffer(1)]], constant WebKitStagedCopyArgs& args [[buffer(2)]], uint threadIndex [[thread_position_in_grid]], uint threadsPerGrid [[threads_per_grid]])
+{
+    for (ulong i = threadIndex; i < args.wordCount; i += threadsPerGrid)
+        destination[args.destinationWordOffset + i] = source[args.sourceWordOffset + i];
+})" options:nil error:&error];
+    id<MTLFunction> function = error ? nil : [library newFunctionWithName:@"csStagedBufferCopy"];
+    if (function)
+        m_stagedCopyPipelineState = [mtlDevice newComputePipelineStateWithFunction:function error:&error];
+    if (!m_stagedCopyPipelineState) {
+        m_stagedCopyPipelineCreationFailed = true;
+        WTFLogAlways("WebGPU: staged-copy compute pipeline creation failed (%@); staged writes will fall back to blit", error); // NOLINT
+    }
+    return m_stagedCopyPipelineState;
 }
 
 void Queue::endEncoding(id<MTLCommandEncoder> commandEncoder, id<MTLCommandBuffer> commandBuffer) const
@@ -625,11 +733,15 @@ void Queue::writeBuffer(id<MTLBuffer> buffer, uint64_t bufferOffset, std::span<u
     }
 #endif
 
+    stageBufferWrite(buffer, bufferOffset, data);
+}
+
+void Queue::stageBufferWrite(id<MTLBuffer> buffer, uint64_t bufferOffset, std::span<uint8_t> data)
+{
     auto device = m_device.get();
-    if (!device)
+    if (!device || !buffer || data.empty())
         return;
 
-    ensureBlitCommandEncoder();
     bool noCopy = data.size() >= largeBufferSize;
     auto bufferWithOffset = newTemporaryBufferWithBytes(data, noCopy);
     id<MTLBuffer> temporaryBuffer = bufferWithOffset.first;
@@ -639,14 +751,70 @@ void Queue::writeBuffer(id<MTLBuffer> buffer, uint64_t bufferOffset, std::span<u
         return;
     }
 
+    encodeStagedCopy(temporaryBuffer, temporaryBufferOffset, buffer, bufferOffset, data.size(), noCopy);
+}
+
+// Encodes an already-staged copy, choosing the channel it rides. Split out from stageBufferWrite so
+// the Swift entry point can share the channel decision without converting spans across the language
+// boundary (Queue.swift).
+//
+// Encode the staged copy on the compute channel when possible. Standalone blit-only staging command
+// buffers interleaved with user compute submissions intermittently deadlock the AGX blit/DMA channel
+// (the driver reports kIOGPUCommandBufferCallbackErrorHang on the staging command buffer and
+// discards neighboring command buffers as innocent victims), losing the device. Encoding the same
+// copies as compute dispatches keeps the commit points, queue ordering, and hazard tracking
+// identical while keeping the per-frame hot path off the blit channel entirely. GPUQueue.writeBuffer
+// validation guarantees 4-byte alignment of both offset and size, and the staging suballocator is
+// 64-byte aligned, so the word-copy kernel covers every spec-reachable write; the blit encoder
+// remains as the fallback (and for writeTexture, clearBuffer, and internal copies).
+void Queue::encodeStagedCopy(id<MTLBuffer> temporaryBuffer, uint64_t temporaryBufferOffset, id<MTLBuffer> buffer, uint64_t bufferOffset, uint64_t size, bool finalizeAfterCopy)
+{
+    if (!temporaryBuffer || !buffer || !size)
+        return;
+
+    // The copy kernel's loop is bounded by wordCount alone, so a bad range would write out of
+    // bounds rather than fault. Check both sides here, by subtraction so the sums cannot overflow.
+    if (bufferOffset > buffer.length || size > buffer.length - bufferOffset)
+        return;
+    if (temporaryBufferOffset > temporaryBuffer.length || size > temporaryBuffer.length - temporaryBufferOffset)
+        return;
+
+    bool wordAligned = !(bufferOffset % sizeof(uint32_t)) && !(size % sizeof(uint32_t)) && !(temporaryBufferOffset % sizeof(uint32_t));
+    id<MTLComputePipelineState> pipelineState = wordAligned ? stagedCopyPipelineState() : nil;
+    // A null encoder here means creation failed, not that compute is unavailable; fall through to
+    // the blit encoder rather than dropping the copy, which would leave the destination stale.
+    id<MTLComputeCommandEncoder> stagedCopyEncoder = pipelineState ? ensureStagedCopyEncoder() : nil;
+    if (stagedCopyEncoder) {
+        StagedCopyArguments args {
+            temporaryBufferOffset / sizeof(uint32_t),
+            bufferOffset / sizeof(uint32_t),
+            size / sizeof(uint32_t)
+        };
+        [stagedCopyEncoder setComputePipelineState:pipelineState];
+        [stagedCopyEncoder setBuffer:temporaryBuffer offset:0 atIndex:0];
+        [stagedCopyEncoder setBuffer:buffer offset:0 atIndex:1];
+        [stagedCopyEncoder setBytes:&args length:sizeof(args) atIndex:2];
+        auto threadsPerThreadgroup = std::min<uint64_t>(256, pipelineState.maxTotalThreadsPerThreadgroup);
+        auto threadgroups = std::min<uint64_t>((args.wordCount + threadsPerThreadgroup - 1) / threadsPerThreadgroup, 2048);
+        [stagedCopyEncoder dispatchThreadgroups:MTLSizeMake(static_cast<NSUInteger>(threadgroups), 1, 1) threadsPerThreadgroup:MTLSizeMake(static_cast<NSUInteger>(threadsPerThreadgroup), 1, 1)];
+
+        if (finalizeAfterCopy)
+            finalizeBlitCommandEncoder();
+        return;
+    }
+
+    ensureBlitCommandEncoder();
+    if (!m_blitCommandEncoder)
+        return;
+
     [m_blitCommandEncoder
         copyFromBuffer:temporaryBuffer
         sourceOffset:temporaryBufferOffset
         toBuffer:buffer
         destinationOffset:bufferOffset
-        size:data.size()];
+        size:size];
 
-    if (noCopy)
+    if (finalizeAfterCopy)
         finalizeBlitCommandEncoder();
 }
 
@@ -662,7 +830,7 @@ void Queue::clearBuffer(id<MTLBuffer> buffer, NSUInteger offset, NSUInteger size
 
 bool Queue::isIdle() const
 {
-    return m_submittedCommandBufferCount == m_completedCommandBufferCount && !m_blitCommandEncoder;
+    return m_submittedCommandBufferCount == m_completedCommandBufferCount && !m_blitCommandEncoder && !m_stagedCopyEncoder;
 }
 
 NSString* Queue::errorValidatingWriteTexture(const WGPUImageCopyTexture& destination, const WGPUTextureDataLayout& dataLayout, const WGPUExtent3D& size, size_t dataByteSize, const Texture& texture) const

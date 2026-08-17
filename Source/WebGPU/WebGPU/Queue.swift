@@ -38,10 +38,6 @@ extension WebGPU.Queue {
             return
         }
 
-        guard let blitCommandEncoder = ensureBlitCommandEncoder() else {
-            return
-        }
-
         let count = data.count
         let noCopy = data.count >= largeBufferSize
         // FIXME: 'bufferWithOffset' may extend the lifetime of 'data', but we drop that information here.
@@ -54,16 +50,11 @@ extension WebGPU.Queue {
             return
         }
 
-        blitCommandEncoder.copy(
-            from: temporaryBuffer,
-            sourceOffset: Int(temporaryBufferOffset),
-            to: buffer,
-            destinationOffset: Int(bufferOffset),
-            size: count
-        )
-
-        if noCopy {
-            finalizeBlitCommandEncoder()
-        }
+        // Shared channel decision with the C++ backend (Queue::encodeStagedCopy): the staged copy
+        // is encoded on the compute channel when possible, because standalone blit-only staging
+        // command buffers interleaved with user compute submissions intermittently deadlock the
+        // AGX blit/DMA channel. See Queue.mm for the full rationale. Passing the staging buffer
+        // and byte offsets keeps this call free of span interop, so it needs no 'unsafe'.
+        encodeStagedCopy(temporaryBuffer, temporaryBufferOffset, buffer, bufferOffset, UInt64(count), noCopy)
     }
 }
