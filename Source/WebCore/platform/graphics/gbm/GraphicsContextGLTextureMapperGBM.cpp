@@ -257,6 +257,7 @@ void GraphicsContextGLTextureMapperGBM::prepareForDisplayWithFinishedSignal(Func
 }
 
 #if ENABLE(WEBXR)
+#if !USE(OPENXR_VULKAN)
 GCGLExternalImage GraphicsContextGLTextureMapperGBM::createExternalImage(ExternalImageSource&& source, GCGLenum, GCGLint)
 {
     GraphicsContextGLExternalImageSource imageSource = WTF::move(source);
@@ -285,6 +286,7 @@ GCGLExternalImage GraphicsContextGLTextureMapperGBM::createExternalImage(Externa
     m_eglImages.add(newName, eglImage);
     return newName;
 }
+#endif // !USE(OPENXR_VULKAN)
 
 void GraphicsContextGLTextureMapperGBM::bindExternalImage(GCGLenum target, GCGLExternalImage image)
 {

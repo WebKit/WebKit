@@ -95,18 +95,15 @@ private:
         // image's objects never collides with another's in flight work.
         VkFence inFlightFence { VK_NULL_HANDLE };
         VkSemaphore acquireSemaphore { VK_NULL_HANDLE };
+        VkSemaphore renderFinishedSemaphore { VK_NULL_HANDLE };
     };
 
-#if USE(GBM)
-    std::optional<PlatformXR::FrameData::ExternalTexture> exportImageAsDMABuf(uint64_t image, const OpenXRSwapchain&, uint32_t width, uint32_t height);
-    Vector<VkDrmFormatModifierPropertiesEXT> supportedExportDRMModifiers(VkFormat, VkImageUsageFlags) const;
-#endif
-#if OS(ANDROID)
-    std::optional<PlatformXR::FrameData::ExternalTexture> exportImageAsAHardwareBuffer(uint64_t image, const OpenXRSwapchain&, uint32_t width, uint32_t height);
-#endif
+    VkImageUsageFlags maximalImageUsageFlags(VkFormat) const;
+    bool supportsOpaqueFDSharing(VkFormat, VkImageUsageFlags) const;
     bool createExportedImageSyncObjects(ExportedImage&);
+    bool createExportedImageSharingSemaphores(ExportedImage&);
     static bool configureValidation(Vector<const char*>& layers, Vector<const char*>& extensions, VkValidationFeaturesEXT&);
-    void logDeviceAndDriverUUIDs(const char* deviceName) const;
+    void readDeviceAndDriverUUIDs(const char* deviceName);
     void createDebugMessenger();
     void setDebugName(VkObjectType, uint64_t objectHandle, const char* name);
     bool recordBlitCommandBuffer(ExportedImage&, VkImage swapchainImage);
@@ -135,9 +132,9 @@ private:
 
     VkDebugUtilsMessengerEXT m_debugMessenger { VK_NULL_HANDLE };
 
-#if USE(GBM)
-    bool m_supportsDRMModifiers { false };
-#endif
+    std::array<uint64_t, 2> m_deviceUUID { };
+    std::array<uint64_t, 2> m_driverUUID { };
+
 
     // The WebProcess render completion fence, stashed by waitFrameFence() and consumed by the next
     // commitFrame(), which imports it into the just acquired image's acquireSemaphore. waitFrameFence() does not know which

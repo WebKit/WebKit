@@ -303,7 +303,6 @@ struct LayerInfo {
     size_t numImages { 1 };
 };
 
-
 #if ENABLE(WEBXR_HIT_TEST)
 struct Ray {
     WebCore::FloatPoint3D origin;
@@ -385,24 +384,41 @@ struct FrameData {
 #endif
     };
 
-#if OS(ANDROID)
+#if OS(ANDROID) && !USE(OPENXR_VULKAN)
     using ExternalTexture = RefPtr<AHardwareBuffer>;
-#else
+#elif PLATFORM(COCOA)
     struct ExternalTexture {
-#if PLATFORM(COCOA)
         MachSendRight handle;
         bool isSharedTexture { false };
 
         explicit operator bool() const { return !!handle; }
+    };
+#else
+    struct ExternalTexture {
+#if USE(OPENXR_VULKAN)
+        WTF::UnixFileDescriptor memory;
+        uint64_t allocationSize { 0 };
+        uint32_t glInternalFormat { 0 };
+        WTF::UnixFileDescriptor renderFinishedSemaphore;
+        // 16 bytes each, carried as integer pairs because a byte-typed array is an opaque data type to the serialization generator and would need a justification entry in opaque_ipc_types.tracking.in.
+        std::array<uint64_t, 2> deviceUUID { };
+        std::array<uint64_t, 2> driverUUID { };
 #else
         Vector<WTF::UnixFileDescriptor> fds;
         Vector<uint32_t> strides;
         Vector<uint32_t> offsets;
         uint32_t fourcc;
         uint64_t modifier;
-
-        explicit operator bool() const { return !fds.isEmpty(); }
 #endif
+
+        explicit operator bool() const
+        {
+#if USE(OPENXR_VULKAN)
+            return !!memory;
+#else
+            return !fds.isEmpty();
+#endif
+        }
     };
 #endif
 

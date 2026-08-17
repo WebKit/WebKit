@@ -222,10 +222,20 @@ static void createAndBindCompositorTexture(GL& gl, WebXRExternalImage& externalI
 static GL::ExternalImageSource makeExternalImageSource(PlatformXR::FrameData::ExternalTexture& imageSource, const IntSize& size)
 {
 #if PLATFORM(GTK) || PLATFORM(WPE)
-#if OS(ANDROID)
+#if OS(ANDROID) && !USE(OPENXR_VULKAN)
     return GraphicsContextGLExternalImageSource {
         .hardwareBuffer = imageSource,
-        .size = size,
+        .size = size
+    };
+#elif USE(OPENXR_VULKAN)
+    return GraphicsContextGLExternalImageSource {
+        .memory = WTF::move(imageSource.memory),
+        .allocationSize = imageSource.allocationSize,
+        .internalFormat = imageSource.glInternalFormat,
+        .renderFinishedSemaphore = WTF::move(imageSource.renderFinishedSemaphore),
+        .deviceUUID = imageSource.deviceUUID,
+        .driverUUID = imageSource.driverUUID,
+        .size = size
     };
 #else
     return GraphicsContextGLExternalImageSource {
@@ -236,12 +246,12 @@ static GL::ExternalImageSource makeExternalImageSource(PlatformXR::FrameData::Ex
         .modifier = imageSource.modifier,
         .size = size
     };
-#endif // OS(ANDROID)
+#endif // OS(ANDROID) && !USE(OPENXR_VULKAN)
 #else
     UNUSED_PARAM(imageSource);
     UNUSED_PARAM(size);
     return GraphicsContextGLExternalImageSource { };
-#endif
+#endif // PLATFORM(GTK) || PLATFORM(WPE)
 }
 
 void WebXRWebGLSharedImageSwapchain::bindCompositorTexturesForDisplay(GraphicsContextGL& gl, PlatformXR::FrameData::LayerData& layerData)
