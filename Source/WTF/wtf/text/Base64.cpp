@@ -120,7 +120,7 @@ template<typename CharacterType> static void base64EncodeInternal(std::span<cons
         return;
     }
 
-    auto encodeMap = options.contains(Base64EncodeOption::URL) ? base64URLEncMap : base64EncMap;
+    auto& encodeMap = options.contains(Base64EncodeOption::URL) ? base64URLEncMap : base64EncMap;
 
     unsigned sidx = 0;
     unsigned didx = 0;
@@ -211,7 +211,7 @@ static std::optional<Vector<uint8_t, 0, CrashOnOverflow, 16, Malloc>> base64Deco
     if (!inputDataBuffer.size())
         return Vector<uint8_t, 0, CrashOnOverflow, 16, Malloc> { };
 
-    auto decodeMap = options.contains(Base64DecodeOption::URL) ? base64URLDecMap : base64DecMap;
+    auto& decodeMap = options.contains(Base64DecodeOption::URL) ? base64URLDecMap : base64DecMap;
     auto validatePadding = options.contains(Base64DecodeOption::ValidatePadding);
     auto ignoreWhitespace = options.contains(Base64DecodeOption::IgnoreWhitespace);
 
