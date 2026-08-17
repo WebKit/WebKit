@@ -1123,31 +1123,18 @@ Ref<StringImpl> StringImpl::replace(char16_t target, char16_t replacement)
     if (target == replacement)
         return *this;
 
-    if (is8Bit()) {
-        if (!isLatin1(target)) {
-            // Looking for a 16-bit character in an 8-bit string, so we're done.
+    auto replaceAll = [&](auto characters) -> Ref<StringImpl> {
+        // find() is SIMD-accelerated, and its Latin1 overload returns notFound for a
+        // non-Latin1 target, so an 8-bit string with a 16-bit target is handled here too.
+        size_t i = WTF::find(characters, target);
+        if (i == notFound)
             return *this;
-        }
-        auto span8 = this->span8();
-        unsigned i;
-        for (i = 0; i < span8.size(); ++i) {
-            if (static_cast<char16_t>(span8[i]) == target)
-                break;
-        }
-        if (i == span8.size())
-            return *this;
-        return createByReplacingInCharacters(span8, target, replacement, i);
-    }
+        return createByReplacingInCharacters(characters, target, replacement, i);
+    };
 
-    auto span16 = this->span16();
-    unsigned i;
-    for (i = 0; i < span16.size(); ++i) {
-        if (span16[i] == target)
-            break;
-    }
-    if (i == span16.size())
-        return *this;
-    return createByReplacingInCharacters(span16, target, replacement, i);
+    if (is8Bit())
+        return replaceAll(span8());
+    return replaceAll(span16());
 }
 
 Ref<StringImpl> StringImpl::replace(size_t position, size_t lengthToReplace, StringView string)
