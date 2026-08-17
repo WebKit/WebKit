@@ -475,8 +475,13 @@ static bool NODELETE anchorSideMatchesInsetProperty(CSSValueID anchorSideID, Box
 static LayoutRect boxBoundingBoxInContainer(const RenderBoxModelObject& box, const RenderLayerModelObject& container)
 {
     bool wasFixed = false;
+    auto localRect = [&]() -> LayoutRect {
+        if (CheckedPtr inlineBox = dynamicDowncast<RenderInline>(&box))
+            return inlineBox->linesBoundingBox();
+        return box.borderBoundingBox();
+    }();
     // FIXME: figure out if OverscrollClamp is still needed.
-    auto boxQuadInContainer = box.localToContainerQuad(FloatQuad { box.borderBoundingBox() }, &container, { MapCoordinatesMode::UseTransforms, MapCoordinatesMode::ClampOverscroll }, &wasFixed);
+    auto boxQuadInContainer = box.localToContainerQuad(FloatQuad { FloatRect { localRect } }, &container, { MapCoordinatesMode::UseTransforms, MapCoordinatesMode::ClampOverscroll }, &wasFixed);
     LayoutRect boundingBox { boxQuadInContainer.boundingBox() };
 
     if (wasFixed) {
@@ -484,11 +489,6 @@ static LayoutRect boxBoundingBoxInContainer(const RenderBoxModelObject& box, con
         boundingBox.moveBy(-box.frame().view()->scrollPositionRespectingCustomFixedPosition());
     }
 
-    if (CheckedPtr descendantInline = dynamicDowncast<RenderInline>(&box)) {
-        // RenderInline objects do not automatically account for their offset above,
-        // so we incorporate this offset here.
-        boundingBox.moveBy(descendantInline->linesBoundingBox().location());
-    }
     if (box.containingBlock() == container.containingBlock()) {
         // Account for 'position: relative' inline containing blocks by shifting back down into them.
         if (CheckedPtr ancestorInline = dynamicDowncast<RenderInline>(&container))
