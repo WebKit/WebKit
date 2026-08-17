@@ -62,6 +62,13 @@ TestWebKitAPI.WebPageTransferableTests/exportToImage(type:) [ Skip ]
 [ iOS Debug ] TestWebKitAPI.IPCTestingAPI.LockdownModeDetection [ Failure ]
 [ iOS Debug ] TestWebKitAPI.IPCTestingAPI.LockdownModeDisabledAllowsWebGL [ Failure ]
 
+# webkit.org/b/321962 [ macOS ]REGRESSION(318934@main): 5x TestWebKitAPI.UnifiedPDF/TestWebKitAPI.WebKit.* (api-tests) are constant crashes.
+[ mac ] TestWebKitAPI.UnifiedPDF.PDFHUDMainResourcePDF [ Pass Crash ]
+[ mac ] TestWebKitAPI.UnifiedPDF.SetPageZoomFactorDoesNotBailIncorrectly [ Pass Crash ]
+[ mac ] TestWebKitAPI.WebKit.OpenPDFWithPreviewIPCTraversalEncodedFilename [ Pass Crash ]
+[ mac ] TestWebKitAPI.WebKit.OpenPDFWithPreviewIPCTraversalUnencodedFilename [ Pass Crash ]
+[ mac ] TestWebKitAPI.WebKit.SaveDataToFile [ Pass Crash ]
+
 # webkit.org/b/318742 [ iOS DEBUG ] 3x TestWebKitAPI.WKWebExtensionAPICookies.* (api-tests) are constant crashes/timeout.
 [ iOS Debug ] TestWebKitAPI.WKWebExtensionAPICookies.GetAllAfterNetworkProcessTermination [ Timeout ]
 [ iOS Debug ] TestWebKitAPI.WKWebExtensionAPICookies.RemoveCookie [ Crash ]
