@@ -28,19 +28,22 @@ from webkitcorepy import OutputCapture, Version, run, testing
 from webkitcorepy.mocks import Terminal as MockTerminal
 
 from webkitscmpy import local, mocks, program
+from webkitscmpy.program.canonicalize import IdentifierTrailer
 
 
 class TestInstallHooks(testing.PathTestCase):
     basepath = 'mock/repository'
 
     @classmethod
-    def write_hook(cls, path, version=None, security_levels=False):
+    def write_hook(cls, path, version=None, security_levels=False, trailers_to_strip=False):
         with open(path, 'w') as f:
             f.write('#!/usr/bin/env {{ python }}\n')
             if version:
                 f.write("VERSION = '{}'\n".format(version))
             if security_levels:
                 f.write('SECURITY_LEVELS = {{ security_levels }}\n')
+            if trailers_to_strip:
+                f.write('TRAILERS_TO_STRIP = {{ trailers_to_strip }}\n')
             f.write("print('Hello, world!\\n')\n")
 
     def write_config(self, **kwargs):
@@ -225,6 +228,39 @@ class TestInstallHooks(testing.PathTestCase):
         ))
         self.assertEqual(captured.stderr.getvalue(), 'No hooks installed because user canceled hook installation\n')
         self.assertEqual(captured.root.log.getvalue(), '')
+
+    def test_install_hook_with_identifier_trailer(self):
+        with OutputCapture(level=logging.INFO) as captured, mocks.local.Git(self.path, remote='git@example.org:WebKit/project.git'), mocks.local.Svn():
+            self.write_hook(os.path.join(self.path, 'hooks', 'pre-push'), trailers_to_strip=True)
+
+            trailer = IdentifierTrailer(
+                name='Canonical-link',
+                value_template='https://commits.webkit.org/{}',
+                aliases=('Canonical link',),
+            )
+            result = program.main(
+                args=('install-hooks', '-v'),
+                path=self.path,
+                hooks=os.path.join(self.path, 'hooks'),
+                identifier_template=trailer,
+            )
+
+        self.assertEqual(0, result)
+        self.assertEqual(
+            captured.stdout.getvalue(),
+            'Successfully installed 1 of 1 repository hooks\n',
+        )
+        self.assertEqual(captured.stderr.getvalue(), '')
+        self.assertEqual(
+            captured.root.log.getvalue(),
+            "Configuring and copying hook 'pre-push' for this repository\n",
+        )
+
+        resolved_hook = os.path.join(self.path, '.git', 'hooks', 'pre-push')
+        self.assertTrue(os.path.isfile(resolved_hook))
+        with open(resolved_hook, 'r') as f:
+            hook_contents = f.read()
+            self.assertIn("TRAILERS_TO_STRIP = ['Identifier', 'Canonical-link', 'Canonical link']", hook_contents)
 
     def test_security_level_in_hook(self):
         with OutputCapture(level=logging.INFO) as captured, mocks.local.Git(self.path, remote='git@example.org:WebKit/project.git'), mocks.local.Svn():
