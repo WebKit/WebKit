@@ -46,13 +46,27 @@ struct SettingEntry {
 
     GRefPtr<GVariant> value() const
     {
-        return setValue ? setValue : defaultValue;
+        return valueForSource(WPE_SETTINGS_SOURCE_APPLICATION);
     }
 
-    GRefPtr<GVariant> setValue;
+    GRefPtr<GVariant> valueForSource(WPESettingsSource source) const
+    {
+        if (source == WPE_SETTINGS_SOURCE_APPLICATION && applicationValue)
+            return applicationValue;
+        if (platformValue)
+            return platformValue;
+        return defaultValue;
+    }
+
+    GRefPtr<GVariant>& valueSlot(WPESettingsSource source)
+    {
+        return source == WPE_SETTINGS_SOURCE_APPLICATION ? applicationValue : platformValue;
+    }
+
+    GRefPtr<GVariant> applicationValue;
+    GRefPtr<GVariant> platformValue;
     GRefPtr<GVariant> defaultValue;
     GUniquePtr<GVariantType> type;
-    bool setByApplication { false };
 };
 
 /**
@@ -219,7 +233,7 @@ gboolean wpe_settings_load_from_keyfile(WPESettings* settingsObject, GKeyFile* k
     for (unsigned i = 0; groups.get()[i]; i++) {
         const char* group = groups.get()[i];
 
-        if (!g_str_has_prefix(group, "wpe-platform/") && strcmp(group, "wpe-platform"))
+        if (!g_str_has_prefix(group, "wpe-platform/") && g_strcmp0(group, "wpe-platform"))
             continue;
 
         GUniquePtr<char*> keys(g_key_file_get_keys(keyFile, group, nullptr, nullptr));
@@ -244,11 +258,12 @@ gboolean wpe_settings_load_from_keyfile(WPESettings* settingsObject, GKeyFile* k
                 return FALSE;
             }
 
-            if (iter->value.setValue && !g_variant_compare(iter->value.setValue.get(), parsedValue.get()))
+            auto& applicationValue = iter->value.valueSlot(WPE_SETTINGS_SOURCE_APPLICATION);
+            if (applicationValue && g_variant_equal(applicationValue.get(), parsedValue.get()))
                 continue;
 
-            iter->value.setValue = WTF::move(parsedValue);
-            g_signal_emit(settingsObject, signals[CHANGED], g_quark_from_string(path.data()), path.data(), iter->value.setValue.get());
+            applicationValue = WTF::move(parsedValue);
+            g_signal_emit(settingsObject, signals[CHANGED], g_quark_from_string(path.data()), path.data(), iter->value.value().get());
         }
     }
 
@@ -263,6 +278,9 @@ gboolean wpe_settings_load_from_keyfile(WPESettings* settingsObject, GKeyFile* k
  * Adds settings to a keyfile. Keys are transformed into group names, for example:
  * `/wpe-platform/fonts/hinting` will be saved as `hinting` in the group `wpe-platform/fonts`.
  *
+ * Only the values set by [enum@WPEPlatform.SettingsSource.APPLICATION] are saved: what the
+ * platform reports is the system's to answer again on the next run.
+ *
  * Any existing values in the keyfile will be overwritten.
  */
 void wpe_settings_save_to_keyfile(WPESettings* settingsObject, GKeyFile* keyFile)
@@ -271,7 +289,7 @@ void wpe_settings_save_to_keyfile(WPESettings* settingsObject, GKeyFile* keyFile
     g_return_if_fail(keyFile);
 
     for (auto& [key, entry] : settingsObject->priv->settings) {
-        if (!entry.setValue)
+        if (!entry.applicationValue)
             continue;
 
         // Transform "/foo/bar/baz" into "foo/bar" and "baz".
@@ -284,7 +302,7 @@ void wpe_settings_save_to_keyfile(WPESettings* settingsObject, GKeyFile* keyFile
         const char* group = keyString.get() + 1;
         // FIXME: Handle empty?
 
-        GUniquePtr<char> variantString(g_variant_print(entry.setValue.get(), FALSE));
+        GUniquePtr<char> variantString(g_variant_print(entry.applicationValue.get(), FALSE));
         g_key_file_set_value(keyFile, group, keyStart, variantString.get());
     }
 }
@@ -297,17 +315,21 @@ void wpe_settings_save_to_keyfile(WPESettings* settingsObject, GKeyFile* keyFile
  * @source: the source of the settings change
  * @error: return location for a #GError, or %NULL
  *
- * If @source is %WPE_SETTINGS_SOURCE_APPLICATION, then the value will not be overwritten by the platform.
- * This value should always be %WPE_SETTINGS_SOURCE_PLATFORM for platforms themselves. This can cause this
- * method to return %TRUE even though no setting changes.
+ * Each source holds a value of its own, and the one set by
+ * [enum@WPEPlatform.SettingsSource.APPLICATION] is the one in use while it is set. This
+ * value should always be [enum@WPEPlatform.SettingsSource.PLATFORM] for platforms
+ * themselves, which may keep their value up to date whether or not an
+ * application value is hiding it. This can cause this method to return %TRUE
+ * even though no setting changes.
  *
  * To set a value @key must have been registered and @value must be of the correct type.
  *
  * Any floating reference of @value will be consumed.
  *
- * Setting @value to %NULL will reset it to the default.
+ * Setting @value to %NULL unsets the value for @source, as
+ * [method@WPESettings.unset] does.
  *
- * On a value being changed it will emit [signal@WPESettings::changed].
+ * On the value in use being changed it will emit [signal@WPESettings::changed].
  *
  * Returns: %FALSE if @error was set, %TRUE otherwise
  */
@@ -323,32 +345,77 @@ gboolean wpe_settings_set_value(WPESettings* settingsObject, const char* key, GV
         return FALSE;
     }
 
-    if (iter->value.setByApplication && source != WPE_SETTINGS_SOURCE_APPLICATION)
-        return TRUE;
-
-    if (!value) {
-        auto previousValue = iter->value.setValue;
-        iter->value.setValue = nullptr;
-        iter->value.setByApplication = source == WPE_SETTINGS_SOURCE_APPLICATION;
-        if (previousValue && g_variant_compare(previousValue.get(), iter->value.defaultValue.get()))
-            g_signal_emit(settingsObject, signals[CHANGED], g_quark_from_string(key), key, iter->value.value().get());
-        return TRUE;
-    }
-
-    if (!g_variant_type_equal(g_variant_get_type(value), iter->value.type.get())) {
+    if (value && !g_variant_type_equal(g_variant_get_type(value), iter->value.type.get())) {
         g_set_error(error, WPE_SETTINGS_ERROR, WPE_SETTINGS_ERROR_INCORRECT_TYPE,
             "Incorrect type (%s) for key %s", g_variant_get_type_string(value), key);
         return FALSE;
     }
 
     auto previousValue = iter->value.value();
-    iter->value.setValue = value;
-    iter->value.setByApplication = source == WPE_SETTINGS_SOURCE_APPLICATION;
+    iter->value.valueSlot(source) = value;
+    auto newValue = iter->value.value();
 
-    if (g_variant_compare(previousValue.get(), value))
-        g_signal_emit(settingsObject, signals[CHANGED], g_quark_from_string(key), key, iter->value.value().get());
+    if (!g_variant_equal(previousValue.get(), newValue.get()))
+        g_signal_emit(settingsObject, signals[CHANGED], g_quark_from_string(key), key, newValue.get());
 
     return TRUE;
+}
+
+/**
+ * wpe_settings_unset:
+ * @settings: a #WPESettings
+ * @key: the key to unset
+ * @source: the source whose value is to be dropped
+ * @error: return location for a #GError, or %NULL
+ *
+ * Drops the value @source set for @key, leaving the key with whatever a lower
+ * source has to say about it: an application unsetting a key it had set gives
+ * the key back to the platform, and to the default when the platform has not
+ * set one either.
+ *
+ * On the value in use being changed it will emit [signal@WPESettings::changed].
+ *
+ * Returns: %FALSE if @error was set, %TRUE otherwise
+ * Since: 2.56
+ */
+gboolean wpe_settings_unset(WPESettings* settingsObject, const char* key, WPESettingsSource source, GError** error)
+{
+    return wpe_settings_set_value(settingsObject, key, nullptr, source, error);
+}
+
+/**
+ * wpe_settings_get_value_for_source:
+ * @settings: a #WPESettings
+ * @key: the key to look up
+ * @source: the source to look the key up in
+ * @error: return location for a #GError, or %NULL
+ *
+ * Gets the value @key would have if no source above @source had set it, which
+ * is what makes it possible to show what following the platform would amount to
+ * while an application value is in place.
+ *
+ * Asking [enum@WPEPlatform.SettingsSource.PLATFORM] gives the platform's value, or the
+ * default when the platform has not set one; asking
+ * [enum@WPEPlatform.SettingsSource.APPLICATION] gives the value in use, as
+ * [method@WPESettings.get_value] does.
+ *
+ * If the key is not registered it will return %NULL and set @error.
+ *
+ * Returns: (transfer none): the value @key has in @source.
+ * Since: 2.56
+ */
+GVariant* wpe_settings_get_value_for_source(WPESettings* settingsObject, const char* key, WPESettingsSource source, GError** error)
+{
+    g_return_val_if_fail(WPE_IS_SETTINGS(settingsObject), NULL);
+    g_return_val_if_fail(key && *key == '/', NULL);
+
+    const auto iter = settingsObject->priv->settings.find(key);
+    if (iter == settingsObject->priv->settings.end()) {
+        g_set_error(error, WPE_SETTINGS_ERROR, WPE_SETTINGS_ERROR_NOT_REGISTERED, "Key %s not registered", key);
+        return nullptr;
+    }
+
+    return iter->value.valueForSource(source).getUncheckedLifetime();
 }
 
 /**

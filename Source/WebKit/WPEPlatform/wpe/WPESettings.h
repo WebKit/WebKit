@@ -307,6 +307,12 @@ typedef enum {
  * @WPE_SETTINGS_SOURCE_APPLICATION: Set by the application
  *
  * Indicates the source of a settings change.
+ *
+ * Each source holds a value of its own for a key. The application's is the one
+ * in use while it is set, the platform's stands in when it is not, and the
+ * default when neither has set one. An application can therefore let the
+ * platform have a key back with [method@WPESettings.unset], and ask what the
+ * platform would say meanwhile with [method@WPESettings.get_value_for_source].
  */
 typedef enum {
     WPE_SETTINGS_SOURCE_PLATFORM,
@@ -336,8 +342,18 @@ WPE_API gboolean     wpe_settings_set_value                       (WPESettings  
                                                                    WPESettingsSource   source,
                                                                    GError            **error);
 
+WPE_API gboolean     wpe_settings_unset                           (WPESettings        *settings,
+                                                                   const char         *key,
+                                                                   WPESettingsSource   source,
+                                                                   GError            **error);
+
 WPE_API GVariant    *wpe_settings_get_value                       (WPESettings        *settings,
                                                                    const char         *key,
+                                                                   GError            **error);
+
+WPE_API GVariant    *wpe_settings_get_value_for_source            (WPESettings        *settings,
+                                                                   const char         *key,
+                                                                   WPESettingsSource   source,
                                                                    GError            **error);
 
 WPE_API gint32       wpe_settings_get_int32                       (WPESettings        *settings,
