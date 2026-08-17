@@ -151,6 +151,7 @@ QueuedVideoOutput::QueuedVideoOutput(AVPlayerItem* item, AVPlayer* player)
 
     [m_playerItem addOutput:m_videoOutput.get()];
 
+    relaxAdoptionRequirement(); // WebQueuedVideoOutputDelegate's observeValueForKeyPath above can create a RefPtr to this object.
     [m_player addObserver:m_delegate.get() forKeyPath:@"rate" options:(NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial) context:nil];
 
     m_videoTimebaseObserver = [m_player addPeriodicTimeObserverForInterval:PAL::CMTimeMake(1, 60) queue:globalOutputDelegateQueue() usingBlock:[weakThis = WeakPtr { *this }, protectedDelegate = m_delegate, protectedOutput = m_videoOutput](CMTime currentTime) mutable {
