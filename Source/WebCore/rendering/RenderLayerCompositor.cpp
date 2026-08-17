@@ -5740,6 +5740,13 @@ std::optional<ScrollingNodeID> RenderLayerCompositor::updateScrollCoordinationFo
         return std::nullopt;
     }
 
+    // With no roles every branch below takes its detach path - short-cut and return the parent node ID.
+    if (roles.isEmpty()) {
+        auto* backing = layer.backing();
+        if (!backing || !backing->hasAnyScrollingNodeID())
+            return treeState.parentNodeID;
+    }
+
     auto newNodeID = treeState.parentNodeID;
 
     ScrollingTreeState childTreeState;
