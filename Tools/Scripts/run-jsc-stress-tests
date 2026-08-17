@@ -2052,6 +2052,12 @@ end
 # the committed -expected.txt baselines.
 WPT_PATH = LAYOUTTESTS_PATH + "imported/w3c/web-platform-tests"
 
+# Origin the WPT server serves the imported tree from during a browser layout-test run, as
+# configured by LayoutTests/imported/w3c/resources/config.json. Stack locations that the WAST
+# harness bakes into assertion descriptions are these URLs in the committed baselines, so
+# wpt-harness-post.js rewrites the shell's relative load paths against this.
+WPT_BASE_URL = "http://web-platform.test:8800/"
+
 # The wasm JIT-configuration matrix, mirroring runWebAssemblySpecTestBase. Returns [kind, options].
 def wasmWPTConfigs(*extraOptions)
     configs = [["default-wasm", FTL_OPTIONS + extraOptions]]
@@ -2103,6 +2109,13 @@ def wptCopyBeside(relativeName, sourceDir)
     prepareExtraRelativeFilesWithBaseDirectory([relativeName], $benchmarkDirectory, sourceDir)
 end
 
+# The collection root's path within the served WPT tree (e.g. "wasm/core/js"). Load paths in the
+# run directory are relative to this root, so it is also the prefix that turns one into the URL
+# the WPT server would serve it from.
+def wptCollectionPrefix
+    $extraFilesBaseDir.relative_path_from(WPT_PATH.realpath)
+end
+
 # Maps each `// META: script=` dependency to a load path relative to the run's working directory
 # (the collection root). prepareCollection copies the whole collection tree into the bundle, so a
 # dependency within it is already present: a /-absolute (/wasm/...) dep resolves to its
@@ -2110,11 +2123,10 @@ end
 # pointing outside the collection would not be in the bundle, so raise rather than reference a
 # missing file (no jsshell test does this today).
 def wptPrepareScripts(scripts)
-    collectionPrefix = $extraFilesBaseDir.relative_path_from(WPT_PATH.realpath)
     scripts.map { | s |
         if s.start_with?("/")
-            rel = Pathname.new(s.sub(%r{^/}, '')).relative_path_from(collectionPrefix)
-            raise "WPT script dependency #{s} is outside the #{collectionPrefix} collection" if rel.to_s.start_with?("..")
+            rel = Pathname.new(s.sub(%r{^/}, '')).relative_path_from(wptCollectionPrefix)
+            raise "WPT script dependency #{s} is outside the #{wptCollectionPrefix} collection" if rel.to_s.start_with?("..")
             rel.to_s
         else
             ($benchmark.dirname + s).to_s
@@ -2135,7 +2147,7 @@ def runWebAssemblyWPT(expectedFile, harnessBeforeBenchmark, *extraOptions)
     wptCopyBeside("wpt-harness-post.js", WASMTESTS_PATH + "wpt")
 
     before = ["wpt-harness-pre.js", "resources/testharness.js"] + harnessBeforeBenchmark + ["wpt-harness-mid.js"]
-    after = ["wpt-harness-post.js", "--", wptTitle($benchmark)]
+    after = ["wpt-harness-post.js", "--", wptTitle($benchmark), WPT_BASE_URL + wptCollectionPrefix.to_s + "/"]
 
     # Enable the in-development JSC features the same way WebKitTestRunner does for the browser
     # layout-test run, so these tests exercise the same feature set (and match the baselines the

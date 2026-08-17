@@ -11,18 +11,32 @@
 // is in place for the results; done() then releases the wait, and completion fires once the
 // promise/timer chain drains via deferredWorkTimer->runRunLoop() before exit.
 
-// Title passed by the runner as a trailing `-- <title>` argument (the test's file name). The
-// browser names an unnamed block-body test after the page title; the shell's ShellTestEnvironment
-// hardcodes "Untitled"/"Untitled N" instead (that environment object is a closure local, so it
-// cannot be patched from here). Remapping the "Untitled" prefix to the title reproduces the
-// committed baseline. Single-line arrow tests derive their name from the function source in both
+// Title passed by the runner as a trailing `-- <title> <baseURL>` argument pair. The browser names
+// an unnamed block-body test after the page title; the shell's ShellTestEnvironment hardcodes
+// "Untitled"/"Untitled N" instead (that environment object is a closure local, so it cannot be
+// patched from here). Remapping the "Untitled" prefix to the title reproduces the committed
+// baseline. Single-line arrow tests derive their name from the function source in both
 // environments, so they are unaffected.
-const WPT_TITLE = (globalThis.arguments && globalThis.arguments.length) ? globalThis.arguments[0] : null;
+const WPT_TITLE = (globalThis.arguments && globalThis.arguments.length > 0) ? globalThis.arguments[0] : null;
+
+// URL the WPT server serves this test's directory from. The WAST harness bakes a stack string into
+// each assertion description, and a frame's location is the URL the browser loaded the script from
+// but a bare relative load path in the shell. Prefixing each frame with this reproduces the URLs in
+// the committed baselines.
+const WPT_BASE_URL = (globalThis.arguments && globalThis.arguments.length > 1) ? globalThis.arguments[1] : null;
 
 function titledName(name) {
     if (WPT_TITLE && /^Untitled( \d+)?$/.test(name))
         return name.replace(/^Untitled/, () => WPT_TITLE);
     return name;
+}
+
+// Rewrites the `name@path:line:column` frames of an assertion description so each path becomes the
+// URL the WPT server would serve it from.
+function urlifyStackFrames(message) {
+    if (!WPT_BASE_URL)
+        return message;
+    return message.replace(/@(?=[A-Za-z0-9_./-]+\.js:\d+:\d+)/g, () => "@" + WPT_BASE_URL);
 }
 
 function convertResult(status) {
@@ -55,7 +69,7 @@ add_completion_callback(function (tests, harness_status) {
         }
         // Append the message only when present; the committed baselines have no trailing
         // space after the name for passing subtests, and diff does not ignore trailing spaces.
-        out += convertResult(test.status) + " " + titledName(sanitize(test.name)) + (message ? " " + message : "") + "\n";
+        out += convertResult(test.status) + " " + titledName(sanitize(test.name)) + (message ? " " + urlifyStackFrames(message) : "") + "\n";
     }
 
     print(out); // print() appends the final newline, reproducing the trailing blank line.
