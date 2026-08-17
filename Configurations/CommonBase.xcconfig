@@ -93,7 +93,7 @@ OTHER_LDFLAGS = $(inherited) $(WK_COMMON_OTHER_LDFLAGS);
 WK_COMMON_OTHER_TAPI_FLAGS = -x objective-c++ -std=c++2b -fno-rtti $(WK_SANITIZER_OTHER_TAPI_FLAGS) $(WK_AVAILABILITY_OVERLAY_FLAGS);
 OTHER_TAPI_FLAGS = $(inherited) $(WK_COMMON_OTHER_TAPI_FLAGS);
 
-WK_DEFAULT_WK_AUDIT_SPI[sdk=iphoneos*] = $(WK_AND_$(WK_NOT_$(WK_ANY_SANITIZER_ENABLED))_$(SUPPORTS_TEXT_BASED_API));
+WK_DEFAULT_WK_AUDIT_SPI[sdk=iphoneos*] = $(WK_NOT_$(WK_ANY_SANITIZER_ENABLED));
 // Explicitly disable auditing on other embedded platforms, because some SDKs
 // fall back to reading settings for iOS.
 WK_DEFAULT_WK_AUDIT_SPI[sdk=appletvos*] = ;
@@ -102,7 +102,9 @@ WK_DEFAULT_WK_AUDIT_SPI[sdk=xros*] = ;
 // Disable auditing on internal builds of already-shipped releases.
 WK_DEFAULT_WK_AUDIT_SPI[sdk=iphoneos26*.internal] = ;
 
-WK_AUDIT_SPI = $(WK_DEFAULT_WK_AUDIT_SPI);
+// Overridden in projects which do not have an InstallAPI requirement to
+// support audit-spi (e.g. WebCore).
+WK_AUDIT_SPI = $(WK_AND_$(WK_DEFAULT_WK_AUDIT_SPI)_$(SUPPORTS_TEXT_BASED_API));
 
 WK_OTHER_AUDIT_SPI_FLAGS = $(WK_OTHER_AUDIT_SPI_FLAGS_148943382) $(WK_OTHER_AUDIT_SPI_FLAGS_164901718) $(WK_OTHER_AUDIT_SPI_FLAGS_$(CONFIGURATION));
 WK_OTHER_AUDIT_SPI_FLAGS_Release = -DNDEBUG;

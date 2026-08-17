@@ -210,14 +210,9 @@ TAPI_USE_SRCROOT = YES;
 TEXT_BASED_API_FILE = WebCore.tbd
 
 // audit-spi normally only runs when SUPPORTS_TEXT_BASED_API is enabled.
-// WebCore does build with InstallAPI by default, and unlike other frameworks
+// WebCore does not build with InstallAPI by default, and unlike other frameworks
 // in our stack, its API surface is fully discoverable through binary analysis.
-WK_DEFAULT_WK_AUDIT_SPI[sdk=iphoneos*] = $(WK_NOT_$(WK_ANY_SANITIZER_ENABLED));
-// Explicitly disable auditing on other embedded platforms, because some SDKs
-// fall back to reading settings for iOS.
-WK_DEFAULT_WK_AUDIT_SPI[sdk=appletvos*] = ;
-WK_DEFAULT_WK_AUDIT_SPI[sdk=watchos*] = ;
-WK_DEFAULT_WK_AUDIT_SPI[sdk=xros*] = ;
+WK_AUDIT_SPI[sdk=iphoneos*] = $(WK_AND_$(WK_DEFAULT_WK_AUDIT_SPI)_$(WK_NOT_$(WK_ANY_SANITIZER_ENABLED)));
 WK_AUDIT_SPI_ALLOWLISTS = $(SRCROOT)/Configurations/AllowedSPI.toml $(SRCROOT)/Configurations/AllowedSPI-legacy.toml $(WK_AUDIT_SPI_ALLOWLISTS_$(USE_INTERNAL_SDK));
 WK_AUDIT_SPI_ALLOWLISTS_YES = $(WK_WEBKITADDITIONS_HEADERS_FOLDER_PATH)/AllowedSPI/AllowedSPI-WebCore.toml;
 
