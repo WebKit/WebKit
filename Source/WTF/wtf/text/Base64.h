@@ -206,7 +206,9 @@ private:
 enum class Alphabet : uint8_t { Base64, Base64URL };
 enum class LastChunkHandling : uint8_t { Loose, Strict, StopBeforePartial };
 enum class FromBase64ShouldThrowError: bool { No, Yes };
-WTF_EXPORT_PRIVATE std::tuple<FromBase64ShouldThrowError, size_t, size_t> fromBase64(StringView, std::span<uint8_t>, Alphabet, LastChunkHandling);
+enum class OutputSizeIsMaxLength : bool { No, Yes };
+
+WTF_EXPORT_PRIVATE std::tuple<FromBase64ShouldThrowError, size_t, size_t> fromBase64(StringView, std::span<uint8_t>, Alphabet, LastChunkHandling, OutputSizeIsMaxLength);
 WTF_EXPORT_PRIVATE size_t maxLengthFromBase64(StringView);
 
 } // namespace WTF
@@ -224,3 +226,4 @@ using WTF::base64URLEncoded;
 using WTF::isBase64OrBase64URLCharacter;
 using WTF::fromBase64;
 using WTF::maxLengthFromBase64;
+using WTF::OutputSizeIsMaxLength;

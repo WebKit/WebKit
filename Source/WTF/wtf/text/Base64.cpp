@@ -338,8 +338,13 @@ static inline simdutf::last_chunk_handling_options NODELETE toSIMDUTFLastChunkHa
 }
 
 template<typename CharacterType>
-static std::tuple<FromBase64ShouldThrowError, size_t, size_t> fromBase64Impl(std::span<const CharacterType> span, std::span<uint8_t> output, Alphabet alphabet, LastChunkHandling lastChunkHandling)
+static std::tuple<FromBase64ShouldThrowError, size_t, size_t> fromBase64Impl(std::span<const CharacterType> span, std::span<uint8_t> output, Alphabet alphabet, LastChunkHandling lastChunkHandling, OutputSizeIsMaxLength outputSizeIsMaxLength)
 {
+    // Step 3 of https://tc39.es/proposal-arraybuffer-base64/spec/#sec-frombase64 returns before looking at
+    // a single character when maxLength is 0, so even invalid input is accepted.
+    if (outputSizeIsMaxLength == OutputSizeIsMaxLength::Yes && output.empty())
+        return { FromBase64ShouldThrowError::No, 0, 0 };
+
     constexpr bool decodeUpToBadChar = true;
     auto [result, outputLength] = simdutf::base64_to_binary_safe(span, output, toSIMDUTFDecodeOptions(alphabet), toSIMDUTFLastChunkHandling(lastChunkHandling), decodeUpToBadChar);
     switch (result.error) {
@@ -352,11 +357,11 @@ static std::tuple<FromBase64ShouldThrowError, size_t, size_t> fromBase64Impl(std
     }
 }
 
-std::tuple<FromBase64ShouldThrowError, size_t, size_t> fromBase64(StringView string, std::span<uint8_t> output, Alphabet alphabet, LastChunkHandling lastChunkHandling)
+std::tuple<FromBase64ShouldThrowError, size_t, size_t> fromBase64(StringView string, std::span<uint8_t> output, Alphabet alphabet, LastChunkHandling lastChunkHandling, OutputSizeIsMaxLength outputSizeIsMaxLength)
 {
     if (string.is8Bit())
-        return fromBase64Impl(string.span8(), output, alphabet, lastChunkHandling);
-    return fromBase64Impl(string.span16(), output, alphabet, lastChunkHandling);
+        return fromBase64Impl(string.span8(), output, alphabet, lastChunkHandling, outputSizeIsMaxLength);
+    return fromBase64Impl(string.span16(), output, alphabet, lastChunkHandling, outputSizeIsMaxLength);
 }
 
 size_t maxLengthFromBase64(StringView string)
