@@ -780,3 +780,5 @@ webkit.org/b/289550 imported/w3c/web-platform-tests/fetch/http-cache/invalidate.
 # Same pre-existing animated-background/repaint-tracking race as fast/repaint/obscured-background-no-repaint.html (webkit.org/b/131477).
 webkit.org/b/131477 fast/css/object-view-box-subset-obscures-background-no-repaint.html [ Pass Failure ]
 webkit.org/b/131477 fast/css/object-view-box-superset-does-not-obscure-background-repaint.html [ Pass Failure ]
+
+webkit.org/b/321958 http/tests/inspector/network/resource-sizes-network.html [ Failure ]
