@@ -47,6 +47,8 @@ public:
 private:
     ASCIILiteral renderName() const final { return "RenderSVGViewportContainer"_s; }
 
+    void paint(PaintInfo&, const LayoutPoint&) final;
+
     void element() const = delete;
 
     bool isOutermostSVGViewportContainer() const { return isAnonymous(); }

@@ -49,6 +49,7 @@
 #include "RenderSVGViewportContainer.h"
 #include "SVGFilterElement.h"
 #include "SVGRenderSupport.h"
+#include "SVGSVGElement.h"
 #include "Settings.h"
 #include "StyleTransformResolver.h"
 #include "TransformPaintScope.h"
@@ -221,9 +222,26 @@ void RenderLayer::paintNegativeZOrderChildrenForSVG(GraphicsContext& context, co
     // (paintChildrenInDOMOrderForSVG handles all children including negative z-index).
 }
 
+static bool viewBoxDisablesPaintingForSVG(RenderLayerModelObject& renderer)
+{
+    if (CheckedPtr svgRoot = dynamicDowncast<RenderSVGRoot>(renderer))
+        return protect(svgRoot->svgSVGElement())->viewBoxDisablesPainting();
+
+    if (CheckedPtr viewportContainer = dynamicDowncast<RenderSVGViewportContainer>(renderer))
+        return protect(viewportContainer->svgSVGElement())->viewBoxDisablesPainting();
+
+    return false;
+}
+
 void RenderLayer::paintForegroundChildrenForSVG(GraphicsContext& context, const LayerPaintingInfo& paintingInfo, const LayerPaintingInfo& localPaintingInfo, OptionSet<PaintLayerFlag> paintFlags, const LayerFragments& layerFragments, OptionSet<PaintBehavior> paintBehavior, RenderObject* subtreePaintRoot, std::optional<WTF::Range<unsigned>> svgPaintOrderItemRange, LayoutSize svgFilterChildLayerCorrection)
 {
     ASSERT(m_svgData);
+
+    // An empty viewBox disables rendering of the content. Non-layer descendants are flattened into
+    // this layer's DOM-order list (see collectChildrenInDOMOrderForSVG), so the whole list has to be
+    // gated here -- RenderSVGViewportContainer::paint() alone would not catch the flattened ones.
+    if (viewBoxDisablesPaintingForSVG(renderer()))
+        return;
 
     // foreignObject uses HTML-style z-order painting.
     if (renderer().isRenderSVGForeignObject()) {

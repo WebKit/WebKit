@@ -174,12 +174,8 @@ void RenderSVGViewportContainer::updateLayerTransform()
     } else if (!m_viewport.location().isZero())
         m_supplementalLayerTransform.translate(m_viewport.location());
 
-    bool hasCurrentViewEmptyViewBox = true;
-    if (useSVGSVGElement->useCurrentView())
-        hasCurrentViewEmptyViewBox = useSVGSVGElement->currentView().hasEmptyViewBox();
-
-    // An empty viewBox disables the rendering -- dirty the visible descendant status!
-    if (useSVGSVGElement->hasEmptyViewBox() && hasCurrentViewEmptyViewBox) {
+    // An empty viewBox disables painting -- dirty the visible descendant status!
+    if (useSVGSVGElement->viewBoxDisablesPainting()) {
         if (hasLayer())
             layer()->dirtyVisibleContentStatus();
     } else if (auto viewBoxTransform = viewBoxToViewTransform(useSVGSVGElement, viewportSize); !viewBoxTransform.isIdentity()) {
@@ -191,6 +187,15 @@ void RenderSVGViewportContainer::updateLayerTransform()
 
     // After updating the supplemental layer transform we're able to use it in RenderLayerModelObjects::updateLayerTransform().
     RenderSVGContainer::updateLayerTransform();
+}
+
+void RenderSVGViewportContainer::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
+{
+    Ref useSVGSVGElement = svgSVGElement();
+    if (useSVGSVGElement->viewBoxDisablesPainting())
+        return;
+
+    RenderSVGContainer::paint(paintInfo, paintOffset);
 }
 
 void RenderSVGViewportContainer::applyTransform(TransformationMatrix& transform, const Style::ComputedStyle& style, const FloatRect& boundingBox, OptionSet<Style::TransformResolverOption> options) const

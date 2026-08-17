@@ -631,6 +631,14 @@ bool SVGSVGElement::hasSynthesizedViewBoxForSVGImage() const
     return !m_useCurrentView && viewBox().isEmpty() && isEmbeddedThroughSVGImage(*this);
 }
 
+bool SVGSVGElement::viewBoxDisablesPainting()
+{
+    if (!hasEmptyViewBox())
+        return false;
+
+    return m_useCurrentView ? currentView().hasEmptyViewBox() : true;
+}
+
 FloatRect SVGSVGElement::currentViewBoxRect() const
 {
     if (m_useCurrentView) {
