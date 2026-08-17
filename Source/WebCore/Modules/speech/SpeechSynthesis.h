@@ -36,6 +36,7 @@
 #include "SpeechSynthesisVoice.h"
 #include <wtf/Deque.h>
 #include <wtf/RefCounted.h>
+#include <wtf/RunLoop.h>
 
 namespace WebCore {
 
@@ -106,6 +107,7 @@ private:
 
     void startSpeakingImmediately(SpeechSynthesisUtterance&);
     void handleSpeakingCompleted(SpeechSynthesisUtterance&, bool errorOccurred);
+    void emptyUtteranceTimerFired();
 
     // EventTarget
     ScriptExecutionContext* NODELETE scriptExecutionContext() const final;
@@ -126,6 +128,7 @@ private:
     BehaviorRestrictions m_restrictions;
     WeakPtr<SpeechSynthesisClient> m_speechSynthesisClient;
     bool m_hasEventListener { false };
+    RunLoop::Timer m_emptyUtteranceTimer;
 };
 
 } // namespace WebCore

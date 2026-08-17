@@ -62,6 +62,7 @@ SpeechSynthesis::SpeechSynthesis(ScriptExecutionContext& context)
     , m_isPaused(false)
     , m_restrictions({ })
     , m_speechSynthesisClient(nullptr)
+    , m_emptyUtteranceTimer(RunLoop::mainSingleton(), "SpeechSynthesis::EmptyUtteranceTimer"_s, this, &SpeechSynthesis::emptyUtteranceTimerFired)
 {
     if (auto* document = dynamicDowncast<Document>(context)) {
 #if PLATFORM(IOS_FAMILY)
@@ -153,6 +154,12 @@ void SpeechSynthesis::startSpeakingImmediately(SpeechSynthesisUtterance& utteran
     m_currentSpeechUtterance = makeUnique<SpeechSynthesisUtteranceActivity>(protect(utterance));
     m_isPaused = false;
 
+    // Use RunLoop::Timer for empty utterances to fire start/end events reliably (rdar://81465164).
+    if (utterance.text().isEmpty()) {
+        m_emptyUtteranceTimer.startOneShot(0_s);
+        return;
+    }
+
     if (RefPtr speechSynthesisClient = m_speechSynthesisClient.get())
         speechSynthesisClient->speak(&utterance.platformUtterance());
     else
@@ -177,6 +184,8 @@ void SpeechSynthesis::speak(SpeechSynthesisUtterance& utterance)
 
 void SpeechSynthesis::cancel()
 {
+    m_emptyUtteranceTimer.stop();
+
     // Remove all the items from the utterance queue.
     // Hold on to the current utterance so the platform synthesizer can have a chance to clean up.
     RefPtr current = currentSpeechUtterance();
@@ -223,6 +232,15 @@ void SpeechSynthesis::resumeSynthesis()
         else if (RefPtr platformSpeechSynthesizer = m_platformSpeechSynthesizer)
             platformSpeechSynthesizer->resume();
     }
+}
+
+void SpeechSynthesis::emptyUtteranceTimerFired()
+{
+    if (!m_currentSpeechUtterance)
+        return;
+    Ref utterance = m_currentSpeechUtterance->utterance();
+    didStartSpeaking(utterance->platformUtterance());
+    handleSpeakingCompleted(utterance.get(), false);
 }
 
 void SpeechSynthesis::handleSpeakingCompleted(SpeechSynthesisUtterance& utterance, bool errorOccurred)
