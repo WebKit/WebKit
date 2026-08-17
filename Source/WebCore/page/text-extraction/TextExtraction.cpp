@@ -105,6 +105,7 @@
 #include <JavaScriptCore/RegularExpression.h>
 #include <ranges>
 #include <unicode/uchar.h>
+#include <wtf/Box.h>
 #include <wtf/Scope.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
@@ -2821,7 +2822,7 @@ static ScrollableContainer findLargeScrollableContainer(LocalFrame& frame)
     return best;
 }
 
-static std::optional<std::pair<String, ScrollableContainer>> redirectToLargeScrollableContainerIfNeeded(LocalFrame& frame, bool identifierProvided, ScrollableArea* scroller)
+static std::optional<std::pair<String, ScrollableContainer>> redirectToLargeScrollableContainerIfNeeded(LocalFrame& frame, bool identifierProvided, ScrollableArea* scroller, Vector<String>& stringsToValidate)
 {
     if (identifierProvided)
         return { };
@@ -2841,15 +2842,18 @@ static std::optional<std::pair<String, ScrollableContainer>> redirectToLargeScro
     auto tagName = protect(element)->tagName().convertToASCIILowercase();
     description.append(tagName);
 
-    if (auto label = normalizedLabelText(*protect(element)); !label.isEmpty())
-        description.append(makeString(" labeled "_s, wrapWithDoubleQuotes(WTF::move(label))));
-    else if (auto role = normalizeText(element->attributeWithoutSynchronization(HTMLNames::roleAttr)); !role.isEmpty() && role != tagName)
-        description.append(makeString(" with role "_s, wrapWithDoubleQuotes(WTF::move(role))));
+    if (auto label = normalizedLabelText(*protect(element)); !label.isEmpty()) {
+        description.append(makeString(" labeled "_s, wrapWithDoubleQuotes(label)));
+        stringsToValidate.append(WTF::move(label));
+    } else if (auto role = normalizeText(element->attributeWithoutSynchronization(HTMLNames::roleAttr)); !role.isEmpty() && role != tagName) {
+        description.append(makeString(" with role "_s, wrapWithDoubleQuotes(role)));
+        stringsToValidate.append(WTF::move(role));
+    }
 
     return { { description.toString(), { WTF::move(element), WTF::move(scrollableArea) } } };
 }
 
-static void scrollBy(LocalFrame& frame, std::optional<NodeIdentifier>&& identifier, FloatSize scrollDelta, CompletionHandler<void(bool, String&&)>&& completion)
+static void scrollBy(LocalFrame& frame, std::optional<NodeIdentifier>&& identifier, FloatSize scrollDelta, Vector<String>& stringsToValidate, CompletionHandler<void(bool, String&&)>&& completion)
 {
     bool identifierProvided = identifier.has_value();
     RefPtr foundNode = resolveNodeWithBodyOrDocumentElementAsFallback(frame, identifier);
@@ -2861,7 +2865,7 @@ static void scrollBy(LocalFrame& frame, std::optional<NodeIdentifier>&& identifi
         return completion(false, "No scrollable area found"_s);
 
     String fallbackDescription;
-    if (auto fallbackResult = redirectToLargeScrollableContainerIfNeeded(protect(frame), identifierProvided, protect(scroller))) {
+    if (auto fallbackResult = redirectToLargeScrollableContainerIfNeeded(protect(frame), identifierProvided, protect(scroller), stringsToValidate)) {
         fallbackDescription = WTF::move(fallbackResult->first);
         foundNode = WTF::move(fallbackResult->second.element);
         scroller = WTF::move(fallbackResult->second.scrollableArea);
@@ -2877,7 +2881,7 @@ static void scrollBy(LocalFrame& frame, std::optional<NodeIdentifier>&& identifi
     completion(true, WTF::move(summary));
 }
 
-static void scrollToNextPage(LocalFrame& frame, std::optional<NodeIdentifier>&& identifier, CompletionHandler<void(bool, String&&)>&& completion)
+static void scrollToNextPage(LocalFrame& frame, std::optional<NodeIdentifier>&& identifier, Vector<String>& stringsToValidate, CompletionHandler<void(bool, String&&)>&& completion)
 {
     bool identifierProvided = identifier.has_value();
     RefPtr foundNode = resolveNodeWithBodyOrDocumentElementAsFallback(frame, identifier);
@@ -2889,7 +2893,7 @@ static void scrollToNextPage(LocalFrame& frame, std::optional<NodeIdentifier>&& 
         return completion(false, "No scrollable area found"_s);
 
     String fallbackDescription;
-    if (auto fallbackResult = redirectToLargeScrollableContainerIfNeeded(frame, identifierProvided, protect(scroller))) {
+    if (auto fallbackResult = redirectToLargeScrollableContainerIfNeeded(frame, identifierProvided, protect(scroller), stringsToValidate)) {
         fallbackDescription = WTF::move(fallbackResult->first);
         foundNode = WTF::move(fallbackResult->second.element);
         scroller = WTF::move(fallbackResult->second.scrollableArea);
@@ -3058,7 +3062,7 @@ static void focusAndInsertText(NodeIdentifier identifier, String&& text, bool re
     });
 }
 
-static void dispatchInteraction(Interaction&& interaction, LocalFrame& frame, CompletionHandler<void(bool, String&&)>&& completion)
+static void dispatchInteraction(Interaction&& interaction, LocalFrame& frame, Vector<String>& stringsToValidate, CompletionHandler<void(bool, String&&)>&& completion)
 {
     switch (interaction.action) {
     case Action::Click: {
@@ -3121,9 +3125,9 @@ static void dispatchInteraction(Interaction&& interaction, LocalFrame& frame, Co
             return scrollToReveal(frame, WTF::move(interaction.nodeIdentifier), WTF::move(interaction.text), WTF::move(completion));
 
         if (interaction.scrollDelta.isZero())
-            return scrollToNextPage(frame, WTF::move(interaction.nodeIdentifier), WTF::move(completion));
+            return scrollToNextPage(frame, WTF::move(interaction.nodeIdentifier), stringsToValidate, WTF::move(completion));
 
-        return scrollBy(frame, WTF::move(interaction.nodeIdentifier), interaction.scrollDelta, WTF::move(completion));
+        return scrollBy(frame, WTF::move(interaction.nodeIdentifier), interaction.scrollDelta, stringsToValidate, WTF::move(completion));
     case Action::Hover: {
         if (auto location = interaction.locationInRootView)
             return dispatchSimulatedHover(frame, roundedIntPoint(*location), WTF::move(completion));
@@ -3143,7 +3147,7 @@ static void dispatchInteraction(Interaction&& interaction, LocalFrame& frame, Co
     completion(false, "Invalid action"_s);
 }
 
-void handleInteraction(Interaction&& interaction, LocalFrame& frame, CompletionHandler<void(bool, String&&, FloatRect)>&& completion)
+void handleInteraction(Interaction&& interaction, LocalFrame& frame, CompletionHandler<void(bool, String&&, Vector<String>&&, FloatRect)>&& completion)
 {
     RefPtr<Node> targetNode;
     if (auto location = interaction.locationInRootView) {
@@ -3154,11 +3158,12 @@ void handleInteraction(Interaction&& interaction, LocalFrame& frame, CompletionH
     } else if (auto identifier = interaction.nodeIdentifier)
         targetNode = Node::fromIdentifier(*identifier);
 
-    dispatchInteraction(WTF::move(interaction), frame, [completion = WTF::move(completion), targetNode = WTF::move(targetNode)](bool success, String&& message) mutable {
+    auto stringsToValidate = Box<Vector<String>>::create();
+    dispatchInteraction(WTF::move(interaction), frame, *stringsToValidate, [completion = WTF::move(completion), targetNode = WTF::move(targetNode), stringsToValidate](bool success, String&& message) mutable {
         FloatRect bounds;
         if (targetNode)
             bounds = rootViewBounds(*targetNode);
-        completion(success, WTF::move(message), bounds);
+        completion(success, WTF::move(message), WTF::move(*stringsToValidate), bounds);
     });
 }
 

@@ -1138,6 +1138,33 @@ TEST(TextExtractionTests, ReplacementStringsAppliedToInteractionDescription)
     EXPECT_TRUE([description containsString:@"brown cat jumped over the lazy dog"]);
     EXPECT_FALSE([description containsString:@"Compose a new message"]);
     EXPECT_FALSE([description containsString:@"fox"]);
+
+    RetainPtr result = [webView synchronouslyPerformInteraction:interaction];
+    EXPECT_NULL([result error]);
+
+    RetainPtr summary = [result summary];
+    EXPECT_TRUE([summary containsString:@"[redacted subject]"]);
+    EXPECT_TRUE([summary containsString:@"brown cat jumped over the lazy dog"]);
+    EXPECT_FALSE([summary containsString:@"Compose a new message"]);
+    EXPECT_FALSE([summary containsString:@"fox"]);
+
+    [webView synchronouslyLoadHTMLString:@"<body style='margin:0; overflow:hidden; height:600px'>"
+        "<div aria-label='Secret Project Alpha' style='width:800px; height:600px; overflow-y:scroll'>"
+        "<div style='height:5000px'>lots of content</div></div></body>"];
+
+    [webView synchronouslyGetDebugText:^{
+        RetainPtr replacementConfiguration = adoptNS([_WKTextExtractionConfiguration new]);
+        [replacementConfiguration setReplacementStrings:@{ @"Secret Project Alpha": @"[redacted container]" }];
+        return replacementConfiguration.autorelease();
+    }()];
+
+    RetainPtr scroll = adoptNS([[_WKTextExtractionInteraction alloc] initWithAction:_WKTextExtractionActionScroll]);
+    RetainPtr scrollResult = [webView synchronouslyPerformInteraction:scroll];
+    EXPECT_NULL([scrollResult error]);
+
+    RetainPtr scrollSummary = [scrollResult summary];
+    EXPECT_TRUE([scrollSummary containsString:@"[redacted container]"]);
+    EXPECT_FALSE([scrollSummary containsString:@"Secret Project Alpha"]);
 }
 
 TEST(TextExtractionTests, VisibleTextOnly)

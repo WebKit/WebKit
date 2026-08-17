@@ -518,7 +518,7 @@ String applyReplacements(const String& text, const Vector<std::pair<String, Stri
     unsigned cursor = 0;
     while (cursor < folded.text.length()) {
         bool matched = false;
-        for (auto [foldedKey, replacement] : replacementStrings) {
+        for (auto& [foldedKey, replacement] : replacementStrings) {
             if (foldedKey.isEmpty()) {
                 ASSERT_NOT_REACHED();
                 break;

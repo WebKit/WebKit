@@ -208,6 +208,23 @@ static Vector<std::pair<String, String>> extractReplacementStrings(_WKTextExtrac
     return result;
 }
 
+#if USE(APPLE_INTERNAL_SDK) || (!PLATFORM(WATCHOS) && !PLATFORM(APPLETV))
+
+static String applyReplacementsToDescription(const String& description, const Vector<String>& stringsToValidate, const Vector<std::pair<String, String>>& replacementStrings)
+{
+    if (replacementStrings.isEmpty())
+        return description;
+
+    auto result = description;
+    for (auto& string : stringsToValidate) {
+        if (auto replaced = WebKit::applyReplacements(string, replacementStrings); replaced != string)
+            result = makeStringByReplacingAll(result, string, WTF::move(replaced));
+    }
+    return result;
+}
+
+#endif // USE(APPLE_INTERNAL_SDK) || (!PLATFORM(WATCHOS) && !PLATFORM(APPLETV))
+
 static WebKit::TextExtractionOutputFormat textExtractionOutputFormat(_WKTextExtractionConfiguration *configuration)
 {
     switch (configuration.outputFormat) {
@@ -536,7 +553,7 @@ static WebKit::TextExtractionOutputFormat textExtractionOutputFormat(_WKTextExtr
         interaction = WTF::move(interactionForRetry),
         presentationUpdateTimeout,
         completionHandler = makeBlockPtr(WTF::move(completionHandler))
-    ](bool success, String&& description, WebCore::FloatRect interactedElementBounds) mutable {
+    ](bool success, String&& description, Vector<String>&& stringsToValidate, WebCore::FloatRect interactedElementBounds) mutable {
         RetainPtr strongSelf = weakSelf.get();
         RefPtr strongPage = weakPage.get();
 
@@ -562,7 +579,11 @@ static WebKit::TextExtractionOutputFormat textExtractionOutputFormat(_WKTextExtr
         RetainPtr<NSString> errorDescription;
         RetainPtr<NSString> summary;
         if (success) {
-            summary = description.createNSString();
+            String replacedDescription = description;
+            if (strongSelf)
+                replacedDescription = applyReplacementsToDescription(description, stringsToValidate, strongSelf->_lastTextExtractionReplacementStrings);
+
+            summary = replacedDescription.createNSString();
             if (!staleNodeNote.isEmpty())
                 summary = adoptNS([[NSString alloc] initWithFormat:@"%@ %@", summary.get(), staleNodeNote.createNSString().get()]);
         } else
@@ -1017,13 +1038,8 @@ static OptionSet<WebCore::DataDetectorType> NODELETE coreDataDetectorTypes(_WKTe
             }
 
             String replacedDescription = description;
-            if (RetainPtr strongSelf = weakSelf.get(); strongSelf && !strongSelf->_lastTextExtractionReplacementStrings.isEmpty()) {
-                for (auto& string : stringsToValidate) {
-                    auto replaced = WebKit::applyReplacements(string, strongSelf->_lastTextExtractionReplacementStrings);
-                    if (replaced != string)
-                        replacedDescription = makeStringByReplacingAll(replacedDescription, string, replaced);
-                }
-            }
+            if (RetainPtr strongSelf = weakSelf.get())
+                replacedDescription = applyReplacementsToDescription(description, stringsToValidate, strongSelf->_lastTextExtractionReplacementStrings);
 
             RetainPtr summary = replacedDescription.createNSString();
             if (!staleNodeNote.isEmpty())

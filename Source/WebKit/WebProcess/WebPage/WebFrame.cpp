@@ -1981,18 +1981,19 @@ void WebFrame::describeTextExtractionInteraction(TextExtraction::Interaction&& i
     completion(TextExtraction::interactionDescription(resolvedInteraction, *frame));
 }
 
-void WebFrame::handleTextExtractionInteraction(TextExtraction::Interaction&& interaction, CompletionHandler<void(bool, String&&, FloatRect)>&& completion)
+void WebFrame::handleTextExtractionInteraction(TextExtraction::Interaction&& interaction, CompletionHandler<void(bool, String&&, Vector<String>&&, FloatRect)>&& completion)
 {
     RefPtr frame = coreLocalFrame();
     if (!frame)
-        return completion(false, "Browsing context is unavailable"_s, { });
+        return completion(false, "Browsing context is unavailable"_s, { }, { });
 
     auto resolvedInteraction = interactionWithResolvedTargetNode(WTF::move(interaction));
-    auto summary = TextExtraction::interactionDescription(resolvedInteraction, *frame, TextExtraction::Tense::Past).description;
-    TextExtraction::handleInteraction(WTF::move(resolvedInteraction), *frame, [completion = WTF::move(completion), summary = WTF::move(summary)](bool success, String&& message, FloatRect interactedElementBounds) mutable {
+    auto description = TextExtraction::interactionDescription(resolvedInteraction, *frame, TextExtraction::Tense::Past);
+    TextExtraction::handleInteraction(WTF::move(resolvedInteraction), *frame, [completion = WTF::move(completion), summary = WTF::move(description.description), stringsToValidate = WTF::move(description.stringsToValidate)](bool success, String&& message, Vector<String>&& additionalStringsToValidate, FloatRect interactedElementBounds) mutable {
         if (success && message.isEmpty())
             message = WTF::move(summary);
-        completion(success, WTF::move(message), interactedElementBounds);
+        stringsToValidate.appendVector(WTF::move(additionalStringsToValidate));
+        completion(success, WTF::move(message), WTF::move(stringsToValidate), interactedElementBounds);
     });
 }
 
