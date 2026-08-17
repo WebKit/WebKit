@@ -42,6 +42,10 @@
 #include <wtf/TZoneMalloc.h>
 #include <wtf/ValueOrReference.h>
 
+#if ENABLE(TOUCH_TRACKING_REGIONS)
+#include <WebCore/LayoutPoint.h>
+#endif
+
 namespace WebCore {
 
 class BeforeTextInsertedEvent;
@@ -58,6 +62,7 @@ class Icon;
 class KeyboardEvent;
 class MouseEvent;
 class Node;
+class RenderObject;
 class StepRange;
 class TextControlInnerTextElement;
 class TouchEvent;
@@ -218,6 +223,18 @@ public:
 
 #if ENABLE(TOUCH_EVENTS)
     bool hasTouchEventHandler() const;
+#endif
+
+#if ENABLE(TOUCH_TRACKING_REGIONS)
+    // Whether this control tracks a pointer drag, which the scroller gets first refusal on. Not
+    // gated on the preference, so registration cannot get out of sync.
+    virtual bool usesTouchTracking() const { return false; }
+
+    virtual bool contributesTouchTrackingRegion(const RenderObject&) const { return false; }
+
+    virtual void touchTrackingDidBegin(LayoutPoint) { }
+    virtual void touchTrackingDidUpdate(LayoutPoint) { }
+    virtual void touchTrackingDidEnd(bool /* committed */) { }
 #endif
 
     // Form value functions.

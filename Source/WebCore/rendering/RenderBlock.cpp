@@ -1277,6 +1277,12 @@ void RenderBlock::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffs
             LOG_WITH_STREAM(EventRegions, stream << "  has touch event handlers: " << document->hasTouchEventHandlers());
         }
 #endif
+#if ENABLE(TOUCH_TRACKING_REGIONS)
+        if (document->settings().controlTouchTrackingEnabled()) {
+            needsTraverseDescendants |= document->hasTouchTrackingElements();
+            LOG_WITH_STREAM(EventRegions, stream << "  has touch tracking elements: " << document->hasTouchTrackingElements());
+        }
+#endif
 
 #if ENABLE(EDITABLE_REGION)
         // We treat the entire text control as editable to match users' expectation even

@@ -1,0 +1,164 @@
+<!doctype html>
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../../../resources/js-test.js"></script>
+<script src="../../../../resources/ui-helper.js"></script>
+<style>
+#vertical { writing-mode: vertical-lr; }
+</style>
+<p><input type=checkbox switch id=horizontal></p>
+<p><input type=checkbox switch id=vertical></p>
+<div style="height: 300vh"></div>
+<script>
+description("The scroller gets first refusal on a touch that starts on a switch: it takes drags it can scroll, and the switch takes the rest. Holding first hands the touch to the switch either way.");
+jsTestIsAsync = true;
+
+const horizontal = document.getElementById("horizontal");
+const vertical = document.getElementById("vertical");
+let input = horizontal;
+let clicks = 0;
+const preventDefaultListener = event => event.preventDefault();
+
+// Only for the last case: non-passive listeners defer every gesture, a different path from none.
+async function setPreventDefault(enabled)
+{
+    for (const type of ["touchstart", "touchmove"]) {
+        if (enabled)
+            document.addEventListener(type, preventDefaultListener, { passive: false });
+        else
+            document.removeEventListener(type, preventDefaultListener);
+    }
+    await UIHelper.ensurePresentationUpdate();
+    await UIHelper.ensurePresentationUpdate();
+}
+
+for (const element of [horizontal, vertical])
+    element.addEventListener("click", () => ++clicks);
+
+function center()
+{
+    const rect = input.getBoundingClientRect();
+    return { x: Math.round(rect.left + rect.width / 2), y: Math.round(rect.top + rect.height / 2) };
+}
+
+// Bounded, so a change in behaviour fails rather than times out.
+async function settle()
+{
+    // A touch landing while a scroller decelerates stops it instead of becoming a touch start.
+    let stable = 0;
+    let previous = -1;
+    for (let i = 0; i < 100 && stable < 4; ++i) {
+        stable = previous === Math.round(scrollY) ? stable + 1 : 0;
+        previous = Math.round(scrollY);
+        await UIHelper.delayFor(50);
+    }
+    await UIHelper.ensurePresentationUpdate();
+}
+
+async function drag(deltaX, deltaY, holdFirst)
+{
+    const { x, y } = center();
+    const stream = new UIHelper.EventStreamBuilder().begin(x, y);
+    if (holdFirst)
+        stream.wait(0.3);
+    await UIHelper.sendEventStream(stream.move(x + deltaX, y + deltaY, 0.25).end().takeResult());
+    await settle();
+}
+
+async function tap(waitOutDoubleTapInterval = true)
+{
+    const { x, y } = center();
+    await UIHelper.sendEventStream(new UIHelper.EventStreamBuilder().begin(x, y).wait(0.05).end().takeResult());
+    for (let i = 0; i < 100 && !input.checked; ++i)
+        await UIHelper.delayFor(20);
+
+    // Wait out the double tap interval, unless the case is about a touch inside it.
+    if (waitOutDoubleTapInterval)
+        await UIHelper.delayFor(500);
+}
+
+async function reset()
+{
+    window.scrollTo(0, 0);
+    input.checked = false;
+    // A selection left by an earlier case brings up selection UI, which captures later touches.
+    if (!getSelection().isCollapsed) {
+        debug("NOTE a selection was left behind by the previous case");
+        getSelection().removeAllRanges();
+    }
+    await settle();
+    clicks = 0;
+}
+
+(async () => {
+    if (!UIHelper.isIOSFamily()) {
+        testPassed("Not applicable outside iOS.");
+        finishJSTest();
+        return;
+    }
+
+    // A switch is turned on by dragging along its inline axis: rightwards when horizontal,
+    // downwards when vertical-lr. Dragging the other way leaves an off switch off.
+
+    debug("A tap, which activates the switch exactly once:");
+    await reset();
+    await tap();
+    shouldBeTrue("input.checked");
+    shouldBe("clicks", "1");
+
+    debug("A drag right after a tap, which works the switch rather than selecting text:");
+    await reset();
+    await tap(false);
+    shouldBeTrue("input.checked");
+    await drag(-2 * input.offsetWidth, 0, false);
+    shouldBeFalse("input.checked");
+    shouldBe("clicks", "2");
+    shouldBeTrue("getSelection().isCollapsed");
+
+    debug("A drag towards on, which the page cannot scroll sideways:");
+    await reset();
+    await drag(2 * input.offsetWidth, 0, false);
+    shouldBeTrue("input.checked");
+    shouldBe("clicks", "1");
+    shouldBe("Math.round(scrollY)", "0");
+
+    debug("An up drag on the same switch, which the page can scroll:");
+    await reset();
+    await drag(0, -150, false);
+    shouldBeFalse("input.checked");
+    shouldBe("clicks", "0");
+    shouldBeTrue("scrollY > 0");
+
+    debug("An up drag on a vertical switch, which the page can also scroll:");
+    input = vertical;
+    await reset();
+    await drag(0, -input.offsetHeight, false);
+    shouldBeFalse("input.checked");
+    shouldBe("clicks", "0");
+    shouldBeTrue("scrollY > 0");
+
+    debug("A drag towards on after holding, which hands the touch to the switch:");
+    await reset();
+    await drag(0, 2 * input.offsetHeight, true);
+    shouldBeTrue("input.checked");
+    shouldBe("clicks", "1");
+    shouldBeTrue("scrollY < 10");
+
+    debug("With the page preventing default, the switch takes no part in the touch:");
+    input = horizontal;
+    await reset();
+    await setPreventDefault(true);
+    await drag(input.offsetWidth, 0, false);
+    shouldBeFalse("input.checked");
+    shouldBe("clicks", "0");
+    shouldBe("Math.round(scrollY)", "0");
+
+    await drag(0, -150, true);
+    shouldBeFalse("input.checked");
+    shouldBeTrue("scrollY < 10");
+    await setPreventDefault(false);
+
+    finishJSTest();
+})();
+</script>
+</html>

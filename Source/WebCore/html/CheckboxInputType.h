@@ -32,6 +32,7 @@
 #pragma once
 
 #include "BaseCheckableInputType.h"
+#include "LayoutPoint.h"
 #include "SwitchTrigger.h"
 #include <wtf/CanMakeWeakPtr.h>
 #include <wtf/TZoneMalloc.h>
@@ -41,8 +42,6 @@ namespace WebCore {
 #if ENABLE(IOS_TOUCH_EVENTS)
 class Touch;
 #endif
-
-class LayoutPoint;
 
 enum class WasSetByJavaScript : bool;
 enum class SwitchAnimationType : bool { VisuallyOn, Held };
@@ -79,6 +78,13 @@ private:
     Touch* subsequentTouchEventTouch(const TouchEvent&) const;
     void handleTouchEvent(TouchEvent&) final;
 #endif
+#if ENABLE(TOUCH_TRACKING_REGIONS)
+    bool usesTouchTracking() const final;
+    bool contributesTouchTrackingRegion(const RenderObject&) const final;
+    void touchTrackingDidBegin(LayoutPoint) final;
+    void touchTrackingDidUpdate(LayoutPoint) final;
+    void touchTrackingDidEnd(bool committed) final;
+#endif
     void startSwitchPointerTracking(LayoutPoint);
     void stopSwitchPointerTracking();
     bool NODELETE isSwitchPointerTracking() const;
@@ -109,6 +115,7 @@ private:
     std::unique_ptr<Timer> m_switchAnimationTimer;
 #if ENABLE(IOS_TOUCH_EVENTS)
     std::unique_ptr<Timer> m_switchHeldTimer;
+    LayoutPoint m_switchTouchStartLocation;
     std::optional<unsigned> m_switchPointerTrackingTouchIdentifier { std::nullopt };
 #endif
 };

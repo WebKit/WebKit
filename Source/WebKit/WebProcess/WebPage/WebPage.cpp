@@ -6179,6 +6179,67 @@ void WebPage::modelDragEnded(NodeIdentifier nodeIdentifier)
 
 #endif // ENABLE(DRAG_SUPPORT)
 
+#if ENABLE(TOUCH_TRACKING_REGIONS)
+static RefPtr<HTMLInputElement> touchTrackingElement(NodeIdentifier nodeID, Page* page)
+{
+    RefPtr input = dynamicDowncast<HTMLInputElement>(Node::fromIdentifier(nodeID));
+    if (!input || !input->isConnected())
+        return nullptr;
+
+    if (input->document().page() != page)
+        return nullptr;
+
+    return input;
+}
+
+static RefPtr<HTMLInputElement> touchTrackingTargetElement(NodeIdentifier nodeID, Page* page)
+{
+    RefPtr input = touchTrackingElement(nodeID, page);
+    if (input && !input->document().settings().controlTouchTrackingEnabled())
+        return nullptr;
+    return input;
+}
+
+static std::optional<LayoutPoint> absoluteLocationForClientPosition(HTMLInputElement& input, IntPoint clientPosition)
+{
+    RefPtr frameView = input.document().view();
+    if (!frameView)
+        return std::nullopt;
+    return LayoutPoint { frameView->rootViewToContents(clientPosition) };
+}
+
+void WebPage::touchTrackingDidBegin(NodeIdentifier nodeID, IntPoint clientPosition)
+{
+    RefPtr input = touchTrackingTargetElement(nodeID, m_page.get());
+    if (!input)
+        return;
+
+    if (auto absoluteLocation = absoluteLocationForClientPosition(*input, clientPosition))
+        input->touchTrackingDidBegin(*absoluteLocation);
+}
+
+void WebPage::touchTrackingDidUpdate(NodeIdentifier nodeID, IntPoint clientPosition)
+{
+    RefPtr input = touchTrackingTargetElement(nodeID, m_page.get());
+    if (!input)
+        return;
+
+    if (auto absoluteLocation = absoluteLocationForClientPosition(*input, clientPosition))
+        input->touchTrackingDidUpdate(*absoluteLocation);
+}
+
+void WebPage::touchTrackingDidEnd(NodeIdentifier nodeID, bool committed)
+{
+    RefPtr input = touchTrackingElement(nodeID, m_page.get());
+    if (!input)
+        return;
+
+    // The click dispatched here needs to be able to activate the control.
+    UserGestureIndicator gestureIndicator { IsProcessingUserGesture::Yes, protect(input->document()).ptr() };
+    input->touchTrackingDidEnd(committed);
+}
+#endif
+
 #if ENABLE(MODEL_PROCESS)
 void WebPage::requestInteractiveModelElementAtPoint(IntPoint clientPosition)
 {

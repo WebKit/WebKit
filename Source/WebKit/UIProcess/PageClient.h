@@ -641,6 +641,9 @@ public:
 #endif
 
     virtual bool isSimulatingCompatibilityPointerTouches() const = 0;
+#if ENABLE(TOUCH_TRACKING_REGIONS)
+    virtual bool controlOwnsTouch() const { return false; }
+#endif
 
     virtual WebCore::FloatBoxExtent computedObscuredInset() const = 0;
     virtual WebCore::Color contentViewBackgroundColor() = 0;

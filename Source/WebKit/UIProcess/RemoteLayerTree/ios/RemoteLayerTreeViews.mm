@@ -200,66 +200,64 @@ static bool isScrolledBy(WKChildScrollView* scrollView, UIView *hitView)
     return false;
 }
 
-OptionSet<WebCore::TouchAction> touchActionsForPoint(UIView *rootView, const WebCore::IntPoint& point)
+// A child scroller has no event region of its own, and occludes whatever is behind it.
+enum class ChildScrollViewBehavior : bool { Occludes, Ignore };
+
+struct HitRemoteLayerTreeNode {
+    Ref<RemoteLayerTreeNode> node;
+    WebCore::IntPoint pointInNode;
+};
+
+static std::optional<HitRemoteLayerTreeNode> remoteLayerTreeNodeAtPoint(UIView *rootView, const WebCore::IntPoint& point, ChildScrollViewBehavior childScrollViewBehavior = ChildScrollViewBehavior::Occludes)
 {
     Vector<RetainPtr<UIView>, 16> viewsAtPoint;
     collectDescendantViewsAtPoint(viewsAtPoint, rootView, point, nil);
 
-    if (viewsAtPoint.isEmpty())
-        return { WebCore::TouchAction::Auto };
-
-    RetainPtr<UIView> hitView;
     for (RetainPtr view : viewsAtPoint | std::views::reverse) {
-        // We only hit WKChildScrollView directly if its content layer doesn't have an event region.
-        // We don't generate the region if there is nothing interesting in it, meaning the touch-action is auto.
-        if ([view isKindOfClass:[WKChildScrollView class]])
-            return WebCore::TouchAction::Auto;
+        if (childScrollViewBehavior == ChildScrollViewBehavior::Occludes && [view isKindOfClass:[WKChildScrollView class]])
+            return std::nullopt;
 
-        if ([view isKindOfClass:[WKCompositingView class]]) {
-            hitView = WTF::move(view);
-            break;
-        }
+        if (![view isKindOfClass:[WKCompositingView class]])
+            continue;
+
+        RefPtr node = RemoteLayerTreeNode::forCALayer([view layer]);
+        if (!node)
+            return std::nullopt;
+
+        return HitRemoteLayerTreeNode { node.releaseNonNull(), WebCore::IntPoint { [view convertPoint:point fromView:rootView] } };
     }
 
-    if (!hitView)
-        return { WebCore::TouchAction::Auto };
-
-    CGPoint hitViewPoint = [hitView convertPoint:point fromView:rootView];
-
-    RefPtr node = RemoteLayerTreeNode::forCALayer(hitView.get().layer);
-    if (!node)
-        return { WebCore::TouchAction::Auto };
-
-    return node->eventRegion().touchActionsForPoint(WebCore::IntPoint(hitViewPoint));
+    return std::nullopt;
 }
+
+OptionSet<WebCore::TouchAction> touchActionsForPoint(UIView *rootView, const WebCore::IntPoint& point)
+{
+    auto hit = remoteLayerTreeNodeAtPoint(rootView, point);
+    if (!hit)
+        return { WebCore::TouchAction::Auto };
+
+    return hit->node->eventRegion().touchActionsForPoint(hit->pointInNode);
+}
+
+#if ENABLE(TOUCH_TRACKING_REGIONS)
+std::optional<WebCore::TouchTrackingTarget> touchTrackingTargetForPoint(UIView *rootView, const WebCore::IntPoint& point)
+{
+    auto hit = remoteLayerTreeNodeAtPoint(rootView, point);
+    if (!hit)
+        return std::nullopt;
+
+    return hit->node->eventRegion().touchTrackingTargetForPoint(hit->pointInNode);
+}
+#endif
 
 #if ENABLE(WHEEL_EVENT_REGIONS)
 OptionSet<WebCore::EventListenerRegionType> eventListenerTypesAtPoint(UIView *rootView, const WebCore::IntPoint& point)
 {
-    Vector<RetainPtr<UIView>, 16> viewsAtPoint;
-    collectDescendantViewsAtPoint(viewsAtPoint, rootView, point, nil);
-
-    if (viewsAtPoint.isEmpty())
+    auto hit = remoteLayerTreeNodeAtPoint(rootView, point, ChildScrollViewBehavior::Ignore);
+    if (!hit)
         return { };
 
-    RetainPtr<UIView> hitView;
-    for (RetainPtr view : viewsAtPoint | std::views::reverse) {
-        if ([view isKindOfClass:[WKCompositingView class]]) {
-            hitView = WTF::move(view);
-            break;
-        }
-    }
-
-    if (!hitView)
-        return { };
-
-    CGPoint hitViewPoint = [hitView convertPoint:point fromView:rootView];
-
-    RefPtr node = RemoteLayerTreeNode::forCALayer(hitView.get().layer);
-    if (!node)
-        return { };
-
-    return node->eventRegion().eventListenerRegionTypesForPoint(WebCore::IntPoint(hitViewPoint));
+    return hit->node->eventRegion().eventListenerRegionTypesForPoint(hit->pointInNode);
 }
 #endif
 

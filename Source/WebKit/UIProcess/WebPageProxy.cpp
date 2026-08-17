@@ -336,6 +336,10 @@
 #include "WebBackForwardListSwiftUtilities.h"
 #endif
 
+#if ENABLE(TOUCH_TRACKING_REGIONS)
+#include <WebCore/EventRegion.h>
+#endif
+
 #if ENABLE(WEBDRIVER_BIDI)
 #include "BidiDigitalCredentialsAgent.h"
 #include "WebDriverBidiProcessor.h"
@@ -4518,6 +4522,23 @@ void WebPageProxy::modelDragEnded(const WebCore::NodeIdentifier nodeIdentifier)
     send(Messages::WebPage::ModelDragEnded(nodeIdentifier));
 }
 #endif
+#endif
+
+#if ENABLE(TOUCH_TRACKING_REGIONS)
+void WebPageProxy::touchTrackingDidBegin(const WebCore::TouchTrackingTarget& target, const IntPoint& clientPosition)
+{
+    sendToProcessContainingFrame(target.frameIdentifier, Messages::WebPage::TouchTrackingDidBegin(target.nodeIdentifier, clientPosition));
+}
+
+void WebPageProxy::touchTrackingDidUpdate(const WebCore::TouchTrackingTarget& target, const IntPoint& clientPosition)
+{
+    sendToProcessContainingFrame(target.frameIdentifier, Messages::WebPage::TouchTrackingDidUpdate(target.nodeIdentifier, clientPosition));
+}
+
+void WebPageProxy::touchTrackingDidEnd(const WebCore::TouchTrackingTarget& target, bool committed)
+{
+    sendToProcessContainingFrame(target.frameIdentifier, Messages::WebPage::TouchTrackingDidEnd(target.nodeIdentifier, committed));
+}
 #endif
 
 #if ENABLE(MODEL_PROCESS)

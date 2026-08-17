@@ -297,6 +297,9 @@ struct DateTimeChooserParameters;
 struct DiagnosticLoggingDictionary;
 struct DictationContextType;
 struct DictionaryPopupInfo;
+#if ENABLE(TOUCH_TRACKING_REGIONS)
+struct TouchTrackingTarget;
+#endif
 struct DocumentSecurityPolicy;
 struct DocumentSyncSerializationData;
 struct DragItem;
@@ -1315,6 +1318,12 @@ public:
     void didConcludeDrop();
 #endif
 #endif // PLATFORM(IOS_FAMILY)
+
+#if ENABLE(TOUCH_TRACKING_REGIONS)
+    void touchTrackingDidBegin(const WebCore::TouchTrackingTarget&, const WebCore::IntPoint& clientPosition);
+    void touchTrackingDidUpdate(const WebCore::TouchTrackingTarget&, const WebCore::IntPoint& clientPosition);
+    void touchTrackingDidEnd(const WebCore::TouchTrackingTarget&, bool committed);
+#endif
 
 #if ENABLE(MODEL_PROCESS)
     void requestInteractiveModelElementAtPoint(WebCore::IntPoint);

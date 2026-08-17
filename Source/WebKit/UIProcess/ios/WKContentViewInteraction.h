@@ -70,6 +70,9 @@
 #import <WebCore/DataOwnerType.h>
 #import <WebCore/DigitalCredentialsRequestData.h>
 #import <WebCore/FloatQuad.h>
+#if ENABLE(TOUCH_TRACKING_REGIONS)
+#import <WebCore/EventRegion.h>
+#endif
 #import <WebCore/MediaControlsContextMenuItem.h>
 #import <WebCore/PointerID.h>
 #import <WebCore/SelectionType.h>
@@ -378,6 +381,20 @@ struct ImageAnalysisContextMenuActionData {
     RetainPtr<WKSyntheticTapGestureRecognizer> _doubleTapGestureRecognizer;
 #if ENABLE(MODEL_PROCESS)
     RetainPtr<UIPanGestureRecognizer> _modelInteractionPanGestureRecognizer;
+#endif
+#if ENABLE(TOUCH_TRACKING_REGIONS)
+    RetainPtr<WKScrollViewTrackingPanGestureRecognizer> _touchTrackingPanGestureRecognizer;
+    std::optional<WebCore::TouchTrackingTarget> _touchTrackingTarget;
+    std::optional<WebCore::TouchTrackingTarget> _activeTouchTrackingTarget;
+    CGPoint _touchTrackingStartLocation;
+    CGPoint _touchTrackingLatestLocation;
+    uint64_t _touchTrackingGeneration;
+    uint64_t _touchTrackingWindowLapsedWaitingForPageGeneration;
+    BOOL _touchTrackingPreventedByPage;
+    BOOL _touchTrackingDecided;
+    BOOL _controlOwnsTouch;
+    BOOL _potentialTapStartedOnTrackingControl;
+    BOOL _controlOwnedTouch;
 #endif
     RetainPtr<UITapGestureRecognizer> _nonBlockingDoubleTapGestureRecognizer;
     RetainPtr<UITapGestureRecognizer> _doubleTapGestureRecognizerForDoubleClick;
@@ -756,6 +773,9 @@ struct ImageAnalysisContextMenuActionData {
 @property (nonatomic, readonly) UIView *inputViewForWebView;
 @property (nonatomic, readonly) UIView *inputAccessoryViewForWebView;
 @property (nonatomic, readonly) UITextInputTraits *textInputTraitsForWebView;
+#if ENABLE(TOUCH_TRACKING_REGIONS)
+@property (nonatomic, readonly) BOOL controlOwnsTouch;
+#endif
 @property (nonatomic, readonly) BOOL preventsPanningInXAxis;
 @property (nonatomic, readonly) BOOL preventsPanningInYAxis;
 @property (nonatomic, readonly) WKTouchEventsGestureRecognizer *touchEventGestureRecognizer;

@@ -57,4 +57,19 @@ inline void HTMLInputElement::updateTouchEventHandler()
 }
 #endif
 
+#if ENABLE(TOUCH_TRACKING_REGIONS)
+inline void HTMLInputElement::updateTouchTracking()
+{
+    bool usesTouchTracking = m_inputType->usesTouchTracking();
+    if (usesTouchTracking == m_usesTouchTracking)
+        return;
+
+    m_usesTouchTracking = usesTouchTracking;
+    if (usesTouchTracking)
+        document().didAddTouchTrackingElement(*this);
+    else
+        document().didRemoveTouchTrackingElement(*this);
+}
+#endif
+
 }

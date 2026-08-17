@@ -33,6 +33,7 @@ fast/forms/search/search-results-hidden-crash.html [ Pass ]
 fast/forms/search/search-recent-searches.html [ Pass ]
 
 fast/forms/switch/ [ Pass ]
+fast/forms/switch/ios [ Skip ]
 
 fast/url/user-visible [ Pass ]
 fast/images/eps-as-image.html [ Skip ]

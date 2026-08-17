@@ -36,6 +36,7 @@ input[type="checkbox"][switch] {
     height: initial;
     padding: initial;
     background-color: initial;
+    -webkit-tap-highlight-color: transparent;
 }
 
 input[type="checkbox"][switch]:checked {

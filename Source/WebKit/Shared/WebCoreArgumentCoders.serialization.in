@@ -4080,6 +4080,18 @@ struct WebCore::VideoFrameTimeMetadata {
     std::optional<unsigned> rtpTimestamp;
 };
 
+#if ENABLE(TOUCH_TRACKING_REGIONS)
+[CustomHeader] struct WebCore::TouchTrackingTarget {
+    WebCore::NodeIdentifier nodeIdentifier;
+    WebCore::FrameIdentifier frameIdentifier;
+};
+
+[CustomHeader] struct WebCore::TouchTrackingRegion {
+    WebCore::Region region;
+    WebCore::TouchTrackingTarget target;
+};
+#endif
+
 class WebCore::EventRegion {
     WebCore::Region m_region;
 #if ENABLE(TOUCH_ACTION_REGIONS)
@@ -4094,6 +4106,9 @@ class WebCore::EventRegion {
 #endif
 #if ENABLE(EDITABLE_REGION)
     std::optional<WebCore::Region> m_editableRegion;
+#endif
+#if ENABLE(TOUCH_TRACKING_REGIONS)
+    Vector<WebCore::TouchTrackingRegion> m_touchTrackingRegions;
 #endif
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
     Vector<WebCore::InteractionRegion> m_interactionRegions;

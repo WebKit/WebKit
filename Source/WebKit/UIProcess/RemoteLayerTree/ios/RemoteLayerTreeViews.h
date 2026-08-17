@@ -32,6 +32,10 @@
 #endif
 #import <wtf/OptionSet.h>
 
+#if ENABLE(TOUCH_TRACKING_REGIONS)
+#import <WebCore/EventRegion.h>
+#endif
+
 OBJC_CLASS UIScrollView;
 
 namespace WebCore {
@@ -96,6 +100,10 @@ namespace WebKit {
 
 OptionSet<WebCore::TouchAction> touchActionsForPoint(UIView *rootView, const WebCore::IntPoint&);
 UIScrollView *findActingScrollParent(UIScrollView *, const RemoteLayerTreeHost&);
+
+#if ENABLE(TOUCH_TRACKING_REGIONS)
+std::optional<WebCore::TouchTrackingTarget> touchTrackingTargetForPoint(UIView *rootView, const WebCore::IntPoint&);
+#endif
 
 OptionSet<WebCore::EventListenerRegionType> eventListenerTypesAtPoint(UIView *rootView, const WebCore::IntPoint&);
 

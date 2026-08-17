@@ -41,6 +41,14 @@
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
+#if ENABLE(TOUCH_TRACKING_REGIONS)
+#include "HTMLInputElement.h"
+#include "LocalFrame.h"
+#include "NodeDocument.h"
+#include "Settings.h"
+#include <ranges>
+#endif
+
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(EventRegionContext);
@@ -445,6 +453,9 @@ EventRegion::EventRegion(Region&& region
 #if ENABLE(EDITABLE_REGION)
     , std::optional<WebCore::Region> editableRegion
 #endif
+#if ENABLE(TOUCH_TRACKING_REGIONS)
+    , Vector<WebCore::TouchTrackingRegion> touchTrackingRegions
+#endif
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
     , Vector<WebCore::InteractionRegion> interactionRegions
 #endif
@@ -462,6 +473,9 @@ EventRegion::EventRegion(Region&& region
 #endif
 #if ENABLE(EDITABLE_REGION)
     , m_editableRegion(WTF::move(editableRegion))
+#endif
+#if ENABLE(TOUCH_TRACKING_REGIONS)
+    , m_touchTrackingRegions(WTF::move(touchTrackingRegions))
 #endif
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
     , m_interactionRegions(WTF::move(interactionRegions))
@@ -484,6 +498,10 @@ void EventRegion::unite(const Region& region, const RenderObject& renderer, cons
 #endif
 
     uniteEventListeners(region, style.eventListenerRegionTypes());
+
+#if ENABLE(TOUCH_TRACKING_REGIONS)
+    uniteTouchTrackingRegion(region, renderer);
+#endif
 
 #if ENABLE(EDITABLE_REGION)
     if (m_editableRegion && (overrideUserModifyIsEditable || style.usedUserModify() != UserModify::ReadOnly)) {
@@ -520,6 +538,11 @@ void EventRegion::translate(const IntSize& offset)
 #if ENABLE(EDITABLE_REGION)
     if (m_editableRegion)
         m_editableRegion->translate(offset);
+#endif
+
+#if ENABLE(TOUCH_TRACKING_REGIONS)
+    for (auto& touchTrackingRegion : m_touchTrackingRegions)
+        touchTrackingRegion.region.translate(offset);
 #endif
 
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
@@ -623,6 +646,78 @@ OptionSet<TouchAction> EventRegion::touchActionsForPoint(const IntPoint& point) 
         return { TouchAction::Auto };
 
     return actions;
+}
+#endif
+
+#if ENABLE(TOUCH_TRACKING_REGIONS)
+struct TouchTrackingContribution {
+    std::optional<TouchTrackingTarget> target;
+    // Part of a control, such as its track or thumb, rather than something painted over one.
+    bool isPartOfControl { false };
+};
+
+static TouchTrackingContribution touchTrackingContributionForRenderer(const RenderObject& renderer)
+{
+    RefPtr node = renderer.node();
+    if (!node)
+        return { };
+
+    RefPtr control = dynamicDowncast<HTMLInputElement>(node.get());
+    if (!control)
+        control = dynamicDowncast<HTMLInputElement>(node->shadowHost());
+    if (!control)
+        return { };
+
+    if (control->contributesTouchTrackingRegion(renderer)) {
+        RefPtr frame = renderer.document().frame();
+        if (!frame)
+            return { std::nullopt, true };
+        return { TouchTrackingTarget { control->nodeIdentifier(), frame->frameID() }, true };
+    }
+
+    return { std::nullopt, control->usesTouchTracking() };
+}
+
+void EventRegion::uniteTouchTrackingRegion(const Region& region, const RenderObject& renderer)
+{
+    if (!renderer.document().settings().controlTouchTrackingEnabled())
+        return;
+
+    auto contribution = touchTrackingContributionForRenderer(renderer);
+    if (contribution.target) {
+        m_touchTrackingRegions.append({ region, *contribution.target });
+        LOG_WITH_STREAM(EventRegions, stream << " uniting touch tracking region for " << renderer);
+        return;
+    }
+
+    if (contribution.isPartOfControl)
+        return;
+
+    // Painted later, so it covers any control underneath it.
+    if (m_touchTrackingRegions.isEmpty())
+        return;
+    for (auto& touchTrackingRegion : m_touchTrackingRegions)
+        touchTrackingRegion.region.subtract(region);
+    m_touchTrackingRegions.removeAllMatching([](auto& touchTrackingRegion) {
+        return touchTrackingRegion.region.isEmpty();
+    });
+}
+
+std::optional<TouchTrackingTarget> EventRegion::touchTrackingTargetForPoint(const IntPoint& point) const
+{
+    // Later regions paint on top of earlier ones.
+    for (auto& touchTrackingRegion : m_touchTrackingRegions | std::views::reverse) {
+        if (touchTrackingRegion.region.contains(point))
+            return touchTrackingRegion.target;
+    }
+    return std::nullopt;
+}
+
+TextStream& operator<<(TextStream& ts, const TouchTrackingRegion& touchTrackingRegion)
+{
+    ts << "node "_s << touchTrackingRegion.target.nodeIdentifier.toUInt64() << " frame "_s << touchTrackingRegion.target.frameIdentifier.toUInt64()
+        << ' ' << touchTrackingRegion.region;
+    return ts;
 }
 #endif
 
@@ -850,6 +945,13 @@ void EventRegion::dump(TextStream& ts) const
 #if ENABLE(EDITABLE_REGION)
     if (m_editableRegion && !m_editableRegion->isEmpty()) {
         ts << indent << "(editable region"_s << *m_editableRegion;
+        ts << indent << ")\n"_s;
+    }
+#endif
+
+#if ENABLE(TOUCH_TRACKING_REGIONS)
+    for (auto& touchTrackingRegion : m_touchTrackingRegions) {
+        ts << indent << "(touch tracking region "_s << touchTrackingRegion;
         ts << indent << ")\n"_s;
     }
 #endif
