@@ -1,4 +1,4 @@
 
-FAIL Matching @supports rule assert_true: expected true got undefined
-FAIL Non matching @supports rule assert_false: expected false got undefined
+PASS Matching @supports rule
+PASS Non matching @supports rule
 

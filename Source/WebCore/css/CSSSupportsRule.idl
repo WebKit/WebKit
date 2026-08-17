@@ -33,6 +33,5 @@
 [
     Exposed=Window
 ] interface CSSSupportsRule : CSSConditionRule {
-    // FIXME: Add support for `matches`.
-    // readonly attribute boolean matches;
+    readonly attribute boolean matches;
 };

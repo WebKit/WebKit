@@ -69,4 +69,9 @@ String CSSSupportsRule::conditionText() const
     return downcast<StyleRuleSupports>(groupRule()).conditionText();
 }
 
+bool CSSSupportsRule::matches() const
+{
+    return downcast<StyleRuleSupports>(groupRule()).conditionIsSupported();
+}
+
 } // namespace WebCore
