@@ -288,24 +288,6 @@ GCGLExternalImage GraphicsContextGLTextureMapperGBM::createExternalImage(Externa
 }
 #endif // !USE(OPENXR_VULKAN)
 
-void GraphicsContextGLTextureMapperGBM::bindExternalImage(GCGLenum target, GCGLExternalImage image)
-{
-    if (!makeContextCurrent())
-        return;
-    EGLImage eglImage = EGL_NO_IMAGE_KHR;
-    if (image) {
-        eglImage = m_eglImages.get(image);
-        if (!eglImage) {
-            addError(GCGLErrorCode::InvalidOperation);
-            return;
-        }
-    }
-    if (target == RENDERBUFFER)
-        GL_EGLImageTargetRenderbufferStorageOES(RENDERBUFFER, eglImage);
-    else
-        GL_EGLImageTargetTexture2DOES(target, eglImage);
-}
-
 bool GraphicsContextGLTextureMapperGBM::enableRequiredWebXRExtensions()
 {
     if (!makeContextCurrent())
@@ -318,7 +300,13 @@ bool GraphicsContextGLTextureMapperGBM::enableRequiredWebXRExtensionsImpl()
 {
     return enableExtensionsImpl({
         "GL_OES_EGL_image"_s,
-        "GL_OES_EGL_image_external"_s
+        "GL_OES_EGL_image_external"_s,
+#if USE(OPENXR_VULKAN)
+        "GL_EXT_memory_object"_s,
+        "GL_EXT_memory_object_fd"_s,
+        "GL_EXT_semaphore"_s,
+        "GL_EXT_semaphore_fd"_s,
+#endif
     });
 }
 #endif // ENABLE(WEBXR)

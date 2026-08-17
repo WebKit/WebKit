@@ -117,7 +117,7 @@ struct GraphicsContextGLExternalImageSource {
 #endif
     WebCore::IntSize size;
 };
-using GraphicsContextGLExternalSyncSource = int;
+using GraphicsContextGLExternalSyncSource = GCGLExternalImage;
 
 #else
 

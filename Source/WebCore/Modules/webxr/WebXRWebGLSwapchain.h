@@ -108,6 +108,8 @@ protected:
     void setupExternalImage(const PlatformXR::FrameData::LayerSetupData&);
     void signalEndFrame(GraphicsContextGL&, PlatformXR::DeviceLayer&);
 
+    virtual GCGLExternalImage currentExternalImage() const = 0;
+
     PlatformXR::LayerHandle m_handle;
     RefPtr<WebGLRenderingContextBase> m_context;
 
@@ -137,6 +139,7 @@ private:
     WebXRWebGLSharedImageSwapchain(WebGLRenderingContextBase&, SwapchainTargets, GCGLenum format, IntSize initialSize, bool clearOnAccess, size_t imageCount);
 
     const WebXRExternalImages* reusableTextures(const PlatformXR::FrameData::ExternalTextureData&) const;
+    GCGLExternalImage currentExternalImage() const final;
     void releaseTexturesAtIndex(size_t index);
     void bindCompositorTexturesForDisplay(GraphicsContextGL&, PlatformXR::FrameData::LayerData&);
     const WebXRExternalImages* reusableTexturesAtIndex(size_t);
@@ -179,6 +182,7 @@ public:
 
 private:
     WebXRWebGLStaticImageSwapchain(WebGLRenderingContextBase&, StaticImageAttributes);
+    GCGLExternalImage currentExternalImage() const final;
     void bindCompositorTexturesForDisplay(GraphicsContextGL&, PlatformXR::FrameData::LayerData&);
     void releaseDisplayImagesAtIndex(size_t);
     void clearTextureRegion(GraphicsContextGL&, const IntRect& viewport, std::optional<GCGLint> slice) override;
@@ -219,6 +223,7 @@ protected:
 
     void releaseTexturesAtIndex(size_t);
     const WebXRExternalImages* reusableTextures(const PlatformXR::FrameData::ExternalTextureData&) const;
+    GCGLExternalImage currentExternalImage() const final;
 
     virtual void bindCompositorTexturesForDisplay(GraphicsContextGL&, PlatformXR::FrameData::LayerData&) = 0;
     virtual void blitToSharedImage(GraphicsContextGL&) = 0;

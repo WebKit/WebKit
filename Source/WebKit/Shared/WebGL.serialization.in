@@ -124,7 +124,7 @@ using WebCore::GraphicsContextGL::ExternalSyncSource = std::tuple<MachSendRight,
     WebCore::IntSize size;
 };
 using WebCore::GraphicsContextGL::ExternalImageSource = WebCore::GraphicsContextGLExternalImageSource;
-using WebCore::GraphicsContextGL::ExternalSyncSource = int
+using WebCore::GraphicsContextGL::ExternalSyncSource = GCGLExternalImage
 #else
 using WebCore::GraphicsContextGL::ExternalImageSource = int
 using WebCore::GraphicsContextGL::ExternalSyncSource = int

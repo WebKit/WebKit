@@ -271,7 +271,8 @@ void WebXROpaqueFramebuffer::endFrame()
         return;
     }
 #else
-    if (auto sync = gl->createExternalSync({ })) {
+    auto* displayAttachmentSet = reusableDisplayAttachmentsAtIndex(m_currentDisplayAttachmentIndex);
+    if (auto sync = gl->createExternalSync(displayAttachmentSet ? GCGLExternalImage { (*displayAttachmentSet)[0].colorBuffer.image } : 0)) {
         m_fenceFD = gl->exportExternalSync(sync);
         gl->deleteExternalSync(sync);
         return;

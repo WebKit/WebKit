@@ -59,8 +59,13 @@ public:
 
 #if ENABLE(WEBXR)
     GCGLExternalSync createExternalSync(ExternalSyncSource&&) final;
+    void bindExternalImage(GCGLenum target, GCGLExternalImage) final;
 #if USE(OPENXR)
     WTF::UnixFileDescriptor exportExternalSync(GCGLExternalSync) final;
+#if USE(OPENXR_VULKAN)
+    GCGLExternalImage createExternalImage(ExternalImageSource&&, GCGLenum internalFormat, GCGLint layer) override;
+    void deleteExternalImage(GCGLExternalImage) final;
+#endif
 #endif
 
     bool addFoveation(IntSize, IntSize, IntSize, std::span<const GCGLfloat>, std::span<const GCGLfloat>, std::span<const GCGLfloat>) final;
@@ -94,6 +99,18 @@ private:
     GCGLuint m_compositorTexture { 0 };
     bool m_isCompositorTextureInitialized { false };
     mutable unsigned m_version { 0 };
+
+#if ENABLE(WEBXR) && USE(OPENXR_VULKAN)
+    bool handBackExternalImage(GCGLExternalImage);
+
+    struct OpaqueFDImageObjects {
+        GCGLuint memoryObject { 0 };
+        PlatformGLObject texture { 0 };
+        GCGLuint renderFinishedSemaphore { 0 };
+    };
+    void deleteOpaqueFDImageObjects(OpaqueFDImageObjects&);
+    HashMap<GCGLExternalImage, OpaqueFDImageObjects, IntHash<GCGLExternalImage>, WTF::UnsignedWithZeroKeyHashTraits<GCGLExternalImage>> m_opaqueFDImages;
+#endif
 
 #if USE(COORDINATED_GRAPHICS) && USE(LIBEPOXY)
     GCGLuint m_textureID { 0 };
