@@ -46,12 +46,12 @@ SOFT_LINK_CLASS_FOR_HEADER(PAL, AVBackgroundView)
 SOFT_LINK_CLASS_FOR_HEADER(PAL, AVPlayerView)
 #endif
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-SOFT_LINK_CLASS_FOR_HEADER(PAL, AVInterfaceMediaSelectionOptionSource)
-SOFT_LINK_CLASS_FOR_HEADER(PAL, AVInterfaceMetadata)
-SOFT_LINK_CLASS_FOR_HEADER(PAL, AVInterfaceTimelineSegment)
-#pragma clang diagnostic pop
+#if HAVE(AVEXPERIENCECONTROLLER)
+SOFT_LINK_CLASS_FOR_HEADER(PAL, AVPlaybackUserInterfaceContentMetadata)
+SOFT_LINK_CLASS_FOR_HEADER(PAL, AVPlaybackUserInterfaceMediaSelectionOption)
+SOFT_LINK_CLASS_FOR_HEADER(PAL, AVPlaybackUserInterfacePlaybackPosition)
+SOFT_LINK_CLASS_FOR_HEADER(PAL, AVPlaybackUserInterfaceTimelineSegment)
+#endif
 
 SOFT_LINK_CLASS_FOR_HEADER(PAL, __AVPlayerLayerView)
 SOFT_LINK_CLASS_FOR_HEADER(PAL, AVOutputDeviceMenuController)

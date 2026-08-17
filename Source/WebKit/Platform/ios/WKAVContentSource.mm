@@ -40,8 +40,8 @@ NS_ASSUME_NONNULL_BEGIN
     WeakPtr<WebCore::PlaybackSessionModel> _model;
 
     CMTimeRange _timeRange;
-    CMTime _currentPlaybackPosition;
-    RetainPtr<NSArray<AVInterfaceTimelineSegment *>> _segments;
+    RetainPtr<AVPlaybackUserInterfacePlaybackPosition> _playbackPosition;
+    RetainPtr<NSArray<AVPlaybackUserInterfaceTimelineSegment *>> _segments;
     NSUInteger _currentSegmentIndex;
     RetainPtr<NSArray<NSValue *>> _seekableTimeRanges;
     BOOL _ready;
@@ -49,29 +49,38 @@ NS_ASSUME_NONNULL_BEGIN
     BOOL _buffering;
     float _playbackSpeed;
     float _scanSpeed;
-    AVInterfacePlaybackState _state;
-    AVInterfaceSeekCapabilities _supportedSeekCapabilities;
+    AVPlaybackUserInterfacePlaybackState _state;
+    AVPlaybackUserInterfaceSeekCapabilities _supportedSeekCapabilities;
     BOOL _containsLiveStreamingContent;
-    RetainPtr<NSError> _playbackError;
+    RetainPtr<NSError> _error;
     float _defaultPlaybackSpeed;
     NSUInteger _currentAudioOptionIndex;
+    NSUInteger _currentAudioDescriptionOptionIndex;
     NSUInteger _currentLegibleOptionIndex;
-    RetainPtr<NSArray<AVInterfaceMediaSelectionOptionSource *>> _audioOptions;
-    RetainPtr<NSArray<AVInterfaceMediaSelectionOptionSource *>> _legibleOptions;
+    RetainPtr<NSArray<AVPlaybackUserInterfaceMediaSelectionOption *>> _audioOptions;
+    RetainPtr<NSArray<AVPlaybackUserInterfaceMediaSelectionOption *>> _audioDescriptionOptions;
+    RetainPtr<NSArray<AVPlaybackUserInterfaceMediaSelectionOption *>> _legibleOptions;
     BOOL _hasAudio;
     BOOL _muted;
     float _volume;
-    RetainPtr<AVInterfaceMetadata> _metadata;
+    RetainPtr<AVPlaybackUserInterfaceContentMetadata> _metadata;
     RetainPtr<CALayer> _videoLayer;
     CGSize _videoSize;
     RetainPtr<CALayer> _captionLayer;
 }
 
-static RetainPtr<AVInterfaceTimelineSegment> emptyTimelineSegment()
+static RetainPtr<AVPlaybackUserInterfaceTimelineSegment> emptyTimelineSegment()
 {
     using namespace PAL;
 
-    return adoptNS([allocAVInterfaceTimelineSegmentInstance() initWithTimeRange:kCMTimeRangeZero auxiliaryContent:NO marked:NO requiresLinearPlayback:NO identifier:nil]);
+    return adoptNS([allocAVPlaybackUserInterfaceTimelineSegmentInstance() initWithTimeRange:kCMTimeRangeZero segmentType:AVPlaybackUserInterfaceTimelineSegmentTypePrimary marked:NO requiresLinearPlayback:NO identifier:nil]);
+}
+
+static RetainPtr<AVPlaybackUserInterfacePlaybackPosition> playbackPosition(CMTime position, CMTime hostTime, float rate)
+{
+    using namespace PAL;
+
+    return adoptNS([allocAVPlaybackUserInterfacePlaybackPositionInstance() initWithPosition:position hostTime:hostTime rate:rate]);
 }
 
 - (instancetype)initWithModel:(WebCore::PlaybackSessionModel&)model
@@ -85,11 +94,13 @@ static RetainPtr<AVInterfaceTimelineSegment> emptyTimelineSegment()
     _model = model;
 
     _timeRange = kCMTimeRangeZero;
-    _currentPlaybackPosition = kCMTimeZero;
+    _playbackPosition = playbackPosition(kCMTimeZero, CMClockGetTime(CMClockGetHostTimeClock()), 0);
     _segments = [NSArray arrayWithObject:emptyTimelineSegment().get()];
     _currentAudioOptionIndex = NSNotFound;
+    _currentAudioDescriptionOptionIndex = NSNotFound;
     _currentLegibleOptionIndex = NSNotFound;
     _audioOptions = [NSArray array];
+    _audioDescriptionOptions = [NSArray array];
     _legibleOptions = [NSArray array];
     _metadata = createPlatformMetadata(nil, nil);
     _videoSize = CGSizeZero;
@@ -117,7 +128,7 @@ static RetainPtr<AVInterfaceTimelineSegment> emptyTimelineSegment()
     _buffering = buffering;
 }
 
-- (void)setSupportedSeekCapabilities:(AVInterfaceSeekCapabilities)supportedSeekCapabilities
+- (void)setSupportedSeekCapabilities:(AVPlaybackUserInterfaceSeekCapabilities)supportedSeekCapabilities
 {
     _supportedSeekCapabilities = supportedSeekCapabilities;
 }
@@ -136,12 +147,12 @@ static RetainPtr<AVInterfaceTimelineSegment> emptyTimelineSegment()
     [self didChangeValueForKey:@"currentLegibleOption"];
 }
 
-- (void)setAudioOptions:(NSArray<AVInterfaceMediaSelectionOptionSource *> *)audioOptions
+- (void)setAudioOptions:(NSArray<AVPlaybackUserInterfaceMediaSelectionOption *> *)audioOptions
 {
     _audioOptions = adoptNS([audioOptions copy]);
 }
 
-- (void)setLegibleOptions:(NSArray<AVInterfaceMediaSelectionOptionSource *> *)legibleOptions
+- (void)setLegibleOptions:(NSArray<AVPlaybackUserInterfaceMediaSelectionOption *> *)legibleOptions
 {
     _legibleOptions = adoptNS([legibleOptions copy]);
 }
@@ -151,7 +162,7 @@ static RetainPtr<AVInterfaceTimelineSegment> emptyTimelineSegment()
     _hasAudio = hasAudio;
 }
 
-- (void)setMetadata:(AVInterfaceMetadata *)metadata
+- (void)setMetadata:(AVPlaybackUserInterfaceContentMetadata *)metadata
 {
     _metadata = metadata;
 }
@@ -171,13 +182,11 @@ static RetainPtr<AVInterfaceTimelineSegment> emptyTimelineSegment()
     _captionLayer = captionLayer;
 }
 
-- (void)setCurrentPlaybackPositionInternal:(CMTime)currentPlaybackPosition
+- (void)setPlaybackPositionInternal:(CMTime)position hostTime:(CMTime)hostTime
 {
-    [self willChangeValueForKey:@"currentValue"];
-    [self willChangeValueForKey:@"currentPlaybackPosition"];
-    _currentPlaybackPosition = currentPlaybackPosition;
-    [self didChangeValueForKey:@"currentValue"];
-    [self didChangeValueForKey:@"currentPlaybackPosition"];
+    [self willChangeValueForKey:@"playbackPosition"];
+    _playbackPosition = playbackPosition(position, hostTime, _playing ? _playbackSpeed : 0);
+    [self didChangeValueForKey:@"playbackPosition"];
 }
 
 - (void)setPlayingInternal:(BOOL)playing
@@ -208,42 +217,32 @@ static RetainPtr<AVInterfaceTimelineSegment> emptyTimelineSegment()
     [self didChangeValueForKey:@"volume"];
 }
 
-#pragma mark - AVInterfaceVideoPlaybackControllable conformance
+#pragma mark - AVPlaybackUserInterfaceVideoControllable conformance
 
 - (CMTimeRange)timeRange
 {
     return _timeRange;
 }
 
-ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
-- (CMTime)currentValue
+- (AVPlaybackUserInterfacePlaybackPosition *)playbackPosition
 {
-    return [self currentPlaybackPosition];
+    return _playbackPosition.get();
 }
 
-- (void)setCurrentValue:(CMTime)currentValue
+- (void)seekToPosition:(CMTime)position tolerance:(CMTime)tolerance
 {
-    [self setCurrentPlaybackPosition:currentValue];
-}
-ALLOW_DEPRECATED_IMPLEMENTATIONS_END
-
-- (CMTime)currentPlaybackPosition
-{
-    return _currentPlaybackPosition;
+    if (CheckedPtr model = _model.get()) {
+        double toleranceSeconds = PAL::CMTimeGetSeconds(tolerance);
+        model->seekToTime(PAL::CMTimeGetSeconds(position), toleranceSeconds, toleranceSeconds);
+    }
 }
 
-- (void)setCurrentPlaybackPosition:(CMTime)currentPlaybackPosition
-{
-    if (CheckedPtr model = _model.get())
-        model->seekToTime(PAL::CMTimeGetSeconds(currentPlaybackPosition));
-}
-
-- (NSArray<AVInterfaceTimelineSegment *> *)segments
+- (NSArray<AVPlaybackUserInterfaceTimelineSegment *> *)segments
 {
     return _segments.get();
 }
 
-- (AVInterfaceTimelineSegment *)currentSegment
+- (AVPlaybackUserInterfaceTimelineSegment *)currentSegment
 {
     return [_segments objectAtIndex:_currentSegmentIndex];
 }
@@ -301,17 +300,17 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     _scanSpeed = scanSpeed;
 }
 
-- (AVInterfacePlaybackState)state
+- (AVPlaybackUserInterfacePlaybackState)state
 {
     return _state;
 }
 
-- (void)setState:(AVInterfacePlaybackState)state
+- (void)setState:(AVPlaybackUserInterfacePlaybackState)state
 {
     _state = state;
 }
 
-- (AVInterfaceSeekCapabilities)supportedSeekCapabilities
+- (AVPlaybackUserInterfaceSeekCapabilities)supportedSeekCapabilities
 {
     return _supportedSeekCapabilities;
 }
@@ -321,9 +320,9 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     return _containsLiveStreamingContent;
 }
 
-- (NSError * _Nullable)playbackError
+- (NSError * _Nullable)error
 {
-    return _playbackError;
+    return _error;
 }
 
 - (float)defaultPlaybackSpeed
@@ -336,7 +335,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     _defaultPlaybackSpeed = defaultPlaybackSpeed;
 }
 
-- (AVInterfaceMediaSelectionOptionSource * _Nullable)currentAudioOption
+- (AVPlaybackUserInterfaceMediaSelectionOption * _Nullable)currentAudioOption
 {
     if (_currentAudioOptionIndex == NSNotFound)
         return nil;
@@ -344,7 +343,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     return [_audioOptions objectAtIndex:_currentAudioOptionIndex];
 }
 
-- (void)setCurrentAudioOption:(AVInterfaceMediaSelectionOptionSource * _Nullable)currentAudioOption
+- (void)setCurrentAudioOption:(AVPlaybackUserInterfaceMediaSelectionOption * _Nullable)currentAudioOption
 {
     CheckedPtr model = _model.get();
     if (!model)
@@ -355,7 +354,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         return;
     }
 
-    NSUInteger index = [_audioOptions indexOfObjectPassingTest:^BOOL(AVInterfaceMediaSelectionOptionSource *option, NSUInteger, BOOL*) {
+    NSUInteger index = [_audioOptions indexOfObjectPassingTest:^BOOL(AVPlaybackUserInterfaceMediaSelectionOption *option, NSUInteger, BOOL*) {
         if (option == currentAudioOption)
             return YES;
         return [option.identifier isEqualToString:currentAudioOption.identifier];
@@ -365,7 +364,29 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         model->selectAudioMediaOption(index);
 }
 
-- (AVInterfaceMediaSelectionOptionSource * _Nullable)currentLegibleOption
+- (AVPlaybackUserInterfaceMediaSelectionOption * _Nullable)currentAudioDescriptionOption
+{
+    if (_currentAudioDescriptionOptionIndex == NSNotFound)
+        return nil;
+
+    return [_audioDescriptionOptions objectAtIndex:_currentAudioDescriptionOptionIndex];
+}
+
+- (void)setCurrentAudioDescriptionOption:(AVPlaybackUserInterfaceMediaSelectionOption * _Nullable)currentAudioDescriptionOption
+{
+    if (!currentAudioDescriptionOption) {
+        _currentAudioDescriptionOptionIndex = NSNotFound;
+        return;
+    }
+
+    _currentAudioDescriptionOptionIndex = [_audioDescriptionOptions indexOfObjectPassingTest:^BOOL(AVPlaybackUserInterfaceMediaSelectionOption *option, NSUInteger, BOOL*) {
+        if (option == currentAudioDescriptionOption)
+            return YES;
+        return [option.identifier isEqualToString:currentAudioDescriptionOption.identifier];
+    }];
+}
+
+- (AVPlaybackUserInterfaceMediaSelectionOption * _Nullable)currentLegibleOption
 {
     if (_currentLegibleOptionIndex == NSNotFound)
         return nil;
@@ -373,7 +394,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     return [_legibleOptions objectAtIndex:_currentLegibleOptionIndex];
 }
 
-- (void)setCurrentLegibleOption:(AVInterfaceMediaSelectionOptionSource * _Nullable)currentLegibleOption
+- (void)setCurrentLegibleOption:(AVPlaybackUserInterfaceMediaSelectionOption * _Nullable)currentLegibleOption
 {
     CheckedPtr model = _model.get();
     if (!model)
@@ -384,7 +405,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         return;
     }
 
-    NSUInteger index = [_legibleOptions indexOfObjectPassingTest:^BOOL(AVInterfaceMediaSelectionOptionSource *option, NSUInteger, BOOL*) {
+    NSUInteger index = [_legibleOptions indexOfObjectPassingTest:^BOOL(AVPlaybackUserInterfaceMediaSelectionOption *option, NSUInteger, BOOL*) {
         if (option == currentLegibleOption)
             return YES;
         return [option.identifier isEqualToString:currentLegibleOption.identifier];
@@ -394,12 +415,17 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         model->selectLegibleMediaOption(index);
 }
 
-- (NSArray<AVInterfaceMediaSelectionOptionSource *> *)audioOptions
+- (NSArray<AVPlaybackUserInterfaceMediaSelectionOption *> *)audioOptions
 {
     return _audioOptions.get();
 }
 
-- (NSArray<AVInterfaceMediaSelectionOptionSource *> *)legibleOptions
+- (NSArray<AVPlaybackUserInterfaceMediaSelectionOption *> *)audioDescriptionOptions
+{
+    return _audioDescriptionOptions.get();
+}
+
+- (NSArray<AVPlaybackUserInterfaceMediaSelectionOption *> *)legibleOptions
 {
     return _legibleOptions.get();
 }
@@ -431,7 +457,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         model->setVolume(volume);
 }
 
-- (AVInterfaceMetadata *)metadata
+- (AVPlaybackUserInterfaceContentMetadata *)metadata
 {
     return _metadata;
 }
@@ -453,10 +479,10 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 @end
 
-RetainPtr<AVInterfaceMetadata> createPlatformMetadata(NSString * _Nullable title, NSString * _Nullable subtitle)
+RetainPtr<AVPlaybackUserInterfaceContentMetadata> createPlatformMetadata(NSString * _Nullable title, NSString * _Nullable subtitle)
 {
     using namespace PAL;
-    return adoptNS([allocAVInterfaceMetadataInstance() initWithAudioOnly:NO presentationSize:CGSizeZero title:title subtitle:subtitle albumArtworkRepresentations:[NSArray array]]);
+    return adoptNS([allocAVPlaybackUserInterfaceContentMetadataInstance() initWithVideoProperties:nil title:title subtitle:subtitle artworkRepresentations:[NSArray array]]);
 }
 
 NS_ASSUME_NONNULL_END

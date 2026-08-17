@@ -25,7 +25,7 @@
 
 #if HAVE(AVEXPERIENCECONTROLLER)
 
-#import <AVKit/AVInterfaceControllable_Private.h>
+#import <AVKit/AVPlaybackUserInterfaceControllable_Private.h>
 #import <CoreMedia/CoreMedia.h>
 #import <Foundation/Foundation.h>
 #import <wtf/Forward.h>
@@ -36,14 +36,14 @@ class PlaybackSessionModel;
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface WKAVContentSource : NSObject <AVInterfaceVideoPlaybackControllable>
+@interface WKAVContentSource : NSObject <AVPlaybackUserInterfaceVideoControllable>
 + (instancetype)new NS_UNAVAILABLE;
 - (instancetype)init NS_UNAVAILABLE;
 - (instancetype)initWithModel:(WebCore::PlaybackSessionModel&)model;
 
 - (void)setCurrentAudioOptionIndex:(NSUInteger)currentAudioOptionIndex;
 - (void)setCurrentLegibleOptionIndex:(NSUInteger)currentLegibleOptionIndex;
-- (void)setCurrentPlaybackPositionInternal:(CMTime)currentPlaybackPosition;
+- (void)setPlaybackPositionInternal:(CMTime)playbackPosition hostTime:(CMTime)hostTime;
 - (void)setPlayingInternal:(BOOL)playing;
 - (void)setPlaybackSpeedInternal:(float)playbackSpeed;
 - (void)setMutedInternal:(BOOL)muted;
@@ -53,17 +53,17 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy, nullable) NSArray<NSValue *> *seekableTimeRanges;
 @property (nonatomic, getter=isReady) BOOL ready;
 @property (nonatomic, getter=isBuffering) BOOL buffering;
-@property (nonatomic) AVInterfaceSeekCapabilities supportedSeekCapabilities;
-@property (nonatomic, copy) NSArray<AVInterfaceMediaSelectionOptionSource *> *audioOptions;
-@property (nonatomic, copy) NSArray<AVInterfaceMediaSelectionOptionSource *> *legibleOptions;
+@property (nonatomic) AVPlaybackUserInterfaceSeekCapabilities supportedSeekCapabilities;
+@property (nonatomic, copy) NSArray<AVPlaybackUserInterfaceMediaSelectionOption *> *audioOptions;
+@property (nonatomic, copy) NSArray<AVPlaybackUserInterfaceMediaSelectionOption *> *legibleOptions;
 @property (nonatomic) BOOL hasAudio;
-@property (nonatomic, strong) AVInterfaceMetadata *metadata;
+@property (nonatomic, copy) AVPlaybackUserInterfaceContentMetadata *metadata;
 @property (nonatomic, strong, nullable) CALayer *videoLayer;
 @property (nonatomic) CGSize videoSize;
 @property (nonatomic, strong, nullable) CALayer *captionLayer;
 @end
 
-RetainPtr<AVInterfaceMetadata> createPlatformMetadata(NSString * _Nullable title, NSString * _Nullable subtitle);
+RetainPtr<AVPlaybackUserInterfaceContentMetadata> createPlatformMetadata(NSString * _Nullable title, NSString * _Nullable subtitle);
 
 NS_ASSUME_NONNULL_END
 
