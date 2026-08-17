@@ -21,10 +21,8 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import logging
-import os
 import re
 import requests
-import subprocess
 
 import ews.common.util as util
 import ews.config as config
@@ -38,29 +36,7 @@ class Buildbot():
     SUCCESS, WARNINGS, FAILURE, SKIPPED, EXCEPTION, RETRY, CANCELLED = ALL_RESULTS
     icons_for_queues_mapping = {}
     queue_name_by_shortname_mapping = {}
-    builder_name_to_id_mapping = {}
     QUEUE_TRIGGERS = {}
-
-    @classmethod
-    def send_patch_to_buildbot(cls, patch_path, send_to_commit_queue=False, properties=None):
-        properties = properties or []
-        buildbot_port = config.COMMIT_QUEUE_PORT if send_to_commit_queue else config.BUILDBOT_SERVER_PORT
-        command = ['buildbot', 'try',
-                   '--connect=pb',
-                   '--master={}:{}'.format(config.BUILDBOT_TRY_HOST, buildbot_port),
-                   '--username={}'.format(config.BUILDBOT_TRY_USERNAME),
-                   '--passwd={}'.format(config.BUILDBOT_TRY_PASSWORD),
-                   '--diff={}'.format(patch_path),
-                   '--repository=']
-
-        for property in properties:
-            command.append('--property={}'.format(property))
-
-        return_code = subprocess.call(command)
-        if return_code:
-            _log.warn('Error executing buildbot try command for {}, return code={}'.format(patch_path, return_code))
-
-        return return_code
 
     @classmethod
     def get_builder_id_to_name_mapping(cls):
@@ -147,43 +123,6 @@ class Buildbot():
                     if child_shortname:
                         triggers[child_shortname] = parent_shortname
         Buildbot.QUEUE_TRIGGERS = triggers
-
-    @classmethod
-    def update_builder_name_to_id_mapping(cls):
-        url = 'https://{}/api/v2/builders'.format(config.BUILDBOT_SERVER_HOST)
-        builders_data = util.fetch_data_from_url(url)
-        if not builders_data:
-            return
-        for builder in builders_data.json().get('builders', []):
-            name = builder.get('name')
-            Buildbot.builder_name_to_id_mapping[name] = builder.get('builderid')
-
-    @classmethod
-    def fetch_pending_and_inprogress_builds(cls, builder_full_name):
-        builderid = Buildbot.builder_name_to_id_mapping.get(builder_full_name)
-        if not Buildbot.builder_name_to_id_mapping:
-            _log.warn('Missing builder_name_to_id_mapping, refetching it from {}'.format(config.BUILDBOT_SERVER_HOST))
-            cls.update_builder_name_to_id_mapping()
-
-        if not builderid:
-            _log.error('Invalid builder: {}. Number of builders: {}'.format(builder_full_name, len(cls.builder_name_to_id_mapping)))
-            return {}
-        url = 'https://{}/api/v2/builders/{}/buildrequests?complete=false&property=*'.format(config.BUILDBOT_SERVER_HOST, builderid)
-        builders_data = util.fetch_data_from_url(url)
-        if not builders_data:
-            return {}
-        return builders_data.json()
-
-    @classmethod
-    def get_patches_in_queue(cls, builder_full_name):
-        patch_ids = []
-        builds = cls.fetch_pending_and_inprogress_builds(builder_full_name)
-        for buildrequest in builds.get('buildrequests', []):
-            properties = buildrequest.get('properties')
-            if properties:
-                patch_ids.append(properties.get('patch_id')[0])
-        _log.debug('Patches in queue for {}: {}'.format(builder_full_name, patch_ids))
-        return patch_ids
 
     @classmethod
     def retry_build(cls, builder_id, build_number):

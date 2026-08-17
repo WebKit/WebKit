@@ -1,4 +1,4 @@
-# Copyright (C) 2018-2025 Apple Inc. All rights reserved.
+# Copyright (C) 2018-2026 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -26,7 +26,7 @@ import logging
 
 from django.db import models
 
-from ews.config import ERR_EXISTING_CHANGE, ERR_INVALID_CHANGE_ID, ERR_NON_EXISTING_CHANGE, SUCCESS
+from ews.config import ERR_EXISTING_CHANGE, ERR_INVALID_CHANGE_ID, SUCCESS
 
 _log = logging.getLogger(__name__)
 
@@ -47,7 +47,7 @@ class Change(models.Model):
         return str(self.change_id)
 
     @classmethod
-    def save_change(cls, change_id, bug_id=-1, pr_number=-1, pr_project='', obsolete=False, sent_to_buildbot=False, sent_to_commit_queue=False):
+    def save_change(cls, change_id, bug_id=-1, pr_number=-1, pr_project='', obsolete=False):
         if not Change.is_valid_change_id(change_id):
             _log.warn('Change id {} in invalid. Skipped saving.'.format(change_id))
             return ERR_INVALID_CHANGE_ID
@@ -55,14 +55,9 @@ class Change(models.Model):
         if Change.is_existing_change_id(change_id):
             _log.debug('Change id {} already exists in database. Skipped saving.'.format(change_id))
             return ERR_EXISTING_CHANGE
-        Change(change_id=change_id, bug_id=bug_id, pr_number=pr_number, pr_project=pr_project, obsolete=obsolete, sent_to_buildbot=sent_to_buildbot, sent_to_commit_queue=sent_to_commit_queue).save()
+        Change(change_id=change_id, bug_id=bug_id, pr_number=pr_number, pr_project=pr_project, obsolete=obsolete).save()
         _log.info(f'Saved change in database, id: {change_id}, pr_number: {pr_number}, pr_project: {pr_project}')
         return SUCCESS
-
-    @classmethod
-    def save_changes(cls, change_id_list):
-        for change_id in change_id_list:
-            Change.save_change(change_id)
 
     @classmethod
     def is_valid_change_id(cls, change_id):
@@ -74,20 +69,6 @@ class Change(models.Model):
     @classmethod
     def is_existing_change_id(cls, change_id):
         return bool(Change.objects.filter(change_id=change_id))
-
-    @classmethod
-    def is_change_sent_to_buildbot(cls, change_id, commit_queue=False):
-        if commit_queue:
-            return Change._is_change_sent_to_commit_queue(change_id)
-        return Change._is_change_sent_to_buildbot(change_id)
-
-    @classmethod
-    def _is_change_sent_to_buildbot(cls, change_id):
-        return Change.is_existing_change_id(change_id) and Change.objects.get(pk=change_id).sent_to_buildbot
-
-    @classmethod
-    def _is_change_sent_to_commit_queue(cls, change_id):
-        return Change.is_existing_change_id(change_id) and Change.objects.get(pk=change_id).sent_to_commit_queue
 
     @classmethod
     def get_change(cls, change_id):
@@ -111,75 +92,6 @@ class Change(models.Model):
                 obsolete_changes.append(change)
                 _log.info(f'Marked change {change.change_id} on pr {pr_number} as obsolete')
         return obsolete_changes
-
-    @classmethod
-    def set_sent_to_buildbot(cls, change_id, value, commit_queue=False):
-        if commit_queue:
-            return Change._set_sent_to_commit_queue(change_id, sent_to_commit_queue=value)
-        return Change._set_sent_to_buildbot(change_id, sent_to_buildbot=value)
-
-    @classmethod
-    def _set_sent_to_buildbot(cls, change_id, sent_to_buildbot=True):
-        if not Change.is_existing_change_id(change_id):
-            Change.save_change(change_id=change_id, sent_to_buildbot=sent_to_buildbot)
-            _log.info('Change {} saved to database with sent_to_buildbot={}'.format(change_id, sent_to_buildbot))
-            return SUCCESS
-
-        change = Change.objects.get(pk=change_id)
-        if change.sent_to_buildbot == sent_to_buildbot:
-            _log.warn('Change {} already has sent_to_buildbot={}'.format(change_id, sent_to_buildbot))
-            return SUCCESS
-
-        change.sent_to_buildbot = sent_to_buildbot
-        change.save()
-        _log.info('Updated change {} with sent_to_buildbot={}'.format(change_id, sent_to_buildbot))
-        return SUCCESS
-
-    @classmethod
-    def _set_sent_to_commit_queue(cls, change_id, sent_to_commit_queue=True):
-        if not Change.is_existing_change_id(change_id):
-            Change.save_change(change_id=change_id, sent_to_commit_queue=sent_to_commit_queue)
-            _log.info('Change {} saved to database with sent_to_commit_queue={}'.format(change_id, sent_to_commit_queue))
-            return SUCCESS
-
-        change = Change.objects.get(pk=change_id)
-        if change.sent_to_commit_queue == sent_to_commit_queue:
-            _log.warn('Change {} already has sent_to_commit_queue={}'.format(change_id, sent_to_commit_queue))
-            return SUCCESS
-
-        change.sent_to_commit_queue = sent_to_commit_queue
-        change.save()
-        _log.info('Updated change {} with sent_to_commit_queue={}'.format(change_id, sent_to_commit_queue))
-        return SUCCESS
-
-    @classmethod
-    def set_bug_id(cls, change_id, bug_id):
-        if not Change.is_existing_change_id(change_id):
-            return ERR_NON_EXISTING_CHANGE
-
-        change = Change.objects.get(pk=change_id)
-        if change.bug_id == bug_id:
-            _log.warn('Change {} already has bug id {} set.'.format(change_id, bug_id))
-            return SUCCESS
-
-        change.bug_id = bug_id
-        change.save()
-        _log.debug('Updated change {} with bug id {}'.format(change_id, bug_id))
-        return SUCCESS
-
-    @classmethod
-    def set_obsolete(cls, change_id, obsolete=True):
-        if not Change.is_existing_change_id(change_id):
-            return ERR_NON_EXISTING_CHANGE
-
-        change = Change.objects.get(pk=change_id)
-        if change.obsolete == obsolete:
-            _log.warn('Change {} is already marked with obsolete={}.'.format(change_id, obsolete))
-            return SUCCESS
-        change.obsolete = obsolete
-        change.save()
-        _log.debug('Marked change {} as obsolete={}'.format(change_id, obsolete))
-        return SUCCESS
 
     def set_comment_id(self, comment_id):
         if type(comment_id) != int or comment_id < 0:

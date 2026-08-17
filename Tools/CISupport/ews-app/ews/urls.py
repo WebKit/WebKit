@@ -26,7 +26,6 @@ from ews.views.index import Index
 from ews.views.results import Results
 from ews.views.status import Status
 from ews.views.statusbubble import StatusBubble
-from ews.views.submittoews import SubmitToEWS
 
 app_name = 'ews'
 urlpatterns = [
@@ -38,6 +37,4 @@ urlpatterns = [
     url(r'^status/(?P<change_id>[a-fA-F0-9]+)/$', Status.as_view(), name='status'),
     # ex: /status-bubble/5 , /status-bubble/ac980a0f
     url(r'^status-bubble/(?P<change_id>[a-fA-F0-9]+)/$', StatusBubble.as_view(), name='statusbubble'),
-    # ex: /submit-to-ews/
-    url(r'^submit-to-ews/$', SubmitToEWS.as_view(), name='submittoews'),
 ]

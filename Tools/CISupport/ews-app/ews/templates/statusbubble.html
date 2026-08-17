@@ -50,13 +50,6 @@ body {
 .error {
   background-color: #E0B0FF;
 }
-.queue_position {
-    font-size: 9px;
-}
-form {
-    float: left;
-    display: block;
-}
 </style>
 <script>
 window.addEventListener("message", function(e) {
@@ -92,20 +85,9 @@ window.addEventListener("message", function(e) {
   {% endif %}
   >
     {{ bubble.name }}
-    {% if bubble.queue_position %}
-    <span class="queue_position">#{{ bubble.queue_position }}</span>
-    {% endif %}
   </a>
   {% endfor %}
   {% endif %}
-
-{% if show_submit_to_ews %}
-  <form name="submit_to_ews" method="POST" action="/submit-to-ews/">{% csrf_token %}
-    <input type="hidden" name="change_id" value="{{ change_id }}">
-    <input type="hidden" name="next_action" value="return_to_bubbles">
-    <input class="status" type="submit" value="Submit for EWS analysis">
-  </form>
-{% endif %}
 
 <script>
 // Convert from UTC dates to local.

@@ -24,7 +24,6 @@ from __future__ import unicode_literals
 
 import datetime
 import logging
-import re
 
 from django.http import HttpResponse
 from django.shortcuts import render
@@ -32,7 +31,6 @@ from django.utils import timezone
 from django.views import View
 from django.views.decorators.clickjacking import xframe_options_exempt
 from ews.common.buildbot import Buildbot
-from ews.models.build import Build
 from ews.models.patch import Change
 import ews.config as config
 
@@ -47,14 +45,12 @@ class StatusBubble(View):
                   'ios-wk2', 'ios-wk2-wpt', 'mac-wk2', 'mac-wk2-stress', 'mac-intel-wk2', 'mac-AS-debug-wk2', 'mac-safer-cpp', 'mac-site-isolation', 'ios-safer-cpp', 'vision-wk2', 'gtk-wk2', 'wpe-wk2', 'api-ios', 'api-mac',
                   'api-mac-debug', 'api-gtk', 'api-wpe', 'bindings', 'jsc-x86-64', 'jsc-debug-arm64', 'jsc-wpe', 'webkitperl', 'webkitpy', 'services']
 
-    DAYS_TO_CHECK_QUEUE_POSITION = 0.5
     DAYS_TO_HIDE_BUBBLE = 7
     BUILDER_ICON = u'\U0001f6e0'
     TESTER_ICON = u'\U0001f9ea'
     BUILD_RETRY_MSG = 'retrying build'
-    UNKNOWN_QUEUE_POSITION = '?'
 
-    def _build_bubble(self, change, queue, hide_icons=False, sent_to_buildbot=True):
+    def _build_bubble(self, change, queue, hide_icons=False):
         bubble = {
             'name': queue,
         }
@@ -71,23 +67,9 @@ class StatusBubble(View):
         if builds:
             build = builds[0]
             builds = builds[:10]  # Limit number of builds to display in status-bubble hover over message
-        if not self._should_show_bubble_for_build(build, sent_to_buildbot):
-            return None
 
         if not build:
-            bubble['state'] = 'none'
-            queue_position = self._queue_position(change, queue, Buildbot.get_parent_queue(queue))
-            if not queue_position:
-                return None
-            if queue_position != StatusBubble.UNKNOWN_QUEUE_POSITION:
-                bubble['queue_position'] = queue_position
-            if Buildbot.get_parent_queue(queue):
-                queue = Buildbot.get_parent_queue(queue)
-            queue_full_name = Buildbot.queue_name_by_shortname_mapping.get(queue)
-            if queue_full_name:
-                bubble['url'] = 'https://{}/#/builders/{}'.format(config.BUILDBOT_SERVER_HOST, queue_full_name)
-            bubble['details_message'] = 'Waiting in queue, processing has not started yet.\n\nPosition in queue: {}'.format(queue_position)
-            return bubble
+            return None
 
         bubble['url'] = 'https://{}/#/builders/{}/builds/{}'.format(config.BUILDBOT_SERVER_HOST, build.builder_id, build.number)
         builder_full_name = build.builder_name.replace('-', ' ')
@@ -135,12 +117,6 @@ class StatusBubble(View):
         elif build.result == Buildbot.SKIPPED:
             bubble['state'] = 'skipped'
             bubble['details_message'] = 'The change is no longer eligible for processing.'
-            if re.search(r'Bug .* is already closed', build.state_string):
-                bubble['details_message'] += ' Bug was already closed when EWS attempted to process it.'
-            elif re.search(r'Patch .* is marked r-', build.state_string):
-                bubble['details_message'] += ' Patch was already marked r- when EWS attempted to process it.'
-            elif re.search(r'Patch .* is obsolete', build.state_string):
-                bubble['details_message'] += ' Patch was obsolete when EWS attempted to process it.'
 
             if len(builds) > 1:
                 bubble['details_message'] += '\nSome messages were logged while the change was still eligible:'
@@ -232,59 +208,15 @@ class StatusBubble(View):
     def get_builds_for_queue(self, change, queue):
         return [build for build in change.build_set.all() if build.builder_display_name == queue]
 
-    def _should_show_bubble_for_build(self, build, sent_to_buildbot=True):
-        if build and build.result == Buildbot.SKIPPED and re.search(r'Patch .* doesn\'t have relevant changes', build.state_string):
-            return False
-        if (not build) and (not sent_to_buildbot):
-            return False
-        return True
-
-    def _queue_position(self, change, queue, parent_queue=None):
-        # FIXME: Handle retried builds and cancelled build-requests as well.
-        from_timestamp = timezone.now() - datetime.timedelta(days=StatusBubble.DAYS_TO_CHECK_QUEUE_POSITION)
-        hide_from_timestamp = timezone.now() - datetime.timedelta(days=StatusBubble.DAYS_TO_HIDE_BUBBLE)
-
-        if change.created < hide_from_timestamp:
-            # Do not display bubble for old change for which no build has been reported on given queue.
-            # Most likely the change would never be processed on this queue, since either the queue was
-            # added after the change was submitted, or build request for that change was cancelled.
-            return None
-
-        if change.created < from_timestamp:
-            # This means change has been waiting on given queue for long time, but not long enough to hide the status-bubble.
-            # Instead of calculating exact queue position (which might be slow), we display a fixed high queue position.
-            return StatusBubble.UNKNOWN_QUEUE_POSITION
-
-        sent = 'sent_to_commit_queue' if queue == 'commit' else 'sent_to_buildbot'
-        previously_sent_changes = set(Change.objects
-                                          .filter(created__gte=from_timestamp)
-                                          .filter(**{sent: True})
-                                          .filter(obsolete=False)
-                                          .filter(created__lt=change.created))
-        if parent_queue:
-            recent_builds_parent_queue = Build.objects \
-                                             .filter(created__gte=from_timestamp) \
-                                             .filter(builder_display_name=parent_queue)
-            processed_changes_parent_queue = set([build.change for build in recent_builds_parent_queue])
-            return len(previously_sent_changes - processed_changes_parent_queue) + 1
-
-        recent_builds = Build.objects \
-                            .filter(created__gte=from_timestamp) \
-                            .filter(builder_display_name=queue)
-        processed_changes = set([build.change for build in recent_builds])
-        _log.debug('Change: {}, queue: {}, previous changes: {}'.format(change.change_id, queue, previously_sent_changes - processed_changes))
-        return len(previously_sent_changes - processed_changes) + 1
-
     def _build_bubbles_for_change(self, change, hide_icons=False):
-        show_submit_to_ews = True
         failed_to_apply = False  # TODO: https://bugs.webkit.org/show_bug.cgi?id=194598
         bubbles = []
 
         if not change:
-            return (None, show_submit_to_ews, failed_to_apply)
+            return (None, failed_to_apply)
 
         for queue in StatusBubble.ALL_QUEUES:
-            bubble = self._build_bubble(change, queue, hide_icons, change.sent_to_buildbot)
+            bubble = self._build_bubble(change, queue, hide_icons)
             if bubble:
                 bubbles.append(bubble)
 
@@ -295,19 +227,17 @@ class StatusBubble(View):
             if cq_bubble:
                 bubbles.insert(0, cq_bubble)
 
-        show_submit_to_ews = not change.sent_to_buildbot
-        return (bubbles, show_submit_to_ews, failed_to_apply)
+        return (bubbles, failed_to_apply)
 
     @xframe_options_exempt
     def get(self, request, change_id):
         hide_icons = request.GET.get('hide_icons', False)
         change = Change.get_change(change_id)
-        bubbles, show_submit_to_ews, show_failure_to_apply = self._build_bubbles_for_change(change, hide_icons)
+        bubbles, show_failure_to_apply = self._build_bubbles_for_change(change, hide_icons)
 
         template_values = {
             'bubbles': bubbles,
             'change_id': change_id,
-            'show_submit_to_ews': show_submit_to_ews,
             'show_failure_to_apply': show_failure_to_apply,
         }
         return render(request, 'statusbubble.html', template_values)
