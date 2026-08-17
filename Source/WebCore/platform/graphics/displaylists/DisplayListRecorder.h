@@ -87,7 +87,7 @@ protected:
         {
             auto stateClone = state.clone(GraphicsContextState::Purpose::TransparencyLayer);
             std::optional<GraphicsContextState> lastDrawingStateClone;
-            if (lastDrawingStateClone)
+            if (lastDrawingState)
                 lastDrawingStateClone = lastDrawingState->clone(GraphicsContextState::Purpose::TransparencyLayer);
             return ContextState { WTF::move(stateClone), ctm, clipBounds, WTF::move(lastDrawingStateClone) };
         }
