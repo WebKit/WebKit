@@ -225,7 +225,7 @@ JSCellButterfly* JSCellButterfly::createFromString(JSGlobalObject* globalObject,
             value = jsSingleCharacterString(vm, characters[index]);
         else {
             ASSERT(size == 2);
-            const char16_t string[2] = {
+            const std::array<char16_t, 2> string {
                 characters[index],
                 characters[index + 1],
             };

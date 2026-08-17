@@ -310,7 +310,7 @@ SUPPRESS_ASAN void JSDOMGlobalObject::addBuiltinGlobals(VM& vm)
     m_builtinInternalFunctions->initialize(*this);
 
     auto& builtinNames = WebCore::builtinNames(vm);
-    JSDOMGlobalObject::GlobalPropertyInfo staticGlobals[] = {
+    std::array<JSDOMGlobalObject::GlobalPropertyInfo, 21> staticGlobals {
         JSDOMGlobalObject::GlobalPropertyInfo(builtinNames.makeThisTypeErrorPrivateName(),
             JSFunction::create(vm, this, 2, String(), makeThisTypeErrorForBuiltins, ImplementationVisibility::Public), PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly),
         JSDOMGlobalObject::GlobalPropertyInfo(builtinNames.makeGetterTypeErrorPrivateName(),

@@ -128,8 +128,8 @@ public:
             return;
 #elif OS(WINDOWS)
         HANDLE hProc = GetCurrentProcess();
-        uint8_t symbolData[sizeof(SYMBOL_INFO) + MAX_SYM_NAME * sizeof(TCHAR)] = { 0 };
-        auto symbolInfo = reinterpret_cast<SYMBOL_INFO*>(symbolData);
+        std::array<uint8_t, sizeof(SYMBOL_INFO) + MAX_SYM_NAME * sizeof(TCHAR)> symbolData { 0 };
+        auto symbolInfo = reinterpret_cast<SYMBOL_INFO*>(symbolData.data());
 
         symbolInfo->SizeOfStruct = sizeof(SYMBOL_INFO);
         symbolInfo->MaxNameLen = MAX_SYM_NAME;

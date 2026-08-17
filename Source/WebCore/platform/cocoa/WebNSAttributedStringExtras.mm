@@ -39,8 +39,8 @@ NSAttributedString *attributedStringByStrippingAttachmentCharacters(NSAttributed
     NSRange attachmentRange;
     RetainPtr<NSString> originalString = [attributedString string];
     static NeverDestroyed attachmentCharString = [] {
-        unichar chars[2] = { NSAttachmentCharacter, 0 };
-        return adoptNS([[NSString alloc] initWithCharacters:chars length:1]);
+        std::array<unichar, 2> chars { NSAttachmentCharacter, 0 };
+        return adoptNS([[NSString alloc] initWithCharacters:chars.data() length:1]);
     }();
 
     attachmentRange = [originalString rangeOfString:attachmentCharString.get().get()];

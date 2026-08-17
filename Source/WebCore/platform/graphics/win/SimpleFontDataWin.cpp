@@ -64,8 +64,8 @@ void Font::platformInit()
     const double metricsMultiplier = 1. / cWindowsFontScaleFactor;
     HGDIOBJ oldFont = SelectObject(dc, m_platformData.hfont());
 
-    wchar_t faceName[LF_FACESIZE];
-    GetTextFace(dc, LF_FACESIZE, faceName);
+    std::array<wchar_t, LF_FACESIZE> faceName;
+    GetTextFace(dc, LF_FACESIZE, faceName.data());
 
     OUTLINETEXTMETRIC metrics;
     if (!GetOutlineTextMetrics(dc, sizeof(metrics), &metrics))
@@ -82,7 +82,7 @@ void Font::platformInit()
     RestoreDC(dc, -1);
 
     // Disable antialiasing when rendering with Ahem because many tests require this.
-    if (!_wcsicmp(faceName, L"Ahem"))
+    if (!_wcsicmp(faceName.data(), L"Ahem"))
         m_allowsAntialiasing = false;
 
     float ascent, descent, capHeight, lineGap;

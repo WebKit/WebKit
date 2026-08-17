@@ -4336,11 +4336,11 @@ private:
 
         // By BasicBlock convention, caseIndex == 0 => then, caseIndex == 1 => else.
         static constexpr unsigned numCases = 2;
-        BasicBlock* cases[numCases];
+        std::array<BasicBlock*, numCases> cases;
         for (unsigned i = 0; i < numCases; ++i)
             cases[i] = m_blockInsertionSet.insertBefore(m_block);
 
-        UncheckedKeyHashMap<Value*, Value*> mappings[2];
+        std::array<UncheckedKeyHashMap<Value*, Value*>, 2> mappings;
 
         // Save things we want to know about the source.
         Value* predicate = source->child(0);

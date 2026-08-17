@@ -153,10 +153,10 @@ String FontPlatformData::familyName() const
 {
     HWndDC hdc(0);
     HGDIOBJ oldFont = SelectObject(hdc, m_hfont.get());
-    wchar_t faceName[LF_FACESIZE];
-    GetTextFace(hdc, LF_FACESIZE, faceName);
+    std::array<wchar_t, LF_FACESIZE> faceName;
+    GetTextFace(hdc, LF_FACESIZE, faceName.data());
     SelectObject(hdc, oldFont);
-    return faceName;
+    return faceName.data();
 }
 
 } // namespace WebCore

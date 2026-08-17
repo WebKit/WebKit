@@ -144,9 +144,9 @@ RetainPtr<CTFontRef> SystemFontDatabaseCoreText::createFontByApplyingWeightWidth
     const float systemFontItalicSlope = 0.07;
     float italicsRawNumber = italic ? systemFontItalicSlope : 0;
     auto italicsNumber = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberFloatType, &italicsRawNumber));
-    CFTypeRef traitsKeys[] = { kCTFontWeightTrait, kCTFontWidthTrait, kCTFontSlantTrait, kCTFontUIFontDesignTrait };
-    CFTypeRef traitsValues[] = { weightNumber.get(), widthNumber.get(), italicsNumber.get(), design ? static_cast<CFTypeRef>(design) : static_cast<CFTypeRef>(kCTFontUIFontDesignDefault) };
-    auto traitsDictionary = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, traitsKeys, traitsValues, std::size(traitsKeys), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+    std::array<CFTypeRef, 4> traitsKeys { kCTFontWeightTrait, kCTFontWidthTrait, kCTFontSlantTrait, kCTFontUIFontDesignTrait };
+    std::array<CFTypeRef, 4> traitsValues { weightNumber.get(), widthNumber.get(), italicsNumber.get(), design ? static_cast<CFTypeRef>(design) : static_cast<CFTypeRef>(kCTFontUIFontDesignDefault) };
+    auto traitsDictionary = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, traitsKeys.data(), traitsValues.data(), traitsKeys.size(), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
     auto attributes = adoptCF(CFDictionaryCreateMutable(kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
     CFDictionaryAddValue(attributes.get(), kCTFontTraitsAttribute, traitsDictionary.get());
     addAttributesForInstalledFonts(attributes.get(), allowUserInstalledFonts);
@@ -159,17 +159,17 @@ RetainPtr<CTFontRef> SystemFontDatabaseCoreText::createFontByApplyingWeightWidth
 RetainPtr<CTFontDescriptorRef> SystemFontDatabaseCoreText::removeCascadeList(CTFontDescriptorRef fontDescriptor)
 {
     auto emptyArray = adoptCF(CFArrayCreate(kCFAllocatorDefault, nullptr, 0, &kCFTypeArrayCallBacks));
-    CFTypeRef fallbackDictionaryKeys[] = { kCTFontCascadeListAttribute };
-    CFTypeRef fallbackDictionaryValues[] = { emptyArray.get() };
-    auto fallbackDictionary = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, fallbackDictionaryKeys, fallbackDictionaryValues, std::size(fallbackDictionaryKeys), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+    std::array<CFTypeRef, 1> fallbackDictionaryKeys { kCTFontCascadeListAttribute };
+    std::array<CFTypeRef, 1> fallbackDictionaryValues { emptyArray.get() };
+    auto fallbackDictionary = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, fallbackDictionaryKeys.data(), fallbackDictionaryValues.data(), fallbackDictionaryKeys.size(), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
     auto modifiedFontDescriptor = adoptCF(CTFontDescriptorCreateCopyWithAttributes(fontDescriptor, fallbackDictionary.get()));
     return modifiedFontDescriptor;
 }
 
 Vector<RetainPtr<CTFontDescriptorRef>> SystemFontDatabaseCoreText::computeCascadeList(CTFontRef font, CFStringRef locale)
 {
-    CFTypeRef arrayValues[] = { locale };
-    auto localeArray = adoptCF(CFArrayCreate(kCFAllocatorDefault, arrayValues, std::size(arrayValues), &kCFTypeArrayCallBacks));
+    std::array<CFTypeRef, 1> arrayValues { locale };
+    auto localeArray = adoptCF(CFArrayCreate(kCFAllocatorDefault, arrayValues.data(), arrayValues.size(), &kCFTypeArrayCallBacks));
     auto cascadeList = adoptCF(CTFontCopyDefaultCascadeListForLanguages(font, localeArray.get()));
     Vector<RetainPtr<CTFontDescriptorRef>> result;
     // WebKit handles the cascade list, and WebKit 2's IPC code doesn't know how to serialize Core Text's cascade list.

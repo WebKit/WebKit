@@ -817,8 +817,8 @@ float sumOfSquares(std::span<const float> inputSpan)
     }
     float32x2_t twoSum = vadd_f32(vget_low_f32(fourSum), vget_high_f32(fourSum));
 
-    float groupSum[2];
-    vst1_f32(groupSum, twoSum);
+    std::array<float, 2> groupSum;
+    vst1_f32(groupSum.data(), twoSum);
     sum += groupSum[0] + groupSum[1];
 
     n = tailFrames;
@@ -883,8 +883,8 @@ float maximumMagnitude(std::span<const float> inputSpan)
     }
     float32x2_t twoMax = vmax_f32(vget_low_f32(fourMax), vget_high_f32(fourMax));
 
-    float groupMax[2];
-    vst1_f32(groupMax, twoMax);
+    std::array<float, 2> groupMax;
+    vst1_f32(groupMax.data(), twoMax);
     max = std::max(groupMax[0], groupMax[1]);
 
     n = tailFrames;

@@ -270,9 +270,9 @@ static void showText(CGContextRef context, float x, float y, CGColorRef color, c
     CGFloat fontSize = 11;
 #endif
     auto font = adoptCF(CTFontCreateWithName(fontName, fontSize, &matrix));
-    CFTypeRef keys[] = { kCTFontAttributeName, kCTForegroundColorFromContextAttributeName };
-    CFTypeRef values[] = { font.get(), kCFBooleanTrue };
-    auto attributes = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, keys, values, std::size(keys), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+    std::array<CFTypeRef, 2> keys { kCTFontAttributeName, kCTForegroundColorFromContextAttributeName };
+    std::array<CFTypeRef, 2> values { font.get(), kCFBooleanTrue };
+    auto attributes = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, keys.data(), values.data(), keys.size(), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
     CString cstr = text.ascii();
     auto cstrSpan = cstr.span();
     auto string = adoptCF(CFStringCreateWithBytesNoCopy(kCFAllocatorDefault, byteCast<UInt8>(cstrSpan.data()), cstrSpan.size(), kCFStringEncodingASCII, false, kCFAllocatorNull));

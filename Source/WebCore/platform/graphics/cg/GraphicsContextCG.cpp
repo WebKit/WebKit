@@ -335,10 +335,10 @@ void GraphicsContextCG::drawNativeImage(const NativeImage& nativeImage, const Fl
         RetainPtr cdrStrengthNumber = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberFloatType, &cdrStrength));
         RetainPtr averageLightLevelNumber = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &averageLightLevel));
 
-        CFTypeRef toneMappingKeys[] = { kCGContentEDRStrength, kCGContentAverageLightLevel, kCGConstrainedDynamicRange };
-        CFTypeRef toneMappingValues[] = { edrStrengthNumber.get(), averageLightLevelNumber.get(), cdrStrengthNumber.get() };
+        std::array<CFTypeRef, 3> toneMappingKeys { kCGContentEDRStrength, kCGContentAverageLightLevel, kCGConstrainedDynamicRange };
+        std::array<CFTypeRef, 3> toneMappingValues { edrStrengthNumber.get(), averageLightLevelNumber.get(), cdrStrengthNumber.get() };
 
-        RetainPtr toneMappingOptions = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, toneMappingKeys, toneMappingValues, sizeof(toneMappingKeys) / sizeof(toneMappingKeys[0]), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+        RetainPtr toneMappingOptions = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, toneMappingKeys.data(), toneMappingValues.data(), toneMappingKeys.size(),&kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
 
         CGContentToneMappingInfo toneMappingInfo = { kCGToneMappingReferenceWhiteBased, toneMappingOptions.get() };
         CGContextSetContentToneMappingInfo(context, toneMappingInfo);
@@ -559,13 +559,13 @@ void GraphicsContextCG::drawRect(const FloatRect& rect, float borderThickness)
         Color oldFillColor = fillColor();
         if (oldFillColor != strokeColor())
             setCGFillColor(context, strokeColor(), colorSpace());
-        CGRect rects[4] = {
+        std::array<CGRect, 4> rects {
             FloatRect(rect.x(), rect.y(), rect.width(), borderThickness),
             FloatRect(rect.x(), rect.maxY() - borderThickness, rect.width(), borderThickness),
             FloatRect(rect.x(), rect.y() + borderThickness, borderThickness, rect.height() - 2 * borderThickness),
             FloatRect(rect.maxX() - borderThickness, rect.y() + borderThickness, borderThickness, rect.height() - 2 * borderThickness)
         };
-        CGContextFillRects(context, rects, 4);
+        CGContextFillRects(context, rects.data(), 4);
         if (oldFillColor != strokeColor())
             setCGFillColor(context, oldFillColor, colorSpace());
     }
@@ -608,8 +608,8 @@ void GraphicsContextCG::drawLine(const FloatPoint& point1, const FloatPoint& poi
             return;
 
         float patternOffset = dashedLinePatternOffsetForPatternAndStrokeWidth(patternWidth, strokeWidth);
-        const CGFloat dashedLine[2] = { static_cast<CGFloat>(patternWidth), static_cast<CGFloat>(patternWidth) };
-        CGContextSetLineDash(context, patternOffset, dashedLine, 2);
+        const std::array<CGFloat, 2> dashedLine { static_cast<CGFloat>(patternWidth), static_cast<CGFloat>(patternWidth) };
+        CGContextSetLineDash(context, patternOffset, dashedLine.data(), 2);
     }
 
     auto centeredPoints = centerLineAndCutOffCorners(isVerticalLine, cornerWidth, point1, point2);
@@ -833,8 +833,8 @@ void GraphicsContextCG::strokePath(const Path& path)
         applyStrokePattern();
 
     if (auto line = path.singleDataLine()) {
-        CGPoint cgPoints[2] { line->start(), line->end() };
-        CGContextStrokeLineSegments(context, cgPoints, 2);
+        std::array<CGPoint, 2> cgPoints { line->start(), line->end() };
+        CGContextStrokeLineSegments(context, cgPoints.data(), 2);
         return;
     }
 
@@ -1023,9 +1023,9 @@ void GraphicsContextCG::clipOut(const FloatRect& rect)
     CGContextRef context = platformContext();
     const AffineTransform& ctm = getCTM();
     bool canUseCGRectInfinite = CGContextGetType(context) != kCGContextTypePDF && (renderingMode() == RenderingMode::Unaccelerated || (!ctm.b() && !ctm.c()));
-    CGRect rects[2] = { canUseCGRectInfinite ? CGRectInfinite : CGContextGetClipBoundingBox(context), rect };
+    std::array<CGRect, 2> rects { canUseCGRectInfinite ? CGRectInfinite : CGContextGetClipBoundingBox(context), rect };
     CGContextBeginPath(context);
-    CGContextAddRects(context, rects, 2);
+    CGContextAddRects(context, rects.data(), 2);
     CGContextEOClip(context);
 }
 
@@ -1359,8 +1359,8 @@ void GraphicsContextCG::strokeLine(const PathDataLine& line)
         applyStrokePattern();
 
     CGContextRef context = platformContext();
-    CGPoint pts[2] = { line.start(), line.end() };
-    CGContextStrokeLineSegments(context, pts, 2);
+    std::array<CGPoint, 2> pts { line.start(), line.end() };
+    CGContextStrokeLineSegments(context, pts.data(), 2);
 }
 
 void GraphicsContextCG::setLineCap(LineCap cap)

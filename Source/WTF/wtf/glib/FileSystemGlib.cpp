@@ -79,13 +79,13 @@ CString currentExecutablePath()
 
 CString currentExecutablePath()
 {
-    static char readBuffer[PATH_MAX];
+    static std::array<char, PATH_MAX> readBuffer;
     int selfFd = open("/proc/self/exefile", O_RDONLY);
-    ssize_t result = read(selfFd, readBuffer, sizeof(readBuffer));
+    ssize_t result = read(selfFd, readBuffer.data(), readBuffer.size());
     close(selfFd);
     if (result <= 0)
         return { };
-    return CString(unsafeMakeSpan(readBuffer, static_cast<size_t>(result)));
+    return CString(unsafeMakeSpan(readBuffer.data(), static_cast<size_t>(result)));
 }
 #elif OS(UNIX)
 #if OS(NETBSD)
@@ -95,11 +95,11 @@ CString currentExecutablePath()
 #endif
 CString currentExecutablePath()
 {
-    static char readLinkBuffer[PATH_MAX];
-    ssize_t result = readlink(_PROC_CURPROC_PATH, readLinkBuffer, PATH_MAX);
+    static std::array<char, PATH_MAX> readLinkBuffer;
+    ssize_t result = readlink(_PROC_CURPROC_PATH, readLinkBuffer.data(), readLinkBuffer.size());
     if (result <= 0)
         return { };
-    return CString(unsafeMakeSpan(readLinkBuffer, static_cast<size_t>(result)));
+    return CString(unsafeMakeSpan(readLinkBuffer.data(), static_cast<size_t>(result)));
 }
 #elif OS(WINDOWS)
 CString currentExecutablePath()

@@ -361,8 +361,8 @@ ALWAYS_INLINE String tryMakeReplacedString(const String& string, const String& r
         size_t dollarPos = replacement.find('$');
         if (dollarPos != WTF::notFound) {
             StringBuilder builder(OverflowPolicy::RecordOverflow);
-            int ovector[2] = { static_cast<int>(matchStart), static_cast<int>(matchEnd) };
-            substituteBackreferencesSlow(builder, replacement, string, ovector, nullptr, dollarPos);
+            std::array<int, 2> ovector { static_cast<int>(matchStart), static_cast<int>(matchEnd) };
+            substituteBackreferencesSlow(builder, replacement, string, ovector.data(), nullptr, dollarPos);
             if (builder.hasOverflowed()) [[unlikely]]
                 return { };
             if (auto result = tryMakeString(StringView(string).substring(0, matchStart), StringView { builder }, StringView(string).substring(matchEnd, string.length() - matchEnd)); !result.isNull()) [[likely]]
@@ -474,8 +474,8 @@ ALWAYS_INLINE JSString* stringReplaceAllStringString(JSGlobalObject* globalObjec
     for (auto start : matchStarts) {
         resultBuilder.append(StringView(string).substring(lastMatchEnd, start - lastMatchEnd));
         if constexpr (substitutions == StringReplaceSubstitutions::Yes) {
-            int ovector[2] = { static_cast<int>(start), static_cast<int>(start + searchLength) };
-            substituteBackreferences(resultBuilder, replacement, string, ovector, nullptr);
+            std::array<int, 2> ovector { static_cast<int>(start), static_cast<int>(start + searchLength) };
+            substituteBackreferences(resultBuilder, replacement, string, ovector.data(), nullptr);
         } else
             resultBuilder.append(replacement);
         lastMatchEnd = start + searchLength;

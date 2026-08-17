@@ -109,7 +109,7 @@ void FEColorMatrixSoftwareApplier::applyPlatformAccelerated(PixelBuffer& pixelBu
     case ColorMatrixType::FECOLORMATRIX_TYPE_MATRIX: {
         const auto& values = m_effect->values();
 
-        const int16_t matrix[4 * 4] = {
+        const std::array<int16_t, 4 * 4> matrix {
             static_cast<int16_t>(roundf(values[ 0] * divisor)),
             static_cast<int16_t>(roundf(values[ 5] * divisor)),
             static_cast<int16_t>(roundf(values[10] * divisor)),
@@ -130,13 +130,13 @@ void FEColorMatrixSoftwareApplier::applyPlatformAccelerated(PixelBuffer& pixelBu
             static_cast<int16_t>(roundf(values[13] * divisor)),
             static_cast<int16_t>(roundf(values[18] * divisor)),
         };
-        vImageMatrixMultiply_ARGB8888(&src, &dest, matrix, divisor, nullptr, nullptr, kvImageNoFlags);
+        vImageMatrixMultiply_ARGB8888(&src, &dest, matrix.data(), divisor, nullptr, nullptr, kvImageNoFlags);
         break;
     }
 
     case ColorMatrixType::FECOLORMATRIX_TYPE_SATURATE:
     case ColorMatrixType::FECOLORMATRIX_TYPE_HUEROTATE: {
-        const int16_t matrix[4 * 4] = {
+        const std::array<int16_t, 4 * 4> matrix {
             static_cast<int16_t>(roundf(m_components[0] * divisor)),
             static_cast<int16_t>(roundf(m_components[3] * divisor)),
             static_cast<int16_t>(roundf(m_components[6] * divisor)),
@@ -157,12 +157,12 @@ void FEColorMatrixSoftwareApplier::applyPlatformAccelerated(PixelBuffer& pixelBu
             0,
             divisor,
         };
-        vImageMatrixMultiply_ARGB8888(&src, &dest, matrix, divisor, nullptr, nullptr, kvImageNoFlags);
+        vImageMatrixMultiply_ARGB8888(&src, &dest, matrix.data(), divisor, nullptr, nullptr, kvImageNoFlags);
         break;
     }
     case ColorMatrixType::FECOLORMATRIX_TYPE_LUMINANCETOALPHA: {
         // FIXME: Use luminanceToAlphaColorMatrix(), but the coefficients are slightly different. Have these been selected for integer math?
-        const int16_t matrix[4 * 4] = {
+        const std::array<int16_t, 4 * 4> matrix {
             0,
             0,
             0,
@@ -183,7 +183,7 @@ void FEColorMatrixSoftwareApplier::applyPlatformAccelerated(PixelBuffer& pixelBu
             0,
             0,
         };
-        vImageMatrixMultiply_ARGB8888(&src, &dest, matrix, divisor, nullptr, nullptr, kvImageNoFlags);
+        vImageMatrixMultiply_ARGB8888(&src, &dest, matrix.data(), divisor, nullptr, nullptr, kvImageNoFlags);
         break;
     }
     }

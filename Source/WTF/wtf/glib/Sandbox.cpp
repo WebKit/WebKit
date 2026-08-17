@@ -50,7 +50,7 @@ bool isInsideUnsupportedContainer()
     // docker vs podman, which permissions are given, is it privileged or unprivileged, and are unprivileged user namespaces enabled.
     // So this just does a basic test of if `bwrap` runs successfully.
     if (inContainer && supportedContainer == -1) {
-        const char* bwrapArgs[] = {
+        std::array<const char*, 11> bwrapArgs {
             BWRAP_EXECUTABLE,
             "--ro-bind", "/", "/",
             "--proc", "/proc",
@@ -60,7 +60,7 @@ bool isInsideUnsupportedContainer()
             nullptr
         };
         int waitStatus = 0;
-        gboolean spawnSucceeded = g_spawn_sync(nullptr, const_cast<char**>(bwrapArgs), nullptr,
+        gboolean spawnSucceeded = g_spawn_sync(nullptr, const_cast<char**>(bwrapArgs.data()), nullptr,
             G_SPAWN_STDERR_TO_DEV_NULL, nullptr, nullptr, nullptr, nullptr, &waitStatus, nullptr);
         supportedContainer = spawnSucceeded && g_spawn_check_exit_status(waitStatus, nullptr);
         if (!supportedContainer)

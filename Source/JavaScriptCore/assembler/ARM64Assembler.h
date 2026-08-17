@@ -3915,7 +3915,7 @@ public:
     static void setPointer(int* address, void* valuePtr, RegisterID rd)
     {
         uintptr_t value = reinterpret_cast<uintptr_t>(valuePtr);
-        int buffer[NUMBER_OF_ADDRESS_ENCODING_INSTRUCTIONS];
+        std::array<int, NUMBER_OF_ADDRESS_ENCODING_INSTRUCTIONS> buffer;
         buffer[0] = moveWideImediate(Datasize_64, MoveWideOp_Z, 0, getHalfword(value, 0), rd);
         buffer[1] = moveWideImediate(Datasize_64, MoveWideOp_K, 1, getHalfword(value, 1), rd);
         if constexpr (NUMBER_OF_ADDRESS_ENCODING_INSTRUCTIONS > 2)
@@ -3923,7 +3923,7 @@ public:
         if constexpr (NUMBER_OF_ADDRESS_ENCODING_INSTRUCTIONS > 3)
             buffer[3] = moveWideImediate(Datasize_64, MoveWideOp_K, 3, getHalfword(value, 3), rd);
         RELEASE_ASSERT(roundUpToMultipleOf<instructionSize>(address) == address);
-        performJITMemcpy<noFlush(repatch)>(address, buffer, sizeof(int) * NUMBER_OF_ADDRESS_ENCODING_INSTRUCTIONS);
+        performJITMemcpy<noFlush(repatch)>(address, buffer.data(), sizeof(int) * NUMBER_OF_ADDRESS_ENCODING_INSTRUCTIONS);
 
         if constexpr ((*repatch).contains(RepatchingFlag::Flush))
             cacheFlush(address, sizeof(int) * NUMBER_OF_ADDRESS_ENCODING_INSTRUCTIONS);

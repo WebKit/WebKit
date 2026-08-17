@@ -1276,7 +1276,7 @@ bool SpeculativeJIT::genericJSValueStrictEq(Node* node, bool invert)
 static const char* NODELETE dataFormatString(DataFormat format)
 {
     // These values correspond to the DataFormat enum.
-    const char* strings[] = {
+    const std::array<const char*, 16> strings {
         "[  ]",
         "[ i]",
         "[ d]",
@@ -17040,7 +17040,7 @@ void SpeculativeJIT::compileMakeRope(Node* node)
     SpeculateCellOperand op1(this, node->child1());
     SpeculateCellOperand op2(this, node->child2());
     SpeculateCellOperand op3(this, node->child3());
-    GPRReg opGPRs[3];
+    std::array<GPRReg, 3> opGPRs;
     unsigned numOpGPRs;
     opGPRs[0] = op1.gpr();
     opGPRs[1] = op2.gpr();
@@ -17052,7 +17052,7 @@ void SpeculativeJIT::compileMakeRope(Node* node)
         numOpGPRs = 2;
     }
 
-    Edge edges[3] = {
+    std::array<Edge, 3> edges {
         node->child1(),
         node->child2(),
         node->child3()
@@ -17208,7 +17208,7 @@ void SpeculativeJIT::compileMakeAtomString(Node* node)
     SpeculateCellOperand op3(this, node->child3());
     GPRTemporary cachePtr(this);
 
-    GPRReg opGPRs[3] { InvalidGPRReg, InvalidGPRReg, InvalidGPRReg };
+    std::array<GPRReg, 3> opGPRs { InvalidGPRReg, InvalidGPRReg, InvalidGPRReg };
     unsigned numOpGPRs;
     opGPRs[0] = op1.gpr();
     if (node->child2()) {

@@ -168,13 +168,13 @@ void TZoneHeapManager::init()
     if (bucketsForSizeClassesValue && *bucketsForSizeClassesValue) {
         constexpr unsigned numParams = 3;
         constexpr unsigned bufferLength = 30;
-        char buffer[bufferLength + 1];
-        unsigned paramsAsNumbers[numParams];
+        std::array<char, bufferLength + 1> buffer;
+        std::array<unsigned, numParams> paramsAsNumbers;
         unsigned paramsProvided = 0;
 
-        memcpy(buffer, bucketsForSizeClassesValue, bufferLength);
+        memcpy(buffer.data(), bucketsForSizeClassesValue, bufferLength);
         buffer[bufferLength] = '\0';
-        auto tempString = buffer;
+        char* tempString = buffer.data();
         char* param = nullptr;
 
         unsigned smallSizeCount { 0 };
@@ -201,7 +201,7 @@ void TZoneHeapManager::init()
 #if BOS(DARWIN)
     // Use the boot UUID and the process' name to seed the key.
     static const size_t rawSeedLength = 128;
-    char rawSeed[rawSeedLength] = { };
+    std::array<char, rawSeedLength> rawSeed { };
 
     uint64_t primordialSeed;
     struct timeval timeValue;
@@ -256,7 +256,7 @@ void TZoneHeapManager::init()
     }
 
     alignas(8) std::array<unsigned char, CC_SHA256_DIGEST_LENGTH> defaultSeed;
-    (void)CC_SHA256(&rawSeed, rawSeedLength, defaultSeed.data());
+    (void)CC_SHA256(rawSeed.data(), rawSeedLength, defaultSeed.data());
 #else // OS(DARWIN) => !OS(DARWIN)
     if constexpr (verbose)
         TZONE_LOG_DEBUG("using static seed\n");
@@ -520,12 +520,12 @@ BINLINE unsigned TZoneHeapManager::bucketForKey(const TZoneSpecification& spec, 
 #if BOS(DARWIN)
     // The output of HMAC_SHA256 is the same length as the SHA256 digest, since HMAC's final step is running
     // the hash function H on a value derived from the original message.
-    uint64_t hmac[CC_SHA256_DIGEST_LENGTH / sizeof(uint64_t)];
+    std::array<uint64_t, CC_SHA256_DIGEST_LENGTH / sizeof(uint64_t)> hmac;
     static_assert(sizeof(hmac) == 32);
 
     uintptr_t addressOfHeapRef = std::bit_cast<uintptr_t>(spec.addressOfHeapRef);
 
-    CCHmac(kCCHmacAlgSHA256, &m_tzoneKeySeed, sizeof(m_tzoneKeySeed), &addressOfHeapRef, sizeof(addressOfHeapRef), hmac);
+    CCHmac(kCCHmacAlgSHA256, &m_tzoneKeySeed, sizeof(m_tzoneKeySeed), &addressOfHeapRef, sizeof(addressOfHeapRef), hmac.data());
     uint64_t random = hmac[0];
     unsigned bucket = random % bucketCountForSize;
 

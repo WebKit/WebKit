@@ -50,8 +50,8 @@ Color colorFromCocoaColor(UIColor *color)
     if (!success) {
         // The color space conversion above can fail if the UIColor is in an incompatible color space.
         // To workaround this we simply draw a one pixel image of the color and use that pixel's color.
-        uint8_t pixel[4];
-        auto bitmapContext = adoptCF(CGBitmapContextCreate(pixel, 1, 1, 8, 4, sRGBColorSpaceSingleton(), kCGImageAlphaPremultipliedLast));
+        std::array<uint8_t, 4> pixel;
+        auto bitmapContext = adoptCF(CGBitmapContextCreate(pixel.data(), 1, 1, 8, 4, sRGBColorSpaceSingleton(), kCGImageAlphaPremultipliedLast));
 
         CGContextSetFillColorWithColor(bitmapContext.get(), color.CGColor);
         CGContextFillRect(bitmapContext.get(), CGRectMake(0, 0, 1, 1));

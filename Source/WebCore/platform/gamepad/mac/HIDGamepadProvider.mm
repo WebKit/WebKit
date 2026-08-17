@@ -55,10 +55,10 @@ static RetainPtr<CFDictionaryRef> deviceMatchingDictionary(uint32_t usagePage, u
     RetainPtr<CFNumberRef> pageNumber = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &usagePage));
     RetainPtr<CFNumberRef> usageNumber = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &usage));
 
-    CFStringRef keys[] = { CFSTR(kIOHIDDeviceUsagePageKey), CFSTR(kIOHIDDeviceUsageKey) };
-    CFNumberRef values[] = { pageNumber.get(), usageNumber.get() };
+    std::array<CFStringRef, 2> keys { CFSTR(kIOHIDDeviceUsagePageKey), CFSTR(kIOHIDDeviceUsageKey) };
+    std::array<CFNumberRef, 2> values { pageNumber.get(), usageNumber.get() };
 
-    return adoptCF(CFDictionaryCreate(kCFAllocatorDefault, (const void**)keys, (const void**)values, 2, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+    return adoptCF(CFDictionaryCreate(kCFAllocatorDefault, (const void**)keys.data(), (const void**)values.data(), 2, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
 }
 
 static void deviceAddedCallback(void* context, IOReturn, void*, IOHIDDeviceRef device)
@@ -97,9 +97,9 @@ HIDGamepadProvider::HIDGamepadProvider()
     RetainPtr<CFDictionaryRef> joystickDictionary = deviceMatchingDictionary(kHIDPage_GenericDesktop, kHIDUsage_GD_Joystick);
     RetainPtr<CFDictionaryRef> gamepadDictionary = deviceMatchingDictionary(kHIDPage_GenericDesktop, kHIDUsage_GD_GamePad);
 
-    CFDictionaryRef devices[] = { joystickDictionary.get(), gamepadDictionary.get() };
+    std::array<CFDictionaryRef, 2> devices { joystickDictionary.get(), gamepadDictionary.get() };
 
-    RetainPtr<CFArrayRef> matchingArray = adoptCF(CFArrayCreate(kCFAllocatorDefault, (const void**)devices, 2, &kCFTypeArrayCallBacks));
+    RetainPtr<CFArrayRef> matchingArray = adoptCF(CFArrayCreate(kCFAllocatorDefault, (const void**)devices.data(), 2, &kCFTypeArrayCallBacks));
 
     IOHIDManagerSetDeviceMatchingMultiple(m_manager.get(), matchingArray.get());
     IOHIDManagerRegisterDeviceMatchingCallback(m_manager.get(), deviceAddedCallback, this);

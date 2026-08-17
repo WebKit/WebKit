@@ -33,6 +33,7 @@
 #include "VMAllocate.h"
 #include "Vector.h"
 #include "bmalloc.h"
+#include <array>
 #include <cstdio>
 
 #if BOS(DARWIN)
@@ -100,7 +101,7 @@ void ensureGigacage()
             RELEASE_BASSERT(!(reinterpret_cast<size_t>(&WebConfig::g_config) & (vmPageSize() - 1)));
 
             constexpr size_t numberOfKinds = static_cast<size_t>(NumberOfKinds);
-            Kind shuffledKinds[numberOfKinds];
+            std::array<Kind, numberOfKinds> shuffledKinds;
             for (unsigned i = 0; i < numberOfKinds; ++i)
                 shuffledKinds[i] = static_cast<Kind>(i);
             
@@ -152,8 +153,8 @@ void ensureGigacage()
                 g_gigacageConfig.setBasePtr(kind, gigacageBasePtr);
                 nextCage = bump(kind, nextCage);
 
-                uint64_t random[2];
-                cryptoRandom(reinterpret_cast<unsigned char*>(random), sizeof(random));
+                std::array<uint64_t, 2> random;
+                cryptoRandom(reinterpret_cast<unsigned char*>(random.data()), sizeof(random));
                 size_t gigacageSize = maxSize(kind);
                 size_t sizeWithSentinel = roundDownToMultipleOf(sliceSize, gigacageSize - (random[0] % maximumCageSizeReductionForSlide));
                 size_t size = sizeWithSentinel - sliceSize;

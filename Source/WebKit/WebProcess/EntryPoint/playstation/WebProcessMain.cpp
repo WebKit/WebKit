@@ -87,15 +87,15 @@ int main(int argc, char** argv)
 
     char* coreProcessIdentifier = argv[1];
 
-    char connectionIdentifier[16];
-    snprintf(connectionIdentifier, sizeof(connectionIdentifier), "%d", PlayStation::getConnectionIdentifier());
+    std::array<char, 16> connectionIdentifier;
+    SAFE_SPRINTF(std::span { connectionIdentifier }, "%d", PlayStation::getConnectionIdentifier());
 
-    char program[] = "dummy";
-    char* internalArgv[] = {
-        program,
+    auto program = WTF::toArray("dummy");
+    std::array<char*, 4> internalArgv {
+        program.data(),
         coreProcessIdentifier,
-        connectionIdentifier,
+        connectionIdentifier.data(),
         0
     };
-    return WebKit::WebProcessMain(sizeof(internalArgv) / sizeof(char*), internalArgv);
+    return WebKit::WebProcessMain(internalArgv.size(), internalArgv.data());
 }

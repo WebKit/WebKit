@@ -130,12 +130,12 @@ void setPermissionsOfConfigPage()
         // We may have potentially initialized some of g_config, namely the
         // gigacage config, prior to reaching this function. We need to
         // preserve these config contents across the mach_vm_map.
-        uint8_t preWTFConfigContents[preWTFConfigSize];
-        memcpySpan(std::span<uint8_t> { preWTFConfigContents, preWTFConfigSize }, std::span<uint8_t> { std::bit_cast<uint8_t*>(&WebConfig::g_config), preWTFConfigSize });
+        std::array<uint8_t, preWTFConfigSize> preWTFConfigContents;
+        memcpySpan(std::span<uint8_t> { preWTFConfigContents }, std::span<uint8_t> { std::bit_cast<uint8_t*>(&WebConfig::g_config), preWTFConfigSize });
 
         makePagesFreezable(&WebConfig::g_config, ConfigSizeToProtect);
 
-        memcpySpan(std::span<uint8_t> { std::bit_cast<uint8_t*>(&WebConfig::g_config), preWTFConfigSize }, std::span<uint8_t> { preWTFConfigContents, preWTFConfigSize });
+        memcpySpan(std::span<uint8_t> { std::bit_cast<uint8_t*>(&WebConfig::g_config), preWTFConfigSize }, std::span<uint8_t> { preWTFConfigContents });
     });
 #endif // PLATFORM(COCOA)
 }

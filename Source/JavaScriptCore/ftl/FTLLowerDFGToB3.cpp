@@ -5376,7 +5376,7 @@ private:
         unsigned numExtraArgs = numExtraAtomicsArgs(m_node->op());
         Edge baseEdge = m_graph.child(m_node, 0);
         Edge indexEdge = m_graph.child(m_node, 1);
-        Edge argEdges[maxNumExtraAtomicsArgs];
+        std::array<Edge, maxNumExtraAtomicsArgs> argEdges;
         for (unsigned i = numExtraArgs; i--;)
             argEdges[i] = m_graph.child(m_node, 2 + i);
         Edge storageEdge = m_graph.child(m_node, 2 + numExtraArgs);
@@ -5434,7 +5434,7 @@ private:
         }
 
         LValue index = lowInt32(indexEdge);
-        LValue args[2];
+        std::array<LValue, 2> args;
         for (unsigned i = numExtraArgs; i--;)
             args[i] = getIntTypedArrayStoreOperand(argEdges[i]);
         LValue storage = lowStorage(storageEdge);
@@ -11749,12 +11749,12 @@ IGNORE_CLANG_WARNINGS_END
             LValue length;
         };
 
-        Edge edges[3] = {
+        std::array<Edge, 3> edges {
             m_node->child1(),
             m_node->child2(),
             m_node->child3(),
         };
-        LValue kids[3];
+        std::array<LValue, 3> kids;
         unsigned numKids;
         kids[0] = lowCell(edges[0]);
         kids[1] = lowCell(edges[1]);
@@ -11886,7 +11886,7 @@ IGNORE_CLANG_WARNINGS_END
     void compileMakeAtomString()
     {
         JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
-        LValue strings[3] { nullptr, nullptr, nullptr };
+        std::array<LValue, 3> strings { nullptr, nullptr, nullptr };
         unsigned numberOfStrings;
         strings[0] = lowCell(m_node->child1());
         if (m_node->child2()) {

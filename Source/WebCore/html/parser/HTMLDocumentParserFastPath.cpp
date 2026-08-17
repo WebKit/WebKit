@@ -83,7 +83,7 @@ private:
     {
         static MainThreadNeverDestroyed<WhitespaceStringCache> cache { []() {
             WhitespaceStringCache stringsCache;
-            Latin1Character chars[maxSpaceCount + 1] = { '\n' };
+            std::array<Latin1Character, maxSpaceCount + 1> chars { '\n' };
             std::ranges::fill(std::span(chars).subspan<1u>(), ' ');
             // Pre-populate the cache with \n + (' ' * spaceCount) strings
             for (unsigned spaceCount = 0; spaceCount <= maxSpaceCount; ++spaceCount)

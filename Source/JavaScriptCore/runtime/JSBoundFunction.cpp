@@ -182,7 +182,7 @@ JSBoundFunction* JSBoundFunction::create(VM& vm, JSGlobalObject* globalObject, J
         RETURN_IF_EXCEPTION(scope, nullptr);
     }
 
-    JSValue boundArgs[maxEmbeddedArgs] { };
+    std::array<JSValue, maxEmbeddedArgs> boundArgs { };
     if (!args.isEmpty()) {
         if (args.size() <= maxEmbeddedArgs) {
             for (unsigned index = 0, size = args.size(); index < size; ++index)

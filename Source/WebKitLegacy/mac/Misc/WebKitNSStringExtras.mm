@@ -171,9 +171,9 @@ static bool canUseFastRenderer(std::span<const UniChar> buffer)
         cacheDirectory = [NSHomeDirectory() stringByAppendingPathComponent:@"Library/Caches"];
 #endif
 #if PLATFORM(MAC)
-        char buffer[MAXPATHLEN];
-        if (size_t length = confstr(_CS_DARWIN_USER_CACHE_DIR, buffer, MAXPATHLEN))
-            cacheDirectory = [[NSFileManager defaultManager] stringWithFileSystemRepresentation:buffer length:length - 1];
+        std::array<char, MAXPATHLEN> buffer;
+        if (size_t length = confstr(_CS_DARWIN_USER_CACHE_DIR, buffer.data(), buffer.size()))
+            cacheDirectory = [[NSFileManager defaultManager] stringWithFileSystemRepresentation:buffer.data() length:length - 1];
 #endif
     }
 

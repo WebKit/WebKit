@@ -3571,14 +3571,14 @@ JSC_DEFINE_JIT_OPERATION(operationNewRegExpUntyped, JSObject*, (JSGlobalObject* 
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    EncodedJSValue args[] {
+    std::array<EncodedJSValue, 2> args {
         encodedContent,
         encodedFlags
     };
 
     JSGlobalObject* regExpGlobalObject = structure->realm();
     JSObject* regExpConstructor = regExpGlobalObject->regExpConstructor();
-    OPERATION_RETURN(scope, constructRegExp(regExpGlobalObject, ArgList { args, 2 }, regExpConstructor, regExpConstructor));
+    OPERATION_RETURN(scope, constructRegExp(regExpGlobalObject, ArgList { args.data(), 2 }, regExpConstructor, regExpConstructor));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationNewRegExpString, JSObject*, (JSGlobalObject* globalObject, Structure* structure, JSString* content, JSString* flags))
@@ -3587,13 +3587,13 @@ JSC_DEFINE_JIT_OPERATION(operationNewRegExpString, JSObject*, (JSGlobalObject* g
     CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
     JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
     auto scope = DECLARE_THROW_SCOPE(vm);
-    EncodedJSValue args[] {
+    std::array<EncodedJSValue, 2> args {
         JSValue::encode(content),
         JSValue::encode(flags)
     };
 
     JSGlobalObject* regExpGlobalObject = structure->realm();
-    OPERATION_RETURN(scope, constructRegExp(regExpGlobalObject, ArgList { args, 2 }, regExpGlobalObject->regExpConstructor()));
+    OPERATION_RETURN(scope, constructRegExp(regExpGlobalObject, ArgList { args.data(), 2 }, regExpGlobalObject->regExpConstructor()));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationStringValueOf, JSString*, (JSGlobalObject* globalObject, EncodedJSValue encodedArgument))
@@ -4696,14 +4696,14 @@ JSC_DEFINE_JIT_OPERATION(operationFunctionBind, JSBoundFunction*, (JSGlobalObjec
     boundArgsLength += !!(JSValue::decode(arg2Value));
 
     JSValue boundThis = JSValue::decode(boundThisValue);
-    EncodedJSValue arguments[JSBoundFunction::maxEmbeddedArgs] {
+    std::array<EncodedJSValue, JSBoundFunction::maxEmbeddedArgs> arguments {
         arg0Value,
         arg1Value,
         arg2Value,
     };
     ArgList boundArgs { };
     if (boundArgsLength >= 1)
-        boundArgs = ArgList(arguments, boundArgsLength);
+        boundArgs = ArgList(arguments.data(), boundArgsLength);
 
     double length = 0;
     JSString* name = nullptr;
@@ -5650,8 +5650,8 @@ JSC_DEFINE_JIT_OPERATION(operationStringFromCodePointUntyped, EncodedJSValue, (J
     if (U_IS_BMP(codePoint))
         OPERATION_RETURN(scope, JSValue::encode(jsSingleCharacterString(vm, static_cast<char16_t>(codePoint))));
 
-    char16_t buffer[2] = { U16_LEAD(codePoint), U16_TRAIL(codePoint) };
-    OPERATION_RETURN(scope, JSValue::encode(jsNontrivialString(vm, String({ buffer, 2 }))));
+    std::array<char16_t, 2> buffer { U16_LEAD(codePoint), U16_TRAIL(codePoint) };
+    OPERATION_RETURN(scope, JSValue::encode(jsNontrivialString(vm, String(buffer))));
 }
 
 JSC_DEFINE_JIT_OPERATION(operationNewRawObject, char*, (VM* vmPointer, Structure* structure, int32_t length, Butterfly* butterfly))

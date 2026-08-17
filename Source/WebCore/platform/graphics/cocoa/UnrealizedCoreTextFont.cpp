@@ -99,9 +99,9 @@ static inline void appendOpenTypeFeature(CFMutableArrayRef features, const FontF
     auto featureKey = adoptCF(CFStringCreateWithBytes(kCFAllocatorDefault, byteCast<UInt8>(feature.tag().data()), feature.tag().size() * sizeof(FontTag::value_type), kCFStringEncodingASCII, false));
     int rawFeatureValue = feature.value();
     auto featureValue = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &rawFeatureValue));
-    CFTypeRef featureDictionaryKeys[] = { kCTFontOpenTypeFeatureTag, kCTFontOpenTypeFeatureValue };
-    CFTypeRef featureDictionaryValues[] = { featureKey.get(), featureValue.get() };
-    auto featureDictionary = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, featureDictionaryKeys, featureDictionaryValues, std::size(featureDictionaryValues), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+    std::array<CFTypeRef, 2> featureDictionaryKeys { kCTFontOpenTypeFeatureTag, kCTFontOpenTypeFeatureValue };
+    std::array<CFTypeRef, 2> featureDictionaryValues { featureKey.get(), featureValue.get() };
+    auto featureDictionary = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, featureDictionaryKeys.data(), featureDictionaryValues.data(), featureDictionaryValues.size(), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
     CFArrayAppendValue(features, featureDictionary.get());
 }
 

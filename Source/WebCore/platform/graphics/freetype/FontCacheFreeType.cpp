@@ -282,8 +282,8 @@ static AliasStrength strengthOfFirstAlias(const FcPattern& original)
     // Note that this config is only used for FcFontRenderPrepare, which we don't even want.
     // However, there appears to be no way to match/sort without it.
     RefPtr<FcConfig> config = adoptRef(FcConfigCreate());
-    FcFontSet* fontSets[1] = { fontSet.get() };
-    RefPtr<FcPattern> match = adoptRef(FcFontSetMatch(config.get(), fontSets, 1, pattern.get(), &result));
+    std::array<FcFontSet*, 1> fontSets { fontSet.get() };
+    RefPtr<FcPattern> match = adoptRef(FcFontSetMatch(config.get(), fontSets.data(), 1, pattern.get(), &result));
 
     FcLangSet* matchLangSet;
     FcPatternGetLangSet(match.get(), FC_LANG, 0, &matchLangSet);
@@ -443,8 +443,8 @@ std::unique_ptr<FontPlatformData> FontCache::createFontPlatformData(const FontDe
         for (auto& fontFaceFeature : *fontCreationContext.fontFaceFeatures()) {
             if (fontFaceFeature.enabled()) {
                 const auto& tag = fontFaceFeature.tag();
-                const char buffer[] = { tag[0], tag[1], tag[2], tag[3], '\0' };
-                FcPatternAddString(resultPattern.get(), FC_FONT_FEATURES, reinterpret_cast<const FcChar8*>(buffer));
+                const std::array<char, 5> buffer { tag[0], tag[1], tag[2], tag[3], '\0' };
+                FcPatternAddString(resultPattern.get(), FC_FONT_FEATURES, reinterpret_cast<const FcChar8*>(buffer.data()));
             }
         }
     }

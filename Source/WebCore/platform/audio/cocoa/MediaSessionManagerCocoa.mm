@@ -67,9 +67,9 @@ do { \
     if (willLog(WTFLogLevel::Always)) { \
         RELEASE_LOG_FORWARDABLE(Media, MediaSessionManagerCocoa##formatString, ##__VA_ARGS__); \
         if (logger().hasEnabledInspector()) { \
-            char buffer[1024] = { 0 }; \
+            std::array<char, 1024> buffer { 0 }; \
             SAFE_SPRINTF(std::span { buffer }, MESSAGE_MediaSessionManagerCocoa##formatString, ##__VA_ARGS__); \
-            logger().toObservers(logChannel(), WTFLogLevel::Always, { }, String::fromUTF8(buffer)); \
+            logger().toObservers(logChannel(), WTFLogLevel::Always, { }, String::fromUTF8(buffer.data())); \
         } \
     } \
 } while (0)

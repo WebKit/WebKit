@@ -411,7 +411,7 @@ void HeapVerifier::checkIfRecorded(HeapCell* cell)
 
     for (int cycleIndex = 0; cycleIndex > -m_numberOfCycles; cycleIndex--) {
         GCCycle& cycle = cycleForIndex(cycleIndex);
-        CellList* lists[] = { &cycle.before, &cycle.after };
+        std::array<CellList*, 2> lists { &cycle.before, &cycle.after };
 
         if (verbose)
             dataLog("Checking ", cycle.scope, " GC<", cycle.timestamp, ">, cycle [", cycleIndex, "]:\n");

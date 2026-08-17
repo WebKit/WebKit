@@ -276,7 +276,7 @@ void ConfigFile::parse()
     if (!scanner.start())
         return;
 
-    char logPathname[s_maxPathLength + 1] = { 0 };
+    std::array<char, s_maxPathLength + 1> logPathname { 0 };
 
     StringBuilder jscOptionsBuilder;
 
@@ -285,11 +285,11 @@ void ConfigFile::parse()
         if (scanner.tryConsume('=') && (filename = scanner.tryConsumeString())) {
             if (statementNesting != NestedStatementFailedCriteria) {
                 if (filename[0] != '/') {
-                    int spaceRequired = snprintf(logPathname, s_maxPathLength + 1, "%s/%s", m_configDirectory, filename);
+                    int spaceRequired = snprintf(logPathname.data(), logPathname.size(), "%s/%s", m_configDirectory, filename);
                     if (static_cast<unsigned>(spaceRequired) > s_maxPathLength)
                         return ParseError;
                 } else
-                    strncpy(logPathname, filename, s_maxPathLength);
+                    strncpy(logPathname.data(), filename, s_maxPathLength);
             }
 
             return ParseOK;
@@ -463,8 +463,8 @@ void ConfigFile::parse()
         parseResult = parseStatement(TopLevelStatment);
 
     if (parseResult == ParseOK) {
-        if (strlen(logPathname))
-            WTF::setDataFile(logPathname);
+        if (strlen(logPathname.data()))
+            WTF::setDataFile(logPathname.data());
 
         if (!jscOptionsBuilder.isEmpty()) {
             JSC::Config::enableRestrictedOptions();
@@ -482,17 +482,17 @@ void ConfigFile::canonicalizePaths()
 #if OS(UNIX) || OS(DARWIN)
     if (m_filename[0] != '/') {
         // Relative path
-        char filenameBuffer[s_maxPathLength + 1];
+        std::array<char, s_maxPathLength + 1> filenameBuffer;
 
-        if (getcwd(filenameBuffer, sizeof(filenameBuffer))) {
-            size_t pathnameLength = strlen(filenameBuffer);
+        if (getcwd(filenameBuffer.data(), sizeof(filenameBuffer))) {
+            size_t pathnameLength = strlen(filenameBuffer.data());
             bool shouldAddPathSeparator = filenameBuffer[pathnameLength - 1] != '/';
             if (sizeof(filenameBuffer) - 1  >= pathnameLength + shouldAddPathSeparator) {
                 if (shouldAddPathSeparator)
-                    strncat(filenameBuffer, "/", 2); // Room for '/' plus NUL
+                    strncat(filenameBuffer.data(), "/", 2); // Room for '/' plus NUL
                 IGNORE_WARNINGS_BEGIN("stringop-truncation")
-                strncat(filenameBuffer, m_filename, sizeof(filenameBuffer) - strlen(filenameBuffer) - 1);
-                strncpy(m_filename, filenameBuffer, s_maxPathLength);
+                strncat(filenameBuffer.data(), m_filename, sizeof(filenameBuffer) - strlen(filenameBuffer.data()) - 1);
+                strncpy(m_filename, filenameBuffer.data(), s_maxPathLength);
                 IGNORE_WARNINGS_END
                 m_filename[s_maxPathLength] = '\0';
             }

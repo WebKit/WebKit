@@ -630,10 +630,10 @@ std::optional<String> AuxiliaryProcess::getHomeDirectory()
 {
     // According to the man page for getpwuid_r, we should use sysconf(_SC_GETPW_R_SIZE_MAX) to determine the size of the buffer.
     // However, a buffer size of 4096 should be sufficient, since PATH_MAX is 1024.
-    char buffer[4096];
+    std::array<char, 4096> buffer;
     passwd pwd;
     passwd* result = nullptr;
-    if (getpwuid_r(getuid(), &pwd, buffer, sizeof(buffer), &result) || !result) {
+    if (getpwuid_r(getuid(), &pwd, buffer.data(), buffer.size(), &result) || !result) {
         RELEASE_LOG_ERROR(Process, "Couldn't find home directory, errno=%d", errno);
         return std::nullopt;
     }
@@ -657,8 +657,8 @@ static void populateSandboxInitializationParameters(SandboxInitializationParamet
     if (!_set_user_dir_suffix(userDirectorySuffixString.data()))
         RELEASE_LOG_ERROR(Process, "Unable to set user dir suffix");
 
-    char temporaryDirectory[PATH_MAX];
-    if (!confstr(_CS_DARWIN_USER_TEMP_DIR, temporaryDirectory, sizeof(temporaryDirectory))) {
+    std::array<char, PATH_MAX> temporaryDirectory;
+    if (!confstr(_CS_DARWIN_USER_TEMP_DIR, temporaryDirectory.data(), temporaryDirectory.size())) {
         WTFLogAlways("%s: couldn't retrieve private temporary directory path: %d\n", getprogname(), errno);
         exitProcess(EX_NOPERM);
     }

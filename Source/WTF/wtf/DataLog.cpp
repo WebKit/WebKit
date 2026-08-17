@@ -112,10 +112,10 @@ static void initializeLogFileOnce()
         filename = fallbackFilepath;
 #endif
 #endif // DATA_LOG_TO_FILE
-    char actualFilename[maxPathLength + 1];
+    std::array<char, maxPathLength + 1> actualFilename;
     if (filename && !contains(unsafeSpan(filename), "%pid"_span)) {
-        snprintf(actualFilename, sizeof(actualFilename), "%s.%%pid.txt", filename);
-        filename = actualFilename;
+        snprintf(actualFilename.data(), actualFilename.size(), "%s.%%pid.txt", filename);
+        filename = actualFilename.data();
     }
 #endif // DATA_LOG_TO_FILE || DATA_LOG_TO_DARWIN_TEMP_DIR
 

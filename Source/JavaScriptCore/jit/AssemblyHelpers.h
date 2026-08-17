@@ -1015,7 +1015,7 @@ public:
 
     static GPRReg selectScratchGPR(RegisterSet preserved)
     {
-        GPRReg registers[] = {
+        auto registers = WTF::toArray({
             GPRInfo::regT0,
             GPRInfo::regT1,
             GPRInfo::regT2,
@@ -1045,7 +1045,7 @@ public:
             GPRInfo::regT11,
             GPRInfo::regT12,
 #endif
-        };
+        });
 
         for (GPRReg reg : registers) {
             if (!preserved.contains(reg, IgnoreVectors))

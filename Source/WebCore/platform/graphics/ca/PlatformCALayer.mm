@@ -147,21 +147,21 @@ void PlatformCALayer::drawTextAtPoint(CGContextRef context, CGFloat x, CGFloat y
     auto font = adoptCF(CTFontCreateWithName(CFSTR("Helvetica"), fontSize, &matrix));
     auto strokeWidthNumber = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberCGFloatType, &strokeWidthAsPercentageOfFontSize));
 
-    CFTypeRef keys[] = {
+    std::array<CFTypeRef, 4> keys {
         kCTFontAttributeName,
         kCTForegroundColorFromContextAttributeName,
         kCTStrokeWidthAttributeName,
         kCTStrokeColorAttributeName,
     };
     auto strokeCGColor = cachedCGColor(strokeColor);
-    CFTypeRef values[] = {
+    std::array<CFTypeRef, 4> values {
         font.get(),
         kCFBooleanTrue,
         strokeWidthNumber.get(),
         strokeCGColor.get(),
     };
 
-    auto attributes = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, keys, values, std::size(keys), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+    auto attributes = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, keys.data(), values.data(), keys.size(), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
     auto string = adoptCF(CFStringCreateWithBytesNoCopy(kCFAllocatorDefault, byteCast<UInt8>(text.data()), text.size(), kCFStringEncodingUTF8, false, kCFAllocatorNull));
     auto attributedString = adoptCF(CFAttributedStringCreate(kCFAllocatorDefault, string.get(), attributes.get()));
     auto line = adoptCF(CTLineCreateWithAttributedString(attributedString.get()));

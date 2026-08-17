@@ -497,8 +497,8 @@ emitExtensionIsland:
         // The wides array is really only to enable us to use encodeMultiHeader. Hence,
         // we don't really need to store instPCDelta as the value here. It can be any value
         // since it's not used. However, to avoid confusion, we'll just populate it consistently.
-        Wide wides[1] = { { instPCDelta, FieldID::InstPC } };
-        m_expressionInfoEncodedInfo.append(encodeMultiHeader(1, wides));
+        std::array<Wide, 1> wides { Wide { instPCDelta, FieldID::InstPC } };
+        m_expressionInfoEncodedInfo.append(encodeMultiHeader(1, wides.data()));
         m_expressionInfoEncodedInfo.append({ instPCDelta });
     }
 

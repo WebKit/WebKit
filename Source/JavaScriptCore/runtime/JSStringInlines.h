@@ -750,12 +750,12 @@ inline JSString* jsAtomString(JSGlobalObject* globalObject, VM& vm, JSString* s1
     };
 
     if (s1->is8Bit() && s2->is8Bit()) {
-        Latin1Character characters[KeyAtomStringCache::maxStringLengthForCache];
+        std::array<Latin1Character, KeyAtomStringCache::maxStringLengthForCache> characters;
         resolveWith2Fibers(s1, s2, std::span { characters }.first(length));
         WTF::HashTranslatorCharBuffer<Latin1Character> buffer { std::span(characters).first(length) };
         return vm.keyAtomStringCache.make(vm, buffer, createFromFibers);
     }
-    char16_t characters[KeyAtomStringCache::maxStringLengthForCache];
+    std::array<char16_t, KeyAtomStringCache::maxStringLengthForCache> characters;
     resolveWith2Fibers(s1, s2, std::span(characters).first(length));
     WTF::HashTranslatorCharBuffer<char16_t> buffer { std::span(characters).first(length) };
     return vm.keyAtomStringCache.make(vm, buffer, createFromFibers);
@@ -809,12 +809,12 @@ inline JSString* jsAtomString(JSGlobalObject* globalObject, VM& vm, JSString* s1
     };
 
     if (s1->is8Bit() && s2->is8Bit() && s3->is8Bit()) {
-        Latin1Character characters[KeyAtomStringCache::maxStringLengthForCache];
+        std::array<Latin1Character, KeyAtomStringCache::maxStringLengthForCache> characters;
         resolveWith3Fibers(s1, s2, s3, std::span { characters }.first(length));
         WTF::HashTranslatorCharBuffer<Latin1Character> buffer { std::span { characters }.first(length) };
         return vm.keyAtomStringCache.make(vm, buffer, createFromFibers);
     }
-    char16_t characters[KeyAtomStringCache::maxStringLengthForCache];
+    std::array<char16_t, KeyAtomStringCache::maxStringLengthForCache> characters;
     resolveWith3Fibers(s1, s2, s3, std::span { characters }.first(length));
     WTF::HashTranslatorCharBuffer<char16_t> buffer { std::span { characters }.first(length) };
     return vm.keyAtomStringCache.make(vm, buffer, createFromFibers);
@@ -852,8 +852,8 @@ inline JSString* jsSubstringOfResolved(VM& vm, GCDeferralContext* deferralContex
                 auto impl = AtomStringImpl::add(buffer);
                 return JSString::create(vm, deferralContext, impl.releaseNonNull());
             };
-            Latin1Character buf[] = { static_cast<Latin1Character>(first), static_cast<Latin1Character>(second) };
-            WTF::HashTranslatorCharBuffer<Latin1Character> buffer { unsafeMakeSpan(buf, length) };
+            std::array<Latin1Character, 2> buf { static_cast<Latin1Character>(first), static_cast<Latin1Character>(second) };
+            WTF::HashTranslatorCharBuffer<Latin1Character> buffer { std::span { buf }.first(length) };
             return vm.keyAtomStringCache.make(vm, buffer, createFromSubstring);
         }
     }

@@ -94,12 +94,12 @@ RetainPtr<CGColorSpaceRef> CoreIPCCGColorSpace::toCF() const
         if (iccdata.derivative == ExtendedRangeDerivative::kNone)
             return adoptCF(CGColorSpaceCreateWithPropertyList(toCFData(iccdata.data).get()));
 
-        const void* keys[] = { kCGColorSpaceICCData, kCGColorSpaceExtendedRange, iccdata.derivative == ExtendedRangeDerivative::kExtendedRangeDisplayReferredDerivative ? kCGColorSpaceDisplayReferredDerivative : kCGColorSpaceSceneReferredDerivative };
+        std::array<const void*, 3> keys { kCGColorSpaceICCData, kCGColorSpaceExtendedRange, iccdata.derivative == ExtendedRangeDerivative::kExtendedRangeDisplayReferredDerivative ? kCGColorSpaceDisplayReferredDerivative : kCGColorSpaceSceneReferredDerivative };
         RetainPtr data = toCFData(iccdata.data);
-        const void* vals[] = { data.get(), kCFBooleanTrue, kCFBooleanTrue };
+        std::array<const void*, 3> vals { data.get(), kCFBooleanTrue, kCFBooleanTrue };
         RetainPtr propertyList = adoptCF(CFDictionaryCreate(NULL,
-            (const void **)keys,
-            (const void **)vals,
+            keys.data(),
+            vals.data(),
             iccdata.derivative == ExtendedRangeDerivative::kExtendedRange ? 2 : 3,
             &kCFTypeDictionaryKeyCallBacks,
             &kCFTypeDictionaryValueCallBacks));
@@ -112,11 +112,11 @@ RetainPtr<CGColorSpaceRef> CoreIPCCGColorSpace::toCF() const
         RetainPtr innerPropertyList = adoptCF(CGColorSpaceCopyPropertyList(innerColorSpace.get()));
         RetainPtr lastIndex = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberSInt8Type, &colorSpace.index));
         RetainPtr table = adoptCF(CGColorSpaceCreateWithPropertyList(toCFData(colorSpace.table).get()));
-        const void* keys[] = { kCGIndexedBaseColorSpaceKey, kCGLastIndexKey, kCGIndexedColorTableKey };
-        const void* vals[] = { innerPropertyList.get(), lastIndex.get(), table.get() };
+        std::array<const void*, 3> keys { kCGIndexedBaseColorSpaceKey, kCGLastIndexKey, kCGIndexedColorTableKey };
+        std::array<const void*, 3> vals { innerPropertyList.get(), lastIndex.get(), table.get() };
         RetainPtr propertyList = adoptCF(CFDictionaryCreate(NULL,
-            (const void **)keys,
-            (const void **)vals,
+            keys.data(),
+            vals.data(),
             3,
             &kCFTypeDictionaryKeyCallBacks,
             &kCFTypeDictionaryValueCallBacks));

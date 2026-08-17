@@ -4825,9 +4825,9 @@ RefPtr<Int32Array> WebGLRenderingContextBase::getWebGLIntArrayParameter(GCGLenum
     default:
         notImplemented();
     }
-    GCGLint value[4] { };
+    std::array<GCGLint, 4> value { };
     protect(graphicsContextGL())->getIntegerv(pname, value);
-    return Int32Array::tryCreate(value, 4);
+    return Int32Array::tryCreate(value.data(), 4);
 }
 
 WebGLRenderingContextBase::PixelStoreParameters WebGLRenderingContextBase::computeUnpackPixelStoreParameters(TexImageDimension dimension) const

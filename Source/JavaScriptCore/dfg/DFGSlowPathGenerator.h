@@ -148,20 +148,20 @@ template<typename JumpType, typename DestinationType, typename SourceType>
 inline std::unique_ptr<SlowPathGenerator> slowPathMove(
     JumpType from, SpeculativeJIT* jit, SourceType source, DestinationType destination)
 {
-    SourceType sourceArray[1] = { source };
-    DestinationType destinationArray[1] = { destination };
+    std::array<SourceType, 1> sourceArray { source };
+    std::array<DestinationType, 1> destinationArray { destination };
     return makeUniqueWithoutFastMallocCheck<AssigningSlowPathGenerator<JumpType, DestinationType, SourceType, 1>>(
-        from, jit, destinationArray, sourceArray);
+        from, jit, destinationArray.data(), sourceArray.data());
 }
 
 template<typename JumpType, typename DestinationType, typename SourceType>
 inline std::unique_ptr<SlowPathGenerator> slowPathMove(
     JumpType from, SpeculativeJIT* jit, SourceType source1, DestinationType destination1, SourceType source2, DestinationType destination2)
 {
-    SourceType sourceArray[2] = { source1, source2 };
-    DestinationType destinationArray[2] = { destination1, destination2 };
+    std::array<SourceType, 2> sourceArray { source1, source2 };
+    std::array<DestinationType, 2> destinationArray { destination1, destination2 };
     return makeUniqueWithoutFastMallocCheck<AssigningSlowPathGenerator<JumpType, DestinationType, SourceType, 2>>(
-        from, jit, destinationArray, sourceArray);
+        from, jit, destinationArray.data(), sourceArray.data());
 }
 
 template<typename JumpType, typename FunctionType, typename ResultType>

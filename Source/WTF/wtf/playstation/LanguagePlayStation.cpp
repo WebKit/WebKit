@@ -34,9 +34,9 @@ Vector<String> platformUserPreferredLanguages(ShouldMinimizeLanguages)
 {
     Vector<String> languages;
 
-    char buffer[16];
-    if (!getenv_np("SYSTEM_LANGUAGE", buffer, sizeof(buffer)))
-        languages.append(String::fromLatin1(buffer));
+    std::array<char, 16> buffer;
+    if (!getenv_np("SYSTEM_LANGUAGE", buffer.data(), buffer.size()))
+        languages.append(String::fromLatin1(buffer.data()));
 
     return languages;
 }

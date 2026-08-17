@@ -323,36 +323,36 @@ NSString *systemDirectoryPath()
 
 String darwinCacheDirectory()
 {
-    char temp[PATH_MAX];
-    size_t length = confstr(_CS_DARWIN_USER_CACHE_DIR, temp, sizeof(temp));
+    std::array<char, PATH_MAX> temp;
+    size_t length = confstr(_CS_DARWIN_USER_CACHE_DIR, temp.data(), temp.size());
     if (!length) {
         RELEASE_LOG_ERROR(Process, "Could not retrieve cache directory path: %s\n", safeStrerror(errno).data());
         return { };
     }
-    RELEASE_ASSERT(length <= sizeof(temp));
-    char resolvedPath[PATH_MAX];
-    if (!realpath(temp, resolvedPath)) {
+    RELEASE_ASSERT(length <= temp.size());
+    std::array<char, PATH_MAX> resolvedPath;
+    if (!realpath(temp.data(), resolvedPath.data())) {
         RELEASE_LOG_ERROR(Process, "Could not canonicalize cache directory path: %s\n", safeStrerror(errno).data());
         return { };
     }
-    return String::fromUTF8(resolvedPath);
+    return String::fromUTF8(resolvedPath.data());
 }
 
 String darwinTempDirectory()
 {
-    char temp[PATH_MAX];
-    size_t length = confstr(_CS_DARWIN_USER_TEMP_DIR, temp, sizeof(temp));
+    std::array<char, PATH_MAX> temp;
+    size_t length = confstr(_CS_DARWIN_USER_TEMP_DIR, temp.data(), temp.size());
     if (!length) {
         RELEASE_LOG_ERROR(Process, "Could not retrieve temporary directory path: %s\n", safeStrerror(errno).data());
         return { };
     }
-    RELEASE_ASSERT(length <= sizeof(temp));
-    char resolvedPath[PATH_MAX];
-    if (!realpath(temp, resolvedPath)) {
+    RELEASE_ASSERT(length <= temp.size());
+    std::array<char, PATH_MAX> resolvedPath;
+    if (!realpath(temp.data(), resolvedPath.data())) {
         RELEASE_LOG_ERROR(Process, "Could not canonicalize temporary directory path: %s\n", safeStrerror(errno).data());
         return { };
     }
-    return String::fromUTF8(resolvedPath);
+    return String::fromUTF8(resolvedPath.data());
 }
 
 } // namespace FileSystemImpl

@@ -264,9 +264,9 @@ void FunctionOverrides::parseOverridesInFile(const char* fileName)
         FAIL_WITH_ERROR(IO_ERROR, ("Failed to open file ", fileName, ". Did you add the file-read-data entitlement to WebProcess.sb?\n"));
 
     char* line;
-    char buffer[BUFSIZ];
+    std::array<char, BUFSIZ> buffer;
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-    while ((line = fgets(buffer, sizeof(buffer), file))) {
+    while ((line = fgets(buffer.data(), buffer.size(), file))) {
         if (strstr(line, "//") == line)
             continue;
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
@@ -275,16 +275,16 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
             continue;
 
         size_t keywordLength;
-        
+
         keywordLength = sizeof("override") - 1;
-        String keyStr = parseClause("override", keywordLength, file, line, buffer, sizeof(buffer));
+        String keyStr = parseClause("override", keywordLength, file, line, buffer.data(), buffer.size());
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-        line = fgets(buffer, sizeof(buffer), file);
+        line = fgets(buffer.data(), buffer.size(), file);
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
         keywordLength = sizeof("with") - 1;
-        String valueStr = parseClause("with", keywordLength, file, line, buffer, sizeof(buffer));
+        String valueStr = parseClause("with", keywordLength, file, line, buffer.data(), buffer.size());
 
         m_entries.add(keyStr, valueStr);
     }

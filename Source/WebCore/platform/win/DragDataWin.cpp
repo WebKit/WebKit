@@ -133,7 +133,7 @@ Vector<String> DragData::asFilenames() const
     Vector<String> result;
 
     if (m_platformDragData) {
-        WCHAR filename[MAX_PATH];
+        std::array<WCHAR, MAX_PATH> filename;
 
         STGMEDIUM medium;
         if (FAILED(m_platformDragData->GetData(cfHDropFormat(), &medium)))
@@ -146,9 +146,9 @@ Vector<String> DragData::asFilenames() const
 
         const unsigned numFiles = DragQueryFileW(hdrop, 0xFFFFFFFF, 0, 0);
         for (unsigned i = 0; i < numFiles; i++) {
-            if (!DragQueryFileW(hdrop, i, filename, std::size(filename)))
+            if (!DragQueryFileW(hdrop, i, filename.data(), filename.size()))
                 continue;
-            result.append(filename);
+            result.append(filename.data());
         }
 
         // Free up memory from drag

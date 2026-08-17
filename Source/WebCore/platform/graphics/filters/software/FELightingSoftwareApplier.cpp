@@ -88,7 +88,7 @@ void FELightingSoftwareApplier::setPixelInternal(int offset, const LightingData&
     if (lightStrength < 0)
         lightStrength = 0;
 
-    uint8_t pixelValue[3] = {
+    std::array<uint8_t, 3> pixelValue {
         static_cast<uint8_t>(lightStrength * lightingData.colorVector.x() * 255.0f),
         static_cast<uint8_t>(lightStrength * lightingData.colorVector.y() * 255.0f),
         static_cast<uint8_t>(lightStrength * lightingData.colorVector.z() * 255.0f)

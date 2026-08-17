@@ -446,13 +446,13 @@ void IntlCollator::checkICULocaleInvariants(const LocaleSet& locales)
                 for (unsigned y = 0; y < 128; ++y) {
                     if (canUseASCIIUCADUCETComparison(static_cast<Latin1Character>(x)) && canUseASCIIUCADUCETComparison(static_cast<Latin1Character>(y))) {
                         UErrorCode status = U_ZERO_ERROR;
-                        char16_t xstring[] = { static_cast<char16_t>(x), 0 };
-                        char16_t ystring[] = { static_cast<char16_t>(y), 0 };
-                        auto resultICU = ucol_strcoll(&collator, xstring, 1, ystring, 1);
+                        const std::array<char16_t, 2> xstring { static_cast<char16_t>(x), 0 };
+                        const std::array<char16_t, 2> ystring { static_cast<char16_t>(y), 0 };
+                        auto resultICU = ucol_strcoll(&collator, xstring.data(), 1, ystring.data(), 1);
                         ASSERT(U_SUCCESS(status));
-                        auto resultJSC = compareASCIIWithUCADUCET(span(*xstring), span(*ystring));
+                        auto resultJSC = compareASCIIWithUCADUCET(std::span { xstring }.first(1), std::span { ystring }.first(1));
                         if (resultJSC && resultICU != resultJSC.value()) {
-                            dataLogLn("BAD ", locale, " ", makeString(hex(x)), "(", StringView { span(*xstring) }, ") <=> ", makeString(hex(y)), "(", StringView { span(*ystring) }, ") ICU:(", static_cast<int32_t>(resultICU), "),JSC:(", static_cast<int32_t>(resultJSC.value()), ")");
+                            dataLogLn("BAD ", locale, " ", makeString(hex(x)), "(", StringView { std::span { xstring }.first(1) }, ") <=> ", makeString(hex(y)), "(", StringView { std::span { ystring }.first(1) }, ") ICU:(", static_cast<int32_t>(resultICU), "),JSC:(", static_cast<int32_t>(resultJSC.value()), ")");
                             allAreGood = false;
                         }
                     }

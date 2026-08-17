@@ -52,7 +52,7 @@ private:
     static PerfLog& singleton();
 
     void write(const AbstractLocker&, std::span<const uint8_t>) WTF_REQUIRES_LOCK(m_lock);
-    void write(const AbstractLocker& locker, std::span<const char> span) WTF_REQUIRES_LOCK(m_lock) { write(locker, unsafeMakeSpan(std::bit_cast<const uint8_t*>(span.data()), span.size_bytes())); }
+    void write(const AbstractLocker& locker, std::span<const char> span) WTF_REQUIRES_LOCK(m_lock) { write(locker, asBytes(span)); }
     void flush(const AbstractLocker&) WTF_REQUIRES_LOCK(m_lock);
 
     WTF::FileSystemImpl::FileHandle m_file { };

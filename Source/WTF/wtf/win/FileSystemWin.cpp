@@ -132,26 +132,26 @@ static String cachedStorageDirectory(DWORD pathIdentifier)
 
 static String generateTemporaryPath(const Function<bool(const String&)>& action)
 {
-    wchar_t tempPath[MAX_PATH];
-    int tempPathLength = ::GetTempPathW(std::size(tempPath), tempPath);
-    if (tempPathLength <= 0 || static_cast<size_t>(tempPathLength) >= std::size(tempPath))
+    std::array<wchar_t, MAX_PATH> tempPath;
+    int tempPathLength = ::GetTempPathW(tempPath.size(), tempPath.data());
+    if (tempPathLength <= 0 || static_cast<size_t>(tempPathLength) >= tempPath.size())
         return String();
 
     String proposedPath;
     do {
-        wchar_t tempFile[] = L"XXXXXXXX.tmp"; // Use 8.3 style name (more characters aren't helpful due to 8.3 short file names)
+        auto tempFile = WTF::toArray(L"XXXXXXXX.tmp"); // Use 8.3 style name (more characters aren't helpful due to 8.3 short file names)
         const int randomPartLength = 8;
-        cryptographicallyRandomValues({ reinterpret_cast<uint8_t*>(tempFile), randomPartLength * sizeof(wchar_t) });
+        cryptographicallyRandomValues({ reinterpret_cast<uint8_t*>(tempFile.data()), randomPartLength * sizeof(wchar_t) });
 
         // Limit to valid filesystem characters, also excluding others that could be problematic, like punctuation.
         // don't include both upper and lowercase since Windows file systems are typically not case sensitive.
-        const char validChars[] = "0123456789abcdefghijklmnopqrstuvwxyz";
+        constexpr auto validChars = WTF::toArray("0123456789abcdefghijklmnopqrstuvwxyz");
         for (int i = 0; i < randomPartLength; ++i)
-            tempFile[i] = validChars[tempFile[i] % (sizeof(validChars) - 1)];
+            tempFile[i] = validChars[tempFile[i] % (validChars.size() - 1)];
 
-        ASSERT(wcslen(tempFile) == std::size(tempFile) - 1);
+        ASSERT(wcslen(tempFile.data()) == tempFile.size() - 1);
 
-        proposedPath = pathByAppendingComponent(String(tempPath), String(tempFile));
+        proposedPath = pathByAppendingComponent(String(tempPath.data()), String(tempFile.data()));
         if (proposedPath.isEmpty())
             break;
     } while (!action(proposedPath));

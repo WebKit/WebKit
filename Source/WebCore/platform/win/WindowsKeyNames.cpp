@@ -552,28 +552,28 @@ void WindowsKeyNames::updateLayout()
     KeyModifierSet allCombination { KeyModifier::Shift, KeyModifier::Control, KeyModifier::Alt, KeyModifier::CapsLock };
 
     for (int combination = 0; combination <= allCombination.toRaw(); ++combination) {
-        BYTE keyboardState[256] = { };
+        std::array<BYTE, 256> keyboardState { };
 
         // Setting up keyboard state for modifiers.
         auto modifiers = KeyModifierSet::fromRaw(combination);
-        setModifierState(keyboardState, modifiers);
+        setModifierState(keyboardState.data(), modifiers);
 
         for (unsigned virtualKey = 0; virtualKey <= 0xFF; ++virtualKey) {
-            wchar_t translatedChars[5];
-            int rv = ToUnicodeEx(virtualKey, 0, keyboardState, translatedChars,
-                std::size(translatedChars), 0, m_keyboardLayout);
+            std::array<wchar_t, 5> translatedChars;
+            int rv = ToUnicodeEx(virtualKey, 0, keyboardState.data(), translatedChars.data(),
+                translatedChars.size(), 0, m_keyboardLayout);
 
             if (rv == -1) {
                 // Dead key, injecting VK_SPACE to get character representation.
-                BYTE emptyState[256] = { };
-                rv = ToUnicodeEx(VK_SPACE, 0, emptyState, translatedChars,
-                    std::size(translatedChars), 0, m_keyboardLayout);
+                std::array<BYTE, 256> emptyState { };
+                rv = ToUnicodeEx(VK_SPACE, 0, emptyState.data(), translatedChars.data(),
+                    translatedChars.size(), 0, m_keyboardLayout);
                 // Expecting a dead key character (not followed by a space).
                 if (rv == 1)
                     m_printableKeyCodeToKey.set(std::make_pair(virtualKey, modifiers), "Dead"_s);
             } else if (rv == 1) {
                 if (translatedChars[0] >= 0x20) {
-                    m_printableKeyCodeToKey.set(std::make_pair(virtualKey, modifiers), String(translatedChars, 1));
+                    m_printableKeyCodeToKey.set(std::make_pair(virtualKey, modifiers), String(translatedChars.data(), 1));
 
                     // Detect whether the layout makes use of AltGraph.
                     if (hasControlAndAlt(modifiers))

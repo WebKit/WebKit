@@ -172,8 +172,8 @@ RefPtr<VideoFrame> VideoFrame::fromNativeImage(NativeImage& image)
     ensureVideoFrameDebugCategoryInitialized();
     GST_CAT_DEBUG(GST_CAT_PERFORMANCE, "Creating VideoFrame from native image");
 
-    size_t offsets[GST_VIDEO_MAX_PLANES] = { 0, };
-    int strides[GST_VIDEO_MAX_PLANES] = { 0, };
+    std::array<size_t, GST_VIDEO_MAX_PLANES> offsets { 0, };
+    std::array<int, GST_VIDEO_MAX_PLANES> strides { 0, };
 
     auto platformImage = image.platformImage();
     const auto& imageInfo = platformImage->imageInfo();
@@ -221,7 +221,7 @@ RefPtr<VideoFrame> VideoFrame::fromNativeImage(NativeImage& image)
         return nullptr;
     }
 
-    gst_buffer_add_video_meta_full(buffer.get(), GST_VIDEO_FRAME_FLAG_NONE, format, width, height, 1, offsets, strides);
+    gst_buffer_add_video_meta_full(buffer.get(), GST_VIDEO_FRAME_FLAG_NONE, format, width, height, 1, offsets.data(), strides.data());
 
     GRefPtr caps = adoptGRef(gst_caps_new_simple("video/x-raw", "format", G_TYPE_STRING, gst_video_format_to_string(format), "width", G_TYPE_INT, width, "height", G_TYPE_INT, height, nullptr));
     auto info = VideoFrameGStreamer::infoFromCaps(caps);

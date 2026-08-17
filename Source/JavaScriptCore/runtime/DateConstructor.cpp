@@ -74,7 +74,7 @@ static double millisecondsFromComponents(JSGlobalObject* globalObject, const Arg
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     // Initialize doubleArguments with default values.
-    double doubleArguments[7] {
+    std::array<double, 7> doubleArguments {
         0, 0, 1, 0, 0, 0, 0
     };
     bool hasNonFinite = false;

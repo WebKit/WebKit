@@ -271,8 +271,8 @@ void CoordinatedPlatformLayerBufferVideo::createBufferFromMappedFrameIfNeeded()
 
     auto* meta = gst_buffer_get_video_gl_texture_upload_meta(m_mappedVideoFrame->get()->buffer);
     if (meta && meta->n_textures == 1) {
-        guint ids[4] = { texture->id(), 0, 0, 0 };
-        if (gst_video_gl_texture_upload_meta_upload(meta, ids)) {
+        std::array<guint, 4> ids { texture->id(), 0, 0, 0 };
+        if (gst_video_gl_texture_upload_meta_upload(meta, ids.data())) {
             m_buffer = CoordinatedPlatformLayerBufferRGB::create(WTF::move(texture), m_flags, nullptr);
             return;
         }

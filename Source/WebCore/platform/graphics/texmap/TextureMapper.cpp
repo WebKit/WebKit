@@ -396,7 +396,7 @@ static int computeGaussianKernel(float radius, std::array<float, SimplifiedGauss
     RELEASE_ASSERT(kernelHalfSize <= GaussianKernelMaxHalfSize);
 
     WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib/Win port
-    float fullKernel[GaussianKernelMaxHalfSize];
+    std::array<float, GaussianKernelMaxHalfSize> fullKernel;
 
     fullKernel[0] = 1; // gauss(0, radius);
     float sum = fullKernel[0];

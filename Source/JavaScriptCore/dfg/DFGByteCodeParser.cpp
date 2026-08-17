@@ -3560,7 +3560,7 @@ auto ByteCodeParser::handleIntrinsicCall(Node* callee, Operand resultOperand, Ca
             }
 
             constexpr unsigned maxStrCatArguments = 3;
-            Node* operands[AdjacencyList::Size] = { };
+            std::array<Node*, AdjacencyList::Size> operands { };
             unsigned indexInOperands = 0;
 
             operands[indexInOperands++] = thisNode;
@@ -8794,7 +8794,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
             int startOperand = bytecode.m_src.offset();
             int numOperands = bytecode.m_count;
             const unsigned maxArguments = 3;
-            Node* operands[AdjacencyList::Size] = { };
+            std::array<Node*, AdjacencyList::Size> operands { };
             unsigned indexInOperands = 0;
             for (int operandIdx = 0; operandIdx < numOperands; ++operandIdx) {
                 if (indexInOperands == maxArguments) {

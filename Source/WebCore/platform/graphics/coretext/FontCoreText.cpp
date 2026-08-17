@@ -247,18 +247,18 @@ bool Font::variantCapsSupportedForSynthesis(FontVariantCaps fontVariantCaps) con
 static RetainPtr<CFDictionaryRef> smallCapsOpenTypeDictionary(CFStringRef key, int rawValue)
 {
     RetainPtr<CFNumberRef> value = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &rawValue));
-    CFTypeRef keys[] = { kCTFontOpenTypeFeatureTag, kCTFontOpenTypeFeatureValue };
-    CFTypeRef values[] = { key, value.get() };
-    return adoptCF(CFDictionaryCreate(kCFAllocatorDefault, keys, values, std::size(keys), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+    std::array<CFTypeRef, 2> keys { kCTFontOpenTypeFeatureTag, kCTFontOpenTypeFeatureValue };
+    std::array<CFTypeRef, 2> values { key, value.get() };
+    return adoptCF(CFDictionaryCreate(kCFAllocatorDefault, keys.data(), values.data(), keys.size(), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
 }
 
 static RetainPtr<CFDictionaryRef> smallCapsTrueTypeDictionary(int rawKey, int rawValue)
 {
     RetainPtr<CFNumberRef> key = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &rawKey));
     RetainPtr<CFNumberRef> value = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &rawValue));
-    CFTypeRef keys[] = { kCTFontFeatureTypeIdentifierKey, kCTFontFeatureSelectorIdentifierKey };
-    CFTypeRef values[] = { key.get(), value.get() };
-    return adoptCF(CFDictionaryCreate(kCFAllocatorDefault, keys, values, std::size(keys), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+    std::array<CFTypeRef, 2> keys { kCTFontFeatureTypeIdentifierKey, kCTFontFeatureSelectorIdentifierKey };
+    std::array<CFTypeRef, 2> values { key.get(), value.get() };
+    return adoptCF(CFDictionaryCreate(kCFAllocatorDefault, keys.data(), values.data(), keys.size(), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
 }
 
 static void unionBitVectors(BitVector& result, CFBitVectorRef source)
@@ -488,9 +488,9 @@ static RetainPtr<CTFontRef> createCTFontWithoutSynthesizableFeatures(CTFontRef f
         RetainPtr feature = static_cast<CFDictionaryRef>(CFArrayGetValueAtIndex(features.get(), i));
         CFArrayAppendValue(newFeatures.get(), removedFeature(feature.get(), font).get());
     }
-    CFTypeRef keys[] = { kCTFontFeatureSettingsAttribute };
-    CFTypeRef values[] = { newFeatures.get() };
-    RetainPtr<CFDictionaryRef> attributes = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, keys, values, std::size(keys), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+    std::array<CFTypeRef, 1> keys { kCTFontFeatureSettingsAttribute };
+    std::array<CFTypeRef, 1> values { newFeatures.get() };
+    RetainPtr<CFDictionaryRef> attributes = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, keys.data(), values.data(), keys.size(), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
     RetainPtr<CTFontDescriptorRef> newDescriptor = adoptCF(CTFontDescriptorCreateWithAttributes(attributes.get()));
     return adoptCF(CTFontCreateCopyWithAttributes(font, CTFontGetSize(font), nullptr, newDescriptor.get()));
 }
@@ -559,12 +559,12 @@ RefPtr<Font> Font::platformCreateHalfWidthFont() const
     auto featureName = CFSTR("halt");
     auto featureValue = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &enableHaltValue));
 
-    const void* featureValues[] = { featureName, featureValue.get() };
-    auto fontFeatureSettings = adoptCF(CFArrayCreate(kCFAllocatorDefault, featureValues, std::size(featureValues), &kCFTypeArrayCallBacks));
+    std::array<const void*, 2> featureValues { featureName, featureValue.get() };
+    auto fontFeatureSettings = adoptCF(CFArrayCreate(kCFAllocatorDefault, featureValues.data(), featureValues.size(), &kCFTypeArrayCallBacks));
 
-    CFTypeRef fontDescriptorKeys[] = { kCTFontFeatureSettingsAttribute };
-    CFTypeRef fontDescriptorValues[] = { fontFeatureSettings.get() };
-    auto attributes = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, fontDescriptorKeys, fontDescriptorValues, std::size(fontDescriptorValues), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+    std::array<CFTypeRef, 1> fontDescriptorKeys { kCTFontFeatureSettingsAttribute };
+    std::array<CFTypeRef, 1> fontDescriptorValues { fontFeatureSettings.get() };
+    auto attributes = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, fontDescriptorKeys.data(), fontDescriptorValues.data(), fontDescriptorValues.size(), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
 
     auto attributesDescriptor = adoptCF(CTFontDescriptorCreateWithAttributes(attributes.get()));
     auto halfWidthFont = adoptCF(CTFontCreateCopyWithAttributes(ctFont.get(), size, nullptr, attributesDescriptor.get()));

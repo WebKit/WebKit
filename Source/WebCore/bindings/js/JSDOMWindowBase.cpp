@@ -134,7 +134,7 @@ SUPPRESS_ASAN inline void JSDOMWindowBase::initStaticGlobals(JSC::VM& vm)
 {
     auto& builtinNames = WebCore::builtinNames(vm);
 
-    GlobalPropertyInfo staticGlobals[] = {
+    std::array<GlobalPropertyInfo, 2> staticGlobals {
         GlobalPropertyInfo(builtinNames.documentPublicName(), jsNull(), PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly),
         GlobalPropertyInfo(builtinNames.windowPublicName(), m_proxy.get(), PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly),
     };

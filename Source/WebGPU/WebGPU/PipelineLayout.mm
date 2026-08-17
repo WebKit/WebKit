@@ -60,7 +60,7 @@ Ref<PipelineLayout> Device::createPipelineLayout(const WGPUPipelineLayoutDescrip
         Vector<Ref<BindGroupLayout>> bindGroupLayouts(descriptorBindGroupLayouts.size(), [&](size_t i) {
             return Ref<BindGroupLayout> { protect(WebGPU::fromAPI(descriptorBindGroupLayouts[i])) };
         });
-        ShaderStage stages[] = { ShaderStage::Vertex, ShaderStage::Fragment, ShaderStage::Compute };
+        auto stages = WTF::toArray({ ShaderStage::Vertex, ShaderStage::Fragment, ShaderStage::Compute });
         for (ShaderStage shaderStage : stages) {
             uint32_t uniformBufferCount = 0, storageBufferCount = 0, samplerCount = 0, textureCount = 0, storageTextureCount = 0;
             for (auto& bindGroupLayout : bindGroupLayouts) {
@@ -161,7 +161,7 @@ PipelineLayout::PipelineLayout(std::optional<Vector<Ref<BindGroupLayout>>>&& opt
         addInitialOffset(initialVertexOffset, vertexOffset, groupIndex, m_vertexOffsets, m_vertexDynamicOffsets);
         addInitialOffset(initialFragmentOffset, fragmentOffset, groupIndex, m_fragmentOffsets, m_fragmentDynamicOffsets);
         addInitialOffset(initialComputeOffset, computeOffset, groupIndex, m_computeOffsets, m_computeDynamicOffsets);
-        constexpr WGPUShaderStage stages[] = { WGPUShaderStage_Vertex, WGPUShaderStage_Fragment, WGPUShaderStage_Compute };
+        constexpr auto stages = WTF::toArray({ WGPUShaderStage_Vertex, WGPUShaderStage_Fragment, WGPUShaderStage_Compute });
         for (auto stage : stages) {
             bool hasLinearLayout = true;
             std::optional<uint32_t> priorDynamicOffsetsIndex, firstDynamicOffsetsIndex;

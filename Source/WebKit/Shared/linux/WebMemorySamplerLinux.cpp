@@ -85,9 +85,9 @@ do { \
 IGNORE_CLANG_WARNINGS_BEGIN("unsafe-buffer-usage-in-libc-call")
 String WebMemorySampler::processName() const
 {
-    char processPath[maxProcessPath];
-    snprintf(processPath, maxProcessPath, "/proc/self/status");
-    FILE* statusFileDescriptor = fopen(processPath, "r");
+    std::array<char, maxProcessPath> processPath;
+    SAFE_SPRINTF(std::span { processPath }, "/proc/self/status");
+    FILE* statusFileDescriptor = fopen(processPath.data(), "r");
     if (!statusFileDescriptor)
         return String();
         

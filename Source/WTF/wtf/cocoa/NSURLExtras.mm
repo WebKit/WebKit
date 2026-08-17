@@ -59,14 +59,14 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
             break;
         
         // Read a script name if present.
-        char word[33];
-        int result = fscanf(file, " %32[^# \t\n\r]%*[^# \t\n\r] ", word);
+        std::array<char, 33> word;
+        int result = fscanf(file, " %32[^# \t\n\r]%*[^# \t\n\r] ", word.data());
         if (result == EOF)
             break;
-        
+
         if (result == 1) {
             // Got a word, map to script code and put it into the array.
-            URLHelpers::addScriptToIDNAllowedScriptList(word);
+            URLHelpers::addScriptToIDNAllowedScriptList(word.data());
         }
     }
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

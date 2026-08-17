@@ -73,7 +73,7 @@ public:
         }
 
         // Left align the 53 bits of the mantissa within 96 bits.
-        uint32_t values[3];
+        std::array<uint32_t, 3> values;
         values[0] = static_cast<uint32_t>(mantissa >> 21);
         values[1] = static_cast<uint32_t>(mantissa << 11);
         values[2] = 0;

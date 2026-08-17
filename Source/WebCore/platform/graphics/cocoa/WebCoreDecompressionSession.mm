@@ -206,9 +206,9 @@ static RetainPtr<CFArrayRef> createTagCollectionRequiredFromVideoToolboxOutput(C
         }
         CMTag stereoView = PAL::CMTagMakeWithFlagsValue(kCMTagCategory_StereoView, it->second);
 
-        CMTag refinedTags[] = { PAL::kCMTagMediaTypeVideo, videoLayerIDTag, stereoView };
+        std::array<CMTag, 3> refinedTags { PAL::kCMTagMediaTypeVideo, videoLayerIDTag, stereoView };
         CMTagCollectionRef rawRefinedTagCollection = nullptr;
-        if (auto status = PAL::CMTagCollectionCreate(kCFAllocatorDefault, refinedTags, sizeof(refinedTags) / sizeof(refinedTags[0]), &rawRefinedTagCollection); status != noErr) {
+        if (auto status = PAL::CMTagCollectionCreate(kCFAllocatorDefault, refinedTags.data(), refinedTags.size(), &rawRefinedTagCollection); status != noErr) {
             RELEASE_LOG_ERROR(Media, "Unable to allocate CMTagCollection for layer:%lld with error:%d", videoLayerValue, int(status));
             return nullptr;
         }

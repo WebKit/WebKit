@@ -158,10 +158,10 @@ NEVER_INLINE static RetainPtr<CFDictionaryRef> buildCoreTextTypesetterEmbeddingL
 {
     auto embeddingLevelValue = std::to_underlying(embeddingLevel);
     static_assert(std::is_same_v<short, decltype(embeddingLevelValue)>);
-    const void* optionKeys[] = { kCTTypesetterOptionForcedEmbeddingLevel };
+    std::array<const void*, 1> optionKeys { kCTTypesetterOptionForcedEmbeddingLevel };
     RetainPtr cfEmbeddingLevelValue = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberShortType, &embeddingLevelValue));
-    const void* optionValues[] = { cfEmbeddingLevelValue.get() };
-    return adoptCF(CFDictionaryCreate(kCFAllocatorDefault, optionKeys, optionValues, std::size(optionKeys), &kCFCopyStringDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+    std::array<const void*, 1> optionValues { cfEmbeddingLevelValue.get() };
+    return adoptCF(CFDictionaryCreate(kCFAllocatorDefault, optionKeys.data(), optionValues.data(), optionKeys.size(), &kCFCopyStringDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
 }
 
 template<CoreTextTypesetterEmbeddingLevel embeddingLevel>

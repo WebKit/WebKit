@@ -151,9 +151,9 @@ RefPtr<SandboxExtension> SandboxExtension::create(Handle&& handle)
 
 String stringByResolvingSymlinksInPath(StringView path)
 {
-    char resolvedPath[PATH_MAX] = { 0 };
-    realpath(path.utf8().data(), resolvedPath);
-    return String::fromUTF8(resolvedPath);
+    std::array<char, PATH_MAX> resolvedPath { 0 };
+    realpath(path.utf8().data(), resolvedPath.data());
+    return String::fromUTF8(resolvedPath.data());
 }
 
 String resolveAndCreateReadWriteDirectoryForSandboxExtension(StringView path)

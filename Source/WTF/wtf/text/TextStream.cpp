@@ -120,9 +120,9 @@ TextStream& TextStream::operator<<(const char* string)
 
 TextStream& TextStream::operator<<(const void* p)
 {
-    char buffer[printBufferSize];
+    std::array<char, printBufferSize> buffer;
     SAFE_SPRINTF(std::span { buffer }, "%p", p);
-    return *this << buffer;
+    return *this << buffer.data();
 }
 
 TextStream& TextStream::operator<<(const AtomString& string)

@@ -114,7 +114,7 @@ static size_t lowWatermarkPages(FILE* zoneInfoFile)
 {
     size_t low = 0;
     size_t sumLow = 0;
-    char buffer[ZONEINFO_TOKEN_BUFFER_SIZE + 1];
+    std::array<char, ZONEINFO_TOKEN_BUFFER_SIZE + 1> buffer;
     bool inNormalZone = false;
 
     if (!zoneInfoFile || fseek(zoneInfoFile, 0, SEEK_SET))
@@ -122,11 +122,11 @@ static size_t lowWatermarkPages(FILE* zoneInfoFile)
 
     while (!feof(zoneInfoFile)) {
         int r;
-        r = fscanf(zoneInfoFile, " Node %*u, zone %" STRINGIFY(ZONEINFO_TOKEN_BUFFER_SIZE) "[^\n]\n", buffer);
-        if (r == 2 && !strcmp(buffer, "Normal"))
+        r = fscanf(zoneInfoFile, " Node %*u, zone %" STRINGIFY(ZONEINFO_TOKEN_BUFFER_SIZE) "[^\n]\n", buffer.data());
+        if (r == 2 && !strcmp(buffer.data(), "Normal"))
             inNormalZone = true;
-        r = fscanf(zoneInfoFile, "%" STRINGIFY(ZONEINFO_TOKEN_BUFFER_SIZE) "s", buffer);
-        if (r == 1 && inNormalZone && !strcmp(buffer, "low")) {
+        r = fscanf(zoneInfoFile, "%" STRINGIFY(ZONEINFO_TOKEN_BUFFER_SIZE) "s", buffer.data());
+        if (r == 1 && inNormalZone && !strcmp(buffer.data(), "low")) {
             r = fscanf(zoneInfoFile, "%zu", &low);
             if (r == 1) {
                 sumLow += low;
@@ -170,10 +170,10 @@ static size_t calculateMemoryAvailable(size_t memoryFree, size_t activeFile, siz
 
 FILE* getCgroupFile(CString cgroupControllerName, CString cgroupControllerPath, CString cgroupFileName)
 {
-    char cgroupPath[maxCgroupPath];
-    snprintf(cgroupPath, maxCgroupPath, s_cgroupMemoryPath, cgroupControllerName.data(), cgroupControllerPath.data(), cgroupFileName.data());
-    LOG_VERBOSE(MemoryPressure, "Open: %s", cgroupPath);
-    FILE* file = fopen(cgroupPath, "r");
+    std::array<char, maxCgroupPath> cgroupPath;
+    SAFE_SPRINTF(std::span { cgroupPath }, s_cgroupMemoryPath, cgroupControllerName, cgroupControllerPath, cgroupFileName);
+    LOG_VERBOSE(MemoryPressure, "Open: %s", cgroupPath.data());
+    FILE* file = fopen(cgroupPath.data(), "r");
     if (file)
         setbuf(file, nullptr);
     return file;
@@ -251,21 +251,21 @@ static int systemMemoryUsedAsPercentage(FILE* memInfoFile, FILE* zoneInfoFile, C
     memoryAvailable = memoryTotal = memoryFree = activeFile = inactiveFile = slabReclaimable = notSet;
 
     while (!feof(memInfoFile)) {
-        char token[MEMINFO_TOKEN_BUFFER_SIZE + 1] = { 0 };
+        std::array<char, MEMINFO_TOKEN_BUFFER_SIZE + 1> token { 0 };
         size_t amount;
-        if (fscanf(memInfoFile, "%" STRINGIFY(MEMINFO_TOKEN_BUFFER_SIZE) "s%zukB", token, &amount) != 2)
+        if (fscanf(memInfoFile, "%" STRINGIFY(MEMINFO_TOKEN_BUFFER_SIZE) "s%zukB", token.data(), &amount) != 2)
             continue;
-        if (!strcmp(token, "MemTotal:"))
+        if (!strcmp(token.data(), "MemTotal:"))
             memoryTotal = amount;
-        else if (!strcmp(token, "MemFree:"))
+        else if (!strcmp(token.data(), "MemFree:"))
             memoryFree = amount;
-        else if (!strcmp(token, "MemAvailable:"))
+        else if (!strcmp(token.data(), "MemAvailable:"))
             memoryAvailable = amount;
-        else if (!strcmp(token, "Active(file):"))
+        else if (!strcmp(token.data(), "Active(file):"))
             activeFile = amount;
-        else if (!strcmp(token, "Inactive(file):"))
+        else if (!strcmp(token.data(), "Inactive(file):"))
             inactiveFile = amount;
-        else if (!strcmp(token, "SReclaimable:"))
+        else if (!strcmp(token.data(), "SReclaimable:"))
             slabReclaimable = amount;
 
         if (memoryTotal != notSet && memoryFree != notSet && activeFile != notSet && inactiveFile != notSet && slabReclaimable != notSet)
@@ -441,13 +441,13 @@ size_t CGroupMemoryController::getCgroupFileValue(FILE *file)
     if (!file || fseek(file, 0, SEEK_SET))
         return notSet;
 
-    char rawValue[VALUE_BUFFER_SIZE + 1];
-    if (fscanf(file, "%" STRINGIFY(VALUE_BUFFER_SIZE) "[^\n]", rawValue) < 1)
+    std::array<char, VALUE_BUFFER_SIZE + 1> rawValue;
+    if (fscanf(file, "%" STRINGIFY(VALUE_BUFFER_SIZE) "[^\n]", rawValue.data()) < 1)
         return notSet;
 
     errno = 0;
     char* endptr;
-    long value = strtol(rawValue, &endptr, 10);
+    long value = strtol(rawValue.data(), &endptr, 10);
 
     if (errno == ERANGE || value < 0 || *endptr != '\0')
         return notSet;

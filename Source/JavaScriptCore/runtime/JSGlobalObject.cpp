@@ -1011,14 +1011,14 @@ void JSGlobalObject::initializeSuppressedErrorConstructor(LazyClassStructure::In
 
 SUPPRESS_ASAN inline void JSGlobalObject::initStaticGlobals(VM& vm)
 {
-    GlobalPropertyInfo staticGlobals[] = {
+    auto staticGlobals = WTF::toArray({
         GlobalPropertyInfo(vm.propertyNames->NaN, jsNaN(), PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly),
         GlobalPropertyInfo(vm.propertyNames->Infinity, jsNumber(std::numeric_limits<double>::infinity()), PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly),
         GlobalPropertyInfo(vm.propertyNames->undefinedKeyword, jsUndefined(), PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly),
 #if ASSERT_ENABLED
         GlobalPropertyInfo(vm.propertyNames->builtinNames().assertPrivateName(), JSFunction::create(vm, this, 1, String(), assertCall, ImplementationVisibility::Public), PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly),
 #endif
-    };
+    });
     addStaticGlobals(staticGlobals);
 }
 
@@ -3196,7 +3196,7 @@ SUPPRESS_ASAN void JSGlobalObject::exposeDollarVM(VM& vm)
 
     JSDollarVM* dollarVM = JSDollarVM::create(vm, JSDollarVM::createStructure(vm, this, m_objectPrototype.get()));
 
-    GlobalPropertyInfo extraStaticGlobals[] = {
+    std::array<GlobalPropertyInfo, 1> extraStaticGlobals {
         GlobalPropertyInfo(vm.propertyNames->builtinNames().dollarVMPrivateName(), dollarVM, PropertyAttribute::DontEnum | PropertyAttribute::DontDelete | PropertyAttribute::ReadOnly),
     };
     addStaticGlobals(extraStaticGlobals);

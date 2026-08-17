@@ -48,8 +48,8 @@
     [self setName:@"WebLightSystemBackdropLayer"];
 #endif
 
-    CGFloat components[4] = { 0.8, 0.8, 0.8, 0.8 };
-    [super setBackgroundColor:adoptCF(CGColorCreate(WebCore::sRGBColorSpaceSingleton(), components)).get()];
+    std::array<CGFloat, 4> components { 0.8, 0.8, 0.8, 0.8 };
+    [super setBackgroundColor:adoptCF(CGColorCreate(WebCore::sRGBColorSpaceSingleton(), components.data())).get()];
 
     return self;
 }
@@ -74,8 +74,8 @@
     [self setName:@"WebDarkSystemBackdropLayer"];
 #endif
 
-    CGFloat components[4] = { 0.2, 0.2, 0.2, 0.8 };
-    [super setBackgroundColor:adoptCF(CGColorCreate(WebCore::sRGBColorSpaceSingleton(), components)).get()];
+    std::array<CGFloat, 4> components { 0.2, 0.2, 0.2, 0.8 };
+    [super setBackgroundColor:adoptCF(CGColorCreate(WebCore::sRGBColorSpaceSingleton(), components.data())).get()];
 
     return self;
 }

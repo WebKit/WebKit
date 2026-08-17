@@ -335,9 +335,8 @@ constexpr bool isStatelessLambda()
 template<typename ResultType, typename Func, typename... ArgumentTypes>
 ResultType callStatelessLambda(ArgumentTypes&&... arguments)
 {
-    uint64_t data[(sizeof(Func) + sizeof(uint64_t) - 1) / sizeof(uint64_t)];
-    memset(data, 0, sizeof(data));
-    return (*reinterpret_cast<Func*>(data))(std::forward<ArgumentTypes>(arguments)...);
+    std::array<uint64_t, (sizeof(Func) + sizeof(uint64_t) - 1) / sizeof(uint64_t)> data { };
+    return (*reinterpret_cast<Func*>(data.data()))(std::forward<ArgumentTypes>(arguments)...);
 }
 
 template<typename T, typename U>

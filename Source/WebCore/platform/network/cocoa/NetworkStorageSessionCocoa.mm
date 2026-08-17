@@ -203,9 +203,9 @@ CookieStorageObserver& NetworkStorageSession::cookieStorageObserver() const
 
 RetainPtr<CFURLStorageSessionRef> createPrivateStorageSession(CFStringRef identifier, std::optional<HTTPCookieAcceptPolicy> cookieAcceptPolicy, NetworkStorageSession::ShouldDisableCFURLCache shouldDisableCFURLCache)
 {
-    const void* sessionPropertyKeys[] = { _kCFURLStorageSessionIsPrivate };
-    const void* sessionPropertyValues[] = { kCFBooleanTrue };
-    auto sessionProperties = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, sessionPropertyKeys, sessionPropertyValues, sizeof(sessionPropertyKeys) / sizeof(*sessionPropertyKeys), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+    std::array<const void*, 1> sessionPropertyKeys { _kCFURLStorageSessionIsPrivate };
+    std::array<const void*, 1> sessionPropertyValues { kCFBooleanTrue };
+    auto sessionProperties = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, sessionPropertyKeys.data(), sessionPropertyValues.data(), sessionPropertyKeys.size(),&kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
     auto storageSession = adoptCF(_CFURLStorageSessionCreate(kCFAllocatorDefault, identifier, sessionProperties.get()));
 
     if (!storageSession)

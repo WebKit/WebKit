@@ -136,7 +136,7 @@ public:
     {
         if (!m_context)
             return;
-        GCGLenum value[1] { GraphicsContextGL::COLOR_ATTACHMENT0 };
+        std::array<GCGLenum, 1> value { GraphicsContextGL::COLOR_ATTACHMENT0 };
         if (context.isWebGL2())
             protect(context.graphicsContextGL())->drawBuffers(value);
         else
@@ -147,7 +147,7 @@ public:
     {
         if (!m_context)
             return;
-        GCGLenum value[1] { GraphicsContextGL::NONE };
+        std::array<GCGLenum, 1> value { GraphicsContextGL::NONE };
         if (m_context->isWebGL2())
             protect(m_context->graphicsContextGL())->drawBuffers(value);
         else
