@@ -1937,6 +1937,23 @@ void RenderLayer::dirtyVisibleContentStatus()
         parent()->dirtyAncestorChainVisibleDescendantStatus();
 }
 
+void RenderLayer::dirtyVisibleContentStatusIncludingAncestors()
+{
+    dirtyVisibleContentStatus();
+
+    // computeHasVisibleContent() looks past a hidden layer into the children it paints, so those
+    // ancestors are stale too. That walk stops at the first self-painting layer.
+    if (isSelfPaintingLayer())
+        return;
+
+    for (auto* ancestor = parent(); ancestor; ancestor = ancestor->parent()) {
+        if (ancestor->renderer().style().usedVisibility() != Visibility::Visible)
+            ancestor->dirtyVisibleContentStatus();
+        if (ancestor->isSelfPaintingLayer())
+            break;
+    }
+}
+
 void RenderLayer::dirtyAncestorChainVisibleDescendantStatus()
 {
     setNeedsPositionUpdate();
@@ -2042,7 +2059,7 @@ bool RenderLayer::computeHasVisibleContent() const
     if (m_svgData && !renderer().style().filter().isNone())
         return true;
 
-    // Layer's renderer has visibility:hidden, but some non-layer child may have visibility:visible.
+    // Layer's renderer has visibility:hidden, but a child we paint ourselves may have visibility:visible.
     auto nextRenderer = [&] (auto& renderer) -> const RenderObject* {
         for (auto* ancestor = &renderer; ancestor && ancestor != &this->renderer(); ancestor = ancestor->parent()) {
             if (auto* sibling = ancestor->nextSibling())
@@ -2052,7 +2069,7 @@ bool RenderLayer::computeHasVisibleContent() const
     };
     const auto* renderer = this->renderer().firstChild();
     while (renderer) {
-        if (CheckedPtr renderElement = dynamicDowncast<RenderElement>(renderer); renderElement && !renderElement->hasLayer()) {
+        if (CheckedPtr renderElement = dynamicDowncast<RenderElement>(renderer); renderElement && !renderElement->hasSelfPaintingLayer()) {
             if (renderElement->style().usedVisibility() == Visibility::Visible)
                 return true;
             if (auto* firstChild = renderElement->firstChild()) {
@@ -5960,6 +5977,9 @@ void RenderLayer::updateSelfPaintingLayer()
 
     if (!parent())
         return;
+
+    // We are part of what a hidden ancestor paints now.
+    parent()->dirtyVisibleContentStatusIncludingAncestors();
 
     if (isSelfPaintingLayer)
         parent()->setAncestorChainHasSelfPaintingLayerDescendant();

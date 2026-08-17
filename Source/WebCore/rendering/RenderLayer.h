@@ -600,6 +600,7 @@ public:
 
     void setHasVisibleContent();
     void NODELETE dirtyVisibleContentStatus();
+    void NODELETE dirtyVisibleContentStatusIncludingAncestors();
 
     bool hasVisibleBoxDecorationsOrBackground() const;
     bool hasVisibleBoxDecorations() const;

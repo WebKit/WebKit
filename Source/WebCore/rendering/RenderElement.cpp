@@ -960,7 +960,7 @@ void RenderElement::styleWillChange(Style::Difference diff, const Style::Compute
         // Keep layer hierarchy visibility bits up to date if visibility or skipped content state changes.
         if (m_style.usedVisibility() != newStyle.usedVisibility()) {
             if (auto* layer = enclosingLayer())
-                layer->dirtyVisibleContentStatus();
+                layer->dirtyVisibleContentStatusIncludingAncestors();
         }
 
         if (m_style.usedContentVisibility() != newStyle.usedContentVisibility()) {
@@ -1222,7 +1222,7 @@ void RenderElement::insertedIntoTree()
 
     // If |this| is visible but this object was not, tell the layer it has some visible content
     // that needs to be drawn and layer visibility optimization can't be used
-    if (parent()->style().usedVisibility() != Visibility::Visible && style().usedVisibility() == Visibility::Visible && !hasLayer()) {
+    if (parent()->style().usedVisibility() != Visibility::Visible && style().usedVisibility() == Visibility::Visible && !hasSelfPaintingLayer()) {
         if (CheckedPtr parentLayer = layerParent())
             parentLayer->dirtyVisibleContentStatus();
     }
@@ -1243,7 +1243,7 @@ void RenderElement::willBeRemovedFromTree()
     }
 
     // If we remove a visible child from an invisible parent, we don't know the layer visibility any more.
-    if (parent()->style().usedVisibility() != Visibility::Visible && style().usedVisibility() == Visibility::Visible && !hasLayer()) {
+    if (parent()->style().usedVisibility() != Visibility::Visible && style().usedVisibility() == Visibility::Visible && !hasSelfPaintingLayer()) {
         // FIXME: should get parent layer. Necessary?
         if (CheckedPtr enclosingLayer = parent()->enclosingLayer())
             enclosingLayer->dirtyVisibleContentStatus();
