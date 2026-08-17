@@ -7723,6 +7723,58 @@ class WebKitStyleTest(CppStyleTestBase):
                          ['ios(WK_MAC_TBA) is invalid; expected WK_IOS_TBA or a major.minor version  [build/wk_api_available] [5]',
                           'visionos(WK_MAC_TBA) is invalid; expected WK_XROS_TBA or a major.minor version  [build/wk_api_available] [5]'])
 
+    def test_wk_macros(self):
+        header = 'Source/WebKit/UIProcess/API/Cocoa/WKWebView.h'
+
+        self.assert_lint('WK_HEADER_AUDIT_BEGIN(nullability, sendability)',
+                         "Use 'NS_HEADER_AUDIT_BEGIN' instead of 'WK_HEADER_AUDIT_BEGIN'.  [build/wk_macros] [5]", header)
+        self.assert_lint('WK_HEADER_AUDIT_END(nullability, sendability)',
+                         "Use 'NS_HEADER_AUDIT_END' instead of 'WK_HEADER_AUDIT_END'.  [build/wk_macros] [5]", header)
+        self.assert_lint('@property (nonatomic, readonly, copy) NSString * WK_NULLABLE_RESULT title;',
+                         "Use 'NS_NULLABLE_RESULT' instead of 'WK_NULLABLE_RESULT'.  [build/wk_macros] [5]", header)
+        self.assert_lint('- (void)fooWithCompletionHandler:(void (^)(void))completionHandler WK_SWIFT_ASYNC(2);',
+                         "Use 'NS_SWIFT_ASYNC' instead of 'WK_SWIFT_ASYNC'.  [build/wk_macros] [5]", header)
+        self.assert_lint('- (void)fooWithCompletionHandler:(void (^)(void))completionHandler WK_SWIFT_ASYNC_NAME(foo());',
+                         "Use 'NS_SWIFT_ASYNC_NAME' instead of 'WK_SWIFT_ASYNC_NAME'.  [build/wk_macros] [5]", header)
+        self.assert_lint('- (void)fooWithCompletionHandler:(void (^)(BOOL))completionHandler WK_SWIFT_ASYNC_THROWS_ON_FALSE(1);',
+                         "Use 'NS_SWIFT_ASYNC_THROWS_ON_FALSE' instead of 'WK_SWIFT_ASYNC_THROWS_ON_FALSE'.  [build/wk_macros] [5]", header)
+        self.assert_lint('- (void)foo:(WK_SWIFT_UI_ACTOR void (^)(void))handler;',
+                         "Use 'NS_SWIFT_UI_ACTOR' instead of 'WK_SWIFT_UI_ACTOR'.  [build/wk_macros] [5]", header)
+
+        # Multiple macros on one line are all reported.
+        self.assert_lint('- (void)foo:(void (^)(void))handler WK_SWIFT_ASYNC_NAME(foo()) WK_SWIFT_ASYNC(1);',
+                         ["Use 'NS_SWIFT_ASYNC' instead of 'WK_SWIFT_ASYNC'.  [build/wk_macros] [5]",
+                          "Use 'NS_SWIFT_ASYNC_NAME' instead of 'WK_SWIFT_ASYNC_NAME'.  [build/wk_macros] [5]"], header)
+
+        # The NS_ spellings and other WK_ macros are fine.
+        self.assert_lint('NS_HEADER_AUDIT_BEGIN(nullability, sendability)', '', header)
+        self.assert_lint('- (void)foo WK_API_AVAILABLE(macos(WK_MAC_TBA));', '', header)
+        self.assert_lint('- (void)foo:(NS_SWIFT_UI_ACTOR void (^)(void))handler;', '', header)
+        self.assert_lint('- (void)foo:(void (^)(void))handler NS_SWIFT_ASYNC_NAME(foo());', '', header)
+
+        # WKFoundation.h is where these macros are defined.
+        self.assert_lint('#define WK_SWIFT_ASYNC_NAME(...) NS_SWIFT_ASYNC_NAME(__VA_ARGS__)', '',
+                         'Source/WebKit/Shared/API/Cocoa/WKFoundation.h')
+        self.assert_lint('#define WK_SWIFT_UI_ACTOR NS_SWIFT_UI_ACTOR', '',
+                         'Source/WebKit/Shared/API/Cocoa/WKFoundation.h')
+        self.assert_lint('#define WK_HEADER_AUDIT_BEGIN NS_HEADER_AUDIT_BEGIN', '',
+                         'Source/WebKit/Shared/API/Cocoa/WKFoundation.h')
+
+    def test_header_audit(self):
+        header = 'Source/WebKit/UIProcess/API/Cocoa/WKWebView.h'
+
+        self.assert_lint('NS_ASSUME_NONNULL_BEGIN',
+                         "Use 'NS_HEADER_AUDIT_BEGIN(nullability, sendability)' instead of 'NS_ASSUME_NONNULL_BEGIN'.  [build/header_audit] [5]", header)
+        self.assert_lint('NS_ASSUME_NONNULL_END',
+                         "Use 'NS_HEADER_AUDIT_END(nullability, sendability)' instead of 'NS_ASSUME_NONNULL_END'.  [build/header_audit] [5]", header)
+
+        self.assert_lint('NS_HEADER_AUDIT_BEGIN(nullability, sendability)', '', header)
+        self.assert_lint('NS_HEADER_AUDIT_END(nullability, sendability)', '', header)
+
+        # WKFoundation.h defines WK_HEADER_AUDIT_BEGIN / WK_HEADER_AUDIT_END in terms of these.
+        self.assert_lint('#define WK_HEADER_AUDIT_BEGIN(...) NS_ASSUME_NONNULL_BEGIN', '',
+                         'Source/WebKit/Shared/API/Cocoa/WKFoundation.h')
+
     def test_os_version_checks(self):
         self.assert_lint('#if PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED < 110000', 'Misplaced OS version check. Please use a named macro in one of headers in the wtf/Platform.h suite of files or an appropriate internal file.  [build/version_check] [5]')
         self.assert_lint('#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 130000', 'Misplaced OS version check. Please use a named macro in one of headers in the wtf/Platform.h suite of files or an appropriate internal file.  [build/version_check] [5]')

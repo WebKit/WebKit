@@ -1232,6 +1232,21 @@ _RE_PATTERN_XCODE_MAX_ALLOWED_MACRO = re.compile(
 _RE_PATTERN_PLATFORM_HEADER = re.compile(
     r'Source/WTF/wtf/Platform[a-zA-Z]+\.h')
 
+# Macros defined by WKFoundation.h which are now just aliases for the
+# identically named NS_ macro, and so should no longer be used.
+_WK_MACROS_WITH_NS_EQUIVALENTS = (
+    'WK_HEADER_AUDIT_BEGIN',
+    'WK_HEADER_AUDIT_END',
+    'WK_NULLABLE_RESULT',
+    'WK_SWIFT_ASYNC',
+    'WK_SWIFT_ASYNC_NAME',
+    'WK_SWIFT_ASYNC_THROWS_ON_FALSE',
+    'WK_SWIFT_UI_ACTOR',
+)
+
+_RE_PATTERN_WK_FOUNDATION_HEADER = re.compile(
+    r'(?:.*[\\/])?WKFoundation\.h$')
+
 
 def check_os_version_checks(filename, clean_lines, line_number, error):
     """ Checks for mistakes using VERSION_MIN_REQUIRED and VERSION_MAX_ALLOWED macros:
@@ -3785,6 +3800,35 @@ def check_arguments_for_wk_api_available(clean_lines, line_number, error):
         return
 
 
+def check_objc_annotation_macros(filename, clean_lines, line_number, error):
+    """Looks for Objective-C annotation macros which have a preferred spelling:
+    1. The WK_ prefixed macros in WKFoundation.h, which should be spelled using their NS_ equivalents.
+    2. NS_ASSUME_NONNULL_BEGIN / NS_ASSUME_NONNULL_END, which should be spelled using NS_HEADER_AUDIT_BEGIN / NS_HEADER_AUDIT_END.
+
+    Args:
+      filename: The name of the current file.
+      clean_lines: A CleansedLines instance containing the file.
+      line_number: The number of the line to check.
+      error: The function to call with any errors found.
+    """
+
+    # WKFoundation.h is where these macros are defined in terms of their preferred spellings.
+    if _RE_PATTERN_WK_FOUNDATION_HEADER.match(filename):
+        return
+
+    line = clean_lines.elided[line_number]  # Get rid of comments and strings.
+
+    for macro in _WK_MACROS_WITH_NS_EQUIVALENTS:
+        # Word boundaries keep WK_SWIFT_ASYNC from matching WK_SWIFT_ASYNC_NAME.
+        if search(r'\b%s\b' % macro, line):
+            error(line_number, 'build/wk_macros', 5, "Use '%s' instead of '%s'." % ('NS' + macro[len('WK'):], macro))
+
+    for macro in ('NS_ASSUME_NONNULL_BEGIN', 'NS_ASSUME_NONNULL_END'):
+        if search(r'\b%s\b' % macro, line):
+            replacement = 'NS_HEADER_AUDIT_%s' % macro.rsplit('_', 1)[-1]
+            error(line_number, 'build/header_audit', 5, "Use '%s(nullability, sendability)' instead of '%s'." % (replacement, macro))
+
+
 def check_objc_protocol(clean_lines, line_number, file_extension, error):
     """Looks for spaces between type names and protocol names.
 
@@ -5167,6 +5211,7 @@ def process_line(filename, file_extension,
     check_posix_threading(clean_lines, line, error)
     check_invalid_increment(clean_lines, line, error)
     check_os_version_checks(filename, clean_lines, line, error)
+    check_objc_annotation_macros(filename, clean_lines, line, error)
     check_callonmainthread(filename, clean_lines, line, file_state, error)
     check_ismainthread(filename, clean_lines, line, file_state, error)
     check_mainthreadneverdestroyed(filename, clean_lines, line, file_state, error)
@@ -5251,6 +5296,7 @@ class CppChecker(object):
         'build/forward_decl',
         'build/header_guard',
         'build/header_guard_missing',
+        'build/header_audit',
         'build/include',
         'build/include_order',
         'build/include_what_you_use',
@@ -5264,6 +5310,7 @@ class CppChecker(object):
         'build/cpp_comment',
         'build/webcore_export',
         'build/wk_api_available',
+        'build/wk_macros',
         'build/version_check',
         'build/self_include',
         'build-speed/inlines',
