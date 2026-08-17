@@ -1233,7 +1233,7 @@ namespace JSC {
             }
 
             auto optionalVariablesUnderTDZ = getVariablesUnderTDZ();
-            std::optional<Vector<Identifier>> generatorOrAsyncWrapperFunctionParameterNames;
+            Vector<Identifier> generatorOrAsyncWrapperFunctionParameterNames;
             std::optional<PrivateNameEnvironment> parentPrivateNameEnvironment = getAvailablePrivateAccessNames();
 
             // FIXME: These flags, ParserModes and propagation to XXXCodeBlocks should be reorganized.

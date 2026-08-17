@@ -796,7 +796,7 @@ IGNORE_GCC_WARNINGS_END
             continue;
         if (shouldCreateArgumentsVariableInParameterScope && entry.key.get() == propertyNames().arguments.impl())
             continue;
-        if (isGeneratorOrAsyncFunctionBodyParseMode(parseMode) && generatorOrAsyncWrapperFunctionParameterNames->contains(entry.key.get()))
+        if (generatorOrAsyncWrapperFunctionParameterNames && generatorOrAsyncWrapperFunctionParameterNames->contains(entry.key.get()))
             continue;
         createVariable(Identifier::fromUid(m_vm, entry.key.get()), varKind(entry.key.get()), functionSymbolTable, IgnoreExisting);
     }
@@ -2352,11 +2352,8 @@ void BytecodeGenerator::hoistSloppyModeFunctionIfNecessary(FunctionMetadataNode*
     if (metadata->isSloppyModeHoistedFunction()) {
         const Identifier& functionName = metadata->ident();
 
-        if (isGeneratorOrAsyncFunctionBodyParseMode(parseMode())) {
-            RELEASE_ASSERT(m_generatorOrAsyncWrapperFunctionParameterNames);
-            if (m_generatorOrAsyncWrapperFunctionParameterNames->contains(functionName))
-                return;
-        }
+        if (m_generatorOrAsyncWrapperFunctionParameterNames && m_generatorOrAsyncWrapperFunctionParameterNames->contains(functionName))
+            return;
 
         Variable currentFunctionVariable = variable(functionName);
         RefPtr<RegisterID> currentValue;
