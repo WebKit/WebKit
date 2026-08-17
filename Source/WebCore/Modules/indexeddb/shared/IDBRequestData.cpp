@@ -79,7 +79,8 @@ IDBRequestData::IDBRequestData(const IDBRequestData& that, IsolatedCopyTag)
 }
 
 
-IDBRequestData IDBRequestData::isolatedCopy() const
+// FIXME: SUPPRESS_NODELETE shouldn't be necessary (webkit.org/b/321500).
+SUPPRESS_NODELETE IDBRequestData IDBRequestData::isolatedCopy() const
 {
     return { *this, IsolatedCopy };
 }
