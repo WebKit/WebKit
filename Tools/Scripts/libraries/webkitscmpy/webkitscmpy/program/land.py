@@ -370,7 +370,7 @@ class Land(Command):
             commit = repository.commit(branch=target, include_log=False)
 
         if identifier_template and commit.identifier:
-            land_message = 'Landed {} ({})!'.format(identifier_template.format(commit).split(': ')[-1], commit.hash[:Commit.HASH_LABEL_SIZE])
+            land_message = 'Landed {} ({})!'.format(identifier_template.value_template.format(commit), commit.hash[:Commit.HASH_LABEL_SIZE])
         else:
             land_message = 'Landed {}!'.format(commit.hash[:Commit.HASH_LABEL_SIZE])
         print(land_message)

@@ -30,7 +30,7 @@ import traceback
 from .apply import Apply
 from .blame import Blame
 from .branch import Branch
-from .canonicalize import Canonicalize
+from .canonicalize import Canonicalize, IdentifierTrailer
 from .cherry_pick import CherryPick
 from .clean import Clean, DeletePRBranches
 from .clone import Clone
@@ -171,6 +171,8 @@ def main(
         repository.classifier = classifier(repository) or repository.classifier
     if callable(identifier_template):
         identifier_template = identifier_template(repository) if repository else None
+    if isinstance(identifier_template, str):
+        identifier_template = IdentifierTrailer.from_template(identifier_template)
     if callable(subversion):
         subversion = subversion(repository) if repository else None
     if callable(hooks):

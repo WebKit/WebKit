@@ -28,9 +28,10 @@ from typing import IO
 
 from webkitscmpy.local import Git
 from webkitscmpy import Commit
+from webkitscmpy.program.canonicalize import IdentifierTrailer
 
 
-def main(inputfile, identifier_template):
+def main(inputfile, identifier_trailer):
     REPOSITORY_PATH = os.environ.get('OLDPWD')
     GIT_COMMIT = os.environ.get('GIT_COMMIT')
 
@@ -50,21 +51,27 @@ def main(inputfile, identifier_template):
         sys.stderr.write("Failed to compute the identifier for '{}'".format(GIT_COMMIT))
         return -1
 
-    rewrite_message(inputfile, sys.stdout, commit, identifier_template)
+    rewrite_message(inputfile, sys.stdout, commit, identifier_trailer)
 
 
-def rewrite_message(inputfile: IO[str], outputfile: IO[str], commit: Commit, identifier_template: str) -> None:
+def rewrite_message(inputfile: IO[str], outputfile: IO[str], commit: Commit, identifier_trailer: IdentifierTrailer) -> None:
     lines = []
     for line in inputfile.readlines():
         lines.append(line.rstrip())
 
-    identifier_template_key = identifier_template.format('').split(':', maxsplit=1)[0]
+    identifier_keys = {identifier_trailer.name, *identifier_trailer.aliases}
+    new_trailer = '{}: {}'.format(identifier_trailer.name, identifier_trailer.value_template.format(commit))
+
+    def is_identifier_trailer(line: str) -> bool:
+        key, sep, _ = line.partition(':')
+        return bool(sep) and key in identifier_keys
 
     identifier_index = len(lines)
     if identifier_index and Git.GIT_SVN_REVISION.match(lines[-1]):
         identifier_index -= 1
 
-    # We're trying to cover cases where there is a space between link and git-svn-id:
+    # We're trying to cover cases where there is a space between the identifier
+    # trailer (Canonical link, Canonical-link, Identifier, etc.) and git-svn-id:
     #     <commit message content>
     #
     #     Canonical link: ...
@@ -74,18 +81,18 @@ def rewrite_message(inputfile: IO[str], outputfile: IO[str], commit: Commit, ide
     #     Canonical link: ...
     #
     #     git-svn-id: ...
-    if identifier_index and lines[identifier_index - 1].startswith(identifier_template_key):
-        lines[identifier_index - 1] = identifier_template.format(commit)
+    if identifier_index and is_identifier_trailer(lines[identifier_index - 1]):
+        lines[identifier_index - 1] = new_trailer
         identifier_index = identifier_index - 2
     else:
         for index in [2, 3]:
-            if identifier_index - index > 0 and lines[identifier_index - index].startswith(identifier_template_key):
+            if identifier_index - index > 0 and is_identifier_trailer(lines[identifier_index - index]):
                 del lines[identifier_index - index]
-                lines.insert(identifier_index - 1, identifier_template.format(commit))
+                lines.insert(identifier_index - 1, new_trailer)
                 identifier_index = identifier_index - 2
                 break
         else:
-            lines.insert(identifier_index, identifier_template.format(commit))
+            lines.insert(identifier_index, new_trailer)
             identifier_index = identifier_index - 1
 
     while identifier_index >= 0 and lines[identifier_index]:
@@ -109,4 +116,5 @@ def rewrite_message(inputfile: IO[str], outputfile: IO[str], commit: Commit, ide
 
 
 if __name__ == '__main__':
-    sys.exit(main(sys.stdin, sys.argv[1]))
+    trailer = IdentifierTrailer.from_json(os.environ['WEBKITSCMPY_CANONICALIZE_IDENTIFIER_TRAILER'])
+    sys.exit(main(sys.stdin, trailer))

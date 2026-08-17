@@ -20,15 +20,40 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import json
 import logging
 import os
 import tempfile
 import subprocess
 import sys
+from dataclasses import asdict, dataclass
 
 from webkitcorepy import arguments, run, string_utils
 from webkitscmpy import log
 from ..command import Command
+
+
+@dataclass(frozen=True)
+class IdentifierTrailer:
+    name: str
+    value_template: str
+    aliases: tuple[str, ...] = ()
+
+    @classmethod
+    def from_template(cls, template):
+        name, value = template.split(':', 1)
+        return cls(name=name, value_template=value.lstrip())
+
+    @classmethod
+    def from_json(cls, s):
+        if s is None:
+            return None
+        data = json.loads(s)
+        data['aliases'] = tuple(data['aliases'])
+        return cls(**data)
+
+    def to_json(self):
+        return json.dumps(asdict(self))
 
 
 class Canonicalize(Command):
@@ -75,6 +100,9 @@ class Canonicalize(Command):
             sys.stderr.write('Failed to determine current branch\n')
             return -1
 
+        if identifier_template is None:
+            identifier_template = IdentifierTrailer(name='Identifier', value_template='{}')
+
         num_commits_to_canonicalize = args.number
         if not num_commits_to_canonicalize:
             result = run([
@@ -102,10 +130,9 @@ class Canonicalize(Command):
 
             message_filter = [
                 '--msg-filter',
-                "{} {} '{}'".format(
+                '{} {}'.format(
                     sys.executable,
                     os.path.join(os.path.dirname(__file__), 'message.py'),
-                    identifier_template or 'Identifier: {}',
                 ),
             ] if args.identifier else []
 
@@ -147,7 +174,11 @@ fi'''.format(
                     ),
                 ] + message_filter + ['{}...{}'.format(branch, base.hash)],
                     cwd=repository.root_path,
-                    env={'FILTER_BRANCH_SQUELCH_WARNING': '1', 'PYTHONPATH': ':'.join(sys.path)},
+                    env={
+                        'FILTER_BRANCH_SQUELCH_WARNING': '1',
+                        'PYTHONPATH': ':'.join(sys.path),
+                        **({'WEBKITSCMPY_CANONICALIZE_IDENTIFIER_TRAILER': identifier_template.to_json()} if args.identifier else {}),
+                    },
                     stdout=devnull if log.level > logging.WARNING else None,
                     stderr=devnull if log.level > logging.WARNING else None,
                 )

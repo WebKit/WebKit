@@ -28,6 +28,7 @@ import sys
 import webkitpy
 from webkitcorepy import run
 from webkitscmpy import local, program, remote, Contributor, log
+from webkitscmpy.program.canonicalize import IdentifierTrailer
 
 
 def is_webkit_filter(to_return):
@@ -63,7 +64,7 @@ if '__main__' == __name__:
     _script_dir = os.path.dirname(os.path.abspath(__file__))
     _root = os.path.dirname(os.path.dirname(_script_dir))
     sys.exit(program.main(
-        identifier_template=is_webkit_filter('Canonical link: https://commits.webkit.org/{}'),
+        identifier_template=is_webkit_filter(IdentifierTrailer(name='Canonical link', value_template='https://commits.webkit.org/{}', aliases=('Canonical-link',))),
         subversion=is_webkit_filter('https://svn.webkit.org/repository/webkit'),
         hooks=os.path.join(_script_dir, 'hooks'),
         classifier=is_webkit_filter(classifier()),

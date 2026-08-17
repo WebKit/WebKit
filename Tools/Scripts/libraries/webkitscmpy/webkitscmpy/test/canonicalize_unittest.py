@@ -20,6 +20,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import dataclasses
 import os
 import unittest
 from io import StringIO
@@ -27,6 +28,7 @@ from io import StringIO
 from webkitcorepy import OutputCapture, testing
 from webkitcorepy.mocks import Time as MockTime
 from webkitscmpy import program, mocks, local, Commit, Contributor
+from webkitscmpy.program.canonicalize import IdentifierTrailer
 from webkitscmpy.program.canonicalize.message import rewrite_message
 
 
@@ -67,8 +69,8 @@ class TestCanonicalizeProgam(testing.PathTestCase):
 
     def test_formated_identifier(self):
         with OutputCapture() as captured, mocks.local.Git(self.path) as mock, mocks.local.Svn(), MockTime:
-            contirbutors = Contributor.Mapping()
-            contirbutors.create('\u017dan Dober\u0161ek', 'zdobersek@igalia.com')
+            contributors = Contributor.Mapping()
+            contributors.create('\u017dan Dober\u0161ek', 'zdobersek@igalia.com')
 
             mock.commits[mock.default_branch].append(Commit(
                 hash='38ea50d28ae394c9c8b80e13c3fb21f1c262871f',
@@ -82,12 +84,44 @@ class TestCanonicalizeProgam(testing.PathTestCase):
             self.assertEqual(0, program.main(
                 args=('canonicalize', '-v',),
                 path=self.path,
-                contributors=contirbutors,
+                contributors=contributors,
                 identifier_template='Canonical link: https://commits.webkit.org/{}',
             ))
 
             commit = local.Git(self.path).commit(branch=mock.default_branch)
-            self.assertEqual(commit.author, contirbutors['zdobersek@igalia.com'])
+            self.assertEqual(commit.author, contributors['zdobersek@igalia.com'])
+            self.assertEqual(commit.message, 'New commit\n\nCanonical link: https://commits.webkit.org/6@main')
+
+        self.assertEqual(
+            captured.stdout.getvalue(),
+            'Rewrite 38ea50d28ae394c9c8b80e13c3fb21f1c262871f (1/1) (--- seconds passed, remaining --- predicted)\n'
+            'Overwriting 38ea50d28ae394c9c8b80e13c3fb21f1c262871f\n'
+            '1 commit successfully canonicalized!\n',
+        )
+
+    def test_identifier_trailer_dataclass(self):
+        with OutputCapture() as captured, mocks.local.Git(self.path) as mock, mocks.local.Svn(), MockTime:
+            contributors = Contributor.Mapping()
+            contributors.create('Žan Doberšek', 'zdobersek@igalia.com')
+
+            mock.commits[mock.default_branch].append(Commit(
+                hash='38ea50d28ae394c9c8b80e13c3fb21f1c262871f',
+                branch=mock.default_branch,
+                author=Contributor('Žan Doberšek', emails=['zdobersek@igalia.com']),
+                identifier=mock.commits[mock.default_branch][-1].identifier + 1,
+                timestamp=1601669000,
+                message='New commit\n',
+            ))
+
+            self.assertEqual(0, program.main(
+                args=('canonicalize', '-v',),
+                path=self.path,
+                contributors=contributors,
+                identifier_template=IdentifierTrailer(name='Canonical link', value_template='https://commits.webkit.org/{}'),
+            ))
+
+            commit = local.Git(self.path).commit(branch=mock.default_branch)
+            self.assertEqual(commit.author, contributors['zdobersek@igalia.com'])
             self.assertEqual(commit.message, 'New commit\n\nCanonical link: https://commits.webkit.org/6@main')
 
         self.assertEqual(
@@ -99,8 +133,8 @@ class TestCanonicalizeProgam(testing.PathTestCase):
 
     def test_existing_identifier(self):
         with OutputCapture() as captured, mocks.local.Git(self.path) as mock, mocks.local.Svn(), MockTime:
-            contirbutors = Contributor.Mapping()
-            contirbutors.create('Jonathan Bedard', 'jbedard@apple.com')
+            contributors = Contributor.Mapping()
+            contributors.create('Jonathan Bedard', 'jbedard@apple.com')
 
             mock.commits[mock.default_branch].append(Commit(
                 hash='38ea50d28ae394c9c8b80e13c3fb21f1c262871f',
@@ -117,12 +151,48 @@ class TestCanonicalizeProgam(testing.PathTestCase):
             self.assertEqual(0, program.main(
                 args=('canonicalize', '-v',),
                 path=self.path,
-                contributors=contirbutors,
+                contributors=contributors,
             ))
 
             commit = local.Git(self.path).commit(branch=mock.default_branch)
-            self.assertEqual(commit.author, contirbutors['jbedard@apple.com'])
+            self.assertEqual(commit.author, contributors['jbedard@apple.com'])
             self.assertEqual(commit.message, 'New commit\n\nIdentifier: 6@main')
+
+        self.assertEqual(
+            captured.stdout.getvalue(),
+            'Rewrite 38ea50d28ae394c9c8b80e13c3fb21f1c262871f (1/1) (--- seconds passed, remaining --- predicted)\n'
+            'Overwriting 38ea50d28ae394c9c8b80e13c3fb21f1c262871f\n'
+            '1 commit successfully canonicalized!\n',
+        )
+
+    def test_existing_canonical_link_alias(self):
+        with OutputCapture() as captured, mocks.local.Git(self.path) as mock, mocks.local.Svn(), MockTime:
+            contributors = Contributor.Mapping()
+            contributors.create('Jonathan Bedard', 'jbedard@apple.com')
+
+            mock.commits[mock.default_branch].append(Commit(
+                hash='38ea50d28ae394c9c8b80e13c3fb21f1c262871f',
+                branch=mock.default_branch,
+                author=Contributor('Jonathan Bedard', emails=['jbedard@apple.com']),
+                identifier=mock.commits[mock.default_branch][-1].identifier + 1,
+                timestamp=1601668000,
+                message='New commit\n\nCanonical-link: https://commits.webkit.org/3@main',
+            ))
+
+            self.assertEqual(0, program.main(
+                args=('canonicalize', '-v',),
+                path=self.path,
+                contributors=contributors,
+                identifier_template=IdentifierTrailer(
+                    name='Canonical link',
+                    value_template='https://commits.webkit.org/{}',
+                    aliases=('Canonical-link',),
+                ),
+            ))
+
+            commit = local.Git(self.path).commit(branch=mock.default_branch)
+            self.assertEqual(commit.author, contributors['jbedard@apple.com'])
+            self.assertEqual(commit.message, 'New commit\n\nCanonical link: https://commits.webkit.org/6@main')
 
         self.assertEqual(
             captured.stdout.getvalue(),
@@ -133,8 +203,8 @@ class TestCanonicalizeProgam(testing.PathTestCase):
 
     def test_git_svn(self):
         with OutputCapture() as captured, mocks.local.Git(self.path, git_svn=True) as mock, mocks.local.Svn(), MockTime:
-            contirbutors = Contributor.Mapping()
-            contirbutors.create('Jonathan Bedard', 'jbedard@apple.com')
+            contributors = Contributor.Mapping()
+            contributors.create('Jonathan Bedard', 'jbedard@apple.com')
 
             mock.commits[mock.default_branch].append(Commit(
                 hash='766609276fe201e7ce2c69994e113d979d2148ac',
@@ -149,11 +219,11 @@ class TestCanonicalizeProgam(testing.PathTestCase):
             self.assertEqual(0, program.main(
                 args=('canonicalize', '-vv'),
                 path=self.path,
-                contributors=contirbutors,
+                contributors=contributors,
             ))
 
             commit = local.Git(self.path).commit(branch=mock.default_branch)
-            self.assertEqual(commit.author, contirbutors['jbedard@apple.com'])
+            self.assertEqual(commit.author, contributors['jbedard@apple.com'])
             self.assertEqual(
                 commit.message,
                 'New commit\n\n'
@@ -174,8 +244,8 @@ class TestCanonicalizeProgam(testing.PathTestCase):
 
     def test_git_svn_existing(self):
         with OutputCapture() as captured, mocks.local.Git(self.path, git_svn=True) as mock, mocks.local.Svn(), MockTime:
-            contirbutors = Contributor.Mapping()
-            contirbutors.create('Jonathan Bedard', 'jbedard@apple.com')
+            contributors = Contributor.Mapping()
+            contributors.create('Jonathan Bedard', 'jbedard@apple.com')
 
             mock.commits[mock.default_branch].append(Commit(
                 hash='766609276fe201e7ce2c69994e113d979d2148ac',
@@ -190,11 +260,11 @@ class TestCanonicalizeProgam(testing.PathTestCase):
             self.assertEqual(0, program.main(
                 args=('canonicalize', '-vv'),
                 path=self.path,
-                contributors=contirbutors,
+                contributors=contributors,
             ))
 
             commit = local.Git(self.path).commit(branch=mock.default_branch)
-            self.assertEqual(commit.author, contirbutors['jbedard@apple.com'])
+            self.assertEqual(commit.author, contributors['jbedard@apple.com'])
             self.assertEqual(
                 commit.message,
                 'New commit\n\n'
@@ -215,8 +285,8 @@ class TestCanonicalizeProgam(testing.PathTestCase):
 
     def test_git_svn_existing_merge_queue(self):
         with OutputCapture() as captured, mocks.local.Git(self.path, git_svn=True) as mock, mocks.local.Svn(), MockTime:
-            contirbutors = Contributor.Mapping()
-            contirbutors.create('Jonathan Bedard', 'jbedard@apple.com')
+            contributors = Contributor.Mapping()
+            contributors.create('Jonathan Bedard', 'jbedard@apple.com')
 
             mock.commits[mock.default_branch].append(Commit(
                 hash='766609276fe201e7ce2c69994e113d979d2148ac',
@@ -231,11 +301,11 @@ class TestCanonicalizeProgam(testing.PathTestCase):
             self.assertEqual(0, program.main(
                 args=('canonicalize', '-vv'),
                 path=self.path,
-                contributors=contirbutors,
+                contributors=contributors,
             ))
 
             commit = local.Git(self.path).commit(branch=mock.default_branch)
-            self.assertEqual(commit.author, contirbutors['jbedard@apple.com'])
+            self.assertEqual(commit.author, contributors['jbedard@apple.com'])
 
             self.assertEqual(
                 commit.message,
@@ -257,8 +327,8 @@ class TestCanonicalizeProgam(testing.PathTestCase):
 
     def test_branch_commits(self):
         with OutputCapture() as captured, mocks.local.Git(self.path) as mock, mocks.local.Svn(), MockTime:
-            contirbutors = Contributor.Mapping()
-            contirbutors.create('Jonathan Bedard', 'jbedard@apple.com')
+            contributors = Contributor.Mapping()
+            contributors.create('Jonathan Bedard', 'jbedard@apple.com')
 
             local.Git(self.path).checkout('branch-a')
             mock.commits['branch-a'].append(Commit(
@@ -283,15 +353,15 @@ class TestCanonicalizeProgam(testing.PathTestCase):
             self.assertEqual(0, program.main(
                 args=('canonicalize', ),
                 path=self.path,
-                contributors=contirbutors,
+                contributors=contributors,
             ))
 
             commit_a = local.Git(self.path).commit(branch='branch-a~1')
-            self.assertEqual(commit_a.author, contirbutors['jbedard@apple.com'])
+            self.assertEqual(commit_a.author, contributors['jbedard@apple.com'])
             self.assertEqual(commit_a.message, 'New commit 1\n\nIdentifier: 2.3@branch-a')
 
             commit_b = local.Git(self.path).commit(branch='branch-a')
-            self.assertEqual(commit_b.author, contirbutors['jbedard@apple.com'])
+            self.assertEqual(commit_b.author, contributors['jbedard@apple.com'])
             self.assertEqual(commit_b.message, 'New commit 2\n\nIdentifier: 2.4@branch-a')
 
         self.assertEqual(
@@ -303,13 +373,13 @@ class TestCanonicalizeProgam(testing.PathTestCase):
 
     def test_number(self):
         with OutputCapture() as captured, mocks.local.Git(self.path), mocks.local.Svn(), MockTime:
-            contirbutors = Contributor.Mapping()
-            contirbutors.create('Jonathan Bedard', 'jbedard@apple.com')
+            contributors = Contributor.Mapping()
+            contributors.create('Jonathan Bedard', 'jbedard@apple.com')
 
             self.assertEqual(0, program.main(
                 args=('canonicalize', '--number', '3'),
                 path=self.path,
-                contributors=contirbutors,
+                contributors=contributors,
             ))
 
             self.assertEqual(local.Git(self.path).commit(identifier='5@main').message, 'Patch Series\n\nIdentifier: 5@main')
@@ -326,8 +396,8 @@ class TestCanonicalizeProgam(testing.PathTestCase):
 
     def test_alternate_trailer(self):
         with OutputCapture() as captured, mocks.local.Git(self.path) as mock, mocks.local.Svn(), MockTime:
-            contirbutors = Contributor.Mapping()
-            contirbutors.create('Jonathan Bedard', 'jbedard@apple.com')
+            contributors = Contributor.Mapping()
+            contributors.create('Jonathan Bedard', 'jbedard@apple.com')
 
             mock.commits[mock.default_branch].append(Commit(
                 hash='766609276fe201e7ce2c69994e113d979d2148ac',
@@ -341,11 +411,11 @@ class TestCanonicalizeProgam(testing.PathTestCase):
             self.assertEqual(0, program.main(
                 args=('canonicalize', '-vv'),
                 path=self.path,
-                contributors=contirbutors,
+                contributors=contributors,
             ))
 
             commit = local.Git(self.path).commit(branch=mock.default_branch)
-            self.assertEqual(commit.author, contirbutors['jbedard@apple.com'])
+            self.assertEqual(commit.author, contributors['jbedard@apple.com'])
             self.assertEqual(
                 commit.message,
                 'New commit\n\n'
@@ -366,9 +436,12 @@ class TestCanonicalizeProgam(testing.PathTestCase):
 
 
 class TestCanonicalizeMessage(unittest.TestCase):
-    def assert_canonicalized_commit_message(self, *, message, expected):
+    def assert_canonicalized_commit_message(self, *, message, expected, trailer=None):
         stdin = StringIO(message)
         stdout = StringIO()
+
+        if trailer is None:
+            trailer = IdentifierTrailer.from_template('Identifier: {}')
 
         commit = Commit(
             hash='38ea50d28ae394c9c8b80e13c3fb21f1c262871f',
@@ -379,9 +452,211 @@ class TestCanonicalizeMessage(unittest.TestCase):
             message=message,
         )
 
-        rewrite_message(stdin, stdout, commit, 'Identifier: {}')
+        rewrite_message(stdin, stdout, commit, trailer)
 
         self.assertEqual(stdout.getvalue(), expected)
+
+    def test_canonical_link_alias(self):
+        self.assert_canonicalized_commit_message(
+            message=(
+                'New commit\n'
+                '\n'
+                'Canonical-link: https://commits.webkit.org/3@main\n'
+            ),
+            expected=(
+                'New commit\n'
+                '\n'
+                'Canonical link: https://commits.webkit.org/6@main\n'
+            ),
+            trailer=IdentifierTrailer(
+                name='Canonical link',
+                value_template='https://commits.webkit.org/{}',
+                aliases=('Canonical-link',),
+            ),
+        )
+
+    def test_canonical_link_alias_mirror(self):
+        # Space-form trailer is replaced with hyphen-form (the canonical name) at the new identifier.
+        self.assert_canonicalized_commit_message(
+            message=(
+                'New commit\n'
+                '\n'
+                'Canonical link: https://commits.webkit.org/3@main\n'
+            ),
+            expected=(
+                'New commit\n'
+                '\n'
+                'Canonical-link: https://commits.webkit.org/6@main\n'
+            ),
+            trailer=IdentifierTrailer(
+                name='Canonical-link',
+                value_template='https://commits.webkit.org/{}',
+                aliases=('Canonical link',),
+            ),
+        )
+
+    def test_canonical_link_both_spellings(self):
+        # When both spellings appear, only the trailing one is replaced; the earlier one is preserved.
+        self.assert_canonicalized_commit_message(
+            message=(
+                'New commit\n'
+                '\n'
+                'Canonical-link: https://commits.webkit.org/3@main\n'
+                'Canonical link: https://commits.webkit.org/3@main\n'
+            ),
+            expected=(
+                'New commit\n'
+                '\n'
+                'Canonical-link: https://commits.webkit.org/3@main\n'
+                'Canonical link: https://commits.webkit.org/6@main\n'
+            ),
+            trailer=IdentifierTrailer(
+                name='Canonical link',
+                value_template='https://commits.webkit.org/{}',
+                aliases=('Canonical-link',),
+            ),
+        )
+
+    def test_no_alias_match_appends_new_trailer(self):
+        # An unrecognised trailer passes through; a fresh Identifier line is appended after it.
+        self.assert_canonicalized_commit_message(
+            message=(
+                'New commit\n'
+                '\n'
+                'Canonical link: https://commits.webkit.org/3@main\n'
+            ),
+            expected=(
+                'New commit\n'
+                '\n'
+                'Canonical link: https://commits.webkit.org/3@main\n'
+                'Identifier: 6@main\n'
+            ),
+            trailer=IdentifierTrailer(
+                name='Identifier',
+                value_template='{}',
+            ),
+        )
+
+    def test_three_existing_canonical_link_trailers(self):
+        # Three matching trailers across both spellings: only the trailing one is updated;
+        # the two earlier ones (one alias-form, one canonical-form) stay.
+        self.assert_canonicalized_commit_message(
+            message=(
+                'New commit\n'
+                '\n'
+                'Canonical-link: https://commits.webkit.org/3@main\n'
+                'Canonical link: https://commits.webkit.org/3@main\n'
+                'Canonical-link: https://commits.webkit.org/3@main\n'
+            ),
+            expected=(
+                'New commit\n'
+                '\n'
+                'Canonical-link: https://commits.webkit.org/3@main\n'
+                'Canonical link: https://commits.webkit.org/3@main\n'
+                'Canonical link: https://commits.webkit.org/6@main\n'
+            ),
+            trailer=IdentifierTrailer(
+                name='Canonical link',
+                value_template='https://commits.webkit.org/{}',
+                aliases=('Canonical-link',),
+            ),
+        )
+
+    def test_canonical_link_alias_separated_by_other_trailer(self):
+        # An earlier alias-form trailer, an unrelated trailer, then a canonical-form trailer:
+        # only the trailing match is updated; the earlier alias-form stays.
+        self.assert_canonicalized_commit_message(
+            message=(
+                'New commit\n'
+                '\n'
+                'Canonical-link: https://commits.webkit.org/3@main\n'
+                'Reviewed-by: Someone\n'
+                'Canonical link: https://commits.webkit.org/3@main\n'
+            ),
+            expected=(
+                'New commit\n'
+                '\n'
+                'Canonical-link: https://commits.webkit.org/3@main\n'
+                'Reviewed-by: Someone\n'
+                'Canonical link: https://commits.webkit.org/6@main\n'
+            ),
+            trailer=IdentifierTrailer(
+                name='Canonical link',
+                value_template='https://commits.webkit.org/{}',
+                aliases=('Canonical-link',),
+            ),
+        )
+
+    def test_canonical_link_alias_followed_by_other_trailer(self):
+        # An alias-form trailer followed by an unrelated trailer (no git-svn-id):
+        # the index-2 fallback finds the alias-form line, deletes it, and inserts the new
+        # canonical-form trailer at the trailing position; the unrelated trailer shifts up.
+        self.assert_canonicalized_commit_message(
+            message=(
+                'New commit\n'
+                '\n'
+                'Canonical-link: https://commits.webkit.org/3@main\n'
+                'Reviewed-by: Someone\n'
+            ),
+            expected=(
+                'New commit\n'
+                '\n'
+                'Reviewed-by: Someone\n'
+                'Canonical link: https://commits.webkit.org/6@main\n'
+            ),
+            trailer=IdentifierTrailer(
+                name='Canonical link',
+                value_template='https://commits.webkit.org/{}',
+                aliases=('Canonical-link',),
+            ),
+        )
+
+    def test_canonical_link_alias_with_git_svn_id(self):
+        # Alias-form trailer immediately followed by git-svn-id: the trailing-position check
+        # (offset by the svn-id line) finds the alias and replaces it with the canonical form.
+        self.assert_canonicalized_commit_message(
+            message=(
+                'New commit\n'
+                '\n'
+                'Canonical-link: https://commits.webkit.org/3@main\n'
+                'git-svn-id: https://svn.example.org/repository/repository/trunk@9 268f45cc-cd09-0410-ab3c-d52691b4dbfc\n'
+            ),
+            expected=(
+                'New commit\n'
+                '\n'
+                'Canonical link: https://commits.webkit.org/6@main\n'
+                'git-svn-id: https://svn.example.org/repository/repository/trunk@9 268f45cc-cd09-0410-ab3c-d52691b4dbfc\n'
+            ),
+            trailer=IdentifierTrailer(
+                name='Canonical link',
+                value_template='https://commits.webkit.org/{}',
+                aliases=('Canonical-link',),
+            ),
+        )
+
+    def test_canonical_link_alias_blank_before_git_svn_id(self):
+        # Alias-form trailer separated from git-svn-id by a blank line: the index-2 fallback
+        # finds the alias-form line and replaces it with the canonical form adjacent to git-svn-id.
+        self.assert_canonicalized_commit_message(
+            message=(
+                'New commit\n'
+                '\n'
+                'Canonical-link: https://commits.webkit.org/3@main\n'
+                '\n'
+                'git-svn-id: https://svn.example.org/repository/repository/trunk@9 268f45cc-cd09-0410-ab3c-d52691b4dbfc\n'
+            ),
+            expected=(
+                'New commit\n'
+                '\n'
+                'Canonical link: https://commits.webkit.org/6@main\n'
+                'git-svn-id: https://svn.example.org/repository/repository/trunk@9 268f45cc-cd09-0410-ab3c-d52691b4dbfc\n'
+            ),
+            trailer=IdentifierTrailer(
+                name='Canonical link',
+                value_template='https://commits.webkit.org/{}',
+                aliases=('Canonical-link',),
+            ),
+        )
 
     def test_incomplete_line(self):
         # By POSIX, a line must end in new line character.
@@ -527,6 +802,101 @@ class TestCanonicalizeMessage(unittest.TestCase):
                 'Identifier: 6@main\n'
                 '\n'
                 'Identifier: 6@main\n'
+            ),
+        )
+
+    def test_three_existing_identifier_trailers(self):
+        # Three same-key trailers: only the trailing one is updated; the two earlier ones stay.
+        self.assert_canonicalized_commit_message(
+            message=(
+                'New commit\n'
+                '\n'
+                'Identifier: 3@main\n'
+                'Identifier: 3@main\n'
+                'Identifier: 3@main\n'
+            ),
+            expected=(
+                'New commit\n'
+                '\n'
+                'Identifier: 3@main\n'
+                'Identifier: 3@main\n'
+                'Identifier: 6@main\n'
+            ),
+        )
+
+    def test_identifier_trailer_separated_by_other_trailer(self):
+        # An earlier `Identifier:` line, an unrelated trailer, then another `Identifier:` line:
+        # only the trailing match is updated; the earlier `Identifier:` stays.
+        self.assert_canonicalized_commit_message(
+            message=(
+                'New commit\n'
+                '\n'
+                'Identifier: 3@main\n'
+                'Reviewed-by: Someone\n'
+                'Identifier: 3@main\n'
+            ),
+            expected=(
+                'New commit\n'
+                '\n'
+                'Identifier: 3@main\n'
+                'Reviewed-by: Someone\n'
+                'Identifier: 6@main\n'
+            ),
+        )
+
+    def test_identifier_trailer_followed_by_other_trailer(self):
+        # An `Identifier:` line followed by another trailer (no git-svn-id):
+        # the index-2 fallback finds the `Identifier:` line, deletes it, and inserts the new one
+        # at the trailing position; the unrelated trailer shifts up.
+        self.assert_canonicalized_commit_message(
+            message=(
+                'New commit\n'
+                '\n'
+                'Identifier: 3@main\n'
+                'Reviewed-by: Someone\n'
+            ),
+            expected=(
+                'New commit\n'
+                '\n'
+                'Reviewed-by: Someone\n'
+                'Identifier: 6@main\n'
+            ),
+        )
+
+    def test_identifier_with_git_svn_id(self):
+        # `Identifier:` immediately followed by git-svn-id: the trailing-position check
+        # (offset by the svn-id line) finds the trailer and replaces it.
+        self.assert_canonicalized_commit_message(
+            message=(
+                'New commit\n'
+                '\n'
+                'Identifier: 3@main\n'
+                'git-svn-id: https://svn.example.org/repository/repository/trunk@9 268f45cc-cd09-0410-ab3c-d52691b4dbfc\n'
+            ),
+            expected=(
+                'New commit\n'
+                '\n'
+                'Identifier: 6@main\n'
+                'git-svn-id: https://svn.example.org/repository/repository/trunk@9 268f45cc-cd09-0410-ab3c-d52691b4dbfc\n'
+            ),
+        )
+
+    def test_identifier_blank_before_git_svn_id(self):
+        # `Identifier:` separated from git-svn-id by a blank line: the index-2 fallback finds
+        # the trailer line and replaces it adjacent to git-svn-id, collapsing the blank.
+        self.assert_canonicalized_commit_message(
+            message=(
+                'New commit\n'
+                '\n'
+                'Identifier: 3@main\n'
+                '\n'
+                'git-svn-id: https://svn.example.org/repository/repository/trunk@9 268f45cc-cd09-0410-ab3c-d52691b4dbfc\n'
+            ),
+            expected=(
+                'New commit\n'
+                '\n'
+                'Identifier: 6@main\n'
+                'git-svn-id: https://svn.example.org/repository/repository/trunk@9 268f45cc-cd09-0410-ab3c-d52691b4dbfc\n'
             ),
         )
 
@@ -1001,3 +1371,16 @@ class TestCanonicalizeMessage(unittest.TestCase):
                     'Identifier: 6@main\n'
                 ),
             )
+
+
+class TestIdentifierTrailer(unittest.TestCase):
+    def test_from_template_fields(self):
+        trailer = IdentifierTrailer.from_template('Foo: bar/{}')
+        self.assertEqual(trailer.name, 'Foo')
+        self.assertEqual(trailer.value_template, 'bar/{}')
+        self.assertEqual(trailer.aliases, ())
+
+    def test_frozen(self):
+        trailer = IdentifierTrailer.from_template('Foo: bar/{}')
+        with self.assertRaises(dataclasses.FrozenInstanceError):
+            trailer.name = 'X'

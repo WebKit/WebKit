@@ -34,6 +34,7 @@ from unittest.mock import patch
 from webkitcorepy import OutputCapture, StringIO, decorators, mocks, string_utils
 
 from webkitscmpy import Commit, Contributor, local
+from webkitscmpy.program.canonicalize import IdentifierTrailer
 from webkitscmpy.program.canonicalize.committer import main as committer_main
 from webkitscmpy.program.canonicalize.message import main as message_main
 
@@ -492,7 +493,7 @@ nothing to commit, working tree clean
                 cwd=self.path,
                 generator=lambda *args, **kwargs: self.filter_branch(
                     args[-1],
-                    identifier_template=args[-2].split("'")[-2] if args[-3] == '--msg-filter' else None,
+                    identifier_trailer=IdentifierTrailer.from_json(kwargs['env'].get('WEBKITSCMPY_CANONICALIZE_IDENTIFIER_TRAILER')),
                     environment_shell=args[4] if args[3] == '--env-filter' and args[4] else None,
                 )
             ), mocks.Subprocess.Route(
@@ -1018,7 +1019,7 @@ nothing to commit, working tree clean
             self.detached = something not in self.commits.keys()
         return True if commit else False
 
-    def filter_branch(self, range, identifier_template=None, environment_shell=None, sed=None, autostash=False):
+    def filter_branch(self, range, identifier_trailer=None, environment_shell=None, sed=None, autostash=False):
         if not autostash and (self.modified or self.staged):
             return mocks.ProcessCompletion(returncode=128)
 
@@ -1064,12 +1065,12 @@ nothing to commit, working tree clean
                         total=len(commits_to_edit),
                     ))
 
-                if identifier_template:
+                if identifier_trailer:
                     messagefile = StringIO()
                     messagefile.write(commit.message)
                     messagefile.seek(0)
                     with OutputCapture() as captured:
-                        message_main(messagefile, identifier_template)
+                        message_main(messagefile, identifier_trailer)
                     lines = captured.stdout.getvalue().splitlines()
                     if lines[-1].startswith('git-svn-id: https://svn'):
                         lines.pop(-1)
