@@ -977,11 +977,10 @@ void GraphicsContextCG::fillRectWithRoundedHole(const FloatRect& rect, const Flo
     else
         path.addRect(roundedHoleRect.rect());
 
-    WindRule oldFillRule = fillRule();
     Color oldFillColor = fillColor();
 
-    setFillRule(WindRule::EvenOdd);
-    setFillColor(color);
+    if (oldFillColor != color)
+        setCGFillColor(context, color, colorSpace());
 
     // fillRectWithRoundedHole() assumes that the edges of rect are clipped out, so we only care about shadows cast around inside the hole.
     bool drawOwnShadow = canUseShadowBlur();
@@ -996,13 +995,13 @@ void GraphicsContextCG::fillRectWithRoundedHole(const FloatRect& rect, const Flo
         contextShadow.drawInsetShadow(*this, rect, roundedHoleRect);
     }
 
-    fillPath(path);
+    drawPathWithCGContext(context, kCGPathEOFill, path);
 
     if (drawOwnShadow)
         stateSaver.restore();
 
-    setFillRule(oldFillRule);
-    setFillColor(oldFillColor);
+    if (oldFillColor != color)
+        setCGFillColor(context, oldFillColor, colorSpace());
 }
 
 void GraphicsContextCG::resetClip()
