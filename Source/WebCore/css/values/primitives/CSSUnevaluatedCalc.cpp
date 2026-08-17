@@ -59,8 +59,8 @@ UnevaluatedCalcBase::UnevaluatedCalcBase(Ref<CSSCalc::Value>&& value)
 {
 }
 
-UnevaluatedCalcBase::UnevaluatedCalcBase(Category category, Range range, const Style::UnevaluatedCalculationBase& value, const Style::ComputedStyle& style)
-    : m_calc { CSSCalc::Value::create(category, range, protect(value.calculation()), style) }
+UnevaluatedCalcBase::UnevaluatedCalcBase(Category category, Range range, const Style::UnevaluatedCalculationBase& value)
+    : m_calc { CSSCalc::Value::create(category, range, protect(value.calculation())) }
 {
 }
 

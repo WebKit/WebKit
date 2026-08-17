@@ -45,7 +45,6 @@ struct CSSPropertyParserOptions;
 
 namespace Style {
 class BuilderState;
-class ComputedStyle;
 class UnevaluatedCalculationBase;
 }
 
@@ -72,7 +71,7 @@ class UnevaluatedCalcBase {
 public:
     WEBCORE_EXPORT UnevaluatedCalcBase(CSSCalc::Value&);
     UnevaluatedCalcBase(Ref<CSSCalc::Value>&&);
-    UnevaluatedCalcBase(Category, Range, const Style::UnevaluatedCalculationBase&, const Style::ComputedStyle&);
+    UnevaluatedCalcBase(Category, Range, const Style::UnevaluatedCalculationBase&);
 
     UnevaluatedCalcBase(const UnevaluatedCalcBase&);
     UnevaluatedCalcBase(UnevaluatedCalcBase&&);
@@ -131,8 +130,8 @@ template<NumericRaw RawType> struct UnevaluatedCalc : UnevaluatedCalcBase {
     static constexpr auto range = Raw::range;
     static constexpr auto category = Raw::category;
 
-    explicit UnevaluatedCalc(const Style::UnevaluatedCalculationBase& value, const Style::ComputedStyle& style)
-        : UnevaluatedCalcBase(category, range, value, style)
+    explicit UnevaluatedCalc(const Style::UnevaluatedCalculationBase& value)
+        : UnevaluatedCalcBase(category, range, value)
     {
     }
 

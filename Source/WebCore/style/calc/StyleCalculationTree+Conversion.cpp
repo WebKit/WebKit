@@ -37,10 +37,8 @@
 #include "CSSUnevaluatedCalc.h"
 #include "StyleBuilderState.h"
 #include "StyleCalculationTree.h"
-#include "StyleComputedStyle+GettersInlines.h"
 #include "StyleLengthResolution.h"
 #include "StylePrimitiveNumericTypes+Conversions.h"
-#include "StyleZoomPrimitivesInlines.h"
 #include <wtf/MathExtras.h>
 #include <wtf/StdLibExtras.h>
 
@@ -51,7 +49,6 @@ namespace Calculation {
 struct ToCSSConversionOptions {
     CSSCalc::CanonicalDimension::Dimension canonicalDimension;
     CSSCalc::SimplificationOptions simplification;
-    const Style::ComputedStyle& style;
 };
 
 struct ToStyleConversionOptions {
@@ -173,18 +170,6 @@ CSSCalc::Child toCSS(const Percentage& percentage, const ToCSSConversionOptions&
 
 CSSCalc::Child toCSS(const Dimension& root, const ToCSSConversionOptions& options)
 {
-    switch (options.canonicalDimension) {
-    case CSSCalc::CanonicalDimension::Dimension::Length:
-        return CSSCalc::makeChild(CSSCalc::CanonicalDimension { .value = Style::adjustFloatForAbsoluteZoom(root.value, options.style), .dimension = options.canonicalDimension });
-
-    case CSSCalc::CanonicalDimension::Dimension::Angle:
-    case CSSCalc::CanonicalDimension::Dimension::Time:
-    case CSSCalc::CanonicalDimension::Dimension::Frequency:
-    case CSSCalc::CanonicalDimension::Dimension::Resolution:
-    case CSSCalc::CanonicalDimension::Dimension::Flex:
-        break;
-    }
-
     return CSSCalc::makeChild(CSSCalc::CanonicalDimension { .value = root.value, .dimension = options.canonicalDimension });
 }
 
@@ -391,7 +376,6 @@ CSSCalc::Tree toCSS(const Tree& tree, const ToCSSOptions& toCSSOptions)
             .symbolTable = { },
             .allowZeroValueLengthRemovalFromSum = true,
         },
-        .style = toCSSOptions.style,
     };
 
     auto root = toCSS(tree.root, conversionOptions);

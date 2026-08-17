@@ -141,58 +141,44 @@ template<auto R, typename V, typename... Rest> LengthPercentage<R, V> canonicali
 
 // MARK: - Conversion from "Style to "CSS"
 
-// Length requires a specialized implementation due to unresolvedValue() usage.
-template<auto R, typename V> struct ToCSS<Length<R, V>> {
-    auto operator()(const Length<R, V>& value, const ComputedStyle&) -> CSS::Length<R, V>
-    {
-        return CSS::LengthRaw<R, V> { value.unit, value.unresolvedValue() };
-    }
-};
-
 template<auto R, typename V> struct ToCSS<UnevaluatedCalculation<CSS::AnglePercentage<R, V>>> {
-    auto operator()(const UnevaluatedCalculation<CSS::AnglePercentage<R, V>>& value, const ComputedStyle& style) -> typename CSS::AnglePercentage<R, V>::Calc
+    auto operator()(const UnevaluatedCalculation<CSS::AnglePercentage<R, V>>& value, const ComputedStyle&) -> typename CSS::AnglePercentage<R, V>::Calc
     {
-        return typename CSS::AnglePercentage<R, V>::Calc { value, style };
+        return typename CSS::AnglePercentage<R, V>::Calc { value };
     }
 };
 
 template<auto R, typename V> struct ToCSS<UnevaluatedCalculation<CSS::LengthPercentage<R, V>>> {
-    auto operator()(const UnevaluatedCalculation<CSS::LengthPercentage<R, V>>& value, const ComputedStyle& style) -> typename CSS::LengthPercentage<R, V>::Calc
+    auto operator()(const UnevaluatedCalculation<CSS::LengthPercentage<R, V>>& value, const ComputedStyle&) -> typename CSS::LengthPercentage<R, V>::Calc
     {
-        return typename CSS::LengthPercentage<R, V>::Calc { value, style };
+        return typename CSS::LengthPercentage<R, V>::Calc { value };
     }
 };
 
 // AnglePercentage / LengthPercentage require specialized implementations due to additional `calc` field.
 template<auto R, typename V> struct ToCSS<AnglePercentage<R, V>> {
-    auto operator()(const AnglePercentage<R, V>& value, const ComputedStyle& style) -> CSS::AnglePercentage<R, V>
+    auto operator()(const AnglePercentage<R, V>& value, const ComputedStyle&) -> CSS::AnglePercentage<R, V>
     {
         return WTF::switchOn(value,
-            [&](const Angle<R, V>& angle) -> CSS::AnglePercentage<R, V> {
-                return typename CSS::AnglePercentage<R, V>::Raw { angle.unit, angle.value };
-            },
-            [&](const Percentage<R, V>& percentage) -> CSS::AnglePercentage<R, V> {
-                return typename CSS::AnglePercentage<R, V>::Raw { percentage.unit, percentage.value };
+            [&](Numeric auto const& angleOrPercentage) -> CSS::AnglePercentage<R, V> {
+                return typename CSS::AnglePercentage<R, V>::Raw { angleOrPercentage.unit, angleOrPercentage.unresolvedValue() };
             },
             [&](const typename AnglePercentage<R, V>::Calc& calculation) -> CSS::AnglePercentage<R> {
-                return typename CSS::AnglePercentage<R, V>::Calc { calculation, style };
+                return typename CSS::AnglePercentage<R, V>::Calc { calculation };
             }
         );
     }
 };
 
 template<auto R, typename V> struct ToCSS<LengthPercentage<R, V>> {
-    auto operator()(const LengthPercentage<R, V>& value, const ComputedStyle& style) -> CSS::LengthPercentage<R, V>
+    auto operator()(const LengthPercentage<R, V>& value, const ComputedStyle&) -> CSS::LengthPercentage<R, V>
     {
         return WTF::switchOn(value,
-            [&](const typename LengthPercentage<R, V>::Dimension& length) -> CSS::LengthPercentage<R, V> {
-                return typename CSS::LengthPercentage<R, V>::Raw { length.unit, length.unresolvedValue() };
-            },
-            [&](const typename LengthPercentage<R, V>::Percentage& percentage) -> CSS::LengthPercentage<R, V> {
-                return typename CSS::LengthPercentage<R, V>::Raw { percentage.unit, percentage.value };
+            [&](Numeric auto const& lengthOrPercentage) -> CSS::LengthPercentage<R, V> {
+                return typename CSS::LengthPercentage<R, V>::Raw { lengthOrPercentage.unit, lengthOrPercentage.unresolvedValue() };
             },
             [&](const typename LengthPercentage<R, V>::Calc& calculation) -> CSS::LengthPercentage<R> {
-                return typename CSS::LengthPercentage<R, V>::Calc { calculation, style };
+                return typename CSS::LengthPercentage<R, V>::Calc { calculation };
             }
         );
     }
@@ -202,7 +188,7 @@ template<auto R, typename V> struct ToCSS<LengthPercentage<R, V>> {
 template<Numeric StyleType> struct ToCSS<StyleType> {
     auto operator()(const StyleType& value, const ComputedStyle&) -> typename StyleType::CSS
     {
-        return { value.unit, value.value };
+        return { value.unit, value.unresolvedValue() };
     }
 };
 
