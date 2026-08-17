@@ -31,7 +31,9 @@
 #include <wtf/glib/GWeakPtr.h>
 #include <wtf/glib/WTFGType.h>
 
+#if ENABLE(WK_WEB_EXTENSIONS)
 constexpr auto WEBKIT_CONTEXT_ERROR_DOMAIN = "WKWebExtensionContextErrorDomain"_s;
+#endif
 
 /**
  * WebKitWebExtensionContext:
