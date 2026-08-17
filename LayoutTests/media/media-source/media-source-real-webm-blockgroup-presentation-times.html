@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-source-real-webm-blockgroup-presentation-times</title>
+    <script src="webm-generator.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    // Tests that a Block wrapped in a BlockGroup gets the same presentation time
+    // as the equivalent bare SimpleBlock.
+    //
+    // WebMParser accumulates each consumed frame's duration so that laced frames
+    // sharing a single Matroska timecode are spaced apart correctly. That
+    // accumulator was reset around SimpleBlock but not around a Block inside a
+    // BlockGroup, so each BlockGroup-wrapped block's presentation time was pushed
+    // out by the total duration of every block before it. With 20ms Opus packets
+    // the error compounds one packet duration per block, so 50 contiguous packets
+    // spanned two seconds instead of one.
+    // See: https://bugs.webkit.org/show_bug.cgi?id=297781
+
+    // Opus packet duration in ms. Must match the codec frame duration emitted by
+    // the generator, otherwise the samples aren't contiguous to begin with.
+    const SAMPLE_DURATION = 20;
+    const SAMPLE_COUNT = 50; // Exactly one second of audio.
+
+    var simpleBlockBuffered;
+    var blockGroupBuffered;
+
+    async function appendOpusPackets(useSimpleBlock) {
+        var source = new MediaSource();
+        video.src = URL.createObjectURL(source);
+        await waitFor(source, 'sourceopen');
+
+        var sourceBuffer = source.addSourceBuffer(WebM.AUDIO_TYPE);
+
+        sourceBuffer.appendBuffer(WebM.initSegment({
+            tracks: [{ id: 1, type: 'audio' }]
+        }));
+        await waitFor(sourceBuffer, 'updateend');
+
+        sourceBuffer.appendBuffer(WebM.mediaSegment({
+            simpleBlock: useSimpleBlock,
+            tracks: [{
+                id: 1, type: 'audio', baseDecodeTime: 0,
+                samples: new Array(SAMPLE_COUNT).fill({ duration: SAMPLE_DURATION, isSync: true }),
+            }]
+        }));
+        await waitFor(sourceBuffer, 'updateend');
+
+        return sourceBuffer.buffered;
+    }
+
+    async function runTest() {
+        findMediaElement();
+
+        if (!MediaSource.isTypeSupported(WebM.AUDIO_TYPE)) {
+            consoleWrite('SKIPPED: ' + WebM.AUDIO_TYPE + ' is not supported');
+            return;
+        }
+
+        // Baseline: bare SimpleBlocks, which always reset the accumulator.
+        simpleBlockBuffered = await appendOpusPackets(true);
+        testExpected('simpleBlockBuffered.length', 1);
+        testExpectedEqualWithTolerance('simpleBlockBuffered.start(0)', 0, 0.01);
+        testExpectedEqualWithTolerance('simpleBlockBuffered.end(0)', 1, 0.05);
+
+        // The same packets carried in BlockGroups must land on the same timeline.
+        blockGroupBuffered = await appendOpusPackets(false);
+        testExpected('blockGroupBuffered.length', 1);
+        testExpectedEqualWithTolerance('blockGroupBuffered.start(0)', 0, 0.01);
+        testExpectedEqualWithTolerance('blockGroupBuffered.end(0)', 1, 0.05);
+    }
+
+    window.addEventListener('load', event => {
+        runTest().then(endTest).catch(failTest);
+    });
+    </script>
+</head>
+<body>
+    <video></video>
+</body>
+</html>

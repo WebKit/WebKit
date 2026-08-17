@@ -859,6 +859,7 @@ webm::Status WebMParser::OnBlockBegin(const ElementMetadata&, const Block& block
     *action = Action::kRead;
 
     m_currentBlock = std::make_optional<BlockVariant>(Block(block));
+    m_currentDuration = MediaTime::zeroTime();
 
     return Status(Status::kOkCompleted);
 }
@@ -866,6 +867,7 @@ webm::Status WebMParser::OnBlockBegin(const ElementMetadata&, const Block& block
 webm::Status WebMParser::OnBlockEnd(const ElementMetadata&, const Block&)
 {
     m_currentBlock = std::nullopt;
+    m_currentDuration = MediaTime::zeroTime();
 
     return Status(Status::kOkCompleted);
 }
