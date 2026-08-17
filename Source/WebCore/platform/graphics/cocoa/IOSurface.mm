@@ -803,15 +803,26 @@ void IOSurface::convertToFormat(IOSurfacePool* pool, std::unique_ptr<IOSurface>&
 {
     static IOSurfaceAcceleratorRef accelerator;
     if (!accelerator) {
-        IOSurfaceAcceleratorCreate(nullptr, nullptr, &accelerator);
+        IOSurfaceAcceleratorRef newAccelerator = nullptr;
+        IOSurfaceAcceleratorCreate(nullptr, nullptr, &newAccelerator);
 
-        if (!accelerator) {
+        if (!newAccelerator) {
             callback(nullptr);
             return;
         }
 
-        auto runLoopSource = IOSurfaceAcceleratorGetRunLoopSource(accelerator);
+        // Without a run loop source, the accelerator can never deliver a completion, so
+        // don't cache it; every subsequent transform would silently never complete.
+        auto runLoopSource = IOSurfaceAcceleratorGetRunLoopSource(newAccelerator);
+        if (!runLoopSource) {
+            RELEASE_LOG_ERROR(IOSurface, "IOSurface::convertToFormat: failed to get a run loop source for the accelerator");
+            CFRelease(newAccelerator);
+            callback(nullptr);
+            return;
+        }
+
         CFRunLoopAddSource(CFRunLoopGetMain(), runLoopSource, kCFRunLoopDefaultMode);
+        accelerator = newAccelerator;
     }
 
     if (inSurface->pixelFormat() == format) {
@@ -829,18 +840,22 @@ void IOSurface::convertToFormat(IOSurfacePool* pool, std::unique_ptr<IOSurface>&
     IOSurfaceAcceleratorCompletion completion;
     completion.completionRefCon = new WTF::Function<void(std::unique_ptr<IOSurface>)> (WTF::move(callback));
     completion.completionRefCon2 = destinationSurface.release();
-    completion.completionCallback = [](void *completionRefCon, IOReturn, void * completionRefCon2) {
+    completion.completionCallback = [](void *completionRefCon, IOReturn result, void * completionRefCon2) {
         auto* callback = static_cast<WTF::Function<void(std::unique_ptr<IOSurface>)>*>(completionRefCon);
         auto destinationSurface = std::unique_ptr<IOSurface>(static_cast<IOSurface*>(completionRefCon2));
-        
-        (*callback)(WTF::move(destinationSurface));
+
+        (*callback)(result == kIOReturnSuccess ? WTF::move(destinationSurface) : nullptr);
         delete callback;
     };
 
     NSDictionary *options = @{ (id)kIOSurfaceAcceleratorUnwireSurfaceKey : @YES };
 
     IOReturn ret = IOSurfaceAcceleratorTransformSurface(accelerator, inSurface->surface(), destinationIOSurfaceRef, (CFDictionaryRef)options, nullptr, &completion, nullptr, nullptr);
-    ASSERT_UNUSED(ret, ret == kIOReturnSuccess);
+    if (ret != kIOReturnSuccess) {
+        RELEASE_LOG_ERROR(IOSurface, "IOSurface::convertToFormat: IOSurfaceAcceleratorTransformSurface failed for size (%d, %d), error %d", inSurface->size().width(), inSurface->size().height(), ret);
+        completion.completionCallback(completion.completionRefCon, ret, completion.completionRefCon2);
+        return;
+    }
 }
 
 #endif // HAVE(IOSURFACE_ACCELERATOR)
