@@ -94,8 +94,6 @@ static bool isExcludedMarker(const RenderBlock& parent, const RenderObject& chil
     CheckedPtr marker = dynamicDowncast<RenderListMarker>(child);
     if (!marker || marker->isInside() || !marker->document().settings().listMarkerPositionedPostLayoutEnabled())
         return false;
-    if (parent.childrenInline())
-        return false;
     CheckedPtr listItem = dynamicDowncast<RenderListItem>(parent);
     return listItem && !markerNeedsOwnLine(*listItem);
 }
@@ -103,7 +101,11 @@ static bool isExcludedMarker(const RenderBlock& parent, const RenderObject& chil
 static bool hasInlineInFlowChild(const RenderBlock& parent)
 {
     for (CheckedPtr child = parent.firstChild(); child; child = child->nextSibling()) {
-        if (child->isFloatingOrOutOfFlowPositioned() || isExcludedMarker(parent, *child))
+        if (child->isFloatingOrOutOfFlowPositioned())
+            continue;
+        // An excluded marker takes no part in in-flow layout, so it does not make the children inline. A
+        // list item left holding nothing but its marker still has the marker's line though.
+        if (isExcludedMarker(parent, *child) && (child->previousSibling() || child->nextSibling()))
             continue;
         if (child->isInline())
             return true;
@@ -204,7 +206,11 @@ void RenderTreeBuilder::Block::attach(RenderBlock& parent, RenderPtr<RenderObjec
     };
 
     if (!shouldBuildAnonymousBlock()) {
-        if (!parent.firstChild() && !child->isFloatingOrOutOfFlowPositioned())
+        auto isEmptyIgnoringExcludedMarker = [&] {
+            CheckedPtr firstChild = parent.firstChild();
+            return !firstChild || (isExcludedMarker(parent, *firstChild) && !firstChild->nextSibling());
+        };
+        if (isEmptyIgnoringExcludedMarker() && !child->isFloatingOrOutOfFlowPositioned())
             parent.setChildrenInline(child->isInline());
         else if (child->isInline() && !isExcludedMarker(parent, *child)) {
             // An excluded marker takes no part in in-flow layout, so it does not make the children inline.
