@@ -4174,8 +4174,6 @@ webkit.org/b/194044 imported/w3c/web-platform-tests/media-source/mediasource-add
 # Added in r276357. Also marked as ImageOnlyFailure in iOS TestExpectations.
 fast/text/line-break-with-locale.html [ ImageOnlyFailure ]
 
-webkit.org/b/225423 fast/canvas/canvas-composite-text-alpha.html [ Failure ]
-
 # Decoded images/video frames are always tagged as sRGB regardless of their embedded ICC
 # profile: PNGImageDecoder/JPEGImageDecoder convert via LCMS straight to sRGB during decode,
 # and ImageBackingStoreSkia.cpp hardcodes SkColorSpace::MakeSRGB() on the result. Wide-gamut

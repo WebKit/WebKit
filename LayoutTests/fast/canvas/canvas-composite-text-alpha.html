@@ -430,16 +430,19 @@
           name: "stroke text"
       };
 
-      function draw()
-      {
+      addEventListener("load", async () => {
+          await document.fonts.load("20px Ahem");
           drawTable(useFillText);
           drawTable(useStrokeText);
           if (window.testRunner)
               testRunner.notifyDone();
-      }
+      }, () => {
+          if (window.testRunner)
+              testRunner.notifyDone();
+      });
     </script>
   </head>
-  <body onload="draw();">
+  <body>
     <p>This test exercises a bunch of alpha composition operations on text. The top-left rectangles are the source images and bottom-right rectangles are the destination images.</p>
     <div id="results">
     </div>

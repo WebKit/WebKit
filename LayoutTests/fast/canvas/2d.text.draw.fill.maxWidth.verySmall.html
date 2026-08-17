@@ -20,7 +20,7 @@ function drawCanvas(ctx) {
   ctx.fillText("XX", -10, 100, 10);
 }
 
-function doDeferredTest() {
+function doDeferredTest(ctx) {
   drawCanvas(ctx);
 
   // Check that the letter rendered appropriately
@@ -47,17 +47,19 @@ if (window.testRunner) {
   testRunner.waitUntilDone();
 }
 
-var canvas = document.getElementById('c');
-var ctx = canvas.getContext("2d");
-ctx.font = "100px Ahem";
+addEventListener('load', async () => {
+  const font = "100px Ahem";
+  await document.fonts.load(font);
 
-// Kick off loading of the font
-ctx.fillText(" ", 0, 0);
+  var canvas = document.getElementById('c');
+  var ctx = canvas.getContext("2d");
+  ctx.font = font;
 
-// Wait for the font to load, then run
-setTimeout(function() {
-  doDeferredTest();
-}, 50);
+  doDeferredTest(ctx);
+}, () => {
+  if (window.testRunner)
+    testRunner.notifyDone();
+});
 </script>
 </body>
 </html>

@@ -15,11 +15,15 @@
     canvas.parentNode.removeChild(canvas);
     if (window.testRunner)
         testRunner.waitUntilDone();
-    setTimeout(function()
-    {
+
+    addEventListener("load", async () => {
+        try {
+            await document.fonts.load(ctx.font);
+        } catch (e) {}
+
         ctx.fillText("A", 0, 100);
         document.body.appendChild(canvas);
         if (window.testRunner)
             testRunner.notifyDone();
-    }, 50);
+    });
 </script>
