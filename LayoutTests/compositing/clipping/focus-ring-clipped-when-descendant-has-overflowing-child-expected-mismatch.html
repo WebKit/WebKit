@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Not-reference: full ring and full leaked overflow (must differ from the clipped test)</title>
+<style>
+    body { margin: 0; }
+    #ancestor {
+        position: absolute; left: 50px; top: 50px;
+        width: 200px; height: 200px;
+        overflow: visible;         /* full ring and full #leak drawn -- the test must NOT look like this */
+        transform: translateZ(0);
+        background: #ddd;
+    }
+    #child {
+        position: absolute;
+        left: 90px; top: 40px;
+        right: 0;
+        height: 100px;
+        transform: translateZ(0);
+        outline: auto;
+        overflow: visible;
+        background: #eee;
+    }
+    #leak {
+        position: absolute;
+        left: 100%; top: 0;
+        width: 40px; height: 40px;
+        background: red;
+    }
+</style>
+</head>
+<body>
+    <p>Test passes if there is no red visible anywhere, and the box's right edge is NOT fully outlined.</p>
+    <div id="ancestor"><div id="child"><div id="leak"></div></div></div>
+</body>
+</html>

@@ -1039,7 +1039,10 @@ void Element::setFocus(bool value, FocusVisibility visibility)
 {
     if (value == focused())
         return;
-    
+
+    if (CheckedPtr renderer = this->renderer())
+        renderer->outlineAutoLiveFocusChanged(value);
+
     Style::PseudoClassChangeInvalidation focusStyleInvalidation(*this, { { CSSSelector::PseudoClass::Focus, value }, { CSSSelector::PseudoClass::FocusVisible, value } });
     document().userActionElements().setFocused(*this, value);
 

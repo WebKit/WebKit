@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Platform focus ring is not clipped when a static outline-style:auto element gains focus without restyling</title>
+<link rel="match" href="focus-ring-not-clipped-when-static-outline-auto-gains-focus-expected.html">
+<!-- A static outline:auto never restyles on focus, so styleDidChange() never runs; only
+     Element::setFocus() -> outlineAutoLiveFocusChanged() invalidates the outsets cached while unfocused. -->
+<style>
+    body { margin: 0; }
+    #ancestor {
+        position: absolute; left: 50px; top: 50px;
+        width: 200px; height: 200px;
+        overflow: hidden;          /* enforced via m_childContainmentLayer since this layer is composited */
+        transform: translateZ(0);  /* force compositing */
+        background: #ddd;
+    }
+    #child {
+        position: absolute;
+        left: 90px; top: 40px;     /* inset from ancestor on left/top/bottom */
+        right: 0;                  /* flush to the ancestor's right edge */
+        height: 100px;
+        transform: translateZ(0);  /* force compositing */
+        outline: auto;             /* static platform focus ring, never restyled by focus */
+        background: #eee;
+    }
+</style>
+</head>
+<body>
+    <p>Test passes if the inner box shows a complete focus ring on all four sides (including the right edge).</p>
+    <div id="ancestor"><div id="child" tabindex="0"></div></div>
+    <script>
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+
+        window.onload = () => {
+            // Let the unfocused state fully commit, caching empty outsets on #ancestor.
+            requestAnimationFrame(() => requestAnimationFrame(() => {
+                child.focus();
+                // Let the focused state's clip recomputation commit before the snapshot.
+                requestAnimationFrame(() => requestAnimationFrame(() => {
+                    if (window.testRunner)
+                        testRunner.notifyDone();
+                }));
+            }));
+        };
+    </script>
+</body>
+</html>

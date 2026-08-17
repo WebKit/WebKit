@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Reference: platform focus ring fully painted</title>
+<style>
+    body { margin: 0; }
+    #clipper {
+        position: absolute; left: 50px; top: 50px;
+        width: 200px; height: 100px;
+        overflow: visible;         /* reference: nothing clips the focus ring */
+        background: #ddd;
+    }
+    #poisoner {
+        position: absolute; left: 0; top: 0;
+        width: 20px; height: 20px;
+        background: green;         /* matches the test's post-mutation color */
+    }
+    #target {
+        position: absolute;
+        left: 40px; top: 40px;
+        right: 0;
+        height: 40px;
+        overflow: hidden;
+        outline: auto;             /* static: paints without needing focus */
+        background: #eee;
+    }
+</style>
+</head>
+<body>
+    <p>Test passes if the inner box shows a complete focus ring on all four sides (including the right edge).</p>
+    <div id="clipper">
+        <div id="poisoner"></div>
+        <div id="target"></div>
+    </div>
+</body>
+</html>

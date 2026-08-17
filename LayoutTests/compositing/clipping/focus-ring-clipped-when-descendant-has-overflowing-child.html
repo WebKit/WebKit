@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Focus ring stays clipped when the composited descendant itself has other overflowing content</title>
+<link rel="mismatch" href="focus-ring-clipped-when-descendant-has-overflowing-child-expected-mismatch.html">
+<!-- #child has an overflowing grandchild (#leak), so the compositing-clip outsets must be refused and both the ring and #leak must stay clipped by #ancestor; this must NOT match a reference where #ancestor's clip is removed. -->
+<style>
+    body { margin: 0; }
+    #ancestor {
+        position: absolute; left: 50px; top: 50px;
+        width: 200px; height: 200px;
+        overflow: hidden;
+        transform: translateZ(0);  /* force compositing: enforced via m_childContainmentLayer */
+        background: #ddd;
+    }
+    #child {
+        position: absolute;
+        left: 90px; top: 40px;
+        right: 0;                  /* flush to the ancestor's right edge */
+        height: 100px;
+        transform: translateZ(0);  /* force compositing */
+        outline: auto;
+        overflow: visible;         /* does not self-clip #leak */
+        background: #eee;
+    }
+    #leak {
+        position: absolute;
+        left: 100%; top: 0;
+        width: 40px; height: 40px; /* extends well past #child's border box -- more than the ring alone would */
+        background: red;
+    }
+</style>
+</head>
+<body>
+    <p>Test passes if there is no red visible anywhere, and the box's right edge is NOT fully outlined.</p>
+    <div id="ancestor"><div id="child" tabindex="0"><div id="leak"></div></div></div>
+    <script>
+        window.onload = () => child.focus();
+    </script>
+</body>
+</html>

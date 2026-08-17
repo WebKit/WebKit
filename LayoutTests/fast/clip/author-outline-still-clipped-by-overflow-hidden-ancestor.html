@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>An author (non-auto) outline on a self-painting layer is still clipped by an ancestor's overflow:hidden</title>
+<!-- A regular author outline on a self-painting-layer element must remain clipped by an ancestor's overflow:hidden; this test must NOT match the full-outline reference. -->
+<style>
+    body { margin: 0; }
+    #ancestor {
+        position: absolute; left: 50px; top: 50px;
+        width: 200px; height: 200px;
+        overflow: hidden;              /* must clip the author outline on the flush edge */
+        background: #ddd;
+    }
+    #child {
+        position: absolute;
+        left: 90px; top: 40px;         /* inset left/top/bottom */
+        right: 0;                      /* flush to the ancestor's right edge */
+        height: 100px;
+        overflow: hidden;              /* self-painting layer -> paints via PaintPhase::SelfOutline */
+        outline: 10px solid green;     /* non-auto author outline: stays clipped */
+        background: #eee;
+    }
+</style>
+</head>
+<body>
+    <p>Test passes if the green outline's right edge is clipped by the container (i.e., the box is NOT fully outlined on the right).</p>
+    <div id="ancestor"><div id="child"></div></div>
+</body>
+</html>

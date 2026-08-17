@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Platform focus ring (outline-style:auto) is not clipped by a composited ancestor's child-containment mask</title>
+<link rel="match" href="focus-ring-not-clipped-by-composited-child-containment-layer-expected.html">
+<!-- Both #ancestor and #child are composited, so the ancestor's overflow:hidden clip is enforced via m_childContainmentLayer rather than the software paint-time clip rect. -->
+<style>
+    body { margin: 0; }
+    #ancestor {
+        position: absolute; left: 50px; top: 50px;
+        width: 200px; height: 200px;
+        overflow: hidden;          /* enforced via m_childContainmentLayer since this layer is composited */
+        transform: translateZ(0);  /* force compositing */
+        background: #ddd;
+    }
+    #child {
+        position: absolute;
+        left: 90px; top: 40px;     /* inset from ancestor on left/top/bottom */
+        right: 0;                  /* flush to the ancestor's right edge */
+        height: 100px;
+        transform: translateZ(0);  /* force compositing */
+        outline: auto;             /* platform focus ring, drawn outside the border box */
+        background: #eee;
+    }
+</style>
+</head>
+<body>
+    <p>Test passes if the inner box shows a complete focus ring on all four sides (including the right edge).</p>
+    <div id="ancestor"><div id="child" tabindex="0"></div></div>
+    <script>
+        window.onload = () => child.focus();
+    </script>
+</body>
+</html>

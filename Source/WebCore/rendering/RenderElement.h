@@ -300,6 +300,8 @@ public:
     ReferencedSVGResources& ensureReferencedSVGResources();
     ReferencedSVGResources* referencedSVGResources() const;
 
+    void outlineAutoLiveFocusChanged(bool isFocused);
+
     Overflow NODELETE effectiveOverflowX() const;
     Overflow NODELETE effectiveOverflowY() const;
     inline Overflow effectiveOverflowInlineDirection() const;
@@ -450,6 +452,7 @@ private:
     
     bool shouldWillChangeCreateStackingContext() const;
     void issueRepaintForOutlineAuto(float outlineSize);
+    void invalidateCompositedClipsForOutlineAutoChange();
     
     void updateReferencedSVGResources();
     void clearReferencedSVGResources();

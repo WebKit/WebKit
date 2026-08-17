@@ -116,7 +116,8 @@ inline auto RenderObject::visibleRectContextForRepaint() -> VisibleRectContext
     return {
         .options = {
             VisibleRectContext::Option::ApplyContainerClip,
-            VisibleRectContext::Option::ApplyCompositedContainerScrolls
+            VisibleRectContext::Option::ApplyCompositedContainerScrolls,
+            VisibleRectContext::Option::AllowOutlineAutoClipOutsets
         },
         .scrollMargin = { },
     };

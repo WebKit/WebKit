@@ -3,7 +3,7 @@
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2005 Allan Sandfeld Jensen (kde@carewolf.com)
  * Copyright (C) 2005-2025 Samuel Weinig (sam@webkit.org)
- * Copyright (C) 2005-2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2026 Apple Inc. All rights reserved.
  * Copyright (C) 2015-2019 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -1496,6 +1496,12 @@ bool RenderBox::applyCachedClipAndScrollPosition(RepaintRects& rects, const Rend
         };
 
         clipRect.expand(scrollMarginEdges);
+    }
+
+    // Only a repaint rect should see a widened clip; a visibility query must see the real one.
+    if (context.options.contains(VisibleRectContext::Option::AllowOutlineAutoClipOutsets)) {
+        if (CheckedPtr layer = this->layer())
+            clipRect = layer->outsetOutlineAutoClipRect(clipRect, RenderLayer::OutsetContext::RingOnly);
     }
 
     bool intersects;
@@ -4907,6 +4913,39 @@ LayoutRect RenderBox::applyVisualEffectOverflow(const LayoutRect& borderBox, Enu
     return LayoutRect(overflowMinX, overflowMinY, overflowMaxX - overflowMinX, overflowMaxY - overflowMinY);
 }
 
+LayoutRect RenderBox::outlineAutoRingBounds() const
+{
+    return applyVisualEffectOverflow(borderBoxRect());
+}
+
+bool RenderBox::outlineAutoIsOnlyVisualOverflow() const
+{
+    if (element() != document().focusedElement())
+        return false;
+
+    CheckedRef outlineStyle = outlineStyleForRepaint();
+    if (outlineStyle->outlineStyle() != OutlineStyle::Auto || !outlineStyle->hasOutlineInVisualOverflow())
+        return false;
+
+    if (!style().boxShadow().isNone() || style().hasBorderImageOutsets() || (hasFilter() && !computeFilterOutsets().isZero()))
+        return false;
+
+    // Already clips its descendants to the border box, so none of their content can reach the ring's space.
+    if (hasNonVisibleOverflow())
+        return true;
+
+    // Otherwise the ring must be all that reaches past the border box.
+    return visualOverflowRect() == applyVisualEffectOverflow(borderBoxRect());
+}
+
+// True when 'child' paints its own visual overflow (box-shadow, outline, etc.) via its own self-painting
+// layer, so this box's visual overflow need not include it.
+bool RenderBox::childPaintsVisualOverflowIndependently(const RenderBox& child) const
+{
+    // A child can't self-paint if a filter is present, since it needs pre-filter bounds for everything it applies to.
+    return child.hasSelfPaintingLayer() && !hasFilter();
+}
+
 void RenderBox::addOverflowFromInFlowChildren(OptionSet<ComputeOverflowOptions> options)
 {
     for (auto& child : childrenOfType<RenderBox>(*this)) {
@@ -4979,7 +5018,7 @@ void RenderBox::addOverflowWithRendererOffset(const RenderBox& renderer, LayoutS
     } else {
         // Update our visual overflow in case the child spills out the block, but only if we were going to paint
         // the child block ourselves.
-        if (renderer.hasSelfPaintingLayer() && !hasFilter())
+        if (childPaintsVisualOverflowIndependently(renderer))
             return;
     }
     if (!childVisualOverflowRect)

@@ -1727,7 +1727,7 @@ void RenderLayerBacking::updateGeometry(const RenderLayer* compositedAncestor)
     LayoutRect clippingBox;
     if (RefPtr clipLayer = clippingLayer()) {
         // clipLayer is the m_childContainmentLayer.
-        clippingBox = clippingLayerBox(renderer());
+        clippingBox = m_owningLayer.outsetOutlineAutoClipRect(clippingLayerBox(renderer()), RenderLayer::OutsetContext::RingOnly);
         // Clipping layer is parented in the primary graphics layer.
         LayoutSize clipBoxOffsetFromGraphicsLayer = toLayoutSize(clippingBox.location()) + rendererOffset.fromPrimaryGraphicsLayer();
         SnappedRectInfo snappedClippingGraphicsLayer = snappedGraphicsLayer(clipBoxOffsetFromGraphicsLayer, clippingBox.size(), renderer());
@@ -1767,7 +1767,7 @@ void RenderLayerBacking::updateGeometry(const RenderLayer* compositedAncestor)
 
     if (m_scrollContainerLayer) {
         ASSERT(m_scrolledContentsLayer);
-        LayoutRect scrollContainerBox = scrollContainerLayerBox(downcast<RenderBox>(renderer()));
+        LayoutRect scrollContainerBox = m_owningLayer.outsetOutlineAutoClipRect(scrollContainerLayerBox(downcast<RenderBox>(renderer())), RenderLayer::OutsetContext::RingOnly);
         LayoutRect parentLayerBounds = clippingLayer() ? scrollContainerBox : compositedBounds();
 
         // FIXME: need to do some pixel snapping here.

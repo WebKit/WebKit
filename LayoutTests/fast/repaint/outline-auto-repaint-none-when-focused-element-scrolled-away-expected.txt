@@ -1,0 +1,4 @@
+(repaint rects
+  (rect 400 400 50 50)
+)
+

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Platform focus ring is not clipped by a non-composited overflow:hidden ancestor when a :focus-gated outline:auto becomes live</title>
+<link rel="match" href="focus-ring-not-clipped-by-overflow-hidden-ancestor-on-focus-expected.html">
+<!-- A :focus-gated outline:auto directly inside a non-composited overflow:hidden parent, flush to its right
+     edge; #poisoner only adds an unrelated repaint in the same update. -->
+<style>
+    body { margin: 0; }
+    #clipper {
+        position: absolute; left: 50px; top: 50px;
+        width: 200px; height: 100px;
+        overflow: hidden;          /* clips the ring unless outsets widen it */
+        background: #ddd;
+    }
+    #poisoner {
+        position: absolute; left: 0; top: 0;
+        width: 20px; height: 20px;
+        background: #bbb;
+    }
+    #target {
+        position: absolute;
+        left: 40px; top: 40px;     /* inset from #clipper on left/top/bottom */
+        right: 0;                  /* flush to #clipper's right edge */
+        height: 40px;
+        overflow: hidden;
+        background: #eee;
+    }
+    #target:focus {
+        outline: auto;
+    }
+</style>
+</head>
+<body>
+    <p>Test passes if the inner box shows a complete focus ring on all four sides (including the right edge).</p>
+    <div id="clipper">
+        <div id="poisoner"></div>
+        <div id="target" tabindex="0"></div>
+    </div>
+    <script>
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+
+        window.onload = () => {
+            // Schedules the :focus restyle; the ring is not live yet when this returns.
+            target.focus();
+            // Issued earlier in the same recalc pass, so it caches outsets computed with no live ring.
+            poisoner.style.backgroundColor = 'green';
+
+            // Let the restyle, repaint and compositing update all commit before the snapshot.
+            requestAnimationFrame(() => requestAnimationFrame(() => {
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            }));
+        };
+    </script>
+</body>
+</html>
