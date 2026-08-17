@@ -12,8 +12,4 @@ Properties requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/wasm/META.yml
-/LayoutTests/imported/w3c/web-platform-tests/wasm/compile_worker.js
-/LayoutTests/imported/w3c/web-platform-tests/wasm/create_multiple_memory.worker.js
-/LayoutTests/imported/w3c/web-platform-tests/wasm/incrementer.wasm
-/LayoutTests/imported/w3c/web-platform-tests/wasm/proposals.json
+/LayoutTests/imported/w3c/web-platform-tests/wasm/tools/update-proposals.py

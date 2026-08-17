@@ -86,14 +86,14 @@ PASS #84 Test that a WebAssembly code traps (return_call_ref.wast:319)
 PASS #85 Test that WebAssembly compilation succeeds (return_call_ref.wast:321)
 PASS #86 Test that WebAssembly instantiation succeeds (return_call_ref.wast:321)
 PASS #87 Test that a WebAssembly code traps (return_call_ref.wast:334)
-FAIL #88 Test that WebAssembly compilation fails (return_call_ref.wast:336) assert_true: module@async_index.js:175:29
-assert_invalid@async_index.js:204:9
-return_call_ref_wast_js@return_call_ref.wast.js:157:15
-global code@return_call_ref.wast.js:171:3 expected true got false
-FAIL #89 Test that WebAssembly compilation fails (return_call_ref.wast:352) assert_true: module@async_index.js:175:29
-assert_invalid@async_index.js:204:9
-return_call_ref_wast_js@return_call_ref.wast.js:160:15
-global code@return_call_ref.wast.js:171:3 expected true got false
+FAIL #88 Test that WebAssembly compilation fails (return_call_ref.wast:336) assert_true: module@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:163:24
+assert_invalid@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:192:9
+return_call_ref_wast_js@http://web-platform.test:8800/wasm/core/js/return_call_ref.wast.js:157:15
+global code@http://web-platform.test:8800/wasm/core/js/return_call_ref.wast.js:171:3 expected true got false
+FAIL #89 Test that WebAssembly compilation fails (return_call_ref.wast:352) assert_true: module@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:163:24
+assert_invalid@http://web-platform.test:8800/wasm/core/js/harness/async_index.js:192:9
+return_call_ref_wast_js@http://web-platform.test:8800/wasm/core/js/return_call_ref.wast.js:160:15
+global code@http://web-platform.test:8800/wasm/core/js/return_call_ref.wast.js:171:3 expected true got false
 PASS #90 Test that WebAssembly compilation fails (return_call_ref.wast:368)
 PASS #91 Test that WebAssembly compilation fails (return_call_ref.wast:378)
 PASS #92 Test that WebAssembly compilation fails (return_call_ref.wast:388)
