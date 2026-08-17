@@ -1034,7 +1034,7 @@ CollapsedBorderValue RenderTableCell::computeCollapsedBeforeBorder(IncludeBorder
             return result;
         
         // (6) Previous row group's after border.
-        currSection = table->sectionAbove(currSection, SkipEmptySections);
+        currSection = table->sectionAbove(currSection, SkipEmptySections::Yes);
         if (currSection) {
             result = chooseBorder(CollapsedBorderValue(currSection->style().borderAfter(tableWritingMode()), includeColor ? resolvedBorderColor(currSection->style(), afterColorProperty) : Color(), BorderPrecedence::RowGroup, currSection->style().usedZoomForLength(), deviceScaleFactor), result);
             if (!result.exists())
@@ -1129,7 +1129,7 @@ CollapsedBorderValue RenderTableCell::computeCollapsedAfterBorder(IncludeBorderC
             return result;
         
         // (6) Following row group's before border.
-        currSection = table->sectionBelow(currSection, SkipEmptySections);
+        currSection = table->sectionBelow(currSection, SkipEmptySections::Yes);
         if (currSection) {
             result = chooseBorder(result, CollapsedBorderValue(currSection->style().borderBefore(tableWritingMode()), includeColor ? resolvedBorderColor(currSection->style(), beforeColorProperty) : Color(), BorderPrecedence::RowGroup, currSection->style().usedZoomForLength(), deviceScaleFactor));
             if (!result.exists())

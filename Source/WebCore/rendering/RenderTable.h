@@ -41,7 +41,7 @@ class RenderTableRow;
 class RenderTableSection;
 class TableLayout;
 
-enum SkipEmptySectionsValue { DoNotSkipEmptySections, SkipEmptySections };
+enum class SkipEmptySections : bool { No, Yes };
 enum class TableIntrinsics : uint8_t { ForLayout, ForKeyword };
 
 class RenderTable : public RenderBlock {
@@ -171,8 +171,8 @@ public:
     bool needsSectionRecalc() const { return m_needsSectionRecalc; }
     void setNeedsSectionRecalc();
 
-    RenderTableSection* sectionAbove(const RenderTableSection*, SkipEmptySectionsValue = DoNotSkipEmptySections) const;
-    RenderTableSection* sectionBelow(const RenderTableSection*, SkipEmptySectionsValue = DoNotSkipEmptySections) const;
+    RenderTableSection* sectionAbove(const RenderTableSection*, SkipEmptySections = SkipEmptySections::No) const;
+    RenderTableSection* sectionBelow(const RenderTableSection*, SkipEmptySections = SkipEmptySections::No) const;
 
     RenderTableCell* cellAbove(const RenderTableCell*) const;
     RenderTableCell* cellBelow(const RenderTableCell*) const;
