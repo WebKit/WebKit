@@ -882,6 +882,11 @@ void CachedResource::setLoadPriority(const std::optional<ResourceLoadPriority>& 
     m_loadPriority = priority;
 }
 
+void CachedResource::setInitialPriority(ResourceLoadPriority priority)
+{
+    m_initialPriority = priority;
+}
+
 CachedResource::ResponseData::ResponseData(CachedResource& resource)
     : m_decodedDataDeletionTimer(resource, &CachedResource::destroyDecodedData, deadDecodedDataDeletionIntervalForResourceType(resource.type()))
 {

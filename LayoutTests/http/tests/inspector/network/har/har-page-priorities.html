@@ -1,0 +1,127 @@
+<!DOCTYPE html><!-- webkit-test-runner [ jscOptions=--useConcurrentGC=true ] -->
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="/resources/dummy.css" media="screen" />
+<link rel="stylesheet" href="/resources/dummy.css?print" media="print" />
+<link rel="stylesheet" href="/resources/dummy.css?low" media="screen" fetchpriority="low" />
+<script src="../../resources/inspector-test.js"></script>
+<script src="../../../cookies/resources/cookie-utilities.js?async" async></script>
+<script>
+function test()
+{
+    if (window.GCController) {
+        GCController.collect();
+    }
+
+    let suite = InspectorTest.createAsyncSuite("HAR.Page");
+
+    suite.addTestCase({
+        name: "HAR.Page.Priorities",
+        description: "Should be able to generate a HAR with all of this test page's resources.",
+        async test() {
+            await NetworkAgent.setResourceCachingDisabled(false);
+
+            await Promise.all([
+                WI.networkManager.mainFrame.removeAllResources(),
+                WI.networkManager.mainFrame.clearProvisionalLoad(false),
+            ]);
+
+            await new Promise(resolve => setTimeout(resolve, 100)); // Microtask yield
+
+            await Promise.all([
+                InspectorTest.awaitEvent("LoadComplete"),
+                InspectorTest.reloadPage({ignoreCache: true}),
+            ]);
+
+            await new Promise(resolve => setTimeout(resolve, 100)); // Microtask yield
+
+            let resources = [WI.networkManager.mainFrame.mainResource, ...WI.networkManager.mainFrame.resourceCollection];
+            let har = await WI.HARBuilder.buildArchive(resources);
+            let localResources = WI.networkManager.processHAR({json: har});
+            let firstDuplicate = true;
+
+            localResources.forEach((entry) => {
+                const priorityName = WI.Resource.displayNameForPriority(entry.priority);
+                const initialPriorityName = WI.Resource.displayNameForPriority(entry.initialPriority);
+
+                if ((/html$/).test(entry.url)) {
+                    InspectorTest.expectEqual(initialPriorityName, "Very High", `HTML ${entry.url} should start with a Very High priority`);
+                    InspectorTest.expectEqual(priorityName, "Very High", "- HTML should still have Very High priority");
+                } else if ((/duplicate$/).test(entry.url)) {
+                    if (firstDuplicate) {
+                        InspectorTest.expectEqual(initialPriorityName, "Low", `First duplicate ${entry.url} should start with a Low priority`);
+                        InspectorTest.expectEqual(priorityName, "Medium", "- First duplicate priority has been boosted");
+                        firstDuplicate = false;
+                    } else {
+                        InspectorTest.expectEqual(priorityName, "Low", "- Second duplicate image has not been boosted");
+                        firstDuplicate = true;
+                    }
+                } else if ((/image\/png/).test(entry.mimeType)) {
+                    InspectorTest.expectEqual(priorityName, "Low", `Image ${entry.url} should have a Low priority`);
+                } else if ((/javascript$/).test(entry.mimeType)) {
+                    InspectorTest.expectEqual(initialPriorityName, "High", `JavaScript ${entry.url} should start with a High priority`);
+                    if ((/async$/).test(entry.url)) {
+                        InspectorTest.expectEqual(priorityName, "Medium", `- Async JavaScript should be reduced to Medium priority`);
+                    } else {
+                        InspectorTest.expectEqual(priorityName, "High", `- JavaScript should still have a High priority`);
+                    }
+                } else if ((/beacon/).test(entry.url)) {
+                    InspectorTest.expectEqual(priorityName, "Very Low", `Beacon ${entry.url} should have Very Low priority`);
+                } else if ((/\.css/).test(entry.url)) {
+                    InspectorTest.expectEqual(initialPriorityName, "High", `Stylesheet ${entry.url} should start with a High priority`);
+                    if ((/print$/).test(entry.url)) {
+                        InspectorTest.expectEqual(priorityName, "Very Low", `- Print stylesheet should be reduced to a Very Low priority`);
+                    } else if ((/low$/).test(entry.url)) {
+                        InspectorTest.expectEqual(priorityName, "Medium", `- Priority was only reduced to Medium`);
+                    } else {
+                        InspectorTest.expectEqual(priorityName, "High", `- Screen stylesheet should stay at a High priority`);
+                    }
+                } else if ((/\.woff$/).test(entry.url)) {
+                    InspectorTest.expectEqual(initialPriorityName, "Medium", `Font ${entry.url} should start with a Medium priority`);
+                    InspectorTest.expectEqual(priorityName, "Medium", `- Font should stay with a Medium priority`);
+                }
+            });
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+<style>
+    @font-face { font-family: 'WebFont'; src: url('/resources/Ahem.woff') format('woff'); }
+    h2 { font-family: 'WebFont'; }
+</style>
+</head>
+<body onload="runTest()">
+<h1>HAR Priorities Test.</h1>
+<p>
+To test various <code>priority</code> and <code>initialPriority</code> scenarios this page has multiple resources:
+<ol>
+    <li>Normal stylesheet</li>
+    <li>Print stylesheet</li>
+    <li>Priority Boosted stylesheet</li>
+    <li>The normal testing JavaScript file</li>
+    <li>A <strong>async</strong>hronous loaded JavaScript file</li>
+    <li>A font</li>
+    <li>A call to a beacon</li>
+    <li>and the below images</li>
+<ol>
+</p>
+<h2>First image</h2>
+<img src="/resources/square100.png?1" width="100" height="100" alt="A 100x100 Square" />
+<h2>Priority boosted image is first of the duplicated set</h2>
+<img src="/resources/square100.png?duplicate" width="100" height="100" alt="A 100x100 Square" fetchpriority="high" />
+<h2>Another image</h2>
+<img src="/resources/square100.png?3" width="100" height="100" alt="A 100x100 Square" />
+<h2>The second image of the duplicated set</h2>
+<img src="/resources/square100.png?duplicate" width="100" height="100" alt="A 100x100 Square" />
+<script>
+navigator.sendBeacon("http://127.0.0.1:8000/blink/sendbeacon/resources/save-beacon.py?name=priorities", "SameOrigin");
+
+window.addEventListener("load", () => {
+    TestPage.dispatchEventToFrontend("LoadComplete");
+});
+</script>
+</body>
+</html>

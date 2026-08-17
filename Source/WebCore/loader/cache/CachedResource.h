@@ -151,6 +151,8 @@ public:
 
     ResourceLoadPriority loadPriority() const { return m_loadPriority; }
     void NODELETE setLoadPriority(const std::optional<ResourceLoadPriority>&, RequestPriority);
+    ResourceLoadPriority initialPriority() const { return m_initialPriority; }
+    void NODELETE setInitialPriority(ResourceLoadPriority);
 
     WEBCORE_EXPORT void addClient(CachedResourceClient&);
     WEBCORE_EXPORT void removeClient(CachedResourceClient&);
@@ -417,6 +419,7 @@ private:
     PreloadResult m_preloadResult : bitWidthOfPreloadResult;
     ResourceResponse::Tainting m_responseTainting : ResourceResponse::bitWidthOfTainting { ResourceResponse::Tainting::Basic };
     ResourceLoadPriority m_loadPriority : bitWidthOfResourceLoadPriority;
+    ResourceLoadPriority m_initialPriority : bitWidthOfResourceLoadPriority;
 
     Status m_status : bitWidthOfStatus;
     bool m_requestedFromNetworkingLayer : 1 { false };

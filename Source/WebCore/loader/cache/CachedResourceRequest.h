@@ -64,6 +64,8 @@ public:
 
     const std::optional<ResourceLoadPriority>& priority() const LIFETIME_BOUND { return m_priority; }
     void setPriority(std::optional<ResourceLoadPriority>&& priority) { m_priority = WTF::move(priority); }
+    const std::optional<ResourceLoadPriority>& initialPriority() const LIFETIME_BOUND { return m_initialPriority; }
+    void setInitialPriority(ResourceLoadPriority initialPriority) { m_initialPriority = WTF::move(initialPriority); }
 
     RequestPriority fetchPriority() const { return m_options.fetchPriority; }
 
@@ -123,6 +125,7 @@ private:
     String m_charset;
     ResourceLoaderOptions m_options;
     std::optional<ResourceLoadPriority> m_priority;
+    std::optional<ResourceLoadPriority> m_initialPriority;
     RefPtr<Element> m_initiatorElement;
     AtomString m_initiatorType;
     RefPtr<SecurityOrigin> m_origin;

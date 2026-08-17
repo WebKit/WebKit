@@ -40,6 +40,7 @@
 #include "CertificateInfo.h"
 #include "CertificateSummary.h"
 #include "CookieJar.h"
+#include "DefaultResourceLoadPriority.h"
 #include "DocumentInlines.h"
 #include "DocumentLoader.h"
 #include "DocumentThreadableLoader.h"
@@ -180,32 +181,17 @@ Ref<Inspector::Protocol::Network::ResourceTiming> InspectorNetworkAgent::buildOb
         .release();
 }
 
-static Inspector::Protocol::Network::Metrics::Priority NODELETE toProtocol(NetworkLoadPriority priority)
-{
-    switch (priority) {
-    case NetworkLoadPriority::Low:
-        return Inspector::Protocol::Network::Metrics::Priority::Low;
-    case NetworkLoadPriority::Medium:
-        return Inspector::Protocol::Network::Metrics::Priority::Medium;
-    case NetworkLoadPriority::High:
-        return Inspector::Protocol::Network::Metrics::Priority::High;
-    case NetworkLoadPriority::Unknown:
-        break;
-    }
-
-    ASSERT_NOT_REACHED();
-    return Inspector::Protocol::Network::Metrics::Priority::Medium;
-}
-
-Ref<Inspector::Protocol::Network::Metrics> InspectorNetworkAgent::buildObjectForMetrics(const NetworkLoadMetrics& networkLoadMetrics)
+Ref<Inspector::Protocol::Network::Metrics> InspectorNetworkAgent::buildObjectForMetrics(const NetworkLoadMetrics& networkLoadMetrics, const CachedResource::Type& resourceRequestType)
 {
     auto metrics = Inspector::Protocol::Network::Metrics::create().release();
 
     if (!networkLoadMetrics.protocol.isNull())
         metrics->setProtocol(networkLoadMetrics.protocol);
     if (auto* additionalMetrics = networkLoadMetrics.additionalNetworkLoadMetricsForWebInspector.get()) {
+        metrics->setInitialPriority(Inspector::Protocol::Network::toProtocol(DefaultResourceLoadPriority::forResourceType(resourceRequestType)));
+
         if (additionalMetrics->priority != NetworkLoadPriority::Unknown)
-            metrics->setPriority(toProtocol(additionalMetrics->priority));
+            metrics->setPriority(Inspector::Protocol::Network::toProtocol(additionalMetrics->priority));
         if (!additionalMetrics->remoteAddress.isNull())
             metrics->setRemoteAddress(additionalMetrics->remoteAddress);
         if (!additionalMetrics->connectionIdentifier.isNull())
@@ -524,7 +510,7 @@ void InspectorNetworkAgent::didReceiveResponse(ResourceLoaderIdentifier identifi
     // 'Raw' is used for loading worker scripts, and those should stay as 'Script' and not change to 'XHR' type.
     if (type != newType && newType != ResourceType::XHR && newType != ResourceType::Other)
         type = newType;
-    
+
     // FIXME: <webkit.org/b/216125> 304 Not Modified responses for XHR/Fetch do not have all their information from the cache.
     if (isNotModified && (type == ResourceType::XHR || type == ResourceType::Fetch) && (!cachedResource || !cachedResource->encodedSize())) {
         if (auto previousResourceData = m_resourcesData->dataForURL(response.url().string())) {
@@ -535,12 +521,12 @@ void InspectorNetworkAgent::didReceiveResponse(ResourceLoaderIdentifier identifi
                     m_resourcesData->maybeAddResourceData(requestId, buffer);
                 });
             }
-            
+
             resourceResponse->setString("mimeType"_s, previousResourceData->mimeType());
-            
+
             resourceResponse->setInteger("status"_s, previousResourceData->httpStatusCode());
             resourceResponse->setString("statusText"_s, previousResourceData->httpStatusText());
-            
+
             resourceResponse->setString("source"_s, Inspector::Protocol::Helpers::getEnumConstantValue(Inspector::Protocol::Network::Response::Source::DiskCache));
         }
     }
@@ -595,10 +581,13 @@ void InspectorNetworkAgent::didFinishLoading(ResourceLoaderIdentifier identifier
 
     m_resourcesData->maybeDecodeDataToContent(requestId);
 
+    CachedResource::Type resourceRequestType = CachedResource::Type::RawResource;
     String sourceMappingURL;
     NetworkResourcesData::ResourceData const* resourceData = m_resourcesData->data(requestId);
-    if (resourceData && resourceData->cachedResource())
+    if (resourceData && resourceData->cachedResource()) {
         sourceMappingURL = ResourceUtilities::sourceMapURLForResource(protect(resourceData->cachedResource()));
+        resourceRequestType = resourceData->cachedResource()->type();
+    }
 
     std::optional<NetworkLoadMetrics> realMetrics;
     if (platformStrategies()->loaderStrategy()->shouldPerformSecurityChecks() && !networkLoadMetrics.isComplete()) {
@@ -606,7 +595,8 @@ void InspectorNetworkAgent::didFinishLoading(ResourceLoaderIdentifier identifier
             realMetrics = platformStrategies()->loaderStrategy()->networkMetricsFromResourceLoadIdentifier(identifier).isolatedCopy();
         });
     }
-    auto metrics = buildObjectForMetrics(realMetrics ? *realMetrics : networkLoadMetrics);
+
+    auto metrics = buildObjectForMetrics(realMetrics ? *realMetrics : networkLoadMetrics, resourceRequestType);
 
     m_frontendDispatcher->loadingFinished(requestId, elapsedFinishTime, sourceMappingURL, WTF::move(metrics));
 }

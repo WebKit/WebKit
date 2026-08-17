@@ -7062,7 +7062,7 @@
 		E4F0BE3125712F6E009E7431 /* CaretRectComputation.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F0BE2E25710A75009E7431 /* CaretRectComputation.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E4F1573927B9261500B330D8 /* ContainerQuery.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F1573227B6991F00B330D8 /* ContainerQuery.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E4F1574127B93B7700B330D8 /* ContainerQueryParser.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F1573D27B93B4C00B330D8 /* ContainerQueryParser.h */; };
-		E4F38D1B2626F13B007B1064 /* DefaultResourceLoadPriority.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F38D192626F13B007B1064 /* DefaultResourceLoadPriority.h */; };
+		E4F38D1B2626F13B007B1064 /* DefaultResourceLoadPriority.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F38D192626F13B007B1064 /* DefaultResourceLoadPriority.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E4F819C626FB4EBF0094E162 /* InlineBoxPainter.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F819C526FB4EBF0094E162 /* InlineBoxPainter.h */; };
 		E4F9EEF3156DA00700D23E7E /* StyleSheetContents.h in Headers */ = {isa = PBXBuildFile; fileRef = E4F9EEF1156D84C400D23E7E /* StyleSheetContents.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E4FFCEBB2760AC0100A68B03 /* CSSLayerStatementRule.h in Headers */ = {isa = PBXBuildFile; fileRef = E4FFCEB82760AC0000A68B03 /* CSSLayerStatementRule.h */; };

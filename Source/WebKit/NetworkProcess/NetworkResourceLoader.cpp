@@ -486,7 +486,7 @@ void NetworkResourceLoader::startNetworkLoad(ResourceRequest&& request, FirstLoa
     parameters.request = WTF::move(request);
     parameters.isNavigatingToAppBoundDomain = m_parameters.isNavigatingToAppBoundDomain;
     m_networkLoad = NetworkLoad::create(*this, WTF::move(parameters), *networkSession);
-    
+
     WeakPtr weakThis { *this };
     RefPtr networkLoad = m_networkLoad;
     if (isSynchronous())
@@ -1237,12 +1237,26 @@ void NetworkResourceLoader::didFinishLoading(const NetworkLoadMetrics& originalN
         logCookieInformation();
 #endif
 
+    if (networkLoadMetrics.additionalNetworkLoadMetricsForWebInspector) {
+        int requestPriority = static_cast<int>(m_parameters.request.priority());
+        int metricPriority = static_cast<int>(networkLoadMetrics.additionalNetworkLoadMetricsForWebInspector->priority);
+
+        networkLoadMetrics.additionalNetworkLoadMetricsForWebInspector->initialPriority =
+            m_parameters.request.initialPriority();
+
+        if (requestPriority != metricPriority) {
+            // Priority changed, so update metric to latest value
+            networkLoadMetrics.additionalNetworkLoadMetricsForWebInspector->priority =
+                toNetworkLoadPriority(m_parameters.request.priority());
+        }
+    }
+
     if (isSynchronous())
         sendReplyToSynchronousRequest(*m_synchronousLoadData, protect(m_bufferedData.buffer()).get(), networkLoadMetrics);
     else {
-        if (!m_bufferedData.isEmpty()) {
+        if (!m_bufferedData.isEmpty())
             sendBuffer(*protect(m_bufferedData.buffer()));
-        }
+
 #if ENABLE(CONTENT_FILTERING)
         if (RefPtr contentFilter = m_contentFilter) {
             if (!contentFilter->continueAfterNotifyFinished(m_parameters.request.url()))
@@ -1328,7 +1342,7 @@ std::optional<Seconds> NetworkResourceLoader::validateCacheEntryForMaxAgeCapVali
         protect(m_cache)->remove(m_cacheEntryForMaxAgeCapValidation->key());
         m_cacheEntryForMaxAgeCapValidation = nullptr;
     }
-    
+
     if (!existingCacheEntryMatchesNewResponse) {
         if (CheckedPtr networkStorageSession = connectionToWebProcess().networkProcess().storageSession(sessionID()))
             return networkStorageSession->maxAgeCacheCap(request, NetworkSession::isRequestToKnownCrossSiteTracker(request));
@@ -2482,6 +2496,24 @@ void NetworkResourceLoader::reportNetworkUsageToAllServiceWorkerClients(WebCore:
     }
 }
 #endif
+
+WebCore::NetworkLoadPriority NODELETE NetworkResourceLoader::toNetworkLoadPriority(WebCore::ResourceLoadPriority priority)
+{
+    switch (priority) {
+    case ResourceLoadPriority::VeryLow:
+        return WebCore::NetworkLoadPriority::Verylow;
+    case ResourceLoadPriority::Low:
+        return WebCore::NetworkLoadPriority::Low;
+    case ResourceLoadPriority::Medium:
+        return WebCore::NetworkLoadPriority::Medium;
+    case ResourceLoadPriority::High:
+        return WebCore::NetworkLoadPriority::High;
+    case ResourceLoadPriority::VeryHigh:
+        return WebCore::NetworkLoadPriority::Veryhigh;
+    }
+
+    return WebCore::NetworkLoadPriority::Unknown;
+}
 
 } // namespace WebKit
 

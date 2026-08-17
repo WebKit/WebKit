@@ -142,6 +142,7 @@ Ref<AdditionalNetworkLoadMetricsForWebInspector> AdditionalNetworkLoadMetricsFor
 {
     auto copy = AdditionalNetworkLoadMetricsForWebInspector::create();
     copy->priority = priority;
+    copy->initialPriority = initialPriority;
     copy->remoteAddress = remoteAddress.isolatedCopy();
     copy->connectionIdentifier = connectionIdentifier.isolatedCopy();
     copy->tlsProtocol = tlsProtocol.isolatedCopy();
@@ -202,13 +203,14 @@ NetworkLoadMetrics NetworkLoadMetrics::isolatedCopy() const
     return copy;
 }
 
-Ref<AdditionalNetworkLoadMetricsForWebInspector> AdditionalNetworkLoadMetricsForWebInspector::create(NetworkLoadPriority&& priority, String&& remoteAddress, String&& connectionIdentifier, String&& tlsProtocol, String&& tlsCipher, HTTPHeaderMap&& requestHeaders, uint64_t requestHeaderBytesSent, uint64_t responseHeaderBytesReceived, uint64_t requestBodyBytesSent, bool isProxyConnection)
+Ref<AdditionalNetworkLoadMetricsForWebInspector> AdditionalNetworkLoadMetricsForWebInspector::create(NetworkLoadPriority&& priority, ResourceLoadPriority&& initialPriority, String&& remoteAddress, String&& connectionIdentifier, String&& tlsProtocol, String&& tlsCipher, HTTPHeaderMap&& requestHeaders, uint64_t requestHeaderBytesSent, uint64_t responseHeaderBytesReceived, uint64_t requestBodyBytesSent, bool isProxyConnection)
 {
-    return adoptRef(*new AdditionalNetworkLoadMetricsForWebInspector(WTF::move(priority), WTF::move(remoteAddress), WTF::move(connectionIdentifier), WTF::move(tlsProtocol), WTF::move(tlsCipher), WTF::move(requestHeaders), requestHeaderBytesSent, responseHeaderBytesReceived, requestBodyBytesSent, isProxyConnection));
+    return adoptRef(*new AdditionalNetworkLoadMetricsForWebInspector(WTF::move(priority), WTF::move(initialPriority), WTF::move(remoteAddress), WTF::move(connectionIdentifier), WTF::move(tlsProtocol), WTF::move(tlsCipher), WTF::move(requestHeaders), requestHeaderBytesSent, responseHeaderBytesReceived, requestBodyBytesSent, isProxyConnection));
 }
 
-AdditionalNetworkLoadMetricsForWebInspector::AdditionalNetworkLoadMetricsForWebInspector(NetworkLoadPriority&& priority, String&& remoteAddress, String&& connectionIdentifier, String&& tlsProtocol, String&& tlsCipher, HTTPHeaderMap&& requestHeaders, uint64_t requestHeaderBytesSent, uint64_t responseHeaderBytesReceived, uint64_t requestBodyBytesSent, bool isProxyConnection)
+AdditionalNetworkLoadMetricsForWebInspector::AdditionalNetworkLoadMetricsForWebInspector(NetworkLoadPriority&& priority, ResourceLoadPriority&& initialPriority, String&& remoteAddress, String&& connectionIdentifier, String&& tlsProtocol, String&& tlsCipher, HTTPHeaderMap&& requestHeaders, uint64_t requestHeaderBytesSent, uint64_t responseHeaderBytesReceived, uint64_t requestBodyBytesSent, bool isProxyConnection)
     : priority(WTF::move(priority))
+    , initialPriority(WTF::move(initialPriority))
     , remoteAddress(WTF::move(remoteAddress))
     , connectionIdentifier(WTF::move(connectionIdentifier))
     , tlsProtocol(WTF::move(tlsProtocol))

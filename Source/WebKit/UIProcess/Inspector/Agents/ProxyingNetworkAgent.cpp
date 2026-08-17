@@ -39,8 +39,11 @@
 #include "WebProcessProxy.h"
 #include "WebsiteDataStore.h"
 #include <JavaScriptCore/InspectorProtocolObjects.h>
+#include <WebCore/DefaultResourceLoadPriority.h>
 #include <WebCore/HTTPHeaderMap.h>
 #include <WebCore/InspectorIdentifierRegistry.h>
+#include <WebCore/InspectorResourceUtilities.h>
+#include <WebCore/NetworkLoadMetrics.h>
 #include <WebCore/ProcessQualified.h>
 #include <tuple>
 #include <utility>
@@ -152,6 +155,52 @@ static RefPtr<Protocol::Network::Response> buildObjectForResourceResponse(const 
         .setMimeType(response.mimeType())
         .setSource(toProtocolResponseSource(response.source()))
         .release();
+}
+
+static Ref<Inspector::Protocol::Network::Metrics> buildObjectForMetrics(const NetworkLoadMetrics& networkLoadMetrics)
+{
+    auto metrics = Inspector::Protocol::Network::Metrics::create().release();
+
+    if (!networkLoadMetrics.protocol.isNull())
+        metrics->setProtocol(networkLoadMetrics.protocol);
+    if (RefPtr additionalMetrics = networkLoadMetrics.additionalNetworkLoadMetricsForWebInspector) {
+        if (static_cast<int>(additionalMetrics->initialPriority) <= static_cast<int>(WebCore::NetworkLoadPriority::Veryhigh))
+            metrics->setInitialPriority(Inspector::Protocol::Network::toProtocol(additionalMetrics->initialPriority));
+        if (additionalMetrics->priority != WebCore::NetworkLoadPriority::Unknown)
+            metrics->setPriority(Inspector::Protocol::Network::toProtocol(additionalMetrics->priority));
+        if (!additionalMetrics->remoteAddress.isNull())
+            metrics->setRemoteAddress(additionalMetrics->remoteAddress);
+        if (!additionalMetrics->connectionIdentifier.isNull())
+            metrics->setConnectionIdentifier(additionalMetrics->connectionIdentifier);
+        if (!additionalMetrics->requestHeaders.isEmpty())
+            metrics->setRequestHeaders(buildObjectForHeaders(additionalMetrics->requestHeaders));
+        if (additionalMetrics->requestHeaderBytesSent != std::numeric_limits<uint64_t>::max())
+            metrics->setRequestHeaderBytesSent(additionalMetrics->requestHeaderBytesSent);
+        if (additionalMetrics->requestBodyBytesSent != std::numeric_limits<uint64_t>::max())
+            metrics->setRequestBodyBytesSent(additionalMetrics->requestBodyBytesSent);
+        if (additionalMetrics->responseHeaderBytesReceived != std::numeric_limits<uint64_t>::max())
+            metrics->setResponseHeaderBytesReceived(additionalMetrics->responseHeaderBytesReceived);
+        metrics->setIsProxyConnection(additionalMetrics->isProxyConnection);
+    }
+
+    if (networkLoadMetrics.responseBodyBytesReceived != std::numeric_limits<uint64_t>::max())
+        metrics->setResponseBodyBytesReceived(networkLoadMetrics.responseBodyBytesReceived);
+    if (networkLoadMetrics.responseBodyDecodedSize != std::numeric_limits<uint64_t>::max())
+        metrics->setResponseBodyDecodedSize(networkLoadMetrics.responseBodyDecodedSize);
+
+    auto connectionPayload = Inspector::Protocol::Security::Connection::create()
+        .release();
+
+    if (RefPtr additionalMetrics = networkLoadMetrics.additionalNetworkLoadMetricsForWebInspector) {
+        if (!additionalMetrics->tlsProtocol.isEmpty())
+            connectionPayload->setProtocol(additionalMetrics->tlsProtocol);
+        if (!additionalMetrics->tlsCipher.isEmpty())
+            connectionPayload->setCipher(additionalMetrics->tlsCipher);
+    }
+
+    metrics->setSecurityConnection(WTF::move(connectionPayload));
+
+    return metrics;
 }
 
 ProxyingNetworkAgent::ProxyingNetworkAgent(WebKit::WebPageAgentContext& context)
@@ -587,14 +636,15 @@ void ProxyingNetworkAgent::dataReceived(ResourceID resourceID, int dataLength, i
     m_frontendDispatcher->dataReceived(requestId, timestamp, dataLength, encodedDataLength);
 }
 
-void ProxyingNetworkAgent::loadingFinished(ResourceID resourceID, double timestamp, const String& sourceMapURL)
+void ProxyingNetworkAgent::loadingFinished(ResourceID resourceID, double timestamp, const String& sourceMapURL, const NetworkLoadMetrics& networkLoadMetrics)
 {
     if (!m_enabled)
         return;
 
     auto requestId = IdentifierRegistry::protocolRequestId(resourceID.processIdentifier(), resourceID.object());
-    // FIXME: Add metrics parameter once we have NetworkLoadMetrics IPC.
-    m_frontendDispatcher->loadingFinished(requestId, timestamp, sourceMapURL, nullptr);
+    auto metrics = buildObjectForMetrics(networkLoadMetrics);
+
+    m_frontendDispatcher->loadingFinished(requestId, timestamp, sourceMapURL, WTF::move(metrics));
 }
 
 void ProxyingNetworkAgent::loadingFailed(ResourceID resourceID, double timestamp, const String& errorText, bool canceled)

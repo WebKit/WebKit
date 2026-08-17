@@ -1,6 +1,7 @@
 var localizedStrings = new Object;
 
 localizedStrings[" (Prototype)"] = " (Prototype)";
+localizedStrings[" (initially %s)"] = " (initially %s)";
 localizedStrings[" (line %s)"] = " (line %s)";
 localizedStrings["${expr} = expression"] = "${expr} = expression";
 localizedStrings["% Progress"] = "% Progress";
@@ -1940,8 +1941,10 @@ localizedStrings["Version"] = "Version";
 localizedStrings["Vertex"] = "Vertex";
 localizedStrings["Vertex Shader"] = "Vertex Shader";
 localizedStrings["Vertex/Fragment Shader"] = "Vertex/Fragment Shader";
+localizedStrings["Very high @ Network Priority"] = "Very High";
 /* Energy Impact: Very High */
 localizedStrings["Very High @ Timeline Energy Impact"] = "Very High";
+localizedStrings["Very low @ Network Priority"] = "Very Low";
 /* Title for Video Codec row in Media Sidebar */
 localizedStrings["Video Codec @ Media Sidebar"] = "Video Codec";
 /* Title for Video Details section in Media Sidebar */
@@ -2120,7 +2123,7 @@ localizedStrings["for changes to take effect"] = "for changes to take effect";
 localizedStrings["half-equirectangular @ Media Sidebar"] = "Half Equirectangular";
 /* Shown in the 'Type' column of the Network Table for image resources. */
 localizedStrings["image @ Network Tab Resource Type Column Value"] = "image";
-localizedStrings["invalid HAR"] = "invalid HAR";
+localizedStrings["invalid HAR%s"] = "invalid HAR%s";
 localizedStrings["invalid JSON"] = "invalid JSON";
 /* Error message template when failing to parse a JS source map. */
 localizedStrings["invalid \u0022%s\u0022 @ Source Map"] = "invalid \u0022%s\u0022";

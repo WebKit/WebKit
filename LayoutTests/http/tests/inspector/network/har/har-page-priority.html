@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="/resources/dummy.css?print" media="print" />
+<script src="../../resources/inspector-test.js"></script>
+<script>
+function test()
+{
+    if (window.GCController) {
+        GCController.collect();
+    }
+    let suite = InspectorTest.createAsyncSuite("HAR.Page");
+
+    suite.addTestCase({
+        name: "HAR.Page.Priority",
+        description: "Should be able to generate a HAR with all of this test page's resources.",
+        waitForResource: async function(capturedResourceData) {
+            return new Promise((resolve) => {
+                function onResourceAdded(event) {
+                    let resource = event.data.resource;
+                    if (!resource || !resource.url)
+                        return;
+                    capturedResourceData.push(resource);
+                    resolve(resource);
+                }
+                WI.Frame.addEventListener(WI.Frame.Event.ResourceWasAdded, onResourceAdded);
+            });
+        },
+        async test() {
+            let resources = [];
+            let resourcePromise = this.waitForResource(resources);
+
+            await NetworkAgent.setResourceCachingDisabled(false);
+
+            await Promise.all([
+                WI.networkManager.mainFrame.removeAllResources(),
+                WI.networkManager.mainFrame.clearProvisionalLoad(false),
+            ]);
+
+            await new Promise(resolve => setTimeout(resolve, 100)); // Microtask yield
+
+            await Promise.all([
+                InspectorTest.awaitEvent("LoadComplete"),
+                InspectorTest.reloadPage({ignoreCache: true, revalidateAllResources: true}),
+            ]);
+
+            resources.unshift(WI.networkManager.mainFrame.mainResource);
+
+            await new Promise(resolve => setTimeout(resolve, 100)); // Microtask yield
+
+            await resourcePromise;
+
+            if (resources.length) {
+                console.log(`Got ${resources.length} resources`);
+
+                resources.forEach((res) => {
+                    const entry = {
+                        initialPriority: WI.Resource.displayNameForPriority(res._initialPriority),
+                        priority: WI.Resource.displayNameForPriority(res._priority),
+                        url: res._url,
+                    };
+
+                    if ((/html$/).test(entry.url)) {
+                        InspectorTest.expectEqual(entry.initialPriority, "Very High", `HTML ${entry.url} should start with a Very High priority`);
+                        InspectorTest.expectEqual(entry.priority, "Very High", "- HTML should still have Very High priority");
+                    } else if ((/\.js/).test(entry.url)) {
+                        InspectorTest.expectEqual(entry.initialPriority, "High", `JavaScript ${entry.url} should start with a High priority`);
+                        if ((/async$/).test(entry.url)) {
+                            InspectorTest.expectEqual(entry.priority, "Medium", `- Async JavaScript should be reduced to Medium priority`);
+                        } else {
+                            InspectorTest.expectEqual(entry.priority, "High", `- JavaScript should still have a High priority`);
+                        }
+                    } else if ((/\.css/).test(entry.url)) {
+                        InspectorTest.expectEqual(entry.initialPriority, "High", `Stylesheet ${entry.url} should start with a High priority`);
+                        if ((/print$/).test(entry.url)) {
+                            InspectorTest.expectEqual(entry.priority, "Very Low", `- Print stylesheet should be reduced to a Very Low priority`);
+                        } else if ((/low$/).test(entry.url)) {
+                            InspectorTest.expectEqual(entry.priority, "Medium", `- Priority was only reduced to Medium`);
+                        } else {
+                            InspectorTest.expectEqual(entry.priority, "High", `- Screen stylesheet should stay at a High priority`);
+                        }
+                    }
+                });
+            } else {
+                const dn = new Date();
+                console.log(`Got no resources ${dn.getTime()}.${dn.getMilliseconds()}`);
+            }
+        }
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<h1>HAR Priorities Test.</h1>
+<script>
+window.addEventListener("load", () => {
+    TestPage.dispatchEventToFrontend("LoadComplete");
+});
+</script>
+</body>
+</html>

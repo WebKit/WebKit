@@ -50,6 +50,12 @@ class TextResourceDecoder;
 namespace Inspector {
 namespace Protocol {
 using ErrorString = String;
+namespace Network {
+enum class LoadPriority;
+
+WEBCORE_EXPORT LoadPriority toProtocol(WebCore::ResourceLoadPriority);
+WEBCORE_EXPORT LoadPriority toProtocol(WebCore::NetworkLoadPriority);
+}
 namespace Page {
 enum class ResourceType : int;
 }
