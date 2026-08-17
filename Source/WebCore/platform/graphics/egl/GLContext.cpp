@@ -642,11 +642,26 @@ const GLContext::GLExtensions& GLContext::glExtensions() const
         m_glExtensions.APPLE_sync = isExtensionSupported(extensionsString, "GL_APPLE_sync");
         m_glExtensions.OES_packed_depth_stencil = isExtensionSupported(extensionsString, "GL_OES_packed_depth_stencil");
         m_glExtensions.EXT_YUV_target = isExtensionSupported(extensionsString, "GL_EXT_YUV_target");
-#if USE(VULKAN)
         m_glExtensions.EXT_memory_object = isExtensionSupported(extensionsString, "GL_EXT_memory_object");
-#endif
     });
     return m_glExtensions;
+}
+
+std::optional<GLContext::DeviceIdentity> GLContext::deviceIdentity() const
+{
+    if (!glExtensions().EXT_memory_object)
+        return std::nullopt;
+
+    GLint deviceUUIDCount = 0;
+    glGetIntegerv(GL_NUM_DEVICE_UUIDS_EXT, &deviceUUIDCount);
+    if (deviceUUIDCount != 1)
+        return std::nullopt;
+
+    static_assert(DeviceIdentity::uuidSize == GL_UUID_SIZE_EXT);
+    DeviceIdentity identity;
+    glGetUnsignedBytei_vEXT(GL_DEVICE_UUID_EXT, 0, identity.deviceUUID.data());
+    glGetUnsignedBytevEXT(GL_DRIVER_UUID_EXT, identity.driverUUID.data());
+    return identity;
 }
 
 GLContext::ScopedGLContext::ScopedGLContext(std::unique_ptr<GLContext>&& context)
