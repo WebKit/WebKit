@@ -156,6 +156,20 @@ static String normalizeType(const String& type)
     return lowercaseType;
 }
 
+// Parses text/uri-list data as described by RFC 2483 and returns the first URL it contains,
+// skipping the comment lines that specification defines as well as lines that cannot be URLs.
+static String firstURLFromURIList(StringView uriList)
+{
+    // split() elides empty entries, and trimming removes the CR of a CRLF line ending.
+    for (auto line : uriList.split('\n')) {
+        auto url = line.trim(isASCIIWhitespace);
+        if (url.isEmpty() || url.startsWith('#'))
+            continue;
+        return url.toString();
+    }
+    return emptyString();
+}
+
 void DataTransfer::clearData(const String& type)
 {
     if (!canWriteData())
@@ -252,7 +266,16 @@ String DataTransfer::readStringFromPasteboard(Document& document, const String& 
 
 String DataTransfer::getData(Document& document, const String& type) const
 {
-    return getDataForItem(document, normalizeType(type));
+    // https://html.spec.whatwg.org/multipage/dnd.html#dom-datatransfer-getdata
+    // Step 6 sets the convert-to-URL flag when the requested format is "url", and step 9
+    // then replaces the text/uri-list data with the first URL it contains.
+    bool convertToURL = equalLettersIgnoringASCIICase(StringView { type }.trim(isASCIIWhitespace), "url"_s);
+
+    auto data = getDataForItem(document, normalizeType(type));
+    if (!convertToURL)
+        return data;
+
+    return firstURLFromURIList(data);
 }
 
 bool DataTransfer::shouldSuppressGetAndSetDataToAvoidExposingFilePaths() const

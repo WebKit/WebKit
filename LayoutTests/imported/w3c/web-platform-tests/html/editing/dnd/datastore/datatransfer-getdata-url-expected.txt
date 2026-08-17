@@ -1,0 +1,13 @@
+
+PASS A single URL is returned unchanged
+PASS Only the first URL is returned, for LF line endings
+PASS Only the first URL is returned, for CRLF line endings
+PASS A trailing line ending is not part of the URL
+PASS Comment lines are skipped
+PASS A blank line after the first URL does not affect the result
+PASS The empty string is returned when the list contains no URL
+PASS The empty string is returned when there is no text/uri-list item
+PASS The format is matched ASCII case-insensitively after stripping whitespace
+PASS Requesting text/uri-list does not convert to a URL
+PASS Leading blank lines are skipped
+
