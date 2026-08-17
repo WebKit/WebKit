@@ -149,6 +149,7 @@ void SVGImageElement::svgAttributeChanged(const QualifiedName& attrName)
     }
 
     if (SVGURIReference::isKnownAttribute(attrName)) {
+        InstanceInvalidationGuard guard(*this);
         m_imageLoader->updateFromElementIgnoringPreviousError();
         invalidateResourceImageBuffersIfNeeded();
         updateSVGRendererForElementChange();
