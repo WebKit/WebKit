@@ -41,6 +41,9 @@ MODIFIED_FILE_REMOVED_PATTERN = re.compile('^\\*.*: Removed.$')
 MODIFIED_FUNCTION_PATTERN = re.compile('^(\\(.*\\):)(.*)$')
 MODIFIED_FUNCTION_DELETED_PATTERN = re.compile('^\\(.*\\): Deleted.$')
 TEST_PATTERN = re.compile('^Tests?: .*$')
+# TEST_PATTERN, with the test name captured.
+TEST_PATTERN_HEADER = re.compile('^Tests?: (.*)$')
+TEST_PATTERN_EXTENSION = re.compile('\\.[a-zA-Z0-9]+$')
 NO_TEST_PATTERN = re.compile('^No new tests \\(OOPS!\\)\\.$')
 TEST_CONTENT_PATTERN = re.compile('^ +.*$')
 REVIEWED_BY_PATTERN = re.compile('^Reviewed by .*$')
@@ -359,6 +362,83 @@ class CommitMessageParser:
         if return_deleted:
             return deleted_result
         return result
+
+    def _test_entries(self, tests_lines):
+        # A tests section holds one entry per line: the first on the "Tests:" line itself,
+        # the rest indented underneath it. "No new tests (OOPS!)." is a placeholder for an
+        # entry rather than one, so it is left out.
+        entries = []
+        for line in tests_lines:
+            if NO_TEST_PATTERN.match(line):
+                continue
+            match = TEST_PATTERN_HEADER.match(line)
+            entry = (match.group(1) if match else line).strip()
+            # prepare-ChangeLog prints layout tests without their LayoutTests prefix, so
+            # drop it here too and a hand-written full path won't become a duplicate.
+            entry = entry.removeprefix('LayoutTests/')
+            if entry:
+                entries.append(entry)
+        return entries
+
+    def _is_test_name(self, entry):
+        # A test name is one path, so an entry carrying prose is not a name. Some real
+        # paths contain a space, such as "Tools/TestWebKitAPI/Tests/WebKit
+        # Swift/WebPageTests.swift", so an entry with whitespace is still a name when it
+        # ends in a file extension.
+        if not re.search(r'\s', entry):
+            return True
+        return bool(TEST_PATTERN_EXTENSION.search(entry))
+
+    def _tests_indent(self):
+        # Continuation lines line up under the first test name.
+        for line in self.tests_lines:
+            if not TEST_PATTERN_HEADER.match(line) and TEST_CONTENT_PATTERN.match(line):
+                return ' ' * (len(line) - len(line.lstrip()))
+        for line in self.tests_lines:
+            if TEST_PATTERN_HEADER.match(line):
+                return ' ' * (line.index(':') + 2)
+        return ' ' * len('Tests: ')
+
+    def _mentions_test(self, entry, name):
+        # An entry the author annotated, such as "fast/a.html: only fails with the flag
+        # on", already names that test and must not gain a duplicate line.
+        if not entry.startswith(name):
+            return False
+        remainder = entry[len(name):]
+        return not remainder or not (remainder[0].isalnum() or remainder[0] in '-_./')
+
+    def reconcile_tests(self, tests_lines):
+        """Update the original tests section to match the tests the current diff adds.
+
+        Tests the original section names are kept, tests new to the diff are added, and
+        the result is sorted so the section doesn't depend on the order the tests were
+        written in. A section that names no test, such as "No new tests (OOPS!).", is
+        kept only while the diff adds no test.
+
+        A section that says anything beyond test names is returned as written, with the
+        new tests appended, because sorting would reorder the author's sentences and
+        could move one of them onto the "Tests:" line.
+
+        tests_lines is the regenerated tests section (prepare-ChangeLog format).
+        """
+        original = self._test_entries(self.tests_lines)
+        added = self._test_entries(tests_lines)
+        if not original and not added:
+            return list(self.tests_lines)
+
+        if not all(self._is_test_name(entry) for entry in original):
+            new = [
+                name for name in added
+                if not any(self._mentions_test(entry, name) for entry in original)
+            ]
+            if not new:
+                return list(self.tests_lines)
+            indent = self._tests_indent()
+            return list(self.tests_lines) + [indent + name for name in new]
+
+        names = sorted(set(original) | set(added))
+        lead = 'Test{}: '.format('' if len(names) == 1 else 's')
+        return [lead + names[0]] + [' ' * len(lead) + name for name in names[1:]]
 
     def _file_identity(self, line):
         # The "* path:" prefix is identical whether the file is modified, Added. or
