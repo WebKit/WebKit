@@ -1141,4 +1141,42 @@ TEST_F(WTF_URLParser, FilePathStartBackslash)
     checkURL("file://\\C|\\path"_s, { "file"_s, ""_s, ""_s, ""_s, 0, "/C:/path"_s, ""_s, ""_s, "file:///C:/path"_s }, TestTabs::No);
 }
 
+TEST_F(WTF_URLParser, Utf16BulkAppend)
+{
+    // Covers appending a run of 16-bit code units to the ASCII buffer in bulk, which needs a
+    // 16-bit input string (forced here by a non-Latin-1 code point, since a Latin-1-only string
+    // stays 8-bit), a syntax violation before the run, and a run of at least one SIMD stride.
+    // The tab sweep in checkURL additionally supplies a violation at every offset.
+    checkURL(utf16String(u"http://host/aaaaaaaaaaaaaaaa^bbbbbbbbbbbbbbbb?cccccccccccccccc#ddddddddddddddddП"),
+        { "http"_s, ""_s, ""_s, "host"_s, 0, "/aaaaaaaaaaaaaaaa%5Ebbbbbbbbbbbbbbbb"_s, "cccccccccccccccc"_s, "dddddddddddddddd%D0%9F"_s,
+            "http://host/aaaaaaaaaaaaaaaa%5Ebbbbbbbbbbbbbbbb?cccccccccccccccc#dddddddddddddddd%D0%9F"_s });
+    checkURL(utf16String(u"about:Пaaaaaaaaaaaaaaaabbbbbbbbbbbbbbbb"),
+        { "about"_s, ""_s, ""_s, ""_s, 0, "%D0%9Faaaaaaaaaaaaaaaabbbbbbbbbbbbbbbb"_s, ""_s, ""_s,
+            "about:%D0%9Faaaaaaaaaaaaaaaabbbbbbbbbbbbbbbb"_s });
+}
+
+TEST_F(WTF_URLParser, DotSegmentsInLongPaths)
+{
+    // A ".." segment reports a syntax violation and pops the buffer, so everything after it is
+    // parsed while building the output buffer. These cases make the surrounding segments long
+    // enough for the vectorized scan to consume them in bulk on both sides of the dot segments,
+    // and the tab sweep in checkURL moves the violation through every offset.
+    checkURL("http://host/aaaaaaaaaaaaaaaa/../bbbbbbbbbbbbbbbb/./cccccccccccccccc"_s,
+        { "http"_s, ""_s, ""_s, "host"_s, 0, "/bbbbbbbbbbbbbbbb/cccccccccccccccc"_s, ""_s, ""_s,
+            "http://host/bbbbbbbbbbbbbbbb/cccccccccccccccc"_s });
+    checkURL("http://host/aaaaaaaaaaaaaaaa/%2e%2e/bbbbbbbbbbbbbbbb"_s,
+        { "http"_s, ""_s, ""_s, "host"_s, 0, "/bbbbbbbbbbbbbbbb"_s, ""_s, ""_s,
+            "http://host/bbbbbbbbbbbbbbbb"_s });
+    checkURL(utf16String(u"http://host/aaaaaaaaaaaaaaaa/../bbbbbbbbbbbbbbbb/./ccccccccccccccccП"),
+        { "http"_s, ""_s, ""_s, "host"_s, 0, "/bbbbbbbbbbbbbbbb/cccccccccccccccc%D0%9F"_s, ""_s, ""_s,
+            "http://host/bbbbbbbbbbbbbbbb/cccccccccccccccc%D0%9F"_s });
+    // Resolving against a base copies the base into the buffer first, so here the pop walks back
+    // over copied bytes rather than bulk-appended ones.
+    checkRelativeURL("../cccccccccccccccc"_s, "http://host/aaaaaaaaaaaaaaaa/bbbbbbbbbbbbbbbb"_s,
+        { "http"_s, ""_s, ""_s, "host"_s, 0, "/cccccccccccccccc"_s, ""_s, ""_s, "http://host/cccccccccccccccc"_s });
+    checkRelativeURL("./cccccccccccccccc"_s, "http://host/aaaaaaaaaaaaaaaa/bbbbbbbbbbbbbbbb"_s,
+        { "http"_s, ""_s, ""_s, "host"_s, 0, "/aaaaaaaaaaaaaaaa/cccccccccccccccc"_s, ""_s, ""_s,
+            "http://host/aaaaaaaaaaaaaaaa/cccccccccccccccc"_s });
+}
+
 } // namespace TestWebKitAPI

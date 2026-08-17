@@ -73,7 +73,14 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     {
         return codeUnitsSince(other.m_data.data());
     }
-    
+
+    ALWAYS_INLINE std::span<const CharacterType> span() const LIFETIME_BOUND { return m_data; }
+
+    // Advances by a number of code units. Only safe when the skipped units are
+    // known to be single-unit code points (e.g., ASCII), so it never splits a
+    // surrogate pair or a UTF-8 sequence.
+    ALWAYS_INLINE void advanceBy(size_t codeUnits) { skip(m_data, codeUnits); }
+
 private:
     std::span<const CharacterType> m_data;
 };

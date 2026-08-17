@@ -124,6 +124,8 @@ private:
     void percentEncodeByte(uint8_t);
     void appendToASCIIBuffer(char32_t);
     void appendToASCIIBuffer(std::span<const Latin1Character>);
+    void appendToASCIIBuffer(std::span<const char16_t>);
+    template<typename CharacterType, typename TrivialCodePointPrefix> void consumeTrivialCodePoints(CodePointIterator<CharacterType>&, NOESCAPE const TrivialCodePointPrefix&);
     template<typename CharacterType> void encodeNonUTF8Query(const Vector<char16_t>& source, const URLTextEncoding&, CodePointIterator<CharacterType>);
     void copyASCIIStringUntil(const String&, size_t length);
     bool copyBaseWindowsDriveLetter(const URL&);
