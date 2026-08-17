@@ -286,7 +286,7 @@ inline const Color& ColorPropertyTraits<PropertyNameConstant<CSSPropertyColor>>:
 
 inline const Color& ColorPropertyTraits<PropertyNameConstant<CSSPropertyAccentColor>>::color(const ComputedStyleProperties& style)
 {
-    return style.accentColor().colorOrCurrentColor();
+    return style.accentColor().colorOrDefaultColor();
 }
 
 inline const Color& ColorPropertyTraits<PropertyNameConstant<CSSPropertyCaretColor>>::color(const ComputedStyleProperties& style)
