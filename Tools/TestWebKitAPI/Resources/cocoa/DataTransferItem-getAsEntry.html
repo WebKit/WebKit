@@ -85,7 +85,7 @@ html, body {
     {
         output.value = "";
         for (let index = 0; index < items.length; index++) {
-            let item = items.item(index);
+            let item = items[index];
             output.value += `Found data transfer item (kind: '${item.kind}', type: '${item.type}')\n`;
             let entry = item.webkitGetAsEntry();
             if (entry)
