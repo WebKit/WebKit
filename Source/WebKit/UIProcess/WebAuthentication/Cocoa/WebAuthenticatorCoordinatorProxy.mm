@@ -1417,6 +1417,8 @@ void WebAuthenticatorCoordinatorProxy::signalUnknownCredential(const WebCore::Se
             completionHandler(std::nullopt);
         });
     }).get()];
+#else
+    completionHandler(ExceptionData { ExceptionCode::UnknownError, "Unsupported."_s });
 #endif
 }
 
@@ -1450,6 +1452,8 @@ void WebAuthenticatorCoordinatorProxy::signalAllAcceptedCredentials(const WebCor
             completionHandler(std::nullopt);
         });
     }).get()];
+#else
+    completionHandler(ExceptionData { ExceptionCode::UnknownError, "Unsupported."_s });
 #endif
 }
 
@@ -1473,6 +1477,8 @@ void WebAuthenticatorCoordinatorProxy::signalCurrentUserDetails(const WebCore::S
             completionHandler(std::nullopt);
         });
     }).get()];
+#else
+    completionHandler(ExceptionData { ExceptionCode::UnknownError, "Unsupported."_s });
 #endif
 }
 
