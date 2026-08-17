@@ -68,8 +68,8 @@ Counters: 53
 ### `analyze`
 
 Compute rendering statistics (vblank intervals, theoretical FPS, frame compositions per
-vblank) and duration/count statistics for a fixed set of WebKit-specific marks (e.g.
-`EventLoopRun`, `PerformLayout`, `StyleRecalc`).
+vblank) and duration/count statistics for a fixed set of WebKit-specific marks (styling,
+layout, rendering, compositing and tiles).
 
 ```
 webkit-sysprof analyze CAPTURE_FILE [-f text|json] [-t TIMESPAN]
@@ -92,6 +92,24 @@ Rendering:
 $ webkit-sysprof analyze -f json -t 0-2000 capture.syscap
 {"document": {...}, "statistics": {...}, "rendering": {...}}
 ```
+
+Restricting the timespan matters more than it looks: page load dominates the tail of
+most metrics, so a whole-capture run largely measures startup. Skipping the first
+seconds is usually what you want when comparing configurations.
+
+#### Reading the mark statistics
+
+Three marks are easy to misread:
+
+- `StyleRecalc` is an umbrella mark that nests `RenderTreeBuild`,
+  `PerformSubtreesLayout` and `CompositingUpdate`. Its duration is not style resolution
+  alone. Subtract the nested marks to get that.
+- `CompositingUpdate` runs twice per rendering update, once inside `StyleRecalc` and
+  once after it, and the second one is much shorter. Its percentiles are therefore
+  bimodal rather than centered on a typical value.
+- `PaintTile` runs on the painting threads, so summing it over a frame gives aggregate
+  work rather than elapsed time. Its `#pixels` statistic is the dirty area taken from
+  the mark's `dirty region <x>x<y>+<width>+<height>` message.
 
 ### `delta-histogram`
 

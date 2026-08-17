@@ -1,5 +1,6 @@
 import argparse
 import logging
+import re
 import statistics
 import collections
 import json
@@ -15,16 +16,55 @@ from ..utils import (
 )
 
 RELEVANT_PERCENTILES = [25, 50, 75, 99]
+
+# Columns of the statistics tables, as (label, statistics key, percentile) triples.
+# The percentile is None for statistics that are not percentiles. The median is taken
+# from the "median" key rather than from the 50th percentile: both describe the same
+# quantity, but the former is exact while the latter is interpolated.
+STATISTICS_COLUMNS: List[Tuple[str, str, Optional[int]]] = [
+    ("#", "n", None),
+    ("mean", "mean", None),
+    ("min", "min", None),
+    ("P25", "percentiles", 25),
+    ("median", "median", None),
+    ("P75", "percentiles", 75),
+    ("P99", "percentiles", 99),
+    ("max", "max", None),
+]
+
 MARKS_RELEVANT_FOR_STATISTICS = [
     "EventLoopRun",
     "RAFCallback",
     "LayerTreeHostRenderingUpdate",
+    "FinalizeRenderingUpdate",
     "PerformLayout",
     "PerformSubtreesLayout",
-    "FlushCompositingState",
-    "PaintToGLContext",
     "StyleRecalc",
+    "RenderTreeBuild",
+    "CompositingUpdate",
+    "FlushCompositingState",
+    "RenderLayerTree",
+    "PaintToGLContext",
+    "WaitForCompositionCompletion",
+    "RecordTile",
+    "UpdateTiles",
+    "PaintTile",
+    "UpdateTile",
+    "SkiaBackingStoreTileUpdate",
 ]
+
+# PaintTile messages look like "Skia/CPU threaded, dirty region 768x512+256+56",
+# where the geometry is "<x>x<y>+<width>+<height>".
+DIRTY_REGION_RE = re.compile(r"(\d+)x(\d+)\+(\d+)\+(\d+)")
+
+
+def _dirty_region_pixels(message: str) -> Optional[int]:
+    match = DIRTY_REGION_RE.search(message)
+    if match is None:
+        return None
+    return int(match.group(3)) * int(match.group(4))
+
+
 STATISTICAL_DATA_EXTRACTORS: Dict[str, Callable[[Dict[str, Any]], Dict[str, Any]]] = {
     "_": lambda data: {
         "duration": nsec_to_msec(data["duration"]),
@@ -36,6 +76,14 @@ STATISTICAL_DATA_EXTRACTORS: Dict[str, Callable[[Dict[str, Any]], Dict[str, Any]
     "PerformSubtreesLayout": lambda data: STATISTICAL_DATA_EXTRACTORS["_"](data)
     | {
         "subtrees": int(data["message"].split()[1]) if data["message"] != "" else None,
+    },
+    "UpdateTiles": lambda data: STATISTICAL_DATA_EXTRACTORS["_"](data)
+    | {
+        "tiles": int(data["message"].split()[2]) if data["message"] != "" else None,
+    },
+    "PaintTile": lambda data: STATISTICAL_DATA_EXTRACTORS["_"](data)
+    | {
+        "dirty_pixels": _dirty_region_pixels(data["message"]),
     },
 }
 
@@ -326,16 +374,37 @@ def _render_text_report(report: Dict[str, Any]) -> None:
         _prepare_statistics_rows(
             [
                 ("JS", "EventLoopRun", "ms", "duration"),
+                ("Styling", "StyleRecalc", "ms", "duration"),
+                ("Styling", "RenderTreeBuild", "ms", "duration"),
                 ("Layout", "PerformSubtreesLayout", "ms", "duration"),
                 ("Layout", "PerformLayout", "ms", "duration"),
-                ("Styling", "StyleRecalc", "ms", "duration"),
                 ("Rendering", "LayerTreeHostRenderingUpdate", "ms", "duration"),
+                ("Rendering", "FinalizeRenderingUpdate", "ms", "duration"),
                 ("Rendering/JS", "RAFCallback", "ms", "duration"),
+                ("Compositing", "CompositingUpdate", "ms", "duration"),
                 ("Compositing", "FlushCompositingState", "ms", "duration"),
+                ("Compositing", "RenderLayerTree", "ms", "duration"),
                 ("Compositing", "PaintToGLContext", "ms", "duration"),
+                ("Compositing", "WaitForCompositionCompletion", "ms", "duration"),
+                ("Tiles", "RecordTile", "ms", "duration"),
+                ("Tiles", "UpdateTiles", "ms", "duration"),
+                ("Tiles", "PaintTile", "ms", "duration"),
+                ("Tiles", "UpdateTile", "ms", "duration"),
+                ("Tiles", "SkiaBackingStoreTileUpdate", "ms", "duration"),
             ],
             report,
         )
+    )
+    print()
+    print(
+        "  StyleRecalc is an umbrella mark: it nests RenderTreeBuild,\n"
+        "  PerformSubtreesLayout and CompositingUpdate, so its duration is not\n"
+        "  style resolution alone. Subtract the nested marks to get that.\n"
+        "  CompositingUpdate runs twice per rendering update, once inside\n"
+        "  StyleRecalc and once after it, and the second one is much shorter, so\n"
+        "  its percentiles are bimodal rather than centered on a typical value.\n"
+        "  PaintTile runs on the painting threads, so summing it across a frame\n"
+        "  yields aggregate work rather than elapsed time."
     )
 
     print()
@@ -345,6 +414,8 @@ def _render_text_report(report: Dict[str, Any]) -> None:
             [
                 ("JS", "EventLoopRun", "#tasks", "tasks"),
                 ("Layout", "PerformSubtreesLayout", "#subtrees", "subtrees"),
+                ("Tiles", "UpdateTiles", "#tiles", "tiles"),
+                ("Tiles", "PaintTile", "#pixels", "dirty_pixels"),
             ],
             report,
         )
@@ -367,9 +438,7 @@ def _prepare_statistics_rows(
     keys: List[Tuple[str, str, str, str]], report: Dict[str, Any]
 ) -> List[List[str]]:
     statistics_rows = [
-        ["category", "mark", "unit", "#", "min"]
-        + [f"P{percentile}" for percentile in RELEVANT_PERCENTILES]
-        + ["max"],
+        ["category", "mark", "unit"] + [label for label, _, _ in STATISTICS_COLUMNS],
     ]
     for category, mark, unit, data_key in keys:
         data = {}
@@ -383,11 +452,10 @@ def _prepare_statistics_row(
     category: str, mark: str, unit: str, raw_data: Dict[str, Any]
 ) -> List[str]:
     data = _statistics_to_strings(raw_data)
-    return (
-        [category, mark, unit, data["n"], data["min"]]
-        + [data["percentiles"][percentile] for percentile in RELEVANT_PERCENTILES]
-        + [data["max"]]
-    )
+    return [category, mark, unit] + [
+        data[key] if percentile is None else data["percentiles"][percentile]
+        for _, key, percentile in STATISTICS_COLUMNS
+    ]
 
 
 def _statistics_to_strings(statistics: Dict[str, Any]) -> Dict[str, Any]:

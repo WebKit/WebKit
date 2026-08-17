@@ -97,6 +97,22 @@ def test_analyze_json(capsys):
     assert report["rendering"]["vblanks"] == 35
 
 
+def test_analyze_json_statistics_cover_all_relevant_marks(capsys):
+    args = argparse.Namespace(
+        capture_file=SAMPLE_CAPTURE_FILE, format="json", timespan="-"
+    )
+    analyze.analyze(args)
+
+    statistics = json.loads(capsys.readouterr().out)["statistics"]
+    assert set(statistics) == set(analyze.MARKS_RELEVANT_FOR_STATISTICS)
+    assert statistics["CompositingUpdate"]["duration"]["n"] == 7
+    assert statistics["RenderTreeBuild"]["duration"]["n"] == 3
+    # Tile geometry depends on the rendering backend, so only check that the
+    # dirty area was extracted from every PaintTile message.
+    assert statistics["PaintTile"]["dirty_pixels"]["n"] == 80
+    assert statistics["PaintTile"]["dirty_pixels"]["min"] > 0
+
+
 def test_analyze_with_custom_timespan(capsys):
     args = argparse.Namespace(
         capture_file=SAMPLE_CAPTURE_FILE, format="text", timespan="0-0"
