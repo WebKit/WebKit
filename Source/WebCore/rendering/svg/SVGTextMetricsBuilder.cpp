@@ -29,7 +29,9 @@
 #include "RenderSVGText.h"
 #include "StyleComputedStyle+GettersInlines.h"
 #include "WidthIterator.h"
+#include <unicode/ubrk.h>
 #include <wtf/WeakPtr.h>
+#include <wtf/text/TextBreakIterator.h>
 
 namespace WebCore {
 
@@ -229,6 +231,12 @@ std::tuple<unsigned, char16_t> SVGTextMetricsBuilder::measureTextRendererWithIte
     auto& textMetricsValues = attributes->textMetricsValues();
     int surrogatePairCharacters = 0;
     unsigned skippedCharacters = 0;
+
+    // Grapheme-cluster boundaries, keyed by the same code-unit offset as m_textPosition. A character
+    // that is not at a boundary is a "middle" character per SVG 2 §11.5: the second or later
+    // character of a typographic character.
+    NonSharedCharacterBreakIterator clusterIterator(m_run.text());
+
     while (advance(iterator)) {
         char16_t currentCharacter = m_run[m_textPosition];
         if (currentCharacter == space && !preserveWhiteSpace && (!lastCharacter || lastCharacter == space)) {
@@ -241,8 +249,22 @@ std::tuple<unsigned, char16_t> SVGTextMetricsBuilder::measureTextRendererWithIte
         if (data.processRenderer) {
             if (data.allCharactersMap) {
                 auto it = data.allCharactersMap->find(valueListPosition + m_textPosition - skippedCharacters - surrogatePairCharacters + 1);
-                if (it != data.allCharactersMap->end())
-                    attributes->characterDataMap().set(m_textPosition + 1, it->value);
+                if (it != data.allCharactersMap->end()) {
+                    auto characterData = it->value;
+
+                    // Repositioning applies to whole typographic characters, so a middle character's
+                    // x/y/rotate are skipped -- honoring them would split the typographic character
+                    // into independently shaped pieces. The value list index is still consumed.
+                    // FIXME: dx/dy are left alone here, and are then dropped rather than accumulated
+                    // onto the next typographic character as SVG 2 requires.
+                    if (!ubrk_isBoundary(clusterIterator, m_textPosition)) {
+                        characterData.x = SVGTextLayoutAttributes::emptyValue();
+                        characterData.y = SVGTextLayoutAttributes::emptyValue();
+                        characterData.rotate = SVGTextLayoutAttributes::emptyValue();
+                    }
+
+                    attributes->characterDataMap().set(m_textPosition + 1, characterData);
+                }
             }
             textMetricsValues.append(m_currentMetrics);
         }
