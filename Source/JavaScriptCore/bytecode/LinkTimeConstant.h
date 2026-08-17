@@ -68,6 +68,7 @@ class JSGlobalObject;
     v(promiseReturnUndefinedOnFulfilled, nullptr) \
     v(promiseResolve, nullptr) \
     v(promiseReject, nullptr) \
+    v(newPromiseCapability, nullptr) \
     v(performPromiseThen, nullptr) \
     v(makeTypeError, nullptr) \
     v(AggregateError, nullptr) \
