@@ -1474,16 +1474,27 @@ inline bool equalIgnoringASCIICase(ASCIILiteral a, ASCIILiteral b)
 }
 
 template<typename ElementType>
-inline void copyElements(std::span<ElementType> destinationSpan, std::span<const ElementType> sourceSpan)
+ALWAYS_INLINE void copyElements(std::span<ElementType> destinationSpan, std::span<const ElementType> sourceSpan)
 {
     ASSERT(!spansOverlap(destinationSpan, sourceSpan));
     RELEASE_ASSERT(destinationSpan.size() >= sourceSpan.size());
     auto* __restrict destination = destinationSpan.data();
     auto* __restrict source = sourceSpan.data();
-    if (sourceSpan.size() == 1)
+    if (sourceSpan.size() == 1) {
         *destination = *source;
-    else if (!sourceSpan.empty())
-        std::memcpy(destination, source, sourceSpan.size_bytes());
+        return;
+    }
+
+    // memcpy cannot inline itself for a count it does not know, and copies short enough to pass
+    // through a few registers are common enough here to be worth keeping out of libc.
+    constexpr size_t maxInlineCopySize = 32;
+    size_t count = sourceSpan.size_bytes();
+    if (isInRange<size_t>(count, 2, maxInlineCopySize)) {
+        copySmallMemory<2, maxInlineCopySize>(reinterpret_cast<uint8_t*>(destination), reinterpret_cast<const uint8_t*>(source), count);
+        return;
+    }
+    if (count)
+        std::memcpy(destination, source, count); // NOLINT
 }
 
 inline void copyElements(std::span<uint16_t> destinationSpan, std::span<const uint8_t> sourceSpan)

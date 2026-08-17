@@ -37,41 +37,9 @@ namespace JSC::B3 {
 
 namespace {
 
-#if HAVE(INT128_T)
-using WidestUnit = UInt128;
-#else
-using WidestUnit = uint64_t;
-#endif
+using WTF::WidestUnalignedUnit;
 
-constexpr size_t maxFastCopyCount = 4 * sizeof(WidestUnit);
-constexpr size_t maxFastFillCount = 4 * sizeof(WidestUnit);
-
-// Copies count bytes as two overlapping sizeof(T) accesses, so it needs
-// sizeof(T) <= count <= 2 * sizeof(T). Both source reads happen before either destination write,
-// which is what makes this safe for overlapping ranges without comparing the two pointers.
-template<typename T>
-ALWAYS_INLINE void copyOverlappingEnds(uint8_t* dst, const uint8_t* src, size_t count)
-{
-    T low = WTF::unalignedLoad<T>(src);
-    T high = WTF::unalignedLoad<T>(src + count - sizeof(T));
-    WTF::unalignedStore<T>(dst, low);
-    WTF::unalignedStore<T>(dst + count - sizeof(T), high);
-}
-
-// The same idea one step wider: two overlapping pairs, for
-// 2 * sizeof(T) <= count <= 4 * sizeof(T).
-template<typename T>
-ALWAYS_INLINE void copyOverlappingEndPairs(uint8_t* dst, const uint8_t* src, size_t count)
-{
-    T low0 = WTF::unalignedLoad<T>(src);
-    T low1 = WTF::unalignedLoad<T>(src + sizeof(T));
-    T high0 = WTF::unalignedLoad<T>(src + count - 2 * sizeof(T));
-    T high1 = WTF::unalignedLoad<T>(src + count - sizeof(T));
-    WTF::unalignedStore<T>(dst, low0);
-    WTF::unalignedStore<T>(dst + sizeof(T), low1);
-    WTF::unalignedStore<T>(dst + count - 2 * sizeof(T), high0);
-    WTF::unalignedStore<T>(dst + count - sizeof(T), high1);
-}
+constexpr size_t maxFastFillCount = 4 * sizeof(WidestUnalignedUnit);
 
 // Writes count bytes as two overlapping runs of unitsPerEnd stores, so it needs
 // unitsPerEnd * sizeof(T) <= count <= 2 * unitsPerEnd * sizeof(T). Every store writes the same
@@ -93,17 +61,8 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMemoryCopy, void, (void* dst, const v
     // emits for memcpy. libc's memmove spends more on dispatching by size than a short copy costs,
     // so handle the short counts here. One unsigned compare rejects both the too-short and the
     // too-long counts.
-    if (count - sizeof(uint32_t) <= maxFastCopyCount - sizeof(uint32_t)) {
-        auto* to = static_cast<uint8_t*>(dst);
-        const auto* from = static_cast<const uint8_t*>(src);
-        if (count < sizeof(uint64_t))
-            copyOverlappingEnds<uint32_t>(to, from, count);
-        else if (count < 2 * sizeof(uint64_t))
-            copyOverlappingEnds<uint64_t>(to, from, count);
-        else if (count < 2 * sizeof(WidestUnit))
-            copyOverlappingEnds<WidestUnit>(to, from, count);
-        else
-            copyOverlappingEndPairs<WidestUnit>(to, from, count);
+    if (count - sizeof(uint32_t) <= WTF::maxSmallCopySize - sizeof(uint32_t)) {
+        WTF::copySmallMemory<sizeof(uint32_t)>(static_cast<uint8_t*>(dst), static_cast<const uint8_t*>(src), count);
         return;
     }
     memmove(dst, src, count);
@@ -114,9 +73,9 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMemoryFill, void, (void* dst, int32_t
     if (count - 1 <= maxFastFillCount - 1) {
         auto* to = static_cast<uint8_t*>(dst);
         uint64_t splat = static_cast<uint8_t>(target) * 0x0101010101010101ULL;
-        WidestUnit widest = splat;
-        if constexpr (sizeof(WidestUnit) > sizeof(uint64_t))
-            widest = (static_cast<WidestUnit>(splat) << 64) | splat;
+        WidestUnalignedUnit widest = splat;
+        if constexpr (sizeof(WidestUnalignedUnit) > sizeof(uint64_t))
+            widest = (static_cast<WidestUnalignedUnit>(splat) << 64) | splat;
         if (count < sizeof(uint16_t))
             fillOverlappingEnds<uint8_t, 1>(to, static_cast<uint8_t>(splat), count);
         else if (count < sizeof(uint32_t))
@@ -125,10 +84,10 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMemoryFill, void, (void* dst, int32_t
             fillOverlappingEnds<uint32_t, 1>(to, static_cast<uint32_t>(splat), count);
         else if (count < 2 * sizeof(uint64_t))
             fillOverlappingEnds<uint64_t, 1>(to, splat, count);
-        else if (count < 2 * sizeof(WidestUnit))
-            fillOverlappingEnds<WidestUnit, 1>(to, widest, count);
+        else if (count < 2 * sizeof(WidestUnalignedUnit))
+            fillOverlappingEnds<WidestUnalignedUnit, 1>(to, widest, count);
         else
-            fillOverlappingEnds<WidestUnit, 2>(to, widest, count);
+            fillOverlappingEnds<WidestUnalignedUnit, 2>(to, widest, count);
         return;
     }
     memset(dst, target, count);
