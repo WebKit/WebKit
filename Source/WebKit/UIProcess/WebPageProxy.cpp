@@ -3185,6 +3185,22 @@ RefPtr<WebAutomationSession> WebPageProxy::activeAutomationSession() const
     return m_configuration->processPool().automationSession();
 }
 
+bool WebPageProxy::hasConnectedInspectorFrontend() const
+{
+    return m_inspectorController->hasFrontends();
+}
+
+void WebPageProxy::updateCookieDomainAuthorization()
+{
+    forEachWebContentProcess([](auto& process, auto) {
+        process.updateCookieDomainAuthorization();
+    });
+
+    // forEachWebContentProcess() skips the provisional page's process, which a frontend can keep driving.
+    if (RefPtr provisionalPage = m_provisionalPage)
+        protect(provisionalPage->process())->updateCookieDomainAuthorization();
+}
+
 void WebPageProxy::sendMessageToInspectorFrontend(const String& targetId, const String& message)
 {
     m_inspectorController->sendMessageToInspectorFrontend(targetId, message);

@@ -33,6 +33,8 @@
 #import "Helpers/Utilities.h"
 #import "TestNavigationDelegate.h"
 #import "TestUIDelegate.h"
+#import <WebKit/WKFrameInfoPrivate.h>
+#import <WebKit/WKHTTPCookieStore.h>
 #import <WebKit/WKNavigationDelegatePrivate.h>
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKProcessPoolPrivate.h>
@@ -40,11 +42,13 @@
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <WebKit/_WKFeature.h>
+#import <WebKit/_WKFrameTreeNode.h>
 #import <WebKit/_WKRemoteObjectInterface.h>
 #import <WebKit/_WKRemoteObjectRegistry.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
+#import <wtf/text/MakeString.h>
 
 static bool didCrash = false;
 static RetainPtr<NSString> alertMessage;
@@ -1111,6 +1115,806 @@ TEST(IPCTestingAPI, FileSystemForgedHandleIdentifierRejected)
 
     [badView evaluateJavaScript:[NSString stringWithFormat:@"attack('%@')", stolenIdentifier] completionHandler:nil];
     EXPECT_WK_STREQ(@"PASS:access-denied", [badUIDelegate waitForAlert]);
+}
+
+// A compromised https://siteb.example iframe inside a https://sitea.example page forges cookie IPC naming
+// firstParty=https://sitea.example/main and url=https://sitea.example/cookie-target, which used to return
+// sitea's cookies including the HttpOnly one. Every read below must now come back empty.
+//
+// IgnoreInvalidMessageWhenIPCTestingAPIEnabled is deliberately not enabled, so a denial that regressed into a
+// MESSAGE_CHECK terminates the sender and is caught by the liveness assertions rather than swallowed.
+
+// A terminated web process never alerts, so -_test_waitForAlert's unbounded wait would hang instead of
+// failing. Same shape as SiteIsolation.mm's BoundedAlertRecorder, renamed because both files link into one
+// binary. Installed before the first load so an early alert is not missed; each wait consumes one message.
+// The bound is much longer than the 10s timeout each page arms, so the page's own diagnostic wins.
+@interface IPCTestingAPIAlertRecorder : NSObject <WKUIDelegate>
+- (NSString *)waitForAlert;
+@end
+
+@implementation IPCTestingAPIAlertRecorder {
+    RetainPtr<NSString> _message;
+}
+
+- (void)webView:(WKWebView *)webView runJavaScriptAlertPanelWithMessage:(NSString *)message initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(void))completionHandler
+{
+    _message = message;
+    completionHandler();
+}
+
+- (NSString *)waitForAlert
+{
+    EXPECT_TRUE(TestWebKitAPI::Util::waitFor([&] {
+        return !!_message;
+    }, 300));
+    RetainPtr<NSString> message = _message;
+    _message = nullptr;
+    return message.autorelease();
+}
+
+@end
+
+static RetainPtr<TestWKWebView> createSiteIsolatedIPCTestWebView(TestWebKitAPI::HTTPServer& server, RetainPtr<TestNavigationDelegate>& navigationDelegate, RetainPtr<IPCTestingAPIAlertRecorder>& alertRecorder)
+{
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    for (_WKFeature *feature in [WKPreferences _features]) {
+        if ([feature.key isEqualToString:@"IPCTestingAPIEnabled"] || [feature.key isEqualToString:@"SiteIsolationEnabled"] || [feature.key isEqualToString:@"CookieStoreAPIEnabled"])
+            [[configuration preferences] _setEnabled:YES forFeature:feature];
+    }
+
+    // On the iOS family, where USE(ITP_TCC_CHECK) makes tracking prevention default to on, a cross-site read
+    // would otherwise come back empty for a reason unrelated to the check under test.
+    [[configuration websiteDataStore] _setResourceLoadStatisticsEnabled:NO];
+
+    navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [navigationDelegate allowAnyTLSCertificate];
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    webView.get().navigationDelegate = navigationDelegate.get();
+    alertRecorder = adoptNS([IPCTestingAPIAlertRecorder new]);
+    webView.get().UIDelegate = alertRecorder.get();
+    return webView;
+}
+
+// Reads the cookie store rather than document.cookie: it also sees HttpOnly cookies and cannot be masked by
+// WebCookieCache. Returns the empty string when absent, for a readable EXPECT_WK_STREQ diff.
+static NSString *cookieValueInStore(WKWebsiteDataStore *dataStore, NSString *name)
+{
+    __block RetainPtr<NSArray<NSHTTPCookie *>> cookies;
+    __block bool gotCookies = false;
+    [dataStore.httpCookieStore getAllCookies:^(NSArray<NSHTTPCookie *> *allCookies) {
+        cookies = allCookies;
+        gotCookies = true;
+    }];
+    TestWebKitAPI::Util::run(&gotCookies);
+    for (NSHTTPCookie *cookie in cookies.get()) {
+        if ([cookie.name isEqualToString:name])
+            return cookie.value;
+    }
+    return @"";
+}
+
+// Every page below is served as these shared helpers followed by its own script. The reporter's proof
+// defined its helpers once per page; keeping exactly one copy is what keeps the pages honest about being
+// the same proof, and is why the comments explaining each helper only have to be right once.
+static constexpr auto siteIsolationCookieIPCHelperBytes = R"TESTRESOURCE(
+<!DOCTYPE html>
+<script>
+function currentFrameIDString()
+{
+    return (Array.isArray(IPC.frameID) ? IPC.frameID[0] : IPC.frameID).toString();
+}
+
+function frameIDArg(frameID)
+{
+    return { type: 'FrameID', value: [ BigInt(frameID) ] };
+}
+
+// The engaged byte before every std::optional is encoded explicitly, exactly as the reporter encoded it.
+// Without it the message would be rejected as undecodable and its test would pass for the wrong reason.
+function optionalFrameIDArgs(frameID)
+{
+    return [ { type: 'uint8_t', value: 1 }, frameIDArg(frameID) ];
+}
+
+function optionalPageIDArgs(pageID)
+{
+    return [ { type: 'uint8_t', value: 1 }, { type: 'uint64_t', value: BigInt(pageID) } ];
+}
+
+function optionalWebPageProxyIDArgs(webPageProxyID)
+{
+    return [ { type: 'uint8_t', value: 1 }, { type: 'uint64_t', value: BigInt(webPageProxyID) } ];
+}
+
+function sameSiteInfoArgs()
+{
+    return [
+        { type: 'uint8_t', value: 1 }, // isSameSite
+        { type: 'uint8_t', value: 1 }, // isTopSite
+        { type: 'uint8_t', value: 1 } // isSafeHTTPMethod
+    ];
+}
+
+function sendSync(connection, message, args)
+{
+    try {
+        return connection.sendSyncMessage(0, message, 10000, args);
+    } catch (e) {
+        return { exception: String(e) };
+    }
+}
+
+function sendAsync(connection, message, args)
+{
+    return new Promise(resolve => {
+        try {
+            connection.sendWithAsyncReply(0, message, args, result => resolve(result));
+        } catch (e) {
+            resolve({ exception: String(e) });
+        }
+    });
+}
+
+// A decoded reply has an arguments array; one that threw, timed out or failed to decode has none. Assertions
+// about a reply's contents need this beside them, or "no reply" looks like "a reply with nothing in it".
+// A failed send yields a bare undefined, so reply arguments must be read through replyArgument() rather than
+// result.arguments[i]: reading a property off that undefined throws inside the async listener, and the page
+// then never posts its payload at all, turning an informative failure into a bare timeout.
+function decodedReply(result)
+{
+    return Array.isArray(result && result.arguments);
+}
+
+function replyArgument(result, index)
+{
+    return result && result.arguments ? result.arguments[index] : undefined;
+}
+
+function replyArgumentCount(result)
+{
+    return decodedReply(result) ? result.arguments.length : -1;
+}
+
+// Reply arguments are { type, value } objects, so an argument that is not there at all reads as
+// '<missing>' rather than as a value.
+function stringValue(result, index)
+{
+    return result && result.arguments && result.arguments[index] ? result.arguments[index].value : '<missing>';
+}
+
+// A denied read replies with a null String, which the IPC testing API decodes as JS null rather than as a
+// string, so the reporter's stringValue() cannot be used directly for the cookie strings any more.
+function cookieStringValue(result, index)
+{
+    const value = stringValue(result, index);
+    return value === null || value === undefined ? '<null>' : String(value);
+}
+
+function safeJSONString(value)
+{
+    return JSON.stringify(value, (_, item) => typeof item === 'bigint' ? item.toString() : item);
+}
+
+// The IPC testing API has no JS representation for Vector<WebCore::Cookie>, so it hands back that argument's
+// raw bytes as an ArrayBuffer. A disengaged std::optional and a missing argument both answer null here.
+function bytesForDecodedArgument(value)
+{
+    if (!value)
+        return null;
+    if (value instanceof ArrayBuffer)
+        return new Uint8Array(value);
+    if (ArrayBuffer.isView(value))
+        return new Uint8Array(value.buffer, value.byteOffset, value.byteLength);
+    if (value.value instanceof ArrayBuffer)
+        return new Uint8Array(value.value);
+    return null;
+}
+
+function containsBytes(haystack, needle)
+{
+    if (!haystack)
+        return false;
+    outer:
+    for (let i = 0; i + needle.length <= haystack.length; ++i) {
+        for (let j = 0; j < needle.length; ++j) {
+            if (haystack[i + j] !== needle[j])
+                continue outer;
+        }
+        return true;
+    }
+    return false;
+}
+
+function utf16Bytes(text, littleEndian)
+{
+    const result = [];
+    for (let i = 0; i < text.length; ++i) {
+        const code = text.charCodeAt(i);
+        if (littleEndian)
+            result.push(code & 0xff, code >> 8);
+        else
+            result.push(code >> 8, code & 0xff);
+    }
+    return new Uint8Array(result);
+}
+
+function decodedArgumentContains(value, text)
+{
+    const bytes = bytesForDecodedArgument(value);
+    if (!bytes)
+        return false;
+    const ascii = new TextEncoder().encode(text);
+    return containsBytes(bytes, ascii)
+        || containsBytes(bytes, utf16Bytes(text, true))
+        || containsBytes(bytes, utf16Bytes(text, false));
+}
+
+function decodedArgumentByteLength(value)
+{
+    const bytes = bytesForDecodedArgument(value);
+    return bytes ? bytes.byteLength : -1;
+}
+
+// A denied read replies with a null String, which the IPC testing API surfaces as '<null>', and an allowed
+// read that finds nothing replies with an empty string. '<missing>' is deliberately not accepted: that
+// means no such reply argument was decoded, which is a broken message rather than a denial.
+function isEmptyCookieString(value)
+{
+    return value === '' || value === '<null>';
+}
+
+// The reply is std::optional<std::array<uint8_t, 20>>. std::array has no JS conversion, so an engaged optional
+// arrives as an ArrayBuffer of the consumed bytes - the engaged byte plus 20 digest bytes - and a disengaged
+// one as undefined. Anything but 21 bytes means the send failed rather than being denied. The salt is new on
+// every network process launch, so only the digest's presence and its stability across a write can be asserted.
+function cookieHeaderDigestBytes(result)
+{
+    const bytes = bytesForDecodedArgument(result && result.arguments && result.arguments[0]);
+    return bytes && bytes.byteLength === 21 ? bytes.subarray(1) : null;
+}
+
+// False for a null operand, so a pair of failed reads cannot make a "the write did not land" assertion pass
+// by comparing nothing to nothing.
+function cookieHeaderDigestsEqual(a, b)
+{
+    if (!a || !b || a.byteLength !== b.byteLength)
+        return false;
+    for (let i = 0; i < a.byteLength; ++i) {
+        if (a[i] !== b[i])
+            return false;
+    }
+    return true;
+}
+
+function cookieHeaderDigestHex(bytes)
+{
+    return bytes ? Array.from(bytes, (byte) => byte.toString(16).padStart(2, '0')).join('') : '<no digest>';
+}
+
+// This message returns only a salted digest of the header, so a caller can assert that a digest came back and
+// that two digests taken across a forged write are equal.
+function readCookieHeaderDigest(firstParty, url)
+{
+    const result = sendSync(IPC.connectionForProcessTarget('Networking'), IPC.messages.NetworkConnectionToWebProcess_CookieRequestHeaderFieldValueDigest.name, [
+        { type: 'URL', value: firstParty },
+        ...sameSiteInfoArgs(),
+        { type: 'URL', value: url },
+        { type: 'uint8_t', value: 1 }
+    ]);
+    const digestBytes = cookieHeaderDigestBytes(result);
+    return {
+        digest: cookieHeaderDigestHex(digestBytes),
+        isDigest: !!digestBytes,
+        replied: decodedReply(result),
+        raw: safeJSONString(result)
+    };
+}
+
+// SetCookiesFromDOM has no reply, so nothing here can observe whether it landed; a caller detects it by
+// comparing cookie header digests taken before and after. Returning sent:true matters: a caller that
+// asserts "the write did not become visible" has to be able to assert that a write was sent at all.
+function setCookieFromDOM(firstParty, url, frameID, pageID, webPageProxyID, cookieString)
+{
+    if (!frameID || !pageID || !webPageProxyID)
+        return { skipped: true };
+
+    try {
+        IPC.connectionForProcessTarget('Networking').sendMessage(0, IPC.messages.NetworkConnectionToWebProcess_SetCookiesFromDOM.name, [
+            { type: 'URL', value: firstParty },
+            ...sameSiteInfoArgs(),
+            { type: 'URL', value: url },
+            frameIDArg(frameID),
+            { type: 'uint64_t', value: BigInt(pageID) },
+            { type: 'String', value: cookieString },
+            { type: 'uint8_t', value: 0 },
+            { type: 'uint64_t', value: BigInt(webPageProxyID) }
+        ]);
+        return { sent: true };
+    } catch (e) {
+        return { exception: String(e) };
+    }
+}
+</script>
+)TESTRESOURCE"_s;
+
+static String siteIsolationCookieIPCPage(ASCIILiteral pageScript)
+{
+    return makeString(siteIsolationCookieIPCHelperBytes, pageScript);
+}
+
+static constexpr auto siteIsolationCookieIPCMainBytes = R"TESTRESOURCE(
+<title>forged cookie IPC proof main</title>
+<script>
+window.addEventListener('message', event => {
+    if (!event.data || event.data.type !== 'cookie-proof-result')
+        return;
+    event.data.parentDocumentCookieAfterProof = document.cookie;
+    alert('CookieIPCProof ' + JSON.stringify(event.data, (_, value) => typeof value === 'bigint' ? value.toString() : value));
+});
+
+setTimeout(() => alert('CookieIPCProof TIMEOUT document.cookie=' + document.cookie), 10000);
+
+async function setCookiesAndStart()
+{
+    for (const path of [ '/set-normal', '/set-httponly', '/set-secure', '/set-strict' ])
+        await fetch(path, { credentials: 'include', cache: 'no-store' });
+
+    const attacker = document.createElement('iframe');
+    attacker.src = 'https://siteb.example/cookie-attacker';
+    attacker.addEventListener('load', () => {
+        attacker.contentWindow.postMessage({
+            type: 'start-cookie-proof',
+            aFrameID: currentFrameIDString(),
+            aPageID: IPC.pageID.toString(),
+            aWebPageProxyID: IPC.webPageProxyID.toString(),
+            firstParty: 'https://sitea.example/main',
+            url: 'https://sitea.example/cookie-target'
+        }, 'https://siteb.example');
+    });
+    document.body.appendChild(attacker);
+}
+
+setCookiesAndStart().catch(error => alert('CookieIPCProof setup failed: ' + error));
+</script>
+<body>
+</body>
+)TESTRESOURCE"_s;
+
+static constexpr auto siteIsolationCookieIPCAttackerBytes = R"TESTRESOURCE(
+<title>forged cookie IPC proof attacker</title>
+<script>
+window.addEventListener('message', async event => {
+    const data = event.data;
+    if (!data || data.type !== 'start-cookie-proof')
+        return;
+
+    const connection = IPC.connectionForProcessTarget('Networking');
+    const firstPartyArg = { type: 'URL', value: data.firstParty };
+    const urlArg = { type: 'URL', value: data.url };
+    const includeSecureCookiesArg = { type: 'uint8_t', value: 1 };
+    const noScriptTrackingPrivacyArg = { type: 'uint8_t', value: 0 };
+    const nonOptionalFrameAndPage = [
+        frameIDArg(data.aFrameID),
+        { type: 'uint64_t', value: BigInt(data.aPageID) }
+    ];
+    const optionalFrameAndPage = [
+        ...optionalFrameIDArgs(data.aFrameID),
+        ...optionalPageIDArgs(data.aPageID)
+    ];
+    const optionalWebPageProxyID = optionalWebPageProxyIDArgs(data.aWebPageProxyID);
+
+    const cookiesForDOM = sendSync(connection, IPC.messages.NetworkConnectionToWebProcess_CookiesForDOM.name, [
+        firstPartyArg,
+        ...sameSiteInfoArgs(),
+        urlArg,
+        ...nonOptionalFrameAndPage,
+        includeSecureCookiesArg,
+        { type: 'uint64_t', value: BigInt(data.aWebPageProxyID) }
+    ]);
+
+    // CookieRequestHeaderFieldValue, which the proof of concept read HttpOnly cookie values from, no longer
+    // exists. Its replacement takes no frame, page or webPageProxy identifier and replies with one String.
+    const cookieRequestHeaderFieldValueDigest = sendSync(connection, IPC.messages.NetworkConnectionToWebProcess_CookieRequestHeaderFieldValueDigest.name, [
+        firstPartyArg,
+        ...sameSiteInfoArgs(),
+        urlArg,
+        includeSecureCookiesArg
+    ]);
+
+    const getRawCookies = sendSync(connection, IPC.messages.NetworkConnectionToWebProcess_GetRawCookies.name, [
+        firstPartyArg,
+        ...sameSiteInfoArgs(),
+        urlArg,
+        ...optionalFrameAndPage,
+        ...optionalWebPageProxyID
+    ]);
+
+    const cookiesForDOMAsync = await sendAsync(connection, IPC.messages.NetworkConnectionToWebProcess_CookiesForDOMAsync.name, [
+        firstPartyArg,
+        ...sameSiteInfoArgs(),
+        urlArg,
+        ...optionalFrameAndPage,
+        includeSecureCookiesArg,
+        { type: 'String', value: null },
+        { type: 'String', value: '' },
+        ...optionalWebPageProxyID
+    ]);
+
+    connection.sendMessage(0, IPC.messages.NetworkConnectionToWebProcess_SetCookiesFromDOM.name, [
+        firstPartyArg,
+        ...sameSiteInfoArgs(),
+        urlArg,
+        ...nonOptionalFrameAndPage,
+        { type: 'String', value: 'normal_cookie=fromB; Path=/' },
+        noScriptTrackingPrivacyArg,
+        { type: 'uint64_t', value: BigInt(data.aWebPageProxyID) }
+    ]);
+
+    // Sent after the write on the same connection, so the network process handles it after the write: if the
+    // write had landed, this digest would differ from the one above.
+    const cookieRequestHeaderFieldValueDigestAfterSet = sendSync(connection, IPC.messages.NetworkConnectionToWebProcess_CookieRequestHeaderFieldValueDigest.name, [
+        firstPartyArg,
+        ...sameSiteInfoArgs(),
+        urlArg,
+        includeSecureCookiesArg
+    ]);
+
+    // Sent last, and for this frame's own site rather than the embedder's. Its reply arriving proves the
+    // process was not terminated for any of the forged messages above, and that its own cookie access still
+    // works. isSameSite is 0 because this document is cross-site to its first party for cookies.
+    const ownSiteRead = sendSync(connection, IPC.messages.NetworkConnectionToWebProcess_CookiesForDOM.name, [
+        firstPartyArg,
+        { type: 'uint8_t', value: 0 }, // isSameSite
+        { type: 'uint8_t', value: 0 }, // isTopSite
+        { type: 'uint8_t', value: 1 }, // isSafeHTTPMethod
+        { type: 'URL', value: location.href },
+        frameIDArg(currentFrameIDString()),
+        { type: 'uint64_t', value: BigInt(IPC.pageID) },
+        includeSecureCookiesArg,
+        { type: 'uint64_t', value: BigInt(IPC.webPageProxyID) }
+    ]);
+
+    const domCookieString = cookieStringValue(cookiesForDOM, 0);
+    const httpCookieDigest = cookieHeaderDigestBytes(cookieRequestHeaderFieldValueDigest);
+    const httpCookieDigestAfterSet = cookieHeaderDigestBytes(cookieRequestHeaderFieldValueDigestAfterSet);
+    const rawCookiesArgument = replyArgument(getRawCookies, 0);
+    const asyncCookiesArgument = replyArgument(cookiesForDOMAsync, 0);
+    const rawCookiesByteLength = decodedArgumentByteLength(rawCookiesArgument);
+    const asyncCookiesByteLength = decodedArgumentByteLength(asyncCookiesArgument);
+
+    parent.postMessage({
+        type: 'cookie-proof-result',
+        attackerOrigin: location.origin,
+        firstParty: data.firstParty,
+        url: data.url,
+        aFrameID: data.aFrameID,
+        aPageID: data.aPageID,
+        aWebPageProxyID: data.aWebPageProxyID,
+        cookiesForDOM: domCookieString,
+        cookieRequestHeaderFieldValueDigest: cookieHeaderDigestHex(httpCookieDigest),
+        cookieRequestHeaderFieldValueDigestAfterSet: cookieHeaderDigestHex(httpCookieDigestAfterSet),
+        // Reported so that a reply whose shape is not the expected engaged byte plus 20 digest bytes says what
+        // it actually was, rather than only failing the assertion below.
+        httpDigestByteLength: decodedArgumentByteLength(replyArgument(cookieRequestHeaderFieldValueDigest, 0)),
+        getRawCookies: safeJSONString(getRawCookies.arguments || getRawCookies),
+        getRawCookiesByteLength: rawCookiesByteLength,
+        cookiesForDOMAsync: safeJSONString(cookiesForDOMAsync.arguments || cookiesForDOMAsync),
+        cookiesForDOMAsyncByteLength: asyncCookiesByteLength,
+        // CookiesForDOM's second reply argument. The proof of concept read it from the header message,
+        // which no longer reports it. Its being there at all is also what proves a two argument reply to
+        // CookiesForDOM was decoded, so that domReadEmpty below is a denial rather than a missing reply.
+        didAccessSecureCookies: stringValue(cookiesForDOM, 1),
+        observed: {
+            domReadEmpty: isEmptyCookieString(domCookieString),
+            domReadNormal: domCookieString.includes('normal_cookie=normalA'),
+            domReadSecure: domCookieString.includes('secure_cookie=secureA'),
+            domReadSameSiteStrict: domCookieString.includes('strict_cookie=strictA'),
+            // GetRawCookies replies with a Vector<WebCore::Cookie>, which a denial makes empty rather than
+            // absent, so its reply argument is still there and still decodes to bytes. Without this the
+            // rawRead flags below would also all be false if the message had never been received at all.
+            rawCookiesReplyDecoded: replyArgumentCount(getRawCookies) === 1 && rawCookiesByteLength >= 0,
+            // The only HttpOnly flag worth asserting: NetworkStorageSession skips HttpOnly cookies for every
+            // CookiesFor::DOM read, so the DOM and async equivalents are false on any build, fixed or not.
+            rawReadNormal: decodedArgumentContains(rawCookiesArgument, 'normal_cookie'),
+            rawReadHttpOnly: decodedArgumentContains(rawCookiesArgument, 'httponly_cookie'),
+            rawReadSecure: decodedArgumentContains(rawCookiesArgument, 'secure_cookie'),
+            rawReadSameSiteStrict: decodedArgumentContains(rawCookiesArgument, 'strict_cookie'),
+            rawReadAnyCookie: decodedArgumentContains(rawCookiesArgument, '_cookie'),
+            // A denied CookiesForDOMAsync replies std::nullopt, which surfaces as an undefined argument, so
+            // one disengaged argument is itself the denial. The asyncRead flags cannot show that: they are
+            // equally false when no reply was decoded at all.
+            asyncCookiesReplyDecoded: replyArgumentCount(cookiesForDOMAsync) === 1,
+            asyncCookiesDisengaged: asyncCookiesArgument === undefined,
+            asyncReadNormal: decodedArgumentContains(asyncCookiesArgument, 'normal_cookie'),
+            asyncReadSecure: decodedArgumentContains(asyncCookiesArgument, 'secure_cookie'),
+            asyncReadSameSiteStrict: decodedArgumentContains(asyncCookiesArgument, 'strict_cookie'),
+            asyncReadAnyCookie: decodedArgumentContains(asyncCookiesArgument, '_cookie'),
+            // The proof of concept found normal_cookie=fromB in the header it read back. Only a digest is
+            // available now, so the write is detected by the digest changing across it, which is salt
+            // independent. That both are really digests is asserted separately, since a failed read would
+            // otherwise make this comparison - the only proof of the write denial - meaningless.
+            overwriteNormalCookie: !cookieHeaderDigestsEqual(httpCookieDigest, httpCookieDigestAfterSet),
+            httpDigestReplied: decodedReply(cookieRequestHeaderFieldValueDigest) && decodedReply(cookieRequestHeaderFieldValueDigestAfterSet),
+            httpDigestIsDigest: !!httpCookieDigest && !!httpCookieDigestAfterSet,
+            attackerStillRunningAfterDenials: decodedReply(ownSiteRead)
+        }
+    }, 'https://sitea.example');
+});
+</script>
+)TESTRESOURCE"_s;
+
+TEST(IPCTestingAPI, SiteIsolationForgedNetworkCookieIPCReadWriteIsDenied)
+{
+    using namespace TestWebKitAPI;
+
+    HTTPServer server({
+        { "/main"_s, { { { "Content-Type"_s, "text/html"_s } }, siteIsolationCookieIPCPage(siteIsolationCookieIPCMainBytes) } },
+        { "/set-normal"_s, { { { "Content-Type"_s, "text/plain"_s }, { "Set-Cookie"_s, "normal_cookie=normalA; Path=/"_s }, { "Cache-Control"_s, "no-store"_s } }, "normal"_s } },
+        { "/set-httponly"_s, { { { "Content-Type"_s, "text/plain"_s }, { "Set-Cookie"_s, "httponly_cookie=httponlyA; Path=/; HttpOnly"_s }, { "Cache-Control"_s, "no-store"_s } }, "httponly"_s } },
+        { "/set-secure"_s, { { { "Content-Type"_s, "text/plain"_s }, { "Set-Cookie"_s, "secure_cookie=secureA; Path=/; Secure; SameSite=None"_s }, { "Cache-Control"_s, "no-store"_s } }, "secure"_s } },
+        { "/set-strict"_s, { { { "Content-Type"_s, "text/plain"_s }, { "Set-Cookie"_s, "strict_cookie=strictA; Path=/; SameSite=Strict"_s }, { "Cache-Control"_s, "no-store"_s } }, "strict"_s } },
+        { "/cookie-attacker"_s, { { { "Content-Type"_s, "text/html"_s } }, siteIsolationCookieIPCPage(siteIsolationCookieIPCAttackerBytes) } },
+        { "/cookie-target"_s, { { { "Content-Type"_s, "text/html"_s } }, "cookie target"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr<TestNavigationDelegate> navigationDelegate;
+    RetainPtr<IPCTestingAPIAlertRecorder> alertRecorder;
+    RetainPtr webView = createSiteIsolatedIPCTestWebView(server, navigationDelegate, alertRecorder);
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://sitea.example/main"]]];
+
+    NSString *result = [alertRecorder waitForAlert];
+    ASSERT_TRUE(result) << "no payload alert; the attacker page never reported";
+    EXPECT_TRUE([result containsString:@"\"attackerOrigin\":\"https://siteb.example\""]) << result.UTF8String;
+
+    // The cookies the proof reads must actually exist, or every assertion that they did not leak passes for
+    // the wrong reason. httponly_cookie needs this most: it can never appear in document.cookie, so nothing
+    // else in this test would notice if /set-httponly had silently failed.
+    RetainPtr proofDataStore = webView.get().configuration.websiteDataStore;
+    EXPECT_WK_STREQ("httponlyA", cookieValueInStore(proofDataStore.get(), @"httponly_cookie"));
+    EXPECT_WK_STREQ("normalA", cookieValueInStore(proofDataStore.get(), @"normal_cookie"));
+
+    // Every read of sitea's cookies from siteb's process is denied, and denial is an empty reply. Each
+    // group is preceded by the assertion that the reply it is about was decoded at all.
+    EXPECT_TRUE([result containsString:@"\"didAccessSecureCookies\":false"]) << result.UTF8String;
+    EXPECT_TRUE([result containsString:@"\"domReadEmpty\":true"]) << result.UTF8String;
+    EXPECT_TRUE([result containsString:@"\"domReadNormal\":false"]) << result.UTF8String;
+    EXPECT_TRUE([result containsString:@"\"domReadSecure\":false"]) << result.UTF8String;
+    EXPECT_TRUE([result containsString:@"\"domReadSameSiteStrict\":false"]) << result.UTF8String;
+    EXPECT_TRUE([result containsString:@"\"rawCookiesReplyDecoded\":true"]) << result.UTF8String;
+    EXPECT_TRUE([result containsString:@"\"rawReadNormal\":false"]) << result.UTF8String;
+    EXPECT_TRUE([result containsString:@"\"rawReadHttpOnly\":false"]) << result.UTF8String;
+    EXPECT_TRUE([result containsString:@"\"rawReadSecure\":false"]) << result.UTF8String;
+    EXPECT_TRUE([result containsString:@"\"rawReadSameSiteStrict\":false"]) << result.UTF8String;
+    EXPECT_TRUE([result containsString:@"\"rawReadAnyCookie\":false"]) << result.UTF8String;
+    EXPECT_TRUE([result containsString:@"\"asyncCookiesReplyDecoded\":true"]) << result.UTF8String;
+    EXPECT_TRUE([result containsString:@"\"asyncCookiesDisengaged\":true"]) << result.UTF8String;
+    EXPECT_TRUE([result containsString:@"\"asyncReadNormal\":false"]) << result.UTF8String;
+    EXPECT_TRUE([result containsString:@"\"asyncReadSecure\":false"]) << result.UTF8String;
+    EXPECT_TRUE([result containsString:@"\"asyncReadSameSiteStrict\":false"]) << result.UTF8String;
+    EXPECT_TRUE([result containsString:@"\"asyncReadAnyCookie\":false"]) << result.UTF8String;
+
+    // The reply to the header message is a salted digest, never a cookie header. The digest value itself is
+    // not asserted: the salt is new on every network process launch. That message is deliberately not one
+    // of the denied ones, so its reply arriving is asserted too, and only a 20-byte digest counts as one.
+    EXPECT_TRUE([result containsString:@"\"httpDigestReplied\":true"]) << result.UTF8String;
+    EXPECT_TRUE([result containsString:@"\"httpDigestIsDigest\":true"]) << result.UTF8String;
+
+    // The forged write does not land: the digest for sitea's URL is unchanged across it, and sitea's own
+    // document.cookie still has its original values, which is also what keeps the two EXPECT_FALSEs below
+    // from being satisfied by an empty payload.
+    EXPECT_TRUE([result containsString:@"\"overwriteNormalCookie\":false"]) << result.UTF8String;
+    EXPECT_TRUE([result containsString:@"\"parentDocumentCookieAfterProof\":\""]) << result.UTF8String;
+    EXPECT_TRUE([result containsString:@"normal_cookie=normalA"]) << result.UTF8String;
+    EXPECT_TRUE([result containsString:@"secure_cookie=secureA"]) << result.UTF8String;
+    EXPECT_TRUE([result containsString:@"strict_cookie=strictA"]) << result.UTF8String;
+    EXPECT_FALSE([result containsString:@"normal_cookie=fromB"]) << result.UTF8String;
+    // httponly_cookie is never in document.cookie and no reply here carries a cookie name, so the name
+    // alone appearing anywhere in the payload is a leak.
+    EXPECT_FALSE([result containsString:@"httponly_cookie"]) << result.UTF8String;
+
+    // A denial is not a MESSAGE_CHECK: the process that sent the forged messages is still running and still
+    // gets replies. Not that its own cookie access works - a denied reply decodes too, and siteb has no
+    // cookies here. ThirdPartyIframeCookiesWithSiteIsolation is what covers an iframe reading its own site.
+    EXPECT_TRUE([result containsString:@"\"attackerStillRunningAfterDenials\":true"]) << result.UTF8String;
+
+    RetainPtr mainFrame = [webView mainFrame];
+    EXPECT_EQ(1u, mainFrame.get().childFrames.count);
+    RetainPtr<WKFrameInfo> attackerFrameInfo = mainFrame.get().childFrames.firstObject.info;
+    pid_t mainFramePid = mainFrame.get().info._processIdentifier;
+    pid_t attackerFramePid = attackerFrameInfo.get()._processIdentifier;
+    // Without site isolation one process hosts every frame of the page, so it hosts a document for sitea
+    // too and naming sitea's URL is legitimate. These reads are only expected to be denied because the
+    // attacker really is in a process of its own.
+    EXPECT_NE(mainFramePid, attackerFramePid);
+    EXPECT_NE(0, attackerFramePid);
+    if (attackerFrameInfo)
+        EXPECT_WK_STREQ("https://siteb.example", [webView stringByEvaluatingJavaScript:@"location.origin" inFrame:attackerFrameInfo.get()]);
+}
+
+static constexpr auto siteIsolationCookieIPCScopeSetCookieBytes = R"TESTRESOURCE(
+<title>cookie IPC scope setup</title>
+<script>
+alert('CookieIPCScopeSet ' + JSON.stringify({
+    origin: location.origin,
+    frameID: currentFrameIDString(),
+    pageID: IPC.pageID.toString(),
+    webPageProxyID: IPC.webPageProxyID.toString(),
+    documentCookie: document.cookie
+}, (_, value) => typeof value === 'bigint' ? value.toString() : value));
+</script>
+)TESTRESOURCE"_s;
+
+static constexpr auto siteIsolationCookieIPCScopeEmbedMainBytes = R"TESTRESOURCE(
+<title>cookie IPC scope embed main</title>
+<script>
+let completed = false;
+function finishWithTimeout()
+{
+    if (!completed)
+        alert('CookieIPCScopeProof TIMEOUT origin=' + location.origin + ' cookie=' + document.cookie);
+}
+setTimeout(finishWithTimeout, 10000);
+
+window.addEventListener('message', event => {
+    const data = event.data;
+    if (!data || typeof data !== 'object')
+        return;
+
+    if (data.type === 'scope-embedded-ready') {
+        event.source.postMessage({
+            type: 'scope-embedded-start',
+            firstPartyA: 'https://sitea.example/scope-set-a',
+            urlA: 'https://sitea.example/scope-target'
+        }, 'https://siteb.example');
+        return;
+    }
+
+    if (data.type !== 'scope-embedded-result')
+        return;
+
+    completed = true;
+    const params = new URLSearchParams;
+    params.set('label', 'after-embed');
+    params.set('firstPartyA', 'https://sitea.example/scope-set-a');
+    params.set('urlA', 'https://sitea.example/scope-target');
+    params.set('aFrameID', currentFrameIDString());
+    params.set('aPageID', IPC.pageID.toString());
+    params.set('aWebPageProxyID', IPC.webPageProxyID.toString());
+    params.set('embeddedDigestIsDigest', data.readA && data.readA.replied && data.readA.isDigest ? '1' : '0');
+    location.href = 'https://siteb.example/scope-top-b#' + params.toString();
+});
+
+const attacker = document.createElement('iframe');
+attacker.src = 'https://siteb.example/scope-embedded-b';
+document.documentElement.appendChild(attacker);
+</script>
+)TESTRESOURCE"_s;
+
+static constexpr auto siteIsolationCookieIPCScopeEmbeddedAttackerBytes = R"TESTRESOURCE(
+<title>cookie IPC scope embedded attacker</title>
+<script>
+window.addEventListener('message', event => {
+    const data = event.data;
+    if (!data || data.type !== 'scope-embedded-start')
+        return;
+
+    // CookieRequestHeaderFieldValueDigest is not one of the denied messages, so what has to hold for this
+    // read of sitea's cookie header from siteb's process is that the reply is a digest and nothing else.
+    const readA = readCookieHeaderDigest(data.firstPartyA, data.urlA);
+    parent.postMessage({
+        type: 'scope-embedded-result',
+        origin: location.origin,
+        readA
+    }, 'https://sitea.example');
+});
+
+parent.postMessage({ type: 'scope-embedded-ready', origin: location.origin }, 'https://sitea.example');
+</script>
+)TESTRESOURCE"_s;
+
+static constexpr auto siteIsolationCookieIPCScopeTopAttackerBytes = R"TESTRESOURCE(
+<title>cookie IPC scope top attacker</title>
+<script>
+const params = new URLSearchParams(location.hash.substring(1));
+const firstPartyA = params.get('firstPartyA') || 'https://sitea.example/scope-set-a';
+const urlA = params.get('urlA') || 'https://sitea.example/scope-target';
+const readABeforeSet = readCookieHeaderDigest(firstPartyA, urlA);
+const setA = setCookieFromDOM(firstPartyA, urlA, params.get('aFrameID'), params.get('aPageID'), params.get('aWebPageProxyID'), 'scope_visible=topB; Path=/');
+// The write has no reply, but it and this read travel the same connection, so the network process handles
+// the read after it: a write that had landed would show up as a different digest here.
+const readAAfterSet = readCookieHeaderDigest(firstPartyA, urlA);
+
+alert('CookieIPCScopeProof ' + JSON.stringify({
+    label: params.get('label') || 'no-embed',
+    origin: location.origin,
+    embeddedDigestIsDigest: params.get('embeddedDigestIsDigest') === '1',
+    readABeforeSet,
+    setA,
+    readAAfterSet,
+    // The proof of concept found scope_visible=topB in the cookie header it read back. Only a digest of
+    // that header is available now, so the write is detected by the digest changing across it. Both
+    // digests being digests is asserted separately, or a pair of failed reads would make this comparison
+    // pass without anything having been compared.
+    setAVisibleCookie: readAAfterSet.digest !== readABeforeSet.digest,
+    digestsAreDigests: readABeforeSet.isDigest && readAAfterSet.isDigest,
+    // Both reads replying at all, the second one after a denied write, is this process not having been
+    // terminated for any of it.
+    stillRunningAfterDenials: readABeforeSet.replied && readAAfterSet.replied
+}, (_, value) => typeof value === 'bigint' ? value.toString() : value));
+</script>
+)TESTRESOURCE"_s;
+
+static constexpr auto siteIsolationCookieIPCScopeVerifyBytes = R"TESTRESOURCE(
+<title>cookie IPC scope verify</title>
+<script>
+alert('CookieIPCScopeVerify ' + JSON.stringify({
+    origin: location.origin,
+    documentCookie: document.cookie
+}));
+</script>
+)TESTRESOURCE"_s;
+
+TEST(IPCTestingAPI, SiteIsolationForgedNetworkCookieIPCScopeExpansionIsDenied)
+{
+    using namespace TestWebKitAPI;
+
+    HTTPServer server({
+        { "/scope-set-a"_s, { { { "Content-Type"_s, "text/html"_s }, { "Set-Cookie"_s, "scope_session=scopeA; Path=/; HttpOnly; Secure; SameSite=Strict"_s }, { "Cache-Control"_s, "no-store"_s } }, siteIsolationCookieIPCPage(siteIsolationCookieIPCScopeSetCookieBytes) } },
+        { "/scope-embed-a"_s, { { { "Content-Type"_s, "text/html"_s }, { "Cache-Control"_s, "no-store"_s } }, siteIsolationCookieIPCPage(siteIsolationCookieIPCScopeEmbedMainBytes) } },
+        { "/scope-embedded-b"_s, { { { "Content-Type"_s, "text/html"_s }, { "Cache-Control"_s, "no-store"_s } }, siteIsolationCookieIPCPage(siteIsolationCookieIPCScopeEmbeddedAttackerBytes) } },
+        { "/scope-top-b"_s, { { { "Content-Type"_s, "text/html"_s }, { "Cache-Control"_s, "no-store"_s } }, siteIsolationCookieIPCPage(siteIsolationCookieIPCScopeTopAttackerBytes) } },
+        { "/scope-target"_s, { { { "Content-Type"_s, "text/html"_s }, { "Cache-Control"_s, "no-store"_s } }, "scope target"_s } },
+        { "/scope-verify"_s, { { { "Content-Type"_s, "text/html"_s }, { "Cache-Control"_s, "no-store"_s } }, siteIsolationCookieIPCPage(siteIsolationCookieIPCScopeVerifyBytes) } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr<TestNavigationDelegate> navigationDelegate;
+    RetainPtr<IPCTestingAPIAlertRecorder> alertRecorder;
+    RetainPtr webView = createSiteIsolatedIPCTestWebView(server, navigationDelegate, alertRecorder);
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://sitea.example/scope-set-a"]]];
+    NSString *setAResult = [alertRecorder waitForAlert];
+    ASSERT_TRUE(setAResult) << "no alert from the set-cookie step";
+    EXPECT_TRUE([setAResult containsString:@"\"origin\":\"https://sitea.example\""]) << setAResult.UTF8String;
+
+    // This step's alert comes from a top level https://siteb.example page naming
+    // firstParty=https://sitea.example/scope-set-a. It runs only because /scope-top-b is same site for the
+    // siteb subframe's process and reuses it, and that process's allowed first party set is add only. Were
+    // that set ever subtractive, allowsFirstPartyForCookies() would answer Terminate and kill the process
+    // before it alerted; the bounded wait below is what reports that.
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://sitea.example/scope-embed-a"]]];
+    NSString *afterEmbedResult = [alertRecorder waitForAlert];
+    ASSERT_TRUE(afterEmbedResult) << "no alert from the embedded-attacker step";
+    EXPECT_TRUE([afterEmbedResult containsString:@"\"label\":\"after-embed\""]) << afterEmbedResult.UTF8String;
+    EXPECT_TRUE([afterEmbedResult containsString:@"\"origin\":\"https://siteb.example\""]) << afterEmbedResult.UTF8String;
+
+    // Neither while embedded in sitea's page nor after that embedding relationship ended does siteb's
+    // process get anything but a digest for sitea's cookie header, or manage to write a cookie that
+    // becomes visible to sitea. The write really was sent, so setAVisibleCookie:false is about a denied
+    // write rather than about a write that never happened.
+    EXPECT_TRUE([afterEmbedResult containsString:@"\"embeddedDigestIsDigest\":true"]) << afterEmbedResult.UTF8String;
+    EXPECT_TRUE([afterEmbedResult containsString:@"\"digestsAreDigests\":true"]) << afterEmbedResult.UTF8String;
+    EXPECT_TRUE([afterEmbedResult containsString:@"\"setA\":{\"sent\":true}"]) << afterEmbedResult.UTF8String;
+    EXPECT_TRUE([afterEmbedResult containsString:@"\"setAVisibleCookie\":false"]) << afterEmbedResult.UTF8String;
+
+    // A denial is not a MESSAGE_CHECK: the process that sent the forged messages is still running.
+    EXPECT_TRUE([afterEmbedResult containsString:@"\"stillRunningAfterDenials\":true"]) << afterEmbedResult.UTF8String;
+    EXPECT_WK_STREQ("https://siteb.example", [webView stringByEvaluatingJavaScript:@"location.origin"]);
+
+    // The forged write is not in sitea's cookie store either. scope_session is HttpOnly, so a document of
+    // sitea's own only ever sees scope_visible=topB here, and only if the write landed.
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://sitea.example/scope-verify"]]];
+    NSString *verifyResult = [alertRecorder waitForAlert];
+    ASSERT_TRUE(verifyResult) << "no alert from the verify step";
+    EXPECT_TRUE([verifyResult containsString:@"\"origin\":\"https://sitea.example\""]) << verifyResult.UTF8String;
+
+    // Asserted from the cookie store as well, which is the assertion the third proof of concept in this
+    // series contributed: it is the store the forged write would have reached, it also holds the HttpOnly
+    // cookie a document of sitea's cannot see, and reading scope_session back proves the store read works
+    // rather than the absence of scope_visible being an empty answer.
+    RetainPtr dataStore = webView.get().configuration.websiteDataStore;
+    EXPECT_WK_STREQ("scopeA", cookieValueInStore(dataStore.get(), @"scope_session"));
+    EXPECT_WK_STREQ("", cookieValueInStore(dataStore.get(), @"scope_visible"));
 }
 
 #endif

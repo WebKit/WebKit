@@ -845,6 +845,10 @@ public:
     unsigned inspectorFrontendCount() const { return m_inspectorFrontendCount; }
     bool hasInspectorFrontend() const { return m_inspectorFrontendCount > 0; }
 
+    // UI process state only, unlike hasInspectorFrontend(), so it is safe to grant a capability from it.
+    bool hasConnectedInspectorFrontend() const;
+    void updateCookieDomainAuthorization();
+
     bool isControlledByAutomation() const { return m_controlledByAutomation; }
     void setControlledByAutomation(bool);
 

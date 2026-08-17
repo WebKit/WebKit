@@ -320,8 +320,12 @@ private:
 
     void registerURLSchemesAsCORSEnabled(Vector<String>&& schemes);
 
+    // Mirrors NetworkProcess::AllowCookieAccess, which cannot be named here. Terminate must be MESSAGE_CHECKed.
     enum class CookieAccess : uint8_t { Disallow, Allow, Terminate };
-    CookieAccess validateCookieAccess(ASCIILiteral messageName, const URL& firstParty, const URL&, const WebCore::SameSiteInfo*);
+    // Which sites a message's url may name. The restrictive value is the default, so a handler that forgets it
+    // denies too much rather than too little.
+    enum class CookieURLPolicy : uint8_t { HostedSitesOnly, HostedSitesUnlessDebugging, AnySite };
+    CookieAccess validateCookieAccess(ASCIILiteral messageName, const URL& firstParty, const URL&, const WebCore::SameSiteInfo*, CookieURLPolicy = CookieURLPolicy::HostedSitesOnly);
 
     void cookiesForDOM(const URL& firstParty, const WebCore::SameSiteInfo&, const URL&, WebCore::FrameIdentifier, WebCore::PageIdentifier, WebCore::IncludeSecureCookies, WebPageProxyIdentifier, CompletionHandler<void(String cookieString, bool secureCookiesAccessed)>&&);
     void setCookiesFromDOM(const URL& firstParty, const WebCore::SameSiteInfo&, const URL&, WebCore::FrameIdentifier, WebCore::PageIdentifier, const String& cookieString, WebCore::RequiresScriptTrackingPrivacy, WebPageProxyIdentifier);
@@ -426,7 +430,7 @@ private:
 
     MessageBatchIdentifier nextMessageBatchIdentifier(CompletionHandler<void()>&&);
 
-    void domCookiesForHost(const URL& host, CompletionHandler<void(const Vector<WebCore::Cookie>&)>&&);
+    void domCookiesForHost(const URL& firstParty, const URL& host, CompletionHandler<void(std::optional<Vector<WebCore::Cookie>>&&)>&&);
 
 #if HAVE(COOKIE_CHANGE_LISTENER_API)
     void subscribeToCookieChangeNotifications(const URL&, const URL& firstParty, WebCore::FrameIdentifier, WebCore::PageIdentifier, WebPageProxyIdentifier, CompletionHandler<void(bool)>&&);

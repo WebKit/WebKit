@@ -291,6 +291,70 @@ void WebProcessProxy::forWebPagesWithOrigin(PAL::SessionID sessionID, const Secu
     }
 }
 
+std::optional<HashSet<WebCore::RegistrableDomain>> WebProcessProxy::allowedCookieDomains() const
+{
+    if (m_hostsUnknownCookieDomains)
+        return std::nullopt;
+
+    if (m_usesSingleWebProcess)
+        return std::nullopt;
+
+    // FrameProcess::site() is std::nullopt for the shared process, so its sites cannot be enumerated reliably.
+    // FIXME: record the site at the navigation point instead.
+    if (isSharedProcess())
+        return std::nullopt;
+
+    if (!m_hasRecordedAnyCookieDomain)
+        return std::nullopt;
+
+    auto domains = m_hostedCookieDomains;
+    domains.addAll(m_sharedProcessDomains);
+    return domains;
+}
+
+// Add-only, because a document can still write cookies from an unload handler after its frame has moved to
+// another process. The flag is set even when no domain can be attributed, so that an empty set means "nothing
+// this process may name" rather than "not known yet", which is allow-all.
+void WebProcessProxy::recordCookieDomain(const std::optional<WebCore::Site>& site)
+{
+    m_hasRecordedAnyCookieDomain = true;
+
+    if (site && !site->isEmpty())
+        m_hostedCookieDomains.add(site->domain());
+
+    updateCookieDomainAuthorization();
+}
+
+bool WebProcessProxy::allowsUnhostedCookieDomains() const
+{
+    // Not hasInspectorFrontend(), whose count the web process reports and could therefore claim for itself.
+    for (Ref page : pages()) {
+        if (page->hasConnectedInspectorFrontend())
+            return true;
+    }
+
+    // pages() excludes provisional pages, whose load a frontend can pause for an arbitrarily long time.
+    for (Ref provisionalPage : m_provisionalPages) {
+        if (RefPtr page = provisionalPage->page(); page && page->hasConnectedInspectorFrontend())
+            return true;
+    }
+
+    return false;
+}
+
+// One push for both halves, so no caller can update one and forget the other. Not awaited: it travels the same
+// connection as the addAllowedFirstPartyForCookies() that gates every load, and is always sent first.
+void WebProcessProxy::updateCookieDomainAuthorization()
+{
+    // Not websiteDataStore(), which ASSERTs the store is non-null.
+    RefPtr dataStore = m_websiteDataStore;
+    if (!dataStore)
+        return;
+
+    if (RefPtr networkProcess = dataStore->networkProcessIfExists())
+        networkProcess->setCookieDomainAuthorizationForProcess(*this, allowedCookieDomains(), allowsUnhostedCookieDomains(), [] { });
+}
+
 void WebProcessProxy::addAllowedFirstPartyForCookies(const WebCore::RegistrableDomain& domain, LoadedWebArchive loadedWebArchive)
 {
     m_allowedFirstPartiesForCookies.second.add(domain);
@@ -333,6 +397,7 @@ WebProcessProxy::WebProcessProxy(WebProcessPool& processPool, WebsiteDataStore* 
 #if HAVE(DISPLAY_LINK)
     , m_displayLinkClient(makeUniqueRef<DisplayLinkProcessProxyClient>())
 #endif
+    , m_usesSingleWebProcess(processPool.configuration().usesSingleWebProcess())
     , m_isResponsive(NoOrMaybe::Maybe)
     , m_visiblePageCounter([this](RefCounterEvent) { updateBackgroundResponsivenessTimer(); })
     , m_websiteDataStore(websiteDataStore)
@@ -421,6 +486,7 @@ void WebProcessProxy::platformDestroy()
 void WebProcessProxy::addSharedProcessDomain(const RegistrableDomain& domain)
 {
     m_sharedProcessDomains.add(domain);
+    updateCookieDomainAuthorization();
 }
 
 void WebProcessProxy::setIsolatedProcessType(IsolatedProcessType isolatedProcessType, std::optional<WebCore::Site> mainFrameSite)
@@ -555,6 +621,7 @@ void WebProcessProxy::addProvisionalPageProxy(ProvisionalPageProxy& provisionalP
     m_provisionalPages.add(provisionalPage);
     initializePreferencesForGPUAndNetworkProcesses(*protect(provisionalPage.page()));
     updateRegistrationWithDataStore();
+    updateCookieDomainAuthorization();
 }
 
 void WebProcessProxy::removeProvisionalPageProxy(ProvisionalPageProxy& provisionalPage)
@@ -564,6 +631,7 @@ void WebProcessProxy::removeProvisionalPageProxy(ProvisionalPageProxy& provision
     ASSERT(m_provisionalPages.contains(provisionalPage));
     m_provisionalPages.remove(provisionalPage);
     updateRegistrationWithDataStore();
+    updateCookieDomainAuthorization();
     if (m_provisionalPages.isEmptyIgnoringNullReferences()) {
         if (RefPtr page = provisionalPage.page())
             reportProcessDisassociatedWithPageIfNecessary(page->identifier());
@@ -581,6 +649,7 @@ void WebProcessProxy::addRemotePageProxy(RemotePageProxy& remotePage)
     updateRegistrationWithDataStore();
     markProcessAsRecentlyUsed();
     initializePreferencesForGPUAndNetworkProcesses(*protect(remotePage.page()));
+    updateCookieDomainAuthorization();
 }
 
 void WebProcessProxy::removeRemotePageProxy(RemotePageProxy& remotePage)
@@ -590,6 +659,7 @@ void WebProcessProxy::removeRemotePageProxy(RemotePageProxy& remotePage)
     WEBPROCESSPROXY_RELEASE_LOG(Loading, "removeRemotePageProxy: remotePage=%p", &remotePage);
     m_remotePages.remove(remotePage);
     updateRegistrationWithDataStore();
+    updateCookieDomainAuthorization();
     if (m_remotePages.isEmptyIgnoringNullReferences())
         maybeShutDown();
 }
@@ -928,6 +998,7 @@ void WebProcessProxy::addExistingWebPage(WebPageProxy& webPage, BeginsUsingDataS
 
     updateRegistrationWithDataStore();
     updateBackgroundResponsivenessTimer();
+    updateCookieDomainAuthorization();
     protect(websiteDataStore())->propagateSettingUpdates();
 
     // If this was previously a standalone worker process with no pages we need to call didChangeThrottleState()
@@ -976,6 +1047,7 @@ void WebProcessProxy::removeWebPage(WebPageProxy& webPage, EndsUsingDataStore en
     updateAudibleMediaAssertions();
     updateMediaStreamingActivity();
     updateBackgroundResponsivenessTimer();
+    updateCookieDomainAuthorization();
     protect(websiteDataStore())->propagateSettingUpdates();
 
 #if ENABLE(MEDIA_STREAM)
@@ -2535,14 +2607,30 @@ void WebProcessProxy::didStartUsingProcessForSiteIsolation(const std::optional<W
 {
     if (!site) {
         ASSERT(m_site.error() == SiteState::NotYetSpecified || m_site.error() == SiteState::SharedProcess);
+        // Drops domains from an earlier life of a cached process. Safe only because it has no live documents.
         m_sharedProcessDomains.clear();
         m_site = makeUnexpected(SiteState::SharedProcess);
         m_sharedProcessMainFrameSite = mainFrameSite;
+        updateCookieDomainAuthorization();
         return;
     }
     ASSERT(m_site ? (m_site.value().isEmpty() || m_site.value() == *site || !m_hasCommittedAnyProvisionalLoads) : (m_site.error() == SiteState::NotYetSpecified || m_site.error() == SiteState::MultipleSites));
     m_committedSites.add(*site);
     m_site = *site;
+    updateCookieDomainAuthorization();
+}
+
+void WebProcessProxy::didStartHostingSiteForCookies(const std::optional<WebCore::Site>& site, bool isSiteIsolated, bool isArchiveProcess)
+{
+    // Keyed off the FrameProcess, not this process's shared preferences, which merge monotonically and so stay
+    // true for a process reused by a page that has site isolation off.
+    if (!isSiteIsolated || isArchiveProcess) {
+        m_hostsUnknownCookieDomains = true;
+        recordCookieDomain(std::nullopt);
+        return;
+    }
+
+    recordCookieDomain(site);
 }
 
 unsigned WebProcessProxy::suspendedPageCount() const
@@ -3032,6 +3120,7 @@ void WebProcessProxy::disableRemoteWorkers(OptionSet<RemoteWorkerType> workerTyp
     if (workerTypes.contains(RemoteWorkerType::ServiceWorker))
         send(Messages::WebSWContextManagerConnection::Close { }, 0);
 
+    // No push here: the set is add-only, and a process that stopped running workers must not widen back.
     maybeShutDown();
 }
 
@@ -3057,6 +3146,10 @@ void WebProcessProxy::enableRemoteWorkers(RemoteWorkerType workerType, const Web
     updateBackgroundResponsivenessTimer();
 
     updateRemoteWorkerProcessAssertion(workerType);
+
+    // A remote-worker process never constructs a FrameProcess, so without this nothing would record a domain
+    // for it. m_site is the registration's top site, set before this runs.
+    recordCookieDomain(m_site ? std::optional<WebCore::Site> { *m_site } : std::nullopt);
 }
 
 void WebProcessProxy::markProcessAsRecentlyUsed()

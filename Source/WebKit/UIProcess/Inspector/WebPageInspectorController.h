@@ -63,6 +63,7 @@ public:
     void init();
     void pageClosed();
 
+    bool hasFrontends() const;
     bool hasLocalFrontend() const;
 
     void connectFrontend(Inspector::FrontendChannel&, bool isAutomaticInspection = false, bool immediatelyPause = false);

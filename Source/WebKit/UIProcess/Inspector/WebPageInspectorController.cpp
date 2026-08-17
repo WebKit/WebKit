@@ -103,6 +103,11 @@ void WebPageInspectorController::pageClosed()
     m_agents.discardValues();
 }
 
+bool WebPageInspectorController::hasFrontends() const
+{
+    return m_frontendRouter->hasFrontends();
+}
+
 bool WebPageInspectorController::hasLocalFrontend() const
 {
     return m_frontendRouter->hasLocalFrontend();
@@ -127,6 +132,9 @@ void WebPageInspectorController::connectFrontend(Inspector::FrontendChannel& fro
     Ref inspectedPage = m_inspectedPage.get();
     inspectedPage->didChangeInspectorFrontendCount(m_frontendRouter->frontendCount());
 
+    // Page.getCookies and Page.deleteCookie name URLs the page's processes do not host.
+    inspectedPage->updateCookieDomainAuthorization();
+
 #if ENABLE(REMOTE_INSPECTOR)
     if (hasLocalFrontend())
         inspectedPage->remoteInspectorInformationDidChange();
@@ -148,6 +156,7 @@ void WebPageInspectorController::disconnectFrontend(FrontendChannel& frontendCha
 
     Ref inspectedPage = m_inspectedPage.get();
     inspectedPage->didChangeInspectorFrontendCount(m_frontendRouter->frontendCount());
+    inspectedPage->updateCookieDomainAuthorization();
 
 #if ENABLE(REMOTE_INSPECTOR)
     if (disconnectingLastFrontend)
@@ -174,6 +183,7 @@ void WebPageInspectorController::disconnectAllFrontends()
 
     Ref inspectedPage = m_inspectedPage.get();
     inspectedPage->didChangeInspectorFrontendCount(m_frontendRouter->frontendCount());
+    inspectedPage->updateCookieDomainAuthorization();
 
 #if ENABLE(REMOTE_INSPECTOR)
     inspectedPage->remoteInspectorInformationDidChange();

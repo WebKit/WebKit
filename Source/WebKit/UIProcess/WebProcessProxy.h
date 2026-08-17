@@ -213,6 +213,12 @@ public:
     void addAllowedFirstPartyForCookies(const WebCore::RegistrableDomain&, LoadedWebArchive);
     const std::pair<LoadedWebArchive, HashSet<WebCore::RegistrableDomain>>& allowedFirstPartiesForCookiesData() const { return m_allowedFirstPartiesForCookies; }
 
+    // The sites this process may host documents for. std::nullopt means any site.
+    std::optional<HashSet<WebCore::RegistrableDomain>> allowedCookieDomains() const;
+    // Whether it may also name sites it does not host, which only Web Inspector needs.
+    bool allowsUnhostedCookieDomains() const;
+    void updateCookieDomainAuthorization();
+
     void initializeWebProcess(WebProcessCreationParameters&&);
 
     unsigned suspendedPageCount() const;
@@ -439,6 +445,7 @@ public:
     void didStartProvisionalLoadForMainFrame(const URL&);
     void didCommitMainFrameLoadWithoutSiteIsolation(const URL&);
     void didStartUsingProcessForSiteIsolation(const std::optional<WebCore::Site>&, const WebCore::Site& mainFrameSite);
+    void didStartHostingSiteForCookies(const std::optional<WebCore::Site>&, bool isSiteIsolated, bool isArchiveProcess);
 
     // ProcessThrottlerClient
     void sendPrepareToSuspend(IsSuspensionImminent, double remainingRunTime, CompletionHandler<void()>&&) final;
@@ -655,6 +662,7 @@ private:
     WebProcessProxy(WebProcessPool&, WebsiteDataStore*, IsPrewarmed, WebCore::CrossOriginMode, LockdownMode, EnhancedSecurity);
 
     void updateSiteForMainFrameNavigation(const URL&);
+    void recordCookieDomain(const std::optional<WebCore::Site>&);
 
     // AuxiliaryProcessProxy
     ASCIILiteral processName() const final { return "WebContent"_s; }
@@ -857,6 +865,12 @@ private:
 
     Expected<WebCore::Site, SiteState> m_site { std::unexpected<SiteState> { SiteState::NotYetSpecified } };
     HashSet<WebCore::Site> m_committedSites;
+    HashSet<WebCore::RegistrableDomain> m_hostedCookieDomains;
+    bool m_hostsUnknownCookieDomains { false };
+    // Distinguishes "may name nothing" from "not known yet", which is allow-all.
+    bool m_hasRecordedAnyCookieDomain { false };
+    // Snapshotted because WKContextSetUsesSingleWebProcess() writes the pool's live configuration.
+    const bool m_usesSingleWebProcess;
     std::optional<WebCore::Site> m_sharedProcessMainFrameSite;
     HashSet<WebCore::RegistrableDomain> m_sharedProcessDomains;
     std::pair<LoadedWebArchive, HashSet<WebCore::RegistrableDomain>> m_allowedFirstPartiesForCookies { LoadedWebArchive::No, { } };

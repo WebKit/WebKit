@@ -475,6 +475,12 @@ public:
     AllowCookieAccess allowsFirstPartyForCookies(WebCore::ProcessIdentifier, const RegistrableDomain&);
     void addAllowedFirstPartyForCookies(WebCore::ProcessIdentifier, WebCore::RegistrableDomain&&, LoadedWebArchive, CompletionHandler<void()>&&);
 
+    // The sites a process may host documents for, as opposed to the first parties it may name. std::nullopt is
+    // any site. allowsUnhostedDomains also lets it name sites it does not host, which only Web Inspector needs.
+    void setCookieDomainAuthorizationForProcess(WebCore::ProcessIdentifier, std::optional<HashSet<WebCore::RegistrableDomain>>&& allowedDomains, bool allowsUnhostedDomains, CompletionHandler<void()>&&);
+    bool allowsCookieDomainForProcess(WebCore::ProcessIdentifier, const RegistrableDomain&) const;
+    bool allowsUnhostedCookieDomainsForProcess(WebCore::ProcessIdentifier) const;
+
     // Per launch, so a reconnecting web process keeps its Vary entries.
     uint64_t cookieHeaderDigestSalt() const { return m_cookieHeaderDigestSalt; }
 
@@ -650,8 +656,12 @@ private:
     HashMap<PAL::SessionID, std::unique_ptr<NetworkSession>> m_networkSessions;
     HashMap<PAL::SessionID, std::unique_ptr<WebCore::NetworkStorageSession>> m_networkStorageSessions;
     HashMap<WebCore::ProcessIdentifier, std::pair<LoadedWebArchive, HashSet<WebCore::RegistrableDomain>>> m_allowedFirstPartiesForCookies;
-    HashMap<WebCore::ProcessIdentifier, HashSet<String>> m_pendingAllowedFilePathsByProcess;
+
+    HashMap<WebCore::ProcessIdentifier, std::optional<HashSet<WebCore::RegistrableDomain>>> m_allowedCookieDomainsForProcess;
+    HashSet<WebCore::ProcessIdentifier> m_processesAllowedUnhostedCookieDomains;
     const uint64_t m_cookieHeaderDigestSalt { cryptographicallyRandomNumber<uint64_t>() };
+
+    HashMap<WebCore::ProcessIdentifier, HashSet<String>> m_pendingAllowedFilePathsByProcess;
 
 #if PLATFORM(COCOA)
     void platformInitializeNetworkProcessCocoa(const NetworkProcessCreationParameters&);

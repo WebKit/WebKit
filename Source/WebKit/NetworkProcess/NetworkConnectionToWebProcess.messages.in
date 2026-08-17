@@ -50,7 +50,7 @@ messages -> NetworkConnectionToWebProcess WantsDispatchMessage {
     SetRawCookie(URL firstParty, URL url, struct WebCore::Cookie cookie, enum:bool WebCore::ShouldPartitionCookie shouldPartitionCookie)
     GetRawCookies(URL firstParty, struct WebCore::SameSiteInfo sameSiteInfo, URL url, std::optional<WebCore::FrameIdentifier> frameID, std::optional<WebCore::PageIdentifier> pageID, std::optional<WebKit::WebPageProxyIdentifier> webPageProxyID) -> (Vector<WebCore::Cookie> cookies) Synchronous
     DeleteCookie(URL firstParty, URL url, String cookieName) -> ()
-    DomCookiesForHost(URL host) -> (Vector<WebCore::Cookie> cookies) Synchronous
+    DomCookiesForHost(URL firstParty, URL host) -> (std::optional<Vector<WebCore::Cookie>> cookies) Synchronous
 
     [EnabledBy=CookieStoreAPIEnabled] CookiesForDOMAsync(URL firstParty, struct WebCore::SameSiteInfo sameSiteInfo, URL url, std::optional<WebCore::FrameIdentifier> frameID, std::optional<WebCore::PageIdentifier> pageID, enum:bool WebCore::IncludeSecureCookies includeSecureCookies, struct WebCore::CookieStoreGetOptions options, std::optional<WebKit::WebPageProxyIdentifier> webPageProxyID) -> (std::optional<Vector<WebCore::Cookie>> cookies)
 
