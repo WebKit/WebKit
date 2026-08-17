@@ -887,19 +887,12 @@ void RenderTable::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffs
     }
     
     if (collapseBorders() && paintPhase == PaintPhase::ChildBlockBackground && style().usedVisibility() == Visibility::Visible) {
-        recalcCollapsedBorders();
-        // Using our cached sorted styles, we then do individual passes,
-        // painting each style of border from lowest precedence to highest precedence.
-        info.phase = PaintPhase::CollapsedTableBorders;
-        size_t count = m_collapsedBorders.size();
-        for (size_t i = 0; i < count; ++i) {
-            m_currentBorder = &m_collapsedBorders[i];
+        paintCollapsedBorderPasses(info, [&](PaintInfo& borderPaintInfo) {
             for (RenderTableSection* section = bottomSection(); section; section = sectionAbove(section)) {
                 LayoutPoint childPoint = flipForWritingModeForChild(*section, paintOffset);
-                section->paint(info, childPoint);
+                section->paint(borderPaintInfo, childPoint);
             }
-        }
-        m_currentBorder = nullptr;
+        });
     }
 
     // Paint outline.
@@ -907,7 +900,8 @@ void RenderTable::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffs
         paintOutline(paintInfo, LayoutRect(paintOffset, borderBoxSize()));
 }
 
-void RenderTable::paintCollapsedBordersForRow(PaintInfo& paintInfo, RenderTableRow& row, const LayoutPoint& paintOffset)
+template<typename Function>
+void RenderTable::paintCollapsedBorderPasses(const PaintInfo& paintInfo, NOESCAPE const Function& paintPass)
 {
     ASSERT(collapseBorders());
     recalcCollapsedBorders();
@@ -915,16 +909,23 @@ void RenderTable::paintCollapsedBordersForRow(PaintInfo& paintInfo, RenderTableR
     PaintInfo borderPaintInfo(paintInfo);
     borderPaintInfo.phase = PaintPhase::CollapsedTableBorders;
 
-    for (size_t i = 0; i < m_collapsedBorders.size(); ++i) {
-        m_currentBorder = &m_collapsedBorders[i];
+    for (auto& border : m_collapsedBorders) {
+        m_currentBorder = &border;
+        paintPass(borderPaintInfo);
+    }
+    m_currentBorder = nullptr;
+}
+
+void RenderTable::paintCollapsedBordersForRow(PaintInfo& paintInfo, RenderTableRow& row, const LayoutPoint& paintOffset)
+{
+    paintCollapsedBorderPasses(paintInfo, [&](PaintInfo& borderPaintInfo) {
         for (CheckedPtr cell = row.firstCell(); cell; cell = cell->nextCell()) {
             if (!cell->hasSelfPaintingLayer()) {
                 auto cellPoint = row.flipForWritingModeForChild(*cell, paintOffset);
                 cell->paintCollapsedBorders(borderPaintInfo, cellPoint);
             }
         }
-    }
-    m_currentBorder = nullptr;
+    });
 }
 
 void RenderTable::adjustBorderBoxRectForPainting(LayoutRect& rect)

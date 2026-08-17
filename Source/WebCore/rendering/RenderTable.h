@@ -226,6 +226,8 @@ protected:
     void paintObject(PaintInfo&, const LayoutPoint&) final;
     void paintBoxDecorations(PaintInfo&, const LayoutPoint&) final;
     void paintMask(PaintInfo&, const LayoutPoint&) final;
+
+    template<typename Function> void paintCollapsedBorderPasses(const PaintInfo&, NOESCAPE const Function& paintPass);
     void layout() final;
     std::pair<LayoutUnit, LayoutUnit> computeIntrinsicLogicalWidths(TableIntrinsics) const;
     std::pair<LayoutUnit, LayoutUnit> computeIntrinsicLogicalWidths() const final;
