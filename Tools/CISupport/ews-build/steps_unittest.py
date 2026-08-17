@@ -1443,18 +1443,6 @@ class TestAnalyzeCompileWebKitResults(BuildStepMixinAdditions, unittest.TestCase
     def tearDown(self):
         return self.tear_down_test_build_step()
 
-    def test_patch_with_build_failure(self):
-        previous_steps = [
-            mock_step(CompileWebKit(), results=FAILURE),
-            mock_step(CompileWebKitWithoutChange(), results=SUCCESS),
-        ]
-        self.setup_step(AnalyzeCompileWebKitResults(), previous_steps=previous_steps)
-        self.setProperty('patch_id', '1234')
-        self.expect_outcome(result=FAILURE, state_string='Patch 1234 does not build (failure)')
-        rc = self.run_step()
-        self.expect_property('comment_text', None)
-        self.expect_property('build_finish_summary', 'Patch 1234 does not build')
-        return rc
 
     def test_pull_request_with_build_failure(self):
         previous_steps = [
@@ -1469,29 +1457,7 @@ class TestAnalyzeCompileWebKitResults(BuildStepMixinAdditions, unittest.TestCase
         self.expect_property('build_finish_summary', 'Hash 7496f8ec for PR 1234 does not build')
         return rc
 
-    def test_patch_with_build_failure_on_commit_queue(self):
-        previous_steps = [
-            mock_step(CompileWebKit(), results=FAILURE),
-            mock_step(CompileWebKitWithoutChange(), results=SUCCESS),
-        ]
-        self.setup_step(AnalyzeCompileWebKitResults(), previous_steps=previous_steps)
-        self.setProperty('patch_id', '1234')
-        self.setProperty('buildername', 'commit-queue')
-        self.expect_outcome(result=FAILURE, state_string='Patch 1234 does not build (failure)')
-        rc = self.run_step()
-        self.expect_property('comment_text', 'Patch 1234 does not build')
-        self.expect_property('build_finish_summary', 'Patch 1234 does not build')
-        return rc
 
-    @expectedFailure
-    def test_patch_with_trunk_failure(self):
-        previous_steps = [
-            mock_step(CompileWebKit(), results=FAILURE),
-            mock_step(CompileWebKitWithoutChange(), results=FAILURE),
-        ]
-        self.setup_step(AnalyzeCompileWebKitResults(), previous_steps=previous_steps)
-        self.expect_outcome(result=FAILURE, state_string='Unable to build WebKit without patch, retrying build (failure)')
-        return self.run_step()
 
     @expectedFailure
     def test_pr_with_main_failure(self):
@@ -2044,15 +2010,6 @@ ts","version":4,"num_passes":42158,"pixel_tests_enabled":false,"date":"11:28AM o
         self.expect_outcome(result=SKIPPED, state_string='Skipped layout-tests in fast-cq mode')
         return self.run_step()
 
-    def test_skip_for_mac_wk2_passed_change_on_commit_queue(self):
-        self.configureStep()
-        self.setProperty('patch_id', '1234')
-        self.setProperty('buildername', 'Commit-Queue')
-        self.setProperty('fullPlatform', 'mac')
-        self.setProperty('configuration', 'debug')
-        self.setProperty('passed_mac_wk2', True)
-        self.expect_outcome(result=SKIPPED, state_string='Skipped layout-tests')
-        return self.run_step()
 
     def test_skip_for_mac_wk2_passed_change_on_merge_queue(self):
         self.configureStep()
@@ -2922,16 +2879,6 @@ class TestAnalyzeLayoutTestsResults(BuildStepMixinAdditions, unittest.TestCase):
         self.expect_property('build_finish_summary', 'Found 1 new test failure: test1')
         return rc
 
-    def test_consistent_failure_without_clean_tree_failures_commit_queue(self):
-        self.configureStep()
-        self.setProperty('buildername', 'Commit-Queue')
-        self.setProperty('first_run_failures', ['test1'])
-        self.setProperty('second_run_failures', ['test1'])
-        self.expect_outcome(result=FAILURE, state_string='Found 1 new test failure: test1 (failure)')
-        rc = self.run_step()
-        self.expect_property('comment_text', 'Found 1 new test failure: test1')
-        self.expect_property('build_finish_summary', 'Found 1 new test failure: test1')
-        return rc
 
     def test_flaky_and_inconsistent_failures_without_clean_tree_failures(self):
         self.configureStep()
@@ -4026,8 +3973,11 @@ class TestAnalyzeLayoutTestsResultsRedTree(BuildStepMixinAdditions, unittest.Tes
     def configureCommonProperties(self):
         self.setProperty('fullPlatform', 'gtk')
         self.setProperty('configuration', 'release')
-        self.setProperty('patch_author', 'test@igalia.com')
-        self.setProperty('patch_id', '404044')
+        self.setProperty('github.number', 404044)
+        self.setProperty('github.head.sha', '1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b')
+        self.setProperty('repository', 'https://github.com/WebKit/WebKit')
+        self.setProperty('owners', ['webkit-commit-queue'])
+        Contributors.load = mock_load_contributors
 
     def test_failure_introduced_by_change_clean_tree_green(self):
         self.configureStep()
@@ -4045,7 +3995,7 @@ class TestAnalyzeLayoutTestsResultsRedTree(BuildStepMixinAdditions, unittest.Tes
         for flaky_test in ["test/flaky1.html", "test/flaky2.html", "test/failure2.html", "test/pre-existent/flaky.html"]:
             self.assertTrue(f'Test name: <a href="https://github.com/WebKit/WebKit/blob/main/LayoutTests/{flaky_test}">{flaky_test}</a>' in self._emails_list[0])
         self.assertFalse('Test name: <a href="https://github.com/WebKit/WebKit/blob/main/LayoutTests/test/failure1.html">test/failure1.html</a>' in self._emails_list[0])
-        self.assertTrue('Subject: Layout test failure for Patch' in self._emails_list[1])
+        self.assertTrue('Subject: Layout test failure for Hash 1a2b3c4d' in self._emails_list[1])
         self.assertTrue('test/failure1.html' in self._emails_list[1])
         return step_result
 
@@ -4067,7 +4017,7 @@ class TestAnalyzeLayoutTestsResultsRedTree(BuildStepMixinAdditions, unittest.Tes
         self.assertFalse('Test name: <a href="https://github.com/WebKit/WebKit/blob/main/LayoutTests/preexisting-test/pre-existent/failure.html">preexisting-test/pre-existent/failure.html</a>' in self._emails_list[0])
         self.assertTrue('Subject: Info about 1 pre-existent failure at' in self._emails_list[1])
         self.assertTrue('preexisting-test/pre-existent/failure.html' in self._emails_list[1])
-        self.assertTrue('Subject: Layout test failure for Patch' in self._emails_list[2])
+        self.assertTrue('Subject: Layout test failure for Hash 1a2b3c4d' in self._emails_list[2])
         self.assertTrue('test/failure1.html' in self._emails_list[2])
         return step_result
 
@@ -4272,7 +4222,7 @@ class TestAnalyzeLayoutTestsResultsRedTree(BuildStepMixinAdditions, unittest.Tes
         self.assertEqual(len(self._emails_list), 2)
         expected_infrastructure_error = 'The step "layout-tests-repeat-failures-with-change" reached the timeout but the step "layout-tests-repeat-failures-without-change" ended. Not trying to repeat this. Reporting 2 failures from the first run.'
         self.assertTrue(expected_infrastructure_error in self._emails_list[0])
-        self.assertTrue('Subject: Layout test failure for Patch' in self._emails_list[1])
+        self.assertTrue('Subject: Layout test failure for Hash 1a2b3c4d' in self._emails_list[1])
         for failed_test in ['test/failure1.html', 'test/failure2.html']:
             self.assertTrue(failed_test in self._emails_list[1])
         return step_result
@@ -4584,188 +4534,6 @@ class TestUpdateWorkingDirectory(BuildStepMixinAdditions, unittest.TestCase):
             .exit(2),
         )
         self.expect_outcome(result=FAILURE, state_string='Failed to updated working directory')
-        return self.run_step()
-
-
-class TestApplyPatch(BuildStepMixinAdditions, unittest.TestCase):
-    READ_LIMIT = 1000
-    ENV = dict(FILTER_BRANCH_SQUELCH_WARNING='1')
-
-    @staticmethod
-    def downloadFileRecordingContents(limit, recorder):
-        def behavior(command):
-            reader = command.args['reader']
-            data = reader.remote_read(limit)
-            recorder(data)
-            reader.remote_close()
-        return behavior
-
-    def setUp(self):
-        self.longMessage = True
-
-        def mock_start(cls, *args, **kwargs):
-            from buildbot.steps import shell
-            return shell.ShellCommand.start(cls)
-        ApplyPatch.start = mock_start
-        return self.setup_test_build_step()
-
-    def tearDown(self):
-        return self.tear_down_test_build_step()
-
-    @expectedFailure
-    def test_success(self):
-        self.setup_step(ApplyPatch())
-        self.setProperty('patch_id', '1234')
-        self.assertEqual(ApplyPatch.flunkOnFailure, True)
-        self.assertEqual(ApplyPatch.haltOnFailure, True)
-        buf = []
-        self.expectRemoteCommands(
-            Expect('downloadFile', dict(
-                workerdest='.buildbot-diff', workdir='wkdir',
-                blocksize=1024 * 32, maxsize=None, mode=None,
-                reader=ExpectRemoteRef(remotetransfer.FileReader),
-            ))
-            + Expect.behavior(self.downloadFileRecordingContents(self.READ_LIMIT, buf.append))
-            .exit(0),
-            ExpectShell(
-                workdir='wkdir',
-                timeout=600,
-                log_environ=False,
-                env=self.ENV,
-                command=['curl', '-L', 'https://bugs.webkit.org/attachment.cgi?id=1234', '-o', '.buildbot-diff'],
-            ).exit(0),
-            ExpectShell(
-                workdir='wkdir',
-                timeout=600,
-                log_environ=False,
-                env=self.ENV,
-                command=['git', 'config', 'user.name', 'EWS'],
-            ).exit(0),
-            ExpectShell(
-                workdir='wkdir',
-                timeout=600,
-                log_environ=False,
-                env=self.ENV,
-                command=['git', 'config', 'user.email', 'ews@webkit.org'],
-            ).exit(0),
-            ExpectShell(
-                workdir='wkdir',
-                timeout=600,
-                log_environ=False,
-                env=self.ENV,
-                command=['git', 'am', '--keep-non-patch', '.buildbot-diff'],
-            ).exit(0),
-            ExpectShell(
-                workdir='wkdir',
-                timeout=600,
-                log_environ=False,
-                env=self.ENV,
-                command=['git', 'filter-branch', '-f', '--msg-filter', 'python3 -c "{}"'.format(ApplyPatch.FILTER_BRANCH_PROGRAM), 'HEAD...HEAD~1'],
-            ).exit(0),
-        )
-        self.expect_outcome(result=SUCCESS, state_string='Applied patch')
-        return self.run_step()
-
-    @expectedFailure
-    def test_success_win(self):
-        self.setup_step(ApplyPatch())
-        self.setProperty('patch_id', '1234')
-        self.setProperty('platform', 'win')
-        self.assertEqual(ApplyPatch.flunkOnFailure, True)
-        self.assertEqual(ApplyPatch.haltOnFailure, True)
-        buf = []
-        self.expectRemoteCommands(
-            Expect('downloadFile', dict(
-                workerdest='.buildbot-diff', workdir='wkdir',
-                blocksize=1024 * 32, maxsize=None, mode=None,
-                reader=ExpectRemoteRef(remotetransfer.FileReader),
-            ))
-            + Expect.behavior(self.downloadFileRecordingContents(self.READ_LIMIT, buf.append))
-            .exit(0),
-            ExpectShell(
-                workdir='wkdir',
-                timeout=600,
-                log_environ=False,
-                env=self.ENV,
-                command=['curl', '-L', 'https://bugs.webkit.org/attachment.cgi?id=1234', '-o', '.buildbot-diff'],
-            ).exit(0),
-            ExpectShell(
-                workdir='wkdir',
-                timeout=600,
-                log_environ=False,
-                env=self.ENV,
-                command=['git', 'config', 'user.name', 'EWS'],
-            ).exit(0),
-            ExpectShell(
-                workdir='wkdir',
-                timeout=600,
-                log_environ=False,
-                env=self.ENV,
-                command=['git', 'config', 'user.email', 'ews@webkit.org'],
-            ).exit(0),
-            ExpectShell(
-                workdir='wkdir',
-                timeout=600,
-                log_environ=False,
-                env=self.ENV,
-                command=['git', 'am', '--keep-non-patch', '.buildbot-diff'],
-            ).exit(0),
-        )
-        self.expect_outcome(result=SUCCESS, state_string='Applied patch')
-        return self.run_step()
-
-    @expectedFailure
-    def test_failure(self):
-        self.setup_step(ApplyPatch())
-        self.setProperty('patch_id', '1234')
-        buf = []
-        self.expectRemoteCommands(
-            Expect('downloadFile', dict(
-                workerdest='.buildbot-diff', workdir='wkdir',
-                blocksize=1024 * 32, maxsize=None, mode=None,
-                reader=ExpectRemoteRef(remotetransfer.FileReader),
-            ))
-            + Expect.behavior(self.downloadFileRecordingContents(self.READ_LIMIT, buf.append))
-            .exit(0),
-            ExpectShell(
-                workdir='wkdir',
-                timeout=600,
-                log_environ=False,
-                env=self.ENV,
-                command=['curl', '-L', 'https://bugs.webkit.org/attachment.cgi?id=1234', '-o', '.buildbot-diff'],
-            ).exit(0),
-            ExpectShell(
-                workdir='wkdir',
-                timeout=600,
-                log_environ=False,
-                env=self.ENV,
-                command=['git', 'config', 'user.name', 'EWS'],
-            ).exit(0),
-            ExpectShell(
-                workdir='wkdir',
-                timeout=600,
-                log_environ=False,
-                env=self.ENV,
-                command=['git', 'config', 'user.email', 'ews@webkit.org'],
-            ).exit(0),
-            ExpectShell(
-                workdir='wkdir',
-                timeout=600,
-                log_environ=False,
-                env=self.ENV,
-                command=['git', 'am', '--keep-non-patch', '.buildbot-diff'],
-            ).exit(1),
-        )
-        self.expect_outcome(result=FAILURE, state_string='git failed to apply patch to trunk')
-        rc = self.run_step()
-        self.expect_property('comment_text', None)
-        self.expect_property('build_finish_summary', None)
-        return rc
-
-    def test_skipped(self):
-        self.setup_step(ApplyPatch())
-        self.expect_hidden(True)
-        self.expect_outcome(result=SKIPPED, state_string="Skipping applying patch since patch_id isn't provided")
         return self.run_step()
 
 
@@ -7570,13 +7338,6 @@ class TestValidateChange(BuildStepMixinAdditions, unittest.TestCase):
             ), labels=[dict(name=label) for label in labels or []],
         )
 
-    def test_skipped_patch(self):
-        self.setup_step(ValidateChange())
-        self.setProperty('patch_id', '1234')
-        self.setProperty('bug_id', '5678')
-        self.setProperty('skip_validation', True)
-        self.expect_outcome(result=SKIPPED, state_string='Validated change (skipped)')
-        return self.run_step()
 
     def test_skipped_pr(self):
         self.setup_step(ValidateChange())
@@ -7586,14 +7347,6 @@ class TestValidateChange(BuildStepMixinAdditions, unittest.TestCase):
         self.expect_outcome(result=SKIPPED, state_string='Validated change (skipped)')
         return self.run_step()
 
-    def test_success_patch(self):
-        self.setup_step(ValidateChange(verifyBugClosed=False))
-        ValidateChange.get_patch_json = lambda x, patch_id: self.get_patch()
-        self.setProperty('patch_id', '425806')
-        self.expect_outcome(result=SUCCESS, state_string='Validated change')
-        rc = self.run_step()
-        self.expect_property('fast_commit_queue', None, 'fast_commit_queue is unexpectedly set')
-        return rc
 
     def test_success_pr(self):
         self.setup_step(ValidateChange(verifyBugClosed=False))
@@ -7617,14 +7370,6 @@ class TestValidateChange(BuildStepMixinAdditions, unittest.TestCase):
         self.expect_property('fast_commit_queue', None, 'fast_commit_queue is unexpectedly set')
         return rc
 
-    def test_obsolete_patch(self):
-        self.setup_step(ValidateChange(verifyBugClosed=False))
-        ValidateChange.get_patch_json = lambda x, patch_id: self.get_patch(obsolete=1)
-        self.setProperty('patch_id', '425806')
-        self.expect_outcome(result=FAILURE, state_string='Patch 425806 is obsolete')
-        rc = self.run_step()
-        self.expect_property('fast_commit_queue', None, 'fast_commit_queue is unexpectedly set')
-        return rc
 
     def test_obsolete_pr(self):
         self.setup_step(ValidateChange(verifyBugClosed=False))
@@ -7648,17 +7393,6 @@ class TestValidateChange(BuildStepMixinAdditions, unittest.TestCase):
         self.expect_property('fast_commit_queue', None, 'fast_commit_queue is unexpectedly set')
         return rc
 
-    @skipTest("This should be expectedFailure, except https://github.com/twisted/twisted/issues/10969")
-    def test_fast_cq_patches_trigger_fast_cq_mode(self):
-        fast_cq_patch_titles = ('REVERT OF r1234', 'revert of r1234', 'REVERT of 123456@main', '[fast-cq]Patch', '[FAST-cq] patch', 'fast-cq-patch', 'FAST-CQ Patch')
-        for fast_cq_patch_title in fast_cq_patch_titles:
-            self.setup_step(ValidateChange(verifyBugClosed=False))
-            ValidateChange.get_patch_json = lambda x, patch_id: self.get_patch(title=fast_cq_patch_title)
-            self.setProperty('patch_id', '425806')
-            self.expect_outcome(result=SUCCESS, state_string='Validated change')
-            rc = self.run_step()
-            self.expect_property('fast_commit_queue', True, f'fast_commit_queue is not set, patch title: {fast_cq_patch_title}')
-        return rc
 
     def test_merge_queue(self):
         self.setup_step(ValidateChange(verifyMergeQueue=True))
@@ -7715,20 +7449,6 @@ class TestValidateChange(BuildStepMixinAdditions, unittest.TestCase):
         self.expect_property('fast_commit_queue', None, 'fast_commit_queue is unexpectedly set')
         return rc
 
-    def test_sensative_patch(self):
-        self.setup_step(ValidateChange(verifyBugClosed=False))
-        ValidateChange.get_patch_json = lambda x, patch_id: self.get_patch()
-        self.setProperty('patch_id', '425806')
-        self.setProperty('sensitive', True)
-        self.setProperty('buildername', 'Commit-Queue')
-
-        message = 'Cannot land security changes with Commit-Queue, please use a GitHub PR against a secret remote'
-        self.expect_outcome(result=FAILURE, state_string=message)
-        rc = self.run_step()
-        self.expect_property('fast_commit_queue', None, 'fast_commit_queue is unexpectedly set')
-        self.expect_property('build_finish_summary', message)
-        self.expect_property('comment_text', message)
-        return rc
 
     def test_skipped_branch(self):
         self.setup_step(ValidateChange(verifyBugClosed=False, branches=[r'main']))
@@ -8168,11 +7888,6 @@ class TestValidateUserForQueue(BuildStepMixinAdditions, unittest.TestCase):
     def tearDown(self):
         return self.tear_down_test_build_step()
 
-    def test_success_patch(self):
-        self.setup_step(ValidateUserForQueue())
-        self.setProperty('patch_committer', 'committer@webkit.org')
-        self.expect_outcome(result=SUCCESS, state_string='Validated user for queue')
-        return self.run_step()
 
     def test_success_pr(self):
         self.setup_step(ValidateUserForQueue())
@@ -8181,12 +7896,6 @@ class TestValidateUserForQueue(BuildStepMixinAdditions, unittest.TestCase):
         self.expect_outcome(result=SUCCESS, state_string='Validated user for queue')
         return self.run_step()
 
-    def test_failure_load_contributors_patch(self):
-        self.setup_step(ValidateUserForQueue())
-        self.setProperty('patch_committer', 'abc@webkit.org')
-        Contributors.load = lambda *args, **kwargs: ({}, [])
-        self.expect_outcome(result=FAILURE, state_string='Failed to get contributors information (failure)')
-        return self.run_step()
 
     def test_failure_load_contributors_pr(self):
         self.setup_step(ValidateUserForQueue())
@@ -8196,11 +7905,6 @@ class TestValidateUserForQueue(BuildStepMixinAdditions, unittest.TestCase):
         self.expect_outcome(result=FAILURE, state_string='Failed to get contributors information (failure)')
         return self.run_step()
 
-    def test_failure_invalid_committer_patch(self):
-        self.setup_step(ValidateUserForQueue())
-        self.setProperty('patch_committer', 'abc@webkit.org')
-        self.expect_outcome(result=FAILURE, state_string='Skipping queue, as abc@webkit.org lacks committer status (failure)')
-        return self.run_step()
 
     def test_failure_invalid_committer_pr(self):
         self.setup_step(ValidateUserForQueue())
@@ -8219,17 +7923,6 @@ class TestValidateCommitterAndReviewer(BuildStepMixinAdditions, unittest.TestCas
     def tearDown(self):
         return self.tear_down_test_build_step()
 
-    def test_success_patch(self):
-        self.setup_step(ValidateCommitterAndReviewer())
-        self.setProperty('patch_id', '1234')
-        self.setProperty('patch_committer', 'committer@webkit.org')
-        self.setProperty('reviewer', 'reviewer@apple.com')
-        self.expect_hidden(False)
-        self.assertEqual(ValidateCommitterAndReviewer.haltOnFailure, False)
-        self.expect_outcome(result=SUCCESS, state_string='Validated committer and reviewer')
-        rc = self.run_step()
-        self.expect_property('valid_reviewers', ['WebKit Reviewer'])
-        return rc
 
     def test_success_pr(self):
         self.setup_step(ValidateCommitterAndReviewer())
@@ -8255,13 +7948,6 @@ class TestValidateCommitterAndReviewer(BuildStepMixinAdditions, unittest.TestCas
         self.expect_property('valid_reviewers', ['WebKit Reviewer'])
         return rc
 
-    def test_success_no_reviewer_patch(self):
-        self.setup_step(ValidateCommitterAndReviewer())
-        self.setProperty('patch_id', '1234')
-        self.setProperty('patch_committer', 'reviewer@apple.com')
-        self.expect_hidden(False)
-        self.expect_outcome(result=SUCCESS, state_string='Validated committer, valid reviewer not found')
-        return self.run_step()
 
     def test_success_no_reviewer_pr(self):
         self.setup_step(ValidateCommitterAndReviewer())
@@ -8281,14 +7967,6 @@ class TestValidateCommitterAndReviewer(BuildStepMixinAdditions, unittest.TestCas
         self.expect_outcome(result=SUCCESS, state_string='Validated committer and reviewer')
         return self.run_step()
 
-    def test_failure_load_contributors_patch(self):
-        self.setup_step(ValidateCommitterAndReviewer())
-        self.setProperty('patch_id', '1234')
-        self.setProperty('patch_committer', 'abc@webkit.org')
-        Contributors.load = lambda *args, **kwargs: ({}, [])
-        self.expect_hidden(False)
-        self.expect_outcome(result=FAILURE, state_string='Failed to get contributors information')
-        return self.run_step()
 
     def test_failure_load_contributors_pr(self):
         self.setup_step(ValidateCommitterAndReviewer())
@@ -8299,13 +7977,6 @@ class TestValidateCommitterAndReviewer(BuildStepMixinAdditions, unittest.TestCas
         self.expect_outcome(result=FAILURE, state_string='Failed to get contributors information')
         return self.run_step()
 
-    def test_failure_invalid_committer_patch(self):
-        self.setup_step(ValidateCommitterAndReviewer())
-        self.setProperty('patch_id', '1234')
-        self.setProperty('patch_committer', 'abc@webkit.org')
-        self.expect_hidden(False)
-        self.expect_outcome(result=FAILURE, state_string='abc@webkit.org does not have committer permissions')
-        return self.run_step()
 
     def test_failure_invalid_committer_pr(self):
         self.setup_step(ValidateCommitterAndReviewer())
@@ -8315,17 +7986,6 @@ class TestValidateCommitterAndReviewer(BuildStepMixinAdditions, unittest.TestCas
         self.expect_outcome(result=FAILURE, state_string='abc does not have committer permissions')
         return self.run_step()
 
-    def test_success_invalid_reviewer_patch(self):
-        self.setup_step(ValidateCommitterAndReviewer())
-        self.setProperty('patch_id', '1234')
-        self.setProperty('patch_committer', 'reviewer@apple.com')
-        self.setProperty('reviewer', 'committer@webkit.org')
-        self.expect_hidden(False)
-        self.expect_outcome(result=SUCCESS, state_string='Validated committer, valid reviewer not found')
-        rc = self.run_step()
-        self.expect_property('valid_reviewers', [])
-        self.expect_property('invalid_reviewers', ['WebKit Committer'])
-        return rc
 
     def test_success_invalid_reviewer_pr(self):
         self.setup_step(ValidateCommitterAndReviewer())
@@ -8451,7 +8111,6 @@ class TestPushCommitToWebKitRepo(BuildStepMixinAdditions, unittest.TestCase):
 
     def test_success(self):
         self.setup_step(PushCommitToWebKitRepo())
-        self.setProperty('patch_id', '1234')
         self.setProperty('remote', 'origin')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
@@ -8471,7 +8130,6 @@ class TestPushCommitToWebKitRepo(BuildStepMixinAdditions, unittest.TestCase):
     @expectedFailure
     def test_failure_retry(self):
         self.setup_step(PushCommitToWebKitRepo())
-        self.setProperty('patch_id', '2345')
         self.setProperty('remote', 'origin')
 
         self.expectRemoteCommands(
@@ -8490,26 +8148,6 @@ class TestPushCommitToWebKitRepo(BuildStepMixinAdditions, unittest.TestCase):
         self.expect_property('landed_hash', None)
         return rc
 
-    def test_failure_patch(self):
-        self.setup_step(PushCommitToWebKitRepo())
-        self.setProperty('remote', 'origin')
-        self.setProperty('patch_id', '2345')
-        self.setProperty('retry_count', PushCommitToWebKitRepo.MAX_RETRY)
-        self.expectRemoteCommands(
-            ExpectShell(workdir='wkdir',
-                        timeout=300,
-                        log_environ=False,
-                        env=dict(GIT_USER='webkit-commit-queue', GIT_PASSWORD='password'),
-                        command=['git', 'push', 'origin', 'HEAD:main'])
-            .log('stdio', stdout='Unexpected failure')
-            .exit(2),
-        )
-        self.expect_outcome(result=FAILURE, state_string='Failed to push commit to Webkit repository')
-        with current_hostname(EWS_BUILD_HOSTNAMES[0]):
-            rc = self.run_step()
-        self.expect_property('build_finish_summary', 'Failed to commit to WebKit repository')
-        self.expect_property('comment_text', 'commit-queue failed to commit attachment 2345 to WebKit repository. To retry, please set cq+ flag again.')
-        return rc
 
     def test_failure_pr(self):
         self.setup_step(PushCommitToWebKitRepo())
@@ -8771,47 +8409,7 @@ class TestDetermineLandedIdentifier(BuildStepMixinAdditions, unittest.TestCase):
         self.expect_property('comment_text', 'Committed ? (5dc27962b4c5): <https://commits.webkit.org/5dc27962b4c5>\n\nReviewed commits have been landed. Closing PR #1234 and removing active labels.')
         self.expect_property('build_summary', 'Committed 5dc27962b4c5')
 
-    @defer.inlineCallbacks
-    def test_success_patch(self):
-        with self.mock_commits_webkit_org(identifier='220797@main'), self.mock_sleep():
-            self.setup_step(DetermineLandedIdentifier())
-            self.setProperty('landed_hash', '5dc27962b4c5')
-            self.setProperty('patch_id', '1234')
-            self.expectRemoteCommands(
-                ExpectShell(workdir='wkdir',
-                            timeout=300,
-                            log_environ=False,
-                            command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', "git log -1 --format=%B | sed 's/^Canonical link:/Canonical-link:/' | git -c trailer.Canonical-link.key=Canonical-link -c trailer.Identifier.key=Identifier -c trailer.git-svn-id.key=git-svn-id interpret-trailers --parse --no-divider | grep 'Canonical-link: https://commits\\.webkit\\.org/'"])
-                .log('stdio', stdout='')
-                .exit(1),
-            )
-            self.expect_outcome(result=SUCCESS, state_string='Identifier: 220797@main')
-            with current_hostname(EWS_BUILD_HOSTNAMES[0]):
-                yield self.run_step()
 
-        self.expect_property('comment_text', 'Committed 220797@main (5dc27962b4c5): <https://commits.webkit.org/220797@main>\n\nAll reviewed patches have been landed. Closing bug and clearing flags on attachment 1234.')
-        self.expect_property('build_summary', 'Committed 220797@main')
-
-    @defer.inlineCallbacks
-    def test_patch_no_identifier(self):
-        with self.mock_commits_webkit_org(), self.mock_sleep():
-            self.setup_step(DetermineLandedIdentifier())
-            self.setProperty('landed_hash', '5dc27962b4c5')
-            self.setProperty('patch_id', '1234')
-            self.expectRemoteCommands(
-                ExpectShell(workdir='wkdir',
-                            timeout=300,
-                            log_environ=False,
-                            command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', "git log -1 --format=%B | sed 's/^Canonical link:/Canonical-link:/' | git -c trailer.Canonical-link.key=Canonical-link -c trailer.Identifier.key=Identifier -c trailer.git-svn-id.key=git-svn-id interpret-trailers --parse --no-divider | grep 'Canonical-link: https://commits\\.webkit\\.org/'"])
-                .log('stdio', stdout='')
-                .exit(1),
-            )
-            self.expect_outcome(result=FAILURE, state_string='Failed to determine identifier')
-            with current_hostname(EWS_BUILD_HOSTNAMES[0]):
-                yield self.run_step()
-
-        self.expect_property('comment_text', 'Committed ? (5dc27962b4c5): <https://commits.webkit.org/5dc27962b4c5>\n\nAll reviewed patches have been landed. Closing bug and clearing flags on attachment 1234.')
-        self.expect_property('build_summary', 'Committed 5dc27962b4c5')
 
 
 class TestCheckOutSource(BuildStepMixinAdditions, unittest.TestCase):
@@ -9423,9 +9021,8 @@ class TestValidateRemote(BuildStepMixinAdditions, unittest.TestCase):
     def tearDown(self):
         return self.tear_down_test_build_step()
 
-    def test_patch(self):
+    def test_no_pull_request(self):
         self.setup_step(ValidateRemote())
-        self.setProperty('patch_id', '1234')
         self.expect_outcome(result=SKIPPED, state_string='finished (skipped)')
         return self.run_step()
 
@@ -9477,9 +9074,8 @@ class TestMapBranchAlias(BuildStepMixinAdditions, unittest.TestCase):
     def tearDown(self):
         return self.tear_down_test_build_step()
 
-    def test_patch(self):
+    def test_no_pull_request(self):
         self.setup_step(MapBranchAlias())
-        self.setProperty('patch_id', '1234')
         self.expect_outcome(result=SKIPPED, state_string='finished (skipped)')
         return self.run_step()
 
@@ -9867,36 +9463,7 @@ class TestValidateSquashed(BuildStepMixinAdditions, unittest.TestCase):
     def tearDown(self):
         return self.tear_down_test_build_step()
 
-    def test_patch(self):
-        self.setup_step(ValidateSquashed())
-        self.setProperty('patch_id', '1234')
-        self.expectRemoteCommands(
-            ExpectShell(workdir='wkdir',
-                        log_environ=False,
-                        command=['git', 'log', '--format=format:%H', 'HEAD', '^origin/main', '--max-count=51'],
-                        )
-            .exit(0)
-            .log('stdio', stdout='e1eb24603493\n'),
-        )
-        self.expect_outcome(result=SUCCESS, state_string='Verified commit is squashed')
-        return self.run_step()
 
-    def test_failure_patch(self):
-        self.setup_step(ValidateSquashed())
-        self.setProperty('patch_id', '1234')
-        self.expectRemoteCommands(
-            ExpectShell(workdir='wkdir',
-                        log_environ=False,
-                        command=['git', 'log', '--format=format:%H', 'HEAD', '^origin/main', '--max-count=51'],
-                        )
-            .exit(0)
-            .log('stdio', stdout='e1eb24603493\n08abb9ddcbb5\n45cf3efe4dfb\n'),
-        )
-        self.expect_outcome(result=FAILURE, state_string='Can only land squashed commits')
-        rc = self.run_step()
-        self.expect_property('comment_text', 'This change contains multiple commits which are not squashed together, rejecting attachment 1234 from commit queue. Please squash the commits to land.')
-        self.expect_property('build_finish_summary', 'Can only land squashed commits')
-        return rc
 
     def test_success(self):
         self.setup_step(ValidateSquashed())
@@ -10008,9 +9575,8 @@ class TestAddReviewerToCommitMessage(BuildStepMixinAdditions, unittest.TestCase)
     def tearDown(self):
         return self.tear_down_test_build_step()
 
-    def test_skipped_patch(self):
+    def test_skipped_no_pull_request(self):
         self.setup_step(AddReviewerToCommitMessage())
-        self.setProperty('patch_id', '1234')
         self.expect_outcome(result=SKIPPED, state_string='Skipped because there are no valid reviewers')
         return self.run_step()
 
@@ -10166,9 +9732,8 @@ class TestValidateCommitMessage(BuildStepMixinAdditions, unittest.TestCase):
     def tearDown(self):
         return self.tear_down_test_build_step()
 
-    def test_patch(self):
+    def test_no_pull_request(self):
         self.setup_step(ValidateCommitMessage())
-        self.setProperty('patch_id', '1234')
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         log_environ=False,
@@ -10395,59 +9960,6 @@ class TestCanonicalize(BuildStepMixinAdditions, unittest.TestCase):
     def tearDown(self):
         return self.tear_down_test_build_step()
 
-    def test_patch(self):
-        self.setup_step(Canonicalize())
-        self.setProperty('patch_id', '1234')
-        self.setProperty('patch_committer', 'committer@webkit.org')
-        self.setProperty('remote', 'origin')
-
-        gmtoffset = int(time.localtime().tm_gmtoff * 100 / (60 * 60))
-        fixed_time = int(time.time())
-        date = f'{int(time.time())} {gmtoffset}'
-        time.time = lambda: fixed_time
-
-        self.expectRemoteCommands(
-            ExpectShell(
-                workdir='wkdir',
-                timeout=300,
-                log_environ=False,
-                env=self.ENV,
-                command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'rm .git/identifiers.json || true'],
-            ).exit(0),
-            ExpectShell(
-                workdir='wkdir',
-                timeout=300,
-                log_environ=False,
-                env=self.ENV,
-                command=['git', 'pull', 'origin', 'main', '--rebase'],
-            ).exit(0),
-            ExpectShell(
-                workdir='wkdir',
-                timeout=300,
-                log_environ=False,
-                env=self.ENV,
-                command=['git', 'checkout', '--progress', 'main'],
-            ).exit(0),
-            ExpectShell(
-                workdir='wkdir',
-                timeout=300,
-                log_environ=False,
-                env=self.ENV,
-                command=['python3', 'Tools/Scripts/git-webkit', 'canonicalize', '-n', '1'],
-            ).exit(0),
-            ExpectShell(workdir='wkdir',
-                        log_environ=False,
-                        env=self.ENV,
-                        timeout=300,
-                        command=[
-                            'git', 'filter-branch', '-f',
-                            '--env-filter', "GIT_AUTHOR_DATE='{date}';GIT_COMMITTER_DATE='{date}';GIT_COMMITTER_NAME='WebKit Committer';GIT_COMMITTER_EMAIL='committer@webkit.org'".format(date=date),
-                            'HEAD...HEAD~1',
-                        ],
-                        ).exit(0),
-        )
-        self.expect_outcome(result=SUCCESS, state_string='Canonicalized commit')
-        return self.run_step()
 
     def test_success(self):
         self.setup_step(Canonicalize())
@@ -10738,9 +10250,8 @@ class TestPushPullRequestBranch(BuildStepMixinAdditions, unittest.TestCase):
     def tearDown(self):
         return self.tear_down_test_build_step()
 
-    def test_skipped_patch(self):
+    def test_skipped_no_pull_request(self):
         self.setup_step(PushPullRequestBranch())
-        self.setProperty('patch_id', '1234')
         self.expect_outcome(result=SKIPPED, state_string='finished (skipped)')
         return self.run_step()
 
@@ -10833,9 +10344,8 @@ class TestUpdatePullRequest(BuildStepMixinAdditions, unittest.TestCase):
     def tearDown(self):
         return self.tear_down_test_build_step()
 
-    def test_skipped_patch(self):
+    def test_skipped_no_pull_request(self):
         self.setup_step(UpdatePullRequest())
-        self.setProperty('patch_id', '1234')
         self.expect_outcome(result=SKIPPED, state_string="'git log ...' (skipped)")
         return self.run_step()
 

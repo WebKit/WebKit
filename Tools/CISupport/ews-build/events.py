@@ -1,4 +1,4 @@
-# Copyright (C) 2019-2025 Apple Inc. All rights reserved.
+# Copyright (C) 2019-2026 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -151,7 +151,7 @@ class Events(service.BuildbotService):
             "type": self.type_prefix + "build",
             "status": "started",
             "hostname": self.master_hostname,
-            "change_id": self.extractProperty(build, 'github.head.sha') or self.extractProperty(build, 'patch_id'),
+            "change_id": self.extractProperty(build, 'github.head.sha'),
             "pr_author": self.extractProperty(build, 'github.head.user.login'),
             "pr_number": self.extractProperty(build, 'github.number') or -1,
             "pr_project": self.extractProperty(build, 'project') or '',
@@ -216,7 +216,7 @@ class Events(service.BuildbotService):
             "type": self.type_prefix + "build",
             "status": "finished",
             "hostname": self.master_hostname,
-            "change_id": self.extractProperty(build, 'github.head.sha') or self.extractProperty(build, 'patch_id'),
+            "change_id": self.extractProperty(build, 'github.head.sha'),
             "pr_author": self.extractProperty(build, 'github.head.user.login'),
             "pr_number": self.extractProperty(build, 'github.number') or -1,
             "pr_project": self.extractProperty(build, 'project') or '',

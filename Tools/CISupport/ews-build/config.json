@@ -550,12 +550,6 @@
       "workernames": ["ews151", "ews253", "webkit-misc"]
     },
     {
-      "name": "Commit-Queue", "shortname": "commit", "icon": "buildAndTest",
-      "factory": "CommitQueueFactory", "platform": "mac-sequoia",
-      "configuration": "release", "architectures": ["arm64"],
-      "workernames": ["webkit-cq-01", "webkit-cq-02", "webkit-cq-03", "webkit-cq-05", "webkit-cq-06"]
-    },
-    {
       "name": "Merge-Queue", "shortname": "merge", "icon": "buildAndTest",
       "factory": "MergeQueueFactory", "platform": "mac-sequoia",
       "configuration": "release", "architectures": ["arm64"],
@@ -574,20 +568,6 @@
     }
   ],
   "schedulers": [
-    {
-      "type": "Try_Userpass", "name": "try", "port": 5555,
-      "builderNames": [
-            "Bindings-Tests-EWS", "GTK-Build-EWS", "iOS-26-Build-EWS", "iOS-26-Simulator-Build-EWS", "JSC-Tests-O3-Debug-arm64-EWS",
-            "macOS-Tahoe-Debug-Build-EWS", "macOS-Sequoia-Release-Build-EWS", "macOS-Safer-CPP-Checks-EWS", "Apple-iOS-26-Safer-CPP-Checks-EWS",
-            "Services-EWS", "Style-EWS", "tvOS-26-Build-EWS", "tvOS-26-Simulator-Build-EWS", "visionOS-26-Build-EWS", "visionOS-26-Simulator-Build-EWS",
-            "watchOS-26-Build-EWS", "watchOS-26-Simulator-Build-EWS", "WPE-Build-EWS", "WebKitPerl-Tests-EWS", "WebKitPy-Tests-EWS", "PlayStation-Build-EWS", "Win-Build-EWS",
-            "GTK-GTK3-GCC-Build-EWS"
-      ]
-    },
-    {
-      "type": "Try_Userpass", "name": "try_commitqueue", "port": 5557,
-      "builderNames": ["Commit-Queue"]
-    },
     {
       "type": "AnyBranchScheduler", "name": "pull_request",
       "builderNames": [

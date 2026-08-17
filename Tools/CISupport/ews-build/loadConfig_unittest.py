@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #
-# Copyright (C) 2018-2022 Apple Inc. All rights reserved.
+# Copyright (C) 2018-2026 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -34,7 +34,7 @@ from . import loadConfig
 
 
 class ConfigDotJSONTest(unittest.TestCase):
-    DUPLICATED_TRIGGERS = ['try', 'pull_request']
+    DUPLICATED_TRIGGERS = ['pull_request']
 
     def get_config(self):
         cwd = os.path.dirname(os.path.abspath(__file__))
@@ -333,25 +333,12 @@ class TestPrioritizeBuilders(unittest.TestCase):
 
     def test_starvation(self):
         builders = [
-            self.MockBuilder('Commit-Queue', oldestRequestTime=datetime.now(timezone.utc) - timedelta(seconds=30)),
             self.MockBuilder('Merge-Queue', oldestRequestTime=datetime.now(timezone.utc) - timedelta(seconds=10)),
             self.MockBuilder('Unsafe-Merge-Queue', oldestRequestTime=datetime.now(timezone.utc) - timedelta(seconds=60)),
         ]
         sorted_builders = loadConfig.prioritizeBuilders(None, builders)
         self.assertEqual(
-            ['Unsafe-Merge-Queue', 'Commit-Queue', 'Merge-Queue'],
-            [builder.name for builder in sorted_builders],
-        )
-
-    def test_starvation_prioritize_commit_queue(self):
-        builders = [
-            self.MockBuilder('Commit-Queue', oldestRequestTime=datetime.now(timezone.utc) - timedelta(seconds=10)),
-            self.MockBuilder('Merge-Queue', oldestRequestTime=datetime.now(timezone.utc) - timedelta(seconds=60)),
-            self.MockBuilder('Unsafe-Merge-Queue', oldestRequestTime=datetime.now(timezone.utc) - timedelta(seconds=20)),
-        ]
-        sorted_builders = loadConfig.prioritizeBuilders(None, builders)
-        self.assertEqual(
-            ['Unsafe-Merge-Queue', 'Commit-Queue', 'Merge-Queue'],
+            ['Unsafe-Merge-Queue', 'Merge-Queue'],
             [builder.name for builder in sorted_builders],
         )
 
