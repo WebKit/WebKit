@@ -1999,6 +1999,8 @@ set(WebCore_SUPPLEMENTAL_IDL_FILES
     Modules/push-api/ServiceWorkerRegistration+PushAPI.idl
     Modules/push-api/WindowPush.idl
 
+    Modules/remoteplayback/HTMLMediaElement+RemotePlayback.idl
+
     Modules/screen-wake-lock/Navigator+ScreenWakeLock.idl
 
     Modules/speech/DOMWindow+SpeechSynthesis.idl
@@ -2119,6 +2121,7 @@ set(WebCore_SUPPLEMENTAL_IDL_FILES
     page/DOMWindow+RequestIdleCallback.idl
     page/DOMWindow+Selection.idl
     page/DOMWindow+VisualViewport.idl
+    page/Navigator+LoginStatus.idl
     page/Navigator+UserActivation.idl
     page/NavigatorCookies.idl
     page/NavigatorGlobalPrivacyControl.idl
