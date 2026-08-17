@@ -43,6 +43,8 @@ COMMIT_QUEUE_PORT = '5557'
 BUILDBOT_TRY_USERNAME = util.load_password('BUILDBOT_TRY_USERNAME', default='sampleuser')
 BUILDBOT_TRY_PASSWORD = util.load_password('BUILDBOT_TRY_PASSWORD', default='samplepass')
 
+is_bugzilla_not_enabled = util.load_password('BUGZILLA_NOT_ENABLED', default="false") is not None
+
 SUCCESS = 0
 ERR_UNEXPECTED = -1
 ERR_EXISTING_CHANGE = -2
