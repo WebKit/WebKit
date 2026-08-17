@@ -31,6 +31,7 @@
 #import "Helpers/cocoa/WebExtensionUtilities.h"
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/_WKInspectorPrivate.h>
+#import <wtf/SetForScope.h>
 
 namespace TestWebKitAPI {
 
@@ -651,6 +652,58 @@ TEST(WKWebExtensionAPIDevTools, PortMessagePassingFromPanelToDevToolsBackground)
 
         @"  browser.test.notifyPass()",
         @"})"
+    ]);
+
+    auto *iconSVG = @"<svg width='16' height='16' xmlns='http://www.w3.org/2000/svg'><circle cx='8' cy='8' r='8' fill='red' /></svg>";
+
+    auto *resources = @{
+        @"background.js": @"// This script is intentionally left blank.",
+        @"devtools.html": @"<script type='module' src='devtools.js'></script>",
+        @"devtools.js": devToolsScript,
+        @"panel.html": @"<script type='module' src='panel.js'></script>",
+        @"panel.js": panelScript,
+        @"icon.svg": iconSVG,
+    };
+
+    auto manager = Util::loadExtension(devToolsManifest, resources);
+
+    [manager.get().defaultTab.webView loadRequest:server.requestWithLocalhost()];
+    [manager.get().defaultTab.webView._inspector show];
+
+    [manager runUntilTestMessage:@"Panel Created"];
+
+    auto *extensionIdentifier = [NSString stringWithFormat:@"WebExtensionTab-%@-1", manager.get().context.uniqueIdentifier];
+    [manager.get().defaultTab.webView._inspector showExtensionTabWithIdentifier:extensionIdentifier completionHandler:^(NSError *error) {
+        EXPECT_NULL(error);
+    }];
+
+    [manager run];
+}
+
+TEST(WKWebExtensionAPIDevTools, InspectedWindowTabIdFromPanel)
+{
+    SetForScope siteIsolation { Util::shouldEnableSiteIsolationForWebExtensionsTest, true };
+
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, ""_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *devToolsScript = Util::constructScript(@[
+        @"let panel = await browser.devtools.panels.create('Test Panel', 'icon.svg', 'panel.html')",
+        @"browser.test.assertEq(typeof panel, 'object', 'Panel should be created successfully')",
+
+        // The devtools_page resolves through its own process, so this half holds either way.
+        @"browser.test.assertTrue(browser.devtools.inspectedWindow.tabId > 0, 'inspectedWindow.tabId should identify the inspected tab from the devtools page')",
+
+        @"browser.test.sendMessage('Panel Created')",
+    ]);
+
+    auto *panelScript = Util::constructScript(@[
+        @"const tabId = browser.devtools.inspectedWindow.tabId",
+        @"browser.test.assertEq(typeof tabId, 'number', 'inspectedWindow.tabId should be a number in a panel')",
+        @"browser.test.assertTrue(tabId > 0, 'inspectedWindow.tabId should identify the inspected tab from a panel, not be the none value')",
+
+        @"browser.test.notifyPass()",
     ]);
 
     auto *iconSVG = @"<svg width='16' height='16' xmlns='http://www.w3.org/2000/svg'><circle cx='8' cy='8' r='8' fill='red' /></svg>";

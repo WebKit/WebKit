@@ -3071,8 +3071,18 @@ HashSet<Ref<WebProcessProxy>> WebExtensionContext::processes(const API::Inspecto
     ASSERT(m_inspectorContextMap.contains(*inspectorProxy));
 
     const auto& inspectorContext = m_inspectorContextMap.get(*inspectorProxy);
-    if (auto *backgroundWebView = inspectorContext.backgroundWebView.get())
-        result.add(backgroundWebView._page->siteIsolatedProcess());
+    if (auto *backgroundWebView = inspectorContext.backgroundWebView.get()) {
+        Ref backgroundPage = *backgroundWebView._page;
+        backgroundPage->forEachWebContentProcess([&](auto& webProcess, auto) {
+            result.addVoid(webProcess);
+        });
+    }
+
+    if (RefPtr inspectorFrontendPage = inspectorProxy->inspectorPage()) {
+        inspectorFrontendPage->forEachWebContentProcess([&](auto& webProcess, auto) {
+            result.addVoid(webProcess);
+        });
+    }
 
     return result;
 }
@@ -3233,17 +3243,12 @@ void WebExtensionContext::loadInspectorBackgroundPage(WebInspectorUIProxy& inspe
         Ref inspectorExtension = result.value();
         inspectorExtension->setClient(makeUniqueRef<InspectorExtensionClient>(inspectorExtension, *this));
 
-        // Use foreground activity to keep background content responsive to events.
-        Ref inspectorPage = *inspectorBackgroundWebView._page;
-        Ref process = inspectorPage->legacyMainFrameProcess();
+        // Use foreground activity to keep background content responsive to events. A ProcessActivityGroup
+        // also covers processes the page later spreads to.
+        Ref inspectorBackgroundPage = *inspectorBackgroundWebView._page;
 
-        Variant<std::monostate, Ref<ProcessThrottlerActivity>, Ref<ProcessActivityGroup>> inspectorBackgroundWebViewActivity;
         constexpr ASCIILiteral activityName = "Web Extension Inspector background content"_s;
-
-        if (siteIsolationEnabled)
-            inspectorBackgroundWebViewActivity = protect(inspectorPage->activityGroupContext())->foregroundProcessActivityGroup(activityName);
-        else
-            inspectorBackgroundWebViewActivity = protect(process->throttler())->foregroundActivity(activityName);
+        Variant<std::monostate, Ref<ProcessThrottlerActivity>, Ref<ProcessActivityGroup>> inspectorBackgroundWebViewActivity = protect(inspectorBackgroundPage->activityGroupContext())->foregroundProcessActivityGroup(activityName);
 
         InspectorContext inspectorContext {
             tab->identifier(),
@@ -3259,10 +3264,16 @@ void WebExtensionContext::loadInspectorBackgroundPage(WebInspectorUIProxy& inspe
 
         auto appearance = protect(inspector->inspectorPage())->useDarkAppearance() ? Inspector::ExtensionAppearance::Dark : Inspector::ExtensionAppearance::Light;
 
-        ASSERT(siteIsolationEnabled || inspectorWebView._page->legacyMainFrameProcess() == process);
-        process->send(Messages::WebExtensionContextProxy::AddInspectorPageIdentifier(inspectorWebView._page->webPageIDInMainFrameProcess(), tab->identifier(), windowIdentifier), identifier());
-        process->send(Messages::WebExtensionContextProxy::AddInspectorBackgroundPageIdentifier(inspectorBackgroundWebView._page->webPageIDInMainFrameProcess(), tab->identifier(), windowIdentifier), identifier());
-        process->send(Messages::WebExtensionContextProxy::DispatchDevToolsPanelsThemeChangedEvent(appearance), identifier());
+        Ref inspectorFrontendPage = *inspectorWebView._page;
+        inspectorFrontendPage->forEachWebContentProcess([&](auto& webProcess, auto pageID) {
+            webProcess.send(Messages::WebExtensionContextProxy::AddInspectorPageIdentifier(pageID, tab->identifier(), windowIdentifier), identifier());
+        });
+
+        inspectorBackgroundPage->forEachWebContentProcess([&](auto& webProcess, auto pageID) {
+            webProcess.send(Messages::WebExtensionContextProxy::AddInspectorBackgroundPageIdentifier(pageID, tab->identifier(), windowIdentifier), identifier());
+        });
+
+        sendToProcesses(processes(inspectorExtension.get()), Messages::WebExtensionContextProxy::DispatchDevToolsPanelsThemeChangedEvent(appearance));
 
         [inspectorBackgroundWebView loadRequest:[NSURLRequest requestWithURL:inspectorBackgroundPageURL().createNSURL().get()]];
     });
