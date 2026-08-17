@@ -45,8 +45,11 @@
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <mach-o/dyld.h>
+#import <pal/spi/cocoa/PassKitSPI.h>
 #import <pal/spi/mac/NSApplicationSPI.h>
 #import <wtf/darwin/DispatchExtras.h>
+
+#import <pal/cocoa/PassKitSoftLink.h>
 
 @interface NSMenu ()
 - (id)_menuImpl;
@@ -64,6 +67,24 @@
     completionHandler(NSURLSessionAuthChallengeUseCredential, [NSURLCredential credentialForTrust:challenge.protectionSpace.serverTrust]);
 }
 @end
+
+#if ENABLE(APPLE_PAY)
+@interface WKTRFakePaymentAuthorizationViewController : NSViewController
+@end
+
+@implementation WKTRFakePaymentAuthorizationViewController
+- (void)loadView
+{
+    RetainPtr view = adoptNS([[NSView alloc] initWithFrame:NSMakeRect(0, 0, 200, 200)]);
+    self.view = view;
+}
+
+- (void)setDelegate:(id)delegate { }
+- (void)setPrivateDelegate:(id)delegate { }
+- (id)delegate { return nil; }
+- (id)privateDelegate { return nil; }
+@end
+#endif // ENABLE(APPLE_PAY)
 
 namespace WTR {
 
@@ -192,6 +213,10 @@ bool TestController::platformResetStateToConsistentValues(const TestOptions& opt
         [menu cancelTracking];
 
     cocoaResetStateToConsistentValues(options);
+
+#if ENABLE(APPLE_PAY)
+    setHasFakePaymentUIForTesting(false);
+#endif
 
     if (RetainPtr webView = m_mainWebView ? m_mainWebView->platformView() : nil) {
         auto newObscuredInsetTop = options.obscuredInsetTop();
@@ -534,6 +559,46 @@ void TestController::initializeWebProcessAccessibility()
     // WebProcessPool::initializeAccessibilityIfNecessary() to send the InitializeAccessibility
     // IPC message to the web content process.
     [platformView accessibilityAttributeValue:NSAccessibilityRoleAttribute];
+}
+
+#if ENABLE(APPLE_PAY)
+
+static void fakeRequestViewControllerWithPaymentRequest(id, SEL, id, void (^completion)(id viewController, NSError *error))
+{
+    RetainPtr viewController = adoptNS([[WKTRFakePaymentAuthorizationViewController alloc] init]);
+    completion(viewController, nil);
+}
+
+static void fakeBeginSheet(id, SEL, NSWindow *, void (^)(NSModalResponse))
+{
+}
+
+FakePaymentUIForTesting::FakePaymentUIForTesting()
+{
+    RetainPtr paymentAuthorizationViewControllerClass = PAL::getPKPaymentAuthorizationViewControllerClassSingleton();
+    SEL requestViewControllerSelector = @selector(requestViewControllerWithPaymentRequest:completion:);
+    if (!paymentAuthorizationViewControllerClass || !class_getClassMethod(paymentAuthorizationViewControllerClass, requestViewControllerSelector))
+        return;
+
+    m_requestViewControllerSwizzler = makeUnique<ClassMethodSwizzler>(paymentAuthorizationViewControllerClass, requestViewControllerSelector, reinterpret_cast<IMP>(fakeRequestViewControllerWithPaymentRequest));
+    m_beginSheetSwizzler = makeUnique<InstanceMethodSwizzler>(NSWindow.class, @selector(beginSheet:completionHandler:), reinterpret_cast<IMP>(fakeBeginSheet));
+}
+
+#endif // ENABLE(APPLE_PAY)
+
+void TestController::setHasFakePaymentUIForTesting(bool hasFakePaymentUI)
+{
+#if ENABLE(APPLE_PAY)
+    if (!hasFakePaymentUI) {
+        m_fakePaymentUI = nullptr;
+        return;
+    }
+
+    if (!m_fakePaymentUI)
+        m_fakePaymentUI = makeUnique<FakePaymentUIForTesting>();
+#else
+    UNUSED_PARAM(hasFakePaymentUI);
+#endif
 }
 
 } // namespace WTR

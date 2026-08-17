@@ -117,8 +117,9 @@ void WebPaymentCoordinatorProxy::platformShowPaymentUI(WebPageProxyIdentifier we
 #if HAVE(LIQUID_GLASS)
             [paymentCoordinatorProxy->m_sheetWindow setStyleMask:NSWindowStyleMaskAlertWindow | NSWindowStyleMaskTitled];
 #endif
-            paymentCoordinatorProxy->m_sheetWindowWillCloseObserver = [[NSNotificationCenter defaultCenter] addObserverForName:NSWindowWillCloseNotification object:paymentCoordinatorProxy->m_sheetWindow.get() queue:nil usingBlock:[paymentCoordinatorProxy](NSNotification *) {
-                paymentCoordinatorProxy->didReachFinalState();
+            paymentCoordinatorProxy->m_sheetWindowWillCloseObserver = [[NSNotificationCenter defaultCenter] addObserverForName:NSWindowWillCloseNotification object:paymentCoordinatorProxy->m_sheetWindow queue:nil usingBlock:[weakThis = WeakPtr { paymentCoordinatorProxy }](NSNotification *) {
+                if (RefPtr protectedThis = weakThis.get())
+                    protectedThis->didReachFinalState();
             }];
 
             [presentingWindow beginSheet:paymentCoordinatorProxy->m_sheetWindow.get() completionHandler:nullptr];
