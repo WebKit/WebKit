@@ -43,12 +43,13 @@ static constexpr bool verbose = false;
 PropertyInlineCache::~PropertyInlineCache() = default;
 
 RepatchingPropertyInlineCache::RepatchingPropertyInlineCache()
-    : PropertyInlineCache(PropertyInlineCacheType::Repatching)
+    : RepatchingPropertyInlineCache(AccessType::GetById, { })
 {
 }
 
 RepatchingPropertyInlineCache::RepatchingPropertyInlineCache(AccessType accessType, CodeOrigin codeOrigin)
     : PropertyInlineCache(PropertyInlineCacheType::Repatching, accessType, codeOrigin)
+    , bufferingCountdown(Options::initialRepatchBufferingCountdown())
 {
 }
 
@@ -177,21 +178,11 @@ AccessGenerationResult PropertyInlineCache::addAccessCase(const GCSafeConcurrent
             if (result.shouldResetStubAndFireWatchpoints())
                 return result;
 
-            if (!result.buffered()) {
-                clearBufferedStructures();
+            if (!result.buffered())
                 return result;
-            }
             setCacheType(locker, CacheType::Stub);
 
             RELEASE_ASSERT(!result.generatedSomeCode());
-
-            // If we didn't buffer any cases then bail. If this made no changes then we'll just try again
-            // subject to cool-down.
-            if (!result.buffered()) {
-                dataLogLnIf(PropertyInlineCacheInternal::verbose, "Didn't buffer anything, bailing.");
-                clearBufferedStructures();
-                return result;
-            }
 
             InlineCacheCompiler compiler(codeBlock->jitType(), vm, globalObject, ecmaMode, *this);
             return compiler.compileHandler(locker, WTF::move(list), codeBlock, accessCase.get());
@@ -207,7 +198,7 @@ AccessGenerationResult PropertyInlineCache::addAccessCase(const GCSafeConcurrent
                 return result;
 
             if (!result.buffered()) {
-                clearBufferedStructures();
+                repatchingIC.clearBufferedStructures();
                 return result;
             }
         } else {
@@ -220,7 +211,7 @@ AccessGenerationResult PropertyInlineCache::addAccessCase(const GCSafeConcurrent
                 return result;
 
             if (!result.buffered()) {
-                clearBufferedStructures();
+                repatchingIC.clearBufferedStructures();
                 return result;
             }
 
@@ -231,23 +222,15 @@ AccessGenerationResult PropertyInlineCache::addAccessCase(const GCSafeConcurrent
         ASSERT(m_cacheType == CacheType::Stub);
         RELEASE_ASSERT(!result.generatedSomeCode());
 
-        // If we didn't buffer any cases then bail. If this made no changes then we'll just try again
-        // subject to cool-down.
-        if (!result.buffered()) {
-            dataLogLnIf(PropertyInlineCacheInternal::verbose, "Didn't buffer anything, bailing.");
-            clearBufferedStructures();
-            return result;
-        }
-
         // The buffering countdown tells us if we should be repatching now.
-        if (bufferingCountdown) {
-            dataLogLnIf(PropertyInlineCacheInternal::verbose, "Countdown is too high: ", bufferingCountdown, ".");
+        if (repatchingIC.bufferingCountdown) {
+            dataLogLnIf(PropertyInlineCacheInternal::verbose, "Countdown is too high: ", repatchingIC.bufferingCountdown, ".");
             return result;
         }
 
         // Forget the buffered structures so that all future attempts to cache get fully handled by the
         // PolymorphicAccess.
-        clearBufferedStructures();
+        repatchingIC.clearBufferedStructures();
 
         InlineCacheCompiler compiler(codeBlock->jitType(), vm, globalObject, ecmaMode, *this);
         result = compiler.compile(locker, *repatchingIC.m_stub, codeBlock);
@@ -270,7 +253,7 @@ AccessGenerationResult PropertyInlineCache::addAccessCase(const GCSafeConcurrent
 
         // If we generated some code then we don't want to attempt to repatch in the future until we
         // gather enough cases.
-        bufferingCountdown = Options::repatchBufferingCountdown();
+        repatchingIC.bufferingCountdown = Options::repatchBufferingCountdown();
         return result;
     })(accessCase.releaseNonNull());
     if (result.generatedSomeCode()) {
@@ -286,12 +269,12 @@ AccessGenerationResult PropertyInlineCache::addAccessCase(const GCSafeConcurrent
 
 void PropertyInlineCache::reset(const ConcurrentJSLockerBase& locker, CodeBlock* codeBlock)
 {
-    clearBufferedStructures();
     m_inlineAccessBaseStructureID.clear();
     if (auto* handlerIC = dynamicDowncast<HandlerPropertyInlineCache>(*this)) {
         if (handlerIC->m_inlinedHandler)
             handlerIC->clearInlinedHandler(codeBlock);
-    }
+    } else
+        downcast<RepatchingPropertyInlineCache>(*this).clearBufferedStructures();
 
     if (m_cacheType == CacheType::Unset)
         return;
@@ -398,19 +381,39 @@ void PropertyInlineCache::reset(const ConcurrentJSLockerBase& locker, CodeBlock*
 }
 
 template<typename Visitor>
+void RepatchingPropertyInlineCache::visitBufferedStructures(Visitor& visitor)
+{
+    Locker locker { m_bufferedStructuresLock };
+    WTF::switchOn(m_bufferedStructures,
+        [&](std::monostate) { },
+        [&](Vector<StructureID>&) { },
+        [&](Vector<std::tuple<StructureID, CacheableIdentifier>>& structures) {
+            for (auto& [bufferedStructureID, bufferedCacheableIdentifier] : structures)
+                bufferedCacheableIdentifier.visitAggregate(visitor);
+        });
+}
+
+void RepatchingPropertyInlineCache::pruneDeadBufferedStructures(VM& vm)
+{
+    Locker locker { m_bufferedStructuresLock };
+    WTF::switchOn(m_bufferedStructures,
+        [&](std::monostate) { },
+        [&](Vector<StructureID>& structures) {
+            structures.removeAllMatching([&](StructureID structureID) {
+                return !vm.heap.isMarked(structureID.decode());
+            });
+        },
+        [&](Vector<std::tuple<StructureID, CacheableIdentifier>>& structures) {
+            structures.removeAllMatching([&](auto& tuple) {
+                return !vm.heap.isMarked(std::get<0>(tuple).decode());
+            });
+        });
+}
+
+template<typename Visitor>
 void PropertyInlineCache::visitAggregateImpl(Visitor& visitor)
 {
-    if (!m_identifier) {
-        Locker locker { m_bufferedStructuresLock };
-        WTF::switchOn(m_bufferedStructures,
-            [&](std::monostate) { },
-            [&](Vector<StructureID>&) { },
-            [&](Vector<std::tuple<StructureID, CacheableIdentifier>>& structures) {
-                for (auto& [bufferedStructureID, bufferedCacheableIdentifier] : structures)
-                    bufferedCacheableIdentifier.visitAggregate(visitor);
-            });
-    } else
-        m_identifier.visitAggregate(visitor);
+    m_identifier.visitAggregate(visitor);
 
     if (auto* handlerIC = dynamicDowncast<HandlerPropertyInlineCache>(*this)) {
         if (handlerIC->m_inlinedHandler)
@@ -424,6 +427,7 @@ void PropertyInlineCache::visitAggregateImpl(Visitor& visitor)
     }
 
     if (auto* repatchingIC = dynamicDowncast<RepatchingPropertyInlineCache>(*this)) {
+        repatchingIC->visitBufferedStructures(visitor);
         if (repatchingIC->m_stub)
             repatchingIC->m_stub->visitAggregate(visitor);
     }
@@ -434,22 +438,6 @@ DEFINE_VISIT_AGGREGATE(PropertyInlineCache);
 void PropertyInlineCache::reconcileWeakReferencesAtGCEnd(const ConcurrentJSLockerBase& locker, CodeBlock* codeBlock)
 {
     VM& vm = codeBlock->vm();
-    {
-        Locker locker { m_bufferedStructuresLock };
-        WTF::switchOn(m_bufferedStructures,
-            [&](std::monostate) { },
-            [&](Vector<StructureID>& structures) {
-                structures.removeAllMatching([&](StructureID structureID) {
-                    return !vm.heap.isMarked(structureID.decode());
-                });
-            },
-            [&](Vector<std::tuple<StructureID, CacheableIdentifier>>& structures) {
-                structures.removeAllMatching([&](auto& tuple) {
-                    return !vm.heap.isMarked(std::get<0>(tuple).decode());
-                });
-            });
-    }
-
     bool isValid = true;
     if (Structure* structure = inlineAccessBaseStructure())
         isValid &= vm.heap.isMarked(structure);
@@ -466,6 +454,7 @@ void PropertyInlineCache::reconcileWeakReferencesAtGCEnd(const ConcurrentJSLocke
     }
 
     if (auto* repatchingIC = dynamicDowncast<RepatchingPropertyInlineCache>(*this)) {
+        repatchingIC->pruneDeadBufferedStructures(vm);
         if (repatchingIC->m_stub)
             isValid &= repatchingIC->m_stub->isStillLive(vm);
     }
@@ -780,9 +769,6 @@ void HandlerPropertyInlineCache::initializeFromUnlinkedPropertyInlineCache(VM& v
     propertyIsInt32 = unlinkedPropertyCache.propertyIsInt32;
     canBeMegamorphic = unlinkedPropertyCache.canBeMegamorphic;
 
-    if (unlinkedPropertyCache.canBeMegamorphic)
-        bufferingCountdown = 1;
-
     m_slowOperation = slowOperationFromUnlinkedPropertyInlineCache(unlinkedPropertyCache);
 }
 
@@ -814,9 +800,6 @@ void HandlerPropertyInlineCache::initializeFromDFGUnlinkedPropertyInlineCache(Co
     propertyIsString = unlinkedPropertyCache.propertyIsString;
     prototypeIsKnownObject = unlinkedPropertyCache.prototypeIsKnownObject;
     canBeMegamorphic = unlinkedPropertyCache.canBeMegamorphic;
-
-    if (unlinkedPropertyCache.canBeMegamorphic)
-        bufferingCountdown = 1;
 
     m_slowOperation = slowOperationFromUnlinkedPropertyInlineCache(unlinkedPropertyCache);
 }
