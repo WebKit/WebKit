@@ -45,7 +45,6 @@ void RenderSVGResourceLinearGradient::collectGradientAttributesIfNeeded()
         return;
 
     Ref linearGradientElement = this->linearGradientElement();
-    linearGradientElement->synchronizeAllAttributes();
 
     auto attributes = LinearGradientAttributes { };
     if (linearGradientElement->collectGradientAttributes(attributes))

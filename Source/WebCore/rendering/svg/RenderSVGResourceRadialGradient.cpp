@@ -46,7 +46,6 @@ void RenderSVGResourceRadialGradient::collectGradientAttributesIfNeeded()
         return;
 
     Ref radialGradientElement = this->radialGradientElement();
-    radialGradientElement->synchronizeAllAttributes();
 
     auto attributes = RadialGradientAttributes { };
     if (radialGradientElement->collectGradientAttributes(attributes))

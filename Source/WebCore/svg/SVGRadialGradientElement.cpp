@@ -118,17 +118,7 @@ RenderPtr<RenderElement> SVGRadialGradientElement::createElementRenderer(Style::
 
 static void setGradientAttributes(SVGGradientElement& element, RadialGradientAttributes& attributes, bool isRadial = true)
 {
-    if (!attributes.hasSpreadMethod() && element.hasAttribute(SVGNames::spreadMethodAttr))
-        attributes.setSpreadMethod(element.spreadMethod());
-
-    if (!attributes.hasGradientUnits() && element.hasAttribute(SVGNames::gradientUnitsAttr))
-        attributes.setGradientUnits(element.gradientUnits());
-
-    if (!attributes.hasGradientTransform() && element.hasAttribute(SVGNames::gradientTransformAttr))
-        attributes.setGradientTransform(element.gradientTransform().concatenate().value_or(identity));
-
-    if (!attributes.hasStops())
-        attributes.setStops(element.buildStops());
+    element.collectCommonGradientAttributes(attributes);
 
     if (isRadial) {
         SVGRadialGradientElement& radial = downcast<SVGRadialGradientElement>(element);

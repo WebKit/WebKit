@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="500" height="100">
+    <!-- An empty or invalid gradientTransform is still a present attribute, so it has to stop the
+         transform from being inherited through xlink:href, while the stops keep being inherited. A
+         gradient carrying no gradientTransform attribute at all does inherit the transform. A
+         transform that was only ever added through the SVG DOM counts as present as well.
+         The first three squares are a green to blue gradient, the first two of them unrotated and the
+         third one rotated by 90 degrees. The fourth square is a yellow to red radial gradient. The
+         last square is a green to blue gradient shifted right by half of its bounding box. -->
+    <defs>
+        <linearGradient id="linear-base" gradientTransform="rotate(90 0.5 0.5)">
+            <stop offset="0" stop-color="green"/>
+            <stop offset="1" stop-color="blue"/>
+        </linearGradient>
+        <linearGradient id="linear-empty" xlink:href="#linear-base" gradientTransform=""/>
+        <linearGradient id="linear-invalid" xlink:href="#linear-base" gradientTransform="bogus"/>
+        <linearGradient id="linear-inherited" xlink:href="#linear-base"/>
+        <linearGradient id="linear-svgdom" xlink:href="#linear-base"/>
+
+        <radialGradient id="radial-base" gradientTransform="scale(2)">
+            <stop offset="0" stop-color="yellow"/>
+            <stop offset="1" stop-color="red"/>
+        </radialGradient>
+        <radialGradient id="radial-whitespace" xlink:href="#radial-base" gradientTransform=" "/>
+    </defs>
+
+    <rect x="10" y="10" width="80" height="80" fill="url(#linear-empty)"/>
+    <rect x="110" y="10" width="80" height="80" fill="url(#linear-invalid)"/>
+    <rect x="210" y="10" width="80" height="80" fill="url(#linear-inherited)"/>
+    <rect x="310" y="10" width="80" height="80" fill="url(#radial-whitespace)"/>
+    <rect x="410" y="10" width="80" height="80" fill="url(#linear-svgdom)"/>
+
+    <script>
+        var transform = document.documentElement.createSVGTransform();
+        transform.setTranslate(0.5, 0);
+        document.getElementById("linear-svgdom").gradientTransform.baseVal.appendItem(transform);
+    </script>
+</svg>

@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="400" height="100">
+    <meta name="fuzzy" content="maxDifference=0-2; totalPixels=0-656"/>
+    <!-- An empty or invalid patternTransform is still a present attribute, so it has to stop the
+         transform from being inherited through xlink:href, while the tile content keeps being
+         inherited. A pattern carrying no patternTransform attribute at all does inherit the transform.
+         A transform that was only ever added through the SVG DOM counts as present as well.
+         The first two squares show an upright green checkerboard, the third one shows the same
+         checkerboard rotated by 45 degrees, the last one shows it shifted right by 5 units. -->
+    <defs>
+        <pattern id="pattern-base" width="20" height="20" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+            <rect width="10" height="10" fill="green"/>
+        </pattern>
+        <pattern id="pattern-empty" xlink:href="#pattern-base" patternTransform=""/>
+        <pattern id="pattern-invalid" xlink:href="#pattern-base" patternTransform="bogus"/>
+        <pattern id="pattern-inherited" xlink:href="#pattern-base"/>
+        <pattern id="pattern-svgdom" xlink:href="#pattern-base"/>
+    </defs>
+
+    <rect x="10" y="10" width="80" height="80" fill="url(#pattern-empty)"/>
+    <rect x="110" y="10" width="80" height="80" fill="url(#pattern-invalid)"/>
+    <rect x="210" y="10" width="80" height="80" fill="url(#pattern-inherited)"/>
+    <rect x="310" y="10" width="80" height="80" fill="url(#pattern-svgdom)"/>
+
+    <script>
+        var transform = document.documentElement.createSVGTransform();
+        transform.setTranslate(5, 0);
+        document.getElementById("pattern-svgdom").patternTransform.baseVal.appendItem(transform);
+    </script>
+</svg>

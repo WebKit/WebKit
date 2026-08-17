@@ -24,8 +24,11 @@
 #include "config.h"
 #include "SVGGradientElement.h"
 
+#include "AffineTransform.h"
 #include "ContainerNodeInlines.h"
 #include "ElementChildIteratorInlines.h"
+#include "ElementInlines.h"
+#include "GradientAttributes.h"
 #include "LegacyRenderSVGResourceLinearGradient.h"
 #include "LegacyRenderSVGResourceRadialGradient.h"
 #include "NodeName.h"
@@ -115,6 +118,28 @@ GradientColorStops SVGGradientElement::buildStops()
         stops.addColorStop({ monotonicallyIncreasingOffset, stop->stopColorIncludingOpacity() });
     }
     return stops;
+}
+
+bool SVGGradientElement::hasGradientTransformAttribute() const
+{
+    if (!attributeWithoutSynchronization(SVGNames::gradientTransformAttr).isNull())
+        return true;
+    return !m_gradientTransform->baseVal()->isEmpty();
+}
+
+void SVGGradientElement::collectCommonGradientAttributes(GradientAttributes& attributes)
+{
+    if (!attributes.hasSpreadMethod() && hasAttribute(SVGNames::spreadMethodAttr))
+        attributes.setSpreadMethod(spreadMethod());
+
+    if (!attributes.hasGradientUnits() && hasAttribute(SVGNames::gradientUnitsAttr))
+        attributes.setGradientUnits(gradientUnits());
+
+    if (!attributes.hasGradientTransform() && hasGradientTransformAttribute())
+        attributes.setGradientTransform(gradientTransform().concatenate().value_or(identity));
+
+    if (!attributes.hasStops())
+        attributes.setStops(buildStops());
 }
 
 }

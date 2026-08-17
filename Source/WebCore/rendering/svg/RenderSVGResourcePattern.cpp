@@ -55,8 +55,6 @@ void RenderSVGResourcePattern::collectPatternAttributesIfNeeded()
 
     RefPtr current = patternElement();
 
-    current->synchronizeAllAttributes();
-
     while (current) {
         if (!current->renderer())
             break;

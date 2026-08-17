@@ -30,6 +30,8 @@
 
 namespace WebCore {
 
+struct GradientAttributes;
+
 enum SVGSpreadMethodType {
     SVGSpreadMethodUnknown = 0,
     SVGSpreadMethodPad,
@@ -82,6 +84,7 @@ public:
     };
 
     GradientColorStops buildStops();
+    void collectCommonGradientAttributes(GradientAttributes&);
 
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGGradientElement, SVGElement, SVGURIReference>;
 
@@ -104,6 +107,8 @@ protected:
 private:
     bool needsPendingResourceHandling() const override { return false; }
     void childrenChanged(const ChildChange&) override;
+
+    bool hasGradientTransformAttribute() const;
 
     const Ref<SVGAnimatedEnumeration> m_spreadMethod { SVGAnimatedEnumeration::create(this, SVGSpreadMethodPad) };
     const Ref<SVGAnimatedEnumeration> m_gradientUnits { SVGAnimatedEnumeration::create(this, SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX) };
