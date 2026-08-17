@@ -205,7 +205,10 @@ class InstallHooks(Command):
             sorted(security_levels.items(), key=lambda x: (x[1], x[0]))
         )
 
-        trailers_to_strip = ['Identifier'] + ([identifier_template.split(':', 1)[0]] if identifier_template else [])
+        trailers_to_strip = ['Identifier'] + (
+            [identifier_template.name] + list(identifier_template.aliases)
+            if identifier_template else []
+        )
         source_remotes = repository.source_remotes() or ['origin']
         perl = 'perl'
         perl = shutil.which('perl')
