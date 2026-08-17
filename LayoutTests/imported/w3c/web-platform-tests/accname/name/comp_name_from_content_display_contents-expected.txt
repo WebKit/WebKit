@@ -1,0 +1,11 @@
+Each element below is named from its contents, and its contents are the single character "x". Text in a following sibling belongs to that sibling and must not be part of the name.
+
+xshould not be in the name x
+should not be in the name
+xshould not be in the name xshould not be in the name
+
+PASS name from content of a display: contents element, followed by an inline sibling
+PASS name from content of a display: contents element, followed by a block sibling
+PASS name from content of a display: contents element, followed by a text sibling
+PASS name from content of a display: contents element with the link role, followed by a sibling
+
