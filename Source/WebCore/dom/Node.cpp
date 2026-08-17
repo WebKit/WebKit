@@ -680,10 +680,16 @@ ExceptionOr<void> Node::before(FixedVector<NodeOrString>&& nodeOrStringVector)
         return result.releaseException();
 
     auto newChildren = result.releaseReturnValue();
+#ifdef RC_REMOVE_SEC_ACCEL_3
     if (auto checkResult = parent->ensurePreInsertionValidityForPhantomDocumentFragment(newChildren); checkResult.hasException())
         return checkResult;
 
     RefPtr viableNextSibling = viablePreviousSibling ? viablePreviousSibling->nextSibling() : parent->firstChild();
+#else
+    RefPtr viableNextSibling = viablePreviousSibling ? viablePreviousSibling->nextSibling() : parent->firstChild();
+    if (auto checkResult = parent->ensurePreInsertionValidityForPhantomDocumentFragment(newChildren, viableNextSibling.get()); checkResult.hasException())
+        return checkResult;
+#endif
     return parent->insertChildrenBeforeWithoutPreInsertionValidityCheck(WTF::move(newChildren), viableNextSibling.get());
 }
 
@@ -701,8 +707,13 @@ ExceptionOr<void> Node::after(FixedVector<NodeOrString>&& nodeOrStringVector)
         return result.releaseException();
 
     auto newChildren = result.releaseReturnValue();
+#ifdef RC_REMOVE_SEC_ACCEL_3
     if (auto checkResult = parent->ensurePreInsertionValidityForPhantomDocumentFragment(newChildren); checkResult.hasException())
         return checkResult;
+#else
+    if (auto checkResult = parent->ensurePreInsertionValidityForPhantomDocumentFragment(newChildren, viableNextSibling.get()); checkResult.hasException())
+        return checkResult;
+#endif
 
     return parent->insertChildrenBeforeWithoutPreInsertionValidityCheck(WTF::move(newChildren), viableNextSibling.get());
 }

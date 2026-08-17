@@ -1045,14 +1045,21 @@ ExceptionOr<void> ContainerNode::insertChildrenBeforeWithoutPreInsertionValidity
             if (nodeTypeResult.hasException())
                 return nodeTypeResult.releaseException();
         }
+#ifdef RC_REMOVE_SEC_ACCEL_3
         if (refChild && refChild->parentNode() != this)
             return { };
+#endif
         for (auto& child : newChildren) {
             if (child->parentNode())
                 return { };
         }
     }
 
+#ifndef RC_REMOVE_SEC_ACCEL_3
+    if (refChild && refChild->parentNode() != this)
+        return { };
+
+#endif
     InspectorInstrumentation::willInsertDOMNode(protect(document()), *this);
 
     executeNodeInsertionWithScriptAssertion(*this, newChildren, refChild.get(), ChildChange::Source::API, ReplacedAllChildren::No, [&](auto& child) {
