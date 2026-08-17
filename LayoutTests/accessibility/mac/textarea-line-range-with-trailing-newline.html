@@ -14,7 +14,8 @@
      rendered text and so do include that newline; these cases would then be one character long. -->
 <!-- The caret's line range is checked here rather than in the cross-platform character-count test
      because it needs AXSelectedTextMarkerRange, which the iOS test runner doesn't implement (see
-     AccessibilityUIElement::selectedTextMarkerRange, which only mac overrides). -->
+     AccessibilityUIElement::selectedTextMarkerRange, which only mac overrides). Values edited after
+     the tree was built are in textarea-line-range-after-dynamic-edit.html. -->
 <textarea id="warmup" style="width: 200px; height: 60px"></textarea>
 <textarea id="ta0" style="width: 200px; height: 60px"></textarea>
 <textarea id="ta1" style="width: 200px; height: 60px"></textarea>
@@ -28,15 +29,17 @@
 <textarea id="ta9" style="width: 200px; height: 60px"></textarea>
 
 <script>
-var output = "Asserts the caret's line range for text control values that end in a line break.\n\n";
+var output = "Asserts the line APIs for text control values that end in a line break: the caret's line\n"
+    + "range, and, where a case names one, the last line's character range and the line of the index\n"
+    + "one past the end of the value.\n\n";
 
 // Every value is set before the accessibility tree is first built, so no case depends on the
 // isolated tree observing a mutation.
 var cases = [
     { id: "ta0", label: "no trailing newline", value: "one two ", caret: 8, lineString: "one two ", lineLength: 8 },
-    { id: "ta1", label: "trailing newline, caret on the blank final line", value: "one two \n", caret: 9, lineString: "", lineLength: 0 },
+    { id: "ta1", label: "trailing newline, caret on the blank final line", value: "one two \n", caret: 9, lineString: "", lineLength: 0, lastLine: 1, lastLineRange: "{9, 0}" },
     { id: "ta2", label: "trailing newline, caret on the first line", value: "one two \n", caret: 4, lineString: "one two \n", lineLength: 9 },
-    { id: "ta3", label: "two lines, caret starting the second", value: "one two \nthree", caret: 9, lineString: "three", lineLength: 5 },
+    { id: "ta3", label: "two lines, caret starting the second", value: "one two \nthree", caret: 9, lineString: "three", lineLength: 5, lastLine: 1, lastLineRange: "{9, 5}" },
     { id: "ta4", label: "leading newline", value: "one \ntwo three", caret: 5, lineString: "two three", lineLength: 9 },
     { id: "ta5", label: "only a newline, caret after it", value: "\n", caret: 1, lineString: "", lineLength: 0 },
     { id: "ta6", label: "only a newline, caret before it", value: "\n", caret: 0, lineString: "\n", lineLength: 1 },
@@ -56,7 +59,7 @@ for (var testCase of cases) {
 }
 
 // expect() evaluates its expressions in its own scope, so the values it reads are globals.
-var axField, caret, lineRange, lineEnd, webArea;
+var axField, caret, lineRange, lineEnd, webArea, lastLine, indexPastEnd;
 
 // The id of the text control the document's accessibility selection currently sits in, or null.
 function idOfFieldHoldingAccessibilitySelection() {
@@ -106,6 +109,12 @@ async function checkCase(testCase) {
     // the caret is. Otherwise the line names a character past the end of the value.
     if (!testCase.lineLength)
         output += expect("lineEnd.isEqual(caret)", "true");
+    if (testCase.lastLineRange) {
+        lastLine = testCase.lastLine;
+        indexPastEnd = testCase.value.length;
+        output += expect("axField.rangeForLine(lastLine)", JSON.stringify(testCase.lastLineRange));
+        output += expect("axField.lineForIndex(indexPastEnd)", "-1");
+    }
     output += "\n";
 }
 

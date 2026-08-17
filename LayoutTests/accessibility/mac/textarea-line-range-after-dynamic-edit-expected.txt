@@ -1,0 +1,24 @@
+Asserts the line APIs for text control values edited after the accessibility tree was built:
+the caret's line range, and, where a case names one, the last line's character range and the line
+of the index one past the end of the value.
+
+trailing newline typed, caret on the blank final line: value "one two \n", caret at 9
+PASS: axField.numberOfCharacters === 9
+PASS: axField.stringForTextMarkerRange(lineRange) === ""
+PASS: axField.textMarkerRangeLength(lineRange) === 0
+PASS: lineEnd.isEqual(caret) === true
+PASS: axField.rangeForLine(lastLine) === "{9, 0}"
+PASS: axField.lineForIndex(indexPastEnd) === -1
+
+inserted through AXReplaceRangeWithText, caret at the end: value "one two \nthree", caret at 14
+PASS: axField.numberOfCharacters === 14
+PASS: axField.stringForTextMarkerRange(lineRange) === "three"
+PASS: axField.textMarkerRangeLength(lineRange) === 5
+PASS: axField.rangeForLine(lastLine) === "{9, 5}"
+PASS: axField.lineForIndex(indexPastEnd) === -1
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

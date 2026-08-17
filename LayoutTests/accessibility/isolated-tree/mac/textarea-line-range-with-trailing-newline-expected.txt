@@ -1,4 +1,6 @@
-Asserts the caret's line range for text control values that end in a line break.
+Asserts the line APIs for text control values that end in a line break: the caret's line
+range, and, where a case names one, the last line's character range and the line of the index
+one past the end of the value.
 
 no trailing newline: value "one two ", caret at 8
 PASS: axField.numberOfCharacters === 8
@@ -10,6 +12,8 @@ PASS: axField.numberOfCharacters === 9
 PASS: axField.stringForTextMarkerRange(lineRange) === ""
 PASS: axField.textMarkerRangeLength(lineRange) === 0
 PASS: lineEnd.isEqual(caret) === true
+PASS: axField.rangeForLine(lastLine) === "{9, 0}"
+PASS: axField.lineForIndex(indexPastEnd) === -1
 
 trailing newline, caret on the first line: value "one two \n", caret at 4
 PASS: axField.numberOfCharacters === 9
@@ -20,6 +24,8 @@ two lines, caret starting the second: value "one two \nthree", caret at 9
 PASS: axField.numberOfCharacters === 14
 PASS: axField.stringForTextMarkerRange(lineRange) === "three"
 PASS: axField.textMarkerRangeLength(lineRange) === 5
+PASS: axField.rangeForLine(lastLine) === "{9, 5}"
+PASS: axField.lineForIndex(indexPastEnd) === -1
 
 leading newline: value "one \ntwo three", caret at 5
 PASS: axField.numberOfCharacters === 14

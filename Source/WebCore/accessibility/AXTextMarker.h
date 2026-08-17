@@ -520,6 +520,11 @@ AXIsolatedObject* findObjectWithRuns(AXIsolatedObject& start, AXDirection direct
 // both the control's U+FFFC and its content would count it twice.
 enum class EmitObjectReplacementCharacters : bool { No, Yes };
 EmittedAuxiliaryText auxiliaryTextForObject(AXIsolatedObject&, TraversalPoint, char16_t lastEmittedCharacter, EmitObjectReplacementCharacters = EmitObjectReplacementCharacters::Yes);
+
+// The offset of the trailing newline a native text control renders for the empty final line of a value
+// ending in a line break — a newline the value itself doesn't contain — or nullopt when this object
+// doesn't hold that newline.
+std::optional<unsigned> offsetOfCollapsedTrailingNewline(AXIsolatedObject&, const AXTextRuns* textRunsForObject);
 #endif // ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 
 } // namespace Accessibility

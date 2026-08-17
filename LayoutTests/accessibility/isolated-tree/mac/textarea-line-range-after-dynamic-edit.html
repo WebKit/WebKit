@@ -6,57 +6,41 @@
 </head>
 <body>
 
-<!-- A text control whose value ends in a line break renders an empty final line, which
-     HTMLTextFormControlElement::setInnerTextValue gives a line box by appending a placeholder <br>.
-     That <br>'s newline is not a character of the value — innerTextValueFrom() strips one trailing
-     newline "that's collapsed out by rendering" — so the control's character count and its line
-     ranges must not count it. The isolated tree builds these answers from text runs, which model
-     rendered text and so do include that newline; these cases would then be one character long. -->
+<!-- A text control whose value ends in a line break renders an empty final line, whose newline is not
+     a character of the value — innerTextValueFrom() strips one trailing newline "that's collapsed out
+     by rendering" — so the control's character count and its line ranges must not count it. Editing
+     represents that newline in shapes setInnerTextValue never produces, which is what these cases
+     cover; values set in markup are in textarea-line-range-with-trailing-newline.html. -->
 <!-- The caret's line range is checked here rather than in the cross-platform character-count test
      because it needs AXSelectedTextMarkerRange, which the iOS test runner doesn't implement (see
-     AccessibilityUIElement::selectedTextMarkerRange, which only mac overrides). Values edited after
-     the tree was built are in textarea-line-range-after-dynamic-edit.html. -->
+     AccessibilityUIElement::selectedTextMarkerRange, which only mac overrides). -->
 <textarea id="warmup" style="width: 200px; height: 60px"></textarea>
-<textarea id="ta0" style="width: 200px; height: 60px"></textarea>
-<textarea id="ta1" style="width: 200px; height: 60px"></textarea>
-<textarea id="ta2" style="width: 200px; height: 60px"></textarea>
-<textarea id="ta3" style="width: 200px; height: 60px"></textarea>
-<textarea id="ta4" style="width: 200px; height: 60px"></textarea>
-<textarea id="ta5" style="width: 200px; height: 60px"></textarea>
-<textarea id="ta6" style="width: 200px; height: 60px"></textarea>
-<textarea id="ta7" style="width: 200px; height: 60px"></textarea>
-<textarea id="ta8" style="width: 200px; height: 60px"></textarea>
-<textarea id="ta9" style="width: 200px; height: 60px"></textarea>
+<!-- Typed into after the accessibility tree exists, because editing represents the newline that
+     rendering adds for the empty final line as a text node holding just that newline, where
+     setInnerTextValue appends a placeholder <br>. The caret's line must come out the same either way. -->
+<textarea id="typed" style="width: 200px; height: 60px"></textarea>
+<!-- Built through AXReplaceRangeWithText, the way VoiceOver inserts text. That path leaves the whole
+     value in one text node with the newline rendering adds for the empty final line at its end, so the
+     collapsed newline is neither a <br> nor a node of its own.
+
+     This isn't an accessibility-only shape: AXReplaceRangeWithText is one of many callers of
+     Editor::replaceSelectionWithText, so pasting a value that ends in a line break produces the same
+     text node and reproduced the same bug. The insertion is driven through the accessibility API here
+     only because that needs no pasteboard. -->
+<textarea id="inserted" style="width: 200px; height: 60px"></textarea>
 
 <script>
-var output = "Asserts the line APIs for text control values that end in a line break: the caret's line\n"
-    + "range, and, where a case names one, the last line's character range and the line of the index\n"
-    + "one past the end of the value.\n\n";
+var output = "Asserts the line APIs for text control values edited after the accessibility tree was built:\n"
+    + "the caret's line range, and, where a case names one, the last line's character range and the line\n"
+    + "of the index one past the end of the value.\n\n";
 
-// Every value is set before the accessibility tree is first built, so no case depends on the
-// isolated tree observing a mutation.
 var cases = [
-    { id: "ta0", label: "no trailing newline", value: "one two ", caret: 8, lineString: "one two ", lineLength: 8 },
-    { id: "ta1", label: "trailing newline, caret on the blank final line", value: "one two \n", caret: 9, lineString: "", lineLength: 0, lastLine: 1, lastLineRange: "{9, 0}" },
-    { id: "ta2", label: "trailing newline, caret on the first line", value: "one two \n", caret: 4, lineString: "one two \n", lineLength: 9 },
-    { id: "ta3", label: "two lines, caret starting the second", value: "one two \nthree", caret: 9, lineString: "three", lineLength: 5, lastLine: 1, lastLineRange: "{9, 5}" },
-    { id: "ta4", label: "leading newline", value: "one \ntwo three", caret: 5, lineString: "two three", lineLength: 9 },
-    { id: "ta5", label: "only a newline, caret after it", value: "\n", caret: 1, lineString: "", lineLength: 0 },
-    { id: "ta6", label: "only a newline, caret before it", value: "\n", caret: 0, lineString: "\n", lineLength: 1 },
-    { id: "ta7", label: "two trailing newlines, caret on the blank final line", value: "a\n\n", caret: 3, lineString: "", lineLength: 0 },
-    { id: "ta8", label: "two trailing newlines, caret on the blank middle line", value: "a\n\n", caret: 2, lineString: "\n", lineLength: 1 },
-    { id: "ta9", label: "whitespace either side of a newline", value: "  \n  ", caret: 5, lineString: "  ", lineLength: 2 },
+    { id: "typed", label: "trailing newline typed, caret on the blank final line", value: "one two \n", caret: 9, lineString: "", lineLength: 0, lastLine: 1, lastLineRange: "{9, 0}", typed: true },
+    // Inserting "\n" and then more text is where VoiceOver's own insertions used to leave the count and
+    // the line one character long: the value ends without a line break, but the control still renders
+    // one, and it sits at the end of the same text node as the rest of the value.
+    { id: "inserted", label: "inserted through AXReplaceRangeWithText, caret at the end", value: "one two \nthree", caret: 14, lineString: "three", lineLength: 5, lastLine: 1, lastLineRange: "{9, 5}", inserted: [[0, 0, "one "], [4, 0, "two "], [8, 0, "\n"], [9, 0, "three"]] },
 ];
-
-for (var testCase of cases) {
-    var field = document.getElementById(testCase.id);
-    if (field.isContentEditable)
-        field.textContent = testCase.value;
-    else
-        field.value = testCase.value;
-    // Force layout so the value is laid out before the accessibility tree is built.
-    field.offsetHeight;
-}
 
 // expect() evaluates its expressions in its own scope, so the values it reads are globals.
 var axField, caret, lineRange, lineEnd, webArea, lastLine, indexPastEnd;
@@ -73,8 +57,33 @@ function idOfFieldHoldingAccessibilitySelection() {
     return element ? element.domIdentifier : null;
 }
 
+// Types |value| one character at a time, the way a user would, leaving the caret somewhere other than
+// |caret| so that placing it there below is a real change and posts the notification the gate waits for.
+function typeValue(field, value, caret) {
+    field.focus();
+    for (var character of value) {
+        if (character === "\n")
+            document.execCommand("insertLineBreak");
+        else
+            document.execCommand("insertText", false, character);
+    }
+    var elsewhere = caret ? 0 : value.length;
+    field.setSelectionRange(elsewhere, elsewhere);
+}
+
 async function checkCase(testCase) {
     var field = document.getElementById(testCase.id);
+    if (testCase.typed)
+        typeValue(field, testCase.value, testCase.caret);
+    if (testCase.inserted) {
+        // AXReplaceRangeWithText needs the field focused, the way VoiceOver leaves it.
+        field.focus();
+        var axFieldForInsertion = await waitForElementById(testCase.id);
+        for (var [location, length, text] of testCase.inserted)
+            axFieldForInsertion.replaceTextInRange(text, location, length);
+        // Leave the caret somewhere else so placing it below posts the notification the gate waits for.
+        field.setSelectionRange(0, 0);
+    }
     axField = await waitForElementById(testCase.id);
     if (!axField) {
         output += `FAIL: ${testCase.label}: no accessibility element for #${testCase.id}\n`;
