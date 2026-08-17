@@ -5964,10 +5964,13 @@ void Element::resetComputedStyle()
         element.elementRareData()->setComputedStyle(nullptr);
     };
     reset(*this);
-    for (Ref child : descendantsOfType<Element>(*this)) {
+    for (Ref descendant : composedTreeDescendants(*this)) {
+        RefPtr child = dynamicDowncast<Element>(descendant.get());
+        if (!child)
+            continue;
         if (!child->hasRareData() || !child->elementRareData()->computedStyle() || child->hasDisplayContents() || child->hasDisplayNone())
             continue;
-        reset(child);
+        reset(*child);
     }
 }
 
