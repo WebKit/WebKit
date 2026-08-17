@@ -61,6 +61,7 @@ namespace JSC {
 class JSModuleNamespaceObject;
 class JSWebAssemblyArray;
 class JSWebAssemblyModule;
+class JSWebAssemblyTag;
 class WebAssemblyModuleRecord;
 
 namespace Wasm {
@@ -164,6 +165,9 @@ public:
         linkGlobal(index, *value->global());
         vm.writeBarrier(this, value);
     }
+
+    void setTagWrapper(VM&, unsigned index, JSWebAssemblyTag*);
+    JSWebAssemblyTag* tagWrapper(unsigned index) const;
 
     JSWebAssemblyModule* jsModule() const LIFETIME_BOUND { return m_jsModule.get(); }
     const Wasm::ModuleInformation& moduleInformation() const { return m_moduleInformation.get(); }
@@ -469,6 +473,8 @@ private:
     BitVector m_globalsToBinding;
     unsigned m_numImportFunctions { 0 };
     UncheckedKeyHashMap<uint32_t, Ref<Wasm::Global>, IntHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_linkedGlobals;
+    using TagWrapperMap = UncheckedKeyHashMap<uint32_t, WriteBarrier<JSWebAssemblyTag>, IntHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>>;
+    TagWrapperMap m_tagWrappers;
     BitVector m_passiveElements;
     BitVector m_passiveDataSegments;
     FixedVector<RefPtr<const Wasm::Tag>> m_tags;

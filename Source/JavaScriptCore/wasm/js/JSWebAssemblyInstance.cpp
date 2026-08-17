@@ -38,6 +38,7 @@
 #include "JSWebAssemblyMemory.h"
 #include "JSWebAssemblyModule.h"
 #include "JSWebAssemblyStruct.h"
+#include "JSWebAssemblyTag.h"
 #include "Register.h"
 #include "VMTrapsInlines.h"
 #include "WasmBaselineData.h"
@@ -220,6 +221,8 @@ void JSWebAssemblyInstance::visitChildrenImpl(JSCell* cell, Visitor& visitor)
     for (auto& wrapper : thisObject->functionWrappers())
         visitor.appendUnbarriered(wrapper.get());
     for (auto& entry : thisObject->m_constantExpressionValues)
+        visitor.append(entry.value);
+    for (auto& entry : thisObject->m_tagWrappers)
         visitor.append(entry.value);
 }
 
@@ -448,6 +451,23 @@ void JSWebAssemblyInstance::setFunctionWrapper(unsigned i, JSValue value)
     Locker locker { cellLock() };
     m_functionWrappers.set(i, WriteBarrier<Unknown>(vm(), this, value));
     ASSERT(getFunctionWrapper(i) == value);
+}
+
+void JSWebAssemblyInstance::setTagWrapper(VM& vm, unsigned index, JSWebAssemblyTag* tag)
+{
+    ASSERT(tag);
+    Locker locker { cellLock() };
+    ASSERT(!m_tagWrappers.contains(index));
+    m_tagWrappers.set(index, WriteBarrier<JSWebAssemblyTag>(vm, this, tag));
+}
+
+JSWebAssemblyTag* JSWebAssemblyInstance::tagWrapper(unsigned index) const
+{
+    Locker locker { cellLock() };
+    auto iterator = m_tagWrappers.find(index);
+    if (iterator == m_tagWrappers.end())
+        return nullptr;
+    return iterator->value.get();
 }
 
 JSValue JSWebAssemblyInstance::ensureFunctionWrapper(FunctionSpaceIndex functionIndexSpace)

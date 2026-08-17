@@ -479,6 +479,7 @@ void WebAssemblyModuleRecord::initializeImports(JSGlobalObject* globalObject, JS
                 return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "imported Tag"_s, "signature doesn't match the imported WebAssembly Tag's signature"_s)));
 
             m_instance->setTag(import.kindIndex, tag->tag());
+            m_instance->setTagWrapper(vm, import.kindIndex, tag);
             break;
         }
 
@@ -753,7 +754,13 @@ void WebAssemblyModuleRecord::initializeExports(JSGlobalObject* globalObject)
             break;
         }
         case Wasm::ExternalKind::Exception: {
-            exportedValue = JSWebAssemblyTag::create(vm, globalObject, globalObject->m_webAssemblyTagStructure.get(globalObject), m_instance->tag(exp.kindIndex));
+            if (JSWebAssemblyTag* wrapper = m_instance->tagWrapper(exp.kindIndex))
+                exportedValue = wrapper;
+            else {
+                auto* created = JSWebAssemblyTag::create(vm, globalObject, globalObject->m_webAssemblyTagStructure.get(globalObject), m_instance->tag(exp.kindIndex));
+                m_instance->setTagWrapper(vm, exp.kindIndex, created);
+                exportedValue = created;
+            }
             break;
         }
         }
