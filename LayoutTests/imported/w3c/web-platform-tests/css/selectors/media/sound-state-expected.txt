@@ -2,5 +2,7 @@
 
 PASS Test :pseudo-class syntax is supported without throwing a SyntaxError
 PASS Test :muted pseudo-class
-FAIL Test :muted matches .muted for content attribute default assert_true: expected true got false
+PASS Test :muted matches .muted for content attribute default
+PASS Test :muted matches .muted for content attribute set
+PASS Test :muted matches .muted for content attribute set, and overridden
 
