@@ -1,0 +1,8 @@
+<!DOCTYPE html>
+<body style="margin:0">
+<iframe width="680" height="520" frameborder="0" src="http://127.0.0.1:8000/site-isolation/resources/controls-manager-in-grandchild-frame-inner.html"></iframe>
+<script>
+window.parent.postMessage({ from: 'middle', pid: window.internals ? internals.processIdentifier : 0 }, '*');
+onmessage = (event) => { window.parent.postMessage(event.data, '*'); };
+</script>
+</body>

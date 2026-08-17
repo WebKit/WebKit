@@ -1263,24 +1263,31 @@ static bool isElementMainContentForPurposesOfAutoplay(const HTMLMediaElement& el
 
 static bool isElementRectMostlyInMainFrame(const HTMLMediaElement& element)
 {
-    if (!element.renderer())
+    CheckedPtr renderer = element.renderer();
+    if (!renderer)
         return false;
 
     RefPtr documentFrame = element.document().frame();
     if (!documentFrame)
         return false;
 
+    RefPtr documentView = documentFrame->virtualView();
+    if (!documentView)
+        return false;
+
     RefPtr mainFrameView = protect(documentFrame->mainFrame())->virtualView();
     if (!mainFrameView)
         return false;
 
-    IntRect mainFrameRectAdjustedForScrollPosition = IntRect(-mainFrameView->documentScrollPositionRelativeToViewOrigin(), mainFrameView->contentsSize());
-    IntRect elementRectInMainFrame = element.boundingBoxInRootViewCoordinates();
+    IntRect mainFrameRect { -mainFrameView->documentScrollPositionRelativeToViewOrigin(), mainFrameView->contentsSize() };
+
+    IntRect elementRectInMainFrame = enclosingIntRect(documentView->convertToRootViewAcrossIsolatedFrames(FloatRect { renderer->absoluteBoundingBoxRect() }));
+
     auto totalElementArea = elementRectInMainFrame.area<RecordOverflow>();
     if (totalElementArea.hasOverflowed())
         return false;
 
-    elementRectInMainFrame.intersect(mainFrameRectAdjustedForScrollPosition);
+    elementRectInMainFrame.intersect(mainFrameRect);
 
     return elementRectInMainFrame.area() > totalElementArea / 2;
 }

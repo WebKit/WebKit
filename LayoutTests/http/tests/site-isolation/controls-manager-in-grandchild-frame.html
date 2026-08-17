@@ -1,0 +1,44 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<body>
+<p>A large, playing video in a same-site grandchild frame whose parent is a cross-origin (Remote) frame should be eligible to be the playback controls manager.</p>
+<iframe width="700" height="540" frameborder="0" src="http://localhost:8000/site-isolation/resources/controls-manager-in-grandchild-frame-middle.html"></iframe>
+<script>
+if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+}
+
+const topPID = window.internals ? internals.processIdentifier : 0;
+let middlePID = 0;
+let grandchildResult = null;
+
+function finish(text) {
+    document.body.textContent = text;
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+function evaluate() {
+    if (!middlePID || !grandchildResult)
+        return;
+    if (!grandchildResult.eligible)
+        finish('FAIL: ' + grandchildResult.detail);
+    else if (grandchildResult.pid !== topPID)
+        finish('FAIL: grandchild pid ' + grandchildResult.pid + ' != top pid ' + topPID);
+    else if (middlePID === topPID)
+        finish('FAIL: middle pid ' + middlePID + ' == top pid (expected a Remote parent in a different process)');
+    else
+        finish('PASS');
+}
+
+addEventListener("message", (event) => {
+    const data = event.data;
+    if (data.from === 'middle')
+        middlePID = data.pid;
+    else if (data.from === 'grandchild')
+        grandchildResult = data;
+    evaluate();
+});
+</script>
+</body>

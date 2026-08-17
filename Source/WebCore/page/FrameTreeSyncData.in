@@ -38,5 +38,7 @@ FrameScrollPosition : WebCore::ScrollPosition [Headers=<WebCore/ScrollTypes.h>]
 
 FrameLayoutViewportRect : WebCore::LayoutRect [Headers=<WebCore/LayoutRect.h>]
 
+FrameContentsSize : WebCore::IntSize [Headers=<WebCore/IntSize.h>]
+
 # Collection of layout info regarding children frames of this frame.
 ChildrenFrameLayoutInfo : HashMap<WebCore::FrameIdentifier, Ref<WebCore::RemoteFrameLayoutInfo>> [Headers=<WebCore/FrameIdentifier.h>,<WebCore/RemoteFrameLayoutInfo.h>]

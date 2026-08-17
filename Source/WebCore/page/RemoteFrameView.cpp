@@ -77,6 +77,11 @@ LayoutRect RemoteFrameView::layoutViewportRect() const
     return m_frame->frameTreeSyncData().frameLayoutViewportRect;
 }
 
+IntSize RemoteFrameView::contentsSize() const
+{
+    return m_frame->frameTreeSyncData().frameContentsSize;
+}
+
 std::optional<LayoutRect> RemoteFrameView::visibleRectOfChild(const Frame& child) const
 {
     if (RefPtr info = m_frame->frameTreeSyncData().childrenFrameLayoutInfo.get(child.frameID()))

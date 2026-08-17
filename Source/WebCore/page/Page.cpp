@@ -2268,6 +2268,7 @@ void Page::syncLocalFrameInfoToRemote()
         RefPtr<LocalFrameView> frameView = frame.view();
 
         frameView->updateLayoutViewportRect();
+        frameView->updateContentsSizeForRemoteFrames();
 
         HashMap<FrameIdentifier, Ref<RemoteFrameLayoutInfo>> childrenFrameLayoutInfo;
         for (RefPtr child = frame.tree().firstChild(); child; child = child->tree().nextSibling()) {
