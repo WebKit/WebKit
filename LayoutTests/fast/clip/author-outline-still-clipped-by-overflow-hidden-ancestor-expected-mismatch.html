@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Not-reference: full author outline (must differ from the clipped test)</title>
+<style>
+    body { margin: 0; }
+    #ancestor {
+        position: absolute; left: 50px; top: 50px;
+        width: 200px; height: 200px;
+        overflow: visible;             /* full outline drawn -> the test must NOT look like this */
+        background: #ddd;
+    }
+    #child {
+        position: absolute;
+        left: 90px; top: 40px;
+        right: 0;
+        height: 100px;
+        overflow: hidden;
+        outline: 10px solid green;
+        background: #eee;
+    }
+</style>
+</head>
+<body>
+    <p>Test passes if the green outline's right edge is clipped by the container.</p>
+    <div id="ancestor"><div id="child"></div></div>
+</body>
+</html>
