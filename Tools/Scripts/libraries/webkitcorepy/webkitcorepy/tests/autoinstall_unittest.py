@@ -57,6 +57,26 @@ class DefaultPyPIIndexTest(unittest.TestCase):
         result = _pypi_indices_from_file(config)
         self.assertEqual(result, ['primary.example.com', 'extra1.example.com', 'extra2.example.com'])
 
+    def test_index_with_simple_suffix(self):
+        config = io.StringIO('[global]\nindex-url = https://internal.example.com/simple/\n')
+        self.assertEqual(_pypi_indices_from_file(config), ['internal.example.com'])
+
+    def test_index_with_path_prefix(self):
+        config = io.StringIO('[global]\nindex-url = https://internal.example.com/pypi/simple/\n')
+        self.assertEqual(_pypi_indices_from_file(config), ['internal.example.com/pypi'])
+
+    def test_index_with_path_prefix_without_simple_suffix(self):
+        config = io.StringIO('[global]\nindex-url = https://internal.example.com/pypi\n')
+        self.assertEqual(_pypi_indices_from_file(config), ['internal.example.com/pypi'])
+
+    def test_index_with_port(self):
+        config = io.StringIO('[global]\nindex-url = http://localhost:8080/pypi/simple/\n')
+        self.assertEqual(_pypi_indices_from_file(config), ['localhost:8080/pypi'])
+
+    def test_index_with_credentials(self):
+        config = io.StringIO('[global]\nindex-url = https://user:pass@internal.example.com/pypi/simple/\n')
+        self.assertEqual(_pypi_indices_from_file(config), ['internal.example.com/pypi'])
+
 
 class ArchiveTest(unittest.TestCase):
     @patch.object(AutoInstall, "_verify_index", autospec=True, return_value=None)

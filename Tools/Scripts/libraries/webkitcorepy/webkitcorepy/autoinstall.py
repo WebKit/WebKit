@@ -475,7 +475,13 @@ def _pypi_indices_from_file(file):
                     if url:
                         parsed = urlparse(url)
                         if parsed.hostname:
-                            result.append(parsed.hostname)
+                            # AutoInstall appends 'simple/<package>/' to the index, but
+                            # index-url values conventionally end with '/simple/' and may
+                            # contain a path prefix (e.g. a proxy at https://host/pypi/simple/).
+                            # Keep the prefix, dropping the trailing '/simple' component.
+                            host = parsed.netloc.rpartition('@')[2]
+                            path = parsed.path.rstrip('/').removesuffix('/simple')
+                            result.append(host + path)
     return result
 
 
