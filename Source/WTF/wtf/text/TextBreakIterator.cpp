@@ -23,6 +23,7 @@
 #include <wtf/text/TextBreakIterator.h>
 
 #include <wtf/Compiler.h>
+#include <wtf/Scope.h>
 #include <wtf/text/TextBreakIteratorInternalICU.h>
 #include <wtf/text/icu/UTextProviderLatin1.h>
 #include <atomic>
@@ -86,6 +87,9 @@ static UBreakIterator* setTextForIterator(UBreakIterator& iterator, StringView s
             LOG_ERROR("uTextOpenLatin1 failed with status %d", openStatus);
             return nullptr;
         }
+        auto closeText = makeScopeExit([&] {
+            utext_close(text);
+        });
 
         UErrorCode setTextStatus = U_ZERO_ERROR;
         ubrk_setUText(&iterator, text, &setTextStatus);
@@ -93,8 +97,6 @@ static UBreakIterator* setTextForIterator(UBreakIterator& iterator, StringView s
             LOG_ERROR("ubrk_setUText failed with status %d", setTextStatus);
             return nullptr;
         }
-
-        utext_close(text);
     } else {
         UErrorCode setTextStatus = U_ZERO_ERROR;
         auto characters = string.span16();
@@ -132,71 +134,65 @@ ALLOW_DEPRECATED_PRAGMA_BEGIN
 static std::atomic<UBreakIterator*> nonSharedCharacterBreakIterator = ATOMIC_VAR_INIT(nullptr);
 ALLOW_DEPRECATED_PRAGMA_END
 
-static inline UBreakIterator* getNonSharedCharacterBreakIterator()
+static inline UBreakIteratorPtr getNonSharedCharacterBreakIterator()
 {
-    if (auto *res = nonSharedCharacterBreakIterator.exchange(nullptr, std::memory_order_acquire))
-        return res;
-    return initializeIterator(UBRK_CHARACTER);
+    if (auto* cached = nonSharedCharacterBreakIterator.exchange(nullptr, std::memory_order_acquire))
+        return UBreakIteratorPtr { cached };
+    return UBreakIteratorPtr { initializeIterator(UBRK_CHARACTER) };
 }
 
-static inline void cacheNonSharedCharacterBreakIterator(UBreakIterator* cacheMe)
+static inline void cacheNonSharedCharacterBreakIterator(UBreakIteratorPtr&& cacheMe)
 {
-    if (auto *old = nonSharedCharacterBreakIterator.exchange(cacheMe, std::memory_order_release))
-        ubrk_close(old);
+    // Destroying `evicted` closes whichever iterator was cached before this one, if any.
+    UBreakIteratorPtr evicted { nonSharedCharacterBreakIterator.exchange(cacheMe.release(), std::memory_order_release) };
 }
 
 NonSharedCharacterBreakIterator::NonSharedCharacterBreakIterator(StringView string)
 {
-    if ((m_iterator = getNonSharedCharacterBreakIterator()))
-        m_iterator = setTextForIterator(*m_iterator, string);
+    auto iterator = getNonSharedCharacterBreakIterator();
+    if (iterator && setTextForIterator(*iterator, string))
+        m_iterator = WTF::move(iterator);
 }
 
 NonSharedCharacterBreakIterator::~NonSharedCharacterBreakIterator()
 {
     if (m_iterator)
-        cacheNonSharedCharacterBreakIterator(m_iterator);
+        cacheNonSharedCharacterBreakIterator(WTF::move(m_iterator));
 }
 
-NonSharedCharacterBreakIterator::NonSharedCharacterBreakIterator(NonSharedCharacterBreakIterator&& other)
-    : m_iterator(nullptr)
-{
-    std::swap(m_iterator, other.m_iterator);
-}
+NonSharedCharacterBreakIterator::NonSharedCharacterBreakIterator(NonSharedCharacterBreakIterator&&) = default;
 
 ALLOW_DEPRECATED_PRAGMA_BEGIN
 static std::atomic<UBreakIterator*> nonSharedSentenceBreakIterator = ATOMIC_VAR_INIT(nullptr);
 ALLOW_DEPRECATED_PRAGMA_END
 
-static inline UBreakIterator* getNonSharedSentenceBreakIterator()
+static inline UBreakIteratorPtr getNonSharedSentenceBreakIterator()
 {
-    if (auto *res = nonSharedSentenceBreakIterator.exchange(nullptr, std::memory_order_acquire))
-        return res;
-    return initializeIterator(UBRK_SENTENCE);
+    if (auto* cached = nonSharedSentenceBreakIterator.exchange(nullptr, std::memory_order_acquire))
+        return UBreakIteratorPtr { cached };
+    return UBreakIteratorPtr { initializeIterator(UBRK_SENTENCE) };
 }
 
-static inline void cacheNonSharedSentenceBreakIterator(UBreakIterator* cacheMe)
+static inline void cacheNonSharedSentenceBreakIterator(UBreakIteratorPtr&& cacheMe)
 {
-    if (auto *old = nonSharedSentenceBreakIterator.exchange(cacheMe, std::memory_order_release))
-        ubrk_close(old);
+    // Destroying `evicted` closes whichever iterator was cached before this one, if any.
+    UBreakIteratorPtr evicted { nonSharedSentenceBreakIterator.exchange(cacheMe.release(), std::memory_order_release) };
 }
 
 NonSharedSentenceBreakIterator::NonSharedSentenceBreakIterator(StringView string)
 {
-    if ((m_iterator = getNonSharedSentenceBreakIterator()))
-        m_iterator = setTextForIterator(*m_iterator, string);
+    auto iterator = getNonSharedSentenceBreakIterator();
+    if (iterator && setTextForIterator(*iterator, string))
+        m_iterator = WTF::move(iterator);
 }
 
 NonSharedSentenceBreakIterator::~NonSharedSentenceBreakIterator()
 {
     if (m_iterator)
-        cacheNonSharedSentenceBreakIterator(m_iterator);
+        cacheNonSharedSentenceBreakIterator(WTF::move(m_iterator));
 }
 
-NonSharedSentenceBreakIterator::NonSharedSentenceBreakIterator(NonSharedSentenceBreakIterator&& other)
-    : m_iterator(nullptr)
-{
-    std::swap(m_iterator, other.m_iterator);
-}
+NonSharedSentenceBreakIterator::NonSharedSentenceBreakIterator(NonSharedSentenceBreakIterator&&) = default;
 
 // Iterator implemenation.
 

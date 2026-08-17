@@ -355,6 +355,8 @@ private:
 // version 4.0 only supports "legacy grapheme clusters".
 // Use this for general text processing, e.g. string truncation.
 
+using UBreakIteratorPtr = std::unique_ptr<UBreakIterator, ICUDeleter<ubrk_close>>;
+
 class NonSharedCharacterBreakIterator {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(NonSharedCharacterBreakIterator);
     WTF_MAKE_NONCOPYABLE(NonSharedCharacterBreakIterator);
@@ -364,10 +366,10 @@ public:
 
     NonSharedCharacterBreakIterator(NonSharedCharacterBreakIterator&&);
 
-    operator UBreakIterator*() const { return m_iterator; }
+    operator UBreakIterator*() const { return m_iterator.get(); }
 
 private:
-    UBreakIterator* m_iterator;
+    UBreakIteratorPtr m_iterator;
 };
 
 class NonSharedSentenceBreakIterator {
@@ -379,10 +381,10 @@ public:
 
     NonSharedSentenceBreakIterator(NonSharedSentenceBreakIterator&&);
 
-    operator UBreakIterator*() const { return m_iterator; }
+    operator UBreakIterator*() const { return m_iterator.get(); }
 
 private:
-    UBreakIterator* m_iterator;
+    UBreakIteratorPtr m_iterator;
 };
 
 // Counts the number of grapheme clusters. A surrogate pair or a sequence
