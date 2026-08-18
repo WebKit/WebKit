@@ -2765,6 +2765,110 @@ class TestRunWebKitTestsWithoutChange(BuildStepMixinAdditions, unittest.TestCase
             return self.run_step()
 
 
+class TestRunWebKitTestsEWSSiteIsolation(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        self.longMessage = True
+        self.jsonFileName = 'layout-test-results/full_results.json'
+        return self.setup_test_build_step()
+
+    def tearDown(self):
+        return self.tear_down_test_build_step()
+
+    def configureStep(self):
+        self.setup_step(RunWebKitTestsEWSSiteIsolation())
+        self.property_exceed_failure_limit = 'first_results_exceed_failure_limit'
+        self.property_failures = 'first_run_failures'
+        RunWebKitTestsEWSSiteIsolation.filter_failures_using_results_db = lambda x, failing_tests: ''
+
+    def test_success(self):
+        self.configureStep()
+        self.setProperty('platform', 'mac-sequoia')
+        self.setProperty('fullPlatform', 'mac-sequoia')
+        self.setProperty('configuration', 'release')
+        self.setProperty('additionalArguments', ['imported/w3c/web-platform-tests', '--site-isolation-enabled-by-default', '--exclude-tests', 'imported/w3c/web-platform-tests/css'])
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logfiles={'json': self.jsonFileName},
+                        log_environ=False,
+                        timeout=19800,
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'python3 Tools/Scripts/run-webkit-tests --no-build --no-show-results --no-new-test-results --clobber-old-results --release --results-directory layout-test-results --debug-rwt-logging --exit-after-n-failures 60 --skip-failing-tests imported/w3c/web-platform-tests --site-isolation-enabled-by-default --exclude-tests imported/w3c/web-platform-tests/css 2>&1 | Tools/Scripts/filter-test-logs layout'],
+                        )
+            .exit(0),
+        )
+        self.expect_outcome(result=SUCCESS, state_string='Passed layout tests')
+        return self.run_step()
+
+    def test_failure(self):
+        self.configureStep()
+        self.setProperty('platform', 'mac-sequoia')
+        self.setProperty('fullPlatform', 'mac-sequoia')
+        self.setProperty('configuration', 'release')
+        self.setProperty('additionalArguments', ['imported/w3c/web-platform-tests', '--site-isolation-enabled-by-default', '--exclude-tests', 'imported/w3c/web-platform-tests/css'])
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logfiles={'json': self.jsonFileName},
+                        log_environ=False,
+                        timeout=19800,
+                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'python3 Tools/Scripts/run-webkit-tests --no-build --no-show-results --no-new-test-results --clobber-old-results --release --results-directory layout-test-results --debug-rwt-logging --exit-after-n-failures 60 --skip-failing-tests imported/w3c/web-platform-tests --site-isolation-enabled-by-default --exclude-tests imported/w3c/web-platform-tests/css 2>&1 | Tools/Scripts/filter-test-logs layout'],
+                        )
+            .log('stdio', stdout='9 failures found.')
+            .exit(2),
+        )
+        self.expect_outcome(result=FAILURE, state_string='layout-tests (failure)')
+        return self.run_step()
+
+    def test_results_db_query_configuration_uses_site_isolation_flavor(self):
+        self.setup_step(RunWebKitTestsEWSSiteIsolation())
+        self.setProperty('platform', 'mac-sequoia')
+        self.setProperty('configuration', 'release')
+        self.assertEqual(self.get_nth_step(0).results_db_query_configuration(), {'flavor': 'site-isolation', 'style': 'release'})
+
+    def test_failure_schedules_site_isolation_rerun(self):
+        self.configureStep()
+        self.setProperty('platform', 'mac-sequoia')
+        self.setProperty('fullPlatform', 'mac-sequoia')
+        self.setProperty('configuration', 'release')
+        next_steps = []
+        self.patch(self.build, 'addStepsAfterCurrentStep', lambda s: next_steps.extend(s))
+        self.patch(RunWebKitTestsEWSSiteIsolation, 'evaluateResult', lambda s, r: r)
+        self.get_nth_step(0).evaluateCommand(FAILURE)
+        self.assertTrue(any(isinstance(step, ReRunWebKitTestsEWSSiteIsolation) for step in next_steps))
+        self.assertFalse(any(type(step) is ReRunWebKitTests for step in next_steps))
+
+
+class TestReRunWebKitTestsEWSSiteIsolation(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        self.longMessage = True
+        self.jsonFileName = 'layout-test-results/full_results.json'
+        return self.setup_test_build_step()
+
+    def tearDown(self):
+        return self.tear_down_test_build_step()
+
+    def configureStep(self):
+        self.setup_step(ReRunWebKitTestsEWSSiteIsolation())
+        ReRunWebKitTestsEWSSiteIsolation.filter_failures_using_results_db = lambda x, failing_tests: ''
+
+    def test_results_db_query_configuration_uses_site_isolation_flavor(self):
+        self.configureStep()
+        self.setProperty('configuration', 'debug')
+        self.assertEqual(self.get_nth_step(0).results_db_query_configuration(), {'flavor': 'site-isolation', 'style': 'debug'})
+
+    def test_failure_schedules_clean_tree_run(self):
+        self.configureStep()
+        self.setProperty('platform', 'mac-sequoia')
+        self.setProperty('fullPlatform', 'mac-sequoia')
+        self.setProperty('configuration', 'release')
+        self.setProperty('first_run_failures', ['imported/w3c/web-platform-tests/test1.html'])
+        self.setProperty('second_run_failures', ['imported/w3c/web-platform-tests/test1.html'])
+        next_steps = []
+        self.patch(self.build, 'addStepsAfterCurrentStep', lambda s: next_steps.extend(s))
+        self.patch(ReRunWebKitTestsEWSSiteIsolation, 'evaluateResult', lambda s, r: r)
+        self.get_nth_step(0).evaluateCommand(FAILURE)
+        self.assertTrue(any(isinstance(step, RunWebKitTestsWithoutChange) for step in next_steps))
+        self.assertTrue(any(isinstance(step, ValidateChange) for step in next_steps))
+
+
 class TestRunWebKit1Tests(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):
         self.longMessage = True

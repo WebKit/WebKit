@@ -4092,6 +4092,9 @@ class RunWebKitTests(shell.Test, ResultsDBReportMixin, AddToLogMixin, ShellMixin
 
         return result
 
+    def rerun_step(self):
+        return ReRunWebKitTests()
+
     def evaluateCommand(self, cmd):
         rc = self.evaluateResult(cmd)
         previous_build_summary = self.getProperty('build_summary', '')
@@ -4138,7 +4141,7 @@ class RunWebKitTests(shell.Test, ResultsDBReportMixin, AddToLogMixin, ShellMixin
             if GitHub.NO_FAILURE_LIMITS_LABEL not in self.getProperty('github_labels', []):
                 steps_to_add += [
                     KillOldProcesses(),
-                    ReRunWebKitTests(),
+                    self.rerun_step(),
                 ]
             elif platform != 'win':
                 steps_to_add += [
@@ -4269,89 +4272,6 @@ class RunWebKitTestsInSiteIsolationMode(RunWebKitTestsInStressMode):
 
     def doStepIf(self, step):
         return self.getProperty('modified_tests', False) and self.getProperty('stress_mode_passed', False)
-
-
-class RunWebKitTestsEWSSiteIsolation(RunWebKitTests):
-    reports_to_results_db = False
-    name = 'layout-tests-site-isolation'
-
-    def results_db_query_configuration(self) -> dict:
-        # Use flavor='site-isolation' without a platform filter so that results from
-        # Apple-Tahoe-Release-WK2-Site-Isolation-Tree-Tests (the closest post-commit queue)
-        # are consulted. Once a mac-sequoia site-isolation post-commit bot exists its
-        # results will automatically be included as well.
-        configuration = super().results_db_query_configuration()
-        configuration['flavor'] = 'site-isolation'
-        configuration.pop('platform')
-        return configuration
-
-    @defer.inlineCallbacks
-    def filter_failures_using_results_db(self, failing_tests):
-        self.failing_tests_filtered = failing_tests.copy()
-        identifier = self.getProperty('identifier', None)
-        configuration = self.results_db_query_configuration()
-
-        yield self._addToLog(self.results_db_log_name, f'Checking Results database for failing tests. Identifier: {identifier}, configuration: {configuration}')
-        has_commit = False
-        if failing_tests and identifier:
-            has_commit = yield ResultsDatabase.has_commit(commit=identifier)
-            if not has_commit:
-                yield self._addToLog(self.results_db_log_name, f"'{identifier}' could not be found on the results database, falling back to tip-of-tree\n")
-
-        for test in failing_tests:
-            data = yield ResultsDatabase.is_test_pre_existing_failure(
-                test, configuration=configuration,
-                commit=identifier if has_commit else None,
-            )
-            yield self._addToLog(self.results_db_log_name, f"\n{test}: pass_rate: {data['pass_rate']}, pre-existing-failure={data['is_existing_failure']}\nResponse from results-db: {data['raw_data']}\n{data['logs']}")
-            if data['is_existing_failure']:
-                self.preexisting_failures_in_results_db.append(test)
-                self.failing_tests_filtered.remove(test)
-            else:
-                break
-
-    def evaluateCommand(self, cmd):
-        rc = self.evaluateResult(cmd)
-        previous_build_summary = self.getProperty('build_summary', '')
-        steps_to_add = []
-
-        if SHOULD_FILTER_LOGS is True:
-            steps_to_add = [
-                GenerateS3URL(
-                    f"{self.getProperty('fullPlatform')}-{self.getProperty('archForUpload')}-{self.getProperty('configuration')}-{self.name}",
-                    extension='txt',
-                    additions=f'{self.build.number}',
-                    content_type='text/plain',
-                ), UploadFileToS3(
-                    'logs.txt',
-                    links={self.name: 'Full logs'},
-                    content_type='text/plain',
-                )
-            ]
-
-        if rc == SUCCESS or rc == WARNINGS:
-            message = 'Passed layout tests'
-            self.descriptionDone = message
-            self.build.results = SUCCESS
-            if RunWebKitTestsInStressMode.FAILURE_MSG_IN_STRESS_MODE not in previous_build_summary:
-                self.setProperty('build_summary', message)
-        elif (self.preexisting_failures_in_results_db and len(self.failing_tests_filtered) == 0):
-            message = f"Ignored pre-existing failure: {', '.join(self.preexisting_failures_in_results_db)}"
-            self.descriptionDone = message
-            self.build.results = SUCCESS
-            if RunWebKitTestsInStressMode.FAILURE_MSG_IN_STRESS_MODE not in previous_build_summary:
-                self.setProperty('build_summary', message)
-            steps_to_add += [ArchiveTestResults(), UploadTestResults(), ExtractTestResults()]
-            self.build.addStepsAfterCurrentStep(steps_to_add)
-            return WARNINGS
-        else:
-            steps_to_add += [
-                ArchiveTestResults(),
-                UploadTestResults(),
-                ExtractTestResults(),
-            ]
-        self.build.addStepsAfterCurrentStep(steps_to_add)
-        return rc
 
 
 class ReRunWebKitTests(RunWebKitTests):
@@ -4613,6 +4533,29 @@ class RunWebKitTestsWithoutChange(RunWebKitTests):
                 continue
             positional_test_paths.append(argument)
         return positional_test_paths
+
+
+class SiteIsolationResultsDBMixin(object):
+    reports_to_results_db = False
+
+    def results_db_query_configuration(self) -> dict:
+        # Use flavor='site-isolation' without a platform filter so that results from
+        # Apple-Tahoe-Release-WK2-Site-Isolation-Tree-Tests (the closest post-commit queue) are consulted.
+        configuration = super().results_db_query_configuration()
+        configuration['flavor'] = 'site-isolation'
+        configuration.pop('platform', None)
+        return configuration
+
+
+class RunWebKitTestsEWSSiteIsolation(SiteIsolationResultsDBMixin, RunWebKitTests):
+    name = 'layout-tests-site-isolation'
+
+    def rerun_step(self):
+        return ReRunWebKitTestsEWSSiteIsolation()
+
+
+class ReRunWebKitTestsEWSSiteIsolation(SiteIsolationResultsDBMixin, ReRunWebKitTests):
+    name = 're-run-layout-tests-site-isolation'
 
 
 class AnalyzeLayoutTestsResults(ResultsDBReportMixin, buildstep.BuildStep, BugzillaMixin, GitHubMixin):
