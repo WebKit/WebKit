@@ -309,7 +309,12 @@ void GStreamerVideoCaptureSource::generatePresets()
         }
 
         IntSize size = { width, height };
-        double framerate;
+
+        if (!gst_structure_has_field(str, "framerate")) {
+            presets.append(VideoPreset { { size, { } } });
+            continue;
+        }
+
         Vector<FrameRateRange> frameRates;
         int32_t minFrameRateNumerator, minFrameRateDenominator, maxFrameRateNumerator, maxFrameRateDenominator, framerateNumerator, framerateDenominator;
         if (gst_structure_get(str, "framerate", GST_TYPE_FRACTION_RANGE, &minFrameRateNumerator, &minFrameRateDenominator, &maxFrameRateNumerator, &maxFrameRateDenominator, nullptr)) {
@@ -320,8 +325,10 @@ void GStreamerVideoCaptureSource::generatePresets()
 
             frameRates.append(range);
         } else if (gst_structure_get(str, "framerate", GST_TYPE_FRACTION, &framerateNumerator, &framerateDenominator, nullptr)) {
+            double framerate = 0;
             gst_util_fraction_to_double(framerateNumerator, framerateDenominator, &framerate);
-            frameRates.append({ framerate, framerate});
+            if (framerate)
+                frameRates.append({ framerate, framerate });
         } else {
             for (const auto& framerate : gstStructureGetList<double>(str, "framerate"_s))
                 frameRates.append({ framerate, framerate });
