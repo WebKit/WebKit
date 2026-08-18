@@ -5,7 +5,6 @@ layer at (0,0) size 400x500
 layer at (0,0) size 400x500
   RenderSVGViewportContainer at (0,0) size 400x500
     RenderSVGHiddenContainer {defs} at (0,0) size 100x100
-      RenderSVGRect {rect} at (0,0) size 100x100 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
       RenderSVGHiddenContainer {filter} at (0,0) size 0x0
         RenderSVGHiddenContainer {feImage} at (0,0) size 0x0
       RenderSVGHiddenContainer {filter} at (0,0) size 0x0
@@ -18,6 +17,8 @@ layer at (0,0) size 400x500
     RenderSVGRect {rect} at (10,240) size 100x100 [stroke={[type=SOLID] [color=#FF0000]}] [x=10.00] [y=240.00] [width=100.00] [height=100.00]
     RenderSVGRect {rect} at (250,10) size 440x220 [stroke={[type=SOLID] [color=#FF0000]}] [x=250.00] [y=10.00] [width=440.00] [height=220.00]
     RenderSVGRect {rect} at (210,240) size 480x240 [stroke={[type=SOLID] [color=#FF0000]}] [x=210.00] [y=240.00] [width=480.00] [height=240.00]
+layer at (0,0) size 100x100
+  RenderSVGRect {rect} at (0,0) size 100x100 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=100.00] [height=100.00]
 layer at (0,0) size 400x200
   RenderSVGTransformableContainer {g} at (0,0) size 400x200
 layer at (0,0) size 400x200

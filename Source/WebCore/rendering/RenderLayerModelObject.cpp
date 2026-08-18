@@ -145,6 +145,9 @@ bool RenderLayerModelObject::hasSelfPaintingLayer() const
 
 bool RenderLayerModelObject::requiresLayerForSVGIntrinsicReasons() const
 {
+    if (RefPtr svgElement = dynamicDowncast<SVGElement>(element()); svgElement && svgElement->isReferencedByFEImage())
+        return true;
+
     // Plain 2D transforms need no layer, paintRendererByApplyingTransformForSVG() handles them.
     // 3D transforms require compositing, hence a layer, as do grouping effects, z-index, etc.
     //

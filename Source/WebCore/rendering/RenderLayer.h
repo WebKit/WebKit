@@ -1094,7 +1094,12 @@ private:
 
     LayoutPoint paintOffsetForRenderer(const LayerFragment& fragment, const LayerPaintingInfo& paintingInfo) const
     {
-        return toLayoutPoint(fragment.layerBounds().location() - rendererLocation() + paintingInfo.subpixelOffset);
+        auto paintOffset = toLayoutPoint(fragment.layerBounds().location() - rendererLocation() + paintingInfo.subpixelOffset);
+
+        if (m_svgData && m_svgData->isPaintingResourceLayer) [[unlikely]]
+            paintOffset.moveBy(renderer().nominalSVGLayoutLocation());
+
+        return paintOffset;
     }
 
     // Compute, cache and return clip rects computed with the given layer as the root.

@@ -31,11 +31,17 @@
 #include "Image.h"
 #include "LegacyRenderSVGResource.h"
 #include "NativeImage.h"
+#include "RenderElementStyleInlines.h"
+#include "RenderLayer.h"
+#include "RenderLayerInlines.h"
+#include "RenderLayerModelObject.h"
 #include "RenderObject.h"
 #include "SVGElementInlines.h"
 #include "SVGNames.h"
 #include "SVGPreserveAspectRatioValue.h"
 #include "SVGRenderingContext.h"
+#include "SVGTransformComputation.h"
+#include "SVGVisitedRendererTracking.h"
 #include "Settings.h"
 #include <wtf/TZoneMallocInlines.h>
 
@@ -178,9 +184,10 @@ void SVGFEImageElement::notifyFinished(CachedResource&, const NetworkLoadMetrics
     if (!parentRenderer)
         return;
 
-    // FIXME: [LBSE] Implement filters.
-    if (document().settings().layerBasedSVGEngineEnabled())
+    if (document().settings().layerBasedSVGEngineEnabled()) {
+        markFilterEffectForRebuild();
         return;
+    }
 
     LegacyRenderSVGResource::markForLayoutAndParentResourceInvalidation(*parentRenderer);
 }
@@ -198,12 +205,46 @@ std::tuple<RefPtr<ImageBuffer>, FloatRect> SVGFEImageElement::imageBufferForEffe
     if (!renderer)
         return { };
 
-    auto absoluteTransform = SVGRenderingContext::calculateTransformationToOutermostCoordinateSystem(*renderer);
-    if (!absoluteTransform.isInvertible())
-        return { };
+    // The layer-based engine paints the referenced subtree through its layer, the same way <mask>,
+    // <clipPath>, <pattern> and <marker> content is painted -- being referenced by an <feImage> is
+    // what gives that element a layer, see RenderLayerModelObject::requiresLayerForSVGIntrinsicReasons().
+    CheckedPtr<RenderLayerModelObject> layerRenderer;
+    if (document().settings().layerBasedSVGEngineEnabled()) {
+        layerRenderer = dynamicDowncast<RenderLayerModelObject>(*renderer);
+        if (!layerRenderer || !layerRenderer->hasLayer())
+            return { };
+    }
 
-    // Ignore 2D rotation, as it doesn't affect the image size.
-    FloatSize scale(absoluteTransform.xScale(), absoluteTransform.yScale());
+    FloatSize scale;
+    if (layerRenderer) {
+        // Ancestor transforms -- the viewBox transform of the outermost <svg> above all -- live on
+        // RenderLayers, where calculateTransformationToOutermostCoordinateSystem() cannot see them.
+        scale = SVGTransformComputation(*layerRenderer).calculateAccumulatedSVGAncestorTransformScale();
+        scale.scale(protect(document())->deviceScaleFactor());
+        if (scale.isEmpty())
+            return { };
+    } else {
+        auto absoluteTransform = SVGRenderingContext::calculateTransformationToOutermostCoordinateSystem(*renderer);
+        if (!absoluteTransform.isInvertible())
+            return { };
+
+        // Ignore 2D rotation, as it doesn't affect the image size.
+        scale = { narrowPrecisionToFloat(absoluteTransform.xScale()), narrowPrecisionToFloat(absoluteTransform.yScale()) };
+    }
+
+    // The subtree paints in full, including descendants carrying a filter that references back to it
+    // (svg/filters/feImage-reentrant-filter-remove-crash.html). Break such cycles the same way the
+    // other SVG resources do. The legacy engine never recurses: it skips layered descendants.
+    static NeverDestroyed<SVGVisitedRendererTracking::VisitedSet> s_visitedSet;
+
+    SVGVisitedRendererTracking recursionTracking(s_visitedSet);
+    std::optional<SVGVisitedRendererTracking::Scope> recursionScope;
+    if (layerRenderer) {
+        if (recursionTracking.isVisiting(*layerRenderer))
+            return { };
+        recursionScope.emplace(recursionTracking, *layerRenderer);
+    }
+
     auto imageRect = renderer->repaintRectInLocalCoordinates();
 
     RefPtr imageBuffer = destinationContext.createScaledImageBuffer(imageRect, scale);
@@ -211,7 +252,10 @@ std::tuple<RefPtr<ImageBuffer>, FloatRect> SVGFEImageElement::imageBufferForEffe
         return { };
 
     auto& context = imageBuffer->context();
-    SVGRenderingContext::renderSubtreeToContext(context, *renderer, AffineTransform());
+    if (layerRenderer)
+        protect(layerRenderer->layer())->paintResourceLayerForSVG(context, { });
+    else
+        SVGRenderingContext::renderSubtreeToContext(context, *renderer, AffineTransform());
 
     return { WTF::move(imageBuffer), imageRect };
 }

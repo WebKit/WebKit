@@ -51,6 +51,7 @@
 #include "SVGElementRareData.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGEllipseElement.h"
+#include "SVGFEImageElement.h"
 #include "SVGForeignObjectElement.h"
 #include "SVGGraphicsElement.h"
 #include "SVGImageElement.h"
@@ -289,12 +290,23 @@ void SVGElement::addReferencingElement(SVGElement& element)
     auto& rareDataOfReferencingElement = element.ensureSVGRareData();
     RELEASE_ASSERT(!rareDataOfReferencingElement.referenceTarget());
     rareDataOfReferencingElement.setReferenceTarget(*this);
+    invalidateLayerRequirementForFEImageReference(element);
 }
 
 void SVGElement::removeReferencingElement(SVGElement& element)
 {
     ensureSVGRareData().removeReferencingElement(element);
     element.ensureSVGRareData().setReferenceTarget(nullptr);
+    invalidateLayerRequirementForFEImageReference(element);
+}
+
+void SVGElement::invalidateLayerRequirementForFEImageReference(const SVGElement& referencingElement)
+{
+    if (!is<SVGFEImageElement>(referencingElement))
+        return;
+    if (!document().settings().layerBasedSVGEngineEnabled())
+        return;
+    invalidateStyleAndLayerComposition();
 }
 
 void SVGElement::removeElementReference()
@@ -303,6 +315,17 @@ void SVGElement::removeElementReference()
         return;
     if (RefPtr destination = m_svgRareData->referenceTarget())
         destination->removeReferencingElement(*this);
+}
+
+bool SVGElement::isReferencedByFEImage() const
+{
+    if (!m_svgRareData)
+        return false;
+    for (Ref element : m_svgRareData->referencingElements()) {
+        if (is<SVGFEImageElement>(element))
+            return true;
+    }
+    return false;
 }
 
 Vector<WeakPtr<SVGResourceElementClient>> SVGElement::referencingCSSClients() const

@@ -42,10 +42,6 @@ svg/filters/big-sized-filter.svg                                                
 svg/filters/css-filter-specified-on-svg-root.html                                      [ ImageOnlyFailure ]
 svg/filters/css-repaint-reference-filter-on-root.html                                  [ Failure ]
 svg/filters/feDropShadow.svg                                                           [ ImageOnlyFailure ]
-svg/filters/feImage-animated-transform-on-target-rect.svg                              [ ImageOnlyFailure ]
-svg/filters/feImage-element-primitive-subregion.svg                                    [ ImageOnlyFailure ]
-svg/filters/feImage-filterUnits-objectBoundingBox-primitiveUnits-objectBoundingBox.svg [ ImageOnlyFailure ]
-svg/filters/feImage-filterUnits-userSpaceOnUse-primitiveUnits-objectBoundingBox.svg    [ ImageOnlyFailure ]
 svg/filters/feImage-filterUnits-userSpaceOnUse-primitiveUnits-userSpaceOnUse.svg       [ ImageOnlyFailure ]
 svg/filters/feImage-late-indirect-update.svg                                           [ ImageOnlyFailure ]
 svg/filters/feImage-reference-svg-primitive.svg                                        [ ImageOnlyFailure ]
@@ -53,11 +49,6 @@ svg/filters/filter-on-root-tile-boundary.html                                   
 svg/filters/filter-on-tspan.svg                                                        [ ImageOnlyFailure ]
 svg/filters/filter-placement-issue.svg                                                 [ ImageOnlyFailure ]
 svg/filters/filter-source-position.svg                                                 [ ImageOnlyFailure ]
-
-# Regressed by conditional layer creation (bugs.webkit.org/b/308565). Filter and resource-buffer
-# painting for non-layered SVG renderers is corrected by a follow-up PR, which restores these.
-svg/filters/feImage-target-attribute-change-with-use-indirection-2.svg                 [ ImageOnlyFailure ]
-svg/filters/feImage-target-attribute-change-with-use-indirection.svg                   [ ImageOnlyFailure ]
 
 # Precision differences
 svg/zoom/page/zoom-zoom-coords.xhtml [ Failure ]

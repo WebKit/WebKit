@@ -11,10 +11,6 @@ layer at (0,0) size 480x360
 layer at (-25,0) size 1124x724 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGTransformableContainer {g} at (-25,0) size 1124x724
     RenderSVGHiddenContainer {defs} at (25,0) size 150x150
-      RenderSVGPath {path} at (0,0) size 150x150 [fill={[type=SOLID] [color=#00FFFF]}] [data="M 0 0 L 150 0 L 150 150 Z"]
-      RenderSVGPath {path} at (0,0) size 150x150 [fill={[type=SOLID] [color=#FF00FF]}] [data="M 0 0 L 0 150 L 150 0 Z"]
-      RenderSVGPath {path} at (0,0) size 150x150 [fill={[type=SOLID] [color=#00FFFF] [opacity=0.50]}] [data="M 0 0 L 150 0 L 150 150 Z"]
-      RenderSVGPath {path} at (0,0) size 150x150 [fill={[type=SOLID] [color=#FF00FF] [opacity=0.50]}] [data="M 0 0 L 0 150 L 150 0 Z"]
       RenderSVGHiddenContainer {filter} at (0,0) size 0x0
         RenderSVGHiddenContainer {feImage} at (0,0) size 0x0
         RenderSVGHiddenContainer {feImage} at (0,0) size 0x0
@@ -63,6 +59,14 @@ layer at (-25,0) size 1124x724 backgroundClip at (0,0) size 480x360 clip at (0,0
         RenderSVGHiddenContainer {feImage} at (0,0) size 0x0
         RenderSVGHiddenContainer {feImage} at (0,0) size 0x0
         RenderSVGHiddenContainer {feComposite} at (0,0) size 0x0
+layer at (0,0) size 150x150
+  RenderSVGPath {path} at (0,0) size 150x150 [fill={[type=SOLID] [color=#00FFFF]}] [data="M 0 0 L 150 0 L 150 150 Z"]
+layer at (0,0) size 150x150
+  RenderSVGPath {path} at (0,0) size 150x150 [fill={[type=SOLID] [color=#FF00FF]}] [data="M 0 0 L 0 150 L 150 0 Z"]
+layer at (0,0) size 150x150
+  RenderSVGPath {path} at (0,0) size 150x150 [fill={[type=SOLID] [color=#00FFFF] [opacity=0.50]}] [data="M 0 0 L 150 0 L 150 150 Z"]
+layer at (0,0) size 150x150
+  RenderSVGPath {path} at (0,0) size 150x150 [fill={[type=SOLID] [color=#FF00FF] [opacity=0.50]}] [data="M 0 0 L 0 150 L 150 0 Z"]
 layer at (-25,0) size 1124x724 backgroundClip at (0,0) size 480x360 clip at (0,0) size 480x360
   RenderSVGTransformableContainer {g} at (0,0) size 1124x724
     RenderSVGRect {rect} at (26,1) size 1098x723 [stroke={[type=SOLID] [color=#0000FF]}] [x=1.00] [y=1.00] [width=1098.00] [height=723.00]

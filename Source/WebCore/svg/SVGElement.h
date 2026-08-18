@@ -130,6 +130,8 @@ public:
     void removeReferencingElement(SVGElement&);
     void removeElementReference();
 
+    bool isReferencedByFEImage() const;
+
     Vector<WeakPtr<SVGResourceElementClient>> referencingCSSClients() const;
     void addReferencingCSSClient(SVGResourceElementClient&);
     void removeReferencingCSSClient(SVGResourceElementClient&);
@@ -229,6 +231,7 @@ protected:
 private:
     virtual void clearTarget() { }
 
+    void invalidateLayerRequirementForFEImageReference(const SVGElement& referencingElement);
     void buildPendingResourcesIfNeeded();
     bool accessKeyAction(bool sendMouseEvents) override;
 

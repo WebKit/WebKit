@@ -573,10 +573,8 @@ void RenderLayer::paintChildrenInDOMOrderForSVG(GraphicsContext& context, const 
 
     if (auto* svgModelObject = dynamicDowncast<RenderSVGModelObject>(renderer())) {
         containerBaseOffset = svgModelObject->currentSVGLayoutLocation();
-        if (isPaintingResourceLayerForSVG()) {
+        if (isPaintingResourceLayerForSVG())
             layerResourceOffset = svgModelObject->nominalSVGLayoutLocation();
-            containerBaseOffset.moveBy(layerResourceOffset);
-        }
     } else if (auto* svgRoot = dynamicDowncast<RenderSVGRoot>(renderer()))
         containerBaseOffset = svgRoot->location();
 
