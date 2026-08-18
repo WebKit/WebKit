@@ -77,7 +77,6 @@ void RenderSVGResourceMasker::applyMask(PaintInfo& paintInfo, const RenderLayerM
 {
     ASSERT(hasLayer());
     ASSERT(layer()->isSelfPaintingLayer());
-    ASSERT(targetRenderer.hasLayer());
 
     static NeverDestroyed<SVGVisitedRendererTracking::VisitedSet> s_visitedSet;
 

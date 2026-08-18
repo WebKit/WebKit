@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="match" href="mask-on-transformed-shape-in-group-expected.html">
+</head>
+<body style="margin: 0">
+<!-- A mask on a transformed non-layer shape inside a plain group. The mask lives in the shape's own
+     user space, so it has to be transformed along with the shape: the left half of the translated
+     rect should be green, the right half should be gone. -->
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300">
+<defs>
+    <mask id="halfMask" maskUnits="userSpaceOnUse" x="0" y="0" width="100" height="200">
+        <rect x="0" y="0" width="100" height="200" fill="white"/>
+    </mask>
+</defs>
+<g>
+    <rect x="0" y="0" width="200" height="200" fill="green" mask="url(#halfMask)" transform="translate(50, 50)"/>
+</g>
+</svg>
+</body>
+</html>

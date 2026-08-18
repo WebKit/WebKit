@@ -40,7 +40,7 @@ class RenderSVGResourceClipper;
 // Applies a clip-path to a renderer and keeps it active for the scope's lifetime. Handles CSS
 // basic-shape and box clip-paths and SVG clipper resources, so it works for both CSS boxes and SVG.
 // Used by the layer paint path (RenderLayer::setupClipPath) and the SVG non-layer path
-// (SVGNonLayerClipPathScope).
+// (SVGNonLayerClippingAndMaskingScope).
 //
 // needsMaskClipping() is true when the clip can't be a path and the caller must paint the clipper as a
 // destination-in mask, using the layer's transparency layer on the layer path and its own otherwise.

@@ -93,11 +93,9 @@ inline bool RenderElement::canContainFixedPositionObjects(const Style::ComputedS
         || (isRenderBlock() && style.willChange().createsContainingBlockForOutOfFlowPositioned(isDocumentElementRenderer()));
 }
 
-inline bool RenderElement::createsGroupForStyleExcludingClipPath(const Style::ComputedStyle& style)
+inline bool RenderElement::createsGroupForStyleExcludingClipPathAndMask(const Style::ComputedStyle& style)
 {
     return !style.opacity().isOpaque()
-        || Style::hasImageInAnyLayer(style.maskLayers())
-        || !style.maskBorderSource().isNone()
         || !style.filter().isNone()
         || !style.backdropFilter().isNone()
 #if HAVE(CORE_MATERIAL)
@@ -108,7 +106,9 @@ inline bool RenderElement::createsGroupForStyleExcludingClipPath(const Style::Co
 
 inline bool RenderElement::createsGroupForStyle(const Style::ComputedStyle& style)
 {
-    return createsGroupForStyleExcludingClipPath(style) || !style.clipPath().isNone();
+    return createsGroupForStyleExcludingClipPathAndMask(style)
+        || style.hasMask()
+        || !style.clipPath().isNone();
 }
 
 inline bool RenderElement::shouldApplyAnyContainment() const

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="match" href="mask-on-shape-in-group-expected.html">
+</head>
+<body style="margin: 0">
+<!-- A mask on a positioned shape nested inside a plain (non-layer) group. The mask must line up with
+     the shape, not be shifted by the group-relative offset. The left half of the rect should be
+     green, the right half should be gone. -->
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300">
+<defs>
+    <mask id="halfMask" maskUnits="userSpaceOnUse" x="50" y="50" width="100" height="200">
+        <rect x="50" y="50" width="100" height="200" fill="white"/>
+    </mask>
+</defs>
+<g>
+    <rect x="50" y="50" width="200" height="200" fill="green" mask="url(#halfMask)"/>
+</g>
+</svg>
+</body>
+</html>
