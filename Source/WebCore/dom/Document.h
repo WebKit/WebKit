@@ -1545,7 +1545,7 @@ public:
 
     MonotonicTime lastHandledUserGestureTimestamp() const { return m_lastHandledUserGestureTimestamp; }
     bool hasHadUserInteraction() const { return static_cast<bool>(m_lastHandledUserGestureTimestamp); }
-    void updateLastHandledUserGestureTimestamp(MonotonicTime);
+    WEBCORE_EXPORT void updateLastHandledUserGestureTimestamp(MonotonicTime);
     bool processingUserGestureForMedia() const;
 
     // Identifies which branch of processingUserGestureForMedia() authorizes media playback.

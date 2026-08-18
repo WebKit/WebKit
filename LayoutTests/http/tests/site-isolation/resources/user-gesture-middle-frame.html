@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<body style="margin: 0">
+<iframe src="http://127.0.0.1:8000/site-isolation/resources/user-gesture-innermost-frame.html" style="border: 0; width: 200px; height: 150px"></iframe>
+<script>
+
+// Make the controller now. Document adds NonInteractedCrossOriginFrame when it makes the controller, which
+// happens at the first requestAnimationFrame call.
+function step()
+{
+    requestAnimationFrame(step);
+}
+
+requestAnimationFrame(step);
+
+window.addEventListener("message", function() {
+    var reasons = window.internals ? internals.requestAnimationFrameThrottlingReasons() : "no internals";
+    window.top.postMessage("middle:" + reasons.includes("NonInteractedCrossOriginFrame"), "*");
+}, false);
+
+</script>
+</body>
+</html>

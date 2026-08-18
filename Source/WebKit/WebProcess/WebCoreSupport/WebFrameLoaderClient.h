@@ -86,6 +86,7 @@ protected:
 
     void didNotifyUserActivation(MonotonicTime);
     void didConsumeUserActivation();
+    void didHandleFirstUserGesture(MonotonicTime);
 
     const Ref<WebFrame> m_frame;
     ScopeExit<Function<void()>> m_frameInvalidator;

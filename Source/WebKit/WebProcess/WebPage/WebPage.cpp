@@ -1565,6 +1565,21 @@ void WebPage::updateUserActivationState(const Vector<FrameIdentifier>& frameIDs,
     }
 }
 
+void WebPage::updateLastHandledUserGestureTimestamp(const Vector<FrameIdentifier>& frameIDs, MonotonicTime gestureTime)
+{
+    for (auto frameID : frameIDs) {
+        RefPtr webFrame = WebProcess::singleton().webFrame(frameID);
+        if (!webFrame || webFrame->page() != this)
+            continue;
+        RefPtr localFrame = webFrame->coreLocalFrame();
+        if (!localFrame)
+            continue;
+        localFrame->setHasHadUserInteraction();
+        if (RefPtr document = localFrame->document())
+            document->updateLastHandledUserGestureTimestamp(gestureTime);
+    }
+}
+
 void WebPage::consumeUserActivations(const Vector<FrameIdentifier>& frameIDs)
 {
     for (auto frameID : frameIDs) {

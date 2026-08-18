@@ -296,6 +296,7 @@ private:
 
     void didNotifyUserActivation(MonotonicTime) final;
     void didConsumeUserActivation() final;
+    void didHandleFirstUserGesture(MonotonicTime) final;
 
     void dispatchDecidePolicyForBackForwardNavigationAction(WebCore::FrameLoadRequest&&, const String& referer, WebCore::FrameLoadType);
 

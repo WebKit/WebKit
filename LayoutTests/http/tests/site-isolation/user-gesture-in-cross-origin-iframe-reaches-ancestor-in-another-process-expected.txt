@@ -1,0 +1,14 @@
+Tests that a user gesture in an out-of-process subframe reaches the ancestors of that subframe in other processes
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Nothing has been interacted with, so the middle frame throttles requestAnimationFrame.
+PASS middleFrameIsThrottled became "true"
+Sending a key to the innermost frame, which has the focus.
+PASS innermostFrameGotTheKey became "true"
+PASS middleFrameIsThrottled became "false"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

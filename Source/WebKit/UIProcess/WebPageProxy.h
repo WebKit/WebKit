@@ -2693,6 +2693,7 @@ public:
 
     void didNotifyUserActivation(IPC::Connection&, WebCore::FrameIdentifier, MonotonicTime);
     void didConsumeUserActivation(IPC::Connection&, WebCore::FrameIdentifier);
+    void didHandleFirstUserGesture(IPC::Connection&, WebCore::FrameIdentifier, MonotonicTime);
 
     void addOpenedPage(WebPageProxy&);
     bool NODELETE hasOpenedPage() const;

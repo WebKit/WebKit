@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<body style="margin: 0; width: 100vw; height: 100vh">
+<input id="field">
+<script>
+
+window.addEventListener("keydown", function() {
+    window.top.postMessage("innermost-keydown", "*");
+}, false);
+
+// Focus the innermost frame so that the eventual UIHelper.keyDown() call sends its event here.
+document.getElementById("field").focus();
+
+window.top.postMessage("innermost-ready", "*");
+
+</script>
+</body>
+</html>

@@ -235,6 +235,7 @@ messages -> WebPage WantsAsyncDispatchMessage {
 
     UpdateUserActivationState(Vector<WebCore::FrameIdentifier> frameIDs, MonotonicTime activationTime)
     ConsumeUserActivations(Vector<WebCore::FrameIdentifier> frameIDs)
+    UpdateLastHandledUserGestureTimestamp(Vector<WebCore::FrameIdentifier> frameIDs, MonotonicTime gestureTime)
 
     GetPDFFirstPageSize(WebCore::FrameIdentifier frameID) -> (WebCore::FloatSize size)
 

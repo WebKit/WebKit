@@ -1135,6 +1135,11 @@ void WebLocalFrameLoaderClient::didConsumeUserActivation()
     WebFrameLoaderClient::didConsumeUserActivation();
 }
 
+void WebLocalFrameLoaderClient::didHandleFirstUserGesture(MonotonicTime gestureTime)
+{
+    WebFrameLoaderClient::didHandleFirstUserGesture(gestureTime);
+}
+
 void WebLocalFrameLoaderClient::cancelPolicyCheck()
 {
     m_frame->invalidatePolicyListeners();

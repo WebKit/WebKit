@@ -292,4 +292,10 @@ void WebFrameLoaderClient::didConsumeUserActivation()
         webPage->send(Messages::WebPageProxy::DidConsumeUserActivation(m_frame->frameID()));
 }
 
+void WebFrameLoaderClient::didHandleFirstUserGesture(MonotonicTime gestureTime)
+{
+    if (RefPtr webPage = m_frame->page())
+        webPage->send(Messages::WebPageProxy::DidHandleFirstUserGesture(m_frame->frameID(), gestureTime));
+}
+
 }

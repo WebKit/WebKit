@@ -57,6 +57,7 @@ public:
     virtual void setPrinting(bool printing, FloatSize pageSize, FloatSize originalPageSize, float maximumShrinkRatio, AdjustViewSize) = 0;
     virtual void didNotifyUserActivation(MonotonicTime) { }
     virtual void didConsumeUserActivation() { }
+    virtual void didHandleFirstUserGesture(MonotonicTime) { }
     virtual ~FrameLoaderClient() = default;
 };
 

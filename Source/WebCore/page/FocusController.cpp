@@ -564,7 +564,10 @@ FocusableElementSearchResult FocusController::findFocusableElementStartingWithLo
 
     // We are advancing focus in this frame's process in response to a keypress in a different frame's process.
     // We therefore assume we have an active user gesture, which is necessary for element-finding and focus-advancing to work.
-    UserGestureIndicator gestureIndicator(IsProcessingUserGesture::Yes, document.get());
+    // Avoid doing this for ShouldFocusElement::No, since that is just a query.
+    std::optional<UserGestureIndicator> gestureIndicator;
+    if (shouldFocusElement == ShouldFocusElement::Yes)
+        gestureIndicator.emplace(IsProcessingUserGesture::Yes, document.get());
 
     return findFocusableElementInDocumentOrderStartingWithFrame(frame, document->documentElement(), nullptr, direction, focusEventData, InitialFocus::No, ContinuingRemoteSearch::Yes, shouldFocusElement);
 }
