@@ -237,10 +237,6 @@ webkit.org/b/251107 [ Debug ] inspector/canvas/recording-webgl2-full.html [ Fail
 webkit.org/b/251107 inspector/canvas/recording-webgl2-snapshots.html [ Failure ]
 webkit.org/b/251107 webgl/2.0.y/conformance/offscreencanvas/offscreencanvas-transfer-image-bitmap.html [ Timeout ]
 
-# No colorspaces in non-Cocoa WebGL.
-fast/canvas/webgl/colorspaces-test.html [ Failure ]
-fast/canvas/webgl/context-lost-restored-p3.html [ Failure ]
-
 # These tests reference specific fonts on Mac port.
 Bug(GTK) fast/text/font-weights.html [ WontFix ]
 Bug(GTK) fast/text/font-weights-zh.html [ WontFix ]
@@ -1093,8 +1089,6 @@ webkit.org/b/309572 compositing/video/video-object-view-box-no-poster.html [ Fai
 webkit.org/b/309572 compositing/video/video-object-view-box-object-position-no-poster.html [ Failure ]
 webkit.org/b/309572 compositing/video/video-object-view-box-writing-mode-no-poster.html [ Failure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/window-resize-aborts-transition-before-ready.html [ Failure ]
-
-http/tests/login-status/login-status-api-getter-setter-functions.html [ Failure ]
 
 imported/w3c/web-platform-tests/css/css-overflow/overflow-auto-scrolling-with-margin-and-transform.html [ Skip ]
 

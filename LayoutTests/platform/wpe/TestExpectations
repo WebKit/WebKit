@@ -871,8 +871,6 @@ compositing/visible-rect/scrolled.html [ Failure ]
 
 media/media-source/media-detachablemse-append.html [ Timeout Pass ]
 
-http/tests/login-status/login-status-api-getter-setter-functions.html [ Failure ]
-
 imported/w3c/web-platform-tests/css/css-overflow/overflow-auto-scrolling-with-margin-and-transform.html [ Skip ]
 
 webkit.org/b/228311 imported/w3c/web-platform-tests/css/css-scoping/css-scoping-shadow-dynamic-remove-style-detached.html [ Pass Failure ]
@@ -1315,6 +1313,8 @@ webkit.org/b/277912 imported/w3c/web-platform-tests/css/css-borders/corner-shape
 webkit.org/b/321450 [ arm64 ] fast/mediacapturefromelement/CanvasCaptureMediaStream-capture-out-of-DOM-canvas.html [ Failure Pass ]
 webkit.org/b/316453 [ arm64 ] imported/w3c/web-platform-tests/css/css-grid/grid-lanes/subgrid/grid-subgridded-to-grid-lanes/track-sizing/row-auto-placed-subgrid-inherited-tracks-001.html [ Crash Timeout ]
 [ arm64 ] webrtc/video-rotation.html [ Failure Pass ]
+
+webkit.org/b/321932 [ arm64 ] streams/readable-stream-create-after-worker-terminates-crash.html [ Pass Crash ]
 
 # Tests expected to crash report Timeout instead on ARM64.
 webkit.org/b/321481 [ arm64 ] fast/css/container-query-orientation-modal-dialog-crash.html [ Crash Pass Timeout ]
