@@ -77,7 +77,7 @@ const ClassInfo ObjectConstructor::s_info = { "Function"_s, &InternalFunction::s
   preventExtensions         objectConstructorPreventExtensions          DontEnum|Function 1
   isSealed                  objectConstructorIsSealed                   DontEnum|Function 1
   isFrozen                  objectConstructorIsFrozen                   DontEnum|Function 1
-  isExtensible              objectConstructorIsExtensible               DontEnum|Function 1
+  isExtensible              objectConstructorIsExtensible               DontEnum|Function 1 ObjectIsExtensibleIntrinsic
   is                        objectConstructorIs                         DontEnum|Function 2 ObjectIsIntrinsic
   assign                    objectConstructorAssign                     DontEnum|Function 2 ObjectAssignIntrinsic
   values                    objectConstructorValues                     DontEnum|Function 1

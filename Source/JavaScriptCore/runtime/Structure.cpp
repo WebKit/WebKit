@@ -261,6 +261,9 @@ Structure::Structure(VM& vm, JSGlobalObject* globalObject, JSValue prototype, co
     setTransitionKind(TransitionKind::Unknown);
     setMayBePrototype(false);
     setDidPreventExtensions(typeInfo.overridesIsExtensible());
+    ASSERT(typeInfo.type() == ProxyObjectType || typeInfo.type() == GlobalProxyType
+        || typeInfo.type() == WebAssemblyGCObjectType
+        || m_classInfo->methodTable.isExtensible == static_cast<MethodTable::IsExtensibleFunctionPtr>(&JSObject::isExtensible));
     setDidTransition(false);
     setStaticPropertiesReified(false);
     setTransitionWatchpointIsLikelyToBeFired(false);

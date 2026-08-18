@@ -333,6 +333,7 @@ inline CapabilityLevel canCompile(DFG::Node* node)
     case IsCallable:
     case IsConstructor:
     case ArrayIsArray:
+    case ObjectIsExtensible:
     case CheckTypeInfoFlags:
     case HasStructureWithFlags:
     case OverridesHasInstance:
