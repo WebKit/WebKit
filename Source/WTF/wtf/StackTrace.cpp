@@ -55,22 +55,31 @@ void WTFGetBacktrace(void** stack, int* size)
 namespace WTF {
 
 #if USE(LIBBACKTRACE)
+// libbacktrace invokes the error callback unconditionally, so it must not be null.
+static void backtraceErrorCallback(void*, const char*, int)
+{
+}
+
 static struct backtrace_state* backtraceState()
 {
-    static NeverDestroyed<struct backtrace_state*> backtraceState = backtrace_create_state(nullptr, 1, nullptr, nullptr);
+    static NeverDestroyed<struct backtrace_state*> backtraceState = backtrace_create_state(nullptr, 1, backtraceErrorCallback, nullptr);
     return backtraceState;
 }
 
 static void backtraceSyminfoCallback(void* data, uintptr_t, const char* symname, uintptr_t, uintptr_t)
 {
-    const char** symbol = static_cast<const char**>(data);
-    *symbol = symname;
+    if (symname) {
+        const char** symbol = static_cast<const char**>(data);
+        *symbol = symname;
+    }
 }
 
 static int backtraceFullCallback(void* data, uintptr_t, const char*, int, const char* function)
 {
-    const char** symbol = static_cast<const char**>(data);
-    *symbol = function;
+    if (function) {
+        const char** symbol = static_cast<const char**>(data);
+        *symbol = function;
+    }
     return 0;
 }
 
@@ -85,11 +94,16 @@ char** symbolize(void* const* addresses, int size)
 
     for (int i = 0; i < size; ++i) {
         uintptr_t pc = reinterpret_cast<uintptr_t>(addresses[i]);
-        char* symbol;
+        const char* symbol = nullptr;
 
-        backtrace_pcinfo(state, pc, backtraceFullCallback, nullptr, &symbol);
+        // The symbol table is consulted first because it stores mangled names, which
+        // demangle to fully qualified ones. The debug information only carries the
+        // mangled name when the compiler emitted DW_AT_linkage_name, and the
+        // -dwarf-linkage-names=Abstract option that we use to compile forces clang
+        // to omit it for out-of-line definitions, leaving just the unqualified DW_AT_name.
+        backtrace_syminfo(state, pc, backtraceSyminfoCallback, backtraceErrorCallback, &symbol);
         if (!symbol)
-            backtrace_syminfo(backtraceState(), pc, backtraceSyminfoCallback, nullptr, &symbol);
+            backtrace_pcinfo(state, pc, backtraceFullCallback, backtraceErrorCallback, &symbol);
 
         if (symbol) {
             char* demangled = abi::__cxa_demangle(symbol, nullptr, nullptr, nullptr);
