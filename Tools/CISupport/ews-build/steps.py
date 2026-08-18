@@ -832,6 +832,7 @@ class ConfigureBuild(buildstep.BuildStep, AddToLogMixin):
 
         defer.returnValue(SUCCESS)
 
+    @defer.inlineCallbacks
     def add_pr_details(self):
         pr_number = self.getProperty('github.number')
         if not pr_number:
