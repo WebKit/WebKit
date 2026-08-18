@@ -864,10 +864,13 @@ void WebAutomationSessionProxy::computeElementLayout(WebCore::PageIdentifier pag
         // FIXME: Wait in an implementation-specific way up to the session implicit wait timeout for the element to become in view.
     }
 
-    RefPtr localFrame = dynamicDowncast<LocalFrame>(frame->coreFrame()->mainFrame());
-    if (!localFrame)
+    Ref localRootFrame = coreLocalFrame->rootFrame();
+    RefPtr rootView = localRootFrame->view();
+    if (!rootView) {
+        String windowNotFoundErrorType = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::WindowNotFound);
+        completionHandler(windowNotFoundErrorType, { }, std::nullopt, false);
         return;
-    RefPtr mainView = localFrame->view();
+    }
 
     // When the local root is not the page's main frame, this process doesn't know where the frame
     // sits within the page, so it cannot produce main-frame-relative coordinates. Stop at local
