@@ -91,5 +91,5 @@ function closed()
     if (!@isReadableStreamDefaultReader(this))
         return @promiseReject(@Promise, @makeGetterTypeError("ReadableStreamDefaultReader", "closed"));
 
-    return @getByIdDirectPrivate(this, "closedPromiseCapability").promise;
+    return @getByIdDirectPrivate(this, "closedPromise");
 }

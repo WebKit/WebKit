@@ -112,7 +112,7 @@ function readableStreamDefaultReaderClosedForBindings(reader)
     if (!@isReadableStreamDefaultReader(reader))
         return @promiseReject(@Promise, @makeGetterTypeError("ReadableStreamDefaultReader", "closed"));
 
-    return @getByIdDirectPrivate(reader, "closedPromiseCapability").promise;
+    return @getByIdDirectPrivate(reader, "closedPromise");
 }
 
 function readableStreamDefaultReaderReadForBindings(reader)
@@ -156,7 +156,7 @@ function readableStreamDefaultReaderCancelForBindings(reader, reason)
 function readableStreamDefaultReaderClosedPromise(reader)
 {
     @assert(@isReadableStreamDefaultReader(reader));
-    return @getByIdDirectPrivate(reader, "closedPromiseCapability").promise;
+    return @getByIdDirectPrivate(reader, "closedPromise");
 }
 
 function readableStreamReaderGenericInitialize(reader, stream)
@@ -166,12 +166,12 @@ function readableStreamReaderGenericInitialize(reader, stream)
     @putByIdDirectPrivate(reader, "ownerReadableStream", stream);
     @putByIdDirectPrivate(stream, "reader", reader);
     if (@getByIdDirectPrivate(stream, "state") === @streamReadable)
-        @putByIdDirectPrivate(reader, "closedPromiseCapability", @newPromiseCapability(@Promise));
+        @putByIdDirectPrivate(reader, "closedPromise", @newPromise());
     else if (@getByIdDirectPrivate(stream, "state") === @streamClosed)
-        @putByIdDirectPrivate(reader, "closedPromiseCapability", { promise: @promiseResolve(@Promise, @undefined) });
+        @putByIdDirectPrivate(reader, "closedPromise", @promiseResolve(@Promise, @undefined));
     else {
         @assert(@getByIdDirectPrivate(stream, "state") === @streamErrored);
-        @putByIdDirectPrivate(reader, "closedPromiseCapability", { promise: @newHandledRejectedPromise(@getByIdDirectPrivate(stream, "storedError")) });
+        @putByIdDirectPrivate(reader, "closedPromise", @newHandledRejectedPromise(@getByIdDirectPrivate(stream, "storedError")));
     }
 }
 
@@ -259,7 +259,7 @@ function readableStreamTee(stream, shouldClone)
         readAgain: false,
     };
 
-    teeState.cancelPromiseCapability = @newPromiseCapability(@Promise);
+    teeState.cancelPromise = @newPromise();
 
     const pullFunction = @readableStreamTeePullFunction(teeState, reader, shouldClone);
 
@@ -274,11 +274,11 @@ function readableStreamTee(stream, shouldClone)
     const branch1 = @createInternalReadableStreamFromUnderlyingSource(branch1Source);
     const branch2 = @createInternalReadableStreamFromUnderlyingSource(branch2Source);
 
-    @getByIdDirectPrivate(reader, "closedPromiseCapability").promise.@then(@undefined, function(e) {
+    @getByIdDirectPrivate(reader, "closedPromise").@then(@undefined, function(e) {
         @readableStreamDefaultControllerError(branch1.@readableStreamController, e);
         @readableStreamDefaultControllerError(branch2.@readableStreamController, e);
         if (!teeState.canceled1 || !teeState.canceled2)
-            teeState.cancelPromiseCapability.resolve.@call();
+            @resolvePromiseWithFirstResolvingFunctionCallCheck(teeState.cancelPromise, @undefined);
     });
 
     // Additional fields compared to the spec, as they are needed within pull/cancel functions.
@@ -309,7 +309,7 @@ function readableStreamTeePullFunction(teeState, reader, shouldClone)
                 if (!teeState.canceled2)
                     @readableStreamDefaultControllerClose(teeState.branch2.@readableStreamController);
                 if (!teeState.canceled1 || !teeState.canceled2)
-                    teeState.cancelPromiseCapability.resolve.@call();
+                    @resolvePromiseWithFirstResolvingFunctionCallCheck(teeState.cancelPromise, @undefined);
                 return;
             }
             // chunk steps.
@@ -322,7 +322,9 @@ function readableStreamTeePullFunction(teeState, reader, shouldClone)
                 } catch (e) {
                     @readableStreamDefaultControllerError(teeState.branch1.@readableStreamController, e);
                     @readableStreamDefaultControllerError(teeState.branch2.@readableStreamController, e);
-                    @readableStreamCancel(teeState.stream, e).@then(teeState.cancelPromiseCapability.resolve, teeState.cancelPromiseCapability.reject);
+                    @readableStreamCancel(teeState.stream, e).@then(
+                        (value) => @resolvePromiseWithFirstResolvingFunctionCallCheck(teeState.cancelPromise, value),
+                        (reason) => @rejectPromiseWithFirstResolvingFunctionCallCheck(teeState.cancelPromise, reason));
                     return;
                 }
             }
@@ -354,10 +356,10 @@ function readableStreamTeeBranch1CancelFunction(teeState, stream)
         teeState.reason1 = r;
         if (teeState.canceled2) {
             @readableStreamCancel(stream, [teeState.reason1, teeState.reason2]).@then(
-                teeState.cancelPromiseCapability.resolve,
-                teeState.cancelPromiseCapability.reject);
+                (value) => @resolvePromiseWithFirstResolvingFunctionCallCheck(teeState.cancelPromise, value),
+                (reason) => @rejectPromiseWithFirstResolvingFunctionCallCheck(teeState.cancelPromise, reason));
         }
-        return teeState.cancelPromiseCapability.promise;
+        return teeState.cancelPromise;
     }
 }
 
@@ -370,10 +372,10 @@ function readableStreamTeeBranch2CancelFunction(teeState, stream)
         teeState.reason2 = r;
         if (teeState.canceled1) {
             @readableStreamCancel(stream, [teeState.reason1, teeState.reason2]).@then(
-                teeState.cancelPromiseCapability.resolve,
-                teeState.cancelPromiseCapability.reject);
+                (value) => @resolvePromiseWithFirstResolvingFunctionCallCheck(teeState.cancelPromise, value),
+                (reason) => @rejectPromiseWithFirstResolvingFunctionCallCheck(teeState.cancelPromise, reason));
         }
-        return teeState.cancelPromiseCapability.promise;
+        return teeState.cancelPromise;
     }
 }
 
@@ -423,8 +425,8 @@ function readableStreamError(stream, error)
     const reader = @getByIdDirectPrivate(stream, "reader");
     @assert(@isReadableStreamDefaultReader(reader));
 
-    @getByIdDirectPrivate(reader, "closedPromiseCapability").reject.@call(@undefined, error);
-    const promise = @getByIdDirectPrivate(reader, "closedPromiseCapability").promise;
+    const promise = @getByIdDirectPrivate(reader, "closedPromise");
+    @rejectPromiseWithFirstResolvingFunctionCallCheck(promise, error);
     @markPromiseAsHandled(promise);
 
     @readableStreamDefaultReaderErrorReadRequests(reader, error);
@@ -580,7 +582,7 @@ function readableStreamClose(stream)
             @fulfillPromiseWithFirstResolvingFunctionCallCheck(requests[index], { value: @undefined, done: true });
     }
 
-    @getByIdDirectPrivate(reader, "closedPromiseCapability").resolve.@call();
+    @resolvePromiseWithFirstResolvingFunctionCallCheck(@getByIdDirectPrivate(reader, "closedPromise"), @undefined);
 }
 
 function readableStreamFulfillReadRequest(stream, chunk, done)
@@ -669,11 +671,11 @@ function readableStreamReaderGenericRelease(reader)
     @assert(@getByIdDirectPrivate(@getByIdDirectPrivate(reader, "ownerReadableStream"), "reader") === reader);
 
     if (@getByIdDirectPrivate(@getByIdDirectPrivate(reader, "ownerReadableStream"), "state") === @streamReadable)
-        @getByIdDirectPrivate(reader, "closedPromiseCapability").reject.@call(@undefined, @makeTypeError("releasing lock of reader whose stream is still in readable state"));
+        @rejectPromiseWithFirstResolvingFunctionCallCheck(@getByIdDirectPrivate(reader, "closedPromise"), @makeTypeError("releasing lock of reader whose stream is still in readable state"));
     else
-        @putByIdDirectPrivate(reader, "closedPromiseCapability", { promise: @newHandledRejectedPromise(@makeTypeError("reader released lock")) });
+        @putByIdDirectPrivate(reader, "closedPromise", @newHandledRejectedPromise(@makeTypeError("reader released lock")));
 
-    const promise = @getByIdDirectPrivate(reader, "closedPromiseCapability").promise;
+    const promise = @getByIdDirectPrivate(reader, "closedPromise");
     @markPromiseAsHandled(promise);
     @putByIdDirectPrivate(@getByIdDirectPrivate(reader, "ownerReadableStream"), "reader", @undefined);
     @putByIdDirectPrivate(reader, "ownerReadableStream", @undefined);

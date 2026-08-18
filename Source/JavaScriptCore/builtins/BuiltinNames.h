@@ -92,7 +92,6 @@ namespace JSC {
     macro(promiseReturnUndefinedOnFulfilled) \
     macro(promiseResolve) \
     macro(promiseReject) \
-    macro(newPromiseCapability) \
     macro(performPromiseThen) \
     macro(push) \
     macro(repeatCharacter) \

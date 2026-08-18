@@ -81,8 +81,8 @@ function createInternalTransformStreamFromTransformer(transformer, writableStrat
     const writableSizeAlgorithm = @extractSizeAlgorithm(writableStrategy);
 
     const internalTransformStream = {};
-    const startPromiseCapability = @newPromiseCapability(@Promise);
-    const [readable, writable] = @initializeTransformStream(internalTransformStream, startPromiseCapability.promise, writableHighWaterMark, writableSizeAlgorithm, readableHighWaterMark, readableSizeAlgorithm);
+    const startPromise = @newPromise();
+    const [readable, writable] = @initializeTransformStream(internalTransformStream, startPromise, writableHighWaterMark, writableSizeAlgorithm, readableHighWaterMark, readableSizeAlgorithm);
     @setUpTransformStreamDefaultControllerFromTransformer(internalTransformStream, transformer, transformerDict);
 
     if ("start" in transformerDict) {
@@ -90,12 +90,12 @@ function createInternalTransformStreamFromTransformer(transformer, writableStrat
         const startAlgorithm = () => @promiseInvokeOrNoopMethodNoCatch(transformer, transformerDict["start"], [controller]);
         startAlgorithm().@then(() => {
             // FIXME: We probably need to resolve start promise with the result of the start algorithm.
-            startPromiseCapability.resolve.@call();
+            @resolvePromiseWithFirstResolvingFunctionCallCheck(startPromise, @undefined);
         }, (error) => {
-            startPromiseCapability.reject.@call(@undefined, error);
+            @rejectPromiseWithFirstResolvingFunctionCallCheck(startPromise, error);
         });
     } else
-        startPromiseCapability.resolve.@call();
+        @resolvePromiseWithFirstResolvingFunctionCallCheck(startPromise, @undefined);
 
     return [internalTransformStream, readable, writable];
 }
@@ -114,16 +114,16 @@ function createTransformStream(startAlgorithm, transformAlgorithm, flushAlgorith
     @assert(readableHighWaterMark >= 0);
 
     const stream = {};
-    const startPromiseCapability = @newPromiseCapability(@Promise);
-    const [readable, writable] = @initializeTransformStream(stream, startPromiseCapability.promise, writableHighWaterMark, writableSizeAlgorithm, readableHighWaterMark, readableSizeAlgorithm);
+    const startPromise = @newPromise();
+    const [readable, writable] = @initializeTransformStream(stream, startPromise, writableHighWaterMark, writableSizeAlgorithm, readableHighWaterMark, readableSizeAlgorithm);
 
     const controller = new @TransformStreamDefaultController(@isTransformStream);
     @setUpTransformStreamDefaultController(stream, controller, transformAlgorithm, flushAlgorithm);
 
     startAlgorithm().@then(() => {
-        startPromiseCapability.resolve.@call();
+        @resolvePromiseWithFirstResolvingFunctionCallCheck(startPromise, @undefined);
     }, (error) => {
-        startPromiseCapability.reject.@call(@undefined, error);
+        @rejectPromiseWithFirstResolvingFunctionCallCheck(startPromise, error);
     });
 
     return [stream, readable, writable];
@@ -201,9 +201,9 @@ function transformStreamSetBackpressure(stream, backpressure)
 
     const backpressureChangePromise = @getByIdDirectPrivate(stream, "backpressureChangePromise");
     if (backpressureChangePromise !== @undefined)
-        backpressureChangePromise.resolve.@call();
+        @resolvePromiseWithFirstResolvingFunctionCallCheck(backpressureChangePromise, @undefined);
 
-    @putByIdDirectPrivate(stream, "backpressureChangePromise", @newPromiseCapability(@Promise));
+    @putByIdDirectPrivate(stream, "backpressureChangePromise", @newPromise());
     @putByIdDirectPrivate(stream, "backpressure", backpressure);
 }
 
@@ -296,16 +296,16 @@ function transformStreamDefaultControllerPerformTransform(controller, chunk)
 {
     "use strict";
 
-    const promiseCapability = @newPromiseCapability(@Promise);
+    const promise = @newPromise();
 
     const transformPromise = @getByIdDirectPrivate(controller, "transformAlgorithm").@call(@undefined, chunk);
     transformPromise.@then(() => {
-        promiseCapability.resolve();
+        @resolvePromiseWithFirstResolvingFunctionCallCheck(promise, @undefined);
     }, (r) => {
         @transformStreamError(@getByIdDirectPrivate(controller, "stream"), r);
-        promiseCapability.reject.@call(@undefined, r);
+        @rejectPromiseWithFirstResolvingFunctionCallCheck(promise, r);
     });
-    return promiseCapability.promise;
+    return promise;
 }
 
 function transformStreamDefaultControllerTerminate(controller)
@@ -335,28 +335,28 @@ function transformStreamDefaultSinkWriteAlgorithm(stream, chunk)
     const controller = @getByIdDirectPrivate(stream, "controller");
 
     if (@getByIdDirectPrivate(stream, "backpressure")) {
-        const promiseCapability = @newPromiseCapability(@Promise);
+        const promise = @newPromise();
 
         const backpressureChangePromise = @getByIdDirectPrivate(stream, "backpressureChangePromise");
         @assert(backpressureChangePromise !== @undefined);
-        backpressureChangePromise.promise.@then(() => {
+        backpressureChangePromise.@then(() => {
             const state = @getByIdDirectPrivate(writable, "state");
             if (state === "erroring") {
-                promiseCapability.reject.@call(@undefined, @getByIdDirectPrivate(writable, "storedError"));
+                @rejectPromiseWithFirstResolvingFunctionCallCheck(promise, @getByIdDirectPrivate(writable, "storedError"));
                 return;
             }
 
             @assert(state === "writable");
             @transformStreamDefaultControllerPerformTransform(controller, chunk).@then(() => {
-                promiseCapability.resolve();
+                @resolvePromiseWithFirstResolvingFunctionCallCheck(promise, @undefined);
             }, (e) => {
-                promiseCapability.reject.@call(@undefined, e);
+                @rejectPromiseWithFirstResolvingFunctionCallCheck(promise, e);
             });
         }, (e) => {
-            promiseCapability.reject.@call(@undefined, e);
+            @rejectPromiseWithFirstResolvingFunctionCallCheck(promise, e);
         });
 
-        return promiseCapability.promise;
+        return promise;
     }
     return @transformStreamDefaultControllerPerformTransform(controller, chunk);
 }
@@ -382,22 +382,22 @@ function transformStreamDefaultSinkCloseAlgorithm(stream)
     const flushPromise = @getByIdDirectPrivate(controller, "flushAlgorithm").@call();
     @transformStreamDefaultControllerClearAlgorithms(controller);
 
-    const promiseCapability = @newPromiseCapability(@Promise);
+    const promise = @newPromise();
     flushPromise.@then(() => {
         if (@getByIdDirectPrivate(readable, "state") === @streamErrored) {
-            promiseCapability.reject.@call(@undefined, @getByIdDirectPrivate(readable, "storedError"));
+            @rejectPromiseWithFirstResolvingFunctionCallCheck(promise, @getByIdDirectPrivate(readable, "storedError"));
             return;
         }
 
         // FIXME: Update readableStreamDefaultControllerClose to make this check.
         if (@readableStreamDefaultControllerCanCloseOrEnqueue(readableController))
             @readableStreamDefaultControllerClose(readableController);
-        promiseCapability.resolve();
+        @resolvePromiseWithFirstResolvingFunctionCallCheck(promise, @undefined);
     }, (r) => {
         @transformStreamError(@getByIdDirectPrivate(controller, "stream"), r);
-        promiseCapability.reject.@call(@undefined, @getByIdDirectPrivate(readable, "storedError"));
+        @rejectPromiseWithFirstResolvingFunctionCallCheck(promise, @getByIdDirectPrivate(readable, "storedError"));
     });
-    return promiseCapability.promise;
+    return promise;
 }
 
 function transformStreamDefaultSourcePullAlgorithm(stream)
@@ -409,5 +409,5 @@ function transformStreamDefaultSourcePullAlgorithm(stream)
 
     @transformStreamSetBackpressure(stream, false);
 
-    return @getByIdDirectPrivate(stream, "backpressureChangePromise").promise;
+    return @getByIdDirectPrivate(stream, "backpressureChangePromise");
 }
