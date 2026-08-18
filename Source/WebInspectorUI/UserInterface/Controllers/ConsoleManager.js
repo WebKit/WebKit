@@ -36,7 +36,7 @@ WI.ConsoleManager = class ConsoleManager extends WI.Object
 
         this._lastMessageLevel = null;
         this._clearMessagesRequested = false;
-        this._isNewPageOrReload = false;
+        this._legacyPendingMainFrameNavigationClear = false;
         this._remoteObjectsToRelease = null;
 
         this._customLoggingChannels = [];
@@ -211,7 +211,7 @@ WI.ConsoleManager = class ConsoleManager extends WI.Object
         WI.ConsoleCommandResultMessage.clearMaximumSavedResultIndex();
         WI.javaScriptRuntimeCompletionProvider.clearCachedPropertyNames();
 
-        // COMPATIBILITY (iOS 16.4, macOS 13.3): `Console.ClearReason` did not exist.
+        // COMPATIBILITY (iOS 16.4, macOS 13.3): `Console.messagesCleared` did not have a `reason` parameter yet.
         if (!reason) {
             if (this._clearMessagesRequested) {
                 // Frontend requested "clear console" and Backend successfully completed the request.
@@ -243,9 +243,6 @@ WI.ConsoleManager = class ConsoleManager extends WI.Object
             return;
 
         case WI.ConsoleManager.ClearReason.MainFrameNavigation:
-            console.assert(this._isNewPageOrReload);
-            this._isNewPageOrReload = false;
-
             if (WI.settings.clearLogOnNavigate.value)
                 this._clearMessages();
 
@@ -338,8 +335,8 @@ WI.ConsoleManager = class ConsoleManager extends WI.Object
 
     _delayedMessagesCleared()
     {
-        if (this._isNewPageOrReload) {
-            this._isNewPageOrReload = false;
+        if (this._legacyPendingMainFrameNavigationClear) {
+            this._legacyPendingMainFrameNavigationClear = false;
 
             if (!WI.settings.clearLogOnNavigate.value)
                 return;
@@ -370,7 +367,9 @@ WI.ConsoleManager = class ConsoleManager extends WI.Object
         if (!event.target.isMainFrame())
             return;
 
-        this._isNewPageOrReload = true;
+        // COMPATIBILITY (iOS 16.4, macOS 13.3): `Console.messagesCleared` did not have a `reason` parameter yet.
+        if (!InspectorBackend.hasEvent("Console.messagesCleared", "reason"))
+            this._legacyPendingMainFrameNavigationClear = true;
 
         let timestamp = Date.now();
         let wasReloaded = event.data.oldMainResource && event.data.oldMainResource.url === event.target.mainResource.url;

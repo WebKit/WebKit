@@ -885,8 +885,6 @@ void InspectorInstrumentation::didCommitLoadImpl(InstrumentingAgents& instrument
         if (CheckedPtr networkAgent = instrumentingAgents.enabledNetworkAgent())
             networkAgent->mainFrameNavigated(*loader);
 
-        // The Web Inspector frontend relies on `networkAgent->mainFrameNavigated` being called first to establish the
-        // type of navigation that has occured.
         if (auto* consoleAgent = instrumentingAgents.webConsoleAgent())
             consoleAgent->mainFrameNavigated();
 
