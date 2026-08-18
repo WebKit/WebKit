@@ -482,6 +482,14 @@ void Adjuster::adjust(Style::ComputedStyle& style) const
         if (style.display() == DisplayType::InlineFlow && !style.pseudoElementType() && style.writingMode().computedWritingMode() != m_parentStyle.writingMode().computedWritingMode())
             style.setDisplayMaintainingOriginalDisplay(DisplayType::InlineFlowRoot);
 
+        // FIXME: according to the specification this should apply as well to -webkit-line-clamp.
+        if (style.lineClamp().isNone() && style.overflowContinue() != OverflowContinue::Auto && style.boxOrient() == BoxOrient::Vertical) {
+            if (style.display() == DisplayType::BlockDeprecatedFlex)
+                style.setDisplayMaintainingOriginalDisplay(DisplayType::BlockFlowRoot);
+            else if (style.display() == DisplayType::InlineDeprecatedFlex)
+                style.setDisplayMaintainingOriginalDisplay(DisplayType::InlineFlowRoot);
+        }
+
         auto display = style.display();
 
         // We do not honor position:relative or position:sticky on table row groups. Table rows are
