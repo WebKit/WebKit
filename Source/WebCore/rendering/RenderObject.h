@@ -1297,7 +1297,6 @@ private:
         // Dirty bit was set with MarkingBehavior::MarkOnlyThis
         bool contentLogicalWidthsInvalidationIsMarkOnlyThis { false };
         bool isYouTubeReplacement { false };
-        EnumSet<Style::MarginTrimSide> trimmedMargins;
 
         // From RenderElement
         std::unique_ptr<ReferencedSVGResources> referencedSVGResources;

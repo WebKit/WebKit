@@ -411,74 +411,6 @@ template<CSSPropertyID propertyID> struct InsetEdgeSharedAdaptor {
 template<CSSPropertyID propertyID> struct MarginEdgeSharedAdaptor {
     template<typename F> decltype(auto) computedValue(ExtractorState& state, const MarginEdge& value, F&& functor) const
     {
-        auto rendererCanHaveTrimmedMargin = [](const RenderBox& renderer) {
-            auto marginTrimSide = [] -> MarginTrimSide {
-                if constexpr (propertyID == CSSPropertyMarginTop)
-                    return MarginTrimSide::BlockStart;
-                else if constexpr (propertyID == CSSPropertyMarginRight)
-                    return MarginTrimSide::InlineEnd;
-                else if constexpr (propertyID == CSSPropertyMarginBottom)
-                    return MarginTrimSide::BlockEnd;
-                else if constexpr (propertyID == CSSPropertyMarginLeft)
-                    return MarginTrimSide::InlineStart;
-            };
-
-            // A renderer will have a specific margin marked as trimmed by setting its rare data bit if:
-            // 1.) The layout system the box is in has this logic (setting the rare data bit for this
-            // specific margin) implemented
-            // 2.) The block container/grid has this margin specified in its margin-trim style
-            // If marginTrimSide is empty we will check if any of the supported margins are in the style
-            if (renderer.isGridItem())
-                return renderer.parent()->style().marginTrim().contains(marginTrimSide());
-
-            // Even though margin-trim is not inherited, it is possible for nested block level boxes
-            // to get placed at the block-start of an containing block ancestor which does have margin-trim.
-            // In this case it is not enough to simply check the immediate containing block of the child. It is
-            // also probably too expensive to perform an arbitrary walk up the tree to check for the existence
-            // of an ancestor containing block with the property, so we will just return true and let
-            // the rest of the logic in RenderBox::hasTrimmedMargin to determine if the rare data bit
-            // were set at some point during layout
-            if (renderer.isBlockLevelBox()) {
-                auto containingBlock = renderer.containingBlock();
-                return containingBlock && containingBlock->isHorizontalWritingMode();
-            }
-            return false;
-        };
-
-        auto toMarginTrimSide = [](const RenderBox& renderer) -> MarginTrimSide {
-            auto formattingContextRootStyle = [](const RenderBox& renderer) -> const ComputedStyle& {
-                if (auto* ancestorToUse = renderer.isGridItem() ? renderer.parent() : renderer.containingBlock())
-                    return ancestorToUse->style();
-                ASSERT_NOT_REACHED();
-                return renderer.style();
-            };
-
-            auto boxSide = [] -> BoxSide {
-                if constexpr (propertyID == CSSPropertyMarginTop)
-                    return BoxSide::Top;
-                else if constexpr (propertyID == CSSPropertyMarginRight)
-                    return BoxSide::Right;
-                else if constexpr (propertyID == CSSPropertyMarginBottom)
-                    return BoxSide::Bottom;
-                else if constexpr (propertyID == CSSPropertyMarginLeft)
-                    return BoxSide::Left;
-            };
-
-            switch (mapSidePhysicalToLogical(formattingContextRootStyle(renderer).writingMode(), boxSide())) {
-            case LogicalBoxSide::BlockStart:
-                return MarginTrimSide::BlockStart;
-            case LogicalBoxSide::BlockEnd:
-                return MarginTrimSide::BlockEnd;
-            case LogicalBoxSide::InlineStart:
-                return MarginTrimSide::InlineStart;
-            case LogicalBoxSide::InlineEnd:
-                return MarginTrimSide::InlineEnd;
-            default:
-                ASSERT_NOT_REACHED();
-                return MarginTrimSide::BlockStart;
-            }
-        };
-
         auto usedValue = [](auto& box) {
             if constexpr (propertyID == CSSPropertyMarginTop)
                 return box.marginTop();
@@ -495,9 +427,6 @@ template<CSSPropertyID propertyID> struct MarginEdgeSharedAdaptor {
             return functor(value);
 
         if constexpr (propertyID == CSSPropertyMarginRight) {
-            if (rendererCanHaveTrimmedMargin(*box) && box->hasTrimmedMargin(toMarginTrimSide(*box)))
-                return functor(unzoomed<Length<>>(state, usedValue(*box)));
-
             if (value.isFixed())
                 return functor(value);
 

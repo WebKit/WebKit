@@ -2844,8 +2844,6 @@ void RenderBlock::setTrimmedMarginForChild(RenderBox& child, Style::MarginTrimSi
         ASSERT_NOT_REACHED();
         break;
     }
-
-    child.markMarginAsTrimmed(side);
 }
 
 LayoutUnit RenderBlock::collapsedMarginBeforeForChild(const RenderBox& child) const

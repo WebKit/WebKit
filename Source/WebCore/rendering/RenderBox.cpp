@@ -1679,21 +1679,6 @@ void RenderBox::clearOverridingLogicalWidthForFlexBasisComputation()
         gOverridingLogicalWidthMapForFlexBasisComputation->remove(*this);
 }
 
-void RenderBox::markMarginAsTrimmed(Style::MarginTrimSide newTrimmedMargin)
-{
-    auto& rareData = ensureRareData();
-    rareData.trimmedMargins = rareData.trimmedMargins | newTrimmedMargin;
-}
-
-bool RenderBox::hasTrimmedMargin(Style::MarginTrimSide marginTrimSide) const
-{
-    if (!isInFlow())
-        return false;
-    if (!hasRareData())
-        return false;
-    return rareData().trimmedMargins.contains(marginTrimSide);
-}
-
 LayoutUnit RenderBox::adjustBorderBoxLogicalWidthForBoxSizing(const Style::Length<CSS::NonnegativeLayoutUnitClamped, float>& logicalWidth) const
 {
     auto width = LayoutUnit { logicalWidth.resolveZoom(style().usedZoomForLength()) };
