@@ -13,7 +13,7 @@ var globalSum = 0;
     var map = createMap(COUNT);
     var sum = 0;
 
-    for (var i = 0; i < 1e2; ++i) {
+    for (var i = 0; i < 5e2; ++i) {
         sum = 0;
         map.forEach(function (value, key) {
             sum += key;
