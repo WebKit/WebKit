@@ -1294,21 +1294,13 @@ bool KeyframeEffect::animatesProperty(const AnimatableCSSProperty& property) con
 
     return WTF::switchOn(property,
         [&](CSSPropertyID cssProperty) {
-            return m_parsedKeyframes.findIf([&](const auto& keyframe) {
-                for (auto keyframeProperty : keyframe.styleStrings.keys()) {
-                    if (keyframeProperty == cssProperty)
-                        return true;
-                }
-                return false;
+            return m_parsedKeyframes.findIf([&](auto& keyframe) {
+                return keyframe.styleStrings.contains(cssProperty);
             });
         },
         [&](const AtomString& customProperty) {
-            return m_parsedKeyframes.findIf([&](const auto& keyframe) {
-                for (auto keyframeProperty : keyframe.customStyleStrings.keys()) {
-                    if (keyframeProperty == customProperty)
-                        return true;
-                }
-                return false;
+            return m_parsedKeyframes.findIf([&](auto& keyframe) {
+                return keyframe.customStyleStrings.contains(customProperty);
             });
         }) != notFound;
 }
