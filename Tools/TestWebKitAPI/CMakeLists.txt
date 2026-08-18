@@ -230,6 +230,7 @@ if (ENABLE_WEBCORE)
         Tests/WebCore/ComplexTextController.cpp
         Tests/WebCore/ContextMenuAction.cpp
         Tests/WebCore/CookieJar.cpp
+        Tests/WebCore/CryptoDigest.cpp
         Tests/WebCore/Decimal.cpp
         Tests/WebCore/FileMonitor.cpp
         Tests/WebCore/FloatPointTests.cpp
@@ -264,6 +265,7 @@ if (ENABLE_WEBCORE)
         Tests/WebCore/PlatformDynamicRangeLimitTests.cpp
         Tests/WebCore/PlatformMediaSessionManagerTests.cpp
         Tests/WebCore/PublicSuffix.cpp
+        Tests/WebCore/PushMessageCrypto.cpp
         Tests/WebCore/RegionTests.cpp
         Tests/WebCore/RenderStyleChange.cpp
         Tests/WebCore/SecurityOrigin.cpp
