@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+</head>
+<body>
+<script>
+description("This test ensures no XML external entity deprecation warning is logged for internal entities, predefined entities, XHTML named entities, or an external DTD subset, which WebKit never fetches.");
+
+jsTestIsAsync = true;
+
+var internalEntityText;
+var nestedEntityText;
+var predefinedEntityText;
+var namedEntityCharCode;
+var externalSubsetText;
+
+var framesLoaded = 0;
+
+function frameLoaded() {
+    if (++framesLoaded < 2)
+        return;
+
+    var internalDocument = document.getElementById("internal-entities-iframe").contentDocument;
+
+    internalEntityText = internalDocument.getElementById("internal").textContent.trim();
+    shouldBeEqualToString("internalEntityText", "PASS");
+
+    nestedEntityText = internalDocument.getElementById("nested").textContent.trim();
+    shouldBeEqualToString("nestedEntityText", "PASS");
+
+    predefinedEntityText = internalDocument.getElementById("predefined").textContent.trim();
+    shouldBeEqualToString("predefinedEntityText", "&<>");
+
+    namedEntityCharCode = internalDocument.getElementById("named").textContent.charCodeAt(0);
+    shouldBe("namedEntityCharCode", "160");
+
+    externalSubsetText = document.getElementById("external-subset-iframe").contentDocument.getElementById("result").textContent.trim();
+    shouldBeEqualToString("externalSubsetText", "PASS");
+
+    finishJSTest();
+}
+</script>
+<iframe id="internal-entities-iframe" src="resources/no-warning-internal-entities.xhtml" onload="frameLoaded()"></iframe>
+<iframe id="external-subset-iframe" src="resources/no-warning-external-subset.xml" onload="frameLoaded()"></iframe>
+</body>
+</html>
