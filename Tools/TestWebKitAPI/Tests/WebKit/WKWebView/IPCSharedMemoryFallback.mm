@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,46 +23,20 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#import "config.h"
 
-#if PLATFORM(COCOA)
+#import "Helpers/cocoa/TestWKWebView.h"
+#import <WebKit/WKProcessPoolPrivate.h>
 
-#include "MessageNames.h"
-#include <mach/message.h>
-#include <memory>
-#include <wtf/CheckedArithmetic.h>
-#include <wtf/StdLibExtras.h>
-#include <wtf/text/CString.h>
+TEST(IPC, SharedMemoryFallback)
+{
+    [WKProcessPool _forceUseSharedMemoryForSendingForTesting:YES];
 
-namespace IPC {
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    [webView synchronouslyLoadTestPageNamed:@"simple"];
 
-class MachMessage {
-    WTF_DEPRECATED_MAKE_FAST_ALLOCATED(MachMessage);
-public:
-    static std::unique_ptr<MachMessage> create(MessageName, size_t);
-    ~MachMessage();
+    RetainPtr innerHTML = [webView stringByEvaluatingJavaScript:@"document.body.innerHTML"];
+    EXPECT_TRUE([innerHTML containsString:@"Simple HTML file."]);
 
-    static CheckedSize NODELETE messageSize(size_t bodySize, size_t portDescriptorCount, size_t memoryDescriptorCount);
-
-    size_t size() const { return m_size; }
-    mach_msg_header_t* header() LIFETIME_BOUND { return m_messageHeader; }
-
-    std::span<uint8_t> span() LIFETIME_BOUND { return unsafeMakeSpan(reinterpret_cast<uint8_t*>(m_messageHeader), m_size); }
-
-    void NODELETE leakDescriptors();
-
-    ReceiverName messageReceiverName() const { return receiverName(m_messageName); }
-    MessageName messageName() const { return m_messageName; }
-
-private:
-    MachMessage(MessageName, size_t);
-
-    MessageName m_messageName;
-    size_t m_size;
-    bool m_shouldFreeDescriptors { true };
-    mach_msg_header_t m_messageHeader[];
-};
-
+    [WKProcessPool _forceUseSharedMemoryForSendingForTesting:NO];
 }
-
-#endif // PLATFORM(COCOA)
