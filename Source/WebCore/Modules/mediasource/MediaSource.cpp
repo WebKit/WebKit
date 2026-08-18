@@ -160,6 +160,13 @@ private:
         return m_private;
     }
 
+    void monitorSourceBuffers() final
+    {
+        ensureWeakOnDispatcher([](MediaSource& parent) {
+            parent.monitorSourceBuffers();
+        });
+    }
+
     void failedToCreateRenderer(RendererType type)
     {
         ensureWeakOnDispatcher([type](MediaSource& parent) {
