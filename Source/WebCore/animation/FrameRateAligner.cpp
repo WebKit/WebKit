@@ -111,7 +111,7 @@ void FrameRateAligner::finishUpdate()
                 continue;
 
             if (frameRatesCanBeAligned(frameRate, potentiallyCompatibleFrameRate)) {
-                if (!highestCompatibleFrameRate || *highestCompatibleFrameRate > potentiallyCompatibleFrameRate)
+                if (!highestCompatibleFrameRate || *highestCompatibleFrameRate < potentiallyCompatibleFrameRate)
                     highestCompatibleFrameRate = potentiallyCompatibleFrameRate;
             }
         }

@@ -1,0 +1,3 @@
+
+PASS A frame rate encountered for the first time aligns with the highest compatible frame rate
+
