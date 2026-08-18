@@ -97,7 +97,7 @@ void RenderTreeBuilder::FormControls::updateAfterDescendants(RenderElement& rend
             return;
 
         if (CheckedPtr pickerElementRenderer = pickerElement->renderer())
-            updatePseudoElement(PseudoElementType::Checkmark, renderer, pickerElementRenderer->style().usedAppearance(), renderer.firstChild());
+            updatePseudoElement(PseudoElementType::Checkmark, renderer, pickerElementRenderer->style().usedAppearance(), PseudoElementPosition::FirstChild);
 
         return;
     }
@@ -108,7 +108,7 @@ void RenderTreeBuilder::FormControls::updateAfterDescendants(RenderElement& rend
     }
 }
 
-void RenderTreeBuilder::FormControls::updatePseudoElement(PseudoElementType type, RenderElement& renderer, StyleAppearance usedAppearance, RenderObject* beforeChild)
+void RenderTreeBuilder::FormControls::updatePseudoElement(PseudoElementType type, RenderElement& renderer, StyleAppearance usedAppearance, PseudoElementPosition position)
 {
     CheckedPtr existingPseudoElement = renderer.pseudoElementRenderer(type).get();
 
@@ -137,8 +137,6 @@ void RenderTreeBuilder::FormControls::updatePseudoElement(PseudoElementType type
     }
 
     if (existingPseudoElement) {
-        if (beforeChild == existingPseudoElement)
-            beforeChild = existingPseudoElement->nextSibling();
         m_builder.destroy(*existingPseudoElement);
         existingPseudoElement = nullptr;
     }
@@ -154,6 +152,7 @@ void RenderTreeBuilder::FormControls::updatePseudoElement(PseudoElementType type
 
     renderer.setPseudoElementRenderer(type, *pseudoElement.get());
 
+    auto* beforeChild = position == PseudoElementPosition::FirstChild ? renderer.firstChild() : nullptr;
     m_builder.attach(renderer, WTF::move(pseudoElement), beforeChild);
 }
 

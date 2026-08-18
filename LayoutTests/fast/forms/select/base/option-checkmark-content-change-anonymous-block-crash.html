@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../../resources/js-test.js"></script>
+<style>
+select, ::picker(select) {
+    appearance: base-select;
+}
+
+/* Give the picker a renderer without opening it. */
+::picker(select) {
+    display: block;
+}
+
+/* Make the ::checkmark a block sibling of the option's text, so the text ends
+   up in an anonymous block wrapper. */
+select option, select option::checkmark {
+    display: block;
+}
+
+select option:not(:checked)::checkmark {
+    content: ".";
+}
+</style>
+</head>
+<body>
+<select id="select">
+    <option>One</option>
+    <option>Two</option>
+</select>
+<script>
+description("Recreating ::checkmark must not crash when destroying the old one collapses the anonymous block wrapping the option's text.");
+
+const select = document.getElementById("select");
+
+jsTestIsAsync = true;
+
+(async () => {
+    await new Promise(requestAnimationFrame);
+    select.value = "Two";
+    document.body.offsetHeight;
+    shouldBe('select.value', '"Two"');
+    finishJSTest();
+})();
+</script>
+</body>
+</html>

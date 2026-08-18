@@ -47,7 +47,8 @@ public:
 private:
     RenderBlock& findOrCreateParentForChild(RenderButton&);
 
-    void updatePseudoElement(PseudoElementType, RenderElement&, StyleAppearance, RenderObject* beforeChild = nullptr);
+    enum class PseudoElementPosition : bool { FirstChild, LastChild };
+    void updatePseudoElement(PseudoElementType, RenderElement&, StyleAppearance, PseudoElementPosition = PseudoElementPosition::LastChild);
 
     RenderTreeBuilder& m_builder;
 };
