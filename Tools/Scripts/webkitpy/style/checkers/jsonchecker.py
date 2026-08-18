@@ -400,6 +400,7 @@ class JSONCSSPropertiesChecker(JSONChecker):
             'computed-style-getter-custom': self.validate_boolean,
             'computed-style-getter-exported': self.validate_boolean,
             'computed-style-getter-inline': self.validate_boolean,
+            'computed-style-getter-nodelete': self.validate_boolean,
             'computed-style-getter': self.validate_string,
             'computed-style-has-explicitly-set-getter-custom': self.validate_boolean,
             'computed-style-has-explicitly-set-policy': self.validate_string,
