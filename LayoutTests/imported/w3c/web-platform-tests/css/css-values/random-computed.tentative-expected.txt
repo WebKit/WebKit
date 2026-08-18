@@ -157,5 +157,5 @@ PASS random() shared by shorthand property in var(), test random() value index
 PASS random() shared by property in attr()
 PASS random() shared by property in typed attr()
 PASS Test collision with property name and identifier
-FAIL Test user specified <random-ua-ident> assert_true: Random values should be equal expected true got false
+PASS Test user specified <random-ua-ident>
 

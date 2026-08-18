@@ -28,15 +28,40 @@
 
 #include "CSSParserTokenRange.h"
 #include "CSSParserTokenRangeGuard.h"
+#include "CSSPropertyParser.h"
 #include "CSSPropertyParserConsumer+Ident.h"
 #include "CSSPropertyParserConsumer+MetaConsumer.h"
 #include "CSSPropertyParserConsumer+NumberDefinitions.h"
 #include "CSSPropertyParserState.h"
 #include "CSSValueKeywords.h"
 #include <wtf/StdLibExtras.h>
+#include <wtf/text/StringToIntegerConversion.h>
 
 namespace WebCore {
 namespace CSSPropertyParserHelpers {
+
+// <random-ua-ident> = ua- PROPERTY [ - INDEX ]?, where INDEX is 1-based. Returns nullopt when the
+// ident does not name a known property, which makes the whole <random-key> invalid.
+// FIXME: § 9.4.1 also spells an in-custom-function form, ua-FUNCTIONNAME-PROPERTY[-INDEX]. Both names
+// can contain hyphens, so splitting it is ambiguous; see https://github.com/w3c/csswg-drafts/issues/14330
+static std::optional<Variant<CSSCalc::Random::Key::PropertyScoped, CSSCalc::Random::Key::PropertyIndexScoped>> parseRandomUAIdent(StringView ident)
+{
+    auto body = ident.substring(3);
+
+    if (auto lastHyphen = body.reverseFind('-'); lastHyphen != notFound) {
+        if (auto index = parseInteger<unsigned>(body.substring(lastHyphen + 1)); index >= 1) {
+            auto property = cssPropertyID(body.left(lastHyphen));
+            if (property == CSSPropertyInvalid)
+                return { };
+            return { CSSCalc::Random::Key::PropertyIndexScoped { CSSCalc::RandomScopedProperty { property, nullAtom() }, *index - 1 } };
+        }
+    }
+
+    auto property = cssPropertyID(body);
+    if (property == CSSPropertyInvalid)
+        return { };
+    return { CSSCalc::Random::Key::PropertyScoped { CSSCalc::RandomScopedProperty { property, nullAtom() } } };
+}
 
 std::optional<CSSCalc::Random::Sharing> consumeUnresolvedRandomKey(CSSParserTokenRange& tokens, CSS::PropertyParserState& state, const RandomKeySource& source, NOESCAPE const Function<unsigned()>& consumeIndex)
 {
@@ -111,6 +136,20 @@ std::optional<CSSCalc::Random::Sharing> consumeUnresolvedRandomKey(CSSParserToke
             tokens.consumeIncludingWhitespace();
             key.propertyScoped = CSSCalc::Random::Key::PropertyIndexScoped { source.property, consumeIndex() };
             return true;
+        }
+        // <random-ua-ident> = <custom-ident> starting with `ua-`. It spells out the property, and
+        // optionally the index, that the keywords derive implicitly, so `ua-height-1` names the same
+        // key as property-index-scoped does while parsing `height`. The index is 1-based in the ident.
+        // No index is consumed from the caller: the ident says which one it means.
+        if (tokens.peek().type() == IdentToken) {
+            if (auto identValue = tokens.peek().value(); startsWithLettersIgnoringASCIICase(identValue, "ua-"_s)) {
+                if (auto scoped = parseRandomUAIdent(identValue)) {
+                    tokens.consumeIncludingWhitespace();
+                    key.propertyScoped = WTF::move(*scoped);
+                    return true;
+                }
+                return false;
+            }
         }
         return false;
     };
