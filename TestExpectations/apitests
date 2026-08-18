@@ -153,7 +153,7 @@ rdar://136551692 [ mac ] TestWebKitAPI.InWindowFullscreen.EnterChangesIsActiveWi
 rdar://136551692 [ mac ] TestWebKitAPI.InWindowFullscreen.ToggleChangesIsActive [ Skip ]
 webkit.org/b/321544 [ ios ] TestWebKitAPI.iOSMouseSupport.FractionalCoordinatesInRotatedIFrameCrossOrigin [ Pass Failure ]
 webkit.org/b/321544 [ ios ] TestWebKitAPI.iOSMouseSupport.FractionalCoordinatesInScaledIFrameCrossOrigin [ Pass Failure ]
-webkit.org/b/321957 [ release sequoia ] TestWebKitAPI.IsolatedSiteStore.PersistsAcrossSessions [ Pass Crash ]
+webkit.org/b/321957 [ release sequoia ] TestWebKitAPI.IsolatedSiteStore.PersistsAcrossSessions [ Pass Failure ]
 rdar://137526107 [ mac debug ] TestWebKitAPI.JavaScriptCore.IncrementalSweeperMainThread [ Skip ]
 rdar://137526107 [ mac debug ] TestWebKitAPI.JavaScriptCore.IncrementalSweeperSecondaryThread [ Skip ]
 rdar://163669257 [ ios ] TestWebKitAPI.KeyboardInputTests.SelectionClipRectsWhenPresentingInputView [ Skip ]
