@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<body style="margin: 0">
+<script>
+
+// The embedder picks the image, so that the SVG and the bitmap image animation paths can be tested
+// through the same frame. Append it while parsing, so that it is part of the load event of this frame.
+var image = document.createElement("img");
+image.src = new URLSearchParams(location.search).get("image") || "smil-animation.svg";
+document.body.appendChild(image);
+
+// The embedder is cross-origin, so it cannot reach this internals object. It asks for the state of the
+// image through messages.
+window.addEventListener("message", function() {
+    parent.postMessage(window.internals ? String(internals.isImageAnimating(image)) : "no internals", "*");
+}, false);
+
+</script>
+</body>
+</html>

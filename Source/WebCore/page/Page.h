@@ -146,6 +146,7 @@ class IntSize;
 class KeyboardScrollingAnimator;
 class LayoutRect;
 class LocalFrame;
+class LocalFrameView;
 class LoginStatus;
 class LowPowerModeNotifier;
 class MediaCanStartListener;
@@ -1188,6 +1189,8 @@ public:
     static void forEachDocumentFromMainFrame(const Frame&, NOESCAPE const Function<void(Document&)>&);
     WEBCORE_EXPORT void forEachLocalFrame(NOESCAPE const Function<void(LocalFrame&)>&);
     void forEachWindowEventLoop(NOESCAPE const Function<void(WindowEventLoop&)>&);
+
+    void forEachRootFrameView(NOESCAPE const Function<void(LocalFrameView&)>&);
 
     bool shouldDisableCorsForRequestTo(const URL&) const;
     bool shouldAssumeSameSiteForRequestTo(const URL& url) const { return shouldDisableCorsForRequestTo(url); }

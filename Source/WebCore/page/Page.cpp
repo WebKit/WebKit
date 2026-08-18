@@ -3477,9 +3477,9 @@ void Page::resumeAnimatingImages()
 {
     // Drawing models which cache painted content while out-of-window (WebKit2's composited drawing areas, etc.)
     // require that we repaint animated images to kickstart the animation loop.
-    RefPtr localMainFrame = this->localMainFrame();
-    if (RefPtr view = localMainFrame ? localMainFrame->view() : nullptr)
-        view->resumeVisibleImageAnimationsIncludingSubframes();
+    forEachRootFrameView([] (LocalFrameView& view) {
+        view.resumeVisibleImageAnimationsIncludingSubframes();
+    });
 }
 
 void Page::setActivityState(OptionSet<ActivityState> activityState)
@@ -3593,9 +3593,9 @@ void Page::setIsVisibleInternal(bool isVisible)
         });
 #endif
 
-        RefPtr localMainFrame = this->localMainFrame();
-        if (RefPtr view = localMainFrame ? localMainFrame->view() : nullptr)
-            view->show();
+        forEachRootFrameView([] (LocalFrameView& view) {
+            view.show();
+        });
 
         if (m_settings->hiddenPageCSSAnimationSuspensionEnabled()) {
             forEachDocument([] (Document& document) {
@@ -3637,9 +3637,9 @@ void Page::setIsVisibleInternal(bool isVisible)
 #endif
 
         suspendScriptedAnimations();
-        RefPtr localMainFrame = this->localMainFrame();
-        if (RefPtr view = localMainFrame ? localMainFrame->view() : nullptr)
-            view->hide();
+        forEachRootFrameView([] (LocalFrameView& view) {
+            view.hide();
+        });
     }
 
     forEachDocument([] (Document& document) {
@@ -4729,6 +4729,17 @@ void Page::forEachLocalFrame(NOESCAPE const Function<void(LocalFrame&)>& functor
 
     for (auto& frame : frames)
         functor(frame);
+}
+
+void Page::forEachRootFrameView(NOESCAPE const Function<void(LocalFrameView&)>& functor)
+{
+    auto views = WTF::compactMap<1>(m_rootFrames, [](auto& rootFrame) -> RefPtr<LocalFrameView> {
+        ASSERT(rootFrame->isRootFrame());
+        return rootFrame->view();
+    });
+
+    for (auto& view : views)
+        functor(view);
 }
 
 void Page::forEachWindowEventLoop(NOESCAPE const Function<void(WindowEventLoop&)>& functor)

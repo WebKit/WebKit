@@ -4294,7 +4294,7 @@ void LocalFrameView::show()
 {
     ScrollView::show();
 
-    if (m_frame->isMainFrame()) {
+    if (m_frame->isRootFrame()) {
         // Turn off speculative tiling for a brief moment after a LocalFrameView appears on screen.
         // Note that adjustTiledBackingCoverage() kicks the (500ms) timer to re-enable it.
         m_speculativeTilingEnabled = false;
