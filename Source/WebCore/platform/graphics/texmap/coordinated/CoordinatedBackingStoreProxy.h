@@ -112,6 +112,11 @@ private:
 
         void addDirtyRect(const IntRect& dirty)
         {
+            if (getenv("WEBKIT_DISABLE_PARTIAL_TILE_UPDATES")) {
+                dirtyRect = rect;
+                return;
+            }
+
             auto tileDirtyRect = intersection(dirty, rect);
             ASSERT(!tileDirtyRect.isEmpty());
             dirtyRect.unite(tileDirtyRect);
