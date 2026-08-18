@@ -96,12 +96,16 @@ public:
     void setIsDeclarativeShadowRoot(bool flag) { m_isDeclarativeShadowRoot = flag; }
 
     Element* host() const { return m_host; }
+#ifdef RC_REMOVE_SEC_ACCEL_3
     inline void setHost(Element*); // Defined and only used in Element.cpp
+#endif
     void setHost(WeakPtr<Element, WeakPtrImplWithEventTargetData>&& host) { m_host = WTF::move(host); }
 
+#ifdef RC_REMOVE_SEC_ACCEL_3
     Node* shadowIncludingRoot() const { return m_shadowIncludingRoot; }
     inline void setShadowIncludingRoot(Node* root) { m_shadowIncludingRoot = root; }
 
+#endif
     bool hasScopedCustomElementRegistry() const { return m_hasScopedCustomElementRegistry; }
     CustomElementRegistry* registryForBindings() const;
 
@@ -181,7 +185,9 @@ private:
     SlotAssignmentMode m_slotAssignmentMode { SlotAssignmentMode::Named };
 
     WeakPtr<Element, WeakPtrImplWithEventTargetData> m_host;
+#ifdef RC_REMOVE_SEC_ACCEL_3
     Node* m_shadowIncludingRoot { nullptr };
+#endif
     RefPtr<StyleSheetList> m_styleSheetList;
 
     std::unique_ptr<Style::Scope> m_styleScope;

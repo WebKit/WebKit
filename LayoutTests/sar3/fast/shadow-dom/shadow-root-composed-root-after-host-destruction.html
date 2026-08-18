@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+// Keep the shadow tree alive with a ChildNodeList, which holds a C++ reference to the
+// shadow root but is not traced as an opaque root by the garbage collector. Once the
+// detached host element is collected, Element::removeShadowRootSlow() detaches the shadow
+// root, and the cached Node::m_shadowIncludingRoot of nodes in the shadow tree must no
+// longer point at the freed host.
+let childNodes;
+(function () {
+    let host = document.createElement('div');
+    let shadowRoot = host.attachShadow({ mode: 'open' });
+    shadowRoot.innerHTML = '<span></span>';
+    childNodes = shadowRoot.childNodes;
+})();
+
+setTimeout(function () {
+    if (window.GCController)
+        GCController.collect();
+    setTimeout(function () {
+        if (window.GCController)
+            GCController.collect();
+        let child = childNodes.item(0);
+        let composedRoot = child.getRootNode({ composed: true });
+        document.write(composedRoot.nodeType == Node.DOCUMENT_FRAGMENT_NODE ? 'PASS' : 'FAIL');
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }, 0);
+}, 0);
+</script>
+</body>
+</html>

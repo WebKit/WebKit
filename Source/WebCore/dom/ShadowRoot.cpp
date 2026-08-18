@@ -62,7 +62,9 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(ShadowRoot);
 struct SameSizeAsShadowRoot : public DocumentFragment, public TreeScope {
     uint8_t flagsAndModes[3];
     WeakPtr<Element, WeakPtrImplWithEventTargetData> host;
+#ifdef RC_REMOVE_SEC_ACCEL_3
     void* shadowIncludingRoot;
+#endif
     void* styleSheetList;
     void* styleScope;
     void* slotAssignment;
@@ -85,7 +87,9 @@ ShadowRoot::ShadowRoot(Document& document, ShadowRootMode mode, SlotAssignmentMo
     , m_hasScopedCustomElementRegistry(scopedRegistry == ShadowRootScopedCustomElementRegistry::Yes)
     , m_mode(mode)
     , m_slotAssignmentMode(assignmentMode)
+#ifdef RC_REMOVE_SEC_ACCEL_3
     , m_shadowIncludingRoot(this)
+#endif
     , m_styleScope(makeUnique<Style::Scope>(*this))
     , m_referenceTarget(referenceTarget)
 {
