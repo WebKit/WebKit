@@ -600,7 +600,7 @@ class ResultsDBReportMixin(abc.ABC):
 
     def results_db_details(self):
         """Extra build metadata folded into each row's `details` blob, non-queryable."""
-        authors = self.getProperty('owners', []) or [self.getProperty('patch_author', None)]
+        authors = self.getProperty('owners', [])
         return {
             'worker': self.getProperty('workername', None),
             'remote': self.getProperty('remote', None),
@@ -3097,9 +3097,6 @@ class CompileWebKit(shell.Compile, AddToLogMixin, ShellMixin):
         self.cancelled_due_to_huge_logs = False
         super().__init__(timeout=60 * 60, logEnviron=False, **kwargs)
 
-    def doStepIf(self, step):
-        return not (self.getProperty('fast_commit_queue') and self.getProperty('buildername', '').lower() == 'commit-queue')
-
     @defer.inlineCallbacks
     def run(self):
         platform = self.getProperty('platform')
@@ -3232,8 +3229,6 @@ class CompileWebKit(shell.Compile, AddToLogMixin, ShellMixin):
         if self.results == FAILURE:
             return {'step': 'Failed to compile WebKit'}
         if self.results == SKIPPED:
-            if self.getProperty('fast_commit_queue'):
-                return {'step': 'Skipped compiling WebKit in fast-cq mode'}
             return {'step': 'Skipped compiling WebKit'}
         if self.results == CANCELLED and self.cancelled_due_to_huge_logs:
             return {'step': 'Cancelled step due to huge logs', 'build': 'Cancelled build due to huge logs'}
@@ -3922,8 +3917,7 @@ class RunWebKitTests(shell.Test, ResultsDBReportMixin, AddToLogMixin, ShellMixin
         self.layout_test_driver = None
 
     def doStepIf(self, step):
-        return not ((self.getProperty('buildername', '').lower() in ['commit-queue', 'merge-queue']) and
-                    (self.getProperty('fast_commit_queue') or self.getProperty('passed_mac_wk2')))
+        return not (self.getProperty('buildername', '').lower() == 'merge-queue' and self.getProperty('passed_mac_wk2'))
 
     def setLayoutTestCommand(self):
         platform = self.getProperty('platform')
@@ -4177,8 +4171,6 @@ class RunWebKitTests(shell.Test, ResultsDBReportMixin, AddToLogMixin, ShellMixin
                 status = ' '.join(self.incorrectLayoutLines)
                 return {'step': status}
         if self.results == SKIPPED:
-            if self.getProperty('fast_commit_queue'):
-                return {'step': 'Skipped layout-tests in fast-cq mode'}
             return {'step': 'Skipped layout-tests'}
 
         return super().getResultSummary()

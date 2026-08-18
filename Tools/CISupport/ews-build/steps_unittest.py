@@ -1383,14 +1383,6 @@ class TestCompileWebKit(BuildStepMixinAdditions, unittest.TestCase):
         self.expect_outcome(result=FAILURE, state_string='Failed to compile WebKit')
         return self.run_step()
 
-    def test_skip_for_revert_patches_on_commit_queue(self):
-        self.setup_step(CompileWebKit())
-        self.setProperty('buildername', 'Commit-Queue')
-        self.setProperty('configuration', 'debug')
-        self.setProperty('fast_commit_queue', True)
-        self.expect_outcome(result=SKIPPED, state_string='Skipped compiling WebKit in fast-cq mode')
-        return self.run_step()
-
 
 class TestCompileWebKitWithoutChange(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):
@@ -1456,7 +1448,6 @@ class TestAnalyzeCompileWebKitResults(BuildStepMixinAdditions, unittest.TestCase
         rc = self.run_step()
         self.expect_property('build_finish_summary', 'Hash 7496f8ec for PR 1234 does not build')
         return rc
-
 
 
     @expectedFailure
@@ -2000,16 +1991,6 @@ ts","version":4,"num_passes":42158,"pixel_tests_enabled":false,"date":"11:28AM o
         )
         self.expect_outcome(result=SUCCESS, state_string='Passed layout tests')
         return self.run_step()
-
-    def test_skip_for_revert_patches_on_commit_queue(self):
-        self.configureStep()
-        self.setProperty('buildername', 'Commit-Queue')
-        self.setProperty('fullPlatform', 'mac')
-        self.setProperty('configuration', 'debug')
-        self.setProperty('fast_commit_queue', True)
-        self.expect_outcome(result=SKIPPED, state_string='Skipped layout-tests in fast-cq mode')
-        return self.run_step()
-
 
     def test_skip_for_mac_wk2_passed_change_on_merge_queue(self):
         self.configureStep()
@@ -2826,15 +2807,6 @@ class TestRunWebKit1Tests(BuildStepMixinAdditions, unittest.TestCase):
         self.expect_outcome(result=FAILURE, state_string='layout-tests (failure)')
         return self.run_step()
 
-    def test_skip_for_revert_patches_on_commit_queue(self):
-        self.setup_step(RunWebKit1Tests())
-        self.setProperty('buildername', 'Commit-Queue')
-        self.setProperty('fullPlatform', 'mac')
-        self.setProperty('configuration', 'debug')
-        self.setProperty('fast_commit_queue', True)
-        self.expect_outcome(result=SKIPPED, state_string='Skipped layout-tests in fast-cq mode')
-        return self.run_step()
-
 
 class TestAnalyzeLayoutTestsResults(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):
@@ -3363,15 +3335,6 @@ class TestReportToResultsDB(BuildStepMixinAdditions, unittest.TestCase):
         self.assertEqual(details['pr_number'], 12345)
         self.assertEqual(details['commit_hash'], 'abc123')
         self.assertEqual(details['build_url'], 'http://localhost:8080/#/builders/1/builds/13')
-
-    @defer.inlineCallbacks
-    def test_authors_fall_back_to_the_patch_author(self):
-        step = self.configureStep()
-        self.setProperty('owners', [])
-        self.setProperty('patch_author', 'jdoe@apple.com')
-        yield step.report_to_results_db(self.FLAKE)
-
-        self.assertEqual(self.results_db_reports[0]['details']['authors'], ['jdoe@apple.com'])
 
     @defer.inlineCallbacks
     def test_reports_the_commit_ews_tested(self):
@@ -7356,7 +7319,6 @@ class TestValidateChange(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('github.head.sha', '7496f8ecc4cc8011f19c8cc1bc7b18fe4a88ad5c')
         self.expect_outcome(result=SUCCESS, state_string='Validated change')
         rc = self.run_step()
-        self.expect_property('fast_commit_queue', None, 'fast_commit_queue is unexpectedly set')
         return rc
 
     def test_success_pr_blocked(self):
@@ -7367,7 +7329,6 @@ class TestValidateChange(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('github.head.sha', '7496f8ecc4cc8011f19c8cc1bc7b18fe4a88ad5c')
         self.expect_outcome(result=SUCCESS, state_string='Validated change')
         rc = self.run_step()
-        self.expect_property('fast_commit_queue', None, 'fast_commit_queue is unexpectedly set')
         return rc
 
 
@@ -7379,7 +7340,6 @@ class TestValidateChange(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('github.head.sha', '1ad60d45a112301f7b9f93dac06134524dae8480')
         self.expect_outcome(result=FAILURE, state_string='Hash 1ad60d45 on PR 1234 is outdated')
         rc = self.run_step()
-        self.expect_property('fast_commit_queue', None, 'fast_commit_queue is unexpectedly set')
         return rc
 
     def test_deleted_pr(self):
@@ -7390,7 +7350,6 @@ class TestValidateChange(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('github.head.sha', '1ad60d45a112301f7b9f93dac06134524dae8480')
         self.expect_outcome(result=FAILURE, state_string='Pull request 1234 is already closed')
         rc = self.run_step()
-        self.expect_property('fast_commit_queue', None, 'fast_commit_queue is unexpectedly set')
         return rc
 
 
@@ -7402,7 +7361,6 @@ class TestValidateChange(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('github.head.sha', '7496f8ecc4cc8011f19c8cc1bc7b18fe4a88ad5c')
         self.expect_outcome(result=SUCCESS, state_string='Validated change')
         rc = self.run_step()
-        self.expect_property('fast_commit_queue', None, 'fast_commit_queue is unexpectedly set')
         return rc
 
     def test_merge_queue_blocked(self):
@@ -7413,7 +7371,6 @@ class TestValidateChange(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('github.head.sha', '7496f8ecc4cc8011f19c8cc1bc7b18fe4a88ad5c')
         self.expect_outcome(result=FAILURE, state_string="PR 1234 has been marked as 'merging-blocked'")
         rc = self.run_step()
-        self.expect_property('fast_commit_queue', None, 'fast_commit_queue is unexpectedly set')
         return rc
 
     def test_no_merge_queue(self):
@@ -7424,7 +7381,6 @@ class TestValidateChange(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('github.head.sha', '7496f8ecc4cc8011f19c8cc1bc7b18fe4a88ad5c')
         self.expect_outcome(result=FAILURE, state_string='PR 1234 does not have a merge queue label')
         rc = self.run_step()
-        self.expect_property('fast_commit_queue', None, 'fast_commit_queue is unexpectedly set')
         return rc
 
     def test_draft(self):
@@ -7435,7 +7391,6 @@ class TestValidateChange(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('github.head.sha', '7496f8ecc4cc8011f19c8cc1bc7b18fe4a88ad5c')
         self.expect_outcome(result=FAILURE, state_string='PR 1234 is a draft pull request')
         rc = self.run_step()
-        self.expect_property('fast_commit_queue', None, 'fast_commit_queue is unexpectedly set')
         return rc
 
     def test_no_draft(self):
@@ -7446,7 +7401,6 @@ class TestValidateChange(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('github.head.sha', '7496f8ecc4cc8011f19c8cc1bc7b18fe4a88ad5c')
         self.expect_outcome(result=SUCCESS, state_string='Validated change')
         rc = self.run_step()
-        self.expect_property('fast_commit_queue', None, 'fast_commit_queue is unexpectedly set')
         return rc
 
 
@@ -7460,7 +7414,6 @@ class TestValidateChange(BuildStepMixinAdditions, unittest.TestCase):
 
         self.expect_outcome(result=FAILURE, state_string="Changes to 'safari-123-branch' are not tested")
         rc = self.run_step()
-        self.expect_property('fast_commit_queue', None, 'fast_commit_queue is unexpectedly set')
         return rc
 
     def test_excluded_branch(self):
@@ -7473,7 +7426,6 @@ class TestValidateChange(BuildStepMixinAdditions, unittest.TestCase):
 
         self.expect_outcome(result=FAILURE, state_string="Skipping as PR 1234 targets 'webkitglib/2.46' branch")
         rc = self.run_step()
-        self.expect_property('fast_commit_queue', None, 'fast_commit_queue is unexpectedly set')
         return rc
 
     def test_allowed_branch_not_in_excluded(self):
@@ -7486,7 +7438,6 @@ class TestValidateChange(BuildStepMixinAdditions, unittest.TestCase):
 
         self.expect_outcome(result=SUCCESS, state_string='Validated change')
         rc = self.run_step()
-        self.expect_property('fast_commit_queue', None, 'fast_commit_queue is unexpectedly set')
         return rc
 
 
@@ -8408,8 +8359,6 @@ class TestDetermineLandedIdentifier(BuildStepMixinAdditions, unittest.TestCase):
 
         self.expect_property('comment_text', 'Committed ? (5dc27962b4c5): <https://commits.webkit.org/5dc27962b4c5>\n\nReviewed commits have been landed. Closing PR #1234 and removing active labels.')
         self.expect_property('build_summary', 'Committed 5dc27962b4c5')
-
-
 
 
 class TestCheckOutSource(BuildStepMixinAdditions, unittest.TestCase):
@@ -9462,7 +9411,6 @@ class TestValidateSquashed(BuildStepMixinAdditions, unittest.TestCase):
 
     def tearDown(self):
         return self.tear_down_test_build_step()
-
 
 
     def test_success(self):
