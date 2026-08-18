@@ -975,7 +975,7 @@ static NSString *optionCellReuseIdentifier = @"WKSelectPickerTableViewCell";
     }
 #endif
 
-    auto closeButton = adoptNS([[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemClose target:self action:@selector(close:)]);
+    RetainPtr closeButton = adoptNS([[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(close:)]);
     self.navigationItem.rightBarButtonItem = closeButton.get();
 
     _collapsedSections = adoptNS([[NSMutableSet alloc] init]);
