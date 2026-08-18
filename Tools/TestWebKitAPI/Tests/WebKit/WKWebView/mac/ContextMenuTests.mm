@@ -792,7 +792,7 @@ TEST(ContextMenuTests, HitTestResultImageSuggestedFilename)
     Util::run(&gotProposedMenu);
 }
 
-static RetainPtr<NSString> imageSuggestedFilenameFromCollidingImageURL(HashMap<String, String> imageResponseHeaders)
+static RetainPtr<NSString> imageSuggestedFilenameFromCollidingImageURL(Vector<WTF::KeyValuePair<String, String>> imageResponseHeaders)
 {
     using namespace TestWebKitAPI;
 
@@ -803,7 +803,7 @@ static RetainPtr<NSString> imageSuggestedFilenameFromCollidingImageURL(HashMap<S
             connection.send(HTTPResponse({ { "Content-Type"_s, "text/html"_s } },
                 "<img id='collision' src='collision.gifv' style='width:300px;height:300px'>"_s).serialize(), [connection, imageData, imageResponseHeaders] {
                 connection.receiveHTTPRequest([connection, imageData, imageResponseHeaders](Vector<char>&&) {
-                    HashMap<String, String> headers = imageResponseHeaders;
+                    Vector<WTF::KeyValuePair<String, String>> headers = imageResponseHeaders;
                     connection.send(HTTPResponse(WTF::move(headers), imageData).serialize());
                 });
             });

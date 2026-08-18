@@ -1695,7 +1695,7 @@ static HTTPServer pdfServerWithSandboxCSPDirective()
 {
     RetainPtr pdfURL = [NSBundle.test_resourcesBundle URLForResource:@"test" withExtension:@"pdf"];
     HTTPResponse response { [NSData dataWithContentsOfURL:pdfURL.get()] };
-    response.headerFields.set("Content-Security-Policy"_s, "sandbox allow-scripts;"_s);
+    response.setHeaderField("Content-Security-Policy"_s, "sandbox allow-scripts;"_s);
     return { { { "/"_s, response } } };
 }
 

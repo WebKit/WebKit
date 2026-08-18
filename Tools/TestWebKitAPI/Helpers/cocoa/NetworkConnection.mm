@@ -124,6 +124,10 @@ void Connection::receiveHTTPMessagingRequest(CompletionHandler<void(HTTPRequestD
                             if (path)
                                 blockPartial.path = String::fromUTF8(path);
                         });
+                        nw_http_request_access_authority(request.get(), ^(const char* authority) {
+                            if (authority)
+                                blockPartial.authority = String::fromUTF8(authority);
+                        });
                         if (RetainPtr fields = adoptNS(nw_http_request_copy_header_fields(request.get()))) {
                             nw_http_fields_enumerate(fields.get(), ^bool(const char* name, size_t nameLength, const char* value, size_t valueLength) {
                                 String fieldName = String::fromUTF8(std::span(name, nameLength));

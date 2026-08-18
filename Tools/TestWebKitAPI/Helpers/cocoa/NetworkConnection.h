@@ -50,6 +50,7 @@ struct HTTPResponse;
 struct HTTPRequestData {
     String method;
     String path;
+    String authority;
     HashMap<String, String> headerFields; // Header field names arrive lowercased per RFC 7540 8.1.2.
     Vector<uint8_t> body;
 };

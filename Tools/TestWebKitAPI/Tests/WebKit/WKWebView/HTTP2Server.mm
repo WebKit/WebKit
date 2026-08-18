@@ -29,7 +29,10 @@
 
 #import "Helpers/Utilities.h"
 #import "Helpers/cocoa/HTTPServer.h"
+#import "Helpers/cocoa/TestNavigationDelegate.h"
 #import "Helpers/cocoa/TestWKWebView.h"
+#import <WebKit/WKWebsiteDataStorePrivate.h>
+#import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <wtf/RetainPtr.h>
 
 namespace TestWebKitAPI {
@@ -170,6 +173,38 @@ TEST(HTTP2Server, MultipleCookiesSetBeforeLoad)
 
     [webView synchronouslyLoadRequestIgnoringSSLErrors:server.request()];
     EXPECT_WK_STREQ("firstCookie=firstValue; secondCookie=secondValue", receivedCookieHeader.get());
+}
+
+TEST(HTTP2Server, ThroughProxy)
+{
+    String receivedAuthority;
+    bool done = false;
+
+    HTTPServer server([&](Connection connection) {
+        connection.receiveHTTPMessagingRequest([&, connection](HTTPRequestData&& request) {
+            receivedAuthority = request.authority;
+            connection.sendHTTPMessagingResponse(HTTPResponse("hello"_s));
+            done = true;
+        });
+    }, HTTPServer::Protocol::Http2Proxy);
+
+    RetainPtr storeConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initNonPersistentConfiguration]);
+    [storeConfiguration setHTTPSProxy:[NSURL URLWithString:[NSString stringWithFormat:@"https://127.0.0.1:%d/", server.port()]]];
+    RetainPtr dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:storeConfiguration.get()]);
+
+    RetainPtr viewConfiguration = adoptNS([WKWebViewConfiguration new]);
+    [viewConfiguration setWebsiteDataStore:dataStore.get()];
+
+    RetainPtr delegate = adoptNS([TestNavigationDelegate new]);
+    [delegate allowAnyTLSCertificate];
+
+    RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:viewConfiguration.get()]);
+    [webView setNavigationDelegate:delegate.get()];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://a.example/"]]];
+    Util::run(&done);
+
+    EXPECT_WK_STREQ("a.example", receivedAuthority);
 }
 
 } // namespace TestWebKitAPI
