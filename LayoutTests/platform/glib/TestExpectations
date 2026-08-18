@@ -4330,7 +4330,7 @@ imported/w3c/web-platform-tests/css/css-color/system-color-hightlights-vs-getSel
 imported/w3c/web-platform-tests/css/css-color/system-color-hightlights-vs-getSelection-002.html [ ImageOnlyFailure ]
 
 # Flakily crashing on GTK and WPE bots
-webkit.org/b/286131 imported/w3c/web-platform-tests/css/css-transforms/transform-box/cssbox-content-box-002.html [ Pass Crash ImageOnlyFailure ]
+webkit.org/b/286131 imported/w3c/web-platform-tests/css/css-transforms/transform-box/cssbox-content-box-002.html [ Pass Crash ImageOnlyFailure Timeout ]
 
 imported/w3c/web-platform-tests/css/css-overscroll-behavior/overscroll-behavior.html [ Skip ]
 imported/w3c/web-platform-tests/css/css-scroll-snap/input/mouse-wheel.html [ Skip ]

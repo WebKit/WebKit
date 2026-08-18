@@ -1293,7 +1293,6 @@ webkit.org/b/319061 [ Debug ] media/muted-video-is-playing-audio.html [ Timeout 
 webkit.org/b/319062 [ Debug ] inspector/dom/getMediaStats.html [ Failure ]
 webkit.org/b/319063 [ Debug ] fullscreen/full-screen-enter-while-exiting.html [ Timeout ]
 webkit.org/b/319064 [ Debug ] fullscreen/video-inside-flex-item.html [ Failure ]
-webkit.org/b/319065 [ Debug ] imported/w3c/web-platform-tests/pointerevents/pointerevent_setpointercapture_relatedtarget.html [ Failure ]
 webkit.org/b/319066 [ Debug ] imported/w3c/web-platform-tests/css/css-view-transitions/view-transition-waituntil-finished-promise.html [ Failure ]
 
 webkit.org/b/319072 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-audio-element/audio-loading-lazy-window-onload.html [ Failure Pass ]
@@ -1327,3 +1326,5 @@ webkit.org/b/320649 [ Debug ] webrtc/disable-encryption.html [ Crash Pass ]
 webkit.org/b/321451 [ Debug ] inspector/unit-tests/debouncer.html [ Failure Pass ]
 
 webkit.org/b/321789 animations/no-style-recalc-during-accelerated-animation.html [ Failure Pass ]
+
+webkit.org/b/322025 fast/animation/request-animation-frame-during-modal.html [ Failure Pass ]

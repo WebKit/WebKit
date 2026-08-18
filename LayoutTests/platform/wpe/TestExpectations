@@ -1121,7 +1121,6 @@ webkit.org/b/309369 [ arm64 ] svg/W3C-SVG-1.1/metadata-example-01-b.svg [ Failur
 
 webkit.org/b/309369 [ arm64 ] imported/w3c/web-platform-tests/css/motion/offset-path-ray-contain-003.html [ ImageOnlyFailure ]
 
-webkit.org/b/309372 [ arm64 ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioparam-interface/k-rate-dynamics-compressor-connections.html [ Failure ]
 webkit.org/b/309372 [ arm64 ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/convolution-mono-mono.html [ Failure ]
 webkit.org/b/309372 [ arm64 ] webaudio/Analyser/realtimeanalyser-freq-data.html [ Failure ]
 webkit.org/b/309372 [ arm64 ] webaudio/ScriptProcessor/scriptprocessor-offlineaudiocontext.html [ Failure ]
@@ -1131,8 +1130,6 @@ webkit.org/b/309376 compositing/animation/animation-backing.html [ Failure Pass 
 webkit.org/b/310413 [ arm64 ] compositing/backing/animate-into-view.html [ Failure Pass ]
 
 webkit.org/b/309382 [ arm64 ] fast/canvas/2d.text.draw.fill.maxWidth.gradient.html [ Failure Pass ]
-
-webkit.org/b/319953 [ arm64 ] imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-mouse.html [ Failure ]
 
 webkit.org/b/310415 fast/canvas/canvas-createPattern-fillRect-shadow.html [ Failure Pass ]
 
@@ -1238,7 +1235,6 @@ webkit.org/b/317969 [ x86_64 Release ] imported/w3c/web-platform-tests/webrtc/RT
 webkit.org/b/317970 [ x86_64 ] imported/w3c/web-platform-tests/css/css-anchor-position/scroll-to-anchored-fixed-000.html [ ImageOnlyFailure Pass ]
 webkit.org/b/317972 [ x86_64 ] streams/pipeTo-unhandled-promise.html [ Crash Pass ]
 webkit.org/b/305514 [ x86_64 ] fast/images/imagebitmap-memory.html [ ImageOnlyFailure Pass Timeout ]
-webkit.org/b/317973 [ arm64 ] fast/visual-viewport/client-rects-relative-to-layout-viewport-zoomed.html [ Failure ]
 webkit.org/b/317974 [ arm64 ] imported/w3c/web-platform-tests/largest-contentful-paint/cross-origin-image.sub.html [ Failure Pass ]
 webkit.org/b/317975 [ arm64 ] fast/dom/HTMLImageElement/sizes/image-sizes-js-innerhtml.html [ Failure Pass ]
 webkit.org/b/317976 [ arm64 ] imported/w3c/web-platform-tests/largest-contentful-paint/observe-svg-data-uri-image.html [ Failure Pass ]
@@ -1333,3 +1329,5 @@ webkit.org/b/321481 [ arm64 ] imported/w3c/web-platform-tests/webrtc/simulcast/s
 webkit.org/b/309372 [ arm64 ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/realtime-conv.html [ Failure ]
 
 webkit.org/b/321107 imported/w3c/web-platform-tests/css/selectors/media/media-loading-state-timing.sub.html [ Skip ]
+
+webkit.org/b/322026 [ arm64 ] imported/w3c/web-platform-tests/wasm/core/f64_cmp.wast.js.html [ Failure Pass Timeout ]
