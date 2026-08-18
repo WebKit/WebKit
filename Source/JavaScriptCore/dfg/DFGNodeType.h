@@ -325,6 +325,7 @@ namespace JSC { namespace DFG {
     macro(ObjectGetOwnPropertyNames, NodeMustGenerate | NodeResultJS) \
     macro(ObjectGetOwnPropertySymbols, NodeMustGenerate | NodeResultJS) \
     macro(ObjectToString, NodeMustGenerate | NodeResultJS) \
+    macro(ObjectIsExtensible, NodeMustGenerate | NodeResultBoolean) \
     macro(ReflectOwnKeys, NodeMustGenerate | NodeResultJS) \
     macro(SymbolToString, NodeResultJS) \
     \
