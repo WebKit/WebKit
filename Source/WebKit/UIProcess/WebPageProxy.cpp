@@ -1648,7 +1648,9 @@ void WebPageProxy::swapToProvisionalPage(Ref<ProvisionalPageProxy>&& provisional
     if (m_drawingArea)
         nominalFramesPerSecond = protect(m_drawingArea)->displayNominalFramesPerSecond();
     // FIXME: We may want to send WindowScreenDidChange on non-iOS platforms too.
-    send(Messages::WebPage::WindowScreenDidChange(*m_displayID, nominalFramesPerSecond));
+    forEachWebContentProcess([&](auto& webProcess, auto pageID) {
+        webProcess.send(Messages::WebPage::WindowScreenDidChange(*m_displayID, nominalFramesPerSecond), pageID);
+    });
 #endif
 
 #if PLATFORM(COCOA)
@@ -6853,11 +6855,17 @@ void WebPageProxy::windowScreenDidChange(PlatformDisplayID displayID)
         return;
 
     std::optional<FramesPerSecond> nominalFramesPerSecond;
-    if (drawingArea)
+    if (RefPtr pageForTesting = m_pageForTesting)
+        nominalFramesPerSecond = pageForTesting->displayNominalFramesPerSecondOverride();
+    if (!nominalFramesPerSecond && drawingArea)
         nominalFramesPerSecond = drawingArea->displayNominalFramesPerSecond();
 
+    // FIXME (rdar://185159815): should we broadcast this to remote frame processes?
     send(Messages::EventDispatcher::PageScreenDidChange(m_webPageID, displayID, nominalFramesPerSecond));
-    send(Messages::WebPage::WindowScreenDidChange(displayID, nominalFramesPerSecond));
+
+    forEachWebContentProcess([&](auto& webProcess, auto pageID) {
+        webProcess.send(Messages::WebPage::WindowScreenDidChange(displayID, nominalFramesPerSecond), pageID);
+    });
 #if HAVE(DISPLAY_LINK)
     updateDisplayLinkFrequency();
 #endif

@@ -161,6 +161,9 @@ typedef NSVisualEffectView _WKPlatformVisualEffectView;
 
 - (void)_numberOfLiveDocumentsForTesting:(void (^)(NSUInteger count))completionHandler;
 
+- (void)_setDisplayForTesting:(uint32_t)displayID nominalFramesPerSecond:(unsigned)nominalFramesPerSecond;
+- (void)_preferredRenderingUpdateIntervalsForTesting:(void (^)(NSArray<NSNumber *> *intervalsInMillisecondsForEachWebProcess))completionHandler;
+
 - (void)_computePagesForPrinting:(_WKFrameHandle *)handle completionHandler:(void(^)(void))completionHandler WK_API_AVAILABLE(macos(13.0), ios(16.0));
 
 - (void)_setConnectedToHardwareConsoleForTesting:(BOOL)connected;

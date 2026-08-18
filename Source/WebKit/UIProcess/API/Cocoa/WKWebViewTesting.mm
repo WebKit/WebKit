@@ -770,6 +770,25 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
     });
 }
 
+- (void)_setDisplayForTesting:(uint32_t)displayID nominalFramesPerSecond:(unsigned)nominalFramesPerSecond
+{
+    if (RefPtr pageForTesting = _page->pageForTesting())
+        pageForTesting->setDisplayForTesting(displayID, nominalFramesPerSecond);
+}
+
+- (void)_preferredRenderingUpdateIntervalsForTesting:(void (^)(NSArray<NSNumber *> *))completionHandler
+{
+    RefPtr pageForTesting = _page->pageForTesting();
+    if (!pageForTesting)
+        return completionHandler(@[ ]);
+
+    pageForTesting->preferredRenderingUpdateIntervalsInMilliseconds([completionHandler = makeBlockPtr(completionHandler)](Vector<double>&& intervals) {
+        completionHandler(createNSArray(intervals, [](double interval) {
+            return @(interval);
+        }).get());
+    });
+}
+
 - (void)_computePagesForPrinting:(_WKFrameHandle *)handle completionHandler:(void(^)(void))completionHandler
 {
     WebKit::PrintInfo printInfo;

@@ -57,6 +57,7 @@ private:
 
     void isLayerTreeFrozen(CompletionHandler<void(bool)>&&);
     void numberOfLiveDocuments(CompletionHandler<void(uint64_t)>&&);
+    void preferredRenderingUpdateIntervalInMilliseconds(CompletionHandler<void(double)>&&);
     void setPermissionLevel(const String& origin, bool allowed);
     void isEditingCommandEnabled(const String& commandName, CompletionHandler<void(bool)>&&);
     void resetStateBetweenTests();

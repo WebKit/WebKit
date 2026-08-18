@@ -94,6 +94,37 @@ void WebPageProxyTesting::numberOfLiveDocuments(CompletionHandler<void(uint64_t)
     sendWithAsyncReply(Messages::WebPageTesting::NumberOfLiveDocuments(), WTF::move(completionHandler));
 }
 
+void WebPageProxyTesting::setDisplayForTesting(uint32_t displayID, unsigned nominalFramesPerSecond)
+{
+    m_displayNominalFramesPerSecondOverride = nominalFramesPerSecond;
+    protect(page())->windowScreenDidChange(displayID);
+}
+
+void WebPageProxyTesting::preferredRenderingUpdateIntervalsInMilliseconds(CompletionHandler<void(Vector<double>&&)>&& completionHandler)
+{
+    class IntervalAggregator : public RefCounted<IntervalAggregator> {
+    public:
+        static Ref<IntervalAggregator> create(CompletionHandler<void(Vector<double>&&)>&& completionHandler) { return adoptRef(*new IntervalAggregator(WTF::move(completionHandler))); }
+        void add(double interval) { m_intervals.append(interval); }
+        ~IntervalAggregator()
+        {
+            m_completionHandler(WTF::move(m_intervals));
+        }
+    private:
+        explicit IntervalAggregator(CompletionHandler<void(Vector<double>&&)>&& completionHandler)
+            : m_completionHandler(WTF::move(completionHandler)) { }
+        CompletionHandler<void(Vector<double>&&)> m_completionHandler;
+        Vector<double> m_intervals;
+    };
+
+    Ref aggregator = IntervalAggregator::create(WTF::move(completionHandler));
+    protect(page())->forEachWebContentProcess([&](auto& webProcess, auto pageID) {
+        webProcess.sendWithAsyncReply(Messages::WebPageTesting::PreferredRenderingUpdateIntervalInMilliseconds(), [aggregator](double interval) {
+            aggregator->add(interval);
+        }, pageID);
+    });
+}
+
 void WebPageProxyTesting::setCrossSiteLoadWithLinkDecorationForTesting(const URL& fromURL, const URL& toURL, bool wasFiltered, CompletionHandler<void()>&& completionHandler)
 {
     protect(protect(protect(page())->websiteDataStore())->networkProcess())->setCrossSiteLoadWithLinkDecorationForTesting(protect(page())->sessionID(), WebCore::RegistrableDomain { fromURL }, WebCore::RegistrableDomain { toURL }, wasFiltered, WTF::move(completionHandler));

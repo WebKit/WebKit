@@ -79,6 +79,12 @@ void WebPageTesting::numberOfLiveDocuments(CompletionHandler<void(uint64_t)>&& c
     completionHandler(WebCore::Document::allDocuments().size());
 }
 
+void WebPageTesting::preferredRenderingUpdateIntervalInMilliseconds(CompletionHandler<void(double)>&& completionHandler)
+{
+    RefPtr page = m_page ? m_page->corePage() : nullptr;
+    completionHandler(page ? page->preferredRenderingUpdateInterval().milliseconds() : 0);
+}
+
 void WebPageTesting::setPermissionLevel(const String& origin, bool allowed)
 {
 #if ENABLE(NOTIFICATIONS)

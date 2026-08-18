@@ -12847,6 +12847,52 @@ TEST(SiteIsolation, RestoredPageWithIframeIsRenderedAfterCrossSiteBFCacheRoundTr
     checkFrameTreesInProcesses(webView.get(), { { "https://b.com"_s } });
 }
 
+static Vector<double> preferredRenderingUpdateIntervals(TestWKWebView *webView)
+{
+    Vector<double> result;
+    __block bool done { false };
+    __block Vector<double>* values = &result;
+    [webView _preferredRenderingUpdateIntervalsForTesting:^(NSArray<NSNumber *> *intervals) {
+        for (NSNumber *interval in intervals)
+            values->append(interval.doubleValue);
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    return result;
+}
+
+TEST(SiteIsolation, DisplayRefreshRateReachesSubframeProcess)
+{
+    HTTPServer server({
+        { "/example"_s, { "<iframe src='https://webkit.org/webkit'></iframe>"_s } },
+        { "/webkit"_s, { "<p>hi</p>"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server, CGRectMake(0, 0, 800, 600));
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    checkFrameTreesInProcesses(webView.get(), {
+        { "https://example.com"_s, { { RemoteFrame } } },
+        { RemoteFrame, { { "https://webkit.org"_s } } }
+    });
+
+    [webView _setDisplayForTesting:1 nominalFramesPerSecond:120];
+    auto fastIntervals = preferredRenderingUpdateIntervals(webView.get());
+    EXPECT_EQ(fastIntervals.size(), 2u);
+    for (auto interval : fastIntervals)
+        EXPECT_EQ(interval, fastIntervals[0]);
+
+
+    [webView _setDisplayForTesting:2 nominalFramesPerSecond:30];
+    auto slowIntervals = preferredRenderingUpdateIntervals(webView.get());
+    EXPECT_EQ(slowIntervals.size(), 2u);
+    for (auto interval : slowIntervals)
+        EXPECT_EQ(interval, slowIntervals[0]);
+
+    EXPECT_NE(slowIntervals[0], fastIntervals[0]);
+}
+
 enum class SiteIsolationHighValueFraudTargetDomainsEnabled : bool { No, Yes };
 
 static std::pair<RetainPtr<TestWKWebView>, RetainPtr<TestNavigationDelegate>> siteIsolatedViewWithHighValueFraudTargetDomains(const HTTPServer& server, NSArray<NSString *> *domains, SiteIsolationHighValueFraudTargetDomainsEnabled enabled)
