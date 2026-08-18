@@ -29,14 +29,9 @@
 
 import logging
 
-from webkitcorepy.string_utils import pluralize
-
 from webkitpy.common.config import urls
-from webkitpy.common.system.executive import ScriptError
 from webkitpy.tool import steps
 from webkitpy.tool.commands.abstractsequencedcommand import AbstractSequencedCommand
-from webkitpy.tool.commands.stepsequence import StepSequence
-from webkitpy.tool.multicommandtool import Command
 
 _log = logging.getLogger(__name__)
 
@@ -52,200 +47,11 @@ class Clean(AbstractSequencedCommand):
         options.force_clean = True
 
 
-class LandUnsafe(AbstractSequencedCommand):
-    name = "land-unsafe"
-    help_text = "Land the current working directory diff and updates the associated bug if any"
-    argument_names = "[BUGID]"
-    show_in_main_help = False
-    steps = [
-        steps.UpdateChangeLogsWithReviewer,
-        steps.ValidateReviewer,
-        steps.ValidateChangeLogs,  # We do this after UpdateChangeLogsWithReviewer to avoid not having to cache the diff twice.
-        steps.Build,
-        steps.Commit,
-        steps.CloseBugForLandDiff,
-    ]
-    long_help = """land commits the current working copy diff (just as svn or git commit would).
-land will NOT build and run the tests before committing, but you can use the --build option for that.
-If a bug id is provided, or one can be found in the ChangeLog land will update the bug after committing."""
-
-    def _prepare_state(self, options, args, tool):
-        changed_files = self._tool.scm().changed_files(options.git_commit)
-        return {
-            "changed_files": changed_files,
-            "bug_id": (args and args[0]) or tool.checkout().bug_id_for_this_commit(options.git_commit, changed_files),
-        }
-
-
 class CheckStyleLocal(AbstractSequencedCommand):
     name = "check-style-local"
     help_text = "Run check-webkit-style on the current working directory diff"
     steps = [
         steps.CheckStyle,
-    ]
-
-
-class AbstractPatchProcessingCommand(Command):
-    # Subclasses must implement the methods below.  We don't declare them here
-    # because we want to be able to implement them with mix-ins.
-    #
-    # pylint: disable=E1101
-    # def _fetch_list_of_patches_to_process(self, options, args, tool):
-    # def _prepare_to_process(self, options, args, tool):
-    # def _process_patch(self, options, args, tool):
-
-    @staticmethod
-    def _collect_patches_by_bug(patches):
-        bugs_to_patches = {}
-        for patch in patches:
-            bugs_to_patches[patch.bug_id()] = bugs_to_patches.get(patch.bug_id(), []) + [patch]
-        return bugs_to_patches
-
-    def execute(self, options, args, tool):
-        self._prepare_to_process(options, args, tool)
-        patches = self._fetch_list_of_patches_to_process(options, args, tool)
-
-        # It's nice to print out total statistics.
-        bugs_to_patches = self._collect_patches_by_bug(patches)
-        _log.info("Processing %s from %s." % (pluralize(len(patches), 'patch', plural='patches'), pluralize(len(bugs_to_patches), "bug")))
-
-        for patch in patches:
-            self._process_patch(patch, options, args, tool)
-
-
-class AbstractPatchSequencingCommand(AbstractPatchProcessingCommand):
-    prepare_steps = None
-    main_steps = None
-
-    def __init__(self):
-        self._prepare_sequence = StepSequence(self.prepare_steps)
-        self._main_sequence = StepSequence(self.main_steps)
-        options = sorted(set(self._prepare_sequence.options() + self._main_sequence.options()), key=lambda option: option.dest)
-        AbstractPatchProcessingCommand.__init__(self, options)
-
-    def _prepare_to_process(self, options, args, tool):
-        try:
-            self.state = self._prepare_state(options, args, tool)
-        except ScriptError as e:
-            _log.error(e.message_with_output(output_limit=5000))
-            self._exit(e.exit_code or 2)
-        self._prepare_sequence.run_and_handle_errors(tool, options, self.state)
-
-    def _process_patch(self, patch, options, args, tool):
-        state = {}
-        state.update(self.state or {})
-        state["patch"] = patch
-        self._main_sequence.run_and_handle_errors(tool, options, state)
-
-    def _prepare_state(self, options, args, tool):
-        return None
-
-
-class ProcessAttachmentsMixin(object):
-    def _fetch_list_of_patches_to_process(self, options, args, tool):
-        return list(map(lambda patch_id: tool.bugs.fetch_attachment(patch_id), args))
-
-
-class ProcessBugsMixin(object):
-    def _fetch_list_of_patches_to_process(self, options, args, tool):
-        all_patches = []
-        for bug_id in args:
-            patches = tool.bugs.fetch_bug(bug_id).reviewed_patches()
-            _log.info("%s found on bug %s." % (pluralize(len(patches), 'reviewed patch', plural='reviewed patches'), bug_id))
-            all_patches += patches
-        if not all_patches:
-            _log.info("No reviewed patches found, looking for unreviewed patches.")
-            for bug_id in args:
-                patches = tool.bugs.fetch_bug(bug_id).patches()
-                _log.info("%s found on bug %s." % (pluralize(len(patches), 'patch', plural='patches'), bug_id))
-                all_patches += patches
-        return all_patches
-
-
-class CheckStyle(AbstractPatchSequencingCommand, ProcessAttachmentsMixin):
-    name = "check-style"
-    help_text = "Run check-webkit-style on the specified attachments"
-    argument_names = "ATTACHMENT_ID [ATTACHMENT_IDS]"
-    main_steps = [
-        steps.DiscardLocalChanges,
-        steps.Update,
-        steps.ApplyPatch,
-        steps.CheckStyle,
-    ]
-
-
-class AbstractPatchApplyingCommand(AbstractPatchSequencingCommand):
-    prepare_steps = [
-        steps.EnsureLocalCommitIfNeeded,
-        steps.CleanWorkingDirectory,
-        steps.Update,
-    ]
-    main_steps = [
-        steps.ApplyPatchWithLocalCommit,
-    ]
-    long_help = """Updates the working copy.
-Downloads and applies the patches, creating local commits if necessary."""
-
-
-class ApplyAttachment(AbstractPatchApplyingCommand, ProcessAttachmentsMixin):
-    name = "apply-attachment"
-    help_text = "Apply an attachment to the local working directory"
-    argument_names = "ATTACHMENT_ID [ATTACHMENT_IDS]"
-    show_in_main_help = True
-
-
-class ApplyFromBug(AbstractPatchApplyingCommand, ProcessBugsMixin):
-    name = "apply-from-bug"
-    help_text = "Apply reviewed patches from provided bugs to the local working directory"
-    argument_names = "BUGID [BUGIDS]"
-    show_in_main_help = True
-
-
-class AbstractPatchLandingCommand(AbstractPatchSequencingCommand):
-    main_steps = [
-        steps.DiscardLocalChanges,
-        steps.Update,
-        steps.ApplyPatch,
-        steps.ValidateChangeLogs,
-        steps.ValidateReviewer,
-        steps.Build,
-        steps.Commit,
-        steps.ClosePatch,
-        steps.CloseBug,
-    ]
-    long_help = """Checks to make sure builders are green.
-Updates the working copy.
-Applies the patch.
-Builds.
-Runs the layout tests.
-Commits the patch.
-Clears the flags on the patch.
-Closes the bug if no patches are marked for review."""
-
-
-class LandAttachment(AbstractPatchLandingCommand, ProcessAttachmentsMixin):
-    name = "land-attachment"
-    help_text = "Land patches from bugzilla, optionally building and testing them first"
-    argument_names = "ATTACHMENT_ID [ATTACHMENT_IDS]"
-    show_in_main_help = True
-
-
-class LandFromBug(AbstractPatchLandingCommand, ProcessBugsMixin):
-    name = "land-from-bug"
-    help_text = "Land all patches on the given bugs, optionally building and testing them first"
-    argument_names = "BUGID [BUGIDS]"
-    show_in_main_help = True
-
-
-class ValidateChangelog(AbstractSequencedCommand):
-    name = "validate-changelog"
-    help_text = "Validate that the ChangeLogs and reviewers look reasonable"
-    long_help = """Examines the current diff to see whether the ChangeLogs
-and the reviewers listed in the ChangeLogs look reasonable.
-"""
-    steps = [
-        steps.ValidateChangeLogs,
-        steps.ValidateReviewer,
     ]
 
 

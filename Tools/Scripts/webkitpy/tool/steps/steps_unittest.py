@@ -74,44 +74,11 @@ class StepsTest(unittest.TestCase):
             self._run_step(steps.Update, tool, options)
         self.assertEqual(captured.root.log.getvalue(), 'Updating working directory\n')
 
-    def test_prompt_for_bug_or_title_step(self):
-        tool = MockTool()
-        tool.user.prompt = lambda message: 50000
-        self._run_step(steps.PromptForBugOrTitle, tool=tool)
-
-    def _post_diff_options(self):
-        options = self._step_options()
-        options.git_commit = None
-        options.description = None
-        options.fast_cq = False
-        options.comment = None
-        options.review = True
-        options.request_commit = False
-        options.open_bug = True
-        return options
-
     def _assert_step_output_with_bug(self, step, bug_id, expected_logs, options=None):
         state = {'bug_id': bug_id}
         with OutputCapture(level=logging.INFO) as captured:
             self._run_step(step, MockTool(), options, state)
         self.assertEqual(captured.root.log.getvalue(), expected_logs)
-
-    def _assert_post_diff_output_for_bug(self, step, bug_id, expected_logs):
-        self._assert_step_output_with_bug(step, bug_id, expected_logs, self._post_diff_options())
-
-    def test_post_diff(self):
-        expected_logs = "MOCK add_patch_to_bug: bug_id=78, description=Patch, mark_for_review=True, mark_for_commit_queue=False, mark_for_landing=False\nMOCK: user.open_url: http://example.com/78\n"
-        self._assert_post_diff_output_for_bug(steps.PostDiff, 78, expected_logs)
-
-    def test_post_diff_for_commit(self):
-        expected_logs = "MOCK add_patch_to_bug: bug_id=78, description=Patch for landing, mark_for_review=False, mark_for_commit_queue=False, mark_for_landing=True\n"
-        self._assert_post_diff_output_for_bug(steps.PostDiffForCommit, 78, expected_logs)
-
-    def test_ensure_bug_is_open_and_assigned(self):
-        expected_logs = "MOCK reopen_bug 50004 with comment 'Reopening to attach new patch.'\n"
-        self._assert_step_output_with_bug(steps.EnsureBugIsOpenAndAssigned, 50004, expected_logs)
-        expected_logs = "MOCK reassign_bug: bug_id=50002, assignee=None\n"
-        self._assert_step_output_with_bug(steps.EnsureBugIsOpenAndAssigned, 50002, expected_logs)
 
     def test_build_jsc_debug(self):
         mock_options = self._step_options()

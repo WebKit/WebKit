@@ -44,14 +44,9 @@ class CommandsTest(unittest.TestCase):
             options.cc_radar = False
         options.component = 'MOCK component'
         options.confirm = True
-        options.email = 'MOCK email'
         options.git_commit = 'MOCK git commit'
-        options.obsolete_patches = True
-        options.open_bug = True
         options.port = 'MOCK port'
-        options.update_changelogs = False
         options.quiet = True
-        options.reviewer = 'MOCK reviewer'
         command.bind_to_tool(tool)
 
         try:

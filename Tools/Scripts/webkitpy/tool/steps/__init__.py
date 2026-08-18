@@ -28,40 +28,19 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 # FIXME: Is this the right way to do this?
-from webkitpy.tool.steps.addradar import AddRadar
-from webkitpy.tool.steps.applypatch import ApplyPatch
-from webkitpy.tool.steps.applypatchwithlocalcommit import ApplyPatchWithLocalCommit
 from webkitpy.tool.steps.applywatchlist import ApplyWatchList
 from webkitpy.tool.steps.build import Build
-from webkitpy.tool.steps.checkforredactedissue import CheckForRedactedIssue
 from webkitpy.tool.steps.checkstyle import CheckStyle
-from webkitpy.tool.steps.cleanworkingdirectory import CleanWorkingDirectory
-from webkitpy.tool.steps.closebug import CloseBug
-from webkitpy.tool.steps.closebugforlanddiff import CloseBugForLandDiff
-from webkitpy.tool.steps.closepatch import ClosePatch
 from webkitpy.tool.steps.commit import Commit
 from webkitpy.tool.steps.confirmdiff import ConfirmDiff
 from webkitpy.tool.steps.createbug import CreateBug
 from webkitpy.tool.steps.discardlocalchanges import DiscardLocalChanges
 from webkitpy.tool.steps.editchangelog import EditChangeLog
-from webkitpy.tool.steps.ensurebugisopenandassigned import EnsureBugIsOpenAndAssigned
-from webkitpy.tool.steps.ensurelocalcommitifneeded import EnsureLocalCommitIfNeeded
 from webkitpy.tool.steps.formatcppfiles import FormatCppFiles
-from webkitpy.tool.steps.obsoletepatches import ObsoletePatches
 from webkitpy.tool.steps.options import Options
-from webkitpy.tool.steps.postdiff import PostDiff
-from webkitpy.tool.steps.postdiffforcommit import PostDiffForCommit
 from webkitpy.tool.steps.postdiffforrevert import PostDiffForRevert
-from webkitpy.tool.steps.preparechangelog import PrepareChangeLog
 from webkitpy.tool.steps.preparechangelogforrevert import PrepareChangeLogForRevert
-from webkitpy.tool.steps.promptforbugortitle import PromptForBugOrTitle
 from webkitpy.tool.steps.reopenbugafterrevert import ReopenBugAfterRevert
 from webkitpy.tool.steps.revertrevision import RevertRevision
 from webkitpy.tool.steps.sortxcodeprojectfiles import SortXcodeProjectFiles
-from webkitpy.tool.steps.suggestreviewers import SuggestReviewers
 from webkitpy.tool.steps.update import Update
-from webkitpy.tool.steps.updatechangelogswithreviewer import (
-    UpdateChangeLogsWithReviewer,
-)
-from webkitpy.tool.steps.validatechangelogs import ValidateChangeLogs
-from webkitpy.tool.steps.validatereviewer import ValidateReviewer
