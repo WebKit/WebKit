@@ -2354,8 +2354,13 @@ StyleContentAlignmentData RenderGrid::contentAlignment(Style::GridTrackSizingDir
 
 ContentAlignmentData RenderGrid::computeContentPositionAndDistributionOffset(Style::GridTrackSizingDirection direction, const LayoutUnit& availableFreeSpace, unsigned numberOfGridTracks) const
 {
-    if (isSubgrid(direction))
-        return { };
+    // https://drafts.csswg.org/css-grid-2/#subgrid-grid-alignment
+    // The position offset is not inherited: our border box already sits at the parent's grid line, which included it.
+    if (isSubgrid(direction)) {
+        auto& parent = downcast<RenderGrid>(*this->parent());
+        auto parentDirection = GridLayoutFunctions::flowAwareDirectionForParent(*this, parent, direction);
+        return { 0_lu, parent.gridItemOffset(parentDirection) };
+    }
 
     auto contentAlignmentData = contentAlignment(direction);
     auto contentAlignmentDistribution = contentAlignmentData.distribution();
