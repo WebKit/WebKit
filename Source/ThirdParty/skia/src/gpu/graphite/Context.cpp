@@ -66,6 +66,7 @@
 #include "src/gpu/graphite/Image_Graphite.h"
 #include "src/gpu/graphite/QueueManager.h"
 #include "src/gpu/graphite/RecorderPriv.h"
+#include "src/gpu/graphite/RecordingPriv.h"
 #include "src/gpu/graphite/RendererProvider.h"
 #include "src/gpu/graphite/ResourceProvider.h"
 #include "src/gpu/graphite/ResourceTypes.h"
@@ -157,6 +158,20 @@ Context::Context(sk_sp<SharedContext> sharedContext,
 }
 
 Context::~Context() {
+    // The PipelineManager uses the Context's SkExecutor but it, and the SharedContext,
+    // could be kept alive after this call via a PrecompileContext. In order to make the
+    // usage lifetime of the executor manageable, remove the PipelineManager's usage
+    // of the executor here. This means that if any PrecompileContext's outlive their
+    // generating Context they will revert to serial, in-line compilation.
+    //
+    // A side effect of terminating threaded compilation here is that any threaded
+    // tasks (that rely on the SharedContext's existence) are cleared out.
+    //
+    // Note that, because this is happening on the main thread, the PipelineManager should not
+    // be waiting to resolve any Pipelines (in resolveHandle/potentiallyWaitOn) so we
+    // shouldn't deadlock.
+    fSharedContext->pipelineManager()->shutDown();
+
 #if defined(GPU_TEST_UTILS)
     SkAutoMutexExclusive lock(fTestingLock);
     for (auto& recorder : fTrackedRecorders) {
@@ -243,6 +258,14 @@ std::unique_ptr<Recorder> Context::makeInternalRecorder() const {
 
 InsertStatus Context::insertRecording(const InsertRecordingInfo& info) {
     ASSERT_SINGLE_OWNER
+
+    if (fSharedContext->captureManager() &&
+        fSharedContext->captureManager()->isCurrentlyCapturing() &&
+        info.fRecording) {
+        fSharedContext->captureManager()->onInsertRecording(
+            info.fRecording->priv().capturedPictures()
+        );
+    }
 
     return fQueueManager->addRecording(info, this);
 }

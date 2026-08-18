@@ -21,14 +21,11 @@ class PipelineDataGatherer;
 
 class TessellateStrokesRenderStep final : public RenderStep {
 public:
-    // TODO: If this takes DepthStencilSettings directly and a way to adjust the flags to specify
-    // that it performs shading, this RenderStep definition could be used to handle inverse-filled
-    // stroke draws.
-    explicit TessellateStrokesRenderStep(Layout, bool infinitySupport);
+    explicit TessellateStrokesRenderStep(Layout, bool infinitySupport, bool inverseFill);
 
     ~TessellateStrokesRenderStep() override;
 
-    std::string vertexSkSL() const override;
+    std::string vertexSkSL(const RootNodesInfo&) const override;
     void writeVertices(DrawWriter*, const DrawParams&, uint32_t ssboIndex) const override;
     void writeUniformsAndTextures(const DrawParams&, PipelineDataGatherer*) const override;
 

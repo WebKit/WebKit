@@ -13,9 +13,15 @@
 #include "src/core/SkSpinlock.h"
 #include "src/core/SkTHash.h"
 
+#include <condition_variable>
+#include <mutex>
+
 namespace skgpu {
 class UniqueKey;
 }
+
+class SkExecutor;
+class SkTaskGroup;
 
 namespace skgpu::graphite {
 
@@ -30,27 +36,32 @@ class SharedContext;
 
 class PipelineManager {
 public:
-    PipelineManager();
+    PipelineManager(SkExecutor* executor);
     ~PipelineManager();
 
+    // If an existing Pipeline is found, it is just wrapped in a Handle and returned.
+    // Otherwise, a compilation task is created and queued up for execution.
+    // If no Executor is provided the compilations will occur synchronously, in-line.
     GraphicsPipelineHandle createHandle(
             SharedContext*,
+            sk_sp<const RuntimeEffectDictionary> runtimeDict,
             const GraphicsPipelineDesc&,
             const RenderPassDesc&,
             SkEnumBitMask<PipelineCreationFlags>);
 
-    void startPipelineCreationTask(SharedContext*,
-                                   sk_sp<const RuntimeEffectDictionary>,
-                                   const GraphicsPipelineHandle&);
+    sk_sp<GraphicsPipeline> resolveHandle(SharedContext*, const GraphicsPipelineHandle&);
 
-    sk_sp<GraphicsPipeline> resolveHandle(const GraphicsPipelineHandle&);
+    // Wait for any in-flight tasks to complete. Additionally, disable the addition of any
+    // more threaded tasks.
+    void shutDown();
 
 #if defined(GPU_TEST_UTILS)
+    void wait_TestOnly();
+
     struct Stats {
         // The number of times we find a pre-existing task for a Pipeline
         int fNumPreemptivelyFoundTasks = 0;
         int fNumTasksCreated = 0;
-        int fNumTaskCreationRaces = 0;
     };
 
     Stats getStats() const SK_EXCLUDES(fSpinLock);
@@ -59,13 +70,18 @@ public:
 private:
     mutable SkSpinlock fSpinLock;
 
-    sk_sp<PipelineCreationTask> findTask(const UniqueKey& pipelineKey) SK_EXCLUDES(fSpinLock);
+    enum class Priority { kHigh = 0, kLow = 1 };
 
     sk_sp<PipelineCreationTask> findOrCreateTask(
+            sk_sp<const RuntimeEffectDictionary> runtimeDict,
             const UniqueKey& pipelineKey,
             const GraphicsPipelineDesc&,
             const RenderPassDesc&,
-            SkEnumBitMask<PipelineCreationFlags>) SK_EXCLUDES(fSpinLock);
+            Priority) SK_EXCLUDES(fSpinLock);
+
+    void addTaskToWorkList(SharedContext*,
+                           sk_sp<PipelineCreationTask>,
+                           Priority);
 
     void removeTask(PipelineCreationTask*) SK_EXCLUDES(fSpinLock);
 
@@ -80,6 +96,24 @@ private:
 #if defined(GPU_TEST_UTILS)
     Stats fStats SK_GUARDED_BY(fSpinLock);
 #endif
+
+    std::unique_ptr<SkTaskGroup> fTaskGroup SK_GUARDED_BY(fSpinLock);
+
+    void signalCompleted(PipelineCreationTask*);
+    void potentiallyWaitOn(SharedContext*, PipelineCreationTask*);
+
+    static void InlineCompile(SharedContext* sharedContext,
+                              PipelineManager* pipelineManager,
+                              PipelineCreationTask* task);
+
+    // We have the mutex and condition_variable here to limit the number of
+    // mutexes/semaphores we need for synchronizing access to the pipelines.
+    // The Context thread is the only place that resolves handles so we will only
+    // ever be waiting on at most one pipeline at a time and no other thread will
+    // need to block on waiting for a different pipeline. This means we don't need
+    // to add a condition_variable to every PipelineCreationTask.
+    std::mutex fMutex;
+    std::condition_variable fConditionVariable; // SK_GUARDED_BY(fMutex)
 };
 
 } // namespace skgpu::graphite

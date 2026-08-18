@@ -42,6 +42,7 @@ class Transform;
 class UniformOffsetCalculator;
 
 struct ResourceBindingRequirements;
+struct RootNodesInfo;
 
 enum class Coverage { kNone, kSingleChannel, kLCD };
 
@@ -68,7 +69,8 @@ enum class Coverage { kNone, kSingleChannel, kLCD };
         M1(SDFText)                                 \
         M2(TessellateCurves, EvenOdd)               \
         M2(TessellateCurves, Winding)               \
-        M1(TessellateStrokes)                       \
+        M2(TessellateStrokes,Fill)                  \
+        M2(TessellateStrokes,InverseFill)           \
         M2(TessellateWedges, Convex)                \
         M2(TessellateWedges, EvenOdd)               \
         M2(TessellateWedges, Winding)               \
@@ -142,7 +144,7 @@ public:
     // NOTE: The above contract is mainly so that the entire SkSL program can be created by just str
     // concatenating struct definitions generated from the RenderStep and paint Combination
     // and then including the function bodies returned here.
-    virtual std::string vertexSkSL() const = 0;
+    virtual std::string vertexSkSL(const RootNodesInfo&) const = 0;
 
     // Emits code to set up textures and samplers. Should only be defined if hasTextures is true.
     virtual std::string texturesAndSamplersSkSL(const ResourceBindingRequirements&,
@@ -159,7 +161,7 @@ public:
     // Emits code to set up a primitive color value. Should only be defined if emitsPrimitiveColor
     // is true. When implemented, the returned SkSL fragment should write its color into a
     // 'half4 primitiveColor' variable (defined in the calling code).
-    virtual const char* fragmentColorSkSL() const { return ""; }
+    virtual std::string fragmentColorSkSL(const RootNodesInfo&) const { return ""; }
 
     // Indicates whether this RenderStep's uniforms are referenced in its fragment shader code.
     // If not, its uniforms can be omitted from the fragment shader entirely.

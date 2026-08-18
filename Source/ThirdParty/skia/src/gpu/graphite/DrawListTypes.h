@@ -27,6 +27,13 @@
 
 namespace skgpu::graphite {
 
+// NOTE: Every class and struct defined in this class must assert that it is trivially destructible.
+// These largely are organized and collected in linked lists created by an arena, which helps avoid
+// memory coherency issues normally associated with linked lists. Enforcing trivial destribility
+// means that the arena can be reset without worrying about destructors.
+
+// TODO(michaelludwig): These types can be moved into DrawListLayer.cpp and just forward declare
+// Layer for ClipStack and Device.
 
 /**
  * Defines a bitmask that defines what types of buffer modifications are blocked by draws within a
@@ -96,6 +103,12 @@ enum class BoundsTestResult {
 };
 SK_MAKE_BITMASK_OPS(BoundsTestResult)
 
+/**
+ * LayerKey encodes the binding information needed for a draw within a layer (e.g. its pipeline
+ * and texture and uniform buffer bindings), as well as the BoundsFlags that control how new draws
+ * must be tested against the recorded draws. Every draw within a BindingList will have the same
+ * LayerKey.
+ */
 struct LayerKey {
     GraphicsPipelineCache::Index fPipelineIndex;
     TextureDataCache::Index fTextureIndex;
@@ -123,6 +136,7 @@ struct LayerKey {
                fUniformIndex == other.fUniformIndex;
     }
 };
+static_assert(std::is_trivially_destructible<LayerKey>::value);
 
 /**
  * A Draw represents the combination of a DrawParams and a specific RenderStep from the
@@ -138,6 +152,7 @@ struct Draw {
 
     SK_DECLARE_INTERNAL_LLIST_INTERFACE(Draw);
 };
+static_assert(std::is_trivially_destructible<Draw>::value);
 
 /**
  * BindingList represents a collection of Draws that share the same RenderStep and other binding
@@ -150,8 +165,6 @@ struct Draw {
  * painter's order rendering.
  */
 struct BindingList {
-    static constexpr uint32_t kCoarseBoundsThreshold = 32;
-
     BindingList(const RenderStep* step, LayerKey key) : fStep(step), fKey(key) {}
 
     Rect fBounds = Rect::InfiniteInverted();
@@ -164,15 +177,54 @@ struct BindingList {
     // the earlier BindingLists so they are not eligible for being moved forward to a new layer.
     bool fBlockForwardMerges = false;
 
-    uint32_t fDrawCount = 0; // SkTInternalLList doesn't maintain a count for us :/
+    int fDrawCount = 0; // SkTInternalLList doesn't maintain a count for us :/
 
     SK_DECLARE_INTERNAL_LLIST_INTERFACE(BindingList);
+
+    SK_ALWAYS_INLINE bool isBetterMatch(const LayerKey& key,
+                                        const BindingList* existingMatch) const {
+        if (key.fPipelineIndex != fKey.fPipelineIndex) {
+            // Any partial match must still share the same pipeline
+            return false;
+        } else if (!existingMatch) {
+            return true; // Any pipeline match is better than no match
+        }
+
+        // Otherwise we need to rank based on similarities, preferring texture matches to
+        // uniform matches.
+        SkASSERT(existingMatch->fKey.fPipelineIndex == key.fPipelineIndex);
+        const bool existingTextureMatch = existingMatch->fKey.fTextureIndex == key.fTextureIndex;
+        const bool newTextureMatch = fKey.fTextureIndex == key.fTextureIndex;
+        if (existingTextureMatch != newTextureMatch) {
+            // If `newTextureMatch` is true, then the new BindingList is definitely the better
+            // match (prioritizing textures over UBO changes). If it's false, then the old
+            // match was better since it had a texture match.
+            return newTextureMatch;
+        } // else either both match on the texture, or neither match so equal preference.
+
+        const bool existingUniformMatch = existingMatch->fKey.fUniformIndex == key.fUniformIndex;
+        const bool newUniformMatch= fKey.fUniformIndex == key.fUniformIndex;
+        if (existingUniformMatch != newUniformMatch) {
+            // Like above, if `newUniformMatch` is true, it's the better match.
+            return newUniformMatch;
+        } // else either both match on the uniform, or neither match so equal preference.
+
+        // // At this point, they are equivalent, so prefer the new list as it's deeper
+        return true;
+    }
 
     SK_ALWAYS_INLINE bool intersects(const Rect::ComplementRect drawBounds) const {
         if (!fBounds.intersects(drawBounds)) {
             return false;
         }
-        if (fDrawCount > kCoarseBoundsThreshold) {
+
+        // When stencil is involved (or depth-only draws), a larger limit is useful because it
+        // creates a shallower layer list. This in turn makes it more likely to find BindingList
+        // matches. In particular, since stencils have to be disjoint from everything and depth-only
+        // clip draws prevent further layer searches, checking more bounding boxes leads to a net
+        // improvement in complex scenes.
+        const int limit = fKey.isSimpleShading() ? 16 : 64;
+        if (fDrawCount > limit) {
             return true;
         }
         for (const Draw* d = fDraws.head(); d; d = d->fNext) {
@@ -193,6 +245,7 @@ struct BindingList {
         }
     }
 };
+static_assert(std::is_trivially_destructible<BindingList>::value);
 
 /**
  * Layer represents a collection of independent Draws that are organized by BindingLists. Within
@@ -254,7 +307,7 @@ struct Layer {
 
             if (list->fKey.isEqual(key)) {
                 return list;
-            } else if (list->fKey.fPipelineIndex == key.fPipelineIndex) {
+            } else if (list->isBetterMatch(key, pipelineMatch)) {
                 // Save pipeline while continuing to search for an exact match
                 SkASSERT(list->fKey.fFlags == key.fFlags);
                 pipelineMatch = list;
@@ -405,8 +458,7 @@ struct Layer {
             // NOTE: It's possible for the same key to be in a layer multiple times due to
             // some of the early-out rules. If we get here, the draw hasn't overlapped any later
             // drawn BindingList, so update the match to be the best, earliest match found so far.
-            if (exactMatch || (list->fKey.fPipelineIndex == key.fPipelineIndex &&
-                               (!match || !match->fKey.isEqual(key)))) {
+            if (exactMatch || list->isBetterMatch(key, match)) {
                 match = list;
             }
 
@@ -458,6 +510,7 @@ struct Layer {
         return list;
     }
 };
+static_assert(std::is_trivially_destructible<Layer>::value);
 
 }  // namespace skgpu::graphite
 

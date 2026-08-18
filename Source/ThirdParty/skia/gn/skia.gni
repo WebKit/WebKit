@@ -33,6 +33,7 @@ declare_args() {
   skia_enable_sparse_strips = false
   skia_disable_tracing = is_official_build
   skia_enable_vello_shaders = false
+  skia_enable_threadlocal_strikecache = false
   skia_disable_vma_stl_shared_mutex = false
   skia_enable_winuwp = false
   skia_generate_workarounds = false
@@ -90,6 +91,8 @@ declare_args() {
   skia_use_rust_png_encode = false
   skia_use_rust_bmp_decode = false
   skia_use_rust_ico_decode = false
+  skia_use_rust_jpeg_decode = false
+  skia_use_rust_jpeg_encode = false
   skia_use_sfml = false
   skia_use_webgl = is_wasm
   skia_use_webgpu = is_wasm
