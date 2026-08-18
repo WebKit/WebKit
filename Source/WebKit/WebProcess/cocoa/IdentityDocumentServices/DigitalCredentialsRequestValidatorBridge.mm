@@ -164,18 +164,102 @@ static WebCore::ValidatedMobileDocumentRequest buildValidatedRequest(WKIdentityD
     return validatedRequest;
 }
 
-Vector<WebCore::ValidatedMobileDocumentRequest> DigitalCredentials::validateRequests(const SecurityOrigin &topOrigin, const Document &document, const Vector<WebCore::UnvalidatedDigitalCredentialRequest> &unvalidatedRequests)
+#if HAVE(DIGITAL_CREDENTIALS_OPENID4VP)
+static std::optional<std::pair<DigitalCredentialPresentationProtocol, RetainPtr<NSData>>> createOpenID4VPRequestData(const WebCore::UnvalidatedDigitalCredentialRequest &unvalidatedRequest)
+{
+    using enum DigitalCredentialPresentationProtocol;
+
+    std::optional<DigitalCredentialPresentationProtocol> protocol;
+    RetainPtr<NSDictionary<NSString *, id>> jsonRequest;
+    RetainPtr<NSData> requestData;
+
+    WTF::switchOn(unvalidatedRequest,
+        [&](const WebCore::OpenID4VPSignedRequest &signedRequest) {
+            protocol = Openid4vpV1Signed;
+            jsonRequest = @{ @"request": signedRequest.request.createNSString().get() };
+        },
+        [&](const WebCore::OpenID4VPMultisignedRequest &multisignedRequest) {
+            protocol = Openid4vpV1Multisigned;
+            RetainPtr signatures = adoptNS([[NSMutableArray alloc] init]);
+            for (auto &signature : multisignedRequest.signatures) {
+                [signatures addObject:@{
+                    @"protected": signature.protectedHeader.createNSString().get(),
+                    @"signature": signature.signature.createNSString().get()
+                }];
+            }
+            jsonRequest = @{
+                @"payload": multisignedRequest.payload.createNSString().get(),
+                @"signatures": signatures.get()
+            };
+        },
+        [&](const WebCore::OpenID4VPUnsignedRequest &unsignedRequest) {
+            protocol = Openid4vpV1Unsigned;
+            requestData = [unsignedRequest.requestJSON.createNSString() dataUsingEncoding:NSUTF8StringEncoding];
+        },
+        [](const auto &) { });
+
+    if (!protocol)
+        return std::nullopt;
+
+    if (jsonRequest) {
+        NSError *error = nil;
+        requestData = [NSJSONSerialization dataWithJSONObject:jsonRequest.get() options:0 error:&error];
+        if (!requestData)
+            LOG(DigitalCredentials, "Failed to serialize an OpenID4VP request: %@", error);
+    }
+
+    if (!requestData)
+        return std::nullopt;
+
+    return std::make_pair(*protocol, WTF::move(requestData));
+}
+#endif // HAVE(DIGITAL_CREDENTIALS_OPENID4VP)
+
+static void reportValidationFailure(const Document &document, const String &protocolName, NSError *error)
+{
+    RetainPtr debugDescription = dynamic_objc_cast<NSString>(error.userInfo[NSDebugDescriptionErrorKey]);
+    String errorMessage = makeString("An error occurred validating the incoming '"_s, protocolName, "' request. The request will be ignored."_s);
+
+    if ([debugDescription length])
+        errorMessage = makeString(errorMessage, " ("_s, String(debugDescription.get()), ")"_s);
+
+    const_cast<Document &>(document).addConsoleMessage(makeUnique<Inspector::ConsoleMessage>(
+        MessageSource::JS,
+        MessageType::Log,
+        MessageLevel::Warning,
+        errorMessage));
+
+    LOG(DigitalCredentials, "DigitalCredentials::validateRequests() - WebProcess: Validation failed for request: %@", error);
+}
+
+Vector<WebCore::ValidatedDigitalCredentialRequest> DigitalCredentials::validateRequests(const SecurityOrigin &topOrigin, const Document &document, const Vector<WebCore::UnvalidatedDigitalCredentialRequest> &unvalidatedRequests)
 {
     RetainPtr convertedTopOrigin = topOrigin.toURL().createNSURL().get();
     RetainPtr validator = adoptNS([WebKit::allocWKIdentityDocumentRawRequestValidatorInstance() init]);
 
-    Vector<WebCore::ValidatedMobileDocumentRequest> validatedRequests;
+    Vector<WebCore::ValidatedDigitalCredentialRequest> validatedRequests;
 
     for (auto& unvalidatedRequest : unvalidatedRequests) {
         auto* mobileDocumentRequest = std::get_if<WebCore::MobileDocumentRequest>(&unvalidatedRequest);
         if (!mobileDocumentRequest) {
-            // FIXME: Validate the OpenID4VP protocols once rdar://problem/183338719 is
-            // fulfilled.
+#if HAVE(DIGITAL_CREDENTIALS_OPENID4VP)
+            auto protocolAndRequestData = createOpenID4VPRequestData(unvalidatedRequest);
+            if (!protocolAndRequestData)
+                continue;
+
+            auto [protocol, requestData] = *protocolAndRequestData;
+            RetainPtr requestType = WebCore::digitalCredentialPresentationProtocolToString(protocol).createNSString();
+
+            NSError *openID4VPError = nil;
+            BOOL didValidate = [validator validateOpenID4VPRequest:requestData.get() requestType:requestType.get() origin:convertedTopOrigin.get() error:&openID4VPError];
+
+            if (didValidate)
+                validatedRequests.append(WebCore::ValidatedOpenID4VPRequest { protocol, { } });
+            else if (openID4VPError)
+                reportValidationFailure(document, WebCore::digitalCredentialPresentationProtocolToString(protocol), openID4VPError);
+#else
+            LOG(DigitalCredentials, "DigitalCredentials::validateRequests() - WebProcess: no platform support for OpenID4VP; the request will be ignored.");
+#endif // HAVE(DIGITAL_CREDENTIALS_OPENID4VP)
             continue;
         }
 
@@ -190,21 +274,8 @@ Vector<WebCore::ValidatedMobileDocumentRequest> DigitalCredentials::validateRequ
         if (validatedISORequest) {
             auto validatedMobileDocumentRequest = buildValidatedRequest(validatedISORequest.get());
             validatedRequests.append(WTF::move(validatedMobileDocumentRequest));
-        } else if (error) {
-            RetainPtr debugDescription = dynamic_objc_cast<NSString>(error.userInfo[NSDebugDescriptionErrorKey]);
-            String errorMessage = "An error occurred validating the incoming 'org-iso-mdoc' request. The request will be ignored."_s;
-
-            if ([debugDescription length])
-                errorMessage = makeString(errorMessage, " ("_s, String(debugDescription.get()), ")"_s);
-
-            const_cast<Document &>(document).addConsoleMessage(makeUnique<Inspector::ConsoleMessage>(
-                MessageSource::JS,
-                MessageType::Log,
-                MessageLevel::Warning,
-                errorMessage));
-
-            LOG(DigitalCredentials, "DigitalCredentials::validateRequests() - WebProcess: Validation failed for request: %@", error);
-        }
+        } else if (error)
+            reportValidationFailure(document, "org-iso-mdoc"_s, error);
     }
 
     LOG(DigitalCredentials, "DigitalCredentials::validateRequests() - WebProcess: returning %zu validated requests", validatedRequests.size());

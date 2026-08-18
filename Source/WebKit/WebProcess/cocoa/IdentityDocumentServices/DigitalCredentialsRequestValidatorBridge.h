@@ -27,9 +27,11 @@
 
 #if ENABLE(WEB_AUTHN)
 
+#include <WebCore/DigitalCredentialsProtocols.h>
 #include <WebCore/MobileDocumentRequest.h>
 #include <WebCore/UnvalidatedDigitalCredentialRequest.h>
 #include <WebCore/ValidatedMobileDocumentRequest.h>
+#include <WebCore/ValidatedOpenID4VPRequest.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -41,7 +43,7 @@ struct ValidatedMobileDocumentRequest;
 namespace WebKit {
 namespace DigitalCredentials {
 
-Vector<WebCore::ValidatedMobileDocumentRequest> validateRequests(const WebCore::SecurityOrigin&, const WebCore::Document&, const Vector<WebCore::UnvalidatedDigitalCredentialRequest>&);
+Vector<WebCore::ValidatedDigitalCredentialRequest> validateRequests(const WebCore::SecurityOrigin&, const WebCore::Document&, const Vector<WebCore::UnvalidatedDigitalCredentialRequest>&);
 
 } // namespace DigitalCredentials
 } // namespace WebKit

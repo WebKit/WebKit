@@ -337,25 +337,39 @@ struct WebCore::MobileDocumentRequest {
     Vector<WebCore::ISO18013PresentmentRequest> presentmentRequests;
 };
 
+header: <WebCore/OpenID4VPUnsignedRequest.h>
+struct WebCore::OpenID4VPUnsignedRequest {
+    [Validator='requestJSON->length() <= WebCore::maxOpenID4VPRequestDataLength'] String requestJSON;
+};
+
 header: <WebCore/OpenID4VPSignedRequest.h>
 struct WebCore::OpenID4VPSignedRequest {
-    String request;
+    [Validator='request->length() <= WebCore::maxOpenID4VPRequestDataLength'] String request;
 };
 
 header: <WebCore/OpenID4VPSignature.h>
 struct WebCore::OpenID4VPSignature {
-    String protectedHeader;
-    String signature;
+    [Validator='protectedHeader->length() <= WebCore::maxOpenID4VPRequestDataLength'] String protectedHeader;
+    [Validator='signature->length() <= WebCore::maxOpenID4VPRequestDataLength'] String signature;
 };
 
 header: <WebCore/OpenID4VPMultisignedRequest.h>
 struct WebCore::OpenID4VPMultisignedRequest {
-    String payload;
+    [Validator='payload->length() <= WebCore::maxOpenID4VPRequestDataLength'] String payload;
     Vector<WebCore::OpenID4VPSignature> signatures;
 };
 
+header: <WebCore/ValidatedOpenID4VPRequest.h>
+[CustomHeader] struct WebCore::ValidatedOpenID4VPRequestObject {
+};
+
+struct WebCore::ValidatedOpenID4VPRequest {
+    WebCore::DigitalCredentialPresentationProtocol protocol;
+    WebCore::ValidatedOpenID4VPRequestObject request;
+};
+
 header: <WebCore/UnvalidatedDigitalCredentialRequest.h>
-using WebCore::UnvalidatedDigitalCredentialRequest = Variant<WebCore::MobileDocumentRequest, WebCore::OpenID4VPSignedRequest, WebCore::OpenID4VPMultisignedRequest>;
+using WebCore::UnvalidatedDigitalCredentialRequest = Variant<WebCore::MobileDocumentRequest, WebCore::OpenID4VPSignedRequest, WebCore::OpenID4VPMultisignedRequest, WebCore::OpenID4VPUnsignedRequest>;
 
 header: <WebCore/DigitalCredentialsRequestData.h>
 [AdditionalEncoder=StreamConnectionEncoder] struct WebCore::DigitalCredentialsSecurityOriginData {
@@ -365,6 +379,11 @@ header: <WebCore/DigitalCredentialsRequestData.h>
 
 struct WebCore::DigitalCredentialsMobileDocumentRequestData : WebCore::DigitalCredentialsSecurityOriginData {
     Vector<WebCore::ValidatedMobileDocumentRequest> requests;
+};
+
+header: <WebCore/DigitalCredentialsOpenID4VPRequestData.h>
+struct WebCore::DigitalCredentialsOpenID4VPRequestData : WebCore::DigitalCredentialsSecurityOriginData {
+    Vector<WebCore::ValidatedOpenID4VPRequest> requests;
 };
 
 struct WebCore::DigitalCredentialsResponseData {

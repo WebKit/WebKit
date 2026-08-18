@@ -26,19 +26,17 @@
 #pragma once
 
 #include <WebCore/DigitalCredentialsMobileDocumentRequestData.h>
-#include <WebCore/MobileDocumentRequest.h>
+#include <WebCore/DigitalCredentialsOpenID4VPRequestData.h>
+#include <WebCore/DigitalCredentialsProtocols.h>
 #include <WebCore/UnvalidatedDigitalCredentialRequest.h>
-#include <WebCore/ValidatedMobileDocumentRequest.h>
 #include <wtf/Variant.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
-using DigitalCredentialRequestTypes = MobileDocumentRequest;
-using ValidatedDigitalCredentialRequest = ValidatedMobileDocumentRequest;
-
 using DigitalCredentialsRequestData = Variant<
-    DigitalCredentialsMobileDocumentRequestData
+    DigitalCredentialsMobileDocumentRequestData,
+    DigitalCredentialsOpenID4VPRequestData
 >;
 
 using DigitalCredentialsRawRequests = Variant<

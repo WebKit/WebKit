@@ -472,6 +472,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/identity/DigitalCredentialPresentationProtocol.h
     Modules/identity/DigitalCredentialRequestOptions.h
     Modules/identity/DigitalCredentialsMobileDocumentRequestData.h
+    Modules/identity/DigitalCredentialsOpenID4VPRequestData.h
     Modules/identity/DigitalCredentialsRequestData.h
     Modules/identity/DigitalCredentialsResponseData.h
     Modules/identity/DigitalCredentialsSecurityOriginData.h
@@ -492,6 +493,8 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/identity/protocols/openid/OpenID4VPMultisignedRequest.h
     Modules/identity/protocols/openid/OpenID4VPSignature.h
     Modules/identity/protocols/openid/OpenID4VPSignedRequest.h
+    Modules/identity/protocols/openid/OpenID4VPUnsignedRequest.h
+    Modules/identity/protocols/openid/ValidatedOpenID4VPRequest.h
 
     Modules/indexeddb/IDBActiveDOMObject.h
     Modules/indexeddb/IDBActiveDOMObjectInlines.h

@@ -11710,9 +11710,11 @@ void WebPageProxy::setVirtualWalletBehaviorForTesting(const String& action, cons
 
     settlePendingTestingDigitalCredentialHandler("Virtual wallet behavior replaced."_s);
 
-    auto parsedProtocol = WebCore::digitalCredentialPresentationProtocolFromString(protocol).value_or(WebCore::DigitalCredentialPresentationProtocol::OrgIsoMdoc);
+    auto parsedProtocol = WebCore::digitalCredentialPresentationProtocolFromString(protocol);
+    if (!parsedProtocol)
+        LOG(DigitalCredentials, "WebPageProxy::setVirtualWalletBehaviorForTesting() - unrecognized protocol '%s'; the virtual wallet will report org-iso-mdoc.", protocol.utf8().data());
 
-    internals().testingVirtualWalletBehavior = VirtualWalletBehavior { *parsedAction, parsedProtocol, responseJSON };
+    internals().testingVirtualWalletBehavior = VirtualWalletBehavior { *parsedAction, parsedProtocol.value_or(WebCore::DigitalCredentialPresentationProtocol::OrgIsoMdoc), responseJSON };
 }
 #endif
 

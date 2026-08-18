@@ -1,4 +1,4 @@
-// Copyright (C) 2025 Apple Inc. All rights reserved.
+// Copyright (C) 2026 Apple Inc. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions
@@ -27,28 +27,12 @@ import Foundation
 
 @objc
 @implementation
-extension WKIdentityDocumentPresentmentRequest {
-    // Used to workaround the fact that `@objc @implementation does not support stored properties whose size can change
-    // due to Library Evolution. Do not use this property directly.
-    @nonobjc
-    private let unsafeOrigin: Any
+extension WKIdentityDocumentPresentmentOpenID4VPRequest {
+    let requestType: String
 
-    var origin: URL {
-        (unsafeOrigin as! NSURL) as URL
-    }
-
-    let mobileDocumentRequests: [WKIdentityDocumentPresentmentMobileDocumentRequest]
-
-    let openID4VPRequests: [WKIdentityDocumentPresentmentOpenID4VPRequest]
-
-    init(
-        origin: URL,
-        mobileDocumentRequests: [WKIdentityDocumentPresentmentMobileDocumentRequest],
-        openID4VPRequests: [WKIdentityDocumentPresentmentOpenID4VPRequest]
-    ) {
-        self.unsafeOrigin = origin as NSURL
-        self.mobileDocumentRequests = mobileDocumentRequests
-        self.openID4VPRequests = openID4VPRequests
+    @objc(initWithRequestType:)
+    init(requestType: String) {
+        self.requestType = requestType
     }
 }
 

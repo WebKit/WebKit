@@ -555,6 +555,7 @@ set(WebKit_PROJECT_HEADERS
     WebKitSwift/IdentityDocumentServices/WKIdentityDocumentPresentmentDelegate.h
     WebKitSwift/IdentityDocumentServices/WKIdentityDocumentPresentmentError.h
     WebKitSwift/IdentityDocumentServices/WKIdentityDocumentPresentmentMobileDocumentRequest.h
+    WebKitSwift/IdentityDocumentServices/WKIdentityDocumentPresentmentOpenID4VPRequest.h
     WebKitSwift/IdentityDocumentServices/WKIdentityDocumentPresentmentRawRequest.h
     WebKitSwift/IdentityDocumentServices/WKIdentityDocumentPresentmentRequest.h
     WebKitSwift/IdentityDocumentServices/WKIdentityDocumentPresentmentResponse.h

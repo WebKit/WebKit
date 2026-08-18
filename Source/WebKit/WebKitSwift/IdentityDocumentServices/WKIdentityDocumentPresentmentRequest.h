@@ -28,6 +28,7 @@
 #if ENABLE(WEB_AUTHN)
 
 #import "WKIdentityDocumentPresentmentMobileDocumentRequest.h"
+#import "WKIdentityDocumentPresentmentOpenID4VPRequest.h"
 #import <Foundation/Foundation.h>
 
 NS_ASSUME_NONNULL_BEGIN
@@ -38,7 +39,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, strong, readonly) NSArray<WKIdentityDocumentPresentmentMobileDocumentRequest *> *mobileDocumentRequests;
 
-- (instancetype)initWithOrigin:(NSURL *)origin mobileDocumentRequests:(NSArray<WKIdentityDocumentPresentmentMobileDocumentRequest *> *)mobileDocumentRequests NS_DESIGNATED_INITIALIZER;
+@property (nonatomic, strong, readonly) NSArray<WKIdentityDocumentPresentmentOpenID4VPRequest *> *openID4VPRequests;
+
+- (instancetype)initWithOrigin:(NSURL *)origin mobileDocumentRequests:(NSArray<WKIdentityDocumentPresentmentMobileDocumentRequest *> *)mobileDocumentRequests openID4VPRequests:(NSArray<WKIdentityDocumentPresentmentOpenID4VPRequest *> *)openID4VPRequests NS_DESIGNATED_INITIALIZER;
 - (instancetype)init NS_UNAVAILABLE;
 
 @end

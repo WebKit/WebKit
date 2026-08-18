@@ -48,10 +48,12 @@
 #import <WebCore/ExceptionData.h>
 #import <WebCore/UnvalidatedDigitalCredentialRequest.h>
 #import <WebCore/ValidatedMobileDocumentRequest.h>
+#import <WebCore/ValidatedOpenID4VPRequest.h>
 #import <WebCore/X509SubjectKeyIdentifier.h>
 #import <WebKit/WKIdentityDocumentPresentmentController.h>
 #import <WebKit/WKIdentityDocumentPresentmentError.h>
 #import <WebKit/WKIdentityDocumentPresentmentMobileDocumentRequest.h>
+#import <WebKit/WKIdentityDocumentPresentmentOpenID4VPRequest.h>
 #import <WebKit/WKIdentityDocumentPresentmentRawRequest.h>
 #import <WebKit/WKIdentityDocumentPresentmentRequest.h>
 #import <wtf/BlockPtr.h>
@@ -328,15 +330,12 @@ static RetainPtr<NSArray<NSArray<WKIdentityDocumentPresentmentRequestAuthenticat
 
     _digitalCredentialsPickerDelegate = adoptNS([[WKDigitalCredentialsPickerDelegate alloc] initWithDigitalCredentialsPickerDelegate:self]);
 
-    WTF::switchOn(requestData,
-        [self](const WebCore::DigitalCredentialsMobileDocumentRequestData& requestData) {
-            [self performRequest:requestData];
-        },
-        [](const auto& data) {
-            UNUSED_PARAM(data);
-            ASSERT_NOT_IMPLEMENTED_YET();
-        }
-    );
+    if (auto* mobileDocumentRequestData = std::get_if<WebCore::DigitalCredentialsMobileDocumentRequestData>(&requestData))
+        [self performRequest:*mobileDocumentRequestData];
+    else if (auto* openID4VPRequestData = std::get_if<WebCore::DigitalCredentialsOpenID4VPRequestData>(&requestData))
+        [self performOpenID4VPRequest:*openID4VPRequestData];
+    else
+        ASSERT_NOT_REACHED();
 
     if ([self.delegate respondsToSelector:@selector(digitalCredentialsPickerDidPresent:)])
         [self.delegate digitalCredentialsPickerDidPresent:self];
@@ -364,9 +363,6 @@ static RetainPtr<NSArray<NSArray<WKIdentityDocumentPresentmentRequestAuthenticat
         [mobileDocumentRequests addObject:mobileDocumentRequest.get()];
     }
 
-    RetainPtr mappedOrigin = requestData.topOrigin.toURL().createNSURL();
-    RetainPtr mappedRequest = adoptNS([WebKit::allocWKIdentityDocumentPresentmentRequestInstance() initWithOrigin:mappedOrigin.get() mobileDocumentRequests:mobileDocumentRequests.get()]);
-
     if (![mobileDocumentRequests count]) {
         LOG(DigitalCredentials, "No supported mobile document requests to present.");
         WebCore::ExceptionData exceptionData = { ExceptionCode::TypeError, "No supported document requests to present."_s };
@@ -374,7 +370,49 @@ static RetainPtr<NSArray<NSArray<WKIdentityDocumentPresentmentRequestAuthenticat
         return;
     }
 
-    [_presentmentController performRequest:mappedRequest.get() completionHandler:makeBlockPtr([weakSelf = WeakObjCPtr<WKDigitalCredentialsPicker>(self)](WKIdentityDocumentPresentmentResponse *response, NSError *error) {
+    RetainPtr mappedOrigin = requestData.topOrigin.toURL().createNSURL();
+    RetainPtr mappedRequest = adoptNS([WebKit::allocWKIdentityDocumentPresentmentRequestInstance() initWithOrigin:mappedOrigin.get() mobileDocumentRequests:mobileDocumentRequests.get() openID4VPRequests:@[]]);
+
+    [self presentRequest:mappedRequest.get()];
+}
+
+- (void)performOpenID4VPRequest:(const WebCore::DigitalCredentialsOpenID4VPRequestData &)requestData
+{
+    RetainPtr openID4VPRequests = adoptNS([[NSMutableArray alloc] init]);
+    std::optional<WebCore::DigitalCredentialPresentationProtocol> presentedProtocol;
+
+    for (auto& validatedRequest : requestData.requests) {
+        if (!WebCore::isOpenID4VPPresentationProtocol(validatedRequest.protocol))
+            continue;
+
+        if (!presentedProtocol)
+            presentedProtocol = validatedRequest.protocol;
+        else if (*presentedProtocol != validatedRequest.protocol) {
+            LOG(DigitalCredentials, "Not presenting an OpenID4VP request of a second protocol.");
+            continue;
+        }
+
+        RetainPtr requestType = WebCore::digitalCredentialPresentationProtocolToString(validatedRequest.protocol).createNSString();
+        RetainPtr openID4VPRequest = adoptNS([WebKit::allocWKIdentityDocumentPresentmentOpenID4VPRequestInstance() initWithRequestType:requestType.get()]);
+        [openID4VPRequests addObject:openID4VPRequest.get()];
+    }
+
+    if (![openID4VPRequests count]) {
+        LOG(DigitalCredentials, "No supported OpenID4VP requests to present.");
+        WebCore::ExceptionData exceptionData = { ExceptionCode::TypeError, "No supported credential requests to present."_s };
+        [self completeWith:makeUnexpected(exceptionData)];
+        return;
+    }
+
+    RetainPtr mappedOrigin = requestData.topOrigin.toURL().createNSURL();
+    RetainPtr mappedRequest = adoptNS([WebKit::allocWKIdentityDocumentPresentmentRequestInstance() initWithOrigin:mappedOrigin.get() mobileDocumentRequests:@[] openID4VPRequests:openID4VPRequests.get()]);
+
+    [self presentRequest:mappedRequest.get()];
+}
+
+- (void)presentRequest:(WKIdentityDocumentPresentmentRequest *)request
+{
+    [_presentmentController performRequest:request completionHandler:makeBlockPtr([weakSelf = WeakObjCPtr<WKDigitalCredentialsPicker>(self)](WKIdentityDocumentPresentmentResponse *response, NSError *error) {
         auto strongSelf = weakSelf.get();
         if (!strongSelf)
             return;
@@ -406,28 +444,46 @@ static RetainPtr<NSArray<NSArray<WKIdentityDocumentPresentmentRequestAuthenticat
             return;
         }
 
-        String responseData = base64URLEncodeToString(span(response.responseData));
-
-        if (responseData.isNull()) {
-            LOG(DigitalCredentials, "Failed to encode response bytes to URL-safe Base64.");
-            WebCore::ExceptionData exceptionData = { ExceptionCode::TypeError, "Document provider returned an invalid format."_s };
-            [self completeWith:makeUnexpected(exceptionData)];
-            return;
-        }
-
-        LOG(DigitalCredentials, "The document provider returned response data: %s.", responseData.utf8().data());
         RetainPtr<NSString> protocol = response.protocolString;
 
         if ([protocol isEqualToString:@"org.iso.mdoc"]) {
+            String responseData = base64URLEncodeToString(span(response.responseData));
+
+            if (responseData.isNull()) {
+                LOG(DigitalCredentials, "Failed to encode response bytes to URL-safe Base64.");
+                WebCore::ExceptionData exceptionData = { ExceptionCode::TypeError, "Document provider returned an invalid format."_s };
+                [self completeWith:makeUnexpected(exceptionData)];
+                return;
+            }
+
+            LOG(DigitalCredentials, "The document provider returned response data: %s.", responseData.utf8().data());
             Ref object = JSON::Object::create();
             object->setString("response"_s, responseData);
             WebCore::DigitalCredentialsResponseData responseObject { DigitalCredentialPresentationProtocol::OrgIsoMdoc, object->toJSONString() };
             [self completeWith:WTF::move(responseObject)];
-        } else {
-            LOG(DigitalCredentials, "Unknown protocol response from document provider. Can't convert it %s.", [protocol UTF8String]);
-            WebCore::ExceptionData exceptionData = { ExceptionCode::TypeError, "Unknown protocol response from document."_s };
-            [self completeWith:makeUnexpected(exceptionData)];
+            return;
         }
+
+        auto openID4VPProtocol = WebCore::digitalCredentialPresentationProtocolFromString(String(protocol.get()));
+        if (openID4VPProtocol && WebCore::isOpenID4VPPresentationProtocol(*openID4VPProtocol)) {
+            RetainPtr responseString = adoptNS([[NSString alloc] initWithData:response.responseData encoding:NSUTF8StringEncoding]);
+
+            if (!responseString) {
+                LOG(DigitalCredentials, "Failed to decode OpenID4VP response data as UTF-8.");
+                WebCore::ExceptionData exceptionData = { ExceptionCode::TypeError, "Document provider returned an invalid format."_s };
+                [self completeWith:makeUnexpected(exceptionData)];
+                return;
+            }
+
+            WebCore::DigitalCredentialsResponseData responseObject { *openID4VPProtocol, String(responseString.get()) };
+            [self completeWith:WTF::move(responseObject)];
+            return;
+        }
+
+        LOG(DigitalCredentials, "Unknown protocol response from document provider. Can't convert it %s.", [protocol UTF8String]);
+        WebCore::ExceptionData exceptionData = { ExceptionCode::TypeError, "Unknown protocol response from document."_s };
+        [self completeWith:makeUnexpected(exceptionData)];
+        return;
     }
 
     [self handleNSError:error];

@@ -28,6 +28,7 @@
 #include <WebCore/MobileDocumentRequest.h>
 #include <WebCore/OpenID4VPMultisignedRequest.h>
 #include <WebCore/OpenID4VPSignedRequest.h>
+#include <WebCore/OpenID4VPUnsignedRequest.h>
 #include <wtf/Variant.h>
 
 namespace WebCore {
@@ -36,7 +37,8 @@ namespace WebCore {
 using UnvalidatedDigitalCredentialRequest = Variant<
     MobileDocumentRequest,
     OpenID4VPSignedRequest,
-    OpenID4VPMultisignedRequest
+    OpenID4VPMultisignedRequest,
+    OpenID4VPUnsignedRequest
 >;
 
 } // namespace WebCore
