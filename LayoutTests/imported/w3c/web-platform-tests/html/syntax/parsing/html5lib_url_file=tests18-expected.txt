@@ -1,0 +1,39 @@
+html5lib parser tests
+
+
+PASS <plaintext></plaintext>
+PASS <!doctype html><plaintext></plaintext>
+PASS <!doctype html><html><plaintext></plaintext>
+PASS <!doctype html><head><plaintext></plaintext>
+PASS <!doctype html></head><plaintext></plaintext>
+PASS <!doctype html><body><plaintext></plaintext>
+PASS <!doctype html><table><plaintext></plaintext>
+PASS <!doctype html><table><tbody><plaintext></plaintext>
+PASS <!doctype html><table><tbody><tr><plaintext></plaintext>
+PASS <!doctype html><table><td><plaintext></plaintext>
+PASS <!doctype html><table><caption><plaintext></plaintext>
+PASS <!doctype html><table><colgroup><plaintext></plaintext>
+PASS <!doctype html><select><plaintext></plaintext>X
+PASS <!doctype html><table><select><plaintext>a<caption>b
+PASS <!doctype html><template><plaintext>a</template>b
+PASS <!doctype html><body></body><plaintext></plaintext>
+PASS <!doctype html><frameset><plaintext></plaintext>
+PASS <!doctype html><frameset></frameset><plaintext></plaintext>
+PASS <!doctype html><body></body></html><plaintext></plaintext>
+PASS <!doctype html><frameset></frameset></html><plaintext></plaintext>
+PASS <!doctype html><svg><plaintext>a</plaintext>b
+PASS <!doctype html><svg><title><plaintext>a</plaintext>b
+PASS <!doctype html><table><tr><style></script></style>abc
+PASS <!doctype html><table><tr><script></style></script>abc
+PASS <!doctype html><table><caption><style></script></style>abc
+PASS <!doctype html><table><td><style></script></style>abc
+PASS <!doctype html><select><script></style></script>abc
+PASS <!doctype html><table><select><script></style></script>abc
+PASS <!doctype html><table><tr><select><script></style></script>abc
+PASS <!doctype html><frameset></frameset><noframes>abc
+PASS <!doctype html><frameset></frameset><noframes>abc</noframes><!--abc-->
+PASS <!doctype html><frameset></frameset></html><noframes>abc
+PASS <!doctype html><frameset></frameset></html><noframes>abc</noframes><!--abc-->
+PASS <!doctype html><table><tr></tbody><tfoot>
+PASS <!doctype html><table><td><svg></svg>abc<td>
+

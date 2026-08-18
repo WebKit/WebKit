@@ -1,0 +1,1731 @@
+html5lib parser tests
+
+
+FAIL <body><?something> assert_equals: expected "#document\n| <html>\n|   <head>\n|   <body>\n|     <?something ?>" but got "#document\n| <html>\n|   <head>\n|   <body>\n|     <!-- ?something -->"
+FAIL <body><?something><span> assert_equals: expected "#document\n| <html>\n|   <head>\n|   <body>\n|     <?something ?>\n|     <span>" but got "#document\n| <html>\n|   <head>\n|   <body>\n|     <!-- ?something -->\n|     <span>"
+FAIL <body><?something good> assert_equals: expected "#document\n| <html>\n|   <head>\n|   <body>\n|     <?something good?>" but got "#document\n| <html>\n|   <head>\n|   <body>\n|     <!-- ?something good -->"
+FAIL <body><?something else is good> assert_equals: expected "#document\n| <html>\n|   <head>\n|   <body>\n|     <?something else is good?>" but got "#document\n| <html>\n|   <head>\n|   <body>\n|     <!-- ?something else is good -->"
+FAIL <body><?one><?two> assert_equals: expected "#document\n| <html>\n|   <head>\n|   <body>\n|     <?one ?>\n|     <?two ?>" but got "#document\n| <html>\n|   <head>\n|   <body>\n|     <!-- ?one -->\n|     <!-- ?two -->"
+FAIL <body><?a$><?b$><?good?> assert_equals: expected "#document\n| <html>\n|   <head>\n|   <body>\n|     <!-- ?a$ -->\n|     <!-- ?b$ -->\n|     <?good ?>" but got "#document\n| <html>\n|   <head>\n|   <body>\n|     <!-- ?a$ -->\n|     <!-- ?b$ -->\n|     <!-- ?good? -->"
+FAIL <body><?hey there?> assert_equals: expected "#document\n| <html>\n|   <head>\n|   <body>\n|     <?hey there?>" but got "#document\n| <html>\n|   <head>\n|   <body>\n|     <!-- ?hey there? -->"
+FAIL <body><?hey   there?> assert_equals: expected "#document\n| <html>\n|   <head>\n|   <body>\n|     <?hey there?>" but got "#document\n| <html>\n|   <head>\n|   <body>\n|     <!-- ?hey   there? -->"
+FAIL <body><?hey?there> assert_equals: expected "#document\n| <html>\n|   <head>\n|   <body>\n|     <?hey ?there?>" but got "#document\n| <html>\n|   <head>\n|   <body>\n|     <!-- ?hey?there -->"
+FAIL <body><?hey\tthere=1?> assert_equals: expected "#document\n| <html>\n|   <head>\n|   <body>\n|     <?hey there=1?>" but got "#document\n| <html>\n|   <head>\n|   <body>\n|     <!-- ?hey\tthere=1? -->"
+FAIL <body><?hey\nthere=1?> assert_equals: expected "#document\n| <html>\n|   <head>\n|   <body>\n|     <?hey there=1?>" but got "#document\n| <html>\n|   <head>\n|   <body>\n|     <!-- ?hey\nthere=1? -->"
+FAIL <body><?hey\rthere=1?> assert_equals: expected "#document\n| <html>\n|   <head>\n|   <body>\n|     <?hey there=1?>" but got "#document\n| <html>\n|   <head>\n|   <body>\n|     <!-- ?hey\nthere=1? -->"
+FAIL <body><?hey\x0cthere=1?> assert_equals: expected "#document\n| <html>\n|   <head>\n|   <body>\n|     <?hey there=1?>" but got "#document\n| <html>\n|   <head>\n|   <body>\n|     <!-- ?hey\fthere=1? -->"
+FAIL <body><?something ? > assert_equals: expected "#document\n| <html>\n|   <head>\n|   <body>\n|     <?something ? ?>" but got "#document\n| <html>\n|   <head>\n|   <body>\n|     <!-- ?something ?  -->"
+FAIL <body><?something x > assert_equals: expected "#document\n| <html>\n|   <head>\n|   <body>\n|     <?something x ?>" but got "#document\n| <html>\n|   <head>\n|   <body>\n|     <!-- ?something x  -->"
+FAIL <body><?something ?\t   ??> assert_equals: expected "#document\n| <html>\n|   <head>\n|   <body>\n|     <?something ?\\t   ??>" but got "#document\n| <html>\n|   <head>\n|   <body>\n|     <!-- ?something ?\\t   ?? -->"
+FAIL <body><?t d > ?> assert_equals: expected "#document\n| <html>\n|   <head>\n|   <body>\n|     <?t d ?>\n|     \" ?>\"" but got "#document\n| <html>\n|   <head>\n|   <body>\n|     <!-- ?t d  -->\n|     \" ?>\""
+FAIL <body><?module-handler> assert_equals: expected "#document\n| <html>\n|   <head>\n|   <body>\n|     <?module-handler ?>" but got "#document\n| <html>\n|   <head>\n|   <body>\n|     <!-- ?module-handler -->"
+FAIL <body><?module-handler data> assert_equals: expected "#document\n| <html>\n|   <head>\n|   <body>\n|     <?module-handler data?>" but got "#document\n| <html>\n|   <head>\n|   <body>\n|     <!-- ?module-handler data -->"
+FAIL <body><?view-port> assert_equals: expected "#document\n| <html>\n|   <head>\n|   <body>\n|     <?view-port ?>" but got "#document\n| <html>\n|   <head>\n|   <body>\n|     <!-- ?view-port -->"
+FAIL <body><?view-port data> assert_equals: expected "#document\n| <html>\n|   <head>\n|   <body>\n|     <?view-port data?>" but got "#document\n| <html>\n|   <head>\n|   <body>\n|     <!-- ?view-port data -->"
+FAIL <body><?config-v2> assert_equals: expected "#document\n| <html>\n|   <head>\n|   <body>\n|     <?config-v2 ?>" but got "#document\n| <html>\n|   <head>\n|   <body>\n|     <!-- ?config-v2 -->"
+FAIL <body><?config-v2 data> assert_equals: expected "#document\n| <html>\n|   <head>\n|   <body>\n|     <?config-v2 data?>" but got "#document\n| <html>\n|   <head>\n|   <body>\n|     <!-- ?config-v2 data -->"
+FAIL <body><?x> assert_equals: expected "#document\n| <html>\n|   <head>\n|   <body>\n|     <?x ?>" but got "#document\n| <html>\n|   <head>\n|   <body>\n|     <!-- ?x -->"
+FAIL <body><?x data> assert_equals: expected "#document\n| <html>\n|   <head>\n|   <body>\n|     <?x data?>" but got "#document\n| <html>\n|   <head>\n|   <body>\n|     <!-- ?x data -->"
+FAIL <body><?zz2op> assert_equals: expected "#document\n| <html>\n|   <head>\n|   <body>\n|     <?zz2op ?>" but got "#document\n| <html>\n|   <head>\n|   <body>\n|     <!-- ?zz2op -->"
+FAIL <body><?zz2op data> assert_equals: expected "#document\n| <html>\n|   <head>\n|   <body>\n|     <?zz2op data?>" but got "#document\n| <html>\n|   <head>\n|   <body>\n|     <!-- ?zz2op data -->"
+FAIL <body><?xla-> assert_equals: expected "#document\n| <html>\n|   <head>\n|   <body>\n|     <?xla- ?>" but got "#document\n| <html>\n|   <head>\n|   <body>\n|     <!-- ?xla- -->"
+FAIL <body><?xla- data> assert_equals: expected "#document\n| <html>\n|   <head>\n|   <body>\n|     <?xla- data?>" but got "#document\n| <html>\n|   <head>\n|   <body>\n|     <!-- ?xla- data -->"
+FAIL <body><?a-b-c> assert_equals: expected "#document\n| <html>\n|   <head>\n|   <body>\n|     <?a-b-c ?>" but got "#document\n| <html>\n|   <head>\n|   <body>\n|     <!-- ?a-b-c -->"
+FAIL <body><?a-b-c data> assert_equals: expected "#document\n| <html>\n|   <head>\n|   <body>\n|     <?a-b-c data?>" but got "#document\n| <html>\n|   <head>\n|   <body>\n|     <!-- ?a-b-c data -->"
+FAIL <body><?v-123> assert_equals: expected "#document\n| <html>\n|   <head>\n|   <body>\n|     <?v-123 ?>" but got "#document\n| <html>\n|   <head>\n|   <body>\n|     <!-- ?v-123 -->"
+FAIL <body><?v-123 data> assert_equals: expected "#document\n| <html>\n|   <head>\n|   <body>\n|     <?v-123 data?>" but got "#document\n| <html>\n|   <head>\n|   <body>\n|     <!-- ?v-123 data -->"
+FAIL <body><?a0-b1-c2> assert_equals: expected "#document\n| <html>\n|   <head>\n|   <body>\n|     <?a0-b1-c2 ?>" but got "#document\n| <html>\n|   <head>\n|   <body>\n|     <!-- ?a0-b1-c2 -->"
+FAIL <body><?a0-b1-c2 data> assert_equals: expected "#document\n| <html>\n|   <head>\n|   <body>\n|     <?a0-b1-c2 data?>" but got "#document\n| <html>\n|   <head>\n|   <body>\n|     <!-- ?a0-b1-c2 data -->"
+FAIL <body><?page-404> assert_equals: expected "#document\n| <html>\n|   <head>\n|   <body>\n|     <?page-404 ?>" but got "#document\n| <html>\n|   <head>\n|   <body>\n|     <!-- ?page-404 -->"
+FAIL <body><?page-404 data> assert_equals: expected "#document\n| <html>\n|   <head>\n|   <body>\n|     <?page-404 data?>" but got "#document\n| <html>\n|   <head>\n|   <body>\n|     <!-- ?page-404 data -->"
+FAIL <body><?r2-d2> assert_equals: expected "#document\n| <html>\n|   <head>\n|   <body>\n|     <?r2-d2 ?>" but got "#document\n| <html>\n|   <head>\n|   <body>\n|     <!-- ?r2-d2 -->"
+FAIL <body><?r2-d2 data> assert_equals: expected "#document\n| <html>\n|   <head>\n|   <body>\n|     <?r2-d2 data?>" but got "#document\n| <html>\n|   <head>\n|   <body>\n|     <!-- ?r2-d2 data -->"
+FAIL <body><?level-99> assert_equals: expected "#document\n| <html>\n|   <head>\n|   <body>\n|     <?level-99 ?>" but got "#document\n| <html>\n|   <head>\n|   <body>\n|     <!-- ?level-99 -->"
+FAIL <body><?level-99 data> assert_equals: expected "#document\n| <html>\n|   <head>\n|   <body>\n|     <?level-99 data?>" but got "#document\n| <html>\n|   <head>\n|   <body>\n|     <!-- ?level-99 data -->"
+FAIL <body><?UPPERCASE> assert_equals: expected "#document\n| <html>\n|   <head>\n|   <body>\n|     <?UPPERCASE ?>" but got "#document\n| <html>\n|   <head>\n|   <body>\n|     <!-- ?UPPERCASE -->"
+FAIL <body><?UPPERCASE data> assert_equals: expected "#document\n| <html>\n|   <head>\n|   <body>\n|     <?UPPERCASE data?>" but got "#document\n| <html>\n|   <head>\n|   <body>\n|     <!-- ?UPPERCASE data -->"
+FAIL <body><?all-KINDS-of-CaSeS> assert_equals: expected "#document\n| <html>\n|   <head>\n|   <body>\n|     <?all-KINDS-of-CaSeS ?>" but got "#document\n| <html>\n|   <head>\n|   <body>\n|     <!-- ?all-KINDS-of-CaSeS -->"
+FAIL <body><?all-KINDS-of-CaSeS data> assert_equals: expected "#document\n| <html>\n|   <head>\n|   <body>\n|     <?all-KINDS-of-CaSeS data?>" but got "#document\n| <html>\n|   <head>\n|   <body>\n|     <!-- ?all-KINDS-of-CaSeS data -->"
+FAIL <body><?user_name> assert_equals: expected "#document\n| <html>\n|   <head>\n|   <body>\n|     <?user_name ?>" but got "#document\n| <html>\n|   <head>\n|   <body>\n|     <!-- ?user_name -->"
+FAIL <body><?user_name data> assert_equals: expected "#document\n| <html>\n|   <head>\n|   <body>\n|     <?user_name data?>" but got "#document\n| <html>\n|   <head>\n|   <body>\n|     <!-- ?user_name data -->"
+FAIL <body><?S_S-S_S> assert_equals: expected "#document\n| <html>\n|   <head>\n|   <body>\n|     <?S_S-S_S ?>" but got "#document\n| <html>\n|   <head>\n|   <body>\n|     <!-- ?S_S-S_S -->"
+FAIL <body><?S_S-S_S data> assert_equals: expected "#document\n| <html>\n|   <head>\n|   <body>\n|     <?S_S-S_S data?>" but got "#document\n| <html>\n|   <head>\n|   <body>\n|     <!-- ?S_S-S_S data -->"
+FAIL <body><?b_> assert_equals: expected "#document\n| <html>\n|   <head>\n|   <body>\n|     <?b_ ?>" but got "#document\n| <html>\n|   <head>\n|   <body>\n|     <!-- ?b_ -->"
+FAIL <body><?b_ data> assert_equals: expected "#document\n| <html>\n|   <head>\n|   <body>\n|     <?b_ data?>" but got "#document\n| <html>\n|   <head>\n|   <body>\n|     <!-- ?b_ data -->"
+FAIL <body><?_prefix> assert_equals: expected "#document\n| <html>\n|   <head>\n|   <body>\n|     <?_prefix ?>" but got "#document\n| <html>\n|   <head>\n|   <body>\n|     <!-- ?_prefix -->"
+FAIL <body><?_prefix data> assert_equals: expected "#document\n| <html>\n|   <head>\n|   <body>\n|     <?_prefix data?>" but got "#document\n| <html>\n|   <head>\n|   <body>\n|     <!-- ?_prefix data -->"
+FAIL <body><?_x132> assert_equals: expected "#document\n| <html>\n|   <head>\n|   <body>\n|     <?_x132 ?>" but got "#document\n| <html>\n|   <head>\n|   <body>\n|     <!-- ?_x132 -->"
+FAIL <body><?_x132 data> assert_equals: expected "#document\n| <html>\n|   <head>\n|   <body>\n|     <?_x132 data?>" but got "#document\n| <html>\n|   <head>\n|   <body>\n|     <!-- ?_x132 data -->"
+FAIL <body><?_-_> assert_equals: expected "#document\n| <html>\n|   <head>\n|   <body>\n|     <?_-_ ?>" but got "#document\n| <html>\n|   <head>\n|   <body>\n|     <!-- ?_-_ -->"
+FAIL <body><?_-_ data> assert_equals: expected "#document\n| <html>\n|   <head>\n|   <body>\n|     <?_-_ data?>" but got "#document\n| <html>\n|   <head>\n|   <body>\n|     <!-- ?_-_ data -->"
+FAIL <body><?_> assert_equals: expected "#document\n| <html>\n|   <head>\n|   <body>\n|     <?_ ?>" but got "#document\n| <html>\n|   <head>\n|   <body>\n|     <!-- ?_ -->"
+FAIL <body><?_ data> assert_equals: expected "#document\n| <html>\n|   <head>\n|   <body>\n|     <?_ data?>" but got "#document\n| <html>\n|   <head>\n|   <body>\n|     <!-- ?_ data -->"
+FAIL <body><?A----------------> assert_equals: expected "#document\n| <html>\n|   <head>\n|   <body>\n|     <?A---------------- ?>" but got "#document\n| <html>\n|   <head>\n|   <body>\n|     <!-- ?A---------------- -->"
+FAIL <body><?A---------------- data> assert_equals: expected "#document\n| <html>\n|   <head>\n|   <body>\n|     <?A---------------- data?>" but got "#document\n| <html>\n|   <head>\n|   <body>\n|     <!-- ?A---------------- data -->"
+FAIL <body><?z0123456789> assert_equals: expected "#document\n| <html>\n|   <head>\n|   <body>\n|     <?z0123456789 ?>" but got "#document\n| <html>\n|   <head>\n|   <body>\n|     <!-- ?z0123456789 -->"
+FAIL <body><?z0123456789 data> assert_equals: expected "#document\n| <html>\n|   <head>\n|   <body>\n|     <?z0123456789 data?>" but got "#document\n| <html>\n|   <head>\n|   <body>\n|     <!-- ?z0123456789 data -->"
+FAIL <body><?m-0> assert_equals: expected "#document\n| <html>\n|   <head>\n|   <body>\n|     <?m-0 ?>" but got "#document\n| <html>\n|   <head>\n|   <body>\n|     <!-- ?m-0 -->"
+FAIL <body><?m-0 data> assert_equals: expected "#document\n| <html>\n|   <head>\n|   <body>\n|     <?m-0 data?>" but got "#document\n| <html>\n|   <head>\n|   <body>\n|     <!-- ?m-0 data -->"
+PASS <body><?xml>
+PASS <body><?xml-stylesheet>
+PASS <body><?XML>
+PASS <body><?XML-stylesheet>
+PASS <body><?xML>
+PASS <body><?xml-STYLesheet>
+PASS <body><?1st-place>
+PASS <body><?2-factor>
+PASS <body><?99-problems>
+PASS <body><?٥-star>
+PASS <body><?-prefix>
+PASS <body><?--internal>
+PASS <body><?-data->
+PASS <body><?-100>
+PASS <body><?·middle-dot>
+PASS <body><?͵greek-numeral>
+PASS <body><?́accent-start>
+PASS <body><?price$value>
+PASS <body><?user@domain>
+PASS <body><?tag#id>
+PASS <body><?a+b>
+PASS <body><?100%>
+PASS <body><?data.v1>
+PASS <body><?namespace:tag>
+PASS <body><?error!code>
+PASS <body><?x=y>
+PASS <body><?a<b>
+PASS <body><?true&false>
+PASS <body><?not|or>
+PASS <body><?lit$123456789>
+PASS <body><?lit$$4x>
+PASS <body><?🚀-launch>
+PASS <body><?error-⚠️>
+PASS <body><?fire-🔥>
+PASS <body><?v1-✅>
+FAIL <body><?start assert_equals: expected "#document\n| <html>\n|   <head>\n|   <body>" but got "#document\n| <html>\n|   <head>\n|   <body>\n|     <!-- ?start -->"
+FAIL <body><?start? assert_equals: expected "#document\n| <html>\n|   <head>\n|   <body>" but got "#document\n| <html>\n|   <head>\n|   <body>\n|     <!-- ?start? -->"
+FAIL <body><?start  assert_equals: expected "#document\n| <html>\n|   <head>\n|   <body>" but got "#document\n| <html>\n|   <head>\n|   <body>\n|     <!-- ?start  -->"
+FAIL <body><?start data assert_equals: expected "#document\n| <html>\n|   <head>\n|   <body>" but got "#document\n| <html>\n|   <head>\n|   <body>\n|     <!-- ?start data -->"
+FAIL <body><?start ? ? assert_equals: expected "#document\n| <html>\n|   <head>\n|   <body>" but got "#document\n| <html>\n|   <head>\n|   <body>\n|     <!-- ?start ? ? -->"
+FAIL <body><? assert_equals: expected "#document\n| <html>\n|   <head>\n|   <body>" but got "#document\n| <html>\n|   <head>\n|   <body>\n|     <!-- ? -->"
+PASS <body><?
+FAIL <div><?something></div> assert_equals: expected "#document\n| <html>\n|   <head>\n|   <body>\n|     <div>\n|       <?something ?>" but got "#document\n| <html>\n|   <head>\n|   <body>\n|     <div>\n|       <!-- ?something -->"
+FAIL <div><?something good></div> assert_equals: expected "#document\n| <html>\n|   <head>\n|   <body>\n|     <div>\n|       <?something good?>" but got "#document\n| <html>\n|   <head>\n|   <body>\n|     <div>\n|       <!-- ?something good -->"
+FAIL <table><?something></table> assert_equals: expected "#document\n| <html>\n|   <head>\n|   <body>\n|     <table>\n|       <?something ?>" but got "#document\n| <html>\n|   <head>\n|   <body>\n|     <table>\n|       <!-- ?something -->"
+FAIL <table><tr><?something></tr></table> assert_equals: expected "#document\n| <html>\n|   <head>\n|   <body>\n|     <table>\n|       <tbody>\n|         <tr>\n|           <?something ?>" but got "#document\n| <html>\n|   <head>\n|   <body>\n|     <table>\n|       <tbody>\n|         <tr>\n|           <!-- ?something -->"
+PASS <script><?something></script>
+PASS <style><?something></style>
+FAIL <?something> assert_equals: expected "#document\n| <?something ?>\n| <html>\n|   <head>\n|   <body>" but got "#document\n| <!-- ?something -->\n| <html>\n|   <head>\n|   <body>"
+FAIL <head><?something> assert_equals: expected "#document\n| <html>\n|   <head>\n|     <?something ?>\n|   <body>" but got "#document\n| <html>\n|   <head>\n|     <!-- ?something -->\n|   <body>"
+FAIL <html><?something><head> assert_equals: expected "#document\n| <html>\n|   <?something ?>\n|   <head>\n|   <body>" but got "#document\n| <html>\n|   <!-- ?something -->\n|   <head>\n|   <body>"
+FAIL <html><head></head><?something><body> assert_equals: expected "#document\n| <html>\n|   <head>\n|   <?something ?>\n|   <body>" but got "#document\n| <html>\n|   <head>\n|   <!-- ?something -->\n|   <body>"
+FAIL <html><body></body><?something> assert_equals: expected "#document\n| <html>\n|   <head>\n|   <body>\n|   <?something ?>" but got "#document\n| <html>\n|   <head>\n|   <body>\n|   <!-- ?something -->"
+FAIL <html><body></body></html><?something> assert_equals: expected "#document\n| <html>\n|   <head>\n|   <body>\n| <?something ?>" but got "#document\n| <html>\n|   <head>\n|   <body>\n| <!-- ?something -->"
+FAIL <body><template><?something></template> assert_equals: expected "#document\n| <html>\n|   <head>\n|   <body>\n|     <template>\n|       content\n|         <?something ?>" but got "#document\n| <html>\n|   <head>\n|   <body>\n|     <template>\n|       content\n|         <!-- ?something -->"
+PASS <body><textarea><?something></textarea>
+PASS <body><title><?something></title>
+FAIL <template><?pi> assert_equals: expected "#document\n| <html>\n|   <head>\n|     <template>\n|       content\n|         <?pi ?>\n|   <body>" but got "#document\n| <html>\n|   <head>\n|     <template>\n|       content\n|         <!-- ?pi -->\n|   <body>"
+<body><?something>
+
+Input
+
+<body><?something>
+Expected
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <?something ?>
+Actual
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <!-- ?something -->
+<body><?something><span>
+
+Input
+
+<body><?something><span>
+Expected
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <?something ?>
+|     <span>
+Actual
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <!-- ?something -->
+|     <span>
+<body><?something good>
+
+Input
+
+<body><?something good>
+Expected
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <?something good?>
+Actual
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <!-- ?something good -->
+<body><?something else is good>
+
+Input
+
+<body><?something else is good>
+Expected
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <?something else is good?>
+Actual
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <!-- ?something else is good -->
+<body><?one><?two>
+
+Input
+
+<body><?one><?two>
+Expected
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <?one ?>
+|     <?two ?>
+Actual
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <!-- ?one -->
+|     <!-- ?two -->
+<body><?a$><?b$><?good?>
+
+Input
+
+<body><?a$><?b$><?good?>
+Expected
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <!-- ?a$ -->
+|     <!-- ?b$ -->
+|     <?good ?>
+Actual
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <!-- ?a$ -->
+|     <!-- ?b$ -->
+|     <!-- ?good? -->
+<body><?hey there?>
+
+Input
+
+<body><?hey there?>
+Expected
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <?hey there?>
+Actual
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <!-- ?hey there? -->
+<body><?hey there?>
+
+Input
+
+<body><?hey   there?>
+Expected
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <?hey there?>
+Actual
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <!-- ?hey   there? -->
+<body><?hey?there>
+
+Input
+
+<body><?hey?there>
+Expected
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <?hey ?there?>
+Actual
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <!-- ?hey?there -->
+<body><?hey\tthere=1?>
+
+Input
+
+<body><?hey	there=1?>
+Expected
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <?hey there=1?>
+Actual
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <!-- ?hey	there=1? -->
+<body><?hey\nthere=1?>
+
+Input
+
+<body><?hey
+there=1?>
+Expected
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <?hey there=1?>
+Actual
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <!-- ?hey
+there=1? -->
+<body><?hey\rthere=1?>
+
+Input
+
+<body><?heythere=1?>
+Expected
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <?hey there=1?>
+Actual
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <!-- ?hey
+there=1? -->
+<body><?hey\x0cthere=1?>
+
+Input
+
+<body><?heythere=1?>
+Expected
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <?hey there=1?>
+Actual
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <!-- ?heythere=1? -->
+<body><?something ? >
+
+Input
+
+<body><?something ? >
+Expected
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <?something ? ?>
+Actual
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <!-- ?something ?  -->
+<body><?something x >
+
+Input
+
+<body><?something x >
+Expected
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <?something x ?>
+Actual
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <!-- ?something x  -->
+<body><?something ?\t ??>
+
+Input
+
+<body><?something ?\t   ??>
+Expected
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <?something ?\t   ??>
+Actual
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <!-- ?something ?\t   ?? -->
+<body><?t d > ?>
+
+Input
+
+<body><?t d > ?>
+Expected
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <?t d ?>
+|     " ?>"
+Actual
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <!-- ?t d  -->
+|     " ?>"
+<body><?module-handler>
+
+Input
+
+<body><?module-handler>
+Expected
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <?module-handler ?>
+Actual
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <!-- ?module-handler -->
+<body><?module-handler data>
+
+Input
+
+<body><?module-handler data>
+Expected
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <?module-handler data?>
+Actual
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <!-- ?module-handler data -->
+<body><?view-port>
+
+Input
+
+<body><?view-port>
+Expected
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <?view-port ?>
+Actual
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <!-- ?view-port -->
+<body><?view-port data>
+
+Input
+
+<body><?view-port data>
+Expected
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <?view-port data?>
+Actual
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <!-- ?view-port data -->
+<body><?config-v2>
+
+Input
+
+<body><?config-v2>
+Expected
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <?config-v2 ?>
+Actual
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <!-- ?config-v2 -->
+<body><?config-v2 data>
+
+Input
+
+<body><?config-v2 data>
+Expected
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <?config-v2 data?>
+Actual
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <!-- ?config-v2 data -->
+<body><?x>
+
+Input
+
+<body><?x>
+Expected
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <?x ?>
+Actual
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <!-- ?x -->
+<body><?x data>
+
+Input
+
+<body><?x data>
+Expected
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <?x data?>
+Actual
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <!-- ?x data -->
+<body><?zz2op>
+
+Input
+
+<body><?zz2op>
+Expected
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <?zz2op ?>
+Actual
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <!-- ?zz2op -->
+<body><?zz2op data>
+
+Input
+
+<body><?zz2op data>
+Expected
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <?zz2op data?>
+Actual
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <!-- ?zz2op data -->
+<body><?xla->
+
+Input
+
+<body><?xla->
+Expected
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <?xla- ?>
+Actual
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <!-- ?xla- -->
+<body><?xla- data>
+
+Input
+
+<body><?xla- data>
+Expected
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <?xla- data?>
+Actual
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <!-- ?xla- data -->
+<body><?a-b-c>
+
+Input
+
+<body><?a-b-c>
+Expected
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <?a-b-c ?>
+Actual
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <!-- ?a-b-c -->
+<body><?a-b-c data>
+
+Input
+
+<body><?a-b-c data>
+Expected
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <?a-b-c data?>
+Actual
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <!-- ?a-b-c data -->
+<body><?v-123>
+
+Input
+
+<body><?v-123>
+Expected
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <?v-123 ?>
+Actual
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <!-- ?v-123 -->
+<body><?v-123 data>
+
+Input
+
+<body><?v-123 data>
+Expected
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <?v-123 data?>
+Actual
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <!-- ?v-123 data -->
+<body><?a0-b1-c2>
+
+Input
+
+<body><?a0-b1-c2>
+Expected
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <?a0-b1-c2 ?>
+Actual
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <!-- ?a0-b1-c2 -->
+<body><?a0-b1-c2 data>
+
+Input
+
+<body><?a0-b1-c2 data>
+Expected
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <?a0-b1-c2 data?>
+Actual
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <!-- ?a0-b1-c2 data -->
+<body><?page-404>
+
+Input
+
+<body><?page-404>
+Expected
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <?page-404 ?>
+Actual
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <!-- ?page-404 -->
+<body><?page-404 data>
+
+Input
+
+<body><?page-404 data>
+Expected
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <?page-404 data?>
+Actual
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <!-- ?page-404 data -->
+<body><?r2-d2>
+
+Input
+
+<body><?r2-d2>
+Expected
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <?r2-d2 ?>
+Actual
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <!-- ?r2-d2 -->
+<body><?r2-d2 data>
+
+Input
+
+<body><?r2-d2 data>
+Expected
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <?r2-d2 data?>
+Actual
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <!-- ?r2-d2 data -->
+<body><?level-99>
+
+Input
+
+<body><?level-99>
+Expected
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <?level-99 ?>
+Actual
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <!-- ?level-99 -->
+<body><?level-99 data>
+
+Input
+
+<body><?level-99 data>
+Expected
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <?level-99 data?>
+Actual
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <!-- ?level-99 data -->
+<body><?UPPERCASE>
+
+Input
+
+<body><?UPPERCASE>
+Expected
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <?UPPERCASE ?>
+Actual
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <!-- ?UPPERCASE -->
+<body><?UPPERCASE data>
+
+Input
+
+<body><?UPPERCASE data>
+Expected
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <?UPPERCASE data?>
+Actual
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <!-- ?UPPERCASE data -->
+<body><?all-KINDS-of-CaSeS>
+
+Input
+
+<body><?all-KINDS-of-CaSeS>
+Expected
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <?all-KINDS-of-CaSeS ?>
+Actual
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <!-- ?all-KINDS-of-CaSeS -->
+<body><?all-KINDS-of-CaSeS data>
+
+Input
+
+<body><?all-KINDS-of-CaSeS data>
+Expected
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <?all-KINDS-of-CaSeS data?>
+Actual
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <!-- ?all-KINDS-of-CaSeS data -->
+<body><?user_name>
+
+Input
+
+<body><?user_name>
+Expected
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <?user_name ?>
+Actual
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <!-- ?user_name -->
+<body><?user_name data>
+
+Input
+
+<body><?user_name data>
+Expected
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <?user_name data?>
+Actual
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <!-- ?user_name data -->
+<body><?S_S-S_S>
+
+Input
+
+<body><?S_S-S_S>
+Expected
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <?S_S-S_S ?>
+Actual
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <!-- ?S_S-S_S -->
+<body><?S_S-S_S data>
+
+Input
+
+<body><?S_S-S_S data>
+Expected
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <?S_S-S_S data?>
+Actual
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <!-- ?S_S-S_S data -->
+<body><?b_>
+
+Input
+
+<body><?b_>
+Expected
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <?b_ ?>
+Actual
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <!-- ?b_ -->
+<body><?b_ data>
+
+Input
+
+<body><?b_ data>
+Expected
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <?b_ data?>
+Actual
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <!-- ?b_ data -->
+<body><?_prefix>
+
+Input
+
+<body><?_prefix>
+Expected
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <?_prefix ?>
+Actual
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <!-- ?_prefix -->
+<body><?_prefix data>
+
+Input
+
+<body><?_prefix data>
+Expected
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <?_prefix data?>
+Actual
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <!-- ?_prefix data -->
+<body><?_x132>
+
+Input
+
+<body><?_x132>
+Expected
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <?_x132 ?>
+Actual
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <!-- ?_x132 -->
+<body><?_x132 data>
+
+Input
+
+<body><?_x132 data>
+Expected
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <?_x132 data?>
+Actual
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <!-- ?_x132 data -->
+<body><?_-_>
+
+Input
+
+<body><?_-_>
+Expected
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <?_-_ ?>
+Actual
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <!-- ?_-_ -->
+<body><?_-_ data>
+
+Input
+
+<body><?_-_ data>
+Expected
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <?_-_ data?>
+Actual
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <!-- ?_-_ data -->
+<body><?_>
+
+Input
+
+<body><?_>
+Expected
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <?_ ?>
+Actual
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <!-- ?_ -->
+<body><?_ data>
+
+Input
+
+<body><?_ data>
+Expected
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <?_ data?>
+Actual
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <!-- ?_ data -->
+<body><?A---------------->
+
+Input
+
+<body><?A---------------->
+Expected
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <?A---------------- ?>
+Actual
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <!-- ?A---------------- -->
+<body><?A---------------- data>
+
+Input
+
+<body><?A---------------- data>
+Expected
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <?A---------------- data?>
+Actual
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <!-- ?A---------------- data -->
+<body><?z0123456789>
+
+Input
+
+<body><?z0123456789>
+Expected
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <?z0123456789 ?>
+Actual
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <!-- ?z0123456789 -->
+<body><?z0123456789 data>
+
+Input
+
+<body><?z0123456789 data>
+Expected
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <?z0123456789 data?>
+Actual
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <!-- ?z0123456789 data -->
+<body><?m-0>
+
+Input
+
+<body><?m-0>
+Expected
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <?m-0 ?>
+Actual
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <!-- ?m-0 -->
+<body><?m-0 data>
+
+Input
+
+<body><?m-0 data>
+Expected
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <?m-0 data?>
+Actual
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <!-- ?m-0 data -->
+<body><?start
+
+Input
+
+<body><?start
+Expected
+
+#document
+| <html>
+|   <head>
+|   <body>
+Actual
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <!-- ?start -->
+<body><?start?
+
+Input
+
+<body><?start?
+Expected
+
+#document
+| <html>
+|   <head>
+|   <body>
+Actual
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <!-- ?start? -->
+<body><?start
+
+Input
+
+<body><?start
+Expected
+
+#document
+| <html>
+|   <head>
+|   <body>
+Actual
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <!-- ?start  -->
+<body><?start data
+
+Input
+
+<body><?start data
+Expected
+
+#document
+| <html>
+|   <head>
+|   <body>
+Actual
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <!-- ?start data -->
+<body><?start ? ?
+
+Input
+
+<body><?start ? ?
+Expected
+
+#document
+| <html>
+|   <head>
+|   <body>
+Actual
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <!-- ?start ? ? -->
+<body><?
+
+Input
+
+<body><?
+Expected
+
+#document
+| <html>
+|   <head>
+|   <body>
+Actual
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <!-- ? -->
+<div><?something></div>
+
+Input
+
+<div><?something></div>
+Expected
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <div>
+|       <?something ?>
+Actual
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <div>
+|       <!-- ?something -->
+<div><?something good></div>
+
+Input
+
+<div><?something good></div>
+Expected
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <div>
+|       <?something good?>
+Actual
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <div>
+|       <!-- ?something good -->
+<table><?something></table>
+
+Input
+
+<table><?something></table>
+Expected
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <table>
+|       <?something ?>
+Actual
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <table>
+|       <!-- ?something -->
+<table><tr><?something></tr></table>
+
+Input
+
+<table><tr><?something></tr></table>
+Expected
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <table>
+|       <tbody>
+|         <tr>
+|           <?something ?>
+Actual
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <table>
+|       <tbody>
+|         <tr>
+|           <!-- ?something -->
+<?something>
+
+Input
+
+<?something>
+Expected
+
+#document
+| <?something ?>
+| <html>
+|   <head>
+|   <body>
+Actual
+
+#document
+| <!-- ?something -->
+| <html>
+|   <head>
+|   <body>
+<head><?something>
+
+Input
+
+<head><?something>
+Expected
+
+#document
+| <html>
+|   <head>
+|     <?something ?>
+|   <body>
+Actual
+
+#document
+| <html>
+|   <head>
+|     <!-- ?something -->
+|   <body>
+<html><?something><head>
+
+Input
+
+<html><?something><head>
+Expected
+
+#document
+| <html>
+|   <?something ?>
+|   <head>
+|   <body>
+Actual
+
+#document
+| <html>
+|   <!-- ?something -->
+|   <head>
+|   <body>
+<html><head></head><?something><body>
+
+Input
+
+<html><head></head><?something><body>
+Expected
+
+#document
+| <html>
+|   <head>
+|   <?something ?>
+|   <body>
+Actual
+
+#document
+| <html>
+|   <head>
+|   <!-- ?something -->
+|   <body>
+<html><body></body><?something>
+
+Input
+
+<html><body></body><?something>
+Expected
+
+#document
+| <html>
+|   <head>
+|   <body>
+|   <?something ?>
+Actual
+
+#document
+| <html>
+|   <head>
+|   <body>
+|   <!-- ?something -->
+<html><body></body></html><?something>
+
+Input
+
+<html><body></body></html><?something>
+Expected
+
+#document
+| <html>
+|   <head>
+|   <body>
+| <?something ?>
+Actual
+
+#document
+| <html>
+|   <head>
+|   <body>
+| <!-- ?something -->
+<body><template><?something></template>
+
+Input
+
+<body><template><?something></template>
+Expected
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <template>
+|       content
+|         <?something ?>
+Actual
+
+#document
+| <html>
+|   <head>
+|   <body>
+|     <template>
+|       content
+|         <!-- ?something -->
+<template><?pi>
+
+Input
+
+<template><?pi>
+Expected
+
+#document
+| <html>
+|   <head>
+|     <template>
+|       content
+|         <?pi ?>
+|   <body>
+Actual
+
+#document
+| <html>
+|   <head>
+|     <template>
+|       content
+|         <!-- ?pi -->
+|   <body>
+

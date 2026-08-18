@@ -10,11 +10,15 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/support/DOMContentLoaded-defer.js
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/support/doctype-system-id-empty-frameset.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/support/doctype-system-id-empty-transitional.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/support/doctype-system-id-missing-frameset.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/support/doctype-system-id-missing-transitional.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/support/doctype-system-id-nonempty-frameset.html
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/support/doctype-system-id-nonempty-transitional.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/support/no-doctype-name-eof.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/support/no-doctype-name-line.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/support/no-doctype-name-space.html

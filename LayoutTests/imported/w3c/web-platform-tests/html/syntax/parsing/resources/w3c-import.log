@@ -1,0 +1,79 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/resources/README.md
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/resources/adoption01.dat
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/resources/adoption02.dat
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/resources/blocks.dat
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/resources/comments01.dat
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/resources/common.js
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/resources/doctype01.dat
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/resources/domjs-unsafe.dat
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/resources/entities01.dat
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/resources/entities02.dat
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/resources/foreign-fragment.dat
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/resources/html5test-com.dat
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/resources/inbody01.dat
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/resources/isindex.dat
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/resources/main-element.dat
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/resources/math.dat
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/resources/menuitem-element.dat
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/resources/namespace-sensitivity.dat
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/resources/noscript01.dat
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/resources/pending-spec-changes-plain-text-unsafe.dat
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/resources/pending-spec-changes.dat
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/resources/plain-text-unsafe.dat
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/resources/processing-instructions.dat
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/resources/quirks01.dat
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/resources/ruby.dat
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/resources/scriptdata01.dat
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/resources/scripted_adoption01.dat
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/resources/scripted_ark.dat
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/resources/scripted_webkit01.dat
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/resources/search-element.dat
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/resources/svg.dat
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/resources/tables01.dat
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/resources/template.dat
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/resources/template.js
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/resources/test.js
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/resources/tests1.dat
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/resources/tests10.dat
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/resources/tests11.dat
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/resources/tests12.dat
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/resources/tests14.dat
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/resources/tests15.dat
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/resources/tests16.dat
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/resources/tests17.dat
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/resources/tests18.dat
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/resources/tests19.dat
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/resources/tests2.dat
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/resources/tests20.dat
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/resources/tests21.dat
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/resources/tests22.dat
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/resources/tests23.dat
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/resources/tests24.dat
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/resources/tests25.dat
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/resources/tests26.dat
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/resources/tests3.dat
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/resources/tests4.dat
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/resources/tests5.dat
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/resources/tests6.dat
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/resources/tests7.dat
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/resources/tests8.dat
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/resources/tests9.dat
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/resources/tests_innerHTML_1.dat
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/resources/tricky01.dat
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/resources/void-in-phrasing.dat
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/resources/webkit01.dat
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/resources/webkit02.dat

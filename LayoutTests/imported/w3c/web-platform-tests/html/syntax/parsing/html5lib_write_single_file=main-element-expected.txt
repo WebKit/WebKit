@@ -1,0 +1,7 @@
+html5lib parser tests
+
+
+PASS <!doctype html><p>foo<main>bar<p>baz
+PASS <!doctype html><main><p>foo</main>bar
+PASS <!DOCTYPE html>xxx<svg><x><g><a><main><b>
+

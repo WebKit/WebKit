@@ -1,0 +1,20 @@
+html5lib parser tests
+
+
+PASS FOO<!-- BAR -->BAZ
+PASS FOO<!-- BAR --!>BAZ
+PASS FOO<!-- BAR --! >BAZ
+PASS FOO<!-- BAR --!\n>BAZ
+PASS FOO<!-- BAR --   >BAZ
+PASS FOO<!-- BAR -- <QUX> -- MUX -->BAZ
+PASS FOO<!-- BAR -- <QUX> -- MUX --!>BAZ
+PASS FOO<!-- BAR -- <QUX> -- MUX -- >BAZ
+PASS FOO<!---->BAZ
+PASS FOO<!--->BAZ
+PASS FOO<!-->BAZ
+PASS <?xml version="1.0">Hi
+PASS <?xml version="1.0">
+PASS <?xml version
+PASS FOO<!----->BAZ
+PASS <html><!-- comment --><title>Comment before head</title>
+

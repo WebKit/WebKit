@@ -1,0 +1,14 @@
+html5lib parser tests
+
+
+PASS <div>\n<div></div>\n</span>x
+PASS <div>x<div></div>\n</span>x
+PASS <div>x<div></div>x</span>x
+PASS <div>x<div></div>y</span>z
+PASS <table><div>x<div></div>x</span>x
+PASS <table><li><li></table>
+PASS x<table>x
+PASS x<table><table>x
+PASS <b>a<div></div><div></b>y
+PASS <a><div><p></a>
+

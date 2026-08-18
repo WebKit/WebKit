@@ -1,0 +1,53 @@
+html5lib parser tests
+
+
+PASS <svg><![CDATA[foo\nbar]]>
+PASS <svg><![CDATA[foo\rbar]]>
+PASS <svg><![CDATA[foo\r\nbar]]>
+PASS <script>a='\x00'</script>
+PASS <script type="data"><!--\x00</script>
+PASS <script type="data"><!--foo\x00</script>
+PASS <script type="data"><!-- foo-\x00</script>
+PASS <script type="data"><!-- foo--\x00</script>
+PASS <script type="data"><!-- foo-
+PASS <script type="data"><!-- foo-<</script>
+PASS <script type="data"><!-- foo-<S
+PASS <script type="data"><!-- foo-</SCRIPT>
+PASS <script type="data"><!--<p></script>
+PASS <script type="data"><!--<script></script></script>
+PASS <script type="data"><!--<script>\x00</script></script>
+PASS <script type="data"><!--<script>-\x00</script></script>
+PASS <script type="data"><!--<script>--\x00</script></script>
+PASS <script type="data"><!--<script>---</script></script>
+PASS <script type="data"><!--<script></scrip></SCRIPT></script>
+PASS <script type="data"><!--<script></scrip </SCRIPT></script>
+PASS <script type="data"><!--<script></scrip/</SCRIPT></script>
+PASS <script type="data"></scrip/></script>
+PASS <script type="data"></scrip ></script>
+PASS <script type="data"><!--</scrip></script>
+PASS <script type="data"><!--</scrip </script>
+PASS <script type="data"><!--</scrip/</script>
+PASS <!DOCTYPE html><!DOCTYPE html>
+PASS <html><!DOCTYPE html>
+PASS <html><head><!DOCTYPE html></head>
+PASS <html><head></head><!DOCTYPE html>
+PASS <body></body><!DOCTYPE html>
+PASS <table><!DOCTYPE html></table>
+PASS <select><!DOCTYPE html></select>
+PASS <table><colgroup><!DOCTYPE html></colgroup></table>
+PASS <table><colgroup><!--test--></colgroup></table>
+PASS <table><colgroup><html></colgroup></table>
+PASS <table><colgroup> foo</colgroup></table>
+PASS <select><!--test--></select>
+PASS <select><html></select>
+PASS <frameset><html></frameset>
+PASS <frameset></frameset><html>
+PASS <frameset></frameset><!DOCTYPE html>
+PASS <html><body></body></html><!DOCTYPE html>
+PASS <svg><!DOCTYPE html></svg>
+PASS <svg><font></font></svg>
+PASS <svg><font id=foo></font></svg>
+PASS <svg><font size=4></font></svg>
+PASS <svg><font color=red></font></svg>
+PASS <svg><font font=sans></font></svg>
+

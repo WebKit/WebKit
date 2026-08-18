@@ -1,0 +1,17 @@
+html5lib parser tests
+
+
+PASS <!DOCTYPE html><body><p><br></p>
+PASS <!DOCTYPE html><body><p><br>text</p>
+PASS <!DOCTYPE html><body><p>before<br>after</p>
+PASS <!DOCTYPE html><body><p><br><br></p>
+PASS <!DOCTYPE html><body><p>a<br>b<br>c</p>
+PASS <!DOCTYPE html><body><h1><br></h1>
+PASS <!DOCTYPE html><body><p><input></p>
+PASS <!DOCTYPE html><body><p><img></p>
+PASS <!DOCTYPE html><body><p><wbr></p>
+PASS <!DOCTYPE html><body><p><embed></p>
+PASS <!DOCTYPE html><body><h2><input></h2>
+PASS <!DOCTYPE html><body><em><br></em>
+PASS <!DOCTYPE html><body><strong><br>text</strong>
+

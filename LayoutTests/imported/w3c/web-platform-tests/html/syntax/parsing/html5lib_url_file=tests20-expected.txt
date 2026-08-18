@@ -1,0 +1,68 @@
+html5lib parser tests
+
+
+PASS <!doctype html><p><button><button>
+PASS <!doctype html><p><button><address>
+PASS <!doctype html><p><button><article>
+PASS <!doctype html><p><button><aside>
+PASS <!doctype html><p><button><blockquote>
+PASS <!doctype html><p><button><center>
+PASS <!doctype html><p><button><details>
+PASS <!doctype html><p><button><dialog>
+PASS <!doctype html><p><button><dir>
+PASS <!doctype html><p><button><div>
+PASS <!doctype html><p><button><dl>
+PASS <!doctype html><p><button><fieldset>
+PASS <!doctype html><p><button><figcaption>
+PASS <!doctype html><p><button><figure>
+PASS <!doctype html><p><button><footer>
+PASS <!doctype html><p><button><header>
+PASS <!doctype html><p><button><hgroup>
+PASS <!doctype html><p><button><main>
+PASS <!doctype html><p><button><menu>
+PASS <!doctype html><p><button><nav>
+PASS <!doctype html><p><button><ol>
+PASS <!doctype html><p><button><p>
+PASS <!doctype html><p><button><search>
+PASS <!doctype html><p><button><section>
+PASS <!doctype html><p><button><summary>
+PASS <!doctype html><p><button><ul>
+PASS <!doctype html><p><button><h1>
+PASS <!doctype html><p><button><h6>
+PASS <!doctype html><p><button><listing>
+PASS <!doctype html><p><button><pre>
+PASS <!doctype html><p><button><form>
+PASS <!doctype html><p><button><li>
+PASS <!doctype html><p><button><dd>
+PASS <!doctype html><p><button><dt>
+PASS <!doctype html><p><button><plaintext>
+PASS <!doctype html><p><button><table>
+PASS <!doctype html><p><button><hr>
+PASS <!doctype html><p><button><xmp>
+PASS <!doctype html><p><button></p>
+PASS <!doctype html><button><p></button>x
+PASS <!doctype html><address><button></address>a
+PASS <p><table></p>
+PASS <!doctype html><svg>
+PASS <!doctype html><p><figcaption>
+PASS <!doctype html><p><summary>
+PASS <!doctype html><form><table><form>
+PASS <!doctype html><table><form><form>
+PASS <!doctype html><table><form></table><form>
+PASS <!doctype html><svg><foreignObject><p>
+PASS <!doctype html><svg><title>abc
+PASS <option><span><option>
+PASS <option><option>
+PASS <math><annotation-xml><div>
+PASS <math><annotation-xml encoding="application/svg+xml"><div>
+PASS <math><annotation-xml encoding="application/xhtml+xml"><div>
+PASS <math><annotation-xml encoding="aPPlication/xhtmL+xMl"><div>
+PASS <math><annotation-xml encoding="text/html"><div>
+PASS <math><annotation-xml encoding="Text/htmL"><div>
+PASS <math><annotation-xml encoding=" text/html "><div>
+PASS <math><annotation-xml> </annotation-xml>
+PASS <math><annotation-xml>c</annotation-xml>
+PASS <math><annotation-xml><!--foo-->
+PASS <math><annotation-xml></svg>x
+PASS <math><annotation-xml><svg>x
+

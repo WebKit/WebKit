@@ -1,0 +1,13 @@
+html5lib parser tests
+
+
+PASS direct div content (innerHTML in div)
+PASS direct textarea content (innerHTML in textarea)
+PASS textarea content with <em>pseudo</em> <foo>markup (innerHTML in textarea)
+PASS this is &#x0043;DATA inside a <style> element (innerHTML in style)
+PASS </plaintext> (innerHTML in plaintext)
+PASS setting html's innerHTML (innerHTML in html)
+PASS <title>setting head's innerHTML</title> (innerHTML in head)
+PASS direct <title> content (innerHTML in title)
+PASS <!-- inside </script> --> (innerHTML in script)
+

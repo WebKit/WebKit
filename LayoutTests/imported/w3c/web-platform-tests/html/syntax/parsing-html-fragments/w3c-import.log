@@ -10,10 +10,9 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing-html-fragments/fragment-parse-form-in-template-001.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing-html-fragments/innerHTML-setter-default-namespace.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing-html-fragments/the-input-byte-stream-001.html
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing-html-fragments/the-input-byte-stream-001.html.headers

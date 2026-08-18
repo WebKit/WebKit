@@ -1,0 +1,115 @@
+html5lib parser tests
+
+
+PASS <body><template>Hello</template>
+PASS <template>Hello</template>
+PASS <template></template><div></div>
+PASS <html><template>Hello</template>
+PASS <head><template><div></div></template></head>
+PASS <div><template><div><span></template><b>
+PASS <div><template></div>Hello
+PASS <div></template></div>
+PASS <table><template></template></table>
+PASS <table><template></template></div>
+PASS <table><div><template></template></div>
+PASS <table><template></template><div></div>
+PASS <table>   <template></template></table>
+PASS <table><tbody><template></template></tbody>
+PASS <table><tbody><template></tbody></template>
+PASS <table><tbody><template></template></tbody></table>
+PASS <table><thead><template></template></thead>
+PASS <table><tfoot><template></template></tfoot>
+PASS <select><template></template></select>
+PASS <select><template><option></option></template></select>
+PASS <template><option></option></select><option></option></template>
+PASS <select><template></template><option></select>
+PASS <select><option><template></template></select>
+PASS <select><template>
+PASS <select><option></option><template>
+PASS <select><option></option><template><option>
+PASS <table><thead><template><td></template></table>
+PASS <table><template><thead></template></table>
+PASS <body><table><template><td></tr><div></template></table>
+PASS <table><template><thead></template></thead></table>
+PASS <table><thead><template><tr></template></table>
+PASS <table><template><tr></template></table>
+PASS <table><tr><template><td>
+PASS <table><template><tr><template><td></template></tr></template></table>
+PASS <table><template><tr><template><td></td></template></tr></template></table>
+PASS <table><template><td></template>
+PASS <body><template><td></td></template>
+PASS <body><template><template><tr></tr></template><td></td></template>
+PASS <table><colgroup><template><col>
+PASS <frameset><template><frame></frame></template></frameset>
+PASS <template><frame></frame></frameset><frame></frame></template>
+PASS <template><div><frameset><span></span></div><span></span></template>
+PASS <body><template><div><frameset><span></span></div><span></span></template></body>
+PASS <body><template><script>var i = 1;</script><td></td></template>
+PASS <body><template><tr><div></div></tr></template>
+PASS <body><template><tr></tr><td></td></template>
+PASS <body><template><td></td></tr><td></td></template>
+PASS <body><template><td></td><tbody><td></td></template>
+PASS <body><template><td></td><caption></caption><td></td></template>
+PASS <body><template><td></td><colgroup></caption><td></td></template>
+PASS <body><template><td></td></table><td></td></template>
+PASS <body><template><tr></tr><tbody><tr></tr></template>
+PASS <body><template><tr></tr><caption><tr></tr></template>
+PASS <body><template><tr></tr></table><tr></tr></template>
+PASS <body><template><thead></thead><caption></caption><tbody></tbody></template>
+PASS <body><template><thead></thead></table><tbody></tbody></template></body>
+PASS <body><template><div><tr></tr></div></template>
+PASS <body><template><em>Hello</em></template>
+PASS <body><template><!--comment--></template>
+PASS <body><template><style></style><td></td></template>
+PASS <body><template><meta><td></td></template>
+PASS <body><template><link><td></td></template>
+PASS <body><table><colgroup><template><col></col></template></colgroup></table></body>
+PASS <body a=b><template><div></div><body c=d><div></div></body></template></body>
+PASS <html a=b><template><div><html b=c><span></template>
+PASS <html a=b><template><col></col><html b=c><col></col></template>
+PASS <html a=b><template><frame></frame><html b=c><frame></frame></template>
+PASS <body><template><tr></tr><template></template><td></td></template>
+PASS <body><template><thead></thead><template><tr></tr></template><tr></tr><tfoot></tfoot></template>
+PASS <body><template><template><b><template></template></template>text</template>
+PASS <body><template><col><colgroup>
+PASS <body><template><col></colgroup>
+PASS <body><template><col><colgroup></template></body>
+PASS <body><template><col><div>
+PASS <body><template><col></div>
+PASS <body><template><col>Hello
+PASS <body><template><i><menu>Foo</i>
+PASS <body><template></div><div>Foo</div><template></template><tr></tr>
+PASS <body><div><template></div><tr><td>Foo</td></tr></template>
+PASS <template></figcaption><sub><table></table>
+PASS <template><template>
+PASS <template><div>
+PASS <template><template><div>
+PASS <template><template><table>
+PASS <template><template><tbody>
+PASS <template><template><tr>
+PASS <template><template><td>
+PASS <template><template><caption>
+PASS <template><template><colgroup>
+PASS <template><template><col>
+PASS <template><template><tbody><select>
+PASS <template><template><table>Foo
+PASS <template><template><frame>
+PASS <template><template><script>var i
+PASS <template><template><style>var i
+PASS <template><table></template><body><span>Foo
+PASS <template><td></template><body><span>Foo
+PASS <template><object></template><body><span>Foo
+PASS <template><svg><template>
+PASS <template><svg><foo><template><foreignObject><div></template><div>
+PASS <dummy><template><span></dummy>
+PASS <body><table><tr><td><select><template>Foo</template><caption>A</table>
+PASS <body></body><template>
+PASS <head></head><template>
+PASS <head></head><template>Foo</template>
+PASS <html><head></head><template></template><head>
+PASS <!DOCTYPE HTML><dummy><table><template><table><template><table><script>
+PASS <template><a><table><a>
+PASS <!DOCTYPE HTML><template><tr><td>cell</td></tr></template>
+PASS <!DOCTYPE HTML><template> <tr> <td>cell</td> </tr> </template>
+PASS <!DOCTYPE HTML><template><tr><td>cell</td></tr>a</template>
+

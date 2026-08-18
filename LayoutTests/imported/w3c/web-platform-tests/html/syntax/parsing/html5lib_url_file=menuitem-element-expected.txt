@@ -1,0 +1,24 @@
+html5lib parser tests
+
+
+PASS <menuitem>
+PASS </menuitem>
+PASS <!DOCTYPE html><body><menuitem>A
+PASS <!DOCTYPE html><body><menuitem>A<menuitem>B
+PASS <!DOCTYPE html><body><menuitem>A<menu>B</menu>
+PASS <!DOCTYPE html><body><menuitem>A<hr>B
+PASS <!DOCTYPE html><li><menuitem><li>
+PASS <!DOCTYPE html><menuitem><p></menuitem>x
+PASS <!DOCTYPE html><p><b></p><menuitem>
+PASS <!DOCTYPE html><menuitem><asdf></menuitem>x
+PASS <!DOCTYPE html></menuitem>
+PASS <!DOCTYPE html><html></menuitem>
+PASS <!DOCTYPE html><head></menuitem>
+PASS <!DOCTYPE html><select><menuitem></select>
+PASS <!DOCTYPE html><option><menuitem>
+PASS <!DOCTYPE html><menuitem><option>
+PASS <!DOCTYPE html><menuitem></body>
+PASS <!DOCTYPE html><menuitem></html>
+PASS <!DOCTYPE html><menuitem><p>
+PASS <!DOCTYPE html><menuitem><li>
+

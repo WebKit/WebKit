@@ -1,0 +1,48 @@
+html5lib parser tests
+
+
+PASS <foo bar=qux/>
+PASS <p id="status"><noscript><strong>A</strong></noscript><span>B</span></p>
+PASS <div><sarcasm><div></div></sarcasm></div>
+PASS <html><body><img src="" border="0" alt="><div>A</div></body></html>
+PASS <table><td></tbody>A
+PASS <table><td></thead>A
+PASS <table><td></tfoot>A
+PASS <table><thead><td></tbody>A
+PASS <legend>test</legend>
+PASS <table><input>
+PASS <b><em><foo><foo><aside></b>
+PASS <b><em><foo><foo><aside></b></em>
+PASS <b><em><foo><foo><foo><aside></b>
+PASS <b><em><foo><foo><foo><aside></b></em>
+PASS <svg><foreignObject><div>foo</div><plaintext></foreignObject></svg><div>bar</div>
+PASS <svg><foreignObject></foreignObject><title></svg>foo
+PASS </foreignObject><plaintext><div>foo</div>
+PASS <svg xml:base xml:lang xml:space xml:baaah definitionurl>
+PASS <math definitionurl xlink:title xlink:show>
+PASS <math DEFINITIONURL>
+PASS <select><hr>
+PASS <select><option><hr>
+PASS <select><optgroup><option><hr>
+PASS <select><optgroup><hr>
+PASS <select><option><optgroup><hr>
+PASS <table><tr><td><select><hr>
+PASS <table><tr><td><select><option><hr>
+PASS <table><tr><td><select><optgroup><option><hr>
+PASS <table><tr><td><select><optgroup><hr>
+PASS <table><tr><td><select><option><optgroup><hr>
+PASS <select><div><i></div><option>option
+PASS <div><i></div><option>option
+PASS <select><div>div 1</div><button>button</button><div>div 2</div><datalist><option>option</option></datalist><div>div 3</div></select>
+PASS <select><button>button</select>
+PASS <select><datalist>datalist</select>
+PASS <select><button><select></select></button></select>
+PASS <select><button><div><select></select>
+PASS <select><div><option><img>option</option></div></select>
+PASS <select><input>
+PASS <select><button><selectedcontent></button><option>X
+PASS <select><button><selectedcontent></button><option>x<i>i<b>ib</i>b
+PASS <select><button><selectedcontent></button><option>X<option>Y
+PASS <select><button><selectedcontent></button><option>X<option selected>Y
+PASS <font><select><option>a</option></font></select>
+

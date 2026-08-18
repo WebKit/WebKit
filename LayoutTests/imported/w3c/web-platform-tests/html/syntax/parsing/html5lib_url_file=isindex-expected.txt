@@ -1,0 +1,8 @@
+html5lib parser tests
+
+
+PASS <isindex>
+PASS <isindex name="A" action="B" prompt="C" foo="D">
+PASS <form><isindex>
+PASS <!doctype html><isindex>x</isindex>x
+

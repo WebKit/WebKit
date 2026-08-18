@@ -1,0 +1,3 @@
+
+FAIL management of form element pointer inside of a <template> assert_equals: <template> content should have 1 form element; it should not be dropped because it is inside a <template> expected 1 but got 0
+

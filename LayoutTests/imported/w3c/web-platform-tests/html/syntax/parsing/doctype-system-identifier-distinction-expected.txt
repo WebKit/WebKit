@@ -1,0 +1,8 @@
+
+PASS DOCTYPE with "-//W3C//DTD HTML 4.01 Frameset//" and empty system ID triggers quirks mode
+PASS DOCTYPE with "-//W3C//DTD HTML 4.01 Frameset//" and missing system ID triggers quirks mode
+PASS DOCTYPE with "-//W3C//DTD HTML 4.01 Frameset//" and non-empty system ID triggers limited-quirks mode
+PASS DOCTYPE with "-//W3C//DTD HTML 4.01 Transitional//" and empty system ID triggers quirks mode
+PASS DOCTYPE with "-//W3C//DTD HTML 4.01 Transitional//" and missing system ID triggers quirks mode
+PASS DOCTYPE with "-//W3C//DTD HTML 4.01 Transitional//" and non-empty system ID triggers limited-quirks mode
+

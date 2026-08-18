@@ -1,0 +1,12 @@
+html5lib parser tests
+
+
+PASS <svg><tr><td><title><tr> (innerHTML in td)
+PASS <svg><tr><td><title><tr> (innerHTML in tr)
+PASS <svg><thead><title><tbody> (innerHTML in thead)
+PASS <svg><tfoot><title><tbody> (innerHTML in tfoot)
+PASS <svg><tbody><title><tfoot> (innerHTML in tbody)
+PASS <svg><tbody><title></table> (innerHTML in tbody)
+PASS <svg><thead><title></table> (innerHTML in tbody)
+PASS <svg><tfoot><title></table> (innerHTML in tbody)
+

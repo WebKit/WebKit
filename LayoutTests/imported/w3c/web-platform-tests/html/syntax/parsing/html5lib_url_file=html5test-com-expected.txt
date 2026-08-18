@@ -1,0 +1,53 @@
+html5lib parser tests
+
+
+PASS <div<div>
+PASS <div foo<bar=''>
+PASS <div foo=`bar`>
+PASS <div \"foo=''>
+PASS <a href='\nbar'></a>
+PASS <!DOCTYPE html>
+PASS &lang;&rang;
+PASS &apos;
+PASS &ImaginaryI;
+PASS &Kopf;
+PASS &notinva;
+FAIL <?import namespace="foo" implementation="#bar"> assert_equals: expected "#document\n| <?import namespace=\"foo\" implementation=\"#bar\"?>\n| <html>\n|   <head>\n|   <body>" but got "#document\n| <!-- ?import namespace=\"foo\" implementation=\"#bar\" -->\n| <html>\n|   <head>\n|   <body>"
+PASS <!--foo--bar-->
+PASS <svg><title><![CDATA[x]]>
+PASS <svg><foreignobject><![CDATA[x]]>
+PASS <svg><foreignobject><p><![CDATA[x]]>
+PASS <math><![CDATA[x]]>
+PASS <math><mtext><![CDATA[x]]>
+PASS <math><mtext><i><![CDATA[x]]>
+PASS <![CDATA[x]]>
+PASS <textarea><!--</textarea>--></textarea>
+PASS <textarea><!--</textarea>-->
+PASS <style><!--</style>--></style>
+PASS <style><!--</style>-->
+PASS <ul><li>A </li> <li>B</li></ul>
+PASS <table><form><input type=hidden><input></form><div></div></table>
+PASS <i>A<b>B<p></i>C</b>D
+PASS <div></div>
+PASS <svg></svg>
+PASS <math></math>
+<?import namespace="foo" implementation="#bar">
+
+Input
+
+<?import namespace="foo" implementation="#bar">
+Expected
+
+#document
+| <?import namespace="foo" implementation="#bar"?>
+| <html>
+|   <head>
+|   <body>
+Actual
+
+#document
+| <!-- ?import namespace="foo" implementation="#bar" -->
+| <html>
+|   <head>
+|   <body>
+
