@@ -1896,6 +1896,15 @@ with open(sys.argv[2], 'wb') as f:
             ${WEBKIT_DIR}/Resources/TextExtractionFilter.mlmodel
             ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebKit.framework/TextExtractionFilter.mlmodel
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            ${WEBKIT_DIR}/WebKitSwift/RealityKit/studio_lighting_objectmode_v3.reibl
+            ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebKit.framework/studio_lighting_objectmode_v3.reibl
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            ${WEBKIT_DIR}/WebKitSwift/RealityKit/studio_lighting_objectmode_v3_diffmap.ktx
+            ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebKit.framework/studio_lighting_objectmode_v3_diffmap.ktx
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            ${WEBKIT_DIR}/WebKitSwift/RealityKit/studio_lighting_objectmode_v3_specmap.ktx
+            ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebKit.framework/studio_lighting_objectmode_v3_specmap.ktx
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
             ${_wk_assets_staging}/Assets.car
             ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/WebKit.framework/Assets.car
         COMMAND ${CMAKE_COMMAND} -E rm -rf

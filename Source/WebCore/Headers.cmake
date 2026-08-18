@@ -1722,6 +1722,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     html/track/VTTCue.h
     html/track/VTTRegion.h
     html/track/VideoTrackClient.h
+    html/track/WebVTTParser.h
 
     inspector/CommandLineAPIHost.h
     inspector/FrameInspectorController.h
@@ -2116,6 +2117,8 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/UADataValues.h
     page/UALowEntropyJSON.h
     page/UndoManager.h
+    page/UserAgentStringData.h
+    page/UserAgentStringParser.h
     page/UserContentController.h
     page/UserContentProvider.h
     page/UserContentTypes.h
@@ -2497,6 +2500,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/ContentsFormat.h
     platform/graphics/CopyImageOptions.h
     platform/graphics/CornerRadii.h
+    platform/graphics/CornerShapeUtilities.h
     platform/graphics/Damage.h
     platform/graphics/DashArray.h
     platform/graphics/DecodingOptions.h
@@ -2534,6 +2538,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/FontFamilySpecificationNull.h
     platform/graphics/FontFeatureValues.h
     platform/graphics/FontGenericFamilies.h
+    platform/graphics/FontInlines.h
     platform/graphics/FontMetrics.h
     platform/graphics/FontMetricsOverrides.h
     platform/graphics/FontPalette.h
@@ -2703,6 +2708,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/TabSize.h
     platform/graphics/TextMeasurementCache.h
     platform/graphics/TextRun.h
+    platform/graphics/TextShapingResultAndDisplayList.h
     platform/graphics/TextTrackRepresentation.h
     platform/graphics/TileGridIdentifier.h
     platform/graphics/TiledBacking.h
@@ -2717,6 +2723,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/VideoTarget.h
     platform/graphics/VideoTrackPrivate.h
     platform/graphics/VideoTrackPrivateClient.h
+    platform/graphics/WebGPUFramePacer.h
     platform/graphics/WidthIterator.h
     platform/graphics/WindRule.h
 
@@ -3498,6 +3505,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     style/values/sizing/StyleMaximumSize.h
     style/values/sizing/StyleMinimumSize.h
     style/values/sizing/StylePreferredSize.h
+    style/values/sizing/StyleSizing.h
 
     style/values/speech/StyleSpeakAs.h
 

@@ -1253,11 +1253,13 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/audio/cocoa/AudioSampleBufferList.h
     platform/audio/cocoa/AudioSampleDataConverter.h
     platform/audio/cocoa/AudioSampleDataSource.h
+    platform/audio/cocoa/AudioSessionCocoa.h
     platform/audio/cocoa/AudioUtilitiesCocoa.h
     platform/audio/cocoa/CAAudioStreamDescription.h
     platform/audio/cocoa/CARingBuffer.h
     platform/audio/cocoa/MediaSessionManagerCocoa.h
     platform/audio/cocoa/SpatialAudioExperienceHelper.h
+    platform/audio/cocoa/SpatialAudioPlaybackHelper.h
     platform/audio/cocoa/WebAudioBufferList.h
 
     platform/audio/ios/MediaSessionHelperIOS.h
@@ -1315,6 +1317,8 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     platform/graphics/avfoundation/AudioSourceProviderAVFObjC.h
     platform/graphics/avfoundation/AudioVideoRendererAVFObjC.h
+    platform/graphics/avfoundation/ISOFairPlayStreamingPsshBox.h
+    platform/graphics/avfoundation/InbandTextTrackPrivateAVF.h
     platform/graphics/avfoundation/MediaPlaybackTargetCocoa.h
     platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.h
     platform/graphics/avfoundation/SampleBufferDisplayLayer.h
@@ -1324,6 +1328,7 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/avfoundation/objc/AVAssetMIMETypeCache.h
     platform/graphics/avfoundation/objc/ImageDecoderAVFObjC.h
     platform/graphics/avfoundation/objc/LocalSampleBufferDisplayLayer.h
+    platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h
     platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.h
     platform/graphics/avfoundation/objc/MediaSampleAVFObjC.h
     platform/graphics/avfoundation/objc/VideoLayerManagerObjC.h
@@ -1371,9 +1376,11 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/cocoa/FontFamilySpecificationCoreText.h
     platform/graphics/cocoa/FontFamilySpecificationCoreTextCache.h
     platform/graphics/cocoa/GraphicsContextGLCocoa.h
+    platform/graphics/cocoa/H264UtilitiesCocoa.h
     platform/graphics/cocoa/HEVCUtilitiesCocoa.h
     platform/graphics/cocoa/IOSurface.h
     platform/graphics/cocoa/IOSurfaceDrawingBuffer.h
+    platform/graphics/cocoa/ISOBMFFPreParser.h
     platform/graphics/cocoa/ISOBMFFTrackInfoParser.h
     platform/graphics/cocoa/MediaPlayerEnumsCocoa.h
     platform/graphics/cocoa/NullPlaybackSessionInterface.h
@@ -1389,6 +1396,7 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/cocoa/VideoTargetFactory.h
     platform/graphics/cocoa/WebActionDisablingCALayerDelegate.h
     platform/graphics/cocoa/WebCoreCALayerExtras.h
+    platform/graphics/cocoa/WebCoreDecompressionSession.h
     platform/graphics/cocoa/WebLayer.h
     platform/graphics/cocoa/WebMAudioUtilitiesCocoa.h
 
@@ -1579,7 +1587,10 @@ set(WebCore_USER_AGENT_SCRIPTS
 )
 
 list(APPEND WebCoreTestSupport_LIBRARIES PRIVATE WebCore)
-list(APPEND WebCoreTestSupport_PRIVATE_HEADERS testing/cocoa/WebArchiveDumpSupport.h)
+list(APPEND WebCoreTestSupport_PRIVATE_HEADERS
+    testing/cocoa/CocoaColorSerialization.h
+    testing/cocoa/WebArchiveDumpSupport.h
+)
 list(APPEND WebCoreTestSupport_SOURCES
     testing/Internals.mm
     testing/MockApplePaySetupFeature.cpp
