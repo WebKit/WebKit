@@ -31,21 +31,15 @@ extension WKAlternatePDFHUDView {
     // For testing only, via `NSSelectorFromString`.
     @objc(_performActionForControl:)
     private func performAction(controlName: String) {
-        guard let hostingView = subviews.first as? NSHostingView<PDFHUDControls> else {
-            fatalError()
-        }
-
-        let action = hostingView.rootView.action
-
         switch controlName {
         case "minus.magnifyingglass":
-            action(.zoomOut)
+            actionHandlerForTesting(.zoomOut)
         case "plus.magnifyingglass":
-            action(.zoomIn)
+            actionHandlerForTesting(.zoomIn)
         case "preview":
-            action(.openInPreview)
+            actionHandlerForTesting(.openInPreview)
         case "arrow.down.circle":
-            action(.savePDF)
+            actionHandlerForTesting(.savePDF)
         default:
             fatalError()
         }

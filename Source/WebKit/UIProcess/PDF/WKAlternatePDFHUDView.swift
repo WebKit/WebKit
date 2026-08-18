@@ -134,6 +134,9 @@ extension WKAlternatePDFHUDView {
     let frameIdentifier: UInt64
 
     @nonobjc
+    final let actionHandlerForTesting: @MainActor @Sendable (WKPDFHUDViewControlAction) -> Void
+
+    @nonobjc
     final let model = PDFHUDControlsModel()
 
     init(
@@ -143,6 +146,7 @@ extension WKAlternatePDFHUDView {
         actionHandler: @MainActor @Sendable @escaping (WKPDFHUDViewControlAction) -> Void
     ) {
         self.frameIdentifier = frameIdentifier
+        self.actionHandlerForTesting = actionHandler
 
         super.init(frame: frame)
 
