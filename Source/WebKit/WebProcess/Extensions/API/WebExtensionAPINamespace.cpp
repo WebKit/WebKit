@@ -66,7 +66,7 @@ bool WebExtensionAPINamespace::isPropertyAllowed(const ASCIILiteral& name, WebPa
 
 #if ENABLE(WK_WEB_EXTENSIONS_OFFSCREEN)
     if (name == "offscreen"_s)
-        return page->corePage()->settings().webExtensionOffscreenEnabled() && extensionContext->hasPermission("offscreen"_s);
+        return page && page->corePage() && page->corePage()->settings().webExtensionOffscreenEnabled() && extensionContext->hasPermission("offscreen"_s);
 
     // The offscreen document is not a full extension environment; only runtime and test are reachable from it.
     if (page && extensionContext->isOffscreenPage(*page))
@@ -114,9 +114,9 @@ bool WebExtensionAPINamespace::isPropertyAllowed(const ASCIILiteral& name, WebPa
     // we check in sidePanel that there is no sidebar_action key, but we do not check in sidebarAction
     // that there is no sidePanel permission
     if (name == "sidePanel"_s)
-        return page->corePage()->settings().webExtensionSidebarEnabled() && extensionContext->hasPermission("sidePanel"_s) && !doesDictionaryExist(extensionContext->manifest(), "sidebar_action"_s, true);
+        return page && page->corePage() && page->corePage()->settings().webExtensionSidebarEnabled() && extensionContext->hasPermission("sidePanel"_s) && !doesDictionaryExist(extensionContext->manifest(), "sidebar_action"_s, true);
     if (name == "sidebarAction"_s)
-        return page->corePage()->settings().webExtensionSidebarEnabled() && doesDictionaryExist(extensionContext->manifest(), "sidebar_action"_s, true);
+        return page && page->corePage() && page->corePage()->settings().webExtensionSidebarEnabled() && doesDictionaryExist(extensionContext->manifest(), "sidebar_action"_s, true);
 #endif // ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
 
     if (name == "storage"_s)

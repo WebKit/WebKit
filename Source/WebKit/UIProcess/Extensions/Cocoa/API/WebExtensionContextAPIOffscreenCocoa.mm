@@ -80,8 +80,9 @@ void WebExtensionContext::offscreenCreateDocument(const WebExtensionOffscreenDoc
     m_offscreenWebView.get().inspectable = m_inspectable;
 
     Ref offscreenPage = *m_offscreenWebView.get()._page;
-
-    offscreenProcess->send(Messages::WebExtensionContextProxy::SetOffscreenPageIdentifier(offscreenPage->webPageIDInMainFrameProcess()), identifier());
+    offscreenPage->forEachWebContentProcess([&](auto& webProcess, auto pageID) {
+        webProcess.send(Messages::WebExtensionContextProxy::SetOffscreenPageIdentifier(pageID), identifier());
+    });
 
     constexpr ASCIILiteral activityName = "Web Extension offscreen document"_s;
     m_offscreenWebViewActivity = protect(offscreenPage->activityGroupContext())->foregroundProcessActivityGroup(activityName);
