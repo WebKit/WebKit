@@ -39,6 +39,7 @@
 #include <wtf/CompletionHandler.h>
 #include <wtf/Forward.h>
 #include <wtf/ListHashSet.h>
+#include <wtf/MonotonicTime.h>
 #include <wtf/ProcessID.h>
 #include <wtf/RetainReleaseSwift.h>
 #include <wtf/WeakPtr.h>
@@ -227,6 +228,14 @@ public:
     Ref<WebFrameProxy> rootFrame();
     RefPtr<WebFrameProxy> childFrame(uint64_t index) const;
 
+    // https://html.spec.whatwg.org/multipage/interaction.html#activation-notification
+    // Mirrors LocalDOMWindow::notifyActivated, propagating activation to ancestor frames
+    // (any origin) and same-origin descendant frames.
+    void notifyActivated(MonotonicTime activationTime);
+
+    // https://html.spec.whatwg.org/multipage/interaction.html#transient-activation
+    bool hasTransientActivation() const;
+
     WebProcessProxy& process() const;
     Ref<WebProcessProxy> protectedProcess() const;
     void setProcess(FrameProcess&);
@@ -318,6 +327,8 @@ private:
     WebFrameProxy* nextSibling() const;
     WebFrameProxy* previousSibling() const;
 
+    void propagateActivationToSameOriginDescendants(const WebCore::SecurityOriginData& rootOrigin, MonotonicTime);
+
     WeakPtr<WebPageProxy> m_page;
     Ref<FrameProcess> m_frameProcess;
     WeakPtr<WebFrameProxy> m_opener;
@@ -343,6 +354,7 @@ private:
     bool m_isPendingInitialHistoryItem { false };
     std::optional<WebCore::IntRect> m_remoteFrameRect;
     WebCore::SandboxFlags m_effectiveSandboxFlags;
+    MonotonicTime m_lastActivationTimestamp { -MonotonicTime::infinity() };
     WebCore::ReferrerPolicy m_effectiveReferrerPolicy { WebCore::ReferrerPolicy::EmptyString };
     WebCore::ScrollbarMode m_scrollingMode;
 } SWIFT_SHARED_REFERENCE(refWebFrameProxy, derefWebFrameProxy);

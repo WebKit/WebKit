@@ -635,6 +635,12 @@ static void testWebViewClipboardPermissionRequest(EditorTest* test, gconstpointe
     g_assert_error(error.get(), WEBKIT_JAVASCRIPT_ERROR, WEBKIT_JAVASCRIPT_ERROR_SCRIPT_FAILED);
     g_assert_true(g_str_has_prefix(error->message, "NotAllowedError:"));
 
+    // Without a transient activation, reading from the clipboard is denied.
+    test->m_permissionRequestResponse = EditorTest::ClipboardPermissionRequestResponse::Allow;
+    value = test->runAsyncJavaScriptFunctionInWorldAndWaitUntilFinished("return navigator.clipboard.readText();", nullptr, nullptr, &error.outPtr());
+    g_assert_null(value);
+
+    test->clickMouseButton(20, 20);  // Provide transient activation before reading.
     test->m_permissionRequestResponse = EditorTest::ClipboardPermissionRequestResponse::Allow;
     value = test->runAsyncJavaScriptFunctionInWorldAndWaitUntilFinished("return navigator.clipboard.readText();", nullptr, nullptr, &error.outPtr());
     g_assert_true(JSC_IS_VALUE(value));
@@ -647,6 +653,7 @@ static void testWebViewClipboardPermissionRequest(EditorTest* test, gconstpointe
     g_assert_error(error.get(), WEBKIT_JAVASCRIPT_ERROR, WEBKIT_JAVASCRIPT_ERROR_SCRIPT_FAILED);
     g_assert_true(g_str_has_prefix(error->message, "NotAllowedError:"));
 
+    test->clickMouseButton(20, 20);  // Provide transient activation before reading.
     test->m_permissionRequestResponse = EditorTest::ClipboardPermissionRequestResponse::AllowAsync;
     value = test->runAsyncJavaScriptFunctionInWorldAndWaitUntilFinished("return navigator.clipboard.readText();", nullptr, nullptr, &error.outPtr());
     g_assert_true(JSC_IS_VALUE(value));
