@@ -104,6 +104,11 @@ JSWebAssemblyInstance::JSWebAssemblyInstance(VM& vm, Structure* structure, JSWeb
 
     zeroSpan(cachedMemoryBaseSizePairs());
 
+    for (unsigned i = 0; i < m_moduleInformation->memoryCount(); ++i) {
+        if (m_moduleInformation->memory(i).isMemory64())
+            m_memoryIsMemory64Bits.set(i);
+    }
+
     m_globals = globals().data();
     memset(reinterpret_cast<uint8_t*>(globals().data()), 0, globals().size_bytes());
     for (unsigned i = 0; i < m_moduleInformation->globals.size(); ++i) {

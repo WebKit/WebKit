@@ -908,11 +908,31 @@ end)
 
 reservedOpcode(0x27)
 
-# Pops the address operand of a memory access, whose width follows memory 0's address type.
+# Pops the address operand of a memory access, leaving it unextended. An i32 address may carry
+# garbage in its upper half, and only the memory being accessed determines how wide the address is,
+# so loadStoreMakePointerFast/Slow do the narrowing once they know which memory that is.
 macro popMemoryAddress(reg)
     popInt64(reg) # Note that popInt32 and popInt64 are same implementation.
-    btbnz JSWebAssemblyInstance::m_cachedMemory0IsMemory64[wasmInstance], .done
+end
+
+# Narrows an address to 32 bits unless memory 0, which is bit 0 of the bitset, is 64-bit.
+macro zeroExtendAddressForMemory0(reg)
+    btbnz (constexpr (JSWebAssemblyInstance::offsetOfMemoryIsMemory64Bits()))[wasmInstance], 0x1, .done
     zxi2q reg, reg
+.done:
+end
+
+# As above, for an arbitrary memory whose index is already in indexReg.
+macro zeroExtendAddressForMemory(indexReg, addrReg, scratch1, scratch2)
+    move indexReg, scratch1
+    urshiftq 6, scratch1
+    lshiftp 3, scratch1
+    loadq (constexpr (JSWebAssemblyInstance::offsetOfMemoryIsMemory64Bits()))[wasmInstance, scratch1], scratch1
+    move indexReg, scratch2
+    andq 63, scratch2
+    urshiftq scratch2, scratch1
+    btqnz scratch1, 0x1, .done
+    zxi2q addrReg, addrReg
 .done:
 end
 
@@ -937,6 +957,7 @@ macro loadStoreMakePointerFast(alignAccess, offsetAccess, wasmAddrReg, size, scr
     bbaeq scratch, 0x80, slowLabel
 
     # Both single-byte, memory index = 0. scratch = offset value.
+    zeroExtendAddressForMemory0(wasmAddrReg)
     baddpc(scratch, wasmAddrReg, _ipint_throw_OutOfBoundsMemoryAccess)
     move size - 1, scratch2
     baddpc(wasmAddrReg, scratch2, _ipint_throw_OutOfBoundsMemoryAccess)
@@ -961,6 +982,10 @@ macro loadStoreMakePointerSlow(cursor, wasmAddrReg, size, scratch, scratch2, dec
 .decodeOffset:
     # 3. Decode offset
     decodeLEBVarUInt(scratch2, cursor, decodeScratch1, decodeScratch2)
+
+    # 4. Narrow the address unless the memory being accessed is 64-bit. This has to happen before the
+    # offset is added, and it consults the accessed memory rather than memory 0.
+    zeroExtendAddressForMemory(scratch, wasmAddrReg, decodeScratch1, decodeScratch2)
 
     baddpc(scratch2, wasmAddrReg, _ipint_throw_OutOfBoundsMemoryAccess)
     move size - 1, scratch2
@@ -10106,12 +10131,10 @@ end)
 
 ipintAtomicOp(_memory_atomic_wait32, macro()
     # starting at sp: timeout, value, pointer
-    loadb IPInt::AtomicMemoryAccessMetadata::memoryIndex[MC], t0
-    pushInt32(t0)
+    loadb IPInt::AtomicMemoryAccessMetadata::memoryIndex[MC], t2
+    pushInt32(t2)
     loadq (StackValueSize * 3)[sp], t0
-    btbnz JSWebAssemblyInstance::m_cachedMemory0IsMemory64[wasmInstance], .pointerIsMemory64
-    zxi2q t0, t0
-.pointerIsMemory64:
+    zeroExtendAddressForMemory(t2, t0, t3, t5)
     loadq IPInt::AtomicMemoryAccessMetadata::offset[MC], t1
     baddpc(t1, t0, _ipint_throw_OutOfBoundsMemoryAccess)
     storeq t0, (StackValueSize * 3)[sp] # replace pointer with pointer + offset
@@ -10139,12 +10162,10 @@ end)
 
 ipintAtomicOp(_memory_atomic_wait64, macro()
     # starting at sp: timeout, value, pointer
-    loadb IPInt::AtomicMemoryAccessMetadata::memoryIndex[MC], t0
-    pushInt32(t0)
+    loadb IPInt::AtomicMemoryAccessMetadata::memoryIndex[MC], t2
+    pushInt32(t2)
     loadq (StackValueSize * 3)[sp], t0
-    btbnz JSWebAssemblyInstance::m_cachedMemory0IsMemory64[wasmInstance], .pointerIsMemory64
-    zxi2q t0, t0
-.pointerIsMemory64:
+    zeroExtendAddressForMemory(t2, t0, t3, t5)
     loadq IPInt::AtomicMemoryAccessMetadata::offset[MC], t1
     baddpc(t1, t0, _ipint_throw_OutOfBoundsMemoryAccess)
     storeq t0, (StackValueSize * 3)[sp] # replace pointer with pointer + offset
