@@ -31,6 +31,7 @@ enum class FetchOptionsDestination : uint8_t {
     EmptyString,
     Audio,
     Audioworklet,
+    CompressionDictionary,
     Document,
     Embed,
     Environmentmap,

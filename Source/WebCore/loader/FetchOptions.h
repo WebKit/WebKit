@@ -133,6 +133,7 @@ template<> struct EnumTraitsForPersistence<WebCore::FetchOptions::Destination> {
         WebCore::FetchOptions::Destination::EmptyString,
         WebCore::FetchOptions::Destination::Audio,
         WebCore::FetchOptions::Destination::Audioworklet,
+        WebCore::FetchOptions::Destination::CompressionDictionary,
         WebCore::FetchOptions::Destination::Document,
         WebCore::FetchOptions::Destination::Embed,
         WebCore::FetchOptions::Destination::Environmentmap,

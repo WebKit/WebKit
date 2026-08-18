@@ -27,10 +27,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-enum FetchRequestDestination {
+[
+    ExportMacro=WEBCORE_EXPORT
+] enum FetchRequestDestination {
     "",
     "audio",
     "audioworklet",
+    "compression-dictionary",
     "document",
     "embed",
     "environmentmap",

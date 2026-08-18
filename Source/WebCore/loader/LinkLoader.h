@@ -63,12 +63,14 @@ public:
     virtual ~LinkLoader();
 
     void loadLink(const LinkLoadParameters&, Document&);
+    void loadCompressionDictionaryLink(const LinkLoadParameters&, Document&);
     enum class ShouldLog : bool { No, Yes };
     enum class IsModulePreload : bool { No, Yes };
     static std::optional<CachedResource::Type> resourceTypeFromAsAttribute(const String&, Document&, ShouldLog = ShouldLog::No, IsModulePreload = IsModulePreload::No);
 
     enum class MediaAttributeCheck { MediaAttributeEmpty, MediaAttributeNotEmpty, SkipMediaAttributeCheck };
     static void loadLinksFromHeader(const String& headerValue, const URL& baseURL, Document&, MediaAttributeCheck);
+    static void loadCompressionDictionariesFromHeader(const String& headerValue, const URL& baseURL, Document&);
     static bool isSupportedType(CachedResource::Type, const String& mimeType, Document&);
 
     void triggerEvents(const CachedResource&);
@@ -86,10 +88,12 @@ private:
     static void preconnectIfNeeded(const LinkLoadParameters&, Document&);
     static RefPtr<LinkPreloadResourceClient> preloadIfNeeded(const LinkLoadParameters&, Document&, LinkLoader*);
     void prefetchIfNeeded(const LinkLoadParameters&, Document&);
+    static RefPtr<LinkPreloadResourceClient> loadCompressionDictionaryIfNeeded(const LinkLoadParameters&, Document&, LinkLoader*);
 
     WeakPtr<LinkLoaderClient> m_client;
     CachedResourceHandle<CachedResource> m_cachedLinkResource;
     RefPtr<LinkPreloadResourceClient> m_preloadResourceClient;
+    RefPtr<LinkPreloadResourceClient> m_compressionDictionaryLoadResourceClient;
 };
 
 }

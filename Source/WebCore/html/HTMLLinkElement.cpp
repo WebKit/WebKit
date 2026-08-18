@@ -246,6 +246,13 @@ void HTMLLinkElement::attributeChanged(const QualifiedName& name, const AtomStri
             m_styleScope->didChangeActiveStyleSheetCandidates();
         break;
     }
+    case AttributeNames::crossoriginAttr:
+        HTMLElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
+        // Only compression-dictionary lists crossorigin among its appropriate times to fetch:
+        // https://html.spec.whatwg.org/multipage/links.html#link-type-compression-dictionary
+        if (oldValue != newValue && m_relAttribute.isCompressionDictionary)
+            process();
+        break;
     case AttributeNames::disabledAttr:
         setDisabledState(!newValue.isNull());
         break;
@@ -402,6 +409,11 @@ void HTMLLinkElement::process()
         // we no longer contain a stylesheet, e.g. perhaps rel or type was changed
         clearSheet();
         protect(m_styleScope)->didChangeActiveStyleSheetCandidates();
+        return;
+    }
+
+    if (m_relAttribute.isCompressionDictionary) {
+        m_linkLoader->loadCompressionDictionaryLink(params, document);
         return;
     }
 

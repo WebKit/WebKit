@@ -538,6 +538,7 @@ ResourceLoadInfo NetworkResourceLoader::resourceLoadInfo()
         case WebCore::FetchOptions::Destination::Audio:
             return ResourceLoadInfo::Type::Media;
         case WebCore::FetchOptions::Destination::Audioworklet:
+        case WebCore::FetchOptions::Destination::CompressionDictionary:
             return ResourceLoadInfo::Type::Other;
         case WebCore::FetchOptions::Destination::Document:
         case WebCore::FetchOptions::Destination::Iframe:

@@ -185,6 +185,7 @@
 #include "LayoutDisallowedScope.h"
 #include "LazyLoadImageObserver.h"
 #include "LegacySchemeRegistry.h"
+#include "LinkLoader.h"
 #include "LoadableSpeculationRules.h"
 #include "LoaderStrategy.h"
 #include "LocalDOMWindow.h"
@@ -7122,6 +7123,8 @@ void Document::dispatchWindowLoadEvent()
     protect(window())->dispatchLoadEvent();
     m_loadEventFinished = true;
 
+    flushPendingCompressionDictionaryLoads();
+
     // A subframe that finished loading without ever being laid out was hidden (e.g. parent had
     // display:none); note that so the first layout can fire resize for the 0x0 to actual size change.
     if (RefPtr frameView = view()) {
@@ -8244,6 +8247,38 @@ Ref<HTMLCollection> Document::documentNamedItems(const AtomString& name)
 Ref<NodeList> Document::getElementsByName(const AtomString& elementName)
 {
     return ensureRareData().ensureNodeLists().addCacheWithAtomName<NameNodeList>(*this, elementName);
+}
+
+void Document::queueCompressionDictionaryLoad(Function<void()>&& load)
+{
+    if (!m_loadEventFinished) {
+        m_pendingCompressionDictionaryLoads.append(WTF::move(load));
+        return;
+    }
+    eventLoop().queueTask(TaskSource::Networking, WTF::move(load));
+}
+
+// Dictionary fetches must not compete with the page's critical-path loads, so they are held back
+// until the load event has been dispatched: those from <link> elements, and those named by this
+// document's own Link headers, which are only looked at for dictionaries here.
+void Document::flushPendingCompressionDictionaryLoads()
+{
+    ASSERT(m_loadEventFinished);
+
+    if (!settings().compressionDictionaryEnabled())
+        return;
+
+    if (RefPtr documentLoader = loader()) {
+        auto linkHeader = documentLoader->response().httpHeaderField(HTTPHeaderName::Link);
+        if (!linkHeader.isEmpty()) {
+            m_pendingCompressionDictionaryLoads.append([document = Ref { *this }, linkHeader = WTF::move(linkHeader)] {
+                LinkLoader::loadCompressionDictionariesFromHeader(linkHeader, document->url(), document);
+            });
+        }
+    }
+
+    for (auto& load : std::exchange(m_pendingCompressionDictionaryLoads, { }))
+        eventLoop().queueTask(TaskSource::Networking, WTF::move(load));
 }
 
 void Document::finishedParsing()

@@ -53,6 +53,9 @@ static constexpr SortedArrayMap linkTypes { WTF::toArray<std::pair<ComparableLet
     { "alternate"_s, { [](auto) { return true; }, [](auto relAttribute) { relAttribute.isAlternate = true; } } },
     { "apple-touch-icon"_s, { [](auto) { return true; }, [](auto relAttribute) { relAttribute.iconType = LinkIconType::TouchIcon; } } },
     { "apple-touch-icon-precomposed"_s, { [](auto) { return true; }, [](auto relAttribute) { relAttribute.iconType = LinkIconType::TouchPrecomposedIcon; } } },
+    { "compression-dictionary"_s, {
+        [](auto document) { return document.settings().compressionDictionaryEnabled(); },
+        [](auto relAttribute) { relAttribute.isCompressionDictionary = true; } } },
     { "dns-prefetch"_s, { [](auto) { return true; }, [](auto relAttribute) { relAttribute.isDNSPrefetch = true; } } },
     { "expect"_s, { [](auto) { return true; }, [](auto relAttribute) { relAttribute.isInternalResourceLink = true; } } },
     { "icon"_s, { [](auto) { return true; }, [](auto relAttribute) { relAttribute.iconType = LinkIconType::Favicon; } } },

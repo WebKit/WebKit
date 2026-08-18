@@ -1,0 +1,3 @@
+
+PASS imagesrcset is not supported on <link rel=compression-dictionary>
+

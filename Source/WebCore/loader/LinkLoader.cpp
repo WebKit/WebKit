@@ -35,6 +35,7 @@
 
 #include "CSSStyleSheet.h"
 #include "CachedCSSStyleSheet.h"
+#include "CachedRawResource.h"
 #include "CachedResourceLoader.h"
 #include "CachedResourceRequest.h"
 #include "ContainerNode.h"
@@ -86,6 +87,8 @@ LinkLoader::~LinkLoader()
     if (RefPtr cachedLinkResource = m_cachedLinkResource)
         cachedLinkResource->removeClient(*this);
     if (RefPtr client = m_preloadResourceClient)
+        client->clear();
+    if (RefPtr client = m_compressionDictionaryLoadResourceClient)
         client->clear();
 }
 
@@ -146,6 +149,32 @@ void LinkLoader::loadLinksFromHeader(const String& headerValue, const URL& baseU
     }
 }
 
+void LinkLoader::loadCompressionDictionariesFromHeader(const String& headerValue, const URL& baseURL, Document& document)
+{
+    if (headerValue.isEmpty())
+        return;
+    LinkHeaderSet headerSet(headerValue);
+    for (auto& header : headerSet) {
+        if (!header.valid() || header.url().isEmpty() || header.rel().isEmpty())
+            continue;
+
+        LinkRelAttribute relAttribute(document, header.rel());
+        if (!relAttribute.isCompressionDictionary)
+            continue;
+
+        URL url(baseURL, header.url());
+        // Sanity check to avoid re-entrancy here.
+        if (equalIgnoringFragmentIdentifier(url, baseURL))
+            continue;
+
+        auto fetchPriority = parseEnumerationFromString<RequestPriority>(header.fetchPriority()).value_or(RequestPriority::Auto);
+        LinkLoadParameters params { relAttribute, url, header.as(), header.media(), header.mimeType(), header.crossOrigin(), header.imageSrcSet(), header.imageSizes(), header.nonce(),
+            parseReferrerPolicy(header.referrerPolicy(), ReferrerPolicySource::ReferrerPolicyAttribute).value_or(ReferrerPolicy::EmptyString), fetchPriority };
+
+        loadCompressionDictionaryIfNeeded(params, document, nullptr);
+    }
+}
+
 std::optional<CachedResource::Type> LinkLoader::resourceTypeFromAsAttribute(const String& as, Document& document, ShouldLog shouldLogError, IsModulePreload isModulePreload)
 {
     if (equalLettersIgnoringASCIICase(as, "fetch"_s))
@@ -169,6 +198,8 @@ std::optional<CachedResource::Type> LinkLoader::resourceTypeFromAsAttribute(cons
     case FetchRequestDestination::Audioworklet:
         return CachedResource::Type::Script;
     case FetchRequestDestination::Document:
+        return std::nullopt;
+    case FetchRequestDestination::CompressionDictionary:
         return std::nullopt;
     case FetchRequestDestination::Embed:
         return std::nullopt;
@@ -469,6 +500,8 @@ void LinkLoader::cancelLoad()
 {
     if (RefPtr client = m_preloadResourceClient)
         client->clear();
+    if (RefPtr client = m_compressionDictionaryLoadResourceClient)
+        client->clear();
 }
 
 void LinkLoader::loadLink(const LinkLoadParameters& params, Document& document)
@@ -490,6 +523,61 @@ void LinkLoader::loadLink(const LinkLoadParameters& params, Document& document)
         if (resourceClient)
             m_preloadResourceClient = WTF::move(resourceClient);
     }
+}
+
+// https://whatpr.org/html/11620/links.html#load-a-compression-dictionary
+RefPtr<LinkPreloadResourceClient> LinkLoader::loadCompressionDictionaryIfNeeded(const LinkLoadParameters& params, Document& document, LinkLoader* loader)
+{
+    if (!document.loader())
+        return nullptr;
+
+    URL url = document.encodingParseURL(params.href.string());
+    if (!url.isValid()) {
+        document.addConsoleMessage(MessageSource::Other, MessageLevel::Error, "rel=compression-dictionary has an invalid URL"_s);
+        return nullptr;
+    }
+
+    auto options = CachedResourceLoader::defaultCachedResourceOptions();
+    options.referrerPolicy = params.referrerPolicy;
+    options.fetchPriority = params.fetchPriority;
+    options.nonce = params.nonce;
+    options.destination = FetchOptions::Destination::CompressionDictionary;
+
+    // No CORS is coerced to Anonymous, so this is always a CORS fetch.
+    auto crossOrigin = params.crossOrigin.isNull() ? String { "anonymous"_s } : params.crossOrigin;
+    auto linkRequest = createPotentialAccessControlRequest(ResourceRequest { WTF::move(url) }, WTF::move(options), document, crossOrigin);
+    linkRequest.setPriority(DefaultResourceLoadPriority::forResourceType(CachedResource::Type::RawResource));
+    linkRequest.setInitiatorType("link"_s);
+    linkRequest.setIgnoreForRequestCount(true);
+
+    RefPtr<CachedResource> cachedLinkResource;
+    if (auto result = protect(document.cachedResourceLoader())->requestRawResource(WTF::move(linkRequest)))
+        cachedLinkResource = WTF::move(result.value());
+
+    if (cachedLinkResource && loader)
+        return createLinkPreloadResourceClient(*cachedLinkResource, *loader, document);
+
+    if (loader)
+        loader->triggerError();
+    return nullptr;
+}
+
+void LinkLoader::loadCompressionDictionaryLink(const LinkLoadParameters& params, Document& document)
+{
+    RefPtr client = m_client.get();
+    if (!client || !client->shouldLoadLink())
+        return;
+
+    document.queueCompressionDictionaryLoad([protectedThis = Ref { *this }, params, weakDocument = WeakPtr { document }] {
+        RefPtr document = weakDocument.get();
+        if (!document)
+            return;
+        auto resourceClient = loadCompressionDictionaryIfNeeded(params, *document, protectedThis.ptr());
+        if (RefPtr existingClient = protectedThis->m_compressionDictionaryLoadResourceClient)
+            existingClient->clear();
+        if (resourceClient)
+            protectedThis->m_compressionDictionaryLoadResourceClient = WTF::move(resourceClient);
+    });
 }
 
 }

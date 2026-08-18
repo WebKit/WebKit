@@ -1,0 +1,3 @@
+
+PASS <link rel=compression-dictionary> are fetched independently of the type.
+

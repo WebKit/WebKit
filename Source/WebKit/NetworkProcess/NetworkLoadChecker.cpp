@@ -445,6 +445,7 @@ bool NetworkLoadChecker::isAllowedByContentSecurityPolicy(const ResourceRequest&
             return false;
         // FIXME: Check CSP for non-importScripts() initiated loads.
         return true;
+    case FetchOptions::Destination::CompressionDictionary:
     case FetchOptions::Destination::EmptyString:
         return contentSecurityPolicy->allowConnectToSource(request.url(), { }, redirectResponseReceived, preRedirectURL);
     case FetchOptions::Destination::Audio:

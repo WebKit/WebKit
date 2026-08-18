@@ -1361,6 +1361,8 @@ public:
 
     void finishedParsing();
 
+    void queueCompressionDictionaryLoad(Function<void()>&&);
+
     enum BackForwardCacheState : uint8_t { NotInBackForwardCache, AboutToEnterBackForwardCache, InBackForwardCache };
 
     BackForwardCacheState backForwardCacheState() const { return m_backForwardCacheState; }
@@ -2148,6 +2150,8 @@ private:
     friend class ThrowOnDynamicMarkupInsertionCountIncrementer;
     friend class UnloadCountIncrementer;
 
+    void flushPendingCompressionDictionaryLoads();
+
     void updateTitleElement(Element& changingTitleElement);
     void willDetachPage() final;
     void frameDestroyed() final;
@@ -2775,6 +2779,8 @@ private:
     // and should be merged.
     bool m_processingLoadEvent { false };
     bool m_loadEventFinished { false };
+
+    Vector<Function<void()>> m_pendingCompressionDictionaryLoads;
 
     bool m_visuallyOrdered { false };
     bool m_bParsing { false }; // FIXME: rename
