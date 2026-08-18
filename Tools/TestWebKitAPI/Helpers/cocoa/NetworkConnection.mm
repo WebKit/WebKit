@@ -28,6 +28,7 @@
 
 #import "Helpers/cocoa/HTTPServer.h"
 #import "Helpers/cocoa/NetworkSPI.h"
+#import <Security/Security.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/SHA1.h>
 #import <wtf/StdLibExtras.h>
@@ -391,6 +392,38 @@ void ConnectionGroup::drainWebTransportSession()
     RetainPtr metadata = nw_connection_group_copy_protocol_metadata(m_data->group.get(), adoptNS(nw_protocol_copy_webtransport_definition()).get());
     if (metadata)
         nw_webtransport_metadata_set_local_draining(metadata.get());
+}
+
+static RetainPtr<sec_protocol_metadata_t> securityMetadata(nw_connection_group_t group)
+{
+    RetainPtr sessionMetadata = nw_connection_group_copy_protocol_metadata(group, adoptNS(nw_protocol_copy_webtransport_definition()).get());
+    if (!sessionMetadata)
+        return nullptr;
+    switch (nw_webtransport_metadata_get_transport_mode(sessionMetadata.get())) {
+    case nw_webtransport_transport_mode_unknown:
+        return nullptr;
+    case nw_webtransport_transport_mode_http2: {
+        RetainPtr tlsMetadata = nw_connection_group_copy_protocol_metadata(group, adoptNS(nw_protocol_copy_tls_definition()).get());
+        return adoptNS(nw_tls_copy_sec_protocol_metadata(tlsMetadata.get()));
+    }
+    case nw_webtransport_transport_mode_http3: {
+        RetainPtr quicMetadata = nw_connection_group_copy_protocol_metadata(group, adoptNS(nw_protocol_copy_quic_connection_definition()).get());
+        return adoptNS(nw_quic_connection_copy_sec_protocol_metadata(quicMetadata.get()));
+    }
+    }
+    ASSERT_NOT_REACHED();
+    return nullptr;
+}
+
+Vector<uint8_t> ConnectionGroup::exportKeyingMaterial(std::span<const uint8_t> label, std::span<const uint8_t> context, uint32_t outputLength) const
+{
+    RetainPtr metadata = securityMetadata(m_data->group.get());
+    if (!metadata)
+        return { };
+    RetainPtr secret = adoptNS(sec_protocol_metadata_create_secret_with_context(metadata.get(), label.size(), reinterpret_cast<const char*>(label.data()), context.size(), context.data(), outputLength));
+    if (!secret)
+        return { };
+    return vectorFromData(secret.get());
 }
 
 #endif // HAVE(WEBTRANSPORT)

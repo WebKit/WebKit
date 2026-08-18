@@ -47,7 +47,7 @@ struct WebTransportServer::Data : public ThreadSafeRefCounted<WebTransportServer
     Vector<CoroutineHandle<ConnectionTask::promise_type>> coroutineHandles;
 };
 
-WebTransportServer::WebTransportServer(Function<ConnectionTask(ConnectionGroup)>&& connectionGroupHandler, sec_identity_t identity)
+WebTransportServer::WebTransportServer(Function<ConnectionTask(ConnectionGroup)>&& connectionGroupHandler, sec_identity_t identity, Protocol protocol)
     : m_data(Data::create(WTF::move(connectionGroupHandler)))
 {
     auto configureWebTransport = [](nw_protocol_options_t options) {
@@ -67,7 +67,12 @@ WebTransportServer::WebTransportServer(Function<ConnectionTask(ConnectionGroup)>
         nw_quic_set_max_datagram_frame_size(options, std::numeric_limits<uint16_t>::max());
     };
 
-    RetainPtr parameters = adoptNS(nw_parameters_create_webtransport_http(configureWebTransport, configureTLS, configureQUIC, NW_PARAMETERS_DEFAULT_CONFIGURATION));
+    RetainPtr parameters = adoptNS(nw_parameters_create_webtransport_http(
+        configureWebTransport,
+        configureTLS,
+        protocol == Protocol::H3 ? configureQUIC : NW_PARAMETERS_DISABLE_PROTOCOL,
+        protocol == Protocol::H3 ? NW_PARAMETERS_DISABLE_PROTOCOL : NW_PARAMETERS_DEFAULT_CONFIGURATION
+    ));
     ASSERT(parameters);
     nw_parameters_set_server_mode(parameters.get(), true);
 

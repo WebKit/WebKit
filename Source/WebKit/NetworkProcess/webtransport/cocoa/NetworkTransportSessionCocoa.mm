@@ -59,18 +59,17 @@
 
 namespace WebKit {
 
-Ref<NetworkTransportSession> NetworkTransportSession::create(NetworkConnectionToWebProcess& connection, WebTransportSessionIdentifier identifier, WebCore::WebTransportOptions&& options, nw_connection_group_t group, nw_endpoint_t endpoint, RefPtr<SecurityProtocolMetadata>&& metadata)
+Ref<NetworkTransportSession> NetworkTransportSession::create(NetworkConnectionToWebProcess& connection, WebTransportSessionIdentifier identifier, WebCore::WebTransportOptions&& options, nw_connection_group_t group, nw_endpoint_t endpoint)
 {
-    return adoptRef(*new NetworkTransportSession(connection, identifier, WTF::move(options), group, endpoint, WTF::move(metadata)));
+    return adoptRef(*new NetworkTransportSession(connection, identifier, WTF::move(options), group, endpoint));
 }
 
-NetworkTransportSession::NetworkTransportSession(NetworkConnectionToWebProcess& connection, WebTransportSessionIdentifier identifier, WebCore::WebTransportOptions&& options, nw_connection_group_t connectionGroup, nw_endpoint_t endpoint, RefPtr<SecurityProtocolMetadata>&& metadata)
+NetworkTransportSession::NetworkTransportSession(NetworkConnectionToWebProcess& connection, WebTransportSessionIdentifier identifier, WebCore::WebTransportOptions&& options, nw_connection_group_t connectionGroup, nw_endpoint_t endpoint)
     : m_connectionToWebProcess(connection)
     , m_identifier(identifier)
     , m_options(WTF::move(options))
     , m_connectionGroup(connectionGroup)
     , m_endpoint(endpoint)
-    , m_securityProtocolMetadata(WTF::move(metadata))
 {
     setupConnectionHandler();
 }
@@ -198,7 +197,7 @@ static String joinProtocolStrings(const Vector<String>& protocols)
     return builder.toString();
 }
 
-static RetainPtr<nw_parameters_t> createParameters(NetworkConnectionToWebProcess& connectionToWebProcess, URL&& url, WebCore::WebTransportOptions& options, Vector<KeyValuePair<String, String>>&& additionalHeaders, WebKit::WebPageProxyIdentifier&& pageID, WebCore::ClientOrigin&& clientOrigin, RefPtr<NetworkTransportSession::SecurityProtocolMetadata> securityMetadata)
+static RetainPtr<nw_parameters_t> createParameters(NetworkConnectionToWebProcess& connectionToWebProcess, URL&& url, WebCore::WebTransportOptions& options, Vector<KeyValuePair<String, String>>&& additionalHeaders, WebKit::WebPageProxyIdentifier&& pageID, WebCore::ClientOrigin&& clientOrigin)
 {
     // https://www.w3.org/TR/webtransport/#web-transport-configuration
     auto configureWebTransport = [
@@ -224,7 +223,6 @@ static RetainPtr<nw_parameters_t> createParameters(NetworkConnectionToWebProcess
         url = WTF::move(url),
         pageID = WTF::move(pageID),
         hashes = std::exchange(options.serverCertificateHashes, { }),
-        securityMetadata = WTF::move(securityMetadata),
         clientOrigin = WTF::move(clientOrigin)
     ](nw_protocol_options_t options) mutable {
         RetainPtr securityOptions = adoptNS(nw_tls_copy_sec_protocol_options(options));
@@ -238,11 +236,8 @@ static RetainPtr<nw_parameters_t> createParameters(NetworkConnectionToWebProcess
             url,
             pageID,
             hashes,
-            securityMetadata,
             clientOrigin
         ] (sec_protocol_metadata_t metadata, sec_trust_t trust, sec_protocol_verify_complete_t completion) mutable {
-            if (securityMetadata)
-                securityMetadata->receivedMetadata(metadata);
             RefPtr connectionToWebProcess = weakConnection.get();
             if (!connectionToWebProcess) {
                 completion(false);
@@ -270,10 +265,7 @@ RefPtr<NetworkTransportSession> NetworkTransportSession::create(NetworkConnectio
         return nullptr;
     }
 
-    // FIXME: Remove SecurityProtocolMetadata once we no longer support platforms without nw_webtransport_metadata_copy_sec_protocol_metadata.
-    RefPtr metadata = canLoad_Network_nw_webtransport_metadata_copy_sec_protocol_metadata() ? nullptr : SecurityProtocolMetadata::create();
-
-    RetainPtr parameters = createParameters(connectionToWebProcess, WTF::move(url), options, WTF::move(additionalHeaders), WTF::move(pageID), WTF::move(clientOrigin), metadata);
+    RetainPtr parameters = createParameters(connectionToWebProcess, WTF::move(url), options, WTF::move(additionalHeaders), WTF::move(pageID), WTF::move(clientOrigin));
     if (!parameters) {
         ASSERT_NOT_REACHED();
         return nullptr;
@@ -291,7 +283,7 @@ RefPtr<NetworkTransportSession> NetworkTransportSession::create(NetworkConnectio
         return nullptr;
     }
 
-    return NetworkTransportSession::create(connectionToWebProcess, identifier, WTF::move(options), connectionGroup.get(), endpoint.get(), WTF::move(metadata));
+    return NetworkTransportSession::create(connectionToWebProcess, identifier, WTF::move(options), connectionGroup.get(), endpoint.get());
 }
 
 void NetworkTransportSession::initialize(CompletionHandler<void(std::optional<WebCore::WebTransportConnectionInfo>&&)>&& completionHandler)
@@ -595,12 +587,31 @@ bool NetworkTransportSession::isSessionClosed() const
     return false;
 }
 
-void NetworkTransportSession::exportKeyingMaterial(std::span<const uint8_t> label, std::span<const uint8_t> context, uint32_t outputLength, CompletionHandler<void(std::optional<Vector<uint8_t>>)>&& completionHandler)
+RetainPtr<sec_protocol_metadata_t> NetworkTransportSession::securityMetadata() const
 {
     if (!m_sessionMetadata)
-        return completionHandler(std::nullopt);
+        return nullptr;
+    switch (nw_webtransport_metadata_get_transport_mode(m_sessionMetadata.get())) {
+    case nw_webtransport_transport_mode_unknown:
+        return nullptr;
+    case nw_webtransport_transport_mode_http2: {
+        RetainPtr tlsDefinition = adoptNS(nw_protocol_copy_tls_definition());
+        RetainPtr protocolMetadata = nw_connection_group_copy_protocol_metadata(m_connectionGroup.get(), tlsDefinition.get());
+        return adoptNS(nw_tls_copy_sec_protocol_metadata(protocolMetadata));
+    }
+    case nw_webtransport_transport_mode_http3: {
+        RetainPtr quicDefinition = adoptNS(nw_protocol_copy_quic_connection_definition());
+        RetainPtr protocolMetadata = nw_connection_group_copy_protocol_metadata(m_connectionGroup.get(), quicDefinition.get());
+        return adoptNS(nw_quic_connection_copy_sec_protocol_metadata(protocolMetadata.get()));
+    }
+    }
+    ASSERT_NOT_REACHED();
+    return nullptr;
+}
 
-    RetainPtr securityMetadata = m_securityProtocolMetadata ? RetainPtr { m_securityProtocolMetadata->metadata() } : adoptNS(softLink_Network_nw_webtransport_metadata_copy_sec_protocol_metadata(m_sessionMetadata.get()));
+void NetworkTransportSession::exportKeyingMaterial(std::span<const uint8_t> label, std::span<const uint8_t> context, uint32_t outputLength, CompletionHandler<void(std::optional<Vector<uint8_t>>)>&& completionHandler)
+{
+    RetainPtr securityMetadata = this->securityMetadata();
     if (!securityMetadata)
         return completionHandler(std::nullopt);
     RetainPtr data = adoptNS(sec_protocol_metadata_create_secret_with_context(securityMetadata.get(), label.size(), reinterpret_cast<const char*>(label.data()), context.size(), context.data(), outputLength));

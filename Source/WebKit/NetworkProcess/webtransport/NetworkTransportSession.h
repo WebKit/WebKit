@@ -109,20 +109,11 @@ public:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
     std::optional<SharedPreferencesForWebProcess> NODELETE sharedPreferencesForWebProcess() const;
     bool isSessionClosed() const;
-#if PLATFORM(COCOA)
-    class SecurityProtocolMetadata : public RefCounted<SecurityProtocolMetadata> {
-    public:
-        static RefPtr<SecurityProtocolMetadata> create() { return adoptRef(new SecurityProtocolMetadata()); }
-        void receivedMetadata(sec_protocol_metadata_t metadata) { m_metadata = metadata; }
-        sec_protocol_metadata_t metadata() const { return m_metadata.get(); }
-    private:
-        RetainPtr<sec_protocol_metadata_t> m_metadata;
-    };
-#endif
 private:
 #if PLATFORM(COCOA) && HAVE(WEBTRANSPORT)
-    static Ref<NetworkTransportSession> create(NetworkConnectionToWebProcess&, WebTransportSessionIdentifier, WebCore::WebTransportOptions&&, nw_connection_group_t, nw_endpoint_t, RefPtr<SecurityProtocolMetadata>&&);
-    NetworkTransportSession(NetworkConnectionToWebProcess&, WebTransportSessionIdentifier, WebCore::WebTransportOptions&&, nw_connection_group_t, nw_endpoint_t, RefPtr<SecurityProtocolMetadata>&&);
+    static Ref<NetworkTransportSession> create(NetworkConnectionToWebProcess&, WebTransportSessionIdentifier, WebCore::WebTransportOptions&&, nw_connection_group_t, nw_endpoint_t);
+    NetworkTransportSession(NetworkConnectionToWebProcess&, WebTransportSessionIdentifier, WebCore::WebTransportOptions&&, nw_connection_group_t, nw_endpoint_t);
+    RetainPtr<sec_protocol_metadata_t> securityMetadata() const;
 #else
     NetworkTransportSession();
 #endif
@@ -160,7 +151,6 @@ private:
 #if PLATFORM(COCOA)
     const RetainPtr<nw_connection_group_t> m_connectionGroup;
     const RetainPtr<nw_endpoint_t> m_endpoint;
-    const RefPtr<SecurityProtocolMetadata> m_securityProtocolMetadata;
     RetainPtr<nw_connection_t> m_datagramConnection;
     RetainPtr<nw_protocol_metadata_t> m_sessionMetadata;
 #endif

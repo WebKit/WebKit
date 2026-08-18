@@ -104,6 +104,7 @@ public:
     void cancel();
     Awaitable<void> awaitableFailure();
     void drainWebTransportSession();
+    Vector<uint8_t> exportKeyingMaterial(std::span<const uint8_t> label, std::span<const uint8_t> context, uint32_t outputLength) const;
 
 private:
     friend class WebTransportServer;

@@ -32,6 +32,4 @@
 
 SOFT_LINK_FRAMEWORK_FOR_SOURCE(WebKit, Network)
 
-SOFT_LINK_FUNCTION_MAY_FAIL_FOR_SOURCE(WebKit, Network, nw_webtransport_metadata_copy_sec_protocol_metadata, sec_protocol_metadata_t, (nw_protocol_metadata_t metadata), (metadata));
-
 #endif // PLATFORM(COCOA)

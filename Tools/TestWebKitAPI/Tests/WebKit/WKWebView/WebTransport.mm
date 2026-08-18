@@ -1078,6 +1078,79 @@ TEST(WebTransport, DISABLED_ServerStreamAborts)
     EXPECT_WK_STREQ([webView _test_waitForAlert], "received abc, read error: 789, write error: 456");
 }
 
+TEST(WebTransport, ExportKeyingMaterial)
+{
+    auto runTest = [] (auto protocol) {
+        constexpr auto label = "EXPORTER-webtransport"_s;
+        constexpr auto context = "context"_s;
+        constexpr uint32_t keyingMaterialLength = 32;
+
+        WebTransportServer server([&](ConnectionGroup group) -> ConnectionTask {
+            auto connection = co_await group.receiveIncomingConnection();
+            Vector<uint8_t> clientKeyingMaterial;
+            while (clientKeyingMaterial.size() < keyingMaterialLength)
+                clientKeyingMaterial.appendVector(co_await connection.awaitableReceiveBytes());
+            auto serverKeyingMaterial = group.exportKeyingMaterial(label.span8(), context.span8(), keyingMaterialLength);
+            EXPECT_EQ(serverKeyingMaterial.size(), keyingMaterialLength);
+            co_await connection.awaitableSend(clientKeyingMaterial == serverKeyingMaterial ? "matches"_str : "differs"_str);
+        }, nullptr, protocol);
+
+        RetainPtr configuration = adoptNS([WKWebViewConfiguration new]);
+        enableWebTransport(configuration.get());
+        RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:configuration.get()]);
+        RetainPtr delegate = adoptNS([TestNavigationDelegate new]);
+        [delegate allowAnyTLSCertificate];
+        [webView setNavigationDelegate:delegate.get()];
+
+        NSString *html = [NSString stringWithFormat:@""
+            "<script>"
+            "function equal(a, b) { return a.length === b.length && a.every((v, i) => v === b[i]); }"
+            "async function test() {"
+            "  try {"
+            "    let t = new WebTransport('https://127.0.0.1:%d/');"
+            "    await t.ready;"
+            "    let reliability = t.reliability;"
+            "    let encoder = new TextEncoder();"
+            "    let label = encoder.encode('%s');"
+            "    let context = encoder.encode('%s');"
+            "    let keyingMaterial = await t.exportKeyingMaterial(label, context, %u);"
+            "    let otherLabel = await t.exportKeyingMaterial(encoder.encode('EXPORTER-other'), context, %u);"
+            "    let s = await t.createBidirectionalStream();"
+            "    let w = s.writable.getWriter();"
+            "    await w.write(keyingMaterial);"
+            "    let r = s.readable.getReader();"
+            "    const { value, done } = await r.read();"
+            "    await r.cancel();"
+            "    t.close();"
+            "    alert('reliability ' + reliability"
+            "        + ', length ' + keyingMaterial.byteLength"
+            "        + ', label changes material ' + !equal(keyingMaterial, otherLabel)"
+            "        + ', server ' + new TextDecoder().decode(value)"
+            "    );"
+            "  } catch (e) { alert('caught ' + e); }"
+            "}; test();"
+            "</script>",
+            server.port(),
+            label.characters(),
+            context.characters(),
+            keyingMaterialLength,
+            keyingMaterialLength];
+        [webView loadHTMLString:html baseURL:[NSURL URLWithString:@"https://webkit.org/"]];
+        const char* expected = protocol == WebTransportServer::Protocol::H2 ?
+        "reliability reliable-only"
+        ", length 32"
+        ", label changes material true"
+        ", server matches" :
+        "reliability supports-unreliable"
+        ", length 32"
+        ", label changes material true"
+        ", server matches";
+        EXPECT_WK_STREQ([webView _test_waitForAlert], expected);
+    };
+    runTest(WebTransportServer::Protocol::H2);
+    runTest(WebTransportServer::Protocol::H3);
+}
+
 } // namespace TestWebKitAPI
 
 #endif // HAVE(WEBTRANSPORT)
