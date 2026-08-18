@@ -830,6 +830,12 @@ void WebAutomationSessionProxy::computeElementLayout(WebCore::PageIdentifier pag
         return;
     }
 
+    // When the local root is not the page's main frame, this process doesn't know where the frame
+    // sits within the page, so it cannot produce main-frame-relative coordinates. Stop at local
+    // root contents coordinates and let WebAutomationSession::computeElementLayout() finish the
+    // conversion in the UI process, which can walk the frame tree across processes.
+    bool localRootIsMainFrame = localRootFrame->isMainFrame();
+
     WebCore::FloatRect resultElementBounds;
     std::optional<WebCore::IntPoint> resultInViewCenterPoint;
     bool isObscured = false;
@@ -840,7 +846,8 @@ void WebAutomationSessionProxy::computeElementLayout(WebCore::PageIdentifier pag
         break;
     case CoordinateSystem::LayoutViewport: {
         auto elementBoundsInRootCoordinates = convertRectFromFrameClientToRootView(frameView.get(), coreElement->boundingClientRect());
-        resultElementBounds = rootView->absoluteToLayoutViewportRect(rootView->rootViewToContents(elementBoundsInRootCoordinates));
+        auto elementBoundsInLocalRootContents = rootView->rootViewToContents(elementBoundsInRootCoordinates);
+        resultElementBounds = localRootIsMainFrame ? rootView->absoluteToLayoutViewportRect(elementBoundsInLocalRootContents) : elementBoundsInLocalRootContents;
         break;
     }
     }
@@ -900,7 +907,8 @@ void WebAutomationSessionProxy::computeElementLayout(WebCore::PageIdentifier pag
         break;
     case CoordinateSystem::LayoutViewport: {
         auto inViewCenterPointInRootCoordinates = convertPointFromFrameClientToRootView(frameView.get(), elementInViewCenterPoint);
-        resultInViewCenterPoint = flooredIntPoint(rootView->absoluteToLayoutViewportPoint(rootView->rootViewToContents(inViewCenterPointInRootCoordinates)));
+        auto inViewCenterPointInLocalRootContents = rootView->rootViewToContents(inViewCenterPointInRootCoordinates);
+        resultInViewCenterPoint = flooredIntPoint(localRootIsMainFrame ? rootView->absoluteToLayoutViewportPoint(inViewCenterPointInLocalRootContents) : inViewCenterPointInLocalRootContents);
         break;
     }
     }
