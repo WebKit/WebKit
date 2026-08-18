@@ -7045,6 +7045,22 @@ void Internals::systemAudioSessionCategory(DOMPromiseDeferred<IDLEnumeration<Aud
 #endif
 }
 
+void Internals::systemAudioSessionActivationCount(DOMPromiseDeferred<IDLUnsignedLongLong>&& promise)
+{
+#if USE(AUDIO_SESSION)
+    AudioSession::singleton().systemActivationCountForTesting()->whenSettled(RunLoop::mainSingleton(),
+        [promise = WTF::move(promise)](auto&& result) mutable {
+            if (!result) {
+                promise.reject(Exception { ExceptionCode::InvalidStateError, "Could not read the system audio session activation count"_s });
+                return;
+            }
+            promise.resolve(*result);
+        });
+#else
+    promise.resolve(0);
+#endif
+}
+
 auto Internals::audioSessionMode() const -> AudioSessionMode
 {
 #if USE(AUDIO_SESSION)

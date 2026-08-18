@@ -301,6 +301,16 @@ Ref<AudioSession::CategoryPromise> RemoteAudioSession::systemCategoryForTesting(
         });
 }
 
+Ref<AudioSession::ActivationCountPromise> RemoteAudioSession::systemActivationCountForTesting()
+{
+    return protect(ensureConnection())->sendWithPromisedReply(Messages::RemoteAudioSessionProxy::SystemActivationCountForTesting())->whenSettled(RunLoop::mainSingleton(),
+        [](auto&& result) {
+            if (!result)
+                return ActivationCountPromise::createAndReject();
+            return ActivationCountPromise::createAndResolve(*result);
+        });
+}
+
 void RemoteAudioSession::beginInterruptionForTesting()
 {
     m_isInterruptedForTesting = true;

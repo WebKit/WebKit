@@ -202,6 +202,11 @@ public:
 
     virtual bool blockedBySystemInterruption() const = 0;
     virtual bool activeAudioSessionRequired() const = 0;
+
+    // Whether the client is allowed to begin playing right now. A session can be Playing and audible
+    // while its client is no longer allowed to start.
+    virtual bool playbackPermitted() const;
+
     virtual bool canProduceAudio() const { return protect(client())->canProduceAudio(); }
     virtual bool hasMediaStreamSource() const { return protect(client())->hasMediaStreamSource(); }
     virtual void canProduceAudioChanged() = 0;
@@ -271,5 +276,6 @@ private:
 inline void PlatformMediaSessionInterface::setMediaSessionIdentifier(MediaSessionIdentifier identifier) { m_mediaSessionIdentifier = identifier; }
 inline PlatformMediaSessionClient& PlatformMediaSessionInterface::client() const { return m_client; }
 inline bool PlatformMediaSessionInterface::isRemoteSessionProxy() const { return false; }
+inline bool PlatformMediaSessionInterface::playbackPermitted() const { return true; }
 
 } // namespace WebCore

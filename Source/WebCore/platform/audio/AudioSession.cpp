@@ -143,12 +143,24 @@ Ref<AudioSession::SetActivePromise> AudioSession::tryToSetActive(bool active)
             ALWAYS_LOG(logSiteIdentifier, "is active = ", active, ", previousIsActive = ", previousIsActive);
             bool hasActiveChanged = previousIsActive != active;
             m_active = active;
+            if (active && hasActiveChanged)
+                ++m_activationCountForTesting;
             if (m_isInterrupted && m_active && previousIsInterrupted)
                 endInterruption(MayResume::Yes);
             if (hasActiveChanged)
                 activeStateChanged();
             return SetActivePromise::createAndResolve();
         });
+}
+
+Ref<AudioSession::ActivationCountPromise> AudioSession::systemActivationCountForTesting()
+{
+    return ActivationCountPromise::createAndResolve(activationCountForTesting());
+}
+
+uint64_t AudioSession::activationCountForTesting() const
+{
+    return m_activationCountForTesting;
 }
 
 void AudioSession::setActive(bool active)

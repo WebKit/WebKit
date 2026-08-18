@@ -1,0 +1,67 @@
+<!-- webkit-test-runner [ RequiresUserGestureForAudioPlayback=true allowTestOnlyIPC=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>audio-session-not-activated-for-denied-audible-element</title>
+    <script src="video-test.js"></script>
+    <script src="media-file.js"></script>
+    <script>
+    // An element is allowed to start playing while it is believed to be silent, and is denied once an
+    // audio track is discovered. Activating the audio session interrupts other applications and the
+    // request cannot be withdrawn once it reaches the platform, so no activation may be requested for
+    // an element that is about to be paused.
+    //
+    // The count is read from the GPU process, which owns the real audio session: a web process's own
+    // AudioSession reports the state it asked for, and reports it optimistically, so a short-lived
+    // activation is already gone from it by the time a test reads it.
+    async function activationsSince(baseline)
+    {
+        window.activations = (await internals.systemAudioSessionActivationCount()) - baseline;
+        return window.activations;
+    }
+
+    window.addEventListener('load', async event => {
+        if (!window.internals) {
+            failTest('This test requires internals.');
+            return;
+        }
+        failTestIn(20000);
+        run('internals.settings.setShouldManageAudioSessionCategory(true)');
+        run('video = document.querySelector("video")');
+
+        let baseline = await internals.systemAudioSessionActivationCount();
+
+        // hasAudio() is false until metadata arrives, so play() without a user gesture is permitted
+        // here, and denied once the audio track is known. The outcome is captured at the call site, as
+        // the rejection lands while this test is still waiting on metadata and a rejection left
+        // unhandled for a turn is reported to the console.
+        run('video.src = findMediaFile("video", "content/test")');
+        let playSettled = run('video.play()').then(() => window.playOutcome = 'resolved', error => window.playOutcome = error.name);
+        await waitFor(video, 'loadedmetadata');
+        await testExpectedEventually('video.audioTracks.length', 1);
+
+        await playSettled;
+        testExpected('playOutcome', 'NotAllowedError');
+        testExpected('video.paused', true);
+
+        // The count query travels the same connection as an activation request would, so it cannot be
+        // answered ahead of one already sent.
+        await activationsSince(baseline);
+        testExpected('activations', 0);
+
+        // A user gesture removes the restriction, so the same element is allowed to play and the audio
+        // session is activated for it.
+        runWithKeyDown('video.play()');
+        await waitFor(video, 'playing');
+        for (let tries = 0; tries < 200 && await activationsSince(baseline) < 1; ++tries)
+            await sleepFor(10);
+        testExpected('activations', 1);
+
+        endTest();
+    });
+    </script>
+</head>
+<body>
+    <video controls></video>
+</body>
+</html>

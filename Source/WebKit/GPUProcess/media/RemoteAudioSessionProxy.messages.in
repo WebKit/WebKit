@@ -40,6 +40,7 @@ messages -> RemoteAudioSessionProxy {
     [EnabledBy=AllowTestOnlyIPC] TriggerBeginInterruptionForTesting()
     [EnabledBy=AllowTestOnlyIPC] TriggerEndInterruptionForTesting()
     [EnabledBy=AllowTestOnlyIPC] SystemCategoryForTesting() -> (enum:uint8_t WebCore::AudioSessionCategory category)
+    [EnabledBy=AllowTestOnlyIPC] SystemActivationCountForTesting() -> (uint64_t count)
 
     BeginInterruptionRemote()
     EndInterruptionRemote(enum:bool WebCore::AudioSessionMayResume flags)

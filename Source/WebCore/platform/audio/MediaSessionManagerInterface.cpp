@@ -209,6 +209,25 @@ bool MediaSessionManagerInterface::activeAudioSessionRequired() const
 #endif
 }
 
+bool MediaSessionManagerInterface::audioSessionActivationRequired() const
+{
+    // Stricter than activeAudioSessionRequired(): activating the audio session interrupts other
+    // applications and cannot be withdrawn once the request reaches the platform, so a session whose
+    // client is not allowed to play must not cause it. Deactivation keys on
+    // activeAudioSessionRequired() instead (conservative about giving the session up, strict about
+    // taking it).
+#if ENABLE(VIDEO) || ENABLE(WEB_AUDIO)
+    if (anyOfSessions([] (auto& session) { return session.activeAudioSessionRequired() && session.playbackPermitted(); }))
+        return true;
+
+    return std::ranges::any_of(m_audioCaptureSources, [](auto& source) {
+        return Ref { source }->isCapturingAudio();
+    });
+#else
+    return false;
+#endif
+}
+
 bool MediaSessionManagerInterface::hasActiveAudioSession(PlatformMediaSessionInterface&) const
 {
 #if USE(AUDIO_SESSION)
@@ -879,7 +898,7 @@ void MediaSessionManagerInterface::maybeDeactivateAudioSession(ShouldCheckRequir
 Ref<GenericPromise> MediaSessionManagerInterface::maybeActivateAudioSession()
 {
 #if USE(AUDIO_SESSION)
-    if (!activeAudioSessionRequired()) {
+    if (!audioSessionActivationRequired()) {
         MEDIASESSIONMANAGERINTERFACE_RELEASE_LOG(MaybeActivateAudioSessionActiveSessionNotRequired);
         // Do NOT deactivate here. This is an "activate or no-op" function, matching
         // the pre-async contract (7136b90d351d). Tearing the session down on any

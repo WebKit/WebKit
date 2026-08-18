@@ -24,6 +24,7 @@ const skippedInternalFunctions = [
   "setVP9ScreenSizeAndScaleForTesting",
   "storeRegistrationsOnDisk",
   "systemAudioSessionCategory", // Calls IPC method behind AllowTestOnlyIPC which this test doesn't set.
+  "systemAudioSessionActivationCount", // Calls IPC method behind AllowTestOnlyIPC which this test doesn't set.
   "terminateWebContentProcess",
 ];
 

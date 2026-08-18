@@ -1,0 +1,14 @@
+
+RUN(internals.settings.setShouldManageAudioSessionCategory(true))
+RUN(video = document.querySelector("video"))
+RUN(video.muted = true)
+RUN(video.src = findMediaFile("video", "content/test"))
+RUN(video.play())
+EVENT(playing)
+EXPECTED (video.paused == 'false') OK
+EXPECTED (activations == '0') OK
+RUN(video.muted = false)
+EXPECTED (video.paused == 'true') OK
+EXPECTED (activations == '0') OK
+END OF TEST
+

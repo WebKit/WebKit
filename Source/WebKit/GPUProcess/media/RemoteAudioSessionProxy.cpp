@@ -193,6 +193,12 @@ void RemoteAudioSessionProxy::systemCategoryForTesting(CompletionHandler<void(We
     completionHandler(AudioSession::singleton().category());
 }
 
+void RemoteAudioSessionProxy::systemActivationCountForTesting(CompletionHandler<void(uint64_t)>&& completionHandler)
+{
+    // How many times the GPU process made the real session active..
+    completionHandler(AudioSession::singleton().activationCountForTesting());
+}
+
 void RemoteAudioSessionProxy::triggerBeginInterruptionForTesting()
 {
     AudioSession::singleton().beginInterruptionForTesting();

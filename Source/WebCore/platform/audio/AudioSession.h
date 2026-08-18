@@ -131,6 +131,12 @@ public:
     // The category applied to the real audio session.
     using CategoryPromise = NativePromise<AudioSessionCategory, void>;
     virtual Ref<CategoryPromise> systemCategoryForTesting() { return CategoryPromise::createAndResolve(category()); }
+
+    // How many times the audio session has been made active, counting only transitions from inactive to active.
+    using ActivationCountPromise = NativePromise<uint64_t, void>;
+    virtual Ref<ActivationCountPromise> systemActivationCountForTesting();
+    uint64_t activationCountForTesting() const;
+
     virtual void clearInterruptionFlagForTesting() { }
 
     static void addInterruptionObserver(AudioSessionInterruptionObserver&);
@@ -174,6 +180,7 @@ protected:
     AudioSession::CategoryType m_categoryOverride { AudioSession::CategoryType::None };
     bool m_active { false }; // Used only for testing.
     bool m_isInterrupted { false };
+    uint64_t m_activationCountForTesting { 0 };
 };
 
 class AudioSessionInterruptionObserver : public AbstractRefCountedAndCanMakeWeakPtr<AudioSessionInterruptionObserver> {

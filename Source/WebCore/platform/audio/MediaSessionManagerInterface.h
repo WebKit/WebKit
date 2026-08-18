@@ -72,6 +72,7 @@ public:
     virtual bool hasNoSession() const;
 
     virtual bool activeAudioSessionRequired() const;
+    bool audioSessionActivationRequired() const;
     virtual bool hasActiveAudioSession(PlatformMediaSessionInterface&) const;
     virtual bool canProduceAudio() const;
 
