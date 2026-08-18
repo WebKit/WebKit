@@ -1,0 +1,233 @@
+=== <select>.innerHTML = "<keygen><option>"
+#document
+| <option>
+
+=== <select>.innerHTML = "<textarea><option>"
+#document
+| <option>
+
+=== <select>.innerHTML = "<option><XH<optgroup></optgroup>"
+#document
+| <option>
+
+=== document.write("<!DOCTYPE html><select><menuitem></select>")
+#document
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <select>
+
+=== document.write("<select><b><option><select><option></b></select>")
+#document
+| <html>
+|   <head>
+|   <body>
+|     <select>
+|       <option>
+|     <option>
+
+=== document.write("<select><b><option><select><option></b></select>X")
+#document
+| <html>
+|   <head>
+|   <body>
+|     <select>
+|       <option>
+|     <option>
+|       "X"
+
+=== document.write("<!DOCTYPE html><body><select><option><svg></svg></option></select>")
+#document
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <select>
+|       <option>
+
+=== document.write("<!DOCTYPE html><body><select><svg></svg></select>")
+#document
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <select>
+
+=== document.write("<!DOCTYPE html><body><table><select><svg><g>foo</g><g>bar</g><p>baz</table><p>quux")
+#document
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <select>
+|       "foobarbaz"
+|     <table>
+|     <p>
+|       "quux"
+
+=== document.write("<!DOCTYPE html><body><table><tr><td><select><svg><g>foo</g><g>bar</g><p>baz</table><p>quux")
+#document
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <table>
+|       <tbody>
+|         <tr>
+|           <td>
+|             <select>
+|               "foobarbaz"
+|     <p>
+|       "quux"
+
+=== document.write("<!doctype html><select><plaintext></plaintext>X")
+#document
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <select>
+|       "X"
+
+=== document.write("<!doctype html><table><select><plaintext>a<caption>b")
+#document
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <select>
+|       "a"
+|     <table>
+|       <caption>
+|         "b"
+
+=== document.write("<select><keygen>")
+#document
+| <html>
+|   <head>
+|   <body>
+|     <select>
+|     <keygen>
+
+=== document.write("<!DOCTYPE html><body><select><math></math></select>")
+#document
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <select>
+
+=== document.write("<!DOCTYPE html><body><select><option><math></math></option></select>")
+#document
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <select>
+|       <option>
+
+=== document.write("<!DOCTYPE html><body><table><select><math><mi>foo</mi><mi>bar</mi><p>baz</table><p>quux")
+#document
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <select>
+|       "foobarbaz"
+|     <table>
+|     <p>
+|       "quux"
+
+=== document.write("<!DOCTYPE html><body><table><tr><td><select><math><mi>foo</mi><mi>bar</mi><p>baz</table><p>quux")
+#document
+| <!DOCTYPE html>
+| <html>
+|   <head>
+|   <body>
+|     <table>
+|       <tbody>
+|         <tr>
+|           <td>
+|             <select>
+|               "foobarbaz"
+|     <p>
+|       "quux"
+
+=== document.write("<select><button><div><select></select>")
+#document
+| <html>
+|   <head>
+|   <body>
+|     <select>
+
+=== document.write("<select><button><select></select></button></select>")
+#document
+| <html>
+|   <head>
+|   <body>
+|     <select>
+
+=== document.write("<select><button><selectedcontent></button><option>X")
+#document
+| <html>
+|   <head>
+|   <body>
+|     <select>
+|       <option>
+|         "X"
+
+=== document.write("<select><button><selectedcontent></button><option>x<i>i<b>ib</i>b")
+#document
+| <html>
+|   <head>
+|   <body>
+|     <select>
+|       <option>
+|         "xiibb"
+
+=== document.write("<select><button>button</select>")
+#document
+| <html>
+|   <head>
+|   <body>
+|     <select>
+|       "button"
+
+=== document.write("<select><datalist>datalist</select>")
+#document
+| <html>
+|   <head>
+|   <body>
+|     <select>
+|       "datalist"
+
+=== document.write("<select><div><i></div><option>option")
+#document
+| <html>
+|   <head>
+|   <body>
+|     <select>
+|       <option>
+|         "option"
+
+=== document.write("<select><div><option><img>option</option></div></select>")
+#document
+| <html>
+|   <head>
+|   <body>
+|     <select>
+|       <option>
+|         "option"
+
+=== document.write("<select><div>div 1</div><button>button</button><div>div 2</div><datalist><option>option</option></datalist><div>div 3</div></select>")
+#document
+| <html>
+|   <head>
+|   <body>
+|     <select>
+|       "div 1buttondiv 2"
+|       <option>
+|         "option"
+|       "div 3"
+

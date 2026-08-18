@@ -1201,8 +1201,6 @@ webkit.org/b/315615 media/media-vp8-hiddenframes.html [ ImageOnlyFailure Pass ]
 
 webkit.org/b/315825 [ Release arm64 ] editing/spelling/spelling-marker-includes-hyphen.html [ ImageOnlyFailure ]
 
-webkit.org/b/315994 [ x86_64 ] html5lib/generated/run-adoption01-data.html [ Crash Pass ]
-
 webkit.org/b/316418 imported/w3c/web-platform-tests/html/semantics/popovers/popover-events.html [ Pass Failure ]
 webkit.org/b/316419 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/src_object_blob.html [ Pass Failure ]
 webkit.org/b/316422 css3/text-decoration/text-decoration-line-spelling-error-2.html [ Pass ImageOnlyFailure ]

@@ -1,0 +1,114 @@
+<!DOCTYPE html><!-- webkit-test-runner [ HTMLEnhancedSelectParsingEnabled=false ] -->
+<!--
+Covers the tree construction cases whose result depends on
+HTMLEnhancedSelectParsingEnabled. imported/w3c/web-platform-tests/html/syntax/
+parsing/html5lib_*.html covers them with the flag on; this is the only coverage
+of the legacy code path and can go away with it.
+-->
+<title>Legacy &lt;select&gt; parsing</title>
+<pre id="log"></pre>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+const cases = [
+    { input: "<keygen><option>", container: "select" },
+    { input: "<textarea><option>", container: "select" },
+    { input: "<option><XH<optgroup></optgroup>", container: "select" },
+    { input: "<!DOCTYPE html><select><menuitem></select>" },
+    { input: "<select><b><option><select><option></b></select>" },
+    { input: "<select><b><option><select><option></b></select>X" },
+    { input: "<!DOCTYPE html><body><select><option><svg></svg></option></select>" },
+    { input: "<!DOCTYPE html><body><select><svg></svg></select>" },
+    { input: "<!DOCTYPE html><body><table><select><svg><g>foo</g><g>bar</g><p>baz</table><p>quux" },
+    { input: "<!DOCTYPE html><body><table><tr><td><select><svg><g>foo</g><g>bar</g><p>baz</table><p>quux" },
+    { input: "<!doctype html><select><plaintext></plaintext>X" },
+    { input: "<!doctype html><table><select><plaintext>a<caption>b" },
+    { input: "<select><keygen>" },
+    { input: "<!DOCTYPE html><body><select><math></math></select>" },
+    { input: "<!DOCTYPE html><body><select><option><math></math></option></select>" },
+    { input: "<!DOCTYPE html><body><table><select><math><mi>foo</mi><mi>bar</mi><p>baz</table><p>quux" },
+    { input: "<!DOCTYPE html><body><table><tr><td><select><math><mi>foo</mi><mi>bar</mi><p>baz</table><p>quux" },
+    { input: "<select><button><div><select></select>" },
+    { input: "<select><button><select></select></button></select>" },
+    { input: "<select><button><selectedcontent></button><option>X" },
+    { input: "<select><button><selectedcontent></button><option>x<i>i<b>ib</i>b" },
+    { input: "<select><button>button</select>" },
+    { input: "<select><datalist>datalist</select>" },
+    { input: "<select><div><i></div><option>option" },
+    { input: "<select><div><option><img>option</option></div></select>" },
+    { input: "<select><div>div 1</div><button>button</button><div>div 2</div><datalist><option>option</option></datalist><div>div 3</div></select>" },
+];
+
+const prefixes = {
+    "http://www.w3.org/1998/Math/MathML": "math",
+    "http://www.w3.org/2000/svg": "svg",
+    "http://www.w3.org/1999/xlink": "xlink",
+    "http://www.w3.org/XML/1998/namespace": "xml",
+    "http://www.w3.org/2000/xmlns/": "xmlns",
+};
+
+// The html5lib-tests serialization, as used by html/syntax/parsing/test.js.
+function serialize(root)
+{
+    root.normalize();
+    const lines = [];
+    (function serializeNode(node, indent) {
+        const spaces = " ".repeat(Math.max(indent - 1, 0));
+        switch (node.nodeType) {
+        case Node.DOCUMENT_NODE:
+        case Node.DOCUMENT_FRAGMENT_NODE:
+            lines.push("#document");
+            break;
+        case Node.DOCUMENT_TYPE_NODE:
+            if (node.publicId || node.systemId)
+                lines.push(`|${spaces}<!DOCTYPE ${node.name} "${node.publicId}" "${node.systemId}">`);
+            else
+                lines.push(`|${spaces}<!DOCTYPE ${node.name}>`);
+            break;
+        case Node.COMMENT_NODE:
+            lines.push(`|${spaces}<!-- ${node.nodeValue} -->`);
+            break;
+        case Node.TEXT_NODE:
+            lines.push(`|${spaces}"${node.nodeValue}"`);
+            break;
+        case Node.ELEMENT_NODE:
+            const prefix = node.namespaceURI && node.namespaceURI in prefixes ? prefixes[node.namespaceURI] + " " : "";
+            lines.push(`|${spaces}<${prefix}${node.localName}>`);
+            Array.from(node.attributes, attr => [(attr.namespaceURI ? prefixes[attr.namespaceURI] + " " : "") + attr.localName, attr.value])
+                .sort((a, b) => a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0)
+                .forEach(([name, value]) => lines.push(`|${" ".repeat(indent + 1)}${name}="${value}"`));
+            break;
+        }
+        for (const child of node.childNodes)
+            serializeNode(child, indent + 2);
+    })(root, 0);
+    return lines.join("\n");
+}
+
+const iframe = document.createElement("iframe");
+document.body.appendChild(iframe);
+
+const output = [];
+for (const { input, container } of cases) {
+    let result;
+    if (container) {
+        output.push(`=== <${container}>.innerHTML = ${JSON.stringify(input)}`);
+        const element = document.createElement(container);
+        element.innerHTML = input;
+        const lines = serialize(element).split("\n");
+        lines[0] = "#document"; // The context object is never part of the serialization.
+        result = lines.join("\n");
+    } else {
+        output.push(`=== document.write(${JSON.stringify(input)})`);
+        iframe.contentDocument.open();
+        iframe.contentDocument.write(input);
+        iframe.contentDocument.close();
+        result = serialize(iframe.contentDocument);
+    }
+    output.push(result, "");
+}
+
+iframe.remove();
+document.getElementById("log").textContent = output.join("\n");
+</script>

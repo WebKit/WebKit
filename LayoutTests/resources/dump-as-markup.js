@@ -129,11 +129,6 @@ Markup.notifyDone = function()
         testRunner.notifyDone();
 }
 
-Markup.useHTML5libOutputFormat = function()
-{
-    Markup._useHTML5libOutputFormat = true;
-}
-
 Markup.get = function(node)
 {
     var shadowRootList = {};
@@ -228,9 +223,8 @@ Markup._get = function(node, depth, shadowRootList)
             }
         }
 
-        if (!Markup._useHTML5libOutputFormat)
-            if (node.nodeName == "INPUT" || node.nodeName == "TEXTAREA")
-                str += Markup._indent(depth + 1) + 'this.value="' + node.value + '"';
+        if (node.nodeName == "INPUT" || node.nodeName == "TEXTAREA")
+            str += Markup._indent(depth + 1) + 'this.value="' + node.value + '"';
 
         break;
     case Node.DOCUMENT_FRAGMENT_NODE:
@@ -256,7 +250,7 @@ Markup._get = function(node, depth, shadowRootList)
 
 Markup._getShadowHostIfPossible = function (node, depth, shadowRootList)
 {
-    if (!Markup._useHTML5libOutputFormat && node.nodeType == Node.ELEMENT_NODE && window.internals) {
+    if (node.nodeType == Node.ELEMENT_NODE && window.internals) {
         var root = window.internals.shadowRoot(node);
         if (root) {
             shadowRootList[internals.address(root)] = true;
@@ -372,8 +366,7 @@ Markup._getMarkupForTextNode = function(node)
         innerMarkup = tokens.join('');
     }
 
-    if (!Markup._useHTML5libOutputFormat)
-        innerMarkup = innerMarkup.replace(/\\/g, "\\\\").replace(/\n/g, "\\n");
+    innerMarkup = innerMarkup.replace(/\\/g, "\\\\").replace(/\n/g, "\\n");
 
     return innerMarkup;
 }
