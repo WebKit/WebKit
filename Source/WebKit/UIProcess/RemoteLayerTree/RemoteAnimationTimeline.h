@@ -46,7 +46,7 @@ public:
     bool isMonotonic() const { return !m_duration; }
     bool isProgressBased() const { return !!m_duration; }
 
-    const WebCore::WebAnimationTime& currentTime() const LIFETIME_BOUND { return m_currentTime; }
+    const std::optional<WebCore::WebAnimationTime>& currentTime() const LIFETIME_BOUND { return m_currentTime; }
     const std::optional<WebCore::WebAnimationTime>& duration() const LIFETIME_BOUND { return m_duration; }
     const TimelineID& identifier() const LIFETIME_BOUND { return m_identifier; }
 
@@ -55,7 +55,7 @@ public:
 protected:
     RemoteAnimationTimeline(TimelineID, std::optional<WebCore::WebAnimationTime> duration);
 
-    WebCore::WebAnimationTime m_currentTime;
+    std::optional<WebCore::WebAnimationTime> m_currentTime;
 
 private:
     TimelineID m_identifier;

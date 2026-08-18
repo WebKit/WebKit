@@ -82,8 +82,8 @@ public:
     WEBCORE_EXPORT Ref<AcceleratedEffect> clone() const;
     WEBCORE_EXPORT Ref<AcceleratedEffect> copyWithProperties(OptionSet<AcceleratedEffectProperty>&) const;
 
-    WEBCORE_EXPORT void apply(AcceleratedEffectValues&, WebAnimationTime timelineTime, std::optional<WebAnimationTime> timelineDuration) const;
-    WEBCORE_EXPORT ResolvedEffectTiming resolvedTimingForTesting(WebAnimationTime timelineTime, std::optional<WebAnimationTime> timelineDuration) const;
+    WEBCORE_EXPORT void apply(AcceleratedEffectValues&, std::optional<WebAnimationTime> timelineTime, std::optional<WebAnimationTime> timelineDuration) const;
+    WEBCORE_EXPORT ResolvedEffectTiming resolvedTimingForTesting(std::optional<WebAnimationTime> timelineTime, std::optional<WebAnimationTime> timelineDuration) const;
 
     void clearProperty(AcceleratedEffectProperty);
     void makeForwardsFilling();
@@ -115,7 +115,7 @@ private:
     explicit AcceleratedEffect(const AcceleratedEffect&, OptionSet<AcceleratedEffectProperty>&);
 
     void validateFilters(const AcceleratedEffectValues& baseValues, OptionSet<AcceleratedEffectProperty>&);
-    ResolvedEffectTiming resolvedTiming(WebAnimationTime timelineTime, std::optional<WebAnimationTime> timelineDuration) const;
+    ResolvedEffectTiming resolvedTiming(std::optional<WebAnimationTime> timelineTime, std::optional<WebAnimationTime> timelineDuration) const;
 
     // KeyframeInterpolation
     bool isPropertyAdditiveOrCumulative(KeyframeInterpolation::Property) const final;

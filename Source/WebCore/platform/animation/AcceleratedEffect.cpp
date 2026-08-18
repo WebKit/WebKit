@@ -416,20 +416,22 @@ static void blend(AcceleratedEffectProperty property, AcceleratedEffectValues& o
     }
 }
 
-ResolvedEffectTiming AcceleratedEffect::resolvedTimingForTesting(WebAnimationTime timelineTime, std::optional<WebAnimationTime> timelineDuration) const
+ResolvedEffectTiming AcceleratedEffect::resolvedTimingForTesting(std::optional<WebAnimationTime> timelineTime, std::optional<WebAnimationTime> timelineDuration) const
 {
     return resolvedTiming(timelineTime, timelineDuration);
 }
 
-ResolvedEffectTiming AcceleratedEffect::resolvedTiming(WebAnimationTime timelineTime, std::optional<WebAnimationTime> timelineDuration) const
+ResolvedEffectTiming AcceleratedEffect::resolvedTiming(std::optional<WebAnimationTime> timelineTime, std::optional<WebAnimationTime> timelineDuration) const
 {
     ASSERT_IMPLIES(m_paused, m_holdTime);
     ASSERT_IMPLIES(!m_paused, m_startTime);
 
-    auto localTime = [&] {
+    auto localTime = [&]() -> std::optional<WebAnimationTime> {
         if (m_paused)
             return *m_holdTime;
-        return (timelineTime - *m_startTime) * m_playbackRate;
+        if (!timelineTime)
+            return m_holdTime;
+        return (*timelineTime - *m_startTime) * m_playbackRate;
     }();
 
     return m_timing.resolve({
@@ -442,7 +444,7 @@ ResolvedEffectTiming AcceleratedEffect::resolvedTiming(WebAnimationTime timeline
     });
 }
 
-void AcceleratedEffect::apply(AcceleratedEffectValues& values, WebAnimationTime timelineTime, std::optional<WebAnimationTime> timelineDuration) const
+void AcceleratedEffect::apply(AcceleratedEffectValues& values, std::optional<WebAnimationTime> timelineTime, std::optional<WebAnimationTime> timelineDuration) const
 {
     auto resolvedTiming = this->resolvedTiming(timelineTime, timelineDuration);
     if (!resolvedTiming.transformedProgress)
