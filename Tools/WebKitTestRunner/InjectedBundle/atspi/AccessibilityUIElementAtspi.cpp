@@ -1660,6 +1660,8 @@ bool AccessibilityUIElementAtspi::hasPopup() const
 
 void AccessibilityUIElementAtspi::takeFocus()
 {
+    m_element->updateBackingStore();
+    m_element->focus();
 }
 
 void AccessibilityUIElementAtspi::takeSelection()

@@ -1041,9 +1041,6 @@ accessibility/css-content-alt-text.html [ Skip ]
 # AXObjectCache::announce not implemented.
 accessibility/announcement-notification.html [ Skip ]
 
-# Failing since introduced.
-accessibility/focus-change-id-mutation-and-removal-crash.html [ Skip ]
-
 # AccessibilityUIElement::isInTable is not implemented.
 accessibility/table-ancestry.html [ Skip ]
 
@@ -1133,9 +1130,6 @@ accessibility/aria-multiline.html [ Skip ]
 
 # Failing since added in https://bugs.webkit.org/show_bug.cgi?id=244069.
 accessibility/dynamically-ignored-canvas.html [ Skip ]
-
-# Missing AccessibilityUIElement::takeFocus().
-accessibility/basic-focusability.html [ Skip ]
 
 # Missing AccessibilityUIElement::uiElementForSearchPredicate implementation.
 accessibility/aria-controlled-table-row-visibility.html [ Skip ]
@@ -1273,9 +1267,6 @@ webkit.org/b/232249 accessibility/video-element-url-attribute.html [ Failure ]
 webkit.org/b/232255 accessibility/math-has-non-presentational-children.html [ Failure ]
 
 webkit.org/b/232256 accessibility/auto-fill-crash.html [ Failure ]
-
-# Times out due to missing AccessibilityUIElement::takeFocus
-http/tests/accessibility/focus-text-field-in-iframe.html [ Skip ]
 
 # Times out due to missing AccessibilityUIElement::linkedUIElementAtIndex() implementation.
 accessibility/combobox/combobox-linked-listbox-destroyed.html [ Skip ]

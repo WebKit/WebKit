@@ -167,6 +167,8 @@ public:
     WEBCORE_EXPORT unsigned columnSpan() const;
     WEBCORE_EXPORT std::pair<std::optional<unsigned>, std::optional<unsigned>> cellPosition() const;
 
+    WEBCORE_EXPORT bool focus() const;
+
 private:
     AccessibilityObjectAtspi(AXCoreObject*, AccessibilityRootAtspi*);
 
@@ -184,7 +186,6 @@ private:
     void buildInterfaces(GVariantBuilder*) const;
     void buildStates(GVariantBuilder*) const;
 
-    bool focus() const;
     float opacity() const;
 
     static TextGranularity atspiBoundaryToTextGranularity(Atspi::TextBoundaryType);
