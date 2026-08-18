@@ -3327,18 +3327,18 @@ FasterClicksEnabled:
 
 FetchUploadStreamsEnabled:
   type: bool
-  status: testable
+  status: stable
   category: networking
   humanReadableName: "Fetch upload streams"
   humanReadableDescription: "Enable ReadableStream request bodies for fetch(). HTTP/2 (or later) required."
   exposed: [ WebKit ]
   defaultValue:
     WebCore:
-      default: false
+      default: true
     WebKitLegacy:
       default: false
     WebKit:
-      default: false
+      default: true
 
 FileReaderAPIEnabled:
   type: bool
