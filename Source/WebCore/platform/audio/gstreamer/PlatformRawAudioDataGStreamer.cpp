@@ -73,6 +73,9 @@ Ref<PlatformRawAudioData> PlatformRawAudioData::create(Ref<MediaSample>&& sample
 
 RefPtr<PlatformRawAudioData> PlatformRawAudioData::create(std::span<const uint8_t> sourceData, AudioSampleFormat format, float sampleRate, int64_t timestamp, size_t numberOfFrames, size_t numberOfChannels)
 {
+    if (!ensureGStreamerInitialized()) [[unlikely]]
+        return nullptr;
+
     ensureAudioDataDebugCategoryInitialized();
     auto [gstFormat, layout] = convertAudioSampleFormatToGStreamerFormat(format);
 
