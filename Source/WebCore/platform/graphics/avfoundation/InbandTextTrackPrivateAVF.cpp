@@ -534,8 +534,7 @@ void InbandTextTrackPrivateAVF::processVTTSample(CMSampleBufferRef sampleBuffer,
     }
 
     while (true) {
-        RefPtr buffer = ArrayBuffer::create(m_sampleInputBuffer);
-        Ref view = JSC::DataView::create(WTF::move(buffer), 0, buffer->byteLength());
+        auto view = m_sampleInputBuffer.span();
 
         auto peekResult = ISOBox::peekBox(view, 0);
         if (!peekResult)
@@ -545,7 +544,7 @@ void InbandTextTrackPrivateAVF::processVTTSample(CMSampleBufferRef sampleBuffer,
         auto boxLength = peekResult.value().second;
         ALWAYS_LOG(LOGIDENTIFIER, "chunk type = '", type, "', size = ", boxLength);
 
-        if (boxLength > view->byteLength()) {
+        if (boxLength > view.size()) {
             ERROR_LOG(LOGIDENTIFIER, "ISO box larger than buffer length!");
             break;
         }

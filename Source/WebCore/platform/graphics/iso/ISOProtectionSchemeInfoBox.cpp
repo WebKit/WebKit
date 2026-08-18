@@ -28,16 +28,17 @@
 
 #include "ISOSchemeInformationBox.h"
 #include "ISOSchemeTypeBox.h"
-#include <JavaScriptCore/DataView.h>
-
-using JSC::DataView;
 
 namespace WebCore {
 
-ISOProtectionSchemeInfoBox::ISOProtectionSchemeInfoBox() = default;
+ISOProtectionSchemeInfoBox::ISOProtectionSchemeInfoBox()
+    : ISOBox(boxTypeName())
+{
+}
+
 ISOProtectionSchemeInfoBox::~ISOProtectionSchemeInfoBox() = default;
 
-bool ISOProtectionSchemeInfoBox::parse(DataView& view, unsigned& offset)
+bool ISOProtectionSchemeInfoBox::parse(const ByteView& view, unsigned& offset)
 {
     unsigned localOffset = offset;
     if (!ISOBox::parse(view, localOffset))
@@ -81,6 +82,44 @@ bool ISOProtectionSchemeInfoBox::parse(DataView& view, unsigned& offset)
 
     offset = localOffset;
     return true;
+}
+
+bool ISOProtectionSchemeInfoBox::pack(MutableByteView& view, unsigned& offset) const
+{
+    if (!ISOBox::pack(view, offset))
+        return false;
+
+    if (!m_originalFormatBox.write(view, offset))
+        return false;
+
+    if (m_schemeTypeBox && !m_schemeTypeBox->write(view, offset))
+        return false;
+
+    if (m_schemeInformationBox && !m_schemeInformationBox->write(view, offset))
+        return false;
+
+    return true;
+}
+
+void ISOProtectionSchemeInfoBox::updateSize()
+{
+    m_originalFormatBox.updateSize();
+    if (m_schemeTypeBox)
+        m_schemeTypeBox->updateSize();
+    if (m_schemeInformationBox)
+        m_schemeInformationBox->updateSize();
+    ISOBox::updateSize();
+}
+
+uint64_t ISOProtectionSchemeInfoBox::partialSize() const
+{
+    auto size = ISOBox::partialSize();
+    size += m_originalFormatBox.requiredSize();
+    if (m_schemeTypeBox)
+        size += m_schemeTypeBox->requiredSize();
+    if (m_schemeInformationBox)
+        size += m_schemeInformationBox->requiredSize();
+    return size;
 }
 
 }

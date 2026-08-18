@@ -29,18 +29,20 @@
 
 namespace WebCore {
 
-class WEBCORE_EXPORT ISOOriginalFormatBox final : public ISOBox {
+class ISOOriginalFormatBox final : public ISOBox {
 public:
-    ISOOriginalFormatBox();
-    ~ISOOriginalFormatBox();
+    WEBCORE_EXPORT ISOOriginalFormatBox();
+    WEBCORE_EXPORT virtual ~ISOOriginalFormatBox();
 
     static FourCC boxTypeName() { return std::span { "frma" }; }
 
     FourCC dataFormat() const { return m_dataFormat; }
 
-    bool parse(JSC::DataView&, unsigned& offset) override;
+    bool parse(const ByteView&, unsigned& offset) final;
+    bool pack(MutableByteView&, unsigned& offset) const final;
 
 private:
+    uint64_t partialSize() const final { return ISOBox::partialSize() + 4; }
     FourCC m_dataFormat;
 };
 

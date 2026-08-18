@@ -26,32 +26,38 @@
 #include "config.h"
 #include "ISOBox.h"
 
-#include <JavaScriptCore/DataView.h>
+#include <wtf/CheckedArithmetic.h>
 #include <wtf/TZoneMallocInlines.h>
-
-using JSC::DataView;
+#include "SharedBuffer.h"
 
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ISOBox);
 
 ISOBox::ISOBox() = default;
+ISOBox::ISOBox(FourCC boxType)
+    : m_boxType { boxType }
+{
+}
+
 ISOBox::~ISOBox() = default;
 ISOBox::ISOBox(const ISOBox&) = default;
+ISOBox::ISOBox(ISOBox&&) = default;
 
 // A box's size field and the cursor these parsers walk it with are both 32-bit, so a larger view
 // cannot be walked at all: its remaining length would not even be representable.
-static bool isWalkableView(const DataView& view)
+static bool isWalkableView(const ISOBox::ByteView& view)
 {
-    return isInBounds<unsigned>(view.byteLength());
+    return isInBounds<unsigned>(view.size());
 }
 
-ISOBox::PeekResult ISOBox::peekBox(DataView& view, unsigned offset)
+ISOBox::PeekResult ISOBox::peekBox(const ByteView& view, unsigned offset)
 {
     if (!isWalkableView(view))
         return std::nullopt;
 
-    unsigned maximumPossibleSize = view.byteLength() - offset;
+    unsigned maximumPossibleSize = view.size() - offset;
+
     uint64_t size = 0;
     if (!checkedRead<uint32_t>(size, view, offset, BigEndian))
         return std::nullopt;
@@ -71,28 +77,77 @@ ISOBox::PeekResult ISOBox::peekBox(DataView& view, unsigned offset)
     return std::make_pair(type, size);
 }
 
-bool ISOBox::read(DataView& view)
+bool ISOBox::read(const ByteView& view)
 {
     unsigned localOffset { 0 };
-    return parse(view, localOffset);
+    if (!parse(view, localOffset))
+        return false;
+
+    return localOffset <= m_size;
 }
 
-bool ISOBox::read(DataView& view, unsigned& offset)
+bool ISOBox::read(const ByteView& view, unsigned& offset)
 {
+    if (!isWalkableView(view))
+        return false;
+
     unsigned localOffset = offset;
     if (!parse(view, localOffset))
+        return false;
+
+    unsigned consumed;
+    if (!WTF::safeSub(localOffset, offset, consumed) || consumed > m_size)
         return false;
 
     offset += m_size;
     return true;
 }
 
-bool ISOBox::parse(DataView& view, unsigned& offset)
+bool ISOBox::write(MutableByteView& view, unsigned& offset) const
 {
     if (!isWalkableView(view))
         return false;
 
-    unsigned maximumPossibleSize = view.byteLength() - offset;
+    unsigned localOffset = offset;
+    if (!pack(view, localOffset))
+        return false;
+
+    unsigned consumed;
+    if (!WTF::safeSub(localOffset, offset, consumed) || consumed > m_size)
+        return false;
+
+    offset += m_size;
+    return true;
+}
+
+void ISOBox::updateSize()
+{
+    m_size = requiredSize();
+}
+
+uint64_t ISOBox::partialSize() const
+{
+    uint64_t size = 8;
+    if (m_boxType == std::span { "uuid" })
+        size += 16;
+    return size;
+}
+
+uint64_t ISOBox::requiredSize() const
+{
+    auto partialSize = this->partialSize();
+    if (partialSize > std::numeric_limits<uint32_t>::max())
+        partialSize += 4;
+    return partialSize;
+}
+
+bool ISOBox::parse(const ByteView& view, unsigned& offset)
+{
+    if (!isWalkableView(view))
+        return false;
+
+    unsigned maximumPossibleSize = view.size() - offset;
+
     if (!checkedRead<uint32_t>(m_size, view, offset, BigEndian))
         return false;
 
@@ -108,22 +163,65 @@ bool ISOBox::parse(DataView& view, unsigned& offset)
         m_size = maximumPossibleSize;
 
     if (m_boxType == std::span { "uuid" }) {
-        struct ExtendedType {
-            uint8_t value[16];
-        } extendedTypeStruct;
-        if (!checkedRead<ExtendedType>(extendedTypeStruct, view, offset, BigEndian))
+        ExtendedType extendedType;
+        if (!checkedRead<ExtendedType>(extendedType, view, offset, BigEndian))
             return false;
 
-        m_extendedType = Vector<uint8_t>(std::span { extendedTypeStruct.value });
+        m_extendedType = WTF::move(extendedType);
     }
 
     return true;
 }
 
-ISOFullBox::ISOFullBox() = default;
-ISOFullBox::ISOFullBox(const ISOFullBox&) = default;
+bool ISOBox::pack(MutableByteView& view, unsigned& offset) const
+{
+    uint32_t firstSize = 1u;
+    if (m_size <= std::numeric_limits<uint32_t>::max())
+        firstSize = m_size;
 
-bool ISOFullBox::parse(DataView& view, unsigned& offset)
+    if (!checkedWrite<uint32_t>(firstSize, view, offset, BigEndian))
+        return false;
+
+    if (!checkedWrite<uint32_t>(m_boxType.value, view, offset, BigEndian))
+        return false;
+
+    if (firstSize == 1 && !checkedWrite<uint64_t>(m_size, view, offset, BigEndian))
+        return false;
+
+    if (m_boxType == std::span { "uuid" }) {
+        ASSERT(m_extendedType);
+        if (!m_extendedType)
+            return false;
+
+        if (!checkedWriteSequence<uint8_t>(*m_extendedType, view, offset, BigEndian))
+            return false;
+    }
+
+    return true;
+}
+
+Ref<SharedBuffer> ISOBox::serialize() const
+{
+    auto buffer = Vector<uint8_t>(m_size);
+    MutableByteView view = buffer.mutableSpan();
+    unsigned offset = 0;
+    if (!write(view, offset))
+        return SharedBuffer::create();
+
+    return SharedBuffer::create(WTF::move(buffer));
+}
+
+ISOFullBox::ISOFullBox() = default;
+ISOFullBox::ISOFullBox(FourCC boxType, uint8_t version, uint32_t flags)
+    : ISOBox(boxType)
+    , m_version { version }
+    , m_flags { flags }
+{
+}
+ISOFullBox::ISOFullBox(const ISOFullBox&) = default;
+ISOFullBox::ISOFullBox(ISOFullBox&&) = default;
+
+bool ISOFullBox::parse(const ByteView& view, unsigned& offset)
 {
     if (!ISOBox::parse(view, offset))
         return false;
@@ -131,7 +229,19 @@ bool ISOFullBox::parse(DataView& view, unsigned& offset)
     return parseVersionAndFlags(view, offset);
 }
 
-bool ISOFullBox::parseVersionAndFlags(DataView& view, unsigned& offset)
+bool ISOFullBox::pack(MutableByteView& view, unsigned& offset) const
+{
+    if (!ISOBox::pack(view, offset))
+        return false;
+
+    uint32_t versionAndFlags = (m_version << 24) + m_flags;
+    if (!checkedWrite<uint32_t>(versionAndFlags, view, offset, BigEndian))
+        return false;
+
+    return true;
+}
+
+bool ISOFullBox::parseVersionAndFlags(const ByteView& view, unsigned& offset)
 {
     uint32_t versionAndFlags = 0;
     if (!checkedRead<uint32_t>(versionAndFlags, view, offset, BigEndian))

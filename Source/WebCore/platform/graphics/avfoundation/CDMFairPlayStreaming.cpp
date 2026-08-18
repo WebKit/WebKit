@@ -135,7 +135,7 @@ static SchemeAndKeyResult extractSchemeAndKeyIdFromSinf(const SharedBuffer& buff
         std::optional<FourCC> scheme;
         std::optional<Vector<uint8_t>> keyID;
 
-        auto view = JSC::DataView::create(buffer->tryCreateArrayBuffer(), offset, buffer->size());
+        auto view = buffer->span();
         while (auto optionalBoxType = ISOBox::peekBox(view, offset)) {
             auto& boxTypeName = optionalBoxType.value().first;
             auto& boxSize = optionalBoxType.value().second;

@@ -31,25 +31,37 @@
 
 namespace WebCore {
 
-class WEBCORE_EXPORT ISOProtectionSystemSpecificHeaderBox : public ISOFullBox {
+class ISOProtectionSystemSpecificHeaderBox : public ISOFullBox {
 public:
-    using KeyID = Vector<uint8_t>;
+    using KeyID = std::array<uint8_t, 16>;
+    using SystemID = std::array<uint8_t, 16>;
 
-    ISOProtectionSystemSpecificHeaderBox();
-    ~ISOProtectionSystemSpecificHeaderBox();
+    WEBCORE_EXPORT static const SystemID& commonSystemID();
+
+    WEBCORE_EXPORT ISOProtectionSystemSpecificHeaderBox();
+    WEBCORE_EXPORT ISOProtectionSystemSpecificHeaderBox(const ISOProtectionSystemSpecificHeaderBox&);
+    WEBCORE_EXPORT ISOProtectionSystemSpecificHeaderBox(ISOProtectionSystemSpecificHeaderBox&&);
+    WEBCORE_EXPORT ISOProtectionSystemSpecificHeaderBox(SystemID);
+    WEBCORE_EXPORT virtual ~ISOProtectionSystemSpecificHeaderBox();
 
     static FourCC boxTypeName() { return std::span { "pssh" }; }
 
-    static std::optional<Vector<uint8_t>> peekSystemID(JSC::DataView&, unsigned offset);
+    WEBCORE_EXPORT static std::optional<SystemID> peekSystemID(ByteView&, unsigned offset);
 
-    const Vector<uint8_t>& systemID() const LIFETIME_BOUND { return m_systemID; }
+    const SystemID& systemID() const LIFETIME_BOUND { return m_systemID; }
     const Vector<KeyID>& keyIDs() const LIFETIME_BOUND { return m_keyIDs; }
     const Vector<uint8_t>& data() const LIFETIME_BOUND { return m_data; }
 
-    bool parse(JSC::DataView&, unsigned& offset) override;
+    WEBCORE_EXPORT bool parse(const ByteView&, unsigned& offset) override;
+    WEBCORE_EXPORT bool pack(MutableByteView&, unsigned& offset) const override;
 
 protected:
-    Vector<uint8_t> m_systemID;
+    virtual uint64_t dataSize() const { return m_data.size(); }
+    virtual bool parseData(const ByteView&, unsigned& offset, uint64_t size);
+    virtual bool writeData(MutableByteView&, unsigned& offset) const;
+    uint64_t partialSize() const override;
+
+    SystemID m_systemID;
     Vector<KeyID> m_keyIDs;
     Vector<uint8_t> m_data;
 };

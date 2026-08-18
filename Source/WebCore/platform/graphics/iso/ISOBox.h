@@ -26,76 +26,132 @@
 #pragma once
 
 #include <WebCore/FourCC.h>
+#include <wtf/FlipBytes.h>
 #include <wtf/Forward.h>
 #include <wtf/StdIntExtras.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/TypeCasts.h>
 
-namespace JSC {
-class DataView;
-}
-
 namespace WebCore {
+
+class SharedBuffer;
 
 class ISOBox {
     WTF_MAKE_TZONE_ALLOCATED(ISOBox);
 public:
     WEBCORE_EXPORT ISOBox();
+    WEBCORE_EXPORT ISOBox(FourCC boxType);
     WEBCORE_EXPORT ISOBox(const ISOBox&);
-    ISOBox(ISOBox&&) = default;
+    WEBCORE_EXPORT ISOBox(ISOBox&&);
     WEBCORE_EXPORT virtual ~ISOBox();
 
     ISOBox& operator=(const ISOBox&) = default;
     ISOBox& operator=(ISOBox&&) = default;
 
+    using ByteView = std::span<const uint8_t>;
+    using MutableByteView = std::span<uint8_t>;
+
     using PeekResult = std::optional<std::pair<FourCC, uint64_t>>;
-    static PeekResult peekBox(JSC::DataView&, unsigned offset);
+    static PeekResult peekBox(const ByteView&, unsigned offset);
     static constexpr size_t minimumBoxSize() { return 2 * sizeof(uint32_t); }
 
-    WEBCORE_EXPORT bool read(JSC::DataView&);
-    bool read(JSC::DataView&, unsigned& offset);
+    WEBCORE_EXPORT bool read(const ByteView&);
+    bool read(const ByteView&, unsigned& offset);
+    bool write(MutableByteView&, unsigned& offset) const;
+
+    WEBCORE_EXPORT Ref<SharedBuffer> serialize() const;
 
     uint64_t size() const { return m_size; }
     FourCC boxType() const { return m_boxType; }
-    const Vector<uint8_t>& extendedType() const LIFETIME_BOUND { return m_extendedType; }
+    using ExtendedType = std::array<uint8_t, 16>;
+    const std::optional<ExtendedType>& extendedType() const LIFETIME_BOUND { return m_extendedType; }
+
+    WEBCORE_EXPORT virtual void updateSize();
+    virtual uint64_t partialSize() const;
+    WEBCORE_EXPORT virtual uint64_t requiredSize() const;
 
 protected:
-    virtual bool parse(JSC::DataView&, unsigned& offset);
+    virtual bool parse(const ByteView&, unsigned& offset);
+    virtual bool pack(MutableByteView&, unsigned& offset) const;
 
     enum Endianness { BigEndian, LittleEndian };
 
-    template<typename T, typename R, typename V>
-    static bool checkedRead(R& returnValue, V& view, unsigned& offset, Endianness endianness)
+    template<typename T, typename R>
+    static bool checkedRead(R& returnValue, const ByteView& view, unsigned& offset, Endianness endianness)
     {
-        bool readStatus = false;
-        size_t actualOffset = offset;
-        T value = view.template read<T>(actualOffset, endianness == LittleEndian, &readStatus);
-        RELEASE_ASSERT(isInBounds<uint32_t>(actualOffset));
-        offset = actualOffset;
-        if (!readStatus)
+        if (offset + sizeof(T) > view.size())
             return false;
 
-        returnValue = value;
+        T value;
+        memcpySpan(asMutableByteSpan(value), view.subspan(offset, sizeof(T)));
+        returnValue = flipBytesIfLittleEndian(value, endianness == LittleEndian);
+        offset += sizeof(T);
+        RELEASE_ASSERT(isInBounds<uint32_t>(offset));
+
+        return true;
+    }
+
+    template<typename T, typename S>
+    static bool checkedReadSequence(S& returnValue, const ByteView& view, unsigned& offset, Endianness endianness)
+    {
+        unsigned actualOffset = offset;
+        for (auto& value : returnValue) {
+            if (!checkedRead<T>(value, view, actualOffset, endianness))
+                return false;
+        }
+        offset = actualOffset;
+        return true;
+    }
+
+    template<typename T, typename R>
+    static bool checkedWrite(const R& value, MutableByteView& view, unsigned& offset, Endianness endianness)
+    {
+        if (offset + sizeof(T) > view.size())
+            return false;
+
+        T flipped = flipBytesIfLittleEndian(static_cast<T>(value), endianness == LittleEndian);
+        memcpySpan(view.subspan(offset, sizeof(T)), asByteSpan(flipped));
+        offset += sizeof(T);
+        RELEASE_ASSERT(isInBounds<uint32_t>(offset));
+        return true;
+    }
+
+    template<typename T, typename S>
+    static bool checkedWriteSequence(const S& sequence, MutableByteView& view, unsigned& offset, Endianness endianness)
+    {
+        unsigned actualOffset = offset;
+        for (auto& value : sequence) {
+            if (!checkedWrite<T>(value, view, actualOffset, endianness))
+                return false;
+        }
+        offset = actualOffset;
         return true;
     }
 
     uint64_t m_size { 0 };
     FourCC m_boxType;
-    Vector<uint8_t> m_extendedType;
+    std::optional<ExtendedType> m_extendedType;
 };
 
 class ISOFullBox : public ISOBox {
 public:
     WEBCORE_EXPORT ISOFullBox();
+    WEBCORE_EXPORT ISOFullBox(FourCC boxType, uint8_t version, uint32_t flags);
     WEBCORE_EXPORT ISOFullBox(const ISOFullBox&);
-    ISOFullBox(ISOFullBox&&) = default;
+    WEBCORE_EXPORT ISOFullBox(ISOFullBox&&);
 
     uint8_t version() const { return m_version; }
+    void setVersion(uint8_t version) { m_version = version; }
+
     uint32_t flags() const { return m_flags; }
+    void setFlags(uint32_t flags) { m_flags = flags; }
 
 protected:
-    bool parse(JSC::DataView&, unsigned& offset) override;
-    bool parseVersionAndFlags(JSC::DataView&, unsigned& offset);
+    uint64_t partialSize() const override { return ISOBox::partialSize() + 4; }
+    bool parse(const ByteView&, unsigned& offset) override;
+    bool parseVersionAndFlags(const ByteView&, unsigned& offset);
+    bool pack(MutableByteView&, unsigned& offset) const override;
 
     uint8_t m_version { 0 };
     uint32_t m_flags { 0 };

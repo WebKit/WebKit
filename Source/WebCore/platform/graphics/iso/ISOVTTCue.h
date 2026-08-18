@@ -61,7 +61,7 @@ public:
 
     String toJSONString() const;
 
-    WEBCORE_EXPORT bool parse(JSC::DataView&, unsigned& offset) override;
+    WEBCORE_EXPORT bool parse(const ByteView&, unsigned& offset) override;
 
     ISOWebVTTCue isolatedCopy() const &;
     ISOWebVTTCue isolatedCopy() &&;

@@ -29,19 +29,22 @@
 
 namespace WebCore {
 
-class WEBCORE_EXPORT ISOSchemeTypeBox final : public ISOFullBox {
+class ISOSchemeTypeBox final : public ISOFullBox {
 public:
-    ISOSchemeTypeBox();
-    ~ISOSchemeTypeBox();
+    WEBCORE_EXPORT ISOSchemeTypeBox();
+    WEBCORE_EXPORT virtual ~ISOSchemeTypeBox();
 
     static FourCC boxTypeName() { return std::span { "schm" }; }
 
     FourCC schemeType() const { return m_schemeType; }
     uint32_t schemeVersion() const { return m_schemeVersion; }
 
-    bool parse(JSC::DataView&, unsigned& offset) override;
+    WEBCORE_EXPORT bool parse(const ByteView&, unsigned& offset) final;
+    WEBCORE_EXPORT bool pack(MutableByteView&, unsigned& offset) const final;
 
 private:
+    uint64_t partialSize() const final { return ISOFullBox::partialSize() + 8; }
+
     FourCC m_schemeType;
     uint32_t m_schemeVersion { 0 };
 };

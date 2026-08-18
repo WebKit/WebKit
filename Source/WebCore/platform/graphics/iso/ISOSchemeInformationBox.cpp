@@ -27,16 +27,17 @@
 #include "ISOSchemeInformationBox.h"
 
 #include "ISOTrackEncryptionBox.h"
-#include <JavaScriptCore/DataView.h>
-
-using JSC::DataView;
 
 namespace WebCore {
 
-ISOSchemeInformationBox::ISOSchemeInformationBox() = default;
+ISOSchemeInformationBox::ISOSchemeInformationBox()
+    : ISOBox(boxTypeName())
+{
+}
+
 ISOSchemeInformationBox::~ISOSchemeInformationBox() = default;
 
-bool ISOSchemeInformationBox::parse(DataView& view, unsigned& offset)
+bool ISOSchemeInformationBox::parse(const ByteView& view, unsigned& offset)
 {
     unsigned localOffset = offset;
     if (!ISOBox::parse(view, localOffset))
@@ -58,6 +59,32 @@ bool ISOSchemeInformationBox::parse(DataView& view, unsigned& offset)
     }
 
     return true;
+}
+
+bool ISOSchemeInformationBox::pack(MutableByteView& view, unsigned& offset) const
+{
+    if (!ISOBox::pack(view, offset))
+        return false;
+
+    if (m_schemeSpecificData)
+        return m_schemeSpecificData->write(view, offset);
+
+    return true;
+}
+
+void ISOSchemeInformationBox::updateSize()
+{
+    if (m_schemeSpecificData)
+        m_schemeSpecificData->updateSize();
+    ISOBox::updateSize();
+}
+
+uint64_t ISOSchemeInformationBox::partialSize() const
+{
+    auto size = ISOBox::partialSize();
+    if (m_schemeSpecificData)
+        size += m_schemeSpecificData->requiredSize();
+    return size;
 }
 
 }

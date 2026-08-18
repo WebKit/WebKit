@@ -43,7 +43,11 @@ public:
     const ISOSchemeTypeBox* schemeTypeBox() const LIFETIME_BOUND { return m_schemeTypeBox.get(); }
     const ISOSchemeInformationBox* schemeInformationBox() const LIFETIME_BOUND { return m_schemeInformationBox.get(); }
 
-    bool parse(JSC::DataView&, unsigned& offset) override;
+    bool parse(const ByteView&, unsigned& offset) final;
+    bool pack(MutableByteView&, unsigned& offset) const final;
+
+    void updateSize() final;
+    uint64_t partialSize() const final;
 
 private:
     ISOOriginalFormatBox m_originalFormatBox;

@@ -40,7 +40,7 @@ public:
     JSArrayBufferView* wrapImpl(JSGlobalObject* lexicalGlobalObject, JSGlobalObject* globalObject);
     
     template<typename T>
-    T get(size_t offset, bool littleEndian, bool* status = nullptr)
+    T get(size_t offset, bool littleEndian, bool* status = nullptr) const
     {
         if (status) {
             if (offset + sizeof(T) > byteLength()) {
@@ -56,7 +56,7 @@ public:
     }
     
     template<typename T>
-    T read(size_t& offset, bool littleEndian, bool* status = nullptr)
+    T read(size_t& offset, bool littleEndian, bool* status = nullptr) const
     {
         T result = this->template get<T>(offset, littleEndian, status);
         if (!status || *status)

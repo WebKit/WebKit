@@ -46,10 +46,12 @@ public:
 
     bool parseWithoutTypeAndSize(std::span<const uint8_t>);
 
-    bool parse(JSC::DataView&, unsigned& offset) override;
+    bool parse(const ByteView&, unsigned& offset) final;
+    bool pack(MutableByteView&, unsigned& offset) const final;
 
 private:
-    bool parsePayload(JSC::DataView&, unsigned& offset);
+    uint64_t partialSize() const final;
+    bool parsePayload(const ByteView&, unsigned& offset);
     std::optional<int8_t> m_defaultCryptByteBlock;
     std::optional<int8_t> m_defaultSkipByteBlock;
     int8_t m_defaultIsProtected { 0 };

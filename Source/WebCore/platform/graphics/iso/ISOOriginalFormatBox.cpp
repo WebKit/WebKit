@@ -26,21 +26,29 @@
 #include "config.h"
 #include "ISOOriginalFormatBox.h"
 
-#include <JavaScriptCore/DataView.h>
-
-using JSC::DataView;
-
 namespace WebCore {
 
-ISOOriginalFormatBox::ISOOriginalFormatBox() = default;
+ISOOriginalFormatBox::ISOOriginalFormatBox()
+    : ISOBox(boxTypeName())
+{
+}
+
 ISOOriginalFormatBox::~ISOOriginalFormatBox() = default;
 
-bool ISOOriginalFormatBox::parse(DataView& view, unsigned& offset)
+bool ISOOriginalFormatBox::parse(const ByteView& view, unsigned& offset)
 {
     if (!ISOBox::parse(view, offset))
         return false;
 
-    return checkedRead<uint32_t>(m_dataFormat, view, offset, BigEndian);
+    return checkedRead<uint32_t>(m_dataFormat.value, view, offset, BigEndian);
+}
+
+bool ISOOriginalFormatBox::pack(MutableByteView& view, unsigned& offset) const
+{
+    if (!ISOBox::pack(view, offset))
+        return false;
+
+    return checkedWrite<uint32_t>(m_dataFormat.value, view, offset, BigEndian);
 }
 
 }

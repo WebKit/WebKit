@@ -38,27 +38,37 @@ public:
 
     static FourCC boxTypeName() { return std::span { "fpsi" }; }
 
+    void setScheme(FourCC scheme) { m_scheme = scheme; }
     FourCC scheme() const { return m_scheme; }
 
-    WEBCORE_EXPORT bool parse(JSC::DataView&, unsigned& offset) final;
+    WEBCORE_EXPORT bool parse(const ByteView&, unsigned& offset) final;
+    WEBCORE_EXPORT bool pack(MutableByteView&, unsigned& offset) const final;
 
 private:
+    uint64_t partialSize() const final { return ISOFullBox::partialSize() + sizeof(uint32_t); }
+
     FourCC m_scheme;
 };
 
 class ISOFairPlayStreamingKeyRequestInfoBox final : public ISOFullBox {
 public:
     WEBCORE_EXPORT ISOFairPlayStreamingKeyRequestInfoBox();
+    WEBCORE_EXPORT ISOFairPlayStreamingKeyRequestInfoBox(const ISOFairPlayStreamingKeyRequestInfoBox&);
+    ISOFairPlayStreamingKeyRequestInfoBox(ISOFairPlayStreamingKeyRequestInfoBox&&);
     WEBCORE_EXPORT ~ISOFairPlayStreamingKeyRequestInfoBox();
 
     static FourCC boxTypeName() { return std::span { "fkri" }; }
 
     using KeyID = Vector<uint8_t, 16>;
+    void setKeyID(KeyID keyID) { m_keyID = keyID; }
     const KeyID& keyID() const LIFETIME_BOUND { return m_keyID; }
 
-    WEBCORE_EXPORT bool parse(JSC::DataView&, unsigned& offset) final;
+    WEBCORE_EXPORT bool parse(const ByteView&, unsigned& offset) final;
+    WEBCORE_EXPORT bool pack(MutableByteView&, unsigned& offset) const final;
 
 private:
+    uint64_t partialSize() const final { return ISOFullBox::partialSize() + m_keyID.size(); }
+
     KeyID m_keyID;
 };
 
@@ -66,7 +76,7 @@ class ISOFairPlayStreamingKeyAssetIdBox final : public ISOBox {
 public:
     WEBCORE_EXPORT ISOFairPlayStreamingKeyAssetIdBox();
     WEBCORE_EXPORT ISOFairPlayStreamingKeyAssetIdBox(const ISOFairPlayStreamingKeyAssetIdBox&);
-    ISOFairPlayStreamingKeyAssetIdBox(ISOFairPlayStreamingKeyAssetIdBox&&) = default;
+    WEBCORE_EXPORT ISOFairPlayStreamingKeyAssetIdBox(ISOFairPlayStreamingKeyAssetIdBox&&);
     WEBCORE_EXPORT ~ISOFairPlayStreamingKeyAssetIdBox();
 
     ISOFairPlayStreamingKeyAssetIdBox& operator=(const ISOFairPlayStreamingKeyAssetIdBox&) = default;
@@ -74,10 +84,14 @@ public:
 
     static FourCC boxTypeName() { return std::span { "fkai" }; }
     const Vector<uint8_t>& data() const LIFETIME_BOUND { return m_data; }
+    Vector<uint8_t>& data() LIFETIME_BOUND { return m_data; }
 
-    WEBCORE_EXPORT bool parse(JSC::DataView&, unsigned& offset) final;
+    WEBCORE_EXPORT bool parse(const ByteView&, unsigned& offset) final;
+    WEBCORE_EXPORT bool pack(MutableByteView&, unsigned& offset) const final;
 
 private:
+    uint64_t partialSize() const final { return ISOBox::partialSize() + m_data.size(); }
+
     Vector<uint8_t> m_data;
 };
 
@@ -85,7 +99,7 @@ class ISOFairPlayStreamingKeyContextBox final : public ISOBox {
 public:
     WEBCORE_EXPORT ISOFairPlayStreamingKeyContextBox();
     WEBCORE_EXPORT ISOFairPlayStreamingKeyContextBox(const ISOFairPlayStreamingKeyContextBox&);
-    ISOFairPlayStreamingKeyContextBox(ISOFairPlayStreamingKeyContextBox&&) = default;
+    WEBCORE_EXPORT ISOFairPlayStreamingKeyContextBox(ISOFairPlayStreamingKeyContextBox&&);
     WEBCORE_EXPORT ~ISOFairPlayStreamingKeyContextBox();
 
     ISOFairPlayStreamingKeyContextBox& operator=(const ISOFairPlayStreamingKeyContextBox&) = default;
@@ -93,10 +107,14 @@ public:
 
     static FourCC boxTypeName() { return std::span { "fkcx" }; }
     const Vector<uint8_t>& data() const LIFETIME_BOUND { return m_data; }
+    Vector<uint8_t>& data() LIFETIME_BOUND { return m_data; }
 
-    WEBCORE_EXPORT bool parse(JSC::DataView&, unsigned& offset) final;
+    WEBCORE_EXPORT bool parse(const ByteView&, unsigned& offset) final;
+    WEBCORE_EXPORT bool pack(MutableByteView&, unsigned& offset) const final;
 
 private:
+    uint64_t partialSize() const final { return ISOBox::partialSize() + m_data.size(); }
+
     Vector<uint8_t> m_data;
 };
 
@@ -104,36 +122,51 @@ class ISOFairPlayStreamingKeyVersionListBox final : public ISOBox {
 public:
     WEBCORE_EXPORT ISOFairPlayStreamingKeyVersionListBox();
     WEBCORE_EXPORT ISOFairPlayStreamingKeyVersionListBox(const ISOFairPlayStreamingKeyVersionListBox&);
-    ISOFairPlayStreamingKeyVersionListBox(ISOFairPlayStreamingKeyVersionListBox&&) = default;
+    WEBCORE_EXPORT ISOFairPlayStreamingKeyVersionListBox(ISOFairPlayStreamingKeyVersionListBox&&);
     WEBCORE_EXPORT ~ISOFairPlayStreamingKeyVersionListBox();
 
     ISOFairPlayStreamingKeyVersionListBox& operator=(const ISOFairPlayStreamingKeyVersionListBox&) = default;
     ISOFairPlayStreamingKeyVersionListBox& operator=(ISOFairPlayStreamingKeyVersionListBox&&) = default;
 
     static FourCC boxTypeName() { return std::span { "fkvl" }; }
-    const Vector<uint8_t> versions() const { return m_versions; }
+    const Vector<uint32_t>& versions() const LIFETIME_BOUND { return m_versions; }
+    Vector<uint32_t>& versions() LIFETIME_BOUND { return m_versions; }
 
-    WEBCORE_EXPORT bool parse(JSC::DataView&, unsigned& offset) final;
+    WEBCORE_EXPORT bool parse(const ByteView&, unsigned& offset) final;
+    WEBCORE_EXPORT bool pack(MutableByteView&, unsigned& offset) const final;
 
 private:
-    Vector<uint8_t> m_versions;
+    uint64_t partialSize() const final { return ISOBox::partialSize() + m_versions.size() * sizeof(uint32_t); }
+
+    Vector<uint32_t> m_versions;
 };
 
 class ISOFairPlayStreamingKeyRequestBox final : public ISOBox {
 public:
     WEBCORE_EXPORT ISOFairPlayStreamingKeyRequestBox();
     WEBCORE_EXPORT ISOFairPlayStreamingKeyRequestBox(const ISOFairPlayStreamingKeyRequestBox&);
-    ISOFairPlayStreamingKeyRequestBox(ISOFairPlayStreamingKeyRequestBox&&) = default;
+    WEBCORE_EXPORT ISOFairPlayStreamingKeyRequestBox(ISOFairPlayStreamingKeyRequestBox&&);
     WEBCORE_EXPORT ~ISOFairPlayStreamingKeyRequestBox();
 
     static FourCC boxTypeName() { return std::span { "fpsk" }; }
 
     const ISOFairPlayStreamingKeyRequestInfoBox& requestInfo() const LIFETIME_BOUND { return m_requestInfo; }
-    const std::optional<ISOFairPlayStreamingKeyAssetIdBox>& assetID() const LIFETIME_BOUND { return m_assetID; }
-    const std::optional<ISOFairPlayStreamingKeyContextBox>& content() const LIFETIME_BOUND { return m_context; }
-    const std::optional<ISOFairPlayStreamingKeyVersionListBox>& versionList() const LIFETIME_BOUND { return m_versionList; }
+    ISOFairPlayStreamingKeyRequestInfoBox& requestInfo() LIFETIME_BOUND { return m_requestInfo; }
 
-    WEBCORE_EXPORT bool parse(JSC::DataView&, unsigned& offset) final;
+    const std::optional<ISOFairPlayStreamingKeyAssetIdBox>& assetID() const LIFETIME_BOUND { return m_assetID; }
+    void setAssetID(std::optional<ISOFairPlayStreamingKeyAssetIdBox>&& assetID) { m_assetID = WTF::move(assetID); }
+
+    const std::optional<ISOFairPlayStreamingKeyContextBox>& content() const LIFETIME_BOUND { return m_context; }
+    void setContent(std::optional<ISOFairPlayStreamingKeyContextBox>&& content)  { m_context = WTF::move(content); }
+
+    const std::optional<ISOFairPlayStreamingKeyVersionListBox>& versionList() const LIFETIME_BOUND { return m_versionList; }
+    void setVersionList(std::optional<ISOFairPlayStreamingKeyVersionListBox>&& versionList)  { m_versionList = WTF::move(versionList); }
+
+    WEBCORE_EXPORT bool parse(const ByteView&, unsigned& offset) final;
+    WEBCORE_EXPORT bool pack(MutableByteView&, unsigned& offset) const final;
+
+    WEBCORE_EXPORT void updateSize() final;
+    uint64_t partialSize() const final;
 
 private:
     ISOFairPlayStreamingKeyRequestInfoBox m_requestInfo;
@@ -150,9 +183,16 @@ public:
     static FourCC boxTypeName() { return std::span { "fpsd" }; }
 
     const ISOFairPlayStreamingInfoBox& info() const LIFETIME_BOUND { return m_info; }
-    const Vector<ISOFairPlayStreamingKeyRequestBox>& requests() const LIFETIME_BOUND { return m_requests; }
+    ISOFairPlayStreamingInfoBox& info() LIFETIME_BOUND { return m_info; }
 
-    WEBCORE_EXPORT bool parse(JSC::DataView&, unsigned& offset) final;
+    const Vector<ISOFairPlayStreamingKeyRequestBox>& requests() const LIFETIME_BOUND { return m_requests; }
+    void setRequests(Vector<ISOFairPlayStreamingKeyRequestBox>&& requests) { m_requests = WTF::move(requests); }
+
+    WEBCORE_EXPORT bool parse(const ByteView&, unsigned& offset) final;
+    WEBCORE_EXPORT bool pack(MutableByteView&, unsigned& offset) const final;
+
+    void updateSize() final;
+    uint64_t partialSize() const final;
 
 private:
     ISOFairPlayStreamingInfoBox m_info;
@@ -164,11 +204,17 @@ public:
     WEBCORE_EXPORT ISOFairPlayStreamingPsshBox();
     WEBCORE_EXPORT ~ISOFairPlayStreamingPsshBox();
 
-    static const Vector<uint8_t>& fairPlaySystemID();
+    WEBCORE_EXPORT static const SystemID& fairPlaySystemID();
 
-    const ISOFairPlayStreamingInitDataBox& initDataBox() LIFETIME_BOUND { return m_initDataBox; }
+    const ISOFairPlayStreamingInitDataBox& initDataBox() const LIFETIME_BOUND { return m_initDataBox; }
+    ISOFairPlayStreamingInitDataBox& initDataBox() LIFETIME_BOUND { return m_initDataBox; }
 
-    WEBCORE_EXPORT bool parse(JSC::DataView&, unsigned& offset) final;
+    uint64_t dataSize() const final;
+    bool parseData(const ByteView&, unsigned& offset, uint64_t size) final;
+    bool writeData(MutableByteView&, unsigned& offset) const final;
+
+    WEBCORE_EXPORT void updateSize() final;
+    uint64_t partialSize() const final;
 
 private:
     ISOFairPlayStreamingInitDataBox m_initDataBox;

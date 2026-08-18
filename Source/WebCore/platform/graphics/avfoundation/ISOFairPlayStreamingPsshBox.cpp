@@ -27,17 +27,18 @@
 #include "ISOFairPlayStreamingPsshBox.h"
 
 #include <JavaScriptCore/DataView.h>
+#include <wtf/CheckedArithmetic.h>
 #include <wtf/StdLibExtras.h>
 
 namespace WebCore {
 
-const Vector<uint8_t>& ISOFairPlayStreamingPsshBox::fairPlaySystemID()
+const ISOFairPlayStreamingPsshBox::SystemID& ISOFairPlayStreamingPsshBox::fairPlaySystemID()
 {
-    static NeverDestroyed<Vector<uint8_t>> systemID = Vector<uint8_t>({ 0x94, 0xCE, 0x86, 0xFB, 0x07, 0xFF, 0x4F, 0x43, 0xAD, 0xB8, 0x93, 0xD2, 0xFA, 0x96, 0x8C, 0xA2 });
+    static NeverDestroyed<SystemID> systemID { SystemID { { 0x94, 0xCE, 0x86, 0xFB, 0x07, 0xFF, 0x4F, 0x43, 0xAD, 0xB8, 0x93, 0xD2, 0xFA, 0x96, 0x8C, 0xA2 } } };
     return systemID;
 }
 
-bool ISOFairPlayStreamingInfoBox::parse(JSC::DataView& view, unsigned& offset)
+bool ISOFairPlayStreamingInfoBox::parse(const ByteView& view, unsigned& offset)
 {
     if (!ISOFullBox::parse(view, offset))
         return false;
@@ -45,10 +46,18 @@ bool ISOFairPlayStreamingInfoBox::parse(JSC::DataView& view, unsigned& offset)
     return checkedRead<uint32_t>(m_scheme, view, offset, BigEndian);
 }
 
-bool ISOFairPlayStreamingKeyRequestInfoBox::parse(JSC::DataView& view, unsigned& offset)
+bool ISOFairPlayStreamingInfoBox::pack(MutableByteView& view, unsigned& offset) const
+{
+    if (!ISOFullBox::pack(view, offset))
+        return false;
+
+    return checkedWrite<uint32_t>(m_scheme.value, view, offset, BigEndian);
+}
+
+bool ISOFairPlayStreamingKeyRequestInfoBox::parse(const ByteView& view, unsigned& offset)
 {
     unsigned localOffset = offset;
-    if (!ISOBox::parse(view, localOffset))
+    if (!ISOFullBox::parse(view, localOffset))
         return false;
 
     CheckedUint64 remaining = m_size;
@@ -59,23 +68,23 @@ bool ISOFairPlayStreamingKeyRequestInfoBox::parse(JSC::DataView& view, unsigned&
     if (remaining < m_keyID.capacity())
         return false;
 
-    auto buffer = view.possiblySharedBuffer();
-    if (!buffer)
-        return false;
-
-    auto keyID = buffer->slice(localOffset, localOffset + m_keyID.capacity());
-    localOffset += m_keyID.capacity();
-
     m_keyID.resize(m_keyID.capacity());
-    if (keyID->byteLength() < m_keyID.capacity())
+    if (!checkedReadSequence<uint8_t>(m_keyID, view, localOffset, BigEndian))
         return false;
-    memcpySpan(m_keyID.mutableSpan(), keyID->span().first(m_keyID.capacity()));
 
     offset = localOffset;
     return true;
 }
 
-bool ISOFairPlayStreamingKeyAssetIdBox::parse(JSC::DataView& view, unsigned& offset)
+bool ISOFairPlayStreamingKeyRequestInfoBox::pack(MutableByteView& view, unsigned& offset) const
+{
+    if (!ISOFullBox::pack(view, offset))
+        return false;
+
+    return checkedWriteSequence<uint8_t>(m_keyID, view, offset, BigEndian);
+}
+
+bool ISOFairPlayStreamingKeyAssetIdBox::parse(const ByteView& view, unsigned& offset)
 {
     unsigned localOffset = offset;
     if (!ISOBox::parse(view, localOffset))
@@ -87,26 +96,34 @@ bool ISOFairPlayStreamingKeyAssetIdBox::parse(JSC::DataView& view, unsigned& off
         return true;
     }
 
-    auto buffer = view.possiblySharedBuffer();
-    if (!buffer)
-        return false;
-
     size_t dataSize;
     if (!WTF::safeSub(m_size, localOffset - offset, dataSize))
         return false;
 
-    auto parsedData = buffer->slice(localOffset, localOffset + dataSize);
-    localOffset += dataSize;
+    size_t remainingInView;
+    if (!WTF::safeSub(view.size(), localOffset, remainingInView))
+        return false;
+
+    if (remainingInView < dataSize)
+        return false;
 
     m_data.resize(dataSize);
-    if (parsedData->byteLength() < dataSize)
+    if (!checkedReadSequence<uint8_t>(m_data, view, localOffset, BigEndian))
         return false;
-    memcpySpan(m_data.mutableSpan(), parsedData->span().first(dataSize));
+
     offset = localOffset;
     return true;
 }
 
-bool ISOFairPlayStreamingKeyContextBox::parse(JSC::DataView& view, unsigned& offset)
+bool ISOFairPlayStreamingKeyAssetIdBox::pack(MutableByteView& view, unsigned& offset) const
+{
+    if (!ISOBox::pack(view, offset))
+        return false;
+
+    return checkedWriteSequence<uint8_t>(m_data, view, offset, BigEndian);
+}
+
+bool ISOFairPlayStreamingKeyContextBox::parse(const ByteView& view, unsigned& offset)
 {
     unsigned localOffset = offset;
     if (!ISOBox::parse(view, localOffset))
@@ -118,26 +135,34 @@ bool ISOFairPlayStreamingKeyContextBox::parse(JSC::DataView& view, unsigned& off
         return true;
     }
 
-    auto buffer = view.possiblySharedBuffer();
-    if (!buffer)
-        return false;
-
     size_t dataSize;
     if (!WTF::safeSub(m_size, localOffset - offset, dataSize))
         return false;
 
-    auto parsedData = buffer->slice(localOffset, localOffset + dataSize);
-    localOffset += dataSize;
+    size_t remainingInView;
+    if (!WTF::safeSub(view.size(), localOffset, remainingInView))
+        return false;
+
+    if (remainingInView < dataSize)
+        return false;
 
     m_data.resize(dataSize);
-    if (parsedData->byteLength() < dataSize)
+    if (!checkedReadSequence<uint8_t>(m_data, view, localOffset, BigEndian))
         return false;
-    memcpySpan(m_data.mutableSpan(), parsedData->span().first(dataSize));
+
     offset = localOffset;
     return true;
 }
 
-bool ISOFairPlayStreamingKeyVersionListBox::parse(JSC::DataView& view, unsigned& offset)
+bool ISOFairPlayStreamingKeyContextBox::pack(MutableByteView& view, unsigned& offset) const
+{
+    if (!ISOBox::pack(view, offset))
+        return false;
+
+    return checkedWriteSequence<uint8_t>(m_data, view, offset, BigEndian);
+}
+
+bool ISOFairPlayStreamingKeyVersionListBox::parse(const ByteView& view, unsigned& offset)
 {
     unsigned localOffset = offset;
     if (!ISOBox::parse(view, localOffset))
@@ -161,10 +186,43 @@ bool ISOFairPlayStreamingKeyVersionListBox::parse(JSC::DataView& view, unsigned&
     } while (true);
 
     offset = localOffset;
-    return true; 
+    return true;
 }
 
-bool ISOFairPlayStreamingKeyRequestBox::parse(JSC::DataView& view, unsigned& offset)
+bool ISOFairPlayStreamingKeyVersionListBox::pack(MutableByteView& view, unsigned& offset) const
+{
+    if (!ISOBox::pack(view, offset))
+        return false;
+
+    return checkedWriteSequence<uint32_t>(m_versions, view, offset, BigEndian);
+}
+
+void ISOFairPlayStreamingKeyRequestBox::updateSize()
+{
+    m_requestInfo.updateSize();
+    if (m_assetID)
+        m_assetID->updateSize();
+    if (m_context)
+        m_context->updateSize();
+    if (m_versionList)
+        m_versionList->updateSize();
+    ISOBox::updateSize();
+}
+
+uint64_t ISOFairPlayStreamingKeyRequestBox::partialSize() const
+{
+    auto size = ISOBox::partialSize();
+    size += m_requestInfo.requiredSize();
+    if (m_assetID)
+        size += m_assetID->requiredSize();
+    if (m_context)
+        size += m_context->requiredSize();
+    if (m_versionList)
+        size += m_versionList->requiredSize();
+    return size;
+}
+
+bool ISOFairPlayStreamingKeyRequestBox::parse(const ByteView& view, unsigned& offset)
 {
     unsigned localOffset = offset;
     if (!ISOBox::parse(view, localOffset))
@@ -220,10 +278,30 @@ bool ISOFairPlayStreamingKeyRequestBox::parse(JSC::DataView& view, unsigned& off
     }   
     
     offset = localOffset;
-    return true; 
+    return true;
 }
 
-bool ISOFairPlayStreamingInitDataBox::parse(JSC::DataView& view, unsigned& offset)
+bool ISOFairPlayStreamingKeyRequestBox::pack(MutableByteView& view, unsigned& offset) const
+{
+    if (!ISOBox::pack(view, offset))
+        return false;
+
+    if (!m_requestInfo.write(view, offset))
+        return false;
+
+    if (m_assetID && !m_assetID->write(view, offset))
+        return false;
+
+    if (m_context && !m_context->write(view, offset))
+        return false;
+
+    if (m_versionList && !m_versionList->write(view, offset))
+        return false;
+
+    return true;
+}
+
+bool ISOFairPlayStreamingInitDataBox::parse(const ByteView& view, unsigned& offset)
 {
     unsigned localOffset = offset;
     if (!ISOBox::parse(view, localOffset))
@@ -244,44 +322,145 @@ bool ISOFairPlayStreamingInitDataBox::parse(JSC::DataView& view, unsigned& offse
     return true;
 }
 
-bool ISOFairPlayStreamingPsshBox::parse(JSC::DataView& view, unsigned& offset)
+bool ISOFairPlayStreamingPsshBox::parseData(const ByteView& view, unsigned& offset, uint64_t size)
 {
-    if (!ISOProtectionSystemSpecificHeaderBox::parse(view, offset))
+    if (!m_initDataBox.read(view, offset))
         return false;
-
-    // Back up the offset by exactly the size of m_data:
-    offset -= m_data.size();
-
-    return m_initDataBox.read(view, offset);
+    ASSERT_UNUSED(size, m_initDataBox.size() == size);
+    return true;
 }
 
-ISOFairPlayStreamingInfoBox::ISOFairPlayStreamingInfoBox() = default;
+bool ISOFairPlayStreamingInitDataBox::pack(MutableByteView& view, unsigned& offset) const
+{
+    if (!ISOBox::pack(view, offset))
+        return false;
+
+    if (!m_info.write(view, offset))
+        return false;
+
+    for (auto& request : m_requests) {
+        if (!request.write(view, offset))
+            return false;
+    }
+
+    return true;
+}
+
+void ISOFairPlayStreamingInitDataBox::updateSize()
+{
+    m_info.updateSize();
+    for (auto& request : m_requests)
+        request.updateSize();
+    ISOBox::updateSize();
+}
+
+uint64_t ISOFairPlayStreamingInitDataBox::partialSize() const
+{
+    auto size = ISOBox::partialSize();
+    size += m_info.requiredSize();
+    for (auto& request : m_requests)
+        size += request.requiredSize();
+    return size;
+}
+
+uint64_t ISOFairPlayStreamingPsshBox::dataSize() const
+{
+    return m_initDataBox.size();
+}
+
+bool ISOFairPlayStreamingPsshBox::writeData(MutableByteView& view, unsigned& offset) const
+{
+    return m_initDataBox.write(view, offset);
+}
+
+void ISOFairPlayStreamingPsshBox::updateSize()
+{
+    m_initDataBox.updateSize();
+    ISOBox::updateSize();
+}
+
+uint64_t ISOFairPlayStreamingPsshBox::partialSize() const
+{
+    // ISOProtectionSystemSpecificHeaderBox::partialSize() adds its base size
+    // to the size of m_data. However, as we've overridden parseData(), it should
+    // be the case that m_data is empty. Assert so, and just in case, subtract out
+    // its size from our super classes' partial size.
+    ASSERT(!m_data.size());
+    return ISOProtectionSystemSpecificHeaderBox::partialSize()
+        - m_data.size()
+        + m_initDataBox.requiredSize();
+}
+
+ISOFairPlayStreamingInfoBox::ISOFairPlayStreamingInfoBox()
+    : ISOFullBox(boxTypeName(), 0, 0)
+{
+}
+
 ISOFairPlayStreamingInfoBox::ISOFairPlayStreamingInfoBox(const ISOFairPlayStreamingInfoBox&) = default;
+ISOFairPlayStreamingInfoBox::ISOFairPlayStreamingInfoBox(ISOFairPlayStreamingInfoBox&&) = default;
 ISOFairPlayStreamingInfoBox::~ISOFairPlayStreamingInfoBox() = default;
 
-ISOFairPlayStreamingKeyRequestInfoBox::ISOFairPlayStreamingKeyRequestInfoBox() = default;
+ISOFairPlayStreamingKeyRequestInfoBox::ISOFairPlayStreamingKeyRequestInfoBox()
+    : ISOFullBox(boxTypeName(), 0, 0)
+{
+    // The key ID is a fixed-width field, so a default-constructed box has to start out with one:
+    // parse() requires capacity() bytes to be present, and a box written without them would not
+    // be readable back. Match the length parse() expects rather than hard-coding it here.
+    m_keyID.fill(0, m_keyID.capacity());
+}
+
+ISOFairPlayStreamingKeyRequestInfoBox::ISOFairPlayStreamingKeyRequestInfoBox(const ISOFairPlayStreamingKeyRequestInfoBox&) = default;
+ISOFairPlayStreamingKeyRequestInfoBox::ISOFairPlayStreamingKeyRequestInfoBox(ISOFairPlayStreamingKeyRequestInfoBox&&) = default;
 ISOFairPlayStreamingKeyRequestInfoBox::~ISOFairPlayStreamingKeyRequestInfoBox() = default;
 
-ISOFairPlayStreamingKeyAssetIdBox::ISOFairPlayStreamingKeyAssetIdBox() = default;
+ISOFairPlayStreamingKeyAssetIdBox::ISOFairPlayStreamingKeyAssetIdBox()
+    : ISOBox(boxTypeName())
+{
+}
+
 ISOFairPlayStreamingKeyAssetIdBox::ISOFairPlayStreamingKeyAssetIdBox(const ISOFairPlayStreamingKeyAssetIdBox&) = default;
+ISOFairPlayStreamingKeyAssetIdBox::ISOFairPlayStreamingKeyAssetIdBox(ISOFairPlayStreamingKeyAssetIdBox&&) = default;
 ISOFairPlayStreamingKeyAssetIdBox::~ISOFairPlayStreamingKeyAssetIdBox() = default;
 
-ISOFairPlayStreamingKeyContextBox::ISOFairPlayStreamingKeyContextBox() = default;
+ISOFairPlayStreamingKeyContextBox::ISOFairPlayStreamingKeyContextBox()
+    : ISOBox(boxTypeName())
+{
+}
+
 ISOFairPlayStreamingKeyContextBox::ISOFairPlayStreamingKeyContextBox(const ISOFairPlayStreamingKeyContextBox&) = default;
+ISOFairPlayStreamingKeyContextBox::ISOFairPlayStreamingKeyContextBox(ISOFairPlayStreamingKeyContextBox&&) = default;
 ISOFairPlayStreamingKeyContextBox::~ISOFairPlayStreamingKeyContextBox() = default;
 
-ISOFairPlayStreamingKeyVersionListBox::ISOFairPlayStreamingKeyVersionListBox() = default;
+ISOFairPlayStreamingKeyVersionListBox::ISOFairPlayStreamingKeyVersionListBox()
+    : ISOBox(boxTypeName())
+{
+}
+
 ISOFairPlayStreamingKeyVersionListBox::ISOFairPlayStreamingKeyVersionListBox(const ISOFairPlayStreamingKeyVersionListBox&) = default;
+ISOFairPlayStreamingKeyVersionListBox::ISOFairPlayStreamingKeyVersionListBox(ISOFairPlayStreamingKeyVersionListBox&&) = default;
 ISOFairPlayStreamingKeyVersionListBox::~ISOFairPlayStreamingKeyVersionListBox() = default;
 
-ISOFairPlayStreamingKeyRequestBox::ISOFairPlayStreamingKeyRequestBox() = default;
+ISOFairPlayStreamingKeyRequestBox::ISOFairPlayStreamingKeyRequestBox()
+    : ISOBox(boxTypeName())
+{
+}
+
 ISOFairPlayStreamingKeyRequestBox::ISOFairPlayStreamingKeyRequestBox(const ISOFairPlayStreamingKeyRequestBox&) = default;
+ISOFairPlayStreamingKeyRequestBox::ISOFairPlayStreamingKeyRequestBox(ISOFairPlayStreamingKeyRequestBox&&) = default;
 ISOFairPlayStreamingKeyRequestBox::~ISOFairPlayStreamingKeyRequestBox() = default;
 
-ISOFairPlayStreamingInitDataBox::ISOFairPlayStreamingInitDataBox() = default;
+ISOFairPlayStreamingInitDataBox::ISOFairPlayStreamingInitDataBox()
+    : ISOBox(boxTypeName())
+{
+}
+
 ISOFairPlayStreamingInitDataBox::~ISOFairPlayStreamingInitDataBox() = default;
 
-ISOFairPlayStreamingPsshBox::ISOFairPlayStreamingPsshBox() = default;
+ISOFairPlayStreamingPsshBox::ISOFairPlayStreamingPsshBox()
+    : ISOProtectionSystemSpecificHeaderBox(fairPlaySystemID())
+{
+}
+
 ISOFairPlayStreamingPsshBox::~ISOFairPlayStreamingPsshBox() = default;
 
 } // namespace WebCore

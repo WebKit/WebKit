@@ -27,17 +27,19 @@
 #include "ISOTrackEncryptionBox.h"
 
 #include "BitReader.h"
-#include <JavaScriptCore/DataView.h>
+#include <wtf/CheckedArithmetic.h>
 #include <wtf/StdLibExtras.h>
-
-using JSC::DataView;
 
 namespace WebCore {
 
-ISOTrackEncryptionBox::ISOTrackEncryptionBox() = default;
+ISOTrackEncryptionBox::ISOTrackEncryptionBox()
+    : ISOFullBox(boxTypeName(), 0, 0)
+{
+}
+
 ISOTrackEncryptionBox::~ISOTrackEncryptionBox() = default;
 
-bool ISOTrackEncryptionBox::parse(DataView& view, unsigned& offset)
+bool ISOTrackEncryptionBox::parse(const ByteView& view, unsigned& offset)
 {
     // ISO/IEC 23001-7-2015 Section 8.2.2
     if (!ISOFullBox::parse(view, offset))
@@ -46,7 +48,7 @@ bool ISOTrackEncryptionBox::parse(DataView& view, unsigned& offset)
     return parsePayload(view, offset);
 }
 
-bool ISOTrackEncryptionBox::parsePayload(DataView& view, unsigned& offset)
+bool ISOTrackEncryptionBox::parsePayload(const ByteView& view, unsigned& offset)
 {
     // unsigned int(8) reserved = 0;
     offset += 1;
@@ -69,18 +71,13 @@ bool ISOTrackEncryptionBox::parsePayload(DataView& view, unsigned& offset)
     if (!checkedRead<int8_t>(m_defaultPerSampleIVSize, view, offset, BigEndian))
         return false;
 
-    auto buffer = view.possiblySharedBuffer();
-    if (!buffer)
+    size_t remaining;
+    if (!WTF::safeSub(view.size(), offset, remaining) || remaining < 16)
         return false;
-
-    auto keyIDBuffer = buffer->slice(offset, offset + 16);
-    offset += 16;
 
     m_defaultKID.resize(16);
-    if (keyIDBuffer->byteLength() < 16)
+    if (!checkedReadSequence<uint8_t>(m_defaultKID, view, offset, BigEndian))
         return false;
-
-    memcpySpan(m_defaultKID.mutableSpan(), keyIDBuffer->span().first(16));
 
     if (m_defaultIsProtected == 1 && !m_defaultPerSampleIVSize) {
         int8_t defaultConstantIVSize = 0;
@@ -99,6 +96,63 @@ bool ISOTrackEncryptionBox::parsePayload(DataView& view, unsigned& offset)
     }
 
     return true;
+}
+
+bool ISOTrackEncryptionBox::pack(MutableByteView& view, unsigned& offset) const
+{
+    // ISO/IEC 23001-7-2015 Section 8.2.2
+    if (!ISOFullBox::pack(view, offset))
+        return false;
+
+    // unsigned int(8) reserved = 0;
+    if (!checkedWrite<int8_t>(0, view, offset, BigEndian))
+        return false;
+
+    if (!m_version) {
+        // unsigned int(8) reserved = 0;
+        if (!checkedWrite<int8_t>(0, view, offset, BigEndian))
+            return false;
+    } else {
+        int8_t cryptAndSkip = (m_defaultCryptByteBlock.value_or(0) << 4) | (m_defaultSkipByteBlock.value_or(0) & 0xF);
+        if (!checkedWrite<int8_t>(cryptAndSkip, view, offset, BigEndian))
+            return false;
+    }
+
+    if (!checkedWrite<int8_t>(m_defaultIsProtected, view, offset, BigEndian))
+        return false;
+
+    if (!checkedWrite<int8_t>(m_defaultPerSampleIVSize, view, offset, BigEndian))
+        return false;
+
+    if (m_defaultKID.size() != 16)
+        return false;
+
+    if (!checkedWriteSequence<uint8_t>(m_defaultKID, view, offset, BigEndian))
+        return false;
+
+    if (m_defaultIsProtected == 1 && !m_defaultPerSampleIVSize) {
+        if (m_defaultConstantIV.size() > std::numeric_limits<int8_t>::max())
+            return false;
+
+        if (!checkedWrite<int8_t>(static_cast<int8_t>(m_defaultConstantIV.size()), view, offset, BigEndian))
+            return false;
+
+        if (!checkedWriteSequence<uint8_t>(m_defaultConstantIV, view, offset, BigEndian))
+            return false;
+    }
+
+    return true;
+}
+
+uint64_t ISOTrackEncryptionBox::partialSize() const
+{
+    // reserved(1) + reserved-or-crypt/skip(1) + isProtected(1) + perSampleIVSize(1) + KID(16)
+    uint64_t size = ISOFullBox::partialSize() + 20;
+
+    if (m_defaultIsProtected == 1 && !m_defaultPerSampleIVSize)
+        size += 1 + m_defaultConstantIV.size();
+
+    return size;
 }
 
 bool ISOTrackEncryptionBox::parseWithoutTypeAndSize(std::span<const uint8_t> data)

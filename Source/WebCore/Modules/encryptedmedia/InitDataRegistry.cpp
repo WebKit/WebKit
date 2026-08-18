@@ -32,7 +32,6 @@
 #include "ISOProtectionSystemSpecificHeaderBox.h"
 #include "NotImplemented.h"
 #include "SharedBuffer.h"
-#include <JavaScriptCore/DataView.h>
 #include <wtf/JSONValues.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/Base64.h>
@@ -130,7 +129,7 @@ std::optional<Vector<std::unique_ptr<ISOProtectionSystemSpecificHeaderBox>>> Ini
     unsigned offset = 0;
     Vector<std::unique_ptr<ISOProtectionSystemSpecificHeaderBox>> psshBoxes;
 
-    auto view = JSC::DataView::create(buffer.tryCreateArrayBuffer(), offset, buffer.size());
+    auto view = buffer.span();
     while (auto optionalBoxType = ISOBox::peekBox(view, offset)) {
         auto& boxTypeName = optionalBoxType.value().first;
         auto& boxSize = optionalBoxType.value().second;
@@ -166,11 +165,7 @@ RefPtr<SharedBuffer> InitDataRegistry::extractFairPlayPsshFromCenc(const SharedB
     if (buffer.size() >= kCencMaxBoxSize)
         return nullptr;
 
-    auto arrayBuffer = buffer.tryCreateArrayBuffer();
-    if (!arrayBuffer)
-        return nullptr;
-
-    auto view = JSC::DataView::create(WTF::move(arrayBuffer), 0, buffer.size());
+    auto view = buffer.span();
     unsigned offset = 0;
     while (auto optionalBoxType = ISOBox::peekBox(view, offset)) {
         auto& [boxTypeName, boxSize] = optionalBoxType.value();

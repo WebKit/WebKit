@@ -26,16 +26,15 @@
 #include "config.h"
 #include "ISOSchemeTypeBox.h"
 
-#include <JavaScriptCore/DataView.h>
-
-using JSC::DataView;
-
 namespace WebCore {
 
-ISOSchemeTypeBox::ISOSchemeTypeBox() = default;
+ISOSchemeTypeBox::ISOSchemeTypeBox()
+    : ISOFullBox(boxTypeName(), 0, 0)
+{
+}
 ISOSchemeTypeBox::~ISOSchemeTypeBox() = default;
 
-bool ISOSchemeTypeBox::parse(DataView& view, unsigned& offset)
+bool ISOSchemeTypeBox::parse(const ByteView& view, unsigned& offset)
 {
     if (!ISOFullBox::parse(view, offset))
         return false;
@@ -47,6 +46,17 @@ bool ISOSchemeTypeBox::parse(DataView& view, unsigned& offset)
         return false;
 
     return true;
+}
+
+bool ISOSchemeTypeBox::pack(MutableByteView& view, unsigned& offset) const
+{
+    if (!ISOFullBox::pack(view, offset))
+        return false;
+
+    if (!checkedWrite<uint32_t>(m_schemeType.value, view, offset, BigEndian))
+        return false;
+
+    return checkedWrite<uint32_t>(m_schemeVersion, view, offset, BigEndian);
 }
 
 }
