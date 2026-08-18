@@ -1940,7 +1940,8 @@ void WebPageProxy::close()
 #endif
 
 #if ENABLE(CONTEXT_MENUS)
-    m_activeContextMenu = nullptr;
+    if (RefPtr activeContextMenu = std::exchange(m_activeContextMenu, nullptr))
+        activeContextMenu->cancelTracking();
 #endif
 
     m_provisionalPage = nullptr;

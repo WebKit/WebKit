@@ -47,8 +47,10 @@ public:
 private:
     WebContextMenuProxyWin(WebPageProxy&, FrameInfoData&&, ContextMenuContextData&&, const UserData&);
     void showContextMenuWithItems(Vector<Ref<WebContextMenuItem>>&&) override;
+    void cancelTracking() override;
 
     HMENU m_menu;
+    bool m_tracking { false };
 };
 
 

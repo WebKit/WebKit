@@ -85,6 +85,7 @@ private:
     WebContextMenuProxyMac(NSView *, WebPageProxy&, FrameInfoData&&, ContextMenuContextData&&, const UserData&);
 
     void show() override;
+    void cancelTracking() override;
     void showContextMenuWithItems(Vector<Ref<WebContextMenuItem>>&&) override;
     void useContextMenuItems(Vector<Ref<WebContextMenuItem>>&&) override;
 

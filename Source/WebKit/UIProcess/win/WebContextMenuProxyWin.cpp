@@ -99,7 +99,10 @@ void WebContextMenuProxyWin::showContextMenuWithItems(Vector<Ref<WebContextMenuI
     POINT pt = location;
     HWND wnd = reinterpret_cast<HWND>(page()->viewWidget());
     ::ClientToScreen(wnd, &pt);
+
+    m_tracking = true;
     ::TrackPopupMenuEx(m_menu, flags, pt.x, pt.y, wnd, nullptr);
+    m_tracking = false;
 }
 
 WebContextMenuProxyWin::WebContextMenuProxyWin(WebPageProxy& page, FrameInfoData&& frameInfo, ContextMenuContextData&& context, const UserData& userData)
@@ -112,6 +115,12 @@ WebContextMenuProxyWin::~WebContextMenuProxyWin()
 {
     if (m_menu)
         ::DestroyMenu(m_menu);
+}
+
+void WebContextMenuProxyWin::cancelTracking()
+{
+    if (m_tracking)
+        ::EndMenu();
 }
 
 } // namespace WebKit

@@ -40,6 +40,7 @@
 #import <WebKit/WKMenuItemIdentifiersPrivate.h>
 #import <WebKit/WKUIDelegatePrivate.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
+#import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
 #import <WebKit/_WKContextMenuElementInfo.h>
 #import <WebKit/_WKHitTestResult.h>
@@ -958,6 +959,47 @@ TEST(ContextMenuTests, CopyLinkUsesPathComponentAsTitleForLinkWithPath)
         TestWebKitAPI::Util::runFor(0.1_s);
 
     EXPECT_WK_STREQ(@"something-cool", readTitleFromPasteboard());
+}
+
+TEST(ContextMenuTests, MenuTrackingCancelledWhenPageCloses)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
+    [webView synchronouslyLoadTestPageNamed:@"simple"];
+
+    __block bool didEndTracking = false;
+    RetainPtr observer = [NSNotificationCenter.defaultCenter addObserverForName:NSMenuDidEndTrackingNotification object:nil queue:nil usingBlock:^(NSNotification *) {
+        didEndTracking = true;
+    }];
+
+    bool didClosePage = false;
+    bool menuStayedOpenAfterPageClose = false;
+    RetainPtr closePageTimer = [NSTimer timerWithTimeInterval:0.25 repeats:YES block:[&didClosePage, &menuStayedOpenAfterPageClose, strongWebView = webView](NSTimer *timer) {
+        // This timer only fires while AppKit is tracking the context menu.
+        if (didClosePage) {
+            menuStayedOpenAfterPageClose = true;
+            [timer invalidate];
+            return;
+        }
+
+        if (![strongWebView _activeMenu])
+            return;
+
+        [strongWebView _close];
+        didClosePage = true;
+    }];
+
+    [NSRunLoop.mainRunLoop addTimer:closePageTimer.get() forMode:NSEventTrackingRunLoopMode];
+    [[webView window] orderFrontRegardless];
+    [webView mouseDownAtPoint:NSMakePoint(200, 200) simulatePressure:NO withFlags:0 eventType:NSEventTypeRightMouseDown];
+    [webView mouseUpAtPoint:NSMakePoint(200, 200) withFlags:0 eventType:NSEventTypeRightMouseUp];
+    Util::run(&didEndTracking);
+    [closePageTimer invalidate];
+
+    EXPECT_TRUE(didClosePage);
+    EXPECT_FALSE(menuStayedOpenAfterPageClose);
+    EXPECT_NULL([webView _activeMenu]);
+
+    [NSNotificationCenter.defaultCenter removeObserver:observer.get()];
 }
 
 } // namespace TestWebKitAPI
