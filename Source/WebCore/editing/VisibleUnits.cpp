@@ -543,9 +543,10 @@ unsigned forwardSearchForBoundaryWithTextIterator(TextIterator& it, Vector<char1
 
 enum class NeedsContextAtParagraphStart : bool { No, Yes };
 static VisiblePosition previousBoundary(const VisiblePosition& position, BoundarySearchFunction searchFunction,
-    NeedsContextAtParagraphStart needsContextAtParagraphStart = NeedsContextAtParagraphStart::No)
+    NeedsContextAtParagraphStart needsContextAtParagraphStart = NeedsContextAtParagraphStart::No,
+    StopAtEnclosingTableCell stopAtEnclosingTableCell = StopAtEnclosingTableCell::No)
 {
-    auto boundary = position.deepEquivalent().parentEditingBoundary();
+    auto boundary = position.deepEquivalent().parentEditingBoundary(stopAtEnclosingTableCell);
     if (!boundary)
         return { };
 
@@ -589,10 +590,11 @@ static VisiblePosition previousBoundary(const VisiblePosition& position, Boundar
     return VisiblePosition(makeDeprecatedLegacyPosition(charIt.range().end), VisiblePosition::defaultAffinity, position.allowUserSelectNone());
 }
 
-static VisiblePosition nextBoundary(const VisiblePosition& c, BoundarySearchFunction searchFunction)
+static VisiblePosition nextBoundary(const VisiblePosition& c, BoundarySearchFunction searchFunction,
+    StopAtEnclosingTableCell stopAtEnclosingTableCell = StopAtEnclosingTableCell::No)
 {
     Position pos = c.deepEquivalent();
-    RefPtr boundary = pos.parentEditingBoundary();
+    RefPtr boundary = pos.parentEditingBoundary(stopAtEnclosingTableCell);
     if (!boundary)
         return VisiblePosition();
 
@@ -669,7 +671,7 @@ VisiblePosition startOfWord(const VisiblePosition& c, WordSide side)
         if (p.isNull())
             return c;
     }
-    return previousBoundary(p, startWordBoundary);
+    return previousBoundary(p, startWordBoundary, NeedsContextAtParagraphStart::No, StopAtEnclosingTableCell::Yes);
 }
 
 unsigned endWordBoundary(StringView text, unsigned offset, BoundarySearchContextAvailability mayHaveMoreContext, bool& needMoreContext)
@@ -698,7 +700,7 @@ VisiblePosition endOfWord(const VisiblePosition& c, WordSide side)
     } else if (isEndOfParagraph(c))
         return c;
     
-    return nextBoundary(p, endWordBoundary);
+    return nextBoundary(p, endWordBoundary, StopAtEnclosingTableCell::Yes);
 }
 
 static unsigned previousWordPositionBoundary(StringView text, unsigned offset, BoundarySearchContextAvailability mayHaveMoreContext, bool& needMoreContext)

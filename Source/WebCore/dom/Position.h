@@ -162,7 +162,10 @@ public:
 
     // Returns true if the visually equivalent positions around have different editability
     bool atEditingBoundary() const;
-    RefPtr<Node> parentEditingBoundary() const;
+    // Returns the outermost ancestor that has the same editability as the anchor node. When asked
+    // to stop at an enclosing table cell, the walk also stops at a <td> or <th>, so the innermost
+    // of the two boundaries wins.
+    RefPtr<Node> parentEditingBoundary(StopAtEnclosingTableCell = StopAtEnclosingTableCell::No) const;
     
     bool atStartOfTree() const;
     bool atEndOfTree() const;

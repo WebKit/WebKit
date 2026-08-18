@@ -37,6 +37,7 @@
 #include "HTMLBodyElement.h"
 #include "HTMLHtmlElement.h"
 #include "HTMLNames.h"
+#include "HTMLTableCellElement.h"
 #include "HTMLTableElement.h"
 #include "InlineIteratorLineBox.h"
 #include "InlineIteratorLogicalOrderTraversal.h"
@@ -515,7 +516,7 @@ bool Position::atEditingBoundary() const
         && prevPosition.isNotNull() && !protect(prevPosition.deprecatedNode())->hasEditableStyle();
 }
 
-RefPtr<Node> Position::parentEditingBoundary() const
+RefPtr<Node> Position::parentEditingBoundary(StopAtEnclosingTableCell stopAtEnclosingTableCell) const
 {
     if (!m_anchorNode)
         return nullptr;
@@ -525,9 +526,12 @@ RefPtr<Node> Position::parentEditingBoundary() const
         return nullptr;
 
     RefPtr boundary = m_anchorNode;
-    while (boundary != documentElement && boundary->nonShadowBoundaryParentNode() && protect(m_anchorNode)->hasEditableStyle() == protect(boundary->parentNode())->hasEditableStyle())
+    while (boundary != documentElement && boundary->nonShadowBoundaryParentNode() && protect(m_anchorNode)->hasEditableStyle() == protect(boundary->parentNode())->hasEditableStyle()) {
+        if (stopAtEnclosingTableCell == StopAtEnclosingTableCell::Yes && is<HTMLTableCellElement>(*boundary))
+            break;
         boundary = boundary->nonShadowBoundaryParentNode();
-    
+    }
+
     return boundary;
 }
 
