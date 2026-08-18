@@ -49,7 +49,6 @@ UnlinkedCodeBlock::UnlinkedCodeBlock(VM& vm, Structure* structure, CodeType code
     , m_numCalleeLocals(0)
     , m_isConstructor(info.isConstructor())
     , m_numParameters(0)
-    , m_hasCapturedVariables(false)
     , m_isBuiltinFunction(info.isBuiltinFunction())
     , m_isBuiltinDefaultClassConstructor(info.isBuiltinDefaultClassConstructor())
     , m_superBinding(static_cast<unsigned>(info.superBinding()))

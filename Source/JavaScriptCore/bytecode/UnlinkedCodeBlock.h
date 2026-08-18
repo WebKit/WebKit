@@ -167,8 +167,6 @@ public:
     bool isClassContext() const { return m_isClassContext; }
     bool hasTailCalls() const { return m_hasTailCalls; }
     void setHasTailCalls() { m_hasTailCalls = true; }
-    bool allowDirectEvalCache() const { return !(m_features & NoEvalCacheFeature); }
-    bool usesImportMeta() const { return m_features & ImportMetaFeature; }
     bool isBuiltinDefaultClassConstructor() const { return m_isBuiltinDefaultClassConstructor; }
 
     bool hasExpressionInfo() { return !m_expressionInfo->isEmpty(); }
@@ -278,28 +276,6 @@ public:
     LineColumn lineColumnForBytecodeIndex(BytecodeIndex);
 
     bool typeProfilerExpressionInfoForBytecodeOffset(unsigned bytecodeOffset, unsigned& startDivot, unsigned& endDivot);
-
-    void recordParse(CodeFeatures features, LexicallyScopedFeatures lexicallyScopedFeatures, bool hasCapturedVariables, unsigned lineCount, unsigned endColumn)
-    {
-        m_features = features;
-        m_lexicallyScopedFeatures = lexicallyScopedFeatures;
-        m_hasCapturedVariables = hasCapturedVariables;
-        m_lineCount = lineCount;
-        // For the UnlinkedCodeBlock, startColumn is always 0.
-        m_endColumn = endColumn;
-    }
-
-    StringImpl* sourceURLDirective() const { return m_sourceURLDirective.get(); }
-    StringImpl* sourceMappingURLDirective() const { return m_sourceMappingURLDirective.get(); }
-    void setSourceURLDirective(const String& sourceURL) { m_sourceURLDirective = sourceURL.impl(); }
-    void setSourceMappingURLDirective(const String& sourceMappingURL) { m_sourceMappingURLDirective = sourceMappingURL.impl(); }
-
-    CodeFeatures codeFeatures() const { return m_features; }
-    LexicallyScopedFeatures lexicallyScopedFeatures() const { return m_lexicallyScopedFeatures; }
-    bool hasCapturedVariables() const { return m_hasCapturedVariables; }
-    unsigned lineCount() const { return m_lineCount; }
-    ALWAYS_INLINE unsigned startColumn() const { return 0; }
-    unsigned endColumn() const { return m_endColumn; }
 
     const FixedVector<JSInstructionStream::Offset>& opProfileControlFlowBytecodeOffsets() const
     {
@@ -422,7 +398,6 @@ private:
     unsigned m_numCalleeLocals : 31;
     unsigned m_isConstructor : 1;
     unsigned m_numParameters : 31;
-    unsigned m_hasCapturedVariables : 1;
 
     unsigned m_isBuiltinFunction : 1;
     unsigned m_isBuiltinDefaultClassConstructor : 1;
@@ -438,7 +413,6 @@ private:
     unsigned m_age : 3;
     static_assert(((1U << 3) - 1) >= maxAge);
     bool m_hasCheckpoints : 1;
-    LexicallyScopedFeatures m_lexicallyScopedFeatures : bitWidthOfLexicallyScopedFeatures { 0 };
     TriState m_quickDFGTierUp : 2 { TriState::Indeterminate };
     bool m_quickFTLTierUp : 1 { false };
 
@@ -448,15 +422,9 @@ public:
     RefPtr<BaselineJITCode> m_unlinkedBaselineCode;
 #endif
 private:
-    CodeFeatures m_features { 0 };
     SourceParseMode m_parseMode;
     OptionSet<CodeGenerationMode> m_codeGenerationMode;
-
-    unsigned m_lineCount { 0 };
-    unsigned m_endColumn { UINT_MAX };
-
-    PackedRefPtr<StringImpl> m_sourceURLDirective;
-    PackedRefPtr<StringImpl> m_sourceMappingURLDirective;
+    BaselineExecutionCounter m_llintExecuteCounter;
 
     FixedVector<JSInstructionStream::Offset> m_jumpTargets;
     const Ref<UnlinkedMetadataTable> m_metadata;
@@ -522,7 +490,6 @@ private:
     OutOfLineJumpTargets m_outOfLineJumpTargets;
     std::unique_ptr<RareData> m_rareData;
     std::unique_ptr<ExpressionInfo> m_expressionInfo;
-    BaselineExecutionCounter m_llintExecuteCounter;
     FixedVector<UnlinkedValueProfile> m_valueProfiles;
     FixedVector<UnlinkedArrayProfile> m_arrayProfiles;
     FixedVector<BinaryArithProfile> m_binaryArithProfiles;

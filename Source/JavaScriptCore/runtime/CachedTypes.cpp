@@ -2005,14 +2005,10 @@ public:
     VirtualRegister NODELETE thisRegister() const { return m_thisRegister; }
     VirtualRegister NODELETE scopeRegister() const { return m_scopeRegister; }
 
-    RefPtr<StringImpl> sourceURLDirective(Decoder& decoder) const { return m_sourceURLDirective.decode(decoder); }
-    RefPtr<StringImpl> sourceMappingURLDirective(Decoder& decoder) const { return m_sourceMappingURLDirective.decode(decoder); }
-
     Ref<UnlinkedMetadataTable> metadata(Decoder& decoder) const { return m_metadata.decode(decoder); }
 
     unsigned NODELETE isConstructor() const { return m_isConstructor; }
     unsigned NODELETE isBuiltinDefaultClassConstructor() const { return m_isBuiltinDefaultClassConstructor; }
-    unsigned NODELETE hasCapturedVariables() const { return m_hasCapturedVariables; }
     unsigned NODELETE isBuiltinFunction() const { return m_isBuiltinFunction; }
     unsigned NODELETE superBinding() const { return m_superBinding; }
     unsigned NODELETE scriptMode() const { return m_scriptMode; }
@@ -2023,15 +2019,11 @@ public:
     unsigned NODELETE evalContextType() const { return m_evalContextType; }
     unsigned NODELETE hasTailCalls() const { return m_hasTailCalls; }
     unsigned NODELETE hasCheckpoints() const { return m_hasCheckpoints; }
-    unsigned NODELETE lineCount() const { return m_lineCount; }
-    unsigned NODELETE endColumn() const { return m_endColumn; }
 
     int NODELETE numVars() const { return m_numVars; }
     int NODELETE numCalleeLocals() const { return m_numCalleeLocals; }
     int NODELETE numParameters() const { return m_numParameters; }
 
-    CodeFeatures NODELETE features() const { return m_features; }
-    LexicallyScopedFeatures NODELETE lexicallyScopedFeatures() const { return m_lexicallyScopedFeatures; }
     SourceParseMode NODELETE parseMode() const { return m_parseMode; }
     OptionSet<CodeGenerationMode> NODELETE codeGenerationMode() const { return m_codeGenerationMode; }
     unsigned NODELETE codeType() const { return m_codeType; }
@@ -2049,7 +2041,6 @@ private:
 
     unsigned m_isConstructor : 1;
     unsigned m_isBuiltinDefaultClassConstructor : 1;
-    unsigned m_hasCapturedVariables : 1;
     unsigned m_isBuiltinFunction : 1;
     unsigned m_superBinding : 1;
     unsigned m_scriptMode: 1;
@@ -2062,13 +2053,8 @@ private:
     unsigned m_codeType : 2;
     unsigned m_hasCheckpoints : 1;
 
-    CodeFeatures m_features : bitWidthOfCodeFeatures;
-    LexicallyScopedFeatures m_lexicallyScopedFeatures : bitWidthOfLexicallyScopedFeatures;
     SourceParseMode m_parseMode;
     OptionSet<CodeGenerationMode> m_codeGenerationMode;
-
-    unsigned m_lineCount;
-    unsigned m_endColumn;
 
     int m_numVars;
     int m_numCalleeLocals;
@@ -2083,9 +2069,6 @@ private:
 
     CachedPtr<CachedCodeBlockRareData> m_rareData;
 
-    CachedRefPtr<CachedStringImpl> m_sourceURLDirective;
-    CachedRefPtr<CachedStringImpl> m_sourceMappingURLDirective;
-
     CachedPtr<CachedInstructionStream> m_instructions;
     CachedVector<JSInstructionStream::Offset> m_jumpTargets;
     CachedVector<CachedJSValue> m_constantRegisters;
@@ -2098,8 +2081,47 @@ private:
     CachedVector<CachedWriteBarrier<CachedFunctionExecutable>> m_functionExprs;
 };
 
-class CachedProgramCodeBlock : public CachedCodeBlock<UnlinkedProgramCodeBlock> {
-    using Base = CachedCodeBlock<UnlinkedProgramCodeBlock>;
+template<typename CodeBlockType>
+class CachedGlobalCodeBlock : public CachedCodeBlock<CodeBlockType> {
+    using Base = CachedCodeBlock<CodeBlockType>;
+
+public:
+    void encode(Encoder& encoder, const UnlinkedGlobalCodeBlock& codeBlock)
+    {
+        Base::encode(encoder, codeBlock);
+        m_features = codeBlock.m_features;
+        m_lexicallyScopedFeatures = codeBlock.m_lexicallyScopedFeatures;
+        m_hasCapturedVariables = codeBlock.m_hasCapturedVariables;
+        m_lineCount = codeBlock.m_lineCount;
+        m_endColumn = codeBlock.m_endColumn;
+        m_sourceURLDirective.encode(encoder, codeBlock.m_sourceURLDirective.get());
+        m_sourceMappingURLDirective.encode(encoder, codeBlock.m_sourceMappingURLDirective.get());
+    }
+
+    void decode(Decoder& decoder, UnlinkedGlobalCodeBlock& codeBlock) const
+    {
+        Base::decode(decoder, codeBlock);
+        codeBlock.m_features = m_features;
+        codeBlock.m_lexicallyScopedFeatures = m_lexicallyScopedFeatures;
+        codeBlock.m_hasCapturedVariables = m_hasCapturedVariables;
+        codeBlock.m_lineCount = m_lineCount;
+        codeBlock.m_endColumn = m_endColumn;
+        codeBlock.m_sourceURLDirective = m_sourceURLDirective.decode(decoder);
+        codeBlock.m_sourceMappingURLDirective = m_sourceMappingURLDirective.decode(decoder);
+    }
+
+private:
+    CodeFeatures m_features;
+    LexicallyScopedFeatures m_lexicallyScopedFeatures;
+    bool m_hasCapturedVariables;
+    unsigned m_lineCount;
+    unsigned m_endColumn;
+    CachedRefPtr<CachedStringImpl> m_sourceURLDirective;
+    CachedRefPtr<CachedStringImpl> m_sourceMappingURLDirective;
+};
+
+class CachedProgramCodeBlock : public CachedGlobalCodeBlock<UnlinkedProgramCodeBlock> {
+    using Base = CachedGlobalCodeBlock<UnlinkedProgramCodeBlock>;
 
 public:
     void encode(Encoder& encoder, const UnlinkedProgramCodeBlock& codeBlock)
@@ -2124,8 +2146,8 @@ private:
     CachedVariableEnvironment m_lexicalDeclarations;
 };
 
-class CachedModuleCodeBlock : public CachedCodeBlock<UnlinkedModuleProgramCodeBlock> {
-    using Base = CachedCodeBlock<UnlinkedModuleProgramCodeBlock>;
+class CachedModuleCodeBlock : public CachedGlobalCodeBlock<UnlinkedModuleProgramCodeBlock> {
+    using Base = CachedGlobalCodeBlock<UnlinkedModuleProgramCodeBlock>;
 
 public:
     void encode(Encoder& encoder, const UnlinkedModuleProgramCodeBlock& codeBlock)
@@ -2150,8 +2172,8 @@ private:
     int m_moduleEnvironmentSymbolTableConstantRegisterOffset;
 };
 
-class CachedEvalCodeBlock : public CachedCodeBlock<UnlinkedEvalCodeBlock> {
-    using Base = CachedCodeBlock<UnlinkedEvalCodeBlock>;
+class CachedEvalCodeBlock : public CachedGlobalCodeBlock<UnlinkedEvalCodeBlock> {
+    using Base = CachedGlobalCodeBlock<UnlinkedEvalCodeBlock>;
 
 public:
     void encode(Encoder& encoder, const UnlinkedEvalCodeBlock& codeBlock)
@@ -2255,7 +2277,6 @@ ALWAYS_INLINE UnlinkedCodeBlock::UnlinkedCodeBlock(Decoder& decoder, Structure* 
     , m_numCalleeLocals(cachedCodeBlock.numCalleeLocals())
     , m_isConstructor(cachedCodeBlock.isConstructor())
     , m_numParameters(cachedCodeBlock.numParameters())
-    , m_hasCapturedVariables(cachedCodeBlock.hasCapturedVariables())
 
     , m_isBuiltinFunction(cachedCodeBlock.isBuiltinFunction())
     , m_isBuiltinDefaultClassConstructor(cachedCodeBlock.isBuiltinDefaultClassConstructor())
@@ -2272,16 +2293,8 @@ ALWAYS_INLINE UnlinkedCodeBlock::UnlinkedCodeBlock(Decoder& decoder, Structure* 
     , m_age(0)
     , m_hasCheckpoints(cachedCodeBlock.hasCheckpoints())
 
-    , m_lexicallyScopedFeatures(cachedCodeBlock.lexicallyScopedFeatures())
-    , m_features(cachedCodeBlock.features())
     , m_parseMode(cachedCodeBlock.parseMode())
     , m_codeGenerationMode(cachedCodeBlock.codeGenerationMode())
-
-    , m_lineCount(cachedCodeBlock.lineCount())
-    , m_endColumn(cachedCodeBlock.endColumn())
-
-    , m_sourceURLDirective(cachedCodeBlock.sourceURLDirective(decoder))
-    , m_sourceMappingURLDirective(cachedCodeBlock.sourceMappingURLDirective(decoder))
 
     , m_metadata(cachedCodeBlock.metadata(decoder))
     , m_instructions(cachedCodeBlock.instructions(decoder))
@@ -2451,7 +2464,6 @@ ALWAYS_INLINE void CachedCodeBlock<CodeBlockType>::encode(Encoder& encoder, cons
     m_thisRegister = codeBlock.m_thisRegister;
     m_scopeRegister = codeBlock.m_scopeRegister;
     m_isConstructor = codeBlock.m_isConstructor;
-    m_hasCapturedVariables = codeBlock.m_hasCapturedVariables;
     m_isBuiltinFunction = codeBlock.m_isBuiltinFunction;
     m_isBuiltinDefaultClassConstructor = codeBlock.m_isBuiltinDefaultClassConstructor;
     m_superBinding = codeBlock.m_superBinding;
@@ -2462,13 +2474,9 @@ ALWAYS_INLINE void CachedCodeBlock<CodeBlockType>::encode(Encoder& encoder, cons
     m_constructorKind = codeBlock.m_constructorKind;
     m_derivedContextType = codeBlock.m_derivedContextType;
     m_evalContextType = codeBlock.m_evalContextType;
-    m_lineCount = codeBlock.m_lineCount;
-    m_endColumn = codeBlock.m_endColumn;
     m_numVars = codeBlock.m_numVars;
     m_numCalleeLocals = codeBlock.m_numCalleeLocals;
     m_numParameters = codeBlock.m_numParameters;
-    m_features = codeBlock.m_features;
-    m_lexicallyScopedFeatures = codeBlock.m_lexicallyScopedFeatures;
     m_parseMode = codeBlock.m_parseMode;
     m_codeGenerationMode = codeBlock.m_codeGenerationMode;
     m_codeType = codeBlock.m_codeType;
@@ -2480,9 +2488,6 @@ ALWAYS_INLINE void CachedCodeBlock<CodeBlockType>::encode(Encoder& encoder, cons
 
     m_metadata.encode(encoder, codeBlock.m_metadata.get());
     m_rareData.encode(encoder, codeBlock.m_rareData.get());
-
-    m_sourceURLDirective.encode(encoder, codeBlock.m_sourceURLDirective.get());
-    m_sourceMappingURLDirective.encode(encoder, codeBlock.m_sourceMappingURLDirective.get());
 
     m_instructions.encode(encoder, codeBlock.m_instructions.get());
     m_constantRegisters.encode(encoder, codeBlock.m_constantRegisters);
