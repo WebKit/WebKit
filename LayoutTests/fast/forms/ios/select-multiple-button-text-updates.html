@@ -1,0 +1,53 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+        <script src="../../../resources/js-test.js"></script>
+        <script src="../../../resources/ui-helper.js"></script>
+    </head>
+<body>
+<select multiple id="select">
+    <option>A</option>
+    <option>B</option>
+    <option>C</option>
+</select>
+</body>
+<script>
+jsTestIsAsync = true;
+
+function buttonText()
+{
+    const shadow = internals.shadowRoot(select);
+    return shadow.querySelector("slot[name=buttonSlot]").firstElementChild.textContent.trim();
+}
+
+async function selectRowAndAssertButtonText(row, text)
+{
+    await UIHelper.ensurePresentationUpdate();
+    await UIHelper.selectFormAccessoryPickerRow(row);
+    await UIHelper.ensurePresentationUpdate();
+
+    selectButtonText = buttonText();
+    shouldBeEqualToString("selectButtonText", text);
+}
+
+addEventListener("load", async () => {
+    description("This test verifies that the in-page text of a &lt;select multiple&gt; updates to reflect the number of selected options as options are chosen in the picker.");
+
+    selectButtonText = buttonText();
+    shouldBeEqualToString("selectButtonText", "0 Items");
+
+    await UIHelper.activateElement(select);
+    await selectRowAndAssertButtonText(0, "A");
+    await selectRowAndAssertButtonText(1, "2 Items");
+    await selectRowAndAssertButtonText(2, "3 Items");
+
+    // Deselecting brings the count back down.
+    await selectRowAndAssertButtonText(0, "2 Items");
+    await selectRowAndAssertButtonText(1, "C");
+    await selectRowAndAssertButtonText(2, "0 Items");
+
+    finishJSTest();
+});
+</script>
+</html>

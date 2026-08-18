@@ -1143,6 +1143,7 @@ void HTMLSelectElement::updateListBoxSelection(bool deselectOtherOptions)
     }
 
     invalidateSelectedItems();
+    invalidateButtonText();
     scrollToSelection();
     updateValidity();
 }
