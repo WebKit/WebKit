@@ -424,6 +424,14 @@ public:
 
     EnhancedSecurityTracking enhancedSecurityTracker;
 
+    // Recorded by WebPageProxy::suspend() so resume() reaches exactly the processes that were
+    // suspended. The set of processes backing the page can change while it is suspended.
+    struct SuspendedProcess {
+        WeakPtr<WebProcessProxy> process;
+        WebCore::PageIdentifier pageID;
+    };
+    Vector<SuspendedProcess> suspendedProcesses;
+
 #if PLATFORM(IOS_FAMILY) && ENABLE(UNIFIED_PDF)
     PDFPluginDisplayMode pdfDisplayMode { PDFPluginDisplayMode::SinglePageContinuous };
 #endif

@@ -177,6 +177,7 @@ struct WebPageCreationParameters {
     bool openedByDOM { false };
     bool mayStartMediaWhenInWindow { false };
     bool mediaPlaybackIsSuspended { false };
+    bool areActiveDOMObjectsAndAnimationsSuspended { false };
 
     WebCore::IntSize minimumSizeForAutoLayout { };
     WebCore::IntSize sizeToContentAutoSizeMaximumSize { };

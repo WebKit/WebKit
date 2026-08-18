@@ -609,6 +609,12 @@ void WebFrameProxy::prepareForProvisionalLoadInProcess(WebProcessProxy& process,
 
     Site site = effectiveOrigin ? Site { *effectiveOrigin } : Site { navigation.currentRequest().url() };
     RefPtr page = m_page.get();
+
+    // Joining a process to a suspended page would leave content running that `_suspendPage:`
+    // promised was frozen. std::nullopt cancels the navigation before the load is sent.
+    if (page->isSuspended())
+        return completionHandler(std::nullopt);
+
     // FIXME: Main resource (of main or subframe) request redirects should go straight from the network to UI process so we don't need to make the processes for each domain in a redirect chain. <rdar://116202119>
     Site mainFrameSite(page->mainFrame()->url());
     auto mainFrameDomain = WebCore::RegistrableDomain { protect(page->mainFrame())->securityOrigin()->data() };

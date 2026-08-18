@@ -12959,4 +12959,383 @@ TEST(SiteIsolation, SharedProcessIgnoresHighValueFraudTargetDomainsWhenDisabled)
     });
 }
 
+// Page-wide commands must reach every web content process backing the page, not just the main
+// frame's. Each test below asserts the command took effect *inside* the cross-site iframe; a
+// version that only checks the main frame passes without the fix.
+
+static String notifyScriptForTag(ASCIILiteral tag)
+{
+    return makeString("<script>"
+        "const tag = '"_s, tag, "';"
+        "function notify(suffix) { window.webkit.messageHandlers.testHandler.postMessage(tag + ':' + suffix); }"
+        "</script>"_s);
+}
+
+TEST(SiteIsolation, StopLoadingStopsCrossSiteIframe)
+{
+    // Each frame commits, starts a subresource load that never completes, then blocks its parser
+    // on a script that never arrives. stopLoading must abort the outstanding load in both.
+    auto pendingLoadScript = "<script>"
+        "fetch('/hang').then(() => notify('fetch-completed'), () => notify('fetch-aborted'));"
+        "notify('fetch-started');"
+        "</script>"_s;
+
+    HTTPServer::ResponseMap responses;
+    responses.add("/mainframe"_s, HTTPResponse(makeString(notifyScriptForTag("main"_s), pendingLoadScript,
+        "<iframe src='https://b.com/subframe'></iframe><script src='/hang'></script>"_s)));
+    responses.add("/subframe"_s, HTTPResponse(makeString(notifyScriptForTag("iframe"_s), pendingLoadScript,
+        "<script src='/hang'></script>"_s)));
+    responses.add("/hang"_s, HTTPResponse(HTTPResponse::Behavior::NeverSendResponse));
+    HTTPServer server(WTF::move(responses), HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server, CGRectMake(0, 0, 800, 600));
+
+    RetainPtr<NSMutableSet<NSString *>> received = adoptNS([[NSMutableSet alloc] init]);
+    [webView performAfterReceivingAnyMessage:^(NSString *message) {
+        [received addObject:message];
+    }];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://a.com/mainframe"]]];
+
+    EXPECT_TRUE(Util::waitFor([&] {
+        return [received containsObject:@"main:fetch-started"] && [received containsObject:@"iframe:fetch-started"];
+    }));
+    while (![[webView firstChildFrame].securityOrigin.host isEqualToString:@"b.com"])
+        Util::spinRunLoop();
+
+    RetainPtr childFrame = [webView firstChildFrame];
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"document.readyState" inFrame:childFrame.get()], "loading");
+
+    [webView stopLoading];
+
+    EXPECT_TRUE(Util::waitFor([&] {
+        return [received containsObject:@"main:fetch-aborted"];
+    }));
+    EXPECT_TRUE(Util::waitFor([&] {
+        return [received containsObject:@"iframe:fetch-aborted"];
+    }));
+    EXPECT_FALSE([received containsObject:@"iframe:fetch-completed"]);
+}
+
+enum class MainFrameVideo : bool { No, Yes };
+
+static HTTPServer::ResponseMap crossSiteVideoResponses(MainFrameVideo mainFrameVideo)
+{
+    auto playVideoScript = "<script>"
+        "function playVideo() {"
+        "    let video = document.getElementById('video');"
+        "    video.addEventListener('playing', () => notify('playing'));"
+        "    video.addEventListener('pause', () => notify('paused'));"
+        "    video.play().catch(() => notify('play-rejected'));"
+        "}"
+        "</script>"_s;
+    auto videoElement = "<video id='video' webkit-playsinline src='/video-with-audio.mp4'></video>"_s;
+    auto iframeElement = "<iframe src='https://b.com/subframe'></iframe>"_s;
+
+    RetainPtr videoData = [NSData dataWithContentsOfFile:[NSBundle.test_resourcesBundle pathForResource:@"video-with-audio" ofType:@"mp4"] options:0 error:NULL];
+
+    HTTPServer::ResponseMap responses;
+    if (mainFrameVideo == MainFrameVideo::Yes) {
+        responses.add("/mainframe"_s, HTTPResponse(makeString(notifyScriptForTag("main"_s), playVideoScript,
+            "<body onload='playVideo()'>"_s, videoElement, iframeElement, "</body>"_s)));
+    } else {
+        responses.add("/mainframe"_s, HTTPResponse(makeString(notifyScriptForTag("main"_s),
+            "<body>"_s, iframeElement, "</body>"_s)));
+    }
+    responses.add("/subframe"_s, HTTPResponse(makeString(notifyScriptForTag("iframe"_s), playVideoScript,
+        "<body onload='playVideo()'>"_s, videoElement, "</body>"_s)));
+    responses.add("/video-with-audio.mp4"_s, HTTPResponse(videoData.get()));
+    return responses;
+}
+
+static std::pair<RetainPtr<TestWKWebView>, RetainPtr<TestNavigationDelegate>> autoplayingCrossSiteVideoView(const HTTPServer& server)
+{
+    RetainPtr configuration = server.httpsProxyConfiguration();
+#if PLATFORM(IOS_FAMILY)
+    [configuration setAllowsInlineMediaPlayback:YES];
+    [configuration _setInlineMediaPlaybackRequiresPlaysInlineAttribute:NO];
+#endif
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(configuration, CGRectMake(0, 0, 800, 600));
+    [navigationDelegate setDecidePolicyForNavigationActionWithPreferences:^(WKNavigationAction *action, WKWebpagePreferences *preferences, void (^completionHandler)(WKNavigationActionPolicy, WKWebpagePreferences *)) {
+        preferences._autoplayPolicy = _WKWebsiteAutoplayPolicyAllow;
+        completionHandler(WKNavigationActionPolicyAllow, preferences);
+    }];
+    return { WTF::move(webView), WTF::move(navigationDelegate) };
+}
+
+static NSString *videoPausedInFrame(TestWKWebView *webView, WKFrameInfo *frame)
+{
+    return [webView stringByEvaluatingJavaScript:@"String(document.getElementById('video').paused)" inFrame:frame];
+}
+
+TEST(SiteIsolation, PauseAllMediaPlaybackPausesCrossSiteIframe)
+{
+    HTTPServer server(crossSiteVideoResponses(MainFrameVideo::Yes), HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = autoplayingCrossSiteVideoView(server);
+
+    RetainPtr<NSMutableSet<NSString *>> received = adoptNS([[NSMutableSet alloc] init]);
+    [webView performAfterReceivingAnyMessage:^(NSString *message) {
+        [received addObject:message];
+    }];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://a.com/mainframe"]]];
+    EXPECT_TRUE(Util::waitFor([&] {
+        return [received containsObject:@"main:playing"] && [received containsObject:@"iframe:playing"];
+    }));
+
+    __block bool done = false;
+    [webView pauseAllMediaPlaybackWithCompletionHandler:^{
+        done = true;
+    }];
+    Util::run(&done);
+
+    // The pause reached each process before its reply, so by the time this evaluation is
+    // dispatched to the iframe's process the video there is already paused.
+    EXPECT_WK_STREQ(videoPausedInFrame(webView.get(), nil), "true");
+    EXPECT_WK_STREQ(videoPausedInFrame(webView.get(), [webView firstChildFrame]), "true");
+}
+
+TEST(SiteIsolation, SetAllMediaPlaybackSuspendedSuspendsCrossSiteIframe)
+{
+    HTTPServer server(crossSiteVideoResponses(MainFrameVideo::Yes), HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = autoplayingCrossSiteVideoView(server);
+
+    RetainPtr<NSMutableSet<NSString *>> received = adoptNS([[NSMutableSet alloc] init]);
+    [webView performAfterReceivingAnyMessage:^(NSString *message) {
+        [received addObject:message];
+    }];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://a.com/mainframe"]]];
+    EXPECT_TRUE(Util::waitFor([&] {
+        return [received containsObject:@"main:playing"] && [received containsObject:@"iframe:playing"];
+    }));
+
+    __block bool done = false;
+    [webView setAllMediaPlaybackSuspended:YES completionHandler:^{
+        done = true;
+    }];
+    Util::run(&done);
+
+    RetainPtr childFrame = [webView firstChildFrame];
+    EXPECT_WK_STREQ(videoPausedInFrame(webView.get(), nil), "true");
+    EXPECT_WK_STREQ(videoPausedInFrame(webView.get(), childFrame.get()), "true");
+
+    // Suspension must also block the page from resuming itself. play() returns a promise, which
+    // evaluateJavaScript cannot serialize, so discard it.
+    [webView objectByEvaluatingJavaScript:@"document.getElementById('video').play().catch(() => { }); undefined" inFrame:childFrame.get()];
+    Util::runFor(0.1_s);
+    EXPECT_WK_STREQ(videoPausedInFrame(webView.get(), childFrame.get()), "true");
+}
+
+TEST(SiteIsolation, ResumeAllMediaPlaybackResumesCrossSiteIframe)
+{
+    // Playback is suspended before the cross-site iframe exists, so its process is created with
+    // mediaPlaybackIsSuspended already set. Only a resume that reaches that process can let the
+    // video play, which is what makes this a test of the resume path rather than the suspend path.
+    auto videoScript = "<script>"
+        "function playVideo() {"
+        "    let video = document.getElementById('video');"
+        "    video.addEventListener('playing', () => notify('playing'));"
+        "    video.play().catch(() => { });"
+        "}"
+        "</script>"_s;
+
+    RetainPtr videoData = [NSData dataWithContentsOfFile:[NSBundle.test_resourcesBundle pathForResource:@"video-with-audio" ofType:@"mp4"] options:0 error:NULL];
+
+    HTTPServer::ResponseMap responses;
+    responses.add("/mainframe"_s, HTTPResponse(makeString(notifyScriptForTag("main"_s), "<body></body>"_s)));
+    responses.add("/subframe"_s, HTTPResponse(makeString(notifyScriptForTag("iframe"_s), videoScript,
+        "<body onload='notify(\"loaded\"); playVideo()'>"
+        "<video id='video' webkit-playsinline src='/video-with-audio.mp4'></video></body>"_s)));
+    responses.add("/video-with-audio.mp4"_s, HTTPResponse(videoData.get()));
+    HTTPServer server(WTF::move(responses), HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = autoplayingCrossSiteVideoView(server);
+
+    RetainPtr<NSMutableSet<NSString *>> received = adoptNS([[NSMutableSet alloc] init]);
+    [webView performAfterReceivingAnyMessage:^(NSString *message) {
+        [received addObject:message];
+    }];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://a.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    __block bool suspended = false;
+    [webView setAllMediaPlaybackSuspended:YES completionHandler:^{
+        suspended = true;
+    }];
+    Util::run(&suspended);
+
+    [webView evaluateJavaScript:@"let iframe = document.createElement('iframe');"
+        "iframe.src = 'https://b.com/subframe';"
+        "document.body.appendChild(iframe);" completionHandler:nil];
+
+    EXPECT_TRUE(Util::waitFor([&] {
+        return [received containsObject:@"iframe:loaded"];
+    }));
+    RetainPtr childFrame = [webView firstChildFrame];
+    EXPECT_WK_STREQ([childFrame securityOrigin].host, "b.com");
+
+    // The iframe's process started suspended, so its autoplay never began.
+    EXPECT_FALSE([received containsObject:@"iframe:playing"]);
+    EXPECT_WK_STREQ(videoPausedInFrame(webView.get(), childFrame.get()), "true");
+
+    __block bool resumed = false;
+    [webView setAllMediaPlaybackSuspended:NO completionHandler:^{
+        resumed = true;
+    }];
+    Util::run(&resumed);
+
+    [webView objectByEvaluatingJavaScript:@"document.getElementById('video').play().catch(() => { }); undefined" inFrame:childFrame.get()];
+
+    EXPECT_TRUE(Util::waitFor([&] {
+        return [videoPausedInFrame(webView.get(), childFrame.get()) isEqualToString:@"false"];
+    }));
+}
+
+TEST(SiteIsolation, RequestMediaPlaybackStateReflectsCrossSiteIframe)
+{
+    // Only the iframe has media, so the main frame's process alone reports no playback at all.
+    HTTPServer server(crossSiteVideoResponses(MainFrameVideo::No), HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = autoplayingCrossSiteVideoView(server);
+
+    RetainPtr<NSMutableSet<NSString *>> received = adoptNS([[NSMutableSet alloc] init]);
+    [webView performAfterReceivingAnyMessage:^(NSString *message) {
+        [received addObject:message];
+    }];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://a.com/mainframe"]]];
+    EXPECT_TRUE(Util::waitFor([&] {
+        return [received containsObject:@"iframe:playing"];
+    }));
+
+    __block bool done = false;
+    __block WKMediaPlaybackState state = WKMediaPlaybackStateNone;
+    [webView requestMediaPlaybackStateWithCompletionHandler:^(WKMediaPlaybackState result) {
+        state = result;
+        done = true;
+    }];
+    Util::run(&done);
+
+    EXPECT_EQ(state, WKMediaPlaybackStatePlaying);
+}
+
+TEST(SiteIsolation, SuspendPageSuspendsCrossSiteIframeProcess)
+{
+    auto tickScript = "<script>setInterval(() => notify('tick'), 10);</script>"_s;
+
+    HTTPServer::ResponseMap responses;
+    responses.add("/mainframe"_s, HTTPResponse(makeString(notifyScriptForTag("main"_s), tickScript,
+        "<iframe src='https://b.com/subframe'></iframe>"_s)));
+    responses.add("/subframe"_s, HTTPResponse(makeString(notifyScriptForTag("iframe"_s), tickScript)));
+    HTTPServer server(WTF::move(responses), HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server, CGRectMake(0, 0, 800, 600));
+
+    __block unsigned mainTicks = 0;
+    __block unsigned iframeTicks = 0;
+    __block bool bothFramesTicking = false;
+    [webView performAfterReceivingAnyMessage:^(NSString *message) {
+        if ([message isEqualToString:@"main:tick"])
+            mainTicks++;
+        else if ([message isEqualToString:@"iframe:tick"])
+            iframeTicks++;
+        if (mainTicks > 2 && iframeTicks > 2)
+            bothFramesTicking = true;
+    }];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://a.com/mainframe"]]];
+    EXPECT_TRUE(Util::runFor(&bothFramesTicking, 10_s));
+
+    __block bool done = false;
+    [webView _suspendPage:^(BOOL success) {
+        EXPECT_TRUE(success);
+        done = true;
+    }];
+    Util::run(&done);
+
+    // Timers must have stopped in both processes. Evaluating JavaScript throws once the page is
+    // suspended, so the tick counters are the only usable probe here.
+    auto mainTicksWhenSuspended = mainTicks;
+    auto iframeTicksWhenSuspended = iframeTicks;
+    Util::runFor(0.5_s);
+    EXPECT_EQ(mainTicksWhenSuspended, mainTicks);
+    EXPECT_EQ(iframeTicksWhenSuspended, iframeTicks);
+
+    __block bool resumeDone = false;
+    [webView _resumePage:^(BOOL success) {
+        EXPECT_TRUE(success);
+        resumeDone = true;
+    }];
+    Util::run(&resumeDone);
+
+    // Both processes must start ticking again. The counters are __block, so they cannot be read
+    // from a C++ lambda and Util::waitFor is unavailable here.
+    bool bothFramesTickingAgain = false;
+    for (unsigned attempt = 0; attempt < 100 && !bothFramesTickingAgain; ++attempt) {
+        Util::runFor(0.1_s);
+        bothFramesTickingAgain = mainTicks > mainTicksWhenSuspended && iframeTicks > iframeTicksWhenSuspended;
+    }
+    EXPECT_TRUE(bothFramesTickingAgain);
+}
+
+TEST(SiteIsolation, SuspendedPageDoesNotLetANewProcessJoin)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<iframe id='child' src='https://a.com/samesite'></iframe>"_s } },
+        { "/samesite"_s, { "same site subframe"_s } },
+        { "/crosssite"_s, { "cross site subframe"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server);
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://a.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigationAndLoadInSubframe];
+
+    // The subframe starts same-site, so one process backs the page.
+    checkFrameTreesInProcesses(webView.get(), { { "https://a.com"_s, { { "https://a.com"_s } } } });
+
+    // Hold the subframe's cross-site navigation. The process for b.com is not chosen until the
+    // decision is allowed, so nothing has joined the page yet.
+    bool didHoldCrossSiteNavigation { false };
+    BlockPtr<void(WKNavigationActionPolicy)> releaseCrossSiteNavigation;
+    navigationDelegate.get().decidePolicyForNavigationAction = makeBlockPtr([&](WKNavigationAction *action, void (^completionHandler)(WKNavigationActionPolicy)) {
+        if ([action.request.URL.host isEqualToString:@"b.com"]) {
+            releaseCrossSiteNavigation = makeBlockPtr(completionHandler);
+            didHoldCrossSiteNavigation = true;
+            return;
+        }
+        completionHandler(WKNavigationActionPolicyAllow);
+    }).get();
+
+    [webView evaluateJavaScript:@"document.getElementById('child').src = 'https://b.com/crosssite'" completionHandler:nil];
+    Util::run(&didHoldCrossSiteNavigation);
+
+    __block bool suspended = false;
+    [webView _suspendPage:^(BOOL success) {
+        EXPECT_TRUE(success);
+        suspended = true;
+    }];
+    Util::run(&suspended);
+
+    releaseCrossSiteNavigation(WKNavigationActionPolicyAllow);
+
+    // The decision is refused because the page is suspended, so no process for b.com joins and
+    // there is nothing running that _suspendPage: failed to freeze.
+    Util::runFor(0.5_s);
+    EXPECT_EQ([frameTrees(webView.get()) count], 1u);
+
+    __block bool resumed = false;
+    __block BOOL resumeSucceeded = NO;
+    [webView _resumePage:^(BOOL success) {
+        resumeSucceeded = success;
+        resumed = true;
+    }];
+    Util::run(&resumed);
+    EXPECT_TRUE(resumeSucceeded);
+
+    // The refused navigation left the iframe where it was.
+    checkFrameTreesInProcesses(webView.get(), { { "https://a.com"_s, { { "https://a.com"_s } } } });
+}
+
 }

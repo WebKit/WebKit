@@ -1101,6 +1101,8 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     m_mayStartMediaWhenInWindow = parameters.mayStartMediaWhenInWindow;
     if (parameters.mediaPlaybackIsSuspended)
         page->suspendAllMediaPlayback();
+    if (parameters.areActiveDOMObjectsAndAnimationsSuspended)
+        page->suspendActiveDOMObjectsAndAnimations();
 
     if (parameters.openedByDOM)
         page->setOpenedByDOM();
@@ -2739,14 +2741,16 @@ void WebPage::loadSimulatedRequestAndResponse(LoadParameters&& loadParameters, R
 
 void WebPage::stopLoading()
 {
-    if (!m_page || !m_mainFrame->coreLocalFrame())
+    if (!m_page)
         return;
 
     SendStopResponsivenessTimer stopper;
 
-    Ref coreFrame = *m_mainFrame->coreLocalFrame();
-    coreFrame->loader().stopForUserCancel();
-    coreFrame->loader().completePageTransitionIfNeeded();
+    for (Ref frame : copyToVectorOf<Ref<LocalFrame>>(m_page->rootFrames()))
+        frame->loader().stopForUserCancel();
+
+    if (RefPtr localMainFrame = m_page->localMainFrame())
+        localMainFrame->loader().completePageTransitionIfNeeded();
 }
 
 void WebPage::stopLoadingDueToProcessSwap()

@@ -100,6 +100,7 @@
 #include "LogInitialization.h"
 #include "Logging.h"
 #include "MediaKeySystemPermissionRequestManagerProxy.h"
+#include "MediaPlaybackState.h"
 #include "MessageSenderInlines.h"
 #include "ModelProcessProxy.h"
 #include "NativeWebGestureEvent.h"
@@ -2675,12 +2676,14 @@ void WebPageProxy::stopLoading()
     drainDeferredModalsForNewNavigation();
 #endif
 
-    send(Messages::WebPage::StopLoading());
+    forEachWebContentProcess([&](auto& process, auto pageID) {
+        process.send(Messages::WebPage::StopLoading(), pageID);
+        process.startResponsivenessTimer();
+    });
     if (RefPtr provisionalPage = m_provisionalPage) {
         provisionalPage->cancel();
         m_provisionalPage = nullptr;
     }
-    protect(legacyMainFrameProcess())->startResponsivenessTimer();
 }
 
 RefPtr<API::Navigation> WebPageProxy::reload(OptionSet<WebCore::ReloadOption> options)
@@ -5785,6 +5788,13 @@ void WebPageProxy::receivedNavigationActionPolicyDecision(WebProcessProxy& proce
 {
     WEBPAGEPROXY_RELEASE_LOG(Loading, "receivedNavigationActionPolicyDecision: frameID=%" PRIu64 ", isMainFrame=%d, navigationID=%" PRIu64 ", policyAction=%" PUBLIC_LOG_STRING, frame.frameID().toUInt64(), frame.isMainFrame(), navigation.navigationID().toUInt64(), toString(policyAction).characters());
 
+    // suspend() cannot cancel a decision the client is still holding, so refuse it here instead.
+    // Allowing it would choose a process for the new site and join it to a suspended page.
+    if (m_isSuspended && policyAction == PolicyAction::Use) {
+        WEBPAGEPROXY_RELEASE_LOG(Loading, "receivedNavigationActionPolicyDecision: ignoring because the page is suspended");
+        policyAction = PolicyAction::Ignore;
+    }
+
     Ref websiteDataStore = m_websiteDataStore;
     RefPtr policies = navigation.websitePolicies();
     if (policies) {
@@ -6558,7 +6568,9 @@ void WebPageProxy::resumeActiveDOMObjectsAndAnimations()
 
     m_areActiveDOMObjectsAndAnimationsSuspended = false;
 
-    send(Messages::WebPage::ResumeActiveDOMObjectsAndAnimations());
+    forEachWebContentProcess([&](auto& process, auto pageID) {
+        process.send(Messages::WebPage::ResumeActiveDOMObjectsAndAnimations(), pageID);
+    });
 }
 
 void WebPageProxy::suspendActiveDOMObjectsAndAnimations()
@@ -6568,7 +6580,9 @@ void WebPageProxy::suspendActiveDOMObjectsAndAnimations()
 
     m_areActiveDOMObjectsAndAnimationsSuspended = true;
 
-    send(Messages::WebPage::SuspendActiveDOMObjectsAndAnimations());
+    forEachWebContentProcess([&](auto& process, auto pageID) {
+        process.send(Messages::WebPage::SuspendActiveDOMObjectsAndAnimations(), pageID);
+    });
 }
 
 void WebPageProxy::suspend(CompletionHandler<void(bool)>&& completionHandler)
@@ -6578,7 +6592,13 @@ void WebPageProxy::suspend(CompletionHandler<void(bool)>&& completionHandler)
         return completionHandler(false);
 
     m_isSuspended = true;
-    sendWithAsyncReply(Messages::WebPage::Suspend(), WTF::move(completionHandler));
+
+    internals().suspendedProcesses.clear();
+    auto aggregator = MainRunLoopSuccessCallbackAggregator::create(WTF::move(completionHandler));
+    forEachWebContentProcess([&](auto& process, auto pageID) {
+        internals().suspendedProcesses.append(Internals::SuspendedProcess { process, pageID });
+        process.sendWithAsyncReply(Messages::WebPage::Suspend(), aggregator->chain(), pageID);
+    });
 }
 
 void WebPageProxy::resume(CompletionHandler<void(bool)>&& completionHandler)
@@ -6589,7 +6609,12 @@ void WebPageProxy::resume(CompletionHandler<void(bool)>&& completionHandler)
         return completionHandler(false);
 
     m_isSuspended = false;
-    sendWithAsyncReply(Messages::WebPage::Resume(), WTF::move(completionHandler));
+
+    auto aggregator = MainRunLoopSuccessCallbackAggregator::create(WTF::move(completionHandler));
+    for (auto& suspendedProcess : std::exchange(internals().suspendedProcesses, { })) {
+        if (RefPtr process = suspendedProcess.process.get())
+            process->sendWithAsyncReply(Messages::WebPage::Resume(), aggregator->chain(), suspendedProcess.pageID);
+    }
 }
 
 bool WebPageProxy::supportsTextEncoding() const
@@ -11876,7 +11901,55 @@ void WebPageProxy::requestMediaPlaybackState(CompletionHandler<void(MediaPlaybac
         return;
     }
 
-    sendWithAsyncReply(Messages::WebPage::RequestMediaPlaybackState(), WTF::move(completionHandler));
+    class MediaPlaybackStateCallbackAggregator : public RefCounted<MediaPlaybackStateCallbackAggregator> {
+    public:
+        static Ref<MediaPlaybackStateCallbackAggregator> create(CompletionHandler<void(MediaPlaybackState)>&& completionHandler) { return adoptRef(*new MediaPlaybackStateCallbackAggregator(WTF::move(completionHandler))); }
+
+        void NODELETE addState(MediaPlaybackState state)
+        {
+            if (precedence(state) > precedence(m_state))
+                m_state = state;
+        }
+
+        ~MediaPlaybackStateCallbackAggregator()
+        {
+            m_completionHandler(m_state);
+        }
+
+    private:
+        explicit MediaPlaybackStateCallbackAggregator(CompletionHandler<void(MediaPlaybackState)>&& completionHandler)
+            : m_completionHandler(WTF::move(completionHandler))
+        {
+        }
+
+        // Media playing anywhere in the page outranks media that is merely suspended, which
+        // outranks paused, which outranks a process with no media at all.
+        static unsigned precedence(MediaPlaybackState state)
+        {
+            switch (state) {
+            case MediaPlaybackState::NoMediaPlayback:
+                return 0;
+            case MediaPlaybackState::MediaPlaybackPaused:
+                return 1;
+            case MediaPlaybackState::MediaPlaybackSuspended:
+                return 2;
+            case MediaPlaybackState::MediaPlaybackPlaying:
+                return 3;
+            }
+            ASSERT_NOT_REACHED();
+            return 0;
+        }
+
+        CompletionHandler<void(MediaPlaybackState)> m_completionHandler;
+        MediaPlaybackState m_state { MediaPlaybackState::NoMediaPlayback };
+    };
+
+    Ref aggregator = MediaPlaybackStateCallbackAggregator::create(WTF::move(completionHandler));
+    forEachWebContentProcess([&](auto& webProcess, auto pageID) {
+        webProcess.sendWithAsyncReply(Messages::WebPage::RequestMediaPlaybackState(), [aggregator](MediaPlaybackState state) {
+            aggregator->addState(state);
+        }, pageID);
+    });
 }
 
 void WebPageProxy::pauseAllMediaPlayback(CompletionHandler<void()>&& completionHandler)
@@ -11886,7 +11959,10 @@ void WebPageProxy::pauseAllMediaPlayback(CompletionHandler<void()>&& completionH
         return;
     }
 
-    sendWithAsyncReply(Messages::WebPage::PauseAllMediaPlayback(), WTF::move(completionHandler));
+    auto aggregator = CallbackAggregator::create(WTF::move(completionHandler));
+    forEachWebContentProcess([&](auto& webProcess, auto pageID) {
+        webProcess.sendWithAsyncReply(Messages::WebPage::PauseAllMediaPlayback(), [aggregator] { }, pageID);
+    });
 }
 
 void WebPageProxy::suspendAllMediaPlayback(CompletionHandler<void()>&& completionHandler)
@@ -11903,7 +11979,10 @@ void WebPageProxy::suspendAllMediaPlayback(CompletionHandler<void()>&& completio
         return;
     }
 
-    sendWithAsyncReply(Messages::WebPage::SuspendAllMediaPlayback(), WTF::move(completionHandler));
+    auto aggregator = CallbackAggregator::create(WTF::move(completionHandler));
+    forEachWebContentProcess([&](auto& webProcess, auto pageID) {
+        webProcess.sendWithAsyncReply(Messages::WebPage::SuspendAllMediaPlayback(), [aggregator] { }, pageID);
+    });
 }
 
 void WebPageProxy::resumeAllMediaPlayback(CompletionHandler<void()>&& completionHandler)
@@ -11922,7 +12001,10 @@ void WebPageProxy::resumeAllMediaPlayback(CompletionHandler<void()>&& completion
         return;
     }
 
-    sendWithAsyncReply(Messages::WebPage::ResumeAllMediaPlayback(), WTF::move(completionHandler));
+    auto aggregator = CallbackAggregator::create(WTF::move(completionHandler));
+    forEachWebContentProcess([&](auto& webProcess, auto pageID) {
+        webProcess.sendWithAsyncReply(Messages::WebPage::ResumeAllMediaPlayback(), [aggregator] { }, pageID);
+    });
 }
 
 void WebPageProxy::processWillSuspend()
@@ -14293,6 +14375,7 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
     parameters.openedByDOM = m_openedByDOM;
     parameters.mayStartMediaWhenInWindow = m_mayStartMediaWhenInWindow;
     parameters.mediaPlaybackIsSuspended = m_mediaPlaybackIsSuspended;
+    parameters.areActiveDOMObjectsAndAnimationsSuspended = m_areActiveDOMObjectsAndAnimationsSuspended;
     parameters.minimumSizeForAutoLayout = internals().minimumSizeForAutoLayout;
     parameters.sizeToContentAutoSizeMaximumSize = internals().sizeToContentAutoSizeMaximumSize;
     parameters.autoSizingShouldExpandToViewHeight = m_autoSizingShouldExpandToViewHeight;
