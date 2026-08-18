@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: XML external entities are deprecated and will be removed in a future version of WebKit.
 CONSOLE MESSAGE: Did not parse external entity resource at 'http://127.0.0.1:8000/security/contentTypeOptions/resources/script-with-header.pl?mime=application/pdf' because only XML MIME types are allowed.
 CONSOLE MESSAGE: Did not parse external entity resource at 'http://127.0.0.1:8000/security/contentTypeOptions/resources/script-with-header.pl?mime=text/html' because only XML MIME types are allowed.
 CONSOLE MESSAGE: Did not parse external entity resource at 'http://127.0.0.1:8000/security/contentTypeOptions/resources/script-with-header.pl?mime=text/javascript' because only XML MIME types are allowed.
