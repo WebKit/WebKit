@@ -117,7 +117,7 @@ private:
 
     void setSourceBufferWithSelectedVideo(SourceBufferPrivateAVFObjC*);
 
-    MediaTime currentTime() const final;
+    MediaTime platformCurrentTime() const final;
     bool timeIsProgressing() const final;
     void bufferedChanged(PlatformTimeRanges&&) final;
 

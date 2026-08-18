@@ -165,6 +165,15 @@ Ref<MediaTimePromise> MediaSourcePrivate::waitForTarget(const SeekTarget& target
         }
 
         protectedThis->tryCompleteWaitForTarget();
+
+        if (protectedThis->m_waitForTargetPromise) {
+            // There's no data at the seek target: run the SourceBuffer Monitoring algorithm so that
+            // the readyState is lowered and a ManagedMediaSource resumes streaming, letting the
+            // content be appended and this seek complete.
+            if (RefPtr client = protectedThis->client())
+                client->monitorSourceBuffers();
+        }
+
         return promise;
     })->whenSettled(RunLoop::mainSingleton(), [weakThis = ThreadSafeWeakPtr { *this }](auto&& result) {
         RefPtr protectedThis = weakThis.get();
@@ -607,6 +616,11 @@ MediaTime MediaSourcePrivate::currentTime() const
         if (m_pendingSeekTarget)
             return m_pendingSeekTarget->time;
     }
+    return platformCurrentTime();
+}
+
+MediaTime MediaSourcePrivate::platformCurrentTime() const
+{
     if (RefPtr player = this->player())
         return player->currentOrPendingSeekTime();
     return MediaTime::zeroTime();

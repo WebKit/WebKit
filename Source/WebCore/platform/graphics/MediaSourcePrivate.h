@@ -86,8 +86,8 @@ public:
     virtual RefPtr<MediaPlayerPrivateInterface> player() const = 0;
     virtual void setPlayer(MediaPlayerPrivateInterface*) = 0;
     void shutdown();
-    // Implementation override must be thread-safe. For the base implementation to be thread-safe, player() must be a ThreadSafeRefCounted object.
-    virtual MediaTime currentTime() const;
+    // Returns the target of the seek being waited on if any, the platform's current time otherwise.
+    MediaTime currentTime() const;
     virtual bool timeIsProgressing() const;
 
     virtual constexpr MediaPlatformType platformType() const = 0;
@@ -193,6 +193,9 @@ protected:
     MediaSourcePrivate(MediaSourcePrivateClient&, WorkQueue&);
     void ensureOnDispatcher(Function<void()>&&) const;
     void ensureOnDispatcherSync(NOESCAPE Function<void()>&&) const;
+
+    // Implementation override must be thread-safe. For the base implementation to be thread-safe, player() must be a ThreadSafeRefCounted object.
+    virtual MediaTime platformCurrentTime() const;
 
     mutable Lock m_lock;
     // FIXME: This should be a Vector<Ref<SourceBufferPrivate>>

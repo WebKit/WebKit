@@ -246,7 +246,7 @@ RefPtr<MediaPlayerPrivateMediaSourceAVFObjC> MediaSourcePrivateAVFObjC::platform
     return m_player.get();
 }
 
-MediaTime MediaSourcePrivateAVFObjC::currentTime() const
+MediaTime MediaSourcePrivateAVFObjC::platformCurrentTime() const
 {
     RefPtr renderer = m_renderer.get();
     return renderer ? renderer->currentTime() : MediaTime::zeroTime();
