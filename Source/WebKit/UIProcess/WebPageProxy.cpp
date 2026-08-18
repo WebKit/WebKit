@@ -4247,10 +4247,17 @@ void WebPageProxy::propagateDragAndDrop(DragEventForwardingData&& forwardingData
     auto targetFrameID = forwardingData.targetFrameID;
 
     RefPtr frame = WebFrameProxy::webFrame(targetFrameID);
+#ifdef RC_REMOVE_SEC_ACCEL_3
     if (!frame) {
         protect(pageClient())->didPerformDragOperation(false);
         return;
     }
+#else
+    if (!frame || frame->page() != this) {
+        protect(pageClient())->didPerformDragOperation(false);
+        return;
+    }
+#endif // RC_REMOVE_SEC_ACCEL_3
     Ref targetProcess = frame->process();
     auto filenames = dragData.fileNames();
     if (!filenames.isEmpty()) {
