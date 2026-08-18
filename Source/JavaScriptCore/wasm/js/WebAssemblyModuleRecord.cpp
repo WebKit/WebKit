@@ -122,11 +122,11 @@ Synchronousness WebAssemblyModuleRecord::link(JSGlobalObject* globalObject, RefP
     return Synchronousness::Sync;
 }
 
-static const WebAssemblyBuiltinSet* findEnabledBuiltinSet(const String& qualifiedName, const Wasm::ModuleInformation& moduleInformation)
+static const WebAssemblyBuiltinSet* findEnabledBuiltinSet(const Wasm::Import& import, const Wasm::ModuleInformation& moduleInformation)
 {
-    if (!moduleInformation.builtinSetsInclude(qualifiedName))
+    if (!moduleInformation.builtinSetsInclude(import.module))
         return nullptr;
-    return WebAssemblyBuiltinRegistry::singleton().findByQualifiedName(qualifiedName);
+    return WebAssemblyBuiltinRegistry::singleton().findByQualifiedName(makeString(import.module));
 }
 
 static void defineImportedStringConstant(VM& vm, WriteBarrier<JSWebAssemblyInstance>& instance, const Wasm::Import& import)
@@ -178,11 +178,11 @@ void WebAssemblyModuleRecord::initializeImports(JSGlobalObject* globalObject, JS
 
         // Imports related to builtins or importedStringConstants are special and bypass
         // the normal procedure of looking up a value in importObject.
-        if (moduleInformation.importedStringConstantsEquals(moduleNameString)) {
+        if (moduleInformation.importedStringConstantsEquals(import.module)) {
             defineImportedStringConstant(vm, m_instance, import);
             continue;
         }
-        const WebAssemblyBuiltinSet* builtinSet = findEnabledBuiltinSet(moduleNameString, moduleInformation);
+        const WebAssemblyBuiltinSet* builtinSet = findEnabledBuiltinSet(import, moduleInformation);
         if (builtinSet) {
             String fieldName = makeString(import.field);
             auto* builtin = builtinSet->findBuiltin(fieldName);

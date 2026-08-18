@@ -194,8 +194,8 @@ struct ModuleInformation final : public ThreadSafeRefCounted<ModuleInformation> 
     size_t totalFunctionSize() const { return m_totalFunctionSize; }
 
     void applyCompileOptions(const WebAssemblyCompileOptions&);
-    bool importedStringConstantsEquals(const String& expected) const { return m_importedStringConstants && m_importedStringConstants.value() == expected; }
-    bool builtinSetsInclude(const String& qualifiedName) const { return m_qualifiedBuiltinSetNames.contains(qualifiedName); }
+    bool importedStringConstantsEquals(const Name& moduleName) const { return m_importedStringConstants && m_importedStringConstants.value() == moduleName; }
+    bool builtinSetsInclude(const Name& moduleName) const { return m_qualifiedBuiltinSetNames.contains(moduleName); }
 
     // nameSection is read from compiler threads (lock-free via atomic pointer)
     // and written from the main thread when the custom "name" section is parsed.
@@ -249,8 +249,8 @@ private:
 
     Vector<Ref<const RTT>> m_rtts;
 
-    std::optional<String> m_importedStringConstants;
-    Vector<String> m_qualifiedBuiltinSetNames;
+    std::optional<Name> m_importedStringConstants;
+    Vector<Name> m_qualifiedBuiltinSetNames;
     Ref<NameSection> m_nameSection;
     RefPtr<NameSection> m_retiredNameSection;
     std::atomic<NameSection*> m_nameSectionPtr { nullptr };

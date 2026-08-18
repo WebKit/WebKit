@@ -65,23 +65,25 @@ void ModuleInformation::setNameSection(Ref<NameSection>&& section)
     m_nameSectionPtr.store(m_nameSection.ptr(), std::memory_order_release);
 }
 
+static std::optional<Name> encodeAsImportName(const String& string)
+{
+    auto utf8 = string.tryGetUTF8(StrictConversion);
+    if (!utf8)
+        return std::nullopt;
+    return Name(byteCast<char8_t>(utf8->span()));
+}
+
 // This is called during module creation, so at this point we have fully isolated access
 // to this ModuleInformation object.
 void ModuleInformation::applyCompileOptions(const WebAssemblyCompileOptions& options)
 {
     const auto& constants = options.importedStringConstants();
-    if (constants.has_value()) {
-        m_importedStringConstants = constants->isolatedCopy();
-        // We are making an isolated copy so we are not holding onto a unique string specific to some random thread.
-        // The assert below ensures that. Empty strings are special because their isolated copies are all the same canonical atomic empty string.
-        ASSERT(!(m_importedStringConstants->impl()->isAtom() || m_importedStringConstants->impl()->isSymbol()) || m_importedStringConstants->impl() == StringImpl::empty());
-    }
+    if (constants.has_value())
+        m_importedStringConstants = encodeAsImportName(*constants);
     const auto& builtinSetNames = options.qualifiedBuiltinSetNames();
     for (const auto& name : builtinSetNames) {
-        auto copy = name.isolatedCopy();
-        // See the assert notes above.
-        ASSERT(!(copy.impl()->isAtom() || copy.impl()->isSymbol()) || copy.impl() == StringImpl::empty());
-        m_qualifiedBuiltinSetNames.append(copy);
+        if (auto encoded = encodeAsImportName(name))
+            m_qualifiedBuiltinSetNames.append(WTF::move(*encoded));
     }
     populateImportShouldBeHidden();
 }
@@ -98,11 +100,10 @@ void ModuleInformation::populateImportShouldBeHidden()
     for (size_t i = 0; i < imports.size(); ++i) {
         const Import& import = imports[i];
 
-        String moduleName = makeString(import.module);
-        if (importedStringConstantsEquals(moduleName))
+        if (importedStringConstantsEquals(import.module))
             importShouldBeHidden.testAndSet(i);
-        else if (builtinSetsInclude(moduleName)) {
-            auto* builtinSet = WebAssemblyBuiltinRegistry::singleton().findByQualifiedName(moduleName);
+        else if (builtinSetsInclude(import.module)) {
+            auto* builtinSet = WebAssemblyBuiltinRegistry::singleton().findByQualifiedName(makeString(import.module));
             if (builtinSet) {
                 String fieldName = makeString(import.field);
                 if (builtinSet->findBuiltin(fieldName))
