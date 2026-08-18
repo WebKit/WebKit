@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+const firstSheet = new CSSStyleSheet();
+firstSheet.replaceSync(`div#target { background: steelblue; }`);
+
+const secondSheet = new CSSStyleSheet();
+secondSheet.replaceSync(`div#target { color: white; }`);
+
+document.adoptedStyleSheets = [firstSheet, secondSheet];
+
+function test()
+{
+    InspectorBackend.runAfterPendingDispatches(function() {
+        // Don't count every style sheet the page has. Site isolation gives the inspector one
+        // more than this document declares, and the count is not what this test is about.
+        let constructedStyleSheets = WI.cssManager.styleSheets.filter((styleSheet) => styleSheet.isConstructed());
+        InspectorTest.expectEqual(constructedStyleSheets.length, 2, "There should be two constructed stylesheets.");
+
+        for (let styleSheet of constructedStyleSheets) {
+            InspectorTest.expectNull(styleSheet.url, "Constructed stylesheet should have no URL, since it has no source file.");
+            InspectorTest.expectEqual(styleSheet.origin, WI.CSSStyleSheet.Type.Author, "Constructed stylesheet should have Author origin.");
+
+            // Having no URL and not being an Inspector Style Sheet is what files a style sheet under
+            // "Extra Style Sheets" in the Sources tab, in both grouping modes.
+            InspectorTest.expectTrue(styleSheet.anonymous, "Constructed stylesheet should be anonymous, so it is grouped with the other style sheets that have no URL.");
+        }
+
+        let displayNames = constructedStyleSheets.map((styleSheet) => styleSheet.displayName);
+        InspectorTest.expectEqual(new Set(displayNames).size, displayNames.length, "Each constructed stylesheet should have its own display name.");
+        for (let displayName of displayNames.sort())
+            InspectorTest.log(`DISPLAY NAME: ${displayName}`);
+
+        InspectorTest.completeTest();
+    });
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Test that constructed stylesheets applied via document.adoptedStyleSheets are enumerated by CSS.getAllStyleSheets, labeled as constructed rather than attributed to the document, and each given a distinct display name. <a href="https://bugs.webkit.org/show_bug.cgi?id=320092">Bug 320092</a>.</p>
+<div id="target"></div>
+</body>
+</html>

@@ -37,7 +37,6 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         this._extraScriptsFolderTreeElement = null;
         this._extraStyleSheetsFolderTreeElement = null;
         this._anonymousScriptsFolderTreeElement = null;
-        this._anonymousStyleSheetsFolderTreeElement = null;
 
         this._originTreeElementMap = new Map;
 
@@ -692,18 +691,22 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
 
             console.assert(representedObject.anonymous, representedObject);
 
-            if (!this._anonymousStyleSheetsFolderTreeElement)
-                this._anonymousStyleSheetsFolderTreeElement = new WI.FolderTreeElement(WI.UIString("Anonymous Style Sheets"), new WI.CSSStyleSheetCollection);
+            // A style sheet without a URL has no domain or path to file it under, so it goes with the
+            // other style sheets that are not part of the frame tree, in both grouping modes.
 
-            if (!this._anonymousStyleSheetsFolderTreeElement.parent) {
-                let index = insertionIndexForObjectInListSortedByFunction(this._anonymousStyleSheetsFolderTreeElement, this._resourcesTreeOutline.children, this._boundCompareTreeElements);
-                this._resourcesTreeOutline.insertChild(this._anonymousStyleSheetsFolderTreeElement, index);
+            if (!this._extraStyleSheetsFolderTreeElement)
+                this._extraStyleSheetsFolderTreeElement = new WI.FolderTreeElement(WI.UIString("Extra Style Sheets"), new WI.CSSStyleSheetCollection);
+
+            if (!this._extraStyleSheetsFolderTreeElement.parent) {
+                let index = insertionIndexForObjectInListSortedByFunction(this._extraStyleSheetsFolderTreeElement, this._resourcesTreeOutline.children, this._boundCompareTreeElements);
+                this._resourcesTreeOutline.insertChild(this._extraStyleSheetsFolderTreeElement, index);
                 this._resourcesTreeOutline.disclosureButtons = true;
             }
 
-           let cssStyleSheetTreeElement = new WI.CSSStyleSheetTreeElement(representedObject);
-           this._anonymousStyleSheetsFolderTreeElement.appendChild(cssStyleSheetTreeElement);
-           return cssStyleSheetTreeElement;
+            let cssStyleSheetTreeElement = new WI.CSSStyleSheetTreeElement(representedObject);
+            let index = insertionIndexForObjectInListSortedByFunction(cssStyleSheetTreeElement, this._extraStyleSheetsFolderTreeElement.children, this._boundCompareTreeElements);
+            this._extraStyleSheetsFolderTreeElement.insertChild(cssStyleSheetTreeElement, index);
+            return cssStyleSheetTreeElement;
         }
 
         console.assert(false, "Didn't find a TreeElement for representedObject", representedObject);
@@ -1055,15 +1058,13 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
                     && treeElement !== this._extensionStyleSheetsFolderTreeElement
                     && treeElement !== this._extraScriptsFolderTreeElement
                     && treeElement !== this._extraStyleSheetsFolderTreeElement
-                    && treeElement !== this._anonymousScriptsFolderTreeElement
-                    && treeElement !== this._anonymousStyleSheetsFolderTreeElement;
+                    && treeElement !== this._anonymousScriptsFolderTreeElement;
             },
             (treeElement) => treeElement === this._extensionScriptsFolderTreeElement,
             (treeElement) => treeElement === this._extensionStyleSheetsFolderTreeElement,
             (treeElement) => treeElement === this._extraScriptsFolderTreeElement,
             (treeElement) => treeElement === this._extraStyleSheetsFolderTreeElement,
             (treeElement) => treeElement === this._anonymousScriptsFolderTreeElement,
-            (treeElement) => treeElement === this._anonymousStyleSheetsFolderTreeElement,
         ];
 
         let aRank = rankFunctions.findIndex((rankFunction) => rankFunction(a));
@@ -2433,7 +2434,6 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
         this._extraScriptsFolderTreeElement = null;
         this._extraStyleSheetsFolderTreeElement = null;
         this._anonymousScriptsFolderTreeElement = null;
-        this._anonymousStyleSheetsFolderTreeElement = null;
 
         this._originTreeElementMap.clear();
 
@@ -2887,10 +2887,6 @@ WI.SourcesNavigationSidebarPanel = class SourcesNavigationSidebarPanel extends W
 
         case this._extraStyleSheetsFolderTreeElement:
             this._extraStyleSheetsFolderTreeElement = null;
-            break;
-
-        case this._anonymousStyleSheetsFolderTreeElement:
-            this._anonymousStyleSheetsFolderTreeElement = null;
             break;
         }
     }

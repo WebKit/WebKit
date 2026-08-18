@@ -1,5 +1,6 @@
-Testing that rules from a constructable CSSStyleSheet attached via document.adoptedStyleSheets are reported with Author origin (not User Agent), so they appear editable in the Web Inspector. Tracking bug.
+Testing that rules from a constructable CSSStyleSheet attached via document.adoptedStyleSheets are reported with Author origin (not User Agent), so they appear editable in the Web Inspector, and are not attributed to the document's URL. Bug 277893 and bug 320092.
 
 PASS: Should have a rule matching "div#target".
 PASS: Adopted stylesheet rule should have "author" origin, not "user-agent".
+PASS: Adopted stylesheet rule should have no sourceURL, since a constructed stylesheet has no source file.
 
