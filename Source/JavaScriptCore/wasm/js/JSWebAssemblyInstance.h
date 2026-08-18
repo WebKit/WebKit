@@ -169,6 +169,8 @@ public:
 
     void setTagWrapper(VM&, unsigned index, JSWebAssemblyTag*);
     JSWebAssemblyTag* tagWrapper(unsigned index) const;
+    void setImportedGlobalWrapper(VM&, unsigned index, JSWebAssemblyGlobal*);
+    JSWebAssemblyGlobal* importedGlobalWrapper(unsigned index) const;
 
     JSWebAssemblyModule* jsModule() const LIFETIME_BOUND { return m_jsModule.get(); }
     const Wasm::ModuleInformation& moduleInformation() const { return m_moduleInformation.get(); }
@@ -479,6 +481,8 @@ private:
     UncheckedKeyHashMap<uint32_t, Ref<Wasm::Global>, IntHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_linkedGlobals;
     using TagWrapperMap = UncheckedKeyHashMap<uint32_t, WriteBarrier<JSWebAssemblyTag>, IntHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>>;
     TagWrapperMap m_tagWrappers;
+    using GlobalWrapperMap = UncheckedKeyHashMap<uint32_t, WriteBarrier<JSWebAssemblyGlobal>, IntHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>>;
+    GlobalWrapperMap m_importedGlobalWrappers;
     BitVector m_passiveElements;
     BitVector m_passiveDataSegments;
     FixedVector<RefPtr<const Wasm::Tag>> m_tags;

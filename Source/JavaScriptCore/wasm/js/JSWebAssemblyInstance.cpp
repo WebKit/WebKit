@@ -229,6 +229,8 @@ void JSWebAssemblyInstance::visitChildrenImpl(JSCell* cell, Visitor& visitor)
         visitor.append(entry.value);
     for (auto& entry : thisObject->m_tagWrappers)
         visitor.append(entry.value);
+    for (auto& entry : thisObject->m_importedGlobalWrappers)
+        visitor.append(entry.value);
 }
 
 DEFINE_VISIT_CHILDREN(JSWebAssemblyInstance);
@@ -471,6 +473,22 @@ JSWebAssemblyTag* JSWebAssemblyInstance::tagWrapper(unsigned index) const
     Locker locker { cellLock() };
     auto iterator = m_tagWrappers.find(index);
     if (iterator == m_tagWrappers.end())
+        return nullptr;
+    return iterator->value.get();
+}
+
+void JSWebAssemblyInstance::setImportedGlobalWrapper(VM& vm, unsigned index, JSWebAssemblyGlobal* global)
+{
+    ASSERT(global);
+    Locker locker { cellLock() };
+    m_importedGlobalWrappers.set(index, WriteBarrier<JSWebAssemblyGlobal>(vm, this, global));
+}
+
+JSWebAssemblyGlobal* JSWebAssemblyInstance::importedGlobalWrapper(unsigned index) const
+{
+    Locker locker { cellLock() };
+    auto iterator = m_importedGlobalWrappers.find(index);
+    if (iterator == m_importedGlobalWrappers.end())
         return nullptr;
     return iterator->value.get();
 }

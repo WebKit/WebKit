@@ -307,6 +307,7 @@ void WebAssemblyModuleRecord::initializeImports(JSGlobalObject* globalObject, JS
                         return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "imported global"_s, "must be a same type"_s)));
                     if (globalValue->global()->mutability() != Wasm::Immutable)
                         return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "imported global"_s, "must be a same mutability"_s)));
+                    m_instance->setImportedGlobalWrapper(vm, import.kindIndex, globalValue);
                     const auto& declaredGlobalType = moduleInformation.globals[import.kindIndex].type;
                     switch (declaredGlobalType.kind()) {
                     case Wasm::TypeKind::I32:
@@ -727,6 +728,10 @@ void WebAssemblyModuleRecord::initializeExports(JSGlobalObject* globalObject)
                 // If global is immutable, we are not creating a binding internally.
                 // But we need to create a binding just to export it. This binding is not actually connected. But this is OK since it is immutable.
                 if (global.bindingMode == Wasm::GlobalInformation::BindingMode::EmbeddedInInstance) {
+                    if (JSWebAssemblyGlobal* wrapper = m_instance->importedGlobalWrapper(exp.kindIndex)) {
+                        exportedValue = wrapper;
+                        break;
+                    }
                     RefPtr<Wasm::Global> globalRef;
                     if (global.type.kind() == Wasm::TypeKind::V128) {
                         v128_t initialValue = m_instance->loadV128Global(exp.kindIndex);
