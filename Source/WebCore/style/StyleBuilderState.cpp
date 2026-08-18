@@ -216,6 +216,7 @@ void BuilderState::updateFontForTextSizeAdjust()
     float zoomFactor = m_style.usedZoom();
     if (auto* frame = document().frame(); frame && m_style.textZoom() != TextZoom::Reset)
         zoomFactor *= frame->textZoomFactor();
+    newFontDescription.setSpecifiedSize(baseSize);
     newFontDescription.setComputedSize(baseSize * zoomFactor, zoomFactor);
 
     m_style.setFontDescriptionWithoutUpdate(WTF::move(newFontDescription));

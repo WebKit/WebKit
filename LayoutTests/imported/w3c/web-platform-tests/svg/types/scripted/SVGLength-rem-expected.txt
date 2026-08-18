@@ -1,4 +1,4 @@
 
-FAIL rem unit in SVGLength assert_equals: expected 100 but got 225
+PASS rem unit in SVGLength
 PASS Convert back to rem from new user unit value
 

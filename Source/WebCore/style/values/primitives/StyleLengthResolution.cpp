@@ -63,38 +63,29 @@ static double unzoomFontMetric(double metric, const FontDescription& fontDescrip
 // Resolve the "em", "rem" and "quirky-em" units.
 // https://drafts.csswg.org/css-values-4/#em
 // https://drafts.csswg.org/css-values-4/#rem
-static double resolveEm(CSSPropertyID propertyToCompute, const FontCascade& fontCascadeForUnit)
+static double resolveEm(const FontCascade& fontCascadeForUnit)
 {
     auto& fontDescription = fontCascadeForUnit.fontDescription();
-
-    // FIXME: Should probably use specifiedSize for every property.
-    if (propertyToCompute == CSSPropertyFontSize)
-        return fontDescription.specifiedSize();
-
-    return fontDescription.unzoomedComputedSize();
+    return fontDescription.specifiedSize();
 }
 
 // Resolve the "ex" and "rex" units.
 // https://drafts.csswg.org/css-values-4/#ex
 // https://drafts.csswg.org/css-values-4/#rex
-static double resolveEx(CSSPropertyID propertyToCompute, const FontCascade& fontCascadeForUnit)
+static double resolveEx(const FontCascade& fontCascadeForUnit)
 {
     auto& fontDescription = fontCascadeForUnit.fontDescription();
     auto& fontMetrics = fontCascadeForUnit.metricsOfPrimaryFont();
     if (fontMetrics.xHeight())
         return unzoomFontMetric(fontMetrics.xHeight().value(), fontDescription);
 
-    // FIXME: Should probably use specifiedSize for every property.
-    if (propertyToCompute == CSSPropertyFontSize)
-        return fontDescription.specifiedSize() / 2.0;
-
-    return fontDescription.unzoomedComputedSize() / 2.0;
+    return fontDescription.specifiedSize() / 2.0;
 }
 
 // Resolve the "cap" and "rcap" units.
 // https://drafts.csswg.org/css-values-4/#cap
 // https://drafts.csswg.org/css-values-4/#rcap
-static double resolveCap(CSSPropertyID, const FontCascade& fontCascadeForUnit)
+static double resolveCap(const FontCascade& fontCascadeForUnit)
 {
     auto& fontDescription = fontCascadeForUnit.fontDescription();
     auto& fontMetrics = fontCascadeForUnit.metricsOfPrimaryFont();
@@ -106,7 +97,7 @@ static double resolveCap(CSSPropertyID, const FontCascade& fontCascadeForUnit)
 // Resolve the "ch" and "rch" units.
 // https://drafts.csswg.org/css-values-4/#ch
 // https://drafts.csswg.org/css-values-4/#rch
-static double resolveCh(CSSPropertyID, const FontCascade& fontCascadeForUnit)
+static double resolveCh(const FontCascade& fontCascadeForUnit)
 {
     return unzoomFontMetric(fontCascadeForUnit.zeroWidth(), fontCascadeForUnit.fontDescription());
 }
@@ -114,7 +105,7 @@ static double resolveCh(CSSPropertyID, const FontCascade& fontCascadeForUnit)
 // Resolve the "ic" and "ric" units.
 // https://drafts.csswg.org/css-values-4/#ic
 // https://drafts.csswg.org/css-values-4/#ric
-static double resolveIc(CSSPropertyID, const FontCascade& fontCascadeForUnit)
+static double resolveIc(const FontCascade& fontCascadeForUnit)
 {
     auto& fontDescription = fontCascadeForUnit.fontDescription();
     auto ideogramWidth = fontCascadeForUnit.metricsOfPrimaryFont().ideogramWidth();
@@ -516,16 +507,16 @@ static double resolveLengthImpl(double value, CSS::LengthUnit lengthUnit, const 
 
     case Em:
     case QuirkyEm:
-        return value * adaptor.applyTextZoom(resolveEm(adaptor.property(), adaptor.fontCascadeForFontUnits()));
+        return value * adaptor.applyTextZoom(resolveEm(adaptor.fontCascadeForFontUnits()));
     case Ex:
-        return value * adaptor.applyTextZoom(resolveEx(adaptor.property(), adaptor.fontCascadeForFontUnits()));
+        return value * adaptor.applyTextZoom(resolveEx(adaptor.fontCascadeForFontUnits()));
     case Cap:
-        return value * adaptor.applyTextZoom(resolveCap(adaptor.property(), adaptor.fontCascadeForFontUnits()));
+        return value * adaptor.applyTextZoom(resolveCap(adaptor.fontCascadeForFontUnits()));
 
     case Ch:
-        return value * adaptor.applyTextZoom(resolveCh(adaptor.property(), adaptor.fontCascadeForFontUnits()));
+        return value * adaptor.applyTextZoom(resolveCh(adaptor.fontCascadeForFontUnits()));
     case Ic:
-        return value * adaptor.applyTextZoom(resolveIc(adaptor.property(), adaptor.fontCascadeForFontUnits()));
+        return value * adaptor.applyTextZoom(resolveIc(adaptor.fontCascadeForFontUnits()));
 
     case Lh:
         return value * applyTextZoomIfComputingLineHeight(resolveLh(adaptor.styleForLineHeightUnits(), adaptor.fontCascadeForFontUnits()));
@@ -533,15 +524,15 @@ static double resolveLengthImpl(double value, CSS::LengthUnit lengthUnit, const 
     // MARK: "root font dependent" resolution
 
     case Rem:
-        return value * adaptor.applyTextZoom(resolveEm(adaptor.property(), adaptor.fontCascadeForRootFontUnits()));
+        return value * adaptor.applyTextZoom(resolveEm(adaptor.fontCascadeForRootFontUnits()));
     case Rcap:
-        return value * adaptor.applyTextZoom(resolveCap(adaptor.property(), adaptor.fontCascadeForRootFontUnits()));
+        return value * adaptor.applyTextZoom(resolveCap(adaptor.fontCascadeForRootFontUnits()));
     case Rch:
-        return value * adaptor.applyTextZoom(resolveCh(adaptor.property(), adaptor.fontCascadeForRootFontUnits()));
+        return value * adaptor.applyTextZoom(resolveCh(adaptor.fontCascadeForRootFontUnits()));
     case Rex:
-        return value * adaptor.applyTextZoom(resolveEx(adaptor.property(), adaptor.fontCascadeForRootFontUnits()));
+        return value * adaptor.applyTextZoom(resolveEx(adaptor.fontCascadeForRootFontUnits()));
     case Ric:
-        return value * adaptor.applyTextZoom(resolveIc(adaptor.property(), adaptor.fontCascadeForRootFontUnits()));
+        return value * adaptor.applyTextZoom(resolveIc(adaptor.fontCascadeForRootFontUnits()));
 
     case Rlh:
         return value * applyTextZoomIfComputingLineHeight(resolveLh(adaptor.styleForRootLineHeightUnits(), adaptor.fontCascadeForRootFontUnits()));
@@ -773,7 +764,7 @@ double emToPxDouble(double value, const CSSToLengthConversionData& conversionDat
     CSSToLengthConversionDataAdaptor adaptor {
         .conversionData = conversionData,
     };
-    return value * adaptor.applyTextZoom(resolveEm(adaptor.property(), adaptor.fontCascadeForFontUnits()));
+    return value * adaptor.applyTextZoom(resolveEm(adaptor.fontCascadeForFontUnits()));
 }
 
 double emToPxDouble(double value, const ComputedStyle& style)

@@ -1,8 +1,5 @@
 This test makes sure that minimumFontSize affects line-height.
-
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
-
-
 PASS Math.round(parseFloat(window.getComputedStyle(document.getElementById('test1')).getPropertyValue('line-height'))) is comparisonLineHeight
 PASS Math.round(parseFloat(window.getComputedStyle(document.getElementById('test2')).getPropertyValue('line-height'))) is comparisonLineHeight
 PASS Math.round(parseFloat(window.getComputedStyle(document.getElementById('test3')).getPropertyValue('line-height'))) is 20 / 16 * 64
