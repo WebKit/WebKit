@@ -87,11 +87,10 @@ static bool callSyncIteratorMethodAndExtract(JSGlobalObject* globalObject, JSVal
         return { };
     }
 
-    MarkedArgumentBuffer args;
-    if (!argument.isEmpty())
-        args.append(argument);
-    ASSERT(!args.hasOverflowed());
-    JSValue result = call(globalObject, method, callData, syncIterator, args);
+    auto args = WTF::toArray<EncodedJSValue>({
+        JSValue::encode(argument),
+    });
+    JSValue result = call(globalObject, method, callData, syncIterator, ArgList { args.data(), argument.isEmpty() ? 0u : 1u });
     RETURN_IF_EXCEPTION(scope, { });
 
     if (!result.isObject()) [[unlikely]] {

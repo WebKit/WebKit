@@ -99,10 +99,10 @@ JSC_DEFINE_HOST_FUNCTION(constructSet, (JSGlobalObject* globalObject, CallFrame*
             return;
         }
 
-        MarkedArgumentBuffer arguments;
-        arguments.append(nextValue);
-        ASSERT(!arguments.hasOverflowed());
-        call(globalObject, adderFunction, adderFunctionCallData, set, arguments);
+        auto arguments = WTF::toArray<EncodedJSValue>({
+            JSValue::encode(nextValue),
+        });
+        call(globalObject, adderFunction, adderFunctionCallData, set, ArgList { arguments.data(), arguments.size() });
     });
 
     return JSValue::encode(set);

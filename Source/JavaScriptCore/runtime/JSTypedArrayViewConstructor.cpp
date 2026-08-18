@@ -115,10 +115,10 @@ JSC_DEFINE_HOST_FUNCTION(typedArrayConstructorOf, (JSGlobalObject* globalObject,
     FOR_EACH_TYPED_ARRAY_TYPE_EXCLUDING_DATA_VIEW(JSC_TYPED_ARRAY_OF_FAST)
 #undef JSC_TYPED_ARRAY_OF_FAST
 
-    MarkedArgumentBuffer args;
-    args.append(jsNumber(length));
-    ASSERT(!args.hasOverflowed());
-    JSObject* constructed = construct(globalObject, thisValue, args, "TypedArray.of requires |this| to be a constructor"_s);
+    auto args = WTF::toArray<EncodedJSValue>({
+        JSValue::encode(jsNumber(length)),
+    });
+    JSObject* constructed = construct(globalObject, thisValue, ArgList { args.data(), args.size() }, "TypedArray.of requires |this| to be a constructor"_s);
     RETURN_IF_EXCEPTION(scope, { });
 
     JSArrayBufferView* view = validateTypedArray(globalObject, constructed);

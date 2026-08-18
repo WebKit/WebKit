@@ -119,11 +119,11 @@ JSC_DEFINE_HOST_FUNCTION(constructMap, (JSGlobalObject* globalObject, CallFrame*
             return;
         }
 
-        MarkedArgumentBuffer arguments;
-        arguments.append(key);
-        arguments.append(value);
-        ASSERT(!arguments.hasOverflowed());
-        call(globalObject, adderFunction, adderFunctionCallData, map, arguments);
+        auto arguments = WTF::toArray<EncodedJSValue>({
+            JSValue::encode(key),
+            JSValue::encode(value),
+        });
+        call(globalObject, adderFunction, adderFunctionCallData, map, ArgList { arguments.data(), arguments.size() });
     });
 
     return JSValue::encode(map);

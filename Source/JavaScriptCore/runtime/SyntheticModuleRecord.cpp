@@ -88,7 +88,7 @@ JSValue SyntheticModuleRecord::evaluate(JSGlobalObject*)
 }
 
 
-SyntheticModuleRecord* SyntheticModuleRecord::tryCreateWithExportNamesAndValues(JSGlobalObject* globalObject, const Identifier& moduleKey, const Vector<Identifier, 4>& exportNames, const MarkedArgumentBuffer& exportValues, SourceProviderSourceType sourceType)
+SyntheticModuleRecord* SyntheticModuleRecord::tryCreateWithExportNamesAndValues(JSGlobalObject* globalObject, const Identifier& moduleKey, const Vector<Identifier, 4>& exportNames, ArgList exportValues, SourceProviderSourceType sourceType)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -132,12 +132,11 @@ SyntheticModuleRecord* SyntheticModuleRecord::tryCreateDefaultExportSyntheticMod
     VM& vm = globalObject->vm();
 
     Vector<Identifier, 4> exportNames;
-    MarkedArgumentBuffer exportValues;
-
+    auto exportValues = WTF::toArray<EncodedJSValue>({
+        JSValue::encode(defaultExport),
+    });
     exportNames.append(vm.propertyNames->defaultKeyword);
-    exportValues.appendWithCrashOnOverflow(defaultExport);
-
-    return tryCreateWithExportNamesAndValues(globalObject, moduleKey, exportNames, exportValues, sourceType);
+    return tryCreateWithExportNamesAndValues(globalObject, moduleKey, exportNames, ArgList { exportValues.data(), exportValues.size() }, sourceType);
 }
 
 SyntheticModuleRecord* SyntheticModuleRecord::parseJSONModule(JSGlobalObject* globalObject, const Identifier& moduleKey, SourceCode&& sourceCode)

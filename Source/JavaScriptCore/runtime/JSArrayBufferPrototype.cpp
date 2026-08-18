@@ -107,10 +107,10 @@ static ALWAYS_INLINE std::pair<SpeciesConstructResult, JSArrayBuffer*> speciesCo
         return fastPathResult;
 
     // 16. Let new be ? Construct(ctor, « 𝔽(newLen) »).
-    MarkedArgumentBuffer args;
-    args.append(jsNumber(length));
-    ASSERT(!args.hasOverflowed());
-    JSObject* newObject = construct(globalObject, species.value(), args, "Species construction did not get a valid constructor"_s);
+    auto args = WTF::toArray<EncodedJSValue>({
+        JSValue::encode(jsNumber(length)),
+    });
+    JSObject* newObject = construct(globalObject, species.value(), ArgList { args.data(), args.size() }, "Species construction did not get a valid constructor"_s);
     RETURN_IF_EXCEPTION(scope, errorResult);
 
     // 17. Perform ? RequireInternalSlot(new, [[ArrayBufferData]]).

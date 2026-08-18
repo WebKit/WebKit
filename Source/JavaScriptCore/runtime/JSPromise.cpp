@@ -117,10 +117,10 @@ std::tuple<JSObject*, JSObject*, JSObject*> JSPromise::newPromiseCapability(JSGl
     executor->setField(vm, JSFunctionWithFields::Field::ExecutorResolve, jsUndefined());
     executor->setField(vm, JSFunctionWithFields::Field::ExecutorReject, jsUndefined());
 
-    MarkedArgumentBuffer args;
-    args.append(executor);
-    ASSERT(!args.hasOverflowed());
-    JSObject* newObject = construct(globalObject, constructor, args, "argument is not a constructor"_s);
+    auto args = WTF::toArray<EncodedJSValue>({
+        JSValue::encode(executor),
+    });
+    JSObject* newObject = construct(globalObject, constructor, ArgList { args.data(), args.size() }, "argument is not a constructor"_s);
     RETURN_IF_EXCEPTION(scope, { });
 
     JSValue resolve = executor->getField(JSFunctionWithFields::Field::ExecutorResolve);
@@ -1023,11 +1023,11 @@ JSObject* JSPromise::promiseResolve(JSGlobalObject* globalObject, JSObject* cons
     auto [promise, resolve, reject] = newPromiseCapability(globalObject, constructor);
     RETURN_IF_EXCEPTION(scope, { });
 
-    MarkedArgumentBuffer arguments;
-    arguments.append(argument);
-    ASSERT(!arguments.hasOverflowed());
+    auto arguments = WTF::toArray<EncodedJSValue>({
+        JSValue::encode(argument),
+    });
     scope.release();
-    call(globalObject, resolve, jsUndefined(), arguments, "resolve is not a function"_s);
+    call(globalObject, resolve, jsUndefined(), ArgList { arguments.data(), arguments.size() }, "resolve is not a function"_s);
     return promise;
 }
 
@@ -1045,11 +1045,11 @@ JSObject* JSPromise::promiseReject(JSGlobalObject* globalObject, JSObject* const
     auto [promise, resolve, reject] = newPromiseCapability(globalObject, constructor);
     RETURN_IF_EXCEPTION(scope, { });
 
-    MarkedArgumentBuffer arguments;
-    arguments.append(argument);
-    ASSERT(!arguments.hasOverflowed());
+    auto arguments = WTF::toArray<EncodedJSValue>({
+        JSValue::encode(argument),
+    });
     scope.release();
-    call(globalObject, reject, jsUndefined(), arguments, "reject is not a function"_s);
+    call(globalObject, reject, jsUndefined(), ArgList { arguments.data(), arguments.size() }, "reject is not a function"_s);
     return promise;
 }
 

@@ -1446,11 +1446,11 @@ void VM::callPromiseRejectionCallback(Strong<JSPromise>& promise)
     auto callData = JSC::getCallDataInline(callback);
     ASSERT(callData.type != CallData::Type::None);
 
-    MarkedArgumentBuffer args;
-    args.append(promise.get());
-    args.append(promise->result());
-    ASSERT(!args.hasOverflowed());
-    call(promise->realm(), callback, callData, jsNull(), args);
+    auto args = WTF::toArray<EncodedJSValue>({
+        JSValue::encode(promise.get()),
+        JSValue::encode(promise->result()),
+    });
+    call(promise->realm(), callback, callData, jsNull(), ArgList { args.data(), args.size() });
     scope.clearException();
 }
 

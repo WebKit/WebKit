@@ -54,11 +54,10 @@ static JSValue iteratorNextImpl(JSGlobalObject* globalObject, IterationRecord it
     if (nextFunctionCallData.type == CallData::Type::None)
         return throwTypeError(globalObject, scope);
 
-    MarkedArgumentBuffer nextFunctionArguments;
-    if (!argument.isEmpty())
-        nextFunctionArguments.append(argument);
-    ASSERT(!nextFunctionArguments.hasOverflowed());
-    JSValue result = call(globalObject, nextFunction, nextFunctionCallData, iterator, nextFunctionArguments);
+    auto nextFunctionArguments = WTF::toArray<EncodedJSValue>({
+        JSValue::encode(argument),
+    });
+    JSValue result = call(globalObject, nextFunction, nextFunctionCallData, iterator, ArgList { nextFunctionArguments.data(), argument.isEmpty() ? 0u : 1u });
     RETURN_IF_EXCEPTION(scope, JSValue());
 
     if (!result.isObject())
@@ -181,9 +180,7 @@ void iteratorClose(JSGlobalObject* globalObject, JSValue iterator)
         return;
     }
 
-    MarkedArgumentBuffer returnFunctionArguments;
-    ASSERT(!returnFunctionArguments.hasOverflowed());
-    JSValue innerResult = call(globalObject, returnFunction, returnFunctionCallData, iterator, returnFunctionArguments);
+    JSValue innerResult = call(globalObject, returnFunction, returnFunctionCallData, iterator, ArgList { });
 
     if (exception) {
         throwException(globalObject, scope, exception);

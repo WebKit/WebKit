@@ -1167,11 +1167,11 @@ JSValue Interpreter::executeProgram(const SourceCode& source, JSGlobalObject*, J
                 auto callData = JSC::getCallDataInline(function);
                 if (callData.type == CallData::Type::None)
                     return throwException(globalObject, throwScope, createNotAFunctionError(globalObject, function));
-                MarkedArgumentBuffer jsonArg;
-                jsonArg.append(JSONPValue);
-                ASSERT(!jsonArg.hasOverflowed());
+                auto jsonArg = WTF::toArray<EncodedJSValue>({
+                    JSValue::encode(JSONPValue),
+                });
                 JSValue thisValue = JSONPPath.size() == 1 ? jsUndefined() : baseObject;
-                JSONPValue = JSC::call(globalObject, function, callData, thisValue, jsonArg);
+                JSONPValue = JSC::call(globalObject, function, callData, thisValue, ArgList { jsonArg.data(), jsonArg.size() });
                 RETURN_IF_EXCEPTION(throwScope, JSValue());
                 break;
             }

@@ -1710,10 +1710,10 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_spread)
         auto callData = JSC::getCallData(iterationFunction);
         ASSERT(callData.type != CallData::Type::None);
 
-        MarkedArgumentBuffer arguments;
-        arguments.append(iterableValue);
-        ASSERT(!arguments.hasOverflowed());
-        JSValue arrayResult = call(globalObject, iterationFunction, callData, jsNull(), arguments);
+        auto arguments = WTF::toArray<EncodedJSValue>({
+            JSValue::encode(iterableValue),
+        });
+        JSValue arrayResult = call(globalObject, iterationFunction, callData, jsNull(), ArgList { arguments.data(), arguments.size() });
         CHECK_EXCEPTION();
         array = uncheckedDowncast<JSArray>(arrayResult);
     }

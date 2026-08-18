@@ -127,10 +127,10 @@ JSValue regExpExec(JSGlobalObject* globalObject, JSValue thisValue, JSString* st
             match = cachedCall.callWithArguments(globalObject, thisValue, str);
             RETURN_IF_EXCEPTION(scope, { });
         } else {
-            MarkedArgumentBuffer args;
-            args.append(str);
-            ASSERT(!args.hasOverflowed());
-            match = call(globalObject, regExpExec, callData, thisValue, args);
+            auto args = WTF::toArray<EncodedJSValue>({
+                JSValue::encode(str),
+            });
+            match = call(globalObject, regExpExec, callData, thisValue, ArgList { args.data(), args.size() });
             RETURN_IF_EXCEPTION(scope, { });
         }
         if (!match.isNull() && !match.isObject()) {
@@ -139,10 +139,10 @@ JSValue regExpExec(JSGlobalObject* globalObject, JSValue thisValue, JSString* st
         }
     } else {
         auto callData = JSC::getCallDataInline(regExpBuiltinExec);
-        MarkedArgumentBuffer args;
-        args.append(str);
-        ASSERT(!args.hasOverflowed());
-        match = call(globalObject, regExpBuiltinExec, callData, thisValue, args);
+        auto args = WTF::toArray<EncodedJSValue>({
+            JSValue::encode(str),
+        });
+        match = call(globalObject, regExpBuiltinExec, callData, thisValue, ArgList { args.data(), args.size() });
         RETURN_IF_EXCEPTION(scope, { });
     }
 
@@ -1169,12 +1169,12 @@ JSValue regExpSplitSlow(JSGlobalObject* globalObject, JSObject* thisObject, JSSt
     }
 
     // 10. Let splitter be ? Construct(speciesCtor, « regexp, newFlags »).
-    MarkedArgumentBuffer constructorArgs;
-    constructorArgs.append(thisValue);
-    constructorArgs.append(jsString(vm, newFlags));
-    ASSERT(!constructorArgs.hasOverflowed());
+    auto constructorArgs = WTF::toArray<EncodedJSValue>({
+        JSValue::encode(thisValue),
+        JSValue::encode(jsString(vm, newFlags)),
+    });
     auto constructData = JSC::getConstructDataInline(speciesConstructor);
-    JSObject* splitter = construct(globalObject, speciesConstructor, constructData, constructorArgs);
+    JSObject* splitter = construct(globalObject, speciesConstructor, constructData, ArgList { constructorArgs.data(), constructorArgs.size() });
     RETURN_IF_EXCEPTION(scope, { });
 
     // After Construct, re-check whether the splitter is a primordial RegExpObject with non-observable
@@ -1771,13 +1771,13 @@ JSC_DEFINE_HOST_FUNCTION(regExpProtoFuncMatchAll, (JSGlobalObject* globalObject,
     String flags = flagsValue.toWTFString(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
 
-    MarkedArgumentBuffer constructorArgs;
-    constructorArgs.append(thisValue);
-    constructorArgs.append(jsString(vm, flags));
-    ASSERT(!constructorArgs.hasOverflowed());
+    auto constructorArgs = WTF::toArray<EncodedJSValue>({
+        JSValue::encode(thisValue),
+        JSValue::encode(jsString(vm, flags)),
+    });
 
     auto constructData = JSC::getConstructDataInline(constructor);
-    JSObject* matcher = construct(globalObject, constructor, constructData, constructorArgs);
+    JSObject* matcher = construct(globalObject, constructor, constructData, ArgList { constructorArgs.data(), constructorArgs.size() });
     RETURN_IF_EXCEPTION(scope, { });
 
     JSValue lastIndexValue = thisObject->get(globalObject, vm.propertyNames->lastIndex);

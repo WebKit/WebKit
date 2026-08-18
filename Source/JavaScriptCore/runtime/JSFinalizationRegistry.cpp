@@ -168,9 +168,10 @@ void JSFinalizationRegistry::runFinalizationCleanup(JSGlobalObject* globalObject
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     while (JSValue value = takeDeadHoldingsValue()) {
-        MarkedArgumentBuffer args;
-        args.append(value);
-        call(globalObject, callback(), args, "This should not be visible: please report a bug to bugs.webkit.org"_s);
+        auto args = WTF::toArray<EncodedJSValue>({
+            JSValue::encode(value),
+        });
+        call(globalObject, callback(), ArgList { args.data(), args.size() }, "This should not be visible: please report a bug to bugs.webkit.org"_s);
         RETURN_IF_EXCEPTION(scope, void());
     }
 }

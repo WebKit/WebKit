@@ -545,14 +545,14 @@ inline JSString* replaceUsingStringSearch(VM& vm, JSGlobalObject* globalObject, 
             replacement = cachedCall->callWithArguments(globalObject, jsUndefined(), substring, jsNumber(matchStart), jsString);
             RETURN_IF_EXCEPTION(scope, nullptr);
         } else {
-            MarkedArgumentBuffer args;
             auto* substring = jsSubstring(globalObject, vm, jsString, matchStart, searchString.impl()->length());
             RETURN_IF_EXCEPTION(scope, nullptr);
-            args.append(substring);
-            args.append(jsNumber(matchStart));
-            args.append(jsString);
-            ASSERT(!args.hasOverflowed());
-            replacement = call(globalObject, replaceValue, callData, jsUndefined(), args);
+            auto args = WTF::toArray<EncodedJSValue>({
+                JSValue::encode(substring),
+                JSValue::encode(jsNumber(matchStart)),
+                JSValue::encode(jsString),
+            });
+            replacement = call(globalObject, replaceValue, callData, jsUndefined(), ArgList { args.data(), args.size() });
             RETURN_IF_EXCEPTION(scope, nullptr);
         }
         replaceString = replacement.toWTFString(globalObject);

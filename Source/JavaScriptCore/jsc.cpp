@@ -2662,12 +2662,11 @@ JSC_DEFINE_HOST_FUNCTION(functionDollarAgentReceiveBroadcast, (JSGlobalObject* g
         return jsUndefined();
     })();
 
-    MarkedArgumentBuffer args;
-    args.append(result);
-    args.append(jsNumber(message->index()));
-    if (args.hasOverflowed()) [[unlikely]]
-        return JSValue::encode(throwOutOfMemoryError(globalObject, scope));
-    RELEASE_AND_RETURN(scope, JSValue::encode(call(globalObject, callback, callData, jsNull(), args)));
+    auto args = WTF::toArray<EncodedJSValue>({
+        JSValue::encode(result),
+        JSValue::encode(jsNumber(message->index())),
+    });
+    RELEASE_AND_RETURN(scope, JSValue::encode(call(globalObject, callback, callData, jsNull(), ArgList { args.data(), args.size() })));
 }
 
 JSC_DEFINE_HOST_FUNCTION(functionDollarAgentReport, (JSGlobalObject* globalObject, CallFrame* callFrame))
@@ -3004,8 +3003,7 @@ JSC_DEFINE_HOST_FUNCTION(functionSetTimeout, (JSGlobalObject* globalObject, Call
         vmPtr->deferredWorkTimer->scheduleWorkSoonIfActive(weakTicket, [](DeferredWorkTimer::Ticket& ticket) {
             auto* callback = uncheckedDowncast<JSFunction>(ticket.target());
             JSGlobalObject* globalObject = callback->realm();
-            MarkedArgumentBuffer args;
-            call(globalObject, callback, jsUndefined(), args, "You shouldn't see this..."_s);
+            call(globalObject, callback, jsUndefined(), ArgList { }, "You shouldn't see this..."_s);
         });
     };
 

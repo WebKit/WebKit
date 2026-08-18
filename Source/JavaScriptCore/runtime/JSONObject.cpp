@@ -333,10 +333,10 @@ ALWAYS_INLINE JSValue Stringifier::toJSON(JSValue baseValue, const PropertyNameF
     if (callData.type == CallData::Type::None)
         return baseValue;
 
-    MarkedArgumentBuffer args;
-    args.append(propertyName.value(vm));
-    ASSERT(!args.hasOverflowed());
-    RELEASE_AND_RETURN(scope, call(m_globalObject, asObject(toJSONFunction), callData, baseValue, args));
+    auto args = WTF::toArray<EncodedJSValue>({
+        JSValue::encode(propertyName.value(vm)),
+    });
+    RELEASE_AND_RETURN(scope, call(m_globalObject, asObject(toJSONFunction), callData, baseValue, ArgList { args.data(), args.size() }));
 }
 
 // We clamp recursion well beyond anything reasonable.
@@ -362,12 +362,12 @@ Stringifier::StringifyResult Stringifier::appendStringifiedValue(StringBuilder& 
 
     // Call the replacer function.
     if (isCallableReplacer()) {
-        MarkedArgumentBuffer args;
-        args.append(propertyName.value(vm));
-        args.append(value);
-        ASSERT(!args.hasOverflowed());
+        auto args = WTF::toArray<EncodedJSValue>({
+            JSValue::encode(propertyName.value(vm)),
+            JSValue::encode(value),
+        });
         ASSERT(holder.object());
-        value = call(m_globalObject, m_replacer, m_replacerCallData, holder.object(), args);
+        value = call(m_globalObject, m_replacer, m_replacerCallData, holder.object(), ArgList { args.data(), args.size() });
         RETURN_IF_EXCEPTION(scope, StringifyFailed);
     }
 
@@ -1918,13 +1918,12 @@ private:
             }
         }
 
-        MarkedArgumentBuffer args;
-        args.append(property);
-        args.append(unfiltered);
-        if (context)
-            args.append(context);
-        ASSERT(!args.hasOverflowed());
-        RELEASE_AND_RETURN(scope, call(m_globalObject, m_function, m_callData, thisObj, args));
+        auto args = WTF::toArray<EncodedJSValue>({
+            JSValue::encode(property),
+            JSValue::encode(unfiltered),
+            JSValue::encode(context),
+        });
+        RELEASE_AND_RETURN(scope, call(m_globalObject, m_function, m_callData, thisObj, ArgList { args.data(), context ? 3u : 2u }));
     }
 
     friend class Holder;

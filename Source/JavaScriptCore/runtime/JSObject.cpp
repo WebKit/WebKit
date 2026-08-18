@@ -787,13 +787,13 @@ bool ordinarySetWithOwnDescriptor(JSGlobalObject* globalObject, JSObject* object
 
     // 9.1.9.1-8 Perform ? Call(setter, Receiver, << V >>).
     JSObject* setterObject = asObject(setter);
-    MarkedArgumentBuffer args;
-    args.append(value);
-    ASSERT(!args.hasOverflowed());
+    auto args = WTF::toArray<EncodedJSValue>({
+        JSValue::encode(value),
+    });
 
     auto callData = JSC::getCallData(setterObject);
     scope.release();
-    call(globalObject, setterObject, callData, receiver, args);
+    call(globalObject, setterObject, callData, receiver, ArgList { args.data(), args.size() });
 
     // 9.1.9.1-9 Return true.
     return true;
@@ -2534,7 +2534,8 @@ static ALWAYS_INLINE JSValue callToPrimitiveFunction(JSGlobalObject* globalObjec
         return scope.exception();
     }
 
-    MarkedArgumentBuffer callArgs;
+    constexpr size_t argCount = key == CachedSpecialPropertyKey::ToPrimitive ? 1 : 0;
+    std::array<EncodedJSValue, argCount> callArgs { };
     if constexpr (key == CachedSpecialPropertyKey::ToPrimitive) {
         JSString* hintString = nullptr;
         switch (hint) {
@@ -2548,13 +2549,12 @@ static ALWAYS_INLINE JSValue callToPrimitiveFunction(JSGlobalObject* globalObjec
             hintString = vm.smallStrings.stringString();
             break;
         }
-        callArgs.append(hintString);
+        callArgs[0] = JSValue::encode(hintString);
     } else {
         UNUSED_PARAM(hint);
     }
-    ASSERT(!callArgs.hasOverflowed());
 
-    JSValue result = call(globalObject, function, callData, const_cast<JSObject*>(object), callArgs);
+    JSValue result = call(globalObject, function, callData, const_cast<JSObject*>(object), ArgList { callArgs.data(), callArgs.size() });
     RETURN_IF_EXCEPTION(scope, scope.exception());
     ASSERT(!result.isGetterSetter());
     if (result.isObject()) {
@@ -2654,10 +2654,10 @@ bool JSObject::hasInstance(JSGlobalObject* globalObject, JSValue value, JSValue 
             return false;
         }
 
-        MarkedArgumentBuffer args;
-        args.append(value);
-        ASSERT(!args.hasOverflowed());
-        JSValue result = call(globalObject, hasInstanceValue, callData, this, args);
+        auto args = WTF::toArray<EncodedJSValue>({
+            JSValue::encode(value),
+        });
+        JSValue result = call(globalObject, hasInstanceValue, callData, this, ArgList { args.data(), args.size() });
         RETURN_IF_EXCEPTION(scope, false);
         return result.toBoolean(globalObject);
     }

@@ -185,12 +185,12 @@ static JSObject* promiseRaceSlow(JSGlobalObject* globalObject, CallFrame* callFr
     RETURN_IF_EXCEPTION(scope, { });
 
     auto callReject = [&](JSValue exception) -> void {
-        MarkedArgumentBuffer rejectArguments;
-        rejectArguments.append(exception);
-        ASSERT(!rejectArguments.hasOverflowed());
+        auto rejectArguments = WTF::toArray<EncodedJSValue>({
+            JSValue::encode(exception),
+        });
         auto rejectCallData = getCallDataInline(reject);
         scope.release();
-        call(globalObject, reject, rejectCallData, jsUndefined(), rejectArguments);
+        call(globalObject, reject, rejectCallData, jsUndefined(), ArgList { rejectArguments.data(), rejectArguments.size() });
     };
     auto callRejectWithScopeException = [&]() -> void {
         Exception* exception = scope.exception();
@@ -232,10 +232,10 @@ static JSObject* promiseRaceSlow(JSGlobalObject* globalObject, CallFrame* callFr
             nextPromise = cachedCall->callWithArguments(globalObject, thisValue, value);
             RETURN_IF_EXCEPTION(scope, void());
         } else {
-            MarkedArgumentBuffer arguments;
-            arguments.append(value);
-            ASSERT(!arguments.hasOverflowed());
-            nextPromise = call(globalObject, promiseResolveValue, promiseResolveCallData, thisValue, arguments);
+            auto arguments = WTF::toArray<EncodedJSValue>({
+                JSValue::encode(value),
+            });
+            nextPromise = call(globalObject, promiseResolveValue, promiseResolveCallData, thisValue, ArgList { arguments.data(), arguments.size() });
             RETURN_IF_EXCEPTION(scope, void());
         }
         ASSERT(nextPromise);
@@ -247,12 +247,12 @@ static JSObject* promiseRaceSlow(JSGlobalObject* globalObject, CallFrame* callFr
             throwTypeError(globalObject, scope, "then is not a function"_s);
             return;
         }
-        MarkedArgumentBuffer thenArguments;
-        thenArguments.append(resolve);
-        thenArguments.append(reject);
-        ASSERT(!thenArguments.hasOverflowed());
+        auto thenArguments = WTF::toArray<EncodedJSValue>({
+            JSValue::encode(resolve),
+            JSValue::encode(reject),
+        });
         scope.release();
-        call(globalObject, then, thenCallData, nextPromise, thenArguments);
+        call(globalObject, then, thenCallData, nextPromise, ArgList { thenArguments.data(), thenArguments.size() });
     });
 
     if (scope.exception()) [[unlikely]]
@@ -317,12 +317,12 @@ JSC_DEFINE_HOST_FUNCTION(promiseConstructorFuncRace, (JSGlobalObject* globalObje
             throwTypeError(globalObject, scope, "then is not a function"_s);
             return;
         }
-        MarkedArgumentBuffer thenArguments;
-        thenArguments.append(resolve);
-        thenArguments.append(reject);
-        ASSERT(!thenArguments.hasOverflowed());
+        auto thenArguments = WTF::toArray<EncodedJSValue>({
+            JSValue::encode(resolve),
+            JSValue::encode(reject),
+        });
         scope.release();
-        call(globalObject, then, thenCallData, nextPromise, thenArguments);
+        call(globalObject, then, thenCallData, nextPromise, ArgList { thenArguments.data(), thenArguments.size() });
     });
 
     if (scope.exception()) [[unlikely]]
@@ -340,12 +340,12 @@ static JSObject* promiseAllSlow(JSGlobalObject* globalObject, CallFrame* callFra
     RETURN_IF_EXCEPTION(scope, { });
 
     auto callReject = [&](JSValue exception) -> void {
-        MarkedArgumentBuffer rejectArguments;
-        rejectArguments.append(exception);
-        ASSERT(!rejectArguments.hasOverflowed());
+        auto rejectArguments = WTF::toArray<EncodedJSValue>({
+            JSValue::encode(exception),
+        });
         auto rejectCallData = getCallDataInline(reject);
         scope.release();
-        call(globalObject, reject, rejectCallData, jsUndefined(), rejectArguments);
+        call(globalObject, reject, rejectCallData, jsUndefined(), ArgList { rejectArguments.data(), rejectArguments.size() });
     };
     auto callRejectWithScopeException = [&]() -> void {
         Exception* exception = scope.exception();
@@ -400,10 +400,10 @@ static JSObject* promiseAllSlow(JSGlobalObject* globalObject, CallFrame* callFra
             nextPromise = cachedCall->callWithArguments(globalObject, thisValue, value);
             RETURN_IF_EXCEPTION(scope, void());
         } else {
-            MarkedArgumentBuffer arguments;
-            arguments.append(value);
-            ASSERT(!arguments.hasOverflowed());
-            nextPromise = call(globalObject, promiseResolveValue, promiseResolveCallData, thisValue, arguments);
+            auto arguments = WTF::toArray<EncodedJSValue>({
+                JSValue::encode(value),
+            });
+            nextPromise = call(globalObject, promiseResolveValue, promiseResolveCallData, thisValue, ArgList { arguments.data(), arguments.size() });
             RETURN_IF_EXCEPTION(scope, void());
         }
         ASSERT(nextPromise);
@@ -426,12 +426,12 @@ static JSObject* promiseAllSlow(JSGlobalObject* globalObject, CallFrame* callFra
             return;
         }
 
-        MarkedArgumentBuffer thenArguments;
-        thenArguments.append(onFulfilled);
-        thenArguments.append(reject);
-        ASSERT(!thenArguments.hasOverflowed());
+        auto thenArguments = WTF::toArray<EncodedJSValue>({
+            JSValue::encode(onFulfilled),
+            JSValue::encode(reject),
+        });
         scope.release();
-        call(globalObject, then, thenCallData, nextPromise, thenArguments);
+        call(globalObject, then, thenCallData, nextPromise, ArgList { thenArguments.data(), thenArguments.size() });
     });
 
     if (scope.exception()) [[unlikely]] {
@@ -442,12 +442,12 @@ static JSObject* promiseAllSlow(JSGlobalObject* globalObject, CallFrame* callFra
     uint64_t count = globalContext->remainingElementsCount() - 1;
     globalContext->setRemainingElementsCount(count);
     if (!count) {
-        MarkedArgumentBuffer resolveArguments;
-        resolveArguments.append(values);
-        ASSERT(!resolveArguments.hasOverflowed());
+        auto resolveArguments = WTF::toArray<EncodedJSValue>({
+            JSValue::encode(values),
+        });
         auto resolveCallData = getCallDataInline(resolve);
         scope.release();
-        call(globalObject, resolve, resolveCallData, jsUndefined(), resolveArguments);
+        call(globalObject, resolve, resolveCallData, jsUndefined(), ArgList { resolveArguments.data(), resolveArguments.size() });
         if (scope.exception()) [[unlikely]] {
             callRejectWithScopeException();
             return promise;
@@ -537,12 +537,12 @@ JSC_DEFINE_HOST_FUNCTION(promiseConstructorFuncAll, (JSGlobalObject* globalObjec
         auto* onFulfilled = JSFunctionWithFields::create(vm, globalObject, vm.promiseAllFulfillFunctionExecutable());
         onFulfilled->setField(vm, JSFunctionWithFields::Field::PromiseAllContext, context);
 
-        MarkedArgumentBuffer thenArguments;
-        thenArguments.append(onFulfilled);
-        thenArguments.append(onRejected);
-        ASSERT(!thenArguments.hasOverflowed());
+        auto thenArguments = WTF::toArray<EncodedJSValue>({
+            JSValue::encode(onFulfilled),
+            JSValue::encode(onRejected),
+        });
         scope.release();
-        call(globalObject, then, thenCallData, nextPromise, thenArguments);
+        call(globalObject, then, thenCallData, nextPromise, ArgList { thenArguments.data(), thenArguments.size() });
         ++index;
     });
 
@@ -624,12 +624,12 @@ JSC_DEFINE_HOST_FUNCTION(promiseAllSlowFulfillFunction, (JSGlobalObject* globalO
     uint64_t count = globalContext->remainingElementsCount() - 1;
     globalContext->setRemainingElementsCount(count);
     if (!count) {
-        MarkedArgumentBuffer resolveArguments;
-        resolveArguments.append(values);
-        ASSERT(!resolveArguments.hasOverflowed());
+        auto resolveArguments = WTF::toArray<EncodedJSValue>({
+            JSValue::encode(values),
+        });
         auto resolveCallData = getCallDataInline(resolve);
         scope.release();
-        call(globalObject, resolve, resolveCallData, jsUndefined(), resolveArguments);
+        call(globalObject, resolve, resolveCallData, jsUndefined(), ArgList { resolveArguments.data(), resolveArguments.size() });
     }
 
     return JSValue::encode(jsUndefined());
@@ -644,12 +644,12 @@ static JSObject* promiseAllSettledSlow(JSGlobalObject* globalObject, CallFrame* 
     RETURN_IF_EXCEPTION(scope, { });
 
     auto callReject = [&](JSValue exception) -> void {
-        MarkedArgumentBuffer rejectArguments;
-        rejectArguments.append(exception);
-        ASSERT(!rejectArguments.hasOverflowed());
+        auto rejectArguments = WTF::toArray<EncodedJSValue>({
+            JSValue::encode(exception),
+        });
         auto rejectCallData = getCallDataInline(reject);
         scope.release();
-        call(globalObject, reject, rejectCallData, jsUndefined(), rejectArguments);
+        call(globalObject, reject, rejectCallData, jsUndefined(), ArgList { rejectArguments.data(), rejectArguments.size() });
     };
     auto callRejectWithScopeException = [&]() -> void {
         Exception* exception = scope.exception();
@@ -704,10 +704,10 @@ static JSObject* promiseAllSettledSlow(JSGlobalObject* globalObject, CallFrame* 
             nextPromise = cachedCall->callWithArguments(globalObject, thisValue, value);
             RETURN_IF_EXCEPTION(scope, void());
         } else {
-            MarkedArgumentBuffer arguments;
-            arguments.append(value);
-            ASSERT(!arguments.hasOverflowed());
-            nextPromise = call(globalObject, promiseResolveValue, promiseResolveCallData, thisValue, arguments);
+            auto arguments = WTF::toArray<EncodedJSValue>({
+                JSValue::encode(value),
+            });
+            nextPromise = call(globalObject, promiseResolveValue, promiseResolveCallData, thisValue, ArgList { arguments.data(), arguments.size() });
             RETURN_IF_EXCEPTION(scope, void());
         }
         ASSERT(nextPromise);
@@ -735,12 +735,12 @@ static JSObject* promiseAllSettledSlow(JSGlobalObject* globalObject, CallFrame* 
             return;
         }
 
-        MarkedArgumentBuffer thenArguments;
-        thenArguments.append(onFulfilled);
-        thenArguments.append(onRejected);
-        ASSERT(!thenArguments.hasOverflowed());
+        auto thenArguments = WTF::toArray<EncodedJSValue>({
+            JSValue::encode(onFulfilled),
+            JSValue::encode(onRejected),
+        });
         scope.release();
-        call(globalObject, then, thenCallData, nextPromise, thenArguments);
+        call(globalObject, then, thenCallData, nextPromise, ArgList { thenArguments.data(), thenArguments.size() });
     });
 
     if (scope.exception()) [[unlikely]] {
@@ -751,12 +751,12 @@ static JSObject* promiseAllSettledSlow(JSGlobalObject* globalObject, CallFrame* 
     uint64_t count = globalContext->remainingElementsCount() - 1;
     globalContext->setRemainingElementsCount(count);
     if (!count) {
-        MarkedArgumentBuffer resolveArguments;
-        resolveArguments.append(values);
-        ASSERT(!resolveArguments.hasOverflowed());
+        auto resolveArguments = WTF::toArray<EncodedJSValue>({
+            JSValue::encode(values),
+        });
         auto resolveCallData = getCallDataInline(resolve);
         scope.release();
-        call(globalObject, resolve, resolveCallData, jsUndefined(), resolveArguments);
+        call(globalObject, resolve, resolveCallData, jsUndefined(), ArgList { resolveArguments.data(), resolveArguments.size() });
         if (scope.exception()) [[unlikely]] {
             callRejectWithScopeException();
             return promise;
@@ -849,12 +849,12 @@ JSC_DEFINE_HOST_FUNCTION(promiseConstructorFuncAllSettled, (JSGlobalObject* glob
             return;
         }
 
-        MarkedArgumentBuffer thenArguments;
-        thenArguments.append(onFulfilled);
-        thenArguments.append(onRejected);
-        ASSERT(!thenArguments.hasOverflowed());
+        auto thenArguments = WTF::toArray<EncodedJSValue>({
+            JSValue::encode(onFulfilled),
+            JSValue::encode(onRejected),
+        });
         scope.release();
-        call(globalObject, then, thenCallData, nextPromise, thenArguments);
+        call(globalObject, then, thenCallData, nextPromise, ArgList { thenArguments.data(), thenArguments.size() });
         ++index;
     });
 
@@ -993,12 +993,12 @@ JSC_DEFINE_HOST_FUNCTION(promiseAllSettledSlowFulfillFunction, (JSGlobalObject* 
     uint64_t count = globalContext->remainingElementsCount() - 1;
     globalContext->setRemainingElementsCount(count);
     if (!count) {
-        MarkedArgumentBuffer resolveArguments;
-        resolveArguments.append(values);
-        ASSERT(!resolveArguments.hasOverflowed());
+        auto resolveArguments = WTF::toArray<EncodedJSValue>({
+            JSValue::encode(values),
+        });
         auto resolveCallData = getCallDataInline(resolve);
         scope.release();
-        call(globalObject, resolve, resolveCallData, jsUndefined(), resolveArguments);
+        call(globalObject, resolve, resolveCallData, jsUndefined(), ArgList { resolveArguments.data(), resolveArguments.size() });
     }
 
     return JSValue::encode(jsUndefined());
@@ -1039,12 +1039,12 @@ JSC_DEFINE_HOST_FUNCTION(promiseAllSettledSlowRejectFunction, (JSGlobalObject* g
     uint64_t count = globalContext->remainingElementsCount() - 1;
     globalContext->setRemainingElementsCount(count);
     if (!count) {
-        MarkedArgumentBuffer resolveArguments;
-        resolveArguments.append(values);
-        ASSERT(!resolveArguments.hasOverflowed());
+        auto resolveArguments = WTF::toArray<EncodedJSValue>({
+            JSValue::encode(values),
+        });
         auto resolveCallData = getCallDataInline(resolve);
         scope.release();
-        call(globalObject, resolve, resolveCallData, jsUndefined(), resolveArguments);
+        call(globalObject, resolve, resolveCallData, jsUndefined(), ArgList { resolveArguments.data(), resolveArguments.size() });
     }
 
     return JSValue::encode(jsUndefined());
@@ -1106,12 +1106,12 @@ static JSObject* promiseAnySlow(JSGlobalObject* globalObject, CallFrame* callFra
     RETURN_IF_EXCEPTION(scope, { });
 
     auto callReject = [&](JSValue exception) -> void {
-        MarkedArgumentBuffer rejectArguments;
-        rejectArguments.append(exception);
-        ASSERT(!rejectArguments.hasOverflowed());
+        auto rejectArguments = WTF::toArray<EncodedJSValue>({
+            JSValue::encode(exception),
+        });
         auto rejectCallData = getCallDataInline(reject);
         scope.release();
-        call(globalObject, reject, rejectCallData, jsUndefined(), rejectArguments);
+        call(globalObject, reject, rejectCallData, jsUndefined(), ArgList { rejectArguments.data(), rejectArguments.size() });
     };
     auto callRejectWithScopeException = [&]() -> void {
         Exception* exception = scope.exception();
@@ -1166,10 +1166,10 @@ static JSObject* promiseAnySlow(JSGlobalObject* globalObject, CallFrame* callFra
             nextPromise = cachedCall->callWithArguments(globalObject, thisValue, value);
             RETURN_IF_EXCEPTION(scope, void());
         } else {
-            MarkedArgumentBuffer arguments;
-            arguments.append(value);
-            ASSERT(!arguments.hasOverflowed());
-            nextPromise = call(globalObject, promiseResolveValue, promiseResolveCallData, thisValue, arguments);
+            auto arguments = WTF::toArray<EncodedJSValue>({
+                JSValue::encode(value),
+            });
+            nextPromise = call(globalObject, promiseResolveValue, promiseResolveCallData, thisValue, ArgList { arguments.data(), arguments.size() });
             RETURN_IF_EXCEPTION(scope, void());
         }
 
@@ -1190,12 +1190,12 @@ static JSObject* promiseAnySlow(JSGlobalObject* globalObject, CallFrame* callFra
             return;
         }
 
-        MarkedArgumentBuffer thenArguments;
-        thenArguments.append(resolve);
-        thenArguments.append(onRejected);
-        ASSERT(!thenArguments.hasOverflowed());
+        auto thenArguments = WTF::toArray<EncodedJSValue>({
+            JSValue::encode(resolve),
+            JSValue::encode(onRejected),
+        });
         scope.release();
-        call(globalObject, then, thenCallData, nextPromise, thenArguments);
+        call(globalObject, then, thenCallData, nextPromise, ArgList { thenArguments.data(), thenArguments.size() });
         ++index;
     });
 
@@ -1300,12 +1300,12 @@ JSC_DEFINE_HOST_FUNCTION(promiseConstructorFuncAny, (JSGlobalObject* globalObjec
             return;
         }
 
-        MarkedArgumentBuffer thenArguments;
-        thenArguments.append(resolve);
-        thenArguments.append(onRejected);
-        ASSERT(!thenArguments.hasOverflowed());
+        auto thenArguments = WTF::toArray<EncodedJSValue>({
+            JSValue::encode(resolve),
+            JSValue::encode(onRejected),
+        });
         scope.release();
-        call(globalObject, then, thenCallData, nextPromise, thenArguments);
+        call(globalObject, then, thenCallData, nextPromise, ArgList { thenArguments.data(), thenArguments.size() });
         ++index;
     });
 
@@ -1390,12 +1390,12 @@ JSC_DEFINE_HOST_FUNCTION(promiseAnySlowRejectFunction, (JSGlobalObject* globalOb
     globalContext->setRemainingElementsCount(count);
     if (!count) {
         auto* aggregateError = createAggregateError(vm, globalObject->errorStructure(ErrorType::AggregateError), errors, String(), jsUndefined());
-        MarkedArgumentBuffer rejectArguments;
-        rejectArguments.append(aggregateError);
-        ASSERT(!rejectArguments.hasOverflowed());
+        auto rejectArguments = WTF::toArray<EncodedJSValue>({
+            JSValue::encode(aggregateError),
+        });
         auto rejectCallData = getCallDataInline(reject);
         scope.release();
-        call(globalObject, reject, rejectCallData, jsUndefined(), rejectArguments);
+        call(globalObject, reject, rejectCallData, jsUndefined(), ArgList { rejectArguments.data(), rejectArguments.size() });
     }
 
     return JSValue::encode(jsUndefined());

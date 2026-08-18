@@ -299,12 +299,12 @@ static JSString* toLocaleString(JSGlobalObject* globalObject, JSValue value, JSV
         return { };
     }
 
-    MarkedArgumentBuffer arguments;
-    arguments.append(locales);
-    arguments.append(options);
-    ASSERT(!arguments.hasOverflowed());
+    auto arguments = WTF::toArray<EncodedJSValue>({
+        JSValue::encode(locales),
+        JSValue::encode(options),
+    });
 
-    JSValue result = call(globalObject, toLocaleStringMethod, callData, value, arguments);
+    JSValue result = call(globalObject, toLocaleStringMethod, callData, value, ArgList { arguments.data(), arguments.size() });
     RETURN_IF_EXCEPTION(scope, { });
 
     RELEASE_AND_RETURN(scope, result.toString(globalObject));
@@ -1000,20 +1000,12 @@ static ALWAYS_INLINE std::span<EncodedJSValue> sortStableSort(JSGlobalObject* gl
         })));
     }
 
-    MarkedArgumentBuffer args;
     RELEASE_AND_RETURN(scope, (arrayStableSort<MergeStrategy::Galloping>(vm, compacted, workingSet, [&](auto left, auto right) ALWAYS_INLINE_LAMBDA {
         auto scope = DECLARE_THROW_SCOPE(vm);
 
-        args.clear();
+        auto args = WTF::toArray<EncodedJSValue>({ left, right });
 
-        args.append(JSValue::decode(left));
-        args.append(JSValue::decode(right));
-        if (args.hasOverflowed()) [[unlikely]] {
-            throwOutOfMemoryError(globalObject, scope);
-            return false;
-        }
-
-        JSValue jsResult = call(globalObject, comparator, callData, jsUndefined(), args);
+        JSValue jsResult = call(globalObject, comparator, callData, jsUndefined(), ArgList { args.data(), args.size() });
         RETURN_IF_EXCEPTION(scope, false);
 
         RELEASE_AND_RETURN(scope, coerceComparatorResultToBoolean(globalObject, jsResult));

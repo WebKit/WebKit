@@ -132,10 +132,10 @@ ALWAYS_INLINE std::pair<SpeciesConstructResult, JSObject*> speciesConstructArray
     if (constructor.isUndefined())
         return std::pair { SpeciesConstructResult::FastPath, nullptr };
 
-    MarkedArgumentBuffer args;
-    args.append(jsNumber(length));
-    ASSERT(!args.hasOverflowed());
-    JSObject* newObject = construct(globalObject, constructor, args, "Species construction did not get a valid constructor"_s);
+    auto args = WTF::toArray<EncodedJSValue>({
+        JSValue::encode(jsNumber(length)),
+    });
+    JSObject* newObject = construct(globalObject, constructor, ArgList { args.data(), args.size() }, "Species construction did not get a valid constructor"_s);
     RETURN_IF_EXCEPTION(scope, exceptionResult);
     return std::pair { SpeciesConstructResult::CreatedObject, newObject };
 }

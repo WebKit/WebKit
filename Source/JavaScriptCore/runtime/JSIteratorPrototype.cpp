@@ -204,12 +204,12 @@ JSC_DEFINE_HOST_FUNCTION(iteratorProtoFuncForEach, (JSGlobalObject* globalObject
 
     scope.release();
     forEachInIteratorProtocol(globalObject, thisValue, [&](VM&, JSGlobalObject*, JSValue nextItem) ALWAYS_INLINE_LAMBDA {
-        MarkedArgumentBuffer args;
-        args.append(nextItem);
-        args.append(jsNumber(counter++));
-        ASSERT(!args.hasOverflowed());
+        auto args = WTF::toArray<EncodedJSValue>({
+            JSValue::encode(nextItem),
+            JSValue::encode(jsNumber(counter++)),
+        });
 
-        call(globalObject, callbackArg, callData, jsUndefined(), args);
+        call(globalObject, callbackArg, callData, jsUndefined(), ArgList { args.data(), args.size() });
     });
 
     return JSValue::encode(jsUndefined());

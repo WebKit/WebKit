@@ -4390,10 +4390,10 @@ JSC_DEFINE_JIT_OPERATION(operationStringSplitRegExp, EncodedJSValue, (JSGlobalOb
             throwTypeError(globalObject, scope, "@@split method is not callable"_s);
             OPERATION_RETURN(scope, encodedJSValue());
         }
-        std::array<EncodedJSValue, 2> args { {
+        auto args = WTF::toArray<EncodedJSValue>({
             JSValue::encode(thisString),
             JSValue::encode(limitValue),
-        } };
+        });
         JSValue result = call(globalObject, splitter, callData, separator, ArgList { args.data(), args.size() });
         OPERATION_RETURN_IF_EXCEPTION(scope, encodedJSValue());
         OPERATION_RETURN(scope, JSValue::encode(result));
@@ -4437,9 +4437,9 @@ JSC_DEFINE_JIT_OPERATION(operationStringMatchRegExp, EncodedJSValue, (JSGlobalOb
             throwTypeError(globalObject, scope, "@@match method is not callable"_s);
             OPERATION_RETURN(scope, encodedJSValue());
         }
-        std::array<EncodedJSValue, 1> args { {
+        auto args = WTF::toArray<EncodedJSValue>({
             JSValue::encode(thisString),
-        } };
+        });
         JSValue result = call(globalObject, matcher, callData, regexp, ArgList { args.data(), args.size() });
         OPERATION_RETURN_IF_EXCEPTION(scope, encodedJSValue());
         OPERATION_RETURN(scope, JSValue::encode(result));
@@ -4475,9 +4475,9 @@ JSC_DEFINE_JIT_OPERATION(operationStringSearchRegExp, EncodedJSValue, (JSGlobalO
             throwTypeError(globalObject, scope, "@@search method is not callable"_s);
             OPERATION_RETURN(scope, encodedJSValue());
         }
-        std::array<EncodedJSValue, 1> args { {
+        auto args = WTF::toArray<EncodedJSValue>({
             JSValue::encode(thisString),
-        } };
+        });
         JSValue result = call(globalObject, searcher, callData, regexp, ArgList { args.data(), args.size() });
         OPERATION_RETURN_IF_EXCEPTION(scope, encodedJSValue());
         OPERATION_RETURN(scope, JSValue::encode(result));
@@ -5813,10 +5813,10 @@ JSC_DEFINE_JIT_OPERATION(operationSpreadGeneric, JSCell*, (JSGlobalObject* globa
         auto callData = JSC::getCallData(iterationFunction);
         ASSERT(callData.type != CallData::Type::None);
 
-        MarkedArgumentBuffer arguments;
-        arguments.append(iterable);
-        ASSERT(!arguments.hasOverflowed());
-        JSValue arrayResult = call(globalObject, iterationFunction, callData, jsNull(), arguments);
+        auto arguments = WTF::toArray<EncodedJSValue>({
+            JSValue::encode(iterable),
+        });
+        JSValue arrayResult = call(globalObject, iterationFunction, callData, jsNull(), ArgList { arguments.data(), arguments.size() });
         OPERATION_RETURN_IF_EXCEPTION(scope, nullptr);
         array = uncheckedDowncast<JSArray>(arrayResult);
     }
@@ -5838,10 +5838,10 @@ JSC_DEFINE_JIT_OPERATION(operationSpreadSet, JSCell*, (JSGlobalObject* globalObj
         JSFunction* iterationFunction = globalObject->iteratorProtocolFunction();
         auto callData = JSC::getCallData(iterationFunction);
         ASSERT(callData.type != CallData::Type::None);
-        MarkedArgumentBuffer arguments;
-        arguments.append(set);
-        ASSERT(!arguments.hasOverflowed());
-        JSValue arrayResult = call(globalObject, iterationFunction, callData, jsNull(), arguments);
+        auto arguments = WTF::toArray<EncodedJSValue>({
+            JSValue::encode(set),
+        });
+        JSValue arrayResult = call(globalObject, iterationFunction, callData, jsNull(), ArgList { arguments.data(), arguments.size() });
         OPERATION_RETURN_IF_EXCEPTION(scope, nullptr);
         JSArray* array = uncheckedDowncast<JSArray>(arrayResult);
         OPERATION_RETURN(scope, JSCellButterfly::createFromArray(globalObject, vm, array));

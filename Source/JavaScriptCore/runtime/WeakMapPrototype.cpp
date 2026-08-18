@@ -194,11 +194,11 @@ JSC_DEFINE_HOST_FUNCTION(protoFuncWeakMapGetOrInsertComputed, (JSGlobalObject* g
         value = cachedCall.callWithArguments(globalObject, jsUndefined(), key);
         RETURN_IF_EXCEPTION(scope, { });
     } else {
-        MarkedArgumentBuffer args;
-        args.append(key);
-        ASSERT(!args.hasOverflowed());
+        auto args = WTF::toArray<EncodedJSValue>({
+            JSValue::encode(key),
+        });
 
-        value = call(globalObject, valueCallback, callData, jsUndefined(), args);
+        value = call(globalObject, valueCallback, callData, jsUndefined(), ArgList { args.data(), args.size() });
         RETURN_IF_EXCEPTION(scope, { });
     }
 

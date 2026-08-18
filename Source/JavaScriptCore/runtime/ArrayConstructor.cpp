@@ -227,9 +227,10 @@ JSC_DEFINE_HOST_FUNCTION(arrayConstructorOf, (JSGlobalObject* globalObject, Call
 
     JSObject* result = nullptr;
     if (thisValue.isConstructor()) {
-        MarkedArgumentBuffer args;
-        args.append(jsNumber(length));
-        result = construct(globalObject, thisValue, args, "Array.of did not get a valid constructor");
+        auto args = WTF::toArray<EncodedJSValue>({
+            JSValue::encode(jsNumber(length)),
+        });
+        result = construct(globalObject, thisValue, ArgList { args.data(), args.size() }, "Array.of did not get a valid constructor");
         RETURN_IF_EXCEPTION(scope, { });
     } else {
         result = JSArray::tryCreate(vm, globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithUndecided), length);

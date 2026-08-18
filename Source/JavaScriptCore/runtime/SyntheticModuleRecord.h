@@ -65,7 +65,7 @@ private:
     SyntheticModuleRecord(VM&, Structure*, const Identifier& moduleKey, SourceProviderSourceType);
 
     static SyntheticModuleRecord* tryCreateDefaultExportSyntheticModule(JSGlobalObject*, const Identifier& moduleKey, JSValue, SourceProviderSourceType);
-    static SyntheticModuleRecord* tryCreateWithExportNamesAndValues(JSGlobalObject*, const Identifier& moduleKey, const Vector<Identifier, 4>& exportNames, const MarkedArgumentBuffer& exportValues, SourceProviderSourceType);
+    static SyntheticModuleRecord* tryCreateWithExportNamesAndValues(JSGlobalObject*, const Identifier& moduleKey, const Vector<Identifier, 4>& exportNames, ArgList exportValues, SourceProviderSourceType);
 
     void finishCreation(JSGlobalObject*, VM&);
 };

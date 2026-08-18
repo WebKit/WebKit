@@ -234,11 +234,11 @@ static void promiseResolveThenableJobFastSlow(JSGlobalObject* globalObject, JSPr
     if (!scope.clearExceptionExceptTermination()) [[unlikely]]
         return;
 
-    MarkedArgumentBuffer arguments;
-    arguments.append(error);
-    ASSERT(!arguments.hasOverflowed());
+    auto arguments = WTF::toArray<EncodedJSValue>({
+        JSValue::encode(error),
+    });
     auto callData = JSC::getCallDataInline(reject);
-    call(globalObject, reject, callData, jsUndefined(), arguments);
+    call(globalObject, reject, callData, jsUndefined(), ArgList { arguments.data(), arguments.size() });
     EXCEPTION_ASSERT(scope.exception() || true);
 }
 
@@ -262,11 +262,11 @@ static void promiseResolveThenableJobWithInternalMicrotaskFastSlow(JSGlobalObjec
     if (!scope.clearExceptionExceptTermination()) [[unlikely]]
         return;
 
-    MarkedArgumentBuffer arguments;
-    arguments.append(error);
-    ASSERT(!arguments.hasOverflowed());
+    auto arguments = WTF::toArray<EncodedJSValue>({
+        JSValue::encode(error),
+    });
     auto callData = JSC::getCallDataInline(reject);
-    call(globalObject, reject, callData, jsUndefined(), arguments);
+    call(globalObject, reject, callData, jsUndefined(), ArgList { arguments.data(), arguments.size() });
     EXCEPTION_ASSERT(scope.exception() || true);
 }
 
@@ -285,10 +285,10 @@ static void promiseResolveThenableJob(JSGlobalObject* globalObject, JSValue prom
     if (!scope.clearExceptionExceptTermination()) [[unlikely]]
         return;
 
-    MarkedArgumentBuffer arguments;
-    arguments.append(error);
-    ASSERT(!arguments.hasOverflowed());
-    call(globalObject, reject, jsUndefined(), arguments, "|reject| is not a function"_s);
+    auto arguments = WTF::toArray<EncodedJSValue>({
+        JSValue::encode(error),
+    });
+    call(globalObject, reject, jsUndefined(), ArgList { arguments.data(), arguments.size() }, "|reject| is not a function"_s);
     EXCEPTION_ASSERT(scope.exception() || true);
 }
 
@@ -1593,22 +1593,22 @@ static void promiseResolveWithoutHandlerJobSlow(JSGlobalObject* globalObject, VM
         JSValue reject = capability.get(globalObject, vm.propertyNames->reject);
         RETURN_IF_EXCEPTION(scope, void());
 
-        MarkedArgumentBuffer arguments;
-        arguments.append(resolution);
-        ASSERT(!arguments.hasOverflowed());
+        auto arguments = WTF::toArray<EncodedJSValue>({
+            JSValue::encode(resolution),
+        });
         scope.release();
-        call(globalObject, reject, jsUndefined(), arguments, "reject is not a function"_s);
+        call(globalObject, reject, jsUndefined(), ArgList { arguments.data(), arguments.size() }, "reject is not a function"_s);
         return;
     }
 
     JSValue resolve = capability.get(globalObject, vm.propertyNames->resolve);
     RETURN_IF_EXCEPTION(scope, void());
 
-    MarkedArgumentBuffer arguments;
-    arguments.append(resolution);
-    ASSERT(!arguments.hasOverflowed());
+    auto arguments = WTF::toArray<EncodedJSValue>({
+        JSValue::encode(resolution),
+    });
     scope.release();
-    call(globalObject, resolve, jsUndefined(), arguments, "resolve is not a function"_s);
+    call(globalObject, resolve, jsUndefined(), ArgList { arguments.data(), arguments.size() }, "resolve is not a function"_s);
 }
 
 static void promiseResolveWithoutHandlerJob(JSGlobalObject* globalObject, VM& vm, JSValue promiseOrCapability, JSValue resolution, JSPromise::Status status)
@@ -1879,11 +1879,11 @@ void runInternalMicrotask(JSGlobalObject* globalObject, VM& vm, InternalMicrotas
             JSValue reject = promiseOrCapability.get(globalObject, vm.propertyNames->reject);
             RETURN_IF_EXCEPTION(scope, void());
 
-            MarkedArgumentBuffer arguments;
-            arguments.append(error);
-            ASSERT(!arguments.hasOverflowed());
+            auto arguments = WTF::toArray<EncodedJSValue>({
+                JSValue::encode(error),
+            });
             scope.release();
-            call(globalObject, reject, jsUndefined(), arguments, "reject is not a function"_s);
+            call(globalObject, reject, jsUndefined(), ArgList { arguments.data(), arguments.size() }, "reject is not a function"_s);
             return;
         }
 
@@ -1893,11 +1893,11 @@ void runInternalMicrotask(JSGlobalObject* globalObject, VM& vm, InternalMicrotas
         JSValue resolve = promiseOrCapability.get(globalObject, vm.propertyNames->resolve);
         RETURN_IF_EXCEPTION(scope, void());
 
-        MarkedArgumentBuffer arguments;
-        arguments.append(result);
-        ASSERT(!arguments.hasOverflowed());
+        auto arguments = WTF::toArray<EncodedJSValue>({
+            JSValue::encode(result),
+        });
         scope.release();
-        call(globalObject, resolve, jsUndefined(), arguments, "resolve is not a function"_s);
+        call(globalObject, resolve, jsUndefined(), ArgList { arguments.data(), arguments.size() }, "resolve is not a function"_s);
         return;
     }
 

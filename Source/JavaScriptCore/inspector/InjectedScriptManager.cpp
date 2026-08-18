@@ -153,13 +153,13 @@ Expected<JSObject*, NakedPtr<Exception>> InjectedScriptManager::createInjectedSc
     if (callData.type == CallData::Type::None)
         return nullptr;
 
-    MarkedArgumentBuffer args;
-    args.append(m_injectedScriptHost->wrapper(globalObject));
-    args.append(globalThisValue);
-    args.append(jsNumber(id));
-    ASSERT(!args.hasOverflowed());
+    std::array<JSC::EncodedJSValue, 3> args { {
+        JSC::JSValue::encode(m_injectedScriptHost->wrapper(globalObject)),
+        JSC::JSValue::encode(globalThisValue),
+        JSC::JSValue::encode(jsNumber(id)),
+    } };
 
-    JSValue result = JSC::call(globalObject, functionValue, callData, globalThisValue, args);
+    JSValue result = JSC::call(globalObject, functionValue, callData, globalThisValue, JSC::ArgList { args.data(), args.size() });
     RETURN_IF_EXCEPTION(scope, makeUnexpected(scope.exception()));
     return result.getObject();
 }

@@ -1842,8 +1842,7 @@ JSC_DEFINE_CUSTOM_SETTER(customFunctionSetter, (JSGlobalObject* globalObject, En
         return false;
 
     auto callData = JSC::getCallData(function);
-    MarkedArgumentBuffer args;
-    call(globalObject, function, callData, jsUndefined(), args);
+    call(globalObject, function, callData, jsUndefined(), ArgList { });
 
     return true;
 }
@@ -3051,8 +3050,7 @@ static void callWithStackSizeProbeFunction(Probe::State* state)
     DollarVMAssertScope assertScope;
 
     auto callData = JSC::getCallData(function);
-    MarkedArgumentBuffer args;
-    call(globalObject, function, callData, jsUndefined(), args);
+    call(globalObject, function, callData, jsUndefined(), ArgList { });
 }
 #endif // ENABLE(ASSEMBLER) && OS(DARWIN) && CPU(X86_64)
 
@@ -3301,10 +3299,10 @@ JSC_DEFINE_HOST_FUNCTION(functionCreateWasmStreamingCompilerForCompile, (JSGloba
         return throwVMTypeError(globalObject, scope, "First argument is not a JS function"_s);
 
     auto compiler = WasmStreamingCompiler::create(vm, globalObject, Wasm::CompilerMode::Validation, nullptr, source);
-    MarkedArgumentBuffer args;
-    args.append(compiler);
-    ASSERT(!args.hasOverflowed());
-    call(globalObject, callback, jsUndefined(), args, "You shouldn't see this..."_s);
+    auto args = WTF::toArray<EncodedJSValue>({
+        JSValue::encode(compiler),
+    });
+    call(globalObject, callback, jsUndefined(), ArgList { args.data(), args.size() }, "You shouldn't see this..."_s);
     TRY_CLEAR_EXCEPTION(scope, { });
     compiler->streamingCompiler().finalize(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
@@ -3331,10 +3329,10 @@ JSC_DEFINE_HOST_FUNCTION(functionCreateWasmStreamingCompilerForInstantiate, (JSG
         return throwVMTypeError(globalObject, scope);
 
     auto compiler = WasmStreamingCompiler::create(vm, globalObject, Wasm::CompilerMode::FullCompile, importObject, source);
-    MarkedArgumentBuffer args;
-    args.append(compiler);
-    ASSERT(!args.hasOverflowed());
-    call(globalObject, callback, jsUndefined(), args, "You shouldn't see this..."_s);
+    auto args = WTF::toArray<EncodedJSValue>({
+        JSValue::encode(compiler),
+    });
+    call(globalObject, callback, jsUndefined(), ArgList { args.data(), args.size() }, "You shouldn't see this..."_s);
     TRY_CLEAR_EXCEPTION(scope, { });
     compiler->streamingCompiler().finalize(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
@@ -3369,10 +3367,10 @@ JSC_DEFINE_HOST_FUNCTION(functionCreateWasmStreamingCompilerForInstantiateWithUR
     auto source = makeSource("[wasm code]"_s, SourceOrigin(url), taintedness);
 
     auto compiler = WasmStreamingCompiler::create(vm, globalObject, Wasm::CompilerMode::FullCompile, importObject, source, WTF::move(wasmSourceURL));
-    MarkedArgumentBuffer args;
-    args.append(compiler);
-    ASSERT(!args.hasOverflowed());
-    call(globalObject, callback, jsUndefined(), args, "You shouldn't see this..."_s);
+    auto args = WTF::toArray<EncodedJSValue>({
+        JSValue::encode(compiler),
+    });
+    call(globalObject, callback, jsUndefined(), ArgList { args.data(), args.size() }, "You shouldn't see this..."_s);
     TRY_CLEAR_EXCEPTION(scope, { });
     compiler->streamingCompiler().finalize(globalObject);
     RETURN_IF_EXCEPTION(scope, { });

@@ -70,13 +70,13 @@ bool GetterSetter::callSetter(JSGlobalObject* globalObject, JSValue thisValue, J
     if (setter->type() == NullSetterFunctionType)
         return typeError(globalObject, scope, shouldThrow, ReadonlyPropertyWriteError);
 
-    MarkedArgumentBuffer args;
-    args.append(value);
-    ASSERT(!args.hasOverflowed());
+    auto args = WTF::toArray<EncodedJSValue>({
+        JSValue::encode(value),
+    });
 
     auto callData = JSC::getCallDataInline(setter);
     scope.release();
-    call(globalObject, setter, callData, thisValue, args);
+    call(globalObject, setter, callData, thisValue, ArgList { args.data(), args.size() });
     return true;
 }
 
