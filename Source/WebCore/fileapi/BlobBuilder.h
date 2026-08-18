@@ -47,11 +47,14 @@ class BlobBuilder {
 public:
     BlobBuilder(EndingType);
 
-    void append(Ref<JSC::ArrayBuffer>&&);
-    void append(Ref<JSC::ArrayBufferView>&&);
-    void append(Ref<Blob>&&);
-    void append(const String& text);
+    // These buffer the data into a single Vector, and return false if it is too large to hold.
+    bool append(Ref<JSC::ArrayBuffer>&&);
+    bool append(Ref<JSC::ArrayBufferView>&&);
+    bool append(const String& text);
+
+    // These append an item instead of buffering, so there is nothing to fail to allocate.
     void append(Ref<FragmentedSharedBuffer>&&);
+    void append(Ref<Blob>&&);
 
     Vector<BlobPart> finalize();
 

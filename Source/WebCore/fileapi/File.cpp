@@ -26,7 +26,9 @@
 #include "config.h"
 #include "File.h"
 
+#include "BlobPart.h"
 #include "BlobURL.h"
+#include "ExceptionOr.h"
 #include "MIMETypeRegistry.h"
 #include <JavaScriptCore/ArrayBufferView.h>
 #include "ThreadableBlobRegistry.h"
@@ -84,8 +86,21 @@ File::File(DeserializationContructor, ScriptExecutionContext* context, const Str
 {
 }
 
-File::File(ScriptExecutionContext& context, Vector<BlobPartVariant>&& blobPartVariants, const String& filename, const PropertyBag& propertyBag)
-    : Blob(context, WTF::move(blobPartVariants), propertyBag)
+ExceptionOr<Ref<File>> File::create(ScriptExecutionContext& context, Vector<BlobPartVariant>&& blobPartVariants, const String& filename, const PropertyBag& propertyBag)
+{
+    std::optional<Vector<BlobPartVariant>> optionalBlobPartVariants { WTF::move(blobPartVariants) };
+    auto memoryCost = memoryCostForParts(optionalBlobPartVariants);
+    auto blobData = blobDataForParts(WTF::move(optionalBlobPartVariants), propertyBag);
+    if (blobData.hasException())
+        return blobData.releaseException();
+
+    Ref file = adoptRef(*new File(context, blobData.releaseReturnValue(), memoryCost, filename, propertyBag));
+    file->suspendIfNeeded();
+    return file;
+}
+
+File::File(ScriptExecutionContext& context, Vector<BlobPart>&& blobData, size_t memoryCost, const String& filename, const PropertyBag& propertyBag)
+    : Blob(context, WTF::move(blobData), memoryCost, propertyBag)
     , m_name(filename)
     , m_lastModifiedDateOverride(propertyBag.lastModified.value_or(WallTime::now().secondsSinceEpoch().milliseconds()))
 {

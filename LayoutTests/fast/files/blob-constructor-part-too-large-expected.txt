@@ -1,0 +1,11 @@
+Constructing a Blob or File from parts that are too large to buffer should throw instead of crashing the process.
+
+PASS new Blob([ArrayBuffer]) threw RangeError
+PASS new Blob([Uint8Array]) threw RangeError
+PASS new Blob([string]) threw RangeError
+PASS new File([ArrayBuffer]) threw RangeError
+PASS new Blob([string, ArrayBuffer]) threw RangeError
+PASS new Blob([ArrayBuffer]).size is 2147483647
+PASS new Blob(['abc', ArrayBuffer(1)]).size is 4
+PASS new Blob([Blob, 'de']).size is 5
+
