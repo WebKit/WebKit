@@ -414,15 +414,20 @@ std::pair<std::unique_ptr<InstanceMethodSwizzler>, std::unique_ptr<InstanceMetho
 
 namespace TestWebKitAPI {
 
-static void enableFeature(WKWebViewConfiguration *configuration, NSString *featureName)
+static void setFeatureEnabled(WKWebViewConfiguration *configuration, NSString *featureName, bool enabled)
 {
     auto preferences = [configuration preferences];
     for (_WKFeature *feature in [WKPreferences _features]) {
         if ([feature.key isEqualToString:featureName]) {
-            [preferences _setEnabled:YES forFeature:feature];
+            [preferences _setEnabled:enabled forFeature:feature];
             break;
         }
     }
+}
+
+static void enableFeature(WKWebViewConfiguration *configuration, NSString *featureName)
+{
+    setFeatureEnabled(configuration, featureName, true);
 }
 
 static void enableSiteIsolation(WKWebViewConfiguration *configuration)
@@ -6144,6 +6149,34 @@ TEST(SiteIsolation, ProcessTerminationReason)
     while (server.totalRequests() < 5u)
         Util::spinRunLoop();
     EXPECT_EQ(server.totalRequests(), 5u);
+}
+
+TEST(SiteIsolation, RemoteProcessTerminationAfterDisablingSiteIsolation)
+{
+    HTTPServer server({
+        { "/example"_s, { "<iframe src='https://webkit.org/iframe'></iframe>"_s } },
+        { "/iframe"_s, { "hi"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(configuration);
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    pid_t iframePID = [webView firstChildFrame]._processIdentifier;
+    EXPECT_NE(iframePID, 0);
+    EXPECT_NE(iframePID, [webView mainFrame].info._processIdentifier);
+
+    // The remote page for the iframe process outlives the preference change, so its
+    // termination must not try to broadcast FrameTreeSyncData.
+    setFeatureEnabled(configuration, @"SiteIsolationEnabled", false);
+
+    kill(iframePID, 9);
+    while (processStillRunning(iframePID))
+        Util::spinRunLoop();
+
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"location.host"], "example.com");
 }
 
 #if defined(NDEBUG) && PLATFORM(MAC)

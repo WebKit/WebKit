@@ -849,7 +849,9 @@ void WebFrameProxy::remoteProcessDidTerminate(WebProcessProxy& process, ClearFra
 {
     // Only clear the FrameTreeSyncData on all child processes once, when handling the main frame.
     // No point in clearing it multiple times in a tight loop.
-    if (clearFrameTreeSyncData == ClearFrameTreeSyncData::Yes)
+    // Site isolation may have been disabled after this remote page was created.
+    RefPtr webPage = page();
+    if (clearFrameTreeSyncData == ClearFrameTreeSyncData::Yes && webPage && protect(webPage->preferences())->siteIsolationEnabled())
         broadcastFrameTreeSyncData(FrameTreeSyncData::create());
 
     for (Ref child : m_childFrames)
