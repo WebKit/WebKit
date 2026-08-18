@@ -2979,6 +2979,17 @@ private:
             break;
         }
 
+        case ObjectIsExtensible: {
+            if (node->child1()->shouldSpeculateObject()) {
+                m_insertionSet.insertNode(
+                    m_indexInBlock, SpecNone, Check, node->origin,
+                    Edge(node->child1().node(), ObjectUse));
+                fixEdge<ObjectUse>(node->child1());
+            } else
+                fixEdge<UntypedUse>(node->child1());
+            break;
+        }
+
         case HasStructureWithFlags: {
             fixEdge<KnownCellUse>(node->child1());
             break;
