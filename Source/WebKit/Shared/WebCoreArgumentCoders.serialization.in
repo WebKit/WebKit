@@ -1298,6 +1298,7 @@ header: <WebCore/FileChooser.h>
 #if ENABLE(MEDIA_CAPTURE)
     WebCore::MediaCaptureType mediaCaptureType;
 #endif
+    WebCore::IntRect elementRectInMainFrameViewCoordinates;
 };
 
 header: <WebCore/TextChecking.h>

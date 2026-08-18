@@ -49,6 +49,8 @@ public:
     WebCore::MediaCaptureType mediaCaptureType() const { return m_settings.mediaCaptureType; }
 #endif
 
+    const WebCore::IntRect& elementRectInMainFrameViewCoordinates() const { return m_settings.elementRectInMainFrameViewCoordinates; }
+
 private:
     explicit OpenPanelParameters(const WebCore::FileChooserSettings&);
 
