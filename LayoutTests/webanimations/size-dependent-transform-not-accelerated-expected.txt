@@ -1,0 +1,7 @@
+
+PASS An animation of width and a width-dependent transform in all of its keyframes should not be accelerated.
+PASS An animation of width and a width-dependent transform in its first keyframe only should not be accelerated.
+PASS An animation of height and a height-dependent transform in its first keyframe only should not be accelerated.
+PASS An animation of width and a width-dependent transform in its first keyframe and a height-dependent transform in its last keyframe should not be accelerated.
+PASS An animation of width, a width-dependent transform and a size-independent translate should not be accelerated.
+

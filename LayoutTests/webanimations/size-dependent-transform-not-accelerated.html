@@ -1,0 +1,52 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ ThreadedTimeBasedAnimationsEnabled=false ] -->
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script src="resources/rendering-frames.js"></script>
+<body>
+<script>
+
+const assertNotAccelerated = async keyframes => {
+    const target = document.body.appendChild(document.createElement("div"));
+    target.style.cssText = "position: absolute; top: 0; left: 0; width: 100px; height: 100px; background-color: black;";
+
+    const animation = target.animate(keyframes, 60 * 1000);
+    await animation.ready;
+
+    // We wait for two frames to ensure an accelerated animation would have been committed.
+    await renderingFrames(2);
+    assert_equals(internals.acceleratedAnimationsForElement(target).length, 0, "The animation's target has no accelerated animation.");
+};
+
+// A size-dependent transform must be resolved against the animated size on every frame, which an
+// accelerated animation cannot do since it resolves percentages once, when it is committed. Each of
+// the animations below specifies a size-dependent transform in at least one keyframe and must not be
+// accelerated, no matter which keyframe or which of the transform-related properties provides the
+// size dependency.
+
+promise_test(() => assertNotAccelerated([
+    { width: "100px", transform: "translateX(50%)" },
+    { width: "200px", transform: "translateX(50%)" }
+]), "An animation of width and a width-dependent transform in all of its keyframes should not be accelerated.");
+
+promise_test(() => assertNotAccelerated([
+    { width: "100px", transform: "translateX(50%)" },
+    { width: "200px", transform: "translateX(0px)" }
+]), "An animation of width and a width-dependent transform in its first keyframe only should not be accelerated.");
+
+promise_test(() => assertNotAccelerated([
+    { height: "100px", transform: "translateY(50%)" },
+    { height: "200px", transform: "translateY(0px)" }
+]), "An animation of height and a height-dependent transform in its first keyframe only should not be accelerated.");
+
+promise_test(() => assertNotAccelerated([
+    { width: "100px", transform: "translateX(50%)" },
+    { width: "200px", transform: "translateY(50%)" }
+]), "An animation of width and a width-dependent transform in its first keyframe and a height-dependent transform in its last keyframe should not be accelerated.");
+
+promise_test(() => assertNotAccelerated([
+    { width: "100px", transform: "translateX(50%)", translate: "10px" },
+    { width: "200px", transform: "translateX(50%)", translate: "20px" }
+]), "An animation of width, a width-dependent transform and a size-independent translate should not be accelerated.");
+
+</script>
+</body>
