@@ -1,0 +1,4 @@
+
+
+PASS Test :stalled timing relative to waiting and timeupdate events
+

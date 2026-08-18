@@ -8143,10 +8143,6 @@ imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/input-tex
 imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/filterable-select/filterable-select-appearance.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/semantics/forms/form-submission-target/form-target-blank-useractivation-multi-globals.html [ Skip ] # timeout
 
-imported/w3c/web-platform-tests/css/selectors/media/media-loading-state.sub.html [ Skip ] # timeout, passes first subtest
-imported/w3c/web-platform-tests/css/selectors/media/media-loading-state-timing.sub.html [ Skip ] # timeout
-imported/w3c/web-platform-tests/css/selectors/invalidation/media-loading-pseudo-classes-in-has.sub.html [ Skip ] # timeout
-
 imported/w3c/web-platform-tests/html/browsers/the-window-object/open-close/open_fires_resize.tentative.html [ Skip ] # timeout
 
 webkit.org/b/311207 imported/w3c/web-platform-tests/workers/semantics/structured-clone/shared.html [ Pass Failure ]

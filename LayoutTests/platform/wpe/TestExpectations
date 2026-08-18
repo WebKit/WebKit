@@ -1333,3 +1333,5 @@ webkit.org/b/321481 [ arm64 ] imported/w3c/web-platform-tests/selection/caret/mo
 webkit.org/b/321481 [ arm64 ] imported/w3c/web-platform-tests/webrtc/simulcast/screenshare.https.html [ Crash Failure Timeout ]
 
 webkit.org/b/309372 [ arm64 ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-convolvernode-interface/realtime-conv.html [ Failure ]
+
+webkit.org/b/321107 imported/w3c/web-platform-tests/css/selectors/media/media-loading-state-timing.sub.html [ Skip ]
