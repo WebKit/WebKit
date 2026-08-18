@@ -8392,6 +8392,20 @@ SiteIsolationEnabled:
       default: false
   sharedPreferenceForWebProcess: true
 
+SiteIsolationHighValueFraudTargetDomainsEnabled:
+  type: bool
+  status: unstable
+  category: security
+  humanReadableName: "High-value fraud target domains for Site Isolation"
+  humanReadableDescription: "Exclude sites on the high-value fraud target domains list from the shared web process"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 SiteIsolationSharedProcessEnabled:
   type: bool
   status: internal

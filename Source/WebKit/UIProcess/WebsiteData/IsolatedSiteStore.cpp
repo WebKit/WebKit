@@ -35,6 +35,10 @@
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
 
+#if PLATFORM(COCOA)
+#include "WebPrivacyHelpers.h"
+#endif
+
 namespace WebKit {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(IsolatedSiteStore);
@@ -60,15 +64,16 @@ WorkQueue& IsolatedSiteStore::sharedWorkQueueSingleton()
     return workQueue.get();
 }
 
-Ref<IsolatedSiteStore> IsolatedSiteStore::create(const String& databaseDirectoryPath, UserInteractionDomainFetcher&& userInteractionDomainFetcher, HashSet<WebCore::RegistrableDomain>&& additionalSitesForTesting)
+Ref<IsolatedSiteStore> IsolatedSiteStore::create(const String& databaseDirectoryPath, UserInteractionDomainFetcher&& userInteractionDomainFetcher, bool highValueFraudTargetDomainsEnabled, HashSet<WebCore::RegistrableDomain>&& additionalSitesForTesting)
 {
-    return adoptRef(*new IsolatedSiteStore(databaseDirectoryPath, WTF::move(userInteractionDomainFetcher), WTF::move(additionalSitesForTesting)));
+    return adoptRef(*new IsolatedSiteStore(databaseDirectoryPath, WTF::move(userInteractionDomainFetcher), highValueFraudTargetDomainsEnabled, WTF::move(additionalSitesForTesting)));
 }
 
-IsolatedSiteStore::IsolatedSiteStore(const String& databaseDirectoryPath, UserInteractionDomainFetcher&& userInteractionDomainFetcher, HashSet<WebCore::RegistrableDomain>&& additionalSitesForTesting)
+IsolatedSiteStore::IsolatedSiteStore(const String& databaseDirectoryPath, UserInteractionDomainFetcher&& userInteractionDomainFetcher, bool highValueFraudTargetDomainsEnabled, HashSet<WebCore::RegistrableDomain>&& additionalSitesForTesting)
     : m_userInteractionDomainFetcher(WTF::move(userInteractionDomainFetcher))
     , m_additionalSitesForTesting(WTF::move(additionalSitesForTesting))
     , m_isPersistent(!databaseDirectoryPath.isEmpty())
+    , m_highValueFraudTargetDomainsEnabled(highValueFraudTargetDomainsEnabled)
 {
     ASSERT(isMainRunLoop());
 
@@ -90,7 +95,7 @@ IsolatedSiteStore::IsolatedSiteStore(const String& databaseDirectoryPath, UserIn
         HashMap<WebCore::RegistrableDomain, Entry> sites;
         for (auto& [domain, record] : protectedThis->m_persistence->allSites()) {
             // A bit written by a newer WebKit has no meaning here.
-            auto signals = OptionSet<Signal>::fromRaw(record.signals & allSignals.toRaw());
+            auto signals = OptionSet<Signal>::fromRaw(record.signals & persistedSignals.toRaw());
             if (signals.isEmpty())
                 continue;
 
@@ -363,11 +368,14 @@ OptionSet<IsolatedSiteStore::Signal> IsolatedSiteStore::reasonsFor(const WebCore
 {
     ASSERT(isMainRunLoop());
 
-    auto it = m_sites.find(site.domain());
-    if (it == m_sites.end())
-        return { };
+    OptionSet<Signal> signals;
+    if (auto it = m_sites.find(site.domain()); it != m_sites.end())
+        signals = it->value.signals;
 
-    return it->value.signals;
+    if (isHighValueFraudTargetDomain(site.domain()))
+        signals.add(Signal::HighValueFraudTarget);
+
+    return signals;
 }
 
 bool IsolatedSiteStore::contains(const WebCore::Site& site) const
@@ -379,7 +387,29 @@ bool IsolatedSiteStore::containsDomain(const WebCore::RegistrableDomain& domain)
 {
     ASSERT(isMainRunLoop());
 
-    return m_sites.contains(domain);
+    return m_sites.contains(domain) || isHighValueFraudTargetDomain(domain);
+}
+
+bool IsolatedSiteStore::isHighValueFraudTargetDomain(const WebCore::RegistrableDomain& domain) const
+{
+    ASSERT(isMainRunLoop());
+
+    if (!m_highValueFraudTargetDomainsEnabled)
+        return false;
+
+#if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
+    return HighValueFraudTargetDomainsController::singleton().contains(domain);
+#else
+    UNUSED_PARAM(domain);
+    return false;
+#endif
+}
+
+void IsolatedSiteStore::setHighValueFraudTargetDomainsEnabled(bool enabled)
+{
+    ASSERT(isMainRunLoop());
+
+    m_highValueFraudTargetDomainsEnabled = enabled;
 }
 
 } // namespace WebKit

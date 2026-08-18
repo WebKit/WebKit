@@ -48,11 +48,14 @@ public:
         Autofill = 1 << 0,
         FirstPartyVisit = 1 << 1,
         FirstPartyUserGesture = 1 << 2,
+        HighValueFraudTarget = 1 << 3,
     };
-    static constexpr OptionSet<Signal> allSignals { Signal::Autofill, Signal::FirstPartyVisit, Signal::FirstPartyUserGesture };
+    // HighValueFraudTarget is derived from WebPrivacy's list on every lookup, so it is deliberately
+    // absent here: it must never be written to or read back from IsolatedSitePersistence.
+    static constexpr OptionSet<Signal> persistedSignals { Signal::Autofill, Signal::FirstPartyVisit, Signal::FirstPartyUserGesture };
 
     using UserInteractionDomainFetcher = Function<void(CompletionHandler<void(std::optional<HashMap<WebCore::RegistrableDomain, WallTime>>&&)>&&)>;
-    static Ref<IsolatedSiteStore> create(const String& databaseDirectoryPath, UserInteractionDomainFetcher&&, HashSet<WebCore::RegistrableDomain>&& additionalSitesForTesting);
+    static Ref<IsolatedSiteStore> create(const String& databaseDirectoryPath, UserInteractionDomainFetcher&&, bool highValueFraudTargetDomainsEnabled, HashSet<WebCore::RegistrableDomain>&& additionalSitesForTesting);
     ~IsolatedSiteStore();
 
     void addSite(const WebCore::Site&, Signal);
@@ -64,11 +67,15 @@ public:
     void removeSitesUpdatedSince(WallTime, CompletionHandler<void()>&&);
     void removeSites(Vector<WebCore::RegistrableDomain>&&, CompletionHandler<void()>&&);
 
+    // Aggregated across every page using the owning WebsiteDataStore; see
+    // WebsiteDataStore::updateIsolatedSiteStoreSettings().
+    void setHighValueFraudTargetDomainsEnabled(bool);
+
     bool isReady() const { return m_isReady; }
     void whenReady(CompletionHandler<void()>&&);
 
 private:
-    IsolatedSiteStore(const String& databaseDirectoryPath, UserInteractionDomainFetcher&&, HashSet<WebCore::RegistrableDomain>&&);
+    IsolatedSiteStore(const String& databaseDirectoryPath, UserInteractionDomainFetcher&&, bool highValueFraudTargetDomainsEnabled, HashSet<WebCore::RegistrableDomain>&&);
 
     static WorkQueue& sharedWorkQueueSingleton();
 
@@ -76,6 +83,8 @@ private:
         OptionSet<Signal> signals;
         WallTime lastUpdated;
     };
+
+    bool isHighValueFraudTargetDomain(const WebCore::RegistrableDomain&) const;
 
     void didLoadSites(HashMap<WebCore::RegistrableDomain, Entry>&&, bool didImportUserInteractions);
     void whenLoaded(CompletionHandler<void()>&&);
@@ -92,6 +101,7 @@ private:
     UserInteractionDomainFetcher m_userInteractionDomainFetcher;
     HashSet<WebCore::RegistrableDomain> m_additionalSitesForTesting;
     const bool m_isPersistent { false };
+    bool m_highValueFraudTargetDomainsEnabled { false };
     bool m_isLoaded { false };
     bool m_isReady { false };
     bool m_importSuppressed { false };

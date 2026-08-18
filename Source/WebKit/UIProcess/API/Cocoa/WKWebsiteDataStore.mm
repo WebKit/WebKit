@@ -1267,6 +1267,11 @@ struct WKWebsiteData {
     return @(signals->toRaw());
 }
 
+- (void)_setHighValueFraudTargetDomainsForTesting:(NSArray<NSString *> *)domains
+{
+    protect(*_websiteDataStore)->setHighValueFraudTargetDomainsForTesting(makeVector<String>(domains));
+}
+
 - (void)_getPendingPushMessage:(void(^)(NSDictionary *))completionHandler
 {
     RELEASE_LOG(Push, "Getting pending push message");

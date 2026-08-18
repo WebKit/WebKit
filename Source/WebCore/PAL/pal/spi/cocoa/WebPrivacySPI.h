@@ -164,6 +164,20 @@ typedef void (^WPRestrictedOpenerDomainsCompletionHandler)(NSArray<WPRestrictedO
 @end
 #endif
 
+#if !defined(HAS_WEB_PRIVACY_HIGH_VALUE_FRAUD_TARGET_DOMAIN_CLASS)
+constexpr NSInteger WPResourceTypeHighValueFraudTargetDomains = 11;
+
+@interface WPHighValueFraudTargetDomain : NSObject
+@property (nonatomic, readonly) NSString *domain;
+@end
+
+typedef void (^WPHighValueFraudTargetDomainsCompletionHandler)(NSArray<WPHighValueFraudTargetDomain *> *, NSError *);
+
+@interface WPResources (Staging_183971390)
+- (void)requestHighValueFraudTargetDomains:(WPResourceRequestOptions *)options completionHandler:(WPHighValueFraudTargetDomainsCompletionHandler)completion;
+@end
+#endif
+
 #if !defined(HAS_WEB_PRIVACY_STORAGE_ACCESS_PROMPT_TRIGGER) && HAVE(WEB_PRIVACY_FRAMEWORK)
 @interface WPStorageAccessPromptQuirk (Staging_124689085)
 @property (nonatomic, readonly) NSDictionary<NSString *, NSArray<NSString *> *> *quirkDomains;

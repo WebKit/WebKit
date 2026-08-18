@@ -491,6 +491,7 @@ selectors = [
     { name = "replacement", class = "?" },
     { name = "reportAnErrorBaseURLString", class = "?" },
     { name = "requestAllowedLinkFilteringData:completionHandler:", class = "?" },
+    { name = "requestHighValueFraudTargetDomains:completionHandler:", class = "?" },
     { name = "requestLinkFilteringData:completionHandler:", class = "?" },
     { name = "requestPoliciesForWebsites:completionHandler:", class = "?" },
     { name = "requestRestrictedOpenerDomains:completionHandler:", class = "?" },

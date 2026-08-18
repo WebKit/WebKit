@@ -12847,4 +12847,70 @@ TEST(SiteIsolation, RestoredPageWithIframeIsRenderedAfterCrossSiteBFCacheRoundTr
     checkFrameTreesInProcesses(webView.get(), { { "https://b.com"_s } });
 }
 
+enum class SiteIsolationHighValueFraudTargetDomainsEnabled : bool { No, Yes };
+
+static std::pair<RetainPtr<TestWKWebView>, RetainPtr<TestNavigationDelegate>> siteIsolatedViewWithHighValueFraudTargetDomains(const HTTPServer& server, NSArray<NSString *> *domains, SiteIsolationHighValueFraudTargetDomainsEnabled enabled)
+{
+    RetainPtr navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [navigationDelegate allowAnyTLSCertificate];
+
+    RetainPtr storeConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initNonPersistentConfiguration]);
+    [storeConfiguration setHTTPSProxy:[NSURL URLWithString:[NSString stringWithFormat:@"https://127.0.0.1:%d/", server.port()]]];
+    RetainPtr dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:storeConfiguration.get()]);
+
+    // Stand in for the list WebPrivacy would have delivered, which is unavailable in tests.
+    [dataStore _setHighValueFraudTargetDomainsForTesting:domains];
+
+    RetainPtr viewConfiguration = adoptNS([WKWebViewConfiguration new]);
+    [viewConfiguration setWebsiteDataStore:dataStore.get()];
+    enableSiteIsolation(viewConfiguration.get());
+    enableFeature(viewConfiguration.get(), @"SiteIsolationSharedProcessEnabled");
+    if (enabled == SiteIsolationHighValueFraudTargetDomainsEnabled::Yes)
+        enableFeature(viewConfiguration.get(), @"SiteIsolationHighValueFraudTargetDomainsEnabled");
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:viewConfiguration.get()]);
+    webView.get().navigationDelegate = navigationDelegate.get();
+    return { WTF::move(webView), WTF::move(navigationDelegate) };
+}
+
+static HTTPServer serverWithTwoCrossSiteFrames()
+{
+    return HTTPServer({
+        { "/example"_s, { "<!DOCTYPE html><iframe src='https://b.com/frame'></iframe><iframe src='https://c.com/frame'></iframe>"_s } },
+        { "/frame"_s, { "hi"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+}
+
+TEST(SiteIsolation, SharedProcessExcludesHighValueFraudTargetDomains)
+{
+    auto server = serverWithTwoCrossSiteFrames();
+    auto [webView, navigationDelegate] = siteIsolatedViewWithHighValueFraudTargetDomains(server, @[@"b.com"], SiteIsolationHighValueFraudTargetDomainsEnabled::Yes);
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    // b.com is on the high-value fraud target domains list, so it gets its own process rather than
+    // joining c.com in the shared process.
+    checkFrameTreesInProcesses(webView.get(), {
+        { "https://example.com"_s, { { RemoteFrame }, { RemoteFrame } } },
+        { RemoteFrame, { { "https://b.com"_s }, { RemoteFrame } } },
+        { RemoteFrame, { { RemoteFrame }, { "https://c.com"_s } } },
+    });
+}
+
+TEST(SiteIsolation, SharedProcessIgnoresHighValueFraudTargetDomainsWhenDisabled)
+{
+    auto server = serverWithTwoCrossSiteFrames();
+    auto [webView, navigationDelegate] = siteIsolatedViewWithHighValueFraudTargetDomains(server, @[@"b.com"], SiteIsolationHighValueFraudTargetDomainsEnabled::No);
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    // The list is populated but the preference is off, so b.com is still allowed to share a process.
+    checkFrameTreesInProcesses(webView.get(), {
+        { "https://example.com"_s, { { RemoteFrame }, { RemoteFrame } } },
+        { RemoteFrame, { { "https://b.com"_s }, { "https://c.com"_s } } },
+    });
+}
+
 }

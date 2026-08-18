@@ -1556,10 +1556,37 @@ IsolatedSiteStore& WebsiteDataStore::isolatedSiteStore()
             protectedThis->fetchDomainsWithUserInteraction(WTF::move(completionHandler));
         };
 
-        lazyInitialize(m_isolatedSiteStore, IsolatedSiteStore::create(isPersistent() ? resolvedDirectories().isolatedSitesDirectory : String { }, WTF::move(fetcher), platformAdditionalDomainsWithUserInteraction()));
+        lazyInitialize(m_isolatedSiteStore, IsolatedSiteStore::create(isPersistent() ? resolvedDirectories().isolatedSitesDirectory : String { }, WTF::move(fetcher), computeSiteIsolationHighValueFraudTargetDomainsEnabled(), platformAdditionalDomainsWithUserInteraction()));
     }
 
     return *m_isolatedSiteStore;
+}
+
+bool WebsiteDataStore::computeSiteIsolationHighValueFraudTargetDomainsEnabled() const
+{
+    for (Ref page : m_pages) {
+        if (protect(page->preferences())->siteIsolationHighValueFraudTargetDomainsEnabled())
+            return true;
+    }
+
+    return false;
+}
+
+void WebsiteDataStore::updateIsolatedSiteStoreSettings()
+{
+    bool highValueFraudTargetDomainsEnabled = computeSiteIsolationHighValueFraudTargetDomainsEnabled();
+
+#if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
+    // Constructing the controller starts fetching the list, so that it is more likely to be ready
+    // for the first lookup.
+    if (highValueFraudTargetDomainsEnabled)
+        HighValueFraudTargetDomainsController::singleton();
+#endif
+
+    if (!m_isolatedSiteStore)
+        return;
+
+    m_isolatedSiteStore->setHighValueFraudTargetDomainsEnabled(highValueFraudTargetDomainsEnabled);
 }
 
 std::optional<OptionSet<IsolatedSiteStore::Signal>> WebsiteDataStore::isolatedSiteSignalsForTesting(const URL& url)
@@ -1570,6 +1597,20 @@ std::optional<OptionSet<IsolatedSiteStore::Signal>> WebsiteDataStore::isolatedSi
         return std::nullopt;
 
     return siteStore->reasonsFor(site);
+}
+
+void WebsiteDataStore::setHighValueFraudTargetDomainsForTesting(Vector<String>&& domains)
+{
+#if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
+    HashSet<WebCore::RegistrableDomain> registrableDomains;
+    registrableDomains.reserveInitialCapacity(domains.size());
+    for (auto& domain : domains)
+        registrableDomains.add(WebCore::RegistrableDomain::fromRawString(WTF::move(domain)));
+
+    HighValueFraudTargetDomainsController::singleton().setDomainsForTesting(WTF::move(registrableDomains));
+#else
+    UNUSED_PARAM(domains);
+#endif
 }
 
 void WebsiteDataStore::logUserInteraction(const URL& url, CompletionHandler<void()>&& completionHandler)
@@ -2115,6 +2156,10 @@ bool WebsiteDataStore::computeIsOptInCookiePartitioningEnabled() const
 
 void WebsiteDataStore::propagateSettingUpdates()
 {
+    // Intentionally above the guards below: this setting has nothing to do with the network process,
+    // and is needed even on ports without OPT_IN_PARTITIONED_COOKIES.
+    updateIsolatedSiteStoreSettings();
+
 #if ENABLE(OPT_IN_PARTITIONED_COOKIES)
     RefPtr networkProcess = networkProcessIfExists();
     if (!networkProcess)

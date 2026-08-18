@@ -233,6 +233,7 @@ public:
     void logTestingEvent(const String&);
     IsolatedSiteStore& isolatedSiteStore();
     std::optional<OptionSet<IsolatedSiteStore::Signal>> isolatedSiteSignalsForTesting(const URL&);
+    void setHighValueFraudTargetDomainsForTesting(Vector<String>&&);
     void logUserInteraction(const URL&, CompletionHandler<void()>&&);
     void getAllStorageAccessEntries(WebPageProxyIdentifier, CompletionHandler<void(Vector<String>&& domains)>&&);
     void hasHadUserInteraction(const URL&, CompletionHandler<void(bool)>&&);
@@ -541,6 +542,9 @@ private:
     void addTestDomains() const;
 #endif
     void initializeManagedDomains(ForceReinitialization = ForceReinitialization::No);
+
+    bool computeSiteIsolationHighValueFraudTargetDomainsEnabled() const;
+    void updateIsolatedSiteStoreSettings();
 
     void fetchDataAndApply(OptionSet<WebsiteDataType>, OptionSet<WebsiteDataFetchOption>, Ref<WorkQueue>&&, Function<void(Vector<WebsiteDataRecord>)>&& apply);
 
