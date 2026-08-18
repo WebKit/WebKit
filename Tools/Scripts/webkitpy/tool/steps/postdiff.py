@@ -41,7 +41,6 @@ class PostDiff(AbstractStep):
             Options.review,
             Options.request_commit,
             Options.open_bug,
-            Options.ews,
             Options.fast_cq,
         ]
 
@@ -53,11 +52,6 @@ class PostDiff(AbstractStep):
         if self._options.fast_cq:
             description = '{}{}'.format(Attachment.fast_cq_preamble, description)
 
-        attachment_id = self._tool.bugs.add_patch_to_bug(bug_id, diff, description, comment_text=comment_text, mark_for_review=self._options.review, mark_for_commit_queue=self._options.request_commit)
+        self._tool.bugs.add_patch_to_bug(bug_id, diff, description, comment_text=comment_text, mark_for_review=self._options.review, mark_for_commit_queue=self._options.request_commit)
         if self._options.open_bug:
             self._tool.user.open_url(self._tool.bugs.bug_url_for_bug_id(bug_id))
-
-        # We only need to submit --no-review patches to EWS as patches posted for review are
-        # automatically submitted to EWS by EWSFeeder.
-        if not self._options.review and self._options.ews:
-            state['attachment_ids'] = [attachment_id]

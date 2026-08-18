@@ -94,7 +94,6 @@ class Post(AbstractPatchUploadingCommand):
         steps.SuggestReviewers,
         steps.EnsureBugIsOpenAndAssigned,
         steps.PostDiff,
-        steps.SubmitToEWS,
     ]
 
 
@@ -158,7 +157,6 @@ class Upload(AbstractPatchUploadingCommand):
         steps.EnsureBugIsOpenAndAssigned,
         steps.PostDiff,
         steps.AddRadar,
-        steps.SubmitToEWS,
     ]
     long_help = """upload uploads the current diff to bugs.webkit.org.
     If no bug id is provided, upload will create a bug.

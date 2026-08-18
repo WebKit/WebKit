@@ -136,7 +136,6 @@ MOCK add_patch_to_bug: bug_id=50000, description=[fast-cq] Patch for landing, ma
         options.non_interactive = False
         options.request_commit = False
         options.review = True
-        options.submit_to_ews = False
         options.sort_xcode_project = False
         options.suggest_reviewers = False
         options.issues = []
@@ -161,7 +160,6 @@ MOCK: user.open_url: http://example.com/50000
         options.non_interactive = False
         options.request_commit = False
         options.review = True
-        options.submit_to_ews = False
         options.sort_xcode_project = False
         options.suggest_reviewers = False
         options.issues = []
@@ -175,31 +173,6 @@ MOCK: user.open_url: http://example.com/50000
         with wmocks.local.Git(self.path):
             self.assert_execute_outputs(Upload(), [50000], options=options, expected_logs=expected_logs)
 
-    def test_upload_with_no_review_and_ews(self):
-        options = MockOptions()
-        options.cc = None
-        options.check_style = True
-        options.check_style_filter = None
-        options.comment = None
-        options.description = 'MOCK description'
-        options.fast_cq = False
-        options.non_interactive = False
-        options.request_commit = False
-        options.review = False
-        options.ews = True
-        options.sort_xcode_project = False
-        options.suggest_reviewers = False
-        options.issues = []
-        expected_logs = """MOCK: user.open_url: file://...
-Was that diff correct?
-Obsoleting 2 old patches on bug 50000
-MOCK reassign_bug: bug_id=50000, assignee=None
-MOCK add_patch_to_bug: bug_id=50000, description=MOCK description, mark_for_review=False, mark_for_commit_queue=False, mark_for_landing=False
-MOCK: user.open_url: http://example.com/50000
-MOCK: submit_to_ews: 10001
-"""
-        with wmocks.local.Git(self.path):
-            self.assert_execute_outputs(Upload(), [50000], options=options, expected_logs=expected_logs)
 
     def test_mark_bug_fixed(self):
         tool = MockTool()
@@ -242,7 +215,6 @@ Committed r9876 (5@main): <https://commits.webkit.org/5@main>
         options.non_interactive = False
         options.request_commit = False
         options.review = True
-        options.submit_to_ews = False
         options.sort_xcode_project = False
         options.suggest_reviewers = False
         options.issues = [MockIssue(
@@ -268,7 +240,6 @@ Please use 'git-webkit' to upload this fix. 'webkit-patch' does not support secu
         options.non_interactive = False
         options.request_commit = False
         options.review = True
-        options.submit_to_ews = False
         options.sort_xcode_project = False
         options.suggest_reviewers = False
         options.issues = [

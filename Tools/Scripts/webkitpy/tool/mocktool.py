@@ -32,7 +32,6 @@ import threading
 # FIXME: Old-style "Ports" need to die and be replaced by modern layout_tests.port which needs to move to common.
 from webkitpy.common.config.ports_mock import MockPort
 from webkitpy.common.host_mock import MockHost
-from webkitpy.common.net.ewsserver_mock import MockEWSServer
 
 
 # FIXME: We should just replace this with optparse.Values(default=kwargs)
@@ -63,7 +62,6 @@ class MockTool(MockHost):
         MockHost.__init__(self, *args, **kwargs)
 
         self._deprecated_port = MockPort()
-        self.ews_server = MockEWSServer()
 
         self.wakeup_event = threading.Event()
 
