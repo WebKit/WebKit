@@ -1407,7 +1407,11 @@ static GlyphUnderlineType computeUnderlineType(const TextRun& textRun, const Gly
     case UBLOCK_ARABIC_SUPPLEMENT:
     case UBLOCK_ARABIC_EXTENDED_A:
     case UBLOCK_ARABIC_EXTENDED_B:
+#if U_ICU_VERSION_MAJOR_NUM >= 72
+    // Arabic Extended-C is Unicode 15.0, which ICU only knows about since 72; older ICU
+    // returns UBLOCK_NO_BLOCK for those code points, so the case is dead there anyway.
     case UBLOCK_ARABIC_EXTENDED_C:
+#endif
     case UBLOCK_ARABIC_PRESENTATION_FORMS_A:
     case UBLOCK_ARABIC_PRESENTATION_FORMS_B:
         return GlyphUnderlineType::DrawOverGlyph;
