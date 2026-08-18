@@ -393,12 +393,13 @@ ScopeExit<Function<void()>> WebFrame::makeInvalidator()
     });
 }
 
-uint64_t WebFrame::setUpPolicyListener(WebCore::FramePolicyFunction&& policyFunction, ForNavigationAction forNavigationAction, Markable<WebCore::ScriptExecutionContextIdentifier> downloadAttributeInitiatingDocument)
+uint64_t WebFrame::setUpPolicyListener(WebCore::FramePolicyFunction&& policyFunction, ForNavigationAction forNavigationAction, Markable<WebCore::ScriptExecutionContextIdentifier> downloadAttributeInitiatingDocument, SingleThreadWeakPtr<WebCore::DocumentLoader>&& downloadAttributePolicyDocumentLoader)
 {
     auto policyListenerID = generateListenerID();
     m_pendingPolicyChecks.add(policyListenerID, PolicyCheck {
         forNavigationAction,
         downloadAttributeInitiatingDocument,
+        WTF::move(downloadAttributePolicyDocumentLoader),
         WTF::move(policyFunction)
     });
 
@@ -417,6 +418,16 @@ bool WebFrame::shouldHonorDownloadAttributePolicyCheck(const PolicyCheck& policy
         return false;
     RefPtr document = localFrame->document();
     return document && document->identifier() == policyCheck.downloadAttributeInitiatingDocument;
+}
+
+// A download check outliving the navigation that started it also means its decision can arrive once a newer
+// navigation owns the load: FrameLoader::loadWithDocumentLoader() will not continue the load the check was
+// made for then, so all that is left of the decision is the download itself. Everything else in it - the
+// website policies, the navigation identifier - would be applied to the newer navigation instead.
+bool WebFrame::newerNavigationOwnsDownloadAttributePolicyCheckLoad(const PolicyCheck& policyCheck) const
+{
+    RefPtr localFrame = dynamicDowncast<LocalFrame>(m_coreFrame.get());
+    return !localFrame || localFrame->loader().policyDocumentLoader() != policyCheck.downloadAttributePolicyDocumentLoader.get();
 }
 
 void WebFrame::loadDidCommitInAnotherProcess(WebCore::ProcessIdentifier hostingProcessID, std::optional<WebCore::LayerHostingContextIdentifier> layerHostingContextIdentifier)
@@ -693,7 +704,16 @@ void WebFrame::didReceivePolicyDecision(uint64_t listenerID, PolicyDecision&& po
     if (policyCheck.downloadAttributeInitiatingDocument && !shouldHonorDownloadAttributePolicyCheck(policyCheck))
         return function(PolicyAction::Ignore);
 
-    if (forNavigationAction && localFrameLoaderClient() && policyDecision.websitePoliciesData) {
+    // Nothing below is the download's to apply once a newer navigation owns the load this check was made for.
+    // The website policies are the clearest of these: they would disable content JavaScript in a document the
+    // client allowed it for. Only a download is still meaningful, so answer anything else Ignore, which
+    // FrameLoader::loadWithDocumentLoader() drops rather than continue with, since it no longer owns the
+    // policy document loader.
+    bool newerNavigationOwnsTheLoad = policyCheck.downloadAttributeInitiatingDocument && newerNavigationOwnsDownloadAttributePolicyCheckLoad(policyCheck);
+    if (newerNavigationOwnsTheLoad && policyDecision.policyAction != PolicyAction::Download)
+        return function(PolicyAction::Ignore);
+
+    if (forNavigationAction && !newerNavigationOwnsTheLoad && localFrameLoaderClient() && policyDecision.websitePoliciesData) {
         ASSERT(page());
         if (page())
             page()->setAllowsContentJavaScriptFromMostRecentNavigation(policyDecision.websitePoliciesData->allowsContentJavaScript);

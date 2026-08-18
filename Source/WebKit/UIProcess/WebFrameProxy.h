@@ -212,7 +212,9 @@ public:
     void didChangeTitle(String&&);
 
     // Only one navigation policy check can be outstanding per frame, so a new one displaces the
-    // previous. A download is not a navigation, so it neither displaces nor is displaced.
+    // previous. A download is not a navigation, so it neither displaces nor is displaced. The check
+    // for a server redirect in a load the client let continue is a navigation check even though its
+    // action still carries the download attribute: it belongs to that load, and dies with it.
     enum class IsDownloadPolicyCheck : bool { No, Yes };
     WebFramePolicyListenerProxy& setUpPolicyListenerProxy(CompletionHandler<void(WebCore::PolicyAction, API::WebsitePolicies*, ProcessSwapRequestedByClient, std::optional<NavigatingToAppBoundDomain>, WasNavigationIntercepted)>&&, ShouldExpectSafeBrowsingResult, ShouldExpectAppBoundDomainResult, ShouldWaitForInitialLinkDecorationFilteringData, ShouldWaitForSiteHasStorageCheck, ShouldWaitForEnhancedSecurityLinkCheck, IsDownloadPolicyCheck);
 

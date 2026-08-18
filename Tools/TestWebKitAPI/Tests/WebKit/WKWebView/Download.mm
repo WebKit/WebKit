@@ -1489,6 +1489,45 @@ TEST(_WKDownload, SubframeSecurityOrigin)
 
 @end
 
+@interface DownloadAttributeNewerNavigationSchemeHandler : NSObject <WKURLSchemeHandler>
+// The second load is held so that a decision arriving then finds it provisional, with no document yet.
+@property (nonatomic, strong) id<WKURLSchemeTask> pendingSecondTask;
+- (void)finishPendingSecondTask;
+@end
+
+@implementation DownloadAttributeNewerNavigationSchemeHandler
+
+- (void)respondToTask:(id<WKURLSchemeTask>)task withHTML:(NSString *)html
+{
+    RetainPtr response = adoptNS([[NSHTTPURLResponse alloc] initWithURL:task.request.URL statusCode:200 HTTPVersion:@"HTTP/1.1" headerFields:@{ @"Content-Type": @"text/html" }]);
+    [task didReceiveResponse:response.get()];
+    [task didReceiveData:[html dataUsingEncoding:NSUTF8StringEncoding]];
+    [task didFinish];
+}
+
+- (void)webView:(WKWebView *)webView startURLSchemeTask:(id<WKURLSchemeTask>)task
+{
+    // One scheme and host throughout, so the download attribute is not dropped as cross origin.
+    if ([task.request.URL.path isEqualToString:@"/main"]) {
+        [self respondToTask:task withHTML:@"<a id='dl' download='downloadFilename' href='download-attribute-identity://host/downloadTarget'>dl</a>"];
+        return;
+    }
+
+    self.pendingSecondTask = task;
+}
+
+- (void)finishPendingSecondTask
+{
+    [self respondToTask:self.pendingSecondTask withHTML:@"<script>document.title = 'scriptRan'</script><body>second</body>"];
+    self.pendingSecondTask = nil;
+}
+
+- (void)webView:(WKWebView *)webView stopURLSchemeTask:(id<WKURLSchemeTask>)task
+{
+}
+
+@end
+
 namespace TestWebKitAPI {
 
 static void checkCallbackRecord(TestDownloadDelegate *delegate, Vector<DownloadCallback> expectedCallbacks)
@@ -2917,6 +2956,135 @@ TEST(WKDownload, DownloadAttributeSurvivesLaterNavigation)
 
     EXPECT_TRUE(answeredDownloadAfterNavigation);
     checkFileContents(expectedDownloadFile.get(), "123"_s);
+}
+
+// A download attribute link the client answers Use for is an ordinary navigation, and the policy check that
+// DocumentLoader::willSendRequest() makes for a server redirect in it reuses the same triggering action,
+// download attribute and all. Unlike the check for the activation itself, that one belongs to a load in
+// progress - its DocumentLoader awaits the answer - so cancelling the load has to cancel it. A check that
+// survived is answered on a stopped, frame-detached DocumentLoader, and answering it Download starts a
+// download of the redirect target for a navigation that is already gone.
+TEST(WKDownload, DownloadAttributeRedirectCheckIsCancelledWithItsNavigation)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/main"_s, { "<a id='dl' download='downloadFilename' href='/redirecting'>download</a>"_s } },
+        { "/redirecting"_s, { 301, { { "Location"_s, "/redirected"_s } } } },
+        { "/redirected"_s, { "redirected"_s } },
+    });
+
+    RetainPtr webView = adoptNS([TestWKWebView new]);
+    RetainPtr delegate = adoptNS([TestNavigationDelegate new]);
+    RetainPtr downloadDelegate = adoptNS([TestDownloadDelegate new]);
+    [webView setNavigationDelegate:delegate.get()];
+
+    __block RetainPtr<id> heldRedirectDecision;
+    __block bool sawRedirectCheck = false;
+    delegate.get().decidePolicyForNavigationAction = ^(WKNavigationAction *action, void (^completionHandler)(WKNavigationActionPolicy)) {
+        if ([action.request.URL.path isEqualToString:@"/redirected"]) {
+            EXPECT_TRUE(action.shouldPerformDownload);
+            heldRedirectDecision = adoptNS([completionHandler copy]);
+            sawRedirectCheck = true;
+            return;
+        }
+        completionHandler(WKNavigationActionPolicyAllow);
+    };
+
+    // Reached only by a download the web process really started: the response is the network process having
+    // fetched the redirect target.
+    __block bool startedDownloadOfRedirectTarget = false;
+    delegate.get().navigationActionDidBecomeDownload = ^(WKNavigationAction *, WKDownload *download) {
+        download.delegate = downloadDelegate.get();
+    };
+    downloadDelegate.get().decideDestinationUsingResponse = ^(WKDownload *, NSURLResponse *, NSString *, void (^completionHandler)(NSURL *)) {
+        startedDownloadOfRedirectTarget = true;
+        completionHandler(nil);
+    };
+
+    [webView loadRequest:server.request("/main"_s)];
+    [delegate waitForDidFinishNavigation];
+
+    [webView evaluateJavaScript:@"document.getElementById('dl').click()" completionHandler:nil];
+    Util::run(&sawRedirectCheck);
+
+    // Cancel the navigation the link started while its document stays current, so nothing but the
+    // cancellation can answer the outstanding redirect check. The script round trip that follows is
+    // answered by the web process only once it has handled the cancellation.
+    [webView stopLoading];
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"'cancelled'"], "cancelled");
+
+    auto requestCountBeforeAnsweringRedirectCheck = server.totalRequests();
+    ((void (^)(WKNavigationActionPolicy))heldRedirectDecision.get())(WKNavigationActionPolicyDownload);
+
+    // Give a download that answering the cancelled check may have started the time to fetch the redirect
+    // target, then round trip through the server, which any request it made has reached by the time a later
+    // load finishes.
+    Util::runFor(&startedDownloadOfRedirectTarget, 0.5_s);
+    [webView loadRequest:server.request("/main"_s)];
+    [delegate waitForDidFinishNavigation];
+
+    EXPECT_FALSE(startedDownloadOfRedirectTarget);
+    EXPECT_EQ(server.totalRequests(), requestCountBeforeAnsweringRedirectCheck + 1);
+}
+
+// The website policies in that decision belong to the download too. Applying them to the newer navigation
+// disables content JavaScript in a document the client allowed it for.
+TEST(WKDownload, DownloadAttributeDecisionDoesNotApplyPoliciesToNewerNavigation)
+{
+    RetainPtr configuration = adoptNS([WKWebViewConfiguration new]);
+    RetainPtr schemeHandler = adoptNS([DownloadAttributeNewerNavigationSchemeHandler new]);
+    [configuration setURLSchemeHandler:schemeHandler.get() forURLScheme:@"download-attribute-identity"];
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+
+    RetainPtr delegate = adoptNS([TestNavigationDelegate new]);
+    [webView setNavigationDelegate:delegate.get()];
+
+    __block RetainPtr<id> heldDownloadDecision;
+    __block RetainPtr<id> heldSecondNavigationDecision;
+    __block bool sawDownloadCheck = false;
+    __block bool sawSecondNavigationCheck = false;
+    delegate.get().decidePolicyForNavigationActionWithPreferences = ^(WKNavigationAction *action, WKWebpagePreferences *preferences, void (^completionHandler)(WKNavigationActionPolicy, WKWebpagePreferences *)) {
+        if (action.shouldPerformDownload) {
+            heldDownloadDecision = adoptNS([completionHandler copy]);
+            sawDownloadCheck = true;
+            return;
+        }
+        if ([action.request.URL.path isEqualToString:@"/second"]) {
+            heldSecondNavigationDecision = adoptNS([completionHandler copy]);
+            sawSecondNavigationCheck = true;
+            return;
+        }
+        completionHandler(WKNavigationActionPolicyAllow, preferences);
+    };
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"download-attribute-identity://host/main"]]];
+    [delegate waitForDidFinishNavigation];
+
+    [webView evaluateJavaScript:@"document.getElementById('dl').click()" completionHandler:nil];
+    Util::run(&sawDownloadCheck);
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"download-attribute-identity://host/second"]]];
+    Util::run(&sawSecondNavigationCheck);
+
+    // Answered first, and with content JavaScript allowed, so that the download's decision below is the
+    // last word on the policies of a load that is still provisional and has not created its document yet.
+    ((void (^)(WKNavigationActionPolicy, WKWebpagePreferences *))heldSecondNavigationDecision.get())(WKNavigationActionPolicyAllow, adoptNS([WKWebpagePreferences new]).get());
+    while (!schemeHandler.get().pendingSecondTask)
+        Util::spinRunLoop();
+
+    RetainPtr downloadPreferences = adoptNS([WKWebpagePreferences new]);
+    [downloadPreferences setAllowsContentJavaScript:NO];
+    ((void (^)(WKNavigationActionPolicy, WKWebpagePreferences *))heldDownloadDecision.get())(WKNavigationActionPolicyAllow, downloadPreferences.get());
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"'answered'"], "answered");
+
+    __block bool done = false;
+    delegate.get().didFinishNavigation = ^(WKWebView *, WKNavigation *) {
+        done = true;
+    };
+    [schemeHandler.get() finishPendingSecondTask];
+    Util::run(&done);
+
+    EXPECT_WK_STREQ([webView URL].path, "/second");
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"document.title"], "scriptRan");
 }
 
 TEST(WKDownload, BlobResponseNoFilename)

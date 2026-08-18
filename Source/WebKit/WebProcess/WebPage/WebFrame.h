@@ -59,6 +59,7 @@ class Array;
 
 namespace WebCore {
 class CertificateInfo;
+class DocumentLoader;
 class FloatRect;
 class Frame;
 class FrameTreeSyncData;
@@ -155,8 +156,10 @@ public:
     WebCore::FrameIdentifier frameID() const { return m_frameID; }
 
     enum class ForNavigationAction : bool { No, Yes };
-    // A non-null initiating document marks this as a download attribute check.
-    uint64_t setUpPolicyListener(WebCore::FramePolicyFunction&&, ForNavigationAction, Markable<WebCore::ScriptExecutionContextIdentifier> downloadAttributeInitiatingDocument = { });
+    // A non-null initiating document marks this as a download attribute check. Such a check outlives the
+    // navigation that started it, so it also carries the load it was made for: the frame's policy document
+    // loader at the time, which a newer navigation can replace before the decision arrives.
+    uint64_t setUpPolicyListener(WebCore::FramePolicyFunction&&, ForNavigationAction, Markable<WebCore::ScriptExecutionContextIdentifier> downloadAttributeInitiatingDocument = { }, SingleThreadWeakPtr<WebCore::DocumentLoader>&& downloadAttributePolicyDocumentLoader = { });
     void invalidatePolicyListeners();
     void didReceivePolicyDecision(uint64_t listenerID, PolicyDecision&&);
 
@@ -337,11 +340,13 @@ private:
     struct PolicyCheck {
         ForNavigationAction forNavigationAction { ForNavigationAction::No };
         Markable<WebCore::ScriptExecutionContextIdentifier> downloadAttributeInitiatingDocument;
+        SingleThreadWeakPtr<WebCore::DocumentLoader> downloadAttributePolicyDocumentLoader;
         WebCore::FramePolicyFunction policyFunction;
     };
     HashMap<uint64_t, PolicyCheck> m_pendingPolicyChecks;
 
     bool shouldHonorDownloadAttributePolicyCheck(const PolicyCheck&) const;
+    bool newerNavigationOwnsDownloadAttributePolicyCheckLoad(const PolicyCheck&) const;
 
     std::optional<DownloadID> m_policyDownloadID;
 

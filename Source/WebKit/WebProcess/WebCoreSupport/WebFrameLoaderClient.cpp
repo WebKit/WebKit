@@ -37,6 +37,7 @@
 #include "WebPage.h"
 #include "WebPageProxyMessages.h"
 #include "WebProcess.h"
+#include <WebCore/DocumentLoader.h>
 #include <WebCore/FrameLoader.h>
 #include <WebCore/HitTestResult.h>
 #include <WebCore/LocalFrameInlines.h>
@@ -199,14 +200,26 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navigat
 
     RefPtr webPage = m_frame->page();
 
+    // Record the document initiating a download attribute check, and the load it is made for.
+    //
+    // Only the check for the activation itself is one: a download attribute link the client answers Use for
+    // is an ordinary navigation, and DocumentLoader::willSendRequest() reuses the same triggering action,
+    // download attribute and all, for the check it makes when the server redirects that load. Unlike the
+    // activation check, that one belongs to a load in progress - its DocumentLoader awaits the answer - so
+    // cancelling the load has to cancel it, and it must not be kept out of the cancellation.
+    //
+    // WebPageProxy::decidePolicyForNavigationAction() draws the same line for its own listener, from the
+    // redirect response in the NavigationActionData, so the two have to stay in agreement.
     Markable<WebCore::ScriptExecutionContextIdentifier> downloadAttributeInitiatingDocument;
-    if (!navigationAction.downloadAttribute().isNull()) {
+    SingleThreadWeakPtr<WebCore::DocumentLoader> downloadAttributePolicyDocumentLoader;
+    if (!navigationAction.downloadAttribute().isNull() && redirectResponse.isNull()) {
         if (RefPtr localFrame = m_frame->coreLocalFrame()) {
             if (RefPtr document = localFrame->document())
                 downloadAttributeInitiatingDocument = document->identifier();
+            downloadAttributePolicyDocumentLoader = localFrame->loader().policyDocumentLoader();
         }
     }
-    uint64_t listenerID = m_frame->setUpPolicyListener(WTF::move(function), WebFrame::ForNavigationAction::Yes, downloadAttributeInitiatingDocument);
+    uint64_t listenerID = m_frame->setUpPolicyListener(WTF::move(function), WebFrame::ForNavigationAction::Yes, downloadAttributeInitiatingDocument, WTF::move(downloadAttributePolicyDocumentLoader));
 
     // Notify the UIProcess.
     if (policyDecisionMode == PolicyDecisionMode::Synchronous) {
