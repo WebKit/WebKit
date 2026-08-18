@@ -31,7 +31,6 @@ enum class FetchOptionsDestination : uint8_t {
     EmptyString,
     Audio,
     Audioworklet,
-    CompressionDictionary,
     Document,
     Embed,
     Environmentmap,
@@ -54,7 +53,8 @@ enum class FetchOptionsDestination : uint8_t {
     Video,
     Worker,
     Xslt,
-    Text
+    Text,
+    CompressionDictionary
 };
     
 } // namespace WebCore

@@ -133,7 +133,6 @@ template<> struct EnumTraitsForPersistence<WebCore::FetchOptions::Destination> {
         WebCore::FetchOptions::Destination::EmptyString,
         WebCore::FetchOptions::Destination::Audio,
         WebCore::FetchOptions::Destination::Audioworklet,
-        WebCore::FetchOptions::Destination::CompressionDictionary,
         WebCore::FetchOptions::Destination::Document,
         WebCore::FetchOptions::Destination::Embed,
         WebCore::FetchOptions::Destination::Environmentmap,
@@ -155,7 +154,8 @@ template<> struct EnumTraitsForPersistence<WebCore::FetchOptions::Destination> {
         WebCore::FetchOptions::Destination::Video,
         WebCore::FetchOptions::Destination::Worker,
         WebCore::FetchOptions::Destination::Xslt,
-        WebCore::FetchOptions::Destination::Text
+        WebCore::FetchOptions::Destination::Text,
+        WebCore::FetchOptions::Destination::CompressionDictionary
     >;
 };
 

@@ -2140,7 +2140,6 @@ enum class WebCore::FetchOptionsDestination : uint8_t {
     EmptyString,
     Audio,
     Audioworklet,
-    CompressionDictionary,
     Document,
     Embed,
     Environmentmap,
@@ -2162,7 +2161,8 @@ enum class WebCore::FetchOptionsDestination : uint8_t {
     Video,
     Worker,
     Xslt,
-    Text
+    Text,
+    CompressionDictionary
 };
 
 enum class WebCore::FetchOptionsMode : uint8_t {
