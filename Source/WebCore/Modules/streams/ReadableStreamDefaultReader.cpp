@@ -121,7 +121,7 @@ void ReadableStreamDefaultReader::read(JSDOMGlobalObject& globalObject, Ref<Read
             Ref vm = globalObject->vm();
             auto scope = DECLARE_THROW_SCOPE(vm);
             auto resultOrException = convertDictionary<ReadableStreamReadResult>(*globalObject, promiseResult);
-            ASSERT(!resultOrException.hasException(scope));
+            ASSERT(!resultOrException.hasException(scope) || vm->hasPendingTerminationException());
             if (resultOrException.hasException(scope)) {
                 TRY_CLEAR_EXCEPTION(scope, void());
                 return;

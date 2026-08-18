@@ -1233,7 +1233,6 @@ webkit.org/b/321411 [ arm64 Release ] imported/w3c/web-platform-tests/IndexedDB/
 webkit.org/b/317967 [ x86_64 ] fast/scrolling/scroll-animator-overlay-scrollbars-clicked.html [ Pass Failure ]
 webkit.org/b/317969 [ x86_64 Release ] imported/w3c/web-platform-tests/webrtc/RTCDataChannel-send-close-blob-negotiated.window.html [ Pass Failure ]
 webkit.org/b/317970 [ x86_64 ] imported/w3c/web-platform-tests/css/css-anchor-position/scroll-to-anchored-fixed-000.html [ ImageOnlyFailure Pass ]
-webkit.org/b/317972 [ x86_64 ] streams/pipeTo-unhandled-promise.html [ Crash Pass ]
 webkit.org/b/305514 [ x86_64 ] fast/images/imagebitmap-memory.html [ ImageOnlyFailure Pass Timeout ]
 webkit.org/b/317974 [ arm64 ] imported/w3c/web-platform-tests/largest-contentful-paint/cross-origin-image.sub.html [ Failure Pass ]
 webkit.org/b/317975 [ arm64 ] fast/dom/HTMLImageElement/sizes/image-sizes-js-innerhtml.html [ Failure Pass ]
