@@ -83,6 +83,26 @@ std::unique_ptr<CoordinatedPlatformLayerBuffer> CoordinatedPlatformLayerBufferVi
     return CoordinatedPlatformLayerBufferRGB::create(WTF::move(texture), m_flags, nullptr);
 }
 
+#if USE(GBM) || USE(GSTREAMER_GL)
+static std::pair<CoordinatedPlatformLayerBufferYUV::YuvToRgbColorSpace, CoordinatedPlatformLayerBufferYUV::TransferFunction> yuvColorSpaceFromVideoInfo(const GstVideoInfo& info)
+{
+    // Default to bt601. This is the same behaviour as GStreamer's glcolorconvert element.
+    auto yuvToRgbColorSpace = CoordinatedPlatformLayerBufferYUV::YuvToRgbColorSpace::Bt601;
+    auto transferFunction = CoordinatedPlatformLayerBufferYUV::TransferFunction::Bt709;
+    const auto& colorimetry = GST_VIDEO_INFO_COLORIMETRY(&info);
+    if (gst_video_colorimetry_matches(&colorimetry, GST_VIDEO_COLORIMETRY_BT709))
+        yuvToRgbColorSpace = CoordinatedPlatformLayerBufferYUV::YuvToRgbColorSpace::Bt709;
+    else if (gst_video_colorimetry_matches(&colorimetry, GST_VIDEO_COLORIMETRY_BT2020))
+        yuvToRgbColorSpace = CoordinatedPlatformLayerBufferYUV::YuvToRgbColorSpace::Bt2020;
+    else if (gst_video_colorimetry_matches(&colorimetry, GST_VIDEO_COLORIMETRY_BT2100_PQ)) {
+        yuvToRgbColorSpace = CoordinatedPlatformLayerBufferYUV::YuvToRgbColorSpace::Bt2020;
+        transferFunction = CoordinatedPlatformLayerBufferYUV::TransferFunction::Pq;
+    } else if (gst_video_colorimetry_matches(&colorimetry, GST_VIDEO_COLORIMETRY_SMPTE240M))
+        yuvToRgbColorSpace = CoordinatedPlatformLayerBufferYUV::YuvToRgbColorSpace::Smpte240M;
+    return { yuvToRgbColorSpace, transferFunction };
+}
+#endif
+
 std::unique_ptr<CoordinatedPlatformLayerBuffer> CoordinatedPlatformLayerBufferVideo::createBufferIfNeeded(bool gstGLEnabled)
 {
     const auto& sample = m_videoFrame->sample();
@@ -98,7 +118,13 @@ std::unique_ptr<CoordinatedPlatformLayerBuffer> CoordinatedPlatformLayerBufferVi
         // rendering.
         auto dmabufFormat = m_videoFrame->dmaBufFormat();
         RELEASE_ASSERT(dmabufFormat);
-        return CoordinatedPlatformLayerBufferExternalOES::create(GRefPtr(buffer), dmabufFormat->first, m_size, m_flags);
+        // The driver converts YUV to RGB while sampling, so it needs the frame colorimetry.
+        const auto& info = m_videoFrame->info();
+        auto yuvColorSpace = yuvColorSpaceFromVideoInfo(info).first;
+        auto sampleRange = GST_VIDEO_INFO_COLORIMETRY(&info).range == GST_VIDEO_COLOR_RANGE_0_255
+            ? CoordinatedPlatformLayerBufferExternalOES::SampleRange::Full
+            : CoordinatedPlatformLayerBufferExternalOES::SampleRange::Narrow;
+        return CoordinatedPlatformLayerBufferExternalOES::create(GRefPtr(buffer), dmabufFormat->first, yuvColorSpace, sampleRange, m_size, m_flags);
     }
 
 #if GST_CHECK_VERSION(1, 24, 0)
@@ -225,19 +251,7 @@ std::unique_ptr<CoordinatedPlatformLayerBuffer> CoordinatedPlatformLayerBufferVi
             yuvPlaneOffset[i] = m_mappedVideoFrame->componentPlaneOffset(i);
         }
 
-        // Default to bt601. This is the same behaviour as GStreamer's glcolorconvert element.
-        CoordinatedPlatformLayerBufferYUV::YuvToRgbColorSpace yuvToRgbColorSpace = CoordinatedPlatformLayerBufferYUV::YuvToRgbColorSpace::Bt601;
-        CoordinatedPlatformLayerBufferYUV::TransferFunction transferFunction = CoordinatedPlatformLayerBufferYUV::TransferFunction::Bt709;
-        if (gst_video_colorimetry_matches(&GST_VIDEO_INFO_COLORIMETRY(m_mappedVideoFrame->info()), GST_VIDEO_COLORIMETRY_BT709))
-            yuvToRgbColorSpace = CoordinatedPlatformLayerBufferYUV::YuvToRgbColorSpace::Bt709;
-        else if (gst_video_colorimetry_matches(&GST_VIDEO_INFO_COLORIMETRY(m_mappedVideoFrame->info()), GST_VIDEO_COLORIMETRY_BT2020))
-            yuvToRgbColorSpace = CoordinatedPlatformLayerBufferYUV::YuvToRgbColorSpace::Bt2020;
-        else if (gst_video_colorimetry_matches(&GST_VIDEO_INFO_COLORIMETRY(m_mappedVideoFrame->info()), GST_VIDEO_COLORIMETRY_BT2100_PQ)) {
-            yuvToRgbColorSpace = CoordinatedPlatformLayerBufferYUV::YuvToRgbColorSpace::Bt2020;
-            transferFunction = CoordinatedPlatformLayerBufferYUV::TransferFunction::Pq;
-        } else if (gst_video_colorimetry_matches(&GST_VIDEO_INFO_COLORIMETRY(m_mappedVideoFrame->info()), GST_VIDEO_COLORIMETRY_SMPTE240M))
-            yuvToRgbColorSpace = CoordinatedPlatformLayerBufferYUV::YuvToRgbColorSpace::Smpte240M;
-
+        auto [yuvToRgbColorSpace, transferFunction] = yuvColorSpaceFromVideoInfo(*m_mappedVideoFrame->info());
         return CoordinatedPlatformLayerBufferYUV::create(*format, numberOfPlanes, WTF::move(planes), WTF::move(yuvPlane), WTF::move(yuvPlaneOffset), yuvToRgbColorSpace, transferFunction, m_size, m_flags, nullptr);
     }
 
