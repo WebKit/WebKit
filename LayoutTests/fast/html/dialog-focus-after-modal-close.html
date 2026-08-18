@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Dialog contents are focusable after a modal dialog is closed and shown again</title>
+<link rel="help" href="https://html.spec.whatwg.org/multipage/interactive-elements.html#dialog-focusing-steps">
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+
+<input id="outside">
+<dialog id="dialog">
+  <button id="button">button</button>
+</dialog>
+
+<script>
+// After a modal dialog is closed, its cached computed style says display:none. show() must mark
+// that style invalid, otherwise resolveComputedStyle() treats the dialog as an unrendered subtree
+// and nothing inside it is focusable, so the dialog focusing steps have no candidate to focus.
+// showModal() gets the same invalidation from addToTopLayer(), which is why only show() was affected.
+test(t => {
+    t.add_cleanup(() => { if (dialog.open) dialog.close(); });
+    outside.focus();
+    dialog.showModal();
+    assert_equals(document.activeElement, button, 'showModal() should focus the button');
+    dialog.close();
+    assert_equals(document.activeElement, outside, 'close() should restore focus');
+
+    outside.focus();
+    dialog.show();
+    assert_equals(document.activeElement, button, 'show() after a modal cycle should focus the button');
+    dialog.close();
+}, 'show() runs the dialog focusing steps after a showModal()/close() cycle');
+
+test(t => {
+    t.add_cleanup(() => { if (dialog.open) dialog.close(); });
+    outside.focus();
+    dialog.showModal();
+    dialog.close();
+
+    // Focusability must also be correct for a direct focus() call, not just the focusing steps.
+    outside.focus();
+    dialog.show();
+    button.blur();
+    button.focus();
+    assert_equals(document.activeElement, button, 'the button should be focusable via focus()');
+    dialog.close();
+}, 'dialog contents are focusable after a showModal()/close() cycle');
+
+test(t => {
+    t.add_cleanup(() => { if (dialog.open) dialog.close(); });
+    // Two modal cycles, to confirm the state is cleaned up each time rather than once.
+    for (let i = 0; i < 2; ++i) {
+        outside.focus();
+        dialog.showModal();
+        assert_equals(document.activeElement, button, `showModal() should focus the button (cycle ${i})`);
+        dialog.close();
+    }
+}, 'repeated showModal()/close() cycles keep the dialog contents focusable');
+</script>

@@ -147,6 +147,13 @@ ExceptionOr<void> HTMLDialogElement::show()
 
     setAttributeWithoutSynchronization(openAttr, emptyAtom());
 
+    // The dialog's cached computed style still says display:none at this point. The focusing steps
+    // below determine focusability from it, and Element::resolveComputedStyle() treats a cached
+    // display:none ancestor as an unrendered subtree unless the ancestor is marked as having an
+    // invalid computed style, so nothing in the dialog would look focusable. showModal() gets this
+    // invalidation from addToTopLayer(). See rdar://185153996 for the underlying issue.
+    invalidateStyle();
+
     Ref document = this->document();
     m_previouslyFocusedElement = document->focusedElement();
 

@@ -1,5 +1,4 @@
 button 1 button 2
-hello world
 
 FAIL Focus should not be restored if the currently focused element is not inside the dialog. assert_equals: expected Element node <button id="b2">button 2</button> but got Element node <button id="b1">button 1</button>
 FAIL Focus restore should not occur when the focused element is in a shadowroot outside of the dialog. assert_equals: document.activeElement should point at the shadow host. expected Element node <div id="host">
@@ -8,5 +7,5 @@ FAIL Focus restore should not occur when the focused element is in a shadowroot 
 PASS Focus restore should occur when the focused element is in a shadowroot inside the dialog.
 PASS Focus restore should occur when the focused element is slotted into a dialog.
 PASS Focus restore should always occur for modal dialogs.
-FAIL Focus restore should work when the dialog itself is focused. assert_equals: The dialog should be focused after show() because it has no interactive descendants. expected Element node <dialog id="mydialog2" open="">hello world</dialog> but got Element node <button id="b1">button 1</button>
+PASS Focus restore should work when the dialog itself is focused.
 
