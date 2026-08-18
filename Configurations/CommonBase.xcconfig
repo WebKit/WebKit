@@ -27,6 +27,7 @@
 #include "SDKVariant.xcconfig"
 #include "WebKitProjectPaths.xcconfig"
 #include "SDKAdditions.xcconfig"
+#include "SecurityReleaseMacros.xcconfig"
 
 WK_ENABLE_SLOW_BUILD_VERIFICATION = $(WK_ENABLE_SLOW_BUILD_VERIFICATION_$(CONFIGURATION));
 WK_ENABLE_SLOW_BUILD_VERIFICATION_Production = YES;
