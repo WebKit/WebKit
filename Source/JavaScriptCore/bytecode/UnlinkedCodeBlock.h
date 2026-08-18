@@ -218,11 +218,6 @@ public:
     unsigned numberOfConstantIdentifierSets() const { return m_rareData ? m_rareData->m_constantIdentifierSets.size() : 0; }
     const FixedVector<IdentifierSet>& constantIdentifierSets() { ASSERT(m_rareData); return m_rareData->m_constantIdentifierSets; }
 
-    // Jumps
-    size_t numberOfJumpTargets() const { return m_jumpTargets.size(); }
-    unsigned jumpTarget(int index) const { return m_jumpTargets[index]; }
-    unsigned lastJumpTarget() const { return m_jumpTargets.last(); }
-
     UnlinkedHandlerInfo* NODELETE handlerForBytecodeIndex(BytecodeIndex, RequiredHandler = RequiredHandler::AnyHandler);
     UnlinkedHandlerInfo* NODELETE handlerForIndex(unsigned, RequiredHandler = RequiredHandler::AnyHandler);
 
@@ -426,7 +421,6 @@ private:
     OptionSet<CodeGenerationMode> m_codeGenerationMode;
     BaselineExecutionCounter m_llintExecuteCounter;
 
-    FixedVector<JSInstructionStream::Offset> m_jumpTargets;
     const Ref<UnlinkedMetadataTable> m_metadata;
     std::unique_ptr<JSInstructionStream> m_instructions;
     std::unique_ptr<BytecodeLivenessAnalysis> m_liveness;

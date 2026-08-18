@@ -53,6 +53,7 @@
 #include "MaxFrameExtentForSlowPathCall.h"
 #include "ModuleProgramCodeBlock.h"
 #include "PCToCodeOriginMap.h"
+#include "PreciseJumpTargets.h"
 #include "ProbeContext.h"
 #include "ProfilerDatabase.h"
 #include "ProgramCodeBlock.h"
@@ -105,6 +106,8 @@ RefPtr<BaselineJITCode> LOLJIT::compileAndLinkWithoutFinalizing(JITCompilationEf
         if (m_unlinkedCodeBlock->numberOfUnlinkedStringSwitchJumpTables())
             m_stringSwitchJumpTables = FixedVector<StringJumpTable>(m_unlinkedCodeBlock->numberOfUnlinkedStringSwitchJumpTables());
     }
+
+    computePreciseJumpTargets(m_unlinkedCodeBlock, m_jumpTargets);
 
     if (Options::dumpDisassembly() || Options::dumpBaselineDisassembly() || (m_vm->m_perBytecodeProfiler && Options::disassembleBaselineForProfiler())) [[unlikely]] {
         // FIXME: build a disassembler off of UnlinkedCodeBlock.

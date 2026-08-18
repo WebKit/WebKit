@@ -415,9 +415,6 @@ public:
     unsigned sourceOffset() const { return m_ownerExecutable->source().startOffset(); }
     unsigned firstLineColumnOffset() const { return m_ownerExecutable->startColumn(); }
 
-    size_t numberOfJumpTargets() const { return m_unlinkedCode->numberOfJumpTargets(); }
-    unsigned jumpTarget(int index) const { return m_unlinkedCode->jumpTarget(index); }
-
     String nameForRegister(VirtualRegister);
 
     static constexpr ptrdiff_t offsetOfArgumentValueProfiles() { return OBJECT_OFFSETOF(CodeBlock, m_argumentValueProfiles); }

@@ -2070,7 +2070,6 @@ private:
     CachedPtr<CachedCodeBlockRareData> m_rareData;
 
     CachedPtr<CachedInstructionStream> m_instructions;
-    CachedVector<JSInstructionStream::Offset> m_jumpTargets;
     CachedVector<CachedJSValue> m_constantRegisters;
     CachedVector<SourceCodeRepresentation> m_constantsSourceCodeRepresentation;
     CachedPtr<CachedExpressionInfo> m_expressionInfo;
@@ -2314,7 +2313,6 @@ ALWAYS_INLINE void CachedCodeBlock<CodeBlockType>::decode(Decoder& decoder, Unli
     m_constantsSourceCodeRepresentation.decode(decoder, codeBlock.m_constantsSourceCodeRepresentation);
     codeBlock.m_expressionInfo = m_expressionInfo->decode(decoder);
     m_outOfLineJumpTargets.decode(decoder, codeBlock.m_outOfLineJumpTargets);
-    m_jumpTargets.decode(decoder, codeBlock.m_jumpTargets);
     m_identifiers.decode(decoder, codeBlock.m_identifiers);
     m_functionDecls.decode(decoder, codeBlock.m_functionDecls, &codeBlock);
     m_functionExprs.decode(decoder, codeBlock.m_functionExprs, &codeBlock);
@@ -2493,7 +2491,6 @@ ALWAYS_INLINE void CachedCodeBlock<CodeBlockType>::encode(Encoder& encoder, cons
     m_constantRegisters.encode(encoder, codeBlock.m_constantRegisters);
     m_constantsSourceCodeRepresentation.encode(encoder, codeBlock.m_constantsSourceCodeRepresentation);
     m_expressionInfo.encode(encoder, codeBlock.m_expressionInfo.get());
-    m_jumpTargets.encode(encoder, codeBlock.m_jumpTargets);
     m_outOfLineJumpTargets.encode(encoder, codeBlock.m_outOfLineJumpTargets);
 
     m_identifiers.encode(encoder, codeBlock.m_identifiers);

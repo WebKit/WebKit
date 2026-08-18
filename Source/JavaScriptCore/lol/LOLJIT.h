@@ -302,7 +302,7 @@ private:
     void nextBytecodeIndexWithFlushForJumpTargetsIfNeeded(auto& allocator, bool shouldSetFastPathResumePoint)
     {
         auto next = BytecodeIndex(m_bytecodeIndex.offset() + m_currentInstruction->size());
-        if (m_currentJumpTargetIndex < m_unlinkedCodeBlock->numberOfJumpTargets() && next.offset() == m_unlinkedCodeBlock->jumpTarget(m_currentJumpTargetIndex)) {
+        if (m_currentJumpTargetIndex < m_jumpTargets.size() && next.offset() == m_jumpTargets[m_currentJumpTargetIndex]) {
             if (shouldSetFastPathResumePoint) {
                 // We need to set a resume point for slow paths to jump back to prior to flushing since the next instruction wouldn't have the flushes and we don't want to re-emit them in the slow path.
                 // It's generally ok if a resume point is already set before here, it should still be correct w.r.t. flushing.
@@ -456,6 +456,7 @@ private:
     Vector<RegisterSet> m_liveTempsForSlowPaths;
     Vector<JSValueRegs> m_slowPathOperandRegs;
     unsigned m_currentSlowPathOperandIndex;
+    Vector<JSInstructionStream::Offset, 32> m_jumpTargets;
     unsigned m_currentJumpTargetIndex;
 
     // This is laid out as [ locals, constants, headers, arguments ]

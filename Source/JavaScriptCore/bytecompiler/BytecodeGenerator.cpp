@@ -297,8 +297,6 @@ ParserError BytecodeGenerator::generate(unsigned& size)
                 : CompletionType::Normal;
             emitLoad(&completionTypeRegister, completionType);
         }
-        m_codeBlock->addJumpTarget(m_lastInstruction.offset());
-
 
         emitJump(tryData->target.get());
         tryData->target = WTF::move(realCatchTarget);
@@ -1460,7 +1458,6 @@ void BytecodeGenerator::emitEnter()
     if (Options::optimizeRecursiveTailCalls()) [[likely]] {
         // We must add the end of op_enter as a potential jump target, because the bytecode parser may decide to split its basic block
         // to have somewhere to jump to if there is a recursive tail-call that points to this function.
-        m_codeBlock->addJumpTarget(instructions().size());
         // This disables peephole optimizations when an instruction is a jump target
         disablePeepholeOptimization();
     }

@@ -113,7 +113,6 @@ void UnlinkedCodeBlock::visitChildrenImpl(JSCell* cell, Visitor& visitor)
         extraMemory += thisObject->m_rareData->sizeInBytes(locker);
     if (thisObject->m_expressionInfo)
         extraMemory += thisObject->m_expressionInfo->byteSize();
-    extraMemory += thisObject->m_jumpTargets.byteSize();
     extraMemory += thisObject->m_identifiers.byteSize();
     extraMemory += thisObject->m_constantRegisters.byteSize();
     extraMemory += thisObject->m_constantsSourceCodeRepresentation.byteSize();

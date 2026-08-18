@@ -30,7 +30,6 @@
 #include "ExpressionInfoInlines.h"
 #include "InstructionStream.h"
 #include "JSCJSValueInlines.h"
-#include "PreciseJumpTargets.h"
 #include "StrongInlines.h"
 #include "UnlinkedMetadataTableInlines.h"
 #include <wtf/TZoneMallocInlines.h>
@@ -67,7 +66,6 @@ void UnlinkedCodeBlockGenerator::finalize(std::unique_ptr<JSInstructionStream> i
         m_codeBlock->allocateSharedProfiles(m_numBinaryArithProfiles, m_numUnaryArithProfiles);
         m_codeBlock->m_metadata->finalize();
 
-        m_codeBlock->m_jumpTargets = WTF::move(m_jumpTargets);
         m_codeBlock->m_identifiers = WTF::move(m_identifiers);
         m_codeBlock->m_constantRegisters = WTF::move(m_constantRegisters);
         m_codeBlock->m_constantsSourceCodeRepresentation = WTF::move(m_constantsSourceCodeRepresentation);
@@ -114,7 +112,7 @@ UnlinkedHandlerInfo* UnlinkedCodeBlockGenerator::handlerForIndex(unsigned index,
     return UnlinkedHandlerInfo::handlerForIndex<UnlinkedHandlerInfo>(m_exceptionHandlers, index, requiredHandler);
 }
 
-void UnlinkedCodeBlockGenerator::applyModification(BytecodeRewriter& rewriter, JSInstructionStreamWriter& instructions)
+void UnlinkedCodeBlockGenerator::applyModification(BytecodeRewriter& rewriter)
 {
     // Before applying the changes, we adjust the jumps based on the original bytecode offset, the offset to the jump target, and
     // the insertion information.
@@ -148,10 +146,6 @@ void UnlinkedCodeBlockGenerator::applyModification(BytecodeRewriter& rewriter, J
 
     // Then, modify the unlinked instructions.
     rewriter.applyModification();
-
-    // And recompute the jump target based on the modified unlinked instructions.
-    m_jumpTargets.clear();
-    recomputePreciseJumpTargets(this, instructions, m_jumpTargets);
 }
 
 void UnlinkedCodeBlockGenerator::addOutOfLineJumpTarget(JSInstructionStream::Offset bytecodeOffset, int target)

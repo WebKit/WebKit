@@ -58,7 +58,7 @@ void BytecodeRewriter::execute()
         return lhs.index < rhs.index;
     });
 
-    m_codeBlock->applyModification(*this, m_writer);
+    m_codeBlock->applyModification(*this);
 }
 
 void BytecodeRewriter::adjustJumpTargetsInFragment(unsigned finalOffset, Insertion& insertion)

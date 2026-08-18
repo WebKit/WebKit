@@ -74,20 +74,7 @@ void BytecodeGeneratorBase<Traits>::reclaimFreeRegisters()
 template<typename Traits>
 void BytecodeGeneratorBase<Traits>::emitLabel(GenericLabel<Traits>& label)
 {
-    unsigned newLabelIndex = m_writer.position();
-    label.setLocation(*this, newLabelIndex);
-
-    if (m_codeBlock->numberOfJumpTargets()) {
-        unsigned lastLabelIndex = m_codeBlock->lastJumpTarget();
-        ASSERT(lastLabelIndex <= newLabelIndex);
-        if (newLabelIndex == lastLabelIndex) {
-            // Peephole optimizations have already been disabled by emitting the last label
-            return;
-        }
-    }
-
-    m_codeBlock->addJumpTarget(newLabelIndex);
-
+    label.setLocation(*this, m_writer.position());
     m_lastOpcodeID = Traits::opcodeForDisablingOptimizations;
 }
 
