@@ -383,7 +383,7 @@ bool CalleeGroup::installOptimizedCallee(Locker<Lock>& locker, const ModuleInfor
         // that weak reference is fine, it does not own the callee. Overwriting a strong one would drop
         // the last reference to code that may still be executing.
         RELEASE_ASSERT(!bbqCallee.isStrong() || !bbqCallee.get());
-        bbqCallee = Ref { uncheckedDowncast<BBQCallee>(callee.get()) };
+        bbqCallee.set(Ref { uncheckedDowncast<BBQCallee>(callee.get()) });
     }
 #endif
 

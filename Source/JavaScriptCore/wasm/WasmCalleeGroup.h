@@ -89,7 +89,7 @@ public:
                 return strong;
             }
 
-            BBQCalleeReference& operator=(Ref<BBQCallee>&& strongReference) WTF_REQUIRES_LOCK(m_bbqCalleeLock)
+            void set(Ref<BBQCallee>&& strongReference) WTF_REQUIRES_LOCK(m_bbqCalleeLock)
             {
                 if (m_isWeak) {
                     std::destroy_at(&m_pointer.weak);
@@ -97,7 +97,6 @@ public:
                     m_isWeak = false;
                 }
                 m_pointer.strong = WTF::move(strongReference);
-                return *this;
             }
 
         private:
