@@ -322,6 +322,7 @@
 #include <wtf/URL.h>
 #include <wtf/URLHash.h>
 #include <wtf/URLParser.h>
+#include <wtf/WeakListHashSet.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringView.h>
@@ -513,6 +514,20 @@ using namespace WebCore;
 static constexpr Seconds resetRecentCrashCountDelay = 30_s;
 static constexpr unsigned maximumWebProcessRelaunchAttempts = 1;
 static constexpr Seconds tryCloseTimeoutDelay = 50_ms;
+
+static WeakListHashSet<WebPageProxy>& NODELETE leastRecentlyVisiblePages()
+{
+    ASSERT(RunLoop::isMain());
+    static NeverDestroyed<WeakListHashSet<WebPageProxy>> pages;
+    return pages;
+}
+
+static WeakListHashSet<WebPageProxy>& NODELETE leastRecentlyHiddenPages()
+{
+    ASSERT(RunLoop::isMain());
+    static NeverDestroyed<WeakListHashSet<WebPageProxy>> pages;
+    return pages;
+}
 
 static bool shouldUseEnhancedSecurityHeuristics(const Ref<WebPreferences>& preferences)
 {
@@ -1068,6 +1083,8 @@ WebPageProxy::WebPageProxy(PageClient& pageClient, WebProcessProxy& process, Ref
 
     if (shouldUseEnhancedSecurityHeuristics(protect(preferences())))
         internals().enhancedSecurityTracker.initializeWithWebsiteDataStore(protect(websiteDataStore()));
+
+    leastRecentlyHiddenPages().add(*this);
 }
 
 WebPageProxy::~WebPageProxy()
@@ -1902,6 +1919,9 @@ void WebPageProxy::close()
 
     m_isClosed = true;
 
+    leastRecentlyVisiblePages().remove(*this);
+    leastRecentlyHiddenPages().remove(*this);
+
 #if ENABLE(WEB_AUTHN) && ENABLE(WEBDRIVER_BIDI)
     abortPendingDigitalCredentialWaitHandlers("Page closed."_s);
 #endif
@@ -2344,7 +2364,6 @@ void WebPageProxy::loadRequestWithNavigationShared(Ref<WebProcessProxy>&& proces
             protectedThis->preconnectTo(ResourceRequest { loadParameters.request });
 
         navigation->setIsLoadedWithNavigationShared(true);
-        protectedProcess->markProcessAsRecentlyUsed();
         if (!protectedProcess->isLaunching() || !url.protocolIsFile())
             protectedProcess->send(Messages::WebPage::LoadRequest(WTF::move(loadParameters)), webPageID);
         else
@@ -2430,7 +2449,6 @@ RefPtr<API::Navigation> WebPageProxy::loadFile(const String& fileURLString, cons
 
         protectedThis->prepareToLoadWebPage(*protectedProcess, loadParameters);
 
-        protectedProcess->markProcessAsRecentlyUsed();
         if (protectedProcess->isLaunching())
             protectedThis->send(Messages::WebPage::LoadRequestWaitingForProcessLaunch(WTF::move(loadParameters), resourceDirectoryURL, protectedThis->identifier(), checkAssumedReadAccessToResourceURL));
         else
@@ -2504,7 +2522,6 @@ void WebPageProxy::loadDataWithNavigationShared(Ref<WebProcessProxy>&& process, 
     loadParameters.isServiceWorkerLoad = isServiceWorkerPage();
     prepareToLoadWebPage(process, loadParameters);
 
-    process->markProcessAsRecentlyUsed();
     process->assumeReadAccessToBaseURL(*this, baseURL, [weakProcess = WeakPtr { process }, webPageID, loadParameters = WTF::move(loadParameters)] () mutable {
         RefPtr protectedProcess = weakProcess.get();
         if (!protectedProcess)
@@ -2574,7 +2591,6 @@ RefPtr<API::Navigation> WebPageProxy::loadSimulatedRequest(WebCore::ResourceRequ
     Ref process = m_legacyMainFrameProcess;
     prepareToLoadWebPage(process, loadParameters);
 
-    process->markProcessAsRecentlyUsed();
     process->assumeReadAccessToBaseURL(*this, baseURL, [weakProcess = WeakPtr { process }, loadParameters = WTF::move(loadParameters), simulatedResponse = WTF::move(simulatedResponse), webPageID = m_webPageID] () mutable {
         RefPtr protectedProcess = weakProcess.get();
         if (!protectedProcess)
@@ -2644,7 +2660,6 @@ void WebPageProxy::loadAlternateHTML(Ref<WebCore::DataSegment>&& htmlData, const
         unreachableURL,
         preventProcessShutdownScope = process->shutdownPreventingScope()
     ] () mutable {
-        process->markProcessAsRecentlyUsed();
         process->assumeReadAccessToBaseURLs(*this, { baseURL.string(), unreachableURL.string() }, [weakThis = WeakPtr { *this }, weakProcess = WeakPtr { process }, baseURL, unreachableURL, loadParameters = WTF::move(loadParameters)] () mutable {
             RefPtr protectedThis = weakThis.get();
             if (!protectedThis)
@@ -2723,7 +2738,6 @@ RefPtr<API::Navigation> WebPageProxy::reload(OptionSet<WebCore::ReloadOption> op
         navigation->setUserContentExtensionsEnabled(false);
 
     Ref process = m_legacyMainFrameProcess;
-    process->markProcessAsRecentlyUsed();
     if (!url.isEmpty()) {
         // We may not have an extension yet if back/forward list was reinstated after a WebProcess crash or a browser relaunch
         maybeInitializeSandboxExtensionHandle(protect(legacyMainFrameProcess()), URL { url }, currentResourceDirectoryURL(), true, [weakThis = WeakPtr { *this }, process = WTF::move(process), options = WTF::move(options), sandboxExtensionHandle = WTF::move(sandboxExtensionHandle), navigation](std::optional<SandboxExtension::Handle>&& sandboxExtension) mutable {
@@ -2898,7 +2912,6 @@ RefPtr<API::Navigation> WebPageProxy::goToBackForwardItem(WebBackForwardListFram
             WEBPAGEPROXY_RELEASE_LOG_ERROR(ProcessSwapping, "goToBackForwardItem: walk dispatched no GoToBackForwardItem messages — back/forward action will be silently dropped");
         navigation->setBackForwardTraversalWasDispatched(anySent);
     } else {
-        process->markProcessAsRecentlyUsed();
         process->send(Messages::WebPage::GoToBackForwardItem({ navigation->navigationID(), copyFrameStateForBackForwardNavigation(frameItem), frameLoadType, ShouldTreatAsContinuingLoad::No, std::nullopt, m_lastNavigationWasAppInitiated, shouldRestoreFromBackForwardCache, std::nullopt, WTF::move(publicSuffix), { }, WebCore::ProcessSwapDisposition::None }), webPageIDInProcess(process));
         process->startResponsivenessTimer();
         navigation->setBackForwardTraversalWasDispatched(true);
@@ -2975,7 +2988,6 @@ bool WebPageProxy::sendGoToBackForwardItemForFrame(WebBackForwardListFrameItem& 
 
     Ref process = processForTheFrameItem(targetFrame);
     auto suffixCopy = publicSuffix;
-    process->markProcessAsRecentlyUsed();
     process->send(Messages::WebPage::GoToBackForwardItem({
         navigationID,
         targetFrame.copyFrameState(),
@@ -3705,6 +3717,9 @@ void WebPageProxy::dispatchActivityStateChange()
             protect(legacyMainFrameProcess())->stopResponsivenessTimer();
         }
     }
+
+    if ((changed & ActivityState::IsFocused) && isViewFocused())
+        leastRecentlyVisiblePages().moveToLastIfPresent(*this);
 
     if (changed & ActivityState::IsInWindow) {
         if (isInWindow())
@@ -9501,10 +9516,41 @@ void WebPageProxy::didChangeMainDocument(IPC::Connection& connection, FrameIdent
 #endif
 }
 
+RefPtr<WebPageProxy> WebPageProxy::leastRecentlyVisiblePageToUnload()
+{
+    enum class AvoidDisruptingVisiblePages : bool { No, Yes };
+    auto findVictim = [](WeakListHashSet<WebPageProxy>& pages, AvoidDisruptingVisiblePages avoidDisruptingVisiblePages) -> RefPtr<WebPageProxy> {
+        for (Ref page : pages) {
+            if (page->isClosed())
+                continue;
+            if (page->siteIsolatedProcess().state() == WebProcessProxy::State::Terminated)
+                continue;
+            if (page->internals().activityState.containsAny({ ActivityState::IsAudible, ActivityState::IsCapturingMedia }))
+                continue;
+            if (avoidDisruptingVisiblePages == AvoidDisruptingVisiblePages::Yes
+                && (protect(page->browsingContextGroup())->hasVisiblePage() || protect(page->siteIsolatedProcess())->hasVisiblePage()))
+                continue;
+            return page.ptr();
+        }
+        return nullptr;
+    };
+
+    // Try to avoid killing a non-visible page whose process a visible page depends on. A visible
+    // page might be synchronously scripting the non-visible page in the same browsing context
+    // group, or the process we would kill might also be serving a frame of a visible page (e.g.
+    // when Site Isolation is off, or when the process was reused across browsing context groups).
+    if (RefPtr page = findVictim(leastRecentlyHiddenPages(), AvoidDisruptingVisiblePages::Yes))
+        return page;
+    if (RefPtr page = findVictim(leastRecentlyHiddenPages(), AvoidDisruptingVisiblePages::No))
+        return page;
+    return findVictim(leastRecentlyVisiblePages(), AvoidDisruptingVisiblePages::No);
+}
+
 void WebPageProxy::viewIsBecomingVisible()
 {
     WEBPAGEPROXY_RELEASE_LOG(ViewState, "viewIsBecomingVisible:");
-    protect(legacyMainFrameProcess())->markProcessAsRecentlyUsed();
+    leastRecentlyHiddenPages().remove(*this);
+    leastRecentlyVisiblePages().add(*this);
     if (RefPtr drawingAreaProxy = drawingArea())
         drawingAreaProxy->viewIsBecomingVisible();
 #if ENABLE(MEDIA_STREAM)
@@ -9519,6 +9565,8 @@ void WebPageProxy::viewIsBecomingVisible()
 void WebPageProxy::viewIsBecomingInvisible()
 {
     WEBPAGEPROXY_RELEASE_LOG(ViewState, "viewIsBecomingInvisible:");
+    leastRecentlyVisiblePages().remove(*this);
+    leastRecentlyHiddenPages().add(*this);
     protect(legacyMainFrameProcess())->pageIsBecomingInvisible(m_webPageID);
     if (RefPtr drawingAreaProxy = drawingArea())
         drawingAreaProxy->viewIsBecomingInvisible();

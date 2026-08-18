@@ -258,8 +258,13 @@ public:
     
     PAL::SessionID NODELETE sessionID() const;
 
+    static unsigned runningProcessCount();
+    static bool isNearingProcessCountLimit();
     static bool hasReachedProcessCountLimit();
     static void NODELETE setProcessCountLimit(unsigned);
+
+    static void reclaimProcessesIfNeeded();
+    static void scheduleReclaimProcessesIfNeeded();
 
     static RefPtr<WebProcessProxy> processForIdentifier(WebCore::ProcessIdentifier);
     static Ref<WebProcessProxy> fromConnection(const IPC::Connection&);
@@ -291,6 +296,10 @@ public:
     unsigned pageCount() const { return m_pageMap.size(); }
     unsigned provisionalPageCount() const;
     unsigned visiblePageCount() const { return m_visiblePageCounter.value(); }
+
+    // Unlike visiblePageCount(), this also accounts for pages this process only serves a subframe
+    // or a provisional load for.
+    bool hasVisiblePage() const;
 
     Vector<WeakPtr<RemotePageProxy>> remotePages() const;
     unsigned remotePageCount() const;
@@ -541,8 +550,6 @@ public:
     static bool shouldEnableRemoteInspector();
 #endif
 
-    void markProcessAsRecentlyUsed();
-
 #if PLATFORM(COCOA) || PLATFORM(GTK) || PLATFORM(WPE)
     void platformSuspendProcess();
     void platformResumeProcess();
@@ -731,6 +738,9 @@ private:
 
     void processDidTerminateOrFailedToLaunch(ProcessTerminationReason);
 
+    void didStartRunningProcess();
+    void didStopRunningProcess();
+
     // IPC::Connection::Client
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
     void didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) override;
@@ -862,6 +872,7 @@ private:
     std::pair<LoadedWebArchive, HashSet<WebCore::RegistrableDomain>> m_allowedFirstPartiesForCookies { LoadedWebArchive::No, { } };
     bool m_isInProcessCache { false };
     bool m_isShuttingDown { false };
+    bool m_isRunningProcess { false };
 
     IsolatedProcessType m_isolatedProcessType { IsolatedProcessType::Unspecified };
     std::optional<WebCore::Site> m_mainFrameSite;

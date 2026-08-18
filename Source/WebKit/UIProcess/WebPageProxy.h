@@ -1870,6 +1870,9 @@ public:
 
     WebProcessProxy& ensureRunningProcess();
     WebProcessProxy& siteIsolatedProcess() const { return m_legacyMainFrameProcess; }
+
+    static RefPtr<WebPageProxy> leastRecentlyVisiblePageToUnload();
+
     // rdar://168057355
     WebProcessProxy* WTF_NONNULL legacyMainFrameProcessPtrForSwift() const SWIFT_NAME(legacyMainFrameProcess()) { return &legacyMainFrameProcess(); }
     WebProcessProxy& legacyMainFrameProcess() const SWIFT_NAME(__legacyMainFrameProcessUnsafe()) { return m_legacyMainFrameProcess; }

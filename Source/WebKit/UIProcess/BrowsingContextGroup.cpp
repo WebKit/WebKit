@@ -318,6 +318,15 @@ bool BrowsingContextGroup::hasMultiplePages() const
     return m_pages.computeSize() > 1;
 }
 
+bool BrowsingContextGroup::hasVisiblePage() const
+{
+    for (Ref page : m_pages) {
+        if (page->isViewVisible())
+            return true;
+    }
+    return false;
+}
+
 void BrowsingContextGroup::forEachRemotePage(const WebPageProxy& page, Function<void(RemotePageProxy&)>&& function)
 {
     auto it = m_remotePages.find(page);

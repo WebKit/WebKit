@@ -120,6 +120,11 @@ bool WebProcessCache::canCacheProcess(WebProcessProxy& process) const
         return false;
     }
 
+    if (WebProcessProxy::isNearingProcessCountLimit()) {
+        WEBPROCESSCACHE_RELEASE_LOG("canCacheProcess: Not caching process because we are nearing the process count limit (running WebProcesses: %u)", process.processID(), WebProcessProxy::runningProcessCount());
+        return false;
+    }
+
     if (!process.websiteDataStore()) {
         WEBPROCESSCACHE_RELEASE_LOG("canCacheProcess: Not caching process because this session has been destroyed", process.processID());
         return false;

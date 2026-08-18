@@ -47,7 +47,6 @@ ProvisionalFrameProxy::ProvisionalFrameProxy(WebFrameProxy& frame, Ref<FrameProc
     , m_navigationID(navigationID)
 {
     Ref process = this->process();
-    process->markProcessAsRecentlyUsed();
     auto parameters = frame.provisionalFrameCreationParameters(std::nullopt, frame.layerHostingContextIdentifier(), commitTiming);
     process->send(Messages::WebFrame::CreateProvisionalFrame(parameters), frame.frameID());
 }

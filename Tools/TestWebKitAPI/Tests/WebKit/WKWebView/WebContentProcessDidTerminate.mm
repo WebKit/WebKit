@@ -418,15 +418,22 @@ TEST(WKNavigation, WebViewURLInProcessDidTerminate)
     TestWebKitAPI::Util::run(&done);
 }
 
+static constexpr unsigned maxProcessCount = 5;
+
 TEST(WKNavigation, WebProcessLimit)
 {
-    constexpr unsigned maxProcessCount = 10;
     [WKProcessPool _setWebProcessCountLimit:maxProcessCount];
 
+    __block RetainPtr<WKWebView> unloadedView;
     RetainPtr navigationDelegate = adoptNS([[TestNavigationDelegate alloc] init]);
     [navigationDelegate setDidFinishNavigation:^(WKWebView *, WKNavigation *) {
         finishedLoad = true;
     }];
+    [navigationDelegate setWebContentProcessDidTerminate:^(WKWebView *view, _WKProcessTerminationReason) {
+        unloadedView = view;
+    }];
+
+    // All of these pages are non-visible, so they are unloaded in creation order.
     auto createWebView = [&] {
         RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
         RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100) configuration:configuration.get()]);
@@ -437,49 +444,69 @@ TEST(WKNavigation, WebProcessLimit)
         return webView;
     };
 
-    [navigationDelegate setWebContentProcessDidTerminate:^(WKWebView *, _WKProcessTerminationReason) {
-        didCrash = true;
-    }];
-
     Vector<RetainPtr<WKWebView>> views;
-    for (unsigned i = 0; i < maxProcessCount; ++i)
+    while (!unloadedView && views.size() < maxProcessCount)
         views.append(createWebView());
-    EXPECT_FALSE(didCrash);
-    for (auto& view : views)
-        EXPECT_NE([view _webProcessIdentifier], 0);
 
-    // We have now reached the WebProcess cap, let's try and launch a new one.
-    __block unsigned crashCount = 0;
-    [navigationDelegate setWebContentProcessDidTerminate:^(WKWebView * view, _WKProcessTerminationReason) {
-        EXPECT_EQ(views[0], view);
-        ++crashCount;
-    }];
+    EXPECT_NOT_NULL(unloadedView.get());
+    EXPECT_EQ(unloadedView.get(), views[0].get());
+    EXPECT_EQ([views[0] _webProcessIdentifier], 0);
+    for (size_t i = 1; i < views.size(); ++i)
+        EXPECT_NE([views[i] _webProcessIdentifier], 0);
+
+    unloadedView = nil;
     views.append(createWebView());
 
-    EXPECT_EQ(crashCount, 1U);
-    for (unsigned i = 0; i < views.size(); ++i) {
-        if (!i)
-            EXPECT_EQ([views[i] _webProcessIdentifier], 0);
-        else
-            EXPECT_NE([views[i] _webProcessIdentifier], 0);
-    }
+    EXPECT_NOT_NULL(unloadedView.get());
+    EXPECT_EQ(unloadedView.get(), views[1].get());
+    EXPECT_EQ([views[1] _webProcessIdentifier], 0);
+    for (size_t i = 2; i < views.size(); ++i)
+        EXPECT_NE([views[i] _webProcessIdentifier], 0);
 
-    crashCount = 0;
-    [navigationDelegate setWebContentProcessDidTerminate:^(WKWebView * view, _WKProcessTerminationReason) {
-        EXPECT_EQ(views[1], view);
-        ++crashCount;
+    [WKProcessPool _setWebProcessCountLimit:0];
+}
+
+TEST(WKNavigation, WebProcessLimitPrefersUnloadingNonVisiblePages)
+{
+    [WKProcessPool _setWebProcessCountLimit:maxProcessCount];
+
+    __block RetainPtr<WKWebView> unloadedView;
+    RetainPtr navigationDelegate = adoptNS([[TestNavigationDelegate alloc] init]);
+    [navigationDelegate setDidFinishNavigation:^(WKWebView *, WKNavigation *) {
+        finishedLoad = true;
     }];
-    views.append(createWebView());
+    [navigationDelegate setWebContentProcessDidTerminate:^(WKWebView *view, _WKProcessTerminationReason) {
+        unloadedView = view;
+    }];
 
-    EXPECT_EQ(crashCount, 1U);
-    for (unsigned i = 0; i < views.size(); ++i) {
-        if (i < 2)
-            EXPECT_EQ([views[i] _webProcessIdentifier], 0);
-        else
-            EXPECT_NE([views[i] _webProcessIdentifier], 0);
-    }
+    auto loadInView = [&](WKWebView *webView) {
+        [webView setNavigationDelegate:navigationDelegate.get()];
+        finishedLoad = false;
+        [webView loadTestPageNamed:@"simple"];
+        TestWebKitAPI::Util::run(&finishedLoad);
+    };
 
-    [WKProcessPool _setWebProcessCountLimit:400];
+    RetainPtr visibleView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100) configuration:adoptNS([[WKWebViewConfiguration alloc] init]).get() addToWindow:YES]);
+    loadInView(visibleView.get());
+    auto visibleViewProcessIdentifier = [visibleView _webProcessIdentifier];
+    EXPECT_NE(visibleViewProcessIdentifier, 0);
+
+    Vector<RetainPtr<WKWebView>> nonVisibleViews;
+    auto createNonVisibleWebView = [&] {
+        RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100) configuration:adoptNS([[WKWebViewConfiguration alloc] init]).get()]);
+        loadInView(webView.get());
+        return webView;
+    };
+
+    while (!unloadedView && nonVisibleViews.size() < maxProcessCount)
+        nonVisibleViews.append(createNonVisibleWebView());
+
+    EXPECT_NOT_NULL(unloadedView.get());
+    EXPECT_EQ(unloadedView.get(), nonVisibleViews[0].get());
+    EXPECT_NE(unloadedView.get(), visibleView.get());
+    EXPECT_EQ([visibleView _webProcessIdentifier], visibleViewProcessIdentifier);
+
+    [WKProcessPool _setWebProcessCountLimit:0];
 }
 
 TEST(WKNavigation, MultipleProcessCrashesRelatedWebViews)

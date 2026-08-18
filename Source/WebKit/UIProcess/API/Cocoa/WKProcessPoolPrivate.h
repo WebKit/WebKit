@@ -109,6 +109,7 @@ WK_CLASS_AVAILABLE(macos(14.5), ios(17.5), visionos(1.2))
 + (NSURL *)_websiteDataURLForContainerWithURL:(NSURL *)containerURL;
 + (NSURL *)_websiteDataURLForContainerWithURL:(NSURL *)containerURL bundleIdentifierIfNotInContainer:(NSString *)bundleIdentifier;
 
+// A limit of 0 implies resetting back to the default process count limit.
 + (void)_setWebProcessCountLimit:(unsigned)limit WK_API_AVAILABLE(macos(13.0), ios(16.0));
 
 - (void)_warmInitialProcess WK_API_AVAILABLE(macos(10.12), ios(10.0));

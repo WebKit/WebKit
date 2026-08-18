@@ -253,6 +253,7 @@ public:
     void setProcessesShouldSuspend(bool);
 #endif
 
+    void reclaimIdleProcesses();
     void handleMemoryPressureWarning(Critical);
 
 #if PLATFORM(COCOA)
@@ -626,6 +627,7 @@ public:
     Seconds pltResourceDelayInterval() const { return m_pltResourceDelayInterval; }
 
     bool hasUsedSiteIsolation() const { return m_hasUsedSiteIsolation; }
+    static bool hasAnyProcessPoolUsedSiteIsolation();
 
     unsigned prewarmedProcessCountLimit() const;
 

@@ -115,6 +115,7 @@
 #include <wtf/ProcessPrivilege.h>
 #include <wtf/RunLoop.h>
 #include <wtf/Scope.h>
+#include <wtf/SetForScope.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/URL.h>
@@ -174,25 +175,64 @@
 namespace WebKit {
 using namespace WebCore;
 
-static unsigned s_maxProcessCount { 400 };
+static constexpr unsigned defaultMaxProcessCount { 400 };
+static constexpr unsigned defaultMaxProcessCountWithSiteIsolation { 512 };
 
-static WeakListHashSet<WebProcessProxy>& NODELETE liveProcessesLRU()
+// Stop prewarming processes if we're near the process limit.
+static constexpr unsigned processCountLimitHeadroom { 8 };
+
+static unsigned s_maxProcessCountOverride;
+static unsigned s_runningProcessCount;
+
+static unsigned maxProcessCount()
 {
-    ASSERT(RunLoop::isMain());
-    static NeverDestroyed<WeakListHashSet<WebProcessProxy>> processes;
-    return processes;
+    if (s_maxProcessCountOverride)
+        return s_maxProcessCountOverride;
+
+    if (WebProcessPool::hasAnyProcessPoolUsedSiteIsolation())
+        return defaultMaxProcessCountWithSiteIsolation;
+
+    return defaultMaxProcessCount;
 }
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(WebProcessProxy);
 
 void WebProcessProxy::setProcessCountLimit(unsigned limit)
 {
-    s_maxProcessCount = limit;
+    s_maxProcessCountOverride = limit;
+}
+
+unsigned WebProcessProxy::runningProcessCount()
+{
+    return s_runningProcessCount;
+}
+
+bool WebProcessProxy::isNearingProcessCountLimit()
+{
+    return s_runningProcessCount + processCountLimitHeadroom >= maxProcessCount();
 }
 
 bool WebProcessProxy::hasReachedProcessCountLimit()
 {
-    return liveProcessesLRU().computeSize() >= s_maxProcessCount;
+    return s_runningProcessCount >= maxProcessCount();
+}
+
+void WebProcessProxy::didStartRunningProcess()
+{
+    ASSERT(RunLoop::isMain());
+    ASSERT(!m_isRunningProcess);
+    m_isRunningProcess = true;
+    ++s_runningProcessCount;
+}
+
+void WebProcessProxy::didStopRunningProcess()
+{
+    ASSERT(RunLoop::isMain());
+    if (!m_isRunningProcess)
+        return;
+    m_isRunningProcess = false;
+    ASSERT(s_runningProcessCount > 0);
+    --s_runningProcessCount;
 }
 
 static bool isMainThreadOrCheckDisabled()
@@ -272,6 +312,22 @@ unsigned WebProcessProxy::provisionalPageCount() const
     return m_provisionalPages.computeSize();
 }
 
+bool WebProcessProxy::hasVisiblePage() const
+{
+    for (Ref page : pages()) {
+        if (page->isViewVisible())
+            return true;
+    }
+
+    for (Ref provisionalPage : m_provisionalPages) {
+        RefPtr page = provisionalPage->page();
+        if (page && page->isViewVisible())
+            return true;
+    }
+
+    return false;
+}
+
 Vector<WeakPtr<RemotePageProxy>> WebProcessProxy::remotePages() const
 {
     return WTF::copyToVector(m_remotePages);
@@ -302,17 +358,52 @@ Ref<WebProcessProxy> WebProcessProxy::create(WebProcessPool& processPool, Websit
 {
     Ref proxy = adoptRef(*new WebProcessProxy(processPool, websiteDataStore, isPrewarmed, crossOriginMode, lockdownMode, enhancedSecurity));
     if (shouldLaunchProcess == ShouldLaunchProcess::Yes) {
-        if (liveProcessesLRU().computeSize() >= s_maxProcessCount) {
-            for (auto& processPool : WebProcessPool::allProcessPools())
-                processPool->webProcessCache().clear();
-            if (liveProcessesLRU().computeSize() >= s_maxProcessCount)
-                protect(liveProcessesLRU().first())->requestTermination(ProcessTerminationReason::ExceededProcessCountLimit);
-        }
-        ASSERT(liveProcessesLRU().computeSize() < s_maxProcessCount);
-        liveProcessesLRU().add(proxy.get());
+        proxy->didStartRunningProcess();
         proxy->connect();
+        scheduleReclaimProcessesIfNeeded();
     }
     return proxy;
+}
+
+void WebProcessProxy::scheduleReclaimProcessesIfNeeded()
+{
+    if (!hasReachedProcessCountLimit())
+        return;
+
+    // Reclaiming unloads a page, which calls out to the client and can start another load.
+    // Reclaim on the next run loop to avoid reentrancy issues.
+    RunLoop::mainSingleton().dispatch([] {
+        reclaimProcessesIfNeeded();
+    });
+}
+
+void WebProcessProxy::reclaimProcessesIfNeeded()
+{
+    static bool isReclaiming = false;
+    if (isReclaiming)
+        return;
+    SetForScope reclaiming(isReclaiming, true);
+
+    if (!hasReachedProcessCountLimit())
+        return;
+
+    for (auto& processPool : WebProcessPool::allProcessPools())
+        processPool->reclaimIdleProcesses();
+
+    if (!hasReachedProcessCountLimit()) {
+        RELEASE_LOG(Process, "WebProcessProxy::reclaimProcessesIfNeeded: reaped idle processes due to exceeding the process count limit of %u (new count: %u)", maxProcessCount(), s_runningProcessCount);
+        return;
+    }
+
+    RefPtr page = WebPageProxy::leastRecentlyVisiblePageToUnload();
+    if (!page) {
+        RELEASE_LOG_ERROR(Process, "WebProcessProxy::reclaimProcessesIfNeeded: exceeding the process count limit of %u because no page could be unloaded (running WebProcesses: %u)", maxProcessCount(), s_runningProcessCount);
+        return;
+    }
+
+    Ref process = page->siteIsolatedProcess();
+    RELEASE_LOG(Process, "WebProcessProxy::reclaimProcessesIfNeeded: unloading page %" PRIu64 " (PID=%i) to stay under the process count limit of %u", page->identifier().toUInt64(), process->processID(), maxProcessCount());
+    process->requestTermination(ProcessTerminationReason::ExceededProcessCountLimit);
 }
 
 Ref<WebProcessProxy> WebProcessProxy::createForRemoteWorkers(RemoteWorkerType workerType, WebProcessPool& processPool, Site&& site, WebsiteDataStore& websiteDataStore, CrossOriginMode crossOriginMode, LockdownMode lockdownMode, EnhancedSecurity enhancedSecurity)
@@ -321,7 +412,9 @@ Ref<WebProcessProxy> WebProcessProxy::createForRemoteWorkers(RemoteWorkerType wo
     proxy->m_committedSites.add(site);
     proxy->m_site = WTF::move(site);
     proxy->enableRemoteWorkers(workerType, processPool.userContentControllerForRemoteWorkers());
+    proxy->didStartRunningProcess();
     proxy->connect();
+    scheduleReclaimProcessesIfNeeded();
     return proxy;
 }
 
@@ -379,7 +472,7 @@ WebProcessProxy::~WebProcessProxy()
     // (e.g. m_pagesPendingClose). Cancel them now, while our state is intact.
     replyToPendingMessages();
 
-    liveProcessesLRU().remove(*this);
+    didStopRunningProcess();
 
     for (auto identifier : m_speechRecognitionServerMap.keys())
         removeMessageReceiver(Messages::SpeechRecognitionServer::messageReceiverName(), identifier);
@@ -551,7 +644,6 @@ void WebProcessProxy::addProvisionalPageProxy(ProvisionalPageProxy& provisionalP
 
     ASSERT(!m_isInProcessCache);
     ASSERT(!m_provisionalPages.contains(provisionalPage));
-    markProcessAsRecentlyUsed();
     m_provisionalPages.add(provisionalPage);
     initializePreferencesForGPUAndNetworkProcesses(*protect(provisionalPage.page()));
     updateRegistrationWithDataStore();
@@ -579,7 +671,6 @@ void WebProcessProxy::addRemotePageProxy(RemotePageProxy& remotePage)
     ASSERT(!m_remotePages.contains(remotePage));
     m_remotePages.add(remotePage);
     updateRegistrationWithDataStore();
-    markProcessAsRecentlyUsed();
     initializePreferencesForGPUAndNetworkProcesses(*protect(remotePage.page()));
 }
 
@@ -759,6 +850,8 @@ void WebProcessProxy::shutDown()
 
     m_isShuttingDown = true;
 
+    didStopRunningProcess();
+
     if (m_isInProcessCache) {
         processPool().webProcessCache().removeProcess(*this, WebProcessCache::ShouldShutDownProcess::No);
         ASSERT(!m_isInProcessCache);
@@ -916,7 +1009,6 @@ void WebProcessProxy::addExistingWebPage(WebPageProxy& webPage, BeginsUsingDataS
     if (webPage.preferences().backgroundWebContentRunningBoardThrottlingEnabled())
         setRunningBoardThrottlingEnabled();
 #endif
-    markProcessAsRecentlyUsed();
     m_pageMap.set(webPage.identifier(), webPage);
     globalPageMap().set(webPage.identifier(), webPage);
 
@@ -1478,8 +1570,6 @@ void WebProcessProxy::processDidTerminateOrFailedToLaunch(ProcessTerminationReas
     // to be deleted before we can finish our work.
     Ref protectedThis { *this };
 
-    liveProcessesLRU().remove(*this);
-
     auto pages = mainPages();
 
     Vector<Ref<ProvisionalPageProxy>> provisionalPages;
@@ -1611,6 +1701,7 @@ bool WebProcessProxy::isAllowedAttachmentFilePath(const String& filePath) const
 void WebProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connection::Identifier&& connectionIdentifier)
 {
     WEBPROCESSPROXY_RELEASE_LOG(Process, "didFinishLaunching:");
+    ASSERT(m_isRunningProcess);
     RELEASE_ASSERT(isMainThreadOrCheckDisabled());
 
     Ref protectedThis { *this };
@@ -2880,7 +2971,6 @@ void WebProcessProxy::establishRemoteWorkerContext(RemoteWorkerType workerType, 
 {
     updateSharedPreferences(store);
     WEBPROCESSPROXY_RELEASE_LOG(Loading, "establishRemoteWorkerContext: Started (workerType=%" PUBLIC_LOG_STRING ")", workerType == RemoteWorkerType::ServiceWorker ? "service" : "shared");
-    markProcessAsRecentlyUsed();
     auto& remoteWorkerInformation = workerType == RemoteWorkerType::ServiceWorker ? m_serviceWorkerInformation : m_sharedWorkerInformation;
     sendWithAsyncReply(Messages::WebProcess::EstablishRemoteWorkerContextConnectionToNetworkProcess { workerType, processPool().defaultPageGroup().pageGroupID(), remoteWorkerInformation->remoteWorkerPageProxyID, remoteWorkerInformation->remoteWorkerPageID, store, site, serviceWorkerPageIdentifier, remoteWorkerInformation->initializationData, workerCrossOriginEmbedderPolicy }, [weakThis = WeakPtr { *this }, workerType, completionHandler = WTF::move(completionHandler)]() mutable {
 #if RELEASE_LOG_DISABLED
@@ -3057,11 +3147,6 @@ void WebProcessProxy::enableRemoteWorkers(RemoteWorkerType workerType, const Web
     updateBackgroundResponsivenessTimer();
 
     updateRemoteWorkerProcessAssertion(workerType);
-}
-
-void WebProcessProxy::markProcessAsRecentlyUsed()
-{
-    liveProcessesLRU().moveToLastIfPresent(*this);
 }
 
 #if !USE(GLIB)

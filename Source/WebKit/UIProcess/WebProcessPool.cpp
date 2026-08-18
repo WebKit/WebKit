@@ -191,6 +191,8 @@ constexpr Seconds resetModelProcessCrashCountDelay { 30_s };
 constexpr unsigned maximumModelProcessRelaunchAttemptsBeforeKillingWebProcesses { 2 };
 #endif
 
+static bool s_hasAnyProcessPoolUsedSiteIsolation;
+
 Ref<WebProcessPool> WebProcessPool::create(API::ProcessPoolConfiguration& configuration)
 {
     InitializeWebKit2();
@@ -1119,8 +1121,8 @@ void WebProcessPool::prewarmProcess()
     if (m_prewarmedProcesses.computeSize() >= prewarmedProcessCountLimit())
         return;
 
-    if (WebProcessProxy::hasReachedProcessCountLimit()) {
-        WEBPROCESSPOOL_RELEASE_LOG(PerformanceLogging, "prewarmProcess: Not prewarming a WebProcess due to reaching process count limit");
+    if (WebProcessProxy::isNearingProcessCountLimit()) {
+        WEBPROCESSPOOL_RELEASE_LOG(PerformanceLogging, "prewarmProcess: Not prewarming a WebProcess due to nearing process count limit (running WebProcesses: %u)", WebProcessProxy::runningProcessCount());
         return;
     }
 
@@ -1512,7 +1514,7 @@ void WebProcessPool::didReachGoodTimeToPrewarm()
         return;
 
     if (MemoryPressureHandler::singleton().isUnderMemoryPressure()) {
-        WEBPROCESSPOOL_RELEASE_LOG(PerformanceLogging, "prewarmProcess: Not prewarming a WebProcess due to memory pressure");
+        WEBPROCESSPOOL_RELEASE_LOG(PerformanceLogging, "didReachGoodTimeToPrewarm: Not prewarming a WebProcess due to memory pressure");
         return;
     }
 
@@ -1531,10 +1533,8 @@ WebProcessPool::Statistics& WebProcessPool::statistics()
     return statistics;
 }
 
-void WebProcessPool::handleMemoryPressureWarning(Critical)
+void WebProcessPool::reclaimIdleProcesses()
 {
-    WEBPROCESSPOOL_RELEASE_LOG(PerformanceLogging, "handleMemoryPressureWarning:");
-
     // Clear back/forward cache first as processes removed from the back/forward cache will likely
     // be added to the WebProcess cache.
     m_backForwardCache->clear();
@@ -1546,6 +1546,13 @@ void WebProcessPool::handleMemoryPressureWarning(Critical)
     }
 
     ASSERT(m_prewarmedProcesses.isEmptyIgnoringNullReferences());
+}
+
+void WebProcessPool::handleMemoryPressureWarning(Critical)
+{
+    WEBPROCESSPOOL_RELEASE_LOG(PerformanceLogging, "handleMemoryPressureWarning:");
+
+    reclaimIdleProcesses();
 
     for (Ref process : m_processes)
         process->clearSandboxExtensions();
@@ -2153,6 +2160,11 @@ void WebProcessPool::removeProcessFromOriginCacheSet(WebProcessProxy& process)
     });
 }
 
+bool WebProcessPool::hasAnyProcessPoolUsedSiteIsolation()
+{
+    return s_hasAnyProcessPoolUsedSiteIsolation;
+}
+
 unsigned WebProcessPool::prewarmedProcessCountLimit() const
 {
 #if PLATFORM(COCOA)
@@ -2177,6 +2189,7 @@ void WebProcessPool::processForNavigation(WebPageProxy& page, WebFrameProxy& fra
     bool siteIsolationEnabled = protect(page.preferences())->siteIsolationEnabled();
     if (siteIsolationEnabled && !m_hasUsedSiteIsolation) {
         m_hasUsedSiteIsolation = true;
+        s_hasAnyProcessPoolUsedSiteIsolation = true;
         m_webProcessCache->updateCapacity(*this);
     }
 

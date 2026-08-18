@@ -12817,6 +12817,105 @@ TEST(SiteIsolation, ColorSchemePreferenceInheritedByCrossSiteIframe)
     EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:check inFrame:childFrame.get()], "true");
 }
 
+static bool hasProcessExited(pid_t pid)
+{
+    return kill(pid, 0) == -1 && errno == ESRCH;
+}
+
+TEST(SiteIsolation, ProcessLimitUnloadsAllProcessesOfLeastRecentlyVisiblePage)
+{
+    // Each view loads a page in to two processes.
+    constexpr unsigned maxProcessCount = 10;
+    unsigned maxViewsToCreate = maxProcessCount / 2;
+
+    [WKProcessPool _setWebProcessCountLimit:maxProcessCount];
+
+    HTTPServer::ResponseMap responses;
+    responses.add("/subframe"_s, HTTPResponse("<body>subframe</body>"_s));
+    for (unsigned i = 0; i < maxViewsToCreate; ++i)
+        responses.add(makeString("/mainframe"_s, i), HTTPResponse(makeString("<iframe src='https://frame"_s, i, ".com/subframe'></iframe>"_s)));
+    HTTPServer server(WTF::move(responses), HTTPServer::Protocol::HttpsProxy);
+
+    auto loadCrossSitePage = [&](TestWKWebView *webView, TestNavigationDelegate *navigationDelegate, unsigned index) {
+        [webView loadRequest:[NSURLRequest requestWithURL:adoptNS([[NSURL alloc] initWithString:[NSString stringWithFormat:@"https://main%u.com/mainframe%u", index, index]]).get()]];
+        [navigationDelegate waitForDidFinishNavigation];
+        RetainPtr childFrameHost = [NSString stringWithFormat:@"frame%u.com", index];
+        EXPECT_TRUE(Util::waitFor([&] {
+            return [[webView firstChildFrame].securityOrigin.host isEqualToString:childFrameHost.get()];
+        }));
+    };
+
+    struct PageProcesses {
+        pid_t mainFrame { 0 };
+        pid_t remoteFrame { 0 };
+    };
+    auto processesForPage = [](TestWKWebView *webView) {
+        PageProcesses processes { [webView _webProcessIdentifier], [webView firstChildFrame]._processIdentifier };
+        EXPECT_NE(processes.mainFrame, 0);
+        EXPECT_NE(processes.remoteFrame, 0);
+        EXPECT_NE(processes.mainFrame, processes.remoteFrame);
+        return processes;
+    };
+
+    // mainFrameOnlyPolicyViewAndDelegate() puts the view in a window, so this is visible.
+    auto [visibleWebView, visibleNavigationDelegate] = mainFrameOnlyPolicyViewAndDelegate(server, ^(WKWebpagePreferences *) { });
+    loadCrossSitePage(visibleWebView.get(), visibleNavigationDelegate.get(), 0);
+    auto visibleProcesses = processesForPage(visibleWebView.get());
+
+    __block RetainPtr<WKWebView> unloadedView;
+    auto recordUnloadedView = ^(WKWebView *view, _WKProcessTerminationReason) {
+        unloadedView = view;
+    };
+    [visibleNavigationDelegate setWebContentProcessDidTerminate:recordUnloadedView];
+
+    RetainPtr nonVisibleNavigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [nonVisibleNavigationDelegate allowAnyTLSCertificate];
+    [nonVisibleNavigationDelegate setWebContentProcessDidTerminate:recordUnloadedView];
+    nonVisibleNavigationDelegate.get().decidePolicyForNavigationActionWithPreferences = ^(WKNavigationAction *, WKWebpagePreferences *preferences, void (^completionHandler)(WKNavigationActionPolicy, WKWebpagePreferences *)) {
+        completionHandler(WKNavigationActionPolicyAllow, preferences);
+    };
+
+    RetainPtr nonVisibleConfiguration = server.httpsProxyConfiguration();
+    enableSiteIsolation(nonVisibleConfiguration.get());
+
+    Vector<RetainPtr<TestWKWebView>> nonVisibleViews;
+    Vector<PageProcesses> nonVisibleProcesses;
+    while (!unloadedView && nonVisibleViews.size() + 1 < maxViewsToCreate) {
+        RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:nonVisibleConfiguration.get() addToWindow:NO]);
+        webView.get().navigationDelegate = nonVisibleNavigationDelegate.get();
+        loadCrossSitePage(webView.get(), nonVisibleNavigationDelegate.get(), nonVisibleViews.size() + 1);
+        nonVisibleProcesses.append(processesForPage(webView.get()));
+        nonVisibleViews.append(WTF::move(webView));
+    }
+
+    // The least recently visible page was the one unloaded, not the visible one. All of its
+    // processes should be dead.
+    EXPECT_NOT_NULL(unloadedView.get());
+    EXPECT_EQ(unloadedView.get(), nonVisibleViews[0].get());
+    EXPECT_EQ([nonVisibleViews[0] _webProcessIdentifier], 0);
+    EXPECT_TRUE(Util::waitFor([&] {
+        return hasProcessExited(nonVisibleProcesses[0].mainFrame);
+    }));
+    EXPECT_TRUE(Util::waitFor([&] {
+        return hasProcessExited(nonVisibleProcesses[0].remoteFrame);
+    }));
+
+    // The visible page should still be running.
+    EXPECT_EQ([visibleWebView _webProcessIdentifier], visibleProcesses.mainFrame);
+    EXPECT_EQ([visibleWebView firstChildFrame]._processIdentifier, visibleProcesses.remoteFrame);
+    EXPECT_FALSE(hasProcessExited(visibleProcesses.mainFrame));
+    EXPECT_FALSE(hasProcessExited(visibleProcesses.remoteFrame));
+
+    // Every page newer than the victim kept both of its processes too.
+    for (size_t i = 1; i < nonVisibleViews.size(); ++i) {
+        EXPECT_EQ([nonVisibleViews[i] _webProcessIdentifier], nonVisibleProcesses[i].mainFrame);
+        EXPECT_FALSE(hasProcessExited(nonVisibleProcesses[i].mainFrame));
+        EXPECT_FALSE(hasProcessExited(nonVisibleProcesses[i].remoteFrame));
+    }
+
+    [WKProcessPool _setWebProcessCountLimit:0];
+}
+
 TEST(SiteIsolation, RestoredPageIsRenderedAfterCrossSiteBFCacheRoundTrip)
 {
     HTTPServer server({
