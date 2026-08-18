@@ -26,6 +26,7 @@
 #include "config.h"
 #include "CookieJar.h"
 
+#include "CacheValidation.h"
 #include "Cookie.h"
 #include "CookieRequestHeaderFieldProxy.h"
 #include "CookieStoreGetOptions.h"
@@ -172,6 +173,15 @@ std::pair<String, SecureCookiesAccessed> CookieJar::cookieRequestHeaderFieldValu
 
     ASSERT_NOT_REACHED();
     return { };
+}
+
+std::optional<SHA1::Digest> CookieJar::cookieRequestHeaderFieldValueDigest(const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, IncludeSecureCookies includeSecureCookies) const
+{
+    if (CheckedPtr session = m_storageSessionProvider->storageSession())
+        return computeCookieHeaderDigestForVary(session->cookieRequestHeaderFieldValue(firstParty, sameSiteInfo, url, std::nullopt, std::nullopt, includeSecureCookies, ApplyTrackingPrevention::Yes, ShouldRelaxThirdPartyCookieBlocking::No, IsKnownCrossSiteTracker::No).first);
+
+    ASSERT_NOT_REACHED();
+    return std::nullopt;
 }
 
 String CookieJar::cookieRequestHeaderFieldValue(Document& document, const URL& url) const

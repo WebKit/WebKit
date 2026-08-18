@@ -1075,6 +1075,7 @@ def class_template_headers(template_string):
         'Markable': {'headers': ['<wtf/Markable.h>'], 'argument_coder_headers': ['"ArgumentCoders.h"']},
         'OptionSet': {'headers': ['<wtf/OptionSet.h>'], 'argument_coder_headers': ['"ArgumentCoders.h"']},
         'Vector': {'headers': ['<wtf/Vector.h>'], 'argument_coder_headers': ['"ArgumentCoders.h"']},
+        'std::array': {'headers': ['<array>'], 'argument_coder_headers': ['"ArgumentCoders.h"']},
         'std::optional': {'headers': ['<optional>'], 'argument_coder_headers': ['"ArgumentCoders.h"']},
         'std::pair': {'headers': ['<utility>'], 'argument_coder_headers': ['"ArgumentCoders.h"']},
         'std::span': {'headers': ['<span>'], 'argument_coder_headers': ['"ArgumentCoders.h"']},

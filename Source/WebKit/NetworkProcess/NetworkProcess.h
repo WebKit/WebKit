@@ -55,6 +55,7 @@
 #include <memory>
 #include <wtf/CheckedRef.h>
 #include <wtf/CrossThreadTask.h>
+#include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/Function.h>
 #include <wtf/HashSet.h>
 #include <wtf/Lock.h>
@@ -474,6 +475,9 @@ public:
     AllowCookieAccess allowsFirstPartyForCookies(WebCore::ProcessIdentifier, const RegistrableDomain&);
     void addAllowedFirstPartyForCookies(WebCore::ProcessIdentifier, WebCore::RegistrableDomain&&, LoadedWebArchive, CompletionHandler<void()>&&);
 
+    // Per launch, so a reconnecting web process keeps its Vary entries.
+    uint64_t cookieHeaderDigestSalt() const { return m_cookieHeaderDigestSalt; }
+
     void requestBackgroundFetchPermission(PAL::SessionID, const WebCore::ClientOrigin&, CompletionHandler<void(bool)>&&);
     void setInspectionForServiceWorkersAllowed(PAL::SessionID, bool);
     void setStorageSiteValidationEnabled(PAL::SessionID, bool);
@@ -647,6 +651,7 @@ private:
     HashMap<PAL::SessionID, std::unique_ptr<WebCore::NetworkStorageSession>> m_networkStorageSessions;
     HashMap<WebCore::ProcessIdentifier, std::pair<LoadedWebArchive, HashSet<WebCore::RegistrableDomain>>> m_allowedFirstPartiesForCookies;
     HashMap<WebCore::ProcessIdentifier, HashSet<String>> m_pendingAllowedFilePathsByProcess;
+    const uint64_t m_cookieHeaderDigestSalt { cryptographicallyRandomNumber<uint64_t>() };
 
 #if PLATFORM(COCOA)
     void platformInitializeNetworkProcessCocoa(const NetworkProcessCreationParameters&);

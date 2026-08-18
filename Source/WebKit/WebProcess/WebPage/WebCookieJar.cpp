@@ -279,19 +279,21 @@ void WebCookieJar::remoteCookiesEnabled(const Document& document, CompletionHand
     WebProcess::singleton().ensureNetworkProcessConnection().connection().sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::CookiesEnabled(document.firstPartyForCookies(), cookieURL, frameID, page->identifier(), page->webPageProxyIdentifier()), WTF::move(completionHandler));
 }
 
-std::pair<String, WebCore::SecureCookiesAccessed> WebCookieJar::cookieRequestHeaderFieldValue(const URL& firstParty, const WebCore::SameSiteInfo& sameSiteInfo, const URL& url, std::optional<FrameIdentifier> frameID, std::optional<PageIdentifier> pageID, WebCore::IncludeSecureCookies includeSecureCookies) const
+std::pair<String, WebCore::SecureCookiesAccessed> WebCookieJar::cookieRequestHeaderFieldValue(const URL&, const WebCore::SameSiteInfo&, const URL&, std::optional<FrameIdentifier>, std::optional<PageIdentifier>, WebCore::IncludeSecureCookies) const
 {
-    RefPtr webFrame = frameID ? WebProcess::singleton().webFrame(*frameID) : nullptr;
-    if (shouldBlockCookies(webFrame.get(), firstParty, url) == BlockCookies::Yes)
-        return { };
+    // Unreachable in WebKit2: only Web Inspector's WebSocket handshake reporting calls this, and both channels discard it.
+    ASSERT_NOT_REACHED();
+    return { };
+}
 
-    auto webPageProxyID = webFrame && webFrame->page() ? std::make_optional(webFrame->page()->webPageProxyIdentifier()) : std::nullopt;
-    auto sendResult = WebProcess::singleton().ensureNetworkProcessConnection().connection().sendSync(Messages::NetworkConnectionToWebProcess::CookieRequestHeaderFieldValue(firstParty, sameSiteInfo, url, frameID, pageID, includeSecureCookies, webPageProxyID), 0);
+std::optional<SHA1::Digest> WebCookieJar::cookieRequestHeaderFieldValueDigest(const URL& firstParty, const WebCore::SameSiteInfo& sameSiteInfo, const URL& url, WebCore::IncludeSecureCookies includeSecureCookies) const
+{
+    auto sendResult = WebProcess::singleton().ensureNetworkProcessConnection().connection().sendSync(Messages::NetworkConnectionToWebProcess::CookieRequestHeaderFieldValueDigest(firstParty, sameSiteInfo, url, includeSecureCookies), 0);
     if (!sendResult.succeeded())
-        return { };
+        return std::nullopt;
 
-    auto [cookieString, secureCookiesAccessed] = sendResult.takeReply();
-    return { cookieString, secureCookiesAccessed ? WebCore::SecureCookiesAccessed::Yes : WebCore::SecureCookiesAccessed::No };
+    auto [digest] = sendResult.takeReply();
+    return digest;
 }
 
 bool WebCookieJar::getRawCookies(WebCore::Document& document, const URL& url, Vector<WebCore::Cookie>& rawCookies) const

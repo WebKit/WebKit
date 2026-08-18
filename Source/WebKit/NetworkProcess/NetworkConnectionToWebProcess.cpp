@@ -75,6 +75,7 @@
 #include "WebSharedWorkerServerToContextConnection.h"
 #include "WebSharedWorkerServerToContextConnectionMessages.h"
 #include "WebsiteDataStoreParameters.h"
+#include <WebCore/CacheValidation.h>
 #include <WebCore/ClientOrigin.h>
 #include <WebCore/Cookie.h>
 #include <WebCore/CookieJar.h>
@@ -935,18 +936,19 @@ void NetworkConnectionToWebProcess::cookiesEnabled(const URL& firstParty, const 
     completionHandler(networkStorageSession->cookiesEnabled(firstParty, url, frameID, pageID, m_networkProcess->shouldRelaxThirdPartyCookieBlockingForPage(webPageProxyID), NetworkSession::isResourceFromKnownCrossSiteTracker(firstParty, url)));
 }
 
-void NetworkConnectionToWebProcess::cookieRequestHeaderFieldValue(const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, std::optional<FrameIdentifier> frameID, std::optional<PageIdentifier> pageID, IncludeSecureCookies includeSecureCookies, std::optional<WebPageProxyIdentifier> webPageProxyID, CompletionHandler<void(String, bool)>&& completionHandler)
+// The only caller never passed frame, page or web page proxy identifiers, so relaxed third-party cookie blocking never applied here.
+void NetworkConnectionToWebProcess::cookieRequestHeaderFieldValueDigest(const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, IncludeSecureCookies includeSecureCookies, CompletionHandler<void(std::optional<SHA1::Digest>)>&& completionHandler)
 {
-    auto access = validateCookieAccess("cookieRequestHeaderFieldValue"_s, firstParty, url, &sameSiteInfo);
-    MESSAGE_CHECK_COMPLETION(access != CookieAccess::Terminate, completionHandler({ }, false));
+    auto access = validateCookieAccess("cookieRequestHeaderFieldValueDigest"_s, firstParty, url, &sameSiteInfo);
+    MESSAGE_CHECK_COMPLETION(access != CookieAccess::Terminate, completionHandler(std::nullopt));
     if (access != CookieAccess::Allow)
-        return completionHandler({ }, false);
+        return completionHandler(std::nullopt);
 
     CheckedPtr networkStorageSession = storageSession();
     if (!networkStorageSession)
-        return completionHandler({ }, false);
-    auto result = networkStorageSession->cookieRequestHeaderFieldValue(firstParty, sameSiteInfo, url, frameID, pageID, includeSecureCookies, ApplyTrackingPrevention::Yes, m_networkProcess->shouldRelaxThirdPartyCookieBlockingForPage(webPageProxyID), NetworkSession::isResourceFromKnownCrossSiteTracker(firstParty, url));
-    completionHandler(WTF::move(result.first), result.second);
+        return completionHandler(std::nullopt);
+    auto result = networkStorageSession->cookieRequestHeaderFieldValue(firstParty, sameSiteInfo, url, std::nullopt, std::nullopt, includeSecureCookies, ApplyTrackingPrevention::Yes, WebCore::ShouldRelaxThirdPartyCookieBlocking::No, NetworkSession::isResourceFromKnownCrossSiteTracker(firstParty, url));
+    completionHandler(WebCore::computeCookieHeaderDigestForVary(result.first, m_networkProcess->cookieHeaderDigestSalt()));
 }
 
 void NetworkConnectionToWebProcess::getRawCookies(const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, std::optional<FrameIdentifier> frameID, std::optional<PageIdentifier> pageID, std::optional<WebPageProxyIdentifier> webPageProxyID, CompletionHandler<void(Vector<WebCore::Cookie>&&)>&& completionHandler)

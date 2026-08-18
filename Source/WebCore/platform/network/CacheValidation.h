@@ -25,8 +25,10 @@
 
 #pragma once
 
+#include <optional>
 #include <wtf/Forward.h>
 #include <wtf/Markable.h>
+#include <wtf/SHA1.h>
 #include <wtf/WallTime.h>
 
 namespace WebCore {
@@ -80,6 +82,10 @@ struct CacheControlDirectives {
     bool isPublic : 1;
 };
 WEBCORE_EXPORT CacheControlDirectives parseCacheControlDirectives(const HTTPHeaderMap&);
+
+// The salt stops a process holding a digest from recovering the header by hashing candidates.
+// std::nullopt means there was no Cookie header, which is distinct from an empty one.
+WEBCORE_EXPORT std::optional<SHA1::Digest> computeCookieHeaderDigestForVary(const String& cookieHeader, uint64_t salt = 0);
 
 WEBCORE_EXPORT Vector<std::pair<String, String>> collectVaryingRequestHeaders(NetworkStorageSession*, const ResourceRequest&, const ResourceResponse&);
 WEBCORE_EXPORT Vector<std::pair<String, String>> collectVaryingRequestHeaders(const CookieJar*, const ResourceRequest&, const ResourceResponse&);

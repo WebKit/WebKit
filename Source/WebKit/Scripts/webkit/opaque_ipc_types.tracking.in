@@ -289,6 +289,10 @@
     [Legacy] StructureParam WebCore::WrappedCryptoKey.wrappedKEK
 }
 
+[SafeWrapper] std::optional<std::array<uint8_t, 20>> {
+    [NotSentFromWebContent] MessageParamReply NetworkConnectionToWebProcess.CookieRequestHeaderFieldValueDigest digest
+}
+
 [UnsafeWrapper] FixedVector<uint8_t> {
     [Legacy] StructureParam WTF::MachSendRightAnnotated.data
 }

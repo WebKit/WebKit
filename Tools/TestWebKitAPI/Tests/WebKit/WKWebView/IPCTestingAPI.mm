@@ -476,7 +476,7 @@ TEST(IPCTestingAPI, InvalidURLsDeleteCookie)
     EXPECT_STREQ([alertMessage UTF8String], "[]");
 }
 
-TEST(IPCTestingAPI, EmptyFirstPartyForCookiesCookieRequestHeaderFieldValue)
+TEST(IPCTestingAPI, EmptyFirstPartyForCookiesCookieRequestHeaderFieldValueDigest)
 {
     RetainPtr webView = createWebViewWithIPCTestingAPI();
     RetainPtr delegate = adoptNS([[IPCTestingAPIDelegate alloc] init]);
@@ -486,29 +486,25 @@ TEST(IPCTestingAPI, EmptyFirstPartyForCookiesCookieRequestHeaderFieldValue)
     auto sendMessage = @"const connection = IPC.connectionForProcessTarget('Networking');"
         "const result = connection.sendSyncMessage("
         "    0,"
-        "    IPC.messages.NetworkConnectionToWebProcess_CookieRequestHeaderFieldValue.name,"
+        "    IPC.messages.NetworkConnectionToWebProcess_CookieRequestHeaderFieldValueDigest.name,"
         "    1000,"
         "    ["
         "        {type: 'String', value: null},"
         "        {type: 'uint8_t', value: 1},"
         "        {type: 'uint8_t', value: 1},"
         "        {type: 'uint8_t', value: 1},"
-        "        {type: 'String', value: location.href},"
+        "        {type: 'URL', value: location.href},"
         "        {type: 'uint8_t', value: 1},"
-        "        {type: 'FrameID', value: IPC.frameID},"
-        "        {type: 'uint8_t', value: 1},"
-        "        {type: 'uint64_t', value: IPC.pageID},"
-        "        {type: 'uint8_t', value: 1},"
-        "        {type: 'uint64_t', value: IPC.webPageProxyID},"
         "    ]"
         ");";
     [webView evaluateJavaScript:sendMessage completionHandler:nil];
     while (![webView objectByEvaluatingJavaScript:@"result"])
         TestWebKitAPI::Util::spinRunLoop();
-    EXPECT_STREQ([[webView stringByEvaluatingJavaScript:@"result.arguments[0].value"] UTF8String], "<null>");
+    // std::nullopt decodes to undefined.
+    EXPECT_STREQ([[webView stringByEvaluatingJavaScript:@"typeof result.arguments[0]"] UTF8String], "undefined");
 }
 
-TEST(IPCTestingAPI, InvalidSameSiteInfoCookieRequestHeaderFieldValue)
+TEST(IPCTestingAPI, InvalidSameSiteInfoCookieRequestHeaderFieldValueDigest)
 {
     RetainPtr webView = createWebViewWithIPCTestingAPI();
     [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html><script>document.cookie='a=b';</script>" baseURL:[NSURL URLWithString:@"https://webkit.org/"]];
@@ -516,26 +512,22 @@ TEST(IPCTestingAPI, InvalidSameSiteInfoCookieRequestHeaderFieldValue)
     auto sendMessage = @"const connection = IPC.connectionForProcessTarget('Networking');"
         "const result = connection.sendSyncMessage("
         "    0,"
-        "    IPC.messages.NetworkConnectionToWebProcess_CookieRequestHeaderFieldValue.name,"
+        "    IPC.messages.NetworkConnectionToWebProcess_CookieRequestHeaderFieldValueDigest.name,"
         "    1000,"
         "    ["
-        "        {type: 'String', value: location.href},"
+        "        {type: 'URL', value: location.href},"
         "        {type: 'uint8_t', value: 1},"
         "        {type: 'uint8_t', value: 1},"
         "        {type: 'uint8_t', value: 1},"
-        "        {type: 'String', value: 'https://webkit.org'},"
+        "        {type: 'URL', value: 'https://webkit.org'},"
         "        {type: 'uint8_t', value: 1},"
-        "        {type: 'FrameID', value: IPC.frameID},"
-        "        {type: 'uint8_t', value: 1},"
-        "        {type: 'uint64_t', value: IPC.pageID},"
-        "        {type: 'uint8_t', value: 1},"
-        "        {type: 'uint64_t', value: IPC.webPageProxyID},"
         "    ]"
         ");";
     [webView evaluateJavaScript:sendMessage completionHandler:nil];
     while (![webView objectByEvaluatingJavaScript:@"result"])
         TestWebKitAPI::Util::spinRunLoop();
-    EXPECT_STREQ([[webView stringByEvaluatingJavaScript:@"result.arguments[0].value"] UTF8String], "<null>");
+    // std::nullopt decodes to undefined.
+    EXPECT_STREQ([[webView stringByEvaluatingJavaScript:@"typeof result.arguments[0]"] UTF8String], "undefined");
 }
 
 TEST(IPCTestingAPI, DescribesArguments)
