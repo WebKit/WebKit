@@ -153,8 +153,9 @@ void WebAutomationSession::Debuggable::disconnect(Inspector::FrontendChannel& ch
 }
 #endif // ENABLE(REMOTE_INSPECTOR)
 
-WebAutomationSession::WebAutomationSession()
+WebAutomationSession::WebAutomationSession(bool siteIsolationEnabled)
     : m_client(makeUnique<API::AutomationSessionClient>())
+    , m_siteIsolationEnabled(siteIsolationEnabled)
     , m_frontendRouter(FrontendRouter::create())
     , m_backendDispatcher(BackendDispatcher::create(m_frontendRouter.copyRef()))
     , m_domainDispatcher(AutomationBackendDispatcher::create(m_backendDispatcher, this))
@@ -1766,6 +1767,23 @@ void WebAutomationSession::getComputedLabel(const Inspector::Protocol::Automatio
     page->sendWithAsyncReplyToProcessContainingFrameWithoutDestinationIdentifier(frameID, Messages::WebAutomationSessionProxy::GetComputedLabel(page->webPageIDInMainFrameProcess(), frameID, nodeHandle), WTF::move(completionHandler));
 }
 
+void WebAutomationSession::consumeUserActivation(const Inspector::Protocol::Automation::BrowsingContextHandle& browsingContextHandle, const Inspector::Protocol::Automation::FrameHandle& frameHandle, CommandCallback<bool>&& callback)
+{
+    auto page = webPageProxyForHandle(browsingContextHandle);
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!page, WindowNotFound);
+
+    bool frameNotFound = false;
+    auto frameID = webFrameIDForHandle(frameHandle, frameNotFound);
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(frameNotFound, WindowNotFound);
+
+    WTF::CompletionHandler<void(std::optional<String>&&, bool)> completionHandler = [callback = WTF::move(callback)](std::optional<String>&& optionalError, bool consumed) mutable {
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF_SET(optionalError);
+
+        callback(consumed);
+    };
+
+    page->sendWithAsyncReplyToProcessContainingFrameWithoutDestinationIdentifier(frameID, Messages::WebAutomationSessionProxy::ConsumeUserActivation(page->webPageIDInProcessForFrame(frameID), frameID), WTF::move(completionHandler));
+}
 void WebAutomationSession::selectOptionElement(const Inspector::Protocol::Automation::BrowsingContextHandle& browsingContextHandle, const Inspector::Protocol::Automation::FrameHandle& frameHandle, const Inspector::Protocol::Automation::NodeHandle& nodeHandle, CommandCallback<void>&& callback)
 {
     auto page = webPageProxyForHandle(browsingContextHandle);

@@ -5499,9 +5499,6 @@
     "imported/w3c/webdriver/tests/bidi/script/realm_destroyed/realm_destroyed.py": {
         "expected": { "all": { "status": ["PASS"]}},
         "subtests": {
-            "test_subscribe_to_one_context": {
-                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288067"}}
-            },
             "test_iframe[same_origin]": {
                 "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288067"}}
             },
@@ -5519,9 +5516,6 @@
             },
             "test_reload_context": {
                 "expected": { "all": { "status": ["TIMEOUT"], "bug": "webkit.org/b/282981"}}
-            },
-            "test_subscribe_after_sandbox_creation": {
-                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288067"}}
             }
         }
     },
