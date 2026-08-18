@@ -264,6 +264,15 @@ void GraphicsLayerCoordinated::setPreserves3D(bool preserves3D)
     setNeedsUpdateLayerTransform();
 }
 
+void GraphicsLayerCoordinated::setBackgroundColor(const Color& color)
+{
+    if (m_backgroundColor == color)
+        return;
+
+    GraphicsLayer::setBackgroundColor(color);
+    noteLayerPropertyChanged(Change::BackgroundColor, ScheduleFlush::Yes);
+}
+
 void GraphicsLayerCoordinated::setBackfaceVisibility(bool backfaceVisibility)
 {
     if (m_backfaceVisibility == backfaceVisibility)
@@ -1112,6 +1121,9 @@ void GraphicsLayerCoordinated::commitLayerChanges(CommitState& commitState, floa
 
     if (m_pendingChanges.contains(Change::BackfaceVisibility))
         m_platformLayer->setBackfaceVisibility(m_backfaceVisibility);
+
+    if (m_pendingChanges.contains(Change::BackgroundColor))
+        m_platformLayer->setBackgroundColor(m_backgroundColor);
 
     if (m_pendingChanges.contains(Change::Opacity))
         m_platformLayer->setOpacity(m_opacity);

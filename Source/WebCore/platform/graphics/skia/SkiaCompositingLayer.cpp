@@ -699,6 +699,13 @@ void SkiaCompositingLayer::paintContents(SkCanvas& canvas, PaintContext& context
 
     if (m_backingStore)
         context.imageSetBatch.addImageSet(canvas, *m_backingStore, transform, context.opacity, enableAntialias, context.damageRegionOrNull(), setupPaint());
+    else if (m_backgroundColor.isValid() && m_backgroundColor.isVisible()) {
+        ScopedFlush autoFlush(canvas, context.imageSetBatch, ScopedFlush::Mode::FlushBefore);
+        canvas.concat(transform);
+        SkPaint paint = setupPaint();
+        paint.setColor(SkColor(m_backgroundColor.colorWithAlphaMultipliedBy(context.opacity)));
+        drawRectRestricted(canvas, context.damageRegionOrNull(), SkRect(m_rect), paint);
+    }
 
     if (m_contentsSolidColor.isValid() && m_contentsSolidColor.isVisible()) {
         ScopedFlush autoFlush(canvas, context.imageSetBatch, ScopedFlush::Mode::FlushBefore);

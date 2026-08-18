@@ -148,6 +148,7 @@ public:
     bool masksToBounds() const WTF_REQUIRES_LOCK(m_lock);
     void setPreserves3D(bool) WTF_REQUIRES_LOCK(m_lock);
     void setBackfaceVisibility(bool) WTF_REQUIRES_LOCK(m_lock);
+    void setBackgroundColor(const Color&) WTF_REQUIRES_LOCK(m_lock);
     void setOpacity(float) WTF_REQUIRES_LOCK(m_lock);
     void setBlendMode(BlendMode) WTF_REQUIRES_LOCK(m_lock);
 
@@ -241,6 +242,7 @@ private:
         BackdropRect,
         BackdropRoot,
         BackfaceVisibility,
+        BackgroundColor,
         BackingStore,
         BlendMode,
         BoundsOrigin,
@@ -315,6 +317,7 @@ private:
     bool m_contentsRectClipsDescendants WTF_GUARDED_BY_LOCK(m_lock) { false };
     FloatRoundedRect m_contentsClippingRect WTF_GUARDED_BY_LOCK(m_lock);
     Path m_contentsClipShapePath WTF_GUARDED_BY_LOCK(m_lock);
+    Color m_backgroundColor WTF_GUARDED_BY_LOCK(m_lock);
     Color m_contentsColor WTF_GUARDED_BY_LOCK(m_lock);
     FloatSize m_contentsTileSize WTF_GUARDED_BY_LOCK(m_lock);
     FloatSize m_contentsTilePhase WTF_GUARDED_BY_LOCK(m_lock);

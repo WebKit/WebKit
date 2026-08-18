@@ -70,6 +70,7 @@ private:
     void setDrawsContent(bool) override;
     void setMasksToBounds(bool) override;
     void setPreserves3D(bool) override;
+    void setBackgroundColor(const Color&) override;
     void setBackfaceVisibility(bool) override;
     void setOpacity(float) override;
     void setBlendMode(BlendMode) override;
@@ -141,6 +142,7 @@ private:
         Backdrop,
         BackdropRect,
         BackdropRoot,
+        BackgroundColor,
         BackfaceVisibility,
         BlendMode,
         Children,
