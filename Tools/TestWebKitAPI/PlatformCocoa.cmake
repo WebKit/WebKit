@@ -407,6 +407,12 @@ set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -framework Cocoa")
 # This is a separate product from InjectedBundleTestWebKitAPI.bundle above,
 # which implements the legacy C-API injected bundle.
 add_library(TestWebKitAPIWebProcessPlugIn MODULE
+    # Matches the Xcode WebProcessPlugIn target's Helpers membership. Without
+    # PlatformUtilitiesCocoa.mm's Util::TestPlugInClassNameParameter the bundle
+    # still links, but fails to dlopen outside the TestWebKitAPI binary. It is in
+    # SourcesCocoa.txt, hence the #include shim below.
+    ${CMAKE_CURRENT_BINARY_DIR}/WebProcessPlugIn-PlatformUtilitiesCocoa.mm
+    ${TESTWEBKITAPI_DIR}/Helpers/cocoa/UtilitiesCocoa.mm
     ${TESTWEBKITAPI_DIR}/InjectedBundle/cocoa/WebProcessPlugIn/WebProcessPlugIn.mm
     ${TESTWEBKITAPI_DIR}/InjectedBundle/cocoa/WebProcessPlugIn/WebProcessPlugInWithInternals.mm
     ${TESTWEBKITAPI_DIR}/Tests/WebKit/WKWebView/AccessibilityTestPlugin.mm
@@ -458,6 +464,11 @@ foreach (_dual_src
         @ONLY)
 endforeach ()
 
+file(CONFIGURE
+    OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/WebProcessPlugIn-PlatformUtilitiesCocoa.mm"
+    CONTENT "#include \"${TESTWEBKITAPI_DIR}/Helpers/cocoa/PlatformUtilitiesCocoa.mm\"\n"
+    @ONLY)
+
 target_include_directories(TestWebKitAPIWebProcessPlugIn PRIVATE
     ${CMAKE_BINARY_DIR}
     ${_testapi_framework_headers}
@@ -469,6 +480,10 @@ target_include_directories(TestWebKitAPIWebProcessPlugIn PRIVATE
 
 # Some pulgins still call -[WKWebProcessPlugInBrowserContextController mainFrame];
 target_compile_options(TestWebKitAPIWebProcessPlugIn PRIVATE -Wno-deprecated-declarations)
+
+# PlatformUtilitiesCocoa.mm uses the WebKit C API, which config.h only pulls in
+# under BUILDING_TestWebKit, as the sibling test targets also define.
+target_compile_definitions(TestWebKitAPIWebProcessPlugIn PRIVATE BUILDING_TestWebKit)
 
 # configure_file substitutes ${EXECUTABLE_NAME}/${PRODUCT_NAME}/
 # ${PRODUCT_BUNDLE_IDENTIFIER} in the Info.plist shared with the Xcode build.
