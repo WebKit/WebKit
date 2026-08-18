@@ -349,6 +349,8 @@ if (ENABLE_WEBKIT)
     set(TestWebKit_SOURCES
         Helpers/Utilities.cpp
 
+        Tests/WebCore/Quirks.cpp
+
         Tests/WebKit/WKPage/AboutBlankLoad.cpp
         Tests/WebKit/WKPage/CanHandleRequest.cpp
         Tests/WebKit/WKPage/DOMWindowExtensionBasic.cpp

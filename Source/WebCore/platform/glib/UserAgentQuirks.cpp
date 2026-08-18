@@ -33,7 +33,7 @@
 namespace WebCore {
 
 // When editing the quirks in this file, be sure to update
-// Tools/TestWebKitAPI/Tests/WebCore/UserAgentQuirks.cpp.
+// Tools/TestWebKitAPI/Tests/WebCore/glib/UserAgentQuirks.cpp.
 //
 // When testing changes, be sure to test with application branding enabled.
 // Otherwise, we will not notice when urlRequiresUnbrandedUserAgent is needed.
