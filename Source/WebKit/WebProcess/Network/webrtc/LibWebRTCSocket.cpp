@@ -87,7 +87,7 @@ void LibWebRTCSocket::signalReadPacket(std::span<const uint8_t> data, webrtc::So
     std::optional<webrtc::Timestamp> packetTimestamp;
     if (timestamp)
         packetTimestamp = webrtc::Timestamp::Micros(timestamp);
-    NotifyPacketReceived({ { data.data(), data.size() }, m_remoteAddress, packetTimestamp, ecn });
+    NotifyPacketReceived({ data, m_remoteAddress, packetTimestamp, ecn });
 }
 
 void LibWebRTCSocket::signalSentPacket(int64_t rtcPacketID, int64_t sendTimeMs)
