@@ -24,6 +24,7 @@
 #include "RenderDeprecatedFlexibleBox.h"
 
 #include "FontCascade.h"
+#include "InlineIteratorBox.h"
 #include "InlineIteratorLineBox.h"
 #include "LayoutIntegrationLineLayout.h"
 #include "LayoutRepainter.h"
@@ -1049,16 +1050,36 @@ void RenderDeprecatedFlexibleBox::layoutVerticalBox(RelayoutChildren relayoutChi
         setBorderBoxHeight(oldHeight);
 }
 
-static RenderBlockFlow* blockContainerForLastFormattedLine(const RenderBlock& enclosingBlockContainer)
+static CheckedPtr<RenderBlockFlow> blockContainerForLastFormattedLine(RenderBlock& enclosingBlockContainer)
 {
+    if (CheckedPtr blockFlow = dynamicDowncast<RenderBlockFlow>(enclosingBlockContainer); blockFlow && blockFlow->childrenInline()) {
+        // The lines tell us where the last formatted line is: either it is one of this container's own lines, or it is inside the block level box sitting on the last line.
+        auto blockLevelBoxOnLastFormattedLine = [&]() -> CheckedPtr<RenderBlock> {
+            for (auto lineBox = InlineIterator::lastLineBoxFor(*blockFlow); lineBox; --lineBox) {
+                if (!lineBox->hasContentfulInFlowBox()) {
+                    // Out-of-flow content could initiate a line with no inline content.
+                    continue;
+                }
+                if (!lineBox->hasBlockContent()) {
+                    // The last formatted line is one of this inline formatting context's own lines.
+                    return { };
+                }
+                auto blockBox = lineBox->blockLevelBox();
+                return blockBox ? dynamicDowncast<RenderBlock>(const_cast<RenderObject&>(blockBox->renderer())) : nullptr;
+            }
+            return { };
+        };
+        if (CheckedPtr blockOnLastFormattedLine = blockLevelBoxOnLastFormattedLine())
+            return blockContainerForLastFormattedLine(*blockOnLastFormattedLine);
+        return blockFlow->hasContentfulInlineLine() ? blockFlow : nullptr;
+    }
+
     for (auto* child = enclosingBlockContainer.lastChild(); child; child = child->previousSibling()) {
         CheckedPtr blockContainer = dynamicDowncast<RenderBlock>(*child);
         if (!blockContainer)
             continue;
-        if (auto* descendantRoot = blockContainerForLastFormattedLine(*blockContainer))
+        if (CheckedPtr descendantRoot = blockContainerForLastFormattedLine(*blockContainer))
             return descendantRoot;
-        if (CheckedPtr blockFlow = dynamicDowncast<RenderBlockFlow>(*blockContainer); blockFlow && blockFlow->hasContentfulInlineLine())
-            return blockFlow.unsafeGet();
     }
     return { };
 }
@@ -1107,7 +1128,7 @@ RenderDeprecatedFlexibleBox::ClampedContent RenderDeprecatedFlexibleBox::applyLi
         child->markForPaginationRelayoutIfNeeded();
         child->layoutIfNeeded();
     }
-    if (auto* lastRoot = blockContainerForLastFormattedLine(*this)) {
+    if (CheckedPtr lastRoot = blockContainerForLastFormattedLine(*this)) {
         if (auto* inlineLayout = lastRoot->inlineLayout(); inlineLayout && inlineLayout->hasEllipsisInBlockDirectionOnLastFormattedLine()) {
             auto currentLineClamp = layoutState.legacyLineClamp();
 

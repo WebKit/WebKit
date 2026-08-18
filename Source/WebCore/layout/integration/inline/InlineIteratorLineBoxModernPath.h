@@ -99,6 +99,7 @@ public:
 
     bool isFirstAfterPageBreak() const { return line().isFirstAfterPageBreak(); }
     bool hasBlockLevelBox() const { return line().hasBlockLevelBox(); }
+    bool hasContentfulInFlowBox() const { return line().hasContentfulInFlowBox(); }
 
     size_t lineIndex() const { return m_lineIndex; }
 

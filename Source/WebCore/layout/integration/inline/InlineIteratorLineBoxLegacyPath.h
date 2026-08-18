@@ -74,6 +74,7 @@ public:
 
     bool isFirstAfterPageBreak() const { return false; }
     bool hasBlockLevelBox() const { return false; }
+    bool hasContentfulInFlowBox() const { return true; }
 
     inline size_t lineIndex() const; // Defined in InlineIteratorLineBoxLegacyPathInlines.h
 

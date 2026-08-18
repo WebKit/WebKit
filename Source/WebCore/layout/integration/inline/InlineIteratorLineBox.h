@@ -89,6 +89,7 @@ public:
 
     bool hasBlockContent() const;
     LeafBoxIterator blockLevelBox() const;
+    inline bool hasContentfulInFlowBox() const;
 
     // Text-relative left/right
     LeafBoxIterator lineLeftmostLeafBox() const;
@@ -326,6 +327,13 @@ inline bool LineBox::hasBlockContent() const
 {
     return WTF::switchOn(m_pathVariant, [](const auto& path) {
         return path.hasBlockLevelBox();
+    });
+}
+
+inline bool LineBox::hasContentfulInFlowBox() const
+{
+    return WTF::switchOn(m_pathVariant, [](const auto& path) {
+        return path.hasContentfulInFlowBox();
     });
 }
 
