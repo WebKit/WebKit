@@ -27,6 +27,7 @@
 #include "SDKVariant.xcconfig"
 #include "WebKitProjectPaths.xcconfig"
 #include "SDKAdditions.xcconfig"
+#include "SecurityReleaseMacros.xcconfig"
 
 // Prefix Definitions
 //
