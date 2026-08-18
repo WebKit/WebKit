@@ -75,6 +75,7 @@
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/MainThread.h>
 #include <wtf/TZoneMallocInlines.h>
+#include <wtf/URLParser.h>
 #include <wtf/UUID.h>
 #include <wtf/text/Base64.h>
 
@@ -556,8 +557,11 @@ ExceptionOr<Vector<MediaEndpointConfiguration::IceServerInfo>> RTCPeerConnection
             if (!serverURL.hasOpaquePath())
                 return Exception { ExceptionCode::SyntaxError, "STUN/TURN URL should be opaque-path"_s };
             if (serverURL.protocolIs("turn"_s) || serverURL.protocolIs("turns"_s)) {
-                if (serverURL.hasQuery() && !!serverURL.query().findIgnoringASCIICase("?transport="_s))
-                    return Exception { ExceptionCode::SyntaxError, "Invalid TURN URL query string"_s };
+                if (serverURL.hasQuery()) {
+                    auto parameters = WTF::URLParser::parseURLEncodedForm(serverURL.query());
+                    if (parameters.size() != 1 || !equalIgnoringASCIICase(parameters[0].key, "transport"_s))
+                        return Exception { ExceptionCode::SyntaxError, "Invalid TURN URL query string"_s };
+                }
                 if (server.credential.isNull() || server.username.isNull())
                     return Exception { ExceptionCode::InvalidAccessError, "TURN/TURNS server requires both username and credential"_s };
                 // https://tools.ietf.org/html/rfc8489#section-14.3

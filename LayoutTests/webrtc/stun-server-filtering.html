@@ -42,4 +42,14 @@ test(() => {
     assert_throws_dom("InvalidAccessError", () => new RTCPeerConnection({iceServers:[{username: 'test', credential: string510, urls:['turn:foo.com']}]}));
     assert_throws_dom("InvalidAccessError", () => new RTCPeerConnection({iceServers:[{username: string510, credential: 'test', urls:['turn:foo.com']}]}));
  }, "RTCPeerConnection and big TURN username/credential");
+
+test(() => {
+    new RTCPeerConnection({iceServers:[{username: 'test', credential: 'test', urls:['turn:foo.com?transport=udp']}]});
+    new RTCPeerConnection({iceServers:[{username: 'test', credential: 'test', urls:['turn:foo.com?transport=tcp']}]});
+    new RTCPeerConnection({iceServers:[{username: 'test', credential: 'test', urls:['turn:foo.com?transport=udp ']}]});
+    new RTCPeerConnection({iceServers:[{username: 'test', credential: 'test', urls:['turn:foo.com?transport=tcp ']}]});
+    assert_throws_dom("SyntaxError", () => new RTCPeerConnection({iceServers:[{username: 'test', credential: 'test', urls:['turn:foo.com?']}]}));
+    assert_throws_dom("SyntaxError", () => new RTCPeerConnection({iceServers:[{username: 'test', credential: 'test', urls:['turn:foo.com? transport=tcp']}]}));
+    assert_throws_dom("SyntaxError", () => new RTCPeerConnection({iceServers:[{username: 'test', credential: 'test', urls:['turn:foo.com?transport=udp&transport=tcp']}]}));
+ }, "RTCPeerConnection and TURN query string");
 </script>
