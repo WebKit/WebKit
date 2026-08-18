@@ -239,6 +239,9 @@ void HTMLVideoElement::attributeChanged(const QualifiedName& name, const AtomStr
     } else {
         HTMLMediaElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 
+        if (name == webkitprojectionAttr && oldValue != newValue && document().settings().spatialVideoRenderingEnabled())
+            scheduleEvent(eventNames().webkitprojectionchangedEvent);
+
 #if PLATFORM(IOS_FAMILY) && ENABLE(WIRELESS_PLAYBACK_TARGET)
         if (name == webkitairplayAttr)
             protect(mediaSession())->setWirelessVideoPlaybackDisabled(isWirelessPlaybackTargetDisabled());

@@ -324,6 +324,7 @@
     "webkitnetworkinfochange": { },
     "webkitplaybacktargetavailabilitychanged": { },
     "webkitpresentationmodechanged": { },
+    "webkitprojectionchanged": { },
     "webkitremovesourcebuffer": { },
     "webkitsourceclose": { },
     "webkitsourceended": { },

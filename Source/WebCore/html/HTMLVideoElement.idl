@@ -39,6 +39,7 @@
     [CEReactions=NotNeeded, Reflect] attribute boolean playsInline;
 
     // Non-standard
+    [CEReactions=NotNeeded, Reflect="webkitprojection", EnabledBySetting=SpatialVideoRenderingEnabled] attribute DOMString projection;
     readonly attribute boolean webkitSupportsFullscreen;
     readonly attribute boolean webkitDisplayingFullscreen;
 
