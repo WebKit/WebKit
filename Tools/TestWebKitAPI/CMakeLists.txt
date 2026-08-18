@@ -122,6 +122,7 @@ set(TestWTF_SOURCES
     Tests/WTF/RobinHoodHashSet.cpp
     Tests/WTF/RunLoop.cpp
     Tests/WTF/SHA1.cpp
+    Tests/WTF/SIMDHelpers.cpp
     Tests/WTF/SafeStrerror.cpp
     Tests/WTF/SaturatingArithmeticOperations.cpp
     Tests/WTF/Scope.cpp

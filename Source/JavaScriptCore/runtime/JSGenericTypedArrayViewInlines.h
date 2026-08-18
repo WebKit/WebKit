@@ -907,13 +907,22 @@ template<typename Adaptor> inline auto JSGenericTypedArrayView<Adaptor>::sort() 
 
     auto originalSpan = typedSpan();
 
-    if constexpr (Adaptor::typeValue == TypeInt8 || Adaptor::typeValue == TypeUint8 || Adaptor::typeValue == TypeUint8Clamped) {
+    if constexpr (elementSize == 1) {
         // Measured crossover. Below this, clearing the histograms costs more than std::sort, which
         // uses insertion sort on inputs this short.
         constexpr size_t countingSortThreshold = 128;
         if (length >= countingSortThreshold) {
             countingSort(originalSpan.first(length));
             return SortResult::Success;
+        }
+    } else {
+        // Measured crossovers against std::sort on randomly distributed input. Below these, the histogram
+        // pass and the scratch allocation cost more than std::sort, which uses insertion sort on short
+        // inputs. The crossover climbs with the element size because a wider element needs more passes.
+        constexpr size_t radixSortThreshold = elementSize == 2 ? 128 : (elementSize == 4 ? 512 : 8192);
+        if (length >= radixSortThreshold) {
+            if (radixSort(originalSpan.first(length)))
+                return SortResult::Success;
         }
     }
 
@@ -1013,31 +1022,81 @@ inline void JSGenericTypedArrayView<Adaptor>::sortFloat(ElementType* begin, Elem
 }
 
 template<typename Adaptor>
+ALWAYS_INLINE auto JSGenericTypedArrayView<Adaptor>::sortKey(ElementType value) -> SortKeyType
+{
+    auto bits = std::bit_cast<SortKeyType>(value);
+    if constexpr (Adaptor::isFloat) {
+        // A negative float's magnitude bits run backwards relative to unsigned order, so every bit
+        // is flipped; a positive one only needs its sign bit set to sort above every negative.
+        auto negative = static_cast<SortKeyType>(-static_cast<SortKeyType>(bits >= sortKeySignBit));
+        return bits ^ (negative | sortKeySignBit);
+    } else if constexpr (std::is_signed_v<ElementType>)
+        return bits ^ sortKeySignBit;
+    else
+        return bits;
+}
+
+template<typename Adaptor>
+inline bool JSGenericTypedArrayView<Adaptor>::isNonDescending(std::span<const ElementType> elements)
+{
+    constexpr size_t stride = SIMD::stride<SortKeyType>;
+    ASSERT(elements.size() > stride);
+
+    auto* bits = std::bit_cast<const SortKeyType*>(elements.data());
+    auto signBitVector = SIMD::splat<SortKeyType>(sortKeySignBit);
+    auto magnitudeMaskVector = SIMD::splat<SortKeyType>(static_cast<SortKeyType>(~sortKeySignBit));
+
+    auto toKey = [&](auto value) ALWAYS_INLINE_LAMBDA {
+        if constexpr (Adaptor::isFloat) {
+            auto negative = SIMD::lessThan(magnitudeMaskVector, value);
+            return SIMD::bitXor(value, SIMD::bitOr(negative, signBitVector));
+        } else if constexpr (std::is_signed_v<ElementType>)
+            return SIMD::bitXor(value, signBitVector);
+        else
+            return value;
+    };
+
+    // A NaN is reported as an inversion. Distinct NaN bit patterns have distinct keys and a negative
+    // NaN keys below -Infinity, so key order is only the order a typed array sort requires once NaN
+    // has been canonicalized, which the full sort does and this scan does not.
+    auto hasInversion = [&](size_t index) ALWAYS_INLINE_LAMBDA {
+        auto lower = SIMD::load(bits + index);
+        auto upper = SIMD::load(bits + index + 1);
+        auto inversions = SIMD::lessThan(toKey(upper), toKey(lower));
+        if constexpr (Adaptor::isFloat) {
+            constexpr SortKeyType infinityBits = [] {
+                if constexpr (elementSize == 2) {
+                    // Float16 https://en.wikipedia.org/wiki/Half-precision_floating-point_format
+                    return static_cast<SortKeyType>(0b0'11111'0000000000U);
+                } else if constexpr (elementSize == 4) {
+                    // Float32 https://en.wikipedia.org/wiki/Single-precision_floating-point_format
+                    return static_cast<SortKeyType>(0b0'11111111'00000000000000000000000U);
+                } else {
+                    // Float64 https://en.wikipedia.org/wiki/Double-precision_floating-point_format
+                    return static_cast<SortKeyType>(0b0'11111111111'0000000000000000000000000000000000000000000000000000ULL);
+                }
+            }();
+            auto infinityVector = SIMD::splat<SortKeyType>(infinityBits);
+            auto isNaN = [&](auto value) ALWAYS_INLINE_LAMBDA {
+                return SIMD::lessThan(infinityVector, SIMD::bitAnd(value, magnitudeMaskVector));
+            };
+            inversions = SIMD::bitOr(inversions, isNaN(lower), isNaN(upper));
+        }
+        return SIMD::isNonZero(inversions);
+    };
+
+    size_t lastBlock = elements.size() - 1 - stride;
+    for (size_t index = 0; index < lastBlock; index += stride) {
+        if (hasInversion(index))
+            return false;
+    }
+    return !hasInversion(lastBlock);
+}
+
+template<typename Adaptor>
 inline void JSGenericTypedArrayView<Adaptor>::countingSort(std::span<ElementType> elements)
 {
     static_assert(sizeof(ElementType) == 1);
-
-    auto isNonDescending = [](std::span<ElementType> elements) ALWAYS_INLINE_LAMBDA {
-        constexpr size_t stride = SIMD::stride<ElementType>;
-        ASSERT(elements.size() > stride);
-
-        auto* data = elements.data();
-        auto hasInversion = [&](size_t index) ALWAYS_INLINE_LAMBDA {
-            simde_uint8x16_t inversions;
-            if constexpr (std::is_signed_v<ElementType>)
-                inversions = simde_vcltq_s8(simde_vld1q_s8(data + index + 1), simde_vld1q_s8(data + index));
-            else
-                inversions = simde_vcltq_u8(simde_vld1q_u8(data + index + 1), simde_vld1q_u8(data + index));
-            return SIMD::isNonZero(inversions);
-        };
-
-        size_t lastBlock = elements.size() - 1 - stride;
-        for (size_t index = 0; index < lastBlock; index += stride) {
-            if (hasInversion(index))
-                return false;
-        }
-        return !hasInversion(lastBlock);
-    };
 
     // This stops at the first inversion, so it costs one block of comparisons on unsorted input, and
     // it reduces the already sorted case to a single scan.
@@ -1106,6 +1165,159 @@ inline void JSGenericTypedArrayView<Adaptor>::countingSortWithCounters(std::span
         }
     }
     ASSERT(cursor == elements.data() + elements.size());
+}
+
+template<typename Adaptor>
+inline bool JSGenericTypedArrayView<Adaptor>::hasFewDistinctValues(std::span<const ElementType> elements)
+{
+    // std::sort is close to linear on an input holding very few distinct values, and it beats radix
+    // sort there no matter how few digits vary, because the histogram pass alone costs a large
+    // fraction of the whole sort. Recognizing such an input has to happen before that pass is paid
+    // for, so this samples instead of counting exactly. Samples are spread over the whole span rather
+    // than taken from the front, so a sorted-looking prefix cannot stand in for the rest.
+    constexpr size_t sampleCount = 32;
+    constexpr unsigned distinctLimit = 4;
+
+    std::array<SortKeyType, distinctLimit> seen;
+    unsigned seenCount = 0;
+    size_t step = std::max<size_t>(1, elements.size() / sampleCount);
+    for (size_t index = 0; index < elements.size(); index += step) {
+        auto bits = std::bit_cast<SortKeyType>(elements[index]);
+        bool isKnown = false;
+        for (unsigned seenIndex = 0; seenIndex < seenCount; ++seenIndex) {
+            if (seen[seenIndex] == bits) {
+                isKnown = true;
+                break;
+            }
+        }
+        if (!isKnown) {
+            if (seenCount == distinctLimit)
+                return false;
+            seen[seenCount++] = bits;
+        }
+    }
+    return true;
+}
+
+template<typename Adaptor>
+NEVER_INLINE bool JSGenericTypedArrayView<Adaptor>::radixSort(std::span<ElementType> elements)
+{
+    static_assert(elementSize > 1);
+    ASSERT(elements.size() > SIMD::stride<SortKeyType>);
+
+    // This stops at the first inversion, so it costs one block of comparisons on unsorted input, and
+    // it reduces the already sorted case to a single scan.
+    if (isNonDescending(elements))
+        return true;
+
+    // Both checks come before any allocation, so handing off to std::sort costs nothing but the scans.
+    if (hasFewDistinctValues(elements))
+        return false;
+
+    if constexpr (sizeof(size_t) > sizeof(uint32_t)) {
+        if (elements.size() > std::numeric_limits<uint32_t>::max()) [[unlikely]]
+            return radixSortWithCounters<uint64_t>(elements);
+    }
+    return radixSortWithCounters<uint32_t>(elements);
+}
+
+template<typename Adaptor>
+template<typename CounterType>
+inline bool JSGenericTypedArrayView<Adaptor>::radixSortWithCounters(std::span<ElementType> elements)
+{
+    constexpr unsigned digitCount = elementSize;
+    constexpr size_t bucketCount = 256;
+
+    // Interleaving several histograms keeps repeated values from serializing: incrementing a counter
+    // otherwise has to wait for the previous increment of that same counter to forward out of the
+    // store buffer. Each element already performs digitCount independent increments, which covers
+    // that latency on its own once there are enough of them, and measurement only found interleaving
+    // worth its larger table for two digit elements.
+    constexpr size_t histogramCount = digitCount == 2 ? 4 : 1;
+
+    size_t length = elements.size();
+
+    auto source = elements;
+
+    Vector<ElementType, 0> snapshot;
+    if (isShared()) {
+        if (!snapshot.tryGrow(length)) [[unlikely]]
+            return false;
+        WTF::copyElements(snapshot.mutableSpan(), spanConstCast<const ElementType>(elements));
+        source = snapshot.mutableSpan();
+    }
+
+    std::array<std::array<std::array<CounterType, bucketCount>, digitCount>, histogramCount> counts { };
+
+    auto accumulate = [&](size_t index, size_t histogram) ALWAYS_INLINE_LAMBDA {
+        ElementType value = source[index];
+        if constexpr (Adaptor::isFloat) {
+            // Canonicalizing NaN here is what makes the key ordering correct: a negative NaN would
+            // otherwise key below -Infinity, and a typed array sort must place NaN last.
+            value = purifyNaN(value);
+            source[index] = value;
+        }
+        SortKeyType key = sortKey(value);
+        for (unsigned digit = 0; digit < digitCount; ++digit)
+            ++counts[histogram][digit][static_cast<uint8_t>(key >> (digit * 8))];
+    };
+
+    size_t index = 0;
+    for (; index + histogramCount <= length; index += histogramCount) {
+        for (size_t histogram = 0; histogram < histogramCount; ++histogram)
+            accumulate(index + histogram, histogram);
+    }
+    for (; index < length; ++index)
+        accumulate(index, 0);
+
+    // Merge the interleaved histograms into the first, and while scanning each digit note how many buckets it uses.
+    // A digit holding one value for every element cannot change the order, so it needs no pass.
+    std::array<unsigned, digitCount> activeDigits;
+    unsigned activeDigitCount = 0;
+    for (unsigned digit = 0; digit < digitCount; ++digit) {
+        unsigned usedBuckets = 0;
+        for (size_t bucket = 0; bucket < bucketCount; ++bucket) {
+            CounterType count = counts[0][digit][bucket];
+            for (size_t histogram = 1; histogram < histogramCount; ++histogram)
+                count += counts[histogram][digit][bucket];
+            counts[0][digit][bucket] = count;
+            if (count)
+                ++usedBuckets;
+        }
+        if (usedBuckets > 1)
+            activeDigits[activeDigitCount++] = digit;
+    }
+
+    Vector<ElementType, 0> scratch;
+    if (!scratch.tryGrow(length)) [[unlikely]]
+        return false;
+    auto destination = scratch.mutableSpan();
+
+    std::array<CounterType, bucketCount> cursors;
+    for (unsigned active = 0; active < activeDigitCount; ++active) {
+        unsigned digit = activeDigits[active];
+        unsigned shift = digit * 8;
+
+        CounterType offset = 0;
+        for (size_t bucket = 0; bucket < bucketCount; ++bucket) {
+            cursors[bucket] = offset;
+            offset += counts[0][digit][bucket];
+        }
+        ASSERT(offset == length);
+
+        // Stability is what makes the least-significant-digit-first order work: a later pass must
+        // preserve the relative order an earlier one established.
+        for (size_t cursor = 0; cursor < length; ++cursor) {
+            ElementType value = source[cursor];
+            destination[cursors[static_cast<uint8_t>(sortKey(value) >> shift)]++] = value;
+        }
+
+        std::swap(source, destination);
+    }
+
+    if (source.data() != elements.data())
+        WTF::copyElements(elements, spanConstCast<const ElementType>(source));
+    return true;
 }
 
 template<typename PassedAdaptor> inline Structure* JSGenericResizableOrGrowableSharedTypedArrayView<PassedAdaptor>::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)

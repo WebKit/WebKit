@@ -215,6 +215,24 @@ protected:
 
     template<typename IntegralType> inline void sortFloat(ElementType* begin, ElementType* end);
 
+    // The unsigned integer of the same width as ElementType, used as the sort key. Ordering
+    // elements by this key gives the order sorting a typed array requires: for signed integers,
+    // flipping the sign bit; for floats, flipping every bit of a negative value and only the sign
+    // bit of a positive one, which lines IEEE 754 up with unsigned integer order.
+    using SortKeyType = std::conditional_t<elementSize == 1, uint8_t,
+        std::conditional_t<elementSize == 2, uint16_t,
+        std::conditional_t<elementSize == 4, uint32_t, uint64_t>>>;
+    static_assert(sizeof(SortKeyType) == elementSize);
+
+    static constexpr SortKeyType sortKeySignBit = static_cast<SortKeyType>(1) << (elementSize * 8 - 1);
+
+    static ALWAYS_INLINE SortKeyType sortKey(ElementType);
+    static inline bool isNonDescending(std::span<const ElementType>);
+    static inline bool hasFewDistinctValues(std::span<const ElementType>);
+
+    NEVER_INLINE bool radixSort(std::span<ElementType>);
+    template<typename CounterType> inline bool radixSortWithCounters(std::span<ElementType>);
+
     inline void countingSort(std::span<ElementType>);
     template<typename CounterType> inline void countingSortWithCounters(std::span<ElementType>);
 };

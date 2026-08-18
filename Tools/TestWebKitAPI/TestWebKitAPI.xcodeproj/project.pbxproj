@@ -1280,6 +1280,7 @@
 				WTF/SetForScope.cpp,
 				WTF/SHA1.cpp,
 				WTF/Signals.cpp,
+				WTF/SIMDHelpers.cpp,
 				WTF/SmallSet.cpp,
 				WTF/SortedArrayMap.cpp,
 				WTF/SparseBitVector.cpp,

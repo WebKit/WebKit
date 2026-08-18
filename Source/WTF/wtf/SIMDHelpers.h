@@ -315,6 +315,26 @@ ALWAYS_INLINE simde_uint64x2_t bitAnd2(simde_uint64x2_t accumulated, simde_uint6
     return simde_vandq_u64(accumulated, input);
 }
 
+ALWAYS_INLINE simde_uint8x16_t bitXor2(simde_uint8x16_t accumulated, simde_uint8x16_t input)
+{
+    return simde_veorq_u8(accumulated, input);
+}
+
+ALWAYS_INLINE simde_uint16x8_t bitXor2(simde_uint16x8_t accumulated, simde_uint16x8_t input)
+{
+    return simde_veorq_u16(accumulated, input);
+}
+
+ALWAYS_INLINE simde_uint32x4_t bitXor2(simde_uint32x4_t accumulated, simde_uint32x4_t input)
+{
+    return simde_veorq_u32(accumulated, input);
+}
+
+ALWAYS_INLINE simde_uint64x2_t bitXor2(simde_uint64x2_t accumulated, simde_uint64x2_t input)
+{
+    return simde_veorq_u64(accumulated, input);
+}
+
 template<typename VectorType, typename... Args>
 ALWAYS_INLINE decltype(auto) merge(VectorType a0, VectorType a1, Args... args)
 {
@@ -340,6 +360,15 @@ ALWAYS_INLINE decltype(auto) bitAnd(VectorType a0, VectorType a1, Args... args)
         return bitAnd2(a0, a1);
     else
         return bitAnd2(a0, bitAnd(a1, std::forward<Args>(args)...));
+}
+
+template<typename VectorType, typename... Args>
+ALWAYS_INLINE decltype(auto) bitXor(VectorType a0, VectorType a1, Args... args)
+{
+    if constexpr (!sizeof...(args))
+        return bitXor2(a0, a1);
+    else
+        return bitXor2(a0, bitXor(a1, std::forward<Args>(args)...));
 }
 
 ALWAYS_INLINE simde_uint8x16_t bitNot(simde_uint8x16_t input)
