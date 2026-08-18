@@ -186,7 +186,7 @@ float StickinessAdjustmentData::exitDistanceAdjustment() const
 
 float StickinessAdjustmentData::rangeStartAdjustment() const
 {
-    auto rangeStartAdjustment = 0;
+    float rangeStartAdjustment = 0;
     if (topOrLeftAdjustmentLocation == StickinessLocation::BeforeEntry)
         rangeStartAdjustment += stickyTopOrLeftAdjustment;
     if (bottomOrRightAdjustmentLocation != StickinessLocation::BeforeEntry)
@@ -196,7 +196,7 @@ float StickinessAdjustmentData::rangeStartAdjustment() const
 
 float StickinessAdjustmentData::rangeEndAdjustment() const
 {
-    auto rangeEndAdjustment = 0;
+    float rangeEndAdjustment = 0;
     if (topOrLeftAdjustmentLocation != StickinessLocation::AfterExit)
         rangeEndAdjustment += stickyTopOrLeftAdjustment;
     if (bottomOrRightAdjustmentLocation == StickinessLocation::AfterExit)
