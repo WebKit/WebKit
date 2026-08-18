@@ -134,6 +134,16 @@ void WKWebsiteDataStoreConfigurationSetServiceWorkerRegistrationDirectory(WKWebs
     protect(WebKit::toImpl(configuration))->setServiceWorkerRegistrationDirectory(protect(WebKit::toImpl(directory))->string());
 }
 
+WKStringRef WKWebsiteDataStoreConfigurationCopyIsolatedSitesDirectory(WKWebsiteDataStoreConfigurationRef configuration)
+{
+    return WebKit::toCopiedAPI(WebKit::toImpl(configuration)->isolatedSitesDirectory());
+}
+
+void WKWebsiteDataStoreConfigurationSetIsolatedSitesDirectory(WKWebsiteDataStoreConfigurationRef configuration, WKStringRef directory)
+{
+    protect(WebKit::toImpl(configuration))->setIsolatedSitesDirectory(protect(WebKit::toImpl(directory))->string());
+}
+
 WKStringRef WKWebsiteDataStoreConfigurationCopyCookieStorageFile(WKWebsiteDataStoreConfigurationRef configuration)
 {
     return WebKit::toCopiedAPI(WebKit::toImpl(configuration)->cookieStorageFile());

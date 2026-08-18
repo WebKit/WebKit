@@ -724,7 +724,8 @@ void WKWebsiteDataStoreClearStorage(WKWebsiteDataStoreRef dataStoreRef, void* co
         WebKit::WebsiteDataType::FileSystem,
         WebKit::WebsiteDataType::DOMCache,
         WebKit::WebsiteDataType::Credentials,
-        WebKit::WebsiteDataType::ServiceWorkerRegistrations
+        WebKit::WebsiteDataType::ServiceWorkerRegistrations,
+        WebKit::WebsiteDataType::IsolatedSiteRecord
     };
     protect(WebKit::toImpl(dataStoreRef))->removeData(dataTypes, -WallTime::infinity(), [context, callback] {
         if (callback)
