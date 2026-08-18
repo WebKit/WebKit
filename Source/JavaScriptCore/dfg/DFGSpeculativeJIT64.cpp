@@ -3757,7 +3757,6 @@ void SpeculativeJIT::compile(Node* node)
     case ArithAbs:
         compileArithAbs(node);
         break;
-        
     case ArithMin:
     case ArithMax: {
         compileArithMinMax(node);
@@ -5896,6 +5895,11 @@ void SpeculativeJIT::compile(Node* node)
 
     case ArrayIsArray: {
         compileArrayIsArray(node);
+        break;
+    }
+
+    case ObjectIsExtensible: {
+        compileObjectIsExtensible(node);
         break;
     }
 

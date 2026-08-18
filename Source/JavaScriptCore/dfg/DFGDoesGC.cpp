@@ -413,6 +413,7 @@ bool doesGC(Graph& graph, Node* node)
     case ObjectGetOwnPropertyNames:
     case ObjectGetOwnPropertySymbols:
     case ObjectToString:
+    case ObjectIsExtensible:
     case SymbolToString:
     case ReflectOwnKeys:
     case AllocatePropertyStorage:

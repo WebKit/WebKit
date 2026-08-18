@@ -870,6 +870,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case ObjectGetOwnPropertyNames:
     case ObjectGetOwnPropertySymbols:
     case ObjectToString:
+    case ObjectIsExtensible:
     case ReflectOwnKeys:
         clobberTop();
         return;

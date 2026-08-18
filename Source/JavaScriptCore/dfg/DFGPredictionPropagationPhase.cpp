@@ -1319,6 +1319,7 @@ private:
         case IsConstructor:
         case IsCellWithType:
         case ArrayIsArray:
+        case ObjectIsExtensible:
         case HasStructureWithFlags:
         case MatchStructure: {
             setPrediction(SpecBoolean);

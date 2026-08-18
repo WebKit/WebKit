@@ -84,7 +84,6 @@ namespace JSC {
     macro(BooleanObjectType, SpecObjectOther) \
     macro(NumberObjectType, SpecObjectOther) \
     macro(ErrorInstanceType, SpecObjectOther) \
-    macro(GlobalProxyType, SpecGlobalProxy) \
     macro(DirectArgumentsType, SpecDirectArguments) \
     macro(ScopedArgumentsType, SpecScopedArguments) \
     macro(ClonedArgumentsType, SpecObjectOther) \
@@ -134,7 +133,10 @@ namespace JSC {
     macro(ShadowRealmType, SpecObjectOther) \
     macro(RegExpObjectType, SpecRegExpObject) \
     macro(JSDateType, SpecDateObject) \
+    /* Start proxy-like types */ \
     macro(ProxyObjectType, SpecProxyObject) \
+    macro(GlobalProxyType, SpecGlobalProxy) \
+    /* End proxy-like types. */ \
     macro(JSGeneratorType, SpecObjectOther) \
     macro(JSAsyncFunctionGeneratorType, SpecObjectOther) \
     macro(JSAsyncGeneratorType, SpecObjectOther) \
