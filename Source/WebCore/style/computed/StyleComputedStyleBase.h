@@ -564,6 +564,8 @@ public:
 
     inline void setUsedUserSelect(UserSelect);
 
+    inline UserSelect usedUserSelectIgnoringEffectivelyInert() const;
+
     // usedContentVisibility will return ContentVisibility::Hidden in a content-visibility: hidden subtree (overriding
     // content-visibility: auto at all times), ContentVisibility::Auto in a content-visibility: auto subtree (when the
     // content is not user relevant and thus skipped), and ContentVisibility::Visible otherwise.

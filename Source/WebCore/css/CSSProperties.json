@@ -12564,13 +12564,13 @@
             ],
             "codegen-properties": {
                 "computed-style-has-explicitly-set-policy": "value-only",
-                "computed-style-has-explicitly-set-storage-path": ["m_inheritedRareData"],
+                "computed-style-has-explicitly-set-storage-path": ["m_nonInheritedData", "miscData"],
                 "computed-style-name-for-methods": "WebkitUserSelect",
                 "computed-style-storage-path": ["m_inheritedRareData"],
                 "computed-style-storage-kind": "enum",
                 "computed-style-type": "UserSelect",
                 "parser-grammar": "<<values>>",
-                "comment": "Not an alias of 'user-select': this property is inherited, it overrides 'user-select' whenever it has been specified (hence the has-explicitly-set flag)."
+                "comment": "Not an alias of 'user-select': this property is inherited, and it only applies when it has been specified and 'user-select' has not (hence the has-explicitly-set flags on both)."
             },
             "status": "non-standard"
         },
@@ -12590,6 +12590,8 @@
                 "all"
             ],
             "codegen-properties": {
+                "computed-style-has-explicitly-set-policy": "value-only",
+                "computed-style-has-explicitly-set-storage-path": ["m_nonInheritedData", "miscData"],
                 "computed-style-storage-path": ["m_nonInheritedData", "miscData"],
                 "computed-style-storage-kind": "enum",
                 "computed-style-type": "UserSelect",

@@ -149,6 +149,7 @@ enum class SDKAlignedBehavior {
     IgnorePageLocationDuringHardPocketEligibilityCheck,
     AdjustColorExtensionsForHorizontalBannerViewOverlays,
     NoMediaLayerTeardownOnPageVisibilityChangeQuirk,
+    UserSelectSupersedesWebkitUserSelect,
 
     NumberOfBehaviors
 };

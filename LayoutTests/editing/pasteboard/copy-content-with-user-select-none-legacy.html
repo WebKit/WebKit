@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html><!-- webkit-test-runner [ CSSUserSelectEnabled=false ] -->
 <html>
 <body>
 <div id="source">hello <span style="-webkit-user-select: none; user-select: none;"><i>world </i><b style="-webkit-user-select: initial;
@@ -19,7 +19,8 @@ getSelection().setBaseAndExtent(source, 0, source, source.childNodes.length);
 source.addEventListener("copy", () => {
     shouldBeTrue('getSelection().toString().includes("hello")');
     shouldBeFalse('getSelection().toString().includes("world")');
-    shouldBeFalse('getSelection().toString().includes("WebKit")');
+    // [LEGACY] 'initial' resolves to 'text':
+    shouldBeTrue('getSelection().toString().includes("WebKit")');
     shouldBeFalse('getSelection().toString().includes("rocks")');
     shouldBeFalse('getSelection().toString().includes("because")');
     shouldBeFalse('getSelection().toString().includes("foo")');
@@ -29,7 +30,8 @@ source.addEventListener("copy", () => {
 destination.addEventListener("paste", () => {
     shouldBeTrue('event.clipboardData.getData("text/plain").includes("hello")');
     shouldBeFalse('event.clipboardData.getData("text/plain").includes("world")');
-    shouldBeFalse('event.clipboardData.getData("text/plain").includes("WebKit")');
+    // [LEGACY] 'initial' resolves to 'text':
+    shouldBeTrue('event.clipboardData.getData("text/plain").includes("WebKit")');
     shouldBeFalse('event.clipboardData.getData("text/plain").includes("rocks")');
     shouldBeFalse('event.clipboardData.getData("text/plain").includes("beacuse")');
     shouldBeFalse('event.clipboardData.getData("text/plain").includes("foo")');
@@ -38,9 +40,12 @@ destination.addEventListener("paste", () => {
     shouldBeFalse('event.clipboardData.getData("text/html").includes("world")');
     shouldBeFalse('event.clipboardData.getData("text/html").includes("<i")');
     shouldBeFalse('event.clipboardData.getData("text/html").includes("</i>")');
-    shouldBeFalse('event.clipboardData.getData("text/html").includes("WebKit")');
-    shouldBeFalse('event.clipboardData.getData("text/html").includes("<b ")');
-    shouldBeFalse('event.clipboardData.getData("text/html").includes("</b>")');
+    // [LEGACY] 'initial' resolves to 'text':
+    shouldBeTrue('event.clipboardData.getData("text/html").includes("WebKit")');
+    // [LEGACY] 'initial' resolves to 'text':
+    shouldBeTrue('event.clipboardData.getData("text/html").includes("<b ")');
+    // [LEGACY] 'initial' resolves to 'text':
+    shouldBeTrue('event.clipboardData.getData("text/html").includes("</b>")');
     shouldBeFalse('event.clipboardData.getData("text/html").includes("rocks")');
     shouldBeFalse('event.clipboardData.getData("text/html").includes("<q>")');
     shouldBeFalse('event.clipboardData.getData("text/html").includes("</q>")');

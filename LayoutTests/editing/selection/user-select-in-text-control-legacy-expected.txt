@@ -1,7 +1,7 @@
 
 edixtableParagraph
 
-edixtableParagraphWebkitUserSelectAll
+editableParagraphWebkitUserSelectAll
 
 Verifies the used user-select value for the inner text element of a text control.
 
@@ -26,15 +26,15 @@ PASS extendOneCharacterIn("readOnly") is "r"
 PASS extendOneCharacterIn("textarea") is "t"
 PASS extendOneCharacterIn("textareaReadOnly") is "t"
 
-'all' makes the value atomically selectable, but it doesn't apply if editable.
-PASS extendOneCharacterIn("webkitUserSelectAll") is "w"
-PASS extendOneCharacterIn("textareaWebkitUserSelectAll") is "t"
+[LEGACY] 'all' makes the value atomically selectable, whether the text is editable or not.
+PASS extendOneCharacterIn("webkitUserSelectAll") is "webkitUserSelectAll"
+PASS extendOneCharacterIn("textareaWebkitUserSelectAll") is "textareaWebkitUserSelectAll"
 PASS extendOneCharacterIn("readOnlyWebkitUserSelectAll") is "readOnlyWebkitUserSelectAll"
 PASS extendOneCharacterIn("textareaReadOnlyWebkitUserSelectAll") is "textareaReadOnlyWebkitUserSelectAll"
 
-'all' no longer removes editability from ordinary editable content.
+[LEGACY] 'all' removes editability from ordinary editable content
 PASS typedTextLandsAt("editableParagraph") is true
-PASS typedTextLandsAt("editableParagraphWebkitUserSelectAll") is true
+PASS typedTextLandsAt("editableParagraphWebkitUserSelectAll") is false
 
 'all' does not remove editability from editable text controls.
 PASS typedTextLandsAt("mutable") is true

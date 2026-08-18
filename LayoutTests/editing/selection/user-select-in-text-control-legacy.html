@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html><!-- webkit-test-runner [ CSSUserSelectEnabled=false ] -->
 <html>
 <head>
 <meta charset="utf-8">
@@ -100,16 +100,16 @@ shouldBeEqualToString('extendOneCharacterIn("textarea")', 't');
 shouldBeEqualToString('extendOneCharacterIn("textareaReadOnly")', 't');
 
 debug("");
-debug("'all' makes the value atomically selectable, but it doesn't apply if editable.");
-shouldBeEqualToString('extendOneCharacterIn("webkitUserSelectAll")', "w");
-shouldBeEqualToString('extendOneCharacterIn("textareaWebkitUserSelectAll")', "t");
+debug("[LEGACY] 'all' makes the value atomically selectable, whether the text is editable or not.");
+shouldBeEqualToString('extendOneCharacterIn("webkitUserSelectAll")', "webkitUserSelectAll");
+shouldBeEqualToString('extendOneCharacterIn("textareaWebkitUserSelectAll")', "textareaWebkitUserSelectAll");
 shouldBeEqualToString('extendOneCharacterIn("readOnlyWebkitUserSelectAll")', "readOnlyWebkitUserSelectAll");
 shouldBeEqualToString('extendOneCharacterIn("textareaReadOnlyWebkitUserSelectAll")', "textareaReadOnlyWebkitUserSelectAll");
 
 debug("");
-debug("'all' no longer removes editability from ordinary editable content.");
+debug("[LEGACY] 'all' removes editability from ordinary editable content");
 shouldBeTrue('typedTextLandsAt("editableParagraph")');
-shouldBeTrue('typedTextLandsAt("editableParagraphWebkitUserSelectAll")');
+shouldBeFalse('typedTextLandsAt("editableParagraphWebkitUserSelectAll")');
 
 debug("");
 debug("'all' does not remove editability from editable text controls.");

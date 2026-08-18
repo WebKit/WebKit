@@ -216,7 +216,6 @@ public:
     PREFERRED_TYPE(LineJoin) unsigned joinStyle : 2;
     PREFERRED_TYPE(bool) unsigned hasExplicitlySetStrokeWidth : 1;
     PREFERRED_TYPE(bool) unsigned hasExplicitlySetStrokeColor : 1;
-    PREFERRED_TYPE(bool) unsigned hasExplicitlySetWebkitUserSelect : 1;
     PREFERRED_TYPE(bool) unsigned effectiveInert : 1;
     PREFERRED_TYPE(bool) unsigned effectivelyTransparent : 1;
     PREFERRED_TYPE(bool) unsigned effectiveWrapInsideAvoid : 1; // This box or an ancestor has wrap-inside: avoid.

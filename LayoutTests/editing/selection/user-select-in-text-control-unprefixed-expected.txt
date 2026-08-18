@@ -1,9 +1,9 @@
 
 edixtableParagraph
 
-edixtableParagraphWebkitUserSelectAll
+edixtableParagraphUserSelectAll
 
-Verifies the used user-select value for the inner text element of a text control.
+Verifies the used user-select value for the inner text element of a text control, and contrasts it with ordinary editable content.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
@@ -15,10 +15,10 @@ PASS selectTextIn("textarea") is "textarea"
 PASS selectTextIn("textareaReadOnly") is "textareaReadOnly"
 
 'none' makes it unselectable, but it is overridden if the text is editable.
-PASS selectTextIn("webkitUserSelectNone") is "webkitUserSelectNone"
-PASS selectTextIn("textareaWebkitUserSelectNone") is "textareaWebkitUserSelectNone"
-PASS selectTextIn("readOnlyWebkitUserSelectNone") is ""
-PASS selectTextIn("textareaReadOnlyWebkitUserSelectNone") is ""
+PASS selectTextIn("userSelectNone") is "userSelectNone"
+PASS selectTextIn("textareaUserSelectNone") is "textareaUserSelectNone"
+PASS selectTextIn("readOnlyUserSelectNone") is ""
+PASS selectTextIn("textareaReadOnlyUserSelectNone") is ""
 
 By default, a control's value is not atomically selectable (all).
 PASS extendOneCharacterIn("mutable") is "m"
@@ -27,24 +27,24 @@ PASS extendOneCharacterIn("textarea") is "t"
 PASS extendOneCharacterIn("textareaReadOnly") is "t"
 
 'all' makes the value atomically selectable, but it doesn't apply if editable.
-PASS extendOneCharacterIn("webkitUserSelectAll") is "w"
-PASS extendOneCharacterIn("textareaWebkitUserSelectAll") is "t"
-PASS extendOneCharacterIn("readOnlyWebkitUserSelectAll") is "readOnlyWebkitUserSelectAll"
-PASS extendOneCharacterIn("textareaReadOnlyWebkitUserSelectAll") is "textareaReadOnlyWebkitUserSelectAll"
+PASS extendOneCharacterIn("userSelectAll") is "u"
+PASS extendOneCharacterIn("textareaUserSelectAll") is "t"
+PASS extendOneCharacterIn("readOnlyUserSelectAll") is "readOnlyUserSelectAll"
+PASS extendOneCharacterIn("textareaReadOnlyUserSelectAll") is "textareaReadOnlyUserSelectAll"
 
 'all' no longer removes editability from ordinary editable content.
 PASS typedTextLandsAt("editableParagraph") is true
-PASS typedTextLandsAt("editableParagraphWebkitUserSelectAll") is true
+PASS typedTextLandsAt("editableParagraphUserSelectAll") is true
 
-'all' does not remove editability from editable text controls.
+'all' does not remove editability from editable text controls either.
 PASS typedTextLandsAt("mutable") is true
 PASS typedTextLandsAt("textarea") is true
 PASS typedTextLandsAt("readOnly") is false
 PASS typedTextLandsAt("textareaReadOnly") is false
-PASS typedTextLandsAt("webkitUserSelectAll") is true
-PASS typedTextLandsAt("textareaWebkitUserSelectAll") is true
-PASS typedTextLandsAt("readOnlyWebkitUserSelectAll") is false
-PASS typedTextLandsAt("textareaReadOnlyWebkitUserSelectAll") is false
+PASS typedTextLandsAt("userSelectAll") is true
+PASS typedTextLandsAt("textareaUserSelectAll") is true
+PASS typedTextLandsAt("readOnlyUserSelectAll") is false
+PASS typedTextLandsAt("textareaReadOnlyUserSelectAll") is false
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -1,10 +1,10 @@
-This tests indenting into a new blockquote when blockquotes are styled as -webkit-user-select: all. -webkit-user-select: all causes the new blockquote element to be uneditable so we should bail out and not indent.
+This tests indenting into a new blockquote when blockquotes are styled as -webkit-user-select: all. Editability now overrides user-select: all, so the new blockquote is editable and the indent goes through. See indent-user-select-all-blockquotes-legacy.html for the legacy behavior, where user-select: all made the blockquote uneditable and we bailed out instead of indenting.
 
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS No blockquote created
+PASS Blockquote created
 PASS successfullyParsed is true
 
 TEST COMPLETE

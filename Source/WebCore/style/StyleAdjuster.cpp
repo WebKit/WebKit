@@ -635,21 +635,6 @@ void Adjuster::adjust(Style::ComputedStyle& style) const
         if (m_document->settings().detailsAutoExpandEnabled() && m_element->isInUserAgentShadowTree() && m_element->userAgentPart() == UserAgentParts::detailsContent())
             style.setAutoRevealsWhenFound();
 
-#if ENABLE(IMAGE_ANALYSIS)
-        // Don't allow selecting individual glyphs on text recognized inside an image:
-        if (m_element->isInUserAgentShadowTree() && m_element->userAgentPart() == UserAgentParts::internalImageOverlayText()) {
-            switch (style.webkitUserSelect()) {
-            case UserSelect::All:
-            case UserSelect::None:
-                break;
-            case UserSelect::Auto:
-            case UserSelect::Text:
-                style.setWebkitUserSelect(UserSelect::All);
-                break;
-            }
-        }
-#endif
-
         if (RefPtr htmlElement = dynamicDowncast<HTMLElement>(element); htmlElement && htmlElement->isHiddenUntilFound())
             style.setAutoRevealsWhenFound();
     }
@@ -828,19 +813,69 @@ void Adjuster::adjust(Style::ComputedStyle& style) const
     adjustForSiteSpecificQuirks(style);
 
     adjustUsedUserSelect(style);
+    // Don't allow selecting individual glyphs on text recognized inside an image:
+#if ENABLE(IMAGE_ANALYSIS)
+    if (m_element && m_element->isInUserAgentShadowTree() && m_element->userAgentPart() == UserAgentParts::internalImageOverlayText()) {
+        auto userSelect = style.usedUserSelectIgnoringEffectivelyInert() == UserSelect::None ? UserSelect::None : UserSelect::All;
+        style.setWebkitUserSelect(userSelect);
+        style.setUserSelect(userSelect);
+        style.setUsedUserSelect(userSelect);
+    }
+#endif
+}
+
+static bool considerUnprefixedUserSelect()
+{
+#if PLATFORM(COCOA)
+    static const bool result = linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::UserSelectSupersedesWebkitUserSelect);
+    return result;
+#else
+    return true;
+#endif
 }
 
 void Adjuster::adjustUsedUserSelect(Style::ComputedStyle& style) const
 {
-    auto value = style.webkitUserSelect();
+    if (!m_document->settings().cssUserSelectEnabled() || !considerUnprefixedUserSelect()) {
+        // Legacy behavior: only -webkit-user-select is consulted and it doesn't behave
+        // according to spec; 'user-select' is ignored.
+        auto value = style.webkitUserSelect();
 
-    // On editable, non-draggable content, 'none' is overridden so that the content can
-    // still be selected and carets can be placed in it.
-    if (style.userModify() != UserModify::ReadOnly && style.userDrag() != UserDrag::Element && value == UserSelect::None)
-        value = UserSelect::Text;
+        // On editable, non-draggable content, 'none' is overridden so that the content can
+        // still be selected and carets can be placed in it.
+        if (style.userModify() != UserModify::ReadOnly && style.userDrag() != UserDrag::Element && value == UserSelect::None)
+            value = UserSelect::Text;
 
-    // 'auto' means nothing stronger was inherited, so it is handled as 'text'.
-    if (value == UserSelect::Auto)
+        // 'auto' means nothing stronger was inherited, so it is handled as 'text'.
+        if (value == UserSelect::Auto)
+            value = UserSelect::Text;
+
+        style.setUsedUserSelect(value);
+        return;
+    }
+
+    auto value = [&] {
+        // The prefixed property only applies if the author did not use the unprefixed
+        // one. Neither flag is inherited, so this is decided per element:
+        if (style.hasExplicitlySetWebkitUserSelect() && !style.hasExplicitlySetUserSelect()) {
+            auto prefixedValue = style.webkitUserSelect();
+
+            // We fold explicitly set prefixed 'auto' into 'text' instead of using
+            // the parent's used value. This is against the spec but preserves
+            // legacy -webkit-user-select usage:
+            return prefixedValue == UserSelect::Auto ? UserSelect::Text : prefixedValue;
+        }
+
+        auto unprefixedValue = style.userSelect();
+        if (unprefixedValue == UserSelect::Auto)
+            return m_parentStyle.usedUserSelectIgnoringEffectivelyInert();
+
+        return unprefixedValue;
+    }();
+
+    // FIXME: this should be overridden to UserSelect::Contain, which is unimplemented but is how
+    // editable content with 'text' already behaves.
+    if (style.userModify() != UserModify::ReadOnly)
         value = UserSelect::Text;
 
     style.setUsedUserSelect(value);
@@ -1096,8 +1131,11 @@ void Adjuster::adjustForSiteSpecificQuirks(Style::ComputedStyle& style) const
 
     if (documentQuirks.needsPrimeVideoUserSelectNoneQuirk()) {
         static MainThreadNeverDestroyed<const AtomString> className("webPlayerSDKUiContainer"_s);
-        if (m_element->hasClassName(className))
+        if (m_element->hasClassName(className)) {
+            // Not redundant: we don't know which one will be used:
             style.setWebkitUserSelect(UserSelect::None);
+            style.setUserSelect(UserSelect::None);
+        }
     }
 
     if (auto tikTokOverflowingContentQuery = documentQuirks.needsTikTokOverflowingContentQuirk(protect(*m_element), m_parentStyle)) {

@@ -9,32 +9,32 @@
 <!-- For input and textarea, some elements in the shadow tree have their style built
      directly, skipping the style cascade. This skips the style adjuster. This test
      verifies that the used value of user-select is correct for the text in these
-     elements. -->
+     elements, using the unprefixed spelling. -->
 
 <input id="mutable" value="mutable">
 <input id="readOnly" readonly value="readOnly">
 <textarea id="textarea">textarea</textarea>
 <textarea id="textareaReadOnly" readonly>textareaReadOnly</textarea>
 
-<input id="webkitUserSelectNone" value="webkitUserSelectNone" style="-webkit-user-select: none">
-<textarea id="textareaWebkitUserSelectNone" style="-webkit-user-select: none">textareaWebkitUserSelectNone</textarea>
+<input id="userSelectNone" value="userSelectNone" style="user-select: none">
+<textarea id="textareaUserSelectNone" style="user-select: none">textareaUserSelectNone</textarea>
 
-<input id="readOnlyWebkitUserSelectNone" readonly value="readOnlyWebkitUserSelectNone" style="-webkit-user-select: none">
-<textarea id="textareaReadOnlyWebkitUserSelectNone" readonly style="-webkit-user-select: none">textareaReadOnlyWebkitUserSelectNone</textarea>
+<input id="readOnlyUserSelectNone" readonly value="readOnlyUserSelectNone" style="user-select: none">
+<textarea id="textareaReadOnlyUserSelectNone" readonly style="user-select: none">textareaReadOnlyUserSelectNone</textarea>
 
-<input id="webkitUserSelectAll" value="webkitUserSelectAll" style="-webkit-user-select: all">
-<textarea id="textareaWebkitUserSelectAll" style="-webkit-user-select: all">textareaWebkitUserSelectAll</textarea>
+<input id="userSelectAll" value="userSelectAll" style="user-select: all">
+<textarea id="textareaUserSelectAll" style="user-select: all">textareaUserSelectAll</textarea>
 
-<input id="readOnlyWebkitUserSelectAll" readonly value="readOnlyWebkitUserSelectAll" style="-webkit-user-select: all">
-<textarea id="textareaReadOnlyWebkitUserSelectAll" readonly style="-webkit-user-select: all">textareaReadOnlyWebkitUserSelectAll</textarea>
+<input id="readOnlyUserSelectAll" readonly value="readOnlyUserSelectAll" style="user-select: all">
+<textarea id="textareaReadOnlyUserSelectAll" readonly style="user-select: all">textareaReadOnlyUserSelectAll</textarea>
 
 <p id="editableParagraph" contenteditable>editableParagraph</p>
-<p id="editableParagraphWebkitUserSelectAll" contenteditable style="-webkit-user-select: all">editableParagraphWebkitUserSelectAll</p>
+<p id="editableParagraphUserSelectAll" contenteditable style="user-select: all">editableParagraphUserSelectAll</p>
 
 <div id="description"></div>
 <div id="console"></div>
 <script>
-description("Verifies the used user-select value for the inner text element of a text control.");
+description("Verifies the used user-select value for the inner text element of a text control, and contrasts it with ordinary editable content.");
 
 function selectTextIn(id)
 {
@@ -87,10 +87,10 @@ shouldBeEqualToString('selectTextIn("textareaReadOnly")', "textareaReadOnly");
 
 debug("");
 debug("'none' makes it unselectable, but it is overridden if the text is editable.");
-shouldBeEqualToString('selectTextIn("webkitUserSelectNone")', "webkitUserSelectNone");
-shouldBeEqualToString('selectTextIn("textareaWebkitUserSelectNone")', "textareaWebkitUserSelectNone");
-shouldBeEqualToString('selectTextIn("readOnlyWebkitUserSelectNone")', "");
-shouldBeEqualToString('selectTextIn("textareaReadOnlyWebkitUserSelectNone")', "");
+shouldBeEqualToString('selectTextIn("userSelectNone")', "userSelectNone");
+shouldBeEqualToString('selectTextIn("textareaUserSelectNone")', "textareaUserSelectNone");
+shouldBeEqualToString('selectTextIn("readOnlyUserSelectNone")', "");
+shouldBeEqualToString('selectTextIn("textareaReadOnlyUserSelectNone")', "");
 
 debug("");
 debug("By default, a control's value is not atomically selectable (all).");
@@ -101,27 +101,27 @@ shouldBeEqualToString('extendOneCharacterIn("textareaReadOnly")', 't');
 
 debug("");
 debug("'all' makes the value atomically selectable, but it doesn't apply if editable.");
-shouldBeEqualToString('extendOneCharacterIn("webkitUserSelectAll")', "w");
-shouldBeEqualToString('extendOneCharacterIn("textareaWebkitUserSelectAll")', "t");
-shouldBeEqualToString('extendOneCharacterIn("readOnlyWebkitUserSelectAll")', "readOnlyWebkitUserSelectAll");
-shouldBeEqualToString('extendOneCharacterIn("textareaReadOnlyWebkitUserSelectAll")', "textareaReadOnlyWebkitUserSelectAll");
+shouldBeEqualToString('extendOneCharacterIn("userSelectAll")', "u");
+shouldBeEqualToString('extendOneCharacterIn("textareaUserSelectAll")', "t");
+shouldBeEqualToString('extendOneCharacterIn("readOnlyUserSelectAll")', "readOnlyUserSelectAll");
+shouldBeEqualToString('extendOneCharacterIn("textareaReadOnlyUserSelectAll")', "textareaReadOnlyUserSelectAll");
 
 debug("");
 debug("'all' no longer removes editability from ordinary editable content.");
 shouldBeTrue('typedTextLandsAt("editableParagraph")');
-shouldBeTrue('typedTextLandsAt("editableParagraphWebkitUserSelectAll")');
+shouldBeTrue('typedTextLandsAt("editableParagraphUserSelectAll")');
 
 debug("");
-debug("'all' does not remove editability from editable text controls.");
+debug("'all' does not remove editability from editable text controls either.");
 shouldBeTrue('typedTextLandsAt("mutable")');
 shouldBeTrue('typedTextLandsAt("textarea")');
 shouldBeFalse('typedTextLandsAt("readOnly")');
 shouldBeFalse('typedTextLandsAt("textareaReadOnly")');
 
-shouldBeTrue('typedTextLandsAt("webkitUserSelectAll")');
-shouldBeTrue('typedTextLandsAt("textareaWebkitUserSelectAll")');
-shouldBeFalse('typedTextLandsAt("readOnlyWebkitUserSelectAll")');
-shouldBeFalse('typedTextLandsAt("textareaReadOnlyWebkitUserSelectAll")');
+shouldBeTrue('typedTextLandsAt("userSelectAll")');
+shouldBeTrue('typedTextLandsAt("textareaUserSelectAll")');
+shouldBeFalse('typedTextLandsAt("readOnlyUserSelectAll")');
+shouldBeFalse('typedTextLandsAt("textareaReadOnlyUserSelectAll")');
 
 </script>
 </body>

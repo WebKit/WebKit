@@ -101,6 +101,8 @@ NonInheritedMiscData::NonInheritedMiscData(const NonInheritedMiscData& o)
     , hasExplicitlySetColorScheme(o.hasExplicitlySetColorScheme)
 #endif
     , hasExplicitlySetDirection(o.hasExplicitlySetDirection)
+    , hasExplicitlySetUserSelect(o.hasExplicitlySetUserSelect)
+    , hasExplicitlySetWebkitUserSelect(o.hasExplicitlySetWebkitUserSelect)
     , hasExplicitlySetWritingMode(o.hasExplicitlySetWritingMode)
     , tableLayout(o.tableLayout)
     , appearance(o.appearance)
@@ -150,6 +152,8 @@ bool NonInheritedMiscData::operator==(const NonInheritedMiscData& o) const
         && hasExplicitlySetColorScheme == o.hasExplicitlySetColorScheme
 #endif
         && hasExplicitlySetDirection == o.hasExplicitlySetDirection
+        && hasExplicitlySetUserSelect == o.hasExplicitlySetUserSelect
+        && hasExplicitlySetWebkitUserSelect == o.hasExplicitlySetWebkitUserSelect
         && hasExplicitlySetWritingMode == o.hasExplicitlySetWritingMode
         && tableLayout == o.tableLayout
         && appearance == o.appearance
@@ -207,6 +211,8 @@ void NonInheritedMiscData::dumpDifferences(TextStream& ts, const NonInheritedMis
 #endif
 
     LOG_IF_DIFFERENT_WITH_CAST(bool, hasExplicitlySetDirection);
+    LOG_IF_DIFFERENT_WITH_CAST(bool, hasExplicitlySetUserSelect);
+    LOG_IF_DIFFERENT_WITH_CAST(bool, hasExplicitlySetWebkitUserSelect);
     LOG_IF_DIFFERENT_WITH_CAST(bool, hasExplicitlySetWritingMode);
 
     LOG_IF_DIFFERENT_WITH_CAST(TableLayoutType, tableLayout);

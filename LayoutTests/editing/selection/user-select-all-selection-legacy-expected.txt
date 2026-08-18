@@ -9,23 +9,23 @@ After extend forward character:
 |   <span>
 |     id="descendant"
 |     style="border: solid red 1px"
-|     "u<#selection-focus>ser "
+|     "user "
 |     <b>
 |       "select all"
 |     " area"
 | <span>
-|   " Test -webkit-user-select all"
+|   "<#selection-focus> Test -webkit-user-select all"
 
 After extend backward character:
 | <span>
-|   "Test -webkit-user-select all <#selection-focus>"
+|   "Test -webkit-user-select all <#selection-caret>"
 | <span>
 |   class="userSelectAll"
 |   id="allArea"
 |   <span>
 |     id="descendant"
 |     style="border: solid red 1px"
-|     "<#selection-anchor>user "
+|     "user "
 |     <b>
 |       "select all"
 |     " area"
@@ -41,23 +41,23 @@ After extend right character:
 |   <span>
 |     id="descendant"
 |     style="border: solid red 1px"
-|     "u<#selection-focus>ser "
+|     "user "
 |     <b>
 |       "select all"
 |     " area"
 | <span>
-|   " Test -webkit-user-select all"
+|   "<#selection-focus> Test -webkit-user-select all"
 
 After extend left character:
 | <span>
-|   "Test -webkit-user-select all <#selection-focus>"
+|   "Test -webkit-user-select all <#selection-caret>"
 | <span>
 |   class="userSelectAll"
 |   id="allArea"
 |   <span>
 |     id="descendant"
 |     style="border: solid red 1px"
-|     "<#selection-anchor>user "
+|     "user "
 |     <b>
 |       "select all"
 |     " area"
@@ -73,12 +73,12 @@ After move forward character:
 |   <span>
 |     id="descendant"
 |     style="border: solid red 1px"
-|     "u<#selection-caret>ser "
+|     "user "
 |     <b>
 |       "select all"
 |     " area"
 | <span>
-|   " Test -webkit-user-select all"
+|   "<#selection-caret> Test -webkit-user-select all"
 
 After move backward character:
 | <span>
@@ -105,12 +105,12 @@ After move right character:
 |   <span>
 |     id="descendant"
 |     style="border: solid red 1px"
-|     "u<#selection-caret>ser "
+|     "user "
 |     <b>
 |       "select all"
 |     " area"
 | <span>
-|   " Test -webkit-user-select all"
+|   "<#selection-caret> Test -webkit-user-select all"
 
 After move left character:
 | <span>
@@ -131,16 +131,18 @@ After move left character:
 After click:
 | <span>
 |   "Test -webkit-user-select all "
+| <#selection-anchor>
 | <span>
 |   class="userSelectAll"
 |   id="allArea"
 |   <span>
 |     id="descendant"
 |     style="border: solid red 1px"
-|     "u<#selection-caret>ser "
+|     "user "
 |     <b>
 |       "select all"
 |     " area"
+| <#selection-focus>
 | <span>
 |   " Test -webkit-user-select all"
 
@@ -153,23 +155,25 @@ After extending selection from left by mouse:
 |   <span>
 |     id="descendant"
 |     style="border: solid red 1px"
-|     "use<#selection-focus>r "
+|     "user "
 |     <b>
 |       "select all"
 |     " area"
+| <#selection-focus>
 | <span>
 |   " Test -webkit-user-select all"
 
 After extending selection from right by mouse:
 | <span>
 |   "Test -webkit-user-select all "
+| <#selection-focus>
 | <span>
 |   class="userSelectAll"
 |   id="allArea"
 |   <span>
 |     id="descendant"
 |     style="border: solid red 1px"
-|     "u<#selection-focus>ser "
+|     "user "
 |     <b>
 |       "select all"
 |     " area"

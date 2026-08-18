@@ -108,6 +108,8 @@ public:
     PREFERRED_TYPE(bool) unsigned hasExplicitlySetColorScheme : 1 { false };
 #endif
     PREFERRED_TYPE(bool) unsigned hasExplicitlySetDirection : 1 { false };
+    PREFERRED_TYPE(bool) unsigned hasExplicitlySetUserSelect : 1 { false };
+    PREFERRED_TYPE(bool) unsigned hasExplicitlySetWebkitUserSelect : 1 { false };
     PREFERRED_TYPE(bool) unsigned hasExplicitlySetWritingMode : 1 { false };
     PREFERRED_TYPE(TableLayoutType) unsigned tableLayout : 1;
     PREFERRED_TYPE(StyleAppearance) unsigned appearance : appearanceBitWidth;

@@ -249,6 +249,11 @@ inline ContentVisibility ComputedStyleBase::usedContentVisibility() const
     return static_cast<ContentVisibility>(m_inheritedRareData->usedContentVisibility);
 }
 
+inline UserSelect ComputedStyleBase::usedUserSelectIgnoringEffectivelyInert() const
+{
+    return static_cast<UserSelect>(m_inheritedRareData->usedUserSelect);
+}
+
 inline TouchAction ComputedStyleBase::usedTouchAction() const
 {
     return m_inheritedRareData->usedTouchAction;
