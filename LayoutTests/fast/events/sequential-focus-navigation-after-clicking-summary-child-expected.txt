@@ -1,0 +1,10 @@
+After clicking an unfocusable element inside a summary, tabbing focus should advance outside its parent details.
+PASS document.activeElement.id is 'second-summary'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Item 1
+Panel 1
+
+Item 2
+
