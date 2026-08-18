@@ -490,7 +490,11 @@ public:
 
     ALWAYS_INLINE void decrementReferencingNodeCount(unsigned count = 1)
     {
+#ifdef RC_REMOVE_SEC_ACCEL_3
         ASSERT_WITH_SECURITY_IMPLICATION(m_referencingNodeCount >= count);
+#else
+        RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(m_referencingNodeCount >= count);
+#endif
 
         m_referencingNodeCount -= count;
         if (!m_referencingNodeCount && !refCount()) {

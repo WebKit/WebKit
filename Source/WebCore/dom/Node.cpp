@@ -2168,18 +2168,27 @@ static unsigned traverseSubtreeToUpdateTreeScope(Node& root, NOESCAPE const Move
 {
     unsigned count = 0;
     for (CheckedPtr node = &root; node; node = NodeTraversal::next(*node, &root)) {
+#ifdef RC_REMOVE_SEC_ACCEL_3
         moveNode(*node);
         ++count;
+#else
+        count += moveNode(*node);
+#endif
 
         RefPtr element = dynamicDowncast<Element>(*node);
         if (!element)
             continue;
 
         if (element->hasSyntheticAttrChildNodes()) {
+#ifdef RC_REMOVE_SEC_ACCEL_3
             for (auto& attr : element->attrNodeList()) {
                 moveNode(attr);
                 ++count;
             }
+#else
+            for (auto& attr : element->attrNodeList())
+                count += moveNode(attr);
+#endif
         }
 
         if (RefPtr shadow = element->shadowRoot())
@@ -2213,8 +2222,18 @@ inline unsigned Node::moveShadowTreeToNewDocumentFastCase(ShadowRoot& shadowRoot
 {
     ASSERT(isDocumentEligibleForFastAdoption(oldDocument, newDocument));
     adoptCustomElementRegistryIfNotExplicitlySet(shadowRoot, newDocument);
+#ifdef RC_REMOVE_SEC_ACCEL_3
     return traverseSubtreeToUpdateTreeScope(shadowRoot, [&](Node& node) {
         node.moveNodeToNewDocumentFastCase(oldDocument, newDocument);
+#else
+    return traverseSubtreeToUpdateTreeScope(shadowRoot, [&](Node& node) -> unsigned {
+        if (&node.treeScope() != static_cast<TreeScope*>(&shadowRoot)) {
+            RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(&node.document() == &newDocument);
+            return 0;
+        }
+        node.moveNodeToNewDocumentFastCase(oldDocument, newDocument);
+        return 1;
+#endif
     }, [&oldDocument, &newDocument](ShadowRoot& innerShadowRoot) {
         RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(&innerShadowRoot.document() == &oldDocument);
         innerShadowRoot.moveShadowRootToNewDocument(oldDocument, newDocument);
@@ -2226,8 +2245,18 @@ inline void Node::moveShadowTreeToNewDocumentSlowCase(ShadowRoot& shadowRoot, Do
 {
     ASSERT(!isDocumentEligibleForFastAdoption(oldDocument, newDocument));
     adoptCustomElementRegistryIfNotExplicitlySet(shadowRoot, newDocument);
+#ifdef RC_REMOVE_SEC_ACCEL_3
     traverseSubtreeToUpdateTreeScope(shadowRoot, [&](Node& node) {
         node.moveNodeToNewDocumentSlowCase(oldDocument, newDocument);
+#else
+    traverseSubtreeToUpdateTreeScope(shadowRoot, [&](Node& node) -> unsigned {
+        if (&node.treeScope() != static_cast<TreeScope*>(&shadowRoot)) {
+            RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(&node.document() == &newDocument);
+            return 0;
+        }
+        node.moveNodeToNewDocumentSlowCase(oldDocument, newDocument);
+        return 1;
+#endif
     }, [&oldDocument, &newDocument](ShadowRoot& innerShadowRoot) {
         RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(&innerShadowRoot.document() == &oldDocument);
         innerShadowRoot.moveShadowRootToNewDocument(oldDocument, newDocument);
@@ -2247,11 +2276,18 @@ void Node::moveTreeToNewScope(Node& root, TreeScope& oldScope, TreeScope& newSco
         oldDocument->incrementReferencingNodeCount();
         bool isFastCase = isDocumentEligibleForFastAdoption(oldDocument, newDocument) && !newScopeIsUAShadowTree;
         if (isFastCase) {
+#ifdef RC_REMOVE_SEC_ACCEL_3
             unsigned nodeCount = traverseSubtreeToUpdateTreeScope(root, [&](Node& node) {
+#else
+            unsigned nodeCount = traverseSubtreeToUpdateTreeScope(root, [&](Node& node) -> unsigned {
+#endif
                 ASSERT(!node.isTreeScope());
                 RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(&node.treeScope() == &oldScope);
                 node.setTreeScope(newScope);
                 node.moveNodeToNewDocumentFastCase(oldDocument, newDocument);
+#ifndef RC_REMOVE_SEC_ACCEL_3
+                return 1;
+#endif
             }, [&](ShadowRoot& shadowRoot) {
                 ASSERT_WITH_SECURITY_IMPLICATION(&shadowRoot.document() == oldDocument.ptr());
                 shadowRoot.moveShadowRootToNewParentScope(newScope, newDocument);
@@ -2260,13 +2296,20 @@ void Node::moveTreeToNewScope(Node& root, TreeScope& oldScope, TreeScope& newSco
             newDocument->incrementReferencingNodeCount(nodeCount);
             oldDocument->decrementReferencingNodeCount(nodeCount);
         } else {
+#ifdef RC_REMOVE_SEC_ACCEL_3
             traverseSubtreeToUpdateTreeScope(root, [&](Node& node) {
+#else
+            traverseSubtreeToUpdateTreeScope(root, [&](Node& node) -> unsigned {
+#endif
                 ASSERT(!node.isTreeScope());
                 RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(&node.treeScope() == &oldScope);
                 if (newScopeIsUAShadowTree)
                     node.setEventTargetFlag(EventTargetFlag::HasBeenInUserAgentShadowTree);
                 node.setTreeScope(newScope);
                 node.moveNodeToNewDocumentSlowCase(oldDocument, newDocument);
+#ifndef RC_REMOVE_SEC_ACCEL_3
+                return 1;
+#endif
             }, [&](ShadowRoot& shadowRoot) {
                 ASSERT_WITH_SECURITY_IMPLICATION(&shadowRoot.document() == oldDocument.ptr());
                 shadowRoot.moveShadowRootToNewParentScope(newScope, newDocument);
@@ -2277,16 +2320,27 @@ void Node::moveTreeToNewScope(Node& root, TreeScope& oldScope, TreeScope& newSco
         RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(&oldScope.documentScope() == oldDocument.ptr() && &newScope.documentScope() == newDocument.ptr());
         oldDocument->decrementReferencingNodeCount();
     } else {
-        traverseSubtreeToUpdateTreeScope(root, [&](Node& node) {
+#ifdef RC_REMOVE_SEC_ACCEL_3
+            traverseSubtreeToUpdateTreeScope(root, [&](Node& node) {
+#else
+            traverseSubtreeToUpdateTreeScope(root, [&](Node& node) -> unsigned {
+#endif
             ASSERT(!node.isTreeScope());
             RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(&node.treeScope() == &oldScope);
             if (newScopeIsUAShadowTree)
                 node.setEventTargetFlag(EventTargetFlag::HasBeenInUserAgentShadowTree);
             node.setTreeScope(newScope);
             if (!node.hasRareData()) [[likely]]
+#ifdef RC_REMOVE_SEC_ACCEL_3
                 return;
+#else
+                return 1;
+#endif
             if (auto* nodeLists = node.rareData()->nodeLists())
                 nodeLists->adoptTreeScope();
+#ifndef RC_REMOVE_SEC_ACCEL_3
+            return 1;
+#endif
         }, [&newScope](ShadowRoot& shadowRoot) {
             shadowRoot.setParentTreeScope(newScope);
             return 0; // Unused.

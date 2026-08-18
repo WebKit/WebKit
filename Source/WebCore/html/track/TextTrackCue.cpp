@@ -238,8 +238,13 @@ void TextTrackCue::didMoveToNewDocument(Document& newDocument)
     ActiveDOMObject::didMoveToNewDocument(newDocument);
     if (RefPtr cueNode = m_cueNode)
         cueNode->setTreeScopeRecursively(newDocument);
+#ifdef RC_REMOVE_SEC_ACCEL_3
     if (RefPtr displayTree = m_displayTree)
         displayTree->setTreeScopeRecursively(newDocument);
+#else
+    if (RefPtr displayTree = m_displayTree; displayTree && !displayTree->parentNode())
+        displayTree->setTreeScopeRecursively(newDocument);
+#endif
 }
 
 ScriptExecutionContext* TextTrackCue::scriptExecutionContext() const

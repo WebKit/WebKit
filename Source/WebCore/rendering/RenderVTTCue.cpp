@@ -210,7 +210,7 @@ RenderVTTCue* RenderVTTCue::overlappingObject() const
 RenderVTTCue* RenderVTTCue::overlappingObjectForRect(const IntRect& rect) const
 {
     for (RenderObject* sibling = previousSibling(); sibling; sibling = sibling->previousSibling()) {
-        auto* previousCue = downcast<RenderVTTCue>(sibling);
+        auto* previousCue = dynamicDowncast<RenderVTTCue>(sibling);
         if (!previousCue || !previousCue->firstChild())
             continue;
 
