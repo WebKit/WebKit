@@ -3221,6 +3221,19 @@ JSC_DEFINE_JIT_OPERATION(operationArrayIsArray, size_t, (JSGlobalObject* globalO
     OPERATION_RETURN(scope, isArraySlow(globalObject, uncheckedDowncast<ProxyObject>(value.asCell())));
 }
 
+JSC_DEFINE_JIT_OPERATION(operationObjectIsExtensible, size_t, (JSGlobalObject* globalObject, EncodedJSValue encodedValue))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSValue value = JSValue::decode(encodedValue);
+    ASSERT(value.isCell() && value.asCell()->isObject());
+    bool isExtensible = asObject(value.asCell())->isExtensible(globalObject);
+    OPERATION_RETURN(scope, isExtensible);
+}
+
 JSC_DEFINE_JIT_OPERATION(operationTypeOfObject, JSCell*, (JSGlobalObject* globalObject, JSCell* object))
 {
     VM& vm = globalObject->vm();

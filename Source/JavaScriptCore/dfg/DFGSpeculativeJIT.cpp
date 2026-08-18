@@ -4799,6 +4799,69 @@ void SpeculativeJIT::compileArrayIsArray(Node* node)
     unblessedBooleanResult(resultGPR, node);
 }
 
+void SpeculativeJIT::compileObjectIsExtensible(Node* node)
+{
+    if (node->child1().useKind() == ObjectUse) {
+        SpeculateCellOperand value(this, node->child1());
+        GPRTemporary result(this);
+        GPRTemporary structure(this);
+
+        GPRReg valueGPR = value.gpr();
+        GPRReg resultGPR = result.gpr();
+        GPRReg structureGPR = structure.gpr();
+
+        speculateObject(node->child1(), valueGPR);
+
+        load8(Address(valueGPR, JSCell::typeInfoTypeOffset()), resultGPR);
+        sub32(TrustedImm32(ProxyObjectType), resultGPR);
+        static_assert(GlobalProxyType == ProxyObjectType + 1);
+        Jump isProxyLike = branch32(BelowOrEqual, resultGPR, TrustedImm32(GlobalProxyType - ProxyObjectType));
+
+        emitLoadStructure(vm(), valueGPR, structureGPR);
+        load16(Address(structureGPR, Structure::outOfLineTypeFlagsOffset()), resultGPR);
+        Jump overridesIsExtensible = branchTest32(NonZero, resultGPR, TrustedImm32(OverridesIsExtensible >> numberOfInlineBits));
+        test32(Zero, Address(structureGPR, Structure::bitFieldOffset()), TrustedImm32(Structure::s_didPreventExtensionsBits), resultGPR);
+
+        JumpList slowCases;
+        slowCases.append(isProxyLike);
+        slowCases.append(overridesIsExtensible);
+        addSlowPathGenerator(slowPathCall(slowCases, this, operationObjectIsExtensible, resultGPR, LinkableConstant::globalObject(*this, node), valueGPR));
+
+        unblessedBooleanResult(resultGPR, node);
+        return;
+    }
+
+    JSValueOperand value(this, node->child1());
+    GPRTemporary result(this);
+    GPRTemporary type(this);
+
+    GPRReg valueGPR = value.gpr();
+    GPRReg resultGPR = result.gpr();
+    GPRReg typeGPR = type.gpr();
+    move(TrustedImm32(0), resultGPR);
+
+    Jump isNotCell = branchIfNotCell(valueGPR);
+
+    load8(Address(valueGPR, JSCell::typeInfoTypeOffset()), typeGPR);
+    Jump isNotObject = branch32(Below, typeGPR, TrustedImm32(ObjectType));
+    sub32(TrustedImm32(ProxyObjectType), typeGPR);
+    Jump isProxyLike = branch32(BelowOrEqual, typeGPR, TrustedImm32(GlobalProxyType - ProxyObjectType));
+
+    emitLoadStructure(vm(), valueGPR, typeGPR);
+    load16(Address(typeGPR, Structure::outOfLineTypeFlagsOffset()), resultGPR);
+    Jump overridesIsExtensible = branchTest32(NonZero, resultGPR, TrustedImm32(OverridesIsExtensible >> numberOfInlineBits));
+    test32(Zero, Address(typeGPR, Structure::bitFieldOffset()), TrustedImm32(Structure::s_didPreventExtensionsBits), resultGPR);
+
+    JumpList slowCases;
+    slowCases.append(isProxyLike);
+    slowCases.append(overridesIsExtensible);
+    addSlowPathGenerator(slowPathCall(slowCases, this, operationObjectIsExtensible, resultGPR, LinkableConstant::globalObject(*this, node), valueGPR));
+
+    isNotCell.link(this);
+    isNotObject.link(this);
+    unblessedBooleanResult(resultGPR, node);
+}
+
 void SpeculativeJIT::compileHasStructureWithFlags(Node* node)
 {
     SpeculateCellOperand object(this, node->child1());
