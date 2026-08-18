@@ -123,8 +123,10 @@ SWIFT_OBJC_INTEROP_MODE = objc;
 OTHER_SWIFT_FLAGS = $(inherited) -Xfrontend -experimental-spi-only-imports @$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/platform-enabled-swift-args.$(arch).resp @$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/swift-tba-availability-macros.resp;
 
 WK_ENABLE_SWIFTUI = YES;
-WK_ENABLE_SWIFTUI[sdk=watch*] = NO;
-WK_ENABLE_SWIFTUI[sdk=appletv*] = NO;
+WK_ENABLE_SWIFTUI[sdk=watch*26.*] = NO;
+WK_ENABLE_SWIFTUI[sdk=watch*27.*] = NO;
+WK_ENABLE_SWIFTUI[sdk=appletv*26.*] = NO;
+WK_ENABLE_SWIFTUI[sdk=appletv*27.*] = NO;
 
 SUPPORTS_TEXT_BASED_API = $(WK_ENABLE_SLOW_BUILD_VERIFICATION);
 // Override to enable SPI checking at desk. Remove once audit-spi works in
