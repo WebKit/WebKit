@@ -1,7 +1,10 @@
 
 PASS can detect whether anchor position follows transforms
-FAIL @supports named-feature(anchor-position-follows-transforms) should be false assert_equals: expected "1" but got "auto"
-FAIL @supports named-feature( anchor-position-follows-transforms ) should be false assert_equals: expected "2" but got "auto"
+FAIL @supports named-feature(anchor-position-follows-transforms) should be true assert_equals: expected "1" but got "auto"
+FAIL @supports named-feature( anchor-position-follows-transforms ) should be true assert_equals: expected "2" but got "auto"
+PASS @supports named-feature(  foo   anchor-position-follows-transforms  ) should be false
+PASS @supports named-feature(  anchor-position-follows-transforms  bar) should be false
+PASS @supports named-feature(anchor-position-follows-transforms single-axis-scroll-container) should be false
 PASS @supports named-feature(unknown-feature) should be false
 PASS @supports named-feature(named-feature) should be false
 PASS @supports named-feature(color) should be false

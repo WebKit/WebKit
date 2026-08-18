@@ -1805,6 +1805,14 @@ font-format
 font-tech
 at-rule
 
+// @supports named-feature
+// https://drafts.csswg.org/css-conditional-5/#funcdef-supports-named-feature
+named-feature
+// List of named features
+// https://drafts.csswg.org/css-conditional-5/#dfn-support-named-feature
+anchor-position-follows-transforms
+single-axis-scroll-container
+
 // math-depth
 auto-add
 // add

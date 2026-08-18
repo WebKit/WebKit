@@ -33,6 +33,7 @@
 #include "CSSAtRuleID.h"
 #include "CSSParser.h"
 #include "CSSPropertyParserConsumer+Font.h"
+#include "CSSPropertyParserConsumer+Ident.h"
 #include "CSSPropertyParserConsumer+Primitives.h"
 #include "CSSPropertyParserState.h"
 #include "CSSSelectorParser.h"
@@ -152,6 +153,8 @@ CSSSupportsParser::SupportsResult CSSSupportsParser::consumeSupportsFunction(CSS
         return consumeSupportsFontTechFunction(range);
     case CSSValueAtRule:
         return consumeSupportsAtRuleFunction(range);
+    case CSSValueNamedFeature:
+        return consumeSupportsNamedFeatureFunction(range);
     default: // Unknown functions should parse as unsupported.
         range.consumeComponentValue();
         return Unsupported;
@@ -221,6 +224,34 @@ CSSSupportsParser::SupportsResult CSSSupportsParser::consumeSupportsAtRuleFuncti
 
     // Per spec, @charset is not an at-rule.
     return ((atRuleID != CSSAtRuleInvalid) && (atRuleID != CSSAtRuleCharset)) ? Supported : Unsupported;
+}
+
+// <supports-named-feature-fn> = named-feature( <ident> )
+CSSSupportsParser::SupportsResult CSSSupportsParser::consumeSupportsNamedFeatureFunction(CSSParserTokenRange& range)
+{
+    ASSERT(range.peek().type() == FunctionToken && range.peek().functionId() == CSSValueNamedFeature);
+
+    auto functionArgs = CSSPropertyParserHelpers::consumeFunction(range);
+    auto namedFeature = CSSPropertyParserHelpers::consumeIdentRaw(functionArgs);
+
+    if (!namedFeature)
+        return Invalid;
+    if (!functionArgs.atEnd())
+        return Invalid;
+
+    switch (*namedFeature) {
+    // FIXME (webkit.org/b/321970): remaining issue before transformed anchor is fully supported.
+    case CSSValueAnchorPositionFollowsTransforms:
+        return Unsupported;
+
+    // FIXME: not implemented yet
+    // https://github.com/WebKit/standards-positions/issues/680
+    case CSSValueSingleAxisScrollContainer:
+        return Unsupported;
+
+    default:
+        return Unsupported;
+    }
 }
 
 // <supports-in-parens> = ( <supports-condition> ) | <supports-feature> | <general-enclosed>

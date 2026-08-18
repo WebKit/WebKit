@@ -75,6 +75,9 @@ private:
     // https://drafts.csswg.org/css-conditional-5/#typedef-supports-at-rule-fn
     SupportsResult consumeSupportsAtRuleFunction(CSSParserTokenRange&);
 
+    // https://drafts.csswg.org/css-conditional-5/#typedef-supports-named-feature-fn
+    SupportsResult consumeSupportsNamedFeatureFunction(CSSParserTokenRange&);
+
     SupportsResult consumeConditionInParenthesis(CSSParserTokenRange&, CSSParserTokenType);
 
     CSSParser& m_parser;
