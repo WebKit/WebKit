@@ -475,6 +475,7 @@ BlendingKeyframe::BlendingKeyframe(const BlendingKeyframe& source)
     , m_timingFunction(source.m_timingFunction)
     , m_compositeOperation(source.m_compositeOperation)
     , m_containsDirectionAwareProperty(source.m_containsDirectionAwareProperty)
+    , m_hasPropertiesWithRevertRuleOrLayer(source.m_hasPropertiesWithRevertRuleOrLayer)
 {
 }
 
