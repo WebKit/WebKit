@@ -8711,3 +8711,9 @@ webkit.org/b/321691 [ Release ] imported/w3c/web-platform-tests/web-locks/bfcach
 webkit.org/b/321726 imported/w3c/web-platform-tests/largest-contentful-paint/observe-svg-data-uri-image.html [ Pass Failure ]
 
 webkit.org/b/321701 imported/w3c/web-platform-tests/html/semantics/forms/the-select-element/customizable-select/button-in-popover.html [ Failure ]
+
+# webkit.org/b/321110 NEW TEST(317810@main): [iOS macOS]4 tests in imported/w3c/web-platform-tests/webtransport/idlharness are constant failure
+imported/w3c/web-platform-tests/webtransport/idlharness.https.sub.any.html [ Failure ]
+imported/w3c/web-platform-tests/webtransport/idlharness.https.sub.any.serviceworker.html [ Failure ]
+imported/w3c/web-platform-tests/webtransport/idlharness.https.sub.any.sharedworker.html [ Failure ]
+imported/w3c/web-platform-tests/webtransport/idlharness.https.sub.any.worker.html [ Failure ]
