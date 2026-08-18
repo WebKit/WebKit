@@ -2,6 +2,7 @@
 <html>
 <head>
 <script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
 <!--
   Touch tests that involve the ontouchstart, ontouchmove, ontouchend or ontouchcancel callbacks
   should be written in an asynchronous fashion so they can be run on mobile platforms like Android.
@@ -120,6 +121,8 @@ description("Tests that the touch events originating on an input element with ty
 window.jsTestIsAsync = true;
 
 onload = async () => {
+    await UIHelper.renderingComplete();
+
     if (window.eventSender) {
         await runTest(slider1, false);
         await runTest(slider2, false);

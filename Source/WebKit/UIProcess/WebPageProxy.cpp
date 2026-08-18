@@ -5453,6 +5453,71 @@ void WebPageProxy::handleUnpreventableTouchEvent(const NativeWebTouchEvent& even
     }
 }
 
+#elif ENABLE(COORDINATED_TOUCH_EVENTS)
+void WebPageProxy::processNextQueuedTouchEvent()
+{
+    if (!hasRunningProcess())
+        return;
+    if (!m_mainFrame)
+        return;
+    auto frameID = m_mainFrame->frameID();
+
+    ASSERT(!internals().touchEventQueue.isEmpty());
+
+    auto& queuedEvent = internals().touchEventQueue.first();
+    protect(legacyMainFrameProcess())->startResponsivenessTimer();
+    sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::EventDispatcher::TouchEvent(webPageIDInProcess(processContainingFrame(frameID)), frameID, queuedEvent.forwardedEvent), [this, protectedThis = Ref { *this }] (IPC::Connection* connection, WebKit::WebEventType eventType, bool handled) mutable {
+        RefPtr pageClient = this->pageClient();
+        if (!pageClient)
+            return;
+
+        if (!connection) {
+            while (!internals().touchEventQueue.isEmpty()) {
+                auto queuedEvents = internals().touchEventQueue.takeFirst();
+                pageClient->doneWithTouchEvent(queuedEvents.forwardedEvent, false);
+                for (auto& event : queuedEvents.deferredTouchEvents)
+                    pageClient->doneWithTouchEvent(event, false);
+            }
+            didFinishProcessingAllPendingTouchEvents();
+            return;
+        }
+
+        MESSAGE_CHECK_BASE(!internals().touchEventQueue.isEmpty(), connection);
+        auto queuedEvents = internals().touchEventQueue.takeFirst();
+
+        MESSAGE_CHECK_BASE(eventType == queuedEvents.forwardedEvent.type(), connection);
+        protect(legacyMainFrameProcess())->stopResponsivenessTimer();
+
+        pageClient->doneWithTouchEvent(queuedEvents.forwardedEvent, handled);
+        for (auto& event : queuedEvents.deferredTouchEvents)
+            pageClient->doneWithTouchEvent(event, handled);
+
+        if (!internals().touchEventQueue.isEmpty())
+            processNextQueuedTouchEvent();
+        else
+            didFinishProcessingAllPendingTouchEvents();
+    });
+}
+
+void WebPageProxy::handleTouchEvent(IPC::Connection*, const NativeWebTouchEvent& event)
+{
+    if (!hasRunningProcess())
+        return;
+
+    if (!m_mainFrame)
+        return;
+
+    if (event.type() == WebEventType::TouchMove && !internals().touchEventQueue.isEmpty()) {
+        QueuedTouchEvents& lastEvent = internals().touchEventQueue.last();
+        if (lastEvent.forwardedEvent.type() == WebEventType::TouchMove)
+            lastEvent.deferredTouchEvents.append(event);
+    } else {
+        internals().touchEventQueue.append(event);
+
+        if (internals().touchEventQueue.size() == 1)
+            processNextQueuedTouchEvent();
+    }
+}
 #elif ENABLE(TOUCH_EVENTS)
 void WebPageProxy::touchEventHandlingCompleted(IPC::Connection* connection, std::optional<WebEventType> eventType, bool handled)
 {

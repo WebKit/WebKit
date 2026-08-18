@@ -2,6 +2,7 @@
 <html>
 <head>
 <script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
 <!--
   To test the new CSS property -webkit-tap-highlight-color which is only supported when building
   WebKit with ENABLE(TOUCH_EVENTS), we create a new div element and add -webkit-tap-highlight-color
@@ -61,6 +62,8 @@ description("Check tap highlight color in touch event");
 window.jsTestIsAsync = true;
 
 onload = async () => {
+    await UIHelper.renderingComplete();
+
     if (window.eventSender && eventSender.clearTouchPoints) {
         await touchTargets();
     } else {

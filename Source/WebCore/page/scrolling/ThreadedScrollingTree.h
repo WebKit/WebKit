@@ -70,6 +70,10 @@ public:
     bool scrollAnimatorEnabled() const { return m_scrollAnimatorEnabled; }
     void removePendingScrollAnimationForNode(ScrollingNodeID) WTF_REQUIRES_LOCK(m_treeLock) final;
 
+#if ENABLE(COORDINATED_TOUCH_EVENTS)
+    virtual TrackingType eventTrackingTypeForTouchEvent(const PlatformTouchEvent&) { return TrackingType::NotTracking; }
+#endif
+
 protected:
     explicit ThreadedScrollingTree(AsyncScrollingCoordinator&);
 

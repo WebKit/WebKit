@@ -1,5 +1,6 @@
 <!DOCTYPE HTML>
 <script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
 <style>
     #pusher {
         width: 1000px;
@@ -92,29 +93,34 @@
 
     onload = async () => {
         window.addEventListener("touchstart", base, false);
-        
+        await UIHelper.renderingComplete();
+
         await sendTouchStart(100, 100);
         window.removeEventListener("touchstart", base, false);
 
         window.addEventListener("touchstart", justZoomed, false);
+        await UIHelper.renderingComplete();
         zoomPageIn();
         await sendTouchStart(100, 100);
         zoomPageOut();
         window.removeEventListener("touchstart", justZoomed, false);
 
         window.addEventListener("touchstart", justScrolled, false);
+        await UIHelper.renderingComplete();
         scrollPage(50, 50);
         await sendTouchStart(100, 100);
         scrollPage(0, 0);
         window.removeEventListener("touchstart", justScrolled, false);
 
         window.addEventListener("touchstart", zoomedAndScrolled, false);
+        await UIHelper.renderingComplete();
         zoomPageIn();
         scrollPage(50, 50);
         await sendTouchStart(100, 100);
         zoomPageOut();
         scrollPage(0, 0);
         window.removeEventListener("touchstart", zoomedAndScrolled, false);
+        await UIHelper.renderingComplete();
 
         if (window.eventSender) {
             await eventSender.asyncTouchEnd();

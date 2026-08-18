@@ -540,6 +540,7 @@ AlwaysUseTouchEventRegions:
     WebKitLegacy:
       default: false
     WebKit:
+      "ENABLE(COORDINATED_TOUCH_EVENTS)" : true
       default: false
     WebCore:
       default: false

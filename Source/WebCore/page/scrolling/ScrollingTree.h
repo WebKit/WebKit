@@ -328,6 +328,10 @@ protected:
     HashSet<ScrollingNodeID> nodesWithActiveScrollAnimations();
     WEBCORE_EXPORT void serviceScrollAnimations(MonotonicTime) WTF_REQUIRES_LOCK(m_treeLock);
 
+#if ENABLE(COORDINATED_TOUCH_EVENTS)
+    std::optional<FloatSize> mainFrameScrollOffset() const;
+#endif
+
     void addPendingScrollUpdateInternal(ScrollUpdate&&);
     WEBCORE_EXPORT void addPendingScrollUpdate(ScrollUpdate&&);
     virtual void didAddPendingScrollUpdate() { }

@@ -13,6 +13,8 @@ if (window.testRunner)
     testRunner.waitUntilDone();
 
 onload = async () => {
+    await UIHelper.renderingComplete();
+
     if (window.eventSender) {
         eventSender.clearTouchPoints();
         eventSender.addTouchPoint(50, 150);

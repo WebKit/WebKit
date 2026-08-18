@@ -4527,6 +4527,17 @@ void WebPage::touchEvent(const WebTouchEvent& touchEvent, CompletionHandler<void
 }
 #endif
 
+#if ENABLE(COORDINATED_TOUCH_EVENTS)
+bool WebPage::dispatchTouchEvent(const WebTouchEvent& event)
+{
+    bool result = false;
+    touchEvent(event, [&](std::optional<WebEventType>, bool handled) {
+        result = handled;
+    });
+    return result;
+}
+#endif
+
 void WebPage::cancelPointer(WebCore::PointerID pointerId, const WebCore::IntPoint& documentPoint)
 {
     m_page->pointerCaptureController().cancelPointer(pointerId, documentPoint);

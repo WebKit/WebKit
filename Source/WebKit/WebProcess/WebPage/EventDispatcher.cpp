@@ -301,6 +301,45 @@ void EventDispatcher::dispatchTouchEvents()
         }
     }
 }
+#elif ENABLE(COORDINATED_TOUCH_EVENTS)
+void EventDispatcher::dispatchTouchEventViaMainThread(WebCore::PageIdentifier pageID, const WebTouchEvent& touchEvent, CompletionHandler<void(WebEventType, bool)>&& completionHandler)
+{
+    RunLoop::mainSingleton().dispatch([protectedThis = Ref { *this }, pageID, touchEvent, completionHandler = WTF::move(completionHandler)] mutable {
+        RefPtr webPage = WebProcess::singleton().webPage(pageID);
+        bool handled = false;
+        if (webPage)
+            handled = webPage->dispatchTouchEvent(touchEvent);
+        if (completionHandler)
+            completionHandler(touchEvent.type(), handled);
+    });
+}
+
+void EventDispatcher::touchEvent(PageIdentifier pageID, FrameIdentifier frameID, const WebTouchEvent& touchEvent, CompletionHandler<void(WebEventType, bool)>&& completionHandler)
+{
+    RefPtr<WebCore::ThreadedScrollingTree> scrollingTree;
+    {
+        Locker locker { m_scrollingTreesLock };
+        scrollingTree = m_scrollingTrees.get(pageID);
+    }
+
+    if (!scrollingTree) {
+        dispatchTouchEventViaMainThread(pageID, touchEvent, WTF::move(completionHandler));
+        return;
+    }
+
+    auto trackingType = scrollingTree->eventTrackingTypeForTouchEvent(platform(touchEvent));
+
+    if (trackingType == TrackingType::NotTracking) {
+        completionHandler(touchEvent.type(), false);
+        return;
+    }
+    if (trackingType == TrackingType::Asynchronous) {
+        completionHandler(touchEvent.type(), false);
+        dispatchTouchEventViaMainThread(pageID, touchEvent, nullptr);
+        return;
+    }
+    dispatchTouchEventViaMainThread(pageID, touchEvent, WTF::move(completionHandler));
+}
 #endif
 
 void EventDispatcher::dispatchWheelEventViaMainThread(WebCore::PageIdentifier pageID, const WebWheelEvent& wheelEvent, OptionSet<WheelEventProcessingSteps> processingSteps, CompletionHandler<void(bool)>&& completionHandler)

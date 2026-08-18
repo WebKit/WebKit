@@ -2,6 +2,7 @@
 <html>
 <head>
 <script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
 <!--
   Touch tests that involve the ontouchstart, ontouchmove, ontouchend or ontouchcancel callbacks
   should be written in an asynchronous fashion so they can be run on mobile platforms like Android.
@@ -32,6 +33,7 @@ onload = async () => {
     document.body.insertBefore(target, document.getElementById('console'));
 
     target.addEventListener("touchstart", touchStartHandler, false);
+    await UIHelper.renderingComplete();
 
     if (window.eventSender) {
         eventSender.clearTouchPoints();

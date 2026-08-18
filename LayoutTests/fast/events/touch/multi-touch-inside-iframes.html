@@ -1,5 +1,6 @@
 <html>
 <script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
 <style>
 iframe {
   width: 100px;
@@ -106,6 +107,8 @@ function onTouch(event, receiver)
 }
 
 async function runTest() {
+    await UIHelper.renderingComplete();
+
     document.getElementById("iframe1").contentWindow.document.title = "iframe1";
     document.getElementById("iframe2").contentWindow.document.title = "iframe2";
     if (window.eventSender) {
