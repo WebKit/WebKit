@@ -203,6 +203,11 @@ void MutationObserver::deliver()
 {
     ASSERT(canDeliver());
 
+    // takeTransientRegistrations() below drops each registration's only strong reference to its
+    // observed node. Keep those nodes alive, declared first so they outlive the registrations.
+    // GCReachableRef keeps their JS wrappers alive too.
+    Vector<GCReachableRef<Node>, 1> observedNodesToKeepAlive;
+
     // Calling takeTransientRegistrations() can modify m_registrations, so it's necessary
     // to make a copy of the transient registrations before operating on them.
     Vector<Ref<MutationObserverRegistration>, 1> transientRegistrations;
@@ -213,8 +218,10 @@ void MutationObserver::deliver()
         if (registration->hasTransientRegistrations())
             transientRegistrations.append(WTF::move(registration));
     }
-    for (auto& registration : transientRegistrations)
+    for (auto& registration : transientRegistrations) {
+        observedNodesToKeepAlive.append(registration->node());
         nodesToKeepAlive.append(registration->takeTransientRegistrations());
+    }
 
     if (m_records.isEmpty()) {
         ASSERT(m_pendingTargets.isEmpty());
