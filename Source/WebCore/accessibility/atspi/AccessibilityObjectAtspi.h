@@ -133,6 +133,8 @@ public:
     WEBCORE_EXPORT double minimumValue() const;
     WEBCORE_EXPORT double maximumValue() const;
     WEBCORE_EXPORT double minimumIncrement() const;
+    WEBCORE_EXPORT void increment();
+    WEBCORE_EXPORT void decrement();
     void valueChanged(double);
 
     WEBCORE_EXPORT URL url() const;

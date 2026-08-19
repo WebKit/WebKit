@@ -1484,7 +1484,7 @@ void AccessibilityUIElementAtspi::increment()
         return;
 
     m_element->updateBackingStore();
-    m_element->setCurrentValue(intValue() + m_element->minimumIncrement());
+    m_element->increment();
 }
 
 void AccessibilityUIElementAtspi::decrement()
@@ -1493,7 +1493,7 @@ void AccessibilityUIElementAtspi::decrement()
         return;
 
     m_element->updateBackingStore();
-    m_element->setCurrentValue(intValue() - m_element->minimumIncrement());
+    m_element->decrement();
 }
 
 void AccessibilityUIElementAtspi::showMenu()

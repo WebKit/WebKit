@@ -112,6 +112,18 @@ void AccessibilityObjectAtspi::valueChanged(double value)
     AccessibilityAtspi::singleton().valueChanged(*this, value);
 }
 
+void AccessibilityObjectAtspi::increment()
+{
+    if (m_coreObject)
+        m_coreObject->increment();
+}
+
+void AccessibilityObjectAtspi::decrement()
+{
+    if (m_coreObject)
+        m_coreObject->decrement();
+}
+
 } // namespace WebCore
 
 #endif // USE(ATSPI)
