@@ -135,6 +135,7 @@ public:
     WEBCORE_EXPORT double minimumIncrement() const;
     WEBCORE_EXPORT void increment();
     WEBCORE_EXPORT void decrement();
+    WEBCORE_EXPORT bool dismiss();
     void valueChanged(double);
 
     WEBCORE_EXPORT URL url() const;

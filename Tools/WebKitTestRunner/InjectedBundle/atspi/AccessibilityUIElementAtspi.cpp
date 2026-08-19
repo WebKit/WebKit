@@ -1506,6 +1506,12 @@ void AccessibilityUIElementAtspi::press()
     m_element->doAction();
 }
 
+bool AccessibilityUIElementAtspi::dismiss()
+{
+    m_element->updateBackingStore();
+    return m_element->dismiss();
+}
+
 void AccessibilityUIElementAtspi::setSelectedChild(AccessibilityUIElement* element) const
 {
 }

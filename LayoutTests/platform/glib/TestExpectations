@@ -1181,9 +1181,6 @@ accessibility/textarea-line-for-index.html [ Skip ]
 # AX support for datetime input elements needs to be completed in glib platforms.
 accessibility/datetime [ Skip ]
 
-# Requires AccessibilityUIElement::dismiss to return whether or not it was handled.
-accessibility/dismiss-action-returns-whether-keyevent-handled.html [ Skip ]
-
 # Different roles
 accessibility/contenteditable-values.html [ Skip ]
 
@@ -1192,9 +1189,6 @@ accessibility/aria-table-indextext.html [ Failure ]
 
 # Started failing on [313982@main..313983@main].
 webkit.org/b/315858 [ Release ] accessibility/aria-owns-deep-chain-no-timeout.html [ Timeout Pass ]
-
-# Requires implementation of 'dismiss' in 'AccessibilityObjectAtspi.h'.
-accessibility/keyevents-posted-for-dismiss-action.html [ Skip ]
 
 webkit.org/b/199860 accessibility/button-with-aria-haspopup-role.html [ Failure ]
 webkit.org/b/199860 accessibility/datalist.html [ Failure ]

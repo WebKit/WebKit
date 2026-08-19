@@ -74,6 +74,7 @@ public:
     void decrement() override;
     void showMenu() override;
     void press() override;
+    bool dismiss() override;
 
     JSRetainPtr<JSStringRef> stringDescriptionOfAttributeValue(JSStringRef attribute) override;
     JSRetainPtr<JSStringRef> stringAttributeValue(JSStringRef attribute) override;
