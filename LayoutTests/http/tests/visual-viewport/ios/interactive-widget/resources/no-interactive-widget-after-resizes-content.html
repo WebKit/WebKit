@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+    <style>
+        input {
+            width: 400px;
+            height: 50px;
+        }
+    </style>
+    <script src="/js-test-resources/js-test.js"></script>
+    <script src="/js-test-resources/ui-helper.js"></script>
+</head>
+<body>
+    <input id="input" type="text">
+    <script>
+        jsTestIsAsync = true;
+        addEventListener("load", async () => {
+            let params = new URLSearchParams(location.search);
+            window.previousProcessIdentifier = Number(params.get("previousProcessIdentifier"));
+            window.previousInitialLayoutViewportHeight = Number(params.get("initialLayoutViewportHeight"));
+            window.previousShrunkLayoutViewportHeight = Number(params.get("shrunkLayoutViewportHeight"));
+            window.currentProcessIdentifier = internals.processIdentifier;
+
+            debug("On the interactive-widget=resizes-content page, the keyboard shrank the layout viewport:");
+            shouldBeTrue('window.previousShrunkLayoutViewportHeight < window.previousInitialLayoutViewportHeight');
+
+            debug("\nThe cross-site navigation swapped processes:");
+            shouldBeTrue('window.currentProcessIdentifier != window.previousProcessIdentifier');
+
+            // Nothing is focused on this page, so the navigation dismisses the keyboard.
+            await UIHelper.waitForKeyboardToHide();
+            await UIHelper.ensureVisibleContentRectAndStablePresentationUpdate();
+
+            window.layoutViewportHeightBeforeFocus = internals.layoutViewportRect().height;
+            window.visualViewportHeightBeforeFocus = internals.visualViewportRect().height;
+
+            debug("\nThe layout viewport is unshrunk after the process swap:");
+            shouldBeTrue('window.layoutViewportHeightBeforeFocus > window.previousShrunkLayoutViewportHeight');
+            shouldBeTrue('window.layoutViewportHeightBeforeFocus == window.previousInitialLayoutViewportHeight');
+            shouldBeTrue('window.visualViewportHeightBeforeFocus == window.layoutViewportHeightBeforeFocus');
+
+            let textField = document.querySelector("input");
+            await UIHelper.activateElement(textField);
+            await UIHelper.waitForKeyboardToShow();
+            await UIHelper.ensureVisibleContentRectAndStablePresentationUpdate();
+
+            window.keyboardTopInView = (await UIHelper.inputViewBoundsInWebView()).top;
+
+            debug("\nAfter focusing the text field on the page with no interactive-widget:");
+            shouldBeTrue('internals.layoutViewportRect().height == window.layoutViewportHeightBeforeFocus');
+            shouldBeTrue('internals.visualViewportRect().height < window.visualViewportHeightBeforeFocus');
+            shouldBeTrue('internals.visualViewportRect().height < internals.layoutViewportRect().height');
+            shouldBeTrue('internals.visualViewportRect().height == window.keyboardTopInView');
+
+            finishJSTest();
+        });
+    </script>
+</body>
+
+</html>

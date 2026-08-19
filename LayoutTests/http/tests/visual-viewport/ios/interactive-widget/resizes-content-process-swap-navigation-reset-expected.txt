@@ -1,0 +1,20 @@
+On the interactive-widget=resizes-content page, the keyboard shrank the layout viewport:
+PASS window.previousShrunkLayoutViewportHeight < window.previousInitialLayoutViewportHeight is true
+
+The cross-site navigation swapped processes:
+PASS window.currentProcessIdentifier != window.previousProcessIdentifier is true
+
+The layout viewport is unshrunk after the process swap:
+PASS window.layoutViewportHeightBeforeFocus > window.previousShrunkLayoutViewportHeight is true
+PASS window.layoutViewportHeightBeforeFocus == window.previousInitialLayoutViewportHeight is true
+PASS window.visualViewportHeightBeforeFocus == window.layoutViewportHeightBeforeFocus is true
+
+After focusing the text field on the page with no interactive-widget:
+PASS internals.layoutViewportRect().height == window.layoutViewportHeightBeforeFocus is true
+PASS internals.visualViewportRect().height < window.visualViewportHeightBeforeFocus is true
+PASS internals.visualViewportRect().height < internals.layoutViewportRect().height is true
+PASS internals.visualViewportRect().height == window.keyboardTopInView is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
