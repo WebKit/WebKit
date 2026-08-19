@@ -95,6 +95,12 @@ public:
         m_size--;
     }
 
+    void shrink(size_t newSize)
+    {
+        ASSERT(newSize <= m_size);
+        m_size = newSize;
+    }
+
     template<typename Visitor> static void markLists(Visitor&, ListSet&);
 
     void overflowCheckNotNeeded() { clearNeedsOverflowCheck(); }
@@ -375,7 +381,7 @@ public:
     void append(T v)
     {
         ASSERT(m_size <= m_capacity);
-        if (m_size == m_capacity || mallocBase()) {
+        if (m_size == m_capacity || (mallocBase() && !m_markSet)) {
             if (slowAppend<T>(v) == Status::Overflowed)
                 this->overflowed();
             return;

@@ -40,6 +40,8 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace JSC {
 
+class JSArray;
+
 enum ParserMode : uint8_t { StrictJSON, SloppyJSON, JSONP };
 enum class JSONReviverMode : uint8_t { Disabled, Enabled };
 
@@ -294,6 +296,8 @@ private:
 
     JSValue parsePrimitiveValue(VM&);
 
+    JSArray* materializeArray(VM&, unsigned stackBase);
+
     static ALWAYS_INLINE bool equalIdentifier(UniquedStringImpl*, typename Lexer::LiteralParserTokenPtr);
     static ALWAYS_INLINE AtomStringImpl* existingIdentifier(VM&, typename Lexer::LiteralParserTokenPtr);
     static ALWAYS_INLINE Identifier makeIdentifier(VM&, typename Lexer::LiteralParserTokenPtr);
@@ -308,6 +312,7 @@ private:
     String m_parseErrorMessage;
     UncheckedKeyHashSet<JSObject*> m_visitedUnderscoreProto;
     MarkedArgumentBuffer m_objectStack;
+    MarkedArgumentBuffer m_elementStack;
     Vector<ParserState, 16, UnsafeVectorOverflow> m_stateStack;
     Vector<Identifier, 16, UnsafeVectorOverflow> m_identifierStack;
     Vector<JSONRanges::Entry, 8> m_rangesStack;
