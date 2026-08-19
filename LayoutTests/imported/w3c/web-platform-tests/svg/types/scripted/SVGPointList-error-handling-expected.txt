@@ -1,0 +1,18 @@
+
+PASS polyline with an odd number of coordinates drops the last one and keeps the rest
+PASS polyline whose points value begins with a non-numeric token renders nothing
+PASS polyline whose points value begins with a separator renders nothing
+PASS polyline with a points value of a single separator renders nothing
+PASS polyline with an empty points value renders nothing
+PASS polyline with a whitespace-only points value renders nothing
+PASS polyline with no points attribute renders nothing
+PASS polyline with a points value in error does not rewrite the content attribute
+PASS polygon with an odd number of coordinates drops the last one and keeps the rest
+PASS polygon whose points value begins with a non-numeric token renders nothing
+PASS polygon whose points value begins with a separator renders nothing
+PASS polygon with a points value of a single separator renders nothing
+PASS polygon with an empty points value renders nothing
+PASS polygon with a whitespace-only points value renders nothing
+PASS polygon with no points attribute renders nothing
+PASS polygon with a points value in error does not rewrite the content attribute
+
