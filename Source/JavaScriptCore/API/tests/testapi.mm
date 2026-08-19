@@ -2250,6 +2250,34 @@ static void testBytecodeCachedFunctionsDontJITImmediately()
     }
 }
 
+static void testBytecodeCachedClassConstructorsDontReparse()
+{
+    @autoreleasepool {
+        NSString *fooSource = @"class Base { constructor(x) { this.x = x; } }; class Derived extends Base { constructor(x) { super(x); this.y = x + 1; } }; class Implicit extends Base { }; var before = $vm.parseCount(); var result = new Derived(20).y + new Implicit(21).x; [$vm.parseCount() - before, result];";
+        NSURL *fooCachePath = cacheFileInDataVault(@"foo.js.cache");
+        JSC::Options::useDollarVM() = true;
+        JSC::Options::countParseTimes() = true;
+        JSContext *context = [[JSContext alloc] init];
+        JSScript *script = [JSScript scriptOfType:kJSScriptTypeProgram withSource:fooSource andSourceURL:[NSURL URLWithString:@"my-path"] andBytecodeCache:fooCachePath inVirtualMachine:context.virtualMachine error:nil];
+        RELEASE_ASSERT(script);
+        if (![script cacheBytecodeWithError:nil])
+            CRASH();
+
+        JSC::Options::forceDiskCache() = true;
+        JSValue *result = [context evaluateJSScript:script];
+        RELEASE_ASSERT(result);
+        RELEASE_ASSERT([result isArray]);
+        checkResult(@"constructing cached classes does not parse", ![[result[0] toNumber] intValue]);
+        checkResult(@"result of cached class constructors is 21+21", [[result[1] toNumber] intValue] == 21 + 21);
+        JSC::Options::forceDiskCache() = false;
+        JSC::Options::countParseTimes() = false;
+
+        NSFileManager* fileManager = [NSFileManager defaultManager];
+        BOOL removedAll = [fileManager removeItemAtURL:fooCachePath error:nil];
+        checkResult(@"Removed all temp files created", removedAll);
+    }
+}
+
 static void testBytecodeCacheWithSyntaxError(JSScriptType type)
 {
     @autoreleasepool {
@@ -3016,6 +3044,7 @@ void testObjectiveCAPI(const char* filter)
         RUN(testModuleBytecodeCache());
         RUN(testProgramBytecodeCache());
         RUN(testBytecodeCachedFunctionsDontJITImmediately());
+        RUN(testBytecodeCachedClassConstructorsDontReparse());
         RUN(testBytecodeCacheWithSyntaxError(kJSScriptTypeProgram));
         RUN(testBytecodeCacheWithSyntaxError(kJSScriptTypeModule));
         RUN(testBytecodeCacheWithSameCacheFileAndDifferentScript(false));

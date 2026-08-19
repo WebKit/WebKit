@@ -59,22 +59,20 @@ void CodeCacheMap::pruneSlowCase()
 
 static void generateUnlinkedCodeBlockForFunctions(VM& vm, UnlinkedCodeBlock* unlinkedCodeBlock, const SourceCode& parentSource, OptionSet<CodeGenerationMode> codeGenerationMode, ParserError& error)
 {
-    auto generate = [&](UnlinkedFunctionExecutable* unlinkedExecutable, CodeSpecializationKind constructorKind) {
-        if (constructorKind == CodeSpecializationKind::CodeForConstruct && SourceParseModeSet(SourceParseMode::AsyncArrowFunctionMode, SourceParseMode::AsyncMethodMode, SourceParseMode::AsyncFunctionMode).contains(unlinkedExecutable->parseMode()))
-            return;
-
+    auto generate = [&](UnlinkedFunctionExecutable* unlinkedExecutable) {
+        // FIXME: We should also generate CodeBlocks for CodeForConstruct of ordinary functions.
+        // https://bugs.webkit.org/show_bug.cgi?id=193823
+        CodeSpecializationKind kind = unlinkedExecutable->isClassConstructorFunction() ? CodeSpecializationKind::CodeForConstruct : CodeSpecializationKind::CodeForCall;
         SourceCode source = unlinkedExecutable->linkedSourceCode(parentSource);
-        UnlinkedFunctionCodeBlock* unlinkedFunctionCodeBlock = unlinkedExecutable->unlinkedCodeBlockFor(vm, source, constructorKind, codeGenerationMode, error, unlinkedExecutable->parseMode());
+        UnlinkedFunctionCodeBlock* unlinkedFunctionCodeBlock = unlinkedExecutable->unlinkedCodeBlockFor(vm, source, kind, codeGenerationMode, error, unlinkedExecutable->parseMode());
         if (unlinkedFunctionCodeBlock)
             generateUnlinkedCodeBlockForFunctions(vm, unlinkedFunctionCodeBlock, source, codeGenerationMode, error);
     };
 
-    // FIXME: We should also generate CodeBlocks for CodeForConstruct
-    // https://bugs.webkit.org/show_bug.cgi?id=193823
     for (unsigned i = 0; i < unlinkedCodeBlock->numberOfFunctionDecls(); i++)
-        generate(unlinkedCodeBlock->functionDecl(i), CodeSpecializationKind::CodeForCall);
+        generate(unlinkedCodeBlock->functionDecl(i));
     for (unsigned i = 0; i < unlinkedCodeBlock->numberOfFunctionExprs(); i++)
-        generate(unlinkedCodeBlock->functionExpr(i), CodeSpecializationKind::CodeForCall);
+        generate(unlinkedCodeBlock->functionExpr(i));
 }
 
 template <class UnlinkedCodeBlockType, class ExecutableType = ScriptExecutable>
