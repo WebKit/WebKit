@@ -414,11 +414,7 @@ std::optional<FloatSize> SVGLengthContext::computeViewportSize() const
     if (!svg)
         return std::nullopt;
 
-    auto viewportSize = svg->currentViewBoxRect().size();
-    if (viewportSize.isEmpty())
-        viewportSize = svg->currentViewportSizeExcludingZoom();
-
-    return viewportSize;
+    return svg->viewportSizeForLengthResolution();
 }
 
 }

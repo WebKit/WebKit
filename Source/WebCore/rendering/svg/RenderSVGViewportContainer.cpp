@@ -90,7 +90,7 @@ bool RenderSVGViewportContainer::updateLayoutSizeIfNeeded()
     auto previousViewportSize = viewportSize();
     m_viewport = { computeViewportLocation(), computeViewportSize() };
     if (previousViewportSize != viewportSize()) {
-        svgSVGElement().invalidateCachedViewportSizeExcludingZoom();
+        svgSVGElement().invalidateCachedViewportSizes();
         return true;
     }
     return selfNeedsLayout();

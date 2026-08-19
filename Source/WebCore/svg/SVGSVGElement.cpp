@@ -671,6 +671,21 @@ FloatSize SVGSVGElement::currentViewportSizeExcludingZoom() const
     return *m_cachedViewportSizeExcludingZoom;
 }
 
+FloatSize SVGSVGElement::viewportSizeForLengthResolution() const
+{
+    auto compute = [&]() -> FloatSize {
+        auto viewBoxSize = currentViewBoxRect().size();
+        return viewBoxSize.isEmpty() ? currentViewportSizeExcludingZoom() : viewBoxSize;
+    };
+
+    if (!document().settings().layerBasedSVGEngineEnabled())
+        return compute();
+
+    if (!m_cachedViewportSizeForLengthResolution)
+        m_cachedViewportSizeForLengthResolution = compute();
+    return *m_cachedViewportSizeForLengthResolution;
+}
+
 FloatSize SVGSVGElement::computeCurrentViewportSizeExcludingZoom() const
 {
     FloatSize viewportSize;

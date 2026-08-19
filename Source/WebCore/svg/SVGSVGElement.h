@@ -108,7 +108,13 @@ public:
     bool hasIntrinsicDimensions() const;
 
     FloatSize currentViewportSizeExcludingZoom() const;
-    void invalidateCachedViewportSizeExcludingZoom() const { m_cachedViewportSizeExcludingZoom = std::nullopt; }
+    void invalidateCachedViewportSizes() const
+    {
+        m_cachedViewportSizeExcludingZoom = std::nullopt;
+        m_cachedViewportSizeForLengthResolution = std::nullopt;
+    }
+
+    FloatSize viewportSizeForLengthResolution() const;
 
     FloatRect currentViewBoxRect() const;
     bool hasSynthesizedViewBoxForSVGImage() const;
@@ -167,6 +173,7 @@ private:
     Ref<SVGPoint> m_currentTranslate { SVGPoint::create() };
 
     mutable std::optional<FloatSize> m_cachedViewportSizeExcludingZoom;
+    mutable std::optional<FloatSize> m_cachedViewportSizeForLengthResolution;
 
     float m_currentScale { 1 };
 
