@@ -66,8 +66,8 @@ public:
 #endif
     };
 
-    Recorder(const GraphicsContextState& state, const FloatRect& initialClip, const AffineTransform& transform, const DestinationColorSpace& colorSpace, DrawGlyphsMode drawGlyphsMode = DrawGlyphsMode::Normal)
-        : Recorder(IsDeferred::Yes, state, initialClip, transform, colorSpace, drawGlyphsMode)
+    Recorder(const GraphicsContextState& state, const FloatRect& initialClip, const DestinationColorSpace& colorSpace, DrawGlyphsMode drawGlyphsMode = DrawGlyphsMode::Normal)
+        : Recorder(IsDeferred::Yes, state, initialClip, colorSpace, drawGlyphsMode)
     {
     }
     WEBCORE_EXPORT virtual ~Recorder();
@@ -75,13 +75,16 @@ public:
     WEBCORE_EXPORT void appendDisplayList(const DisplayList&);
 
 protected:
-    WEBCORE_EXPORT Recorder(IsDeferred, const GraphicsContextState&, const FloatRect& initialClip, const AffineTransform&, const DestinationColorSpace&, DrawGlyphsMode);
+    WEBCORE_EXPORT Recorder(IsDeferred, const GraphicsContextState&, const FloatRect& initialClip, const DestinationColorSpace&, DrawGlyphsMode);
 
     struct ContextState {
         GraphicsContextState state;
-        AffineTransform ctm;
         FloatRect clipBounds;
         std::optional<GraphicsContextState> lastDrawingState { std::nullopt };
+        // The CTM as of the last DisplayList item emitted for this state (see RecorderImpl::
+        // appendStateChangeItemIfNecessary). Used to record CTM changes as a relative
+        // ConcatenateCTM delta, which replays correctly against any base transform.
+        AffineTransform lastRecordedCTM { state.ctm() };
 
         ContextState cloneForTransparencyLayer() const
         {
@@ -89,14 +92,16 @@ protected:
             std::optional<GraphicsContextState> lastDrawingStateClone;
             if (lastDrawingState)
                 lastDrawingStateClone = lastDrawingState->clone(GraphicsContextState::Purpose::TransparencyLayer);
-            return ContextState { WTF::move(stateClone), ctm, clipBounds, WTF::move(lastDrawingStateClone) };
+            return ContextState { WTF::move(stateClone), clipBounds, WTF::move(lastDrawingStateClone), lastRecordedCTM };
         }
 
-        void NODELETE translate(float x, float y);
+        const AffineTransform& ctm() const { return state.ctm(); }
+
+        void translate(float x, float y);
         void rotate(float angleInRadians);
         void scale(const FloatSize&);
-        void NODELETE concatCTM(const AffineTransform&);
-        void NODELETE setCTM(const AffineTransform&);
+        void concatCTM(const AffineTransform&);
+        void setCTM(const AffineTransform&);
     };
 
     const Vector<ContextState, 4>& stateStack() const LIFETIME_BOUND { return m_stateStack; }
@@ -107,11 +112,11 @@ protected:
 protected:
     WEBCORE_EXPORT void updateStateForSave(GraphicsContextState::Purpose);
     [[nodiscard]] WEBCORE_EXPORT bool updateStateForRestore(GraphicsContextState::Purpose);
-    [[nodiscard]] WEBCORE_EXPORT bool NODELETE updateStateForTranslate(float x, float y);
+    [[nodiscard]] WEBCORE_EXPORT bool updateStateForTranslate(float x, float y);
     [[nodiscard]] WEBCORE_EXPORT bool updateStateForRotate(float angleInRadians);
     [[nodiscard]] WEBCORE_EXPORT bool updateStateForScale(const FloatSize&);
-    [[nodiscard]] WEBCORE_EXPORT bool NODELETE updateStateForConcatCTM(const AffineTransform&);
-    WEBCORE_EXPORT void NODELETE updateStateForSetCTM(const AffineTransform&);
+    [[nodiscard]] WEBCORE_EXPORT bool updateStateForConcatCTM(const AffineTransform&);
+    WEBCORE_EXPORT void updateStateForSetCTM(const AffineTransform&);
     WEBCORE_EXPORT void updateStateForBeginTransparencyLayer(float opacity);
     WEBCORE_EXPORT void updateStateForBeginTransparencyLayer(CompositeOperator, BlendMode);
     [[nodiscard]] WEBCORE_EXPORT bool updateStateForEndTransparencyLayer();
@@ -150,7 +155,7 @@ private:
 
     virtual void appendStateChangeItemIfNecessary() = 0;
 
-    const AffineTransform& NODELETE ctm() const;
+    //const AffineTransform& NODELETE ctm() const;
 
     Vector<ContextState, 4> m_stateStack;
     DestinationColorSpace m_colorSpace;

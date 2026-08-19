@@ -53,7 +53,7 @@ TEST(BifurcatedGraphicsContextTests, Basic)
     RetainPtr primaryCGContext = adoptCF(CGBitmapContextCreate(nullptr, contextWidth, contextHeight, 8, 4 * contextWidth, colorSpace.platformColorSpace(), kCGImageAlphaPremultipliedLast));
 
     GraphicsContextCG primaryContext(primaryCGContext.get());
-    RecorderImpl secondaryContext({ }, FloatRect(0, 0, contextWidth, contextHeight), { });
+    RecorderImpl secondaryContext({ }, FloatRect(0, 0, contextWidth, contextHeight));
 
     BifurcatedGraphicsContext ctx(primaryContext, secondaryContext);
 
@@ -83,8 +83,8 @@ TEST(BifurcatedGraphicsContextTests, Basic)
 
 TEST(BifurcatedGraphicsContextTests, Text)
 {
-    RecorderImpl primaryContext({ }, FloatRect(0, 0, contextWidth, contextHeight), { });
-    RecorderImpl secondaryContext({ }, FloatRect(0, 0, contextWidth, contextHeight), { });
+    RecorderImpl primaryContext({ }, FloatRect(0, 0, contextWidth, contextHeight));
+    RecorderImpl secondaryContext({ }, FloatRect(0, 0, contextWidth, contextHeight));
 
     BifurcatedGraphicsContext ctx(primaryContext, secondaryContext);
 
@@ -184,7 +184,7 @@ TEST(BifurcatedGraphicsContextTests, Borders)
     RetainPtr primaryCGContext = adoptCF(CGBitmapContextCreate(nullptr, contextWidth, contextHeight, 8, 4 * contextWidth, colorSpace.platformColorSpace(), kCGImageAlphaPremultipliedLast));
 
     GraphicsContextCG primaryContext(primaryCGContext.get());
-    RecorderImpl secondaryContext({ }, FloatRect(0, 0, contextWidth, contextHeight), { });
+    RecorderImpl secondaryContext({ }, FloatRect(0, 0, contextWidth, contextHeight));
 
     BifurcatedGraphicsContext ctx(primaryContext, secondaryContext);
 
@@ -210,7 +210,7 @@ TEST(BifurcatedGraphicsContextTests, TransformedClip)
     GraphicsContextCG primaryContextCG(primaryCGContext.get());
     GraphicsContext& primaryContext = primaryContextCG;
 
-    RecorderImpl secondaryContextDL({ }, FloatRect(0, 0, 100, 100), { });
+    RecorderImpl secondaryContextDL({ }, FloatRect(0, 0, 100, 100));
     GraphicsContext& secondaryContext = secondaryContextDL;
 
     BifurcatedGraphicsContext ctx(primaryContext, secondaryContext);
@@ -268,7 +268,7 @@ TEST(BifurcatedGraphicsContextTests, ApplyDeviceScaleFactor)
     GraphicsContextCG primaryContextCG(primaryCGContext.get());
     GraphicsContext& primaryContext = primaryContextCG;
 
-    RecorderImpl secondaryContextDL({ }, FloatRect(0, 0, 100, 100), { });
+    RecorderImpl secondaryContextDL({ }, FloatRect(0, 0, 100, 100));
     GraphicsContext& secondaryContext = secondaryContextDL;
 
     BifurcatedGraphicsContext ctx(primaryContext, secondaryContext);
@@ -287,8 +287,8 @@ TEST(BifurcatedGraphicsContextTests, ApplyDeviceScaleFactor)
 
 TEST(BifurcatedGraphicsContextTests, ClipToImageBuffer)
 {
-    RecorderImpl primaryContext({ }, FloatRect(0, 0, contextWidth, contextHeight), { });
-    RecorderImpl secondaryContext({ }, FloatRect(0, 0, contextWidth, contextHeight), { });
+    RecorderImpl primaryContext({ }, FloatRect(0, 0, contextWidth, contextHeight));
+    RecorderImpl secondaryContext({ }, FloatRect(0, 0, contextWidth, contextHeight));
 
     BifurcatedGraphicsContext ctx(primaryContext, secondaryContext);
 

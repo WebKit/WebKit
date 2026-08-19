@@ -1253,6 +1253,10 @@ void GraphicsContextCG::didUpdateState(GraphicsContextState& state)
             CGContextSetShouldSmoothFonts(context, state.shouldSmoothFonts());
             break;
 
+        case GraphicsContextState::Change::TransformationMatrix:
+            CGContextSetCTM(context, state.ctm());
+            m_userToDeviceTransformKnownToBeIdentity = false;
+            break;
         default:
             break;
         }
@@ -1409,36 +1413,6 @@ void GraphicsContextCG::setLineJoin(LineJoin join)
     }
 }
 
-void GraphicsContextCG::scale(const FloatSize& size)
-{
-    CGContextScaleCTM(platformContext(), size.width(), size.height());
-    m_userToDeviceTransformKnownToBeIdentity = false;
-}
-
-void GraphicsContextCG::rotate(float angle)
-{
-    CGContextRotateCTM(platformContext(), angle);
-    m_userToDeviceTransformKnownToBeIdentity = false;
-}
-
-void GraphicsContextCG::translate(float x, float y)
-{
-    CGContextTranslateCTM(platformContext(), x, y);
-    m_userToDeviceTransformKnownToBeIdentity = false;
-}
-
-void GraphicsContextCG::concatCTM(const AffineTransform& transform)
-{
-    CGContextConcatCTM(platformContext(), transform);
-    m_userToDeviceTransformKnownToBeIdentity = false;
-}
-
-void GraphicsContextCG::setCTM(const AffineTransform& transform)
-{
-    CGContextSetCTM(platformContext(), transform);
-    m_userToDeviceTransformKnownToBeIdentity = false;
-}
-
 AffineTransform GraphicsContextCG::getCTM(IncludeDeviceScale includeScale) const
 {
     // The CTM usually includes the deviceScaleFactor except in WebKit 1 when the
@@ -1563,6 +1537,11 @@ void GraphicsContextCG::beginPage(const FloatRect& pageRect)
     auto pageInfo = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, &key, &value, 1, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
 
     CGPDFContextBeginPage(context, pageInfo.get());
+
+    // CGPDFContextBeginPage resets the platform CTM to identity for the new page.
+    // Reset the cached CTM to match, without marking it as a pending change --
+    // it's already correct on the platform context, nothing needs to be pushed.
+    m_state.ctm() = { };
 }
 
 void GraphicsContextCG::endPage()

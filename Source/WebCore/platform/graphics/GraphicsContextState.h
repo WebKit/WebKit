@@ -58,6 +58,8 @@ public:
         ShouldSubpixelQuantizeFonts = 1 << 13,
         ShadowsIgnoreTransforms     = 1 << 14,
         DrawLuminanceMask           = 1 << 15,
+
+        TransformationMatrix        = 1 << 16,
     };
     using ChangeFlags = OptionSet<Change>;
 
@@ -77,13 +79,47 @@ public:
         TransparencyLayer
     };
 
-    WEBCORE_EXPORT GraphicsContextState(const ChangeFlags& = { }, InterpolationQuality = InterpolationQuality::Default);
+    WEBCORE_EXPORT GraphicsContextState(const AffineTransform& ctm = { }, const ChangeFlags& = { }, InterpolationQuality = InterpolationQuality::Default);
 
     void repurpose(Purpose);
     GraphicsContextState clone(Purpose) const;
 
     ChangeFlags changes() const { return m_changeFlags; }
     void didApplyChanges() { m_changeFlags = { }; }
+    void didApplyChanges(ChangeFlags applied) { m_changeFlags.remove(applied); }
+
+    AffineTransform& ctm() LIFETIME_BOUND { return m_transformationMatrix; }
+    const AffineTransform& ctm() const LIFETIME_BOUND { return m_transformationMatrix; }
+    void setCTM(const AffineTransform& ctm) { setProperty(Change::TransformationMatrix, &GraphicsContextState::m_transformationMatrix, ctm); }
+
+    void concatCTM(const AffineTransform& matrix)
+    {
+        auto ctm = m_transformationMatrix;
+        ctm *= matrix;
+        setCTM(ctm);
+    }
+
+    void scale(const FloatSize& size)
+    {
+        auto ctm = m_transformationMatrix;
+        ctm.scale(size);
+        setCTM(ctm);
+    }
+
+    void rotate(float angleInRadians)
+    {
+        double angleInDegrees = rad2deg(static_cast<double>(angleInRadians));
+        auto ctm = m_transformationMatrix;
+        ctm.rotate(angleInDegrees);
+        setCTM(ctm);
+    }
+
+    void translate(float x, float y)
+    {
+        auto ctm = m_transformationMatrix;
+        ctm.translate(x, y);
+        setCTM(ctm);
+    }
 
     SourceBrush& fillBrush() LIFETIME_BOUND { return m_fillBrush; }
     const SourceBrush& fillBrush() const LIFETIME_BOUND { return m_fillBrush; }
@@ -173,6 +209,8 @@ private:
         this->*property = std::forward<T>(value);
         m_changeFlags.add(change);
     }
+
+    AffineTransform m_transformationMatrix { };
 
     SourceBrush m_fillBrush { Color::black };
     SourceBrush m_strokeBrush { Color::black };

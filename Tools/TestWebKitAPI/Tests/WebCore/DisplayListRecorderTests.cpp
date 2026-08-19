@@ -268,9 +268,8 @@ struct ResetClipRect {
     static String description()
     {
         return R"DL(
-(translate
-  (x 10.00)
-  (y 10.00))
+(concatenate-ctm
+  (ctm {m=((1.00,0.00)(0.00,1.00)) t=(10.00,10.00)}))
 (save)
 (reset-clip)
 (clip
@@ -382,12 +381,8 @@ struct TrivialTranslate {
     static String description()
     {
         return R"DL(
-(translate
-  (x 1.00)
-  (y 0.00))
-(translate
-  (x 0.00)
-  (y 2.00))
+(concatenate-ctm
+  (ctm {m=((1.00,0.00)(0.00,1.00)) t=(1.00,2.00)}))
 (draw-rect
   (rect at (0,0) size 1x1)
   (border-thickness 1.00)))DL"_s;
@@ -405,10 +400,8 @@ struct TrivialScale {
     static String description()
     {
         return R"DL(
-(scale
-  (size width=1.10 height=1.20))
-(scale
-  (size width=0.10 height=0.70))
+(concatenate-ctm
+  (ctm {m=((0.11,0.00)(0.00,0.84)) t=(0.00,0.00)}))
 (draw-rect
   (rect at (0,0) size 1x1)
   (border-thickness 1.00)))DL"_s;
@@ -429,12 +422,8 @@ struct TrivialRotate {
     static String description()
     {
         return R"DL(
-(rotate
-  (angle 1.00))
-(rotate
-  (angle 2.00))
-(rotate
-  (angle 43.98))
+(concatenate-ctm
+  (ctm {m=((-0.99,0.14)(-0.14,-0.99)) t=(0.00,0.00)}))
 (draw-rect
   (rect at (0,0) size 1x1)
   (border-thickness 1.00)))DL"_s;
@@ -484,6 +473,30 @@ TYPED_TEST_P(DisplayListRecorderResultStateTest, StateThroughDisplayListIsPreser
 }
 
 REGISTER_TYPED_TEST_SUITE_P(DisplayListRecorderResultStateTest, StateThroughDisplayListIsPreserved);
+
+TEST(DisplayListRecorderTest, RecordedCTMChangeIsRelativeToReplayTimeBaseCTM)
+{
+    WebCore::DisplayList::RecorderImpl recorderImpl { { testContextWidth, testContextHeight } };
+    WebCore::GraphicsContext& recorder = recorderImpl;
+    recorder.translate(3, 4);
+    recorder.scale(WebCore::FloatSize { 2, 2 });
+    recorder.drawRect({ 0, 0, 1, 1 });
+    Ref displayList = recorderImpl.takeDisplayList();
+
+    // Replay into a target whose CTM already differs from the one live when the list was
+    // recorded (analogous to drawing a cached glyph run at a different text origin).
+    auto replayTarget = createReferenceTarget();
+    auto& replayContext = replayTarget->context();
+    replayContext.translate(10, 20);
+
+    auto expectedCTM = replayContext.getCTM();
+    expectedCTM.translate(3, 4);
+    expectedCTM.scale(WebCore::FloatSize { 2, 2 });
+
+    replayContext.drawDisplayList(displayList);
+
+    EXPECT_EQ(expectedCTM, replayContext.getCTM());
+}
 
 INSTANTIATE_TYPED_TEST_SUITE_P(DisplayListRecorderTest, DisplayListRecorderResultStateTest, AllOperations);
 

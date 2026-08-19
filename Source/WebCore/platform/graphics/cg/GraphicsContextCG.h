@@ -109,14 +109,6 @@ public:
 
     void drawPattern(const NativeImage&, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions = { }) final;
 
-    using GraphicsContext::scale;
-    void scale(const FloatSize&) final;
-    void rotate(float angleInRadians) final;
-    void translate(float x, float y) final;
-
-    void concatCTM(const AffineTransform&) final;
-    void setCTM(const AffineTransform&) override;
-
     AffineTransform getCTM(IncludeDeviceScale = PossiblyIncludeDeviceScale) const override;
 
     void drawFocusRing(const Path&, float outlineWidth, const Color&, float zoomFactor) final;

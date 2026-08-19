@@ -84,6 +84,30 @@ OperationRecorder::OperationRecorder(PaintingOperations& commandList)
 
 void OperationRecorder::didUpdateState(GraphicsContextState& state)
 {
+    if (state.changes().contains(GraphicsContextState::Change::TransformationMatrix)) {
+        struct SetCTM final : PaintingOperation, OperationData<AffineTransform> {
+            virtual ~SetCTM() = default;
+
+            void execute(WebCore::GraphicsContextCairo& context) override
+            {
+                Cairo::State::setCTM(context, arg<0>());
+            }
+
+            void dump(TextStream& ts) override
+            {
+                ts << indent << "SetCTM<>\n"_s;
+            }
+        };
+
+        if (auto inverse = state.ctm().inverse()) {
+            append(createCommand<SetCTM>(state.ctm()));
+
+            auto& recorderState = m_stateStack.last();
+            recorderState.ctm = state.ctm();
+            recorderState.ctmInverse = inverse.value();
+        }
+    }
+
     if (state.changes().contains(GraphicsContextState::Change::StrokeThickness)) {
         struct StrokeThicknessChange final : PaintingOperation, OperationData<float> {
             virtual ~StrokeThicknessChange() = default;
@@ -862,144 +886,6 @@ void OperationRecorder::restore(GraphicsContextState::Purpose purpose)
     m_stateStack.removeLast();
     if (m_stateStack.isEmpty())
         m_stateStack.clear();
-}
-
-void OperationRecorder::translate(float x, float y)
-{
-    struct Translate final : PaintingOperation, OperationData<float, float> {
-        virtual ~Translate() = default;
-
-        void execute(WebCore::GraphicsContextCairo& context) override
-        {
-            Cairo::translate(context, arg<0>(), arg<1>());
-        }
-
-        void dump(TextStream& ts) override
-        {
-            ts << indent << "Translate<>\n"_s;
-        }
-    };
-
-    append(createCommand<Translate>(x, y));
-
-    {
-        auto& state = m_stateStack.last();
-        state.ctm.translate(x, y);
-
-        AffineTransform t;
-        t.translate(-x, -y);
-        state.ctmInverse = t * state.ctmInverse;
-    }
-}
-
-void OperationRecorder::rotate(float angleInRadians)
-{
-    struct Rotate final : PaintingOperation, OperationData<float> {
-        virtual ~Rotate() = default;
-
-        void execute(WebCore::GraphicsContextCairo& context) override
-        {
-            Cairo::rotate(context, arg<0>());
-        }
-
-        void dump(TextStream& ts) override
-        {
-            ts << indent << "Rotate<>\n"_s;
-        }
-    };
-
-    append(createCommand<Rotate>(angleInRadians));
-
-    {
-        auto& state = m_stateStack.last();
-        state.ctm.rotate(angleInRadians);
-
-        AffineTransform t;
-        t.rotate(angleInRadians);
-        state.ctmInverse = t * state.ctmInverse;
-    }
-}
-
-void OperationRecorder::scale(const FloatSize& size)
-{
-    struct Scale final : PaintingOperation, OperationData<FloatSize> {
-        virtual ~Scale() = default;
-
-        void execute(WebCore::GraphicsContextCairo& context) override
-        {
-            Cairo::scale(context, arg<0>());
-        }
-
-        void dump(TextStream& ts) override
-        {
-            ts << indent << "Scale<>\n"_s;
-        }
-    };
-
-    append(createCommand<Scale>(size));
-
-    {
-        auto& state = m_stateStack.last();
-        state.ctm.scale(size.width(), size.height());
-
-        AffineTransform t;
-        t.scale(1 / size.width(), 1 / size.height());
-        state.ctmInverse = t * state.ctmInverse;
-    }
-}
-
-void OperationRecorder::concatCTM(const AffineTransform& transform)
-{
-    struct ConcatCTM final : PaintingOperation, OperationData<AffineTransform> {
-        virtual ~ConcatCTM() = default;
-
-        void execute(WebCore::GraphicsContextCairo& context) override
-        {
-            Cairo::concatCTM(context, arg<0>());
-        }
-
-        void dump(TextStream& ts) override
-        {
-            ts << indent << "ConcatCTM<>\n"_s;
-        }
-    };
-
-    auto inverse = transform.inverse();
-    if (!inverse)
-        return;
-
-    append(createCommand<ConcatCTM>(transform));
-
-    auto& state = m_stateStack.last();
-    state.ctm *= transform;
-    state.ctmInverse = inverse.value() * state.ctmInverse;
-}
-
-void OperationRecorder::setCTM(const AffineTransform& transform)
-{
-    struct SetCTM final : PaintingOperation, OperationData<AffineTransform> {
-        virtual ~SetCTM() = default;
-
-        void execute(WebCore::GraphicsContextCairo& context) override
-        {
-            Cairo::State::setCTM(context, arg<0>());
-        }
-
-        void dump(TextStream& ts) override
-        {
-            ts << indent << "SetCTM<>\n"_s;
-        }
-    };
-
-    auto inverse = transform.inverse();
-    if (!inverse)
-        return;
-
-    append(createCommand<SetCTM>(transform));
-
-    auto& state = m_stateStack.last();
-    state.ctm = transform;
-    state.ctmInverse = inverse.value();
 }
 
 AffineTransform OperationRecorder::getCTM(GraphicsContext::IncludeDeviceScale) const

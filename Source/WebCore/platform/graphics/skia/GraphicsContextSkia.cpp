@@ -859,27 +859,10 @@ void GraphicsContextSkia::drawDotsForDocumentMarker(const FloatRect& boundaries,
     m_canvas.drawPath(createErrorUnderlinePath(boundaries), paint);
 }
 
-void GraphicsContextSkia::translate(float x, float y)
+void GraphicsContextSkia::didUpdateState(GraphicsContextState& state)
 {
-    m_canvas.translate(SkFloatToScalar(x), SkFloatToScalar(y));
-}
-
-void GraphicsContextSkia::didUpdateState(GraphicsContextState&)
-{
-}
-
-void GraphicsContextSkia::didUpdateSingleState(GraphicsContextState&, GraphicsContextState::ChangeIndex)
-{
-}
-
-void GraphicsContextSkia::concatCTM(const AffineTransform& ctm)
-{
-    m_canvas.concat(ctm);
-}
-
-void GraphicsContextSkia::setCTM(const AffineTransform& ctm)
-{
-    m_canvas.setMatrix(ctm);
+    if (state.changes().contains(GraphicsContextState::Change::TransformationMatrix))
+        m_canvas.setMatrix(state.ctm());
 }
 
 void GraphicsContextSkia::saveLayer(float opacity, CompositeMode compositeMode)
@@ -1052,16 +1035,6 @@ void GraphicsContextSkia::clipOut(const Path& path)
 
     m_canvas.clipPath(skiaPath, true);
     skiaPath.toggleInverseFillType();
-}
-
-void GraphicsContextSkia::rotate(float radians)
-{
-    m_canvas.rotate(SkFloatToScalar(rad2deg(radians)));
-}
-
-void GraphicsContextSkia::scale(const FloatSize& scale)
-{
-    m_canvas.scale(SkFloatToScalar(scale.width()), SkFloatToScalar(scale.height()));
 }
 
 void GraphicsContextSkia::clipOut(const FloatRect& rect)

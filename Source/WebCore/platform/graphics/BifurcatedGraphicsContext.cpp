@@ -457,46 +457,6 @@ void BifurcatedGraphicsContext::drawVideoFrame(const VideoFrame& videoFrame, con
 }
 #endif // ENABLE(VIDEO)
 
-void BifurcatedGraphicsContext::scale(const FloatSize& scale)
-{
-    m_primaryContext.scale(scale);
-    m_secondaryContext.scale(scale);
-
-    VERIFY_STATE_SYNCHRONIZATION();
-}
-
-void BifurcatedGraphicsContext::rotate(float angleInRadians)
-{
-    m_primaryContext.rotate(angleInRadians);
-    m_secondaryContext.rotate(angleInRadians);
-
-    VERIFY_STATE_SYNCHRONIZATION();
-}
-
-void BifurcatedGraphicsContext::translate(float x, float y)
-{
-    m_primaryContext.translate(x, y);
-    m_secondaryContext.translate(x, y);
-
-    VERIFY_STATE_SYNCHRONIZATION();
-}
-
-void BifurcatedGraphicsContext::concatCTM(const AffineTransform& transform)
-{
-    m_primaryContext.concatCTM(transform);
-    m_secondaryContext.concatCTM(transform);
-
-    VERIFY_STATE_SYNCHRONIZATION();
-}
-
-void BifurcatedGraphicsContext::setCTM(const AffineTransform& transform)
-{
-    m_primaryContext.setCTM(transform);
-    m_secondaryContext.setCTM(transform);
-
-    VERIFY_STATE_SYNCHRONIZATION();
-}
-
 AffineTransform BifurcatedGraphicsContext::getCTM(IncludeDeviceScale includeDeviceScale) const
 {
     return m_primaryContext.getCTM(includeDeviceScale);

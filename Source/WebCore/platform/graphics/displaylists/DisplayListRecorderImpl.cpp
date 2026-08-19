@@ -45,8 +45,8 @@ namespace DisplayList {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RecorderImpl);
 
-RecorderImpl::RecorderImpl(const GraphicsContextState& state, const FloatRect& initialClip, const AffineTransform& initialCTM, const DestinationColorSpace& colorSpace, DrawGlyphsMode drawGlyphsMode)
-    : Recorder(state, initialClip, initialCTM, colorSpace, drawGlyphsMode)
+RecorderImpl::RecorderImpl(const GraphicsContextState& state, const FloatRect& initialClip, const DestinationColorSpace& colorSpace, DrawGlyphsMode drawGlyphsMode)
+    : Recorder(state, initialClip, colorSpace, drawGlyphsMode)
 {
     LOG_WITH_STREAM(DisplayLists, stream << "\nRecording with clip " << initialClip);
 }
@@ -132,40 +132,6 @@ void RecorderImpl::restore(GraphicsContextState::Purpose purpose)
     if (!updateStateForRestore(purpose))
         return;
     m_items.append(Restore());
-}
-
-void RecorderImpl::translate(float x, float y)
-{
-    if (!updateStateForTranslate(x, y))
-        return;
-    m_items.append(Translate(x, y));
-}
-
-void RecorderImpl::rotate(float angle)
-{
-    if (!updateStateForRotate(angle))
-        return;
-    m_items.append(Rotate(angle));
-}
-
-void RecorderImpl::scale(const FloatSize& scale)
-{
-    if (!updateStateForScale(scale))
-        return;
-    m_items.append(Scale(scale));
-}
-
-void RecorderImpl::setCTM(const AffineTransform& transform)
-{
-    updateStateForSetCTM(transform);
-    m_items.append(SetCTM(transform));
-}
-
-void RecorderImpl::concatCTM(const AffineTransform& transform)
-{
-    if (!updateStateForConcatCTM(transform))
-        return;
-    m_items.append(ConcatenateCTM(transform));
 }
 
 void RecorderImpl::setLineCap(LineCap lineCap)
@@ -510,6 +476,28 @@ void RecorderImpl::appendStateChangeItemIfNecessary()
         state.didApplyChanges();
         currentState().lastDrawingState = state;
     };
+
+    // The CTM is relocatable state: a recorded DisplayList can be replayed against a
+    // different base transform than the one in effect when it was recorded (e.g. a cached
+    // glyph display list drawn at a new text origin). SetState bakes in an absolute CTM,
+    // which would stomp the replay-time base transform instead of composing with it. Record
+    // the CTM delta since the last emitted item as a ConcatenateCTM instead, which composes
+    // correctly no matter where the display list is replayed.
+    if (changes.contains(GraphicsContextState::Change::TransformationMatrix)) {
+        auto& lastCTM = currentState().lastRecordedCTM;
+        if (auto inverse = lastCTM.inverse())
+            m_items.append(ConcatenateCTM(*inverse * state.ctm()));
+        lastCTM = state.ctm();
+        // Clear the bit on `state` itself (not just the local `changes` copy) so that if
+        // execution falls through to recordFullItem() below, the SetState it captures does
+        // not also carry the absolute CTM as a pending change.
+        state.didApplyChanges({ GraphicsContextState::Change::TransformationMatrix });
+        changes.remove(GraphicsContextState::Change::TransformationMatrix);
+        if (!changes) {
+            currentState().lastDrawingState = state;
+            return;
+        }
+    }
 
     if (!changes.containsOnly({ GraphicsContextState::Change::FillBrush, GraphicsContextState::Change::StrokeBrush, GraphicsContextState::Change::StrokeThickness })) {
         recordFullItem();

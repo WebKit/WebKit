@@ -31,8 +31,9 @@
 
 namespace WebCore {
 
-GraphicsContextState::GraphicsContextState(const ChangeFlags& changeFlags, InterpolationQuality imageInterpolationQuality)
-    : m_changeFlags(changeFlags)
+GraphicsContextState::GraphicsContextState(const AffineTransform& ctm, const ChangeFlags& changeFlags, InterpolationQuality imageInterpolationQuality)
+    : m_transformationMatrix { ctm }
+    , m_changeFlags(changeFlags)
     , m_imageInterpolationQuality(imageInterpolationQuality)
 {
 }
@@ -130,6 +131,10 @@ void GraphicsContextState::mergeSingleChange(const GraphicsContextState& state, 
     case toIndex(Change::DrawLuminanceMask).value:
         mergeChange(&GraphicsContextState::m_drawLuminanceMask);
         break;
+
+    case toIndex(Change::TransformationMatrix).value:
+        mergeChange(&GraphicsContextState::m_transformationMatrix);
+        break;
     default:
         RELEASE_ASSERT_NOT_REACHED();
     }
@@ -216,6 +221,9 @@ static ASCIILiteral stateChangeName(GraphicsContextState::Change change)
 
     case GraphicsContextState::Change::DrawLuminanceMask:
         return "draw-luminance-mask"_s;
+
+    case GraphicsContextState::Change::TransformationMatrix:
+        return "transformation-matrix"_s;
     }
 
     RELEASE_ASSERT_NOT_REACHED();
@@ -250,6 +258,8 @@ TextStream& GraphicsContextState::dump(TextStream& ts) const
     dump(Change::ShouldSubpixelQuantizeFonts,   &GraphicsContextState::m_shouldSubpixelQuantizeFonts);
     dump(Change::ShadowsIgnoreTransforms,       &GraphicsContextState::m_shadowsIgnoreTransforms);
     dump(Change::DrawLuminanceMask,             &GraphicsContextState::m_drawLuminanceMask);
+
+    dump(Change::TransformationMatrix,          &GraphicsContextState::m_transformationMatrix);
     return ts;
 }
 

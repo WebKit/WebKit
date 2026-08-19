@@ -70,7 +70,7 @@ RemoteGraphicsContextProxy::RemoteGraphicsContextProxy(const DestinationColorSpa
 }
 
 RemoteGraphicsContextProxy::RemoteGraphicsContextProxy(const DestinationColorSpace& colorSpace, std::optional<ContentsFormat> contentsFormat, RenderingMode renderingMode, const FloatRect& initialClip, const AffineTransform& initialCTM, DrawGlyphsMode drawGlyphsMode, RemoteGraphicsContextIdentifier identifier, RemoteRenderingBackendProxy& renderingBackend)
-    : DisplayList::Recorder(IsDeferred::No, { }, initialClip, initialCTM, colorSpace, drawGlyphsMode)
+    : DisplayList::Recorder(IsDeferred::No, { initialCTM }, initialClip, colorSpace, drawGlyphsMode)
     , m_renderingMode(renderingMode)
     , m_identifier(identifier)
     , m_renderingBackend(renderingBackend)
@@ -145,45 +145,6 @@ void RemoteGraphicsContextProxy::restore(GraphicsContextState::Purpose purpose)
     if (!updateStateForRestore(purpose))
         return;
     send(Messages::RemoteGraphicsContext::Restore());
-}
-
-void RemoteGraphicsContextProxy::translate(float x, float y)
-{
-    sendPendingDrawsIfNecessary();
-    if (!updateStateForTranslate(x, y))
-        return;
-    send(Messages::RemoteGraphicsContext::Translate(x, y));
-}
-
-void RemoteGraphicsContextProxy::rotate(float angle)
-{
-    sendPendingDrawsIfNecessary();
-    if (!updateStateForRotate(angle))
-        return;
-    send(Messages::RemoteGraphicsContext::Rotate(angle));
-}
-
-void RemoteGraphicsContextProxy::scale(const FloatSize& scale)
-{
-    sendPendingDrawsIfNecessary();
-    if (!updateStateForScale(scale))
-        return;
-    send(Messages::RemoteGraphicsContext::Scale(scale));
-}
-
-void RemoteGraphicsContextProxy::setCTM(const AffineTransform& transform)
-{
-    sendPendingDrawsIfNecessary();
-    updateStateForSetCTM(transform);
-    send(Messages::RemoteGraphicsContext::SetCTM(transform));
-}
-
-void RemoteGraphicsContextProxy::concatCTM(const AffineTransform& transform)
-{
-    sendPendingDrawsIfNecessary();
-    if (!updateStateForConcatCTM(transform))
-        return;
-    send(Messages::RemoteGraphicsContext::ConcatCTM(transform));
 }
 
 void RemoteGraphicsContextProxy::setLineCap(LineCap lineCap)
@@ -357,16 +318,14 @@ void RemoteGraphicsContextProxy::drawNativeImage(const NativeImage& image, const
     m_maxPaintedEDRHeadroom = std::max(m_maxPaintedEDRHeadroom, headroom.headroom);
     m_maxRequestedEDRHeadroom = std::max(m_maxRequestedEDRHeadroom, image.headroom().headroom);
     ImagePaintingOptions clampedOptions(options, headroom);
+#else
+    ImagePaintingOptions clampedOptions = options;
 #endif
     sendPendingDrawsIfNecessary();
-    appendStateChangeItemIfNecessary();
+    appendStateChangeItemIfNecessaryExcluding({ GraphicsContextState::Change::Alpha, GraphicsContextState::Change::TransformationMatrix });
     if (!recordResourceUse(const_cast<NativeImage&>(image)))
         return;
-#if HAVE(SUPPORT_HDR_DISPLAY_APIS)
-    send(Messages::RemoteGraphicsContext::DrawNativeImage(image.renderingResourceIdentifier(), destRect, srcRect, clampedOptions));
-#else
-    send(Messages::RemoteGraphicsContext::DrawNativeImage(image.renderingResourceIdentifier(), destRect, srcRect, options));
-#endif
+    send(Messages::RemoteGraphicsContext::DrawNativeImage(image.renderingResourceIdentifier(), destRect, srcRect, clampedOptions, ctm(), alpha()));
 }
 
 void RemoteGraphicsContextProxy::drawSystemImage(SystemImage& systemImage, const FloatRect& destinationRect)
@@ -882,10 +841,10 @@ RefPtr<ImageBuffer> RemoteGraphicsContextProxy::createAlignedImageBuffer(const F
     return GraphicsContext::createScaledImageBuffer(rect, scaleFactor(), colorSpace, renderingMode, renderingMethod);
 }
 
-void RemoteGraphicsContextProxy::appendStateChangeItemIfNecessary()
+void RemoteGraphicsContextProxy::appendStateChangeItemIfNecessaryExcluding(GraphicsContextState::ChangeFlags excluded)
 {
     auto& state = currentState().state;
-    auto changes = state.changes();
+    auto changes = state.changes() - excluded;
     if (!changes)
         return;
     if (changes.contains(GraphicsContextState::Change::FillBrush)) {
@@ -932,6 +891,8 @@ void RemoteGraphicsContextProxy::appendStateChangeItemIfNecessary()
         } else
             send(Messages::RemoteGraphicsContext::SetStrokeColor(strokeBrush.color()));
     }
+    if (changes.contains(GraphicsContextState::Change::TransformationMatrix))
+        send(Messages::RemoteGraphicsContext::SetCTM(state.ctm()));
     if (changes.contains(GraphicsContextState::Change::FillRule))
         send(Messages::RemoteGraphicsContext::SetFillRule(state.fillRule()));
     if (changes.contains(GraphicsContextState::Change::StrokeThickness))
