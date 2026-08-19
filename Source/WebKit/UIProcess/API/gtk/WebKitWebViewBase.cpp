@@ -3419,6 +3419,55 @@ void webkitWebViewBaseSynthesizeWheelEvent(WebKitWebViewBase* webViewBase, const
         delta, wheelTicks, toWebKitWheelEventPhase(phase), toWebKitWheelEventPhase(momentumPhase), true));
 }
 
+#if ENABLE(TOUCH_EVENTS)
+static WebPlatformTouchPoint::State toWebPlatformTouchPointState(SyntheticTouchPoint::State state)
+{
+    switch (state) {
+    case SyntheticTouchPoint::State::Stationary:
+        return WebPlatformTouchPoint::State::Stationary;
+    case SyntheticTouchPoint::State::Pressed:
+        return WebPlatformTouchPoint::State::Pressed;
+    case SyntheticTouchPoint::State::Moved:
+        return WebPlatformTouchPoint::State::Moved;
+    case SyntheticTouchPoint::State::Released:
+        return WebPlatformTouchPoint::State::Released;
+    case SyntheticTouchPoint::State::Cancelled:
+        return WebPlatformTouchPoint::State::Cancelled;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+void webkitWebViewBaseSynthesizeTouchEvent(WebKitWebViewBase* webViewBase, TouchEventType type, Vector<SyntheticTouchPoint>&& points, unsigned modifiers)
+{
+    WebKitWebViewBasePrivate* priv = webViewBase->priv;
+    if (priv->dialog)
+        return;
+
+    WebEventType webEventType;
+    switch (type) {
+    case TouchEventType::Start:
+        webEventType = WebEventType::TouchStart;
+        break;
+    case TouchEventType::Move:
+        webEventType = WebEventType::TouchMove;
+        break;
+    case TouchEventType::End:
+        webEventType = WebEventType::TouchEnd;
+        break;
+    case TouchEventType::Cancel:
+        webEventType = WebEventType::TouchCancel;
+        break;
+    }
+
+    auto touchPoints = points.map([widget = GTK_WIDGET(webViewBase)](const SyntheticTouchPoint& point) -> WebPlatformTouchPoint {
+        auto rootCoords = widgetRootCoords(widget, point.x, point.y);
+        return WebPlatformTouchPoint(point.id, toWebPlatformTouchPointState(point.state), DoublePoint(rootCoords.x(), rootCoords.y()), DoublePoint(point.x, point.y));
+    });
+
+    priv->pageProxy->handleTouchEvent(nullptr, NativeWebTouchEvent(webEventType, toWebKitModifiers(modifiers), WTF::move(touchPoints)));
+}
+#endif // ENABLE(TOUCH_EVENTS)
+
 void webkitWebViewBaseMakeBlank(WebKitWebViewBase* webViewBase, bool makeBlank)
 {
     WebKitWebViewBasePrivate* priv = webViewBase->priv;

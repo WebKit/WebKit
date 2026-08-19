@@ -27,6 +27,7 @@
 
 #include <WebKit/WKBase.h>
 #include <WebCore/PlatformMouseEvent.h>
+#include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
 class SkImage;
@@ -48,6 +49,18 @@ WK_EXPORT void webkitWebViewBaseSynthesizeKeyEvent(WebKitWebViewBase*, KeyEventT
 
 enum class WheelEventPhase { NoPhase, Began, Changed, Ended, Cancelled, MayBegin };
 WK_EXPORT void webkitWebViewBaseSynthesizeWheelEvent(WebKitWebViewBase*, double deltaX, double deltaY, int x, int y, WheelEventPhase, WheelEventPhase momentumPhase, bool);
+
+#if ENABLE(TOUCH_EVENTS)
+enum class TouchEventType { Start, Move, End, Cancel };
+struct SyntheticTouchPoint {
+    enum class State : uint8_t { Stationary, Pressed, Moved, Released, Cancelled };
+    unsigned id { 0 };
+    State state { State::Stationary };
+    int x { 0 };
+    int y { 0 };
+};
+WK_EXPORT void webkitWebViewBaseSynthesizeTouchEvent(WebKitWebViewBase*, TouchEventType, Vector<SyntheticTouchPoint>&&, unsigned modifiers);
+#endif
 
 WK_EXPORT SkImage* webkitWebViewBaseSnapshotForTesting(WebKitWebViewBase*);
 
