@@ -1683,27 +1683,34 @@ String WebFrame::frameTextForTesting(bool includeSubframes)
     return builder.toString();
 }
 
-static RefPtr<WebKitJSHandle> createJSHandle(Node& node)
+static RefPtr<WebKitJSHandle> createJSHandle(Node& node, DOMWrapperWorld& world)
 {
     Ref document = node.document();
-    auto* lexicalGlobalObject = document->globalObject();
-    if (!lexicalGlobalObject)
+    RefPtr frame = document->frame();
+    if (!frame)
         return { };
 
-    RELEASE_ASSERT(lexicalGlobalObject->template inherits<JSDOMGlobalObject>());
-    auto* domGlobalObject = downcast<JSDOMGlobalObject>(lexicalGlobalObject);
-    JSC::JSLockHolder locker { lexicalGlobalObject };
-    return WebKitJSHandle::create(toJS(lexicalGlobalObject, domGlobalObject, node).toObject(lexicalGlobalObject));
+    auto* domGlobalObject = protect(frame->script())->globalObject(world);
+    if (!domGlobalObject)
+        return { };
+
+    JSC::JSLockHolder locker { domGlobalObject };
+    return WebKitJSHandle::create(toJS(domGlobalObject, domGlobalObject, node).toObject(domGlobalObject));
 }
 
 std::optional<std::pair<Ref<WebKitJSHandle>, JSHandleInfo>> WebFrame::createAndPrepareToSendJSHandle(Node& node) const
 {
-    RefPtr handle = createJSHandle(node);
+    return createAndPrepareToSendJSHandle(node, InjectedBundleScriptWorld::normalWorldSingleton());
+}
+
+std::optional<std::pair<Ref<WebKitJSHandle>, JSHandleInfo>> WebFrame::createAndPrepareToSendJSHandle(Node& node, InjectedBundleScriptWorld& world) const
+{
+    RefPtr handle = createJSHandle(node, protect(world.coreWorld()));
     if (!handle)
         return std::nullopt;
 
     WebKitJSHandle::jsHandleSentToAnotherProcess(handle->identifier());
-    JSHandleInfo handleInfo { handle->identifier(), pageContentWorldIdentifier(), info(), handle->windowFrameIdentifier() };
+    JSHandleInfo handleInfo { handle->identifier(), world.identifier(), info(), handle->windowFrameIdentifier() };
     return { { handle.releaseNonNull(), WTF::move(handleInfo) } };
 }
 

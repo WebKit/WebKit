@@ -10746,7 +10746,7 @@ void WebPage::remoteDictionaryPopupInfoToRootView(WebCore::FrameIdentifier frame
     completionHandler(popupInfo);
 }
 
-void WebPage::hitTestAtPoint(WebCore::FrameIdentifier frameID, WebCore::FloatPoint point, CompletionHandler<void(NodeHitTestResult)>&& completionHandler)
+void WebPage::hitTestAtPoint(WebCore::FrameIdentifier frameID, WebCore::FloatPoint point, const ContentWorldData& worldData, CompletionHandler<void(NodeHitTestResult)>&& completionHandler)
 {
     RefPtr frame = WebFrame::webFrame(frameID);
     if (!frame)
@@ -10770,7 +10770,7 @@ void WebPage::hitTestAtPoint(WebCore::FrameIdentifier frameID, WebCore::FloatPoi
             case Frame::FrameType::Remote:
                 return completionHandler( { NodeHitTestResult::RemoteFrameInfo { contentFrame->frameID(), transformedCoordinates } });
             case Frame::FrameType::Local:
-                return hitTestAtPoint(contentFrame->frameID(), transformedCoordinates, WTF::move(completionHandler));
+                return hitTestAtPoint(contentFrame->frameID(), transformedCoordinates, worldData, WTF::move(completionHandler));
             }
         }
     }
@@ -10783,7 +10783,12 @@ void WebPage::hitTestAtPoint(WebCore::FrameIdentifier frameID, WebCore::FloatPoi
     if (!nodeWebFrame)
         return completionHandler({ });
 
-    auto handleAndInfo = nodeWebFrame->createAndPrepareToSendJSHandle(*node);
+    m_userContentController->addContentWorldIfNecessary(worldData);
+    RefPtr world = m_userContentController->worldForIdentifier(worldData.identifier);
+    if (!world)
+        return completionHandler({ });
+
+    auto handleAndInfo = nodeWebFrame->createAndPrepareToSendJSHandle(*node, *world);
     if (!handleAndInfo)
         return completionHandler({ });
 

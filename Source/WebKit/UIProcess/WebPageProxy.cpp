@@ -15938,16 +15938,16 @@ Awaitable<std::optional<WebCore::FloatRect>> WebPageProxy::convertRectToMainFram
     } };
 }
 
-void WebPageProxy::hitTestAtPoint(WebCore::FrameIdentifier frameID, WebCore::FloatPoint point, CompletionHandler<void(std::optional<JSHandleInfo>&&)>&& completionHandler)
+void WebPageProxy::hitTestAtPoint(WebCore::FrameIdentifier frameID, WebCore::FloatPoint point, API::ContentWorld& world, CompletionHandler<void(std::optional<JSHandleInfo>&&)>&& completionHandler)
 {
-    sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::HitTestAtPoint(frameID, point), [weakThis = WeakPtr { *this }, completionHandler = WTF::move(completionHandler)] (auto&& result) mutable {
+    sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::HitTestAtPoint(frameID, point, world.worldDataForProcess(processContainingFrame(frameID))), [weakThis = WeakPtr { *this }, world = Ref { world }, completionHandler = WTF::move(completionHandler)] (auto&& result) mutable {
         WTF::switchOn(WTF::move(result.variant), [&] (std::monostate) {
             completionHandler(std::nullopt);
         }, [&] (WebKit::NodeHitTestResult::RemoteFrameInfo&& info) {
             RefPtr protectedThis = weakThis.get();
             if (!protectedThis)
                 return completionHandler(std::nullopt);
-            protectedThis->hitTestAtPoint(info.remoteFrameIdentifier, info.transformedPoint, WTF::move(completionHandler));
+            protectedThis->hitTestAtPoint(info.remoteFrameIdentifier, info.transformedPoint, world, WTF::move(completionHandler));
         }, [&] (JSHandleInfo&& nodeAndFrame) {
             completionHandler(WTF::move(nodeAndFrame));
         });

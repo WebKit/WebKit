@@ -4975,10 +4975,15 @@ static RetainPtr<NSArray> wkTextManipulationErrors(NSArray<_WKTextManipulationIt
 
 - (void)_hitTestAtPoint:(CGPoint)point inFrameCoordinateSpace:(WKFrameInfo *)frame completionHandler:(void (^)(_WKJSHandle *, NSError *))completionHandler
 {
+    [self _hitTestAtPoint:point inFrameCoordinateSpace:frame inContentWorld:WKContentWorld.pageWorld completionHandler:completionHandler];
+}
+
+- (void)_hitTestAtPoint:(CGPoint)point inFrameCoordinateSpace:(WKFrameInfo *)frame inContentWorld:(WKContentWorld *)contentWorld completionHandler:(void (^)(_WKJSHandle *, NSError *))completionHandler
+{
     RefPtr mainFrame = _page->mainFrame();
     if (!frame && !mainFrame)
         return completionHandler(nil, unknownError().get());
-    _page->hitTestAtPoint(frame ? frame->_frameInfo->frameInfoData().frameID : mainFrame->frameID(), point, [completionHandler = makeBlockPtr(completionHandler)] (auto&& result) mutable {
+    _page->hitTestAtPoint(frame ? frame->_frameInfo->frameInfoData().frameID : mainFrame->frameID(), point, protect(*contentWorld->_contentWorld), [completionHandler = makeBlockPtr(completionHandler)] (auto&& result) mutable {
         if (!result)
             return completionHandler(nil, unknownError().get());
         completionHandler(wrapper(API::JSHandle::create(WTF::move(*result))).get(), nil);

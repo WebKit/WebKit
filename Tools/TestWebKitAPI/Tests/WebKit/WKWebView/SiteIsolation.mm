@@ -9021,7 +9021,7 @@ TEST(SiteIsolation, HitTesting)
     auto hitTestResult = [] (RetainPtr<WKWebView> webView, CGPoint point, WKFrameInfo *coordinateFrame = nil) -> RetainPtr<_WKJSHandle> {
         __block bool done { false };
         __block RetainPtr<_WKJSHandle> result;
-        [webView _hitTestAtPoint:point inFrameCoordinateSpace:coordinateFrame completionHandler:^(_WKJSHandle *node, NSError *error) {
+        [webView _hitTestAtPoint:point inFrameCoordinateSpace:coordinateFrame inContentWorld:WKContentWorld.pageWorld completionHandler:^(_WKJSHandle *node, NSError *error) {
             done = true;
             EXPECT_NE(!node, !error);
             result = node;
@@ -9071,6 +9071,60 @@ TEST(SiteIsolation, HitTesting)
         hitTestPointInIFrame(10, 10, "[object Text] undefined, child of webkitiframediv");
         hitTestPointInIFrame(260, 160, "[object HTMLDivElement] webkitiframediv, child of ");
         hitTestPointInIFrame(300, 220, "[object HTMLHtmlElement] , child of undefined");
+    };
+    runTest(true);
+    runTest(false);
+}
+
+TEST(SiteIsolation, HitTestingInContentWorld)
+{
+    auto text = "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum "_s;
+
+    HTTPServer server({
+        { "/example"_s, { makeString(
+            "<meta name='viewport' content='width=device-width,initial-scale=1'>"
+            "<div id=mainframediv>"_s, text, text, "</div>"_s
+        ) } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr<WKContentWorld> contentWorld = [WKContentWorld worldWithName:@"HitTestingContentWorld"];
+    EXPECT_NE(contentWorld.get(), WKContentWorld.pageWorld);
+
+    auto hitTestResult = [&] (RetainPtr<WKWebView> webView, CGPoint point) -> RetainPtr<_WKJSHandle> {
+        __block bool done { false };
+        __block RetainPtr<_WKJSHandle> result;
+        [webView _hitTestAtPoint:point inFrameCoordinateSpace:nil inContentWorld:contentWorld.get() completionHandler:^(_WKJSHandle *node, NSError *error) {
+            done = true;
+            EXPECT_NE(!node, !error);
+            result = node;
+        }];
+        Util::run(&done);
+        return result;
+    };
+
+    auto runTest = [&] (bool withSiteIsolation) {
+        RetainPtr configuration = server.httpsProxyConfiguration();
+        if (withSiteIsolation)
+            enableSiteIsolation(configuration.get());
+
+        constexpr size_t widthWiderThanTwoIframes { 650 };
+        constexpr size_t heightShorterThanHitTestCoordinates { 100 };
+        RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, widthWiderThanTwoIframes, heightShorterThanHitTestCoordinates) configuration:configuration.get()]);
+
+        [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+        [webView _test_waitForDidFinishNavigationWhileIgnoringSSLErrors];
+
+        auto node = hitTestResult(webView, CGPointMake(40, 40));
+        EXPECT_NOT_NULL(node.get());
+        if (!node)
+            return;
+
+        // The handle is associated with the content world it was requested for, not the page world.
+        EXPECT_EQ([node world], contentWorld.get());
+
+        // The handle can be used to reference the hit node when calling JavaScript in that same content world.
+        NSString *result = [webView objectByCallingAsyncFunction:@"return Object.getPrototypeOf(n).toString() + ', child of ' + n.parentElement?.id" withArguments:@{ @"n" : node.get() } inFrame:node.get().frame inContentWorld:contentWorld.get()];
+        EXPECT_WK_STREQ(result, "[object Text], child of mainframediv");
     };
     runTest(true);
     runTest(false);
