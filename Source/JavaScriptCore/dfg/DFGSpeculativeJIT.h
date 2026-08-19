@@ -1322,7 +1322,7 @@ public:
         SwitchData*, const Vector<StringSwitchCase>&, unsigned numChecked,
         unsigned begin, unsigned end, GPRReg buffer, GPRReg length, GPRReg temp,
         unsigned alreadyCheckedLength, bool checkedExactLength);
-    void emitSwitchStringOnString(Node*, SwitchData*, GPRReg string, Edge stringEdge);
+    void emitSwitchStringOnString(Node*, SwitchData*, GPRReg stringGPR, Edge stringEdge);
     void emitSwitchString(Node*, SwitchData*);
     void emitSwitch(Node*);
     

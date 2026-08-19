@@ -23801,6 +23801,10 @@ IGNORE_CLANG_WARNINGS_END
         LBasicBlock hasImplBlock = m_out.newBlock();
         LBasicBlock is8BitBlock = m_out.newBlock();
         LBasicBlock isRopeBlock = m_out.newBlock();
+        LBasicBlock isSubstringBlock = m_out.newBlock();
+        LBasicBlock substringBlock = m_out.newBlock();
+        LBasicBlock concatRopeBlock = m_out.newBlock();
+        LBasicBlock binarySwitchBlock = m_out.newBlock();
         LBasicBlock slowBlock = m_out.newBlock();
 
         m_out.branch(isRopeString(string, edge), rarely(isRopeBlock), usually(hasImplBlock));
@@ -23821,8 +23825,46 @@ IGNORE_CLANG_WARNINGS_END
             rarely(slowBlock), usually(is8BitBlock));
 
         m_out.appendTo(is8BitBlock, isRopeBlock);
+        ValueFromBlock resolvedBuffer = m_out.anchor(m_out.loadPtr(stringImpl, m_heaps.StringImpl_data));
+        ValueFromBlock resolvedLength = m_out.anchor(length);
+        m_out.jump(binarySwitchBlock);
 
-        LValue buffer = m_out.loadPtr(stringImpl, m_heaps.StringImpl_data);
+        m_out.appendTo(isRopeBlock, isSubstringBlock);
+        LValue fiber0 = m_out.loadPtr(string, m_heaps.JSRopeString_fiber0);
+        m_out.branch(
+            m_out.testIsZeroPtr(fiber0, m_out.constIntPtr(JSRopeString::isSubstringInPointer)),
+            unsure(concatRopeBlock), unsure(isSubstringBlock));
+
+        m_out.appendTo(isSubstringBlock, substringBlock);
+        m_out.branch(
+            m_out.testIsZeroPtr(fiber0, m_out.constIntPtr(JSRopeString::is8BitInPointer)),
+            unsure(concatRopeBlock), unsure(substringBlock));
+
+        m_out.appendTo(substringBlock, concatRopeBlock);
+        LValue packedLengthAndBaseLower = m_out.load64(string, m_heaps.JSRopeString_fiber1);
+        LValue packedBaseUpperAndOffset = m_out.load64(string, m_heaps.JSRopeString_fiber2);
+        LValue substringBase = m_out.bitOr(
+            m_out.lShr(packedLengthAndBaseLower, m_out.constInt32(32)),
+            m_out.shl(m_out.bitAnd(packedBaseUpperAndOffset, m_out.constInt64(0xffff)), m_out.constInt32(32)));
+        LValue substringOffset = m_out.lShr(packedBaseUpperAndOffset, m_out.constInt32(16));
+        LValue baseImpl = m_out.loadPtr(substringBase, m_heaps.JSString_value);
+        ValueFromBlock substringBuffer = m_out.anchor(
+            m_out.add(m_out.loadPtr(baseImpl, m_heaps.StringImpl_data), substringOffset));
+        ValueFromBlock substringLength = m_out.anchor(m_out.load32NonNegative(string, m_heaps.JSRopeString_length));
+        m_out.jump(binarySwitchBlock);
+
+        m_out.appendTo(concatRopeBlock, binarySwitchBlock);
+        const UnlinkedStringJumpTable& unlinkedTable = m_graph.unlinkedStringSwitchJumpTable(data->switchTableIndex);
+        LValue ropeLength;
+        if (auto stringLength = tryGetConstantStringLength(edge))
+            ropeLength = m_out.constInt32(*stringLength);
+        else
+            ropeLength = m_out.load32NonNegative(string, m_heaps.JSRopeString_length);
+        m_out.branch(m_out.belowOrEqual(m_out.sub(ropeLength, m_out.constInt32(unlinkedTable.minLength())), m_out.constInt32(unlinkedTable.maxLength() - unlinkedTable.minLength())), unsure(slowBlock), unsure(lowBlock(data->fallThrough.block)));
+
+        m_out.appendTo(binarySwitchBlock, slowBlock);
+        LValue buffer = m_out.phi(pointerType(), resolvedBuffer, substringBuffer);
+        LValue switchLength = m_out.phi(Int32, resolvedLength, substringLength);
 
         // FIXME: We should propagate branch weight data to the cases of this switch.
         // https://bugs.webkit.org/show_bug.cgi?id=144368
@@ -23831,16 +23873,7 @@ IGNORE_CLANG_WARNINGS_END
         for (DFG::SwitchCase myCase : data->cases)
             cases.append(StringSwitchCase(myCase.value.stringImpl(), lowBlock(myCase.target.block)));
         std::sort(cases.begin(), cases.end());
-        switchStringRecurse(data, buffer, length, cases, 0, 0, cases.size(), 0, false);
-
-        m_out.appendTo(isRopeBlock, slowBlock);
-        const UnlinkedStringJumpTable& unlinkedTable = m_graph.unlinkedStringSwitchJumpTable(data->switchTableIndex);
-        LValue ropeLength;
-        if (auto stringLength = tryGetConstantStringLength(edge))
-            ropeLength = m_out.constInt32(*stringLength);
-        else
-            ropeLength = m_out.load32NonNegative(string, m_heaps.JSRopeString_length);
-        m_out.branch(m_out.belowOrEqual(m_out.sub(ropeLength, m_out.constInt32(unlinkedTable.minLength())), m_out.constInt32(unlinkedTable.maxLength() - unlinkedTable.minLength())), unsure(slowBlock), unsure(lowBlock(data->fallThrough.block)));
+        switchStringRecurse(data, buffer, switchLength, cases, 0, 0, cases.size(), 0, false);
 
         m_out.appendTo(slowBlock, lastNext);
         switchStringSlow(data, string);
