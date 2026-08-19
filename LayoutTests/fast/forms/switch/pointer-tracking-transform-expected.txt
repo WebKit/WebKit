@@ -1,0 +1,10 @@
+A transformed switch tracks the pointer along its track. A drag to the far end of the track and back leaves the thumb where it was, so releasing it does not flip the switch.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS input.checked is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

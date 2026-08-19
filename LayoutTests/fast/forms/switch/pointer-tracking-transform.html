@@ -1,0 +1,35 @@
+<!doctype html>
+<html>
+<script src="../../../resources/js-test.js"></script>
+<input type=checkbox switch style="margin: 20px; transform: scale(5); transform-origin: top left">
+<script>
+description("A transformed switch tracks the pointer along its track. A drag to the far end of the track and back leaves the thumb where it was, so releasing it does not flip the switch.");
+jsTestIsAsync = true;
+
+const input = document.querySelector("input");
+
+(async () => {
+    if (!window.eventSender) {
+        testFailed("This test requires eventSender.");
+        finishJSTest();
+        return;
+    }
+
+    const rect = input.getBoundingClientRect();
+    const y = Math.round(rect.top + rect.height / 2);
+    const start = Math.round(rect.left + rect.width * 0.15);
+    const far = Math.round(rect.left + rect.width * 0.85);
+
+    const clicked = new Promise(resolve => input.addEventListener("click", resolve, { once: true }));
+    await eventSender.asyncMouseMoveTo(start, y);
+    await eventSender.asyncMouseDown();
+    await eventSender.asyncMouseMoveTo(far, y);
+    await eventSender.asyncMouseMoveTo(start, y);
+    await eventSender.asyncMouseUp();
+    await Promise.race([clicked, new Promise(resolve => setTimeout(resolve, 1000))]);
+
+    shouldBeFalse("input.checked");
+    finishJSTest();
+})();
+</script>
+</html>

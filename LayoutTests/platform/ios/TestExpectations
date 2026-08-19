@@ -49,6 +49,8 @@ fast/snapshot [ Skip ]
 fast/forms/switch/pointer-tracking-there-and-back-again-rtl.html [ Skip ]
 fast/forms/switch/pointer-tracking-there-and-back-again.html [ Skip ]
 fast/forms/switch/pointer-tracking.html [ Skip ]
+fast/forms/switch/pointer-tracking-vertical-lr.html [ Skip ]
+fast/forms/switch/pointer-tracking-transform.html [ Skip ]
 
 # Shadow of Liquid Glass switches is different between transform and zoom.
 fast/forms/switch/zoom-approximates-transform.html [ Skip ]

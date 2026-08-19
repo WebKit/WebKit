@@ -50,7 +50,9 @@
 #include "LocalizedStrings.h"
 #include "MouseEvent.h"
 #include "NodeDocument.h"
+#include "NodeInlines.h"
 #include "PlatformRenderTheme.h"
+#include "RenderBoxInlines.h"
 #include "RenderElement.h"
 #include "RenderTheme.h"
 #include "ScopedEventQueue.h"
@@ -471,21 +473,23 @@ bool CheckboxInputType::isSwitchHeld() const
 void CheckboxInputType::updateIsSwitchVisuallyOnFromAbsoluteLocation(LayoutPoint absoluteLocation)
 {
     Ref element = *this->element();
+    CheckedPtr renderer = element->renderBox();
+    if (!renderer)
+        return;
     auto logicalLeftPosition = switchPointerTrackingLogicalLeftPosition(element.get(), absoluteLocation);
     auto isSwitchVisuallyOn = m_isSwitchVisuallyOn;
-    auto isRTL = element->computedStyle()->writingMode().isBidiRTL();
+    auto isRTL = renderer->writingMode().isBidiRTL();
     auto switchThumbIsLogicallyLeft = (!isRTL && !isSwitchVisuallyOn) || (isRTL && isSwitchVisuallyOn);
-    auto switchTrackRect = protect(element->renderer())->absoluteBoundingBoxRect();
-    auto switchThumbLength = switchTrackRect.height();
-    auto switchTrackWidth = switchTrackRect.width();
+    auto switchThumbLogicalLength = renderer->logicalHeight();
+    auto switchTrackLogicalWidth = renderer->logicalWidth();
 
-    auto changePosition = switchTrackWidth / 2;
+    auto changePosition = switchTrackLogicalWidth / 2;
     if (!m_hasSwitchVisuallyOnChanged) {
-        auto switchTrackNoThumbWidth = switchTrackWidth - switchThumbLength;
-        auto changeOffset = switchTrackWidth * RenderTheme::singleton().switchPointerTrackingMagnitudeProportion();
-        if (switchThumbIsLogicallyLeft && *m_switchPointerTrackingLogicalLeftPositionStart > switchTrackNoThumbWidth)
+        auto switchTrackNoThumbLogicalWidth = switchTrackLogicalWidth - switchThumbLogicalLength;
+        auto changeOffset = switchTrackLogicalWidth * RenderTheme::singleton().switchPointerTrackingMagnitudeProportion();
+        if (switchThumbIsLogicallyLeft && *m_switchPointerTrackingLogicalLeftPositionStart > switchTrackNoThumbLogicalWidth)
             changePosition = *m_switchPointerTrackingLogicalLeftPositionStart + changeOffset;
-        else if (!switchThumbIsLogicallyLeft && *m_switchPointerTrackingLogicalLeftPositionStart < switchTrackNoThumbWidth)
+        else if (!switchThumbIsLogicallyLeft && *m_switchPointerTrackingLogicalLeftPositionStart < switchTrackNoThumbLogicalWidth)
             changePosition = *m_switchPointerTrackingLogicalLeftPositionStart - changeOffset;
     }
 
