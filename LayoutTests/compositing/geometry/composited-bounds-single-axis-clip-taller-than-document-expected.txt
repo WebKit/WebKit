@@ -1,0 +1,36 @@
+Bug 295662: a backing-sharing layer clipped in one axis but taller than the document (as in a code editor with a large paste) must get bounds covering its full content, not clamped to the document rect.
+
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 800.00 600.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 600.00)
+      (contentsOpaque 1)
+      (children 2
+        (GraphicsLayer
+          (position 8.00 68.00)
+          (bounds 400.00 300.00)
+          (children 1
+            (GraphicsLayer
+              (bounds 50.00 50.00)
+            )
+          )
+        )
+        (GraphicsLayer
+          (position 8.00 68.00)
+          (bounds 400.00 300.00)
+          (children 1
+            (GraphicsLayer
+              (position 20.00 20.00)
+              (bounds 300.00 3000.00)
+              (usingTiledLayer 1)
+              (drawsContent 1)
+            )
+          )
+        )
+      )
+    )
+  )
+)
+
