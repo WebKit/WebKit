@@ -82,12 +82,12 @@ void BiquadFilterNode::setType(BiquadFilterType type)
 
 ExceptionOr<void> BiquadFilterNode::getFrequencyResponse(const Ref<Float32Array>& frequencyHz, const Ref<Float32Array>& magResponse, const Ref<Float32Array>& phaseResponse)
 {
-    unsigned length = frequencyHz->length();
+    size_t length = frequencyHz->length();
     if (magResponse->length() != length || phaseResponse->length() != length)
         return Exception { ExceptionCode::InvalidAccessError, "The arrays passed as arguments must have the same length"_s };
 
     if (length)
-        protect(biquadProcessor())->getFrequencyResponse(length, frequencyHz->typedSpan(), magResponse->typedMutableSpan(), phaseResponse->typedMutableSpan());
+        protect(biquadProcessor())->getFrequencyResponse(frequencyHz->typedSpan(), magResponse->typedMutableSpan(), phaseResponse->typedMutableSpan());
     return { };
 }
 

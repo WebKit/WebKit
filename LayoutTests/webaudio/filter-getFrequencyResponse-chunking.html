@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../resources/js-test.js"></script>
+<script>
+description("Tests that BiquadFilterNode/IIRFilterNode getFrequencyResponse() is computed correctly for arrays longer than one render quantum.");
+
+var context = new OfflineAudioContext({ sampleRate: 44100, length: 100 });
+var biquad = new BiquadFilterNode(context);
+var iir = new IIRFilterNode(context, { feedforward: [0.5, 0.5], feedback: [1, -0.5] });
+
+// getFrequencyResponse() normalizes the input frequencies in fixed-size chunks internally, so
+// exercise lengths that are shorter than, equal to and longer than that chunk size, including
+// lengths that are not a multiple of it.
+const lengths = [1, 2, 127, 128, 129, 255, 256, 257, 300];
+
+// Each frequency is answered independently of the others, so computing the response for a whole
+// array must give the same result as computing the response for each frequency on its own. This
+// catches any chunk-boundary mistake in the internal chunking.
+function testChunking(node, nodeName, length)
+{
+    const frequencyHz = new Float32Array(length);
+    for (let k = 0; k < length; ++k)
+        frequencyHz[k] = k * (0.5 * context.sampleRate) / length;
+
+    const magResponse = new Float32Array(length);
+    const phaseResponse = new Float32Array(length);
+    node.getFrequencyResponse(frequencyHz, magResponse, phaseResponse);
+
+    const singleFrequency = new Float32Array(1);
+    const singleMag = new Float32Array(1);
+    const singlePhase = new Float32Array(1);
+    for (let k = 0; k < length; ++k) {
+        singleFrequency[0] = frequencyHz[k];
+        node.getFrequencyResponse(singleFrequency, singleMag, singlePhase);
+        if (magResponse[k] !== singleMag[0] || phaseResponse[k] !== singlePhase[0]) {
+            testFailed(`${nodeName}.getFrequencyResponse() with length ${length} differs at index ${k}: `
+                + `got (${magResponse[k]}, ${phaseResponse[k]}), expected (${singleMag[0]}, ${singlePhase[0]})`);
+            return;
+        }
+    }
+    testPassed(`${nodeName}.getFrequencyResponse() with length ${length} matches per-frequency results.`);
+}
+
+for (const length of lengths) {
+    testChunking(biquad, "BiquadFilterNode", length);
+    testChunking(iir, "IIRFilterNode", length);
+}
+
+// Out-of-range frequencies must report NaN, including past the first chunk.
+var outOfRangeFrequencyHz = new Float32Array(300);
+outOfRangeFrequencyHz.fill(-1);
+var magResponse = new Float32Array(300);
+var phaseResponse = new Float32Array(300);
+biquad.getFrequencyResponse(outOfRangeFrequencyHz, magResponse, phaseResponse);
+shouldBeTrue("magResponse.every(Number.isNaN) && phaseResponse.every(Number.isNaN)");
+
+// Mismatched lengths still throw, and a zero length is still a no-op.
+shouldThrowErrorName("biquad.getFrequencyResponse(new Float32Array(4), new Float32Array(4), new Float32Array(5))", "InvalidAccessError");
+shouldNotThrow("biquad.getFrequencyResponse(new Float32Array(0), new Float32Array(0), new Float32Array(0))");
+shouldThrowErrorName("iir.getFrequencyResponse(new Float32Array(4), new Float32Array(4), new Float32Array(5))", "InvalidAccessError");
+shouldNotThrow("iir.getFrequencyResponse(new Float32Array(0), new Float32Array(0), new Float32Array(0))");
+</script>
+</body>
+</html>

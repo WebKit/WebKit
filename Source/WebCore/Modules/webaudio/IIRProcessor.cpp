@@ -98,9 +98,9 @@ void IIRProcessor::process(const AudioBus& source, AudioBus& destination, size_t
         m_kernels[i]->process(source.channel(i)->span().first(framesToProcess), destination.channel(i)->mutableSpan());
 }
 
-void IIRProcessor::getFrequencyResponse(unsigned length, std::span<const float> frequencyHz, std::span<float> magResponse, std::span<float> phaseResponse)
+void IIRProcessor::getFrequencyResponse(std::span<const float> frequencyHz, std::span<float> magResponse, std::span<float> phaseResponse)
 {
-    m_responseKernel->getFrequencyResponse(length, frequencyHz, magResponse, phaseResponse);
+    m_responseKernel->getFrequencyResponse(frequencyHz, magResponse, phaseResponse);
 }
 
 } // namespace WebCore
