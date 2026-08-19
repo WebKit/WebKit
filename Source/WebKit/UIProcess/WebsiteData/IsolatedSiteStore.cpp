@@ -27,13 +27,18 @@
 #include "IsolatedSiteStore.h"
 
 #include "IsolatedSitePersistence.h"
+#include "Logging.h"
+#include <algorithm>
 #include <cmath>
+#include <ranges>
 #include <wtf/CrossThreadCopier.h>
 #include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/SetForScope.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
+#include <wtf/WeakRandomNumber.h>
 
 #if PLATFORM(COCOA)
 #include "WebPrivacyHelpers.h"
@@ -99,7 +104,7 @@ IsolatedSiteStore::IsolatedSiteStore(const String& databaseDirectoryPath, UserIn
             if (signals.isEmpty())
                 continue;
 
-            sites.set(domain, Entry { signals, record.lastUpdated });
+            sites.set(domain, Entry { .lastUpdated = record.lastUpdated, .signals = signals });
         }
         bool didImportUserInteractions = protectedThis->m_persistence->didImportUserInteractions();
 
@@ -139,6 +144,9 @@ void IsolatedSiteStore::didLoadSites(HashMap<WebCore::RegistrableDomain, Entry>&
     }
 
     m_isLoaded = true;
+
+    evictSitesIfNeeded();
+
     for (auto& completionHandler : std::exchange(m_loadCompletionHandlers, { }))
         completionHandler();
 
@@ -197,14 +205,18 @@ void IsolatedSiteStore::importUserInteractions()
             return protectedThis->becomeReady();
 
         auto now = today();
-        for (auto& [domain, interactionTime] : *domains) {
-            if (domain.isEmpty())
-                continue;
-            auto lastUpdated = roundDownToDay(interactionTime);
-            if (!lastUpdated || lastUpdated > now)
-                lastUpdated = now;
-            protectedThis->recordSignals(domain, { Signal::FirstPartyVisit, Signal::FirstPartyUserGesture }, lastUpdated);
+        {
+            SetForScope isImporting(protectedThis->m_isImportingUserInteractions, true);
+            for (auto& [domain, interactionTime] : *domains) {
+                if (domain.isEmpty())
+                    continue;
+                auto lastUpdated = roundDownToDay(interactionTime);
+                if (!lastUpdated || lastUpdated > now)
+                    lastUpdated = now;
+                protectedThis->recordSignals(domain, { Signal::FirstPartyVisit, Signal::FirstPartyUserGesture }, lastUpdated);
+            }
         }
+        protectedThis->evictSitesIfNeeded();
 
         sharedWorkQueueSingleton().dispatch([weakThis = ThreadSafeWeakPtr { protectedThis.get() }] {
             assertIsCurrent(sharedWorkQueueSingleton());
@@ -274,6 +286,82 @@ void IsolatedSiteStore::recordSignals(const WebCore::RegistrableDomain& domain, 
     entry.signals.add(signals);
     entry.lastUpdated = std::max(entry.lastUpdated, lastUpdated);
     saveSite(domain, entry);
+
+    evictSitesIfNeeded();
+}
+
+auto IsolatedSiteStore::evictionTier(OptionSet<Signal> signals) -> EvictionTier
+{
+    if (!firstPartySignals.containsAll(signals))
+        return EvictionTier::CredentialEvidence;
+
+    if (signals.contains(Signal::FirstPartyUserGesture))
+        return EvictionTier::Gestured;
+
+    return EvictionTier::VisitOnly;
+}
+
+void IsolatedSiteStore::evictSitesIfNeeded()
+{
+    ASSERT(isMainRunLoop());
+
+    if (!m_isLoaded || m_isImportingUserInteractions)
+        return;
+
+    if (m_sites.size() <= m_maximumSiteCount)
+        return;
+
+    // When tier and day (lastUpdated has day granularity) both tie, pick the victim at random
+    // to avoid eviction pathology.
+    struct Candidate {
+        EvictionTier tier;
+        WallTime lastUpdated;
+        uint32_t randomKey;
+        const WebCore::RegistrableDomain* domain;
+    };
+    auto candidates = WTF::map(m_sites, [](auto& site) {
+        return Candidate { evictionTier(site.value.signals), site.value.lastUpdated, weakRandomNumber<uint32_t>(), &site.key };
+    });
+
+    auto evictionCount = m_sites.size() - m_maximumSiteCount;
+    std::ranges::nth_element(candidates, std::next(candidates.begin(), evictionCount), [](auto& a, auto& b) {
+        return std::tie(a.tier, a.lastUpdated, a.randomKey) < std::tie(b.tier, b.lastUpdated, b.randomKey);
+    });
+    candidates.shrink(evictionCount);
+
+    auto evictedDomains = WTF::map(candidates, [](auto& candidate) {
+        return *candidate.domain;
+    });
+
+#if !RELEASE_LOG_DISABLED
+    auto evictedInTier = [&candidates](EvictionTier tier) {
+        return std::ranges::count_if(candidates, [tier](auto& candidate) {
+            return candidate.tier == tier;
+        });
+    };
+    RELEASE_LOG(Storage, "IsolatedSiteStore::evictSitesIfNeeded evicted %u of %u sites to reach a cap of %u (visit-only %td, gestured %td, credential evidence %td)", evictionCount, m_sites.size(), m_maximumSiteCount, evictedInTier(EvictionTier::VisitOnly), evictedInTier(EvictionTier::Gestured), evictedInTier(EvictionTier::CredentialEvidence));
+#endif
+
+    for (auto& domain : evictedDomains)
+        m_sites.remove(domain);
+
+    if (!m_isPersistent)
+        return;
+
+    sharedWorkQueueSingleton().dispatch([weakThis = ThreadSafeWeakPtr { *this }, domains = crossThreadCopy(WTF::move(evictedDomains))] {
+        assertIsCurrent(sharedWorkQueueSingleton());
+
+        if (RefPtr protectedThis = weakThis.get(); protectedThis && protectedThis->m_persistence)
+            protectedThis->m_persistence->deleteSites(domains);
+    });
+}
+
+void IsolatedSiteStore::setMaximumSiteCountForTesting(uint32_t maximumSiteCount)
+{
+    ASSERT(isMainRunLoop());
+
+    m_maximumSiteCount = maximumSiteCount;
+    evictSitesIfNeeded();
 }
 
 void IsolatedSiteStore::addSite(const WebCore::Site& site, Signal signal)

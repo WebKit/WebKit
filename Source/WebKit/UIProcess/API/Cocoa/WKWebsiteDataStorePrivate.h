@@ -130,6 +130,7 @@ typedef NS_ENUM(uint8_t, _WKRestrictedOpenerType) {
 -(bool)_hasServiceWorkerBackgroundActivityForTesting WK_API_AVAILABLE(macos(13.0), ios(16.0));
 -(NSNumber *)_isolatedSiteSignalsForTesting:(NSURL *)url WK_API_AVAILABLE(macos(27.0), ios(27.0), visionos(27.0)); // IsolatedSiteStore::Signal bits, or nil if the site is not isolated.
 -(void)_setHighValueFraudTargetDomainsForTesting:(NSArray<NSString *> *)domains WK_API_AVAILABLE(macos(27.0), ios(27.0), visionos(27.0));
+-(void)_setMaximumIsolatedSiteCountForTesting:(NSUInteger)count WK_API_AVAILABLE(macos(27.0), ios(27.0), visionos(27.0));
 -(void)_getPendingPushMessage:(void(^)(NSDictionary *))completionHandler WK_API_AVAILABLE(macos(15.2), ios(18.2));
 -(void)_getPendingPushMessages:(void(^)(NSArray<NSDictionary *> *))completionHandler WK_API_AVAILABLE(macos(13.0), ios(16.0));
 -(void)_processPushMessage:(NSDictionary *)pushMessage completionHandler:(void(^)(bool))completionHandler WK_API_AVAILABLE(macos(13.0), ios(16.0));

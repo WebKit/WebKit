@@ -1613,6 +1613,11 @@ void WebsiteDataStore::setHighValueFraudTargetDomainsForTesting(Vector<String>&&
 #endif
 }
 
+void WebsiteDataStore::setMaximumIsolatedSiteCountForTesting(size_t maximumSiteCount)
+{
+    protect(isolatedSiteStore())->setMaximumSiteCountForTesting(maximumSiteCount);
+}
+
 void WebsiteDataStore::logUserInteraction(const URL& url, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());

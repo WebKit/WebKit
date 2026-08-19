@@ -1272,6 +1272,11 @@ struct WKWebsiteData {
     protect(*_websiteDataStore)->setHighValueFraudTargetDomainsForTesting(makeVector<String>(domains));
 }
 
+- (void)_setMaximumIsolatedSiteCountForTesting:(NSUInteger)count
+{
+    protect(*_websiteDataStore)->setMaximumIsolatedSiteCountForTesting(count);
+}
+
 - (void)_getPendingPushMessage:(void(^)(NSDictionary *))completionHandler
 {
     RELEASE_LOG(Push, "Getting pending push message");

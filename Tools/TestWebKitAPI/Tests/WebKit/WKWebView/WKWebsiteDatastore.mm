@@ -2436,7 +2436,7 @@ TEST(IsolatedSiteStore, PersistsAcrossSessions)
     }
 }
 
-static RetainPtr<WKWebsiteDataRecord> isolatedSiteRecordForDisplayName(WKWebsiteDataStore *dataStore, NSString *displayName)
+static RetainPtr<NSArray<WKWebsiteDataRecord *>> isolatedSiteRecords(WKWebsiteDataStore *dataStore)
 {
     __block RetainPtr<NSArray<WKWebsiteDataRecord *>> records;
     __block bool done = false;
@@ -2445,7 +2445,12 @@ static RetainPtr<WKWebsiteDataRecord> isolatedSiteRecordForDisplayName(WKWebsite
         done = true;
     }];
     Util::run(&done);
+    return records;
+}
 
+static RetainPtr<WKWebsiteDataRecord> isolatedSiteRecordForDisplayName(WKWebsiteDataStore *dataStore, NSString *displayName)
+{
+    RetainPtr records = isolatedSiteRecords(dataStore);
     for (WKWebsiteDataRecord *record in records.get()) {
         if ([record.displayName isEqualToString:displayName])
             return record;
@@ -2616,6 +2621,131 @@ TEST(IsolatedSiteStore, ImportsWhenTrackingPreventionIsTurnedOnLater)
         // the entry carries that time rather than the time it was imported.
         removeIsolatedSiteDataSince(dataStore.get(), [NSDate dateWithTimeIntervalSinceNow:-3600]);
         EXPECT_TRUE(isolatedSiteSignals(dataStore.get(), @"https://webkit.org/") & firstPartyVisitSignal);
+    }
+}
+
+TEST(IsolatedSiteStore, EvictsOneOfTwoTiedSitesWithinTier)
+{
+    HTTPServer server({
+        { "/example"_s, { "example as a top-level page"_s } },
+        { "/webkit"_s, { "webkit as a top-level page"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = webViewForIsolatedSiteStoreTest(server);
+    WKWebsiteDataStore *dataStore = [webView configuration].websiteDataStore;
+    [dataStore _setMaximumIsolatedSiteCountForTesting:1];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://webkit.org/webkit"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    // Both entries carry the same signal and the timestamp is rounded down to a day, so which one
+    // is evicted is randomized; only their count is deterministic.
+    bool exampleSurvived = !!(isolatedSiteSignals(dataStore, @"https://example.com/") & firstPartyVisitSignal);
+    bool webkitSurvived = !!(isolatedSiteSignals(dataStore, @"https://webkit.org/") & firstPartyVisitSignal);
+    EXPECT_TRUE(exampleSurvived != webkitSurvived);
+}
+
+#if PLATFORM(MAC)
+
+TEST(IsolatedSiteStore, EvictsVisitOnlySiteBeforeGesturedSite)
+{
+    HTTPServer server({
+        { "/example"_s, { "<body style='margin:0'><div style='width:300px;height:300px'></div></body>"_s } },
+        { "/webkit"_s, { "webkit as a top-level page"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = webViewForIsolatedSiteStoreTest(server);
+    WKWebsiteDataStore *dataStore = [webView configuration].websiteDataStore;
+    [dataStore _setMaximumIsolatedSiteCountForTesting:1];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    [webView sendClickAtPoint:NSMakePoint(100, 100)];
+    [webView waitForPendingMouseEvents];
+    EXPECT_TRUE(Util::waitFor([&] {
+        return !!(isolatedSiteSignals(dataStore, @"https://example.com/") & firstPartyUserGestureSignal);
+    }));
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://webkit.org/webkit"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    // webkit.org is the site visited more recently, but the gesture puts example.com in a tier that is
+    // only evicted once the visit-only entries are gone.
+    EXPECT_TRUE(isolatedSiteSignals(dataStore, @"https://example.com/") & firstPartyUserGestureSignal);
+    EXPECT_NULL([dataStore _isolatedSiteSignalsForTesting:[NSURL URLWithString:@"https://webkit.org/"]]);
+}
+
+#endif // PLATFORM(MAC)
+
+TEST(IsolatedSiteStore, EvictionIsPersisted)
+{
+    HTTPServer server({
+        { "/example"_s, { "example as a top-level page"_s } },
+        { "/webkit"_s, { "webkit as a top-level page"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    NSURL *directory = temporaryDirectoryForIsolatedSiteStoreTest(@"IsolatedSiteStoreEvictionIsPersisted");
+    RetainPtr<NSString> survivingDomain;
+
+    @autoreleasepool {
+        RetainPtr dataStore = persistentDataStore(server, directory);
+        [dataStore _setMaximumIsolatedSiteCountForTesting:1];
+        auto [webView, navigationDelegate] = webViewForDataStore(dataStore.get());
+
+        [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+        [navigationDelegate waitForDidFinishNavigation];
+        [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://webkit.org/webkit"]]];
+        [navigationDelegate waitForDidFinishNavigation];
+
+        EXPECT_EQ(1u, [isolatedSiteRecords(dataStore.get()) count]);
+
+        // Both entries are in the same tier and were updated on the same day, so which one survives
+        // eviction is randomized; record it so the second session can check that eviction was persisted.
+        bool exampleSurvived = !!(isolatedSiteSignals(dataStore.get(), @"https://example.com/") & firstPartyVisitSignal);
+        survivingDomain = exampleSurvived ? @"https://example.com/" : @"https://webkit.org/";
+    }
+
+    @autoreleasepool {
+        RetainPtr dataStore = persistentDataStore(server, directory);
+        EXPECT_EQ(1u, [isolatedSiteRecords(dataStore.get()) count]);
+        EXPECT_TRUE(isolatedSiteSignals(dataStore.get(), survivingDomain.get()) & firstPartyVisitSignal);
+    }
+}
+
+TEST(IsolatedSiteStore, EvictsLoadedSitesOverTheCap)
+{
+    HTTPServer server({
+        { "/example"_s, { "example as a top-level page"_s } },
+        { "/webkit"_s, { "webkit as a top-level page"_s } },
+        { "/apple"_s, { "apple as a top-level page"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    NSURL *directory = temporaryDirectoryForIsolatedSiteStoreTest(@"IsolatedSiteStoreEvictionOnLoad");
+
+    @autoreleasepool {
+        RetainPtr dataStore = persistentDataStore(server, directory);
+        auto [webView, navigationDelegate] = webViewForDataStore(dataStore.get());
+
+        for (NSString *url in @[@"https://example.com/example", @"https://webkit.org/webkit", @"https://apple.com/apple"]) {
+            [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:url]]];
+            [navigationDelegate waitForDidFinishNavigation];
+        }
+
+        EXPECT_EQ(3u, [isolatedSiteRecords(dataStore.get()) count]);
+    }
+
+    @autoreleasepool {
+        RetainPtr dataStore = persistentDataStore(server, directory);
+        [dataStore _setMaximumIsolatedSiteCountForTesting:1];
+        EXPECT_EQ(1u, [isolatedSiteRecords(dataStore.get()) count]);
+    }
+
+    @autoreleasepool {
+        RetainPtr dataStore = persistentDataStore(server, directory);
+        EXPECT_EQ(1u, [isolatedSiteRecords(dataStore.get()) count]);
     }
 }
 

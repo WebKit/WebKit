@@ -50,9 +50,9 @@ public:
         FirstPartyUserGesture = 1 << 2,
         HighValueFraudTarget = 1 << 3,
     };
-    // HighValueFraudTarget is derived from WebPrivacy's list on every lookup, so it is deliberately
-    // absent here: it must never be written to or read back from IsolatedSitePersistence.
     static constexpr OptionSet<Signal> persistedSignals { Signal::Autofill, Signal::FirstPartyVisit, Signal::FirstPartyUserGesture };
+    static constexpr OptionSet<Signal> firstPartySignals { Signal::FirstPartyVisit, Signal::FirstPartyUserGesture };
+    static constexpr uint32_t defaultMaximumSiteCount = 5000;
 
     using UserInteractionDomainFetcher = Function<void(CompletionHandler<void(std::optional<HashMap<WebCore::RegistrableDomain, WallTime>>&&)>&&)>;
     static Ref<IsolatedSiteStore> create(const String& databaseDirectoryPath, UserInteractionDomainFetcher&&, bool highValueFraudTargetDomainsEnabled, HashSet<WebCore::RegistrableDomain>&& additionalSitesForTesting);
@@ -74,14 +74,23 @@ public:
     bool isReady() const { return m_isReady; }
     void whenReady(CompletionHandler<void()>&&);
 
+    void setMaximumSiteCountForTesting(uint32_t);
+
 private:
     IsolatedSiteStore(const String& databaseDirectoryPath, UserInteractionDomainFetcher&&, bool highValueFraudTargetDomainsEnabled, HashSet<WebCore::RegistrableDomain>&&);
 
     static WorkQueue& sharedWorkQueueSingleton();
 
+    // Ordered by alignment to keep the entry at 16 bytes.
     struct Entry {
-        OptionSet<Signal> signals;
         WallTime lastUpdated;
+        OptionSet<Signal> signals;
+    };
+
+    enum class EvictionTier : uint8_t {
+        VisitOnly,
+        Gestured,
+        CredentialEvidence,
     };
 
     bool isHighValueFraudTargetDomain(const WebCore::RegistrableDomain&) const;
@@ -94,17 +103,21 @@ private:
     void skipImport();
     void recordSignals(const WebCore::RegistrableDomain&, OptionSet<Signal>, WallTime lastUpdated);
     void saveSite(const WebCore::RegistrableDomain&, const Entry&);
+    static EvictionTier evictionTier(OptionSet<Signal>);
+    void evictSitesIfNeeded();
 
     HashMap<WebCore::RegistrableDomain, Entry> m_sites;
     Vector<CompletionHandler<void()>> m_loadCompletionHandlers;
     Vector<CompletionHandler<void()>> m_readyCompletionHandlers;
     UserInteractionDomainFetcher m_userInteractionDomainFetcher;
     HashSet<WebCore::RegistrableDomain> m_additionalSitesForTesting;
+    uint32_t m_maximumSiteCount { defaultMaximumSiteCount };
     const bool m_isPersistent { false };
     bool m_highValueFraudTargetDomainsEnabled { false };
     bool m_isLoaded { false };
     bool m_isReady { false };
     bool m_importSuppressed { false };
+    bool m_isImportingUserInteractions { false };
     std::unique_ptr<IsolatedSitePersistence> m_persistence WTF_GUARDED_BY_CAPABILITY(sharedWorkQueueSingleton());
 };
 

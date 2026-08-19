@@ -234,6 +234,7 @@ public:
     IsolatedSiteStore& isolatedSiteStore();
     std::optional<OptionSet<IsolatedSiteStore::Signal>> isolatedSiteSignalsForTesting(const URL&);
     void setHighValueFraudTargetDomainsForTesting(Vector<String>&&);
+    void setMaximumIsolatedSiteCountForTesting(size_t);
     void logUserInteraction(const URL&, CompletionHandler<void()>&&);
     void getAllStorageAccessEntries(WebPageProxyIdentifier, CompletionHandler<void(Vector<String>&& domains)>&&);
     void hasHadUserInteraction(const URL&, CompletionHandler<void(bool)>&&);
