@@ -1108,6 +1108,66 @@ TEST(TextExtractionTests, ReplacementStringsDiacriticInsensitive)
     EXPECT_FALSE([debugText containsString:@"Zurich"]);
 }
 
+TEST(TextExtractionTests, ReplacementStringsWordBoundaries)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:^{
+        RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+        [[configuration preferences] _setTextExtractionEnabled:YES];
+        return configuration.autorelease();
+    }()]);
+
+    auto textAfterReplacing = [&](NSString *markup, NSDictionary<NSString *, NSString *> *replacementStrings) -> RetainPtr<NSString> {
+        [webView synchronouslyLoadHTMLString:markup];
+        RetainPtr configuration = adoptNS([_WKTextExtractionConfiguration new]);
+        [configuration setReplacementStrings:replacementStrings];
+        return [webView synchronouslyGetDebugText:configuration];
+    };
+
+    {
+        // A key matching only part of a longer word is not the user's data, and replacing it would both
+        // corrupt the surrounding text and reveal the key to anyone diffing against the unredacted page.
+        RetainPtr text = textAfterReplacing(@"<p>Two-factor authentication</p><p>Location customization</p><p>Cat pictures</p>", @{
+            @"Cat": @"Jane",
+        });
+        EXPECT_TRUE([text containsString:@"Two-factor authentication"]);
+        EXPECT_TRUE([text containsString:@"Location customization"]);
+        EXPECT_TRUE([text containsString:@"Jane pictures"]);
+        EXPECT_FALSE([text containsString:@"authentiJaneion"]);
+        EXPECT_FALSE([text containsString:@"LoJaneion"]);
+    }
+    {
+        RetainPtr text = textAfterReplacing(@"<p>At least 8 characters</p><button>Cancel</button><p>L is an initial</p>", @{
+            @"L": @"Marie",
+        });
+        EXPECT_TRUE([text containsString:@"At least 8 characters"]);
+        EXPECT_TRUE([text containsString:@"Cancel"]);
+        EXPECT_TRUE([text containsString:@"Marie is an initial"]);
+        EXPECT_FALSE([text containsString:@"Marieeast"]);
+        EXPECT_FALSE([text containsString:@"CanceMarie"]);
+    }
+    {
+        // Only alphanumeric characters are part of a word, so punctuation and symbols bound a match.
+        RetainPtr text = textAfterReplacing(@"<p>wenson@me.com</p><p>wenson.hsieh@me.com</p><p>wenson-hsieh</p><p>wensonhsieh</p>", @{
+            @"Wenson": @"jane",
+        });
+        EXPECT_TRUE([text containsString:@"jane@me.com"]);
+        EXPECT_TRUE([text containsString:@"jane.hsieh@me.com"]);
+        EXPECT_TRUE([text containsString:@"jane-hsieh"]);
+        EXPECT_TRUE([text containsString:@"wensonhsieh"]);
+        EXPECT_FALSE([text containsString:@"janehsieh"]);
+    }
+    {
+        // Scripts written without interword spacing have no boundary to anchor to, so requiring one
+        // would keep replacements from ever applying within them.
+        RetainPtr text = textAfterReplacing(@"<p>王謝李明</p><p>서울특별시</p>", @{
+            @"謝李": @"<redacted-name>",
+            @"울특": @"<redacted-place>",
+        });
+        EXPECT_TRUE([text containsString:@"王<redacted-name>明"]);
+        EXPECT_TRUE([text containsString:@"서<redacted-place>별시"]);
+    }
+}
+
 TEST(TextExtractionTests, ReplacementStringsAppliedToInteractionDescription)
 {
     RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
