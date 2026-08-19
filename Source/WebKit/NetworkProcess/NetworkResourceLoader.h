@@ -38,8 +38,10 @@
 #include <WebCore/ContentFilterUnblockHandler.h>
 #include <WebCore/ContentSecurityPolicyClient.h>
 #include <WebCore/CrossOriginAccessControl.h>
+#include <WebCore/NetworkLoadMetrics.h>
 #include <WebCore/PrivateClickMeasurement.h>
 #include <WebCore/ReportingClient.h>
+#include <WebCore/ResourceError.h>
 #include <WebCore/ResourceResponse.h>
 #include <WebCore/SWServerRegistration.h>
 #include <WebCore/SecurityPolicyViolationEvent.h>
@@ -47,6 +49,7 @@
 #include <WebCore/Timer.h>
 #include <wtf/Deque.h>
 #include <wtf/MonotonicTime.h>
+#include <wtf/Variant.h>
 #include <wtf/WeakPtr.h>
 
 namespace IPC {
@@ -156,6 +159,18 @@ public:
     void didBlockAuthenticationChallenge() final;
     void didReceiveChallenge(const WebCore::AuthenticationChallenge&) final;
     bool shouldCaptureExtraNetworkLoadMetrics() const final;
+
+#if HAVE(BROKEN_MULTIPART_RESPONSE_FLOW_CONTROL)
+    // Releases the pipeline claimed by didReceiveResponse(), then delivers what was deferred behind that response if it
+    // was accepted, or drops it if it was not.
+    void responseProcessingCompleted(WebCore::PolicyAction);
+    // Replays the messages that were deferred while waiting for ContinueDidReceiveResponse.
+    void deliverDeferredMessages();
+    // Drops any deferred messages on teardown, answering their still-pending completion handlers with Ignore.
+    void cancelDeferredMessages();
+    // Cancels the load when the WebProcess is too slow (or refuses) to answer ContinueDidReceiveResponse.
+    void failDueToExcessiveDeferredMessages();
+#endif
 
     // CrossOriginAccessControlCheckDisabler
     bool crossOriginAccessControlCheckEnabled() const override;
@@ -350,9 +365,35 @@ private:
     std::unique_ptr<NetworkCache::Entry> m_cacheEntryWaitingForContinueDidReceiveResponse;
     RefPtr<NetworkLoadChecker> m_networkLoadChecker;
     bool m_shouldRestartLoad { false };
-    // A Deque (rather than a single handler) is needed because multipart/x-mixed-replace responses
-    // can deliver follow-up parts before the WebProcess has approved the first one via ContinueDidReceiveResponse.
+    // Holds the completion handler of the response currently awaiting ContinueDidReceiveResponse from the WebProcess.
+    // Multipart/x-mixed-replace can add more than one when the network layer does not serialize the parts itself
+    // (see HAVE(BROKEN_MULTIPART_RESPONSE_FLOW_CONTROL)), hence a Deque rather than a single handler: every handler
+    // is still answered rather than destroyed. Added by 313118@main.
     Deque<ResponseCompletionHandler> m_responseCompletionHandlers;
+
+#if HAVE(BROKEN_MULTIPART_RESPONSE_FLOW_CONTROL)
+    // The network layer can deliver follow-up multipart/x-mixed-replace parts (and their data, and the end of the
+    // load) before the WebProcess has answered ContinueDidReceiveResponse for the previous part, whose content-policy
+    // check is asynchronous. The WebProcess must not see anything past a response it has not validated yet, so while a
+    // response is outstanding every message is queued here and replayed in order from continueDidReceiveResponse().
+    // See deliverDeferredMessages() / didReceiveResponse().
+    struct DeferredResponse {
+        WebCore::ResourceResponse response;
+        PrivateRelayed privateRelayed;
+        ResponseCompletionHandler completionHandler;
+    };
+    using DeferredMessage = WTF::Variant<DeferredResponse, Ref<const WebCore::FragmentedSharedBuffer>, WebCore::NetworkLoadMetrics, WebCore::ResourceError>;
+    Deque<DeferredMessage> m_deferredMessages;
+    // Bounds how much data we retain on behalf of a WebProcess that never answers ContinueDidReceiveResponse,
+    // so that it cannot grow the network process' memory without limit.
+    size_t m_deferredMessagesSize { 0 };
+    // Whether a response is being processed, from the moment didReceiveResponse() starts on it until its completion
+    // handler runs. Tracked explicitly rather than derived from m_responseCompletionHandlers, because
+    // didReceiveResponse() can take asynchronous steps (processClearSiteDataHeader()) before appending the handler,
+    // and nothing may be delivered to the WebProcess in that window.
+    bool m_isProcessingResponse { false };
+#endif
+
     bool m_shouldCaptureExtraNetworkLoadMetrics { false };
     bool m_isKeptAlive { false };
     std::unique_ptr<EarlyHintsResourceLoader> m_earlyHintsResourceLoader;

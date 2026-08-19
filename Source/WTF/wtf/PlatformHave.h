@@ -1992,3 +1992,10 @@
     || PLATFORM(IOS_FAMILY)
 #define HAVE_NETWORK_FRAMEWORK_HTTP_MESSAGING 1
 #endif
+
+// The CFNetwork network loader delivers multipart/x-mixed-replace parts, their data and the end of the load without
+// waiting for the previous part's response completion handler, which NetworkResourceLoader has to serialize itself.
+// FIXME: Turn this off on platforms that have the CFNetwork fix (rdar://185073080).
+#if !defined(HAVE_BROKEN_MULTIPART_RESPONSE_FLOW_CONTROL) && PLATFORM(COCOA)
+#define HAVE_BROKEN_MULTIPART_RESPONSE_FLOW_CONTROL 1
+#endif
