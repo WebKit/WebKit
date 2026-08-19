@@ -231,5 +231,3 @@ const log = [];
     shouldBe(m, (1e5 - 1) * 3, "phase11 method");
     log.push("phase11 ok");
 }
-
-print(log.join("\n"));

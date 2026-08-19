@@ -106,4 +106,3 @@ for (const space of spaces) {
 
 if (failures)
     throw new Error('FAILED: ' + failures + ' mismatches');
-print('all ok');
