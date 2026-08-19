@@ -17,11 +17,17 @@
 
     if (window.accessibilityController) {
         text1 = accessibilityController.accessibleElementById("text1");
-        shouldBe("text1.role", "'AXRole: AXGroup'");
-        shouldBe("text1.childrenCount", "1");
-        staticText = text1.childAtIndex(0);
-        shouldBe("staticText.role", "'AXRole: AXStaticText'");
-        shouldBe("staticText.stringValue", "'AXValue: Hello World!'");
+        if (accessibilityController.platformName == "atspi") {
+            shouldBe("text1.role", "'AXRole: AXSection'");
+            shouldBe("text1.childrenCount", "0");
+            shouldBe("text1.stringValue", "'AXValue: Hello World!'");
+        } else {
+            shouldBe("text1.role", "'AXRole: AXGroup'");
+            shouldBe("text1.childrenCount", "1");
+            staticText = text1.childAtIndex(0);
+            shouldBe("staticText.role", "'AXRole: AXStaticText'");
+            shouldBe("staticText.stringValue", "'AXValue: Hello World!'");
+        }
     }
 </script>
 </body>

@@ -1165,8 +1165,6 @@ accessibility/visible-character-range-vertical-rl.html [ Skip ]
 
 accessibility/display-contents/tree-and-treeitems.html [ Failure ]
 
-webkit.org/b/212805 accessibility/svg-text.html [ Failure ]
-
 accessibility/combobox/mac [ Skip ]
 accessibility/shadow-dom/reference-target/mac [ Skip ]
 
