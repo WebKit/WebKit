@@ -30,6 +30,7 @@
 #include "APIWebsitePolicies.h"
 #include "EnhancedSecurity.h"
 #include "FrameProcess.h"
+#include "Logging.h"
 #include "PageLoadState.h"
 #include "ProvisionalPageProxy.h"
 #include "RemotePageProxy.h"
@@ -44,7 +45,10 @@ namespace WebKit {
 
 using namespace WebCore;
 
-BrowsingContextGroup::BrowsingContextGroup() = default;
+BrowsingContextGroup::BrowsingContextGroup(CrossOriginMode crossOriginMode)
+    : m_crossOriginMode(crossOriginMode)
+{
+}
 
 BrowsingContextGroup::~BrowsingContextGroup() = default;
 
@@ -59,6 +63,10 @@ void BrowsingContextGroup::sharedProcessForSite(WebsiteDataStore& websiteDataSto
     WebProcessProxy::LockdownMode lockdownMode, EnhancedSecurity enhancedSecurity, API::PageConfiguration& pageConfiguration, IsMainFrame isMainFrame, CompletionHandler<void(FrameProcess*)>&& completionHandler)
 {
     if (!preferences.siteIsolationEnabled() || !preferences.siteIsolationSharedProcessEnabled())
+        return completionHandler(nullptr);
+
+    // The shared process hosts many sites and can be taken from the cache by a later group.
+    if (m_crossOriginMode == CrossOriginMode::Isolated)
         return completionHandler(nullptr);
 
     if (site.isEmpty() || m_processMap.contains(site))
@@ -106,7 +114,7 @@ void BrowsingContextGroup::sharedProcessForSite(WebsiteDataStore& websiteDataSto
         return completionHandler(frameProcess.get());
     }
 
-    Ref process = protect(pageConfiguration.processPool())->processForSite(websiteDataStore, WebProcessProxy::IsolatedProcessType::Shared, site, mainFrameSite, lockdownMode, enhancedSecurity, pageConfiguration, ProcessSwapDisposition::Other);
+    Ref process = protect(pageConfiguration.processPool())->processForSite(websiteDataStore, WebProcessProxy::IsolatedProcessType::Shared, site, mainFrameSite, lockdownMode, enhancedSecurity, pageConfiguration, ProcessSwapDisposition::Other, m_crossOriginMode);
     ASSERT(!process->isInProcessCache());
     Ref frameProcess = FrameProcess::create(process, *this, std::nullopt, mainFrameSite, preferences, LoadedWebArchive::No, BrowsingContextGroupUpdate::AddProcessAndInjectBrowsingContext);
     ASSERT(frameProcess->isSharedProcess());
@@ -118,6 +126,13 @@ void BrowsingContextGroup::sharedProcessForSite(WebsiteDataStore& websiteDataSto
 
 Ref<FrameProcess> BrowsingContextGroup::ensureProcessForSite(const Site& site, const Site& mainFrameSite, WebProcessProxy& process, const WebPreferences& preferences, LoadedWebArchive loadedWebArchive, BrowsingContextGroupUpdate browsingContextGroupUpdate)
 {
+    // Nearly every path that binds a process to a group comes through here. A mismatch is a capability
+    // leak, so log it in release too. Dummy processes host no content; launchProcess() picks a real one.
+    bool crossOriginModeMatches = process.isDummyProcessProxy() || process.crossOriginMode() == m_crossOriginMode;
+    if (!crossOriginModeMatches)
+        RELEASE_LOG_ERROR(Process, "BrowsingContextGroup::ensureProcessForSite: process (PID=%i) cross-origin isolation state does not match the browsing context group's", process.processID());
+    ASSERT(crossOriginModeMatches);
+
     if (preferences.siteIsolationEnabled()) {
         if ((m_sharedProcess && m_sharedProcessSites.contains(site)) || process.isSharedProcess()) {
             ASSERT(&m_sharedProcess->process() == &process);

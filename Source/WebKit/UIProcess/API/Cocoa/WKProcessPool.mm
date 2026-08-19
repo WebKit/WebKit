@@ -397,6 +397,14 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     return result.autorelease();
 }
 
+- (NSSet<NSNumber *> *)_crossOriginIsolatedProcessIdentifiersForTesting
+{
+    RetainPtr result = adoptNS([[NSMutableSet alloc] init]);
+    for (auto pid : protect(*_processPool)->crossOriginIsolatedProcessIdentifiers())
+        [result addObject:@(pid)];
+    return result.autorelease();
+}
+
 - (void)_countWebPagesInAllProcessesForTesting:(void(^)(unsigned))completionHandler
 {
     protect(*_processPool)->countWebPagesInAllProcessesForTesting([completionHandler = makeBlockPtr(completionHandler)] (unsigned result) {

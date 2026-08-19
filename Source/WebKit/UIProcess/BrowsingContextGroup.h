@@ -62,10 +62,13 @@ enum class BrowsingContextGroupUpdate : uint8_t { None, AddProcess, AddProcessAn
 
 class BrowsingContextGroup : public RefCountedAndCanMakeWeakPtr<BrowsingContextGroup> {
 public:
-    static Ref<BrowsingContextGroup> create() { return adoptRef(*new BrowsingContextGroup()); }
+    static Ref<BrowsingContextGroup> create(WebCore::CrossOriginMode crossOriginMode) { return adoptRef(*new BrowsingContextGroup(crossOriginMode)); }
     ~BrowsingContextGroup();
 
     WebCore::BrowsingContextGroupIdentifier identifier() const { return m_identifier; }
+
+    // Every process serving this group must have been launched in this mode, which is fixed at launch.
+    WebCore::CrossOriginMode crossOriginMode() const { return m_crossOriginMode; }
 
     void sharedProcessForSite(WebsiteDataStore&, API::WebsitePolicies*, const WebPreferences&, const WebCore::Site&, const WebCore::Site& mainFrameSite, WebProcessProxy::LockdownMode, EnhancedSecurity, API::PageConfiguration&, IsMainFrame, CompletionHandler<void(FrameProcess*)>&&);
     Ref<FrameProcess> ensureProcessForSite(const WebCore::Site&, const WebCore::Site& mainFrameSite, WebProcessProxy&, const WebPreferences&, LoadedWebArchive = LoadedWebArchive::No, BrowsingContextGroupUpdate = BrowsingContextGroupUpdate::AddProcessAndInjectBrowsingContext);
@@ -97,9 +100,10 @@ public:
     void clearBrowsingContextGroupForTesting();
 
 private:
-    BrowsingContextGroup();
+    explicit BrowsingContextGroup(WebCore::CrossOriginMode);
 
     WebCore::BrowsingContextGroupIdentifier m_identifier { WebCore::BrowsingContextGroupIdentifier::generate() };
+    const WebCore::CrossOriginMode m_crossOriginMode;
 
     WeakPtr<FrameProcess> m_sharedProcess;
     HashSet<WebCore::Site> m_sharedProcessSites;
