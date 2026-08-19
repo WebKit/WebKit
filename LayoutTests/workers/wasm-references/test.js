@@ -493,7 +493,7 @@ const WASM = {};
     const type = WASM.type = Object.keys(description.type);
     const _typeSet = new Set(type);
     WASM.isValidType = v => _typeSet.has(v);
-    WASM.typeValue = _mapValues(description.type);
+    WASM.typeValue = { ..._mapValues(description.type), ..._mapValues(description.defined_type || {}) };
     const _valueTypeSet = new Set(description.value_type);
     WASM.isValidValueType = v => _valueTypeSet.has(v);
     const _blockTypeSet = new Set(description.block_type);

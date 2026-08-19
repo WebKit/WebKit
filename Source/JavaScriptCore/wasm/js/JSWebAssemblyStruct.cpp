@@ -151,13 +151,7 @@ void JSWebAssemblyStruct::set(uint32_t fieldIndex, uint64_t argument)
         return;
     }
     case TypeKind::V128:
-    case TypeKind::Func:
-    case TypeKind::Struct:
-    case TypeKind::Array:
     case TypeKind::Void:
-    case TypeKind::Sub:
-    case TypeKind::Subfinal:
-    case TypeKind::Rec:
     case TypeKind::Exnref:
     case TypeKind::Eqref:
     case TypeKind::Anyref:

@@ -629,13 +629,7 @@ void BBQJIT::emitCCall(Func function, std::span<const Value> arguments, Value& r
     case TypeKind::Noexnref:
     case TypeKind::Noneref:
     case TypeKind::Nofuncref:
-    case TypeKind::Noexternref:
-    case TypeKind::Rec:
-    case TypeKind::Sub:
-    case TypeKind::Subfinal:
-    case TypeKind::Array:
-    case TypeKind::Struct:
-    case TypeKind::Func: {
+    case TypeKind::Noexternref: {
         resultLocation = Location::fromGPR(GPRInfo::returnValueGPR);
         ASSERT(validGPRs().contains(GPRInfo::returnValueGPR, IgnoreVectors));
         break;

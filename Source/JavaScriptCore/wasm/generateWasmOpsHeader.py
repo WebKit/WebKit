@@ -67,13 +67,21 @@ def packedTypeMacroizer():
         yield cppMacroPacked(ty, wasm.packed_types[ty]["value"])
 
 
+def definedTypeMacroizer():
+    for ty in wasm.defined_types:
+        yield cppMacroPacked(ty, wasm.defined_types[ty]["value"])
+
+
 def typeMacroizerFiltered(filter):
     for t in typeMacroizer():
         if not filter(t):
             yield t
 
+
 type_definitions = ["#define FOR_EACH_WASM_TYPE(macro)"]
 type_definitions.extend([t for t in typeMacroizer()])
+type_definitions.extend(["\n\n#define FOR_EACH_WASM_DEFINED_TYPE(macro)"])
+type_definitions.extend([t for t in definedTypeMacroizer()])
 type_definitions.extend(["\n\n#define FOR_EACH_WASM_PACKED_TYPE(macro)"])
 type_definitions.extend([t for t in packedTypeMacroizer()])
 type_definitions = "".join(type_definitions)
@@ -263,6 +271,12 @@ enum class TypeKind : int8_t {
 #define CREATE_ENUM_VALUE(name, id) name = id,
 enum class PackedType: int8_t {
     FOR_EACH_WASM_PACKED_TYPE(CREATE_ENUM_VALUE)
+};
+#undef CREATE_ENUM_VALUE
+
+#define CREATE_ENUM_VALUE(name, id) name = id,
+enum class DefinedTypeKind : int8_t {
+    FOR_EACH_WASM_DEFINED_TYPE(CREATE_ENUM_VALUE)
 };
 #undef CREATE_ENUM_VALUE
 
@@ -515,6 +529,19 @@ inline bool isValidPackedType(Int i)
 }
 #undef CREATE_CASE
 
+#define CREATE_CASE(name, id, ...) case id: return true;
+template <typename Int>
+inline bool isValidDefinedTypeKind(Int i)
+{
+    switch (i) {
+    default: return false;
+    FOR_EACH_WASM_DEFINED_TYPE(CREATE_CASE)
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+    return false;
+}
+#undef CREATE_CASE
+
 #define CREATE_CASE(name, ...) case TypeKind::name: return #name ## _s;
 inline ASCIILiteral makeString(TypeKind kind)
 {
@@ -531,6 +558,17 @@ inline ASCIILiteral makeString(PackedType packedType)
 {
     switch (packedType) {
     FOR_EACH_WASM_PACKED_TYPE(CREATE_CASE)
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+    return { };
+}
+#undef CREATE_CASE
+
+#define CREATE_CASE(name, ...) case DefinedTypeKind::name: return #name ## _s;
+inline ASCIILiteral makeString(DefinedTypeKind kind)
+{
+    switch (kind) {
+    FOR_EACH_WASM_DEFINED_TYPE(CREATE_CASE)
     }
     RELEASE_ASSERT_NOT_REACHED();
     return { };

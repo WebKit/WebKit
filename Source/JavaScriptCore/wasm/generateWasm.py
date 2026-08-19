@@ -40,6 +40,7 @@ class Wasm:
                 self.expectedVersionNumber = str(pre["value"])
         self.preamble = wasm["preamble"]
         self.types = wasm["type"]
+        self.defined_types = wasm["defined_type"]
         self.packed_types = wasm["packed_type"]
         self.opcodes = wasm["opcode"]
         self.header = """/*

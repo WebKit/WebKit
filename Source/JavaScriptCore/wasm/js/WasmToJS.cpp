@@ -135,10 +135,7 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(const 
             Type argType = signature.argumentType(argNum);
             switch (argType.kind()) {
             case TypeKind::Void:
-            case TypeKind::Func:
-            case TypeKind::Struct:
             case TypeKind::Structref:
-            case TypeKind::Array:
             case TypeKind::Arrayref:
             case TypeKind::Eqref:
             case TypeKind::Anyref:
@@ -147,9 +144,6 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(const 
             case TypeKind::Nofuncref:
             case TypeKind::Noexternref:
             case TypeKind::I31ref:
-            case TypeKind::Rec:
-            case TypeKind::Sub:
-            case TypeKind::Subfinal:
             case TypeKind::V128:
                 RELEASE_ASSERT_NOT_REACHED(); // Handled above.
             case TypeKind::RefNull:
@@ -225,10 +219,7 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(const 
             Type argType = signature.argumentType(argNum);
             switch (argType.kind()) {
             case TypeKind::Void:
-            case TypeKind::Func:
-            case TypeKind::Struct:
             case TypeKind::Structref:
-            case TypeKind::Array:
             case TypeKind::Arrayref:
             case TypeKind::Eqref:
             case TypeKind::Anyref:
@@ -237,9 +228,6 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToJS(const 
             case TypeKind::Nofuncref:
             case TypeKind::Noexternref:
             case TypeKind::I31ref:
-            case TypeKind::Rec:
-            case TypeKind::Sub:
-            case TypeKind::Subfinal:
             case TypeKind::V128:
                 RELEASE_ASSERT_NOT_REACHED(); // Handled above.
             case TypeKind::RefNull:

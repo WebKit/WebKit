@@ -26,13 +26,15 @@
         "exnref":        { "type": "varint7", "value":  -23, "b3type": "B3::Int64",  "width": 0 },
         "ref":           { "type": "varint7", "value":  -28, "b3type": "B3::Int64",  "width": 64 },
         "ref_null":      { "type": "varint7", "value":  -29, "b3type": "B3::Int64",  "width": 64 },
-        "func":          { "type": "varint7", "value":  -32, "b3type": "B3::Void",   "width": 0 },
-        "struct":        { "type": "varint7", "value":  -33, "b3type": "B3::Void",   "width": 0 },
-        "array":         { "type": "varint7", "value":  -34, "b3type": "B3::Void",   "width": 0 },
-        "sub":           { "type": "varint7", "value":  -48, "b3type": "B3::Void",   "width": 0 },
-        "subfinal":      { "type": "varint7", "value":  -49, "b3type": "B3::Void",   "width": 0 },
-        "rec":           { "type": "varint7", "value":  -50, "b3type": "B3::Void",   "width": 0 },
         "void":          { "type": "varint7", "value":  -64, "b3type": "B3::Void",   "width": 0 }
+    },
+    "defined_type": {
+        "func":          { "type": "varint7", "value":  -32 },
+        "struct":        { "type": "varint7", "value":  -33 },
+        "array":         { "type": "varint7", "value":  -34 },
+        "sub":           { "type": "varint7", "value":  -48 },
+        "subfinal":      { "type": "varint7", "value":  -49 },
+        "rec":           { "type": "varint7", "value":  -50 }
     },
     "packed_type": {
         "i8":        { "type": "varint7", "value":  -8},

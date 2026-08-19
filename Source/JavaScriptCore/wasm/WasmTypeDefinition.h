@@ -332,13 +332,7 @@ constexpr size_t typeKindSizeInBytes(TypeKind kind)
     case TypeKind::RefNull: {
         return sizeof(WriteBarrierBase<Unknown>);
     }
-    case TypeKind::Array:
-    case TypeKind::Func:
-    case TypeKind::Struct:
     case TypeKind::Void:
-    case TypeKind::Sub:
-    case TypeKind::Subfinal:
-    case TypeKind::Rec:
     case TypeKind::Eqref:
     case TypeKind::Anyref:
     case TypeKind::Noexnref:

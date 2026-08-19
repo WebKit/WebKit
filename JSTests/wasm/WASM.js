@@ -34,7 +34,8 @@ export const description = JSON.parse(read("wasm.json", "caller relative")); // 
 export const type = Object.keys(description.type);
 const _typeSet = new Set(type);
 export const isValidType = v => _typeSet.has(v);
-export const typeValue = _mapValues(description.type);
+export const definedTypeValue = _mapValues(description.defined_type);
+export const typeValue = { ..._mapValues(description.type), ...definedTypeValue };
 const _valueTypeSet = new Set(description.value_type);
 export const isValidValueType = v => _valueTypeSet.has(v);
 const _blockTypeSet = new Set(description.block_type);

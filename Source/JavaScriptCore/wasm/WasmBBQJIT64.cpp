@@ -104,18 +104,12 @@ uint32_t NODELETE BBQJIT::sizeOfType(TypeKind type)
     case TypeKind::V128:
         return 16;
     case TypeKind::I31ref:
-    case TypeKind::Func:
     case TypeKind::Funcref:
     case TypeKind::Ref:
     case TypeKind::RefNull:
-    case TypeKind::Rec:
-    case TypeKind::Sub:
-    case TypeKind::Subfinal:
-    case TypeKind::Struct:
     case TypeKind::Structref:
     case TypeKind::Exnref:
     case TypeKind::Externref:
-    case TypeKind::Array:
     case TypeKind::Arrayref:
     case TypeKind::Eqref:
     case TypeKind::Anyref:
@@ -217,18 +211,12 @@ Value BBQJIT::instanceValue()
         case TypeKind::V128:
             m_jit.loadVector(Address(wasmScratchGPR), resultLocation.asFPR());
             break;
-        case TypeKind::Func:
         case TypeKind::Funcref:
         case TypeKind::Ref:
         case TypeKind::RefNull:
-        case TypeKind::Rec:
-        case TypeKind::Sub:
-        case TypeKind::Subfinal:
-        case TypeKind::Struct:
         case TypeKind::Structref:
         case TypeKind::Exnref:
         case TypeKind::Externref:
-        case TypeKind::Array:
         case TypeKind::Arrayref:
         case TypeKind::I31ref:
         case TypeKind::Eqref:
@@ -300,18 +288,12 @@ Value BBQJIT::instanceValue()
         case TypeKind::V128:
             m_jit.storeVector(valueLocation.asFPR(), Address(wasmScratchGPR));
             break;
-        case TypeKind::Func:
         case TypeKind::Funcref:
         case TypeKind::Ref:
         case TypeKind::RefNull:
-        case TypeKind::Rec:
-        case TypeKind::Sub:
-        case TypeKind::Subfinal:
-        case TypeKind::Struct:
         case TypeKind::Structref:
         case TypeKind::Exnref:
         case TypeKind::Externref:
-        case TypeKind::Array:
         case TypeKind::Arrayref:
         case TypeKind::I31ref:
         case TypeKind::Eqref:
@@ -3234,12 +3216,6 @@ void BBQJIT::emitCatchImpl(ControlData& dataCatch, const RTT& exceptionSignature
             case TypeKind::Noneref:
             case TypeKind::Nofuncref:
             case TypeKind::Noexternref:
-            case TypeKind::Rec:
-            case TypeKind::Sub:
-            case TypeKind::Subfinal:
-            case TypeKind::Array:
-            case TypeKind::Struct:
-            case TypeKind::Func:
                 m_jit.transfer64(Address(wasmScratchGPR, JSWebAssemblyException::Payload::Storage::offsetOfData() + offset * sizeof(uint64_t)), slot.asAddress());
                 break;
             case TypeKind::F32:
@@ -3323,12 +3299,6 @@ void BBQJIT::emitCatchTableImpl(ControlData& entryData, ControlType::TryTableTar
                 case TypeKind::Noneref:
                 case TypeKind::Nofuncref:
                 case TypeKind::Noexternref:
-                case TypeKind::Rec:
-                case TypeKind::Sub:
-                case TypeKind::Subfinal:
-                case TypeKind::Array:
-                case TypeKind::Struct:
-                case TypeKind::Func:
                     if (slot.isGPR())
                         m_jit.load64(Address(wasmScratchGPR, JSWebAssemblyException::Payload::Storage::offsetOfData() + offset * sizeof(uint64_t)), slot.asGPR());
                     else

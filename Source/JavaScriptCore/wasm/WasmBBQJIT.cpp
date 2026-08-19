@@ -309,19 +309,13 @@ TypeKind BBQJIT::toValueKind(TypeKind kind)
     case TypeKind::F64:
     case TypeKind::V128:
         return kind;
-    case TypeKind::Func:
     case TypeKind::I31ref:
     case TypeKind::Funcref:
     case TypeKind::Exnref:
     case TypeKind::Ref:
     case TypeKind::RefNull:
-    case TypeKind::Rec:
-    case TypeKind::Sub:
-    case TypeKind::Subfinal:
-    case TypeKind::Struct:
     case TypeKind::Structref:
     case TypeKind::Externref:
-    case TypeKind::Array:
     case TypeKind::Arrayref:
     case TypeKind::Eqref:
     case TypeKind::Anyref:
@@ -3366,12 +3360,6 @@ void BBQJIT::emitEntryTierUpCheck()
         case TypeKind::F32:
         case TypeKind::F64:
         case TypeKind::I64:
-        case TypeKind::Struct:
-        case TypeKind::Rec:
-        case TypeKind::Func:
-        case TypeKind::Array:
-        case TypeKind::Sub:
-        case TypeKind::Subfinal:
         case TypeKind::V128:
             clear(ClearMode::Zero, type, m_locals[i]);
             break;
