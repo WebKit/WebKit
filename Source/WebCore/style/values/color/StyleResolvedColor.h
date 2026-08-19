@@ -46,7 +46,7 @@ struct ResolvedColor {
 
 Color toStyleColor(const CSS::ResolvedColor&, ColorResolutionState&);
 
-inline WebCore::Color resolveColor(const ResolvedColor& absoluteColor, const WebCore::Color&)
+inline WebCore::Color resolveColor(const ResolvedColor& absoluteColor, const ResolvedColors&)
 {
     return absoluteColor.color;
 }

@@ -51,7 +51,7 @@ Color toStyleColor(const CSS::KeywordColor& unresolved, ColorResolutionState& st
     case CSSValueWebkitFocusRingColor:
         return { RenderTheme::singleton().focusRingColor(state.document->styleColorOptions(state.style.ptr())) };
     case CSSValueCurrentcolor:
-        return { CurrentColor() };
+        return { CurrentColor { CurrentColor::Property::Color } };
     default:
         return { CSS::colorFromKeyword(unresolved.valueID, state.document->styleColorOptions(state.style.ptr())) };
     }
