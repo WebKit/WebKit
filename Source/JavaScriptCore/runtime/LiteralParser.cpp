@@ -1133,12 +1133,16 @@ TokenType LiteralParser<CharType, reviverMode>::Lexer::lexNumber(LiteralParserTo
     auto* start = m_ptr; // Do not include '-'.
 
     // (0 | [1-9][0-9]*)
+    uint32_t accumulated = 0;
     if (m_ptr < m_end && isASCIIDigit(*m_ptr)) [[likely]] {
         auto character = *m_ptr++;
+        accumulated = character - '0';
         if (character != '0') {
             // [0-9]*
-            while (m_ptr < m_end && isASCIIDigit(*m_ptr))
+            while (m_ptr < m_end && isASCIIDigit(*m_ptr)) {
+                accumulated = accumulated * 10 + (*m_ptr - '0');
                 ++m_ptr;
+            }
         }
     } else {
         m_lexErrorMessage = "Invalid number"_s;
@@ -1147,11 +1151,7 @@ TokenType LiteralParser<CharType, reviverMode>::Lexer::lexNumber(LiteralParserTo
 
     const int numberOfDigitsForSafeInt32 = 9; // The numbers from -999999999 to 999999999 are always in range of Int32.
     if (m_ptr < m_end && (*m_ptr != '.' && *m_ptr != 'e' && *m_ptr != 'E') && (m_ptr - start) <= numberOfDigitsForSafeInt32) {
-        int32_t result = 0;
-        const CharType* cursor = start;
-        do {
-            result = result * 10 + (*cursor++) - '0';
-        } while (cursor < m_ptr);
+        int32_t result = static_cast<int32_t>(accumulated);
 
         if (!negative) [[likely]] {
             token.type = TokNumberInt32;
