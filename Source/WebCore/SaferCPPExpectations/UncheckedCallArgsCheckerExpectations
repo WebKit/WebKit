@@ -477,7 +477,6 @@ style/Styleable.cpp
 style/Styleable.h
 style/computed/StyleComputedStyle.cpp
 style/computed/StyleComputedStyleBase.cpp
-style/values/color/StyleColor.cpp
 style/values/content/StyleContent.cpp
 style/values/grid/StyleGridPositionsResolver.cpp
 style/values/images/kinds/StyleGradientImage.cpp

@@ -759,31 +759,14 @@ bool equalForLengthResolution(const ComputedStyle& styleA, const ComputedStyle& 
 
 // MARK: - em-to-px utility functions
 
-double emToPxDouble(double value, const CSSToLengthConversionData& conversionData)
-{
-    CSSToLengthConversionDataAdaptor adaptor {
-        .conversionData = conversionData,
-    };
-    return value * adaptor.applyTextZoom(resolveEm(adaptor.fontCascadeForFontUnits()));
-}
-
 double emToPxDouble(double value, const ComputedStyle& style)
 {
-    return emToPxDouble(value, CSSToLengthConversionData(style, nullptr, nullptr, nullptr, nullptr));
-}
-
-double emToPxDoubleZoomed(double value, const CSSToLengthConversionData& conversionData)
-{
-    // Text zoom is not applied here as it is already included in the FontDescription's computedSize().
-    CSSToLengthConversionDataAdaptor adaptor {
-        .conversionData = conversionData,
-    };
-    return value * adaptor.fontCascadeForFontUnits().fontDescription().computedSize();
+    return value * style.fontCascade().fontDescription().specifiedSize();
 }
 
 double emToPxDoubleZoomed(double value, const ComputedStyle& style)
 {
-    return emToPxDoubleZoomed(value, CSSToLengthConversionData(style, nullptr, nullptr, nullptr, nullptr));
+    return value * style.fontCascade().fontDescription().computedSize();
 }
 
 } // namespace Style

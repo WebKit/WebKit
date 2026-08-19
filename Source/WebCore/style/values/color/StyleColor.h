@@ -189,8 +189,6 @@ WTF::TextStream& operator<<(WTF::TextStream&, const Color&);
 // MARK: - Conversion
 
 Color toStyleColor(const CSS::Color&, ColorResolutionState&);
-Color toStyleColor(const CSS::Color&, Ref<const Document>, const ComputedStyle&, const CSSToLengthConversionData&, ForVisitedLink);
-Color toStyleColor(const CSS::Color&, const BuilderState&, ForVisitedLink);
 
 template<> struct ToCSS<Color> {
     auto operator()(const Color&, const Style::ComputedStyle&) -> CSS::Color;

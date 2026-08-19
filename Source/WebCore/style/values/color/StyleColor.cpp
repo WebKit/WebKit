@@ -375,22 +375,6 @@ Color toStyleColor(const CSS::Color& value, ColorResolutionState& state)
     return WTF::switchOn(value, [&](const auto& color) { return toStyleColor(color, state); });
 }
 
-Color toStyleColor(const CSS::Color& value, Ref<const Document> document, const ComputedStyle& style, const CSSToLengthConversionData& conversionData, ForVisitedLink forVisitedLink)
-{
-    auto resolutionState = ColorResolutionState {
-        .document = document,
-        .style = style,
-        .conversionData = conversionData,
-        .forVisitedLink = forVisitedLink
-    };
-    return toStyleColor(value, resolutionState);
-}
-
-Color toStyleColor(const CSS::Color& value, const BuilderState& builderState, ForVisitedLink forVisitedLink)
-{
-    return toStyleColor(value, builderState.document(), builderState.style(), builderState.cssToLengthConversionData(), forVisitedLink);
-}
-
 auto ToCSS<Color>::operator()(const Color& value, const Style::ComputedStyle& style) -> CSS::Color
 {
     ColorResolver colorResolver { style };
@@ -399,7 +383,13 @@ auto ToCSS<Color>::operator()(const Color& value, const Style::ComputedStyle& st
 
 auto ToStyle<CSS::Color>::operator()(const CSS::Color& value, const BuilderState& builderState, ForVisitedLink forVisitedLink) -> Color
 {
-    return toStyleColor(value, builderState.document(), builderState.style(), builderState.cssToLengthConversionData(), forVisitedLink);
+    auto resolutionState = ColorResolutionState {
+        .document = builderState.document(),
+        .style = builderState.style(),
+        .conversionData = builderState.cssToLengthConversionData(),
+        .forVisitedLink = forVisitedLink
+    };
+    return toStyleColor(value, resolutionState);
 }
 
 auto ToStyle<CSS::Color>::operator()(const CSS::Color& value, const BuilderState& builderState) -> Color
