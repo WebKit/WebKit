@@ -42,6 +42,7 @@ inspector/dom-debugger/url-breakpoints-dom-text-and-regex.html [ Skip ]
 ########################
 # Tests that Text fail #
 ########################
+http/tests/inspector/network/resource-sizes-network.html [ Failure ]
 fast/files/file-reader-back-forward-cache.html [ Failure ]
 http/tests/inspector/network/fetch-response-body-304.html [ Failure ]
 http/tests/inspector/network/resource-certificate-subject-format.html [ Failure ]

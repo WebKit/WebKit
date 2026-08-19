@@ -1044,8 +1044,6 @@ webkit.org/b/224294 [ Debug ] inspector/indexeddb/requestDatabaseNames.html [ Pa
 
 webkit.org/b/224633 media/presentationmodechanged-fired-once.html [ Pass Timeout ]
 
-webkit.org/b/225430 [ arm64 ] http/tests/inspector/network/resource-sizes-network.html [ Pass Failure ]
-
 webkit.org/b/225488 fast/scrolling/mac/rubberband-overflow-in-wheel-region-root-jiggle.html [ Pass Timeout ]
 
 webkit.org/b/225498 fast/scrolling/mac/overflow-scrollbars-toggle-dark-mode.html [ Pass ImageOnlyFailure ]
