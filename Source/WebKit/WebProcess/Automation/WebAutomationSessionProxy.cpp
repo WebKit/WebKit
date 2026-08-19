@@ -404,6 +404,10 @@ void WebAutomationSessionProxy::ensureObserverForFrame(WebFrame& frame)
 void WebAutomationSessionProxy::didClearWindowObjectForFrame(WebFrame& frame)
 {
     willDestroyGlobalObjectForFrame(frame.frameID());
+
+    // Create the script object before page script can tamper with the built-ins it captures (webkit.org/b/259594).
+    if (frame.jsContext())
+        scriptObjectForFrame(frame);
 }
 
 void WebAutomationSessionProxy::willDestroyGlobalObjectForFrame(WebCore::FrameIdentifier frameID)

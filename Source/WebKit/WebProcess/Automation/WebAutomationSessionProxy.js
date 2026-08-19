@@ -29,28 +29,55 @@
 
 const sessionNodePropertyName = "session-node-" + sessionIdentifier;
 
+// Captured before any page script runs, so tampering with the built-ins cannot break automation (webkit.org/b/259594).
+const reflectApply = Reflect.apply;
+const uncurryThis = func => (thisArg, ...args) => reflectApply(func, thisArg, args);
+
+const MapConstructor = Map;
+const mapGet = uncurryThis(Map.prototype.get);
+const mapSet = uncurryThis(Map.prototype.set);
+const mapDelete = uncurryThis(Map.prototype.delete);
+const mapForEach = uncurryThis(Map.prototype.forEach);
+
+const PromiseConstructor = Promise;
+const promiseRace = uncurryThis(Promise.race);
+const promiseThen = uncurryThis(Promise.prototype.then);
+const promiseCatch = uncurryThis(Promise.prototype.catch);
+const promiseFinally = uncurryThis(Promise.prototype.finally);
+
+const arrayMap = uncurryThis(Array.prototype.map);
+const arrayPush = uncurryThis(Array.prototype.push);
+const arrayShift = uncurryThis(Array.prototype.shift);
+const arrayJoin = uncurryThis(Array.prototype.join);
+const stringSplit = uncurryThis(String.prototype.split);
+const stringStartsWith = uncurryThis(String.prototype.startsWith);
+const jsonParse = JSON.parse;
+const jsonStringify = JSON.stringify;
+const originalSetTimeout = setTimeout;
+const originalClearTimeout = clearTimeout;
+
 let AutomationSessionProxy = class AutomationSessionProxy
 {
     constructor()
     {
-        this._nodeToIdMap = new Map;
-        this._idToNodeMap = new Map;
+        this._nodeToIdMap = new MapConstructor;
+        this._idToNodeMap = new MapConstructor;
     }
 
     // Public
 
     evaluateJavaScriptFunction(functionString, argumentStrings, expectsImplicitCallbackArgument, forceUserGesture, frameID, callbackID, resultCallback, callbackTimeout)
     {
-        this._execute(functionString, argumentStrings, expectsImplicitCallbackArgument, callbackTimeout)
-            .then(result => { resultCallback(frameID, callbackID, this._jsonStringify(result)); })
-            .catch(error => { resultCallback(frameID, callbackID, error); });
+        promiseCatch(promiseThen(this._execute(functionString, argumentStrings, expectsImplicitCallbackArgument, callbackTimeout),
+            result => { resultCallback(frameID, callbackID, this._jsonStringify(result)); }),
+            error => { resultCallback(frameID, callbackID, error); });
     }
 
     evaluateBidiScript(expression, awaitPromise, maxObjectDepth, frameID, callbackID, resultCallback, callbackTimeout)
     {
-        this._executeBidiScript(expression, awaitPromise, maxObjectDepth, callbackTimeout)
-            .then(result => { resultCallback(frameID, callbackID, JSON.stringify(result)); })
-            .catch(error => { resultCallback(frameID, callbackID, error); });
+        promiseCatch(promiseThen(this._executeBidiScript(expression, awaitPromise, maxObjectDepth, callbackTimeout),
+            result => { resultCallback(frameID, callbackID, jsonStringify(result)); }),
+            error => { resultCallback(frameID, callbackID, error); });
     }
 
     nodeForIdentifier(identifier)
@@ -70,23 +97,23 @@ let AutomationSessionProxy = class AutomationSessionProxy
         let timeoutPromise;
         let timeoutIdentifier = 0;
         if (callbackTimeout >= 0) {
-            timeoutPromise = new Promise((resolve, reject) => {
-                timeoutIdentifier = setTimeout(() => {
+            timeoutPromise = new PromiseConstructor((resolve, reject) => {
+                timeoutIdentifier = originalSetTimeout(() => {
                     reject({ name: "JavaScriptTimeout", message: `script timed out after ${callbackTimeout}ms` });
                 }, callbackTimeout);
             });
         }
 
-        let promise = new Promise((resolve, reject) => {
+        let promise = new PromiseConstructor((resolve, reject) => {
             // Split initial line comments like "//# __injectedScript" source map that would break the async expression below.
-            let lines = functionString.split("\n");
+            let lines = stringSplit(functionString, "\n");
             let prefixLines = [];
-            while (lines && lines[0].startsWith("//")) {
-                prefixLines.push(lines.shift());
+            while (lines && stringStartsWith(lines[0], "//")) {
+                arrayPush(prefixLines, arrayShift(lines));
             }
-            functionString = lines.join("\n");
+            functionString = arrayJoin(lines, "\n");
 
-            let prefix = prefixLines.join("\n")
+            let prefix = arrayJoin(prefixLines, "\n")
             if (prefix)
                 prefix += "\n";
 
@@ -97,23 +124,21 @@ let AutomationSessionProxy = class AutomationSessionProxy
 
             this._clearStaleNodes();
 
-            let argumentValues = argumentStrings.map(this._jsonParse, this);
+            let argumentValues = arrayMap(argumentStrings, this._jsonParse, this);
             if (expectsImplicitCallbackArgument)
-                argumentValues.push(resolve);
-            let resultPromise = functionValue.apply(null, argumentValues);
+                arrayPush(argumentValues, resolve);
+            let resultPromise = reflectApply(functionValue, null, argumentValues);
 
             let promises = [resultPromise];
             if (timeoutPromise)
-                promises.push(timeoutPromise);
-            Promise.race(promises)
-                .then(result => {
-                    if (!expectsImplicitCallbackArgument) {
-                        resolve(result);
-                    }
-                })
-                .catch(error => {
-                    reject(error);
-                });
+                arrayPush(promises, timeoutPromise);
+            promiseCatch(promiseThen(promiseRace(PromiseConstructor, promises), result => {
+                if (!expectsImplicitCallbackArgument) {
+                    resolve(result);
+                }
+            }), error => {
+                reject(error);
+            });
         });
 
         // Async scripts can call Promise.resolve() in the function script, generating a new promise that is resolved in a
@@ -121,13 +146,12 @@ let AutomationSessionProxy = class AutomationSessionProxy
         // finishes resolved, so we need to start a new one here to wait for the second promise to be resolved or the timeout.
         let promises = [promise];
         if (timeoutPromise)
-            promises.push(timeoutPromise);
-        return Promise.race(promises)
-            .finally(() => {
-                if (timeoutIdentifier) {
-                    clearTimeout(timeoutIdentifier);
-                }
-            });
+            arrayPush(promises, timeoutPromise);
+        return promiseFinally(promiseRace(PromiseConstructor, promises), () => {
+            if (timeoutIdentifier) {
+                originalClearTimeout(timeoutIdentifier);
+            }
+        });
     }
 
     _executeBidiScript(expression, awaitPromise, maxObjectDepth, callbackTimeout)
@@ -135,14 +159,14 @@ let AutomationSessionProxy = class AutomationSessionProxy
         let timeoutPromise;
         let timeoutIdentifier = 0;
         if (callbackTimeout >= 0) {
-            timeoutPromise = new Promise((resolve, reject) => {
-                timeoutIdentifier = setTimeout(() => {
+            timeoutPromise = new PromiseConstructor((resolve, reject) => {
+                timeoutIdentifier = originalSetTimeout(() => {
                     reject({ name: "JavaScriptTimeout", message: `script timed out after ${callbackTimeout}ms` });
                 }, callbackTimeout);
             });
         }
 
-        let promise = new Promise((resolve, reject) => {
+        let promise = new PromiseConstructor((resolve, reject) => {
             try {
                 // Execute expression using globalThis.eval pattern (like original implementation).
                 let result = globalThis.eval(expression);
@@ -170,25 +194,24 @@ let AutomationSessionProxy = class AutomationSessionProxy
 
         let promises = [promise];
         if (timeoutPromise)
-            promises.push(timeoutPromise);
-        return Promise.race(promises)
-            .finally(() => {
-                if (timeoutIdentifier) {
-                    clearTimeout(timeoutIdentifier);
-                }
-            });
+            arrayPush(promises, timeoutPromise);
+        return promiseFinally(promiseRace(PromiseConstructor, promises), () => {
+            if (timeoutIdentifier) {
+                originalClearTimeout(timeoutIdentifier);
+            }
+        });
     }
 
     _jsonParse(string)
     {
         if (!string)
             return undefined;
-        return JSON.parse(string, (key, value) => this._reviveJSONValue(key, value));
+        return jsonParse(string, (key, value) => this._reviveJSONValue(key, value));
     }
 
     _jsonStringify(value)
     {
-        return JSON.stringify(this._jsonClone(value));
+        return jsonStringify(this._jsonClone(value));
     }
 
     _reviveJSONValue(key, value)
@@ -297,7 +320,7 @@ let AutomationSessionProxy = class AutomationSessionProxy
         if (!isValidNodeIdentifier(identifier))
             throw {name: "InvalidNodeIdentifier", message: "Node identifier '" + identifier + "' is invalid"};
 
-        let node = this._idToNodeMap.get(identifier);
+        let node = mapGet(this._idToNodeMap, identifier);
         if (node)
             return node;
         throw {name: "NodeNotFound", message: "Node with identifier '" + identifier + "' was not found"};
@@ -305,27 +328,27 @@ let AutomationSessionProxy = class AutomationSessionProxy
 
     _identifierForNode(node)
     {
-        let identifier = this._nodeToIdMap.get(node);
+        let identifier = mapGet(this._nodeToIdMap, node);
         if (identifier)
             return identifier;
 
         identifier = "node-" + createUUID();
 
-        this._nodeToIdMap.set(node, identifier);
-        this._idToNodeMap.set(identifier, node);
+        mapSet(this._nodeToIdMap, node, identifier);
+        mapSet(this._idToNodeMap, identifier, node);
 
         return identifier;
     }
 
     _clearStaleNodes()
     {
-        for (var [node, identifier] of this._nodeToIdMap) {
+        mapForEach(this._nodeToIdMap, (identifier, node) => {
             const rootNode = node.getRootNode({ composed: true });
             if (rootNode !== document) {
-                this._nodeToIdMap.delete(node);
-                this._idToNodeMap.delete(identifier);
+                mapDelete(this._nodeToIdMap, node);
+                mapDelete(this._idToNodeMap, identifier);
             }
-        }
+        });
     }
 
     // BiDi Script utilities for W3C WebDriver BiDi specification.
