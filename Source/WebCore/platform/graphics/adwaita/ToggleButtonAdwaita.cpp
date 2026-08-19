@@ -65,13 +65,16 @@ void ToggleButtonAdwaita::drawCheckbox(GraphicsContext& graphicsContext, const F
 
     SRGBA<uint8_t> toggleBorderColor;
     SRGBA<uint8_t> toggleBorderHoverColor;
+    Color toggleBackgroundColor;
 
     if (style.states.contains(ControlStyle::State::DarkAppearance)) {
         toggleBorderColor = toggleBorderColorDark;
         toggleBorderHoverColor = toggleBorderHoveredColorDark;
+        toggleBackgroundColor = toggleBackgroundColorDark;
     } else {
         toggleBorderColor = toggleBorderColorLight;
         toggleBorderHoverColor = toggleBorderHoveredColorLight;
+        toggleBackgroundColor = toggleBackgroundColorLight;
     }
 
     Color accentColor = this->accentColor(style);
@@ -81,7 +84,9 @@ void ToggleButtonAdwaita::drawCheckbox(GraphicsContext& graphicsContext, const F
     if (!style.states.contains(ControlStyle::State::Enabled))
         graphicsContext.beginTransparencyLayer(disabledOpacity);
 
-    FloatSize corner(2, 2);
+    auto borderSize = fieldRect.width() * toggleBorderSizeRatio;
+    auto cornerRadius = fieldRect.width() * toggleBorderRadiusRatio;
+    FloatSize corner(cornerRadius, cornerRadius);
     Path path;
 
     if (style.states.containsAny({ ControlStyle::State::Checked, ControlStyle::State::Indeterminate })) {
@@ -98,7 +103,7 @@ void ToggleButtonAdwaita::drawCheckbox(GraphicsContext& graphicsContext, const F
         graphicsContext.translate(fieldRect.x(), fieldRect.y());
         graphicsContext.scale(FloatSize::narrowPrecision(fieldRect.width() / toggleSize, fieldRect.height() / toggleSize));
         if (style.states.contains(ControlStyle::State::Indeterminate))
-            path.addRoundedRect(FloatRect(2, 5, 10, 4), corner);
+            path.addRoundedRect(FloatRect(2, 5, 10, 4), FloatSize(2, 2));
         else {
             path.moveTo({ 2.43, 6.57 });
             path.addLineTo({ 7.5, 11.63 });
@@ -120,10 +125,10 @@ void ToggleButtonAdwaita::drawCheckbox(GraphicsContext& graphicsContext, const F
         graphicsContext.fillPath(path);
         path.clear();
 
-        fieldRect.inflate(-toggleBorderSize);
-        corner.expand(-buttonBorderSize, -buttonBorderSize);
+        fieldRect.inflate(-borderSize);
+        corner.expand(-borderSize, -borderSize);
         path.addRoundedRect(fieldRect, corner);
-        graphicsContext.setFillColor(foregroundColor);
+        graphicsContext.setFillColor(toggleBackgroundColor);
         graphicsContext.fillPath(path);
     }
 
@@ -149,13 +154,16 @@ void ToggleButtonAdwaita::drawRadio(GraphicsContext& graphicsContext, const Floa
 
     SRGBA<uint8_t> toggleBorderColor;
     SRGBA<uint8_t> toggleBorderHoverColor;
+    Color toggleBackgroundColor;
 
     if (style.states.contains(ControlStyle::State::DarkAppearance)) {
         toggleBorderColor = toggleBorderColorDark;
         toggleBorderHoverColor = toggleBorderHoveredColorDark;
+        toggleBackgroundColor = toggleBackgroundColorDark;
     } else {
         toggleBorderColor = toggleBorderColorLight;
         toggleBorderHoverColor = toggleBorderHoveredColorLight;
+        toggleBackgroundColor = toggleBackgroundColorLight;
     }
 
     Color accentColor = this->accentColor(style);
@@ -165,6 +173,7 @@ void ToggleButtonAdwaita::drawRadio(GraphicsContext& graphicsContext, const Floa
     if (!style.states.contains(ControlStyle::State::Enabled))
         graphicsContext.beginTransparencyLayer(disabledOpacity);
 
+    auto borderSize = fieldRect.width() * toggleBorderSizeRatio;
     Path path;
 
     if (style.states.containsAny({ ControlStyle::State::Checked, ControlStyle::State::Indeterminate })) {
@@ -190,9 +199,9 @@ void ToggleButtonAdwaita::drawRadio(GraphicsContext& graphicsContext, const Floa
         graphicsContext.fillPath(path);
         path.clear();
 
-        fieldRect.inflate(-toggleBorderSize);
+        fieldRect.inflate(-borderSize);
         path.addEllipseInRect(fieldRect);
-        graphicsContext.setFillColor(foregroundColor);
+        graphicsContext.setFillColor(toggleBackgroundColor);
         graphicsContext.fillPath(path);
     }
 

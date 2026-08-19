@@ -92,6 +92,7 @@ constexpr auto buttonBackgroundPressedColorLight = SRGBA<uint8_t> { 214, 214, 21
 constexpr auto buttonBackgroundHoveredColorLight = SRGBA<uint8_t> { 248, 248, 248 };
 constexpr auto toggleBorderColorLight = SRGBA<uint8_t> { 0, 0, 0, 50 };
 constexpr auto toggleBorderHoveredColorLight = SRGBA<uint8_t> { 0, 0, 0, 80 };
+constexpr auto toggleBackgroundColorLight = Color::white;
 
 constexpr auto buttonBorderColorDark = SRGBA<uint8_t> { 255, 255, 255, 50 };
 constexpr auto buttonBackgroundColorDark = SRGBA<uint8_t> { 52, 52, 52 };
@@ -99,9 +100,11 @@ constexpr auto buttonBackgroundPressedColorDark = SRGBA<uint8_t> { 30, 30, 30 };
 constexpr auto buttonBackgroundHoveredColorDark = SRGBA<uint8_t> { 60, 60, 60 };
 constexpr auto toggleBorderColorDark = SRGBA<uint8_t> { 255, 255, 255, 50 };
 constexpr auto toggleBorderHoveredColorDark = SRGBA<uint8_t> { 255, 255, 255, 80 };
+constexpr auto toggleBackgroundColorDark = SRGBA<uint8_t> { 45, 45, 45 };
 
 constexpr double toggleSize = 14.;
-constexpr int toggleBorderSize = 2;
+constexpr double toggleBorderSizeRatio = 2. / 20.;
+constexpr double toggleBorderRadiusRatio = 6. / 20.;
 constexpr int toggleFocusOffset = 1;
 
 constexpr auto spinButtonBorderColorLight = SRGBA<uint8_t> { 0, 0, 0, 25 };
