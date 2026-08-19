@@ -186,6 +186,7 @@ public:
 
     void commitCertificateInfo(const URL&);
     void receivedMainResourceResponseWithCertificateInfo(String&&, WebCore::CertificateInfo&&);
+    void copyCertificateInfoForProcessSwapOnNavigationResponse(const URL&, const WebFrameProxy&);
 
     bool canProvideSource() const;
 
@@ -340,7 +341,7 @@ private:
     WebFrameProxy(WebPageProxy&, FrameProcess&, WebCore::FrameIdentifier, WebCore::SandboxFlags, WebCore::ReferrerPolicy, WebCore::ScrollbarMode, WebFrameProxy*, WebFrameProxy*, IsMainFrame, std::optional<URL>&&);
 
     std::optional<SharedPreferencesForWebProcess> NODELETE sharedPreferencesForWebProcess() const;
-    void waitForCertificateInfoFromNetworkProcess(const String& hostAndPort);
+    WebCore::CertificateInfo certificateInfoFromNetworkProcess(const URL&) const;
 
     std::optional<WebCore::PageIdentifier> NODELETE pageIdentifier() const;
 
