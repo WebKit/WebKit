@@ -674,7 +674,7 @@ static std::optional<TypedChild> consumeRandom(CSSParserTokenRange& tokens, int 
     using Op = Random;
 
     auto keySource = CSSPropertyParserHelpers::RandomKeySource {
-        .property = { state.propertyParserState.currentProperty, state.propertyParserState.currentCustomPropertyName },
+        .property = { state.propertyParserState.currentProperty, state.propertyParserState.currentCustomPropertyName, RandomFunction::Random },
         .autoElementScoped = CSS::Keyword::ElementScoped { }
     };
 

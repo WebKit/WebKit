@@ -1074,13 +1074,10 @@ std::optional<double> SubstitutionResolver::randomItemBaseValue(Vector<CSSParser
 
     auto parserState = CSS::PropertyParserState { .context = m_substitutionValue->context() };
 
-    // FIXME: This index is counted here, at substitution time, in a separate space from random()'s
-    // parse-time cssRandomFunctionCount. An auto random-item() and an auto random() in the same
-    // property value can therefore land on the same RandomCachingKey and share a base value, and the
-    // index follows the selected branch rather than parse position. Unifying this with random()'s
-    // counter is a follow-up.
+    // This index is counted in its own space, separate from random()'s parse-time
+    // cssRandomFunctionCount, which is why the key records which function it came from.
     auto keySource = CSSPropertyParserHelpers::RandomKeySource {
-        .property = { m_styleBuilder.state().cssPropertyID(), m_styleBuilder.state().customPropertyName() },
+        .property = { m_styleBuilder.state().cssPropertyID(), m_styleBuilder.state().customPropertyName(), CSSCalc::RandomFunction::RandomItem },
         .autoElementScoped = CSS::Keyword::ElementScoped { }
     };
     auto sharing = CSSPropertyParserHelpers::consumeUnresolvedRandomKey(randomKeyRange, parserState, keySource, [&] {

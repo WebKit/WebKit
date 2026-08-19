@@ -38,19 +38,26 @@ enum CSSPropertyID : uint16_t;
 
 namespace CSSCalc {
 
+// Which function a property scope was derived from. random() and random-item() each get their own
+// bucket, so an index derived for one cannot collide with the same index derived for the other. Only
+// derived scopes carry this, so an author's <dashed-ident> still shares across both functions.
+// https://github.com/w3c/csswg-drafts/issues/14330
+enum class RandomFunction : bool { Random, RandomItem };
+
 // The property a random key is scoped to. Every custom property shares CSSPropertyCustom, so the name
 // is what tells them apart and is empty for everything else.
 // FIXME: Same concept as AssociatedProperty and AnimatableCSSProperty.
 struct RandomScopedProperty {
     CSSPropertyID property { CSSPropertyInvalid };
     AtomString customPropertyName { };
+    RandomFunction function { RandomFunction::Random };
 
     bool operator==(const RandomScopedProperty&) const = default;
 };
 
 inline void add(Hasher& hasher, const RandomScopedProperty& scopedProperty)
 {
-    add(hasher, scopedProperty.property, scopedProperty.customPropertyName);
+    add(hasher, scopedProperty.property, scopedProperty.customPropertyName, scopedProperty.function);
 }
 
 // `auto` is a top-level <random-key> alternative; its scoping is chosen per-usage by the caller.
