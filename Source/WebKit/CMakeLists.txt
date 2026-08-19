@@ -1165,6 +1165,7 @@ foreach (in_file ${WebCore_SERIALIZATION_IN_FILES})
     list(APPEND WebKit_SERIALIZATION_DEPENDENCIES "${WebCore_PRIVATE_HEADERS_DIR}/${in_file}")
 endforeach ()
 list(APPEND WebKit_SERIALIZATION_DEPENDENCIES "${WebKit_DERIVED_SOURCES_DIR}/SharedPreferencesForWebProcess.serialization.in")
+list(APPEND WebKit_SERIALIZATION_DEPENDENCIES "${WebKit_DERIVED_SOURCES_DIR}/SecurityFlags.serialization.in")
 
 list(APPEND WebKit_DERIVED_SOURCES
     ${WebKit_DERIVED_SOURCES_DIR}/GeneratedSerializers.h
@@ -1392,6 +1393,33 @@ list(APPEND WebKit_SOURCES
     ${WebKit_DERIVED_SOURCES_DIR}/WebPreferencesGetterSetters.cpp
     ${WebKit_DERIVED_SOURCES_DIR}/WebPreferencesKeys.cpp
     ${WebKit_DERIVED_SOURCES_DIR}/WebPreferencesStoreDefaultsMap.cpp
+)
+
+set(WebKit_SECURITY_FLAGS_TEMPLATES
+    ${WEBKIT_DIR}/Scripts/SecurityFlagsTemplates/SecurityFlags.h.erb
+    ${WEBKIT_DIR}/Scripts/SecurityFlagsTemplates/SecurityFlags.cpp.erb
+    ${WEBKIT_DIR}/Scripts/SecurityFlagsTemplates/SecurityFlags.serialization.in.erb
+)
+
+set(WebKit_SECURITY_FLAGS
+    ${WTF_SCRIPTS_DIR}/Preferences/SecurityFlags.yaml
+)
+
+set_source_files_properties(${WebKit_SECURITY_FLAGS} PROPERTIES GENERATED TRUE)
+
+add_custom_command(
+    OUTPUT ${WebKit_DERIVED_SOURCES_DIR}/SecurityFlags.h ${WebKit_DERIVED_SOURCES_DIR}/SecurityFlags.cpp ${WebKit_DERIVED_SOURCES_DIR}/SecurityFlags.serialization.in
+    DEPENDS ${WebKit_SECURITY_FLAGS_TEMPLATES} ${WebKit_SECURITY_FLAGS} WTF_CopyPreferences
+    COMMAND ${Ruby_EXECUTABLE} ${WTF_SCRIPTS_DIR}/GenerateSecurityFlags.rb --outputDir "${WebKit_DERIVED_SOURCES_DIR}" --template "$<JOIN:${WebKit_SECURITY_FLAGS_TEMPLATES},;--template;>" ${WebKit_SECURITY_FLAGS}
+    COMMAND_EXPAND_LISTS
+    VERBATIM)
+
+list(APPEND WebKit_HEADERS
+    ${WebKit_DERIVED_SOURCES_DIR}/SecurityFlags.h
+)
+
+list(APPEND WebKit_SOURCES
+    ${WebKit_DERIVED_SOURCES_DIR}/SecurityFlags.cpp
 )
 
 if (ENABLE_SWIFT_DEMO_URI_SCHEME)

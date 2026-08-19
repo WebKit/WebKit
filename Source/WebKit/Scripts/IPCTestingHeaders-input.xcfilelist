@@ -53,6 +53,7 @@ $(SRCROOT)/Platform/IPC/ObjectIdentifierReferenceTracker.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/IPC/PushClientConnectionMessages.h
 $(SRCROOT)/Shared/PushMessageForTesting.h
 $(SRCROOT)/Platform/IPC/ReceiverMatcher.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/SecurityFlags.h
 $(SRCROOT)/Platform/IPC/StreamClientConnection.h
 $(SRCROOT)/Platform/IPC/StreamClientConnectionBuffer.h
 $(SRCROOT)/Platform/IPC/StreamConnectionBuffer.h

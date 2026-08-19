@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,27 +25,33 @@
 
 #pragma once
 
-#if ENABLE(MODEL_PROCESS)
-
-#include "AuxiliaryProcessCreationParameters.h"
 #include "SecurityFlags.h"
-#include <wtf/ProcessID.h>
+#include <wtf/Forward.h>
+#include <wtf/NeverDestroyed.h>
+#include <wtf/Noncopyable.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebKit {
 
-struct ModelProcessCreationParameters {
-    AuxiliaryProcessCreationParameters auxiliaryProcessParameters;
-    SecurityFlags securityFlags;
-    ProcessID parentPID;
-    String applicationVisibleName;
-    bool restrictiveRenderingMode { false };
-    std::optional<int> debugEntityMemoryLimit;
-    std::optional<int> debugImmersiveEntityMemoryLimit;
-#if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
-    bool isDebugLoggingEnabled { false };
-#endif
+// One value for the whole UIProcess, because it comes from a single device-global list. Reading a flag is safe
+// from any thread; setting them is main run loop only, because propagateToChildProcesses() touches the proxies.
+class SecurityFlagsController {
+    WTF_MAKE_NONCOPYABLE(SecurityFlagsController);
+public:
+    static SecurityFlagsController& singleton();
+
+    const SecurityFlags& securityFlags() const LIFETIME_BOUND { return m_securityFlags; }
+
+    // The list is the whole truth: every flag it does not name is enforced, so an empty list resets everything.
+    void setDisabledFlagsNamed(const Vector<String>&);
+
+private:
+    friend class WTF::NeverDestroyed<SecurityFlagsController>;
+    SecurityFlagsController() = default;
+
+    void propagateToChildProcesses();
+
+    SecurityFlags m_securityFlags;
 };
 
 } // namespace WebKit
-
-#endif // ENABLE(MODEL_PROCESS)

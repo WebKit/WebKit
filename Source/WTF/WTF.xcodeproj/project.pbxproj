@@ -306,6 +306,7 @@
 		DCEE22011CEA7551000C2396 /* BlockObjCExceptions.mm in Sources */ = {isa = PBXBuildFile; fileRef = DCEE21FD1CEA7551000C2396 /* BlockObjCExceptions.mm */; };
 		DD03059327B5DA0D00344002 /* SignedPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = 862A8D32278DE74A0014120C /* SignedPtr.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD28468829248DDA0009A61D /* UnifiedWebPreferences.yaml in Headers */ = {isa = PBXBuildFile; fileRef = DD284687292442F30009A61D /* UnifiedWebPreferences.yaml */; settings = {ATTRIBUTES = (Private, ); }; };
+		DD28468A29248DDA0009A61D /* SecurityFlags.yaml in Headers */ = {isa = PBXBuildFile; fileRef = DD284689292442F30009A61D /* SecurityFlags.yaml */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD3DC85E27A4BF8E007E5B61 /* WeakHashSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B67F3F12228D5310030DE9C /* WeakHashSet.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD3DC85F27A4BF8E007E5B61 /* HashMap.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A472B6151A825A004123FF /* HashMap.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DD3DC86027A4BF8E007E5B61 /* Observer.h in Headers */ = {isa = PBXBuildFile; fileRef = CD48A87024C8A21600F5800C /* Observer.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -722,6 +723,7 @@
 		DDF307F427C086EA006A526F /* Collator.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A4734A151A825B004123FF /* Collator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DDF307F527C0870E006A526F /* config.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A4748B151A8264004123FF /* config.h */; };
 		DDF3080327C08A77006A526F /* GeneratePreferences.rb in Headers */ = {isa = PBXBuildFile; fileRef = DD3DCA0627A4E176007E5B61 /* GeneratePreferences.rb */; settings = {ATTRIBUTES = (Private, ); }; };
+		DDF3080427C08A77006A526F /* GenerateSecurityFlags.rb in Headers */ = {isa = PBXBuildFile; fileRef = DD3DCA0727A4E176007E5B61 /* GenerateSecurityFlags.rb */; settings = {ATTRIBUTES = (Private, ); }; };
 		DDF3082327C44F08006A526F /* filteredbrk.h in Headers */ = {isa = PBXBuildFile; fileRef = DDD8BB3027B347C500C109E0 /* filteredbrk.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DDF3082427C44F08006A526F /* udatpg.h in Headers */ = {isa = PBXBuildFile; fileRef = DDD8BB1727B347C500C109E0 /* udatpg.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DDF3082527C44F08006A526F /* utypes.h in Headers */ = {isa = PBXBuildFile; fileRef = DDD8BB7927B347C500C109E0 /* utypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1790,9 +1792,11 @@
 		DCEE21FD1CEA7551000C2396 /* BlockObjCExceptions.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BlockObjCExceptions.mm; sourceTree = "<group>"; };
 		DCEE22041CEB9869000C2396 /* BackwardsGraph.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BackwardsGraph.h; sourceTree = "<group>"; };
 		DD284687292442F30009A61D /* UnifiedWebPreferences.yaml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.yaml; path = UnifiedWebPreferences.yaml; sourceTree = "<group>"; };
+		DD284689292442F30009A61D /* SecurityFlags.yaml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.yaml; path = SecurityFlags.yaml; sourceTree = "<group>"; };
 		DD28DF2329D368BD00BBB459 /* generate-tapi-filelist.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = "generate-tapi-filelist.py"; sourceTree = "<group>"; };
 		DD3DC9A127A5C0F0007E5B61 /* ReducedResolutionSeconds.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReducedResolutionSeconds.h; sourceTree = "<group>"; };
 		DD3DCA0627A4E176007E5B61 /* GeneratePreferences.rb */ = {isa = PBXFileReference; lastKnownFileType = text.script.ruby; path = GeneratePreferences.rb; sourceTree = "<group>"; };
+		DD3DCA0727A4E176007E5B61 /* GenerateSecurityFlags.rb */ = {isa = PBXFileReference; lastKnownFileType = text.script.ruby; path = GenerateSecurityFlags.rb; sourceTree = "<group>"; };
 		DD403D5528EB93BE009B4684 /* libbmalloc.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libbmalloc.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		DD4901DF27B4748A00D7E50D /* UniStdExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UniStdExtras.h; sourceTree = "<group>"; };
 		DD4901E027B4748A00D7E50D /* ParallelJobsGeneric.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParallelJobsGeneric.h; sourceTree = "<group>"; };
@@ -3100,6 +3104,7 @@
 				DD28DF2329D368BD00BBB459 /* generate-tapi-filelist.py */,
 				DDE7455D2F731D80008013AB /* generate-unified-source-bundles.py */,
 				DD3DCA0627A4E176007E5B61 /* GeneratePreferences.rb */,
+				DD3DCA0727A4E176007E5B61 /* GenerateSecurityFlags.rb */,
 			);
 			path = Scripts;
 			sourceTree = "<group>";
@@ -3107,6 +3112,7 @@
 		DD3DCA0027A4E176007E5B61 /* Preferences */ = {
 			isa = PBXGroup;
 			children = (
+				DD284689292442F30009A61D /* SecurityFlags.yaml */,
 				DD284687292442F30009A61D /* UnifiedWebPreferences.yaml */,
 			);
 			path = Preferences;
@@ -3706,6 +3712,7 @@
 				DDE7455F2F731DBA008013AB /* generate-unified-source-bundles.py in Headers */,
 				07F5EA702EE8A7660085B185 /* GenerateModuleVerifierInputsTask.py in Headers */,
 				DDF3080327C08A77006A526F /* GeneratePreferences.rb in Headers */,
+				DDF3080427C08A77006A526F /* GenerateSecurityFlags.rb in Headers */,
 				A400B8FB2F3AB62E009E21AF /* GenerationalSet.h in Headers */,
 				DDCAF31D27B1E7C500C45308 /* GenericHashKey.h in Headers */,
 				DD3DC93127A4BF8E007E5B61 /* GenericTimeMixin.h in Headers */,
@@ -3938,6 +3945,7 @@
 				DD3DC8CB27A4BF8E007E5B61 /* ScopedLambda.h in Headers */,
 				53CAC0632C6FBD8200B1A77C /* ScopedPrintStream.h in Headers */,
 				DD3DC8F327A4BF8E007E5B61 /* Seconds.h in Headers */,
+				DD28468A29248DDA0009A61D /* SecurityFlags.yaml in Headers */,
 				DDF306DD27C08654006A526F /* SecuritySPI.h in Headers */,
 				DD3DC99227A4BF8E007E5B61 /* SegmentedVector.h in Headers */,
 				DD3DC8C127A4BF8E007E5B61 /* SentinelLinkedList.h in Headers */,

@@ -31,6 +31,7 @@
 #include "EditingRange.h"
 #include "Encoder.h"
 #include "GeneratedSerializers.h"
+#include "SecurityFlags.h"
 #include "StreamConnectionEncoder.h"
 #include "Helpers/Test.h"
 #include <WebCore/ShareableResource.h>
@@ -776,5 +777,59 @@ TEST(ArgumentCoderShareableResourceHandle, OverflowingOffsetAndSizeIsRejectedNot
     EXPECT_FALSE(result.has_value());
 }
 #endif // ENABLE(SHAREABLE_RESOURCE)
+
+TEST(ArgumentCoderSecurityFlags, SecureDefaultRoundTrips)
+{
+    IPC::Encoder encoder(IPC::MessageName::IPCTester_EmptyMessage, 0);
+    encoder << WebKit::SecurityFlags { };
+
+    auto decoder = IPC::Decoder::create(encoder.span(), { });
+    ASSERT_TRUE(decoder);
+
+    auto flags = decoder->decode<WebKit::SecurityFlags>();
+    ASSERT_TRUE(flags.has_value());
+    EXPECT_TRUE(*flags == WebKit::SecurityFlags { });
+}
+
+TEST(ArgumentCoderSecurityFlags, DisabledFlagRoundTrips)
+{
+    std::array<uint64_t, WebKit::SecurityFlags::ipcWordCount> words { };
+    words[0] |= 1ULL;
+    auto original = WebKit::SecurityFlags::fromDisabledFlagsForIPC(words);
+    ASSERT_TRUE(original.has_value());
+    EXPECT_FALSE(*original == WebKit::SecurityFlags { });
+
+    IPC::Encoder encoder(IPC::MessageName::IPCTester_EmptyMessage, 0);
+    encoder << *original;
+
+    auto decoder = IPC::Decoder::create(encoder.span(), { });
+    ASSERT_TRUE(decoder);
+
+    auto flags = decoder->decode<WebKit::SecurityFlags>();
+    ASSERT_TRUE(flags.has_value());
+    EXPECT_TRUE(*flags == *original);
+    EXPECT_EQ(flags->disabledFlagsForIPC(), words);
+}
+
+TEST(ArgumentCoderSecurityFlags, BitBelongingToNoFlagIsRejectedNotCrashed)
+{
+    // A flag count that fills the last word leaves no bit for this test to set, and flagCount / 64 would then
+    // index one past the end.
+    if constexpr (!(WebKit::SecurityFlags::flagCount % 64))
+        GTEST_SKIP() << "every bit belongs to a flag at this flag count";
+    else {
+        std::array<uint64_t, WebKit::SecurityFlags::ipcWordCount> words { };
+        words[WebKit::SecurityFlags::flagCount / 64] |= 1ULL << (WebKit::SecurityFlags::flagCount % 64);
+
+        IPC::Encoder encoder(IPC::MessageName::IPCTester_EmptyMessage, 0);
+        encoder << words;
+
+        auto decoder = IPC::Decoder::create(encoder.span(), { });
+        ASSERT_TRUE(decoder);
+
+        auto flags = decoder->decode<WebKit::SecurityFlags>();
+        EXPECT_FALSE(flags.has_value());
+    }
+}
 
 } // namespace TestWebKitAPI

@@ -192,6 +192,7 @@ AutomationBackendDispatchers.cpp
 AutomationFrontendDispatchers.cpp
 AutomationProtocolObjects.cpp
 MessageArgumentDescriptions.cpp
+SecurityFlags.cpp
 SharedPreferencesForWebProcess.cpp
 WebDriverBidiBackendDispatchers.cpp
 WebDriverBidiFrontendDispatchers.cpp

@@ -609,6 +609,25 @@ all : $(WEB_PREFERENCES_FILES)
 $(WEB_PREFERENCES_PATTERNS) : $(WTF_BUILD_SCRIPTS_DIR)/GeneratePreferences.rb $(WEB_PREFERENCES_TEMPLATES) $(WEB_PREFERENCES)
 	$(RUBY) $< --frontend WebKit $(addprefix --template , $(WEB_PREFERENCES_TEMPLATES)) $(WEB_PREFERENCES)
 
+# Security flag generation
+
+SECURITY_FLAGS = \
+    $(WTF_BUILD_SCRIPTS_DIR)/Preferences/SecurityFlags.yaml \
+#
+
+SECURITY_FLAGS_TEMPLATES = \
+    $(WebKit2)/Scripts/SecurityFlagsTemplates/SecurityFlags.h.erb \
+    $(WebKit2)/Scripts/SecurityFlagsTemplates/SecurityFlags.cpp.erb \
+    $(WebKit2)/Scripts/SecurityFlagsTemplates/SecurityFlags.serialization.in.erb \
+#
+SECURITY_FLAGS_FILES = $(basename $(notdir $(SECURITY_FLAGS_TEMPLATES)))
+SECURITY_FLAGS_PATTERNS = $(call to-pattern, $(SECURITY_FLAGS_FILES))
+
+all : $(SECURITY_FLAGS_FILES)
+
+$(SECURITY_FLAGS_PATTERNS) : $(WTF_BUILD_SCRIPTS_DIR)/GenerateSecurityFlags.rb $(SECURITY_FLAGS_TEMPLATES) $(SECURITY_FLAGS)
+	$(RUBY) $< $(addprefix --template , $(SECURITY_FLAGS_TEMPLATES)) $(SECURITY_FLAGS)
+
 SERIALIZATION_DESCRIPTION_FILES = \
 	GPUProcess/GPUProcessCreationParameters.serialization.in \
 	GPUProcess/GPUProcessPreferences.serialization.in \
@@ -974,6 +993,7 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	WebProcess/WebCoreSupport/WebSpeechSynthesisVoice.serialization.in \
 	WebProcess/WebPage/RemoteLayerTree/PlatformCAAnimationRemoteProperties.serialization.in \
 	SharedPreferencesForWebProcess.serialization.in \
+	SecurityFlags.serialization.in \
 #
 
 WEBCORE_SERIALIZATION_DESCRIPTION_FILES = \

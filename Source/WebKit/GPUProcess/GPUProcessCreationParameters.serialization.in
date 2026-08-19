@@ -24,6 +24,7 @@
 
 [RValue, DebugDecodingFailure] struct WebKit::GPUProcessCreationParameters {
     WebKit::AuxiliaryProcessCreationParameters auxiliaryProcessParameters;
+    WebKit::SecurityFlags securityFlags;
 
 #if ENABLE(MEDIA_STREAM)
     bool useMockCaptureDevices;

@@ -49,6 +49,7 @@ $(WK_IPC_TESTING_HEADERS_DEST_DIR)/ObjectIdentifierReferenceTracker.h
 $(WK_IPC_TESTING_HEADERS_DEST_DIR)/PushClientConnectionMessages.h
 $(WK_IPC_TESTING_HEADERS_DEST_DIR)/PushMessageForTesting.h
 $(WK_IPC_TESTING_HEADERS_DEST_DIR)/ReceiverMatcher.h
+$(WK_IPC_TESTING_HEADERS_DEST_DIR)/SecurityFlags.h
 $(WK_IPC_TESTING_HEADERS_DEST_DIR)/StreamClientConnection.h
 $(WK_IPC_TESTING_HEADERS_DEST_DIR)/StreamClientConnectionBuffer.h
 $(WK_IPC_TESTING_HEADERS_DEST_DIR)/StreamConnectionBuffer.h
