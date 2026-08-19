@@ -180,6 +180,10 @@
                 "CMAKE_OBJCXX_FLAGS_DEBUG": {
                     "type": "STRING",
                     "value": "-g -O3"
+                },
+                "USE_PCH_CODEGEN": {
+                    "type": "BOOL",
+                    "value": "OFF"
                 }
             }
         },

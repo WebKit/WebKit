@@ -383,6 +383,8 @@ if (COMPILER_IS_CLANG)
     endforeach ()
 endif ()
 
+option(USE_PCH_CODEGEN "Emit the inline functions a prefix header defines once into a per-target PCH object file" ON)
+
 if (COMPILER_IS_GCC_OR_CLANG)
     # Careful: this needs to be above where ENABLED_COMPILER_SANITIZERS is set.
     # Also, it's not possible to use the normal prepend/append macros for
