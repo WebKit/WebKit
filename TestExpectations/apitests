@@ -58,6 +58,11 @@ TestWebKitAPI.WebPageTransferableTests/exportToImage(type:) [ Skip ]
 [ iOS Debug ] TestWebKitAPI.ContentRuleList.RequestMethods [ Pass Timeout ]
 [ iOS Debug ] TestWebKitAPI.ContentRuleList.ResourceTypes [ Pass Timeout ]
 
+# webkit.org/b/322125 [ iOS ]NEW TEST(319178@main): 3x TestWebKitAPI.HTTP2Server.* (api-tests) is a constant timeout. 
+[ iOS ] TestWebKitAPI.HTTP2Server.MultipleRequestsOverOneConnection [ Skip ]
+[ iOS ] TestWebKitAPI.HTTP2Server.NonDefaultStatusCodeAndResponseHeader [ Skip ]
+[ iOS ] TestWebKitAPI.HTTP2Server.POSTBody [ Skip ]
+
 # webkit.org/b/318893 [ iOS DEBUG ] 2x TestWebKitAPI.IPCTestingAPI.* (api-tests) are constant fails.
 [ iOS Debug ] TestWebKitAPI.IPCTestingAPI.LockdownModeDetection [ Failure ]
 [ iOS Debug ] TestWebKitAPI.IPCTestingAPI.LockdownModeDisabledAllowsWebGL [ Failure ]
