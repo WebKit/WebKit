@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Igalia S.L.
+ * Copyright (C) 2026 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,33 +25,32 @@
 
 #pragma once
 
-#include "ArgumentCoders.h"
-#include <gio/gio.h>
+#if USE(GLIB)
+
+#include <span>
 #include <wtf/glib/GRefPtr.h>
+#include <wtf/text/CString.h>
 
-typedef struct _GTlsCertificate GTlsCertificate;
-typedef struct _GUnixFDList GUnixFDList;
+typedef struct _GVariant GVariant;
+typedef struct _GBytes GBytes;
 
-namespace IPC {
+namespace WebKit {
 
-template<> struct ArgumentCoder<GRefPtr<GByteArray>> {
-    static void encode(Encoder&, const GRefPtr<GByteArray>&);
-    static std::optional<GRefPtr<GByteArray>> decode(Decoder&);
+class CoreIPCGVariant {
+public:
+    explicit CoreIPCGVariant(const GRefPtr<GVariant>&);
+    CoreIPCGVariant(CString&&, std::span<const uint8_t>);
+
+    CString typeString() const { return m_typeString; }
+    std::span<const uint8_t> data() const;
+
+    operator GRefPtr<GVariant>() const;
+
+private:
+    CString m_typeString;
+    GRefPtr<GBytes> m_data;
 };
 
-template<> struct ArgumentCoder<GRefPtr<GTlsCertificate>> {
-    static void encode(Encoder&, const GRefPtr<GTlsCertificate>&);
-    static std::optional<GRefPtr<GTlsCertificate>> decode(Decoder&);
-};
+} // namespace WebKit
 
-template<> struct ArgumentCoder<GTlsCertificateFlags> {
-    static void encode(Encoder&, GTlsCertificateFlags);
-    static std::optional<GTlsCertificateFlags> decode(Decoder&);
-};
-
-template<> struct ArgumentCoder<GRefPtr<GUnixFDList>> {
-    static void encode(Encoder&, const GRefPtr<GUnixFDList>&);
-    static std::optional<GRefPtr<GUnixFDList>> decode(Decoder&);
-};
-
-} // namespace IPC
+#endif // USE(GLIB)

@@ -290,6 +290,14 @@ additional_forward_declaration: typedef struct __CFBar * CFBarRef
 }
 #endif
 
+#if USE(GLIB)
+additional_forward_declaration: typedef struct _GFooBar GFooBar
+[GRefPtrWrapped=GFooBar] class WebKit::CoreIPCGFooBar {
+    int foo();
+    double bar();
+}
+#endif
+
 [RValue] class WebKit::RValueWithFunctionCalls {
     SandboxExtensionHandle callFunction()
 }

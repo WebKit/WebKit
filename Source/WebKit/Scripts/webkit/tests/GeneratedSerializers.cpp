@@ -31,6 +31,9 @@
 #if ENABLE(TEST_FEATURE)
 #include "CommonHeader.h"
 #endif
+#if USE(GLIB)
+#include "CoreIPCGFooBar.h"
+#endif
 #include "CustomEncoded.h"
 #if ENABLE(TEST_FEATURE)
 #include "FirstMemberType.h"
@@ -1333,6 +1336,43 @@ std::optional<SkFooBar> ArgumentCoder<SkFooBar>::decode(Decoder& decoder)
         return std::nullopt;
     return {
         CoreIPCSkFooBar {
+            WTF::move(*foo),
+            WTF::move(*bar)
+        }
+    };
+}
+
+#endif
+
+#if USE(GLIB)
+void ArgumentCoder<GRefPtr<GFooBar>>::encode(Encoder& encoder, const GRefPtr<GFooBar>& passedInstance)
+{
+    if (!passedInstance) {
+        encoder << false;
+        return;
+    }
+    encoder << true;
+    auto instance = WebKit::CoreIPCGFooBar(passedInstance);
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.foo())>, int>);
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.bar())>, double>);
+
+    encoder << instance.foo();
+    encoder << instance.bar();
+}
+
+std::optional<GRefPtr<GFooBar>> ArgumentCoder<GRefPtr<GFooBar>>::decode(Decoder& decoder)
+{
+    auto isEngaged = decoder.decode<bool>();
+    if (!isEngaged) [[unlikely]]
+        return std::nullopt;
+    if (!*isEngaged)
+        return GRefPtr<GFooBar> { };
+    auto foo = decoder.decode<int>();
+    auto bar = decoder.decode<double>();
+    if (!decoder.isValid()) [[unlikely]]
+        return std::nullopt;
+    return {
+        WebKit::CoreIPCGFooBar {
             WTF::move(*foo),
             WTF::move(*bar)
         }

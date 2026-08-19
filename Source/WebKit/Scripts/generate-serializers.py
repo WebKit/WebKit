@@ -189,6 +189,7 @@ class SerializedType(object):
         self.disableMissingMemberCheck = False
         self.debug_decoding_failure = False
         self.generic_wrapper = None
+        self.gref_type = None
         self.bundle = None
         if attributes is not None:
             for attribute in attributes.split(', '):
@@ -212,6 +213,9 @@ class SerializedType(object):
                         self.custom_secure_coding_class = value
                     elif key == 'Wrapper':
                         self.generic_wrapper = value
+                    elif key == 'GRefPtrWrapped':
+                        self.gref_type = value
+                        self.generic_wrapper = f'{self.namespace}::{self.name}'
                     else:
                         raise Exception(f'Invalid attribute ({key}={value}) found on struct: {self.namespace}::{self.name}')
                 else:
@@ -249,6 +253,8 @@ class SerializedType(object):
         return re.sub(r'\W+', '_', self.name)
 
     def namespace_and_name(self):
+        if self.gref_type is not None:
+            return f'GRefPtr<{self.gref_type}>'
         if self.cf_type is not None:
             return f'{self.cf_type}Ref'
         if self.namespace is None:
@@ -319,7 +325,7 @@ class SerializedType(object):
         return False
 
     def should_skip_forward_declare(self):
-        return self.nested or self.templates
+        return self.nested or self.templates or self.gref_type is not None
 
     def cpp_type_from_struct_or_class(self):
         if self.is_webkit_secure_coding_type():
@@ -1186,6 +1192,12 @@ def generate_one_impl(type, template_argument, serialized_types):
         else:
             result.append(f'void ArgumentCoder<{name_with_template}>::encode({encoder}& encoder, const {name_with_template}& {instanceArgName})')
         result.append('{')
+        if type.gref_type is not None:
+            result.append(f'    if (!{instanceArgName}) {{')
+            result.append('        encoder << false;')
+            result.append('        return;')
+            result.append('    }')
+            result.append('    encoder << true;')
         if type.generic_wrapper is not None:
             if type.rvalue:
                 result.append(f'    auto instance = {type.generic_wrapper}(WTF::move({instanceArgName}));')
@@ -1219,6 +1231,12 @@ def generate_one_impl(type, template_argument, serialized_types):
     else:
         result.append(f'std::optional<{name_with_template}> ArgumentCoder<{name_with_template}>::decode(Decoder& decoder)')
     result.append('{')
+    if type.gref_type is not None:
+        result.append('    auto isEngaged = decoder.decode<bool>();')
+        result.append('    if (!isEngaged) [[unlikely]]')
+        result.append('        return std::nullopt;')
+        result.append('    if (!*isEngaged)')
+        result.append(f'        return GRefPtr<{type.gref_type}> {{ }};')
     result = result + decode_type(type, serialized_types)
     if type.cf_type is None:
         if not type.members_are_subclasses:

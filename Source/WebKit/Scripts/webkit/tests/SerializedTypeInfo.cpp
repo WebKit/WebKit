@@ -29,6 +29,9 @@
 #if ENABLE(TEST_FEATURE)
 #include "CommonHeader.h"
 #endif
+#if USE(GLIB)
+#include "CoreIPCGFooBar.h"
+#endif
 #include "CustomEncoded.h"
 #if ENABLE(TEST_FEATURE)
 #include "FirstMemberType.h"
@@ -492,6 +495,18 @@ Vector<SerializedTypeInfo> allSerializedTypes()
             },
         } },
 #endif // USE(SKIA)
+#if USE(GLIB)
+        { "GRefPtr<GFooBar>"_s, {
+            {
+                "int"_s,
+                "foo()"_s
+            },
+            {
+                "double"_s,
+                "bar()"_s
+            },
+        } },
+#endif // USE(GLIB)
         { "WebKit::RValueWithFunctionCalls"_s, {
             {
                 "SandboxExtensionHandle"_s,

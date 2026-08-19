@@ -35,6 +35,9 @@
 typedef struct CF_BRIDGED_TYPE(id) __SecTrust *SecTrustRef;
 #endif
 #endif
+#if USE(GLIB)
+#include <wtf/glib/GRefPtr.h>
+#endif
 
 namespace EnumNamespace {
 #if ENABLE(BOOL_ENUM)
@@ -134,6 +137,9 @@ class SkFooBar;
 
 #if USE(CFBAR)
 typedef struct __CFBar * CFBarRef;
+#endif
+#if USE(GLIB)
+typedef struct _GFooBar GFooBar;
 #endif
 namespace IPC { template<typename> class ObjectIdentifierReference; };
 namespace IPC { template<typename> class ObjectIdentifierWriteReference; };
@@ -367,6 +373,13 @@ template<> struct ArgumentCoder<SkFooBar> {
     static void encode(Encoder&, const SkFooBar&);
     static void encode(OtherEncoder&, const SkFooBar&);
     static std::optional<SkFooBar> decode(Decoder&);
+};
+#endif
+
+#if USE(GLIB)
+template<> struct ArgumentCoder<GRefPtr<GFooBar>> {
+    static void encode(Encoder&, const GRefPtr<GFooBar>&);
+    static std::optional<GRefPtr<GFooBar>> decode(Decoder&);
 };
 #endif
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Igalia S.L.
+ * Copyright (C) 2026 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,35 +23,41 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "CoreIPCGVariant.h"
 
-#include "ArgumentCoders.h"
-#include <gio/gio.h>
-#include <wtf/glib/GRefPtr.h>
+#if USE(GLIB)
 
-typedef struct _GTlsCertificate GTlsCertificate;
-typedef struct _GUnixFDList GUnixFDList;
+#include <glib.h>
+#include <wtf/glib/GUniquePtr.h>
 
-namespace IPC {
+namespace WebKit {
 
-template<> struct ArgumentCoder<GRefPtr<GByteArray>> {
-    static void encode(Encoder&, const GRefPtr<GByteArray>&);
-    static std::optional<GRefPtr<GByteArray>> decode(Decoder&);
-};
+CoreIPCGVariant::CoreIPCGVariant(const GRefPtr<GVariant>& variant)
+    : m_typeString(g_variant_get_type_string(variant.get()))
+    , m_data(adoptGRef(g_variant_get_data_as_bytes(variant.get())))
+{
+}
 
-template<> struct ArgumentCoder<GRefPtr<GTlsCertificate>> {
-    static void encode(Encoder&, const GRefPtr<GTlsCertificate>&);
-    static std::optional<GRefPtr<GTlsCertificate>> decode(Decoder&);
-};
+CoreIPCGVariant::CoreIPCGVariant(CString&& typeString, std::span<const uint8_t> data)
+    : m_typeString(WTF::move(typeString))
+    , m_data(adoptGRef(g_bytes_new(data.data(), data.size())))
+{
+}
 
-template<> struct ArgumentCoder<GTlsCertificateFlags> {
-    static void encode(Encoder&, GTlsCertificateFlags);
-    static std::optional<GTlsCertificateFlags> decode(Decoder&);
-};
+std::span<const uint8_t> CoreIPCGVariant::data() const
+{
+    gsize size = 0;
+    const auto* data = static_cast<const uint8_t*>(g_bytes_get_data(m_data.get(), &size));
+    return unsafeMakeSpan(data, size);
+}
 
-template<> struct ArgumentCoder<GRefPtr<GUnixFDList>> {
-    static void encode(Encoder&, const GRefPtr<GUnixFDList>&);
-    static std::optional<GRefPtr<GUnixFDList>> decode(Decoder&);
-};
+CoreIPCGVariant::operator GRefPtr<GVariant>() const
+{
+    GUniquePtr<GVariantType> type(g_variant_type_new(m_typeString.data()));
+    return g_variant_new_from_bytes(type.get(), m_data.get(), FALSE);
+}
 
-} // namespace IPC
+} // namespace WebKit
+
+#endif // USE(GLIB)

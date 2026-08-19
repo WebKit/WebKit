@@ -65,38 +65,6 @@ std::optional<GRefPtr<GByteArray>> ArgumentCoder<GRefPtr<GByteArray>>::decode(De
     return array;
 }
 
-void ArgumentCoder<GRefPtr<GVariant>>::encode(Encoder& encoder, const GRefPtr<GVariant>& variant)
-{
-    if (!variant) {
-        encoder << CString();
-        return;
-    }
-
-    encoder << CString(g_variant_get_type_string(variant.get()));
-    encoder << span(variant);
-}
-
-std::optional<GRefPtr<GVariant>> ArgumentCoder<GRefPtr<GVariant>>::decode(Decoder& decoder)
-{
-    auto variantTypeString = decoder.decode<CString>();
-    if (!variantTypeString) [[unlikely]]
-        return std::nullopt;
-
-    if (variantTypeString->isNull())
-        return GRefPtr<GVariant>();
-
-    if (!g_variant_type_string_is_valid(variantTypeString->data()))
-        return std::nullopt;
-
-    auto data = decoder.decode<std::span<const uint8_t>>();
-    if (!data) [[unlikely]]
-        return std::nullopt;
-
-    GUniquePtr<GVariantType> variantType(g_variant_type_new(variantTypeString->data()));
-    GRefPtr<GBytes> bytes = adoptGRef(g_bytes_new(data->data(), data->size()));
-    return g_variant_new_from_bytes(variantType.get(), bytes.get(), FALSE);
-}
-
 void ArgumentCoder<GRefPtr<GTlsCertificate>>::encode(Encoder& encoder, const GRefPtr<GTlsCertificate>& certificate)
 {
     if (!certificate) {
