@@ -1184,24 +1184,25 @@ static void moduleLoadTopSettled(JSGlobalObject* globalObject, VM& vm, ThrowScop
         // onFetchRejected logic
         const Identifier& specifier = context->moduleRequest().m_specifier;
         auto type = context->moduleRequest().type();
-        ModuleRegistryEntry* entry = globalObject->moduleLoader()->ensureRegistered(globalObject, specifier, type);
-        if (scope.exception()) {
-            intermediatePromise->rejectWithCaughtException(vm, scope);
-            return;
-        }
         JSValue errorValue = arguments[1];
         if (auto* error = dynamicDowncast<ErrorInstance>(errorValue)) {
             auto failure = JSModuleLoader::getErrorInfo(globalObject, error);
-            if (failure.isEvaluationError(specifier, type))
+            // https://html.spec.whatwg.org/multipage/webappapis.html#fetch-a-single-module-script step 13.1
+            // Don't register the module unless it's an evaluation error.
+            if (failure.isEvaluationError(specifier, type)) {
+                ModuleRegistryEntry* entry = globalObject->moduleLoader()->ensureRegistered(globalObject, specifier, type);
+                if (scope.exception()) {
+                    intermediatePromise->rejectWithCaughtException(vm, scope);
+                    return;
+                }
                 entry->setEvaluationError(globalObject, error);
-            else
-                entry->setFetchError(globalObject, error);
+            }
         }
         intermediatePromise->reject(vm, errorValue);
     }
 }
 
-static void moduleLoadTopRejected(JSGlobalObject* globalObject, VM& vm, ThrowScope& scope, std::span<const JSValue, maxMicrotaskArguments> arguments, uint8_t payload)
+static void moduleLoadTopRejected(JSGlobalObject* globalObject, VM& vm, std::span<const JSValue, maxMicrotaskArguments> arguments, uint8_t payload)
 {
     // loadModule first overload: onLoadRejected
     // arguments[0] = pre-created resultPromise
@@ -1215,26 +1216,11 @@ static void moduleLoadTopRejected(JSGlobalObject* globalObject, VM& vm, ThrowSco
     else {
         const Identifier& specifier = context->moduleRequest().m_specifier;
         auto type = context->moduleRequest().type();
-        ModuleRegistryEntry* entry = globalObject->moduleLoader()->ensureRegistered(globalObject, specifier, type);
-        if (scope.exception()) {
-            resultPromise->rejectWithCaughtException(vm, scope);
-            return;
-        }
-        if (JSValue fetchErrorValue = entry->fetchError()) {
-            if (ErrorInstance* fetchError = dynamicDowncast<ErrorInstance>(fetchErrorValue)) {
-                ErrorInstance* fetchErrorCopy = JSModuleLoader::maybeDuplicateFetchError(globalObject, fetchError);
-                if (scope.exception()) {
-                    resultPromise->rejectWithCaughtException(vm, scope);
-                    return;
-                }
-                resultPromise->reject(vm, fetchErrorCopy);
-            } else
-                resultPromise->reject(vm, fetchErrorValue);
-            return;
-        }
-        JSValue error = arguments[1];
-        entry->setEvaluationError(globalObject, error);
-        resultPromise->reject(vm, error);
+        // https://html.spec.whatwg.org/multipage/webappapis.html#fetch-a-single-module-script step 13.1
+        // Only set an error if the entry already exists.
+        if (ModuleRegistryEntry* entry = globalObject->moduleLoader()->getRegisteredMayBeNull(specifier, type))
+            entry->setEvaluationError(globalObject, arguments[1]);
+        resultPromise->reject(vm, arguments[1]);
     }
 }
 
@@ -1373,7 +1359,7 @@ static void moduleLoadReturnRecord(JSGlobalObject*, VM& vm, ThrowScope& scope, s
         resultPromise->reject(vm, arguments[1]);
 }
 
-static void moduleLoadStoreError(JSGlobalObject* globalObject, ThrowScope& scope, std::span<const JSValue, maxMicrotaskArguments> arguments, uint8_t payload)
+static void moduleLoadStoreError(JSGlobalObject* globalObject, std::span<const JSValue, maxMicrotaskArguments> arguments, uint8_t payload)
 {
     // loadModule second overload: fire-and-forget error categorization
     // arguments[0] = unused
@@ -1385,8 +1371,11 @@ static void moduleLoadStoreError(JSGlobalObject* globalObject, ThrowScope& scope
         JSValue errorValue = arguments[1];
         const Identifier& specifier = context->moduleRequest().m_specifier;
         auto type = context->moduleRequest().type();
-        ModuleRegistryEntry* entry = globalObject->moduleLoader()->ensureRegistered(globalObject, specifier, type);
-        RETURN_IF_EXCEPTION(scope, void());
+        // https://html.spec.whatwg.org/multipage/webappapis.html#fetch-a-single-module-script step 13.1
+        // Only set an error if the entry already exists.
+        ModuleRegistryEntry* entry = globalObject->moduleLoader()->getRegisteredMayBeNull(specifier, type);
+        if (!entry)
+            return;
         if (auto* error = dynamicDowncast<ErrorInstance>(errorValue)) {
             auto failure = JSModuleLoader::getErrorInfo(globalObject, error);
             if (failure.isEvaluationError(specifier, type))
@@ -2017,7 +2006,7 @@ void runInternalMicrotask(JSGlobalObject* globalObject, VM& vm, InternalMicrotas
     }
 
     case InternalMicrotask::ModuleLoadTopRejected: {
-        moduleLoadTopRejected(globalObject, vm, scope, arguments, payload);
+        moduleLoadTopRejected(globalObject, vm, arguments, payload);
         return;
     }
 
@@ -2062,7 +2051,7 @@ void runInternalMicrotask(JSGlobalObject* globalObject, VM& vm, InternalMicrotas
     }
 
     case InternalMicrotask::ModuleLoadStoreError: {
-        moduleLoadStoreError(globalObject, scope, arguments, payload);
+        moduleLoadStoreError(globalObject, arguments, payload);
         return;
     }
 

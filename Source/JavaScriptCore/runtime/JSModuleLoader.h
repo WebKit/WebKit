@@ -174,11 +174,14 @@ public:
 
     ModuleRegistryEntry* ensureRegistered(JSGlobalObject*, const Identifier& key, ScriptFetchParameters::Type);
 
+    // https://html.spec.whatwg.org/multipage/webappapis.html#fetch-a-single-module-script step 13.1.2.
+    void removeFailedFetchEntry(ModuleRegistryEntry*);
+
+    ModuleRegistryEntry* getRegisteredMayBeNull(const Identifier& key, ScriptFetchParameters::Type);
+
 private:
     JSModuleLoader(VM&, Structure*);
     void finishCreation(JSGlobalObject*, VM&);
-
-    ModuleRegistryEntry* getRegisteredMayBeNull(const Identifier& key, ScriptFetchParameters::Type);
 
     void addResolutionFailure(VM&, const ResolutionMapKey&, JSValue error);
 
