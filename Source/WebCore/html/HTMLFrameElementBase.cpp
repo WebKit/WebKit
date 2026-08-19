@@ -56,7 +56,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(HTMLFrameElementBase);
 using namespace HTMLNames;
 
 HTMLFrameElementBase::HTMLFrameElementBase(const QualifiedName& tagName, Document& document)
-    : HTMLFrameOwnerElement(tagName, document, TypeFlag::HasCustomStyleResolveCallbacks)
+    : HTMLFrameOwnerElement(tagName, document)
 {
 }
 
@@ -196,6 +196,7 @@ void HTMLFrameElementBase::didAttachRenderers()
         if (RefPtr frame = contentFrame())
             part->setWidget(frame->virtualView());
     }
+    HTMLFrameOwnerElement::didAttachRenderers();
 }
 
 void HTMLFrameElementBase::setLocation(const String& str)

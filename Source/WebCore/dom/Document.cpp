@@ -3008,6 +3008,12 @@ bool Document::updateStyleIfNeeded()
         if (!frameView || frameView->layoutContext().isInRenderTreeLayout())
             return false;
 
+        // Whether this document gets a render tree at all depends on its owner element having a
+        // renderer, so the owner documents have to resolve first. updateLayout() walks them the same
+        // way. Each one bails on its own guards above, so an owner mid-layout is left alone.
+        if (RefPtr owner = ownerElement())
+            protect(owner->document())->updateStyleIfNeeded();
+
         styleScope().flushPendingUpdate();
 
         if (!needsStyleRecalc())

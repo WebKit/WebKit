@@ -105,7 +105,7 @@ using namespace HTMLNames;
 constexpr auto HTMLPlugInElement::pluginElementTypeFlags() -> OptionSet<TypeFlag>
 {
     using enum TypeFlag;
-    return { HasCustomStyleResolveCallbacks, HasDidMoveToNewDocument };
+    return { HasDidMoveToNewDocument };
 }
 
 HTMLPlugInElement::HTMLPlugInElement(const QualifiedName& tagName, Document& document, OptionSet<TypeFlag> typeFlags)

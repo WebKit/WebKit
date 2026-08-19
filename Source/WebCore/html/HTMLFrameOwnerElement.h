@@ -74,6 +74,8 @@ protected:
     bool isProhibitedSelfReference(const URL&) const;
     bool isKeyboardFocusable(const FocusEventData&) const override;
 
+    void didAttachRenderers() override;
+
 private:
     bool isHTMLFrameOwnerElement() const final { return true; }
 

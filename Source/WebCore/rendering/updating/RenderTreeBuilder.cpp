@@ -30,6 +30,7 @@
 #include "AXObjectCache.h"
 #include "DocumentView.h"
 #include "FrameSelection.h"
+#include "HTMLFrameOwnerElement.h"
 #include "HTMLMarqueeElement.h"
 #include "LayoutIntegrationLineLayout.h"
 #include "LegacyRenderSVGContainer.h"
@@ -194,6 +195,11 @@ RenderTreeBuilder::RenderTreeBuilder(RenderView& view)
 RenderTreeBuilder::~RenderTreeBuilder()
 {
     s_current = m_previous;
+}
+
+void RenderTreeBuilder::addFrameWithDetachedRenderer(HTMLFrameOwnerElement& frameOwner)
+{
+    m_framesWithDetachedRenderers.add(frameOwner);
 }
 
 bool RenderTreeBuilder::isRebuildRootForChildren(const RenderElement& renderer)

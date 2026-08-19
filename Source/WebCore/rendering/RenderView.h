@@ -56,6 +56,8 @@ public:
 
     bool isChildAllowed(const RenderObject&, const Style::ComputedStyle&) const override;
 
+    bool ownerFrameIsRendered() const;
+
     void layout() override;
     void updateLogicalWidth() override;
     LogicalExtentComputedValues computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop) const override;
