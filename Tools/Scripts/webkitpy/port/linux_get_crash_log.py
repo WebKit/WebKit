@@ -29,6 +29,7 @@
 
 import datetime
 import fcntl
+import hashlib
 import json
 import logging
 import os
@@ -36,6 +37,7 @@ import re
 import resource
 import requests
 import shutil
+import signal
 import subprocess
 import sys
 import tempfile
@@ -57,7 +59,7 @@ if sys.version_info < (3, 11):
 else:
     from enum import StrEnum
 
-from webkitcorepy import string_utils
+from webkitcorepy import TaskPool, string_utils
 from webkitpy.common.memoized import memoized
 from webkitpy.common.system.executive import ScriptError
 from webkitpy.common.webkit_finder import WebKitFinder
@@ -163,6 +165,7 @@ class LockFile:
 
 
 CORE_PATTERN_RECOMMEND_COMMAND = "echo /var/tmp/core-%f-pid_%p.dump | sudo tee /proc/sys/kernel/core_pattern"
+GDB_EXECUTION_TIMEOUT_DEFAULT_SECONDS = 30 * 60
 
 
 class CoreDumpMethod(StrEnum):
@@ -176,6 +179,7 @@ class CrashLogEnvVars(StrEnum):
     allow_unreliable_fallback_to_latest_coredump = 'WEBKIT_CRASHLOG_ALLOW_UNRELIABLE_FALLBACK_TO_LATEST_COREDUMP'
     core_dumps_autodelete = 'WEBKIT_CORE_DUMPS_AUTODELETE'
     gdb_concurrent_execution_limit = 'WEBKIT_CRASHLOG_GDB_CONCURRENT_EXECUTION_LIMIT'
+    gdb_execution_timeout = 'WEBKIT_CRASHLOG_GDB_EXECUTION_TIMEOUT'
 
 
 class CrashLogUtils:
@@ -196,18 +200,34 @@ class CrashLogUtils:
         return 0
 
     @staticmethod
+    def get_gdb_execution_timeout():
+        configured_timeout = os.environ.get(CrashLogEnvVars.gdb_execution_timeout, str(GDB_EXECUTION_TIMEOUT_DEFAULT_SECONDS))
+        try:
+            timeout = int(configured_timeout)
+            if timeout > 0:
+                return timeout
+        except ValueError:
+            pass
+        _log.warning(f"Invalid value: {CrashLogEnvVars.gdb_execution_timeout}={configured_timeout}. Using the default of {GDB_EXECUTION_TIMEOUT_DEFAULT_SECONDS} seconds.")
+        return GDB_EXECUTION_TIMEOUT_DEFAULT_SECONDS
+
+    @staticmethod
+    def is_taskpool_worker_terminating():
+        return TaskPool.Process.name is not None and not TaskPool.Process.working
+
+    @staticmethod
     @memoized
     def _get_gdb_lock_configuration():
         max_concurrent_gdb_processes = CrashLogUtils.get_gdb_concurrent_execution_limit()
         if max_concurrent_gdb_processes:
-            for base in ('/run/lock', os.environ.get('XDG_RUNTIME_DIR'), tempfile.gettempdir(), '/tmp', '/var/tmp'):
-                if not base:
+            for lock_directory_parent in ('/run/lock', os.environ.get('XDG_RUNTIME_DIR'), tempfile.gettempdir(), '/tmp', '/var/tmp'):
+                if not lock_directory_parent:
                     continue
-                lock_base_dir = os.path.join(base, f'webkit-crashlog-{os.getuid()}')
+                lock_directory = CrashLogUtils.get_crashlog_temp_dir(lock_directory_parent)
                 try:
-                    os.makedirs(lock_base_dir, exist_ok=True)
-                    if os.path.isdir(lock_base_dir) and os.access(lock_base_dir, os.W_OK | os.X_OK):
-                        return os.path.join(lock_base_dir, 'gdb-serial-execution.lock'), max_concurrent_gdb_processes
+                    os.makedirs(lock_directory, exist_ok=True)
+                    if os.path.isdir(lock_directory) and os.access(lock_directory, os.W_OK | os.X_OK):
+                        return os.path.join(lock_directory, 'gdb-serial-execution.lock'), max_concurrent_gdb_processes
                 except OSError:
                     continue
             _log.warning("No writable directory found for the gdb lock. GDB processes will not be serialized.")
@@ -228,8 +248,16 @@ class CrashLogUtils:
 
     @staticmethod
     @memoized
+    def get_crashlog_temp_dir(parent_dir=None):
+        return os.path.join(parent_dir or tempfile.gettempdir(), f'webkit-crashlog-{os.getuid()}')
+
+    @staticmethod
     def get_thread_data_dir():
-        return os.path.join(tempfile.gettempdir(), f'webkit-crashlog-thread-name-data-{os.getuid()}')
+        return os.path.join(CrashLogUtils.get_crashlog_temp_dir(), 'thread-name-data')
+
+    @staticmethod
+    def get_debuginfod_cache_dir():
+        return os.path.join(CrashLogUtils.get_crashlog_temp_dir(), 'debuginfod-cache')
 
     @staticmethod
     @memoized
@@ -441,6 +469,278 @@ class CrashLogUtils:
         return '(?P<pid>' in pid_regex
 
 
+# This class runs any long-lived process and ensures that such process
+# is not allowed to run for more time than $timeout seconds, and also
+# ensures that when the TaskPool that manages this worker signals that
+# this worker should end (SIGINT, SIGTERM) then the process executed by
+# this class is terminated and control is returned to the caller/worker.
+class TaskPooledProcessRunner(object):
+    PROCESS_TERMINATION_GRACE_PERIOD_SECONDS = 60
+    PROCESS_CLEANUP_TIMEOUT_SECONDS = 10
+    PROCESS_COMMUNICATE_POLL_INTERVAL_SECONDS = 1
+    PROCESS_STATUS_LINE_INTERVAL_SECONDS = 60
+
+    def __init__(self, executive, command, environment, timeout, target_is_child=False):
+        self._executive = executive
+        self._command = command
+        self._environment = environment
+        self._timeout = timeout
+        self._target_is_child = target_is_child
+        self._proc = None
+
+    def _communicate(self, timeout):
+        # Wake periodically to notice when TaskPool requests worker shutdown.
+        now = time.monotonic()
+        deadline = now + timeout
+        next_status_line = now + self.PROCESS_STATUS_LINE_INTERVAL_SECONDS
+        while not CrashLogUtils.is_taskpool_worker_terminating():
+            remaining = deadline - time.monotonic()
+            try:
+                return self._proc.communicate(timeout=min(
+                    max(0, remaining), self.PROCESS_COMMUNICATE_POLL_INTERVAL_SECONDS))
+            except subprocess.TimeoutExpired:
+                now = time.monotonic()
+                if now >= deadline:
+                    raise
+                if now >= next_status_line:
+                    tproc_pid, tproc_name = self._get_target_pid_and_name()
+                    _log.debug(f'Process "{tproc_name}" running (pid {tproc_pid}), {int(remaining)} seconds remain until timeout deadline.')
+                    next_status_line = now + self.PROCESS_STATUS_LINE_INTERVAL_SECONDS
+        self._terminate_after_interruption()
+        return b'', b''
+
+    def _signal_process_group(self, sig):
+        # nice and time may wrap the target. The process starts a new session,
+        # so its pid is also the process group id for every wrapper.
+        try:
+            os.killpg(self._proc.pid, sig)
+        except ProcessLookupError:
+            pass
+        except OSError as e:
+            _log.warning(f'Failed to send signal {sig} to process group {self._proc.pid}: {e}')
+            try:
+                self._proc.send_signal(sig)
+            except OSError:
+                pass
+
+    def _get_target_pid_and_name(self):
+        try:
+            pid = self._proc.pid
+            if self._target_is_child:
+                pid = self._get_child_pids()[0]
+        except (AttributeError, IndexError):
+            pid = None
+        name = None
+        if pid:
+            comm_path = f'/proc/{pid}/comm'
+            try:
+                with open(comm_path, 'r') as f:
+                    name = f.read().strip()
+            except OSError:
+                name = None
+        return pid, name
+
+    def _get_child_pids(self):
+        try:
+            pid = self._proc.pid
+            with open(f'/proc/{pid}/task/{pid}/children', 'r') as children_file:
+                return [int(child_pid) for child_pid in children_file.read().split()]
+        except FileNotFoundError:
+            return []
+        except (AttributeError, OSError, ValueError) as e:
+            _log.warning(f'Unable to find child processes of pid {pid}: {e}')
+            return []
+
+    def _signal_target(self, sig):
+        if not self._target_is_child:
+            try:
+                self._proc.send_signal(sig)
+            except ProcessLookupError:
+                pass
+            except OSError as e:
+                _log.warning(f'Failed to send signal {sig} to process {self._proc.pid}: {e}')
+            return
+
+        # GNU time remains the process-group leader while it waits for the target,
+        # so first signal SIGTERM/SIGKILL to the children without terminating time.
+        for child_pid in self._get_child_pids():
+            try:
+                os.kill(child_pid, sig)
+            except ProcessLookupError:
+                pass
+            except OSError as e:
+                _log.warning(f'Failed to send signal {sig} to process {child_pid}: {e}')
+
+    def _force_kill_and_reap(self):
+        self._signal_process_group(signal.SIGKILL)
+        # An unkillable or escaped descendant could retain one of these pipes.
+        for pipe in (self._proc.stdout, self._proc.stderr):
+            if pipe:
+                try:
+                    pipe.close()
+                except OSError:
+                    pass
+        try:
+            self._proc.wait(timeout=self.PROCESS_CLEANUP_TIMEOUT_SECONDS)
+        except subprocess.TimeoutExpired:
+            _log.warning(f'Process {self._proc.pid} did not exit after being killed; continuing without waiting for it.')
+        except OSError as e:
+            _log.warning(f'Unable to reap process {self._proc.pid} after killing it: {e}')
+
+    def _terminate_after_interruption(self):
+        self._signal_target(signal.SIGTERM)
+        try:
+            self._proc.communicate(timeout=self.PROCESS_CLEANUP_TIMEOUT_SECONDS)
+        except BaseException:
+            # Cleanup must not replace the exception which interrupted the process.
+            self._force_kill_and_reap()
+
+    def run(self):
+        try:
+            if CrashLogUtils.is_taskpool_worker_terminating():
+                return b'', b'', None, False
+            self._proc = self._executive.popen(
+                self._command, stdin=None, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                env=self._environment, start_new_session=True)
+            try:
+                stdout, stderr = self._communicate(self._timeout)
+                return stdout, stderr, self._proc.returncode, False
+            except subprocess.TimeoutExpired as e:
+                stdout, stderr = e.output or b'', e.stderr or b''
+
+            self._signal_target(signal.SIGTERM)
+            try:
+                stdout, stderr = self._communicate(self.PROCESS_TERMINATION_GRACE_PERIOD_SECONDS)
+                return stdout, stderr, self._proc.returncode, True
+            except subprocess.TimeoutExpired as e:
+                stdout, stderr = e.output or stdout, e.stderr or stderr
+
+            # SIGTERM has been ignored by the target process, so send SIGKILL to the target
+            # first: that should let the wrapper (time) end properly and write its report.
+            self._signal_target(signal.SIGKILL)
+            try:
+                stdout, stderr = self._communicate(self.PROCESS_CLEANUP_TIMEOUT_SECONDS)
+                return stdout, stderr, self._proc.returncode, True
+            except subprocess.TimeoutExpired as e:
+                stdout, stderr = e.output or stdout, e.stderr or stderr
+            # Last resort: kill everything inside the process group
+            self._force_kill_and_reap()
+            return stdout, stderr, self._proc.returncode, True
+        except BaseException:
+            if self._proc:
+                self._terminate_after_interruption()
+            raise
+
+
+# GDB can wait indefinitely when a server in DEBUGINFOD_URLS stops answering. Check the configured
+# servers immediately before GDB starts, but share results younger than five minutes between
+# layout-test workers because each network check can take several seconds.
+class DebuginfodServerCache(object):
+    MAX_AGE_SECONDS = 5 * 60
+    REQUEST_TIMEOUT_SECONDS = 5
+    CACHE_FILENAME_PREFIX = 'availability-'
+    CACHE_FILENAME_SUFFIX = '.json'
+
+    @classmethod
+    def _cache_path(cls, servers):
+        server_list_hash = hashlib.md5('\0'.join(servers).encode('utf-8')).hexdigest()
+        return os.path.join(CrashLogUtils.get_debuginfod_cache_dir(),
+                            f'{cls.CACHE_FILENAME_PREFIX}{server_list_hash}{cls.CACHE_FILENAME_SUFFIX}')
+
+    @classmethod
+    def _is_server_available(cls, url):
+        try:
+            response = requests.get(url.rstrip('/') + '/metrics', timeout=cls.REQUEST_TIMEOUT_SECONDS)
+        except requests.RequestException:
+            return False
+        if response.status_code != 200:
+            return False
+        required_markers = ('thread_busy', 'http_requests_total', 'groom', 'debuginfo')
+        return all(marker in response.text for marker in required_markers)
+
+    @classmethod
+    def _probe(cls, servers):
+        working_servers = []
+        for server in servers:
+            if server.startswith('file://'):
+                working_servers.append(server)
+            elif server.startswith(('http://', 'https://')):
+                if cls._is_server_available(server):
+                    working_servers.append(server)
+                else:
+                    _log.warning(f'Disabling debuginfod server {server} which seems offline.')
+            else:
+                _log.warning(f'Disabling debuginfod server {server}: do not know how to handle it. Only http/https/file URIs are supported.')
+        return working_servers
+
+    @classmethod
+    def _read(cls, cache_path, servers):
+        try:
+            with open(cache_path, 'r') as cache_file:
+                working_servers = json.load(cache_file)
+                checked_at = os.fstat(cache_file.fileno()).st_mtime
+            if (not isinstance(working_servers, list)
+                    or not all(isinstance(server, str) and server in servers for server in working_servers)):
+                raise ValueError('unexpected server list')
+        except FileNotFoundError:
+            return None
+        except ValueError as e:
+            _log.warning(f'Ignoring invalid debuginfod availability cache at {cache_path}: {e}')
+            return None
+        age = time.time() - checked_at
+        if not 0 <= age < cls.MAX_AGE_SECONDS:
+            return None
+        _log.debug(f'Reusing debuginfod server availability checked {age:.0f} seconds ago.')
+        return working_servers
+
+    @classmethod
+    def _write(cls, cache_path, working_servers):
+        temporary_path = cache_path + '.tmp'
+        try:
+            with open(temporary_path, 'w') as cache_file:
+                json.dump(working_servers, cache_file)
+            os.replace(temporary_path, cache_path)
+        finally:
+            try:
+                os.remove(temporary_path)
+            except OSError:
+                pass
+
+    @classmethod
+    def _get_working_servers(cls, servers):
+        if not servers:
+            return []
+        cache_path = cls._cache_path(servers)
+        try:
+            os.makedirs(os.path.dirname(cache_path), mode=0o700, exist_ok=True)
+            with LockFile(cache_path + '.lock', log_wait_each_seconds=60):
+                cached_result = cls._read(cache_path, servers)
+                if cached_result is not None:
+                    return cached_result
+                working_servers = cls._probe(servers)
+                try:
+                    cls._write(cache_path, working_servers)
+                except OSError as e:
+                    _log.warning(f'Unable to update the debuginfod availability cache: {e}')
+                return working_servers
+        except OSError as e:
+            # Cache and lock failures must not abort crash-log generation. An
+            # uncached probe is slower but still protects GDB from dead servers.
+            _log.warning(f'Unable to use the debuginfod availability cache: {e}')
+            return cls._probe(servers)
+
+    @classmethod
+    def environment_for_gdb(cls):
+        environment = os.environ.copy()
+        servers = sorted(set(environment.get('DEBUGINFOD_URLS', '').split()))
+        working_servers = cls._get_working_servers(servers)
+        if working_servers:
+            environment['DEBUGINFOD_URLS'] = ' '.join(working_servers)
+        else:
+            environment.pop('DEBUGINFOD_URLS', None)
+        return environment
+
+
 # This runs inside a thread that watches (with inotify) the directory where the coredumps are generated
 # And saves the names of the threads of the crashing pid as soon as the coredump is started to be generated,
 # this info is later added into the generated crash log report. Even when it is naturally racy it works
@@ -570,18 +870,19 @@ class ThreadNamesCrashLogCapturer(object):
                     f.write(f'# Program name: {program_name}\n')
                     f.write('\n')
                     f.write(f'{"LWP/TID":<12} {"Thread Name"}\n')
-                    f.write(f'{"-"*12} {"-"*20}\n')
+                    f.write(f'{"-" * 12} {"-" * 20}\n')
                     for tid, name in sorted(thread_info.items(), key=lambda x: int(x[0])):
                         f.write(f'{tid:<12} {name}\n')
         except OSError as e:
             _log.error(f'Failed to write {output_path}: {e}')
 
 
-# This runs only once when the test suite start, it optionally cleans old cores and old thread-info files,
-# and then starts the thread for generating the thread-info files
+# This runs only once when the test suite starts. It cleans old debuginfod caches, optionally cleans
+# old cores and thread-info files, and starts the thread for generating thread-info files.
 class GDBCrashLogStartupHandler(object):
     def __init__(self):
         self._coredump_method, self._coredump_pattern, self._coredump_directory, self._coredump_directory_has_variable_format_specifiers = CrashLogUtils.determine_coredump_method_and_dir()
+        self.clean_old_debuginfod_server_caches()
         if os.environ.get(CrashLogEnvVars.core_dumps_autodelete, '0') == '1':
             # Even when we try to clean the coredumps as soon as those are processed sometimes there are uncleaned coredumps (usually caused by crashes not detected by this tooling),
             # so this opt-in helps to clean those anyway at startup time (used on the bots).
@@ -599,17 +900,14 @@ class GDBCrashLogStartupHandler(object):
             _log.warning("Running inside a pid namespace different than the host. This causes non-reliable crash detection. Please disable the pid namespace or switch to using an abspath for kernel.core_pattern.")
         elif self._coredump_method == CoreDumpMethod.Unknown:
             _log.error("Directory for coredumps not defined. Please use coredumpctl or define an abspath at kernel.core_pattern")
-        # Check if the debuginfod server is available to avoid hangs when generating the backtraces if the server is not responding
-        self._check_debuginfod_servers()
         # Start the thread-info capturer
         ThreadNamesCrashLogCapturer()
 
-    def _maybe_remove_file_if_old(self, path):
-        # Define old as "more than 30 minutes"
+    def _maybe_remove_file_if_old(self, path, max_age_seconds=30 * 60):
         mtime = CrashLogUtils.safe_getmtime(path)
         if mtime is None:
             return  # already gone (another worker cleaned it)
-        is_old = (time.time() - mtime) > 1800
+        is_old = (time.time() - mtime) > max_age_seconds
         if is_old:
             _log.debug(f'Cleaning old file at: {path}')
             try:
@@ -618,40 +916,6 @@ class GDBCrashLogStartupHandler(object):
                 pass  # likely another worker already removed it
         else:
             _log.debug(f'Skipping non-old file at: {path}')
-
-    def _is_debuginfod_server_available(self, url, timeout=5):
-        try:
-            r = requests.get(url.rstrip("/") + "/metrics", timeout=timeout)
-        except requests.RequestException:
-            return False
-
-        if r.status_code != 200:
-            return False
-
-        required_markers = ('thread_busy', 'http_requests_total', 'groom', 'debuginfo')
-        return all(marker in r.text for marker in required_markers)
-
-    def _check_debuginfod_servers(self):
-        if 'DEBUGINFOD_URLS' in os.environ:
-            working_debuginfod_servers = []
-            debuginfo_servers = os.environ.get('DEBUGINFOD_URLS').split()
-            if not debuginfo_servers:
-                return
-            for server in debuginfo_servers:
-                if server.startswith('file://'):
-                    working_debuginfod_servers.append(server)
-                elif server.startswith('http://') or server.startswith('https://'):
-                    if self._is_debuginfod_server_available(server):
-                        working_debuginfod_servers.append(server)
-                    else:
-                        _log.warning(f'Disabling debuginfod server {server} which seems offline.')
-                else:
-                    _log.warning(f'Disabling debuginfod server {server}: do not know how to handle it. Only http/https/file URIs are supported.')
-            if working_debuginfod_servers:
-                os.environ['DEBUGINFOD_URLS'] = ' '.join(working_debuginfod_servers)
-            else:
-                del os.environ['DEBUGINFOD_URLS']
-            _log.debug(f'Environment variable DEBUGINFOD_URLS updated to "{os.environ.get("DEBUGINFOD_URLS", "")}"')
 
     def clean_old_coredumps(self):
         candidate_coredumps = [os.path.join(self._coredump_directory, f) for f in os.listdir(self._coredump_directory) if os.path.isfile(os.path.join(self._coredump_directory, f))]
@@ -669,6 +933,21 @@ class GDBCrashLogStartupHandler(object):
                 path = os.path.join(webkit_thread_info_crashlog_dir, name)
                 if os.path.isfile(path) and name.startswith(prefix) and name.endswith(suffix):
                     self._maybe_remove_file_if_old(path)
+
+    def clean_old_debuginfod_server_caches(self):
+        cache_dir = CrashLogUtils.get_debuginfod_cache_dir()
+        if not os.path.isdir(cache_dir):
+            return
+        try:
+            cache_entries = os.listdir(cache_dir)
+        except OSError as e:
+            _log.warning(f'Unable to clean old debuginfod availability caches: {e}')
+            return
+        for name in cache_entries:
+            is_cache_entry = name.startswith(DebuginfodServerCache.CACHE_FILENAME_PREFIX) and name.endswith((DebuginfodServerCache.CACHE_FILENAME_SUFFIX, DebuginfodServerCache.CACHE_FILENAME_SUFFIX + '.tmp'))
+            path = os.path.join(cache_dir, name)
+            if os.path.isfile(path) and is_cache_entry:
+                self._maybe_remove_file_if_old(path, DebuginfodServerCache.MAX_AGE_SECONDS)
 
 
 class GDBCrashLogGenerator(object):
@@ -700,33 +979,62 @@ class GDBCrashLogGenerator(object):
         # than other tester process to help avoiding timeouts. But this can starve the system RAM.
         # On the CI is recommended to set a limit.
         gdb_cmd_wrapper = [] if CrashLogUtils.get_gdb_concurrent_execution_limit() else ['nice']
-        time_output_tmp = None
+        time_output_path = None
         time_output_content = ""
-        if shutil.which('time'):
-            time_output_tmp = CrashLogUtils.make_temp_path(suffix='.log')
-            gdb_cmd_wrapper += ['time', '-v', f'--output={time_output_tmp}']
-        gdb_cmd = ['gdb', '-iex', 'set debuginfod enabled on',
-                   '-ex', 'thread apply all -ascending bt full 1024', '--batch', process_name, coredump_path]
-        with CrashLogUtils.get_gdb_lock():
-            _log.debug(f'Starting GDB process to generate a backtrace for {process_name} (pid {self._effective_coredump_pid})')
-            proc = self._executive.popen(gdb_cmd_wrapper + gdb_cmd, stdin=None, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-            stdout, stderr = proc.communicate()
-        if proc.returncode != 0:
-            stdout = (b'ERROR: The gdb process exited with non-zero return code %s\n\n' % str(proc.returncode).encode('utf8', 'ignore')) + stdout
-        # Read time stats
-        if time_output_tmp and os.path.isfile(time_output_tmp):
-            with open(time_output_tmp, 'r') as f:
-                lines = []
-                for line in f:
-                    line = line.strip()
-                    # Skip lines with zero values: most rusage fields (average sizes, swaps, I/O, signals) are always zero on Linux
-                    # because the kernel never implemented them -- they exist only for compatibility with BSD. See getrusage(2).
-                    if line.endswith(': 0') and 'Exit status' not in line:
-                        continue
-                    lines.append(line)
-                time_output_content = '\n'.join(lines)
-            os.remove(time_output_tmp)
-        return (stdout.decode('utf8', 'ignore'), stderr.decode('utf8', 'ignore'), time_output_content)
+        try:
+            gdb_cmd = ['gdb', '-iex', 'set debuginfod enabled on',
+                       '-ex', 'thread apply all -ascending bt full 1024', '--batch', process_name, coredump_path]
+            gdb_timeout = CrashLogUtils.get_gdb_execution_timeout()
+
+            with CrashLogUtils.get_gdb_lock():
+                if CrashLogUtils.is_taskpool_worker_terminating():
+                    _log.warning(f'GDB not started because taskpool requested worker termination while preparing to generate a backtrace for {process_name} (pid {self._effective_coredump_pid}).')
+                    return '', '', ''
+                # Do this after waiting for a GDB slot, so a long queue cannot make
+                # an otherwise fresh availability check stale before GDB starts.
+                gdb_environment = DebuginfodServerCache.environment_for_gdb()
+                if shutil.which('time'):
+                    try:
+                        crashlog_temp_dir = CrashLogUtils.get_crashlog_temp_dir()
+                        os.makedirs(crashlog_temp_dir, exist_ok=True)
+                        time_output_path = CrashLogUtils.make_temp_path(dir=crashlog_temp_dir, prefix='gdb-time-', suffix='.log')
+                        gdb_cmd_wrapper += ['time', '-v', f'--output={time_output_path}']
+                    except OSError as e:
+                        _log.warning(f'Unable to create GDB timing output file: {e}. Continuing without timing statistics.')
+                _log.debug(f'Starting GDB process to generate a backtrace for {process_name} (pid {self._effective_coredump_pid}) with an execution timeout of {gdb_timeout} seconds')
+                stdout, stderr, returncode, timed_out = TaskPooledProcessRunner(self._executive, gdb_cmd_wrapper + gdb_cmd, gdb_environment, gdb_timeout, target_is_child=bool(time_output_path)).run()
+                if CrashLogUtils.is_taskpool_worker_terminating():
+                    _log.warning(f'GDB was terminated because taskpool requested worker termination while generating a backtrace for {process_name} (pid {self._effective_coredump_pid}).')
+                    return '', '', ''
+            if timed_out:
+                _log.error(f'GDB was terminated after exceeding its {gdb_timeout}-second timeout while generating a backtrace for {process_name} (pid {self._effective_coredump_pid}).')
+                timeout_message = f'ERROR: GDB was terminated because it did not finish within {gdb_timeout} seconds.\n' + \
+                                  f'       It was sent SIGTERM and given up to {TaskPooledProcessRunner.PROCESS_TERMINATION_GRACE_PERIOD_SECONDS} seconds to exit before SIGKILL escalation.\n' + \
+                                  '       Any backtrace below is incomplete.\n' + \
+                                  f'       DEBUGINFOD_URLS used: "{gdb_environment.get("DEBUGINFOD_URLS", "")}"\n' + \
+                                  f'       The timeout can be changed with {CrashLogEnvVars.gdb_execution_timeout}.\n\n'
+                stdout = timeout_message.encode('utf8') + stdout
+            elif returncode != 0:
+                stdout = (b'ERROR: The gdb process exited with non-zero return code %s\n\n' % str(returncode).encode('utf8', 'ignore')) + stdout
+            # Read time stats
+            if time_output_path and os.path.isfile(time_output_path):
+                with open(time_output_path, 'r') as f:
+                    lines = []
+                    for line in f:
+                        line = line.strip()
+                        # Skip lines with zero values: most rusage fields (average sizes, swaps, I/O, signals) are always zero on Linux
+                        # because the kernel never implemented them -- they exist only for compatibility with BSD. See getrusage(2).
+                        if line.endswith(': 0') and 'Exit status' not in line:
+                            continue
+                        lines.append(line)
+                    time_output_content = '\n'.join(lines)
+            return (stdout.decode('utf8', 'ignore'), stderr.decode('utf8', 'ignore'), time_output_content)
+        finally:
+            if time_output_path:
+                try:
+                    os.remove(time_output_path)
+                except OSError:
+                    pass
 
     def _coredump_pattern_has_pid_format_string(self):
         return CrashLogUtils.core_pattern_has_pid_format_string(self._coredump_pattern)

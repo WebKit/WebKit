@@ -29,21 +29,27 @@
 
 import builtins
 import collections
+import contextlib
 import io
 import os
 import json
 import re
+import requests
 import shutil
+import signal
+import subprocess
 import resource
+import sys
 import tempfile
 import threading
 import time
 import unittest
 from unittest import mock
 
+from webkitcorepy import TaskPool
 from webkitpy.common.system.executive_mock import MockExecutive
 from webkitpy.common.system.filesystem_mock import MockFileSystem
-from webkitpy.port.linux_get_crash_log import CoreDumpMethod, CrashLogEnvVars, CrashLogUtils, GDBCrashLogGenerator, GDBCrashLogStartupHandler, LockFile, ThreadNamesCrashLogCapturer
+from webkitpy.port.linux_get_crash_log import GDB_EXECUTION_TIMEOUT_DEFAULT_SECONDS, CoreDumpMethod, CrashLogEnvVars, CrashLogUtils, DebuginfodServerCache, GDBCrashLogGenerator, GDBCrashLogStartupHandler, LockFile, TaskPooledProcessRunner, ThreadNamesCrashLogCapturer
 
 
 # GDBCrashLogGenerator with determine_coredump_method_and_dir patched
@@ -190,6 +196,17 @@ class MakeTempPathTest(unittest.TestCase):
         self.addCleanup(os.unlink, p1)
         self.addCleanup(os.unlink, p2)
         self.assertNotEqual(p1, p2)
+
+
+class CrashLogTemporaryDirectoriesTest(unittest.TestCase):
+
+    def test_thread_and_debuginfod_directories_share_crashlog_root(self):
+        root = CrashLogUtils.get_crashlog_temp_dir()
+
+        self.assertEqual(root, os.path.join(tempfile.gettempdir(), f'webkit-crashlog-{os.getuid()}'))
+        self.assertEqual(CrashLogUtils.get_crashlog_temp_dir('/parent'), os.path.join('/parent', os.path.basename(root)))
+        self.assertEqual(CrashLogUtils.get_thread_data_dir(), os.path.join(root, 'thread-name-data'))
+        self.assertEqual(CrashLogUtils.get_debuginfod_cache_dir(), os.path.join(root, 'debuginfod-cache'))
 
 
 class SafeGetmtimeMostRecentExistingTest(unittest.TestCase):
@@ -637,9 +654,8 @@ class CoredumpDeletionGatingTest(unittest.TestCase):
             'a vanished coredump must not be renamed/claimed')
 
 
-class CleanOldCoredumpsTest(unittest.TestCase):
-    """clean_old_coredumps() reaps old files matching the core_pattern AND old
-    claimed (being-processed) leftovers, while leaving fresh and unrelated files."""
+class CleanOldCrashLogFilesTest(unittest.TestCase):
+    """Startup cleanup reaps recognized stale files while preserving fresh and unrelated files."""
 
     def setUp(self):
         self.tmpdir = tempfile.mkdtemp()
@@ -649,6 +665,9 @@ class CleanOldCoredumpsTest(unittest.TestCase):
         self.handler = GDBCrashLogStartupHandler.__new__(GDBCrashLogStartupHandler)
         self.handler._coredump_directory = self.tmpdir
         self.handler._coredump_pattern = 'core-%e-pid_%p.dump'
+        patcher = mock.patch.object(CrashLogUtils, 'get_debuginfod_cache_dir', return_value=self.tmpdir)
+        patcher.start()
+        self.addCleanup(patcher.stop)
 
     def _touch(self, name, age_seconds):
         path = os.path.join(self.tmpdir, name)
@@ -674,6 +693,39 @@ class CleanOldCoredumpsTest(unittest.TestCase):
         self.assertFalse(os.path.exists(old_claimed), 'old claimed leftover should be reaped')
         self.assertTrue(os.path.exists(fresh_claimed), 'fresh (in-flight) claimed file should be kept')
         self.assertTrue(os.path.exists(unrelated), 'unrelated file should be left untouched')
+
+    def test_removes_only_old_cache_and_temporary_files(self):
+        old_age = DebuginfodServerCache.MAX_AGE_SECONDS + 1
+        old_cache = self._touch('availability-old.json', old_age)
+        fresh_cache = self._touch('availability-fresh.json', 1)
+        old_temporary = self._touch('availability-old.json.tmp', old_age)
+        fresh_temporary = self._touch('availability-fresh.json.tmp', 1)
+        old_lock = self._touch('availability-old.json.lock', old_age)
+        unrelated = self._touch('unrelated', old_age)
+
+        self.handler.clean_old_debuginfod_server_caches()
+
+        self.assertFalse(os.path.exists(old_cache))
+        self.assertTrue(os.path.exists(fresh_cache))
+        self.assertFalse(os.path.exists(old_temporary))
+        self.assertTrue(os.path.exists(fresh_temporary))
+        self.assertTrue(os.path.exists(old_lock))
+        self.assertTrue(os.path.exists(unrelated))
+
+    def test_keeps_cache_directory_when_last_cache_is_removed(self):
+        old_cache = self._touch('availability-old.json', DebuginfodServerCache.MAX_AGE_SECONDS + 1)
+
+        self.handler.clean_old_debuginfod_server_caches()
+
+        self.assertFalse(os.path.exists(old_cache))
+        self.assertTrue(os.path.isdir(self.tmpdir))
+
+    def test_list_failure_does_not_abort_cleanup(self):
+        with mock.patch('os.listdir', side_effect=PermissionError('read-only')), \
+             mock.patch('webkitpy.port.linux_get_crash_log._log.warning') as warning:
+            self.handler.clean_old_debuginfod_server_caches()
+
+        self.assertIn('Unable to clean old debuginfod availability caches', warning.call_args.args[0])
 
 
 class DetermineCoredumpMethodAndDirTest(unittest.TestCase):
@@ -1458,3 +1510,699 @@ Thread 2 (Thread 0x... (LWP 5678)):
         self.assertIn("real_thread_1_frame ()", result)
         self.assertNotIn("PREAMBLE_FRAME_should_be_ignored", result)
         self.assertNotIn("NON_CRASHING_FRAME_should_be_ignored", result)
+
+
+class DebuginfodServerCacheTest(unittest.TestCase):
+
+    def setUp(self):
+        self.tmpdir = tempfile.mkdtemp()
+        self.addCleanup(shutil.rmtree, self.tmpdir, True)
+        patcher = mock.patch.object(CrashLogUtils, 'get_debuginfod_cache_dir', return_value=self.tmpdir)
+        patcher.start()
+        self.addCleanup(patcher.stop)
+        self.servers = sorted(['https://up.example.com', 'https://flaky.example.com'])
+        self.cache_path = DebuginfodServerCache._cache_path(self.servers)
+        self.environment_patch = mock.patch.dict(os.environ, {'DEBUGINFOD_URLS': ' '.join(self.servers)}, clear=True)
+        self.environment_patch.start()
+        self.addCleanup(self.environment_patch.stop)
+
+    def _age_cache(self):
+        mtime = time.time() - DebuginfodServerCache.MAX_AGE_SECONDS - 1
+        os.utime(self.cache_path, (mtime, mtime))
+
+    def test_recent_result_is_shared_without_reprobing(self):
+        with mock.patch.object(DebuginfodServerCache, '_probe', return_value=self.servers) as probe:
+            first = DebuginfodServerCache._get_working_servers(self.servers)
+            second = DebuginfodServerCache._get_working_servers(self.servers)
+
+        self.assertEqual(first, self.servers)
+        self.assertEqual(second, self.servers)
+        probe.assert_called_once_with(self.servers)
+
+    def test_environment_canonicalizes_reordered_and_duplicate_servers(self):
+        reordered_servers = list(reversed(self.servers)) + [self.servers[0]]
+        with mock.patch.object(DebuginfodServerCache, '_probe', return_value=self.servers) as probe:
+            with mock.patch.dict(os.environ, {'DEBUGINFOD_URLS': ' '.join(reordered_servers)}, clear=True):
+                first_environment = DebuginfodServerCache.environment_for_gdb()
+            second_environment = DebuginfodServerCache.environment_for_gdb()
+
+        self.assertEqual(first_environment['DEBUGINFOD_URLS'], ' '.join(self.servers))
+        self.assertEqual(second_environment['DEBUGINFOD_URLS'], ' '.join(self.servers))
+        probe.assert_called_once_with(self.servers)
+
+    def test_probe_keeps_file_urls_and_drops_unsupported_urls(self):
+        servers = ['file:///usr/lib/debug', 'ftp://unsupported.example.com', self.servers[0]]
+        with mock.patch.object(DebuginfodServerCache, '_is_server_available', return_value=True) as is_available:
+            working_servers = DebuginfodServerCache._probe(servers)
+
+        self.assertEqual(working_servers, ['file:///usr/lib/debug', self.servers[0]])
+        is_available.assert_called_once_with(self.servers[0])
+
+    def test_http_availability_probe(self):
+        required_metrics = 'thread_busy http_requests_total groom debuginfo'
+        cases = (
+            ('available', 200, required_metrics, True),
+            ('server error', 503, required_metrics, False),
+            ('missing metrics', 200, 'missing required metrics', False),
+        )
+        for name, status, text, expected in cases:
+            response = mock.Mock(status_code=status, text=text)
+            with self.subTest(name=name), \
+                 mock.patch('webkitpy.port.linux_get_crash_log.requests.get', return_value=response) as request:
+                self.assertEqual(DebuginfodServerCache._is_server_available('https://debuginfod.example.com/'), expected)
+                request.assert_called_once_with('https://debuginfod.example.com/metrics',
+                                                timeout=DebuginfodServerCache.REQUEST_TIMEOUT_SECONDS)
+
+        with mock.patch('webkitpy.port.linux_get_crash_log.requests.get',
+                        side_effect=requests.RequestException('unavailable')):
+            self.assertFalse(DebuginfodServerCache._is_server_available('https://debuginfod.example.com'))
+
+    def test_concurrent_refresh_is_coalesced_by_file_lock(self):
+        barrier = threading.Barrier(3)
+        results = []
+
+        def slow_probe(servers):
+            time.sleep(0.05)
+            return servers
+
+        def worker():
+            barrier.wait()
+            results.append(DebuginfodServerCache._get_working_servers(self.servers))
+
+        with mock.patch.object(DebuginfodServerCache, '_probe', side_effect=slow_probe) as probe:
+            threads = [threading.Thread(target=worker) for _ in range(2)]
+            for thread in threads:
+                thread.start()
+            barrier.wait()
+            for thread in threads:
+                thread.join(timeout=5)
+
+        self.assertTrue(all(not thread.is_alive() for thread in threads))
+        self.assertEqual(results, [self.servers, self.servers])
+        probe.assert_called_once_with(self.servers)
+
+    def test_environment_for_gdb_filters_copy_without_changing_process_environment(self):
+        def only_first_server_works(servers):
+            return [servers[0]]
+
+        configured_urls = os.environ['DEBUGINFOD_URLS']
+        with mock.patch.object(DebuginfodServerCache, '_probe', side_effect=only_first_server_works) as probe:
+            gdb_environment = DebuginfodServerCache.environment_for_gdb()
+
+        self.assertEqual(os.environ['DEBUGINFOD_URLS'], configured_urls)
+        self.assertEqual(gdb_environment['DEBUGINFOD_URLS'], self.servers[0])
+        probe.assert_called_once_with(self.servers)
+
+    def test_server_offline_during_first_crash_can_recover(self):
+        configured_urls = os.environ['DEBUGINFOD_URLS']
+        with mock.patch.object(DebuginfodServerCache, '_probe', return_value=[]) as probe:
+            first_gdb_environment = DebuginfodServerCache.environment_for_gdb()
+            second_gdb_environment = DebuginfodServerCache.environment_for_gdb()
+        self.assertNotIn('DEBUGINFOD_URLS', first_gdb_environment)
+        self.assertNotIn('DEBUGINFOD_URLS', second_gdb_environment)
+        self.assertEqual(os.environ['DEBUGINFOD_URLS'], configured_urls)
+        probe.assert_called_once_with(self.servers)
+
+        self._age_cache()
+        with mock.patch.object(DebuginfodServerCache, '_probe', return_value=self.servers) as probe:
+            gdb_environment = DebuginfodServerCache.environment_for_gdb()
+
+        self.assertEqual(gdb_environment['DEBUGINFOD_URLS'], ' '.join(self.servers))
+        probe.assert_called_once_with(self.servers)
+
+    def test_cache_path_failure_falls_back_to_uncached_probe(self):
+        with mock.patch('os.makedirs', side_effect=PermissionError('read-only')), \
+             mock.patch.object(DebuginfodServerCache, '_probe', return_value=self.servers) as probe:
+            working_servers = DebuginfodServerCache._get_working_servers(self.servers)
+
+        self.assertEqual(working_servers, self.servers)
+        probe.assert_called_once_with(self.servers)
+
+    def test_cache_write_failure_does_not_repeat_probe_or_raise(self):
+        with mock.patch.object(DebuginfodServerCache, '_probe', return_value=self.servers) as probe, \
+             mock.patch.object(DebuginfodServerCache, '_write', side_effect=OSError('disk full')):
+            working_servers = DebuginfodServerCache._get_working_servers(self.servers)
+
+        self.assertEqual(working_servers, self.servers)
+        probe.assert_called_once_with(self.servers)
+
+    def test_corrupted_cache_is_ignored(self):
+        with open(self.cache_path, 'w') as cache_file:
+            cache_file.write('not JSON')
+        with mock.patch.object(DebuginfodServerCache, '_probe', return_value=self.servers) as probe:
+            self.assertEqual(DebuginfodServerCache._get_working_servers(self.servers), self.servers)
+        probe.assert_called_once_with(self.servers)
+
+    def test_different_server_lists_use_independent_cached_results(self):
+        with mock.patch.object(DebuginfodServerCache, '_probe', side_effect=lambda servers: servers) as probe:
+            DebuginfodServerCache._get_working_servers(self.servers)
+            self.assertEqual(DebuginfodServerCache._get_working_servers(self.servers[:1]), self.servers[:1])
+        self.assertEqual(probe.call_count, 2)
+
+    def test_no_configured_servers_does_not_probe_or_set_gdb_environment(self):
+        with mock.patch.dict(os.environ, {}, clear=True), \
+             mock.patch.object(DebuginfodServerCache, '_probe') as probe:
+            gdb_environment = DebuginfodServerCache.environment_for_gdb()
+
+        probe.assert_not_called()
+        self.assertNotIn('DEBUGINFOD_URLS', gdb_environment)
+
+
+class GDBExecutionTimeoutConfigurationTest(unittest.TestCase):
+
+    def _timeout_with_value(self, value):
+        environment = {} if value is None else {CrashLogEnvVars.gdb_execution_timeout: value}
+        with mock.patch.dict(os.environ, environment, clear=True):
+            return CrashLogUtils.get_gdb_execution_timeout()
+
+    def test_timeout_configuration(self):
+        cases = (
+            (None, GDB_EXECUTION_TIMEOUT_DEFAULT_SECONDS),
+            ('60', 60),
+            ('invalid', GDB_EXECUTION_TIMEOUT_DEFAULT_SECONDS),
+            ('0', GDB_EXECUTION_TIMEOUT_DEFAULT_SECONDS),
+            ('-1', GDB_EXECUTION_TIMEOUT_DEFAULT_SECONDS),
+            ('-01', GDB_EXECUTION_TIMEOUT_DEFAULT_SECONDS),
+            ('', GDB_EXECUTION_TIMEOUT_DEFAULT_SECONDS),
+            ('²', GDB_EXECUTION_TIMEOUT_DEFAULT_SECONDS),
+        )
+        with mock.patch('webkitpy.port.linux_get_crash_log._log.warning') as warning:
+            for value, expected in cases:
+                with self.subTest(value=value):
+                    self.assertEqual(self._timeout_with_value(value), expected)
+                    if value is not None and expected == GDB_EXECUTION_TIMEOUT_DEFAULT_SECONDS:
+                        self.assertIn(f'={value}.', warning.call_args.args[0])
+
+
+class FakeGDBProcess(object):
+
+    def __init__(self, communicate_result, pid=4242, wait_times_out=False):
+        self.pid = pid
+        self.returncode = None
+        self.stdout = io.BytesIO()
+        self.stderr = io.BytesIO()
+        self.communicate_results = communicate_result if isinstance(communicate_result, list) else [communicate_result]
+        self.wait_times_out = wait_times_out
+        self.communicate_timeouts = []
+        self.wait_timeouts = []
+        self.signals_sent = []
+
+    def communicate(self, timeout=None):
+        self.communicate_timeouts.append(timeout)
+        result_index = min(len(self.communicate_timeouts) - 1, len(self.communicate_results) - 1)
+        communicate_result = self.communicate_results[result_index]
+        if isinstance(communicate_result, BaseException):
+            raise communicate_result
+        self.returncode = 0
+        return communicate_result
+
+    def send_signal(self, sig):
+        self.signals_sent.append(sig)
+
+    def wait(self, timeout=None):
+        self.wait_timeouts.append(timeout)
+        if self.wait_times_out:
+            raise subprocess.TimeoutExpired('gdb', timeout)
+        self.returncode = -signal.SIGKILL
+        return self.returncode
+
+
+class FakeGDBExecutive(object):
+
+    def __init__(self, process):
+        self.process = process
+        self.popen_kwargs = None
+
+    def popen(self, _, **kwargs):
+        self.popen_kwargs = kwargs
+        return self.process
+
+
+class SubprocessExecutive(object):
+
+    @staticmethod
+    def popen(command, **kwargs):
+        return subprocess.Popen(command, **kwargs)
+
+
+def _run_process(executive, command, environment, timeout, target_is_child=False):
+    return TaskPooledProcessRunner(executive, command, environment, timeout, target_is_child).run()
+
+
+class TaskPooledProcessRunnerCommunicateTest(unittest.TestCase):
+
+    @staticmethod
+    def _runner(process):
+        runner = TaskPooledProcessRunner(FakeGDBExecutive(process), ['gdb'], {}, 10)
+        runner._proc = process
+        return runner
+
+    def test_retries_with_bounded_timeouts_until_process_exits(self):
+        process = FakeGDBProcess([
+            subprocess.TimeoutExpired('gdb', 1),
+            (b'backtrace', b''),
+        ])
+
+        with mock.patch('webkitpy.port.linux_get_crash_log.time.monotonic',
+                        side_effect=(0, 0, 1, 1)):
+            result = self._runner(process)._communicate(10)
+
+        self.assertEqual(result, (b'backtrace', b''))
+        self.assertEqual(process.communicate_timeouts, [1, 1])
+
+    def test_raises_when_overall_deadline_expires(self):
+        process = FakeGDBProcess(subprocess.TimeoutExpired(
+            'gdb', 1, output=b'partial backtrace', stderr=b'partial stderr'))
+
+        with mock.patch('webkitpy.port.linux_get_crash_log.time.monotonic',
+                        side_effect=(0, 0, 1, 1, 2, 2, 3)), \
+             self.assertRaises(subprocess.TimeoutExpired) as raised:
+            self._runner(process)._communicate(3)
+
+        self.assertEqual(raised.exception.output, b'partial backtrace')
+        self.assertEqual(raised.exception.stderr, b'partial stderr')
+        self.assertEqual(process.communicate_timeouts, [1, 1, 1])
+
+    def test_termination_request_stops_communicating(self):
+        process = FakeGDBProcess(subprocess.TimeoutExpired('gdb', 1))
+        runner = self._runner(process)
+
+        with mock.patch('webkitpy.port.linux_get_crash_log.time.monotonic',
+                        side_effect=(0, 0, 0)), \
+             mock.patch.object(CrashLogUtils, 'is_taskpool_worker_terminating',
+                               side_effect=(False, True)), \
+             mock.patch.object(runner, '_terminate_after_interruption') as terminate:
+            result = runner._communicate(10)
+
+        self.assertEqual(result, (b'', b''))
+        terminate.assert_called_once_with()
+        self.assertEqual(process.communicate_timeouts, [1])
+
+
+class TaskPooledProcessRunnerTest(unittest.TestCase):
+
+    def setUp(self):
+        # These tests exercise the process timeout state machine. Test bounded
+        # communicate polling separately without making every fake timeout wait
+        # for a real deadline.
+        def communicate(runner, timeout):
+            result = runner._proc.communicate(timeout=timeout)
+            if CrashLogUtils.is_taskpool_worker_terminating():
+                runner._terminate_after_interruption()
+                return b'', b''
+            return result
+
+        communicate = mock.patch.object(
+            TaskPooledProcessRunner, '_communicate', autospec=True, side_effect=communicate)
+        communicate.start()
+        self.addCleanup(communicate.stop)
+
+    def test_success_uses_timeout_environment_and_new_session(self):
+        process = FakeGDBProcess((b'backtrace', b''))
+        executive = FakeGDBExecutive(process)
+        environment = {'DEBUGINFOD_URLS': 'file:///debug'}
+
+        result = _run_process(executive, ['gdb'], environment, 1800)
+
+        self.assertEqual(result, (b'backtrace', b'', 0, False))
+        self.assertEqual(process.communicate_timeouts, [1800])
+        self.assertEqual(executive.popen_kwargs['env'], environment)
+        self.assertTrue(executive.popen_kwargs['start_new_session'])
+
+    def test_termination_requested_before_run_prevents_process_start(self):
+        process = FakeGDBProcess((b'backtrace', b''))
+        executive = FakeGDBExecutive(process)
+
+        with mock.patch.object(CrashLogUtils, 'is_taskpool_worker_terminating', return_value=True):
+            result = TaskPooledProcessRunner(executive, ['gdb'], {}, 1800).run()
+
+        self.assertEqual(result, (b'', b'', None, False))
+        self.assertIsNone(executive.popen_kwargs)
+
+    def test_timeout_escalates_to_sigkill_and_preserves_partial_output(self):
+        timeout = subprocess.TimeoutExpired('gdb', 1800, output=b'partial backtrace', stderr=b'partial stderr')
+        process = FakeGDBProcess(timeout)
+
+        with mock.patch('webkitpy.port.linux_get_crash_log.os.killpg') as signal_process_group:
+            result = _run_process(FakeGDBExecutive(process), ['gdb'], {}, 1800)
+
+        self.assertEqual(result, (b'partial backtrace', b'partial stderr', -signal.SIGKILL, True))
+        self.assertEqual(process.signals_sent, [signal.SIGTERM, signal.SIGKILL])
+        signal_process_group.assert_called_once_with(4242, signal.SIGKILL)
+        self.assertEqual(process.communicate_timeouts, [1800, TaskPooledProcessRunner.PROCESS_TERMINATION_GRACE_PERIOD_SECONDS,
+                                                        TaskPooledProcessRunner.PROCESS_CLEANUP_TIMEOUT_SECONDS])
+        self.assertEqual(process.wait_timeouts, [TaskPooledProcessRunner.PROCESS_CLEANUP_TIMEOUT_SECONDS])
+        self.assertTrue(process.stdout.closed and process.stderr.closed)
+
+    def test_sigterm_grace_period_collects_additional_output_without_sigkill(self):
+        timeout = subprocess.TimeoutExpired('gdb', 1800, output=b'partial backtrace\n', stderr=b'')
+        process = FakeGDBProcess([timeout, (b'partial backtrace\ntermination details\n', b'gdb terminated\n')])
+
+        with mock.patch('webkitpy.port.linux_get_crash_log.os.killpg') as signal_process_group:
+            result = _run_process(FakeGDBExecutive(process), ['gdb'], {}, 1800)
+
+        self.assertEqual(result, (b'partial backtrace\ntermination details\n', b'gdb terminated\n', 0, True))
+        self.assertEqual(process.signals_sent, [signal.SIGTERM])
+        signal_process_group.assert_not_called()
+        self.assertEqual(process.communicate_timeouts, [1800, TaskPooledProcessRunner.PROCESS_TERMINATION_GRACE_PERIOD_SECONDS])
+
+    def test_gdb_sigkill_allows_time_wrapper_to_return_output(self):
+        timeout = subprocess.TimeoutExpired('gdb', 1800, output=b'partial backtrace\n', stderr=b'')
+        grace_timeout = subprocess.TimeoutExpired('gdb', 60, output=b'partial backtrace\n', stderr=b'')
+        process = FakeGDBProcess([timeout, grace_timeout, (b'partial backtrace\ntime report\n', b'')])
+
+        real_open = builtins.open
+        children_paths = []
+
+        # Read the children of the time wrapper straight from /proc, so the pid used
+        # to locate them is covered rather than supplied by the test.
+        def fake_open(path, *args, **kwargs):
+            if str(path).startswith('/proc/'):
+                children_paths.append(path)
+                return io.StringIO('4343\n')
+            return real_open(path, *args, **kwargs)
+
+        with mock.patch('builtins.open', side_effect=fake_open), \
+             mock.patch('webkitpy.port.linux_get_crash_log.os.kill') as signal_gdb, \
+             mock.patch('webkitpy.port.linux_get_crash_log.os.killpg') as signal_process_group:
+            result = _run_process(
+                FakeGDBExecutive(process), ['time', 'gdb'], {}, 1800, target_is_child=True)
+
+        self.assertEqual(result, (b'partial backtrace\ntime report\n', b'', 0, True))
+        self.assertEqual(signal_gdb.call_args_list,
+                         [mock.call(4343, signal.SIGTERM), mock.call(4343, signal.SIGKILL)])
+        self.assertEqual(children_paths, ['/proc/4242/task/4242/children'] * 2)
+        signal_process_group.assert_not_called()
+        self.assertEqual(process.communicate_timeouts, [1800, TaskPooledProcessRunner.PROCESS_TERMINATION_GRACE_PERIOD_SECONDS,
+                                                        TaskPooledProcessRunner.PROCESS_CLEANUP_TIMEOUT_SECONDS])
+
+    def test_unreapable_process_does_not_make_cleanup_unbounded(self):
+        process = FakeGDBProcess(subprocess.TimeoutExpired('gdb', 1800), wait_times_out=True)
+        with mock.patch('webkitpy.port.linux_get_crash_log.os.killpg'):
+            result = _run_process(FakeGDBExecutive(process), ['gdb'], {}, 1800)
+
+        self.assertTrue(result[3])
+        self.assertEqual(process.communicate_timeouts, [1800, TaskPooledProcessRunner.PROCESS_TERMINATION_GRACE_PERIOD_SECONDS,
+                                                        TaskPooledProcessRunner.PROCESS_CLEANUP_TIMEOUT_SECONDS])
+        self.assertEqual(process.wait_timeouts, [TaskPooledProcessRunner.PROCESS_CLEANUP_TIMEOUT_SECONDS])
+
+    def test_killpg_failure_uses_direct_process_fallback(self):
+        process = FakeGDBProcess(subprocess.TimeoutExpired('gdb', 1800))
+        with mock.patch('webkitpy.port.linux_get_crash_log.os.killpg', side_effect=OSError('failed')):
+            result = _run_process(FakeGDBExecutive(process), ['gdb'], {}, 1800)
+
+        self.assertTrue(result[3])
+        self.assertEqual(process.signals_sent, [signal.SIGTERM, signal.SIGKILL, signal.SIGKILL])
+        self.assertEqual(process.communicate_timeouts, [1800, TaskPooledProcessRunner.PROCESS_TERMINATION_GRACE_PERIOD_SECONDS,
+                                                        TaskPooledProcessRunner.PROCESS_CLEANUP_TIMEOUT_SECONDS])
+
+    def test_reap_failure_does_not_mask_grace_period_keyboard_interrupt(self):
+        process = FakeGDBProcess([subprocess.TimeoutExpired('gdb', 1800), KeyboardInterrupt()])
+        with mock.patch('webkitpy.port.linux_get_crash_log.os.killpg') as signal_process_group, \
+             mock.patch.object(process, 'wait', side_effect=OSError('no child')), \
+             mock.patch('webkitpy.port.linux_get_crash_log._log.warning') as warning, \
+             self.assertRaises(KeyboardInterrupt):
+            _run_process(FakeGDBExecutive(process), ['gdb'], {}, 1800)
+
+        self.assertEqual(process.signals_sent, [signal.SIGTERM, signal.SIGTERM])
+        signal_process_group.assert_called_once_with(4242, signal.SIGKILL)
+        self.assertTrue(process.stdout.closed and process.stderr.closed)
+        self.assertIn('Unable to reap process 4242', warning.call_args.args[0])
+
+    def test_termination_request_terminates_process(self):
+        process = FakeGDBProcess((b'', b''))
+
+        def request_termination(*_args, **_kwargs):
+            TaskPool.Process.working = False
+            return b'', b''
+
+        with mock.patch.object(TaskPool.Process, 'name', 'worker/0'), \
+             mock.patch.object(TaskPool.Process, 'working', True), \
+             mock.patch.object(process, 'communicate', side_effect=request_termination), \
+             mock.patch('webkitpy.port.linux_get_crash_log.os.killpg') as signal_process_group:
+            result = TaskPooledProcessRunner(FakeGDBExecutive(process), ['gdb'], {}, 1800).run()
+
+        self.assertEqual(result, (b'', b'', None, False))
+        self.assertEqual(process.signals_sent, [signal.SIGTERM])
+        signal_process_group.assert_not_called()
+
+    def test_interrupted_process_ignoring_sigterm_is_force_killed(self):
+        process = FakeGDBProcess((b'', b''))
+
+        def interrupt_then_timeout(*_args, **_kwargs):
+            if process.communicate.call_count == 1:
+                TaskPool.Process.working = False
+                return b'', b''
+            raise subprocess.TimeoutExpired('gdb', 10)
+
+        with mock.patch.object(TaskPool.Process, 'name', 'worker/0'), \
+             mock.patch.object(TaskPool.Process, 'working', True), \
+             mock.patch.object(process, 'communicate', side_effect=interrupt_then_timeout), \
+             mock.patch.object(TaskPooledProcessRunner, '_force_kill_and_reap', autospec=True) as force_kill:
+            result = TaskPooledProcessRunner(FakeGDBExecutive(process), ['gdb'], {}, 1800).run()
+
+        self.assertEqual(result, (b'', b'', None, False))
+        self.assertEqual(process.signals_sent, [signal.SIGTERM])
+        force_kill.assert_called_once()
+
+    def test_real_wrapper_and_child_are_both_killed_after_grace_period(self):
+        wrapper_script = (
+            "import signal, subprocess, sys, time; "
+            "signal.signal(signal.SIGTERM, signal.SIG_IGN); "
+            "child = subprocess.Popen([sys.executable, '-c', "
+            "'import signal, time; signal.signal(signal.SIGTERM, signal.SIG_IGN); time.sleep(60)']); "
+            "print(child.pid, flush=True); "
+            "time.sleep(60)"
+        )
+        with mock.patch.object(TaskPooledProcessRunner, 'PROCESS_TERMINATION_GRACE_PERIOD_SECONDS', 0.2), \
+             mock.patch.object(TaskPooledProcessRunner, 'PROCESS_CLEANUP_TIMEOUT_SECONDS', 0.2):
+            stdout, _, returncode, timed_out = _run_process(
+                SubprocessExecutive(), [sys.executable, '-c', wrapper_script], os.environ.copy(), 0.5,
+                target_is_child=True)
+
+        child_pid = int(stdout.decode('ascii').strip())
+
+        def child_is_running():
+            try:
+                with open(f'/proc/{child_pid}/stat', 'r') as stat_file:
+                    # A zombie has terminated and is only waiting for its parent to reap it.
+                    return stat_file.read().split(') ', 1)[1][0] != 'Z'
+            except (FileNotFoundError, ProcessLookupError):
+                return False
+
+        try:
+            deadline = time.monotonic() + 2
+            while child_is_running() and time.monotonic() < deadline:
+                time.sleep(0.05)
+            self.assertTrue(timed_out)
+            self.assertEqual(returncode, -signal.SIGKILL)
+            self.assertFalse(child_is_running())
+        finally:
+            if child_is_running():
+                os.kill(child_pid, signal.SIGKILL)
+
+    # Signalling the target below the wrapper needs the child list from
+    # /proc/<pid>/task/<pid>/children, which only Linux provides.
+    @unittest.skipUnless(sys.platform.startswith('linux'), 'requires Linux procfs')
+    def test_gdb_sigkill_allows_real_wrapper_to_write_output(self):
+        child_script = (
+            "import signal, time; "
+            "signal.signal(signal.SIGTERM, signal.SIG_IGN); "
+            "print('child ready', flush=True); "
+            "time.sleep(60)"
+        )
+        wrapper_script = (
+            "import pathlib, subprocess, sys; "
+            "child = subprocess.Popen([sys.executable, '-c', sys.argv[2]]); "
+            "child.wait(); "
+            "pathlib.Path(sys.argv[1]).write_text('wrapper report')"
+        )
+        with tempfile.TemporaryDirectory() as temp_dir:
+            report_path = os.path.join(temp_dir, 'time.log')
+            with mock.patch.object(TaskPooledProcessRunner, 'PROCESS_TERMINATION_GRACE_PERIOD_SECONDS', 0.2), \
+                 mock.patch.object(TaskPooledProcessRunner, 'PROCESS_CLEANUP_TIMEOUT_SECONDS', 2):
+                stdout, _, returncode, timed_out = _run_process(
+                    SubprocessExecutive(), [sys.executable, '-c', wrapper_script, report_path, child_script],
+                    os.environ.copy(), 1, target_is_child=True)
+
+            self.assertTrue(timed_out)
+            self.assertEqual(returncode, 0)
+            self.assertIn(b'child ready', stdout)
+            with open(report_path, 'r') as report_file:
+                self.assertEqual(report_file.read(), 'wrapper report')
+
+    def test_taskpool_sigint_handler_interrupts_gdb(self):
+        child_script = (
+            "import os, pathlib, sys, time; "
+            "pathlib.Path(sys.argv[1]).write_text(str(os.getpid())); "
+            "time.sleep(60)"
+        )
+        helper_script = (
+            "import os, signal, subprocess, sys, threading, time\n"
+            "from webkitpy.port.linux_get_crash_log import TaskPooledProcessRunner, TaskPool\n"
+            "TaskPool.Process.name = 'worker/0'\n"
+            "TaskPool.Process.working = True\n"
+            "signal.signal(signal.SIGINT, TaskPool.Process.handler)\n"
+            "executive = type('Executive', (), {'popen': staticmethod(subprocess.Popen)})()\n"
+            "def interrupt_from_this_thread():\n"
+            "    while not os.path.isfile(sys.argv[1]):\n"
+            "        time.sleep(0.01)\n"
+            "    signal.pthread_kill(threading.get_ident(), signal.SIGINT)\n"
+            "threading.Thread(target=interrupt_from_this_thread, daemon=True).start()\n"
+            "TaskPooledProcessRunner(executive, [sys.executable, '-c', sys.argv[2], sys.argv[1]], "
+            "os.environ.copy(), 60).run()\n"
+        )
+
+        child_pid = None
+        with tempfile.TemporaryDirectory() as temp_dir:
+            child_pid_path = os.path.join(temp_dir, 'child-pid')
+            helper = subprocess.Popen(
+                [sys.executable, '-c', helper_script, child_pid_path, child_script],
+                stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            try:
+                _, stderr = helper.communicate(timeout=5)
+                self.assertEqual(helper.returncode, 0, stderr.decode('utf8', 'replace'))
+                self.assertTrue(os.path.isfile(child_pid_path))
+                with open(child_pid_path, 'r') as child_pid_file:
+                    child_pid = int(child_pid_file.read())
+                with self.assertRaises(ProcessLookupError):
+                    os.kill(child_pid, 0)
+            finally:
+                if helper.poll() is None:
+                    helper.kill()
+                    helper.wait()
+                if child_pid:
+                    try:
+                        os.kill(child_pid, signal.SIGKILL)
+                    except ProcessLookupError:
+                        pass
+
+
+class GDBTimeoutCrashLogTest(unittest.TestCase):
+
+    def test_worker_termination_after_lock_prevents_gdb_start(self):
+        generator = _make_generator(name='WebKitWebProcess', pid=99)
+        generator._path_to_driver = lambda: '/build/bin/WebKitWebProcess'
+
+        @contextlib.contextmanager
+        def gdb_lock():
+            TaskPool.Process.working = False
+            yield
+
+        with mock.patch.object(TaskPool.Process, 'name', 'worker/0'), \
+             mock.patch.object(TaskPool.Process, 'working', True), \
+             mock.patch.object(CrashLogUtils, 'get_gdb_lock', side_effect=gdb_lock), \
+             mock.patch.object(DebuginfodServerCache, 'environment_for_gdb') as environment_for_gdb, \
+             mock.patch.object(TaskPooledProcessRunner, 'run', autospec=True) as run_process:
+            result = generator._get_gdb_output('/tmp/core.dump')
+
+        self.assertEqual(result, ('', '', ''))
+        environment_for_gdb.assert_not_called()
+        run_process.assert_not_called()
+
+    def test_worker_termination_while_gdb_runs_discards_output(self):
+        generator = _make_generator(name='WebKitWebProcess', pid=99)
+        generator._path_to_driver = lambda: '/build/bin/WebKitWebProcess'
+
+        def run_process(_):
+            TaskPool.Process.working = False
+            return b'partial backtrace\n', b'gdb stderr\n', -signal.SIGKILL, False
+
+        with mock.patch.object(TaskPool.Process, 'name', 'worker/0'), \
+             mock.patch.object(TaskPool.Process, 'working', True), \
+             mock.patch.object(CrashLogUtils, 'get_gdb_lock', return_value=contextlib.nullcontext()), \
+             mock.patch.object(DebuginfodServerCache, 'environment_for_gdb', return_value={}), \
+             mock.patch.object(TaskPooledProcessRunner, 'run', autospec=True, side_effect=run_process), \
+             mock.patch('webkitpy.port.linux_get_crash_log.shutil.which', return_value=None):
+            result = generator._get_gdb_output('/tmp/core.dump')
+
+        self.assertEqual(result, ('', '', ''))
+
+    def test_time_output_setup_failure_does_not_abort_gdb(self):
+        generator = _make_generator(name='WebKitWebProcess', pid=99)
+        generator._path_to_driver = lambda: '/build/bin/WebKitWebProcess'
+
+        with mock.patch.object(CrashLogUtils, 'get_crashlog_temp_dir', return_value='/unwritable'), \
+             mock.patch.object(CrashLogUtils, 'get_gdb_lock', return_value=contextlib.nullcontext()), \
+             mock.patch.object(TaskPooledProcessRunner, 'run', autospec=True, return_value=(b'backtrace\n', b'', 0, False)) as run_process, \
+             mock.patch.object(DebuginfodServerCache, 'environment_for_gdb', return_value={}), \
+             mock.patch.object(CrashLogUtils, 'get_gdb_execution_timeout', return_value=1800), \
+             mock.patch('webkitpy.port.linux_get_crash_log.shutil.which', return_value='/usr/bin/time'), \
+             mock.patch('webkitpy.port.linux_get_crash_log.os.makedirs', side_effect=PermissionError('read-only')), \
+             mock.patch('webkitpy.port.linux_get_crash_log._log.warning') as warning:
+            stdout, _, _ = generator._get_gdb_output('/tmp/core.dump')
+
+        process_runner = run_process.call_args.args[0]
+        command = process_runner._command
+        self.assertEqual(stdout, 'backtrace\n')
+        self.assertNotIn('time', command)
+        self.assertFalse(any(argument.startswith('--output=') for argument in command))
+        self.assertFalse(process_runner._target_is_child)
+        self.assertIn('Unable to create GDB timing output file', warning.call_args.args[0])
+
+    def test_time_output_uses_crashlog_directory_and_is_removed_on_failure(self):
+        generator = _make_generator(name='WebKitWebProcess', pid=99)
+        generator._path_to_driver = lambda: '/build/bin/WebKitWebProcess'
+
+        with tempfile.TemporaryDirectory() as crashlog_directory:
+            def fail_after_checking_time_output(process_runner):
+                command = process_runner._command
+                output_argument = next(argument for argument in command if argument.startswith('--output='))
+                time_output_path = output_argument.split('=', 1)[1]
+                self.assertEqual(os.path.dirname(time_output_path), crashlog_directory)
+                self.assertTrue(os.path.isfile(time_output_path))
+                self.assertTrue(process_runner._target_is_child)
+                raise RuntimeError('gdb failed')
+
+            with mock.patch.object(CrashLogUtils, 'get_crashlog_temp_dir', return_value=crashlog_directory), \
+                 mock.patch.object(CrashLogUtils, 'get_gdb_lock', return_value=contextlib.nullcontext()), \
+                 mock.patch.object(TaskPooledProcessRunner, 'run', autospec=True, side_effect=fail_after_checking_time_output), \
+                 mock.patch.object(DebuginfodServerCache, 'environment_for_gdb', return_value={}), \
+                 mock.patch.object(CrashLogUtils, 'get_gdb_execution_timeout', return_value=1800), \
+                 mock.patch('webkitpy.port.linux_get_crash_log.shutil.which', return_value='/usr/bin/time'), \
+                 self.assertRaisesRegex(RuntimeError, 'gdb failed'):
+                generator._get_gdb_output('/tmp/core.dump')
+
+            self.assertEqual(os.listdir(crashlog_directory), [])
+
+    def test_timeout_is_reported_and_filtered_environment_reaches_process(self):
+        generator = _make_generator(name='WebKitWebProcess', pid=99)
+        generator._path_to_driver = lambda: '/build/bin/WebKitWebProcess'
+        generator._effective_coredump_pid = 99
+        filtered_environment = {'DEBUGINFOD_URLS': 'https://up.example.com'}
+        process_result = (b'partial backtrace\n', b'gdb stderr\n', -signal.SIGKILL, True)
+        events = []
+
+        @contextlib.contextmanager
+        def gdb_lock():
+            events.append('lock acquired')
+            try:
+                yield
+            finally:
+                events.append('lock released')
+
+        def environment_for_gdb():
+            events.append('environment prepared')
+            return filtered_environment
+
+        def run_process(_):
+            events.append('process started')
+            return process_result
+
+        with mock.patch.object(CrashLogUtils, 'get_gdb_lock', side_effect=gdb_lock), \
+             mock.patch.object(TaskPooledProcessRunner, 'run', autospec=True, side_effect=run_process) as run_process_mock, \
+             mock.patch.object(DebuginfodServerCache, 'environment_for_gdb', side_effect=environment_for_gdb), \
+             mock.patch.object(CrashLogUtils, 'get_gdb_execution_timeout', return_value=1800), \
+             mock.patch('webkitpy.port.linux_get_crash_log.shutil.which', return_value=None):
+            stdout, stderr, _ = generator._get_gdb_output('/tmp/core.dump')
+
+        process_runner = run_process_mock.call_args.args[0]
+        self.assertEqual(events, ['lock acquired', 'environment prepared', 'process started', 'lock released'])
+        self.assertIn('gdb', process_runner._command)
+        self.assertEqual(process_runner._environment, filtered_environment)
+        self.assertEqual(process_runner._timeout, 1800)
+        self.assertFalse(process_runner._target_is_child)
+        self.assertTrue(stdout.startswith('ERROR: GDB was terminated'))
+        self.assertIn('It was sent SIGTERM and given up to 60 seconds to exit before SIGKILL escalation.', stdout)
+        self.assertIn('partial backtrace', stdout)
+        self.assertEqual(stderr, 'gdb stderr\n')
