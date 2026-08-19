@@ -85,6 +85,11 @@ div.image-overlay-line, .image-overlay-text {
     background-color: highlight;
 }
 
+.image-overlay-text {
+    -webkit-user-select: -internal-auto-all;
+    user-select: -internal-auto-all;
+}
+
 div.image-overlay-data-detector-result {
     position: absolute;
     -webkit-user-select: none;

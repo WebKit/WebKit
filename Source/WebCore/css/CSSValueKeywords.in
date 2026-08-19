@@ -817,6 +817,7 @@ element
 // CSS_PROP__KHTML_USER_SELECT
 //
 ignore
+-internal-auto-all
 
 //
 // CSS_PROP_WIDTH/MIN_WIDTH/MAX_WIDTH

@@ -26,6 +26,7 @@
 
 #pragma once
 
+#include <WebCore/RenderStyleConstants.h>
 #include <WebCore/StyleAlignContent.h>
 #include <WebCore/StyleAlignItems.h>
 #include <WebCore/StyleAlignSelf.h>
@@ -114,7 +115,7 @@ public:
     PREFERRED_TYPE(TableLayoutType) unsigned tableLayout : 1;
     PREFERRED_TYPE(StyleAppearance) unsigned appearance : appearanceBitWidth;
     PREFERRED_TYPE(StyleAppearance) unsigned usedAppearance : appearanceBitWidth;
-    PREFERRED_TYPE(UserSelect) unsigned userSelect : 2;
+    PREFERRED_TYPE(UserSelect) unsigned userSelect : userSelectBitWidth;
     PREFERRED_TYPE(bool) unsigned textOverflow : 1; // Whether or not lines that spill out should be truncated with "..."
     PREFERRED_TYPE(UserDrag) unsigned userDrag : 2;
     PREFERRED_TYPE(ObjectFit) unsigned objectFit : 3;

@@ -508,8 +508,13 @@ enum class UserSelect : uint8_t {
     None,
     Text,
     All,
-    Auto
+    Auto,
+    // User agent stylesheets only ('-internal-auto-all'): resolves to 'none' if the parent's
+    // used value is 'none', and to 'all' otherwise. Never appears as a used value.
+    AutoAll
 };
+
+constexpr int userSelectBitWidth = 3;
 
 // CSS3 Image Values
 enum class ObjectFit : uint8_t {
