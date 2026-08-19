@@ -1,4 +1,18 @@
 ================
+WebKitGTK 2.52.6
+================
+
+What's new in WebKitGTK 2.52.6?
+
+  - Improve memory usage in pages that use font variations.
+  - The webkit://gpu page now respects the dark theme user preference.
+  - Fix cross compilation due to failure to pick the correct gio-unix-2.0
+    headers in certain configurations.
+  - Fix calculating data sizes of reported through WebKitWebsiteData.
+  - Fix the build with CMake 4.4 or newer.
+  - Fix several crashes and rendering issues.
+
+================
 WebKitGTK 2.52.5
 ================
 
