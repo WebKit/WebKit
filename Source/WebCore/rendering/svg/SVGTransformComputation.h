@@ -132,10 +132,11 @@ public:
             layer = layer->parent();
         }
 
+        // TrackSVGScreenCTMMatrix deliberately produces a zoom independent matrix (getScreenCTM() semantics),
+        // whereas the scaling factor has to match the actual on-screen resolution -- re-apply the zoom.
         auto ctm = computeAccumulatedTransform(stopAtLayer ? &stopAtLayer->renderer() : nullptr, TransformState::TrackSVGScreenCTMMatrix);
         ctm.scale(protect(m_renderer->document())->deviceScaleFactor());
-        if (!m_renderer->document().isSVGDocument())
-            ctm.scale(m_renderer->style().usedZoom());
+        ctm.scale(m_renderer->style().usedZoom());
         return narrowPrecisionToFloat(std::hypot(ctm.xScale(), ctm.yScale()) / std::numbers::sqrt2);
     }
 

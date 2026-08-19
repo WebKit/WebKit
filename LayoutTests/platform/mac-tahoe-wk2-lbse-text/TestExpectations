@@ -93,8 +93,6 @@ svg/css/mix-blend-mode-opacity-root.svg    [ ImageOnlyFailure ]
 
 # Non-scaling stroke issues
 svg/repaint/non-scaling-stroke-transform-animation.html               [ ImageOnlyFailure ]
-svg/zoom/page/non-scaling-stroke-textRendering-default.svg            [ ImageOnlyFailure ]
-svg/zoom/page/non-scaling-stroke-textRendering-geometricPrecision.svg [ ImageOnlyFailure ]
 
 # SMIL animation issues
 svg/stroke/animated-non-scaling-stroke.html [ ImageOnlyFailure ]
