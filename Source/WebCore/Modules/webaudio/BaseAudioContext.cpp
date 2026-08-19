@@ -658,18 +658,19 @@ void BaseAudioContext::handlePostRenderTasks()
 void BaseAudioContext::handleDeferredDecrementConnectionCounts()
 {
     ASSERT(isGraphOwner());
-    for (auto& node : m_deferredBreakConnectionList)
+    while (!m_deferredBreakConnectionList.isEmpty()) {
+        SUPPRESS_UNCHECKED_LOCAL auto* node = m_deferredBreakConnectionList.takeLast().unsafeGet(); // NOLINT.
         node->decrementConnectionCountWithLock();
-
-    m_deferredBreakConnectionList.clear();
+    }
 }
 
 void BaseAudioContext::handleDeferredDerefs()
 {
     ASSERT(isGraphOwner());
-    for (auto& node : m_deferredDerefList)
+    while (!m_deferredDerefList.isEmpty()) {
+        SUPPRESS_UNCHECKED_LOCAL auto* node = m_deferredDerefList.takeLast().unsafeGet(); // NOLINT.
         node->derefWithLock();
-    m_deferredDerefList.clear();
+    }
 }
 
 void BaseAudioContext::addTailProcessingNode(AudioNode& node)
