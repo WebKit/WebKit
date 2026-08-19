@@ -32,13 +32,18 @@
 #include "BitmapTexturePool.h"
 #include "CoordinatedPlatformLayer.h"
 #include "CoordinatedPlatformLayerBufferRGB.h"
+#include "CoordinatedPlatformLayerBufferSkiaDeferredImage.h"
+#include "FontRenderOptions.h"
 #include "GLContext.h"
 #include "GLFence.h"
 #include "GraphicsContextSkia.h"
 #include "PlatformDisplay.h"
 #include "ScrollerImpAdwaita.h"
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
-#include <skia/core/SkSurface.h>
+#include <skia/core/SkCanvas.h>
+#include <skia/private/chromium/GrDeferredDisplayList.h>
+#include <skia/private/chromium/GrDeferredDisplayListRecorder.h>
+#include <skia/private/chromium/GrSurfaceCharacterization.h>
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 #include <wtf/TZoneMallocInlines.h>
 
@@ -122,15 +127,6 @@ void ScrollerCoordinated::updateValues()
     state.thumbPosition = (values.visibleSize - state.thumbLength) * values.value;
     state.frameRect = rect;
 
-    auto& display = PlatformDisplay::sharedDisplay();
-    auto* glContext = display.skiaGLContext();
-    if (!glContext)
-        return;
-
-    auto* grContext = display.skiaGrContext();
-    RELEASE_ASSERT(grContext);
-    GLContext::ScopedGLContextCurrent scopedCurrent(*glContext);
-
     float contentsScale;
     {
         Locker layerLocker { hostLayer->lock() };
@@ -139,23 +135,59 @@ void ScrollerCoordinated::updateValues()
 
     auto frameRect = enclosingIntRect(FloatRect(state.frameRect.x() * contentsScale, state.frameRect.y() * contentsScale,
         state.frameRect.width() * contentsScale, state.frameRect.height() * contentsScale));
-    Ref texture = BitmapTexturePool::singleton().acquireTexture(frameRect.size(), { BitmapTexture::Flags::SupportsAlpha });
-    auto surface = texture->createSkiaSurface(grContext);
-    if (!surface)
-        return;
 
-    auto* canvas = surface->getCanvas();
-    if (!canvas)
-        return;
+    std::unique_ptr<CoordinatedPlatformLayerBuffer> buffer;
 
-    canvas->clear(SK_ColorTRANSPARENT);
+    if (const auto& threadSafeGrContext = hostLayer->threadSafeGrContext()) {
+        auto imageInfo = SkImageInfo::Make(frameRect.size().width(), frameRect.size().height(), kRGBA_8888_SkColorType, kPremul_SkAlphaType, SkColorSpace::MakeSRGB());
+        auto backendFormat = threadSafeGrContext->defaultBackendFormat(kRGBA_8888_SkColorType, GrRenderable::kYes);
+        ASSERT(backendFormat.isValid());
+        auto properties = FontRenderOptions::singleton().createSurfaceProps();
+        auto maxResourceCacheBytes = PlatformDisplay::sharedDisplay().maxSkiaResourceCacheBytes();
+        auto characterization = threadSafeGrContext->createCharacterization(maxResourceCacheBytes, imageInfo, backendFormat, 0, kTopLeft_GrSurfaceOrigin, properties, skgpu::Mipmapped::kNo);
+        GrDeferredDisplayListRecorder ddlRecorder(characterization);
+        auto* canvas = ddlRecorder.getCanvas();
+        if (!canvas)
+            return;
 
-    GraphicsContextSkia context(*canvas, RenderingMode::Accelerated, RenderingPurpose::DOM);
-    context.scale(contentsScale);
-    scrollerImp->paint(context, state.frameRect, state);
+        canvas->clear(SK_ColorTRANSPARENT);
 
-    grContext->flushAndSubmit(surface.get(), GLFence::isSupported(display.glDisplay()) ? GrSyncCpu::kNo : GrSyncCpu::kYes);
-    auto buffer = CoordinatedPlatformLayerBufferRGB::create(WTF::move(texture), { TextureMapperFlags::ShouldBlend }, GLFence::create(display.glDisplay()));
+        GraphicsContextSkia recordingContext(*canvas, RenderingMode::Accelerated, RenderingPurpose::LayerBacking);
+        recordingContext.beginRecording(GraphicsContextSkia::RecordingMode::Scrollbar, threadSafeGrContext);
+        recordingContext.scale(contentsScale);
+        scrollerImp->paint(recordingContext, state.frameRect, state);
+        recordingContext.endRecording();
+
+        buffer = CoordinatedPlatformLayerBufferSkiaDeferredImage::create(ddlRecorder.detach());
+    } else {
+        auto& display = PlatformDisplay::sharedDisplay();
+        auto* glContext = display.skiaGLContext();
+        if (!glContext)
+            return;
+
+        auto* grContext = display.skiaGrContext();
+        ASSERT(grContext);
+        GLContext::ScopedGLContextCurrent scopedCurrent(*glContext);
+
+        Ref texture = BitmapTexturePool::singleton().acquireTexture(frameRect.size(), { BitmapTexture::Flags::SupportsAlpha });
+        auto surface = texture->createSkiaSurface(grContext);
+        if (!surface)
+            return;
+
+        auto* canvas = surface->getCanvas();
+        if (!canvas)
+            return;
+
+        canvas->clear(SK_ColorTRANSPARENT);
+
+        GraphicsContextSkia context(*canvas, RenderingMode::Accelerated, RenderingPurpose::DOM);
+        context.scale(contentsScale);
+        scrollerImp->paint(context, state.frameRect, state);
+
+        grContext->flushAndSubmit(surface.get(), GLFence::isSupported(display.glDisplay()) ? GrSyncCpu::kNo : GrSyncCpu::kYes);
+        buffer = CoordinatedPlatformLayerBufferRGB::create(WTF::move(texture), { TextureMapperFlags::ShouldBlend }, GLFence::create(display.glDisplay()));
+    }
+
     if (!buffer)
         return;
 

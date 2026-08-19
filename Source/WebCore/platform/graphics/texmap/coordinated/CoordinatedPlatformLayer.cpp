@@ -61,6 +61,9 @@ Ref<CoordinatedPlatformLayer> CoordinatedPlatformLayer::create()
 CoordinatedPlatformLayer::CoordinatedPlatformLayer(Client* client)
     : m_client(client)
     , m_id(PlatformLayerIdentifier::generate())
+#if USE(SKIA)
+    , m_threadSafeGrContext(m_client ? m_client->paintingEngine().threadSafeGrContext() : nullptr)
+#endif
 {
     ASSERT(isMainThread());
 }
@@ -985,16 +988,6 @@ void CoordinatedPlatformLayer::didPaintTile()
     if (m_client)
         m_client->didPaintTile();
 }
-
-#if USE(SKIA)
-sk_sp<GrContextThreadSafeProxy> CoordinatedPlatformLayer::threadSafeGrContext() const
-{
-    if (!m_client)
-        return nullptr;
-
-    return m_client->paintingEngine().threadSafeGrContext();
-}
-#endif
 
 void CoordinatedPlatformLayer::waitUntilPaintingComplete()
 {

@@ -52,7 +52,8 @@ public:
         DMABuf,
         NativeImage,
 #if USE(SKIA)
-        SkiaImage
+        SkiaImage,
+        SkiaDeferredImage
 #endif
     };
 

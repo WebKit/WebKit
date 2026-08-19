@@ -106,7 +106,7 @@ public:
     TextureMapperLayer& ensureTarget();
 #if USE(SKIA)
     SkiaCompositingLayer& ensureSkiaTarget();
-    sk_sp<GrContextThreadSafeProxy> threadSafeGrContext() const;
+    sk_sp<GrContextThreadSafeProxy> threadSafeGrContext() const { return m_threadSafeGrContext; }
 #endif
     void invalidateTarget();
 
@@ -283,6 +283,7 @@ private:
     std::unique_ptr<TextureMapperLayer> m_target;
 #if USE(SKIA)
     RefPtr<SkiaCompositingLayer> m_skiaTarget;
+    sk_sp<GrContextThreadSafeProxy> m_threadSafeGrContext;
 #endif
 
     // Accessed only from the main thread.

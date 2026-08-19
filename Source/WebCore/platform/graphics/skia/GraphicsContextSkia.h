@@ -58,7 +58,7 @@ public:
 
     const DestinationColorSpace& colorSpace() const final;
 
-    enum class RecordingMode : bool { Tile, Canvas };
+    enum class RecordingMode : uint8_t { Tile, Canvas, Scrollbar };
     void beginRecording(RecordingMode, const sk_sp<GrContextThreadSafeProxy>& = nullptr);
     SkiaRecordingData endRecording();
 
@@ -128,7 +128,8 @@ private:
     enum class ContextMode : uint8_t {
         PaintingMode,
         TileRecordingMode,
-        CanvasRecordingMode
+        CanvasRecordingMode,
+        ScrollbarRecordingMode
     };
 
     bool makeGLContextCurrentIfNeeded() const;
