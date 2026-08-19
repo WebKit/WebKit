@@ -1,0 +1,4 @@
+
+PASS A zero-length attachment range yields unresolved computed keyframe offsets, not infinite ones
+PASS A non-degenerate attachment range still maps timeline range offsets outside [0,1]
+

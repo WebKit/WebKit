@@ -440,7 +440,13 @@ void BlendingKeyframes::updatedComputedOffsets(NOESCAPE const Function<double(co
     for (auto& keyframe : m_keyframes)
         keyframe.setComputedOffset(callback(keyframe.specifiedOffset()));
 
-    std::ranges::stable_sort(m_keyframes, { }, &BlendingKeyframe::offset);
+    std::ranges::stable_sort(m_keyframes, [](double a, double b) {
+        if (std::isnan(a))
+            return false;
+        if (std::isnan(b))
+            return true;
+        return a < b;
+    }, &BlendingKeyframe::offset);
 }
 
 bool BlendingKeyframes::hasKeyframeWithUnresolvedComputedOffset() const
