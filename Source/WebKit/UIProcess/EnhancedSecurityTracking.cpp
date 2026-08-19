@@ -220,7 +220,10 @@ bool EnhancedSecurityTracking::enableIfRequired(const API::Navigation& navigatio
 
 void EnhancedSecurityTracking::handleBackForwardNavigation(const API::Navigation& navigation)
 {
-    EnhancedSecurity priorState = navigation.targetItem() ? navigation.targetItem()->enhancedSecurity() : EnhancedSecurity::Disabled;
+    // targetItem() and reloadItem() are both "the item being navigated to", and only one is ever set.
+    // Reading just targetItem() would treat a reload's missing target as Enhanced Security being off.
+    RefPtr item = navigation.targetItem() ? navigation.targetItem() : navigation.reloadItem();
+    EnhancedSecurity priorState = item ? item->enhancedSecurity() : EnhancedSecurity::Disabled;
 
     if (priorState == EnhancedSecurity::Disabled) {
         if (m_activeState != ActivationState::None)
