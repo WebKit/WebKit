@@ -236,6 +236,18 @@ void MediaElementSession::addMediaUsageManagerSessionIfNecessary()
 #endif
 }
 
+void MediaElementSession::mediaUsageManagerSessionWillBeSuspended()
+{
+#if ENABLE(MEDIA_USAGE)
+    // The back/forward cache keeps this MediaElementSession (and thus this flag) alive across
+    // suspend/resume, but the UI process unconditionally clears its usage-tracking map on every
+    // navigation commit, including the eventual restore commit.
+    // Reset the flag so the next updateMediaUsageIfChanged() after resuming re-adds the session
+    // before updating it, instead of sending an update for an identifier the UI process no longer has.
+    m_haveAddedMediaUsageManagerSession = false;
+#endif
+}
+
 void MediaElementSession::registerWithDocument(Document& document)
 {
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)

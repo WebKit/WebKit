@@ -1,0 +1,85 @@
+<!-- webkit-test-runner [ UsesBackForwardCache=true ] -->
+<html>
+    <head>
+        <script src=media-file.js></script>
+        <script src=video-test.js></script>
+        <script>
+            var mediaFile = findMediaFile("video", "content/test");
+            var loadCount = 0;
+            var timeBeforeCache;
+
+            if (window.testRunner) {
+                testRunner.dumpAsText();
+                testRunner.waitUntilDone();
+            }
+
+            function waitForTimeToAdvance() {
+                if (video.currentTime > timeBeforeCache) {
+                    testExpected("video.currentTime > timeBeforeCache", true);
+                    if (window.testRunner)
+                        testRunner.notifyDone();
+                    return;
+                }
+                requestAnimationFrame(waitForTimeToAdvance);
+            }
+
+            function pageshow(evt)
+            {
+                if (!evt.persisted) {
+                    // this is the first time the page has been loaded, setup the video element
+                    setup();
+                    return;
+                }
+
+                consoleWrite("*** Page returned from cache");
+                testExpected("loadCount", 1);
+
+                video = document.getElementsByTagName("video")[0];
+                testExpected("video.paused", false);
+
+                waitForTimeToAdvance();
+            }
+
+            function pagehide()
+            {
+                timeBeforeCache = video.currentTime;
+                consoleWrite("*** Page going into cache, video.paused = " + video.paused);
+            }
+
+            function canplaythrough()
+            {
+                testExpected("loadCount", 0);
+
+                if (!loadCount) {
+                    // Wait for the 'playing' event (not just calling .play()) before caching, so
+                    // the pipeline has actually reached the PLAYING state (not just requested it)
+                    // matching a genuinely-playing video rather than one that was paused
+                    // again before playback really started.
+                    waitForEvent("playing", function() {
+                        consoleWrite("*** Page going into cache while playing");
+                        var blob = new Blob(['<!DOCTYPE html><script>setTimeout(function() { history.back(); }, 0);<\/script>'], { type: "text/html" });
+                        window.location.href = URL.createObjectURL(blob);
+                    }, false, true);
+                    video.play();
+                }
+                ++loadCount;
+            }
+
+            function setup()
+            {
+                video = document.getElementsByTagName("video")[0];
+                waitForEvent("canplaythrough", canplaythrough);
+                video.src = mediaFile;
+            }
+
+            window.onpageshow = pageshow;
+            window.onpagehide = pagehide;
+        </script>
+    </head>
+    <body>
+
+        <video></video>
+        <p>Test that a &lt;video&gt; that was playing before entering the back/forward cache
+        is still playing (and currentTime is advancing again) after being restored.</p>
+    </body>
+</html>

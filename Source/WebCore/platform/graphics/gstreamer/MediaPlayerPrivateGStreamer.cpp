@@ -203,7 +203,16 @@ MediaPlayerPrivateGStreamer::MediaPlayerPrivateGStreamer(MediaPlayer& player)
     }
 
 #if USE(COORDINATED_GRAPHICS)
-    m_contentsBufferProxy = CoordinatedPlatformLayerBufferProxy::create();
+    m_contentsBufferProxy = CoordinatedPlatformLayerBufferProxy::create([weakThis = ThreadSafeWeakPtr { *this }] {
+        RefPtr self = weakThis.get();
+        if (!self)
+            return;
+        // The layer we were previously attached to may have just been destroyed and recreated
+        // (e.g. restoring the page from the back/forward cache rebuilds the render tree),
+        // losing whatever frame it was displaying. Re-deliver the current sample so the new
+        // layer isn't left blank, a paused player will otherwise never push a new one.
+        self->pushTextureToCompositor(IsDuplicateSample::Yes);
+    });
 #endif
 
     ensureGStreamerInitialized();
@@ -3853,7 +3862,7 @@ PlatformLayer* MediaPlayerPrivateGStreamer::platformLayer() const
     return m_contentsBufferProxy.get();
 }
 
-void MediaPlayerPrivateGStreamer::pushTextureToCompositor(bool isDuplicateSample)
+void MediaPlayerPrivateGStreamer::pushTextureToCompositor(IsDuplicateSample isDuplicateSample)
 {
     Locker sampleLocker { m_sampleMutex };
     if (!GST_IS_SAMPLE(m_sample.get()))
@@ -3862,7 +3871,7 @@ void MediaPlayerPrivateGStreamer::pushTextureToCompositor(bool isDuplicateSample
     // The GL video appsink reports the sample following a preroll with the same buffer, so don't
     // account for this scenario, this is important for rvfc, ensuring timestamps in metadata
     // increase monotonically during playback.
-    if (!isDuplicateSample)
+    if (isDuplicateSample == IsDuplicateSample::No)
         ++m_sampleCount;
 
     if (!m_videoInfo)
@@ -4065,14 +4074,14 @@ void MediaPlayerPrivateGStreamer::triggerRepaint(GRefPtr<GstSample>&& sample)
     }
 
     bool shouldTriggerResize;
-    bool isDuplicateSample = false;
+    IsDuplicateSample isDuplicateSample = IsDuplicateSample::No;
     {
         Locker sampleLocker { m_sampleMutex };
         shouldTriggerResize = !m_sample;
         if (!shouldTriggerResize) {
             auto previousBuffer = gst_sample_get_buffer(m_sample.get());
             // We're omitting a !previousBuffer assert here because on some embedded platforms the buffer can't be deep copied by flushCurrentBuffer().
-            isDuplicateSample = buffer == previousBuffer;
+            isDuplicateSample = buffer == previousBuffer ? IsDuplicateSample::Yes : IsDuplicateSample::No;
         }
         m_sample = WTF::move(sample);
     }

@@ -986,7 +986,8 @@ private:
     void loadResource(const URL&, const ContentType&);
     void scheduleNextSourceChild();
     void loadNextSourceChild();
-    void userCancelledLoad();
+    enum class ShouldDestroyMediaPlayer : bool { No, Yes };
+    void userCancelledLoad(ShouldDestroyMediaPlayer = ShouldDestroyMediaPlayer::Yes);
     void clearMediaPlayer();
     bool havePotentialSourceChild();
     void noneSupported();

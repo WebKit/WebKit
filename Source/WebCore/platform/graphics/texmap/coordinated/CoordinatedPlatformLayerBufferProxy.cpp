@@ -40,6 +40,18 @@ Ref<CoordinatedPlatformLayerBufferProxy> CoordinatedPlatformLayerBufferProxy::cr
 
 CoordinatedPlatformLayerBufferProxy::CoordinatedPlatformLayerBufferProxy() = default;
 
+#if ENABLE(VIDEO) && USE(GSTREAMER)
+Ref<CoordinatedPlatformLayerBufferProxy> CoordinatedPlatformLayerBufferProxy::create(Function<void()>&& layerAttachedCallback)
+{
+    return adoptRef(*new CoordinatedPlatformLayerBufferProxy(WTF::move(layerAttachedCallback)));
+}
+
+CoordinatedPlatformLayerBufferProxy::CoordinatedPlatformLayerBufferProxy(Function<void()>&& layerAttachedCallback)
+    : m_layerAttachedCallback(WTF::move(layerAttachedCallback))
+{
+}
+#endif
+
 CoordinatedPlatformLayerBufferProxy::~CoordinatedPlatformLayerBufferProxy()
 {
     ASSERT(!m_layer);
@@ -51,21 +63,37 @@ CoordinatedPlatformLayerBufferProxy::~CoordinatedPlatformLayerBufferProxy()
 void CoordinatedPlatformLayerBufferProxy::setTargetLayer(CoordinatedPlatformLayer* layer)
 {
     ASSERT(RunLoop::isMain());
-    Locker locker { m_lock };
-    if (m_layer == layer)
-        return;
+#if ENABLE(VIDEO) && USE(GSTREAMER)
+    bool didAttachLayer = false;
+    RefPtr<RunLoop> compositingRunLoop;
+#endif
+    {
+        Locker locker { m_lock };
+        if (m_layer == layer)
+            return;
 
-    m_layer = layer;
-    if (m_layer) {
+        m_layer = layer;
+        if (m_layer) {
 #if ENABLE(VIDEO) && USE(GSTREAMER)
-        m_compositingRunLoop = m_layer->compositingRunLoop();
+            m_compositingRunLoop = m_layer->compositingRunLoop();
+            compositingRunLoop = m_compositingRunLoop;
+            didAttachLayer = true;
 #endif
-    } else {
-        m_pendingBuffer = nullptr;
+        } else {
+            m_pendingBuffer = nullptr;
 #if ENABLE(VIDEO) && USE(GSTREAMER)
-        m_compositingRunLoop = nullptr;
+            m_compositingRunLoop = nullptr;
 #endif
+        }
     }
+
+#if ENABLE(VIDEO) && USE(GSTREAMER)
+    if (didAttachLayer && m_layerAttachedCallback && compositingRunLoop) {
+        compositingRunLoop->dispatch([protectedThis = Ref { *this }] {
+            protectedThis->m_layerAttachedCallback();
+        });
+    }
+#endif
 }
 
 void CoordinatedPlatformLayerBufferProxy::consumePendingBufferIfNeeded()

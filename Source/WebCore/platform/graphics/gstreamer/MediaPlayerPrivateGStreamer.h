@@ -321,7 +321,8 @@ protected:
 #endif
 
 #if USE(COORDINATED_GRAPHICS)
-    void pushTextureToCompositor(bool isDuplicateSample);
+    enum class IsDuplicateSample : bool { No, Yes };
+    void pushTextureToCompositor(IsDuplicateSample);
 #endif
 
     GstElement* videoSink() const { return m_videoSink.get(); }
