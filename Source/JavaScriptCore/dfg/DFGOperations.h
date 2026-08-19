@@ -364,14 +364,8 @@ JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationMapHashHeapBigInt, UCPUStrictInt32, 
 JSC_DECLARE_JIT_OPERATION(operationMapGet, JSValue*, (JSGlobalObject*, JSCell*, EncodedJSValue, int32_t));
 JSC_DECLARE_JIT_OPERATION(operationSetGet, JSValue*, (JSGlobalObject*, JSCell*, EncodedJSValue, int32_t));
 
-JSC_DECLARE_JIT_OPERATION(operationMapIterationNext, EncodedJSValue, (JSGlobalObject*, JSCell*, int32_t));
-JSC_DECLARE_JIT_OPERATION(operationMapIterationEntry, EncodedJSValue, (JSGlobalObject*, JSCell*));
-JSC_DECLARE_JIT_OPERATION(operationMapIterationEntryKey, EncodedJSValue, (JSGlobalObject*, JSCell*));
-JSC_DECLARE_JIT_OPERATION(operationMapIterationEntryValue, EncodedJSValue, (JSGlobalObject*, JSCell*));
-
-JSC_DECLARE_JIT_OPERATION(operationSetIterationNext, EncodedJSValue, (JSGlobalObject*, JSCell*, int32_t));
-JSC_DECLARE_JIT_OPERATION(operationSetIterationEntry, EncodedJSValue, (JSGlobalObject*, JSCell*));
-JSC_DECLARE_JIT_OPERATION(operationSetIterationEntryKey, EncodedJSValue, (JSGlobalObject*, JSCell*));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationMapIterationNext, EncodedJSValue, (VM*, JSCell*, int32_t));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationSetIterationNext, EncodedJSValue, (VM*, JSCell*, int32_t));
 
 JSC_DECLARE_JIT_OPERATION(operationStringIteratorNext, UGPRPair, (JSGlobalObject*, JSString*, int32_t));
 JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationMapIteratorNext, UGPRPair, (VM*, JSCell*, JSCell*, int32_t));

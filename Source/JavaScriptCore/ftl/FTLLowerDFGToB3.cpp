@@ -16613,38 +16613,118 @@ IGNORE_CLANG_WARNINGS_END
 
     void compileMapIterationNext()
     {
-        JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
-        LValue mapStorage = lowCell(m_node->child1());
-        LValue entry = lowInt32(m_node->child2());
+        bool isMap = m_node->bucketOwnerType() == BucketOwnerType::Map;
+        LValue storage = lowCell(m_node->child1());
+        LValue currentEntry = lowInt32(m_node->child2());
 
-        LValue result = vmCall(Int64, m_node->bucketOwnerType() == BucketOwnerType::Map ? operationMapIterationNext : operationSetIterationNext, weakPointer(globalObject), mapStorage, entry);
-        setJSValue(result);
+        LBasicBlock checkObsolete = m_out.newBlock();
+        LBasicBlock fastPath = m_out.newBlock();
+        LBasicBlock loop = m_out.newBlock();
+        LBasicBlock checkIfDeleted = m_out.newBlock();
+        LBasicBlock foundEntry = m_out.newBlock();
+        LBasicBlock exhausted = m_out.newBlock();
+        LBasicBlock slowPath = m_out.newBlock();
+        LBasicBlock continuation = m_out.newBlock();
+
+        LValue sentinel = m_out.constIntPtr(std::bit_cast<void*>(vm().orderedHashTableSentinel()));
+        LValue deletedValue = m_out.constIntPtr(std::bit_cast<void*>(vm().orderedHashTableDeletedValue()));
+
+        m_out.branch(m_out.equal(storage, sentinel), rarely(exhausted), usually(checkObsolete));
+
+        LBasicBlock lastNext = m_out.appendTo(checkObsolete, fastPath);
+        LValue butterfly = toButterfly(storage);
+        LValue aliveEntryCount = m_out.load64(m_out.baseIndex(m_heaps.indexedContiguousProperties, butterfly, m_out.constIntPtr(isMap ? JSMap::Helper::aliveEntryCountIndex() : JSSet::Helper::aliveEntryCountIndex())));
+        m_out.branch(isNotInt32(aliveEntryCount), rarely(slowPath), usually(fastPath));
+
+        m_out.appendTo(fastPath, loop);
+        LValue bucketCount = m_out.load32(m_out.baseIndex(m_heaps.indexedContiguousProperties, butterfly, m_out.constIntPtr(isMap ? JSMap::Helper::capacityIndex() : JSSet::Helper::capacityIndex())));
+        LValue dataTableStartIndex = m_out.add(m_out.constInt32(isMap ? JSMap::Helper::hashTableStartIndex() : JSSet::Helper::hashTableStartIndex()), bucketCount);
+        LValue entrySize = m_out.constIntPtr(isMap ? JSMap::Helper::EntrySize : JSSet::Helper::EntrySize);
+
+        LValue multiplied;
+        if (isMap) {
+            static_assert(JSMap::Helper::EntrySize == 3);
+            multiplied = m_out.add(currentEntry, m_out.shl(currentEntry, m_out.constInt32(1)));
+        } else {
+            static_assert(JSSet::Helper::EntrySize == 2);
+            multiplied = m_out.add(currentEntry, currentEntry);
+        }
+        ValueFromBlock initialEntry = m_out.anchor(currentEntry);
+        ValueFromBlock initialEntryIndex = m_out.anchor(m_out.zeroExtPtr(m_out.add(dataTableStartIndex, multiplied)));
+        m_out.jump(loop);
+
+        m_out.appendTo(loop, checkIfDeleted);
+        LValue entry = m_out.phi(Int32, initialEntry);
+        LValue entryIndex = m_out.phi(pointerType(), initialEntryIndex);
+        LValue key = m_out.load64(m_out.baseIndex(m_heaps.indexedContiguousProperties, butterfly, entryIndex));
+        m_out.branch(m_out.isZero64(key), rarely(exhausted), usually(checkIfDeleted));
+
+        m_out.appendTo(checkIfDeleted, foundEntry);
+        m_out.addIncomingToPhi(entry, m_out.anchor(m_out.add(entry, m_out.constInt32(1))));
+        m_out.addIncomingToPhi(entryIndex, m_out.anchor(m_out.add(entryIndex, entrySize)));
+        m_out.branch(m_out.equal(key, deletedValue), rarely(loop), usually(foundEntry));
+
+        m_out.appendTo(foundEntry, exhausted);
+        m_out.store64(boxInt32(entry), m_out.baseIndex(m_heaps.indexedContiguousProperties, butterfly, m_out.constIntPtr(isMap ? JSMap::Helper::iterationEntryIndex() : JSSet::Helper::iterationEntryIndex())));
+        ValueFromBlock foundResult = m_out.anchor(storage);
+        m_out.jump(continuation);
+
+        m_out.appendTo(exhausted, slowPath);
+        ValueFromBlock exhaustedResult = m_out.anchor(sentinel);
+        m_out.jump(continuation);
+
+        m_out.appendTo(slowPath, continuation);
+        ValueFromBlock slowResult = m_out.anchor(vmCall(Int64, isMap ? operationMapIterationNext : operationSetIterationNext, m_vmValue, storage, currentEntry));
+        m_out.jump(continuation);
+
+        m_out.appendTo(continuation, lastNext);
+        setJSValue(m_out.phi(Int64, foundResult, exhaustedResult, slowResult));
     }
 
     void compileMapIterationEntry()
     {
-        JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
-        LValue storage = lowCell(m_node->child1());
-        auto operation = m_node->bucketOwnerType() == BucketOwnerType::Map ? operationMapIterationEntry : operationSetIterationEntry;
-        LValue result = vmCall(Int64, operation, weakPointer(globalObject), storage);
-        setJSValue(result);
+        bool isMap = m_node->bucketOwnerType() == BucketOwnerType::Map;
+        LValue butterfly = toButterfly(lowCell(m_node->child1()));
+        setJSValue(m_out.load64(m_out.baseIndex(m_heaps.indexedContiguousProperties, butterfly, m_out.constIntPtr(isMap ? JSMap::Helper::iterationEntryIndex() : JSSet::Helper::iterationEntryIndex()))));
+    }
+
+    LValue loadMapEntryData(LValue butterfly, LValue entry, int32_t indexAdjust)
+    {
+        bool isMap = m_node->bucketOwnerType() == BucketOwnerType::Map;
+        LValue bucketCount = m_out.load32(m_out.baseIndex(m_heaps.indexedContiguousProperties, butterfly, m_out.constIntPtr(isMap ? JSMap::Helper::capacityIndex() : JSSet::Helper::capacityIndex())));
+
+        LValue multiplied;
+        int32_t hashTableStartIndex;
+        if (isMap) {
+            static_assert(JSMap::Helper::EntrySize == 3);
+            hashTableStartIndex = JSMap::Helper::hashTableStartIndex();
+            multiplied = m_out.add(entry, m_out.shl(entry, m_out.constInt32(1)));
+        } else {
+            static_assert(JSSet::Helper::EntrySize == 2);
+            hashTableStartIndex = JSSet::Helper::hashTableStartIndex();
+            multiplied = m_out.add(entry, entry);
+        }
+        LValue entryInButterfly = m_out.add(m_out.constInt32(hashTableStartIndex + indexAdjust), m_out.add(bucketCount, multiplied));
+        return m_out.load64(m_out.baseIndex(m_heaps.indexedContiguousProperties, butterfly, m_out.zeroExtPtr(entryInButterfly)));
+    }
+
+    LValue loadMapIterationEntryData(int32_t dataOffset)
+    {
+        bool isMap = m_node->bucketOwnerType() == BucketOwnerType::Map;
+        LValue butterfly = toButterfly(lowCell(m_node->child1()));
+        LValue entry = m_out.load32(m_out.baseIndex(m_heaps.indexedContiguousProperties, butterfly, m_out.constIntPtr(isMap ? JSMap::Helper::iterationEntryIndex() : JSSet::Helper::iterationEntryIndex())));
+        return loadMapEntryData(butterfly, entry, dataOffset);
     }
 
     void compileMapIterationEntryKey()
     {
-        JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
-        LValue storage = lowCell(m_node->child1());
-        auto operation = m_node->bucketOwnerType() == BucketOwnerType::Map ? operationMapIterationEntryKey : operationSetIterationEntryKey;
-        LValue result = vmCall(Int64, operation, weakPointer(globalObject), storage);
-        setJSValue(result);
+        setJSValue(loadMapIterationEntryData(0));
     }
 
     void compileMapIterationEntryValue()
     {
-        JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
-        LValue storage = lowCell(m_node->child1());
-        LValue result = vmCall(Int64, operationMapIterationEntryValue, weakPointer(globalObject), storage);
-        setJSValue(result);
+        ASSERT(m_node->bucketOwnerType() == BucketOwnerType::Map);
+        setJSValue(loadMapIterationEntryData(1));
     }
 
     void compileMapStorage()
@@ -16800,46 +16880,17 @@ IGNORE_CLANG_WARNINGS_END
 
     void compileMapIteratorKey()
     {
-        bool isMapIterator = m_node->bucketOwnerType() == BucketOwnerType::Map;
-        LValue storage = lowCell(m_node->child1());
+        LValue butterfly = toButterfly(lowCell(m_node->child1()));
         LValue entry = lowInt32(m_node->child2());
-
-        LValue butterfly = toButterfly(storage);
-        LValue bucketCount = m_out.load32(m_out.baseIndex(m_heaps.indexedContiguousProperties, butterfly, m_out.constIntPtr(isMapIterator ? JSMap::Helper::capacityIndex() : JSSet::Helper::capacityIndex())));
-
-        LValue multiplied;
-        int32_t entrySize;
-        int32_t hashTableStartIndex;
-        if (isMapIterator) {
-            static_assert(JSMap::Helper::EntrySize == 3);
-            entrySize = JSMap::Helper::EntrySize;
-            hashTableStartIndex = JSMap::Helper::hashTableStartIndex();
-            multiplied = m_out.add(entry, m_out.shl(entry, m_out.constInt32(1)));
-        } else {
-            static_assert(JSSet::Helper::EntrySize == 2);
-            entrySize = JSSet::Helper::EntrySize;
-            hashTableStartIndex = JSSet::Helper::hashTableStartIndex();
-            multiplied = m_out.add(entry, entry);
-        }
-        LValue entryInButterfly = m_out.add(m_out.constInt32(hashTableStartIndex - entrySize), m_out.add(bucketCount, multiplied));
-        LValue key = m_out.load64(m_out.baseIndex(m_heaps.indexedContiguousProperties, butterfly, m_out.zeroExtPtr(entryInButterfly)));
-        setJSValue(key);
+        setJSValue(loadMapEntryData(butterfly, entry, -(m_node->bucketOwnerType() == BucketOwnerType::Map ? JSMap::Helper::EntrySize : JSSet::Helper::EntrySize)));
     }
 
     void compileMapIteratorValue()
     {
         ASSERT(m_node->bucketOwnerType() == BucketOwnerType::Map);
-        LValue storage = lowCell(m_node->child1());
+        LValue butterfly = toButterfly(lowCell(m_node->child1()));
         LValue entry = lowInt32(m_node->child2());
-
-        LValue butterfly = toButterfly(storage);
-        LValue bucketCount = m_out.load32(m_out.baseIndex(m_heaps.indexedContiguousProperties, butterfly, m_out.constIntPtr(JSMap::Helper::capacityIndex())));
-
-        static_assert(JSMap::Helper::EntrySize == 3);
-        LValue multiplied = m_out.add(entry, m_out.shl(entry, m_out.constInt32(1)));
-        LValue entryInButterfly = m_out.add(m_out.add(m_out.constInt32(JSMap::Helper::hashTableStartIndex() - JSMap::Helper::EntrySize), m_out.add(bucketCount, multiplied)), /* value offset */ m_out.constInt32(1));
-        LValue value = m_out.load64(m_out.baseIndex(m_heaps.indexedContiguousProperties, butterfly, m_out.zeroExtPtr(entryInButterfly)));
-        setJSValue(value);
+        setJSValue(loadMapEntryData(butterfly, entry, -JSMap::Helper::EntrySize + /* value offset */ 1));
     }
 
     void compileExtractValueFromWeakMapGet()

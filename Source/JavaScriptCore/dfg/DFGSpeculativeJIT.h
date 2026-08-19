@@ -1377,12 +1377,14 @@ public:
     void compileLoadMapValue(Node*);
     void compileIsEmptyStorage(Node*);
     void compileMapIteratorNext(Node*);
+    void loadMapEntryData(bool isMap, GPRReg storageGPR, GPRReg entryGPR, GPRReg scratchGPR, JSValueRegs resultRegs, int32_t indexAdjust);
     void compileMapIteratorKey(Node*);
     void compileMapIteratorValue(Node*);
     void compileMapStorage(Node*);
     void compileMapStorageOrSentinel(Node*);
     void compileMapIterationNext(Node*);
     void compileMapIterationEntry(Node*);
+    void compileMapIterationEntryData(Node*, unsigned dataOffset);
     void compileMapIterationEntryKey(Node*);
     void compileMapIterationEntryValue(Node*);
     void compileMapOrSetSize(Node*);
