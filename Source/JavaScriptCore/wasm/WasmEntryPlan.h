@@ -118,6 +118,10 @@ protected:
     void complete() WTF_REQUIRES_LOCK(m_lock) override;
 
     bool failIfMixedExceptionHandlingProposals() WTF_REQUIRES_LOCK(m_lock);
+    // Records a function validation error (lowest index wins) and stops assigning more work.
+    // Completion is deferred to ThreadCountHolder / completeInStreaming so concurrent
+    // workers can still report a lower-index failure.
+    void failFunctionCompilation(FunctionCodeIndex, String&& errorMessage, CompilationError = CompilationError::Default) WTF_REQUIRES_LOCK(m_lock);
 
     virtual bool prepareImpl() = 0;
     virtual void compileFunction(FunctionCodeIndex functionIndex) = 0;

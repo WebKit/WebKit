@@ -127,6 +127,18 @@ void Plan::fail(String&& errorMessage, CompilationError error)
     complete();
 }
 
+void Plan::failAtFunction(FunctionCodeIndex functionIndex, String&& errorMessage, CompilationError error)
+{
+    ASSERT(errorMessage);
+    // Non-function failures (OOM, parse, cancel) win over function validation errors.
+    if (failed() && (!m_errorFunctionIndex || *m_errorFunctionIndex <= functionIndex))
+        return;
+    dataLogLnIf(WasmPlanInternal::verbose, "failing function ", functionIndex, " with message: ", errorMessage);
+    m_errorMessage = WTF::move(errorMessage);
+    m_errorFunctionIndex = functionIndex;
+    m_error = error;
+}
+
 Plan::~Plan() = default;
 
 CString Plan::signpostMessage(CompilationMode compilationMode, uint32_t functionIndexSpace) const

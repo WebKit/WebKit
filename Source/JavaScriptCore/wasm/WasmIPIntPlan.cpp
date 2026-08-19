@@ -97,11 +97,7 @@ void IPIntPlan::compileFunction(FunctionCodeIndex functionIndex)
 
     if (!parseAndCompileResult) [[unlikely]] {
         Locker locker { m_lock };
-        if (!m_errorMessage) {
-            // Multiple compiles could fail simultaneously. We arbitrarily choose the first.
-            fail(makeString(parseAndCompileResult.error(), ", in function at index "_s, functionIndex.rawIndex())); // FIXME make this an Expected.
-        }
-        m_currentIndex = m_moduleInformation->functions.size();
+        failFunctionCompilation(functionIndex, makeString(parseAndCompileResult.error(), ", in function at index "_s, functionIndex.rawIndex()));
         return;
     }
 
@@ -117,7 +113,7 @@ void IPIntPlan::compileFunction(FunctionCodeIndex functionIndex)
 
         if (usesSIMD && !Options::useBBQJIT() && !Options::useWasmIPIntSIMD()) {
             Locker locker { m_lock };
-            Base::fail(makeString("JIT is disabled, but the entrypoint for "_s, functionIndex.rawIndex(), " requires JIT"_s));
+            failFunctionCompilation(functionIndex, makeString("JIT is disabled, but the entrypoint for "_s, functionIndex.rawIndex(), " requires JIT"_s));
             return;
         }
 
