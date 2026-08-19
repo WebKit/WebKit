@@ -72,13 +72,13 @@ module WebKit_Internal [system] {
     }
 
     module WKObject {
-        requires cplusplus20
+        requires cplusplus20,objc
         header "../../Shared/Cocoa/WKObject.h"
         export *
     }
 
     module WKTextSelectionController {
-        requires cplusplus20
+        requires cplusplus20,objc
         header "../../UIProcess/mac/WKTextSelectionController.h"
         export *
     }
@@ -102,12 +102,13 @@ module WebKit_Internal [system] {
     }
 
     module WKTextSelectionRect {
-        requires cplusplus20
+        requires cplusplus20,objc
         header "../../UIProcess/Cocoa/WKTextSelectionRect.h"
         export *
     }
 
     module WKWebViewIOS {
+        requires objc
         header "../../UIProcess/API/ios/WKWebViewIOS.h"
         export *
     }
@@ -399,7 +400,7 @@ module WebKit_Internal [system] {
     }
 
     module WKAppKitGestureController {
-        requires cplusplus20
+        requires cplusplus20,objc
         header "../../UIProcess/mac/AppKitGestures/WKAppKitGestureController.h"
         export *
     }
