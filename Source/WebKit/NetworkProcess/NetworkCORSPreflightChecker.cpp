@@ -124,13 +124,19 @@ void NetworkCORSPreflightChecker::didReceiveChallenge(WebCore::AuthenticationCha
 
 void NetworkCORSPreflightChecker::didReceiveResponse(WebCore::ResourceResponse&& response, NegotiatedLegacyTLS, PrivateRelayed, ResponseCompletionHandler&& completionHandler)
 {
-    CORS_CHECKER_RELEASE_LOG("didReceiveResponse");
-
     if (m_shouldCaptureExtraNetworkLoadMetrics)
         m_loadInformation.response = response;
 
     m_response = WTF::move(response);
-    completionHandler(PolicyAction::Use);
+
+    CORS_CHECKER_RELEASE_LOG("didReceiveResponse http_status_code=%d", m_response.httpStatusCode());
+
+    completionHandler(PolicyAction::Ignore);
+    if (RefPtr task = std::exchange(m_task, nullptr)) {
+        task->clearClient();
+        task->cancel();
+    }
+    completePreflight(ResourceError { });
 }
 
 void NetworkCORSPreflightChecker::didReceiveData(const WebCore::SharedBuffer&)
@@ -143,9 +149,16 @@ void NetworkCORSPreflightChecker::didCompleteWithError(const WebCore::ResourceEr
     if (m_shouldCaptureExtraNetworkLoadMetrics)
         m_loadInformation.metrics = metrics;
 
+    completePreflight(ResourceError { preflightError });
+}
+
+void NetworkCORSPreflightChecker::completePreflight(ResourceError&& preflightError)
+{
+    ASSERT(m_completionCallback);
+
     if (!preflightError.isNull()) {
         CORS_CHECKER_RELEASE_LOG("didCompleteWithError");
-        auto error = preflightError;
+        auto error = WTF::move(preflightError);
         if (error.isNull() || error.isGeneral())
             error.setType(ResourceError::Type::AccessControl);
 

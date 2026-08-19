@@ -93,6 +93,8 @@ private:
     void wasBlockedByRestrictions() final;
     void wasBlockedByDisabledFTP() final;
 
+    void completePreflight(WebCore::ResourceError&&);
+
     Parameters m_parameters;
     const Ref<NetworkProcess> m_networkProcess;
     WebCore::ResourceResponse m_response;
