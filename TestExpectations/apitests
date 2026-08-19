@@ -63,6 +63,12 @@ TestWebKitAPI.WebPageTransferableTests/exportToImage(type:) [ Skip ]
 [ iOS ] TestWebKitAPI.HTTP2Server.NonDefaultStatusCodeAndResponseHeader [ Skip ]
 [ iOS ] TestWebKitAPI.HTTP2Server.POSTBody [ Skip ]
 
+# webkit.org/b/322126 [ iOS ]NEW TEST(319204@main): 3x TestWebKitAPI.HTTP3Server.* (api-tests) is a constant timeout.
+[ iOS Debug ] TestWebKitAPI.HTTP3Server.MultipleRequestsOverOneConnection [ Skip ]
+[ iOS Release ] TestWebKitAPI.HTTP3Server.MultipleRequestsOverOneConnection [ Pass Timeout ]
+[ iOS ] TestWebKitAPI.HTTP3Server.NonDefaultStatusCodeAndResponseHeader [ Skip ]
+[ iOS ] TestWebKitAPI.HTTP3Server.POSTBody [ Skip ]
+
 # webkit.org/b/318893 [ iOS DEBUG ] 2x TestWebKitAPI.IPCTestingAPI.* (api-tests) are constant fails.
 [ iOS Debug ] TestWebKitAPI.IPCTestingAPI.LockdownModeDetection [ Failure ]
 [ iOS Debug ] TestWebKitAPI.IPCTestingAPI.LockdownModeDisabledAllowsWebGL [ Failure ]
