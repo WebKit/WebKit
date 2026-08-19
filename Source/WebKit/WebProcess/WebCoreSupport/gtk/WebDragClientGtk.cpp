@@ -28,7 +28,6 @@
 
 #if ENABLE(DRAG_SUPPORT)
 
-#include "ArgumentCodersGtk.h"
 #include "MessageSenderInlines.h"
 #include "WebPage.h"
 #include "WebPageProxyMessages.h"

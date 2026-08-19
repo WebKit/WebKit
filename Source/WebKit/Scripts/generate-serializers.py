@@ -756,7 +756,7 @@ def generate_forward_declarations(serialized_types, serialized_enums, additional
                 less_than_index = name.find('<')
                 if less_than_index == -1:
                     result.append(f'{type.cpp_type_from_struct_or_class()} {name};')
-                else:
+                elif name[:less_than_index] != 'GRefPtr':
                     result.append(f'template<typename> {type.cpp_type_from_struct_or_class()} {name[:less_than_index]};')
             if type.condition is not None:
                 result.append('#endif')
@@ -804,6 +804,10 @@ def generate_header(serialized_types, serialized_enums, additional_forward_decla
     result.append('#else')
     result.append('typedef struct CF_BRIDGED_TYPE(id) __SecTrust *SecTrustRef;')
     result.append('#endif')
+    result.append('#endif')
+
+    result.append('#if USE(GLIB)')
+    result.append('#include <wtf/glib/GRefPtr.h>')
     result.append('#endif')
 
     result += generate_forward_declarations(serialized_types, serialized_enums, additional_forward_declarations)

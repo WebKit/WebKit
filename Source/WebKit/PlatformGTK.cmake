@@ -81,6 +81,8 @@ list(APPEND WebKit_SERIALIZATION_IN_FILES
     Shared/glib/SystemSettings.serialization.in
     Shared/glib/UserMessage.serialization.in
 
+    Shared/gtk/ArgumentCodersGtk.serialization.in
+
     Shared/soup/WebCoreArgumentCodersSoup.serialization.in
 )
 

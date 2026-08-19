@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Igalia S.L.
+ * Copyright (C) 2026 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,26 +25,51 @@
 
 #pragma once
 
-#include "ArgumentCoders.h"
+#if PLATFORM(GTK)
+
+#include "ArgumentCodersGLib.h"
 #include <wtf/glib/GRefPtr.h>
 
 typedef struct _GtkPrintSettings GtkPrintSettings;
 typedef struct _GtkPageSetup GtkPageSetup;
+typedef struct _GVariant GVariant;
 
-namespace WebCore {
-class SelectionData;
-}
+namespace WebKit {
 
-namespace IPC {
+class CoreIPCGtkPrintSettings {
+public:
+    explicit CoreIPCGtkPrintSettings(const GRefPtr<GtkPrintSettings>&);
 
-template<> struct ArgumentCoder<GRefPtr<GtkPrintSettings>> {
-    static void encode(Encoder&, const GRefPtr<GtkPrintSettings>&);
-    static std::optional<GRefPtr<GtkPrintSettings>> decode(Decoder&);
+    explicit CoreIPCGtkPrintSettings(GRefPtr<GVariant>&& settings)
+        : m_settings(WTF::move(settings))
+    {
+    }
+
+    GRefPtr<GVariant> settings() const { return m_settings; }
+
+    operator GRefPtr<GtkPrintSettings>() const;
+
+private:
+    GRefPtr<GVariant> m_settings;
 };
 
-template<> struct ArgumentCoder<GRefPtr<GtkPageSetup>> {
-    static void encode(Encoder&, const GRefPtr<GtkPageSetup>&);
-    static std::optional<GRefPtr<GtkPageSetup>> decode(Decoder&);
+class CoreIPCGtkPageSetup {
+public:
+    explicit CoreIPCGtkPageSetup(const GRefPtr<GtkPageSetup>&);
+
+    explicit CoreIPCGtkPageSetup(GRefPtr<GVariant>&& pageSetup)
+        : m_pageSetup(WTF::move(pageSetup))
+    {
+    }
+
+    GRefPtr<GVariant> pageSetup() const { return m_pageSetup; }
+
+    operator GRefPtr<GtkPageSetup>() const;
+
+private:
+    GRefPtr<GVariant> m_pageSetup;
 };
 
-} // namespace IPC
+} // namespace WebKit
+
+#endif // PLATFORM(GTK)

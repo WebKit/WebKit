@@ -87,7 +87,6 @@
 #endif
 
 #if PLATFORM(GTK)
-#include "ArgumentCodersGtk.h"
 #include "WebPrintOperationGtk.h"
 #endif
 
