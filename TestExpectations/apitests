@@ -217,6 +217,7 @@ rdar://163517689 [ ios ] TestWebKitAPI.ProcessSwap.CrashWithGestureController [ 
 rdar://137984168 [ ios ] TestWebKitAPI.ProcessSwap.NavigateBackAfterCrossOriginClientRedirect [ Skip ]
 rdar://163517689 [ ios ] TestWebKitAPI.ProcessSwap.SwapWithGestureController [ Skip ]
 webkit.org/b/242085 [ ios ] TestWebKitAPI.RequestTextInputContext.TextInteraction_FocusingAssistedElementShouldNotScrollToReveal [ Skip ]
+webkit.org/b/321947 [ debug ] TestWebKitAPI.ResourceLoadStatistics.BlockUnpartitionedThirdPartyCookies [ Skip ]
 rdar://136525714 [ mac ] TestWebKitAPI.ResourceLoadStatistics.ClientEvaluatedJavaScriptDoesNotLogUserInteraction [ Skip ]
 rdar://172325390 TestWebKitAPI.ResourceLoadStatistics.GrandfatherCallback [ Skip ]
 rdar://136535465 TestWebKitAPI.ResourceLoadStatistics.MigrateDataFromMissingTopFrameUniqueRedirectSameSiteStrictTableSchema [ Skip ]
