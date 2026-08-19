@@ -720,6 +720,33 @@ static bool shouldIncludeOrientationState(const AXCoreObject& coreObject)
         || coreObject.isSlider();
 }
 
+AccessibilityObjectAtspi* AccessibilityObjectAtspi::focusableAncestor() const
+{
+    if (!m_coreObject)
+        return nullptr;
+
+    auto ancestor = m_coreObject->focusableAncestor();
+    return ancestor ? ancestor->wrapper() : nullptr;
+}
+
+AccessibilityObjectAtspi* AccessibilityObjectAtspi::editableAncestor() const
+{
+    if (!m_coreObject)
+        return nullptr;
+
+    auto ancestor = m_coreObject->editableAncestor();
+    return ancestor ? ancestor->wrapper() : nullptr;
+}
+
+AccessibilityObjectAtspi* AccessibilityObjectAtspi::highestEditableAncestor() const
+{
+    if (!m_coreObject)
+        return nullptr;
+
+    auto ancestor = m_coreObject->highestEditableAncestor();
+    return ancestor ? ancestor->wrapper() : nullptr;
+}
+
 OptionSet<Atspi::State> AccessibilityObjectAtspi::states() const
 {
     OptionSet<Atspi::State> states;
@@ -759,7 +786,7 @@ OptionSet<Atspi::State> AccessibilityObjectAtspi::states() const
         if (m_coreObject->supportsChecked())
             states.add(Atspi::State::Checkable);
 
-        if (m_coreObject->isTextControl() || m_coreObject->isNonNativeTextControl())
+        if (m_coreObject->isTextControl() || m_coreObject->isNonNativeTextControl() || m_coreObject->editableAncestor())
             states.add(Atspi::State::Editable);
     } else if (liveObject && liveObject->supportsReadOnly())
         states.add(Atspi::State::ReadOnly);
@@ -1405,7 +1432,9 @@ AccessibilityObjectInclusion AccessibilityObject::accessibilityPlatformIncludesO
         return AccessibilityObjectInclusion::IgnoreObject;
 
     // Entries and password fields have extraneous children which we want to ignore.
-    if (parent->isSecureField() || parent->isTextControl())
+    // Exclude content-editable regions since they can contain valid non-text
+    // descendants (e.g: a button).
+    if (parent->isSecureField() || (parent->isTextControl() && !parent->hasContentEditableAttributeSet()))
         return AccessibilityObjectInclusion::IgnoreObject;
 
     // We expose the slider as a whole but not its value indicator.

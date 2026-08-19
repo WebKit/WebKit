@@ -172,6 +172,10 @@ public:
 
     WEBCORE_EXPORT bool focus() const;
 
+    WEBCORE_EXPORT AccessibilityObjectAtspi* focusableAncestor() const;
+    WEBCORE_EXPORT AccessibilityObjectAtspi* editableAncestor() const;
+    WEBCORE_EXPORT AccessibilityObjectAtspi* highestEditableAncestor() const;
+
 private:
     AccessibilityObjectAtspi(AXCoreObject*, AccessibilityRootAtspi*);
 

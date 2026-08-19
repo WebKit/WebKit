@@ -268,6 +268,10 @@ public:
     JSRetainPtr<JSStringRef> lineAtOffset(int offset) override;
     JSRetainPtr<JSStringRef> sentenceAtOffset(int offset) override;
 
+    RefPtr<AccessibilityUIElement> focusableAncestor() override;
+    RefPtr<AccessibilityUIElement> editableAncestor() override;
+    RefPtr<AccessibilityUIElement> highestEditableAncestor() override;
+
 private:
     AccessibilityUIElementAtspi(PlatformUIElement);
     AccessibilityUIElementAtspi(const AccessibilityUIElementAtspi&);

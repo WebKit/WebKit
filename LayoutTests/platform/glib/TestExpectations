@@ -1116,12 +1116,6 @@ accessibility/loading-iframe-updates-axtree.html [ Skip ]
 # Missing AccessibilityUIElement::{isBusy, isAtomicLiveRegion, liveRegionStatus, liveRegionRelevant} implementations.
 accessibility/live-region-attributes-update-after-dynamic-change.html [ Skip ]
 
-# Missing AccessibilityUIElement::focusableAncestor implementation.
-accessibility/focusable-ancestor.html [ Failure ]
-
-# Missing AccessibilityUIElement::{editableAncestor, highestEditableAncestor} implementations.
-accessibility/editable-ancestor.html [ Failure ]
-
 # Timing out since it was added in https://bugs.webkit.org/show_bug.cgi?id=239434.
 accessibility/text-updates-after-dynamic-change.html [ Skip ]
 

@@ -1894,6 +1894,31 @@ JSRetainPtr<JSStringRef> AccessibilityUIElementAtspi::sentenceAtOffset(int offse
     return OpaqueJSString::tryCreate(stringAtOffset(m_element.get(), offset, WebCore::AccessibilityObjectAtspi::TextGranularity::SentenceStart)).leakRef();
 }
 
+
+RefPtr<AccessibilityUIElement> AccessibilityUIElementAtspi::focusableAncestor()
+{
+    m_element->updateBackingStore();
+    if (auto ancestor = m_element->focusableAncestor())
+        return AccessibilityUIElementAtspi::create(ancestor);
+    return nullptr;
+}
+
+RefPtr<AccessibilityUIElement> AccessibilityUIElementAtspi::editableAncestor()
+{
+    m_element->updateBackingStore();
+    if (auto ancestor = m_element->editableAncestor())
+        return AccessibilityUIElementAtspi::create(ancestor);
+    return nullptr;
+}
+
+RefPtr<AccessibilityUIElement> AccessibilityUIElementAtspi::highestEditableAncestor()
+{
+    m_element->updateBackingStore();
+    if (auto ancestor = m_element->highestEditableAncestor())
+        return AccessibilityUIElementAtspi::create(ancestor);
+    return nullptr;
+}
+
 bool AccessibilityUIElementAtspi::replaceTextInRange(JSStringRef, int, int)
 {
     return false;
