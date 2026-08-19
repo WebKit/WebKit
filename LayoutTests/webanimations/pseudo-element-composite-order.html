@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Composite order of animations targeting pseudo-elements</title>
+<link rel="help" href="https://drafts.csswg.org/css-animations-2/#animation-composite-order">
+<link rel="help" href="https://drafts.csswg.org/web-animations-1/#dom-animatable-getanimations">
+<link rel="help" href="https://drafts.csswg.org/web-animations-1/#the-effect-stack">
+<meta name="assert" content="Animations on the pseudo-elements of a single originating element sort as: the element, ::marker, ::before, any other pseudo-element in ascending order of the Unicode codepoints of its selector, ::after.">
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<style>
+@keyframes colorAnim {
+    from { color: red; }
+    to { color: blue; }
+}
+</style>
+<body>
+<div id="scratch"></div>
+<script>
+'use strict';
+
+// Animatable.getAnimations() returns its list "sorted using the composite order described
+// for the associated animations of effects in § 5.4.2 The effect stack". Every animation
+// here is a CSS Animation, so steps 1 and 3 of that comparison do not apply and it resolves
+// entirely on step 2, the class-specific composite order — for CSS Animations that is:
+//
+//     https://drafts.csswg.org/css-animations-2/#animation-composite-order
+//
+// which sorts animations with a common owning element but different pseudo-element
+// identifiers as:
+//
+//     - the element itself
+//     - ::marker
+//     - ::before
+//     - any other pseudo-element, in ascending order of the Unicode codepoints of its selector
+//     - ::after
+//
+// So the sequence getAnimations() returns is a direct probe of that ordering. Animation
+// event dispatch order uses the same comparison, but getAnimations() is synchronous and
+// so needs no waiting on events that may never be dispatched.
+//
+// The ::view-transition pseudo-element tree is deliberately out of scope here: its
+// ordering is additionally constrained by css-view-transitions.
+//
+// ::-webkit-scrollbar is not standardized, which is why this test is not in
+// web-platform-tests: Firefox has no such pseudo-element, so the ordering it takes part
+// in cannot be tested cross-engine. It participates in the same codepoint ordering
+// wherever it is supported, and it is the only entry in the third group whose selector
+// begins with a character below "a".
+//
+// Pseudo-elements for which no animation is created report their subtests as
+// optional-feature-unsupported rather than failing them, so that an unsupported
+// pseudo-element cannot mask a misordering.
+
+// All ASCII, so code-unit order matches codepoint order.
+const codepointOrder = (a, b) => a < b ? -1 : a > b ? 1 : 0;
+
+const OTHER_PSEUDOS = [
+    '::-webkit-scrollbar',
+    '::checkmark',
+    '::first-letter',
+    '::first-line',
+    '::grammar-error',
+    '::highlight(hl)',
+    '::picker-icon',
+    '::selection',
+    '::spelling-error',
+    '::target-text',
+].sort(codepointOrder);
+
+// `null` stands for the originating element itself.
+const EXPECTED_ORDER = [null, '::marker', '::before', ...OTHER_PSEUDOS, '::after'];
+
+const display = pseudo => pseudo === null ? 'element' : pseudo;
+
+const nextFrame = () => new Promise(requestAnimationFrame);
+
+let hostCounter = 0;
+
+function declarationsFor(pseudo) {
+    switch (pseudo) {
+    case '::before':
+    case '::after':
+        return "content: 'x';";
+    case '::-webkit-scrollbar':
+        // Styling ::-webkit-scrollbar at all opts the scroller into custom scrollbars,
+        // which is what makes the pseudo-element exist on platforms with overlay scrollbars.
+        return 'width: 10px; height: 10px; background-color: gray;';
+    case '::checkmark':
+    case '::picker-icon':
+        return 'display: block;';
+    default:
+        return '';
+    }
+}
+
+function addStyle(test, id, pseudos, extraRules = '') {
+    const rules = pseudos.map(pseudo => {
+        const selector = pseudo === null ? `#${id}` : `#${id}${pseudo}`;
+        return `${selector} { ${declarationsFor(pseudo)} animation: colorAnim 100s linear; }`;
+    });
+    const style = document.createElement('style');
+    style.textContent = extraRules + '\n' + rules.join('\n');
+    document.head.appendChild(style);
+    test.add_cleanup(() => { style.remove(); });
+}
+
+// A single element that can simultaneously own ::marker, ::before, ::after,
+// ::first-letter, ::first-line, ::selection, ::highlight(), ::-webkit-scrollbar,
+// ::grammar-error, ::spelling-error and ::target-text.
+function buildDivHost(test, pseudos) {
+    const id = `host-${hostCounter++}`;
+    const host = document.createElement('div');
+    host.id = id;
+    host.textContent = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.';
+    host.style.cssText = 'display: list-item; list-style-position: inside; overflow: scroll; width: 100px; height: 40px;';
+
+    addStyle(test, id, pseudos);
+    document.getElementById('scratch').appendChild(host);
+    test.add_cleanup(() => { host.remove(); });
+
+    if (pseudos.includes('::selection')) {
+        getSelection().selectAllChildren(host);
+        test.add_cleanup(() => { getSelection().removeAllRanges(); });
+    }
+
+    if (pseudos.includes('::highlight(hl)') && window.Highlight && window.CSS && CSS.highlights) {
+        const range = new Range();
+        range.selectNodeContents(host);
+        CSS.highlights.set('hl', new Highlight(range));
+        test.add_cleanup(() => { CSS.highlights.delete('hl'); });
+    }
+
+    return host;
+}
+
+// ::picker-icon is owned by the <select>, ::checkmark by the <option>, so they can
+// never be compared against each other by this table — only against pseudo-elements
+// of their own originating element.
+function buildSelectHost(test, pseudos) {
+    const id = `host-${hostCounter++}`;
+    const select = document.createElement('select');
+    select.id = id;
+    select.innerHTML = '<option>one</option><option>two</option>';
+
+    addStyle(test, id, pseudos, `#${id} { appearance: base-select; }`);
+    document.getElementById('scratch').appendChild(select);
+    test.add_cleanup(() => { select.remove(); });
+
+    return select;
+}
+
+function buildOptionHost(test, pseudos) {
+    const id = `host-${hostCounter++}`;
+    const select = document.createElement('select');
+    select.id = `select-${hostCounter++}`;
+    const option = document.createElement('option');
+    option.id = id;
+    option.textContent = 'one';
+    select.appendChild(option);
+    select.appendChild(document.createElement('option')).textContent = 'two';
+
+    // ::checkmark only exists on the :checked option, which is the first one here.
+    addStyle(test, id, pseudos, `#${select.id} { appearance: base-select; } #${id} { display: list-item; list-style-position: inside; }`);
+    document.getElementById('scratch').appendChild(select);
+    test.add_cleanup(() => { select.remove(); });
+
+    return option;
+}
+
+function compositeOrder(host) {
+    // getAnimations() is specified to return animations in composite order.
+    return host.getAnimations({ subtree: true }).map(animation => animation.effect.pseudoElement ?? null);
+}
+
+function sequenceTest(family) {
+    const name = `[${family.label}] full sequence`;
+    const pseudos = family.pseudos;
+    promise_test(async test => {
+        const host = family.build(test, pseudos);
+        await nextFrame();
+        await nextFrame();
+
+        const actual = compositeOrder(host);
+
+        // Only the pseudo-elements that an animation was actually created for take part
+        // in the comparison, so an unsupported pseudo-element cannot mask a misordering.
+        const expected = pseudos.filter(pseudo => actual.includes(pseudo));
+
+        assert_array_equals(actual.map(display), expected.map(display));
+    }, name);
+}
+
+function pairTest(family, a, b) {
+    const name = `[${family.label}] ${display(a)} sorts before ${display(b)}`;
+    promise_test(async test => {
+        const host = family.build(test, [a, b]);
+        await nextFrame();
+        await nextFrame();
+
+        const actual = compositeOrder(host);
+        const indexOfA = actual.indexOf(a);
+        const indexOfB = actual.indexOf(b);
+
+        if (indexOfA < 0 || indexOfB < 0) {
+            assert_implements_optional(false,
+                `no animation created for ${[[a, indexOfA], [b, indexOfB]].filter(([, i]) => i < 0).map(([pseudo]) => display(pseudo)).join(' or ')}`);
+        }
+
+        assert_less_than(indexOfA, indexOfB,
+            `getAnimations() returned ${actual.map(display).join(', ')}`);
+    }, name);
+}
+
+function pairTests(family) {
+    const pseudos = family.pseudos;
+    for (let i = 0; i < pseudos.length; ++i) {
+        for (let j = i + 1; j < pseudos.length; ++j)
+            pairTest(family, pseudos[i], pseudos[j]);
+    }
+}
+
+// Each family is one originating element carrying every pseudo-element it can own.
+// The pseudo-element list is always in the order the spec requires.
+const FAMILIES = [{
+    label: 'div',
+    build: buildDivHost,
+    pseudos: EXPECTED_ORDER.filter(pseudo => pseudo !== '::checkmark' && pseudo !== '::picker-icon'),
+}, {
+    label: 'select',
+    build: buildSelectHost,
+    pseudos: EXPECTED_ORDER.filter(pseudo => [null, '::before', '::picker-icon', '::after'].includes(pseudo)),
+}, {
+    label: 'option',
+    build: buildOptionHost,
+    pseudos: EXPECTED_ORDER.filter(pseudo => [null, '::marker', '::before', '::checkmark', '::after'].includes(pseudo)),
+}];
+
+for (const family of FAMILIES)
+    sequenceTest(family);
+
+for (const family of FAMILIES)
+    pairTests(family);
+</script>
+</body>
+

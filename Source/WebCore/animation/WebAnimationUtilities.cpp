@@ -65,7 +65,13 @@ static bool compareStyleOriginatedAnimationOwningElementPositionsInDocumentTreeO
     //     - any other pseudo-elements not mentioned specifically in this list, sorted in ascending order by the Unicode codepoints that make up each selector
     //     - ::after
     //     - element children
-    enum SortingIndex : uint8_t { NotPseudo, Marker, Before, FirstLetter, FirstLine, GrammarError, Highlight, WebKitScrollbar, Selection, SpellingError, TargetText, Checkmark, After, PickerIcon, ViewTransition, ViewTransitionGroup, ViewTransitionImagePair, ViewTransitionOld, ViewTransitionNew, Other };
+    //
+    // The enumerators below are listed in that sort order, since their numeric values are what
+    // the comparison uses. A new pseudo-element must therefore be inserted at its place in this
+    // list rather than appended at the end. For the "any other pseudo-elements" group, that place
+    // is where its selector falls in ascending codepoint order: "-" sorts before "c", "c" before
+    // "f", and so on.
+    enum SortingIndex : uint8_t { NotPseudo, Marker, Before, WebKitScrollbar, Checkmark, FirstLetter, FirstLine, GrammarError, Highlight, PickerIcon, Selection, SpellingError, TargetText, After, ViewTransition, ViewTransitionGroup, ViewTransitionImagePair, ViewTransitionOld, ViewTransitionNew, Other };
     auto sortingIndex = [](const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier) -> SortingIndex {
         if (!pseudoElementIdentifier)
             return NotPseudo;

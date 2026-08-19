@@ -1,0 +1,87 @@
+
+PASS [div] full sequence
+PASS [select] full sequence
+PASS [option] full sequence
+PASS [div] element sorts before ::marker
+PASS [div] element sorts before ::before
+PASS [div] element sorts before ::-webkit-scrollbar
+PASS [div] element sorts before ::first-letter
+PASS [div] element sorts before ::first-line
+NOTRUN [div] element sorts before ::grammar-error no animation created for ::grammar-error
+NOTRUN [div] element sorts before ::highlight(hl) no animation created for ::highlight(hl)
+NOTRUN [div] element sorts before ::selection no animation created for ::selection
+NOTRUN [div] element sorts before ::spelling-error no animation created for ::spelling-error
+NOTRUN [div] element sorts before ::target-text no animation created for ::target-text
+PASS [div] element sorts before ::after
+PASS [div] ::marker sorts before ::before
+PASS [div] ::marker sorts before ::-webkit-scrollbar
+PASS [div] ::marker sorts before ::first-letter
+PASS [div] ::marker sorts before ::first-line
+NOTRUN [div] ::marker sorts before ::grammar-error no animation created for ::grammar-error
+NOTRUN [div] ::marker sorts before ::highlight(hl) no animation created for ::highlight(hl)
+NOTRUN [div] ::marker sorts before ::selection no animation created for ::selection
+NOTRUN [div] ::marker sorts before ::spelling-error no animation created for ::spelling-error
+NOTRUN [div] ::marker sorts before ::target-text no animation created for ::target-text
+PASS [div] ::marker sorts before ::after
+PASS [div] ::before sorts before ::-webkit-scrollbar
+PASS [div] ::before sorts before ::first-letter
+PASS [div] ::before sorts before ::first-line
+NOTRUN [div] ::before sorts before ::grammar-error no animation created for ::grammar-error
+NOTRUN [div] ::before sorts before ::highlight(hl) no animation created for ::highlight(hl)
+NOTRUN [div] ::before sorts before ::selection no animation created for ::selection
+NOTRUN [div] ::before sorts before ::spelling-error no animation created for ::spelling-error
+NOTRUN [div] ::before sorts before ::target-text no animation created for ::target-text
+PASS [div] ::before sorts before ::after
+PASS [div] ::-webkit-scrollbar sorts before ::first-letter
+PASS [div] ::-webkit-scrollbar sorts before ::first-line
+NOTRUN [div] ::-webkit-scrollbar sorts before ::grammar-error no animation created for ::grammar-error
+NOTRUN [div] ::-webkit-scrollbar sorts before ::highlight(hl) no animation created for ::highlight(hl)
+NOTRUN [div] ::-webkit-scrollbar sorts before ::selection no animation created for ::selection
+NOTRUN [div] ::-webkit-scrollbar sorts before ::spelling-error no animation created for ::spelling-error
+NOTRUN [div] ::-webkit-scrollbar sorts before ::target-text no animation created for ::target-text
+PASS [div] ::-webkit-scrollbar sorts before ::after
+PASS [div] ::first-letter sorts before ::first-line
+NOTRUN [div] ::first-letter sorts before ::grammar-error no animation created for ::grammar-error
+NOTRUN [div] ::first-letter sorts before ::highlight(hl) no animation created for ::highlight(hl)
+NOTRUN [div] ::first-letter sorts before ::selection no animation created for ::selection
+NOTRUN [div] ::first-letter sorts before ::spelling-error no animation created for ::spelling-error
+NOTRUN [div] ::first-letter sorts before ::target-text no animation created for ::target-text
+PASS [div] ::first-letter sorts before ::after
+NOTRUN [div] ::first-line sorts before ::grammar-error no animation created for ::grammar-error
+NOTRUN [div] ::first-line sorts before ::highlight(hl) no animation created for ::highlight(hl)
+NOTRUN [div] ::first-line sorts before ::selection no animation created for ::selection
+NOTRUN [div] ::first-line sorts before ::spelling-error no animation created for ::spelling-error
+NOTRUN [div] ::first-line sorts before ::target-text no animation created for ::target-text
+PASS [div] ::first-line sorts before ::after
+NOTRUN [div] ::grammar-error sorts before ::highlight(hl) no animation created for ::grammar-error or ::highlight(hl)
+NOTRUN [div] ::grammar-error sorts before ::selection no animation created for ::grammar-error or ::selection
+NOTRUN [div] ::grammar-error sorts before ::spelling-error no animation created for ::grammar-error or ::spelling-error
+NOTRUN [div] ::grammar-error sorts before ::target-text no animation created for ::grammar-error or ::target-text
+NOTRUN [div] ::grammar-error sorts before ::after no animation created for ::grammar-error
+NOTRUN [div] ::highlight(hl) sorts before ::selection no animation created for ::highlight(hl) or ::selection
+NOTRUN [div] ::highlight(hl) sorts before ::spelling-error no animation created for ::highlight(hl) or ::spelling-error
+NOTRUN [div] ::highlight(hl) sorts before ::target-text no animation created for ::highlight(hl) or ::target-text
+NOTRUN [div] ::highlight(hl) sorts before ::after no animation created for ::highlight(hl)
+NOTRUN [div] ::selection sorts before ::spelling-error no animation created for ::selection or ::spelling-error
+NOTRUN [div] ::selection sorts before ::target-text no animation created for ::selection or ::target-text
+NOTRUN [div] ::selection sorts before ::after no animation created for ::selection
+NOTRUN [div] ::spelling-error sorts before ::target-text no animation created for ::spelling-error or ::target-text
+NOTRUN [div] ::spelling-error sorts before ::after no animation created for ::spelling-error
+NOTRUN [div] ::target-text sorts before ::after no animation created for ::target-text
+PASS [select] element sorts before ::before
+PASS [select] element sorts before ::picker-icon
+PASS [select] element sorts before ::after
+PASS [select] ::before sorts before ::picker-icon
+PASS [select] ::before sorts before ::after
+PASS [select] ::picker-icon sorts before ::after
+PASS [option] element sorts before ::marker
+PASS [option] element sorts before ::before
+NOTRUN [option] element sorts before ::checkmark no animation created for ::checkmark
+PASS [option] element sorts before ::after
+PASS [option] ::marker sorts before ::before
+NOTRUN [option] ::marker sorts before ::checkmark no animation created for ::checkmark
+PASS [option] ::marker sorts before ::after
+NOTRUN [option] ::before sorts before ::checkmark no animation created for ::checkmark
+PASS [option] ::before sorts before ::after
+NOTRUN [option] ::checkmark sorts before ::after no animation created for ::checkmark
+
