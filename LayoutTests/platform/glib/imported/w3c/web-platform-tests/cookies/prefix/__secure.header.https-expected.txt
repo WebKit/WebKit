@@ -13,6 +13,6 @@ PASS __Secure: secure origin: Should set 'Secure;Path=/;HttpOnly'
 PASS __SeCuRe: secure origin: Should set 'Secure;Path=/;HttpOnly'
 PASS __Secure: secure origin: Should not set 'Path=/;domain=not-web-platform.test'
 PASS __SeCuRe: secure origin: Should not set 'Path=/;domain=not-web-platform.test'
-FAIL __Secure: secure origin: Should set 'Secure;Path=/;domain=not-web-platform.test' assert_equals: expected (string) "0.44015457568242167" but got (undefined) undefined
-FAIL __SeCuRe: secure origin: Should set 'Secure;Path=/;domain=not-web-platform.test' assert_equals: expected (string) "0.656092680583008" but got (undefined) undefined
+FAIL __Secure: secure origin: Should set 'Secure;Path=/;domain=not-web-platform.test' assert_equals: expected (string) "bar15" but got (undefined) undefined
+FAIL __SeCuRe: secure origin: Should set 'Secure;Path=/;domain=not-web-platform.test' assert_equals: expected (string) "bar16" but got (undefined) undefined
 

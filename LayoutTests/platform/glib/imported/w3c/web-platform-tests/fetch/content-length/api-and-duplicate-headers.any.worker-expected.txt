@@ -1,4 +1,4 @@
 
-PASS fetch() and duplicate Content-Length/Content-Type headers
-PASS XMLHttpRequest and duplicate Content-Length/Content-Type headers
+FAIL fetch() and duplicate Content-Length/Content-Type headers assert_equals: expected "6, 6" but got "6"
+FAIL XMLHttpRequest and duplicate Content-Length/Content-Type headers assert_equals: expected "6, 6" but got "6"
 
