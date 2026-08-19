@@ -423,6 +423,8 @@ JSC_DEFINE_JIT_OPERATION(operationWasmToJSExitMarshalArguments, void, (void* sp,
 ALWAYS_INLINE void assertCalleeIsReferenced(CallFrame* frame, JSWebAssemblyInstance* instance)
 {
 #if ASSERT_ENABLED
+    if (!frame->callee().isNativeCallee())
+        return;
     CalleeGroup& calleeGroup = *instance->calleeGroup();
     Wasm::Callee* callee = uncheckedDowncast<Wasm::Callee>(frame->callee().asNativeCallee());
     TriState status;
