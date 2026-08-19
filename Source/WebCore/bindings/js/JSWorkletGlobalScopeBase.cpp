@@ -80,6 +80,10 @@ JSWorkletGlobalScopeBase::JSWorkletGlobalScopeBase(JSC::VM& vm, JSC::Structure* 
     : JSDOMGlobalObject(vm, structure, normalWorld(vm), globalObjectMethodTable())
     , m_wrapped(WTF::move(impl))
 {
+#if ENABLE(WEBASSEMBLY)
+    ScriptExecutionContext& context = m_wrapped.get();
+    setWebAssemblyESMIntegrationEnabled(context.settingsValues().webAssemblyESMIntegrationEnabled);
+#endif
 }
 
 void JSWorkletGlobalScopeBase::finishCreation(VM& vm, JSGlobalProxy* proxy)
