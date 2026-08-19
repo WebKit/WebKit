@@ -1012,7 +1012,10 @@
                 "expected": {"wpe": {"status": ["FAIL"], "bug": "webkit.org/b/184967"}}
             },
             "test_touch_pointer_in_shadow_tree[inner-open]": {
-                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/184967"}}
+                "expected": {
+                    "gtk": {"status": ["FAIL"], "bug": "webkit.org/b/184967"},
+                    "wpe": {"status": ["FAIL"], "bug": "webkit.org/b/322100"}
+                }
             },
             "test_touch_pointer_in_shadow_tree[outer-open]": {
                 "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/184967"}}
@@ -1031,6 +1034,9 @@
             },
             "test_touch_pointer_in_shadow_tree[outer-closed]": {
                 "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/320461"}}
+            },
+            "test_move_to_fractional_position": {
+                "expected": {"wpe": {"status": ["FAIL"], "bug": "webkit.org/b/322100"}}
             }
         }
     },
