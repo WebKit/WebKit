@@ -691,7 +691,6 @@ private:
 
     void determineInstallReasonDuringLoad();
     void moveLocalStorageIfNeeded(const URL& previousBaseURL, CompletionHandler<void()>&&);
-    void removeWebsiteDataForOrigin(const URL&, CompletionHandler<void()>&&);
     void removeStaleExtensionWebsiteData();
 
     void permissionsDidChange(PermissionNotification, const PermissionsSet&);

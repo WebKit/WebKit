@@ -591,6 +591,55 @@ TEST(WebKit, WebsiteDataStoreRenameOrigin)
     TestWebKitAPI::Util::run(&done);
 }
 
+static RetainPtr<NSSet> displayNamesOfDataRecords(WKWebsiteDataStore *dataStore, NSSet *types)
+{
+    __block RetainPtr<NSMutableSet> displayNames = adoptNS([[NSMutableSet alloc] init]);
+    __block bool done = false;
+    [dataStore fetchDataRecordsOfTypes:types completionHandler:^(NSArray<WKWebsiteDataRecord *> *records) {
+        for (WKWebsiteDataRecord *record in records)
+            [displayNames addObject:record.displayName];
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    return displayNames;
+}
+
+TEST(WebKit, WebsiteDataStoreRenameOriginRemovesSourceOriginData)
+{
+    NSSet *allTypes = [WKWebsiteDataStore allWebsiteDataTypes];
+
+    __block bool done = false;
+    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:allTypes modifiedSince:[NSDate distantPast] completionHandler:^{
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    NSURL *exampleURL = [NSURL URLWithString:@"https://example.com/"];
+    NSURL *webKitURL = [NSURL URLWithString:@"https://webkit.org/"];
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] init]);
+    [webView synchronouslyLoadHTMLString:@"<script>localStorage.setItem('testkey', 'testvalue')</script>" baseURL:exampleURL];
+
+    // DOMCache is not one of the renamed types, so it is what verifies that data left behind gets deleted.
+    EXPECT_WK_STREQ("ok", [webView objectByCallingAsyncFunction:@"const cache = await caches.open('testcache'); await cache.put('https://example.com/resource', new Response('body')); return 'ok';" withArguments:@{ }]);
+
+    WKWebsiteDataStore *dataStore = [webView configuration].websiteDataStore;
+    EXPECT_TRUE([displayNamesOfDataRecords(dataStore, allTypes).get() containsObject:@"example.com"]);
+
+    RetainPtr renamedTypes = adoptNS([[NSSet alloc] initWithObjects:WKWebsiteDataTypeLocalStorage, WKWebsiteDataTypeIndexedDBDatabases, nil]);
+    done = false;
+    [dataStore _renameOrigin:exampleURL to:webKitURL forDataOfTypes:renamedTypes.get() completionHandler:^{
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    [webView synchronouslyLoadHTMLString:@"hello" baseURL:webKitURL];
+    EXPECT_WK_STREQ("testvalue", [webView stringByEvaluatingJavaScript:@"localStorage.getItem('testkey')"]);
+
+    EXPECT_FALSE([displayNamesOfDataRecords(dataStore, allTypes).get() containsObject:@"example.com"]);
+}
+
 TEST(WebKit, NetworkCacheDirectory)
 {
     using namespace TestWebKitAPI;

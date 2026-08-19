@@ -507,34 +507,12 @@ void WebExtensionContext::moveLocalStorageIfNeeded(const URL& previousBaseURL, C
     }
 
     static NSSet<NSString *> *dataTypes = [NSSet setWithObjects:WKWebsiteDataTypeIndexedDBDatabases, WKWebsiteDataTypeLocalStorage, nil];
-    [webViewConfiguration().websiteDataStore _renameOrigin:previousBaseURL.createNSURL().get() to:baseURL().createNSURL().get() forDataOfTypes:dataTypes completionHandler:makeBlockPtr([this, protectedThis = Ref { *this }, previousBaseURL, completionHandler = WTF::move(completionHandler)]() mutable {
-        removeWebsiteDataForOrigin(previousBaseURL, WTF::move(completionHandler));
-    }).get()];
+    [webViewConfiguration().websiteDataStore _renameOrigin:previousBaseURL.createNSURL().get() to:baseURL().createNSURL().get() forDataOfTypes:dataTypes completionHandler:makeBlockPtr(WTF::move(completionHandler)).get()];
 }
 
 static OptionSet<WebsiteDataType> allWebsiteDataTypes()
 {
     return toWebsiteDataTypes([WKWebsiteDataStore _allWebsiteDataTypesIncludingPrivate]);
-}
-
-void WebExtensionContext::removeWebsiteDataForOrigin(const URL& originURL, CompletionHandler<void()>&& completionHandler)
-{
-    if (!originURL.isValid())
-        return completionHandler();
-
-    RetainPtr<WKWebsiteDataStore> dataStore = webViewConfiguration().websiteDataStore;
-    RefPtr websiteDataStore = dataStore ? dataStore->_websiteDataStore.get() : nullptr;
-    if (!websiteDataStore)
-        return completionHandler();
-
-    auto origin = WebCore::SecurityOriginData::fromURLWithoutStrictOpaqueness(originURL);
-    auto dataTypes = allWebsiteDataTypes();
-
-    WebsiteDataRecord record;
-    for (auto type : dataTypes)
-        record.add(type, origin);
-
-    websiteDataStore->removeData(dataTypes, { record }, WTF::move(completionHandler));
 }
 
 void WebExtensionContext::removeStaleExtensionWebsiteData()
