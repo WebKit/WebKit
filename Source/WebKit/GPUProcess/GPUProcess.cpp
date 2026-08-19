@@ -391,11 +391,13 @@ void GPUProcess::sinkCompletedSnapshotToPDF(RemoteSnapshotIdentifier identifier,
     if (!snapshot->isComplete()) {
         // Currently the callbacks ensure the completeness.
         ASSERT_NOT_REACHED();
+        completionHandler({ });
         return;
     }
     auto result = snapshot->drawToPDF(size, rootFrameIdentifier);
     if (!result) {
         ASSERT_NOT_REACHED();
+        completionHandler({ });
         return;
     }
     completionHandler(WTF::move(*result));
@@ -418,6 +420,7 @@ void GPUProcess::sinkCompletedSnapshotToBitmap(RemoteSnapshotIdentifier identifi
     if (!snapshot->isComplete()) {
         // Currently the callbacks ensure the completeness.
         ASSERT_NOT_REACHED();
+        completionHandler({ });
         return;
     }
     completionHandler(snapshot->drawToBitmap(size, rootFrameIdentifier));

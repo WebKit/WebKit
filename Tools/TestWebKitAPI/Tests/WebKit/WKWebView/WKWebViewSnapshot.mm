@@ -1003,6 +1003,42 @@ TEST(WKWebView, RemoteSnapshotWithTransform)
 
     TestWebKitAPI::Util::run(&isDone);
 }
+
+// The UI process asks the web process to decide the image size by sending an empty bitmap size
+// (see -[WKWebView takeSnapshotWithConfiguration:]). The resolved size has to travel back so that
+// the GPU process can allocate the destination bitmap: an empty size produces an image buffer with
+// no GraphicsContext, which used to be dereferenced unconditionally in RemoteSnapshot::drawToBitmap.
+// rdar://182787176
+TEST(WKWebView, RemoteSnapshotWithContentsRect)
+{
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    enableRemoteSnapshotting(configuration.get());
+
+    CGFloat viewWidth = 200;
+    CGFloat viewHeight = 200;
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, viewWidth, viewHeight) configuration:configuration.get()]);
+
+    [webView synchronouslyLoadHTMLString:@"<body style='margin: 0'><div style='position: absolute; left: 200px; width: 800px; height: 600px; background-color: blue;'></div></body>"];
+
+    RetainPtr snapshotConfiguration = adoptNS([[WKSnapshotConfiguration alloc] init]);
+    [snapshotConfiguration _setUsesContentsRect:YES];
+
+    isDone = false;
+    [webView takeSnapshotWithConfiguration:snapshotConfiguration.get() completionHandler:^(Util::PlatformImage *snapshotImage, NSError *error) {
+        // Before the fix the GPU process crashed here, so the reply never arrived.
+        EXPECT_NULL(error);
+        EXPECT_NOT_NULL(snapshotImage);
+
+        // The contents rect is wider and taller than the view, so the web process must have
+        // resolved a non-empty size from the contents rather than using the empty requested one.
+        EXPECT_GT(snapshotImage.size.width, viewWidth);
+        EXPECT_GT(snapshotImage.size.height, viewHeight);
+
+        isDone = true;
+    }];
+
+    TestWebKitAPI::Util::run(&isDone);
+}
 #endif
 
 } // namespace TestWebKitAPI

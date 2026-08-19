@@ -16678,18 +16678,18 @@ void WebPageProxy::takeSnapshot(const IntRect& rect, const IntSize& bitmapSize, 
     auto snapshotIdentifier = RemoteSnapshotIdentifier::generate();
     Ref gpuProcess = GPUProcessProxy::getOrCreate();
     sendWithAsyncReply(Messages::WebPage::TakeRemoteSnapshot(rect, bitmapSize, options, snapshotIdentifier),
-        [weakGPUProcess = WeakPtr { gpuProcess }, snapshotIdentifier, bitmapSize, callback = WTF::move(callback), rootFrameIdentifier = m_mainFrame->frameID()](bool result) mutable {
+        [weakGPUProcess = WeakPtr { gpuProcess }, snapshotIdentifier, callback = WTF::move(callback), rootFrameIdentifier = m_mainFrame->frameID()](std::optional<WebCore::IntSize> resolvedSize) mutable {
         RefPtr gpuProcess = weakGPUProcess.get();
         if (!gpuProcess || !gpuProcess->hasConnection()) {
             callback(nullptr);
             return;
         }
-        if (!result) {
+        if (!resolvedSize) {
             gpuProcess->releaseSnapshot(snapshotIdentifier);
             callback(nullptr);
             return;
         }
-        gpuProcess->sinkCompletedSnapshotToBitmap(snapshotIdentifier, bitmapSize, rootFrameIdentifier, [callback = WTF::move(callback)] (std::optional<WebCore::ShareableBitmap::Handle>&& handle) mutable {
+        gpuProcess->sinkCompletedSnapshotToBitmap(snapshotIdentifier, *resolvedSize, rootFrameIdentifier, [callback = WTF::move(callback)] (std::optional<WebCore::ShareableBitmap::Handle>&& handle) mutable {
             if (!handle) {
                 callback(nullptr);
                 return;

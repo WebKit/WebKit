@@ -127,13 +127,12 @@ std::optional<RefPtr<SharedBuffer>> RemoteSnapshot::drawToPDF(const FloatSize& s
 std::optional<ShareableBitmap::Handle> RemoteSnapshot::drawToBitmap(const FloatSize& size, FrameIdentifier rootFrameIdentifier)
 {
     ASSERT(isComplete());
-    RefPtr image = WebImage::create(size, ImageOption::Shareable, DestinationColorSpace::SRGB());
-    if (!image)
+    Ref image = WebImage::create(size, ImageOption::Shareable, DestinationColorSpace::SRGB());
+    auto* context = image->context();
+    if (!context)
         return std::nullopt;
 
-    auto& context = *image->context();
-
-    if (!applyFrame(rootFrameIdentifier, context))
+    if (!applyFrame(rootFrameIdentifier, *context))
         return std::nullopt;
 
     return image->createHandle(SharedMemory::Protection::ReadOnly);
