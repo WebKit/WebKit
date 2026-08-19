@@ -1,0 +1,323 @@
+https://www.example.com/
+    (none)
+https://webkit.org/
+    (none)
+https://amazon.com.attacker.com/
+    (none)
+https://www.notamazon.com/
+    (none)
+https://www.365scores.com/
+    (none)
+https://actesting.org/
+    ShouldEnableLegacyGetUserMediaQuirk
+https://www.airindiaexpress.com/
+    NeedsAirIndiaExpressLayeringQuirk
+https://www.amazon.com/
+    NeedsPrimeVideoUserSelectNoneQuirk
+    ShouldDispatchSimulatedMouseEventsAssumeDefaultPreventedQuirk
+https://sub.amazon.com/
+    NeedsPrimeVideoUserSelectNoneQuirk
+    ShouldDispatchSimulatedMouseEventsAssumeDefaultPreventedQuirk
+https://www.amazon.co.uk/
+    NeedsPrimeVideoUserSelectNoneQuirk
+    ShouldDispatchSimulatedMouseEventsAssumeDefaultPreventedQuirk
+https://amazon.design/
+    NeedsPrimeVideoUserSelectNoneQuirk
+    ShouldDispatchSimulatedMouseEventsAssumeDefaultPreventedQuirk
+https://www.apple.com/
+    EnsureCaptionVisibilityInFullscreenAndPictureInPicture
+https://as.com/
+    (none)
+https://www.att.com/
+    (none)
+https://www.bbc.co.uk/
+    ReturnNullPictureInPictureElementDuringFullscreenChangeQuirk
+https://www.bbc.com/
+    ReturnNullPictureInPictureElementDuringFullscreenChangeQuirk
+https://codepen.io/
+    ShouldEnableSpeakerSelectionPermissionsPolicyQuirk
+https://www.codepen.io/
+    (none)
+https://www.bankofamerica.com/
+    MaybeBypassBackForwardCache
+https://www.bestbuy.com/
+    NeedsScriptToEvaluateBeforeRunningScriptFromURLQuirk
+https://www.bing.com/
+    MaybeBypassBackForwardCache
+    NeedsMediaRewriteRangeRequestQuirk
+https://bungalow.com/
+    ShouldBypassAsyncScriptDeferring
+https://www.capitalgroup.com/
+    ShouldDelayReloadWhenRegisteringServiceWorker
+https://www.cbssports.com/
+    (none)
+https://www.cnn.com/
+    (none)
+https://www.digitaltrends.com/
+    (none)
+https://discord.com/
+    (none)
+https://store.steampowered.com/
+    ShouldTreatAddingMouseOutEventListenerAsContentChange
+https://www.crunchyroll.com/
+    NeedsSuppressPostLayoutBoundaryEventsQuirk
+https://digits.t-mobile.com/
+    NeedsCustomUserAgentData
+    NeedsNavigatorUserAgentDataQuirk
+https://www.t-mobile.com/
+    (none)
+https://www.descript.com/
+    ShouldDisableDOMAudioSession
+https://www.dictionary.com/
+    NeedsAnchorToBeMouseFocusableQuirk
+https://www.disneyplus.com/
+    (none)
+https://www.ea.com/
+    (none)
+https://www.espn.com/
+    ShouldDisableEndFullscreenEventWhenEnteringPictureInPictureFromFullscreenQuirk
+https://www.facebook.com/
+    NeedsFacebookRemoveNotSupportedQuirk
+    RequiresUserGestureToPauseInPictureInPictureQuirk
+    ShouldDispatchSimulatedMouseEventsAssumeDefaultPreventedQuirk
+    ShouldEnableCameraAndMicrophonePermissionStateQuirk
+    ShouldEnableEnumerateDeviceQuirk
+    ShouldEnableFacebookFlagQuirk
+    ShouldEnableRTCEncodedStreamsQuirk
+    ShouldEnableRemoteTrackLabelQuirk
+https://www.forbes.com/
+    RequiresUserGestureToPauseInPictureInPictureQuirk
+https://gizmodo.com/
+    (none)
+https://play.geforcenow.com/
+    (none)
+https://www.google.com/
+    MaybeBypassBackForwardCache
+https://www.google.com/maps/
+    MayNeedToIgnoreContentObservation
+    MaybeBypassBackForwardCache
+    ShouldAvoidResizingWhenInputViewBoundsChangeQuirk
+https://maps.google.com/maps/
+    MayNeedToIgnoreContentObservation
+    MaybeBypassBackForwardCache
+    ShouldAvoidResizingWhenInputViewBoundsChangeQuirk
+https://docs.google.com/
+    InputMethodMustUseCompositionEvents
+    InputMethodUsesCorrectKeyEventOrder
+    IsTouchBarUpdateSuppressedForHiddenContentEditableQuirk
+    MaybeBypassBackForwardCache
+https://translate.google.com/
+    MaybeBypassBackForwardCache
+https://mail.google.com/
+    MaybeBypassBackForwardCache
+https://sites.google.com/
+    MaybeBypassBackForwardCache
+https://meet.google.com/
+    MaybeBypassBackForwardCache
+    ShouldEnableCameraBackgroundPlayback
+https://www.google.co.uk/
+    MaybeBypassBackForwardCache
+https://www.hbomax.com/
+    ShouldEnableFontLoadingAPIQuirk
+https://play.hbomax.com/
+    ShouldDisableAdSkippingInPip
+    ShouldEnableFontLoadingAPIQuirk
+https://www.carrentals.com/
+    NeedsExpediaGroupAnimationQuirk
+https://www.cheaptickets.com/
+    NeedsExpediaGroupAnimationQuirk
+https://www.ebookers.de/
+    NeedsExpediaGroupAnimationQuirk
+https://www.expedia.com/
+    NeedsExpediaGroupAnimationQuirk
+https://www.expedia.fr/
+    NeedsExpediaGroupAnimationQuirk
+https://www.hoteis.com/
+    NeedsExpediaGroupAnimationQuirk
+https://www.hoteles.com/
+    NeedsExpediaGroupAnimationQuirk
+https://www.hotels.com/
+    NeedsExpediaGroupAnimationQuirk
+https://www.mrjet.se/
+    NeedsExpediaGroupAnimationQuirk
+https://www.orbitz.com/
+    NeedsExpediaGroupAnimationQuirk
+https://www.travelocity.com/
+    NeedsExpediaGroupAnimationQuirk
+https://www.travelocity.ca/
+    NeedsExpediaGroupAnimationQuirk
+https://www.wotif.com/
+    NeedsExpediaGroupAnimationQuirk
+https://www.wotif.co.nz/
+    NeedsExpediaGroupAnimationQuirk
+https://www.hulu.com/
+    ImplicitMuteWhenVolumeSetToZero
+    NeedsCanPlayAfterSeekedQuirk
+    NeedsVideoShouldMaintainAspectRatioQuirk
+https://www.icloud.com/
+    (none)
+https://www.iheart.com/
+    NeedsScriptToEvaluateBeforeRunningScriptFromURLQuirk
+https://www.imdb.com/
+    NeedsChromeMediaControlsPseudoElementQuirk
+    NeedsZeroMaxTouchPointsQuirk
+https://www.instagram.com/
+    NeedsInstagramResizingReelsQuirk
+https://invideo.io/
+    NeedsScriptToEvaluateBeforeRunningScriptFromURLQuirk
+https://www.linkedin.com/
+    (none)
+https://outlook.live.com/
+    MayNeedToIgnoreContentObservation
+    NeedsMozillaFileTypeForDataTransferQuirk
+    ShouldAvoidResizingWhenInputViewBoundsChangeQuirk
+https://live.com/
+    ShouldAvoidResizingWhenInputViewBoundsChangeQuirk
+https://onedrive.live.com/
+    IsNeverRichlyEditableForTouchBarQuirk
+    ShouldAvoidResizingWhenInputViewBoundsChangeQuirk
+    ShouldDisableDataURLPaddingValidation
+https://officeapps.live.com/
+    ShouldAvoidResizingWhenInputViewBoundsChangeQuirk
+    ShouldDisableDataURLPaddingValidation
+https://madisoncity.k12.al.us/
+    (none)
+https://mailchimp.com/
+    (none)
+https://www.marcus.com/
+    ShouldExposeShowModalDialog
+https://medium.com/
+    ShouldDispatchSyntheticMouseEventsWhenModifyingSelectionQuirk
+https://m365.cloud.microsoft/
+    (none)
+https://cloud.microsoft/
+    (none)
+https://safe.menlosecurity.com/
+    ShouldDisableWritingSuggestionsByDefaultQuirk
+https://www.menlosecurity.com/
+    (none)
+https://www.messenger.com/
+    ShouldEnableCameraAndMicrophonePermissionStateQuirk
+    ShouldEnableEnumerateDeviceQuirk
+    ShouldEnableRTCEncodedStreamsQuirk
+    ShouldEnableRemoteTrackLabelQuirk
+https://www.netflix.com/
+    NeedsSeekingSupportDisabledQuirk
+https://www.nba.com/
+    (none)
+https://www.nfl.com/
+    ShouldSuppressHLSSubtitles
+https://www.nhl.com/
+    NeedsWebKitMediaTextTrackDisplayQuirk
+https://www.nytimes.com/
+    (none)
+https://www.pandora.com/
+    ShouldExposeShowModalDialog
+https://www.pinterest.com/
+    ShouldAllowNotificationPermissionWithoutUserGesture
+https://www.premierleague.com/
+    ShouldAvoidStartingSelectionOnMouseDownOverPointerCursor
+    ShouldDispatchPlayPauseEventsOnResume
+    ShouldIgnorePlaysInlineRequirementQuirk
+https://www.ralphlauren.com/
+    (none)
+https://www.reddit.com/
+    RequiresUserGestureToPauseInPictureInPictureQuirk
+https://www.scribd.com/
+    NeedsReuseLiveRangeForSelectionUpdateQuirk
+https://www.sfusd.edu/
+    ShouldBypassAsyncScriptDeferring
+https://app.slack.com/
+    (none)
+https://www.sharepoint.com/
+    ShouldAvoidResizingWhenInputViewBoundsChangeQuirk
+https://soundcloud.com/
+    ShouldDispatchSimulatedMouseEventsAssumeDefaultPreventedQuirk
+    ShouldExposeShowModalDialog
+https://soylent.com/
+    (none)
+https://open.spotify.com/
+    NeedsBodyScrollbarWidthNoneDisabledQuirk
+    NeedsWebKitMediaTextTrackDisplayQuirk
+    ShouldAvoidStartingSelectionOnMouseDownOverPointerCursor
+    ShouldBlockAudiblePlaybackWhileAudioIsPlaying
+    ShouldDeferIntersectionObserversDuringResize
+    ShouldLimitHLSPlaybackRate
+https://www.spotify.com/
+    (none)
+https://ceac.state.gov/
+    NeedsFormControlToBeMouseFocusableQuirk
+    NeedsScriptToEvaluateBeforeRunningScriptFromURLQuirk
+https://sub.ceac.state.gov/
+    NeedsFormControlToBeMouseFocusableQuirk
+    NeedsScriptToEvaluateBeforeRunningScriptFromURLQuirk
+https://www.state.gov/
+    (none)
+https://www.theguardian.com/
+    (none)
+https://www.thesaurus.com/
+    NeedsAnchorToBeMouseFocusableQuirk
+https://www.tiktok.com/
+    NeedsTikTokOverflowingContentQuirk
+    ShouldDispatchSimulatedMouseEventsAssumeDefaultPreventedQuirk
+https://trix-editor.org/
+    IsNeverRichlyEditableForTouchBarQuirk
+https://www.twitch.tv/
+    ShouldReportDocumentAsVisibleIfActivePIPQuirk
+https://tympanus.net/
+    ShouldBlockFetchWithNewlineAndLessThan
+https://www.victoriassecret.com/
+    ShouldDisableFetchMetadata
+https://vimeo.com/
+    BlocksEnteringStandardFullscreenFromPictureInPictureQuirk
+    BlocksReturnToFullscreenFromPictureInPictureQuirk
+    MaybeBypassBackForwardCache
+    ShouldDisableEndFullscreenEventWhenEnteringPictureInPictureFromFullscreenQuirk
+https://www.walmart.com/
+    MayNeedToIgnoreContentObservation
+https://en.wikipedia.org/
+    ShouldLayOutAtMinimumWindowWidthWhenIgnoringScalingConstraintsQuirk
+https://weather.com/
+    NeedsFormControlToBeMouseFocusableQuirk
+https://www.webex.com/
+    (none)
+https://www.weebly.com/
+    ShouldDispatchSyntheticMouseEventsWhenModifyingSelectionQuirk
+https://workspaces.xyz/
+    ShouldComparareUsedValuesForBorderWidthForTriggeringTransitions
+https://wpdevelopment.ca/
+    NeedsFormControlToBeMouseFocusableQuirk
+https://x.com/
+    RequiresUserGestureToLoadInPictureInPictureQuirk
+    RequiresUserGestureToPauseInPictureInPictureQuirk
+https://twitter.com/
+    (none)
+https://www.yahoo.com/
+    NeedsYahooVolumeSliderQuirk
+    ShouldAvoidStartingSelectionOnMouseDownOverPointerCursor
+https://news.ycombinator.com/
+    ShouldIgnoreTextAutoSizingQuirk
+https://ycombinator.com/
+    (none)
+https://www.youtube.com/
+    HasBrokenEncryptedMediaAPISupportQuirk
+    NeedsScrollbarWidthThinDisabledQuirk
+    NeedsYouTubeCaptionQuirk
+    NeedsYouTubeMouseOutQuirk
+https://www.youtube-nocookie.com/
+    (none)
+https://www.zillow.com/
+    ShouldAvoidScrollingWhenFocusedContentIsVisibleQuirk
+https://www.zomato.com/
+    NeedsZomatoEmailLoginLabelQuirk
+https://zoom.us/
+    ShouldAllowMediaStreamTrackSerializationQuirk
+    ShouldAutoplayWebAudioForArbitraryUserGestureQuirk
+    ShouldDisableImageCaptureQuirk
+https://www.dailymail.co.uk/
+    ShouldUnloadHeavyFrames
+https://claude.ai/
+    NeedsLogoutCookieCleanupQuirk
+https://claude.com/
+    (none)
+

@@ -225,6 +225,8 @@ public:
 
     WEBCORE_EXPORT void setTopDocumentURLForTesting(URL&&);
 
+    WEBCORE_EXPORT Vector<String> activeQuirksForTesting() const;
+
     static bool shouldOmitHTMLDocumentSupportedPropertyNames();
 
 #if PLATFORM(IOS) || PLATFORM(VISION)

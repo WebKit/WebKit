@@ -1556,6 +1556,7 @@ public:
     bool destroySleepDisabler(unsigned identifier);
 
     void setTopDocumentURLForQuirks(const String&);
+    Vector<String> activeQuirks() const;
 
 #if ENABLE(APP_HIGHLIGHTS)
     Vector<String> appHighlightContextMenuItemTitles() const;

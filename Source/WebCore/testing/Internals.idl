@@ -1546,6 +1546,7 @@ enum ContentsFormat {
     Promise<ImageBufferResourceLimits> getImageBufferResourceLimits();
 
     undefined setTopDocumentURLForQuirks(DOMString urlString);
+    sequence<DOMString> activeQuirks();
 
     [CallWith=CurrentGlobalObject] ReadableStream readableStreamFromMessagePort(MessagePort port);
     [CallWith=CurrentGlobalObject] WritableStream writableStreamFromMessagePort(MessagePort port);

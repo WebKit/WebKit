@@ -8646,6 +8646,15 @@ void Internals::setTopDocumentURLForQuirks(const String& urlString)
     document->quirks().setTopDocumentURLForTesting(URL { urlString });
 }
 
+Vector<String> Internals::activeQuirks() const
+{
+    RefPtr document = contextDocument();
+    if (!document)
+        return { };
+
+    return document->quirks().activeQuirksForTesting();
+}
+
 #if ENABLE(DAMAGE_TRACKING)
 ExceptionOr<Vector<Internals::FrameDamage>> Internals::getFrameDamageHistory() const
 {

@@ -96,6 +96,8 @@
 #include <JavaScriptCore/SourceCode.h>
 #include <JavaScriptCore/SourceProvider.h>
 #include <JavaScriptCore/StackVisitor.h>
+#include <ranges>
+#include <wtf/EnumTraits.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
@@ -114,6 +116,13 @@
 #define QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(returnValue) \
     if (!needsQuirks()) [[unlikely]] \
         return returnValue
+
+namespace WTF {
+template<> struct EnumTraits<WebCore::QuirksData::SiteSpecificQuirk> {
+    static constexpr int min = 0;
+    static constexpr int max = static_cast<int>(WebCore::QuirksData::SiteSpecificQuirk::NumberOfQuirks);
+};
+} // namespace WTF
 
 namespace WebCore {
 
@@ -4333,6 +4342,17 @@ void Quirks::determineRelevantQuirks()
 bool Quirks::hasRelevantQuirks() const
 {
     return !m_quirksData.activeQuirks.isEmpty();
+}
+
+Vector<String> Quirks::activeQuirksForTesting() const
+{
+    Vector<String> result;
+
+    for (auto quirk : m_quirksData.activeQuirks)
+        result.append(String { WTF::enumName(static_cast<QuirksData::SiteSpecificQuirk>(quirk)) });
+
+    std::ranges::sort(result, codePointCompareLessThan);
+    return result;
 }
 
 }
