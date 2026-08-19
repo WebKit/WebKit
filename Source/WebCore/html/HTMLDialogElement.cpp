@@ -122,6 +122,7 @@ ClosedByState HTMLDialogElement::computedClosedByState() const
     return result;
 }
 
+// https://html.spec.whatwg.org/multipage/interactive-elements.html#dom-dialog-show
 ExceptionOr<void> HTMLDialogElement::show()
 {
     // If the element already has an open attribute, then return.
@@ -147,11 +148,7 @@ ExceptionOr<void> HTMLDialogElement::show()
 
     setAttributeWithoutSynchronization(openAttr, emptyAtom());
 
-    // The dialog's cached computed style still says display:none at this point. The focusing steps
-    // below determine focusability from it, and Element::resolveComputedStyle() treats a cached
-    // display:none ancestor as an unrendered subtree unless the ancestor is marked as having an
-    // invalid computed style, so nothing in the dialog would look focusable. showModal() gets this
-    // invalidation from addToTopLayer(). See rdar://185153996 for the underlying issue.
+    // Invalidate style for correct focusability computation in the focusing steps after showing the dialog.
     invalidateStyle();
 
     Ref document = this->document();
@@ -164,16 +161,15 @@ ExceptionOr<void> HTMLDialogElement::show()
     return { };
 }
 
+// https://html.spec.whatwg.org/multipage/interactive-elements.html#show-a-modal-dialog
 ExceptionOr<void> HTMLDialogElement::showModal(Element* source)
 {
-    // If subject already has an open attribute, then throw an "InvalidStateError" DOMException.
     if (isOpen()) {
         if (isModal())
             return { };
         return Exception { ExceptionCode::InvalidStateError, "Cannot call showModal() on an open non-modal dialog."_s };
     }
 
-    // If subject is not connected, then throw an "InvalidStateError" DOMException.
     if (!isConnected())
         return Exception { ExceptionCode::InvalidStateError, "Element is not connected."_s };
 
@@ -236,6 +232,7 @@ ExceptionOr<void> HTMLDialogElement::showModal(Element* source)
     return { };
 }
 
+// https://html.spec.whatwg.org/multipage/interactive-elements.html#dom-dialog-close
 void HTMLDialogElement::close(const String& result, Element* source)
 {
     if (!isOpen())
@@ -277,6 +274,7 @@ void HTMLDialogElement::close(const String& result, Element* source)
     queueTaskToDispatchEvent(TaskSource::UserInteraction, Event::create(eventNames().closeEvent, Event::CanBubble::No, Event::IsCancelable::No));
 }
 
+// https://html.spec.whatwg.org/multipage/interactive-elements.html#dom-dialog-requestclose
 void HTMLDialogElement::requestClose(const String& returnValue, Element* source)
 {
     if (!isOpen())
