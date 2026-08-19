@@ -181,7 +181,7 @@ public:
     LValue bitNot(LValue);
     LValue logicalNot(LValue);
 
-    LValue ctlz32(LValue);
+    LValue ctlz(LValue);
     LValue doubleAbs(LValue);
     LValue doubleCeil(LValue);
     LValue doubleFloor(LValue);
