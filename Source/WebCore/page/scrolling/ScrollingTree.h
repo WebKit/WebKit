@@ -320,7 +320,8 @@ protected:
 
     WEBCORE_EXPORT virtual void applyLayerPositionsInternal() WTF_REQUIRES_LOCK(m_treeLock);
     WEBCORE_EXPORT void removeAllNodes() WTF_REQUIRES_LOCK(m_treeLock);
-    
+    void removeFromActiveNodes(ScrollingTreeNode&);
+
     virtual void hasNodeWithAnimatedScrollChanged(bool /* hasNodeWithAnimatedScroll */) { }
 
     bool hasProcessedWheelEventsRecently();

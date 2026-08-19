@@ -1,0 +1,63 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true AsyncOverflowScrollingEnabled=true ] -->
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/js-test-resources/ui-helper.js"></script>
+<body>
+<script>
+description("Verifies that removing a cross-origin iframe also removes the scroll proxy nodes its process contributed to the scrolling tree's active node sets.");
+jsTestIsAsync = true;
+
+// internals.scrollingTreeAsText() is empty under site isolation and omits node IDs,
+// so read the UI process tree directly rather than via UIHelper.getScrollingTree().
+function scrollingTree()
+{
+    return new Promise((resolve) => {
+        testRunner.runUIScript("(function() { return uiController.scrollingTreeIncludingNodeIDsAsText; })();", resolve);
+    });
+}
+
+// The active set prints as its own "(overflow scroll proxy nodes" section; the
+// per-node dump is singular, so the plural is unambiguous.
+function hasActiveScrollProxyNodes(tree)
+{
+    return tree.includes("(overflow scroll proxy nodes");
+}
+
+// Registered at parse time: the subframe's load fires before ours, so a listener
+// installed from our own load handler can miss the message.
+window.addEventListener("message", async (event) => {
+    if (!event.data || event.data.type != "scrolled")
+        return;
+
+    if (event.data.scrollTop > 0)
+        testPassed("iframe content scrolled");
+    else
+        testFailed("iframe content did not scroll, so no scroll proxy nodes can become active");
+
+    // The iframe commits in its own transaction, so poll rather than assume it landed.
+    await UIHelper.waitForConditionAsync(async () => hasActiveScrollProxyNodes(await scrollingTree()), 120);
+
+    if (hasActiveScrollProxyNodes(await scrollingTree()))
+        testPassed("active scroll proxy nodes exist while the iframe is present");
+    else
+        testFailed("expected active scroll proxy nodes while the iframe is present");
+
+    document.getElementById("frameToRemove").remove();
+
+    // establishLayerTreeScrollingRelations() runs before presentation update callbacks
+    // are answered, so once these resolve the walk over the active sets has happened.
+    await UIHelper.ensurePresentationUpdate();
+    await UIHelper.ensurePresentationUpdate();
+
+    if (hasActiveScrollProxyNodes(await scrollingTree()))
+        testFailed("active scroll proxy nodes outlived the iframe that contributed them");
+    else
+        testPassed("active scroll proxy nodes were removed with the iframe");
+
+    finishJSTest();
+}, false);
+
+if (!window.testRunner || !testRunner.runUIScript)
+    finishJSTest();
+</script>
+<iframe id="frameToRemove" width="300" height="200" src="http://localhost:8000/site-isolation/scrolling/resources/scroll-proxy-iframe.html"></iframe>
+</body>

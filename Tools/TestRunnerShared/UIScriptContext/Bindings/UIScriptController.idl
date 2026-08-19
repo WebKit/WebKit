@@ -392,6 +392,7 @@ interface UIScriptController {
     undefined replaceTextAtRange(DOMString text, long location, long length);
 
     readonly attribute DOMString scrollingTreeAsText;
+    readonly attribute DOMString scrollingTreeIncludingNodeIDsAsText;
     readonly attribute DOMString uiViewTreeAsText;
     readonly attribute DOMString caLayerTreeAsText;
     DOMString caLayerTreeAsTextForLayerWithID(unsigned long long layerID);

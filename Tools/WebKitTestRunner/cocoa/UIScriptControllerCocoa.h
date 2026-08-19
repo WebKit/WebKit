@@ -58,6 +58,7 @@ private:
     JSObjectRef propertiesOfLayerWithID(uint64_t layerID) const final;
 
     JSRetainPtr<JSStringRef> scrollingTreeAsText() const override;
+    JSRetainPtr<JSStringRef> scrollingTreeIncludingNodeIDsAsText() const override;
 
     void setDidShowContextMenuCallback(JSValueRef) override;
     void setDidDismissContextMenuCallback(JSValueRef) override;

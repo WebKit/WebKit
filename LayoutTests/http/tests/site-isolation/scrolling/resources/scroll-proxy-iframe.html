@@ -1,0 +1,41 @@
+<style>
+/* Overflow on html and body keeps body a composited scroller. */
+html { margin: 0; height: 100%; overflow: hidden auto; }
+body { margin: 0; height: 100%; overflow: hidden auto; position: relative; }
+
+#content { height: 3000px; }
+
+.clipper {
+    position: relative;
+    overflow: hidden;
+    width: 200px;
+    height: 100px;
+    border-radius: 8px;
+}
+
+/* Composited, clipped by .clipper, and moved by the body scroller: that
+   combination is what gives it an overflow scroll proxy node. */
+.banner {
+    position: absolute;
+    top: 10px;
+    width: 150px;
+    height: 50px;
+    background-color: green;
+    will-change: transform;
+}
+</style>
+<body>
+    <div id="content">
+        <div class="clipper"><div class="banner"></div></div>
+        <div class="clipper"><div class="banner"></div></div>
+    </div>
+</body>
+<script>
+// Proxy nodes only join the active sets once the scroller has scrolled.
+window.addEventListener("load", () => {
+    document.body.scrollTop = 400;
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+        parent.postMessage({ type: "scrolled", scrollTop: document.body.scrollTop }, "*");
+    }));
+}, false);
+</script>

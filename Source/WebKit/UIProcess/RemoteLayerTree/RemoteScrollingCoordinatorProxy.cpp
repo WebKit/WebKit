@@ -372,6 +372,11 @@ String RemoteScrollingCoordinatorProxy::scrollingTreeAsText() const
     return m_scrollingTree->scrollingTreeAsText();
 }
 
+String RemoteScrollingCoordinatorProxy::scrollingTreeIncludingNodeIDsAsText() const
+{
+    return m_scrollingTree->scrollingTreeAsText(ScrollingStateTreeAsTextBehavior::IncludeNodeIDs);
+}
+
 float RemoteScrollingCoordinatorProxy::rubberbandHyperbolicCoefficientForTesting() const
 {
     return m_scrollingTree->rubberbandHyperbolicCoefficientForTesting();

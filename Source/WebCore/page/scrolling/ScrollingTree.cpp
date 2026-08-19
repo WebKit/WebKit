@@ -332,10 +332,36 @@ void ScrollingTree::removeNode(ScrollingNodeID nodeID, ScrollingTreeFrameHosting
             if (nodeList != m_nodeMapPerFrame.end())
                 nodeList->value.remove(nodeID);
         }
+        removeFromActiveNodes(*node);
         if (hostingNode)
             hostingNode->removeHostedChild(*node);
         node->willBeDestroyed();
     }
+}
+
+void ScrollingTree::removeFromActiveNodes(ScrollingTreeNode& node)
+{
+    // The active node sets hold refs, so a node removed from m_nodeMap would otherwise stay in
+    // them and remain unresolvable via nodeForID() for the rest of the tree's lifetime.
+    if (auto* positionedNode = dynamicDowncast<ScrollingTreePositionedNode>(node))
+        m_activePositionedNodes.remove(*positionedNode);
+    else if (auto* scrollProxyNode = dynamicDowncast<ScrollingTreeOverflowScrollProxyNode>(node))
+        m_activeOverflowScrollProxyNodes.remove(*scrollProxyNode);
+
+    // Active nodes can also reference the node going away, and those references resolve
+    // by ID, so drop the referrers rather than leave them pointing at nothing.
+    if (!node.isOverflowScrollingNode())
+        return;
+
+    auto removedNodeID = node.scrollingNodeID();
+
+    m_activeOverflowScrollProxyNodes.removeIf([removedNodeID](auto& scrollProxyNode) {
+        return scrollProxyNode->overflowScrollingNodeID() == removedNodeID;
+    });
+
+    m_activePositionedNodes.removeIf([removedNodeID](auto& positionedNode) {
+        return positionedNode->relatedOverflowScrollingNodes().contains(removedNodeID);
+    });
 }
 
 void ScrollingTree::removeFrameHostingNode(LayerHostingContextIdentifier hostingIdentifier)
@@ -575,6 +601,11 @@ bool ScrollingTree::updateTreeFromStateNodeRecursive(const ScrollingStateNode* s
 void ScrollingTree::removeAllNodes()
 {
     auto nodes = std::exchange(m_nodeMap, { });
+
+    // Every node is going away, so no entry in the active sets can still be resolved via nodeForID().
+    m_activePositionedNodes.clear();
+    m_activeOverflowScrollProxyNodes.clear();
+
     for (auto iter : nodes)
         Ref { iter.value }->willBeDestroyed();
 
@@ -1150,7 +1181,6 @@ String ScrollingTree::scrollingTreeAsText(OptionSet<ScrollingStateTreeAsTextBeha
                 }
             }
 
-#if ENABLE(SCROLLING_THREAD)
             if (!m_activeOverflowScrollProxyNodes.isEmpty()) {
                 TextStream::GroupScope scope(ts);
                 ts << "overflow scroll proxy nodes"_s;
@@ -1170,7 +1200,6 @@ String ScrollingTree::scrollingTreeAsText(OptionSet<ScrollingStateTreeAsTextBeha
                         ts << '\n' << indent << node->scrollingNodeID();
                 }
             }
-#endif // ENABLE(SCROLLING_THREAD)
         }
     }
     return ts.release();

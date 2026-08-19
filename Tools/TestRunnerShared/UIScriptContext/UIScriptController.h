@@ -205,6 +205,7 @@ public:
     virtual JSObjectRef adjustedContentInset() const { notImplemented(); return nullptr; }
 
     virtual JSRetainPtr<JSStringRef> scrollingTreeAsText() const { notImplemented(); return nullptr; }
+    virtual JSRetainPtr<JSStringRef> scrollingTreeIncludingNodeIDsAsText() const { notImplemented(); return nullptr; }
     virtual JSRetainPtr<JSStringRef> uiViewTreeAsText() const { notImplemented(); return nullptr; }
     virtual JSRetainPtr<JSStringRef> caLayerTreeAsText() const { notImplemented(); return nullptr; }
     virtual JSRetainPtr<JSStringRef> caLayerTreeAsTextForLayerWithID(unsigned long long) const { notImplemented(); return nullptr; }

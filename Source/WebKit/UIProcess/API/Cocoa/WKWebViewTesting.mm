@@ -360,6 +360,15 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
     return coordinator->scrollingTreeAsText().createNSString().autorelease();
 }
 
+- (NSString *)_scrollingTreeIncludingNodeIDsAsText
+{
+    CheckedPtr coordinator = _page->scrollingCoordinatorProxy();
+    if (!coordinator)
+        return @"";
+
+    return coordinator->scrollingTreeIncludingNodeIDsAsText().createNSString().autorelease();
+}
+
 - (double)_rubberbandHyperbolicCoefficientForTesting
 {
     if (CheckedPtr coordinator = _page->scrollingCoordinatorProxy())

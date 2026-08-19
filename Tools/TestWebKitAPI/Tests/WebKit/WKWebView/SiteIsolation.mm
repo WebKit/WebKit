@@ -11367,6 +11367,50 @@ TEST(SiteIsolation, CrossOriginIframeWithoutHorizontalOverflowCanShortCircuitHor
         return !WKPageWillHandleHorizontalScrollEvents([webView _pageForTesting]);
     }));
 }
+
+// Hosted subtree nodes are removed without the frame-scoped pruning in commitTreeStateInternal(),
+// stranding active entries that then fail a MESSAGE_CHECK. See rdar://175191840.
+TEST(SiteIsolation, RemoveIframeWithActiveScrollProxyNodes)
+{
+    auto mainHTML = "<body style='margin:0'><iframe id='frame' src='https://webkit.org/iframe' style='width:300px;height:200px;border:none'></iframe></body>"_s;
+
+    // Overflow on html and body keeps body a composited scroller; the clipped
+    // composited banners are what give it overflow scroll proxy nodes.
+    auto iframeHTML = "<style>"
+        "  html { margin: 0; height: 100%; overflow: hidden auto; }"
+        "  body { margin: 0; height: 100%; overflow: hidden auto; position: relative; }"
+        "  #content { height: 3000px; }"
+        "  .clipper { position: relative; overflow: hidden; width: 200px; height: 100px; border-radius: 8px; }"
+        "  .banner { position: absolute; top: 10px; width: 150px; height: 50px;"
+        "            background-color: green; will-change: transform; }"
+        "</style>"
+        "<div id='content'>"
+        "  <div class='clipper'><div class='banner'></div></div>"
+        "  <div class='clipper'><div class='banner'></div></div>"
+        "</div>"
+        "<script>onload=()=>{ document.body.scrollTop = 400; alert('loaded') }</script>"_s;
+
+    HTTPServer server({
+        { "/main"_s, { mainHTML } },
+        { "/iframe"_s, { iframeHTML } }
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server, CGRectMake(0, 0, 800, 600));
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/main"]]];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "loaded");
+    [webView waitForNextPresentationUpdate];
+
+    EXPECT_TRUE([[webView _scrollingTreeIncludingNodeIDsAsText] containsString:@"(overflow scroll proxy nodes"]);
+
+    [webView objectByEvaluatingJavaScript:@"document.getElementById('frame').remove();1"];
+    [webView waitForNextPresentationUpdate];
+    [webView waitForNextPresentationUpdate];
+
+    EXPECT_FALSE([[webView _scrollingTreeIncludingNodeIDsAsText] containsString:@"(overflow scroll proxy nodes"]);
+
+    // The UI process surviving to round-trip this is the real assertion.
+    EXPECT_WK_STREQ([webView objectByEvaluatingJavaScript:@"'alive'"], "alive");
+}
 #endif
 
 #if PLATFORM(IOS_FAMILY)

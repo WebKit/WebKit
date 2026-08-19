@@ -117,6 +117,11 @@ JSRetainPtr<JSStringRef> UIScriptControllerCocoa::scrollingTreeAsText() const
     return adopt(JSStringCreateWithCFString((CFStringRef)[webView() _scrollingTreeAsText]));
 }
 
+JSRetainPtr<JSStringRef> UIScriptControllerCocoa::scrollingTreeIncludingNodeIDsAsText() const
+{
+    return adopt(JSStringCreateWithCFString((CFStringRef)[webView() _scrollingTreeIncludingNodeIDsAsText]));
+}
+
 void UIScriptControllerCocoa::removeViewFromWindow(JSValueRef callback)
 {
     // FIXME: On iOS, we never invoke the completion callback that's passed in. Fixing this causes the layout
