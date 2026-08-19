@@ -69,6 +69,7 @@ public:
     JS_EXPORT_PRIVATE JSValue evaluate(JSGlobalObject*);
 
     JSObject* exportsObject() const LIFETIME_BOUND { return m_exportsObject.get(); }
+    JSWebAssemblyInstance* instance() const LIFETIME_BOUND { return m_instance.get(); }
 
     static constexpr ptrdiff_t offsetOfExportsObject() { return OBJECT_OFFSETOF(WebAssemblyModuleRecord, m_exportsObject); }
 

@@ -76,6 +76,7 @@ static JSC_DECLARE_HOST_FUNCTION(webAssemblyInstantiateFunc);
 static JSC_DECLARE_HOST_FUNCTION(webAssemblyInstantiateStreamingFunc);
 static JSC_DECLARE_HOST_FUNCTION(webAssemblyPromisingFunc);
 static JSC_DECLARE_HOST_FUNCTION(webAssemblyValidateFunc);
+static JSC_DECLARE_HOST_FUNCTION(webAssemblyNamespaceInstanceFunc);
 static JSC_DECLARE_HOST_FUNCTION(webAssemblyGetterJSTag);
 
 }
@@ -128,6 +129,8 @@ void JSWebAssembly::finishCreation(VM& vm, JSGlobalObject* globalObject)
     JSC_NATIVE_GETTER_WITHOUT_TRANSITION("JSTag"_s, webAssemblyGetterJSTag, PropertyAttribute::ReadOnly);
     if (Options::useJSPI())
         JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("promising"_s, webAssemblyPromisingFunc, static_cast<unsigned>(PropertyAttribute::None), 0, ImplementationVisibility::Public);
+    if (Options::useWebAssemblyESMIntegration())
+        JSC_NATIVE_FUNCTION_WITHOUT_TRANSITION("namespaceInstance"_s, webAssemblyNamespaceInstanceFunc, static_cast<unsigned>(PropertyAttribute::None), 1, ImplementationVisibility::Public);
 }
 
 JSWebAssembly::JSWebAssembly(VM& vm, Structure* structure)
@@ -449,6 +452,21 @@ JSC_DEFINE_HOST_FUNCTION(webAssemblyValidateFunc, (JSGlobalObject* globalObject,
     }
 
     return JSValue::encode(jsBoolean(success));
+}
+
+JSC_DEFINE_HOST_FUNCTION(webAssemblyNamespaceInstanceFunc, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    auto* moduleNamespace = dynamicDowncast<JSModuleNamespaceObject>(callFrame->argument(0));
+    auto* wasmRecord = moduleNamespace ? dynamicDowncast<WebAssemblyModuleRecord>(moduleNamespace->moduleRecord()) : nullptr;
+    if (!wasmRecord)
+        return throwVMTypeError(globalObject, scope, "WebAssembly.namespaceInstance() expects a WebAssembly module namespace object"_s);
+
+    auto* instance = wasmRecord->instance();
+    RELEASE_ASSERT(instance);
+    return JSValue::encode(instance);
 }
 
 /**
