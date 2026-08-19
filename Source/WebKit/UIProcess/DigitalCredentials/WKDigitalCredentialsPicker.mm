@@ -428,6 +428,7 @@ static RetainPtr<NSArray<NSArray<WKIdentityDocumentPresentmentRequestAuthenticat
             WebCore::ExceptionData exceptionData = { ExceptionCode::TypeError, "Unknown protocol response from document."_s };
             [self completeWith:makeUnexpected(exceptionData)];
         }
+        return;
     }
 
     [self handleNSError:error];

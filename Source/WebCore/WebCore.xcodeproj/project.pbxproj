@@ -385,6 +385,7 @@
 		0D44C33E2ABA1B9F0017FB5D /* ThermalMitigationNotifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D8EF8122A9D511F000118F8 /* ThermalMitigationNotifier.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0D54CF61301D63D400DEB1E8 /* WebGPUFramePacer.h in Headers */ = {isa = PBXBuildFile; fileRef = 0D54CF5D301D5E6900DEB1E8 /* WebGPUFramePacer.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0D649B392B9EA4E500D7F335 /* CredentialRequestCoordinator.h in Headers */ = {isa = PBXBuildFile; fileRef = 0D649B382B9EA4E500D7F335 /* CredentialRequestCoordinator.h */; };
+		0D649B512B9EA4E500D7F335 /* DigitalCredentialsSession.h in Headers */ = {isa = PBXBuildFile; fileRef = 0D649B502B9EA4E500D7F335 /* DigitalCredentialsSession.h */; };
 		0D649B482B9EC50300D7F335 /* CredentialRequestCoordinatorClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 0D649B472B9EC4E200D7F335 /* CredentialRequestCoordinatorClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0D6D0AAB2C6ADA390073F63D /* WebGPUXRView.h in Headers */ = {isa = PBXBuildFile; fileRef = 0D6D0AAA2C6ADA390073F63D /* WebGPUXRView.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0D767CC52E450AFE00D323F7 /* XRCanvasConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = 0D767CC42E450AFE00D323F7 /* XRCanvasConfiguration.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -8273,6 +8274,8 @@
 		0D5C81072B8B0FED0099BF96 /* WGSLLanguageFeatures.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WGSLLanguageFeatures.cpp; sourceTree = "<group>"; };
 		0D649B382B9EA4E500D7F335 /* CredentialRequestCoordinator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CredentialRequestCoordinator.h; sourceTree = "<group>"; };
 		0D649B3A2B9EA50A00D7F335 /* CredentialRequestCoordinator.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CredentialRequestCoordinator.cpp; sourceTree = "<group>"; };
+		0D649B502B9EA4E500D7F335 /* DigitalCredentialsSession.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DigitalCredentialsSession.h; sourceTree = "<group>"; };
+		0D649B522B9EA4E500D7F335 /* DigitalCredentialsSession.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DigitalCredentialsSession.cpp; sourceTree = "<group>"; };
 		0D649B472B9EC4E200D7F335 /* CredentialRequestCoordinatorClient.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CredentialRequestCoordinatorClient.h; sourceTree = "<group>"; };
 		0D68A40F2C631A5F0062C559 /* XRGPUBinding.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XRGPUBinding.h; sourceTree = "<group>"; };
 		0D68A4102C631A5F0062C559 /* XRGPUBinding.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = XRGPUBinding.cpp; sourceTree = "<group>"; };
@@ -25045,6 +25048,8 @@
 				48BFAF292F3137FA00E7D926 /* DigitalCredentialsRequestDataBuilder.h */,
 				0DE11A782C8AB2840003F6EE /* DigitalCredentialsResponseData.h */,
 				4828C31C2F35643E009D206E /* DigitalCredentialsSecurityOriginData.h */,
+				0D649B522B9EA4E500D7F335 /* DigitalCredentialsSession.cpp */,
+				0D649B502B9EA4E500D7F335 /* DigitalCredentialsSession.h */,
 			);
 			name = identity;
 			path = Modules/identity;
@@ -45334,6 +45339,7 @@
 				48BFAF2B2F3137FA00E7D926 /* DigitalCredentialsRequestDataBuilder.h in Headers */,
 				0DE11A792C8AB2950003F6EE /* DigitalCredentialsResponseData.h in Headers */,
 				4828C31D2F35643E009D206E /* DigitalCredentialsSecurityOriginData.h in Headers */,
+				0D649B512B9EA4E500D7F335 /* DigitalCredentialsSession.h in Headers */,
 				FDAF19991513D131008DB0C3 /* DirectConvolver.h in Headers */,
 				835D54C51F4DE53800E60671 /* DirectoryFileListCreator.h in Headers */,
 				F47A09D120A93A9700240FAE /* DisabledAdaptations.h in Headers */,

@@ -34,7 +34,10 @@
 #include "DigitalCredentialsRequestData.h"
 #include "DigitalCredentialsRequestDataBuilder.h"
 #include "DigitalCredentialsResponseData.h"
+#include "DigitalCredentialsSession.h"
+#include "Document.h"
 #include "DocumentSecurityOrigin.h"
+#include "EventLoop.h"
 #include "ExceptionData.h"
 #include "ExceptionOr.h"
 #include "JSDOMConvertAny.h"
@@ -47,6 +50,7 @@
 #include "LocalFrame.h"
 #include "Page.h"
 #include "SecurityOriginData.h"
+#include "TaskSource.h"
 #include <JavaScriptCore/JSObject.h>
 #include <JavaScriptCore/StrongInlines.h>
 #include <Logging.h>
@@ -64,28 +68,12 @@ Ref<CredentialRequestCoordinator> CredentialRequestCoordinator::create(Ref<Crede
 }
 
 CredentialRequestCoordinator::CredentialRequestCoordinator(Ref<CredentialRequestCoordinatorClient>&& client, Page& page)
-    : ActiveDOMObject(page.localTopDocument())
-    , m_client(WTF::move(client))
+    : m_client(WTF::move(client))
     , m_page(page)
 {
 }
 
-CredentialRequestCoordinator::InteractionStateGuard::InteractionStateGuard(CredentialRequestCoordinator& coordinator)
-    : m_coordinator(coordinator)
-{
-    ASSERT(coordinator.interactionState() == InteractionState::Requesting);
-}
-
-CredentialRequestCoordinator::InteractionStateGuard::~InteractionStateGuard()
-{
-    if (!m_active)
-        return;
-
-    ASSERT(m_coordinator->interactionState() == InteractionState::Requesting
-        || m_coordinator->interactionState() == InteractionState::Aborting);
-
-    m_coordinator->setInteractionState(InteractionState::Idle);
-}
+CredentialRequestCoordinator::~CredentialRequestCoordinator() = default;
 
 CredentialRequestCoordinator::InteractionState CredentialRequestCoordinator::interactionState() const
 {
@@ -115,26 +103,43 @@ void CredentialRequestCoordinator::setInteractionState(InteractionState newState
     m_interactionState = newState;
 }
 
-void CredentialRequestCoordinator::setCurrentPromise(CredentialPromise&& promise)
+void CredentialRequestCoordinator::sessionDidFinish(const DigitalCredentialsSession& session)
 {
-    ASSERT(m_interactionState == InteractionState::Requesting);
-    ASSERT(!m_currentPromise);
-    m_currentPromise = makeUnique<CredentialPromise>(WTF::move(promise));
+    if (m_activeSession.get() != &session)
+        return;
+
+    m_activeSession = nullptr;
+    setInteractionState(InteractionState::Idle);
 }
 
-CredentialPromise* CredentialRequestCoordinator::currentPromise()
+void CredentialRequestCoordinator::dismissChooser()
 {
-    return m_currentPromise.get();
+    m_client->dismissDigitalCredentialsChooser([](bool success) {
+        if (!success)
+            LOG(DigitalCredentials, "Failed to dismiss the credential chooser.");
+    });
 }
 
 void CredentialRequestCoordinator::prepareCredentialRequests(const Document& document, CredentialPromise&& promise, Vector<UnvalidatedDigitalCredentialRequest>&& unvalidatedRequests, RefPtr<AbortSignal> signal)
 {
-    if (m_interactionState != InteractionState::Idle)
-        return promise.reject(ExceptionCode::NotAllowedError, "A credential request is already in progress."_s);
+    RefPtr context = document.scriptExecutionContext();
+    if (!context)
+        return promise.reject(Exception { ExceptionCode::AbortError, "Document has no script execution context."_s });
 
-    ASSERT(!m_currentPromise);
+    if (m_interactionState != InteractionState::Idle) {
+        // The spec queues this on the *requesting* document's global, which is not the
+        // in-flight request's, so it cannot go through the active session.
+        CheckedRef eventLoop = context->eventLoop();
+        eventLoop->queueTask(TaskSource::DOMManipulation, [promise = makeUnique<CredentialPromise>(WTF::move(promise))]() mutable {
+            promise->reject(ExceptionCode::NotAllowedError, "A credential request is already in progress."_s);
+        });
+        return;
+    }
+
+    ASSERT(!m_activeSession);
     setInteractionState(InteractionState::Requesting);
-    setCurrentPromise(WTF::move(promise));
+    Ref session = DigitalCredentialsSession::create(*context, *this, WTF::move(promise));
+    m_activeSession = session.ptr();
 
     if (!m_page)
         return rejectTheCredentialRequestWith(Exception { ExceptionCode::AbortError, "Page was destroyed."_s });
@@ -158,13 +163,13 @@ void CredentialRequestCoordinator::prepareCredentialRequests(const Document& doc
 
     if (signal) {
         ASSERT(!signal->aborted());
-        m_abortSignal = signal;
-        m_abortAlgorithmIdentifier = signal->addAlgorithm([weakThis = WeakPtr { *this }, signal = protect(signal)](JSC::JSValue reason) {
+        auto identifier = signal->addAlgorithm([weakThis = WeakPtr { *this }](JSC::JSValue reason) {
             if (!weakThis)
                 return;
             LOG(DigitalCredentials, "Credential request was aborted by AbortSignal");
             weakThis->abortTheCredentialRequest(ExceptionOr<JSC::JSValue> { WTF::move(reason) });
         });
+        session->setAbortAlgorithm(RefPtr { signal }, identifier);
     }
 
     if (signal && signal->aborted())
@@ -178,8 +183,6 @@ void CredentialRequestCoordinator::initiateTheCredentialRequest(const Document& 
     auto requestDataAndRawRequests = DigitalCredentialsRequestDataBuilder::build(validatedRequests, document, WTF::move(unvalidatedRequests));
     if (requestDataAndRawRequests.hasException())
         return rejectTheCredentialRequestWith(requestDataAndRawRequests.releaseException());
-
-    observeContext(protect(document.scriptExecutionContext()).get());
 
     auto [requestData, rawRequests] = requestDataAndRawRequests.releaseReturnValue();
 
@@ -205,43 +208,44 @@ void CredentialRequestCoordinator::processCredentialChooserResponse(Expected<Dig
         return;
     }
 
-    // A parked "wait" reply released during abort/teardown can arrive after the
-    // request already left Requesting; it is moot, so return before the guard.
     if (m_interactionState != InteractionState::Requesting) {
         LOG(DigitalCredentials, "Ignoring credential chooser response received while not in the Requesting state.");
         return;
     }
 
-    InteractionStateGuard guard(*this);
-
-    if (!m_currentPromise) {
-        LOG(DigitalCredentials, "No current promise in coordinator.");
+    RefPtr session = m_activeSession;
+    if (!session) {
+        LOG(DigitalCredentials, "No active credential request session in coordinator.");
         ASSERT_NOT_REACHED();
         return;
     }
 
-    guard.deactivate();
-
     if (!responseOrException)
-        return settleTheCredentialRequest(responseOrException.error().toException());
+        return rejectTheCredentialRequestWith(responseOrException.error().toException());
 
     auto& responseData = responseOrException.value();
 
     if (responseData.responseDataJSON.isEmpty())
-        return settleTheCredentialRequest(Exception { ExceptionCode::NotAllowedError, "The user cancelled the credential request."_s });
+        return rejectTheCredentialRequestWith(Exception { ExceptionCode::NotAllowedError, "The user cancelled the credential request."_s });
 
-    auto parsedObject = parseDigitalCredentialsResponseData(responseData.responseDataJSON);
+    session->queueSettlement([weakThis = WeakPtr { *this }, responseDataJSON = responseData.responseDataJSON, protocol = responseData.protocol](auto& promise) mutable {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis) {
+            promise.reject(Exception { ExceptionCode::AbortError, "Page was destroyed."_s });
+            return;
+        }
 
-    if (parsedObject.hasException())
-        return settleTheCredentialRequest(parsedObject.releaseException());
-
-    if (!parsedObject.returnValue())
-        return settleTheCredentialRequest(Exception { ExceptionCode::TypeError, "No parsed object."_s });
-
-    auto returnValue = parsedObject.releaseReturnValue();
-    Ref credential = DigitalCredential::create({ returnValue->vm(), returnValue }, responseData.protocol);
-
-    settleTheCredentialRequest(credential.ptr());
+        auto parsedObject = protectedThis->parseDigitalCredentialsResponseData(responseDataJSON);
+        if (parsedObject.hasException())
+            promise.reject(parsedObject.releaseException());
+        else if (!parsedObject.returnValue())
+            promise.reject(Exception { ExceptionCode::TypeError, "Parsed JSON data is not an object."_s });
+        else {
+            auto returnValue = parsedObject.releaseReturnValue();
+            Ref credential = DigitalCredential::create({ returnValue->vm(), returnValue }, protocol);
+            promise.resolve(credential.ptr());
+        }
+    });
 }
 
 ExceptionOr<JSC::JSObject*> CredentialRequestCoordinator::parseDigitalCredentialsResponseData(const String& responseDataJSON) const
@@ -284,74 +288,27 @@ ExceptionOr<JSC::JSObject*> CredentialRequestCoordinator::parseDigitalCredential
 void CredentialRequestCoordinator::rejectTheCredentialRequestWith(Exception&& exception)
 {
     ASSERT(m_interactionState != InteractionState::Idle);
-    ASSERT(m_currentPromise);
-    clearAbortAlgorithm();
-    m_currentPromise->reject(WTF::move(exception));
-    m_currentPromise.reset();
-    setInteractionState(InteractionState::Idle);
-}
 
-void CredentialRequestCoordinator::settleTheCredentialRequest(ExceptionOr<RefPtr<BasicCredential>>&& result)
-{
-    clearAbortAlgorithm();
-
-    auto promise = WTF::move(m_currentPromise);
-    m_currentPromise.reset();
-
-    ASSERT(m_interactionState == InteractionState::Requesting || m_interactionState == InteractionState::Aborting);
-
-    m_client->dismissDigitalCredentialsChooser([weakThis = WeakPtr { *this }, promise = WTF::move(promise), result = WTF::move(result)](bool success) mutable {
-        if (!success)
-            LOG(DigitalCredentials, "Failed to dismiss the credential chooser.");
-
-        if (auto* rawThis = weakThis.get())
-            rawThis->setInteractionState(InteractionState::Idle);
-
-        if (!promise)
-            return;
-
-        if (result.hasException())
-            promise->reject(result.releaseException());
-        else
-            promise->resolve(result.releaseReturnValue().get());
-    });
-}
-
-void CredentialRequestCoordinator::clearAbortAlgorithm()
-{
-    if (!m_abortAlgorithmIdentifier)
+    RefPtr session = m_activeSession;
+    if (!session)
         return;
 
-    RefPtr signal = m_abortSignal;
-    if (signal)
-        signal->removeAlgorithm(*m_abortAlgorithmIdentifier);
-
-    m_abortAlgorithmIdentifier.reset();
-    m_abortSignal = nullptr;
+    session->queueSettlement([exception = WTF::move(exception)](auto& promise) mutable {
+        promise.reject(WTF::move(exception));
+    });
 }
 
 void CredentialRequestCoordinator::abortTheCredentialRequest(ExceptionOr<JSC::JSValue>&& reason)
 {
-    clearAbortAlgorithm();
-    if (m_interactionState == InteractionState::Idle) {
-        ASSERT(!m_currentPromise);
+    RefPtr session = m_activeSession;
+    if (!session || !session->hasPromise())
         return;
-    }
 
-    if (m_interactionState == InteractionState::Aborting) {
-        ASSERT(!m_currentPromise);
+    if (m_interactionState != InteractionState::Requesting)
         return;
-    }
-
-    if (m_interactionState != InteractionState::Requesting) {
-        LOG(DigitalCredentials, "Cannot abort the credential request when it is not presenting.");
-        return;
-    }
 
     setInteractionState(InteractionState::Aborting);
-
-    auto promise = WTF::move(m_currentPromise);
-    m_currentPromise.reset();
+    dismissChooser();
 
     std::optional<Exception> abortException;
     std::optional<JSC::Strong<JSC::Unknown>> protectedReason;
@@ -371,41 +328,14 @@ void CredentialRequestCoordinator::abortTheCredentialRequest(ExceptionOr<JSC::JS
         }
     }
 
-    m_client->dismissDigitalCredentialsChooser(
-        [weakThis = WeakPtr { *this }, promise = WTF::move(promise), abortException = WTF::move(abortException), protectedReason = WTF::move(protectedReason)](bool success) mutable {
-            if (!success)
-                LOG(DigitalCredentials, "Failed to dismiss the credential chooser.");
-
-            if (auto* rawThis = weakThis.get())
-                rawThis->setInteractionState(InteractionState::Idle);
-
-            if (!promise)
-                return;
-
-            if (abortException)
-                return promise->reject(WTF::move(*abortException));
-
-            if (protectedReason)
-                return promise->rejectType<IDLAny>(protectedReason->get());
-
-            promise->reject(ExceptionCode::AbortError);
-        });
-}
-
-void CredentialRequestCoordinator::contextDestroyed()
-{
-    LOG(DigitalCredentials, "The context we were observing got destroyed");
-    abortTheCredentialRequest(Exception { ExceptionCode::AbortError, "script execution context was destroyed."_s });
-};
-
-CredentialRequestCoordinator::~CredentialRequestCoordinator()
-{
-    clearAbortAlgorithm();
-
-    if (m_currentPromise) {
-        m_currentPromise->reject(ExceptionCode::AbortError);
-        m_currentPromise.reset();
-    }
+    session->queueSettlement([abortException = WTF::move(abortException), protectedReason = WTF::move(protectedReason)](auto& promise) mutable {
+        if (abortException)
+            promise.reject(WTF::move(*abortException));
+        else if (protectedReason)
+            promise.template rejectType<IDLAny>(protectedReason->get());
+        else
+            promise.reject(Exception { ExceptionCode::AbortError, "The credential request was aborted."_s });
+    });
 }
 
 } // namespace WebCore

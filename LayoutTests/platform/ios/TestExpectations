@@ -8621,7 +8621,6 @@ webkit.org/b/319761 imported/w3c/web-platform-tests/css/css-viewport/zoom/perspe
 # (the drag target is computed from glyph rects + a fixed offset). Needs a more robust target; follow-up.
 webkit.org/b/319784 editing/selection/ios/bidi-visually-contiguous-selection-multiline.html [ Failure ]
 
-webkit.org/b/317884 imported/w3c/web-platform-tests/digital-credentials/get-non-fully-active.https.html [ Skip ]
 webkit.org/b/256299 imported/w3c/web-platform-tests/digital-credentials/allow-attribute-with-get.https.html [ Pass Failure ]
 
 webkit.org/b/318157 [ Debug ] imported/w3c/web-platform-tests/IndexedDB/interleaved-cursors-small.any.sharedworker.html [ Failure ]

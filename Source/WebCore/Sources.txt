@@ -208,6 +208,7 @@ Modules/highlight/HighlightRegistry.cpp @cost:3
 Modules/identity/CredentialRequestCoordinator.cpp @cost:3
 Modules/identity/DigitalCredential.cpp @cost:3
 Modules/identity/DigitalCredentialsRequestDataBuilder.cpp
+Modules/identity/DigitalCredentialsSession.cpp
 Modules/identity/dummy/DummyCredentialRequestCoordinatorClient.cpp
 Modules/indexeddb/IDBCursor.cpp @cost:3
 Modules/indexeddb/IDBCursorWithValue.cpp

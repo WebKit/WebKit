@@ -1,3 +1,5 @@
 
 PASS A second get() call while another is pending should reject with NotAllowedError.
+PASS A concurrent get() rejection is queued on the DOM manipulation task source, not settled synchronously.
+PASS Destroying the requesting document returns the coordinator to the idle interaction state.
 
