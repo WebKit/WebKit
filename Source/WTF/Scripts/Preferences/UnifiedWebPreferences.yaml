@@ -9361,7 +9361,7 @@ UseAVCaptureDeviceRotationCoordinatorAPI:
 
 UseAlternatePDFHUD:
   type: bool
-  status: mature
+  status: internal
   category: html
   humanReadableName: "Alternate PDF HUD"
   humanReadableDescription: "Use the alternate PDF HUD"
@@ -9370,7 +9370,7 @@ UseAlternatePDFHUD:
   condition: ENABLE(PDF_HUD)
   defaultValue:
     WebKit:
-      default: true
+      default: false
 
 UseAppKitGestures:
   type: bool
