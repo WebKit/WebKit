@@ -27,6 +27,7 @@
 #pragma once
 
 #include <WebCore/Color.h>
+#include <WebCore/StyleResolvedColors.h>
 #include <wtf/Forward.h>
 
 namespace WebCore {
@@ -37,13 +38,41 @@ struct SerializationContext;
 
 namespace Style {
 
-struct CurrentColor {
+class ComputedStyleProperties;
+
+// CurrentColor refers to a color that is defined in the elemene's style.
+// Note that this is a bit different from CSS 'currentColor' keyword:
+// 'currentColor' keyword refers to the current value of the 'color' property
+// of the element, while this CurrentColor refers to any color that is defined
+// in the style, including 'currentColor'.
+class CurrentColor {
+public:
+    // Represents the CSS property in which to obtain the color from.
+    enum class Property {
+        // 'color' property.
+        Color
+    };
+
+    WEBCORE_EXPORT CurrentColor(Property);
+
+    Property property() const { return m_property; }
+
     constexpr bool operator==(const CurrentColor&) const = default;
+
+private:
+    Property m_property;
 };
 
-inline WebCore::Color resolveColor(const CurrentColor&, const WebCore::Color& currentColor)
+inline WebCore::Color resolveColor(const CurrentColor& currentColor, const ResolvedColors& resolvedColors)
 {
-    return currentColor;
+    switch (currentColor.property()) {
+    case CurrentColor::Property::Color:
+        return resolvedColors.currentColor();
+
+    default:
+        ASSERT_NOT_REACHED();
+        return { };
+    }
 }
 
 constexpr bool containsCurrentColor(const CurrentColor&)

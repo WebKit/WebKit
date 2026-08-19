@@ -53,6 +53,7 @@ namespace Style {
 enum class ForVisitedLink : bool;
 
 class ComputedStyle;
+class ResolvedColors;
 
 // The following style color kinds are forward declared and stored in
 // UniqueRefs to avoid unnecessarily growing the size of Color for the
@@ -156,7 +157,7 @@ public:
     bool NODELETE isResolvedColor() const;
     const WebCore::Color& resolvedColor() const;
 
-    WEBCORE_EXPORT WebCore::Color resolveColor(const WebCore::Color& currentColor) const;
+    WEBCORE_EXPORT WebCore::Color resolveColor(const ResolvedColors&) const;
 
     bool isKnownTransparent() const;
 
@@ -174,7 +175,7 @@ private:
     ColorKind value;
 };
 
-WebCore::Color resolveColor(const Color&, const WebCore::Color& currentColor);
+WebCore::Color resolveColor(const Color&, const ResolvedColors&);
 bool containsCurrentColor(const Color&);
 
 void serializationForCSSTokenization(StringBuilder&, const CSS::SerializationContext&, const Color&);

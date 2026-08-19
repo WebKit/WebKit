@@ -70,12 +70,12 @@ Color::Color(EmptyToken token)
 }
 
 Color::Color()
-    : value { CurrentColor { } }
+    : value { CurrentColor { CurrentColor::Property::Color } }
 {
 }
 
 Color::Color(CSS::Keyword::Currentcolor)
-    : value { CurrentColor { } }
+    : value { CurrentColor { CurrentColor::Property::Color } }
 {
 }
 
@@ -234,7 +234,7 @@ bool Color::operator==(const Color& other) const = default;
 
 const Color& Color::currentColor()
 {
-    static NeverDestroyed<Style::Color> color { CurrentColor { } };
+    static NeverDestroyed<Style::Color> color { CurrentColor { CurrentColor::Property::Color } };
     return color.get();
 }
 
@@ -257,9 +257,9 @@ WTF::String Color::debugDescription() const
     return ts.release();
 }
 
-WebCore::Color Color::resolveColor(const WebCore::Color& currentColor) const
+WebCore::Color Color::resolveColor(const ResolvedColors& resolvedColors) const
 {
-    return switchOn([&](const auto& kind) { return WebCore::Style::resolveColor(kind, currentColor); });
+    return switchOn([&](const auto& kind) { return WebCore::Style::resolveColor(kind, resolvedColors); });
 }
 
 bool Color::containsCurrentColor() const
@@ -328,9 +328,9 @@ template<typename T> Color::ColorKind Color::makeIndirectColor(T&& colorType)
     return { makeUniqueRef<T>(WTF::move(colorType)) };
 }
 
-WebCore::Color resolveColor(const Color& value, const WebCore::Color& currentColor)
+WebCore::Color resolveColor(const Color& value, const ResolvedColors& resolvedColors)
 {
-    return value.resolveColor(currentColor);
+    return value.resolveColor(resolvedColors);
 }
 
 bool containsCurrentColor(const Color& value)

@@ -50,7 +50,7 @@ inline bool operator==(const UniqueRef<ContrastColor>& a, const UniqueRef<Contra
 }
 
 Color toStyleColor(const CSS::ContrastColor&, ColorResolutionState&);
-WebCore::Color resolveColor(const ContrastColor&, const WebCore::Color& currentColor);
+WebCore::Color resolveColor(const ContrastColor&, const ResolvedColors&);
 bool containsCurrentColor(const ContrastColor&);
 
 void serializationForCSSTokenization(StringBuilder&, const CSS::SerializationContext&, const ContrastColor&);

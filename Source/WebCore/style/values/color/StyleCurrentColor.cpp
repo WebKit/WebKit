@@ -32,23 +32,52 @@
 namespace WebCore {
 namespace Style {
 
-// MARK: - Serialization
-
-void serializationForCSSTokenization(StringBuilder& builder, const CSS::SerializationContext&, const CurrentColor&)
+CurrentColor::CurrentColor(Property property)
+    : m_property(property)
 {
-    builder.append("currentcolor"_s);
 }
 
-WTF::String serializationForCSSTokenization(const CSS::SerializationContext&, const CurrentColor&)
+// MARK: - Serialization
+
+void serializationForCSSTokenization(StringBuilder& builder, const CSS::SerializationContext&, const CurrentColor& currentColor)
 {
-    return "currentcolor"_s;
+    switch (currentColor.property()) {
+    case CurrentColor::Property::Color:
+        builder.append("currentcolor"_s);
+        return;
+    default:
+        ASSERT_NOT_REACHED();
+        builder.append("<invalid color>"_s);
+        break;
+    }
+}
+
+WTF::String serializationForCSSTokenization(const CSS::SerializationContext&, const CurrentColor& currentColor)
+{
+    switch (currentColor.property()) {
+    case CurrentColor::Property::Color:
+        return "currentcolor"_s;
+    default:
+        break;
+    }
+
+    ASSERT_NOT_REACHED();
+    return "<invalid color>"_s;
 }
 
 // MARK: - TextStream
 
-WTF::TextStream& operator<<(WTF::TextStream& ts, const CurrentColor&)
+WTF::TextStream& operator<<(WTF::TextStream& ts, const CurrentColor& currentColor)
 {
-    return ts << "currentColor"_s;
+    switch (currentColor.property()) {
+    case CurrentColor::Property::Color:
+        return ts << "currentcolor"_s;
+    default:
+        break;
+    }
+
+    ASSERT_NOT_REACHED();
+    return ts << "<invalid color>"_s;
 }
 
 } // namespace Style
