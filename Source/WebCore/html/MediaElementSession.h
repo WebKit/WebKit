@@ -84,7 +84,7 @@ public:
     void unregisterWithDocument(Document&);
 
     void clientWillBeginAutoplaying() final;
-    void clientWillBeginPlayback(CompletionHandler<void(bool)>&&) final;
+    Ref<GenericPromise> clientWillBeginPlayback() final;
     bool clientWillPausePlayback() final;
     void clientCharacteristicsChanged(bool) final;
 

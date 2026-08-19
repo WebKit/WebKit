@@ -125,7 +125,11 @@ public:
     virtual MediaSessionRestrictions restrictions(PlatformMediaSessionMediaType);
     virtual void resetRestrictions();
 
-    virtual void sessionWillBeginPlayback(PlatformMediaSessionInterface&, CompletionHandler<void(bool)>&&);
+    Ref<GenericPromise> sessionWillBeginPlayback(PlatformMediaSessionInterface&);
+    // Called after a session's admission commits to Playing, still inside the serialized admission region.
+    // Override for work that depends on that outcome (Now Playing/audio-session updates, wireless playback
+    // target assignment, cross-process notification) instead of overriding sessionWillBeginPlayback() itself.
+    virtual void sessionDidCompleteAdmission(PlatformMediaSessionInterface&);
     virtual void sessionWillEndPlayback(PlatformMediaSessionInterface&, DelayCallingUpdateNowPlaying);
     virtual void sessionStateChanged(PlatformMediaSessionInterface&);
     virtual void sessionDidEndRemoteScrubbing(PlatformMediaSessionInterface&) { }
@@ -226,10 +230,17 @@ protected:
 
 private:
     bool has(PlatformMediaSessionMediaType) const;
+    Ref<GenericPromise> startSessionAdmission(PlatformMediaSessionInterface&, PlatformMediaSessionState stateAtStart);
 
     std::array<MediaSessionRestrictions, static_cast<unsigned>(PlatformMediaSessionMediaType::DOMMediaSession) + 1> m_restrictions;
 
     std::optional<PlatformMediaSessionInterruptionType> m_currentInterruption;
+
+    // Used to serialize admissions; gets resolved when the current round completes. An admission whose
+    // AudioSession activation never replies stalls every later admission for this manager instance —
+    // page-wide, across every WebContent process, on the UI-process aggregator — and keeps this manager
+    // alive (each in-flight round holds a Ref to it). There is no watchdog for this today.
+    Ref<GenericPromise> m_currentPlaybackAdmission { GenericPromise::createAndResolve() };
 
     WeakHashSet<AudioCaptureSource> m_audioCaptureSources;
 

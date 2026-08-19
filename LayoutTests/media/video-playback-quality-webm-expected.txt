@@ -7,7 +7,7 @@ EXPECTED (originalQuality.totalVideoFrames >= '0') OK
 EXPECTED (originalQuality.droppedVideoFrames == '0') OK
 EXPECTED (originalQuality.totalFrameDelay == '0') OK
 RUN(video.play())
-EVENT(playing)
+EVENT(timeupdate)
 RUN(newQuality = video.getVideoPlaybackQuality())
 EXPECTED (newQuality.creationTime > originalQuality.creationTime == 'true') OK
 EXPECTED (newQuality.totalVideoFrames >= originalQuality.totalVideoFrames == 'true') OK

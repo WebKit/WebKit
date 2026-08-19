@@ -46,7 +46,9 @@
 #include "PlatformMediaSessionManager.h"
 #include "Settings.h"
 #include <wtf/CryptographicallyRandomNumber.h>
+#include <wtf/MainThread.h>
 #include <wtf/MediaTime.h>
+#include <wtf/RunLoop.h>
 #include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(MEDIA_STREAM)
@@ -251,6 +253,8 @@ void AudioContext::close(DOMPromiseDeferred<void>&& promise)
 
 void AudioContext::suspendRendering(DOMPromiseDeferred<void>&& promise)
 {
+    assertIsMainThread();
+
     if (isStopped() || isClosed()) {
         promise.reject(Exception { ExceptionCode::InvalidStateError, "Context is closed"_s });
         return;
@@ -258,25 +262,45 @@ void AudioContext::suspendRendering(DOMPromiseDeferred<void>&& promise)
 
     m_wasSuspendedByScript = true;
 
-    if (!willPausePlayback()) {
-        addReaction(State::Suspended, WTF::move(promise));
-        return;
-    }
-
-    lazyInitialize();
-
-    protect(destination())->suspend([activity = makePendingActivity(*this), promise = WTF::move(promise)](std::optional<Exception>&& exception) mutable {
-        if (exception) {
-            promise.reject(WTF::move(*exception));
-            return;
+    auto doSuspend = [this, protectedThis = Ref { *this }, promise = WTF::move(promise)]() mutable {
+        if (isStopped() || isClosed()) {
+            promise.reject(Exception { ExceptionCode::InvalidStateError, "Context is closed"_s });
+            return GenericPromise::createAndResolve();
         }
-        activity->object().setState(State::Suspended);
-        promise.resolve();
+
+        if (!willPausePlayback()) {
+            addReaction(State::Suspended, WTF::move(promise));
+            return GenericPromise::createAndResolve();
+        }
+
+        lazyInitialize();
+
+        GenericPromise::Producer producer;
+        Ref result = producer.promise();
+        protect(destination())->suspend([activity = makePendingActivity(*this), promise = WTF::move(promise), producer = WTF::move(producer)](std::optional<Exception>&& exception) mutable {
+            activity->object().queueTaskKeepingObjectAlive(activity->object(), TaskSource::InternalAsyncTask, [promise = WTF::move(promise), producer = WTF::move(producer), exception = WTF::move(exception)](auto& context) mutable {
+                if (exception) {
+                    promise.reject(WTF::move(*exception));
+                    producer.resolve();
+                    return;
+                }
+                context.setState(State::Suspended);
+                promise.resolve();
+                producer.resolve();
+            });
+        });
+        return result;
+    };
+
+    m_currentRenderingOperation = protect(m_currentRenderingOperation)->whenSettled(RunLoop::mainSingleton(), [doSuspend = WTF::move(doSuspend)](auto) mutable {
+        return doSuspend();
     });
 }
 
 void AudioContext::resumeRendering(DOMPromiseDeferred<void>&& promise)
 {
+    assertIsMainThread();
+
     if (isStopped() || isClosed()) {
         promise.reject(Exception { ExceptionCode::InvalidStateError, "Context is closed"_s });
         return;
@@ -284,44 +308,64 @@ void AudioContext::resumeRendering(DOMPromiseDeferred<void>&& promise)
 
     m_wasSuspendedByScript = false;
 
-    willBeginPlayback([weakThis = WeakPtr { *this }, promise = WTF::move(promise)](bool willBegin) mutable {
-        RefPtr protectedThis = weakThis.get();
-        if (!protectedThis)
-            return;
+    auto doResume = [this, protectedThis = Ref { *this }, promise = WTF::move(promise)]() mutable {
+        GenericPromise::Producer producer;
+        Ref result = producer.promise();
 
-        if (!willBegin) {
-            protectedThis->addReaction(State::Running, WTF::move(promise));
-            return;
-        }
-
-        if (protectedThis->isStopped() || protectedThis->isClosed()) {
-            promise.reject(Exception { ExceptionCode::InvalidStateError, "Context is closed"_s });
-            return;
-        }
-
-        protectedThis->lazyInitialize();
-        Ref destination = protectedThis->destination();
-        if (!destination->isInitialized()) {
-            promise.reject(Exception { ExceptionCode::InvalidStateError, "AudioDestinationNode is not initialized"_s });
-            return;
-        }
-
-        destination->resume([activity = protectedThis->makePendingActivity(*protectedThis), promise = WTF::move(promise)](std::optional<Exception>&& exception) mutable {
-            if (exception) {
-                promise.reject(WTF::move(*exception));
+        willBeginPlayback([weakThis = WeakPtr { *this }, promise = WTF::move(promise), producer = WTF::move(producer)](bool willBegin) mutable {
+            RefPtr protectedThis = weakThis.get();
+            if (!protectedThis) {
+                producer.resolve();
                 return;
             }
 
-            // Since we update the state asynchronously, we may have been interrupted after the
-            // call to resume() and before this lambda runs. In this case, we don't want to
-            // reset the state to running.
-            bool interrupted = activity->object().m_mediaSession->state() == PlatformMediaSession::State::Interrupted;
-            activity->object().setState(interrupted ? State::Interrupted : State::Running);
-            if (interrupted)
-                activity->object().addReaction(State::Running, WTF::move(promise));
-            else
-                promise.resolve();
+            if (!willBegin) {
+                protectedThis->addReaction(State::Running, WTF::move(promise));
+                producer.resolve();
+                return;
+            }
+
+            if (protectedThis->isStopped() || protectedThis->isClosed()) {
+                promise.reject(Exception { ExceptionCode::InvalidStateError, "Context is closed"_s });
+                producer.resolve();
+                return;
+            }
+
+            protectedThis->lazyInitialize();
+            Ref destination = protectedThis->destination();
+            if (!destination->isInitialized()) {
+                promise.reject(Exception { ExceptionCode::InvalidStateError, "AudioDestinationNode is not initialized"_s });
+                producer.resolve();
+                return;
+            }
+
+            destination->resume([activity = protectedThis->makePendingActivity(*protectedThis), promise = WTF::move(promise), producer = WTF::move(producer)](std::optional<Exception>&& exception) mutable {
+                activity->object().queueTaskKeepingObjectAlive(activity->object(), TaskSource::InternalAsyncTask, [promise = WTF::move(promise), producer = WTF::move(producer), exception = WTF::move(exception)](auto& context) mutable {
+                    if (exception) {
+                        promise.reject(WTF::move(*exception));
+                        producer.resolve();
+                        return;
+                    }
+
+                    // Since we update the state asynchronously, we may have been interrupted after the
+                    // call to resume() and before this lambda runs. In this case, we don't want to
+                    // reset the state to running.
+                    bool interrupted = context.m_mediaSession->state() == PlatformMediaSession::State::Interrupted;
+                    context.setState(interrupted ? State::Interrupted : State::Running);
+                    if (interrupted)
+                        context.addReaction(State::Running, WTF::move(promise));
+                    else
+                        promise.resolve();
+                    producer.resolve();
+                });
+            });
         });
+
+        return result;
+    };
+
+    m_currentRenderingOperation = protect(m_currentRenderingOperation)->whenSettled(RunLoop::mainSingleton(), [doResume = WTF::move(doResume)](auto) mutable {
+        return doResume();
     });
 }
 
@@ -483,15 +527,15 @@ void AudioContext::willBeginPlayback(CompletionHandler<void(bool)>&& completionH
 
     m_mediaSession->setActive(true);
 
-    m_mediaSession->clientWillBeginPlayback([weakThis = WeakPtr { *this }, completionHandler = WTF::move(completionHandler), logSiteIdentifier = WTF::move(logSiteIdentifier)](bool willBegin) mutable {
+    m_mediaSession->clientWillBeginPlayback()->whenSettled(RunLoop::mainSingleton(), [weakThis = WeakPtr { *this }, completionHandler = WTF::move(completionHandler), logSiteIdentifier = WTF::move(logSiteIdentifier)](auto&& result) mutable {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis) {
             completionHandler(false);
             return;
         }
 
-        ALWAYS_LOG_WITH_THIS(protectedThis, logSiteIdentifier, "returning ", willBegin);
-        completionHandler(willBegin);
+        ALWAYS_LOG_WITH_THIS(protectedThis, logSiteIdentifier, "returning ", !!result);
+        completionHandler(!!result);
     });
 }
 

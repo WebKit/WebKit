@@ -88,7 +88,7 @@ protected:
     void addSession(PlatformMediaSessionInterface&) override;
     void setCurrentSession(PlatformMediaSessionInterface&) override;
 
-    void sessionWillBeginPlayback(PlatformMediaSessionInterface&, CompletionHandler<void(bool)>&&) override;
+    void sessionDidCompleteAdmission(PlatformMediaSessionInterface&) override;
     void sessionWillEndPlayback(PlatformMediaSessionInterface&, DelayCallingUpdateNowPlaying) override;
     void sessionDidEndRemoteScrubbing(PlatformMediaSessionInterface&) final;
     void clientCharacteristicsChanged(PlatformMediaSessionInterface&, bool) final;

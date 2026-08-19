@@ -70,7 +70,7 @@ protected:
     void resetRestrictions() override;
 #endif
 
-    void sessionWillBeginPlayback(PlatformMediaSessionInterface&, CompletionHandler<void(bool)>&&) override;
+    void sessionDidCompleteAdmission(PlatformMediaSessionInterface&) override;
 
 private:
     void configureWirelessTargetMonitoring() final;

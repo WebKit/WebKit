@@ -64,6 +64,7 @@
 #include "VideoTrackConfiguration.h"
 #include "VideoTrackList.h"
 #include <wtf/CryptographicallyRandomNumber.h>
+#include <wtf/RunLoop.h>
 #include <wtf/RuntimeApplicationChecks.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/StringBuilder.h>
@@ -267,14 +268,12 @@ void MediaElementSession::clientWillBeginAutoplaying()
     updateClientDataBuffering();
 }
 
-void MediaElementSession::clientWillBeginPlayback(CompletionHandler<void(bool)>&& completionHandler)
+Ref<GenericPromise> MediaElementSession::clientWillBeginPlayback()
 {
-    PlatformMediaSession::clientWillBeginPlayback([weakThis = WeakPtr { *this }, completionHandler = WTF::move(completionHandler)](bool willBegin) mutable {
+    return PlatformMediaSession::clientWillBeginPlayback()->whenSettled(RunLoop::mainSingleton(), [weakThis = WeakPtr { *this }](auto&& result) {
         RefPtr protectedThis = weakThis.get();
-        if (!protectedThis || !willBegin) {
-            completionHandler(false);
-            return;
-        }
+        if (!protectedThis || !result)
+            return GenericPromise::createAndReject();
 
         protectedThis->m_elementIsHiddenBecauseItWasRemovedFromDOM = false;
         protectedThis->updateClientDataBuffering();
@@ -284,7 +283,7 @@ void MediaElementSession::clientWillBeginPlayback(CompletionHandler<void(bool)>&
             session->willBeginPlayback();
 #endif
 
-        completionHandler(true);
+        return GenericPromise::createAndResolve();
     });
 }
 

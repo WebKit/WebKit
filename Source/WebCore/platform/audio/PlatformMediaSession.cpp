@@ -35,6 +35,7 @@
 #include "NowPlayingInfo.h"
 #include "PlatformMediaSessionManager.h"
 #include <wtf/MediaTime.h>
+#include <wtf/RunLoop.h>
 #include <wtf/RuntimeApplicationChecks.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
@@ -267,12 +268,10 @@ void PlatformMediaSession::clientWillBeginAutoplaying()
     setState(State::Autoplaying);
 }
 
-void PlatformMediaSession::clientWillBeginPlayback(CompletionHandler<void(bool)>&& completionHandler)
+Ref<GenericPromise> PlatformMediaSession::clientWillBeginPlayback()
 {
-    if (m_notifyingClient) {
-        completionHandler(true);
-        return;
-    }
+    if (m_notifyingClient)
+        return GenericPromise::createAndResolve();
 
     ALWAYS_LOG(LOGIDENTIFIER, "state = ", m_state);
 
@@ -281,70 +280,52 @@ void PlatformMediaSession::clientWillBeginPlayback(CompletionHandler<void(bool)>
     // and ConcurrentCheck at completion time, potentially reordering session state
     // when async admissions interleave with the redundant clientWillBeginPlayback
     // call from updatePlayState).
-    if (state() == State::Playing) {
-        completionHandler(true);
-        return;
-    }
+    if (state() == State::Playing)
+        return GenericPromise::createAndResolve();
 
     RefPtr manager = sessionManager();
-    if (!manager) {
-        completionHandler(false);
-        return;
-    }
+    if (!manager)
+        return GenericPromise::createAndReject();
 
     // m_preparingToPlay tracks "play is still intended". It is cleared by
     // processClientWillPausePlayback if pause() is called while admission is
-    // in flight; it is also used by MediaElementSession::preferredBufferingPolicy
-    // and updateMediaUsageIfChanged to treat the in-flight state as Playing.
+    // in flight, and by commitPlaybackAdmission() once the manager's admission
+    // settles successfully.
     m_preparingToPlay = true;
 
-    // Capture the state at admission start. The pause-during-admission detection
-    // below compares state() at callback time against this captured value rather
-    // than against the (shared, mutable) m_preparingToPlay flag — m_preparingToPlay
-    // is cleared by an earlier admission's callback in the same session, so it
-    // cannot reliably distinguish "pause happened during my admission" from
-    // "another admission cleared the flag".
-    auto stateAtStart = state();
-
-    manager->sessionWillBeginPlayback(*this, [weakThis = WeakPtr { *this }, completionHandler = WTF::move(completionHandler), stateAtStart](bool canBegin) mutable {
+    return manager->sessionWillBeginPlayback(*this)->whenSettled(RunLoop::mainSingleton(), [weakThis = WeakPtr { *this }](auto&& result) {
         RefPtr protectedThis = weakThis.get();
-        if (!protectedThis) {
-            completionHandler(false);
-            return;
-        }
+        if (!protectedThis)
+            return GenericPromise::createAndReject();
 
-        protectedThis->m_preparingToPlay = false;
-
-        if (!canBegin) {
+        if (!result) {
+            protectedThis->m_preparingToPlay = false;
             if (protectedThis->state() == State::Interrupted)
                 protectedThis->m_stateToRestore = State::Playing;
-            completionHandler(false);
-            return;
+            return GenericPromise::createAndReject();
         }
 
-        // If state transitioned to Paused while admission was in flight (and
-        // it wasn't Paused at admission start), don't override the user's
-        // (or ended-path's) Paused state by setting state to Playing. But
-        // call completionHandler(true) — the manager-level admission did
-        // succeed, and we cannot reliably distinguish "user called pause()"
-        // from "player ended-path called setPaused(true)" (both call
-        // processClientWillPausePlayback identically). Returning true matches
-        // pre-branch behavior: scheduleNotifyAboutPlaying in the caller's
-        // success path will resolve the play promise. The trade-off is that
-        // for a genuine play()/pause() user race, the play promise resolves
-        // rather than rejecting with AbortError (spec deviation), but
-        // pre-branch sync admission had the same behavior because
-        // scheduleNotifyAboutPlaying ran before pauseInternal could reject
-        // the pending promises.
-        if (protectedThis->state() == State::Paused && stateAtStart != State::Paused) {
-            completionHandler(true);
-            return;
-        }
-
-        protectedThis->m_stateToRestore = State::Playing;
-        protectedThis->setState(State::Playing);
-        completionHandler(true);
+        return GenericPromise::createAndResolve();
     });
+}
+
+bool PlatformMediaSession::commitPlaybackAdmission(State stateAtStart)
+{
+    m_preparingToPlay = false;
+
+    // If state transitioned to Paused while admission was in flight (and it wasn't Paused
+    // at admission start), don't override the user's (or ended-path's) Paused state by
+    // setting state to Playing. The trade-off is that for a genuine play()/pause() user
+    // race, the play promise still resolves rather than rejecting with AbortError (spec
+    // deviation) — clientWillBeginPlayback()'s continuation resolves regardless of this
+    // result. What this return value controls is only whether the caller may enforce
+    // exclusivity on this session's behalf: a session that stayed paused never claimed it.
+    if (state() == State::Paused && stateAtStart != State::Paused)
+        return false;
+
+    m_stateToRestore = State::Playing;
+    setState(State::Playing);
+    return true;
 }
 
 bool PlatformMediaSession::processClientWillPausePlayback(DelayCallingUpdateNowPlaying shouldDelayCallingUpdateNowPlaying)

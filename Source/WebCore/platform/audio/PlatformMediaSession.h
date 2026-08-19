@@ -54,7 +54,8 @@ public:
     void endInterruption(OptionSet<EndInterruptionFlags>) final;
 
     void clientWillBeginAutoplaying() override;
-    void clientWillBeginPlayback(CompletionHandler<void(bool)>&&) override;
+    Ref<GenericPromise> clientWillBeginPlayback() override;
+    bool commitPlaybackAdmission(State stateAtStart) override;
     bool clientWillPausePlayback() override;
 
     void clientWillBeDOMSuspended() final;

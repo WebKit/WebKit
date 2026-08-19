@@ -3082,6 +3082,14 @@ void HTMLMediaElement::cancelPendingEventsAndCallbacks()
     for (auto& source : childrenOfType<HTMLSourceElement>(*this))
         source.cancelPendingErrorEvent();
 
+    // A new load racing an in-flight play() admission must not preempt a settlement that the
+    // admission's own callback is already guaranteed to deliver (see m_playPromiseSettlementGuaranteed).
+    if (m_beginPlaybackRequest->hasCallback()) {
+        if (m_playPromiseSettlementGuaranteed)
+            return;
+        m_beginPlaybackRequest->disconnect();
+    }
+
     rejectPendingPlayPromises(WTF::move(m_pendingPlayPromises), DOMException::create(ExceptionCode::AbortError));
 }
 
@@ -4733,16 +4741,7 @@ void HTMLMediaElement::playInternal()
         return;
     }
 
-    GenericPromise::Producer producer;
-    Ref promise = producer.promise();
-    mediaSession->clientWillBeginPlayback([producer = WTF::move(producer)](bool canBegin) mutable {
-        if (canBegin)
-            producer.resolve();
-        else
-            producer.reject();
-    });
-
-    promise->whenSettled(RunLoop::mainSingleton(), [weakThis = WeakPtr { *this }, onAdmissionSettled = WTF::move(onAdmissionSettled)](auto&& result) {
+    mediaSession->clientWillBeginPlayback()->whenSettled(RunLoop::mainSingleton(), [weakThis = WeakPtr { *this }, onAdmissionSettled = WTF::move(onAdmissionSettled)](auto&& result) {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
@@ -6887,7 +6886,11 @@ void HTMLMediaElement::updatePlayState()
         invalidateOfficialPlaybackPosition();
 
         if (playerPaused) {
-            mediaSession->clientWillBeginPlayback([](bool) { });
+            // Only re-request admission if none is already in flight for this session — otherwise this
+            // would append a second, fully serialized admission (setCurrentSession, restriction
+            // enforcement) behind the current one, whose result nothing here consumes.
+            if (!mediaSession->preparingToPlay())
+                mediaSession->clientWillBeginPlayback();
 
             // Set rate, muted and volume before calling play in case they were set before the media engine was set up.
             // The media engine should just stash the rate, muted and volume values since it isn't already playing.
@@ -10105,7 +10108,9 @@ void HTMLMediaElement::updateShouldAutoplay()
 void HTMLMediaElement::updateShouldPlay()
 {
     if (!paused() && !protect(mediaSession())->playbackStateChangePermitted(MediaPlaybackState::Playing)) {
-        scheduleRejectPendingPlayPromises(DOMException::create(ExceptionCode::NotAllowedError));
+        // pauseInternal() rejects m_pendingPlayPromises itself, guarded by
+        // m_playPromiseSettlementGuaranteed — an in-flight play() admission that is
+        // guaranteed to settle this same promise must not be preempted here.
         pauseInternal();
         setAutoplayEventPlaybackState(AutoplayEventPlaybackState::PreventedAutoplay);
         return;

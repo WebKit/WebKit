@@ -95,7 +95,7 @@ private:
     void addSession(WebCore::PlatformMediaSessionInterface&) final;
     void removeSession(WebCore::PlatformMediaSessionInterface&) final;
     void setCurrentSession(WebCore::PlatformMediaSessionInterface&) final;
-    void sessionWillBeginPlayback(WebCore::PlatformMediaSessionInterface&, CompletionHandler<void(bool)>&&) final;
+    void sessionDidCompleteAdmission(WebCore::PlatformMediaSessionInterface&) final;
     void updateSessionState() final;
     void sessionStateChanged(WebCore::PlatformMediaSessionInterface&) final;
 

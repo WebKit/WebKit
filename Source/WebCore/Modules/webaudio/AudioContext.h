@@ -172,6 +172,12 @@ private:
     // https://www.w3.org/TR/webaudio/#dom-audiocontext-suspended-by-user-slot
     bool m_wasSuspendedByScript { false };
 
+    // Serializes resumeRendering()/suspendRendering() against each other so their DOMPromiseDeferred
+    // arguments settle in call order — resume() then immediately suspend() must not let suspend's
+    // promise settle first just because clientWillPausePlayback() is synchronous while
+    // clientWillBeginPlayback() goes through the (async) session admission chain.
+    Ref<GenericPromise> m_currentRenderingOperation { GenericPromise::createAndResolve() };
+
     bool m_canOverrideBackgroundPlaybackRestriction { true };
 };
 

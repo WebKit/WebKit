@@ -76,6 +76,14 @@ void RemoteMediaSessionProxy::setState(WebCore::PlatformMediaSessionState state)
     m_sessionState.state = state;
 }
 
+bool RemoteMediaSessionProxy::commitPlaybackAdmission(WebCore::PlatformMediaSessionState)
+{
+    // The content process already decided whether playback may begin — this proxy only mirrors
+    // that decision, so there is no pause-race to check locally; committing always succeeds.
+    setState(WebCore::PlatformMediaSessionState::Playing);
+    return true;
+}
+
 WeakPtr<WebCore::PlatformMediaSessionInterface> RemoteMediaSessionProxy::selectBestMediaSession(const Vector<WeakPtr<WebCore::PlatformMediaSessionInterface>>&, WebCore::PlatformMediaSessionPlaybackControlsPurpose)
 {
     // FIXME: Another synchronous API we need to fix.

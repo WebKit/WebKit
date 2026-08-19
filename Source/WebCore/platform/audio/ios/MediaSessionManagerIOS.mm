@@ -132,34 +132,15 @@ void MediaSessionManageriOS::ensureMediaDeviceRouteControllerMonitoring()
 }
 #endif
 
-void MediaSessionManageriOS::sessionWillBeginPlayback(PlatformMediaSessionInterface& session, CompletionHandler<void(bool)>&& completionHandler)
+void MediaSessionManageriOS::sessionDidCompleteAdmission(PlatformMediaSessionInterface& session)
 {
-    auto logSiteIdentifier = LOGIDENTIFIER;
-    MediaSessionManagerCocoa::sessionWillBeginPlayback(session, [weakThis = ThreadSafeWeakPtr { *this }, completionHandler = WTF::move(completionHandler), strongSession = RefPtr { &session }, logSiteIdentifier = WTF::move(logSiteIdentifier)](bool canBegin) mutable {
+    MediaSessionManagerCocoa::sessionDidCompleteAdmission(session);
 
-        UNUSED_PARAM(logSiteIdentifier);
-
-        RefPtr protectedThis = weakThis.get();
-        if (!protectedThis) {
-            completionHandler(false);
-            return;
-        }
-
-        if (!canBegin) {
-            completionHandler(false);
-            return;
-        }
-
-#if PLATFORM(IOS_FAMILY)
-        auto playbackTargetSupportsAirPlayVideo = MediaSessionHelper::sharedHelper().activeVideoRouteSupportsAirPlayVideo();
-        ALWAYS_LOG_WITH_THIS(protectedThis, logSiteIdentifier, "Playback Target Supports AirPlay Video = ", playbackTargetSupportsAirPlayVideo);
-        if (RefPtr target = MediaSessionHelper::sharedHelper().playbackTarget(); target && playbackTargetSupportsAirPlayVideo)
-            strongSession->setPlaybackTarget(*target);
-        strongSession->setShouldPlayToPlaybackTarget(playbackTargetSupportsAirPlayVideo);
-#endif
-
-        completionHandler(true);
-    });
+    auto playbackTargetSupportsAirPlayVideo = MediaSessionHelper::sharedHelper().activeVideoRouteSupportsAirPlayVideo();
+    ALWAYS_LOG(LOGIDENTIFIER, "Playback Target Supports AirPlay Video = ", playbackTargetSupportsAirPlayVideo);
+    if (RefPtr target = MediaSessionHelper::sharedHelper().playbackTarget(); target && playbackTargetSupportsAirPlayVideo)
+        session.setPlaybackTarget(*target);
+    session.setShouldPlayToPlaybackTarget(playbackTargetSupportsAirPlayVideo);
 }
 
 void MediaSessionManageriOS::sessionWillEndPlayback(PlatformMediaSessionInterface& session, DelayCallingUpdateNowPlaying delayCallingUpdateNowPlaying)

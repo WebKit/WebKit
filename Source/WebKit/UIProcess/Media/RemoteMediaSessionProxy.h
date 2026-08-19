@@ -54,6 +54,7 @@ private:
 
     WebCore::PlatformMediaSessionState state() const  final { return m_sessionState.state; }
     void setState(WebCore::PlatformMediaSessionState) final;
+    bool commitPlaybackAdmission(WebCore::PlatformMediaSessionState) final;
 
     bool isPlayingToWirelessPlaybackTarget() const final { return m_sessionState.isPlayingToWirelessPlaybackTarget; }
 
@@ -68,6 +69,12 @@ private:
     bool hasMediaStreamSource() const final { return m_sessionState.hasMediaStreamSource; }
 
     bool preparingToPlay() const final { return m_sessionState.preparingToPlay; }
+
+    // The content process only sends MediaSessionWillBeginPlayback once it has already committed the
+    // admission locally, so there is nothing to revalidate here — unlike preparingToPlay(), which mirrors
+    // that message's post-commit snapshot and would otherwise always read false at this point.
+    bool admissionStillValid() const final { return true; }
+
     bool hasPlayedAudiblySinceLastInterruption() const final { return m_sessionState.hasPlayedAudiblySinceLastInterruption; }
 
     bool shouldOverridePauseDuringRouteChange() const final { return m_sessionState.shouldOverridePauseDuringRouteChange; }

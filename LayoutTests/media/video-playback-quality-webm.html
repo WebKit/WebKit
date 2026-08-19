@@ -18,7 +18,7 @@
         testExpected('originalQuality.totalFrameDelay', 0);
 
         runWithKeyDown('video.play()');
-        await waitFor(video, 'playing');
+        await waitFor(video, 'timeupdate');
 
         run(`newQuality = video.getVideoPlaybackQuality()`);
         testExpected('newQuality.creationTime > originalQuality.creationTime', true);

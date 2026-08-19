@@ -110,16 +110,16 @@ void RemoteMediaSessionManager::setCurrentSession(WebCore::PlatformMediaSessionI
     send(Messages::RemoteMediaSessionManagerProxy::SetCurrentMediaSession(currentSessionState(session)));
 }
 
-void RemoteMediaSessionManager::sessionWillBeginPlayback(WebCore::PlatformMediaSessionInterface& session, CompletionHandler<void(bool)>&& completionHandler)
+void RemoteMediaSessionManager::sessionDidCompleteAdmission(WebCore::PlatformMediaSessionInterface& session)
 {
-    // Whether playback may begin is decided here: the session, its state and the restrictions are all
-    // in this process. The UI process is told so that it can make this session current and enforce the
-    // concurrent playback restriction across every process's sessions.
-    REMOTE_MEDIA_SESSION_MANAGER_BASE_CLASS::sessionWillBeginPlayback(session, [protectedThis = Ref { *this }, state = currentSessionState(session), completionHandler = WTF::move(completionHandler)](bool granted) mutable {
-        if (granted)
-            protectedThis->send(Messages::RemoteMediaSessionManagerProxy::MediaSessionWillBeginPlayback(state));
-        completionHandler(granted);
-    });
+    REMOTE_MEDIA_SESSION_MANAGER_BASE_CLASS::sessionDidCompleteAdmission(session);
+
+    // Whether playback may begin was decided locally: the session, its state and the restrictions are
+    // all in this process. The UI process is told so that it can make this session current and enforce
+    // the concurrent playback restriction across every process's sessions. The snapshot is taken now,
+    // after commitPlaybackAdmission() has already run, so it carries State::Playing and
+    // preparingToPlay() == false.
+    send(Messages::RemoteMediaSessionManagerProxy::MediaSessionWillBeginPlayback(currentSessionState(session)));
 }
 
 void RemoteMediaSessionManager::addRestriction(WebCore::PlatformMediaSessionMediaType type, WebCore::MediaSessionRestrictions restrictions)

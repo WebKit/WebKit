@@ -157,7 +157,14 @@ public:
     virtual void clientCharacteristicsChanged(bool) = 0;
 
     virtual void clientWillBeginAutoplaying() = 0;
-    virtual void clientWillBeginPlayback(CompletionHandler<void(bool)>&&) = 0;
+    virtual Ref<GenericPromise> clientWillBeginPlayback() = 0;
+    // Called by the manager, inside the serialized admission region, once activation has succeeded and
+    // immediately before enforceConcurrentPlaybackRestriction(). stateAtStart is state() as captured
+    // synchronously when this admission began.
+    // Returns true if the session actually transitioned to Playing (so enforcing exclusivity on its behalf
+    // makes sense); false if it stayed paused (e.g. a pause() raced the admission), in which case the
+    // caller must not evict other sessions.
+    virtual bool commitPlaybackAdmission(State stateAtStart) = 0;
     virtual bool clientWillPausePlayback() = 0;
 
     virtual void clientWillBeDOMSuspended() = 0;
@@ -218,6 +225,21 @@ public:
 
     virtual bool preparingToPlay() const = 0;
 
+    // Whether a queued admission for this session, once its turn comes up in
+    // MediaSessionManagerInterface::sessionWillBeginPlayback()'s serialization chain, should still
+    // proceed. Defaults to preparingToPlay(): a local session may have had pause() called on it while
+    // queued, in which case it no longer wants to play. Overridden by RemoteMediaSessionProxy, whose
+    // preparingToPlay() mirrors a snapshot the WebContent process takes *after* it already committed the
+    // admission locally — always false for that message, which is not evidence of a race here; any real
+    // invalidation after commit arrives via a separate, later-ordered IPC message instead.
+    virtual bool admissionStillValid() const;
+
+    // A session whose own admission is in flight has not reached Playing yet but intends to; treat it
+    // as playing for the purpose of not disturbing it. Do not use this in enforceConcurrentPlaybackRestriction()'s
+    // eviction predicate — that one deliberately checks state() alone, since a merely-queued or
+    // in-flight session there is not a legitimate eviction target (see MediaSessionManagerInterface.cpp).
+    bool isPlayingOrPreparingToPlay() const;
+
     virtual bool canPlayConcurrently(const PlatformMediaSessionInterface&) const = 0;
     virtual bool shouldOverridePauseDuringRouteChange() const { return protect(client())->shouldOverridePauseDuringRouteChange(); }
 
@@ -277,5 +299,7 @@ inline void PlatformMediaSessionInterface::setMediaSessionIdentifier(MediaSessio
 inline PlatformMediaSessionClient& PlatformMediaSessionInterface::client() const { return m_client; }
 inline bool PlatformMediaSessionInterface::isRemoteSessionProxy() const { return false; }
 inline bool PlatformMediaSessionInterface::playbackPermitted() const { return true; }
+inline bool PlatformMediaSessionInterface::admissionStillValid() const { return preparingToPlay(); }
+inline bool PlatformMediaSessionInterface::isPlayingOrPreparingToPlay() const { return state() == State::Playing || preparingToPlay(); }
 
 } // namespace WebCore

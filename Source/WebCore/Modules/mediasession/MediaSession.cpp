@@ -281,9 +281,14 @@ void MediaSession::setPlaybackState(MediaSessionPlaybackState state)
 
     updateReportedPosition();
 
-    if (state == MediaSessionPlaybackState::Playing)
-        m_platformSession->clientWillBeginPlayback([] (bool) { });
-    else if (m_playbackState == MediaSessionPlaybackState::Playing)
+    if (state == MediaSessionPlaybackState::Playing) {
+        // Registers this session in the manager's sessions() set synchronously, the same way
+        // HTMLMediaElement::playInternal() already does — independent of whether the admission below
+        // ever completes, so beginInterruption()'s forEachSession() can find this session immediately,
+        // not just once its (now always asynchronous) admission settles.
+        m_platformSession->setActive(true);
+        m_platformSession->clientWillBeginPlayback();
+    } else if (m_playbackState == MediaSessionPlaybackState::Playing)
         m_platformSession->clientWillPausePlayback();
 
     m_playbackState = state;

@@ -230,7 +230,7 @@ void RemoteMediaSessionManagerProxy::mediaSessionWillBeginPlayback(IPC::Connecti
     // The content process decided whether playback may begin; this runs the part that needs every
     // process's sessions: making this one current, and the concurrent playback restriction.
     if (RefPtr session = findAndUpdateSession(connection, state))
-        REMOTE_MEDIA_SESSION_MANAGER_BASE_CLASS::sessionWillBeginPlayback(*session, [](bool) { });
+        REMOTE_MEDIA_SESSION_MANAGER_BASE_CLASS::sessionWillBeginPlayback(*session);
 }
 
 void RemoteMediaSessionManagerProxy::addMediaSessionRestriction(WebCore::PlatformMediaSessionMediaType type, WebCore::MediaSessionRestrictions restrictions)
