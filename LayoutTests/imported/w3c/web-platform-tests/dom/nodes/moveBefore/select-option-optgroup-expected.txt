@@ -1,4 +1,6 @@
 
+B
 
-FAIL Option selectedness is updated on option and optgroup DOM moves assert_true: B becomes selected after first move expected true got false
+PASS Option selectedness is updated on option and optgroup DOM moves
+PASS Selected index is updated when an option moves within the same select
 

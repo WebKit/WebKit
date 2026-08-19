@@ -87,6 +87,7 @@ private:
 
     NeedsPostConnectionSteps insertionSteps(InsertionType, ContainerNode&) final;
     void removingSteps(RemovalType, ContainerNode& oldParentOfRemovedTree) final;
+    void movingSteps(bool isSubtreeRoot, ContainerNode&) final;
 
     bool supportsFocus() const final;
     bool isFocusable() const final;

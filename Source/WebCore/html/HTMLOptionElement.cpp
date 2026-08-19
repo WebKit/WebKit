@@ -211,6 +211,41 @@ void HTMLOptionElement::removingSteps(RemovalType removalType, ContainerNode& ol
     }
 }
 
+void HTMLOptionElement::movingSteps(bool isSubtreeRoot, ContainerNode& oldParent)
+{
+    HTMLElement::movingSteps(isSubtreeRoot, oldParent);
+
+    if (!isSubtreeRoot)
+        return;
+
+    if (!document().settings().htmlEnhancedSelectParsingEnabled())
+        return;
+
+    RefPtr oldSelect = m_ownerSelect;
+    RefPtr newSelect = HTMLSelectElement::findOwnerSelect(parentNode(), HTMLSelectElement::ExcludeOptGroup::No);
+    if (oldSelect == newSelect) {
+        if (newSelect) {
+            newSelect->setRecalcListItems();
+            newSelect->invalidateButtonText();
+        }
+        return;
+    }
+
+    m_ownerSelect = newSelect.get();
+
+    if (oldSelect) {
+        oldSelect->setRecalcListItems();
+        oldSelect->invalidateButtonText();
+    }
+
+    if (newSelect) {
+        newSelect->setRecalcListItems();
+        newSelect->invalidateButtonText();
+    }
+
+    invalidateShadowTree();
+}
+
 void HTMLOptionElement::finishParsingChildren()
 {
     if (!document().settings().htmlEnhancedSelectEnabled())
