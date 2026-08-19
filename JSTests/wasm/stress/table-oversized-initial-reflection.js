@@ -1,4 +1,5 @@
 //@ skip if $addressBits <= 32
+//@ requireOptions("--useWasmJSTypes=true")
 import * as assert from "../assert.js";
 
 // A table may declare a size larger than this implementation can create. That is a compile-time

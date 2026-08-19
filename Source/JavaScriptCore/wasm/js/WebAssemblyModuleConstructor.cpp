@@ -233,22 +233,21 @@ JSC_DEFINE_HOST_FUNCTION(webAssemblyModuleImports, (JSGlobalObject* globalObject
     // The following would theoretically be a strict ==, but an inline FixedBitVector reports a larger size than it was created with.
     RELEASE_ASSERT(shouldBeHiddenMap.size() >= imports.size());
     if (imports.size()) {
+        const bool includeTypeReflection = Options::useWasmJSTypes();
         Identifier moduleId = Identifier::fromString(vm, "module"_s);
-        Identifier name = Identifier::fromString(vm, "name"_s);
         Identifier kind = Identifier::fromString(vm, "kind"_s);
-        Identifier type = Identifier::fromString(vm, "type"_s);
         for (size_t i = 0; i < imports.size(); i++) {
             if (!shouldBeHiddenMap.test(i)) {
                 const Wasm::Import& imp = imports[i];
                 JSObject* obj = constructEmptyObject(globalObject);
                 RETURN_IF_EXCEPTION(throwScope, { });
                 obj->putDirect(vm, moduleId, jsString(vm, WTF::makeString(imp.module)));
-                obj->putDirect(vm, name, jsString(vm, WTF::makeString(imp.field)));
+                obj->putDirect(vm, vm.propertyNames->name, jsString(vm, WTF::makeString(imp.field)));
                 obj->putDirect(vm, kind, jsString(vm, String::fromLatin1(makeString(imp.kind))));
-                if (imp.kind == Wasm::ExternalKind::Function || imp.kind == Wasm::ExternalKind::Table || imp.kind == Wasm::ExternalKind::Memory || imp.kind == Wasm::ExternalKind::Global) {
+                if (includeTypeReflection && (imp.kind == Wasm::ExternalKind::Function || imp.kind == Wasm::ExternalKind::Table || imp.kind == Wasm::ExternalKind::Memory || imp.kind == Wasm::ExternalKind::Global)) {
                     JSObject* typeReflectionObject = createTypeReflectionObject(globalObject, module, imp);
                     RETURN_IF_EXCEPTION(throwScope, { });
-                    obj->putDirect(vm, type, typeReflectionObject);
+                    obj->putDirect(vm, vm.propertyNames->type, typeReflectionObject);
                 }
                 result->push(globalObject, obj);
                 RETURN_IF_EXCEPTION(throwScope, { });
@@ -273,18 +272,17 @@ JSC_DEFINE_HOST_FUNCTION(webAssemblyModuleExports, (JSGlobalObject* globalObject
 
     const auto& exports = module->moduleInformation().exports;
     if (exports.size()) {
-        Identifier name = Identifier::fromString(vm, "name"_s);
+        const bool includeTypeReflection = Options::useWasmJSTypes();
         Identifier kind = Identifier::fromString(vm, "kind"_s);
-        Identifier type = Identifier::fromString(vm, "type"_s);
         for (const Wasm::Export& exp : exports) {
             JSObject* obj = constructEmptyObject(globalObject);
             RETURN_IF_EXCEPTION(throwScope, { });
-            obj->putDirect(vm, name, jsString(vm, WTF::makeString(exp.field)));
+            obj->putDirect(vm, vm.propertyNames->name, jsString(vm, WTF::makeString(exp.field)));
             obj->putDirect(vm, kind, jsString(vm, String::fromLatin1(makeString(exp.kind))));
-            if (exp.kind == Wasm::ExternalKind::Function || exp.kind == Wasm::ExternalKind::Table || exp.kind == Wasm::ExternalKind::Memory || exp.kind == Wasm::ExternalKind::Global) {
+            if (includeTypeReflection && (exp.kind == Wasm::ExternalKind::Function || exp.kind == Wasm::ExternalKind::Table || exp.kind == Wasm::ExternalKind::Memory || exp.kind == Wasm::ExternalKind::Global)) {
                 JSObject* typeReflectionObject = createTypeReflectionObject(globalObject, module, exp);
                 RETURN_IF_EXCEPTION(throwScope, { });
-                obj->putDirect(vm, type, typeReflectionObject);
+                obj->putDirect(vm, vm.propertyNames->type, typeReflectionObject);
             }
             result->push(globalObject, obj);
             RETURN_IF_EXCEPTION(throwScope, { });
@@ -383,4 +381,3 @@ WebAssemblyModuleConstructor::WebAssemblyModuleConstructor(VM& vm, Structure* st
 } // namespace JSC
 
 #endif // ENABLE(WEBASSEMBLY)
-

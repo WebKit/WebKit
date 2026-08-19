@@ -9956,7 +9956,7 @@ WasmJSTypesEnabled:
   status: testable
   category: javascript
   humanReadableName: "WebAssembly JS Types"
-  humanReadableDescription: "Enable the js-types proposal type() methods on WebAssembly.Memory/Table/Global/Tag prototypes."
+  humanReadableDescription: "Enable the js-types proposal: type() on WebAssembly.Memory/Table/Global/Tag, and the type field on WebAssembly.Module.imports/exports descriptors."
   webcoreBinding: none
   jscOptionName: useWasmJSTypes
   sharedPreferenceForWebProcess: true

@@ -1,3 +1,4 @@
+//@ requireOptions("--useWasmJSTypes=true")
 import { compile } from "../wabt-wrapper.js";
 import * as assert from "../assert.js"
 
