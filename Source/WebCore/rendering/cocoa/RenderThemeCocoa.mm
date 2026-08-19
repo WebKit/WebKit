@@ -1354,6 +1354,22 @@ String RenderThemeCocoa::cnnQuirkScript()
     return m_cnnCaptionQuirkScript;
 }
 
+String RenderThemeCocoa::youTubeCaptionFetchScript()
+{
+    if (!m_youTubeCaptionFetchScript)
+        m_youTubeCaptionFetchScript = StringImpl::createWithoutCopying(YouTubeCaptionFetchQuirkJavaScript);
+
+    return m_youTubeCaptionFetchScript;
+}
+
+String RenderThemeCocoa::netflixCaptionFetchScript()
+{
+    if (!m_netflixCaptionFetchScript)
+        m_netflixCaptionFetchScript = StringImpl::createWithoutCopying(NetflixCaptionFetchQuirkJavaScript);
+
+    return m_netflixCaptionFetchScript;
+}
+
 #endif // ENABLE(VIDEO)
 
 #if ENABLE(ATTACHMENT_ELEMENT)

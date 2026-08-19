@@ -45,6 +45,7 @@
 #include "DiagnosticLoggingClient.h"
 #include "DiagnosticLoggingKeys.h"
 #include "DocumentLoader.h"
+#include "DocumentMediaElement.h"
 #include "DocumentPrefetcher.h"
 #include "DocumentQuirks.h"
 #include "DocumentResourceLoader.h"
@@ -791,10 +792,38 @@ bool LocalFrame::hasUserContentProvider(const UserContentProvider& provider)
     return userContentProvider() == &provider;
 }
 
+#if ENABLE(VIDEO)
+// Injected at document-start: these sites fetch captions before <video> loads, so we hook early.
+static void injectCaptionFetchQuirkScripts(Document& document)
+{
+    if (!document.settings().findInVideoEnabled())
+        return;
+
+    auto& quirks = document.quirks();
+    bool needsYouTube = quirks.needsYouTubeCaptionFetchQuirk();
+    bool needsNetflix = quirks.needsNetflixCaptionFetchQuirk();
+    if (!needsYouTube && !needsNetflix)
+        return;
+
+    auto& mediaElement = DocumentMediaElement::from(document);
+    if (needsYouTube)
+        mediaElement.ensureYouTubeCaptionFetchScript();
+    if (needsNetflix)
+        mediaElement.ensureNetflixCaptionFetchScript();
+}
+#endif
+
 void LocalFrame::injectUserScripts(UserScriptInjectionTime injectionTime)
 {
     if (loader().stateMachine().creatingInitialEmptyDocument() && !settings().shouldInjectUserScriptsInInitialEmptyDocument())
         return;
+
+#if ENABLE(VIDEO)
+    if (injectionTime == UserScriptInjectionTime::DocumentStart) {
+        if (RefPtr document = this->document())
+            injectCaptionFetchQuirkScripts(*document);
+    }
+#endif
 
     RefPtr userContentProvider = this->userContentProvider();
     if (!userContentProvider)

@@ -131,6 +131,8 @@ public:
     virtual String mediaControlsFormattedStringForDuration(double) { return String(); }
     virtual String youTubeQuirkScript() { return { }; }
     virtual String cnnQuirkScript() { return { }; }
+    virtual String youTubeCaptionFetchScript() { return { }; }
+    virtual String netflixCaptionFetchScript() { return { }; }
 #endif // ENABLE(VIDEO)
 #if ENABLE(ATTACHMENT_ELEMENT)
     virtual String attachmentStyleSheet() const;

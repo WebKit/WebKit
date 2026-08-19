@@ -134,50 +134,54 @@ bool DocumentMediaElement::ensureMediaControlsScript()
     return m_haveParsedMediaControlsScript;
 }
 
-bool DocumentMediaElement::ensureYouTubeQuirkScript()
+bool DocumentMediaElement::ensureScriptParsed(bool& haveParsed, String&& script, DOMWrapperWorld& world)
 {
-    if (m_haveParsedYouTubeQuirkScript)
+    if (haveParsed)
         return true;
 
     Ref document = this->document();
-    auto youTubeQuirkScript = RenderTheme::singleton().youTubeQuirkScript();
-    if (youTubeQuirkScript.isEmpty() || document->activeDOMObjectsAreSuspended() || document->activeDOMObjectsAreStopped())
+    if (script.isEmpty() || document->activeDOMObjectsAreSuspended() || document->activeDOMObjectsAreStopped())
         return false;
 
-    Ref world = mainThreadNormalWorldSingleton();
-    m_haveParsedYouTubeQuirkScript = setupAndCallJS([youTubeQuirkScript = WTF::move(youTubeQuirkScript)](JSDOMGlobalObject& globalObject, JSC::JSGlobalObject&, ScriptController& scriptController, DOMWrapperWorld& world) {
+    haveParsed = setupAndCallJS([script = WTF::move(script)](JSDOMGlobalObject& globalObject, JSC::JSGlobalObject&, ScriptController& scriptController, DOMWrapperWorld& world) {
         auto& vm = globalObject.vm();
         auto scope = DECLARE_THROW_SCOPE(vm);
 
-        scriptController.evaluateInWorldIgnoringException(ScriptSourceCode(youTubeQuirkScript, JSC::SourceTaintedOrigin::Untainted), world);
+        scriptController.evaluateInWorldIgnoringException(ScriptSourceCode(script, JSC::SourceTaintedOrigin::Untainted), world);
         RETURN_IF_EXCEPTION(scope, false);
 
         return true;
     }, world);
-    return m_haveParsedYouTubeQuirkScript;
+    return haveParsed;
+}
+
+bool DocumentMediaElement::ensureYouTubeQuirkScript()
+{
+    return ensureScriptParsed(m_haveParsedYouTubeQuirkScript, RenderTheme::singleton().youTubeQuirkScript(), mainThreadNormalWorldSingleton());
 }
 
 bool DocumentMediaElement::ensureCNNQuirkScript()
 {
-    if (m_haveParsedCNNQuirkScript)
-        return true;
+    return ensureScriptParsed(m_haveParsedCNNQuirkScript, RenderTheme::singleton().cnnQuirkScript(), mainThreadNormalWorldSingleton());
+}
 
-    Ref document = this->document();
-    auto cnnQuirkScript = RenderTheme::singleton().cnnQuirkScript();
-    if (cnnQuirkScript.isEmpty() || document->activeDOMObjectsAreSuspended() || document->activeDOMObjectsAreStopped())
+bool DocumentMediaElement::ensureYouTubeCaptionFetchScript()
+{
+    return ensureScriptParsed(m_haveParsedYouTubeCaptionFetchScript, RenderTheme::singleton().youTubeCaptionFetchScript(), mainThreadNormalWorldSingleton());
+}
+
+bool DocumentMediaElement::ensureNetflixCaptionFetchScript()
+{
+    return ensureScriptParsed(m_haveParsedNetflixCaptionFetchScript, RenderTheme::singleton().netflixCaptionFetchScript(), mainThreadNormalWorldSingleton());
+}
+
+bool DocumentMediaElement::setupAndCallNetflixCaptionFetchJS(NOESCAPE const JSSetupFunction& task)
+{
+    if (!ensureNetflixCaptionFetchScript())
         return false;
 
     Ref world = mainThreadNormalWorldSingleton();
-    m_haveParsedCNNQuirkScript = setupAndCallJS([cnnQuirkScript = WTF::move(cnnQuirkScript)](JSDOMGlobalObject& globalObject, JSC::JSGlobalObject&, ScriptController& scriptController, DOMWrapperWorld& world) {
-        auto& vm = globalObject.vm();
-        auto scope = DECLARE_THROW_SCOPE(vm);
-
-        scriptController.evaluateInWorldIgnoringException(ScriptSourceCode(cnnQuirkScript, JSC::SourceTaintedOrigin::Untainted), world);
-        RETURN_IF_EXCEPTION(scope, false);
-
-        return true;
-    }, world);
-    return m_haveParsedCNNQuirkScript;
+    return setupAndCallJS(task, world);
 }
 
 bool DocumentMediaElement::setupAndCallJS(NOESCAPE const JSSetupFunction& task, DOMWrapperWorld& world)

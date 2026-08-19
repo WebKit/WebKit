@@ -55,6 +55,10 @@ public:
     bool setupAndCallYouTubeQuirkJS(NOESCAPE const JSSetupFunction&);
     bool setupAndCallCNNQuirkJS(NOESCAPE const JSSetupFunction&);
 
+    bool ensureYouTubeCaptionFetchScript();
+    bool ensureNetflixCaptionFetchScript();
+    bool setupAndCallNetflixCaptionFetchJS(NOESCAPE const JSSetupFunction&);
+
 private:
     bool isDocumentMediaElement() const final { return true; }
     static ASCIILiteral supplementName();
@@ -67,12 +71,15 @@ private:
 
     bool ensureYouTubeQuirkScript();
     bool ensureCNNQuirkScript();
+    bool ensureScriptParsed(bool& haveParsed, String&&, DOMWrapperWorld&);
 
     CheckedRef<Document> m_document;
     RefPtr<DOMWrapperWorld> m_isolatedWorld;
     bool m_haveParsedMediaControlsScript { false };
     bool m_haveParsedYouTubeQuirkScript { false };
     bool m_haveParsedCNNQuirkScript { false };
+    bool m_haveParsedYouTubeCaptionFetchScript { false };
+    bool m_haveParsedNetflixCaptionFetchScript { false };
 };
 
 }
