@@ -542,7 +542,7 @@ static inline bool NODELETE isChildTypeAllowed(ContainerNode& newParent, Node& c
     return true;
 }
 
-static bool containsIncludingHostElements(const Node& possibleAncestor, const Node& node)
+bool containsIncludingHostElements(const Node& possibleAncestor, const Node& node)
 {
     const Node* currentNode = &node;
     do {

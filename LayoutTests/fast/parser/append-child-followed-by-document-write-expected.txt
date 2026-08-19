@@ -1,3 +1,4 @@
-ALERT: document.firstChild.outerHTML: <a></a>
-document.firstChild.nextSibling.outerHTML: <html><head></head><body><b id="b"></b></body></html>
+ALERT: document child nodes: A
+document.documentElement === a: true
+document.getElementById('b'): null
 

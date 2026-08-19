@@ -30,6 +30,7 @@
 #include "Comment.h"
 #include "ContainerNodeInlines.h"
 #include "CustomElementRegistry.h"
+#include "Document.h"
 #include "DocumentFragment.h"
 #include "DocumentType.h"
 #include "FrameDestructionObserverInlines.h"
@@ -134,9 +135,17 @@ static inline bool NODELETE causesFosterParenting(const HTMLStackItem& item)
 
 static inline void insert(HTMLConstructionSiteTask& task)
 {
-    if (auto templateElement = dynamicDowncast<HTMLTemplateElement>(task.parent)) {
+    if (RefPtr templateElement = dynamicDowncast<HTMLTemplateElement>(task.parent)) [[unlikely]] {
         task.parent = templateElement->fragmentForInsertion();
         task.nextChild = nullptr;
+    } else {
+        if (task.nextChild && task.nextChild->parentNode() != task.parent) [[unlikely]]
+            return;
+
+        if (RefPtr document = dynamicDowncast<Document>(task.parent)) [[unlikely]] {
+            if (!document->canAcceptChild(*task.child, task.nextChild.get(), AcceptChildOperation::InsertOrAdd))
+                return;
+        }
     }
 
     ASSERT(!task.child->parentNode());
@@ -179,13 +188,11 @@ static inline void executeInsertAlreadyParsedChildTask(HTMLConstructionSiteTask&
 {
     ASSERT(task.operation == HTMLConstructionSiteTask::InsertAlreadyParsedChild);
 
-    if (RefPtr<ContainerNode> parent = task.child->parentNode())
-        parent->parserRemoveChild(protect(*task.child));
+    Ref child = *task.child;
+    if (RefPtr parent = child->parentNode())
+        parent->parserRemoveChild(child);
 
-    if (task.child->parentNode() || task.child->contains(task.parent.get()))
-        return;
-
-    if (task.nextChild && task.nextChild->parentNode() != task.parent)
+    if (child->parentNode() || containsIncludingHostElements(child, *protect(task.parent)))
         return;
 
     insert(task);

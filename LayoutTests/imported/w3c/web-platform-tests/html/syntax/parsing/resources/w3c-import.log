@@ -13,6 +13,7 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/resources/README.md
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/resources/adoption-agency-reparenting.js
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/resources/adoption01.dat
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/resources/adoption02.dat
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/resources/blocks.dat
@@ -40,6 +41,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/resources/scriptdata01.dat
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/resources/scripted_adoption01.dat
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/resources/scripted_ark.dat
+/LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/resources/scripted_foster01.dat
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/resources/scripted_webkit01.dat
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/resources/search-element.dat
 /LayoutTests/imported/w3c/web-platform-tests/html/syntax/parsing/resources/svg.dat

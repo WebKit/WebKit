@@ -195,6 +195,8 @@ private:
     CheckedPtr<Node> m_lastChild;
 };
 
+bool containsIncludingHostElements(const Node& possibleAncestor, const Node&);
+
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ContainerNode)
