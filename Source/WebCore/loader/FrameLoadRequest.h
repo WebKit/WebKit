@@ -82,6 +82,9 @@ public:
     bool isFromNavigationAPI() const { return m_isFromNavigationAPI; }
     void setIsFromNavigationAPI(bool isFromNavigationAPI) { m_isFromNavigationAPI = isFromNavigationAPI; }
 
+    bool needsSynchronousPolicyDecision() const { return m_needsSynchronousPolicyDecision; }
+    void setNeedsSynchronousPolicyDecision(bool value) { m_needsSynchronousPolicyDecision = value; }
+
     const std::optional<BackForwardItemIdentifier>& targetBackForwardItemIdentifier() const LIFETIME_BOUND { return m_targetBackForwardItemIdentifier; }
     void setTargetBackForwardItemIdentifier(BackForwardItemIdentifier itemID) { m_targetBackForwardItemIdentifier = itemID; }
 
@@ -110,6 +113,7 @@ private:
     bool m_isInitialFrameSrcLoad { false };
     bool m_isContentRuleListRedirect { false };
     bool m_isFromNavigationAPI { false };
+    bool m_needsSynchronousPolicyDecision { false };
 };
 
 class FrameLoadRequest : public FrameLoadRequestBase {

@@ -664,6 +664,7 @@ private:
     // The action that triggered loading - we keep this around for the
     // benefit of the various policy handlers.
     NavigationAction m_triggeringAction;
+    bool m_hasDeferredEmptyLoad { false };
 
     Markable<NavigationIdentifier> m_navigationID;
 
