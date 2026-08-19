@@ -40,16 +40,7 @@ test/built-ins/Function/prototype/toString/built-in-function-object.js:
 test/built-ins/Proxy/apply/arguments-realm.js:
   default: 3
   strict mode: 3
-test/built-ins/Proxy/apply/null-handler-realm.js:
-  default: 3
-  strict mode: 3
-test/built-ins/Proxy/apply/trap-is-not-callable-realm.js:
-  default: 3
-  strict mode: 3
 test/built-ins/Proxy/construct/arguments-realm.js:
-  default: 3
-  strict mode: 3
-test/built-ins/Proxy/construct/trap-is-not-callable-realm.js:
   default: 3
   strict mode: 3
 test/built-ins/TypedArray/prototype/slice/speciesctor-return-same-buffer-with-offset.js:
