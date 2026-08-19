@@ -7903,6 +7903,53 @@ TEST(SiteIsolation, UserScript)
     EXPECT_WK_STREQ([webView _test_waitForAlert], "script ran in iframe");
 }
 
+// A window opened with no URL has an about:blank main frame that inherits the opener frame's origin.
+// Processes seeded with that origin must be told the new one once the window navigates away.
+TEST(SiteIsolation, TopOriginInRemoteProcessesAfterMainFrameProcessSwap)
+{
+    HTTPServer server({
+        { "/top"_s, { "<!DOCTYPE html><iframe src='https://widget.com/idle'></iframe><iframe src='https://opener.com/frame'></iframe>"_s } },
+        { "/idle"_s, { "<!DOCTYPE html><p>idle</p>"_s } },
+        { "/frame"_s, { "<!DOCTYPE html><script>const w = window.open(); setTimeout(() => { w.location = 'https://landing.com/landing' }, 0)</script>"_s } },
+        { "/landing"_s, { "<!DOCTYPE html><iframe src='https://widget.com/widget'></iframe>"_s } },
+        { "/widget"_s, { "<!DOCTYPE html><script>navigator.serviceWorker.register('/sw.js').then(() => { alert('registered') })</script>"_s } },
+        { "/sw.js"_s, { { { "Content-Type"_s, "application/javascript"_s } }, "self.addEventListener('message', () => { });"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server);
+    webView.get().configuration.preferences.javaScriptCanOpenWindowsAutomatically = YES;
+
+    // The NetworkProcess terminating a Web process is reported as _WKProcessTerminationReasonCrash.
+    __block bool done = false;
+    __block bool terminatedByNetworkProcess = false;
+    navigationDelegate.get().webContentProcessDidTerminate = ^(WKWebView *, _WKProcessTerminationReason reason) {
+        terminatedByNetworkProcess = reason == _WKProcessTerminationReasonCrash;
+        done = true;
+    };
+
+    __block auto *sharedNavigationDelegate = navigationDelegate.get();
+    __block RetainPtr<TestWKWebView> openedWebView;
+    RetainPtr uiDelegate = adoptNS([TestUIDelegate new]);
+    webView.get().UIDelegate = uiDelegate.get();
+    uiDelegate.get().runJavaScriptAlertPanelWithMessage = ^(WKWebView *, NSString *, WKFrameInfo *, void (^completionHandler)(void)) {
+        done = true;
+        completionHandler();
+    };
+    uiDelegate.get().createWebViewWithConfiguration = ^(WKWebViewConfiguration *configuration, WKNavigationAction *action, WKWindowFeatures *windowFeatures) {
+        openedWebView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 200) configuration:configuration]);
+        openedWebView.get().navigationDelegate = sharedNavigationDelegate;
+        openedWebView.get().UIDelegate = uiDelegate.get();
+        return openedWebView.get();
+    };
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://top.com/top"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    TestWebKitAPI::Util::run(&done);
+
+    EXPECT_FALSE(terminatedByNetworkProcess);
+}
+
 TEST(SiteIsolation, SharedProcessMostBasic)
 {
     HTTPServer server({

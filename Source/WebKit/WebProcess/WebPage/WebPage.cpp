@@ -1733,6 +1733,11 @@ void WebPage::reinitializeWebPage(WebPageCreationParameters&& parameters)
 
     setUseColorAppearance(parameters.useDarkAppearance, parameters.useElevatedUserInterfaceLevel);
 
+    if (auto& remotePageParameters = parameters.remotePageParameters) {
+        if (RefPtr page = m_page; page && is<RemoteFrame>(page->mainFrame()))
+            page->updateTopDocumentSyncData(Ref { remotePageParameters->topDocumentSyncData });
+    }
+
     if (auto&& provisionalFrameCreationParameters = parameters.provisionalFrameCreationParameters) {
         ASSERT(m_page->settings().siteIsolationEnabled());
         createProvisionalFrame(WTF::move(*provisionalFrameCreationParameters));
