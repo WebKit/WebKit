@@ -27,7 +27,7 @@
 
 #include <cstdint>
 #include <span>
-#include <wtf/BorrowedBytes.h>
+#include <wtf/EscapableByteSpan.h>
 #include <wtf/Vector.h>
 
 namespace PAL::Crypto {

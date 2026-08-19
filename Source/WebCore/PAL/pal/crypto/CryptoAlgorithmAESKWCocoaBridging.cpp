@@ -28,16 +28,14 @@
 
 #include "CommonCryptoSPI.h"
 #include "PALSwift-Generated.h"
-#include <wtf/BorrowedBytes.h>
 #include <wtf/CryptographicUtilities.h>
+#include <wtf/EscapableByteSpan.h>
 
 namespace PAL::Crypto {
 
 Expected<VectorUInt8, Error> wrapKeyAESKWCryptoKit(const VectorUInt8& key, const VectorUInt8& data)
 {
-    BorrowedVectorScope dataScope(data);
-    BorrowedVectorScope keyScope(key);
-    auto rv = pal::AesKw::wrap(protect(dataScope.bytes()).ptr(), protect(keyScope.bytes()).ptr());
+    auto rv = pal::AesKw::wrap(escapableSpan(borrow(data)->span()), escapableSpan(borrow(key)->span()));
     if (rv.errorCode != PAL::Crypto::Error::Success)
         return makeUnexpected(rv.errorCode);
     return WTF::move(rv.result);
@@ -45,9 +43,7 @@ Expected<VectorUInt8, Error> wrapKeyAESKWCryptoKit(const VectorUInt8& key, const
 
 Expected<VectorUInt8, Error> unwrapKeyAESKWCryptoKit(const VectorUInt8& key, const VectorUInt8& data)
 {
-    BorrowedVectorScope dataScope(data);
-    BorrowedVectorScope keyScope(key);
-    auto rv = pal::AesKw::unwrap(protect(dataScope.bytes()).ptr(), protect(keyScope.bytes()).ptr());
+    auto rv = pal::AesKw::unwrap(escapableSpan(borrow(data)->span()), escapableSpan(borrow(key)->span()));
     if (rv.errorCode != PAL::Crypto::Error::Success)
         return makeUnexpected(rv.errorCode);
     return WTF::move(rv.result);

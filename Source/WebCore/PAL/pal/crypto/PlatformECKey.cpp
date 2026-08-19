@@ -27,7 +27,7 @@
 #include "PlatformECKey.h"
 
 #include "PALSwift-Generated.h"
-#include <wtf/BorrowedBytes.h>
+#include <wtf/EscapableByteSpan.h>
 
 namespace PAL::Crypto {
 
@@ -54,15 +54,12 @@ CryptoOperationReturnValue PlatformECKey::deriveBits(const PlatformECKey& public
 
 CryptoOperationReturnValue PlatformECKey::sign(SpanConstUInt8 message, CryptoDigestHashFunction hashFunction) const
 {
-    BorrowedSpanScope messageScope(message);
-    return m_key->sign(protect(messageScope.bytes()).ptr(), hashFunction);
+    return m_key->sign(escapableSpan(message), hashFunction);
 }
 
 CryptoOperationReturnValue PlatformECKey::doVerify(SpanConstUInt8 message, SpanConstUInt8 signature, CryptoDigestHashFunction hashFunction) const
 {
-    BorrowedSpanScope messageScope(message);
-    BorrowedSpanScope signatureScope(signature);
-    return m_key->verify(protect(messageScope.bytes()).ptr(), protect(signatureScope.bytes()).ptr(), hashFunction);
+    return m_key->verify(escapableSpan(message), escapableSpan(signature), hashFunction);
 }
 
 PlatformECKey PlatformECKey::toPub() const
@@ -82,8 +79,7 @@ CryptoOperationReturnValue PlatformECKey::exportX963Private() const
 
 std::optional<PlatformECKey> PlatformECKey::importX963Pub(SpanConstUInt8 data, NamedCurve curve)
 {
-    BorrowedSpanScope dataScope(data);
-    auto result = pal::ECKey::importX963Pub(protect(dataScope.bytes()).ptr(), curve);
+    auto result = pal::ECKey::importX963Pub(escapableSpan(data), curve);
     if (result)
         return { { result.get() } };
 
@@ -92,8 +88,7 @@ std::optional<PlatformECKey> PlatformECKey::importX963Pub(SpanConstUInt8 data, N
 
 std::optional<PlatformECKey> PlatformECKey::importX963Private(SpanConstUInt8 data, NamedCurve curve)
 {
-    BorrowedSpanScope dataScope(data);
-    auto result = pal::ECKey::importX963Private(protect(dataScope.bytes()).ptr(), curve);
+    auto result = pal::ECKey::importX963Private(escapableSpan(data), curve);
     if (result)
         return { { result.get() } };
 
@@ -102,8 +97,7 @@ std::optional<PlatformECKey> PlatformECKey::importX963Private(SpanConstUInt8 dat
 
 std::optional<PlatformECKey> PlatformECKey::importCompressedPub(SpanConstUInt8 data, NamedCurve curve)
 {
-    BorrowedSpanScope dataScope(data);
-    auto result = pal::ECKey::importCompressedPub(protect(dataScope.bytes()).ptr(), curve);
+    auto result = pal::ECKey::importCompressedPub(escapableSpan(data), curve);
     if (result)
         return { { result.get() } };
 

@@ -21,27 +21,29 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 // THE POSSIBILITY OF SUCH DAMAGE.
 
+private import CxxStdlib
 public import Foundation
 import wtf
 
-// BorrowedBytes exposes borrowed C++ bytes to Foundation/CryptoKit consumers
-// with no copy and no `unsafe` at the call sites. The single audited `unsafe`
-// is the projection below; it goes through BorrowedBytes.data(), which crashes
-// cleanly (rather than reading freed memory) if the borrow has been revoked.
-// The conformances are therefore safe to mark @safe: any misuse is a
-// deterministic crash, not undefined behavior.
+// EscapableByteSpan exposes borrowed C++ bytes to Foundation/CryptoKit consumers with
+// no copy. The remaining `unsafe` uses are the UnsafeRawBufferPointer that
+// ContiguousBytes' own signature demands, the non-null substitution for an empty buffer,
+// and the output copy; a copy that outlives the borrow crashes when the borrow ends.
 
-@safe
-extension WTF.BorrowedBytes: ContiguousBytes {
+extension WTF.EscapableByteSpan: ContiguousBytes {
     /// Calls `body` with a raw buffer pointer over the borrowed bytes, valid only for the call.
     public func withUnsafeBytes<R, E>(_ body: (UnsafeRawBufferPointer) throws(E) -> R) throws(E) -> R where E: Error {
-        // Safe: data()/size() describe the same live span, and data() traps if the borrow was revoked, so misuse crashes rather than reading freed memory.
-        try unsafe body(UnsafeRawBufferPointer(start: data(), count: size()))
+        // Safe: the C++ side of EscapableByteSpan has release assertions and
+        // LIFETIME_BOUND guarantees that span lives longer than any Swift
+        // accesses.
+        let elements = unsafe Span<UInt8>(_unsafeCxxSpan: span())
+        // Unsafe: We rely on body and its callees honoring the buffer's count and not escaping
+        // pointers to it, but nothing ensures those properties.
+        return try unsafe elements.bytes.withUnsafeBytes(body)
     }
 }
 
-@safe
-extension WTF.BorrowedBytes: RandomAccessCollection {
+extension WTF.EscapableByteSpan: RandomAccessCollection {
     /// The position of the first byte.
     public var startIndex: Int { 0 }
 
@@ -50,30 +52,27 @@ extension WTF.BorrowedBytes: RandomAccessCollection {
 
     /// The byte at `position`.
     public subscript(position: Int) -> UInt8 {
-        precondition(position >= 0 && position < size(), "BorrowedBytes index out of range")
-        // Safe: position has just been bounds-checked against the same live span
-        // that data()/size() describe, and data() traps if the borrow was revoked.
-        return unsafe UnsafeRawBufferPointer(start: data(), count: size())[position]
+        // Safe: same justification as in ContiguousBytes above.
+        let elements = unsafe Span<UInt8>(_unsafeCxxSpan: span())
+        return elements[position]
     }
 }
 
-@safe
-extension WTF.BorrowedBytes: DataProtocol {
+extension WTF.EscapableByteSpan: DataProtocol {
     /// The borrowed bytes as a single contiguous region.
-    public var regions: CollectionOfOne<WTF.BorrowedBytes> { CollectionOfOne(self) }
+    public var regions: CollectionOfOne<WTF.EscapableByteSpan> { CollectionOfOne(self) }
 }
 
 /// Bytes that are safe to hand to CryptoKit even when the source is empty.
 ///
-/// Borrowing an empty WTF::Vector/span yields a BorrowedBytes whose data()
-/// pointer is null, and CryptoKit does not tolerate a null-pointer-backed
+/// Borrowing an empty WTF::Vector/span yields a view whose base pointer is
+/// null, and CryptoKit does not tolerate a null-pointer-backed
 /// zero-length buffer. This wrapper substitutes a non-null zero-length buffer
 /// in that case.
-@safe
 public struct NonNullBytes: ContiguousBytes, DataProtocol, RandomAccessCollection {
-    private let bytes: WTF.BorrowedBytes
+    private let bytes: WTF.EscapableByteSpan
 
-    fileprivate init(_ bytes: WTF.BorrowedBytes) {
+    fileprivate init(_ bytes: WTF.EscapableByteSpan) {
         self.bytes = bytes
     }
 
@@ -88,7 +87,7 @@ public struct NonNullBytes: ContiguousBytes, DataProtocol, RandomAccessCollectio
                 try unsafe body(UnsafeRawBufferPointer(start: raw.baseAddress, count: 0))
             }
         }
-        return try bytes.withUnsafeBytes(body)
+        return try unsafe bytes.withUnsafeBytes(body)
     }
 
     /// This value as a single contiguous region.
@@ -104,8 +103,7 @@ public struct NonNullBytes: ContiguousBytes, DataProtocol, RandomAccessCollectio
     public subscript(position: Int) -> UInt8 { bytes[position] }
 }
 
-@safe
-extension WTF.BorrowedBytes {
+extension WTF.EscapableByteSpan {
     /// This value wrapped so it is always safe to hand to CryptoKit APIs, even when
     /// the borrow is empty (see the note on NonNullBytes).
     public var asNonNullBytes: NonNullBytes {
@@ -115,7 +113,7 @@ extension WTF.BorrowedBytes {
 
 /// Copies the bytes of any `ContiguousBytes` into a new `Vector<uint8_t>`.
 ///
-/// This is the crypto *output* counterpart to `WTF.BorrowedBytes` (the input
+/// This is the crypto *output* counterpart to `WTF.EscapableByteSpan` (the input
 /// borrow): the destination Vector is allocated here at exactly the source's
 /// byte count and owned by the result, so there is no borrow, lifetime
 /// dependency, or aliasing, and copyMemory traps if the counts ever disagree.
@@ -125,7 +123,6 @@ extension WTF.BorrowedBytes {
 /// Vector<uint8_t> emits unparseable synthesized names (`_CUnsignedLong_0`) into
 /// the verified module interface (rdar://181593806). A function that merely
 /// *returns* the type prints the `VectorUInt8` typealias and verifies cleanly.
-@safe
 public func makeVectorUInt8(copying bytes: some ContiguousBytes) -> WTF.VectorUInt8 {
     // Safe: bytes borrows its own storage for the duration of this call, and source never escapes the closure.
     unsafe bytes.withUnsafeBytes { source in

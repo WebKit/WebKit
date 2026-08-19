@@ -27,16 +27,13 @@
 #include "CryptoAlgorithmHKDFCocoaBridging.h"
 
 #include "PALSwift-Generated.h"
-#include <wtf/BorrowedBytes.h>
+#include <wtf/EscapableByteSpan.h>
 
 namespace PAL::Crypto {
 
 Expected<VectorUInt8, Error> deriveBitsHKDFCryptoKit(const VectorUInt8& key, const VectorUInt8& salt, const VectorUInt8& info, size_t length, CryptoDigestHashFunction hashFunction)
 {
-    BorrowedVectorScope keyScope(key);
-    BorrowedVectorScope saltScope(salt);
-    BorrowedVectorScope infoScope(info);
-    auto rv = pal::HKDF::deriveBits(protect(keyScope.bytes()).ptr(), protect(saltScope.bytes()).ptr(), protect(infoScope.bytes()).ptr(), length, hashFunction);
+    auto rv = pal::HKDF::deriveBits(escapableSpan(borrow(key)->span()), escapableSpan(borrow(salt)->span()), escapableSpan(borrow(info)->span()), length, hashFunction);
     if (rv.errorCode != PAL::Crypto::Error::Success)
         return makeUnexpected(rv.errorCode);
     return WTF::move(rv.result);

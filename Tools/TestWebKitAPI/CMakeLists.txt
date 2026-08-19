@@ -40,7 +40,6 @@ set(TestWTF_SOURCES
     Tests/WTF/BitVector.cpp
     Tests/WTF/BloomFilter.cpp
     Tests/WTF/Borrow.cpp
-    Tests/WTF/BorrowedBytes.cpp
     Tests/WTF/BoxPtr.cpp
     Tests/WTF/BumpPointerAllocator.cpp
     Tests/WTF/CString.cpp
@@ -64,6 +63,7 @@ set(TestWTF_SOURCES
     Tests/WTF/DragonBoxTest.cpp
     Tests/WTF/EmbeddedFixedVector.cpp
     Tests/WTF/EnumTraits.cpp
+    Tests/WTF/EscapableByteSpan.cpp
     Tests/WTF/Expected.cpp
     Tests/WTF/FileSystem.cpp
     Tests/WTF/FormattedLogging.cpp

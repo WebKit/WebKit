@@ -127,6 +127,11 @@ if (SWIFT_REQUIRED AND APPLE)
     target_compile_options(PAL PRIVATE
         "$<$<COMPILE_LANGUAGE:Swift>:-import-underlying-module>"
         "$<$<COMPILE_LANGUAGE:Swift>:-strict-memory-safety>"
+        # SafeInteropWrappers imports a lifetimebound std::span return as a Swift Span,
+        # which is what lets the byte views hand Swift a lifetime-dependent view rather
+        # than a raw pointer.
+        "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-enable-experimental-feature Lifetimes>"
+        "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-enable-experimental-feature SafeInteropWrappers>"
         "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-swift-version 6>"
         "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xcc -I${PAL_FRAMEWORK_HEADERS_DIR}>"
         "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xcc -I${CMAKE_BINARY_DIR}/WTF/Headers>"

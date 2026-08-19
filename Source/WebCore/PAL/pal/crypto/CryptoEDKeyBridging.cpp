@@ -27,7 +27,7 @@
 #include "CryptoEDKeyBridging.h"
 
 #include "PALSwift-Generated.h"
-#include <wtf/BorrowedBytes.h>
+#include <wtf/EscapableByteSpan.h>
 
 namespace PAL::Crypto::EdKey {
 
@@ -43,28 +43,22 @@ VectorUInt8 generatePrivateKeyKeyAgreement(EdKeyAgreementAlgorithm algorithm)
 
 CryptoOperationReturnValue privateToPublic(EdSigningAlgorithm algorithm, SpanConstUInt8 privateKey)
 {
-    BorrowedSpanScope privateKeyScope(privateKey);
-    return pal::EdKey::privateToPublic(algorithm, protect(privateKeyScope.bytes()).ptr());
+    return pal::EdKey::privateToPublic(algorithm, escapableSpan(privateKey));
 }
 
 CryptoOperationReturnValue privateToPublicKeyAgreement(EdKeyAgreementAlgorithm algorithm, SpanConstUInt8 privateKey)
 {
-    BorrowedSpanScope privateKeyScope(privateKey);
-    return pal::EdKey::privateToPublicKeyAgreement(algorithm, protect(privateKeyScope.bytes()).ptr());
+    return pal::EdKey::privateToPublicKeyAgreement(algorithm, escapableSpan(privateKey));
 }
 
 bool validateKeyPair(EdSigningAlgorithm algorithm, SpanConstUInt8 privateKey, SpanConstUInt8 publicKey)
 {
-    BorrowedSpanScope privateKeyScope(privateKey);
-    BorrowedSpanScope publicKeyScope(publicKey);
-    return pal::EdKey::validateKeyPair(algorithm, protect(privateKeyScope.bytes()).ptr(), protect(publicKeyScope.bytes()).ptr());
+    return pal::EdKey::validateKeyPair(algorithm, escapableSpan(privateKey), escapableSpan(publicKey));
 }
 
 bool validateKeyPairKeyAgreement(EdKeyAgreementAlgorithm algorithm, SpanConstUInt8 privateKey, SpanConstUInt8 publicKey)
 {
-    BorrowedSpanScope privateKeyScope(privateKey);
-    BorrowedSpanScope publicKeyScope(publicKey);
-    return pal::EdKey::validateKeyPairKeyAgreement(algorithm, protect(privateKeyScope.bytes()).ptr(), protect(publicKeyScope.bytes()).ptr());
+    return pal::EdKey::validateKeyPairKeyAgreement(algorithm, escapableSpan(privateKey), escapableSpan(publicKey));
 }
 
 } // namespace PAL::Crypto::EdKey

@@ -27,7 +27,7 @@
 #include "CryptoAlgorithmX25519CocoaBridging.h"
 
 #include "PALSwift-Generated.h"
-#include <wtf/BorrowedBytes.h>
+#include <wtf/EscapableByteSpan.h>
 
 namespace PAL::Crypto {
 
@@ -35,9 +35,7 @@ std::optional<VectorUInt8> deriveBitsX25519CryptoKit(const VectorUInt8& baseKey,
 {
     if (baseKey.size() != ed25519KeySize || publicKey.size() != ed25519KeySize)
         return std::nullopt;
-    BorrowedVectorScope baseKeyScope(baseKey);
-    BorrowedVectorScope publicKeyScope(publicKey);
-    auto rv = pal::EdKey::deriveBits(PAL::Crypto::EdKeyAgreementAlgorithm::X25519, protect(baseKeyScope.bytes()).ptr(), protect(publicKeyScope.bytes()).ptr());
+    auto rv = pal::EdKey::deriveBits(PAL::Crypto::EdKeyAgreementAlgorithm::X25519, escapableSpan(borrow(baseKey)->span()), escapableSpan(borrow(publicKey)->span()));
     if (rv.errorCode != PAL::Crypto::Error::Success)
         return std::nullopt;
     return WTF::move(rv.result);

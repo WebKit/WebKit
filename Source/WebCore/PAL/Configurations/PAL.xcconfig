@@ -73,7 +73,7 @@ SWIFT_LIBRARY_LEVEL = spi;
 SWIFT_DEFAULT_ACTOR_ISOLATION = nonisolated;
 SWIFT_STRICT_CONCURRENCY = complete;
 
-OTHER_SWIFT_FLAGS = $(inherited) -Xcc -std=c++2b -Xfrontend -clang-header-expose-decls=has-expose-attr-or-stdlib -Xfrontend -emit-clang-header-min-access -Xfrontend internal;
+OTHER_SWIFT_FLAGS = $(inherited) -Xcc -std=c++2b -enable-experimental-feature SafeInteropWrappers -enable-experimental-feature Lifetimes -Xfrontend -clang-header-expose-decls=has-expose-attr-or-stdlib -Xfrontend -emit-clang-header-min-access -Xfrontend internal;
 
 _SWIFT_EXPLICIT_MODULES_ALLOW_CXX_INTEROP = YES;
 SWIFT_INSTALL_MODULE_FOR_DEPLOYMENT = YES;

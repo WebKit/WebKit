@@ -27,23 +27,18 @@
 #include "CryptoAlgorithmHMACCocoaBridging.h"
 
 #include "PALSwift-Generated.h"
-#include <wtf/BorrowedBytes.h>
+#include <wtf/EscapableByteSpan.h>
 
 namespace PAL::Crypto {
 
 Expected<VectorUInt8, Error> signHMACCryptoKit(const VectorUInt8& key, const VectorUInt8& data, CryptoDigestHashFunction hashFunction)
 {
-    BorrowedVectorScope keyScope(key);
-    BorrowedVectorScope dataScope(data);
-    return pal::HMAC::sign(protect(keyScope.bytes()).ptr(), protect(dataScope.bytes()).ptr(), hashFunction);
+    return pal::HMAC::sign(escapableSpan(borrow(key)->span()), escapableSpan(borrow(data)->span()), hashFunction);
 }
 
 Expected<bool, Error> verifyHMACCryptoKit(const VectorUInt8& signature, const VectorUInt8& key, const VectorUInt8& data, CryptoDigestHashFunction hashFunction)
 {
-    BorrowedVectorScope signatureScope(signature);
-    BorrowedVectorScope keyScope(key);
-    BorrowedVectorScope dataScope(data);
-    return pal::HMAC::verify(protect(signatureScope.bytes()).ptr(), protect(keyScope.bytes()).ptr(), protect(dataScope.bytes()).ptr(), hashFunction);
+    return pal::HMAC::verify(escapableSpan(borrow(signature)->span()), escapableSpan(borrow(key)->span()), escapableSpan(borrow(data)->span()), hashFunction);
 }
 
 }

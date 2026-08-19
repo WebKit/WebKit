@@ -27,7 +27,7 @@
 #include "CryptoAlgorithmEd25519CocoaBridging.h"
 
 #include "PALSwift-Generated.h"
-#include <wtf/BorrowedBytes.h>
+#include <wtf/EscapableByteSpan.h>
 
 namespace PAL::Crypto {
 
@@ -35,9 +35,7 @@ Expected<VectorUInt8, Error> signEd25519CryptoKit(const VectorUInt8 &sk, const V
 {
     if (sk.size() != ed25519KeySize)
         return makeUnexpected(Error::FailedToSign);
-    BorrowedVectorScope skScope(sk);
-    BorrowedVectorScope dataScope(data);
-    auto rv = pal::EdKey::sign(PAL::Crypto::EdSigningAlgorithm::ED25519, protect(skScope.bytes()).ptr(), protect(dataScope.bytes()).ptr());
+    auto rv = pal::EdKey::sign(PAL::Crypto::EdSigningAlgorithm::ED25519, escapableSpan(borrow(sk)->span()), escapableSpan(borrow(data)->span()));
     if (rv.errorCode != PAL::Crypto::Error::Success)
         return makeUnexpected(rv.errorCode);
     return WTF::move(rv.result);
@@ -47,10 +45,7 @@ Expected<bool, Error> verifyEd25519CryptoKit(const VectorUInt8& pubKey, const Ve
 {
     if (pubKey.size() != ed25519KeySize || signature.size() != ed25519SignatureSize)
         return false;
-    BorrowedVectorScope pubKeyScope(pubKey);
-    BorrowedVectorScope signatureScope(signature);
-    BorrowedVectorScope dataScope(data);
-    auto rv = pal::EdKey::verify(PAL::Crypto::EdSigningAlgorithm::ED25519, protect(pubKeyScope.bytes()).ptr(), protect(signatureScope.bytes()).ptr(), protect(dataScope.bytes()).ptr());
+    auto rv = pal::EdKey::verify(PAL::Crypto::EdSigningAlgorithm::ED25519, escapableSpan(borrow(pubKey)->span()), escapableSpan(borrow(signature)->span()), escapableSpan(borrow(data)->span()));
     return rv.errorCode == PAL::Crypto::Error::Success;
 }
 

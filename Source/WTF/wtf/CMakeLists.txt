@@ -30,7 +30,6 @@ set(WTF_PUBLIC_HEADERS
     BloomFilter.h
     BooleanLattice.h
     Borrow.h
-    BorrowedBytes.h
     Box.h
     BoxPtr.h
     Brigand.h
@@ -91,6 +90,7 @@ set(WTF_PUBLIC_HEADERS
     EnumSet.h
     EnumTraits.h
     EnumeratedArray.h
+    EscapableByteSpan.h
     Expected.h
     ExperimentalFeatureNames.h
     ExportMacros.h

@@ -975,7 +975,7 @@
 		EBEE51132D2DF488004FEC23 /* ContinuousApproximateTime.h in Headers */ = {isa = PBXBuildFile; fileRef = EBEE51112D2DF488004FEC23 /* ContinuousApproximateTime.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		EBEE51142D2DF488004FEC23 /* ContinuousApproximateTime.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EBEE51122D2DF488004FEC23 /* ContinuousApproximateTime.cpp */; };
 		F50D171852941FCC9DB3F894 /* Borrow.h in Headers */ = {isa = PBXBuildFile; fileRef = DED4D271AFDD9025027F5497 /* Borrow.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		BB0000000000000000000002 /* BorrowedBytes.h in Headers */ = {isa = PBXBuildFile; fileRef = BB0000000000000000000001 /* BorrowedBytes.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BB0000000000000000000002 /* EscapableByteSpan.h in Headers */ = {isa = PBXBuildFile; fileRef = BB0000000000000000000001 /* EscapableByteSpan.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FA0C387B2BEAD56B00583842 /* SmallMap.h in Headers */ = {isa = PBXBuildFile; fileRef = FA0C387A2BEAD56B00583842 /* SmallMap.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FA864D602DA9809F006820D3 /* Variant.h in Headers */ = {isa = PBXBuildFile; fileRef = FA864D5F2DA9809F006820D3 /* Variant.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FAC31B9D2D80083D006CCA20 /* CoroutineUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = FAC31B9C2D80083D006CCA20 /* CoroutineUtilities.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -2018,7 +2018,7 @@
 		DDF3081E27C44EFF006A526F /* libicu.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libicu.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		DDF308DD27C44F84006A526F /* icu.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = icu.xcconfig; sourceTree = "<group>"; };
 		DED4D271AFDD9025027F5497 /* Borrow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Borrow.h; sourceTree = "<group>"; };
-		BB0000000000000000000001 /* BorrowedBytes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BorrowedBytes.h; sourceTree = "<group>"; };
+		BB0000000000000000000001 /* EscapableByteSpan.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EscapableByteSpan.h; sourceTree = "<group>"; };
 		DEF7FE5F22581AC800C15129 /* TaggedArrayStoragePtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TaggedArrayStoragePtr.h; sourceTree = "<group>"; };
 		DF292D55278F9BC600BB2918 /* ExperimentalFeatureNames.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExperimentalFeatureNames.h; sourceTree = "<group>"; };
 		DFC610A724FB71B9006254C8 /* CodePointIterator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CodePointIterator.h; sourceTree = "<group>"; };
@@ -2419,7 +2419,6 @@
 				A8A47265151A825A004123FF /* BloomFilter.h */,
 				0FB399B820AF5A580017E213 /* BooleanLattice.h */,
 				DED4D271AFDD9025027F5497 /* Borrow.h */,
-				BB0000000000000000000001 /* BorrowedBytes.h */,
 				0F93274A1C17F4B700CF6564 /* Box.h */,
 				0F93274A1C17F4B700CF6566 /* BoxPtr.h */,
 				7C3F72391D78811900674E26 /* Brigand.h */,
@@ -2502,6 +2501,7 @@
 				1CFD5D3B2851AB3E00A0E30B /* EnumeratedArray.h */,
 				E42785642E9BC0F200A0DEF4 /* EnumSet.h */,
 				1AEA88E11D6BBCF400E5AD64 /* EnumTraits.h */,
+				BB0000000000000000000001 /* EscapableByteSpan.h */,
 				AD7C434A1DD2A4A70026888B /* Expected.h */,
 				DF292D55278F9BC600BB2918 /* ExperimentalFeatureNames.h */,
 				A8A4729F151A825A004123FF /* ExportMacros.h */,
@@ -3580,7 +3580,6 @@
 				468378C62EC2D84200A9257A /* BOMSPI.h in Headers */,
 				DD3DC90E27A4BF8E007E5B61 /* BooleanLattice.h in Headers */,
 				F50D171852941FCC9DB3F894 /* Borrow.h in Headers */,
-				BB0000000000000000000002 /* BorrowedBytes.h in Headers */,
 				DD3DC91B27A4BF8E007E5B61 /* Box.h in Headers */,
 				DD3DC92927A4BF8E007E5B61 /* BoxPtr.h in Headers */,
 				DD3DC91C27A4BF8E007E5B61 /* Brigand.h in Headers */,
@@ -3676,6 +3675,7 @@
 				1CFD5D3D2851AB3E00A0E30B /* EnumeratedArray.h in Headers */,
 				E42785652E9BC0F200A0DEF4 /* EnumSet.h in Headers */,
 				DD3DC88C27A4BF8E007E5B61 /* EnumTraits.h in Headers */,
+				BB0000000000000000000002 /* EscapableByteSpan.h in Headers */,
 				93853DD328755A6C00FF4E2B /* EscapedFormsForJSON.h in Headers */,
 				DD3DC87C27A4BF8E007E5B61 /* Expected.h in Headers */,
 				DD3DC8FB27A4BF8E007E5B61 /* ExperimentalFeatureNames.h in Headers */,

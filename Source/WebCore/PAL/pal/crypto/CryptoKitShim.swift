@@ -34,10 +34,10 @@ private enum LocalErrors: Error {
 final class AesGcm {
     @_expose(Cxx)
     static func encrypt(
-        key: WTF.BorrowedBytes,
-        iv: WTF.BorrowedBytes,
-        ad: WTF.BorrowedBytes,
-        message: WTF.BorrowedBytes,
+        key: WTF.EscapableByteSpan,
+        iv: WTF.EscapableByteSpan,
+        ad: WTF.EscapableByteSpan,
+        message: WTF.EscapableByteSpan,
         desiredTagLengthInBytes: Int
     ) -> PAL.Crypto.CryptoOperationReturnValue {
         var returnValue = PAL.Crypto.CryptoOperationReturnValue()
@@ -78,8 +78,8 @@ final class AesGcm {
 final class AesKw {
     @_expose(Cxx)
     static func wrap(
-        keyToWrap: WTF.BorrowedBytes,
-        using: WTF.BorrowedBytes
+        keyToWrap: WTF.EscapableByteSpan,
+        using: WTF.EscapableByteSpan
     ) -> PAL.Crypto.CryptoOperationReturnValue {
         var returnValue = PAL.Crypto.CryptoOperationReturnValue()
         do {
@@ -97,8 +97,8 @@ final class AesKw {
 
     @_expose(Cxx)
     static func unwrap(
-        wrappedKey: WTF.BorrowedBytes,
-        using: WTF.BorrowedBytes
+        wrappedKey: WTF.EscapableByteSpan,
+        using: WTF.EscapableByteSpan
     ) -> PAL.Crypto.CryptoOperationReturnValue {
         var returnValue = PAL.Crypto.CryptoOperationReturnValue()
         do {
@@ -144,7 +144,7 @@ final class Digest {
     }
 
     @_expose(Cxx)
-    func update(_ data: WTF.BorrowedBytes) {
+    func update(_ data: WTF.EscapableByteSpan) {
         ctx.update(data: data.asNonNullBytes)
     }
 
@@ -154,37 +154,37 @@ final class Digest {
     }
 
     @_expose(Cxx)
-    static func sha1(_ data: WTF.BorrowedBytes) -> PAL.Crypto.VectorUInt8 {
+    static func sha1(_ data: WTF.EscapableByteSpan) -> PAL.Crypto.VectorUInt8 {
         digest(data, t: Insecure.SHA1.self)
     }
 
     @_expose(Cxx)
-    static func sha256(_ data: WTF.BorrowedBytes) -> PAL.Crypto.VectorUInt8 {
+    static func sha256(_ data: WTF.EscapableByteSpan) -> PAL.Crypto.VectorUInt8 {
         digest(data, t: SHA256.self)
     }
 
     @_expose(Cxx)
-    static func sha384(_ data: WTF.BorrowedBytes) -> PAL.Crypto.VectorUInt8 {
+    static func sha384(_ data: WTF.EscapableByteSpan) -> PAL.Crypto.VectorUInt8 {
         digest(data, t: SHA384.self)
     }
 
     @_expose(Cxx)
-    static func sha512(_ data: WTF.BorrowedBytes) -> PAL.Crypto.VectorUInt8 {
+    static func sha512(_ data: WTF.EscapableByteSpan) -> PAL.Crypto.VectorUInt8 {
         digest(data, t: SHA512.self)
     }
 
-    fileprivate static func digest<T: CryptoKit.HashFunction>(_ data: WTF.BorrowedBytes, _: T.Type) -> T.Digest {
+    fileprivate static func digest<T: CryptoKit.HashFunction>(_ data: WTF.EscapableByteSpan, _: T.Type) -> T.Digest {
         var hasher = T()
         hasher.update(data: data.asNonNullBytes)
         return hasher.finalize()
     }
 
-    fileprivate static func digest<T: CryptoKit.HashFunction>(_ data: WTF.BorrowedBytes, t: T.Type) -> PAL.Crypto.VectorUInt8 {
+    fileprivate static func digest<T: CryptoKit.HashFunction>(_ data: WTF.EscapableByteSpan, t: T.Type) -> PAL.Crypto.VectorUInt8 {
         makeVectorUInt8(copying: Self.digest(data, t))
     }
 
     fileprivate static func digest(
-        _ data: WTF.BorrowedBytes,
+        _ data: WTF.EscapableByteSpan,
         hashFunction: PAL.Crypto.CryptoDigestHashFunction
     ) -> any CryptoKit.Digest {
         switch hashFunction {
@@ -269,7 +269,7 @@ struct ECKey {
     }
 
     @_expose(Cxx)
-    static func importX963Pub(data: WTF.BorrowedBytes, curve: PAL.Crypto.ECNamedCurve) -> ECKey? {
+    static func importX963Pub(data: WTF.EscapableByteSpan, curve: PAL.Crypto.ECNamedCurve) -> ECKey? {
         do {
             return switch curve {
             case .P256:
@@ -306,7 +306,7 @@ struct ECKey {
     }
 
     @_expose(Cxx)
-    static func importCompressedPub(data: WTF.BorrowedBytes, curve: PAL.Crypto.ECNamedCurve) -> ECKey? {
+    static func importCompressedPub(data: WTF.EscapableByteSpan, curve: PAL.Crypto.ECNamedCurve) -> ECKey? {
         do {
             return switch curve {
             case .P256:
@@ -324,7 +324,7 @@ struct ECKey {
     }
 
     @_expose(Cxx)
-    static func importX963Private(data: WTF.BorrowedBytes, curve: PAL.Crypto.ECNamedCurve) -> ECKey? {
+    static func importX963Private(data: WTF.EscapableByteSpan, curve: PAL.Crypto.ECNamedCurve) -> ECKey? {
         do {
             return switch curve {
             case .P256:
@@ -362,7 +362,7 @@ struct ECKey {
 
     @_expose(Cxx)
     func sign(
-        message: WTF.BorrowedBytes,
+        message: WTF.EscapableByteSpan,
         hashFunction: PAL.Crypto.CryptoDigestHashFunction
     ) -> PAL.Crypto.CryptoOperationReturnValue {
         var returnValue = PAL.Crypto.CryptoOperationReturnValue()
@@ -393,8 +393,8 @@ struct ECKey {
 
     @_expose(Cxx)
     func verify(
-        message: WTF.BorrowedBytes,
-        signature: WTF.BorrowedBytes,
+        message: WTF.EscapableByteSpan,
+        signature: WTF.EscapableByteSpan,
         hashFunction: PAL.Crypto.CryptoDigestHashFunction
     ) -> PAL.Crypto.CryptoOperationReturnValue {
         var returnValue = PAL.Crypto.CryptoOperationReturnValue()
@@ -534,7 +534,7 @@ final class EdKey {
     @_expose(Cxx)
     static func privateToPublic(
         algo: PAL.Crypto.EdSigningAlgorithm,
-        privateKey: WTF.BorrowedBytes
+        privateKey: WTF.EscapableByteSpan
     ) -> PAL.Crypto.CryptoOperationReturnValue {
         var returnValue = PAL.Crypto.CryptoOperationReturnValue()
         do {
@@ -564,7 +564,7 @@ final class EdKey {
     @_expose(Cxx)
     static func privateToPublicKeyAgreement(
         algo: PAL.Crypto.EdKeyAgreementAlgorithm,
-        privateKey: WTF.BorrowedBytes
+        privateKey: WTF.EscapableByteSpan
     ) -> PAL.Crypto.CryptoOperationReturnValue {
         var returnValue = PAL.Crypto.CryptoOperationReturnValue()
         do {
@@ -594,8 +594,8 @@ final class EdKey {
     @_expose(Cxx)
     static func validateKeyPair(
         algo: PAL.Crypto.EdSigningAlgorithm,
-        privateKey: WTF.BorrowedBytes,
-        publicKey: WTF.BorrowedBytes
+        privateKey: WTF.EscapableByteSpan,
+        publicKey: WTF.EscapableByteSpan
     ) -> Bool {
         do {
             if privateKey.size() != 32 || publicKey.size() != 32 {
@@ -619,8 +619,8 @@ final class EdKey {
     @_expose(Cxx)
     static func validateKeyPairKeyAgreement(
         algo: PAL.Crypto.EdKeyAgreementAlgorithm,
-        privateKey: WTF.BorrowedBytes,
-        publicKey: WTF.BorrowedBytes
+        privateKey: WTF.EscapableByteSpan,
+        publicKey: WTF.EscapableByteSpan
     ) -> Bool {
         do {
             if privateKey.size() != 32 || publicKey.size() != 32 {
@@ -644,8 +644,8 @@ final class EdKey {
     @_expose(Cxx)
     static func sign(
         algo: PAL.Crypto.EdSigningAlgorithm,
-        privateKey: WTF.BorrowedBytes,
-        data: WTF.BorrowedBytes
+        privateKey: WTF.EscapableByteSpan,
+        data: WTF.EscapableByteSpan
     ) -> PAL.Crypto.CryptoOperationReturnValue {
         var returnValue = PAL.Crypto.CryptoOperationReturnValue()
         do {
@@ -668,9 +668,9 @@ final class EdKey {
     @_expose(Cxx)
     static func verify(
         algo: PAL.Crypto.EdSigningAlgorithm,
-        publicKey: WTF.BorrowedBytes,
-        signature: WTF.BorrowedBytes,
-        data: WTF.BorrowedBytes
+        publicKey: WTF.EscapableByteSpan,
+        signature: WTF.EscapableByteSpan,
+        data: WTF.EscapableByteSpan
     ) -> PAL.Crypto.CryptoOperationReturnValue {
         var returnValue = PAL.Crypto.CryptoOperationReturnValue()
         do {
@@ -694,8 +694,8 @@ final class EdKey {
     @_expose(Cxx)
     static func deriveBits(
         algo: PAL.Crypto.EdKeyAgreementAlgorithm,
-        privateKey: WTF.BorrowedBytes,
-        publicKey: WTF.BorrowedBytes
+        privateKey: WTF.EscapableByteSpan,
+        publicKey: WTF.EscapableByteSpan
     ) -> PAL.Crypto.CryptoOperationReturnValue {
         var returnValue = PAL.Crypto.CryptoOperationReturnValue()
         do {
@@ -720,8 +720,8 @@ final class EdKey {
 final class HMAC {
     @_expose(Cxx)
     static func sign(
-        key: WTF.BorrowedBytes,
-        data: WTF.BorrowedBytes,
+        key: WTF.EscapableByteSpan,
+        data: WTF.EscapableByteSpan,
         hashFunction: PAL.Crypto.CryptoDigestHashFunction
     ) -> PAL.Crypto.VectorUInt8 {
         let key = SymmetricKey(data: key.asNonNullBytes)
@@ -743,9 +743,9 @@ final class HMAC {
 
     @_expose(Cxx)
     static func verify(
-        mac: WTF.BorrowedBytes,
-        key: WTF.BorrowedBytes,
-        data: WTF.BorrowedBytes,
+        mac: WTF.EscapableByteSpan,
+        key: WTF.EscapableByteSpan,
+        data: WTF.EscapableByteSpan,
         hashFunction: PAL.Crypto.CryptoDigestHashFunction
     ) -> Bool {
         let key = SymmetricKey(data: key.asNonNullBytes)
@@ -777,9 +777,9 @@ private let hkdfInputSizeLimitSHA512 = 255 * SHA512.byteCount * 8
 final class HKDF {
     @_expose(Cxx)
     static func deriveBits(
-        key: WTF.BorrowedBytes,
-        salt: WTF.BorrowedBytes,
-        info: WTF.BorrowedBytes,
+        key: WTF.EscapableByteSpan,
+        salt: WTF.EscapableByteSpan,
+        info: WTF.EscapableByteSpan,
         outputBitCount: Int,
         hashFunction: PAL.Crypto.CryptoDigestHashFunction
     ) -> PAL.Crypto.CryptoOperationReturnValue {
@@ -867,16 +867,16 @@ final class HKDF {
     }
 }
 
-// Thin wrappers adapting WTF.BorrowedBytes (which conforms to ContiguousBytes and
+// Thin wrappers adapting WTF.EscapableByteSpan (which conforms to ContiguousBytes and
 // DataProtocol) to the CryptoKit key/signature initializers and helpers. No
-// `unsafe`: BorrowedBytes borrows the C++ bytes with no copy and crashes cleanly
+// `unsafe`: EscapableByteSpan borrows the C++ bytes with no copy and crashes cleanly
 // if the borrow has been revoked.
 
-extension WTF.BorrowedBytes {
+extension WTF.EscapableByteSpan {
     // The key/signature decoders below all reject empty input up front, because
     // CryptoKit's representation initializers mishandle it. Returns self so a
     // decoder can guard and forward in a single expression.
-    fileprivate func requireNonEmpty() throws -> WTF.BorrowedBytes {
+    fileprivate func requireNonEmpty() throws -> WTF.EscapableByteSpan {
         if isEmpty {
             throw LocalErrors.emptySpan
         }
@@ -885,87 +885,87 @@ extension WTF.BorrowedBytes {
 }
 
 extension P256.Signing.ECDSASignature {
-    init(span: WTF.BorrowedBytes) throws {
+    init(span: WTF.EscapableByteSpan) throws {
         try self.init(rawRepresentation: span.requireNonEmpty())
     }
 }
 
 extension P384.Signing.ECDSASignature {
-    init(span: WTF.BorrowedBytes) throws {
+    init(span: WTF.EscapableByteSpan) throws {
         try self.init(rawRepresentation: span.requireNonEmpty())
     }
 }
 
 extension P521.Signing.ECDSASignature {
-    init(span: WTF.BorrowedBytes) throws {
+    init(span: WTF.EscapableByteSpan) throws {
         try self.init(rawRepresentation: span.requireNonEmpty())
     }
 }
 
 extension P256.Signing.PublicKey {
-    init(span: WTF.BorrowedBytes) throws {
+    init(span: WTF.EscapableByteSpan) throws {
         try self.init(x963Representation: span.requireNonEmpty())
     }
 
-    init(spanCompressed: WTF.BorrowedBytes) throws {
+    init(spanCompressed: WTF.EscapableByteSpan) throws {
         try self.init(compressedRepresentation: spanCompressed.requireNonEmpty())
     }
 }
 
 extension P384.Signing.PublicKey {
-    init(span: WTF.BorrowedBytes) throws {
+    init(span: WTF.EscapableByteSpan) throws {
         try self.init(x963Representation: span.requireNonEmpty())
     }
 
-    init(spanCompressed: WTF.BorrowedBytes) throws {
+    init(spanCompressed: WTF.EscapableByteSpan) throws {
         try self.init(compressedRepresentation: spanCompressed.requireNonEmpty())
     }
 }
 
 extension P521.Signing.PublicKey {
-    init(span: WTF.BorrowedBytes) throws {
+    init(span: WTF.EscapableByteSpan) throws {
         try self.init(x963Representation: span.requireNonEmpty())
     }
 
-    init(spanCompressed: WTF.BorrowedBytes) throws {
+    init(spanCompressed: WTF.EscapableByteSpan) throws {
         try self.init(compressedRepresentation: spanCompressed.requireNonEmpty())
     }
 }
 
 extension P256.Signing.PrivateKey {
-    init(span: WTF.BorrowedBytes) throws {
+    init(span: WTF.EscapableByteSpan) throws {
         try self.init(x963Representation: span.requireNonEmpty())
     }
 }
 
 extension P384.Signing.PrivateKey {
-    init(span: WTF.BorrowedBytes) throws {
+    init(span: WTF.EscapableByteSpan) throws {
         try self.init(x963Representation: span.requireNonEmpty())
     }
 }
 
 extension P521.Signing.PrivateKey {
-    init(span: WTF.BorrowedBytes) throws {
+    init(span: WTF.EscapableByteSpan) throws {
         try self.init(x963Representation: span.requireNonEmpty())
     }
 }
 
 extension Curve25519.Signing.PrivateKey {
-    init(span: WTF.BorrowedBytes) throws {
+    init(span: WTF.EscapableByteSpan) throws {
         try self.init(rawRepresentation: span.requireNonEmpty())
     }
 
-    func signature(span: WTF.BorrowedBytes) throws -> PAL.Crypto.VectorUInt8 {
+    func signature(span: WTF.EscapableByteSpan) throws -> PAL.Crypto.VectorUInt8 {
         makeVectorUInt8(copying: try self.signature(for: span.asNonNullBytes))
     }
 }
 
 extension Curve25519.Signing.PublicKey {
-    init(span: WTF.BorrowedBytes) throws {
+    init(span: WTF.EscapableByteSpan) throws {
         try self.init(rawRepresentation: span.requireNonEmpty())
     }
 
-    func isValidSignature(signature: WTF.BorrowedBytes, data: WTF.BorrowedBytes) -> Bool {
+    func isValidSignature(signature: WTF.EscapableByteSpan, data: WTF.EscapableByteSpan) -> Bool {
         if signature.isEmpty || data.isEmpty {
             return false
         }
@@ -974,18 +974,18 @@ extension Curve25519.Signing.PublicKey {
 }
 
 extension Curve25519.KeyAgreement.PrivateKey {
-    init(span: WTF.BorrowedBytes) throws {
+    init(span: WTF.EscapableByteSpan) throws {
         try self.init(rawRepresentation: span.requireNonEmpty())
     }
 
-    func sharedSecretFromKeyAgreement(pubSpan: WTF.BorrowedBytes) throws -> PAL.Crypto.VectorUInt8 {
+    func sharedSecretFromKeyAgreement(pubSpan: WTF.EscapableByteSpan) throws -> PAL.Crypto.VectorUInt8 {
         let pub = try Curve25519.KeyAgreement.PublicKey(rawRepresentation: pubSpan.requireNonEmpty())
         return makeVectorUInt8(copying: try self.sharedSecretFromKeyAgreement(with: pub))
     }
 }
 
 extension Curve25519.KeyAgreement.PublicKey {
-    init(span: WTF.BorrowedBytes) throws {
+    init(span: WTF.EscapableByteSpan) throws {
         try self.init(rawRepresentation: span.requireNonEmpty())
     }
 }
