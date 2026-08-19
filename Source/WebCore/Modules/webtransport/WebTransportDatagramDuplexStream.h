@@ -51,7 +51,7 @@ public:
 
     ReadableStream& readable() { return m_readable; }
     ExceptionOr<Ref<WebTransportDatagramsWritable>> createWritable(ScriptExecutionContext&, WebTransportSendOptions&&);
-    unsigned maxDatagramSize() const;
+    unsigned NODELETE maxDatagramSize() const;
     std::optional<double> incomingMaxAge() const { return m_incomingMaxAge; }
     std::optional<double> outgoingMaxAge() const { return m_outgoingMaxAge; }
     uint32_t incomingMaxBufferedDatagrams() const { return m_incomingMaxBufferedDatagrams; }
