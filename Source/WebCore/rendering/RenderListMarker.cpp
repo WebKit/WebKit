@@ -107,6 +107,8 @@ void RenderListMarker::styleDidChange(Style::Difference diff, const Style::Compu
         diff = adjustedStyleDifference(diff, *oldStyle, style());
     RenderBox::styleDidChange(diff, oldStyle);
 
+    propagateStyleToAnonymousChildren(StylePropagationType::AllChildren);
+
     if (RefPtr newImage = style().listStyleImage().tryStyleImage(); m_image != newImage) {
         if (m_image)
             protect(m_image)->removeClient(*this);
