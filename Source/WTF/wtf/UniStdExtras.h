@@ -26,6 +26,10 @@
 #ifndef UniStdExtras_h
 #define UniStdExtras_h
 
+#include <wtf/Platform.h>
+
+#if OS(UNIX)
+
 #include <errno.h>
 #include <unistd.h>
 
@@ -60,5 +64,7 @@ using WTF::dupCloseOnExec;
 using WTF::setCloseOnExec;
 using WTF::unsetCloseOnExec;
 using WTF::setNonBlock;
+
+#endif // OS(UNIX)
 
 #endif // UniStdExtras_h
