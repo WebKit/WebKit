@@ -30,6 +30,7 @@
 import contextlib
 import io
 import os
+import re
 import shutil
 import sys
 import tempfile
@@ -1128,10 +1129,10 @@ class TestEndToEnd(unittest.TestCase):
             yaml.dump(contents, f)
         return path
 
-    def _run(self, *extra_args):
+    def _run(self, *extra_args, child_processes=("-p", "1")):
         argv = [
             "test262-runner",
-            "-p", "1",
+            *child_processes,
             "--release",
             "--no-progress",
             "--jsc", self.jsc,
@@ -1232,6 +1233,22 @@ class TestEndToEnd(unittest.TestCase):
                 "test/failing.js": {"default": 3, "strict mode": 3},
             },
         )
+
+    def _child_processes(self, number_of_processors, *extra_args):
+        with mock.patch.dict(os.environ, {"NUMBER_OF_PROCESSORS": number_of_processors}):
+            code, out = self._run("-i", "-x", "-o", "test/passing.js", *extra_args, child_processes=())
+        self.assertEqual(code, 0)
+        match = re.search(r"^Child Processes: (\d+)$", out, re.MULTILINE)
+        self.assertIsNotNone(match, out)
+        return int(match.group(1))
+
+    def test_number_of_processors_is_honored(self):
+        # Linux CI bots cap the parallelism of each container with this env var. Ensure it is honored.
+        self.assertEqual(self._child_processes("3"), 3)
+        self.assertEqual(self._child_processes("5"), 5)
+
+    def test_child_processes_option_overrides_number_of_processors(self):
+        self.assertEqual(self._child_processes("3", "-p", "1"), 1)
 
 
 if __name__ == "__main__":

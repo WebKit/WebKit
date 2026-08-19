@@ -51,6 +51,7 @@ for _lib_path in (str(_SCRIPTS_DIR), str(_SCRIPTS_DIR / "libraries" / "webkitcor
         sys.path.insert(0, _lib_path)
 
 from webkitcorepy import TaskPool, Version  # noqa: E402
+from webkitpy.common.system.executive import Executive  # noqa: E402
 from webkitpy.common.system.filesystem import FileSystem  # noqa: E402
 from webkitpy.common.system.platforminfo import PlatformInfo  # noqa: E402
 from webkitpy.common.webkit_finder import WebKitFinder  # noqa: E402
@@ -1268,7 +1269,7 @@ def main() -> None:
         )
 
     # --- Process count ---
-    num_processes = args.child_processes or os.cpu_count() or 1
+    num_processes = args.child_processes or Executive().cpu_count() or 1
 
     # --- Print settings ---
     print(f"\nSettings:")
