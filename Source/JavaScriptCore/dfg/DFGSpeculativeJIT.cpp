@@ -12709,9 +12709,9 @@ void SpeculativeJIT::emitSwitchChar(Node* node, SwitchData* data)
         GPRReg op1GPR = op1.gpr();
         GPRReg tempGPR = temp.gpr();
 
+        speculateString(node->child1(), op1GPR);
         op1.use();
 
-        speculateString(node->child1(), op1GPR);
         emitSwitchCharStringJump(node, data, op1GPR, tempGPR, node->child1());
         noResult(node, UseChildrenCalledExplicitly);
         break;
