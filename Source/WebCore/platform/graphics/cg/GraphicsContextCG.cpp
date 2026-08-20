@@ -223,10 +223,6 @@ GraphicsContextCG::GraphicsContextCG(CGContextRef cgContext, CGContextSource sou
     , m_renderingMode(knownRenderingMode.value_or(renderingModeForCGContext(cgContext, source)))
     , m_isLayerCGContext(source == GraphicsContextCG::CGContextFromCALayer)
 {
-    if (!cgContext)
-        return;
-    // Make sure the context starts in sync with our state.
-    didUpdateState(m_state);
 }
 
 GraphicsContextCG::~GraphicsContextCG() = default;
@@ -266,6 +262,12 @@ const DestinationColorSpace& GraphicsContextCG::colorSpace() const
 
 void GraphicsContextCG::save(GraphicsContextState::Purpose purpose)
 {
+    // Apply the state before saving, so that the state pushed on the stack describes the gstate
+    // saved below. This has to happen before GraphicsContext::save(), because
+    // Purpose::TransparencyLayer resets the properties CG resets for a layer without marking them
+    // as changed, and a pending change to them would otherwise reach the context as the reset
+    // value instead of the value the layer has to be composited with.
+    updatePlatformContextStateIfNeeded();
     GraphicsContext::save(purpose);
     CGContextSaveGState(contextForState());
 }
@@ -1078,6 +1080,12 @@ void GraphicsContextCG::beginTransparencyLayer(float opacity)
 {
     GraphicsContext::beginTransparencyLayer(opacity);
 
+    // CG composites the layer using the alpha, style and blend mode that are in effect when the
+    // layer begins, and resets them for the layer contents. Purpose::TransparencyLayer resets
+    // them in our state to match, without marking them as changed, so any pending change to them
+    // has to reach the context before that happens.
+    updatePlatformContextStateIfNeeded();
+
     save(GraphicsContextState::Purpose::TransparencyLayer);
 
     CGContextRef context = platformContext();
@@ -1198,67 +1206,67 @@ void GraphicsContextCG::setCGStyle(const std::optional<GraphicsStyle>& style, bo
     );
 }
 
-void GraphicsContextCG::didUpdateState(GraphicsContextState& state)
+void GraphicsContextCG::updatePlatformContextState()
 {
-    if (!state.changes())
-        return;
+    // Consume the changes up front: applying them below must not recurse back here, either
+    // via platformContext() or by re-entering through one of the appliers.
+    auto changes = m_state.changes();
+    m_state.didApplyChanges();
 
     auto context = platformContext();
 
-    for (auto change : state.changes()) {
+    for (auto change : changes) {
         switch (change) {
         case GraphicsContextState::Change::FillBrush:
-            if (!state.fillBrush().hasPatternOrGradient())
-                setCGFillColor(context, state.fillBrush().color(), colorSpace());
+            if (!m_state.fillBrush().hasPatternOrGradient())
+                setCGFillColor(context, m_state.fillBrush().color(), colorSpace());
             break;
 
         case GraphicsContextState::Change::StrokeThickness:
-            CGContextSetLineWidth(context, std::max(state.strokeThickness(), 0.f));
+            CGContextSetLineWidth(context, std::max(m_state.strokeThickness(), 0.f));
             break;
 
         case GraphicsContextState::Change::StrokeBrush:
-            if (!state.strokeBrush().hasPatternOrGradient())
-                CGContextSetStrokeColorWithColor(context, cachedCGColorInDestinationStandardRange(state.strokeBrush().color(), colorSpace()).get());
+            if (!m_state.strokeBrush().hasPatternOrGradient())
+                CGContextSetStrokeColorWithColor(context, cachedCGColorInDestinationStandardRange(m_state.strokeBrush().color(), colorSpace()).get());
             break;
 
         case GraphicsContextState::Change::CompositeMode:
-            setCGBlendMode(context, state.compositeMode().operation, state.compositeMode().blendMode);
+            setCGBlendMode(context, m_state.compositeMode().operation, m_state.compositeMode().blendMode);
             break;
 
         case GraphicsContextState::Change::DropShadow:
-            setCGDropShadow(state.dropShadow(), state.shadowsIgnoreTransforms());
+            setCGDropShadow(m_state.dropShadow(), m_state.shadowsIgnoreTransforms());
             break;
 
         case GraphicsContextState::Change::Style:
-            setCGStyle(state.style(), state.shadowsIgnoreTransforms());
+            setCGStyle(m_state.style(), m_state.shadowsIgnoreTransforms());
             break;
 
         case GraphicsContextState::Change::Alpha:
-            CGContextSetAlpha(context, state.alpha());
+            CGContextSetAlpha(context, m_state.alpha());
             break;
 
         case GraphicsContextState::Change::ImageInterpolationQuality:
-            CGContextSetInterpolationQuality(context, toCGInterpolationQuality(state.imageInterpolationQuality()));
+            CGContextSetInterpolationQuality(context, toCGInterpolationQuality(m_state.imageInterpolationQuality()));
             break;
 
         case GraphicsContextState::Change::TextDrawingMode:
-            CGContextSetTextDrawingMode(context, cgTextDrawingMode(state.textDrawingMode()));
+            CGContextSetTextDrawingMode(context, cgTextDrawingMode(m_state.textDrawingMode()));
             break;
 
         case GraphicsContextState::Change::ShouldAntialias:
-            CGContextSetShouldAntialias(context, state.shouldAntialias());
+            CGContextSetShouldAntialias(context, m_state.shouldAntialias());
             break;
 
         case GraphicsContextState::Change::ShouldSmoothFonts:
-            CGContextSetShouldSmoothFonts(context, state.shouldSmoothFonts());
+            CGContextSetShouldSmoothFonts(context, m_state.shouldSmoothFonts());
             break;
 
         default:
             break;
         }
     }
-
-    state.didApplyChanges();
 }
 
 void GraphicsContextCG::setMiterLimit(float limit)
@@ -1408,6 +1416,11 @@ void GraphicsContextCG::setLineJoin(LineJoin join)
         break;
     }
 }
+
+// The transform functions below apply the pending state to the platform context even though they
+// do not draw. Shadows and styles are converted to device space using the user to base transform,
+// so a pending shadow or style has to reach the context while the transform it was set under is
+// still current. The same applies to the base transform change in applyDeviceScaleFactor().
 
 void GraphicsContextCG::scale(const FloatSize& size)
 {
