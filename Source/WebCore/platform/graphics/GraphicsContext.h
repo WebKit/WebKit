@@ -169,9 +169,14 @@ public:
     void mergeLastChanges(const GraphicsContextState&);
     void mergeAllChanges(const GraphicsContextState&);
 
+#if USE(CG) || USE(SKIA)
+    // Compatibility function: when all platforms implement lazy state sync, remove this.
+    void didUpdateState(GraphicsContextState&) { }
+#else
     // Called *after* any change to GraphicsContextState; generally used to propagate changes
     // to the platform context's state.
     virtual void didUpdateState(GraphicsContextState&) = 0;
+#endif
 
     void didInvalidatePlatformState(GraphicsContextState::ChangeFlags properties) { m_state.markChanged(properties); }
 
