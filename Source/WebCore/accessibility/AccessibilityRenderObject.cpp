@@ -432,9 +432,13 @@ String AccessibilityRenderObject::textUnderElement(TextUnderElementMode mode) co
     if (CheckedPtr fileUpload = dynamicDowncast<RenderFileUploadControl>(*m_renderer))
         return fileUpload->buttonValue();
 
-    if (mode.includeListMarkers == IncludeListMarkerText::Yes) {
-        if (auto* listMarker = dynamicDowncast<RenderListMarker>(*m_renderer))
-            return listMarker->textContent();
+    if (auto* listMarker = dynamicDowncast<RenderListMarker>(*m_renderer)) {
+        // A `content` marker has no text of its own; the child walk below reads the renderers holding it.
+        if (!listMarker->hasContentProperty()) {
+            if (mode.includeListMarkers == IncludeListMarkerText::Yes)
+                return listMarker->textContent();
+            return { };
+        }
     }
 
     // Reflect when a content author has explicitly marked a line break.
