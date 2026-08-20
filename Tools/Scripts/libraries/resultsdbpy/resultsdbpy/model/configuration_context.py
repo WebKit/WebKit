@@ -253,11 +253,11 @@ class ConfigurationContext(object):
                 attributes=json.dumps(attributes_dict),
                 **kwargs)
 
-    def select_from_table_with_configurations(self, table_name, configurations=None, branch=None, recent=True, limit=100, **kwargs):
+    def complete_configurations_for(self, configurations=None, branch=None, recent=True):
         if not isinstance(configurations, Iterable):
             raise TypeError('Expected configurations to be iterable')
         if not configurations:
-            configurations.append(Configuration())
+            configurations = [Configuration()]
 
         with self:
             complete_configurations = set()
@@ -267,12 +267,18 @@ class ConfigurationContext(object):
                 if config.is_complete():
                     complete_configurations.add(config)
                 elif recent:
-                    [complete_configurations.add(element) for element in self.search_for_recent_configuration(config, branch=branch)]
+                    complete_configurations.update(self.search_for_recent_configuration(config, branch=branch))
                 else:
-                    [complete_configurations.add(element) for element in self.search_for_configuration(config, branch=branch)]
+                    complete_configurations.update(self.search_for_configuration(config, branch=branch))
+            return complete_configurations
 
+    def select_from_table_with_complete_configurations(self, table_name, complete_configurations, branch=None, limit=100, **kwargs):
+        with self:
             results = {}
             for configuration in complete_configurations:
+                if not isinstance(configuration, Configuration):
+                    raise TypeError(f'Expected type {Configuration}, got {type(configuration)}')
+
                 attributes_dict = OrderedDict()
                 for member in Configuration.OPTIONAL_MEMBERS:
                     if getattr(configuration, member) is not None:
@@ -297,3 +303,11 @@ class ConfigurationContext(object):
                     results[full_config].append(row)
 
             return results
+
+    def select_from_table_with_configurations(self, table_name, configurations=None, branch=None, recent=True, limit=100, **kwargs):
+        # Held across both halves so they share one connection, as they did when this was one method.
+        with self:
+            complete_configs = self.complete_configurations_for(configurations, branch=branch, recent=recent)
+            return self.select_from_table_with_complete_configurations(
+                table_name, complete_configs, branch=branch, limit=limit, **kwargs
+            )

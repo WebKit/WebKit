@@ -27,6 +27,7 @@ from fakeredis import FakeStrictRedis
 from redis import StrictRedis
 from resultsdbpy.controller.api_routes import APIRoutes
 from resultsdbpy.controller.configuration import Configuration
+from resultsdbpy.controller.ews_controller import EWSController
 from resultsdbpy.flask_support.flask_testcase import FlaskTestCase
 from resultsdbpy.model.cassandra_context import CassandraContext
 from resultsdbpy.model.mock_model_factory import MockModelFactory
@@ -81,19 +82,21 @@ class EWSControllerTest(FlaskTestCase, WaitForDockerTestCase):
         return client.post(f'{cls.URL}/{cls.EWS_UPLOAD_ENDPOINT}', data=json.dumps(data))
 
     @classmethod
-    def find_ews_results(cls, client, configuration=None, suite='layout-tests', test=..., flaky=None, recent=None, after_time=None, before_time=None):
+    def find_ews_results(cls, client, configuration=None, suite='layout-tests', tests=..., flaky=None, recent=None, after_time=None, before_time=None):
         if configuration is None:
             configuration = ConfigurationContextTest.CONFIGURATIONS[0]
-        if test is ...:
-            test = cls.REGRESSION_TEST
+        if tests is ...:
+            tests = [cls.REGRESSION_TEST]
         params = {
-            'suite': suite, 'test': test, 'flaky': flaky, 'recent': recent,
+            'suite': suite, 'flaky': flaky, 'recent': recent,
             'after_time': after_time, 'before_time': before_time,
             'platform': configuration.platform, 'style': configuration.style, 'flavor': configuration.flavor,
         }
         query = '&'.join(
-            f'{key}={str(value).lower() if isinstance(value, bool) else value}'
-            for key, value in params.items() if value is not None
+            [
+                f'{key}={str(value).lower() if isinstance(value, bool) else value}'
+                for key, value in params.items() if value is not None
+            ] + [f'tests={quote(name, safe="")}' for name in tests or []]
         )
         return client.get(f'{cls.URL}/{cls.EWS_RESULTS_ENDPOINT}?{query}')
 
@@ -126,7 +129,7 @@ class EWSControllerTest(FlaskTestCase, WaitForDockerTestCase):
         self.assertEqual(details.get('build_number'), 678)
         self.assertEqual(details.get('link'), 'https://ews.example.com/build/1')
 
-        response = self.find_ews_results(client, test='fast/encoding/css-charset.html')
+        response = self.find_ews_results(client, tests=['fast/encoding/css-charset.html'])
         self.assertEqual(response.status_code, 200, response.json())
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
@@ -151,7 +154,7 @@ class EWSControllerTest(FlaskTestCase, WaitForDockerTestCase):
         self.assertEqual((result.get('details') or {}).get('pr_number'), 12345)
 
         # A test that wasn't reported flaky is not in the flaky table.
-        response = self.find_ews_results(client, test='fast/encoding/css-charset.html', flaky=True)
+        response = self.find_ews_results(client, tests=['fast/encoding/css-charset.html'], flaky=True)
         self.assertEqual(response.status_code, 404)
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
@@ -213,20 +216,90 @@ class EWSControllerTest(FlaskTestCase, WaitForDockerTestCase):
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
     @FlaskTestCase.run_with_webserver()
+    def test_find_a_batch_names_the_test_each_entry_answers_for(self, client, **kwargs):
+        """A client batching its queries can only match answers to questions by the test field, and
+        can only tell a test with no history from one it never asked about by its absence."""
+        response = self.upload_ews_results(client)
+        self.assertEqual(response.status_code, 200, response.json())
+
+        reported = sorted(self.DEFAULT_TEST_RESULTS['results'])
+        self.assertGreater(len(reported), 1)
+        never_reported = 'fast/never/reported.html'
+
+        response = self.find_ews_results(client, tests=reported + [never_reported])
+        self.assertEqual(response.status_code, 200, response.json())
+
+        by_test = {}
+        for entry in response.json():
+            by_test.setdefault(entry['test'], []).extend(entry['results'])
+
+        self.assertEqual(sorted(by_test), reported)
+        self.assertNotIn(never_reported, by_test)
+        for test in reported:
+            self.assertTrue(by_test[test], test)
+            for result in by_test[test]:
+                self.assertEqual(result['result'], self.DEFAULT_TEST_RESULTS['results'][test])
+
+    @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
+    @FlaskTestCase.run_with_webserver()
     def test_find_rejects_a_commit_range(self, client, **kwargs):
         # Results are clustered by start_time, so a commit range could only be honored as a
         # client-side filter over rows Cassandra already truncated with LIMIT. Reject it instead.
         for param in ('ref=6', 'uuid=153802947300000', 'timestamp=1538029473', 'begin=5', 'end=7'):
-            response = client.get(f'{self.URL}/{self.EWS_RESULTS_ENDPOINT}?suite=layout-tests&test={self.REGRESSION_TEST}&{param}')
+            response = client.get(f'{self.URL}/{self.EWS_RESULTS_ENDPOINT}?suite=layout-tests&tests={self.REGRESSION_TEST}&{param}')
             self.assertEqual(response.status_code, 400, f'{param} gave {response.status_code}')
             self.assertIn('not supported in queries by this endpoint', response.json()['description'])
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
     @FlaskTestCase.run_with_webserver()
     def test_find_without_test(self, client, **kwargs):
-        response = self.find_ews_results(client, test=None)
+        response = self.find_ews_results(client, tests=None)
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.json()['description'], 'No valid test specified')
+
+    @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
+    @FlaskTestCase.run_with_webserver()
+    def test_find_a_test_whose_name_needs_escaping(self, client, **kwargs):
+        """WPT names carry their own query string. Unescaped, everything from the first & on is read
+        as further query parameters, so the name arrives truncated and the request is rejected."""
+        test = 'imported/w3c/web-platform-tests/webrtc/RTCIceTransport.html?type=relay&mode=full'
+        response = self.upload_ews_results(client, test_results={'results': {
+            test: {'report': 'REGRESSION', 'expected': 'PASS', 'actual': 'TEXT'},
+        }})
+        self.assertEqual(response.status_code, 200, response.json())
+
+        response = self.find_ews_results(client, tests=[test])
+        self.assertEqual(response.status_code, 200, response.json())
+        self.assertEqual([entry['test'] for entry in response.json()], [test])
+
+    @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
+    @FlaskTestCase.run_with_webserver()
+    def test_find_ignores_blank_and_repeated_names(self, client, **kwargs):
+        """A blank repeated value must not reject a batch that names a real test, nor reach the
+        database as an empty test name, and a name repeated twice must not cost two queries."""
+        self.assertEqual(self.upload_ews_results(client).status_code, 200)
+
+        for tests in (['', self.REGRESSION_TEST], [self.REGRESSION_TEST, ''], [self.REGRESSION_TEST] * 2):
+            response = self.find_ews_results(client, tests=tests)
+            self.assertEqual(response.status_code, 200, f'{tests} gave {response.status_code}')
+            self.assertEqual([entry['test'] for entry in response.json()], [self.REGRESSION_TEST], tests)
+
+        response = self.find_ews_results(client, tests=['', ''])
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.json()['description'], 'No valid test specified')
+
+    @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
+    @FlaskTestCase.run_with_webserver()
+    def test_find_rejects_an_oversized_batch(self, client, **kwargs):
+        """The limit is per test, so an unbounded batch is an unbounded response and one query per test."""
+        cap = EWSController.MAX_TESTS_PER_QUERY
+
+        response = self.find_ews_results(client, tests=[f'fast/{index}.html' for index in range(cap)])
+        self.assertEqual(response.status_code, 404, response.json())
+
+        response = self.find_ews_results(client, tests=[f'fast/{index}.html' for index in range(cap + 1)])
+        self.assertEqual(response.status_code, 400, response.json())
+        self.assertIn(f'Cannot query more than {cap} tests at a time', response.json()['description'])
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
     @FlaskTestCase.run_with_webserver()
@@ -351,7 +424,7 @@ class EWSControllerTest(FlaskTestCase, WaitForDockerTestCase):
     def test_list_tests_prefix(self, client, **kwargs):
         self.assertEqual(self.upload_ews_results(client).status_code, 200)
 
-        response = client.get(f'{self.URL}/{self.EWS_TESTS_ENDPOINT}?suite=layout-tests&test=fast/encoding/css-c')
+        response = client.get(f'{self.URL}/{self.EWS_TESTS_ENDPOINT}?suite=layout-tests&prefixes=fast/encoding/css-c')
         self.assertEqual(response.status_code, 200, response.json())
         self.assertEqual(response.json(), ['fast/encoding/css-cached-bom.html', 'fast/encoding/css-charset.html'])
 
@@ -362,7 +435,7 @@ class EWSControllerTest(FlaskTestCase, WaitForDockerTestCase):
         # cqlengine reads a limit of 0 as no limit, so exhausting it must stop the loop.
         self.assertEqual(self.upload_ews_results(client).status_code, 200)
 
-        prefixes = '&'.join(f'test={name}' for name in sorted(self.DEFAULT_TEST_RESULTS['results']))
+        prefixes = '&'.join(f'prefixes={name}' for name in sorted(self.DEFAULT_TEST_RESULTS['results']))
         response = client.get(f'{self.URL}/{self.EWS_TESTS_ENDPOINT}?suite=layout-tests&limit=2&{prefixes}')
         self.assertEqual(response.status_code, 200, response.json())
         self.assertEqual(len(response.json()), 2)
@@ -375,7 +448,7 @@ class EWSControllerTest(FlaskTestCase, WaitForDockerTestCase):
         results = {test: {'report': 'REGRESSION', 'expected': 'PASS', 'actual': 'TEXT'}}
         self.assertEqual(self.upload_ews_results(client, test_results=dict(results=results)).status_code, 200)
 
-        response = client.get(f'{self.URL}/{self.EWS_TESTS_ENDPOINT}?suite=layout-tests&test={quote(test, safe="")}')
+        response = client.get(f'{self.URL}/{self.EWS_TESTS_ENDPOINT}?suite=layout-tests&prefixes={quote(test, safe="")}')
         self.assertEqual(response.status_code, 200, response.json())
         self.assertEqual(response.json(), list(results))
 

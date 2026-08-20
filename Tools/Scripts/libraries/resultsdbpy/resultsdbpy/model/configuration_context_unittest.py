@@ -90,6 +90,90 @@ class ConfigurationContextTest(WaitForDockerTestCase):
             self.database.register_configuration(Configuration(platform='iOS'))
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
+    def test_complete_configurations_for_expands_a_partial_configuration(self, redis=StrictRedis, cassandra=CassandraContext):
+        """Every caller reaches this through select_from_table_with_configurations, so it has to
+        agree with the search it replaced on both the recent and the expired paths."""
+        self.init_database(redis=redis, cassandra=cassandra)
+        self.register_configurations()
+
+        partial = Configuration(platform='Mac', style='Release')
+        for recent in (True, False):
+            search = self.database.search_for_recent_configuration if recent else self.database.search_for_configuration
+            expanded = self.database.complete_configurations_for([partial], recent=recent)
+
+            self.assertEqual(expanded, set(search(partial)), f'recent={recent}')
+            self.assertTrue(expanded, f'recent={recent}')
+            for configuration in expanded:
+                self.assertTrue(configuration.is_complete(), configuration)
+                self.assertEqual(configuration, partial)
+
+        # The expired path knows about configurations that stopped reporting, so it sees more.
+        self.assertLess(
+            len(self.database.complete_configurations_for([partial], recent=True)),
+            len(self.database.complete_configurations_for([partial], recent=False)),
+        )
+
+    @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
+    def test_complete_configurations_for_passes_a_complete_configuration_through(self, redis=StrictRedis, cassandra=CassandraContext):
+        self.init_database(redis=redis, cassandra=cassandra)
+        self.register_configurations()
+
+        complete = self.CONFIGURATIONS[0]
+        self.assertTrue(complete.is_complete())
+        self.assertEqual(self.database.complete_configurations_for([complete]), {complete})
+
+        # No configurations at all means every configuration, not none of them.
+        self.assertEqual(
+            self.database.complete_configurations_for([]),
+            self.database.complete_configurations_for([Configuration()]),
+        )
+
+    @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
+    def test_complete_configurations_for_rejects_an_invalid_configuration(self, redis=StrictRedis, cassandra=CassandraContext):
+        self.init_database(redis=redis, cassandra=cassandra)
+
+        with self.assertRaises(TypeError):
+            self.database.complete_configurations_for('invalid object')
+        with self.assertRaises(TypeError):
+            self.database.complete_configurations_for(['invalid object'])
+        with self.assertRaises(TypeError):
+            self.database.select_from_table_with_complete_configurations('example_table', ['invalid object'])
+
+    @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
+    def test_selecting_with_configurations_opens_one_connection(self, redis=StrictRedis, cassandra=CassandraContext):
+        """Expanding the configurations and querying the table used to share a session. Split across
+        two methods, each would open and tear down its own unless the wrapper holds one open."""
+        self.init_database(redis=redis, cassandra=cassandra)
+        self.register_configurations()
+
+        class ExampleModel(ClusteredByConfiguration):
+            __table_name__ = 'example_table'
+            branch = columns.Text(partition_key=True, required=True)
+            index = columns.Integer(primary_key=True, required=True)
+
+        with self.database:
+            self.database.cassandra.create_table(ExampleModel)
+
+        opened = []
+        cassandra_context = self.database.cassandra
+        original = type(cassandra_context).__enter__
+
+        def counting_enter(context):
+            if context._depth == 0:
+                opened.append(context)
+            return original(context)
+
+        try:
+            type(cassandra_context).__enter__ = counting_enter
+            self.database.select_from_table_with_configurations(
+                ExampleModel.__table_name__, [Configuration(platform='Mac')], index=1,
+            )
+        finally:
+            type(cassandra_context).__enter__ = original
+
+        self.assertEqual(len(opened), 1)
+
+    @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
     def test_no_style_configuration(self, redis=StrictRedis, cassandra=CassandraContext):
         self.init_database(redis=redis, cassandra=cassandra)
 

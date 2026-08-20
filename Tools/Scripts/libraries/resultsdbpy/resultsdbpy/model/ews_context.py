@@ -125,19 +125,29 @@ class EWSContext(UploadCallbackContext):
                 args.update(test__gte=test, test__lte=test + '~')
             return [row.test for row in self.cassandra.select_from_table(self.EWSTestNameBySuite.__table_name__, **args)]
 
-    def find_for_test(self, configurations, suite, test, flaky, branch=None, recent=True, begin_query_time=None, end_query_time=None, limit=100):
+    def find_for_tests(self, configurations, suite, tests, flaky, branch=None, recent=True, begin_query_time=None, end_query_time=None, limit=100):
+        """Results for several tests at once, keyed by test name."""
         table = self.EWSFlakesByStartTime if flaky else self.EWSFailedTestsByStartTime
 
         def get_time(time):
             return time if isinstance(time, datetime) else datetime.utcfromtimestamp(int(time)) if time else None
 
+        found = {}
         with self:
-            return {
-                config: [row.unpack() for row in rows]
-                for config, rows in self.configuration_context.select_from_table_with_configurations(
-                    table.__table_name__, configurations=configurations,
-                    suite=suite, branch=branch or self.commit_context.DEFAULT_BRANCH_KEY, test=test,
-                    start_time__gte=get_time(begin_query_time), start_time__lte=get_time(end_query_time),
-                    recent=recent, limit=limit,
-                ).items()
-            }
+            branch = branch or self.commit_context.DEFAULT_BRANCH_KEY
+            complete_configurations = self.configuration_context.complete_configurations_for(
+                configurations, branch=branch, recent=recent,
+            )
+            for test in tests:
+                by_configuration = {
+                    config: [row.unpack() for row in rows]
+                    for config, rows in self.configuration_context.select_from_table_with_complete_configurations(
+                        table.__table_name__, complete_configurations,
+                        suite=suite, branch=branch, test=test,
+                        start_time__gte=get_time(begin_query_time), start_time__lte=get_time(end_query_time),
+                        limit=limit,
+                    ).items()
+                }
+                if by_configuration:
+                    found[test] = by_configuration
+        return found

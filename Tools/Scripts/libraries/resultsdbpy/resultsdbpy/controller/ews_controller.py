@@ -34,6 +34,7 @@ from webkitflaskpy.util import AssertRequest, query_as_kwargs, limit_for_query, 
 class EWSController(HasCommitContext):
     DEFAULT_LIMIT = 100
     TIMESTAMP_TOLERANCE_SECONDS = 5 * 60
+    MAX_TESTS_PER_QUERY = 100
 
     def __init__(self, commit_controller, ews_context):
         super().__init__(commit_controller.commit_context)
@@ -100,40 +101,50 @@ class EWSController(HasCommitContext):
     @configuration_for_query()
     @time_range_for_query()
     def find(
-        self, configurations=None, suite=None, test=None, recent=None, flaky=None,
+        self, configurations=None, suite=None, tests=None, recent=None, flaky=None,
         branch=None, begin_query_time=None, end_query_time=None,
         limit=None, **kwargs
     ):
+        """Results for one or more tests, one entry per test and configuration.
+
+        limit is per test rather than shared across the batch, since a shared one would be spent on
+        whichever test happened to be queried first. A test with no results is absent from the
+        response rather than present and empty, and a batch where no test has any results is a 404.
+        """
         AssertRequest.is_type(['GET'])
         AssertRequest.query_kwargs_empty(**kwargs)
 
         if not suite or not suite[0]:
             abort(400, description='No valid test suite specified')
-        if not test or not test[0]:
+        if not (tests := sorted({name for name in tests or [] if name})):
             abort(400, description='No valid test specified')
+        if len(tests) > self.MAX_TESTS_PER_QUERY:
+            abort(400, description=f'Cannot query more than {self.MAX_TESTS_PER_QUERY} tests at a time, got {len(tests)} tests')
 
         recent = boolean_query(*recent)[0] if recent else True
         flaky = boolean_query(*flaky)[0] if flaky else False
 
-        results = self.ews_context.find_for_test(
+        found = self.ews_context.find_for_tests(
             configurations=configurations, suite=suite[0], branch=branch[0] if branch else None,
             begin_query_time=begin_query_time, end_query_time=end_query_time, limit=limit,
-            test=test[0], flaky=flaky, recent=recent,
+            tests=tests, flaky=flaky, recent=recent,
         )
-        if not results:
+        if not found:
             abort(404, description='No EWS results matching the specified criteria')
 
         response = []
-        for config, entries in results.items():
-            response.append({
-                'configuration': Configuration.Encoder().default(config),
-                'results': sorted(entries, key=lambda result: (result['uuid'], result['start_time'])),
-            })
+        for name, by_configuration in found.items():
+            for config, entries in by_configuration.items():
+                response.append({
+                    'test': name,
+                    'configuration': Configuration.Encoder().default(config),
+                    'results': sorted(entries, key=lambda result: (result['uuid'], result['start_time'])),
+                })
         return jsonify(response)
 
     @query_as_kwargs()
     @limit_for_query(DEFAULT_LIMIT)
-    def list_tests(self, suite=None, test=None, flaky=None, limit=None, **kwargs):
+    def list_tests(self, suite=None, prefixes=None, flaky=None, limit=None, **kwargs):
         """Names recorded in the EWS tables by any configuration & branch."""
         AssertRequest.is_type(['GET'])
         AssertRequest.query_kwargs_empty(**kwargs)
@@ -144,7 +155,7 @@ class EWSController(HasCommitContext):
         flaky = boolean_query(*flaky)[0] if flaky else False
 
         names = set()
-        for prefix in test or [None]:
+        for prefix in prefixes or [None]:
             if len(names) >= limit:
                 break
             names.update(self.ews_context.names(

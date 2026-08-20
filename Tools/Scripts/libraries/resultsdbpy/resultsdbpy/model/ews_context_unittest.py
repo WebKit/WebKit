@@ -58,10 +58,10 @@ class EWSContextTest(WaitForDockerTestCase):
                 )
 
     def _find(self, test, flaky=False):
-        return self.model.ews_context.find_for_test(
+        return self.model.ews_context.find_for_tests(
             configurations=[Configuration(platform='Mac', style='Release', flavor='wk1')],
-            suite='layout-tests', test=test, recent=True, flaky=flaky,
-        )
+            suite='layout-tests', tests=[test], recent=True, flaky=flaky,
+        ).get(test, {})
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
     def test_ttl_is_an_integer(self, redis=StrictRedis, cassandra=CassandraContext):
@@ -101,6 +101,81 @@ class EWSContextTest(WaitForDockerTestCase):
         for test, leaf in self.DEFAULT_TEST_RESULTS['results'].items():
             stored = list(self._find(test).values())[0][0]['result']
             self.assertEqual(stored, leaf)
+
+    @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
+    def test_several_tests_are_answered_in_one_call(self, redis=StrictRedis, cassandra=CassandraContext):
+        """Keyed by test name, so a caller asking about a batch can tell the answers apart."""
+        self.init_database(redis=redis, cassandra=cassandra)
+        reported = sorted(self.DEFAULT_TEST_RESULTS['results'])
+
+        found = self.model.ews_context.find_for_tests(
+            configurations=[Configuration(platform='Mac', style='Release', flavor='wk1')],
+            suite='layout-tests', tests=reported + ['fast/never/reported.html'],
+            recent=True, flaky=False,
+        )
+
+        # A test with nothing recorded is absent rather than present and empty.
+        self.assertEqual(sorted(found), reported)
+        for test in reported:
+            rows = [row for rows in found[test].values() for row in rows]
+            self.assertTrue(rows, test)
+            for row in rows:
+                self.assertEqual(row['result'], self.DEFAULT_TEST_RESULTS['results'][test])
+
+    @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
+    def test_the_limit_is_spent_per_test_rather_than_shared(self, redis=StrictRedis, cassandra=CassandraContext):
+        """Shared across the batch, the limit would be spent on whichever test was queried first and
+        every later test would come back empty. It bounds each test and configuration separately."""
+        base = int(time.time())
+        self.init_database(redis=redis, cassandra=cassandra, timestamps=[base - 3600, base])
+        reported = sorted(self.DEFAULT_TEST_RESULTS['results'])
+        self.assertGreater(len(reported), 1)
+
+        def rows_per_configuration(limit):
+            found = self.model.ews_context.find_for_tests(
+                configurations=[Configuration(platform='Mac', style='Release', flavor='wk1')],
+                suite='layout-tests', tests=reported, recent=True, flaky=False, limit=limit,
+            )
+            self.assertEqual(sorted(found), reported)
+            return {test: sorted(len(rows) for rows in by_configuration.values()) for test, by_configuration in found.items()}
+
+        # Every test has more rows than the limit will allow, so a limit that is ignored would show.
+        unlimited = rows_per_configuration(100)
+        for test, counts in unlimited.items():
+            self.assertTrue(counts, test)
+            self.assertTrue(all(count > 1 for count in counts), f'{test}: {counts}')
+
+        limited = rows_per_configuration(1)
+        for test, counts in limited.items():
+            self.assertEqual(counts, [1] * len(unlimited[test]), test)
+
+    @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
+    def test_the_configurations_are_expanded_once_for_the_batch(self, redis=StrictRedis, cassandra=CassandraContext):
+        """EWS never queries with a complete configuration, so every read has to expand a partial one
+        against redis. That expansion does not depend on the test, so a batch must only pay it once."""
+        self.init_database(redis=redis, cassandra=cassandra)
+        reported = sorted(self.DEFAULT_TEST_RESULTS['results'])
+        self.assertGreater(len(reported), 1)
+
+        expansions = []
+        configuration_context = self.model.ews_context.configuration_context
+        original = configuration_context.search_for_recent_configuration
+
+        def record(configuration, **kwargs):
+            expansions.append(configuration)
+            return original(configuration, **kwargs)
+
+        try:
+            configuration_context.search_for_recent_configuration = record
+            found = self.model.ews_context.find_for_tests(
+                configurations=[Configuration(platform='Mac', style='Release', flavor='wk1')],
+                suite='layout-tests', tests=reported, recent=True, flaky=False,
+            )
+        finally:
+            del configuration_context.search_for_recent_configuration
+
+        self.assertEqual(sorted(found), reported)
+        self.assertEqual(len(expansions), 1)
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
     def test_metadata_stored(self, redis=StrictRedis, cassandra=CassandraContext):
@@ -172,11 +247,11 @@ class EWSContextTest(WaitForDockerTestCase):
         self.init_database(redis=redis, cassandra=cassandra, timestamps=[recent, day_old, old])
 
         def start_times_within(cutoff):
-            results = self.model.ews_context.find_for_test(
+            results = self.model.ews_context.find_for_tests(
                 configurations=[Configuration(platform='Mac', style='Release', flavor='wk1')],
-                suite='layout-tests', test=self.REGRESSION_TEST, flaky=False, recent=False,
+                suite='layout-tests', tests=[self.REGRESSION_TEST], flaky=False, recent=False,
                 begin_query_time=cutoff,
-            )
+            ).get(self.REGRESSION_TEST, {})
             return {row['start_time'] for rows in results.values() for row in rows}
 
         self.assertEqual(start_times_within(now - 24 * HOUR), {recent})
