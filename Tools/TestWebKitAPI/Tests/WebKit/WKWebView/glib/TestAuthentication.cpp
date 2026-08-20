@@ -29,6 +29,7 @@ static const char authTestPassword[] = "password";
 static const char authExpectedSuccessTitle[] = "WebKit2Gtk+ Authentication test";
 static const char authExpectedFailureTitle[] = "401 Authorization Required";
 static const char authExpectedAuthorization[] = "Basic dXNlcm5hbWU6cGFzc3dvcmQ="; // Base64 encoding of "username:password".
+static const char authPageAuthorization[] = "Bearer page-token"; // Authorization header set by the page itself.
 static const char authSuccessHTMLString[] =
     "<html>"
     "<head><title>WebKit2Gtk+ Authentication test</title></head>"
@@ -326,6 +327,30 @@ static void testWebViewAuthenticationSuccess(AuthenticationTest* test, gconstpoi
     g_assert_true(test->m_authenticationSucceededReceived);
 }
 
+static void testWebViewAuthenticationPageProvidedAuthorizationHeader(AuthenticationTest* test, gconstpointer)
+{
+    // Authenticate once, so that the credentials end up in the auth cache for the whole domain.
+    test->loadURI(kServer->getURIForPath("/auth-test.html").data());
+    WebKitAuthenticationRequest* request = test->waitForAuthenticationRequest();
+    WebKitCredential* credential = webkit_credential_new(authTestUsername, authTestPassword, WEBKIT_CREDENTIAL_PERSISTENCE_FOR_SESSION);
+    webkit_authentication_request_authenticate(request, credential);
+    webkit_credential_free(credential);
+    test->waitUntilTitleChanged();
+    g_assert_cmpstr(webkit_web_view_get_title(test->webView()), ==, authExpectedSuccessTitle);
+    g_assert_true(test->m_authenticationSucceededReceived);
+
+    // A request that carries its own Authorization header must be sent as-is, even though the
+    // cached credentials would otherwise be used for this domain.
+    GUniqueOutPtr<GError> error;
+    auto* value = test->runAsyncJavaScriptFunctionInWorldAndWaitUntilFinished(
+        "const response = await fetch('echo-authorization', { headers: { 'Authorization': 'Bearer page-token' } });"
+        "return await response.text();", nullptr, nullptr, &error.outPtr());
+    g_assert_no_error(error.get());
+    g_assert_nonnull(value);
+    GUniquePtr<char> authorization(WebViewTest::javascriptResultToCString(value));
+    g_assert_cmpstr(authorization.get(), ==, authPageAuthorization);
+}
+
 static void testWebViewAuthenticationEmptyRealm(AuthenticationTest* test, gconstpointer)
 {
     test->loadURI(kServer->getURIForPath("/empty-realm.html").data());
@@ -439,6 +464,10 @@ static void serverCallback(SoupServer* server, SoupServerMessage* message, const
             soup_server_message_set_status(message, isProxy ? SOUP_STATUS_PROXY_AUTHENTICATION_REQUIRED : SOUP_STATUS_UNAUTHORIZED, nullptr);
             soup_message_body_append(responseBody, SOUP_MEMORY_STATIC, authFailureHTMLString, strlen(authFailureHTMLString));
         }
+    } else if (g_str_has_suffix(path, "/echo-authorization")) {
+        const char* authorization = soup_message_headers_get_one(soup_server_message_get_request_headers(message), "Authorization");
+        soup_server_message_set_status(message, SOUP_STATUS_OK, nullptr);
+        soup_message_body_append(responseBody, SOUP_MEMORY_COPY, authorization ? authorization : "", authorization ? strlen(authorization) : 0);
     } else
         soup_server_message_set_status(message, SOUP_STATUS_NOT_FOUND, nullptr);
 
@@ -531,6 +560,7 @@ void beforeAll()
     EphemeralAuthenticationTest::add("Authentication", "authentication-ephemeral", testWebViewAuthenticationEphemeral);
     AuthenticationTest::add("Authentication", "authentication-storage", testWebViewAuthenticationStorage);
     AuthenticationTest::add("Authentication", "authentication-empty-realm", testWebViewAuthenticationEmptyRealm);
+    AuthenticationTest::add("Authentication", "authentication-page-provided-authorization-header", testWebViewAuthenticationPageProvidedAuthorizationHeader);
     ProxyAuthenticationTest::add("Authentication", "authentication-proxy", testWebViewAuthenticationProxy);
     ProxyAuthenticationTest::add("Authentication", "authentication-proxy-https", testWebViewAuthenticationProxyHTTPS);
 }
