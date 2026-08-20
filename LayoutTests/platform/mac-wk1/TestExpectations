@@ -527,3 +527,37 @@ webarchive/doctype.html [ Pass ]
 fast/repaint/align-content-center-in-composited-layer.html [ Skip ]
 fast/repaint/layer-repaint-with-layout-delta-1.html [ Skip ]
 fast/repaint/layer-repaint-with-layout-delta-2.html [ Skip ]
+
+# rdar://182904432 ([macOS 27 wk1] 2 loader/navigation-policy/should-open-external-urls/user-gesture tests are constant TEXT failures)
+[ GoldenGate ] loader/navigation-policy/should-open-external-urls/user-gesture-target-blank-without-flag.html [ Skip ]
+[ GoldenGate ] loader/navigation-policy/should-open-external-urls/user-gesture-window-open-with-flag.html [ Skip ]
+
+# rdar://182926094 ([macOS 27 wk1] 18 fast/text-extraction tests fail (TEXT): the platform/mac [ GoldenGate ] entry overrides fast [ Skip ] on wk1)
+# WebKit1 (DumpRenderTree) lacks the text-extraction debug API; these WKTR-only tests emit empty output on wk1.
+[ GoldenGate ] fast/text-extraction/debug-text-extraction-basic.html [ Skip ]
+[ GoldenGate ] fast/text-extraction/basic-text-extraction.html [ Skip ]
+[ GoldenGate ] fast/text-extraction/debug-text-extraction-all-container-uids.html [ Skip ]
+[ GoldenGate ] fast/text-extraction/debug-text-extraction-highlight-text.html [ Skip ]
+[ GoldenGate ] fast/text-extraction/debug-text-extraction-form-controls-2.html [ Skip ]
+[ GoldenGate ] fast/text-extraction/debug-text-extraction-ignore-autofilled-fields.html [ Skip ]
+[ GoldenGate ] fast/text-extraction/debug-text-extraction-markdown.html [ Skip ]
+[ GoldenGate ] fast/text-extraction/debug-text-extraction-form-controls.html [ Skip ]
+[ GoldenGate ] fast/text-extraction/debug-text-extraction-sanitization.html [ Skip ]
+[ GoldenGate ] fast/text-extraction/debug-text-extraction-interactions.html [ Skip ]
+[ GoldenGate ] fast/text-extraction/debug-text-extraction-markup.html [ Skip ]
+[ GoldenGate ] fast/text-extraction/debug-text-extraction-offscreen-button.html [ Skip ]
+[ GoldenGate ] fast/text-extraction/text-extraction-display-contents.html [ Skip ]
+[ GoldenGate ] fast/text-extraction/debug-text-extraction-scrolling.html [ Skip ]
+[ GoldenGate ] fast/text-extraction/text-extraction-when-scrolled.html [ Skip ]
+[ GoldenGate ] fast/text-extraction/debug-text-extraction-shorten-urls.html [ Skip ]
+[ GoldenGate ] fast/text-extraction/debug-text-extraction-select-options.html [ Skip ]
+[ GoldenGate ] http/tests/text-extraction/debug-text-extraction-subframes.html [ Skip ]
+
+# rdar://182926094 - 2 media/modern-media-controls/tracks-support tests CRASH on WebKit1 only
+# (they pass on WebKit2); the flavor-agnostic platform/mac [ GoldenGate ] entry re-enables them on wk1 where they crash.
+[ GoldenGate ] media/modern-media-controls/tracks-support/auto-text-track.html [ Skip ]
+[ GoldenGate ] media/modern-media-controls/tracks-support/sorted-by-user-preferred-languages.html [ Skip ]
+
+# rdar://183069235 ([macOS 27 wk1] fast/dom/HTMLElement/attr-dir-invalid.html: the platform/mac [ GoldenGate ] entry overrides fast [ Skip ] on wk1)
+# Keep it skipped on wk1 (OS skips all of fast/ on WebKit1); the entry is for WebKit2.
+[ GoldenGate ] fast/dom/HTMLElement/attr-dir-invalid.html [ Skip ]

@@ -279,7 +279,6 @@ http/tests/misc/bubble-drag-events.html
 http/tests/security/drag-drop-same-unique-origin.html
 http/tests/security/drag-over-remote-content-iframe.html
 
-
 # [WK2] [Mac] Spellcheck tests don't seem to work
 webkit.org/b/105616 editing/spelling/context-menu-suggestions-multiword-selection.html
 webkit.org/b/105616 editing/spelling/context-menu-suggestions-subword-selection.html
@@ -359,7 +358,6 @@ webkit.org/b/90156 editing/mac/spelling/autocorrection-blockquote-crash.html [ F
 
 webkit.org/b/95043 http/tests/security/local-user-CSS-from-remote.html [ Failure ]
 
-
 # These tests test the Shadow DOM based HTML form validation UI but Mac WK2 is using native dialogs instead.
 fast/forms/validation-message-on-listbox.html
 fast/forms/validation-message-on-menulist.html
@@ -403,7 +401,6 @@ webgl/2.0.y/conformance/textures/video/tex-2d-rgb-rgb-unsigned_short_5_6_5.html 
 webgl/2.0.y/conformance/textures/video/tex-2d-rgba-rgba-unsigned_byte.html [ Skip ]
 webgl/2.0.y/conformance/textures/video/tex-2d-rgba-rgba-unsigned_short_4_4_4_4.html [ Skip ]
 webgl/2.0.y/conformance/textures/video/tex-2d-rgba-rgba-unsigned_short_5_5_5_1.html [ Skip ]
-
 
 # fast/events/controlclick-no-onclick.html fails or times out on Mac WK2
 webkit.org/b/105948 fast/events/controlclick-no-onclick.html [ Skip ]
@@ -467,7 +464,6 @@ imported/w3c/web-platform-tests/css/css-transforms/transform3d-preserve3d-001.ht
 ### END OF (1) Classified failures with bug reports
 ########################################
 
-
 ########################################
 ### START OF (2) Classified failures without bug reports (yet)
 
@@ -484,7 +480,6 @@ editing/spelling/spelling-insert-html.html [ Skip ]
 
 ### END OF (2) Classified failures without bug reports (yet)
 ########################################
-
 
 ########################################
 ### START OF (3) Unclassified failures
@@ -669,7 +664,6 @@ webkit.org/b/161633 [ Debug ] storage/indexeddb/objectstore-cursor.html [ Pass T
 
 webkit.org/b/161926 storage/indexeddb/index-cursor.html [ Pass Timeout ]
 
-
 webkit.org/b/162685  http/tests/cache/disk-cache/disk-cache-204-status-code.html [ Pass Failure ]
 
 webkit.org/b/161649 [ Debug ] http/tests/cache/disk-cache/resource-becomes-uncacheable.html [ Pass Failure ]
@@ -726,8 +720,8 @@ http/tests/storageAccess/grant-with-prompt-under-general-third-party-cookie-bloc
 [ Tahoe+ ] http/tests/resourceLoadStatistics/only-partitioned-cookies-after-redirect.https.html [ Pass ]
 [ Tahoe+ ] http/tests/resourceLoadStatistics/only-partitioned-cookies-after-redirect-fetch.https.html [ Pass ]
 [ Tahoe+ ] http/tests/cookies/multiple-cookies.https.html [ Pass ]
-[ Tahoe+ ] http/tests/cookies/multiple-cookies-iframes.https.html [ Pass Slow ]
-[ Tahoe+ ] http/tests/cookies/max-partitioned-cookies.https.html [ Pass ]
+[ Tahoe+ ] http/tests/cookies/multiple-cookies-iframes.https.html [ Pass Failure Slow ] # rdar://181856090
+[ Tahoe+ ] http/tests/cookies/max-partitioned-cookies.https.html [ Timeout ] # rdar://181722903
 [ Tahoe+ ] http/tests/cookies/accept-partitioned-first-and-third-party-cookies.https.html [ Pass ]
 [ Tahoe+ ] http/tests/clear-site-data/set-and-clear-cookies.https.html [ Pass ]
 [ Tahoe+ ] imported/w3c/web-platform-tests/cookies/partitioned-cookies/partitioned-cookies.tentative.https.html [ Pass ]
@@ -818,7 +812,6 @@ webkit.org/b/197207 http/wpt/resource-timing/rt-resources-per-frame.html [ Pass 
 webkit.org/b/197662 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-getStats.https.html [ Pass Failure ]
 
 imported/w3c/web-platform-tests/webrtc/RTCIceTransport.html [ Skip ]
-
 
 webkit.org/b/187828 [ Release ] fast/css-grid-layout/flex-content-sized-columns-resize.html [ Pass ImageOnlyFailure ]
 
@@ -987,7 +980,6 @@ webkit.org/b/222140 inspector/indexeddb/clearObjectStore.html [ Pass Failure Tim
 
 webkit.org/b/222209 inspector/debugger/async-stack-trace-basic.html [ Pass Timeout ]
 
-
 webkit.org/b/222365 inspector/dom/attributeModified.html [ Pass Timeout ]
 
 webkit.org/b/307572 [ Debug arm64 ] http/tests/inspector/dom/didFireEvent.html [ Pass Timeout ]
@@ -1096,7 +1088,7 @@ webkit.org/b/228210 [ Debug ] inspector/model/remote-object/iterator-large.html 
 
 webkit.org/b/228591 fast/scrolling/mac/programmatic-scroll-overrides-rubberband.html [ Pass Failure ]
 
-#rdar://82043074 ([Star wk2 Debug arm64,Sky/AzulE wk2 Guard-Malloc] imported/w3c/web-platform-tests/xhr/xhr-timeout-longtask.any.html is a flaky failure)
+#rdar://82043074 ([ Monterey wk2 Debug arm64, iOS 15 / iOS 14 wk2 Guard-Malloc ] imported/w3c/web-platform-tests/xhr/xhr-timeout-longtask.any.html is a flaky failure)
 imported/w3c/web-platform-tests/xhr/xhr-timeout-longtask.any.html [ Pass Failure ]
 
 webkit.org/b/229561 http/tests/navigation/page-cache-video.html [ Pass Failure ]
@@ -1439,7 +1431,6 @@ http/tests/webgpu/webgpu/shader/execution/expression/call/builtin/mix.html [ Pas
 http/tests/webgpu/webgpu/shader/execution/expression/call/builtin/subgroupMinMax.html [ Timeout ]
 http/tests/webgpu/webgpu/shader/execution/expression/binary/af_matrix_matrix_multiplication.html [ Timeout ]
 
-
 [ Debug ] http/tests/webgpu/webgpu/shader/execution/expression/binary/f16_matrix_matrix_multiplication.html [ Pass Timeout ]
 [ Debug ] http/tests/webgpu/webgpu/shader/execution/expression/call/builtin/faceForward.html [ Pass Timeout ]
 [ Debug ] http/tests/webgpu/webgpu/shader/execution/expression/call/builtin/fwidth.html [ Pass Timeout ]
@@ -1504,7 +1495,6 @@ http/tests/webgpu/webgpu/api/validation/buffer/mapping.html [ Pass ]
 [ Release Sequoia+ ] http/tests/webgpu/webgpu/api/operation/render_pipeline/sample_mask.html [ Pass Slow ]
 [ Release Sequoia+ ] http/tests/webgpu/webgpu/api/validation/image_copy/texture_related.html [ Pass Slow ]
 [ Release arm64 Sequoia+ ] http/tests/webgpu/webgpu/api/validation/state/device_lost/destroy.html [ Pass Slow ]
-
 
 http/tests/webgpu/webgpu/api/validation/queue/buffer_mapped.html [ Pass ]
 http/tests/webgpu/webgpu/api/validation/queue/submit.html [ Pass ]
@@ -1672,7 +1662,7 @@ webkit.org/b/232282 fast/scrolling/mac/scrollbars/overlay-scrollbar-hovered.html
 
 webkit.org/b/286693 [ Sequoia Debug arm64 ] media/video-canvas-createPattern.html [ Pass Failure ]
 
-webkit.org/b/286653 [ Sequoia ] pdf/images/jpeg2000-embed-pdf.html [ Pass Failure ]
+webkit.org/b/286653 [ Sequoia+ ] pdf/images/jpeg2000-embed-pdf.html [ Pass Failure ImageOnlyFailure ] # rdar://162399080
 
 webkit.org/b/287122 imported/w3c/web-platform-tests/html/capability-delegation/delegate-fullscreen-request-subframe-same-origin.https.tentative.html [ Pass Failure ]
 
@@ -1904,7 +1894,7 @@ webkit.org/b/296297 fast/images/image-map-outline-with-paint-root-offset.html [ 
 
 webkit.org/b/296344 imported/w3c/web-platform-tests/webrtc/RTCRtpSender-replaceTrack.https.html [ Pass Failure ]
 
-webkit.org/b/296348 [ Sequoia ] http/tests/cache/disk-cache/shattered-deduplication.html [ Pass Failure ] 
+webkit.org/b/296348 [ Sequoia GoldenGate ] http/tests/cache/disk-cache/shattered-deduplication.html [ Pass Failure ImageOnlyFailure ] # rdar://182144718
 
 webkit.org/b/295746 webanimations/no-scheduling-while-filling-accelerated.html [ Pass Failure ]
 
@@ -2272,7 +2262,7 @@ webkit.org/b/315618 [ Release ] imported/w3c/web-platform-tests/resize-observer/
 imported/w3c/web-platform-tests/dom/nodes/moveBefore/style-applies.html [ Skip ]
 imported/w3c/web-platform-tests/dom/nodes/moveBefore/throws-exception.html [ Skip ]
 
-webkit.org/b/315242 [ Tahoe x86_64 ] fast/forms/select/mac-wk2/inactive-appearance.html [ ImageOnlyFailure ]
+webkit.org/b/315242 [ Tahoe+ ] fast/forms/select/mac-wk2/inactive-appearance.html [ Pass ImageOnlyFailure ] # rdar://162584530
 
 webkit.org/b/315246 [ Tahoe x86_64 ] http/tests/resourceLoadStatistics/website-data-removal-for-site-navigated-to-with-filtered-link-decoration-after-long-deletion.html [ Pass Failure ]
 
@@ -2441,7 +2431,6 @@ webkit.org/b/320326 imported/w3c/web-platform-tests/css/css-highlight-api/painti
 
 webkit.org/b/321103 [ Debug ] imported/w3c/web-platform-tests/uievents/textInput/enter-textarea-contenteditable.html [ Pass Failure ]
 
-
 webkit.org/b/321185 [ Debug ] imported/w3c/web-platform-tests/wasm/core/float_exprs.wast.js.html [ Pass Timeout ]
 
 webkit.org/b/321191 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-event.https.h2.html [ Pass Crash Failure ]
@@ -2466,3 +2455,25 @@ imported/w3c/web-platform-tests/webtransport/idlharness.https.sub.any.sharedwork
 imported/w3c/web-platform-tests/webtransport/idlharness.https.sub.any.worker.html [ Failure ]
 
 webkit.org/b/322051 [ Release ] media/picture-in-picture/picture-in-picture-interruption.html [ Pass Failure ]
+
+# rdar://181715555 (REGRESSION(26A343b): [macOS 27] webrtc/h265.html is a constant TIMEOUT)
+[ GoldenGate ] webrtc/h265.html [ Timeout ]
+
+# rdar://183487942 ([macOS 27] fast/inline/blocks-in-inline-ax-invalid.html is a flaky test failure)
+[ GoldenGate ] fast/inline/blocks-in-inline-ax-invalid.html [ Pass ImageOnlyFailure ]
+
+# rdar://162316605 fast/forms/input-appearance-spinbutton-up.html is a constant text failure
+[ Tahoe+ ] fast/forms/input-appearance-spinbutton-up.html [ Failure ]
+
+# rdar://162324754 media/modern-media-controls/volume-support/volume-support-drag-to-mute.html is a constant timeout
+[ Tahoe+ ] media/modern-media-controls/volume-support/volume-support-drag-to-mute.html [ Timeout ]
+
+# rdar://162398509 [ macOS 26 ] media/track/track-css-visible-stroke.html is a constant image failure
+[ Tahoe+ Release ] media/track/track-css-visible-stroke.html [ ImageOnlyFailure ]
+
+# rdar://162402260 [ macOS 26 Release ] media/modern-media-controls/css/visibility-hidden.html is a constant image failure
+[ Tahoe+ Release ] media/modern-media-controls/css/visibility-hidden.html [ ImageOnlyFailure ]
+
+# rdar://172228955 (REGRESSION (macOS 26?): [macOS 26 and later] Two http/tests/storageAccess/request-and-grant-access-cross-origin-sandboxed tests are a consistent failure)
+[ Tahoe+ ] http/tests/storageAccess/request-and-grant-access-cross-origin-sandboxed-iframe-from-prevalent-domain-with-user-interaction-and-access-from-right-frame.https.html [ Failure ]
+[ Tahoe+ ] http/tests/storageAccess/request-and-grant-access-cross-origin-sandboxed-iframe-from-prevalent-domain-with-user-interaction-but-access-from-wrong-frame.https.html [ Failure ]

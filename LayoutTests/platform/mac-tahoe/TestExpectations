@@ -1,0 +1,23 @@
+### DO NOT PUT ANYTHING ABOVE THIS LINE
+###
+### NOTICE: Unless you know that the issue for which you're setting expectations specifically only occurs on macOS 26,
+### you should probably use the platform/mac/TestExpectations file, NOT this one.
+###
+### macOS supports version specifiers, so prefer [ Tahoe ] or [ Tahoe+ ] in
+### platform/mac/TestExpectations over adding entries here. This directory is primarily
+### for baselines which differ between macOS 26 and macOS 27.
+###
+
+# -- The below has different, expected behavior on macOS 27 than macOS 26 --
+# -- Please put new failure expectations at the bottom of the file. --
+
+# -- The above has different, expected behavior on macOS 27 than macOS 26 --
+# -- New failure expectations below this point only!! --
+
+
+
+
+###
+### NOTICE: Unless you know that the issue for which you're setting expectations specifically only occurs on macOS 26,
+### you should probably use the platform/mac/TestExpectations file, NOT this one.
+###
