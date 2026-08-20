@@ -1,0 +1,5 @@
+
+
+FAIL Hit-testing doesn't reach contents of an inert iframe assert_array_equals: wrapper got all events lengths differ, expected array ["mousedown", "mouseenter", "mousemove", "mouseover", "pointerdown", "pointerenter", "pointermove", "pointerover"] length 8, got [] length 0
+FAIL Hit-testing can reach contents of a no longer inert iframe assert_array_equals: target got all events lengths differ, expected array ["mousedown", "mouseenter", "mousemove", "mouseover", "pointerdown", "pointerenter", "pointermove", "pointerover"] length 8, got [] length 0
+

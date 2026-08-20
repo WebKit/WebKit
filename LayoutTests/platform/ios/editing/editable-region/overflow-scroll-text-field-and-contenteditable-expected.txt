@@ -10,9 +10,20 @@
       (backgroundColor #FFFFFF)
       (event region
         (rect (0,0) width=800 height=600)
+      (touch event listener region: asynchronousDispatchRegion:
+        (rect (9,201) width=285 height=285)
+eventSpecificSynchronousDispatchRegions: eventName: touchstart eventRect:
+        (rect (9,201) width=285 height=285)
+eventSpecificSynchronousDispatchRegions: eventName: touchend eventRect:
+        (rect (9,201) width=285 height=285)
+eventSpecificSynchronousDispatchRegions: eventName: touchmove eventRect:
+        (rect (9,201) width=285 height=285)
+eventSpecificSynchronousDispatchRegions: eventName: touchforcechange eventRect:
+        (rect (9,201) width=285 height=285)
+
       (editable region
-        (rect (9,202) width=154 height=19)
-        (rect (19,446) width=275 height=40)
+        (rect (9,202) width=154 height=21)
+        (rect (19,447) width=275 height=39)
       )
       )
     )

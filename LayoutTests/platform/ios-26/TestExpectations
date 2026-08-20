@@ -1,0 +1,19 @@
+### DO NOT PUT ANYTHING ABOVE THIS LINE
+###
+### NOTICE: Unless you know that the issue for which you're setting expectations specifically only occurs on iOS 26,
+### you should probably use the platform/ios/TestExpectations file, NOT this one.
+###
+
+# -- The below has different, expected behavior on iOS 27 than iOS 26 --
+# -- Please put new failure expectations at the bottom of the file. --
+
+# -- The above has different, expected behavior on iOS 27 than iOS 26 --
+# -- New failure expectations below this point only!! --
+
+
+
+
+###
+### NOTICE: Unless you know that the issue for which you're setting expectations specifically only occurs on iOS 26,
+### you should probably use the platform/ios/TestExpectations file, NOT this one.
+###

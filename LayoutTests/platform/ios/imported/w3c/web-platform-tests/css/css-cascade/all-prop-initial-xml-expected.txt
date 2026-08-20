@@ -8,7 +8,6 @@ PASS align-items
 PASS align-self
 PASS alignment-baseline
 PASS anchor-name
-PASS anchor-scope
 PASS animation-composition
 PASS animation-delay
 PASS animation-direction
@@ -17,8 +16,6 @@ PASS animation-fill-mode
 PASS animation-iteration-count
 PASS animation-name
 PASS animation-play-state
-PASS animation-range-end
-PASS animation-range-start
 PASS animation-timeline
 PASS animation-timing-function
 PASS appearance
@@ -36,11 +33,8 @@ PASS background-position-y
 PASS background-repeat
 PASS background-size
 PASS baseline-shift
-PASS block-ellipsis
 PASS block-size
-PASS block-step-align
 PASS block-step-insert
-PASS block-step-round
 PASS block-step-size
 PASS border-block-end-color
 PASS border-block-end-style
@@ -114,15 +108,6 @@ PASS container-name
 PASS container-type
 PASS content
 PASS content-visibility
-PASS continue
-PASS corner-bottom-left-shape
-PASS corner-bottom-right-shape
-PASS corner-end-end-shape
-PASS corner-end-start-shape
-PASS corner-start-end-shape
-PASS corner-start-start-shape
-PASS corner-top-left-shape
-PASS corner-top-right-shape
 PASS counter-increment
 PASS counter-reset
 PASS counter-set
@@ -133,7 +118,6 @@ PASS d
 PASS direction
 PASS display
 PASS dominant-baseline
-PASS dynamic-range-limit
 PASS empty-cells
 PASS field-sizing
 PASS fill
@@ -155,6 +139,7 @@ PASS font-optical-sizing
 PASS font-palette
 PASS font-size
 PASS font-size-adjust
+PASS font-stretch
 PASS font-style
 PASS font-synthesis-small-caps
 PASS font-synthesis-style
@@ -168,7 +153,7 @@ PASS font-variant-numeric
 PASS font-variant-position
 PASS font-variation-settings
 PASS font-weight
-PASS font-width
+PASS glyph-orientation-horizontal
 PASS glyph-orientation-vertical
 PASS grid-auto-columns
 PASS grid-auto-flow
@@ -196,6 +181,7 @@ PASS isolation
 PASS justify-content
 PASS justify-items
 PASS justify-self
+PASS kerning
 PASS left
 PASS letter-spacing
 PASS lighting-color
@@ -229,13 +215,11 @@ PASS mask-origin
 PASS mask-repeat
 PASS mask-size
 PASS mask-type
-PASS math-depth
-PASS math-shift
+PASS masonry-auto-flow
 PASS math-style
 PASS max-block-size
 PASS max-height
 PASS max-inline-size
-PASS max-lines
 PASS max-width
 PASS min-block-size
 PASS min-height
@@ -244,7 +228,6 @@ PASS min-width
 PASS mix-blend-mode
 PASS object-fit
 PASS object-position
-PASS object-view-box
 PASS offset-anchor
 PASS offset-distance
 PASS offset-path
@@ -258,8 +241,6 @@ PASS outline-offset
 PASS outline-style
 PASS outline-width
 PASS overflow-anchor
-PASS overflow-block
-PASS overflow-inline
 PASS overflow-wrap
 PASS overflow-x
 PASS overflow-y
@@ -281,10 +262,6 @@ PASS perspective-origin
 PASS pointer-events
 PASS position
 PASS position-anchor
-PASS position-area
-PASS position-try-fallbacks
-PASS position-try-order
-PASS position-visibility
 PASS print-color-adjust
 PASS quotes
 PASS r
@@ -292,9 +269,6 @@ PASS resize
 PASS right
 PASS rotate
 PASS row-gap
-PASS ruby-align
-PASS ruby-overhang
-PASS ruby-position
 PASS rx
 PASS ry
 PASS scale
@@ -369,7 +343,6 @@ PASS text-underline-offset
 PASS text-underline-position
 PASS text-wrap-mode
 PASS text-wrap-style
-PASS timeline-scope
 PASS top
 PASS touch-action
 PASS transform
@@ -388,7 +361,6 @@ PASS vertical-align
 PASS view-timeline-axis
 PASS view-timeline-inset
 PASS view-timeline-name
-PASS view-transition-class
 PASS view-transition-name
 PASS visibility
 PASS white-space-collapse
@@ -404,6 +376,9 @@ PASS z-index
 PASS zoom
 PASS -apple-pay-button-style
 PASS -apple-pay-button-type
+PASS -webkit-backdrop-filter
+PASS -webkit-background-clip
+PASS -webkit-background-origin
 PASS -webkit-border-horizontal-spacing
 PASS -webkit-border-vertical-spacing
 PASS -webkit-box-align
@@ -416,6 +391,7 @@ PASS -webkit-box-ordinal-group
 PASS -webkit-box-orient
 PASS -webkit-box-pack
 PASS -webkit-box-reflect
+PASS -webkit-box-shadow
 PASS -webkit-column-axis
 PASS -webkit-column-progression
 PASS -webkit-cursor-visibility
@@ -430,10 +406,17 @@ PASS -webkit-line-clamp
 PASS -webkit-line-grid
 PASS -webkit-line-snap
 PASS -webkit-locale
+PASS -webkit-mask-clip
+PASS -webkit-mask-composite
 PASS -webkit-mask-position-x
 PASS -webkit-mask-position-y
+PASS -webkit-mask-source-type
 PASS -webkit-nbsp-mode
+PASS -webkit-overflow-scrolling
 PASS -webkit-rtl-ordering
+PASS -webkit-ruby-position
+PASS -webkit-tap-highlight-color
+PASS -webkit-text-combine
 PASS -webkit-text-fill-color
 PASS -webkit-text-security
 PASS -webkit-text-stroke-color

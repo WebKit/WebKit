@@ -1,0 +1,73 @@
+
+(GraphicsLayer
+  (anchor 0.00 0.00)
+  (bounds 800.00 4112.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 4112.00)
+      (contentsOpaque 1)
+      (drawsContent 1)
+      (backgroundColor #FFFFFF)
+      (event region
+        (rect (0,0) width=800 height=4112)
+      )
+      (children 1
+        (GraphicsLayer
+          (position 8.00 8.00)
+          (bounds 304.00 304.00)
+          (drawsContent 1)
+          (children 1
+            (GraphicsLayer
+              (position 2.00 2.00)
+              (children 1
+                (GraphicsLayer
+                  (bounds origin 0.00 200.00)
+                  (anchor 0.00 0.00)
+                  (bounds 300.00 300.00)
+                  (children 1
+                    (GraphicsLayer
+                      (anchor 0.00 0.00)
+                      (children 1
+                        (GraphicsLayer
+                          (anchor 0.00 0.00)
+                          (bounds 310.00 670.00)
+                          (children 1
+                            (GraphicsLayer
+                              (bounds 310.00 670.00)
+                              (drawsContent 1)
+                              (event region
+                                (rect (0,0) width=310 height=670)
+                              (touch event listener region: asynchronousDispatchRegion:
+                                (rect (9,361) width=285 height=285)
+eventSpecificSynchronousDispatchRegions: eventName: touchstart eventRect:
+                                (rect (9,361) width=285 height=285)
+eventSpecificSynchronousDispatchRegions: eventName: touchend eventRect:
+                                (rect (9,361) width=285 height=285)
+eventSpecificSynchronousDispatchRegions: eventName: touchmove eventRect:
+                                (rect (9,361) width=285 height=285)
+eventSpecificSynchronousDispatchRegions: eventName: touchforcechange eventRect:
+                                (rect (9,361) width=285 height=285)
+
+                              )
+                              (children 1
+                                (GraphicsLayer
+                                  (anchor 0.00 0.00)
+                                  (bounds 310.00 670.00)
+                                )
+                              )
+                            )
+                          )
+                        )
+                      )
+                    )
+                  )
+                )
+              )
+            )
+          )
+        )
+      )
+    )
+  )
+)
+

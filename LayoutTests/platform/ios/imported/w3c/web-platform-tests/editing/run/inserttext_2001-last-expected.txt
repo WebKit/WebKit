@@ -355,7 +355,7 @@ PASS [["inserttext","a"]] "foo<s>[bar</s>baz]" queryCommandState("inserttext") a
 PASS [["inserttext","a"]] "foo<s>[bar</s>baz]" queryCommandValue("inserttext") after
 PASS [["inserttext","a"]] "foo<sub>[bar</sub>baz]": execCommand("inserttext", false, "a") return value
 PASS [["inserttext","a"]] "foo<sub>[bar</sub>baz]" checks for modifications to non-editable content
-FAIL [["inserttext","a"]] "foo<sub>[bar</sub>baz]" compare innerHTML assert_equals: Unexpected innerHTML (after normalizing inline style) expected "foo<sub>a</sub>" but got "foo<font size=\"2\"><span style=\"font-size:13.333333px\">a</span></font>"
+FAIL [["inserttext","a"]] "foo<sub>[bar</sub>baz]" compare innerHTML assert_equals: Unexpected innerHTML (after normalizing inline style) expected "foo<sub>a</sub>" but got "foo<font size=\"2\">a</font>"
 PASS [["inserttext","a"]] "foo<sub>[bar</sub>baz]" queryCommandIndeterm("inserttext") before
 PASS [["inserttext","a"]] "foo<sub>[bar</sub>baz]" queryCommandState("inserttext") before
 PASS [["inserttext","a"]] "foo<sub>[bar</sub>baz]" queryCommandValue("inserttext") before
@@ -364,7 +364,7 @@ PASS [["inserttext","a"]] "foo<sub>[bar</sub>baz]" queryCommandState("inserttext
 PASS [["inserttext","a"]] "foo<sub>[bar</sub>baz]" queryCommandValue("inserttext") after
 PASS [["inserttext","a"]] "foo<sup>[bar</sup>baz]": execCommand("inserttext", false, "a") return value
 PASS [["inserttext","a"]] "foo<sup>[bar</sup>baz]" checks for modifications to non-editable content
-FAIL [["inserttext","a"]] "foo<sup>[bar</sup>baz]" compare innerHTML assert_equals: Unexpected innerHTML (after normalizing inline style) expected "foo<sup>a</sup>" but got "foo<font size=\"2\"><span style=\"font-size:13.333333px\">a</span></font>"
+FAIL [["inserttext","a"]] "foo<sup>[bar</sup>baz]" compare innerHTML assert_equals: Unexpected innerHTML (after normalizing inline style) expected "foo<sup>a</sup>" but got "foo<font size=\"2\">a</font>"
 PASS [["inserttext","a"]] "foo<sup>[bar</sup>baz]" queryCommandIndeterm("inserttext") before
 PASS [["inserttext","a"]] "foo<sup>[bar</sup>baz]" queryCommandState("inserttext") before
 PASS [["inserttext","a"]] "foo<sup>[bar</sup>baz]" queryCommandValue("inserttext") before
@@ -499,7 +499,7 @@ PASS [["inserttext","a"]] "foo<sub><font size=2>[bar</font></sub>baz]" queryComm
 PASS [["inserttext","a"]] "foo<sub><font size=2>[bar</font></sub>baz]" queryCommandValue("inserttext") after
 PASS [["inserttext","a"]] "foo<font size=2><sub>[bar</sub></font>baz]": execCommand("inserttext", false, "a") return value
 PASS [["inserttext","a"]] "foo<font size=2><sub>[bar</sub></font>baz]" checks for modifications to non-editable content
-FAIL [["inserttext","a"]] "foo<font size=2><sub>[bar</sub></font>baz]" compare innerHTML assert_equals: Unexpected innerHTML (after normalizing inline style) expected "foo<font size=\"2\"><sub>a</sub></font>" but got "foo<font size=\"1\"><span style=\"font-size:10.833333px\">a</span></font>"
+FAIL [["inserttext","a"]] "foo<font size=2><sub>[bar</sub></font>baz]" compare innerHTML assert_equals: Unexpected innerHTML (after normalizing inline style) expected "foo<font size=\"2\"><sub>a</sub></font>" but got "foo<font size=\"1\">a</font>"
 PASS [["inserttext","a"]] "foo<font size=2><sub>[bar</sub></font>baz]" queryCommandIndeterm("inserttext") before
 PASS [["inserttext","a"]] "foo<font size=2><sub>[bar</sub></font>baz]" queryCommandState("inserttext") before
 PASS [["inserttext","a"]] "foo<font size=2><sub>[bar</sub></font>baz]" queryCommandValue("inserttext") before
@@ -517,7 +517,7 @@ PASS [["inserttext","a"]] "foo<sub><font size=3>[bar</font></sub>baz]" queryComm
 PASS [["inserttext","a"]] "foo<sub><font size=3>[bar</font></sub>baz]" queryCommandValue("inserttext") after
 PASS [["inserttext","a"]] "foo<font size=3><sub>[bar</sub></font>baz]": execCommand("inserttext", false, "a") return value
 PASS [["inserttext","a"]] "foo<font size=3><sub>[bar</sub></font>baz]" checks for modifications to non-editable content
-FAIL [["inserttext","a"]] "foo<font size=3><sub>[bar</sub></font>baz]" compare innerHTML assert_equals: Unexpected innerHTML (after normalizing inline style) expected "foo<font size=\"3\"><sub>a</sub></font>" but got "foo<font size=\"2\"><span style=\"font-size:13.333333px\">a</span></font>"
+FAIL [["inserttext","a"]] "foo<font size=3><sub>[bar</sub></font>baz]" compare innerHTML assert_equals: Unexpected innerHTML (after normalizing inline style) expected "foo<font size=\"3\"><sub>a</sub></font>" but got "foo<font size=\"2\">a</font>"
 PASS [["inserttext","a"]] "foo<font size=3><sub>[bar</sub></font>baz]" queryCommandIndeterm("inserttext") before
 PASS [["inserttext","a"]] "foo<font size=3><sub>[bar</sub></font>baz]" queryCommandState("inserttext") before
 PASS [["inserttext","a"]] "foo<font size=3><sub>[bar</sub></font>baz]" queryCommandValue("inserttext") before

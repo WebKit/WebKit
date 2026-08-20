@@ -79,12 +79,14 @@ interaction-region [ Pass ]
 media/media-css-volume-locked.html [ Pass ]
 overlay-region [ Pass ]
 platform/visionos/transforms [ Pass ]
+fast/images/spatial-image-controls.html [ Pass ]
 fast/images/spatial-image-controls-rtl.html [ Pass ]
 
 http/tests/security/model-element [ Pass ]
 http/wpt/model-element [ Pass ]
 http/tests/security/model-element/model-element-crossorigin-allowed-with-all-access-header.html [ Slow ]
 model-element [ Pass ]
+model-element/immersive [ Pass ]
 model-element/model-element-animations-loop.html [ Slow ]
 model-element/model-element-lazy-loading-unloading.html [ Slow ]
 model-element/model-element-suspend-before-ready.html [ Slow ]
@@ -114,7 +116,6 @@ fast/forms/ios/inputmode-removing-none.html [ Skip ]
 fast/forms/ios/inputmode-change-update-keyboard.html [ Skip ]
 
 model-element/gpup [ Skip ]
-model-element/immersive [ Skip ]
 
 # WebXR - Missing modules.
 imported/w3c/web-platform-tests/webxr/anchors [ Skip ]
@@ -191,10 +192,6 @@ interaction-region/form-control-refresh/date-native-interaction-region.html [ Fa
 interaction-region/interaction-layers-culling.html [ Failure ]
 platform/visionos/transforms/separated-update.html [ Failure ]
 platform/visionos/transforms/separated-video.html [ Failure ]
-
-overlay-region/full-page-scrolling.html [ Failure ]
-overlay-region/overlay-element.html [ Failure ]
-overlay-region/sticky.html [ Failure ]
 
 ### END OF Triaged failures
 ###################################################################################################

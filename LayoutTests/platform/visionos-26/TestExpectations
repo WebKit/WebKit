@@ -1,0 +1,28 @@
+### DO NOT PUT ANYTHING ABOVE THIS LINE
+###
+### NOTICE: Unless you know that the issue for which you're setting expectations specifically only occurs on visionOS 26,
+### you should probably use the platform/visionos/TestExpectations file, NOT this one.
+###
+
+# -- The below has different, expected behavior on visionOS 27 than visionOS 26 --
+# -- Please put new failure expectations at the bottom of the file. --
+
+# Spatial image controls and immersive model-element are enabled starting in visionOS 27.
+fast/images/spatial-image-controls.html [ Skip ]
+model-element/immersive [ Skip ]
+
+# These pass on visionOS 27 against the visionOS 27 overlay-region baselines.
+overlay-region/full-page-scrolling.html [ Failure ]
+overlay-region/overlay-element.html [ Failure ]
+overlay-region/sticky.html [ Failure ]
+
+# -- The above has different, expected behavior on visionOS 27 than visionOS 26 --
+# -- New failure expectations below this point only!! --
+
+
+
+
+###
+### NOTICE: Unless you know that the issue for which you're setting expectations specifically only occurs on visionOS 26,
+### you should probably use the platform/visionos/TestExpectations file, NOT this one.
+###
