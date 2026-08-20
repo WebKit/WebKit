@@ -77,6 +77,11 @@ TestWebKitAPI.WebPageTransferableTests/exportToImage(type:) [ Skip ]
 [ iOS Debug ] TestWebKitAPI.IPCTestingAPI.LockdownModeDetection [ Failure ]
 [ iOS Debug ] TestWebKitAPI.IPCTestingAPI.LockdownModeDisabledAllowsWebGL [ Failure ]
 
+# webkit.org/b/322223 [ DEBUG ]REGRESSION(318495@main): 3x TestWebKitAPI.SiteIsolation.BrowsingContext*/CrossOriginPopup* (api-tests) is a constant crash.
+[ debug ] TestWebKitAPI.SiteIsolation.BrowsingContextGroupSwitchForIncompatibleCrossOriginOpenerPolicy [ Crash ]
+[ debug ] TestWebKitAPI.SiteIsolation.CrossOriginPopupWithCOOPValueSameOrigin [ Crash ]
+[ debug ] TestWebKitAPI.SiteIsolation.CrossOriginPopupWithOpenerCOOPValueSameOrigin [ Crash ]
+
 # webkit.org/b/318742 [ iOS DEBUG ] 3x TestWebKitAPI.WKWebExtensionAPICookies.* (api-tests) are constant crashes/timeout.
 [ iOS Debug ] TestWebKitAPI.WKWebExtensionAPICookies.GetAllAfterNetworkProcessTermination [ Timeout ]
 [ iOS Debug ] TestWebKitAPI.WKWebExtensionAPICookies.RemoveCookie [ Crash ]
