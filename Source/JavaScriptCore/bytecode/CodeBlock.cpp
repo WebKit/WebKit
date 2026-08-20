@@ -313,9 +313,7 @@ CodeBlock::CodeBlock(VM& vm, Structure* structure, CopyParsedBlockTag, CodeBlock
     , m_vm(other.m_vm)
     , m_instructionsRawPointer(other.m_instructionsRawPointer)
     , m_metadata(other.m_metadata)
-    , m_constantRegisters(other.m_constantRegisters)
-    , m_functionDecls(other.m_functionDecls)
-    , m_functionExprs(other.m_functionExprs)
+    , m_constants(other.m_constants)
     , m_creationTime(ApproximateTime::now())
 #if ASSERT_ENABLED
     , m_magic(CODEBLOCK_MAGIC)
@@ -410,34 +408,30 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
     // We wait to initialize template objects until the end of finishCreation beecause it can
     // throw. We rely on linking to put the CodeBlock into a coherent state, so we can't throw
     // until we're all done linking.
-    Vector<unsigned> templateObjectIndices = setConstantRegisters(unlinkedCodeBlock->constantRegisters(), unlinkedCodeBlock->constantsSourceCodeRepresentation());
+    m_constants = unlinkedCodeBlock->constantRegisters().span().data();
 
-    // We already have the cloned symbol table for the module environment since we need to instantiate
-    // the module environments before linking the code block. We replace the stored symbol table with the already cloned one.
+    // The module environment has to be instantiated before the code block is linked, so its symbol table
+    // was already cloned. Seed the memo with it so linkSymbolTable() below hands out that same clone.
     if (UnlinkedModuleProgramCodeBlock* unlinkedModuleProgramCodeBlock = dynamicDowncast<UnlinkedModuleProgramCodeBlock>(unlinkedCodeBlock)) {
         SymbolTable* clonedSymbolTable = uncheckedDowncast<ModuleProgramExecutable>(ownerExecutable)->moduleEnvironmentSymbolTable();
         if (m_unlinkedCode->wasCompiledWithTypeProfilerOpcodes()) {
             ConcurrentJSLocker locker(clonedSymbolTable->m_lock);
             clonedSymbolTable->prepareForTypeProfiling(locker);
         }
-        replaceConstant(VirtualRegister(unlinkedModuleProgramCodeBlock->moduleEnvironmentSymbolTableConstantRegisterOffset()), clonedSymbolTable);
+        SymbolTable* master = uncheckedDowncast<SymbolTable>(unlinkedCodeBlock->getConstant(VirtualRegister(unlinkedModuleProgramCodeBlock->moduleEnvironmentSymbolTableConstantRegisterOffset())).asCell());
+        m_globalObject->symbolTableCache().set(master, clonedSymbolTable);
     }
 
-    bool shouldUpdateFunctionHasExecutedCache = m_unlinkedCode->wasCompiledWithTypeProfilerOpcodes() || m_unlinkedCode->wasCompiledWithControlFlowProfilerOpcodes();
-    m_functionDecls = FixedVector<WriteBarrier<FunctionExecutable>>(unlinkedCodeBlock->numberOfFunctionDecls());
-    for (size_t count = unlinkedCodeBlock->numberOfFunctionDecls(), i = 0; i < count; ++i) {
-        UnlinkedFunctionExecutable* unlinkedExecutable = unlinkedCodeBlock->functionDecl(i);
-        if (shouldUpdateFunctionHasExecutedCache)
-            vm.functionHasExecutedCache()->insertUnexecutedRange(ownerExecutable->sourceID(), unlinkedExecutable->unlinkedFunctionStart(), unlinkedExecutable->unlinkedFunctionEnd());
-        m_functionDecls[i].set(vm, this, unlinkedExecutable->link(vm, topLevelExecutable, ownerExecutable->source(), std::nullopt, NoIntrinsic, ownerExecutable->isInsideOrdinaryFunction()));
-    }
-
-    m_functionExprs = FixedVector<WriteBarrier<FunctionExecutable>>(unlinkedCodeBlock->numberOfFunctionExprs());
-    for (size_t count = unlinkedCodeBlock->numberOfFunctionExprs(), i = 0; i < count; ++i) {
-        UnlinkedFunctionExecutable* unlinkedExecutable = unlinkedCodeBlock->functionExpr(i);
-        if (shouldUpdateFunctionHasExecutedCache)
-            vm.functionHasExecutedCache()->insertUnexecutedRange(ownerExecutable->sourceID(), unlinkedExecutable->unlinkedFunctionStart(), unlinkedExecutable->unlinkedFunctionEnd());
-        m_functionExprs[i].set(vm, this, unlinkedExecutable->link(vm, topLevelExecutable, ownerExecutable->source(), std::nullopt, NoIntrinsic, ownerExecutable->isInsideOrdinaryFunction()));
+    // FunctionExecutables themselves are linked lazily into the metadata of the op_new_func that names
+    // them. This covers every unlinked entry instead, including declarations that exist only to be
+    // hoisted by Interpreter::executeEval and are named by no instruction.
+    if (m_unlinkedCode->wasCompiledWithTypeProfilerOpcodes() || m_unlinkedCode->wasCompiledWithControlFlowProfilerOpcodes()) {
+        auto insertUnexecutedRanges = [&](std::span<const WriteBarrier<UnlinkedFunctionExecutable>> executables) {
+            for (auto& unlinkedExecutable : executables)
+                vm.functionHasExecutedCache()->insertUnexecutedRange(ownerExecutable->sourceID(), unlinkedExecutable->unlinkedFunctionStart(), unlinkedExecutable->unlinkedFunctionEnd());
+        };
+        insertUnexecutedRanges(unlinkedCodeBlock->functionDecls());
+        insertUnexecutedRanges(unlinkedCodeBlock->functionExprs());
     }
 
     if (unlinkedCodeBlock->numberOfExceptionHandlers()) {
@@ -458,15 +452,40 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
         }
     }
 
-    // Bookkeep the strongly referenced module environments.
-    UncheckedKeyHashSet<JSModuleEnvironment*> stronglyReferencedModuleEnvironments;
-
     auto link_objectAllocationProfile = [&](const auto& /*instruction*/, auto bytecode, auto& metadata) {
         metadata.m_objectAllocationProfile.initializeProfile(vm, m_globalObject.get(), this, m_globalObject->objectPrototype(), bytecode.m_inlineCapacity);
     };
 
     auto link_arrayAllocationProfile = [&](const auto& /*instruction*/, auto bytecode, auto& metadata) {
         metadata.m_arrayAllocationProfile.initializeIndexingMode(bytecode.m_recommendedIndexingType);
+    };
+
+    auto link_immutableButterfly = [&](const auto& /*instruction*/, auto bytecode, auto& metadata) {
+        metadata.m_immutableButterfly.set(vm, this, uncheckedDowncast<JSCellButterfly>(unlinkedCodeBlock->getConstant(bytecode.m_immutableButterfly).asCell()));
+    };
+
+    auto link_specialPointer = [&](const auto& /*instruction*/, auto bytecode, auto& metadata) {
+        metadata.m_specialPointer.set(vm, this, m_globalObject->linkTimeConstant(bytecode.m_specialPointer));
+    };
+
+    auto link_constant = [&](const auto& /*instruction*/, auto bytecode, auto& metadata) {
+        metadata.m_constant.set(vm, this, m_globalObject->linkTimeConstant(bytecode.m_linkTimeConstant));
+    };
+
+    auto link_symbolTable = [&](const auto& /*instruction*/, auto bytecode, auto& metadata) {
+        metadata.m_symbolTable.set(vm, this, linkSymbolTable(bytecode.m_symbolTable));
+    };
+
+    auto link_functionExecutable = [&](const auto& /*instruction*/, auto bytecode, auto& metadata) {
+        using Bytecode = decltype(bytecode);
+        constexpr bool isExpression = Bytecode::opcodeID == op_new_func_exp
+            || Bytecode::opcodeID == op_new_generator_func_exp
+            || Bytecode::opcodeID == op_new_async_func_exp
+            || Bytecode::opcodeID == op_new_async_generator_func_exp;
+        UnlinkedFunctionExecutable* unlinkedExecutable = isExpression
+            ? unlinkedCodeBlock->functionExpr(bytecode.m_functionDecl)
+            : unlinkedCodeBlock->functionDecl(bytecode.m_functionDecl);
+        metadata.m_functionExecutable.set(vm, this, unlinkedExecutable->link(vm, topLevelExecutable, ownerExecutable->source(), std::nullopt, NoIntrinsic, ownerExecutable->isInsideOrdinaryFunction()));
     };
 
     auto link_callLinkInfo = [&](const auto& instruction, auto bytecode, auto& metadata) {
@@ -527,7 +546,7 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
 
         LINK(OpNewArray)
         LINK(OpNewArrayWithSize)
-        LINK(OpNewArrayBuffer, arrayAllocationProfile)
+        LINK(OpNewArrayBuffer, arrayAllocationProfile, immutableButterfly)
 
         LINK(OpNewObject, objectAllocationProfile)
 
@@ -536,7 +555,19 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
         LINK(OpCreatePromise)
         LINK(OpCreateGenerator)
 
-        LINK(OpJneqPtr)
+        LINK(OpJneqPtr, specialPointer)
+        LINK(OpJeqPtr, specialPointer)
+        LINK(OpGetLinkTimeConstant, constant)
+        LINK(OpCreateLexicalEnvironment, symbolTable)
+        LINK(OpCreateGeneratorFrameEnvironment, symbolTable)
+        LINK(OpNewFunc, functionExecutable)
+        LINK(OpNewFuncExp, functionExecutable)
+        LINK(OpNewGeneratorFunc, functionExecutable)
+        LINK(OpNewGeneratorFuncExp, functionExecutable)
+        LINK(OpNewAsyncFunc, functionExecutable)
+        LINK(OpNewAsyncFuncExp, functionExecutable)
+        LINK(OpNewAsyncGeneratorFunc, functionExecutable)
+        LINK(OpNewAsyncGeneratorFuncExp, functionExecutable)
 
         LINK(OpCatch)
         LINK(OpProfileControlFlow)
@@ -572,12 +603,9 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
             metadata.m_resolveType = op.type;
             metadata.m_localScopeDepth = op.depth;
             if (op.lexicalEnvironment) {
-                if (op.type == ModuleVar) {
-                    // Keep the linked module environment strongly referenced.
-                    if (stronglyReferencedModuleEnvironments.add(uncheckedDowncast<JSModuleEnvironment>(op.lexicalEnvironment)).isNewEntry)
-                        addConstant(ConcurrentJSLocker(m_lock), op.lexicalEnvironment);
+                if (op.type == ModuleVar)
                     metadata.m_lexicalEnvironment.set(vm, this, op.lexicalEnvironment);
-                } else
+                else
                     metadata.m_symbolTable.set(vm, this, op.lexicalEnvironment->symbolTable());
             } else if (JSScope* constantScope = JSScope::constantScopeForCodeBlock(op.type, this)) {
                 metadata.m_constantScope.set(vm, this, constantScope);
@@ -619,7 +647,8 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
             if (bytecode.m_getPutInfo.resolveType() == ResolvedClosureVar) {
                 // Only do watching if the property we're putting to is not anonymous.
                 if (bytecode.m_var != UINT_MAX) {
-                    SymbolTable* symbolTable = uncheckedDowncast<SymbolTable>(getConstant(bytecode.m_symbolTableOrScopeDepth.symbolTable()));
+                    SymbolTable* symbolTable = linkSymbolTable(bytecode.m_symbolTableOrScopeDepth.symbolTable());
+                    metadata.m_symbolTable.set(vm, this, symbolTable);
                     const Identifier& ident = identifier(bytecode.m_var);
                     ConcurrentJSLocker locker(symbolTable->m_lock);
                     auto iter = symbolTable->find(locker, ident.impl());
@@ -690,7 +719,7 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
                 break;
             }
             case ProfileTypeBytecodeLocallyResolved: {
-                SymbolTable* symbolTable = uncheckedDowncast<SymbolTable>(getConstant(bytecode.m_symbolTableOrScopeDepth.symbolTable()));
+                SymbolTable* symbolTable = linkSymbolTable(bytecode.m_symbolTableOrScopeDepth.symbolTable());
                 const Identifier& ident = identifier(bytecode.m_identifier);
                 ConcurrentJSLocker locker(symbolTable->m_lock);
                 // If our parent scope was created while profiling was disabled, it will not have prepared for profiling yet.
@@ -769,7 +798,7 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
     if (m_metadata)
         vm.heap.reportExtraMemoryAllocated(this, m_metadata->sizeInBytesForGC());
 
-    initializeTemplateObjects(topLevelExecutable, templateObjectIndices);
+    initializeTemplateObjects(topLevelExecutable);
     RETURN_IF_EXCEPTION(throwScope, false);
 
     return true;
@@ -801,7 +830,7 @@ void CodeBlock::setupWithUnlinkedBaselineCode(Ref<BaselineJITCode> jitCode)
 
     {
         ASSERT(!m_jitData);
-        auto baselineJITData = BaselineJITData::create(jitCode->m_unlinkedPropertyInlineCaches.size(), jitCode->m_constantPool.size(), this);
+        auto baselineJITData = BaselineJITData::create(jitCode->m_unlinkedPropertyInlineCaches.size(), this);
 
         for (unsigned index = 0; index < jitCode->m_unlinkedPropertyInlineCaches.size(); ++index) {
             BaselineUnlinkedPropertyInlineCache& unlinkedPropertyCache = jitCode->m_unlinkedPropertyInlineCaches[index];
@@ -809,21 +838,6 @@ void CodeBlock::setupWithUnlinkedBaselineCode(Ref<BaselineJITCode> jitCode)
             propertyCache.initializeFromUnlinkedPropertyInlineCache(vm(), this, unlinkedPropertyCache);
         }
 
-        for (size_t i = 0; i < jitCode->m_constantPool.size(); ++i) {
-            auto entry = jitCode->m_constantPool.at(i);
-            switch (entry.type()) {
-            case JITConstantPool::Type::FunctionDecl: {
-                unsigned index = std::bit_cast<uintptr_t>(entry.pointer());
-                baselineJITData->trailingSpan()[i] = functionDecl(index);
-                break;
-            }
-            case JITConstantPool::Type::FunctionExpr: {
-                unsigned index = std::bit_cast<uintptr_t>(entry.pointer());
-                baselineJITData->trailingSpan()[i] = functionExpr(index);
-                break;
-            }
-            }
-        }
         setBaselineJITData(WTF::move(baselineJITData));
 
         // Set optimization thresholds only after instructions is initialized and JITData is initialized, since these
@@ -1020,100 +1034,56 @@ CodeBlock::~CodeBlock()
     }
 }
 
-bool CodeBlock::isConstantOwnedByUnlinkedCodeBlock(VirtualRegister reg) const
-{
-    // This needs to correspond to what we do inside setConstantRegisters.
-    switch (unlinkedCodeBlock()->constantSourceCodeRepresentation(reg)) {
-    case SourceCodeRepresentation::Integer:
-    case SourceCodeRepresentation::Double:
-        return true;
-    case SourceCodeRepresentation::Other: {
-        JSValue value = unlinkedCodeBlock()->getConstant(reg);
-        if (!value || !value.isCell())
-            return true;
-        JSCell* cell = value.asCell();
-        if (cell->inherits<SymbolTable>() || cell->inherits<JSTemplateObjectDescriptor>())
-            return false;
-        return true;
-    }
-    case SourceCodeRepresentation::LinkTimeConstant:
-        return false;
-    default:
-        RELEASE_ASSERT_NOT_REACHED();
-    }
-}
-
-Vector<unsigned> CodeBlock::setConstantRegisters(const FixedVector<WriteBarrier<Unknown>>& constants, const FixedVector<SourceCodeRepresentation>& constantsSourceCodeRepresentation)
+// The constant pool holds the master SymbolTable, shared by every realm. Scopes need a per-realm clone,
+// memoized on the global object so that all CodeBlocks of a realm agree: constant watchpointing depends
+// on there being exactly one clone, otherwise a jettison caused by a changed constant could leave a
+// stale-but-valid watchpoint on a different clone.
+SymbolTable* CodeBlock::linkSymbolTable(SymbolTable* master)
 {
     VM& vm = *m_vm;
     JSGlobalObject* globalObject = m_globalObject.get();
 
-    Vector<unsigned> templateObjectIndices;
-
-    ASSERT(constants.size() == constantsSourceCodeRepresentation.size());
-    size_t count = constants.size();
-    {
-        ConcurrentJSLocker locker(m_lock);
-        m_constantRegisters.resizeToFit(count);
-    }
-    for (size_t i = 0; i < count; i++) {
-        JSValue constant = constants[i].get();
-        SourceCodeRepresentation representation = constantsSourceCodeRepresentation[i];
-        switch (representation) {
-        case SourceCodeRepresentation::LinkTimeConstant:
-            constant = globalObject->linkTimeConstant(static_cast<LinkTimeConstant>(constant.asInt32AsAnyInt()));
-            ASSERT(constant.isCell()); // Unlinked Baseline JIT requires this.
-            break;
-        case SourceCodeRepresentation::Other:
-        case SourceCodeRepresentation::Integer:
-        case SourceCodeRepresentation::Double:
-            if (!constant.isEmpty()) {
-                if (constant.isCell()) {
-                    JSCell* cell = constant.asCell();
-                    if (SymbolTable* symbolTable = dynamicDowncast<SymbolTable>(cell)) {
-                        if (m_unlinkedCode->wasCompiledWithTypeProfilerOpcodes()) {
-                            ConcurrentJSLocker locker(symbolTable->m_lock);
-                            symbolTable->prepareForTypeProfiling(locker);
-                        }
-
-                        // We have to make sure to use a single code block for constant watchpointing.
-                        // If we didn't then we could jettison a compilation because that constant changed
-                        // but invalidate the clone. Then the next compilation would see the original
-                        // watchpoint intact and assume the value is still the original constant.
-                        SymbolTable* clone = globalObject->symbolTableCache().get(symbolTable);
-                        if (!clone) {
-                            // For non-builtin code, link the clone's singleton watchpoint to the master
-                            // SymbolTable held inside the UnlinkedCodeBlock so that all per-realm clones
-                            // share one InferredValue. This avoids re-firing the singleton watchpoint
-                            // independently in every realm (e.g. on navigation) for the same code.
-                            auto propagateCloneInvalidationToOriginal = m_unlinkedCode->isBuiltinFunction() ? SymbolTable::PropagateCloneInvalidationToOriginal::No : SymbolTable::PropagateCloneInvalidationToOriginal::Yes;
-                            clone = symbolTable->cloneScopePart(vm, propagateCloneInvalidationToOriginal);
-                            globalObject->symbolTableCache().set(symbolTable, clone);
-                        }
-                        if (wasCompiledWithDebuggingOpcodes())
-                            clone->collectDebuggerInfo(this);
-
-                        constant = clone;
-                    } else if (is<JSTemplateObjectDescriptor>(cell))
-                        templateObjectIndices.append(i);
-                }
-            }
-            break;
-        }
-        m_constantRegisters[i].set(vm, this, constant);
+    if (m_unlinkedCode->wasCompiledWithTypeProfilerOpcodes()) {
+        ConcurrentJSLocker locker(master->m_lock);
+        master->prepareForTypeProfiling(locker);
     }
 
-    return templateObjectIndices;
+    SymbolTable* clone = globalObject->symbolTableCache().get(master);
+    if (!clone) {
+        // For non-builtin code, link the clone's singleton watchpoint to the master SymbolTable held
+        // inside the UnlinkedCodeBlock so that all per-realm clones share one InferredValue. This avoids
+        // re-firing the singleton watchpoint independently in every realm (e.g. on navigation) for the
+        // same code.
+        auto propagateCloneInvalidationToOriginal = m_unlinkedCode->isBuiltinFunction() ? SymbolTable::PropagateCloneInvalidationToOriginal::No : SymbolTable::PropagateCloneInvalidationToOriginal::Yes;
+        clone = master->cloneScopePart(vm, propagateCloneInvalidationToOriginal);
+        globalObject->symbolTableCache().set(master, clone);
+    }
+    if (wasCompiledWithDebuggingOpcodes())
+        clone->collectDebuggerInfo(this);
+
+    return clone;
 }
 
-void CodeBlock::initializeTemplateObjects(ScriptExecutable* topLevelExecutable, const Vector<unsigned>& templateObjectIndices)
+SymbolTable* CodeBlock::linkSymbolTable(VirtualRegister masterConstant)
 {
+    return linkSymbolTable(uncheckedDowncast<SymbolTable>(m_unlinkedCode->getConstant(masterConstant).asCell()));
+}
+
+void CodeBlock::initializeTemplateObjects(ScriptExecutable* topLevelExecutable)
+{
+    if (!m_metadata)
+        return;
+
     auto scope = DECLARE_THROW_SCOPE(vm());
-    for (unsigned i : templateObjectIndices) {
-        auto* descriptor = uncheckedDowncast<JSTemplateObjectDescriptor>(m_constantRegisters[i].get());
+    const auto& instructionStream = instructions();
+    for (const auto& instruction : instructionStream) {
+        if (!instruction->is<OpGetTemplateObject>())
+            continue;
+        auto bytecode = instruction->as<OpGetTemplateObject>();
+        auto* descriptor = uncheckedDowncast<JSTemplateObjectDescriptor>(m_unlinkedCode->getConstant(bytecode.m_descriptor).asCell());
         auto* templateObject = topLevelExecutable->createTemplateObject(globalObject(), descriptor);
         RETURN_IF_EXCEPTION(scope, void());
-        m_constantRegisters[i].set(vm(), this, templateObject);
+        bytecode.metadata(this).m_templateObject.set(vm(), this, templateObject);
     }
 }
 
@@ -1955,14 +1925,59 @@ void CodeBlock::stronglyVisitStrongReferences(const ConcurrentJSLocker& locker, 
     visitor.append(m_unlinkedCode);
     if (m_rareData)
         m_rareData->m_directEvalCodeCache.visitAggregate(visitor);
-    visitor.appendValues(m_constantRegisters.span().data(), m_constantRegisters.size());
-    for (auto& functionExpr : m_functionExprs)
-        visitor.append(functionExpr);
-    for (auto& functionDecl : m_functionDecls)
-        visitor.append(functionDecl);
     forEachObjectAllocationProfile([&](ObjectAllocationProfile& objectAllocationProfile) {
         objectAllocationProfile.visitAggregate(visitor);
     });
+    if (m_metadata) {
+        // Unlike OpResolveScope's m_symbolTable, this is the only reference to the module environment,
+        // so it cannot be treated as weak and cleared when dead.
+        m_metadata->forEach<OpResolveScope>([&](auto& metadata) {
+            if (metadata.m_resolveType == ModuleVar)
+                visitor.append(metadata.m_lexicalEnvironment);
+        });
+        m_metadata->forEach<OpNewArrayBuffer>([&](auto& metadata) {
+            visitor.append(metadata.m_immutableButterfly);
+        });
+        // The per-realm SymbolTable clones are memoized in a WeakGCMap, so these are the only strong
+        // references keeping them alive, and OpPutToScope's m_watchpointSet points into one of them.
+        m_metadata->forEach<OpCreateLexicalEnvironment>([&](auto& metadata) {
+            visitor.append(metadata.m_symbolTable);
+        });
+        m_metadata->forEach<OpCreateGeneratorFrameEnvironment>([&](auto& metadata) {
+            visitor.append(metadata.m_symbolTable);
+        });
+        m_metadata->forEach<OpPutToScope>([&](auto& metadata) {
+            visitor.append(metadata.m_symbolTable);
+        });
+        // The top level executable's TemplateObjectMap already keeps these alive, but this CodeBlock
+        // reaches that map only indirectly, so mark them here rather than rely on it.
+        m_metadata->forEach<OpGetTemplateObject>([&](auto& metadata) {
+            visitor.append(metadata.m_templateObject);
+        });
+        auto visitFunctionExecutable = [&](auto& metadata) {
+            visitor.append(metadata.m_functionExecutable);
+        };
+        m_metadata->forEach<OpNewFunc>(visitFunctionExecutable);
+        m_metadata->forEach<OpNewFuncExp>(visitFunctionExecutable);
+        m_metadata->forEach<OpNewGeneratorFunc>(visitFunctionExecutable);
+        m_metadata->forEach<OpNewGeneratorFuncExp>(visitFunctionExecutable);
+        m_metadata->forEach<OpNewAsyncFunc>(visitFunctionExecutable);
+        m_metadata->forEach<OpNewAsyncFuncExp>(visitFunctionExecutable);
+        m_metadata->forEach<OpNewAsyncGeneratorFunc>(visitFunctionExecutable);
+        m_metadata->forEach<OpNewAsyncGeneratorFuncExp>(visitFunctionExecutable);
+        // A link time constant is owned by the global object, which this CodeBlock references strongly,
+        // so in principle these need no marking. Mark them anyway: the cost is one scan of metadata that
+        // already exists, and relying on a second owner for a raw cached cell is not worth the risk.
+        m_metadata->forEach<OpGetLinkTimeConstant>([&](auto& metadata) {
+            visitor.append(metadata.m_constant);
+        });
+        m_metadata->forEach<OpJeqPtr>([&](auto& metadata) {
+            visitor.append(metadata.m_specialPointer);
+        });
+        m_metadata->forEach<OpJneqPtr>([&](auto& metadata) {
+            visitor.append(metadata.m_specialPointer);
+        });
+    }
 
 #if ENABLE(JIT)
     forEachPropertyInlineCache([&](PropertyInlineCache& propertyCache) {
@@ -1976,6 +1991,8 @@ void CodeBlock::stronglyVisitStrongReferences(const ConcurrentJSLocker& locker, 
             statuses->visitAggregate(visitor);
         for (auto& cache : dfgCommon->m_concatKeyAtomStringCaches)
             cache->visitAggregate(visitor);
+        for (auto& strongReference : dfgCommon->m_strongReferences)
+            visitor.append(strongReference);
         visitOSRExitTargets(locker, visitor);
 #endif
     }
@@ -2206,12 +2223,6 @@ bool CodeBlock::hasOpDebugForLineAndColumn(unsigned line, std::optional<unsigned
         }
     }
     return false;
-}
-
-void CodeBlock::shrinkToFit(const ConcurrentJSLocker&, ShrinkMode shrinkMode)
-{
-    UNUSED_PARAM(shrinkMode);
-    m_constantRegisters.shrinkToFit();
 }
 
 void CodeBlock::linkIncomingCall(JSCell* caller, CallLinkInfoBase* incoming)
@@ -3344,7 +3355,7 @@ size_t CodeBlock::predictedMachineCodeSize()
 
 String CodeBlock::nameForRegister(VirtualRegister virtualRegister)
 {
-    for (auto& constantRegister : m_constantRegisters) {
+    for (auto& constantRegister : m_unlinkedCode->constantRegisters()) {
         if (constantRegister.get().isEmpty())
             continue;
         if (SymbolTable* symbolTable = dynamicDowncast<SymbolTable>(constantRegister.get())) {
@@ -3621,18 +3632,17 @@ void CodeBlock::insertBasicBlockBoundariesForControlFlowProfiler()
         // This is necessary because in the original source text of a JavaScript program, 
         // function literals form new basic blocks boundaries, but they aren't represented 
         // inside the CodeBlock's instruction stream.
-        auto insertFunctionGaps = [basicBlockLocation, basicBlockStartOffset, basicBlockEndOffset] (const WriteBarrier<FunctionExecutable>& functionExecutable) {
-            const UnlinkedFunctionExecutable* executable = functionExecutable->unlinkedExecutable();
-            int functionStart = executable->unlinkedFunctionStart();
-            int functionEnd = executable->unlinkedFunctionEnd();
-            if (functionStart >= basicBlockStartOffset && functionEnd <= basicBlockEndOffset)
-                basicBlockLocation->insertGap(functionStart, functionEnd);
+        auto insertFunctionGaps = [basicBlockLocation, basicBlockStartOffset, basicBlockEndOffset] (std::span<const WriteBarrier<UnlinkedFunctionExecutable>> executables) {
+            for (auto& executable : executables) {
+                int functionStart = executable->unlinkedFunctionStart();
+                int functionEnd = executable->unlinkedFunctionEnd();
+                if (functionStart >= basicBlockStartOffset && functionEnd <= basicBlockEndOffset)
+                    basicBlockLocation->insertGap(functionStart, functionEnd);
+            }
         };
 
-        for (const WriteBarrier<FunctionExecutable>& executable : m_functionDecls)
-            insertFunctionGaps(executable);
-        for (const WriteBarrier<FunctionExecutable>& executable : m_functionExprs)
-            insertFunctionGaps(executable);
+        insertFunctionGaps(m_unlinkedCode->functionDecls());
+        insertFunctionGaps(m_unlinkedCode->functionExprs());
 
         metadata.m_basicBlockLocation = basicBlockLocation;
     }

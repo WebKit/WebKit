@@ -63,6 +63,7 @@ bool JITFinalizer::finalize()
 
     CodeBlock* codeBlock = m_plan.codeBlock();
 
+    m_plan.installStrongReferences(&m_jitCode->common);
     codeBlock->setJITCode(m_jitCode.copyRef());
 
     auto data = m_plan.tryFinalizeJITData(m_jitCode.get());

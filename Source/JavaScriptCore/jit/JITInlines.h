@@ -37,16 +37,12 @@ ALWAYS_INLINE bool JIT::isOperandConstantDouble(VirtualRegister src)
 {
     if (!src.isConstant())
         return false;
-    if (m_unlinkedCodeBlock->constantSourceCodeRepresentation(src) == SourceCodeRepresentation::LinkTimeConstant)
-        return false;
     return getConstantOperand(src).isDouble();
 }
 
 ALWAYS_INLINE bool JIT::isOperandConstantInt(VirtualRegister src)
 {
     if (!src.isConstant())
-        return false;
-    if (m_unlinkedCodeBlock->constantSourceCodeRepresentation(src) == SourceCodeRepresentation::LinkTimeConstant)
         return false;
     return getConstantOperand(src).isInt32();
 }
@@ -55,17 +51,12 @@ ALWAYS_INLINE bool JIT::isKnownCell(VirtualRegister src)
 {
     if (!src.isConstant())
         return false;
-    if (m_unlinkedCodeBlock->constantSourceCodeRepresentation(src) == SourceCodeRepresentation::LinkTimeConstant) {
-        // All link time constants are cells.
-        return true;
-    }
     return getConstantOperand(src).isCell();
 }
 
 ALWAYS_INLINE JSValue JIT::getConstantOperand(VirtualRegister src)
 {
     ASSERT(src.isConstant());
-    RELEASE_ASSERT(m_unlinkedCodeBlock->constantSourceCodeRepresentation(src) != SourceCodeRepresentation::LinkTimeConstant);
     return m_unlinkedCodeBlock->getConstant(src);
 }
 
@@ -303,8 +294,6 @@ ALWAYS_INLINE bool JIT::isOperandConstantChar(VirtualRegister src)
 {
     if (!src.isConstant())
         return false;
-    if (m_unlinkedCodeBlock->constantSourceCodeRepresentation(src) == SourceCodeRepresentation::LinkTimeConstant)
-        return false;
     return getConstantOperand(src).isString() && asString(getConstantOperand(src).asCell())->length() == 1;
 }
 
@@ -361,10 +350,7 @@ ALWAYS_INLINE void JIT::emitGetVirtualRegister(VirtualRegister src, JSValueRegs 
 {
     ASSERT(m_bytecodeIndex); // This method should only be called during hot/cold path generation, so that m_bytecodeIndex is set.
     if (src.isConstant()) {
-        if (m_profiledCodeBlock->isConstantOwnedByUnlinkedCodeBlock(src))
-            moveValue(m_unlinkedCodeBlock->getConstant(src), dst);
-        else
-            loadCodeBlockConstant(src, dst);
+        moveValue(m_unlinkedCodeBlock->getConstant(src), dst);
         return;
     }
     loadValue(addressFor(src), dst);
@@ -543,19 +529,10 @@ ALWAYS_INLINE void JIT::materializePointerIntoMetadata(const Bytecode& bytecode,
     addPtr(TrustedImm32(m_profiledCodeBlock->metadataTable()->offsetInMetadataTable(bytecode) + offset), GPRInfo::metadataTableRegister, result);
 }
 
-ALWAYS_INLINE void JIT::loadConstant(CCallHelpers& jit, JITConstantPool::Constant constantIndex, GPRReg result)
-{
-    jit.loadPtr(Address(GPRInfo::jitDataRegister, BaselineJITData::offsetOfTrailingData() + static_cast<uintptr_t>(constantIndex) * sizeof(void*)), result);
-}
 
 ALWAYS_INLINE void JIT::loadGlobalObject(CCallHelpers& jit, GPRReg result)
 {
     jit.loadPtr(Address(GPRInfo::jitDataRegister, BaselineJITData::offsetOfGlobalObject()), result);
-}
-
-ALWAYS_INLINE void JIT::loadConstant(JITConstantPool::Constant constantIndex, GPRReg result)
-{
-    loadConstant(*this, constantIndex, result);
 }
 
 ALWAYS_INLINE void JIT::loadGlobalObject(GPRReg result)
@@ -573,26 +550,6 @@ ALWAYS_INLINE void JIT::loadPropertyInlineCache(PropertyInlineCacheIndex index, 
     loadPropertyInlineCache(*this, index, result);
 }
 
-ALWAYS_INLINE static void loadAddrOfCodeBlockConstantBuffer(JIT &jit, GPRReg dst)
-{
-    jit.loadPtr(jit.addressFor(CallFrameSlot::codeBlock), dst);
-    jit.loadPtr(JIT::Address(dst, CodeBlock::offsetOfConstantsVectorBuffer()), dst);
-}
-
-ALWAYS_INLINE void JIT::loadCodeBlockConstant(VirtualRegister constant, JSValueRegs dst)
-{
-    RELEASE_ASSERT(constant.isConstant());
-    loadAddrOfCodeBlockConstantBuffer(*this, dst.payloadGPR());
-    loadValue(Address(dst.payloadGPR(), constant.toConstantIndex() * sizeof(Register)), dst);
-}
-
-ALWAYS_INLINE void JIT::loadCodeBlockConstantPayload(VirtualRegister constant, RegisterID dst)
-{
-    RELEASE_ASSERT(constant.isConstant());
-    loadAddrOfCodeBlockConstantBuffer(*this, dst);
-    Address address(dst, constant.toConstantIndex() * sizeof(Register));
-    load64(address, dst);
-}
 
 } // namespace JSC
 

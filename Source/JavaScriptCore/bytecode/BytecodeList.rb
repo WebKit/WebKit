@@ -32,6 +32,7 @@ types [
     :DebugHookType,
     :ECMAMode,
     :ErrorTypeWithExtension,
+    :FunctionExecutable,
     :EnumeratorMetadata,
     :GetByIdMode,
     :GetByIdModeMetadata,
@@ -39,6 +40,7 @@ types [
     :IndexingType,
     :IterationModeMetadata,
     :JSCell,
+    :JSCellButterfly,
     :JSGlobalLexicalEnvironment,
     :JSGlobalObject,
     :JSModuleEnvironment,
@@ -46,6 +48,7 @@ types [
     :JSScope,
     :JSType,
     :JSValue,
+    :LinkTimeConstant,
     :ResultType,
     :OperandTypes,
     :PrivateFieldPutKind,
@@ -405,6 +408,9 @@ op :new_array_buffer,
     },
     metadata: {
         arrayAllocationProfile: ArrayAllocationProfile,
+        # Starts out as the constant named by immutableButterfly, but is replaced by a re-typed copy
+        # once the allocation profile asks for an indexing type the constant does not have.
+        immutableButterfly: WriteBarrierBase[JSCellButterfly],
     }
 
 op :get_by_id,
@@ -578,6 +584,9 @@ op :put_to_scope,
             watchpointSet: WatchpointSet.*,
         },
         operand: uintptr_t,
+        # For ResolvedClosureVar, watchpointSet points into an entry of this SymbolTable, which is a
+        # per-realm clone held only here, so it cannot be reconstructed or treated as weak.
+        symbolTable: WriteBarrierBase[SymbolTable],
     },
     metadata_initializers: {
         getPutInfo: :getPutInfo,
@@ -639,6 +648,97 @@ op :get_private_name,
         structureID: StructureID,
         offset: unsigned,
         property: WriteBarrier[JSCell],
+    }
+
+# functionDecl indexes UnlinkedCodeBlock's decl list for the plain forms and its expr list for the _exp
+# forms. The metadata holds the FunctionExecutable linked from it, so CodeBlock needs no vector of them.
+op_group :NewFunction,
+    [
+        :new_func,
+        :new_func_exp,
+        :new_generator_func,
+        :new_generator_func_exp,
+        :new_async_func,
+        :new_async_func_exp,
+        :new_async_generator_func,
+        :new_async_generator_func_exp,
+    ],
+    args: {
+        dst: VirtualRegister,
+        scope: VirtualRegister,
+        functionDecl: unsigned,
+    },
+    metadata: {
+        functionExecutable: WriteBarrierBase[FunctionExecutable],
+    }
+
+# The templateObject metadata is the realm's JSArray for the tagged template site named by the
+# descriptor operand, which stays the shared JSTemplateObjectDescriptor in the constant pool.
+op :get_template_object,
+    args: {
+        dst: VirtualRegister,
+        descriptor: VirtualRegister,
+    },
+    metadata: {
+        templateObject: WriteBarrierBase[JSObject],
+    }
+
+# The symbolTable metadata is the per-realm clone of the SymbolTable named by the symbolTable operand,
+# which stays the shared master in the constant pool.
+op :create_lexical_environment,
+    args: {
+        dst: VirtualRegister,
+        scope: VirtualRegister,
+        symbolTable: VirtualRegister,
+        initialValue: VirtualRegister,
+    },
+    metadata: {
+        symbolTable: WriteBarrierBase[SymbolTable],
+    }
+
+op :create_generator_frame_environment,
+    args: {
+        dst: VirtualRegister,
+        scope: VirtualRegister,
+        symbolTable: VirtualRegister,
+        initialValue: VirtualRegister,
+    },
+    metadata: {
+        symbolTable: WriteBarrierBase[SymbolTable],
+    }
+
+# The metadata caches globalObject->linkTimeConstant(linkTimeConstant), which the shared Baseline JIT
+# code cannot embed because it differs per realm.
+op :get_link_time_constant,
+    args: {
+        dst: VirtualRegister,
+        linkTimeConstant: LinkTimeConstant,
+    },
+    metadata: {
+        constant: WriteBarrierBase[JSCell],
+    }
+
+# The specialPointer metadata caches globalObject->linkTimeConstant(specialPointer), which the shared
+# Baseline JIT code cannot embed because it differs per realm.
+op :jeq_ptr,
+    args: {
+        value: VirtualRegister,
+        specialPointer: LinkTimeConstant,
+        targetLabel: BoundLabel,
+    },
+    metadata: {
+        specialPointer: WriteBarrierBase[JSCell],
+    }
+
+op :jneq_ptr,
+    args: {
+        value: VirtualRegister,
+        specialPointer: LinkTimeConstant,
+        targetLabel: BoundLabel,
+    },
+    metadata: {
+        specialPointer: WriteBarrierBase[JSCell],
+        hasJumped: bool,
     }
 
 # Alignment: 4
@@ -792,17 +892,6 @@ op :get_by_id_direct,
     metadata: {
         structureID: StructureID,
         offset: unsigned,
-    }
-
-# Alignment: 1
-op :jneq_ptr,
-    args: {
-        value: VirtualRegister,
-        specialPointer: VirtualRegister,
-        targetLabel: BoundLabel,
-    },
-    metadata: {
-        hasJumped: bool,
     }
 
 # Opcodes without metadata are last
@@ -1007,13 +1096,6 @@ op :jnundefined_or_null,
         targetLabel: BoundLabel,
     }
 
-op :jeq_ptr,
-    args: {
-        value: VirtualRegister,
-        specialPointer: VirtualRegister,
-        targetLabel: BoundLabel,
-    }
-
 op_group :BinaryJmp,
     [
         :jeq,
@@ -1048,23 +1130,6 @@ op_group :SwitchValue,
     args: {
         tableIndex: unsigned,
         scrutinee: VirtualRegister,
-    }
-
-op_group :NewFunction,
-    [
-        :new_func,
-        :new_func_exp,
-        :new_generator_func,
-        :new_generator_func_exp,
-        :new_async_func,
-        :new_async_func_exp,
-        :new_async_generator_func,
-        :new_async_generator_func_exp,
-    ],
-    args: {
-        dst: VirtualRegister,
-        scope: VirtualRegister,
-        functionDecl: unsigned,
     }
 
 op :set_function_name,
@@ -1115,22 +1180,6 @@ op :push_with_scope,
         dst: VirtualRegister,
         currentScope: VirtualRegister,
         newScope: VirtualRegister,
-    }
-
-op :create_lexical_environment,
-    args: {
-        dst: VirtualRegister,
-        scope: VirtualRegister,
-        symbolTable: VirtualRegister,
-        initialValue: VirtualRegister,
-    }
-
-op :create_generator_frame_environment,
-    args: {
-        dst: VirtualRegister,
-        scope: VirtualRegister,
-        symbolTable: VirtualRegister,
-        initialValue: VirtualRegister,
     }
 
 op :get_parent_scope,

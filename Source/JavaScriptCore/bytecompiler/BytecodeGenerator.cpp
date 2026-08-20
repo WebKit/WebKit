@@ -1618,32 +1618,32 @@ void BytecodeGenerator::emitJumpIfFalse(RegisterID* cond, Label& target)
 
 void BytecodeGenerator::emitJumpIfNotFunctionCall(RegisterID* cond, Label& target)
 {
-    OpJneqPtr::emit(this, cond, moveLinkTimeConstant(nullptr, LinkTimeConstant::callFunction), target.bind(this));
+    OpJneqPtr::emit(this, cond, LinkTimeConstant::callFunction, target.bind(this));
 }
 
 void BytecodeGenerator::emitJumpIfNotFunctionApply(RegisterID* cond, Label& target)
 {
-    OpJneqPtr::emit(this, cond, moveLinkTimeConstant(nullptr, LinkTimeConstant::applyFunction), target.bind(this));
+    OpJneqPtr::emit(this, cond, LinkTimeConstant::applyFunction, target.bind(this));
 }
 
 void BytecodeGenerator::emitJumpIfNotEvalFunction(RegisterID* cond, Label& target)
 {
-    OpJneqPtr::emit(this, cond, moveLinkTimeConstant(nullptr, LinkTimeConstant::evalFunction), target.bind(this));
+    OpJneqPtr::emit(this, cond, LinkTimeConstant::evalFunction, target.bind(this));
 }
 
 void BytecodeGenerator::emitJumpIfEmptyPropertyNameEnumerator(RegisterID* cond, Label& target)
 {
-    OpJeqPtr::emit(this, cond, moveLinkTimeConstant(nullptr, LinkTimeConstant::emptyPropertyNameEnumerator), target.bind(this));
+    OpJeqPtr::emit(this, cond, LinkTimeConstant::emptyPropertyNameEnumerator, target.bind(this));
 }
 
 void BytecodeGenerator::emitJumpIfSentinelString(RegisterID* cond, Label& target)
 {
-    OpJeqPtr::emit(this, cond, moveLinkTimeConstant(nullptr, LinkTimeConstant::sentinelString), target.bind(this));
+    OpJeqPtr::emit(this, cond, LinkTimeConstant::sentinelString, target.bind(this));
 }
 
 unsigned BytecodeGenerator::emitWideJumpIfNotFunctionHasOwnProperty(RegisterID* cond, Label& target)
 {
-    OpJneqPtr::emit<OpcodeSize::Wide32>(this, cond, moveLinkTimeConstant(nullptr, LinkTimeConstant::hasOwnPropertyFunction), target.bind(this));
+    OpJneqPtr::emit<OpcodeSize::Wide32>(this, cond, LinkTimeConstant::hasOwnPropertyFunction, target.bind(this));
     return m_lastInstruction.offset();
 }
 
@@ -1703,15 +1703,10 @@ RegisterID* BytecodeGenerator::addConstantValue(JSValue v, SourceCodeRepresentat
 
 RegisterID* BytecodeGenerator::moveLinkTimeConstant(RegisterID* dst, LinkTimeConstant type)
 {
-    RegisterID* constant = m_linkTimeConstantRegisters.ensure(type, [&] {
-        int index = addConstantIndex();
-        m_codeBlock->addConstant(type);
-        return &m_constantPoolRegisters[index];
-    }).iterator->value;
     if (!dst)
-        return constant;
-
-    return move(dst, constant);
+        dst = newTemporary();
+    OpGetLinkTimeConstant::emit(this, dst, type);
+    return dst;
 }
 
 RegisterID* BytecodeGenerator::moveEmptyValue(RegisterID* dst)
@@ -3067,7 +3062,7 @@ void BytecodeGenerator::emitCreatePrivateBrand(const JSTextPosition& divot, cons
     CallArguments arguments(*this, nullptr, 1);
     emitLoad(arguments.thisRegister(), jsUndefined());
     emitLoad(arguments.argumentRegister(0), jsEmptyString(m_vm));
-    RegisterID* newSymbol = emitCall(finalDestination(nullptr, createPrivateSymbol.get()), createPrivateSymbol.get(), NoExpectedFunction, arguments, divot, divotStart, divotEnd, DebuggableCall::No);
+    RegisterID* newSymbol = emitCall(finalDestination(nullptr), createPrivateSymbol.get(), NoExpectedFunction, arguments, divot, divotStart, divotEnd, DebuggableCall::No);
 
     Variable privateBrandVar = variable(propertyNames().builtinNames().privateBrandPrivateName());
 
@@ -3744,7 +3739,7 @@ ExpectedFunction BytecodeGenerator::emitExpectedFunctionSnippet(RegisterID* dst,
         if (callArguments.argumentCountIncludingThis() >= 2)
             return NoExpectedFunction;
         
-        OpJneqPtr::emit(this, func, moveLinkTimeConstant(nullptr, LinkTimeConstant::Object), realCall->bind(this));
+        OpJneqPtr::emit(this, func, LinkTimeConstant::Object, realCall->bind(this));
         
         if (dst != ignoredResult())
             emitNewObject(dst);
@@ -3760,7 +3755,7 @@ ExpectedFunction BytecodeGenerator::emitExpectedFunctionSnippet(RegisterID* dst,
         if (callArguments.argumentCountIncludingThis() > 2)
             return NoExpectedFunction;
         
-        OpJneqPtr::emit(this, func, moveLinkTimeConstant(nullptr, LinkTimeConstant::Array), realCall->bind(this));
+        OpJneqPtr::emit(this, func, LinkTimeConstant::Array, realCall->bind(this));
         
         if (dst != ignoredResult()) {
             if (callArguments.argumentCountIncludingThis() == 2)
@@ -5091,10 +5086,11 @@ RegisterID* BytecodeGenerator::emitGetTemplateObject(RegisterID* dst, TaggedTemp
         else
             cookedStrings.append(string->cooked()->impl());
     }
-    RefPtr<RegisterID> constant = addTemplateObjectConstant(TemplateObjectDescriptor::create(WTF::move(rawStrings), WTF::move(cookedStrings)), taggedTemplate->endOffset());
+    RefPtr<RegisterID> descriptor = addTemplateObjectConstant(TemplateObjectDescriptor::create(WTF::move(rawStrings), WTF::move(cookedStrings)), taggedTemplate->endOffset());
     if (!dst)
-        return constant.unsafeGet();
-    return move(dst, constant.get());
+        dst = newTemporary();
+    OpGetTemplateObject::emit(this, dst, descriptor.get());
+    return dst;
 }
 
 RegisterID* BytecodeGenerator::emitGetGlobalPrivate(RegisterID* dst, const Identifier& property)

@@ -1661,8 +1661,9 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_new_array_buffer)
     BEGIN();
     auto bytecode = pc->as<OpNewArrayBuffer>();
     ASSERT(bytecode.m_immutableButterfly.isConstant());
-    JSCellButterfly* immutableButterfly = std::bit_cast<JSCellButterfly*>(GET_C(bytecode.m_immutableButterfly).jsValue().asCell());
-    auto& profile = bytecode.metadata(codeBlock).m_arrayAllocationProfile;
+    auto& metadata = bytecode.metadata(codeBlock);
+    JSCellButterfly* immutableButterfly = metadata.m_immutableButterfly.get();
+    auto& profile = metadata.m_arrayAllocationProfile;
 
     IndexingType indexingMode = profile.selectIndexingType();
     Structure* structure = globalObject->arrayStructureForIndexingTypeDuringAllocation(indexingMode);
@@ -1675,11 +1676,11 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_new_array_buffer)
             newButterfly->setIndex(vm, i, immutableButterfly->get(i));
         immutableButterfly = newButterfly;
 
-        // FIXME: This is kinda gross and only works because we can't inline new_array_bufffer in the baseline.
-        // We also cannot allocate a new butterfly from compilation threads since it's invalid to allocate cells from
-        // a compilation thread.
+        // We cannot allocate a new butterfly from a compilation thread, so the re-typed one is
+        // published here for the DFG to pick up. The fences order the butterfly's initializing stores
+        // against the pointer store, and pair with the dependentLoadLoadFence in the DFG parser.
         WTF::storeStoreFence();
-        codeBlock->constantRegister(bytecode.m_immutableButterfly).set(vm, codeBlock, immutableButterfly);
+        metadata.m_immutableButterfly.set(vm, codeBlock, immutableButterfly);
         WTF::storeStoreFence();
     }
 

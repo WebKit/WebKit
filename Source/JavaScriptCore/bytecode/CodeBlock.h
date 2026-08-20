@@ -501,35 +501,16 @@ public:
     bool wasDestructed();
 #endif
 
-    Vector<WriteBarrier<Unknown>>& constants() LIFETIME_BOUND { return m_constantRegisters; }
-    unsigned addConstant(const ConcurrentJSLocker&, JSValue v)
-    {
-        unsigned result = m_constantRegisters.size();
-        m_constantRegisters.append(WriteBarrier<Unknown>());
-        m_constantRegisters.last().set(*m_vm, this, v);
-        return result;
-    }
-
-    unsigned addConstantLazily(const ConcurrentJSLocker&)
-    {
-        unsigned result = m_constantRegisters.size();
-        m_constantRegisters.append(WriteBarrier<Unknown>());
-        return result;
-    }
-
-    const Vector<WriteBarrier<Unknown>>& constantRegisters() LIFETIME_BOUND { return m_constantRegisters; }
-    WriteBarrier<Unknown>& constantRegister(VirtualRegister reg) { return m_constantRegisters[reg.toConstantIndex()]; }
-    ALWAYS_INLINE JSValue getConstant(VirtualRegister reg) const { return m_constantRegisters[reg.toConstantIndex()].get(); }
-    bool NODELETE isConstantOwnedByUnlinkedCodeBlock(VirtualRegister) const;
+    unsigned numberOfConstantRegisters() const { return m_unlinkedCode->constantRegisters().size(); }
+    std::span<const WriteBarrier<Unknown>> constantRegisters() const LIFETIME_BOUND { return { m_constants, numberOfConstantRegisters() }; }
+    const WriteBarrier<Unknown>& constantRegister(VirtualRegister reg) const LIFETIME_BOUND { return m_constants[reg.toConstantIndex()]; }
+    ALWAYS_INLINE JSValue getConstant(VirtualRegister reg) const { return m_constants[reg.toConstantIndex()].get(); }
+    SymbolTable* linkSymbolTable(SymbolTable* master);
+    SymbolTable* linkSymbolTable(VirtualRegister masterConstant);
     ALWAYS_INLINE SourceCodeRepresentation constantSourceCodeRepresentation(VirtualRegister reg) const { return m_unlinkedCode->constantSourceCodeRepresentation(reg); }
     ALWAYS_INLINE SourceCodeRepresentation constantSourceCodeRepresentation(unsigned index) const { return m_unlinkedCode->constantSourceCodeRepresentation(index); }
-    static constexpr ptrdiff_t offsetOfConstantsVectorBuffer() { return OBJECT_OFFSETOF(CodeBlock, m_constantRegisters) + decltype(m_constantRegisters)::dataMemoryOffset(); }
+    static constexpr ptrdiff_t offsetOfConstants() { return OBJECT_OFFSETOF(CodeBlock, m_constants); }
 
-    FunctionExecutable* functionDecl(int index) { return m_functionDecls[index].get(); }
-    int numberOfFunctionDecls() { return m_functionDecls.size(); }
-    std::span<const WriteBarrier<FunctionExecutable>> functionDecls() { return m_functionDecls.span(); }
-    FunctionExecutable* functionExpr(int index) { return m_functionExprs[index].get(); }
-    std::span<const WriteBarrier<FunctionExecutable>> functionExprs() { return m_functionExprs.span(); }
     
     const BitVector& bitVector(size_t i) LIFETIME_BOUND { return m_unlinkedCode->bitVector(i); }
 
@@ -589,17 +570,6 @@ public:
     const UnlinkedStringJumpTable& unlinkedStringSwitchJumpTable(int tableIndex) LIFETIME_BOUND { return m_unlinkedCode->unlinkedStringSwitchJumpTable(tableIndex); }
 
     DirectEvalCodeCache& directEvalCodeCache() { createRareDataIfNecessary(); return m_rareData->m_directEvalCodeCache; }
-
-    enum class ShrinkMode {
-        // Shrink prior to generating machine code that may point directly into vectors.
-        EarlyShrink,
-
-        // Shrink after generating machine code, and after possibly creating new vectors
-        // and appending to others. At this time it is not safe to shrink certain vectors
-        // because we would have generated machine code that references them directly.
-        LateShrink,
-    };
-    void shrinkToFit(const ConcurrentJSLocker&, ShrinkMode);
 
     // Functions for controlling when JITting kicks in, in a mixed mode
     // execution world.
@@ -915,19 +885,12 @@ private:
 
     void updateAllNonLazyValueProfilePredictionsAndCountLiveness(const ConcurrentJSLocker&, unsigned& numberOfLiveNonArgumentValueProfiles, unsigned& numberOfSamplesInProfiles);
 
-    Vector<unsigned> setConstantRegisters(const FixedVector<WriteBarrier<Unknown>>& constants, const FixedVector<SourceCodeRepresentation>& constantsSourceCodeRepresentation);
-    void initializeTemplateObjects(ScriptExecutable* topLevelExecutable, const Vector<unsigned>& templateObjectIndices);
-
-    void replaceConstant(VirtualRegister reg, JSValue value)
-    {
-        ASSERT(reg.isConstant() && static_cast<size_t>(reg.toConstantIndex()) < m_constantRegisters.size());
-        m_constantRegisters[reg.toConstantIndex()].set(*m_vm, this, value);
-    }
+    void initializeTemplateObjects(ScriptExecutable* topLevelExecutable);
 
     template<typename Visitor> bool shouldVisitStrongly(const ConcurrentJSLocker&, Visitor&);
     bool shouldJettisonDueToWeakReference(VM&);
     template<typename Visitor> bool shouldJettisonDueToOldAge(const ConcurrentJSLocker&, Visitor&);
-    
+
     template<typename Visitor> void propagateTransitions(const ConcurrentJSLocker&, Visitor&);
     template<typename Visitor> void determineLiveness(const ConcurrentJSLocker&, Visitor&);
         
@@ -1008,13 +971,12 @@ private:
 #endif
     FixedVector<ArgumentValueProfile> m_argumentValueProfiles;
 
-    // Constant Pool
+    // Constant Pool. Points directly at m_unlinkedCode's immutable buffer: every entry is identical in
+    // every realm, so nothing here is per-CodeBlock. Anything that does differ per realm (link time
+    // constants, SymbolTable clones, template objects, re-typed array literal butterflies) lives in the
+    // metadata of the instruction that needs it.
     static_assert(sizeof(Register) == sizeof(WriteBarrier<Unknown>), "Register must be same size as WriteBarrier Unknown");
-    // FIXME: This could just be a pointer to m_unlinkedCodeBlock's data, but the DFG mutates
-    // it, so we're stuck with it for now.
-    Vector<WriteBarrier<Unknown>> m_constantRegisters;
-    FixedVector<WriteBarrier<FunctionExecutable>> m_functionDecls;
-    FixedVector<WriteBarrier<FunctionExecutable>> m_functionExprs;
+    const WriteBarrier<Unknown>* m_constants { nullptr };
 
     WriteBarrier<CodeBlock> m_alternative;
 
@@ -1032,7 +994,7 @@ private:
 };
 /* This check is for normal Release builds; ASSERT_ENABLED changes the size. */
 #if !ASSERT_ENABLED
-static_assert(sizeof(CodeBlock) <= 224, "Keep it small for memory saving");
+static_assert(sizeof(CodeBlock) <= 200, "Keep it small for memory saving");
 #endif
 
 template <typename ExecutableType>
@@ -1065,10 +1027,10 @@ void ScriptExecutable::prepareForExecution(VM& vm, JSFunction* function, JSScope
 void setPrinter(Printer::PrintRecord&, CodeBlock*);
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-inline Register& CallFrame::r(VirtualRegister reg)
+inline const Register& CallFrame::r(VirtualRegister reg)
 {
     if (reg.isConstant())
-        SUPPRESS_MEMORY_UNSAFE_CAST return *reinterpret_cast<Register*>(&this->codeBlock()->constantRegister(reg));
+        SUPPRESS_MEMORY_UNSAFE_CAST return *reinterpret_cast<const Register*>(&this->codeBlock()->constantRegister(reg));
     return this[reg.offset()];
 }
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

@@ -101,6 +101,8 @@ namespace JSC::LOL {
     macro(op_jneq_null) \
     macro(op_jundefined_or_null) \
     macro(op_jnundefined_or_null) \
+    macro(op_get_link_time_constant) \
+    macro(op_get_template_object) \
     macro(op_jeq_ptr) \
     macro(op_jneq_ptr) \
     macro(op_jeq) \

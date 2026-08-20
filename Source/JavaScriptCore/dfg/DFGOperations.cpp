@@ -5590,10 +5590,10 @@ JSC_DEFINE_JIT_OPERATION(operationLoadVarargs, void, (JSGlobalObject* globalObje
     auto scope = DECLARE_THROW_SCOPE(vm);
     JSValue arguments = JSValue::decode(encodedArguments);
     
-    loadVarargs(globalObject, std::bit_cast<JSValue*>(&callFrame->r(firstElement)), arguments, offset, lengthIncludingThis - 1);
+    loadVarargs(globalObject, std::bit_cast<JSValue*>(&callFrame->uncheckedR(firstElement)), arguments, offset, lengthIncludingThis - 1);
     
     for (uint32_t i = lengthIncludingThis - 1; i < mandatoryMinimum; ++i)
-        callFrame->r(firstElement + i) = jsUndefined();
+        callFrame->uncheckedR(firstElement + i) = jsUndefined();
     OPERATION_RETURN(scope);
 }
 

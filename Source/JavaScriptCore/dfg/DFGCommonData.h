@@ -121,6 +121,9 @@ public:
     
     FixedVector<Identifier> m_dfgIdentifiers;
     FixedVector<WeakReferenceTransition> m_transitions;
+    // Values the compiled code embeds directly. Unlike m_weakReferences these are visited
+    // unconditionally, since the code cannot survive their collection.
+    FixedVector<WriteBarrier<JSCell>> m_strongReferences;
     FixedVector<WriteBarrier<JSCell>> m_weakReferences;
     FixedVector<StructureID> m_weakStructureReferences;
     FixedVector<CatchEntrypointData> m_catchEntrypoints;

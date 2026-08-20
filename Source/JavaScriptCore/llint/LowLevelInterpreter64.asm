@@ -471,7 +471,7 @@ if JIT
                 btpz r0, .recover
                 move r1, sp
 
-                loadBaselineJITConstantPool()
+                loadBaselineJITData()
 
                 if ARM64E
                     leap _g_config, a2
@@ -555,19 +555,19 @@ end
 macro loadConstant(size, index, value)
     macro loadNarrow()
         loadp CodeBlock[cfr], value
-        loadp CodeBlock::m_constantRegisters + VectorBufferOffset[value], value
+        loadp CodeBlock::m_constants[value], value
         loadq -(FirstConstantRegisterIndexNarrow * 8)[value, index, 8], value
     end
 
     macro loadWide16()
         loadp CodeBlock[cfr], value
-        loadp CodeBlock::m_constantRegisters + VectorBufferOffset[value], value
+        loadp CodeBlock::m_constants[value], value
         loadq -(FirstConstantRegisterIndexWide16 * 8)[value, index, 8], value
     end
 
     macro loadWide32()
         loadp CodeBlock[cfr], value
-        loadp CodeBlock::m_constantRegisters + VectorBufferOffset[value], value
+        loadp CodeBlock::m_constants[value], value
         subp FirstConstantRegisterIndexWide32, index
         loadq [value, index, 8], value
     end
@@ -2208,10 +2208,24 @@ undefinedOrNullJumpOp(jundefined_or_null, OpJundefinedOrNull,
 undefinedOrNullJumpOp(jnundefined_or_null, OpJnundefinedOrNull,
     macro (value, target) bqneq value, ValueNull, target end)
 
-llintOpWithReturn(op_jeq_ptr, OpJeqPtr, macro (size, get, dispatch, return)
+llintOpWithMetadata(op_get_template_object, OpGetTemplateObject, macro (size, get, dispatch, metadata, return)
+    metadata(t5, t0)
+    loadp OpGetTemplateObject::Metadata::m_templateObject[t5], t0
+    return(t0)
+end)
+
+
+llintOpWithMetadata(op_get_link_time_constant, OpGetLinkTimeConstant, macro (size, get, dispatch, metadata, return)
+    metadata(t5, t0)
+    loadp OpGetLinkTimeConstant::Metadata::m_constant[t5], t0
+    return(t0)
+end)
+
+
+llintOpWithMetadata(op_jeq_ptr, OpJeqPtr, macro (size, get, dispatch, metadata, return)
     get(m_value, t0)
-    get(m_specialPointer, t1)
-    loadConstant(size, t1, t2)
+    metadata(t5, t2)
+    loadp OpJeqPtr::Metadata::m_specialPointer[t5], t2
     bpeq t2, [cfr, t0, 8], .opJeqPtrTarget
     dispatch()
 
@@ -2223,13 +2237,12 @@ end)
 
 llintOpWithMetadata(op_jneq_ptr, OpJneqPtr, macro (size, get, dispatch, metadata, return)
     get(m_value, t0)
-    get(m_specialPointer, t1)
-    loadConstant(size, t1, t2)
+    metadata(t5, t2)
+    loadp OpJneqPtr::Metadata::m_specialPointer[t5], t2
     bpneq t2, [cfr, t0, 8], .opJneqPtrTarget
     dispatch()
 
 .opJneqPtrTarget:
-    metadata(t5, t0)
     storeb 1, OpJneqPtr::Metadata::m_hasJumped[t5]
     get(m_targetLabel, t0)
     jumpImpl(dispatchIndirect, t0)

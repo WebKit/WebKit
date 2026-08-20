@@ -698,7 +698,7 @@ LLINT_SLOW_PATH_DECL(slow_path_create_lexical_environment)
     LLINT_BEGIN();
     auto bytecode = pc->as<OpCreateLexicalEnvironment>();
     JSScope* currentScope = callFrame->uncheckedR(bytecode.m_scope).Register::scope();
-    SymbolTable* symbolTable = uncheckedDowncast<SymbolTable>(getOperand(callFrame, bytecode.m_symbolTable));
+    SymbolTable* symbolTable = bytecode.metadata(codeBlock).m_symbolTable.get();
     JSValue initialValue = getOperand(callFrame, bytecode.m_initialValue);
     ASSERT(initialValue == jsUndefined() || initialValue == jsTDZValue());
     JSScope* newScope = JSLexicalEnvironment::create(vm, globalObject, currentScope, symbolTable, initialValue);
@@ -1916,7 +1916,7 @@ LLINT_SLOW_PATH_DECL(slow_path_new_func)
     auto bytecode = pc->as<OpNewFunc>();
     JSScope* scope = callFrame->uncheckedR(bytecode.m_scope).Register::scope();
     slowPathLogF("Creating function!\n");
-    LLINT_RETURN(JSFunction::create(vm, globalObject, codeBlock->functionDecl(bytecode.m_functionDecl), scope));
+    LLINT_RETURN(JSFunction::create(vm, globalObject, bytecode.metadata(codeBlock).m_functionExecutable.get(), scope));
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_new_generator_func)
@@ -1925,7 +1925,7 @@ LLINT_SLOW_PATH_DECL(slow_path_new_generator_func)
     auto bytecode = pc->as<OpNewGeneratorFunc>();
     JSScope* scope = callFrame->uncheckedR(bytecode.m_scope).Register::scope();
     slowPathLogF("Creating function!\n");
-    LLINT_RETURN(JSGeneratorFunction::create(vm, globalObject, codeBlock->functionDecl(bytecode.m_functionDecl), scope));
+    LLINT_RETURN(JSGeneratorFunction::create(vm, globalObject, bytecode.metadata(codeBlock).m_functionExecutable.get(), scope));
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_new_async_func)
@@ -1934,7 +1934,7 @@ LLINT_SLOW_PATH_DECL(slow_path_new_async_func)
     auto bytecode = pc->as<OpNewAsyncFunc>();
     JSScope* scope = callFrame->uncheckedR(bytecode.m_scope).Register::scope();
     slowPathLogF("Creating async function!\n");
-    LLINT_RETURN(JSAsyncFunction::create(vm, globalObject, codeBlock->functionDecl(bytecode.m_functionDecl), scope));
+    LLINT_RETURN(JSAsyncFunction::create(vm, globalObject, bytecode.metadata(codeBlock).m_functionExecutable.get(), scope));
 }
 
 LLINT_SLOW_PATH_DECL(slow_path_new_async_generator_func)
@@ -1943,7 +1943,7 @@ LLINT_SLOW_PATH_DECL(slow_path_new_async_generator_func)
     auto bytecode = pc->as<OpNewAsyncGeneratorFunc>();
     JSScope* scope = callFrame->uncheckedR(bytecode.m_scope).Register::scope();
     slowPathLogF("Creating async generator function!\n");
-    LLINT_RETURN(JSAsyncGeneratorFunction::create(vm, globalObject, codeBlock->functionDecl(bytecode.m_functionDecl), scope));
+    LLINT_RETURN(JSAsyncGeneratorFunction::create(vm, globalObject, bytecode.metadata(codeBlock).m_functionExecutable.get(), scope));
 }
     
 LLINT_SLOW_PATH_DECL(slow_path_new_func_exp)
@@ -1952,7 +1952,7 @@ LLINT_SLOW_PATH_DECL(slow_path_new_func_exp)
     
     auto bytecode = pc->as<OpNewFuncExp>();
     JSScope* scope = callFrame->uncheckedR(bytecode.m_scope).Register::scope();
-    FunctionExecutable* executable = codeBlock->functionExpr(bytecode.m_functionDecl);
+    FunctionExecutable* executable = bytecode.metadata(codeBlock).m_functionExecutable.get();
     
     LLINT_RETURN(JSFunction::create(vm, globalObject, executable, scope));
 }
@@ -1963,7 +1963,7 @@ LLINT_SLOW_PATH_DECL(slow_path_new_generator_func_exp)
 
     auto bytecode = pc->as<OpNewGeneratorFuncExp>();
     JSScope* scope = callFrame->uncheckedR(bytecode.m_scope).Register::scope();
-    FunctionExecutable* executable = codeBlock->functionExpr(bytecode.m_functionDecl);
+    FunctionExecutable* executable = bytecode.metadata(codeBlock).m_functionExecutable.get();
 
     LLINT_RETURN(JSGeneratorFunction::create(vm, globalObject, executable, scope));
 }
@@ -1974,7 +1974,7 @@ LLINT_SLOW_PATH_DECL(slow_path_new_async_func_exp)
     
     auto bytecode = pc->as<OpNewAsyncFuncExp>();
     JSScope* scope = callFrame->uncheckedR(bytecode.m_scope).Register::scope();
-    FunctionExecutable* executable = codeBlock->functionExpr(bytecode.m_functionDecl);
+    FunctionExecutable* executable = bytecode.metadata(codeBlock).m_functionExecutable.get();
     
     LLINT_RETURN(JSAsyncFunction::create(vm, globalObject, executable, scope));
 }
@@ -1985,7 +1985,7 @@ LLINT_SLOW_PATH_DECL(slow_path_new_async_generator_func_exp)
         
     auto bytecode = pc->as<OpNewAsyncGeneratorFuncExp>();
     JSScope* scope = callFrame->uncheckedR(bytecode.m_scope).Register::scope();
-    FunctionExecutable* executable = codeBlock->functionExpr(bytecode.m_functionDecl);
+    FunctionExecutable* executable = bytecode.metadata(codeBlock).m_functionExecutable.get();
         
     LLINT_RETURN(JSAsyncGeneratorFunction::create(vm, globalObject, executable, scope));
 }

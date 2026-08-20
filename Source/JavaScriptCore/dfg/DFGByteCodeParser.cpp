@@ -8510,10 +8510,10 @@ void ByteCodeParser::parseBlock(unsigned limit)
             auto bytecode = currentInstruction->as<OpNewArrayBuffer>();
             // Unfortunately, we can't allocate a new JSCellButterfly if the profile tells us new information because we
             // cannot allocate from compilation threads.
-            FrozenValue* frozen = get(VirtualRegister(bytecode.m_immutableButterfly))->constant();
+            JSCellButterfly* immutableButterfly = bytecode.metadata(m_inlineStackTop->m_codeBlock).m_immutableButterfly.get();
             WTF::dependentLoadLoadFence();
 
-            JSCellButterfly* immutableButterfly = frozen->cast<JSCellButterfly*>();
+            FrozenValue* frozen = m_graph.freezeStrong(immutableButterfly);
             NewArrayBufferData data { };
             unsigned vectorLengthHint = immutableButterfly->toButterfly()->vectorLength();
 
@@ -10259,11 +10259,21 @@ void ByteCodeParser::parseBlock(unsigned limit)
             NEXT_OPCODE(op_iterator_next);
         }
 
+        case op_get_template_object: {
+            auto bytecode = currentInstruction->as<OpGetTemplateObject>();
+            set(bytecode.m_dst, jsConstant(bytecode.metadata(m_inlineStackTop->m_codeBlock).m_templateObject.get()));
+            NEXT_OPCODE(op_get_template_object);
+        }
+
+        case op_get_link_time_constant: {
+            auto bytecode = currentInstruction->as<OpGetLinkTimeConstant>();
+            set(bytecode.m_dst, jsConstant(bytecode.metadata(m_inlineStackTop->m_codeBlock).m_constant.get()));
+            NEXT_OPCODE(op_get_link_time_constant);
+        }
+
         case op_jeq_ptr: {
             auto bytecode = currentInstruction->as<OpJeqPtr>();
-            JSValue constant = m_inlineStackTop->m_codeBlock->getConstant(bytecode.m_specialPointer);
-            FrozenValue* frozenPointer = m_graph.freezeStrong(constant);
-            ASSERT(frozenPointer->cell() == constant);
+            FrozenValue* frozenPointer = m_graph.freezeStrong(bytecode.metadata(m_inlineStackTop->m_codeBlock).m_specialPointer.get());
             unsigned relativeOffset = jumpTarget(bytecode.m_targetLabel);
             Node* child = get(bytecode.m_value);
             Node* condition = addToGraph(CompareEqPtr, OpInfo(frozenPointer), child);
@@ -10273,7 +10283,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
 
         case op_jneq_ptr: {
             auto bytecode = currentInstruction->as<OpJneqPtr>();
-            FrozenValue* frozenPointer = m_graph.freezeStrong(m_inlineStackTop->m_codeBlock->getConstant(bytecode.m_specialPointer));
+            FrozenValue* frozenPointer = m_graph.freezeStrong(bytecode.metadata(m_inlineStackTop->m_codeBlock).m_specialPointer.get());
             unsigned relativeOffset = jumpTarget(bytecode.m_targetLabel);
             Node* child = get(bytecode.m_value);
             if (bytecode.metadata(codeBlock).m_hasJumped) {
@@ -10766,7 +10776,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
         case op_create_lexical_environment: {
             auto bytecode = currentInstruction->as<OpCreateLexicalEnvironment>();
             ASSERT(bytecode.m_symbolTable.isConstant() && bytecode.m_initialValue.isConstant());
-            FrozenValue* symbolTable = m_graph.freezeStrong(m_inlineStackTop->m_codeBlock->getConstant(bytecode.m_symbolTable));
+            FrozenValue* symbolTable = m_graph.freezeStrong(bytecode.metadata(m_inlineStackTop->m_codeBlock).m_symbolTable.get());
             FrozenValue* initialValue = m_graph.freezeStrong(m_inlineStackTop->m_codeBlock->getConstant(bytecode.m_initialValue));
             Node* scope = get(bytecode.m_scope);
             Node* lexicalEnvironment = addToGraph(CreateActivation, OpInfo(symbolTable), OpInfo(initialValue), scope);
@@ -11725,7 +11735,7 @@ void ByteCodeParser::handlePutAccessorByVal(NodeType op, Bytecode bytecode)
 template <typename Bytecode>
 void ByteCodeParser::handleNewFunc(NodeType op, Bytecode bytecode)
 {
-    FunctionExecutable* decl = m_inlineStackTop->m_profiledBlock->functionDecl(bytecode.m_functionDecl);
+    FunctionExecutable* decl = bytecode.metadata(m_inlineStackTop->m_profiledBlock).m_functionExecutable.get();
     FrozenValue* frozen = m_graph.freezeStrong(decl);
     Node* scope = get(bytecode.m_scope);
     set(bytecode.m_dst, addToGraph(op, OpInfo(frozen), scope));
@@ -11742,7 +11752,7 @@ void ByteCodeParser::handleNewFunc(NodeType op, Bytecode bytecode)
 template <typename Bytecode>
 void ByteCodeParser::handleNewFuncExp(NodeType op, Bytecode bytecode)
 {
-    FunctionExecutable* expr = m_inlineStackTop->m_profiledBlock->functionExpr(bytecode.m_functionDecl);
+    FunctionExecutable* expr = bytecode.metadata(m_inlineStackTop->m_profiledBlock).m_functionExecutable.get();
     FrozenValue* frozen = m_graph.freezeStrong(expr);
     Node* scope = get(bytecode.m_scope);
     set(bytecode.m_dst, addToGraph(op, OpInfo(frozen), scope));

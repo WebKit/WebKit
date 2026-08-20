@@ -136,16 +136,6 @@ public:
         m_constantsSourceCodeRepresentation.append(sourceCodeRepresentation);
         return result;
     }
-    unsigned addConstant(LinkTimeConstant linkTimeConstant)
-    {
-        ASSERT(m_vm.heap.isDeferred());
-        unsigned result = m_constantRegisters.size();
-        m_constantRegisters.append(WriteBarrier<Unknown>());
-        m_constantRegisters.last().setWithoutWriteBarrier(jsNumber(static_cast<int32_t>(linkTimeConstant)));
-        m_constantsSourceCodeRepresentation.append(SourceCodeRepresentation::LinkTimeConstant);
-        return result;
-    }
-
     unsigned addFunctionDecl(UnlinkedFunctionExecutable* n)
     {
         ASSERT(m_vm.heap.isDeferred());

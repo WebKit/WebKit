@@ -84,9 +84,9 @@ public:
     RegisterAllocator(Backend& backend, CodeBlock* codeBlock)
         : m_numVars(codeBlock->numVars())
         , m_constantsOffset(codeBlock->numCalleeLocals())
-        , m_headersOffset(m_constantsOffset + codeBlock->constantRegisters().size())
+        , m_headersOffset(m_constantsOffset + codeBlock->numberOfConstantRegisters())
         , m_numArguments(codeBlock->numParameters())
-        , m_locations(codeBlock->numCalleeLocals() + codeBlock->constantRegisters().size() + CallFrame::headerSizeInRegisters + codeBlock->numParameters())
+        , m_locations(codeBlock->numCalleeLocals() + codeBlock->numberOfConstantRegisters() + CallFrame::headerSizeInRegisters + codeBlock->numParameters())
         , m_backend(backend)
     {
         RegisterSet gprs = RegisterSet::allGPRs();
@@ -406,6 +406,22 @@ auto RegisterAllocator<Backend>::allocate(Backend& jit, const OpGetArgument& ins
 }
 
 template<typename Backend>
+auto RegisterAllocator<Backend>::allocate(Backend& jit, const OpGetLinkTimeConstant& instruction, BytecodeIndex index)
+{
+    std::array<AllocationHint, 0> uses = { };
+    std::array<AllocationHint, 1> defs = { instruction.m_dst };
+    return allocateImpl<0>(jit, instruction, index, uses, defs);
+}
+
+template<typename Backend>
+auto RegisterAllocator<Backend>::allocate(Backend& jit, const OpGetTemplateObject& instruction, BytecodeIndex index)
+{
+    std::array<AllocationHint, 0> uses = { };
+    std::array<AllocationHint, 1> defs = { instruction.m_dst };
+    return allocateImpl<0>(jit, instruction, index, uses, defs);
+}
+
+template<typename Backend>
 auto RegisterAllocator<Backend>::allocate(Backend& jit, const OpArgumentCount& instruction, BytecodeIndex index)
 {
     std::array<AllocationHint, 0> uses = { };
@@ -445,7 +461,7 @@ auto RegisterAllocator<Backend>::allocate(Backend& jit, const OpNewObject& instr
 template<typename Backend>
 auto RegisterAllocator<Backend>::allocate(Backend& jit, const OpCreateLexicalEnvironment& instruction, BytecodeIndex index)
 {
-    std::array<AllocationHint, 2> uses = { instruction.m_scope, instruction.m_symbolTable };
+    std::array<AllocationHint, 1> uses = { instruction.m_scope };
     std::array<AllocationHint, 0> defs = { };
     auto result = allocateImpl<0>(jit, instruction, index, uses, defs);
     m_allocator.flushAllRegisters(*this);

@@ -94,6 +94,12 @@ public:
     DesiredTransitions& transitions() LIFETIME_BOUND { return m_transitions; }
     RecordedStatuses& recordedStatuses() LIFETIME_BOUND { return *m_recordedStatuses.get(); }
 
+    // Cells the generated code embeds directly, so the code cannot outlive them. The plan keeps them
+    // alive via checkLivenessAndVisitChildren until reallyAdd() hands them to DFG::CommonData, which
+    // is why they may be appended right up until then, including from a main thread finalization task.
+    void addStrongReference(JSCell* cell) { m_strongReferences.append(cell); }
+    void installStrongReferences(CommonData*);
+
     bool willTryToTierUp() const { return m_willTryToTierUp; }
     void setWillTryToTierUp(bool willTryToTierUp) { m_willTryToTierUp = willTryToTierUp; }
 
@@ -132,6 +138,7 @@ private:
     DesiredIdentifiers m_identifiers;
     DesiredWeakReferences m_weakReferences;
     DesiredTransitions m_transitions;
+    Vector<JSCell*> m_strongReferences;
     std::unique_ptr<RecordedStatuses> m_recordedStatuses;
 
     UncheckedKeyHashMap<BytecodeIndex, FixedVector<BytecodeIndex>> m_tierUpInLoopHierarchy;
