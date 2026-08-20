@@ -2688,7 +2688,6 @@ end
 # t0 is callee
 # t2 is CallLinkInfo*
 macro virtualThunkFor(offsetOfJITCodeWithArityCheck, offsetOfCodeBlock, internalFunctionTrampoline, slowCase)
-    addi 1, CallLinkInfo::m_slowPathCount[t2]
     btqnz t0, NotCellMask, slowCase
     bbneq JSCell::m_type[t0], JSFunctionType, .notJSFunction
     loadp JSFunction::m_executableOrRareData[t0], t5

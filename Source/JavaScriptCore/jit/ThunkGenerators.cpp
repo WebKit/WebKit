@@ -228,12 +228,6 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> virtualThunkFor(VM& vm, CallMode mo
 
     CCallHelpers::JumpList slowCase;
 
-    // This is a slow path execution, and regT2 contains the CallLinkInfo. Count the
-    // slow path execution for the profiler.
-    jit.add32(
-        CCallHelpers::TrustedImm32(1),
-        CCallHelpers::Address(GPRInfo::regT2, CallLinkInfo::offsetOfSlowPathCount()));
-
     // FIXME: we should have a story for eliminating these checks. In many cases,
     // the DFG knows that the value is definitely a cell, or definitely a function.
 
