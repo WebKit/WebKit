@@ -176,6 +176,11 @@ add_compile_options(
 set_property(DIRECTORY "${CMAKE_BINARY_DIR}" APPEND PROPERTY
     ADDITIONAL_CLEAN_FILES "${CMAKE_BINARY_DIR}/SwiftModuleCache")
 
+# FIXME: Consider building with -wmo in release / performance builds.
+add_compile_options(
+    "$<$<COMPILE_LANGUAGE:Swift>:-enable-batch-mode>"
+)
+
 if (WEBKIT_SDK_IS_MACOS AND USE_APPLE_INTERNAL_SDK)
     set(WEBKIT_CODE_SIGN_IDENTITY "Safari Engineering")
     WEBKITADDITIONS_FIND_KEYCHAIN()
