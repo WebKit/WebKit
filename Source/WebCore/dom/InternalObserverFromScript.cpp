@@ -73,6 +73,7 @@ void InternalObserverFromScript::complete()
 
 void InternalObserverFromScript::visitAdditionalChildrenInGCThread(JSC::AbstractSlotVisitor& visitor) const
 {
+#ifdef RC_REMOVE_SEC_ACCEL_3
     if (RefPtr next = m_next)
         next->visitJSFunctionInGCThread(visitor);
 
@@ -81,6 +82,16 @@ void InternalObserverFromScript::visitAdditionalChildrenInGCThread(JSC::Abstract
 
     if (RefPtr complete = m_complete)
         complete->visitJSFunctionInGCThread(visitor);
+#else
+    SUPPRESS_UNCOUNTED_LOCAL if (auto* next = m_next.get())
+        SUPPRESS_UNCOUNTED_ARG next->visitJSFunctionInGCThread(visitor);
+
+    SUPPRESS_UNCOUNTED_LOCAL if (auto* error = m_error.get())
+        SUPPRESS_UNCOUNTED_ARG error->visitJSFunctionInGCThread(visitor);
+
+    SUPPRESS_UNCOUNTED_LOCAL if (auto* complete = m_complete.get())
+        SUPPRESS_UNCOUNTED_ARG complete->visitJSFunctionInGCThread(visitor);
+#endif
 }
 
 InternalObserverFromScript::InternalObserverFromScript(ScriptExecutionContext& context, RefPtr<JSSubscriptionObserverCallback> callback)

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<body>
+<div id="result">Running</div>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+const frameCount = 15;
+const batchCount = 3;
+let remainingBatches = batchCount;
+
+function runNextBatch() {
+    Array.from(document.querySelectorAll('iframe')).forEach((iframe) => iframe.remove());
+    if (window.GCController)
+        GCController.collect();
+
+    let remainingFrames = frameCount;
+    window.onmessage = () => {
+        --remainingFrames;
+        result.textContent = `${remainingFrames} frames / ${remainingBatches} batches`;
+        if (remainingFrames)
+            return;
+
+        if (!--remainingBatches) {
+            result.textContent = 'PASS';
+            if (window.testRunner)
+                testRunner.notifyDone();
+            return;
+        }
+
+        runNextBatch();
+    }
+
+    for (let i = 0; i < frameCount; ++i) {
+        const iframe = document.createElement('iframe');
+        iframe.src = 'resources/resize-observer-target-refcount-crash-child.html';
+        iframe.style.width = '80px';
+        iframe.style.height = '80px';
+        document.body.appendChild(iframe);
+    }
+}
+
+runNextBatch();
+
+</script>
+</body>
+</html>
