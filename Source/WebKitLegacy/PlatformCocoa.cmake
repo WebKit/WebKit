@@ -94,6 +94,13 @@ add_custom_command(
     VERBATIM
 )
 
+# Put the generated header into a separate target so that dependents can build
+# without waiting for the rest of WebCore to compile and link.
+add_custom_target(WebKitLegacyPreferences DEPENDS
+    ${WebKitLegacy_DERIVED_SOURCES_DIR}/WebPreferencesDefinitions.h
+)
+add_dependencies(WebKitLegacy WebKitLegacyPreferences)
+
 list(APPEND WebKitLegacy_SOURCES
     ${WebKitLegacy_DERIVED_SOURCES_DIR}/WebViewPreferencesChangedGenerated.mm
     ${WebKitLegacy_DERIVED_SOURCES_DIR}/WebPreferencesInternalFeatures.mm

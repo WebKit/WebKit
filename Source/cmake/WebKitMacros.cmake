@@ -1110,7 +1110,7 @@ endfunction()
 # Format (one token per line): -DNAME for truthy HAVE_/USE_/ENABLE_/
 # WTF_PLATFORM_/ASSERT_ macros from wtf/Platform.h, plus -Xcc -DNAME=VALUE
 # for every cmakeconfig.h entry. DEPFILE re-runs it on Platform header changes.
-function(_webkit_generate_platform_swift_args _target _resp_path _ordering_dep)
+function(_webkit_generate_platform_swift_args _target _resp_path)
     set(_depfile "${_resp_path}.d")
     _webkit_platform_args_empty_input(_empty_input)
     _webkit_platform_args_clang_prefix(_clang_cmd
@@ -1131,20 +1131,6 @@ function(_webkit_generate_platform_swift_args _target _resp_path _ordering_dep)
     list(APPEND _clang_cmd ${ENABLED_COMPILER_SANITIZERS})
     list(APPEND _clang_cmd "${_empty_input}")
 
-    # Order resp generation after the framework's headers are staged: the
-    # clang preprocess -include's wtf/Platform.h from WTF_FRAMEWORK_HEADERS_DIR.
-    # Targets declared after this macro call are skipped (not yet visible to
-    # if(TARGET ...)); for current callers WTF_CopyHeaders is already created.
-    set(_header_deps "")
-    foreach (_lib IN ITEMS WTF "${_target}" ${${_target}_FRAMEWORKS})
-        foreach (_suffix IN ITEMS _CopyHeaders _CopyPrivateHeaders)
-            if (TARGET "${_lib}${_suffix}")
-                list(APPEND _header_deps "${_lib}${_suffix}")
-            endif ()
-        endforeach ()
-    endforeach ()
-    list(REMOVE_DUPLICATES _header_deps)
-
     set(_script "${CMAKE_SOURCE_DIR}/Source/WTF/Scripts/generate-platform-args")
     add_custom_command(
         OUTPUT "${_resp_path}"
@@ -1159,8 +1145,7 @@ function(_webkit_generate_platform_swift_args _target _resp_path _ordering_dep)
         DEPENDS
             "${_script}"
             "${CMAKE_BINARY_DIR}/cmakeconfig.h"
-            ${_ordering_dep}
-            ${_header_deps}
+            WTF_CopyHeaders
         COMMENT "Generating ${_target} platform-swift-args.resp"
         VERBATIM
     )
@@ -1270,9 +1255,9 @@ macro(WEBKIT_SETUP_SWIFT_AND_GENERATE_SWIFT_CPP_INTEROP_HEADER _target _module_n
         # The platform-derived feature flags (HAVE_/USE_/ENABLE_/WTF_PLATFORM_/
         # ASSERT_) plus the cmakeconfig.h seed defines for the clang importer
         # are produced as a build-time @-response file. The custom command that
-        # writes it is created later (after the SwiftGeneratedDeps placeholder
-        # exists); we just thread the @-flag here so it ends up in the swiftc
-        # invocation that CMake assembles from target_compile_options.
+        # writes it is created further down; we just thread the @-flag here so
+        # it ends up in the swiftc invocation that CMake assembles from
+        # target_compile_options.
         set(_resp_path "${CMAKE_CURRENT_BINARY_DIR}/${_target}.platform-swift-args.resp")
         set(_swift_options "@${_resp_path}")
         # Other options needed by Swift for C++ interop, including the location
@@ -1457,7 +1442,7 @@ macro(WEBKIT_SETUP_SWIFT_AND_GENERATE_SWIFT_CPP_INTEROP_HEADER _target _module_n
         # Generate the @-response file with platform-derived -D flags. The
         # @-flag itself is already in _swift_options above, which gets fed to
         # target_compile_options via _swift_only_options earlier in the macro.
-        _webkit_generate_platform_swift_args(${_target} "${_resp_path}" ${_target}_SwiftGeneratedDeps)
+        _webkit_generate_platform_swift_args(${_target} "${_resp_path}")
 
         # Trigger source whose mtime tracks the resp (and the emit-clang-header
         # stamp / INTEROP_HEADERS when applicable). target_sources is how we
