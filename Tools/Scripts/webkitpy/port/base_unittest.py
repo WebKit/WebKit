@@ -275,6 +275,12 @@ class PortTest(unittest.TestCase):
         port = self.make_port()
         self.assertEqual(port.http_test_roots(), ("http/tests", "sar3/http/tests"))
 
+    def test_web_platform_test_roots(self):
+        port = self.make_port()
+        self.assertEqual(port.web_platform_test_roots(), ("http/wpt", "sar3/http/wpt"))
+        self.assertEqual(port.url_prefix_for_web_platform_test_root("http/wpt"), "")
+        self.assertEqual(port.url_prefix_for_web_platform_test_root("sar3/http/wpt"), "sar3/")
+
     def test_http_server_supports_ipv6(self):
         port = self.make_port()
         self.assertTrue(port.http_server_supports_ipv6())
