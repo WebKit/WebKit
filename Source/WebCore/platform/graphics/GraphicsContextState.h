@@ -31,8 +31,11 @@
 #include <WebCore/WindRule.h>
 #include <wtf/ArgumentCoder.h>
 #include <wtf/OptionSet.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
+
+class GraphicsContextStateStack;
 
 class GraphicsContextState {
     friend class GraphicsContextCairo;
@@ -75,15 +78,19 @@ public:
     void repurpose(Purpose);
     GraphicsContextState clone(Purpose) const;
 
+    // The changes that have not been applied to the platform context yet.
     ChangeFlags changes() const { return m_changeFlags; }
     void didApplyChanges() { m_changeFlags = { }; }
+
+    // The changes made since the save() that started this state stack level.
+    ChangeFlags changesSinceSave() const { return m_changesSinceSave; }
 
     SourceBrush& fillBrush() LIFETIME_BOUND { return m_fillBrush; }
     const SourceBrush& fillBrush() const LIFETIME_BOUND { return m_fillBrush; }
     void setFillBrush(const SourceBrush& brush) { setProperty(Change::FillBrush, &GraphicsContextState::m_fillBrush, brush); }
     void setFillColor(const Color& color) { setProperty(Change::FillBrush, &GraphicsContextState::m_fillBrush, { color }); }
-    void setFillGradient(Ref<Gradient>&& gradient, const AffineTransform& spaceTransform) { m_fillBrush.setGradient(WTF::move(gradient), spaceTransform); m_changeFlags.add(Change::FillBrush); }
-    void setFillPattern(Ref<Pattern>&& pattern) { m_fillBrush.setPattern(WTF::move(pattern)); m_changeFlags.add(Change::FillBrush); }
+    void setFillGradient(Ref<Gradient>&& gradient, const AffineTransform& spaceTransform) { m_fillBrush.setGradient(WTF::move(gradient), spaceTransform); addChange(Change::FillBrush); }
+    void setFillPattern(Ref<Pattern>&& pattern) { m_fillBrush.setPattern(WTF::move(pattern)); addChange(Change::FillBrush); }
 
     WindRule fillRule() const { return m_fillRule; }
     void setFillRule(WindRule fillRule) { setProperty(Change::FillRule, &GraphicsContextState::m_fillRule, fillRule); }
@@ -92,8 +99,8 @@ public:
     const SourceBrush& strokeBrush() const LIFETIME_BOUND { return m_strokeBrush; }
     void setStrokeBrush(const SourceBrush& brush) { setProperty(Change::StrokeBrush, &GraphicsContextState::m_strokeBrush, brush); }
     void setStrokeColor(const Color& color) { setProperty(Change::StrokeBrush, &GraphicsContextState::m_strokeBrush, { color }); }
-    void setStrokeGradient(Ref<Gradient>&& gradient, const AffineTransform& spaceTransform) { m_strokeBrush.setGradient(WTF::move(gradient), spaceTransform); m_changeFlags.add(Change::StrokeBrush); }
-    void setStrokePattern(Ref<Pattern>&& pattern) { m_strokeBrush.setPattern(WTF::move(pattern)); m_changeFlags.add(Change::StrokeBrush); }
+    void setStrokeGradient(Ref<Gradient>&& gradient, const AffineTransform& spaceTransform) { m_strokeBrush.setGradient(WTF::move(gradient), spaceTransform); addChange(Change::StrokeBrush); }
+    void setStrokePattern(Ref<Pattern>&& pattern) { m_strokeBrush.setPattern(WTF::move(pattern)); addChange(Change::StrokeBrush); }
 
     float strokeThickness() const { return m_strokeThickness; }
     void setStrokeThickness(float strokeThickness) { setProperty(Change::StrokeThickness, &GraphicsContextState::m_strokeThickness, strokeThickness); }
@@ -149,8 +156,15 @@ public:
 
 private:
     friend struct IPC::ArgumentCoder<GraphicsContextState>;
+    friend class GraphicsContextStateStack;
 
     template<typename Functor> static constexpr void forEachProperty(NOESCAPE const Functor&);
+
+    void addChange(Change change)
+    {
+        m_changeFlags.add(change);
+        m_changesSinceSave.add(change);
+    }
 
     template<typename T>
     void setProperty(Change change, T GraphicsContextState::*property, const T& value)
@@ -160,7 +174,7 @@ private:
             return;
 #endif
         this->*property = value;
-        m_changeFlags.add(change);
+        addChange(change);
     }
 
     template<typename T>
@@ -171,12 +185,13 @@ private:
             return;
 #endif
         this->*property = std::forward<T>(value);
-        m_changeFlags.add(change);
+        addChange(change);
     }
 
     SourceBrush m_fillBrush { Color::black };
     SourceBrush m_strokeBrush { Color::black };
     ChangeFlags m_changeFlags;
+    ChangeFlags m_changesSinceSave { ChangeFlags::all() }; // Initial -> save pushes all properties.
     float m_strokeThickness { 0 };
     WindRule m_fillRule { WindRule::NonZero };
     StrokeStyle m_strokeStyle { StrokeStyle::SolidStroke };
@@ -196,6 +211,63 @@ private:
     bool m_drawLuminanceMask { false };
 
     Purpose m_purpose { Purpose::Initial };
+};
+
+class GraphicsContextStateStack {
+public:
+    using Change = GraphicsContextState::Change;
+    using ChangeFlags = GraphicsContextState::ChangeFlags;
+    using Purpose = GraphicsContextState::Purpose;
+
+    bool isEmpty() const { return m_levels.isEmpty(); }
+    unsigned size() const { return m_levels.size(); }
+
+    void save(GraphicsContextState& current, Purpose);
+    void restore(GraphicsContextState& current);
+
+private:
+    friend class GraphicsContextState;
+
+    struct SmallProperties {
+        unsigned imageInterpolationQuality : 3; // InterpolationQuality
+        unsigned textDrawingMode : 2; // TextDrawingModeFlags
+        unsigned shouldAntialias : 1;
+        unsigned shouldSmoothFonts : 1;
+        unsigned shouldSubpixelQuantizeFonts : 1;
+        unsigned shadowsIgnoreTransforms : 1;
+        unsigned drawLuminanceMask : 1;
+    };
+    static_assert(sizeof(SmallProperties) <= 4, "SmallProperties should pack into a word");
+    static_assert(static_cast<unsigned>(InterpolationQuality::High) < 8, "imageInterpolationQuality needs more bits");
+    static_assert(2 * static_cast<unsigned>(TextDrawingMode::Stroke) - 1 < 4, "textDrawingMode needs more bits");
+
+    static constexpr ChangeFlags smallChanges {
+        Change::ImageInterpolationQuality, Change::TextDrawingMode, Change::ShouldAntialias,
+        Change::ShouldSmoothFonts, Change::ShouldSubpixelQuantizeFonts,
+        Change::ShadowsIgnoreTransforms, Change::DrawLuminanceMask
+    };
+
+    static SmallProperties smallProperties(const GraphicsContextState&);
+    static void applySmallProperties(GraphicsContextState&, SmallProperties);
+
+    struct Level {
+        ChangeFlags pushedValues; // The properties whose value this level pushed, which its restore() pops.
+        Purpose purpose;
+    };
+
+    Vector<Level, 1> m_levels;
+
+    // Each of these holds the value the property had before save().
+    Vector<SourceBrush, 1> m_fillBrush;
+    Vector<SourceBrush, 1> m_strokeBrush;
+    Vector<float, 1> m_strokeThickness;
+    Vector<float, 1> m_alpha;
+    Vector<std::optional<GraphicsDropShadow>> m_dropShadow;
+    Vector<std::optional<GraphicsStyle>> m_style;
+    Vector<WindRule, 1> m_fillRule;
+    Vector<StrokeStyle, 1> m_strokeStyle;
+    Vector<CompositeMode, 1> m_compositeMode;
+    Vector<SmallProperties, 1> m_smallProperties;
 };
 
 TextStream& operator<<(TextStream&, GraphicsContextState::Change);

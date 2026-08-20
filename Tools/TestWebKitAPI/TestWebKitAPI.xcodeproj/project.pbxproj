@@ -759,6 +759,7 @@
 				WebCore/FlowModeTests.cpp,
 				WebCore/FontCascade.cpp,
 				WebCore/FontShadowTests.cpp,
+				WebCore/GraphicsContextStateStackTests.cpp,
 				WebCore/GridPosition.cpp,
 				WebCore/HTMLParserIdioms.cpp,
 				WebCore/HTTPHeaderField.cpp,
