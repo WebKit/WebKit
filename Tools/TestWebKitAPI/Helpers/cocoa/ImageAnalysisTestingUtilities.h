@@ -25,6 +25,8 @@
 
 #pragma once
 
+#import <Foundation/Foundation.h>
+
 #ifdef __cplusplus
 
 #if HAVE(VK_IMAGE_ANALYSIS)
@@ -59,6 +61,8 @@ private:
 };
 
 #endif // ENABLE(IMAGE_ANALYSIS)
+
+Class getImageAnalyzerClass();
 
 } // namespace TestWebKitAPI
 
