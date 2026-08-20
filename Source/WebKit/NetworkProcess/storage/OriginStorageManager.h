@@ -68,8 +68,14 @@ public:
 
     void connectionClosed(IPC::Connection::UniqueID);
     WebCore::StorageEstimate estimate();
+<<<<<<< HEAD
     const String& path() const LIFETIME_BOUND { return m_path; }
     OriginQuotaManager& NODELETE quotaManager();
+=======
+    const String& path() const { return m_path; }
+    OriginQuotaManager& quotaManager();
+    Ref<OriginQuotaManager> protectedQuotaManager();
+>>>>>>> ae0bf14abc6d (Validate connection access to FileSystem storage with FileSystemHandleIdentifier)
     FileSystemStorageManager& fileSystemStorageManager(FileSystemStorageHandleRegistry&, const WebCore::ClientOrigin&);
     FileSystemStorageManager* existingFileSystemStorageManager();
     LocalStorageManager& localStorageManager(StorageAreaRegistry&) LIFETIME_BOUND;

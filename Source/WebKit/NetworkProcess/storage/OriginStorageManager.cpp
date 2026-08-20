@@ -74,7 +74,11 @@ public:
     void connectionClosed(IPC::Connection::UniqueID);
     String typeStoragePath(StorageType) const;
     FileSystemStorageManager& fileSystemStorageManager(FileSystemStorageHandleRegistry&, const WebCore::ClientOrigin&, FileSystemStorageManager::QuotaCheckFunction&&);
+<<<<<<< HEAD
     FileSystemStorageManager* NODELETE existingFileSystemStorageManager() { return m_fileSystemStorageManager.get(); }
+=======
+    FileSystemStorageManager* existingFileSystemStorageManager() { return m_fileSystemStorageManager.get(); }
+>>>>>>> ae0bf14abc6d (Validate connection access to FileSystem storage with FileSystemHandleIdentifier)
     LocalStorageManager& localStorageManager(StorageAreaRegistry&);
     LocalStorageManager* NODELETE existingLocalStorageManager() { return m_localStorageManager.get(); }
     SessionStorageManager& sessionStorageManager(StorageAreaRegistry&);
@@ -684,6 +688,14 @@ OriginQuotaManager& OriginStorageManager::quotaManager()
 
 FileSystemStorageManager& OriginStorageManager::fileSystemStorageManager(FileSystemStorageHandleRegistry& registry, const WebCore::ClientOrigin& origin)
 {
+<<<<<<< HEAD
+=======
+    return m_quotaManager.get();
+}
+
+FileSystemStorageManager& OriginStorageManager::fileSystemStorageManager(FileSystemStorageHandleRegistry& registry, const WebCore::ClientOrigin& origin)
+{
+>>>>>>> ae0bf14abc6d (Validate connection access to FileSystem storage with FileSystemHandleIdentifier)
     return defaultBucket().fileSystemStorageManager(registry, origin, [quotaManager = ThreadSafeWeakPtr { this->quotaManager() }](uint64_t spaceRequested, CompletionHandler<void(bool)>&& completionHandler) mutable {
         auto strongReference = quotaManager.get();
         if (!strongReference)

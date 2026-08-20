@@ -28,7 +28,10 @@
 #include "FileSystemStorageHandle.h"
 #include "FileSystemStorageManagerLock.h"
 #include <WebCore/ClientOrigin.h>
+<<<<<<< HEAD
 #include <WebCore/FileSystemHandleGlobalIdentifier.h>
+=======
+>>>>>>> ae0bf14abc6d (Validate connection access to FileSystem storage with FileSystemHandleIdentifier)
 #include <WebCore/FileSystemHandleIdentifier.h>
 #include <WebCore/FileSystemHandleKind.h>
 #include <WebCore/FileSystemHandleRecord.h>

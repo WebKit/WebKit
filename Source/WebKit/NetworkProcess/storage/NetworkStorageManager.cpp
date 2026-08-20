@@ -1067,7 +1067,11 @@ void NetworkStorageManager::fileSystemGetDirectory(IPC::Connection& connection, 
     ASSERT(!RunLoop::isMain());
     MESSAGE_CHECK_COMPLETION(isSiteAllowedForConnection(connection.uniqueID(), WebCore::RegistrableDomain { origin.topOrigin }), connection, completionHandler(makeUnexpected(FileSystemStorageError::Unknown)));
 
+<<<<<<< HEAD
     Ref fileSystemStorageManager = originStorageManager(origin, ShouldWriteOriginFile::Yes, ShouldUpdateOriginAccessTime::Yes)->fileSystemStorageManager(*protect(m_fileSystemStorageHandleRegistry), origin);
+=======
+    Ref fileSystemStorageManager = checkedOriginStorageManager(origin)->fileSystemStorageManager(*protectedFileSystemStorageHandleRegistry(), origin);
+>>>>>>> ae0bf14abc6d (Validate connection access to FileSystem storage with FileSystemHandleIdentifier)
     auto result = fileSystemStorageManager->getDirectory(connection.uniqueID());
     if (!result)
         return completionHandler(makeUnexpected(result.error()));
@@ -1079,11 +1083,19 @@ void NetworkStorageManager::closeHandle(IPC::Connection& connection, WebCore::Fi
 {
     ASSERT(!RunLoop::isMain());
 
+<<<<<<< HEAD
     RefPtr handle = m_fileSystemStorageHandleRegistry->getHandle(identifier);
     if (!handle)
         return;
 
     MESSAGE_CHECK(canConnectionAccessFileSystemHandle(connection.uniqueID(), *handle), connection);
+=======
+    RefPtr handle = protectedFileSystemStorageHandleRegistry()->getHandle(identifier);
+    if (!handle)
+        return;
+
+    STORAGE_MESSAGE_CHECK(canConnectionAccessFileSystemHandle(connection.uniqueID(), *handle), connection);
+>>>>>>> ae0bf14abc6d (Validate connection access to FileSystem storage with FileSystemHandleIdentifier)
 
     handle->close();
 }
@@ -1096,7 +1108,11 @@ void NetworkStorageManager::isSameEntry(IPC::Connection& connection, WebCore::Fi
     if (!handle)
         return completionHandler(false);
 
+<<<<<<< HEAD
     MESSAGE_CHECK_COMPLETION(canConnectionAccessFileSystemHandle(connection.uniqueID(), *handle), connection, completionHandler(false));
+=======
+    STORAGE_MESSAGE_CHECK_COMPLETION(canConnectionAccessFileSystemHandle(connection.uniqueID(), *handle), connection, completionHandler(false));
+>>>>>>> ae0bf14abc6d (Validate connection access to FileSystem storage with FileSystemHandleIdentifier)
 
     completionHandler(handle->isSameEntry(targetIdentifier));
 }
@@ -1109,7 +1125,11 @@ void NetworkStorageManager::move(IPC::Connection& connection, WebCore::FileSyste
     if (!handle)
         return completionHandler(FileSystemStorageError::Unknown);
 
+<<<<<<< HEAD
     MESSAGE_CHECK_COMPLETION(canConnectionAccessFileSystemHandle(connection.uniqueID(), *handle), connection, completionHandler(FileSystemStorageError::Unknown));
+=======
+    STORAGE_MESSAGE_CHECK_COMPLETION(canConnectionAccessFileSystemHandle(connection.uniqueID(), *handle), connection, completionHandler(FileSystemStorageError::Unknown));
+>>>>>>> ae0bf14abc6d (Validate connection access to FileSystem storage with FileSystemHandleIdentifier)
 
     completionHandler(handle->move(destinationIdentifier, newName));
 }
@@ -1122,6 +1142,7 @@ void NetworkStorageManager::getFileHandle(IPC::Connection& connection, WebCore::
     if (!handle)
         return completionHandler(makeUnexpected(FileSystemStorageError::Unknown));
 
+<<<<<<< HEAD
     MESSAGE_CHECK_COMPLETION(canConnectionAccessFileSystemHandle(connection.uniqueID(), *handle), connection, completionHandler(makeUnexpected(FileSystemStorageError::Unknown)));
 
     auto result = handle->getFileHandle(connection.uniqueID(), WTF::move(name), createIfNecessary);
@@ -1129,6 +1150,11 @@ void NetworkStorageManager::getFileHandle(IPC::Connection& connection, WebCore::
         return completionHandler(makeUnexpected(result.error()));
 
     completionHandler(result.value());
+=======
+    STORAGE_MESSAGE_CHECK_COMPLETION(canConnectionAccessFileSystemHandle(connection.uniqueID(), *handle), connection, completionHandler(makeUnexpected(FileSystemStorageError::Unknown)));
+
+    completionHandler(handle->getFileHandle(connection.uniqueID(), WTF::move(name), createIfNecessary));
+>>>>>>> ae0bf14abc6d (Validate connection access to FileSystem storage with FileSystemHandleIdentifier)
 }
 
 void NetworkStorageManager::getDirectoryHandle(IPC::Connection& connection, WebCore::FileSystemHandleIdentifier identifier, String&& name, bool createIfNecessary, CompletionHandler<void(Expected<std::pair<WebCore::FileSystemHandleGlobalIdentifier, WebCore::FileSystemHandleIdentifier>, FileSystemStorageError>)>&& completionHandler)
@@ -1139,6 +1165,7 @@ void NetworkStorageManager::getDirectoryHandle(IPC::Connection& connection, WebC
     if (!handle)
         return completionHandler(makeUnexpected(FileSystemStorageError::Unknown));
 
+<<<<<<< HEAD
     MESSAGE_CHECK_COMPLETION(canConnectionAccessFileSystemHandle(connection.uniqueID(), *handle), connection, completionHandler(makeUnexpected(FileSystemStorageError::Unknown)));
 
     auto result = handle->getDirectoryHandle(connection.uniqueID(), WTF::move(name), createIfNecessary);
@@ -1146,6 +1173,11 @@ void NetworkStorageManager::getDirectoryHandle(IPC::Connection& connection, WebC
         return completionHandler(makeUnexpected(result.error()));
 
     completionHandler(result.value());
+=======
+    STORAGE_MESSAGE_CHECK_COMPLETION(canConnectionAccessFileSystemHandle(connection.uniqueID(), *handle), connection, completionHandler(makeUnexpected(FileSystemStorageError::Unknown)));
+
+    completionHandler(handle->getDirectoryHandle(connection.uniqueID(), WTF::move(name), createIfNecessary));
+>>>>>>> ae0bf14abc6d (Validate connection access to FileSystem storage with FileSystemHandleIdentifier)
 }
 
 void NetworkStorageManager::removeEntry(IPC::Connection& connection, WebCore::FileSystemHandleIdentifier identifier, const String& name, bool deleteRecursively, CompletionHandler<void(std::optional<FileSystemStorageError>)>&& completionHandler)
@@ -1156,12 +1188,20 @@ void NetworkStorageManager::removeEntry(IPC::Connection& connection, WebCore::Fi
     if (!handle)
         return completionHandler(FileSystemStorageError::Unknown);
 
+<<<<<<< HEAD
     MESSAGE_CHECK_COMPLETION(canConnectionAccessFileSystemHandle(connection.uniqueID(), *handle), connection, completionHandler(FileSystemStorageError::Unknown));
+=======
+    STORAGE_MESSAGE_CHECK_COMPLETION(canConnectionAccessFileSystemHandle(connection.uniqueID(), *handle), connection, completionHandler(FileSystemStorageError::Unknown));
+>>>>>>> ae0bf14abc6d (Validate connection access to FileSystem storage with FileSystemHandleIdentifier)
 
     completionHandler(handle->removeEntry(name, deleteRecursively));
 }
 
+<<<<<<< HEAD
 void NetworkStorageManager::resolve(IPC::Connection& connection, WebCore::FileSystemHandleIdentifier identifier, WebCore::FileSystemHandleIdentifier targetIdentifier, CompletionHandler<void(Expected<std::optional<Vector<String>>, FileSystemStorageError>)>&& completionHandler)
+=======
+void NetworkStorageManager::resolve(IPC::Connection& connection, WebCore::FileSystemHandleIdentifier identifier, WebCore::FileSystemHandleIdentifier targetIdentifier, CompletionHandler<void(Expected<Vector<String>, FileSystemStorageError>)>&& completionHandler)
+>>>>>>> ae0bf14abc6d (Validate connection access to FileSystem storage with FileSystemHandleIdentifier)
 {
     ASSERT(!RunLoop::isMain());
 
@@ -1169,7 +1209,11 @@ void NetworkStorageManager::resolve(IPC::Connection& connection, WebCore::FileSy
     if (!handle)
         return completionHandler(makeUnexpected(FileSystemStorageError::Unknown));
 
+<<<<<<< HEAD
     MESSAGE_CHECK_COMPLETION(canConnectionAccessFileSystemHandle(connection.uniqueID(), *handle), connection, completionHandler(makeUnexpected(FileSystemStorageError::Unknown)));
+=======
+    STORAGE_MESSAGE_CHECK_COMPLETION(canConnectionAccessFileSystemHandle(connection.uniqueID(), *handle), connection, completionHandler(makeUnexpected(FileSystemStorageError::Unknown)));
+>>>>>>> ae0bf14abc6d (Validate connection access to FileSystem storage with FileSystemHandleIdentifier)
 
     completionHandler(handle->resolve(targetIdentifier));
 }
@@ -1182,10 +1226,14 @@ void NetworkStorageManager::getFile(IPC::Connection& connection, WebCore::FileSy
     if (!handle)
         return completionHandler(makeUnexpected(FileSystemStorageError::Unknown));
 
+<<<<<<< HEAD
     MESSAGE_CHECK_COMPLETION(canConnectionAccessFileSystemHandle(connection.uniqueID(), *handle), connection, completionHandler(makeUnexpected(FileSystemStorageError::Unknown)));
 
     if (!FileSystem::fileExists(handle->path()))
         return completionHandler(makeUnexpected(FileSystemStorageError::FileNotFound));
+=======
+    STORAGE_MESSAGE_CHECK_COMPLETION(canConnectionAccessFileSystemHandle(connection.uniqueID(), *handle), connection, completionHandler(makeUnexpected(FileSystemStorageError::Unknown)));
+>>>>>>> ae0bf14abc6d (Validate connection access to FileSystem storage with FileSystemHandleIdentifier)
 
     RunLoop::mainSingleton().dispatch([protectedThis = Ref { *this }, connection = Ref { connection }, path = crossThreadCopy(handle->path()), completionHandler = WTF::move(completionHandler)] mutable {
         if (RefPtr process = protectedThis->m_process.get()) {
@@ -1206,7 +1254,11 @@ void NetworkStorageManager::createSyncAccessHandle(IPC::Connection& connection, 
     if (!handle)
         return completionHandler(makeUnexpected(FileSystemStorageError::Unknown));
 
+<<<<<<< HEAD
     MESSAGE_CHECK_COMPLETION(canConnectionAccessFileSystemHandle(connection.uniqueID(), *handle), connection, completionHandler(makeUnexpected(FileSystemStorageError::Unknown)));
+=======
+    STORAGE_MESSAGE_CHECK_COMPLETION(canConnectionAccessFileSystemHandle(connection.uniqueID(), *handle), connection, completionHandler(makeUnexpected(FileSystemStorageError::Unknown)));
+>>>>>>> ae0bf14abc6d (Validate connection access to FileSystem storage with FileSystemHandleIdentifier)
 
     completionHandler(handle->createSyncAccessHandle());
 }
@@ -1215,11 +1267,19 @@ void NetworkStorageManager::closeSyncAccessHandle(IPC::Connection& connection, W
 {
     ASSERT(!RunLoop::isMain());
 
+<<<<<<< HEAD
     RefPtr handle = m_fileSystemStorageHandleRegistry->getHandle(identifier);
     if (!handle)
         return completionHandler();
 
     MESSAGE_CHECK_COMPLETION(canConnectionAccessFileSystemHandle(connection.uniqueID(), *handle), connection, completionHandler());
+=======
+    RefPtr handle = protectedFileSystemStorageHandleRegistry()->getHandle(identifier);
+    if (!handle)
+        return completionHandler();
+
+    STORAGE_MESSAGE_CHECK_COMPLETION(canConnectionAccessFileSystemHandle(connection.uniqueID(), *handle), connection, completionHandler());
+>>>>>>> ae0bf14abc6d (Validate connection access to FileSystem storage with FileSystemHandleIdentifier)
 
     handle->closeSyncAccessHandle(accessHandleIdentifier);
 
@@ -1234,7 +1294,11 @@ void NetworkStorageManager::requestNewCapacityForSyncAccessHandle(IPC::Connectio
     if (!handle)
         return completionHandler(std::nullopt);
 
+<<<<<<< HEAD
     MESSAGE_CHECK_COMPLETION(canConnectionAccessFileSystemHandle(connection.uniqueID(), *handle), connection, completionHandler(std::nullopt));
+=======
+    STORAGE_MESSAGE_CHECK_COMPLETION(canConnectionAccessFileSystemHandle(connection.uniqueID(), *handle), connection, completionHandler(std::nullopt));
+>>>>>>> ae0bf14abc6d (Validate connection access to FileSystem storage with FileSystemHandleIdentifier)
 
     handle->requestNewCapacityForSyncAccessHandle(accessHandleIdentifier, newCapacity, WTF::move(completionHandler));
 }
@@ -1247,7 +1311,11 @@ void NetworkStorageManager::createWritable(IPC::Connection& connection, WebCore:
     if (!handle)
         return completionHandler(makeUnexpected(FileSystemStorageError::Unknown));
 
+<<<<<<< HEAD
     MESSAGE_CHECK_COMPLETION(canConnectionAccessFileSystemHandle(connection.uniqueID(), *handle), connection, completionHandler(makeUnexpected(FileSystemStorageError::Unknown)));
+=======
+    STORAGE_MESSAGE_CHECK_COMPLETION(canConnectionAccessFileSystemHandle(connection.uniqueID(), *handle), connection, completionHandler(makeUnexpected(FileSystemStorageError::Unknown)));
+>>>>>>> ae0bf14abc6d (Validate connection access to FileSystem storage with FileSystemHandleIdentifier)
 
     completionHandler(handle->createWritable(keepExistingData));
 }
@@ -1260,7 +1328,11 @@ void NetworkStorageManager::closeWritable(IPC::Connection& connection, WebCore::
     if (!handle)
         return completionHandler(FileSystemStorageError::Unknown);
 
+<<<<<<< HEAD
     MESSAGE_CHECK_COMPLETION(canConnectionAccessFileSystemHandle(connection.uniqueID(), *handle), connection, completionHandler(FileSystemStorageError::Unknown));
+=======
+    STORAGE_MESSAGE_CHECK_COMPLETION(canConnectionAccessFileSystemHandle(connection.uniqueID(), *handle), connection, completionHandler(FileSystemStorageError::Unknown));
+>>>>>>> ae0bf14abc6d (Validate connection access to FileSystem storage with FileSystemHandleIdentifier)
 
     completionHandler(handle->closeWritable(streamIdentifier, reason));
 }
@@ -1273,7 +1345,11 @@ void NetworkStorageManager::executeCommandForWritable(IPC::Connection& connectio
     if (!handle)
         return completionHandler(FileSystemStorageError::Unknown);
 
+<<<<<<< HEAD
     MESSAGE_CHECK_COMPLETION(canConnectionAccessFileSystemHandle(connection.uniqueID(), *handle), connection, completionHandler(FileSystemStorageError::Unknown));
+=======
+    STORAGE_MESSAGE_CHECK_COMPLETION(canConnectionAccessFileSystemHandle(connection.uniqueID(), *handle), connection, completionHandler(FileSystemStorageError::Unknown));
+>>>>>>> ae0bf14abc6d (Validate connection access to FileSystem storage with FileSystemHandleIdentifier)
 
     handle->executeCommandForWritable(streamIdentifier, type, position, size, dataBytes, hasDataError, WTF::move(completionHandler));
 }
@@ -1286,7 +1362,11 @@ void NetworkStorageManager::getHandleNames(IPC::Connection& connection, WebCore:
     if (!handle)
         return completionHandler(makeUnexpected(FileSystemStorageError::Unknown));
 
+<<<<<<< HEAD
     MESSAGE_CHECK_COMPLETION(canConnectionAccessFileSystemHandle(connection.uniqueID(), *handle), connection, completionHandler(makeUnexpected(FileSystemStorageError::Unknown)));
+=======
+    STORAGE_MESSAGE_CHECK_COMPLETION(canConnectionAccessFileSystemHandle(connection.uniqueID(), *handle), connection, completionHandler(makeUnexpected(FileSystemStorageError::Unknown)));
+>>>>>>> ae0bf14abc6d (Validate connection access to FileSystem storage with FileSystemHandleIdentifier)
 
     completionHandler(handle->getHandleNames());
 }
@@ -1299,7 +1379,11 @@ void NetworkStorageManager::getHandle(IPC::Connection& connection, WebCore::File
     if (!handle)
         return completionHandler(makeUnexpected(FileSystemStorageError::Unknown));
 
+<<<<<<< HEAD
     MESSAGE_CHECK_COMPLETION(canConnectionAccessFileSystemHandle(connection.uniqueID(), *handle), connection, completionHandler(makeUnexpected(FileSystemStorageError::Unknown)));
+=======
+    STORAGE_MESSAGE_CHECK_COMPLETION(canConnectionAccessFileSystemHandle(connection.uniqueID(), *handle), connection, completionHandler(makeUnexpected(FileSystemStorageError::Unknown)));
+>>>>>>> ae0bf14abc6d (Validate connection access to FileSystem storage with FileSystemHandleIdentifier)
 
     auto result = handle->getHandle(connection.uniqueID(), WTF::move(name));
     if (!result)

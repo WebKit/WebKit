@@ -64,9 +64,12 @@ public:
     Type type() const { return m_type; }
     uint64_t allocatedUnusedCapacity();
     std::optional<WebCore::ClientOrigin> origin() const;
+<<<<<<< HEAD
 
     const Markable<WebCore::FileSystemHandleGlobalIdentifier>& globalIdentifier() const { return m_globalIdentifier; }
     void setGlobalIdentifier(WebCore::FileSystemHandleGlobalIdentifier globalIdentifier) { m_globalIdentifier = globalIdentifier; }
+=======
+>>>>>>> ae0bf14abc6d (Validate connection access to FileSystem storage with FileSystemHandleIdentifier)
 
     void close();
     bool isSameEntry(WebCore::FileSystemHandleIdentifier);

@@ -1041,7 +1041,11 @@ IPC.addOutgoingMessageListener('Networking', function(msg) {
     }
 });
 
+<<<<<<< HEAD:Tools/TestWebKitAPI/Tests/WebKit/WKWebView/IPCTestingAPI.mm
 var run = async() => {
+=======
+async function run() {
+>>>>>>> ae0bf14abc6d (Validate connection access to FileSystem storage with FileSystemHandleIdentifier):Tools/TestWebKitAPI/Tests/WebKitCocoa/IPCTestingAPI.mm
     var root = await navigator.storage.getDirectory();
     await root.getFileHandle('test.txt', { create: true });
     for await (var entry of root.entries()) { }
@@ -1049,13 +1053,18 @@ var run = async() => {
         alert('id:' + capturedIdentifier.toString());
     else
         alert('error:no-identifier-captured');
+<<<<<<< HEAD:Tools/TestWebKitAPI/Tests/WebKit/WKWebView/IPCTestingAPI.mm
 };
+=======
+}
+>>>>>>> ae0bf14abc6d (Validate connection access to FileSystem storage with FileSystemHandleIdentifier):Tools/TestWebKitAPI/Tests/WebKitCocoa/IPCTestingAPI.mm
 run();
 </script>
 )TESTRESOURCE"_s;
 
 static constexpr auto fileSystemBadPageHTML = R"TESTRESOURCE(
 <script>
+<<<<<<< HEAD:Tools/TestWebKitAPI/Tests/WebKit/WKWebView/IPCTestingAPI.mm
 var attack = (stolenId) => {
     var net = IPC.connectionForProcessTarget('Networking');
     var onReply = (reply) => {
@@ -1068,6 +1077,23 @@ var attack = (stolenId) => {
     };
     net.sendWithAsyncReply(0, IPC.messages.NetworkStorageManager_GetHandleNames.name, [ { type: 'uint64_t', value: BigInt(stolenId) } ], onReply);
 };
+=======
+function attack(stolenId) {
+    var net = IPC.connectionForProcessTarget('Networking');
+    net.sendWithAsyncReply(0,
+        IPC.messages.NetworkStorageManager_GetHandleNames.name,
+        [{ type: 'uint64_t', value: BigInt(stolenId) }],
+        function(reply) {
+            var buf = new DataView(reply.buffer);
+            var hasValue = !!buf.getUint8(16);
+            if (hasValue)
+                alert('FAIL:access-granted');
+            else
+                alert('PASS:access-denied');
+        }
+    );
+}
+>>>>>>> ae0bf14abc6d (Validate connection access to FileSystem storage with FileSystemHandleIdentifier):Tools/TestWebKitAPI/Tests/WebKitCocoa/IPCTestingAPI.mm
 </script>
 )TESTRESOURCE"_s;
 
@@ -1075,6 +1101,7 @@ TEST(IPCTestingAPI, FileSystemForgedHandleIdentifierRejected)
 {
     using namespace TestWebKitAPI;
 
+<<<<<<< HEAD:Tools/TestWebKitAPI/Tests/WebKit/WKWebView/IPCTestingAPI.mm
     RetainPtr tempDir = retainPtr([[NSFileManager defaultManager] URLForDirectory:NSItemReplacementDirectory inDomain:NSUserDomainMask appropriateForURL:[NSURL fileURLWithPath:NSTemporaryDirectory()] create:YES error:nil]);
     RetainPtr dataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
     [dataStoreConfiguration setGeneralStorageDirectory:[tempDir URLByAppendingPathComponent:@"Storage"]];
@@ -1082,6 +1109,15 @@ TEST(IPCTestingAPI, FileSystemForgedHandleIdentifierRejected)
     [dataStore _setStorageSiteValidationEnabled:YES];
 
     RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+=======
+    auto tempDir = retainPtr([[NSFileManager defaultManager] URLForDirectory:NSItemReplacementDirectory inDomain:NSUserDomainMask appropriateForURL:[NSURL fileURLWithPath:NSTemporaryDirectory()] create:YES error:nil]);
+    auto dataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
+    [dataStoreConfiguration setGeneralStorageDirectory:[tempDir URLByAppendingPathComponent:@"Storage"]];
+    auto dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:dataStoreConfiguration.get()]);
+    [dataStore _setStorageSiteValidationEnabled:YES];
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+>>>>>>> ae0bf14abc6d (Validate connection access to FileSystem storage with FileSystemHandleIdentifier):Tools/TestWebKitAPI/Tests/WebKitCocoa/IPCTestingAPI.mm
     for (_WKFeature *feature in [WKPreferences _features]) {
         if ([feature.key isEqualToString:@"IPCTestingAPIEnabled"]) {
             [[configuration preferences] _setEnabled:YES forFeature:feature];
@@ -1090,8 +1126,13 @@ TEST(IPCTestingAPI, FileSystemForgedHandleIdentifierRejected)
     }
     [configuration setWebsiteDataStore:dataStore.get()];
 
+<<<<<<< HEAD:Tools/TestWebKitAPI/Tests/WebKit/WKWebView/IPCTestingAPI.mm
     RetainPtr goodUIDelegate = adoptNS([TestUIDelegate new]);
     RetainPtr goodView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+=======
+    auto goodUIDelegate = adoptNS([TestUIDelegate new]);
+    auto goodView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+>>>>>>> ae0bf14abc6d (Validate connection access to FileSystem storage with FileSystemHandleIdentifier):Tools/TestWebKitAPI/Tests/WebKitCocoa/IPCTestingAPI.mm
     [goodView setUIDelegate:goodUIDelegate.get()];
     [goodView synchronouslyLoadHTMLString:[NSString stringWithUTF8String:fileSystemGoodPageHTML.characters()] baseURL:[NSURL URLWithString:@"https://good.example/"]];
 
@@ -1101,8 +1142,13 @@ TEST(IPCTestingAPI, FileSystemForgedHandleIdentifierRejected)
 
     auto goodPID = [goodView _webProcessIdentifier];
 
+<<<<<<< HEAD:Tools/TestWebKitAPI/Tests/WebKit/WKWebView/IPCTestingAPI.mm
     RetainPtr badUIDelegate = adoptNS([TestUIDelegate new]);
     RetainPtr badView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+=======
+    auto badUIDelegate = adoptNS([TestUIDelegate new]);
+    auto badView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+>>>>>>> ae0bf14abc6d (Validate connection access to FileSystem storage with FileSystemHandleIdentifier):Tools/TestWebKitAPI/Tests/WebKitCocoa/IPCTestingAPI.mm
     [badView setUIDelegate:badUIDelegate.get()];
     [badView synchronouslyLoadHTMLString:[NSString stringWithUTF8String:fileSystemBadPageHTML.characters()] baseURL:[NSURL URLWithString:@"https://bad.example/"]];
 
