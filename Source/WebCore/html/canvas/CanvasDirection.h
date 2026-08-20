@@ -27,6 +27,6 @@
 
 namespace WebCore {
 
-enum class CanvasDirection { Ltr, Rtl, Inherit };
+enum class CanvasDirection : uint8_t { Ltr, Rtl, Inherit };
 
 }

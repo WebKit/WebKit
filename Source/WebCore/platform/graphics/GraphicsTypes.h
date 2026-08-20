@@ -154,7 +154,7 @@ enum class TextDrawingMode : uint8_t {
 };
 using TextDrawingModeFlags = OptionSet<TextDrawingMode>;
 
-enum TextBaseline {
+enum TextBaseline : uint8_t {
     AlphabeticTextBaseline,
     TopTextBaseline,
     MiddleTextBaseline,
@@ -163,7 +163,7 @@ enum TextBaseline {
     HangingTextBaseline
 };
 
-enum TextAlign {
+enum TextAlign : uint8_t {
     StartTextAlign,
     EndTextAlign,
     LeftTextAlign,
