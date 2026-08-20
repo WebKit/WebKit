@@ -36,10 +36,37 @@
 #import "MediaSessionHelperIOS.h"
 #import "MediaStrategy.h"
 #import "PlatformStrategies.h"
+#import "WebMediaDevicePlatformRoute.h"
 #import <wtf/darwin/DispatchExtras.h>
-#import <WebKitAdditions/MediaDeviceRouteControllerAdditions.mm>
 
-#import <pal/ios/AVRoutingSoftLink.h>
+#import <pal/ios/AVSystemRoutingSoftLink.h>
+
+#if HAVE(AVSYSTEMROUTING_FRAMEWORK)
+
+@interface WebMediaDeviceRouteObserver : NSObject <AVSystemRouteControllerObserver>
+@end
+
+@implementation WebMediaDeviceRouteObserver
+
+- (void)systemRouteController:(AVSystemRouteController *)controller handleEvent:(AVSystemRouteEvent *)event completionHandler:(void (^)(BOOL))completionHandler
+{
+    using namespace WebCore;
+    dispatch_async(mainDispatchQueueSingleton(), ^{
+        RELEASE_LOG(Media, "WebMediaDeviceRouteObserver handling event %ld", (long)event.reason);
+        switch (event.reason) {
+        case AVSystemRouteEventReasonActivate:
+            return completionHandler(MediaDeviceRouteController::singleton().activateRoute(event.route));
+        case AVSystemRouteEventReasonDeactivate:
+            return completionHandler(MediaDeviceRouteController::singleton().deactivateRoute(event.route));
+        }
+
+        RELEASE_ASSERT_NOT_REACHED();
+    });
+}
+
+@end
+
+#endif // HAVE(AVSYSTEMROUTING_FRAMEWORK)
 
 namespace WebCore {
 
@@ -50,12 +77,12 @@ MediaDeviceRouteController& MediaDeviceRouteController::singleton()
 }
 
 MediaDeviceRouteController::MediaDeviceRouteController()
-#if HAVE(AVROUTING_FRAMEWORK)
+#if HAVE(AVSYSTEMROUTING_FRAMEWORK)
     : m_routeObserver { adoptNS([[WebMediaDeviceRouteObserver alloc] init]) }
-    , m_platformController { [WebMediaDevicePlatformRouteControllerClass sharedController] }
+    , m_platformController { [PAL::getAVSystemRouteControllerClassSingleton() sharedController] }
 #endif
 {
-#if HAVE(AVROUTING_FRAMEWORK)
+#if HAVE(AVSYSTEMROUTING_FRAMEWORK)
     [m_platformController addObserver:m_routeObserver.get()];
 #endif
 }

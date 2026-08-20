@@ -4328,6 +4328,7 @@
 		A1A0B8792F35782E00550471 /* MediaDeviceRoute.mm in Sources */ = {isa = PBXBuildFile; fileRef = A1AC9A362ED3028B0011617C /* MediaDeviceRoute.mm */; };
 		A1AA9AB91D23911500FEADB3 /* ContentFilterBlockedPage.html in Resources */ = {isa = PBXBuildFile; fileRef = A1AA9AB81D23911500FEADB3 /* ContentFilterBlockedPage.html */; };
 		A1AC9A382ED3028B0011617C /* MediaDeviceRoute.h in Headers */ = {isa = PBXBuildFile; fileRef = A1AC9A352ED3028B0011617C /* MediaDeviceRoute.h */; };
+		A1E4C7012F60A11000B3D4E1 /* WebMediaDevicePlatformRoute.h in Headers */ = {isa = PBXBuildFile; fileRef = A1E4C7002F60A11000B3D4E1 /* WebMediaDevicePlatformRoute.h */; };
 		A1ADAF7D2360FD3E009CB776 /* PreviewConverterClient.h in Headers */ = {isa = PBXBuildFile; fileRef = A1ADAF7B2360FD3D009CB776 /* PreviewConverterClient.h */; };
 		A1ADAF7E2360FD3E009CB776 /* PreviewConverterProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = A1ADAF7C2360FD3E009CB776 /* PreviewConverterProvider.h */; };
 		A1AFEDE61F8BFF6D0087013F /* MockPaymentCoordinator.h in Headers */ = {isa = PBXBuildFile; fileRef = A1AFEDE41F8BFF6D0087013F /* MockPaymentCoordinator.h */; };
@@ -17329,6 +17330,7 @@
 		A15E31F21E0CB0AA004B371C /* QuickLook.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = QuickLook.mm; sourceTree = "<group>"; };
 		A15E66142EDA8E8D007FB56F /* MediaDeviceRouteController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MediaDeviceRouteController.h; sourceTree = "<group>"; };
 		A15E66152EDA8E8D007FB56F /* MediaDeviceRouteController.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = MediaDeviceRouteController.mm; sourceTree = "<group>"; };
+		A1E4C7002F60A11000B3D4E1 /* WebMediaDevicePlatformRoute.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebMediaDevicePlatformRoute.h; sourceTree = "<group>"; };
 		A15E66252EDBB930007FB56F /* MediaPlaybackTargetWirelessPlayback.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MediaPlaybackTargetWirelessPlayback.h; sourceTree = "<group>"; };
 		A15E66262EDBB930007FB56F /* MediaPlaybackTargetWirelessPlayback.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MediaPlaybackTargetWirelessPlayback.cpp; sourceTree = "<group>"; };
 		A15E6BF01E212A6A0080AF34 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -40035,6 +40037,7 @@
 				07638A971884487200E15A1B /* MediaSessionManagerIOS.h */,
 				07638A981884487200E15A1B /* MediaSessionManagerIOS.mm */,
 				5107E2F52F5ABCA700851C85 /* SpatialAudioPlaybackHelperIOS.mm */,
+				A1E4C7002F60A11000B3D4E1 /* WebMediaDevicePlatformRoute.h */,
 			);
 			path = ios;
 			sourceTree = "<group>";
@@ -49285,7 +49288,6 @@
 				83C05A5B1A686212007E5DEA /* StylePropertyShorthandFunctions.h in Headers */,
 				5A574F29131DB96D00471B88 /* StyleQuotes.h in Headers */,
 				BC2387602D84A59400698102 /* StyleRatio.h in Headers */,
-				28A097C7302E767800E50E45 /* StyleSnapLengthAsBorderWidth.h in Headers */,
 				BCEA07332CC6C395000AC148 /* StyleRayFunction.h in Headers */,
 				BCB2720C2CC1F1DB00265123 /* StyleRectFunction.h in Headers */,
 				E461802D1C8DD2900026C02C /* StyleRelations.h in Headers */,
@@ -49345,6 +49347,7 @@
 				BC7320022E732F3F00A6584F /* StyleSingleTransitionProperty.h in Headers */,
 				214FAAB5DFD52EFEDBCC69DA /* StyleSizing.h in Headers */,
 				BC4F32B52E89C4DA00F6AEC1 /* StyleSkewTransformFunction.h in Headers */,
+				28A097C7302E767800E50E45 /* StyleSnapLengthAsBorderWidth.h in Headers */,
 				BC4529E92ECBAD6E00FD066C /* StyleSpeakAs.h in Headers */,
 				BC66AF692F7E152000345E91 /* StyleString.h in Headers */,
 				BC34D2BC2E3BDAB4001EAD95 /* StyleStrokeMiterlimit.h in Headers */,
@@ -50300,6 +50303,7 @@
 				4644F7F7272A1C1B0055599E /* WebLockMode.h in Headers */,
 				464CAF09274331A7003B9E41 /* WebLockRegistry.h in Headers */,
 				07F5CFF52582A51D00662EF5 /* WebMAudioUtilitiesCocoa.h in Headers */,
+				A1E4C7012F60A11000B3D4E1 /* WebMediaDevicePlatformRoute.h in Headers */,
 				0709D78F1AE55554004E42F8 /* WebMediaSessionManager.h in Headers */,
 				0709D7951AE55A29004E42F8 /* WebMediaSessionManagerClient.h in Headers */,
 				0709D7931AE5557E004E42F8 /* WebMediaSessionManagerMac.h in Headers */,

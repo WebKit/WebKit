@@ -27,17 +27,14 @@
 
 #if ENABLE(WIRELESS_PLAYBACK_MEDIA_PLAYER)
 
-// FIXME: Properly support using WKA in modules.
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wnon-modular-include-in-module"
-#include <WebKitAdditions/MediaDeviceRouteControllerAdditions.h>
-#pragma clang diagnostic pop
 #include <wtf/AbstractThreadSafeRefCountedAndCanMakeWeakPtr.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/Vector.h>
 
+OBJC_CLASS AVSystemRouteController;
 OBJC_CLASS WebMediaDeviceRouteObserver;
+OBJC_PROTOCOL(WebMediaDevicePlatformRoute);
 
 namespace WebCore {
 
@@ -72,9 +69,9 @@ private:
 
     ThreadSafeWeakPtr<MediaDeviceRouteControllerClient> m_client;
     Vector<Ref<MediaDeviceRoute>> m_activeRoutes;
-#if HAVE(AVROUTING_FRAMEWORK)
+#if HAVE(AVSYSTEMROUTING_FRAMEWORK)
     RetainPtr<WebMediaDeviceRouteObserver> m_routeObserver;
-    RetainPtr<WebMediaDevicePlatformRouteController> m_platformController;
+    RetainPtr<AVSystemRouteController> m_platformController;
 #endif
 };
 

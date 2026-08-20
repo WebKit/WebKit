@@ -28,7 +28,6 @@
 #if ENABLE(WIRELESS_PLAYBACK_MEDIA_PLAYER)
 
 #include "MediaDeviceRouteLoadURLResult.h"
-#include <WebKitAdditions/MediaDeviceRouteAdditions.h>
 #include <wtf/AbstractRefCountedAndCanMakeWeakPtr.h>
 #include <wtf/Forward.h>
 #include <wtf/MediaTime.h>
@@ -39,7 +38,9 @@
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
+OBJC_CLASS AVSystemRouteSession;
 OBJC_CLASS WebPlaybackControlObserver;
+OBJC_PROTOCOL(WebMediaDevicePlatformRoute);
 
 namespace WebCore {
 
@@ -145,8 +146,8 @@ private:
     RetainPtr<WebMediaDevicePlatformRoute> m_platformRoute;
     RetainPtr<WebPlaybackControlObserver> m_playbackControlObserver;
     WeakPtr<MediaDeviceRouteClient> m_client;
-#if HAVE(AVROUTING_FRAMEWORK)
-    RetainPtr<WebMediaDevicePlatformRouteSession> m_routeSession;
+#if HAVE(AVSYSTEMROUTING_FRAMEWORK)
+    RetainPtr<AVSystemRouteSession> m_routeSession;
 #endif
 };
 

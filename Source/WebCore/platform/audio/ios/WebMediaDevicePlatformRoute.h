@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,12 +23,37 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
+#pragma once
 
-#if HAVE(AVROUTING_FRAMEWORK)
+#import <AVKit/AVKit.h>
+#import <UniformTypeIdentifiers/UTType.h>
+#import <wtf/Platform.h>
 
-#include <wtf/SoftLinking.h>
+#if HAVE(AVSYSTEMROUTING_FRAMEWORK)
+#import <AVSystemRouting/AVSystemRouting.h>
+#endif
 
-#import <WebKitAdditions/AVRoutingSoftLinkAdditions.mm>
+NS_HEADER_AUDIT_BEGIN(nullability, sendability)
 
-#endif // HAVE(AVROUTING_FRAMEWORK)
+@protocol WebMediaDevicePlatformRoute
+
+@property (readonly, copy) NSString *routeDisplayName;
+@property (readonly, copy) UTType *protocolType;
+
+@optional
+#if HAVE(AVSYSTEMROUTING_FRAMEWORK)
+- (BOOL)addSession:(AVSystemRouteSession *)session;
+- (BOOL)removeSession:(AVSystemRouteSession *)session;
+#else
+- (void)startWithURL:(NSURL *)url completionHandler:(void (^)(NSError * _Nullable, NSObject<AVPlaybackUserInterfaceControllable> * _Nullable))completionHandler;
+- (void)stop;
+#endif
+
+@end
+
+#if HAVE(AVSYSTEMROUTING_FRAMEWORK)
+@interface AVSystemRoute () <WebMediaDevicePlatformRoute>
+@end
+#endif
+
+NS_HEADER_AUDIT_END(nullability, sendability)

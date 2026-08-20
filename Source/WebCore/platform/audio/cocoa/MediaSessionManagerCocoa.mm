@@ -206,7 +206,7 @@ void MediaSessionManagerCocoa::updateSessionState()
     if (mode == AudioSession::Mode::Default && category == AudioSession::CategoryType::PlayAndRecord)
         mode = AudioSession::Mode::VideoChat;
 
-#if HAVE(AVROUTING_FRAMEWORK)
+#if HAVE(AVSYSTEMROUTING_FRAMEWORK)
     RouteSharingPolicy policy = RouteSharingPolicy::LongFormAudio;
 #else
     RouteSharingPolicy policy = (category == AudioSession::CategoryType::MediaPlayback) ? RouteSharingPolicy::LongFormAudio : RouteSharingPolicy::Default;

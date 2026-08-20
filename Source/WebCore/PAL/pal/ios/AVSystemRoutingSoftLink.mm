@@ -23,18 +23,16 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#import "config.h"
 
-#include <wtf/Platform.h>
+#if HAVE(AVSYSTEMROUTING_FRAMEWORK)
 
-#if HAVE(AVROUTING_FRAMEWORK)
+#import <AVSystemRouting/AVSystemRouting.h>
+#import <wtf/SoftLinking.h>
 
-#include <wtf/SoftLinking.h>
+SOFT_LINK_FRAMEWORK_FOR_SOURCE_WITH_EXPORT(PAL, AVSystemRouting, PAL_EXPORT)
 
-// FIXME: Properly support using WKA in modules.
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wnon-modular-include-in-module"
-#include <WebKitAdditions/AVRoutingSoftLinkAdditions.h>
-#pragma clang diagnostic pop
+SOFT_LINK_CLASS_FOR_SOURCE_OPTIONAL_WITH_EXPORT(PAL, AVSystemRouting, AVSystemRouteController, PAL_EXPORT)
+SOFT_LINK_CLASS_FOR_SOURCE_OPTIONAL_WITH_EXPORT(PAL, AVSystemRouting, AVSystemRouteSession, PAL_EXPORT)
 
-#endif // HAVE(AVROUTING_FRAMEWORK)
+#endif // HAVE(AVSYSTEMROUTING_FRAMEWORK)
