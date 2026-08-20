@@ -5917,6 +5917,13 @@ bool Internals::elementIsActiveNowPlayingSession(HTMLMediaElement& element) cons
     return element.isActiveNowPlayingSession();
 }
 
+void Internals::elementIsActiveNowPlayingSessionInGPUProcess(HTMLMediaElement& element, DOMPromiseDeferred<IDLBoolean>&& promise)
+{
+    platformStrategies()->mediaStrategy()->isActiveNowPlayingSessionInGPUProcessForTesting(element.mediaSession().mediaSessionIdentifier(), [promise = WTF::move(promise)](bool result) mutable {
+        promise.resolve(result);
+    });
+}
+
 #endif // ENABLE(VIDEO)
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)

@@ -188,6 +188,8 @@
 namespace WebKit {
 using namespace WebCore;
 
+WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(GPUConnectionToWebProcess::NowPlayingCandidate);
+
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
 
 class GPUProxyForCapture final : public UserMediaCaptureManagerProxy::ConnectionProxy {
@@ -417,7 +419,7 @@ void GPUConnectionToWebProcess::didClose(IPC::Connection& connection)
     assertIsMainThread();
 
     if (m_isActiveNowPlayingProcess)
-        clearNowPlayingInfo();
+        clearNowPlayingInfoForPage(std::nullopt);
 
 #if ENABLE(ROUTING_ARBITRATION) && HAVE(AVAUDIO_ROUTING_ARBITER)
     if (m_routingArbitrator)
@@ -810,19 +812,89 @@ void GPUConnectionToWebProcess::releaseGPU(WebGPUIdentifier identifier)
     }
 }
 
-void GPUConnectionToWebProcess::clearNowPlayingInfo()
+void GPUConnectionToWebProcess::clearNowPlayingInfoForPage(std::optional<WebCore::PageIdentifier> pageIdentifier)
 {
+    Ref gpuProcess = this->gpuProcess();
+    if (gpuProcess->isNowPlayingArbiterActive()) {
+        if (pageIdentifier)
+            m_nowPlayingCandidates.remove(*pageIdentifier);
+        else
+            m_nowPlayingCandidates.clear();
+        gpuProcess->recomputeNowPlayingOwner();
+        return;
+    }
+
     m_isActiveNowPlayingProcess = false;
-    m_gpuProcess->nowPlayingManager().removeClient(*this);
+    gpuProcess->nowPlayingManager().removeClient(*this);
 }
 
-void GPUConnectionToWebProcess::setNowPlayingInfo(NowPlayingInfo&& nowPlayingInfo)
+void GPUConnectionToWebProcess::setNowPlayingCandidateState(NowPlayingCandidateState&& candidateState)
 {
-    m_isActiveNowPlayingProcess = true;
+    if (!candidateState.pageIdentifier)
+        return;
+
+    auto pageIdentifier = *candidateState.pageIdentifier;
+    auto& candidate = m_nowPlayingCandidates.ensure(pageIdentifier, [] {
+        return makeUniqueRef<NowPlayingCandidate>();
+    }).iterator->value.get();
+    candidate.state = WTF::move(candidateState);
+
+    gpuProcess().recomputeNowPlayingOwner();
+}
+
+void GPUConnectionToWebProcess::setNowPlayingInfoForPage(NowPlayingInfo&& nowPlayingInfo, std::optional<WebCore::PageIdentifier> pageIdentifier)
+{
     Ref gpuProcess = this->gpuProcess();
+    if (gpuProcess->isNowPlayingArbiterActive()) {
+        if (!pageIdentifier)
+            return;
+
+        auto& candidate = m_nowPlayingCandidates.ensure(*pageIdentifier, [] {
+            return makeUniqueRef<NowPlayingCandidate>();
+        }).iterator->value.get();
+
+        // Content strips the artwork image from repeat pushes assuming the receiver cached it, so attach it here.
+        if (nowPlayingInfo.metadata.artwork && !nowPlayingInfo.metadata.artwork->image && candidate.info && candidate.info->metadata.artwork && candidate.info->metadata.artwork->src == nowPlayingInfo.metadata.artwork->src)
+            nowPlayingInfo.metadata.artwork->image = candidate.info->metadata.artwork->image;
+        candidate.info = WTF::move(nowPlayingInfo);
+
+        if (gpuProcess->isActiveNowPlayingPage(webProcessIdentifier(), *pageIdentifier)) {
+            gpuProcess->nowPlayingManager().addClient(*this);
+            gpuProcess->nowPlayingManager().setNowPlayingInfo(*candidate.info);
+            updateSupportedRemoteCommands();
+        }
+        return;
+    }
+
+    m_isActiveNowPlayingProcess = true;
     gpuProcess->nowPlayingManager().addClient(*this);
     gpuProcess->nowPlayingManager().setNowPlayingInfo(WTF::move(nowPlayingInfo));
     updateSupportedRemoteCommands();
+}
+
+void GPUConnectionToWebProcess::becomeNowPlayingOwner(WebCore::PageIdentifier pageIdentifier)
+{
+    auto it = m_nowPlayingCandidates.find(pageIdentifier);
+    if (it == m_nowPlayingCandidates.end())
+        return;
+
+    m_isActiveNowPlayingProcess = true;
+    Ref gpuProcess = this->gpuProcess();
+    gpuProcess->nowPlayingManager().addClient(*this);
+    if (it->value->info)
+        gpuProcess->nowPlayingManager().setNowPlayingInfo(*it->value->info);
+    updateSupportedRemoteCommands();
+}
+
+void GPUConnectionToWebProcess::resignNowPlayingOwner()
+{
+    m_isActiveNowPlayingProcess = false;
+    gpuProcess().nowPlayingManager().removeClient(*this);
+}
+
+void GPUConnectionToWebProcess::isActiveNowPlayingSessionForTesting(WebCore::MediaSessionIdentifier identifier, CompletionHandler<void(bool)>&& completion)
+{
+    completion(gpuProcess().isActiveNowPlayingSession(webProcessIdentifier(), identifier));
 }
 
 void GPUConnectionToWebProcess::updateSupportedRemoteCommands()

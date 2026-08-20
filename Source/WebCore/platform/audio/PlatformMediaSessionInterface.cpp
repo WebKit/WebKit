@@ -59,4 +59,14 @@ PlatformMediaSessionClient& emptyPlatformMediaSessionClient()
 
 PlatformMediaSessionClient::~PlatformMediaSessionClient() = default;
 
+bool PlatformMediaSessionInterface::isLargeEnoughForMainContent() const
+{
+    return false;
+}
+
+Markable<MonotonicTime> PlatformMediaSessionInterface::mostRecentUserInteractionTime() const
+{
+    return { };
+}
+
 }

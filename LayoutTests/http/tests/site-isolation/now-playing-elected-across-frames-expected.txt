@@ -1,0 +1,14 @@
+Under site isolation, the GPU process chooses the single system NowPlaying session across the main frame and its cross-site subframe. The main frame plays first and is selected; when the cross-site subframe then begins playing, the ConcurrentPlaybackNotPermitted restriction interrupts the main frame playback, and the GPU process selects the subframe's element instead.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS mainFrameActiveInitially is true
+PASS subframeActiveInitially is false
+PASS mainFramePausedAfterSubframePlays is true
+PASS mainFrameActiveAfterSubframePlays is false
+PASS subframeActiveAfterSubframePlays is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

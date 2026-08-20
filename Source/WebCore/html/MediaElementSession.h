@@ -175,9 +175,10 @@ public:
 
     bool canShowControlsManager(PlaybackControlsPurpose) const;
     bool isLargeEnoughForMainContent(MediaSessionMainContentPurpose) const;
+    bool isLargeEnoughForMainContent() const final { return isLargeEnoughForMainContent(MediaSessionMainContentPurpose::MediaControls); }
     bool isLongEnoughForMainContent() const final;
     bool isMainContentForPurposesOfAutoplayEvents() const;
-    Markable<MonotonicTime> NODELETE mostRecentUserInteractionTime() const;
+    Markable<MonotonicTime> NODELETE mostRecentUserInteractionTime() const final;
 
     bool NODELETE allowsPlaybackControlsForAutoplayingAudio() const;
 

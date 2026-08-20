@@ -63,6 +63,8 @@ public:
     virtual RefPtr<AudioVideoRenderer> createAudioVideoRenderer(WTF::LoggerHelper*, HTMLMediaElementIdentifier, MediaPlayerIdentifier) const;
 #endif
     virtual std::unique_ptr<NowPlayingManager> createNowPlayingManager() const;
+
+    virtual void isActiveNowPlayingSessionInGPUProcessForTesting(MediaSessionIdentifier, CompletionHandler<void(bool)>&&);
     void resetMediaEngines();
     virtual bool hasThreadSafeMediaSourceSupport() const;
 #if ENABLE(MEDIA_SOURCE)

@@ -670,9 +670,10 @@ void MediaSessionManagerCocoa::updateNowPlayingInfo()
 
         if (m_registeredAsNowPlayingApplication) {
             ALWAYS_LOG(LOGIDENTIFIER, "clearing now playing info");
-            m_nowPlayingManager->clearNowPlayingInfo();
+            m_nowPlayingManager->clearNowPlayingInfoForPage(pageIdentifier());
         }
 
+        m_lastSentNowPlayingCandidateState = std::nullopt;
         m_registeredAsNowPlayingApplication = false;
         m_nowPlayingActive = false;
         m_lastUpdatedNowPlayingTitle = emptyString();
@@ -690,6 +691,25 @@ void MediaSessionManagerCocoa::updateNowPlayingInfo()
 
     m_nowPlayingUpdateTimer.startOneShot(m_nowPlayingUpdateInterval);
 
+    std::optional<WallTime> interactionWallTime;
+    if (auto interaction = session->mostRecentUserInteractionTime())
+        interactionWallTime = WallTime::now() - (MonotonicTime::now() - *interaction);
+
+    NowPlayingCandidateState candidateState {
+        .pageIdentifier = pageIdentifier(),
+        .mostRecentUserInteractionTime = interactionWallTime,
+        .sessionIdentifier = session->mediaSessionIdentifier(),
+        .presentationType = session->presentationType(),
+        .isLargeEnoughForMainContent = session->isLargeEnoughForMainContent(),
+        .isPlaying = session->isPlaying(),
+    };
+
+    // Sent whenever candidacy changes, before the info dedup below: a resize can change eligibility without changing the info.
+    if (m_lastSentNowPlayingCandidateState != candidateState) {
+        m_lastSentNowPlayingCandidateState = candidateState;
+        m_nowPlayingManager->updateNowPlayingCandidateState(candidateState);
+    }
+
     double currentTime = nowPlayingInfo->currentTime;
     if (!shouldUpdateNowPlaying(*nowPlayingInfo)) {
         INFO_LOG(LOGIDENTIFIER, "Skipping update at ", currentTime);
@@ -698,7 +718,7 @@ void MediaSessionManagerCocoa::updateNowPlayingInfo()
 
     m_haveEverRegisteredAsNowPlayingApplication = true;
 
-    if (m_nowPlayingManager->setNowPlayingInfo(*nowPlayingInfo)) {
+    if (m_nowPlayingManager->setNowPlayingInfo(*nowPlayingInfo, pageIdentifier())) {
 #ifdef RELEASE_LOG_DISABLED
         String src = "src"_s;
         String title = "title"_s;

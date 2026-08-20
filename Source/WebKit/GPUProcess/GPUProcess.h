@@ -37,6 +37,7 @@
 #include <WebCore/ImageBuffer.h>
 #include <WebCore/IntDegrees.h>
 #include <WebCore/MediaPlayerIdentifier.h>
+#include <WebCore/MediaSessionIdentifier.h>
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/ProcessIdentity.h>
 #include <WebCore/ShareableBitmap.h>
@@ -130,6 +131,11 @@ public:
 
     WebCore::NowPlayingManager& nowPlayingManager() LIFETIME_BOUND;
 
+    void recomputeNowPlayingOwner();
+    bool isNowPlayingArbiterActive() const { return m_isNowPlayingArbiterActive; }
+    bool isActiveNowPlayingPage(WebCore::ProcessIdentifier process, WebCore::PageIdentifier page) const { return m_activeNowPlayingOwner && m_activeNowPlayingOwner->process == process && m_activeNowPlayingOwner->page == page; }
+    bool isActiveNowPlayingSession(WebCore::ProcessIdentifier process, WebCore::MediaSessionIdentifier session) const { return m_activeNowPlayingOwner && m_activeNowPlayingOwner->process == process && m_activeNowPlayingOwner->session == session; }
+
 #if ENABLE(MEDIA_STREAM) && PLATFORM(COCOA)
     WorkQueue& videoMediaStreamTrackRendererQueue();
     void ensureAVCaptureServerConnection();
@@ -208,6 +214,7 @@ private:
     void updateGPUProcessPreferences(GPUProcessPreferences&&);
     void createGPUConnectionToWebProcess(WebCore::ProcessIdentifier, PAL::SessionID, IPC::Connection::Handle&&, GPUProcessConnectionParameters&&, CompletionHandler<void()>&&);
     void sharedPreferencesForWebProcessDidChange(WebCore::ProcessIdentifier, SharedPreferencesForWebProcess&&, CompletionHandler<void()>&&);
+    void updateNowPlayingArbiterActive(const SharedPreferencesForWebProcess&);
     void securityFlagsDidChange(SecurityFlags&&);
     void addSession(PAL::SessionID, GPUProcessSessionParameters&&);
     void removeSession(PAL::SessionID);
@@ -308,6 +315,12 @@ private:
     WebCore::Timer m_idleExitTimer;
     std::unique_ptr<WebCore::NowPlayingManager> m_nowPlayingManager;
     SecurityFlags m_securityFlags;
+    struct NowPlayingOwner {
+        WebCore::ProcessIdentifier process;
+        WebCore::PageIdentifier page;
+        WebCore::MediaSessionIdentifier session;
+    };
+    std::optional<NowPlayingOwner> m_activeNowPlayingOwner;
     String m_applicationVisibleName;
 #if PLATFORM(MAC)
     String m_uiProcessName;
@@ -322,6 +335,7 @@ private:
     bool m_haveEnabledVP9Decoder { false };
     bool m_haveEnabledSWVP9Decoder { false };
 #endif
+    bool m_isNowPlayingArbiterActive { false };
 
 };
 

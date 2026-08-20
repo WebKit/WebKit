@@ -51,6 +51,11 @@ std::unique_ptr<NowPlayingManager> MediaStrategy::createNowPlayingManager() cons
     return makeUnique<NowPlayingManager>();
 }
 
+void MediaStrategy::isActiveNowPlayingSessionInGPUProcessForTesting(MediaSessionIdentifier, CompletionHandler<void(bool)>&& completion)
+{
+    completion(false);
+}
+
 void MediaStrategy::resetMediaEngines()
 {
 #if ENABLE(VIDEO)

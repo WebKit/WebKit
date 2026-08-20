@@ -33,7 +33,9 @@
 #include <WebCore/Timer.h>
 #include <wtf/Logger.h>
 #include <wtf/LoggerHelper.h>
+#include <wtf/Markable.h>
 #include <wtf/MediaTime.h>
+#include <wtf/MonotonicTime.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Platform.h>
 #include <wtf/ProcessID.h>
@@ -252,9 +254,11 @@ public:
     virtual void updateMediaUsageIfChanged() { }
 
     virtual bool isLongEnoughForMainContent() const { return false; }
+    virtual bool isLargeEnoughForMainContent() const;
+    virtual Markable<MonotonicTime> mostRecentUserInteractionTime() const;
 
     void setMediaSessionIdentifier(MediaSessionIdentifier);
-    virtual MediaSessionIdentifier mediaSessionIdentifier() const { return m_mediaSessionIdentifier; }
+    virtual MediaSessionIdentifier mediaSessionIdentifier() const;
 
     virtual bool isActiveNowPlayingSession() const = 0;
     virtual void setActiveNowPlayingSession(bool) = 0;
@@ -301,5 +305,6 @@ inline bool PlatformMediaSessionInterface::isRemoteSessionProxy() const { return
 inline bool PlatformMediaSessionInterface::playbackPermitted() const { return true; }
 inline bool PlatformMediaSessionInterface::admissionStillValid() const { return preparingToPlay(); }
 inline bool PlatformMediaSessionInterface::isPlayingOrPreparingToPlay() const { return state() == State::Playing || preparingToPlay(); }
+inline MediaSessionIdentifier PlatformMediaSessionInterface::mediaSessionIdentifier() const { return m_mediaSessionIdentifier; }
 
 } // namespace WebCore

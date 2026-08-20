@@ -307,7 +307,7 @@ void MediaSessionManagerGLib::updateNowPlayingInfo()
     if (!platformSession) {
         if (m_registeredAsNowPlayingApplication) {
             ALWAYS_LOG(LOGIDENTIFIER, "clearing now playing info");
-            m_nowPlayingManager->clearNowPlayingInfo();
+            m_nowPlayingManager->clearNowPlayingInfoForPage(pageIdentifier());
         }
 
         m_registeredAsNowPlayingApplication = false;

@@ -36,8 +36,10 @@ messages -> GPUConnectionToWebProcess WantsDispatchMessage {
 #endif
     [EnabledBy=WebGPUEnabled] void CreateGPU(WebKit::WebGPUIdentifier identifier, WebKit::RemoteRenderingBackendIdentifier renderingBackendIdentifier, IPC::StreamServerConnectionHandle serverConnection) AllowedWhenWaitingForSyncReply
     [EnabledBy=WebGPUEnabled] void ReleaseGPU(WebKit::WebGPUIdentifier identifier) AllowedWhenWaitingForSyncReply
-    void ClearNowPlayingInfo()
-    void SetNowPlayingInfo(struct WebCore::NowPlayingInfo nowPlayingInfo)
+    void ClearNowPlayingInfoForPage(std::optional<WebCore::PageIdentifier> pageIdentifier)
+    void SetNowPlayingInfoForPage(struct WebCore::NowPlayingInfo nowPlayingInfo, std::optional<WebCore::PageIdentifier> pageIdentifier)
+    void SetNowPlayingCandidateState(struct WebCore::NowPlayingCandidateState candidate)
+    [EnabledBy=AllowTestOnlyIPC] IsActiveNowPlayingSessionForTesting(WebCore::MediaSessionIdentifier identifier) -> (bool isActive)
 #if USE(AUDIO_SESSION)
     [EnabledBy=UseGPUProcessForMediaEnabled && MediaPlaybackEnabled] EnsureAudioSession() -> (struct WebKit::RemoteAudioSessionConfiguration configuration) Synchronous
 #endif

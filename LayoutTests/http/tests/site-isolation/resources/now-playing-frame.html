@@ -1,0 +1,45 @@
+
+<script src="/media-resources/utilities.js"></script>
+
+<video id="video" loop src="/media-resources/content/test.mp4" style="width: 640px; height: 480px"></video>
+
+<script>
+let video = document.getElementById("video");
+
+if (!location.search.includes("noConcurrencyRestriction"))
+    internals.setMediaSessionRestrictions("videoaudio", "concurrentplaybacknotpermitted");
+
+window.onmessage = async (event) => {
+    if (event.data === "isActiveNowPlaying?") {
+        const value = await internals.elementIsActiveNowPlayingSessionInGPUProcess(video);
+        window.parent.postMessage({ type: "isActiveNowPlaying", value }, "*");
+        return;
+    }
+    if (event.data === "play") {
+        try {
+            video.volume = 0.001;
+            internals.withUserGesture(() => video.play());
+            await new Promise(resolve => video.addEventListener("playing", resolve, { once: true }));
+            window.parent.postMessage({ type: "playing" }, "*");
+        } catch (e) {
+            window.parent.postMessage({ type: "error", message: e.message }, "*");
+        }
+        return;
+    }
+};
+
+async function load()
+{
+    try {
+        await new Promise(resolve => {
+            video.addEventListener("canplaythrough", resolve, { once: true });
+            video.load();
+        });
+        window.parent.postMessage({ type: "loaded" }, "*");
+    } catch (e) {
+        window.parent.postMessage({ type: "error", message: e.message }, "*");
+    }
+}
+
+load();
+</script>

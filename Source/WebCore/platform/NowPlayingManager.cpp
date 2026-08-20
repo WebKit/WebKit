@@ -59,23 +59,23 @@ void NowPlayingManager::removeClient(NowPlayingManagerClient& client)
     m_client.clear();
     m_nowPlayingInfo = { };
 
-    clearNowPlayingInfo();
+    clearNowPlayingInfoForPage(std::nullopt);
 }
 
-void NowPlayingManager::clearNowPlayingInfo()
+void NowPlayingManager::clearNowPlayingInfoForPage(std::optional<PageIdentifier> pageIdentifier)
 {
-    clearNowPlayingInfoPrivate();
+    clearNowPlayingInfoPrivate(pageIdentifier);
     m_setAsNowPlayingApplication = false;
 }
 
-void NowPlayingManager::clearNowPlayingInfoPrivate()
+void NowPlayingManager::clearNowPlayingInfoPrivate(std::optional<PageIdentifier>)
 {
 #if PLATFORM(COCOA)
     MediaSessionManagerCocoa::clearNowPlayingInfo();
 #endif
 }
 
-bool NowPlayingManager::setNowPlayingInfo(const NowPlayingInfo& nowPlayingInfo)
+bool NowPlayingManager::setNowPlayingInfo(const NowPlayingInfo& nowPlayingInfo, std::optional<PageIdentifier> pageIdentifier)
 {
     if (m_nowPlayingInfo && *m_nowPlayingInfo == nowPlayingInfo)
         return false;
@@ -109,12 +109,17 @@ bool NowPlayingManager::setNowPlayingInfo(const NowPlayingInfo& nowPlayingInfo)
     else
         m_nowPlayingInfo->metadata.artwork->image = nullptr;
 
-    setNowPlayingInfoPrivate(*m_nowPlayingInfo, shouldUpdateNowPlayingSuppression);
+    setNowPlayingInfoPrivate(*m_nowPlayingInfo, shouldUpdateNowPlayingSuppression, pageIdentifier);
     m_setAsNowPlayingApplication = true;
     return true;
 }
 
-void NowPlayingManager::setNowPlayingInfoPrivate(const NowPlayingInfo& nowPlayingInfo, bool shouldUpdateNowPlayingSuppression)
+void NowPlayingManager::updateNowPlayingCandidateState(const NowPlayingCandidateState& candidateState)
+{
+    updateNowPlayingCandidateStatePrivate(candidateState);
+}
+
+void NowPlayingManager::setNowPlayingInfoPrivate(const NowPlayingInfo& nowPlayingInfo, bool shouldUpdateNowPlayingSuppression, std::optional<PageIdentifier>)
 {
     setSupportsSeeking(nowPlayingInfo.supportsSeeking);
 #if PLATFORM(COCOA)

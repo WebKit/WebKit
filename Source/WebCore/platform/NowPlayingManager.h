@@ -58,15 +58,17 @@ public:
     void addClient(NowPlayingManagerClient&);
     void removeClient(NowPlayingManagerClient&);
 
-    void clearNowPlayingInfo();
-    bool setNowPlayingInfo(const NowPlayingInfo&);
+    void clearNowPlayingInfoForPage(std::optional<PageIdentifier>);
+    bool setNowPlayingInfo(const NowPlayingInfo&, std::optional<PageIdentifier> = std::nullopt);
+    void updateNowPlayingCandidateState(const NowPlayingCandidateState&);
     void setSupportsSeeking(bool);
     void setSupportedRemoteCommands(const RemoteCommandListener::RemoteCommandsSet&);
     void updateSupportedCommands();
 
 private:
-    virtual void clearNowPlayingInfoPrivate();
-    virtual void setNowPlayingInfoPrivate(const NowPlayingInfo&, bool shouldUpdateNowPlayingSuppression);
+    virtual void clearNowPlayingInfoPrivate(std::optional<PageIdentifier>);
+    virtual void setNowPlayingInfoPrivate(const NowPlayingInfo&, bool shouldUpdateNowPlayingSuppression, std::optional<PageIdentifier>);
+    virtual void updateNowPlayingCandidateStatePrivate(const NowPlayingCandidateState&);
     void ensureRemoteCommandListenerCreated();
     RefPtr<RemoteCommandListener> m_remoteCommandListener;
     WeakPtr<NowPlayingManagerClient> m_client;
@@ -78,5 +80,7 @@ private:
     std::optional<ArtworkCache> m_nowPlayingInfoArtwork;
     bool m_setAsNowPlayingApplication { false };
 };
+
+inline void NowPlayingManager::updateNowPlayingCandidateStatePrivate(const NowPlayingCandidateState&) { }
 
 }

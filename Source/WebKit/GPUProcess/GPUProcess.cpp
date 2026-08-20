@@ -134,13 +134,24 @@ void GPUProcess::createGPUConnectionToWebProcess(WebCore::ProcessIdentifier iden
 #endif
 
     ASSERT(!m_webProcessConnections.contains(identifier));
+    updateNowPlayingArbiterActive(newConnection->sharedPreferencesForWebProcessValue());
     m_webProcessConnections.add(identifier, WTF::move(newConnection));
+}
+
+void GPUProcess::updateNowPlayingArbiterActive(const SharedPreferencesForWebProcess& sharedPreferences)
+{
+    // Under site isolation the eligible sessions are scattered across processes, so the GPU process elects the
+    // single system owner. Once enabled it stays enabled so an unarbitrated process cannot steal the panel.
+    if (sharedPreferences.remoteMediaSessionManagerEnabled || sharedPreferences.siteIsolationEnabled)
+        m_isNowPlayingArbiterActive = true;
 }
 
 void GPUProcess::sharedPreferencesForWebProcessDidChange(WebCore::ProcessIdentifier identifier, SharedPreferencesForWebProcess&& sharedPreferencesForWebProcess, CompletionHandler<void()>&& completionHandler)
 {
-    if (RefPtr connection = m_webProcessConnections.get(identifier))
+    if (RefPtr connection = m_webProcessConnections.get(identifier)) {
         connection->updateSharedPreferencesForWebProcess(WTF::move(sharedPreferencesForWebProcess));
+        updateNowPlayingArbiterActive(connection->sharedPreferencesForWebProcessValue());
+    }
     completionHandler();
 }
 
@@ -154,6 +165,10 @@ void GPUProcess::removeGPUConnectionToWebProcess(GPUConnectionToWebProcess& conn
     RELEASE_LOG(Process, "%p - GPUProcess::removeGPUConnectionToWebProcess: processIdentifier=%" PRIu64, this, connection.webProcessIdentifier().toUInt64());
     ASSERT(m_webProcessConnections.contains(connection.webProcessIdentifier()));
     m_webProcessConnections.remove(connection.webProcessIdentifier());
+
+    if (m_isNowPlayingArbiterActive)
+        recomputeNowPlayingOwner();
+
     tryExitIfUnusedAndUnderMemoryPressure();
 }
 
@@ -356,6 +371,78 @@ void GPUProcess::resume()
 GPUConnectionToWebProcess* GPUProcess::webProcessConnection(WebCore::ProcessIdentifier identifier) const
 {
     return m_webProcessConnections.get(identifier);
+}
+
+static bool isPreferredNowPlayingCandidate(const WebCore::NowPlayingCandidateState& candidate, const WebCore::NowPlayingCandidateState& incumbent)
+{
+    // Mirrors the logic in PlatformMediaSessionManager::bestEligibleSessionForRemoteControls +
+    // HTMLMediaElement::selectBestMediaSession:
+    bool candidateIsAudioVideo = candidate.presentationType != WebCore::PlatformMediaSessionMediaType::WebAudio;
+    bool incumbentIsAudioVideo = incumbent.presentationType != WebCore::PlatformMediaSessionMediaType::WebAudio;
+    if (candidateIsAudioVideo != incumbentIsAudioVideo)
+        return candidateIsAudioVideo;
+
+    if (candidateIsAudioVideo) {
+        if (candidate.isLargeEnoughForMainContent != incumbent.isLargeEnoughForMainContent)
+            return candidate.isLargeEnoughForMainContent;
+        return candidate.mostRecentUserInteractionTime.value_or(WallTime { }) > incumbent.mostRecentUserInteractionTime.value_or(WallTime { });
+    }
+
+    if (candidate.isPlaying != incumbent.isPlaying)
+        return candidate.isPlaying;
+    return false;
+}
+
+void GPUProcess::recomputeNowPlayingOwner()
+{
+    if (!m_isNowPlayingArbiterActive)
+        return;
+
+    RefPtr<GPUConnectionToWebProcess> winningConnection;
+    std::optional<NowPlayingCandidateState> winnerState;
+    std::optional<PageIdentifier> winnerPage;
+
+    // Seed with the current owner so that equal candidates keep the incumbent, since the candidates are stored in
+    // a HashMap whose iteration order is not stable.
+    if (m_activeNowPlayingOwner) {
+        if (RefPtr connection = webProcessConnection(m_activeNowPlayingOwner->process)) {
+            auto it = connection->nowPlayingCandidates().find(m_activeNowPlayingOwner->page);
+            if (it != connection->nowPlayingCandidates().end() && it->value->state) {
+                winningConnection = connection;
+                winnerState = *it->value->state;
+                winnerPage = m_activeNowPlayingOwner->page;
+            }
+        }
+    }
+
+    for (Ref connection : m_webProcessConnections.values()) {
+        for (auto& entry : connection->nowPlayingCandidates()) {
+            if (!entry.value->state)
+                continue;
+            if (!winnerState || isPreferredNowPlayingCandidate(*entry.value->state, *winnerState)) {
+                winningConnection = connection.ptr();
+                winnerState = *entry.value->state;
+                winnerPage = entry.key;
+            }
+        }
+    }
+
+    if (!winnerState) {
+        if (RefPtr previous = m_activeNowPlayingOwner ? webProcessConnection(m_activeNowPlayingOwner->process) : nullptr)
+            previous->resignNowPlayingOwner();
+        m_activeNowPlayingOwner = std::nullopt;
+        return;
+    }
+
+    auto winnerProcess = winningConnection->webProcessIdentifier();
+
+    winningConnection->becomeNowPlayingOwner(*winnerPage);
+    if (m_activeNowPlayingOwner && m_activeNowPlayingOwner->process != winnerProcess) {
+        if (RefPtr previous = webProcessConnection(m_activeNowPlayingOwner->process))
+            previous->resignNowPlayingOwner();
+    }
+
+    m_activeNowPlayingOwner = { winnerProcess, *winnerPage, winnerState->sessionIdentifier };
 }
 
 void GPUProcess::updateSandboxAccess(const Vector<SandboxExtension::Handle>& extensions)

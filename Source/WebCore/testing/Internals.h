@@ -1343,6 +1343,7 @@ public:
 #endif
 
     bool elementIsActiveNowPlayingSession(HTMLMediaElement&) const;
+    void elementIsActiveNowPlayingSessionInGPUProcess(HTMLMediaElement&, DOMPromiseDeferred<IDLBoolean>&&);
 
 #endif // ENABLE(VIDEO)
 

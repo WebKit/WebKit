@@ -5621,6 +5621,16 @@ struct WebCore::NowPlayingInfo {
 #endif
 }
 
+header: <WebCore/NowPlayingInfo.h>
+[CustomHeader] struct WebCore::NowPlayingCandidateState {
+    std::optional<WebCore::PageIdentifier> pageIdentifier;
+    std::optional<WallTime> mostRecentUserInteractionTime;
+    WebCore::MediaSessionIdentifier sessionIdentifier;
+    WebCore::PlatformMediaSessionMediaType presentationType;
+    bool isLargeEnoughForMainContent;
+    bool isPlaying;
+}
+
 struct WebCore::PlatformMediaCapabilitiesVideoConfiguration {
     String contentType;
     uint32_t width;

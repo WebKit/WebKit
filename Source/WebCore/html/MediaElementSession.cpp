@@ -1327,8 +1327,8 @@ static bool isElementLargeRelativeToMainFrame(const HTMLMediaElement& element)
 static bool isElementLargeEnoughForMainContent(const HTMLMediaElement& element, MediaSessionMainContentPurpose purpose)
 {
     static const double elementMainContentAreaMinimum = 400 * 300;
-    static const double maximumAspectRatio = purpose == MediaSessionMainContentPurpose::MediaControls ? 3 : 1.8;
     static const double minimumAspectRatio = .5; // Slightly smaller than 9:16.
+    const double maximumAspectRatio = purpose == MediaSessionMainContentPurpose::MediaControls ? 3 : 1.8;
 
     // Elements which have not yet been laid out, or which are not yet in the DOM, cannot be main content.
     CheckedPtr renderer = element.renderer();

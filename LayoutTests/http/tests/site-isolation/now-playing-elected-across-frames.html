@@ -1,0 +1,119 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true allowTestOnlyIPC=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/media-resources/utilities.js"></script>
+</head>
+<body>
+<video id="video" loop src="/media-resources/content/test.mp4" style="width: 640px; height: 480px"></video>
+<script>
+description("Under site isolation, the GPU process chooses the single system NowPlaying session across the main frame and its cross-site subframe. The main frame plays first and is selected; when the cross-site subframe then begins playing, the ConcurrentPlaybackNotPermitted restriction interrupts the main frame playback, and the GPU process selects the subframe's element instead.");
+
+jsTestIsAsync = true;
+
+let video = document.getElementById("video");
+let iframe;
+let mainFrameActiveInitially = false;
+let subframeActiveInitially = true;
+let mainFramePausedAfterSubframePlays = false;
+let mainFrameActiveAfterSubframePlays = true;
+let subframeActiveAfterSubframePlays = false;
+
+function waitForSubframeMessage(replyType)
+{
+    return new Promise((resolve, reject) => {
+        const timeoutId = setTimeout(() => {
+            window.removeEventListener("message", handler);
+            reject(new Error(`timed out waiting for "${replyType}" from the subframe`));
+        }, 10000);
+        function handler(event) {
+            if (!event.data || (event.data.type !== replyType && event.data.type !== "error"))
+                return;
+            window.removeEventListener("message", handler);
+            clearTimeout(timeoutId);
+            if (event.data.type === "error")
+                reject(new Error(event.data.message));
+            else
+                resolve(event.data.value);
+        }
+        window.addEventListener("message", handler);
+    });
+}
+
+function askFrame(query, replyType)
+{
+    const reply = waitForSubframeMessage(replyType);
+    iframe.contentWindow.postMessage(query, "*");
+    return reply;
+}
+
+function subframeIsActiveNowPlaying()
+{
+    return askFrame("isActiveNowPlaying?", "isActiveNowPlaying");
+}
+
+async function waitFor(predicate)
+{
+    for (let tries = 0; tries < 200; ++tries) {
+        if (await predicate())
+            return;
+        await new Promise(resolve => setTimeout(resolve, 10));
+    }
+}
+
+onload = async () => {
+    if (!window.internals) {
+        testFailed("This test requires the Internals API");
+        finishJSTest();
+        return;
+    }
+
+    try {
+        internals.setMediaSessionRestrictions("videoaudio", "concurrentplaybacknotpermitted");
+
+        const frameLoaded = waitForSubframeMessage("loaded");
+        iframe = document.createElement("iframe");
+        iframe.src = "http://localhost:8000/site-isolation/resources/now-playing-frame.html";
+        document.body.appendChild(iframe);
+        await frameLoaded;
+
+        await new Promise(resolve => {
+            video.addEventListener("canplaythrough", resolve, { once: true });
+            video.load();
+        });
+        video.volume = 0.001;
+        internals.withUserGesture(() => video.play());
+        await new Promise(resolve => video.addEventListener("playing", resolve, { once: true }));
+
+        await waitFor(async () => {
+            mainFrameActiveInitially = await internals.elementIsActiveNowPlayingSessionInGPUProcess(video);
+            subframeActiveInitially = await subframeIsActiveNowPlaying();
+            return mainFrameActiveInitially && !subframeActiveInitially;
+        });
+        shouldBeTrue("mainFrameActiveInitially");
+        shouldBeFalse("subframeActiveInitially");
+
+        const framePlaying = waitForSubframeMessage("playing");
+        iframe.contentWindow.postMessage("play", "*");
+        await framePlaying;
+
+        await waitFor(async () => {
+            mainFramePausedAfterSubframePlays = video.paused;
+            mainFrameActiveAfterSubframePlays = await internals.elementIsActiveNowPlayingSessionInGPUProcess(video);
+            subframeActiveAfterSubframePlays = await subframeIsActiveNowPlaying();
+            return mainFramePausedAfterSubframePlays && !mainFrameActiveAfterSubframePlays && subframeActiveAfterSubframePlays;
+        });
+        shouldBeTrue("mainFramePausedAfterSubframePlays");
+        shouldBeFalse("mainFrameActiveAfterSubframePlays");
+        shouldBeTrue("subframeActiveAfterSubframePlays");
+    } catch (e) {
+        testFailed(e.message);
+    }
+
+    video.pause();
+    finishJSTest();
+};
+</script>
+</body>
+</html>

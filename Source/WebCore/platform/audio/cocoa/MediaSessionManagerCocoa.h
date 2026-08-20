@@ -137,6 +137,7 @@ private:
     Markable<MediaUniqueIdentifier> m_lastUpdatedNowPlayingInfoUniqueIdentifier;
 
     std::optional<NowPlayingInfo> m_nowPlayingInfo;
+    std::optional<NowPlayingCandidateState> m_lastSentNowPlayingCandidateState;
     const std::unique_ptr<NowPlayingManager> m_nowPlayingManager;
     RunLoop::Timer m_nowPlayingUpdateTimer;
     Seconds m_nowPlayingUpdateInterval { 5_s };

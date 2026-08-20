@@ -1,0 +1,134 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true allowTestOnlyIPC=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+<script src="/media-resources/utilities.js"></script>
+</head>
+<body>
+<video id="video" loop src="/media-resources/content/test.mp4" style="width: 640px; height: 480px"></video>
+<script>
+description("Under site isolation, the GPU process re-runs the NowPlaying election when a candidate's eligibility changes even if its NowPlayingInfo does not. A cross-site subframe video plays first and the same-sized main-frame video plays second, so the main frame is elected (both are main-content-sized, and it was interacted with more recently). After the main-frame video is paused and shrunk below the main-content threshold, the subframe video must be elected because it is now the only main-content-sized candidate. A paused video's info is frozen, so only candidacy reported independently of the info-dedup path can trigger the re-election.");
+jsTestIsAsync = true;
+
+let video = document.getElementById("video");
+let iframe;
+let mainFrameElectedInitially = false;
+let subframeElectedInitially = true;
+let mainFrameElectedAfterPause = false;
+let mainFrameElectedAfterResize = true;
+let subframeElectedAfterResize = false;
+
+function waitForSubframeMessage(replyType)
+{
+    return new Promise((resolve, reject) => {
+        const timeoutId = setTimeout(() => {
+            window.removeEventListener("message", handler);
+            reject(new Error(`timed out waiting for "${replyType}" from the subframe`));
+        }, 10000);
+        function handler(event) {
+            if (!event.data || (event.data.type !== replyType && event.data.type !== "error"))
+                return;
+            window.removeEventListener("message", handler);
+            clearTimeout(timeoutId);
+            if (event.data.type === "error")
+                reject(new Error(event.data.message));
+            else
+                resolve(event.data.value);
+        }
+        window.addEventListener("message", handler);
+    });
+}
+
+function askFrame(query, replyType)
+{
+    const reply = waitForSubframeMessage(replyType);
+    iframe.contentWindow.postMessage(query, "*");
+    return reply;
+}
+
+function subframeIsActiveNowPlaying()
+{
+    return askFrame("isActiveNowPlaying?", "isActiveNowPlaying");
+}
+
+async function waitFor(predicate, tries, delay)
+{
+    for (let i = 0; i < tries; ++i) {
+        if (await predicate())
+            return;
+        await new Promise(resolve => setTimeout(resolve, delay));
+    }
+}
+
+onload = async () => {
+    if (!window.internals) {
+        testFailed("This test requires the Internals API");
+        finishJSTest();
+        return;
+    }
+
+    try {
+        const frameLoaded = waitForSubframeMessage("loaded");
+        iframe = document.createElement("iframe");
+        iframe.style.width = "700px";
+        iframe.style.height = "520px";
+        iframe.src = "http://localhost:8000/site-isolation/resources/now-playing-frame.html?noConcurrencyRestriction";
+        document.body.appendChild(iframe);
+        await frameLoaded;
+
+        // The subframe video plays first, so the main-frame video's user-interaction time is more recent.
+        const framePlaying = waitForSubframeMessage("playing");
+        iframe.contentWindow.postMessage("play", "*");
+        await framePlaying;
+
+        await new Promise(resolve => {
+            video.addEventListener("canplaythrough", resolve, { once: true });
+            video.load();
+        });
+        video.volume = 0.001;
+        internals.withUserGesture(() => video.play());
+        await new Promise(resolve => video.addEventListener("playing", resolve, { once: true }));
+
+        // Both videos are main-content-sized, so the more recently interacted-with main frame is elected.
+        await waitFor(async () => {
+            mainFrameElectedInitially = await internals.elementIsActiveNowPlayingSessionInGPUProcess(video);
+            subframeElectedInitially = await subframeIsActiveNowPlaying();
+            return mainFrameElectedInitially && !subframeElectedInitially;
+        }, 200, 10);
+        shouldBeTrue("mainFrameElectedInitially");
+        shouldBeFalse("subframeElectedInitially");
+
+        // Pausing the main-frame video leaves it eligible and still elected.
+        video.pause();
+        await new Promise(resolve => video.addEventListener("pause", resolve, { once: true }));
+        await waitFor(async () => {
+            mainFrameElectedAfterPause = await internals.elementIsActiveNowPlayingSessionInGPUProcess(video);
+            return mainFrameElectedAfterPause;
+        }, 200, 10);
+        shouldBeTrue("mainFrameElectedAfterPause");
+
+        // Shrink the paused video below the main-content threshold. Its NowPlayingInfo does not change, so the
+        // re-election is driven only by the periodic candidacy report; force that timer to fire frequently.
+        internals.nowPlayingUpdateInterval = 100;
+        video.style.width = "100px";
+        video.style.height = "100px";
+        video.offsetWidth;
+
+        await waitFor(async () => {
+            mainFrameElectedAfterResize = await internals.elementIsActiveNowPlayingSessionInGPUProcess(video);
+            subframeElectedAfterResize = await subframeIsActiveNowPlaying();
+            return !mainFrameElectedAfterResize && subframeElectedAfterResize;
+        }, 600, 25);
+        shouldBeFalse("mainFrameElectedAfterResize");
+        shouldBeTrue("subframeElectedAfterResize");
+    } catch (e) {
+        testFailed(e.message);
+    }
+
+    video.pause();
+    finishJSTest();
+};
+</script>
+</body>
+</html>
