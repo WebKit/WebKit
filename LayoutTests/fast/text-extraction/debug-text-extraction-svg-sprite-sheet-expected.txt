@@ -1,0 +1,1 @@
+root image uid=… class=sprite-sheet 'Visible content follows.' image uid=… label='Star icon' alt='Star icon' image uid=… id=sprite-alias image uid=… id=sprite-icon image uid=… label='Inline icon' alt='Inline icon'
