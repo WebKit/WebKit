@@ -48,6 +48,7 @@
 #include "DeferredWorkTimer.h"
 #include "Disassembler.h"
 #include "DoublePredictionFuzzerAgent.h"
+#include "EagerIIFERegistry.h"
 #include "ErrorInstance.h"
 #include "EvalCodeBlockInlines.h"
 #include "EvalExecutableInlines.h"
@@ -1062,9 +1063,18 @@ SourceProviderCache* VM::addSourceProviderCache(SourceProvider* sourceProvider)
     return addResult.iterator->value.get();
 }
 
+EagerIIFERegistry* VM::addEagerIIFERegistry(SourceProvider* sourceProvider)
+{
+    auto addResult = eagerIIFERegistryMap.add(sourceProvider, nullptr);
+    if (addResult.isNewEntry)
+        addResult.iterator->value = EagerIIFERegistry::create();
+    return addResult.iterator->value.get();
+}
+
 void VM::clearSourceProviderCaches()
 {
     sourceProviderCacheMap.clear();
+    eagerIIFERegistryMap.clear();
 }
 
 bool VM::hasExceptionsAfterHandlingTraps()

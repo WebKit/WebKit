@@ -46,6 +46,13 @@ ParserArena::ParserArena()
 {
 }
 
+ParserArena::ParserArena(Ref<IdentifierArena>&& shared)
+    : m_freeableMemory(nullptr)
+    , m_freeablePoolEnd(nullptr)
+    , m_identifierArena(WTF::move(shared))
+{
+}
+
 inline void* ParserArena::freeablePool()
 {
     ASSERT(m_freeablePoolEnd);
