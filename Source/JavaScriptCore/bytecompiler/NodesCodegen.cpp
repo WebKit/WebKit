@@ -1070,8 +1070,12 @@ RegisterID* DotAccessorNode::emitBytecode(BytecodeGenerator& generator, Register
 {
     RefPtr<RegisterID> finalDest = generator.finalDestination(dst);
 
-    if (generator.shouldGetArgumentsDotLengthFast(this))
+    if (generator.shouldGetArgumentsDotLengthFast(this)) {
+        if (generator.shouldEmitDebugHooks()) [[unlikely]]
+            generator.emitExpressionInfo(divot(), divotStart(), divotEnd());
+        generator.emitWillReadPropertyDebugHook(generator.propertyNames().length);
         return generator.emitArgumentCount(finalDest.get());
+    }
 
     bool baseIsSuper = m_base->isSuperNode();
 
@@ -2217,9 +2221,10 @@ RegisterID* FunctionCallDotNode::emitBytecode(BytecodeGenerator& generator, Regi
     }
     generator.emitExpressionInfo(subexpressionDivot(), subexpressionStart(), subexpressionEnd());
 
-    if (shouldGetArgumentsDotLengthFast)
+    if (shouldGetArgumentsDotLengthFast) {
+        generator.emitWillReadPropertyDebugHook(generator.propertyNames().length);
         generator.emitArgumentCount(function.get());
-    else {
+    } else {
         RefPtr<RegisterID> base = baseIsSuper ? emitSuperBaseForCallee(generator) : callArguments.thisRegister();
         emitGetPropertyValue(generator, function.get(), base.get());
     }
