@@ -1046,8 +1046,9 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
             }
 
             if (strongDeferring == strongSelf->_secondaryClickDeferringGestureRecognizer) {
-                const auto isSelectable = info.isSelectable();
-                WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG_DEBUG([webView _protectedPage]->logIdentifier(), "Resolved deferral: isSelectable=%d", isSelectable);
+                const auto isEditableWithoutText = info.selectability == WebKit::InteractionInformationAtPosition::Selectability::UnselectableDueToFocusableElement && info.isContentEditable;
+                const auto isSelectable = info.isSelectable() || isEditableWithoutText;
+                WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG_DEBUG([webView _protectedPage]->logIdentifier(), "Resolved deferral: isSelectable=%d (selectability=%hhu contentEditable=%d)", isSelectable, static_cast<uint8_t>(info.selectability), info.isContentEditable);
                 return !isSelectable && !overLiveTextImage;
             }
 

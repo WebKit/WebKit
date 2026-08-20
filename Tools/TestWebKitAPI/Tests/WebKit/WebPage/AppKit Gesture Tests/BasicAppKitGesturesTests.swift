@@ -1319,6 +1319,35 @@ extension AppKitGesturesTests.Basic {
         // The test succeeds if it does not timeout.
     }
 
+    @Test
+    func clickingAfterImageInEditableContentPlacesCaretAfterImage() async throws {
+        let html = """
+            <body style="margin: 0">
+            <div id="editor" contenteditable style="font-size: 30px; padding: 20px;"><img id="img" src="400x400-green.png" style="width: 150px; height: 100px;"></div>
+            </body>
+            """
+
+        let baseURL = try #require(Bundle.testResources.resourceURL)
+        try await page.load(html: html, baseURL: baseURL).wait()
+
+        try await page.callJavaScript(JavaScriptMessages.SetSelection(in: "editor", offset: 0))
+
+        await page.waitForNextPresentationUpdate()
+
+        let imageBounds = try await screenBounds(ofElementWithID: "img")
+        let pointAfterImage = CGPoint(x: imageBounds.maxX + 50, y: imageBounds.midY)
+
+        await recap.play { composer in
+            composer._wk_click(at: pointAfterImage, for: .seconds(0.1))
+        }
+
+        await page.waitForPendingMouseEvents()
+        await page.waitForNextPresentationUpdate()
+
+        let selection = try await page.callJavaScript(JavaScriptMessages.GetSelection())
+        #expect(selection == .collapsed(.init(in: "editor", at: 1)))
+    }
+
     @Test(.disabled("This test takes an unavoidable ~10 seconds to run"))
     func consecutiveQuickFlicksAccelerateScrolling() async throws {
         let html = """

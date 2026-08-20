@@ -216,6 +216,8 @@ extension JavaScriptMessages {
         // swift-format-ignore: AllPublicDeclarationsHaveDocumentation
         public static var expression: String {
             """
+            const containerID = node => (node.nodeType === Node.ELEMENT_NODE ? node : node.parentElement).id;
+
             const selection = getSelection();
             if (selection.rangeCount === 0 || selection.anchorNode === null) {
                 return { "kind": "none" };
@@ -224,7 +226,7 @@ extension JavaScriptMessages {
                 return {
                     "kind": "collapsed",
                     "position": {
-                        "container": selection.anchorNode.parentElement.id,
+                        "container": containerID(selection.anchorNode),
                         "offset": selection.anchorOffset,
                     },
                 };
@@ -232,11 +234,11 @@ extension JavaScriptMessages {
                 return {
                     "kind": "range",
                     "base": {
-                        "container": selection.anchorNode.parentElement.id,
+                        "container": containerID(selection.anchorNode),
                         "offset": selection.anchorOffset,
                     },
                     "extent": {
-                        "container": selection.focusNode.parentElement.id,
+                        "container": containerID(selection.focusNode),
                         "offset": selection.focusOffset,
                     },
                 };
