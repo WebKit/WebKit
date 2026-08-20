@@ -103,10 +103,8 @@ private:
 #endif
 
     void applyPendingAcceleratedAnimations();
-    void scheduleInvalidationTaskIfNeeded();
     void scheduleAnimationResolution();
     void clearTickScheduleTimer();
-    void internalUpdateAnimationsAndSendEvents();
     void scheduleNextTick();
     bool animationCanBeRemoved(WebAnimation&);
     bool shouldRunUpdateAnimationsAndSendEventsIgnoringSuspensionState() const;
