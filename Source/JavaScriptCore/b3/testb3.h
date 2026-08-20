@@ -1269,6 +1269,8 @@ void testLICMWritesPinned();
 void testLICMControlDependent();
 void testLICMControlDependentNotBackwardsDominant();
 void testLICMControlDependentSideExits();
+void testLICMControlDependentSideExitInPredecessor();
+void testLICMControlDependentSideExitInEarlierIteration();
 void testLICMReadsPinnedWritesPinned();
 void testLICMReadsWritesDifferentHeaps();
 void testLICMReadsWritesOverlappingHeaps();

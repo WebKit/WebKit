@@ -1518,6 +1518,151 @@ void testLICMControlDependentSideExits()
     CHECK_EQ(callCount, 100u);
 }
 
+// The side exit is taken on only some iterations, so it sits in a block of its own rather than in the
+// block holding the control-dependent value. Finding it requires walking back to the loop header over
+// the value's predecessors.
+void testLICMControlDependentSideExitInPredecessor()
+{
+    Procedure proc;
+    if (proc.optLevel() < 2)
+        return;
+
+    auto array = makeArrayForLoops();
+
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* header = proc.addBlock();
+    BasicBlock* exiting = proc.addBlock();
+    BasicBlock* footer = proc.addBlock();
+    BasicBlock* end = proc.addBlock();
+
+    auto arguments = cCallArgumentValues<unsigned*>(proc, root);
+    Value* callCountArgument = arguments[0];
+    UpsilonValue* initialIndex = root->appendNew<UpsilonValue>(
+        proc, Origin(), root->appendNew<Const32Value>(proc, Origin(), 0));
+    root->appendNew<Value>(proc, Jump, Origin());
+    root->setSuccessors(header);
+
+    // if (array[index])
+    Value* index = header->appendNew<Value>(proc, Phi, Int32, Origin());
+    initialIndex->setPhi(index);
+    header->appendNew<Value>(
+        proc, Branch, Origin(),
+        header->appendNew<MemoryValue>(
+            proc, Load, Int32, Origin(),
+            header->appendNew<Value>(
+                proc, Add, Origin(),
+                header->appendNew<ConstPtrValue>(proc, Origin(), &array),
+                header->appendNew<Value>(
+                    proc, Mul, Origin(),
+                    header->appendNew<Value>(proc, ZExt32, Origin(), index),
+                    header->appendNew<ConstPtrValue>(proc, Origin(), sizeof(int))))));
+    header->setSuccessors(exiting, footer);
+
+    Effects effects = Effects::none();
+    effects.exitsSideways = true;
+    effects.reads = HeapRange::top();
+    exiting->appendNew<CCallValue>(
+        proc, Void, Origin(), effects,
+        exiting->appendNew<ConstPtrValue>(proc, Origin(), tagCFunction<OperationPtrTag>(noOpFunction)));
+    exiting->appendNew<Value>(proc, Jump, Origin());
+    exiting->setSuccessors(footer);
+
+    effects = Effects::none();
+    effects.controlDependent = true;
+    Value* one = footer->appendNew<CCallValue>(
+        proc, Int32, Origin(), effects,
+        footer->appendNew<ConstPtrValue>(proc, Origin(), tagCFunction<OperationPtrTag>(oneFunction)),
+        callCountArgument);
+
+    Value* nextIndex = footer->appendNew<Value>(proc, Add, Origin(), index, one);
+    UpsilonValue* loopIndex = footer->appendNew<UpsilonValue>(proc, Origin(), nextIndex);
+    loopIndex->setPhi(index);
+    footer->appendNew<Value>(
+        proc, Branch, Origin(),
+        footer->appendNew<Value>(
+            proc, LessThan, Origin(), nextIndex,
+            footer->appendNew<Const32Value>(proc, Origin(), 100)));
+    footer->setSuccessors(header, end);
+
+    end->appendNew<Value>(proc, Return, Origin());
+
+    unsigned callCount = 0;
+    compileAndRun<void>(proc, &callCount);
+    CHECK_EQ(callCount, 100u);
+}
+
+// The side exit runs in the first iteration and the control-dependent value's block is first entered
+// in the second, so the exit precedes the value while sitting in no block between the loop header and
+// it. Rejecting this relies on backwards dominance counting a back edge as a way for the procedure to
+// end, which makes the value's block not backwards-dominate the pre-header.
+void testLICMControlDependentSideExitInEarlierIteration()
+{
+    Procedure proc;
+    if (proc.optLevel() < 2)
+        return;
+
+    BasicBlock* root = proc.addBlock();
+    BasicBlock* header = proc.addBlock();
+    BasicBlock* exiting = proc.addBlock();
+    BasicBlock* body = proc.addBlock();
+    BasicBlock* end = proc.addBlock();
+
+    auto arguments = cCallArgumentValues<unsigned*>(proc, root);
+    Value* callCountArgument = arguments[0];
+    UpsilonValue* initialIndex = root->appendNew<UpsilonValue>(
+        proc, Origin(), root->appendNew<Const32Value>(proc, Origin(), 0));
+    root->appendNew<Value>(proc, Jump, Origin());
+    root->setSuccessors(header);
+
+    // if (!index), so only the first iteration takes the exiting block.
+    Value* index = header->appendNew<Value>(proc, Phi, Int32, Origin());
+    initialIndex->setPhi(index);
+    header->appendNew<Value>(
+        proc, Branch, Origin(),
+        header->appendNew<Value>(
+            proc, Equal, Origin(), index,
+            header->appendNew<Const32Value>(proc, Origin(), 0)));
+    header->setSuccessors(exiting, body);
+
+    Effects effects = Effects::none();
+    effects.exitsSideways = true;
+    effects.reads = HeapRange::top();
+    exiting->appendNew<CCallValue>(
+        proc, Void, Origin(), effects,
+        exiting->appendNew<ConstPtrValue>(proc, Origin(), tagCFunction<OperationPtrTag>(noOpFunction)));
+    UpsilonValue* indexAfterExiting = exiting->appendNew<UpsilonValue>(
+        proc, Origin(),
+        exiting->appendNew<Value>(
+            proc, Add, Origin(), index,
+            exiting->appendNew<Const32Value>(proc, Origin(), 1)));
+    indexAfterExiting->setPhi(index);
+    exiting->appendNew<Value>(proc, Jump, Origin());
+    exiting->setSuccessors(header);
+
+    effects = Effects::none();
+    effects.controlDependent = true;
+    Value* one = body->appendNew<CCallValue>(
+        proc, Int32, Origin(), effects,
+        body->appendNew<ConstPtrValue>(proc, Origin(), tagCFunction<OperationPtrTag>(oneFunction)),
+        callCountArgument);
+
+    Value* nextIndex = body->appendNew<Value>(proc, Add, Origin(), index, one);
+    UpsilonValue* loopIndex = body->appendNew<UpsilonValue>(proc, Origin(), nextIndex);
+    loopIndex->setPhi(index);
+    body->appendNew<Value>(
+        proc, Branch, Origin(),
+        body->appendNew<Value>(
+            proc, LessThan, Origin(), nextIndex,
+            body->appendNew<Const32Value>(proc, Origin(), 100)));
+    body->setSuccessors(header, end);
+
+    end->appendNew<Value>(proc, Return, Origin());
+
+    unsigned callCount = 0;
+    compileAndRun<void>(proc, &callCount);
+    CHECK_EQ(callCount, 99u);
+}
+
 void testLICMReadsPinnedWritesPinned()
 {
     Procedure proc;

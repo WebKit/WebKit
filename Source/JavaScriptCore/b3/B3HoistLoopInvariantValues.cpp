@@ -39,6 +39,76 @@
 
 namespace JSC { namespace B3 {
 
+// A load that can trap reports exitsSideways, which normally disqualifies it from hoisting. The
+// fault is its only escaping effect, so it can still move to a point where it is certain to run and
+// where nothing observable precedes it. WasmGC field and length loads depend on this: their null
+// check is a trap rather than a branch, which would otherwise be all that blocks hoisting them.
+static bool isTrappingLoad(const Value* value)
+{
+    if (!value->traps())
+        return false;
+    switch (value->opcode()) {
+    case Load8Z:
+    case Load8S:
+    case Load16Z:
+    case Load16S:
+    case Load:
+        // A fenced load also orders memory, which is an effect that cannot move.
+        return !value->as<MemoryValue>()->hasFence();
+    case WasmStructGet:
+    case WasmArrayLength:
+        return true;
+    default:
+        return false;
+    }
+}
+
+static bool isReachedWithoutTrapBarrier(const NaturalLoops& loops, const NaturalLoop& loop, BasicBlock* block, const IndexSet<BasicBlock*>& blockBarriers)
+{
+    if (block == loop.header())
+        return true;
+
+    // Tracing ancestors from the block. If any blocks belonging to this loop has a trap,
+    // then we cannot hoist since that trap needs to be executed before the hoisted value causes
+    // a trap at a pre-header block.
+    Vector<BasicBlock*, 8> worklist;
+    IndexSet<BasicBlock*> seen;
+    auto push = [&](BasicBlock* predecessor) {
+        if (loops.belongsTo(predecessor, loop)) {
+            if (seen.add(predecessor)) {
+                // Every value in these blocks runs before the one being hoisted.
+                if (blockBarriers.contains(predecessor))
+                    return false;
+
+                // Stopping at the header is enough even though earlier iterations run other blocks:
+                // callers only reach here for a value whose block backwards-dominates the pre-header,
+                // and backwards dominance counts a back edge as a way for the procedure to end, so
+                // such a value always runs before any iteration completes.
+                if (predecessor == loop.header())
+                    return true;
+
+                worklist.append(predecessor);
+            }
+        }
+        return true;
+    };
+
+    for (BasicBlock* predecessor : block->predecessors()) {
+        if (!push(predecessor))
+            return false;
+    }
+
+    while (!worklist.isEmpty()) {
+        BasicBlock* current = worklist.takeLast();
+        for (BasicBlock* predecessor : current->predecessors()) {
+            if (!push(predecessor))
+                return false;
+        }
+    }
+
+    return true;
+}
+
 bool hoistLoopInvariantValues(Procedure& proc)
 {
     PhaseScope phaseScope(proc, "hoistLoopInvariantValues"_s);
@@ -59,12 +129,13 @@ bool hoistLoopInvariantValues(Procedure& proc)
         RangeSet<HeapRange> writes;
         bool writesLocalState { false };
         bool writesPinned { false };
-        bool sideExits { false };
+        bool exitsSideways { false };
         BasicBlock* preHeader { nullptr };
     };
-    
+
     IndexMap<NaturalLoop, LoopData> data(loops.numLoops());
-    
+    IndexSet<BasicBlock*> blockBarriers;
+
     for (unsigned loopIndex = loops.numLoops(); loopIndex--;) {
         const NaturalLoop& loop = loops.loop(loopIndex);
         for (BasicBlock* predecessor : loop.header()->predecessors()) {
@@ -84,7 +155,9 @@ bool hoistLoopInvariantValues(Procedure& proc)
             data[*loop].writes.add(effects.writes);
             data[*loop].writesLocalState |= effects.writesLocalState;
             data[*loop].writesPinned |= effects.writesPinned;
-            data[*loop].sideExits |= effects.exitsSideways;
+            data[*loop].exitsSideways |= effects.exitsSideways;
+            if (effects.isTrapBarrier())
+                blockBarriers.add(block);
         }
     }
     
@@ -94,7 +167,7 @@ bool hoistLoopInvariantValues(Procedure& proc)
             data[*current].writes.addAll(data[loop].writes);
             data[*current].writesLocalState |= data[loop].writesLocalState;
             data[*current].writesPinned |= data[loop].writesPinned;
-            data[*current].sideExits |= data[loop].sideExits;
+            data[*current].exitsSideways |= data[loop].exitsSideways;
         }
     }
     
@@ -106,52 +179,66 @@ bool hoistLoopInvariantValues(Procedure& proc)
         Vector<const NaturalLoop*> blockLoops = loops.loopsOf(block);
         if (blockLoops.isEmpty())
             continue;
-        
+
+        // Values that stay in this block run before everything later in it, so once one of them is a
+        // trap barrier nothing after it can be hoisted out on the strength of trapping first.
+        bool trapBarrierInBlock = false;
         for (Value*& value : *block) {
             Effects effects = value->effects();
-            
-            // We never hoist write effects or control constructs.
-            if (effects.mustExecute())
-                continue;
+            bool trappingLoad = isTrappingLoad(value);
+            bool hoisted = false;
 
-            // Try outermost loop first.
-            for (unsigned i = blockLoops.size(); i--;) {
-                const NaturalLoop& loop = *blockLoops[i];
-                
-                bool ok = true;
-                for (Value* child : value->children()) {
-                    if (!dominators.dominates(child->owner, data[loop].preHeader)) {
-                        ok = false;
-                        break;
+            // We never hoist write effects or control constructs. A trapping load is allowed
+            // through. The fault it reports as a side exit is its own, and the checks below decide
+            // whether it may move.
+            if (!effects.mustExecute() || trappingLoad) {
+                // Try outermost loop first.
+                for (unsigned i = blockLoops.size(); i--;) {
+                    const NaturalLoop& loop = *blockLoops[i];
+
+                    bool ok = true;
+                    for (Value* child : value->children()) {
+                        if (!dominators.dominates(child->owner, data[loop].preHeader)) {
+                            ok = false;
+                            break;
+                        }
                     }
-                }
-                if (!ok)
-                    continue;
-                
-                if (effects.controlDependent) {
-                    if (!backwardsDominators.dominates(block, data[loop].preHeader))
+                    if (!ok)
                         continue;
-                    
-                    // FIXME: This is super conservative. In reality, we just need to make sure that there
-                    // aren't any side exits between here and the pre-header according to backwards search.
-                    // https://bugs.webkit.org/show_bug.cgi?id=174763
-                    if (data[loop].sideExits)
+
+                    if (effects.controlDependent || trappingLoad) {
+                        // The block is backward-dominating the pre-header.
+                        // The value needs to be guaranteed to run on every iteration.
+                        if (!backwardsDominators.dominates(block, data[loop].preHeader))
+                            continue;
+
+                        if (data[loop].exitsSideways) {
+                            // Even if the loop can exit (after this value for example), if we do not have
+                            // any exit between pre-header to this value, we can still hoist a value because
+                            // this can be a first value causing a trap.
+                            if (trapBarrierInBlock || !isReachedWithoutTrapBarrier(loops, loop, block, blockBarriers))
+                                continue;
+                        }
+                    }
+
+                    if (effects.readsPinned && data[loop].writesPinned)
                         continue;
+
+                    if (effects.readsLocalState && data[loop].writesLocalState)
+                        continue;
+
+                    if (data[loop].writes.overlaps(effects.reads))
+                        continue;
+
+                    data[loop].preHeader->appendNonTerminal(value);
+                    value = proc.add<Value>(Nop, Void, value->origin());
+                    changed = true;
+                    hoisted = true;
                 }
-                
-                if (effects.readsPinned && data[loop].writesPinned)
-                    continue;
-                
-                if (effects.readsLocalState && data[loop].writesLocalState)
-                    continue;
-                
-                if (data[loop].writes.overlaps(effects.reads))
-                    continue;
-                
-                data[loop].preHeader->appendNonTerminal(value);
-                value = proc.add<Value>(Nop, Void, value->origin());
-                changed = true;
             }
+
+            if (!hoisted)
+                trapBarrierInBlock |= effects.isTrapBarrier();
         }
     }
     

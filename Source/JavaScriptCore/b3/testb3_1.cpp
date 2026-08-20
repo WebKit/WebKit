@@ -1153,6 +1153,8 @@ void run(const TestConfig* config)
     RUN(testLICMControlDependent());
     RUN(testLICMControlDependentNotBackwardsDominant());
     RUN(testLICMControlDependentSideExits());
+    RUN(testLICMControlDependentSideExitInPredecessor());
+    RUN(testLICMControlDependentSideExitInEarlierIteration());
     RUN(testLICMReadsPinnedWritesPinned());
     RUN(testLICMReadsWritesDifferentHeaps());
     RUN(testLICMReadsWritesOverlappingHeaps());
