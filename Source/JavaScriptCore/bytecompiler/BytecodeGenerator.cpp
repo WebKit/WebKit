@@ -2864,6 +2864,7 @@ RegisterID* BytecodeGenerator::emitPutById(RegisterID* base, const Identifier& p
 
     m_staticPropertyAnalyzer.putById(base, propertyIndex);
 
+    emitWillWritePropertyDebugHook(property);
     OpPutById::emit(this, base, propertyIndex, value, PutByIdFlags::create(ecmaMode())); // is not direct
     return value;
 }
@@ -2874,6 +2875,7 @@ RegisterID* BytecodeGenerator::emitPutById(RegisterID* base, RegisterID* thisVal
 
     unsigned propertyIndex = addConstant(property);
 
+    emitWillWritePropertyDebugHook(property);
     OpPutByIdWithThis::emit(this, base, thisValue, propertyIndex, value, ecmaMode());
 
     return value;
@@ -2888,6 +2890,7 @@ RegisterID* BytecodeGenerator::emitDirectPutById(RegisterID* base, const Identif
     m_staticPropertyAnalyzer.putById(base, propertyIndex);
 
     PutByIdFlags type = PutByIdFlags::createDirect(ecmaMode());
+    emitWillWritePropertyDebugHook(property);
     OpPutById::emit(this, base, propertyIndex, value, type);
     return value;
 }
@@ -2897,6 +2900,7 @@ void BytecodeGenerator::emitPutGetterById(RegisterID* base, const Identifier& pr
     unsigned propertyIndex = addConstant(property);
     m_staticPropertyAnalyzer.putById(base, propertyIndex);
 
+    emitWillWritePropertyDebugHook(property);
     OpPutGetterById::emit(this, base, propertyIndex, attributes, getter);
 }
 
@@ -2905,6 +2909,7 @@ void BytecodeGenerator::emitPutSetterById(RegisterID* base, const Identifier& pr
     unsigned propertyIndex = addConstant(property);
     m_staticPropertyAnalyzer.putById(base, propertyIndex);
 
+    emitWillWritePropertyDebugHook(property);
     OpPutSetterById::emit(this, base, propertyIndex, attributes, setter);
 }
 
@@ -2914,16 +2919,23 @@ void BytecodeGenerator::emitPutGetterSetter(RegisterID* base, const Identifier& 
 
     m_staticPropertyAnalyzer.putById(base, propertyIndex);
 
+    emitWillWritePropertyDebugHook(property);
     OpPutGetterSetterById::emit(this, base, propertyIndex, attributes, getter, setter);
 }
 
 void BytecodeGenerator::emitPutGetterByVal(RegisterID* base, RegisterID* property, unsigned attributes, RegisterID* getter)
 {
+    RefPtr<RegisterID> protectedProperty;
+    property = preparePropertyForWillWritePropertyDebugHook(property, protectedProperty);
+    emitWillWritePropertyDebugHook(property);
     OpPutGetterByVal::emit(this, base, property, attributes, getter);
 }
 
 void BytecodeGenerator::emitPutSetterByVal(RegisterID* base, RegisterID* property, unsigned attributes, RegisterID* setter)
 {
+    RefPtr<RegisterID> protectedProperty;
+    property = preparePropertyForWillWritePropertyDebugHook(property, protectedProperty);
+    emitWillWritePropertyDebugHook(property);
     OpPutSetterByVal::emit(this, base, property, attributes, setter);
 }
 
@@ -2947,6 +2959,7 @@ void BytecodeGenerator::emitPutAsyncGeneratorFields(RegisterID* nextFunction)
 
 RegisterID* BytecodeGenerator::emitDeleteById(RegisterID* dst, RegisterID* base, const Identifier& property)
 {
+    emitWillWritePropertyDebugHook(property);
     OpDelById::emit(this, dst, base, addConstant(property), ecmaMode());
     return dst;
 }
@@ -2989,18 +3002,27 @@ RegisterID* BytecodeGenerator::emitPutByVal(RegisterID* base, RegisterID* proper
         return emitEnumeratorPutByVal(context, base, property, value);
     }
 
+    RefPtr<RegisterID> protectedProperty;
+    property = preparePropertyForWillWritePropertyDebugHook(property, protectedProperty);
+    emitWillWritePropertyDebugHook(property);
     OpPutByVal::emit(this, base, property, value, ecmaMode());
     return value;
 }
 
 RegisterID* BytecodeGenerator::emitPutByVal(RegisterID* base, RegisterID* thisValue, RegisterID* property, RegisterID* value)
 {
+    RefPtr<RegisterID> protectedProperty;
+    property = preparePropertyForWillWritePropertyDebugHook(property, protectedProperty);
+    emitWillWritePropertyDebugHook(property);
     OpPutByValWithThis::emit(this, base, thisValue, property, value, ecmaMode());
     return value;
 }
 
 RegisterID* BytecodeGenerator::emitPutByValWithECMAMode(RegisterID* base, RegisterID* thisValue, RegisterID* property, RegisterID* value, ECMAMode ecmaMode)
 {
+    RefPtr<RegisterID> protectedProperty;
+    property = preparePropertyForWillWritePropertyDebugHook(property, protectedProperty);
+    emitWillWritePropertyDebugHook(property);
     OpPutByValWithThis::emit(this, base, thisValue, property, value, ecmaMode);
     return value;
 }
@@ -3008,6 +3030,7 @@ RegisterID* BytecodeGenerator::emitPutByValWithECMAMode(RegisterID* base, Regist
 RegisterID* BytecodeGenerator::emitEnumeratorPutByVal(ForInContext& context, RegisterID* base, RegisterID* property, RegisterID* value)
 {
     // FIXME: We should have a better bytecode rewriter that can resize chunks.
+    emitWillWritePropertyDebugHook(property);
     OpEnumeratorPutByVal::emit<OpcodeSize::Wide32>(this, base, context.mode(), property, context.propertyOffset(), context.enumerator(), value, ecmaMode());
     context.addPutInst(m_lastInstruction.offset(), property->index());
     return value;
@@ -3033,12 +3056,18 @@ RegisterID* BytecodeGenerator::emitHasStructureWithFlags(RegisterID* dst, Regist
 
 RegisterID* BytecodeGenerator::emitDirectPutByVal(RegisterID* base, RegisterID* property, RegisterID* value)
 {
+    RefPtr<RegisterID> protectedProperty;
+    property = preparePropertyForWillWritePropertyDebugHook(property, protectedProperty);
+    emitWillWritePropertyDebugHook(property);
     OpPutByValDirect::emit(this, base, property, value, ecmaMode());
     return value;
 }
 
 RegisterID* BytecodeGenerator::emitDeleteByVal(RegisterID* dst, RegisterID* base, RegisterID* property)
 {
+    RefPtr<RegisterID> protectedProperty;
+    property = preparePropertyForWillWritePropertyDebugHook(property, protectedProperty);
+    emitWillWritePropertyDebugHook(property);
     OpDelByVal::emit(this, dst, base, property, ecmaMode());
     return dst;
 }
@@ -3953,6 +3982,10 @@ void BytecodeGenerator::emitCallDefineProperty(RegisterID* newObj, RegisterID* p
 
     emitExpressionInfo(position, position, position);
 
+    RefPtr<RegisterID> protectedPropertyNameRegister;
+    propertyNameRegister = preparePropertyForWillWritePropertyDebugHook(propertyNameRegister, protectedPropertyNameRegister);
+    emitWillWritePropertyDebugHook(propertyNameRegister);
+
     if (attributes.hasGet() || attributes.hasSet()) {
         RefPtr<RegisterID> throwTypeErrorFunction;
         if (!attributes.hasGet() || !attributes.hasSet())
@@ -4166,6 +4199,34 @@ void BytecodeGenerator::emitDebugHook(StatementNode* statement, RegisterID* data
 void BytecodeGenerator::emitDebugHook(ExpressionNode* expr, RegisterID* data)
 {
     emitDebugHook(WillExecuteStatement, expr->position(), data);
+}
+
+RegisterID* BytecodeGenerator::preparePropertyForWillWritePropertyDebugHook(RegisterID* property, RefPtr<RegisterID>& protectedProperty)
+{
+    if (!shouldEmitDebugHooks()) [[likely]]
+        return property;
+
+    protectedProperty = emitToPropertyKeyOrNumber(newTemporary(), property);
+    return protectedProperty.get();
+}
+
+void BytecodeGenerator::emitWillWritePropertyDebugHook(RegisterID* property)
+{
+    if (!shouldEmitDebugHooks()) [[likely]]
+        return;
+
+    OpDebug::emit(this, WillWriteProperty, property);
+}
+
+void BytecodeGenerator::emitWillWritePropertyDebugHook(const Identifier& property)
+{
+    if (!shouldEmitDebugHooks()) [[likely]]
+        return;
+
+    if (property.isSymbol())
+        return;
+
+    OpDebug::emit(this, WillWriteProperty, emitLoad(nullptr, property));
 }
 
 void BytecodeGenerator::emitWillLeaveCallFrameDebugHook()

@@ -855,6 +855,7 @@ localizedStrings["Full-Screen from \u201C%s\u201D"] = "Full-Screen from \u201C%s
 /* Property value for `font-variant-alternates: full-width`. */
 localizedStrings["Full-Width Variants @ Font Details Sidebar Property Value"] = "Full-Width Variants";
 localizedStrings["Function"] = "Function";
+localizedStrings["Function Calls"] = "Function Calls";
 localizedStrings["Function Name Variable"] = "Function Name Variable";
 localizedStrings["GIF"] = "GIF";
 localizedStrings["Garbage Collection"] = "Garbage Collection";
@@ -1090,6 +1091,7 @@ localizedStrings["Map to Directory @ Resource Preview"] = "Map to Directory";
 localizedStrings["Map to File @ Resource Preview"] = "Map to File";
 localizedStrings["Mapped to \u201C%s\u201D"] = "Mapped to \u201C%s\u201D";
 localizedStrings["Mass"] = "Mass";
+localizedStrings["Match"] = "Match";
 localizedStrings["Matching"] = "Matching";
 /* Title for Matrix Coefficients row in Media Sidebar */
 localizedStrings["Matrix Coefficients @ Media Sidebar"] = "Matrix Coefficients";
@@ -1356,6 +1358,7 @@ localizedStrings["Program %d"] = "Program %d";
 localizedStrings["Projections @ Media Sidebar"] = "Projection";
 localizedStrings["Properties"] = "Properties";
 localizedStrings["Property"] = "Property";
+localizedStrings["Property Writes"] = "Property Writes";
 /* Property value for `font-variant-numeric: proportional-nums`. */
 localizedStrings["Proportional Numerals @ Font Details Sidebar Property Value"] = "Proportional Numerals";
 /* Property value for `font-variant-alternates: proportional-width`. */
@@ -2067,6 +2070,8 @@ localizedStrings["Workers @ Execution Context Picker"] = "Workers";
 localizedStrings["Wrap lines to editor width"] = "Wrap lines to editor width";
 /* Part of the tooltip indicating that the hovered property is writable. */
 localizedStrings["Writable @ Object Tree Property"] = "Writable";
+/* Label shown when JavaScript execution is paused due to a symbolic breakpoint. */
+localizedStrings["Writing Property \u201C%s\u201D @ Sources Navigation Sidebar Panel"] = "Writing Property \u201C%s\u201D";
 localizedStrings["XBM"] = "XBM";
 localizedStrings["XHR"] = "XHR";
 localizedStrings["XHRs"] = "XHRs";
