@@ -58,13 +58,22 @@ test/built-ins/TypedArray/prototype/slice/speciesctor-return-same-buffer-with-of
 test/built-ins/TypedArrayConstructors/ctors/object-arg/iterated-array-changed-by-tonumber.js:
   default: 3
   strict mode: 3
-test/built-ins/Uint8Array/prototype/setFromBase64/trailing-garbage-empty.js:
-  default: 3
-  strict mode: 3
 test/built-ins/Uint8Array/prototype/setFromBase64/trailing-garbage.js:
   default: 3
   strict mode: 3
+test/intl402/Locale/prototype/getHourCycles/region-priority.js:
+  default: 3
+  strict mode: 3
+test/intl402/Locale/prototype/getHourCycles/subdivision-region.js:
+  default: 3
+  strict mode: 3
+test/intl402/Temporal/PlainDate/prototype/daysInYear/basic-chinese.js:
+  default: 3
+  strict mode: 3
 test/intl402/Temporal/PlainDate/prototype/monthCode/chinese-calendar-dates.js:
+  default: 3
+  strict mode: 3
+test/intl402/Temporal/PlainDateTime/prototype/daysInYear/basic-chinese.js:
   default: 3
   strict mode: 3
 test/intl402/Temporal/PlainDateTime/prototype/monthCode/chinese-calendar-dates.js:
@@ -73,7 +82,13 @@ test/intl402/Temporal/PlainDateTime/prototype/monthCode/chinese-calendar-dates.j
 test/intl402/Temporal/PlainMonthDay/prototype/monthCode/chinese-calendar-dates.js:
   default: 3
   strict mode: 3
+test/intl402/Temporal/PlainYearMonth/prototype/daysInYear/basic-chinese.js:
+  default: 3
+  strict mode: 3
 test/intl402/Temporal/PlainYearMonth/prototype/monthCode/chinese-calendar-dates.js:
+  default: 3
+  strict mode: 3
+test/intl402/Temporal/ZonedDateTime/prototype/daysInYear/basic-chinese.js:
   default: 3
   strict mode: 3
 test/intl402/Temporal/ZonedDateTime/prototype/monthCode/chinese-calendar-dates.js:
@@ -111,9 +126,6 @@ test/language/expressions/call/tco-non-eval-with.js:
 test/language/expressions/delete/super-property-uninitialized-this.js:
   default: 3
   strict mode: 3
-test/language/expressions/dynamic-import/import-attributes/2nd-param-with-type-text.js:
-  default: 3
-  strict mode: 3
 test/language/expressions/new/non-ctor-err-realm.js:
   default: 3
   strict mode: 3
@@ -143,16 +155,6 @@ test/language/expressions/yield/star-rhs-iter-thrw-res-done-no-value.js:
   strict mode: 3
 test/language/identifier-resolution/assign-to-global-undefined.js:
   strict mode: 3
-test/language/import/import-attributes/text-empty.js:
-  module: 3
-test/language/import/import-attributes/text-javascript.js:
-  module: 3
-test/language/import/import-attributes/text-self.js:
-  module: 3
-test/language/import/import-attributes/text-string.js:
-  module: 3
-test/language/import/import-attributes/text-via-namespace.js:
-  module: 3
 test/language/statements/class/elements/private-class-field-on-nonextensible-objects.js:
   strict mode: 3
 test/language/statements/class/subclass/private-class-field-on-nonextensible-return-override.js:
