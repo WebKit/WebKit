@@ -47,6 +47,7 @@
 #include "CSSValueList.h"
 #include "CSSValuePool.h"
 #include "ColorConversion.h"
+#include "FloatConversion.h"
 #include "HashTools.h"
 #include "StylePropertyShorthand.h"
 #include <wtf/text/ParsingUtilities.h>

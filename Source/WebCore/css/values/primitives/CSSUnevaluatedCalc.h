@@ -92,9 +92,14 @@ public:
 
     bool canBeCastedTo(Category) const;
 
+    WTF::String serializationForCSS(const SerializationContext&) const;
     void serializationForCSS(StringBuilder&, const SerializationContext&) const;
+
     void collectComputedStyleDependencies(ComputedStyleDependencies&) const;
 
+    // Creates a copy of the CSSCalc::Tree with non-canonical dimensions and any symbols present in the provided symbol table resolved.
+    UnevaluatedCalcBase simplifyBase(const Style::BuilderState&) const;
+    UnevaluatedCalcBase simplifyBase(const Style::BuilderState&, const CSSCalcSymbolTable&) const;
     UnevaluatedCalcBase simplifyBase(const CSSToLengthConversionData&) const;
     UnevaluatedCalcBase simplifyBase(const CSSToLengthConversionData&, const CSSCalcSymbolTable&) const;
     UnevaluatedCalcBase simplifyBase(NoConversionDataRequiredToken) const;
@@ -108,6 +113,8 @@ public:
     double evaluate(NoConversionDataRequiredToken, const CSSCalcSymbolTable&) const;
     double evaluateDeprecated() const;
 
+    Style::UnevaluatedCalculationBase createCalculationValue(const Style::BuilderState&) const;
+    Style::UnevaluatedCalculationBase createCalculationValue(const Style::BuilderState&, const CSSCalcSymbolTable&) const;
     Style::UnevaluatedCalculationBase createCalculationValue(const CSSToLengthConversionData&) const;
     Style::UnevaluatedCalculationBase createCalculationValue(const CSSToLengthConversionData&, const CSSCalcSymbolTable&) const;
     Style::UnevaluatedCalculationBase createCalculationValue(NoConversionDataRequiredToken) const;
@@ -157,6 +164,14 @@ template<NumericRaw RawType> struct UnevaluatedCalc : UnevaluatedCalcBase {
         return UnevaluatedCalcBase::operator==(static_cast<const UnevaluatedCalcBase&>(other));
     }
 
+    UnevaluatedCalc simplify(const Style::BuilderState& state) const
+    {
+        return UnevaluatedCalc(simplifyBase(state));
+    }
+    UnevaluatedCalc simplify(const Style::BuilderState& state, const CSSCalcSymbolTable& symbolTable) const
+    {
+        return UnevaluatedCalc(simplifyBase(state, symbolTable));
+    }
     UnevaluatedCalc simplify(const CSSToLengthConversionData& conversionData) const
     {
         return UnevaluatedCalc(simplifyBase(conversionData));
@@ -270,6 +285,8 @@ template<Calc T> struct CSSValueChildrenVisitor<T> {
         return IterationStatus::Continue;
     }
 };
+
+WTF::TextStream& operator<<(WTF::TextStream&, const UnevaluatedCalcBase&);
 
 } // namespace CSS
 } // namespace WebCore

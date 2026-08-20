@@ -66,7 +66,7 @@ template<auto R, typename T> struct AbsoluteCSSNumericValueConversion<LengthPerc
                 return std::nullopt;
             if (auto category = calcValue->category(); category != CSS::Category::LengthPercentage && category != CSS::Category::Length && category != CSS::Category::Percentage)
                 return std::nullopt;
-            if (calcValue->requiresConversionData())
+            if (calcValue->tree().requiresConversionData)
                 return std::nullopt;
 
             return toStyle(typename CSSType::Calc { calcValue.releaseNonNull() }, NoConversionDataRequiredToken { });

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2011, 2012 Google Inc. All rights reserved.
- * Copyright (C) 2024 Samuel Weinig <sam@webkit.org>
+ * Copyright (C) 2024-2026 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -37,92 +37,32 @@
 
 namespace WebCore {
 
-namespace Style {
-namespace Calculation {
-class Value;
-}
-}
-
 namespace CSS {
-struct PropertyParserState;
 struct Range;
 enum class Category : uint8_t;
 }
-
-class CSSCalcSymbolTable;
-class CSSCalcSymbolsAllowed;
-class CSSParserTokenRange;
-class CSSToLengthConversionData;
-
-struct CSSParserContext;
-struct CSSPropertyParserOptions;
-struct NoConversionDataRequiredToken;
-
-enum CSSValueID : uint16_t;
-
-enum class CSSUnitType : uint8_t;
 
 namespace CSSCalc {
 
 // Boxes a `CSSCalc::Tree` along with the `Style::Calculation::Category` and `CSS::Range` used to construct it.
 class Value final : public RefCounted<Value> {
 public:
-    static RefPtr<Value> parse(CSSParserTokenRange&, CSS::PropertyParserState&, CSS::Category, CSS::Range, CSSCalcSymbolsAllowed, CSSPropertyParserOptions);
-
-    static Ref<Value> create(CSS::Category, CSS::Range, const Style::Calculation::Value&);
-    static Ref<Value> create(CSS::Category, CSS::Range, CSSCalc::Tree&&);
-
+    static Ref<Value> create(CSS::Category, CSS::Range, Tree&&);
     ~Value();
-
-    // Creates a copy of the CSSCalc::Tree with non-canonical dimensions and any symbols present in the provided symbol table resolved.
-    Ref<Value> copySimplified(const CSSToLengthConversionData&) const;
-    Ref<Value> copySimplified(const CSSToLengthConversionData&, const CSSCalcSymbolTable&) const;
-    Ref<Value> copySimplified(NoConversionDataRequiredToken) const;
-    Ref<Value> copySimplified(NoConversionDataRequiredToken, const CSSCalcSymbolTable&) const;
 
     CSS::Category category() const { return m_category; }
     CSS::Range range() const { return m_range; }
-
-    CSSUnitType NODELETE primitiveType() const;
-    bool NODELETE rootNodeIsPercentage() const;
-
-    // Returns whether the CSSCalc::Tree requires `CSSToLengthConversionData` to fully resolve.
-    bool requiresConversionData() const { return m_tree.requiresConversionData; };
-
-    double doubleValue(const CSSToLengthConversionData&) const;
-    double doubleValue(const CSSToLengthConversionData&, const CSSCalcSymbolTable&) const;
-    double doubleValue(NoConversionDataRequiredToken) const;
-    double doubleValue(NoConversionDataRequiredToken, const CSSCalcSymbolTable&) const;
-    double doubleValueDeprecated() const;
-
-    double computeLengthPx(const CSSToLengthConversionData&) const;
-    double computeLengthPx(const CSSToLengthConversionData&, const CSSCalcSymbolTable&) const;
-
-    Ref<Style::Calculation::Value> createCalculationValue(NoConversionDataRequiredToken) const;
-    Ref<Style::Calculation::Value> createCalculationValue(NoConversionDataRequiredToken, const CSSCalcSymbolTable&) const;
-    Ref<Style::Calculation::Value> createCalculationValue(const CSSToLengthConversionData&) const;
-    Ref<Style::Calculation::Value> createCalculationValue(const CSSToLengthConversionData&, const CSSCalcSymbolTable&) const;
-
-    void collectComputedStyleDependencies(ComputedStyleDependencies&) const;
-
-    String cssText(const CSS::SerializationContext&) const;
-    bool equals(const Value&) const;
+    const CSSCalc::Tree& tree() const LIFETIME_BOUND { return m_tree; }
 
     void dump(TextStream&) const;
 
-    const CSSCalc::Tree& tree() const LIFETIME_BOUND { return m_tree; }
-
 private:
-    explicit Value(CSS::Category, CSS::Range, CSSCalc::Tree&&);
-
-    double clampToPermittedRange(double) const;
+    explicit Value(CSS::Category, CSS::Range, Tree&&);
 
     CSS::Category m_category;
     CSS::Range m_range;
     Tree m_tree;
 };
-
-TextStream& operator<<(TextStream&, const Value&);
 
 } // namespace CSSCalc
 } // namespace WebCore

@@ -43,9 +43,11 @@ enum class LengthUnit : uint8_t;
 
 namespace Style {
 
+class BuilderState;
 class ComputedStyle;
 
 // Resolves length `value` of the provided `CSS::LengthUnit` type to a length with `CSS::LengthUnit::Px` type.
+double resolveLength(double value, CSS::LengthUnit, const BuilderState&);
 double resolveLength(double value, CSS::LengthUnit, const CSSToLengthConversionData&);
 
 // Only valid for absolute length units (Px, Cm, Mm, Q, In, Pt, Pc).

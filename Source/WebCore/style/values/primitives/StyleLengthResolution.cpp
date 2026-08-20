@@ -651,6 +651,13 @@ static double resolveLengthImpl(double value, CSS::LengthUnit lengthUnit, const 
     RELEASE_ASSERT_NOT_REACHED();
 }
 
+double resolveLength(double value, CSS::LengthUnit lengthUnit, const BuilderState& state)
+{
+    return resolveLengthImpl(value, lengthUnit, CSSToLengthConversionDataAdaptor {
+        .conversionData = state.cssToLengthConversionData(),
+    });
+}
+
 double resolveLength(double value, CSS::LengthUnit lengthUnit, const CSSToLengthConversionData& conversionData)
 {
     return resolveLengthImpl(value, lengthUnit, CSSToLengthConversionDataAdaptor {

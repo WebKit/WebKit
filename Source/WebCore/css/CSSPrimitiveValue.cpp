@@ -60,8 +60,8 @@ static HashMap<const CSSPrimitiveValue*, String>& NODELETE serializedPrimitiveVa
 
 CSSUnitType CSSPrimitiveValue::primitiveType() const
 {
-    if (RefPtr calcValue = cssCalcValue())
-        return calcValue->primitiveType();
+    if (RefPtr calcValue = const_cast<CSSCalc::Value*>(cssCalcValue()))
+        return CSS::UnevaluatedCalcBase { calcValue.releaseNonNull() }.primitiveType();
     return primitiveUnitType();
 }
 
@@ -330,7 +330,7 @@ ALWAYS_INLINE String CSSPrimitiveValue::serializeInternal(const CSS::Serializati
     case CSSUnitType::X:
         return formatNumberValue(unitTypeString(type));
     case CSSUnitType::Calc:
-        return protect(cssCalcValue())->cssText(context);
+        return CSS::UnevaluatedCalcBase { protect(const_cast<CSSCalc::Value&>(*cssCalcValue())) }.serializationForCSS(context);
     case CSSUnitType::Integer:
         return formatIntegerValue(""_s);
     case CSSUnitType::QuirkyEm:
@@ -437,7 +437,7 @@ bool CSSPrimitiveValue::equals(const CSSPrimitiveValue& other) const
     case CSSUnitType::Cqmax:
         return m_value.number == other.m_value.number;
     case CSSUnitType::Calc:
-        return protect(cssCalcValue())->equals(*protect(other.cssCalcValue()));
+        return CSS::UnevaluatedCalcBase { protect(const_cast<CSSCalc::Value&>(*cssCalcValue())) } == CSS::UnevaluatedCalcBase { protect(const_cast<CSSCalc::Value&>(*other.cssCalcValue())) };
     case CSSUnitType::CalcPercentageWithAngle:
     case CSSUnitType::CalcPercentageWithLength:
         // FIXME: seems like these should be handled.
@@ -536,8 +536,8 @@ bool CSSPrimitiveValue::addDerivedHash(Hasher& hasher) const
 // https://drafts.css-houdini.org/css-properties-values-api/#dependency-cycles
 void CSSPrimitiveValue::collectComputedStyleDependencies(ComputedStyleDependencies& dependencies) const
 {
-    if (RefPtr calcValue = cssCalcValue()) {
-        calcValue->collectComputedStyleDependencies(dependencies);
+    if (RefPtr calcValue = const_cast<CSSCalc::Value*>(cssCalcValue())) {
+        CSS::UnevaluatedCalcBase { calcValue.releaseNonNull() }.collectComputedStyleDependencies(dependencies);
         return;
     }
 

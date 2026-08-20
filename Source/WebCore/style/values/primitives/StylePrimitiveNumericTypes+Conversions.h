@@ -25,25 +25,13 @@
 #pragma once
 
 #include "CSSPrimitiveNumericTypes+Canonicalization.h"
-#include "CSSPrimitiveNumericTypes+ComputedStyleDependencies.h"
-#include "CSSSymbol.h"
-#include "CSSToLengthConversionData.h"
 #include "CSSUnevaluatedCalc.h"
-#include "FloatConversion.h"
 #include "StyleBuilderState.h"
 #include "StyleLengthResolution.h"
 #include "StylePrimitiveNumericTypes.h"
-#include "StylePrimitiveNumericTypes+Rounding.h"
 
 namespace WebCore {
 namespace Style {
-
-// MARK: Conversion Data Access
-
-template<typename> CSSToLengthConversionData conversionData(const BuilderState& state)
-{
-    return state.cssToLengthConversionData();
-}
 
 // MARK: - Type maps
 
@@ -221,12 +209,6 @@ template<auto R, typename V> struct ToStyle<CSS::UnevaluatedCalc<CSS::IntegerRaw
         ASSERT(value.runtimeCategory() == CSS::Category::Number || value.runtimeCategory() == CSS::Category::Integer);
         return { canonicalize(CSS::IntegerRaw<R, V> { To::unit, value.evaluate(rest...) }, rest...) };
     }
-
-    // Implement `BuilderState` overload to explicitly forward to the `CSSToLengthConversionData` overload.
-    template<typename... Rest> auto operator()(const From& value, const BuilderState& state, Rest&&... rest) -> To
-    {
-        return toStyle(value, conversionData<To>(state), std::forward<Rest>(rest)...);
-    }
 };
 
 template<auto R, typename V> struct ToStyle<CSS::UnevaluatedCalc<CSS::NumberRaw<R, V>>> {
@@ -237,12 +219,6 @@ template<auto R, typename V> struct ToStyle<CSS::UnevaluatedCalc<CSS::NumberRaw<
     {
         ASSERT(value.runtimeCategory() == CSS::Category::Number || value.runtimeCategory() == CSS::Category::Integer);
         return { canonicalize(CSS::NumberRaw<R, V> { To::unit, value.evaluate(rest...) }, rest...) };
-    }
-
-    // Implement `BuilderState` overload to explicitly forward to the `CSSToLengthConversionData` overload.
-    template<typename... Rest> auto operator()(const From& value, const BuilderState& state, Rest&&... rest) -> To
-    {
-        return toStyle(value, conversionData<To>(state), std::forward<Rest>(rest)...);
     }
 };
 
@@ -290,12 +266,6 @@ template<auto R, typename V> struct ToStyle<CSS::UnevaluatedCalc<CSS::AnglePerce
         }
         return typename To::Calc(simplifiedCalc.createCalculationValue(std::forward<Rest>(rest)...));
     }
-
-    // Implement `BuilderState` overload to explicitly forward to the `CSSToLengthConversionData` overload.
-    template<typename... Rest> auto operator()(const From& value, const BuilderState& state, Rest&&... rest) -> To
-    {
-        return toStyle(value, conversionData<To>(state), std::forward<Rest>(rest)...);
-    }
 };
 
 template<auto R, typename V> struct ToStyle<CSS::UnevaluatedCalc<CSS::LengthPercentageRaw<R, V>>> {
@@ -340,12 +310,6 @@ template<auto R, typename V> struct ToStyle<CSS::UnevaluatedCalc<CSS::LengthPerc
         }
         return typename To::Calc(simplifiedCalc.createCalculationValue(std::forward<Rest>(rest)...));
     }
-
-    // Implement `BuilderState` overload to explicitly forward to the `CSSToLengthConversionData` overload.
-    template<typename... Rest> auto operator()(const From& value, const BuilderState& state, Rest&&... rest) -> To
-    {
-        return toStyle(value, conversionData<To>(state), std::forward<Rest>(rest)...);
-    }
 };
 
 // Partial specialization for remaining numeric types.
@@ -358,12 +322,6 @@ template<CSS::NumericRaw RawType> struct ToStyle<RawType> {
     {
         return { canonicalize(value, std::forward<Rest>(rest)...) };
     }
-
-    // Implement `BuilderState` overload to explicitly forward to the `CSSToLengthConversionData` overload.
-    template<typename... Rest> auto operator()(const From& value, const BuilderState& state, Rest&&... rest) -> To
-    {
-        return toStyle(value, conversionData<To>(state), std::forward<Rest>(rest)...);
-    }
 };
 
 template<CSS::NumericRaw RawType> struct ToStyle<CSS::UnevaluatedCalc<RawType>> {
@@ -373,12 +331,6 @@ template<CSS::NumericRaw RawType> struct ToStyle<CSS::UnevaluatedCalc<RawType>> 
     template<typename... Rest> auto operator()(const From& value, Rest&&... rest) -> To
     {
         return { canonicalize(RawType { To::unit, value.evaluate(rest...) }, rest...) };
-    }
-
-    // Implement `BuilderState` overload to explicitly forward to the `CSSToLengthConversionData` overload.
-    template<typename... Rest> auto operator()(const From& value, const BuilderState& state, Rest&&... rest) -> To
-    {
-        return toStyle(value, conversionData<To>(state), std::forward<Rest>(rest)...);
     }
 };
 
