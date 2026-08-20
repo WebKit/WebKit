@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,6 +36,8 @@ typedef struct __CVPixelBufferPool* CVPixelBufferPoolRef;
 namespace WebCore {
 
 class VideoFrame;
+class NativeImage;
+struct ImageOrientation;
 
 class ImageRotationSessionVT final {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(ImageRotationSessionVT, WEBCORE_EXPORT);
@@ -62,8 +64,13 @@ public:
     const FloatSize& rotatedSize() LIFETIME_BOUND { return m_rotatedSize; }
 
     RetainPtr<CVPixelBufferRef> rotate(CVPixelBufferRef);
-    RefPtr<VideoFrame> applyRotation(VideoFrame&, IsCGImageCompatible = IsCGImageCompatible::No);
+
+    RetainPtr<CVPixelBufferRef> rotate(CVPixelBufferRef, const RotationProperties&, IsCGImageCompatible);
     WEBCORE_EXPORT RetainPtr<CVPixelBufferRef> rotate(VideoFrame&, const RotationProperties&, IsCGImageCompatible);
+    RetainPtr<CVPixelBufferRef> rotate(NativeImage&, const RotationProperties&, IsCGImageCompatible);
+
+    RefPtr<VideoFrame> applyRotation(VideoFrame&, IsCGImageCompatible = IsCGImageCompatible::No);
+    RefPtr<NativeImage> applyRotation(NativeImage&, ImageOrientation, IsCGImageCompatible = IsCGImageCompatible::No);
 
 private:
     void initialize(const RotationProperties&, FloatSize, IsCGImageCompatible);
@@ -79,4 +86,4 @@ private:
     bool m_shouldUseIOSurface { true };
 };
 
-}
+} // namespace WebCore

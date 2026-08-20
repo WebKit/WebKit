@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +27,7 @@
 #import "ImageRotationSessionVT.h"
 
 #import "AffineTransform.h"
+#import "CVPixelBufferUtilities.h"
 #import "CVUtilities.h"
 #import "Logging.h"
 #import "VideoFrameCV.h"
@@ -136,19 +137,31 @@ RetainPtr<CVPixelBufferRef> ImageRotationSessionVT::rotate(CVPixelBufferRef pixe
     return result;
 }
 
-RetainPtr<CVPixelBufferRef> ImageRotationSessionVT::rotate(VideoFrame& videoFrame, const RotationProperties& rotation, IsCGImageCompatible cgImageCompatible)
+RetainPtr<CVPixelBufferRef> ImageRotationSessionVT::rotate(CVPixelBufferRef pixelBuffer, const RotationProperties& rotation, IsCGImageCompatible cgImageCompatible)
 {
-    RetainPtr pixelBuffer = videoFrame.pixelBuffer();
-    ASSERT(pixelBuffer);
-    if (!pixelBuffer)
-        return nullptr;
+    m_pixelFormat = CVPixelBufferGetPixelFormatType(pixelBuffer);
 
-    m_pixelFormat = CVPixelBufferGetPixelFormatType(pixelBuffer.get());
-    IntSize size { static_cast<int>(CVPixelBufferGetWidth(pixelBuffer.get())), static_cast<int>(CVPixelBufferGetHeight(pixelBuffer.get())) };
+    IntSize size { static_cast<int>(CVPixelBufferGetWidth(pixelBuffer)), static_cast<int>(CVPixelBufferGetHeight(pixelBuffer)) };
     if (rotation != m_rotationProperties || m_size != size)
         initialize(rotation, size, cgImageCompatible);
 
-    return rotate(pixelBuffer.get());
+    return rotate(pixelBuffer);
+}
+
+RetainPtr<CVPixelBufferRef> ImageRotationSessionVT::rotate(VideoFrame& videoFrame, const RotationProperties& rotation, IsCGImageCompatible cgImageCompatible)
+{
+    if (RetainPtr pixelBuffer = videoFrame.pixelBuffer())
+        return rotate(pixelBuffer, rotation, cgImageCompatible);
+    ASSERT_NOT_REACHED();
+    return nullptr;
+}
+
+RetainPtr<CVPixelBufferRef> ImageRotationSessionVT::rotate(NativeImage& image, const RotationProperties& rotation, IsCGImageCompatible cgImageCompatible)
+{
+    if (RetainPtr pixelBuffer = createCVPixelBufferFromImage(image.platformImage()))
+        return rotate(pixelBuffer, rotation, cgImageCompatible);
+    ASSERT_NOT_REACHED();
+    return nullptr;
 }
 
 RefPtr<VideoFrame> ImageRotationSessionVT::applyRotation(VideoFrame& videoFrame, IsCGImageCompatible cgImageCompatible)
@@ -165,4 +178,51 @@ RefPtr<VideoFrame> ImageRotationSessionVT::applyRotation(VideoFrame& videoFrame,
     return VideoFrameCV::create(videoFrame.presentationTime(), false, VideoFrameRotation::None, WTF::move(pixelBuffer), PlatformVideoColorSpace { videoFrame.colorSpace() });
 }
 
+RefPtr<NativeImage> ImageRotationSessionVT::applyRotation(NativeImage& nativeImage, ImageOrientation orientation, IsCGImageCompatible cgImageCompatible)
+{
+    if (!canLoad_VideoToolbox_VTCreateCGImageFromCVPixelBuffer())
+        return nullptr;
+
+    RotationProperties rotation;
+
+    switch (orientation.orientation()) {
+    case ImageOrientation::Orientation::FromImage:
+        ASSERT_NOT_REACHED();
+        return nullptr;
+    case ImageOrientation::Orientation::OriginTopLeft:
+        break;
+    case ImageOrientation::Orientation::OriginTopRight:
+        rotation.flipX = true;
+        break;
+    case ImageOrientation::Orientation::OriginBottomRight:
+        rotation.angle = 180;
+        break;
+    case ImageOrientation::Orientation::OriginBottomLeft:
+        rotation.flipY = true;
+        break;
+    case ImageOrientation::Orientation::OriginLeftTop:
+        rotation.angle = 90;
+        rotation.flipX = true;
+        break;
+    case ImageOrientation::Orientation::OriginRightTop:
+        rotation.angle = 90;
+        break;
+    case ImageOrientation::Orientation::OriginRightBottom:
+        rotation.angle = 270;
+        rotation.flipX = true;
+        break;
+    case ImageOrientation::Orientation::OriginLeftBottom:
+        rotation.angle = 270;
+        break;
+    }
+
+    RetainPtr pixelBuffer = rotate(nativeImage, rotation, cgImageCompatible);
+    if (!pixelBuffer)
+        return nullptr;
+
+    CGImageRef cgImage;
+    VTCreateCGImageFromCVPixelBuffer(pixelBuffer, nullptr, &cgImage);
+    return NativeImage::create(adoptCF(cgImage));
 }
+
+} // namespace WebCore

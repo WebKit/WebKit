@@ -106,6 +106,22 @@ size_t NativeImage::sizeInBytes() const
 void NativeImage::computeHeadroom() const
 {
 }
+
+RefPtr<NativeImage> NativeImage::rotatedImage(ImageOrientation orientation)
+{
+    IntSize sizeForRotation = orientation.usesWidthAsHeight() ? size().transposedSize() : size();
+
+    // FIXME: This preserves neither the pixelFormat nor the colorSapace of the original NativeImage.
+    RefPtr buffer = ImageBuffer::create(sizeForRotation, RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
+    if (!buffer)
+        return nullptr;
+
+    GraphicsContext& context = buffer->context();
+    context.drawNativeImage(*this, { { }, sizeForRotation }, { { }, sizeForRotation }, { orientation });
+
+    return ImageBuffer::sinkIntoNativeImage(WTF::move(buffer));
+}
+
 #endif
 
 } // namespace WebCore

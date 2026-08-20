@@ -45,6 +45,8 @@ RetainPtr<CVPixelBufferRef> createScratchMetalCompatibleCVPixelBuffer(const Shar
 
 RetainPtr<CVPixelBufferRef> createMetalCompatibleCVPixelBufferFromImage(PlatformImagePtr);
 
+RetainPtr<CVPixelBufferRef> createCVPixelBufferFromImage(PlatformImagePtr);
+
 #if ENABLE(DUMP_GAIN_MAP_IMAGES)
 void CVPixelBufferDumpToFile(CVPixelBufferRef, const String& name);
 #endif

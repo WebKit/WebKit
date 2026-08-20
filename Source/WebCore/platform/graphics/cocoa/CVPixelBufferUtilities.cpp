@@ -88,20 +88,21 @@ RetainPtr<CVPixelBufferRef> createScratchMetalCompatibleCVPixelBuffer(const Shar
     return createScratchMetalCompatibleCVPixelBuffer(width, height, pixelFormat, colorSpace);
 }
 
-RetainPtr<CVPixelBufferRef> createMetalCompatibleCVPixelBufferFromImage(PlatformImagePtr platformImage)
+static RetainPtr<CVPixelBufferRef> createCVPixelBufferFromImage(PlatformImagePtr platformImage, RetainPtr<CVPixelBufferRef>&& targetPixelBuffer)
 {
+    if (!targetPixelBuffer)
+        return nullptr;
+
     unsigned width = CGImageGetWidth(platformImage);
     unsigned height = CGImageGetHeight(platformImage);
     RetainPtr colorSpace = CGImageGetColorSpace(platformImage);
 
-    RetainPtr pixelBuffer = createScratchMetalCompatibleCVPixelBuffer(width, height, kCVPixelFormatType_32BGRA);
-    if (!pixelBuffer)
-        return nullptr;
-
-    CVPixelBufferLockBaseAddress(pixelBuffer, 0);
+    // FIXME: There should be an API that does the opposite of VTCreateCGImageFromCVPixelBuffer()
+    // - one that converts a CGImage into a CVPixelBuffer.
+    CVPixelBufferLockBaseAddress(targetPixelBuffer, 0);
     {
-        unsigned destinationBytesPerRow = CVPixelBufferGetBytesPerRow(pixelBuffer);
-        auto* destinationBaseAddress = static_cast<uint8_t*>(CVPixelBufferGetBaseAddress(pixelBuffer));
+        unsigned destinationBytesPerRow = CVPixelBufferGetBytesPerRow(targetPixelBuffer);
+        auto* destinationBaseAddress = static_cast<uint8_t*>(CVPixelBufferGetBaseAddress(targetPixelBuffer));
 
         // kCGBitmapByteOrder32Little | kCGImageAlphaPremultipliedFirst => BGRA layout
         auto bitmapInfo = static_cast<CGBitmapInfo>(kCGBitmapByteOrder32Little) | static_cast<CGBitmapInfo>(kCGImageAlphaPremultipliedFirst);
@@ -109,9 +110,30 @@ RetainPtr<CVPixelBufferRef> createMetalCompatibleCVPixelBufferFromImage(Platform
         RetainPtr context = adoptCF(CGBitmapContextCreate(destinationBaseAddress, width, height, 8, destinationBytesPerRow, colorSpace, bitmapInfo));
         CGContextDrawImage(context, CGRectMake(0, 0, static_cast<CGFloat>(width), static_cast<CGFloat>(height)), platformImage);
     }
-    CVPixelBufferUnlockBaseAddress(pixelBuffer, 0);
+    CVPixelBufferUnlockBaseAddress(targetPixelBuffer, 0);
 
-    return WTF::move(pixelBuffer);
+    return WTF::move(targetPixelBuffer);
+}
+
+RetainPtr<CVPixelBufferRef> createMetalCompatibleCVPixelBufferFromImage(PlatformImagePtr platformImage)
+{
+    unsigned width = CGImageGetWidth(platformImage);
+    unsigned height = CGImageGetHeight(platformImage);
+    RetainPtr colorSpace = CGImageGetColorSpace(platformImage);
+
+    RetainPtr targetPixelBuffer = createScratchMetalCompatibleCVPixelBuffer(width, height, kCVPixelFormatType_32BGRA);
+    return createCVPixelBufferFromImage(platformImage, WTF::move(targetPixelBuffer));
+}
+
+RetainPtr<CVPixelBufferRef> createCVPixelBufferFromImage(PlatformImagePtr platformImage)
+{
+    unsigned width = CGImageGetWidth(platformImage);
+    unsigned height = CGImageGetHeight(platformImage);
+    RetainPtr colorSpace = CGImageGetColorSpace(platformImage);
+    OSType pixelFormat = CGImageGetAlphaInfo(platformImage) == kCGImageAlphaNone ? kCVPixelFormatType_24RGB : kCVPixelFormatType_32BGRA;
+
+    RetainPtr targetPixelBuffer = createScratchCVPixelBuffer(width, height, pixelFormat);
+    return createCVPixelBufferFromImage(platformImage, WTF::move(targetPixelBuffer));
 }
 
 #if ENABLE(DUMP_GAIN_MAP_IMAGES)

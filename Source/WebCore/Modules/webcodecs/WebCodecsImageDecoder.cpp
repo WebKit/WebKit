@@ -191,7 +191,15 @@ void WebCodecsImageDecoder::fulfillPendingDecodePromises(size_t frameIndex, RefP
     ASSERT(m_internalDecoder);
     Ref internalDecoder = *m_internalDecoder;
 
-    IntSize frameSize = internalDecoder->frameSizeAtIndex(frameIndex);
+    auto frameSize = internalDecoder->frameSizeAtIndex(frameIndex);
+    auto frameOrientation = internalDecoder->frameOrientationAtIndex(frameIndex);
+
+    if (frameOrientation != ImageOrientation::Orientation::OriginTopLeft) {
+        if (RefPtr rotatedImage = nativeImage->rotatedImage(frameOrientation)) {
+            nativeImage = WTF::move(rotatedImage);
+            frameSize = frameOrientation.usesWidthAsHeight() ? frameSize.transposedSize() : frameSize;
+        }
+    }
 
     WebCodecsVideoFrame::Init init {
         .duration = static_cast<uint64_t>(internalDecoder->frameDurationAtIndex(frameIndex).microseconds()),
@@ -202,7 +210,6 @@ void WebCodecsImageDecoder::fulfillPendingDecodePromises(size_t frameIndex, RefP
         .displayHeight = static_cast<size_t>(frameSize.height())
     };
 
-    // FIXME: nativeImage should be rotated based on the frame ImageOrientation.
     auto videoFrame = WebCodecsVideoFrame::create(*protect(scriptExecutionContext()), nativeImage.releaseNonNull(), WTF::move(init));
     if (videoFrame.hasException()) {
         rejectPendingDecodePromises(frameIndex, videoFrame.releaseException());

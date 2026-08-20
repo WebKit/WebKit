@@ -48,6 +48,7 @@ class FloatRect;
 class GraphicsContext;
 class IntSize;
 class NativeImageBackend;
+struct ImageOrientation;
 struct ImagePaintingOptions;
 
 class NativeImage : public ThreadSafeRefCounted<NativeImage>, public CanMakeThreadSafeCheckedPtr<NativeImage> {
@@ -79,6 +80,8 @@ public:
     bool hasHDRGainMap() const { return m_gainMap.has_value(); }
     Headroom baseImageHeadroom() const { return m_baseImageHeadroom; }
     Headroom headroom() const { return m_headroom; }
+
+    RefPtr<NativeImage> rotatedImage(ImageOrientation);
 
     void clearSubimages();
 

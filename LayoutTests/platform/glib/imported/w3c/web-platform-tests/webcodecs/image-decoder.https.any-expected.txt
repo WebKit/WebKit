@@ -3,21 +3,21 @@ Harness Error (FAIL), message = Unhandled rejection: Decoding error
 
 PASS Test JPEG image decoding.
 PASS Test JPEG w/ EXIF orientation top-left.
-FAIL Test JPEG w/ EXIF orientation top-right. assert_equals: top left corner expected "Red" but got "Yellow"
-FAIL Test JPEG w/ EXIF orientation bottom-right. assert_equals: top left corner expected "Green" but got "Yellow"
-FAIL Test JPEG w/ EXIF orientation bottom-left. assert_equals: top left corner expected "Blue" but got "Yellow"
-FAIL Test JPEG w/ EXIF orientation left-top. assert_equals: expected 240 but got 320
-FAIL Test JPEG w/ EXIF orientation right-top. assert_equals: expected 240 but got 320
-FAIL Test JPEG w/ EXIF orientation right-bottom. assert_equals: expected 240 but got 320
-FAIL Test JPEG w/ EXIF orientation left-bottom. assert_equals: expected 240 but got 320
+PASS Test JPEG w/ EXIF orientation top-right.
+PASS Test JPEG w/ EXIF orientation bottom-right.
+PASS Test JPEG w/ EXIF orientation bottom-left.
+PASS Test JPEG w/ EXIF orientation left-top.
+PASS Test JPEG w/ EXIF orientation right-top.
+PASS Test JPEG w/ EXIF orientation right-bottom.
+PASS Test JPEG w/ EXIF orientation left-bottom.
 PASS Test 4:2:0 JPEG w/ EXIF orientation top-left.
-FAIL Test 4:2:0 JPEG w/ EXIF orientation top-right. assert_equals: top left corner expected "Red" but got "Yellow"
-FAIL Test 4:2:0 JPEG w/ EXIF orientation bottom-right. assert_equals: top left corner expected "Green" but got "Yellow"
-FAIL Test 4:2:0 JPEG w/ EXIF orientation bottom-left. assert_equals: top left corner expected "Blue" but got "Yellow"
-FAIL Test 4:2:0 JPEG w/ EXIF orientation left-top. assert_equals: expected 240 but got 320
-FAIL Test 4:2:0 JPEG w/ EXIF orientation right-top. assert_equals: expected 240 but got 320
-FAIL Test 4:2:0 JPEG w/ EXIF orientation right-bottom. assert_equals: expected 240 but got 320
-FAIL Test 4:2:0 JPEG w/ EXIF orientation left-bottom. assert_equals: expected 240 but got 320
+PASS Test 4:2:0 JPEG w/ EXIF orientation top-right.
+PASS Test 4:2:0 JPEG w/ EXIF orientation bottom-right.
+PASS Test 4:2:0 JPEG w/ EXIF orientation bottom-left.
+PASS Test 4:2:0 JPEG w/ EXIF orientation left-top.
+PASS Test 4:2:0 JPEG w/ EXIF orientation right-top.
+PASS Test 4:2:0 JPEG w/ EXIF orientation right-bottom.
+PASS Test 4:2:0 JPEG w/ EXIF orientation left-bottom.
 PASS Test PNG image decoding.
 PASS Test AVIF image decoding.
 PASS Test high bit depth HDR AVIF image decoding.
@@ -47,21 +47,21 @@ Harness Error (FAIL), message = Unhandled rejection: Decoding error
 
 PASS Test JPEG image decoding.
 PASS Test JPEG w/ EXIF orientation top-left.
-FAIL Test JPEG w/ EXIF orientation top-right. assert_equals: top left corner expected "Red" but got "Yellow"
-FAIL Test JPEG w/ EXIF orientation bottom-right. assert_equals: top left corner expected "Green" but got "Yellow"
-FAIL Test JPEG w/ EXIF orientation bottom-left. assert_equals: top left corner expected "Blue" but got "Yellow"
-FAIL Test JPEG w/ EXIF orientation left-top. assert_equals: expected 240 but got 320
-FAIL Test JPEG w/ EXIF orientation right-top. assert_equals: expected 240 but got 320
-FAIL Test JPEG w/ EXIF orientation right-bottom. assert_equals: expected 240 but got 320
-FAIL Test JPEG w/ EXIF orientation left-bottom. assert_equals: expected 240 but got 320
+PASS Test JPEG w/ EXIF orientation top-right.
+PASS Test JPEG w/ EXIF orientation bottom-right.
+PASS Test JPEG w/ EXIF orientation bottom-left.
+PASS Test JPEG w/ EXIF orientation left-top.
+PASS Test JPEG w/ EXIF orientation right-top.
+PASS Test JPEG w/ EXIF orientation right-bottom.
+PASS Test JPEG w/ EXIF orientation left-bottom.
 PASS Test 4:2:0 JPEG w/ EXIF orientation top-left.
-FAIL Test 4:2:0 JPEG w/ EXIF orientation top-right. assert_equals: top left corner expected "Red" but got "Yellow"
-FAIL Test 4:2:0 JPEG w/ EXIF orientation bottom-right. assert_equals: top left corner expected "Green" but got "Yellow"
-FAIL Test 4:2:0 JPEG w/ EXIF orientation bottom-left. assert_equals: top left corner expected "Blue" but got "Yellow"
-FAIL Test 4:2:0 JPEG w/ EXIF orientation left-top. assert_equals: expected 240 but got 320
-FAIL Test 4:2:0 JPEG w/ EXIF orientation right-top. assert_equals: expected 240 but got 320
-FAIL Test 4:2:0 JPEG w/ EXIF orientation right-bottom. assert_equals: expected 240 but got 320
-FAIL Test 4:2:0 JPEG w/ EXIF orientation left-bottom. assert_equals: expected 240 but got 320
+PASS Test 4:2:0 JPEG w/ EXIF orientation top-right.
+PASS Test 4:2:0 JPEG w/ EXIF orientation bottom-right.
+PASS Test 4:2:0 JPEG w/ EXIF orientation bottom-left.
+PASS Test 4:2:0 JPEG w/ EXIF orientation left-top.
+PASS Test 4:2:0 JPEG w/ EXIF orientation right-top.
+PASS Test 4:2:0 JPEG w/ EXIF orientation right-bottom.
+PASS Test 4:2:0 JPEG w/ EXIF orientation left-bottom.
 PASS Test PNG image decoding.
 PASS Test AVIF image decoding.
 PASS Test high bit depth HDR AVIF image decoding.

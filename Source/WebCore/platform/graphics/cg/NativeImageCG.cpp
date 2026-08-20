@@ -32,6 +32,7 @@
 #include "GeometryUtilities.h"
 #include "GraphicsContextCG.h"
 #include "ImageBuffer.h"
+#include "ImageRotationSessionVT.h"
 #include <limits>
 #include <pal/spi/cg/CoreGraphicsSPI.h>
 
@@ -135,6 +136,12 @@ std::optional<Color> NativeImage::singlePixelSolidColor() const
         return Color::transparentBlack;
 
     return makeFromComponentsClampingExceptAlpha<SRGBA<uint8_t>>(pixel[0] * 255 / pixel[3], pixel[1] * 255 / pixel[3], pixel[2] * 255 / pixel[3], pixel[3]);
+}
+
+RefPtr<NativeImage> NativeImage::rotatedImage(ImageOrientation orientation)
+{
+    ImageRotationSessionVT rotationSession(ImageRotationSessionVT::ShouldUseIOSurface::No);
+    return rotationSession.applyRotation(*this, orientation, ImageRotationSessionVT::IsCGImageCompatible::Yes);
 }
 
 void NativeImage::clearSubimages()
