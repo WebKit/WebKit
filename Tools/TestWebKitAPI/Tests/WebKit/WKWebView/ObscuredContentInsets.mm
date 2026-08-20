@@ -544,6 +544,31 @@ TEST(ObscuredContentInsets, TopOverhangColorExtensionLayerRemovedQuicklyAfterNav
     EXPECT_NULL([webView firstLayerWithNameContaining:@"top overhang"]);
 }
 
+TEST(ObscuredContentInsets, ScrollPocketRemainsWhenScrolledToTopInEditableWebView)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 600, 400)]);
+    [webView _setUsesAutomaticContentInsetBackgroundFill:YES];
+    [webView setObscuredContentInsets:NSEdgeInsetsMake(100, 0, 0, 0)];
+    [webView waitForNextPresentationUpdate];
+    [webView synchronouslyLoadTestPageNamed:@"simple-tall"];
+
+    EXPECT_NULL([webView _topScrollPocket]);
+
+    [webView _setEditable:YES];
+    EXPECT_NOT_NULL([webView _topScrollPocket]);
+
+    [webView objectByEvaluatingJavaScript:@"scrollTo(0, 500)"];
+    [webView waitForNextPresentationUpdate];
+    EXPECT_NOT_NULL([webView _topScrollPocket]);
+
+    [webView objectByEvaluatingJavaScript:@"scrollTo(0, 0)"];
+    [webView waitForNextPresentationUpdate];
+    EXPECT_NOT_NULL([webView _topScrollPocket]);
+
+    [webView _setEditable:NO];
+    EXPECT_NULL([webView _topScrollPocket]);
+}
+
 #endif // PLATFORM(MAC)
 
 #if ENABLE(HORIZONTAL_BANNER_VIEW_OVERLAYS)

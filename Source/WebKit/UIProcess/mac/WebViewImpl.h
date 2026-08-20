@@ -889,7 +889,7 @@ public:
     NSScrollPocket *topScrollPocket() const LIFETIME_BOUND { return m_topScrollPocket.get(); }
     void registerViewAboveScrollPocket(NSView *);
     void unregisterViewAboveScrollPocket(NSView *);
-    void updateScrollPocketVisibilityWhenScrolledToTop();
+    void updateScrollPocketVisibilityWhenScrolledToTopAndNonEditable();
     void updateTopScrollPocketCaptureColor();
     void updateTopScrollPocketStyle();
     void updatePrefersSolidColorHardPocket();

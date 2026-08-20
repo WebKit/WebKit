@@ -4527,6 +4527,10 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKCONTENTVIEW)
     if (wasEditable == editable)
         return;
 
+#if PLATFORM(MAC) && ENABLE(CONTENT_INSET_BACKGROUND_FILL)
+    _impl->updateScrollPocketVisibilityWhenScrolledToTopAndNonEditable();
+#endif
+
 #if PLATFORM(IOS_FAMILY)
     [_contentView _didChangeWebViewEditability];
 #endif
