@@ -109,7 +109,7 @@ lifecycles you can rely on.
 
 The minimum viable usage looks like this:
 
-1. Create a [class@WebKit.WebView] without specifying a display or a
+1. Create a `WebKitWebView` without specifying a display or a
    backend. WebKit then uses the default display automatically — it is
    obtained by iterating the registered platform modules in priority
    order and connecting to the first one that succeeds.

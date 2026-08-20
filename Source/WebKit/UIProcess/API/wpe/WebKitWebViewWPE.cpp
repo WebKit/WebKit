@@ -77,9 +77,9 @@ void webkitWebViewRestoreWindow(WebKitWebView*, CompletionHandler<void()>&& comp
  * The new view will use the default [class@WebContext] and will not
  * have an associated [class@UserContentManager].
  *
- * See also [id@webkit_web_view_new_with_context],
- * [id@webkit_web_view_new_with_user_content_manager]), and
- * [id@webkit_web_view_new_with_settings].
+ * Set the [property@WebView:web-context],
+ * [property@WebView:user-content-manager] or [property@WebView:settings]
+ * properties at construction to use a different configuration.
  *
  * Returns: The newly created web view.
  */
@@ -109,8 +109,8 @@ WebKitWebView* webkit_web_view_new(WebKitWebViewBackend* backend)
  * The new web view will use the given [class@WebContext] and will not have
  * an associated [class@UserContentManager].
  *
- * See also [id@webkit_web_view_new_with_user_content_manager] and
- * [id@webkit_web_view_new_with_settings].
+ * See also [ctor@WebView.new_with_user_content_manager] and
+ * [ctor@WebView.new_with_settings].
  *
  * Returns: The newly created web view.
  */
@@ -169,8 +169,8 @@ WebKitWebView* webkit_web_view_new_with_related_view(WebKitWebViewBackend* backe
  *
  * Creates a new web view with the given settings.
  *
- * See also [id@webkit_web_view_new_with_context], and
- * [id@webkit_web_view_new_with_user_content_manager].
+ * See also [ctor@WebView.new_with_context] and
+ * [ctor@WebView.new_with_user_content_manager].
  *
  * Returns: (transfer full): The newly created web view.
  *
