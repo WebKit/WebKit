@@ -38,15 +38,23 @@
 namespace JSC {
 
 struct SourceProviderCacheItemCreationParameters {
+    std::span<UniquedStringImpl* const> freeVariables() const LIFETIME_BOUND
+    {
+        ASSERT(freeVariableCount <= usedVariables.size());
+        return usedVariables.span().first(freeVariableCount);
+    }
+
     unsigned lastTokenLine { 0 };
     unsigned lastTokenStartOffset { 0 };
     unsigned lastTokenEndOffset { 0 };
     unsigned lastTokenLineStartOffset { 0 };
     unsigned endFunctionOffset { 0 };
     unsigned parameterCount { 0 };
+    unsigned freeVariableCount { 0 };
     LexicallyScopedFeatures lexicallyScopedFeatures { 0 };
     InnerArrowFunctionCodeFeatures innerArrowFunctionFeatures { 0 };
     ImplementationVisibility implementationVisibility { ImplementationVisibility::Public };
+    // Scope's own free variables followed by the captures from its parameter expressions.
     Vector<UniquedStringImpl*, 8> usedVariables;
     JSTokenType tokenType { CLOSEBRACE };
     ConstructorKind constructorKind;
