@@ -78,6 +78,7 @@ def main():
     tester.add_tree(os.path.join(_webkit_root, 'Tools', 'Scripts', 'libraries', 'webkitflaskpy'), 'webkitflaskpy')
     tester.add_tree(os.path.join(_webkit_root, 'Tools', 'Scripts', 'libraries', 'reporelaypy'), 'reporelaypy')
     tester.add_tree(os.path.join(_webkit_root, 'Tools', 'Scripts', 'libraries', 'webkitapipy'), 'webkitapipy')
+    tester.add_tree(os.path.join(_webkit_root, 'Tools', 'Scripts', 'webkit-sysprof'), 'webkitsysprof')
     tester.add_tree(os.path.join(_webkit_root, 'Source', 'WebKit', 'Scripts'), 'webkit')
 
     tester.skip(('webkitpy.common.checkout.scm.scm_unittest',), 'are really, really, slow', 31818)

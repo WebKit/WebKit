@@ -282,21 +282,23 @@ def _calculate_statistics_input_data(
 def _calculate_statistics(values: Sequence[Union[int, float]]) -> Dict[str, Any]:
     if values == []:
         return {}
-    return {
+    result: Dict[str, Any] = {
         "n": len(values),
         "min": min(values),
         "max": max(values),
         "mean": statistics.mean(values),
         "stddev": statistics.stdev(values) if len(values) > 1 else 0,
         "median": statistics.median(values),
-        "percentiles": {
+    }
+    if len(values) > 1:
+        result["percentiles"] = {
             k: v
             for k, v in dict(
                 zip(range(1, 100), statistics.quantiles(values, n=100))
             ).items()
             if k in RELEVANT_PERCENTILES
-        },
-    }
+        }
+    return result
 
 
 def _render_text_report(report: Dict[str, Any]) -> None:

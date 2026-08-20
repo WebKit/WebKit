@@ -134,23 +134,8 @@ than twice in the (optionally trimmed) capture, it prints `No data available for
 
 ## Development
 
-Run all checks — lint, format-check, type-check, and the test suite (each in its own
-isolated tox env):
+Run tests:
 
 ```
-tox
-```
-
-Run an individual check:
-
-```
-tox -e lint      # flake8
-tox -e format    # black --check --diff
-tox -e mypy      # mypy
-```
-
-Run just the test suite:
-
-```
-tox -e test
+Tools/Scripts/test-webkitpy webkitsysprof
 ```
