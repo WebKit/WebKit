@@ -1624,11 +1624,15 @@ auto TreeResolver::updateAnchorPositioningState(Element& element, const Style::C
     };
 
     update(style);
-    update(style->pseudoElementStyle({ PseudoElementType::Before }));
-    update(style->pseudoElementStyle({ PseudoElementType::After }));
+    if (style->hasPseudoElementStyles()) {
+        update(style->pseudoElementStyle({ PseudoElementType::Before }));
+        update(style->pseudoElementStyle({ PseudoElementType::After }));
+    }
 
-    auto needsInterleavedLayout = hasUnresolvedAnchorPosition({ element, { } });
-    if (needsInterleavedLayout)
+    if (m_treeResolutionState.anchorPositionedStates.isEmpty())
+        return LayoutInterleavingAction::None;
+
+    if (hasUnresolvedAnchorPosition({ element, { } }))
         return LayoutInterleavingAction::SkipDescendants;
 
     return LayoutInterleavingAction::None;
