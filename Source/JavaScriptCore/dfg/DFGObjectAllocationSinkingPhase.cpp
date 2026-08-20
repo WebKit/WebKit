@@ -1499,7 +1499,9 @@ escapeChildren:
         // 2) If we put a sink candidate into a local allocation, that
         //    allocation becomes a sink candidate as well.
         //
-        // We currently choose to implement closure rule #2.
+        // Typically we implement closure rule #2. However, when a candidate is
+        // excluded due to InlineCallFrame mismatch, we use rule #1 to also exclude
+        // anything that transitively depends on it.
         UncheckedKeyHashMap<Node*, Vector<Node*>> dependencies;
         bool hasUnescapedReads = false;
         for (BasicBlock* block : m_graph.blocksInPreOrder()) {
@@ -1581,32 +1583,17 @@ escapeChildren:
             }
         };
 
-        if (m_sinkCandidates.size()) {
-            // If we're moving an allocation to `where` in the program, we need to ensure
-            // we can still walk the stack at that point in the program for the
-            // InlineCallFrame of the original allocation. Certain InlineCallFrames rely on
-            // data in the stack when taking a stack trace. All allocation sites can do a
-            // stack walk (we do a stack walk when we GC). Conservatively, we say we're
-            // still ok to move this allocation if we are moving within the same InlineCallFrame.
-            // We could be more precise here and do an analysis of stack writes. However,
-            // this scenario is so rare that we just take the conservative-and-straight-forward 
-            // approach of checking that we're in the same InlineCallFrame.
+        auto shouldDemote = [] (Node* candidate, Node* where) {
+            InlineCallFrame* inlineCallFrame = candidate->origin.semantic.inlineCallFrame();
+            if (!inlineCallFrame)
+                return false;
+            if (!inlineCallFrame->isClosureCall && !inlineCallFrame->isVarargs())
+                return false;
+            return inlineCallFrame != where->origin.semantic.inlineCallFrame();
+        };
 
-            forEachEscapee([&] (UncheckedKeyHashMap<Node*, Allocation>& escapees, Node* where) {
-                for (Node* allocation : escapees.keys()) {
-                    InlineCallFrame* inlineCallFrame = allocation->origin.semantic.inlineCallFrame();
-                    if (!inlineCallFrame)
-                        continue;
-                    if ((inlineCallFrame->isClosureCall || inlineCallFrame->isVarargs()) && inlineCallFrame != where->origin.semantic.inlineCallFrame()) {
-                        dataLogLnIf(Options::verboseObjectAllocationSinking(), "Removing candidate because it escapes from a frame that has a closure: ", allocation);
-                        m_sinkCandidates.remove(allocation);
-                    }
-                }
-            });
-        }
-
-        // Ensure that the set of sink candidates is closed for put operations
-        // This is (2) as described above.
+        // Closure rule #2: for each candidate, promote every `dependencies` entry
+        // (i.e. every allocation it was put into).
         Vector<Node*> worklist;
         worklist.appendRange(m_sinkCandidates.begin(), m_sinkCandidates.end());
 
@@ -1617,6 +1604,49 @@ escapeChildren:
             }
         }
 
+        bool hasDemotedAnyCandidate = false;
+        if (m_sinkCandidates.size()) {
+            // If we're moving an allocation to `where` in the program, we need to ensure
+            // we can still walk the stack at that point in the program for the
+            // InlineCallFrame of the original allocation. Certain InlineCallFrames rely on
+            // data in the stack when taking a stack trace. All allocation sites can do a
+            // stack walk (we do a stack walk when we GC). Conservatively, we say we're
+            // still ok to move this allocation if we are moving within the same InlineCallFrame.
+            // We could be more precise here and do an analysis of stack writes. However,
+            // this scenario is so rare that we just take the conservative-and-straight-forward
+            // approach of checking that we're in the same InlineCallFrame.
+            forEachEscapee([&] (UncheckedKeyHashMap<Node*, Allocation>& escapees, Node* where) {
+                for (Node* allocation : escapees.keys()) {
+                    if (shouldDemote(allocation, where)) {
+                        dataLogLnIf(Options::verboseObjectAllocationSinking(), "Removing candidate because it escapes from a frame that has a closure: ", allocation);
+                        m_sinkCandidates.remove(allocation);
+                        hasDemotedAnyCandidate = true;
+                    }
+                }
+            });
+        }
+
+        // Closure rule #1: demote any candidate that was put into a demoted allocation
+        // (i.e. one removed by the InlineCallFrame check above). Iterate to fixpoint;
+        // rule #2's fixpoint is preserved through this loop and doesn't need re-running.
+        if (hasDemotedAnyCandidate) [[unlikely]] {
+            Vector<Node*> toRemove;
+            do {
+                toRemove.shrink(0);
+                for (Node* candidate : m_sinkCandidates) {
+                    for (Node* parent : dependencies.get(candidate)) {
+                        if (!m_sinkCandidates.contains(parent)) {
+                            dataLogLnIf(Options::verboseObjectAllocationSinking(), "Removing candidate ", candidate, " because parent ", parent, " was a demoted candidate");
+                            toRemove.append(candidate);
+                            break;
+                        }
+                    }
+                }
+                for (Node* candidate : toRemove)
+                    m_sinkCandidates.remove(candidate);
+            } while (!toRemove.isEmpty());
+        }
+
         if (m_sinkCandidates.isEmpty())
             return hasUnescapedReads;
 
@@ -1624,6 +1654,10 @@ escapeChildren:
 
         // Create the materialization nodes.
         forEachEscapee([&] (UncheckedKeyHashMap<Node*, Allocation>& escapees, Node* where) {
+#if ASSERT_ENABLED
+            for (Node* allocation : escapees.keys())
+                ASSERT(!shouldDemote(allocation, where));
+#endif
             placeMaterializations(WTF::move(escapees), where);
         });
 
