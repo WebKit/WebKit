@@ -69,7 +69,7 @@ const big = [];
 let bigSum = 0;
 for (let i = 0; i < 40; i++) { big.push(i); bigSum += i; }
 
-for (let i = 0; i < 300000; i++) {
+for (let i = 0; i < testLoopCount; i++) {
     ck(restThenLiteral(1, 2, 3), 6 + 42, "restThenLiteral");
     ck(restThenLiteral(), 42, "restThenLiteral-empty");
     ck(restThenLiteral(5, 5, 5, 5, 5), 25 + 42, "restThenLiteral-long");

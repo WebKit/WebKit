@@ -36,7 +36,7 @@ function midConstArray(...rest) { return shape("a", ...rest, [7, 8, 9], "z"); }
 function hMid() { return midConstArray(1, 2); }
 noInline(hMid);
 
-for (var i = 0; i < 300000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     assert(hLead() === "[3],1,2", "leadConstArray " + hLead());
     assert(hTrail() === "1,2,3,[2]", "trailConstArray " + hTrail());
     assert(hMid() === "a,1,2,[3],z", "midConstArray " + hMid());
@@ -50,7 +50,7 @@ noInline(hArgs);
 function sloppyTrailArguments() { return shape(...arguments, arguments); }
 noInline(sloppyTrailArguments);
 
-for (var i = 0; i < 300000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     assert(hArgs() === "7,8,9,[3]", "trailArguments " + hArgs());
     assert(sloppyTrailArguments(1, 2) === "1,2,[2]", "sloppyTrailArguments " + sloppyTrailArguments(1, 2));
 }
@@ -59,12 +59,12 @@ for (var i = 0; i < 300000; ++i) {
 function nestedSpreadLiteral(x, ...rest) { return shape([...x, 0], ...rest); }
 function hNested() { return nestedSpreadLiteral([1, 1], 2, 3); }
 noInline(hNested);
-for (var i = 0; i < 300000; ++i)
+for (var i = 0; i < testLoopCount; ++i)
     assert(hNested() === "[3],2,3", "nestedSpreadLiteral " + hNested());
 
 // Un-folded path: spread of a heap array (not statically expandable) with an eliminable literal, at FTL.
 var heapArr = [100, 200];
 function heapSpreadWithArgsLiteral() { return shape(...heapArr, arguments); }
 noInline(heapSpreadWithArgsLiteral);
-for (var i = 0; i < 300000; ++i)
+for (var i = 0; i < testLoopCount; ++i)
     assert(heapSpreadWithArgsLiteral("q") === "100,200,[1]", "heapSpreadWithArgsLiteral " + heapSpreadWithArgsLiteral("q"));

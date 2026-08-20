@@ -32,7 +32,7 @@ function callTwoConstArrays() {
 }
 noInline(callTwoConstArrays);
 
-for (var i = 0; i < 1000000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     assert(callEscapesRestAfter(1, 2, 3) === "1,2,3,8,9,", "callEscapesRestAfter " + callEscapesRestAfter(1, 2, 3));
     assert(callTwoConstArrays() === "1,2,3,4,", "callTwoConstArrays " + callTwoConstArrays());
 }
@@ -53,5 +53,5 @@ function inlinedSpreadEscape(...rest) {
 function driver() { return inlinedSpreadEscape(5, 6); }
 noInline(driver);
 
-for (var i = 0; i < 1000000; ++i)
+for (var i = 0; i < testLoopCount; ++i)
     assert(driver() === "5,6,100,200,", "driver " + driver());

@@ -82,8 +82,18 @@ var huge = new Array(1000000).fill(1);
 var gotRangeError = false;
 try {
     (function overflow(a, arr) { return collect(a, ...arr); })(0, huge);
-    (function rec(n) { return collect(n, ...huge).length + rec(n + 1); })(0);
 } catch (e) {
     gotRangeError = e instanceof RangeError;
 }
-assert(gotRangeError, "stack overflow throws RangeError");
+assert(gotRangeError, "huge spread throws RangeError");
+
+// Running out of stack through recursion rather than argument count must unwind just as cleanly.
+function countArgs() { return arguments.length; }
+noInline(countArgs);
+var recursionThrewRangeError = false;
+try {
+    (function rec(n) { return countArgs(n, ...many) + rec(n + 1); })(0);
+} catch (e) {
+    recursionThrewRangeError = e instanceof RangeError;
+}
+assert(recursionThrewRangeError, "deep recursion throws RangeError");

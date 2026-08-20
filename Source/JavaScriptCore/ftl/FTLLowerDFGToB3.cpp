@@ -14434,7 +14434,7 @@ IGNORE_CLANG_WARNINGS_END
                     ++staticArgumentCount;
                     LValue argument = this->lowJSValue(m_graph.varArgChild(node, 2 + e));
                     patchpointArguments.append(argument);
-                    argumentsToEmitFromRightToLeft.append({ VarargsSpreadArgumentToEmit::Type::PhantomNewArrayWithSpreadCase, paramsOffset + (index++)});
+                    argumentsToEmitFromRightToLeft.append({ VarargsSpreadArgumentToEmit::Type::PhantomNewArrayWithSpreadCase, paramsOffset + (index++) });
                 }
             }
         } else
@@ -14963,7 +14963,7 @@ IGNORE_CLANG_WARNINGS_END
         unsigned numElems = node->numChildren() - 2;
 
         BitVector* bitVector = node->bitVector();
-        // Per-operand forwarding plan (kept 1:1 with elems so the generator's elemGPRs indexing is trivial).
+        // Per-operand forwarding plan, kept 1:1 with elems so it can be indexed by operand number.
         Vector<uint8_t> isForwardRest(numElems, [](size_t) { return static_cast<uint8_t>(0); });
         Vector<InlineCallFrame*> forwardInlineCallFrame(numElems, [](size_t) -> InlineCallFrame* { return nullptr; });
         Vector<unsigned> forwardSkip(numElems, [](size_t) { return 0u; });
@@ -15000,16 +15000,26 @@ IGNORE_CLANG_WARNINGS_END
             if (bitVector->get(e))
                 singleTrailingSpread = false;
         }
+        // The inline copy moves butterfly slots verbatim, so a double-shaped buffer would land in the
+        // argument slots as raw bits and then be read back as JSValues. A materialized spread is always
+        // contiguous, but the constant buffer of an eliminated one can hold doubles.
+        if (singleTrailingSpread) {
+            Node* trailing = m_graph.varArgChild(node, 2 + numElems - 1).node();
+            if (trailing->op() == PhantomSpread) {
+                Node* inner = trailing->child1().node();
+                if (inner->op() == PhantomNewArrayBuffer && hasDouble(inner->castOperand<JSCellButterfly*>()->indexingMode()))
+                    singleTrailingSpread = false;
+            }
+        }
         unsigned numPrefix = numElems - 1;
 
         PatchpointValue* patchpoint = m_out.patchpoint(Int64);
         patchpoint->append(jsCallee, ValueRep::reg(BaselineJITRegisters::Call::calleeGPR));
-        patchpoint->appendSomeRegister(thisArg);
-        for (LValue elem : elems)
-            patchpoint->appendSomeRegister(elem);
-        // Late uses so callee/this survive clobbering (see compileCallOrConstructVarargs for the rationale).
+        patchpoint->append(thisArg, ValueRep::WarmAny);
+        patchpoint->appendVectorWithRep(elems, ValueRep::WarmAny);
+        // The frame-setup calls clobber the register the callee is pinned to, so ask for it a second
+        // time as a late use, which cannot be assigned a volatile register.
         patchpoint->append(jsCallee, ValueRep::LateColdAny);
-        patchpoint->append(thisArg, ValueRep::LateColdAny);
 
         RefPtr<PatchpointExceptionHandle> exceptionHandle = preparePatchpointForExceptions(patchpoint);
 
@@ -15017,7 +15027,10 @@ IGNORE_CLANG_WARNINGS_END
         patchpoint->append(m_numberTag, ValueRep::reg(GPRInfo::numberTagRegister));
 
         patchpoint->clobber(RegisterSet::macroClobberedGPRs());
-        patchpoint->clobberLate(RegisterSet::registersToSaveForJSCall(RegisterSet::allScalarRegisters()));
+        // Clobbering the volatile registers early as well as late keeps every operand out of them. The
+        // operands therefore survive the frame-setup calls, and the entire volatile set is left free for
+        // the generator's scratch registers, whose count does not depend on the number of operands.
+        patchpoint->clobber(RegisterSet::registersToSaveForJSCall(RegisterSet::allScalarRegisters()));
         patchpoint->resultConstraints = { ValueRep::reg(GPRInfo::returnValueGPR) };
 
         unsigned minimumJSCallAreaSize =
@@ -15044,26 +15057,22 @@ IGNORE_CLANG_WARNINGS_END
                 unsigned argIndex = 1;
                 GPRReg calleeGPR = params[argIndex++].gpr();
                 ASSERT(calleeGPR == GPRInfo::regT0);
-                GPRReg thisGPR = params[argIndex++].gpr();
-                Vector<GPRReg, 8> elemGPRs(numElems, [&](size_t) { return params[argIndex++].gpr(); });
+                unsigned thisArgIndex = argIndex++;
+                unsigned firstElemIndex = argIndex;
+                argIndex += numElems;
                 B3::ValueRep calleeLateRep = params[argIndex++];
-                B3::ValueRep thisLateRep = params[argIndex++];
 
-                RegisterSet usedRegisters;
-                usedRegisters.merge(RegisterSet::stackRegisters());
-                usedRegisters.merge(RegisterSet::reservedHardwareRegisters());
-                usedRegisters.merge(RegisterSet::calleeSaveRegisters());
+                // No operand can be in a volatile register, so all of them are free for scratch.
+                auto usedRegisters = RegisterSet(RegisterSet::allScalarRegisters())
+                    .exclude(RegisterSet::registersToSaveForJSCall(RegisterSet::allScalarRegisters()));
                 usedRegisters.add(calleeGPR, IgnoreVectors);
-                usedRegisters.add(thisGPR, IgnoreVectors);
-                for (GPRReg elemGPR : elemGPRs)
-                    usedRegisters.add(elemGPR, IgnoreVectors);
-                if (calleeLateRep.isReg())
-                    usedRegisters.add(calleeLateRep.reg(), IgnoreVectors);
-                if (thisLateRep.isReg())
-                    usedRegisters.add(thisLateRep.reg(), IgnoreVectors);
                 ScratchRegisterAllocator allocator(usedRegisters);
                 GPRReg scratchGPR1 = allocator.allocateScratchGPR();
                 GPRReg scratchGPR2 = allocator.allocateScratchGPR();
+                RELEASE_ASSERT(!allocator.numberOfReusedRegisters());
+
+                // The inline spread fast path needs four more scratch registers; disable it gracefully if
+                // the target lacks enough free ones.
                 bool useSpreadFast = singleTrailingSpread;
                 GPRReg spreadButterflyGPR = InvalidGPRReg;
                 GPRReg spreadNumUsedGPR = InvalidGPRReg;
@@ -15074,11 +15083,30 @@ IGNORE_CLANG_WARNINGS_END
                     spreadNumUsedGPR = allocator.allocateScratchGPR();
                     spreadScratch1 = allocator.allocateScratchGPR();
                     spreadScratch2 = allocator.allocateScratchGPR();
+                    if (allocator.numberOfReusedRegisters())
+                        useSpreadFast = false;
                 }
-                RELEASE_ASSERT(!allocator.numberOfReusedRegisters());
 
-                // Store the elements into the scratch buffer while they are still in registers. A forwarded
-                // rest operand has no register value: write the empty-JSValue sentinel plus its descriptor.
+                auto getValueFromRep = [&] (B3::ValueRep rep, GPRReg result) {
+                    ASSERT(!usedRegisters.contains(result, IgnoreVectors));
+
+                    if (rep.isConstant()) {
+                        jit.move(CCallHelpers::Imm64(rep.value()), result);
+                        return;
+                    }
+
+                    // Only 64 bit values are requested here.
+                    if (rep.isStack()) {
+                        jit.load64(CCallHelpers::Address(GPRInfo::callFrameRegister, rep.offsetFromFP()), result);
+                        return;
+                    }
+
+                    RELEASE_ASSERT(rep.isGPR());
+                    jit.move(rep.gpr(), result);
+                };
+
+                // Store the elements into the scratch buffer while they are still available. A forwarded
+                // rest operand has no value of its own: write the empty-JSValue sentinel plus its descriptor.
                 jit.move(CCallHelpers::TrustedImmPtr(buffer), scratchGPR1);
                 for (unsigned e = 0; e < numElems; ++e) {
                     if (isForwardRest[e]) {
@@ -15086,8 +15114,10 @@ IGNORE_CLANG_WARNINGS_END
                         unsigned descByteOffset = numElems * sizeof(EncodedJSValue) + e * sizeof(VarargsSpreadForwardDescriptor);
                         jit.store64(CCallHelpers::TrustedImm64(std::bit_cast<int64_t>(forwardInlineCallFrame[e])), CCallHelpers::Address(scratchGPR1, descByteOffset + OBJECT_OFFSETOF(VarargsSpreadForwardDescriptor, inlineCallFrame)));
                         jit.store32(CCallHelpers::TrustedImm32(forwardSkip[e]), CCallHelpers::Address(scratchGPR1, descByteOffset + OBJECT_OFFSETOF(VarargsSpreadForwardDescriptor, numberOfArgumentsToSkip)));
-                    } else
-                        jit.store64(elemGPRs[e], CCallHelpers::Address(scratchGPR1, e * sizeof(EncodedJSValue)));
+                    } else {
+                        getValueFromRep(params[firstElemIndex + e], scratchGPR2);
+                        jit.store64(scratchGPR2, CCallHelpers::Address(scratchGPR1, e * sizeof(EncodedJSValue)));
+                    }
                 }
 
                 auto callWithExceptionCheck = [&] (void(*callee)()) {
@@ -15141,14 +15171,14 @@ IGNORE_CLANG_WARNINGS_END
                 jit.addPtr(CCallHelpers::TrustedImm32(sizeof(CallerFrameAndPC)), GPRInfo::returnValueGPR, CCallHelpers::stackPointerRegister);
 
                 calleeLateRep.emitRestore(jit, BaselineJITRegisters::Call::calleeGPR);
-                thisLateRep.emitRestore(jit, thisGPR);
 
-                // The fast path does no C calls, so calleeGPR/thisGPR are still live and need no restore.
+                // The fast path does no C calls, so the pinned callee register is still live there.
                 if (spreadFastDone)
                     spreadFastDone->link(&jit);
 
                 jit.store64(BaselineJITRegisters::Call::calleeGPR, CCallHelpers::calleeFrameSlot(CallFrameSlot::callee));
-                jit.store64(thisGPR, CCallHelpers::calleeArgumentSlot(0));
+                getValueFromRep(params[thisArgIndex], scratchGPR1);
+                jit.store64(scratchGPR1, CCallHelpers::calleeArgumentSlot(0));
 
                 callLinkInfo->setUpCall(CallLinkInfo::CallVarargs);
                 CallLinkInfo::emitFastPath(jit, callLinkInfo);

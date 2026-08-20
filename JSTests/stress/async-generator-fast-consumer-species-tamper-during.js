@@ -44,7 +44,6 @@ async function main() {
         assert((await asyncGeneratorTamperDuring(false)) === "0|1,2,3", "warm iteration " + i);
 
     var result = (await asyncGeneratorTamperDuring(true));
-    print(result);
     assert(result === "3|1,2,3", "async-gen tamper-during");
 }
 

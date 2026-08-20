@@ -121,10 +121,8 @@ assert(rExit.length === 3 && rExit[0] === marker && rExit[1] === 20 && rExit[2] 
 function throwerInlined(a) { if (typeof a === "object") throw new Error("boom"); return a; }
 function callThrower(a, arr) { return throwerInlined(a, ...arr); }
 noInline(callThrower);
-for (var i = 0; i < testLoopCount; ++i) {
-    var threw = false;
-    try { callThrower(1, many); } catch (e) { threw = e.message === "boom" ? false : "wrong"; threw = e.message === "boom"; }
-}
+for (var i = 0; i < testLoopCount; ++i)
+    assert(callThrower(1, many) === 1, "inlined callee returns normally for a non-object argument");
 var threwObj = false;
 try { callThrower({}, many); } catch (e) { threwObj = e.message === "boom"; }
 assert(threwObj, "exception propagation from inlined callee");

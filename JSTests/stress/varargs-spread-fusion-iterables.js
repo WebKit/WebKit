@@ -56,7 +56,10 @@ function makeIterables() {
     ];
 }
 
-for (var iter = 0; iter < 30000; ++iter) {
+// Every iterable exercises each fused call once per pass, so scale the pass count to keep the number
+// of calls per function at testLoopCount rather than a multiple of it.
+var passes = Math.max(1, Math.ceil(testLoopCount / makeIterables().length));
+for (var iter = 0; iter < passes; ++iter) {
     var iterables = makeIterables();
     for (var k = 0; k < iterables.length; ++k) {
         var it = iterables[k];
@@ -73,7 +76,7 @@ for (var iter = 0; iter < 30000; ++iter) {
 function customIterable(values) {
     return { [Symbol.iterator]() { var i = 0; return { next() { return i < values.length ? { value: values[i++], done: false } : { value: undefined, done: true }; } }; } };
 }
-for (var i = 0; i < 100000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var c = customIterable(["p", "q", "r"]);
     assert(fusedMid("A", c, "Z") === reference(undefined, ["A"], ["p", "q", "r"], ["Z"]), "custom iterator");
 }
@@ -86,7 +89,7 @@ var calleeRan = false;
 function observingCallee() { calleeRan = true; return 0; }
 function fusedThrow(it) { return observingCallee(1, ...it, 2); }
 noInline(fusedThrow);
-for (var i = 0; i < 100000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     calleeRan = false;
     var threw = false;
     try { fusedThrow(throwingIterable(2)); } catch (e) { threw = e.message === "iter-boom"; }
@@ -98,7 +101,7 @@ for (var i = 0; i < 100000; ++i) {
 var obj = { id: "T", m() { return this.id + "#" + callee.apply(this, arguments); } };
 function fusedMethod(a, it) { return obj.m(a, ...it); }
 noInline(fusedMethod);
-for (var i = 0; i < 100000; ++i)
+for (var i = 0; i < testLoopCount; ++i)
     assert(fusedMethod("A", [1, 2]) === "T#" + callee.call(obj, "A", 1, 2), "method this");
 
 // A huge spread must throw RangeError in the fused path just like apply.
