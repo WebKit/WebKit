@@ -4018,13 +4018,14 @@ private:
     double m_pageLength { 0 };
     double m_gapBetweenPages { 0 };
 
+    std::optional<WebCore::FrameIdentifier> m_printingFrameID;
+
     // Whether WebPageProxy::close() has been called on this page.
     bool m_isClosed { false };
 
     // Whether it can run modal child web pages.
     bool m_canRunModal { false };
 
-    bool m_isInPrintingMode { false };
     bool m_isPerformingDOMPrintOperation { false };
 
     bool m_hasUpdatedRenderingAfterDidCommitLoad { true };

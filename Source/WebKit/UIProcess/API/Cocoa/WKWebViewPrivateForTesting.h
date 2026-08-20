@@ -166,6 +166,7 @@ typedef NSVisualEffectView _WKPlatformVisualEffectView;
 - (void)_preferredRenderingUpdateIntervalsForTesting:(void (^)(NSArray<NSNumber *> *intervalsInMillisecondsForEachWebProcess))completionHandler;
 
 - (void)_computePagesForPrinting:(_WKFrameHandle *)handle completionHandler:(void(^)(void))completionHandler WK_API_AVAILABLE(macos(13.0), ios(16.0));
+- (void)_endPrintingForTesting:(void(^)(void))completionHandler;
 
 - (void)_setConnectedToHardwareConsoleForTesting:(BOOL)connected;
 

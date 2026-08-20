@@ -15985,11 +15985,11 @@ bool WebPageProxy::canRunModal()
 
 void WebPageProxy::beginPrinting(WebFrameProxy* frame, const PrintInfo& printInfo)
 {
-    if (m_isInPrintingMode)
+    if (m_printingFrameID)
         return;
 
-    m_isInPrintingMode = true;
     auto frameID = frame->frameID();
+    m_printingFrameID = frameID;
     if (m_isPerformingDOMPrintOperation)
         sendToProcessContainingFrame(frameID, Messages::WebPage::BeginPrintingDuringDOMPrintOperation(frameID, printInfo), IPC::SendOption::DispatchMessageEvenWhenWaitingForUnboundedSyncReply);
     else
@@ -15998,22 +15998,21 @@ void WebPageProxy::beginPrinting(WebFrameProxy* frame, const PrintInfo& printInf
 
 void WebPageProxy::endPrinting(CompletionHandler<void()>&& callback)
 {
-    if (!m_isInPrintingMode) {
+    if (!m_printingFrameID) {
         callback();
         return;
     }
 
-    m_isInPrintingMode = false;
-
+    auto frameID = std::exchange(m_printingFrameID, std::nullopt);
     if (m_isPerformingDOMPrintOperation)
-        protect(legacyMainFrameProcess())->sendWithAsyncReply(Messages::WebPage::EndPrintingDuringDOMPrintOperation(), WTF::move(callback), webPageIDInMainFrameProcess(), IPC::SendOption::DispatchMessageEvenWhenWaitingForUnboundedSyncReply);
+        sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::EndPrintingDuringDOMPrintOperation(), WTF::move(callback), IPC::SendOption::DispatchMessageEvenWhenWaitingForUnboundedSyncReply);
     else
-        sendWithAsyncReply(Messages::WebPage::EndPrinting(), WTF::move(callback));
+        sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::EndPrinting(), WTF::move(callback));
 }
 
 std::optional<IPC::Connection::AsyncReplyID> WebPageProxy::computePagesForPrinting(FrameIdentifier frameID, const PrintInfo& printInfo, CompletionHandler<void(const Vector<WebCore::IntRect>&, double, const WebCore::FloatBoxExtent&)>&& callback)
 {
-    m_isInPrintingMode = true;
+    m_printingFrameID = frameID;
     if (m_isPerformingDOMPrintOperation)
         return sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::ComputePagesForPrintingDuringDOMPrintOperation(frameID, printInfo), WTF::move(callback), IPC::SendOption::DispatchMessageEvenWhenWaitingForUnboundedSyncReply);
     return sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::ComputePagesForPrinting(frameID, printInfo), WTF::move(callback));
@@ -16086,8 +16085,8 @@ std::optional<IPC::Connection::AsyncReplyID> WebPageProxy::drawPagesToPDF(WebFra
 #elif PLATFORM(GTK)
 void WebPageProxy::drawPagesForPrinting(WebFrameProxy& frame, const PrintInfo& printInfo, CompletionHandler<void(std::optional<SharedMemory::Handle>&&, ResourceError&&)>&& callback)
 {
-    m_isInPrintingMode = true;
     auto frameID = frame.frameID();
+    m_printingFrameID = frameID;
     if (m_isPerformingDOMPrintOperation)
         sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::DrawPagesForPrintingDuringDOMPrintOperation(frameID, printInfo), WTF::move(callback), IPC::SendOption::DispatchMessageEvenWhenWaitingForUnboundedSyncReply);
     else

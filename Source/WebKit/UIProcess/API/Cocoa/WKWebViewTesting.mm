@@ -800,8 +800,20 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
 
 - (void)_computePagesForPrinting:(_WKFrameHandle *)handle completionHandler:(void(^)(void))completionHandler
 {
+    // A default-constructed PrintInfo has a zero-sized page, which makes the printing layout
+    // divide by zero, so pretend we're printing to US Letter paper.
     WebKit::PrintInfo printInfo;
+    printInfo.pageSetupScaleFactor = 1;
+    printInfo.availablePaperWidth = 612;
+    printInfo.availablePaperHeight = 792;
     _page->computePagesForPrinting(*handle->_frameHandle->frameID(), printInfo, [completionHandler = makeBlockPtr(completionHandler)] (const Vector<WebCore::IntRect>&, double, const WebCore::FloatBoxExtent&) {
+        completionHandler();
+    });
+}
+
+- (void)_endPrintingForTesting:(void(^)(void))completionHandler
+{
+    _page->endPrinting([completionHandler = makeBlockPtr(completionHandler)] {
         completionHandler();
     });
 }

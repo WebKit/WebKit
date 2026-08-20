@@ -13615,4 +13615,51 @@ TEST(SiteIsolation, SuspendedPageDoesNotLetANewProcessJoin)
     checkFrameTreesInProcesses(webView.get(), { { "https://a.com"_s, { { "https://a.com"_s } } } });
 }
 
+TEST(SiteIsolation, EndPrintingIsRoutedToTheFrameThatStartedPrinting)
+{
+    HTTPServer server({
+        { "/mainframe"_s, { "<iframe src='https://b.com/subframe'></iframe>"_s } },
+        { "/subframe"_s, { "<script>"
+            "window.printEvents = [];"
+            "for (const event of ['beforeprint', 'afterprint'])"
+            "    window.addEventListener(event, () => window.printEvents.push(event));"
+            "</script>"_s } },
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server);
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://a.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigationAndLoadInSubframe];
+
+    RetainPtr<WKFrameInfo> mainFrame = [webView mainFrame].info;
+    RetainPtr<WKFrameInfo> subframe = [webView mainFrame].childFrames.firstObject.info;
+    EXPECT_NE([mainFrame _processIdentifier], [subframe _processIdentifier]);
+
+    __block bool computedPages = false;
+    [webView _computePagesForPrinting:[subframe _handle] completionHandler:^{
+        computedPages = true;
+    }];
+    Util::run(&computedPages);
+
+    // Printing began in the subframe's process, leaving the main frame's process untouched.
+    EXPECT_WK_STREQ([webView objectByEvaluatingJavaScript:@"window.printEvents.join(',')" inFrame:subframe.get()], "beforeprint");
+    EXPECT_TRUE([[webView objectByEvaluatingJavaScript:@"window.matchMedia('print').matches" inFrame:subframe.get()] boolValue]);
+    EXPECT_FALSE([[webView objectByEvaluatingJavaScript:@"window.matchMedia('print').matches" inFrame:mainFrame.get()] boolValue]);
+
+    __block bool endedPrinting = false;
+    [webView _endPrintingForTesting:^{
+        endedPrinting = true;
+    }];
+    Util::run(&endedPrinting);
+
+    // EndPrinting must reach the process that began printing. When it went to the main frame's
+    // process instead, the subframe stayed paginated and never fired afterprint.
+    EXPECT_FALSE([[webView objectByEvaluatingJavaScript:@"window.matchMedia('print').matches" inFrame:subframe.get()] boolValue]);
+
+    // afterprint is queued on the subframe document's event loop, so it can arrive after the
+    // EndPrinting reply.
+    EXPECT_TRUE(Util::waitFor([&] {
+        return [[webView objectByEvaluatingJavaScript:@"window.printEvents.join(',')" inFrame:subframe.get()] isEqualToString:@"beforeprint,afterprint"];
+    }));
+}
+
 }
