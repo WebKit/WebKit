@@ -1472,7 +1472,8 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     WebKit::NativeWebWheelEvent nativeEvent { wheelEvent };
 
     CheckedPtr impl = [webView _impl];
-    if (impl->allowsBackForwardNavigationGestures() && protect(impl->ensureGestureController())->handleScrollWheelEvent(nativeEvent)) {
+    bool forwardToGestureController = impl->allowsBackForwardNavigationGestures() && [self prefersForwardingToGestureController:gesture];
+    if (forwardToGestureController && protect(impl->ensureGestureController())->handleScrollWheelEvent(nativeEvent)) {
         WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG_DEBUG([webView _protectedPage]->logIdentifier(), "View gesture controller handled gesture");
         return;
     }

@@ -1223,9 +1223,12 @@ extension AppKitGesturesTests.Basic {
     }
 
     @Test(
-        .bug("https://webkit.org/b/319256", "Trackpad swiping between spaces should not trigger back navigation")
+        .bug("https://webkit.org/b/319256", "Trackpad swiping between spaces should not trigger back navigation"),
+        arguments: [false, true]
     )
-    func swipingBetweenSpacesShouldNotTriggerBackNavigation() async throws {
+    func swipingBetweenSpacesShouldNotTriggerBackNavigation(gesturesForGestureEvents: Bool) async throws {
+        page.setWebFeature("UseAppKitGesturesForGestureEvents", enabled: gesturesForGestureEvents)
+
         // Establish a back-forward history entry so that a "swipe back" gesture would have somewhere to navigate to.
         try await page.load(URL(string: "about:blank?1")).wait()
 
