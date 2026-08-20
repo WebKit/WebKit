@@ -53,7 +53,15 @@ class PopenBase(object):
 
         self._args = args
         self._cwd = cwd
-        self._env = env or dict()
+        self._env = env if env is not None else dict(os.environ)
+
+        if (args[0] == 'git' or args[0].endswith('/git')) and not (
+            len(args) >= 2 and (
+                args[1] in ('check-ref-format', 'lfs') or
+                (args[1] == 'rev-parse' and len(args) >= 3 and args[2] == '--local-env-vars')
+            )
+        ):
+            assert 'GIT_DIR' not in self._env, f"args: {args!r}, cwd: {cwd!r}, env: {env!r}"
 
         self.returncode = None
 

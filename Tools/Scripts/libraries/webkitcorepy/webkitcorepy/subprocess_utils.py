@@ -34,6 +34,15 @@ CompletedProcess = subprocess.CompletedProcess
 
 # Allows native integration with the Timeout context
 def run(*popenargs, **kwargs):
+
+    if (popenargs[0][0] == 'git' or popenargs[0][0].endswith('/git')) and not (
+        len(popenargs[0]) >= 2 and (
+            popenargs[0][1] in ('check-ref-format', 'lfs') or
+            (popenargs[0][1] == 'rev-parse' and len(popenargs[0]) >= 3 and popenargs[0][2] == '--local-env-vars')
+        )
+    ):
+        assert 'GIT_DIR' not in kwargs.get('env', {}), f"popenargs: {popenargs!r}, kwargs: {kwargs!r}"
+
     timeout = kwargs.pop('timeout', None)
     capture_output = kwargs.pop('capture_output', False)
 

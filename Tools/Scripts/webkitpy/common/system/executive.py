@@ -496,6 +496,14 @@ class Executive(AbstractExecutive):
                 mod_env[key] = value
             env = mod_env
 
+        if (args[0] == 'git' or args[0].endswith('/git')) and not (
+            len(args) >= 2 and (
+                args[1] in ('check-ref-format', 'lfs') or
+                (args[1] == 'rev-parse' and len(args) >= 3 and args[2] == '--local-env-vars')
+            )
+        ):
+            assert env is None or 'GIT_DIR' not in env
+
         return subprocess.Popen(string_args, env=env, **kwargs)
 
     def run_in_parallel(self, command_lines_and_cwds, processes=None):
