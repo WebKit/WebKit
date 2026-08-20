@@ -62,108 +62,69 @@ GraphicsContextState GraphicsContextState::clone(Purpose purpose) const
     return clone;
 }
 
-void GraphicsContextState::mergeLastChanges(const GraphicsContextState& state, const std::optional<GraphicsContextState>& lastDrawingState)
+template<typename Functor>
+constexpr void GraphicsContextState::forEachProperty(NOESCAPE const Functor& functor)
 {
-    for (auto change : state.changes())
-        mergeSingleChange(state, toIndex(change), lastDrawingState);
+    functor(Change::FillBrush, &GraphicsContextState::m_fillBrush);
+    functor(Change::FillRule, &GraphicsContextState::m_fillRule);
+    functor(Change::StrokeBrush, &GraphicsContextState::m_strokeBrush);
+    functor(Change::StrokeThickness, &GraphicsContextState::m_strokeThickness);
+    functor(Change::StrokeStyle, &GraphicsContextState::m_strokeStyle);
+    functor(Change::CompositeMode, &GraphicsContextState::m_compositeMode);
+    functor(Change::DropShadow, &GraphicsContextState::m_dropShadow);
+    functor(Change::Style, &GraphicsContextState::m_style);
+    functor(Change::Alpha, &GraphicsContextState::m_alpha);
+    functor(Change::ImageInterpolationQuality, &GraphicsContextState::m_imageInterpolationQuality);
+    functor(Change::TextDrawingMode, &GraphicsContextState::m_textDrawingMode);
+    functor(Change::ShouldAntialias, &GraphicsContextState::m_shouldAntialias);
+    functor(Change::ShouldSmoothFonts, &GraphicsContextState::m_shouldSmoothFonts);
+    functor(Change::ShouldSubpixelQuantizeFonts, &GraphicsContextState::m_shouldSubpixelQuantizeFonts);
+    functor(Change::ShadowsIgnoreTransforms, &GraphicsContextState::m_shadowsIgnoreTransforms);
+    functor(Change::DrawLuminanceMask, &GraphicsContextState::m_drawLuminanceMask);
 }
 
-void GraphicsContextState::mergeSingleChange(const GraphicsContextState& state, ChangeIndex changeIndex, const std::optional<GraphicsContextState>& lastDrawingState)
+void GraphicsContextState::mergeLastChanges(const GraphicsContextState& state)
 {
-    auto mergeChange = [&](auto GraphicsContextState::*property) {
-        if (this->*property == state.*property)
+    auto changes = state.changes();
+    if (!changes)
+        return;
+    forEachProperty([&](Change change, auto property) {
+        if (!changes.contains(change) || this->*property == state.*property)
             return;
         this->*property = state.*property;
-        m_changeFlags.set(changeIndex.toChange(), !lastDrawingState || (*lastDrawingState).*property != this->*property);
-    };
-
-    switch (changeIndex.value) {
-    case toIndex(Change::FillBrush).value:
-        mergeChange(&GraphicsContextState::m_fillBrush);
-        break;
-    case toIndex(Change::FillRule).value:
-        mergeChange(&GraphicsContextState::m_fillRule);
-        break;
-
-    case toIndex(Change::StrokeBrush).value:
-        mergeChange(&GraphicsContextState::m_strokeBrush);
-        break;
-    case toIndex(Change::StrokeThickness).value:
-        mergeChange(&GraphicsContextState::m_strokeThickness);
-        break;
-    case toIndex(Change::StrokeStyle).value:
-        mergeChange(&GraphicsContextState::m_strokeStyle);
-        break;
-
-    case toIndex(Change::CompositeMode).value:
-        mergeChange(&GraphicsContextState::m_compositeMode);
-        break;
-    case toIndex(Change::DropShadow).value:
-        mergeChange(&GraphicsContextState::m_dropShadow);
-        break;
-    case toIndex(Change::Style).value:
-        mergeChange(&GraphicsContextState::m_style);
-        break;
-
-    case toIndex(Change::Alpha).value:
-        mergeChange(&GraphicsContextState::m_alpha);
-        break;
-    case toIndex(Change::TextDrawingMode).value:
-        mergeChange(&GraphicsContextState::m_textDrawingMode);
-        break;
-    case toIndex(Change::ImageInterpolationQuality).value:
-        mergeChange(&GraphicsContextState::m_imageInterpolationQuality);
-        break;
-
-    case toIndex(Change::ShouldAntialias).value:
-        mergeChange(&GraphicsContextState::m_shouldAntialias);
-        break;
-    case toIndex(Change::ShouldSmoothFonts).value:
-        mergeChange(&GraphicsContextState::m_shouldSmoothFonts);
-        break;
-    case toIndex(Change::ShouldSubpixelQuantizeFonts).value:
-        mergeChange(&GraphicsContextState::m_shouldSubpixelQuantizeFonts);
-        break;
-    case toIndex(Change::ShadowsIgnoreTransforms).value:
-        mergeChange(&GraphicsContextState::m_shadowsIgnoreTransforms);
-        break;
-    case toIndex(Change::DrawLuminanceMask).value:
-        mergeChange(&GraphicsContextState::m_drawLuminanceMask);
-        break;
-    default:
-        RELEASE_ASSERT_NOT_REACHED();
-    }
+        m_changeFlags.add(change);
+    });
 }
 
 void GraphicsContextState::mergeAllChanges(const GraphicsContextState& state)
 {
-    auto mergeChange = [&](Change change, auto GraphicsContextState::*property) {
+    forEachProperty([&](Change change, auto property) {
         if (this->*property == state.*property)
             return;
         this->*property = state.*property;
         m_changeFlags.add(change);
-    };
+    });
+}
 
-    mergeChange(Change::FillBrush,                   &GraphicsContextState::m_fillBrush);
-    mergeChange(Change::FillRule,                    &GraphicsContextState::m_fillRule);
+void GraphicsContextState::filterLastChangesForMatching(const GraphicsContextState& state)
+{
+    if (!m_changeFlags)
+        return;
+    forEachProperty([&](Change change, auto property) {
+        if (m_changeFlags.contains(change) && this->*property == state.*property)
+            m_changeFlags.remove(change);
+    });
+}
 
-    mergeChange(Change::StrokeBrush,                 &GraphicsContextState::m_strokeBrush);
-    mergeChange(Change::StrokeThickness,             &GraphicsContextState::m_strokeThickness);
-    mergeChange(Change::StrokeStyle,                 &GraphicsContextState::m_strokeStyle);
-
-    mergeChange(Change::CompositeMode,               &GraphicsContextState::m_compositeMode);
-    mergeChange(Change::DropShadow,                  &GraphicsContextState::m_dropShadow);
-    mergeChange(Change::Style,                       &GraphicsContextState::m_style);
-
-    mergeChange(Change::Alpha,                       &GraphicsContextState::m_alpha);
-    mergeChange(Change::ImageInterpolationQuality,   &GraphicsContextState::m_imageInterpolationQuality);
-    mergeChange(Change::TextDrawingMode,             &GraphicsContextState::m_textDrawingMode);
-
-    mergeChange(Change::ShouldAntialias,             &GraphicsContextState::m_shouldAntialias);
-    mergeChange(Change::ShouldSmoothFonts,           &GraphicsContextState::m_shouldSmoothFonts);
-    mergeChange(Change::ShouldSubpixelQuantizeFonts, &GraphicsContextState::m_shouldSubpixelQuantizeFonts);
-    mergeChange(Change::ShadowsIgnoreTransforms,     &GraphicsContextState::m_shadowsIgnoreTransforms);
-    mergeChange(Change::DrawLuminanceMask,           &GraphicsContextState::m_drawLuminanceMask);
+void GraphicsContextState::copyLastChangesFrom(const GraphicsContextState& state)
+{
+    auto changes = state.m_changeFlags;
+    if (!changes)
+        return;
+    forEachProperty([&](Change change, auto property) {
+        if (changes.contains(change))
+            this->*property = state.*property;
+    });
 }
 
 static ASCIILiteral stateChangeName(GraphicsContextState::Change change)
@@ -223,33 +184,22 @@ static ASCIILiteral stateChangeName(GraphicsContextState::Change change)
 
 TextStream& GraphicsContextState::dump(TextStream& ts) const
 {
-    auto dump = [&](Change change, auto GraphicsContextState::*property) {
-        if (m_changeFlags.contains(change))
-            ts.dumpProperty(stateChangeName(change), this->*property);
+    constexpr auto numberOfProperties = [] {
+        size_t count = 0;
+        forEachProperty([&](Change, auto) { ++count; });
+        return count;
     };
+    // DrawLuminanceMask is the highest Change bit, so its index plus one is the number of changes.
+    static_assert(numberOfProperties() == WTF::ctz(std::to_underlying(Change::DrawLuminanceMask)) + 1,
+        "forEachProperty() must list every Change enumerator");
 
     ts.dumpProperty("change-flags"_s, m_changeFlags);
-
-    dump(Change::FillBrush,                     &GraphicsContextState::m_fillBrush);
-    dump(Change::FillRule,                      &GraphicsContextState::m_fillRule);
-
-    dump(Change::StrokeBrush,                   &GraphicsContextState::m_strokeBrush);
-    dump(Change::StrokeThickness,               &GraphicsContextState::m_strokeThickness);
-    dump(Change::StrokeStyle,                   &GraphicsContextState::m_strokeStyle);
-
-    dump(Change::CompositeMode,                 &GraphicsContextState::m_compositeMode);
-    dump(Change::DropShadow,                    &GraphicsContextState::m_dropShadow);
-    dump(Change::Style,                         &GraphicsContextState::m_style);
-
-    dump(Change::Alpha,                         &GraphicsContextState::m_alpha);
-    dump(Change::ImageInterpolationQuality,     &GraphicsContextState::m_imageInterpolationQuality);
-    dump(Change::TextDrawingMode,               &GraphicsContextState::m_textDrawingMode);
-
-    dump(Change::ShouldAntialias,               &GraphicsContextState::m_shouldAntialias);
-    dump(Change::ShouldSmoothFonts,             &GraphicsContextState::m_shouldSmoothFonts);
-    dump(Change::ShouldSubpixelQuantizeFonts,   &GraphicsContextState::m_shouldSubpixelQuantizeFonts);
-    dump(Change::ShadowsIgnoreTransforms,       &GraphicsContextState::m_shadowsIgnoreTransforms);
-    dump(Change::DrawLuminanceMask,             &GraphicsContextState::m_drawLuminanceMask);
+    if (m_changeFlags) {
+        forEachProperty([&](Change change, auto property) {
+            if (m_changeFlags.contains(change))
+                ts.dumpProperty(stateChangeName(change), this->*property);
+        });
+    }
     return ts;
 }
 

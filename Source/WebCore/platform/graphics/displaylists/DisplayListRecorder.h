@@ -78,18 +78,16 @@ protected:
     WEBCORE_EXPORT Recorder(IsDeferred, const GraphicsContextState&, const FloatRect& initialClip, const AffineTransform&, const DestinationColorSpace&, DrawGlyphsMode);
 
     struct ContextState {
-        GraphicsContextState state;
         AffineTransform ctm;
         FloatRect clipBounds;
         std::optional<GraphicsContextState> lastDrawingState { std::nullopt };
 
         ContextState cloneForTransparencyLayer() const
         {
-            auto stateClone = state.clone(GraphicsContextState::Purpose::TransparencyLayer);
             std::optional<GraphicsContextState> lastDrawingStateClone;
             if (lastDrawingState)
                 lastDrawingStateClone = lastDrawingState->clone(GraphicsContextState::Purpose::TransparencyLayer);
-            return ContextState { WTF::move(stateClone), ctm, clipBounds, WTF::move(lastDrawingStateClone) };
+            return ContextState { ctm, clipBounds, WTF::move(lastDrawingStateClone) };
         }
 
         void NODELETE translate(float x, float y);
@@ -140,10 +138,8 @@ private:
 
     void fillRoundedRectImpl(const FloatRoundedRect&, const Color&) final { ASSERT_NOT_REACHED(); }
 
-    WEBCORE_EXPORT const GraphicsContextState& state() const final;
-
     WEBCORE_EXPORT void didUpdateState(GraphicsContextState&) final;
-    WEBCORE_EXPORT void didUpdateSingleState(GraphicsContextState&, GraphicsContextState::ChangeIndex) final;
+
     WEBCORE_EXPORT void drawConsumingImageBuffer(RefPtr<ImageBuffer>, const FloatRect& destination, const FloatRect& source, ImagePaintingOptions) final;
     WEBCORE_EXPORT AffineTransform getCTM(GraphicsContext::IncludeDeviceScale = PossiblyIncludeDeviceScale) const final;
     WEBCORE_EXPORT IntRect clipBounds() const final;

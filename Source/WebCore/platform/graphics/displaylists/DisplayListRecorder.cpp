@@ -55,7 +55,7 @@ Recorder::Recorder(IsDeferred isDeferred, const GraphicsContextState& state, con
 #endif
 {
     ASSERT(!state.changes());
-    m_stateStack.append({ state, initialCTM, initialCTM.mapRect(initialClip) });
+    m_stateStack.append({ initialCTM, initialCTM.mapRect(initialClip) });
 }
 
 Recorder::~Recorder()
@@ -68,22 +68,8 @@ void Recorder::appendDisplayList(const DisplayList& displayList)
     GraphicsContext::drawDisplayList(displayList, Ref { ControlFactory::singleton() });
 }
 
-const GraphicsContextState& Recorder::state() const
+void Recorder::didUpdateState(GraphicsContextState&)
 {
-    return currentState().state;
-}
-
-void Recorder::didUpdateState(GraphicsContextState& state)
-{
-    currentState().state.mergeLastChanges(state, currentState().lastDrawingState);
-    state.didApplyChanges();
-}
-
-void Recorder::didUpdateSingleState(GraphicsContextState& state, GraphicsContextState::ChangeIndex changeIndex)
-{
-    ASSERT(state.changes() - changeIndex.toChange() == GraphicsContextState::ChangeFlags { });
-    currentState().state.mergeSingleChange(state, changeIndex, currentState().lastDrawingState);
-    state.didApplyChanges();
 }
 
 bool Recorder::decomposeDrawGlyphsIfNeeded(const Font& font, std::span<const GlyphBufferGlyph> glyphs, std::span<const GlyphBufferAdvance> advances, const FloatPoint& localAnchor, FontSmoothingMode smoothingMode)

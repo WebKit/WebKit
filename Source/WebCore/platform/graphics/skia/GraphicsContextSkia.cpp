@@ -868,10 +868,6 @@ void GraphicsContextSkia::didUpdateState(GraphicsContextState&)
 {
 }
 
-void GraphicsContextSkia::didUpdateSingleState(GraphicsContextState&, GraphicsContextState::ChangeIndex)
-{
-}
-
 void GraphicsContextSkia::concatCTM(const AffineTransform& ctm)
 {
     m_canvas.concat(ctm);

@@ -884,7 +884,10 @@ RefPtr<ImageBuffer> RemoteGraphicsContextProxy::createAlignedImageBuffer(const F
 
 void RemoteGraphicsContextProxy::appendStateChangeItemIfNecessary()
 {
-    auto& state = currentState().state;
+    auto& state = m_state;
+    auto& lastDrawingState = currentState().lastDrawingState;
+    if (lastDrawingState)
+        state.filterLastChangesForMatching(*lastDrawingState);
     auto changes = state.changes();
     if (!changes)
         return;
@@ -963,13 +966,21 @@ void RemoteGraphicsContextProxy::appendStateChangeItemIfNecessary()
     if (changes.contains(GraphicsContextState::Change::DrawLuminanceMask))
         send(Messages::RemoteGraphicsContext::SetDrawLuminanceMask(state.drawLuminanceMask()));
 
+    if (lastDrawingState)
+        lastDrawingState->copyLastChangesFrom(state);
+    else {
+        lastDrawingState = state;
+        lastDrawingState->didApplyChanges();
+    }
     state.didApplyChanges();
-    currentState().lastDrawingState = state;
 }
 
 std::optional<RemoteGraphicsContextProxy::InlineStrokeData> RemoteGraphicsContextProxy::inlineStrokeStateIfBatchable()
 {
-    auto& state = currentState().state;
+    auto& state = m_state;
+    auto& lastDrawingState = currentState().lastDrawingState;
+    if (lastDrawingState)
+        state.filterLastChangesForMatching(*lastDrawingState);
     auto changes = state.changes();
     // Only fold the line into the batch if the sole pending state changes are
     // stroke color and/or thickness; anything else has to go through the normal
@@ -984,12 +995,12 @@ std::optional<RemoteGraphicsContextProxy::InlineStrokeData> RemoteGraphicsContex
     if (changes) {
         // The stroke color/thickness travel inline with each buffered line, so
         // mark them applied and keep lastDrawingState in sync for future diffs.
-        auto& lastDrawingState = currentState().lastDrawingState;
         if (!lastDrawingState)
             lastDrawingState = state;
         else {
             if (changes.contains(GraphicsContextState::Change::StrokeBrush)) {
-                // Set through strokeBrush() to avoid comparison.
+                // Set through strokeBrush() to avoid comparison. Only the color is copied: the GPU
+                // process applies the inline color on top of whatever brush it already has.
                 lastDrawingState->strokeBrush().setColor(state.strokeBrush().color());
             }
             if (changes.contains(GraphicsContextState::Change::StrokeThickness))
