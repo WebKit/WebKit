@@ -2544,10 +2544,7 @@ void BBQJIT::emitRefTestOrCast(CastKind castKind, const TypedExpression& typedVa
 
 [[nodiscard]] PartialResult BBQJIT::addI64MulWideU(Value lhs, Value rhs, Value& resultLo, Value& resultHi)
 {
-#if CPU(X86_64)
-    for (JSC::Reg reg : clobbersForDivX86())
-        clobber(reg);
-#endif
+    PREPARE_FOR_MOD_OR_DIV;
 
     std::optional<ScratchScope<1, 0>> lhsScratch, rhsScratch;
     Location lhsLocation = materializeToGPR(lhs, lhsScratch);
@@ -2568,13 +2565,8 @@ void BBQJIT::emitRefTestOrCast(CastKind castKind, const TypedExpression& typedVa
         std::swap(lhsLocation, rhsLocation);
     m_jit.move(lhsLocation.asGPR(), X86Registers::eax);
     m_jit.x86UMulHigh64(rhsLocation.asGPR(), X86Registers::eax, X86Registers::edx);
-    if (resultLoLocation.asGPR() != X86Registers::edx) {
-        m_jit.move(X86Registers::eax, resultLoLocation.asGPR());
-        m_jit.move(X86Registers::edx, resultHiLocation.asGPR());
-    } else {
-        m_jit.move(X86Registers::edx, resultHiLocation.asGPR());
-        m_jit.move(X86Registers::eax, resultLoLocation.asGPR());
-    }
+    m_jit.move(X86Registers::eax, resultLoLocation.asGPR());
+    m_jit.move(X86Registers::edx, resultHiLocation.asGPR());
 #elif CPU(ARM64)
     if (resultHiLocation.asGPR() == lhsLocation.asGPR()) {
         m_jit.move(lhsLocation.asGPR(), wasmScratchGPR);
@@ -2595,10 +2587,7 @@ void BBQJIT::emitRefTestOrCast(CastKind castKind, const TypedExpression& typedVa
 
 [[nodiscard]] PartialResult BBQJIT::addI64MulWideS(Value lhs, Value rhs, Value& resultLo, Value& resultHi)
 {
-#if CPU(X86_64)
-    for (JSC::Reg reg : clobbersForDivX86())
-        clobber(reg);
-#endif
+    PREPARE_FOR_MOD_OR_DIV;
 
     std::optional<ScratchScope<1, 0>> lhsScratch, rhsScratch;
     Location lhsLocation = materializeToGPR(lhs, lhsScratch);
@@ -2619,13 +2608,8 @@ void BBQJIT::emitRefTestOrCast(CastKind castKind, const TypedExpression& typedVa
         std::swap(lhsLocation, rhsLocation);
     m_jit.move(lhsLocation.asGPR(), X86Registers::eax);
     m_jit.x86MulHigh64(rhsLocation.asGPR(), X86Registers::eax, X86Registers::edx);
-    if (resultLoLocation.asGPR() != X86Registers::edx) {
-        m_jit.move(X86Registers::eax, resultLoLocation.asGPR());
-        m_jit.move(X86Registers::edx, resultHiLocation.asGPR());
-    } else {
-        m_jit.move(X86Registers::edx, resultHiLocation.asGPR());
-        m_jit.move(X86Registers::eax, resultLoLocation.asGPR());
-    }
+    m_jit.move(X86Registers::eax, resultLoLocation.asGPR());
+    m_jit.move(X86Registers::edx, resultHiLocation.asGPR());
 #elif CPU(ARM64)
     if (resultHiLocation.asGPR() == lhsLocation.asGPR()) {
         m_jit.move(lhsLocation.asGPR(), wasmScratchGPR);
