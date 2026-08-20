@@ -8659,7 +8659,7 @@ Vector<String> Internals::activeQuirks() const
     if (!document)
         return { };
 
-    return document->quirks().activeQuirksForTesting();
+    return document->quirks().activeQuirks();
 }
 
 #if ENABLE(DAMAGE_TRACKING)

@@ -4371,17 +4371,6 @@ bool Quirks::hasRelevantQuirks() const
     return !m_quirksData.activeQuirks.isEmpty();
 }
 
-Vector<String> Quirks::activeQuirksForTesting() const
-{
-    Vector<String> result;
-
-    for (auto quirk : m_quirksData.activeQuirks)
-        result.append(String { WTF::enumName(static_cast<QuirksData::SiteSpecificQuirk>(quirk)) });
-
-    std::ranges::sort(result, codePointCompareLessThan);
-    return result;
-}
-
 }
 
 #undef QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE
