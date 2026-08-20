@@ -177,7 +177,45 @@ bool CDMPrivateThunder::supportsConfiguration(const CDMKeySystemConfiguration& c
 
 Vector<String> CDMPrivateThunder::supportedRobustnesses() const
 {
-    return { emptyString(), "SW_SECURE_DECODE"_s, "SW_SECURE_CRYPTO"_s };
+    static const Vector<String> defaultRobustnesses { emptyAtom(), "SW_SECURE_DECODE"_s, "SW_SECURE_CRYPTO"_s };
+
+#if THUNDER_HAS_OCDM_SUPPORTED_ROBUSTNESS
+    if (!m_thunderSystem) {
+        GST_WARNING("CDMPrivateThunder: No active OpenCDM system. Falling back to default WebKit robustness levels.");
+        return defaultRobustnesses;
+    }
+
+    Vector<String> robustnesses { emptyAtom() };
+    char** buffers = nullptr;
+    uint16_t count = 0;
+
+    auto error = opencdm_system_supported_robustness(m_thunderSystem.get(), &buffers, &count);
+
+    if (buffers) {
+        if (count) {
+            robustnesses.reserveCapacity(robustnesses.size() + count);
+            // There's basically no good way to avoid unsafe-buffer-usage-in-container when interacting with a legacy
+            // char** buffer that doesn't depend on us. A modern opencdm API should use a std::vector or std::array,
+            // but it's not in our hands. Using an unsafe span is the less bad way. It's unsafe because the compiler
+            // can't ensure that buffers actually have a length of count, but we do know it's true.
+            for (char* buffer : unsafeMakeSpan(buffers, count)) {
+                if (buffer) {
+                    if (error == ERROR_NONE)
+                        robustnesses.append(String::fromLatin1(buffer));
+                    free(buffer);
+                }
+            }
+        }
+        free(buffers);
+    }
+
+    if (error == ERROR_NONE && robustnesses.size() > 1)
+        return robustnesses;
+
+    GST_WARNING("Failed to get robustness levels from OCDM. Falling back to default WebKit robustness levels.");
+#endif
+
+    return defaultRobustnesses;
 }
 
 CDMRequirement CDMPrivateThunder::distinctiveIdentifiersRequirement(const CDMKeySystemConfiguration&, const CDMRestrictions&) const

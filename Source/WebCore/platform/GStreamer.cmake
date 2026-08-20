@@ -152,6 +152,13 @@ if (ENABLE_ENCRYPTED_MEDIA AND ENABLE_THUNDER)
     # Globally add thunder libraries, required for the check_cxx_symbol_exists call.
     set(CMAKE_REQUIRED_LIBRARIES ${THUNDER_LIBRARIES})
 
+    check_cxx_symbol_exists(opencdm_system_supported_robustness ${THUNDER_INCLUDE_DIR}/open_cdm.h HAS_OCDM_SUPPORTED_ROBUSTNESS)
+    if (HAS_OCDM_SUPPORTED_ROBUSTNESS)
+      list(APPEND WebCore_PRIVATE_DEFINITIONS THUNDER_HAS_OCDM_SUPPORTED_ROBUSTNESS=1)
+    else ()
+      list(APPEND WebCore_PRIVATE_DEFINITIONS THUNDER_HAS_OCDM_SUPPORTED_ROBUSTNESS=0)
+    endif ()
+
     check_cxx_symbol_exists(opencdm_gstreamer_session_decrypt_buffer ${THUNDER_INCLUDE_DIR}/open_cdm_adapter.h HAS_OCDM_DECRYPT_BUFFER)
     if (HAS_OCDM_DECRYPT_BUFFER)
       list(APPEND WebCore_PRIVATE_DEFINITIONS THUNDER_HAS_OCDM_DECRYPT_BUFFER=1)
