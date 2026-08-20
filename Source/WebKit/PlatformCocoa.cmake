@@ -515,6 +515,7 @@ list(APPEND WebKit_SOURCES
     ${WEBKIT_DIR}/UIProcess/API/Swift/WebPage+Navigation.swift
     ${WEBKIT_DIR}/UIProcess/API/Swift/WebPage+NavigationDeciding.swift
     ${WEBKIT_DIR}/UIProcess/API/Swift/WebPage+NavigationPreferences.swift
+    ${WEBKIT_DIR}/UIProcess/API/Swift/WebPage+SPI.swift
     ${WEBKIT_DIR}/UIProcess/API/Swift/WebPage+Transferable.swift
     ${WEBKIT_DIR}/UIProcess/Cocoa/Separated/CALayer+CoreRE.swift
     ${WEBKIT_DIR}/UIProcess/Cocoa/Separated/WKSeparatedImageView.swift
@@ -537,7 +538,6 @@ find_library(USERNOTIFICATIONS_LIBRARY UserNotifications)
 find_library(WRITINGTOOLS_LIBRARY WritingTools HINTS ${CMAKE_OSX_SYSROOT}/System/Library/PrivateFrameworks)
 find_library(APPLEPUSHSERVICE_LIBRARY ApplePushService HINTS ${CMAKE_OSX_SYSROOT}/System/Library/PrivateFrameworks)
 list(APPEND WebKit_PRIVATE_LIBRARIES
-    "-weak_framework PowerLog"
     Accessibility
     ${CORESERVICES_LIBRARY}
     ${CRYPTOTOKENKIT_LIBRARY}
@@ -551,6 +551,7 @@ list(APPEND WebKit_PRIVATE_LIBRARIES
 
 if (WEBKIT_SDK_IS_MACOS)
     list(APPEND WebKit_PRIVATE_LIBRARIES
+        "-weak_framework PowerLog"
         ${APPLICATIONSERVICES_LIBRARY}
         ${SECURITYINTERFACE_LIBRARY}
         $<$<BOOL:${AVFAUDIO_LIBRARY}>:${AVFAUDIO_LIBRARY}>
@@ -974,6 +975,12 @@ file(WRITE "${WebKit_CMAKE_MODULEMAP_DIR}/module.modulemap"
     module WKTextEffectManager {
         requires objc
         header \"${WEBKIT_DIR}/UIProcess/Cocoa/WKTextEffectManager.h\"
+        export *
+    }
+
+    module WKBackForwardListItemInternal {
+        requires objc
+        header \"${WEBKIT_DIR}/UIProcess/API/Cocoa/WKBackForwardListItemInternal.h\"
         export *
     }
 
@@ -2150,6 +2157,7 @@ target_compile_options(WebKitSwift PRIVATE
     "$<$<COMPILE_LANGUAGE:Swift>:-DHAVE_MARKETPLACE_KIT>"
     "$<$<COMPILE_LANGUAGE:Swift>:-DHAVE_CREDENTIAL_UPDATE_API>"
     "$<$<COMPILE_LANGUAGE:Swift>:SHELL:-Xfrontend -disable-cross-import-overlays>"
+    "$<$<COMPILE_LANGUAGE:Swift>:SHELL:@${CMAKE_CURRENT_BINARY_DIR}/WebKit.platform-swift-args.resp>"
     "$<$<COMPILE_LANGUAGE:Swift>:SHELL:@${_swift_tba_resp}>"
     "$<$<COMPILE_LANGUAGE:Swift>:-I${WEBKIT_DIR}/Platform/spi/Cocoa>"
     "$<$<COMPILE_LANGUAGE:Swift>:-I${WEBKIT_DIR}/Platform/spi/Cocoa/Modules>"
@@ -2195,6 +2203,7 @@ add_library(_WebKit_SwiftUI SHARED
     ${_swiftui_dir}/API/WebPage+SwiftUI.swift
     ${_swiftui_dir}/API/WebPageNavigationAction+SwiftUI.swift
     ${_swiftui_dir}/API/WebView.swift
+    ${_swiftui_dir}/API/WebView+ViewportConfiguration.swift
     ${_swiftui_dir}/Implementation/CocoaWebViewAdapter.swift
     ${_swiftui_dir}/Implementation/EnvironmentValues+Extras.swift
     ${_swiftui_dir}/Implementation/Foundation+Extras.swift
@@ -2212,13 +2221,11 @@ endif ()
 
 if (WebKit_SwiftUI_ADDITIONS_SOURCES)
     target_sources(_WebKit_SwiftUI PRIVATE ${WebKit_SwiftUI_ADDITIONS_SOURCES})
-    # Share WebKit's platform-swift-args.resp so the overlay's #if
-    # conditionals (e.g. ENABLE_WEBVIEW_ADDITIONAL_SETUP) match the main
-    # module. Re-fires propagate via add_dependencies(_WebKit_SwiftUI WebKit).
-    target_compile_options(_WebKit_SwiftUI PRIVATE
-        "$<$<COMPILE_LANGUAGE:Swift>:SHELL:@${CMAKE_CURRENT_BINARY_DIR}/WebKit.platform-swift-args.resp>"
-    )
 endif ()
+
+target_compile_options(_WebKit_SwiftUI PRIVATE
+    "$<$<COMPILE_LANGUAGE:Swift>:SHELL:@${CMAKE_CURRENT_BINARY_DIR}/WebKit.platform-swift-args.resp>"
+)
 
 set_target_properties(_WebKit_SwiftUI PROPERTIES
     OUTPUT_NAME _WebKit_SwiftUI

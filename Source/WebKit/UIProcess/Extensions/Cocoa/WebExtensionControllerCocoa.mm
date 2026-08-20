@@ -231,8 +231,11 @@ void WebExtensionController::removeData(OptionSet<WebExtensionDataType> dataType
             removeStorage(*storage, dataType, makeBlockPtr([aggregator, uniqueIdentifier, dataType, record = Ref { record }](Expected<void, WebExtensionError>&& result) mutable {
                 if (!result)
                     record->addError(result.error().createNSString().get(), dataType);
-                else
+                else {
+                    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
                     [NSDistributedNotificationCenter.defaultCenter postNotificationName:WebExtensionLocalStorageWasDeletedNotification object:nil userInfo:@{ WebExtensionUniqueIdentifierKey: uniqueIdentifier.createNSString().get() }];
+                    ALLOW_DEPRECATED_DECLARATIONS_END
+                }
             }));
         }
     }
