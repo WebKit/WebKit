@@ -58,6 +58,13 @@
 #include <wtf/OSObjectPtr.h>
 #endif
 
+#if defined(__swift__) && OS(WINDOWS)
+// The Swift C++ importer eagerly instantiates class-template members
+// (including Vector<T>::span()), and MSVC's STL rejects std::span<T> when T
+// is incomplete.
+#include "ITPThirdPartyData.h"
+#endif
+
 namespace IPC {
 class FormDataReference;
 }
