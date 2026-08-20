@@ -7824,7 +7824,6 @@ imported/w3c/web-platform-tests/css/cssom/adoptedstylesheets-adopt-link.tentativ
 imported/w3c/web-platform-tests/css/cssom/adoptedstylesheets-adopt-style-subresource.tentative.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/cssom/adoptedstylesheets-adopt-style.tentative.html [ ImageOnlyFailure ]
 
-imported/w3c/web-platform-tests/wasm/jsapi/jspi/js-promise-integration.any.html [ Pass Failure ]
 imported/w3c/web-platform-tests/wasm/webapi/esm-integration/script-src-blocks-wasm.tentative.sub.html [ Pass Failure ]
 
 http/tests/iframe-memory-monitor/video-iframe.html [ Skip ]
