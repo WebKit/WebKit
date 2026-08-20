@@ -1,0 +1,10 @@
+Test that a Emulation.setEmulatedMedia override set before a cross-origin iframe is created is replayed to the iframe's late-joining process under site isolation.
+
+
+== Running test suite: SiteIsolation.Emulation.SetEmulatedMediaLateOOPIF
+-- Running test case: SiteIsolation.Emulation.SetEmulatedMedia.LateJoiningProcessInheritsOverride
+Setting emulated media to print before the cross-origin iframe exists...
+Adding cross-origin iframe into a new process...
+PASS: Added target should have Frame type.
+PASS: Late-joining cross-origin iframe process should observe the print media override.
+

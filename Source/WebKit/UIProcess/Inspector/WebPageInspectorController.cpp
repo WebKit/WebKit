@@ -35,6 +35,7 @@
 #include "PageInspectorTargetProxy.h"
 #include "ProvisionalFrameProxy.h"
 #include "ProvisionalPageProxy.h"
+#include "ProxyingEmulationAgent.h"
 #include "ProxyingNetworkAgent.h"
 #include "ProxyingPageAgent.h"
 #include "WebFrameProxy.h"
@@ -122,6 +123,8 @@ void WebPageInspectorController::connectFrontend(Inspector::FrontendChannel& fro
             networkAgent->didCreateFrontendAndBackend();
         if (RefPtr pageAgent = m_pageAgent)
             pageAgent->didCreateFrontendAndBackend();
+        if (RefPtr emulationAgent = m_emulationAgent)
+            emulationAgent->didCreateFrontendAndBackend();
     }
 
     Ref inspectedPage = m_inspectedPage.get();
@@ -144,6 +147,8 @@ void WebPageInspectorController::disconnectFrontend(FrontendChannel& frontendCha
             networkAgent->willDestroyFrontendAndBackend(DisconnectReason::InspectorDestroyed);
         if (RefPtr pageAgent = m_pageAgent)
             pageAgent->willDestroyFrontendAndBackend(DisconnectReason::InspectorDestroyed);
+        if (RefPtr emulationAgent = m_emulationAgent)
+            emulationAgent->willDestroyFrontendAndBackend(DisconnectReason::InspectorDestroyed);
     }
 
     Ref inspectedPage = m_inspectedPage.get();
@@ -168,6 +173,8 @@ void WebPageInspectorController::disconnectAllFrontends()
         networkAgent->willDestroyFrontendAndBackend(DisconnectReason::InspectedTargetDestroyed);
     if (RefPtr pageAgent = m_pageAgent)
         pageAgent->willDestroyFrontendAndBackend(DisconnectReason::InspectedTargetDestroyed);
+    if (RefPtr emulationAgent = m_emulationAgent)
+        emulationAgent->willDestroyFrontendAndBackend(DisconnectReason::InspectedTargetDestroyed);
 
     // Disconnect any remaining remote frontends.
     m_frontendRouter->disconnectAllFrontends();
@@ -350,6 +357,13 @@ void WebPageInspectorController::didCommitProvisionalPage(std::optional<WebCore:
             networkAgent->disableInstrumentationForProcess(*oldProcess, oldWebPageID);
         networkAgent->enableInstrumentationForProcess(newProcess, newWebPageID);
     }
+
+    RefPtr emulationAgent = m_emulationAgent;
+    if (emulationAgent && emulationAgent->isEnabled()) {
+        if (oldProcess)
+            emulationAgent->disableInstrumentationForProcess(*oldProcess, oldWebPageID);
+        emulationAgent->enableInstrumentationForProcess(newProcess, newWebPageID);
+    }
 }
 
 void WebPageInspectorController::didCreateFrame(WebFrameProxy& frame)
@@ -371,6 +385,12 @@ void WebPageInspectorController::didCreateFrame(WebFrameProxy& frame)
     if (pageAgent && pageAgent->isEnabled()) {
         if (auto pageID = frame.webPageIDInCurrentProcess())
             pageAgent->enableInstrumentationForProcess(process, *pageID);
+    }
+
+    RefPtr emulationAgent = m_emulationAgent;
+    if (emulationAgent && emulationAgent->isEnabled()) {
+        if (auto pageID = frame.webPageIDInCurrentProcess())
+            emulationAgent->enableInstrumentationForProcess(process, *pageID);
     }
 }
 
@@ -398,6 +418,12 @@ void WebPageInspectorController::willDestroyFrame(const WebFrameProxy& frame)
         pageAgent->frameDestroyed(frame.frameID());
     }
 
+    RefPtr emulationAgent = m_emulationAgent;
+    if (emulationAgent && emulationAgent->isEnabled()) {
+        if (auto pageID = frame.webPageIDInCurrentProcess())
+            emulationAgent->disableInstrumentationForProcess(process, *pageID);
+    }
+
     removeTarget(getTargetID(frame));
 }
 
@@ -418,6 +444,13 @@ void WebPageInspectorController::didCreateProvisionalFrame(ProvisionalFrameProxy
     auto pageID = protect(m_inspectedPage)->webPageIDInProcess(process);
     if (pageAgent && pageAgent->isEnabled())
         pageAgent->enableInstrumentationForProcess(process, pageID);
+
+    // The emulation overrides must reach the provisional process before it commits too, so a
+    // cross-origin document never renders a frame against the real platform environment while the
+    // rest of the page is emulated. See webkit.org/b/308897.
+    RefPtr emulationAgent = m_emulationAgent;
+    if (emulationAgent && emulationAgent->isEnabled())
+        emulationAgent->enableInstrumentationForProcess(process, pageID);
 }
 
 void WebPageInspectorController::willDestroyProvisionalFrame(const ProvisionalFrameProxy& provisionalFrame)
@@ -443,6 +476,10 @@ void WebPageInspectorController::willDestroyProvisionalFrame(const ProvisionalFr
     auto pageID = protect(m_inspectedPage)->webPageIDInProcess(process);
     if (pageAgent && pageAgent->isEnabled())
         pageAgent->disableInstrumentationForProcess(process, pageID);
+
+    RefPtr emulationAgent = m_emulationAgent;
+    if (emulationAgent && emulationAgent->isEnabled())
+        emulationAgent->disableInstrumentationForProcess(process, pageID);
 }
 
 void WebPageInspectorController::didCommitProvisionalFrame(WebFrameProxy& frame, WebCore::ProcessIdentifier oldProcessID, std::optional<WebCore::PageIdentifier> oldPageID, WebCore::ProcessIdentifier newProcessID)
@@ -493,6 +530,14 @@ void WebPageInspectorController::didCommitProvisionalFrame(WebFrameProxy& frame,
         // is delivered. Re-registering here would double-count the receiver, so we only
         // release the old process. See webkit.org/b/308896.
     }
+
+    RefPtr emulationAgent = m_emulationAgent;
+    if (emulationAgent && emulationAgent->isEnabled()) {
+        if (oldProcess && oldPageID)
+            emulationAgent->disableInstrumentationForProcess(*oldProcess, *oldPageID);
+        // Like the page agent, the emulation agent already registered the new (committing) process
+        // in didCreateProvisionalFrame, so only the old process is released here.
+    }
 }
 
 InspectorBrowserAgent* WebPageInspectorController::enabledBrowserAgent() const
@@ -528,6 +573,7 @@ void WebPageInspectorController::createLazyAgents()
         // managed explicitly in connectFrontend / disconnectFrontend / disconnectAllFrontends.
         m_networkAgent = adoptRef(*new Inspector::ProxyingNetworkAgent(webPageContext));
         m_pageAgent = adoptRef(*new Inspector::ProxyingPageAgent(webPageContext));
+        m_emulationAgent = adoptRef(*new Inspector::ProxyingEmulationAgent(webPageContext));
     }
 }
 
@@ -565,6 +611,11 @@ void WebPageInspectorController::setShowPaintRects(bool show)
 {
     if (RefPtr pageAgent = m_pageAgent)
         std::ignore = pageAgent->setShowPaintRects(show);
+}
+
+Inspector::ProxyingEmulationAgent* WebPageInspectorController::emulationAgent() const
+{
+    return m_emulationAgent.get();
 }
 
 void WebPageInspectorController::setEnabledBrowserAgent(InspectorBrowserAgent* agent)

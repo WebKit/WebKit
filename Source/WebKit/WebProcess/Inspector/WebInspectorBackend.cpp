@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebInspectorBackend.h"
 
+#include "EmulationManager.h"
 #include "FrameNetworkAgentProxy.h"
 #include "PageAgentProxy.h"
 #include "WebFrame.h"
@@ -80,6 +81,7 @@ Ref<WebInspectorBackend> WebInspectorBackend::create(WebPage& page)
 
 WebInspectorBackend::WebInspectorBackend(WebPage& page)
     : m_page(page)
+    , m_emulationManager(Inspector::EmulationManager::create(*this))
     , m_resourceDataStore(makeUniqueRef<BackendResourceDataStore>(BackendResourceDataStore::Settings { }))
 {
 }
@@ -87,6 +89,7 @@ WebInspectorBackend::WebInspectorBackend(WebPage& page)
 WebInspectorBackend::~WebInspectorBackend()
 {
     disableNetworkInstrumentation();
+    disablePageInstrumentation();
 
     if (RefPtr frontendConnection = m_frontendConnection)
         frontendConnection->invalidate();
@@ -374,6 +377,29 @@ void WebInspectorBackend::ensureNetworkInstrumentationForFrame(LocalFrame& frame
     m_frameNetworkAgentProxies.add(frameID, WTF::move(proxy));
 }
 
+void WebInspectorBackend::connectRemoteInstrumentationIfNeeded()
+{
+    // Connect on the first enabled domain only. Both bools have already been flipped to true by
+    // the caller, so exactly one of them being true means this is the first domain to enable.
+    if (m_networkInstrumentationEnabled && m_pageInstrumentationEnabled)
+        return;
+
+    if (RefPtr corePage = m_page ? m_page->corePage() : nullptr)
+        corePage->inspectorController().connectRemoteInstrumentation();
+}
+
+void WebInspectorBackend::disconnectRemoteInstrumentationIfNeeded()
+{
+    // Disconnect on the last enabled domain only. Both bools have already been flipped to false by
+    // the caller, so this disconnects exactly once, keeping the frontend counter balanced against
+    // the single connectRemoteInstrumentation() from connectRemoteInstrumentationIfNeeded().
+    if (m_networkInstrumentationEnabled || m_pageInstrumentationEnabled)
+        return;
+
+    if (RefPtr corePage = m_page ? m_page->corePage() : nullptr)
+        corePage->inspectorController().disconnectRemoteInstrumentation();
+}
+
 void WebInspectorBackend::enableNetworkInstrumentation()
 {
     if (!m_page)
@@ -386,7 +412,7 @@ void WebInspectorBackend::enableNetworkInstrumentation()
     if (!m_networkInstrumentationEnabled) {
         m_networkInstrumentationEnabled = true;
         corePage->settings().setDeveloperExtrasEnabled(true);
-        corePage->inspectorController().connectRemoteInstrumentation();
+        connectRemoteInstrumentationIfNeeded();
 
         // Buffer certificates only when the page opts in, matching PageNetworkAgent.
         CheckedRef { m_resourceDataStore.get() }->setSupportsShowingCertificate(corePage->settings().inspectorSupportsShowingCertificate());
@@ -414,10 +440,10 @@ void WebInspectorBackend::disableNetworkInstrumentation()
     if (!m_page)
         return;
 
-    if (RefPtr corePage = m_page->corePage()) {
+    if (RefPtr corePage = m_page->corePage())
         corePage->setResourceCachingDisabledByWebInspector(false);
-        corePage->inspectorController().disconnectRemoteInstrumentation();
-    }
+
+    disconnectRemoteInstrumentationIfNeeded();
 }
 
 void WebInspectorBackend::removeInstrumentationForFrame(FrameIdentifier frameID)
@@ -703,6 +729,13 @@ void WebInspectorBackend::ensurePageInstrumentationForFrame(LocalFrame& frame)
     proxy->setShowPaintRects(m_showPaintRects);
 
     m_framePageAgentProxies.add(frameID, WTF::move(proxy));
+
+    // The frame's document already committed before this proxy was installed, so nothing has
+    // recalculated its author styles against the now-instrumented frame. Recalc them (and
+    // re-evaluate its media queries, honoring any active emulated-media override) so an
+    // already-present cross-origin frame reflects its author stylesheet instead of the default
+    // UA style. See webkit.org/b/308896.
+    m_emulationManager->applyLocally(frame);
 }
 
 void WebInspectorBackend::enablePageInstrumentation()
@@ -717,6 +750,15 @@ void WebInspectorBackend::enablePageInstrumentation()
 
     RefPtr corePage = m_page->corePage();
     corePage->settings().setDeveloperExtrasEnabled(true);
+
+    // A process spawned instrumented (shouldEnablePageInstrumentation on creation) enables page
+    // instrumentation without ever receiving a SetFrontendConnection -- that message is delivered only
+    // to the main-frame process. Connect the page's remote instrumentation here so the per-process
+    // frontend counter is bumped and InspectorInstrumentation's FAST_RETURN_IF_NO_FRONTENDS fast path
+    // treats this process as instrumented; otherwise a cross-origin frame reports hasFrontends() == false
+    // and silently drops emulated-media (and other) overrides. Shared with network instrumentation so the
+    // counter is bumped exactly once regardless of enable order. See webkit.org/b/308896.
+    connectRemoteInstrumentationIfNeeded();
 
     corePage->forEachLocalFrame([&](LocalFrame& frame) {
         ensurePageInstrumentationForFrame(frame);
@@ -739,6 +781,14 @@ void WebInspectorBackend::disablePageInstrumentation()
     // Reset so a later re-enable seeds fresh proxies as off; the UIProcess ProxyingPageAgent also
     // resets on disable().
     m_showPaintRects = false;
+
+    // Balance the connect from enablePageInstrumentation() -- disconnects (and drops the frontend
+    // counter) only once the last instrumentation domain is disabled, so the counter can never
+    // underflow or leak across enable -> disable -> re-enable.
+    disconnectRemoteInstrumentationIfNeeded();
+
+    m_emulationManager->setEmulatedMedia(emptyString());
+    m_emulationManager->applyLocally(); // Restore real platform media on disable, mirroring setEmulationOverrides.
 }
 
 void WebInspectorBackend::setShowPaintRects(bool show)
@@ -748,6 +798,17 @@ void WebInspectorBackend::setShowPaintRects(bool show)
     m_showPaintRects = show;
     for (auto& proxy : m_framePageAgentProxies.values())
         proxy->setShowPaintRects(show);
+}
+
+void WebInspectorBackend::setEmulationOverrides(Inspector::EmulationOverrides&& overrides)
+{
+    // Apply each materialized emulation override forwarded from the UIProcess. Only emulatedMedia
+    // exists today; an absent value clears the override. The per-frame PageAgentProxies read the
+    // applied override back through the EmulationManager in applyEmulatedMedia, so there is nothing
+    // to push to them here. See webkit.org/b/308897.
+    Ref emulationManager = m_emulationManager;
+    emulationManager->setEmulatedMedia(overrides.emulatedMedia.value_or(emptyString()));
+    emulationManager->applyLocally();
 }
 
 void WebInspectorBackend::getFrameResourceData(Vector<WebCore::FrameIdentifier>&& frameIDs, CompletionHandler<void(Vector<std::pair<WebCore::FrameIdentifier, Inspector::FrameResourceData>>&&)>&& completionHandler)

@@ -1,0 +1,9 @@
+Test that a Emulation.setEmulatedMedia override set before a cross-origin main-frame navigation is serialized to the swapped-in process under site isolation.
+
+
+== Running test suite: SiteIsolation.Emulation.SetEmulatedMediaProcessSwap
+-- Running test case: SiteIsolation.Emulation.SetEmulatedMedia.ProcessSwapInheritsOverride
+Setting emulated media to print before the cross-origin main-frame navigation...
+Navigating the main frame cross-origin to force a process swap...
+PASS: Swapped-in main-frame process should observe the print media override.
+
