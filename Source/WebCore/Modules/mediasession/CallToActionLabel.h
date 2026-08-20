@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,32 +23,17 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[
-    Conditional=MEDIA_SESSION,
-] enum MediaSessionAction {
-    "play",
-    "pause",
-    "seekbackward",
-    "seekforward",
-    "previoustrack",
-    "nexttrack",
-    "skipad",
-    "stop",
-    "seekto",
-    "togglemicrophone",
-    "togglecamera",
-    "togglescreenshare",
-    "hangup",
-    "previousslide",
-    "nextslide",
-    "enterpictureinpicture",
-    "voiceactivity",
-    "togglecaptions",
-    "selectcaptiontrack"
-#if defined(ENABLE_MEDIA_SESSION_CALL_TO_ACTION) && ENABLE_MEDIA_SESSION_CALL_TO_ACTION
-    , "call-to-action"
-#endif
-#if defined(ENABLE_MEDIA_SESSION_PLAYLIST) && ENABLE_MEDIA_SESSION_PLAYLIST
-    , "settrack"
-#endif
+#pragma once
+
+#if ENABLE(MEDIA_SESSION)
+
+namespace WebCore {
+
+enum class CallToActionLabel : uint8_t {
+    Visit,
+    Download,
 };
+
+} // namespace WebCore
+
+#endif // ENABLE(MEDIA_SESSION)

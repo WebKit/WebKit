@@ -555,6 +555,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/indexeddb/shared/IDBTransactionInfo.h
     Modules/indexeddb/shared/IndexKey.h
 
+    Modules/mediasession/CallToActionLabel.h
     Modules/mediasession/MediaImage.h
     Modules/mediasession/MediaMetadata.h
     Modules/mediasession/MediaMetadataInit.h

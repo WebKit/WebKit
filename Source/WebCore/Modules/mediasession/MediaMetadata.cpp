@@ -105,6 +105,9 @@ ExceptionOr<Ref<MediaMetadata>> MediaMetadata::create(ScriptExecutionContext& co
 #if ENABLE(MEDIA_SESSION_PLAYLIST)
         metadata->setTrackIdentifier(init->trackIdentifier);
 #endif
+#if ENABLE(MEDIA_SESSION_CALL_TO_ACTION)
+        metadata->setCallToActionLabel(init->callToActionLabel);
+#endif
         auto possibleException = metadata->setArtwork(context, WTF::move(init->artwork));
         if (possibleException.hasException())
             return Exception { possibleException.exception() };
@@ -162,6 +165,17 @@ void MediaMetadata::setAlbum(const String& album)
     m_metadata.album = album;
     metadataUpdated();
 }
+
+#if ENABLE(MEDIA_SESSION_CALL_TO_ACTION)
+void MediaMetadata::setCallToActionLabel(CallToActionLabel label)
+{
+    if (m_metadata.callToActionLabel == label)
+        return;
+
+    m_metadata.callToActionLabel = label;
+    metadataUpdated();
+}
+#endif
 
 ExceptionOr<void> MediaMetadata::setArtwork(ScriptExecutionContext& context, Vector<MediaImage>&& artwork)
 {

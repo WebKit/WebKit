@@ -554,6 +554,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSViewTransitionRule.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCSSViewTransitionRule.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCacheQueryOptions.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCacheQueryOptions.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCallToActionLabel.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCallToActionLabel.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCanvasCaptureMediaStreamTrack.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCanvasCaptureMediaStreamTrack.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCanvasCompositing.cpp

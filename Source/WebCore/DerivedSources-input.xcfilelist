@@ -561,6 +561,7 @@ $(PROJECT_DIR)/Modules/mediacontrols/MediaControlsUtils.idl
 $(PROJECT_DIR)/Modules/mediarecorder/BlobEvent.idl
 $(PROJECT_DIR)/Modules/mediarecorder/MediaRecorder.idl
 $(PROJECT_DIR)/Modules/mediarecorder/MediaRecorderErrorEvent.idl
+$(PROJECT_DIR)/Modules/mediasession/CallToActionLabel.idl
 $(PROJECT_DIR)/Modules/mediasession/MediaImage.idl
 $(PROJECT_DIR)/Modules/mediasession/MediaMetadata.idl
 $(PROJECT_DIR)/Modules/mediasession/MediaMetadataInit.idl
