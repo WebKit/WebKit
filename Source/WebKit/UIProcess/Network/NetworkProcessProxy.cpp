@@ -346,6 +346,11 @@ void NetworkProcessProxy::getNetworkProcessConnection(WebProcessProxy& webProces
     auto& cookiesData = webProcessProxy.allowedFirstPartiesForCookiesData();
     parameters.loadedWebArchive = cookiesData.first;
     parameters.allowedFirstPartiesForCookies = cookiesData.second;
+    // These parameters install the authorization directly, so the dedupe cache has to record it too, or a
+    // later push of the same value is suppressed while the network process still holds something tighter.
+    parameters.allowedCookieDomains = webProcessProxy.allowedCookieDomains();
+    parameters.allowsUnhostedCookieDomains = webProcessProxy.allowsUnhostedCookieDomains();
+    m_cookieDomainAuthorizations.set(webProcessProxy, CookieDomainAuthorization { parameters.allowedCookieDomains, parameters.allowsUnhostedCookieDomains });
     sendWithAsyncReply(Messages::NetworkProcess::CreateNetworkConnectionToWebProcess { webProcessProxy.coreProcessIdentifier(), webProcessProxy.sessionID(), parameters }, [weakThis = WeakPtr { *this }, reply = WTF::move(reply)](auto&& identifier, auto cookieAcceptPolicy) mutable {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis) {
@@ -2074,6 +2079,20 @@ void NetworkProcessProxy::addAllowedFirstPartyForCookies(WebProcessProxy& webPro
         sendWithAsyncReply(Messages::NetworkProcess::AddAllowedFirstPartyForCookies(webProcessProxy.coreProcessIdentifier(), firstPartyForCookies, loadedWebArchive), WTF::move(completionHandler));
     else
         completionHandler();
+}
+
+void NetworkProcessProxy::setCookieDomainAuthorizationForProcess(WebProcessProxy& webProcessProxy, std::optional<HashSet<WebCore::RegistrableDomain>>&& domains, bool allowsUnhostedDomains, CompletionHandler<void()>&& completionHandler)
+{
+    auto& current = m_cookieDomainAuthorizations.ensure(webProcessProxy, [] {
+        return CookieDomainAuthorization { };
+    }).iterator->value;
+
+    CookieDomainAuthorization updated { WTF::move(domains), allowsUnhostedDomains };
+    if (current == updated)
+        return completionHandler();
+
+    current = WTF::move(updated);
+    sendWithAsyncReply(Messages::NetworkProcess::SetCookieDomainAuthorizationForProcess(webProcessProxy.coreProcessIdentifier(), current.allowedDomains, current.allowsUnhostedDomains), WTF::move(completionHandler));
 }
 
 void NetworkProcessProxy::addAllowedFilePaths(WebProcessProxy& webProcessProxy, const Vector<String>& paths)

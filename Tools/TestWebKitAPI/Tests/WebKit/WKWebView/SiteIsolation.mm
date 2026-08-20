@@ -435,6 +435,20 @@ static void enableSiteIsolation(WKWebViewConfiguration *configuration)
     enableFeature(configuration, @"SiteIsolationEnabled");
 }
 
+// Tracking prevention defaults to on for the TestWebKitAPI bundle only where USE(ITP_TCC_CHECK) is
+// defined, which is PLATFORM(IOS) || PLATFORM(VISION); everywhere else, macOS included,
+// determineTrackingPreventionStateInternal() falls through to its `return false` and this is a
+// no-op. Where it is on, WebsiteDataStore's third party cookie blocking mode defaults to All, so a
+// cross-site iframe's document.cookie comes back empty and the web process does not even send the
+// IPC (WebCookieJar::shouldBlockCookies() answers Yes locally in that mode). Any test that asserts a
+// third-party cookie value has to opt out of that, so it is measuring cookie access rather than
+// tracking prevention. This is the counterpart of the _setResourceLoadStatisticsEnabled:YES that
+// siteIsolatedViewWithSharedProcess does.
+static void disableTrackingPrevention(WKWebViewConfiguration *configuration)
+{
+    [[configuration websiteDataStore] _setResourceLoadStatisticsEnabled:NO];
+}
+
 // WKPreferences._usesPageCache is macOS-only, so disable BFCache via the
 // cross-platform _WKProcessPoolConfiguration.pageCacheEnabled property
 // instead (sets the process pool's BFCache capacity to 0).
@@ -4935,7 +4949,11 @@ TEST(SiteIsolation, GoBackToPageWithIframeBFCache)
         { "/b"_s, { ""_s } },
         { "/frame"_s, { ""_s } }
     }, HTTPServer::Protocol::HttpsProxy);
-    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server);
+    // The post-restore assertion below reads a cookie from the cross-site frame.com iframe, so this
+    // test has to measure cookie access rather than third-party cookie blocking.
+    auto *configuration = server.httpsProxyConfiguration();
+    disableTrackingPrevention(configuration);
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(configuration);
 
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://a.com/a"]]];
     [navigationDelegate waitForDidFinishNavigationAndLoadInSubframe];
@@ -4944,6 +4962,10 @@ TEST(SiteIsolation, GoBackToPageWithIframeBFCache)
     // it back from the iframe scope: the marker proves the iframe document survived in BFCache
     // (rather than being reloaded), which requires the iframe process to still be alive.
     [webView objectByEvaluatingJavaScript:@"window.__iframeBfcacheMarker = true" inFrame:[webView firstChildFrame]];
+    // Write a cookie from the cross-site iframe before navigating away so that the post-restore read
+    // has a known value to compare against. An EXPECT_NOT_NULL there would be satisfied by the empty
+    // string a denied cookie IPC produces, so it could not detect the regression this test exists for.
+    [webView objectByEvaluatingJavaScript:@"document.cookie = 'bfcache=1'" inFrame:[webView firstChildFrame]];
 
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://b.com/b"]]];
     [navigationDelegate waitForDidFinishNavigation];
@@ -4963,9 +4985,10 @@ TEST(SiteIsolation, GoBackToPageWithIframeBFCache)
     EXPECT_TRUE([[webView objectByEvaluatingJavaScript:@"window.__iframeBfcacheMarker ? true : false" inFrame:[webView firstChildFrame]] boolValue]);
     // Reading document.cookie from the iframe scope exercises the first-party-for-cookies path that
     // previously terminated the restored iframe process. With the fix the iframe's first party
-    // resolves to the a.com main frame, so the NetworkProcess allows the access and the read
-    // returns a (non-nil) value instead of terminating the process.
-    EXPECT_NOT_NULL([webView objectByEvaluatingJavaScript:@"String(document.cookie)" inFrame:[webView firstChildFrame]]);
+    // resolves to the a.com main frame, so the NetworkProcess allows the access and the cookie the
+    // iframe wrote before the navigation comes back. Compared against its value rather than merely
+    // checked for non-nil, because a denial is silent and produces the empty string.
+    EXPECT_WK_STREQ("bfcache=1", [webView stringByEvaluatingJavaScript:@"String(document.cookie)" inFrame:[webView firstChildFrame]]);
     checkFrameTreesInProcesses(webView.get(), WTF::move(expectedAfterGoBack));
 }
 
@@ -13614,5 +13637,424 @@ TEST(SiteIsolation, SuspendedPageDoesNotLetANewProcessJoin)
     // The refused navigation left the iframe where it was.
     checkFrameTreesInProcesses(webView.get(), { { "https://a.com"_s, { { "https://a.com"_s } } } });
 }
+
+// MARK: - Cookie IPC authorization
+//
+// The network process rejects a cookie IPC whose url names a registrable domain the sending web process does
+// not host a document for. Rejection is silent - an empty cookie string, not a kill - so every assertion here
+// is EXPECT_WK_STREQ against a known value; a non-null or non-empty check would be satisfied by the empty
+// string a rejection produces. Layout tests cannot cover this, because they run with site isolation off where
+// allowedCookieDomains() is deliberately permissive.
+
+// The mainframe alerts whatever its cross-site subframe posts to it, which is how the subframe's cookie value
+// reaches the test. BoundedAlertRecorder bounds the wait, so a wedged subframe fails instead of hanging.
+static HTTPServer::ResponseMap cookieIPCResponses(ASCIILiteral subframeURL, ASCIILiteral subframeScript)
+{
+    HTTPServer::ResponseMap responses;
+    responses.add("/mainframe"_s, HTTPResponse(makeString(
+        "<!DOCTYPE html><script>"
+        "window.addEventListener('message', (event) => { alert(String(event.data)); });"
+        "</script><iframe src='"_s, subframeURL, "'></iframe>"_s)));
+    responses.add("/subframe"_s, HTTPResponse(makeString("<!DOCTYPE html><script>"_s, subframeScript, "</script>"_s)));
+    // Only used by ThirdPartyIframeCookiesInProcessReusedFromSiteIsolatedView, which needs a
+    // subframe-free first load so that exactly one process ends up in the WebProcess cache.
+    responses.add("/plain"_s, HTTPResponse("<!DOCTYPE html>plain"_s));
+    return responses;
+}
+
+// Writes a cookie in the subframe and posts what reading it back produces. Both halves are needed:
+// the write is SetCookiesFromDOM and the read is CookiesForDOM, and either being rejected yields "".
+static constexpr auto writeAndReadCookieInSubframeScript =
+    "document.cookie = 'k=v';"
+    "parent.postMessage(String(document.cookie), '*');"_s;
+
+// On the iOS family, where tracking prevention defaults to on for this bundle, every third-party read below
+// would otherwise come back empty for a reason unrelated to the check. A no-op elsewhere.
+static RetainPtr<WKWebViewConfiguration> cookieIPCConfiguration(const HTTPServer& server)
+{
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    disableTrackingPrevention(configuration.get());
+    return configuration;
+}
+
+// The highest-value case: site isolation off, which is the shipping default, so this is the
+// configuration essentially every third-party iframe on the web runs in.
+TEST(SiteIsolation, ThirdPartyIframeCookiesWithoutSiteIsolation)
+{
+    // With site isolation off one process hosts every frame, so allowedCookieDomains() answers "unknown"
+    // here. If it answered {a.com}, every cross-site iframe on every page would silently read and write
+    // nothing. Deliberately a single navigation: a second cross-site main-frame navigation is permissive for
+    // a different reason and would mask that.
+    HTTPServer server(cookieIPCResponses("https://b.com/subframe"_s, writeAndReadCookieInSubframeScript), HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = viewAndDelegate(cookieIPCConfiguration(server), CGRectMake(0, 0, 800, 600));
+    RetainPtr alertRecorder = adoptNS([BoundedAlertRecorder new]);
+    webView.get().UIDelegate = alertRecorder.get();
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://a.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    EXPECT_WK_STREQ("k=v", [alertRecorder waitForAlert]);
+
+    // Confirms this really is the one-process-hosts-every-frame configuration, so the test cannot
+    // pass by accidentally having run with site isolation on.
+    EXPECT_EQ([webView _webProcessIdentifier], [webView firstChildFrame]._processIdentifier);
+}
+
+// Same page with site isolation on, where allowedCookieDomains() is a definite {b.com} for the
+// subframe's process rather than "unknown", so the url check actually evaluates and must allow.
+TEST(SiteIsolation, ThirdPartyIframeCookiesWithSiteIsolation)
+{
+    HTTPServer server(cookieIPCResponses("https://b.com/subframe"_s, writeAndReadCookieInSubframeScript), HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(cookieIPCConfiguration(server), CGRectMake(0, 0, 800, 600));
+    RetainPtr alertRecorder = adoptNS([BoundedAlertRecorder new]);
+    webView.get().UIDelegate = alertRecorder.get();
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://a.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    EXPECT_WK_STREQ("k=v", [alertRecorder waitForAlert]);
+
+    // If site isolation silently stopped applying this test would degenerate into a duplicate of
+    // ThirdPartyIframeCookiesWithoutSiteIsolation and keep passing while covering nothing, so assert
+    // the subframe really is in its own process. Frame tree shape as in LoadingCallbacksAndPostMessage.
+    checkFrameTreesInProcesses(webView.get(), {
+        { "https://a.com"_s, { { RemoteFrame } } },
+        { RemoteFrame, { { "https://b.com"_s } } },
+    });
+    EXPECT_NE([webView _webProcessIdentifier], [webView firstChildFrame]._processIdentifier);
+}
+
+// The WebProcess cache is disabled by default on iOS and cannot be enabled on devices with too
+// little RAM, so this is macOS-only for the same reason as the WebProcessCache tests in
+// ProcessSwapOnNavigation.mm.
+#if !PLATFORM(IOS_FAMILY)
+
+TEST(SiteIsolation, ThirdPartyIframeCookiesInProcessReusedFromSiteIsolatedView)
+{
+    // When the WebProcess cache hands a process that hosted a site-isolated a.com document to a page with
+    // site isolation off, its set must widen to "unknown" rather than stay {a.com}. That has to key off the
+    // new FrameProcess, not the process's shared preferences, which merge monotonically so siteIsolationEnabled
+    // stays true for the reused process forever.
+    HTTPServer server(cookieIPCResponses("https://b.com/subframe"_s, writeAndReadCookieInSubframeScript), HTTPServer::Protocol::HttpsProxy);
+
+    // Both views must share one data store and one process pool: WebProcessCache::takeProcess()
+    // refuses a process whose data store is not identical to the new page's.
+    RetainPtr storeConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initNonPersistentConfiguration]);
+    [storeConfiguration setHTTPSProxy:[NSURL URLWithString:[NSString stringWithFormat:@"https://127.0.0.1:%d/", server.port()]]];
+    RetainPtr dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:storeConfiguration.get()]);
+    [dataStore _setResourceLoadStatisticsEnabled:NO];
+
+    RetainPtr processPoolConfiguration = adoptNS([[_WKProcessPoolConfiguration alloc] init]);
+    processPoolConfiguration.get().usesWebProcessCache = YES;
+    // WebProcessCache::updateCapacity() zeroes the cache's capacity unless process swap on
+    // navigation is on, and BFCache would otherwise compete for the closed page's process. Same
+    // reasoning as ProcessReuse.
+    processPoolConfiguration.get().processSwapsOnNavigation = YES;
+    processPoolConfiguration.get().pageCacheEnabled = NO;
+    RetainPtr processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+
+    // A fresh WKWebViewConfiguration per view, because enableSiteIsolation() mutates the
+    // configuration's WKPreferences and the two views need opposite answers.
+    auto makeConfiguration = [&] {
+        RetainPtr configuration = adoptNS([WKWebViewConfiguration new]);
+        [configuration setWebsiteDataStore:dataStore.get()];
+        [configuration setProcessPool:processPool.get()];
+        return configuration;
+    };
+
+    pid_t siteIsolatedPID = 0;
+    @autoreleasepool {
+        auto [siteIsolatedView, siteIsolatedDelegate] = siteIsolatedViewAndDelegate(makeConfiguration(), CGRectMake(0, 0, 800, 600));
+        // No subframe, so exactly one process is a candidate for the cache and the pid below is
+        // unambiguous.
+        [siteIsolatedView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://a.com/plain"]]];
+        [siteIsolatedDelegate waitForDidFinishNavigation];
+        siteIsolatedPID = [siteIsolatedView _webProcessIdentifier];
+        EXPECT_NE(0, siteIsolatedPID);
+        [siteIsolatedView _close];
+    }
+
+    // Waiting for the process to land in the cache, as in ProcessSwap.UseWebProcessCacheForLoadInNewView.
+    EXPECT_TRUE(Util::waitFor([&] {
+        return [processPool _processCacheSize] == 1;
+    }));
+
+    auto [webView, navigationDelegate] = viewAndDelegate(makeConfiguration(), CGRectMake(0, 0, 800, 600));
+    RetainPtr alertRecorder = adoptNS([BoundedAlertRecorder new]);
+    webView.get().UIDelegate = alertRecorder.get();
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://a.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    // If the cached process was not actually reused there is no stale hosted cookie domain set to
+    // widen, and the cookie assertion below would pass while covering nothing. Fail loudly instead.
+    EXPECT_EQ(siteIsolatedPID, [webView _webProcessIdentifier]);
+
+    EXPECT_WK_STREQ("k=v", [alertRecorder waitForAlert]);
+}
+
+#endif // !PLATFORM(IOS_FAMILY)
+
+// Control for the comparison being registrable-domain based rather than origin-exact. Note this one reads
+// through WebCookieCache, not CookiesForDOM: isEligibleForCache() is true because both registrable domains
+// are a.com, so it is also the only coverage of DomCookiesForHost being allowed rather than denied. sub.a.com is a
+// different origin from a.com but the same site, so with site isolation on it stays in the a.com
+// process, whose hosted cookie domain set is exactly {a.com}. Host naming as in SubdomainIsSameSite.
+TEST(SiteIsolation, SameSiteSubdomainIframeCookies)
+{
+    HTTPServer server(cookieIPCResponses("https://sub.a.com/subframe"_s, writeAndReadCookieInSubframeScript), HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(cookieIPCConfiguration(server), CGRectMake(0, 0, 800, 600));
+    RetainPtr alertRecorder = adoptNS([BoundedAlertRecorder new]);
+    webView.get().UIDelegate = alertRecorder.get();
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://a.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    EXPECT_WK_STREQ("k=v", [alertRecorder waitForAlert]);
+
+    // Same site, so site isolation keeps both documents in one process; the subframe's cookie url is
+    // https://sub.a.com/, whose registrable domain is the a.com already in that process's set.
+    EXPECT_EQ([webView _webProcessIdentifier], [webView firstChildFrame]._processIdentifier);
+}
+
+// CookiesForDOMAsync and SetCookieFromDOMAsync have no coverage anywhere today. Same page shape as
+// ThirdPartyIframeCookiesWithoutSiteIsolation, driven through the Cookie Store API instead of
+// document.cookie. Site isolation is on so that the subframe process's hosted cookie domain set is a
+// definite {b.com} and the url check on these two messages actually evaluates.
+TEST(SiteIsolation, CookieStoreInThirdPartyIframe)
+{
+    // sameSite: 'none' because CookieInit defaults sameSite to "strict", and a Strict cookie is not
+    // returned to a third-party context: the read would come back empty for a reason that has
+    // nothing to do with the check under test. CookieStore::set() always sets Secure, and these
+    // documents are https, so no Secure handling is needed here.
+    static constexpr auto cookieStoreScript =
+        "(async () => {"
+        "    try {"
+        "        await cookieStore.set({ name: 'k', value: 'v', sameSite: 'none' });"
+        "        const cookie = await cookieStore.get('k');"
+        "        parent.postMessage(cookie ? cookie.name + '=' + cookie.value : 'no cookie', '*');"
+        "    } catch (error) {"
+        "        parent.postMessage('threw: ' + error, '*');"
+        "    }"
+        "})();"_s;
+
+    HTTPServer server(cookieIPCResponses("https://b.com/subframe"_s, cookieStoreScript), HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr configuration = cookieIPCConfiguration(server);
+    // CookiesForDOMAsync and SetCookieFromDOMAsync are [EnabledBy=CookieStoreAPIEnabled]. That
+    // preference's WebKit default is already on wherever ENABLE(COOKIE_STORE_API_BY_DEFAULT) is, but
+    // enable it explicitly so this test does not silently stop exercising those messages if the
+    // default changes. Nothing else in this file enables it.
+    enableFeature(configuration.get(), @"CookieStoreAPIEnabled");
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(configuration, CGRectMake(0, 0, 800, 600));
+    RetainPtr alertRecorder = adoptNS([BoundedAlertRecorder new]);
+    webView.get().UIDelegate = alertRecorder.get();
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://a.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    EXPECT_WK_STREQ("k=v", [alertRecorder waitForAlert]);
+    EXPECT_NE([webView _webProcessIdentifier], [webView firstChildFrame]._processIdentifier);
+}
+
+#if HAVE(COOKIE_CHANGE_LISTENER_API)
+
+// SubscribeToCookieChangeNotifications has no return value to be empty, so its denial is the most invisible
+// of the set: addChangeListenerWithAccess() just drops the listener and the iframe silently stops receiving
+// change events. Site isolation is on so the subframe process's set is a definite {b.com} and the url check
+// really evaluates; the url named is the subframe's own document url, which must be allowed.
+TEST(SiteIsolation, CookieChangeListenerInThirdPartyIframe)
+{
+    // addEventListener() sends the subscription but is not awaitable, so the write is ordered after it by
+    // awaiting cookieStore.get(), which cannot complete before the subscription sent ahead of it on the same
+    // connection is handled. sameSite 'none' as in CookieStoreInThirdPartyIframe. A denied subscription means
+    // no event ever arrives, which BoundedAlertRecorder turns into a failure rather than a hang.
+    static constexpr auto cookieChangeScript =
+        "(async () => {"
+        "    try {"
+        "        cookieStore.addEventListener('change', (event) => {"
+        "            const changed = event.changed.map((cookie) => cookie.name + '=' + cookie.value);"
+        "            parent.postMessage('changed: ' + changed.join(','), '*');"
+        "        });"
+        "        await cookieStore.get('nothing');"
+        "        await cookieStore.set({ name: 'k', value: 'v', sameSite: 'none' });"
+        "    } catch (error) {"
+        "        parent.postMessage('threw: ' + error, '*');"
+        "    }"
+        "})();"_s;
+
+    HTTPServer server(cookieIPCResponses("https://b.com/subframe"_s, cookieChangeScript), HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr configuration = cookieIPCConfiguration(server);
+    enableFeature(configuration.get(), @"CookieStoreAPIEnabled");
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(configuration, CGRectMake(0, 0, 800, 600));
+    RetainPtr alertRecorder = adoptNS([BoundedAlertRecorder new]);
+    webView.get().UIDelegate = alertRecorder.get();
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://a.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    // Asserting the cookie's value and not merely that an event arrived: an event carrying the wrong
+    // cookie would mean the subscription was registered for the wrong host.
+    EXPECT_WK_STREQ("changed: k=v", [alertRecorder waitForAlert]);
+
+    // As in ThirdPartyIframeCookiesWithSiteIsolation: if isolation silently stopped applying, the
+    // subframe would share the main frame's process and its set would contain a.com for an unrelated
+    // reason, so this test would keep passing while covering nothing.
+    EXPECT_NE([webView _webProcessIdentifier], [webView firstChildFrame]._processIdentifier);
+}
+
+#endif // HAVE(COOKIE_CHANGE_LISTENER_API)
+
+static RetainPtr<NSArray<NSHTTPCookie *>> cookiesInStore(WKWebsiteDataStore *dataStore)
+{
+    __block RetainPtr<NSArray<NSHTTPCookie *>> result;
+    __block bool done = false;
+    [dataStore.httpCookieStore getAllCookies:^(NSArray<NSHTTPCookie *> *cookies) {
+        result = cookies;
+        done = true;
+    }];
+    Util::run(&done);
+    return result;
+}
+
+// Returns the empty string when absent, so a missing cookie produces a readable EXPECT_WK_STREQ diff
+// rather than a nil comparison.
+static NSString *cookieValueInStore(WKWebsiteDataStore *dataStore, NSString *name)
+{
+    for (NSHTTPCookie *cookie in cookiesInStore(dataStore).get()) {
+        if ([cookie.name isEqualToString:name])
+            return cookie.value;
+    }
+    return @"";
+}
+
+TEST(SiteIsolation, InspectorSetCookieDoesNotTerminateWebProcess)
+{
+    // InspectorPageAgent::setCookie() calls CookieJar::setRawCookie() once per frame with the same cookie, so a
+    // cross-site frame legitimately sends fields that do not match its own document. Rejecting that must not
+    // kill the web process, or using Web Inspector terminates the page. Driven through internals.setCookie(),
+    // the same entry point, because a connected frontend would make allowsUnhostedCookieDomains() true and mask
+    // the check. Site isolation is off so the subframe is a LocalFrame here, as the real fan-out requires.
+    HTTPServer server(mainAndSubframeResponses(), HTTPServer::Protocol::HttpsProxy);
+
+    WKWebViewConfiguration *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
+    RetainPtr storeConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initNonPersistentConfiguration]);
+    [storeConfiguration setHTTPSProxy:[NSURL URLWithString:[NSString stringWithFormat:@"https://127.0.0.1:%d/", server.port()]]];
+    RetainPtr dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:storeConfiguration.get()]);
+    [configuration setWebsiteDataStore:dataStore.get()];
+    disableTrackingPrevention(configuration);
+
+    auto [webView, navigationDelegate] = viewAndDelegate(configuration, CGRectMake(0, 0, 800, 600));
+    RetainPtr childFrame = loadAndWaitForCrossSiteChildFrame(webView.get(), navigationDelegate.get(), @"https://a.com/mainframe", @"b.com");
+
+    auto pidBefore = [webView _webProcessIdentifier];
+    EXPECT_EQ(pidBefore, childFrame.get()._processIdentifier);
+
+    // domain a.com for both calls, exactly as the inspector's single cookie object would be. The two calls
+    // deliberately write different values: with one shared value the store would hold it whether the
+    // subframe's write was rejected or accepted, so the read at the end could not tell those apart.
+    NSString *setCookieFromMainFrame = @"internals.setCookie({ name: 'inspector', value: 'fromMainFrame', domain: 'a.com', path: '/' })";
+    NSString *setCookieFromSubframe = @"internals.setCookie({ name: 'inspector', value: 'fromSubframe', domain: 'a.com', path: '/' })";
+
+    // The main frame's document url is https://a.com/mainframe, so this one is well formed and must
+    // reach the cookie store.
+    [webView objectByEvaluatingJavaScript:setCookieFromMainFrame];
+
+    // The subframe's document url is https://b.com/subframe, so cookie.domain does not match it and
+    // the page's first party is a.com, not b.com. Rejected, but the process must survive.
+    [webView objectByEvaluatingJavaScript:setCookieFromSubframe inFrame:childFrame.get()];
+
+    // SetRawCookie is an async send with no reply, so let it and any resulting termination drain
+    // before checking that the process is still alive.
+    Util::runFor(0.5_s);
+    EXPECT_TRUE(processStillRunning(pidBefore));
+    EXPECT_EQ(pidBefore, [webView _webProcessIdentifier]);
+
+    // Read through WKHTTPCookieStore, because setRawCookie() does not invalidate WebCookieCache and a
+    // document.cookie read could miss it. The main frame's value is both halves of the assertion: its write
+    // landed, and the subframe's did not overwrite it.
+    EXPECT_WK_STREQ("fromMainFrame", cookieValueInStore(dataStore.get(), @"inspector"));
+}
+
+#if PLATFORM(IOS_FAMILY)
+
+static void setCookieInStore(WKWebsiteDataStore *dataStore, NSString *domain, NSString *name, NSString *value)
+{
+    RetainPtr cookie = [NSHTTPCookie cookieWithProperties:@{
+        NSHTTPCookiePath: @"/",
+        NSHTTPCookieName: name,
+        NSHTTPCookieValue: value,
+        NSHTTPCookieDomain: domain,
+    }];
+    __block bool done = false;
+    [dataStore.httpCookieStore setCookie:cookie.get() completionHandler:^{
+        done = true;
+    }];
+    Util::run(&done);
+}
+
+// createAVAssetForURL() on iOS creates the AVURLAsset inside the GetRawCookies reply handler, so that message
+// is on the media load's critical path and both tests assert the load. Both are vacuous when
+// PAL::canLoad_AVFoundation_AVURLAssetHTTPCookiesKey() is false, because createAVAssetForURL() then returns
+// before asking for cookies. Video plumbing follows MediaLoading.mm's runVideoTest().
+static void runMediaResourceCookieTest(ASCIILiteral videoURL, NSString *cookieDomain)
+{
+    RetainPtr videoData = [NSData dataWithContentsOfFile:[NSBundle.test_resourcesBundle pathForResource:@"video-with-audio" ofType:@"mp4"] options:0 error:NULL];
+    EXPECT_NOT_NULL(videoData.get());
+
+    HTTPServer::ResponseMap responses;
+    responses.add("/mainframe"_s, HTTPResponse({ { "Content-Type"_s, "text/html"_s } }, makeString(
+        "<!DOCTYPE html><script>"
+        "function createVideoElement() {"
+        "    let video = document.createElement('video');"
+        "    video.addEventListener('error', () => { alert('error'); });"
+        "    video.addEventListener('loadeddata', () => { alert('loadeddata'); });"
+        "    video.src = '"_s, videoURL, "';"
+        "    video.autoplay = 1;"
+        "    video.playsInline = true;"
+        "    document.body.appendChild(video);"
+        "}"
+        "</script><body onload='createVideoElement()'></body>"_s)));
+    responses.add("/video-with-audio.mp4"_s, HTTPResponse(videoData.get()));
+    HTTPServer server(WTF::move(responses), HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr configuration = cookieIPCConfiguration(server);
+    configuration.get().mediaTypesRequiringUserActionForPlayback = WKAudiovisualMediaTypeNone;
+
+    // Site isolation on so that the page's process has a definite hosted cookie domain set of
+    // {a.com}; with it off the set is "unknown" and the media url would never be compared at all.
+    setCookieInStore([configuration websiteDataStore], cookieDomain, @"media", @"1");
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(configuration, CGRectMake(0, 0, 800, 600));
+    RetainPtr alertRecorder = adoptNS([BoundedAlertRecorder new]);
+    webView.get().UIDelegate = alertRecorder.get();
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://a.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    EXPECT_WK_STREQ("loadeddata", [alertRecorder waitForAlert]);
+}
+
+TEST(SiteIsolation, GetRawCookiesForSameSiteMediaResource)
+{
+    // The media url's registrable domain is one the page's process hosts a document for, so nothing
+    // about the reply is withheld and the load must behave exactly as it always has.
+    runMediaResourceCookieTest("https://a.com/video-with-audio.mp4"_s, @"a.com");
+}
+
+TEST(SiteIsolation, GetRawCookiesForCrossOriginMediaResource)
+{
+    // A different registrable domain from the page, which the process does not host. No assertion that the
+    // cookie reaches AVFoundation: withholding it is the intended behaviour change. This is not a regression
+    // test for the url check either - CookieJar's sameSiteInfo is isSameSite for the page's own document, so
+    // the pre-existing shouldTreatAsSameSite() guard already denied this. It guards that a denial still
+    // replies, so the load completes.
+    runMediaResourceCookieTest("https://b.com/video-with-audio.mp4"_s, @"b.com");
+}
+
+#endif // PLATFORM(IOS_FAMILY)
 
 }

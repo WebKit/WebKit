@@ -78,7 +78,6 @@
 #include <WebCore/CacheValidation.h>
 #include <WebCore/ClientOrigin.h>
 #include <WebCore/Cookie.h>
-#include <WebCore/CookieJar.h>
 #include <WebCore/CookieStoreGetOptions.h>
 #include <WebCore/DeprecatedGlobalSettings.h>
 #include <WebCore/DocumentStorageAccess.h>
@@ -858,13 +857,25 @@ static bool shouldTreatAsSameSite(const URL& firstParty, const URL& url)
 #endif
 }
 
-auto NetworkConnectionToWebProcess::validateCookieAccess(ASCIILiteral messageName, const URL& firstParty, const URL& url, const SameSiteInfo* sameSiteInfo) -> CookieAccess
+auto NetworkConnectionToWebProcess::validateCookieAccess(ASCIILiteral messageName, const URL& firstParty, const URL& url, const SameSiteInfo* sameSiteInfo, CookieURLPolicy policy) -> CookieAccess
 {
-    auto allowCookieAccess = m_networkProcess->allowsFirstPartyForCookies(m_webProcessIdentifier, firstParty);
-    if (allowCookieAccess == NetworkProcess::AllowCookieAccess::Terminate)
+    // No default: adding a state to AllowCookieAccess must fail to compile here rather than degrade to Disallow.
+    switch (m_networkProcess->allowsFirstPartyForCookies(m_webProcessIdentifier, firstParty)) {
+    case NetworkProcess::AllowCookieAccess::Terminate:
         return CookieAccess::Terminate;
-    if (allowCookieAccess != NetworkProcess::AllowCookieAccess::Allow)
+    case NetworkProcess::AllowCookieAccess::Disallow:
         return CookieAccess::Disallow;
+    case NetworkProcess::AllowCookieAccess::Allow:
+        break;
+    }
+
+    if (policy != CookieURLPolicy::AnySite && !m_networkProcess->allowsCookieDomainForProcess(m_webProcessIdentifier, RegistrableDomain { url })) {
+        // Web Inspector names URLs its process does not host, so the UI process exempts it while a frontend is connected.
+        if (policy == CookieURLPolicy::HostedSitesOnly || !m_networkProcess->allowsUnhostedCookieDomainsForProcess(m_webProcessIdentifier)) {
+            CONNECTION_RELEASE_LOG_ERROR(IPC, "%" PUBLIC_LOG_STRING ": Rejecting cookie access for a site this process does not host a document for", messageName.characters());
+            return CookieAccess::Disallow;
+        }
+    }
 
     if (sameSiteInfo && sameSiteInfo->isSameSite && !shouldTreatAsSameSite(firstParty, url)) {
         CONNECTION_RELEASE_LOG_ERROR(IPC, "%" PUBLIC_LOG_STRING ": Rejecting cookie access due to invalid sameSiteInfo", messageName.characters());
@@ -939,7 +950,8 @@ void NetworkConnectionToWebProcess::cookiesEnabled(const URL& firstParty, const 
 // The only caller never passed frame, page or web page proxy identifiers, so relaxed third-party cookie blocking never applied here.
 void NetworkConnectionToWebProcess::cookieRequestHeaderFieldValueDigest(const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, IncludeSecureCookies includeSecureCookies, CompletionHandler<void(std::optional<SHA1::Digest>)>&& completionHandler)
 {
-    auto access = validateCookieAccess("cookieRequestHeaderFieldValueDigest"_s, firstParty, url, &sameSiteInfo);
+    // url is unchecked: a revalidated subresource is routinely cross-origin, and the reply is only a digest.
+    auto access = validateCookieAccess("cookieRequestHeaderFieldValueDigest"_s, firstParty, url, &sameSiteInfo, CookieURLPolicy::AnySite);
     MESSAGE_CHECK_COMPLETION(access != CookieAccess::Terminate, completionHandler(std::nullopt));
     if (access != CookieAccess::Allow)
         return completionHandler(std::nullopt);
@@ -953,7 +965,10 @@ void NetworkConnectionToWebProcess::cookieRequestHeaderFieldValueDigest(const UR
 
 void NetworkConnectionToWebProcess::getRawCookies(const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, std::optional<FrameIdentifier> frameID, std::optional<PageIdentifier> pageID, std::optional<WebPageProxyIdentifier> webPageProxyID, CompletionHandler<void(Vector<WebCore::Cookie>&&)>&& completionHandler)
 {
-    auto access = validateCookieAccess("getRawCookies"_s, firstParty, url, &sameSiteInfo);
+    // The reply includes HttpOnly values, so url is checked unless the page is being inspected. Cross-site
+    // media on iOS is not affected: the sameSiteInfo CookieJar builds from the document is isSameSite, so the
+    // shouldTreatAsSameSite() check below already denied a media url on another registrable domain.
+    auto access = validateCookieAccess("getRawCookies"_s, firstParty, url, &sameSiteInfo, CookieURLPolicy::HostedSitesUnlessDebugging);
     MESSAGE_CHECK_COMPLETION(access != CookieAccess::Terminate, completionHandler({ }));
     if (access != CookieAccess::Allow)
         return completionHandler({ });
@@ -970,10 +985,16 @@ void NetworkConnectionToWebProcess::setRawCookie(const URL& firstParty, const UR
 {
     auto access = validateCookieAccess("setRawCookie"_s, firstParty, url, nullptr);
     MESSAGE_CHECK(access != CookieAccess::Terminate);
-    MESSAGE_CHECK(RegistrableDomain::uncheckedCreateFromHost(cookie.domain).matches(firstParty));
-    MESSAGE_CHECK(RegistrableDomain(url).matches(firstParty));
     if (access != CookieAccess::Allow)
         return;
+
+    // Not MESSAGE_CHECKs: Page.setCookie fans out over every frame, so a cross-site frame legitimately sends
+    // values that do not match. They confine a raw write to the document's own site.
+    if (!RegistrableDomain::uncheckedCreateFromHost(cookie.domain).matches(url)
+        || !RegistrableDomain(url).matches(firstParty)) {
+        CONNECTION_RELEASE_LOG_ERROR(IPC, "setRawCookie: Rejecting a cookie that does not belong to the document's site");
+        return;
+    }
 
     CheckedPtr networkStorageSession = storageSession();
     if (!networkStorageSession)
@@ -993,7 +1014,7 @@ void NetworkConnectionToWebProcess::deleteCookie(const URL& firstParty, const UR
     MESSAGE_CHECK_COMPLETION(!firstParty.isEmpty() && firstParty.isValid(), completionHandler());
     MESSAGE_CHECK_COMPLETION(!url.isEmpty() && url.isValid(), completionHandler());
     MESSAGE_CHECK_COMPLETION(!cookieName.isEmpty(), completionHandler());
-    auto access = validateCookieAccess("deleteCookie"_s, firstParty, url, nullptr);
+    auto access = validateCookieAccess("deleteCookie"_s, firstParty, url, nullptr, CookieURLPolicy::HostedSitesUnlessDebugging);
     MESSAGE_CHECK_COMPLETION(access != CookieAccess::Terminate, completionHandler());
     if (access != CookieAccess::Allow)
         return completionHandler();
@@ -1045,20 +1066,34 @@ void NetworkConnectionToWebProcess::setCookieFromDOMAsync(const URL& firstParty,
     completionHandler(result);
 }
 
-void NetworkConnectionToWebProcess::domCookiesForHost(const URL& url, CompletionHandler<void(const Vector<WebCore::Cookie>&)>&& completionHandler)
+void NetworkConnectionToWebProcess::domCookiesForHost(const URL& firstParty, const URL& url, CompletionHandler<void(std::optional<Vector<WebCore::Cookie>>&&)>&& completionHandler)
 {
-    auto host = url.host().toString();
-    MESSAGE_CHECK_COMPLETION(HashSet<String>::isValidValue(url.host().toString()), completionHandler({ }));
+    // std::nullopt is a denial, which must not be cached. An empty vector means the host has no cookies.
+    MESSAGE_CHECK_COMPLETION(HashSet<String>::isValidValue(url.host().toString()), completionHandler(std::nullopt));
+    // Both arguments are url, which is document.cookieURL() and so a value this process is entitled to.
+    // firstParty arrives unvalidated and is used only for the filter below.
     auto access = validateCookieAccess("domCookiesForHost"_s, url, url, nullptr);
-    MESSAGE_CHECK_COMPLETION(access != CookieAccess::Terminate, completionHandler({ }));
+    MESSAGE_CHECK_COMPLETION(access != CookieAccess::Terminate, completionHandler(std::nullopt));
     if (access != CookieAccess::Allow)
-        return completionHandler({ });
+        return completionHandler(std::nullopt);
 
     CheckedPtr networkStorageSession = storageSession();
     if (!networkStorageSession)
-        return completionHandler({ });
+        return completionHandler(std::nullopt);
 
-    completionHandler(networkStorageSession->domCookiesForHost(url));
+    // This goes straight to the cookie store, so the filtering cookiesForDOM() applies has to be applied here.
+    // Not shouldBlockCookies(), which is true only for ThirdPartyCookieBlockingDecision::All.
+    // std::nullopt rather than an empty vector: a Storage Access grant can lift this at runtime, so the
+    // answer must not be cached.
+    if (networkStorageSession->thirdPartyCookieBlockingDecisionForRequest(firstParty, url, std::nullopt, std::nullopt, WebCore::ShouldRelaxThirdPartyCookieBlocking::No, NetworkSession::isResourceFromKnownCrossSiteTracker(firstParty, url)) != WebCore::ThirdPartyCookieBlockingDecision::None)
+        return completionHandler(std::nullopt);
+
+    // WebCookieCache seeds its session from this reply before discarding HttpOnly cookies, so never send them.
+    auto cookies = networkStorageSession->domCookiesForHost(url);
+    cookies.removeAllMatching([](auto& cookie) {
+        return cookie.httpOnly;
+    });
+    completionHandler(WTF::move(cookies));
 }
 
 #if HAVE(COOKIE_CHANGE_LISTENER_API)

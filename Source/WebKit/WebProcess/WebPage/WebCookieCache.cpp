@@ -75,11 +75,15 @@ String WebCookieCache::cookiesForDOM(const URL& firstParty, const SameSiteInfo& 
         if (!hasCacheForHost)
             protect(WebProcess::singleton().cookieJar())->addChangeListenerWithAccess(url, firstParty, frameID, pageID, webPageProxyID, *this);
 #endif
-        auto sendResult = WebProcess::singleton().ensureNetworkProcessConnection().connection().sendSync(Messages::NetworkConnectionToWebProcess::DomCookiesForHost(url), 0);
+        auto sendResult = WebProcess::singleton().ensureNetworkProcessConnection().connection().sendSync(Messages::NetworkConnectionToWebProcess::DomCookiesForHost(firstParty, url), 0);
         if (!sendResult.succeeded())
             return { };
 
-        auto& [cookies] = sendResult.reply();
+        auto& [optionalCookies] = sendResult.reply();
+        // A denied request must not seed the cache, or every later read is served from an empty session.
+        if (!optionalCookies)
+            return { };
+        auto& cookies = *optionalCookies;
 
         if (hasCacheForHost)
             return cookiesToString(cookies);

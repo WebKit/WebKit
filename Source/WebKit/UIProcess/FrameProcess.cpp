@@ -44,6 +44,7 @@ FrameProcess::FrameProcess(WebProcessProxy& process, BrowsingContextGroup& group
     , m_isArchiveProcess(loadedWebArchive == LoadedWebArchive::Yes)
 {
     m_process->incrementFrameProcessCount();
+    m_process->didStartHostingSiteForCookies(site, preferences.siteIsolationEnabled(), m_isArchiveProcess);
     if (!preferences.siteIsolationEnabled()) {
         m_browsingContextGroup = nullptr;
         return;

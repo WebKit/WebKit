@@ -230,6 +230,8 @@ void NetworkProcess::removeNetworkConnectionToWebProcess(NetworkConnectionToWebP
     ASSERT(m_webProcessConnections.contains(connection.webProcessIdentifier()));
     m_webProcessConnections.remove(connection.webProcessIdentifier());
     m_allowedFirstPartiesForCookies.remove(connection.webProcessIdentifier());
+    m_allowedCookieDomainsForProcess.remove(connection.webProcessIdentifier());
+    m_processesAllowedUnhostedCookieDomains.remove(connection.webProcessIdentifier());
     auto completionHandlers = m_webProcessConnectionCloseHandlers.take(connection.webProcessIdentifier());
     for (auto& completionHandler : completionHandlers)
         completionHandler();
@@ -414,6 +416,10 @@ void NetworkProcess::createNetworkConnectionToWebProcess(ProcessIdentifier ident
     for (auto& domain : parameters.allowedFirstPartiesForCookies)
         currentDomains.add(domain);
 
+    // Before parameters is moved from below. A moved-from std::optional stays engaged with an emptied set,
+    // which this design reads as "may name nothing" rather than "any site", so a later read would deny.
+    setCookieDomainAuthorizationForProcess(identifier, WTF::move(parameters.allowedCookieDomains), parameters.allowsUnhostedCookieDomains, [] { });
+
     auto newConnection = NetworkConnectionToWebProcess::create(*this, identifier, sessionID, WTF::move(parameters), WTF::move(connectionIdentifiers->server));
     Ref connection = newConnection;
 
@@ -502,6 +508,43 @@ void NetworkProcess::addAllowedFirstPartyForCookies(WebCore::ProcessIdentifier p
         updateConnectionAllowedSitesForStorage(currentDomains);
 
     completionHandler();
+}
+
+void NetworkProcess::setCookieDomainAuthorizationForProcess(WebCore::ProcessIdentifier processIdentifier, std::optional<HashSet<WebCore::RegistrableDomain>>&& allowedDomains, bool allowsUnhostedDomains, CompletionHandler<void()>&& completionHandler)
+{
+    m_allowedCookieDomainsForProcess.set(processIdentifier, WTF::move(allowedDomains));
+    if (allowsUnhostedDomains)
+        m_processesAllowedUnhostedCookieDomains.add(processIdentifier);
+    else
+        m_processesAllowedUnhostedCookieDomains.remove(processIdentifier);
+    completionHandler();
+}
+
+bool NetworkProcess::allowsUnhostedCookieDomainsForProcess(WebCore::ProcessIdentifier processIdentifier) const
+{
+    return m_processesAllowedUnhostedCookieDomains.contains(processIdentifier);
+}
+
+bool NetworkProcess::allowsCookieDomainForProcess(WebCore::ProcessIdentifier processIdentifier, const RegistrableDomain& domain) const
+{
+    // A process that has loaded a web archive may name any first party, so it may also name any site.
+    auto firstPartyIterator = m_allowedFirstPartiesForCookies.find(processIdentifier);
+    if (firstPartyIterator != m_allowedFirstPartiesForCookies.end() && firstPartyIterator->value.first == LoadedWebArchive::Yes)
+        return true;
+
+    // No registrable domain to judge, and such documents are cookie-averse. RegistrableDomain maps an empty
+    // host to a sentinel string, so test isEmpty() rather than HashSet::isValidValue().
+    if (domain.isEmpty())
+        return true;
+
+    auto iterator = m_allowedCookieDomainsForProcess.find(processIdentifier);
+    if (iterator == m_allowedCookieDomainsForProcess.end())
+        return true;
+
+    if (!iterator->value)
+        return true; // Any site.
+
+    return iterator->value->contains(domain);
 }
 
 auto NetworkProcess::allowsFirstPartyForCookies(WebCore::ProcessIdentifier processIdentifier, const URL& firstParty) -> AllowCookieAccess
