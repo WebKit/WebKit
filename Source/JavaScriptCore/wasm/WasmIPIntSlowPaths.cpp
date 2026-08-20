@@ -1224,10 +1224,13 @@ static ALWAYS_INLINE UGPRPair prepareCallIndirectImpl(JSWebAssemblyInstance* ins
             callProfile.observeCallIndirect(boxedCallee);
     }
 
-    IPINT_HANDLE_STEP_INTO_CALL(instance->vm(), function->boxedCallee, function->targetInstance.get());
+    JSWebAssemblyInstance* targetInstance = function->targetInstance.get();
+    if (!targetInstance)
+        targetInstance = instance;
+    IPINT_HANDLE_STEP_INTO_CALL(instance->vm(), function->boxedCallee, targetInstance);
 
     auto callTarget = *function->entrypointLoadLocation;
-    WASM_CALL_RETURN(function->targetInstance.get(), callTarget);
+    WASM_CALL_RETURN(targetInstance, callTarget);
 }
 
 static ALWAYS_INLINE UGPRPair prepareCallRefImpl(JSWebAssemblyInstance* instance, CallFrame* callFrame, uint32_t callProfileIndex, IPIntStackEntry* sp)
@@ -1248,6 +1251,8 @@ static ALWAYS_INLINE UGPRPair prepareCallRefImpl(JSWebAssemblyInstance* instance
     auto* wasmFunction = uncheckedDowncast<WebAssemblyFunctionBase>(referenceAsObject);
     auto& function = wasmFunction->importableFunction();
     JSWebAssemblyInstance* calleeInstance = wasmFunction->instance();
+    if (!calleeInstance)
+        calleeInstance = instance;
     auto boxedCallee = function.boxedCallee.encodedBits();
     sp->ref = boxedCallee;
     Register& functionInfoSlot = std::bit_cast<Register*>(sp)[1];

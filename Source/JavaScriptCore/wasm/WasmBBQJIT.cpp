@@ -62,6 +62,7 @@
 #include "WasmOps.h"
 #include "WasmThunks.h"
 #include "WasmTypeDefinition.h"
+#include "WebAssemblyFunctionBase.h"
 #include <bit>
 #include <cmath>
 #include <wtf/Assertions.h>
@@ -4674,6 +4675,12 @@ void BBQJIT::emitIndirectCall(const char* opcode, unsigned callProfileIndex, con
     JumpList afterCall;
     m_jit.loadPtr(CCallHelpers::Address(importableFunction, WasmToWasmImportableFunction::offsetOfBoxedCallee()), wasmScratchGPR);
     m_jit.storeWasmCalleeToCalleeCallFrame(wasmScratchGPR);
+    m_jit.loadPtr(CCallHelpers::Address(importableFunction, WasmToWasmImportableFunction::offsetOfTargetInstance()), m_jit.scratchRegister());
+    Jump hasTargetInstance = m_jit.branchTestPtr(ResultCondition::NonZero, m_jit.scratchRegister());
+    m_jit.loadPtr(CCallHelpers::Address(importableFunction, WebAssemblyFunctionBase::offsetOfCallLinkInfoFromImportableFunction()), m_jit.scratchRegister());
+    m_jit.storePtr(m_jit.scratchRegister(), CCallHelpers::calleeFrameCodeBlockBeforeCall());
+    Jump afterContextSwitch = m_jit.jump();
+    hasTargetInstance.link(&m_jit);
     if (m_profile->isMegamorphic(callProfileIndex)) {
         m_jit.loadPtr(CCallHelpers::Address(importableFunction, WasmToWasmImportableFunction::offsetOfTargetInstance()), wasmScratchGPR);
         // Do a context switch if needed.
@@ -4708,6 +4715,7 @@ void BBQJIT::emitIndirectCall(const char* opcode, unsigned callProfileIndex, con
         m_jit.storePtr(wasmScratchGPR, CCallHelpers::Address(GPRInfo::jitDataRegister, safeCast<int32_t>(BaselineData::offsetOfData() + sizeof(CallProfile) * callProfileIndex + CallProfile::offsetOfBoxedCallee())));
         profilingDone.link(m_jit);
     }
+    afterContextSwitch.link(&m_jit);
 
     m_jit.loadPtr(CCallHelpers::Address(importableFunction, WasmToWasmImportableFunction::offsetOfEntrypointLoadLocation()), wasmScratchGPR);
     m_jit.call(CCallHelpers::Address(wasmScratchGPR), WasmEntryPtrTag);
@@ -4759,11 +4767,13 @@ void BBQJIT::emitIndirectTailCall(const char* opcode, const Value& callee, GPRRe
         Checked<int32_t> topSourceOffsetFromFP = static_cast<int32_t>(roundUpToMultipleOf<stackAlignmentBytes()>(topSource));
 
         m_jit.loadPtr(CCallHelpers::Address(importableFunction, WasmToWasmImportableFunction::offsetOfTargetInstance()), wasmScratchGPR);
+        Jump isConstructedJSFunction = m_jit.branchTestPtr(ResultCondition::Zero, wasmScratchGPR);
         Jump isSameInstance = m_jit.branchPtr(RelationalCondition::Equal, wasmScratchGPR, GPRInfo::wasmContextInstancePointer);
         emitRestoreInstanceFrameIfNeeded(m_jit, GPRInfo::wasmContextInstancePointer, callerStackSize, m_frameSize, topSourceOffsetFromFP, wasmScratchGPR, wasmBaseMemoryPointer);
         m_jit.loadPtr(CCallHelpers::Address(importableFunction, WasmToWasmImportableFunction::offsetOfTargetInstance()), GPRInfo::wasmContextInstancePointer);
         loadWebAssemblyGlobalState(wasmBaseMemoryPointer, wasmBoundsCheckingSizeRegister);
         isSameInstance.link(m_jit);
+        isConstructedJSFunction.link(&m_jit);
     }
 
     m_jit.loadPtr(CCallHelpers::Address(importableFunction, WasmToWasmImportableFunction::offsetOfBoxedCallee()), wasmScratchGPR);
@@ -4850,6 +4860,12 @@ void BBQJIT::emitIndirectTailCall(const char* opcode, const Value& callee, GPRRe
 #else
     UNREACHABLE_FOR_PLATFORM();
 #endif
+
+    m_jit.loadPtr(CCallHelpers::Address(importableFunction, WasmToWasmImportableFunction::offsetOfTargetInstance()), wasmScratchGPR);
+    Jump hasTargetInstance = m_jit.branchTestPtr(ResultCondition::NonZero, wasmScratchGPR);
+    m_jit.loadPtr(CCallHelpers::Address(importableFunction, WebAssemblyFunctionBase::offsetOfCallLinkInfoFromImportableFunction()), wasmScratchGPR);
+    m_jit.storePtr(wasmScratchGPR, CCallHelpers::calleeFrameCodeBlockBeforeTailCall());
+    hasTargetInstance.link(&m_jit);
 
     m_jit.loadPtr(CCallHelpers::Address(importableFunction, WasmToWasmImportableFunction::offsetOfEntrypointLoadLocation()), importableFunction);
     m_jit.farJump(CCallHelpers::Address(importableFunction), WasmEntryPtrTag);
@@ -4960,6 +4976,19 @@ void BBQJIT::emitIndirectTailCall(const char* opcode, const Value& callee, GPRRe
 
                 indexEqual.link(&m_jit);
             }
+
+            m_jit.loadPtr(CCallHelpers::Address(importableFunction, WasmToWasmImportableFunction::offsetOfTargetInstance()), wasmScratchGPR);
+            Jump hasTargetInstance = m_jit.branchTestPtr(ResultCondition::NonZero, wasmScratchGPR);
+            m_jit.loadPtr(Address(GPRInfo::wasmContextInstancePointer, JSWebAssemblyInstance::offsetOfTable(m_info, tableIndex)), wasmScratchGPR);
+            m_jit.loadPtr(Address(wasmScratchGPR, FuncRefTable::offsetOfWrappers()), wasmScratchGPR);
+            GPRReg wrapperIndex = scratches.gpr(1);
+            m_jit.move(importableFunction, wrapperIndex);
+            m_jit.subPtr(callableFunctionBuffer, wrapperIndex);
+            static_assert(hasOneBitSet(sizeof(FuncRefTable::Function)));
+            m_jit.urshiftPtr(TrustedImm32(getLSBSet(sizeof(FuncRefTable::Function))), wrapperIndex);
+            m_jit.loadPtr(BaseIndex(wasmScratchGPR, wrapperIndex, CCallHelpers::ScalePtr), wasmScratchGPR);
+            m_jit.addPtr(TrustedImm32(WebAssemblyFunctionBase::offsetOfImportableFunction()), wasmScratchGPR, importableFunction);
+            hasTargetInstance.link(&m_jit);
         }
     }
 
