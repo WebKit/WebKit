@@ -70,6 +70,11 @@ CoordinatedPlatformLayerBufferRGB::CoordinatedPlatformLayerBufferRGB(unsigned te
 
 CoordinatedPlatformLayerBufferRGB::~CoordinatedPlatformLayerBufferRGB() = default;
 
+unsigned CoordinatedPlatformLayerBufferRGB::textureID() const
+{
+    return m_texture ? m_texture->id() : m_textureID;
+}
+
 void CoordinatedPlatformLayerBufferRGB::paintToTextureMapper(TextureMapper& textureMapper, const FloatRect& targetRect, const TransformationMatrix& modelViewMatrix, float opacity)
 {
     waitForContentsIfNeeded();
@@ -91,7 +96,7 @@ sk_sp<SkImage> CoordinatedPlatformLayerBufferRGB::skiaImage()
     ASSERT(grContext);
     GrGLTextureInfo externalTexture;
     externalTexture.fTarget = GL_TEXTURE_2D;
-    externalTexture.fID = m_texture ? m_texture->id() : m_textureID;
+    externalTexture.fID = textureID();
     externalTexture.fFormat = GL_RGBA8;
     auto backendTexture = GrBackendTextures::MakeGL(m_size.width(), m_size.height(), skgpu::Mipmapped::kNo, externalTexture);
     auto origin = m_flags.contains(TextureMapperFlags::ShouldFlipTexture) ? kBottomLeft_GrSurfaceOrigin : kTopLeft_GrSurfaceOrigin;

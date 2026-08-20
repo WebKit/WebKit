@@ -29,6 +29,12 @@
 #include "CoordinatedPlatformLayerBuffer.h"
 #include <wtf/unix/UnixFileDescriptor.h>
 
+#if USE(SKIA)
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
+#include <skia/gpu/ganesh/GrContextThreadSafeProxy.h>
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
+#endif
+
 namespace WebCore {
 
 class DMABufBuffer;
@@ -38,6 +44,12 @@ class CoordinatedPlatformLayerBufferDMABuf final : public CoordinatedPlatformLay
 public:
     static std::unique_ptr<CoordinatedPlatformLayerBufferDMABuf> create(Ref<DMABufBuffer>&&, OptionSet<TextureMapperFlags>, std::unique_ptr<GLFence>&&);
     static std::unique_ptr<CoordinatedPlatformLayerBufferDMABuf> create(Ref<DMABufBuffer>&&, OptionSet<TextureMapperFlags>, WTF::UnixFileDescriptor&&);
+#if USE(SKIA)
+    static std::unique_ptr<CoordinatedPlatformLayerBufferDMABuf> create(Ref<DMABufBuffer>&&, OptionSet<TextureMapperFlags>, std::unique_ptr<GLFence>&&, const sk_sp<GrContextThreadSafeProxy>&);
+    static std::unique_ptr<CoordinatedPlatformLayerBufferDMABuf> create(Ref<DMABufBuffer>&&, OptionSet<TextureMapperFlags>, WTF::UnixFileDescriptor&&, const sk_sp<GrContextThreadSafeProxy>&);
+    CoordinatedPlatformLayerBufferDMABuf(Ref<DMABufBuffer>&&, OptionSet<TextureMapperFlags>, std::unique_ptr<GLFence>&&, const sk_sp<GrContextThreadSafeProxy>&);
+    CoordinatedPlatformLayerBufferDMABuf(Ref<DMABufBuffer>&&, OptionSet<TextureMapperFlags>, WTF::UnixFileDescriptor&&, const sk_sp<GrContextThreadSafeProxy>&);
+#endif
     CoordinatedPlatformLayerBufferDMABuf(Ref<DMABufBuffer>&&, OptionSet<TextureMapperFlags>, std::unique_ptr<GLFence>&&);
     CoordinatedPlatformLayerBufferDMABuf(Ref<DMABufBuffer>&&, OptionSet<TextureMapperFlags>, WTF::UnixFileDescriptor&&);
     virtual ~CoordinatedPlatformLayerBufferDMABuf();
@@ -46,6 +58,7 @@ private:
     void paintToTextureMapper(TextureMapper&, const FloatRect&, const TransformationMatrix& modelViewMatrix = TransformationMatrix(), float opacity = 1.0) override;
 
 #if USE(SKIA)
+    void createSkiaImageIfNeeded(const sk_sp<GrContextThreadSafeProxy>&);
     sk_sp<SkImage> skiaImage() override;
 #endif
 
@@ -54,6 +67,9 @@ private:
 
     const Ref<DMABufBuffer> m_dmabuf;
     WTF::UnixFileDescriptor m_fenceFD;
+#if USE(SKIA)
+    sk_sp<SkImage> m_image;
+#endif
 };
 
 } // namespace WebCore
