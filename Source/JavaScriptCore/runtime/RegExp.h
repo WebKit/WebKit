@@ -28,6 +28,7 @@
 #include <JavaScriptCore/YarrErrorCode.h>
 #include <wtf/Atomics.h>
 #include <wtf/BitSet.h>
+#include <wtf/FixedVector.h>
 #include <wtf/Forward.h>
 #include <wtf/ThreadSafeLazyUniquePtr.h>
 #include <wtf/text/WTFString.h>
@@ -229,7 +230,7 @@ private:
     struct RareData {
         WTF_DEPRECATED_MAKE_STRUCT_FAST_ALLOCATED(RareData);
         unsigned m_numDuplicateNamedCaptureGroups;
-        Vector<AtomString> m_captureGroupNames;
+        FixedVector<AtomString> m_captureGroupNames;
 
         // This first element of the RHS vector is the subpatternId in the non-duplicate case.
         // For the duplicate case, the first element is the namedCaptureGroupId.
@@ -250,7 +251,7 @@ private:
     std::unique_ptr<Yarr::YarrCodeBlock> m_regExpJITCode;
 #endif
     std::unique_ptr<RareData> m_rareData;
-    Vector<int> m_ovector;
+    FixedVector<int> m_ovector;
     mutable ThreadSafeLazyUniquePtr<const WTF::BitSet<256>> m_firstCharacterBitmap;
 #if ENABLE(REGEXP_TRACING)
     double m_rtMatchOnlyTotalSubjectStringLen { 0.0 };

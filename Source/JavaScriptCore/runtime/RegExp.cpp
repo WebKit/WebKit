@@ -175,7 +175,7 @@ void RegExp::finishCreation(VM& vm)
     if (!pattern.m_captureGroupNames.isEmpty() || !pattern.m_namedGroupToParenIndices.isEmpty()) {
         auto rareData = makeUnique<RareData>();
         rareData->m_numDuplicateNamedCaptureGroups = pattern.m_numDuplicateNamedCaptureGroups;
-        rareData->m_captureGroupNames = WTF::map(pattern.m_captureGroupNames, [](auto& name) {
+        rareData->m_captureGroupNames = FixedVector<AtomString>::map(pattern.m_captureGroupNames, [](auto& name) {
             return AtomString { name };
         });
         rareData->m_namedGroupToParenIndices.swap(pattern.m_namedGroupToParenIndices);
@@ -187,7 +187,7 @@ void RegExp::finishCreation(VM& vm)
     unsigned offsetVectorSize = offsetVectorBaseForNamedCaptures();
     if (hasNamedCaptures())
         offsetVectorSize += m_rareData->m_numDuplicateNamedCaptureGroups;
-    m_ovector.resize(offsetVectorSize);
+    m_ovector = FixedVector<int>(offsetVectorSize);
 }
 
 void RegExp::destroy(JSCell* cell)
@@ -207,7 +207,7 @@ size_t RegExp::estimatedSize(JSCell* cell, VM& vm)
     if (auto* jitCode = thisObject->m_regExpJITCode.get())
         regexDataSize += jitCode->size();
 #endif
-    regexDataSize += thisObject->m_ovector.capacity() * sizeof(int);
+    regexDataSize += thisObject->m_ovector.byteSize();
     if (thisObject->m_firstCharacterBitmap.get())
         regexDataSize += sizeof(WTF::BitSet<256>);
     return Base::estimatedSize(cell, vm) + regexDataSize;
