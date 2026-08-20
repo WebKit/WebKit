@@ -151,9 +151,10 @@
     {"access": "public", "introduced": "2", "linkage": "exported", "name": "_$ss5UInt8V12CoreGraphicsEyAbC7CGFloatVcfC"},
     {"access": "public", "introduced": "2", "linkage": "exported", "name": "_$ss6UInt16V12CoreGraphicsEyAbC7CGFloatVcfC"},
     {"access": "public", "introduced": "2", "linkage": "exported", "name": "_$ss6UInt32V12CoreGraphicsEyAbC7CGFloatVcfC"},
-    {"access": "public", "introduced": "2", "linkage": "exported", "name": "_$ss6UInt64V12CoreGraphicsEyAbC7CGFloatVcfC"}
+    {"access": "public", "introduced": "2", "linkage": "exported", "name": "_$ss6UInt64V12CoreGraphicsEyAbC7CGFloatVcfC"},
+    {"access": "public", "linkage": "exported", "name": "__swift_FORCE_LOAD_$_swiftCoreFoundation"}
    ],
-   "target": "arm64e-apple-ios26.5"
+   "target": "arm64e-apple-ios27.0"
   }
  ],
  "version": "1.0"

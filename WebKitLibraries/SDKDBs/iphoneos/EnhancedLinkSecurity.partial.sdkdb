@@ -1,0 +1,100 @@
+
+{
+ "PublicSDKContentRoot": [
+  {
+   "interfaces": [
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "addFlaggedURL:"},
+      {"access": "public", "name": "addFlaggedURLs:"},
+      {"access": "public", "name": "checkIsFlaggedURL:completion:"}
+     ],
+     "introduced": "27",
+     "linkage": "exported",
+     "name": "LSLinkSecurityManager",
+     "properties": [
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "sharedManager", "name": "sharedManager"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "hasFlaggedURLs", "name": "hasFlaggedURLs"}
+     ],
+     "super": "NSObject"
+    }
+   ],
+   "target": "arm64e-apple-ios27"
+  },
+  {
+   "interfaces": [
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "addFlaggedURL:"},
+      {"access": "public", "name": "addFlaggedURLs:"},
+      {"access": "public", "name": "checkIsFlaggedURL:completion:"}
+     ],
+     "introduced": "27",
+     "linkage": "exported",
+     "name": "LSLinkSecurityManager",
+     "properties": [
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "sharedManager", "name": "sharedManager"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "hasFlaggedURLs", "name": "hasFlaggedURLs"}
+     ],
+     "super": "NSObject"
+    }
+   ],
+   "target": "arm64e.x1-apple-ios27"
+  },
+  {
+   "interfaces": [
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "requestEnhancedSecurityForURL:"},
+      {"access": "public", "name": "requestEnhancedSecurityForURLs:"},
+      {"access": "public", "name": "shouldUseEnhancedSecurityForURL:"},
+      {"access": "public", "name": "shouldUseEnhancedSecurityForURL:completion:"}
+     ],
+     "introduced": "27",
+     "linkage": "exported",
+     "name": "IMEnhancedLinkSecurityManager",
+     "properties": [
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "sharedManager", "name": "sharedManager"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "hasURLsRequiringEnhancedSecurity", "name": "hasURLsRequiringEnhancedSecurity"}
+     ],
+     "super": "NSObject"
+    }
+   ],
+   "target": "arm64e-apple-ios27"
+  },
+  {
+   "interfaces": [
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "requestEnhancedSecurityForURL:"},
+      {"access": "public", "name": "requestEnhancedSecurityForURLs:"},
+      {"access": "public", "name": "shouldUseEnhancedSecurityForURL:"},
+      {"access": "public", "name": "shouldUseEnhancedSecurityForURL:completion:"}
+     ],
+     "introduced": "27",
+     "linkage": "exported",
+     "name": "IMEnhancedLinkSecurityManager",
+     "properties": [
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "sharedManager", "name": "sharedManager"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "hasURLsRequiringEnhancedSecurity", "name": "hasURLsRequiringEnhancedSecurity"}
+     ],
+     "super": "NSObject"
+    }
+   ],
+   "target": "arm64e.x1-apple-ios27"
+  },
+  {
+   "target": "arm64e-apple-ios27.0"
+  },
+  {
+   "target": "arm64e-apple-ios27.0"
+  }
+ ],
+ "version": "1.0"
+}

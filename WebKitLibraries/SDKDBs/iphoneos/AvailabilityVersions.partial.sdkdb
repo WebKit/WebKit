@@ -3,6 +3,9 @@
  "PublicSDKContentRoot": [
   {
    "target": "arm64e-apple-ios"
+  },
+  {
+   "target": "arm64e.x1-apple-ios"
   }
  ],
  "version": "1.0"

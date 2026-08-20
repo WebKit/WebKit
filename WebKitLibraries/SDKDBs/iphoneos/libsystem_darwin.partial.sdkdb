@@ -1,0 +1,18 @@
+
+{
+ "PublicSDKContentRoot": [
+  {
+   "globals": [
+    {"access": "public", "introduced": "27", "kind": "function", "linkage": "exported", "name": "_os_lockdown_mode_enabled"}
+   ],
+   "target": "arm64e-apple-ios27"
+  },
+  {
+   "globals": [
+    {"access": "public", "introduced": "27", "kind": "function", "linkage": "exported", "name": "_os_lockdown_mode_enabled"}
+   ],
+   "target": "arm64e.x1-apple-ios27"
+  }
+ ],
+ "version": "1.0"
+}

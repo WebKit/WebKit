@@ -22,15 +22,277 @@
     },
     {
      "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "7", "name": "fixAttributesInRange:"}
+     ],
+     "interface": "NSMutableAttributedString",
+     "name": "NSAttributedStringAttributeFixing"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "9", "name": "initWithURL:options:documentAttributes:error:"},
+      {"access": "public", "introduced": "7", "name": "initWithData:options:documentAttributes:error:"},
+      {"access": "public", "introduced": "7", "name": "dataFromRange:documentAttributes:error:"},
+      {"access": "public", "introduced": "7", "name": "fileWrapperFromRange:documentAttributes:error:"}
+     ],
+     "interface": "NSAttributedString",
+     "name": "NSAttributedStringDocumentFormats"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "9", "name": "containsAttachmentsInRange:"},
+      {"access": "public", "introduced": "18", "name": "prefersRTFDInRange:"}
+     ],
+     "interface": "NSAttributedString",
+     "name": "NSAttributedStringKitAdditions"
+    },
+    {
+     "access": "public",
+     "interface": "NSAttributedString",
+     "introduced": "12",
+     "name": "NSAttributedString_ItemProvider",
+     "protocols": [
+      "NSItemProviderReading",
+      "NSItemProviderWriting"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "7", "name": "initWithFileURL:options:documentAttributes:error:"}
+     ],
+     "interface": "NSAttributedString",
+     "name": "NSDeprecatedKitAdditions"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "7", "name": "readFromFileURL:options:documentAttributes:error:"}
+     ],
+     "interface": "NSMutableAttributedString",
+     "name": "NSDeprecatedKitAdditions"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "7", "name": "drawWithRect:options:attributes:context:"},
+      {"access": "public", "introduced": "7", "name": "boundingRectWithSize:options:attributes:context:"}
+     ],
+     "interface": "NSString",
+     "name": "NSExtendedStringDrawing"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "6", "name": "drawWithRect:options:context:"},
+      {"access": "public", "introduced": "6", "name": "boundingRectWithSize:options:context:"}
+     ],
+     "interface": "NSAttributedString",
+     "name": "NSExtendedStringDrawing"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "glyphAtIndex:isValidIndex:"},
+      {"access": "public", "name": "glyphAtIndex:"},
+      {"access": "public", "introduced": "7", "name": "showCGGlyphs:positions:count:font:matrix:attributes:inContext:"}
+     ],
+     "interface": "NSLayoutManager",
+     "name": "NSLayoutManagerDeprecated",
+     "properties": [
+      {"access": "public", "getter": "hyphenationFactor", "introduced": "7", "name": "hyphenationFactor", "setter": "setHyphenationFactor:"}
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "9", "name": "readFromURL:options:documentAttributes:error:"},
+      {"access": "public", "introduced": "7", "name": "readFromData:options:documentAttributes:error:"}
+     ],
+     "interface": "NSMutableAttributedString",
+     "name": "NSMutableAttributedStringDocumentFormats"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "7", "name": "sizeWithAttributes:"},
+      {"access": "public", "introduced": "7", "name": "drawAtPoint:withAttributes:"},
+      {"access": "public", "introduced": "7", "name": "drawInRect:withAttributes:"}
+     ],
+     "interface": "NSString",
+     "name": "NSStringDrawing"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "6", "name": "size"},
+      {"access": "public", "introduced": "6", "name": "drawAtPoint:"},
+      {"access": "public", "introduced": "6", "name": "drawInRect:"}
+     ],
+     "interface": "NSAttributedString",
+     "name": "NSStringDrawing"
+    },
+    {
+     "access": "public",
+     "interface": "NSStringDrawingContext",
+     "name": "NSStringDrawingContextDeprecated",
+     "properties": [
+      {"access": "public", "getter": "minimumTrackingAdjustment", "introduced": "6", "name": "minimumTrackingAdjustment", "setter": "setMinimumTrackingAdjustment:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "actualTrackingAdjustment", "introduced": "6", "name": "actualTrackingAdjustment"}
+     ]
+    },
+    {
+     "access": "public",
      "interface": "NSTextAttachment",
      "introduced": "7",
      "name": "NSTextAttachment_Deprecation",
      "protocols": [
       "NSTextAttachmentContainer"
      ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "9", "name": "replaceLayoutManager:"}
+     ],
+     "interface": "NSTextContainer",
+     "name": "NSTextContainer_NSLayoutManagerInterface",
+     "properties": [
+      {"access": "public", "getter": "layoutManager", "introduced": "9", "name": "layoutManager", "setter": "setLayoutManager:"}
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "addLayoutManager:"},
+      {"access": "public", "name": "removeLayoutManager:"}
+     ],
+     "interface": "NSTextStorage",
+     "introduced": "7",
+     "name": "NSTextStorage_NSLayoutManagerInterface",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "layoutManagers", "name": "layoutManagers"}
+     ]
     }
    ],
    "enums": [
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "NSControlCharacterActionZeroAdvancement"},
+      {"access": "public", "name": "NSControlCharacterActionWhitespace"},
+      {"access": "public", "name": "NSControlCharacterActionHorizontalTab"},
+      {"access": "public", "name": "NSControlCharacterActionLineBreak"},
+      {"access": "public", "name": "NSControlCharacterActionParagraphBreak"},
+      {"access": "public", "name": "NSControlCharacterActionContainerBreak"}
+     ],
+     "introduced": "7",
+     "name": "NSControlCharacterAction"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "NSGlyphPropertyNull"},
+      {"access": "public", "name": "NSGlyphPropertyControlCharacter"},
+      {"access": "public", "name": "NSGlyphPropertyElastic"},
+      {"access": "public", "name": "NSGlyphPropertyNonBaseCharacter"}
+     ],
+     "introduced": "7",
+     "name": "NSGlyphProperty"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "NSLineBreakByWordWrapping"},
+      {"access": "public", "name": "NSLineBreakByCharWrapping"},
+      {"access": "public", "name": "NSLineBreakByClipping"},
+      {"access": "public", "name": "NSLineBreakByTruncatingHead"},
+      {"access": "public", "name": "NSLineBreakByTruncatingTail"},
+      {"access": "public", "name": "NSLineBreakByTruncatingMiddle"}
+     ],
+     "introduced": "6",
+     "name": "NSLineBreakMode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "NSLineBreakStrategyNone"},
+      {"access": "public", "introduced": "9", "name": "NSLineBreakStrategyPushOut"},
+      {"access": "public", "introduced": "14", "name": "NSLineBreakStrategyHangulWordPriority"},
+      {"access": "public", "introduced": "14", "name": "NSLineBreakStrategyStandard"}
+     ],
+     "introduced": "9",
+     "name": "NSLineBreakStrategy"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "NSStringDrawingUsesLineFragmentOrigin"},
+      {"access": "public", "name": "NSStringDrawingUsesFontLeading"},
+      {"access": "public", "name": "NSStringDrawingUsesDeviceMetrics"},
+      {"access": "public", "introduced": "6", "name": "NSStringDrawingTruncatesLastVisibleLine"},
+      {"access": "public", "introduced": "26", "name": "NSStringDrawingOptionsResolvesNaturalAlignmentWithBaseWritingDirection"}
+     ],
+     "introduced": "6",
+     "name": "NSStringDrawingOptions"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "NSTextAlignmentLeft"},
+      {"access": "public", "name": "NSTextAlignmentCenter"},
+      {"access": "public", "name": "NSTextAlignmentRight"},
+      {"access": "public", "name": "NSTextAlignmentJustified"},
+      {"access": "public", "name": "NSTextAlignmentNatural"}
+     ],
+     "introduced": "6",
+     "name": "NSTextAlignment"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "NSTextBlockDimensionWidth"},
+      {"access": "public", "name": "NSTextBlockDimensionMinimumWidth"},
+      {"access": "public", "name": "NSTextBlockDimensionMaximumWidth"},
+      {"access": "public", "name": "NSTextBlockDimensionHeight"},
+      {"access": "public", "name": "NSTextBlockDimensionMinimumHeight"},
+      {"access": "public", "name": "NSTextBlockDimensionMaximumHeight"}
+     ],
+     "introduced": "6",
+     "name": "NSTextBlockDimension"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "NSTextBlockLayerPadding"},
+      {"access": "public", "name": "NSTextBlockLayerBorder"},
+      {"access": "public", "name": "NSTextBlockLayerMargin"}
+     ],
+     "introduced": "6",
+     "name": "NSTextBlockLayer"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "NSTextBlockValueTypeAbsolute"},
+      {"access": "public", "name": "NSTextBlockValueTypePercentage"}
+     ],
+     "introduced": "6",
+     "name": "NSTextBlockValueType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "NSTextBlockVerticalAlignmentTop"},
+      {"access": "public", "name": "NSTextBlockVerticalAlignmentMiddle"},
+      {"access": "public", "name": "NSTextBlockVerticalAlignmentBottom"},
+      {"access": "public", "name": "NSTextBlockVerticalAlignmentBaseline"}
+     ],
+     "introduced": "6",
+     "name": "NSTextBlockVerticalAlignment"
+    },
     {
      "access": "public",
      "constants": [
@@ -89,10 +351,28 @@
     {
      "access": "public",
      "constants": [
+      {"access": "public", "name": "NSTextLayoutOrientationHorizontal"},
+      {"access": "public", "name": "NSTextLayoutOrientationVertical"}
+     ],
+     "introduced": "7",
+     "name": "NSTextLayoutOrientation"
+    },
+    {
+     "access": "public",
+     "constants": [
       {"access": "public", "introduced": "7", "name": "NSTextListPrependEnclosingMarker"}
      ],
      "introduced": "7",
      "name": "NSTextListOptions"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "NSTextScalingStandard"},
+      {"access": "public", "name": "NSTextScalingiOS"}
+     ],
+     "introduced": "13",
+     "name": "NSTextScalingType"
     },
     {
      "access": "public",
@@ -173,14 +453,145 @@
     {
      "access": "public",
      "constants": [
+      {"access": "public", "introduced": "7", "name": "NSTextStorageEditedAttributes"},
+      {"access": "public", "introduced": "7", "name": "NSTextStorageEditedCharacters"}
+     ],
+     "introduced": "7",
+     "name": "NSTextStorageEditActions"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "NSTextTableLayoutAlgorithmAutomatic"},
+      {"access": "public", "name": "NSTextTableLayoutAlgorithmFixed"}
+     ],
+     "introduced": "6",
+     "name": "NSTextTableLayoutAlgorithm"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "NSTextWritingDirectionEmbedding"},
+      {"access": "public", "name": "NSTextWritingDirectionOverride"}
+     ],
+     "introduced": "7",
+     "name": "NSTextWritingDirection"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "NSUnderlineStyleNone"},
+      {"access": "public", "name": "NSUnderlineStyleSingle"},
+      {"access": "public", "introduced": "7", "name": "NSUnderlineStyleThick"},
+      {"access": "public", "introduced": "7", "name": "NSUnderlineStyleDouble"},
+      {"access": "public", "introduced": "7", "name": "NSUnderlineStylePatternSolid"},
+      {"access": "public", "introduced": "7", "name": "NSUnderlineStylePatternDot"},
+      {"access": "public", "introduced": "7", "name": "NSUnderlineStylePatternDash"},
+      {"access": "public", "introduced": "7", "name": "NSUnderlineStylePatternDashDot"},
+      {"access": "public", "introduced": "7", "name": "NSUnderlineStylePatternDashDotDot"},
+      {"access": "public", "introduced": "7", "name": "NSUnderlineStyleByWord"}
+     ],
+     "introduced": "6",
+     "name": "NSUnderlineStyle"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "NSWritingDirectionNatural"},
+      {"access": "public", "name": "NSWritingDirectionLeftToRight"},
+      {"access": "public", "name": "NSWritingDirectionRightToLeft"}
+     ],
+     "introduced": "6",
+     "name": "NSWritingDirection"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "NSWritingDirectionEmbedding"},
+      {"access": "public", "name": "NSWritingDirectionOverride"}
+     ],
+     "introduced": "9",
+     "name": "NSWritingDirectionFormatType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "7", "name": "NSControlCharacterZeroAdvancementAction"},
+      {"access": "public", "introduced": "7", "name": "NSControlCharacterWhitespaceAction"},
+      {"access": "public", "introduced": "7", "name": "NSControlCharacterHorizontalTabAction"},
+      {"access": "public", "introduced": "7", "name": "NSControlCharacterLineBreakAction"},
+      {"access": "public", "introduced": "7", "name": "NSControlCharacterParagraphBreakAction"},
+      {"access": "public", "introduced": "7", "name": "NSControlCharacterContainerBreakAction"}
+     ],
+     "name": "enum (unnamed at NSLayoutManager.h:3601)"
+    },
+    {
+     "access": "public",
+     "constants": [
       {"access": "public", "introduced": "7", "name": "NSAttachmentCharacter"}
      ],
      "introduced": "7",
-     "name": "enum (unnamed at NSTextAttachment.h:161)"
+     "name": "enum (unnamed at NSTextAttachment.h:151)"
     }
    ],
    "globals": [
+    {"access": "public", "introduced": "18", "kind": "variable", "linkage": "exported", "name": "_NSAdaptiveImageGlyphAttributeName"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_NSAttachmentAttributeName"},
+    {"access": "public", "introduced": "6", "kind": "variable", "linkage": "exported", "name": "_NSBackgroundColorAttributeName"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_NSBackgroundColorDocumentAttribute"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_NSBaselineOffsetAttributeName"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_NSCharacterEncodingDocumentAttribute"},
+    {"access": "public", "introduced": "6", "kind": "variable", "linkage": "exported", "name": "_NSCharacterEncodingDocumentOption"},
+    {"access": "public", "introduced": "13", "kind": "variable", "linkage": "exported", "name": "_NSCocoaVersionDocumentAttribute"},
+    {"access": "public", "introduced": "6", "kind": "variable", "linkage": "exported", "name": "_NSDefaultAttributesDocumentAttribute"},
+    {"access": "public", "introduced": "6", "kind": "variable", "linkage": "exported", "name": "_NSDefaultAttributesDocumentOption"},
+    {"access": "public", "introduced": "17", "kind": "variable", "linkage": "exported", "name": "_NSDefaultFontExcludedDocumentAttribute"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_NSDefaultTabIntervalDocumentAttribute"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_NSDocumentTypeDocumentAttribute"},
+    {"access": "public", "introduced": "6", "kind": "variable", "linkage": "exported", "name": "_NSDocumentTypeDocumentOption"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_NSExpansionAttributeName"},
+    {"access": "public", "introduced": "6", "kind": "variable", "linkage": "exported", "name": "_NSFontAttributeName"},
+    {"access": "public", "introduced": "6", "kind": "variable", "linkage": "exported", "name": "_NSForegroundColorAttributeName"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_NSHTMLTextDocumentType"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_NSHyphenationFactorDocumentAttribute"},
+    {"access": "public", "introduced": "6", "kind": "variable", "linkage": "exported", "name": "_NSKernAttributeName"},
+    {"access": "public", "introduced": "6", "kind": "variable", "linkage": "exported", "name": "_NSLigatureAttributeName"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_NSLinkAttributeName"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_NSObliquenessAttributeName"},
+    {"access": "public", "introduced": "6", "kind": "variable", "linkage": "exported", "name": "_NSPaperMarginDocumentAttribute"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_NSPaperSizeDocumentAttribute"},
+    {"access": "public", "introduced": "6", "kind": "variable", "linkage": "exported", "name": "_NSParagraphStyleAttributeName"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_NSPlainTextDocumentType"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_NSRTFDTextDocumentType"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_NSRTFTextDocumentType"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_NSReadOnlyDocumentAttribute"},
+    {"access": "public", "introduced": "6", "kind": "variable", "linkage": "exported", "name": "_NSShadowAttributeName"},
+    {"access": "public", "introduced": "13", "kind": "variable", "linkage": "exported", "name": "_NSSourceTextScalingDocumentAttribute"},
+    {"access": "public", "introduced": "13", "kind": "variable", "linkage": "exported", "name": "_NSSourceTextScalingDocumentOption"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_NSStrikethroughColorAttributeName"},
+    {"access": "public", "introduced": "6", "kind": "variable", "linkage": "exported", "name": "_NSStrikethroughStyleAttributeName"},
+    {"access": "public", "introduced": "6", "kind": "variable", "linkage": "exported", "name": "_NSStrokeColorAttributeName"},
+    {"access": "public", "introduced": "6", "kind": "variable", "linkage": "exported", "name": "_NSStrokeWidthAttributeName"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_NSTabColumnTerminatorsAttributeName"},
+    {"access": "public", "introduced": "13", "kind": "variable", "linkage": "exported", "name": "_NSTargetTextScalingDocumentOption"},
+    {"access": "public", "introduced": "6", "kind": "function", "linkage": "exported", "name": "_NSTextAlignmentFromCTTextAlignment"},
+    {"access": "public", "introduced": "6", "kind": "function", "linkage": "exported", "name": "_NSTextAlignmentToCTTextAlignment"},
     {"access": "public", "introduced": "15", "kind": "variable", "linkage": "exported", "name": "_NSTextContentStorageUnsupportedAttributeAddedNotification"},
+    {"access": "public", "introduced": "6", "kind": "variable", "linkage": "exported", "name": "_NSTextEffectAttributeName"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_NSTextEffectLetterpressStyle"},
+    {"access": "public", "introduced": "18", "kind": "variable", "linkage": "exported", "name": "_NSTextHighlightColorSchemeAttributeName"},
+    {"access": "public", "introduced": "18", "kind": "variable", "linkage": "exported", "name": "_NSTextHighlightColorSchemeBlue"},
+    {"access": "public", "introduced": "18", "kind": "variable", "linkage": "exported", "name": "_NSTextHighlightColorSchemeDefault"},
+    {"access": "public", "introduced": "18", "kind": "variable", "linkage": "exported", "name": "_NSTextHighlightColorSchemeMint"},
+    {"access": "public", "introduced": "18", "kind": "variable", "linkage": "exported", "name": "_NSTextHighlightColorSchemeOrange"},
+    {"access": "public", "introduced": "18", "kind": "variable", "linkage": "exported", "name": "_NSTextHighlightColorSchemePink"},
+    {"access": "public", "introduced": "18", "kind": "variable", "linkage": "exported", "name": "_NSTextHighlightColorSchemePurple"},
+    {"access": "public", "introduced": "18", "kind": "variable", "linkage": "exported", "name": "_NSTextHighlightStyleAttributeName"},
+    {"access": "public", "introduced": "18", "kind": "variable", "linkage": "exported", "name": "_NSTextHighlightStyleDefault"},
+    {"access": "public", "introduced": "18", "kind": "variable", "linkage": "exported", "name": "_NSTextKit1ListMarkerFormatDocumentOption"},
+    {"access": "public", "introduced": "6", "kind": "variable", "linkage": "exported", "name": "_NSTextLayoutSectionOrientation"},
+    {"access": "public", "introduced": "6", "kind": "variable", "linkage": "exported", "name": "_NSTextLayoutSectionRange"},
+    {"access": "public", "introduced": "6", "kind": "variable", "linkage": "exported", "name": "_NSTextLayoutSectionsAttribute"},
     {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_NSTextListMarkerBox"},
     {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_NSTextListMarkerCheck"},
     {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_NSTextListMarkerCircle"},
@@ -197,7 +608,19 @@
     {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_NSTextListMarkerUppercaseAlpha"},
     {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_NSTextListMarkerUppercaseHexadecimal"},
     {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_NSTextListMarkerUppercaseLatin"},
-    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_NSTextListMarkerUppercaseRoman"}
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_NSTextListMarkerUppercaseRoman"},
+    {"access": "public", "introduced": "13", "kind": "variable", "linkage": "exported", "name": "_NSTextScalingDocumentAttribute"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_NSTextStorageDidProcessEditingNotification"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_NSTextStorageWillProcessEditingNotification"},
+    {"access": "public", "introduced": "14", "kind": "variable", "linkage": "exported", "name": "_NSTrackingAttributeName"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_NSUnderlineColorAttributeName"},
+    {"access": "public", "introduced": "6", "kind": "variable", "linkage": "exported", "name": "_NSUnderlineStyleAttributeName"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_NSVerticalGlyphFormAttributeName"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_NSViewModeDocumentAttribute"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_NSViewSizeDocumentAttribute"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_NSViewZoomDocumentAttribute"},
+    {"access": "public", "introduced": "6", "kind": "variable", "linkage": "exported", "name": "_NSWritingDirectionAttributeName"},
+    {"access": "public", "introduced": "18.2", "kind": "variable", "linkage": "exported", "name": "_NSWritingToolsExclusionAttributeName"}
    ],
    "interfaces": [
     {
@@ -220,6 +643,213 @@
       "NSCopying",
       "NSSecureCoding",
       "CTAdaptiveImageProviding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "categories": [
+      "NSLayoutManagerDeprecated"
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init"},
+      {"access": "public", "name": "initWithCoder:"},
+      {"access": "public", "name": "addTextContainer:"},
+      {"access": "public", "name": "insertTextContainer:atIndex:"},
+      {"access": "public", "name": "removeTextContainerAtIndex:"},
+      {"access": "public", "name": "textContainerChangedGeometry:"},
+      {"access": "public", "name": "invalidateGlyphsForCharacterRange:changeInLength:actualCharacterRange:"},
+      {"access": "public", "introduced": "7", "name": "invalidateLayoutForCharacterRange:actualCharacterRange:"},
+      {"access": "public", "name": "invalidateDisplayForCharacterRange:"},
+      {"access": "public", "name": "invalidateDisplayForGlyphRange:"},
+      {"access": "public", "introduced": "7", "name": "processEditingForTextStorage:edited:range:changeInLength:invalidatedRange:"},
+      {"access": "public", "name": "ensureGlyphsForCharacterRange:"},
+      {"access": "public", "name": "ensureGlyphsForGlyphRange:"},
+      {"access": "public", "name": "ensureLayoutForCharacterRange:"},
+      {"access": "public", "name": "ensureLayoutForGlyphRange:"},
+      {"access": "public", "name": "ensureLayoutForTextContainer:"},
+      {"access": "public", "name": "ensureLayoutForBoundingRect:inTextContainer:"},
+      {"access": "public", "introduced": "7", "name": "setGlyphs:properties:characterIndexes:font:forGlyphRange:"},
+      {"access": "public", "introduced": "7", "name": "CGGlyphAtIndex:isValidIndex:"},
+      {"access": "public", "introduced": "7", "name": "CGGlyphAtIndex:"},
+      {"access": "public", "introduced": "7", "name": "isValidGlyphIndex:"},
+      {"access": "public", "introduced": "7", "name": "propertyForGlyphAtIndex:"},
+      {"access": "public", "name": "characterIndexForGlyphAtIndex:"},
+      {"access": "public", "name": "glyphIndexForCharacterAtIndex:"},
+      {"access": "public", "introduced": "7", "name": "getGlyphsInRange:glyphs:properties:characterIndexes:bidiLevels:"},
+      {"access": "public", "name": "setTextContainer:forGlyphRange:"},
+      {"access": "public", "name": "setLineFragmentRect:forGlyphRange:usedRect:"},
+      {"access": "public", "name": "setExtraLineFragmentRect:usedRect:textContainer:"},
+      {"access": "public", "name": "setLocation:forStartOfGlyphRange:"},
+      {"access": "public", "name": "setNotShownAttribute:forGlyphAtIndex:"},
+      {"access": "public", "name": "setDrawsOutsideLineFragment:forGlyphAtIndex:"},
+      {"access": "public", "name": "setAttachmentSize:forGlyphRange:"},
+      {"access": "public", "name": "getFirstUnlaidCharacterIndex:glyphIndex:"},
+      {"access": "public", "name": "firstUnlaidCharacterIndex"},
+      {"access": "public", "name": "firstUnlaidGlyphIndex"},
+      {"access": "public", "name": "textContainerForGlyphAtIndex:effectiveRange:"},
+      {"access": "public", "introduced": "9", "name": "textContainerForGlyphAtIndex:effectiveRange:withoutAdditionalLayout:"},
+      {"access": "public", "name": "usedRectForTextContainer:"},
+      {"access": "public", "name": "lineFragmentRectForGlyphAtIndex:effectiveRange:"},
+      {"access": "public", "introduced": "9", "name": "lineFragmentRectForGlyphAtIndex:effectiveRange:withoutAdditionalLayout:"},
+      {"access": "public", "name": "lineFragmentUsedRectForGlyphAtIndex:effectiveRange:"},
+      {"access": "public", "introduced": "9", "name": "lineFragmentUsedRectForGlyphAtIndex:effectiveRange:withoutAdditionalLayout:"},
+      {"access": "public", "name": "locationForGlyphAtIndex:"},
+      {"access": "public", "name": "notShownAttributeForGlyphAtIndex:"},
+      {"access": "public", "name": "drawsOutsideLineFragmentForGlyphAtIndex:"},
+      {"access": "public", "name": "attachmentSizeForGlyphAtIndex:"},
+      {"access": "public", "introduced": "7", "name": "truncatedGlyphRangeInLineFragmentForGlyphAtIndex:"},
+      {"access": "public", "name": "glyphRangeForCharacterRange:actualCharacterRange:"},
+      {"access": "public", "name": "characterRangeForGlyphRange:actualGlyphRange:"},
+      {"access": "public", "name": "glyphRangeForTextContainer:"},
+      {"access": "public", "name": "rangeOfNominallySpacedGlyphsContainingIndex:"},
+      {"access": "public", "name": "boundingRectForGlyphRange:inTextContainer:"},
+      {"access": "public", "name": "glyphRangeForBoundingRect:inTextContainer:"},
+      {"access": "public", "name": "glyphRangeForBoundingRectWithoutAdditionalLayout:inTextContainer:"},
+      {"access": "public", "name": "glyphIndexForPoint:inTextContainer:fractionOfDistanceThroughGlyph:"},
+      {"access": "public", "name": "glyphIndexForPoint:inTextContainer:"},
+      {"access": "public", "name": "fractionOfDistanceThroughGlyphForPoint:inTextContainer:"},
+      {"access": "public", "name": "characterIndexForPoint:inTextContainer:fractionOfDistanceBetweenInsertionPoints:"},
+      {"access": "public", "name": "getLineFragmentInsertionPointsForCharacterAtIndex:alternatePositions:inDisplayOrder:positions:characterIndexes:"},
+      {"access": "public", "introduced": "7", "name": "enumerateLineFragmentsForGlyphRange:usingBlock:"},
+      {"access": "public", "introduced": "7", "name": "enumerateEnclosingRectsForGlyphRange:withinSelectedGlyphRange:inTextContainer:usingBlock:"},
+      {"access": "public", "name": "drawBackgroundForGlyphRange:atPoint:"},
+      {"access": "public", "name": "drawGlyphsForGlyphRange:atPoint:"},
+      {"access": "public", "introduced": "13", "name": "showCGGlyphs:positions:count:font:textMatrix:attributes:inContext:"},
+      {"access": "public", "introduced": "7", "name": "fillBackgroundRectArray:count:forCharacterRange:color:"},
+      {"access": "public", "name": "drawUnderlineForGlyphRange:underlineType:baselineOffset:lineFragmentRect:lineFragmentGlyphRange:containerOrigin:"},
+      {"access": "public", "name": "underlineGlyphRange:underlineType:lineFragmentRect:lineFragmentGlyphRange:containerOrigin:"},
+      {"access": "public", "name": "drawStrikethroughForGlyphRange:strikethroughType:baselineOffset:lineFragmentRect:lineFragmentGlyphRange:containerOrigin:"},
+      {"access": "public", "name": "strikethroughGlyphRange:strikethroughType:lineFragmentRect:lineFragmentGlyphRange:containerOrigin:"}
+     ],
+     "introduced": "7",
+     "linkage": "exported",
+     "name": "NSLayoutManager",
+     "properties": [
+      {"access": "public", "getter": "textStorage", "name": "textStorage", "setter": "setTextStorage:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "textContainers", "name": "textContainers"},
+      {"access": "public", "getter": "delegate", "name": "delegate", "setter": "setDelegate:"},
+      {"access": "public", "getter": "showsInvisibleCharacters", "name": "showsInvisibleCharacters", "setter": "setShowsInvisibleCharacters:"},
+      {"access": "public", "getter": "showsControlCharacters", "name": "showsControlCharacters", "setter": "setShowsControlCharacters:"},
+      {"access": "public", "getter": "usesFontLeading", "name": "usesFontLeading", "setter": "setUsesFontLeading:"},
+      {"access": "public", "getter": "allowsNonContiguousLayout", "introduced": "7", "name": "allowsNonContiguousLayout", "setter": "setAllowsNonContiguousLayout:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "hasNonContiguousLayout", "introduced": "7", "name": "hasNonContiguousLayout"},
+      {"access": "public", "getter": "limitsLayoutForSuspiciousContents", "introduced": "12", "name": "limitsLayoutForSuspiciousContents", "setter": "setLimitsLayoutForSuspiciousContents:"},
+      {"access": "public", "getter": "usesDefaultHyphenation", "introduced": "13", "name": "usesDefaultHyphenation", "setter": "setUsesDefaultHyphenation:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "numberOfGlyphs", "name": "numberOfGlyphs"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "extraLineFragmentRect", "name": "extraLineFragmentRect"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "extraLineFragmentUsedRect", "name": "extraLineFragmentUsedRect"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "extraLineFragmentTextContainer", "name": "extraLineFragmentTextContainer"}
+     ],
+     "protocols": [
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "9", "name": "addTabStop:"},
+      {"access": "public", "introduced": "9", "name": "removeTabStop:"},
+      {"access": "public", "introduced": "9", "name": "setParagraphStyle:"}
+     ],
+     "introduced": "6",
+     "linkage": "exported",
+     "name": "NSMutableParagraphStyle",
+     "properties": [
+      {"access": "public", "getter": "alignment", "name": "alignment", "setter": "setAlignment:"},
+      {"access": "public", "getter": "lineSpacing", "name": "lineSpacing", "setter": "setLineSpacing:"},
+      {"access": "public", "getter": "paragraphSpacing", "name": "paragraphSpacing", "setter": "setParagraphSpacing:"},
+      {"access": "public", "getter": "firstLineHeadIndent", "name": "firstLineHeadIndent", "setter": "setFirstLineHeadIndent:"},
+      {"access": "public", "getter": "headIndent", "name": "headIndent", "setter": "setHeadIndent:"},
+      {"access": "public", "getter": "tailIndent", "name": "tailIndent", "setter": "setTailIndent:"},
+      {"access": "public", "getter": "lineBreakMode", "name": "lineBreakMode", "setter": "setLineBreakMode:"},
+      {"access": "public", "getter": "minimumLineHeight", "name": "minimumLineHeight", "setter": "setMinimumLineHeight:"},
+      {"access": "public", "getter": "maximumLineHeight", "name": "maximumLineHeight", "setter": "setMaximumLineHeight:"},
+      {"access": "public", "getter": "baseWritingDirection", "name": "baseWritingDirection", "setter": "setBaseWritingDirection:"},
+      {"access": "public", "getter": "lineHeightMultiple", "name": "lineHeightMultiple", "setter": "setLineHeightMultiple:"},
+      {"access": "public", "getter": "paragraphSpacingBefore", "name": "paragraphSpacingBefore", "setter": "setParagraphSpacingBefore:"},
+      {"access": "public", "getter": "hyphenationFactor", "name": "hyphenationFactor", "setter": "setHyphenationFactor:"},
+      {"access": "public", "getter": "usesDefaultHyphenation", "introduced": "15", "name": "usesDefaultHyphenation", "setter": "setUsesDefaultHyphenation:"},
+      {"access": "public", "getter": "tabStops", "introduced": "7", "name": "tabStops", "setter": "setTabStops:"},
+      {"access": "public", "getter": "defaultTabInterval", "introduced": "7", "name": "defaultTabInterval", "setter": "setDefaultTabInterval:"},
+      {"access": "public", "getter": "allowsDefaultTighteningForTruncation", "introduced": "9", "name": "allowsDefaultTighteningForTruncation", "setter": "setAllowsDefaultTighteningForTruncation:"},
+      {"access": "public", "getter": "lineBreakStrategy", "introduced": "9", "name": "lineBreakStrategy", "setter": "setLineBreakStrategy:"},
+      {"access": "public", "getter": "textLists", "introduced": "7", "name": "textLists", "setter": "setTextLists:"},
+      {"access": "public", "getter": "textBlocks", "introduced": "6", "name": "textBlocks", "setter": "setTextBlocks:"}
+     ],
+     "super": "NSParagraphStyle"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "defaultWritingDirectionForLanguage:"}
+     ],
+     "introduced": "6",
+     "linkage": "exported",
+     "name": "NSParagraphStyle",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "alignment", "name": "alignment"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "defaultParagraphStyle", "name": "defaultParagraphStyle"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "lineSpacing", "name": "lineSpacing"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "paragraphSpacing", "name": "paragraphSpacing"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "headIndent", "name": "headIndent"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "tailIndent", "name": "tailIndent"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "firstLineHeadIndent", "name": "firstLineHeadIndent"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "minimumLineHeight", "name": "minimumLineHeight"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "maximumLineHeight", "name": "maximumLineHeight"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "lineBreakMode", "name": "lineBreakMode"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "baseWritingDirection", "name": "baseWritingDirection"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "lineHeightMultiple", "name": "lineHeightMultiple"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "paragraphSpacingBefore", "name": "paragraphSpacingBefore"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "hyphenationFactor", "name": "hyphenationFactor"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "usesDefaultHyphenation", "introduced": "15", "name": "usesDefaultHyphenation"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "tabStops", "introduced": "7", "name": "tabStops"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "defaultTabInterval", "introduced": "7", "name": "defaultTabInterval"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "textLists", "introduced": "7", "name": "textLists"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "textBlocks", "introduced": "6", "name": "textBlocks"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "allowsDefaultTighteningForTruncation", "introduced": "9", "name": "allowsDefaultTighteningForTruncation"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "lineBreakStrategy", "introduced": "9", "name": "lineBreakStrategy"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSMutableCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "init"},
+      {"access": "public", "name": "initWithCoder:"}
+     ],
+     "introduced": "6",
+     "linkage": "exported",
+     "name": "NSShadow",
+     "properties": [
+      {"access": "public", "getter": "shadowOffset", "name": "shadowOffset", "setter": "setShadowOffset:"},
+      {"access": "public", "getter": "shadowBlurRadius", "name": "shadowBlurRadius", "setter": "setShadowBlurRadius:"},
+      {"access": "public", "getter": "shadowColor", "name": "shadowColor", "setter": "setShadowColor:"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "categories": [
+      "NSStringDrawingContextDeprecated"
+     ],
+     "introduced": "6",
+     "linkage": "exported",
+     "name": "NSStringDrawingContext",
+     "properties": [
+      {"access": "public", "getter": "minimumScaleFactor", "name": "minimumScaleFactor", "setter": "setMinimumScaleFactor:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "actualScaleFactor", "name": "actualScaleFactor"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "totalBounds", "name": "totalBounds"}
      ],
      "super": "NSObject"
     },
@@ -274,6 +904,68 @@
       {"access": "public", "attr": [ "readonly" ], "getter": "location", "name": "location"},
       {"access": "public", "getter": "view", "name": "view", "setter": "setView:"},
       {"access": "public", "getter": "tracksTextAttachmentViewBounds", "name": "tracksTextAttachmentViewBounds", "setter": "setTracksTextAttachmentViewBounds:"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "init"},
+      {"access": "public", "name": "initWithCoder:"},
+      {"access": "public", "name": "setValue:type:forDimension:"},
+      {"access": "public", "name": "valueForDimension:"},
+      {"access": "public", "name": "valueTypeForDimension:"},
+      {"access": "public", "name": "setContentWidth:type:"},
+      {"access": "public", "name": "setWidth:type:forLayer:"},
+      {"access": "public", "introduced": "27", "name": "setWidth:type:forLayer:rectEdge:"},
+      {"access": "public", "introduced": "27", "name": "widthForLayer:rectEdge:"},
+      {"access": "public", "introduced": "27", "name": "widthValueTypeForLayer:rectEdge:"},
+      {"access": "public", "name": "setBorderColor:"},
+      {"access": "public", "introduced": "27", "name": "setBorderColor:rectEdge:"},
+      {"access": "public", "introduced": "27", "name": "borderColorForRectEdge:"}
+     ],
+     "introduced": "6",
+     "linkage": "exported",
+     "name": "NSTextBlock",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "contentWidth", "name": "contentWidth"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "contentWidthValueType", "name": "contentWidthValueType"},
+      {"access": "public", "getter": "verticalAlignment", "name": "verticalAlignment", "setter": "setVerticalAlignment:"},
+      {"access": "public", "getter": "backgroundColor", "name": "backgroundColor", "setter": "setBackgroundColor:"}
+     ],
+     "protocols": [
+      "NSSecureCoding",
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "categories": [
+      "NSTextContainer_NSLayoutManagerInterface"
+     ],
+     "instanceMethods": [
+      {"access": "public", "introduced": "7", "name": "initWithSize:"},
+      {"access": "public", "name": "initWithCoder:"},
+      {"access": "public", "introduced": "7", "name": "lineFragmentRectForProposedRect:atIndex:writingDirection:remainingRect:"}
+     ],
+     "introduced": "7",
+     "linkage": "exported",
+     "name": "NSTextContainer",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "textLayoutManager", "introduced": "15", "name": "textLayoutManager"},
+      {"access": "public", "getter": "size", "introduced": "7", "name": "size", "setter": "setSize:"},
+      {"access": "public", "getter": "lineBreakMode", "introduced": "7", "name": "lineBreakMode", "setter": "setLineBreakMode:"},
+      {"access": "public", "getter": "exclusionPaths", "introduced": "7", "name": "exclusionPaths", "setter": "setExclusionPaths:"},
+      {"access": "public", "getter": "lineFragmentPadding", "name": "lineFragmentPadding", "setter": "setLineFragmentPadding:"},
+      {"access": "public", "getter": "maximumNumberOfLines", "introduced": "7", "name": "maximumNumberOfLines", "setter": "setMaximumNumberOfLines:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isSimpleRectangularTextContainer", "introduced": "9", "name": "simpleRectangularTextContainer"},
+      {"access": "public", "getter": "widthTracksTextView", "name": "widthTracksTextView", "setter": "setWidthTracksTextView:"},
+      {"access": "public", "getter": "heightTracksTextView", "name": "heightTracksTextView", "setter": "setHeightTracksTextView:"}
+     ],
+     "protocols": [
+      "NSSecureCoding",
+      "NSTextLayoutOrientationProvider"
      ],
      "super": "NSObject"
     },
@@ -376,7 +1068,8 @@
       {"access": "public", "attr": [ "readonly" ], "getter": "textAttachmentViewProviders", "name": "textAttachmentViewProviders"}
      ],
      "protocols": [
-      "NSSecureCoding"
+      "NSSecureCoding",
+      "NSTextViewportRenderingSurfaceKey"
      ],
      "super": "NSObject"
     },
@@ -597,6 +1290,87 @@
     },
     {
      "access": "public",
+     "categories": [
+      "NSTextStorage_NSLayoutManagerInterface"
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "edited:range:changeInLength:"},
+      {"access": "public", "name": "processEditing"},
+      {"access": "public", "name": "invalidateAttributesInRange:"},
+      {"access": "public", "name": "ensureAttributesAreFixedInRange:"}
+     ],
+     "introduced": "7",
+     "linkage": "exported",
+     "name": "NSTextStorage",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "editedMask", "name": "editedMask"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "editedRange", "name": "editedRange"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "changeInLength", "name": "changeInLength"},
+      {"access": "public", "getter": "delegate", "name": "delegate", "setter": "setDelegate:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "fixesAttributesLazily", "name": "fixesAttributesLazily"},
+      {"access": "public", "getter": "textStorageObserver", "introduced": "15", "name": "textStorageObserver", "setter": "setTextStorageObserver:"}
+     ],
+     "protocols": [
+      "NSSecureCoding"
+     ],
+     "super": "NSMutableAttributedString"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "introduced": "7", "name": "columnTerminatorsForLocale:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithTextAlignment:location:options:"}
+     ],
+     "introduced": "7",
+     "linkage": "exported",
+     "name": "NSTextTab",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "alignment", "name": "alignment"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "location", "name": "location"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "options", "name": "options"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSCoding",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "6",
+     "linkage": "exported",
+     "name": "NSTextTable",
+     "properties": [
+      {"access": "public", "getter": "numberOfColumns", "name": "numberOfColumns", "setter": "setNumberOfColumns:"},
+      {"access": "public", "getter": "layoutAlgorithm", "name": "layoutAlgorithm", "setter": "setLayoutAlgorithm:"},
+      {"access": "public", "getter": "collapsesBorders", "name": "collapsesBorders", "setter": "setCollapsesBorders:"},
+      {"access": "public", "getter": "hidesEmptyCells", "name": "hidesEmptyCells", "setter": "setHidesEmptyCells:"}
+     ],
+     "super": "NSTextBlock"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithTable:startingRow:rowSpan:startingColumn:columnSpan:"},
+      {"access": "public", "name": "initWithCoder:"}
+     ],
+     "introduced": "6",
+     "linkage": "exported",
+     "name": "NSTextTableBlock",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "table", "name": "table"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "startingRow", "name": "startingRow"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "rowSpan", "name": "rowSpan"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "startingColumn", "name": "startingColumn"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "columnSpan", "name": "columnSpan"}
+     ],
+     "super": "NSTextBlock"
+    },
+    {
+     "access": "public",
      "classMethods": [
       {"access": "public", "name": "new", "unavailable": true}
      ],
@@ -605,7 +1379,8 @@
       {"access": "public", "name": "init", "unavailable": true},
       {"access": "public", "name": "layoutViewport"},
       {"access": "public", "name": "relocateViewportToTextLocation:"},
-      {"access": "public", "name": "adjustViewportByVerticalOffset:"}
+      {"access": "public", "name": "adjustViewportByVerticalOffset:"},
+      {"access": "public", "name": "renderingSurfaceForKey:", "unavailable": true}
      ],
      "introduced": "15",
      "linkage": "exported",
@@ -620,6 +1395,27 @@
     }
    ],
    "protocols": [
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "7", "name": "layoutManager:shouldGenerateGlyphs:properties:characterIndexes:font:forGlyphRange:", "optional": true},
+      {"access": "public", "introduced": "7", "name": "layoutManager:lineSpacingAfterGlyphAtIndex:withProposedLineFragmentRect:", "optional": true},
+      {"access": "public", "introduced": "7", "name": "layoutManager:paragraphSpacingBeforeGlyphAtIndex:withProposedLineFragmentRect:", "optional": true},
+      {"access": "public", "introduced": "7", "name": "layoutManager:paragraphSpacingAfterGlyphAtIndex:withProposedLineFragmentRect:", "optional": true},
+      {"access": "public", "introduced": "7", "name": "layoutManager:shouldUseAction:forControlCharacterAtIndex:", "optional": true},
+      {"access": "public", "introduced": "7", "name": "layoutManager:shouldBreakLineByWordBeforeCharacterAtIndex:", "optional": true},
+      {"access": "public", "introduced": "7", "name": "layoutManager:shouldBreakLineByHyphenatingBeforeCharacterAtIndex:", "optional": true},
+      {"access": "public", "introduced": "7", "name": "layoutManager:boundingBoxForControlGlyphAtIndex:forTextContainer:proposedLineFragment:glyphPosition:characterIndex:", "optional": true},
+      {"access": "public", "introduced": "9", "name": "layoutManager:shouldSetLineFragmentRect:lineFragmentUsedRect:baselineOffset:inTextContainer:forGlyphRange:", "optional": true},
+      {"access": "public", "introduced": "7", "name": "layoutManagerDidInvalidateLayout:", "optional": true},
+      {"access": "public", "introduced": "7", "name": "layoutManager:didCompleteLayoutForTextContainer:atEnd:", "optional": true},
+      {"access": "public", "introduced": "7", "name": "layoutManager:textContainer:didChangeGeometryFromSize:", "optional": true}
+     ],
+     "name": "NSLayoutManagerDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    },
     {
      "access": "public",
      "instanceMethods": [
@@ -692,7 +1488,9 @@
      "instanceMethods": [
       {"access": "public", "name": "textLayoutManager:textLayoutFragmentForLocation:inTextElement:", "optional": true},
       {"access": "public", "name": "textLayoutManager:shouldBreakLineBeforeLocation:hyphenating:", "optional": true},
-      {"access": "public", "name": "textLayoutManager:renderingAttributesForLink:atLocation:defaultAttributes:", "optional": true}
+      {"access": "public", "name": "textLayoutManager:renderingAttributesForLink:atLocation:defaultAttributes:", "optional": true},
+      {"access": "public", "introduced": "27", "name": "textLayoutManager:cacheTextAttachmentViewProvider:forTextAttachment:", "optional": true},
+      {"access": "public", "introduced": "27", "name": "textLayoutManager:retrieveCachedTextAttachmentViewProviderForTextAttachment:", "optional": true}
      ],
      "introduced": "15",
      "name": "NSTextLayoutManagerDelegate",
@@ -702,11 +1500,23 @@
     },
     {
      "access": "public",
+     "introduced": "7",
+     "name": "NSTextLayoutOrientationProvider",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "layoutOrientation", "introduced": "7", "name": "layoutOrientation"}
+     ]
+    },
+    {
+     "access": "public",
      "instanceMethods": [
-      {"access": "public", "introduced": "15", "name": "compare:"}
+      {"access": "public", "introduced": "15", "name": "compare:"},
+      {"access": "public", "name": "isEqual:"}
      ],
      "introduced": "15",
      "name": "NSTextLocation",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "hash", "name": "hash"}
+     ],
      "protocols": [
       "NSObject"
      ]
@@ -722,7 +1532,8 @@
       {"access": "public", "name": "enumerateCaretOffsetsInLineFragmentAtLocation:usingBlock:"},
       {"access": "public", "name": "lineFragmentRangeForPoint:inContainerAtLocation:"},
       {"access": "public", "name": "enumerateContainerBoundariesFromLocation:reverse:usingBlock:", "optional": true},
-      {"access": "public", "name": "textLayoutOrientationAtLocation:", "optional": true}
+      {"access": "public", "name": "textLayoutOrientationAtLocation:", "optional": true},
+      {"access": "public", "introduced": "27", "name": "convertInteractionPoint:toContainerAtLocation:", "optional": true}
      ],
      "introduced": "15",
      "name": "NSTextSelectionDataSource",
@@ -736,34 +1547,1758 @@
     {
      "access": "public",
      "instanceMethods": [
+      {"access": "public", "introduced": "7", "name": "textStorage:willProcessEditing:range:changeInLength:", "optional": true},
+      {"access": "public", "introduced": "7", "name": "textStorage:didProcessEditing:range:changeInLength:", "optional": true}
+     ],
+     "introduced": "7",
+     "name": "NSTextStorageDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "processEditingForTextStorage:edited:range:changeInLength:invalidatedRange:"},
+      {"access": "public", "name": "performEditingTransactionForTextStorage:usingBlock:"}
+     ],
+     "introduced": "15",
+     "name": "NSTextStorageObserving",
+     "properties": [
+      {"access": "public", "getter": "textStorage", "name": "textStorage", "setter": "setTextStorage:"}
+     ],
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
       {"access": "public", "name": "viewportBoundsForTextViewportLayoutController:"},
       {"access": "public", "name": "textViewportLayoutController:configureRenderingSurfaceForTextLayoutFragment:"},
       {"access": "public", "name": "textViewportLayoutControllerWillLayout:", "optional": true},
-      {"access": "public", "name": "textViewportLayoutControllerDidLayout:", "optional": true}
+      {"access": "public", "name": "textViewportLayoutControllerDidLayout:", "optional": true},
+      {"access": "public", "name": "textViewportLayoutController:cacheRenderingSurface:forKey:", "optional": true},
+      {"access": "public", "name": "textViewportLayoutController:retrieveCachedRenderingSurfaceForKey:", "optional": true},
+      {"access": "public", "name": "textViewportLayoutControllerReceivedSetNeedsLayout:", "optional": true},
+      {"access": "public", "name": "textViewportLayoutController:renderingSurfaceForTextLayoutFragment:", "optional": true, "unavailable": true}
      ],
      "introduced": "15",
      "name": "NSTextViewportLayoutControllerDelegate",
      "protocols": [
       "NSObject"
      ]
+    },
+    {
+     "access": "public",
+     "introduced": "27",
+     "name": "NSTextViewportRenderingSurface",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "introduced": "18",
+     "name": "NSTextViewportRenderingSurfaceKey",
+     "protocols": [
+      "NSObject"
+     ]
     }
    ],
-   "target": "arm64e-apple-ios26.5",
+   "target": "arm64e-apple-ios27",
    "typedefs": [
+    {"access": "public", "name": "CTTextAlignment"},
+    {"access": "public", "introduced": "7", "name": "NSAttributedStringDocumentAttributeKey"},
+    {"access": "public", "introduced": "6", "name": "NSAttributedStringDocumentReadingOptionKey"},
+    {"access": "public", "introduced": "7", "name": "NSAttributedStringDocumentType"},
+    {"access": "public", "name": "NSControlCharacterAction"},
+    {"access": "public", "name": "NSGlyphProperty"},
+    {"access": "public", "name": "NSLineBreakMode"},
+    {"access": "public", "name": "NSLineBreakStrategy"},
+    {"access": "public", "name": "NSStringDrawingOptions"},
+    {"access": "public", "name": "NSTextAlignment"},
+    {"access": "public", "name": "NSTextBlockDimension"},
+    {"access": "public", "name": "NSTextBlockLayer"},
+    {"access": "public", "name": "NSTextBlockValueType"},
+    {"access": "public", "name": "NSTextBlockVerticalAlignment"},
     {"access": "public", "name": "NSTextContentManagerEnumerationOptions"},
+    {"access": "public", "introduced": "7", "name": "NSTextEffectStyle"},
+    {"access": "public", "introduced": "18", "name": "NSTextHighlightColorScheme"},
+    {"access": "public", "introduced": "18", "name": "NSTextHighlightStyle"},
     {"access": "public", "name": "NSTextLayoutFragmentEnumerationOptions"},
     {"access": "public", "name": "NSTextLayoutFragmentState"},
     {"access": "public", "name": "NSTextLayoutManagerSegmentOptions"},
     {"access": "public", "name": "NSTextLayoutManagerSegmentType"},
+    {"access": "public", "name": "NSTextLayoutOrientation"},
+    {"access": "public", "introduced": "6", "name": "NSTextLayoutSectionKey"},
     {"access": "public", "introduced": "7", "name": "NSTextListMarkerFormat"},
     {"access": "public", "name": "NSTextListOptions"},
+    {"access": "public", "name": "NSTextScalingType"},
     {"access": "public", "name": "NSTextSelectionAffinity"},
     {"access": "public", "name": "NSTextSelectionGranularity"},
     {"access": "public", "name": "NSTextSelectionNavigationDestination"},
     {"access": "public", "name": "NSTextSelectionNavigationDirection"},
     {"access": "public", "name": "NSTextSelectionNavigationLayoutOrientation"},
     {"access": "public", "name": "NSTextSelectionNavigationModifier"},
-    {"access": "public", "name": "NSTextSelectionNavigationWritingDirection"}
+    {"access": "public", "name": "NSTextSelectionNavigationWritingDirection"},
+    {"access": "public", "name": "NSTextStorageEditActions"},
+    {"access": "public", "introduced": "7", "name": "NSTextTabOptionKey"},
+    {"access": "public", "name": "NSTextTableLayoutAlgorithm"},
+    {"access": "public", "name": "NSTextWritingDirection"},
+    {"access": "public", "name": "NSUnderlineStyle"},
+    {"access": "public", "name": "NSWritingDirection"},
+    {"access": "public", "name": "NSWritingDirectionFormatType"}
+   ]
+  },
+  {
+   "categories": [
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "introduced": "18", "name": "attributedStringWithAdaptiveImageGlyph:attributes:"}
+     ],
+     "interface": "NSAttributedString",
+     "name": "NSAttributedStringAdaptiveImageGlyphConveniences"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "introduced": "7", "name": "attributedStringWithAttachment:"},
+      {"access": "public", "introduced": "18", "name": "attributedStringWithAttachment:attributes:"}
+     ],
+     "interface": "NSAttributedString",
+     "name": "NSAttributedStringAttachmentConveniences"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "7", "name": "fixAttributesInRange:"}
+     ],
+     "interface": "NSMutableAttributedString",
+     "name": "NSAttributedStringAttributeFixing"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "9", "name": "initWithURL:options:documentAttributes:error:"},
+      {"access": "public", "introduced": "7", "name": "initWithData:options:documentAttributes:error:"},
+      {"access": "public", "introduced": "7", "name": "dataFromRange:documentAttributes:error:"},
+      {"access": "public", "introduced": "7", "name": "fileWrapperFromRange:documentAttributes:error:"}
+     ],
+     "interface": "NSAttributedString",
+     "name": "NSAttributedStringDocumentFormats"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "9", "name": "containsAttachmentsInRange:"},
+      {"access": "public", "introduced": "18", "name": "prefersRTFDInRange:"}
+     ],
+     "interface": "NSAttributedString",
+     "name": "NSAttributedStringKitAdditions"
+    },
+    {
+     "access": "public",
+     "interface": "NSAttributedString",
+     "introduced": "12",
+     "name": "NSAttributedString_ItemProvider",
+     "protocols": [
+      "NSItemProviderReading",
+      "NSItemProviderWriting"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "7", "name": "initWithFileURL:options:documentAttributes:error:"}
+     ],
+     "interface": "NSAttributedString",
+     "name": "NSDeprecatedKitAdditions"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "7", "name": "readFromFileURL:options:documentAttributes:error:"}
+     ],
+     "interface": "NSMutableAttributedString",
+     "name": "NSDeprecatedKitAdditions"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "7", "name": "drawWithRect:options:attributes:context:"},
+      {"access": "public", "introduced": "7", "name": "boundingRectWithSize:options:attributes:context:"}
+     ],
+     "interface": "NSString",
+     "name": "NSExtendedStringDrawing"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "6", "name": "drawWithRect:options:context:"},
+      {"access": "public", "introduced": "6", "name": "boundingRectWithSize:options:context:"}
+     ],
+     "interface": "NSAttributedString",
+     "name": "NSExtendedStringDrawing"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "glyphAtIndex:isValidIndex:"},
+      {"access": "public", "name": "glyphAtIndex:"},
+      {"access": "public", "introduced": "7", "name": "showCGGlyphs:positions:count:font:matrix:attributes:inContext:"}
+     ],
+     "interface": "NSLayoutManager",
+     "name": "NSLayoutManagerDeprecated",
+     "properties": [
+      {"access": "public", "getter": "hyphenationFactor", "introduced": "7", "name": "hyphenationFactor", "setter": "setHyphenationFactor:"}
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "9", "name": "readFromURL:options:documentAttributes:error:"},
+      {"access": "public", "introduced": "7", "name": "readFromData:options:documentAttributes:error:"}
+     ],
+     "interface": "NSMutableAttributedString",
+     "name": "NSMutableAttributedStringDocumentFormats"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "7", "name": "sizeWithAttributes:"},
+      {"access": "public", "introduced": "7", "name": "drawAtPoint:withAttributes:"},
+      {"access": "public", "introduced": "7", "name": "drawInRect:withAttributes:"}
+     ],
+     "interface": "NSString",
+     "name": "NSStringDrawing"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "6", "name": "size"},
+      {"access": "public", "introduced": "6", "name": "drawAtPoint:"},
+      {"access": "public", "introduced": "6", "name": "drawInRect:"}
+     ],
+     "interface": "NSAttributedString",
+     "name": "NSStringDrawing"
+    },
+    {
+     "access": "public",
+     "interface": "NSStringDrawingContext",
+     "name": "NSStringDrawingContextDeprecated",
+     "properties": [
+      {"access": "public", "getter": "minimumTrackingAdjustment", "introduced": "6", "name": "minimumTrackingAdjustment", "setter": "setMinimumTrackingAdjustment:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "actualTrackingAdjustment", "introduced": "6", "name": "actualTrackingAdjustment"}
+     ]
+    },
+    {
+     "access": "public",
+     "interface": "NSTextAttachment",
+     "introduced": "7",
+     "name": "NSTextAttachment_Deprecation",
+     "protocols": [
+      "NSTextAttachmentContainer"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "9", "name": "replaceLayoutManager:"}
+     ],
+     "interface": "NSTextContainer",
+     "name": "NSTextContainer_NSLayoutManagerInterface",
+     "properties": [
+      {"access": "public", "getter": "layoutManager", "introduced": "9", "name": "layoutManager", "setter": "setLayoutManager:"}
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "addLayoutManager:"},
+      {"access": "public", "name": "removeLayoutManager:"}
+     ],
+     "interface": "NSTextStorage",
+     "introduced": "7",
+     "name": "NSTextStorage_NSLayoutManagerInterface",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "layoutManagers", "name": "layoutManagers"}
+     ]
+    }
+   ],
+   "enums": [
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "NSControlCharacterActionZeroAdvancement"},
+      {"access": "public", "name": "NSControlCharacterActionWhitespace"},
+      {"access": "public", "name": "NSControlCharacterActionHorizontalTab"},
+      {"access": "public", "name": "NSControlCharacterActionLineBreak"},
+      {"access": "public", "name": "NSControlCharacterActionParagraphBreak"},
+      {"access": "public", "name": "NSControlCharacterActionContainerBreak"}
+     ],
+     "introduced": "7",
+     "name": "NSControlCharacterAction"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "NSGlyphPropertyNull"},
+      {"access": "public", "name": "NSGlyphPropertyControlCharacter"},
+      {"access": "public", "name": "NSGlyphPropertyElastic"},
+      {"access": "public", "name": "NSGlyphPropertyNonBaseCharacter"}
+     ],
+     "introduced": "7",
+     "name": "NSGlyphProperty"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "NSLineBreakByWordWrapping"},
+      {"access": "public", "name": "NSLineBreakByCharWrapping"},
+      {"access": "public", "name": "NSLineBreakByClipping"},
+      {"access": "public", "name": "NSLineBreakByTruncatingHead"},
+      {"access": "public", "name": "NSLineBreakByTruncatingTail"},
+      {"access": "public", "name": "NSLineBreakByTruncatingMiddle"}
+     ],
+     "introduced": "6",
+     "name": "NSLineBreakMode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "NSLineBreakStrategyNone"},
+      {"access": "public", "introduced": "9", "name": "NSLineBreakStrategyPushOut"},
+      {"access": "public", "introduced": "14", "name": "NSLineBreakStrategyHangulWordPriority"},
+      {"access": "public", "introduced": "14", "name": "NSLineBreakStrategyStandard"}
+     ],
+     "introduced": "9",
+     "name": "NSLineBreakStrategy"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "NSStringDrawingUsesLineFragmentOrigin"},
+      {"access": "public", "name": "NSStringDrawingUsesFontLeading"},
+      {"access": "public", "name": "NSStringDrawingUsesDeviceMetrics"},
+      {"access": "public", "introduced": "6", "name": "NSStringDrawingTruncatesLastVisibleLine"},
+      {"access": "public", "introduced": "26", "name": "NSStringDrawingOptionsResolvesNaturalAlignmentWithBaseWritingDirection"}
+     ],
+     "introduced": "6",
+     "name": "NSStringDrawingOptions"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "NSTextAlignmentLeft"},
+      {"access": "public", "name": "NSTextAlignmentCenter"},
+      {"access": "public", "name": "NSTextAlignmentRight"},
+      {"access": "public", "name": "NSTextAlignmentJustified"},
+      {"access": "public", "name": "NSTextAlignmentNatural"}
+     ],
+     "introduced": "6",
+     "name": "NSTextAlignment"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "NSTextBlockDimensionWidth"},
+      {"access": "public", "name": "NSTextBlockDimensionMinimumWidth"},
+      {"access": "public", "name": "NSTextBlockDimensionMaximumWidth"},
+      {"access": "public", "name": "NSTextBlockDimensionHeight"},
+      {"access": "public", "name": "NSTextBlockDimensionMinimumHeight"},
+      {"access": "public", "name": "NSTextBlockDimensionMaximumHeight"}
+     ],
+     "introduced": "6",
+     "name": "NSTextBlockDimension"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "NSTextBlockLayerPadding"},
+      {"access": "public", "name": "NSTextBlockLayerBorder"},
+      {"access": "public", "name": "NSTextBlockLayerMargin"}
+     ],
+     "introduced": "6",
+     "name": "NSTextBlockLayer"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "NSTextBlockValueTypeAbsolute"},
+      {"access": "public", "name": "NSTextBlockValueTypePercentage"}
+     ],
+     "introduced": "6",
+     "name": "NSTextBlockValueType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "NSTextBlockVerticalAlignmentTop"},
+      {"access": "public", "name": "NSTextBlockVerticalAlignmentMiddle"},
+      {"access": "public", "name": "NSTextBlockVerticalAlignmentBottom"},
+      {"access": "public", "name": "NSTextBlockVerticalAlignmentBaseline"}
+     ],
+     "introduced": "6",
+     "name": "NSTextBlockVerticalAlignment"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "NSTextContentManagerEnumerationOptionsNone"},
+      {"access": "public", "name": "NSTextContentManagerEnumerationOptionsReverse"}
+     ],
+     "introduced": "15",
+     "name": "NSTextContentManagerEnumerationOptions"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "NSTextLayoutFragmentEnumerationOptionsNone"},
+      {"access": "public", "name": "NSTextLayoutFragmentEnumerationOptionsReverse"},
+      {"access": "public", "name": "NSTextLayoutFragmentEnumerationOptionsEstimatesSize"},
+      {"access": "public", "name": "NSTextLayoutFragmentEnumerationOptionsEnsuresLayout"},
+      {"access": "public", "name": "NSTextLayoutFragmentEnumerationOptionsEnsuresExtraLineFragment"}
+     ],
+     "introduced": "15",
+     "name": "NSTextLayoutFragmentEnumerationOptions"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "NSTextLayoutFragmentStateNone"},
+      {"access": "public", "name": "NSTextLayoutFragmentStateEstimatedUsageBounds"},
+      {"access": "public", "name": "NSTextLayoutFragmentStateCalculatedUsageBounds"},
+      {"access": "public", "name": "NSTextLayoutFragmentStateLayoutAvailable"}
+     ],
+     "introduced": "15",
+     "name": "NSTextLayoutFragmentState"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "NSTextLayoutManagerSegmentOptionsNone"},
+      {"access": "public", "name": "NSTextLayoutManagerSegmentOptionsRangeNotRequired"},
+      {"access": "public", "name": "NSTextLayoutManagerSegmentOptionsMiddleFragmentsExcluded"},
+      {"access": "public", "name": "NSTextLayoutManagerSegmentOptionsHeadSegmentExtended"},
+      {"access": "public", "name": "NSTextLayoutManagerSegmentOptionsTailSegmentExtended"},
+      {"access": "public", "name": "NSTextLayoutManagerSegmentOptionsUpstreamAffinity"}
+     ],
+     "introduced": "15",
+     "name": "NSTextLayoutManagerSegmentOptions"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "NSTextLayoutManagerSegmentTypeStandard"},
+      {"access": "public", "name": "NSTextLayoutManagerSegmentTypeSelection"},
+      {"access": "public", "name": "NSTextLayoutManagerSegmentTypeHighlight"}
+     ],
+     "introduced": "15",
+     "name": "NSTextLayoutManagerSegmentType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "NSTextLayoutOrientationHorizontal"},
+      {"access": "public", "name": "NSTextLayoutOrientationVertical"}
+     ],
+     "introduced": "7",
+     "name": "NSTextLayoutOrientation"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "7", "name": "NSTextListPrependEnclosingMarker"}
+     ],
+     "introduced": "7",
+     "name": "NSTextListOptions"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "NSTextScalingStandard"},
+      {"access": "public", "name": "NSTextScalingiOS"}
+     ],
+     "introduced": "13",
+     "name": "NSTextScalingType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "NSTextSelectionAffinityUpstream"},
+      {"access": "public", "name": "NSTextSelectionAffinityDownstream"}
+     ],
+     "introduced": "15",
+     "name": "NSTextSelectionAffinity"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "NSTextSelectionGranularityCharacter"},
+      {"access": "public", "name": "NSTextSelectionGranularityWord"},
+      {"access": "public", "name": "NSTextSelectionGranularityParagraph"},
+      {"access": "public", "name": "NSTextSelectionGranularityLine"},
+      {"access": "public", "name": "NSTextSelectionGranularitySentence"}
+     ],
+     "introduced": "15",
+     "name": "NSTextSelectionGranularity"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "NSTextSelectionNavigationDestinationCharacter"},
+      {"access": "public", "name": "NSTextSelectionNavigationDestinationWord"},
+      {"access": "public", "name": "NSTextSelectionNavigationDestinationLine"},
+      {"access": "public", "name": "NSTextSelectionNavigationDestinationSentence"},
+      {"access": "public", "name": "NSTextSelectionNavigationDestinationParagraph"},
+      {"access": "public", "name": "NSTextSelectionNavigationDestinationContainer"},
+      {"access": "public", "name": "NSTextSelectionNavigationDestinationDocument"}
+     ],
+     "introduced": "15",
+     "name": "NSTextSelectionNavigationDestination"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "NSTextSelectionNavigationDirectionForward"},
+      {"access": "public", "name": "NSTextSelectionNavigationDirectionBackward"},
+      {"access": "public", "name": "NSTextSelectionNavigationDirectionRight"},
+      {"access": "public", "name": "NSTextSelectionNavigationDirectionLeft"},
+      {"access": "public", "name": "NSTextSelectionNavigationDirectionUp"},
+      {"access": "public", "name": "NSTextSelectionNavigationDirectionDown"}
+     ],
+     "introduced": "15",
+     "name": "NSTextSelectionNavigationDirection"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "NSTextSelectionNavigationLayoutOrientationHorizontal"},
+      {"access": "public", "name": "NSTextSelectionNavigationLayoutOrientationVertical"}
+     ],
+     "introduced": "15",
+     "name": "NSTextSelectionNavigationLayoutOrientation"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "NSTextSelectionNavigationModifierExtend"},
+      {"access": "public", "name": "NSTextSelectionNavigationModifierVisual"},
+      {"access": "public", "name": "NSTextSelectionNavigationModifierMultiple"}
+     ],
+     "introduced": "15",
+     "name": "NSTextSelectionNavigationModifier"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "NSTextSelectionNavigationWritingDirectionLeftToRight"},
+      {"access": "public", "name": "NSTextSelectionNavigationWritingDirectionRightToLeft"}
+     ],
+     "introduced": "15",
+     "name": "NSTextSelectionNavigationWritingDirection"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "7", "name": "NSTextStorageEditedAttributes"},
+      {"access": "public", "introduced": "7", "name": "NSTextStorageEditedCharacters"}
+     ],
+     "introduced": "7",
+     "name": "NSTextStorageEditActions"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "NSTextTableLayoutAlgorithmAutomatic"},
+      {"access": "public", "name": "NSTextTableLayoutAlgorithmFixed"}
+     ],
+     "introduced": "6",
+     "name": "NSTextTableLayoutAlgorithm"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "NSTextWritingDirectionEmbedding"},
+      {"access": "public", "name": "NSTextWritingDirectionOverride"}
+     ],
+     "introduced": "7",
+     "name": "NSTextWritingDirection"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "NSUnderlineStyleNone"},
+      {"access": "public", "name": "NSUnderlineStyleSingle"},
+      {"access": "public", "introduced": "7", "name": "NSUnderlineStyleThick"},
+      {"access": "public", "introduced": "7", "name": "NSUnderlineStyleDouble"},
+      {"access": "public", "introduced": "7", "name": "NSUnderlineStylePatternSolid"},
+      {"access": "public", "introduced": "7", "name": "NSUnderlineStylePatternDot"},
+      {"access": "public", "introduced": "7", "name": "NSUnderlineStylePatternDash"},
+      {"access": "public", "introduced": "7", "name": "NSUnderlineStylePatternDashDot"},
+      {"access": "public", "introduced": "7", "name": "NSUnderlineStylePatternDashDotDot"},
+      {"access": "public", "introduced": "7", "name": "NSUnderlineStyleByWord"}
+     ],
+     "introduced": "6",
+     "name": "NSUnderlineStyle"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "NSWritingDirectionNatural"},
+      {"access": "public", "name": "NSWritingDirectionLeftToRight"},
+      {"access": "public", "name": "NSWritingDirectionRightToLeft"}
+     ],
+     "introduced": "6",
+     "name": "NSWritingDirection"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "NSWritingDirectionEmbedding"},
+      {"access": "public", "name": "NSWritingDirectionOverride"}
+     ],
+     "introduced": "9",
+     "name": "NSWritingDirectionFormatType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "7", "name": "NSControlCharacterZeroAdvancementAction"},
+      {"access": "public", "introduced": "7", "name": "NSControlCharacterWhitespaceAction"},
+      {"access": "public", "introduced": "7", "name": "NSControlCharacterHorizontalTabAction"},
+      {"access": "public", "introduced": "7", "name": "NSControlCharacterLineBreakAction"},
+      {"access": "public", "introduced": "7", "name": "NSControlCharacterParagraphBreakAction"},
+      {"access": "public", "introduced": "7", "name": "NSControlCharacterContainerBreakAction"}
+     ],
+     "name": "enum (unnamed at NSLayoutManager.h:3601)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "introduced": "7", "name": "NSAttachmentCharacter"}
+     ],
+     "introduced": "7",
+     "name": "enum (unnamed at NSTextAttachment.h:151)"
+    }
+   ],
+   "globals": [
+    {"access": "public", "introduced": "18", "kind": "variable", "linkage": "exported", "name": "_NSAdaptiveImageGlyphAttributeName"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_NSAttachmentAttributeName"},
+    {"access": "public", "introduced": "6", "kind": "variable", "linkage": "exported", "name": "_NSBackgroundColorAttributeName"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_NSBackgroundColorDocumentAttribute"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_NSBaselineOffsetAttributeName"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_NSCharacterEncodingDocumentAttribute"},
+    {"access": "public", "introduced": "6", "kind": "variable", "linkage": "exported", "name": "_NSCharacterEncodingDocumentOption"},
+    {"access": "public", "introduced": "13", "kind": "variable", "linkage": "exported", "name": "_NSCocoaVersionDocumentAttribute"},
+    {"access": "public", "introduced": "6", "kind": "variable", "linkage": "exported", "name": "_NSDefaultAttributesDocumentAttribute"},
+    {"access": "public", "introduced": "6", "kind": "variable", "linkage": "exported", "name": "_NSDefaultAttributesDocumentOption"},
+    {"access": "public", "introduced": "17", "kind": "variable", "linkage": "exported", "name": "_NSDefaultFontExcludedDocumentAttribute"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_NSDefaultTabIntervalDocumentAttribute"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_NSDocumentTypeDocumentAttribute"},
+    {"access": "public", "introduced": "6", "kind": "variable", "linkage": "exported", "name": "_NSDocumentTypeDocumentOption"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_NSExpansionAttributeName"},
+    {"access": "public", "introduced": "6", "kind": "variable", "linkage": "exported", "name": "_NSFontAttributeName"},
+    {"access": "public", "introduced": "6", "kind": "variable", "linkage": "exported", "name": "_NSForegroundColorAttributeName"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_NSHTMLTextDocumentType"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_NSHyphenationFactorDocumentAttribute"},
+    {"access": "public", "introduced": "6", "kind": "variable", "linkage": "exported", "name": "_NSKernAttributeName"},
+    {"access": "public", "introduced": "6", "kind": "variable", "linkage": "exported", "name": "_NSLigatureAttributeName"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_NSLinkAttributeName"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_NSObliquenessAttributeName"},
+    {"access": "public", "introduced": "6", "kind": "variable", "linkage": "exported", "name": "_NSPaperMarginDocumentAttribute"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_NSPaperSizeDocumentAttribute"},
+    {"access": "public", "introduced": "6", "kind": "variable", "linkage": "exported", "name": "_NSParagraphStyleAttributeName"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_NSPlainTextDocumentType"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_NSRTFDTextDocumentType"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_NSRTFTextDocumentType"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_NSReadOnlyDocumentAttribute"},
+    {"access": "public", "introduced": "6", "kind": "variable", "linkage": "exported", "name": "_NSShadowAttributeName"},
+    {"access": "public", "introduced": "13", "kind": "variable", "linkage": "exported", "name": "_NSSourceTextScalingDocumentAttribute"},
+    {"access": "public", "introduced": "13", "kind": "variable", "linkage": "exported", "name": "_NSSourceTextScalingDocumentOption"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_NSStrikethroughColorAttributeName"},
+    {"access": "public", "introduced": "6", "kind": "variable", "linkage": "exported", "name": "_NSStrikethroughStyleAttributeName"},
+    {"access": "public", "introduced": "6", "kind": "variable", "linkage": "exported", "name": "_NSStrokeColorAttributeName"},
+    {"access": "public", "introduced": "6", "kind": "variable", "linkage": "exported", "name": "_NSStrokeWidthAttributeName"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_NSTabColumnTerminatorsAttributeName"},
+    {"access": "public", "introduced": "13", "kind": "variable", "linkage": "exported", "name": "_NSTargetTextScalingDocumentOption"},
+    {"access": "public", "introduced": "6", "kind": "function", "linkage": "exported", "name": "_NSTextAlignmentFromCTTextAlignment"},
+    {"access": "public", "introduced": "6", "kind": "function", "linkage": "exported", "name": "_NSTextAlignmentToCTTextAlignment"},
+    {"access": "public", "introduced": "15", "kind": "variable", "linkage": "exported", "name": "_NSTextContentStorageUnsupportedAttributeAddedNotification"},
+    {"access": "public", "introduced": "6", "kind": "variable", "linkage": "exported", "name": "_NSTextEffectAttributeName"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_NSTextEffectLetterpressStyle"},
+    {"access": "public", "introduced": "18", "kind": "variable", "linkage": "exported", "name": "_NSTextHighlightColorSchemeAttributeName"},
+    {"access": "public", "introduced": "18", "kind": "variable", "linkage": "exported", "name": "_NSTextHighlightColorSchemeBlue"},
+    {"access": "public", "introduced": "18", "kind": "variable", "linkage": "exported", "name": "_NSTextHighlightColorSchemeDefault"},
+    {"access": "public", "introduced": "18", "kind": "variable", "linkage": "exported", "name": "_NSTextHighlightColorSchemeMint"},
+    {"access": "public", "introduced": "18", "kind": "variable", "linkage": "exported", "name": "_NSTextHighlightColorSchemeOrange"},
+    {"access": "public", "introduced": "18", "kind": "variable", "linkage": "exported", "name": "_NSTextHighlightColorSchemePink"},
+    {"access": "public", "introduced": "18", "kind": "variable", "linkage": "exported", "name": "_NSTextHighlightColorSchemePurple"},
+    {"access": "public", "introduced": "18", "kind": "variable", "linkage": "exported", "name": "_NSTextHighlightStyleAttributeName"},
+    {"access": "public", "introduced": "18", "kind": "variable", "linkage": "exported", "name": "_NSTextHighlightStyleDefault"},
+    {"access": "public", "introduced": "18", "kind": "variable", "linkage": "exported", "name": "_NSTextKit1ListMarkerFormatDocumentOption"},
+    {"access": "public", "introduced": "6", "kind": "variable", "linkage": "exported", "name": "_NSTextLayoutSectionOrientation"},
+    {"access": "public", "introduced": "6", "kind": "variable", "linkage": "exported", "name": "_NSTextLayoutSectionRange"},
+    {"access": "public", "introduced": "6", "kind": "variable", "linkage": "exported", "name": "_NSTextLayoutSectionsAttribute"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_NSTextListMarkerBox"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_NSTextListMarkerCheck"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_NSTextListMarkerCircle"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_NSTextListMarkerDecimal"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_NSTextListMarkerDiamond"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_NSTextListMarkerDisc"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_NSTextListMarkerHyphen"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_NSTextListMarkerLowercaseAlpha"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_NSTextListMarkerLowercaseHexadecimal"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_NSTextListMarkerLowercaseLatin"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_NSTextListMarkerLowercaseRoman"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_NSTextListMarkerOctal"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_NSTextListMarkerSquare"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_NSTextListMarkerUppercaseAlpha"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_NSTextListMarkerUppercaseHexadecimal"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_NSTextListMarkerUppercaseLatin"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_NSTextListMarkerUppercaseRoman"},
+    {"access": "public", "introduced": "13", "kind": "variable", "linkage": "exported", "name": "_NSTextScalingDocumentAttribute"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_NSTextStorageDidProcessEditingNotification"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_NSTextStorageWillProcessEditingNotification"},
+    {"access": "public", "introduced": "14", "kind": "variable", "linkage": "exported", "name": "_NSTrackingAttributeName"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_NSUnderlineColorAttributeName"},
+    {"access": "public", "introduced": "6", "kind": "variable", "linkage": "exported", "name": "_NSUnderlineStyleAttributeName"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_NSVerticalGlyphFormAttributeName"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_NSViewModeDocumentAttribute"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_NSViewSizeDocumentAttribute"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_NSViewZoomDocumentAttribute"},
+    {"access": "public", "introduced": "6", "kind": "variable", "linkage": "exported", "name": "_NSWritingDirectionAttributeName"},
+    {"access": "public", "introduced": "18.2", "kind": "variable", "linkage": "exported", "name": "_NSWritingToolsExclusionAttributeName"}
+   ],
+   "interfaces": [
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithImageContent:"},
+      {"access": "public", "name": "initWithCoder:"},
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "18",
+     "linkage": "exported",
+     "name": "NSAdaptiveImageGlyph",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "imageContent", "name": "imageContent"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "contentIdentifier", "name": "contentIdentifier"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "contentDescription", "name": "contentDescription"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "contentType", "name": "contentType"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding",
+      "CTAdaptiveImageProviding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "categories": [
+      "NSLayoutManagerDeprecated"
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init"},
+      {"access": "public", "name": "initWithCoder:"},
+      {"access": "public", "name": "addTextContainer:"},
+      {"access": "public", "name": "insertTextContainer:atIndex:"},
+      {"access": "public", "name": "removeTextContainerAtIndex:"},
+      {"access": "public", "name": "textContainerChangedGeometry:"},
+      {"access": "public", "name": "invalidateGlyphsForCharacterRange:changeInLength:actualCharacterRange:"},
+      {"access": "public", "introduced": "7", "name": "invalidateLayoutForCharacterRange:actualCharacterRange:"},
+      {"access": "public", "name": "invalidateDisplayForCharacterRange:"},
+      {"access": "public", "name": "invalidateDisplayForGlyphRange:"},
+      {"access": "public", "introduced": "7", "name": "processEditingForTextStorage:edited:range:changeInLength:invalidatedRange:"},
+      {"access": "public", "name": "ensureGlyphsForCharacterRange:"},
+      {"access": "public", "name": "ensureGlyphsForGlyphRange:"},
+      {"access": "public", "name": "ensureLayoutForCharacterRange:"},
+      {"access": "public", "name": "ensureLayoutForGlyphRange:"},
+      {"access": "public", "name": "ensureLayoutForTextContainer:"},
+      {"access": "public", "name": "ensureLayoutForBoundingRect:inTextContainer:"},
+      {"access": "public", "introduced": "7", "name": "setGlyphs:properties:characterIndexes:font:forGlyphRange:"},
+      {"access": "public", "introduced": "7", "name": "CGGlyphAtIndex:isValidIndex:"},
+      {"access": "public", "introduced": "7", "name": "CGGlyphAtIndex:"},
+      {"access": "public", "introduced": "7", "name": "isValidGlyphIndex:"},
+      {"access": "public", "introduced": "7", "name": "propertyForGlyphAtIndex:"},
+      {"access": "public", "name": "characterIndexForGlyphAtIndex:"},
+      {"access": "public", "name": "glyphIndexForCharacterAtIndex:"},
+      {"access": "public", "introduced": "7", "name": "getGlyphsInRange:glyphs:properties:characterIndexes:bidiLevels:"},
+      {"access": "public", "name": "setTextContainer:forGlyphRange:"},
+      {"access": "public", "name": "setLineFragmentRect:forGlyphRange:usedRect:"},
+      {"access": "public", "name": "setExtraLineFragmentRect:usedRect:textContainer:"},
+      {"access": "public", "name": "setLocation:forStartOfGlyphRange:"},
+      {"access": "public", "name": "setNotShownAttribute:forGlyphAtIndex:"},
+      {"access": "public", "name": "setDrawsOutsideLineFragment:forGlyphAtIndex:"},
+      {"access": "public", "name": "setAttachmentSize:forGlyphRange:"},
+      {"access": "public", "name": "getFirstUnlaidCharacterIndex:glyphIndex:"},
+      {"access": "public", "name": "firstUnlaidCharacterIndex"},
+      {"access": "public", "name": "firstUnlaidGlyphIndex"},
+      {"access": "public", "name": "textContainerForGlyphAtIndex:effectiveRange:"},
+      {"access": "public", "introduced": "9", "name": "textContainerForGlyphAtIndex:effectiveRange:withoutAdditionalLayout:"},
+      {"access": "public", "name": "usedRectForTextContainer:"},
+      {"access": "public", "name": "lineFragmentRectForGlyphAtIndex:effectiveRange:"},
+      {"access": "public", "introduced": "9", "name": "lineFragmentRectForGlyphAtIndex:effectiveRange:withoutAdditionalLayout:"},
+      {"access": "public", "name": "lineFragmentUsedRectForGlyphAtIndex:effectiveRange:"},
+      {"access": "public", "introduced": "9", "name": "lineFragmentUsedRectForGlyphAtIndex:effectiveRange:withoutAdditionalLayout:"},
+      {"access": "public", "name": "locationForGlyphAtIndex:"},
+      {"access": "public", "name": "notShownAttributeForGlyphAtIndex:"},
+      {"access": "public", "name": "drawsOutsideLineFragmentForGlyphAtIndex:"},
+      {"access": "public", "name": "attachmentSizeForGlyphAtIndex:"},
+      {"access": "public", "introduced": "7", "name": "truncatedGlyphRangeInLineFragmentForGlyphAtIndex:"},
+      {"access": "public", "name": "glyphRangeForCharacterRange:actualCharacterRange:"},
+      {"access": "public", "name": "characterRangeForGlyphRange:actualGlyphRange:"},
+      {"access": "public", "name": "glyphRangeForTextContainer:"},
+      {"access": "public", "name": "rangeOfNominallySpacedGlyphsContainingIndex:"},
+      {"access": "public", "name": "boundingRectForGlyphRange:inTextContainer:"},
+      {"access": "public", "name": "glyphRangeForBoundingRect:inTextContainer:"},
+      {"access": "public", "name": "glyphRangeForBoundingRectWithoutAdditionalLayout:inTextContainer:"},
+      {"access": "public", "name": "glyphIndexForPoint:inTextContainer:fractionOfDistanceThroughGlyph:"},
+      {"access": "public", "name": "glyphIndexForPoint:inTextContainer:"},
+      {"access": "public", "name": "fractionOfDistanceThroughGlyphForPoint:inTextContainer:"},
+      {"access": "public", "name": "characterIndexForPoint:inTextContainer:fractionOfDistanceBetweenInsertionPoints:"},
+      {"access": "public", "name": "getLineFragmentInsertionPointsForCharacterAtIndex:alternatePositions:inDisplayOrder:positions:characterIndexes:"},
+      {"access": "public", "introduced": "7", "name": "enumerateLineFragmentsForGlyphRange:usingBlock:"},
+      {"access": "public", "introduced": "7", "name": "enumerateEnclosingRectsForGlyphRange:withinSelectedGlyphRange:inTextContainer:usingBlock:"},
+      {"access": "public", "name": "drawBackgroundForGlyphRange:atPoint:"},
+      {"access": "public", "name": "drawGlyphsForGlyphRange:atPoint:"},
+      {"access": "public", "introduced": "13", "name": "showCGGlyphs:positions:count:font:textMatrix:attributes:inContext:"},
+      {"access": "public", "introduced": "7", "name": "fillBackgroundRectArray:count:forCharacterRange:color:"},
+      {"access": "public", "name": "drawUnderlineForGlyphRange:underlineType:baselineOffset:lineFragmentRect:lineFragmentGlyphRange:containerOrigin:"},
+      {"access": "public", "name": "underlineGlyphRange:underlineType:lineFragmentRect:lineFragmentGlyphRange:containerOrigin:"},
+      {"access": "public", "name": "drawStrikethroughForGlyphRange:strikethroughType:baselineOffset:lineFragmentRect:lineFragmentGlyphRange:containerOrigin:"},
+      {"access": "public", "name": "strikethroughGlyphRange:strikethroughType:lineFragmentRect:lineFragmentGlyphRange:containerOrigin:"}
+     ],
+     "introduced": "7",
+     "linkage": "exported",
+     "name": "NSLayoutManager",
+     "properties": [
+      {"access": "public", "getter": "textStorage", "name": "textStorage", "setter": "setTextStorage:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "textContainers", "name": "textContainers"},
+      {"access": "public", "getter": "delegate", "name": "delegate", "setter": "setDelegate:"},
+      {"access": "public", "getter": "showsInvisibleCharacters", "name": "showsInvisibleCharacters", "setter": "setShowsInvisibleCharacters:"},
+      {"access": "public", "getter": "showsControlCharacters", "name": "showsControlCharacters", "setter": "setShowsControlCharacters:"},
+      {"access": "public", "getter": "usesFontLeading", "name": "usesFontLeading", "setter": "setUsesFontLeading:"},
+      {"access": "public", "getter": "allowsNonContiguousLayout", "introduced": "7", "name": "allowsNonContiguousLayout", "setter": "setAllowsNonContiguousLayout:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "hasNonContiguousLayout", "introduced": "7", "name": "hasNonContiguousLayout"},
+      {"access": "public", "getter": "limitsLayoutForSuspiciousContents", "introduced": "12", "name": "limitsLayoutForSuspiciousContents", "setter": "setLimitsLayoutForSuspiciousContents:"},
+      {"access": "public", "getter": "usesDefaultHyphenation", "introduced": "13", "name": "usesDefaultHyphenation", "setter": "setUsesDefaultHyphenation:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "numberOfGlyphs", "name": "numberOfGlyphs"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "extraLineFragmentRect", "name": "extraLineFragmentRect"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "extraLineFragmentUsedRect", "name": "extraLineFragmentUsedRect"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "extraLineFragmentTextContainer", "name": "extraLineFragmentTextContainer"}
+     ],
+     "protocols": [
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "9", "name": "addTabStop:"},
+      {"access": "public", "introduced": "9", "name": "removeTabStop:"},
+      {"access": "public", "introduced": "9", "name": "setParagraphStyle:"}
+     ],
+     "introduced": "6",
+     "linkage": "exported",
+     "name": "NSMutableParagraphStyle",
+     "properties": [
+      {"access": "public", "getter": "alignment", "name": "alignment", "setter": "setAlignment:"},
+      {"access": "public", "getter": "lineSpacing", "name": "lineSpacing", "setter": "setLineSpacing:"},
+      {"access": "public", "getter": "paragraphSpacing", "name": "paragraphSpacing", "setter": "setParagraphSpacing:"},
+      {"access": "public", "getter": "firstLineHeadIndent", "name": "firstLineHeadIndent", "setter": "setFirstLineHeadIndent:"},
+      {"access": "public", "getter": "headIndent", "name": "headIndent", "setter": "setHeadIndent:"},
+      {"access": "public", "getter": "tailIndent", "name": "tailIndent", "setter": "setTailIndent:"},
+      {"access": "public", "getter": "lineBreakMode", "name": "lineBreakMode", "setter": "setLineBreakMode:"},
+      {"access": "public", "getter": "minimumLineHeight", "name": "minimumLineHeight", "setter": "setMinimumLineHeight:"},
+      {"access": "public", "getter": "maximumLineHeight", "name": "maximumLineHeight", "setter": "setMaximumLineHeight:"},
+      {"access": "public", "getter": "baseWritingDirection", "name": "baseWritingDirection", "setter": "setBaseWritingDirection:"},
+      {"access": "public", "getter": "lineHeightMultiple", "name": "lineHeightMultiple", "setter": "setLineHeightMultiple:"},
+      {"access": "public", "getter": "paragraphSpacingBefore", "name": "paragraphSpacingBefore", "setter": "setParagraphSpacingBefore:"},
+      {"access": "public", "getter": "hyphenationFactor", "name": "hyphenationFactor", "setter": "setHyphenationFactor:"},
+      {"access": "public", "getter": "usesDefaultHyphenation", "introduced": "15", "name": "usesDefaultHyphenation", "setter": "setUsesDefaultHyphenation:"},
+      {"access": "public", "getter": "tabStops", "introduced": "7", "name": "tabStops", "setter": "setTabStops:"},
+      {"access": "public", "getter": "defaultTabInterval", "introduced": "7", "name": "defaultTabInterval", "setter": "setDefaultTabInterval:"},
+      {"access": "public", "getter": "allowsDefaultTighteningForTruncation", "introduced": "9", "name": "allowsDefaultTighteningForTruncation", "setter": "setAllowsDefaultTighteningForTruncation:"},
+      {"access": "public", "getter": "lineBreakStrategy", "introduced": "9", "name": "lineBreakStrategy", "setter": "setLineBreakStrategy:"},
+      {"access": "public", "getter": "textLists", "introduced": "7", "name": "textLists", "setter": "setTextLists:"},
+      {"access": "public", "getter": "textBlocks", "introduced": "6", "name": "textBlocks", "setter": "setTextBlocks:"}
+     ],
+     "super": "NSParagraphStyle"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "defaultWritingDirectionForLanguage:"}
+     ],
+     "introduced": "6",
+     "linkage": "exported",
+     "name": "NSParagraphStyle",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "alignment", "name": "alignment"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "defaultParagraphStyle", "name": "defaultParagraphStyle"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "lineSpacing", "name": "lineSpacing"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "paragraphSpacing", "name": "paragraphSpacing"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "headIndent", "name": "headIndent"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "tailIndent", "name": "tailIndent"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "firstLineHeadIndent", "name": "firstLineHeadIndent"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "minimumLineHeight", "name": "minimumLineHeight"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "maximumLineHeight", "name": "maximumLineHeight"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "lineBreakMode", "name": "lineBreakMode"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "baseWritingDirection", "name": "baseWritingDirection"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "lineHeightMultiple", "name": "lineHeightMultiple"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "paragraphSpacingBefore", "name": "paragraphSpacingBefore"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "hyphenationFactor", "name": "hyphenationFactor"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "usesDefaultHyphenation", "introduced": "15", "name": "usesDefaultHyphenation"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "tabStops", "introduced": "7", "name": "tabStops"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "defaultTabInterval", "introduced": "7", "name": "defaultTabInterval"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "textLists", "introduced": "7", "name": "textLists"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "textBlocks", "introduced": "6", "name": "textBlocks"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "allowsDefaultTighteningForTruncation", "introduced": "9", "name": "allowsDefaultTighteningForTruncation"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "lineBreakStrategy", "introduced": "9", "name": "lineBreakStrategy"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSMutableCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "init"},
+      {"access": "public", "name": "initWithCoder:"}
+     ],
+     "introduced": "6",
+     "linkage": "exported",
+     "name": "NSShadow",
+     "properties": [
+      {"access": "public", "getter": "shadowOffset", "name": "shadowOffset", "setter": "setShadowOffset:"},
+      {"access": "public", "getter": "shadowBlurRadius", "name": "shadowBlurRadius", "setter": "setShadowBlurRadius:"},
+      {"access": "public", "getter": "shadowColor", "name": "shadowColor", "setter": "setShadowColor:"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "categories": [
+      "NSStringDrawingContextDeprecated"
+     ],
+     "introduced": "6",
+     "linkage": "exported",
+     "name": "NSStringDrawingContext",
+     "properties": [
+      {"access": "public", "getter": "minimumScaleFactor", "name": "minimumScaleFactor", "setter": "setMinimumScaleFactor:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "actualScaleFactor", "name": "actualScaleFactor"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "totalBounds", "name": "totalBounds"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "categories": [
+      "NSTextAttachment_Deprecation"
+     ],
+     "classMethods": [
+      {"access": "public", "introduced": "15", "name": "textAttachmentViewProviderClassForFileType:"},
+      {"access": "public", "introduced": "15", "name": "registerTextAttachmentViewProviderClass:forFileType:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "introduced": "7", "name": "initWithData:ofType:"}
+     ],
+     "introduced": "7",
+     "linkage": "exported",
+     "name": "NSTextAttachment",
+     "properties": [
+      {"access": "public", "getter": "contents", "introduced": "7", "name": "contents", "setter": "setContents:"},
+      {"access": "public", "getter": "fileType", "introduced": "7", "name": "fileType", "setter": "setFileType:"},
+      {"access": "public", "getter": "image", "introduced": "7", "name": "image", "setter": "setImage:"},
+      {"access": "public", "getter": "bounds", "introduced": "7", "name": "bounds", "setter": "setBounds:"},
+      {"access": "public", "getter": "fileWrapper", "name": "fileWrapper", "setter": "setFileWrapper:"},
+      {"access": "public", "getter": "lineLayoutPadding", "introduced": "15", "name": "lineLayoutPadding", "setter": "setLineLayoutPadding:"},
+      {"access": "public", "getter": "allowsTextAttachmentView", "introduced": "15", "name": "allowsTextAttachmentView", "setter": "setAllowsTextAttachmentView:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "usesTextAttachmentView", "introduced": "15", "name": "usesTextAttachmentView"}
+     ],
+     "protocols": [
+      "NSTextAttachmentLayout",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithTextAttachment:parentView:textLayoutManager:location:"},
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "loadView"},
+      {"access": "public", "name": "attachmentBoundsForAttributes:location:textContainer:proposedLineFragment:position:"}
+     ],
+     "introduced": "15",
+     "linkage": "exported",
+     "name": "NSTextAttachmentViewProvider",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "textAttachment", "name": "textAttachment"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "textLayoutManager", "name": "textLayoutManager"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "location", "name": "location"},
+      {"access": "public", "getter": "view", "name": "view", "setter": "setView:"},
+      {"access": "public", "getter": "tracksTextAttachmentViewBounds", "name": "tracksTextAttachmentViewBounds", "setter": "setTracksTextAttachmentViewBounds:"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "init"},
+      {"access": "public", "name": "initWithCoder:"},
+      {"access": "public", "name": "setValue:type:forDimension:"},
+      {"access": "public", "name": "valueForDimension:"},
+      {"access": "public", "name": "valueTypeForDimension:"},
+      {"access": "public", "name": "setContentWidth:type:"},
+      {"access": "public", "name": "setWidth:type:forLayer:"},
+      {"access": "public", "introduced": "27", "name": "setWidth:type:forLayer:rectEdge:"},
+      {"access": "public", "introduced": "27", "name": "widthForLayer:rectEdge:"},
+      {"access": "public", "introduced": "27", "name": "widthValueTypeForLayer:rectEdge:"},
+      {"access": "public", "name": "setBorderColor:"},
+      {"access": "public", "introduced": "27", "name": "setBorderColor:rectEdge:"},
+      {"access": "public", "introduced": "27", "name": "borderColorForRectEdge:"}
+     ],
+     "introduced": "6",
+     "linkage": "exported",
+     "name": "NSTextBlock",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "contentWidth", "name": "contentWidth"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "contentWidthValueType", "name": "contentWidthValueType"},
+      {"access": "public", "getter": "verticalAlignment", "name": "verticalAlignment", "setter": "setVerticalAlignment:"},
+      {"access": "public", "getter": "backgroundColor", "name": "backgroundColor", "setter": "setBackgroundColor:"}
+     ],
+     "protocols": [
+      "NSSecureCoding",
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "categories": [
+      "NSTextContainer_NSLayoutManagerInterface"
+     ],
+     "instanceMethods": [
+      {"access": "public", "introduced": "7", "name": "initWithSize:"},
+      {"access": "public", "name": "initWithCoder:"},
+      {"access": "public", "introduced": "7", "name": "lineFragmentRectForProposedRect:atIndex:writingDirection:remainingRect:"}
+     ],
+     "introduced": "7",
+     "linkage": "exported",
+     "name": "NSTextContainer",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "textLayoutManager", "introduced": "15", "name": "textLayoutManager"},
+      {"access": "public", "getter": "size", "introduced": "7", "name": "size", "setter": "setSize:"},
+      {"access": "public", "getter": "lineBreakMode", "introduced": "7", "name": "lineBreakMode", "setter": "setLineBreakMode:"},
+      {"access": "public", "getter": "exclusionPaths", "introduced": "7", "name": "exclusionPaths", "setter": "setExclusionPaths:"},
+      {"access": "public", "getter": "lineFragmentPadding", "name": "lineFragmentPadding", "setter": "setLineFragmentPadding:"},
+      {"access": "public", "getter": "maximumNumberOfLines", "introduced": "7", "name": "maximumNumberOfLines", "setter": "setMaximumNumberOfLines:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isSimpleRectangularTextContainer", "introduced": "9", "name": "simpleRectangularTextContainer"},
+      {"access": "public", "getter": "widthTracksTextView", "name": "widthTracksTextView", "setter": "setWidthTracksTextView:"},
+      {"access": "public", "getter": "heightTracksTextView", "name": "heightTracksTextView", "setter": "setHeightTracksTextView:"}
+     ],
+     "protocols": [
+      "NSSecureCoding",
+      "NSTextLayoutOrientationProvider"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "init"},
+      {"access": "public", "name": "initWithCoder:"},
+      {"access": "public", "name": "addTextLayoutManager:"},
+      {"access": "public", "name": "removeTextLayoutManager:"},
+      {"access": "public", "name": "synchronizeTextLayoutManagers:"},
+      {"access": "public", "name": "textElementsForRange:"},
+      {"access": "public", "name": "performEditingTransactionUsingBlock:"},
+      {"access": "public", "name": "recordEditActionInRange:newTextRange:"}
+     ],
+     "introduced": "15",
+     "linkage": "exported",
+     "name": "NSTextContentManager",
+     "properties": [
+      {"access": "public", "getter": "delegate", "name": "delegate", "setter": "setDelegate:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "textLayoutManagers", "name": "textLayoutManagers"},
+      {"access": "public", "getter": "primaryTextLayoutManager", "name": "primaryTextLayoutManager", "setter": "setPrimaryTextLayoutManager:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "hasEditingTransaction", "name": "hasEditingTransaction"},
+      {"access": "public", "getter": "automaticallySynchronizesTextLayoutManagers", "name": "automaticallySynchronizesTextLayoutManagers", "setter": "setAutomaticallySynchronizesTextLayoutManagers:"},
+      {"access": "public", "getter": "automaticallySynchronizesToBackingStore", "name": "automaticallySynchronizesToBackingStore", "setter": "setAutomaticallySynchronizesToBackingStore:"}
+     ],
+     "protocols": [
+      "NSTextElementProvider",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "attributedStringForTextElement:"},
+      {"access": "public", "name": "textElementForAttributedString:"},
+      {"access": "public", "name": "locationFromLocation:withOffset:"},
+      {"access": "public", "name": "offsetFromLocation:toLocation:"},
+      {"access": "public", "name": "adjustedRangeFromRange:forEditingTextSelection:"}
+     ],
+     "introduced": "15",
+     "linkage": "exported",
+     "name": "NSTextContentStorage",
+     "properties": [
+      {"access": "public", "getter": "delegate", "name": "delegate", "setter": "setDelegate:"},
+      {"access": "public", "getter": "includesTextListMarkers", "introduced": "26", "name": "includesTextListMarkers", "setter": "setIncludesTextListMarkers:"},
+      {"access": "public", "getter": "attributedString", "name": "attributedString", "setter": "setAttributedString:"}
+     ],
+     "protocols": [
+      "NSTextStorageObserving"
+     ],
+     "super": "NSTextContentManager"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithTextContentManager:"}
+     ],
+     "introduced": "15",
+     "linkage": "exported",
+     "name": "NSTextElement",
+     "properties": [
+      {"access": "public", "getter": "textContentManager", "name": "textContentManager", "setter": "setTextContentManager:"},
+      {"access": "public", "getter": "elementRange", "name": "elementRange", "setter": "setElementRange:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "childElements", "introduced": "16", "name": "childElements"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "parentElement", "introduced": "16", "name": "parentElement"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isRepresentedElement", "introduced": "16", "name": "isRepresentedElement"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithTextElement:range:"},
+      {"access": "public", "name": "initWithCoder:"},
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "introduced": "17", "name": "textLineFragmentForVerticalOffset:requiresExactMatch:"},
+      {"access": "public", "introduced": "17", "name": "textLineFragmentForTextLocation:isUpstreamAffinity:"},
+      {"access": "public", "name": "invalidateLayout"},
+      {"access": "public", "name": "drawAtPoint:inContext:"},
+      {"access": "public", "name": "frameForTextAttachmentAtLocation:"}
+     ],
+     "introduced": "15",
+     "linkage": "exported",
+     "name": "NSTextLayoutFragment",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "textLayoutManager", "name": "textLayoutManager"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "textElement", "name": "textElement"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "rangeInElement", "name": "rangeInElement"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "textLineFragments", "name": "textLineFragments"},
+      {"access": "public", "getter": "layoutQueue", "name": "layoutQueue", "setter": "setLayoutQueue:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "state", "name": "state"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "layoutFragmentFrame", "name": "layoutFragmentFrame"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "renderingSurfaceBounds", "name": "renderingSurfaceBounds"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "leadingPadding", "name": "leadingPadding"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "trailingPadding", "name": "trailingPadding"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "topMargin", "name": "topMargin"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "bottomMargin", "name": "bottomMargin"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "textAttachmentViewProviders", "name": "textAttachmentViewProviders"}
+     ],
+     "protocols": [
+      "NSSecureCoding",
+      "NSTextViewportRenderingSurfaceKey"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "init"},
+      {"access": "public", "name": "initWithCoder:"},
+      {"access": "public", "name": "replaceTextContentManager:"},
+      {"access": "public", "name": "ensureLayoutForRange:"},
+      {"access": "public", "name": "ensureLayoutForBounds:"},
+      {"access": "public", "name": "invalidateLayoutForRange:"},
+      {"access": "public", "name": "textLayoutFragmentForPosition:"},
+      {"access": "public", "name": "textLayoutFragmentForLocation:"},
+      {"access": "public", "name": "enumerateTextLayoutFragmentsFromLocation:options:usingBlock:"},
+      {"access": "public", "name": "enumerateRenderingAttributesFromLocation:reverse:usingBlock:"},
+      {"access": "public", "name": "setRenderingAttributes:forTextRange:"},
+      {"access": "public", "name": "addRenderingAttribute:value:forTextRange:"},
+      {"access": "public", "name": "removeRenderingAttribute:forTextRange:"},
+      {"access": "public", "name": "invalidateRenderingAttributesForTextRange:"},
+      {"access": "public", "name": "renderingAttributesForLink:atLocation:"},
+      {"access": "public", "name": "enumerateTextSegmentsInRange:type:options:usingBlock:"},
+      {"access": "public", "name": "replaceContentsInRange:withTextElements:"},
+      {"access": "public", "name": "replaceContentsInRange:withAttributedString:"}
+     ],
+     "introduced": "15",
+     "linkage": "exported",
+     "name": "NSTextLayoutManager",
+     "properties": [
+      {"access": "public", "getter": "delegate", "name": "delegate", "setter": "setDelegate:"},
+      {"access": "public", "getter": "usesFontLeading", "name": "usesFontLeading", "setter": "setUsesFontLeading:"},
+      {"access": "public", "getter": "limitsLayoutForSuspiciousContents", "name": "limitsLayoutForSuspiciousContents", "setter": "setLimitsLayoutForSuspiciousContents:"},
+      {"access": "public", "getter": "usesHyphenation", "name": "usesHyphenation", "setter": "setUsesHyphenation:"},
+      {"access": "public", "getter": "resolvesNaturalAlignmentWithBaseWritingDirection", "introduced": "26", "name": "resolvesNaturalAlignmentWithBaseWritingDirection", "setter": "setResolvesNaturalAlignmentWithBaseWritingDirection:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "textContentManager", "name": "textContentManager"},
+      {"access": "public", "getter": "textContainer", "name": "textContainer", "setter": "setTextContainer:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "usageBoundsForTextContainer", "name": "usageBoundsForTextContainer"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "textViewportLayoutController", "name": "textViewportLayoutController"},
+      {"access": "public", "getter": "layoutQueue", "name": "layoutQueue", "setter": "setLayoutQueue:"},
+      {"access": "public", "getter": "textSelections", "name": "textSelections", "setter": "setTextSelections:"},
+      {"access": "public", "getter": "textSelectionNavigation", "name": "textSelectionNavigation", "setter": "setTextSelectionNavigation:"},
+      {"access": "public", "getter": "renderingAttributesValidator", "name": "renderingAttributesValidator", "setter": "setRenderingAttributesValidator:"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "linkRenderingAttributes", "name": "linkRenderingAttributes"}
+     ],
+     "protocols": [
+      "NSSecureCoding",
+      "NSTextSelectionDataSource"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithAttributedString:range:"},
+      {"access": "public", "name": "initWithCoder:"},
+      {"access": "public", "name": "initWithString:attributes:range:"},
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "drawAtPoint:inContext:"},
+      {"access": "public", "name": "locationForCharacterAtIndex:"},
+      {"access": "public", "name": "characterIndexForPoint:"},
+      {"access": "public", "name": "fractionOfDistanceThroughGlyphForPoint:"}
+     ],
+     "introduced": "15",
+     "linkage": "exported",
+     "name": "NSTextLineFragment",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "attributedString", "name": "attributedString"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "characterRange", "name": "characterRange"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "typographicBounds", "name": "typographicBounds"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "glyphOrigin", "name": "glyphOrigin"}
+     ],
+     "protocols": [
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "16", "name": "initWithMarkerFormat:options:startingItemNumber:"},
+      {"access": "public", "name": "initWithMarkerFormat:options:"},
+      {"access": "public", "name": "initWithCoder:"},
+      {"access": "public", "name": "markerForItemNumber:"}
+     ],
+     "introduced": "7",
+     "linkage": "exported",
+     "name": "NSTextList",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "markerFormat", "name": "markerFormat"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "listOptions", "name": "listOptions"},
+      {"access": "public", "getter": "startingItemNumber", "name": "startingItemNumber", "setter": "setStartingItemNumber:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isOrdered", "introduced": "16", "name": "ordered"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "includesTextListMarkers", "introduced": "26", "name": "includesTextListMarkers"}
+     ],
+     "protocols": [
+      "NSSecureCoding",
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "textListElementWithContents:markerAttributes:textList:childElements:"},
+      {"access": "public", "name": "textListElementWithChildElements:textList:nestingLevel:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithParentElement:textList:contents:markerAttributes:childElements:"},
+      {"access": "public", "name": "initWithAttributedString:", "unavailable": true}
+     ],
+     "introduced": "16",
+     "linkage": "exported",
+     "name": "NSTextListElement",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "textList", "name": "textList"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "contents", "name": "contents"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "markerAttributes", "name": "markerAttributes"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "attributedString", "name": "attributedString"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "childElements", "name": "childElements"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "parentElement", "name": "parentElement"}
+     ],
+     "super": "NSTextParagraph"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithAttributedString:"}
+     ],
+     "introduced": "15",
+     "linkage": "exported",
+     "name": "NSTextParagraph",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "attributedString", "name": "attributedString"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "paragraphContentRange", "name": "paragraphContentRange"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "paragraphSeparatorRange", "name": "paragraphSeparatorRange"}
+     ],
+     "super": "NSTextElement"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithLocation:endLocation:"},
+      {"access": "public", "name": "initWithLocation:"},
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "isEqualToTextRange:"},
+      {"access": "public", "name": "containsLocation:"},
+      {"access": "public", "name": "containsRange:"},
+      {"access": "public", "name": "intersectsWithTextRange:"},
+      {"access": "public", "name": "textRangeByIntersectingWithTextRange:"},
+      {"access": "public", "name": "textRangeByFormingUnionWithTextRange:"}
+     ],
+     "introduced": "15",
+     "linkage": "exported",
+     "name": "NSTextRange",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "isEmpty", "name": "empty"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "location", "name": "location"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "endLocation", "name": "endLocation"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithRanges:affinity:granularity:"},
+      {"access": "public", "name": "initWithCoder:"},
+      {"access": "public", "name": "initWithRange:affinity:granularity:"},
+      {"access": "public", "name": "initWithLocation:affinity:"},
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "textSelectionWithTextRanges:"}
+     ],
+     "introduced": "15",
+     "linkage": "exported",
+     "name": "NSTextSelection",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "textRanges", "name": "textRanges"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "granularity", "name": "granularity"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "affinity", "name": "affinity"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isTransient", "name": "transient"},
+      {"access": "public", "getter": "anchorPositionOffset", "name": "anchorPositionOffset", "setter": "setAnchorPositionOffset:"},
+      {"access": "public", "getter": "isLogical", "name": "logical", "setter": "setLogical:"},
+      {"access": "public", "getter": "secondarySelectionLocation", "name": "secondarySelectionLocation", "setter": "setSecondarySelectionLocation:"},
+      {"access": "public", "getter": "typingAttributes", "name": "typingAttributes", "setter": "setTypingAttributes:"}
+     ],
+     "protocols": [
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithDataSource:"},
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "flushLayoutCache"},
+      {"access": "public", "name": "destinationSelectionForTextSelection:direction:destination:extending:confined:"},
+      {"access": "public", "name": "textSelectionsInteractingAtPoint:inContainerAtLocation:anchors:modifiers:selecting:bounds:"},
+      {"access": "public", "name": "textSelectionForSelectionGranularity:enclosingTextSelection:"},
+      {"access": "public", "name": "textSelectionForSelectionGranularity:enclosingPoint:inContainerAtLocation:"},
+      {"access": "public", "name": "resolvedInsertionLocationForTextSelection:writingDirection:"},
+      {"access": "public", "name": "deletionRangesForTextSelection:direction:destination:allowsDecomposition:"}
+     ],
+     "introduced": "15",
+     "linkage": "exported",
+     "name": "NSTextSelectionNavigation",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "textSelectionDataSource", "name": "textSelectionDataSource"},
+      {"access": "public", "getter": "allowsNonContiguousRanges", "name": "allowsNonContiguousRanges", "setter": "setAllowsNonContiguousRanges:"},
+      {"access": "public", "getter": "rotatesCoordinateSystemForLayoutOrientation", "name": "rotatesCoordinateSystemForLayoutOrientation", "setter": "setRotatesCoordinateSystemForLayoutOrientation:"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "categories": [
+      "NSTextStorage_NSLayoutManagerInterface"
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "edited:range:changeInLength:"},
+      {"access": "public", "name": "processEditing"},
+      {"access": "public", "name": "invalidateAttributesInRange:"},
+      {"access": "public", "name": "ensureAttributesAreFixedInRange:"}
+     ],
+     "introduced": "7",
+     "linkage": "exported",
+     "name": "NSTextStorage",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "editedMask", "name": "editedMask"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "editedRange", "name": "editedRange"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "changeInLength", "name": "changeInLength"},
+      {"access": "public", "getter": "delegate", "name": "delegate", "setter": "setDelegate:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "fixesAttributesLazily", "name": "fixesAttributesLazily"},
+      {"access": "public", "getter": "textStorageObserver", "introduced": "15", "name": "textStorageObserver", "setter": "setTextStorageObserver:"}
+     ],
+     "protocols": [
+      "NSSecureCoding"
+     ],
+     "super": "NSMutableAttributedString"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "introduced": "7", "name": "columnTerminatorsForLocale:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithTextAlignment:location:options:"}
+     ],
+     "introduced": "7",
+     "linkage": "exported",
+     "name": "NSTextTab",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "alignment", "name": "alignment"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "location", "name": "location"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "options", "name": "options"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSCoding",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "6",
+     "linkage": "exported",
+     "name": "NSTextTable",
+     "properties": [
+      {"access": "public", "getter": "numberOfColumns", "name": "numberOfColumns", "setter": "setNumberOfColumns:"},
+      {"access": "public", "getter": "layoutAlgorithm", "name": "layoutAlgorithm", "setter": "setLayoutAlgorithm:"},
+      {"access": "public", "getter": "collapsesBorders", "name": "collapsesBorders", "setter": "setCollapsesBorders:"},
+      {"access": "public", "getter": "hidesEmptyCells", "name": "hidesEmptyCells", "setter": "setHidesEmptyCells:"}
+     ],
+     "super": "NSTextBlock"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithTable:startingRow:rowSpan:startingColumn:columnSpan:"},
+      {"access": "public", "name": "initWithCoder:"}
+     ],
+     "introduced": "6",
+     "linkage": "exported",
+     "name": "NSTextTableBlock",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "table", "name": "table"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "startingRow", "name": "startingRow"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "rowSpan", "name": "rowSpan"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "startingColumn", "name": "startingColumn"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "columnSpan", "name": "columnSpan"}
+     ],
+     "super": "NSTextBlock"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithTextLayoutManager:"},
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "layoutViewport"},
+      {"access": "public", "name": "relocateViewportToTextLocation:"},
+      {"access": "public", "name": "adjustViewportByVerticalOffset:"},
+      {"access": "public", "name": "renderingSurfaceForKey:", "unavailable": true}
+     ],
+     "introduced": "15",
+     "linkage": "exported",
+     "name": "NSTextViewportLayoutController",
+     "properties": [
+      {"access": "public", "getter": "delegate", "name": "delegate", "setter": "setDelegate:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "textLayoutManager", "name": "textLayoutManager"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "viewportBounds", "name": "viewportBounds"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "viewportRange", "name": "viewportRange"}
+     ],
+     "super": "NSObject"
+    }
+   ],
+   "protocols": [
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "7", "name": "layoutManager:shouldGenerateGlyphs:properties:characterIndexes:font:forGlyphRange:", "optional": true},
+      {"access": "public", "introduced": "7", "name": "layoutManager:lineSpacingAfterGlyphAtIndex:withProposedLineFragmentRect:", "optional": true},
+      {"access": "public", "introduced": "7", "name": "layoutManager:paragraphSpacingBeforeGlyphAtIndex:withProposedLineFragmentRect:", "optional": true},
+      {"access": "public", "introduced": "7", "name": "layoutManager:paragraphSpacingAfterGlyphAtIndex:withProposedLineFragmentRect:", "optional": true},
+      {"access": "public", "introduced": "7", "name": "layoutManager:shouldUseAction:forControlCharacterAtIndex:", "optional": true},
+      {"access": "public", "introduced": "7", "name": "layoutManager:shouldBreakLineByWordBeforeCharacterAtIndex:", "optional": true},
+      {"access": "public", "introduced": "7", "name": "layoutManager:shouldBreakLineByHyphenatingBeforeCharacterAtIndex:", "optional": true},
+      {"access": "public", "introduced": "7", "name": "layoutManager:boundingBoxForControlGlyphAtIndex:forTextContainer:proposedLineFragment:glyphPosition:characterIndex:", "optional": true},
+      {"access": "public", "introduced": "9", "name": "layoutManager:shouldSetLineFragmentRect:lineFragmentUsedRect:baselineOffset:inTextContainer:forGlyphRange:", "optional": true},
+      {"access": "public", "introduced": "7", "name": "layoutManagerDidInvalidateLayout:", "optional": true},
+      {"access": "public", "introduced": "7", "name": "layoutManager:didCompleteLayoutForTextContainer:atEnd:", "optional": true},
+      {"access": "public", "introduced": "7", "name": "layoutManager:textContainer:didChangeGeometryFromSize:", "optional": true}
+     ],
+     "name": "NSLayoutManagerDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "7", "name": "imageForBounds:textContainer:characterIndex:"},
+      {"access": "public", "introduced": "7", "name": "attachmentBoundsForTextContainer:proposedLineFragment:glyphPosition:characterIndex:"}
+     ],
+     "introduced": "7",
+     "name": "NSTextAttachmentContainer",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "15", "name": "imageForBounds:attributes:location:textContainer:"},
+      {"access": "public", "introduced": "15", "name": "attachmentBoundsForAttributes:location:textContainer:proposedLineFragment:position:"},
+      {"access": "public", "introduced": "15", "name": "viewProviderForParentView:location:textContainer:"}
+     ],
+     "introduced": "15",
+     "name": "NSTextAttachmentLayout",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "textContentManager:textElementAtLocation:", "optional": true},
+      {"access": "public", "name": "textContentManager:shouldEnumerateTextElement:options:", "optional": true}
+     ],
+     "introduced": "15",
+     "name": "NSTextContentManagerDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "textContentStorage:textParagraphWithRange:", "optional": true}
+     ],
+     "introduced": "15",
+     "name": "NSTextContentStorageDelegate",
+     "protocols": [
+      "NSTextContentManagerDelegate"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "enumerateTextElementsFromLocation:options:usingBlock:"},
+      {"access": "public", "name": "replaceContentsInRange:withTextElements:"},
+      {"access": "public", "name": "synchronizeToBackingStore:"},
+      {"access": "public", "name": "locationFromLocation:withOffset:", "optional": true},
+      {"access": "public", "name": "offsetFromLocation:toLocation:", "optional": true},
+      {"access": "public", "name": "adjustedRangeFromRange:forEditingTextSelection:", "optional": true}
+     ],
+     "introduced": "15",
+     "name": "NSTextElementProvider",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "documentRange", "name": "documentRange"}
+     ],
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "textLayoutManager:textLayoutFragmentForLocation:inTextElement:", "optional": true},
+      {"access": "public", "name": "textLayoutManager:shouldBreakLineBeforeLocation:hyphenating:", "optional": true},
+      {"access": "public", "name": "textLayoutManager:renderingAttributesForLink:atLocation:defaultAttributes:", "optional": true},
+      {"access": "public", "introduced": "27", "name": "textLayoutManager:cacheTextAttachmentViewProvider:forTextAttachment:", "optional": true},
+      {"access": "public", "introduced": "27", "name": "textLayoutManager:retrieveCachedTextAttachmentViewProviderForTextAttachment:", "optional": true}
+     ],
+     "introduced": "15",
+     "name": "NSTextLayoutManagerDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "introduced": "7",
+     "name": "NSTextLayoutOrientationProvider",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "layoutOrientation", "introduced": "7", "name": "layoutOrientation"}
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "15", "name": "compare:"},
+      {"access": "public", "name": "isEqual:"}
+     ],
+     "introduced": "15",
+     "name": "NSTextLocation",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "hash", "name": "hash"}
+     ],
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "enumerateSubstringsFromLocation:options:usingBlock:"},
+      {"access": "public", "name": "textRangeForSelectionGranularity:enclosingLocation:"},
+      {"access": "public", "name": "locationFromLocation:withOffset:"},
+      {"access": "public", "name": "offsetFromLocation:toLocation:"},
+      {"access": "public", "name": "baseWritingDirectionAtLocation:"},
+      {"access": "public", "name": "enumerateCaretOffsetsInLineFragmentAtLocation:usingBlock:"},
+      {"access": "public", "name": "lineFragmentRangeForPoint:inContainerAtLocation:"},
+      {"access": "public", "name": "enumerateContainerBoundariesFromLocation:reverse:usingBlock:", "optional": true},
+      {"access": "public", "name": "textLayoutOrientationAtLocation:", "optional": true},
+      {"access": "public", "introduced": "27", "name": "convertInteractionPoint:toContainerAtLocation:", "optional": true}
+     ],
+     "introduced": "15",
+     "name": "NSTextSelectionDataSource",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "documentRange", "name": "documentRange"}
+     ],
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "introduced": "7", "name": "textStorage:willProcessEditing:range:changeInLength:", "optional": true},
+      {"access": "public", "introduced": "7", "name": "textStorage:didProcessEditing:range:changeInLength:", "optional": true}
+     ],
+     "introduced": "7",
+     "name": "NSTextStorageDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "processEditingForTextStorage:edited:range:changeInLength:invalidatedRange:"},
+      {"access": "public", "name": "performEditingTransactionForTextStorage:usingBlock:"}
+     ],
+     "introduced": "15",
+     "name": "NSTextStorageObserving",
+     "properties": [
+      {"access": "public", "getter": "textStorage", "name": "textStorage", "setter": "setTextStorage:"}
+     ],
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "viewportBoundsForTextViewportLayoutController:"},
+      {"access": "public", "name": "textViewportLayoutController:configureRenderingSurfaceForTextLayoutFragment:"},
+      {"access": "public", "name": "textViewportLayoutControllerWillLayout:", "optional": true},
+      {"access": "public", "name": "textViewportLayoutControllerDidLayout:", "optional": true},
+      {"access": "public", "name": "textViewportLayoutController:cacheRenderingSurface:forKey:", "optional": true},
+      {"access": "public", "name": "textViewportLayoutController:retrieveCachedRenderingSurfaceForKey:", "optional": true},
+      {"access": "public", "name": "textViewportLayoutControllerReceivedSetNeedsLayout:", "optional": true},
+      {"access": "public", "name": "textViewportLayoutController:renderingSurfaceForTextLayoutFragment:", "optional": true, "unavailable": true}
+     ],
+     "introduced": "15",
+     "name": "NSTextViewportLayoutControllerDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "introduced": "27",
+     "name": "NSTextViewportRenderingSurface",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "introduced": "18",
+     "name": "NSTextViewportRenderingSurfaceKey",
+     "protocols": [
+      "NSObject"
+     ]
+    }
+   ],
+   "target": "arm64e.x1-apple-ios27",
+   "typedefs": [
+    {"access": "public", "name": "CTTextAlignment"},
+    {"access": "public", "introduced": "7", "name": "NSAttributedStringDocumentAttributeKey"},
+    {"access": "public", "introduced": "6", "name": "NSAttributedStringDocumentReadingOptionKey"},
+    {"access": "public", "introduced": "7", "name": "NSAttributedStringDocumentType"},
+    {"access": "public", "name": "NSControlCharacterAction"},
+    {"access": "public", "name": "NSGlyphProperty"},
+    {"access": "public", "name": "NSLineBreakMode"},
+    {"access": "public", "name": "NSLineBreakStrategy"},
+    {"access": "public", "name": "NSStringDrawingOptions"},
+    {"access": "public", "name": "NSTextAlignment"},
+    {"access": "public", "name": "NSTextBlockDimension"},
+    {"access": "public", "name": "NSTextBlockLayer"},
+    {"access": "public", "name": "NSTextBlockValueType"},
+    {"access": "public", "name": "NSTextBlockVerticalAlignment"},
+    {"access": "public", "name": "NSTextContentManagerEnumerationOptions"},
+    {"access": "public", "introduced": "7", "name": "NSTextEffectStyle"},
+    {"access": "public", "introduced": "18", "name": "NSTextHighlightColorScheme"},
+    {"access": "public", "introduced": "18", "name": "NSTextHighlightStyle"},
+    {"access": "public", "name": "NSTextLayoutFragmentEnumerationOptions"},
+    {"access": "public", "name": "NSTextLayoutFragmentState"},
+    {"access": "public", "name": "NSTextLayoutManagerSegmentOptions"},
+    {"access": "public", "name": "NSTextLayoutManagerSegmentType"},
+    {"access": "public", "name": "NSTextLayoutOrientation"},
+    {"access": "public", "introduced": "6", "name": "NSTextLayoutSectionKey"},
+    {"access": "public", "introduced": "7", "name": "NSTextListMarkerFormat"},
+    {"access": "public", "name": "NSTextListOptions"},
+    {"access": "public", "name": "NSTextScalingType"},
+    {"access": "public", "name": "NSTextSelectionAffinity"},
+    {"access": "public", "name": "NSTextSelectionGranularity"},
+    {"access": "public", "name": "NSTextSelectionNavigationDestination"},
+    {"access": "public", "name": "NSTextSelectionNavigationDirection"},
+    {"access": "public", "name": "NSTextSelectionNavigationLayoutOrientation"},
+    {"access": "public", "name": "NSTextSelectionNavigationModifier"},
+    {"access": "public", "name": "NSTextSelectionNavigationWritingDirection"},
+    {"access": "public", "name": "NSTextStorageEditActions"},
+    {"access": "public", "introduced": "7", "name": "NSTextTabOptionKey"},
+    {"access": "public", "name": "NSTextTableLayoutAlgorithm"},
+    {"access": "public", "name": "NSTextWritingDirection"},
+    {"access": "public", "name": "NSUnderlineStyle"},
+    {"access": "public", "name": "NSWritingDirection"},
+    {"access": "public", "name": "NSWritingDirectionFormatType"}
    ]
   },
   {
@@ -2986,6 +5521,8 @@
     {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$s18DocumentIdentifier5UIKit15UITextSearchingPTl"},
     {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$s21DeveloperToolsSupport7PreviewV5UIKitE_6traits4bodyACSSSg_AA0D5TraitVyAC10ViewTraitsOGdSo16UIViewControllerCyScMYcctcfC"},
     {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$s21DeveloperToolsSupport7PreviewV5UIKitE_6traits4bodyACSSSg_AA0D5TraitVyAC10ViewTraitsOGdSo6UIViewCyScMYcctcfC"},
+    {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$s21DeveloperToolsSupport7PreviewV5UIKitE_6traits9arguments4bodyACSSSg_AA0D5TraitVyAC10ViewTraitsOGdSayxGSo16UIViewControllerCxScMYcctclufC"},
+    {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$s21DeveloperToolsSupport7PreviewV5UIKitE_6traits9arguments4bodyACSSSg_AA0D5TraitVyAC10ViewTraitsOGdSayxGSo6UIViewCxScMYcctclufC"},
     {"access": "public", "introduced": "7", "linkage": "exported", "name": "_$s5UIKit01_A23NumericRawRepresentableMp"},
     {"access": "public", "introduced": "7", "linkage": "exported", "name": "_$s5UIKit01_A23NumericRawRepresentableP0C5ValueSY_SLTn"},
     {"access": "public", "introduced": "7", "linkage": "exported", "name": "_$s5UIKit01_A23NumericRawRepresentableP0C5ValueSY_SjTn"},
@@ -3459,6 +5996,10 @@
     {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$s5UIKit15UIMutableTraitsPAAE28preferredContentSizeCategorySo09UIContentfG0avg"},
     {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$s5UIKit15UIMutableTraitsPAAE28preferredContentSizeCategorySo09UIContentfG0avpMV"},
     {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$s5UIKit15UIMutableTraitsPAAE28preferredContentSizeCategorySo09UIContentfG0avs"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5UIKit15UIMutableTraitsPAAE33systemPrefersReducedResourceUsageSbvM"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5UIKit15UIMutableTraitsPAAE33systemPrefersReducedResourceUsageSbvg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5UIKit15UIMutableTraitsPAAE33systemPrefersReducedResourceUsageSbvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5UIKit15UIMutableTraitsPAAE33systemPrefersReducedResourceUsageSbvs"},
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$s5UIKit15UIMutableTraitsPAAE36splitViewControllerLayoutEnvironmentSo07UISplitefgH0VvM"},
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$s5UIKit15UIMutableTraitsPAAE36splitViewControllerLayoutEnvironmentSo07UISplitefgH0Vvg"},
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$s5UIKit15UIMutableTraitsPAAE36splitViewControllerLayoutEnvironmentSo07UISplitefgH0VvpMV"},
@@ -3705,6 +6246,28 @@
     {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$s5UIKit16UITraitOverridesVySixmcAA0B10DefinitionRzSi5ValueRtzluig"},
     {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$s5UIKit16UITraitOverridesVySixmcAA0B10DefinitionRzSi5ValueRtzluis"},
     {"access": "public", "linkage": "exported", "name": "_$s5UIKit17UIApplicationMainys5Int32VAD_SpySpys4Int8VGGSgSSSgAJtF"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5UIKit17UIBarMinimizationV18safeAreaAdjustmentSo0bc4SafeeF0VvM"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5UIKit17UIBarMinimizationV18safeAreaAdjustmentSo0bc4SafeeF0Vvg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5UIKit17UIBarMinimizationV18safeAreaAdjustmentSo0bc4SafeeF0VvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5UIKit17UIBarMinimizationV18safeAreaAdjustmentSo0bc4SafeeF0Vvs"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5UIKit17UIBarMinimizationV19restorationBehaviorSo0bc11RestorationE0VvM"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5UIKit17UIBarMinimizationV19restorationBehaviorSo0bc11RestorationE0Vvg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5UIKit17UIBarMinimizationV19restorationBehaviorSo0bc11RestorationE0VvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5UIKit17UIBarMinimizationV19restorationBehaviorSo0bc11RestorationE0Vvs"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5UIKit17UIBarMinimizationV20minimizationBehaviorSo0bcE0VvM"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5UIKit17UIBarMinimizationV20minimizationBehaviorSo0bcE0Vvg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5UIKit17UIBarMinimizationV20minimizationBehaviorSo0bcE0VvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5UIKit17UIBarMinimizationV20minimizationBehaviorSo0bcE0Vvs"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5UIKit17UIBarMinimizationV2eeoiySbAC_ACtFZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5UIKit17UIBarMinimizationV4hash4intoys6HasherVz_tF"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5UIKit17UIBarMinimizationV9hashValueSivg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5UIKit17UIBarMinimizationV9hashValueSivpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5UIKit17UIBarMinimizationVACycfC"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5UIKit17UIBarMinimizationVMa"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5UIKit17UIBarMinimizationVMn"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5UIKit17UIBarMinimizationVN"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5UIKit17UIBarMinimizationVSHAAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5UIKit17UIBarMinimizationVSQAAMc"},
     {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$s5UIKit17UIHoverLiftEffectV012_makeBridgedD0So0bD0_pyF"},
     {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$s5UIKit17UIHoverLiftEffectV8_resolve2inAA016_UIResolvedHoverD0VAA01_bD17ResolutionContextV_tF"},
     {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$s5UIKit17UIHoverLiftEffectVAA0bD0AAMc"},
@@ -5588,6 +8151,21 @@
     {"access": "public", "introduced": "15", "linkage": "exported", "name": "_$s5UIKit40UIConfigurationTextAttributesTransformerVMn"},
     {"access": "public", "introduced": "15", "linkage": "exported", "name": "_$s5UIKit40UIConfigurationTextAttributesTransformerVN"},
     {"access": "public", "introduced": "15", "linkage": "exported", "name": "_$s5UIKit40UIConfigurationTextAttributesTransformerVyAC10Foundation18AttributeContainerVAFccfC"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5UIKit40UITraitSystemPrefersReducedResourceUsageV10_isPrivateSbvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5UIKit40UITraitSystemPrefersReducedResourceUsageV10_isPrivateSbvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5UIKit40UITraitSystemPrefersReducedResourceUsageV10identifierSSvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5UIKit40UITraitSystemPrefersReducedResourceUsageV10identifierSSvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5UIKit40UITraitSystemPrefersReducedResourceUsageV12defaultValueSbvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5UIKit40UITraitSystemPrefersReducedResourceUsageV12defaultValueSbvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5UIKit40UITraitSystemPrefersReducedResourceUsageV22affectsColorAppearanceSbvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5UIKit40UITraitSystemPrefersReducedResourceUsageV22affectsColorAppearanceSbvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5UIKit40UITraitSystemPrefersReducedResourceUsageV4nameSSvgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5UIKit40UITraitSystemPrefersReducedResourceUsageV4nameSSvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5UIKit40UITraitSystemPrefersReducedResourceUsageVAA0B10DefinitionAAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5UIKit40UITraitSystemPrefersReducedResourceUsageVAA0B10DefinitionAAWP"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5UIKit40UITraitSystemPrefersReducedResourceUsageVMa"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5UIKit40UITraitSystemPrefersReducedResourceUsageVMn"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s5UIKit40UITraitSystemPrefersReducedResourceUsageVN"},
     {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$s5UIKit40_UICustomRawRepresentableTraitDefinitionMp"},
     {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$s5UIKit40_UICustomRawRepresentableTraitDefinitionP07_customC5Value3for07_CustomcH0Qz0H0Qz_tFZTj"},
     {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$s5UIKit40_UICustomRawRepresentableTraitDefinitionP07_customC5Value3for07_CustomcH0Qz0H0Qz_tFZTq"},
@@ -6089,6 +8667,7 @@
     {"access": "public", "introduced": "7", "linkage": "exported", "name": "_$sSo12UIFloatRangeaSe5UIKitMc"},
     {"access": "public", "introduced": "11", "linkage": "exported", "name": "_$sSo12UIFontWeighta5UIKit01_C23NumericRawRepresentableACMc"},
     {"access": "public", "introduced": "11", "linkage": "exported", "name": "_$sSo12UIFontWeighta5UIKit01_C23NumericRawRepresentableACWP"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo12UIFontWeighta5UIKitE06symbolB0So013UIImageSymbolB0VyF", "unavailable": true},
     {"access": "public", "introduced": "11", "linkage": "exported", "name": "_$sSo12UIFontWeightaSL5UIKitMc"},
     {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$sSo12UIHoverStyleC5UIKitE5shapeAC7UIShapeVSgvM"},
     {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$sSo12UIHoverStyleC5UIKitE5shapeAC7UIShapeVSgvg"},
@@ -6104,6 +8683,8 @@
     {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$sSo12UIHoverStyleC5UIKitE6effectAC0A6Effect_pvs"},
     {"access": "public", "introduced": "13", "linkage": "exported", "name": "_$sSo12UIKeyCommandC5UIKitE5title5image6action5input13modifierFlags12propertyList10alternates20discoverabilityTitle10attributes5stateABSS_So7UIImageCSg10ObjectiveC8SelectorVSSSo0a8ModifierI0VypSgSaySo18UICommandAlternateCGSSSgSo23UIMenuElementAttributesVSo0wX5StateVtcfC"},
     {"access": "public", "introduced": "13", "linkage": "exported", "name": "_$sSo12UIKeyCommandC5UIKitE5title5image6action5input13modifierFlags12propertyList10alternates20discoverabilityTitle10attributes5stateABSS_So7UIImageCSg10ObjectiveC8SelectorVSSSo0a8ModifierI0VypSgSaySo18UICommandAlternateCGSSSgSo23UIMenuElementAttributesVSo0wX5StateVtcfc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$sSo12UIKeyCommandC5UIKitE5title8subtitle5image13selectedImage09preferredH10Visibility6action5input13modifierFlags12propertyList10alternates20discoverabilityTitle10attributes5stateABSS_SSSgSo7UIImageCSgATSo013UIMenuElementhJ0V10ObjectiveC8SelectorVSSSo0a8ModifierN0VypSgSaySo18UICommandAlternateCGAQSo0wX10AttributesVSo0wX5StateVtcfC"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$sSo12UIKeyCommandC5UIKitE5title8subtitle5image13selectedImage09preferredH10Visibility6action5input13modifierFlags12propertyList10alternates20discoverabilityTitle10attributes5stateABSS_SSSgSo7UIImageCSgATSo013UIMenuElementhJ0V10ObjectiveC8SelectorVSSSo0a8ModifierN0VypSgSaySo18UICommandAlternateCGAQSo0wX10AttributesVSo0wX5StateVtcfc"},
     {"access": "public", "introduced": "11", "linkage": "exported", "name": "_$sSo12UIPasteboardC5UIKitE10setObjects_9localOnly14expirationDateySayxG_Sb10Foundation0H0VSgts21_ObjectiveCBridgeableRzSo21NSItemProviderWriting01_J5CTypeRpzlF"},
     {"access": "public", "introduced": "11", "linkage": "exported", "name": "_$sSo12UIPasteboardC5UIKitE10setObjectsyySayxGs21_ObjectiveCBridgeableRzSo21NSItemProviderWriting01_E5CTypeRpzlF"},
     {"access": "public", "introduced": "14", "linkage": "exported", "name": "_$sSo12UIPasteboardC5UIKitE12detectValues3for17completionHandleryShySo0A16DetectionPatternaG_ys6ResultOySDyAHypGs5Error_pGctF"},
@@ -6277,6 +8858,14 @@
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$sSo13UIApplicationC5UIKitE41ProtectedDataWillBecomeUnavailableMessageVMn"},
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$sSo13UIApplicationC5UIKitE41ProtectedDataWillBecomeUnavailableMessageVN"},
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$sSo13UIApplicationC5UIKitE41ProtectedDataWillBecomeUnavailableMessageVSo20NSNotificationCenterC10FoundationE09MainActorH0ACMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$sSo13UIApplicationC5UIKitE49SystemPrefersReducedResourceUsageDidChangeMessageV04makeJ0yAESg10Foundation12NotificationVFZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$sSo13UIApplicationC5UIKitE49SystemPrefersReducedResourceUsageDidChangeMessageV4nameSo18NSNotificationNameavgZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$sSo13UIApplicationC5UIKitE49SystemPrefersReducedResourceUsageDidChangeMessageV4nameSo18NSNotificationNameavpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$sSo13UIApplicationC5UIKitE49SystemPrefersReducedResourceUsageDidChangeMessageVAEycfC"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$sSo13UIApplicationC5UIKitE49SystemPrefersReducedResourceUsageDidChangeMessageVMa"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$sSo13UIApplicationC5UIKitE49SystemPrefersReducedResourceUsageDidChangeMessageVMn"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$sSo13UIApplicationC5UIKitE49SystemPrefersReducedResourceUsageDidChangeMessageVN"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$sSo13UIApplicationC5UIKitE49SystemPrefersReducedResourceUsageDidChangeMessageVSo20NSNotificationCenterC10FoundationE09MainActorJ0ACMc"},
     {"access": "public", "introduced": "18.2", "linkage": "exported", "name": "_$sSo13UIApplicationC5UIKitE9isDefaultySbSo0A8CategoryVKF"},
     {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$sSo13UICornerCurveV5UIKitE11descriptionSSvg"},
     {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$sSo13UICornerCurveV5UIKitE11descriptionSSvpMV"},
@@ -6334,6 +8923,7 @@
     {"access": "public", "introduced": "7", "linkage": "exported", "name": "_$sSo13UIWindowLevelaSL5UIKitMc"},
     {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$sSo13UIWindowSceneC5UIKit23UITraitChangeObservableACMc"},
     {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$sSo13UIWindowSceneC5UIKit23UITraitChangeObservableACWP"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$sSo13UIWindowSceneC5UIKitE11displayLink6actionSo09CADisplayE0CSgyAGc_tF"},
     {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$sSo13UIWindowSceneC5UIKitE14traitOverridesAC07UITraitE0VvM"},
     {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$sSo13UIWindowSceneC5UIKitE14traitOverridesAC07UITraitE0Vvg"},
     {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$sSo13UIWindowSceneC5UIKitE14traitOverridesAC07UITraitE0VvpMV"},
@@ -6617,6 +9207,10 @@
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$sSo16UINavigationItemC5UIKitE23largeAttributedSubtitle10Foundation0E6StringVSgvg"},
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$sSo16UINavigationItemC5UIKitE23largeAttributedSubtitle10Foundation0E6StringVSgvpMV"},
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$sSo16UINavigationItemC5UIKitE23largeAttributedSubtitle10Foundation0E6StringVSgvs"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$sSo16UINavigationItemC5UIKitE25navigationBarMinimizationAC05UIBarF0VvM"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$sSo16UINavigationItemC5UIKitE25navigationBarMinimizationAC05UIBarF0Vvg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$sSo16UINavigationItemC5UIKitE25navigationBarMinimizationAC05UIBarF0VvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$sSo16UINavigationItemC5UIKitE25navigationBarMinimizationAC05UIBarF0Vvs"},
     {"access": "public", "introduced": "18", "linkage": "exported", "name": "_$sSo16UITabSidebarItemC5UIKitE11accessoriesSayAC15UICellAccessoryVGvM"},
     {"access": "public", "introduced": "18", "linkage": "exported", "name": "_$sSo16UITabSidebarItemC5UIKitE11accessoriesSayAC15UICellAccessoryVGvg"},
     {"access": "public", "introduced": "18", "linkage": "exported", "name": "_$sSo16UITabSidebarItemC5UIKitE11accessoriesSayAC15UICellAccessoryVGvpMV"},
@@ -6701,6 +9295,10 @@
     {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$sSo17UITraitCollectionC5UIKitE19typesettingLanguageAB10Foundation6LocaleV0E0VSg_tcfc"},
     {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$sSo17UITraitCollectionC5UIKitE32systemTraitsAffectingImageLookupSayAC0A10Definition_pXpGvgZ"},
     {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$sSo17UITraitCollectionC5UIKitE32systemTraitsAffectingImageLookupSayAC0A10Definition_pXpGvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$sSo17UITraitCollectionC5UIKitE33systemPrefersReducedResourceUsageABSb_tcfC"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$sSo17UITraitCollectionC5UIKitE33systemPrefersReducedResourceUsageABSb_tcfc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$sSo17UITraitCollectionC5UIKitE33systemPrefersReducedResourceUsageSbvg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$sSo17UITraitCollectionC5UIKitE33systemPrefersReducedResourceUsageSbvpMV"},
     {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$sSo17UITraitCollectionC5UIKitE36systemTraitsAffectingColorAppearanceSayAC0A10Definition_pXpGvgZ"},
     {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$sSo17UITraitCollectionC5UIKitE36systemTraitsAffectingColorAppearanceSayAC0A10Definition_pXpGvpZMV"},
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$sSo17UITraitCollectionC5UIKitE48resolvesNaturalAlignmentWithBaseWritingDirectionABSb_tcfC"},
@@ -6857,6 +9455,7 @@
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$sSo20NSNotificationCenterC10FoundationE17MessageIdentifierP5UIKitAbCE04BasedE0Vy_So13UIApplicationCAFE031ProtectedDataDidBecomeAvailableD0VGRszrlE09protectedjklM0AMvpZMV"},
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$sSo20NSNotificationCenterC10FoundationE17MessageIdentifierP5UIKitAbCE04BasedE0Vy_So13UIApplicationCAFE032BackgroundRefreshStatusDidChangeD0VGRszrlE010backgroundjklM0AMvpZMV"},
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$sSo20NSNotificationCenterC10FoundationE17MessageIdentifierP5UIKitAbCE04BasedE0Vy_So13UIApplicationCAFE034ProtectedDataWillBecomeUnavailableD0VGRszrlE09protectedjklM0AMvpZMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$sSo20NSNotificationCenterC10FoundationE17MessageIdentifierP5UIKitAbCE04BasedE0Vy_So13UIApplicationCAFE042SystemPrefersReducedResourceUsageDidChangeD0VGRszrlE06systemjklmnO0AMvpZMV"},
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$sSo20NSNotificationCenterC10FoundationE17MessageIdentifierP5UIKitAbCE04BasedE0Vy_So13UIFocusSystemCAFE015MovementDidFailD0VGRszrlE08movementkL0AMvpZMV"},
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$sSo20NSNotificationCenterC10FoundationE17MessageIdentifierP5UIKitAbCE04BasedE0Vy_So13UIFocusSystemCAFE09DidUpdateD0VGRszrlE03didK0AMvpZMV"},
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$sSo20NSNotificationCenterC10FoundationE17MessageIdentifierP5UIKitAbCE04BasedE0Vy_So15UIAccessibilityVAFE014ElementFocusedD0VGRszrlE07elementJ0AMvpZMV"},
@@ -7154,6 +9753,10 @@
     {"access": "public", "introduced": "18", "linkage": "exported", "name": "_$sSo30UITextFormattingViewControllerC5UIKitE8delegateAbCE8Delegate_pSgvg"},
     {"access": "public", "introduced": "18", "linkage": "exported", "name": "_$sSo30UITextFormattingViewControllerC5UIKitE8delegateAbCE8Delegate_pSgvpMV"},
     {"access": "public", "introduced": "18", "linkage": "exported", "name": "_$sSo30UITextFormattingViewControllerC5UIKitE8delegateAbCE8Delegate_pSgvs"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$sSo33UIBarButtonItemVisibilityPrioritya5UIKitE10higherThanA2B_tcfC"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$sSo33UIBarButtonItemVisibilityPrioritya5UIKitE1loiySbAB_ABtFZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$sSo33UIBarButtonItemVisibilityPrioritya5UIKitE9lowerThanA2B_tcfC"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$sSo33UIBarButtonItemVisibilityPriorityaSL5UIKitMc"},
     {"access": "public", "introduced": "14", "linkage": "exported", "name": "_$sSo35UICollectionViewCompositionalLayoutC5UIKitE4list5usingAbC0aD17ListConfigurationV_tFZ"},
     {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$sSo35UISheetPresentationControllerDetentC5UIKitE13resolvedValue2in12CoreGraphics7CGFloatVSgSo0abcD17ResolutionContext_p_tF"},
     {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$sSo35UISheetPresentationControllerDetentC5UIKitE6custom10identifier8resolverABSo0abcD10IdentifieraSg_12CoreGraphics7CGFloatVSgSo0abcD17ResolutionContext_pctFZ"},
@@ -7195,6 +9798,8 @@
     {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$sSo6UIMenuC5UIKitE5title8subtitle5image10identifier7options20preferredElementSize8childrenABSS_SSSgSo7UIImageCSgSo0A10IdentifieraSgSo0A7OptionsVSo0aiJ0VSaySo0aI0CGtcfc"},
     {"access": "public", "introduced": "15", "linkage": "exported", "name": "_$sSo6UIMenuC5UIKitE5title8subtitle5image10identifier7options8childrenABSS_SSSgSo7UIImageCSgSo0A10IdentifieraSgSo0A7OptionsVSaySo0A7ElementCGtcfC"},
     {"access": "public", "introduced": "15", "linkage": "exported", "name": "_$sSo6UIMenuC5UIKitE5title8subtitle5image10identifier7options8childrenABSS_SSSgSo7UIImageCSgSo0A10IdentifieraSgSo0A7OptionsVSaySo0A7ElementCGtcfc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$sSo6UIMenuC5UIKitE5title8subtitle5image24preferredImageVisibility10identifier7options0F11ElementSize8childrenABSS_SSSgSo7UIImageCSgSo0akgH0VSo0A10IdentifieraSgSo0A7OptionsVSo0akL0VSaySo0aK0CGtcfC"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$sSo6UIMenuC5UIKitE5title8subtitle5image24preferredImageVisibility10identifier7options0F11ElementSize8childrenABSS_SSSgSo7UIImageCSgSo0akgH0VSo0A10IdentifieraSgSo0A7OptionsVSo0akL0VSaySo0aK0CGtcfc"},
     {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$sSo6UIViewC5UIKit23UITraitChangeObservableACMc"},
     {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$sSo6UIViewC5UIKit23UITraitChangeObservableACWP"},
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$sSo6UIViewC5UIKitE10edgeInsets3forSo06UIEdgeD0VAbCE12LayoutRegionV_tF"},
@@ -7308,6 +9913,7 @@
     {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$sSo6UIViewC5UIKitE25unregisterForTraitChangesyySo25UITraitChangeRegistration_pF"},
     {"access": "public", "linkage": "exported", "name": "_$sSo6UIViewC5UIKitE33_defaultCustomPlaygroundQuickLooks01_efG0Ovg"},
     {"access": "public", "linkage": "exported", "name": "_$sSo6UIViewC5UIKitE33_defaultCustomPlaygroundQuickLooks01_efG0OvpMV"},
+    {"access": "public", "linkage": "exported", "name": "_$sSo6UIViewC5UIKitE5_rect3forSo6CGRectVAbCE12LayoutRegionV_tF", "unavailable": true},
     {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$sSo6UIViewC5UIKitE7animate14springDuration6bounce21initialSpringVelocity5delay7options10animations10completionySd_12CoreGraphics7CGFloatVANSdSo0A16AnimationOptionsVyyXEySbcSgtFZ"},
     {"access": "public", "introduced": "7", "linkage": "exported", "name": "_$sSo6UIViewCs38__DefaultCustomPlaygroundQuickLookable5UIKitMc"},
     {"access": "public", "introduced": "7", "linkage": "exported", "name": "_$sSo7UIColorC5UIKitE16_colorLiteralRed5green4blue5alphaABSf_S3ftcfC"},
@@ -7428,6 +10034,8 @@
     {"access": "public", "introduced": "13", "linkage": "exported", "name": "_$sSo8UIActionC5UIKitE5title5image10identifier20discoverabilityTitle10attributes5state7handlerABSS_So7UIImageCSgSo0A10IdentifieraSgSSSgSo23UIMenuElementAttributesVSo0mN5StateVyABctcfc"},
     {"access": "public", "introduced": "15", "linkage": "exported", "name": "_$sSo8UIActionC5UIKitE5title8subtitle5image10identifier20discoverabilityTitle10attributes5state7handlerABSS_SSSgSo7UIImageCSgSo0A10IdentifieraSgALSo23UIMenuElementAttributesVSo0nO5StateVyABctcfC"},
     {"access": "public", "introduced": "15", "linkage": "exported", "name": "_$sSo8UIActionC5UIKitE5title8subtitle5image10identifier20discoverabilityTitle10attributes5state7handlerABSS_SSSgSo7UIImageCSgSo0A10IdentifieraSgALSo23UIMenuElementAttributesVSo0nO5StateVyABctcfc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$sSo8UIActionC5UIKitE5title8subtitle5image13selectedImage09preferredG10Visibility10identifier20discoverabilityTitle10attributes5state7handlerABSS_SSSgSo7UIImageCSgAQSo013UIMenuElementgI0VSo0A10IdentifieraSgANSo0qR10AttributesVSo0qR5StateVyABctcfC"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$sSo8UIActionC5UIKitE5title8subtitle5image13selectedImage09preferredG10Visibility10identifier20discoverabilityTitle10attributes5state7handlerABSS_SSSgSo7UIImageCSgAQSo013UIMenuElementgI0VSo0A10IdentifieraSgANSo0qR10AttributesVSo0qR5StateVyABctcfc"},
     {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$sSo8UIActionC5UIKitE5title8subtitle5image13selectedImage10identifier20discoverabilityTitle10attributes5state7handlerABSS_SSSgSo7UIImageCSgAPSo0A10IdentifieraSgAMSo23UIMenuElementAttributesVSo0pQ5StateVyABctcfC"},
     {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$sSo8UIActionC5UIKitE5title8subtitle5image13selectedImage10identifier20discoverabilityTitle10attributes5state7handlerABSS_SSSgSo7UIImageCSgAPSo0A10IdentifieraSgAMSo23UIMenuElementAttributesVSo0pQ5StateVyABctcfc"},
     {"access": "public", "introduced": "15", "linkage": "exported", "name": "_$sSo8UIButtonC5UIKitE13ConfigurationV015preferredSymbolC8ForImageSo07UIImageeC0CSgvM"},
@@ -7850,11 +10458,14 @@
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$sSo8UIWindowC5UIKitE23DidBecomeVisibleMessageVSo20NSNotificationCenterC10FoundationE09MainActorF0ACMc"},
     {"access": "public", "introduced": "13", "linkage": "exported", "name": "_$sSo9UICommandC5UIKitE5title5image6action12propertyList10alternates20discoverabilityTitle10attributes5stateABSS_So7UIImageCSg10ObjectiveC8SelectorVypSgSaySo0A9AlternateCGSSSgSo23UIMenuElementAttributesVSo0qR5StateVtcfC"},
     {"access": "public", "introduced": "13", "linkage": "exported", "name": "_$sSo9UICommandC5UIKitE5title5image6action12propertyList10alternates20discoverabilityTitle10attributes5stateABSS_So7UIImageCSg10ObjectiveC8SelectorVypSgSaySo0A9AlternateCGSSSgSo23UIMenuElementAttributesVSo0qR5StateVtcfc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$sSo9UICommandC5UIKitE5title8subtitle5image13selectedImage09preferredG10Visibility6action12propertyList10alternates20discoverabilityTitle10attributes5stateABSS_SSSgSo7UIImageCSgARSo013UIMenuElementgI0V10ObjectiveC8SelectorVypSgSaySo0A9AlternateCGAOSo0sT10AttributesVSo0sT5StateVtcfC"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$sSo9UICommandC5UIKitE5title8subtitle5image13selectedImage09preferredG10Visibility6action12propertyList10alternates20discoverabilityTitle10attributes5stateABSS_SSSgSo7UIImageCSgARSo013UIMenuElementgI0V10ObjectiveC8SelectorVypSgSaySo0A9AlternateCGAOSo0sT10AttributesVSo0sT5StateVtcfc"},
     {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$sSo9UICommandC5UIKitE5title8subtitle5image13selectedImage6action12propertyList10alternates20discoverabilityTitle10attributes5stateABSS_SSSgSo7UIImageCSgAQ10ObjectiveC8SelectorVypSgSaySo0A9AlternateCGANSo23UIMenuElementAttributesVSo0tU5StateVtcfC"},
     {"access": "public", "introduced": "17", "linkage": "exported", "name": "_$sSo9UICommandC5UIKitE5title8subtitle5image13selectedImage6action12propertyList10alternates20discoverabilityTitle10attributes5stateABSS_SSSgSo7UIImageCSgAQ10ObjectiveC8SelectorVypSgSaySo0A9AlternateCGANSo23UIMenuElementAttributesVSo0tU5StateVtcfc"},
     {"access": "public", "introduced": "15", "linkage": "exported", "name": "_$sSo9UICommandC5UIKitE5title8subtitle5image6action12propertyList10alternates20discoverabilityTitle10attributes5stateABSS_SSSgSo7UIImageCSg10ObjectiveC8SelectorVypSgSaySo0A9AlternateCGAMSo23UIMenuElementAttributesVSo0rS5StateVtcfC"},
     {"access": "public", "introduced": "15", "linkage": "exported", "name": "_$sSo9UICommandC5UIKitE5title8subtitle5image6action12propertyList10alternates20discoverabilityTitle10attributes5stateABSS_SSSgSo7UIImageCSg10ObjectiveC8SelectorVypSgSaySo0A9AlternateCGAMSo23UIMenuElementAttributesVSo0rS5StateVtcfc"},
-    {"access": "public", "introduced": "14", "linkage": "exported", "name": "_$sSo9UIControlC5UIKitE22enumerateEventHandlersyyySo8UIActionCSg_ypSg_10ObjectiveC8SelectorVtSgSo0A6EventsVSbztXEF"}
+    {"access": "public", "introduced": "14", "linkage": "exported", "name": "_$sSo9UIControlC5UIKitE22enumerateEventHandlersyyySo8UIActionCSg_ypSg_10ObjectiveC8SelectorVtSgSo0A6EventsVSbztXEF"},
+    {"access": "public", "linkage": "exported", "name": "__swift_FORCE_LOAD_$_swiftUIKit"}
    ],
    "interfaces": [
     {
@@ -7870,7 +10481,7 @@
      "super": "NSObject"
     }
    ],
-   "target": "arm64e-apple-ios26.5"
+   "target": "arm64e-apple-ios27.0"
   }
  ],
  "version": "1.0"

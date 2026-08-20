@@ -39,7 +39,47 @@
      ]
     }
    ],
-   "target": "arm64e-apple-ios26.5"
+   "target": "arm64e-apple-ios27"
+  },
+  {
+   "interfaces": [
+    {
+     "access": "public",
+     "introduced": "18",
+     "linkage": "exported",
+     "name": "EXAppExtensionBrowserViewController",
+     "super": "UIViewController"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "makeXPCConnectionWithError:"}
+     ],
+     "introduced": "26",
+     "linkage": "exported",
+     "name": "EXHostViewController",
+     "properties": [
+      {"access": "public", "getter": "delegate", "name": "delegate", "setter": "setDelegate:"},
+      {"access": "public", "getter": "placeholderView", "name": "placeholderView", "setter": "setPlaceholderView:"}
+     ],
+     "super": "UIViewController"
+    }
+   ],
+   "protocols": [
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "hostViewControllerDidActivate:", "optional": true},
+      {"access": "public", "name": "hostViewControllerWillDeactivate:error:", "optional": true}
+     ],
+     "introduced": "26",
+     "name": "EXHostViewControllerDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    }
+   ],
+   "target": "arm64e.x1-apple-ios27"
   },
   {
    "globals": [
@@ -112,7 +152,7 @@
     {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$ss5NeverO12ExtensionKitE4bodyABvg"},
     {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$ss5NeverO12ExtensionKitE4bodyABvpMV"}
    ],
-   "target": "arm64e-apple-ios26.5"
+   "target": "arm64e-apple-ios27.0"
   }
  ],
  "version": "1.0"

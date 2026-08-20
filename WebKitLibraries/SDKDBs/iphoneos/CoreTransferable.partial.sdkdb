@@ -5,7 +5,13 @@
    "globals": [
     {"access": "public", "kind": "variable", "linkage": "exported", "name": "_CoreTransferableVersionNumber"}
    ],
-   "target": "arm64e-apple-ios26.5"
+   "target": "arm64e-apple-ios27"
+  },
+  {
+   "globals": [
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_CoreTransferableVersionNumber"}
+   ],
+   "target": "arm64e.x1-apple-ios27"
   },
   {
    "globals": [
@@ -465,7 +471,7 @@
     {"access": "public", "introduced": "13", "linkage": "exported", "name": "_$ss5NeverO7SwiftUIE4bodyABvg"},
     {"access": "public", "introduced": "13", "linkage": "exported", "name": "_$ss5NeverO7SwiftUIE4bodyABvpMV"}
    ],
-   "target": "arm64e-apple-ios26.5"
+   "target": "arm64e-apple-ios27.0"
   }
  ],
  "version": "1.0"

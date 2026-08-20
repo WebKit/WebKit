@@ -1,0 +1,3040 @@
+
+{
+ "PublicSDKContentRoot": [
+  {
+   "enums": [
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MLCActivationTypeNone"},
+      {"access": "public", "name": "MLCActivationTypeReLU"},
+      {"access": "public", "name": "MLCActivationTypeLinear"},
+      {"access": "public", "name": "MLCActivationTypeSigmoid"},
+      {"access": "public", "name": "MLCActivationTypeHardSigmoid"},
+      {"access": "public", "name": "MLCActivationTypeTanh"},
+      {"access": "public", "name": "MLCActivationTypeAbsolute"},
+      {"access": "public", "name": "MLCActivationTypeSoftPlus"},
+      {"access": "public", "name": "MLCActivationTypeSoftSign"},
+      {"access": "public", "name": "MLCActivationTypeELU"},
+      {"access": "public", "name": "MLCActivationTypeReLUN"},
+      {"access": "public", "name": "MLCActivationTypeLogSigmoid"},
+      {"access": "public", "name": "MLCActivationTypeSELU"},
+      {"access": "public", "name": "MLCActivationTypeCELU"},
+      {"access": "public", "name": "MLCActivationTypeHardShrink"},
+      {"access": "public", "name": "MLCActivationTypeSoftShrink"},
+      {"access": "public", "name": "MLCActivationTypeTanhShrink"},
+      {"access": "public", "name": "MLCActivationTypeThreshold"},
+      {"access": "public", "name": "MLCActivationTypeGELU"},
+      {"access": "public", "introduced": "14.5", "name": "MLCActivationTypeHardSwish"},
+      {"access": "public", "introduced": "14.5", "name": "MLCActivationTypeClamp"},
+      {"access": "public", "name": "MLCActivationTypeCount"}
+     ],
+     "name": "MLCActivationType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MLCArithmeticOperationAdd"},
+      {"access": "public", "name": "MLCArithmeticOperationSubtract"},
+      {"access": "public", "name": "MLCArithmeticOperationMultiply"},
+      {"access": "public", "name": "MLCArithmeticOperationDivide"},
+      {"access": "public", "name": "MLCArithmeticOperationFloor"},
+      {"access": "public", "name": "MLCArithmeticOperationRound"},
+      {"access": "public", "name": "MLCArithmeticOperationCeil"},
+      {"access": "public", "name": "MLCArithmeticOperationSqrt"},
+      {"access": "public", "name": "MLCArithmeticOperationRsqrt"},
+      {"access": "public", "name": "MLCArithmeticOperationSin"},
+      {"access": "public", "name": "MLCArithmeticOperationCos"},
+      {"access": "public", "name": "MLCArithmeticOperationTan"},
+      {"access": "public", "name": "MLCArithmeticOperationAsin"},
+      {"access": "public", "name": "MLCArithmeticOperationAcos"},
+      {"access": "public", "name": "MLCArithmeticOperationAtan"},
+      {"access": "public", "name": "MLCArithmeticOperationSinh"},
+      {"access": "public", "name": "MLCArithmeticOperationCosh"},
+      {"access": "public", "name": "MLCArithmeticOperationTanh"},
+      {"access": "public", "name": "MLCArithmeticOperationAsinh"},
+      {"access": "public", "name": "MLCArithmeticOperationAcosh"},
+      {"access": "public", "name": "MLCArithmeticOperationAtanh"},
+      {"access": "public", "name": "MLCArithmeticOperationPow"},
+      {"access": "public", "name": "MLCArithmeticOperationExp"},
+      {"access": "public", "name": "MLCArithmeticOperationExp2"},
+      {"access": "public", "name": "MLCArithmeticOperationLog"},
+      {"access": "public", "name": "MLCArithmeticOperationLog2"},
+      {"access": "public", "introduced": "14.5", "name": "MLCArithmeticOperationMultiplyNoNaN"},
+      {"access": "public", "introduced": "14.5", "name": "MLCArithmeticOperationDivideNoNaN"},
+      {"access": "public", "introduced": "14.5", "name": "MLCArithmeticOperationMin"},
+      {"access": "public", "introduced": "14.5", "name": "MLCArithmeticOperationMax"},
+      {"access": "public", "name": "MLCArithmeticOperationCount"}
+     ],
+     "name": "MLCArithmeticOperation"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MLCComparisonOperationEqual"},
+      {"access": "public", "name": "MLCComparisonOperationNotEqual"},
+      {"access": "public", "name": "MLCComparisonOperationLess"},
+      {"access": "public", "name": "MLCComparisonOperationGreater"},
+      {"access": "public", "name": "MLCComparisonOperationLessOrEqual"},
+      {"access": "public", "name": "MLCComparisonOperationGreaterOrEqual"},
+      {"access": "public", "name": "MLCComparisonOperationLogicalAND"},
+      {"access": "public", "name": "MLCComparisonOperationLogicalOR"},
+      {"access": "public", "name": "MLCComparisonOperationLogicalNOT"},
+      {"access": "public", "name": "MLCComparisonOperationLogicalNAND"},
+      {"access": "public", "name": "MLCComparisonOperationLogicalNOR"},
+      {"access": "public", "name": "MLCComparisonOperationLogicalXOR"},
+      {"access": "public", "name": "MLCComparisonOperationCount"}
+     ],
+     "name": "MLCComparisonOperation"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MLCConvolutionTypeStandard"},
+      {"access": "public", "name": "MLCConvolutionTypeTransposed"},
+      {"access": "public", "name": "MLCConvolutionTypeDepthwise"}
+     ],
+     "name": "MLCConvolutionType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MLCDataTypeInvalid"},
+      {"access": "public", "name": "MLCDataTypeFloat32"},
+      {"access": "public", "introduced": "15", "name": "MLCDataTypeFloat16"},
+      {"access": "public", "name": "MLCDataTypeBoolean"},
+      {"access": "public", "name": "MLCDataTypeInt64"},
+      {"access": "public", "name": "MLCDataTypeInt32"},
+      {"access": "public", "introduced": "15", "name": "MLCDataTypeInt8"},
+      {"access": "public", "introduced": "15", "name": "MLCDataTypeUInt8"},
+      {"access": "public", "name": "MLCDataTypeCount"}
+     ],
+     "name": "MLCDataType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MLCDeviceTypeCPU"},
+      {"access": "public", "name": "MLCDeviceTypeGPU"},
+      {"access": "public", "name": "MLCDeviceTypeAny"},
+      {"access": "public", "introduced": "15", "name": "MLCDeviceTypeANE"},
+      {"access": "public", "name": "MLCDeviceTypeCount"}
+     ],
+     "name": "MLCDeviceType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MLCExecutionOptionsNone"},
+      {"access": "public", "name": "MLCExecutionOptionsSkipWritingInputDataToDevice"},
+      {"access": "public", "name": "MLCExecutionOptionsSynchronous"},
+      {"access": "public", "name": "MLCExecutionOptionsProfiling"},
+      {"access": "public", "name": "MLCExecutionOptionsForwardForInference"},
+      {"access": "public", "introduced": "15", "name": "MLCExecutionOptionsPerLayerProfiling"}
+     ],
+     "name": "MLCExecutionOptions"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MLCGradientClippingTypeByValue"},
+      {"access": "public", "name": "MLCGradientClippingTypeByNorm"},
+      {"access": "public", "name": "MLCGradientClippingTypeByGlobalNorm"}
+     ],
+     "name": "MLCGradientClippingType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MLCGraphCompilationOptionsNone"},
+      {"access": "public", "name": "MLCGraphCompilationOptionsDebugLayers"},
+      {"access": "public", "name": "MLCGraphCompilationOptionsDisableLayerFusion"},
+      {"access": "public", "name": "MLCGraphCompilationOptionsLinkGraphs"},
+      {"access": "public", "name": "MLCGraphCompilationOptionsComputeAllGradients"}
+     ],
+     "name": "MLCGraphCompilationOptions"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MLCLSTMResultModeOutput"},
+      {"access": "public", "name": "MLCLSTMResultModeOutputAndStates"}
+     ],
+     "name": "MLCLSTMResultMode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MLCLossTypeMeanAbsoluteError"},
+      {"access": "public", "name": "MLCLossTypeMeanSquaredError"},
+      {"access": "public", "name": "MLCLossTypeSoftmaxCrossEntropy"},
+      {"access": "public", "name": "MLCLossTypeSigmoidCrossEntropy"},
+      {"access": "public", "name": "MLCLossTypeCategoricalCrossEntropy"},
+      {"access": "public", "name": "MLCLossTypeHinge"},
+      {"access": "public", "name": "MLCLossTypeHuber"},
+      {"access": "public", "name": "MLCLossTypeCosineDistance"},
+      {"access": "public", "name": "MLCLossTypeLog"},
+      {"access": "public", "name": "MLCLossTypeCount"}
+     ],
+     "name": "MLCLossType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MLCPaddingPolicySame"},
+      {"access": "public", "name": "MLCPaddingPolicyValid"},
+      {"access": "public", "name": "MLCPaddingPolicyUsePaddingSize"}
+     ],
+     "name": "MLCPaddingPolicy"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MLCPaddingTypeZero"},
+      {"access": "public", "name": "MLCPaddingTypeReflect"},
+      {"access": "public", "name": "MLCPaddingTypeSymmetric"},
+      {"access": "public", "name": "MLCPaddingTypeConstant"}
+     ],
+     "name": "MLCPaddingType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MLCPoolingTypeMax"},
+      {"access": "public", "name": "MLCPoolingTypeAverage"},
+      {"access": "public", "name": "MLCPoolingTypeL2Norm"},
+      {"access": "public", "name": "MLCPoolingTypeCount"}
+     ],
+     "name": "MLCPoolingType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MLCRandomInitializerTypeInvalid"},
+      {"access": "public", "name": "MLCRandomInitializerTypeUniform"},
+      {"access": "public", "name": "MLCRandomInitializerTypeGlorotUniform"},
+      {"access": "public", "name": "MLCRandomInitializerTypeXavier"},
+      {"access": "public", "name": "MLCRandomInitializerTypeCount"}
+     ],
+     "name": "MLCRandomInitializerType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MLCReductionTypeNone"},
+      {"access": "public", "name": "MLCReductionTypeSum"},
+      {"access": "public", "name": "MLCReductionTypeMean"},
+      {"access": "public", "name": "MLCReductionTypeMax"},
+      {"access": "public", "name": "MLCReductionTypeMin"},
+      {"access": "public", "name": "MLCReductionTypeArgMax"},
+      {"access": "public", "name": "MLCReductionTypeArgMin"},
+      {"access": "public", "introduced": "14.5", "name": "MLCReductionTypeL1Norm"},
+      {"access": "public", "introduced": "14.5", "name": "MLCReductionTypeAny"},
+      {"access": "public", "introduced": "14.5", "name": "MLCReductionTypeAll"},
+      {"access": "public", "name": "MLCReductionTypeCount"}
+     ],
+     "name": "MLCReductionType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MLCRegularizationTypeNone"},
+      {"access": "public", "name": "MLCRegularizationTypeL1"},
+      {"access": "public", "name": "MLCRegularizationTypeL2"}
+     ],
+     "name": "MLCRegularizationType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MLCSampleModeNearest"},
+      {"access": "public", "name": "MLCSampleModeLinear"}
+     ],
+     "name": "MLCSampleMode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MLCSoftmaxOperationSoftmax"},
+      {"access": "public", "name": "MLCSoftmaxOperationLogSoftmax"}
+     ],
+     "name": "MLCSoftmaxOperation"
+    }
+   ],
+   "globals": [
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_MLCActivationTypeDebugDescription"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_MLCArithmeticOperationDebugDescription"},
+    {"access": "public", "introduced": "14.5", "kind": "function", "linkage": "exported", "name": "_MLCComparisonOperationDebugDescription"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_MLCConvolutionTypeDebugDescription"},
+    {"access": "public", "introduced": "15", "kind": "function", "linkage": "exported", "name": "_MLCGradientClippingTypeDebugDescription"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_MLCLSTMResultModeDebugDescription"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_MLCLossTypeDebugDescription"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_MLCPaddingPolicyDebugDescription"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_MLCPaddingTypeDebugDescription"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_MLCPoolingTypeDebugDescription"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_MLCReductionTypeDebugDescription"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_MLCSampleModeDebugDescription"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_MLCSoftmaxOperationDebugDescription"}
+   ],
+   "interfaces": [
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true},
+      {"access": "public", "name": "descriptorWithType:"},
+      {"access": "public", "name": "descriptorWithType:a:"},
+      {"access": "public", "name": "descriptorWithType:a:b:"},
+      {"access": "public", "name": "descriptorWithType:a:b:c:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "MLCActivationDescriptor",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "activationType", "name": "activationType"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "a", "name": "a"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "b", "name": "b"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "c", "name": "c"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "layerWithDescriptor:"},
+      {"access": "public", "name": "leakyReLULayerWithNegativeSlope:"},
+      {"access": "public", "name": "linearLayerWithScale:bias:"},
+      {"access": "public", "name": "softPlusLayerWithBeta:"},
+      {"access": "public", "name": "eluLayerWithA:"},
+      {"access": "public", "name": "relunLayerWithA:b:"},
+      {"access": "public", "name": "celuLayerWithA:"},
+      {"access": "public", "name": "hardShrinkLayerWithA:"},
+      {"access": "public", "name": "softShrinkLayerWithA:"},
+      {"access": "public", "name": "thresholdLayerWithThreshold:replacement:"},
+      {"access": "public", "name": "clampLayerWithMinValue:maxValue:"}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "MLCActivationLayer",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "descriptor", "name": "descriptor"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "reluLayer", "name": "reluLayer"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "relu6Layer", "name": "relu6Layer"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "leakyReLULayer", "name": "leakyReLULayer"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "sigmoidLayer", "name": "sigmoidLayer"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "hardSigmoidLayer", "name": "hardSigmoidLayer"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "tanhLayer", "name": "tanhLayer"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "absoluteLayer", "name": "absoluteLayer"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "softPlusLayer", "name": "softPlusLayer"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "softSignLayer", "name": "softSignLayer"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "eluLayer", "name": "eluLayer"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "logSigmoidLayer", "name": "logSigmoidLayer"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "seluLayer", "name": "seluLayer"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "celuLayer", "name": "celuLayer"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "hardShrinkLayer", "name": "hardShrinkLayer"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "softShrinkLayer", "name": "softShrinkLayer"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "tanhShrinkLayer", "name": "tanhShrinkLayer"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "geluLayer", "name": "geluLayer"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "hardSwishLayer", "name": "hardSwishLayer"}
+     ],
+     "super": "MLCLayer"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "optimizerWithDescriptor:"},
+      {"access": "public", "name": "optimizerWithDescriptor:beta1:beta2:epsilon:timeStep:"},
+      {"access": "public", "introduced": "15", "name": "optimizerWithDescriptor:beta1:beta2:epsilon:usesAMSGrad:timeStep:"}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "MLCAdamOptimizer",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "beta1", "name": "beta1"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "beta2", "name": "beta2"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "epsilon", "name": "epsilon"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "usesAMSGrad", "name": "usesAMSGrad"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "timeStep", "name": "timeStep"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "MLCOptimizer"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "optimizerWithDescriptor:"},
+      {"access": "public", "name": "optimizerWithDescriptor:beta1:beta2:epsilon:usesAMSGrad:timeStep:"}
+     ],
+     "introduced": "15",
+     "linkage": "exported",
+     "name": "MLCAdamWOptimizer",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "beta1", "name": "beta1"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "beta2", "name": "beta2"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "epsilon", "name": "epsilon"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "usesAMSGrad", "name": "usesAMSGrad"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "timeStep", "name": "timeStep"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "MLCOptimizer"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "layerWithOperation:"}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "MLCArithmeticLayer",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "operation", "name": "operation"}
+     ],
+     "super": "MLCLayer"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "layerWithFeatureChannelCount:mean:variance:beta:gamma:varianceEpsilon:"},
+      {"access": "public", "name": "layerWithFeatureChannelCount:mean:variance:beta:gamma:varianceEpsilon:momentum:"}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "MLCBatchNormalizationLayer",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "featureChannelCount", "name": "featureChannelCount"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "mean", "name": "mean"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "variance", "name": "variance"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "beta", "name": "beta"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "gamma", "name": "gamma"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "betaParameter", "name": "betaParameter"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "gammaParameter", "name": "gammaParameter"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "varianceEpsilon", "name": "varianceEpsilon"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "momentum", "name": "momentum"}
+     ],
+     "super": "MLCLayer"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "layerWithOperation:"}
+     ],
+     "introduced": "14.5",
+     "linkage": "exported",
+     "name": "MLCComparisonLayer",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "operation", "name": "operation"}
+     ],
+     "super": "MLCLayer"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "layer"},
+      {"access": "public", "name": "layerWithDimension:"}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "MLCConcatenationLayer",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "dimension", "name": "dimension"}
+     ],
+     "super": "MLCLayer"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "descriptorWithType:kernelSizes:inputFeatureChannelCount:outputFeatureChannelCount:groupCount:strides:dilationRates:paddingPolicy:paddingSizes:"},
+      {"access": "public", "name": "descriptorWithKernelWidth:kernelHeight:inputFeatureChannelCount:outputFeatureChannelCount:"},
+      {"access": "public", "name": "descriptorWithKernelSizes:inputFeatureChannelCount:outputFeatureChannelCount:strides:paddingPolicy:paddingSizes:"},
+      {"access": "public", "name": "descriptorWithKernelSizes:inputFeatureChannelCount:outputFeatureChannelCount:groupCount:strides:dilationRates:paddingPolicy:paddingSizes:"},
+      {"access": "public", "name": "convolutionTransposeDescriptorWithKernelWidth:kernelHeight:inputFeatureChannelCount:outputFeatureChannelCount:"},
+      {"access": "public", "name": "convolutionTransposeDescriptorWithKernelSizes:inputFeatureChannelCount:outputFeatureChannelCount:strides:paddingPolicy:paddingSizes:"},
+      {"access": "public", "name": "convolutionTransposeDescriptorWithKernelSizes:inputFeatureChannelCount:outputFeatureChannelCount:groupCount:strides:dilationRates:paddingPolicy:paddingSizes:"},
+      {"access": "public", "name": "depthwiseConvolutionDescriptorWithKernelWidth:kernelHeight:inputFeatureChannelCount:channelMultiplier:"},
+      {"access": "public", "name": "depthwiseConvolutionDescriptorWithKernelSizes:inputFeatureChannelCount:channelMultiplier:strides:paddingPolicy:paddingSizes:"},
+      {"access": "public", "name": "depthwiseConvolutionDescriptorWithKernelSizes:inputFeatureChannelCount:channelMultiplier:strides:dilationRates:paddingPolicy:paddingSizes:"}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "MLCConvolutionDescriptor",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "convolutionType", "name": "convolutionType"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "kernelWidth", "name": "kernelWidth"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "kernelHeight", "name": "kernelHeight"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "inputFeatureChannelCount", "name": "inputFeatureChannelCount"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "outputFeatureChannelCount", "name": "outputFeatureChannelCount"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "strideInX", "name": "strideInX"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "strideInY", "name": "strideInY"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "dilationRateInX", "name": "dilationRateInX"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "dilationRateInY", "name": "dilationRateInY"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "groupCount", "name": "groupCount"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "paddingPolicy", "name": "paddingPolicy"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "paddingSizeInX", "name": "paddingSizeInX"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "paddingSizeInY", "name": "paddingSizeInY"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isConvolutionTranspose", "name": "isConvolutionTranspose"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "usesDepthwiseConvolution", "name": "usesDepthwiseConvolution"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "layerWithWeights:biases:descriptor:"}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "MLCConvolutionLayer",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "descriptor", "name": "descriptor"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "weights", "name": "weights"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "biases", "name": "biases"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "weightsParameter", "name": "weightsParameter"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "biasesParameter", "name": "biasesParameter"}
+     ],
+     "super": "MLCLayer"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "cpuDevice"},
+      {"access": "public", "name": "gpuDevice"},
+      {"access": "public", "introduced": "15", "name": "aneDevice"},
+      {"access": "public", "name": "deviceWithType:"},
+      {"access": "public", "introduced": "14.5", "name": "deviceWithType:selectsMultipleComputeDevices:"},
+      {"access": "public", "name": "deviceWithGPUDevices:"}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "MLCDevice",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "type", "name": "type"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "actualDeviceType", "introduced": "15", "name": "actualDeviceType"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "gpuDevices", "name": "gpuDevices"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "layerWithRate:seed:"}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "MLCDropoutLayer",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "rate", "name": "rate"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "seed", "name": "seed"}
+     ],
+     "super": "MLCLayer"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true},
+      {"access": "public", "name": "descriptorWithEmbeddingCount:embeddingDimension:"},
+      {"access": "public", "name": "descriptorWithEmbeddingCount:embeddingDimension:paddingIndex:maximumNorm:pNorm:scalesGradientByFrequency:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "MLCEmbeddingDescriptor",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "embeddingCount", "name": "embeddingCount"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "embeddingDimension", "name": "embeddingDimension"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "paddingIndex", "name": "paddingIndex"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "maximumNorm", "name": "maximumNorm"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "pNorm", "name": "pNorm"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "scalesGradientByFrequency", "name": "scalesGradientByFrequency"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "layerWithDescriptor:weights:"}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "MLCEmbeddingLayer",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "descriptor", "name": "descriptor"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "weights", "name": "weights"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "weightsParameter", "name": "weightsParameter"}
+     ],
+     "super": "MLCLayer"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "layerWithWeights:biases:descriptor:"}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "MLCFullyConnectedLayer",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "descriptor", "name": "descriptor"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "weights", "name": "weights"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "biases", "name": "biases"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "weightsParameter", "name": "weightsParameter"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "biasesParameter", "name": "biasesParameter"}
+     ],
+     "super": "MLCLayer"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "layerWithDimension:"}
+     ],
+     "introduced": "14.5",
+     "linkage": "exported",
+     "name": "MLCGatherLayer",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "dimension", "name": "dimension"}
+     ],
+     "super": "MLCLayer"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "layerWithScale:"}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "MLCGramMatrixLayer",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "scale", "name": "scale"}
+     ],
+     "super": "MLCLayer"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "graph"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "nodeWithLayer:source:"},
+      {"access": "public", "name": "nodeWithLayer:sources:"},
+      {"access": "public", "name": "nodeWithLayer:sources:disableUpdate:"},
+      {"access": "public", "name": "nodeWithLayer:sources:lossLabels:"},
+      {"access": "public", "name": "splitWithSource:splitCount:dimension:"},
+      {"access": "public", "name": "splitWithSource:splitSectionLengths:dimension:"},
+      {"access": "public", "name": "concatenateWithSources:dimension:"},
+      {"access": "public", "name": "reshapeWithShape:source:"},
+      {"access": "public", "name": "transposeWithDimensions:source:"},
+      {"access": "public", "introduced": "14.5", "name": "selectWithSources:condition:"},
+      {"access": "public", "introduced": "14.5", "name": "scatterWithDimension:source:indices:copyFrom:reductionType:"},
+      {"access": "public", "introduced": "14.5", "name": "gatherWithDimension:source:indices:"},
+      {"access": "public", "name": "bindAndWriteData:forInputs:toDevice:batchSize:synchronous:"},
+      {"access": "public", "name": "bindAndWriteData:forInputs:toDevice:synchronous:"},
+      {"access": "public", "name": "sourceTensorsForLayer:"},
+      {"access": "public", "name": "resultTensorsForLayer:"}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "MLCGraph",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "device", "name": "device"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "layers", "name": "layers"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "summarizedDOTDescription", "name": "summarizedDOTDescription"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "layerWithFeatureChannelCount:groupCount:beta:gamma:varianceEpsilon:"}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "MLCGroupNormalizationLayer",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "featureChannelCount", "name": "featureChannelCount"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "groupCount", "name": "groupCount"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "beta", "name": "beta"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "gamma", "name": "gamma"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "betaParameter", "name": "betaParameter"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "gammaParameter", "name": "gammaParameter"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "varianceEpsilon", "name": "varianceEpsilon"}
+     ],
+     "super": "MLCLayer"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true},
+      {"access": "public", "name": "graphWithGraphObjects:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "addInputs:"},
+      {"access": "public", "name": "addInputs:lossLabels:lossLabelWeights:"},
+      {"access": "public", "name": "addOutputs:"},
+      {"access": "public", "name": "compileWithOptions:device:"},
+      {"access": "public", "introduced": "14.5", "name": "compileWithOptions:device:inputTensors:inputTensorsData:"},
+      {"access": "public", "name": "linkWithGraphs:"},
+      {"access": "public", "name": "executeWithInputsData:batchSize:options:completionHandler:"},
+      {"access": "public", "name": "executeWithInputsData:outputsData:batchSize:options:completionHandler:"},
+      {"access": "public", "name": "executeWithInputsData:lossLabelsData:lossLabelWeightsData:batchSize:options:completionHandler:"},
+      {"access": "public", "name": "executeWithInputsData:lossLabelsData:lossLabelWeightsData:outputsData:batchSize:options:completionHandler:"}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "MLCInferenceGraph",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "deviceMemorySize", "name": "deviceMemorySize"}
+     ],
+     "super": "MLCGraph"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "layerWithFeatureChannelCount:beta:gamma:varianceEpsilon:"},
+      {"access": "public", "name": "layerWithFeatureChannelCount:beta:gamma:varianceEpsilon:momentum:"},
+      {"access": "public", "introduced": "14.5", "name": "layerWithFeatureChannelCount:mean:variance:beta:gamma:varianceEpsilon:momentum:"}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "MLCInstanceNormalizationLayer",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "featureChannelCount", "name": "featureChannelCount"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "mean", "introduced": "14.5", "name": "mean"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "variance", "introduced": "14.5", "name": "variance"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "beta", "name": "beta"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "gamma", "name": "gamma"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "betaParameter", "name": "betaParameter"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "gammaParameter", "name": "gammaParameter"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "varianceEpsilon", "name": "varianceEpsilon"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "momentum", "name": "momentum"}
+     ],
+     "super": "MLCLayer"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true},
+      {"access": "public", "name": "descriptorWithInputSize:hiddenSize:layerCount:"},
+      {"access": "public", "name": "descriptorWithInputSize:hiddenSize:layerCount:usesBiases:isBidirectional:dropout:"},
+      {"access": "public", "name": "descriptorWithInputSize:hiddenSize:layerCount:usesBiases:batchFirst:isBidirectional:dropout:"},
+      {"access": "public", "name": "descriptorWithInputSize:hiddenSize:layerCount:usesBiases:batchFirst:isBidirectional:returnsSequences:dropout:"},
+      {"access": "public", "name": "descriptorWithInputSize:hiddenSize:layerCount:usesBiases:batchFirst:isBidirectional:returnsSequences:dropout:resultMode:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "MLCLSTMDescriptor",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "inputSize", "name": "inputSize"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "hiddenSize", "name": "hiddenSize"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "layerCount", "name": "layerCount"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "usesBiases", "name": "usesBiases"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "batchFirst", "name": "batchFirst"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isBidirectional", "name": "isBidirectional"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "returnsSequences", "name": "returnsSequences"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "dropout", "name": "dropout"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "resultMode", "name": "resultMode"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "layerWithDescriptor:inputWeights:hiddenWeights:biases:"},
+      {"access": "public", "name": "layerWithDescriptor:inputWeights:hiddenWeights:peepholeWeights:biases:"},
+      {"access": "public", "name": "layerWithDescriptor:inputWeights:hiddenWeights:peepholeWeights:biases:gateActivations:outputResultActivation:"}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "MLCLSTMLayer",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "descriptor", "name": "descriptor"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "gateActivations", "name": "gateActivations"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "outputResultActivation", "name": "outputResultActivation"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "inputWeights", "name": "inputWeights"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "hiddenWeights", "name": "hiddenWeights"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "peepholeWeights", "name": "peepholeWeights"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "biases", "name": "biases"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "inputWeightsParameters", "name": "inputWeightsParameters"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "hiddenWeightsParameters", "name": "hiddenWeightsParameters"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "peepholeWeightsParameters", "name": "peepholeWeightsParameters"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "biasesParameters", "name": "biasesParameters"}
+     ],
+     "super": "MLCLayer"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "supportsDataType:onDevice:"},
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "MLCLayer",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "layerID", "name": "layerID"},
+      {"access": "public", "getter": "label", "name": "label", "setter": "setLabel:"},
+      {"access": "public", "getter": "isDebuggingEnabled", "name": "isDebuggingEnabled", "setter": "setIsDebuggingEnabled:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "deviceType", "introduced": "15", "name": "deviceType"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "layerWithNormalizedShape:beta:gamma:varianceEpsilon:"}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "MLCLayerNormalizationLayer",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "normalizedShape", "name": "normalizedShape"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "beta", "name": "beta"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "gamma", "name": "gamma"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "betaParameter", "name": "betaParameter"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "gammaParameter", "name": "gammaParameter"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "varianceEpsilon", "name": "varianceEpsilon"}
+     ],
+     "super": "MLCLayer"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true},
+      {"access": "public", "name": "descriptorWithType:reductionType:"},
+      {"access": "public", "name": "descriptorWithType:reductionType:weight:"},
+      {"access": "public", "name": "descriptorWithType:reductionType:weight:labelSmoothing:classCount:"},
+      {"access": "public", "name": "descriptorWithType:reductionType:weight:labelSmoothing:classCount:epsilon:delta:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "MLCLossDescriptor",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "lossType", "name": "lossType"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "reductionType", "name": "reductionType"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "weight", "name": "weight"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "labelSmoothing", "name": "labelSmoothing"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "classCount", "name": "classCount"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "epsilon", "name": "epsilon"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "delta", "name": "delta"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "layerWithDescriptor:"},
+      {"access": "public", "name": "layerWithDescriptor:weights:"},
+      {"access": "public", "name": "softmaxCrossEntropyLossWithReductionType:labelSmoothing:classCount:weight:"},
+      {"access": "public", "name": "softmaxCrossEntropyLossWithReductionType:labelSmoothing:classCount:weights:"},
+      {"access": "public", "name": "categoricalCrossEntropyLossWithReductionType:labelSmoothing:classCount:weight:"},
+      {"access": "public", "name": "categoricalCrossEntropyLossWithReductionType:labelSmoothing:classCount:weights:"},
+      {"access": "public", "name": "sigmoidCrossEntropyLossWithReductionType:labelSmoothing:weight:"},
+      {"access": "public", "name": "sigmoidCrossEntropyLossWithReductionType:labelSmoothing:weights:"},
+      {"access": "public", "name": "logLossWithReductionType:epsilon:weight:"},
+      {"access": "public", "name": "logLossWithReductionType:epsilon:weights:"},
+      {"access": "public", "name": "huberLossWithReductionType:delta:weight:"},
+      {"access": "public", "name": "huberLossWithReductionType:delta:weights:"},
+      {"access": "public", "name": "meanAbsoluteErrorLossWithReductionType:weight:"},
+      {"access": "public", "name": "meanAbsoluteErrorLossWithReductionType:weights:"},
+      {"access": "public", "name": "meanSquaredErrorLossWithReductionType:weight:"},
+      {"access": "public", "name": "meanSquaredErrorLossWithReductionType:weights:"},
+      {"access": "public", "name": "hingeLossWithReductionType:weight:"},
+      {"access": "public", "name": "hingeLossWithReductionType:weights:"},
+      {"access": "public", "name": "cosineDistanceLossWithReductionType:weight:"},
+      {"access": "public", "name": "cosineDistanceLossWithReductionType:weights:"}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "MLCLossLayer",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "descriptor", "name": "descriptor"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "weights", "name": "weights"}
+     ],
+     "super": "MLCLayer"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true},
+      {"access": "public", "name": "descriptorWithAlpha:transposesX:transposesY:"},
+      {"access": "public", "name": "descriptor"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "MLCMatMulDescriptor",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "alpha", "name": "alpha"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "transposesX", "name": "transposesX"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "transposesY", "name": "transposesY"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "layerWithDescriptor:"}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "MLCMatMulLayer",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "descriptor", "name": "descriptor"}
+     ],
+     "super": "MLCLayer"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true},
+      {"access": "public", "name": "descriptorWithModelDimension:keyDimension:valueDimension:headCount:dropout:hasBiases:hasAttentionBiases:addsZeroAttention:"},
+      {"access": "public", "name": "descriptorWithModelDimension:headCount:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "MLCMultiheadAttentionDescriptor",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "modelDimension", "name": "modelDimension"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "keyDimension", "name": "keyDimension"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "valueDimension", "name": "valueDimension"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "headCount", "name": "headCount"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "dropout", "name": "dropout"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "hasBiases", "name": "hasBiases"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "hasAttentionBiases", "name": "hasAttentionBiases"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "addsZeroAttention", "name": "addsZeroAttention"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "layerWithDescriptor:weights:biases:attentionBiases:"}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "MLCMultiheadAttentionLayer",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "descriptor", "name": "descriptor"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "weights", "name": "weights"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "biases", "name": "biases"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "attentionBiases", "name": "attentionBiases"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "weightsParameters", "name": "weightsParameters"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "biasesParameters", "name": "biasesParameters"}
+     ],
+     "super": "MLCLayer"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "MLCOptimizer",
+     "properties": [
+      {"access": "public", "getter": "learningRate", "name": "learningRate", "setter": "setLearningRate:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "gradientRescale", "name": "gradientRescale"},
+      {"access": "public", "getter": "appliesGradientClipping", "name": "appliesGradientClipping", "setter": "setAppliesGradientClipping:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "gradientClipMax", "name": "gradientClipMax"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "gradientClipMin", "name": "gradientClipMin"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "regularizationScale", "name": "regularizationScale"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "regularizationType", "name": "regularizationType"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "gradientClippingType", "introduced": "15", "name": "gradientClippingType"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "maximumClippingNorm", "introduced": "15", "name": "maximumClippingNorm"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "customGlobalNorm", "introduced": "15", "name": "customGlobalNorm"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "descriptorWithLearningRate:gradientRescale:regularizationType:regularizationScale:"},
+      {"access": "public", "name": "descriptorWithLearningRate:gradientRescale:appliesGradientClipping:gradientClipMax:gradientClipMin:regularizationType:regularizationScale:"},
+      {"access": "public", "introduced": "15", "name": "descriptorWithLearningRate:gradientRescale:appliesGradientClipping:gradientClippingType:gradientClipMax:gradientClipMin:maximumClippingNorm:customGlobalNorm:regularizationType:regularizationScale:"}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "MLCOptimizerDescriptor",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "learningRate", "name": "learningRate"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "gradientRescale", "name": "gradientRescale"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "appliesGradientClipping", "name": "appliesGradientClipping"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "gradientClipMax", "name": "gradientClipMax"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "gradientClipMin", "name": "gradientClipMin"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "regularizationScale", "name": "regularizationScale"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "regularizationType", "name": "regularizationType"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "gradientClippingType", "introduced": "15", "name": "gradientClippingType"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "maximumClippingNorm", "introduced": "15", "name": "maximumClippingNorm"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "customGlobalNorm", "introduced": "15", "name": "customGlobalNorm"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "layerWithReflectionPadding:"},
+      {"access": "public", "name": "layerWithSymmetricPadding:"},
+      {"access": "public", "name": "layerWithZeroPadding:"},
+      {"access": "public", "name": "layerWithConstantPadding:constantValue:"}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "MLCPaddingLayer",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "paddingType", "name": "paddingType"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "paddingLeft", "name": "paddingLeft"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "paddingRight", "name": "paddingRight"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "paddingTop", "name": "paddingTop"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "paddingBottom", "name": "paddingBottom"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "constantValue", "name": "constantValue"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "MLCLayer"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "setRNGSeedTo:"},
+      {"access": "public", "name": "getRNGseed"}
+     ],
+     "introduced": "15",
+     "linkage": "exported",
+     "name": "MLCPlatform",
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true},
+      {"access": "public", "name": "poolingDescriptorWithType:kernelSize:stride:"},
+      {"access": "public", "name": "maxPoolingDescriptorWithKernelSizes:strides:paddingPolicy:paddingSizes:"},
+      {"access": "public", "name": "maxPoolingDescriptorWithKernelSizes:strides:dilationRates:paddingPolicy:paddingSizes:"},
+      {"access": "public", "name": "averagePoolingDescriptorWithKernelSizes:strides:paddingPolicy:paddingSizes:countIncludesPadding:"},
+      {"access": "public", "name": "averagePoolingDescriptorWithKernelSizes:strides:dilationRates:paddingPolicy:paddingSizes:countIncludesPadding:"},
+      {"access": "public", "name": "l2NormPoolingDescriptorWithKernelSizes:strides:paddingPolicy:paddingSizes:"},
+      {"access": "public", "name": "l2NormPoolingDescriptorWithKernelSizes:strides:dilationRates:paddingPolicy:paddingSizes:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "MLCPoolingDescriptor",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "poolingType", "name": "poolingType"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "kernelWidth", "name": "kernelWidth"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "kernelHeight", "name": "kernelHeight"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "strideInX", "name": "strideInX"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "strideInY", "name": "strideInY"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "dilationRateInX", "name": "dilationRateInX"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "dilationRateInY", "name": "dilationRateInY"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "paddingPolicy", "name": "paddingPolicy"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "paddingSizeInX", "name": "paddingSizeInX"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "paddingSizeInY", "name": "paddingSizeInY"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "countIncludesPadding", "name": "countIncludesPadding"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "layerWithDescriptor:"}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "MLCPoolingLayer",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "descriptor", "name": "descriptor"}
+     ],
+     "super": "MLCLayer"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "optimizerWithDescriptor:"},
+      {"access": "public", "name": "optimizerWithDescriptor:momentumScale:alpha:epsilon:isCentered:"}
+     ],
+     "linkage": "exported",
+     "name": "MLCRMSPropOptimizer",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "momentumScale", "name": "momentumScale"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "alpha", "name": "alpha"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "epsilon", "name": "epsilon"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isCentered", "name": "isCentered"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "MLCOptimizer"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "layerWithReductionType:dimension:"},
+      {"access": "public", "introduced": "14.5", "name": "layerWithReductionType:dimensions:"}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "MLCReductionLayer",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "reductionType", "name": "reductionType"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "dimension", "name": "dimension"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "dimensions", "introduced": "14.5", "name": "dimensions"}
+     ],
+     "super": "MLCLayer"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "layerWithShape:"}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "MLCReshapeLayer",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "shape", "introduced": "14.5", "name": "shape"}
+     ],
+     "super": "MLCLayer"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "optimizerWithDescriptor:"},
+      {"access": "public", "name": "optimizerWithDescriptor:momentumScale:usesNesterovMomentum:"}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "MLCSGDOptimizer",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "momentumScale", "name": "momentumScale"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "usesNesterovMomentum", "name": "usesNesterovMomentum"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "MLCOptimizer"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "layerWithDimension:reductionType:"}
+     ],
+     "introduced": "14.5",
+     "linkage": "exported",
+     "name": "MLCScatterLayer",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "dimension", "name": "dimension"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "reductionType", "name": "reductionType"}
+     ],
+     "super": "MLCLayer"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "layer"}
+     ],
+     "introduced": "14.5",
+     "linkage": "exported",
+     "name": "MLCSelectionLayer",
+     "super": "MLCLayer"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "sliceLayerWithStart:end:stride:"}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "MLCSliceLayer",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "start", "name": "start"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "end", "name": "end"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "stride", "name": "stride"}
+     ],
+     "super": "MLCLayer"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "layerWithOperation:"},
+      {"access": "public", "name": "layerWithOperation:dimension:"}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "MLCSoftmaxLayer",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "operation", "name": "operation"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "dimension", "name": "dimension"}
+     ],
+     "super": "MLCLayer"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "layerWithSplitCount:dimension:"},
+      {"access": "public", "name": "layerWithSplitSectionLengths:dimension:"}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "MLCSplitLayer",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "dimension", "name": "dimension"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "splitCount", "name": "splitCount"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "splitSectionLengths", "name": "splitSectionLengths"}
+     ],
+     "super": "MLCLayer"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true},
+      {"access": "public", "name": "tensorWithDescriptor:"},
+      {"access": "public", "name": "tensorWithDescriptor:randomInitializerType:"},
+      {"access": "public", "name": "tensorWithDescriptor:fillWithData:"},
+      {"access": "public", "name": "tensorWithDescriptor:data:"},
+      {"access": "public", "name": "tensorWithShape:"},
+      {"access": "public", "name": "tensorWithShape:randomInitializerType:"},
+      {"access": "public", "name": "tensorWithShape:randomInitializerType:dataType:"},
+      {"access": "public", "name": "tensorWithShape:dataType:"},
+      {"access": "public", "name": "tensorWithShape:data:dataType:"},
+      {"access": "public", "name": "tensorWithShape:fillWithData:dataType:"},
+      {"access": "public", "name": "tensorWithWidth:height:featureChannelCount:batchSize:"},
+      {"access": "public", "name": "tensorWithWidth:height:featureChannelCount:batchSize:fillWithData:dataType:"},
+      {"access": "public", "name": "tensorWithWidth:height:featureChannelCount:batchSize:randomInitializerType:"},
+      {"access": "public", "name": "tensorWithWidth:height:featureChannelCount:batchSize:data:"},
+      {"access": "public", "name": "tensorWithWidth:height:featureChannelCount:batchSize:data:dataType:"},
+      {"access": "public", "name": "tensorWithSequenceLength:featureChannelCount:batchSize:"},
+      {"access": "public", "name": "tensorWithSequenceLength:featureChannelCount:batchSize:randomInitializerType:"},
+      {"access": "public", "name": "tensorWithSequenceLength:featureChannelCount:batchSize:data:"},
+      {"access": "public", "name": "tensorWithSequenceLengths:sortedSequences:featureChannelCount:batchSize:randomInitializerType:"},
+      {"access": "public", "name": "tensorWithSequenceLengths:sortedSequences:featureChannelCount:batchSize:data:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "synchronizeData"},
+      {"access": "public", "name": "synchronizeOptimizerData"},
+      {"access": "public", "name": "copyDataFromDeviceMemoryToBytes:length:synchronizeWithDevice:"},
+      {"access": "public", "name": "bindAndWriteData:toDevice:"},
+      {"access": "public", "name": "bindOptimizerData:deviceData:"},
+      {"access": "public", "introduced": "15", "name": "tensorByQuantizingToType:scale:bias:"},
+      {"access": "public", "introduced": "15", "name": "tensorByQuantizingToType:scale:bias:axis:"},
+      {"access": "public", "introduced": "15", "name": "tensorByDequantizingToType:scale:bias:"},
+      {"access": "public", "introduced": "15", "name": "tensorByDequantizingToType:scale:bias:axis:"}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "MLCTensor",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "tensorID", "name": "tensorID"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "descriptor", "name": "descriptor"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "data", "name": "data"},
+      {"access": "public", "getter": "label", "name": "label", "setter": "setLabel:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "device", "name": "device"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "optimizerData", "name": "optimizerData"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "optimizerDeviceData", "name": "optimizerDeviceData"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "hasValidNumerics", "name": "hasValidNumerics"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true},
+      {"access": "public", "name": "dataWithBytesNoCopy:length:"},
+      {"access": "public", "name": "dataWithImmutableBytesNoCopy:length:"},
+      {"access": "public", "introduced": "14.5", "name": "dataWithBytesNoCopy:length:deallocator:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "MLCTensorData",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "bytes", "name": "bytes"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "length", "name": "length"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true},
+      {"access": "public", "name": "descriptorWithShape:dataType:"},
+      {"access": "public", "name": "descriptorWithShape:sequenceLengths:sortedSequences:dataType:"},
+      {"access": "public", "name": "descriptorWithWidth:height:featureChannelCount:batchSize:"},
+      {"access": "public", "name": "descriptorWithWidth:height:featureChannelCount:batchSize:dataType:"},
+      {"access": "public", "name": "convolutionWeightsDescriptorWithWidth:height:inputFeatureChannelCount:outputFeatureChannelCount:dataType:"},
+      {"access": "public", "name": "convolutionWeightsDescriptorWithInputFeatureChannelCount:outputFeatureChannelCount:dataType:"},
+      {"access": "public", "name": "convolutionBiasesDescriptorWithFeatureChannelCount:dataType:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "MLCTensorDescriptor",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "dataType", "name": "dataType"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "dimensionCount", "name": "dimensionCount"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "shape", "name": "shape"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "stride", "name": "stride"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "tensorAllocationSizeInBytes", "name": "tensorAllocationSizeInBytes"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "sequenceLengths", "name": "sequenceLengths"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "sortedSequences", "name": "sortedSequences"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "batchSizePerSequenceStep", "name": "batchSizePerSequenceStep"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "maxTensorDimensions", "name": "maxTensorDimensions"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "MLCTensorOptimizerDeviceData",
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true},
+      {"access": "public", "name": "parameterWithTensor:"},
+      {"access": "public", "name": "parameterWithTensor:optimizerData:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "MLCTensorParameter",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "tensor", "name": "tensor"},
+      {"access": "public", "getter": "isUpdatable", "name": "isUpdatable", "setter": "setIsUpdatable:"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "graphWithGraphObjects:lossLayer:optimizer:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "addInputs:lossLabels:"},
+      {"access": "public", "name": "addInputs:lossLabels:lossLabelWeights:"},
+      {"access": "public", "name": "addOutputs:"},
+      {"access": "public", "name": "stopGradientForTensors:"},
+      {"access": "public", "name": "compileWithOptions:device:"},
+      {"access": "public", "introduced": "14.5", "name": "compileWithOptions:device:inputTensors:inputTensorsData:"},
+      {"access": "public", "name": "compileOptimizer:"},
+      {"access": "public", "name": "linkWithGraphs:"},
+      {"access": "public", "name": "gradientTensorForInput:"},
+      {"access": "public", "name": "sourceGradientTensorsForLayer:"},
+      {"access": "public", "name": "resultGradientTensorsForLayer:"},
+      {"access": "public", "name": "gradientDataForParameter:layer:"},
+      {"access": "public", "name": "allocateUserGradientForTensor:"},
+      {"access": "public", "name": "executeWithInputsData:lossLabelsData:lossLabelWeightsData:batchSize:options:completionHandler:"},
+      {"access": "public", "name": "executeWithInputsData:lossLabelsData:lossLabelWeightsData:outputsData:batchSize:options:completionHandler:"},
+      {"access": "public", "name": "executeForwardWithBatchSize:options:completionHandler:"},
+      {"access": "public", "name": "executeForwardWithBatchSize:options:outputsData:completionHandler:"},
+      {"access": "public", "name": "executeGradientWithBatchSize:options:completionHandler:"},
+      {"access": "public", "name": "executeGradientWithBatchSize:options:outputsData:completionHandler:"},
+      {"access": "public", "name": "executeOptimizerUpdateWithOptions:completionHandler:"},
+      {"access": "public", "name": "synchronizeUpdates"},
+      {"access": "public", "name": "setTrainingTensorParameters:"},
+      {"access": "public", "name": "bindOptimizerData:deviceData:withTensor:"}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "MLCTrainingGraph",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "optimizer", "name": "optimizer"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "deviceMemorySize", "name": "deviceMemorySize"}
+     ],
+     "super": "MLCGraph"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "layerWithDimensions:"}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "MLCTransposeLayer",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "dimensions", "name": "dimensions"}
+     ],
+     "super": "MLCLayer"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "layerWithShape:"},
+      {"access": "public", "name": "layerWithShape:sampleMode:alignsCorners:"}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "MLCUpsampleLayer",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "shape", "name": "shape"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "sampleMode", "name": "sampleMode"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "alignsCorners", "name": "alignsCorners"}
+     ],
+     "super": "MLCLayer"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true},
+      {"access": "public", "name": "descriptorWithAnchorBoxes:anchorBoxCount:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "MLCYOLOLossDescriptor",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "anchorBoxCount", "name": "anchorBoxCount"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "anchorBoxes", "name": "anchorBoxes"},
+      {"access": "public", "getter": "shouldRescore", "name": "shouldRescore", "setter": "setShouldRescore:"},
+      {"access": "public", "getter": "scaleSpatialPositionLoss", "name": "scaleSpatialPositionLoss", "setter": "setScaleSpatialPositionLoss:"},
+      {"access": "public", "getter": "scaleSpatialSizeLoss", "name": "scaleSpatialSizeLoss", "setter": "setScaleSpatialSizeLoss:"},
+      {"access": "public", "getter": "scaleNoObjectConfidenceLoss", "name": "scaleNoObjectConfidenceLoss", "setter": "setScaleNoObjectConfidenceLoss:"},
+      {"access": "public", "getter": "scaleObjectConfidenceLoss", "name": "scaleObjectConfidenceLoss", "setter": "setScaleObjectConfidenceLoss:"},
+      {"access": "public", "getter": "scaleClassLoss", "name": "scaleClassLoss", "setter": "setScaleClassLoss:"},
+      {"access": "public", "getter": "minimumIOUForObjectPresence", "name": "minimumIOUForObjectPresence", "setter": "setMinimumIOUForObjectPresence:"},
+      {"access": "public", "getter": "maximumIOUForObjectAbsence", "name": "maximumIOUForObjectAbsence", "setter": "setMaximumIOUForObjectAbsence:"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "layerWithDescriptor:"}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "MLCYOLOLossLayer",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "yoloLossDescriptor", "name": "yoloLossDescriptor"}
+     ],
+     "super": "MLCLossLayer"
+    }
+   ],
+   "target": "arm64e-apple-ios27",
+   "typedefs": [
+    {"access": "public", "introduced": "14", "name": "MLCActivationType"},
+    {"access": "public", "introduced": "14", "name": "MLCArithmeticOperation"},
+    {"access": "public", "introduced": "14.5", "name": "MLCComparisonOperation"},
+    {"access": "public", "introduced": "14", "name": "MLCConvolutionType"},
+    {"access": "public", "introduced": "14", "name": "MLCDataType"},
+    {"access": "public", "introduced": "14", "name": "MLCDeviceType"},
+    {"access": "public", "introduced": "14", "name": "MLCExecutionOptions"},
+    {"access": "public", "introduced": "15", "name": "MLCGradientClippingType"},
+    {"access": "public", "introduced": "14", "name": "MLCGraphCompilationOptions"},
+    {"access": "public", "name": "MLCGraphCompletionHandler"},
+    {"access": "public", "introduced": "14", "name": "MLCLSTMResultMode"},
+    {"access": "public", "introduced": "14", "name": "MLCLossType"},
+    {"access": "public", "introduced": "14", "name": "MLCPaddingPolicy"},
+    {"access": "public", "introduced": "14", "name": "MLCPaddingType"},
+    {"access": "public", "introduced": "14", "name": "MLCPoolingType"},
+    {"access": "public", "introduced": "14", "name": "MLCRandomInitializerType"},
+    {"access": "public", "introduced": "14", "name": "MLCReductionType"},
+    {"access": "public", "introduced": "14", "name": "MLCRegularizationType"},
+    {"access": "public", "introduced": "14", "name": "MLCSampleMode"},
+    {"access": "public", "introduced": "14", "name": "MLCSoftmaxOperation"}
+   ]
+  },
+  {
+   "enums": [
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MLCActivationTypeNone"},
+      {"access": "public", "name": "MLCActivationTypeReLU"},
+      {"access": "public", "name": "MLCActivationTypeLinear"},
+      {"access": "public", "name": "MLCActivationTypeSigmoid"},
+      {"access": "public", "name": "MLCActivationTypeHardSigmoid"},
+      {"access": "public", "name": "MLCActivationTypeTanh"},
+      {"access": "public", "name": "MLCActivationTypeAbsolute"},
+      {"access": "public", "name": "MLCActivationTypeSoftPlus"},
+      {"access": "public", "name": "MLCActivationTypeSoftSign"},
+      {"access": "public", "name": "MLCActivationTypeELU"},
+      {"access": "public", "name": "MLCActivationTypeReLUN"},
+      {"access": "public", "name": "MLCActivationTypeLogSigmoid"},
+      {"access": "public", "name": "MLCActivationTypeSELU"},
+      {"access": "public", "name": "MLCActivationTypeCELU"},
+      {"access": "public", "name": "MLCActivationTypeHardShrink"},
+      {"access": "public", "name": "MLCActivationTypeSoftShrink"},
+      {"access": "public", "name": "MLCActivationTypeTanhShrink"},
+      {"access": "public", "name": "MLCActivationTypeThreshold"},
+      {"access": "public", "name": "MLCActivationTypeGELU"},
+      {"access": "public", "introduced": "14.5", "name": "MLCActivationTypeHardSwish"},
+      {"access": "public", "introduced": "14.5", "name": "MLCActivationTypeClamp"},
+      {"access": "public", "name": "MLCActivationTypeCount"}
+     ],
+     "name": "MLCActivationType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MLCArithmeticOperationAdd"},
+      {"access": "public", "name": "MLCArithmeticOperationSubtract"},
+      {"access": "public", "name": "MLCArithmeticOperationMultiply"},
+      {"access": "public", "name": "MLCArithmeticOperationDivide"},
+      {"access": "public", "name": "MLCArithmeticOperationFloor"},
+      {"access": "public", "name": "MLCArithmeticOperationRound"},
+      {"access": "public", "name": "MLCArithmeticOperationCeil"},
+      {"access": "public", "name": "MLCArithmeticOperationSqrt"},
+      {"access": "public", "name": "MLCArithmeticOperationRsqrt"},
+      {"access": "public", "name": "MLCArithmeticOperationSin"},
+      {"access": "public", "name": "MLCArithmeticOperationCos"},
+      {"access": "public", "name": "MLCArithmeticOperationTan"},
+      {"access": "public", "name": "MLCArithmeticOperationAsin"},
+      {"access": "public", "name": "MLCArithmeticOperationAcos"},
+      {"access": "public", "name": "MLCArithmeticOperationAtan"},
+      {"access": "public", "name": "MLCArithmeticOperationSinh"},
+      {"access": "public", "name": "MLCArithmeticOperationCosh"},
+      {"access": "public", "name": "MLCArithmeticOperationTanh"},
+      {"access": "public", "name": "MLCArithmeticOperationAsinh"},
+      {"access": "public", "name": "MLCArithmeticOperationAcosh"},
+      {"access": "public", "name": "MLCArithmeticOperationAtanh"},
+      {"access": "public", "name": "MLCArithmeticOperationPow"},
+      {"access": "public", "name": "MLCArithmeticOperationExp"},
+      {"access": "public", "name": "MLCArithmeticOperationExp2"},
+      {"access": "public", "name": "MLCArithmeticOperationLog"},
+      {"access": "public", "name": "MLCArithmeticOperationLog2"},
+      {"access": "public", "introduced": "14.5", "name": "MLCArithmeticOperationMultiplyNoNaN"},
+      {"access": "public", "introduced": "14.5", "name": "MLCArithmeticOperationDivideNoNaN"},
+      {"access": "public", "introduced": "14.5", "name": "MLCArithmeticOperationMin"},
+      {"access": "public", "introduced": "14.5", "name": "MLCArithmeticOperationMax"},
+      {"access": "public", "name": "MLCArithmeticOperationCount"}
+     ],
+     "name": "MLCArithmeticOperation"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MLCComparisonOperationEqual"},
+      {"access": "public", "name": "MLCComparisonOperationNotEqual"},
+      {"access": "public", "name": "MLCComparisonOperationLess"},
+      {"access": "public", "name": "MLCComparisonOperationGreater"},
+      {"access": "public", "name": "MLCComparisonOperationLessOrEqual"},
+      {"access": "public", "name": "MLCComparisonOperationGreaterOrEqual"},
+      {"access": "public", "name": "MLCComparisonOperationLogicalAND"},
+      {"access": "public", "name": "MLCComparisonOperationLogicalOR"},
+      {"access": "public", "name": "MLCComparisonOperationLogicalNOT"},
+      {"access": "public", "name": "MLCComparisonOperationLogicalNAND"},
+      {"access": "public", "name": "MLCComparisonOperationLogicalNOR"},
+      {"access": "public", "name": "MLCComparisonOperationLogicalXOR"},
+      {"access": "public", "name": "MLCComparisonOperationCount"}
+     ],
+     "name": "MLCComparisonOperation"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MLCConvolutionTypeStandard"},
+      {"access": "public", "name": "MLCConvolutionTypeTransposed"},
+      {"access": "public", "name": "MLCConvolutionTypeDepthwise"}
+     ],
+     "name": "MLCConvolutionType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MLCDataTypeInvalid"},
+      {"access": "public", "name": "MLCDataTypeFloat32"},
+      {"access": "public", "introduced": "15", "name": "MLCDataTypeFloat16"},
+      {"access": "public", "name": "MLCDataTypeBoolean"},
+      {"access": "public", "name": "MLCDataTypeInt64"},
+      {"access": "public", "name": "MLCDataTypeInt32"},
+      {"access": "public", "introduced": "15", "name": "MLCDataTypeInt8"},
+      {"access": "public", "introduced": "15", "name": "MLCDataTypeUInt8"},
+      {"access": "public", "name": "MLCDataTypeCount"}
+     ],
+     "name": "MLCDataType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MLCDeviceTypeCPU"},
+      {"access": "public", "name": "MLCDeviceTypeGPU"},
+      {"access": "public", "name": "MLCDeviceTypeAny"},
+      {"access": "public", "introduced": "15", "name": "MLCDeviceTypeANE"},
+      {"access": "public", "name": "MLCDeviceTypeCount"}
+     ],
+     "name": "MLCDeviceType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MLCExecutionOptionsNone"},
+      {"access": "public", "name": "MLCExecutionOptionsSkipWritingInputDataToDevice"},
+      {"access": "public", "name": "MLCExecutionOptionsSynchronous"},
+      {"access": "public", "name": "MLCExecutionOptionsProfiling"},
+      {"access": "public", "name": "MLCExecutionOptionsForwardForInference"},
+      {"access": "public", "introduced": "15", "name": "MLCExecutionOptionsPerLayerProfiling"}
+     ],
+     "name": "MLCExecutionOptions"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MLCGradientClippingTypeByValue"},
+      {"access": "public", "name": "MLCGradientClippingTypeByNorm"},
+      {"access": "public", "name": "MLCGradientClippingTypeByGlobalNorm"}
+     ],
+     "name": "MLCGradientClippingType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MLCGraphCompilationOptionsNone"},
+      {"access": "public", "name": "MLCGraphCompilationOptionsDebugLayers"},
+      {"access": "public", "name": "MLCGraphCompilationOptionsDisableLayerFusion"},
+      {"access": "public", "name": "MLCGraphCompilationOptionsLinkGraphs"},
+      {"access": "public", "name": "MLCGraphCompilationOptionsComputeAllGradients"}
+     ],
+     "name": "MLCGraphCompilationOptions"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MLCLSTMResultModeOutput"},
+      {"access": "public", "name": "MLCLSTMResultModeOutputAndStates"}
+     ],
+     "name": "MLCLSTMResultMode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MLCLossTypeMeanAbsoluteError"},
+      {"access": "public", "name": "MLCLossTypeMeanSquaredError"},
+      {"access": "public", "name": "MLCLossTypeSoftmaxCrossEntropy"},
+      {"access": "public", "name": "MLCLossTypeSigmoidCrossEntropy"},
+      {"access": "public", "name": "MLCLossTypeCategoricalCrossEntropy"},
+      {"access": "public", "name": "MLCLossTypeHinge"},
+      {"access": "public", "name": "MLCLossTypeHuber"},
+      {"access": "public", "name": "MLCLossTypeCosineDistance"},
+      {"access": "public", "name": "MLCLossTypeLog"},
+      {"access": "public", "name": "MLCLossTypeCount"}
+     ],
+     "name": "MLCLossType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MLCPaddingPolicySame"},
+      {"access": "public", "name": "MLCPaddingPolicyValid"},
+      {"access": "public", "name": "MLCPaddingPolicyUsePaddingSize"}
+     ],
+     "name": "MLCPaddingPolicy"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MLCPaddingTypeZero"},
+      {"access": "public", "name": "MLCPaddingTypeReflect"},
+      {"access": "public", "name": "MLCPaddingTypeSymmetric"},
+      {"access": "public", "name": "MLCPaddingTypeConstant"}
+     ],
+     "name": "MLCPaddingType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MLCPoolingTypeMax"},
+      {"access": "public", "name": "MLCPoolingTypeAverage"},
+      {"access": "public", "name": "MLCPoolingTypeL2Norm"},
+      {"access": "public", "name": "MLCPoolingTypeCount"}
+     ],
+     "name": "MLCPoolingType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MLCRandomInitializerTypeInvalid"},
+      {"access": "public", "name": "MLCRandomInitializerTypeUniform"},
+      {"access": "public", "name": "MLCRandomInitializerTypeGlorotUniform"},
+      {"access": "public", "name": "MLCRandomInitializerTypeXavier"},
+      {"access": "public", "name": "MLCRandomInitializerTypeCount"}
+     ],
+     "name": "MLCRandomInitializerType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MLCReductionTypeNone"},
+      {"access": "public", "name": "MLCReductionTypeSum"},
+      {"access": "public", "name": "MLCReductionTypeMean"},
+      {"access": "public", "name": "MLCReductionTypeMax"},
+      {"access": "public", "name": "MLCReductionTypeMin"},
+      {"access": "public", "name": "MLCReductionTypeArgMax"},
+      {"access": "public", "name": "MLCReductionTypeArgMin"},
+      {"access": "public", "introduced": "14.5", "name": "MLCReductionTypeL1Norm"},
+      {"access": "public", "introduced": "14.5", "name": "MLCReductionTypeAny"},
+      {"access": "public", "introduced": "14.5", "name": "MLCReductionTypeAll"},
+      {"access": "public", "name": "MLCReductionTypeCount"}
+     ],
+     "name": "MLCReductionType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MLCRegularizationTypeNone"},
+      {"access": "public", "name": "MLCRegularizationTypeL1"},
+      {"access": "public", "name": "MLCRegularizationTypeL2"}
+     ],
+     "name": "MLCRegularizationType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MLCSampleModeNearest"},
+      {"access": "public", "name": "MLCSampleModeLinear"}
+     ],
+     "name": "MLCSampleMode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MLCSoftmaxOperationSoftmax"},
+      {"access": "public", "name": "MLCSoftmaxOperationLogSoftmax"}
+     ],
+     "name": "MLCSoftmaxOperation"
+    }
+   ],
+   "globals": [
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_MLCActivationTypeDebugDescription"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_MLCArithmeticOperationDebugDescription"},
+    {"access": "public", "introduced": "14.5", "kind": "function", "linkage": "exported", "name": "_MLCComparisonOperationDebugDescription"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_MLCConvolutionTypeDebugDescription"},
+    {"access": "public", "introduced": "15", "kind": "function", "linkage": "exported", "name": "_MLCGradientClippingTypeDebugDescription"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_MLCLSTMResultModeDebugDescription"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_MLCLossTypeDebugDescription"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_MLCPaddingPolicyDebugDescription"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_MLCPaddingTypeDebugDescription"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_MLCPoolingTypeDebugDescription"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_MLCReductionTypeDebugDescription"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_MLCSampleModeDebugDescription"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_MLCSoftmaxOperationDebugDescription"}
+   ],
+   "interfaces": [
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true},
+      {"access": "public", "name": "descriptorWithType:"},
+      {"access": "public", "name": "descriptorWithType:a:"},
+      {"access": "public", "name": "descriptorWithType:a:b:"},
+      {"access": "public", "name": "descriptorWithType:a:b:c:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "MLCActivationDescriptor",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "activationType", "name": "activationType"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "a", "name": "a"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "b", "name": "b"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "c", "name": "c"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "layerWithDescriptor:"},
+      {"access": "public", "name": "leakyReLULayerWithNegativeSlope:"},
+      {"access": "public", "name": "linearLayerWithScale:bias:"},
+      {"access": "public", "name": "softPlusLayerWithBeta:"},
+      {"access": "public", "name": "eluLayerWithA:"},
+      {"access": "public", "name": "relunLayerWithA:b:"},
+      {"access": "public", "name": "celuLayerWithA:"},
+      {"access": "public", "name": "hardShrinkLayerWithA:"},
+      {"access": "public", "name": "softShrinkLayerWithA:"},
+      {"access": "public", "name": "thresholdLayerWithThreshold:replacement:"},
+      {"access": "public", "name": "clampLayerWithMinValue:maxValue:"}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "MLCActivationLayer",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "descriptor", "name": "descriptor"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "reluLayer", "name": "reluLayer"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "relu6Layer", "name": "relu6Layer"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "leakyReLULayer", "name": "leakyReLULayer"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "sigmoidLayer", "name": "sigmoidLayer"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "hardSigmoidLayer", "name": "hardSigmoidLayer"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "tanhLayer", "name": "tanhLayer"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "absoluteLayer", "name": "absoluteLayer"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "softPlusLayer", "name": "softPlusLayer"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "softSignLayer", "name": "softSignLayer"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "eluLayer", "name": "eluLayer"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "logSigmoidLayer", "name": "logSigmoidLayer"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "seluLayer", "name": "seluLayer"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "celuLayer", "name": "celuLayer"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "hardShrinkLayer", "name": "hardShrinkLayer"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "softShrinkLayer", "name": "softShrinkLayer"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "tanhShrinkLayer", "name": "tanhShrinkLayer"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "geluLayer", "name": "geluLayer"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "hardSwishLayer", "name": "hardSwishLayer"}
+     ],
+     "super": "MLCLayer"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "optimizerWithDescriptor:"},
+      {"access": "public", "name": "optimizerWithDescriptor:beta1:beta2:epsilon:timeStep:"},
+      {"access": "public", "introduced": "15", "name": "optimizerWithDescriptor:beta1:beta2:epsilon:usesAMSGrad:timeStep:"}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "MLCAdamOptimizer",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "beta1", "name": "beta1"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "beta2", "name": "beta2"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "epsilon", "name": "epsilon"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "usesAMSGrad", "name": "usesAMSGrad"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "timeStep", "name": "timeStep"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "MLCOptimizer"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "optimizerWithDescriptor:"},
+      {"access": "public", "name": "optimizerWithDescriptor:beta1:beta2:epsilon:usesAMSGrad:timeStep:"}
+     ],
+     "introduced": "15",
+     "linkage": "exported",
+     "name": "MLCAdamWOptimizer",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "beta1", "name": "beta1"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "beta2", "name": "beta2"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "epsilon", "name": "epsilon"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "usesAMSGrad", "name": "usesAMSGrad"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "timeStep", "name": "timeStep"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "MLCOptimizer"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "layerWithOperation:"}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "MLCArithmeticLayer",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "operation", "name": "operation"}
+     ],
+     "super": "MLCLayer"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "layerWithFeatureChannelCount:mean:variance:beta:gamma:varianceEpsilon:"},
+      {"access": "public", "name": "layerWithFeatureChannelCount:mean:variance:beta:gamma:varianceEpsilon:momentum:"}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "MLCBatchNormalizationLayer",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "featureChannelCount", "name": "featureChannelCount"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "mean", "name": "mean"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "variance", "name": "variance"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "beta", "name": "beta"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "gamma", "name": "gamma"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "betaParameter", "name": "betaParameter"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "gammaParameter", "name": "gammaParameter"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "varianceEpsilon", "name": "varianceEpsilon"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "momentum", "name": "momentum"}
+     ],
+     "super": "MLCLayer"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "layerWithOperation:"}
+     ],
+     "introduced": "14.5",
+     "linkage": "exported",
+     "name": "MLCComparisonLayer",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "operation", "name": "operation"}
+     ],
+     "super": "MLCLayer"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "layer"},
+      {"access": "public", "name": "layerWithDimension:"}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "MLCConcatenationLayer",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "dimension", "name": "dimension"}
+     ],
+     "super": "MLCLayer"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "descriptorWithType:kernelSizes:inputFeatureChannelCount:outputFeatureChannelCount:groupCount:strides:dilationRates:paddingPolicy:paddingSizes:"},
+      {"access": "public", "name": "descriptorWithKernelWidth:kernelHeight:inputFeatureChannelCount:outputFeatureChannelCount:"},
+      {"access": "public", "name": "descriptorWithKernelSizes:inputFeatureChannelCount:outputFeatureChannelCount:strides:paddingPolicy:paddingSizes:"},
+      {"access": "public", "name": "descriptorWithKernelSizes:inputFeatureChannelCount:outputFeatureChannelCount:groupCount:strides:dilationRates:paddingPolicy:paddingSizes:"},
+      {"access": "public", "name": "convolutionTransposeDescriptorWithKernelWidth:kernelHeight:inputFeatureChannelCount:outputFeatureChannelCount:"},
+      {"access": "public", "name": "convolutionTransposeDescriptorWithKernelSizes:inputFeatureChannelCount:outputFeatureChannelCount:strides:paddingPolicy:paddingSizes:"},
+      {"access": "public", "name": "convolutionTransposeDescriptorWithKernelSizes:inputFeatureChannelCount:outputFeatureChannelCount:groupCount:strides:dilationRates:paddingPolicy:paddingSizes:"},
+      {"access": "public", "name": "depthwiseConvolutionDescriptorWithKernelWidth:kernelHeight:inputFeatureChannelCount:channelMultiplier:"},
+      {"access": "public", "name": "depthwiseConvolutionDescriptorWithKernelSizes:inputFeatureChannelCount:channelMultiplier:strides:paddingPolicy:paddingSizes:"},
+      {"access": "public", "name": "depthwiseConvolutionDescriptorWithKernelSizes:inputFeatureChannelCount:channelMultiplier:strides:dilationRates:paddingPolicy:paddingSizes:"}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "MLCConvolutionDescriptor",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "convolutionType", "name": "convolutionType"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "kernelWidth", "name": "kernelWidth"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "kernelHeight", "name": "kernelHeight"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "inputFeatureChannelCount", "name": "inputFeatureChannelCount"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "outputFeatureChannelCount", "name": "outputFeatureChannelCount"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "strideInX", "name": "strideInX"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "strideInY", "name": "strideInY"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "dilationRateInX", "name": "dilationRateInX"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "dilationRateInY", "name": "dilationRateInY"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "groupCount", "name": "groupCount"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "paddingPolicy", "name": "paddingPolicy"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "paddingSizeInX", "name": "paddingSizeInX"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "paddingSizeInY", "name": "paddingSizeInY"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isConvolutionTranspose", "name": "isConvolutionTranspose"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "usesDepthwiseConvolution", "name": "usesDepthwiseConvolution"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "layerWithWeights:biases:descriptor:"}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "MLCConvolutionLayer",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "descriptor", "name": "descriptor"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "weights", "name": "weights"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "biases", "name": "biases"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "weightsParameter", "name": "weightsParameter"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "biasesParameter", "name": "biasesParameter"}
+     ],
+     "super": "MLCLayer"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "cpuDevice"},
+      {"access": "public", "name": "gpuDevice"},
+      {"access": "public", "introduced": "15", "name": "aneDevice"},
+      {"access": "public", "name": "deviceWithType:"},
+      {"access": "public", "introduced": "14.5", "name": "deviceWithType:selectsMultipleComputeDevices:"},
+      {"access": "public", "name": "deviceWithGPUDevices:"}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "MLCDevice",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "type", "name": "type"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "actualDeviceType", "introduced": "15", "name": "actualDeviceType"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "gpuDevices", "name": "gpuDevices"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "layerWithRate:seed:"}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "MLCDropoutLayer",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "rate", "name": "rate"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "seed", "name": "seed"}
+     ],
+     "super": "MLCLayer"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true},
+      {"access": "public", "name": "descriptorWithEmbeddingCount:embeddingDimension:"},
+      {"access": "public", "name": "descriptorWithEmbeddingCount:embeddingDimension:paddingIndex:maximumNorm:pNorm:scalesGradientByFrequency:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "MLCEmbeddingDescriptor",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "embeddingCount", "name": "embeddingCount"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "embeddingDimension", "name": "embeddingDimension"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "paddingIndex", "name": "paddingIndex"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "maximumNorm", "name": "maximumNorm"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "pNorm", "name": "pNorm"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "scalesGradientByFrequency", "name": "scalesGradientByFrequency"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "layerWithDescriptor:weights:"}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "MLCEmbeddingLayer",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "descriptor", "name": "descriptor"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "weights", "name": "weights"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "weightsParameter", "name": "weightsParameter"}
+     ],
+     "super": "MLCLayer"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "layerWithWeights:biases:descriptor:"}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "MLCFullyConnectedLayer",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "descriptor", "name": "descriptor"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "weights", "name": "weights"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "biases", "name": "biases"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "weightsParameter", "name": "weightsParameter"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "biasesParameter", "name": "biasesParameter"}
+     ],
+     "super": "MLCLayer"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "layerWithDimension:"}
+     ],
+     "introduced": "14.5",
+     "linkage": "exported",
+     "name": "MLCGatherLayer",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "dimension", "name": "dimension"}
+     ],
+     "super": "MLCLayer"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "layerWithScale:"}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "MLCGramMatrixLayer",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "scale", "name": "scale"}
+     ],
+     "super": "MLCLayer"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "graph"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "nodeWithLayer:source:"},
+      {"access": "public", "name": "nodeWithLayer:sources:"},
+      {"access": "public", "name": "nodeWithLayer:sources:disableUpdate:"},
+      {"access": "public", "name": "nodeWithLayer:sources:lossLabels:"},
+      {"access": "public", "name": "splitWithSource:splitCount:dimension:"},
+      {"access": "public", "name": "splitWithSource:splitSectionLengths:dimension:"},
+      {"access": "public", "name": "concatenateWithSources:dimension:"},
+      {"access": "public", "name": "reshapeWithShape:source:"},
+      {"access": "public", "name": "transposeWithDimensions:source:"},
+      {"access": "public", "introduced": "14.5", "name": "selectWithSources:condition:"},
+      {"access": "public", "introduced": "14.5", "name": "scatterWithDimension:source:indices:copyFrom:reductionType:"},
+      {"access": "public", "introduced": "14.5", "name": "gatherWithDimension:source:indices:"},
+      {"access": "public", "name": "bindAndWriteData:forInputs:toDevice:batchSize:synchronous:"},
+      {"access": "public", "name": "bindAndWriteData:forInputs:toDevice:synchronous:"},
+      {"access": "public", "name": "sourceTensorsForLayer:"},
+      {"access": "public", "name": "resultTensorsForLayer:"}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "MLCGraph",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "device", "name": "device"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "layers", "name": "layers"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "summarizedDOTDescription", "name": "summarizedDOTDescription"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "layerWithFeatureChannelCount:groupCount:beta:gamma:varianceEpsilon:"}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "MLCGroupNormalizationLayer",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "featureChannelCount", "name": "featureChannelCount"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "groupCount", "name": "groupCount"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "beta", "name": "beta"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "gamma", "name": "gamma"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "betaParameter", "name": "betaParameter"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "gammaParameter", "name": "gammaParameter"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "varianceEpsilon", "name": "varianceEpsilon"}
+     ],
+     "super": "MLCLayer"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true},
+      {"access": "public", "name": "graphWithGraphObjects:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "addInputs:"},
+      {"access": "public", "name": "addInputs:lossLabels:lossLabelWeights:"},
+      {"access": "public", "name": "addOutputs:"},
+      {"access": "public", "name": "compileWithOptions:device:"},
+      {"access": "public", "introduced": "14.5", "name": "compileWithOptions:device:inputTensors:inputTensorsData:"},
+      {"access": "public", "name": "linkWithGraphs:"},
+      {"access": "public", "name": "executeWithInputsData:batchSize:options:completionHandler:"},
+      {"access": "public", "name": "executeWithInputsData:outputsData:batchSize:options:completionHandler:"},
+      {"access": "public", "name": "executeWithInputsData:lossLabelsData:lossLabelWeightsData:batchSize:options:completionHandler:"},
+      {"access": "public", "name": "executeWithInputsData:lossLabelsData:lossLabelWeightsData:outputsData:batchSize:options:completionHandler:"}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "MLCInferenceGraph",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "deviceMemorySize", "name": "deviceMemorySize"}
+     ],
+     "super": "MLCGraph"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "layerWithFeatureChannelCount:beta:gamma:varianceEpsilon:"},
+      {"access": "public", "name": "layerWithFeatureChannelCount:beta:gamma:varianceEpsilon:momentum:"},
+      {"access": "public", "introduced": "14.5", "name": "layerWithFeatureChannelCount:mean:variance:beta:gamma:varianceEpsilon:momentum:"}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "MLCInstanceNormalizationLayer",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "featureChannelCount", "name": "featureChannelCount"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "mean", "introduced": "14.5", "name": "mean"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "variance", "introduced": "14.5", "name": "variance"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "beta", "name": "beta"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "gamma", "name": "gamma"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "betaParameter", "name": "betaParameter"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "gammaParameter", "name": "gammaParameter"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "varianceEpsilon", "name": "varianceEpsilon"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "momentum", "name": "momentum"}
+     ],
+     "super": "MLCLayer"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true},
+      {"access": "public", "name": "descriptorWithInputSize:hiddenSize:layerCount:"},
+      {"access": "public", "name": "descriptorWithInputSize:hiddenSize:layerCount:usesBiases:isBidirectional:dropout:"},
+      {"access": "public", "name": "descriptorWithInputSize:hiddenSize:layerCount:usesBiases:batchFirst:isBidirectional:dropout:"},
+      {"access": "public", "name": "descriptorWithInputSize:hiddenSize:layerCount:usesBiases:batchFirst:isBidirectional:returnsSequences:dropout:"},
+      {"access": "public", "name": "descriptorWithInputSize:hiddenSize:layerCount:usesBiases:batchFirst:isBidirectional:returnsSequences:dropout:resultMode:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "MLCLSTMDescriptor",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "inputSize", "name": "inputSize"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "hiddenSize", "name": "hiddenSize"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "layerCount", "name": "layerCount"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "usesBiases", "name": "usesBiases"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "batchFirst", "name": "batchFirst"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isBidirectional", "name": "isBidirectional"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "returnsSequences", "name": "returnsSequences"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "dropout", "name": "dropout"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "resultMode", "name": "resultMode"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "layerWithDescriptor:inputWeights:hiddenWeights:biases:"},
+      {"access": "public", "name": "layerWithDescriptor:inputWeights:hiddenWeights:peepholeWeights:biases:"},
+      {"access": "public", "name": "layerWithDescriptor:inputWeights:hiddenWeights:peepholeWeights:biases:gateActivations:outputResultActivation:"}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "MLCLSTMLayer",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "descriptor", "name": "descriptor"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "gateActivations", "name": "gateActivations"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "outputResultActivation", "name": "outputResultActivation"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "inputWeights", "name": "inputWeights"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "hiddenWeights", "name": "hiddenWeights"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "peepholeWeights", "name": "peepholeWeights"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "biases", "name": "biases"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "inputWeightsParameters", "name": "inputWeightsParameters"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "hiddenWeightsParameters", "name": "hiddenWeightsParameters"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "peepholeWeightsParameters", "name": "peepholeWeightsParameters"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "biasesParameters", "name": "biasesParameters"}
+     ],
+     "super": "MLCLayer"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "supportsDataType:onDevice:"},
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "MLCLayer",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "layerID", "name": "layerID"},
+      {"access": "public", "getter": "label", "name": "label", "setter": "setLabel:"},
+      {"access": "public", "getter": "isDebuggingEnabled", "name": "isDebuggingEnabled", "setter": "setIsDebuggingEnabled:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "deviceType", "introduced": "15", "name": "deviceType"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "layerWithNormalizedShape:beta:gamma:varianceEpsilon:"}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "MLCLayerNormalizationLayer",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "normalizedShape", "name": "normalizedShape"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "beta", "name": "beta"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "gamma", "name": "gamma"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "betaParameter", "name": "betaParameter"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "gammaParameter", "name": "gammaParameter"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "varianceEpsilon", "name": "varianceEpsilon"}
+     ],
+     "super": "MLCLayer"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true},
+      {"access": "public", "name": "descriptorWithType:reductionType:"},
+      {"access": "public", "name": "descriptorWithType:reductionType:weight:"},
+      {"access": "public", "name": "descriptorWithType:reductionType:weight:labelSmoothing:classCount:"},
+      {"access": "public", "name": "descriptorWithType:reductionType:weight:labelSmoothing:classCount:epsilon:delta:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "MLCLossDescriptor",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "lossType", "name": "lossType"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "reductionType", "name": "reductionType"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "weight", "name": "weight"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "labelSmoothing", "name": "labelSmoothing"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "classCount", "name": "classCount"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "epsilon", "name": "epsilon"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "delta", "name": "delta"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "layerWithDescriptor:"},
+      {"access": "public", "name": "layerWithDescriptor:weights:"},
+      {"access": "public", "name": "softmaxCrossEntropyLossWithReductionType:labelSmoothing:classCount:weight:"},
+      {"access": "public", "name": "softmaxCrossEntropyLossWithReductionType:labelSmoothing:classCount:weights:"},
+      {"access": "public", "name": "categoricalCrossEntropyLossWithReductionType:labelSmoothing:classCount:weight:"},
+      {"access": "public", "name": "categoricalCrossEntropyLossWithReductionType:labelSmoothing:classCount:weights:"},
+      {"access": "public", "name": "sigmoidCrossEntropyLossWithReductionType:labelSmoothing:weight:"},
+      {"access": "public", "name": "sigmoidCrossEntropyLossWithReductionType:labelSmoothing:weights:"},
+      {"access": "public", "name": "logLossWithReductionType:epsilon:weight:"},
+      {"access": "public", "name": "logLossWithReductionType:epsilon:weights:"},
+      {"access": "public", "name": "huberLossWithReductionType:delta:weight:"},
+      {"access": "public", "name": "huberLossWithReductionType:delta:weights:"},
+      {"access": "public", "name": "meanAbsoluteErrorLossWithReductionType:weight:"},
+      {"access": "public", "name": "meanAbsoluteErrorLossWithReductionType:weights:"},
+      {"access": "public", "name": "meanSquaredErrorLossWithReductionType:weight:"},
+      {"access": "public", "name": "meanSquaredErrorLossWithReductionType:weights:"},
+      {"access": "public", "name": "hingeLossWithReductionType:weight:"},
+      {"access": "public", "name": "hingeLossWithReductionType:weights:"},
+      {"access": "public", "name": "cosineDistanceLossWithReductionType:weight:"},
+      {"access": "public", "name": "cosineDistanceLossWithReductionType:weights:"}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "MLCLossLayer",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "descriptor", "name": "descriptor"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "weights", "name": "weights"}
+     ],
+     "super": "MLCLayer"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true},
+      {"access": "public", "name": "descriptorWithAlpha:transposesX:transposesY:"},
+      {"access": "public", "name": "descriptor"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "MLCMatMulDescriptor",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "alpha", "name": "alpha"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "transposesX", "name": "transposesX"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "transposesY", "name": "transposesY"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "layerWithDescriptor:"}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "MLCMatMulLayer",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "descriptor", "name": "descriptor"}
+     ],
+     "super": "MLCLayer"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true},
+      {"access": "public", "name": "descriptorWithModelDimension:keyDimension:valueDimension:headCount:dropout:hasBiases:hasAttentionBiases:addsZeroAttention:"},
+      {"access": "public", "name": "descriptorWithModelDimension:headCount:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "MLCMultiheadAttentionDescriptor",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "modelDimension", "name": "modelDimension"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "keyDimension", "name": "keyDimension"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "valueDimension", "name": "valueDimension"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "headCount", "name": "headCount"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "dropout", "name": "dropout"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "hasBiases", "name": "hasBiases"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "hasAttentionBiases", "name": "hasAttentionBiases"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "addsZeroAttention", "name": "addsZeroAttention"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "layerWithDescriptor:weights:biases:attentionBiases:"}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "MLCMultiheadAttentionLayer",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "descriptor", "name": "descriptor"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "weights", "name": "weights"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "biases", "name": "biases"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "attentionBiases", "name": "attentionBiases"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "weightsParameters", "name": "weightsParameters"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "biasesParameters", "name": "biasesParameters"}
+     ],
+     "super": "MLCLayer"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "MLCOptimizer",
+     "properties": [
+      {"access": "public", "getter": "learningRate", "name": "learningRate", "setter": "setLearningRate:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "gradientRescale", "name": "gradientRescale"},
+      {"access": "public", "getter": "appliesGradientClipping", "name": "appliesGradientClipping", "setter": "setAppliesGradientClipping:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "gradientClipMax", "name": "gradientClipMax"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "gradientClipMin", "name": "gradientClipMin"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "regularizationScale", "name": "regularizationScale"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "regularizationType", "name": "regularizationType"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "gradientClippingType", "introduced": "15", "name": "gradientClippingType"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "maximumClippingNorm", "introduced": "15", "name": "maximumClippingNorm"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "customGlobalNorm", "introduced": "15", "name": "customGlobalNorm"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "descriptorWithLearningRate:gradientRescale:regularizationType:regularizationScale:"},
+      {"access": "public", "name": "descriptorWithLearningRate:gradientRescale:appliesGradientClipping:gradientClipMax:gradientClipMin:regularizationType:regularizationScale:"},
+      {"access": "public", "introduced": "15", "name": "descriptorWithLearningRate:gradientRescale:appliesGradientClipping:gradientClippingType:gradientClipMax:gradientClipMin:maximumClippingNorm:customGlobalNorm:regularizationType:regularizationScale:"}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "MLCOptimizerDescriptor",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "learningRate", "name": "learningRate"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "gradientRescale", "name": "gradientRescale"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "appliesGradientClipping", "name": "appliesGradientClipping"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "gradientClipMax", "name": "gradientClipMax"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "gradientClipMin", "name": "gradientClipMin"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "regularizationScale", "name": "regularizationScale"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "regularizationType", "name": "regularizationType"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "gradientClippingType", "introduced": "15", "name": "gradientClippingType"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "maximumClippingNorm", "introduced": "15", "name": "maximumClippingNorm"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "customGlobalNorm", "introduced": "15", "name": "customGlobalNorm"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "layerWithReflectionPadding:"},
+      {"access": "public", "name": "layerWithSymmetricPadding:"},
+      {"access": "public", "name": "layerWithZeroPadding:"},
+      {"access": "public", "name": "layerWithConstantPadding:constantValue:"}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "MLCPaddingLayer",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "paddingType", "name": "paddingType"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "paddingLeft", "name": "paddingLeft"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "paddingRight", "name": "paddingRight"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "paddingTop", "name": "paddingTop"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "paddingBottom", "name": "paddingBottom"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "constantValue", "name": "constantValue"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "MLCLayer"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "setRNGSeedTo:"},
+      {"access": "public", "name": "getRNGseed"}
+     ],
+     "introduced": "15",
+     "linkage": "exported",
+     "name": "MLCPlatform",
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true},
+      {"access": "public", "name": "poolingDescriptorWithType:kernelSize:stride:"},
+      {"access": "public", "name": "maxPoolingDescriptorWithKernelSizes:strides:paddingPolicy:paddingSizes:"},
+      {"access": "public", "name": "maxPoolingDescriptorWithKernelSizes:strides:dilationRates:paddingPolicy:paddingSizes:"},
+      {"access": "public", "name": "averagePoolingDescriptorWithKernelSizes:strides:paddingPolicy:paddingSizes:countIncludesPadding:"},
+      {"access": "public", "name": "averagePoolingDescriptorWithKernelSizes:strides:dilationRates:paddingPolicy:paddingSizes:countIncludesPadding:"},
+      {"access": "public", "name": "l2NormPoolingDescriptorWithKernelSizes:strides:paddingPolicy:paddingSizes:"},
+      {"access": "public", "name": "l2NormPoolingDescriptorWithKernelSizes:strides:dilationRates:paddingPolicy:paddingSizes:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "MLCPoolingDescriptor",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "poolingType", "name": "poolingType"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "kernelWidth", "name": "kernelWidth"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "kernelHeight", "name": "kernelHeight"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "strideInX", "name": "strideInX"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "strideInY", "name": "strideInY"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "dilationRateInX", "name": "dilationRateInX"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "dilationRateInY", "name": "dilationRateInY"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "paddingPolicy", "name": "paddingPolicy"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "paddingSizeInX", "name": "paddingSizeInX"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "paddingSizeInY", "name": "paddingSizeInY"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "countIncludesPadding", "name": "countIncludesPadding"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "layerWithDescriptor:"}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "MLCPoolingLayer",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "descriptor", "name": "descriptor"}
+     ],
+     "super": "MLCLayer"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "optimizerWithDescriptor:"},
+      {"access": "public", "name": "optimizerWithDescriptor:momentumScale:alpha:epsilon:isCentered:"}
+     ],
+     "linkage": "exported",
+     "name": "MLCRMSPropOptimizer",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "momentumScale", "name": "momentumScale"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "alpha", "name": "alpha"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "epsilon", "name": "epsilon"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isCentered", "name": "isCentered"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "MLCOptimizer"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "layerWithReductionType:dimension:"},
+      {"access": "public", "introduced": "14.5", "name": "layerWithReductionType:dimensions:"}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "MLCReductionLayer",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "reductionType", "name": "reductionType"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "dimension", "name": "dimension"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "dimensions", "introduced": "14.5", "name": "dimensions"}
+     ],
+     "super": "MLCLayer"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "layerWithShape:"}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "MLCReshapeLayer",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "shape", "introduced": "14.5", "name": "shape"}
+     ],
+     "super": "MLCLayer"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "optimizerWithDescriptor:"},
+      {"access": "public", "name": "optimizerWithDescriptor:momentumScale:usesNesterovMomentum:"}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "MLCSGDOptimizer",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "momentumScale", "name": "momentumScale"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "usesNesterovMomentum", "name": "usesNesterovMomentum"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "MLCOptimizer"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "layerWithDimension:reductionType:"}
+     ],
+     "introduced": "14.5",
+     "linkage": "exported",
+     "name": "MLCScatterLayer",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "dimension", "name": "dimension"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "reductionType", "name": "reductionType"}
+     ],
+     "super": "MLCLayer"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "layer"}
+     ],
+     "introduced": "14.5",
+     "linkage": "exported",
+     "name": "MLCSelectionLayer",
+     "super": "MLCLayer"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "sliceLayerWithStart:end:stride:"}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "MLCSliceLayer",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "start", "name": "start"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "end", "name": "end"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "stride", "name": "stride"}
+     ],
+     "super": "MLCLayer"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "layerWithOperation:"},
+      {"access": "public", "name": "layerWithOperation:dimension:"}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "MLCSoftmaxLayer",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "operation", "name": "operation"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "dimension", "name": "dimension"}
+     ],
+     "super": "MLCLayer"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "layerWithSplitCount:dimension:"},
+      {"access": "public", "name": "layerWithSplitSectionLengths:dimension:"}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "MLCSplitLayer",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "dimension", "name": "dimension"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "splitCount", "name": "splitCount"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "splitSectionLengths", "name": "splitSectionLengths"}
+     ],
+     "super": "MLCLayer"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true},
+      {"access": "public", "name": "tensorWithDescriptor:"},
+      {"access": "public", "name": "tensorWithDescriptor:randomInitializerType:"},
+      {"access": "public", "name": "tensorWithDescriptor:fillWithData:"},
+      {"access": "public", "name": "tensorWithDescriptor:data:"},
+      {"access": "public", "name": "tensorWithShape:"},
+      {"access": "public", "name": "tensorWithShape:randomInitializerType:"},
+      {"access": "public", "name": "tensorWithShape:randomInitializerType:dataType:"},
+      {"access": "public", "name": "tensorWithShape:dataType:"},
+      {"access": "public", "name": "tensorWithShape:data:dataType:"},
+      {"access": "public", "name": "tensorWithShape:fillWithData:dataType:"},
+      {"access": "public", "name": "tensorWithWidth:height:featureChannelCount:batchSize:"},
+      {"access": "public", "name": "tensorWithWidth:height:featureChannelCount:batchSize:fillWithData:dataType:"},
+      {"access": "public", "name": "tensorWithWidth:height:featureChannelCount:batchSize:randomInitializerType:"},
+      {"access": "public", "name": "tensorWithWidth:height:featureChannelCount:batchSize:data:"},
+      {"access": "public", "name": "tensorWithWidth:height:featureChannelCount:batchSize:data:dataType:"},
+      {"access": "public", "name": "tensorWithSequenceLength:featureChannelCount:batchSize:"},
+      {"access": "public", "name": "tensorWithSequenceLength:featureChannelCount:batchSize:randomInitializerType:"},
+      {"access": "public", "name": "tensorWithSequenceLength:featureChannelCount:batchSize:data:"},
+      {"access": "public", "name": "tensorWithSequenceLengths:sortedSequences:featureChannelCount:batchSize:randomInitializerType:"},
+      {"access": "public", "name": "tensorWithSequenceLengths:sortedSequences:featureChannelCount:batchSize:data:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "synchronizeData"},
+      {"access": "public", "name": "synchronizeOptimizerData"},
+      {"access": "public", "name": "copyDataFromDeviceMemoryToBytes:length:synchronizeWithDevice:"},
+      {"access": "public", "name": "bindAndWriteData:toDevice:"},
+      {"access": "public", "name": "bindOptimizerData:deviceData:"},
+      {"access": "public", "introduced": "15", "name": "tensorByQuantizingToType:scale:bias:"},
+      {"access": "public", "introduced": "15", "name": "tensorByQuantizingToType:scale:bias:axis:"},
+      {"access": "public", "introduced": "15", "name": "tensorByDequantizingToType:scale:bias:"},
+      {"access": "public", "introduced": "15", "name": "tensorByDequantizingToType:scale:bias:axis:"}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "MLCTensor",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "tensorID", "name": "tensorID"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "descriptor", "name": "descriptor"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "data", "name": "data"},
+      {"access": "public", "getter": "label", "name": "label", "setter": "setLabel:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "device", "name": "device"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "optimizerData", "name": "optimizerData"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "optimizerDeviceData", "name": "optimizerDeviceData"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "hasValidNumerics", "name": "hasValidNumerics"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true},
+      {"access": "public", "name": "dataWithBytesNoCopy:length:"},
+      {"access": "public", "name": "dataWithImmutableBytesNoCopy:length:"},
+      {"access": "public", "introduced": "14.5", "name": "dataWithBytesNoCopy:length:deallocator:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "MLCTensorData",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "bytes", "name": "bytes"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "length", "name": "length"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true},
+      {"access": "public", "name": "descriptorWithShape:dataType:"},
+      {"access": "public", "name": "descriptorWithShape:sequenceLengths:sortedSequences:dataType:"},
+      {"access": "public", "name": "descriptorWithWidth:height:featureChannelCount:batchSize:"},
+      {"access": "public", "name": "descriptorWithWidth:height:featureChannelCount:batchSize:dataType:"},
+      {"access": "public", "name": "convolutionWeightsDescriptorWithWidth:height:inputFeatureChannelCount:outputFeatureChannelCount:dataType:"},
+      {"access": "public", "name": "convolutionWeightsDescriptorWithInputFeatureChannelCount:outputFeatureChannelCount:dataType:"},
+      {"access": "public", "name": "convolutionBiasesDescriptorWithFeatureChannelCount:dataType:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "MLCTensorDescriptor",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "dataType", "name": "dataType"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "dimensionCount", "name": "dimensionCount"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "shape", "name": "shape"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "stride", "name": "stride"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "tensorAllocationSizeInBytes", "name": "tensorAllocationSizeInBytes"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "sequenceLengths", "name": "sequenceLengths"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "sortedSequences", "name": "sortedSequences"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "batchSizePerSequenceStep", "name": "batchSizePerSequenceStep"},
+      {"access": "public", "attr": [ "readonly", "class" ], "getter": "maxTensorDimensions", "name": "maxTensorDimensions"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "MLCTensorOptimizerDeviceData",
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true},
+      {"access": "public", "name": "parameterWithTensor:"},
+      {"access": "public", "name": "parameterWithTensor:optimizerData:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "MLCTensorParameter",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "tensor", "name": "tensor"},
+      {"access": "public", "getter": "isUpdatable", "name": "isUpdatable", "setter": "setIsUpdatable:"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "graphWithGraphObjects:lossLayer:optimizer:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "addInputs:lossLabels:"},
+      {"access": "public", "name": "addInputs:lossLabels:lossLabelWeights:"},
+      {"access": "public", "name": "addOutputs:"},
+      {"access": "public", "name": "stopGradientForTensors:"},
+      {"access": "public", "name": "compileWithOptions:device:"},
+      {"access": "public", "introduced": "14.5", "name": "compileWithOptions:device:inputTensors:inputTensorsData:"},
+      {"access": "public", "name": "compileOptimizer:"},
+      {"access": "public", "name": "linkWithGraphs:"},
+      {"access": "public", "name": "gradientTensorForInput:"},
+      {"access": "public", "name": "sourceGradientTensorsForLayer:"},
+      {"access": "public", "name": "resultGradientTensorsForLayer:"},
+      {"access": "public", "name": "gradientDataForParameter:layer:"},
+      {"access": "public", "name": "allocateUserGradientForTensor:"},
+      {"access": "public", "name": "executeWithInputsData:lossLabelsData:lossLabelWeightsData:batchSize:options:completionHandler:"},
+      {"access": "public", "name": "executeWithInputsData:lossLabelsData:lossLabelWeightsData:outputsData:batchSize:options:completionHandler:"},
+      {"access": "public", "name": "executeForwardWithBatchSize:options:completionHandler:"},
+      {"access": "public", "name": "executeForwardWithBatchSize:options:outputsData:completionHandler:"},
+      {"access": "public", "name": "executeGradientWithBatchSize:options:completionHandler:"},
+      {"access": "public", "name": "executeGradientWithBatchSize:options:outputsData:completionHandler:"},
+      {"access": "public", "name": "executeOptimizerUpdateWithOptions:completionHandler:"},
+      {"access": "public", "name": "synchronizeUpdates"},
+      {"access": "public", "name": "setTrainingTensorParameters:"},
+      {"access": "public", "name": "bindOptimizerData:deviceData:withTensor:"}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "MLCTrainingGraph",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "optimizer", "name": "optimizer"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "deviceMemorySize", "name": "deviceMemorySize"}
+     ],
+     "super": "MLCGraph"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "layerWithDimensions:"}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "MLCTransposeLayer",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "dimensions", "name": "dimensions"}
+     ],
+     "super": "MLCLayer"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "layerWithShape:"},
+      {"access": "public", "name": "layerWithShape:sampleMode:alignsCorners:"}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "MLCUpsampleLayer",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "shape", "name": "shape"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "sampleMode", "name": "sampleMode"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "alignsCorners", "name": "alignsCorners"}
+     ],
+     "super": "MLCLayer"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "new", "unavailable": true},
+      {"access": "public", "name": "descriptorWithAnchorBoxes:anchorBoxCount:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "MLCYOLOLossDescriptor",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "anchorBoxCount", "name": "anchorBoxCount"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "anchorBoxes", "name": "anchorBoxes"},
+      {"access": "public", "getter": "shouldRescore", "name": "shouldRescore", "setter": "setShouldRescore:"},
+      {"access": "public", "getter": "scaleSpatialPositionLoss", "name": "scaleSpatialPositionLoss", "setter": "setScaleSpatialPositionLoss:"},
+      {"access": "public", "getter": "scaleSpatialSizeLoss", "name": "scaleSpatialSizeLoss", "setter": "setScaleSpatialSizeLoss:"},
+      {"access": "public", "getter": "scaleNoObjectConfidenceLoss", "name": "scaleNoObjectConfidenceLoss", "setter": "setScaleNoObjectConfidenceLoss:"},
+      {"access": "public", "getter": "scaleObjectConfidenceLoss", "name": "scaleObjectConfidenceLoss", "setter": "setScaleObjectConfidenceLoss:"},
+      {"access": "public", "getter": "scaleClassLoss", "name": "scaleClassLoss", "setter": "setScaleClassLoss:"},
+      {"access": "public", "getter": "minimumIOUForObjectPresence", "name": "minimumIOUForObjectPresence", "setter": "setMinimumIOUForObjectPresence:"},
+      {"access": "public", "getter": "maximumIOUForObjectAbsence", "name": "maximumIOUForObjectAbsence", "setter": "setMaximumIOUForObjectAbsence:"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "layerWithDescriptor:"}
+     ],
+     "introduced": "14",
+     "linkage": "exported",
+     "name": "MLCYOLOLossLayer",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "yoloLossDescriptor", "name": "yoloLossDescriptor"}
+     ],
+     "super": "MLCLossLayer"
+    }
+   ],
+   "target": "arm64e.x1-apple-ios27",
+   "typedefs": [
+    {"access": "public", "introduced": "14", "name": "MLCActivationType"},
+    {"access": "public", "introduced": "14", "name": "MLCArithmeticOperation"},
+    {"access": "public", "introduced": "14.5", "name": "MLCComparisonOperation"},
+    {"access": "public", "introduced": "14", "name": "MLCConvolutionType"},
+    {"access": "public", "introduced": "14", "name": "MLCDataType"},
+    {"access": "public", "introduced": "14", "name": "MLCDeviceType"},
+    {"access": "public", "introduced": "14", "name": "MLCExecutionOptions"},
+    {"access": "public", "introduced": "15", "name": "MLCGradientClippingType"},
+    {"access": "public", "introduced": "14", "name": "MLCGraphCompilationOptions"},
+    {"access": "public", "name": "MLCGraphCompletionHandler"},
+    {"access": "public", "introduced": "14", "name": "MLCLSTMResultMode"},
+    {"access": "public", "introduced": "14", "name": "MLCLossType"},
+    {"access": "public", "introduced": "14", "name": "MLCPaddingPolicy"},
+    {"access": "public", "introduced": "14", "name": "MLCPaddingType"},
+    {"access": "public", "introduced": "14", "name": "MLCPoolingType"},
+    {"access": "public", "introduced": "14", "name": "MLCRandomInitializerType"},
+    {"access": "public", "introduced": "14", "name": "MLCReductionType"},
+    {"access": "public", "introduced": "14", "name": "MLCRegularizationType"},
+    {"access": "public", "introduced": "14", "name": "MLCSampleMode"},
+    {"access": "public", "introduced": "14", "name": "MLCSoftmaxOperation"}
+   ]
+  }
+ ],
+ "version": "1.0"
+}

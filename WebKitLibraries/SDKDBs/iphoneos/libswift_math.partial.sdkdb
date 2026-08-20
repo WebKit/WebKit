@@ -155,9 +155,10 @@
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$sSo13audit_token_taSE6DarwinMc"},
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$sSo13audit_token_taSH6DarwinMc"},
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$sSo13audit_token_taSQ6DarwinMc"},
-    {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$sSo13audit_token_taSe6DarwinMc"}
+    {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$sSo13audit_token_taSe6DarwinMc"},
+    {"access": "public", "linkage": "exported", "name": "__swift_FORCE_LOAD_$_swiftDarwin"}
    ],
-   "target": "arm64e-apple-ios26.5"
+   "target": "arm64e-apple-ios27.0"
   },
   {
    "globals": [
@@ -254,9 +255,10 @@
     {"access": "public", "introduced": "7", "linkage": "exported", "name": "_$s6Darwin9nearbyintyS2dF"},
     {"access": "public", "introduced": "7", "linkage": "exported", "name": "_$s6Darwin9nearbyintyS2fF"},
     {"access": "public", "introduced": "7", "linkage": "exported", "name": "_$s6Darwin9nextafteryS2f_SftF"},
-    {"access": "public", "introduced": "7", "linkage": "exported", "name": "_$s6Darwin9remainderyxx_xtSFRzlF"}
+    {"access": "public", "introduced": "7", "linkage": "exported", "name": "_$s6Darwin9remainderyxx_xtSFRzlF"},
+    {"access": "public", "linkage": "exported", "name": "__swift_FORCE_LOAD_$_swift_DarwinFoundation1"}
    ],
-   "target": "arm64e-apple-ios26.5"
+   "target": "arm64e-apple-ios27.0"
   },
   {
    "globals": [
@@ -274,9 +276,10 @@
     {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$sSo7timevalV6DarwinEyABs8DurationVcfC"},
     {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$sSo8timespecV6DarwinEyABs8DurationVcfC"},
     {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$ss8DurationV6DarwinEyABSo7timevalVcfC"},
-    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$ss8DurationV6DarwinEyABSo8timespecVcfC"}
+    {"access": "public", "introduced": "16", "linkage": "exported", "name": "_$ss8DurationV6DarwinEyABSo8timespecVcfC"},
+    {"access": "public", "linkage": "exported", "name": "__swift_FORCE_LOAD_$_swift_DarwinFoundation2"}
    ],
-   "target": "arm64e-apple-ios26.5"
+   "target": "arm64e-apple-ios27.0"
   },
   {
    "globals": [
@@ -285,9 +288,10 @@
     {"access": "public", "introduced": "7", "linkage": "exported", "name": "_$s6Darwin7SIG_DFLys5Int32VXCSgvg"},
     {"access": "public", "introduced": "7", "linkage": "exported", "name": "_$s6Darwin7SIG_ERRyys5Int32VXCvg"},
     {"access": "public", "introduced": "7", "linkage": "exported", "name": "_$s6Darwin7SIG_IGNyys5Int32VXCvg"},
-    {"access": "public", "introduced": "7", "linkage": "exported", "name": "_$s6Darwin8SIG_HOLDyys5Int32VXCvg"}
+    {"access": "public", "introduced": "7", "linkage": "exported", "name": "_$s6Darwin8SIG_HOLDyys5Int32VXCvg"},
+    {"access": "public", "linkage": "exported", "name": "__swift_FORCE_LOAD_$_swift_DarwinFoundation3"}
    ],
-   "target": "arm64e-apple-ios26.5"
+   "target": "arm64e-apple-ios27.0"
   }
  ],
  "version": "1.0"

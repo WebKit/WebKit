@@ -33,9 +33,3 @@ symbols = ["dyld_get_program_sdk_version"]
 # In internal builds, usage may be dead-stripped depending on WebKitAdditions
 # code in RuntimeApplicationChecks.
 allow-unused = true
-
-[[legacy]]
-symbols = [
-    "_dyld_get_dlopen_image_header",
-]
-requires-sdk = ["iOS <= 26.*"]

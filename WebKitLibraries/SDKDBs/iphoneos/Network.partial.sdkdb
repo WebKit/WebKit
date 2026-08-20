@@ -763,6 +763,7 @@
     {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_tcp_options_set_persist_timeout"},
     {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_tcp_options_set_retransmit_connection_drop_time"},
     {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_tcp_options_set_retransmit_fin_drop"},
+    {"access": "public", "introduced": "27", "kind": "function", "linkage": "exported", "name": "_nw_tcp_set_max_pacing_rate"},
     {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_tls_copy_sec_protocol_metadata"},
     {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_tls_copy_sec_protocol_options"},
     {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_tls_create_options"},
@@ -1028,7 +1029,1154 @@
      ]
     }
    ],
-   "target": "arm64e-apple-ios26.5",
+   "target": "arm64e-apple-ios27",
+   "typedefs": [
+    {"access": "public", "name": "nw_advertise_descriptor_t"},
+    {"access": "public", "name": "nw_browse_descriptor_t"},
+    {"access": "public", "name": "nw_browse_result_change_t"},
+    {"access": "public", "name": "nw_browse_result_enumerate_interface_t"},
+    {"access": "public", "name": "nw_browse_result_t"},
+    {"access": "public", "name": "nw_browser_browse_results_changed_handler_t"},
+    {"access": "public", "name": "nw_browser_state_changed_handler_t"},
+    {"access": "public", "name": "nw_browser_state_t"},
+    {"access": "public", "name": "nw_browser_t"},
+    {"access": "public", "name": "nw_connection_boolean_event_handler_t"},
+    {"access": "public", "name": "nw_connection_group_new_connection_handler_t"},
+    {"access": "public", "name": "nw_connection_group_receive_handler_t"},
+    {"access": "public", "name": "nw_connection_group_send_completion_t"},
+    {"access": "public", "name": "nw_connection_group_state_changed_handler_t"},
+    {"access": "public", "name": "nw_connection_group_state_t"},
+    {"access": "public", "name": "nw_connection_group_t"},
+    {"access": "public", "name": "nw_connection_path_event_handler_t"},
+    {"access": "public", "name": "nw_connection_receive_completion_t"},
+    {"access": "public", "name": "nw_connection_send_completion_t"},
+    {"access": "public", "name": "nw_connection_state_changed_handler_t"},
+    {"access": "public", "name": "nw_connection_state_t"},
+    {"access": "public", "name": "nw_connection_t"},
+    {"access": "public", "name": "nw_content_context_t"},
+    {"access": "public", "name": "nw_data_transfer_report_collect_block_t"},
+    {"access": "public", "name": "nw_data_transfer_report_state_t"},
+    {"access": "public", "name": "nw_data_transfer_report_t"},
+    {"access": "public", "name": "nw_endpoint_t"},
+    {"access": "public", "name": "nw_endpoint_type_t"},
+    {"access": "public", "name": "nw_error_domain_t"},
+    {"access": "public", "name": "nw_error_t"},
+    {"access": "public", "name": "nw_establishment_report_access_block_t"},
+    {"access": "public", "name": "nw_establishment_report_t"},
+    {"access": "public", "name": "nw_ethernet_address_t", "unavailable": true},
+    {"access": "public", "name": "nw_ethernet_channel_receive_handler_t", "unavailable": true},
+    {"access": "public", "name": "nw_ethernet_channel_send_completion_t", "unavailable": true},
+    {"access": "public", "name": "nw_ethernet_channel_state_changed_handler_t", "unavailable": true},
+    {"access": "public", "name": "nw_ethernet_channel_state_t", "unavailable": true},
+    {"access": "public", "name": "nw_ethernet_channel_t"},
+    {"access": "public", "name": "nw_framer_block_t"},
+    {"access": "public", "name": "nw_framer_cleanup_handler_t"},
+    {"access": "public", "name": "nw_framer_input_handler_t"},
+    {"access": "public", "name": "nw_framer_message_dispose_value_t"},
+    {"access": "public", "name": "nw_framer_message_t"},
+    {"access": "public", "name": "nw_framer_output_handler_t"},
+    {"access": "public", "name": "nw_framer_parse_completion_t"},
+    {"access": "public", "name": "nw_framer_start_handler_t"},
+    {"access": "public", "name": "nw_framer_start_result_t"},
+    {"access": "public", "name": "nw_framer_stop_handler_t"},
+    {"access": "public", "name": "nw_framer_t"},
+    {"access": "public", "name": "nw_framer_wakeup_handler_t"},
+    {"access": "public", "name": "nw_group_descriptor_enumerate_endpoints_block_t"},
+    {"access": "public", "name": "nw_group_descriptor_t"},
+    {"access": "public", "name": "nw_interface_radio_type_t"},
+    {"access": "public", "name": "nw_interface_t"},
+    {"access": "public", "name": "nw_interface_type_t"},
+    {"access": "public", "name": "nw_ip_ecn_flag_t"},
+    {"access": "public", "name": "nw_ip_local_address_preference_t"},
+    {"access": "public", "name": "nw_ip_version_t"},
+    {"access": "public", "name": "nw_link_quality_t"},
+    {"access": "public", "name": "nw_listener_advertised_endpoint_changed_handler_t"},
+    {"access": "public", "name": "nw_listener_new_connection_group_handler_t"},
+    {"access": "public", "name": "nw_listener_new_connection_handler_t"},
+    {"access": "public", "name": "nw_listener_state_changed_handler_t"},
+    {"access": "public", "name": "nw_listener_state_t"},
+    {"access": "public", "name": "nw_listener_t"},
+    {"access": "public", "name": "nw_multipath_service_t"},
+    {"access": "public", "name": "nw_multipath_version_t"},
+    {"access": "public", "name": "nw_object_t"},
+    {"access": "public", "name": "nw_parameters_attribution_t"},
+    {"access": "public", "name": "nw_parameters_configure_protocol_block_t"},
+    {"access": "public", "name": "nw_parameters_expired_dns_behavior_t"},
+    {"access": "public", "name": "nw_parameters_iterate_interface_types_block_t"},
+    {"access": "public", "name": "nw_parameters_iterate_interfaces_block_t"},
+    {"access": "public", "name": "nw_parameters_t"},
+    {"access": "public", "name": "nw_path_enumerate_gateways_block_t"},
+    {"access": "public", "name": "nw_path_enumerate_interfaces_block_t"},
+    {"access": "public", "name": "nw_path_monitor_cancel_handler_t"},
+    {"access": "public", "name": "nw_path_monitor_t"},
+    {"access": "public", "name": "nw_path_monitor_update_handler_t"},
+    {"access": "public", "name": "nw_path_status_t"},
+    {"access": "public", "name": "nw_path_t"},
+    {"access": "public", "name": "nw_path_unsatisfied_reason_t"},
+    {"access": "public", "name": "nw_privacy_context_t"},
+    {"access": "public", "name": "nw_protocol_definition_t"},
+    {"access": "public", "name": "nw_protocol_metadata_t"},
+    {"access": "public", "name": "nw_protocol_options_t"},
+    {"access": "public", "name": "nw_protocol_stack_iterate_protocols_block_t"},
+    {"access": "public", "name": "nw_protocol_stack_t"},
+    {"access": "public", "name": "nw_proxy_config_t"},
+    {"access": "public", "name": "nw_proxy_domain_enumerator_t"},
+    {"access": "public", "name": "nw_quic_stream_type_t"},
+    {"access": "public", "name": "nw_relay_hop_t"},
+    {"access": "public", "name": "nw_report_protocol_enumerator_t"},
+    {"access": "public", "name": "nw_report_resolution_enumerator_t"},
+    {"access": "public", "name": "nw_report_resolution_protocol_t"},
+    {"access": "public", "name": "nw_report_resolution_report_enumerator_t"},
+    {"access": "public", "name": "nw_report_resolution_source_t"},
+    {"access": "public", "name": "nw_resolution_report_t"},
+    {"access": "public", "name": "nw_resolver_config_t"},
+    {"access": "public", "name": "nw_service_class_t"},
+    {"access": "public", "name": "nw_txt_record_access_bytes_t"},
+    {"access": "public", "name": "nw_txt_record_access_key_t"},
+    {"access": "public", "name": "nw_txt_record_applier_t"},
+    {"access": "public", "name": "nw_txt_record_find_key_t"},
+    {"access": "public", "name": "nw_txt_record_t"},
+    {"access": "public", "name": "nw_ws_additional_header_enumerator_t"},
+    {"access": "public", "name": "nw_ws_client_request_handler_t"},
+    {"access": "public", "name": "nw_ws_close_code_t"},
+    {"access": "public", "name": "nw_ws_opcode_t"},
+    {"access": "public", "name": "nw_ws_pong_handler_t"},
+    {"access": "public", "name": "nw_ws_request_t"},
+    {"access": "public", "name": "nw_ws_response_status_t"},
+    {"access": "public", "name": "nw_ws_response_t"},
+    {"access": "public", "name": "nw_ws_subprotocol_enumerator_t"},
+    {"access": "public", "name": "nw_ws_version_t"}
+   ]
+  },
+  {
+   "categories": [
+    {
+     "access": "public",
+     "interface": "NSURLSessionConfiguration",
+     "introduced": "17",
+     "name": "Network",
+     "properties": [
+      {"access": "public", "getter": "proxyConfigurations", "name": "proxyConfigurations", "setter": "setProxyConfigurations:"}
+     ]
+    }
+   ],
+   "enums": [
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "nw_browse_result_change_invalid"},
+      {"access": "public", "name": "nw_browse_result_change_identical"},
+      {"access": "public", "name": "nw_browse_result_change_result_added"},
+      {"access": "public", "name": "nw_browse_result_change_result_removed"},
+      {"access": "public", "name": "nw_browse_result_change_interface_added"},
+      {"access": "public", "name": "nw_browse_result_change_interface_removed"},
+      {"access": "public", "name": "nw_browse_result_change_txt_record_changed"}
+     ],
+     "name": "enum (unnamed at browse_result.h:561)"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "nw_browser_state_invalid"},
+      {"access": "public", "name": "nw_browser_state_ready"},
+      {"access": "public", "name": "nw_browser_state_failed"},
+      {"access": "public", "name": "nw_browser_state_cancelled"},
+      {"access": "public", "name": "nw_browser_state_waiting"}
+     ],
+     "name": "nw_browser_state_t"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "nw_connection_group_state_invalid"},
+      {"access": "public", "name": "nw_connection_group_state_waiting"},
+      {"access": "public", "name": "nw_connection_group_state_ready"},
+      {"access": "public", "name": "nw_connection_group_state_failed"},
+      {"access": "public", "name": "nw_connection_group_state_cancelled"}
+     ],
+     "name": "nw_connection_group_state_t"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "nw_connection_state_invalid"},
+      {"access": "public", "name": "nw_connection_state_waiting"},
+      {"access": "public", "name": "nw_connection_state_preparing"},
+      {"access": "public", "name": "nw_connection_state_ready"},
+      {"access": "public", "name": "nw_connection_state_failed"},
+      {"access": "public", "name": "nw_connection_state_cancelled"}
+     ],
+     "name": "nw_connection_state_t"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "nw_data_transfer_report_state_collecting"},
+      {"access": "public", "name": "nw_data_transfer_report_state_collected"}
+     ],
+     "name": "nw_data_transfer_report_state_t"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "nw_endpoint_type_invalid"},
+      {"access": "public", "name": "nw_endpoint_type_address"},
+      {"access": "public", "name": "nw_endpoint_type_host"},
+      {"access": "public", "name": "nw_endpoint_type_bonjour_service"},
+      {"access": "public", "name": "nw_endpoint_type_url"}
+     ],
+     "name": "nw_endpoint_type_t"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "nw_error_domain_invalid"},
+      {"access": "public", "name": "nw_error_domain_posix"},
+      {"access": "public", "name": "nw_error_domain_dns"},
+      {"access": "public", "name": "nw_error_domain_tls"},
+      {"access": "public", "introduced": "26", "name": "nw_error_domain_wifi_aware"}
+     ],
+     "name": "nw_error_domain_t"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "nw_ethernet_channel_state_invalid"},
+      {"access": "public", "name": "nw_ethernet_channel_state_waiting"},
+      {"access": "public", "name": "nw_ethernet_channel_state_preparing"},
+      {"access": "public", "name": "nw_ethernet_channel_state_ready"},
+      {"access": "public", "name": "nw_ethernet_channel_state_failed"},
+      {"access": "public", "name": "nw_ethernet_channel_state_cancelled"}
+     ],
+     "name": "nw_ethernet_channel_state_t"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "nw_framer_start_result_ready"},
+      {"access": "public", "name": "nw_framer_start_result_will_mark_ready"}
+     ],
+     "name": "nw_framer_start_result_t"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "nw_interface_radio_type_unknown"},
+      {"access": "public", "name": "nw_interface_radio_type_wifi_b"},
+      {"access": "public", "name": "nw_interface_radio_type_wifi_a"},
+      {"access": "public", "name": "nw_interface_radio_type_wifi_g"},
+      {"access": "public", "name": "nw_interface_radio_type_wifi_n"},
+      {"access": "public", "name": "nw_interface_radio_type_wifi_ac"},
+      {"access": "public", "name": "nw_interface_radio_type_wifi_ax"},
+      {"access": "public", "name": "nw_interface_radio_type_cell_lte"},
+      {"access": "public", "name": "nw_interface_radio_type_cell_endc_sub6"},
+      {"access": "public", "name": "nw_interface_radio_type_cell_endc_mmw"},
+      {"access": "public", "name": "nw_interface_radio_type_cell_nr_sa_sub6"},
+      {"access": "public", "name": "nw_interface_radio_type_cell_nr_sa_mmw"},
+      {"access": "public", "name": "nw_interface_radio_type_cell_wcdma"},
+      {"access": "public", "name": "nw_interface_radio_type_cell_gsm"},
+      {"access": "public", "name": "nw_interface_radio_type_cell_cdma"},
+      {"access": "public", "name": "nw_interface_radio_type_cell_evdo"}
+     ],
+     "name": "nw_interface_radio_type_t"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "nw_interface_type_other"},
+      {"access": "public", "name": "nw_interface_type_wifi"},
+      {"access": "public", "name": "nw_interface_type_cellular"},
+      {"access": "public", "name": "nw_interface_type_wired"},
+      {"access": "public", "name": "nw_interface_type_loopback"}
+     ],
+     "name": "nw_interface_type_t"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "nw_ip_ecn_flag_non_ect"},
+      {"access": "public", "name": "nw_ip_ecn_flag_ect_0"},
+      {"access": "public", "name": "nw_ip_ecn_flag_ect_1"},
+      {"access": "public", "name": "nw_ip_ecn_flag_ce"}
+     ],
+     "name": "nw_ip_ecn_flag_t"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "nw_ip_local_address_preference_default"},
+      {"access": "public", "name": "nw_ip_local_address_preference_temporary"},
+      {"access": "public", "name": "nw_ip_local_address_preference_stable"}
+     ],
+     "name": "nw_ip_local_address_preference_t"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "nw_ip_version_any"},
+      {"access": "public", "name": "nw_ip_version_4"},
+      {"access": "public", "name": "nw_ip_version_6"}
+     ],
+     "name": "nw_ip_version_t"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "nw_link_quality_unknown"},
+      {"access": "public", "name": "nw_link_quality_minimal"},
+      {"access": "public", "name": "nw_link_quality_moderate"},
+      {"access": "public", "name": "nw_link_quality_good"}
+     ],
+     "name": "nw_link_quality_t"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "nw_listener_state_invalid"},
+      {"access": "public", "name": "nw_listener_state_waiting"},
+      {"access": "public", "name": "nw_listener_state_ready"},
+      {"access": "public", "name": "nw_listener_state_failed"},
+      {"access": "public", "name": "nw_listener_state_cancelled"}
+     ],
+     "name": "nw_listener_state_t"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "nw_multipath_service_disabled"},
+      {"access": "public", "name": "nw_multipath_service_handover"},
+      {"access": "public", "name": "nw_multipath_service_interactive"},
+      {"access": "public", "name": "nw_multipath_service_aggregate"}
+     ],
+     "name": "nw_multipath_service_t"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "nw_multipath_version_unspecified"},
+      {"access": "public", "name": "nw_multipath_version_0"},
+      {"access": "public", "name": "nw_multipath_version_1"}
+     ],
+     "name": "nw_multipath_version_t"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "nw_parameters_attribution_developer"},
+      {"access": "public", "name": "nw_parameters_attribution_user"}
+     ],
+     "name": "nw_parameters_attribution_t"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "nw_parameters_expired_dns_behavior_default"},
+      {"access": "public", "name": "nw_parameters_expired_dns_behavior_allow"},
+      {"access": "public", "name": "nw_parameters_expired_dns_behavior_prohibit"},
+      {"access": "public", "introduced": "18", "name": "nw_parameters_expired_dns_behavior_persistent"}
+     ],
+     "name": "nw_parameters_expired_dns_behavior_t"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "nw_path_status_invalid"},
+      {"access": "public", "name": "nw_path_status_satisfied"},
+      {"access": "public", "name": "nw_path_status_unsatisfied"},
+      {"access": "public", "name": "nw_path_status_satisfiable"}
+     ],
+     "name": "nw_path_status_t"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "nw_path_unsatisfied_reason_not_available"},
+      {"access": "public", "name": "nw_path_unsatisfied_reason_cellular_denied"},
+      {"access": "public", "name": "nw_path_unsatisfied_reason_wifi_denied"},
+      {"access": "public", "name": "nw_path_unsatisfied_reason_local_network_denied"},
+      {"access": "public", "introduced": "17", "name": "nw_path_unsatisfied_reason_vpn_inactive"}
+     ],
+     "name": "nw_path_unsatisfied_reason_t"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "nw_quic_stream_type_unknown"},
+      {"access": "public", "name": "nw_quic_stream_type_bidirectional"},
+      {"access": "public", "name": "nw_quic_stream_type_unidirectional"},
+      {"access": "public", "name": "nw_quic_stream_type_datagram"}
+     ],
+     "name": "nw_quic_stream_type_t"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "nw_report_resolution_protocol_unknown"},
+      {"access": "public", "name": "nw_report_resolution_protocol_udp"},
+      {"access": "public", "name": "nw_report_resolution_protocol_tcp"},
+      {"access": "public", "name": "nw_report_resolution_protocol_tls"},
+      {"access": "public", "name": "nw_report_resolution_protocol_https"}
+     ],
+     "name": "nw_report_resolution_protocol_t"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "nw_report_resolution_source_query"},
+      {"access": "public", "name": "nw_report_resolution_source_cache"},
+      {"access": "public", "name": "nw_report_resolution_source_expired_cache"}
+     ],
+     "name": "nw_report_resolution_source_t"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "nw_service_class_best_effort"},
+      {"access": "public", "name": "nw_service_class_background"},
+      {"access": "public", "name": "nw_service_class_interactive_video"},
+      {"access": "public", "name": "nw_service_class_interactive_voice"},
+      {"access": "public", "name": "nw_service_class_responsive_data"},
+      {"access": "public", "name": "nw_service_class_signaling"}
+     ],
+     "name": "nw_service_class_t"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "nw_txt_record_find_key_invalid"},
+      {"access": "public", "name": "nw_txt_record_find_key_not_present"},
+      {"access": "public", "name": "nw_txt_record_find_key_no_value"},
+      {"access": "public", "name": "nw_txt_record_find_key_empty_value"},
+      {"access": "public", "name": "nw_txt_record_find_key_non_empty_value"}
+     ],
+     "name": "nw_txt_record_find_key_t"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "nw_ws_close_code_normal_closure"},
+      {"access": "public", "name": "nw_ws_close_code_going_away"},
+      {"access": "public", "name": "nw_ws_close_code_protocol_error"},
+      {"access": "public", "name": "nw_ws_close_code_unsupported_data"},
+      {"access": "public", "name": "nw_ws_close_code_no_status_received"},
+      {"access": "public", "name": "nw_ws_close_code_abnormal_closure"},
+      {"access": "public", "name": "nw_ws_close_code_invalid_frame_payload_data"},
+      {"access": "public", "name": "nw_ws_close_code_policy_violation"},
+      {"access": "public", "name": "nw_ws_close_code_message_too_big"},
+      {"access": "public", "name": "nw_ws_close_code_mandatory_extension"},
+      {"access": "public", "name": "nw_ws_close_code_internal_server_error"},
+      {"access": "public", "name": "nw_ws_close_code_tls_handshake"}
+     ],
+     "name": "nw_ws_close_code_t"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "nw_ws_opcode_invalid"},
+      {"access": "public", "name": "nw_ws_opcode_cont"},
+      {"access": "public", "name": "nw_ws_opcode_text"},
+      {"access": "public", "name": "nw_ws_opcode_binary"},
+      {"access": "public", "name": "nw_ws_opcode_close"},
+      {"access": "public", "name": "nw_ws_opcode_ping"},
+      {"access": "public", "name": "nw_ws_opcode_pong"}
+     ],
+     "name": "nw_ws_opcode_t"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "nw_ws_response_status_invalid"},
+      {"access": "public", "name": "nw_ws_response_status_accept"},
+      {"access": "public", "name": "nw_ws_response_status_reject"}
+     ],
+     "name": "nw_ws_response_status_t"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "nw_ws_version_invalid"},
+      {"access": "public", "name": "nw_ws_version_13"}
+     ],
+     "name": "nw_ws_version_t"
+    }
+   ],
+   "globals": [
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "__nw_connection_send_idempotent_content"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "__nw_content_context_default_message"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "__nw_content_context_default_stream"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "__nw_content_context_final_send"},
+    {"access": "public", "introduced": "13", "kind": "variable", "linkage": "exported", "name": "__nw_data_transfer_report_all_paths"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "__nw_parameters_configure_protocol_default_configuration"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "__nw_parameters_configure_protocol_disable"},
+    {"access": "public", "introduced": "14", "kind": "variable", "linkage": "exported", "name": "__nw_privacy_context_default_context"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_kNWErrorDomainDNS"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_kNWErrorDomainPOSIX"},
+    {"access": "public", "introduced": "12", "kind": "variable", "linkage": "exported", "name": "_kNWErrorDomainTLS"},
+    {"access": "public", "introduced": "26", "kind": "variable", "linkage": "exported", "name": "_kNWErrorDomainWiFiAware"},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_nw_advertise_descriptor_copy_txt_record_object"},
+    {"access": "public", "introduced": "16", "kind": "function", "linkage": "exported", "name": "_nw_advertise_descriptor_create_application_service"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_advertise_descriptor_create_bonjour_service"},
+    {"access": "public", "introduced": "16", "kind": "function", "linkage": "exported", "name": "_nw_advertise_descriptor_get_application_service_name"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_advertise_descriptor_get_no_auto_rename"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_advertise_descriptor_set_no_auto_rename"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_advertise_descriptor_set_txt_record"},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_nw_advertise_descriptor_set_txt_record_object"},
+    {"access": "public", "introduced": "16", "kind": "function", "linkage": "exported", "name": "_nw_browse_descriptor_create_application_service"},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_nw_browse_descriptor_create_bonjour_service"},
+    {"access": "public", "introduced": "16", "kind": "function", "linkage": "exported", "name": "_nw_browse_descriptor_get_application_service_name"},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_nw_browse_descriptor_get_bonjour_service_domain"},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_nw_browse_descriptor_get_bonjour_service_type"},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_nw_browse_descriptor_get_include_txt_record"},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_nw_browse_descriptor_set_include_txt_record"},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_nw_browse_result_copy_endpoint"},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_nw_browse_result_copy_txt_record_object"},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_nw_browse_result_enumerate_interfaces"},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_nw_browse_result_get_changes"},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_nw_browse_result_get_interfaces_count"},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_nw_browser_cancel"},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_nw_browser_copy_browse_descriptor"},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_nw_browser_copy_parameters"},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_nw_browser_create"},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_nw_browser_set_browse_results_changed_handler"},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_nw_browser_set_queue"},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_nw_browser_set_state_changed_handler"},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_nw_browser_start"},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_nw_connection_access_establishment_report"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_connection_batch"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_connection_cancel"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_connection_cancel_current_endpoint"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_connection_copy_current_path"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_connection_copy_description"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_connection_copy_endpoint"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_connection_copy_parameters"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_connection_copy_protocol_metadata"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_connection_create"},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_nw_connection_create_new_data_transfer_report"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_connection_force_cancel"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_connection_get_maximum_datagram_size"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_nw_connection_group_cancel"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_nw_connection_group_copy_descriptor"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_nw_connection_group_copy_local_endpoint_for_message"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_nw_connection_group_copy_parameters"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_nw_connection_group_copy_path_for_message"},
+    {"access": "public", "introduced": "15", "kind": "function", "linkage": "exported", "name": "_nw_connection_group_copy_protocol_metadata"},
+    {"access": "public", "introduced": "15", "kind": "function", "linkage": "exported", "name": "_nw_connection_group_copy_protocol_metadata_for_message"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_nw_connection_group_copy_remote_endpoint_for_message"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_nw_connection_group_create"},
+    {"access": "public", "introduced": "15", "kind": "function", "linkage": "exported", "name": "_nw_connection_group_extract_connection"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_nw_connection_group_extract_connection_for_message"},
+    {"access": "public", "introduced": "15", "kind": "function", "linkage": "exported", "name": "_nw_connection_group_reinsert_extracted_connection"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_nw_connection_group_reply"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_nw_connection_group_send_message"},
+    {"access": "public", "introduced": "15", "kind": "function", "linkage": "exported", "name": "_nw_connection_group_set_new_connection_handler"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_nw_connection_group_set_queue"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_nw_connection_group_set_receive_handler"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_nw_connection_group_set_state_changed_handler"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_nw_connection_group_start"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_connection_receive"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_connection_receive_message"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_connection_restart"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_connection_send"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_connection_set_better_path_available_handler"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_connection_set_path_changed_handler"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_connection_set_queue"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_connection_set_state_changed_handler"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_connection_set_viability_changed_handler"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_connection_start"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_content_context_copy_antecedent"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_content_context_copy_protocol_metadata"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_content_context_create"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_content_context_foreach_protocol_metadata"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_content_context_get_expiration_milliseconds"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_content_context_get_identifier"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_content_context_get_is_final"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_content_context_get_relative_priority"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_content_context_set_antecedent"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_content_context_set_expiration_milliseconds"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_content_context_set_is_final"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_content_context_set_metadata_for_protocol"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_content_context_set_relative_priority"},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_nw_data_transfer_report_collect"},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_nw_data_transfer_report_copy_path_interface"},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_nw_data_transfer_report_get_duration_milliseconds"},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_nw_data_transfer_report_get_path_count"},
+    {"access": "public", "introduced": "15", "kind": "function", "linkage": "exported", "name": "_nw_data_transfer_report_get_path_radio_type"},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_nw_data_transfer_report_get_received_application_byte_count"},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_nw_data_transfer_report_get_received_ip_packet_count"},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_nw_data_transfer_report_get_received_transport_byte_count"},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_nw_data_transfer_report_get_received_transport_duplicate_byte_count"},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_nw_data_transfer_report_get_received_transport_out_of_order_byte_count"},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_nw_data_transfer_report_get_sent_application_byte_count"},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_nw_data_transfer_report_get_sent_ip_packet_count"},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_nw_data_transfer_report_get_sent_transport_byte_count"},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_nw_data_transfer_report_get_sent_transport_retransmitted_byte_count"},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_nw_data_transfer_report_get_state"},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_nw_data_transfer_report_get_transport_minimum_rtt_milliseconds"},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_nw_data_transfer_report_get_transport_rtt_variance"},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_nw_data_transfer_report_get_transport_smoothed_rtt_milliseconds"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_endpoint_copy_address_string"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_endpoint_copy_port_string"},
+    {"access": "public", "introduced": "16", "kind": "function", "linkage": "exported", "name": "_nw_endpoint_copy_txt_record"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_endpoint_create_address"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_endpoint_create_bonjour_service"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_endpoint_create_host"},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_nw_endpoint_create_url"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_endpoint_get_address"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_endpoint_get_bonjour_service_domain"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_endpoint_get_bonjour_service_name"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_endpoint_get_bonjour_service_type"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_endpoint_get_hostname"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_endpoint_get_port"},
+    {"access": "public", "introduced": "16", "kind": "function", "linkage": "exported", "name": "_nw_endpoint_get_signature"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_endpoint_get_type"},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_nw_endpoint_get_url"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_error_copy_cf_error"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_error_get_error_code"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_error_get_error_domain"},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_nw_establishment_report_copy_proxy_endpoint"},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_nw_establishment_report_enumerate_protocols"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_nw_establishment_report_enumerate_resolution_reports"},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_nw_establishment_report_enumerate_resolutions"},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_nw_establishment_report_get_attempt_started_after_milliseconds"},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_nw_establishment_report_get_duration_milliseconds"},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_nw_establishment_report_get_previous_attempt_count"},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_nw_establishment_report_get_proxy_configured"},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_nw_establishment_report_get_used_proxy"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_nw_ethernet_channel_cancel", "unavailable": true},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_nw_ethernet_channel_create", "unavailable": true},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_nw_ethernet_channel_create_with_parameters", "unavailable": true},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_nw_ethernet_channel_get_maximum_payload_size", "unavailable": true},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_nw_ethernet_channel_send", "unavailable": true},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_nw_ethernet_channel_set_queue", "unavailable": true},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_nw_ethernet_channel_set_receive_handler", "unavailable": true},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_nw_ethernet_channel_set_state_changed_handler", "unavailable": true},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_nw_ethernet_channel_start", "unavailable": true},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_nw_framer_async"},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_nw_framer_copy_local_endpoint"},
+    {"access": "public", "introduced": "15.4", "kind": "function", "linkage": "exported", "name": "_nw_framer_copy_options"},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_nw_framer_copy_parameters"},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_nw_framer_copy_remote_endpoint"},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_nw_framer_create_definition"},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_nw_framer_create_options"},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_nw_framer_deliver_input"},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_nw_framer_deliver_input_no_copy"},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_nw_framer_mark_failed_with_error"},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_nw_framer_mark_ready"},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_nw_framer_message_access_value"},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_nw_framer_message_copy_object_value"},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_nw_framer_message_create"},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_nw_framer_message_set_object_value"},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_nw_framer_message_set_value"},
+    {"access": "public", "introduced": "15.4", "kind": "function", "linkage": "exported", "name": "_nw_framer_options_copy_object_value"},
+    {"access": "public", "introduced": "15.4", "kind": "function", "linkage": "exported", "name": "_nw_framer_options_set_object_value"},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_nw_framer_parse_input"},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_nw_framer_parse_output"},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_nw_framer_pass_through_input"},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_nw_framer_pass_through_output"},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_nw_framer_prepend_application_protocol"},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_nw_framer_protocol_create_message"},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_nw_framer_schedule_wakeup"},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_nw_framer_set_cleanup_handler"},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_nw_framer_set_input_handler"},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_nw_framer_set_output_handler"},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_nw_framer_set_stop_handler"},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_nw_framer_set_wakeup_handler"},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_nw_framer_write_output"},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_nw_framer_write_output_data"},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_nw_framer_write_output_no_copy"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_nw_group_descriptor_add_endpoint"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_nw_group_descriptor_create_multicast"},
+    {"access": "public", "introduced": "15", "kind": "function", "linkage": "exported", "name": "_nw_group_descriptor_create_multiplex"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_nw_group_descriptor_enumerate_endpoints"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_interface_get_index"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_interface_get_name"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_interface_get_type"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_ip_create_metadata"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_ip_metadata_get_ecn_flag"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_ip_metadata_get_receive_time"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_ip_metadata_get_service_class"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_ip_metadata_set_ecn_flag"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_ip_metadata_set_service_class"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_ip_options_set_calculate_receive_time"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_ip_options_set_disable_fragmentation"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_nw_ip_options_set_disable_multicast_loopback"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_ip_options_set_hop_limit"},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_nw_ip_options_set_local_address_preference"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_ip_options_set_use_minimum_mtu"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_ip_options_set_version"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_listener_cancel"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_listener_create"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_listener_create_with_connection"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_nw_listener_create_with_launchd_key", "unavailable": true},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_listener_create_with_port"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_listener_get_new_connection_limit"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_listener_get_port"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_listener_set_advertise_descriptor"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_listener_set_advertised_endpoint_changed_handler"},
+    {"access": "public", "introduced": "15", "kind": "function", "linkage": "exported", "name": "_nw_listener_set_new_connection_group_handler"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_listener_set_new_connection_handler"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_listener_set_new_connection_limit"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_listener_set_queue"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_listener_set_state_changed_handler"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_listener_start"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_nw_multicast_group_descriptor_get_disable_unicast_traffic"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_nw_multicast_group_descriptor_set_disable_unicast_traffic"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_nw_multicast_group_descriptor_set_specific_source"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_parameters_clear_prohibited_interface_types"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_parameters_clear_prohibited_interfaces"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_parameters_copy"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_parameters_copy_default_protocol_stack"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_parameters_copy_local_endpoint"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_parameters_copy_required_interface"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_parameters_create"},
+    {"access": "public", "introduced": "16", "kind": "function", "linkage": "exported", "name": "_nw_parameters_create_application_service"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_nw_parameters_create_custom_ip", "unavailable": true},
+    {"access": "public", "introduced": "15", "kind": "function", "linkage": "exported", "name": "_nw_parameters_create_quic"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_parameters_create_secure_tcp"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_parameters_create_secure_udp"},
+    {"access": "public", "introduced": "26", "kind": "function", "linkage": "exported", "name": "_nw_parameters_get_allow_ultra_constrained"},
+    {"access": "public", "introduced": "15", "kind": "function", "linkage": "exported", "name": "_nw_parameters_get_attribution"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_parameters_get_expired_dns_behavior"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_parameters_get_fast_open_enabled"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_parameters_get_include_peer_to_peer"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_parameters_get_local_only"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_parameters_get_multipath_service"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_parameters_get_prefer_no_proxy"},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_nw_parameters_get_prohibit_constrained"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_parameters_get_prohibit_expensive"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_parameters_get_required_interface_type"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_parameters_get_reuse_local_address"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_parameters_get_service_class"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_parameters_iterate_prohibited_interface_types"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_parameters_iterate_prohibited_interfaces"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_parameters_prohibit_interface"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_parameters_prohibit_interface_type"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_parameters_require_interface"},
+    {"access": "public", "introduced": "16", "kind": "function", "linkage": "exported", "name": "_nw_parameters_requires_dnssec_validation"},
+    {"access": "public", "introduced": "26", "kind": "function", "linkage": "exported", "name": "_nw_parameters_set_allow_ultra_constrained"},
+    {"access": "public", "introduced": "15", "kind": "function", "linkage": "exported", "name": "_nw_parameters_set_attribution"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_parameters_set_expired_dns_behavior"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_parameters_set_fast_open_enabled"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_parameters_set_include_peer_to_peer"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_parameters_set_local_endpoint"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_parameters_set_local_only"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_parameters_set_multipath_service"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_parameters_set_prefer_no_proxy"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_nw_parameters_set_privacy_context"},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_nw_parameters_set_prohibit_constrained"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_parameters_set_prohibit_expensive"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_parameters_set_required_interface_type"},
+    {"access": "public", "introduced": "16", "kind": "function", "linkage": "exported", "name": "_nw_parameters_set_requires_dnssec_validation"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_parameters_set_reuse_local_address"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_parameters_set_service_class"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_path_copy_effective_local_endpoint"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_path_copy_effective_remote_endpoint"},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_nw_path_enumerate_gateways"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_path_enumerate_interfaces"},
+    {"access": "public", "introduced": "26", "kind": "function", "linkage": "exported", "name": "_nw_path_get_link_quality"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_path_get_status"},
+    {"access": "public", "introduced": "14.2", "kind": "function", "linkage": "exported", "name": "_nw_path_get_unsatisfied_reason"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_path_has_dns"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_path_has_ipv4"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_path_has_ipv6"},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_nw_path_is_constrained"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_path_is_equal"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_path_is_expensive"},
+    {"access": "public", "introduced": "26", "kind": "function", "linkage": "exported", "name": "_nw_path_is_ultra_constrained"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_path_monitor_cancel"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_path_monitor_create"},
+    {"access": "public", "kind": "function", "linkage": "exported", "name": "_nw_path_monitor_create_for_ethernet_channel", "unavailable": true},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_path_monitor_create_with_type"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_nw_path_monitor_prohibit_interface_type"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_path_monitor_set_cancel_handler"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_path_monitor_set_queue"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_path_monitor_set_update_handler"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_path_monitor_start"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_path_uses_interface_type"},
+    {"access": "public", "introduced": "17", "kind": "function", "linkage": "exported", "name": "_nw_privacy_context_add_proxy"},
+    {"access": "public", "introduced": "17", "kind": "function", "linkage": "exported", "name": "_nw_privacy_context_clear_proxies"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_nw_privacy_context_create"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_nw_privacy_context_disable_logging"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_nw_privacy_context_flush_cache"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_nw_privacy_context_require_encrypted_name_resolution"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_protocol_copy_ip_definition"},
+    {"access": "public", "introduced": "15", "kind": "function", "linkage": "exported", "name": "_nw_protocol_copy_quic_definition"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_protocol_copy_tcp_definition"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_protocol_copy_tls_definition"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_protocol_copy_udp_definition"},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_nw_protocol_copy_ws_definition"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_protocol_definition_is_equal"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_protocol_metadata_copy_definition"},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_nw_protocol_metadata_is_framer_message"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_protocol_metadata_is_ip"},
+    {"access": "public", "introduced": "15", "kind": "function", "linkage": "exported", "name": "_nw_protocol_metadata_is_quic"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_protocol_metadata_is_tcp"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_protocol_metadata_is_tls"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_protocol_metadata_is_udp"},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_nw_protocol_metadata_is_ws"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_protocol_options_copy_definition"},
+    {"access": "public", "introduced": "15", "kind": "function", "linkage": "exported", "name": "_nw_protocol_options_is_quic"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_protocol_stack_clear_application_protocols"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_protocol_stack_copy_internet_protocol"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_protocol_stack_copy_transport_protocol"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_protocol_stack_iterate_application_protocols"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_protocol_stack_prepend_application_protocol"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_protocol_stack_set_transport_protocol"},
+    {"access": "public", "introduced": "17", "kind": "function", "linkage": "exported", "name": "_nw_proxy_config_add_excluded_domain"},
+    {"access": "public", "introduced": "17", "kind": "function", "linkage": "exported", "name": "_nw_proxy_config_add_match_domain"},
+    {"access": "public", "introduced": "17", "kind": "function", "linkage": "exported", "name": "_nw_proxy_config_clear_excluded_domains"},
+    {"access": "public", "introduced": "17", "kind": "function", "linkage": "exported", "name": "_nw_proxy_config_clear_match_domains"},
+    {"access": "public", "introduced": "17", "kind": "function", "linkage": "exported", "name": "_nw_proxy_config_create_http_connect"},
+    {"access": "public", "introduced": "17", "kind": "function", "linkage": "exported", "name": "_nw_proxy_config_create_oblivious_http"},
+    {"access": "public", "introduced": "17", "kind": "function", "linkage": "exported", "name": "_nw_proxy_config_create_relay"},
+    {"access": "public", "introduced": "17", "kind": "function", "linkage": "exported", "name": "_nw_proxy_config_create_socksv5"},
+    {"access": "public", "introduced": "17", "kind": "function", "linkage": "exported", "name": "_nw_proxy_config_enumerate_excluded_domains"},
+    {"access": "public", "introduced": "17", "kind": "function", "linkage": "exported", "name": "_nw_proxy_config_enumerate_match_domains"},
+    {"access": "public", "introduced": "17", "kind": "function", "linkage": "exported", "name": "_nw_proxy_config_get_failover_allowed"},
+    {"access": "public", "introduced": "17", "kind": "function", "linkage": "exported", "name": "_nw_proxy_config_set_failover_allowed"},
+    {"access": "public", "introduced": "17", "kind": "function", "linkage": "exported", "name": "_nw_proxy_config_set_username_and_password"},
+    {"access": "public", "introduced": "15", "kind": "function", "linkage": "exported", "name": "_nw_quic_add_tls_application_protocol"},
+    {"access": "public", "introduced": "15", "kind": "function", "linkage": "exported", "name": "_nw_quic_copy_sec_protocol_metadata"},
+    {"access": "public", "introduced": "15", "kind": "function", "linkage": "exported", "name": "_nw_quic_copy_sec_protocol_options"},
+    {"access": "public", "introduced": "15", "kind": "function", "linkage": "exported", "name": "_nw_quic_create_options"},
+    {"access": "public", "introduced": "15", "kind": "function", "linkage": "exported", "name": "_nw_quic_get_application_error"},
+    {"access": "public", "introduced": "15", "kind": "function", "linkage": "exported", "name": "_nw_quic_get_application_error_reason"},
+    {"access": "public", "introduced": "15", "kind": "function", "linkage": "exported", "name": "_nw_quic_get_idle_timeout"},
+    {"access": "public", "introduced": "15", "kind": "function", "linkage": "exported", "name": "_nw_quic_get_initial_max_data"},
+    {"access": "public", "introduced": "15", "kind": "function", "linkage": "exported", "name": "_nw_quic_get_initial_max_stream_data_bidirectional_local"},
+    {"access": "public", "introduced": "15", "kind": "function", "linkage": "exported", "name": "_nw_quic_get_initial_max_stream_data_bidirectional_remote"},
+    {"access": "public", "introduced": "15", "kind": "function", "linkage": "exported", "name": "_nw_quic_get_initial_max_stream_data_unidirectional"},
+    {"access": "public", "introduced": "15", "kind": "function", "linkage": "exported", "name": "_nw_quic_get_initial_max_streams_bidirectional"},
+    {"access": "public", "introduced": "15", "kind": "function", "linkage": "exported", "name": "_nw_quic_get_initial_max_streams_unidirectional"},
+    {"access": "public", "introduced": "15", "kind": "function", "linkage": "exported", "name": "_nw_quic_get_keepalive_interval"},
+    {"access": "public", "introduced": "15", "kind": "function", "linkage": "exported", "name": "_nw_quic_get_local_max_streams_bidirectional"},
+    {"access": "public", "introduced": "15", "kind": "function", "linkage": "exported", "name": "_nw_quic_get_local_max_streams_unidirectional"},
+    {"access": "public", "introduced": "16", "kind": "function", "linkage": "exported", "name": "_nw_quic_get_max_datagram_frame_size"},
+    {"access": "public", "introduced": "15", "kind": "function", "linkage": "exported", "name": "_nw_quic_get_max_udp_payload_size"},
+    {"access": "public", "introduced": "15", "kind": "function", "linkage": "exported", "name": "_nw_quic_get_remote_idle_timeout"},
+    {"access": "public", "introduced": "15", "kind": "function", "linkage": "exported", "name": "_nw_quic_get_remote_max_streams_bidirectional"},
+    {"access": "public", "introduced": "15", "kind": "function", "linkage": "exported", "name": "_nw_quic_get_remote_max_streams_unidirectional"},
+    {"access": "public", "introduced": "15", "kind": "function", "linkage": "exported", "name": "_nw_quic_get_stream_application_error"},
+    {"access": "public", "introduced": "15", "kind": "function", "linkage": "exported", "name": "_nw_quic_get_stream_id"},
+    {"access": "public", "introduced": "16", "kind": "function", "linkage": "exported", "name": "_nw_quic_get_stream_is_datagram"},
+    {"access": "public", "introduced": "15", "kind": "function", "linkage": "exported", "name": "_nw_quic_get_stream_is_unidirectional"},
+    {"access": "public", "introduced": "15", "kind": "function", "linkage": "exported", "name": "_nw_quic_get_stream_type"},
+    {"access": "public", "introduced": "16", "kind": "function", "linkage": "exported", "name": "_nw_quic_get_stream_usable_datagram_frame_size"},
+    {"access": "public", "introduced": "15", "kind": "function", "linkage": "exported", "name": "_nw_quic_set_application_error"},
+    {"access": "public", "introduced": "15", "kind": "function", "linkage": "exported", "name": "_nw_quic_set_idle_timeout"},
+    {"access": "public", "introduced": "15", "kind": "function", "linkage": "exported", "name": "_nw_quic_set_initial_max_data"},
+    {"access": "public", "introduced": "15", "kind": "function", "linkage": "exported", "name": "_nw_quic_set_initial_max_stream_data_bidirectional_local"},
+    {"access": "public", "introduced": "15", "kind": "function", "linkage": "exported", "name": "_nw_quic_set_initial_max_stream_data_bidirectional_remote"},
+    {"access": "public", "introduced": "15", "kind": "function", "linkage": "exported", "name": "_nw_quic_set_initial_max_stream_data_unidirectional"},
+    {"access": "public", "introduced": "15", "kind": "function", "linkage": "exported", "name": "_nw_quic_set_initial_max_streams_bidirectional"},
+    {"access": "public", "introduced": "15", "kind": "function", "linkage": "exported", "name": "_nw_quic_set_initial_max_streams_unidirectional"},
+    {"access": "public", "introduced": "15", "kind": "function", "linkage": "exported", "name": "_nw_quic_set_keepalive_interval"},
+    {"access": "public", "introduced": "15", "kind": "function", "linkage": "exported", "name": "_nw_quic_set_local_max_streams_bidirectional"},
+    {"access": "public", "introduced": "15", "kind": "function", "linkage": "exported", "name": "_nw_quic_set_local_max_streams_unidirectional"},
+    {"access": "public", "introduced": "16", "kind": "function", "linkage": "exported", "name": "_nw_quic_set_max_datagram_frame_size"},
+    {"access": "public", "introduced": "15", "kind": "function", "linkage": "exported", "name": "_nw_quic_set_max_udp_payload_size"},
+    {"access": "public", "introduced": "15", "kind": "function", "linkage": "exported", "name": "_nw_quic_set_stream_application_error"},
+    {"access": "public", "introduced": "16", "kind": "function", "linkage": "exported", "name": "_nw_quic_set_stream_is_datagram"},
+    {"access": "public", "introduced": "15", "kind": "function", "linkage": "exported", "name": "_nw_quic_set_stream_is_unidirectional"},
+    {"access": "public", "introduced": "17", "kind": "function", "linkage": "exported", "name": "_nw_relay_hop_add_additional_http_header_field"},
+    {"access": "public", "introduced": "17", "kind": "function", "linkage": "exported", "name": "_nw_relay_hop_create"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_release"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_nw_resolution_report_copy_preferred_endpoint"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_nw_resolution_report_copy_successful_endpoint"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_nw_resolution_report_get_endpoint_count"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_nw_resolution_report_get_milliseconds"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_nw_resolution_report_get_protocol"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_nw_resolution_report_get_source"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_nw_resolver_config_add_server_address"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_nw_resolver_config_create_https"},
+    {"access": "public", "introduced": "14", "kind": "function", "linkage": "exported", "name": "_nw_resolver_config_create_tls"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_retain"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_tcp_create_options"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_tcp_get_available_receive_buffer"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_tcp_get_available_send_buffer"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_tcp_options_set_connection_timeout"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_tcp_options_set_disable_ack_stretching"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_tcp_options_set_disable_ecn"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_tcp_options_set_enable_fast_open"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_tcp_options_set_enable_keepalive"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_tcp_options_set_keepalive_count"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_tcp_options_set_keepalive_idle_time"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_tcp_options_set_keepalive_interval"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_tcp_options_set_maximum_segment_size"},
+    {"access": "public", "introduced": "15", "kind": "function", "linkage": "exported", "name": "_nw_tcp_options_set_multipath_force_version"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_tcp_options_set_no_delay"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_tcp_options_set_no_options"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_tcp_options_set_no_push"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_tcp_options_set_persist_timeout"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_tcp_options_set_retransmit_connection_drop_time"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_tcp_options_set_retransmit_fin_drop"},
+    {"access": "public", "introduced": "27", "kind": "function", "linkage": "exported", "name": "_nw_tcp_set_max_pacing_rate"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_tls_copy_sec_protocol_metadata"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_tls_copy_sec_protocol_options"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_tls_create_options"},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_nw_txt_record_access_bytes"},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_nw_txt_record_access_key"},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_nw_txt_record_apply"},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_nw_txt_record_copy"},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_nw_txt_record_create_dictionary"},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_nw_txt_record_create_with_bytes"},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_nw_txt_record_find_key"},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_nw_txt_record_get_key_count"},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_nw_txt_record_is_dictionary"},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_nw_txt_record_is_equal"},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_nw_txt_record_remove_key"},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_nw_txt_record_set_key"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_udp_create_metadata"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_udp_create_options"},
+    {"access": "public", "introduced": "12", "kind": "function", "linkage": "exported", "name": "_nw_udp_options_set_prefer_no_checksum"},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_nw_ws_create_metadata"},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_nw_ws_create_options"},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_nw_ws_metadata_copy_server_response"},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_nw_ws_metadata_get_close_code"},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_nw_ws_metadata_get_opcode"},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_nw_ws_metadata_set_close_code"},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_nw_ws_metadata_set_pong_handler"},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_nw_ws_options_add_additional_header"},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_nw_ws_options_add_subprotocol"},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_nw_ws_options_set_auto_reply_ping"},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_nw_ws_options_set_client_request_handler"},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_nw_ws_options_set_maximum_message_size"},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_nw_ws_options_set_skip_handshake"},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_nw_ws_request_enumerate_additional_headers"},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_nw_ws_request_enumerate_subprotocols"},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_nw_ws_response_add_additional_header"},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_nw_ws_response_create"},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_nw_ws_response_enumerate_additional_headers"},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_nw_ws_response_get_selected_subprotocol"},
+    {"access": "public", "introduced": "13", "kind": "function", "linkage": "exported", "name": "_nw_ws_response_get_status"}
+   ],
+   "protocols": [
+    {
+     "access": "public",
+     "name": "OS_nw_advertise_descriptor",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "name": "OS_nw_browse_descriptor",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "name": "OS_nw_browse_result",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "name": "OS_nw_browser",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "name": "OS_nw_connection",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "name": "OS_nw_connection_group",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "name": "OS_nw_content_context",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "name": "OS_nw_data_transfer_report",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "name": "OS_nw_endpoint",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "name": "OS_nw_error",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "name": "OS_nw_establishment_report",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "name": "OS_nw_ethernet_channel",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "name": "OS_nw_framer",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "name": "OS_nw_group_descriptor",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "name": "OS_nw_interface",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "name": "OS_nw_listener",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "name": "OS_nw_object",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "name": "OS_nw_parameters",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "name": "OS_nw_path",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "name": "OS_nw_path_monitor",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "name": "OS_nw_privacy_context",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "name": "OS_nw_protocol_definition",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "name": "OS_nw_protocol_metadata",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "name": "OS_nw_protocol_options",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "name": "OS_nw_protocol_stack",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "name": "OS_nw_proxy_config",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "name": "OS_nw_relay_hop",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "name": "OS_nw_resolution_report",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "name": "OS_nw_resolver_config",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "name": "OS_nw_txt_record",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "name": "OS_nw_ws_request",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "name": "OS_nw_ws_response",
+     "protocols": [
+      "NSObject"
+     ]
+    }
+   ],
+   "target": "arm64e.x1-apple-ios27",
    "typedefs": [
     {"access": "public", "name": "nw_advertise_descriptor_t"},
     {"access": "public", "name": "nw_browse_descriptor_t"},
@@ -1193,6 +2341,9 @@
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$s7Network0A10ConnectionCA2A05OneToC8ProtocolRzrlE2to5usingACyxGAA11Connectable_p_AA19NWParametersBuilderVyxyQPGtcfc"},
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$s7Network0A10ConnectionCA2A05OneToC8ProtocolRzrlE2to5usingACyxGAA11Connectable_p_xyXEtcfC"},
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$s7Network0A10ConnectionCA2A05OneToC8ProtocolRzrlE2to5usingACyxGAA11Connectable_p_xyXEtcfc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s7Network0A10ConnectionCA2A17MultiplexProtocolRzrlE12onPathUpdateyACyxGXDyAF_AA6NWPathVtYbYAcF"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s7Network0A10ConnectionCA2A17MultiplexProtocolRzrlE17onViabilityUpdateyACyxGXDyAF_SbtYbYAcF"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s7Network0A10ConnectionCA2A17MultiplexProtocolRzrlE18onBetterPathUpdateyACyxGXDyAF_SbtYbYAcF"},
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$s7Network0A10ConnectionCA2A17MultiplexProtocolRzrlE2to5usingACyxGAA10NWEndpointO_AA19NWParametersBuilderVyxyQPGtcfC"},
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$s7Network0A10ConnectionCA2A17MultiplexProtocolRzrlE2to5usingACyxGAA10NWEndpointO_AA19NWParametersBuilderVyxyQPGtcfc"},
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$s7Network0A10ConnectionCA2A17MultiplexProtocolRzrlE2to5usingACyxGAA10NWEndpointO_xyXEtcfC"},
@@ -1346,6 +2497,9 @@
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$s7Network0A7ChannelC8metadata10definitionAA18NWProtocolMetadataCSgAA0E10DefinitionC_tFTq"},
     {"access": "public", "introduced": "26.1", "linkage": "exported", "name": "_$s7Network0A7ChannelC9hashValueSivg"},
     {"access": "public", "introduced": "26.1", "linkage": "exported", "name": "_$s7Network0A7ChannelC9hashValueSivpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s7Network0A7ChannelCA2A10QUICStreamVRszrlE12onPathUpdateyACyAEGXDyAGXD_AA6NWPathVtYbYAcF"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s7Network0A7ChannelCA2A10QUICStreamVRszrlE17onViabilityUpdateyACyAEGXDyAGXD_SbtYbYAcF"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s7Network0A7ChannelCA2A10QUICStreamVRszrlE18onBetterPathUpdateyACyAEGXDyAGXD_SbtYbYAcF"},
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$s7Network0A7ChannelCA2A14StreamProtocolRzrlE14sendIdempotent_05endOfC08metadatayqd___SbSayAA18NWProtocolMetadataCGyXEt10Foundation04DataD0Rd__lF"},
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$s7Network0A7ChannelCA2A14StreamProtocolRzrlE14sendIdempotent_05endOfC08metadatayqd___SbSayAA18NWProtocolMetadataCGyXEtAA0A17FixedWidthIntegerRd__lF"},
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$s7Network0A7ChannelCA2A14StreamProtocolRzrlE4send_05endOfC08metadatayqd___SbSayAA18NWProtocolMetadataCGyXEtYaK10Foundation04DataD0Rd__lF"},
@@ -2719,6 +3873,8 @@
     {"access": "public", "introduced": "12", "linkage": "exported", "name": "_$s7Network13NWProtocolTCPC8MetadataC22availableReceiveBuffers6UInt32VvgTj"},
     {"access": "public", "introduced": "12", "linkage": "exported", "name": "_$s7Network13NWProtocolTCPC8MetadataC22availableReceiveBuffers6UInt32VvgTq"},
     {"access": "public", "introduced": "12", "linkage": "exported", "name": "_$s7Network13NWProtocolTCPC8MetadataC22availableReceiveBuffers6UInt32VvpMV"},
+    {"access": "public", "linkage": "exported", "name": "_$s7Network13NWProtocolTCPC8MetadataC34setMaximumPacingRateBytesPerSecondyys6UInt64VSgFTj"},
+    {"access": "public", "linkage": "exported", "name": "_$s7Network13NWProtocolTCPC8MetadataC34setMaximumPacingRateBytesPerSecondyys6UInt64VSgFTq"},
     {"access": "public", "introduced": "12", "linkage": "exported", "name": "_$s7Network13NWProtocolTCPC8MetadataCMa"},
     {"access": "public", "introduced": "12", "linkage": "exported", "name": "_$s7Network13NWProtocolTCPC8MetadataCMm"},
     {"access": "public", "introduced": "12", "linkage": "exported", "name": "_$s7Network13NWProtocolTCPC8MetadataCMn"},
@@ -3157,6 +4313,7 @@
     {"access": "public", "introduced": "13", "linkage": "exported", "name": "_$s7Network16NWProtocolFramerC8InstanceC17writeOutputNoCopy6lengthySi_tKF"},
     {"access": "public", "introduced": "13", "linkage": "exported", "name": "_$s7Network16NWProtocolFramerC8InstanceC18deliverInputNoCopy6length7message10isCompleteSbSi_AC7MessageCSbtF"},
     {"access": "public", "introduced": "13", "linkage": "exported", "name": "_$s7Network16NWProtocolFramerC8InstanceC26prependApplicationProtocol7optionsyAA0B7OptionsC_tKF"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s7Network16NWProtocolFramerC8InstanceC39prependApplicationProtocolIgnoringReady7optionsyAA0B7OptionsC_tKF"},
     {"access": "public", "introduced": "13", "linkage": "exported", "name": "_$s7Network16NWProtocolFramerC8InstanceC5async7executeyyyc_tF"},
     {"access": "public", "introduced": "13", "linkage": "exported", "name": "_$s7Network16NWProtocolFramerC8InstanceC5localAA10NWEndpointOSgvg"},
     {"access": "public", "introduced": "13", "linkage": "exported", "name": "_$s7Network16NWProtocolFramerC8InstanceC5localAA10NWEndpointOSgvpMV"},
@@ -3817,6 +4974,48 @@
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$s7Network3UDPVMn"},
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$s7Network3UDPVN"},
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$s7Network3UDPVyAcA2IPVyXEcfC"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s7Network4DTLSV12cipherSuitesyACSaySo17tls_ciphersuite_tVGF"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s7Network4DTLSV13localIdentityyACSo15OS_sec_identity_pF"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s7Network4DTLSV14ticketsEnabledyACSbF"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s7Network4DTLSV16earlyDataEnabledyACSbF"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s7Network4DTLSV17cipherSuiteGroupsyACSaySo23tls_ciphersuite_group_tVGF"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s7Network4DTLSV18PeerAuthenticationO2eeoiySbAE_AEtFZ"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s7Network4DTLSV18PeerAuthenticationO4hash4intoys6HasherVz_tF"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s7Network4DTLSV18PeerAuthenticationO4noneyA2EmFWC"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s7Network4DTLSV18PeerAuthenticationO8optionalyA2EmFWC"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s7Network4DTLSV18PeerAuthenticationO8requiredyA2EmFWC"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s7Network4DTLSV18PeerAuthenticationO9hashValueSivg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s7Network4DTLSV18PeerAuthenticationO9hashValueSivpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s7Network4DTLSV18PeerAuthenticationOMa"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s7Network4DTLSV18PeerAuthenticationOMn"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s7Network4DTLSV18PeerAuthenticationON"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s7Network4DTLSV18PeerAuthenticationOSHAAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s7Network4DTLSV18PeerAuthenticationOSQAAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s7Network4DTLSV18peerAuthenticationyA2C04PeerD0OF"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s7Network4DTLSV20applicationProtocolsyACSaySSGF"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s7Network4DTLSV20certificateValidatoryACSbSo24OS_sec_protocol_metadata_p_So0e1_F6_trust_ptYaYbYAcF"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s7Network4DTLSV7version3min3maxACSo013tls_protocol_C2_tVSg_AItF"},
+    {"access": "public", "linkage": "exported", "name": "_$s7Network4DTLSV7versionACyF", "unavailable": true},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s7Network4DTLSV8MetadataV5otherSayAA010NWProtocolC0CGvg"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s7Network4DTLSV8MetadataV5otherSayAA010NWProtocolC0CGvpMV"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s7Network4DTLSV8MetadataVAA0aC8ProtocolAAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s7Network4DTLSV8MetadataVAA0aC8ProtocolAAWP"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s7Network4DTLSV8MetadataVMa"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s7Network4DTLSV8MetadataVMn"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s7Network4DTLSV8MetadataVN"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s7Network4DTLSVAA05OneToC8ProtocolAAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s7Network4DTLSVAA05OneToC8ProtocolAAWP"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s7Network4DTLSVAA0A15ProtocolOptionsAAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s7Network4DTLSVAA0A15ProtocolOptionsAAWP"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s7Network4DTLSVAA15MessageProtocolAAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s7Network4DTLSVAA15MessageProtocolAAWP"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s7Network4DTLSVAA16DatagramProtocolAAMc"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s7Network4DTLSVAA16DatagramProtocolAAWP"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s7Network4DTLSVACycfC"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s7Network4DTLSVMa"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s7Network4DTLSVMn"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s7Network4DTLSVN"},
+    {"access": "public", "introduced": "27", "linkage": "exported", "name": "_$s7Network4DTLSVyAcA3UDPVyXEcfC"},
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$s7Network4QUICV11idleTimeoutyACSiF"},
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$s7Network4QUICV14initialMaxDatayACSiF"},
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$s7Network4QUICV15ProtocolStorageVAA010ConnectionD0AAMc"},
@@ -4235,9 +5434,10 @@
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$ss6UInt32V7Network0B17FixedWidthIntegerACMc"},
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$ss6UInt32V7Network0B17FixedWidthIntegerACWP"},
     {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$ss6UInt64V7Network0B17FixedWidthIntegerACMc"},
-    {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$ss6UInt64V7Network0B17FixedWidthIntegerACWP"}
+    {"access": "public", "introduced": "26", "linkage": "exported", "name": "_$ss6UInt64V7Network0B17FixedWidthIntegerACWP"},
+    {"access": "public", "linkage": "exported", "name": "__swift_FORCE_LOAD_$_swiftNetwork"}
    ],
-   "target": "arm64e-apple-ios26.5"
+   "target": "arm64e-apple-ios27.0"
   }
  ],
  "version": "1.0"

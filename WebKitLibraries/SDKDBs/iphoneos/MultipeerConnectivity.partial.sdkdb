@@ -1,0 +1,522 @@
+
+{
+ "PublicSDKContentRoot": [
+  {
+   "categories": [
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "nearbyConnectionDataForPeer:withCompletionHandler:"},
+      {"access": "public", "name": "connectPeer:withNearbyConnectionData:"},
+      {"access": "public", "name": "cancelConnectPeer:"}
+     ],
+     "interface": "MCSession",
+     "name": "MCSessionCustomDiscovery"
+    }
+   ],
+   "enums": [
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MCEncryptionOptional"},
+      {"access": "public", "name": "MCEncryptionRequired"},
+      {"access": "public", "name": "MCEncryptionNone"}
+     ],
+     "introduced": "7",
+     "name": "MCEncryptionPreference"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MCErrorUnknown"},
+      {"access": "public", "name": "MCErrorNotConnected"},
+      {"access": "public", "name": "MCErrorInvalidParameter"},
+      {"access": "public", "name": "MCErrorUnsupported"},
+      {"access": "public", "name": "MCErrorTimedOut"},
+      {"access": "public", "name": "MCErrorCancelled"},
+      {"access": "public", "name": "MCErrorUnavailable"}
+     ],
+     "introduced": "7",
+     "name": "MCErrorCode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MCSessionSendDataReliable"},
+      {"access": "public", "name": "MCSessionSendDataUnreliable"}
+     ],
+     "introduced": "7",
+     "name": "MCSessionSendDataMode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MCSessionStateNotConnected"},
+      {"access": "public", "name": "MCSessionStateConnecting"},
+      {"access": "public", "name": "MCSessionStateConnected"}
+     ],
+     "introduced": "7",
+     "name": "MCSessionState"
+    }
+   ],
+   "globals": [
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_MCErrorDomain"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_kMCSessionMaximumNumberOfPeers"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_kMCSessionMinimumNumberOfPeers"}
+   ],
+   "interfaces": [
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithServiceType:discoveryInfo:session:"},
+      {"access": "public", "name": "start"},
+      {"access": "public", "name": "stop"}
+     ],
+     "introduced": "7",
+     "linkage": "exported",
+     "name": "MCAdvertiserAssistant",
+     "properties": [
+      {"access": "public", "getter": "delegate", "name": "delegate", "setter": "setDelegate:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "session", "name": "session"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "discoveryInfo", "name": "discoveryInfo"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "serviceType", "name": "serviceType"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithServiceType:session:"},
+      {"access": "public", "name": "initWithBrowser:session:"}
+     ],
+     "introduced": "7",
+     "linkage": "exported",
+     "name": "MCBrowserViewController",
+     "properties": [
+      {"access": "public", "getter": "delegate", "name": "delegate", "setter": "setDelegate:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "browser", "name": "browser"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "session", "name": "session"},
+      {"access": "public", "getter": "minimumNumberOfPeers", "name": "minimumNumberOfPeers", "setter": "setMinimumNumberOfPeers:"},
+      {"access": "public", "getter": "maximumNumberOfPeers", "name": "maximumNumberOfPeers", "setter": "setMaximumNumberOfPeers:"}
+     ],
+     "protocols": [
+      "MCNearbyServiceBrowserDelegate"
+     ],
+     "super": "UIViewController"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithPeer:discoveryInfo:serviceType:"},
+      {"access": "public", "name": "startAdvertisingPeer"},
+      {"access": "public", "name": "stopAdvertisingPeer"}
+     ],
+     "introduced": "7",
+     "linkage": "exported",
+     "name": "MCNearbyServiceAdvertiser",
+     "properties": [
+      {"access": "public", "getter": "delegate", "name": "delegate", "setter": "setDelegate:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "myPeerID", "name": "myPeerID"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "discoveryInfo", "name": "discoveryInfo"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "serviceType", "name": "serviceType"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithPeer:serviceType:"},
+      {"access": "public", "name": "startBrowsingForPeers"},
+      {"access": "public", "name": "stopBrowsingForPeers"},
+      {"access": "public", "name": "invitePeer:toSession:withContext:timeout:"}
+     ],
+     "introduced": "7",
+     "linkage": "exported",
+     "name": "MCNearbyServiceBrowser",
+     "properties": [
+      {"access": "public", "getter": "delegate", "name": "delegate", "setter": "setDelegate:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "myPeerID", "name": "myPeerID"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "serviceType", "name": "serviceType"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithDisplayName:"}
+     ],
+     "introduced": "7",
+     "linkage": "exported",
+     "name": "MCPeerID",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "displayName", "name": "displayName"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "categories": [
+      "MCSessionCustomDiscovery"
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithPeer:"},
+      {"access": "public", "name": "initWithPeer:securityIdentity:encryptionPreference:"},
+      {"access": "public", "name": "sendData:toPeers:withMode:error:"},
+      {"access": "public", "name": "disconnect"},
+      {"access": "public", "name": "sendResourceAtURL:withName:toPeer:withCompletionHandler:"},
+      {"access": "public", "name": "startStreamWithName:toPeer:error:"}
+     ],
+     "introduced": "7",
+     "linkage": "exported",
+     "name": "MCSession",
+     "properties": [
+      {"access": "public", "getter": "delegate", "name": "delegate", "setter": "setDelegate:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "myPeerID", "name": "myPeerID"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "securityIdentity", "name": "securityIdentity"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "encryptionPreference", "name": "encryptionPreference"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "connectedPeers", "name": "connectedPeers"}
+     ],
+     "super": "NSObject"
+    }
+   ],
+   "protocols": [
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "advertiserAssistantWillPresentInvitation:", "optional": true},
+      {"access": "public", "name": "advertiserAssistantDidDismissInvitation:", "optional": true}
+     ],
+     "introduced": "7",
+     "name": "MCAdvertiserAssistantDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "browserViewControllerDidFinish:"},
+      {"access": "public", "name": "browserViewControllerWasCancelled:"},
+      {"access": "public", "name": "browserViewController:shouldPresentNearbyPeer:withDiscoveryInfo:", "optional": true}
+     ],
+     "introduced": "7",
+     "name": "MCBrowserViewControllerDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "advertiser:didReceiveInvitationFromPeer:withContext:invitationHandler:"},
+      {"access": "public", "name": "advertiser:didNotStartAdvertisingPeer:", "optional": true}
+     ],
+     "introduced": "7",
+     "name": "MCNearbyServiceAdvertiserDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "browser:foundPeer:withDiscoveryInfo:"},
+      {"access": "public", "name": "browser:lostPeer:"},
+      {"access": "public", "name": "browser:didNotStartBrowsingForPeers:", "optional": true}
+     ],
+     "introduced": "7",
+     "name": "MCNearbyServiceBrowserDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "session:peer:didChangeState:"},
+      {"access": "public", "name": "session:didReceiveData:fromPeer:"},
+      {"access": "public", "name": "session:didReceiveStream:withName:fromPeer:"},
+      {"access": "public", "name": "session:didStartReceivingResourceWithName:fromPeer:withProgress:"},
+      {"access": "public", "name": "session:didFinishReceivingResourceWithName:fromPeer:atURL:withError:"},
+      {"access": "public", "name": "session:didReceiveCertificate:fromPeer:certificateHandler:", "optional": true}
+     ],
+     "introduced": "7",
+     "name": "MCSessionDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    }
+   ],
+   "target": "arm64e-apple-ios27",
+   "typedefs": [
+    {"access": "public", "name": "MCEncryptionPreference"},
+    {"access": "public", "name": "MCErrorCode"},
+    {"access": "public", "name": "MCSessionSendDataMode"},
+    {"access": "public", "name": "MCSessionState"}
+   ]
+  },
+  {
+   "categories": [
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "nearbyConnectionDataForPeer:withCompletionHandler:"},
+      {"access": "public", "name": "connectPeer:withNearbyConnectionData:"},
+      {"access": "public", "name": "cancelConnectPeer:"}
+     ],
+     "interface": "MCSession",
+     "name": "MCSessionCustomDiscovery"
+    }
+   ],
+   "enums": [
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MCEncryptionOptional"},
+      {"access": "public", "name": "MCEncryptionRequired"},
+      {"access": "public", "name": "MCEncryptionNone"}
+     ],
+     "introduced": "7",
+     "name": "MCEncryptionPreference"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MCErrorUnknown"},
+      {"access": "public", "name": "MCErrorNotConnected"},
+      {"access": "public", "name": "MCErrorInvalidParameter"},
+      {"access": "public", "name": "MCErrorUnsupported"},
+      {"access": "public", "name": "MCErrorTimedOut"},
+      {"access": "public", "name": "MCErrorCancelled"},
+      {"access": "public", "name": "MCErrorUnavailable"}
+     ],
+     "introduced": "7",
+     "name": "MCErrorCode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MCSessionSendDataReliable"},
+      {"access": "public", "name": "MCSessionSendDataUnreliable"}
+     ],
+     "introduced": "7",
+     "name": "MCSessionSendDataMode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MCSessionStateNotConnected"},
+      {"access": "public", "name": "MCSessionStateConnecting"},
+      {"access": "public", "name": "MCSessionStateConnected"}
+     ],
+     "introduced": "7",
+     "name": "MCSessionState"
+    }
+   ],
+   "globals": [
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_MCErrorDomain"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_kMCSessionMaximumNumberOfPeers"},
+    {"access": "public", "introduced": "7", "kind": "variable", "linkage": "exported", "name": "_kMCSessionMinimumNumberOfPeers"}
+   ],
+   "interfaces": [
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithServiceType:discoveryInfo:session:"},
+      {"access": "public", "name": "start"},
+      {"access": "public", "name": "stop"}
+     ],
+     "introduced": "7",
+     "linkage": "exported",
+     "name": "MCAdvertiserAssistant",
+     "properties": [
+      {"access": "public", "getter": "delegate", "name": "delegate", "setter": "setDelegate:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "session", "name": "session"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "discoveryInfo", "name": "discoveryInfo"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "serviceType", "name": "serviceType"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithServiceType:session:"},
+      {"access": "public", "name": "initWithBrowser:session:"}
+     ],
+     "introduced": "7",
+     "linkage": "exported",
+     "name": "MCBrowserViewController",
+     "properties": [
+      {"access": "public", "getter": "delegate", "name": "delegate", "setter": "setDelegate:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "browser", "name": "browser"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "session", "name": "session"},
+      {"access": "public", "getter": "minimumNumberOfPeers", "name": "minimumNumberOfPeers", "setter": "setMinimumNumberOfPeers:"},
+      {"access": "public", "getter": "maximumNumberOfPeers", "name": "maximumNumberOfPeers", "setter": "setMaximumNumberOfPeers:"}
+     ],
+     "protocols": [
+      "MCNearbyServiceBrowserDelegate"
+     ],
+     "super": "UIViewController"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithPeer:discoveryInfo:serviceType:"},
+      {"access": "public", "name": "startAdvertisingPeer"},
+      {"access": "public", "name": "stopAdvertisingPeer"}
+     ],
+     "introduced": "7",
+     "linkage": "exported",
+     "name": "MCNearbyServiceAdvertiser",
+     "properties": [
+      {"access": "public", "getter": "delegate", "name": "delegate", "setter": "setDelegate:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "myPeerID", "name": "myPeerID"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "discoveryInfo", "name": "discoveryInfo"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "serviceType", "name": "serviceType"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithPeer:serviceType:"},
+      {"access": "public", "name": "startBrowsingForPeers"},
+      {"access": "public", "name": "stopBrowsingForPeers"},
+      {"access": "public", "name": "invitePeer:toSession:withContext:timeout:"}
+     ],
+     "introduced": "7",
+     "linkage": "exported",
+     "name": "MCNearbyServiceBrowser",
+     "properties": [
+      {"access": "public", "getter": "delegate", "name": "delegate", "setter": "setDelegate:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "myPeerID", "name": "myPeerID"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "serviceType", "name": "serviceType"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithDisplayName:"}
+     ],
+     "introduced": "7",
+     "linkage": "exported",
+     "name": "MCPeerID",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "displayName", "name": "displayName"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSSecureCoding"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "categories": [
+      "MCSessionCustomDiscovery"
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithPeer:"},
+      {"access": "public", "name": "initWithPeer:securityIdentity:encryptionPreference:"},
+      {"access": "public", "name": "sendData:toPeers:withMode:error:"},
+      {"access": "public", "name": "disconnect"},
+      {"access": "public", "name": "sendResourceAtURL:withName:toPeer:withCompletionHandler:"},
+      {"access": "public", "name": "startStreamWithName:toPeer:error:"}
+     ],
+     "introduced": "7",
+     "linkage": "exported",
+     "name": "MCSession",
+     "properties": [
+      {"access": "public", "getter": "delegate", "name": "delegate", "setter": "setDelegate:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "myPeerID", "name": "myPeerID"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "securityIdentity", "name": "securityIdentity"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "encryptionPreference", "name": "encryptionPreference"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "connectedPeers", "name": "connectedPeers"}
+     ],
+     "super": "NSObject"
+    }
+   ],
+   "protocols": [
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "advertiserAssistantWillPresentInvitation:", "optional": true},
+      {"access": "public", "name": "advertiserAssistantDidDismissInvitation:", "optional": true}
+     ],
+     "introduced": "7",
+     "name": "MCAdvertiserAssistantDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "browserViewControllerDidFinish:"},
+      {"access": "public", "name": "browserViewControllerWasCancelled:"},
+      {"access": "public", "name": "browserViewController:shouldPresentNearbyPeer:withDiscoveryInfo:", "optional": true}
+     ],
+     "introduced": "7",
+     "name": "MCBrowserViewControllerDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "advertiser:didReceiveInvitationFromPeer:withContext:invitationHandler:"},
+      {"access": "public", "name": "advertiser:didNotStartAdvertisingPeer:", "optional": true}
+     ],
+     "introduced": "7",
+     "name": "MCNearbyServiceAdvertiserDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "browser:foundPeer:withDiscoveryInfo:"},
+      {"access": "public", "name": "browser:lostPeer:"},
+      {"access": "public", "name": "browser:didNotStartBrowsingForPeers:", "optional": true}
+     ],
+     "introduced": "7",
+     "name": "MCNearbyServiceBrowserDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "session:peer:didChangeState:"},
+      {"access": "public", "name": "session:didReceiveData:fromPeer:"},
+      {"access": "public", "name": "session:didReceiveStream:withName:fromPeer:"},
+      {"access": "public", "name": "session:didStartReceivingResourceWithName:fromPeer:withProgress:"},
+      {"access": "public", "name": "session:didFinishReceivingResourceWithName:fromPeer:atURL:withError:"},
+      {"access": "public", "name": "session:didReceiveCertificate:fromPeer:certificateHandler:", "optional": true}
+     ],
+     "introduced": "7",
+     "name": "MCSessionDelegate",
+     "protocols": [
+      "NSObject"
+     ]
+    }
+   ],
+   "target": "arm64e.x1-apple-ios27",
+   "typedefs": [
+    {"access": "public", "name": "MCEncryptionPreference"},
+    {"access": "public", "name": "MCErrorCode"},
+    {"access": "public", "name": "MCSessionSendDataMode"},
+    {"access": "public", "name": "MCSessionState"}
+   ]
+  }
+ ],
+ "version": "1.0"
+}

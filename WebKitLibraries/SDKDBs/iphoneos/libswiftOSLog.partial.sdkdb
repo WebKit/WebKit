@@ -14,9 +14,10 @@
     {"access": "public", "introduced": "15", "linkage": "exported", "name": "_$sSo21OSLogMessageComponentC0A0E8ArgumentOMn"},
     {"access": "public", "introduced": "15", "linkage": "exported", "name": "_$sSo21OSLogMessageComponentC0A0E8ArgumentON"},
     {"access": "public", "introduced": "15", "linkage": "exported", "name": "_$sSo21OSLogMessageComponentC0A0E8argumentAbCE8ArgumentOvg"},
-    {"access": "public", "introduced": "15", "linkage": "exported", "name": "_$sSo21OSLogMessageComponentC0A0E8argumentAbCE8ArgumentOvpMV"}
+    {"access": "public", "introduced": "15", "linkage": "exported", "name": "_$sSo21OSLogMessageComponentC0A0E8argumentAbCE8ArgumentOvpMV"},
+    {"access": "public", "linkage": "exported", "name": "__swift_FORCE_LOAD_$_swiftOSLog"}
    ],
-   "target": "arm64e-apple-ios26.5"
+   "target": "arm64e-apple-ios27.0"
   }
  ],
  "version": "1.0"

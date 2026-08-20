@@ -1,0 +1,3690 @@
+
+{
+ "PublicSDKContentRoot": [
+  {
+   "categories": [
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "newBoxWithDimensions:segments:geometryType:inwardNormals:allocator:"},
+      {"access": "public", "name": "newEllipsoidWithRadii:radialSegments:verticalSegments:geometryType:inwardNormals:hemisphere:allocator:"},
+      {"access": "public", "name": "newCylinderWithHeight:radii:radialSegments:verticalSegments:geometryType:inwardNormals:allocator:"},
+      {"access": "public", "introduced": "11", "name": "newCapsuleWithHeight:radii:radialSegments:verticalSegments:hemisphereSegments:geometryType:inwardNormals:allocator:"},
+      {"access": "public", "name": "newEllipticalConeWithHeight:radii:radialSegments:verticalSegments:geometryType:inwardNormals:allocator:"},
+      {"access": "public", "name": "newPlaneWithDimensions:segments:geometryType:allocator:"},
+      {"access": "public", "introduced": "11", "name": "newIcosahedronWithRadius:inwardNormals:geometryType:allocator:"},
+      {"access": "public", "name": "newIcosahedronWithRadius:inwardNormals:allocator:"},
+      {"access": "public", "name": "newSubdividedMesh:submeshIndex:subdivisionLevels:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initBoxWithExtent:segments:inwardNormals:geometryType:allocator:"},
+      {"access": "public", "name": "initSphereWithExtent:segments:inwardNormals:geometryType:allocator:"},
+      {"access": "public", "name": "initHemisphereWithExtent:segments:inwardNormals:cap:geometryType:allocator:"},
+      {"access": "public", "name": "initCylinderWithExtent:segments:inwardNormals:topCap:bottomCap:geometryType:allocator:"},
+      {"access": "public", "name": "initCapsuleWithExtent:cylinderSegments:hemisphereSegments:inwardNormals:geometryType:allocator:"},
+      {"access": "public", "name": "initConeWithExtent:segments:inwardNormals:cap:geometryType:allocator:"},
+      {"access": "public", "name": "initPlaneWithExtent:segments:geometryType:allocator:"},
+      {"access": "public", "name": "initIcosahedronWithExtent:inwardNormals:geometryType:allocator:"},
+      {"access": "public", "name": "initMeshBySubdividingMesh:submeshIndex:subdivisionLevels:allocator:"}
+     ],
+     "interface": "MDLMesh",
+     "name": "Generators"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "placeLightProbesWithDensity:heuristic:usingIrradianceDataSource:"}
+     ],
+     "interface": "MDLAsset",
+     "name": "MDLLightBaking"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "lightProbeWithTextureSize:forLocation:lightsToConsider:objectsToConsider:reflectiveCubemap:irradianceCubemap:"}
+     ],
+     "interface": "MDLLightProbe",
+     "name": "MDLLightBaking"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "generateAmbientOcclusionTextureWithSize:raysPerSample:attenuationFactor:objectsToConsider:vertexAttributeNamed:materialPropertyNamed:"},
+      {"access": "public", "name": "generateAmbientOcclusionTextureWithQuality:attenuationFactor:objectsToConsider:vertexAttributeNamed:materialPropertyNamed:"},
+      {"access": "public", "name": "generateAmbientOcclusionVertexColorsWithRaysPerSample:attenuationFactor:objectsToConsider:vertexAttributeNamed:"},
+      {"access": "public", "name": "generateAmbientOcclusionVertexColorsWithQuality:attenuationFactor:objectsToConsider:vertexAttributeNamed:"},
+      {"access": "public", "name": "generateLightMapTextureWithTextureSize:lightsToConsider:objectsToConsider:vertexAttributeNamed:materialPropertyNamed:"},
+      {"access": "public", "name": "generateLightMapTextureWithQuality:lightsToConsider:objectsToConsider:vertexAttributeNamed:materialPropertyNamed:"},
+      {"access": "public", "name": "generateLightMapVertexColorsWithLightsToConsider:objectsToConsider:vertexAttributeNamed:"}
+     ],
+     "interface": "MDLMesh",
+     "name": "MDLLightBaking"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "addAttributeWithName:format:"},
+      {"access": "public", "name": "addAttributeWithName:format:type:data:stride:"},
+      {"access": "public", "name": "addAttributeWithName:format:type:data:stride:time:"},
+      {"access": "public", "name": "addNormalsWithAttributeNamed:creaseThreshold:"},
+      {"access": "public", "name": "addTangentBasisForTextureCoordinateAttributeNamed:tangentAttributeNamed:bitangentAttributeNamed:"},
+      {"access": "public", "name": "addTangentBasisForTextureCoordinateAttributeNamed:normalAttributeNamed:tangentAttributeNamed:"},
+      {"access": "public", "introduced": "11", "name": "addOrthTanBasisForTextureCoordinateAttributeNamed:normalAttributeNamed:tangentAttributeNamed:"},
+      {"access": "public", "name": "addUnwrappedTextureCoordinatesForAttributeNamed:"},
+      {"access": "public", "introduced": "11", "name": "flipTextureCoordinatesInAttributeNamed:"},
+      {"access": "public", "introduced": "9", "name": "makeVerticesUnique"},
+      {"access": "public", "introduced": "11", "name": "makeVerticesUniqueAndReturnError:"},
+      {"access": "public", "name": "replaceAttributeNamed:withData:"},
+      {"access": "public", "name": "updateAttributeNamed:withData:"},
+      {"access": "public", "name": "removeAttributeNamed:"}
+     ],
+     "interface": "MDLMesh",
+     "name": "Modifiers"
+    }
+   ],
+   "enums": [
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MDLAnimatedValueInterpolationConstant"},
+      {"access": "public", "name": "MDLAnimatedValueInterpolationLinear"}
+     ],
+     "name": "MDLAnimatedValueInterpolation"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MDLCameraProjectionPerspective"},
+      {"access": "public", "name": "MDLCameraProjectionOrthographic"}
+     ],
+     "name": "MDLCameraProjection"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MDLDataPrecisionUndefined"},
+      {"access": "public", "name": "MDLDataPrecisionFloat"},
+      {"access": "public", "name": "MDLDataPrecisionDouble"}
+     ],
+     "introduced": "11",
+     "name": "MDLDataPrecision"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MDLGeometryTypePoints"},
+      {"access": "public", "name": "MDLGeometryTypeLines"},
+      {"access": "public", "name": "MDLGeometryTypeTriangles"},
+      {"access": "public", "name": "MDLGeometryTypeTriangleStrips"},
+      {"access": "public", "name": "MDLGeometryTypeQuads"},
+      {"access": "public", "name": "MDLGeometryTypeVariableTopology"}
+     ],
+     "name": "MDLGeometryType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MDLIndexBitDepthInvalid"},
+      {"access": "public", "name": "MDLIndexBitDepthUInt8"},
+      {"access": "public", "name": "MDLIndexBitDepthUint8"},
+      {"access": "public", "name": "MDLIndexBitDepthUInt16"},
+      {"access": "public", "name": "MDLIndexBitDepthUint16"},
+      {"access": "public", "name": "MDLIndexBitDepthUInt32"},
+      {"access": "public", "name": "MDLIndexBitDepthUint32"}
+     ],
+     "name": "MDLIndexBitDepth"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MDLLightTypeUnknown"},
+      {"access": "public", "name": "MDLLightTypeAmbient"},
+      {"access": "public", "name": "MDLLightTypeDirectional"},
+      {"access": "public", "name": "MDLLightTypeSpot"},
+      {"access": "public", "name": "MDLLightTypePoint"},
+      {"access": "public", "name": "MDLLightTypeLinear"},
+      {"access": "public", "name": "MDLLightTypeDiscArea"},
+      {"access": "public", "name": "MDLLightTypeRectangularArea"},
+      {"access": "public", "name": "MDLLightTypeSuperElliptical"},
+      {"access": "public", "name": "MDLLightTypePhotometric"},
+      {"access": "public", "name": "MDLLightTypeProbe"},
+      {"access": "public", "name": "MDLLightTypeEnvironment"}
+     ],
+     "name": "MDLLightType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MDLMaterialFaceFront"},
+      {"access": "public", "name": "MDLMaterialFaceBack"},
+      {"access": "public", "name": "MDLMaterialFaceDoubleSided"}
+     ],
+     "name": "MDLMaterialFace"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MDLMaterialMipMapFilterModeNearest"},
+      {"access": "public", "name": "MDLMaterialMipMapFilterModeLinear"}
+     ],
+     "name": "MDLMaterialMipMapFilterMode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MDLMaterialPropertyTypeNone"},
+      {"access": "public", "name": "MDLMaterialPropertyTypeString"},
+      {"access": "public", "name": "MDLMaterialPropertyTypeURL"},
+      {"access": "public", "name": "MDLMaterialPropertyTypeTexture"},
+      {"access": "public", "name": "MDLMaterialPropertyTypeColor"},
+      {"access": "public", "name": "MDLMaterialPropertyTypeFloat"},
+      {"access": "public", "name": "MDLMaterialPropertyTypeFloat2"},
+      {"access": "public", "name": "MDLMaterialPropertyTypeFloat3"},
+      {"access": "public", "name": "MDLMaterialPropertyTypeFloat4"},
+      {"access": "public", "name": "MDLMaterialPropertyTypeMatrix44"},
+      {"access": "public", "name": "MDLMaterialPropertyTypeBuffer"}
+     ],
+     "name": "MDLMaterialPropertyType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MDLMaterialSemanticBaseColor"},
+      {"access": "public", "name": "MDLMaterialSemanticSubsurface"},
+      {"access": "public", "name": "MDLMaterialSemanticMetallic"},
+      {"access": "public", "name": "MDLMaterialSemanticSpecular"},
+      {"access": "public", "name": "MDLMaterialSemanticSpecularExponent"},
+      {"access": "public", "name": "MDLMaterialSemanticSpecularTint"},
+      {"access": "public", "name": "MDLMaterialSemanticRoughness"},
+      {"access": "public", "name": "MDLMaterialSemanticAnisotropic"},
+      {"access": "public", "name": "MDLMaterialSemanticAnisotropicRotation"},
+      {"access": "public", "name": "MDLMaterialSemanticSheen"},
+      {"access": "public", "name": "MDLMaterialSemanticSheenTint"},
+      {"access": "public", "name": "MDLMaterialSemanticClearcoat"},
+      {"access": "public", "name": "MDLMaterialSemanticClearcoatGloss"},
+      {"access": "public", "name": "MDLMaterialSemanticEmission"},
+      {"access": "public", "name": "MDLMaterialSemanticBump"},
+      {"access": "public", "name": "MDLMaterialSemanticOpacity"},
+      {"access": "public", "name": "MDLMaterialSemanticInterfaceIndexOfRefraction"},
+      {"access": "public", "name": "MDLMaterialSemanticMaterialIndexOfRefraction"},
+      {"access": "public", "name": "MDLMaterialSemanticObjectSpaceNormal"},
+      {"access": "public", "name": "MDLMaterialSemanticTangentSpaceNormal"},
+      {"access": "public", "name": "MDLMaterialSemanticDisplacement"},
+      {"access": "public", "name": "MDLMaterialSemanticDisplacementScale"},
+      {"access": "public", "name": "MDLMaterialSemanticAmbientOcclusion"},
+      {"access": "public", "name": "MDLMaterialSemanticAmbientOcclusionScale"},
+      {"access": "public", "name": "MDLMaterialSemanticNone"},
+      {"access": "public", "name": "MDLMaterialSemanticUserDefined"}
+     ],
+     "name": "MDLMaterialSemantic"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MDLMaterialTextureFilterModeNearest"},
+      {"access": "public", "name": "MDLMaterialTextureFilterModeLinear"}
+     ],
+     "name": "MDLMaterialTextureFilterMode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MDLMaterialTextureWrapModeClamp"},
+      {"access": "public", "name": "MDLMaterialTextureWrapModeRepeat"},
+      {"access": "public", "name": "MDLMaterialTextureWrapModeMirror"}
+     ],
+     "name": "MDLMaterialTextureWrapMode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MDLMeshBufferTypeVertex"},
+      {"access": "public", "name": "MDLMeshBufferTypeIndex"},
+      {"access": "public", "name": "MDLMeshBufferTypeCustom"}
+     ],
+     "name": "MDLMeshBufferType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MDLProbePlacementUniformGrid"},
+      {"access": "public", "name": "MDLProbePlacementIrradianceDistribution"}
+     ],
+     "name": "MDLProbePlacement"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MDLTextureChannelEncodingUInt8"},
+      {"access": "public", "name": "MDLTextureChannelEncodingUint8"},
+      {"access": "public", "name": "MDLTextureChannelEncodingUInt16"},
+      {"access": "public", "name": "MDLTextureChannelEncodingUint16"},
+      {"access": "public", "name": "MDLTextureChannelEncodingUInt24"},
+      {"access": "public", "name": "MDLTextureChannelEncodingUint24"},
+      {"access": "public", "name": "MDLTextureChannelEncodingUInt32"},
+      {"access": "public", "name": "MDLTextureChannelEncodingUint32"},
+      {"access": "public", "name": "MDLTextureChannelEncodingFloat16"},
+      {"access": "public", "name": "MDLTextureChannelEncodingFloat16SR"},
+      {"access": "public", "name": "MDLTextureChannelEncodingFloat32"}
+     ],
+     "name": "MDLTextureChannelEncoding"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MDLTransformOpRotationOrderXYZ"},
+      {"access": "public", "name": "MDLTransformOpRotationOrderXZY"},
+      {"access": "public", "name": "MDLTransformOpRotationOrderYXZ"},
+      {"access": "public", "name": "MDLTransformOpRotationOrderYZX"},
+      {"access": "public", "name": "MDLTransformOpRotationOrderZXY"},
+      {"access": "public", "name": "MDLTransformOpRotationOrderZYX"}
+     ],
+     "name": "MDLTransformOpRotationOrder"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MDLVertexFormatInvalid"},
+      {"access": "public", "name": "MDLVertexFormatPackedBit"},
+      {"access": "public", "name": "MDLVertexFormatUCharBits"},
+      {"access": "public", "name": "MDLVertexFormatCharBits"},
+      {"access": "public", "name": "MDLVertexFormatUCharNormalizedBits"},
+      {"access": "public", "name": "MDLVertexFormatCharNormalizedBits"},
+      {"access": "public", "name": "MDLVertexFormatUShortBits"},
+      {"access": "public", "name": "MDLVertexFormatShortBits"},
+      {"access": "public", "name": "MDLVertexFormatUShortNormalizedBits"},
+      {"access": "public", "name": "MDLVertexFormatShortNormalizedBits"},
+      {"access": "public", "name": "MDLVertexFormatUIntBits"},
+      {"access": "public", "name": "MDLVertexFormatIntBits"},
+      {"access": "public", "name": "MDLVertexFormatHalfBits"},
+      {"access": "public", "name": "MDLVertexFormatFloatBits"},
+      {"access": "public", "name": "MDLVertexFormatUChar"},
+      {"access": "public", "name": "MDLVertexFormatUChar2"},
+      {"access": "public", "name": "MDLVertexFormatUChar3"},
+      {"access": "public", "name": "MDLVertexFormatUChar4"},
+      {"access": "public", "name": "MDLVertexFormatChar"},
+      {"access": "public", "name": "MDLVertexFormatChar2"},
+      {"access": "public", "name": "MDLVertexFormatChar3"},
+      {"access": "public", "name": "MDLVertexFormatChar4"},
+      {"access": "public", "name": "MDLVertexFormatUCharNormalized"},
+      {"access": "public", "name": "MDLVertexFormatUChar2Normalized"},
+      {"access": "public", "name": "MDLVertexFormatUChar3Normalized"},
+      {"access": "public", "name": "MDLVertexFormatUChar4Normalized"},
+      {"access": "public", "name": "MDLVertexFormatCharNormalized"},
+      {"access": "public", "name": "MDLVertexFormatChar2Normalized"},
+      {"access": "public", "name": "MDLVertexFormatChar3Normalized"},
+      {"access": "public", "name": "MDLVertexFormatChar4Normalized"},
+      {"access": "public", "name": "MDLVertexFormatUShort"},
+      {"access": "public", "name": "MDLVertexFormatUShort2"},
+      {"access": "public", "name": "MDLVertexFormatUShort3"},
+      {"access": "public", "name": "MDLVertexFormatUShort4"},
+      {"access": "public", "name": "MDLVertexFormatShort"},
+      {"access": "public", "name": "MDLVertexFormatShort2"},
+      {"access": "public", "name": "MDLVertexFormatShort3"},
+      {"access": "public", "name": "MDLVertexFormatShort4"},
+      {"access": "public", "name": "MDLVertexFormatUShortNormalized"},
+      {"access": "public", "name": "MDLVertexFormatUShort2Normalized"},
+      {"access": "public", "name": "MDLVertexFormatUShort3Normalized"},
+      {"access": "public", "name": "MDLVertexFormatUShort4Normalized"},
+      {"access": "public", "name": "MDLVertexFormatShortNormalized"},
+      {"access": "public", "name": "MDLVertexFormatShort2Normalized"},
+      {"access": "public", "name": "MDLVertexFormatShort3Normalized"},
+      {"access": "public", "name": "MDLVertexFormatShort4Normalized"},
+      {"access": "public", "name": "MDLVertexFormatUInt"},
+      {"access": "public", "name": "MDLVertexFormatUInt2"},
+      {"access": "public", "name": "MDLVertexFormatUInt3"},
+      {"access": "public", "name": "MDLVertexFormatUInt4"},
+      {"access": "public", "name": "MDLVertexFormatInt"},
+      {"access": "public", "name": "MDLVertexFormatInt2"},
+      {"access": "public", "name": "MDLVertexFormatInt3"},
+      {"access": "public", "name": "MDLVertexFormatInt4"},
+      {"access": "public", "name": "MDLVertexFormatHalf"},
+      {"access": "public", "name": "MDLVertexFormatHalf2"},
+      {"access": "public", "name": "MDLVertexFormatHalf3"},
+      {"access": "public", "name": "MDLVertexFormatHalf4"},
+      {"access": "public", "name": "MDLVertexFormatFloat"},
+      {"access": "public", "name": "MDLVertexFormatFloat2"},
+      {"access": "public", "name": "MDLVertexFormatFloat3"},
+      {"access": "public", "name": "MDLVertexFormatFloat4"},
+      {"access": "public", "name": "MDLVertexFormatInt1010102Normalized"},
+      {"access": "public", "name": "MDLVertexFormatUInt1010102Normalized"}
+     ],
+     "name": "MDLVertexFormat"
+    }
+   ],
+   "globals": [
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_MDLVertexAttributeAnisotropy"},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_MDLVertexAttributeBinormal"},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_MDLVertexAttributeBitangent"},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_MDLVertexAttributeColor"},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_MDLVertexAttributeEdgeCrease"},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_MDLVertexAttributeJointIndices"},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_MDLVertexAttributeJointWeights"},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_MDLVertexAttributeNormal"},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_MDLVertexAttributeOcclusionValue"},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_MDLVertexAttributePosition"},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_MDLVertexAttributeShadingBasisU"},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_MDLVertexAttributeShadingBasisV"},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_MDLVertexAttributeSubdivisionStencil"},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_MDLVertexAttributeTangent"},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_MDLVertexAttributeTextureCoordinate"},
+    {"access": "public", "introduced": "9", "kind": "variable", "linkage": "exported", "name": "_kUTType3dObject"},
+    {"access": "public", "introduced": "9", "kind": "variable", "linkage": "exported", "name": "_kUTTypeAlembic"},
+    {"access": "public", "introduced": "9", "kind": "variable", "linkage": "exported", "name": "_kUTTypePolygon"},
+    {"access": "public", "introduced": "9", "kind": "variable", "linkage": "exported", "name": "_kUTTypeStereolithography"},
+    {"access": "public", "introduced": "10", "kind": "variable", "linkage": "exported", "name": "_kUTTypeUniversalSceneDescription"},
+    {"access": "public", "introduced": "14", "kind": "variable", "linkage": "exported", "name": "_kUTTypeUniversalSceneDescriptionMobile"}
+   ],
+   "interfaces": [
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "setFloat4x4:atTime:"},
+      {"access": "public", "name": "setDouble4x4:atTime:"},
+      {"access": "public", "name": "float4x4AtTime:"},
+      {"access": "public", "name": "double4x4AtTime:"},
+      {"access": "public", "name": "resetWithFloat4x4Array:atTimes:count:"},
+      {"access": "public", "name": "resetWithDouble4x4Array:atTimes:count:"},
+      {"access": "public", "name": "getFloat4x4Array:maxCount:"},
+      {"access": "public", "name": "getDouble4x4Array:maxCount:"}
+     ],
+     "introduced": "11",
+     "linkage": "exported",
+     "name": "MDLAnimatedMatrix4x4",
+     "super": "MDLAnimatedValue"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "setFloatQuaternion:atTime:"},
+      {"access": "public", "name": "setDoubleQuaternion:atTime:"},
+      {"access": "public", "name": "floatQuaternionAtTime:"},
+      {"access": "public", "name": "doubleQuaternionAtTime:"},
+      {"access": "public", "name": "resetWithFloatQuaternionArray:atTimes:count:"},
+      {"access": "public", "name": "resetWithDoubleQuaternionArray:atTimes:count:"},
+      {"access": "public", "name": "getFloatQuaternionArray:maxCount:"},
+      {"access": "public", "name": "getDoubleQuaternionArray:maxCount:"}
+     ],
+     "introduced": "12",
+     "linkage": "exported",
+     "name": "MDLAnimatedQuaternion",
+     "super": "MDLAnimatedValue"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithElementCount:"},
+      {"access": "public", "name": "setFloatQuaternionArray:count:atTime:"},
+      {"access": "public", "name": "setDoubleQuaternionArray:count:atTime:"},
+      {"access": "public", "name": "getFloatQuaternionArray:maxCount:atTime:"},
+      {"access": "public", "name": "getDoubleQuaternionArray:maxCount:atTime:"},
+      {"access": "public", "name": "resetWithFloatQuaternionArray:count:atTimes:count:"},
+      {"access": "public", "name": "resetWithDoubleQuaternionArray:count:atTimes:count:"},
+      {"access": "public", "name": "getFloatQuaternionArray:maxCount:"},
+      {"access": "public", "name": "getDoubleQuaternionArray:maxCount:"}
+     ],
+     "introduced": "11",
+     "linkage": "exported",
+     "name": "MDLAnimatedQuaternionArray",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "elementCount", "name": "elementCount"}
+     ],
+     "super": "MDLAnimatedValue"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "setFloat:atTime:"},
+      {"access": "public", "name": "setDouble:atTime:"},
+      {"access": "public", "name": "floatAtTime:"},
+      {"access": "public", "name": "doubleAtTime:"},
+      {"access": "public", "name": "resetWithFloatArray:atTimes:count:"},
+      {"access": "public", "name": "resetWithDoubleArray:atTimes:count:"},
+      {"access": "public", "name": "getFloatArray:maxCount:"},
+      {"access": "public", "name": "getDoubleArray:maxCount:"}
+     ],
+     "introduced": "11",
+     "linkage": "exported",
+     "name": "MDLAnimatedScalar",
+     "super": "MDLAnimatedValue"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithElementCount:"},
+      {"access": "public", "name": "setFloatArray:count:atTime:"},
+      {"access": "public", "name": "setDoubleArray:count:atTime:"},
+      {"access": "public", "name": "getFloatArray:maxCount:atTime:"},
+      {"access": "public", "name": "getDoubleArray:maxCount:atTime:"},
+      {"access": "public", "name": "resetWithFloatArray:count:atTimes:count:"},
+      {"access": "public", "name": "resetWithDoubleArray:count:atTimes:count:"},
+      {"access": "public", "name": "getFloatArray:maxCount:"},
+      {"access": "public", "name": "getDoubleArray:maxCount:"}
+     ],
+     "introduced": "11",
+     "linkage": "exported",
+     "name": "MDLAnimatedScalarArray",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "elementCount", "name": "elementCount"}
+     ],
+     "super": "MDLAnimatedValue"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "isAnimated"},
+      {"access": "public", "name": "clear"},
+      {"access": "public", "name": "getTimes:maxCount:"}
+     ],
+     "introduced": "11",
+     "linkage": "exported",
+     "name": "MDLAnimatedValue",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "precision", "name": "precision"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "timeSampleCount", "name": "timeSampleCount"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "minimumTime", "name": "minimumTime"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "maximumTime", "name": "maximumTime"},
+      {"access": "public", "getter": "interpolation", "name": "interpolation", "setter": "setInterpolation:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "keyTimes", "name": "keyTimes"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "setFloat2:atTime:"},
+      {"access": "public", "name": "setDouble2:atTime:"},
+      {"access": "public", "name": "float2AtTime:"},
+      {"access": "public", "name": "double2AtTime:"},
+      {"access": "public", "name": "resetWithFloat2Array:atTimes:count:"},
+      {"access": "public", "name": "resetWithDouble2Array:atTimes:count:"},
+      {"access": "public", "name": "getFloat2Array:maxCount:"},
+      {"access": "public", "name": "getDouble2Array:maxCount:"}
+     ],
+     "introduced": "11",
+     "linkage": "exported",
+     "name": "MDLAnimatedVector2",
+     "super": "MDLAnimatedValue"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "setFloat3:atTime:"},
+      {"access": "public", "name": "setDouble3:atTime:"},
+      {"access": "public", "name": "float3AtTime:"},
+      {"access": "public", "name": "double3AtTime:"},
+      {"access": "public", "name": "resetWithFloat3Array:atTimes:count:"},
+      {"access": "public", "name": "resetWithDouble3Array:atTimes:count:"},
+      {"access": "public", "name": "getFloat3Array:maxCount:"},
+      {"access": "public", "name": "getDouble3Array:maxCount:"}
+     ],
+     "introduced": "11",
+     "linkage": "exported",
+     "name": "MDLAnimatedVector3",
+     "super": "MDLAnimatedValue"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithElementCount:"},
+      {"access": "public", "name": "setFloat3Array:count:atTime:"},
+      {"access": "public", "name": "setDouble3Array:count:atTime:"},
+      {"access": "public", "name": "getFloat3Array:maxCount:atTime:"},
+      {"access": "public", "name": "getDouble3Array:maxCount:atTime:"},
+      {"access": "public", "name": "resetWithFloat3Array:count:atTimes:count:"},
+      {"access": "public", "name": "resetWithDouble3Array:count:atTimes:count:"},
+      {"access": "public", "name": "getFloat3Array:maxCount:"},
+      {"access": "public", "name": "getDouble3Array:maxCount:"}
+     ],
+     "introduced": "11",
+     "linkage": "exported",
+     "name": "MDLAnimatedVector3Array",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "elementCount", "name": "elementCount"}
+     ],
+     "super": "MDLAnimatedValue"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "setFloat4:atTime:"},
+      {"access": "public", "name": "setDouble4:atTime:"},
+      {"access": "public", "name": "float4AtTime:"},
+      {"access": "public", "name": "double4AtTime:"},
+      {"access": "public", "name": "resetWithFloat4Array:atTimes:count:"},
+      {"access": "public", "name": "resetWithDouble4Array:atTimes:count:"},
+      {"access": "public", "name": "getFloat4Array:maxCount:"},
+      {"access": "public", "name": "getDouble4Array:maxCount:"}
+     ],
+     "introduced": "11",
+     "linkage": "exported",
+     "name": "MDLAnimatedVector4",
+     "super": "MDLAnimatedValue"
+    },
+    {
+     "access": "public",
+     "introduced": "11",
+     "linkage": "exported",
+     "name": "MDLAnimationBindComponent",
+     "properties": [
+      {"access": "public", "getter": "skeleton", "name": "skeleton", "setter": "setSkeleton:"},
+      {"access": "public", "getter": "jointAnimation", "name": "jointAnimation", "setter": "setJointAnimation:"},
+      {"access": "public", "getter": "jointPaths", "name": "jointPaths", "setter": "setJointPaths:"},
+      {"access": "public", "getter": "geometryBindTransform", "name": "geometryBindTransform", "setter": "setGeometryBindTransform:"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "MDLComponent"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "9",
+     "linkage": "exported",
+     "name": "MDLAreaLight",
+     "properties": [
+      {"access": "public", "getter": "areaRadius", "name": "areaRadius", "setter": "setAreaRadius:"},
+      {"access": "public", "getter": "superEllipticPower", "name": "superEllipticPower", "setter": "setSuperEllipticPower:"},
+      {"access": "public", "getter": "aspect", "name": "aspect", "setter": "setAspect:"}
+     ],
+     "super": "MDLPhysicallyPlausibleLight"
+    },
+    {
+     "access": "public",
+     "categories": [
+      "MDLLightBaking"
+     ],
+     "classMethods": [
+      {"access": "public", "name": "canImportFileExtension:"},
+      {"access": "public", "name": "canExportFileExtension:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithURL:"},
+      {"access": "public", "name": "initWithURL:vertexDescriptor:bufferAllocator:"},
+      {"access": "public", "name": "initWithBufferAllocator:"},
+      {"access": "public", "name": "initWithURL:vertexDescriptor:bufferAllocator:preserveTopology:error:"},
+      {"access": "public", "name": "exportAssetToURL:"},
+      {"access": "public", "name": "exportAssetToURL:error:"},
+      {"access": "public", "introduced": "11", "name": "objectAtPath:"},
+      {"access": "public", "name": "childObjectsOfClass:"},
+      {"access": "public", "introduced": "11", "name": "loadTextures"},
+      {"access": "public", "name": "boundingBoxAtTime:"},
+      {"access": "public", "name": "addObject:"},
+      {"access": "public", "name": "removeObject:"},
+      {"access": "public", "name": "objectAtIndexedSubscript:"},
+      {"access": "public", "name": "objectAtIndex:"}
+     ],
+     "introduced": "9",
+     "linkage": "exported",
+     "name": "MDLAsset",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "boundingBox", "name": "boundingBox"},
+      {"access": "public", "getter": "frameInterval", "name": "frameInterval", "setter": "setFrameInterval:"},
+      {"access": "public", "getter": "startTime", "name": "startTime", "setter": "setStartTime:"},
+      {"access": "public", "getter": "endTime", "name": "endTime", "setter": "setEndTime:"},
+      {"access": "public", "getter": "upAxis", "introduced": "11", "name": "upAxis", "setter": "setUpAxis:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "URL", "name": "URL"},
+      {"access": "public", "getter": "resolver", "introduced": "11", "name": "resolver", "setter": "setResolver:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "bufferAllocator", "name": "bufferAllocator"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "vertexDescriptor", "name": "vertexDescriptor"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "count", "name": "count"},
+      {"access": "public", "getter": "masters", "introduced": "10", "name": "masters", "setter": "setMasters:"},
+      {"access": "public", "getter": "originals", "introduced": "15", "name": "originals", "setter": "setOriginals:"},
+      {"access": "public", "getter": "animations", "introduced": "11", "name": "animations", "setter": "setAnimations:"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSFastEnumeration"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithBundle:"}
+     ],
+     "introduced": "11",
+     "linkage": "exported",
+     "name": "MDLBundleAssetResolver",
+     "properties": [
+      {"access": "public", "getter": "path", "name": "path", "setter": "setPath:"}
+     ],
+     "protocols": [
+      "MDLAssetResolver"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "frameBoundingBox:setNearAndFar:"},
+      {"access": "public", "name": "lookAt:"},
+      {"access": "public", "name": "lookAt:from:"},
+      {"access": "public", "name": "rayTo:forViewPort:"},
+      {"access": "public", "name": "bokehKernelWithSize:"}
+     ],
+     "introduced": "9",
+     "linkage": "exported",
+     "name": "MDLCamera",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "projectionMatrix", "name": "projectionMatrix"},
+      {"access": "public", "getter": "projection", "name": "projection", "setter": "setProjection:"},
+      {"access": "public", "getter": "nearVisibilityDistance", "name": "nearVisibilityDistance", "setter": "setNearVisibilityDistance:"},
+      {"access": "public", "getter": "farVisibilityDistance", "name": "farVisibilityDistance", "setter": "setFarVisibilityDistance:"},
+      {"access": "public", "getter": "worldToMetersConversionScale", "name": "worldToMetersConversionScale", "setter": "setWorldToMetersConversionScale:"},
+      {"access": "public", "getter": "barrelDistortion", "name": "barrelDistortion", "setter": "setBarrelDistortion:"},
+      {"access": "public", "getter": "fisheyeDistortion", "name": "fisheyeDistortion", "setter": "setFisheyeDistortion:"},
+      {"access": "public", "getter": "opticalVignetting", "name": "opticalVignetting", "setter": "setOpticalVignetting:"},
+      {"access": "public", "getter": "chromaticAberration", "name": "chromaticAberration", "setter": "setChromaticAberration:"},
+      {"access": "public", "getter": "focalLength", "name": "focalLength", "setter": "setFocalLength:"},
+      {"access": "public", "getter": "focusDistance", "name": "focusDistance", "setter": "setFocusDistance:"},
+      {"access": "public", "getter": "fieldOfView", "name": "fieldOfView", "setter": "setFieldOfView:"},
+      {"access": "public", "getter": "fStop", "name": "fStop", "setter": "setFStop:"},
+      {"access": "public", "getter": "apertureBladeCount", "name": "apertureBladeCount", "setter": "setApertureBladeCount:"},
+      {"access": "public", "getter": "maximumCircleOfConfusion", "name": "maximumCircleOfConfusion", "setter": "setMaximumCircleOfConfusion:"},
+      {"access": "public", "getter": "shutterOpenInterval", "name": "shutterOpenInterval", "setter": "setShutterOpenInterval:"},
+      {"access": "public", "getter": "sensorVerticalAperture", "name": "sensorVerticalAperture", "setter": "setSensorVerticalAperture:"},
+      {"access": "public", "getter": "sensorAspect", "name": "sensorAspect", "setter": "setSensorAspect:"},
+      {"access": "public", "getter": "sensorEnlargement", "name": "sensorEnlargement", "setter": "setSensorEnlargement:"},
+      {"access": "public", "getter": "sensorShift", "name": "sensorShift", "setter": "setSensorShift:"},
+      {"access": "public", "getter": "flash", "name": "flash", "setter": "setFlash:"},
+      {"access": "public", "getter": "exposureCompression", "name": "exposureCompression", "setter": "setExposureCompression:"},
+      {"access": "public", "getter": "exposure", "name": "exposure", "setter": "setExposure:"}
+     ],
+     "super": "MDLObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithDivisions:name:dimensions:channelCount:channelEncoding:color1:color2:"}
+     ],
+     "introduced": "9",
+     "linkage": "exported",
+     "name": "MDLCheckerboardTexture",
+     "properties": [
+      {"access": "public", "getter": "divisions", "name": "divisions", "setter": "setDivisions:"},
+      {"access": "public", "getter": "color1", "name": "color1", "setter": "setColor1:"},
+      {"access": "public", "getter": "color2", "name": "color2", "setter": "setColor2:"}
+     ],
+     "super": "MDLTexture"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithColorTemperatureGradientFrom:toColorTemperature:name:textureDimensions:"},
+      {"access": "public", "name": "initWithColorGradientFrom:toColor:name:textureDimensions:"}
+     ],
+     "introduced": "9",
+     "linkage": "exported",
+     "name": "MDLColorSwatchTexture",
+     "super": "MDLTexture"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "irradianceAtPoint:"},
+      {"access": "public", "name": "irradianceAtPoint:colorSpace:"}
+     ],
+     "introduced": "9",
+     "linkage": "exported",
+     "name": "MDLLight",
+     "properties": [
+      {"access": "public", "getter": "lightType", "name": "lightType", "setter": "setLightType:"},
+      {"access": "public", "getter": "colorSpace", "name": "colorSpace", "setter": "setColorSpace:"}
+     ],
+     "super": "MDLObject"
+    },
+    {
+     "access": "public",
+     "categories": [
+      "MDLLightBaking"
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithReflectiveTexture:irradianceTexture:"},
+      {"access": "public", "name": "generateSphericalHarmonicsFromIrradiance:"}
+     ],
+     "introduced": "9",
+     "linkage": "exported",
+     "name": "MDLLightProbe",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "reflectiveTexture", "name": "reflectiveTexture"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "irradianceTexture", "name": "irradianceTexture"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "sphericalHarmonicsLevel", "name": "sphericalHarmonicsLevel"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "sphericalHarmonicsCoefficients", "name": "sphericalHarmonicsCoefficients"}
+     ],
+     "super": "MDLLight"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithName:scatteringFunction:"},
+      {"access": "public", "name": "setProperty:"},
+      {"access": "public", "name": "removeProperty:"},
+      {"access": "public", "name": "propertyNamed:"},
+      {"access": "public", "name": "propertyWithSemantic:"},
+      {"access": "public", "introduced": "11", "name": "propertiesWithSemantic:"},
+      {"access": "public", "name": "removeAllProperties"},
+      {"access": "public", "introduced": "11", "name": "resolveTexturesWithResolver:"},
+      {"access": "public", "introduced": "11", "name": "loadTexturesUsingResolver:"},
+      {"access": "public", "name": "objectAtIndexedSubscript:"},
+      {"access": "public", "name": "objectForKeyedSubscript:"}
+     ],
+     "introduced": "9",
+     "linkage": "exported",
+     "name": "MDLMaterial",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "scatteringFunction", "name": "scatteringFunction"},
+      {"access": "public", "getter": "name", "name": "name", "setter": "setName:"},
+      {"access": "public", "getter": "baseMaterial", "name": "baseMaterial", "setter": "setBaseMaterial:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "count", "name": "count"},
+      {"access": "public", "getter": "materialFace", "name": "materialFace", "setter": "setMaterialFace:"}
+     ],
+     "protocols": [
+      "MDLNamed",
+      "NSFastEnumeration"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "initWithName:semantic:"},
+      {"access": "public", "name": "initWithName:semantic:float:"},
+      {"access": "public", "name": "initWithName:semantic:float2:"},
+      {"access": "public", "name": "initWithName:semantic:float3:"},
+      {"access": "public", "name": "initWithName:semantic:float4:"},
+      {"access": "public", "name": "initWithName:semantic:matrix4x4:"},
+      {"access": "public", "name": "initWithName:semantic:URL:"},
+      {"access": "public", "name": "initWithName:semantic:string:"},
+      {"access": "public", "name": "initWithName:semantic:textureSampler:"},
+      {"access": "public", "name": "initWithName:semantic:color:"},
+      {"access": "public", "name": "setProperties:"}
+     ],
+     "introduced": "9",
+     "linkage": "exported",
+     "name": "MDLMaterialProperty",
+     "properties": [
+      {"access": "public", "getter": "semantic", "name": "semantic", "setter": "setSemantic:"},
+      {"access": "public", "getter": "type", "name": "type", "setter": "setType:"},
+      {"access": "public", "getter": "name", "name": "name", "setter": "setName:"},
+      {"access": "public", "getter": "stringValue", "name": "stringValue", "setter": "setStringValue:"},
+      {"access": "public", "getter": "URLValue", "name": "URLValue", "setter": "setURLValue:"},
+      {"access": "public", "getter": "textureSamplerValue", "name": "textureSamplerValue", "setter": "setTextureSamplerValue:"},
+      {"access": "public", "getter": "color", "name": "color", "setter": "setColor:"},
+      {"access": "public", "getter": "floatValue", "name": "floatValue", "setter": "setFloatValue:"},
+      {"access": "public", "getter": "float2Value", "name": "float2Value", "setter": "setFloat2Value:"},
+      {"access": "public", "getter": "float3Value", "name": "float3Value", "setter": "setFloat3Value:"},
+      {"access": "public", "getter": "float4Value", "name": "float4Value", "setter": "setFloat4Value:"},
+      {"access": "public", "getter": "matrix4x4", "name": "matrix4x4", "setter": "setMatrix4x4:"},
+      {"access": "public", "getter": "luminance", "name": "luminance", "setter": "setLuminance:"}
+     ],
+     "protocols": [
+      "MDLNamed",
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "initWithOutput:input:"}
+     ],
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "MDLMaterialPropertyConnection",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "output", "name": "output"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "input", "name": "input"}
+     ],
+     "protocols": [
+      "MDLNamed"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "initWithNodes:connections:"},
+      {"access": "public", "name": "evaluate"}
+     ],
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "MDLMaterialPropertyGraph",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "nodes", "name": "nodes"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "connections", "name": "connections"}
+     ],
+     "super": "MDLMaterialPropertyNode"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "initWithInputs:outputs:evaluationFunction:"}
+     ],
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "MDLMaterialPropertyNode",
+     "properties": [
+      {"access": "public", "getter": "evaluationFunction", "name": "evaluationFunction", "setter": "setEvaluationFunction:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "inputs", "name": "inputs"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "outputs", "name": "outputs"}
+     ],
+     "protocols": [
+      "MDLNamed"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "clear"},
+      {"access": "public", "name": "initWithElementCount:"},
+      {"access": "public", "name": "setFloat4x4Array:count:"},
+      {"access": "public", "name": "setDouble4x4Array:count:"},
+      {"access": "public", "name": "getFloat4x4Array:maxCount:"},
+      {"access": "public", "name": "getDouble4x4Array:maxCount:"}
+     ],
+     "introduced": "11",
+     "linkage": "exported",
+     "name": "MDLMatrix4x4Array",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "elementCount", "name": "elementCount"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "precision", "name": "precision"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "categories": [
+      "Modifiers",
+      "Generators",
+      "MDLLightBaking"
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithBufferAllocator:"},
+      {"access": "public", "name": "initWithVertexBuffer:vertexCount:descriptor:submeshes:"},
+      {"access": "public", "name": "initWithVertexBuffers:vertexCount:descriptor:submeshes:"},
+      {"access": "public", "name": "vertexAttributeDataForAttributeNamed:"},
+      {"access": "public", "name": "vertexAttributeDataForAttributeNamed:asFormat:"}
+     ],
+     "introduced": "9",
+     "linkage": "exported",
+     "name": "MDLMesh",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "boundingBox", "name": "boundingBox"},
+      {"access": "public", "getter": "vertexDescriptor", "name": "vertexDescriptor", "setter": "setVertexDescriptor:"},
+      {"access": "public", "getter": "vertexCount", "name": "vertexCount", "setter": "setVertexCount:"},
+      {"access": "public", "getter": "vertexBuffers", "name": "vertexBuffers", "setter": "setVertexBuffers:"},
+      {"access": "public", "getter": "submeshes", "name": "submeshes", "setter": "setSubmeshes:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "allocator", "name": "allocator"}
+     ],
+     "super": "MDLObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithType:length:"},
+      {"access": "public", "name": "initWithType:data:"}
+     ],
+     "introduced": "9",
+     "linkage": "exported",
+     "name": "MDLMeshBufferData",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "data", "name": "data"}
+     ],
+     "protocols": [
+      "MDLMeshBuffer"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "9",
+     "linkage": "exported",
+     "name": "MDLMeshBufferDataAllocator",
+     "protocols": [
+      "MDLMeshBufferAllocator"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithBytes:deallocator:"}
+     ],
+     "introduced": "9",
+     "linkage": "exported",
+     "name": "MDLMeshBufferMap",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "bytes", "name": "bytes"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "11",
+     "linkage": "exported",
+     "name": "MDLMeshBufferZoneDefault",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "capacity", "name": "capacity"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "allocator", "name": "allocator"}
+     ],
+     "protocols": [
+      "MDLMeshBufferZone"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initVectorNoiseWithSmoothness:name:textureDimensions:channelEncoding:"},
+      {"access": "public", "name": "initScalarNoiseWithSmoothness:name:textureDimensions:channelCount:channelEncoding:grayscale:"},
+      {"access": "public", "introduced": "11", "name": "initCellularNoiseWithFrequency:name:textureDimensions:channelEncoding:"}
+     ],
+     "introduced": "9",
+     "linkage": "exported",
+     "name": "MDLNoiseTexture",
+     "super": "MDLTexture"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initByGeneratingNormalMapWithTexture:name:smoothness:contrast:"}
+     ],
+     "introduced": "9",
+     "linkage": "exported",
+     "name": "MDLNormalMapTexture",
+     "super": "MDLTexture"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "setComponent:forProtocol:"},
+      {"access": "public", "name": "componentConformingToProtocol:"},
+      {"access": "public", "name": "objectForKeyedSubscript:"},
+      {"access": "public", "name": "setObject:forKeyedSubscript:"},
+      {"access": "public", "name": "objectAtPath:"},
+      {"access": "public", "introduced": "11", "name": "enumerateChildObjectsOfClass:root:usingBlock:stopPointer:"},
+      {"access": "public", "name": "addChild:"},
+      {"access": "public", "name": "boundingBoxAtTime:"}
+     ],
+     "introduced": "9",
+     "linkage": "exported",
+     "name": "MDLObject",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "components", "name": "components"},
+      {"access": "public", "getter": "parent", "name": "parent", "setter": "setParent:"},
+      {"access": "public", "getter": "instance", "name": "instance", "setter": "setInstance:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "path", "name": "path"},
+      {"access": "public", "getter": "transform", "name": "transform", "setter": "setTransform:"},
+      {"access": "public", "getter": "children", "name": "children", "setter": "setChildren:"},
+      {"access": "public", "getter": "hidden", "name": "hidden", "setter": "setHidden:"}
+     ],
+     "protocols": [
+      "MDLNamed"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "9",
+     "linkage": "exported",
+     "name": "MDLObjectContainer",
+     "protocols": [
+      "MDLObjectContainerComponent"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithName:jointPaths:"}
+     ],
+     "introduced": "11",
+     "linkage": "exported",
+     "name": "MDLPackedJointAnimation",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "jointPaths", "name": "jointPaths"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "translations", "name": "translations"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "rotations", "name": "rotations"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "scales", "name": "scales"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "MDLJointAnimation"
+     ],
+     "super": "MDLObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithPath:"}
+     ],
+     "introduced": "11",
+     "linkage": "exported",
+     "name": "MDLPathAssetResolver",
+     "properties": [
+      {"access": "public", "getter": "path", "name": "path", "setter": "setPath:"}
+     ],
+     "protocols": [
+      "MDLAssetResolver"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithIESProfile:"},
+      {"access": "public", "name": "generateSphericalHarmonicsFromLight:"},
+      {"access": "public", "name": "generateCubemapFromLight:"},
+      {"access": "public", "introduced": "11", "name": "generateTexture:"}
+     ],
+     "introduced": "9",
+     "linkage": "exported",
+     "name": "MDLPhotometricLight",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "lightCubeMap", "name": "lightCubeMap"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "sphericalHarmonicsLevel", "name": "sphericalHarmonicsLevel"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "sphericalHarmonicsCoefficients", "name": "sphericalHarmonicsCoefficients"}
+     ],
+     "super": "MDLPhysicallyPlausibleLight"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "setColorByTemperature:"}
+     ],
+     "introduced": "9",
+     "linkage": "exported",
+     "name": "MDLPhysicallyPlausibleLight",
+     "properties": [
+      {"access": "public", "getter": "color", "name": "color", "setter": "setColor:"},
+      {"access": "public", "getter": "lumens", "name": "lumens", "setter": "setLumens:"},
+      {"access": "public", "getter": "innerConeAngle", "name": "innerConeAngle", "setter": "setInnerConeAngle:"},
+      {"access": "public", "getter": "outerConeAngle", "name": "outerConeAngle", "setter": "setOuterConeAngle:"},
+      {"access": "public", "getter": "attenuationStartDistance", "name": "attenuationStartDistance", "setter": "setAttenuationStartDistance:"},
+      {"access": "public", "getter": "attenuationEndDistance", "name": "attenuationEndDistance", "setter": "setAttenuationEndDistance:"}
+     ],
+     "super": "MDLLight"
+    },
+    {
+     "access": "public",
+     "introduced": "9",
+     "linkage": "exported",
+     "name": "MDLPhysicallyPlausibleScatteringFunction",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "version", "name": "version"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "subsurface", "name": "subsurface"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "metallic", "name": "metallic"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "specularAmount", "name": "specularAmount"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "specularTint", "name": "specularTint"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "roughness", "name": "roughness"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "anisotropic", "name": "anisotropic"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "anisotropicRotation", "name": "anisotropicRotation"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "sheen", "name": "sheen"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "sheenTint", "name": "sheenTint"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "clearcoat", "name": "clearcoat"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "clearcoatGloss", "name": "clearcoatGloss"}
+     ],
+     "super": "MDLScatteringFunction"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithAsset:"}
+     ],
+     "introduced": "11",
+     "linkage": "exported",
+     "name": "MDLRelativeAssetResolver",
+     "properties": [
+      {"access": "public", "getter": "asset", "name": "asset", "setter": "setAsset:"}
+     ],
+     "protocols": [
+      "MDLAssetResolver"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "9",
+     "linkage": "exported",
+     "name": "MDLScatteringFunction",
+     "properties": [
+      {"access": "public", "getter": "name", "name": "name", "setter": "setName:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "baseColor", "name": "baseColor"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "emission", "name": "emission"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "specular", "name": "specular"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "materialIndexOfRefraction", "name": "materialIndexOfRefraction"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "interfaceIndexOfRefraction", "name": "interfaceIndexOfRefraction"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "normal", "name": "normal"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "ambientOcclusion", "name": "ambientOcclusion"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "ambientOcclusionScale", "name": "ambientOcclusionScale"}
+     ],
+     "protocols": [
+      "MDLNamed"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithName:jointPaths:"}
+     ],
+     "introduced": "11",
+     "linkage": "exported",
+     "name": "MDLSkeleton",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "jointPaths", "name": "jointPaths"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "jointBindTransforms", "name": "jointBindTransforms"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "jointRestTransforms", "name": "jointRestTransforms"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "MDLObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithName:channelEncoding:textureDimensions:turbidity:sunElevation:upperAtmosphereScattering:groundAlbedo:"},
+      {"access": "public", "introduced": "11", "name": "initWithName:channelEncoding:textureDimensions:turbidity:sunElevation:sunAzimuth:upperAtmosphereScattering:groundAlbedo:"},
+      {"access": "public", "name": "updateTexture"}
+     ],
+     "introduced": "9",
+     "linkage": "exported",
+     "name": "MDLSkyCubeTexture",
+     "properties": [
+      {"access": "public", "getter": "turbidity", "name": "turbidity", "setter": "setTurbidity:"},
+      {"access": "public", "getter": "sunElevation", "name": "sunElevation", "setter": "setSunElevation:"},
+      {"access": "public", "getter": "sunAzimuth", "introduced": "11", "name": "sunAzimuth", "setter": "setSunAzimuth:"},
+      {"access": "public", "getter": "upperAtmosphereScattering", "name": "upperAtmosphereScattering", "setter": "setUpperAtmosphereScattering:"},
+      {"access": "public", "getter": "groundAlbedo", "name": "groundAlbedo", "setter": "setGroundAlbedo:"},
+      {"access": "public", "getter": "horizonElevation", "name": "horizonElevation", "setter": "setHorizonElevation:"},
+      {"access": "public", "getter": "groundColor", "name": "groundColor", "setter": "setGroundColor:"},
+      {"access": "public", "getter": "gamma", "name": "gamma", "setter": "setGamma:"},
+      {"access": "public", "getter": "exposure", "name": "exposure", "setter": "setExposure:"},
+      {"access": "public", "getter": "brightness", "name": "brightness", "setter": "setBrightness:"},
+      {"access": "public", "getter": "contrast", "name": "contrast", "setter": "setContrast:"},
+      {"access": "public", "getter": "saturation", "name": "saturation", "setter": "setSaturation:"},
+      {"access": "public", "getter": "highDynamicRangeCompression", "name": "highDynamicRangeCompression", "setter": "setHighDynamicRangeCompression:"}
+     ],
+     "super": "MDLTexture"
+    },
+    {
+     "access": "public",
+     "introduced": "9",
+     "linkage": "exported",
+     "name": "MDLStereoscopicCamera",
+     "properties": [
+      {"access": "public", "getter": "interPupillaryDistance", "name": "interPupillaryDistance", "setter": "setInterPupillaryDistance:"},
+      {"access": "public", "getter": "leftVergence", "name": "leftVergence", "setter": "setLeftVergence:"},
+      {"access": "public", "getter": "rightVergence", "name": "rightVergence", "setter": "setRightVergence:"},
+      {"access": "public", "getter": "overlap", "name": "overlap", "setter": "setOverlap:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "leftViewMatrix", "name": "leftViewMatrix"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "rightViewMatrix", "name": "rightViewMatrix"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "leftProjectionMatrix", "name": "leftProjectionMatrix"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "rightProjectionMatrix", "name": "rightProjectionMatrix"}
+     ],
+     "super": "MDLCamera"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithName:indexBuffer:indexCount:indexType:geometryType:material:"},
+      {"access": "public", "name": "initWithIndexBuffer:indexCount:indexType:geometryType:material:"},
+      {"access": "public", "name": "initWithName:indexBuffer:indexCount:indexType:geometryType:material:topology:"},
+      {"access": "public", "name": "initWithMDLSubmesh:indexType:geometryType:"},
+      {"access": "public", "name": "indexBufferAsIndexType:"}
+     ],
+     "introduced": "9",
+     "linkage": "exported",
+     "name": "MDLSubmesh",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "indexBuffer", "name": "indexBuffer"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "indexCount", "name": "indexCount"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "indexType", "name": "indexType"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "geometryType", "name": "geometryType"},
+      {"access": "public", "getter": "material", "name": "material", "setter": "setMaterial:"},
+      {"access": "public", "getter": "topology", "name": "topology", "setter": "setTopology:"},
+      {"access": "public", "getter": "name", "name": "name", "setter": "setName:"}
+     ],
+     "protocols": [
+      "MDLNamed"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithSubmesh:"}
+     ],
+     "introduced": "9",
+     "linkage": "exported",
+     "name": "MDLSubmeshTopology",
+     "properties": [
+      {"access": "public", "getter": "faceTopology", "name": "faceTopology", "setter": "setFaceTopology:"},
+      {"access": "public", "getter": "faceCount", "name": "faceCount", "setter": "setFaceCount:"},
+      {"access": "public", "getter": "vertexCreaseIndices", "name": "vertexCreaseIndices", "setter": "setVertexCreaseIndices:"},
+      {"access": "public", "getter": "vertexCreases", "name": "vertexCreases", "setter": "setVertexCreases:"},
+      {"access": "public", "getter": "vertexCreaseCount", "name": "vertexCreaseCount", "setter": "setVertexCreaseCount:"},
+      {"access": "public", "getter": "edgeCreaseIndices", "name": "edgeCreaseIndices", "setter": "setEdgeCreaseIndices:"},
+      {"access": "public", "getter": "edgeCreases", "name": "edgeCreases", "setter": "setEdgeCreases:"},
+      {"access": "public", "getter": "edgeCreaseCount", "name": "edgeCreaseCount", "setter": "setEdgeCreaseCount:"},
+      {"access": "public", "getter": "holes", "name": "holes", "setter": "setHoles:"},
+      {"access": "public", "getter": "holeCount", "name": "holeCount", "setter": "setHoleCount:"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "textureNamed:"},
+      {"access": "public", "name": "textureNamed:bundle:"},
+      {"access": "public", "introduced": "12", "name": "textureNamed:assetResolver:"},
+      {"access": "public", "name": "textureCubeWithImagesNamed:"},
+      {"access": "public", "name": "textureCubeWithImagesNamed:bundle:"},
+      {"access": "public", "name": "irradianceTextureCubeWithTexture:name:dimensions:"},
+      {"access": "public", "name": "irradianceTextureCubeWithTexture:name:dimensions:roughness:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init"},
+      {"access": "public", "name": "initWithData:topLeftOrigin:name:dimensions:rowStride:channelCount:channelEncoding:isCube:"},
+      {"access": "public", "name": "writeToURL:"},
+      {"access": "public", "introduced": "11", "name": "writeToURL:level:"},
+      {"access": "public", "name": "writeToURL:type:"},
+      {"access": "public", "introduced": "11", "name": "writeToURL:type:level:"},
+      {"access": "public", "name": "imageFromTexture"},
+      {"access": "public", "introduced": "11", "name": "imageFromTextureAtLevel:"},
+      {"access": "public", "name": "texelDataWithTopLeftOrigin"},
+      {"access": "public", "name": "texelDataWithBottomLeftOrigin"},
+      {"access": "public", "name": "texelDataWithTopLeftOriginAtMipLevel:create:"},
+      {"access": "public", "name": "texelDataWithBottomLeftOriginAtMipLevel:create:"}
+     ],
+     "introduced": "9",
+     "linkage": "exported",
+     "name": "MDLTexture",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "dimensions", "name": "dimensions"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "rowStride", "name": "rowStride"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "channelCount", "name": "channelCount"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "mipLevelCount", "name": "mipLevelCount"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "channelEncoding", "name": "channelEncoding"},
+      {"access": "public", "getter": "isCube", "name": "isCube", "setter": "setIsCube:"},
+      {"access": "public", "getter": "hasAlphaValues", "name": "hasAlphaValues", "setter": "setHasAlphaValues:"}
+     ],
+     "protocols": [
+      "MDLNamed"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "9",
+     "linkage": "exported",
+     "name": "MDLTextureFilter",
+     "properties": [
+      {"access": "public", "getter": "sWrapMode", "name": "sWrapMode", "setter": "setSWrapMode:"},
+      {"access": "public", "getter": "tWrapMode", "name": "tWrapMode", "setter": "setTWrapMode:"},
+      {"access": "public", "getter": "rWrapMode", "name": "rWrapMode", "setter": "setRWrapMode:"},
+      {"access": "public", "getter": "minFilter", "name": "minFilter", "setter": "setMinFilter:"},
+      {"access": "public", "getter": "magFilter", "name": "magFilter", "setter": "setMagFilter:"},
+      {"access": "public", "getter": "mipFilter", "name": "mipFilter", "setter": "setMipFilter:"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "9",
+     "linkage": "exported",
+     "name": "MDLTextureSampler",
+     "properties": [
+      {"access": "public", "getter": "texture", "name": "texture", "setter": "setTexture:"},
+      {"access": "public", "getter": "hardwareFilter", "name": "hardwareFilter", "setter": "setHardwareFilter:"},
+      {"access": "public", "getter": "transform", "name": "transform", "setter": "setTransform:"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "init"},
+      {"access": "public", "introduced": "9", "name": "initWithIdentity"},
+      {"access": "public", "name": "initWithTransformComponent:"},
+      {"access": "public", "name": "initWithTransformComponent:resetsTransform:"},
+      {"access": "public", "name": "initWithMatrix:"},
+      {"access": "public", "name": "initWithMatrix:resetsTransform:"},
+      {"access": "public", "name": "setIdentity"},
+      {"access": "public", "name": "translationAtTime:"},
+      {"access": "public", "name": "rotationAtTime:"},
+      {"access": "public", "name": "shearAtTime:"},
+      {"access": "public", "name": "scaleAtTime:"},
+      {"access": "public", "introduced": "11", "name": "setMatrix:forTime:"},
+      {"access": "public", "name": "setTranslation:forTime:"},
+      {"access": "public", "name": "setRotation:forTime:"},
+      {"access": "public", "name": "setShear:forTime:"},
+      {"access": "public", "name": "setScale:forTime:"},
+      {"access": "public", "name": "rotationMatrixAtTime:"}
+     ],
+     "introduced": "9",
+     "linkage": "exported",
+     "name": "MDLTransform",
+     "properties": [
+      {"access": "public", "getter": "translation", "name": "translation", "setter": "setTranslation:"},
+      {"access": "public", "getter": "rotation", "name": "rotation", "setter": "setRotation:"},
+      {"access": "public", "getter": "shear", "name": "shear", "setter": "setShear:"},
+      {"access": "public", "getter": "scale", "name": "scale", "setter": "setScale:"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "MDLTransformComponent"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "11",
+     "linkage": "exported",
+     "name": "MDLTransformMatrixOp",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "name", "name": "name"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "animatedValue", "name": "animatedValue"}
+     ],
+     "protocols": [
+      "MDLTransformOp"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "12",
+     "linkage": "exported",
+     "name": "MDLTransformOrientOp",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "name", "name": "name"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "animatedValue", "name": "animatedValue"}
+     ],
+     "protocols": [
+      "MDLTransformOp"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "11",
+     "linkage": "exported",
+     "name": "MDLTransformRotateOp",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "name", "name": "name"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "animatedValue", "name": "animatedValue"}
+     ],
+     "protocols": [
+      "MDLTransformOp"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "11",
+     "linkage": "exported",
+     "name": "MDLTransformRotateXOp",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "name", "name": "name"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "animatedValue", "name": "animatedValue"}
+     ],
+     "protocols": [
+      "MDLTransformOp"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "11",
+     "linkage": "exported",
+     "name": "MDLTransformRotateYOp",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "name", "name": "name"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "animatedValue", "name": "animatedValue"}
+     ],
+     "protocols": [
+      "MDLTransformOp"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "11",
+     "linkage": "exported",
+     "name": "MDLTransformRotateZOp",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "name", "name": "name"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "animatedValue", "name": "animatedValue"}
+     ],
+     "protocols": [
+      "MDLTransformOp"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "11",
+     "linkage": "exported",
+     "name": "MDLTransformScaleOp",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "name", "name": "name"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "animatedValue", "name": "animatedValue"}
+     ],
+     "protocols": [
+      "MDLTransformOp"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "init"},
+      {"access": "public", "name": "addTranslateOp:inverse:"},
+      {"access": "public", "name": "addRotateXOp:inverse:"},
+      {"access": "public", "name": "addRotateYOp:inverse:"},
+      {"access": "public", "name": "addRotateZOp:inverse:"},
+      {"access": "public", "name": "addRotateOp:order:inverse:"},
+      {"access": "public", "name": "addScaleOp:inverse:"},
+      {"access": "public", "name": "addMatrixOp:inverse:"},
+      {"access": "public", "name": "addOrientOp:inverse:"},
+      {"access": "public", "name": "animatedValueWithName:"},
+      {"access": "public", "name": "float4x4AtTime:"},
+      {"access": "public", "name": "double4x4AtTime:"},
+      {"access": "public", "name": "count"}
+     ],
+     "introduced": "11",
+     "linkage": "exported",
+     "name": "MDLTransformStack",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "keyTimes", "name": "keyTimes"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "transformOps", "name": "transformOps"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "MDLTransformComponent"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "11",
+     "linkage": "exported",
+     "name": "MDLTransformTranslateOp",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "name", "name": "name"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "animatedValue", "name": "animatedValue"}
+     ],
+     "protocols": [
+      "MDLTransformOp"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithURL:name:"}
+     ],
+     "introduced": "9",
+     "linkage": "exported",
+     "name": "MDLURLTexture",
+     "properties": [
+      {"access": "public", "getter": "URL", "name": "URL", "setter": "setURL:"}
+     ],
+     "super": "MDLTexture"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "convertToUSDZ:writeToURL:"}
+     ],
+     "introduced": "18",
+     "linkage": "exported",
+     "name": "MDLUtility",
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithName:format:offset:bufferIndex:"}
+     ],
+     "introduced": "9",
+     "linkage": "exported",
+     "name": "MDLVertexAttribute",
+     "properties": [
+      {"access": "public", "getter": "name", "name": "name", "setter": "setName:"},
+      {"access": "public", "getter": "format", "name": "format", "setter": "setFormat:"},
+      {"access": "public", "getter": "offset", "name": "offset", "setter": "setOffset:"},
+      {"access": "public", "getter": "bufferIndex", "name": "bufferIndex", "setter": "setBufferIndex:"},
+      {"access": "public", "getter": "time", "name": "time", "setter": "setTime:"},
+      {"access": "public", "getter": "initializationValue", "name": "initializationValue", "setter": "setInitializationValue:"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "9",
+     "linkage": "exported",
+     "name": "MDLVertexAttributeData",
+     "properties": [
+      {"access": "public", "getter": "map", "name": "map", "setter": "setMap:"},
+      {"access": "public", "getter": "dataStart", "name": "dataStart", "setter": "setDataStart:"},
+      {"access": "public", "getter": "stride", "name": "stride", "setter": "setStride:"},
+      {"access": "public", "getter": "format", "name": "format", "setter": "setFormat:"},
+      {"access": "public", "getter": "bufferSize", "introduced": "11", "name": "bufferSize", "setter": "setBufferSize:"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithStride:"}
+     ],
+     "introduced": "9",
+     "linkage": "exported",
+     "name": "MDLVertexBufferLayout",
+     "properties": [
+      {"access": "public", "getter": "stride", "name": "stride", "setter": "setStride:"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithVertexDescriptor:"},
+      {"access": "public", "name": "attributeNamed:"},
+      {"access": "public", "name": "addOrReplaceAttribute:"},
+      {"access": "public", "name": "removeAttributeNamed:"},
+      {"access": "public", "name": "reset"},
+      {"access": "public", "name": "setPackedStrides"},
+      {"access": "public", "name": "setPackedOffsets"}
+     ],
+     "introduced": "9",
+     "linkage": "exported",
+     "name": "MDLVertexDescriptor",
+     "properties": [
+      {"access": "public", "getter": "attributes", "name": "attributes", "setter": "setAttributes:"},
+      {"access": "public", "getter": "layouts", "name": "layouts", "setter": "setLayouts:"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithAsset:divisions:patchRadius:"},
+      {"access": "public", "name": "initWithData:boundingBox:voxelExtent:"},
+      {"access": "public", "name": "initWithAsset:divisions:interiorShells:exteriorShells:patchRadius:", "unavailable": true},
+      {"access": "public", "name": "initWithAsset:divisions:interiorNBWidth:exteriorNBWidth:patchRadius:", "unavailable": true},
+      {"access": "public", "name": "voxelExistsAtIndex:allowAnyX:allowAnyY:allowAnyZ:allowAnyShell:"},
+      {"access": "public", "name": "voxelsWithinExtent:"},
+      {"access": "public", "name": "voxelIndices"},
+      {"access": "public", "name": "setVoxelAtIndex:"},
+      {"access": "public", "name": "setVoxelsForMesh:divisions:patchRadius:"},
+      {"access": "public", "name": "setVoxelsForMesh:divisions:interiorShells:exteriorShells:patchRadius:", "unavailable": true},
+      {"access": "public", "name": "setVoxelsForMesh:divisions:interiorNBWidth:exteriorNBWidth:patchRadius:", "unavailable": true},
+      {"access": "public", "name": "unionWithVoxels:"},
+      {"access": "public", "name": "intersectWithVoxels:"},
+      {"access": "public", "name": "differenceWithVoxels:"},
+      {"access": "public", "name": "indexOfSpatialLocation:"},
+      {"access": "public", "name": "spatialLocationOfIndex:"},
+      {"access": "public", "name": "voxelBoundingBoxAtIndex:"},
+      {"access": "public", "name": "convertToSignedShellField"},
+      {"access": "public", "name": "coarseMesh"},
+      {"access": "public", "name": "coarseMeshUsingAllocator:"},
+      {"access": "public", "name": "meshUsingAllocator:"}
+     ],
+     "introduced": "9",
+     "linkage": "exported",
+     "name": "MDLVoxelArray",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "count", "name": "count"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "voxelIndexExtent", "name": "voxelIndexExtent"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "boundingBox", "name": "boundingBox"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isValidSignedShellField", "name": "isValidSignedShellField"},
+      {"access": "public", "getter": "shellFieldInteriorThickness", "name": "shellFieldInteriorThickness", "setter": "setShellFieldInteriorThickness:"},
+      {"access": "public", "getter": "shellFieldExteriorThickness", "name": "shellFieldExteriorThickness", "setter": "setShellFieldExteriorThickness:"}
+     ],
+     "super": "MDLObject"
+    }
+   ],
+   "protocols": [
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "canResolveAssetNamed:"},
+      {"access": "public", "name": "resolveAssetNamed:"}
+     ],
+     "introduced": "11",
+     "name": "MDLAssetResolver",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "introduced": "9",
+     "name": "MDLComponent",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "introduced": "11",
+     "name": "MDLJointAnimation"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "sphericalHarmonicsCoefficientsAtPosition:", "optional": true}
+     ],
+     "name": "MDLLightProbeIrradianceDataSource",
+     "properties": [
+      {"access": "public", "getter": "boundingBox", "name": "boundingBox", "setter": "setBoundingBox:"},
+      {"access": "public", "getter": "sphericalHarmonicsLevel", "name": "sphericalHarmonicsLevel", "optional": true, "setter": "setSphericalHarmonicsLevel:"}
+     ],
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "fillData:offset:"},
+      {"access": "public", "name": "map"}
+     ],
+     "introduced": "9",
+     "name": "MDLMeshBuffer",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "length", "name": "length"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "allocator", "name": "allocator"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "zone", "name": "zone"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "type", "name": "type"}
+     ],
+     "protocols": [
+      "NSObject",
+      "NSCopying"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "newZone:"},
+      {"access": "public", "name": "newZoneForBuffersWithSize:andType:"},
+      {"access": "public", "name": "newBuffer:type:"},
+      {"access": "public", "name": "newBufferWithData:type:"},
+      {"access": "public", "name": "newBufferFromZone:length:type:"},
+      {"access": "public", "name": "newBufferFromZone:data:type:"}
+     ],
+     "introduced": "9",
+     "name": "MDLMeshBufferAllocator",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "introduced": "9",
+     "name": "MDLMeshBufferZone",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "capacity", "name": "capacity"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "allocator", "name": "allocator"}
+     ],
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "introduced": "9",
+     "name": "MDLNamed",
+     "properties": [
+      {"access": "public", "getter": "name", "name": "name", "setter": "setName:"}
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "addObject:"},
+      {"access": "public", "name": "removeObject:"},
+      {"access": "public", "introduced": "11", "name": "objectAtIndexedSubscript:"}
+     ],
+     "introduced": "9",
+     "name": "MDLObjectContainerComponent",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "count", "introduced": "11", "name": "count"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "objects", "name": "objects"}
+     ],
+     "protocols": [
+      "MDLComponent",
+      "NSFastEnumeration"
+     ]
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "globalTransformWithObject:atTime:", "optional": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "setLocalTransform:forTime:", "optional": true},
+      {"access": "public", "name": "setLocalTransform:", "optional": true},
+      {"access": "public", "name": "localTransformAtTime:", "optional": true}
+     ],
+     "introduced": "9",
+     "name": "MDLTransformComponent",
+     "properties": [
+      {"access": "public", "getter": "matrix", "name": "matrix", "setter": "setMatrix:"},
+      {"access": "public", "getter": "resetsTransform", "name": "resetsTransform", "setter": "setResetsTransform:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "minimumTime", "name": "minimumTime"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "maximumTime", "name": "maximumTime"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "keyTimes", "name": "keyTimes"}
+     ],
+     "protocols": [
+      "MDLComponent"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "float4x4AtTime:"},
+      {"access": "public", "name": "double4x4AtTime:"},
+      {"access": "public", "name": "IsInverseOp"}
+     ],
+     "introduced": "11",
+     "name": "MDLTransformOp",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "name", "name": "name"}
+     ]
+    }
+   ],
+   "target": "arm64e-apple-ios27",
+   "typedefs": [
+    {"access": "public", "name": "MDLAnimatedValueInterpolation"},
+    {"access": "public", "name": "MDLAxisAlignedBoundingBox"},
+    {"access": "public", "name": "MDLCameraProjection"},
+    {"access": "public", "name": "MDLDataPrecision"},
+    {"access": "public", "name": "MDLGeometryType"},
+    {"access": "public", "name": "MDLIndexBitDepth"},
+    {"access": "public", "name": "MDLLightType"},
+    {"access": "public", "name": "MDLMaterialFace"},
+    {"access": "public", "name": "MDLMaterialMipMapFilterMode"},
+    {"access": "public", "name": "MDLMaterialPropertyType"},
+    {"access": "public", "name": "MDLMaterialSemantic"},
+    {"access": "public", "name": "MDLMaterialTextureFilterMode"},
+    {"access": "public", "name": "MDLMaterialTextureWrapMode"},
+    {"access": "public", "name": "MDLMeshBufferType"},
+    {"access": "public", "name": "MDLProbePlacement"},
+    {"access": "public", "name": "MDLTextureChannelEncoding"},
+    {"access": "public", "name": "MDLTransformOpRotationOrder"},
+    {"access": "public", "name": "MDLVertexFormat"},
+    {"access": "public", "name": "MDLVoxelIndex"},
+    {"access": "public", "name": "MDLVoxelIndexExtent"}
+   ]
+  },
+  {
+   "categories": [
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "newBoxWithDimensions:segments:geometryType:inwardNormals:allocator:"},
+      {"access": "public", "name": "newEllipsoidWithRadii:radialSegments:verticalSegments:geometryType:inwardNormals:hemisphere:allocator:"},
+      {"access": "public", "name": "newCylinderWithHeight:radii:radialSegments:verticalSegments:geometryType:inwardNormals:allocator:"},
+      {"access": "public", "introduced": "11", "name": "newCapsuleWithHeight:radii:radialSegments:verticalSegments:hemisphereSegments:geometryType:inwardNormals:allocator:"},
+      {"access": "public", "name": "newEllipticalConeWithHeight:radii:radialSegments:verticalSegments:geometryType:inwardNormals:allocator:"},
+      {"access": "public", "name": "newPlaneWithDimensions:segments:geometryType:allocator:"},
+      {"access": "public", "introduced": "11", "name": "newIcosahedronWithRadius:inwardNormals:geometryType:allocator:"},
+      {"access": "public", "name": "newIcosahedronWithRadius:inwardNormals:allocator:"},
+      {"access": "public", "name": "newSubdividedMesh:submeshIndex:subdivisionLevels:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initBoxWithExtent:segments:inwardNormals:geometryType:allocator:"},
+      {"access": "public", "name": "initSphereWithExtent:segments:inwardNormals:geometryType:allocator:"},
+      {"access": "public", "name": "initHemisphereWithExtent:segments:inwardNormals:cap:geometryType:allocator:"},
+      {"access": "public", "name": "initCylinderWithExtent:segments:inwardNormals:topCap:bottomCap:geometryType:allocator:"},
+      {"access": "public", "name": "initCapsuleWithExtent:cylinderSegments:hemisphereSegments:inwardNormals:geometryType:allocator:"},
+      {"access": "public", "name": "initConeWithExtent:segments:inwardNormals:cap:geometryType:allocator:"},
+      {"access": "public", "name": "initPlaneWithExtent:segments:geometryType:allocator:"},
+      {"access": "public", "name": "initIcosahedronWithExtent:inwardNormals:geometryType:allocator:"},
+      {"access": "public", "name": "initMeshBySubdividingMesh:submeshIndex:subdivisionLevels:allocator:"}
+     ],
+     "interface": "MDLMesh",
+     "name": "Generators"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "placeLightProbesWithDensity:heuristic:usingIrradianceDataSource:"}
+     ],
+     "interface": "MDLAsset",
+     "name": "MDLLightBaking"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "lightProbeWithTextureSize:forLocation:lightsToConsider:objectsToConsider:reflectiveCubemap:irradianceCubemap:"}
+     ],
+     "interface": "MDLLightProbe",
+     "name": "MDLLightBaking"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "generateAmbientOcclusionTextureWithSize:raysPerSample:attenuationFactor:objectsToConsider:vertexAttributeNamed:materialPropertyNamed:"},
+      {"access": "public", "name": "generateAmbientOcclusionTextureWithQuality:attenuationFactor:objectsToConsider:vertexAttributeNamed:materialPropertyNamed:"},
+      {"access": "public", "name": "generateAmbientOcclusionVertexColorsWithRaysPerSample:attenuationFactor:objectsToConsider:vertexAttributeNamed:"},
+      {"access": "public", "name": "generateAmbientOcclusionVertexColorsWithQuality:attenuationFactor:objectsToConsider:vertexAttributeNamed:"},
+      {"access": "public", "name": "generateLightMapTextureWithTextureSize:lightsToConsider:objectsToConsider:vertexAttributeNamed:materialPropertyNamed:"},
+      {"access": "public", "name": "generateLightMapTextureWithQuality:lightsToConsider:objectsToConsider:vertexAttributeNamed:materialPropertyNamed:"},
+      {"access": "public", "name": "generateLightMapVertexColorsWithLightsToConsider:objectsToConsider:vertexAttributeNamed:"}
+     ],
+     "interface": "MDLMesh",
+     "name": "MDLLightBaking"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "addAttributeWithName:format:"},
+      {"access": "public", "name": "addAttributeWithName:format:type:data:stride:"},
+      {"access": "public", "name": "addAttributeWithName:format:type:data:stride:time:"},
+      {"access": "public", "name": "addNormalsWithAttributeNamed:creaseThreshold:"},
+      {"access": "public", "name": "addTangentBasisForTextureCoordinateAttributeNamed:tangentAttributeNamed:bitangentAttributeNamed:"},
+      {"access": "public", "name": "addTangentBasisForTextureCoordinateAttributeNamed:normalAttributeNamed:tangentAttributeNamed:"},
+      {"access": "public", "introduced": "11", "name": "addOrthTanBasisForTextureCoordinateAttributeNamed:normalAttributeNamed:tangentAttributeNamed:"},
+      {"access": "public", "name": "addUnwrappedTextureCoordinatesForAttributeNamed:"},
+      {"access": "public", "introduced": "11", "name": "flipTextureCoordinatesInAttributeNamed:"},
+      {"access": "public", "introduced": "9", "name": "makeVerticesUnique"},
+      {"access": "public", "introduced": "11", "name": "makeVerticesUniqueAndReturnError:"},
+      {"access": "public", "name": "replaceAttributeNamed:withData:"},
+      {"access": "public", "name": "updateAttributeNamed:withData:"},
+      {"access": "public", "name": "removeAttributeNamed:"}
+     ],
+     "interface": "MDLMesh",
+     "name": "Modifiers"
+    }
+   ],
+   "enums": [
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MDLAnimatedValueInterpolationConstant"},
+      {"access": "public", "name": "MDLAnimatedValueInterpolationLinear"}
+     ],
+     "name": "MDLAnimatedValueInterpolation"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MDLCameraProjectionPerspective"},
+      {"access": "public", "name": "MDLCameraProjectionOrthographic"}
+     ],
+     "name": "MDLCameraProjection"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MDLDataPrecisionUndefined"},
+      {"access": "public", "name": "MDLDataPrecisionFloat"},
+      {"access": "public", "name": "MDLDataPrecisionDouble"}
+     ],
+     "introduced": "11",
+     "name": "MDLDataPrecision"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MDLGeometryTypePoints"},
+      {"access": "public", "name": "MDLGeometryTypeLines"},
+      {"access": "public", "name": "MDLGeometryTypeTriangles"},
+      {"access": "public", "name": "MDLGeometryTypeTriangleStrips"},
+      {"access": "public", "name": "MDLGeometryTypeQuads"},
+      {"access": "public", "name": "MDLGeometryTypeVariableTopology"}
+     ],
+     "name": "MDLGeometryType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MDLIndexBitDepthInvalid"},
+      {"access": "public", "name": "MDLIndexBitDepthUInt8"},
+      {"access": "public", "name": "MDLIndexBitDepthUint8"},
+      {"access": "public", "name": "MDLIndexBitDepthUInt16"},
+      {"access": "public", "name": "MDLIndexBitDepthUint16"},
+      {"access": "public", "name": "MDLIndexBitDepthUInt32"},
+      {"access": "public", "name": "MDLIndexBitDepthUint32"}
+     ],
+     "name": "MDLIndexBitDepth"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MDLLightTypeUnknown"},
+      {"access": "public", "name": "MDLLightTypeAmbient"},
+      {"access": "public", "name": "MDLLightTypeDirectional"},
+      {"access": "public", "name": "MDLLightTypeSpot"},
+      {"access": "public", "name": "MDLLightTypePoint"},
+      {"access": "public", "name": "MDLLightTypeLinear"},
+      {"access": "public", "name": "MDLLightTypeDiscArea"},
+      {"access": "public", "name": "MDLLightTypeRectangularArea"},
+      {"access": "public", "name": "MDLLightTypeSuperElliptical"},
+      {"access": "public", "name": "MDLLightTypePhotometric"},
+      {"access": "public", "name": "MDLLightTypeProbe"},
+      {"access": "public", "name": "MDLLightTypeEnvironment"}
+     ],
+     "name": "MDLLightType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MDLMaterialFaceFront"},
+      {"access": "public", "name": "MDLMaterialFaceBack"},
+      {"access": "public", "name": "MDLMaterialFaceDoubleSided"}
+     ],
+     "name": "MDLMaterialFace"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MDLMaterialMipMapFilterModeNearest"},
+      {"access": "public", "name": "MDLMaterialMipMapFilterModeLinear"}
+     ],
+     "name": "MDLMaterialMipMapFilterMode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MDLMaterialPropertyTypeNone"},
+      {"access": "public", "name": "MDLMaterialPropertyTypeString"},
+      {"access": "public", "name": "MDLMaterialPropertyTypeURL"},
+      {"access": "public", "name": "MDLMaterialPropertyTypeTexture"},
+      {"access": "public", "name": "MDLMaterialPropertyTypeColor"},
+      {"access": "public", "name": "MDLMaterialPropertyTypeFloat"},
+      {"access": "public", "name": "MDLMaterialPropertyTypeFloat2"},
+      {"access": "public", "name": "MDLMaterialPropertyTypeFloat3"},
+      {"access": "public", "name": "MDLMaterialPropertyTypeFloat4"},
+      {"access": "public", "name": "MDLMaterialPropertyTypeMatrix44"},
+      {"access": "public", "name": "MDLMaterialPropertyTypeBuffer"}
+     ],
+     "name": "MDLMaterialPropertyType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MDLMaterialSemanticBaseColor"},
+      {"access": "public", "name": "MDLMaterialSemanticSubsurface"},
+      {"access": "public", "name": "MDLMaterialSemanticMetallic"},
+      {"access": "public", "name": "MDLMaterialSemanticSpecular"},
+      {"access": "public", "name": "MDLMaterialSemanticSpecularExponent"},
+      {"access": "public", "name": "MDLMaterialSemanticSpecularTint"},
+      {"access": "public", "name": "MDLMaterialSemanticRoughness"},
+      {"access": "public", "name": "MDLMaterialSemanticAnisotropic"},
+      {"access": "public", "name": "MDLMaterialSemanticAnisotropicRotation"},
+      {"access": "public", "name": "MDLMaterialSemanticSheen"},
+      {"access": "public", "name": "MDLMaterialSemanticSheenTint"},
+      {"access": "public", "name": "MDLMaterialSemanticClearcoat"},
+      {"access": "public", "name": "MDLMaterialSemanticClearcoatGloss"},
+      {"access": "public", "name": "MDLMaterialSemanticEmission"},
+      {"access": "public", "name": "MDLMaterialSemanticBump"},
+      {"access": "public", "name": "MDLMaterialSemanticOpacity"},
+      {"access": "public", "name": "MDLMaterialSemanticInterfaceIndexOfRefraction"},
+      {"access": "public", "name": "MDLMaterialSemanticMaterialIndexOfRefraction"},
+      {"access": "public", "name": "MDLMaterialSemanticObjectSpaceNormal"},
+      {"access": "public", "name": "MDLMaterialSemanticTangentSpaceNormal"},
+      {"access": "public", "name": "MDLMaterialSemanticDisplacement"},
+      {"access": "public", "name": "MDLMaterialSemanticDisplacementScale"},
+      {"access": "public", "name": "MDLMaterialSemanticAmbientOcclusion"},
+      {"access": "public", "name": "MDLMaterialSemanticAmbientOcclusionScale"},
+      {"access": "public", "name": "MDLMaterialSemanticNone"},
+      {"access": "public", "name": "MDLMaterialSemanticUserDefined"}
+     ],
+     "name": "MDLMaterialSemantic"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MDLMaterialTextureFilterModeNearest"},
+      {"access": "public", "name": "MDLMaterialTextureFilterModeLinear"}
+     ],
+     "name": "MDLMaterialTextureFilterMode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MDLMaterialTextureWrapModeClamp"},
+      {"access": "public", "name": "MDLMaterialTextureWrapModeRepeat"},
+      {"access": "public", "name": "MDLMaterialTextureWrapModeMirror"}
+     ],
+     "name": "MDLMaterialTextureWrapMode"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MDLMeshBufferTypeVertex"},
+      {"access": "public", "name": "MDLMeshBufferTypeIndex"},
+      {"access": "public", "name": "MDLMeshBufferTypeCustom"}
+     ],
+     "name": "MDLMeshBufferType"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MDLProbePlacementUniformGrid"},
+      {"access": "public", "name": "MDLProbePlacementIrradianceDistribution"}
+     ],
+     "name": "MDLProbePlacement"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MDLTextureChannelEncodingUInt8"},
+      {"access": "public", "name": "MDLTextureChannelEncodingUint8"},
+      {"access": "public", "name": "MDLTextureChannelEncodingUInt16"},
+      {"access": "public", "name": "MDLTextureChannelEncodingUint16"},
+      {"access": "public", "name": "MDLTextureChannelEncodingUInt24"},
+      {"access": "public", "name": "MDLTextureChannelEncodingUint24"},
+      {"access": "public", "name": "MDLTextureChannelEncodingUInt32"},
+      {"access": "public", "name": "MDLTextureChannelEncodingUint32"},
+      {"access": "public", "name": "MDLTextureChannelEncodingFloat16"},
+      {"access": "public", "name": "MDLTextureChannelEncodingFloat16SR"},
+      {"access": "public", "name": "MDLTextureChannelEncodingFloat32"}
+     ],
+     "name": "MDLTextureChannelEncoding"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MDLTransformOpRotationOrderXYZ"},
+      {"access": "public", "name": "MDLTransformOpRotationOrderXZY"},
+      {"access": "public", "name": "MDLTransformOpRotationOrderYXZ"},
+      {"access": "public", "name": "MDLTransformOpRotationOrderYZX"},
+      {"access": "public", "name": "MDLTransformOpRotationOrderZXY"},
+      {"access": "public", "name": "MDLTransformOpRotationOrderZYX"}
+     ],
+     "name": "MDLTransformOpRotationOrder"
+    },
+    {
+     "access": "public",
+     "constants": [
+      {"access": "public", "name": "MDLVertexFormatInvalid"},
+      {"access": "public", "name": "MDLVertexFormatPackedBit"},
+      {"access": "public", "name": "MDLVertexFormatUCharBits"},
+      {"access": "public", "name": "MDLVertexFormatCharBits"},
+      {"access": "public", "name": "MDLVertexFormatUCharNormalizedBits"},
+      {"access": "public", "name": "MDLVertexFormatCharNormalizedBits"},
+      {"access": "public", "name": "MDLVertexFormatUShortBits"},
+      {"access": "public", "name": "MDLVertexFormatShortBits"},
+      {"access": "public", "name": "MDLVertexFormatUShortNormalizedBits"},
+      {"access": "public", "name": "MDLVertexFormatShortNormalizedBits"},
+      {"access": "public", "name": "MDLVertexFormatUIntBits"},
+      {"access": "public", "name": "MDLVertexFormatIntBits"},
+      {"access": "public", "name": "MDLVertexFormatHalfBits"},
+      {"access": "public", "name": "MDLVertexFormatFloatBits"},
+      {"access": "public", "name": "MDLVertexFormatUChar"},
+      {"access": "public", "name": "MDLVertexFormatUChar2"},
+      {"access": "public", "name": "MDLVertexFormatUChar3"},
+      {"access": "public", "name": "MDLVertexFormatUChar4"},
+      {"access": "public", "name": "MDLVertexFormatChar"},
+      {"access": "public", "name": "MDLVertexFormatChar2"},
+      {"access": "public", "name": "MDLVertexFormatChar3"},
+      {"access": "public", "name": "MDLVertexFormatChar4"},
+      {"access": "public", "name": "MDLVertexFormatUCharNormalized"},
+      {"access": "public", "name": "MDLVertexFormatUChar2Normalized"},
+      {"access": "public", "name": "MDLVertexFormatUChar3Normalized"},
+      {"access": "public", "name": "MDLVertexFormatUChar4Normalized"},
+      {"access": "public", "name": "MDLVertexFormatCharNormalized"},
+      {"access": "public", "name": "MDLVertexFormatChar2Normalized"},
+      {"access": "public", "name": "MDLVertexFormatChar3Normalized"},
+      {"access": "public", "name": "MDLVertexFormatChar4Normalized"},
+      {"access": "public", "name": "MDLVertexFormatUShort"},
+      {"access": "public", "name": "MDLVertexFormatUShort2"},
+      {"access": "public", "name": "MDLVertexFormatUShort3"},
+      {"access": "public", "name": "MDLVertexFormatUShort4"},
+      {"access": "public", "name": "MDLVertexFormatShort"},
+      {"access": "public", "name": "MDLVertexFormatShort2"},
+      {"access": "public", "name": "MDLVertexFormatShort3"},
+      {"access": "public", "name": "MDLVertexFormatShort4"},
+      {"access": "public", "name": "MDLVertexFormatUShortNormalized"},
+      {"access": "public", "name": "MDLVertexFormatUShort2Normalized"},
+      {"access": "public", "name": "MDLVertexFormatUShort3Normalized"},
+      {"access": "public", "name": "MDLVertexFormatUShort4Normalized"},
+      {"access": "public", "name": "MDLVertexFormatShortNormalized"},
+      {"access": "public", "name": "MDLVertexFormatShort2Normalized"},
+      {"access": "public", "name": "MDLVertexFormatShort3Normalized"},
+      {"access": "public", "name": "MDLVertexFormatShort4Normalized"},
+      {"access": "public", "name": "MDLVertexFormatUInt"},
+      {"access": "public", "name": "MDLVertexFormatUInt2"},
+      {"access": "public", "name": "MDLVertexFormatUInt3"},
+      {"access": "public", "name": "MDLVertexFormatUInt4"},
+      {"access": "public", "name": "MDLVertexFormatInt"},
+      {"access": "public", "name": "MDLVertexFormatInt2"},
+      {"access": "public", "name": "MDLVertexFormatInt3"},
+      {"access": "public", "name": "MDLVertexFormatInt4"},
+      {"access": "public", "name": "MDLVertexFormatHalf"},
+      {"access": "public", "name": "MDLVertexFormatHalf2"},
+      {"access": "public", "name": "MDLVertexFormatHalf3"},
+      {"access": "public", "name": "MDLVertexFormatHalf4"},
+      {"access": "public", "name": "MDLVertexFormatFloat"},
+      {"access": "public", "name": "MDLVertexFormatFloat2"},
+      {"access": "public", "name": "MDLVertexFormatFloat3"},
+      {"access": "public", "name": "MDLVertexFormatFloat4"},
+      {"access": "public", "name": "MDLVertexFormatInt1010102Normalized"},
+      {"access": "public", "name": "MDLVertexFormatUInt1010102Normalized"}
+     ],
+     "name": "MDLVertexFormat"
+    }
+   ],
+   "globals": [
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_MDLVertexAttributeAnisotropy"},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_MDLVertexAttributeBinormal"},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_MDLVertexAttributeBitangent"},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_MDLVertexAttributeColor"},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_MDLVertexAttributeEdgeCrease"},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_MDLVertexAttributeJointIndices"},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_MDLVertexAttributeJointWeights"},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_MDLVertexAttributeNormal"},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_MDLVertexAttributeOcclusionValue"},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_MDLVertexAttributePosition"},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_MDLVertexAttributeShadingBasisU"},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_MDLVertexAttributeShadingBasisV"},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_MDLVertexAttributeSubdivisionStencil"},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_MDLVertexAttributeTangent"},
+    {"access": "public", "kind": "variable", "linkage": "exported", "name": "_MDLVertexAttributeTextureCoordinate"},
+    {"access": "public", "introduced": "9", "kind": "variable", "linkage": "exported", "name": "_kUTType3dObject"},
+    {"access": "public", "introduced": "9", "kind": "variable", "linkage": "exported", "name": "_kUTTypeAlembic"},
+    {"access": "public", "introduced": "9", "kind": "variable", "linkage": "exported", "name": "_kUTTypePolygon"},
+    {"access": "public", "introduced": "9", "kind": "variable", "linkage": "exported", "name": "_kUTTypeStereolithography"},
+    {"access": "public", "introduced": "10", "kind": "variable", "linkage": "exported", "name": "_kUTTypeUniversalSceneDescription"},
+    {"access": "public", "introduced": "14", "kind": "variable", "linkage": "exported", "name": "_kUTTypeUniversalSceneDescriptionMobile"}
+   ],
+   "interfaces": [
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "setFloat4x4:atTime:"},
+      {"access": "public", "name": "setDouble4x4:atTime:"},
+      {"access": "public", "name": "float4x4AtTime:"},
+      {"access": "public", "name": "double4x4AtTime:"},
+      {"access": "public", "name": "resetWithFloat4x4Array:atTimes:count:"},
+      {"access": "public", "name": "resetWithDouble4x4Array:atTimes:count:"},
+      {"access": "public", "name": "getFloat4x4Array:maxCount:"},
+      {"access": "public", "name": "getDouble4x4Array:maxCount:"}
+     ],
+     "introduced": "11",
+     "linkage": "exported",
+     "name": "MDLAnimatedMatrix4x4",
+     "super": "MDLAnimatedValue"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "setFloatQuaternion:atTime:"},
+      {"access": "public", "name": "setDoubleQuaternion:atTime:"},
+      {"access": "public", "name": "floatQuaternionAtTime:"},
+      {"access": "public", "name": "doubleQuaternionAtTime:"},
+      {"access": "public", "name": "resetWithFloatQuaternionArray:atTimes:count:"},
+      {"access": "public", "name": "resetWithDoubleQuaternionArray:atTimes:count:"},
+      {"access": "public", "name": "getFloatQuaternionArray:maxCount:"},
+      {"access": "public", "name": "getDoubleQuaternionArray:maxCount:"}
+     ],
+     "introduced": "12",
+     "linkage": "exported",
+     "name": "MDLAnimatedQuaternion",
+     "super": "MDLAnimatedValue"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithElementCount:"},
+      {"access": "public", "name": "setFloatQuaternionArray:count:atTime:"},
+      {"access": "public", "name": "setDoubleQuaternionArray:count:atTime:"},
+      {"access": "public", "name": "getFloatQuaternionArray:maxCount:atTime:"},
+      {"access": "public", "name": "getDoubleQuaternionArray:maxCount:atTime:"},
+      {"access": "public", "name": "resetWithFloatQuaternionArray:count:atTimes:count:"},
+      {"access": "public", "name": "resetWithDoubleQuaternionArray:count:atTimes:count:"},
+      {"access": "public", "name": "getFloatQuaternionArray:maxCount:"},
+      {"access": "public", "name": "getDoubleQuaternionArray:maxCount:"}
+     ],
+     "introduced": "11",
+     "linkage": "exported",
+     "name": "MDLAnimatedQuaternionArray",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "elementCount", "name": "elementCount"}
+     ],
+     "super": "MDLAnimatedValue"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "setFloat:atTime:"},
+      {"access": "public", "name": "setDouble:atTime:"},
+      {"access": "public", "name": "floatAtTime:"},
+      {"access": "public", "name": "doubleAtTime:"},
+      {"access": "public", "name": "resetWithFloatArray:atTimes:count:"},
+      {"access": "public", "name": "resetWithDoubleArray:atTimes:count:"},
+      {"access": "public", "name": "getFloatArray:maxCount:"},
+      {"access": "public", "name": "getDoubleArray:maxCount:"}
+     ],
+     "introduced": "11",
+     "linkage": "exported",
+     "name": "MDLAnimatedScalar",
+     "super": "MDLAnimatedValue"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithElementCount:"},
+      {"access": "public", "name": "setFloatArray:count:atTime:"},
+      {"access": "public", "name": "setDoubleArray:count:atTime:"},
+      {"access": "public", "name": "getFloatArray:maxCount:atTime:"},
+      {"access": "public", "name": "getDoubleArray:maxCount:atTime:"},
+      {"access": "public", "name": "resetWithFloatArray:count:atTimes:count:"},
+      {"access": "public", "name": "resetWithDoubleArray:count:atTimes:count:"},
+      {"access": "public", "name": "getFloatArray:maxCount:"},
+      {"access": "public", "name": "getDoubleArray:maxCount:"}
+     ],
+     "introduced": "11",
+     "linkage": "exported",
+     "name": "MDLAnimatedScalarArray",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "elementCount", "name": "elementCount"}
+     ],
+     "super": "MDLAnimatedValue"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "isAnimated"},
+      {"access": "public", "name": "clear"},
+      {"access": "public", "name": "getTimes:maxCount:"}
+     ],
+     "introduced": "11",
+     "linkage": "exported",
+     "name": "MDLAnimatedValue",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "precision", "name": "precision"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "timeSampleCount", "name": "timeSampleCount"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "minimumTime", "name": "minimumTime"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "maximumTime", "name": "maximumTime"},
+      {"access": "public", "getter": "interpolation", "name": "interpolation", "setter": "setInterpolation:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "keyTimes", "name": "keyTimes"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "setFloat2:atTime:"},
+      {"access": "public", "name": "setDouble2:atTime:"},
+      {"access": "public", "name": "float2AtTime:"},
+      {"access": "public", "name": "double2AtTime:"},
+      {"access": "public", "name": "resetWithFloat2Array:atTimes:count:"},
+      {"access": "public", "name": "resetWithDouble2Array:atTimes:count:"},
+      {"access": "public", "name": "getFloat2Array:maxCount:"},
+      {"access": "public", "name": "getDouble2Array:maxCount:"}
+     ],
+     "introduced": "11",
+     "linkage": "exported",
+     "name": "MDLAnimatedVector2",
+     "super": "MDLAnimatedValue"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "setFloat3:atTime:"},
+      {"access": "public", "name": "setDouble3:atTime:"},
+      {"access": "public", "name": "float3AtTime:"},
+      {"access": "public", "name": "double3AtTime:"},
+      {"access": "public", "name": "resetWithFloat3Array:atTimes:count:"},
+      {"access": "public", "name": "resetWithDouble3Array:atTimes:count:"},
+      {"access": "public", "name": "getFloat3Array:maxCount:"},
+      {"access": "public", "name": "getDouble3Array:maxCount:"}
+     ],
+     "introduced": "11",
+     "linkage": "exported",
+     "name": "MDLAnimatedVector3",
+     "super": "MDLAnimatedValue"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithElementCount:"},
+      {"access": "public", "name": "setFloat3Array:count:atTime:"},
+      {"access": "public", "name": "setDouble3Array:count:atTime:"},
+      {"access": "public", "name": "getFloat3Array:maxCount:atTime:"},
+      {"access": "public", "name": "getDouble3Array:maxCount:atTime:"},
+      {"access": "public", "name": "resetWithFloat3Array:count:atTimes:count:"},
+      {"access": "public", "name": "resetWithDouble3Array:count:atTimes:count:"},
+      {"access": "public", "name": "getFloat3Array:maxCount:"},
+      {"access": "public", "name": "getDouble3Array:maxCount:"}
+     ],
+     "introduced": "11",
+     "linkage": "exported",
+     "name": "MDLAnimatedVector3Array",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "elementCount", "name": "elementCount"}
+     ],
+     "super": "MDLAnimatedValue"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "setFloat4:atTime:"},
+      {"access": "public", "name": "setDouble4:atTime:"},
+      {"access": "public", "name": "float4AtTime:"},
+      {"access": "public", "name": "double4AtTime:"},
+      {"access": "public", "name": "resetWithFloat4Array:atTimes:count:"},
+      {"access": "public", "name": "resetWithDouble4Array:atTimes:count:"},
+      {"access": "public", "name": "getFloat4Array:maxCount:"},
+      {"access": "public", "name": "getDouble4Array:maxCount:"}
+     ],
+     "introduced": "11",
+     "linkage": "exported",
+     "name": "MDLAnimatedVector4",
+     "super": "MDLAnimatedValue"
+    },
+    {
+     "access": "public",
+     "introduced": "11",
+     "linkage": "exported",
+     "name": "MDLAnimationBindComponent",
+     "properties": [
+      {"access": "public", "getter": "skeleton", "name": "skeleton", "setter": "setSkeleton:"},
+      {"access": "public", "getter": "jointAnimation", "name": "jointAnimation", "setter": "setJointAnimation:"},
+      {"access": "public", "getter": "jointPaths", "name": "jointPaths", "setter": "setJointPaths:"},
+      {"access": "public", "getter": "geometryBindTransform", "name": "geometryBindTransform", "setter": "setGeometryBindTransform:"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "MDLComponent"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "9",
+     "linkage": "exported",
+     "name": "MDLAreaLight",
+     "properties": [
+      {"access": "public", "getter": "areaRadius", "name": "areaRadius", "setter": "setAreaRadius:"},
+      {"access": "public", "getter": "superEllipticPower", "name": "superEllipticPower", "setter": "setSuperEllipticPower:"},
+      {"access": "public", "getter": "aspect", "name": "aspect", "setter": "setAspect:"}
+     ],
+     "super": "MDLPhysicallyPlausibleLight"
+    },
+    {
+     "access": "public",
+     "categories": [
+      "MDLLightBaking"
+     ],
+     "classMethods": [
+      {"access": "public", "name": "canImportFileExtension:"},
+      {"access": "public", "name": "canExportFileExtension:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithURL:"},
+      {"access": "public", "name": "initWithURL:vertexDescriptor:bufferAllocator:"},
+      {"access": "public", "name": "initWithBufferAllocator:"},
+      {"access": "public", "name": "initWithURL:vertexDescriptor:bufferAllocator:preserveTopology:error:"},
+      {"access": "public", "name": "exportAssetToURL:"},
+      {"access": "public", "name": "exportAssetToURL:error:"},
+      {"access": "public", "introduced": "11", "name": "objectAtPath:"},
+      {"access": "public", "name": "childObjectsOfClass:"},
+      {"access": "public", "introduced": "11", "name": "loadTextures"},
+      {"access": "public", "name": "boundingBoxAtTime:"},
+      {"access": "public", "name": "addObject:"},
+      {"access": "public", "name": "removeObject:"},
+      {"access": "public", "name": "objectAtIndexedSubscript:"},
+      {"access": "public", "name": "objectAtIndex:"}
+     ],
+     "introduced": "9",
+     "linkage": "exported",
+     "name": "MDLAsset",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "boundingBox", "name": "boundingBox"},
+      {"access": "public", "getter": "frameInterval", "name": "frameInterval", "setter": "setFrameInterval:"},
+      {"access": "public", "getter": "startTime", "name": "startTime", "setter": "setStartTime:"},
+      {"access": "public", "getter": "endTime", "name": "endTime", "setter": "setEndTime:"},
+      {"access": "public", "getter": "upAxis", "introduced": "11", "name": "upAxis", "setter": "setUpAxis:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "URL", "name": "URL"},
+      {"access": "public", "getter": "resolver", "introduced": "11", "name": "resolver", "setter": "setResolver:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "bufferAllocator", "name": "bufferAllocator"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "vertexDescriptor", "name": "vertexDescriptor"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "count", "name": "count"},
+      {"access": "public", "getter": "masters", "introduced": "10", "name": "masters", "setter": "setMasters:"},
+      {"access": "public", "getter": "originals", "introduced": "15", "name": "originals", "setter": "setOriginals:"},
+      {"access": "public", "getter": "animations", "introduced": "11", "name": "animations", "setter": "setAnimations:"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "NSFastEnumeration"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithBundle:"}
+     ],
+     "introduced": "11",
+     "linkage": "exported",
+     "name": "MDLBundleAssetResolver",
+     "properties": [
+      {"access": "public", "getter": "path", "name": "path", "setter": "setPath:"}
+     ],
+     "protocols": [
+      "MDLAssetResolver"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "frameBoundingBox:setNearAndFar:"},
+      {"access": "public", "name": "lookAt:"},
+      {"access": "public", "name": "lookAt:from:"},
+      {"access": "public", "name": "rayTo:forViewPort:"},
+      {"access": "public", "name": "bokehKernelWithSize:"}
+     ],
+     "introduced": "9",
+     "linkage": "exported",
+     "name": "MDLCamera",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "projectionMatrix", "name": "projectionMatrix"},
+      {"access": "public", "getter": "projection", "name": "projection", "setter": "setProjection:"},
+      {"access": "public", "getter": "nearVisibilityDistance", "name": "nearVisibilityDistance", "setter": "setNearVisibilityDistance:"},
+      {"access": "public", "getter": "farVisibilityDistance", "name": "farVisibilityDistance", "setter": "setFarVisibilityDistance:"},
+      {"access": "public", "getter": "worldToMetersConversionScale", "name": "worldToMetersConversionScale", "setter": "setWorldToMetersConversionScale:"},
+      {"access": "public", "getter": "barrelDistortion", "name": "barrelDistortion", "setter": "setBarrelDistortion:"},
+      {"access": "public", "getter": "fisheyeDistortion", "name": "fisheyeDistortion", "setter": "setFisheyeDistortion:"},
+      {"access": "public", "getter": "opticalVignetting", "name": "opticalVignetting", "setter": "setOpticalVignetting:"},
+      {"access": "public", "getter": "chromaticAberration", "name": "chromaticAberration", "setter": "setChromaticAberration:"},
+      {"access": "public", "getter": "focalLength", "name": "focalLength", "setter": "setFocalLength:"},
+      {"access": "public", "getter": "focusDistance", "name": "focusDistance", "setter": "setFocusDistance:"},
+      {"access": "public", "getter": "fieldOfView", "name": "fieldOfView", "setter": "setFieldOfView:"},
+      {"access": "public", "getter": "fStop", "name": "fStop", "setter": "setFStop:"},
+      {"access": "public", "getter": "apertureBladeCount", "name": "apertureBladeCount", "setter": "setApertureBladeCount:"},
+      {"access": "public", "getter": "maximumCircleOfConfusion", "name": "maximumCircleOfConfusion", "setter": "setMaximumCircleOfConfusion:"},
+      {"access": "public", "getter": "shutterOpenInterval", "name": "shutterOpenInterval", "setter": "setShutterOpenInterval:"},
+      {"access": "public", "getter": "sensorVerticalAperture", "name": "sensorVerticalAperture", "setter": "setSensorVerticalAperture:"},
+      {"access": "public", "getter": "sensorAspect", "name": "sensorAspect", "setter": "setSensorAspect:"},
+      {"access": "public", "getter": "sensorEnlargement", "name": "sensorEnlargement", "setter": "setSensorEnlargement:"},
+      {"access": "public", "getter": "sensorShift", "name": "sensorShift", "setter": "setSensorShift:"},
+      {"access": "public", "getter": "flash", "name": "flash", "setter": "setFlash:"},
+      {"access": "public", "getter": "exposureCompression", "name": "exposureCompression", "setter": "setExposureCompression:"},
+      {"access": "public", "getter": "exposure", "name": "exposure", "setter": "setExposure:"}
+     ],
+     "super": "MDLObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithDivisions:name:dimensions:channelCount:channelEncoding:color1:color2:"}
+     ],
+     "introduced": "9",
+     "linkage": "exported",
+     "name": "MDLCheckerboardTexture",
+     "properties": [
+      {"access": "public", "getter": "divisions", "name": "divisions", "setter": "setDivisions:"},
+      {"access": "public", "getter": "color1", "name": "color1", "setter": "setColor1:"},
+      {"access": "public", "getter": "color2", "name": "color2", "setter": "setColor2:"}
+     ],
+     "super": "MDLTexture"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithColorTemperatureGradientFrom:toColorTemperature:name:textureDimensions:"},
+      {"access": "public", "name": "initWithColorGradientFrom:toColor:name:textureDimensions:"}
+     ],
+     "introduced": "9",
+     "linkage": "exported",
+     "name": "MDLColorSwatchTexture",
+     "super": "MDLTexture"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "irradianceAtPoint:"},
+      {"access": "public", "name": "irradianceAtPoint:colorSpace:"}
+     ],
+     "introduced": "9",
+     "linkage": "exported",
+     "name": "MDLLight",
+     "properties": [
+      {"access": "public", "getter": "lightType", "name": "lightType", "setter": "setLightType:"},
+      {"access": "public", "getter": "colorSpace", "name": "colorSpace", "setter": "setColorSpace:"}
+     ],
+     "super": "MDLObject"
+    },
+    {
+     "access": "public",
+     "categories": [
+      "MDLLightBaking"
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithReflectiveTexture:irradianceTexture:"},
+      {"access": "public", "name": "generateSphericalHarmonicsFromIrradiance:"}
+     ],
+     "introduced": "9",
+     "linkage": "exported",
+     "name": "MDLLightProbe",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "reflectiveTexture", "name": "reflectiveTexture"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "irradianceTexture", "name": "irradianceTexture"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "sphericalHarmonicsLevel", "name": "sphericalHarmonicsLevel"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "sphericalHarmonicsCoefficients", "name": "sphericalHarmonicsCoefficients"}
+     ],
+     "super": "MDLLight"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithName:scatteringFunction:"},
+      {"access": "public", "name": "setProperty:"},
+      {"access": "public", "name": "removeProperty:"},
+      {"access": "public", "name": "propertyNamed:"},
+      {"access": "public", "name": "propertyWithSemantic:"},
+      {"access": "public", "introduced": "11", "name": "propertiesWithSemantic:"},
+      {"access": "public", "name": "removeAllProperties"},
+      {"access": "public", "introduced": "11", "name": "resolveTexturesWithResolver:"},
+      {"access": "public", "introduced": "11", "name": "loadTexturesUsingResolver:"},
+      {"access": "public", "name": "objectAtIndexedSubscript:"},
+      {"access": "public", "name": "objectForKeyedSubscript:"}
+     ],
+     "introduced": "9",
+     "linkage": "exported",
+     "name": "MDLMaterial",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "scatteringFunction", "name": "scatteringFunction"},
+      {"access": "public", "getter": "name", "name": "name", "setter": "setName:"},
+      {"access": "public", "getter": "baseMaterial", "name": "baseMaterial", "setter": "setBaseMaterial:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "count", "name": "count"},
+      {"access": "public", "getter": "materialFace", "name": "materialFace", "setter": "setMaterialFace:"}
+     ],
+     "protocols": [
+      "MDLNamed",
+      "NSFastEnumeration"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "initWithName:semantic:"},
+      {"access": "public", "name": "initWithName:semantic:float:"},
+      {"access": "public", "name": "initWithName:semantic:float2:"},
+      {"access": "public", "name": "initWithName:semantic:float3:"},
+      {"access": "public", "name": "initWithName:semantic:float4:"},
+      {"access": "public", "name": "initWithName:semantic:matrix4x4:"},
+      {"access": "public", "name": "initWithName:semantic:URL:"},
+      {"access": "public", "name": "initWithName:semantic:string:"},
+      {"access": "public", "name": "initWithName:semantic:textureSampler:"},
+      {"access": "public", "name": "initWithName:semantic:color:"},
+      {"access": "public", "name": "setProperties:"}
+     ],
+     "introduced": "9",
+     "linkage": "exported",
+     "name": "MDLMaterialProperty",
+     "properties": [
+      {"access": "public", "getter": "semantic", "name": "semantic", "setter": "setSemantic:"},
+      {"access": "public", "getter": "type", "name": "type", "setter": "setType:"},
+      {"access": "public", "getter": "name", "name": "name", "setter": "setName:"},
+      {"access": "public", "getter": "stringValue", "name": "stringValue", "setter": "setStringValue:"},
+      {"access": "public", "getter": "URLValue", "name": "URLValue", "setter": "setURLValue:"},
+      {"access": "public", "getter": "textureSamplerValue", "name": "textureSamplerValue", "setter": "setTextureSamplerValue:"},
+      {"access": "public", "getter": "color", "name": "color", "setter": "setColor:"},
+      {"access": "public", "getter": "floatValue", "name": "floatValue", "setter": "setFloatValue:"},
+      {"access": "public", "getter": "float2Value", "name": "float2Value", "setter": "setFloat2Value:"},
+      {"access": "public", "getter": "float3Value", "name": "float3Value", "setter": "setFloat3Value:"},
+      {"access": "public", "getter": "float4Value", "name": "float4Value", "setter": "setFloat4Value:"},
+      {"access": "public", "getter": "matrix4x4", "name": "matrix4x4", "setter": "setMatrix4x4:"},
+      {"access": "public", "getter": "luminance", "name": "luminance", "setter": "setLuminance:"}
+     ],
+     "protocols": [
+      "MDLNamed",
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "initWithOutput:input:"}
+     ],
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "MDLMaterialPropertyConnection",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "output", "name": "output"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "input", "name": "input"}
+     ],
+     "protocols": [
+      "MDLNamed"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "initWithNodes:connections:"},
+      {"access": "public", "name": "evaluate"}
+     ],
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "MDLMaterialPropertyGraph",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "nodes", "name": "nodes"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "connections", "name": "connections"}
+     ],
+     "super": "MDLMaterialPropertyNode"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "init", "unavailable": true},
+      {"access": "public", "name": "initWithInputs:outputs:evaluationFunction:"}
+     ],
+     "introduced": "10",
+     "linkage": "exported",
+     "name": "MDLMaterialPropertyNode",
+     "properties": [
+      {"access": "public", "getter": "evaluationFunction", "name": "evaluationFunction", "setter": "setEvaluationFunction:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "inputs", "name": "inputs"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "outputs", "name": "outputs"}
+     ],
+     "protocols": [
+      "MDLNamed"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "clear"},
+      {"access": "public", "name": "initWithElementCount:"},
+      {"access": "public", "name": "setFloat4x4Array:count:"},
+      {"access": "public", "name": "setDouble4x4Array:count:"},
+      {"access": "public", "name": "getFloat4x4Array:maxCount:"},
+      {"access": "public", "name": "getDouble4x4Array:maxCount:"}
+     ],
+     "introduced": "11",
+     "linkage": "exported",
+     "name": "MDLMatrix4x4Array",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "elementCount", "name": "elementCount"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "precision", "name": "precision"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "categories": [
+      "Modifiers",
+      "Generators",
+      "MDLLightBaking"
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "initWithBufferAllocator:"},
+      {"access": "public", "name": "initWithVertexBuffer:vertexCount:descriptor:submeshes:"},
+      {"access": "public", "name": "initWithVertexBuffers:vertexCount:descriptor:submeshes:"},
+      {"access": "public", "name": "vertexAttributeDataForAttributeNamed:"},
+      {"access": "public", "name": "vertexAttributeDataForAttributeNamed:asFormat:"}
+     ],
+     "introduced": "9",
+     "linkage": "exported",
+     "name": "MDLMesh",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "boundingBox", "name": "boundingBox"},
+      {"access": "public", "getter": "vertexDescriptor", "name": "vertexDescriptor", "setter": "setVertexDescriptor:"},
+      {"access": "public", "getter": "vertexCount", "name": "vertexCount", "setter": "setVertexCount:"},
+      {"access": "public", "getter": "vertexBuffers", "name": "vertexBuffers", "setter": "setVertexBuffers:"},
+      {"access": "public", "getter": "submeshes", "name": "submeshes", "setter": "setSubmeshes:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "allocator", "name": "allocator"}
+     ],
+     "super": "MDLObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithType:length:"},
+      {"access": "public", "name": "initWithType:data:"}
+     ],
+     "introduced": "9",
+     "linkage": "exported",
+     "name": "MDLMeshBufferData",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "data", "name": "data"}
+     ],
+     "protocols": [
+      "MDLMeshBuffer"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "9",
+     "linkage": "exported",
+     "name": "MDLMeshBufferDataAllocator",
+     "protocols": [
+      "MDLMeshBufferAllocator"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithBytes:deallocator:"}
+     ],
+     "introduced": "9",
+     "linkage": "exported",
+     "name": "MDLMeshBufferMap",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "bytes", "name": "bytes"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "11",
+     "linkage": "exported",
+     "name": "MDLMeshBufferZoneDefault",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "capacity", "name": "capacity"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "allocator", "name": "allocator"}
+     ],
+     "protocols": [
+      "MDLMeshBufferZone"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initVectorNoiseWithSmoothness:name:textureDimensions:channelEncoding:"},
+      {"access": "public", "name": "initScalarNoiseWithSmoothness:name:textureDimensions:channelCount:channelEncoding:grayscale:"},
+      {"access": "public", "introduced": "11", "name": "initCellularNoiseWithFrequency:name:textureDimensions:channelEncoding:"}
+     ],
+     "introduced": "9",
+     "linkage": "exported",
+     "name": "MDLNoiseTexture",
+     "super": "MDLTexture"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initByGeneratingNormalMapWithTexture:name:smoothness:contrast:"}
+     ],
+     "introduced": "9",
+     "linkage": "exported",
+     "name": "MDLNormalMapTexture",
+     "super": "MDLTexture"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "setComponent:forProtocol:"},
+      {"access": "public", "name": "componentConformingToProtocol:"},
+      {"access": "public", "name": "objectForKeyedSubscript:"},
+      {"access": "public", "name": "setObject:forKeyedSubscript:"},
+      {"access": "public", "name": "objectAtPath:"},
+      {"access": "public", "introduced": "11", "name": "enumerateChildObjectsOfClass:root:usingBlock:stopPointer:"},
+      {"access": "public", "name": "addChild:"},
+      {"access": "public", "name": "boundingBoxAtTime:"}
+     ],
+     "introduced": "9",
+     "linkage": "exported",
+     "name": "MDLObject",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "components", "name": "components"},
+      {"access": "public", "getter": "parent", "name": "parent", "setter": "setParent:"},
+      {"access": "public", "getter": "instance", "name": "instance", "setter": "setInstance:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "path", "name": "path"},
+      {"access": "public", "getter": "transform", "name": "transform", "setter": "setTransform:"},
+      {"access": "public", "getter": "children", "name": "children", "setter": "setChildren:"},
+      {"access": "public", "getter": "hidden", "name": "hidden", "setter": "setHidden:"}
+     ],
+     "protocols": [
+      "MDLNamed"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "9",
+     "linkage": "exported",
+     "name": "MDLObjectContainer",
+     "protocols": [
+      "MDLObjectContainerComponent"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithName:jointPaths:"}
+     ],
+     "introduced": "11",
+     "linkage": "exported",
+     "name": "MDLPackedJointAnimation",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "jointPaths", "name": "jointPaths"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "translations", "name": "translations"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "rotations", "name": "rotations"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "scales", "name": "scales"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "MDLJointAnimation"
+     ],
+     "super": "MDLObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithPath:"}
+     ],
+     "introduced": "11",
+     "linkage": "exported",
+     "name": "MDLPathAssetResolver",
+     "properties": [
+      {"access": "public", "getter": "path", "name": "path", "setter": "setPath:"}
+     ],
+     "protocols": [
+      "MDLAssetResolver"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithIESProfile:"},
+      {"access": "public", "name": "generateSphericalHarmonicsFromLight:"},
+      {"access": "public", "name": "generateCubemapFromLight:"},
+      {"access": "public", "introduced": "11", "name": "generateTexture:"}
+     ],
+     "introduced": "9",
+     "linkage": "exported",
+     "name": "MDLPhotometricLight",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "lightCubeMap", "name": "lightCubeMap"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "sphericalHarmonicsLevel", "name": "sphericalHarmonicsLevel"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "sphericalHarmonicsCoefficients", "name": "sphericalHarmonicsCoefficients"}
+     ],
+     "super": "MDLPhysicallyPlausibleLight"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "setColorByTemperature:"}
+     ],
+     "introduced": "9",
+     "linkage": "exported",
+     "name": "MDLPhysicallyPlausibleLight",
+     "properties": [
+      {"access": "public", "getter": "color", "name": "color", "setter": "setColor:"},
+      {"access": "public", "getter": "lumens", "name": "lumens", "setter": "setLumens:"},
+      {"access": "public", "getter": "innerConeAngle", "name": "innerConeAngle", "setter": "setInnerConeAngle:"},
+      {"access": "public", "getter": "outerConeAngle", "name": "outerConeAngle", "setter": "setOuterConeAngle:"},
+      {"access": "public", "getter": "attenuationStartDistance", "name": "attenuationStartDistance", "setter": "setAttenuationStartDistance:"},
+      {"access": "public", "getter": "attenuationEndDistance", "name": "attenuationEndDistance", "setter": "setAttenuationEndDistance:"}
+     ],
+     "super": "MDLLight"
+    },
+    {
+     "access": "public",
+     "introduced": "9",
+     "linkage": "exported",
+     "name": "MDLPhysicallyPlausibleScatteringFunction",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "version", "name": "version"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "subsurface", "name": "subsurface"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "metallic", "name": "metallic"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "specularAmount", "name": "specularAmount"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "specularTint", "name": "specularTint"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "roughness", "name": "roughness"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "anisotropic", "name": "anisotropic"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "anisotropicRotation", "name": "anisotropicRotation"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "sheen", "name": "sheen"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "sheenTint", "name": "sheenTint"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "clearcoat", "name": "clearcoat"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "clearcoatGloss", "name": "clearcoatGloss"}
+     ],
+     "super": "MDLScatteringFunction"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithAsset:"}
+     ],
+     "introduced": "11",
+     "linkage": "exported",
+     "name": "MDLRelativeAssetResolver",
+     "properties": [
+      {"access": "public", "getter": "asset", "name": "asset", "setter": "setAsset:"}
+     ],
+     "protocols": [
+      "MDLAssetResolver"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "9",
+     "linkage": "exported",
+     "name": "MDLScatteringFunction",
+     "properties": [
+      {"access": "public", "getter": "name", "name": "name", "setter": "setName:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "baseColor", "name": "baseColor"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "emission", "name": "emission"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "specular", "name": "specular"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "materialIndexOfRefraction", "name": "materialIndexOfRefraction"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "interfaceIndexOfRefraction", "name": "interfaceIndexOfRefraction"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "normal", "name": "normal"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "ambientOcclusion", "name": "ambientOcclusion"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "ambientOcclusionScale", "name": "ambientOcclusionScale"}
+     ],
+     "protocols": [
+      "MDLNamed"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithName:jointPaths:"}
+     ],
+     "introduced": "11",
+     "linkage": "exported",
+     "name": "MDLSkeleton",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "jointPaths", "name": "jointPaths"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "jointBindTransforms", "name": "jointBindTransforms"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "jointRestTransforms", "name": "jointRestTransforms"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "MDLObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithName:channelEncoding:textureDimensions:turbidity:sunElevation:upperAtmosphereScattering:groundAlbedo:"},
+      {"access": "public", "introduced": "11", "name": "initWithName:channelEncoding:textureDimensions:turbidity:sunElevation:sunAzimuth:upperAtmosphereScattering:groundAlbedo:"},
+      {"access": "public", "name": "updateTexture"}
+     ],
+     "introduced": "9",
+     "linkage": "exported",
+     "name": "MDLSkyCubeTexture",
+     "properties": [
+      {"access": "public", "getter": "turbidity", "name": "turbidity", "setter": "setTurbidity:"},
+      {"access": "public", "getter": "sunElevation", "name": "sunElevation", "setter": "setSunElevation:"},
+      {"access": "public", "getter": "sunAzimuth", "introduced": "11", "name": "sunAzimuth", "setter": "setSunAzimuth:"},
+      {"access": "public", "getter": "upperAtmosphereScattering", "name": "upperAtmosphereScattering", "setter": "setUpperAtmosphereScattering:"},
+      {"access": "public", "getter": "groundAlbedo", "name": "groundAlbedo", "setter": "setGroundAlbedo:"},
+      {"access": "public", "getter": "horizonElevation", "name": "horizonElevation", "setter": "setHorizonElevation:"},
+      {"access": "public", "getter": "groundColor", "name": "groundColor", "setter": "setGroundColor:"},
+      {"access": "public", "getter": "gamma", "name": "gamma", "setter": "setGamma:"},
+      {"access": "public", "getter": "exposure", "name": "exposure", "setter": "setExposure:"},
+      {"access": "public", "getter": "brightness", "name": "brightness", "setter": "setBrightness:"},
+      {"access": "public", "getter": "contrast", "name": "contrast", "setter": "setContrast:"},
+      {"access": "public", "getter": "saturation", "name": "saturation", "setter": "setSaturation:"},
+      {"access": "public", "getter": "highDynamicRangeCompression", "name": "highDynamicRangeCompression", "setter": "setHighDynamicRangeCompression:"}
+     ],
+     "super": "MDLTexture"
+    },
+    {
+     "access": "public",
+     "introduced": "9",
+     "linkage": "exported",
+     "name": "MDLStereoscopicCamera",
+     "properties": [
+      {"access": "public", "getter": "interPupillaryDistance", "name": "interPupillaryDistance", "setter": "setInterPupillaryDistance:"},
+      {"access": "public", "getter": "leftVergence", "name": "leftVergence", "setter": "setLeftVergence:"},
+      {"access": "public", "getter": "rightVergence", "name": "rightVergence", "setter": "setRightVergence:"},
+      {"access": "public", "getter": "overlap", "name": "overlap", "setter": "setOverlap:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "leftViewMatrix", "name": "leftViewMatrix"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "rightViewMatrix", "name": "rightViewMatrix"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "leftProjectionMatrix", "name": "leftProjectionMatrix"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "rightProjectionMatrix", "name": "rightProjectionMatrix"}
+     ],
+     "super": "MDLCamera"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithName:indexBuffer:indexCount:indexType:geometryType:material:"},
+      {"access": "public", "name": "initWithIndexBuffer:indexCount:indexType:geometryType:material:"},
+      {"access": "public", "name": "initWithName:indexBuffer:indexCount:indexType:geometryType:material:topology:"},
+      {"access": "public", "name": "initWithMDLSubmesh:indexType:geometryType:"},
+      {"access": "public", "name": "indexBufferAsIndexType:"}
+     ],
+     "introduced": "9",
+     "linkage": "exported",
+     "name": "MDLSubmesh",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "indexBuffer", "name": "indexBuffer"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "indexCount", "name": "indexCount"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "indexType", "name": "indexType"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "geometryType", "name": "geometryType"},
+      {"access": "public", "getter": "material", "name": "material", "setter": "setMaterial:"},
+      {"access": "public", "getter": "topology", "name": "topology", "setter": "setTopology:"},
+      {"access": "public", "getter": "name", "name": "name", "setter": "setName:"}
+     ],
+     "protocols": [
+      "MDLNamed"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithSubmesh:"}
+     ],
+     "introduced": "9",
+     "linkage": "exported",
+     "name": "MDLSubmeshTopology",
+     "properties": [
+      {"access": "public", "getter": "faceTopology", "name": "faceTopology", "setter": "setFaceTopology:"},
+      {"access": "public", "getter": "faceCount", "name": "faceCount", "setter": "setFaceCount:"},
+      {"access": "public", "getter": "vertexCreaseIndices", "name": "vertexCreaseIndices", "setter": "setVertexCreaseIndices:"},
+      {"access": "public", "getter": "vertexCreases", "name": "vertexCreases", "setter": "setVertexCreases:"},
+      {"access": "public", "getter": "vertexCreaseCount", "name": "vertexCreaseCount", "setter": "setVertexCreaseCount:"},
+      {"access": "public", "getter": "edgeCreaseIndices", "name": "edgeCreaseIndices", "setter": "setEdgeCreaseIndices:"},
+      {"access": "public", "getter": "edgeCreases", "name": "edgeCreases", "setter": "setEdgeCreases:"},
+      {"access": "public", "getter": "edgeCreaseCount", "name": "edgeCreaseCount", "setter": "setEdgeCreaseCount:"},
+      {"access": "public", "getter": "holes", "name": "holes", "setter": "setHoles:"},
+      {"access": "public", "getter": "holeCount", "name": "holeCount", "setter": "setHoleCount:"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "textureNamed:"},
+      {"access": "public", "name": "textureNamed:bundle:"},
+      {"access": "public", "introduced": "12", "name": "textureNamed:assetResolver:"},
+      {"access": "public", "name": "textureCubeWithImagesNamed:"},
+      {"access": "public", "name": "textureCubeWithImagesNamed:bundle:"},
+      {"access": "public", "name": "irradianceTextureCubeWithTexture:name:dimensions:"},
+      {"access": "public", "name": "irradianceTextureCubeWithTexture:name:dimensions:roughness:"}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "init"},
+      {"access": "public", "name": "initWithData:topLeftOrigin:name:dimensions:rowStride:channelCount:channelEncoding:isCube:"},
+      {"access": "public", "name": "writeToURL:"},
+      {"access": "public", "introduced": "11", "name": "writeToURL:level:"},
+      {"access": "public", "name": "writeToURL:type:"},
+      {"access": "public", "introduced": "11", "name": "writeToURL:type:level:"},
+      {"access": "public", "name": "imageFromTexture"},
+      {"access": "public", "introduced": "11", "name": "imageFromTextureAtLevel:"},
+      {"access": "public", "name": "texelDataWithTopLeftOrigin"},
+      {"access": "public", "name": "texelDataWithBottomLeftOrigin"},
+      {"access": "public", "name": "texelDataWithTopLeftOriginAtMipLevel:create:"},
+      {"access": "public", "name": "texelDataWithBottomLeftOriginAtMipLevel:create:"}
+     ],
+     "introduced": "9",
+     "linkage": "exported",
+     "name": "MDLTexture",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "dimensions", "name": "dimensions"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "rowStride", "name": "rowStride"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "channelCount", "name": "channelCount"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "mipLevelCount", "name": "mipLevelCount"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "channelEncoding", "name": "channelEncoding"},
+      {"access": "public", "getter": "isCube", "name": "isCube", "setter": "setIsCube:"},
+      {"access": "public", "getter": "hasAlphaValues", "name": "hasAlphaValues", "setter": "setHasAlphaValues:"}
+     ],
+     "protocols": [
+      "MDLNamed"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "9",
+     "linkage": "exported",
+     "name": "MDLTextureFilter",
+     "properties": [
+      {"access": "public", "getter": "sWrapMode", "name": "sWrapMode", "setter": "setSWrapMode:"},
+      {"access": "public", "getter": "tWrapMode", "name": "tWrapMode", "setter": "setTWrapMode:"},
+      {"access": "public", "getter": "rWrapMode", "name": "rWrapMode", "setter": "setRWrapMode:"},
+      {"access": "public", "getter": "minFilter", "name": "minFilter", "setter": "setMinFilter:"},
+      {"access": "public", "getter": "magFilter", "name": "magFilter", "setter": "setMagFilter:"},
+      {"access": "public", "getter": "mipFilter", "name": "mipFilter", "setter": "setMipFilter:"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "9",
+     "linkage": "exported",
+     "name": "MDLTextureSampler",
+     "properties": [
+      {"access": "public", "getter": "texture", "name": "texture", "setter": "setTexture:"},
+      {"access": "public", "getter": "hardwareFilter", "name": "hardwareFilter", "setter": "setHardwareFilter:"},
+      {"access": "public", "getter": "transform", "name": "transform", "setter": "setTransform:"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "init"},
+      {"access": "public", "introduced": "9", "name": "initWithIdentity"},
+      {"access": "public", "name": "initWithTransformComponent:"},
+      {"access": "public", "name": "initWithTransformComponent:resetsTransform:"},
+      {"access": "public", "name": "initWithMatrix:"},
+      {"access": "public", "name": "initWithMatrix:resetsTransform:"},
+      {"access": "public", "name": "setIdentity"},
+      {"access": "public", "name": "translationAtTime:"},
+      {"access": "public", "name": "rotationAtTime:"},
+      {"access": "public", "name": "shearAtTime:"},
+      {"access": "public", "name": "scaleAtTime:"},
+      {"access": "public", "introduced": "11", "name": "setMatrix:forTime:"},
+      {"access": "public", "name": "setTranslation:forTime:"},
+      {"access": "public", "name": "setRotation:forTime:"},
+      {"access": "public", "name": "setShear:forTime:"},
+      {"access": "public", "name": "setScale:forTime:"},
+      {"access": "public", "name": "rotationMatrixAtTime:"}
+     ],
+     "introduced": "9",
+     "linkage": "exported",
+     "name": "MDLTransform",
+     "properties": [
+      {"access": "public", "getter": "translation", "name": "translation", "setter": "setTranslation:"},
+      {"access": "public", "getter": "rotation", "name": "rotation", "setter": "setRotation:"},
+      {"access": "public", "getter": "shear", "name": "shear", "setter": "setShear:"},
+      {"access": "public", "getter": "scale", "name": "scale", "setter": "setScale:"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "MDLTransformComponent"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "11",
+     "linkage": "exported",
+     "name": "MDLTransformMatrixOp",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "name", "name": "name"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "animatedValue", "name": "animatedValue"}
+     ],
+     "protocols": [
+      "MDLTransformOp"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "12",
+     "linkage": "exported",
+     "name": "MDLTransformOrientOp",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "name", "name": "name"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "animatedValue", "name": "animatedValue"}
+     ],
+     "protocols": [
+      "MDLTransformOp"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "11",
+     "linkage": "exported",
+     "name": "MDLTransformRotateOp",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "name", "name": "name"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "animatedValue", "name": "animatedValue"}
+     ],
+     "protocols": [
+      "MDLTransformOp"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "11",
+     "linkage": "exported",
+     "name": "MDLTransformRotateXOp",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "name", "name": "name"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "animatedValue", "name": "animatedValue"}
+     ],
+     "protocols": [
+      "MDLTransformOp"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "11",
+     "linkage": "exported",
+     "name": "MDLTransformRotateYOp",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "name", "name": "name"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "animatedValue", "name": "animatedValue"}
+     ],
+     "protocols": [
+      "MDLTransformOp"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "11",
+     "linkage": "exported",
+     "name": "MDLTransformRotateZOp",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "name", "name": "name"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "animatedValue", "name": "animatedValue"}
+     ],
+     "protocols": [
+      "MDLTransformOp"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "11",
+     "linkage": "exported",
+     "name": "MDLTransformScaleOp",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "name", "name": "name"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "animatedValue", "name": "animatedValue"}
+     ],
+     "protocols": [
+      "MDLTransformOp"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "init"},
+      {"access": "public", "name": "addTranslateOp:inverse:"},
+      {"access": "public", "name": "addRotateXOp:inverse:"},
+      {"access": "public", "name": "addRotateYOp:inverse:"},
+      {"access": "public", "name": "addRotateZOp:inverse:"},
+      {"access": "public", "name": "addRotateOp:order:inverse:"},
+      {"access": "public", "name": "addScaleOp:inverse:"},
+      {"access": "public", "name": "addMatrixOp:inverse:"},
+      {"access": "public", "name": "addOrientOp:inverse:"},
+      {"access": "public", "name": "animatedValueWithName:"},
+      {"access": "public", "name": "float4x4AtTime:"},
+      {"access": "public", "name": "double4x4AtTime:"},
+      {"access": "public", "name": "count"}
+     ],
+     "introduced": "11",
+     "linkage": "exported",
+     "name": "MDLTransformStack",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "keyTimes", "name": "keyTimes"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "transformOps", "name": "transformOps"}
+     ],
+     "protocols": [
+      "NSCopying",
+      "MDLTransformComponent"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "11",
+     "linkage": "exported",
+     "name": "MDLTransformTranslateOp",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "name", "name": "name"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "animatedValue", "name": "animatedValue"}
+     ],
+     "protocols": [
+      "MDLTransformOp"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithURL:name:"}
+     ],
+     "introduced": "9",
+     "linkage": "exported",
+     "name": "MDLURLTexture",
+     "properties": [
+      {"access": "public", "getter": "URL", "name": "URL", "setter": "setURL:"}
+     ],
+     "super": "MDLTexture"
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "convertToUSDZ:writeToURL:"}
+     ],
+     "introduced": "18",
+     "linkage": "exported",
+     "name": "MDLUtility",
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithName:format:offset:bufferIndex:"}
+     ],
+     "introduced": "9",
+     "linkage": "exported",
+     "name": "MDLVertexAttribute",
+     "properties": [
+      {"access": "public", "getter": "name", "name": "name", "setter": "setName:"},
+      {"access": "public", "getter": "format", "name": "format", "setter": "setFormat:"},
+      {"access": "public", "getter": "offset", "name": "offset", "setter": "setOffset:"},
+      {"access": "public", "getter": "bufferIndex", "name": "bufferIndex", "setter": "setBufferIndex:"},
+      {"access": "public", "getter": "time", "name": "time", "setter": "setTime:"},
+      {"access": "public", "getter": "initializationValue", "name": "initializationValue", "setter": "setInitializationValue:"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "introduced": "9",
+     "linkage": "exported",
+     "name": "MDLVertexAttributeData",
+     "properties": [
+      {"access": "public", "getter": "map", "name": "map", "setter": "setMap:"},
+      {"access": "public", "getter": "dataStart", "name": "dataStart", "setter": "setDataStart:"},
+      {"access": "public", "getter": "stride", "name": "stride", "setter": "setStride:"},
+      {"access": "public", "getter": "format", "name": "format", "setter": "setFormat:"},
+      {"access": "public", "getter": "bufferSize", "introduced": "11", "name": "bufferSize", "setter": "setBufferSize:"}
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithStride:"}
+     ],
+     "introduced": "9",
+     "linkage": "exported",
+     "name": "MDLVertexBufferLayout",
+     "properties": [
+      {"access": "public", "getter": "stride", "name": "stride", "setter": "setStride:"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithVertexDescriptor:"},
+      {"access": "public", "name": "attributeNamed:"},
+      {"access": "public", "name": "addOrReplaceAttribute:"},
+      {"access": "public", "name": "removeAttributeNamed:"},
+      {"access": "public", "name": "reset"},
+      {"access": "public", "name": "setPackedStrides"},
+      {"access": "public", "name": "setPackedOffsets"}
+     ],
+     "introduced": "9",
+     "linkage": "exported",
+     "name": "MDLVertexDescriptor",
+     "properties": [
+      {"access": "public", "getter": "attributes", "name": "attributes", "setter": "setAttributes:"},
+      {"access": "public", "getter": "layouts", "name": "layouts", "setter": "setLayouts:"}
+     ],
+     "protocols": [
+      "NSCopying"
+     ],
+     "super": "NSObject"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "initWithAsset:divisions:patchRadius:"},
+      {"access": "public", "name": "initWithData:boundingBox:voxelExtent:"},
+      {"access": "public", "name": "initWithAsset:divisions:interiorShells:exteriorShells:patchRadius:", "unavailable": true},
+      {"access": "public", "name": "initWithAsset:divisions:interiorNBWidth:exteriorNBWidth:patchRadius:", "unavailable": true},
+      {"access": "public", "name": "voxelExistsAtIndex:allowAnyX:allowAnyY:allowAnyZ:allowAnyShell:"},
+      {"access": "public", "name": "voxelsWithinExtent:"},
+      {"access": "public", "name": "voxelIndices"},
+      {"access": "public", "name": "setVoxelAtIndex:"},
+      {"access": "public", "name": "setVoxelsForMesh:divisions:patchRadius:"},
+      {"access": "public", "name": "setVoxelsForMesh:divisions:interiorShells:exteriorShells:patchRadius:", "unavailable": true},
+      {"access": "public", "name": "setVoxelsForMesh:divisions:interiorNBWidth:exteriorNBWidth:patchRadius:", "unavailable": true},
+      {"access": "public", "name": "unionWithVoxels:"},
+      {"access": "public", "name": "intersectWithVoxels:"},
+      {"access": "public", "name": "differenceWithVoxels:"},
+      {"access": "public", "name": "indexOfSpatialLocation:"},
+      {"access": "public", "name": "spatialLocationOfIndex:"},
+      {"access": "public", "name": "voxelBoundingBoxAtIndex:"},
+      {"access": "public", "name": "convertToSignedShellField"},
+      {"access": "public", "name": "coarseMesh"},
+      {"access": "public", "name": "coarseMeshUsingAllocator:"},
+      {"access": "public", "name": "meshUsingAllocator:"}
+     ],
+     "introduced": "9",
+     "linkage": "exported",
+     "name": "MDLVoxelArray",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "count", "name": "count"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "voxelIndexExtent", "name": "voxelIndexExtent"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "boundingBox", "name": "boundingBox"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "isValidSignedShellField", "name": "isValidSignedShellField"},
+      {"access": "public", "getter": "shellFieldInteriorThickness", "name": "shellFieldInteriorThickness", "setter": "setShellFieldInteriorThickness:"},
+      {"access": "public", "getter": "shellFieldExteriorThickness", "name": "shellFieldExteriorThickness", "setter": "setShellFieldExteriorThickness:"}
+     ],
+     "super": "MDLObject"
+    }
+   ],
+   "protocols": [
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "canResolveAssetNamed:"},
+      {"access": "public", "name": "resolveAssetNamed:"}
+     ],
+     "introduced": "11",
+     "name": "MDLAssetResolver",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "introduced": "9",
+     "name": "MDLComponent",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "introduced": "11",
+     "name": "MDLJointAnimation"
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "sphericalHarmonicsCoefficientsAtPosition:", "optional": true}
+     ],
+     "name": "MDLLightProbeIrradianceDataSource",
+     "properties": [
+      {"access": "public", "getter": "boundingBox", "name": "boundingBox", "setter": "setBoundingBox:"},
+      {"access": "public", "getter": "sphericalHarmonicsLevel", "name": "sphericalHarmonicsLevel", "optional": true, "setter": "setSphericalHarmonicsLevel:"}
+     ],
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "fillData:offset:"},
+      {"access": "public", "name": "map"}
+     ],
+     "introduced": "9",
+     "name": "MDLMeshBuffer",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "length", "name": "length"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "allocator", "name": "allocator"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "zone", "name": "zone"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "type", "name": "type"}
+     ],
+     "protocols": [
+      "NSObject",
+      "NSCopying"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "newZone:"},
+      {"access": "public", "name": "newZoneForBuffersWithSize:andType:"},
+      {"access": "public", "name": "newBuffer:type:"},
+      {"access": "public", "name": "newBufferWithData:type:"},
+      {"access": "public", "name": "newBufferFromZone:length:type:"},
+      {"access": "public", "name": "newBufferFromZone:data:type:"}
+     ],
+     "introduced": "9",
+     "name": "MDLMeshBufferAllocator",
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "introduced": "9",
+     "name": "MDLMeshBufferZone",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "capacity", "name": "capacity"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "allocator", "name": "allocator"}
+     ],
+     "protocols": [
+      "NSObject"
+     ]
+    },
+    {
+     "access": "public",
+     "introduced": "9",
+     "name": "MDLNamed",
+     "properties": [
+      {"access": "public", "getter": "name", "name": "name", "setter": "setName:"}
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "addObject:"},
+      {"access": "public", "name": "removeObject:"},
+      {"access": "public", "introduced": "11", "name": "objectAtIndexedSubscript:"}
+     ],
+     "introduced": "9",
+     "name": "MDLObjectContainerComponent",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "count", "introduced": "11", "name": "count"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "objects", "name": "objects"}
+     ],
+     "protocols": [
+      "MDLComponent",
+      "NSFastEnumeration"
+     ]
+    },
+    {
+     "access": "public",
+     "classMethods": [
+      {"access": "public", "name": "globalTransformWithObject:atTime:", "optional": true}
+     ],
+     "instanceMethods": [
+      {"access": "public", "name": "setLocalTransform:forTime:", "optional": true},
+      {"access": "public", "name": "setLocalTransform:", "optional": true},
+      {"access": "public", "name": "localTransformAtTime:", "optional": true}
+     ],
+     "introduced": "9",
+     "name": "MDLTransformComponent",
+     "properties": [
+      {"access": "public", "getter": "matrix", "name": "matrix", "setter": "setMatrix:"},
+      {"access": "public", "getter": "resetsTransform", "name": "resetsTransform", "setter": "setResetsTransform:"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "minimumTime", "name": "minimumTime"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "maximumTime", "name": "maximumTime"},
+      {"access": "public", "attr": [ "readonly" ], "getter": "keyTimes", "name": "keyTimes"}
+     ],
+     "protocols": [
+      "MDLComponent"
+     ]
+    },
+    {
+     "access": "public",
+     "instanceMethods": [
+      {"access": "public", "name": "float4x4AtTime:"},
+      {"access": "public", "name": "double4x4AtTime:"},
+      {"access": "public", "name": "IsInverseOp"}
+     ],
+     "introduced": "11",
+     "name": "MDLTransformOp",
+     "properties": [
+      {"access": "public", "attr": [ "readonly" ], "getter": "name", "name": "name"}
+     ]
+    }
+   ],
+   "target": "arm64e.x1-apple-ios27",
+   "typedefs": [
+    {"access": "public", "name": "MDLAnimatedValueInterpolation"},
+    {"access": "public", "name": "MDLAxisAlignedBoundingBox"},
+    {"access": "public", "name": "MDLCameraProjection"},
+    {"access": "public", "name": "MDLDataPrecision"},
+    {"access": "public", "name": "MDLGeometryType"},
+    {"access": "public", "name": "MDLIndexBitDepth"},
+    {"access": "public", "name": "MDLLightType"},
+    {"access": "public", "name": "MDLMaterialFace"},
+    {"access": "public", "name": "MDLMaterialMipMapFilterMode"},
+    {"access": "public", "name": "MDLMaterialPropertyType"},
+    {"access": "public", "name": "MDLMaterialSemantic"},
+    {"access": "public", "name": "MDLMaterialTextureFilterMode"},
+    {"access": "public", "name": "MDLMaterialTextureWrapMode"},
+    {"access": "public", "name": "MDLMeshBufferType"},
+    {"access": "public", "name": "MDLProbePlacement"},
+    {"access": "public", "name": "MDLTextureChannelEncoding"},
+    {"access": "public", "name": "MDLTransformOpRotationOrder"},
+    {"access": "public", "name": "MDLVertexFormat"},
+    {"access": "public", "name": "MDLVoxelIndex"},
+    {"access": "public", "name": "MDLVoxelIndexExtent"}
+   ]
+  }
+ ],
+ "version": "1.0"
+}
