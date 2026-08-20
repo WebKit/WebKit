@@ -87,7 +87,7 @@ static OptionSet<CSS::ColorType> allowedColorTypes(ScriptExecutionContext* scrip
 Color parseColor(const String& colorString, CanvasBase& canvasBase)
 {
     using namespace CSSPropertyParserHelpers;
-    auto cssParserContext = canvasBase.cssParserContext();
+    auto& cssParserContext = canvasBase.cssParserContext();
     auto color = parseColorRawSimple(colorString, cssParserContext);
     if (color.isValid())
         return color;
