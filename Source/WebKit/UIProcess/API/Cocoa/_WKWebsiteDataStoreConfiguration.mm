@@ -967,6 +967,16 @@ static WebKit::UnifiedOriginStorageLevel NODELETE toUnifiedOriginStorageLevel(_W
     _configuration->setOverridePersistentNotificationMinimumLifetimeForTesting(lifetime);
 }
 
+- (BOOL)qualifiedServerTrustDebugEnabledForTesting
+{
+    return _configuration->qualifiedServerTrustDebugEnabledForTesting();
+}
+
+- (void)setQualifiedServerTrustDebugEnabledForTesting:(BOOL)enabled
+{
+    _configuration->setQualifiedServerTrustDebugEnabledForTesting(enabled);
+}
+
 - (NSUUID *)identifier
 {
     auto currentIdentifier = _configuration->identifier();

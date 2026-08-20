@@ -54,8 +54,10 @@ struct LinkRelAttribute {
 #endif
     bool isInternalResourceLink : 1 { false };
     bool isCompressionDictionary : 1 { false };
+    bool isTLSCertificateBinding : 1 { false };
 
     LinkRelAttribute() = default;
+    WEBCORE_EXPORT LinkRelAttribute(Document*, StringView);
     LinkRelAttribute(Document&, StringView);
 
     friend bool operator==(const LinkRelAttribute&, const LinkRelAttribute&) = default;

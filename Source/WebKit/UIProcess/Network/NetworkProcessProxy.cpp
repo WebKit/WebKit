@@ -2164,6 +2164,12 @@ void NetworkProcessProxy::flushNetworkProcessIPC(CompletionHandler<void()>&& com
     sendWithAsyncReply(Messages::NetworkProcess::FlushNetworkProcessIPC(), WTF::move(completionHandler));
 }
 
+void NetworkProcessProxy::receivedQualifiedServerTrust(WebKit::WebPageProxyIdentifier webPageID, WebCore::CertificateInfo&& serverTrust, WebCore::CertificateInfo&& qualifiedServerTrust)
+{
+    if (RefPtr page = WebPageProxy::fromIdentifier(webPageID))
+        page->receivedQualifiedServerTrust(WTF::move(serverTrust), WTF::move(qualifiedServerTrust));
+}
+
 } // namespace WebKit
 
 #undef MESSAGE_CHECK_COMPLETION

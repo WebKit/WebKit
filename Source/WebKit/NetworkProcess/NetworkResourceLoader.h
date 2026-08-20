@@ -279,6 +279,8 @@ private:
     void consumeSandboxExtensions();
     void invalidateSandboxExtensions();
 
+    void checkForQualifiedServerTrust(const WebCore::ResourceResponse&);
+
 #if !RELEASE_LOG_DISABLED
     void logCookieInformation() const;
 #endif

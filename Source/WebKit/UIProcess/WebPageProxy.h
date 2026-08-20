@@ -2965,6 +2965,8 @@ public:
 
     void closeCurrentTypingCommand();
 
+    void receivedQualifiedServerTrust(WebCore::CertificateInfo&&, WebCore::CertificateInfo&&);
+
     void simulateClickOverFirstMatchingTextInViewportWithUserInteraction(String&& targetText, CompletionHandler<void(bool)>&&);
 
     void startNetworkRequestsForPageLoadTiming(WebCore::FrameIdentifier);

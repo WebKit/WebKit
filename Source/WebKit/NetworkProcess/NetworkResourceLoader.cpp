@@ -46,6 +46,7 @@
 #include "NetworkSession.h"
 #include "NetworkStorageManager.h"
 #include "PrivateRelayed.h"
+#include "QualifiedServerTrustFetch.h"
 #include "ResourceLoadInfo.h"
 #include "ServiceWorkerFetchTask.h"
 #include "SharedBufferReference.h"
@@ -71,6 +72,7 @@
 #include <WebCore/HTTPStatusCodes.h>
 #include <WebCore/LegacySchemeRegistry.h>
 #include <WebCore/LinkHeader.h>
+#include <WebCore/LinkRelAttribute.h>
 #include <WebCore/NetworkLoadMetrics.h>
 #include <WebCore/NetworkStorageSession.h>
 #include <WebCore/OriginAccessPatterns.h>
@@ -1319,6 +1321,12 @@ void NetworkResourceLoader::didFinishLoading(const NetworkLoadMetrics& originalN
     if (shouldSendResourceLoadMessages())
         connectionToWebProcess().networkProcess().parentProcessConnection()->send(Messages::NetworkProcessProxy::ResourceLoadDidCompleteWithError(webPageProxyID(), resourceLoadInfo(), m_response, { }), 0);
 
+    // If this is done too early, we can receive the 2qwac response before the main frame main resource
+    // actually commits with all the response IPC. Since it's low priority, do it here to avoid
+    // slowing down the page load.
+    if (isMainFrameLoad())
+        checkForQualifiedServerTrust(m_response);
+
     cleanup(LoadResult::Success);
 }
 
@@ -1932,6 +1940,41 @@ void NetworkResourceLoader::didReceiveMainResourceResponse(const WebCore::Resour
         speculativeLoadManager->registerMainResourceLoadResponse(globalFrameID(), originalRequest(), response);
     if (auto& certificateInfo = response.certificateInfo(); certificateInfo && !certificateInfo->isEmpty())
         connectionToWebProcess().networkProcess().parentProcessConnection()->send(Messages::WebFrameProxyFromNetworkProcess::ReceivedMainResourceResponseWithCertificateInfo(response.url().hostAndPort(), *certificateInfo), frameID());
+}
+
+void NetworkResourceLoader::checkForQualifiedServerTrust(const WebCore::ResourceResponse& response)
+{
+    CheckedPtr session = m_connection->networkProcess().networkSession(sessionID());
+    if (!session)
+        return;
+
+    if (!response.url().protocolIs("https"_s))
+        return;
+
+    auto headerValue = response.httpHeaderField(HTTPHeaderName::Link);
+    if (headerValue.isEmpty())
+        return;
+
+    auto tlsCertificates = response.certificateInfo();
+    if (!tlsCertificates)
+        return;
+
+    LinkHeaderSet headerSet(headerValue);
+    for (const auto& header : headerSet) {
+        if (!header.valid() || header.url().isEmpty())
+            continue;
+        // From https://www.etsi.org/deliver/etsi_ts/119400_119499/11941105/02.01.01_60/ts_11941105v020101p.pdf section 6.2.2:
+        // Examine the HTTP headers included in any main frame navigation response from the server (relating to
+        // navigation by the web browser to the address as displayed in the address bar) for a HTTP 'Link' response
+        // header (as defined in IETF RFC 8288 [6]) with a rel value of tls-certificate-binding.
+        if (!WebCore::LinkRelAttribute(nullptr, header.rel()).isTLSCertificateBinding)
+            continue;
+        URL url { header.url() };
+        if (!url.isValid())
+            continue;
+        if (protocolHostAndPortAreEqual(response.url(), url))
+            return QualifiedServerTrustFetch::create(*session, url, m_parameters, *tlsCertificates);
+    }
 }
 
 void NetworkResourceLoader::initializeReportingEndpoints(const ResourceResponse& response)

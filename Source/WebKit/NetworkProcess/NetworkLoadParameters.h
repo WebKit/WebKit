@@ -56,14 +56,14 @@ struct NetworkLoadParameters {
     bool shouldClearReferrerOnHTTPSToHTTPRedirect { true };
     bool needsCertificateInfo { false };
     bool isMainFrameNavigation { false };
-    std::optional<NavigationActionData> mainResourceNavigationDataForAnyFrame;
-    Vector<Ref<WebCore::BlobDataFileReference>> blobFileReferences;
+    std::optional<NavigationActionData> mainResourceNavigationDataForAnyFrame { };
+    Vector<Ref<WebCore::BlobDataFileReference>> blobFileReferences { };
     PreconnectOnly shouldPreconnectOnly { PreconnectOnly::No };
-    std::optional<NetworkActivityTracker> networkActivityTracker;
+    std::optional<NetworkActivityTracker> networkActivityTracker { };
     std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain { NavigatingToAppBoundDomain::No };
     bool hadMainFrameMainResourcePrivateRelayed { false };
     bool allowPrivacyProxy { true };
-    OptionSet<WebCore::AdvancedPrivacyProtections> advancedPrivacyProtections;
+    OptionSet<WebCore::AdvancedPrivacyProtections> advancedPrivacyProtections { };
     bool isInitiatedByDedicatedWorker { false };
 
     uint64_t requiredCookiesVersion { 0 };

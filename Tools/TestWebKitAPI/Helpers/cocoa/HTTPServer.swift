@@ -53,6 +53,7 @@ import struct Swift.String
 public struct Route: Sendable {
     fileprivate struct Storage: Sendable {
         let pathComponents: [String]
+        let headerFields: [String: String]
         let response: String
     }
 
@@ -62,8 +63,8 @@ public struct Route: Sendable {
         self.children = children
     }
 
-    fileprivate init(path: String, response: String) {
-        self.children = [Storage(pathComponents: [path], response: response)]
+    fileprivate init(path: String, headerFields: [String: String], response: String) {
+        self.children = [Storage(pathComponents: [path], headerFields: headerFields, response: response)]
     }
 
     /// Creates a Route from a group of child Routes.
@@ -74,7 +75,7 @@ public struct Route: Sendable {
     public init(_ path: String, @RouteBuilder _ route: () -> Route) {
         self.children = route().children
             .map {
-                Storage(pathComponents: [path] + $0.pathComponents, response: $0.response)
+                Storage(pathComponents: [path] + $0.pathComponents, headerFields: $0.headerFields, response: $0.response)
             }
     }
 
@@ -82,9 +83,10 @@ public struct Route: Sendable {
     ///
     /// - Parameters:
     ///   - path: The path of this route. If this value is non-empty, it must start with `/`.
+    ///   - headerFields: The header fields of the response.
     ///   - response: The response to be used.
-    public init(_ path: String, _ response: () -> String) {
-        self.init(path: path, response: response())
+    public init(_ path: String, headerFields: [String: String] = [:], _ response: () -> String) {
+        self.init(path: path, headerFields: headerFields, response: response())
     }
 }
 
@@ -171,7 +173,11 @@ public struct HTTPServer: ~Copyable {
         let routes = route().children
         for child in routes {
             let path = child.pathComponents.joined()
-            let response = unsafe TestWebKitAPI.HTTPResponse(WTF.String(child.response))
+            var response = unsafe TestWebKitAPI.HTTPResponse(WTF.String(child.response))
+
+            for (name, value) in child.headerFields {
+                unsafe response.setHeaderField(consuming: .init(name), consuming: .init(value))
+            }
 
             unsafe hashMapSet(&entries, consuming: .init(path), consuming: response)
         }

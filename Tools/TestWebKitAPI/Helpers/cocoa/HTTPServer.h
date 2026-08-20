@@ -157,6 +157,11 @@ struct HTTPResponse {
         headerFieldsFor304 = WTF::move(headerFields);
     }
 
+    void setHeaderField(String&& name, String&& value)
+    {
+        headerFields.set(WTF::move(name), WTF::move(value));
+    }
+
     enum class IncludeContentLength : bool { No, Yes };
     Vector<uint8_t> serialize(IncludeContentLength = IncludeContentLength::Yes) const;
     static Vector<uint8_t> bodyFromString(const String&);

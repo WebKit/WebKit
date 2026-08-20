@@ -116,6 +116,7 @@ WK_CLASS_AVAILABLE(macos(10.13), ios(11.0))
 @property (nonatomic, nullable, copy) NSNumber *defaultTrackingPreventionEnabledOverride WK_API_AVAILABLE(macos(15.0), ios(18.0), visionos(2.0));
 @property (nonatomic, copy, setter=_setResourceMonitorThrottlerDirectory:) NSURL *_resourceMonitorThrottlerDirectory WK_API_AVAILABLE(macos(15.0), ios(18.0));
 @property (nonatomic, nullable, copy) NSURL *webContentRestrictionsConfigurationURL WK_API_AVAILABLE(macos(26.0), ios(26.0));
+@property (nonatomic) BOOL qualifiedServerTrustDebugEnabledForTesting WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
 
 // Testing only.
 @property (nonatomic) BOOL allLoadsBlockedByDeviceManagementRestrictionsForTesting WK_API_AVAILABLE(macos(10.15), ios(13.0));

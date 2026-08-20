@@ -253,6 +253,9 @@ public:
     
     bool allowsHSTSWithUntrustedRootCertificate() const { return m_allowsHSTSWithUntrustedRootCertificate; }
     void setAllowsHSTSWithUntrustedRootCertificate(bool allows) { m_allowsHSTSWithUntrustedRootCertificate = allows; }
+
+    bool qualifiedServerTrustDebugEnabledForTesting() const { return m_qualifiedServerTrustDebugEnabledForTesting; }
+    void setQualifiedServerTrustDebugEnabledForTesting(bool enabled) { m_qualifiedServerTrustDebugEnabledForTesting = enabled; }
     
     void setPCMMachServiceName(String&& name) { m_pcmMachServiceName = WTF::move(name); }
     const String& pcmMachServiceName() const LIFETIME_BOUND { return m_pcmMachServiceName; }
@@ -365,6 +368,7 @@ private:
     URL m_standaloneApplicationURL;
     bool m_enableInAppBrowserPrivacyForTesting { false };
     bool m_allowsHSTSWithUntrustedRootCertificate { false };
+    bool m_qualifiedServerTrustDebugEnabledForTesting { false };
     bool m_trackingPreventionDebugModeEnabled { false };
 #if ENABLE(DECLARATIVE_WEB_PUSH)
     bool m_isDeclarativeWebPushEnabled { false };

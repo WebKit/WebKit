@@ -31,7 +31,10 @@
 #import "Helpers/cocoa/HTTPServer.h"
 #import "Helpers/cocoa/TestNavigationDelegate.h"
 #import "Helpers/cocoa/TestUIDelegate.h"
+#import <WebKit/WKWebsiteDataStorePrivate.h>
+#import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/text/MakeString.h>
 
 @interface TrustObserver : NSObject
 - (void)waitUntilServerTrustChanged;
@@ -51,6 +54,29 @@
 {
     _observedServerTrust = false;
     while (!_observedServerTrust)
+        TestWebKitAPI::Util::spinRunLoop();
+}
+
+@end
+
+@interface QualifiedServerTrustObserver : NSObject
+- (void)waitUntilQualifiedServerTrustChanged;
+@end
+
+@implementation QualifiedServerTrustObserver {
+    bool _observedQualifiedServerTrust;
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+    EXPECT_WK_STREQ(keyPath, "qualifiedServerTrust");
+    _observedQualifiedServerTrust = true;
+}
+
+- (void)waitUntilQualifiedServerTrustChanged
+{
+    _observedQualifiedServerTrust = false;
+    while (!_observedQualifiedServerTrust)
         TestWebKitAPI::Util::spinRunLoop();
 }
 
@@ -125,4 +151,67 @@ TEST(WKWebView, ServerTrustKVCWithCOOP)
     [webView loadHTMLString:@"<script>alert('loaded')</script>" baseURL:[NSURL URLWithString:@"https://webkit.org/path1"]];
     EXPECT_WK_STREQ([uiDelegate waitForAlert], "loaded");
     EXPECT_NULL(webView.get().serverTrust);
+}
+
+TEST(WKWebView, QualifiedServerTrustKVC)
+{
+    using namespace TestWebKitAPI;
+    constexpr auto qualifiedServerTrustBody = "This is where the 2QWAC bytes will go."_s;
+
+    HTTPServer server({ { "/2qwac"_s, { qualifiedServerTrustBody } } }, HTTPServer::Protocol::HttpsProxy);
+    auto linkHeader = [&] (ASCIILiteral rel) {
+        return makeString("<https://webkit.org/2qwac>; rel=\""_s, rel, "\""_s);
+    };
+    server.addResponse("/no-link"_s, { "hi"_s });
+    server.addResponse("/binding-link"_s, { { { "Link"_s, linkHeader("tls-certificate-binding preload"_s) } }, "hi"_s });
+    server.addResponse("/other-rel"_s, { { { "Link"_s, linkHeader("author"_s) } }, "hi"_s });
+    server.addResponse("/many-links"_s, { { { "Link"_s, makeString("<https://webkit.org/author>; rel=\"author\", "_s, linkHeader("tls-certificate-binding"_s)) } }, "hi"_s });
+    server.addResponse("/cross-origin-link"_s, { { { "Link"_s, "<https://example.com/2qwac>; rel=\"tls-certificate-binding\""_s } }, "hi"_s });
+
+    RetainPtr storeConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initNonPersistentConfiguration]);
+    [storeConfiguration setQualifiedServerTrustDebugEnabledForTesting:YES];
+    [storeConfiguration setHTTPSProxy:[NSURL URLWithString:[NSString stringWithFormat:@"https://127.0.0.1:%d/", server.port()]]];
+    RetainPtr viewConfiguration = adoptNS([WKWebViewConfiguration new]);
+    [viewConfiguration setWebsiteDataStore:adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:storeConfiguration.get()]).get()];
+    RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:CGRectZero configuration:viewConfiguration.get()]);
+    RetainPtr delegate = adoptNS([TestNavigationDelegate new]);
+    webView.get().navigationDelegate = delegate.get();
+    [delegate allowAnyTLSCertificate];
+    EXPECT_NULL([webView valueForKey:@"qualifiedServerTrust"]);
+
+    RetainPtr observer = adoptNS([QualifiedServerTrustObserver new]);
+    [webView addObserver:observer.get() forKeyPath:@"qualifiedServerTrust" options:NSKeyValueObservingOptionNew context:nil];
+
+    [webView loadURL:[NSURL URLWithString:@"https://webkit.org/binding-link"]];
+    [observer waitUntilQualifiedServerTrustChanged];
+    verifyCertificateAndPublicKey([webView qualifiedServerTrust]);
+
+    // Committing a response without a tls-certificate-binding link clears the 2QWAC.
+    [webView loadURL:[NSURL URLWithString:@"https://webkit.org/no-link"]];
+    [observer waitUntilQualifiedServerTrustChanged];
+    EXPECT_NULL([webView qualifiedServerTrust]);
+
+    // The tls-certificate-binding link is found even when it isn't the only link.
+    [webView loadURL:[NSURL URLWithString:@"https://webkit.org/many-links"]];
+    [observer waitUntilQualifiedServerTrustChanged];
+    verifyCertificateAndPublicKey([webView qualifiedServerTrust]);
+
+    // A link with a different rel is not a 2QWAC.
+    [webView loadURL:[NSURL URLWithString:@"https://webkit.org/other-rel"]];
+    [observer waitUntilQualifiedServerTrustChanged];
+    EXPECT_NULL([webView qualifiedServerTrust]);
+
+    // A cross-origin tls-certificate-binding link is ignored. The 2QWAC is already
+    // null here, so there is nothing to observe and we wait for the navigation instead.
+    [webView loadURL:[NSURL URLWithString:@"https://webkit.org/cross-origin-link"]];
+    [delegate waitForDidFinishNavigation];
+    Util::runFor(0.1_s);
+    EXPECT_NULL([webView qualifiedServerTrust]);
+
+    // Load a valid 2QWAC again to verify the checks above didn't just break the fetch entirely.
+    [webView loadURL:[NSURL URLWithString:@"https://webkit.org/binding-link"]];
+    [observer waitUntilQualifiedServerTrustChanged];
+    verifyCertificateAndPublicKey([webView qualifiedServerTrust]);
+
+    [webView removeObserver:observer.get() forKeyPath:@"qualifiedServerTrust"];
 }

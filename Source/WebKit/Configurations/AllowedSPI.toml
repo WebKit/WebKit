@@ -334,3 +334,9 @@ request = "rdar://171940190"
 selectors = [
     { name = "endSessionWithCompletion:", class = "NFSession" },
 ]
+
+[[staging]]
+request = "rdar://166719636"
+symbols = [
+    "SecQWACTLSBindingVerify"
+]

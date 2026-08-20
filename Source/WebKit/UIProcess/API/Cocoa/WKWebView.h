@@ -217,6 +217,13 @@ typedef NS_ENUM(NSInteger, WKFullscreenState) {
  */
 @property (nonatomic, readonly, nullable) SecTrustRef serverTrust WK_API_AVAILABLE(macos(10.12), ios(10.0));
 
+/*! @abstract A SecTrustRef with a 2-QWAC for the currently committed navigation.
+ @discussion Since a separate fetch is needed to get the 2-QWAC data, this becomes available
+ after the serverTrust.  It will only become available if the server has a valid 2-QWAC.
+ This property is key-value observing (KVO) compliant.
+ */
+@property (nonatomic, readonly, nullable) SecTrustRef qualifiedServerTrust WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+
 /*! @abstract A Boolean value indicating whether there is a back item in
  the back-forward list that can be navigated to.
  @discussion @link WKWebView @/link is key-value observing (KVO) compliant

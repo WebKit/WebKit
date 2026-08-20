@@ -81,6 +81,9 @@ public:
     virtual void willChangeWebProcessIsResponsive() = 0;
     virtual void didChangeWebProcessIsResponsive() = 0;
 
+    virtual void willChangeQualifiedServerTrust() { }
+    virtual void didChangeQualifiedServerTrust() { }
+
     virtual void didSwapWebProcesses() = 0;
 };
 
@@ -164,6 +167,8 @@ public:
 
     const WebCore::CertificateInfo& certificateInfo() const LIFETIME_BOUND { return m_committedState.certificateInfo; }
 
+    const WebCore::CertificateInfo& qualifiedServerTrust() const LIFETIME_BOUND { return m_committedState.qualifiedServerTrust; }
+
     const URL& resourceDirectoryURL() const LIFETIME_BOUND { return m_committedState.resourceDirectoryURL; }
 
     const URL& pendingAPIRequestURL() const LIFETIME_BOUND { return m_committedState.pendingAPIRequest.url; }
@@ -177,6 +182,8 @@ public:
     void didFailProvisionalLoad(const Transaction::Token&);
 
     void didCommitLoad(const Transaction::Token&, const WebCore::CertificateInfo&, bool hasInsecureContent, bool usedLegacyTLS, bool privateRelayed, const String& proxyName, const WebCore::ResourceResponseSource, const WebCore::SecurityOriginData&);
+
+    void receivedQualifiedServerTrust(const Transaction::Token&, WebCore::CertificateInfo&&, WebCore::CertificateInfo&&);
 
     void NODELETE didFinishLoad(const Transaction::Token&);
     void NODELETE didFailLoad(const Transaction::Token&);
@@ -252,6 +259,8 @@ private:
         WebCore::CertificateInfo certificateInfo;
         String proxyName;
         WebCore::ResourceResponseSource source;
+
+        WebCore::CertificateInfo qualifiedServerTrust;
     };
 
     static bool NODELETE isLoading(const Data&);

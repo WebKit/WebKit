@@ -396,6 +396,7 @@ unset(_webkit_additional_cocoa_sources)
 list(APPEND WebKit_SOURCES
     NetworkProcess/cocoa/DeviceManagementSoftLink.mm
     NetworkProcess/cocoa/NetworkSoftLink.mm
+    NetworkProcess/cocoa/SecuritySoftLink.mm
 
     Platform/cocoa/_WKWebViewTextInputNotifications.mm
 

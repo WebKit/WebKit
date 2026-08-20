@@ -290,6 +290,15 @@ final public class WebPage {
         backingProperty(\.serverTrust, backedBy: \.serverTrust)
     }
 
+    /// The trust management object for the 2-QWAC of the currently committed navigation.
+    ///
+    /// A 2-QWAC binds a qualified website authentication certificate to the TLS certificate the webpage was
+    /// served with. Since a separate fetch is needed to get the 2-QWAC data, this value becomes available
+    /// after ``serverTrust``, and only if the server has a valid 2-QWAC.
+    public var qualifiedServerTrust: SecTrust? {
+        backingProperty(\.qualifiedServerTrust, backedBy: \.qualifiedServerTrust)
+    }
+
     /// Indicates whether the webpage loaded all resources on the page through securely encrypted connections.
     public var hasOnlySecureContent: Bool {
         backingProperty(\.hasOnlySecureContent, backedBy: \.hasOnlySecureContent)

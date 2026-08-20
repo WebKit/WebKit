@@ -37,6 +37,7 @@ NetworkProcess/Downloads/cocoa/WKDownloadProgress.mm @nonARC
 NetworkProcess/cocoa/DeviceManagementSoftLink.mm @nonARC @no-unify // SOFT_LINK_*_FOR_SOURCE defines non-inline symbols.
 NetworkProcess/cocoa/LaunchServicesDatabaseObserver.mm @nonARC
 NetworkProcess/cocoa/NetworkSoftLink.mm @nonARC @no-unify // SOFT_LINK_*_FOR_SOURCE defines non-inline symbols.
+NetworkProcess/cocoa/SecuritySoftLink.mm @nonARC @no-unify // SOFT_LINK_*_FOR_SOURCE defines non-inline symbols.
 NetworkProcess/cocoa/WebSocketTaskCocoa.mm @nonARC
 
 NetworkProcess/mac/NetworkConnectionToWebProcessMac.mm @nonARC

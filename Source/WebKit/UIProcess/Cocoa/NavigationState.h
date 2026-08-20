@@ -207,6 +207,8 @@ private:
     void willChangeWebProcessIsResponsive() override;
     void didChangeWebProcessIsResponsive() override;
     void didSwapWebProcesses() override;
+    void willChangeQualifiedServerTrust() override;
+    void didChangeQualifiedServerTrust() override;
 
 #if USE(RUNNINGBOARD)
     void releaseNetworkActivityAfterLoadCompletion() { releaseNetworkActivity(NetworkActivityReleaseReason::LoadCompleted); }

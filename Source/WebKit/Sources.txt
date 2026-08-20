@@ -126,6 +126,7 @@ NetworkProcess/NetworkSession.cpp @cost:9
 NetworkProcess/NetworkSocketChannel.cpp
 NetworkProcess/PingLoad.cpp @cost:4
 NetworkProcess/PreconnectTask.cpp @cost:3
+NetworkProcess/QualifiedServerTrustFetch.cpp @cost:3
 
 NetworkProcess/Authentication/AuthenticationManager.cpp @cost:7
 

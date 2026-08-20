@@ -25,11 +25,16 @@
 
 import SwiftUI
 import Observation
+import Security
 import Testing
 @_spi(CrossImportOverlay) @_spi(Private) @_spi(Testing) import WebKit
 import WebKit_Private.WKWebViewPrivate
 @_spi(Private) import _WebKit_SwiftUI
 private import TestWebKitAPILibrary
+#if ENABLE_CXX_INTEROP
+private import WebKit_Private._WKWebsiteDataStoreConfiguration
+private import WebKit_Private.WKWebsiteDataStorePrivate
+#endif
 
 // MARK: Supporting test types
 
@@ -64,6 +69,28 @@ private class TestNavigationDecider: WebPage.NavigationDeciding {
     }
 }
 
+#if ENABLE_CXX_INTEROP
+@MainActor
+private struct TrustingNavigationDecider: WebPage.NavigationDeciding {
+    mutating func decideAuthenticationChallengeDisposition(
+        for challenge: URLAuthenticationChallenge
+    ) async -> (URLSession.AuthChallengeDisposition, URLCredential?) {
+        (.useCredential, challenge.protectionSpace.serverTrust.map(URLCredential.init(trust:)))
+    }
+}
+
+extension WebPage.Configuration {
+    fileprivate init(_ serverConfiguration: HTTPServer.Configuration, qualifiedServerTrustDebugEnabled: Bool = false) {
+        self.init()
+
+        let storeConfiguration = _WKWebsiteDataStoreConfiguration(nonPersistentConfiguration: ())
+        storeConfiguration.httpsProxy = serverConfiguration.httpsProxy
+        storeConfiguration.qualifiedServerTrustDebugEnabledForTesting = qualifiedServerTrustDebugEnabled
+        self.websiteDataStore = WKWebsiteDataStore._store(with: storeConfiguration)
+    }
+}
+#endif // ENABLE_CXX_INTEROP
+
 // MARK: Tests
 
 @MainActor
@@ -77,6 +104,7 @@ struct WebPageTests {
         #expect(!page.isLoading)
         #expect(page.estimatedProgress == 0.0)
         #expect(page.serverTrust == nil)
+        #expect(page.qualifiedServerTrust == nil)
         #expect(!page.hasOnlySecureContent)
         #if WTF_PLATFORM_MAC || WTF_PLATFORM_IOS
         #expect(page.themeColor == nil)
@@ -84,6 +112,58 @@ struct WebPageTests {
 
         // FIXME: (283456) Make this test more comprehensive once Observation supports observing a stream of changes to properties.
     }
+
+    #if ENABLE_CXX_INTEROP
+    @Test
+    func qualifiedServerTrust() async throws {
+        var server = HTTPServer(protocol: .httpsProxy) {
+            Route("/binding-link", headerFields: ["Link": "<https://webkit.org/2qwac>; rel=\"tls-certificate-binding\""]) {
+                "hi"
+            }
+
+            Route("/2qwac") {
+                "This is where the 2QWAC bytes will go."
+            }
+
+            Route("/no-link") {
+                "hi"
+            }
+        }
+
+        try await server.run { serverConfiguration in
+            let configuration = WebPage.Configuration(serverConfiguration, qualifiedServerTrustDebugEnabled: true)
+            let page = WebPage(configuration: configuration, navigationDecider: TrustingNavigationDecider())
+
+            #expect(page.qualifiedServerTrust == nil)
+
+            let changes = Observations { page.qualifiedServerTrust != nil }
+
+            let bindingLinkURL = try #require(URL(string: "https://webkit.org/binding-link"))
+            try await page.load(bindingLinkURL).wait()
+
+            // The 2-QWAC is fetched after the navigation commits, so waiting for the navigation to finish
+            // is not enough; this waits for the property to be observed changing.
+            _ = try await #require(changes.first { @Sendable in $0 })
+
+            let qualifiedServerTrust = try #require(page.qualifiedServerTrust)
+            let serverTrust = try #require(page.serverTrust)
+
+            // With debugging enabled the 2-QWAC is the TLS trust of the 2-QWAC fetch, which was served by
+            // the same identity as the page itself.
+            let qualifiedServerTrustKey = try #require(SecTrustCopyKey(qualifiedServerTrust))
+            let serverKey = try #require(SecTrustCopyKey(serverTrust))
+            let qualifiedServerTrustKeyData = unsafe try #require(SecKeyCopyExternalRepresentation(qualifiedServerTrustKey, nil))
+            let serverKeyData = unsafe try #require(SecKeyCopyExternalRepresentation(serverKey, nil))
+            #expect(CFEqual(qualifiedServerTrustKeyData, serverKeyData))
+
+            // Committing a response without a tls-certificate-binding link clears the 2-QWAC.
+            let noLinkURL = try #require(URL(string: "https://webkit.org/no-link"))
+            try await page.load(noLinkURL).wait()
+
+            #expect(page.qualifiedServerTrust == nil)
+        }
+    }
+    #endif // ENABLE_CXX_INTEROP
 
     @Test
     func decidePolicyForNavigationActionFragment() async throws {

@@ -100,6 +100,7 @@ struct NetworkSessionCreationParameters {
     std::optional<unsigned> overrideServiceWorkerRegistrationCountTestingValue;
     bool preventsSystemHTTPProxyAuthentication { false };
     bool allowsHSTSWithUntrustedRootCertificate { false };
+    bool qualifiedServerTrustDebugEnabledForTesting { false };
     String pcmMachServiceName;
     String webPushMachServiceName;
     String webPushPartitionString;

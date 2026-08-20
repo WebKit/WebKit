@@ -1775,6 +1775,16 @@ void NavigationState::didChangeWebProcessIsResponsive()
     [webView() didChangeValueForKey:@"_webProcessIsResponsive"];
 }
 
+void NavigationState::willChangeQualifiedServerTrust()
+{
+    [webView() willChangeValueForKey:@"qualifiedServerTrust"];
+}
+
+void NavigationState::didChangeQualifiedServerTrust()
+{
+    [webView() didChangeValueForKey:@"qualifiedServerTrust"];
+}
+
 void NavigationState::didSwapWebProcesses()
 {
 #if USE(RUNNINGBOARD)

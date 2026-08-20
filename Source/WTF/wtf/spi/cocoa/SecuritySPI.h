@@ -123,6 +123,8 @@ CFDataRef SecKeyCopySubjectPublicKeyInfo(SecKeyRef);
 
 OSStatus SecCodeValidateFileResource(SecStaticCodeRef, CFStringRef, CFDataRef, SecCSFlags);
 
+bool SecQWACTLSBindingVerify(CFDataRef, SecTrustRef, SecTrustRef* CF_RETURNS_RETAINED, CFErrorRef*);
+
 WTF_EXTERN_C_END
 
 #if PLATFORM(MAC)

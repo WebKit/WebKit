@@ -20021,6 +20021,13 @@ void WebPageProxy::updateRemoteIntersectionObserversInOtherWebProcesses(IPC::Con
     });
 }
 
+void WebPageProxy::receivedQualifiedServerTrust(WebCore::CertificateInfo&& serverTrust, WebCore::CertificateInfo&& qualifiedServerTrust)
+{
+    Ref pageLoadState = this->pageLoadState();
+    auto transaction = pageLoadState->transaction();
+    pageLoadState->receivedQualifiedServerTrust(transaction, WTF::move(serverTrust), WTF::move(qualifiedServerTrust));
+}
+
 } // namespace WebKit
 
 #undef WEBPAGEPROXY_RELEASE_LOG

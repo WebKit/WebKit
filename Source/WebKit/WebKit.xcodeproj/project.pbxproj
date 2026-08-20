@@ -2795,6 +2795,7 @@
 		FA580B4E2DA64B5F005E4965 /* UnifiedSource163.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FA580B292DA64B5F005E4965 /* UnifiedSource163.cpp */; };
 		FA5AAE9B2E6A217A00FE693D /* NetworkSoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = FA5AAE992E6A217A00FE693D /* NetworkSoftLink.h */; };
 		FA5AAE9C2E6A217A00FE693D /* NetworkSoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = FA5AAE9A2E6A217A00FE693D /* NetworkSoftLink.mm */; };
+		FA745C49302FC7FF007231F3 /* SecuritySoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = FA745C48302EA40D007231F3 /* SecuritySoftLink.mm */; };
 		FA84D6692E579F38004BDAA4 /* WKJSHandleRef.h in Headers */ = {isa = PBXBuildFile; fileRef = FA84D6672E579EA4004BDAA4 /* WKJSHandleRef.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FA8B4F6D2E46AFFC00E419CD /* WKScriptMessageRef.h in Headers */ = {isa = PBXBuildFile; fileRef = FA8B4F6B2E46A93500E419CD /* WKScriptMessageRef.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FA8B4F7C2E4A5F7C00E419CD /* _WKJSHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = FA8B4F792E4A5F7300E419CD /* _WKJSHandle.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -9268,6 +9269,8 @@
 		FA6DCE712BAAB3AB0043109B /* WebPagePreferencesLockdownModeObserver.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WebPagePreferencesLockdownModeObserver.mm; sourceTree = "<group>"; };
 		FA6DCE722BAAB3AB0043109B /* WebPagePreferencesLockdownModeObserver.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebPagePreferencesLockdownModeObserver.h; sourceTree = "<group>"; };
 		FA7036C32D72882A00083D04 /* RunJavaScriptParameters.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RunJavaScriptParameters.h; sourceTree = "<group>"; };
+		FA745C47302EA40D007231F3 /* SecuritySoftLink.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SecuritySoftLink.h; sourceTree = "<group>"; };
+		FA745C48302EA40D007231F3 /* SecuritySoftLink.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = SecuritySoftLink.mm; sourceTree = "<group>"; };
 		FA8262722B2193EA00BB8236 /* APINumber.serialization.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = APINumber.serialization.in; sourceTree = "<group>"; };
 		FA84D6672E579EA4004BDAA4 /* WKJSHandleRef.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKJSHandleRef.h; sourceTree = "<group>"; };
 		FA84D6682E579EA4004BDAA4 /* WKJSHandleRef.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WKJSHandleRef.cpp; sourceTree = "<group>"; };
@@ -9275,6 +9278,8 @@
 		FA87D9B42D8BDC2B00B609D4 /* FrameInfoData.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FrameInfoData.cpp; sourceTree = "<group>"; };
 		FA894D902EB51F0500495F1F /* SharedMemoryJSBuffer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SharedMemoryJSBuffer.h; sourceTree = "<group>"; };
 		FA894D912EB51F0500495F1F /* SharedMemoryJSBuffer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SharedMemoryJSBuffer.cpp; sourceTree = "<group>"; };
+		FA8B24AB30212E540018413F /* QualifiedServerTrustFetch.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = QualifiedServerTrustFetch.h; sourceTree = "<group>"; };
+		FA8B24AC30212E540018413F /* QualifiedServerTrustFetch.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = QualifiedServerTrustFetch.cpp; sourceTree = "<group>"; };
 		FA8B4F662E4674BC00E419CD /* APIScriptMessage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = APIScriptMessage.h; sourceTree = "<group>"; };
 		FA8B4F672E4674BC00E419CD /* APIScriptMessage.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = APIScriptMessage.cpp; sourceTree = "<group>"; };
 		FA8B4F6B2E46A93500E419CD /* WKScriptMessageRef.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKScriptMessageRef.h; sourceTree = "<group>"; };
@@ -14312,6 +14317,8 @@
 				1D3F2E8A99B47C6E5F7A2D13 /* PreconnectRequest.serialization.in */,
 				83A0ED331F747CC7003299EB /* PreconnectTask.cpp */,
 				83A0ED321F747CC6003299EB /* PreconnectTask.h */,
+				FA8B24AC30212E540018413F /* QualifiedServerTrustFetch.cpp */,
+				FA8B24AB30212E540018413F /* QualifiedServerTrustFetch.h */,
 				41287D4D225C161F009A3E26 /* WebSocketTask.h */,
 			);
 			path = NetworkProcess;
@@ -15256,6 +15263,8 @@
 				FA5AAE9A2E6A217A00FE693D /* NetworkSoftLink.mm */,
 				D2E2FE6D29C8C30D00023E6B /* NetworkTaskCocoa.h */,
 				D2E2FE6F29C8C4F900023E6B /* NetworkTaskCocoa.mm */,
+				FA745C47302EA40D007231F3 /* SecuritySoftLink.h */,
+				FA745C48302EA40D007231F3 /* SecuritySoftLink.mm */,
 				41287D4C225C05C5009A3E26 /* WebSocketTaskCocoa.h */,
 				41287D4B225C05C4009A3E26 /* WebSocketTaskCocoa.mm */,
 				5C2C6FA827C96FF900CCDA9E /* WKURLSessionTaskDelegate.h */,
@@ -22271,6 +22280,7 @@
 				1AF572302D690813008266F2 /* RemoteScrollingTreeCocoa.mm in Sources */,
 				7BCF70DE2615D06E00E4FB70 /* ScopedRenderingResourcesRequestCocoa.mm in Sources */,
 				9BF622542C3E8559007F7021 /* SecurityFlags.cpp in Sources */,
+				FA745C49302FC7FF007231F3 /* SecuritySoftLink.mm in Sources */,
 				E3D0A9422D62B1C90094538A /* ServiceWorkerDebuggableFrontendChannel.cpp in Sources */,
 				E3E6297F2D5FA8F200DAE50C /* ServiceWorkerDebuggableProxy.cpp in Sources */,
 				93468E6D2714AF88009983E3 /* SharedFileHandleCocoa.cpp in Sources */,
