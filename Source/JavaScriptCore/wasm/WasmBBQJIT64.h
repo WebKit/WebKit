@@ -223,7 +223,7 @@ void BBQJIT::emitModOrDiv(Value& lhs, Location lhsLocation, Value& rhs, Location
 
     ASSERT(resultLocation.isRegister());
     ASSERT(lhsLocation.asGPR() != X86Registers::eax && lhsLocation.asGPR() != X86Registers::edx);
-    ASSERT(rhsLocation.asGPR() != X86Registers::eax && lhsLocation.asGPR() != X86Registers::edx);
+    ASSERT(rhsLocation.asGPR() != X86Registers::eax && rhsLocation.asGPR() != X86Registers::edx);
 
     ScratchScope<2, 0> scratches(*this, lhsLocation, rhsLocation, resultLocation);
 
