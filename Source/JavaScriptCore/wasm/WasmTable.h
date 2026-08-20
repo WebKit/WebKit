@@ -149,6 +149,7 @@ public:
     void copyFunction(FuncRefTable* srcTable, uint32_t dstIndex, uint32_t srcIndex);
 
     static constexpr ptrdiff_t offsetOfFunctions() { return OBJECT_OFFSETOF(FuncRefTable, m_importableFunctions); }
+    static constexpr ptrdiff_t offsetOfWrappers() { return OBJECT_OFFSETOF(FuncRefTable, m_wrappers); }
     static constexpr ptrdiff_t offsetOfTail() { return WTF::roundUpToMultipleOf<alignof(Function)>(sizeof(FuncRefTable)); }
     static constexpr ptrdiff_t offsetOfFunctionsForFixedSizedTable() { return offsetOfTail(); }
 

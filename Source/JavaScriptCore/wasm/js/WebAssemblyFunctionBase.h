@@ -66,6 +66,8 @@ public:
     static constexpr ptrdiff_t offsetOfBoxedCallee() { return OBJECT_OFFSETOF(WebAssemblyFunctionBase, m_importableFunction) + WasmToWasmImportableFunction::offsetOfBoxedCallee(); }
     static constexpr ptrdiff_t offsetOfTargetInstance() { return OBJECT_OFFSETOF(WebAssemblyFunctionBase, m_importableFunction) + WasmToWasmImportableFunction::offsetOfTargetInstance(); }
     static constexpr ptrdiff_t offsetOfRTT() { return OBJECT_OFFSETOF(WebAssemblyFunctionBase, m_importableFunction) + WasmToWasmImportableFunction::offsetOfRTT(); }
+    static constexpr ptrdiff_t offsetOfCallLinkInfo() { return OBJECT_OFFSETOF(WebAssemblyFunctionBase, m_callLinkInfo); }
+    static constexpr ptrdiff_t offsetOfCallLinkInfoFromImportableFunction() { return offsetOfCallLinkInfo() - offsetOfImportableFunction(); }
 
 protected:
     DECLARE_DEFAULT_FINISH_CREATION;

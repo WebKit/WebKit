@@ -189,6 +189,7 @@ namespace JSC::B3 {
     macro(VM_exception, VM::exceptionOffset(), Mutability::Mutable) \
     macro(WatchpointSet_state, WatchpointSet::offsetOfState(), Mutability::Mutable) \
     macro(WasmFuncRefTable_functions, Wasm::FuncRefTable::offsetOfFunctions(), Mutability::Mutable) \
+    macro(WasmFuncRefTable_wrappers, Wasm::FuncRefTable::offsetOfWrappers(), Mutability::Mutable) \
     macro(WasmFuncRefTableFunction_boxedCallee, Wasm::FuncRefTable::Function::offsetOfBoxedCallee(), Mutability::Mutable) \
     macro(WasmFuncRefTableFunction_entrypointLoadLocation, Wasm::FuncRefTable::Function::offsetOfEntrypointLoadLocation(), Mutability::Mutable) \
     macro(WasmFuncRefTableFunction_rtt, Wasm::FuncRefTable::Function::offsetOfRTT(), Mutability::Mutable) \

@@ -254,6 +254,8 @@ $(PROJECT_DIR)/wasm/js/WebAssemblyStructConstructor.cpp
 $(PROJECT_DIR)/wasm/js/WebAssemblyStructPrototype.cpp
 $(PROJECT_DIR)/wasm/js/WebAssemblySuspendErrorConstructor.cpp
 $(PROJECT_DIR)/wasm/js/WebAssemblySuspendErrorPrototype.cpp
+$(PROJECT_DIR)/wasm/js/WebAssemblyJSFunctionConstructor.cpp
+$(PROJECT_DIR)/wasm/js/WebAssemblyJSFunctionPrototype.cpp
 $(PROJECT_DIR)/wasm/js/WebAssemblyTableConstructor.cpp
 $(PROJECT_DIR)/wasm/js/WebAssemblyTablePrototype.cpp
 $(PROJECT_DIR)/wasm/js/WebAssemblyTagConstructor.cpp
