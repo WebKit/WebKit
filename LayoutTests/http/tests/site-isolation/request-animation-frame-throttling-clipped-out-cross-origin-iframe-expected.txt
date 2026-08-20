@@ -1,0 +1,16 @@
+Tests that requestAnimationFrame and DOM timers are throttled in an out-of-process subframe clipped away by an overflow:hidden ancestor
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+The frame is visible inside the clipping container, so it should not be throttled.
+PASS throttlingState became "requestAnimationFrame=false,timers=false"
+Scrolling the frame out of the clipping container.
+PASS throttlingState became "requestAnimationFrame=true,timers=true"
+Scrolling the frame back into the clipping container.
+PASS throttlingState became "requestAnimationFrame=false,timers=false"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
+

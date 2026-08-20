@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<body style="margin: 0">
+<p id="text">Quo usque tandem abutere, Catilina, patientia nostra?</p>
+<script>
+
+if (window.internals)
+    internals.countMatchesForText("tandem", [], "mark");
+
+window.addEventListener("message", function() {
+    // renderedRectsForMarkers() drops a rect that the clip of the frame makes empty, so the presence of a
+    // rect says whether the frame believes the match is on screen.
+    var rects = window.internals ? internals.dumpMarkerRects("TextMatch") : "no internals";
+    window.top.postMessage("hasMarkerRects:" + rects.includes("("), "*");
+}, false);
+
+</script>
+</body>
+</html>

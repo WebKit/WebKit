@@ -1,0 +1,52 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+
+<!DOCTYPE html>
+<html>
+<body>
+<script src="/js-test-resources/js-test.js"></script>
+<script>
+description("Tests that an animated image is paused in an out-of-process subframe that becomes display:none");
+
+var jsTestIsAsync = true;
+var imageIsAnimating = "";
+var testFrame;
+
+// The subframe is cross-origin, so its internals object cannot be reached directly.
+window.addEventListener("message", function(event) {
+    imageIsAnimating = event.data;
+}, false);
+
+function runTest()
+{
+    testFrame = document.getElementById("testFrame");
+
+    // Ask repeatedly: the rect reaches the subframe's process asynchronously, one rendering update later.
+    setInterval(function() {
+        testFrame.contentWindow.postMessage("report-image-animating", "*");
+    }, 50);
+
+    debug("The frame is inside the viewport, so its animated image should be animating.");
+    shouldBecomeEqualToString("imageIsAnimating", "true", hideFrame);
+}
+
+function hideFrame()
+{
+    // With site isolation off, an owner element with no renderer gives the frame an empty window clip rect,
+    // which pauses its animated images. The subframe cannot see that its owner has no box, so the owning
+    // process has to report it. Throttling stays suppressed separately, so this is not the same question as
+    // the requestAnimationFrame display:none test.
+    debug("Hiding the frame with display:none.");
+    testFrame.style.display = "none";
+    shouldBecomeEqualToString("imageIsAnimating", "false", showFrame);
+}
+
+function showFrame()
+{
+    debug("Showing the frame again.");
+    testFrame.style.display = "block";
+    shouldBecomeEqualToString("imageIsAnimating", "true", finishJSTest);
+}
+</script>
+<iframe id="testFrame" src="http://localhost:8000/site-isolation/resources/animated-image-frame.html" onload="runTest()"></iframe>
+</body>
+</html>

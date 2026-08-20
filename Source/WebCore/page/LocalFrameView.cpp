@@ -3861,7 +3861,8 @@ void LocalFrameView::updateScriptedAnimationsAndTimersThrottlingState(const IntR
         return;
 
     // We don't throttle zero-size or display:none frames because those are usually utility frames.
-    bool shouldThrottle = visibleRect.isEmpty() && !m_lastUsedSizeForLayout.isEmpty() && m_frame->ownerRenderer();
+    bool ownerHasRenderer = m_frame->ownerRenderer() || (m_frame->isRootFrame() && m_ownerHasRendererInParentFrameProcess);
+    bool shouldThrottle = visibleRect.isEmpty() && !m_lastUsedSizeForLayout.isEmpty() && ownerHasRenderer;
     document->setTimerThrottlingEnabled(shouldThrottle);
 
     RefPtr page = m_frame->page();
@@ -5311,8 +5312,13 @@ IntRect LocalFrameView::windowClipRect() const
     // Set our clip rect to be our contents.
     IntRect clipRect = contentsToWindow(visibleContentRect(LegacyIOSDocumentVisibleRect));
 
-    if (!m_frame->ownerElement())
+    if (!m_frame->ownerElement()) {
+        // When SI is enabled, this frame has no local owner element. Apply the visible rect that
+        // the parent frame process passed to us over IPC instead.
+        if (m_visibleRectFromParentFrameProcess)
+            clipRect.intersect(*m_visibleRectFromParentFrameProcess);
         return clipRect;
+    }
 
     // Take our owner element and get its clip rect.
     RefPtr ownerElement = m_frame->ownerElement();

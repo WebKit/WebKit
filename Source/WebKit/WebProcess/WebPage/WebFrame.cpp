@@ -1382,14 +1382,11 @@ void WebFrame::updateLocalFrameRect(WebCore::LocalFrame& localFrame, WebCore::In
     }
 
 #if PLATFORM(IOS_FAMILY)
-    // The iframe root's unobscured content size is its natural frame size: it drives the scrolling
-    // tree's scrollable-area size and CSS viewport units, so it must never be clamped to the visible
-    // region (doing so collapses an off-screen frame's scrolling node to 0x0).
+    // Only the main frame has obscured insets, so the unobscured size here is just the frame size.
     frameView->setUnobscuredContentSize(frameView->size());
-    // Tile coverage (exposedContentRect) is normally driven by the embedder-visible rect in
-    // WebPage::updateExposedRectFromParent, so a below-fold frame commits ~0 tiles. Until that
-    // path has supplied a rect at least once, back the whole frame so nothing blanks if the first
-    // compositor flush precedes the first childrenFrameLayoutInfo sync (see rdar://122429810 history).
+
+    // Default to covering the entire view until the parent frame process sends an
+    // exposedContentRect to us at least once to minimize blanking issues (see rdar://122429810).
     if (!frameView->hasEverSetExposedContentRectFromEmbedder())
         frameView->setExposedContentRect(FloatRect { { }, frameView->size() });
 #endif

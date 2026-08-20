@@ -2271,23 +2271,40 @@ void Page::syncLocalFrameInfoToRemote()
         frameView->updateContentsSizeForRemoteFrames();
 
         HashMap<FrameIdentifier, Ref<RemoteFrameLayoutInfo>> childrenFrameLayoutInfo;
-        for (RefPtr child = frame.tree().firstChild(); child; child = child->tree().nextSibling()) {
-            auto childVisibleRect = frameView->visibleRectOfChild(*child.get());
+        auto windowClipRectInContentCoordinates = [&frameView, rect = std::optional<LayoutRect> { }]() mutable {
+            if (!rect)
+                rect = LayoutRect { frameView->windowToContents(frameView->windowClipRect()) };
+            return *rect;
+        };
+#if PLATFORM(IOS_FAMILY)
+        auto exposedContentRect = [&frameView, rect = std::optional<LayoutRect> { }]() mutable {
+            if (!rect)
+                rect = LayoutRect { frameView->exposedContentRect() };
+            return *rect;
+        };
+#endif
 
+        for (RefPtr child = frame.tree().firstChild(); child; child = child->tree().nextSibling()) {
+            auto visibleRectInParent = frameView->visibleRectOfChild(*child.get());
+
+#if PLATFORM(IOS_FAMILY)
             // Clamp the child's visible rect to the portion of the page actually on-screen, so an offscreen
             // iframe commits ~0 tiles — matching the single-tiled-backing coverage decision the page makes
             // with site isolation off. visibleRectOfChild() clips through the compositor tree but not the
             // top-level viewport, so a fully-below-fold iframe can still return a non-empty box; intersect
             // it here with the parent's exposed viewport.
-#if PLATFORM(IOS_FAMILY)
-            if (childVisibleRect && frame.settings().siteIsolationEnabled()) {
-                auto viewport = LayoutRect { frameView->exposedContentRect() };
-                childVisibleRect->intersect(viewport);
-            }
+            auto exposedContentRectInParent = visibleRectInParent;
+            if (exposedContentRectInParent)
+                exposedContentRectInParent->intersect(exposedContentRect());
 #endif
 
             childrenFrameLayoutInfo.add(child->frameID(), RemoteFrameLayoutInfo::create(
-                childVisibleRect,
+                windowClipRectInContentCoordinates(),
+                visibleRectInParent,
+#if PLATFORM(IOS_FAMILY)
+                exposedContentRectInParent,
+#endif
+                !!child->ownerRenderer(),
                 frameView->childFrameOwnerToRootContentTransform(*child),
                 frameView->absoluteToChildFrameOwnerLocalTransform(*child),
                 frame.usedZoomForChild(*child),

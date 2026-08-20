@@ -343,7 +343,7 @@ public:
 
     LayoutRect rectForFixedPositionLayout() const;
 
-    void viewportContentsChanged();
+    WEBCORE_EXPORT void viewportContentsChanged();
     WEBCORE_EXPORT void resumeVisibleImageAnimationsIncludingSubframes();
 #if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
     void updatePlayStateForAllAnimationsIncludingSubframes();
@@ -694,6 +694,13 @@ public:
     // so a compositing flush that precedes the first sync doesn't clamp coverage to a stale/empty rect.
     void setHasSetExposedContentRectFromEmbedder() { m_hasSetExposedContentRectFromEmbedder = true; }
     bool hasEverSetExposedContentRectFromEmbedder() const { return m_hasSetExposedContentRectFromEmbedder; }
+
+    // The part of this frame that the parent remote frame thinks is visible in the current view's window coordinates.
+    void setVisibleRectFromParentFrameProcess(std::optional<IntRect> rect) { m_visibleRectFromParentFrameProcess = rect; }
+    std::optional<IntRect> visibleRectFromParentFrameProcess() const { return m_visibleRectFromParentFrameProcess; }
+
+    void setOwnerHasRendererInParentFrameProcess(bool hasRenderer) { m_ownerHasRendererInParentFrameProcess = hasRenderer; }
+    bool ownerHasRendererInParentFrameProcess() const { return m_ownerHasRendererInParentFrameProcess; }
 
     void updateSnapOffsets() final;
     bool isScrollSnapInProgress() const final;
@@ -1048,7 +1055,10 @@ private:
     std::optional<LayoutRect> m_visualViewportOverrideRect; // Used when the iOS keyboard is showing.
 
     std::optional<FloatRect> m_viewExposedRect;
+    std::optional<IntRect> m_visibleRectFromParentFrameProcess;
+
     bool m_hasSetExposedContentRectFromEmbedder { false };
+    bool m_ownerHasRendererInParentFrameProcess { true };
 
     OptionSet<PaintBehavior> m_paintBehavior;
 

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+
+if (window.internals) {
+    // The OutsideViewport override is per-Page, and this frame has its own Page in its own process, so it
+    // has to be enabled here as well as in the embedder.
+    internals.setOutsideViewportThrottlingEnabled(true);
+}
+
+function step()
+{
+    requestAnimationFrame(step);
+}
+
+requestAnimationFrame(step);
+
+window.addEventListener("message", function() {
+    // Report only the viewport reason. A cross-origin frame that has had no user interaction also carries
+    // NonInteractedCrossOriginFrame, which is not what these tests are about.
+    var reasons = window.internals ? internals.requestAnimationFrameThrottlingReasons() : "no internals";
+    var throttlesAnimationFrames = reasons.includes("OutsideViewport");
+
+    // The DOM timer half of the same throttle. Unlike the reason above, it does not depend on the
+    // OutsideViewport override, so it also covers the configuration that ships.
+    var throttlesTimers = window.internals ? internals.areTimersThrottled() : false;
+
+    parent.postMessage("requestAnimationFrame=" + throttlesAnimationFrames + ",timers=" + throttlesTimers, "*");
+}, false);
+
+</script>
+</body>
+</html>

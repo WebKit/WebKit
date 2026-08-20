@@ -48,25 +48,57 @@ class RemoteFrameLayoutInfo : public RefCounted<RemoteFrameLayoutInfo> {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(RemoteFrameLayoutInfo, WEBCORE_EXPORT);
 
 public:
-    WEBCORE_EXPORT static Ref<RemoteFrameLayoutInfo> create(std::optional<LayoutRect>, TransformationMatrix, TransformationMatrix, float, LayoutPoint, OptionSet<FrameOwnerElementAppearance>);
+    template<typename... Args> static Ref<RemoteFrameLayoutInfo> create(Args&&... args) { return adoptRef(*new RemoteFrameLayoutInfo(std::forward<Args>(args)...)); }
 
+    LayoutRect windowClipRectInParent() const { return m_windowClipRectInParent; }
     std::optional<LayoutRect> visibleRectInParent() const { return m_visibleRectInParent; }
+#if PLATFORM(IOS_FAMILY)
+    std::optional<LayoutRect> exposedContentRectInParent() const { return m_exposedContentRectInParent; }
+#endif
+    bool ownerHasRenderer() const { return m_ownerHasRenderer; }
     const TransformationMatrix& childFrameOwnerToRootContentTransform() const { return m_childFrameOwnerToRootContentTransform; }
     const TransformationMatrix& absoluteToChildFrameOwnerLocalTransform() const { return m_absoluteToChildFrameOwnerLocalTransform; }
     float usedZoom() const { return m_usedZoom; }
     LayoutPoint contentBoxLocation() const { return m_contentBoxLocation; }
     OptionSet<FrameOwnerElementAppearance> ownerElementAppearance() const { return m_ownerElementAppearance; }
 
-    // Inverse of LocalFrameView::visibleRectOfChild - iframes use this to clamp its
-    // tiled-backing coverage to the embedder-visible region (setExposedContentRect).
-    WEBCORE_EXPORT std::optional<FloatRect> projectVisibleRectToChildContent() const;
+    // This maps a rect from the parent frame's content coordinate space into this frame's
+    // window space. This may fail and return std::nullopt for non-affine transforms.
+    WEBCORE_EXPORT std::optional<FloatRect> mapParentContentsToChildWindow(const LayoutRect&) const;
 
 private:
-    RemoteFrameLayoutInfo(std::optional<LayoutRect>, TransformationMatrix, TransformationMatrix, float, LayoutPoint, OptionSet<FrameOwnerElementAppearance>);
+    WEBCORE_EXPORT RemoteFrameLayoutInfo(
+        LayoutRect windowClipRectInParent,
+        std::optional<LayoutRect> visibleRectInParent,
+#if PLATFORM(IOS_FAMILY)
+        std::optional<LayoutRect> exposedContentRectInParent,
+#endif
+        bool ownerHasRenderer,
+        TransformationMatrix childFrameOwnerToRootContentTransform,
+        TransformationMatrix absoluteToChildFrameOwnerLocalTransform,
+        float usedZoom,
+        LayoutPoint contentBoxLocation,
+        OptionSet<FrameOwnerElementAppearance>
+    );
 
+    // The parent frame's windowClipRect in the parent's content coordinate space.
+    LayoutRect m_windowClipRectInParent;
+
+    // The visible portion of this frame in the parent frame's content coordinate space. This is
+    // clipped by the compositor tree but not by the viewport, because IntersectionObserver applies
+    // its own viewport clip (layoutViewportRect) at each recursion step.
+    //
+    // To get the part of this frame that is on screen, intersect with windowClipRectInParent.
+    std::optional<LayoutRect> m_visibleRectInParent;
+
+#if PLATFORM(IOS_FAMILY)
     // Rectangle of the visible portion of the frame in its parent frame,
     // in the coordinate space of the document of the parent frame.
-    std::optional<LayoutRect> m_visibleRectInParent;
+    std::optional<LayoutRect> m_exposedContentRectInParent;
+#endif
+
+    // Whether the frame's owner element has a renderer (e.g. not display:none).
+    bool m_ownerHasRenderer;
 
     // The transformation matrix to project from the frame owner's
     // coordinate space to its RenderView's (root) coordinate space.
