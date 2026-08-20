@@ -5427,7 +5427,20 @@ template <class TreeBuilder> TreeExpression Parser<LexerType>::parseMemberExpres
     TreeExpression base = 0;
     JSTextPosition expressionStart = tokenStartPosition();
     JSTokenLocation location = tokenLocation();
-    Vector<JSTextPosition, 4> newTokenStartPositions;
+
+    // No need to accumulate newTokenStartPositions if the builder is SyntaxChecker.
+    struct IgnoredPositions {
+        void append(const JSTextPosition&) { ++m_size; }
+        JSTextPosition operator[](size_t) const { return { }; }
+        size_t size() const { return m_size; }
+    private:
+        unsigned m_size { 0 };
+    };
+    static_assert(!std::is_same_v<TreeBuilder, SyntaxChecker>
+        || requires (TreeBuilder& builder, TreeExpression expression, const JSTokenLocation& newLocation) { builder.createNewExpr(newLocation, expression, 0, 0, 0); },
+        "SyntaxChecker::createNewExpr is expected to accept ints instead of JSTextPositions and ignore them.");
+
+    std::conditional_t<std::is_same_v<TreeBuilder, SyntaxChecker>, IgnoredPositions, Vector<JSTextPosition, 4>> newTokenStartPositions;
     while (match(NEW)) {
         newTokenStartPositions.append(tokenStartPosition());
         next();
