@@ -25,6 +25,10 @@
     <button id="disabled-button" aria-label="Disabled Button" disabled>Disabled</button>
     <input type="email" placeholder="Enter some text" value="foo" />
     <input type="text" placeholder="Readonly field" value="readonly" readonly />
+    <input type="submit" name="commit" value="Sign in" />
+    <input type="image" name="find" alt="Search now" src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='60' height='20'></svg>" style="width: 60px; height: 20px" />
+    <img id="logo" alt="Sign out" src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='60' height='20'></svg>" style="width: 60px; height: 20px" />
+    <input type="password" name="login" aria-label="Account password" value="hunter2" />
     <select role="menu">
         <option>One</option>
         <option selected>Two</option>
@@ -56,11 +60,16 @@
     addEventListener("load", async () => {
         textField = document.querySelector("input");
         readonlyField = document.querySelector("input[readonly]");
+        passwordField = document.querySelector("input[type=password]");
         select = document.querySelector("select");
         disabledSelect = document.querySelector("select[disabled]");
         clickCount1 = document.querySelector(".click-count-1");
         clickCount2 = document.querySelector(".click-count-2");
         childScroller = document.querySelector(".scroller");
+        clickedTargetNames = [];
+
+        for (const target of document.querySelectorAll("input[type=submit], input[type=image], img"))
+            target.addEventListener("click", event => clickedTargetNames.push(event.target.name || event.target.id));
 
         document.getElementById("test-button").addEventListener("click", () => {
             clickCount1.textContent = parseInt(clickCount1.textContent) + 1;
@@ -97,6 +106,43 @@
         selectMenuItemError = await UIHelper.performTextExtractionInteraction("selectmenuitem", {
             nodeIdentifier: UIHelper.nodeIdentifierFromDebugText(debugText, "menu"),
             text: "Three"
+        });
+
+        clickSubmitButtonError = await UIHelper.performTextExtractionInteraction("click", {
+            nodeIdentifier: UIHelper.nodeIdentifierFromDebugText(debugText, "Sign in"),
+            text: "Sign in"
+        });
+
+        clickImageButtonError = await UIHelper.performTextExtractionInteraction("click", {
+            nodeIdentifier: UIHelper.nodeIdentifierFromDebugText(debugText, "find"),
+            text: "Search now"
+        });
+
+        clickImageWithAltTextError = await UIHelper.performTextExtractionInteraction("click", {
+            nodeIdentifier: UIHelper.nodeIdentifierFromDebugText(debugText, "Sign out"),
+            text: "Sign out"
+        });
+
+        clickSubmitButtonWithWrongTextError = await UIHelper.performTextExtractionInteraction("click", {
+            nodeIdentifier: UIHelper.nodeIdentifierFromDebugText(debugText, "Sign in"),
+            text: "Register"
+        });
+
+        clickPasswordFieldWithLabelError = await UIHelper.performTextExtractionInteraction("click", {
+            nodeIdentifier: UIHelper.nodeIdentifierFromDebugText(debugText, "login"),
+            text: "Account password"
+        });
+
+        passwordFieldFocusedAfterClick = document.activeElement === passwordField;
+
+        clickPasswordFieldWithValueError = await UIHelper.performTextExtractionInteraction("click", {
+            nodeIdentifier: UIHelper.nodeIdentifierFromDebugText(debugText, "login"),
+            text: "hunter2"
+        });
+
+        clickFieldWithPlaceholderError = await UIHelper.performTextExtractionInteraction("click", {
+            nodeIdentifier: UIHelper.nodeIdentifierFromDebugText(debugText, "Enter some text"),
+            text: "Enter some text"
         });
 
         selectTextError = await UIHelper.performTextExtractionInteraction("selecttext", {
@@ -195,6 +241,15 @@
         shouldBeEqualToString("selectDisabledMenuItemError", "Select is disabled");
         shouldBeEqualToString("readonlyField.value", "readonly");
         shouldBeEqualToString("disabledSelect.value", "Beta");
+        shouldBeEqualToString("clickSubmitButtonError", "");
+        shouldBeEqualToString("clickImageButtonError", "");
+        shouldBeEqualToString("clickImageWithAltTextError", "");
+        shouldBeEqualToString("clickSubmitButtonWithWrongTextError", "'Register' not found inside the target node");
+        shouldBeEqualToString("clickedTargetNames.join()", "commit,find,logo");
+        shouldBeEqualToString("clickPasswordFieldWithLabelError", "");
+        shouldBeTrue("passwordFieldFocusedAfterClick");
+        shouldBeEqualToString("clickPasswordFieldWithValueError", "'hunter2' not found inside the target node");
+        shouldBeEqualToString("clickFieldWithPlaceholderError", "");
 
         finishJSTest();
     });
