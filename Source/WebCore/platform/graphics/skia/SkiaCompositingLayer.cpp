@@ -637,6 +637,26 @@ TransformationMatrix SkiaCompositingLayer::combinedTransform(const PaintContext&
     return transform;
 }
 
+static std::optional<SkMatrix> rotateContentsIfNeeded(OptionSet<TextureMapperFlags> flags, const FloatRect& contentsRect)
+{
+    auto rotate = [](float degrees, float x, float y) {
+        auto matrix = SkMatrix::Translate(x, y);
+        matrix.preRotate(degrees);
+        return matrix;
+    };
+
+    if (flags.contains(TextureMapperFlags::ShouldRotateTexture90))
+        return rotate(90, contentsRect.maxX(), contentsRect.y());
+
+    if (flags.contains(TextureMapperFlags::ShouldRotateTexture180))
+        return rotate(180, contentsRect.maxX(), contentsRect.maxY());
+
+    if (flags.contains(TextureMapperFlags::ShouldRotateTexture270))
+        return rotate(270, contentsRect.x(), contentsRect.maxY());
+
+    return std::nullopt;
+}
+
 void SkiaCompositingLayer::paintContents(SkCanvas& canvas, PaintContext& context)
 {
     // Important: the walk does not clip the canvas to the damage, so every content draw below limits
@@ -646,7 +666,7 @@ void SkiaCompositingLayer::paintContents(SkCanvas& canvas, PaintContext& context
     // region is never empty, because paint() turns an empty one into a no-op.
     ASSERT(!context.compositingDamageRegion || !context.compositingDamageRegion->isEmpty());
 
-    const SkM44 transform(combinedTransform(context));
+    SkM44 transform(combinedTransform(context));
 
     const auto ctm = transform.asM33();
     bool enableAntialias = !ctm.preservesAxisAlignment() && !ctm.preservesRightAngles();
@@ -749,6 +769,8 @@ void SkiaCompositingLayer::paintContents(SkCanvas& canvas, PaintContext& context
         }
 
         sk_sp<SkImage> image;
+        std::optional<SkMatrix> rotationMatrix;
+        auto imageRect = m_contentsRect;
 
         if (m_contentsBuffer) {
 #if ENABLE(VIDEO)
@@ -763,6 +785,14 @@ void SkiaCompositingLayer::paintContents(SkCanvas& canvas, PaintContext& context
             } else
 #endif // ENABLE(VIDEO)
                 image = m_contentsBuffer->skiaImage();
+
+            auto flags = m_contentsBuffer->flags();
+            rotationMatrix = rotateContentsIfNeeded(flags, m_contentsRect);
+            if (rotationMatrix) {
+                imageRect.setLocation({ });
+                if (flags.containsAny({ TextureMapperFlags::ShouldRotateTexture90, TextureMapperFlags::ShouldRotateTexture270 }))
+                    imageRect.setSize(m_contentsRect.size().transposedSize());
+            }
         } else if (auto* buffer = m_imageBackingStore->buffer()) {
             image = buffer->skiaImage();
             if (!m_contentsTiling.size.isEmpty()) {
@@ -778,15 +808,20 @@ void SkiaCompositingLayer::paintContents(SkCanvas& canvas, PaintContext& context
 
         if (image) {
             if (shouldPaintNow) {
+                if (rotationMatrix)
+                    canvas.concat(*rotationMatrix);
                 SkPaint paint = setupPaint();
-                drawImageRectRestricted(canvas, context.damageRegionOrNull(), image.get(), SkRect::MakeSize(SkSize::Make(image->dimensions())), SkRect(m_contentsRect),
+                drawImageRectRestricted(canvas, context.damageRegionOrNull(), image.get(), SkRect::MakeSize(SkSize::Make(image->dimensions())), SkRect(imageRect),
                     SkSamplingOptions(SkFilterMode::kLinear, SkMipmapMode::kNone), &paint);
             } else {
+                if (rotationMatrix)
+                    transform.preConcat(*rotationMatrix);
+
                 // The contents image composites over the backing store, so it must use SrcOver always.
                 if (forcedSrcBlendMode && m_backingStore)
                     context.imageSetBatch.updatePaintProperties(canvas, context.colorFilter, context.blendMode);
 
-                context.imageSetBatch.addImage(canvas, image, m_contentsRect, transform, context.opacity, enableAntialias, context.damageRegionOrNull(), setupPaint());
+                context.imageSetBatch.addImage(canvas, image, imageRect, transform, context.opacity, enableAntialias, context.damageRegionOrNull(), setupPaint());
             }
         }
     }

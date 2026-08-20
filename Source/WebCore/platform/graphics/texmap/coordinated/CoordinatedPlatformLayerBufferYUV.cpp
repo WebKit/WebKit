@@ -273,7 +273,8 @@ sk_sp<SkImage> CoordinatedPlatformLayerBufferYUV::skiaImage()
     }();
 
     SkYUVAInfo info(SkISize::Make(m_size.width(), m_size.height()), planeConfig, subsampling, yuvaColorSpace);
-    GrYUVABackendTextures yuvaBackendTextures(info, backendTextures.data(), kTopLeft_GrSurfaceOrigin);
+    auto origin = m_flags.contains(TextureMapperFlags::ShouldFlipTexture) ? kBottomLeft_GrSurfaceOrigin : kTopLeft_GrSurfaceOrigin;
+    GrYUVABackendTextures yuvaBackendTextures(info, backendTextures.data(), origin);
     if (!yuvaBackendTextures.isValid())
         return nullptr;
 
