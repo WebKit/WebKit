@@ -1,0 +1,11 @@
+[
+    {
+        "action": {
+            "type": "block"
+        },
+        "trigger": {
+            "url-filter": "some-other-host-that-is-never-loaded",
+            "resource-type": ["ping"]
+        }
+    }
+]

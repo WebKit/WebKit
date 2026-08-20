@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<meta charset=utf-8>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<body>
+<script>
+async function loadImage(url) {
+    return new Promise((resolve, reject) => {
+        const element = document.createElement("img");
+        element.src = url;
+        element.onload = resolve;
+        element.onerror = reject;
+        document.body.appendChild(element);
+    });
+}
+
+// Whether the network process issued the early hints preconnect is reported by the console message
+// EarlyHintsResourceLoader emits, so the expectations file is what distinguishes the blocked arm from
+// the allowed one. Loading an image from the origin the early hint named keeps the page alive long
+// enough for that message to have been delivered to this frame.
+promise_test(async (t) => {
+    const preconnectOrigin = new URLSearchParams(window.location.search).get("preconnect_origin");
+    await loadImage(new URL("/WebKit/loading/early-hints/resources/blank.png", preconnectOrigin).href);
+}, "Early hints preconnect content rule list check");
+</script>
+</body>

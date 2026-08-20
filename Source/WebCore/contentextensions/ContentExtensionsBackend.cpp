@@ -391,10 +391,10 @@ ContentRuleListResults ContentExtensionsBackend::processContentRuleListsForLoad(
     return results;
 }
 
-ContentRuleListResults ContentExtensionsBackend::processContentRuleListsForPingLoad(const URL& url, const URL& mainDocumentURL, const URL& frameURL, const String& httpMethod)
+ContentRuleListResults ContentExtensionsBackend::processContentRuleListsForPingLoad(const URL& url, const URL& mainDocumentURL, const URL& frameURL, const String& httpMethod, MainFrameContext mainFrameContext)
 {
     RequestMethod requestMethod = readRequestMethod(httpMethod).value_or(RequestMethod::None);
-    ResourceLoadInfo resourceLoadInfo { url, mainDocumentURL, frameURL, ResourceType::Ping, false, requestMethod };
+    ResourceLoadInfo resourceLoadInfo { url, mainDocumentURL, frameURL, ResourceType::Ping, mainFrameContext == MainFrameContext::Yes, requestMethod };
     auto actions = actionsForResourceLoad(resourceLoadInfo);
 
     ContentRuleListResults results;
