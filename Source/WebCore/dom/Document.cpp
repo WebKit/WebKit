@@ -8636,10 +8636,10 @@ bool Document::isSecureContext() const
 
 bool Document::crossOriginIsolated() const
 {
-    RefPtr mainDocument = mainFrameDocument();
-    if (!mainDocument)
-        return false;
-    return mainDocument->crossOriginOpenerPolicy().value == CrossOriginOpenerPolicyValue::SameOriginPlusCOEP;
+    // Don't reach for mainFrameDocument() here: with site isolation it is null when the main frame is
+    // remote. crossOriginOpenerPolicy() already answers "what is the top-level document's policy" across
+    // a process boundary, using the policy the main frame's process synced into the frame tree.
+    return crossOriginOpenerPolicy().value == CrossOriginOpenerPolicyValue::SameOriginPlusCOEP;
 }
 
 String Document::agentClusterID() const

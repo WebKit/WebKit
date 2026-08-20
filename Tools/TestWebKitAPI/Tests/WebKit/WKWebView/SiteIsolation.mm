@@ -11047,6 +11047,7 @@ static HTTPServer crossOriginIsolationServer()
         { "/isolated"_s, { { { "Cross-Origin-Opener-Policy"_s, "same-origin"_s }, { "Cross-Origin-Embedder-Policy"_s, "require-corp"_s } }, "<iframe src='https://webkit.org/isolated-subframe'></iframe>"_s } },
         { "/isolated-two-subframes"_s, { { { "Cross-Origin-Opener-Policy"_s, "same-origin"_s }, { "Cross-Origin-Embedder-Policy"_s, "require-corp"_s } }, "<iframe src='https://webkit.org/isolated-subframe'></iframe><iframe src='https://apple.com/isolated-subframe'></iframe>"_s } },
         { "/isolated-subframe"_s, { { { "Cross-Origin-Embedder-Policy"_s, "require-corp"_s }, { "Cross-Origin-Resource-Policy"_s, "cross-origin"_s } }, "subframe"_s } },
+        { "/isolated-same-site"_s, { { { "Cross-Origin-Opener-Policy"_s, "same-origin"_s }, { "Cross-Origin-Embedder-Policy"_s, "require-corp"_s } }, "<iframe src='https://example.com/isolated-subframe'></iframe>"_s } },
         { "/shared"_s, { "<iframe src='https://webkit.org/shared-subframe'></iframe>"_s } },
         { "/shared-two-subframes"_s, { "<iframe src='https://webkit.org/shared-subframe'></iframe><iframe src='https://apple.com/shared-subframe'></iframe>"_s } },
         { "/shared-subframe"_s, { "subframe"_s } },
@@ -11086,6 +11087,7 @@ TEST(SiteIsolation, CrossOriginIsolatedBrowsingContextGroupUsesIsolatedProcesses
 
     // Without this, the negative assertions below could pass for the wrong reason.
     EXPECT_WK_STREQ("not-isolated", [webView stringByEvaluatingJavaScript:@"self.crossOriginIsolated ? 'isolated' : 'not-isolated'"]);
+    EXPECT_WK_STREQ("not-isolated", [webView stringByEvaluatingJavaScript:@"self.crossOriginIsolated ? 'isolated' : 'not-isolated'" inFrame:[webView firstChildFrame]]);
 
     RetainPtr sharedTrees = frameTrees(webView.get());
     pid_t sharedMainFramePID = findFramePID(sharedTrees.get(), FrameType::Local);
@@ -11108,8 +11110,35 @@ TEST(SiteIsolation, CrossOriginIsolatedBrowsingContextGroupUsesIsolatedProcesses
     EXPECT_NE(sharedMainFramePID, isolatedMainFramePID);
     EXPECT_NE(sharedSubframePID, isolatedSubframePID);
 
-    // The capability the mode gates, in the subframe's own process. self.crossOriginIsolated is not
-    // checked here: it goes through mainFrameDocument(), which is null when the main frame is remote.
+    // The subframe's own process. Its main frame is remote, so the top-level policy it reports comes from
+    // the frame tree sync data, and it must agree with the capability the mode gates.
+    EXPECT_WK_STREQ("isolated", [webView stringByEvaluatingJavaScript:@"self.crossOriginIsolated ? 'isolated' : 'not-isolated'" inFrame:[webView firstChildFrame]]);
+    EXPECT_WK_STREQ("has-sab", [webView stringByEvaluatingJavaScript:@"self.SharedArrayBuffer ? 'has-sab' : 'does-not-have-sab'" inFrame:[webView firstChildFrame]]);
+    // A cross-origin-isolated document is origin-keyed, so its agent cluster key uses the origin.
+    EXPECT_WK_STREQ("origin-keyed", [webView stringByEvaluatingJavaScript:@"self.originAgentCluster ? 'origin-keyed' : 'site-keyed'" inFrame:[webView firstChildFrame]]);
+}
+
+// The same-process path must be unaffected: here the main frame is local, so the top-level policy is read
+// from the main frame's document instead of the frame tree sync data.
+TEST(SiteIsolation, CrossOriginIsolatedSameSiteSubframe)
+{
+    auto server = crossOriginIsolationServer();
+
+    RetainPtr processPool = adoptNS([WKProcessPool new]);
+    RetainPtr webViewConfiguration = server.httpsProxyConfiguration();
+    [webViewConfiguration setProcessPool:processPool.get()];
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(webViewConfiguration.get());
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/isolated-same-site"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    checkFrameTreesInProcesses(webView.get(), {
+        { "https://example.com"_s, { { "https://example.com"_s } } }
+    });
+    expectAllProcessesCrossOriginIsolated(processPool.get(), frameTrees(webView.get()).get(), true, 1);
+
+    EXPECT_WK_STREQ("isolated", [webView stringByEvaluatingJavaScript:@"self.crossOriginIsolated ? 'isolated' : 'not-isolated'"]);
+    EXPECT_WK_STREQ("isolated", [webView stringByEvaluatingJavaScript:@"self.crossOriginIsolated ? 'isolated' : 'not-isolated'" inFrame:[webView firstChildFrame]]);
     EXPECT_WK_STREQ("has-sab", [webView stringByEvaluatingJavaScript:@"self.SharedArrayBuffer ? 'has-sab' : 'does-not-have-sab'" inFrame:[webView firstChildFrame]]);
 }
 
