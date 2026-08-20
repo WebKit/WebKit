@@ -1,0 +1,5 @@
+Decoding a truncated OS/2 RLE24 BMP whose absolute-mode run starts mid-row. The test passes if it does not crash.
+
+PASS
+
+
