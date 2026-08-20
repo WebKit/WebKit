@@ -900,15 +900,24 @@ void RenderLayerBacking::updateBackdropFiltersGeometry()
     FloatRoundedRect backdropFiltersRect;
     if (renderBox->style().border().hasBorderRadius() && !renderBox->hasClip()) {
         auto borderShape = BorderShape::shapeForBorderRect(renderBox->style(), renderBox->borderBoxRect());
-        auto roundedBoxRect = borderShape.deprecatedRoundedRect();
+        auto roundedBoxRect = borderShape.shapedRectForOuterShape();
         roundedBoxRect.move(contentOffsetInCompositingLayer());
         backdropFiltersRect = roundedBoxRect.pixelSnappedRoundedRectForPainting(deviceScaleFactor());
+
+        if (renderBox->style().border().hasNonRoundCornerShape()) {
+            auto shapePath = borderShape.pathForOuterShape(deviceScaleFactor());
+            shapePath.translate(FloatSize { contentOffsetInCompositingLayer() });
+            m_graphicsLayer->setBackdropFiltersShapePath(shapePath);
+            backdropFiltersRect = FloatRoundedRect { backdropFiltersRect.rect() };
+        } else
+            m_graphicsLayer->setBackdropFiltersShapePath({ });
     } else {
         auto boxRect = renderBox->borderBoxRect();
         if (renderBox->hasClip())
             boxRect.intersect(renderBox->clipRect({ }));
         boxRect.move(contentOffsetInCompositingLayer());
         backdropFiltersRect = FloatRoundedRect(snapRectToDevicePixels(boxRect, deviceScaleFactor()));
+        m_graphicsLayer->setBackdropFiltersShapePath({ });
     }
 
     m_graphicsLayer->setBackdropFiltersRect(backdropFiltersRect);
@@ -1010,9 +1019,14 @@ void RenderLayerBacking::updateAppleVisualEffect(const Style::ComputedStyle& sty
         if (CheckedPtr renderBox = dynamicDowncast<RenderBox>(renderer())) {
             if (renderBox->style().border().hasBorderRadius()) {
                 auto borderShape = BorderShape::shapeForBorderRect(renderBox->style(), renderBox->borderBoxRect());
-                auto roundedBoxRect = borderShape.deprecatedRoundedRect();
+                auto roundedBoxRect = borderShape.shapedRectForOuterShape();
                 roundedBoxRect.move(contentOffsetInCompositingLayer());
-                visualEffectData.borderRect = roundedBoxRect.pixelSnappedRoundedRectForPainting(deviceScaleFactor());
+                auto snappedBoxRect = roundedBoxRect.pixelSnappedRoundedRectForPainting(deviceScaleFactor());
+
+                if (renderBox->style().border().hasNonRoundCornerShape())
+                    snappedBoxRect = FloatRoundedRect { snappedBoxRect.rect() };
+
+                visualEffectData.borderRect = snappedBoxRect;
             }
         }
     }
@@ -1257,7 +1271,7 @@ bool RenderLayerBacking::updateConfiguration(const RenderLayer* compositingAnces
         // If it's scrollable, it has to be a box.
         auto& renderBox = downcast<RenderBox>(renderer());
         auto borderShape = BorderShape::shapeForBorderRect(renderBox.style(), renderBox.borderBoxRect());
-        FloatRoundedRect contentsClippingRect = borderShape.deprecatedPixelSnappedInnerRoundedRect(deviceScaleFactor());
+        FloatRoundedRect contentsClippingRect = borderShape.snappedShapedRectForInnerShape(deviceScaleFactor());
         needsDescendantsClippingLayer = contentsClippingRect.hasNonZeroRadii();
     } else
         needsDescendantsClippingLayer = RenderLayerCompositor::clipsCompositingDescendants(m_owningLayer);
@@ -1738,7 +1752,7 @@ void RenderLayerBacking::updateGeometry(const RenderLayer* compositedAncestor)
         auto computeMasksToBoundsRect = [&] {
             if ((renderer().hasClipPath() || renderer().style().border().hasBorderRadius())) {
                 auto borderShape = BorderShape::shapeForBorderRect(renderer().style(), m_owningLayer.rendererBorderBoxRect());
-                auto contentsClippingRect = contentsClippingRectForCornerShape(borderShape.deprecatedPixelSnappedInnerRoundedRect(deviceScaleFactor), renderer().style());
+                auto contentsClippingRect = contentsClippingRectForCornerShape(borderShape.snappedShapedRectForInnerShape(deviceScaleFactor), renderer().style());
                 contentsClippingRect.move(LayoutSize(-clipLayer->offsetFromRenderer()));
                 return contentsClippingRect;
             }
@@ -2155,7 +2169,7 @@ void RenderLayerBacking::updateContentsRects()
 #if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
         if (RenderLayerCompositor::isSeparated(renderer())) {
             auto borderShape = BorderShape::shapeForBorderRect(renderVideo->style(), renderVideo->borderBoxRect());
-            auto contentsClippingRect = contentsClippingRectForCornerShape(borderShape.deprecatedPixelSnappedInnerRoundedRect(deviceScaleFactor()), renderVideo->style());
+            auto contentsClippingRect = contentsClippingRectForCornerShape(borderShape.snappedShapedRectForInnerShape(deviceScaleFactor()), renderVideo->style());
             contentsClippingRect.move(contentOffsetInCompositingLayer());
             m_graphicsLayer->setContentsClippingRect(contentsClippingRect);
             setContentsClipShapePath(*m_graphicsLayer, renderVideo->style(), borderShape, deviceScaleFactor(), contentOffsetInCompositingLayer());
@@ -2172,7 +2186,7 @@ void RenderLayerBacking::updateContentsRects()
             contentsClippingRect = FloatRoundedRect(m_graphicsLayer->contentsRect());
         } else {
             auto borderShape = renderVideo->borderShapeForContentClipping(renderVideo->borderBoxRect());
-            contentsClippingRect = contentsClippingRectForCornerShape(borderShape.deprecatedPixelSnappedInnerRoundedRect(deviceScaleFactor()), renderVideo->style());
+            contentsClippingRect = contentsClippingRectForCornerShape(borderShape.snappedShapedRectForInnerShape(deviceScaleFactor()), renderVideo->style());
             // Intersect with the (small) destination rect so the oversized contents layer is clipped to what's actually visible.
             contentsClippingRect = FloatRoundedRect(intersection(contentsClippingRect.rect(), FloatRect(renderVideo->videoBox())), contentsClippingRect.radii());
             contentsClippingRect.move(contentOffsetInCompositingLayer());
@@ -2199,7 +2213,7 @@ void RenderLayerBacking::updateContentsRects()
     if (needsContentsClippingRectUpdate) {
         if (CheckedPtr renderBox = dynamicDowncast<RenderBox>(renderer())) {
             auto borderShape = BorderShape::shapeForBorderRect(renderBox->style(), renderBox->borderBoxRect());
-            auto contentsClippingRect = contentsClippingRectForCornerShape(borderShape.deprecatedPixelSnappedInnerRoundedRect(deviceScaleFactor()), renderBox->style());
+            auto contentsClippingRect = contentsClippingRectForCornerShape(borderShape.snappedShapedRectForInnerShape(deviceScaleFactor()), renderBox->style());
             contentsClippingRect.move(contentOffsetInCompositingLayer());
             m_graphicsLayer->setContentsClippingRect(contentsClippingRect);
             setContentsClipShapePath(*m_graphicsLayer, renderBox->style(), borderShape, deviceScaleFactor(), contentOffsetInCompositingLayer());
@@ -2214,7 +2228,7 @@ void RenderLayerBacking::updateContentsRects()
         else {
             // FIXME: Support visible overflow for replaced content.
             auto borderShape = renderReplaced->borderShapeForContentClipping(renderReplaced->borderBoxRect());
-            auto contentsClippingRect = contentsClippingRectForCornerShape(borderShape.deprecatedPixelSnappedInnerRoundedRect(deviceScaleFactor()), renderReplaced->style());
+            auto contentsClippingRect = contentsClippingRectForCornerShape(borderShape.snappedShapedRectForInnerShape(deviceScaleFactor()), renderReplaced->style());
             contentsClippingRect.move(contentOffsetInCompositingLayer());
             m_graphicsLayer->setContentsClippingRect(contentsClippingRect);
             setContentsClipShapePath(*m_graphicsLayer, renderReplaced->style(), borderShape, deviceScaleFactor(), contentOffsetInCompositingLayer());
@@ -3183,7 +3197,15 @@ bool RenderLayerBacking::needsCornerShapeMask() const
     if (!renderer().style().border().hasCornerShapeOutsideRoundedRect())
         return false;
 
-    return m_graphicsLayer->contentsRectClipsDescendants() || m_childContainmentLayer || m_scrollContainerLayer;
+    if (m_graphicsLayer->contentsRectClipsDescendants() || m_childContainmentLayer || m_scrollContainerLayer)
+        return true;
+
+#if HAVE(MATERIAL_HOSTING)
+    if (appleVisualEffectIsHostedMaterial(renderer().style().appleVisualEffect()))
+        return true;
+#endif
+
+    return false;
 }
 
 // Masking layer is used for masks, clip-path, or corner-shape

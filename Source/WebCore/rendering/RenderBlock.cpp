@@ -1252,9 +1252,9 @@ void RenderBlock::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffs
         Ref document = this->document();
         if (paintInfo.paintBehavior.contains(PaintBehavior::EventRegionIncludeBackground) && visibleToHitTesting()) {
             auto borderShape = BorderShape::shapeForBorderRect(style(), borderRect);
-            LOG_WITH_STREAM(EventRegions, stream << "RenderBlock " << *this << " uniting region " << borderShape.deprecatedRoundedRect() << " event listener types " << style().eventListenerRegionTypes());
+            LOG_WITH_STREAM(EventRegions, stream << "RenderBlock " << *this << " uniting region " << borderShape.shapedRectForOuterShape() << " event listener types " << style().eventListenerRegionTypes());
             bool overrideUserModifyIsEditable = isRenderTextControl() && protect(downcast<RenderTextControl>(*this).textFormControlElement())->isInnerTextElementEditable();
-            paintInfo.eventRegionContext()->unite(borderShape.deprecatedPixelSnappedRoundedRect(document->deviceScaleFactor()), *this, style(), overrideUserModifyIsEditable);
+            paintInfo.eventRegionContext()->unite(borderShape, document->deviceScaleFactor(), *this, style(), overrideUserModifyIsEditable);
         }
 
         if (!paintInfo.paintBehavior.contains(PaintBehavior::EventRegionIncludeForeground))

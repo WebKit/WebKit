@@ -31,7 +31,9 @@
 #include "BoxLayoutShape.h"
 
 #include "BorderShape.h"
+#include "Path.h"
 #include "RenderBoxInlines.h"
+#include <limits>
 #include <wtf/MathExtras.h>
 
 namespace WebCore {
@@ -63,6 +65,17 @@ static inline LayoutRoundedRect::Radii computeMarginBoxShapeRadii(const LayoutRo
         computeMarginBoxShapeRadius(radii.bottomRight(), LayoutSize(renderer.marginRight(), renderer.marginBottom())));
 }
 
+static BorderShape marginBoxBorderShape(const Style::ComputedStyle& style, const RenderBox& renderer)
+{
+    auto marginBox = renderer.marginBoxRect();
+    auto borderShape = BorderShape::shapeForBorderRect(style, renderer.borderBoxRect());
+    auto radii = computeMarginBoxShapeRadii(borderShape.radii(), renderer);
+    radii.scale(calcBorderRadiiConstraintScaleFor(marginBox, radii));
+    if (!radii.areRenderableInRect(marginBox))
+        radii.makeRenderableInRect(marginBox);
+    return BorderShape { marginBox, { }, radii, borderShape.cornerCurvatures() };
+}
+
 LayoutRoundedRect computeRoundedRectForBoxShape(CSSBoxType box, const RenderBox& renderer)
 {
     CheckedRef style = renderer.style();
@@ -70,31 +83,57 @@ LayoutRoundedRect computeRoundedRectForBoxShape(CSSBoxType box, const RenderBox&
     case CSSBoxType::MarginBox: {
         if (!style->border().hasBorderRadius())
             return LayoutRoundedRect(renderer.marginBoxRect(), LayoutRoundedRect::Radii());
-
-        auto marginBox = renderer.marginBoxRect();
-        auto borderShape = BorderShape::shapeForBorderRect(style, renderer.borderBoxRect());
-        LayoutRoundedRect::Radii radii = computeMarginBoxShapeRadii(borderShape.radii(), renderer);
-        radii.scale(calcBorderRadiiConstraintScaleFor(marginBox, radii));
-        return LayoutRoundedRect(marginBox, radii);
+        return marginBoxBorderShape(style, renderer).shapedRectForOuterShape();
     }
     case CSSBoxType::PaddingBox:
-        return BorderShape::shapeForBorderRect(style, renderer.borderBoxRect()).deprecatedInnerRoundedRect();
+        return BorderShape::shapeForBorderRect(style, renderer.borderBoxRect()).shapedRectForInnerShape();
     // fill-box compute to content-box for HTML elements.
     case CSSBoxType::FillBox:
     case CSSBoxType::ContentBox: {
         auto borderShape = renderer.borderShapeForContentClipping(renderer.borderBoxRect());
-        return borderShape.deprecatedInnerRoundedRect();
+        return borderShape.shapedRectForInnerShape();
     }
     // stroke-box, view-box compute to border-box for HTML elements.
     case CSSBoxType::BorderBox:
     case CSSBoxType::StrokeBox:
     case CSSBoxType::ViewBox:
     case CSSBoxType::BoxMissing:
-        return BorderShape::shapeForBorderRect(style, renderer.borderBoxRect()).deprecatedRoundedRect();
+        return BorderShape::shapeForBorderRect(style, renderer.borderBoxRect()).shapedRectForOuterShape();
     }
 
     ASSERT_NOT_REACHED();
-    return BorderShape::shapeForBorderRect(style, renderer.borderBoxRect()).deprecatedRoundedRect();
+    return BorderShape::shapeForBorderRect(style, renderer.borderBoxRect()).shapedRectForOuterShape();
+}
+
+std::optional<Path> computePathForBoxShape(CSSBoxType box, const RenderBox& renderer, float deviceScaleFactor)
+{
+    CheckedRef style = renderer.style();
+    if (!style->border().hasBorderRadius())
+        return std::nullopt;
+
+    auto pathIfNotRounded = [&](const BorderShape& borderShape, bool inner) -> std::optional<Path> {
+        if (!borderShape.hasNonRoundCornerShape())
+            return std::nullopt;
+        return inner ? borderShape.pathForInnerShape(deviceScaleFactor) : borderShape.pathForOuterShape(deviceScaleFactor);
+    };
+
+    switch (box) {
+    case CSSBoxType::PaddingBox:
+        return pathIfNotRounded(BorderShape::shapeForBorderRect(style, renderer.borderBoxRect()), true);
+    case CSSBoxType::FillBox:
+    case CSSBoxType::ContentBox:
+        return pathIfNotRounded(renderer.borderShapeForContentClipping(renderer.borderBoxRect()), true);
+    case CSSBoxType::BorderBox:
+    case CSSBoxType::StrokeBox:
+    case CSSBoxType::ViewBox:
+    case CSSBoxType::BoxMissing:
+        return pathIfNotRounded(BorderShape::shapeForBorderRect(style, renderer.borderBoxRect()), false);
+    case CSSBoxType::MarginBox:
+        return pathIfNotRounded(marginBoxBorderShape(style, renderer), false);
+    }
+
+    ASSERT_NOT_REACHED();
+    return std::nullopt;
 }
 
 LayoutRect BoxLayoutShape::shapeMarginLogicalBoundingBox() const
@@ -119,6 +158,38 @@ FloatRoundedRect BoxLayoutShape::shapeMarginBounds() const
     return marginBounds;
 }
 
+static std::optional<LineSegment> contourExtentBetween(const Vector<FloatPoint>& contour, float bandTop, float bandBottom)
+{
+    float minimumX = std::numeric_limits<float>::max();
+    float maximumX = std::numeric_limits<float>::lowest();
+    auto include = [&](float candidateX) {
+        minimumX = std::min(minimumX, candidateX);
+        maximumX = std::max(maximumX, candidateX);
+    };
+
+    for (size_t index = 0; index + 1 < contour.size(); ++index) {
+        auto start = contour[index];
+        auto end = contour[index + 1];
+
+        if (start.y() >= bandTop && start.y() <= bandBottom)
+            include(start.x());
+
+        if (start.y() == end.y())
+            continue;
+
+        for (float bandEdge : { bandTop, bandBottom }) {
+            if (bandEdge < std::min(start.y(), end.y()) || bandEdge > std::max(start.y(), end.y()))
+                continue;
+            auto fraction = (bandEdge - start.y()) / (end.y() - start.y());
+            include(start.x() + fraction * (end.x() - start.x()));
+        }
+    }
+
+    if (minimumX > maximumX)
+        return std::nullopt;
+    return LineSegment(minimumX, maximumX);
+}
+
 LineSegment BoxLayoutShape::getExcludedInterval(LayoutUnit logicalTop, LayoutUnit logicalHeight) const
 {
     const FloatRoundedRect& marginBounds = shapeMarginBounds();
@@ -128,6 +199,12 @@ LineSegment BoxLayoutShape::getExcludedInterval(LayoutUnit logicalTop, LayoutUni
     float y1 = logicalTop;
     float y2 = logicalTop + logicalHeight;
     const FloatRect& rect = marginBounds.rect();
+
+    if (!m_contour.isEmpty()) {
+        if (auto extent = contourExtentBetween(m_contour, y1, y2))
+            return *extent;
+        return LineSegment();
+    }
 
     if (!marginBounds.hasNonZeroRadii())
         return LineSegment(rect.x(), rect.maxX());

@@ -1,0 +1,13 @@
+square: event region found - PASS
+round: event region found - PASS
+bevel: event region found - PASS
+scoop: event region found - PASS
+notch: event region found - PASS
+square covers its whole box - PASS
+round leaves its corners uncovered - PASS
+bevel leaves its corners uncovered - PASS
+scoop leaves its corners uncovered - PASS
+notch leaves its corners uncovered - PASS
+bevel differs from round - PASS
+scoop differs from round - PASS
+notch differs from round - PASS

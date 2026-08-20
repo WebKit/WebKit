@@ -29,6 +29,7 @@
 #if ENABLE(THREADED_ANIMATIONS)
 
 #include "AnimationUtilities.h"
+#include "BorderShape.h"
 #include "Path.h"
 #include "TransformOperationData.h"
 
@@ -39,6 +40,9 @@ namespace WebCore {
 std::optional<WebCore::Path> tryPath(const AcceleratedEffectBoxPath&, const TransformOperationData& data)
 {
     if (auto motionPathData = data.motionPathData) {
+        if (auto shaped = BorderShape::pathForShapedRect(motionPathData->offsetRect(), motionPathData->cornerCurvatures))
+            return shaped;
+
         WebCore::Path result;
         result.addRoundedRect(motionPathData->offsetRect(), PathRoundedRect::Strategy::PreferBezier);
         return result;

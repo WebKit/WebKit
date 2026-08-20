@@ -393,7 +393,7 @@ void RenderSVGRoot::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOf
         // children should contribute to interaction regions.
         auto borderRect = LayoutRect(adjustedPaintOffset, borderBoxSize());
         auto borderShape = BorderShape::shapeForBorderRect(style(), borderRect);
-        paintInfo.eventRegionContext()->unite(borderShape.deprecatedPixelSnappedRoundedRect(document().deviceScaleFactor()), *this, style(), false, EventRegionContext::ContributeToInteractionRegions::No);
+        paintInfo.eventRegionContext()->unite(borderShape, document().deviceScaleFactor(), *this, style(), false, EventRegionContext::ContributeToInteractionRegions::No);
     }
 
     if (paintInfo.paintRootBackgroundOnly())

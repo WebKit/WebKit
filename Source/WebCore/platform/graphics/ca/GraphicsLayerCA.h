@@ -388,7 +388,7 @@ private:
     void setupContentsLayer(PlatformCALayer*, CompositingCoordinatesOrientation = defaultContentsOrientation);
     PlatformCALayer* contentsLayer() const { return m_contentsLayer.get(); }
 
-    void updateClippingStrategy(PlatformCALayer&, RefPtr<PlatformCALayer>& shapeMaskLayer, const FloatRoundedRect&);
+    void updateClippingStrategy(PlatformCALayer&, RefPtr<PlatformCALayer>& shapeMaskLayer, const FloatRoundedRect&, const Path* shapePath = nullptr);
 
     WEBCORE_EXPORT void setReplicatedByLayer(RefPtr<GraphicsLayer>&&) override;
 

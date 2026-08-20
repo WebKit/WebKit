@@ -865,7 +865,7 @@ void BorderPainter::clipBorderSidePolygon(const BorderShape& borderShape, BoxSid
     auto outerRect = borderShape.snappedOuterRect(deviceScaleFactor);
 
     auto innerRect = borderShape.snappedInnerRect(deviceScaleFactor);
-    auto innerBorder = borderShape.deprecatedInnerRoundedRect();
+    auto innerBorder = borderShape.shapedRectForInnerShape();
 
     // For each side, create a quad that encompasses all parts of that side that may draw,
     // including areas inside the innerBorder.

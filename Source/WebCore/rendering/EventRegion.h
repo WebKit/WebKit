@@ -44,6 +44,7 @@
 
 namespace WebCore {
 
+class BorderShape;
 class EventRegion;
 class Path;
 class RenderObject;
@@ -64,6 +65,7 @@ public:
 
     enum class ContributeToInteractionRegions : bool { No, Yes };
     WEBCORE_EXPORT void unite(const FloatRoundedRect&, const RenderObject&, const Style::ComputedStyle&, bool overrideUserModifyIsEditable = false, ContributeToInteractionRegions = ContributeToInteractionRegions::Yes);
+    WEBCORE_EXPORT void unite(const BorderShape&, float deviceScaleFactor, const RenderObject&, const Style::ComputedStyle&, bool overrideUserModifyIsEditable = false, ContributeToInteractionRegions = ContributeToInteractionRegions::Yes);
     bool contains(const IntRect&) const;
 
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
@@ -77,6 +79,8 @@ public:
 #endif
 
 private:
+    void uniteRegion(Region&&, const FloatRect& bounds, const RenderObject&, const Style::ComputedStyle&, bool overrideUserModifyIsEditable, ContributeToInteractionRegions);
+
     EventRegion& m_eventRegion;
 
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)

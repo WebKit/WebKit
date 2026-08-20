@@ -30,6 +30,7 @@
 #include "config.h"
 #include "ShapeOutsideInfo.h"
 
+#include "BorderShape.h"
 #include "BoxLayoutShape.h"
 #include "FloatingObjects.h"
 #include "NullGraphicsContext.h"
@@ -282,29 +283,40 @@ Ref<const LayoutShape> makeShapeForShapeOutside(const RenderBox& renderer)
         },
         [&](const Style::ShapeOutside::ShapeBox&) {
             auto shapeRect = computeRoundedRectForBoxShape(shapeOutside.effectiveCSSBox(), renderer);
+            auto curvatures = BorderShape::shapeForBorderRect(style, renderer.borderBoxRect()).cornerCurvatures();
             auto flipForWritingAndInlineDirection = [&] {
                 // FIXME: We should consider this moving to LayoutRoundedRect::transposedRect.
                 if (!isHorizontalWritingMode) {
                     shapeRect = shapeRect.transposedRect();
                     auto radiiForBlockDirection = shapeRect.radii();
-                    if (writingMode.isLineOverLeft()) // sideways-lr
+                    auto blockDirection = curvatures;
+                    if (writingMode.isLineOverLeft()) {
+                        // sideways-lr
                         shapeRect.setRadii({ radiiForBlockDirection.bottomLeft(), radiiForBlockDirection.topLeft(), radiiForBlockDirection.bottomRight(), radiiForBlockDirection.topRight() });
-                    else if (writingMode.isBlockLeftToRight()) // vertical-lr
+                        curvatures = { blockDirection.bottomLeft(), blockDirection.topLeft(), blockDirection.bottomRight(), blockDirection.topRight() };
+                    } else if (writingMode.isBlockLeftToRight()) {
+                        // vertical-lr
                         shapeRect.setRadii({ radiiForBlockDirection.topLeft(), radiiForBlockDirection.bottomLeft(), radiiForBlockDirection.topRight(), radiiForBlockDirection.bottomRight() });
-                    else // vertical-rl, sideways-rl
+                        curvatures = { blockDirection.topLeft(), blockDirection.bottomLeft(), blockDirection.topRight(), blockDirection.bottomRight() };
+                    } else {
+                        // vertical-rl, sideways-rl
                         shapeRect.setRadii({ radiiForBlockDirection.topRight(), radiiForBlockDirection.bottomRight(), radiiForBlockDirection.topLeft(), radiiForBlockDirection.bottomLeft() });
+                        curvatures = { blockDirection.topRight(), blockDirection.bottomRight(), blockDirection.topLeft(), blockDirection.bottomLeft() };
+                    }
                 }
                 if (writingMode.isBidiRTL()) {
                     auto radii = shapeRect.radii();
+                    auto beforeFlip = curvatures;
                     shapeRect.setRadii({ radii.topRight(), radii.topLeft(), radii.bottomRight(), radii.bottomLeft() });
+                    curvatures = { beforeFlip.topRight(), beforeFlip.topLeft(), beforeFlip.bottomRight(), beforeFlip.bottomLeft() };
                 }
             };
             flipForWritingAndInlineDirection();
-            return LayoutShape::createBoxShape(shapeRect, writingMode, logicalMargin);
+            return LayoutShape::createBoxShape(shapeRect, curvatures, renderer.document().deviceScaleFactor(), writingMode, logicalMargin);
         },
         [&](const CSS::Keyword::None&) {
             ASSERT_NOT_REACHED();
-            return LayoutShape::createBoxShape(LayoutRoundedRect { { } }, writingMode, 0);
+            return LayoutShape::createBoxShape(LayoutRoundedRect { { } }, { 1.0f, 1.0f, 1.0f, 1.0f }, 1, writingMode, 0);
         }
     );
 }

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>CSS Borders and Box Decorations 4: a thick border's inner edge follows 'corner-shape'</title>
+    <meta name="fuzzy" content="maxDifference=0-1; totalPixels=0-120">
+    <style>
+        body {
+            margin: 0;
+            background-color: white;
+        }
+
+        .target {
+            box-sizing: border-box;
+            width: 200px;
+            height: 200px;
+            margin: 20px;
+            border: 20px solid red;
+            border-radius: 60px;
+            corner-shape: bevel;
+            background-color: green;
+        }
+    </style>
+</head>
+<body>
+    <div class="target"></div>
+</body>
+</html>

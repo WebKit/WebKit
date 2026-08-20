@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>CSS Motion Path: a &lt;coord-box&gt; 'offset-path' follows 'corner-shape'</title>
+    <style>
+        body {
+            margin: 0;
+            background-color: white;
+        }
+
+        #container {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            margin: 50px;
+            border-radius: 50%;
+            corner-shape: bevel;
+        }
+
+        #dot {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background-color: blue;
+            offset-path: border-box;
+            offset-distance: 12.5%;
+        }
+    </style>
+</head>
+<body>
+    <div id="container"><div id="dot"></div></div>
+</body>
+</html>

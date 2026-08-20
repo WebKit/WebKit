@@ -51,7 +51,7 @@ static FloatRoundedRect containingBlockRectForRenderer(const RenderObject& rende
             auto referenceBox = offsetPath.referenceBox();
             auto referenceRect = container.referenceBoxRect(referenceBox);
             auto borderShape = BorderShape::shapeForBorderRect(container.style(), LayoutRect(referenceRect));
-            return borderShape.deprecatedPixelSnappedRoundedRect(protect(container.document())->deviceScaleFactor());
+            return borderShape.snappedShapedRectForOuterShape(protect(container.document())->deviceScaleFactor());
         },
         [&](const auto& offsetPath) -> FloatRoundedRect {
             auto referenceBox = offsetPath.referenceBox();
@@ -113,6 +113,8 @@ std::optional<MotionPathData> MotionPath::motionPathDataForRenderer(const Render
 
     MotionPathData data;
     data.containingBlockBoundingRect = containingBlockRectForRenderer(renderer, *container, offsetPath);
+    // Carried so offset-path: <box> can follow the corner-shape contour rather than the rounded rect.
+    data.cornerCurvatures = BorderShape::shapeForBorderRect(container->style(), container->borderBoxRect()).cornerCurvatures();
     data.offsetFromContainingBlock = offsetFromContainer(renderer, *container, data.containingBlockBoundingRect.rect());
 
     auto zoom = renderer.style().usedZoomForLength();

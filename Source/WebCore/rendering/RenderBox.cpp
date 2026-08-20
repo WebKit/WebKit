@@ -995,7 +995,7 @@ LayoutUnit RenderBox::constrainContentBoxLogicalHeightByMinMax(LayoutUnit logica
 LayoutRoundedRect::Radii RenderBox::borderRadii() const
 {
     auto borderShape = BorderShape::shapeForBorderRect(style(), paddingBoxRectIncludingScrollbar());
-    return borderShape.deprecatedRoundedRect().radii();
+    return borderShape.radii();
 }
 
 IntRect absoluteInteractionBounds(const RenderObject& renderer)

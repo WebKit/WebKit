@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>corner-shape: a composited backdrop-filter is clipped to the contour</title>
+    <style>
+        body {
+            margin: 0;
+            background-color: green;
+        }
+
+        .target {
+            width: 200px;
+            height: 200px;
+            margin: 20px;
+            border-radius: 60px;
+            corner-shape: bevel;
+            backdrop-filter: brightness(0);
+            will-change: transform;
+        }
+    </style>
+</head>
+<body>
+    <div class="target"></div>
+</body>
+</html>
