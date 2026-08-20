@@ -38,6 +38,7 @@
 #import <simd/simd.h>
 #import <wtf/Borrow.h>
 #import <wtf/CheckedArithmetic.h>
+#import <wtf/EscapableByteSpan.h>
 #import <wtf/StdLibExtras.h>
 #import <wtf/TZoneMallocInlines.h>
 
@@ -724,11 +725,19 @@ std::pair<id<MTLBuffer>, uint64_t> Queue::newTemporaryBufferWithBytes(std::span<
     return std::make_pair(m_temporaryBuffer, priorOffset);
 }
 
+id<MTLBuffer> Queue::newTemporaryBufferForSwift(const WTF::MutableByteSpan& data, bool noCopy, uint64_t& outOffset)
+{
+    auto bufferWithOffset = newTemporaryBufferWithBytes(data.span(), noCopy);
+    outOffset = bufferWithOffset.second;
+    return bufferWithOffset.first;
+}
+
 void Queue::writeBuffer(id<MTLBuffer> buffer, uint64_t bufferOffset, std::span<uint8_t> data)
 {
 #if ENABLE(WEBGPU_SWIFT)
     if (isWebGPUSwiftEnabled()) {
-        queueWriteBuffer(this, buffer, bufferOffset, data);
+        auto dataSpan = MutableByteSpan::create(data);
+        queueWriteBuffer(this, buffer, bufferOffset, dataSpan);
         return;
     }
 #endif

@@ -21,43 +21,25 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 // THE POSSIBILITY OF SUCH DAMAGE.
 
-private import CxxStdlib
 import WebGPU_Internal.Buffer
-
-extension WebGPU.Buffer {
-    func copy(from source: Span<UInt8>, offset: Int) {
-        // FIXME (rdar://161274084): Swift doesn't have a lifetime-safe way to return a borrowed value from a refcounted object yet.
-        let bufferContents = unsafe MutableSpan(_unsafeCxxSpan: getBufferContents())
-
-        var destination = bufferContents._consumingExtracting(droppingFirst: offset)
-        destination.copyMemory(from: source)
-    }
-}
+import wtf
 
 @_expose(Cxx)
-func bufferCopyFrom(_ buffer: WebGPU.Buffer, from data: WebGPU.SpanConstUInt8, offset: Int) {
-    buffer.copy(from: unsafe Span<UInt8>(_unsafeCxxSpan: data), offset: offset)
-}
-
-@_expose(Cxx)
-func bufferGetMappedRange(_ buffer: WebGPU.Buffer, offset: Int, size: Int) -> WebGPU.SpanUInt8 {
-    unsafe buffer.getMappedRange(offset: offset, size: size)
-}
-
-extension WebGPU.SpanUInt8 {
-    /// A default-constructed, zero-length span: a null base pointer that's never read through.
-    ///
-    /// Marked `@safe` because the empty case carries no risk.
-    @safe
-    fileprivate static var empty: WebGPU.SpanUInt8 {
-        unsafe WebGPU.SpanUInt8()
-    }
+@_lifetime(copy contents)
+func bufferGetMappedRange(
+    _ buffer: WebGPU.Buffer,
+    contents: WTF.MutableByteSpan,
+    offset: Int,
+    size: Int,
+) -> WTF.MutableByteSpan {
+    buffer.getMappedRange(contents: contents, offset: offset, size: size)
 }
 
 extension WebGPU.Buffer {
-    func getMappedRange(offset: Int, size: Int) -> WebGPU.SpanUInt8 {
+    @_lifetime(copy contents)
+    func getMappedRange(contents: WTF.MutableByteSpan, offset: Int, size: Int) -> WTF.MutableByteSpan {
         if !isValid() {
-            return .empty
+            return WTF.MutableByteSpan()
         }
 
         var rangeSize = size
@@ -66,16 +48,16 @@ extension WebGPU.Buffer {
         }
 
         if !validateGetMappedRange(offset, rangeSize) {
-            return .empty
+            return WTF.MutableByteSpan()
         }
 
         m_mappedRanges.add(.init(UInt(offset), UInt(offset + rangeSize)))
         m_mappedRanges.compact()
 
         if m_buffer.storageMode == .private || m_buffer.storageMode == .memoryless || m_buffer.length == 0 {
-            return .empty
+            return WTF.MutableByteSpan()
         }
 
-        return unsafe getBufferContents().subspan(offset, rangeSize)
+        return contents.subspan(offset, rangeSize)
     }
 }

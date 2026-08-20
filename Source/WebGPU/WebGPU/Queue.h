@@ -28,6 +28,7 @@
 #import "Instance.h"
 #import <Metal/Metal.h>
 #import <wtf/CompletionHandler.h>
+#import <wtf/EscapableByteSpan.h>
 #import <wtf/FastMalloc.h>
 #import <wtf/HashMap.h>
 #import <wtf/Ref.h>
@@ -107,8 +108,11 @@ public:
     id<MTLIndirectCommandBuffer> trimICB(id<MTLIndirectCommandBuffer> dest, id<MTLIndirectCommandBuffer> src, NSUInteger newSize);
     id<MTLDevice> _Nullable metalDevice() const;
     std::pair<id<MTLBuffer>, uint64_t> newTemporaryBufferWithBytes(std::span<uint8_t> data, bool noCopy);
+    // Overload with more Swift-compatible signature
+    id<MTLBuffer> _Nullable newTemporaryBufferForSwift(const WTF::MutableByteSpan& data, bool noCopy, uint64_t& outOffset);
     void stageBufferWrite(id<MTLBuffer>, uint64_t bufferOffset, std::span<uint8_t> data);
     void encodeStagedCopy(id<MTLBuffer> temporaryBuffer, uint64_t temporaryBufferOffset, id<MTLBuffer>, uint64_t bufferOffset, uint64_t size, bool finalizeAfterCopy);
+
 
 private:
     Queue(id<MTLCommandQueue>, Adapter&, Device&);
