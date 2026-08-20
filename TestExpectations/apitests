@@ -58,6 +58,10 @@ TestWebKitAPI.WebPageTransferableTests/exportToImage(type:) [ Skip ]
 [ iOS Debug ] TestWebKitAPI.ContentRuleList.RequestMethods [ Pass Timeout ]
 [ iOS Debug ] TestWebKitAPI.ContentRuleList.ResourceTypes [ Pass Timeout ]
 
+# webkit.org/b/321940 [ macOS DEBUG ] 2x TestWebKitAPI.EnhancedSecurityPolicies.MultiHopThenBackToSecure* (api-tests) are constant timeouts.
+[ mac Debug ] TestWebKitAPI.EnhancedSecurityPolicies.MultiHopThenBackToSecure [ Skip ]
+[ mac Debug ] TestWebKitAPI.EnhancedSecurityPolicies.MultiHopThenBackToSecureJavascript [ Skip ]
+
 # webkit.org/b/322125 [ iOS ]NEW TEST(319178@main): 3x TestWebKitAPI.HTTP2Server.* (api-tests) is a constant timeout. 
 [ iOS ] TestWebKitAPI.HTTP2Server.MultipleRequestsOverOneConnection [ Skip ]
 [ iOS ] TestWebKitAPI.HTTP2Server.NonDefaultStatusCodeAndResponseHeader [ Skip ]
