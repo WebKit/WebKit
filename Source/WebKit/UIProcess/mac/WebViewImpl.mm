@@ -8514,10 +8514,17 @@ void WebViewImpl::updateRefreshControllerForWheelEvent(NSEvent *event)
 }
 
 #if HAVE(APPKIT_GESTURES_SUPPORT)
-void WebViewImpl::updateRefreshControllerForPanGesture(NSGestureRecognizerState state)
+void WebViewImpl::updateRefreshControllerForPanGesture(NSGestureRecognizerState state, RefreshControllerEligibility eligibility)
 {
     if (!m_refreshController)
         return;
+
+    if (eligibility == RefreshControllerEligibility::Ineligible) {
+        m_refreshControllerIsTracking = false;
+        m_canShowRefreshController = false;
+        m_suppressRefreshControllerUpdates = true;
+        return;
+    }
 
     // Track whether this scroll gesture began at the top of the page.
     // Only allow refresh control activation for gestures that started at top.
