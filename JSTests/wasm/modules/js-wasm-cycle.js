@@ -25,8 +25,8 @@ import("./js-wasm-cycle/entry-memory.js").then($vm.abort, function (error) {
 
 // Test Wasm exports.
 import { g } from "./js-wasm-cycle/entry-wasm-global.js";
-assert.instanceof(g, WebAssembly.Global);
-assert.eq(g.valueOf(), 42);
+assert.isNumber(g);
+assert.eq(g, 42);
 
 import { m } from "./js-wasm-cycle/entry-wasm-memory.js";
 assert.instanceof(m, WebAssembly.Memory);

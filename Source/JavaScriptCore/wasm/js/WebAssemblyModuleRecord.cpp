@@ -245,6 +245,12 @@ void WebAssemblyModuleRecord::initializeImports(JSGlobalObject* globalObject, JS
                 // Snapshotting a value.
                 value = importedEnvironment->variableAt(entry.scopeOffset()).get();
             }
+            if (!value) {
+                if (auto* wasmRecord = dynamicDowncast<WebAssemblyModuleRecord>(importedRecord)) {
+                    if (JSObject* exports = wasmRecord->exportsObject())
+                        value = exports->getDirect(vm, resolution.localName);
+                }
+            }
         }
         if (!value)
             value = jsUndefined();
@@ -772,12 +778,25 @@ void WebAssemblyModuleRecord::initializeExports(JSGlobalObject* globalObject)
 
         auto propertyName = Identifier::fromString(vm, makeAtomString(exp.field));
 
+        JSValue namespaceValue = exportedValue;
+        if (exp.kind == Wasm::ExternalKind::Global) {
+            const Wasm::GlobalInformation& global = moduleInformation.globals[exp.kindIndex];
+            if (global.type.kind() == Wasm::TypeKind::V128 || Wasm::isExnref(global.type))
+                namespaceValue = JSValue();
+            else if (global.mutability == Wasm::Mutability::Immutable) {
+                namespaceValue = uncheckedDowncast<JSWebAssemblyGlobal>(exportedValue)->global()->get(globalObject);
+                RETURN_IF_EXCEPTION(scope, void());
+            }
+        }
+
         bool shouldThrowReadOnlyError = false;
         bool ignoreReadOnlyErrors = true;
         bool putResult = false;
-        symbolTablePutTouchWatchpointSet(moduleEnvironment, globalObject, propertyName, exportedValue, shouldThrowReadOnlyError, ignoreReadOnlyErrors, putResult);
-        scope.assertNoException();
-        RELEASE_ASSERT(putResult);
+        if (namespaceValue) {
+            symbolTablePutTouchWatchpointSet(moduleEnvironment, globalObject, propertyName, namespaceValue, shouldThrowReadOnlyError, ignoreReadOnlyErrors, putResult);
+            scope.assertNoException();
+            RELEASE_ASSERT(putResult);
+        }
 
         if (std::optional<uint32_t> index = parseIndex(propertyName)) {
             exportsObject->putDirectIndex(globalObject, index.value(), exportedValue);
