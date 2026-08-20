@@ -36,6 +36,8 @@ extension AppKitGesturesTests {
     @MainActor
     @Suite(.serialized, .timeLimit(.minutes(1)))
     final class RefreshControl: AppKitGestureTestSuite {
+        static let text = "Here's to the crazy ones."
+
         @MainActor
         private final class RefreshCounter {
             var count = 0
