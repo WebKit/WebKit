@@ -461,18 +461,11 @@ void RenderListItem::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintO
         excludedMarker->paintAsInlineBlock(paintInfo, flipForWritingModeForChild(*excludedMarker, paintOffset));
 }
 
-String RenderListItem::markerTextWithoutSuffix() const
+String RenderListItem::markerText(RenderListMarker::IncludeSuffix includeSuffix) const
 {
     if (!m_marker)
         return { };
-    return m_marker->textWithoutSuffix();
-}
-
-String RenderListItem::markerTextWithSuffix() const
-{
-    if (!m_marker)
-        return { };
-    return m_marker->textWithSuffix();
+    return m_marker->textContent(includeSuffix);
 }
 
 void RenderListItem::usedCounterDirectivesChanged()

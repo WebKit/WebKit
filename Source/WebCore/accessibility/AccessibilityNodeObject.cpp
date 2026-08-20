@@ -4310,7 +4310,7 @@ String AccessibilityNodeObject::stringValue() const
             } else if (CheckedPtr renderListMarker = dynamicDowncast<RenderListMarker>(object->renderer())) {
                 // List markers have no DOM node. Flush any pending text run, then append marker text.
                 flushRun();
-                builder.append(renderListMarker->textWithSuffix());
+                builder.append(renderListMarker->textContent());
             }
         }
         flushRun();

@@ -388,7 +388,7 @@ void RenderListMarker::layout()
     } else {
         setLogicalWidth(minContentLogicalWidthContribution());
         setLogicalHeight(style().metricsOfPrimaryFont().intHeight());
-        m_layoutBounds = layoutBoundForTextContent(textWithSuffix());
+        m_layoutBounds = layoutBoundForTextContent(m_textContent.textWithSuffix);
     }
 
     setMarginStart(0);
@@ -426,7 +426,7 @@ void RenderListMarker::layoutContentContainer(RenderBlockFlow& container)
 
     if (textNeedsBidiResolution()) {
         setLogicalHeight(style().metricsOfPrimaryFont().intHeight());
-        m_layoutBounds = layoutBoundForTextContent(textWithSuffix());
+        m_layoutBounds = layoutBoundForTextContent(m_textContent.textWithSuffix);
     } else {
         setLogicalHeight(container.logicalHeight());
         m_layoutBounds = { contentBaseline, container.logicalHeight() - contentBaseline };

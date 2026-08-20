@@ -2167,7 +2167,7 @@ static StringView lineStartListMarkerText(const RenderListItem* listItem, const 
         return { };
 
     if (!markerText)
-        markerText = listItem->markerTextWithSuffix();
+        markerText = listItem->markerText();
     if (markerText->isEmpty())
         return { };
 
@@ -2184,7 +2184,7 @@ StringView AccessibilityObject::listMarkerTextForNodeAndPosition(Node* node, Pos
         return { };
     // Creating a VisiblePosition and determining its relationship to a line of text can be expensive.
     // Thus perform that determination only if we have some text to return.
-    auto markerText = listItem->markerTextWithSuffix();
+    auto markerText = listItem->markerText();
     if (markerText.isEmpty())
         return { };
     return lineStartListMarkerText(listItem.get(), startPosition, markerText);
