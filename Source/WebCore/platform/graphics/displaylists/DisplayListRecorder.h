@@ -138,7 +138,10 @@ private:
 
     void fillRoundedRectImpl(const FloatRoundedRect&, const Color&) final { ASSERT_NOT_REACHED(); }
 
+#if !USE(CG) && !USE(SKIA)
+    // The recorder applies the state lazily, in appendStateChangeItemIfNecessary().
     WEBCORE_EXPORT void didUpdateState(GraphicsContextState&) final;
+#endif
 
     WEBCORE_EXPORT void drawConsumingImageBuffer(RefPtr<ImageBuffer>, const FloatRect& destination, const FloatRect& source, ImagePaintingOptions) final;
     WEBCORE_EXPORT AffineTransform getCTM(GraphicsContext::IncludeDeviceScale = PossiblyIncludeDeviceScale) const final;

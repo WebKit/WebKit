@@ -68,9 +68,11 @@ void Recorder::appendDisplayList(const DisplayList& displayList)
     GraphicsContext::drawDisplayList(displayList, Ref { ControlFactory::singleton() });
 }
 
+#if !USE(CG) && !USE(SKIA)
 void Recorder::didUpdateState(GraphicsContextState&)
 {
 }
+#endif
 
 bool Recorder::decomposeDrawGlyphsIfNeeded(const Font& font, std::span<const GlyphBufferGlyph> glyphs, std::span<const GlyphBufferAdvance> advances, const FloatPoint& localAnchor, FontSmoothingMode smoothingMode)
 {

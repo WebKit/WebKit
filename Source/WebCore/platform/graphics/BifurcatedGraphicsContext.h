@@ -150,9 +150,11 @@ public:
 
     bool supportsInternalLinks() const final;
 
-    void didUpdateState(GraphicsContextState&) final;
-
 private:
+    // The child contexts are kept in sync lazily, before any operation that needs them to
+    // observe the current state. They apply the state to their platform contexts in turn.
+    void updatePlatformContextStateIfNeeded();
+
     void verifyStateSynchronization();
 
     bool m_hasLoggedAboutDesynchronizedState { false };

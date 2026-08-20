@@ -64,8 +64,6 @@ public:
 
     void replayStateOnCanvas(SkCanvas&) const;
 
-    void didUpdateState(GraphicsContextState&) final;
-
     void setLineCap(LineCap) final;
     void setLineDash(const DashArray&, float) final;
     void setLineJoin(LineJoin) final;
