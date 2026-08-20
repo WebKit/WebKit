@@ -814,6 +814,9 @@ void FrameLoader::receivedFirstData()
     ASSERT(frame->document());
     Ref document = *frame->document();
 
+    if (frame->isMainFrame())
+        document->quirks().logQuirksToConsoleIfNecessary();
+
     LinkLoader::loadLinksFromHeader(documentLoader->response().httpHeaderField(HTTPHeaderName::Link), document->url(), document, LinkLoader::MediaAttributeCheck::MediaAttributeEmpty);
 
     scheduleRefreshIfNeeded(document, documentLoader->response().httpHeaderField(HTTPHeaderName::Refresh), IsMetaRefresh::No);

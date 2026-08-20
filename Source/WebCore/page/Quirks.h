@@ -229,6 +229,8 @@ public:
 
     static bool shouldOmitHTMLDocumentSupportedPropertyNames();
 
+    WEBCORE_EXPORT Vector<String> activeQuirks() const;
+
 #if PLATFORM(IOS) || PLATFORM(VISION)
     WEBCORE_EXPORT bool allowLayeredFullscreenVideos() const;
 #endif
@@ -370,6 +372,7 @@ public:
     void clearLogoutSurvivingIdentityCookiesIfNeeded(const URL& fetchURL, int httpStatusCode);
 
     void determineRelevantQuirks();
+    void logQuirksToConsoleIfNecessary() const;
 
 #if PLATFORM(IOS_FAMILY) && ENABLE(IOS_TOUCH_EVENTS)
     WEBCORE_EXPORT bool shouldAllowNativeTapsOnMediaElements(const Node*) const;
