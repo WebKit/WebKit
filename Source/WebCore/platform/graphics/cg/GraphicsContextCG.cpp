@@ -1200,12 +1200,20 @@ void GraphicsContextCG::setCGStyle(const std::optional<GraphicsStyle>& style, bo
 
 void GraphicsContextCG::didUpdateState(GraphicsContextState& state)
 {
-    if (!state.changes())
+    auto changes = state.changes();
+    if (!changes)
         return;
+
+    if (changes.contains(GraphicsContextState::Change::ShadowsIgnoreTransforms)) {
+        if (state.dropShadow())
+            changes.add(GraphicsContextState::Change::DropShadow);
+        if (state.style())
+            changes.add(GraphicsContextState::Change::Style);
+    }
 
     auto context = platformContext();
 
-    for (auto change : state.changes()) {
+    for (auto change : changes) {
         switch (change) {
         case GraphicsContextState::Change::FillBrush:
             if (!state.fillBrush().hasPatternOrGradient())
