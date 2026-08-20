@@ -1,0 +1,49 @@
+<!DOCTYPE html><!-- webkit-test-runner [ jscOptions=--useSharedArrayBuffer=true ] -->
+<body>
+<p>Test worker.terminate() while blocked in Wasm memory.atomic.wait32.</p>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+var worker = new Worker("resources/worker-wasm-atomic-wait-forever.js");
+var sawStart = false;
+
+worker.onmessage = function() {
+    sawStart = true;
+    console.log("Worker was started");
+    setTimeout(function() {
+        worker.terminate();
+        setTimeout(waitForWorkerToStop, 0);
+    }, 50);
+};
+
+function waitForWorkerToStop() {
+    var startTime = Date.now();
+    function checkIfWorkerStopped() {
+        if (typeof GCController !== "undefined")
+            GCController.collect();
+        if (internals.workerThreadCount == 0) {
+            console.log("Worker was terminated");
+            testRunner.notifyDone();
+        } else if (Date.now() - startTime < 5000) {
+            setTimeout(checkIfWorkerStopped, 10);
+        } else {
+            console.log("Did not see worker terminate");
+            testRunner.notifyDone();
+        }
+    }
+    setTimeout(checkIfWorkerStopped, 0);
+}
+
+setTimeout(function() {
+    if (!sawStart) {
+        console.log("Worker did not show up");
+        worker.terminate();
+        testRunner.notifyDone();
+    }
+}, 5000);
+</script>
+</body>
+</html>

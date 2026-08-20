@@ -32,6 +32,7 @@
 #include "JSObjectInlines.h"
 #include "ObjectConstructor.h"
 #include "VMManager.h"
+#include "VMTrapsInlines.h"
 #include <wtf/DataLog.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RawPointer.h>
@@ -82,6 +83,10 @@ WaiterListManager::WaitSyncResult WaiterListManager::waitSyncImpl(VM& vm, ValueT
     Ref<WaiterList> list = findOrCreateList(ptr);
     MonotonicTime time = MonotonicTime::timePointFromNow(timeout);
 
+    auto isTerminating = [&] {
+        return vm.hasTerminationRequest() || vm.traps().needHandling(VMTraps::NeedTermination);
+    };
+
     {
         VMBlockingScope waitScope(vm, StopTheWorldEvent::AtomicsWaitBlocked);
 
@@ -92,8 +97,16 @@ WaiterListManager::WaitSyncResult WaiterListManager::waitSyncImpl(VM& vm, ValueT
         list->addLast(listLocker, syncWaiter);
         dataLogLnIf(WaiterListsManagerInternal::verbose, "<WaiterListManager> <Thread:", Thread::currentSingleton(), "> added a new SyncWaiter=", syncWaiter.get(), " to a waiterList for ptr ", RawPointer(ptr));
 
-        while (syncWaiter->isOnList() && time.now() < time && !vm.hasTerminationRequest())
+        while (syncWaiter->isOnList() && time.now() < time && !isTerminating())
             syncWaiter->condition().waitUntil(list->lock, time.approximate<WallTime>());
+
+        if (isTerminating()) {
+            if (syncWaiter->isOnList()) {
+                bool removed = list->findAndRemove(listLocker, syncWaiter);
+                ASSERT_UNUSED(removed, removed);
+            }
+            return WaitSyncResult::Terminated;
+        }
 
         // At this point, syncWaiter should be either notified (dequeued) or timeout (not dequeued).
         bool didGetDequeued = !syncWaiter->isOnList();
@@ -102,7 +115,7 @@ WaiterListManager::WaitSyncResult WaiterListManager::waitSyncImpl(VM& vm, ValueT
 
         didGetDequeued = list->findAndRemove(listLocker, syncWaiter);
         ASSERT(didGetDequeued);
-        return vm.hasTerminationRequest() ? WaitSyncResult::Terminated : WaitSyncResult::TimedOut;
+        return WaitSyncResult::TimedOut;
     }
 }
 

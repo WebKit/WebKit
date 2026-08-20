@@ -747,7 +747,7 @@ static inline int32_t waitImpl(VM& vm, ValueType* pointer, ValueType expectedVal
     case WaiterListManager::WaitSyncResult::TimedOut:
         return static_cast<int32_t>(result);
     case WaiterListManager::WaitSyncResult::Terminated:
-        vm.throwTerminationException();
+        vm.throwTerminationExceptionIfNeeded();
         return -1;
     }
     RELEASE_ASSERT_NOT_REACHED();
@@ -833,12 +833,15 @@ inline void* throwWasmToJSException(CallFrame* callFrame, Wasm::ExceptionType ty
     do {
         auto throwScope = DECLARE_THROW_SCOPE(vm);
 
-        JSObject* error;
+        if (vm.hasPendingTerminationException())
+            break;
+
         if (type == ExceptionType::Termination) {
-            // Nothing to do because the exception should have already been thrown.
-            RELEASE_ASSERT(vm.hasPendingTerminationException());
+            RELEASE_ASSERT_NOT_REACHED();
             break;
         }
+
+        JSObject* error;
         if (type == ExceptionType::StackOverflow)
             error = createStackOverflowError(globalObject);
         else if (isTypeErrorExceptionType(type))

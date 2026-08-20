@@ -1103,6 +1103,21 @@ void VM::throwTerminationException()
         setExecutionForbidden();
 }
 
+void VM::throwTerminationExceptionIfNeeded()
+{
+    if (hasPendingTerminationException())
+        return;
+
+    if (traps().needHandling(VMTraps::NeedTermination))
+        traps().handleTraps(VMTraps::NeedTermination);
+
+    if (hasPendingTerminationException())
+        return;
+
+    if (hasTerminationRequest() && !traps().isDeferringTermination())
+        throwTerminationException();
+}
+
 Exception* VM::throwException(JSGlobalObject* globalObject, Exception* exceptionToThrow)
 {
     // The TerminationException should never be overridden.
