@@ -30,11 +30,9 @@
     Exposed=(Window,Worker),
     ExportMacro=WEBCORE_EXPORT
 ] interface Path2D {
-    constructor();
-    constructor(Path2D path);
+    constructor(optional (Path2D or DOMString) path);
     // FIXME: Implement missing constructor.
     // constructor(sequence<Path2D> paths, optional CanvasFillRule fillRule = "nonzero");
-    constructor(DOMString d);
 
     undefined addPath(Path2D path, optional DOMMatrix2DInit transform = {});
 };

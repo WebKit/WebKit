@@ -28,9 +28,9 @@
 #pragma once
 
 #include "CanvasPath.h"
-#include "SVGPathUtilities.h"
 #include <wtf/RefCounted.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -39,26 +39,15 @@ struct DOMMatrix2DInit;
 class WEBCORE_EXPORT Path2D final : public RefCounted<Path2D>, public CanvasPath {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(Path2D, WEBCORE_EXPORT);
 public:
+    using PathInit = Variant<Ref<Path2D>, String>;
+
     virtual ~Path2D();
 
-    static Ref<Path2D> create()
-    {
-        return adoptRef(*new Path2D);
-    }
+    static Ref<Path2D> create(std::optional<PathInit>&&);
 
     static Ref<Path2D> create(const Path& path)
     {
         return adoptRef(*new Path2D(path));
-    }
-
-    static Ref<Path2D> create(const Path2D& path)
-    {
-        return create(path.path());
-    }
-
-    static Ref<Path2D> create(StringView pathData)
-    {
-        return create(buildPathFromString(pathData));
     }
 
     ExceptionOr<void> addPath(Path2D&, DOMMatrix2DInit&&);
