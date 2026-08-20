@@ -23849,12 +23849,16 @@ IGNORE_CLANG_WARNINGS_END
             return;
         }
 
+        JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
+
         LBasicBlock hasImplBlock = m_out.newBlock();
         LBasicBlock is8BitBlock = m_out.newBlock();
         LBasicBlock isRopeBlock = m_out.newBlock();
         LBasicBlock isSubstringBlock = m_out.newBlock();
         LBasicBlock substringBlock = m_out.newBlock();
         LBasicBlock concatRopeBlock = m_out.newBlock();
+        LBasicBlock resolveConcatRopeBlock = m_out.newBlock();
+        LBasicBlock resolvedConcatRopeBlock = m_out.newBlock();
         LBasicBlock binarySwitchBlock = m_out.newBlock();
         LBasicBlock slowBlock = m_out.newBlock();
 
@@ -23904,18 +23908,27 @@ IGNORE_CLANG_WARNINGS_END
         ValueFromBlock substringLength = m_out.anchor(m_out.load32NonNegative(string, m_heaps.JSRopeString_length));
         m_out.jump(binarySwitchBlock);
 
-        m_out.appendTo(concatRopeBlock, binarySwitchBlock);
+        m_out.appendTo(concatRopeBlock, resolveConcatRopeBlock);
         const UnlinkedStringJumpTable& unlinkedTable = m_graph.unlinkedStringSwitchJumpTable(data->switchTableIndex);
         LValue ropeLength;
         if (auto stringLength = tryGetConstantStringLength(edge))
             ropeLength = m_out.constInt32(*stringLength);
         else
             ropeLength = m_out.load32NonNegative(string, m_heaps.JSRopeString_length);
-        m_out.branch(m_out.belowOrEqual(m_out.sub(ropeLength, m_out.constInt32(unlinkedTable.minLength())), m_out.constInt32(unlinkedTable.maxLength() - unlinkedTable.minLength())), unsure(slowBlock), unsure(lowBlock(data->fallThrough.block)));
+        m_out.branch(m_out.belowOrEqual(m_out.sub(ropeLength, m_out.constInt32(unlinkedTable.minLength())), m_out.constInt32(unlinkedTable.maxLength() - unlinkedTable.minLength())), unsure(resolveConcatRopeBlock), unsure(lowBlock(data->fallThrough.block)));
+
+        m_out.appendTo(resolveConcatRopeBlock, resolvedConcatRopeBlock);
+        LValue resolvedRopeCharacters = vmCall(pointerType(), operationSwitchStringResolveRopeAndGetCharacters8, weakPointer(globalObject), string);
+        m_out.branch(m_out.isNull(resolvedRopeCharacters), rarely(slowBlock), usually(resolvedConcatRopeBlock));
+
+        m_out.appendTo(resolvedConcatRopeBlock, binarySwitchBlock);
+        ValueFromBlock resolvedRopeBuffer = m_out.anchor(resolvedRopeCharacters);
+        ValueFromBlock resolvedRopeLength = m_out.anchor(ropeLength);
+        m_out.jump(binarySwitchBlock);
 
         m_out.appendTo(binarySwitchBlock, slowBlock);
-        LValue buffer = m_out.phi(pointerType(), resolvedBuffer, substringBuffer);
-        LValue switchLength = m_out.phi(Int32, resolvedLength, substringLength);
+        LValue buffer = m_out.phi(pointerType(), resolvedBuffer, substringBuffer, resolvedRopeBuffer);
+        LValue switchLength = m_out.phi(Int32, resolvedLength, substringLength, resolvedRopeLength);
 
         // FIXME: We should propagate branch weight data to the cases of this switch.
         // https://bugs.webkit.org/show_bug.cgi?id=144368

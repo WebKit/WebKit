@@ -922,6 +922,21 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationSwitchStringAndGetIndex, UCPUStrictIn
     return toUCPUStrictInt32(unlinkedTable->indexForValue(str->impl(), std::numeric_limits<unsigned>::max()));
 }
 
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationSwitchStringResolveRopeAndGetCharacters8, const Latin1Character*, (JSGlobalObject* globalObject, JSString* string))
+{
+    VM& vm = globalObject->vm();
+    CallFrame* callFrame = DECLARE_CALL_FRAME(vm);
+    JITOperationPrologueCallFrameTracer tracer(vm, callFrame);
+
+    // We intentionally use tryGetValue here instead of value() function not to throw OOM error.
+    // When failing, we will just return a nullptr, and going to the slow path.
+    auto value = string->tryGetValue();
+    StringImpl* impl = value.data.impl();
+    if (!impl || !impl->is8Bit())
+        return nullptr;
+    return impl->span8().data();
+}
+
 JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationTypeOfObjectAsTypeofType, UCPUStrictInt32, (JSGlobalObject* globalObject, JSCell* object))
 {
     VM& vm = globalObject->vm();
