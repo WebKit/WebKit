@@ -166,7 +166,9 @@ public:
 
     void setPDFDisplayMode(PDFPluginDisplayMode);
 
+#if ENABLE(PDF_HUD)
     void openWithPreview(CompletionHandler<void(const String&, std::optional<FrameInfoData>&&, std::span<const uint8_t>)>&&);
+#endif
 
     void focusPluginElement();
 

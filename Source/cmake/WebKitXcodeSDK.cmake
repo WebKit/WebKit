@@ -137,6 +137,10 @@ elseif (WEBKIT_SDK_NAME STREQUAL "iphonesimulator")
     set(WEBKIT_SDK_IS_IOS_FAMILY ON)
     set(WEBKIT_SDK_IS_SIMULATOR ON)
     set(WEBKIT_PLATFORM_NAME "iPhoneSimulator")
+else ()
+    message(FATAL_ERROR "Unsupported Apple SDK '${WEBKIT_SDK_NAME}'. Add it above so "
+        "the platform booleans, WEBKIT_PLATFORM_NAME, and the deployment-target flag "
+        "that wtf/Platform.h is evaluated against are all derived for it.")
 endif ()
 
 # Building for macOS defaults uses the host system's deployment target. Other

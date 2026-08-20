@@ -286,9 +286,8 @@ public:
 
     void save(CompletionHandler<void(const String&, const URL&, std::span<const uint8_t>)>&&);
     void updateHUDLocation();
-#endif
-
     void openWithPreview(CompletionHandler<void(const String&, std::optional<FrameInfoData>&&, std::span<const uint8_t>)>&&);
+#endif
 
     void notifyCursorChanged(WebCore::PlatformCursorType);
 

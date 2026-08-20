@@ -1174,10 +1174,12 @@ void PluginView::setPDFDisplayMode(PDFPluginDisplayMode mode)
     m_plugin->setDisplayModeAndUpdateLayout(mode);
 }
 
+#if ENABLE(PDF_HUD)
 void PluginView::openWithPreview(CompletionHandler<void(const String&, std::optional<FrameInfoData>&&, std::span<const uint8_t>)>&& completionHandler)
 {
     m_plugin->openWithPreview(WTF::move(completionHandler));
 }
+#endif
 
 #if ENABLE(TWO_PHASE_CLICKS)
 
