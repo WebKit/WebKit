@@ -347,7 +347,6 @@ class Driver(object):
 
     HTTP_DIR = "http/tests/"
     HTTP_LOCAL_DIR = "http/tests/local/"
-    WEBKIT_SPECIFIC_WEB_PLATFORM_TEST_SUBDIR = "http/wpt/"
     WEBKIT_WEB_PLATFORM_TEST_SERVER_ROUTE = "WebKit/"
 
     def is_http_test(self, driver_input):
@@ -356,7 +355,7 @@ class Driver(object):
         return driver_input.test_name.startswith(self.HTTP_DIR) and not driver_input.test_name.startswith(self.HTTP_LOCAL_DIR)
 
     def is_webkit_specific_web_platform_test(self, test_name):
-        return test_name.startswith(self.WEBKIT_SPECIFIC_WEB_PLATFORM_TEST_SUBDIR)
+        return any(test_name.startswith(root + "/") for root in self._port.web_platform_test_roots())
 
     def is_web_platform_test(self, test_name):
         return test_name.startswith(self.web_platform_test_server_doc_root)
@@ -394,7 +393,11 @@ class Driver(object):
         if self.is_web_platform_test(test_name):
             return self.wpt_test_path_to_uri(test_name[len(self.web_platform_test_server_doc_root):])
         if self.is_webkit_specific_web_platform_test(test_name):
-            return self.wpt_webkit_test_path_to_uri(self.WEBKIT_WEB_PLATFORM_TEST_SERVER_ROUTE + test_name[len(self.WEBKIT_SPECIFIC_WEB_PLATFORM_TEST_SUBDIR):])
+            for root in self._port.web_platform_test_roots():
+                root_prefix = root + "/"
+                if test_name.startswith(root_prefix):
+                    route = self._port.url_prefix_for_web_platform_test_root(root) + self.WEBKIT_WEB_PLATFORM_TEST_SERVER_ROUTE
+                    return self.wpt_webkit_test_path_to_uri(route + test_name[len(root_prefix):])
 
         if not self.is_http_test(driver_input):
             return path.abspath_to_uri(self._port.host.platform, self._port.abspath_for_test(test_name))
@@ -415,10 +418,11 @@ class Driver(object):
             if not prefix.endswith('/'):
                 prefix += '/'
             return uri[len(prefix):]
-        if uri.startswith(self.web_platform_test_server_base_http_url + self.WEBKIT_WEB_PLATFORM_TEST_SERVER_ROUTE):
-            return uri.replace(self.web_platform_test_server_base_http_url + self.WEBKIT_WEB_PLATFORM_TEST_SERVER_ROUTE, self.WEBKIT_SPECIFIC_WEB_PLATFORM_TEST_SUBDIR)
-        if uri.startswith(self.web_platform_test_server_base_https_url + self.WEBKIT_WEB_PLATFORM_TEST_SERVER_ROUTE):
-            return uri.replace(self.web_platform_test_server_base_https_url + self.WEBKIT_WEB_PLATFORM_TEST_SERVER_ROUTE, self.WEBKIT_SPECIFIC_WEB_PLATFORM_TEST_SUBDIR)
+        for root in self._port.web_platform_test_roots():
+            route = self._port.url_prefix_for_web_platform_test_root(root) + self.WEBKIT_WEB_PLATFORM_TEST_SERVER_ROUTE
+            for base in (self.web_platform_test_server_base_http_url, self.web_platform_test_server_base_https_url):
+                if uri.startswith(base + route):
+                    return uri.replace(base + route, root + "/")
         if uri.startswith(self.web_platform_test_server_base_http_url):
             return uri.replace(self.web_platform_test_server_base_http_url, self.web_platform_test_server_doc_root)
         if uri.startswith(self.web_platform_test_server_base_https_url):

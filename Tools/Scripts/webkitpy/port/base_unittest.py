@@ -141,6 +141,26 @@ class PortTest(unittest.TestCase):
         add_text_file('', 'Skipped', '\n'.join(['Layout', '', 'SunSpider', 'Supported/some-test.html', '[ExoticPort] UnskippedTest.html', '[baseport] SkippedTest.html']))
         self.assertEqual(port.skipped_perf_tests(), ['Layout', 'SunSpider', 'Supported/some-test.html', 'SkippedTest.html'])
 
+    def test_sar3_tests_enabled_symbol_present(self):
+        port = self.make_port(with_tests=True, executive=MockExecutive2(output="0000000000000000 D __ZN3WTR11SAR3EnabledE\n"))
+        port.host.filesystem.write_text_file(port._path_to_driver(), "binary")
+        self.assertTrue(port._sar3_tests_enabled())
+
+    def test_sar3_tests_enabled_symbol_absent(self):
+        port = self.make_port(with_tests=True, executive=MockExecutive2(output="0000000000000000 T _main\n"))
+        port.host.filesystem.write_text_file(port._path_to_driver(), "binary")
+        self.assertFalse(port._sar3_tests_enabled())
+
+    def test_sar3_tests_enabled_missing_binary(self):
+        port = self.make_port(with_tests=True, executive=MockExecutive2(output="__ZN3WTR11SAR3EnabledE\n"))
+        # Driver never written to the mock filesystem -> probe returns False.
+        self.assertFalse(port._sar3_tests_enabled())
+
+    def test_sar3_tests_enabled_nm_error(self):
+        port = self.make_port(with_tests=True, executive=MockExecutive2(exception=ScriptError))
+        port.host.filesystem.write_text_file(port._path_to_driver(), "binary")
+        self.assertFalse(port._sar3_tests_enabled())
+
     def test_get_option__set(self):
         options, args = optparse.OptionParser().parse_args([])
         options.foo = 'bar'
@@ -187,6 +207,24 @@ class PortTest(unittest.TestCase):
         port._filesystem.write_text_file('/mock-checkout/LayoutTests/platform/exists/TestExpectations', '')
         self.assertEqual('\n'.join(port.expectations_dict().keys()), '/mock-checkout/LayoutTests/platform/exists/TestExpectations')
 
+    def test_sar3_expectations_included_when_feature_present(self):
+        port = self.make_port(with_tests=True)
+        fs = port.host.filesystem
+        fs.maybe_make_directory(fs.join(port.layout_tests_dir(), "sar3"))
+        te = fs.join(port.layout_tests_dir(), "sar3", "TestExpectations")
+        fs.write_text_file(te, "sar3/a.html [ Failure ]\n")
+        port._sar3_tests_enabled = lambda: True
+        self.assertIn(te, list(port.expectations_dict().keys()))
+
+    def test_sar3_expectations_excluded_when_feature_absent(self):
+        port = self.make_port(with_tests=True)
+        fs = port.host.filesystem
+        fs.maybe_make_directory(fs.join(port.layout_tests_dir(), "sar3"))
+        te = fs.join(port.layout_tests_dir(), "sar3", "TestExpectations")
+        fs.write_text_file(te, "sar3/a.html [ Pass ]\n")
+        port._sar3_tests_enabled = lambda: False
+        self.assertNotIn(te, list(port.expectations_dict().keys()))
+
     def test_additional_expectations(self):
         port = self.make_port(port_name='foo')
         port.port_name = 'foo'
@@ -227,6 +265,16 @@ class PortTest(unittest.TestCase):
 
     def test_operating_system(self):
         self.assertEqual('mac', self.make_port().operating_system())
+
+    def test_http_test_roots(self):
+        port = self.make_port()
+        self.assertEqual(port.http_test_roots(), ("http/tests", "sar3/http/tests"))
+
+    def test_web_platform_test_roots(self):
+        port = self.make_port()
+        self.assertEqual(port.web_platform_test_roots(), ("http/wpt", "sar3/http/wpt"))
+        self.assertEqual(port.url_prefix_for_web_platform_test_root("http/wpt"), "")
+        self.assertEqual(port.url_prefix_for_web_platform_test_root("sar3/http/wpt"), "sar3/")
 
     def test_http_server_supports_ipv6(self):
         port = self.make_port()
@@ -269,6 +317,27 @@ class PortTest(unittest.TestCase):
         self.assertFalse(port.test_isdir('passes/text.html'))
         self.assertFalse(port.test_isdir('passes/does_not_exist.html'))
         self.assertFalse(port.test_isdir('passes/does_not_exist/'))
+
+    def test_sar3_skipped_when_feature_absent(self):
+        port = self.make_port(with_tests=True)
+        fs = port.host.filesystem
+        fs.maybe_make_directory(fs.join(port.layout_tests_dir(), "sar3"))
+        fs.write_text_file(fs.join(port.layout_tests_dir(), "sar3", "a.html"), "x")
+        port._sar3_tests_enabled = lambda: False
+        self.assertIn("sar3", port.skipped_layout_tests(device_type=None))
+
+    def test_sar3_not_skipped_when_feature_present(self):
+        port = self.make_port(with_tests=True)
+        fs = port.host.filesystem
+        fs.maybe_make_directory(fs.join(port.layout_tests_dir(), "sar3"))
+        fs.write_text_file(fs.join(port.layout_tests_dir(), "sar3", "a.html"), "x")
+        port._sar3_tests_enabled = lambda: True
+        self.assertNotIn("sar3", port.skipped_layout_tests(device_type=None))
+
+    def test_sar3_not_skipped_when_directory_absent(self):
+        port = self.make_port(with_tests=True)
+        port._sar3_tests_enabled = lambda: False
+        self.assertNotIn("sar3", port.skipped_layout_tests(device_type=None))
 
     def test_build_path(self):
         port = self.make_port(

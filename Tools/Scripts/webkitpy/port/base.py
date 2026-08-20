@@ -105,6 +105,18 @@ class Port(object):
     DEFAULT_DEVICE_TYPES = []
     DRIVER_NAMES = ('WebKitTestRunner',)
 
+    # LayoutTests-relative directories served over HTTP by the layout-test HTTP
+    # server. This is the single source of truth for HTTP-test classification,
+    # shared by LayoutTestFinder (Test.is_http_test) and Driver.is_http_test().
+    HTTP_TEST_ROOTS = ("http/tests", "sar3/http/tests")
+
+    # LayoutTests-relative directories holding WebKit-specific Web Platform Tests,
+    # served by the WPT server under a per-root URL prefix plus the shared "WebKit/"
+    # route. Single source of truth for WPT classification and URL mapping, shared
+    # by LayoutTestFinder (Test.is_wpt_test) and Driver. Mirrors HTTP_TEST_ROOTS and
+    # the sar3 staging area served by Apache.
+    WEB_PLATFORM_TEST_ROOTS = ("http/wpt", "sar3/http/wpt")
+
     # Do test runners support alias hostnames such as web-platform.test
     supports_localhost_aliases = False
 
@@ -613,9 +625,40 @@ class Port(object):
 
     def skipped_layout_tests(self, device_type=None):
         """Returns tests skipped outside of the TestExpectations files."""
-        return set(self._tests_for_other_platforms(device_type=device_type)) | set(
+        skipped = set(self._tests_for_other_platforms(device_type=device_type)) | set(
             self.get_option("ignore_tests", [])
         )
+        # LayoutTests/sar3/ runs only when WebKitTestRunner was built with the
+        # security acceleration release 3 (SAR3) feature (see _sar3_tests_enabled).
+        # When the feature is absent, skip the whole directory regardless of any
+        # sar3/TestExpectations file. Test for the directory first so the feature
+        # probe -- which needs the built driver and can fail when the checkout is
+        # not a real build tree -- runs only when there is a sar3/ to gate.
+        sar3_dir = self._filesystem.join(self.layout_tests_dir(), "sar3")
+        if self._filesystem.isdir(sar3_dir) and not self._sar3_tests_enabled():
+            skipped.add("sar3")
+        return skipped
+
+    # Whole Itanium mangled name of WTR::SAR3Enabled in WebKitTestRunner (verified
+    # empirically). Matched as a substring of raw `nm` output; Mach-O nm prints it
+    # as __ZN3WTR11SAR3EnabledE. Never demangled, never the bare identifier.
+    SAR3_GATE_SYMBOL = "_ZN3WTR11SAR3EnabledE"
+
+    @memoized
+    def _sar3_tests_enabled(self):
+        """True iff the built WebKitTestRunner contains the SAR3 gate symbol.
+
+        The symbol is compiled out when RC_REMOVE_SEC_ACCEL_3 is defined. Any
+        probe failure (binary missing/not built, nm/xcrun error, empty output)
+        is treated as absent, so LayoutTests/sar3/ is skipped."""
+        driver_path = self._path_to_driver()
+        if not driver_path or not self._filesystem.exists(driver_path):
+            return False
+        try:
+            output = self._executive.run_command(["/usr/bin/xcrun", "nm", driver_path])
+        except (ScriptError, OSError):
+            return False
+        return self.SAR3_GATE_SYMBOL in output
 
     @memoized
     def skipped_perf_tests(self):
@@ -833,6 +876,48 @@ class Port(object):
         if Port._web_platform_test_server:
             ports.extend(Port._web_platform_test_server.ports_to_forward())
         return ports
+
+    def http_test_roots(self):
+        """Ordered tuple of LayoutTests-relative directories classified as HTTP tests."""
+        return self.HTTP_TEST_ROOTS
+
+    def url_prefix_for_http_test_root(self, root):
+        """The URL path prefix a given HTTP-test root is served under.
+
+        The default root (`http_test_roots()[0]`, "http/tests") is served with
+        no prefix; an extra root like "sar3/http/tests" is served under
+        "sar3/". Every root ends with that shared subdirectory; the prefix is
+        whatever precedes it."""
+        suffix = self.HTTP_TEST_ROOTS[0]
+        return root[:-len(suffix)] if root.endswith(suffix) else root
+
+    def absolute_path_for_http_test_root(self, root):
+        """Absolute on-disk directory for an HTTP-test root (an entry of
+        http_test_roots(), e.g. "sar3/http/tests")."""
+        return self._filesystem.join(self.layout_tests_dir(), *root.split('/'))
+
+    def web_platform_test_roots(self):
+        """Ordered tuple of LayoutTests-relative directories holding WebKit-specific WPT tests."""
+        return self.WEB_PLATFORM_TEST_ROOTS
+
+    @classmethod
+    def url_prefix_for_web_platform_test_root(cls, root):
+        """The URL path prefix a given WPT root's "WebKit/" route is served under.
+
+        The default root (`web_platform_test_roots()[0]`, "http/wpt") is served at
+        /WebKit/ (no prefix); an extra root like "sar3/http/wpt" is served at
+        /sar3/WebKit/. Every root ends with that shared subdirectory; the prefix is
+        whatever precedes it. Mirrors url_prefix_for_http_test_root().
+
+        A classmethod so callers without a Port instance (e.g. LayoutTestFinder)
+        can share this single source of truth."""
+        suffix = cls.WEB_PLATFORM_TEST_ROOTS[0]
+        return root[:-len(suffix)] if root.endswith(suffix) else root
+
+    def absolute_path_for_web_platform_test_root(self, root):
+        """Absolute on-disk directory for a WPT root (an entry of
+        web_platform_test_roots(), e.g. "sar3/http/wpt")."""
+        return self._filesystem.join(self.layout_tests_dir(), *root.split('/'))
 
     def start_http_server(self, additional_dirs=None):
         """Start a web server. Raise an error if it can't start or is already running.
@@ -1062,7 +1147,17 @@ class Port(object):
         return [self._filesystem.join(self._webkit_baseline_path(d), 'TestExpectations') for d in search_paths]
 
     def expectations_files(self, device_type=None):
-        return [self.path_to_generic_test_expectations_file()] + self._port_specific_expectations_files(device_type=device_type)
+        files = [self.path_to_generic_test_expectations_file()] + self._port_specific_expectations_files(device_type=device_type)
+        # When the sar3 feature is present in the driver, honor per-test overrides
+        # in LayoutTests/sar3/TestExpectations. Appended last => highest priority
+        # among cascade files. Test for the directory first so the feature probe --
+        # which needs the built driver and can fail when the checkout is not a real
+        # build tree -- runs only when there is a sar3/ directory (and
+        # expectations_dict() filters a non-existent path anyway).
+        sar3_dir = self._filesystem.join(self.layout_tests_dir(), "sar3")
+        if self._filesystem.isdir(sar3_dir) and self._sar3_tests_enabled():
+            files.append(self._filesystem.join(sar3_dir, "TestExpectations"))
+        return files
 
     def repository_paths(self):
         """Returns a list of (repository_name, repository_path) tuples of its depending code base.

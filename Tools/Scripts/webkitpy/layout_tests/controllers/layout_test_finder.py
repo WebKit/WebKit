@@ -29,7 +29,30 @@ from collections import OrderedDict
 
 from webkitpy.layout_tests.controllers.test_result_writer import TestResultWriter
 from webkitpy.layout_tests.models.test import Test
+from webkitpy.port import Port
 from webkitpy.w3c.common import TEMPLATED_TEST_HEADER
+
+
+def _is_http_test_path(path):
+    """Classify `path` as an HTTP test against Port.HTTP_TEST_ROOTS -- the same
+    ordered list of roots Driver.is_http_test() consults -- via a directory-segment
+    match, so a root matches both at the start of the path and nested under a
+    platform-specific override directory (e.g. "platform/mac/http/tests/...")."""
+    return any(("/" + root + "/") in ("/" + path) for root in Port.HTTP_TEST_ROOTS)
+
+
+def _local_wpt_root_for_path(path):
+    """Return the Port.WEB_PLATFORM_TEST_ROOTS entry `path` lives under, or None.
+
+    Matches on a directory-segment boundary (like _is_http_test_path), so a root
+    matches both at the start of the path and nested under a platform-specific
+    override directory. Most-specific root first, so "sar3/http/wpt" wins over the
+    "http/wpt" substring it contains."""
+    for root in sorted(Port.WEB_PLATFORM_TEST_ROOTS, key=len, reverse=True):
+        if ("/" + root + "/") in ("/" + path):
+            return root
+    return None
+
 
 supported_test_extensions = (
     ".htm",
@@ -436,7 +459,7 @@ class LayoutTestFinder(object):
                 reference_files=(
                     tuple(reference_files) if reference_files is not None else None
                 ),
-                is_http_test="http/test" in trimmed_path,
+                is_http_test=_is_http_test_path(trimmed_path),
                 is_websocket_test=(
                     "websocket/" in trimmed_path
                     or "http/test" in trimmed_path
@@ -444,7 +467,7 @@ class LayoutTestFinder(object):
                 ),
                 is_wpt_test=(
                     "imported/w3c/web-platform-tests/" in trimmed_path
-                    or "http/wpt/" in trimmed_path
+                    or _local_wpt_root_for_path(trimmed_path) is not None
                 ),
                 is_wpt_crash_test=self.is_wpt_crash_test(trimmed_path),
             )
@@ -602,7 +625,7 @@ class LayoutTestFinder(object):
 
     def is_wpt_crash_test(self, name):
         # This shouldn't exist, we should be reading the WPT manifest instead.
-        if "imported/w3c/web-platform-tests/" not in name and "http/wpt/" not in name:
+        if "imported/w3c/web-platform-tests/" not in name and _local_wpt_root_for_path(name) is None:
             return False
 
         filename, _ = self.fs.splitext(name)
