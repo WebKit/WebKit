@@ -20,12 +20,15 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import logging
 import re
 from functools import cmp_to_key
 from unittest.mock import patch
 
 from webkitcorepy import string_utils, unicode
 from webkitcorepy.mocks import ContextStack
+
+_log = logging.getLogger(__name__)
 
 
 class ProcessCompletion(object):
@@ -158,13 +161,19 @@ class Subprocess(ContextStack):
 
     @classmethod
     def completion_for(cls, *args, **kwargs):
-        candidates = [
-            candidate for candidate in cls.completion_generator_for(args[0]) if candidate.matches(*args, **kwargs)
-        ]
+        all_candidates = cls.completion_generator_for(args[0])
+        candidates = []
+        for candidate in all_candidates:
+            matches = candidate.matches(*args, **kwargs)
+            _log.debug(f'Route {candidate.args}: matches={matches}')
+            if matches:
+                candidates.append(candidate)
+
         if not candidates:
             raise AssertionError('Provided arguments to {} do not match a provided completion'.format(args[0]))
 
         completion = candidates[0]
+        _log.debug(f'Selected route: {completion.args}')
         current = cls.top
         while current:
             if current.ordered and completion is current.completions[0]:
