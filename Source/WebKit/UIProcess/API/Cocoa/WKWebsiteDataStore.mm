@@ -1524,7 +1524,7 @@ struct WKWebsiteData {
 + (void)_setDisabledSecurityFlagsForTesting:(NSArray<NSString *> *)flagNames
 {
 #if defined(ENGINEERING_BUILD) && ENGINEERING_BUILD
-    WebKit::SecurityFlagsController::singleton().setDisabledFlagsNamed(makeVector<String>(flagNames));
+    WebKit::SecurityFlagsController::singleton().setDisabledFlagsNamedForTesting(makeVector<String>(flagNames));
 #endif // ENGINEERING_BUILD
 }
 

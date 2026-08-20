@@ -117,6 +117,30 @@ TEST_F(SecurityFlagsTest, UnknownFlagNameIsIgnored)
     EXPECT_EQ(flagStateInNetworkProcess(dataStore.get(), @"radar99999999"), FlagState::NoSuchFlag);
 }
 
+static NSString * const disabledSecurityFlagsDefaultsKey = @"WebKitDebugDisabledSecurityFlags";
+
+class SecurityFlagsUserDefaultTest : public testing::Test {
+public:
+    void SetUp() final { [NSUserDefaults.standardUserDefaults setObject:@[testSecurityFlagName] forKey:disabledSecurityFlagsDefaultsKey]; }
+
+    void TearDown() final { [NSUserDefaults.standardUserDefaults removeObjectForKey:disabledSecurityFlagsDefaultsKey]; }
+};
+
+TEST_F(SecurityFlagsUserDefaultTest, DisablesFlagAtStartup)
+{
+    auto dataStore = launchNetworkProcess();
+    EXPECT_EQ(flagStateInNetworkProcess(dataStore.get(), testSecurityFlagName), FlagState::Disabled);
+}
+
+TEST_F(SecurityFlagsUserDefaultTest, TestingSPIIgnoresTheUserDefault)
+{
+    auto dataStore = launchNetworkProcess();
+    EXPECT_EQ(flagStateInNetworkProcess(dataStore.get(), testSecurityFlagName), FlagState::Disabled);
+
+    [WKWebsiteDataStore _setDisabledSecurityFlagsForTesting:@[]];
+    EXPECT_EQ(flagStateInNetworkProcess(dataStore.get(), testSecurityFlagName), FlagState::Enforced);
+}
+
 } // namespace TestWebKitAPI
 
 #endif // ENGINEERING_BUILD

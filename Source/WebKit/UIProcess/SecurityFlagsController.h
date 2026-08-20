@@ -29,6 +29,7 @@
 #include <wtf/Forward.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {
@@ -43,14 +44,24 @@ public:
     const SecurityFlags& securityFlags() const LIFETIME_BOUND { return m_securityFlags; }
 
     // The list is the whole truth: every flag it does not name is enforced, so an empty list resets everything.
+    // Flags named by the user default stay disabled regardless.
     void setDisabledFlagsNamed(const Vector<String>&);
+
+    // Ignores the user default, so a test gets the state it asked for on a device that has one set.
+    void setDisabledFlagsNamedForTesting(const Vector<String>&);
 
 private:
     friend class WTF::NeverDestroyed<SecurityFlagsController>;
-    SecurityFlagsController() = default;
+    SecurityFlagsController();
 
+    enum class IncludePersistentNames : bool { No, Yes };
+    SecurityFlags flagsWithNamesDisabled(const Vector<String>&, IncludePersistentNames) const;
+    void apply(const SecurityFlags&);
     void propagateToChildProcesses();
 
+    static Vector<String> platformPersistentlyDisabledFlagNames();
+
+    Vector<String> m_persistentlyDisabledNames;
     SecurityFlags m_securityFlags;
 };
 
