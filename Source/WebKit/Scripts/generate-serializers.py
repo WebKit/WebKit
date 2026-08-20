@@ -762,7 +762,7 @@ def generate_forward_declarations(serialized_types, serialized_enums, additional
                 less_than_index = name.find('<')
                 if less_than_index == -1:
                     result.append(f'{type.cpp_type_from_struct_or_class()} {name};')
-                elif name[:less_than_index] != 'GRefPtr':
+                else:
                     result.append(f'template<typename> {type.cpp_type_from_struct_or_class()} {name[:less_than_index]};')
             if type.condition is not None:
                 result.append('#endif')

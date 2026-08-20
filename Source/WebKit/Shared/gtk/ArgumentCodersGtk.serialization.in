@@ -28,11 +28,11 @@ header: "CoreIPCGtkPrint.h"
 additional_forward_declaration: typedef struct _GtkPrintSettings GtkPrintSettings
 additional_forward_declaration: typedef struct _GtkPageSetup GtkPageSetup
 
-[Wrapper=WebKit::CoreIPCGtkPrintSettings] class GRefPtr<GtkPrintSettings> {
+[GRefPtrWrapped=GtkPrintSettings, CustomHeader] class WebKit::CoreIPCGtkPrintSettings {
     GRefPtr<GVariant> settings();
 }
 
-[Wrapper=WebKit::CoreIPCGtkPageSetup] class GRefPtr<GtkPageSetup> {
+[GRefPtrWrapped=GtkPageSetup, CustomHeader] class WebKit::CoreIPCGtkPageSetup {
     GRefPtr<GVariant> pageSetup();
 }
 

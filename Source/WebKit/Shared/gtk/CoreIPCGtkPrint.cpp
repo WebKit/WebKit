@@ -33,7 +33,7 @@
 namespace WebKit {
 
 CoreIPCGtkPrintSettings::CoreIPCGtkPrintSettings(const GRefPtr<GtkPrintSettings>& settings)
-    : m_settings(gtk_print_settings_to_gvariant(settings ? settings.get() : adoptGRef(gtk_print_settings_new()).get()))
+    : m_settings(gtk_print_settings_to_gvariant(settings.get()))
 {
 }
 
@@ -45,7 +45,7 @@ CoreIPCGtkPrintSettings::operator GRefPtr<GtkPrintSettings>() const
 }
 
 CoreIPCGtkPageSetup::CoreIPCGtkPageSetup(const GRefPtr<GtkPageSetup>& pageSetup)
-    : m_pageSetup(gtk_page_setup_to_gvariant(pageSetup ? pageSetup.get() : adoptGRef(gtk_page_setup_new()).get()))
+    : m_pageSetup(gtk_page_setup_to_gvariant(pageSetup.get()))
 {
 }
 
