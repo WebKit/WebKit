@@ -24,6 +24,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+// https://html.spec.whatwg.org/multipage/canvas.html#htmlcanvaselement
+
 typedef (
 #if defined(ENABLE_WEBGL) && ENABLE_WEBGL
     WebGLRenderingContext or
@@ -53,8 +55,8 @@ typedef (Element or CanvasElementImage) CanvasElementImageSource;
 
     [CallWith=CurrentGlobalObject] RenderingContext? getContext(DOMString contextId, any... arguments);
 
-    DOMString toDataURL(optional DOMString type, optional any quality);
-    undefined toBlob(BlobCallback callback, optional DOMString type, optional any quality);
+    USVString toDataURL(optional DOMString type = "image/png", optional any quality);
+    undefined toBlob(BlobCallback callback, optional DOMString type = "image/png", optional any quality);
     [Conditional=OFFSCREEN_CANVAS, EnabledBySetting=OffscreenCanvasEnabled, NewObject] OffscreenCanvas transferControlToOffscreen();
 
     [Conditional=MEDIA_STREAM, NewObject] MediaStream captureStream(optional double frameRequestRate);
