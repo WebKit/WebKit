@@ -6939,7 +6939,7 @@ PropagateDamagingInformation:
      WebKitLegacy:
        default: false
      WebKit:
-       "PLATFORM(GTK)": true
+       "PLATFORM(GTK) || PLATFORM(WPE)": true
        default: false
      WebCore:
        default: false
