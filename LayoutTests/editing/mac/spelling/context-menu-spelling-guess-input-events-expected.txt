@@ -1,0 +1,23 @@
+
+Verifies that choosing a spelling suggestion from the context menu fires beforeinput and input events with inputType 'insertReplacementText' rather than 'insertText'. To manually test, right click the misspelled word and choose one of the suggestions at the top of the menu.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Rich text (contenteditable):
+PASS inputTypes() is "beforeinput=insertReplacementText, input=insertReplacementText"
+PASS events[0].data is null
+PASS events[0].dataTransfer is non-null.
+PASS events[0].cancelable is true
+PASS events[1].cancelable is false
+
+Plain text (input):
+PASS inputTypes() is "beforeinput=insertReplacementText, input=insertReplacementText"
+PASS events[0].data.length > 0 is true
+PASS events[0].dataTransfer is null
+PASS events[0].cancelable is true
+PASS events[1].cancelable is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

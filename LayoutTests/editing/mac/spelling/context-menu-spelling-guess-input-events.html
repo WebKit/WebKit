@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+</head>
+<body>
+<div id="editable" contenteditable>welllcome</div>
+<input id="plainText">
+<p id="description"></p>
+<p id="console"></p>
+</body>
+<script>
+description("Verifies that choosing a spelling suggestion from the context menu fires beforeinput and input events with inputType 'insertReplacementText' rather than 'insertText'. To manually test, right click the misspelled word and choose one of the suggestions at the top of the menu.");
+
+let events = [];
+
+function logInputEvent(event)
+{
+    events.push(event);
+}
+
+function chooseFirstSpellingGuess(element)
+{
+    element.focus();
+
+    // Context click over the misspelled word itself; on macOS the word under the cursor is what gets checked.
+    let point;
+    if (element.tagName === "INPUT") {
+        element.setSelectionRange(0, element.value.length);
+        let rect = element.getBoundingClientRect();
+        point = { x: rect.left + 12, y: rect.top + rect.height / 2 };
+    } else {
+        let range = document.createRange();
+        range.selectNodeContents(element);
+        getSelection().removeAllRanges();
+        getSelection().addRange(range);
+        let rect = range.getBoundingClientRect();
+        point = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
+    }
+
+    eventSender.mouseMoveTo(point.x, point.y);
+    let items = eventSender.contextClick();
+
+    // Spelling suggestions are the leading items, followed by a separator and "Ignore Spelling".
+    // Bail out rather than clicking an arbitrary item if this isn't a misspelled-word menu.
+    if (!items.some(item => item.title === "Ignore Spelling")) {
+        testFailed(`context menu for #${element.id} has no spelling suggestions: ${items.map(item => JSON.stringify(item.title)).join(", ")}`);
+        return false;
+    }
+
+    events = [];
+    items[0].click();
+    return true;
+}
+
+function inputTypes()
+{
+    return events.map(event => `${event.type}=${event.inputType}`).join(", ");
+}
+
+editable = document.getElementById("editable");
+plainText = document.getElementById("plainText");
+plainText.value = "welllcome";
+
+for (let element of [editable, plainText]) {
+    element.addEventListener("beforeinput", logInputEvent);
+    element.addEventListener("input", logInputEvent);
+}
+
+if (window.eventSender) {
+    debug("Rich text (contenteditable):");
+    if (chooseFirstSpellingGuess(editable)) {
+        shouldBeEqualToString("inputTypes()", "beforeinput=insertReplacementText, input=insertReplacementText");
+        shouldBeNull("events[0].data");
+        shouldBeNonNull("events[0].dataTransfer");
+        shouldBeTrue("events[0].cancelable");
+        shouldBeFalse("events[1].cancelable");
+    }
+    debug("");
+
+    debug("Plain text (input):");
+    if (chooseFirstSpellingGuess(plainText)) {
+        shouldBeEqualToString("inputTypes()", "beforeinput=insertReplacementText, input=insertReplacementText");
+        shouldBeTrue("events[0].data.length > 0");
+        shouldBeNull("events[0].dataTransfer");
+        shouldBeTrue("events[0].cancelable");
+        shouldBeFalse("events[1].cancelable");
+    }
+
+    // The chosen suggestion comes from the system dictionary, so don't leave it in the text dump.
+    editable.textContent = "";
+    plainText.value = "";
+}
+</script>
+</html>

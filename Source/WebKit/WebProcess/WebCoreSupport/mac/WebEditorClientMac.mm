@@ -86,7 +86,7 @@ static void applyTextTransformation(WebPage& page, NSString *(*transform)(NSStri
     editor->command("selectWord"_s).execute();
 
     RetainPtr selectedString = frame->displayStringModifiedByEncoding(editor->selectedText()).createNSString();
-    page.replaceSelectionWithText(frame.get(), transform(selectedString.get()));
+    page.replaceSelectionWithText(frame.get(), transform(selectedString.get()), WebCore::EditAction::Insert);
 }
 
 void WebEditorClient::uppercaseWord()

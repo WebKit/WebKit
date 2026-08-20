@@ -249,6 +249,7 @@ enum class DragApplicationFlags : uint8_t;
 enum class DragHandlingMethod : uint8_t;
 enum class DragEventHandled : bool;
 enum class DeviceOrientationOrMotionPermissionState : uint8_t;
+enum class EditAction : uint8_t;
 enum class EventHandling : uint8_t;
 enum class EventMakesGamepadsVisible : bool;
 enum class ExceptionCode : uint8_t;
@@ -1439,7 +1440,7 @@ public:
     bool NODELETE isSelectTrailingWhitespaceEnabled() const;
     void NODELETE setSelectTrailingWhitespaceEnabled(bool);
 
-    void replaceSelectionWithText(WebCore::LocalFrame*, const String&);
+    void replaceSelectionWithText(WebCore::LocalFrame*, const String&, WebCore::EditAction);
     void clearSelection();
     void restoreSelectionInFocusedEditableElement();
 

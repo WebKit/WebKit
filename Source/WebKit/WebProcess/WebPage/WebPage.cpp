@@ -6643,7 +6643,7 @@ bool WebPage::hasRichlyEditableSelection() const
 
 void WebPage::changeSpellingToWord(const String& word)
 {
-    replaceSelectionWithText(protect(corePage()->focusController().focusedOrMainFrame()).get(), word);
+    replaceSelectionWithText(protect(corePage()->focusController().focusedOrMainFrame()).get(), word, EditAction::InsertReplacement);
 }
 
 void WebPage::unmarkAllMisspellings()
@@ -6769,9 +6769,9 @@ void WebPage::didSelectItemFromActiveContextMenu(const WebContextMenuItemData& i
 }
 #endif
 
-void WebPage::replaceSelectionWithText(LocalFrame* frame, const String& text)
+void WebPage::replaceSelectionWithText(LocalFrame* frame, const String& text, EditAction editingAction)
 {
-    return protect(frame->editor())->replaceSelectionWithText(text, WebCore::Editor::SelectReplacement::Yes, WebCore::Editor::SmartReplace::No);
+    return protect(frame->editor())->replaceSelectionWithText(text, Editor::SelectReplacement::Yes, Editor::SmartReplace::No, editingAction);
 }
 
 #if !PLATFORM(IOS_FAMILY)
