@@ -858,7 +858,7 @@ void PNGImageDecoder::frameComplete()
             }
 #if USE(LCMS)
             if (m_iccTransform)
-                cmsDoTransform(m_iccTransform.get(), destinationRow.data(), destinationRow.data(), rect.maxX());
+                cmsDoTransform(m_iccTransform.get(), destinationRow.data(), destinationRow.data(), rect.width());
 #endif
         }
 
