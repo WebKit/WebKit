@@ -194,7 +194,7 @@ void WebCodecsImageDecoder::fulfillPendingDecodePromises(size_t frameIndex, RefP
     IntSize frameSize = internalDecoder->frameSizeAtIndex(frameIndex);
 
     WebCodecsVideoFrame::Init init {
-        .duration = static_cast<uint64_t>(internalDecoder->frameDurationAtIndex(frameIndex).value()),
+        .duration = static_cast<uint64_t>(internalDecoder->frameDurationAtIndex(frameIndex).microseconds()),
         .timestamp = std::nullopt,
         .alpha = WebCodecsAlphaOption::Keep,
         .visibleRect = std::nullopt,
