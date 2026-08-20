@@ -209,11 +209,11 @@ RefPtr<Element> unsplittableElementForPosition(const Position& position)
     return editableRootForPosition(position);
 }
 
-Position nextCandidate(const Position& position)
+Position nextCandidate(const Position& position, AllowUserSelectNone allowUserSelectNone)
 {
     for (PositionIterator nextPosition = position; !nextPosition.atEnd(); ) {
         nextPosition.increment();
-        if (nextPosition.isCandidate())
+        if (nextPosition.isCandidate(allowUserSelectNone))
             return nextPosition;
     }
     return { };
@@ -241,12 +241,12 @@ Position nextVisuallyDistinctCandidate(const Position& position, SkipDisplayCont
     return { };
 }
 
-Position previousCandidate(const Position& position)
+Position previousCandidate(const Position& position, AllowUserSelectNone allowUserSelectNone)
 {
     PositionIterator previousPosition = position;
     while (!previousPosition.atStart()) {
         previousPosition.decrement();
-        if (previousPosition.isCandidate())
+        if (previousPosition.isCandidate(allowUserSelectNone))
             return previousPosition;
     }
     return { };
@@ -1026,11 +1026,11 @@ VisiblePosition visiblePositionForPositionWithOffset(const VisiblePosition& posi
     return visiblePositionForIndex(startIndex + offset, root.get());
 }
 
-VisiblePosition visiblePositionForIndex(int index, Node* scope, TextIteratorBehaviors behaviors)
+VisiblePosition visiblePositionForIndex(int index, Node* scope, TextIteratorBehaviors behaviors, AllowUserSelectNone allowUserSelectNone)
 {
     if (!scope)
         return { };
-    return { makeDeprecatedLegacyPosition(resolveCharacterLocation(makeRangeSelectingNodeContents(*scope), index, behaviors)) };
+    return { makeDeprecatedLegacyPosition(resolveCharacterLocation(makeRangeSelectingNodeContents(*scope), index, behaviors)), VisiblePosition::defaultAffinity, allowUserSelectNone };
 }
 
 VisiblePosition visiblePositionForIndexUsingCharacterIterator(Node& node, int index)

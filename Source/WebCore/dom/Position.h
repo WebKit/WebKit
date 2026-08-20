@@ -51,6 +51,8 @@ enum PositionMoveType {
     BackwardDeletion // Subject to platform conventions.
 };
 
+enum class AllowUserSelectNone : bool { No, Yes };
+
 struct InlineBoxAndOffset;
 
 class Position {
@@ -174,7 +176,7 @@ public:
     WEBCORE_EXPORT Position upstream(EditingBoundaryCrossingRule = CannotCrossEditingBoundary) const;
     WEBCORE_EXPORT Position downstream(EditingBoundaryCrossingRule = CannotCrossEditingBoundary) const;
     
-    bool isCandidate() const;
+    bool isCandidate(AllowUserSelectNone = AllowUserSelectNone::No) const;
     bool isRenderedCharacter() const;
     bool rendersInDifferentPosition(const Position&) const;
 

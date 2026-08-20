@@ -909,8 +909,8 @@ AccessibilityObjectAtspi::TextAttributes AccessibilityObjectAtspi::textAttribute
         endPosition = lastPositionInOrAfterNode(endRenderer->node());
     }
 
-    auto startOffset = adjustOutputOffset(m_coreObject->indexForVisiblePosition(startPosition), m_hasListMarkerAtStart);
-    auto endOffset = adjustOutputOffset(m_coreObject->indexForVisiblePosition(endPosition), m_hasListMarkerAtStart);
+    auto startOffset = adjustOutputOffset(m_coreObject->indexForVisiblePosition(VisiblePosition(startPosition, VisiblePosition::defaultAffinity, AllowUserSelectNone::Yes)), m_hasListMarkerAtStart);
+    auto endOffset = adjustOutputOffset(m_coreObject->indexForVisiblePosition(VisiblePosition(endPosition, VisiblePosition::defaultAffinity, AllowUserSelectNone::Yes)), m_hasListMarkerAtStart);
     if (!includeDefault)
         return { WTF::move(attributes), startOffset, endOffset };
 

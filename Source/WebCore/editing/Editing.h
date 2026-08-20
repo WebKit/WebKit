@@ -135,8 +135,8 @@ WEBCORE_EXPORT EnclosingLayerInfomation computeEnclosingLayer(const SimpleRange&
 // Position
 // -------------------------------------------------------------------------
 
-Position nextCandidate(const Position&);
-Position previousCandidate(const Position&);
+Position nextCandidate(const Position&, AllowUserSelectNone = AllowUserSelectNone::No);
+Position previousCandidate(const Position&, AllowUserSelectNone = AllowUserSelectNone::No);
 
 enum class SkipDisplayContents : bool { No, Yes };
 Position nextVisuallyDistinctCandidate(const Position&, SkipDisplayContents = SkipDisplayContents::Yes);
@@ -171,7 +171,7 @@ bool lineBreakExistsAtVisiblePosition(const VisiblePosition&);
 WEBCORE_EXPORT int indexForVisiblePosition(const VisiblePosition&, RefPtr<ContainerNode>& scope);
 int indexForVisiblePosition(Node&, const VisiblePosition&, TextIteratorBehaviors);
 WEBCORE_EXPORT VisiblePosition visiblePositionForPositionWithOffset(const VisiblePosition&, int offset);
-WEBCORE_EXPORT VisiblePosition visiblePositionForIndex(int index, Node* scope, TextIteratorBehaviors = TextIteratorBehavior::EmitsCharactersBetweenAllVisiblePositions);
+WEBCORE_EXPORT VisiblePosition visiblePositionForIndex(int index, Node* scope, TextIteratorBehaviors = TextIteratorBehavior::EmitsCharactersBetweenAllVisiblePositions, AllowUserSelectNone = AllowUserSelectNone::No);
 VisiblePosition visiblePositionForIndexUsingCharacterIterator(Node&, int index); // FIXME: Why do we need this version?
 
 WEBCORE_EXPORT VisiblePosition closestEditablePositionInElementForAbsolutePoint(const Element&, const IntPoint&);

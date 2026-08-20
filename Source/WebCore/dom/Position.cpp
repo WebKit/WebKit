@@ -1001,7 +1001,7 @@ RefPtr<Node> Position::rootUserSelectAllForNode(Node* node)
 }
 
 // This function should be kept in sync with PositionIterator::isCandidate().
-bool Position::isCandidate() const
+bool Position::isCandidate(AllowUserSelectNone allowUserSelectNone) const
 {
     if (isNull())
         return false;
@@ -1021,13 +1021,13 @@ bool Position::isCandidate() const
 
     if (is<RenderText>(*renderer)) {
         auto [resolvedText, resolvedOffset] = resolvedTextRendererAndOffset();
-        return !nodeIsUserSelectNone(node.get()) && resolvedText && resolvedText->containsCaretOffset(resolvedOffset);
+        return (allowUserSelectNone == AllowUserSelectNone::Yes || !nodeIsUserSelectNone(node.get())) && resolvedText && resolvedText->containsCaretOffset(resolvedOffset);
     }
 
     if (positionBeforeOrAfterNodeIsCandidate(*node)) {
         return ((atFirstEditingPositionForNode() && m_anchorType == PositionIsBeforeAnchor)
             || (atLastEditingPositionForNode() && m_anchorType == PositionIsAfterAnchor))
-            && !nodeIsUserSelectNone(node->parentNode());
+            && (allowUserSelectNone == AllowUserSelectNone::Yes || !nodeIsUserSelectNone(node->parentNode()));
     }
 
     if (is<HTMLHtmlElement>(*m_anchorNode))
@@ -1037,14 +1037,14 @@ bool Position::isCandidate() const
         if (isAnyOf<RenderBlockFlow, RenderGrid, RenderFlexibleBox>(*block)) {
             if (block->logicalHeight() || is<HTMLBodyElement>(*m_anchorNode) || protect(m_anchorNode)->isRootEditableElement()) {
                 if (!Position::hasRenderedNonAnonymousDescendantsWithHeight(*block))
-                    return atFirstEditingPositionForNode() && !Position::nodeIsUserSelectNone(node.get());
-                return protect(m_anchorNode)->hasEditableStyle() && !Position::nodeIsUserSelectNone(node.get()) && atEditingBoundary();
+                    return atFirstEditingPositionForNode() && (allowUserSelectNone == AllowUserSelectNone::Yes  || !Position::nodeIsUserSelectNone(node.get()));
+                return protect(m_anchorNode)->hasEditableStyle() && (allowUserSelectNone == AllowUserSelectNone::Yes || !Position::nodeIsUserSelectNone(node.get())) && atEditingBoundary();
             }
             return false;
         }
     }
 
-    return protect(m_anchorNode)->hasEditableStyle() && !Position::nodeIsUserSelectNone(node.get()) && atEditingBoundary();
+    return protect(m_anchorNode)->hasEditableStyle() && (allowUserSelectNone == AllowUserSelectNone::Yes || !Position::nodeIsUserSelectNone(node.get())) && atEditingBoundary();
 }
 
 bool Position::isRenderedCharacter() const

@@ -159,7 +159,7 @@ bool PositionIterator::atEndOfNode() const
 }
 
 // This function should be kept in sync with Position::isCandidate().
-bool PositionIterator::isCandidate() const
+bool PositionIterator::isCandidate(AllowUserSelectNone allowUserSelectNone) const
 {
     RefPtr anchorNode = node();
     if (!anchorNode)
@@ -176,14 +176,14 @@ bool PositionIterator::isCandidate() const
         return Position(*this).isCandidate();
 
     if (is<RenderText>(*renderer)) {
-        if (Position::nodeIsUserSelectNone(anchorNode.get()))
+        if (Position::nodeIsUserSelectNone(anchorNode.get()) && allowUserSelectNone == AllowUserSelectNone::No)
             return false;
         auto [resolvedText, resolvedOffset] = Position(*this).resolvedTextRendererAndOffset();
         return resolvedText && resolvedText->containsCaretOffset(resolvedOffset);
     }
 
     if (positionBeforeOrAfterNodeIsCandidate(*anchorNode))
-        return (atStartOfNode() || atEndOfNode()) && !Position::nodeIsUserSelectNone(anchorNode->parentNode());
+        return (atStartOfNode() || atEndOfNode()) && (allowUserSelectNone == AllowUserSelectNone::Yes || !Position::nodeIsUserSelectNone(anchorNode->parentNode()));
 
     if (is<HTMLHtmlElement>(*anchorNode))
         return false;
@@ -192,14 +192,14 @@ bool PositionIterator::isCandidate() const
         if (isAnyOf<RenderBlockFlow, RenderGrid, RenderFlexibleBox>(*block)) {
             if (block->logicalHeight() || is<HTMLBodyElement>(*anchorNode) || anchorNode->isRootEditableElement()) {
                 if (!Position::hasRenderedNonAnonymousDescendantsWithHeight(*block))
-                    return atStartOfNode() && !Position::nodeIsUserSelectNone(anchorNode.get());
-                return anchorNode->hasEditableStyle() && !Position::nodeIsUserSelectNone(anchorNode.get()) && Position(*this).atEditingBoundary();
+                    return atStartOfNode() && (allowUserSelectNone == AllowUserSelectNone::Yes || !Position::nodeIsUserSelectNone(anchorNode.get()));
+                return anchorNode->hasEditableStyle() && (allowUserSelectNone == AllowUserSelectNone::Yes || !Position::nodeIsUserSelectNone(anchorNode.get())) && Position(*this).atEditingBoundary();
             }
             return false;
         }
     }
 
-    return anchorNode->hasEditableStyle() && !Position::nodeIsUserSelectNone(anchorNode.get()) && Position(*this).atEditingBoundary();
+    return anchorNode->hasEditableStyle() && (allowUserSelectNone == AllowUserSelectNone::Yes || !Position::nodeIsUserSelectNone(anchorNode.get())) && Position(*this).atEditingBoundary();
 }
 
 } // namespace WebCore

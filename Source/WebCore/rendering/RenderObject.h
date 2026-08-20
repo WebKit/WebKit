@@ -28,6 +28,7 @@
 #include <WebCore/CachedImageClient.h>
 #include <WebCore/LayoutRect.h>
 #include <WebCore/PlatformLayerIdentifier.h>
+#include <WebCore/Position.h>
 #include <WebCore/RenderObjectEnums.h>
 #include <WebCore/RenderStyleConstants.h>
 #include <WebCore/RepaintRectCalculation.h>
@@ -803,7 +804,7 @@ public:
     PositionWithAffinity createPositionWithAffinity(int offset, Affinity) const;
     PositionWithAffinity createPositionWithAffinity(const Position&) const;
 
-    WEBCORE_EXPORT VisiblePosition visiblePositionForPoint(const LayoutPoint&, HitTestSource);
+    WEBCORE_EXPORT VisiblePosition visiblePositionForPoint(const LayoutPoint&, HitTestSource, AllowUserSelectNone = AllowUserSelectNone::No);
 
     // Returns the containing block level element for this element.
     WEBCORE_EXPORT RenderBlock* containingBlock() const;

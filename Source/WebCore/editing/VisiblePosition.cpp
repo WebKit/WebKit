@@ -70,8 +70,9 @@ static RenderTextFragment* remainingTextFragmentForFirstLetter(const RenderObjec
     return { };
 }
 
-VisiblePosition::VisiblePosition(const Position& position, Affinity affinity)
-    : m_deepPosition { canonicalPosition(position) }
+VisiblePosition::VisiblePosition(const Position& position, Affinity affinity, AllowUserSelectNone allowUserSelectNone)
+    : m_deepPosition(canonicalPosition(position, allowUserSelectNone))
+    , m_allowUserSelectNone(allowUserSelectNone)
 {
     if (affinity == Affinity::Upstream && !isNull()) {
         auto upstreamCopy = *this;
@@ -502,7 +503,7 @@ VisiblePosition VisiblePosition::honorEditingBoundaryAtOrBefore(const VisiblePos
     }
 
     // Return the last position before pos that is in the same editable region as this position
-    return lastEditablePositionBeforePositionInRoot(position.deepEquivalent(), highestRoot.get());
+    return VisiblePosition(lastEditablePositionBeforePositionInRoot(position.deepEquivalent(), highestRoot.get()), VisiblePosition::defaultAffinity, position.allowUserSelectNone());
 }
 
 VisiblePosition VisiblePosition::honorEditingBoundaryAtOrAfter(const VisiblePosition& otherPosition, bool* reachedBoundary) const
@@ -539,21 +540,21 @@ VisiblePosition VisiblePosition::honorEditingBoundaryAtOrAfter(const VisiblePosi
     }
 
     // Return the next position after pos that is in the same editable region as this position
-    return firstEditablePositionAfterPositionInRoot(otherPosition.deepEquivalent(), highestRoot.get());
+    return VisiblePosition(firstEditablePositionAfterPositionInRoot(otherPosition.deepEquivalent(), highestRoot.get()), VisiblePosition::defaultAffinity, otherPosition.allowUserSelectNone());
 }
 
-static Position canonicalizeCandidate(const Position& candidate)
+static Position canonicalizeCandidate(const Position& candidate, AllowUserSelectNone allowUserSelectNone)
 {
     if (candidate.isNull())
         return Position();
-    ASSERT(candidate.isCandidate());
+    ASSERT(candidate.isCandidate(allowUserSelectNone));
     Position upstream = candidate.upstream();
-    if (upstream.isCandidate())
+    if (upstream.isCandidate(allowUserSelectNone))
         return upstream;
     return candidate;
 }
 
-Position VisiblePosition::canonicalPosition(const Position& passedPosition)
+Position VisiblePosition::canonicalPosition(const Position& passedPosition, AllowUserSelectNone allowUserSelectNone)
 {
     // The updateLayout call below can do so much that even the position passed
     // in to us might get changed as a side effect. Specifically, there are code
@@ -574,16 +575,16 @@ Position VisiblePosition::canonicalPosition(const Position& passedPosition)
     RefPtr node = position.containerNode();
 
     Position candidate = position.upstream();
-    if (candidate.isCandidate())
+    if (candidate.isCandidate(allowUserSelectNone))
         return candidate;
     candidate = position.downstream();
-    if (candidate.isCandidate())
+    if (candidate.isCandidate(allowUserSelectNone))
         return candidate;
 
     // When neither upstream or downstream gets us to a candidate (upstream/downstream won't leave 
     // blocks or enter new ones), we search forward and backward until we find one.
-    Position next = canonicalizeCandidate(nextCandidate(position));
-    Position prev = canonicalizeCandidate(previousCandidate(position));
+    Position next = canonicalizeCandidate(nextCandidate(position, allowUserSelectNone), allowUserSelectNone);
+    Position prev = canonicalizeCandidate(previousCandidate(position, allowUserSelectNone), allowUserSelectNone);
     RefPtr nextNode = next.deprecatedNode();
     RefPtr prevNode = prev.deprecatedNode();
 
