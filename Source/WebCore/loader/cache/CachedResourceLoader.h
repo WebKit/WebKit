@@ -213,6 +213,7 @@ private:
 
     bool canRequestAfterRedirection(CachedResource::Type, const URL&, const ResourceLoaderOptions&, const URL& preRedirectURL) const;
     bool canRequestInContentDispositionAttachmentSandbox(CachedResource::Type, const URL&) const;
+    bool isNoCorsCrossOriginRequestToURLSchemeHandler(CachedResource::Type, const URL&, const ResourceLoaderOptions&) const;
 
     MemoryCompactRobinHoodHashSet<URL> m_validatedURLs;
     MemoryCompactRobinHoodHashSet<URL> m_cachedSVGImagesURLs;

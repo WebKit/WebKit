@@ -553,6 +553,8 @@ public:
     void remoteAudioSessionConfigurationChanged(const RemoteAudioSessionConfiguration&);
 #endif
 
+    void registerURLSchemeAsCORSEnabled(const String&);
+
 private:
     WebProcess();
     ~WebProcess();
@@ -594,7 +596,6 @@ private:
     void registerURLSchemeAsNoAccess(const String&) const;
 #endif
     void registerURLSchemeAsDisplayIsolated(const String&) const;
-    void registerURLSchemeAsCORSEnabled(const String&);
     void registerURLSchemeAsAlwaysRevalidated(const String&) const;
     void registerURLSchemeAsCachePartitioned(const String&) const;
     void registerURLSchemeAsCanDisplayOnlyIfCanRequest(const String&) const;

@@ -38,10 +38,6 @@
 #import <WebKit/_WKArchiveConfiguration.h>
 #import <WebKit/_WKArchiveExclusionRule.h>
 
-#if PLATFORM(IOS_FAMILY)
-#import <MobileCoreServices/MobileCoreServices.h>
-#endif
-
 namespace TestWebKitAPI {
 
 static const char* mainBytes = R"TESTRESOURCE(
@@ -114,7 +110,7 @@ TEST(WebArchive, CreateCustomScheme)
     done = false;
 
     [webView performAfterReceivingMessage:@"done" action:[&] { done = true; }];
-    [webView loadData:archiveData.get() MIMEType:UTTypeArchive.identifier characterEncodingName:@"utf-8" baseURL:[NSURL URLWithString:@"about:blank"]];
+    [webView loadData:archiveData.get() MIMEType:@"application/x-webarchive" characterEncodingName:@"utf-8" baseURL:[NSURL URLWithString:@"about:blank"]];
 
     Util::run(&done);
     done = false;
