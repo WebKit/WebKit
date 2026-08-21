@@ -712,7 +712,8 @@ void ComplexTextController::adjustGlyphsAndAdvances()
         unsigned glyphCount = complexTextRun->glyphCount();
         Ref font = complexTextRun->font();
 
-        if (!complexTextRun->isLTR())
+        bool runIsLTR = complexTextRun->isLTR();
+        if (!runIsLTR)
             m_isLTROnly = false;
 
         auto glyphs = complexTextRun->glyphs();
@@ -724,6 +725,9 @@ void ComplexTextController::adjustGlyphsAndAdvances()
         FloatPoint glyphOrigin;
         unsigned previousCharacterIndex = m_run->ltr() ? std::numeric_limits<unsigned>::min() : std::numeric_limits<unsigned>::max();
         bool isMonotonic = true;
+        // What the cluster's base owes the origins of the marks that follow it; zero until a base is emitted.
+        // FIXME: Handle a cluster CoreText split across two runs, whose base is the previous run's last glyph.
+        float originCompensationOwedToMarks = 0;
 
 #if USE(CORE_TEXT) || USE(SKIA)
         auto boundsForGlyphs = font->boundsForGlyphs(glyphs);
@@ -741,10 +745,15 @@ void ComplexTextController::adjustGlyphsAndAdvances()
             char16_t character = charactersSpan[characterIndex];
 
             bool treatAsSpace = FontCascade::treatAsSpace(character);
+            bool isTabWithTabStops = character == tabCharacter && m_run->allowTabs();
+            // Every treatAsSpace() character but a tab with tab stops takes the font's space width below, moving the
+            // pen its marks are positioned against. CoreText emits glyphs in visual order, so only an LTR cluster's
+            // marks follow their base and are affected by that.
+            bool shouldCompensateMarkOrigins = treatAsSpace && !isTabWithTabStops && runIsLTR;
             CGGlyph glyph = glyphs[glyphIndex];
             FloatSize advance = treatAsSpace ? FloatSize(spaceWidth, advances[glyphIndex].height()) : advances[glyphIndex];
 
-            if (character == tabCharacter && m_run->allowTabs()) {
+            if (isTabWithTabStops) {
                 advance.setWidth(m_fontCascade->tabWidth(font.get(), m_run->tabSize(), m_run->xPos() + m_totalAdvance.width(), Font::SyntheticBoldInclusion::Exclude));
                 // Like simple text path in WidthIterator::applyCSSVisibilityRules,
                 // make tabCharacter glyph invisible after advancing.
@@ -877,10 +886,20 @@ void ComplexTextController::adjustGlyphsAndAdvances()
             }
 
             m_adjustedBaseAdvances.append(advance);
+            // A glyph that advances the pen is a cluster base and keeps its own origin; the zero-advance glyphs
+            // after it are its marks, and take the compensation their base recorded.
+            float originCompensation = originCompensationOwedToMarks;
+            if (advances[glyphIndex].width()) {
+                originCompensation = 0;
+                // CoreText guarantees only the sum of a cluster's base advances and glyph origins, so adding the
+                // difference back to the marks' origins moves the cluster as a whole.
+                // FIXME: Compensate the synthetic bold, letter-spacing, expansion and word-spacing adjustments too.
+                originCompensationOwedToMarks = shouldCompensateMarkOrigins ? advances[glyphIndex].width() - spaceWidth : 0;
+            }
             if (auto origins = complexTextRun->glyphOrigins(); !origins.empty()) {
                 ASSERT(m_glyphOrigins.size() < m_adjustedBaseAdvances.size());
                 m_glyphOrigins.grow(m_adjustedBaseAdvances.size());
-                m_glyphOrigins[m_glyphOrigins.size() - 1] = origins[glyphIndex] + FloatSize(textAutoSpaceSpacing, 0);
+                m_glyphOrigins[m_glyphOrigins.size() - 1] = origins[glyphIndex] + FloatSize(textAutoSpaceSpacing + originCompensation, 0);
                 ASSERT(m_glyphOrigins.size() == m_adjustedBaseAdvances.size());
             }
             m_adjustedGlyphs.append(glyph);

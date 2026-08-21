@@ -258,6 +258,91 @@ TEST_F(ComplexTextControllerTest, InitialAdvanceInRTLNoOrigins)
     EXPECT_NEAR(height(glyphBuffer.advanceAt(3)), 12.368896925859, 0.0001);
 }
 
+// Core Text fits a wide combining mark by widening its base's advance and giving the mark a negative origin, so
+// substituting the font's space width for a space base moves the pen the following mark is positioned against. In
+// an LTR run that mark has to be compensated by the same amount, or it slides left onto the preceding glyph.
+TEST_F(ComplexTextControllerTest, SubstitutedSpaceAdvanceCompensatesFollowingMarkInLTR)
+{
+    FontCascadeDescription description;
+    description.setOneFamily("Times"_s);
+    description.setComputedSize(80);
+    FontCascade font(WTF::move(description));
+    font.update();
+    auto spaceWidth = font.primaryFont().spaceWidth(Font::SyntheticBoldInclusion::Exclude);
+
+    // 'a', then a [space, combining mark] cluster whose whole 100pt advance Core Text put on the space.
+    Vector<FloatSize> advances = { FloatSize(40, 0), FloatSize(100, 0), FloatSize() };
+    Vector<FloatPoint> origins = { FloatPoint(), FloatPoint(), FloatPoint(-100, -20) };
+
+    std::array<char16_t, 3> characters { 'a', 0x20, 0x336 };
+    TextRun textRun { StringView(characters) };
+    auto run = ComplexTextController::ComplexTextRun::create(advances, origins, { 68, 3, 500 }, { 0, 1, 2 }, FloatSize(), font.primaryFont(), std::span { characters }, 0, 0, 3, true);
+    Vector<Ref<ComplexTextController::ComplexTextRun>> runs;
+    runs.append(WTF::move(run));
+    ComplexTextController controller(font, textRun, runs);
+
+    // Only the space's layout advance is substituted; the mark stays zero width.
+    EXPECT_NEAR(controller.totalAdvance().width(), advances[0].width() + spaceWidth, 0.0001);
+    GlyphBuffer glyphBuffer;
+    controller.advance(3, &glyphBuffer);
+    EXPECT_EQ(glyphBuffer.size(), 3U);
+    EXPECT_NEAR(width(glyphBuffer.initialAdvance()), 0, 0.0001);
+    EXPECT_NEAR(width(glyphBuffer.advanceAt(0)), advances[0].width(), 0.0001);
+    // The mark's origin gains (100 - spaceWidth), so it is still painted at the space's left edge where Core Text
+    // put it, rather than (100 - spaceWidth) further left, on top of the 'a'.
+    EXPECT_NEAR(width(glyphBuffer.advanceAt(1)), 0, 0.0001);
+    EXPECT_NEAR(width(glyphBuffer.advanceAt(2)), spaceWidth, 0.0001);
+    EXPECT_NEAR(height(glyphBuffer.advanceAt(0)), 0, 0.0001);
+    EXPECT_NEAR(height(glyphBuffer.advanceAt(1)), -origins[2].y(), 0.0001);
+    EXPECT_NEAR(height(glyphBuffer.advanceAt(2)), origins[2].y(), 0.0001);
+}
+
+// The other half of the same claim: Core Text emits glyphs in visual order, so in an RTL run a cluster's marks
+// precede their base and the glyph before a mark is the neighboring cluster's, not its own base. Compensating
+// there would shift a mark by an amount owed to a space it is not attached to.
+TEST_F(ComplexTextControllerTest, SubstitutedSpaceAdvanceDoesNotCompensateInRTL)
+{
+    FontCascadeDescription description;
+    description.setOneFamily("Times"_s);
+    description.setComputedSize(80);
+    FontCascade font(WTF::move(description));
+    font.update();
+    auto spaceWidth = font.primaryFont().spaceWidth(Font::SyntheticBoldInclusion::Exclude);
+
+    // [alef, mark] then [space, mark], in visual order: the space's mark, the space, the alef's mark, the alef.
+    // Core Text widened the space to 100pt to hold its mark, so a compensation here would be (100 - spaceWidth).
+    Vector<FloatSize> advances = { FloatSize(), FloatSize(100, 0), FloatSize(), FloatSize(60, 0) };
+    Vector<FloatPoint> origins = { FloatPoint(-100, -30), FloatPoint(), FloatPoint(-60, -20), FloatPoint() };
+
+    // As in the other RTL tests, a leading zero-advance glyph's origin is also reported as the initial advance.
+    FloatSize initialAdvance = FloatSize(-100, -30);
+
+    std::array<char16_t, 4> characters { 0x627, 0x336, 0x20, 0x336 };
+    TextRun textRun(StringView(characters), 0, 0, ExpansionBehavior::defaultBehavior(), TextDirection::RTL);
+    auto run = ComplexTextController::ComplexTextRun::create(advances, origins, { 500, 3, 500, 227 }, { 3, 2, 1, 0 }, initialAdvance, font.primaryFont(), std::span { characters }, 0, 0, 4, false);
+    Vector<Ref<ComplexTextController::ComplexTextRun>> runs;
+    runs.append(WTF::move(run));
+    ComplexTextController controller(font, textRun, runs);
+
+    EXPECT_NEAR(controller.totalAdvance().width(), spaceWidth + advances[3].width(), 0.0001);
+    GlyphBuffer glyphBuffer;
+    controller.advance(4, &glyphBuffer);
+    EXPECT_EQ(glyphBuffer.size(), 4U);
+    EXPECT_NEAR(width(glyphBuffer.initialAdvance()), initialAdvance.width(), 0.0001);
+    EXPECT_NEAR(height(glyphBuffer.initialAdvance()), initialAdvance.height(), 0.0001);
+    EXPECT_NEAR(width(glyphBuffer.advanceAt(0)), advances[3].width(), 0.0001);
+    // The alef's mark keeps the offset Core Text gave it. Compensating it would make this -origins[2].x() - (100 -
+    // spaceWidth) and slide the mark off the alef.
+    EXPECT_NEAR(width(glyphBuffer.advanceAt(1)), -origins[2].x(), 0.0001);
+    EXPECT_NEAR(width(glyphBuffer.advanceAt(2)), spaceWidth + origins[2].x(), 0.0001);
+    // The space's own mark precedes the space, so the substitution never moved the pen it is positioned against.
+    EXPECT_NEAR(width(glyphBuffer.advanceAt(3)), -origins[0].x(), 0.0001);
+    EXPECT_NEAR(height(glyphBuffer.advanceAt(0)), 0, 0.0001);
+    EXPECT_NEAR(height(glyphBuffer.advanceAt(1)), origins[2].y(), 0.0001);
+    EXPECT_NEAR(height(glyphBuffer.advanceAt(2)), -origins[2].y(), 0.0001);
+    EXPECT_NEAR(height(glyphBuffer.advanceAt(3)), origins[0].y(), 0.0001);
+}
+
 TEST_F(ComplexTextControllerTest, LeftExpansion)
 {
     FontCascadeDescription description;
