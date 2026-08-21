@@ -957,7 +957,6 @@ if (SWIFT_REQUIRED)
     set(WebKit_SWIFT_INTEROP_SOURCES
         UIProcess/ProvisionalPageProxy.cpp
         UIProcess/RemotePageProxy.cpp
-        UIProcess/ViewGestureController.cpp
         UIProcess/WebBackForwardList.cpp
         UIProcess/WebPageProxy.cpp
         UIProcess/Automation/WebAutomationSession.cpp
@@ -965,6 +964,9 @@ if (SWIFT_REQUIRED)
         ${WebKit_DERIVED_SOURCES_DIR}/UIProcess/WebBackForwardListMessageReceiver.cpp
         ${WebKit_DERIVED_SOURCES_DIR}/Shared/IPCTesterReceiverMessageReceiver.cpp
     )
+    if (NOT WIN32)
+        list(APPEND WebKit_SWIFT_INTEROP_SOURCES UIProcess/ViewGestureController.cpp)
+    endif ()
     if (APPLE)
         list(APPEND WebKit_SWIFT_INTEROP_SOURCES
             UIProcess/API/ios/WKWebViewIOS.mm
@@ -978,7 +980,7 @@ if (SWIFT_REQUIRED)
     endif ()
     foreach (_f IN LISTS WebKit_SWIFT_INTEROP_SOURCES)
         cmake_path(GET _f FILENAME _fn)
-        list(APPEND WebKit_UNIFIED_SOURCE_EXCLUDES "(^|/)${_fn}( |$)")
+        list(APPEND WebKit_UNIFIED_SOURCE_EXCLUDES "(^|[/\\\\])${_fn}( |$)")
     endforeach ()
 
     # FIXME(rdar://177840132): swiftc -emit-dependencies records imported
