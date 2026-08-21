@@ -62,15 +62,15 @@ static NSData *readRTFDataFromPasteboard()
 }
 #endif
 
-static RetainPtr<NSAttributedString> copyAttributedStringFromHTML(NSString *htmlString, bool forceDarkMode, bool enableUnprefixedUserSelect = false)
+static RetainPtr<NSAttributedString> copyAttributedStringFromHTML(NSString *htmlString, bool forceDarkMode, bool disableUnprefixedUserSelect = false)
 {
     RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
 
     auto preferences = (__bridge WKPreferencesRef)[[webView configuration] preferences];
     WKPreferencesSetWriteRichTextDataWhenCopyingOrDragging(preferences, true);
 
-    if (enableUnprefixedUserSelect)
-        WKPreferencesSetBoolValueForKeyForTesting(preferences, true, WKStringCreateWithUTF8CString("CSSUserSelectEnabled"));
+    if (disableUnprefixedUserSelect)
+        WKPreferencesSetBoolValueForKeyForTesting(preferences, false, WKStringCreateWithUTF8CString("CSSUserSelectEnabled"));
 
     if (forceDarkMode)
         [webView forceDarkMode];
@@ -178,19 +178,18 @@ TEST(CopyRTF, StripsUserSelectNone)
         "<span style='-webkit-user-select: initial; user-select: initial;'>WebKit </span></span>"
         "<div style='-webkit-user-select: none; user-select: none;'>some<br>user-select-none<br>content</div><span inert>foo </span>bar", false);
 
-    EXPECT_WK_STREQ([attributedString string].UTF8String, "hello WebKit bar");
+    EXPECT_WK_STREQ([attributedString string].UTF8String, "hello bar");
 }
 
-TEST(CopyRTF, StripsUserSelectNoneWithUnprefixedUserSelectEnabled)
+TEST(CopyRTF, StripsUserSelectNonewithLegacyUserSelectBehavior)
 {
-    // Same content as StripsUserSelectNone. With the unprefixed property enabled, 'initial' no
-    // longer counts as explicitly set for either spelling, so the inner span falls back to
-    // 'user-select: auto', resolves to the surrounding 'none', and is stripped too.
+    // Same content as StripsUserSelectNone. On legacy behavior,
+    // 'initial' is resolved to 'text':
     auto attributedString = copyAttributedStringFromHTML(@"hello <span style='-webkit-user-select: none; user-select: none;'>world "
         "<span style='-webkit-user-select: initial; user-select: initial;'>WebKit </span></span>"
         "<div style='-webkit-user-select: none; user-select: none;'>some<br>user-select-none<br>content</div><span inert>foo </span>bar", false, true);
 
-    EXPECT_WK_STREQ([attributedString string].UTF8String, "hello bar");
+    EXPECT_WK_STREQ([attributedString string].UTF8String, "hello WebKit bar");
 }
 
 TEST(CopyRTF, StripsUserSelectNoneQuirks)

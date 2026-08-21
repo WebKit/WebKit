@@ -1846,17 +1846,17 @@ CSSUnprefixedBackdropFilterEnabled:
 
 CSSUserSelectEnabled:
   type: bool
-  status: testable
+  status: stable
   category: css
   humanReadableName: "CSS Unprefixed User Select"
   humanReadableDescription: "Enable the unprefixed user-select CSS property"
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 CSSWhiteSpaceTrimEnabled:
   type: bool
