@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+// @page rule via a data: URL so the user style sheet applies synchronously.
+testRunner.setUserStyleSheetLocation("data:text/css;charset=utf-8;base64," + btoa("@page { margin: 7px; }"));
+testRunner.setUserStyleSheetEnabled(true);
+
+// Force style resolution so the resolver references the @page rule.
+document.body.offsetTop;
+
+// beginPrinting() dispatches "beforeprint" before it computes the page size, so
+// disabling the user style sheet here drops the @page rule mid-print.
+window.addEventListener("beforeprint", () => {
+    testRunner.setUserStyleSheetEnabled(false);
+});
+
+window.print();
+
+document.body.textContent = "PASS if no crash";
+</script>
+</body>
+</html>
