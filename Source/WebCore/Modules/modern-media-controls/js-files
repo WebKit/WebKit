@@ -52,6 +52,7 @@ controls/watchos-activity-indicator.js
 controls/watchos-media-controls.js
 controls/watchos-layout-traits.js
 media/media-controller-support.js
+media/stylesheet-support.js
 media/airplay-support.js
 media/audio-support.js
 media/close-support.js

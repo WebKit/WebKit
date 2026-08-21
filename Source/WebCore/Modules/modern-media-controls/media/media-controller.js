@@ -83,6 +83,9 @@ class MediaController
 
         this.hasPlayed = !media.paused || !!media.played.length;
 
+        if (host)
+            this._stylesheetSupport = new StyleSheetSupport(this);
+
         this.container = shadowRoot.appendChild(document.createElement("div"));
 
         this._updateControlsIfNeeded();
@@ -362,6 +365,12 @@ class MediaController
         if (this.controls)
             this.controls.disable();
         return true;
+    }
+
+    captionStyleSheetsDidChange()
+    {
+        if (this._stylesheetSupport)
+            this._stylesheetSupport.captionStyleSheetsDidChange();
     }
 
     reinitialize(shadowRoot, media, host)
