@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Igalia S.L.
+ * Copyright (C) 2026 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,23 +24,37 @@
  */
 
 #include "config.h"
-#include "ArgumentCodersGLib.h"
+#include "CoreIPCGUnixFDList.h"
 
-#include <gio/gio.h>
+#if USE(GLIB)
 
-namespace IPC {
+#include <gio/gunixfdlist.h>
 
-void ArgumentCoder<GTlsCertificateFlags>::encode(Encoder& encoder, GTlsCertificateFlags flags)
+namespace WebKit {
+
+CoreIPCGUnixFDList::CoreIPCGUnixFDList(const GRefPtr<GUnixFDList>& fdList)
+    : m_fdList(fdList)
 {
-    encoder << static_cast<uint32_t>(flags);
 }
 
-std::optional<GTlsCertificateFlags> ArgumentCoder<GTlsCertificateFlags>::decode(Decoder& decoder)
+CoreIPCGUnixFDList::CoreIPCGUnixFDList(Vector<WTF::UnixFileDescriptor>&& fileDescriptors)
+    : m_fdList(adoptGRef(g_unix_fd_list_new()))
 {
-    auto flags = decoder.decode<uint32_t>();
-    if (!flags) [[unlikely]]
-        return std::nullopt;
-    return static_cast<GTlsCertificateFlags>(*flags);
+    for (const auto& fileDescriptor : fileDescriptors)
+        g_unix_fd_list_append(m_fdList.get(), fileDescriptor.value(), nullptr);
 }
 
-} // namespace IPC
+Vector<WTF::UnixFileDescriptor> CoreIPCGUnixFDList::fileDescriptors() const
+{
+    unsigned length = std::max(0, m_fdList ? g_unix_fd_list_get_length(m_fdList.get()) : 0);
+    if (!length)
+        return { };
+
+    return Vector<WTF::UnixFileDescriptor>(length, [&](size_t i) {
+        return WTF::UnixFileDescriptor { g_unix_fd_list_get(m_fdList.get(), i, nullptr), WTF::UnixFileDescriptor::Adopt };
+    });
+}
+
+} // namespace WebKit
+
+#endif // USE(GLIB)

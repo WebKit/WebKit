@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Igalia S.L.
+ * Copyright (C) 2026 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,24 +23,31 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "ArgumentCodersGLib.h"
+#pragma once
 
-#include <gio/gio.h>
+#if USE(GLIB)
 
-namespace IPC {
+#include <wtf/Vector.h>
+#include <wtf/glib/GRefPtr.h>
+#include <wtf/unix/UnixFileDescriptor.h>
 
-void ArgumentCoder<GTlsCertificateFlags>::encode(Encoder& encoder, GTlsCertificateFlags flags)
-{
-    encoder << static_cast<uint32_t>(flags);
-}
+typedef struct _GUnixFDList GUnixFDList;
 
-std::optional<GTlsCertificateFlags> ArgumentCoder<GTlsCertificateFlags>::decode(Decoder& decoder)
-{
-    auto flags = decoder.decode<uint32_t>();
-    if (!flags) [[unlikely]]
-        return std::nullopt;
-    return static_cast<GTlsCertificateFlags>(*flags);
-}
+namespace WebKit {
 
-} // namespace IPC
+class CoreIPCGUnixFDList {
+public:
+    explicit CoreIPCGUnixFDList(const GRefPtr<GUnixFDList>&);
+    explicit CoreIPCGUnixFDList(Vector<WTF::UnixFileDescriptor>&&);
+
+    Vector<WTF::UnixFileDescriptor> fileDescriptors() const;
+
+    operator GRefPtr<GUnixFDList>() const { return m_fdList; }
+
+private:
+    GRefPtr<GUnixFDList> m_fdList;
+};
+
+} // namespace WebKit
+
+#endif // USE(GLIB)

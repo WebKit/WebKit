@@ -74,6 +74,7 @@ list(APPEND WebKit_SERIALIZATION_IN_FILES
     Shared/glib/AvailableInputDevices.serialization.in
     Shared/glib/CoreIPCGByteArray.serialization.in
     Shared/glib/CoreIPCGTlsCertificate.serialization.in
+    Shared/glib/CoreIPCGUnixFDList.serialization.in
     Shared/glib/CoreIPCGVariant.serialization.in
     Shared/glib/DMABufBufferAttributes.serialization.in
     Shared/glib/InputMethodState.serialization.in
