@@ -46,6 +46,8 @@ SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, CoreVideo, CVBufferGetAttachment, CFTypeR
 #define CVBufferGetAttachment softLink_CoreVideo_CVBufferGetAttachment
 SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, CoreVideo, CVBufferGetAttachments, CFDictionaryRef, (CVBufferRef buffer, CVAttachmentMode mode), (buffer, mode))
 #define CVBufferGetAttachments softLink_CoreVideo_CVBufferGetAttachments
+SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, CoreVideo, CVBufferPropagateAttachments, void, (CVBufferRef sourceBuffer, CVBufferRef destinationBuffer), (sourceBuffer, destinationBuffer))
+#define CVBufferPropagateAttachments softLink_CoreVideo_CVBufferPropagateAttachments
 SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, CoreVideo, CVBufferRemoveAttachment, void, (CVBufferRef buffer, CFStringRef key), (buffer, key))
 #define CVBufferRemoveAttachment softLink_CoreVideo_CVBufferRemoveAttachment
 SOFT_LINK_FUNCTION_FOR_HEADER(WebCore, CoreVideo, CVBufferSetAttachment, void, (CVBufferRef buffer, CFStringRef key, CFTypeRef value, CVAttachmentMode attachmentMode), (buffer, key, value, attachmentMode))
@@ -119,6 +121,10 @@ SOFT_LINK_CONSTANT_FOR_HEADER(WebCore, CoreVideo, kCVPixelBufferPoolMinimumBuffe
 #define kCVPixelBufferPoolMinimumBufferCountKey get_CoreVideo_kCVPixelBufferPoolMinimumBufferCountKeySingleton()
 SOFT_LINK_CONSTANT_FOR_HEADER(WebCore, CoreVideo, kCVPixelBufferPoolAllocationThresholdKey, CFStringRef)
 #define kCVPixelBufferPoolAllocationThresholdKey get_CoreVideo_kCVPixelBufferPoolAllocationThresholdKeySingleton()
+SOFT_LINK_CONSTANT_FOR_HEADER(WebCore, CoreVideo, kCVImageBufferAlphaChannelModeKey, CFStringRef)
+#define kCVImageBufferAlphaChannelModeKey get_CoreVideo_kCVImageBufferAlphaChannelModeKeySingleton()
+SOFT_LINK_CONSTANT_FOR_HEADER(WebCore, CoreVideo, kCVImageBufferAlphaChannelMode_PremultipliedAlpha, CFStringRef)
+#define kCVImageBufferAlphaChannelMode_PremultipliedAlpha get_CoreVideo_kCVImageBufferAlphaChannelMode_PremultipliedAlphaSingleton()
 SOFT_LINK_CONSTANT_FOR_HEADER(WebCore, CoreVideo, kCVImageBufferYCbCrMatrixKey, CFStringRef)
 #define kCVImageBufferYCbCrMatrixKey get_CoreVideo_kCVImageBufferYCbCrMatrixKeySingleton()
 SOFT_LINK_CONSTANT_FOR_HEADER(WebCore, CoreVideo, kCVImageBufferYCbCrMatrix_ITU_R_709_2, CFStringRef)

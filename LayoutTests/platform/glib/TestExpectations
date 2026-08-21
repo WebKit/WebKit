@@ -615,9 +615,8 @@ fast/css/accent-color/text.html [ Pass ]
 
 fast/events/keyboardevent-modifier.html [ Pass ]
 
-# Support for VP9 encoded videos with transparency is only available on ports that use GStreamer.
-media/video-with-alpha.html [ Pass ]
-media/video-with-alpha-premultiplied.html [ Pass ]
+# glcolorconvert's planar YUVA to YUVA shader does not apply the bit depth factor to alpha, so 10-bit alpha comes out 64 times too small.
+media/video-with-alpha-10bit.html [ Failure ]
 
 # MSE text track support for formats other than WebVTT
 media/media-source/media-source-mp4ttsimple.html [ Pass ]
