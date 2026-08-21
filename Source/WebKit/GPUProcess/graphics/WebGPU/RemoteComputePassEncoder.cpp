@@ -37,6 +37,8 @@
 #include <WebCore/WebGPUComputePipeline.h>
 #include <wtf/TZoneMallocInlines.h>
 
+#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, m_streamConnection)
+
 namespace WebKit {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteComputePassEncoder);
@@ -66,7 +68,7 @@ void RemoteComputePassEncoder::stopListeningForIPC()
 void RemoteComputePassEncoder::setPipeline(WebGPUIdentifier computePipeline)
 {
     auto convertedComputePipeline = protect(m_objectHeap)->convertComputePipelineFromBacking(computePipeline);
-    ASSERT(convertedComputePipeline);
+    MESSAGE_CHECK(convertedComputePipeline);
     if (!convertedComputePipeline)
         return;
 
@@ -81,7 +83,7 @@ void RemoteComputePassEncoder::dispatch(WebCore::WebGPU::Size32 workgroupCountX,
 void RemoteComputePassEncoder::dispatchIndirect(WebGPUIdentifier indirectBuffer, WebCore::WebGPU::Size64 indirectOffset)
 {
     auto convertedIndirectBuffer = protect(m_objectHeap)->convertBufferFromBacking(indirectBuffer);
-    ASSERT(convertedIndirectBuffer);
+    MESSAGE_CHECK(convertedIndirectBuffer);
     if (!convertedIndirectBuffer)
         return;
 
@@ -102,7 +104,7 @@ void RemoteComputePassEncoder::setBindGroup(WebCore::WebGPU::Index32 index, std:
     }
 
     RefPtr convertedBindGroup = protect(m_objectHeap)->convertBindGroupFromBacking(*bindGroup).get();
-    ASSERT(convertedBindGroup);
+    MESSAGE_CHECK(convertedBindGroup);
     if (!convertedBindGroup)
         return;
 

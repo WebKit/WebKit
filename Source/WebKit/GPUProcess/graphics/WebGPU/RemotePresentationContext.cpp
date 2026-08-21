@@ -38,6 +38,8 @@
 #include <WebCore/WebGPUTexture.h>
 #include <wtf/TZoneMallocInlines.h>
 
+#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, m_streamConnection)
+
 namespace WebKit {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemotePresentationContext);
@@ -63,7 +65,7 @@ void RemotePresentationContext::stopListeningForIPC()
 void RemotePresentationContext::configure(const WebGPU::CanvasConfiguration& canvasConfiguration)
 {
     auto convertedConfiguration = m_objectHeap->convertFromBacking(canvasConfiguration);
-    ASSERT(convertedConfiguration);
+    MESSAGE_CHECK(convertedConfiguration);
     if (!convertedConfiguration)
         return;
 

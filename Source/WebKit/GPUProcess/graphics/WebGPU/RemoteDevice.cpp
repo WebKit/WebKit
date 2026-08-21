@@ -357,7 +357,7 @@ void RemoteDevice::createComputePipelineAsync(const WebGPU::ComputePipelineDescr
 {
     Ref objectHeap = m_objectHeap.get();
     auto convertedDescriptor = objectHeap->convertFromBacking(descriptor);
-    ASSERT(convertedDescriptor);
+    MESSAGE_CHECK(convertedDescriptor);
     if (!convertedDescriptor) {
         callback(false, ""_s);
         return;
@@ -377,7 +377,7 @@ void RemoteDevice::createRenderPipelineAsync(const WebGPU::RenderPipelineDescrip
 {
     Ref objectHeap = m_objectHeap.get();
     auto convertedDescriptor = objectHeap->convertFromBacking(descriptor);
-    ASSERT(convertedDescriptor);
+    MESSAGE_CHECK(convertedDescriptor);
     if (!convertedDescriptor) {
         callback(false, ""_s);
         return;

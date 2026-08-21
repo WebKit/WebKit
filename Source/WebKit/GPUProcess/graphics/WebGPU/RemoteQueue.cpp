@@ -37,6 +37,8 @@
 #include <WebCore/WebGPUQueue.h>
 #include <wtf/TZoneMallocInlines.h>
 
+#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, m_streamConnection)
+
 namespace WebKit {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteQueue);
@@ -69,9 +71,7 @@ void RemoteQueue::submit(Vector<WebGPUIdentifier>&& commandBuffers)
     convertedCommandBuffers.reserveInitialCapacity(commandBuffers.size());
     for (WebGPUIdentifier identifier : commandBuffers) {
         auto convertedCommandBuffer = protect(m_objectHeap)->convertCommandBufferFromBacking(identifier);
-        ASSERT(convertedCommandBuffer);
-        if (!convertedCommandBuffer)
-            return;
+        MESSAGE_CHECK(convertedCommandBuffer);
         convertedCommandBuffers.append(*convertedCommandBuffer);
     }
     protect(m_backing)->submit(WTF::move(convertedCommandBuffers));
@@ -92,7 +92,7 @@ void RemoteQueue::writeBuffer(
 {
     auto data = dataHandle ? WebCore::SharedMemory::map(WTF::move(*dataHandle), WebCore::SharedMemory::Protection::ReadOnly) : nullptr;
     auto convertedBuffer = protect(m_objectHeap)->convertBufferFromBacking(buffer);
-    ASSERT(convertedBuffer);
+    MESSAGE_CHECK(convertedBuffer);
     if (!convertedBuffer || !data || data->size() <= WebGPU::maxCrossProcessResourceCopySize) {
         completionHandler(false);
         return;
@@ -109,9 +109,7 @@ void RemoteQueue::writeBufferWithCopy(
 {
     Ref objectHeap = m_objectHeap.get();
     auto convertedBuffer = objectHeap->convertBufferFromBacking(buffer);
-    ASSERT(convertedBuffer);
-    if (!convertedBuffer)
-        return;
+    MESSAGE_CHECK(convertedBuffer);
 
     protect(m_backing)->writeBufferNoCopy(*convertedBuffer, bufferOffset, data.mutableSpan(), 0, std::nullopt);
 }
@@ -126,12 +124,12 @@ void RemoteQueue::writeTexture(
     auto data = dataHandle ? WebCore::SharedMemory::map(WTF::move(*dataHandle), WebCore::SharedMemory::Protection::ReadOnly) : nullptr;
     Ref objectHeap = m_objectHeap.get();
     auto convertedDestination = objectHeap->convertFromBacking(destination);
-    ASSERT(convertedDestination);
+    MESSAGE_CHECK(convertedDestination);
     auto convertedDataLayout = objectHeap->convertFromBacking(dataLayout);
-    ASSERT(convertedDestination);
+    MESSAGE_CHECK(convertedDataLayout);
     auto convertedSize = objectHeap->convertFromBacking(size);
-    ASSERT(convertedSize);
-    if (!convertedDestination || !convertedDestination || !convertedSize || !data || data->size() <= WebGPU::maxCrossProcessResourceCopySize) {
+    MESSAGE_CHECK(convertedSize);
+    if (!convertedDestination || !convertedDataLayout || !convertedSize || !data || data->size() <= WebGPU::maxCrossProcessResourceCopySize) {
         completionHandler(false);
         return;
     }
@@ -148,13 +146,11 @@ void RemoteQueue::writeTextureWithCopy(
 {
     Ref objectHeap = m_objectHeap.get();
     auto convertedDestination = objectHeap->convertFromBacking(destination);
-    ASSERT(convertedDestination);
+    MESSAGE_CHECK(convertedDestination);
     auto convertedDataLayout = objectHeap->convertFromBacking(dataLayout);
-    ASSERT(convertedDestination);
+    MESSAGE_CHECK(convertedDataLayout);
     auto convertedSize = objectHeap->convertFromBacking(size);
-    ASSERT(convertedSize);
-    if (!convertedDestination || !convertedDestination || !convertedSize)
-        return;
+    MESSAGE_CHECK(convertedSize);
 
     protect(m_backing)->writeTexture(*convertedDestination, data.mutableSpan(), *convertedDataLayout, *convertedSize);
 }
@@ -166,13 +162,11 @@ void RemoteQueue::copyExternalImageToTexture(
 {
     Ref objectHeap = m_objectHeap.get();
     auto convertedSource = objectHeap->convertFromBacking(source);
-    ASSERT(convertedSource);
+    MESSAGE_CHECK(convertedSource);
     auto convertedDestination = objectHeap->convertFromBacking(destination);
-    ASSERT(convertedDestination);
+    MESSAGE_CHECK(convertedDestination);
     auto convertedCopySize = objectHeap->convertFromBacking(copySize);
-    ASSERT(convertedCopySize);
-    if (!convertedDestination || !convertedDestination || !convertedCopySize)
-        return;
+    MESSAGE_CHECK(convertedCopySize);
 
     protect(m_backing)->copyExternalImageToTexture(*convertedSource, *convertedDestination, *convertedCopySize);
 }

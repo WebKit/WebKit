@@ -159,7 +159,7 @@ void RemoteGPU::requestAdapter(const WebGPU::RequestAdapterOptions& options, Web
 
     Ref objectHeap = m_objectHeap;
     auto convertedOptions = objectHeap->convertFromBacking(options);
-    ASSERT(convertedOptions);
+    MESSAGE_CHECK(convertedOptions);
     if (!convertedOptions) {
         callback(std::nullopt);
         return;

@@ -107,11 +107,9 @@ void RemoteCommandEncoder::copyBufferToBuffer(
 {
     Ref objectHeap = m_objectHeap.get();
     auto convertedSource = objectHeap->convertBufferFromBacking(source);
-    ASSERT(convertedSource);
+    MESSAGE_CHECK(convertedSource);
     auto convertedDestination = objectHeap->convertBufferFromBacking(destination);
-    ASSERT(convertedDestination);
-    if (!convertedSource || !convertedDestination)
-        return;
+    MESSAGE_CHECK(convertedDestination);
 
     protect(m_backing)->copyBufferToBuffer(*convertedSource, sourceOffset, *convertedDestination, destinationOffset, size);
 }
@@ -122,13 +120,11 @@ void RemoteCommandEncoder::copyBufferToTexture(
     const WebGPU::Extent3D& copySize)
 {
     auto convertedSource = m_objectHeap->convertFromBacking(source);
-    ASSERT(convertedSource);
+    MESSAGE_CHECK(convertedSource);
     auto convertedDestination = m_objectHeap->convertFromBacking(destination);
-    ASSERT(convertedDestination);
+    MESSAGE_CHECK(convertedDestination);
     auto convertedCopySize = m_objectHeap->convertFromBacking(copySize);
-    ASSERT(convertedCopySize);
-    if (!convertedSource || !convertedDestination || !convertedCopySize)
-        return;
+    MESSAGE_CHECK(convertedCopySize);
 
     protect(m_backing)->copyBufferToTexture(*convertedSource, *convertedDestination, *convertedCopySize);
 }
@@ -139,13 +135,11 @@ void RemoteCommandEncoder::copyTextureToBuffer(
     const WebGPU::Extent3D& copySize)
 {
     auto convertedSource = m_objectHeap->convertFromBacking(source);
-    ASSERT(convertedSource);
+    MESSAGE_CHECK(convertedSource);
     auto convertedDestination = m_objectHeap->convertFromBacking(destination);
-    ASSERT(convertedDestination);
+    MESSAGE_CHECK(convertedDestination);
     auto convertedCopySize = m_objectHeap->convertFromBacking(copySize);
-    ASSERT(convertedCopySize);
-    if (!convertedSource || !convertedDestination || !convertedCopySize)
-        return;
+    MESSAGE_CHECK(convertedCopySize);
 
     protect(m_backing)->copyTextureToBuffer(*convertedSource, *convertedDestination, *convertedCopySize);
 }
@@ -156,13 +150,11 @@ void RemoteCommandEncoder::copyTextureToTexture(
     const WebGPU::Extent3D& copySize)
 {
     auto convertedSource = m_objectHeap->convertFromBacking(source);
-    ASSERT(convertedSource);
+    MESSAGE_CHECK(convertedSource);
     auto convertedDestination = m_objectHeap->convertFromBacking(destination);
-    ASSERT(convertedDestination);
+    MESSAGE_CHECK(convertedDestination);
     auto convertedCopySize = m_objectHeap->convertFromBacking(copySize);
-    ASSERT(convertedCopySize);
-    if (!convertedSource || !convertedDestination || !convertedCopySize)
-        return;
+    MESSAGE_CHECK(convertedCopySize);
 
     protect(m_backing)->copyTextureToTexture(*convertedSource, *convertedDestination, *convertedCopySize);
 }
@@ -173,9 +165,7 @@ void RemoteCommandEncoder::clearBuffer(
     std::optional<WebCore::WebGPU::Size64> size)
 {
     auto convertedBuffer = protect(m_objectHeap)->convertBufferFromBacking(buffer);
-    ASSERT(convertedBuffer);
-    if (!convertedBuffer)
-        return;
+    MESSAGE_CHECK(convertedBuffer);
 
     protect(m_backing)->clearBuffer(*convertedBuffer, offset, size);
 }
@@ -198,9 +188,7 @@ void RemoteCommandEncoder::insertDebugMarker(String&& markerLabel)
 void RemoteCommandEncoder::writeTimestamp(WebGPUIdentifier querySet, WebCore::WebGPU::Size32 queryIndex)
 {
     auto convertedQuerySet = protect(m_objectHeap)->convertQuerySetFromBacking(querySet);
-    ASSERT(convertedQuerySet);
-    if (!convertedQuerySet)
-        return;
+    MESSAGE_CHECK(convertedQuerySet);
 
     protect(m_backing)->writeTimestamp(*convertedQuerySet, queryIndex);
 }
@@ -214,11 +202,9 @@ void RemoteCommandEncoder::resolveQuerySet(
 {
     Ref objectHeap = m_objectHeap.get();
     auto convertedQuerySet = objectHeap->convertQuerySetFromBacking(querySet);
-    ASSERT(convertedQuerySet);
+    MESSAGE_CHECK(convertedQuerySet);
     auto convertedDestination = objectHeap->convertBufferFromBacking(destination);
-    ASSERT(convertedDestination);
-    if (!convertedQuerySet || !convertedDestination)
-        return;
+    MESSAGE_CHECK(convertedDestination);
 
     protect(m_backing)->resolveQuerySet(*convertedQuerySet, firstQuery, queryCount, *convertedDestination, destinationOffset);
 }

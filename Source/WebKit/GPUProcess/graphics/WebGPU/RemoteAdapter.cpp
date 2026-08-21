@@ -40,6 +40,8 @@
 #include <WebCore/WebGPUDevice.h>
 #include <wtf/TZoneMallocInlines.h>
 
+#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, m_streamConnection)
+
 namespace WebKit {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteAdapter);
@@ -70,7 +72,7 @@ void RemoteAdapter::stopListeningForIPC()
 void RemoteAdapter::requestDevice(const WebGPU::DeviceDescriptor& descriptor, WebGPUIdentifier identifier, WebGPUIdentifier queueIdentifier, CompletionHandler<void(WebGPU::SupportedFeatures&&, WebGPU::SupportedLimits&&)>&& callback)
 {
     auto convertedDescriptor = m_objectHeap->convertFromBacking(descriptor);
-    ASSERT(convertedDescriptor);
+    MESSAGE_CHECK(convertedDescriptor);
     if (!convertedDescriptor) {
         callback({ { } }, { });
         return;
