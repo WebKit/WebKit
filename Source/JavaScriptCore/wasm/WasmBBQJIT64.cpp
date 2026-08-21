@@ -2066,7 +2066,7 @@ void BBQJIT::emitAllocateGCStructUninitialized(GPRReg resultGPR, TypeSignatureIn
         emitAllocateGCStructUninitialized(resultGPR, typeIndex, wasmScratchGPR, scratchGPR);
 
         JIT_COMMENT(m_jit, "Struct allocation done, do initialization");
-        bool needsMutatorFence = false;
+        bool needsMutatorFence = structType.hasRefFieldTypes();
         for (StructFieldCount i = 0; i < structType.fieldCount(); ++i) {
             if (Wasm::isRefType(structType.field(i).type))
                 needsMutatorFence |= emitStructSet(resultGPR, structType, i, Value::fromRef(TypeKind::RefNull, JSValue::encode(jsNull())));
@@ -2077,8 +2077,8 @@ void BBQJIT::emitAllocateGCStructUninitialized(GPRReg resultGPR, TypeSignatureIn
                 needsMutatorFence |= emitStructSet(resultGPR, structType, i, Value::fromI64(0));
         }
 
-        // No write barrier needed here as all fields are set to constants.
-        ASSERT_UNUSED(needsMutatorFence, !needsMutatorFence);
+        if (needsMutatorFence)
+            emitMutatorFence();
     }
 
     result = topValue(TypeKind::Ref);
@@ -2112,7 +2112,7 @@ void BBQJIT::emitAllocateGCStructUninitialized(GPRReg resultGPR, TypeSignatureIn
         emitAllocateGCStructUninitialized(resultGPR, typeIndex, wasmScratchGPR, scratchGPR);
 
         JIT_COMMENT(m_jit, "Struct allocation done, do initialization");
-        bool needsMutatorFence = false;
+        bool needsMutatorFence = structType.hasRefFieldTypes();
         for (uint32_t i = 0; i < args.size(); ++i)
             needsMutatorFence |= emitStructSet(resultGPR, structType, i, args[i]);
 
