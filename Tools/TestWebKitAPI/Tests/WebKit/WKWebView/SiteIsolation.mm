@@ -1049,6 +1049,63 @@ TEST(SiteIsolation, NavigationAfterWindowOpen)
         Util::spinRunLoop();
 }
 
+#if PLATFORM(MAC)
+
+TEST(SiteIsolation, ObscuredContentInsetsSurviveWindowOpenProcessSwap)
+{
+    HTTPServer server({
+        { "/example"_s, { "<script>w = window.open('https://webkit.org/webkit')</script>"_s } },
+        { "/webkit"_s, { "hi"_s } },
+        { "/example_opened_after_navigation"_s, { "hi"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    RetainPtr configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
+    RetainPtr storeConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] initNonPersistentConfiguration]);
+    [storeConfiguration setHTTPSProxy:[NSURL URLWithString:[NSString stringWithFormat:@"https://127.0.0.1:%d/", server.port()]]];
+    [configuration setWebsiteDataStore:adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:storeConfiguration])];
+    enableSiteIsolation(configuration);
+    configuration.get().preferences.javaScriptCanOpenWindowsAutomatically = YES;
+
+    RetainPtr openerNavigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [openerNavigationDelegate allowAnyTLSCertificate];
+    RetainPtr opener = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration]);
+    [opener setNavigationDelegate:openerNavigationDelegate];
+
+    RetainPtr openedNavigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [openedNavigationDelegate allowAnyTLSCertificate];
+    __block RetainPtr<TestWKWebView> opened;
+    RetainPtr openerUIDelegate = adoptNS([TestUIDelegate new]);
+    openerUIDelegate.get().createWebViewWithConfiguration = ^(WKWebViewConfiguration *configuration, WKNavigationAction *action, WKWindowFeatures *windowFeatures) {
+        opened = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:configuration]);
+        opened.get().navigationDelegate = openedNavigationDelegate;
+        return opened.get();
+    };
+    [opener setUIDelegate:openerUIDelegate];
+
+    [opener loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://example.com/example"]]];
+    while (!opened)
+        Util::spinRunLoop();
+    [openedNavigationDelegate waitForDidFinishNavigation];
+
+    checkFrameTreesInProcesses(opened, { { RemoteFrame }, { "https://webkit.org"_s } });
+
+    [opened setObscuredContentInsets:NSEdgeInsetsMake(100, 0, 0, 0)];
+    [opened waitForNextPresentationUpdate];
+
+    // Navigating the opened window's main frame to example.com causes it to swap into the
+    // opener's already-running example.com process, reusing the WebPage that process already
+    // held for this page (as a RemotePageProxy placeholder), rather than creating a new one.
+    [opened evaluateJavaScript:@"window.location = 'https://example.com/example_opened_after_navigation'" completionHandler:nil];
+    [openedNavigationDelegate waitForDidFinishNavigation];
+    checkFrameTreesInProcesses(opened, { { "https://example.com"_s } });
+
+    // If the reused process's WebCore::Page never learned about the inset, this reads back 0.
+    RetainPtr insetTop = [opened objectByEvaluatingJavaScript:@"internals.obscuredContentInsetTop()"];
+    EXPECT_EQ([insetTop doubleValue], 100);
+}
+
+#endif // PLATFORM(MAC)
+
 TEST(SiteIsolation, CrossSiteIFrameWindowOpensMainFrameSite)
 {
     HTTPServer server({

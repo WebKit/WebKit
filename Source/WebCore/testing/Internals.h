@@ -701,6 +701,8 @@ public:
     void setHeaderHeight(float);
     void setFooterHeight(float);
 
+    float obscuredContentInsetTop();
+
     struct FullscreenInsets {
         float top { 0 };
         float left { 0 };

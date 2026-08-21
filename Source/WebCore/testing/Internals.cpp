@@ -4287,6 +4287,15 @@ void Internals::setFooterHeight(float height)
     document->page()->setFooterHeight(height);
 }
 
+float Internals::obscuredContentInsetTop()
+{
+    RefPtr document = contextDocument();
+    if (!document || !document->page())
+        return 0;
+
+    return protect(document->page())->obscuredContentInsets().top();
+}
+
 void Internals::setFullscreenInsets(FullscreenInsets insets)
 {
     Page* page = contextDocument()->frame()->page();
