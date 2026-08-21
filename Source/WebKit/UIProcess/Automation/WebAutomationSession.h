@@ -272,6 +272,7 @@ public:
     void evaluateBidiScript(const Inspector::Protocol::Automation::BrowsingContextHandle&, const Inspector::Protocol::Automation::FrameHandle&, const String& expression, bool awaitPromise, int maxObjectDepth, std::optional<double>&& callbackTimeout, Inspector::CommandCallback<String>&&);
 #if ENABLE(WEBDRIVER_BIDI)
     void getBidiRealmInfo(const Inspector::Protocol::Automation::BrowsingContextHandle&, const Inspector::Protocol::Automation::FrameHandle&, CompletionHandler<void(std::optional<RealmIdentifier>&&)>&&);
+    void evaluateBidiCallFunction(const Inspector::Protocol::Automation::BrowsingContextHandle&, const Inspector::Protocol::Automation::FrameHandle&, std::optional<RealmIdentifier>, const String& functionDeclaration, Ref<JSON::Array>&& arguments, bool awaitPromise, std::optional<double> maxObjectDepth, bool userActivation, std::optional<double>&& callbackTimeout, Inspector::CommandCallbackOf<String, RealmIdentifier>&&);
 #endif
     void performMouseInteraction(const Inspector::Protocol::Automation::BrowsingContextHandle&, Ref<JSON::Object>&& requestedPosition, Inspector::Protocol::Automation::MouseButton, Inspector::Protocol::Automation::MouseInteraction, Ref<JSON::Array>&& keyModifiers, Inspector::CommandCallback<Ref<Inspector::Protocol::Automation::Point>>&&) override;
     void performKeyboardInteractions(const Inspector::Protocol::Automation::BrowsingContextHandle&, Ref<JSON::Array>&& interactions, Inspector::CommandCallback<void>&&) override;
@@ -495,6 +496,9 @@ private:
 
     uint64_t m_nextEvaluateJavaScriptCallbackID { 1 };
     HashMap<uint64_t, Inspector::CommandCallback<String>> m_evaluateJavaScriptFunctionCallbacks;
+#if ENABLE(WEBDRIVER_BIDI)
+    HashMap<uint64_t, Inspector::CommandCallbackOf<String, RealmIdentifier>> m_evaluateBidiCallFunctionCallbacks;
+#endif
 
     enum class WindowTransitionedToState {
         Fullscreen,
