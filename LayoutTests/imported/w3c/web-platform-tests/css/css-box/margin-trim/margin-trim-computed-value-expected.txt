@@ -1,0 +1,11 @@
+
+PASS block-start margin of a trimmed first child is still the used value
+PASS block-end margin of a trimmed last child is still the used value
+PASS percentage block-start margin of a trimmed first child resolves against the containing block
+PASS block-start margin that collapses through to a trimmed edge is still the used value
+PASS both margins of a trimmed self-collapsing last child are still the used values
+PASS block-start margin of a trimmed first child in vertical-lr is still the used value
+PASS collapsed block-start margin is still the used value
+PASS trimmed margins of a self-collapsing last child do not grow a container that cannot collapse with its children
+PASS block-end margin that collapses through to a trimmed edge is still the used value
+

@@ -247,7 +247,6 @@ public:
         LayoutUnit m_marginBeforeWithClearance;
     };
 
-    bool shouldTrimChildMargin(Style::MarginTrimSide, const RenderBox&) const;
     void performBlockStepSizing(RenderBox& child, LayoutUnit blockStepSizeForChild) const;
 
     void layoutBlockChild(RenderBox& child, MarginInfo&, LayoutUnit& previousFloatLogicalBottom, LayoutUnit& maxFloatLogicalBottom);
@@ -262,7 +261,7 @@ public:
     void adjustOutOfFlowBlock(RenderBox& child, const MarginInfo&);
     void adjustFloatingBlock(const MarginInfo&);
 
-    void trimBlockEndChildrenMargins();
+    void adjustBlockEndChildrenForMarginTrim();
 
     void setStaticInlinePositionForChild(RenderBox& child, LayoutUnit inlinePosition);
 

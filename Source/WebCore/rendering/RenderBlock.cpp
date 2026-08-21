@@ -2829,23 +2829,6 @@ bool RenderBlock::updateFragmentRangeForBoxChild(const RenderBox& box) const
     return false;
 }
 
-void RenderBlock::setTrimmedMarginForChild(RenderBox& child, Style::MarginTrimSide side)
-{
-    // Only the block-axis sides: margin-trim applies to block containers and multi-column containers, and it has no
-    // effect on the inline-axis margins of their children.
-    switch (side) {
-    case Style::MarginTrimSide::BlockStart:
-        setMarginBeforeForChild(child, 0_lu);
-        break;
-    case Style::MarginTrimSide::BlockEnd:
-        setMarginAfterForChild(child, 0_lu);
-        break;
-    default:
-        ASSERT_NOT_REACHED();
-        break;
-    }
-}
-
 LayoutUnit RenderBlock::collapsedMarginBeforeForChild(const RenderBox& child) const
 {
     // If the child has the same directionality as we do, then we can just return its
@@ -3229,8 +3212,8 @@ void RenderBlock::layoutExcludedChildren(RelayoutChildren relayoutChildren)
     
     LayoutUnit fieldsetBorderBefore = borderBefore();
     LayoutUnit legendLogicalHeight = logicalHeightForChild(legend);
-    LayoutUnit legendBeforeMargin = marginBeforeForChild(legend);
-    LayoutUnit legendAfterMargin = marginAfterForChild(legend);
+    LayoutUnit legendBeforeMargin = shouldTrimChildMargin(Style::MarginTrimSide::BlockStart, legend) ? 0_lu : marginBeforeForChild(legend);
+    LayoutUnit legendAfterMargin = shouldTrimChildMargin(Style::MarginTrimSide::BlockEnd, legend) ? 0_lu : marginAfterForChild(legend);
     LayoutUnit topPositionForLegend = std::max(0_lu, (fieldsetBorderBefore - legendLogicalHeight) / 2);
     LayoutUnit bottomPositionForLegend = topPositionForLegend + legendLogicalHeight + legendAfterMargin;
 
