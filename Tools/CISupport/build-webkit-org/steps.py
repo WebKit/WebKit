@@ -993,8 +993,8 @@ class RunWebKitTests(shell.Test, CustomFlagsMixin, ShellMixin):
                 else:
                     return FAILURE
 
-        # Return code from Tools/Scripts/layout_tests/run_webkit_tests.py.
-        # This means that an exception was raised when running run-webkit-tests and
+        # Return code from webkitpy/layout_tests/run_layout_tests.py.
+        # This means that an exception was raised when running the layout tests and
         # was never handled.
         if cmd.rc == 254:
             return EXCEPTION

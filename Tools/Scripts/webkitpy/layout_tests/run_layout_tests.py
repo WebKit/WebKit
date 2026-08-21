@@ -126,87 +126,87 @@ def parse_args(args):
 
     option_group_definitions.append(("Feature Switches", [
         optparse.make_option("--complex-text", action="store_true", default=False,
-            help="Use the complex text code path for all text (OS X and Windows only)"),
+                             help="Use the complex text code path for all text (OS X and Windows only)"),
         optparse.make_option("--accelerated-drawing", action="store_true", default=False,
-            help="Use accelerated drawing (OS X only)"),
+                             help="Use accelerated drawing (OS X only)"),
         optparse.make_option("--remote-layer-tree", action="store_true", default=False,
-            help="Use the remote layer tree drawing model (OS X WebKit2 only)"),
+                             help="Use the remote layer tree drawing model (OS X WebKit2 only)"),
         optparse.make_option("--no-remote-layer-tree", action="store_true", default=False,
-            help="Disable the remote layer tree drawing model (OS X WebKit2 only)"),
+                             help="Disable the remote layer tree drawing model (OS X WebKit2 only)"),
         optparse.make_option("--wpe-legacy-api", action="store_true", default=False,
-            help="Use the WPE legacy API (WPE only), including its own expectations and result report flavor"),
+                             help="Use the WPE legacy API (WPE only), including its own expectations and result report flavor"),
         optparse.make_option("--internal-feature", type="string", action="append", default=[],
-            help="Enable (disable) an internal feature (--internal-feature FeatureName[=true|false])"),
+                             help="Enable (disable) an internal feature (--internal-feature FeatureName[=true|false])"),
         optparse.make_option("--experimental-feature", type="string", action="append", default=[],
-            help="Enable (disable) an experimental feature (--experimental-feature FeatureName[=true|false])"),
+                             help="Enable (disable) an experimental feature (--experimental-feature FeatureName[=true|false])"),
         optparse.make_option("--no-enable-all-experimental-features", action="store_false", default=True, dest="enable_all_experimental_features",
-            help="Don't enable all experimental features in WebKitTestRunner"),
+                             help="Don't enable all experimental features in WebKitTestRunner"),
     ]))
 
     option_group_definitions.append(("WebKit Options", [
         optparse.make_option("--gc-between-tests", action="store_true", default=False,
-            help="Force garbage collection between each test"),
+                             help="Force garbage collection between each test"),
         optparse.make_option("-l", "--leaks", action="store_true", default=False,
-            help="Enable leaks checking (OS X and Gtk+ only)"),
+                             help="Enable leaks checking (OS X and Gtk+ only)"),
         optparse.make_option("-g", "--guard-malloc", action="store_true", default=False,
-            help="Enable Guard Malloc (OS X only)"),
+                             help="Enable Guard Malloc (OS X only)"),
         optparse.make_option("--threaded", action="store_true", default=False,
-            help="Run a concurrent JavaScript thread with each test"),
+                             help="Run a concurrent JavaScript thread with each test"),
         optparse.make_option("--dump-render-tree", "-1", action='append_const', dest='driver_names', const="DumpRenderTree", default=[],
-            help="Use DumpRenderTree rather than WebKitTestRunner. This runs the wk1 single-process architecture."),
+                             help="Use DumpRenderTree rather than WebKitTestRunner. This runs the wk1 single-process architecture."),
         optparse.make_option("--webkit-test-runner", "-2", action='append_const', dest='driver_names', const="WebKitTestRunner", default=[],
-            help="Use WebKitTestRunner exclusively, skip any wk1 specific tests."),
+                             help="Use WebKitTestRunner exclusively, skip any wk1 specific tests."),
         # FIXME: We should merge this w/ --build-directory and only have one flag.
         optparse.make_option("--root", action="store",
-            help="Path to a directory containing the executables needed to run tests."),
+                             help="Path to a directory containing the executables needed to run tests."),
     ]))
 
     option_group_definitions.append(("Results Options", [
         optparse.make_option("-p", "--pixel", "--pixel-tests", action="store_true",
-            dest="pixel_tests", help="Enable pixel-to-pixel PNG comparisons"),
+                             dest="pixel_tests", help="Enable pixel-to-pixel PNG comparisons"),
         optparse.make_option("--no-pixel", "--no-pixel-tests", action="store_false",
-            dest="pixel_tests", help="Disable pixel-to-pixel PNG comparisons"),
+                             dest="pixel_tests", help="Disable pixel-to-pixel PNG comparisons"),
         optparse.make_option("--no-sample-on-timeout", action="store_false", default=True,
-            dest="sample_on_timeout", help="Don't run sample on timeout (OS X only)"),
+                             dest="sample_on_timeout", help="Don't run sample on timeout (OS X only)"),
         optparse.make_option("--no-ref-tests", action="store_true",
-            dest="no_ref_tests", help="Skip all ref tests"),
+                             dest="no_ref_tests", help="Skip all ref tests"),
         optparse.make_option("--ignore-render-tree-dump-results", action="store_true",
-            dest="ignore_render_tree_dump_results",
-            help="Don't compare or save results for render tree dump tests (they still run and crashes are reported)"),
+                             dest="ignore_render_tree_dump_results",
+                             help="Don't compare or save results for render tree dump tests (they still run and crashes are reported)"),
         optparse.make_option("--tolerance",
-            help="Ignore image differences less than this percentage (some "
-                "ports may ignore this option)", type="float"),
+                             help="Ignore image differences less than this percentage (some "
+                             "ports may ignore this option)", type="float"),
         optparse.make_option("--results-directory", help="Location of test results"),
         optparse.make_option("--build-directory",
-            help="Path to the directory under which build files are kept (should not include configuration)"),
+                             help="Path to the directory under which build files are kept (should not include configuration)"),
         optparse.make_option("--add-platform-exceptions", action="store_true", default=False,
-            help="Save generated results into the *most-specific-platform* directory rather than the *generic-platform* directory"),
+                             help="Save generated results into the *most-specific-platform* directory rather than the *generic-platform* directory"),
         optparse.make_option("--add-baselines-to-platform", default=False,
-            help="Save generated results into a specified platform directory",
-            metavar="PLATFORM_DIR"),
+                             help="Save generated results into a specified platform directory",
+                             metavar="PLATFORM_DIR"),
         optparse.make_option("--add-redundant-platform-results", action="store_true",
-            help="Save generated results the platform even if they're redundant"),
+                             help="Save generated results the platform even if they're redundant"),
         optparse.make_option("--new-baseline", action="store_true",
-            default=False, help="Save generated results as new baselines "
-                 "into the *most-specific-platform* directory, overwriting whatever's "
-                 "already there. Equivalent to --reset-results --add-platform-exceptions"),
+                             default=False, help="Save generated results as new baselines "
+                             "into the *most-specific-platform* directory, overwriting whatever's "
+                             "already there. Equivalent to --reset-results --add-platform-exceptions"),
         optparse.make_option("--reset-results", action="store_true",
-            default=False, help="Reset expectations to the "
-                 "generated results in their existing location."),
+                             default=False, help="Reset expectations to the "
+                             "generated results in their existing location."),
         optparse.make_option("--no-new-test-results", action="store_false",
-            dest="new_test_results", default=True,
-            help="Don't create new baselines when no expected results exist"),
+                             dest="new_test_results", default=True,
+                             help="Don't create new baselines when no expected results exist"),
         optparse.make_option("--treat-ref-tests-as-pixel-tests", action="store_true", default=False,
-            help="Run ref tests, but treat them as if they were traditional pixel tests"),
+                             help="Run ref tests, but treat them as if they were traditional pixel tests"),
 
-        #FIXME: we should support a comma separated list with --pixel-test-directory as well.
+        # FIXME: we should support a comma separated list with --pixel-test-directory as well.
         optparse.make_option("--pixel-test-directory", action="append", default=[], dest="pixel_test_directories",
-            help="A directory where it is allowed to execute tests as pixel tests. "
-                 "Specify multiple times to add multiple directories. "
-                 "This option implies --pixel-tests. If specified, only those tests "
-                 "will be executed as pixel tests that are located in one of the "
-                 "directories enumerated with the option. Some ports may ignore this "
-                 "option while others can have a default value that can be overridden here."),
+                             help="A directory where it is allowed to execute tests as pixel tests. "
+                             "Specify multiple times to add multiple directories. "
+                             "This option implies --pixel-tests. If specified, only those tests "
+                             "will be executed as pixel tests that are located in one of the "
+                             "directories enumerated with the option. Some ports may ignore this "
+                             "option while others can have a default value that can be overridden here."),
 
         optparse.make_option("--check-pre-existing-failures", action="store_true",
                              default=False, dest="check_pre_existing_failures",
@@ -218,27 +218,27 @@ def parse_args(args):
                              help="Maximum number of failing tests to look up in results.webkit.org when "
                                   "--check-pre-existing-failures is set. Use 0 for no limit. (default: 0)"),
         optparse.make_option("--skip-failing-tests", action="store_true",
-            default=False, help="Skip tests that are marked as failing or flaky. "
-                 "Note: When using this option, you might miss new crashes "
-                 "in these tests."),
+                             default=False, help="Skip tests that are marked as failing or flaky. "
+                             "Note: When using this option, you might miss new crashes "
+                             "in these tests."),
         optparse.make_option("--skip-flaky-tests", action="store_true",
-            default=False, help="Skip tests that are marked as flaky. "
-                 "Note: When using this option, you might miss new crashes "
-                 "in these tests."),
+                             default=False, help="Skip tests that are marked as flaky. "
+                             "Note: When using this option, you might miss new crashes "
+                             "in these tests."),
         optparse.make_option("--additional-drt-flag", action="append",
-            default=[], help="Additional command line flag to pass to DumpRenderTree "
-                 "Specify multiple times to add multiple flags."),
+                             default=[], help="Additional command line flag to pass to DumpRenderTree "
+                             "Specify multiple times to add multiple flags."),
         optparse.make_option("--driver-name", type="string",
-            help="Alternative DumpRenderTree binary to use"),
+                             help="Alternative DumpRenderTree binary to use"),
         optparse.make_option("--additional-platform-directory", action="append",
-            default=[], help="Additional directory where to look for test "
-                 "baselines (will take precendence over platform baselines). "
-                 "Specify multiple times to add multiple search path entries."),
+                             default=[], help="Additional directory where to look for test "
+                             "baselines (will take precendence over platform baselines). "
+                             "Specify multiple times to add multiple search path entries."),
         optparse.make_option("--additional-expectations", action="append", default=[],
-            help="Path to a test_expectations file that will override previous expectations. "
-                 "Specify multiple times for multiple sets of overrides."),
+                             help="Path to a test_expectations file that will override previous expectations. "
+                             "Specify multiple times for multiple sets of overrides."),
         optparse.make_option("--compare-port", action="store", default=None,
-            help="Use the specified port's baselines first"),
+                             help="Use the specified port's baselines first"),
         optparse.make_option("--show-results", action="store_true",
                              default=False, dest="show_results",
                              help="Launch a browser with results after the tests "
@@ -248,105 +248,105 @@ def parse_args(args):
                              help="Don't launch a browser with results after the tests "
                                   "are done (default)"),
         optparse.make_option("--full-results-html", action="store_true",
-            default=False,
-            help="Show all failures in results.html, rather than only regressions"),
+                             default=False,
+                             help="Show all failures in results.html, rather than only regressions"),
         optparse.make_option("--clobber-old-results", action="store_true",
-            default=False, help="Clobbers test results from previous runs."),
+                             default=False, help="Clobbers test results from previous runs."),
         optparse.make_option("--full-diff-context", action="store_true",
-            default=False, help="Show full context in text diffs instead of a few lines around changes"),
+                             default=False, help="Show full context in text diffs instead of a few lines around changes"),
         optparse.make_option("--http", action="store_true", dest="http",
-            default=True, help="Run HTTP and WebSocket tests (default)"),
+                             default=True, help="Run HTTP and WebSocket tests (default)"),
         optparse.make_option("--no-http", action="store_false", dest="http",
-            help="Don't run HTTP and WebSocket tests"),
+                             help="Don't run HTTP and WebSocket tests"),
         optparse.make_option("--no-http-servers", action="store_false", dest="start_http_servers_if_needed",
-            default=True, help="Don't start HTTP servers"),
+                             default=True, help="Don't start HTTP servers"),
         optparse.make_option("--ignore-metrics", action="store_true", dest="ignore_metrics",
-            default=False, help="Ignore rendering metrics related information from test "
-            "output, only compare the structure of the rendertree."),
+                             default=False, help="Ignore rendering metrics related information from test "
+                             "output, only compare the structure of the rendertree."),
         optparse.make_option("--nocheck-sys-deps", action="store_true",
-            default=False,
-            help="Don't check the system dependencies (themes)"),
+                             default=False,
+                             help="Don't check the system dependencies (themes)"),
         optparse.make_option("--java", action="store_true",
-            default=False,
-            help="Build java support files"),
+                             default=False,
+                             help="Build java support files"),
         optparse.make_option("--layout-tests-directory", action="store", default=None,
-            help="Override the default layout test directory.", dest="layout_tests_dir")
+                             help="Override the default layout test directory.", dest="layout_tests_dir")
     ]))
 
     option_group_definitions.append(("Testing Options", [
         optparse.make_option("--build", dest="build", action="store_true", default=False, help="Check to ensure the DumpRenderTree build is up-to-date."),
         optparse.make_option("--no-build", dest="build", action="store_false", help="Don't check to see if the DumpRenderTree or WebKitTestRunner build is up-to-date (default)."),
         optparse.make_option("-n", "--dry-run", action="store_true",
-            default=False,
-            help="Do everything but actually run the tests or upload results."),
+                             default=False,
+                             help="Do everything but actually run the tests or upload results."),
         optparse.make_option("--wrapper",
-            help="wrapper command to insert before invocations of "
-                 "DumpRenderTree or WebKitTestRunner; option is split on whitespace before "
-                 "running. (Example: --wrapper='valgrind --smc-check=all')"),
+                             help="wrapper command to insert before invocations of "
+                             "DumpRenderTree or WebKitTestRunner; option is split on whitespace before "
+                             "running. (Example: --wrapper='valgrind --smc-check=all')"),
         optparse.make_option("-i", "--ignore-tests", "--exclude-tests", action="append", default=[],
-            help="directories or test to ignore (may specify multiple times)"),
+                             help="directories or test to ignore (may specify multiple times)"),
         optparse.make_option("--test-list", action="append",
-            help="read list of tests to run from file", metavar="FILE"),
+                             help="read list of tests to run from file", metavar="FILE"),
         optparse.make_option("--skipped", action="store", default="default",
-            choices=["default", "ignore", "only", "always"],
-            help=("control how tests marked SKIP are run. "
-                 "'default' == Skip tests unless explicitly listed on the command line, "
-                 "'ignore' == Run them anyway, "
-                 "'only' == only run the SKIP tests, "
-                 "'always' == always skip, even if listed on the command line.")),
+                             choices=["default", "ignore", "only", "always"],
+                             help=("control how tests marked SKIP are run. "
+                                   "'default' == Skip tests unless explicitly listed on the command line, "
+                                   "'ignore' == Run them anyway, "
+                                   "'only' == only run the SKIP tests, "
+                                   "'always' == always skip, even if listed on the command line.")),
         optparse.make_option("--expect-pass", "--force", action="store_true", default=False, dest="force",
-            help="Run all tests with PASS as expected result, even those marked SKIP in the test list or " + \
-                 "those which are device-specific (implies --skipped=ignore)"),
+                             help="Run all tests with PASS as expected result, even those marked SKIP in the test list or " +
+                             "those which are device-specific (implies --skipped=ignore)"),
         optparse.make_option("--time-out-ms", "--timeout",
-            help="Set the timeout for each test in milliseconds"),
+                             help="Set the timeout for each test in milliseconds"),
         optparse.make_option("--order", action="store", default="natural",
-            choices=["none", "natural", "random"],
-            help=("determine the order in which the test cases will be run. "
-                  "'none' == use the order in which the tests were listed either in arguments or test list, "
-                  "'natural' == use the natural order (default), "
-                  "'random' == randomize the test order.")),
+                             choices=["none", "natural", "random"],
+                             help=("determine the order in which the test cases will be run. "
+                                   "'none' == use the order in which the tests were listed either in arguments or test list, "
+                                   "'natural' == use the natural order (default), "
+                                   "'random' == randomize the test order.")),
         optparse.make_option("--run-chunk",
-            help=("Run a specified chunk (n:l), the nth of len l, "
-                 "of the layout tests")),
+                             help=("Run a specified chunk (n:l), the nth of len l, "
+                                   "of the layout tests")),
         optparse.make_option("--run-part", help=("Run a specified part (n:m), "
-                  "the nth of m parts, of the layout tests")),
+                                                 "the nth of m parts, of the layout tests")),
         optparse.make_option("--batch-size",
-            help=("Run a the tests in batches (n), after every n tests, "
-                  "DumpRenderTree is relaunched."), type="int", default=None),
+                             help=("Run a the tests in batches (n), after every n tests, "
+                                   "DumpRenderTree is relaunched."), type="int", default=None),
         optparse.make_option("--run-singly", action="store_true",
-            default=False, help="run a separate DumpRenderTree for each test (implies --verbose)"),
+                             default=False, help="run a separate DumpRenderTree for each test (implies --verbose)"),
         optparse.make_option("--child-processes",
-            help="Number of DumpRenderTrees to run in parallel."),
+                             help="Number of DumpRenderTrees to run in parallel."),
         # FIXME: Display default number of child processes that will run.
         optparse.make_option("-f", "--fully-parallel", action="store_true",
-            help="run all tests in parallel"),
+                             help="run all tests in parallel"),
         optparse.make_option("--exit-after-n-failures", type="int", default=None,
-            help="Exit after the first N failures instead of running all "
-            "tests"),
+                             help="Exit after the first N failures instead of running all "
+                             "tests"),
         optparse.make_option("--exit-after-n-crashes-or-timeouts", type="int",
-            default=None, help="Exit after the first N crashes instead of "
-            "running all tests"),
+                             default=None, help="Exit after the first N crashes instead of "
+                             "running all tests"),
         optparse.make_option("--iterations", type="int", default=1, help="Number of times to run the set of tests (e.g. ABCABCABC)"),
         optparse.make_option("--repeat-each", type="int", default=1, help="Number of times to run each test (e.g. AAABBBCCC)"),
         optparse.make_option("--retry-failures", action="store_true",
-            default=True,
-            help="Re-try any tests that produce unexpected results (default)"),
+                             default=True,
+                             help="Re-try any tests that produce unexpected results (default)"),
         optparse.make_option("--no-retry-failures", action="store_false",
-            dest="retry_failures",
-            help="Don't re-try any tests that produce unexpected results."),
+                             dest="retry_failures",
+                             help="Don't re-try any tests that produce unexpected results."),
         optparse.make_option("--max-locked-shards", type="int", default=0,
-            help="Set the maximum number of locked shards"),
+                             help="Set the maximum number of locked shards"),
         optparse.make_option("--additional-env-var", type="string", action="append", default=[],
-            help="Passes that environment variable to the tests (--additional-env-var=NAME=VALUE)"),
+                             help="Passes that environment variable to the tests (--additional-env-var=NAME=VALUE)"),
         optparse.make_option("--additional-header", help="Passes that webkit-test-runner header value to the tests (--additional-header='KEY=VALUE KEY=VALUE ...')"),
         optparse.make_option("--profile", action="store_true",
-            help="Output per-test profile information."),
+                             help="Output per-test profile information."),
         optparse.make_option("--profiler", action="store",
-            help="Output per-test profile information, using the specified profiler."),
+                             help="Output per-test profile information, using the specified profiler."),
         optparse.make_option("--no-timeout", action="store_true", default=False, help="Disable test timeouts"),
         optparse.make_option('--display-server', choices=['xvfb', 'xorg', 'weston', 'wayland'], default='xvfb',
-            help='"xvfb": Use a virtualized X11 server. "xorg": Use the current X11 session. '
-                 '"weston": Use a virtualized Weston server. "wayland": Use the current wayland session.'),
+                             help='"xvfb": Use a virtualized X11 server. "xorg": Use the current X11 session. '
+                             '"weston": Use a virtualized Weston server. "wayland": Use the current wayland session.'),
         optparse.make_option('--enable-core-dumps-nolimit', action='store_true', default=False, help='Enable core dumps for the test run (runs the equivalent of "ulimit -c unlimited" before starting the tests).'),
         optparse.make_option("--world-leaks", action="store_true", default=False, help="Check for world leaks (currently, only documents). Differs from --leaks in that this uses internal instrumentation, rather than external tools."),
         optparse.make_option("--accessibility-isolated-tree", action="store_true", default=False, help="Runs tests in accessibility isolated tree mode."),
@@ -356,11 +356,11 @@ def parse_args(args):
 
     option_group_definitions.append(("iOS Options", [
         optparse.make_option('--no-install', action='store_const', const=False, default=True, dest='install',
-            help='Skip install step for device and simulator testing'),
+                             help='Skip install step for device and simulator testing'),
         optparse.make_option('--version', help='Specify the version of iOS to be used. By default, this will adopt the runtime for iOS Simulator.'),
         optparse.make_option('--device-type', help='iOS Simulator device type identifier (default: i386 -> iPhone 5, x86_64 -> iPhone SE)'),
         optparse.make_option('--dedicated-simulators', action="store_true", default=False,
-            help="If set, dedicated iOS simulators will always be created.  If not set, the script will attempt to use any currently running simulator."),
+                             help="If set, dedicated iOS simulators will always be created.  If not set, the script will attempt to use any currently running simulator."),
         optparse.make_option('--show-touches', action="store_true", default=False, help="If set, a small dot will be shown where the generated touches are. Helpful for debugging touch tests."),
         optparse.make_option('--udid', '--udids', dest='udids', action='store', help='Specify a device UDID to pick the connected device to run tests on. Specify multiple by separating with commas. If using --*-simulator and the specified UDIDs don\'t satisfy the request, simulators will be created to fulfill the remaining requests.'),
     ]))
@@ -470,8 +470,6 @@ def parse_args(args):
         options.result_report_flavor = 'wpe-legacy-api'
 
     return options, args
-
-
 
 
 def _set_up_derived_options(port, options):

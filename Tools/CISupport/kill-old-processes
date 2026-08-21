@@ -189,8 +189,8 @@ def main(user=None):
         for task in tasksToKill + tasksToKillMac:
             os.system("killall -9 -v -m " + task)
 
-        # Kill all instances of python executing run-webkit-tests
-        os.system("ps aux | grep -E '.+/Python3? .+(run_webkit_tests|run-webkit-tests|mod_pywebsocket)' | grep -v grep | awk '{print $2}' | xargs kill")
+        # Kill all instances of python executing the layout test harness
+        os.system("ps aux | grep -E '.+/Python3? .+(run[-_](webkit|layout)[-_]tests|mod_pywebsocket)' | grep -v grep | awk '{print $2}' | xargs kill")
     elif sys.platform == 'cygwin' or sys.platform == 'win32':
         for task in tasksToKill + tasksToKillWin:
             os.system("taskkill /t /f /im " + task)
@@ -201,7 +201,7 @@ def main(user=None):
             os.system("killall -9 -v " + task)
         # Match on the executable name (comm) rather than the command line, so that wrappers
         # that merely mention the script (podman run ..., bash -c '... | ...') are not killed.
-        os.system(r"ps -eo pid=,comm=,args= | grep -P '^\s*\d+\s+python3?\s' | grep -P '(run_webkit_tests|run-webkit-tests|mod_pywebsocket|run-webdriver-tests)' | grep -v grep | awk '{print $1}' | xargs -r kill")
+        os.system(r"ps -eo pid=,comm=,args= | grep -P '^\s*\d+\s+python3?\s' | grep -P '(run[-_](webkit|layout)[-_]tests|mod_pywebsocket|run-webdriver-tests)' | grep -v grep | awk '{print $1}' | xargs -r kill")
         removeOrphanShmSegments()
 
         # Filter Xvfb instances likely spawned by our harness, skipping ones run with xvfb-run like
