@@ -191,7 +191,7 @@ void RemoteGraphicsContextGLProxy::reshape(int width, int height)
         markContextLost();
 }
 
-RefPtr<NativeImage> RemoteGraphicsContextGLProxy::copyNativeImageYFlipped(SurfaceBuffer buffer)
+RefPtr<NativeImage> RemoteGraphicsContextGLProxy::copyNativeImage(SurfaceBuffer buffer)
 {
     if (isContextLost()) [[unlikely]]
         return nullptr;
@@ -211,7 +211,7 @@ RefPtr<NativeImage> RemoteGraphicsContextGLProxy::copyNativeImageYFlipped(Surfac
     // into this backend's cache right away, so that drawing it needs no further set up.
     Ref nativeImage = RemoteNativeImageProxy::create(size, m_drawingBufferColorSpace.platformColorSpace(), attributes.alpha, sharedResourceCache.releaseNonNull());
     renderingBackend->cacheNativeImageFromSharedNativeImage(nativeImage);
-    auto sendResult = send(Messages::RemoteGraphicsContextGL::copyNativeImageYFlipped(buffer, nativeImage->reference()));
+    auto sendResult = send(Messages::RemoteGraphicsContextGL::CopyNativeImage(buffer, nativeImage->reference()));
     if (sendResult != IPC::Error::NoError) [[unlikely]] {
         markContextLost();
         return nullptr;

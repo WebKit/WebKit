@@ -43,6 +43,7 @@
 #import <pal/spi/cocoa/MetalSPI.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/RuntimeApplicationChecks.h>
+#import <wtf/Scope.h>
 #import <wtf/StdLibExtras.h>
 #import <wtf/darwin/WeakLinking.h>
 #import <wtf/text/CString.h>
@@ -57,9 +58,7 @@
 #import "VideoFrameCV.h"
 #endif
 
-#if ENABLE(MEDIA_STREAM)
-#import "ImageRotationSessionVT.h"
-#endif
+#import "CoreVideoSoftLink.h"
 
 // FIXME: Checking for EGL_Initialize does not seem to be robust in recovery OS.
 WTF_WEAK_LINK_FORCE_IMPORT(EGL_GetPlatformDisplayEXT);
@@ -292,6 +291,9 @@ bool GraphicsContextGLCocoa::platformInitializeExtensions()
     if (!enableExtensionsImpl({ "GL_EXT_texture_format_BGRA8888"_s }))
         return false;
 #endif
+    // For flip blit.
+    if (!m_isForWebGL2 && !enableExtensionsImpl({ "GL_NV_framebuffer_blit"_s }))
+        return false;
 #if ENABLE(WEBXR)
     auto attributes = contextAttributes();
     if (attributes.xrCompatible && !enableRequiredWebXRExtensionsImpl())
@@ -373,6 +375,80 @@ bool GraphicsContextGLCocoa::reshapeDrawingBuffer()
     return bindNextDrawingBuffer();
 }
 
+RetainPtr<IOSurfaceRef> GraphicsContextGLCocoa::copySurfaceBuffer(SurfaceBuffer bufferType)
+{
+    auto size = getInternalFramebufferSize();
+    auto& source = surfaceBuffer(bufferType);
+    if (!source || source.size() != size)
+        return nullptr;
+
+    auto& destination = copyBuffer();
+    if (destination && destination.isInUse()) {
+        EGL_DestroySurface(m_displayObj, destination.pbuffer());
+        destination = { };
+    }
+    if (!destination) {
+        destination = createDrawingBuffer();
+        if (!destination)
+            return nullptr;
+    }
+    ScopedRestoreTextureBinding restoreTextureBinding(TEXTURE_BINDING_2D, TEXTURE_2D);
+
+    ScopedTexture destinationTexture;
+    GL_BindTexture(TEXTURE_2D, destinationTexture);
+
+    if (!EGL_BindTexImage(m_displayObj, destination.pbuffer(), EGL_BACK_BUFFER))
+        return nullptr;
+    auto destinationTexImageCleanup = makeScopeExit([&] {
+        EGL_ReleaseTexImage(m_displayObj, destination.pbuffer(), EGL_BACK_BUFFER);
+    });
+    // Restores the bindings after the scoped framebuffers below are deleted, as deleting a bound
+    // framebuffer resets the binding to 0.
+    auto framebufferBindingCleanup = makeScopeExit([&] {
+        if (m_isForWebGL2) {
+            GL_BindFramebuffer(GL_DRAW_FRAMEBUFFER, m_state.boundDrawFBO);
+            GL_BindFramebuffer(GL_READ_FRAMEBUFFER, m_state.boundReadFBO);
+        } else
+            GL_BindFramebuffer(GL_FRAMEBUFFER, m_state.boundDrawFBO);
+    });
+    ScopedFramebuffer flipFBO;
+    GL_BindFramebuffer(GL_DRAW_FRAMEBUFFER_ANGLE, flipFBO);
+    GL_FramebufferTexture2D(GL_DRAW_FRAMEBUFFER_ANGLE, GL_COLOR_ATTACHMENT0, TEXTURE_2D, destinationTexture, 0);
+
+    std::optional<ScopedTexture> sourceTexture;
+    // NOTE: Custom FBO since client might have modified default framebuffer state.
+
+    ScopedFramebuffer sourceFBO;
+    auto sourceTexImageCleanup = makeScopeExit([&] {
+        if (sourceTexture)
+            EGL_ReleaseTexImage(m_displayObj, source.pbuffer(), EGL_BACK_BUFFER);
+    });
+    GCGLuint sourceTextureName = m_texture;
+    if (bufferType == SurfaceBuffer::DisplayBuffer) {
+        sourceTexture.emplace();
+        GL_BindTexture(TEXTURE_2D, *sourceTexture);
+        if (!EGL_BindTexImage(m_displayObj, source.pbuffer(), EGL_BACK_BUFFER)) {
+            sourceTexture.reset();
+            return nullptr;
+        }
+        sourceTextureName = *sourceTexture;
+    }
+
+    GL_BindFramebuffer(GL_READ_FRAMEBUFFER_ANGLE, sourceFBO);
+    GL_FramebufferTexture2D(GL_READ_FRAMEBUFFER_ANGLE, GL_COLOR_ATTACHMENT0, TEXTURE_2D, sourceTextureName, 0);
+
+    ASSERT(GL_CheckFramebufferStatus(GL_DRAW_FRAMEBUFFER_ANGLE) == GL_FRAMEBUFFER_COMPLETE);
+    ASSERT(GL_CheckFramebufferStatus(GL_READ_FRAMEBUFFER_ANGLE) == GL_FRAMEBUFFER_COMPLETE);
+    {
+        ScopedGLCapability scopedScissor(GL_SCISSOR_TEST, GL_FALSE);
+        ScopedGLCapability scopedDither(GL_DITHER, GL_FALSE);
+        // The destination rows run the other way, which is the flip.
+        blitFramebuffer(0, 0, size.width(), size.height(), 0, size.height(), size.width(), 0, COLOR_BUFFER_BIT, NEAREST);
+    }
+
+    return destination.surface()->surface();
+}
+
 void GraphicsContextGLCocoa::setDrawingBufferColorSpace(const DestinationColorSpace& colorSpace)
 {
     if (!makeContextCurrent())
@@ -388,19 +464,52 @@ void GraphicsContextGLCocoa::setDrawingBufferColorSpace(const DestinationColorSp
 
 IOSurfacePbuffer& GraphicsContextGLCocoa::drawingBuffer()
 {
-    return surfaceBuffer(SurfaceBuffer::DrawingBuffer);
+    return m_drawingBuffers[m_currentDrawingBufferIndex % maxReusedDrawingBuffers];
 }
 
 IOSurfacePbuffer& GraphicsContextGLCocoa::displayBuffer()
 {
-    return surfaceBuffer(SurfaceBuffer::DisplayBuffer);
+    return m_drawingBuffers[(m_currentDrawingBufferIndex + maxReusedDrawingBuffers - 1u) % maxReusedDrawingBuffers];
+}
+
+IOSurfacePbuffer& GraphicsContextGLCocoa::copyBuffer()
+{
+    return m_drawingBuffers[(m_currentDrawingBufferIndex + 1) % maxReusedDrawingBuffers];
 }
 
 IOSurfacePbuffer& GraphicsContextGLCocoa::surfaceBuffer(SurfaceBuffer buffer)
 {
     if (buffer == SurfaceBuffer::DisplayBuffer)
-        return m_drawingBuffers[(m_currentDrawingBufferIndex + maxReusedDrawingBuffers - 1u) % maxReusedDrawingBuffers];
-    return m_drawingBuffers[m_currentDrawingBufferIndex % maxReusedDrawingBuffers];
+        return displayBuffer();
+    return drawingBuffer();
+}
+
+IOSurfacePbuffer GraphicsContextGLCocoa::createDrawingBuffer()
+{
+    const auto size = getInternalFramebufferSize();
+    auto surface = IOSurface::create(nullptr, size, m_drawingBufferColorSpace, IOSurface::Name::GraphicsContextGL);
+    if (!surface)
+        return { };
+    if (m_resourceOwner)
+        surface->setOwnershipIdentity(m_resourceOwner);
+
+    const bool usingAlpha = contextAttributes().alpha;
+    const EGLint surfaceAttributes[] = {
+        EGL_WIDTH, size.width(),
+        EGL_HEIGHT, size.height(),
+        EGL_IOSURFACE_PLANE_ANGLE, 0,
+        EGL_TEXTURE_TARGET, EGL_TEXTURE_2D,
+        EGL_TEXTURE_INTERNAL_FORMAT_ANGLE, usingAlpha ? GL_BGRA_EXT : GL_RGB,
+        EGL_TEXTURE_FORMAT, EGL_TEXTURE_RGBA,
+        EGL_TEXTURE_TYPE_ANGLE, GL_UNSIGNED_BYTE,
+        // Only has an effect on the iOS Simulator.
+        EGL_IOSURFACE_USAGE_HINT_ANGLE, EGL_IOSURFACE_WRITE_HINT_ANGLE,
+        EGL_NONE, EGL_NONE
+    };
+    EGLSurface pbuffer = EGL_CreatePbufferFromClientBuffer(m_displayObj, EGL_IOSURFACE_ANGLE, surface->surface(), m_configObj, surfaceAttributes);
+    if (!pbuffer)
+        return { };
+    return IOSurfacePbuffer { WTF::move(surface), pbuffer };
 }
 
 bool GraphicsContextGLCocoa::bindNextDrawingBuffer()
@@ -421,30 +530,9 @@ bool GraphicsContextGLCocoa::bindNextDrawingBuffer()
         return false;
     }
     if (!buffer) {
-        auto surface = IOSurface::create(nullptr, getInternalFramebufferSize(), m_drawingBufferColorSpace, IOSurface::Name::GraphicsContextGL);
-        if (!surface)
+        buffer = createDrawingBuffer();
+        if (!buffer)
             return false;
-        if (m_resourceOwner)
-            surface->setOwnershipIdentity(m_resourceOwner);
-
-        const bool usingAlpha = contextAttributes().alpha;
-        const auto size = getInternalFramebufferSize();
-        const EGLint surfaceAttributes[] = {
-            EGL_WIDTH, size.width(),
-            EGL_HEIGHT, size.height(),
-            EGL_IOSURFACE_PLANE_ANGLE, 0,
-            EGL_TEXTURE_TARGET, EGL_TEXTURE_2D,
-            EGL_TEXTURE_INTERNAL_FORMAT_ANGLE, usingAlpha ? GL_BGRA_EXT : GL_RGB,
-            EGL_TEXTURE_FORMAT, EGL_TEXTURE_RGBA,
-            EGL_TEXTURE_TYPE_ANGLE, GL_UNSIGNED_BYTE,
-            // Only has an effect on the iOS Simulator.
-            EGL_IOSURFACE_USAGE_HINT_ANGLE, EGL_IOSURFACE_WRITE_HINT_ANGLE,
-            EGL_NONE, EGL_NONE
-        };
-        EGLSurface pbuffer = EGL_CreatePbufferFromClientBuffer(m_displayObj, EGL_IOSURFACE_ANGLE, surface->surface(), m_configObj, surfaceAttributes);
-        if (!pbuffer)
-            return false;
-        buffer = IOSurfacePbuffer { WTF::move(surface), pbuffer };
     }
 
     ScopedRestoreTextureBinding restoreBinding(TEXTURE_BINDING_2D, TEXTURE_2D);
@@ -768,30 +856,22 @@ RefPtr<PixelBuffer> GraphicsContextGLCocoa::readCompositedResults()
 
 RefPtr<VideoFrame> GraphicsContextGLCocoa::surfaceBufferToVideoFrame(SurfaceBuffer buffer)
 {
-    if (buffer == SurfaceBuffer::DrawingBuffer) {
-        if (!makeContextCurrent())
-            return nullptr;
+    if (!makeContextCurrent())
+        return nullptr;
+    if (buffer == SurfaceBuffer::DrawingBuffer)
         prepareTexture();
-        waitUntilWorkScheduled();
-    }
-
-    auto& source = surfaceBuffer(buffer);
-    if (!source || source.size() != getInternalFramebufferSize())
+    RetainPtr copy = copySurfaceBuffer(buffer);
+    if (!copy)
         return nullptr;
-    // We will mirror and rotate the buffer explicitly. Thus the source being used is always a new one.
-    auto pixelBuffer = createCVPixelBuffer(protect(source.surface()->surface()).get());
-    if (!pixelBuffer)
-        return nullptr;
-    // Mirror and rotate the pixel buffer explicitly, as WebRTC encoders cannot mirror.
-    auto size = getInternalFramebufferSize();
-    if (!m_mediaSampleRotationSession || m_mediaSampleRotationSessionSize != size)
-        m_mediaSampleRotationSession = makeUnique<ImageRotationSessionVT>(ImageRotationSessionVT::RotationProperties { true, false, 180 }, size, ImageRotationSessionVT::IsCGImageCompatible::No);
-    auto mediaSamplePixelBuffer = m_mediaSampleRotationSession->rotate(pixelBuffer->get());
+    // The flip is this context's own work, so the encoder reading the copy needs it scheduled.
+    waitUntilWorkScheduled();
+    auto mediaSamplePixelBuffer = createCVPixelBuffer(copy.get());
     if (!mediaSamplePixelBuffer)
         return nullptr;
-    if (m_resourceOwner)
-        setOwnershipIdentityForCVPixelBuffer(mediaSamplePixelBuffer.get(), m_resourceOwner);
-    return VideoFrameCV::create({ }, false, VideoFrame::Rotation::None, WTF::move(mediaSamplePixelBuffer));
+    // The surface describes the color space, but a pixel buffer consumer looks for the attachment.
+    RetainPtr colorSpace = m_drawingBufferColorSpace.platformColorSpace();
+    CVBufferSetAttachment(mediaSamplePixelBuffer->get(), kCVImageBufferCGColorSpaceKey, colorSpace.get(), kCVAttachmentMode_ShouldPropagate);
+    return VideoFrameCV::create({ }, false, VideoFrame::Rotation::None, WTF::move(*mediaSamplePixelBuffer));
 }
 #endif
 
@@ -811,42 +891,33 @@ void GraphicsContextGLCocoa::invalidateKnownTextureContent(GCGLuint texture)
         m_cv->invalidateKnownTextureContent(texture);
 }
 
-RefPtr<NativeImage> GraphicsContextGLCocoa::copyNativeImageYFlipped(SurfaceBuffer buffer)
+// Says how the alpha of the contents of the surface buffers is to be interpreted.
+static CGImageAlphaInfo alphaInfoForSurfaceBufferContents(const GraphicsContextGLAttributes& attributes)
 {
-    RetainPtr<CGContextRef> cgContext;
-    RefPtr<NativeImage> image;
-    if (contextAttributes().premultipliedAlpha) {
-        // Use the IOSurface backed image directly
-        if (buffer == SurfaceBuffer::DrawingBuffer) {
-            if (!makeContextCurrent())
-                return nullptr;
-            prepareTexture();
-            waitUntilWorkScheduled();
-        }
-        IOSurfacePbuffer& source = surfaceBuffer(buffer);
-        if (!source || source.size() != getInternalFramebufferSize())
-            return nullptr;
-        image = source.copyNativeImage();
-    } else {
-        if (!makeContextCurrent())
-            return nullptr;
-        // Since IOSurface-backed images only support premultiplied alpha, read
-        // the image into a PixelBuffer which can be used to create a CGImage
-        // that does the conversion.
-        //
-        // FIXME: Can the IOSurface be read into a buffer to avoid the read back via GL?
-        RefPtr<PixelBuffer> pixelBuffer;
-        if (buffer == SurfaceBuffer::DrawingBuffer)
-            pixelBuffer = drawingBufferToPixelBuffer(FlipY::No);
-        else
-            pixelBuffer = readCompositedResults();
-        if (!pixelBuffer)
-            return nullptr;
-        image = createNativeImageFromPixelBuffer(contextAttributes(), pixelBuffer.releaseNonNull());
-    }
+    if (!attributes.alpha)
+        return kCGImageAlphaNoneSkipFirst;
+    if (attributes.premultipliedAlpha)
+        return kCGImageAlphaPremultipliedFirst;
+    return kCGImageAlphaFirst;
+}
+
+RefPtr<NativeImage> GraphicsContextGLCocoa::copyNativeImage(SurfaceBuffer buffer)
+{
+    if (!makeContextCurrent())
+        return nullptr;
+    if (buffer == SurfaceBuffer::DrawingBuffer)
+        prepareTexture();
+    RetainPtr copy = copySurfaceBuffer(buffer);
+    if (!copy)
+        return nullptr;
+    // The flip is this context's own work, so the image reading the copy needs it scheduled.
+    waitUntilWorkScheduled();
+    auto copyPixelBuffer = createCVPixelBuffer(copy.get());
+    if (!copyPixelBuffer)
+        return nullptr;
+    RefPtr image = NativeImage::create(WTF::move(*copyPixelBuffer), alphaInfoForSurfaceBufferContents(contextAttributes()), m_drawingBufferColorSpace.platformColorSpace());
     if (!image)
         return nullptr;
-
     CGImageSetCachingFlags(image->platformImage().get(), kCGImageCachingTransient);
     return image;
 }
@@ -889,12 +960,6 @@ bool GraphicsContextGLCocoa::copyTextureFromVideoFrame(VideoFrame& videoFrame, P
     return contextCV->copyVideoSampleToTexture(*videoFrameCV, texture, level, internalFormat, format, type, WebCore::GraphicsContextGL::FlipY(flipY));
 }
 #endif
-
-void GraphicsContextGLCocoa::prepareForDrawingBufferWrite()
-{
-    auto& buffer = drawingBuffer();
-    buffer.prepareForWrite();
-}
 
 }
 

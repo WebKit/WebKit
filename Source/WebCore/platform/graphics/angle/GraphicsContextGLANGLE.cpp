@@ -527,7 +527,6 @@ void GraphicsContextGLANGLE::attachDepthAndStencilBufferIfNeeded(GLuint internal
 
 void GraphicsContextGLANGLE::resolveMultisamplingIfNecessary(const IntRect& rect)
 {
-    prepareForDrawingBufferWrite();
     ScopedGLCapability scopedScissor(GL_SCISSOR_TEST, GL_FALSE);
     ScopedGLCapability scopedDither(GL_DITHER, GL_FALSE);
 
@@ -823,12 +822,16 @@ void GraphicsContextGLANGLE::prepareTexture()
         resolveMultisamplingIfNecessary();
 
     if (m_preserveDrawingBufferTexture) {
-        prepareForDrawingBufferWrite();
         // Blit m_preserveDrawingBufferTexture into m_texture.
         ScopedGLCapability scopedScissor(GL_SCISSOR_TEST, GL_FALSE);
         ScopedGLCapability scopedDither(GL_DITHER, GL_FALSE);
         GL_BindFramebuffer(GL_DRAW_FRAMEBUFFER_ANGLE, m_preserveDrawingBufferFBO);
-        GL_BindFramebuffer(GL_READ_FRAMEBUFFER_ANGLE, m_fbo);
+        // Read m_preserveDrawingBufferTexture through an own framebuffer instead of m_fbo, because
+        // the read buffer of m_fbo, the emulated default framebuffer, is set by the WebGL 2 context
+        // and might be NONE.
+        ScopedFramebuffer readFBO;
+        GL_BindFramebuffer(GL_READ_FRAMEBUFFER_ANGLE, readFBO);
+        GL_FramebufferTexture2D(GL_READ_FRAMEBUFFER_ANGLE, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_preserveDrawingBufferTexture, 0);
         GL_BlitFramebufferANGLE(0, 0, m_currentWidth, m_currentHeight, 0, 0, m_currentWidth, m_currentHeight, GL_COLOR_BUFFER_BIT, GL_NEAREST);
 
         if (m_isForWebGL2) {
@@ -1245,9 +1248,6 @@ void GraphicsContextGLANGLE::clear(GCGLbitfield mask)
 {
     if (!makeContextCurrent())
         return;
-    if (mask & COLOR_BUFFER_BIT)
-        prepareForDrawingBufferWriteIfBound();
-
     GL_Clear(mask);
     checkGPUStatus();
 }
@@ -1379,7 +1379,6 @@ void GraphicsContextGLANGLE::drawArrays(GCGLenum mode, GCGLint first, GCGLsizei 
 {
     if (!makeContextCurrent())
         return;
-    prepareForDrawingBufferWriteIfBound();
     GL_DrawArrays(mode, first, count);
     checkGPUStatus();
 }
@@ -1388,7 +1387,6 @@ void GraphicsContextGLANGLE::drawElements(GCGLenum mode, GCGLsizei count, GCGLen
 {
     if (!makeContextCurrent())
         return;
-    prepareForDrawingBufferWriteIfBound();
     GL_DrawElements(mode, count, type, reinterpret_cast<GLvoid*>(static_cast<intptr_t>(offset)));
     checkGPUStatus();
 }
@@ -2404,7 +2402,6 @@ void GraphicsContextGLANGLE::drawArraysInstanced(GCGLenum mode, GCGLint first, G
 {
     if (!makeContextCurrent())
         return;
-    prepareForDrawingBufferWriteIfBound();
     if (m_isForWebGL2)
         GL_DrawArraysInstanced(mode, first, count, primcount);
     else
@@ -2416,7 +2413,6 @@ void GraphicsContextGLANGLE::drawElementsInstanced(GCGLenum mode, GCGLsizei coun
 {
     if (!makeContextCurrent())
         return;
-    prepareForDrawingBufferWriteIfBound();
     if (m_isForWebGL2)
         GL_DrawElementsInstanced(mode, count, type, reinterpret_cast<void*>(offset), primcount);
     else
@@ -2597,7 +2593,6 @@ void GraphicsContextGLANGLE::blitFramebuffer(GCGLint srcX0, GCGLint srcY0, GCGLi
 {
     if (!makeContextCurrent())
         return;
-    prepareForDrawingBufferWriteIfBound();
     if (m_isForWebGL2)
         GL_BlitFramebuffer(srcX0, srcY0, srcX1, srcY1, dstX0, dstY0, dstX1, dstY1, mask, filter);
     else if (isExtensionEnabledImpl("GL_NV_framebuffer_blit"_s))
@@ -2619,7 +2614,6 @@ void GraphicsContextGLANGLE::invalidateFramebuffer(GCGLenum target, std::span<co
 {
     if (!makeContextCurrent())
         return;
-    prepareForDrawingBufferWriteIfBound();
     GL_InvalidateFramebuffer(target, attachments.size(), attachments.data());
 }
 
@@ -2627,7 +2621,6 @@ void GraphicsContextGLANGLE::invalidateSubFramebuffer(GCGLenum target, std::span
 {
     if (!makeContextCurrent())
         return;
-    prepareForDrawingBufferWriteIfBound();
     GL_InvalidateSubFramebuffer(target, attachments.size(), attachments.data(), x, y, width, height);
 }
 
@@ -2821,7 +2814,6 @@ void GraphicsContextGLANGLE::drawRangeElements(GCGLenum mode, GCGLuint start, GC
 {
     if (!makeContextCurrent())
         return;
-    prepareForDrawingBufferWriteIfBound();
     GL_DrawRangeElements(mode, start, end, count, type, reinterpret_cast<void*>(offset));
     checkGPUStatus();
 }
@@ -2839,7 +2831,6 @@ void GraphicsContextGLANGLE::clearBufferiv(GCGLenum buffer, GCGLint drawbuffer, 
         return;
     if (!validateClearBufferv(buffer, values.size()))
         return;
-    prepareForDrawingBufferWriteIfBound();
     GL_ClearBufferiv(buffer, drawbuffer, values.data());
     checkGPUStatus();
 }
@@ -2850,7 +2841,6 @@ void GraphicsContextGLANGLE::clearBufferuiv(GCGLenum buffer, GCGLint drawbuffer,
         return;
     if (!validateClearBufferv(buffer, values.size()))
         return;
-    prepareForDrawingBufferWriteIfBound();
     GL_ClearBufferuiv(buffer, drawbuffer, values.data());
     checkGPUStatus();
 }
@@ -2861,7 +2851,6 @@ void GraphicsContextGLANGLE::clearBufferfv(GCGLenum buffer, GCGLint drawbuffer, 
         return;
     if (!validateClearBufferv(buffer, values.size()))
         return;
-    prepareForDrawingBufferWriteIfBound();
     GL_ClearBufferfv(buffer, drawbuffer, values.data());
     checkGPUStatus();
 }
@@ -3106,7 +3095,6 @@ void GraphicsContextGLANGLE::multiDrawArraysANGLE(GCGLenum mode, GCGLSpanTuple<c
 {
     if (!makeContextCurrent())
         return;
-    prepareForDrawingBufferWriteIfBound();
     GL_MultiDrawArraysANGLE(mode, firstsAndCounts.data<0>(), firstsAndCounts.data<1>(), firstsAndCounts.bufSize);
     checkGPUStatus();
 }
@@ -3115,7 +3103,6 @@ void GraphicsContextGLANGLE::multiDrawArraysInstancedANGLE(GCGLenum mode, GCGLSp
 {
     if (!makeContextCurrent())
         return;
-    prepareForDrawingBufferWriteIfBound();
     GL_MultiDrawArraysInstancedANGLE(mode, firstsCountsAndInstanceCounts.data<0>(), firstsCountsAndInstanceCounts.data<1>(), firstsCountsAndInstanceCounts.data<2>(), firstsCountsAndInstanceCounts.bufSize);
     checkGPUStatus();
 }
@@ -3124,8 +3111,6 @@ void GraphicsContextGLANGLE::multiDrawElementsANGLE(GCGLenum mode, GCGLSpanTuple
 {
     if (!makeContextCurrent())
         return;
-
-    prepareForDrawingBufferWriteIfBound();
     GL_MultiDrawElementsANGLE(mode, countsAndOffsets.data<0>(), type, asPointers(countsAndOffsets.span<1>()).span().data(), countsAndOffsets.bufSize);
     checkGPUStatus();
 }
@@ -3134,8 +3119,6 @@ void GraphicsContextGLANGLE::multiDrawElementsInstancedANGLE(GCGLenum mode, GCGL
 {
     if (!makeContextCurrent())
         return;
-
-    prepareForDrawingBufferWriteIfBound();
     GL_MultiDrawElementsInstancedANGLE(mode, countsOffsetsAndInstanceCounts.data<0>(), type, asPointers(countsOffsetsAndInstanceCounts.span<1>()).span().data(), countsOffsetsAndInstanceCounts.data<2>(), countsOffsetsAndInstanceCounts.bufSize);
     checkGPUStatus();
 }
@@ -3362,7 +3345,6 @@ void GraphicsContextGLANGLE::drawArraysInstancedBaseInstanceANGLE(GCGLenum mode,
 {
     if (!makeContextCurrent())
         return;
-    prepareForDrawingBufferWriteIfBound();
     GL_DrawArraysInstancedBaseInstanceANGLE(mode, first, count, instanceCount, baseInstance);
     checkGPUStatus();
 }
@@ -3371,7 +3353,6 @@ void GraphicsContextGLANGLE::drawElementsInstancedBaseVertexBaseInstanceANGLE(GC
 {
     if (!makeContextCurrent())
         return;
-    prepareForDrawingBufferWriteIfBound();
     GL_DrawElementsInstancedBaseVertexBaseInstanceANGLE(mode, count, type, reinterpret_cast<void*>(offset), instanceCount, baseVertex, baseInstance);
     checkGPUStatus();
 }
@@ -3380,7 +3361,6 @@ void GraphicsContextGLANGLE::multiDrawArraysInstancedBaseInstanceANGLE(GCGLenum 
 {
     if (!makeContextCurrent())
         return;
-    prepareForDrawingBufferWriteIfBound();
     GL_MultiDrawArraysInstancedBaseInstanceANGLE(mode, firstsCountsInstanceCountsAndBaseInstances.data<0>(), firstsCountsInstanceCountsAndBaseInstances.data<1>(), firstsCountsInstanceCountsAndBaseInstances.data<2>(), firstsCountsInstanceCountsAndBaseInstances.data<3>(), firstsCountsInstanceCountsAndBaseInstances.bufSize);
     checkGPUStatus();
 }
@@ -3389,8 +3369,6 @@ void GraphicsContextGLANGLE::multiDrawElementsInstancedBaseVertexBaseInstanceANG
 {
     if (!makeContextCurrent())
         return;
-
-    prepareForDrawingBufferWriteIfBound();
     GL_MultiDrawElementsInstancedBaseVertexBaseInstanceANGLE(mode, countsOffsetsInstanceCountsBaseVerticesAndBaseInstances.data<0>(), type, asPointers(countsOffsetsInstanceCountsBaseVerticesAndBaseInstances.span<1>()).span().data(), countsOffsetsInstanceCountsBaseVerticesAndBaseInstances.data<2>(), countsOffsetsInstanceCountsBaseVerticesAndBaseInstances.data<3>(), countsOffsetsInstanceCountsBaseVerticesAndBaseInstances.data<4>(), countsOffsetsInstanceCountsBaseVerticesAndBaseInstances.bufSize);
     checkGPUStatus();
 }
@@ -3435,7 +3413,25 @@ void GraphicsContextGLANGLE::simulateEventForTesting(SimulatedEventForTesting ev
     }
 }
 
-RefPtr<NativeImage> GraphicsContextGLANGLE::copyNativeImageYFlipped(SurfaceBuffer source)
+// Flips the rows in place, e.g. to convert GL read results to image orientation.
+static void flipPixelBufferRows(PixelBuffer& pixelBuffer)
+{
+    if (pixelBuffer.size().isEmpty())
+        return;
+    ASSERT(pixelBuffer.format().pixelFormat == PixelFormat::RGBA8 || pixelBuffer.format().pixelFormat == PixelFormat::BGRA8);
+    // FIXME: Make PixelBufferConversions support negative rowBytes and in-place conversions.
+    size_t rowStride = pixelBuffer.size().width() * 4;
+    auto rowBuffer = MallocSpan<uint8_t>::malloc(rowStride);
+    for (auto bytes = pixelBuffer.bytes(); bytes.size() >= rowStride * 2; bytes = bytes.subspan(rowStride, bytes.size() - 2 * rowStride)) {
+        auto top = bytes.first(rowStride);
+        auto bottom = bytes.last(rowStride);
+        memcpySpan(rowBuffer.mutableSpan(), bottom);
+        memcpySpan(bottom, top);
+        memcpySpan(top, rowBuffer.span());
+    }
+}
+
+RefPtr<NativeImage> GraphicsContextGLANGLE::copyNativeImage(SurfaceBuffer source)
 {
     if (!makeContextCurrent())
         return nullptr;
@@ -3448,29 +3444,9 @@ RefPtr<NativeImage> GraphicsContextGLANGLE::copyNativeImageYFlipped(SurfaceBuffe
         pixelBuffer = readCompositedResults();
     if (!pixelBuffer)
         return nullptr;
+    // The first row of the read results is the bottom row of the image.
+    flipPixelBufferRows(*pixelBuffer);
     return createNativeImageFromPixelBuffer(contextAttributes(), pixelBuffer.releaseNonNull());
-}
-
-RefPtr<PixelBuffer> GraphicsContextGLANGLE::drawingBufferToPixelBuffer(FlipY flipY)
-{
-    // Reading premultiplied alpha would involve unpremultiplying, which is lossy.
-    if (contextAttributes().premultipliedAlpha)
-        return nullptr;
-    auto results = readRenderingResultsForPainting();
-    if (flipY == FlipY::Yes && results && !results->size().isEmpty()) {
-        ASSERT(results->format().pixelFormat == PixelFormat::RGBA8 || results->format().pixelFormat == PixelFormat::BGRA8);
-        // FIXME: Make PixelBufferConversions support negative rowBytes and in-place conversions.
-        size_t rowStride = results->size().width() * 4;
-        auto rowBuffer = MallocSpan<uint8_t>::malloc(rowStride);
-        for (auto bytes = results->bytes(); bytes.size() >= rowStride * 2; bytes = bytes.subspan(rowStride, bytes.size() - 2 * rowStride)) {
-            auto top = bytes.first(rowStride);
-            auto bottom = bytes.last(rowStride);
-            memcpySpan(rowBuffer.mutableSpan(), bottom);
-            memcpySpan(bottom, top);
-            memcpySpan(top, rowBuffer.span());
-        }
-    }
-    return results;
 }
 
 RefPtr<PixelBuffer> GraphicsContextGLANGLE::readRenderingResultsForPainting()
@@ -3549,17 +3525,6 @@ bool GraphicsContextGLANGLE::validateClearBufferv(GCGLenum buffer, size_t values
     }
     addError(GCGLErrorCode::InvalidOperation);
     return false;
-}
-
-void GraphicsContextGLANGLE::prepareForDrawingBufferWriteIfBound()
-{
-    if (m_state.boundDrawFBO != m_fbo)
-        return;
-    prepareForDrawingBufferWrite();
-}
-
-void GraphicsContextGLANGLE::prepareForDrawingBufferWrite()
-{
 }
 
 }

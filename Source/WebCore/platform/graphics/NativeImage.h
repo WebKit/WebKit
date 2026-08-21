@@ -40,6 +40,10 @@
 class GrDirectContext;
 #endif
 
+#if HAVE(IOSURFACE)
+typedef struct CF_BRIDGED_TYPE(id) __CVBuffer* CVPixelBufferRef;
+#endif
+
 namespace WebCore {
 
 class Color;
@@ -65,6 +69,10 @@ public:
     static WEBCORE_EXPORT RefPtr<NativeImage> create(PlatformImagePtr&&);
     // Creates a NativeImage that is intended to be drawn once or only few times. Signals the platform to avoid generating any caches for the image.
     static WEBCORE_EXPORT RefPtr<NativeImage> createTransient(PlatformImagePtr&&);
+#endif
+
+#if USE(CG)
+    WEBCORE_EXPORT static RefPtr<NativeImage> create(RetainPtr<CVPixelBufferRef>, CGImageAlphaInfo, RetainPtr<CGColorSpaceRef>);
 #endif
 
     WEBCORE_EXPORT virtual ~NativeImage();

@@ -2857,7 +2857,7 @@ void MediaPlayerPrivateAVFoundationObjC::updateLastImage(NOESCAPE UpdateCompleti
 
     MonotonicTime start = MonotonicTime::now();
 
-    m_lastImage = NativeImage::create(m_pixelBufferConformer->createImageFromPixelBuffer(m_lastPixelBuffer.get()));
+    m_lastImage = m_pixelBufferConformer->createImageFromPixelBuffer(m_lastPixelBuffer.get());
 
     INFO_LOG(LOGIDENTIFIER, "creating buffer took ", (MonotonicTime::now() - start).seconds());
 

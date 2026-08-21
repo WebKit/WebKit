@@ -466,7 +466,6 @@ platform/graphics/cocoa/GraphicsContextCocoa.mm @nonARC
 platform/graphics/cocoa/H264UtilitiesCocoa.mm @nonARC
 platform/graphics/cocoa/HEVCUtilitiesCocoa.mm @nonARC
 platform/graphics/cocoa/IOSurface.mm @nonARC
-platform/graphics/cocoa/IOSurfaceDrawingBuffer.cpp
 platform/graphics/cocoa/IOSurfacePoolCocoa.mm @nonARC
 platform/graphics/cocoa/ISOBMFFPreParser.cpp
 platform/graphics/cocoa/ISOBMFFTrackInfoParser.cpp

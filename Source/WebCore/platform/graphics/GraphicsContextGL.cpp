@@ -618,19 +618,8 @@ void GraphicsContextGL::paintToCanvas(NativeImage& image, const IntSize& canvasS
     // rendering results.
 
     GraphicsContextStateSaver stateSaver(context);
-    context.scale(FloatSize(1, -1));
-    context.translate(0, -imageSize.height());
     context.setImageInterpolationQuality(InterpolationQuality::DoNotInterpolate);
     context.drawNativeImage(image, canvasRect, FloatRect { { }, imageSize }, { CompositeOperator::Copy });
-}
-
-void GraphicsContextGL::paintToCanvas(const GraphicsContextGLAttributes& sourceContextAttributes, Ref<PixelBuffer>&& pixelBuffer, const IntSize& canvasSize, GraphicsContext& context)
-{
-    if (canvasSize.isEmpty())
-        return;
-
-    auto image = createNativeImageFromPixelBuffer(sourceContextAttributes, WTF::move(pixelBuffer));
-    paintToCanvas(*image, canvasSize, context);
 }
 
 void GraphicsContextGL::forceContextLost()

@@ -348,11 +348,10 @@ public:
     void deleteShader(PlatformGLObject) final;
     void deleteTexture(PlatformGLObject) final;
     void simulateEventForTesting(SimulatedEventForTesting) override;
-    RefPtr<PixelBuffer> drawingBufferToPixelBuffer(FlipY);
 
     RefPtr<PixelBuffer> readRenderingResultsForPainting();
 
-    RefPtr<NativeImage> copyNativeImageYFlipped(SurfaceBuffer) override;
+    RefPtr<NativeImage> copyNativeImage(SurfaceBuffer) override;
 
     // Returns the span of valid data read on success.
     bool getBufferSubDataWithStatus(GCGLenum target, GCGLintptr offset, std::span<uint8_t> data);
@@ -423,8 +422,6 @@ protected:
     GCGLenum NODELETE adjustWebGL1TextureInternalFormat(GCGLenum internalformat, GCGLenum format, GCGLenum type);
     void setPackParameters(GCGLint alignment, GCGLint rowLength, GCGLboolean reverseRowOrder);
     bool NODELETE validateClearBufferv(GCGLenum buffer, size_t valuesSize);
-    void prepareForDrawingBufferWriteIfBound();
-    virtual void prepareForDrawingBufferWrite();
 
     HashSet<CString> m_allRequestableExtensions;
     HashSet<CString> m_allEnabledRequestableExtensions;

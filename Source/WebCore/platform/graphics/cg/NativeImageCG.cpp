@@ -35,6 +35,7 @@
 #include "ImageRotationSessionVT.h"
 #include <limits>
 #include <pal/spi/cg/CoreGraphicsSPI.h>
+#include <wtf/Scope.h>
 
 #include "CoreVideoSoftLink.h"
 
@@ -67,6 +68,116 @@ RefPtr<NativeImage> NativeImage::createTransient(PlatformImagePtr&& image)
     image = nullptr;
     CGImageSetCachingFlags(transientImage.get(), kCGImageCachingTransient);
     return create(WTF::move(transientImage));
+}
+
+static void releaseImageBlock(void* info, CGImageBlockRef)
+{
+    SUPPRESS_RETAINPTR_CTOR_ADOPT RetainPtr pixelBuffer = adoptCF(static_cast<CVPixelBufferRef>(info));
+    CVPixelBufferUnlockBaseAddress(pixelBuffer.get(), kCVPixelBufferLock_ReadOnly);
+}
+
+static const CGImageBlockCallbacks blockCallbacks = { 0, releaseImageBlock };
+
+static bool canSatisfyBlockSetOptions(CFDictionaryRef options)
+{
+    CFIndex satisfiedRequests = 0;
+    if (CFDictionaryContainsKey(options, kCGImageBlockSingletonRequest))
+        ++satisfiedRequests;
+    if (CFDictionaryContainsKey(options, kCGImageBlockMarkAsReadOnlyRequest))
+        ++satisfiedRequests;
+    return CFDictionaryGetCount(options) == satisfiedRequests;
+}
+
+static CGImageBlockSetRef copyImageBlockSet(void* info, CGImageProviderRef provider, CGRect, CGSize, CFDictionaryRef options)
+{
+    if (options && !canSatisfyBlockSetOptions(options))
+        return nullptr;
+
+    RetainPtr pixelBuffer = static_cast<CVPixelBufferRef>(info);
+    if (CVPixelBufferLockBaseAddress(pixelBuffer.get(), kCVPixelBufferLock_ReadOnly) != kCVReturnSuccess)
+        return nullptr;
+    auto lockCleanup = makeScopeExit([&] {
+        CVPixelBufferUnlockBaseAddress(pixelBuffer.get(), kCVPixelBufferLock_ReadOnly);
+    });
+
+    auto size = CGImageProviderGetSize(provider);
+    auto rect = CGRectMake(0, 0, size.width, size.height);
+    auto* data = CVPixelBufferGetBaseAddress(pixelBuffer.get());
+    auto bytesPerRow = CVPixelBufferGetBytesPerRow(pixelBuffer.get());
+    // Image blocks and image block sets are not CF types, so they cannot be held in a RetainPtr:
+    // they are released with CGImageBlockRelease() and CGImageBlockSetRelease(), not CFRelease().
+    SUPPRESS_UNRETAINED_LOCAL CGImageBlockRef block = CGImageBlockCreate(data, rect, bytesPerRow, pixelBuffer.get(), &blockCallbacks);
+    if (!block)
+        return nullptr;
+    // The block owns a reference to the buffer and its read lock, released via releaseImageBlock.
+    lockCleanup.release();
+    SUPPRESS_RETAINPTR_CTOR_ADOPT (void) pixelBuffer.leakRef(); // NOLINT
+    SUPPRESS_UNRETAINED_LOCAL CGImageBlockSetRef blockSet = CGImageBlockSetCreate(provider, rect.size, rect, 1, &block, nullptr, nullptr);
+    if (!blockSet) {
+        // CGImageBlockSetCreate() takes ownership of the block only on success.
+        CGImageBlockRelease(block);
+        return nullptr;
+    }
+    // The blockSet took ownership of the block; the caller takes ownership of the blockSet.
+    return blockSet;
+}
+
+static IOSurfaceRef copyIOSurface(void* info, CGImageProviderRef, CFDictionaryRef)
+{
+    RetainPtr result = CVPixelBufferGetIOSurface(static_cast<CVPixelBufferRef>(info));
+    // FIXME(rdar://162218496): SaferCPP should notice that our API is a create.
+    SUPPRESS_RETAINPTR_CTOR_ADOPT return result.leakRef();
+}
+
+static void releaseProviderInfo(void* info)
+{
+    CFRelease(info);
+}
+
+static const CGImageProviderCallbacksVersion1 blockSetOnlyCallbacks = { 1, copyImageBlockSet, releaseProviderInfo };
+static const CGImageProviderCallbacksVersion2 surfaceCallbacks = { 2, copyImageBlockSet, copyIOSurface, releaseProviderInfo };
+
+RefPtr<NativeImage> NativeImage::create(RetainPtr<CVPixelBufferRef> pixelBuffer, CGImageAlphaInfo alphaInfo, RetainPtr<CGColorSpaceRef> colorSpace)
+{
+    if (!pixelBuffer)
+        return nullptr;
+    if (CVPixelBufferGetPixelFormatType(pixelBuffer.get()) != kCVPixelFormatType_32BGRA)
+        return nullptr;
+    IntSize size { static_cast<int>(CVPixelBufferGetWidth(pixelBuffer.get())), static_cast<int>(CVPixelBufferGetHeight(pixelBuffer.get())) };
+    if (size.isEmpty() || !colorSpace)
+        return nullptr;
+
+    // Currently CA uses the IOSurface if there is one, but is not able to draw with unpremultiplied correctly.
+    RetainPtr surface = CVPixelBufferGetIOSurface(pixelBuffer.get());
+    bool contentsArePremultiplied = alphaInfo != kCGImageAlphaFirst && alphaInfo != kCGImageAlphaLast;
+    const void* callbacks = surface && contentsArePremultiplied ? static_cast<const void*>(&surfaceCallbacks) : static_cast<const void*>(&blockSetOnlyCallbacks);
+
+    auto bitmapInfo = static_cast<int32_t>(static_cast<CGBitmapInfo>(alphaInfo) | static_cast<CGBitmapInfo>(kCGBitmapByteOrder32Little));
+    RetainPtr bitmapInfoNumber = adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberSInt32Type, &bitmapInfo));
+    CFTypeRef keys[] = { kCGImageProviderBitmapInfo };
+    CFTypeRef values[] = { bitmapInfoNumber.get() };
+    RetainPtr auxiliaryInfo = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, keys, values, std::size(keys), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+
+    RetainPtr provider = adoptCF(CGImageProviderCreate(CGSizeMake(size.width(), size.height()), kCGImageComponent8BitInteger, colorSpace.get(), pixelBuffer.get(), callbacks, auxiliaryInfo.get()));
+    if (!provider)
+        return nullptr;
+    // On success, the provider owns the pixel buffer, and releases it via releaseProviderInfo.
+    SUPPRESS_RETAINPTR_CTOR_ADOPT (void) pixelBuffer.leakRef(); // NOLINT
+
+    RetainPtr<CGImageRef> image = adoptCF(CGImageCreateWithImageProvider(provider.get(), nullptr, false, kCGRenderingIntentDefault));
+    if (!image)
+        return nullptr;
+    // CoreAnimation draws the surface directly when the image describes it, instead of
+    // reading the contents back and uploading them to a texture of its own.
+    if (surface && contentsArePremultiplied)
+        CGImageSetProperty(image.get(), kCGImagePropertyIOSurface, surface.get());
+    // For historical reasons, CoreAnimation will adjust certain video color spaces when
+    // displaying the video. If the image is drawn to an accelerated image buffer, e.g. for a
+    // canvas, CA may not do this same adjustment, resulting in the canvas pixels not matching
+    // the source video. Setting this property, even for an image that is not IOSurface
+    // backed, avoids this non-adjustment of the image color space. rdar://88804270
+    CGImageSetProperty(image.get(), CFSTR("CA_IOSURFACE_IMAGE"), kCFBooleanTrue);
+    return NativeImage::create(WTF::move(image));
 }
 
 IntSize NativeImage::size() const

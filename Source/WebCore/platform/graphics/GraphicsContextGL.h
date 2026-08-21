@@ -1673,7 +1673,7 @@ public:
     virtual void prepareForDisplay() = 0;
 
     using SurfaceBuffer = GraphicsContextGLSurfaceBuffer;
-    virtual RefPtr<NativeImage> copyNativeImageYFlipped(SurfaceBuffer) = 0;
+    virtual RefPtr<NativeImage> copyNativeImage(SurfaceBuffer) = 0;
 #if ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)
     virtual RefPtr<VideoFrame> surfaceBufferToVideoFrame(SurfaceBuffer) = 0;
 #endif
@@ -1732,7 +1732,6 @@ public:
 
     WEBCORE_EXPORT static RefPtr<NativeImage> createNativeImageFromPixelBuffer(const GraphicsContextGLAttributes&, Ref<PixelBuffer>&&);
     WEBCORE_EXPORT static void paintToCanvas(NativeImage&, const IntSize& canvasSize, GraphicsContext&);
-    WEBCORE_EXPORT static void paintToCanvas(const GraphicsContextGLAttributes&, Ref<PixelBuffer>&&, const IntSize& canvasSize, GraphicsContext&);
 
     bool isContextLost() const { return m_contextLost; }
 protected:

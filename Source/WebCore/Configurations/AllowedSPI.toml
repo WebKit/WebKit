@@ -17,6 +17,22 @@ symbols = [
     "kCMTextMarkupAttribute_PreventLineWrapping",
 ]
 
+[[temporary-usage]]
+request = "rdar://185191711"
+cleanup = "rdar://185191934"
+symbols = [
+    "CGImageBlockCreate",
+    "CGImageBlockRelease",
+    "CGImageBlockSetCreate",
+    "CGImageCreateWithImageProvider",
+    "CGImageProviderCreate",
+    "CGImageProviderGetSize",
+    "kCGImageBlockMarkAsReadOnlyRequest",
+    "kCGImageBlockSingletonRequest",
+    "kCGImagePropertyIOSurface",
+    "kCGImageProviderBitmapInfo",
+]
+
 [[not-web-essential]]
 request = "rdar://157890384"
 classes = ["MTMaterialLayer"]

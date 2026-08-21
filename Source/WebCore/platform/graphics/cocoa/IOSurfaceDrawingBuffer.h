@@ -52,22 +52,12 @@ public:
     // cross-process use, and copy-on-write would not work.
     bool isInUse() const;
 
-    // Should be called always when writing to the surface.
-    void prepareForWrite();
-
-    // Creates a copy of current contents.
-    RefPtr<NativeImage> copyNativeImage() const;
 private:
-    void forceCopy();
     std::unique_ptr<IOSurface> m_surface;
-    mutable RetainPtr<CGContextRef> m_copyOnWriteContext;
-    mutable bool m_needCopy { false };
 };
 
 inline IOSurfaceDrawingBuffer::IOSurfaceDrawingBuffer(IOSurfaceDrawingBuffer&& other)
     : m_surface(WTF::move(other.m_surface))
-    , m_copyOnWriteContext(WTF::move(other.m_copyOnWriteContext))
-    , m_needCopy(std::exchange(other.m_needCopy, false))
 {
 }
 
@@ -79,15 +69,7 @@ inline IOSurfaceDrawingBuffer::IOSurfaceDrawingBuffer(std::unique_ptr<IOSurface>
 inline IOSurfaceDrawingBuffer& IOSurfaceDrawingBuffer::operator=(IOSurfaceDrawingBuffer&& other)
 {
     m_surface = WTF::move(other.m_surface);
-    m_copyOnWriteContext = WTF::move(other.m_copyOnWriteContext);
-    m_needCopy = std::exchange(other.m_needCopy, false);
     return *this;
-}
-
-inline void IOSurfaceDrawingBuffer::prepareForWrite()
-{
-    if (m_needCopy)
-        forceCopy();
 }
 
 inline bool IOSurfaceDrawingBuffer::isInUse() const

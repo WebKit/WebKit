@@ -29,6 +29,7 @@
 #include "CVUtilities.h"
 #include "GraphicsContextCG.h"
 #include "ImageUtilities.h"
+#include "NativeImage.h"
 #include <pal/spi/cg/CoreGraphicsSPI.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -66,7 +67,7 @@ RetainPtr<CVPixelBufferRef> PixelBufferConformerCV::convert(CVPixelBufferRef raw
     return nullptr;
 }
 
-RetainPtr<CGImageRef> PixelBufferConformerCV::createImageFromPixelBuffer(CVPixelBufferRef rawBuffer)
+RefPtr<NativeImage> PixelBufferConformerCV::createImageFromPixelBuffer(CVPixelBufferRef rawBuffer)
 {
     RetainPtr buffer { rawBuffer };
     RetainPtr colorSpace = createCGColorSpaceForCVPixelBuffer(buffer.get());
@@ -79,7 +80,7 @@ RetainPtr<CGImageRef> PixelBufferConformerCV::createImageFromPixelBuffer(CVPixel
         buffer = adoptCF(outputBuffer);
     }
 
-    return createImageFrom32BGRAPixelBuffer(WTF::move(buffer), colorSpace.get());
+    return NativeImage::create(WTF::move(buffer), kCGImageAlphaFirst, colorSpace.get());
 }
 
 }

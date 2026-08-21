@@ -56,5 +56,4 @@ WEBCORE_EXPORT void setOwnershipIdentityForCVPixelBuffer(CVPixelBufferRef, const
 
 WEBCORE_EXPORT RetainPtr<CVPixelBufferRef> createBlackPixelBuffer(size_t width, size_t height, bool shouldUseIOSurface = false);
 
-WEBCORE_EXPORT RetainPtr<CGImageRef> createImageFrom32BGRAPixelBuffer(RetainPtr<CVPixelBufferRef>&&, CGColorSpaceRef);
 }

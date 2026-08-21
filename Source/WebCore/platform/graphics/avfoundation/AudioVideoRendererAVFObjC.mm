@@ -2012,7 +2012,7 @@ RefPtr<NativeImage> AudioVideoRendererAVFObjC::currentNativeImage() const
             m_rgbConformer = makeUnique<PixelBufferConformerCV>((__bridge CFDictionaryRef)attributes);
         }
         RetainPtr pixelBuffer = videoFrame->pixelBuffer();
-        return NativeImage::create(m_rgbConformer->createImageFromPixelBuffer(pixelBuffer.get()));
+        return m_rgbConformer->createImageFromPixelBuffer(pixelBuffer.get());
     }
     return nullptr;
 }

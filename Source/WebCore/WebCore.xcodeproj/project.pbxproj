@@ -15052,7 +15052,6 @@
 		7B5A3DAB27ABF8C4006C6F97 /* VideoFrame.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VideoFrame.cpp; sourceTree = "<group>"; };
 		7B5A3DAD27ABF8C4006C6F97 /* VideoFrame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoFrame.h; sourceTree = "<group>"; };
 		7B66CFD22D31387D00BD6CB5 /* IOSurfaceDrawingBuffer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IOSurfaceDrawingBuffer.h; sourceTree = "<group>"; };
-		7B66CFD32D31387D00BD6CB5 /* IOSurfaceDrawingBuffer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = IOSurfaceDrawingBuffer.cpp; sourceTree = "<group>"; };
 		7B720B0A2743DBA60008ABED /* GraphicsLayerContentsDisplayDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GraphicsLayerContentsDisplayDelegate.h; sourceTree = "<group>"; };
 		7B7363A62EA761A000770085 /* GCGLExtension.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GCGLExtension.h; sourceTree = "<group>"; };
 		7B8ED5ED26F0C123008AC023 /* CVUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CVUtilities.h; sourceTree = "<group>"; };
@@ -37316,7 +37315,6 @@
 				B27535500B053814002CE64F /* IntRectCocoa.mm */,
 				2D0B4AA918DA1CCD00434DE1 /* IOSurface.h */,
 				2D0B4AAA18DA1CCD00434DE1 /* IOSurface.mm */,
-				7B66CFD32D31387D00BD6CB5 /* IOSurfaceDrawingBuffer.cpp */,
 				7B66CFD22D31387D00BD6CB5 /* IOSurfaceDrawingBuffer.h */,
 				AD9FF6E01908391D003B61E0 /* IOSurfacePoolCocoa.mm */,
 				B588D918E3A23CFD5275BDE9 /* ISOBMFFPreParser.cpp */,

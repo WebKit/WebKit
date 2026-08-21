@@ -93,7 +93,7 @@ public:
     GCGLint max3DTextureSize() final { return m_max3DTextureSize; }
     GCGLint maxArrayTextureLayers() final { return m_maxArrayTextureLayers; }
 
-    RefPtr<WebCore::NativeImage> copyNativeImageYFlipped(SurfaceBuffer) final;
+    RefPtr<WebCore::NativeImage> copyNativeImage(SurfaceBuffer) final;
 #if ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)
     RefPtr<WebCore::VideoFrame> surfaceBufferToVideoFrame(SurfaceBuffer) final;
 #endif

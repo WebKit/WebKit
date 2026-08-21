@@ -35,13 +35,15 @@ typedef struct CF_BRIDGED_TYPE(id) __CVBuffer *CVPixelBufferRef;
 
 namespace WebCore {
 
+class NativeImage;
+
 class PixelBufferConformerCV {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(PixelBufferConformerCV, WEBCORE_EXPORT);
 public:
     WEBCORE_EXPORT PixelBufferConformerCV(CFDictionaryRef attributes);
     WEBCORE_EXPORT PixelBufferConformerCV(uint32_t format);
     WEBCORE_EXPORT RetainPtr<CVPixelBufferRef> convert(CVPixelBufferRef);
-    WEBCORE_EXPORT RetainPtr<CGImageRef> createImageFromPixelBuffer(CVPixelBufferRef);
+    WEBCORE_EXPORT RefPtr<NativeImage> createImageFromPixelBuffer(CVPixelBufferRef);
 
 private:
     static RetainPtr<VTPixelBufferConformerRef> createPixelConformer(CFDictionaryRef attributes);
