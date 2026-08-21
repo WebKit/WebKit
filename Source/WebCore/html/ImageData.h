@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -64,6 +64,8 @@ public:
     PredefinedColorSpace colorSpace() const { return m_colorSpace; }
     ImageDataPixelFormat pixelFormat() const { return m_data.pixelFormat(); }
 
+    size_t memoryCost() const { return m_memoryCost; }
+
     WEBCORE_EXPORT Ref<ByteArrayPixelBuffer> byteArrayPixelBuffer() const;
 #if ENABLE(PIXEL_FORMAT_RGBA16F)
     Ref<Float16ArrayPixelBuffer> float16ArrayPixelBuffer() const;
@@ -77,6 +79,10 @@ private:
     IntSize m_size;
     ImageDataArray m_data;
     PredefinedColorSpace m_colorSpace;
+    // memoryCost() is invoked concurrently from a GC thread, so the cost is computed
+    // once here rather than read off the array buffer view, whose byte length involves
+    // chasing a buffer pointer that can be nullified by detaching.
+    const size_t m_memoryCost;
 };
 
 WEBCORE_EXPORT TextStream& operator<<(TextStream&, const ImageData&);

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2013 Google Inc. All rights reserved.
- * Copyright (C) 2013-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -1280,9 +1280,7 @@ void SourceBuffer::reportExtraMemoryAllocated(uint64_t extraMemory)
 
     Ref vm = protect(scriptExecutionContext())->vm();
     JSC::JSLockHolder lock(vm);
-    // FIXME: Adopt reportExtraMemoryVisited, and switch to reportExtraMemoryAllocated.
-    // https://bugs.webkit.org/show_bug.cgi?id=142595
-    vm->heap.deprecatedReportExtraMemory(extraMemoryCostDelta);
+    vm->heap.reportExtraMemoryAllocated(nullptr, extraMemoryCostDelta);
 }
 
 Ref<SourceBuffer::SamplesPromise> SourceBuffer::bufferedSamplesForTrackId(TrackID trackID)
