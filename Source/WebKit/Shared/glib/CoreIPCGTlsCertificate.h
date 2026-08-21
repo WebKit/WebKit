@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Igalia S.L.
+ * Copyright (C) 2026 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,22 +25,34 @@
 
 #pragma once
 
-#include "ArgumentCoders.h"
-#include <gio/gio.h>
+#if USE(GLIB)
+
+#include <wtf/Vector.h>
 #include <wtf/glib/GRefPtr.h>
+#include <wtf/text/CString.h>
 
-typedef struct _GUnixFDList GUnixFDList;
+typedef struct _GByteArray GByteArray;
+typedef struct _GTlsCertificate GTlsCertificate;
 
-namespace IPC {
+namespace WebKit {
 
-template<> struct ArgumentCoder<GTlsCertificateFlags> {
-    static void encode(Encoder&, GTlsCertificateFlags);
-    static std::optional<GTlsCertificateFlags> decode(Decoder&);
+class CoreIPCGTlsCertificate {
+public:
+    explicit CoreIPCGTlsCertificate(const GRefPtr<GTlsCertificate>&);
+    CoreIPCGTlsCertificate(Vector<GRefPtr<GByteArray>>&&, GRefPtr<GByteArray>&&, CString&&);
+
+    const Vector<GRefPtr<GByteArray>>& certificates() const { return m_certificates; }
+    const GRefPtr<GByteArray>& privateKey() const { return m_privateKey; }
+    CString privateKeyPKCS11Uri() const { return m_privateKeyPKCS11Uri; }
+
+    operator GRefPtr<GTlsCertificate>() const;
+
+private:
+    Vector<GRefPtr<GByteArray>> m_certificates;
+    GRefPtr<GByteArray> m_privateKey;
+    CString m_privateKeyPKCS11Uri;
 };
 
-template<> struct ArgumentCoder<GRefPtr<GUnixFDList>> {
-    static void encode(Encoder&, const GRefPtr<GUnixFDList>&);
-    static std::optional<GRefPtr<GUnixFDList>> decode(Decoder&);
-};
+} // namespace WebKit
 
-} // namespace IPC
+#endif // USE(GLIB)

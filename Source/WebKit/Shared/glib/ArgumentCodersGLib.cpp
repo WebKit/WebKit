@@ -26,87 +26,11 @@
 #include "config.h"
 #include "ArgumentCodersGLib.h"
 
-#include "GeneratedSerializers.h"
 #include <gio/gio.h>
 #include <gio/gunixfdlist.h>
 #include <wtf/Vector.h>
-#include <wtf/glib/GSpanExtras.h>
-#include <wtf/glib/GUniquePtr.h>
-#include <wtf/text/CString.h>
 
 namespace IPC {
-
-void ArgumentCoder<GRefPtr<GTlsCertificate>>::encode(Encoder& encoder, const GRefPtr<GTlsCertificate>& certificate)
-{
-    if (!certificate) {
-        encoder << Vector<std::span<const uint8_t>> { };
-        return;
-    }
-
-    Vector<GRefPtr<GByteArray>> certificatesData;
-    for (auto* nextCertificate = certificate.get(); nextCertificate; nextCertificate = g_tls_certificate_get_issuer(nextCertificate)) {
-        GRefPtr<GByteArray> certificateData;
-        g_object_get(nextCertificate, "certificate", &certificateData.outPtr(), nullptr);
-
-        if (!certificateData) {
-            certificatesData.clear();
-            break;
-        }
-        certificatesData.insert(0, WTF::move(certificateData));
-    }
-
-    if (certificatesData.isEmpty()) {
-        encoder << Vector<std::span<const uint8_t>> { };
-        return;
-    }
-
-    encoder << certificatesData;
-
-    GRefPtr<GByteArray> privateKey;
-    GUniqueOutPtr<char> privateKeyPKCS11Uri;
-    g_object_get(certificate.get(), "private-key", &privateKey.outPtr(), "private-key-pkcs11-uri", &privateKeyPKCS11Uri.outPtr(), nullptr);
-    encoder << privateKey;
-    encoder << CString(privateKeyPKCS11Uri.get());
-}
-
-std::optional<GRefPtr<GTlsCertificate>> ArgumentCoder<GRefPtr<GTlsCertificate>>::decode(Decoder& decoder)
-{
-    auto certificatesData = decoder.decode<WTF::Vector<GRefPtr<GByteArray>>>();
-
-    if (!certificatesData) [[unlikely]]
-        return std::nullopt;
-
-    if (!certificatesData->size())
-        return GRefPtr<GTlsCertificate>();
-
-    std::optional<GRefPtr<GByteArray>> privateKey;
-    decoder >> privateKey;
-    if (!privateKey) [[unlikely]]
-        return std::nullopt;
-
-    std::optional<CString> privateKeyPKCS11Uri;
-    decoder >> privateKeyPKCS11Uri;
-    if (!privateKeyPKCS11Uri) [[unlikely]]
-        return std::nullopt;
-
-    GType certificateType = g_tls_backend_get_certificate_type(g_tls_backend_get_default());
-    GRefPtr<GTlsCertificate> certificate;
-    GTlsCertificate* issuer = nullptr;
-    uint32_t i = 0;
-    for (auto& certificateData : *certificatesData) {
-        certificate = adoptGRef(G_TLS_CERTIFICATE(g_initable_new(
-            certificateType, nullptr, nullptr,
-            "certificate", certificateData.get(),
-            "issuer", issuer,
-            "private-key", i == certificatesData->size() - 1 ? privateKey->get() : nullptr,
-            "private-key-pkcs11-uri", i == certificatesData->size() - 1 ? privateKeyPKCS11Uri->data() : nullptr,
-            nullptr)));
-        issuer = certificate.get();
-        i++;
-    }
-
-    return certificate;
-}
 
 void ArgumentCoder<GTlsCertificateFlags>::encode(Encoder& encoder, GTlsCertificateFlags flags)
 {

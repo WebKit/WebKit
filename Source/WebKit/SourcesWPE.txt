@@ -82,6 +82,7 @@ Shared/API/glib/WebKitUserMessage.cpp @no-unify
 
 Shared/glib/ArgumentCodersGLib.cpp
 Shared/glib/CoreIPCGByteArray.cpp
+Shared/glib/CoreIPCGTlsCertificate.cpp
 Shared/glib/CoreIPCGVariant.cpp
 Shared/glib/InputMethodState.cpp
 Shared/glib/JavaScriptEvaluationResultGLib.cpp
