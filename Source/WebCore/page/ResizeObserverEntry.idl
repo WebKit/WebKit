@@ -32,4 +32,5 @@
     readonly attribute DOMRectReadOnly contentRect;
     readonly attribute FrozenArray<ResizeObserverSize> borderBoxSize;
     readonly attribute FrozenArray<ResizeObserverSize> contentBoxSize;
+    [EnabledBySetting=ResizeObserverDevicePixelContentBoxEnabled] readonly attribute FrozenArray<ResizeObserverSize> devicePixelContentBoxSize;
 };

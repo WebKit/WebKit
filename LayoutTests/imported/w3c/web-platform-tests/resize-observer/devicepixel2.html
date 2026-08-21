@@ -1,6 +1,8 @@
 <!doctype html>
+<html class="reftest-wait">
 <link rel="match" href="devicepixel2-ref.html">
 <meta name="assert" content="Resize Observer's reported device pixel content box size should be consistent with the actual pixel-snapped painted box size">
+<script src="/common/reftest-wait.js"></script>
 <style>
   html, body {
     margin: 0;
@@ -112,6 +114,8 @@ function setPatternsUsingSizeInfo(entries) {
     const lineHeight = lineEntry.blockSize;
     devicePixelY += lineHeight;
   }
+
+  requestAnimationFrame(() => takeScreenshot());
 }
 
 const observer = new ResizeObserver(setPatternsUsingSizeInfo);

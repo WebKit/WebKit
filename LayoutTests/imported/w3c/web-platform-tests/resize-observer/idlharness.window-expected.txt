@@ -32,14 +32,14 @@ PASS ResizeObserverEntry interface: attribute target
 PASS ResizeObserverEntry interface: attribute contentRect
 PASS ResizeObserverEntry interface: attribute borderBoxSize
 PASS ResizeObserverEntry interface: attribute contentBoxSize
-FAIL ResizeObserverEntry interface: attribute devicePixelContentBoxSize assert_true: The prototype object must have a property "devicePixelContentBoxSize" expected true got false
+PASS ResizeObserverEntry interface: attribute devicePixelContentBoxSize
 PASS ResizeObserverEntry must be primary interface of entry
 PASS Stringification of entry
 PASS ResizeObserverEntry interface: entry must inherit property "target" with the proper type
 PASS ResizeObserverEntry interface: entry must inherit property "contentRect" with the proper type
 PASS ResizeObserverEntry interface: entry must inherit property "borderBoxSize" with the proper type
 PASS ResizeObserverEntry interface: entry must inherit property "contentBoxSize" with the proper type
-FAIL ResizeObserverEntry interface: entry must inherit property "devicePixelContentBoxSize" with the proper type assert_inherits: property "devicePixelContentBoxSize" not found in prototype chain
+PASS ResizeObserverEntry interface: entry must inherit property "devicePixelContentBoxSize" with the proper type
 PASS ResizeObserverSize interface: existence and properties of interface object
 PASS ResizeObserverSize interface object length
 PASS ResizeObserverSize interface object name

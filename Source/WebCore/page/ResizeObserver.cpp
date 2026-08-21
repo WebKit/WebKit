@@ -173,7 +173,7 @@ void ResizeObserver::deliverObservations()
         ASSERT(target); // The target is supposed to be kept alive via `m_activeObservationTargets` and JSResizeObserver::visitAdditionalChildrenInGCThread().
         if (!target)
             return nullptr;
-        return ResizeObserverEntry::create(target.releaseNonNull(), observation->computeContentRect(), observation->borderBoxSize(), observation->contentBoxSize());
+        return ResizeObserverEntry::create(target.releaseNonNull(), observation->computeContentRect(), observation->borderBoxSize(), observation->contentBoxSize(), observation->devicePixelContentBoxSize());
     });
     m_activeObservations.clear();
 
