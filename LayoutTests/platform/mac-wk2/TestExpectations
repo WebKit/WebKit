@@ -2477,3 +2477,5 @@ webkit.org/b/322051 [ Release ] media/picture-in-picture/picture-in-picture-inte
 # rdar://172228955 (REGRESSION (macOS 26?): [macOS 26 and later] Two http/tests/storageAccess/request-and-grant-access-cross-origin-sandboxed tests are a consistent failure)
 [ Tahoe+ ] http/tests/storageAccess/request-and-grant-access-cross-origin-sandboxed-iframe-from-prevalent-domain-with-user-interaction-and-access-from-right-frame.https.html [ Failure ]
 [ Tahoe+ ] http/tests/storageAccess/request-and-grant-access-cross-origin-sandboxed-iframe-from-prevalent-domain-with-user-interaction-but-access-from-wrong-frame.https.html [ Failure ]
+
+webkit.org/b/321323 [ Tahoe+ ] http/tests/websocket/tests/hybi/inspector/before-load.html [ Failure ]
