@@ -1,0 +1,5 @@
+
+FAIL A CSS module fetched through a redirect loads and applies promise_test: Unhandled rejection with value: object "TypeError: Import attribute type "css" is not valid"
+FAIL Repeated import of a redirecting URL returns the same CSSStyleSheet promise_test: Unhandled rejection with value: object "TypeError: Import attribute type "css" is not valid"
+FAIL A redirecting URL and its target are distinct module map entries promise_test: Unhandled rejection with value: object "TypeError: Import attribute type "css" is not valid"
+

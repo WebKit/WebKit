@@ -1,0 +1,5 @@
+
+FAIL CSS module with parse errors imports successfully with empty rules. promise_test: Unhandled rejection with value: object "TypeError: Import attribute type "css" is not valid"
+FAIL Repeated import of parse-error CSS module returns same sheet. promise_test: Unhandled rejection with value: object "TypeError: Import attribute type "css" is not valid"
+FAIL CSS module with partially malformed CSS imports with valid rules. promise_test: Unhandled rejection with value: object "TypeError: Import attribute type "css" is not valid"
+
