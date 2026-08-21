@@ -2,6 +2,7 @@
  * Copyright (C) 2007, 2008, 2015 Apple Inc. All rights reserved.
  * Copyright (C) 2009 Google Inc. All rights reserved.
  * Copyright (C) 2009 Torch Mobile, Inc. All rights reserved.
+ * Copyright (C) 2026 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -156,6 +157,14 @@ void Thread::initializePlatformThreading()
 {
 }
 
+void Thread::updateSchedulingAttributes(SchedulingState) const
+{
+}
+
+void Thread::initializeSchedulingAttributes()
+{
+}
+
 static unsigned __stdcall wtfThreadEntryPoint(void* data)
 {
     Thread::entryPoint(reinterpret_cast<Thread::NewThreadContext*>(data));
@@ -267,7 +276,7 @@ Thread& Thread::initializeCurrentTLS()
 {
     // Not a WTF-created thread, ThreadIdentifier is not established yet.
     WTF::initialize();
-    Ref thread = adoptRef(*new Thread(SchedulingPolicy::Other));
+    Ref thread = adoptRef(*new Thread(defaultQOS, SchedulingPolicy::Other));
 
     HANDLE handle;
     bool isSuccessful = DuplicateHandle(GetCurrentProcess(), GetCurrentThread(), GetCurrentProcess(), &handle, 0, FALSE, DUPLICATE_SAME_ACCESS);

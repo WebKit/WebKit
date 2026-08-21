@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2026 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -78,7 +79,7 @@ JITWorklistThread::JITWorklistThread(const AbstractLocker& locker, JITWorklist& 
 }
 #else
 JITWorklistThread::JITWorklistThread(const AbstractLocker& locker, JITWorklist& worklist)
-    : AutomaticThread(locker, worklist.m_lock, worklist.m_planEnqueued.copyRef(), ThreadType::Compiler)
+    : AutomaticThread(locker, worklist.m_lock, worklist.m_planEnqueued.copyRef(), ThreadType::Compiler, compilerThreadQOS())
     , m_worklist(worklist)
 {
 }
