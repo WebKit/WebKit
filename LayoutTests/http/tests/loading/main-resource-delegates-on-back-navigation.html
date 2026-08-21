@@ -24,11 +24,17 @@ window.addEventListener('pageshow', function() {
         pageCacheEnabled = 1;
         break;
     case 3:
-        setTimeout(function() {
-            delete sessionStorage.testLoadCount;
-            testRunner.notifyDone();
-        }, 0);
-        break;
+        // Final load: return so the navigation below isn't scheduled, which
+        // would otherwise log a stray client redirect under site isolation.
+        // Wait two frames so the network process's resource-load callbacks
+        // reach the UI process before notifyDone() dumps results.
+        requestAnimationFrame(function() {
+            requestAnimationFrame(function() {
+                delete sessionStorage.testLoadCount;
+                testRunner.notifyDone();
+            });
+        });
+        return;
     }
 
     setTimeout(function() {
