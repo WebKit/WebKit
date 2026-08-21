@@ -193,6 +193,8 @@ interaction-region/interaction-layers-culling.html [ Failure ]
 platform/visionos/transforms/separated-update.html [ Failure ]
 platform/visionos/transforms/separated-video.html [ Failure ]
 
+webkit.org/b/322289 media/modern-media-controls/icon-service/icon-service-bundle-load.html [ Failure ]
+
 ### END OF Triaged failures
 ###################################################################################################
 
