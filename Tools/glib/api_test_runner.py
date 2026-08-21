@@ -80,7 +80,7 @@ class TestRunner(object):
         # Debug since those builds are slower (no compiler optimizations are
         # used). An explicit --timeout is used verbatim. This matches the
         # layout test harness (see GLibPort.default_timeout_ms() and
-        # run_webkit_tests, which only applies the multiplier to the default).
+        # run_layout_tests, which only applies the multiplier to the default).
         if self._options.timeout is not None:
             self._timeout = self._options.timeout
         else:
