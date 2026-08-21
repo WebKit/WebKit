@@ -91,9 +91,9 @@ private:
     void destruct();
 
     void setLabel(String&&);
-    void update(Vector<WebModel::UpdateMeshDescriptor>&&, CompletionHandler<void(bool)>&&);
-    void updateTexture(Vector<WebModel::UpdateTextureDescriptor>&&, CompletionHandler<void(bool)>&&);
-    void updateMaterial(Vector<WebModel::UpdateMaterialDescriptor>&&, CompletionHandler<void(bool)>&&);
+    void update(Vector<WebModel::UpdateMeshDescriptor>&&);
+    void updateTexture(Vector<WebModel::UpdateTextureDescriptor>&&);
+    void updateMaterial(Vector<WebModel::UpdateMaterialDescriptor>&&);
     void updateTransform(const WebModel::Float4x4& transform);
     void setFOV(float fovY);
     void play(bool);
