@@ -61,7 +61,8 @@ void DataListButtonElement::defaultEventHandler(Event& event)
     }
 
     if (isAnyClick(*mouseEvent)) {
-        m_owner.dataListButtonElementWasClicked();
+        if (RefPtr owner = m_owner)
+            owner->dataListButtonElementWasClicked();
         event.setDefaultHandled();
     }
 
