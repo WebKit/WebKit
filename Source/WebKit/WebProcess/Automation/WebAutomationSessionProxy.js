@@ -53,6 +53,13 @@ let AutomationSessionProxy = class AutomationSessionProxy
             .catch(error => { resultCallback(frameID, callbackID, error); });
     }
 
+    callBidiFunction(functionDeclaration, serializedArguments, awaitPromise, maxObjectDepth, frameID, callbackID, resultCallback, callbackTimeout)
+    {
+        this._executeBidiCallFunction(functionDeclaration, serializedArguments, awaitPromise, maxObjectDepth, callbackTimeout)
+            .then(result => { resultCallback(frameID, callbackID, JSON.stringify(result)); })
+            .catch(error => { resultCallback(frameID, callbackID, error); });
+    }
+
     nodeForIdentifier(identifier)
     {
         this._clearStaleNodes();
@@ -177,6 +184,144 @@ let AutomationSessionProxy = class AutomationSessionProxy
                     clearTimeout(timeoutIdentifier);
                 }
             });
+    }
+
+    _executeBidiCallFunction(functionDeclaration, serializedArguments, awaitPromise, maxObjectDepth, callbackTimeout)
+    {
+        let timeoutPromise;
+        let timeoutIdentifier = 0;
+        if (callbackTimeout >= 0) {
+            timeoutPromise = new Promise((resolve, reject) => {
+                timeoutIdentifier = setTimeout(() => {
+                    reject({ name: "JavaScriptTimeout", message: `script timed out after ${callbackTimeout}ms` });
+                }, callbackTimeout);
+            });
+        }
+
+        let promise = new Promise((resolve, reject) => {
+            try {
+                let lines = functionDeclaration.split("\n");
+                let prefixLines = [];
+                while (lines.length && lines[0].startsWith("//"))
+                    prefixLines.push(lines.shift());
+                functionDeclaration = lines.join("\n");
+                let prefix = prefixLines.join("\n");
+                if (prefix)
+                    prefix += "\n";
+
+                let functionValue = globalThis.eval(prefix + "(" + functionDeclaration + ")");
+                if (typeof functionValue !== "function")
+                    throw new TypeError("Script did not evaluate to a function.");
+
+                this._clearStaleNodes();
+
+                let args = [];
+                for (let i = 0; i < serializedArguments.length; ++i)
+                    args.push(this._deserializeBidiLocalValue(JSON.parse(serializedArguments[i])));
+
+                let result = functionValue.apply(null, args);
+
+                if (awaitPromise && result && typeof result.then === "function") {
+                    result.then(
+                        value => {
+                            let serializedValue = this.serializeBidiRemoteValue(value, maxObjectDepth);
+                            resolve({ success: true, result: serializedValue });
+                        },
+                        error => {
+                            reject({ success: false, error: { name: error.name, message: error.message, stack: error.stack } });
+                        }
+                    );
+                } else {
+                    let serializedValue = this.serializeBidiRemoteValue(result, maxObjectDepth);
+                    resolve({ success: true, result: serializedValue });
+                }
+            } catch (error) {
+                reject({ success: false, error: { name: error.name, message: error.message, stack: error.stack } });
+            }
+        });
+
+        let promises = [promise];
+        if (timeoutPromise)
+            promises.push(timeoutPromise);
+        return Promise.race(promises)
+            .finally(() => {
+                if (timeoutIdentifier) {
+                    clearTimeout(timeoutIdentifier);
+                }
+            });
+    }
+
+    _deserializeBidiLocalValue(localValue)
+    {
+        let type = localValue.type;
+
+        if (type === "undefined") return undefined;
+        if (type === "null") return null;
+        if (type === "string") return localValue.value;
+        if (type === "boolean") return localValue.value;
+
+        if (type === "number") {
+            let v = localValue.value;
+            if (v === "NaN") return NaN;
+            if (v === "Infinity") return Infinity;
+            if (v === "-Infinity") return -Infinity;
+            if (v === "-0") return -0;
+            return v;
+        }
+
+        if (type === "bigint") return BigInt(localValue.value);
+
+        if (type === "date") return new Date(localValue.value);
+
+        if (type === "regexp") {
+            let v = localValue.value;
+            return new RegExp(v.pattern, v.flags || "");
+        }
+
+        if (type === "array") {
+            let arr = [];
+            if (localValue.value) {
+                for (let i = 0; i < localValue.value.length; ++i)
+                    arr.push(this._deserializeBidiLocalValue(localValue.value[i]));
+            }
+            return arr;
+        }
+
+        if (type === "object") {
+            let obj = {};
+            if (localValue.value) {
+                for (let i = 0; i < localValue.value.length; ++i) {
+                    let pair = localValue.value[i];
+                    let key = typeof pair[0] === "string" ? pair[0] : this._deserializeBidiLocalValue(pair[0]);
+                    obj[key] = this._deserializeBidiLocalValue(pair[1]);
+                }
+            }
+            return obj;
+        }
+
+        if (type === "map") {
+            let map = new Map();
+            if (localValue.value) {
+                for (let i = 0; i < localValue.value.length; ++i) {
+                    let pair = localValue.value[i];
+                    let key = typeof pair[0] === "string" ? pair[0] : this._deserializeBidiLocalValue(pair[0]);
+                    map.set(key, this._deserializeBidiLocalValue(pair[1]));
+                }
+            }
+            return map;
+        }
+
+        if (type === "set") {
+            let set = new Set();
+            if (localValue.value) {
+                for (let i = 0; i < localValue.value.length; ++i)
+                    set.add(this._deserializeBidiLocalValue(localValue.value[i]));
+            }
+            return set;
+        }
+
+        // FIXME: Handle "channel" and remote reference types. <https://webkit.org/b/288057>
+        return undefined;
     }
 
     _jsonParse(string)
