@@ -9,61 +9,74 @@
 <script src="/resources/testharness.js"></script>
 <script src="/resources/testharnessreport.js"></script>
 <script src="/common/get-host-info.sub.js"></script>
+<script src="/common/custom-cors-response.js"></script>
 <script src="resources/entry-invariants.js"></script>
 <script src="resources/resource-loaders.js"></script>
+<script src="resources/tao-response.js"></script>
+<body>
 <script>
-const {REMOTE_ORIGIN} = get_host_info();
-const path = REMOTE_ORIGIN + '/resource-timing/resources/TAOResponse.py?tao=';
+const {ORIGIN, REMOTE_ORIGIN} = get_host_info();
 
-attribute_test(load.xhr_sync, path + 'match_origin',
-  invariants.assert_tao_pass_no_redirect_http,
-'The timing allow check algorithm will pass when the Timing-Allow-Origin ' +
-'header value list contains a case-sensitive match.');
+const run_test = (loader, resource_type) => {
+  attribute_test(loader, remote_tao_response(ORIGIN),
+    invariants.assert_tao_pass_no_redirect_http,
+    `The timing allow check algorithm will pass when the Timing-Allow-Origin ` +
+    `header value contains only the origin. (${resource_type})`);
 
-attribute_test(load.xhr_sync, path + 'match_wildcard',
-  invariants.assert_tao_pass_no_redirect_http,
-'The timing allow check algorithm will pass when the Timing-Allow-Origin ' +
-'header value list contains a wildcard.');
+  attribute_test(loader, remote_tao_response('*'),
+    invariants.assert_tao_pass_no_redirect_http,
+    `The timing allow check algorithm will pass when the Timing-Allow-Origin ` +
+    `header value contains only a wildcard. (${resource_type})`);
 
-attribute_test(load.xhr_sync, path + 'null',
-  invariants.assert_tao_failure_resource,
-'The timing allow check algorithm will fail when the Timing-Allow-Origin ' +
-'header value list contains a null origin.');
+  attribute_test(loader, remote_tao_response(`${ORIGIN},fake`),
+    invariants.assert_tao_pass_no_redirect_http,
+    `The timing allow check algorithm will pass when the Timing-Allow-Origin ` +
+    `header value list contains a case-sensitive match. (${resource_type})`);
 
-attribute_test(load.xhr_sync, path + 'multi',
-  invariants.assert_tao_pass_no_redirect_http,
-'The timing allow check algorithm will pass when the Timing-Allow-Origin ' +
-'header value list contains the origin and a wildcard.');
+  attribute_test(loader, remote_tao_response(`${ORIGIN},*`),
+    invariants.assert_tao_pass_no_redirect_http,
+    `The timing allow check algorithm will pass when the Timing-Allow-Origin ` +
+    `header value list contains the origin and a wildcard. (${resource_type})`);
 
-attribute_test(load.xhr_sync, path + 'multi_wildcard',
-  invariants.assert_tao_pass_no_redirect_http,
-'The timing allow check algorithm will pass when the Timing-Allow-Origin ' +
-'header value list contains multiple wildcards.');
+  attribute_test(loader, remote_tao_response('fake,*'),
+    invariants.assert_tao_pass_no_redirect_http,
+    `The timing allow check algorithm will pass when the Timing-Allow-Origin ` +
+    `header value list contains a wildcard. (${resource_type})`);
 
-attribute_test(load.xhr_sync, path + 'origin',
-  invariants.assert_tao_pass_no_redirect_http,
-'The timing allow check algorithm will pass when the Timing-Allow-Origin ' +
-'header value contains only the origin.');
+  attribute_test(loader, remote_tao_response('null'),
+    invariants.assert_tao_failure_resource,
+    `The timing allow check algorithm will fail when the Timing-Allow-Origin ` +
+    `header value list contains a null origin. (${resource_type})`);
 
-attribute_test(load.xhr_sync, path + 'uppercase',
-  invariants.assert_tao_failure_resource,
-'The timing allow check algorithm will fail when the Timing-Allow-Origin ' +
-'header value contains only the uppercased origin.');
+  attribute_test(loader, remote_tao_response('*,*'),
+    invariants.assert_tao_pass_no_redirect_http,
+    `The timing allow check algorithm will pass when the Timing-Allow-Origin ` +
+    `header value list contains multiple wildcards. (${resource_type})`);
 
-attribute_test(load.xhr_sync, path + 'space',
-  invariants.assert_tao_failure_resource,
-'The timing allow check algorithm will fail when the Timing-Allow-Origin ' +
-'header value contains only a space.');
+  attribute_test(loader, remote_tao_response(ORIGIN.toUpperCase()),
+    invariants.assert_tao_failure_resource,
+    `The timing allow check algorithm will fail when the Timing-Allow-Origin ` +
+    `header value contains only the uppercased origin. (${resource_type})`);
 
-attribute_test(load.xhr_sync, path + 'wildcard',
-  invariants.assert_tao_pass_no_redirect_http,
-'The timing allow check algorithm will fail when the Timing-Allow-Origin ' +
-'header value contains only a wildcard.');
+  attribute_test(loader, remote_tao_response(`${ORIGIN} *`),
+    invariants.assert_tao_failure_resource,
+    `The timing allow check algorithm will fail when the Timing-Allow-Origin ` +
+    `header value contains the origin, a space, then a wildcard. ` +
+    `(${resource_type})`);
 
-attribute_test(load.xhr_sync, path + 'zero',
-  invariants.assert_tao_failure_resource,
-'The timing allow check algorithm will fail when the Timing-Allow-Origin ' +
-'header is not present.');
+  attribute_test(loader, custom_cors_response({}, REMOTE_ORIGIN),
+    invariants.assert_tao_failure_resource,
+    `The timing allow check algorithm will fail when the Timing-Allow-Origin ` +
+    `header is not present. (${resource_type})`);
+};
+
+run_test(load.font, "font");
+run_test(load.iframe, "iframe");
+run_test(load.image, "image");
+run_test(load.script, "script");
+run_test(load.stylesheet, "stylesheet");
+run_test(load.xhr_sync, "XMLHttpRequest");
+
 </script>
 </body>
 </html>

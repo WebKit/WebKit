@@ -1,3 +1,19 @@
+const await_with_timeout = async (delay, message, promise, cleanup = ()=>{}) => {
+  let timeout_id;
+  const timeout = new Promise((_, reject) => {
+    timeout_id = step_timeout(() =>
+      reject(new DOMException(message, "TimeoutError")), delay)
+  });
+  let result = null;
+  try {
+    result = await Promise.race([promise, timeout]);
+    clearTimeout(timeout_id);
+  } finally {
+    cleanup();
+  }
+  return result;
+};
+
 // Asserts that the given attributes are present in 'entry' and hold equal
 // values.
 const assert_all_equal_ = (entry, attributes) => {
@@ -75,8 +91,36 @@ const invariants = {
     assert_positive_(entry, [
       "fetchStart",
       "transferSize",
-      "encodedBodySize",
-      "decodedBodySize",
+    ]);
+  },
+
+  // Like assert_tao_pass_no_redirect_http but for empty response bodies.
+  assert_tao_pass_no_redirect_http_empty: entry => {
+    assert_ordered_(entry, [
+      "fetchStart",
+      "domainLookupStart",
+      "domainLookupEnd",
+      "connectStart",
+      "connectEnd",
+      "requestStart",
+      "responseStart",
+      "responseEnd",
+    ]);
+
+    assert_zeroed_(entry, [
+      "workerStart",
+      "secureConnectionStart",
+      "redirectStart",
+      "redirectEnd",
+    ]);
+
+    assert_not_negative_(entry, [
+      "duration",
+    ]);
+
+    assert_positive_(entry, [
+      "fetchStart",
+      "transferSize",
     ]);
   },
 
@@ -107,8 +151,37 @@ const invariants = {
     assert_positive_(entry, [
       "fetchStart",
       "transferSize",
-      "encodedBodySize",
-      "decodedBodySize",
+    ]);
+  },
+
+  // Like assert_tao_pass_no_redirect_https but for resources that did encounter
+  // at least one HTTP redirect.
+  assert_tao_pass_with_redirect_https: entry => {
+    assert_ordered_(entry, [
+      "fetchStart",
+      "redirectStart",
+      "redirectEnd",
+      "domainLookupStart",
+      "domainLookupEnd",
+      "secureConnectionStart",
+      "connectStart",
+      "connectEnd",
+      "requestStart",
+      "responseStart",
+      "responseEnd",
+    ]);
+
+    assert_zeroed_(entry, [
+      "workerStart",
+    ]);
+
+    assert_not_negative_(entry, [
+      "duration",
+    ]);
+
+    assert_positive_(entry, [
+      "fetchStart",
+      "transferSize",
     ]);
   },
 
@@ -131,8 +204,6 @@ const invariants = {
       "secureConnectionStart",
       "redirectStart",
       "redirectEnd",
-      "encodedBodySize",
-      "decodedBodySize",
     ]);
 
     assert_not_negative_(entry, [
@@ -164,8 +235,6 @@ const invariants = {
       "workerStart",
       "redirectStart",
       "redirectEnd",
-      "encodedBodySize",
-      "decodedBodySize",
     ]);
 
     assert_not_negative_(entry, [
@@ -242,8 +311,41 @@ const invariants = {
   },
 
   // Asserts that attributes of the given PerformanceResourceTiming entry match
-  // what the spec dictates for a resource fetched over HTTPS through a
-  // TAO enabled cross-origin redirect.
+  // what the spec dictates when
+  // 1. An HTTP request is made for a same-origin resource.
+  // 2. The response to 1 is an HTTP redirect (like a 302).
+  // 3. The location from 2 is a cross-origin HTTPS URL.
+  // 4. The response to fetching the URL from 3 does not set a matching TAO header.
+  assert_http_to_cross_origin_redirected_resource: entry => {
+    assert_zeroed_(entry, [
+      "redirectStart",
+      "redirectEnd",
+      "domainLookupStart",
+      "domainLookupEnd",
+      "connectStart",
+      "connectEnd",
+      "secureConnectionStart",
+      "requestStart",
+      "responseStart",
+    ]);
+
+    assert_positive_(entry, [
+      "fetchStart",
+      "responseEnd",
+    ]);
+
+    assert_ordered_(entry, [
+      "fetchStart",
+      "responseEnd",
+    ]);
+  },
+
+  // Asserts that attributes of the given PerformanceResourceTiming entry match
+  // what the spec dictates when
+  // 1. An HTTPS request is made for a same-origin resource.
+  // 2. The response to 1 is an HTTP redirect (like a 302).
+  // 3. The location from 2 is a cross-origin HTTPS URL.
+  // 4. The response to fetching the URL from 3 sets a matching TAO header.
   assert_tao_enabled_cross_origin_redirected_resource: entry => {
     assert_positive_(entry, [
       "redirectStart",
@@ -256,6 +358,37 @@ const invariants = {
       "domainLookupEnd",
       "connectStart",
       "secureConnectionStart",
+      "connectEnd",
+      "requestStart",
+      "responseStart",
+      "responseEnd",
+    ]);
+  },
+
+  // Asserts that attributes of the given PerformanceResourceTiming entry match
+  // what the spec dictates when
+  // 1. An HTTP request is made for a same-origin resource
+  // 2. The response to 1 is an HTTP redirect (like a 302).
+  // 3. The location from 2 is a cross-origin HTTPS URL.
+  // 4. The response to fetching the URL from 3 sets a matching TAO header.
+  assert_http_to_tao_enabled_cross_origin_https_redirected_resource: entry => {
+    assert_zeroed_(entry, [
+      // Note that, according to the spec, the secureConnectionStart attribute
+      // should describe the connection for the first resource request when
+      // there are redirects. Since the initial request is over HTTP,
+      // secureConnectionStart must be 0.
+      "secureConnectionStart",
+    ]);
+    assert_positive_(entry, [
+      "redirectStart",
+    ]);
+    assert_ordered_(entry, [
+      "redirectStart",
+      "redirectEnd",
+      "fetchStart",
+      "domainLookupStart",
+      "domainLookupEnd",
+      "connectStart",
       "connectEnd",
       "requestStart",
       "responseStart",
@@ -276,8 +409,6 @@ const invariants = {
       "requestStart",
       "responseStart",
       "transferSize",
-      "encodedBodySize",
-      "decodedBodySize",
     ]);
 
     assert_ordered_(entry, [
@@ -294,6 +425,9 @@ const invariants = {
 
     assert_positive_(entry, [
       "startTime",
+    ]);
+
+    assert_not_negative_(entry, [
       "duration",
     ]);
 
@@ -308,8 +442,6 @@ const invariants = {
       "requestStart",
       "responseStart",
       "transferSize",
-      "encodedBodySize",
-      "decodedBodySize",
     ]);
   }
 
@@ -335,7 +467,10 @@ const attribute_test_internal = (loader, path, validator, run_test, test_label) 
       });
 
       await loader(path, validator);
-      const entry = await(loaded_entry);
+      const entry = await await_with_timeout(2000,
+        "Timeout was reached before entry fired",
+        loaded_entry);
+      assert_not_equals(entry, null, 'No entry was received');
       run_test(entry);
   }, test_label);
 };
@@ -352,3 +487,26 @@ const attribute_test = (loader, path, run_test, test_label) => {
 const attribute_test_with_validator = (loader, path, validator, run_test, test_label) => {
   attribute_test_internal(loader, path, validator, run_test, test_label);
 };
+
+const network_error_entry_test = (originalURL, args, label, loader) => {
+  const url = new URL(originalURL, location.href);
+  const search = new URLSearchParams(url.search.substr(1));
+  const timeBefore = performance.now();
+
+  // Load using `fetch()`, unless we're given a specific loader for this test.
+  loader ??= () => new Promise(resolve => fetch(url, args).catch(resolve));
+
+  attribute_test(
+    loader, url,
+    () => {
+      const timeAfter = performance.now();
+      const names = performance.getEntriesByType('resource').filter(e => e.initiatorType === 'fetch').map(e => e.name);
+      const entries = performance.getEntriesByName(url.toString());
+      assert_equals(entries.length, 1, 'resource timing entry for network error');
+      const entry = entries[0]
+      assert_equals(entry.startTime, entry.fetchStart, 'startTime and fetchStart should be equal');
+      assert_greater_than_equal(entry.startTime, timeBefore, 'startTime and fetchStart should be greater than the time before fetching');
+      assert_greater_than_equal(timeAfter, entry.responseEnd, 'endTime should be less than the time right after returning from the fetch');
+      invariants.assert_tao_failure_resource(entry);
+  }, `A ResourceTiming entry should be created for network error of type ${label}`);
+}

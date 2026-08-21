@@ -1,0 +1,74 @@
+
+FAIL mime-type-minimized 0 : application/ecmascript assert_equals: expected (string) "text/javascript" but got (undefined) undefined
+FAIL mime-type-minimized 1 : application/javascript assert_equals: expected (string) "text/javascript" but got (undefined) undefined
+FAIL mime-type-minimized 2 : application/x-ecmascript assert_equals: expected (string) "text/javascript" but got (undefined) undefined
+FAIL mime-type-minimized 3 : application/x-javascript assert_equals: expected (string) "text/javascript" but got (undefined) undefined
+FAIL mime-type-minimized 4 : text/ecmascript assert_equals: expected (string) "text/javascript" but got (undefined) undefined
+FAIL mime-type-minimized 5 : text/javascript assert_equals: expected (string) "text/javascript" but got (undefined) undefined
+FAIL mime-type-minimized 6 : text/javascript1.0 assert_equals: expected (string) "text/javascript" but got (undefined) undefined
+FAIL mime-type-minimized 7 : text/javascript1.1 assert_equals: expected (string) "text/javascript" but got (undefined) undefined
+FAIL mime-type-minimized 8 : text/javascript1.2 assert_equals: expected (string) "text/javascript" but got (undefined) undefined
+FAIL mime-type-minimized 9 : text/javascript1.3 assert_equals: expected (string) "text/javascript" but got (undefined) undefined
+FAIL mime-type-minimized 10 : text/javascript1.4 assert_equals: expected (string) "text/javascript" but got (undefined) undefined
+FAIL mime-type-minimized 11 : text/javascript1.5 assert_equals: expected (string) "text/javascript" but got (undefined) undefined
+FAIL mime-type-minimized 12 : text/jscript assert_equals: expected (string) "text/javascript" but got (undefined) undefined
+FAIL mime-type-minimized 13 : text/livescript assert_equals: expected (string) "text/javascript" but got (undefined) undefined
+FAIL mime-type-minimized 14 : text/x-ecmascript assert_equals: expected (string) "text/javascript" but got (undefined) undefined
+FAIL mime-type-minimized 15 : text/x-javascript assert_equals: expected (string) "text/javascript" but got (undefined) undefined
+FAIL mime-type-minimized 16 : application/json assert_equals: expected (string) "application/json" but got (undefined) undefined
+FAIL mime-type-minimized 17 : text/json assert_equals: expected (string) "application/json" but got (undefined) undefined
+FAIL mime-type-minimized 18 : application/ld+json assert_equals: expected (string) "application/json" but got (undefined) undefined
+FAIL mime-type-minimized 19 : image/svg+xml assert_equals: expected (string) "image/svg+xml" but got (undefined) undefined
+FAIL mime-type-minimized 20 : application/xml assert_equals: expected (string) "application/xml" but got (undefined) undefined
+FAIL mime-type-minimized 21 : text/xml assert_equals: expected (string) "application/xml" but got (undefined) undefined
+FAIL mime-type-minimized 22 : application/rss+xml assert_equals: expected (string) "application/xml" but got (undefined) undefined
+FAIL mime-type-minimized 23 : application/xhtml+xml assert_equals: expected (string) "application/xml" but got (undefined) undefined
+FAIL mime-type-minimized 24 : application/atom+xml assert_equals: expected (string) "application/xml" but got (undefined) undefined
+FAIL mime-type-minimized 25 : image/png;7a752164-f10e-11ed-a05b-0242ac120003 assert_equals: expected (string) "image/png" but got (undefined) undefined
+FAIL mime-type-minimized 26 : text/xml;7a758876-f40e-11ee-998b-0242abgh0003 assert_equals: expected (string) "application/xml" but got (undefined) undefined
+FAIL mime-type-minimized 27 : image/png assert_equals: expected (string) "image/png" but got (undefined) undefined
+FAIL mime-type-minimized 28 : image/jpe assert_equals: expected (string) "" but got (undefined) undefined
+FAIL mime-type-minimized 29 : application/png assert_equals: expected (string) "" but got (undefined) undefined
+FAIL mime-type-minimized 30 : random/png assert_equals: expected (string) "" but got (undefined) undefined
+FAIL mime-type-minimized 31 : application/abcd assert_equals: expected (string) "" but got (undefined) undefined
+FAIL mime-type 1 : text/html;charset=gbk assert_equals: expected (string) "text/html" but got (undefined) undefined
+FAIL mime-type 2 : TEXT/HTML;CHARSET=GBK assert_equals: expected (string) "text/html" but got (undefined) undefined
+FAIL mime-type 4 : text/html;charset=gbk( assert_equals: expected (string) "text/html" but got (undefined) undefined
+FAIL mime-type 5 : text/html;x=(;charset=gbk assert_equals: expected (string) "text/html" but got (undefined) undefined
+FAIL mime-type 7 : text/html;charset=gbk;charset=windows-1255 assert_equals: expected (string) "text/html" but got (undefined) undefined
+FAIL mime-type 8 : text/html;charset=();charset=GBK assert_equals: expected (string) "text/html" but got (undefined) undefined
+FAIL mime-type 10 : text/html;charset =gbk assert_equals: expected (string) "text/html" but got (undefined) undefined
+FAIL mime-type 11 : text/html ;charset=gbk assert_equals: expected (string) "text/html" but got (undefined) undefined
+FAIL mime-type 12 : text/html; charset=gbk assert_equals: expected (string) "text/html" but got (undefined) undefined
+FAIL mime-type 13 : text/html;charset= gbk assert_equals: expected (string) "text/html" but got (undefined) undefined
+FAIL mime-type 14 : text/html;charset= "gbk" assert_equals: expected (string) "text/html" but got (undefined) undefined
+FAIL mime-type 16 : text/html;charset=gbk assert_equals: expected (string) "text/html" but got (undefined) undefined
+FAIL mime-type 17 : text/html;charset=gbk assert_equals: expected (string) "text/html" but got (undefined) undefined
+FAIL mime-type 18 : text/html;charset=gbk assert_equals: expected (string) "text/html" but got (undefined) undefined
+FAIL mime-type 19 : text/html;charset=gbk assert_equals: expected (string) "text/html" but got (undefined) undefined
+FAIL mime-type 21 : text/html;charset='gbk' assert_equals: expected (string) "text/html" but got (undefined) undefined
+FAIL mime-type 22 : text/html;charset='gbk assert_equals: expected (string) "text/html" but got (undefined) undefined
+FAIL mime-type 23 : text/html;charset=gbk' assert_equals: expected (string) "text/html" but got (undefined) undefined
+FAIL mime-type 24 : text/html;charset=';charset=GBK assert_equals: expected (string) "text/html" but got (undefined) undefined
+FAIL mime-type 26 : text/html;test;charset=gbk assert_equals: expected (string) "text/html" but got (undefined) undefined
+FAIL mime-type 27 : text/html;test=;charset=gbk assert_equals: expected (string) "text/html" but got (undefined) undefined
+FAIL mime-type 28 : text/html;';charset=gbk assert_equals: expected (string) "text/html" but got (undefined) undefined
+FAIL mime-type 29 : text/html;";charset=gbk assert_equals: expected (string) "text/html" but got (undefined) undefined
+FAIL mime-type 30 : text/html ; ; charset=gbk assert_equals: expected (string) "text/html" but got (undefined) undefined
+FAIL mime-type 31 : text/html;;;;charset=gbk assert_equals: expected (string) "text/html" but got (undefined) undefined
+FAIL mime-type 32 : text/html;charset= ";charset=GBK assert_equals: expected (string) "text/html" but got (undefined) undefined
+FAIL mime-type 33 : text/html;charset=";charset=foo";charset=GBK assert_equals: expected (string) "text/html" but got (undefined) undefined
+FAIL mime-type 35 : text/html;charset="gbk" assert_equals: expected (string) "text/html" but got (undefined) undefined
+FAIL mime-type 36 : text/html;charset="gbk assert_equals: expected (string) "text/html" but got (undefined) undefined
+FAIL mime-type 37 : text/html;charset=gbk" assert_equals: expected (string) "text/html" but got (undefined) undefined
+FAIL mime-type 38 : text/html;charset=" gbk" assert_equals: expected (string) "text/html" but got (undefined) undefined
+FAIL mime-type 39 : text/html;charset="gbk " assert_equals: expected (string) "text/html" but got (undefined) undefined
+FAIL mime-type 40 : text/html;charset="\ gbk" assert_equals: expected (string) "text/html" but got (undefined) undefined
+FAIL mime-type 41 : text/html;charset="\g\b\k" assert_equals: expected (string) "text/html" but got (undefined) undefined
+FAIL mime-type 42 : text/html;charset="gbk"x assert_equals: expected (string) "text/html" but got (undefined) undefined
+FAIL mime-type 43 : text/html;charset="";charset=GBK assert_equals: expected (string) "text/html" but got (undefined) undefined
+FAIL mime-type 44 : text/html;charset=";charset=GBK assert_equals: expected (string) "text/html" but got (undefined) undefined
+FAIL mime-type 46 : text/html;charset={gbk} assert_equals: expected (string) "text/html" but got (undefined) undefined
+FAIL mime-type 48 : text/html;0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789=x;charset=gbk assert_equals: expected (string) "text/html" but got (undefined) undefined
+FAIL mime-type 69 : text/html;test=ÿ;charset=gbk assert_equals: expected (string) "text/html" but got (undefined) undefined
+

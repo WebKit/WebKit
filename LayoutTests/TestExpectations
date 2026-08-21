@@ -1374,19 +1374,25 @@ imported/w3c/web-platform-tests/eventsource/dedicated-worker/eventsource-constru
 imported/w3c/web-platform-tests/mediacapture-fromelement/capture.html [ Failure ]
 imported/w3c/web-platform-tests/mediacapture-fromelement/ended.html [ Failure ]
 imported/w3c/web-platform-tests/mediacapture-fromelement/creation.html [ Pass Failure ]
+imported/w3c/web-platform-tests/resource-timing/content-type.html [ Pass Failure ]
+imported/w3c/web-platform-tests/resource-timing/connection-reuse.html [ Pass Failure ]
+imported/w3c/web-platform-tests/resource-timing/render-blocking-status-link.html [ Pass Failure ]
+imported/w3c/web-platform-tests/resource-timing/render-blocking-status-script.html [ Pass Failure ]
+imported/w3c/web-platform-tests/resource-timing/iframe-sequence-of-events.html [ Pass Failure ]
+imported/w3c/web-platform-tests/resource-timing/interim-response-times.html [ Skip ] # Timeout
+imported/w3c/web-platform-tests/resource-timing/interim-response-times.h2.html [ Skip ] # Timeout
+imported/w3c/web-platform-tests/resource-timing/initiator-type/link.html [ Skip ] # Timeout
+imported/w3c/web-platform-tests/resource-timing/initiator-type/video.html [ Skip ] # Timeout
+imported/w3c/web-platform-tests/resource-timing/initiator-type/picture.html [ Skip ] # Timeout
+imported/w3c/web-platform-tests/resource-timing/content-encoding.https.html [ Skip ] # Timeout
+imported/w3c/web-platform-tests/resource-timing/entries-for-network-errors.sub.https.html [ Skip ] # Timeout
+imported/w3c/web-platform-tests/resource-timing/response-status-code.html [ Pass Failure ]
+imported/w3c/web-platform-tests/resource-timing/nested-nav-fallback-timing.html [ Pass Failure ]
 imported/w3c/web-platform-tests/resource-timing/font-timestamps.html [ Failure ]
 imported/w3c/web-platform-tests/resource-timing/cross-origin-start-end-time-with-redirects.html [ Pass Failure ]
 imported/w3c/web-platform-tests/resource-timing/resource_timing_content_length.html [ Skip ]
 imported/w3c/web-platform-tests/resource-timing/SO-XO-SO-redirect-chain-tao.https.html [ Failure ]
-webkit.org/b/180240 imported/w3c/web-platform-tests/resource-timing/single-entry-per-resource.html [ Pass Failure ]
-webkit.org/b/189906 imported/w3c/web-platform-tests/resource-timing/resource_timing_buffer_full_eventually.html [ Skip ]
-imported/w3c/web-platform-tests/resource-timing/resource-reload-TAO.sub.html [ Skip ]
-webkit.org/b/189905 imported/w3c/web-platform-tests/resource-timing/resource_initiator_types.html [ Pass Failure ]
-webkit.org/b/190523 imported/w3c/web-platform-tests/resource-timing/resource_timing_cross_origin_redirect_chain.html [ Pass Failure ]
-imported/w3c/web-platform-tests/resource-timing/crossorigin-sandwich-no-TAO.sub.html [ Pass Failure ]
 imported/w3c/web-platform-tests/resource-timing/cors-preflight.any.html [ Failure Pass ]
-imported/w3c/web-platform-tests/resource-timing/crossorigin-sandwich-TAO.sub.html [ Pass Failure ]
-imported/w3c/web-platform-tests/resource-timing/crossorigin-sandwich-partial-TAO.sub.html [ Pass Failure ]
 imported/w3c/web-platform-tests/navigation-timing/secure-connection-start-non-zero.https.html [ Pass Failure ]
 imported/w3c/web-platform-tests/navigation-timing/nav2-test-attributes-values.html [ Pass Failure ]
 imported/w3c/web-platform-tests/resource-timing/TAO-match.html [ Pass Failure ]
@@ -6470,7 +6476,6 @@ imported/w3c/web-platform-tests/resize-observer/svg.html [ Skip ]
 imported/w3c/web-platform-tests/resource-timing/entry-attributes.html [ Skip ]
 imported/w3c/web-platform-tests/resource-timing/object-not-found-after-TAO-cross-origin-redirect.html [ Skip ]
 imported/w3c/web-platform-tests/resource-timing/object-not-found-after-cross-origin-redirect.html [ Skip ]
-imported/w3c/web-platform-tests/resource-timing/resource_timing_cross_origin_redirect.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-audio-tainting.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/unregister-immediately-before-installed.https.html [ Skip ]
 imported/w3c/web-platform-tests/service-workers/service-worker/unregister-immediately.https.html [ Skip ]

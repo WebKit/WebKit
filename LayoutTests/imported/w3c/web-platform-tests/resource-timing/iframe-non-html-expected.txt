@@ -1,0 +1,6 @@
+
+PASS Iframes should report resource timing for image iframes
+PASS Iframes should report resource timing for xhtml iframes
+PASS Iframes should report resource timing for xml iframes
+PASS Iframes should report resource timing for text iframes
+

@@ -1,0 +1,7 @@
+
+FAIL PerformanceResourceTiming deliveryType test, same origin. assert_equals: Expect "cache" deliveryType for a
+        cached response. expected "cache" but got ""
+FAIL PerformanceResourceTiming deliveryType test, cross origin, TAO passes. assert_equals: Expect "cache" deliveryType for a
+        cached response. expected "cache" but got ""
+PASS PerformanceResourceTiming deliveryType test, cross origin, TAO fails.
+

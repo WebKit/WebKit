@@ -1,0 +1,4 @@
+
+FAIL The initiator Url for worker-importer-static initiatorUrl from worker must be 'http://web-platform.test:8800/resource-timing/resources/module-script-worker.js' promise_test: Unhandled rejection with value: object "Error: worker-importer-static timeout"
+FAIL The initiator Url for a script imported from a worker must be the worker script assert_equals: expected (string) "http://web-platform.test:8800/resource-timing/resources/module-script-worker.js" but got (undefined) undefined
+

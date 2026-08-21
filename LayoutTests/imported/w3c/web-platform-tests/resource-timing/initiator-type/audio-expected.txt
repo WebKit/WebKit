@@ -1,0 +1,6 @@
+
+PASS The initiator type for <audio src> without 'type' attribute must be 'audio'
+PASS The initiator type for <source src> with type 'audio/wav' must be 'audio'
+PASS The initiator type for <source src> with type 'audio/mpeg' must be 'audio'
+PASS The initiator type for <source src> with type 'audio/ogg' must be 'audio'
+

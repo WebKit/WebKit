@@ -1,3 +1,13 @@
 
-PASS Verify that cross origin resources' timings aren't exposed when even as targets of HTTP redirects.
+PASS Verify that cross-origin resources' timings aren't exposed through HTTP redirects.
+PASS Verify that a redirected cross-origin resources' timings aren't exposed when the TAO check fails.
+FAIL Verify that cross-origin resources' timings are exposed when the TAO check succeeds. Also verify that secureConnectionStart is 0 since the original request was over HTTP. assert_greater_than: redirectStart should be greater than 0 expected a number greater than 0 but got 0
+PASS Verify that a redirect chain through cross-origin resources have their timings exposed when all TAO checks succeed. Also verify that secureConnectionStart is 0 since the original request was over HTTP.
+PASS Verify that a redirect chain through cross-origin resources do not have their timings exposed when any of the TAO checks fail. (FAIL -> FAIL -> FAIL)
+PASS Verify that a redirect chain through cross-origin resources do not have their timings exposed when any of the TAO checks fail. (FAIL -> FAIL -> PASS)
+PASS Verify that a redirect chain through cross-origin resources do not have their timings exposed when any of the TAO checks fail. (FAIL -> PASS -> FAIL)
+PASS Verify that a redirect chain through cross-origin resources do not have their timings exposed when any of the TAO checks fail. (FAIL -> PASS -> PASS)
+PASS Verify that a redirect chain through cross-origin resources do not have their timings exposed when any of the TAO checks fail. (PASS -> FAIL -> FAIL)
+PASS Verify that a redirect chain through cross-origin resources do not have their timings exposed when any of the TAO checks fail. (PASS -> FAIL -> PASS)
+PASS Verify that a redirect chain through cross-origin resources do not have their timings exposed when any of the TAO checks fail. (PASS -> PASS -> FAIL)
 

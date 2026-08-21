@@ -1,0 +1,8 @@
+Description
+
+This test verifies that, for a resource fetched via event handler, correct initiator_url is reported after event handler is overwritten.
+
+
+
+FAIL The initiator Url for /images/red.png?initiator_url_eventhandler initiatorUrl from event handlers must be 'http://web-platform.test:8800/resource-timing/tentative/initiator-url/event-handler-overwritten.html' assert_equals: expected (string) "http://web-platform.test:8800/resource-timing/tentative/initiator-url/event-handler-overwritten.html" but got (undefined) undefined
+

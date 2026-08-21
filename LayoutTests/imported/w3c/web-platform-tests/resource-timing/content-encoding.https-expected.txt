@@ -1,0 +1,35 @@
+Description
+
+This test validates contentEncoding in resource timing.
+
+
+FAIL contentEncoding in resource timing assert_equals: run_same_origin_test failed, unexpected contentEncoding value. expected (string) "dcb" but got (undefined) undefined
+FAIL contentEncoding in resource timing 1 assert_equals: run_same_origin_test failed, unexpected contentEncoding value. expected (string) "dcz" but got (undefined) undefined
+FAIL contentEncoding in resource timing 2 assert_equals: run_same_origin_test failed, unexpected contentEncoding value. expected (string) "gzip" but got (undefined) undefined
+FAIL contentEncoding in resource timing 3 assert_equals: run_same_origin_test failed, unexpected contentEncoding value. expected (string) "br" but got (undefined) undefined
+FAIL contentEncoding in resource timing 4 assert_equals: run_same_origin_test failed, unexpected contentEncoding value. expected (string) "gzip" but got (undefined) undefined
+FAIL contentEncoding in resource timing 5 assert_equals: run_same_origin_test failed, unexpected contentEncoding value. expected (string) "zstd" but got (undefined) undefined
+FAIL contentEncoding in resource timing 6 assert_equals: run_same_origin_test failed, unexpected contentEncoding value. expected (string) "deflate" but got (undefined) undefined
+FAIL contentEncoding in resource timing 7 assert_equals: run_same_origin_test failed, unexpected contentEncoding value. expected (string) "gzip" but got (undefined) undefined
+FAIL contentEncoding in resource timing 8 assert_equals: run_same_origin_test failed, unexpected contentEncoding value. expected (string) "@unknown" but got (undefined) undefined
+FAIL contentEncoding in resource timing 9 assert_equals: run_same_origin_test failed, unexpected contentEncoding value. expected (string) "@unknown" but got (undefined) undefined
+FAIL contentEncoding in resource timing 10 assert_equals: run_same_origin_test failed, unexpected contentEncoding value. expected (string) "multiple" but got (undefined) undefined
+FAIL contentEncoding in resource timing 11 assert_equals: run_same_origin_test failed, unexpected contentEncoding value. expected (string) "multiple" but got (undefined) undefined
+FAIL contentEncoding in resource timing 12 assert_equals: run_same_origin_test failed, unexpected contentEncoding value. expected (string) "gzip" but got (undefined) undefined
+FAIL contentEncoding in resource timing 13 assert_equals: run_same_origin_test failed, unexpected contentEncoding value. expected (string) "" but got (undefined) undefined
+FAIL contentEncoding in resource timing 14 promise_test: Unhandled rejection with value: object "TimeoutError: Timeout was reached before entry fired"
+FAIL contentEncoding in resource timing 15 promise_test: Unhandled rejection with value: object "TimeoutError: Timeout was reached before entry fired"
+FAIL contentEncoding in resource timing 16 promise_test: Unhandled rejection with value: object "TimeoutError: Timeout was reached before entry fired"
+FAIL contentEncoding in resource timing 17 promise_test: Unhandled rejection with value: object "TimeoutError: Timeout was reached before entry fired"
+FAIL contentEncoding in resource timing 18 promise_test: Unhandled rejection with value: object "TimeoutError: Timeout was reached before entry fired"
+FAIL contentEncoding in resource timing 19 promise_test: Unhandled rejection with value: object "TimeoutError: Timeout was reached before entry fired"
+FAIL contentEncoding in resource timing 20 promise_test: Unhandled rejection with value: object "TimeoutError: Timeout was reached before entry fired"
+FAIL contentEncoding in resource timing 21 promise_test: Unhandled rejection with value: object "TimeoutError: Timeout was reached before entry fired"
+FAIL contentEncoding in resource timing 22 assert_equals: run_cross_origin_allowed_test failed, unexpected contentEncoding value. expected (string) "dcb" but got (undefined) undefined
+FAIL contentEncoding in resource timing 23 assert_equals: run_cross_origin_allowed_test failed, unexpected contentEncoding value. expected (string) "dcz" but got (undefined) undefined
+FAIL contentEncoding in resource timing 24 assert_equals: run_cross_origin_allowed_test failed, unexpected contentEncoding value. expected (string) "gzip" but got (undefined) undefined
+FAIL contentEncoding in resource timing 25 assert_equals: run_cross_origin_allowed_test failed, unexpected contentEncoding value. expected (string) "deflate" but got (undefined) undefined
+FAIL contentEncoding in resource timing 26 assert_equals: run_cross_origin_allowed_test failed, unexpected contentEncoding value. expected (string) "gzip" but got (undefined) undefined
+FAIL contentEncoding in resource timing 27 assert_equals: content-encoding should be empty for iframes having cross origin redirects expected (string) "" but got (undefined) undefined
+FAIL contentEncoding in resource timing 28 assert_equals: content-encoding should be exposed for iframes having only same origin redirects expected (string) "gzip" but got (undefined) undefined
+

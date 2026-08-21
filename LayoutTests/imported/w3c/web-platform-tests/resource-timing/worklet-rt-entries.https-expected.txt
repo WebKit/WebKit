@@ -1,0 +1,3 @@
+
+FAIL Worklets should generate Resource Timing Entries assert_equals: expected 1 but got 0
+

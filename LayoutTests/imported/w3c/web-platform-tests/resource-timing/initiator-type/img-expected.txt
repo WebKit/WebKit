@@ -1,0 +1,4 @@
+
+
+PASS The initiator type for <img> must be 'img'
+

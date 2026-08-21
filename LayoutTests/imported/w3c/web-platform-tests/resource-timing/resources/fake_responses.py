@@ -12,8 +12,9 @@ def main(request, response):
     match = request.headers.get(b"If-None-Match", None)
     date = request.GET.first(b"date", b"")
     modified = request.headers.get(b"If-Modified-Since", None)
-    response.headers.set(b"Access-Control-Allow-Origin", b"*");
-    response.headers.set(b"Timing-Allow-Origin", b"*");
+    url = request.GET.first(b"url", None)
+    response.headers.set(b"Access-Control-Allow-Origin", b"*")
+    response.headers.set(b"Timing-Allow-Origin", b"*")
     if tag:
         response.headers.set(b"ETag", b'"%s"' % tag)
     elif date:
@@ -22,6 +23,15 @@ def main(request, response):
         response.headers.set(b"Location", redirect)
         response.status = (302, b"Moved")
         return b""
+
+    if url:
+        filename = url.decode('utf-8').split("?")[0]
+        filepath = "./resource-timing/resources/{}".format(filename)
+        response.headers.set(b"Content-Type", b"text/javascript")
+        with open(filepath, 'rb') as f:
+            filedata = f.read()
+
+        return filedata
 
     if ((match is not None and match == tag) or
         (modified is not None and modified == date)):

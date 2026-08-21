@@ -1,17 +1,3 @@
-let appendScript = (src, resolve) => {
-    const script = document.createElement('script');
-    script.type = 'text/javascript';
-    script.src = src;
-    script.onload = resolve;
-    document.body.appendChild(script);
-}
-
-let xhrScript = src => {
-    var xhr = new XMLHttpRequest();
-    xhr.open("GET", src, false);
-    xhr.send(null);
-}
-
 // This script relies on resources/resource-loaders.js. Include it before in order for the below
 // methods to work properly.
 
@@ -32,33 +18,6 @@ const clearBufferAndSetSize = size => {
   performance.clearResourceTimings();
   performance.setResourceTimingBufferSize(size);
 }
-
-let waitUntilConditionIsMet = cond => {
-    return new Promise(resolve => {
-        let checkCondition = function() {
-            if (cond.apply(null)) {
-                resolve();
-            } else {
-                step_timeout(checkCondition.bind(null,cond), 0);
-            }
-        }
-        step_timeout(checkCondition.bind(null, cond), 0);
-    });
-}
-
-let waitForEventToFire = () => {
-    return new Promise(resolve => {
-        let waitForIt = function() {
-            if (eventFired) {
-                eventFired = false;
-                resolve();
-            } else {
-                step_timeout(waitForIt, 0);
-            }
-        }
-        step_timeout(waitForIt, 0);
-    });
-};
 
 const forceBufferFullEvent = async () => {
   clearBufferAndSetSize(1);

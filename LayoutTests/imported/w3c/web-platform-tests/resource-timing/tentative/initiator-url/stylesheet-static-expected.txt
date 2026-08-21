@@ -1,0 +1,6 @@
+X
+
+FAIL The initiator Url for resource_timing_test0.css?label=initiator initiatorUrl from style sheet must be 'http://web-platform.test:8800/resource-timing/resources/nested-initiator.css' assert_equals: expected (string) "http://web-platform.test:8800/resource-timing/resources/nested-initiator.css" but got (undefined) undefined
+FAIL The initiator Url for Ahem.ttf?label=initiator initiatorUrl from style sheet must be 'http://web-platform.test:8800/resource-timing/resources/nested-initiator.css' assert_equals: expected (string) "http://web-platform.test:8800/resource-timing/resources/nested-initiator.css" but got (undefined) undefined
+FAIL The initiator Url for blue.png?label=initiator initiatorUrl from style sheet must be 'http://web-platform.test:8800/resource-timing/resources/nested-initiator.css' assert_equals: expected (string) "http://web-platform.test:8800/resource-timing/resources/nested-initiator.css" but got (undefined) undefined
+

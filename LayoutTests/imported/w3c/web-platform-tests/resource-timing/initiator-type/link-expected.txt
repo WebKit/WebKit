@@ -1,0 +1,11 @@
+This content forces a font to get fetched
+
+PASS The initiator type for <link> must be 'link'
+PASS The initiator type for css resources embedded in css must be 'css'
+PASS The initiator type for font resources embedded in css must be 'css'
+PASS The initiator type for image resources embedded in css must be 'css'
+FAIL The initiator type for <link prefetch> must be 'link' assert_equals: expected "link" but got "other"
+PASS The initiator type for <link preload> must be 'link'
+FAIL The initiator type for <link manifest> must be 'link' promise_test: Unhandled rejection with value: object "Error: observe_entry: timeout"
+FAIL The initiator type for module preload must be 'other' assert_equals: expected "other" but got "link"
+

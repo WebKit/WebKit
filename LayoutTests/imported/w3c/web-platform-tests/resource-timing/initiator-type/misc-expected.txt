@@ -1,0 +1,9 @@
+
+
+PASS The initiator type for <body background> must be 'body'
+PASS The initiator type for <input type='image'> must be 'input'
+PASS The initiator type for <object type='image/png'> must be 'object'
+FAIL The initiator type for sendBeacon() must be 'beacon' assert_equals: expected "beacon" but got "other"
+PASS The initiator type for for fetch() must be 'fetch'
+FAIL The initiator type for new EventSource() must be 'other' assert_equals: expected "other" but got "eventsource"
+

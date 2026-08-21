@@ -1,0 +1,8 @@
+Description
+
+This test verifies that, for a resource fetched with a XMLHttpRequest, the initiator_url points to the script where xmlhttprequest.send() happens.
+
+
+
+FAIL The initiator Url for /images/blue.png?initiator_url_xmlhttprequest initiatorUrl from XMLHttpRequest() must be 'http://web-platform.test:8800/resource-timing/tentative/initiator-url/xml-http-request.html' assert_equals: expected (string) "http://web-platform.test:8800/resource-timing/tentative/initiator-url/xml-http-request.html" but got (undefined) undefined
+

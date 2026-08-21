@@ -5288,6 +5288,33 @@
     "imported/w3c/web-platform-tests/requestidlecallback/deadline-max.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/resource-timing/buffer-full-eventually.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/resource-timing/content-type-minimization.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/resource-timing/decoded-body-size-compressed.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/resource-timing/encoded-body-size-cached.https.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/resource-timing/event-source-timing.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/resource-timing/iframe-failed-commit.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/resource-timing/interim-response-times.h2.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/resource-timing/interim-response-times.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/resource-timing/link-sequence-of-events.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/resource-timing/nested-context-navigations-embed.html": [
         "slow"
     ],
@@ -5297,19 +5324,13 @@
     "imported/w3c/web-platform-tests/resource-timing/nested-context-navigations-object.html": [
         "slow"
     ],
-    "imported/w3c/web-platform-tests/resource-timing/nextHopProtocol-tao-protected.https.html": [
+    "imported/w3c/web-platform-tests/resource-timing/object-not-found-after-cross-origin-redirect.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/resource-timing/resource-timing-level1.sub.html": [
         "slow"
     ],
-    "imported/w3c/web-platform-tests/resource-timing/resource_timing_buffer_full_eventually.html": [
-        "slow"
-    ],
-    "imported/w3c/web-platform-tests/resource-timing/single-entry-per-resource.html": [
-        "slow"
-    ],
-    "imported/w3c/web-platform-tests/resource-timing/workerStart-tao-protected.https.html": [
+    "imported/w3c/web-platform-tests/resource-timing/response-status-code.html": [
         "slow"
     ],
     "imported/w3c/web-platform-tests/screen-orientation/hidden_document.html": [

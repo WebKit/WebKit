@@ -1,0 +1,5 @@
+
+PASS An image should receive its load event after the ResourceTiming entry is available
+PASS A non-existent (404) image should receive its error event after the ResourceTiming entry is available
+PASS An invalid image should receive its error event after the ResourceTiming entry is available
+

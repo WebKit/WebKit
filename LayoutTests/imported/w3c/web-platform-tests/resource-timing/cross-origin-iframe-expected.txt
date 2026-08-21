@@ -1,0 +1,4 @@
+
+PASS A cross-origin iframe should report an opaque RT entry
+FAIL A cross-origin iframe with TAO enabled should report a full RT entry assert_greater_than: transferSize should be greater than 0 expected a number greater than 0 but got 0
+

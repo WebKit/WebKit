@@ -3,6 +3,10 @@ Description
 See the included test script
 
 
-PASS PerformanceResrouceTiming entries need to conform to the spec when a distinct resource is fetched over a persistent connection
-PASS PerformanceResrouceTiming entries need to conform to the spec when the resource is cache-revalidated over a persistent connection
+PASS PerformanceResrouceTiming entries need to conform to the spec when a distinct resource is fetched over a persistent connection (Reuse HTTP connection)
+PASS PerformanceResrouceTiming entries need to conform to the spec when the resource is cache-revalidated over a persistent connection (Reuse HTTP connection)
+FAIL PerformanceResrouceTiming entries need to conform to the spec when a distinct resource is fetched over a persistent connection (Reuse HTTPS connection from HTTP page) assert_greater_than: transferSize should be greater than 0 expected a number greater than 0 but got 0
+FAIL PerformanceResrouceTiming entries need to conform to the spec when the resource is cache-revalidated over a persistent connection (Reuse HTTPS connection from HTTP page) assert_greater_than: transferSize should be greater than 0 expected a number greater than 0 but got 0
+PASS PerformanceResrouceTiming entries need to conform to the spec when a distinct resource is fetched over a persistent connection (Reuse HTTPS connection with redirects from an HTTP page)
+PASS PerformanceResrouceTiming entries need to conform to the spec when the resource is cache-revalidated over a persistent connection (Reuse HTTPS connection with redirects from an HTTP page)
 

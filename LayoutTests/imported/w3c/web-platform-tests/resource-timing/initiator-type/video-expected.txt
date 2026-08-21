@@ -1,0 +1,8 @@
+
+
+PASS The initiator type for <video poster> must be 'video'
+PASS The initiator type for <video src> must be 'video'
+PASS The initiator type for <source src> with type="video/mp4" must be 'video'
+FAIL The initiator type for <track src> must be 'track' promise_test: Unhandled rejection with value: object "Error: observe_entry: timeout"
+FAIL The initiator type for <source src> with type="video/webm" must be 'video' promise_test: Unhandled rejection with value: object "Error: observe_entry: timeout"
+

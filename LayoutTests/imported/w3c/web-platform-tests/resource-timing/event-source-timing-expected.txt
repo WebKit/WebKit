@@ -1,0 +1,3 @@
+
+PASS ResourceTiming for EventSource should reflect number of re-connections to source
+

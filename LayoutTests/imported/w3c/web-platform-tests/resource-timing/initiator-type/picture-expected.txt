@@ -1,0 +1,7 @@
+
+
+PASS The initiator type for <source> in a <picture> must be 'img'
+PASS The initiator type for <img> in a <picture> must be 'img'
+PASS The initiator type for <img srcset> in a <picture> must be 'img'
+PASS The initiator type for <img src> in a <picture> must be 'img'
+

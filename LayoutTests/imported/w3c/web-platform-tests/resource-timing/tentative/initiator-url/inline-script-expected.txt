@@ -1,0 +1,10 @@
+Description
+
+This test verifies that, for resources including an iframe, that are loaded by an inline script, the initiatorUrl is properly reported.
+
+
+
+FAIL The initiator Url for blank_page_green.html?no_cache_inline_script initiatorUrl from inline-script must be 'http://web-platform.test:8800/resource-timing/tentative/initiator-url/inline-script.html' assert_equals: expected (string) "http://web-platform.test:8800/resource-timing/tentative/initiator-url/inline-script.html" but got (undefined) undefined
+FAIL The initiator Url for empty_style.css?no_cache_inline_script initiatorUrl from inline-script must be 'http://web-platform.test:8800/resource-timing/tentative/initiator-url/inline-script.html' assert_equals: expected (string) "http://web-platform.test:8800/resource-timing/tentative/initiator-url/inline-script.html" but got (undefined) undefined
+FAIL The initiator Url for blue.png?no_cache_inline_script initiatorUrl from inline-script must be 'http://web-platform.test:8800/resource-timing/tentative/initiator-url/inline-script.html' assert_equals: expected (string) "http://web-platform.test:8800/resource-timing/tentative/initiator-url/inline-script.html" but got (undefined) undefined
+

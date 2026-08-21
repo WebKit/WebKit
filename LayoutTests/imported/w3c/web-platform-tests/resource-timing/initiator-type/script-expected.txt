@@ -1,0 +1,5 @@
+
+PASS The initiator type for <script> must be 'script'
+PASS The initiator type for an asynchronous XmlHTTPRequest must be 'xmlhttprequest'
+PASS The initiator type for script imported from another script must be 'script'
+

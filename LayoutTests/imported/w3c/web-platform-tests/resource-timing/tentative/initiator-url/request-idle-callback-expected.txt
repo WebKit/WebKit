@@ -1,0 +1,37 @@
+Description
+
+This test verifies that, for a resource fetched with a requestIdleCallback, the initiator_url points to the async caller script, instead of the callee script.
+
+
+
+FAIL The initiator Url for function test(func, name, properties)
+    {
+        if (tests.promise_setup_called) {
+            tests.status.status = tests.status.ERROR;
+            tests.status.message = '`test` invoked after `promise_setup`';
+            tests.complete();
+        }
+        var test_name = get_test_name(func, name);
+        var test_obj = new Test(test_name, properties);
+        var value = test_obj.step(func, test_obj, test_obj);
+
+        if (value !== undefined) {
+            var msg = 'Test named "' + test_name +
+                '" passed a function to `test` that returned a value.';
+
+            try {
+                if (value && typeof value.then === 'function') {
+                    msg += ' Consider using `promise_test` instead when ' +
+                        'using Promises or async/await.';
+                }
+            } catch (err) {}
+
+            tests.status.status = tests.status.ERROR;
+            tests.status.message = msg;
+        }
+
+        if (test_obj.phase === test_obj.phases.STARTED) {
+            test_obj.done();
+        }
+    } initiatorUrl from requestIdleCallback() must be 'http://web-platform.test:8800/resource-timing/tentative/initiator-url/request-idle-callback.html' assert_equals: expected (string) "http://web-platform.test:8800/resource-timing/tentative/initiator-url/request-idle-callback.html" but got (undefined) undefined
+

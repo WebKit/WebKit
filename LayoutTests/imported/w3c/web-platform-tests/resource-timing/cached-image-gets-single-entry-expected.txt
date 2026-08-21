@@ -1,0 +1,8 @@
+Description
+
+Test that a reused resource only appears in the buffer once.
+
+
+
+PASS When a resource is resolved from cache, there must not be a corresponding entry in the Performance Timeline
+

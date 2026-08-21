@@ -1,0 +1,4 @@
+
+FAIL secureConnectionStart is reported for iframes loaded over https in http context promise_test: Unhandled rejection with value: object "Error: observe_entry: timeout"
+FAIL secureConnectionStart is reported for object documents loaded over https in http context promise_test: Unhandled rejection with value: object "Error: observe_entry: timeout"
+

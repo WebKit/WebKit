@@ -1,0 +1,7 @@
+X
+
+FAIL The initiator Url for nested-dynamic-initiator.css initiatorUrl from document must be 'http://web-platform.test:8800/resource-timing/tentative/initiator-url/stylesheet-dynamic.html' assert_equals: expected (string) "http://web-platform.test:8800/resource-timing/tentative/initiator-url/stylesheet-dynamic.html" but got (undefined) undefined
+FAIL The initiator Url for resource_timing_test0.css?label=dynamic-initiator initiatorUrl from style sheet must be 'http://web-platform.test:8800/resource-timing/resources/nested-dynamic-initiator.css' assert_equals: expected (string) "http://web-platform.test:8800/resource-timing/resources/nested-dynamic-initiator.css" but got (undefined) undefined
+FAIL The initiator Url for Ahem.ttf?label=dynamic-initiator initiatorUrl from style sheet must be 'http://web-platform.test:8800/resource-timing/resources/nested-dynamic-initiator.css' assert_equals: expected (string) "http://web-platform.test:8800/resource-timing/resources/nested-dynamic-initiator.css" but got (undefined) undefined
+FAIL The initiator Url for blue.png?label=dynamic-initiator initiatorUrl from style sheet must be 'http://web-platform.test:8800/resource-timing/resources/nested-dynamic-initiator.css' assert_equals: expected (string) "http://web-platform.test:8800/resource-timing/resources/nested-dynamic-initiator.css" but got (undefined) undefined
+

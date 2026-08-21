@@ -14241,7 +14241,7 @@
         "web-platform-tests/resize-observer/devicepixel-ref.html",
         "web-platform-tests/resize-observer/devicepixel2-ref.html",
         "web-platform-tests/resize-observer/iframe-same-origin-ref.html",
-        "web-platform-tests/resource-timing/iframe-setdomain.sub.html",
+        "web-platform-tests/resource-timing/frameset-timing.html",
         "web-platform-tests/scroll-animations/animation-trigger/animation-trigger-fill-mode-both-ref.html",
         "web-platform-tests/scroll-animations/animation-trigger/animation-trigger-fill-mode-none-ref.html",
         "web-platform-tests/scroll-animations/css/animation-fill-outside-range-ref.html",
