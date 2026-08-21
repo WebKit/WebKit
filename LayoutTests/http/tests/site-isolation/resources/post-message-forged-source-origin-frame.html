@@ -1,0 +1,67 @@
+<script>
+// Posting a message to the cross-site parent goes through WebPageProxy::postMessageToRemote. Capture that
+// message and send it again with the host in its sourceOrigin replaced, like a compromised process would.
+
+const realHost = "localhost";
+const forgedHost = "evil.test"; // Same length as realHost, so the encoded string stays well formed.
+
+function report(status)
+{
+    parent.postMessage("done " + status, "*");
+}
+
+// Returns how many copies of realHost were replaced, so the test fails loudly rather than silently replaying
+// an unmodified message if the encoding ever changes.
+function forgeHost(bytes)
+{
+    const encoder = new TextEncoder();
+    const realBytes = encoder.encode(realHost);
+    const forgedBytes = encoder.encode(forgedHost);
+    let replacements = 0;
+    outer: for (let i = 0; i + realBytes.length <= bytes.length; i++) {
+        for (let j = 0; j < realBytes.length; j++) {
+            if (bytes[i + j] !== realBytes[j])
+                continue outer;
+        }
+        for (let j = 0; j < forgedBytes.length; j++)
+            bytes[i + j] = forgedBytes[j];
+        replacements++;
+        i += realBytes.length - 1;
+    }
+    return replacements;
+}
+
+onload = () => {
+    if (!window.IPC) {
+        report("skipped");
+        return;
+    }
+
+    let captured = false;
+    IPC.addOutgoingMessageListener("UI", (description) => {
+        if (captured || !description || !description.buffer)
+            return;
+        if (description.name !== IPC.messages.WebPageProxy_PostMessageToRemote.name)
+            return;
+        captured = true;
+
+        const bytes = new Uint8Array(new Uint8Array(description.buffer));
+        const replacements = forgeHost(bytes);
+        if (replacements !== 1) {
+            report("unable to forge sourceOrigin, replaced " + replacements + " copies of the host");
+            return;
+        }
+
+        // slice(16) drops the message header, which IPC.sendMessage writes itself.
+        IPC.sendMessage("UI", description.destinationID, description.name, bytes.slice(16));
+        report("forged");
+    });
+
+    parent.postMessage("probe", "*");
+
+    setTimeout(() => {
+        if (!captured)
+            report("no PostMessageToRemote was captured");
+    }, 3000);
+};
+</script>
