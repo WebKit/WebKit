@@ -25,6 +25,7 @@ import json
 import logging
 import operator
 import os
+import re
 import shutil
 import sys
 import tempfile
@@ -48,6 +49,7 @@ from Shared.steps import *
 
 from . import send_email
 from .layout_test_failures import LayoutTestFailures
+from .results_db import FlakyVerdict
 from .steps import *
 
 # Workaround for https://github.com/buildbot/buildbot/issues/4669
@@ -3206,6 +3208,8 @@ class TestFilterLayoutTestFailuresUsingResultsDB(BuildStepMixinAdditions, unitte
 
         self.patch(ResultsDatabase, 'is_test_pre_existing_failure', classmethod(fake_is_pre_existing))
         self.patch(ResultsDatabase, 'has_commit', classmethod(lambda cls, commit=None: defer.succeed(False)))
+        self.patch(ResultsDatabase, 'flaky_verdicts_for', classmethod(lambda cls, tests, **kwargs: defer.succeed((
+            {test: FlakyVerdict() for test in tests}, ''))))
         return step
 
     @defer.inlineCallbacks
@@ -3230,6 +3234,87 @@ class TestFilterLayoutTestFailuresUsingResultsDB(BuildStepMixinAdditions, unitte
         )
 
     @defer.inlineCallbacks
+    def test_a_flaky_verdict_is_recorded_without_ignoring_the_failure(self):
+        # SHOULD_IGNORE_FLAKY_TESTS is False, so the verdict is recorded but the test is not removed.
+        step = self._configure(set())
+        builds = [f'https://build.webkit.org/#/builders/1/builds/{number}' for number in (11, 12, 13)]
+        self.patch(ResultsDatabase, 'flaky_verdicts_for', classmethod(
+            lambda cls, tests, **kwargs: defer.succeed(({
+                test: (
+                    FlakyVerdict(flaky_type='DirtyTree', build_urls=set(builds))
+                    if test == 'flaky.html' else FlakyVerdict()
+                ) for test in tests
+            }, ''))))
+
+        yield step.filter_failures_using_results_db(['real.html', 'flaky.html'])
+
+        self.assertEqual(step.failing_tests_filtered, ['real.html', 'flaky.html'])
+        self.assertEqual(step.flaky_failures_in_results_db, {'flaky.html': 'DirtyTree'})
+        self.assertEqual(step.preexisting_failures_in_results_db, [])
+        self.assertEqual(step.results_db_ignore_message(), 'Ignored flaky tests: flaky.html based on results-db')
+
+    @defer.inlineCallbacks
+    def test_a_test_with_no_verdict_is_not_treated_as_sound(self):
+        # flaky_verdicts_for answers for every test it is given, so this cannot happen today. If that
+        # ever drifts, the failure must not read as a clean 'not flaky'.
+        step = self._configure(set())
+        self.patch(ResultsDatabase, 'flaky_verdicts_for', classmethod(
+            lambda cls, tests, **kwargs: defer.succeed(({}, ''))))
+
+        yield step.filter_failures_using_results_db(['real.html'])
+
+        self.assertEqual(step.failing_tests_filtered, ['real.html'])
+        self.assertEqual(step.flaky_failures_in_results_db, {})
+
+    @defer.inlineCallbacks
+    def test_the_ignore_message_covers_both_categories(self):
+        step = self._configure({'pre-existing.html'})
+        self.patch(ResultsDatabase, 'flaky_verdicts_for', classmethod(
+            lambda cls, tests, **kwargs: defer.succeed(({
+                test: (
+                    FlakyVerdict(flaky_type='CleanTree')
+                    if test == 'flaky.html' else FlakyVerdict()
+                ) for test in tests
+            }, ''))))
+
+        yield step.filter_failures_using_results_db(['pre-existing.html', 'flaky.html'])
+
+        self.assertEqual(step.failing_tests_filtered, ['flaky.html'])
+        self.assertEqual(
+            step.results_db_ignore_message(),
+            'Ignored pre-existing failures: pre-existing.html; flaky tests: flaky.html based on results-db',
+        )
+
+    @defer.inlineCallbacks
+    def test_set_build_summary_restores_success_from_the_property(self):
+        # buildbot overwrites build.results after the step that ignored the failures, so the verdict
+        # has to be restored here. Driven by a property rather than the summary's wording.
+        self.setup_step(SetBuildSummary())
+        self.setProperty('build_summary', 'Ignored flaky tests: flaky.html based on results-db')
+        self.setProperty('force_build_success', True)
+        self.build.results = FAILURE
+        self.expect_outcome(result=SUCCESS)
+        yield self.run_step()
+        self.assertEqual(self.build.results, SUCCESS)
+
+    def test_ignoring_every_failure_sets_the_property_set_build_summary_reads(self):
+        # The other half of the wiring: nothing else tells SetBuildSummary to keep this build green.
+        class Cmd:
+            rc = 1
+
+        self.setup_step(RunWebKitTests())
+        step = self.get_nth_step(0)
+        step._addToLog = lambda logName, message: defer.succeed(None)
+        step.incorrectLayoutLines = []
+        step.failing_tests_filtered = []
+        step.preexisting_failures_in_results_db = ['pre-existing.html']
+        step.flaky_failures_in_results_db = ['flaky.html']
+        self.patch(self.build, 'addStepsAfterCurrentStep', lambda steps: None)
+
+        self.assertEqual(step.evaluateCommand(Cmd()), WARNINGS)
+        self.assertTrue(self.getProperty('force_build_success'))
+
+    @defer.inlineCallbacks
     def test_wpe_platform_is_translated_to_uppercase_for_results_db(self):
         configurations = []
 
@@ -3246,6 +3331,8 @@ class TestFilterLayoutTestFailuresUsingResultsDB(BuildStepMixinAdditions, unitte
         self.setProperty('configuration', 'release')
         self.patch(ResultsDatabase, 'is_test_pre_existing_failure', classmethod(fake_is_pre_existing))
         self.patch(ResultsDatabase, 'has_commit', classmethod(lambda cls, commit=None: defer.succeed(False)))
+        self.patch(ResultsDatabase, 'flaky_verdicts_for', classmethod(lambda cls, tests, **kwargs: defer.succeed((
+            {test: FlakyVerdict() for test in tests}, ''))))
 
         yield step.filter_failures_using_results_db(['real.html'])
         self.assertEqual(configurations, [dict(platform='WPE', style='release')])
@@ -3288,6 +3375,8 @@ class TestFilterLayoutTestFailuresUsingResultsDB(BuildStepMixinAdditions, unitte
         step._addToLog = lambda logName, message: defer.succeed(None)
         self.patch(ResultsDatabase, 'is_test_pre_existing_failure', classmethod(fake_is_pre_existing))
         self.patch(ResultsDatabase, 'has_commit', classmethod(lambda cls, commit=None: defer.succeed(False)))
+        self.patch(ResultsDatabase, 'flaky_verdicts_for', classmethod(lambda cls, tests, **kwargs: defer.succeed((
+            {test: FlakyVerdict() for test in tests}, ''))))
 
         cap = RunWebKitTests.MAX_FAILURES_TO_CHECK_RESULTS_DB
         failing_tests = [f'test{i}.html' for i in range(cap + 10)]
@@ -3689,6 +3778,26 @@ class TestLayoutTestStepsReportAsTheyRun(BuildStepMixinAdditions, unittest.TestC
             sorted(self.getProperty('first_run_results')),
             ['fast/b.html', 'fast/both.html', 'fast/flaky.html'],
         )
+
+    @defer.inlineCallbacks
+    def test_the_first_run_exports_the_verdicts_it_relied_on(self):
+        step = self.configureStep(RunWebKitTests, self.FLAKY_AND_REGRESSED)
+
+        def fake_filter(failing_tests):
+            step.failing_tests_filtered = list(failing_tests)
+            step.preexisting_failures_in_results_db = ['fast/b.html']
+            step.flaky_failures_in_results_db = {'fast/both.html': 'CleanTree'}
+            step.unsupported_flakes_in_results_db = ['fast/both.html']
+            step.unknown_flakes_in_results_db = ['fast/a.html']
+            return defer.succeed(None)
+
+        step.filter_failures_using_results_db = fake_filter
+        yield step.runCommand(['run-webkit-tests'])
+
+        self.assertEqual(self.getProperty('results-db_first_run_flaky'), {'fast/both.html': 'CleanTree'})
+        self.assertEqual(self.getProperty('results-db_first_run_pre_existing'), ['fast/b.html'])
+        self.assertEqual(self.getProperty('results-db_first_run_flaky_unsupported'), ['fast/both.html'])
+        self.assertEqual(self.getProperty('results-db_first_run_flaky_unknown'), ['fast/a.html'])
 
     @defer.inlineCallbacks
     def test_the_rerun_reports_its_flakes_and_what_differed_from_the_first_run(self):
@@ -12111,3 +12220,378 @@ class TestResultsDatabaseFailureHandling(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
+
+class TestIsTestFlakyClassifier(unittest.TestCase):
+    def _response(self, rows=None):
+        # rows=None simulates the find endpoint's 404 (no results for this test in that table).
+        if rows is None:
+            return TwistedAdditions.Response(status_code=404)
+        payload = [{'test': 'layout/test.html', 'configuration': {}, 'results': rows}]
+        return TwistedAdditions.Response(status_code=200, content=json.dumps(payload).encode('utf-8'))
+
+    def _flaky_row(self, flaky_type, build_url=None, pr_number=None, authors=None):
+        return {'flaky_type': flaky_type, 'details': {
+            'build_url': build_url, 'pr_number': pr_number, 'authors': authors or [],
+        }}
+
+    def _failed_row(self, pr_number=None, authors=None, build_url=None):
+        return {'details': {'pr_number': pr_number, 'authors': authors or [], 'build_url': build_url}}
+
+    def _mock(self, flaky_response, failed_response):
+        # The flaky table is asked first, then the failed one; route on which table was requested.
+        def fake_request(*args, **kwargs):
+            params = kwargs.get('params') or {}
+            return defer.succeed(flaky_response if params.get('flaky') == 'true' else failed_response)
+        return patch('ews-build.results_db.TwistedAdditions.request', fake_request)
+
+    @defer.inlineCallbacks
+    def test_a_clean_tree_flake_is_flaky(self):
+        flaky = self._response(rows=[self._flaky_row('WithinStepCleanTree', build_url='https://build/1/builds/7')])
+        with self._mock(flaky, self._response()):
+            verdicts, _ = yield ResultsDatabase.flaky_verdicts_for(['layout/test.html'], suite='layout-tests')
+            result = verdicts['layout/test.html']
+            self.assertEqual(result.flaky_type, 'CleanTree')
+            self.assertEqual(result.build_urls, {'https://build/1/builds/7'})
+
+    @defer.inlineCallbacks
+    def test_two_dirty_tree_pull_requests_is_flaky(self):
+        rows = [
+            self._flaky_row('WithinStepDirtyTree', build_url=f'https://build/1/builds/{n}', pr_number=n, authors=[author])
+            for n, author in enumerate(['alice', 'bob'], start=1)
+        ]
+        with self._mock(self._response(rows=rows), self._response()):
+            verdicts, _ = yield ResultsDatabase.flaky_verdicts_for(['layout/test.html'], suite='layout-tests')
+            result = verdicts['layout/test.html']
+            self.assertEqual(result.flaky_type, 'DirtyTree')
+            self.assertEqual(result.pr_numbers, {1, 2})
+            self.assertEqual(result.authors, {'alice', 'bob'})
+            self.assertEqual(result.build_urls, {'https://build/1/builds/1', 'https://build/1/builds/2'})
+
+    @defer.inlineCallbacks
+    def test_retrying_one_pull_request_does_not_excuse_its_own_failure(self):
+        # build_url carries the build number, so an EWS retry is a distinct build.
+        rows = [
+            self._flaky_row('WithinStepDirtyTree', build_url=f'https://build/1/builds/{n}', pr_number=99, authors=['alice'])
+            for n in range(1, 6)
+        ]
+        with self._mock(self._response(rows=rows), self._response()):
+            verdicts, _ = yield ResultsDatabase.flaky_verdicts_for(['layout/test.html'], suite='layout-tests')
+            self.assertFalse(verdicts['layout/test.html'].is_flaky)
+
+    @defer.inlineCallbacks
+    def test_a_missing_pull_request_is_not_a_second_pull_request(self):
+        rows = [
+            self._flaky_row('WithinStepDirtyTree', build_url='https://build/1/builds/1', pr_number=1, authors=['alice']),
+            self._flaky_row('WithinStepDirtyTree', build_url='https://build/1/builds/2', authors=['bob']),
+        ]
+        with self._mock(self._response(rows=rows), self._response()):
+            verdicts, _ = yield ResultsDatabase.flaky_verdicts_for(['layout/test.html'], suite='layout-tests')
+            self.assertFalse(verdicts['layout/test.html'].is_flaky)
+
+    @defer.inlineCallbacks
+    def test_dirty_tree_pull_requests_with_no_author_not_flaky(self):
+        rows = [
+            self._flaky_row('WithinStepDirtyTree', build_url=f'https://build/1/builds/{n}', pr_number=n)
+            for n in range(1, 4)
+        ]
+        with self._mock(self._response(rows=rows), self._response()):
+            verdicts, _ = yield ResultsDatabase.flaky_verdicts_for(['layout/test.html'], suite='layout-tests')
+            self.assertFalse(verdicts['layout/test.html'].is_flaky)
+
+    @defer.inlineCallbacks
+    def test_a_row_recording_no_flakiness_at_all_is_ignored(self):
+        # flaky_type is required in the flaky table, so a null means malformed data.
+        rows = [
+            self._flaky_row(None, build_url='https://build/1/builds/1'),
+            self._flaky_row('SomethingNewerReports', build_url='https://build/1/builds/2'),
+        ]
+        with self._mock(self._response(rows=rows), self._response()):
+            verdicts, logs = yield ResultsDatabase.flaky_verdicts_for(['layout/test.html'], suite='layout-tests')
+
+        self.assertFalse(verdicts['layout/test.html'].is_flaky)
+        self.assertIn('SomethingNewerReports', logs)
+
+    @defer.inlineCallbacks
+    def test_flakiness_recorded_under_an_unknown_name_is_reported(self):
+        # A results database holding a value this EWS does not know counts the row for nothing, which
+        # is what deploying the two halves out of order looks like.
+        rows = [self._flaky_row('SomethingNewerReports', build_url='https://build/1/builds/7')]
+        with self._mock(self._response(rows=rows), self._response()):
+            verdicts, logs = yield ResultsDatabase.flaky_verdicts_for(['layout/test.html'], suite='layout-tests')
+
+        self.assertFalse(verdicts['layout/test.html'].is_flaky)
+        self.assertIn('SomethingNewerReports', logs)
+
+    @defer.inlineCallbacks
+    def test_dirty_tree_same_build_deduped_not_flaky(self):
+        rows = [
+            self._flaky_row('WithinStepDirtyTree', build_url='https://build/1/builds/42', pr_number=7, authors=['alice'])
+            for _ in range(3)
+        ]
+        with self._mock(self._response(rows=rows), self._response()):
+            verdicts, _ = yield ResultsDatabase.flaky_verdicts_for(['layout/test.html'], suite='layout-tests')
+            result = verdicts['layout/test.html']
+            self.assertFalse(result.is_flaky)
+
+    @defer.inlineCallbacks
+    def test_a_verdict_records_whether_any_build_saw_the_flakiness(self):
+        failed = [self._failed_row(pr_number=n, authors=[a]) for n, a in enumerate(['alice', 'bob', 'alice'], start=1)]
+        with self._mock(self._response(), self._response(rows=failed)):
+            verdicts, _ = yield ResultsDatabase.flaky_verdicts_for(['layout/test.html'], suite='layout-tests')
+        self.assertFalse(verdicts['layout/test.html'].intra_build_evidence)
+
+        short_of_a_verdict = [self._flaky_row('WithinStepDirtyTree', build_url='https://build/1/builds/1', pr_number=9)]
+        with self._mock(self._response(rows=short_of_a_verdict), self._response(rows=failed)):
+            verdicts, _ = yield ResultsDatabase.flaky_verdicts_for(['layout/test.html'], suite='layout-tests')
+        self.assertTrue(verdicts['layout/test.html'].intra_build_evidence)
+
+    @defer.inlineCallbacks
+    def test_a_conviction_keeps_its_evidence_when_a_later_query_fails(self):
+        convicted = [{'test': 'a.html', 'configuration': {}, 'results': [
+            self._flaky_row('WithinStepDirtyTree', build_url='https://build/1/builds/1', pr_number=1, authors=['alice']),
+            self._flaky_row('WithinStepDirtyTree', build_url='https://build/1/builds/2', pr_number=2, authors=['bob']),
+        ]}]
+        flaky = TwistedAdditions.Response(status_code=200, content=json.dumps(convicted).encode('utf-8'))
+
+        def fake_request(*args, **kwargs):
+            if (kwargs.get('params') or {}).get('flaky') == 'true':
+                return defer.succeed(flaky)
+            return defer.succeed(TwistedAdditions.Response(status_code=500))
+
+        with patch('ews-build.results_db.TwistedAdditions.request', fake_request):
+            verdicts, _ = yield ResultsDatabase.flaky_verdicts_for(['a.html', 'b.html'], suite='layout-tests')
+
+        self.assertEqual(verdicts['a.html'].flaky_type, 'DirtyTree')
+        self.assertTrue(verdicts['a.html'].intra_build_evidence)
+        self.assertTrue(verdicts['b.html'].request_failed)
+
+    @defer.inlineCallbacks
+    def test_between_builds_reports_whether_any_build_saw_the_flakiness(self):
+        failed = [
+            self._failed_row(pr_number=n, authors=[author])
+            for n, author in enumerate(['alice', 'bob', 'alice'], start=1)
+        ]
+
+        with self._mock(self._response(), self._response(rows=failed)):
+            verdicts, logs = yield ResultsDatabase.flaky_verdicts_for(['layout/test.html'], suite='layout-tests')
+        self.assertEqual(verdicts['layout/test.html'].flaky_type, 'BetweenBuilds')
+        self.assertIn('BetweenBuilds with no within-build flakiness recorded', logs)
+        self.assertIn('layout/test.html', logs)
+
+        # One dirty-tree row is short of a verdict on its own, but it is still an inconsistency
+        # some build observed, so this conviction is not the between-builds rule acting alone.
+        short_of_a_verdict = [self._flaky_row('WithinStepDirtyTree', build_url='https://build/1/builds/1', pr_number=9)]
+        with self._mock(self._response(rows=short_of_a_verdict), self._response(rows=failed)):
+            verdicts, logs = yield ResultsDatabase.flaky_verdicts_for(['layout/test.html'], suite='layout-tests')
+        self.assertEqual(verdicts['layout/test.html'].flaky_type, 'BetweenBuilds')
+        self.assertNotIn('BetweenBuilds with no within-build flakiness recorded', logs)
+
+    @defer.inlineCallbacks
+    def test_between_builds_three_prs_two_authors_is_flaky(self):
+        rows = [
+            self._failed_row(pr_number=1, authors=['alice'], build_url='https://build/1/builds/1'),
+            self._failed_row(pr_number=2, authors=['bob'], build_url='https://build/1/builds/2'),
+            self._failed_row(pr_number=3, authors=['alice'], build_url='https://build/1/builds/3'),
+        ]
+        with self._mock(self._response(), self._response(rows=rows)):
+            verdicts, _ = yield ResultsDatabase.flaky_verdicts_for(['layout/test.html'], suite='layout-tests')
+            result = verdicts['layout/test.html']
+            self.assertEqual(result.flaky_type, 'BetweenBuilds')
+            self.assertEqual(result.pr_numbers, {1, 2, 3})
+            self.assertEqual(result.build_urls, {
+                'https://build/1/builds/1', 'https://build/1/builds/2', 'https://build/1/builds/3',
+            })
+
+    @defer.inlineCallbacks
+    def test_between_builds_too_few_prs_not_flaky(self):
+        rows = [
+            self._failed_row(pr_number=1, authors=['alice']),
+            self._failed_row(pr_number=2, authors=['bob']),
+        ]
+        with self._mock(self._response(), self._response(rows=rows)):
+            verdicts, _ = yield ResultsDatabase.flaky_verdicts_for(['layout/test.html'], suite='layout-tests')
+            result = verdicts['layout/test.html']
+            self.assertFalse(result.is_flaky)
+
+    @defer.inlineCallbacks
+    def test_between_builds_single_author_not_flaky(self):
+        # 3 PRs but all from one author-set -> fails the >=2 distinct author-sets floor.
+        rows = [self._failed_row(pr_number=n, authors=['alice']) for n in range(1, 4)]
+        with self._mock(self._response(), self._response(rows=rows)):
+            verdicts, _ = yield ResultsDatabase.flaky_verdicts_for(['layout/test.html'], suite='layout-tests')
+            result = verdicts['layout/test.html']
+            self.assertFalse(result.is_flaky)
+
+    @defer.inlineCallbacks
+    def test_no_history_not_flaky(self):
+        with self._mock(self._response(), self._response()):
+            verdicts, _ = yield ResultsDatabase.flaky_verdicts_for(['layout/test.html'], suite='layout-tests')
+            result = verdicts['layout/test.html']
+            self.assertFalse(result.is_flaky)
+
+    @defer.inlineCallbacks
+    def test_a_body_that_is_not_a_list_of_entries_is_a_failed_query(self):
+        for content, expected in (
+            (b'<html>502 Bad Gateway</html>', 'not json'),
+            (b'{"tests": []}', 'unexpected shape'),
+            (b'["a.html"]', 'unexpected shape'),
+        ):
+            malformed = TwistedAdditions.Response(status_code=200, content=content)
+            with self._mock(malformed, self._response()):
+                verdicts, logs = yield ResultsDatabase.flaky_verdicts_for(['a.html'], suite='layout-tests')
+
+            self.assertTrue(verdicts['a.html'].request_failed, content)
+            self.assertFalse(verdicts['a.html'].is_flaky, content)
+            self.assertIn(expected, logs, content)
+
+    @defer.inlineCallbacks
+    def test_asking_about_no_tests_does_not_query(self):
+        # Every failure being pre-existing leaves nothing to classify, and the endpoint rejects a
+        # query naming no test.
+        def fail_if_called(*args, **kwargs):
+            self.fail('queried the results database with no tests')
+
+        with patch('ews-build.results_db.TwistedAdditions.request', fail_if_called):
+            verdicts, logs = yield ResultsDatabase.flaky_verdicts_for([], suite='layout-tests')
+
+        self.assertEqual(verdicts, {})
+        self.assertEqual(logs, '')
+
+    @defer.inlineCallbacks
+    def test_an_entry_naming_no_test_is_a_failed_query(self):
+        # A results database predating the batched endpoint answers without naming the test. Matching
+        # nothing, those entries would otherwise be dropped and every test would read as not flaky.
+        payload = [{'configuration': {}, 'results': [self._flaky_row('WithinStepCleanTree', build_url='build/1')]}]
+        nameless = TwistedAdditions.Response(status_code=200, content=json.dumps(payload).encode('utf-8'))
+        with self._mock(nameless, self._response()):
+            verdicts, logs = yield ResultsDatabase.flaky_verdicts_for(['a.html'], suite='layout-tests')
+
+        self.assertTrue(verdicts['a.html'].request_failed)
+        self.assertFalse(verdicts['a.html'].is_flaky)
+        self.assertIn('naming no test', logs)
+
+    @defer.inlineCallbacks
+    def test_a_batch_classifies_every_test_it_asked_about(self):
+        # Two of the three are convicted by the first table. Dropping them from the list while
+        # iterating it would skip the one in between, which would then read as not flaky.
+        rows = [
+            {'test': 'a.html', 'configuration': {}, 'results': [self._flaky_row('WithinStepCleanTree', build_url='build/1')]},
+            {'test': 'b.html', 'configuration': {}, 'results': [self._flaky_row('WithinStepCleanTree', build_url='build/2')]},
+        ]
+        flaky = TwistedAdditions.Response(status_code=200, content=json.dumps(rows).encode('utf-8'))
+        with self._mock(flaky, self._response()):
+            verdicts, _ = yield ResultsDatabase.flaky_verdicts_for(
+                ['a.html', 'b.html', 'c.html'], suite='layout-tests',
+            )
+
+        self.assertEqual(verdicts['a.html'].flaky_type, 'CleanTree')
+        self.assertEqual(verdicts['b.html'].flaky_type, 'CleanTree')
+        self.assertFalse(verdicts['c.html'].is_flaky)
+
+    @defer.inlineCallbacks
+    def test_a_large_batch_is_split_across_requests(self):
+        tests = [f'imported/w3c/web-platform-tests/css/very/long/path/test-{n}.html' for n in range(45)]
+        captured = []
+
+        def fake_request(*args, **kwargs):
+            params = kwargs.get('params') or {}
+            captured.append(params)
+            asked = params['tests']
+            rows = [
+                {'test': test, 'configuration': {}, 'results': [self._flaky_row('WithinStepCleanTree', build_url=f'build/{test}')]}
+                for test in asked
+            ] if params.get('flaky') == 'true' else []
+            if not rows:
+                return defer.succeed(TwistedAdditions.Response(status_code=404))
+            return defer.succeed(TwistedAdditions.Response(status_code=200, content=json.dumps(rows).encode('utf-8')))
+
+        with patch('ews-build.results_db.TwistedAdditions.request', fake_request):
+            verdicts, _ = yield ResultsDatabase.flaky_verdicts_for(tests, suite='layout-tests')
+
+        for params in captured:
+            self.assertLessEqual(len(params['tests']), ResultsDatabase.TESTS_PER_FLAKY_QUERY)
+        self.assertGreater(len(captured), 2)
+        self.assertLess(max(len(params['tests']) for params in captured), len(tests))
+        self.assertEqual(sorted(test for params in captured for test in params['tests']), sorted(tests))
+        self.assertEqual(sorted(verdicts), sorted(tests))
+        for test in tests:
+            self.assertEqual(verdicts[test].flaky_type, 'CleanTree', test)
+
+    @defer.inlineCallbacks
+    def test_a_chunk_with_no_history_does_not_stop_the_rest(self):
+        tests = [f'test-{n}.html' for n in range(45)]
+        answered = []
+
+        def fake_request(*args, **kwargs):
+            params = kwargs.get('params') or {}
+            answered.append(params['tests'])
+            if params.get('flaky') != 'true' or len(answered) == 1:
+                return defer.succeed(TwistedAdditions.Response(status_code=404))
+            rows = [
+                {'test': test, 'configuration': {}, 'results': [self._flaky_row('WithinStepCleanTree', build_url='build/1')]}
+                for test in params['tests']
+            ]
+            return defer.succeed(TwistedAdditions.Response(status_code=200, content=json.dumps(rows).encode('utf-8')))
+
+        with patch('ews-build.results_db.TwistedAdditions.request', fake_request):
+            verdicts, _ = yield ResultsDatabase.flaky_verdicts_for(tests, suite='layout-tests')
+
+        first_chunk = answered[0]
+        self.assertTrue(all(not verdicts[test].is_flaky for test in first_chunk))
+        self.assertTrue(any(verdicts[test].is_flaky for test in tests if test not in first_chunk))
+
+    @defer.inlineCallbacks
+    def test_one_failed_chunk_fails_the_whole_query(self):
+        tests = [f'test-{n}.html' for n in range(45)]
+        responses = []
+
+        def fake_request(*args, **kwargs):
+            responses.append(None)
+            if len(responses) == 2:
+                return defer.succeed(TwistedAdditions.Response(status_code=414))
+            return defer.succeed(self._response())
+
+        with patch('ews-build.results_db.TwistedAdditions.request', fake_request):
+            verdicts, logs = yield ResultsDatabase.flaky_verdicts_for(tests, suite='layout-tests')
+
+        self.assertIn('414', logs)
+        for test in tests:
+            self.assertTrue(verdicts[test].request_failed, test)
+            self.assertFalse(verdicts[test].is_flaky, test)
+
+    @defer.inlineCallbacks
+    def test_a_chunk_gets_longer_than_the_default_timeout(self):
+        captured = []
+
+        def fake_request(*args, **kwargs):
+            captured.append(kwargs.get('timeout'))
+            return defer.succeed(self._response())
+
+        with patch('ews-build.results_db.TwistedAdditions.request', fake_request):
+            yield ResultsDatabase.flaky_verdicts_for(['layout/test.html'], suite='layout-tests')
+
+        self.assertTrue(captured)
+        for timeout in captured:
+            self.assertEqual(timeout, ResultsDatabase.FLAKY_QUERY_TIMEOUT_SECONDS)
+            self.assertGreater(timeout, 10)
+
+    @defer.inlineCallbacks
+    def test_both_queries_are_bounded_to_the_flaky_window(self):
+        captured = []
+
+        def fake_request(*args, **kwargs):
+            captured.append(kwargs.get('params') or {})
+            return defer.succeed(self._response())
+
+        with patch('ews-build.results_db.TwistedAdditions.request', fake_request):
+            yield ResultsDatabase.flaky_verdicts_for(['layout/test.html'], suite='layout-tests')
+
+            self.assertEqual(ResultsDatabase.FLAKY_WINDOW_SECONDS, 3 * 24 * 60 * 60)
+            self.assertEqual([params.get('flaky') for params in captured], ['true', 'false'])
+            for params in captured:
+                self.assertEqual(params['suite'], 'layout-tests')
+                self.assertEqual(params['limit'], ResultsDatabase.FLAKY_QUERY_LIMIT)
+                # A list, so request() renders it as a repeated key rather than one comma-joined value.
+                self.assertEqual(params['tests'], ['layout/test.html'])
+                self.assertLessEqual(abs(params['after_time'] - (time.time() - 3 * 24 * 60 * 60)), 60)

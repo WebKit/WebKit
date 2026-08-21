@@ -33,7 +33,7 @@ from twisted.internet import defer, reactor, task
 
 from .layout_test_failures import LayoutTestFailures
 from .send_email import send_email_to_patch_author, send_email_to_bot_watchers, send_email_to_github_admin, FROM_EMAIL
-from .results_db import ResultsDatabase
+from .results_db import FlakyVerdict, ResultsDatabase
 from .twisted_additions import TwistedAdditions
 from .utils import load_password, get_custom_suffix
 
@@ -3903,6 +3903,7 @@ class RunWebKitTests(shell.Test, ResultsDBReportMixin, AddToLogMixin, ShellMixin
     ENABLE_ADDITIONAL_ARGUMENTS = True
     EXIT_AFTER_FAILURES = '60'
     MAX_FAILURES_TO_CHECK_RESULTS_DB = 60
+    SHOULD_IGNORE_FLAKY_TESTS = False
     STRESS_MODE = False
     command = ['python3', 'Tools/Scripts/run-webkit-tests',
                '--no-build',
@@ -3916,6 +3917,9 @@ class RunWebKitTests(shell.Test, ResultsDBReportMixin, AddToLogMixin, ShellMixin
         self.incorrectLayoutLines = []
         self.failing_tests_filtered = []
         self.preexisting_failures_in_results_db = []
+        self.flaky_failures_in_results_db = {}
+        self.unsupported_flakes_in_results_db = []
+        self.unknown_flakes_in_results_db = []
         self.layout_test_driver = None
 
     def doStepIf(self, step):
@@ -4043,6 +4047,9 @@ class RunWebKitTests(shell.Test, ResultsDBReportMixin, AddToLogMixin, ShellMixin
                 yield self.filter_failures_using_results_db(first_results.failing_tests)
                 self.setProperty('first_run_failures_filtered', sorted(self.failing_tests_filtered))
                 self.setProperty('results-db_first_run_pre_existing', sorted(self.preexisting_failures_in_results_db))
+                self.setProperty('results-db_first_run_flaky', self.flaky_failures_in_results_db)
+                self.setProperty('results-db_first_run_flaky_unsupported', sorted(self.unsupported_flakes_in_results_db))
+                self.setProperty('results-db_first_run_flaky_unknown', sorted(self.unknown_flakes_in_results_db))
 
             yield self.report_to_results_db(first_results.flaky_results, flaky_type='WithinStepDirtyTree', stage='first-run')
 
@@ -4061,16 +4068,59 @@ class RunWebKitTests(shell.Test, ResultsDBReportMixin, AddToLogMixin, ShellMixin
             if not has_commit:
                 yield self._addToLog(self.results_db_log_name, f"'{identifier}' could not be found on the results database, falling back to tip-of-tree\n")
 
-        for test in failing_tests[:self.MAX_FAILURES_TO_CHECK_RESULTS_DB]:
-            data = yield ResultsDatabase.is_test_pre_existing_failure(
+        tests = failing_tests[:self.MAX_FAILURES_TO_CHECK_RESULTS_DB]
+        pre_existing = {}
+        for test in tests:
+            pre_existing[test] = yield ResultsDatabase.is_test_pre_existing_failure(
                 test, configuration=configuration,
                 commit=identifier if has_commit else None,
             )
 
-            yield self._addToLog(self.results_db_log_name, f"\n{test}: pass_rate: {data['pass_rate']}, pre-existing-failure={data['is_existing_failure']}\nResponse from results-db: {data['raw_data']}\n{data['logs']}")
+        # Only tests the database does not already expect to fail need a flakiness verdict
+        unexplained = [test for test in tests if not pre_existing[test]['is_existing_failure']]
+        flakes, flake_logs = yield ResultsDatabase.flaky_verdicts_for(unexplained, configuration=configuration, suite=self.suite)
+        if flake_logs:
+            yield self._addToLog(self.results_db_log_name, flake_logs)
+
+        for test in tests:
+            data = pre_existing[test]
+            flake = flakes.get(test, FlakyVerdict(request_failed=True))
+            flake_summary = 'False'
             if data['is_existing_failure']:
                 self.preexisting_failures_in_results_db.append(test)
                 self.failing_tests_filtered.remove(test)
+            elif flake.is_flaky:
+                self.flaky_failures_in_results_db[test] = flake.flaky_type
+                if flake.flaky_type == 'BetweenBuilds' and not flake.intra_build_evidence:
+                    self.unsupported_flakes_in_results_db.append(test)
+                flake_summary = f'{flake.flaky_type}: {flake.evidence}'
+                if self.SHOULD_IGNORE_FLAKY_TESTS:
+                    self.failing_tests_filtered.remove(test)
+            elif flake.request_failed:
+                self.unknown_flakes_in_results_db.append(test)
+                flake_summary = 'Unknown'
+
+            yield self._addToLog(
+                self.results_db_log_name,
+                f"\n{test}: pass_rate: {data['pass_rate']}, pre-existing-failure={data['is_existing_failure']}\n"
+                f"Response from results-db: {data['raw_data']}\n{data['logs']}\npre-existing-flake={flake_summary}"
+            )
+
+        if self.flaky_failures_in_results_db:
+            action = 'Ignored' if self.SHOULD_IGNORE_FLAKY_TESTS else 'Would have ignored'
+            yield self._addToLog(
+                self.results_db_log_name,
+                f"\n{action} {len(self.flaky_failures_in_results_db)} flaky "
+                f"test(s): {', '.join(sorted(self.flaky_failures_in_results_db))}\n",
+            )
+
+    def results_db_ignore_message(self) -> str:
+        parts = []
+        if self.preexisting_failures_in_results_db:
+            parts.append(f"pre-existing failures: {', '.join(self.preexisting_failures_in_results_db)}")
+        if self.flaky_failures_in_results_db:
+            parts.append(f"flaky tests: {', '.join(sorted(self.flaky_failures_in_results_db))}")
+        return f"Ignored {'; '.join(parts)} based on results-db"
 
     def evaluateResult(self, cmd):
         result = SUCCESS
@@ -4123,11 +4173,12 @@ class RunWebKitTests(shell.Test, ResultsDBReportMixin, AddToLogMixin, ShellMixin
             self.build.results = SUCCESS
             if RunWebKitTestsInStressMode.FAILURE_MSG_IN_STRESS_MODE not in previous_build_summary:
                 self.setProperty('build_summary', message)
-        elif (self.preexisting_failures_in_results_db and len(self.failing_tests_filtered) == 0):
-            # This means all the tests which failed in this run were also failing or flaky in results database
-            message = f"Ignored pre-existing failure: {', '.join(self.preexisting_failures_in_results_db)}"
+        elif ((self.preexisting_failures_in_results_db or self.flaky_failures_in_results_db) and len(self.failing_tests_filtered) == 0):
+            # All tests that failed this run were pre-existing failures or known flaky in the results database
+            message = self.results_db_ignore_message()
             self.descriptionDone = message
             self.build.results = SUCCESS
+            self.setProperty('force_build_success', True)
             if RunWebKitTestsInStressMode.FAILURE_MSG_IN_STRESS_MODE not in previous_build_summary:
                 self.setProperty('build_summary', message)
             steps_to_add += [ArchiveTestResults(), UploadTestResults(), ExtractTestResults()]
@@ -4169,9 +4220,13 @@ class RunWebKitTests(shell.Test, ResultsDBReportMixin, AddToLogMixin, ShellMixin
         status = self.name
 
         if self.results != SUCCESS:
-            if (self.preexisting_failures_in_results_db and len(self.failing_tests_filtered) == 0):
-                status = f"Ignored {len(self.preexisting_failures_in_results_db)} pre-existing failure based on results-db"
-                return {'step': status}
+            if ((self.preexisting_failures_in_results_db or self.flaky_failures_in_results_db) and len(self.failing_tests_filtered) == 0):
+                counts = []
+                if self.preexisting_failures_in_results_db:
+                    counts.append(f"{len(self.preexisting_failures_in_results_db)} pre-existing")
+                if self.flaky_failures_in_results_db:
+                    counts.append(f"{len(self.flaky_failures_in_results_db)} flaky")
+                return {'step': f"Ignored {' and '.join(counts)} failure(s) based on results-db"}
             if self.incorrectLayoutLines:
                 status = ' '.join(self.incorrectLayoutLines)
                 return {'step': status}
@@ -4322,11 +4377,12 @@ class ReRunWebKitTests(RunWebKitTests):
             if RunWebKitTestsInStressMode.FAILURE_MSG_IN_STRESS_MODE not in previous_build_summary:
                 self.setProperty('build_summary', message)
             self.build.addStepsAfterCurrentStep(steps_to_add)
-        elif (self.preexisting_failures_in_results_db and len(self.failing_tests_filtered) == 0):
-            # This means all the tests which failed in this run were also failing or flaky in results database
-            message = f"Ignored pre-existing failure: {', '.join(self.preexisting_failures_in_results_db)}"
+        elif ((self.preexisting_failures_in_results_db or self.flaky_failures_in_results_db) and len(self.failing_tests_filtered) == 0):
+            # All tests that failed this run were pre-existing failures or known flaky in the results database
+            message = self.results_db_ignore_message()
             self.descriptionDone = message
             self.build.results = SUCCESS
+            self.setProperty('force_build_success', True)
             if RunWebKitTestsInStressMode.FAILURE_MSG_IN_STRESS_MODE not in previous_build_summary:
                 self.setProperty('build_summary', message)
             steps_to_add += [ArchiveTestResults(), UploadTestResults(identifier='rerun'), ExtractTestResults(identifier='rerun')]
@@ -4397,6 +4453,9 @@ class ReRunWebKitTests(RunWebKitTests):
                 yield self.filter_failures_using_results_db(second_results.failing_tests)
                 self.setProperty('second_run_failures_filtered', sorted(self.failing_tests_filtered))
                 self.setProperty('results-db_second_run_pre_existing', sorted(self.preexisting_failures_in_results_db))
+                self.setProperty('results-db_second_run_flaky', self.flaky_failures_in_results_db)
+                self.setProperty('results-db_second_run_flaky_unsupported', sorted(self.unsupported_flakes_in_results_db))
+                self.setProperty('results-db_second_run_flaky_unknown', sorted(self.unknown_flakes_in_results_db))
 
             yield self.report_to_results_db(second_results.flaky_results, flaky_type='WithinStepDirtyTree', stage='second-run')
 

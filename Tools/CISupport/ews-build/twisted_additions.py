@@ -30,6 +30,7 @@ import json
 import os
 import re
 import twisted
+import urllib.parse
 
 from twisted.internet import defer, error, interfaces, protocol, reactor, task
 from twisted.python import log
@@ -243,7 +244,8 @@ class TwistedAdditions(object):
             defer.returnValue(None)
         hostname = '/'.join(url.split('/', 3)[:3])
         if params:
-            url = '{}?{}'.format(url, '&'.join([f'{key}={value}' for key, value in params.items()]))
+            # doseq so a list value becomes a repeated key
+            url = f'{url}?{urllib.parse.urlencode(params, doseq=True)}'
 
         headers = headers or {}
         if 'User-Agent' not in headers:
