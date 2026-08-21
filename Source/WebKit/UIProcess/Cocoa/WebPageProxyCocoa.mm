@@ -38,6 +38,7 @@
 #import "DataDetectionResult.h"
 #import "ExtensionCapabilityGranter.h"
 #import "InsertTextOptions.h"
+#import "InteractionInformationAtPosition.h"
 #import "LegacyWebArchiveCallbackAggregator.h"
 #import "LoadParameters.h"
 #import "MessageSenderInlines.h"
@@ -2228,10 +2229,37 @@ void WebPageProxy::selectWithGesture(std::optional<WebCore::FrameIdentifier> fra
     } });
 }
 
-void WebPageProxy::didReceivePositionInformation(const InteractionInformationAtPosition& info)
+void WebPageProxy::didReceivePositionInformation(IPC::Connection& connection, const InteractionInformationAtPosition& information)
 {
+    auto frameHostedBySender = [&](WebFrameProxy* frame) {
+        return frame && frame->page() == this && &frame->process() == WebProcessProxy::fromConnection(connection).ptr();
+    };
+
+    RefPtr localRootFrame = WebFrameProxy::webFrame(information.localRootFrameID);
+    if (!frameHostedBySender(localRootFrame.get())) {
+        // The frame that answered can go away, or move to another process, before its reply is dispatched.
+        // That reply is stale rather than malformed: keep nothing it describes, but still settle the request.
+        auto staleInformation = InteractionInformationAtPosition::invalidInformation();
+        staleInformation.request = information.request;
+        if (RefPtr pageClient = this->pageClient())
+            pageClient->positionInformationDidChange(staleInformation);
+        return;
+    }
+
+    if (information.remoteFrameHit) {
+        RefPtr remoteFrame = WebFrameProxy::webFrame(information.remoteFrameHit->remoteFrameID);
+        // Route one level deeper into the sender's own frame tree, so a chain always descends.
+        if (remoteFrame && frameHostedBySender(remoteFrame->parentFrame())) {
+            auto request = information.request;
+            request.targetFrameID = information.remoteFrameHit->remoteFrameID;
+            request.pointInTargetFrame = roundedIntPoint(information.remoteFrameHit->transformedPoint);
+            sendToProcessContainingFrame(request.targetFrameID, Messages::WebPage::RequestPositionInformation(request));
+        }
+    }
+
+    // Report every reply, so callers waiting on this request are released.
     if (RefPtr pageClient = this->pageClient())
-        pageClient->positionInformationDidChange(info);
+        pageClient->positionInformationDidChange(information);
 }
 
 void WebPageProxy::requestPositionInformation(const InteractionInformationRequest& request)

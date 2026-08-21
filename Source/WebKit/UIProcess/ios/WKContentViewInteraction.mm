@@ -3369,6 +3369,10 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (BOOL)_currentPositionInformationIsValidForRequest:(const WebKit::InteractionInformationRequest&)request
 {
+    // An answer describing an <iframe> another process hosts is not usable; wait for the routed reply.
+    if (_positionInformation.remoteFrameHit)
+        return NO;
+
     return _hasValidPositionInformation && _positionInformation.request.isValidForRequest(request);
 }
 
@@ -3379,6 +3383,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (BOOL)_currentPositionInformationIsApproximatelyValidForRequest:(const WebKit::InteractionInformationRequest&)request radiusForApproximation:(int)radius
 {
+    if (_positionInformation.remoteFrameHit)
+        return NO;
+
     return _hasValidPositionInformation && _positionInformation.request.isApproximatelyValidForRequest(request, radius);
 }
 
@@ -3387,6 +3394,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     ASSERT(_hasValidPositionInformation);
 
     // FIXME: We need to clean up these handlers in the event that we are not able to collect data, or if the WebProcess crashes.
+    // A routed reply comes from a subframe's process, whose exit does not tear down this view.
     ++_positionInformationCallbackDepth;
     auto updatedPositionInformation = _positionInformation;
 
@@ -3402,6 +3410,35 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
         if (requestAndHandler->second)
             requestAndHandler->second(updatedPositionInformation);
+    }
+
+    if (--_positionInformationCallbackDepth)
+        return;
+
+    for (int index = _pendingPositionInformationHandlers.size() - 1; index >= 0; --index) {
+        if (!_pendingPositionInformationHandlers[index])
+            _pendingPositionInformationHandlers.removeAt(index);
+    }
+}
+
+// Settle the handlers waiting on a point whose answer cannot be used.
+- (void)_invokeAndRemovePendingHandlersForUnusablePositionInformation
+{
+    ++_positionInformationCallbackDepth;
+    auto unusablePositionInformation = _positionInformation;
+
+    for (size_t index = 0; index < _pendingPositionInformationHandlers.size(); ++index) {
+        auto requestAndHandler = _pendingPositionInformationHandlers[index];
+        if (!requestAndHandler)
+            continue;
+
+        if (requestAndHandler->first.point != unusablePositionInformation.request.point)
+            continue;
+
+        _pendingPositionInformationHandlers[index] = std::nullopt;
+
+        if (requestAndHandler->second)
+            requestAndHandler->second(unusablePositionInformation);
     }
 
     if (--_positionInformationCallbackDepth)
@@ -4225,10 +4262,15 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
 
 - (void)_positionInformationDidChange:(const WebKit::InteractionInformationAtPosition&)info
 {
-    if (_lastOutstandingPositionInformationRequest && info.request.isValidForRequest(*_lastOutstandingPositionInformationRequest))
+    // The routed reply is the answer, so leave the request outstanding to coalesce against.
+    if (_lastOutstandingPositionInformationRequest && !info.remoteFrameHit && info.request.isValidForRequest(*_lastOutstandingPositionInformationRequest))
         _lastOutstandingPositionInformationRequest = std::nullopt;
 
     _isWaitingOnPositionInformation = NO;
+
+    // Do not replace a real answer for this point with one that only describes the <iframe>.
+    if (info.remoteFrameHit && _hasValidPositionInformation && !_positionInformation.remoteFrameHit && _positionInformation.request.point == info.request.point)
+        return;
 
     WebKit::InteractionInformationAtPosition newInfo = info;
     newInfo.mergeCompatibleOptionalInformation(_positionInformation);
@@ -4237,7 +4279,13 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
     _hasValidPositionInformation = _positionInformation.canBeValid;
     if (_actionSheetAssistant)
         [protect(_actionSheetAssistant) updateSheetPosition];
-    [self _invokeAndRemovePendingHandlersValidForCurrentPositionInformation];
+
+    if (_hasValidPositionInformation) {
+        [self _invokeAndRemovePendingHandlersValidForCurrentPositionInformation];
+        return;
+    }
+
+    [self _invokeAndRemovePendingHandlersForUnusablePositionInformation];
 }
 
 - (void)_willStartScrollingOrZooming

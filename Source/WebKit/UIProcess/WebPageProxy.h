@@ -1205,7 +1205,7 @@ public:
 #if PLATFORM(COCOA)
     void selectWithGesture(std::optional<WebCore::FrameIdentifier>, WebCore::IntPoint, GestureType, GestureRecognizerState, bool isInteractingWithFocusedElement, CompletionHandler<void(const WebCore::IntPoint&, GestureType, GestureRecognizerState, OptionSet<SelectionFlags>)>&&);
 
-    void didReceivePositionInformation(const InteractionInformationAtPosition&);
+    void didReceivePositionInformation(IPC::Connection&, const InteractionInformationAtPosition&);
     void requestPositionInformation(const InteractionInformationRequest&);
 
     void selectPositionAtPoint(WebCore::IntPoint, bool isInteractingWithFocusedElement, CompletionHandler<void()>&&);

@@ -32,7 +32,9 @@
 #import "InteractionInformationRequest.h"
 #import "PluginView.h"
 #import "ShareableBitmapUtilities.h"
+#import "WebFrame.h"
 #import "WebPage.h"
+#import "WebProcess.h"
 #import <WebCore/AccessibilityObject.h>
 #import <WebCore/ContainerNodeInlines.h>
 #import <WebCore/DataDetection.h>
@@ -50,6 +52,7 @@
 #import <WebCore/HTMLAnchorElement.h>
 #import <WebCore/HTMLAttachmentElement.h>
 #import <WebCore/HTMLElement.h>
+#import <WebCore/HTMLFrameOwnerElement.h>
 #import <WebCore/HTMLImageElement.h>
 #import <WebCore/HTMLInputElement.h>
 #import <WebCore/HTMLModelElement.h>
@@ -61,11 +64,15 @@
 #import <WebCore/ImageOverlay.h>
 #import <WebCore/LocalDOMWindow.h>
 #import <WebCore/LocalFrameInlines.h>
+#import <WebCore/LocalFrameView.h>
 #import <WebCore/Model.h>
 #import <WebCore/NodeDocument.h>
 #import <WebCore/Page.h>
 #import <WebCore/PlatformScreen.h>
 #import <WebCore/Quirks.h>
+#import <WebCore/RemoteFrame.h>
+#import <WebCore/RemoteFrameGeometryTransformer.h>
+#import <WebCore/RemoteFrameView.h>
 #import <WebCore/RenderBlockFlow.h>
 #import <WebCore/RenderBoxInlines.h>
 #import <WebCore/RenderImage.h>
@@ -83,10 +90,32 @@
 
 namespace WebKit {
 
-static void focusedElementPositionInformation(WebPage& page, WebCore::Element& focusedElement, const InteractionInformationRequest& request, InteractionInformationAtPosition& info)
+// A routed request names the frame that must answer; otherwise the main frame answers.
+static RefPtr<WebCore::LocalFrame> frameToHitTest(const WebPage& page, const InteractionInformationRequest& request)
+{
+    if (!request.targetFrameID)
+        return page.corePage()->localMainOrRootFrame();
+
+    RefPtr frame = WebProcess::singleton().webFrame(*request.targetFrameID);
+    if (!frame || frame->page() != &page)
+        return nullptr;
+
+    // Only a local root can answer, since `pointInTargetFrame` is in its root-view coordinates.
+    RefPtr localFrame = frame->coreLocalFrame();
+    if (!localFrame || !localFrame->isRootFrame())
+        return nullptr;
+
+    return localFrame;
+}
+
+static void focusedElementPositionInformation(WebPage& page, WebCore::Element& focusedElement, const WebCore::LocalFrame& hitTestFrame, const InteractionInformationRequest& request, InteractionInformationAtPosition& info)
 {
     RefPtr frame = page.corePage()->focusController().focusedOrMainFrame();
     if (!frame || !frame->editor().hasComposition())
+        return;
+
+    // A composition in a different local root cannot be measured against `request.point`.
+    if (&frame->rootFrame() != &hitTestFrame.rootFrame())
         return;
 
     const uint32_t kHitAreaWidth = 66;
@@ -358,11 +387,11 @@ static void selectionPositionInformation(WebPage& page, const InteractionInforma
 {
     // `request.point` is in the root-view coordinate space.
 
-    RefPtr localMainFrame = dynamicDowncast<WebCore::LocalFrame>(page.corePage()->mainFrame());
-    if (!localMainFrame)
+    RefPtr hitTestFrame = frameToHitTest(page, request);
+    if (!hitTestFrame)
         return;
 
-    RefPtr frameView = localMainFrame->view();
+    RefPtr frameView = hitTestFrame->view();
     if (!frameView)
         return;
 
@@ -373,7 +402,7 @@ static void selectionPositionInformation(WebPage& page, const InteractionInforma
         WebCore::HitTestRequest::Type::Active,
         WebCore::HitTestRequest::Type::AllowVisibleChildFrameContentOnly
     };
-    WebCore::HitTestResult result = localMainFrame->eventHandler().hitTestResultAtPoint(contentsPoint, hitType);
+    WebCore::HitTestResult result = hitTestFrame->eventHandler().hitTestResultAtPoint(contentsPoint, hitType);
     RefPtr hitNode = result.innerNode();
 
     // Hit test could return HTMLHtmlElement that has no renderer, if the body is smaller than the document.
@@ -450,7 +479,7 @@ static void selectionPositionInformation(WebPage& page, const InteractionInforma
             WebCore::HitTestRequest::Type::CollectMultipleElements,
             WebCore::HitTestRequest::Type::IncludeAllElementsUnderPoint,
         };
-        const auto sliderResult = localMainFrame->eventHandler().hitTestResultAtPoint(contentsPoint, sliderHitType);
+        const auto sliderResult = hitTestFrame->eventHandler().hitTestResultAtPoint(contentsPoint, sliderHitType);
         for (Ref node : sliderResult.listBasedTestResult()) {
             const RefPtr element = dynamicDowncast<WebCore::Element>(node);
             if (!element)
@@ -468,7 +497,7 @@ static void selectionPositionInformation(WebPage& page, const InteractionInforma
 #if PLATFORM(MACCATALYST)
     bool isInsideFixedPosition;
     WebCore::VisiblePosition caretPosition(renderer->visiblePositionForPoint(contentsPoint, WebCore::HitTestSource::User));
-    info.caretRect = caretPosition.absoluteCaretBounds(&isInsideFixedPosition);
+    info.caretRect = frameView->contentsToRootView(caretPosition.absoluteCaretBounds(&isInsideFixedPosition));
 #endif
 
 #if ENABLE(MODEL_PROCESS)
@@ -485,15 +514,15 @@ static void textInteractionPositionInformation(WebPage& page, const WebCore::HTM
         return;
 
     constexpr OptionSet<WebCore::HitTestRequest::Type> hitType { WebCore::HitTestRequest::Type::ReadOnly, WebCore::HitTestRequest::Type::Active, WebCore::HitTestRequest::Type::AllowVisibleChildFrameContentOnly };
-    RefPtr localMainFrame = dynamicDowncast<WebCore::LocalFrame>(page.corePage()->mainFrame());
-    if (!localMainFrame)
+    RefPtr hitTestFrame = frameToHitTest(page, request);
+    if (!hitTestFrame)
         return;
 
-    RefPtr frameView = localMainFrame->view();
+    RefPtr frameView = hitTestFrame->view();
     if (!frameView)
         return;
 
-    WebCore::HitTestResult result = localMainFrame->eventHandler().hitTestResultAtPoint(frameView->rootViewToContents(request.point), hitType);
+    WebCore::HitTestResult result = hitTestFrame->eventHandler().hitTestResultAtPoint(frameView->rootViewToContents(request.point), hitType);
     if (result.innerNode() == input.dataListButtonElement())
         info.preventTextInteraction = true;
 }
@@ -629,29 +658,83 @@ static void animationPositionInformation(WebPage& page, const InteractionInforma
 #endif // ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
 }
 
-InteractionInformationAtPosition positionInformationForWebPage(WebPage& page, const InteractionInformationRequest& request)
+static std::optional<InteractionInformationAtPosition::RemoteFrameHit> remoteFrameHit(WebCore::LocalFrame& frame, const WebCore::HitTestResult& hitTestResult, const InteractionInformationRequest& request)
 {
-    // `request.point` is in the root-view coordinate space.
+    RefPtr frameOwner = dynamicDowncast<WebCore::HTMLFrameOwnerElement>(hitTestResult.innerNonSharedNode());
+    if (!frameOwner)
+        return std::nullopt;
 
+    RefPtr remoteFrame = dynamicDowncast<WebCore::RemoteFrame>(frameOwner->contentFrame());
+    if (!remoteFrame)
+        return std::nullopt;
+
+    RefPtr remoteFrameView = remoteFrame->view();
+    RefPtr localFrameView = frame.view();
+    if (!remoteFrameView || !localFrameView)
+        return std::nullopt;
+
+    WebCore::RemoteFrameGeometryTransformer transformer { remoteFrameView.releaseNonNull(), localFrameView.releaseNonNull(), remoteFrame->frameID() };
+    auto transformedPoint = transformer.transformRootViewPointToRemoteFrameCoordinates(WebCore::DoublePoint { request.point });
+    return InteractionInformationAtPosition::RemoteFrameHit { remoteFrame->frameID(), WebCore::FloatPoint { transformedPoint } };
+}
+
+// Convert from the answering frame's root-view coordinates into the main frame's, which is what the UI
+// process reads.
+//
+// FIXME: A transformed frame owner scales the rects but not the snapshots they describe, nor the text
+// indicator's rects that are relative to its bounding rect.
+static void convertToMainFrameRootViewCoordinates(const WebCore::LocalFrameView& view, InteractionInformationAtPosition& info)
+{
+    auto convertRect = [&](WebCore::IntRect rect) {
+        return roundedIntRect(view.convertToRootViewAcrossIsolatedFrames(WebCore::FloatRect { rect }));
+    };
+
+    info.bounds = convertRect(info.bounds);
+    info.adjustedPointForNodeRespondingToClickEvents = view.convertToRootViewAcrossIsolatedFrames(info.adjustedPointForNodeRespondingToClickEvents);
+    info.cursorContext.lineCaretExtent = view.convertToRootViewAcrossIsolatedFrames(info.cursorContext.lineCaretExtent);
+#if PLATFORM(MACCATALYST)
+    info.caretRect = convertRect(info.caretRect);
+#endif
+#if ENABLE(DATA_DETECTION) && PLATFORM(IOS_FAMILY)
+    info.dataDetectorBounds = convertRect(info.dataDetectorBounds);
+#endif
+    if (info.elementContext)
+        info.elementContext->boundingRect = view.convertToRootViewAcrossIsolatedFrames(info.elementContext->boundingRect);
+    if (info.hostImageOrVideoElementContext)
+        info.hostImageOrVideoElementContext->boundingRect = view.convertToRootViewAcrossIsolatedFrames(info.hostImageOrVideoElementContext->boundingRect);
+
+    if (RefPtr textIndicator = info.textIndicator) {
+        textIndicator->setSelectionRectInRootViewCoordinates(view.convertToRootViewAcrossIsolatedFrames(textIndicator->selectionRectInRootViewCoordinates()));
+        textIndicator->setTextBoundingRectInRootViewCoordinates(view.convertToRootViewAcrossIsolatedFrames(textIndicator->textBoundingRectInRootViewCoordinates()));
+        textIndicator->setContentImageWithoutSelectionRectInRootViewCoordinates(view.convertToRootViewAcrossIsolatedFrames(textIndicator->contentImageWithoutSelectionRectInRootViewCoordinates()));
+    }
+
+#if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
+    for (auto& animation : info.animationsAtPoint)
+        animation.element.boundingRect = view.convertToRootViewAcrossIsolatedFrames(animation.element.boundingRect);
+#endif
+}
+
+InteractionInformationAtPosition positionInformationForWebPage(WebPage& page, const InteractionInformationRequest& originalRequest)
+{
     InteractionInformationAtPosition info;
-    info.request = request;
+    // Reply with the request as it was asked, so the UI process can match it.
+    info.request = originalRequest;
 
-    WebCore::FloatPoint adjustedPoint;
-    RefPtr localMainFrame = page.corePage()->localMainFrame();
-    if (!localMainFrame)
+    RefPtr hitTestFrame = frameToHitTest(page, originalRequest);
+    RefPtr hitTestFrameView = hitTestFrame ? hitTestFrame->view() : nullptr;
+    if (!hitTestFrameView) {
+        // Answer anyway, so the UI process can settle the request it is tracking.
+        info.canBeValid = false;
         return info;
+    }
 
-    RefPtr mainFrameView = localMainFrame->view();
-    if (!mainFrameView)
-        return info;
+    info.localRootFrameID = hitTestFrame->rootFrame().frameID();
 
-    RefPtr nodeRespondingToClickEvents = localMainFrame->nodeRespondingToClickEvents(request.point, adjustedPoint);
-
-    info.isContentEditable = nodeRespondingToClickEvents && nodeRespondingToClickEvents->isContentEditable();
-    info.adjustedPointForNodeRespondingToClickEvents = adjustedPoint;
-
-    if (request.includeHasDoubleClickHandler)
-        info.hitNodeOrWindowHasDoubleClickListener = localMainFrame->nodeRespondingToDoubleClickEvent(request.point, adjustedPoint) || localMainFrame->windowWithDoubleClickEventListener();
+    // Everything below works in the answering frame's root-view coordinates.
+    auto request = originalRequest;
+    if (originalRequest.pointInTargetFrame)
+        request.point = *originalRequest.pointInTargetFrame;
 
     auto hitTestRequestTypes = OptionSet<WebCore::HitTestRequest::Type> {
         WebCore::HitTestRequest::Type::ReadOnly,
@@ -666,10 +749,26 @@ InteractionInformationAtPosition positionInformationForWebPage(WebPage& page, co
     }
 #endif // ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
 
-    auto& eventHandler = localMainFrame->eventHandler();
+    auto& eventHandler = hitTestFrame->eventHandler();
 
-    auto hitTestPoint = mainFrameView->rootViewToContents(request.point);
+    auto hitTestPoint = hitTestFrameView->rootViewToContents(request.point);
     auto hitTestResult = eventHandler.hitTestResultAtPoint(hitTestPoint, hitTestRequestTypes);
+
+    info.remoteFrameHit = remoteFrameHit(*hitTestFrame, hitTestResult, request);
+    if (info.remoteFrameHit) {
+        // Describing the <iframe> answers nothing, so stop before gathering anything.
+        return info;
+    }
+
+    WebCore::FloatPoint adjustedPoint;
+
+    RefPtr nodeRespondingToClickEvents = hitTestFrame->nodeRespondingToClickEvents(request.point, adjustedPoint);
+
+    info.isContentEditable = nodeRespondingToClickEvents && nodeRespondingToClickEvents->isContentEditable();
+    info.adjustedPointForNodeRespondingToClickEvents = adjustedPoint;
+
+    if (request.includeHasDoubleClickHandler)
+        info.hitNodeOrWindowHasDoubleClickListener = hitTestFrame->nodeRespondingToDoubleClickEvent(request.point, adjustedPoint) || hitTestFrame->windowWithDoubleClickEventListener();
 
 #if ENABLE(PDF_PLUGIN)
     RefPtr pluginView = hitTestResult.isOverWidget() ? WebPage::pluginViewForFrame(WTF::protect(hitTestResult.innerNodeFrame())) : nullptr;
@@ -686,7 +785,7 @@ InteractionInformationAtPosition positionInformationForWebPage(WebPage& page, co
     }();
 
     if (page.focusedElement())
-        focusedElementPositionInformation(page, *page.focusedElement(), request, info);
+        focusedElementPositionInformation(page, *page.focusedElement(), *hitTestFrame, request, info);
 
     RefPtr hitTestNode = hitTestResult.innerNonSharedNode();
 
@@ -764,6 +863,9 @@ InteractionInformationAtPosition positionInformationForWebPage(WebPage& page, co
         info.isInPlugin = true;
     }
 #endif // ENABLE(PDF_PLUGIN) && PLATFORM(IOS_FAMILY)
+
+    if (!hitTestFrame->isMainFrame())
+        convertToMainFrameRootViewCoordinates(*hitTestFrameView, info);
 
     return info;
 }

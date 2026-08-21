@@ -33,6 +33,7 @@
 #include "InteractionInformationRequest.h"
 #include <WebCore/ElementAnimationContext.h>
 #include <WebCore/ElementContext.h>
+#include <WebCore/FrameIdentifier.h>
 #include <WebCore/IntPoint.h>
 #include <WebCore/ScrollTypes.h>
 #include <WebCore/SelectionGeometry.h>
@@ -53,6 +54,12 @@ struct InteractionInformationAtPosition {
         response.canBeValid = false;
         return response;
     }
+
+    // Set when the hit landed on a frame in another process. `transformedPoint` is in that frame's coordinates.
+    struct RemoteFrameHit {
+        WebCore::FrameIdentifier remoteFrameID;
+        WebCore::FloatPoint transformedPoint;
+    };
 
     enum class Selectability : uint8_t {
         Selectable,
@@ -131,7 +138,9 @@ struct InteractionInformationAtPosition {
         Vector<WebCore::ElementAnimationContext>&& animationsAtPoint,
 #endif
         std::optional<WebCore::ElementContext>&&,
-        std::optional<WebCore::ElementContext>&& hostImageOrVideoElementContext
+        std::optional<WebCore::ElementContext>&& hostImageOrVideoElementContext,
+        Markable<WebCore::FrameIdentifier>&& localRootFrameID,
+        std::optional<RemoteFrameHit>&& remoteFrameHit
 );
 
     InteractionInformationRequest request;
@@ -211,6 +220,11 @@ struct InteractionInformationAtPosition {
 
     std::optional<WebCore::ElementContext> elementContext;
     std::optional<WebCore::ElementContext> hostImageOrVideoElementContext;
+
+    // The local root frame that answered. Every rect above is in the main frame's root-view coordinates.
+    Markable<WebCore::FrameIdentifier> localRootFrameID;
+
+    std::optional<RemoteFrameHit> remoteFrameHit;
 
     // Copy compatible optional bits forward (for example, if we have a InteractionInformationAtPosition
     // with snapshots in it, and perform another request for the same point without requesting the snapshots,

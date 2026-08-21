@@ -24,6 +24,8 @@
 
 struct WebKit::InteractionInformationRequest {
     WebCore::IntPoint point;
+    Markable<WebCore::FrameIdentifier> targetFrameID;
+    std::optional<WebCore::IntPoint> pointInTargetFrame;
 
     bool includeSnapshot;
     bool includeLinkIndicator;
