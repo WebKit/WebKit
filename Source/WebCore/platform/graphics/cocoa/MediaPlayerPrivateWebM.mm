@@ -1515,6 +1515,7 @@ void MediaPlayerPrivateWebM::didParseInitializationData(InitializationSegment&& 
                         protectedThis->setNaturalSize(size);
                 });
                 track->setSelected(true);
+                m_videoFrameHasAlpha.store(track->hasAlpha(), std::memory_order_relaxed);
             }
 
             m_videoTracks.append(track);
@@ -1669,6 +1670,7 @@ void MediaPlayerPrivateWebM::clearTracks() WTF_IGNORES_THREAD_SAFETY_ANALYSIS
         });
     }
     m_videoTracks.clear();
+    m_videoFrameHasAlpha.store(false, std::memory_order_relaxed);
 
     for (auto& track : m_audioTracks) {
         track->setEnabledChangedCallback(nullptr);
