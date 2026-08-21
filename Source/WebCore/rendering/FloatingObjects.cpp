@@ -28,6 +28,7 @@
 #include "PODIntervalTree.h"
 #include "RenderBlockFlowInlines.h"
 #include "RenderBox.h"
+#include "RenderElementInlines.h"
 #include "RenderView.h"
 #include <wtf/HexNumber.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -56,7 +57,7 @@ static_assert(sizeof(CheckedPtr<LegacyRootInlineBox>) == sizeof(void*), "WeakPtr
 FloatingObject::FloatingObject(RenderBox& renderer)
     : m_renderer(renderer)
 {
-    UsedFloat type = Style::ComputedStyle::usedFloat(renderer);
+    UsedFloat type = renderer.usedStyle().floating();
     ASSERT(type != UsedFloat::None);
     if (type == UsedFloat::Left)
         m_type = FloatLeft;

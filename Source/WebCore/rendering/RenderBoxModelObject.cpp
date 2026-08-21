@@ -533,15 +533,13 @@ void RenderBoxModelObject::computeStickyPositionConstraints(StickyPositionViewpo
 
     LayoutUnit maxWidth = containingBlock->contentBoxLogicalWidth();
 
-    const auto& zoomFactor = style().usedZoomForLength();
-
     // Sticky positioned element ignore any override logical width on the containing block (as they don't call
     // containingBlockLogicalWidthForContent). It's unclear whether this is totally fine.
     LayoutBoxExtent minMargin(
-        Style::evaluateMinimum<LayoutUnit>(style().marginTop(), maxWidth, zoomFactor),
-        Style::evaluateMinimum<LayoutUnit>(style().marginRight(), maxWidth, zoomFactor),
-        Style::evaluateMinimum<LayoutUnit>(style().marginBottom(), maxWidth, zoomFactor),
-        Style::evaluateMinimum<LayoutUnit>(style().marginLeft(), maxWidth, zoomFactor)
+        usedStyle().marginTop(maxWidth).value_or(0_lu),
+        usedStyle().marginRight(maxWidth).value_or(0_lu),
+        usedStyle().marginBottom(maxWidth).value_or(0_lu),
+        usedStyle().marginLeft(maxWidth).value_or(0_lu)
     );
 
     // Compute the container-relative area within which the sticky element is allowed to move.

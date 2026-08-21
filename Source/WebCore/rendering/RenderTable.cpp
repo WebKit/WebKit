@@ -282,9 +282,8 @@ void RenderTable::updateLogicalWidth()
         setLogicalWidth(convertStyleLogicalWidthToComputedWidth(styleLogicalWidth, containerWidthInInlineDirection));
     else {
         // Subtract out any fixed margins from our available width for auto width tables.
-        auto zoom = style().usedZoomForLength();
-        auto marginStart = Style::evaluateMinimum<LayoutUnit>(style().marginStart(), availableLogicalWidth, zoom);
-        auto marginEnd = Style::evaluateMinimum<LayoutUnit>(style().marginEnd(), availableLogicalWidth, zoom);
+        auto marginStart = usedStyle().marginStart(availableLogicalWidth).value_or(0_lu);
+        auto marginEnd = usedStyle().marginEnd(availableLogicalWidth).value_or(0_lu);
         auto marginTotal = marginStart + marginEnd;
 
         // Subtract out our margins to get the available content width.
@@ -336,9 +335,8 @@ void RenderTable::updateLogicalWidth()
         setMarginStart(marginValues.start);
         setMarginEnd(marginValues.end);
     } else {
-        auto zoom = style().usedZoomForLength();
-        setMarginStart(Style::evaluateMinimum<LayoutUnit>(style().marginStart(), availableLogicalWidth, zoom));
-        setMarginEnd(Style::evaluateMinimum<LayoutUnit>(style().marginEnd(), availableLogicalWidth, zoom));
+        setMarginStart(usedStyle().marginStart(availableLogicalWidth).value_or(0_lu));
+        setMarginEnd(usedStyle().marginEnd(availableLogicalWidth).value_or(0_lu));
     }
 }
 

@@ -38,6 +38,7 @@
 #include "StyleComputedStyle+GettersInlines.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 #include "TableFormattingState.h"
+#include "UsedStyle.h"
 #include "LayoutBoxInlines.h"
 
 namespace WebCore {
@@ -1121,22 +1122,22 @@ BoxGeometry::Edges FormattingGeometry::computedPadding(const Box& layoutBox, con
 
 ComputedHorizontalMargin FormattingGeometry::computedHorizontalMargin(const Box& layoutBox, const HorizontalConstraints& horizontalConstraints) const
 {
-    CheckedRef style = layoutBox.style();
-    const auto& zoomFactor = style->usedZoomForLength();
+    // The optional margin getters yield std::nullopt for `auto`, which is exactly what the used-margin
+    // solver wants (it distributes the auto margins itself).
+    auto usedStyle = UsedStyle { layoutBox };
     auto containingBlockWidth = horizontalConstraints.logicalWidth;
     if (usedWritingMode(layoutBox).isHorizontal())
-        return { computedValue(style->marginLeft(), containingBlockWidth, zoomFactor), computedValue(style->marginRight(), containingBlockWidth, zoomFactor) };
-    return { computedValue(style->marginTop(), containingBlockWidth, zoomFactor), computedValue(style->marginBottom(), containingBlockWidth, zoomFactor) };
+        return { usedStyle.marginLeft(containingBlockWidth), usedStyle.marginRight(containingBlockWidth) };
+    return { usedStyle.marginTop(containingBlockWidth), usedStyle.marginBottom(containingBlockWidth) };
 }
 
 ComputedVerticalMargin FormattingGeometry::computedVerticalMargin(const Box& layoutBox, const HorizontalConstraints& horizontalConstraints) const
 {
-    CheckedRef style = layoutBox.style();
-    const auto& zoomFactor = style->usedZoomForLength();
+    auto usedStyle = UsedStyle { layoutBox };
     auto containingBlockWidth = horizontalConstraints.logicalWidth;
     if (usedWritingMode(layoutBox).isHorizontal())
-        return { computedValue(style->marginTop(), containingBlockWidth, zoomFactor), computedValue(style->marginBottom(), containingBlockWidth, zoomFactor) };
-    return { computedValue(style->marginLeft(), containingBlockWidth, zoomFactor), computedValue(style->marginRight(), containingBlockWidth, zoomFactor) };
+        return { usedStyle.marginTop(containingBlockWidth), usedStyle.marginBottom(containingBlockWidth) };
+    return { usedStyle.marginLeft(containingBlockWidth), usedStyle.marginRight(containingBlockWidth) };
 }
 
 IntrinsicWidthConstraints FormattingGeometry::constrainByMinMaxWidth(const Box& layoutBox, IntrinsicWidthConstraints intrinsicWidth) const

@@ -685,6 +685,7 @@ class StylePropertyCodeGenProperties:
         Schema.Entry("top-priority-reason", allowed_types=[str]),
         Schema.Entry("top-priority", allowed_types=[bool], default_value=False),
         Schema.Entry("url", allowed_types=[str]),
+        Schema.Entry("used-style", allowed_types=[str]),
         Schema.Entry("visited-link-color-support", allowed_types=[bool], default_value=False),
     )
 
@@ -8204,6 +8205,401 @@ class GenerateStyleComputedStyleProperties(object):
                     generator.initial_functions.generate_inline_function_definitions(to=writer)
 
 
+# Generates `UsedStyleProperties.h` and `UsedStyleProperties.cpp`.
+#
+# `UsedStyleProperties` is the generated base of the hand-written `UsedStyle` wrapper. Only
+# properties opted in via the `used-style` codegen property appear here (see USED_STYLE_VALUES);
+# their getters return used values derived from the wrapped computed style (`computedStyle()`,
+# i.e. the renderer's computed style). Used values are read-only, so no setters are generated.
+class GenerateUsedStyle:
+    def __init__(self, generation_context):
+        self.generation_context = generation_context
+
+    @property
+    def properties_and_descriptors(self):
+        return self.generation_context.properties_and_descriptors
+
+    @property
+    def style_properties(self):
+        return self.generation_context.properties_and_descriptors.style_properties
+
+    # The `used-style` codegen property opts a property into UsedStyle and selects how its used
+    # getter is produced:
+    #   "evaluate-zoomed" - getters resolving a length-percentage against a reference, applying
+    #                       usedZoomForLength() (e.g. padding). Return LayoutUnit.
+    #   "evaluate-zoomed-or-auto" - as "evaluate-zoomed", but the property also accepts `auto`
+    #                       (e.g. margins). The getters return std::optional<LayoutUnit>, yielding
+    #                       std::nullopt for `auto` so each caller decides what `auto` resolves to.
+    #   "custom"          - hand-written on UsedStyle (not generated here, e.g. float/clear).
+    USED_STYLE_VALUES = ("evaluate-zoomed", "evaluate-zoomed-or-auto", "custom")
+
+    # used-style values whose getters resolve a length-percentage against a reference.
+    EVALUATE_ZOOMED_VALUES = ("evaluate-zoomed", "evaluate-zoomed-or-auto")
+
+    # The getter return type for an evaluate-zoomed value: optional when `auto` is possible.
+    @staticmethod
+    def _evaluate_zoomed_return_type(used_style):
+        return 'std::optional<LayoutUnit>' if used_style == "evaluate-zoomed-or-auto" else 'LayoutUnit'
+
+    def generate(self):
+        for property in self.style_properties.all:
+            used_style = property.codegen_properties.used_style
+            if used_style is not None and used_style not in self.USED_STYLE_VALUES:
+                raise Exception(f"Unknown 'used-style' value '{used_style}' for '{property}'. Expected one of {self.USED_STYLE_VALUES}.")
+        self.generate_used_style_properties_h()
+        self.generate_used_style_properties_cpp()
+
+    # Generate UsedStyleProperties.h
+
+    def _generate_property_getter_declarations(self, *, to):
+        for property in self.style_properties.all:
+            if property.codegen_properties.skip_computed_style:
+                continue
+            if property.codegen_properties.is_logical:
+                continue
+            if property.codegen_properties.longhands:
+                continue
+            if property.codegen_properties.cascade_alias:
+                continue
+            if property.codegen_properties.coordinated_value_list_property:
+                continue
+            # Only evaluate-zoomed properties are generated here. "custom" properties are
+            # hand-written on UsedStyle; absent means not part of it.
+            if property.codegen_properties.used_style not in self.EVALUATE_ZOOMED_VALUES:
+                continue
+
+            to.write(f"// '{property}'")
+
+            # `evaluate-zoomed`: a used getter that resolves the computed length-percentage against
+            # a reference, applying usedZoomForLength(). Two forms: a caller-named ReferenceSize (the
+            # reference is renderer-derived and resolved lazily, so non-trivial references like the
+            # containing block are only computed for percentages), and an explicit LayoutUnit the
+            # caller already holds. Both defined out-of-line in UsedStyleProperties.cpp.
+            # `evaluate-zoomed-or-auto` is identical but returns std::optional<LayoutUnit> (nullopt = auto).
+            if property.codegen_properties.used_style in self.EVALUATE_ZOOMED_VALUES:
+                return_type = self._evaluate_zoomed_return_type(property.codegen_properties.used_style)
+                self.generation_context.generate_function_declaration(
+                    to=to,
+                    function_name=property.codegen_properties.computed_style_getter,
+                    return_type=return_type,
+                    argument_types=['ReferenceSize'],
+                    function_qualifiers=['const']
+                )
+                self.generation_context.generate_function_declaration(
+                    to=to,
+                    function_name=property.codegen_properties.computed_style_getter,
+                    return_type=return_type,
+                    argument_types=['LayoutUnit'],
+                    function_qualifiers=['const']
+                )
+
+            if property.codegen_properties.color_property:
+                if property.codegen_properties.computed_style_visited_link_storage_path:
+                    self.generation_context.generate_function_declaration(
+                        to=to,
+                        function_name=f"visitedLink{property.codegen_properties.computed_style_name_for_methods}",
+                        function_specifiers=['inline'],
+                        return_type=property.getter_return_type,
+                        function_qualifiers=['const']
+                    )
+
+                self.generation_context.generate_function_declaration(
+                    to=to,
+                    function_name=f"{property.codegen_properties.computed_style_getter}Resolver",
+                    function_specifiers=['inline'],
+                    return_type="decltype(auto)",
+                    function_qualifiers=['const']
+                )
+
+                self.generation_context.generate_function_declaration(
+                    to=to,
+                    function_name=f"{property.codegen_properties.computed_style_getter}ResolvingCurrentColor",
+                    function_specifiers=['inline'],
+                    return_type='WebCore::Color',
+                    function_qualifiers=['const']
+                )
+                self.generation_context.generate_function_declaration(
+                    to=to,
+                    function_name=f"{property.codegen_properties.computed_style_getter}ResolvingCurrentColorApplyingColorFilter",
+                    function_specifiers=['inline'],
+                    return_type='WebCore::Color',
+                    function_qualifiers=['const']
+                )
+
+                if property.codegen_properties.computed_style_visited_link_storage_path:
+                    self.generation_context.generate_function_declaration(
+                        to=to,
+                        function_name=f"visitedLink{property.codegen_properties.computed_style_name_for_methods}ResolvingCurrentColor",
+                        function_specifiers=['inline'],
+                        return_type='WebCore::Color',
+                        function_qualifiers=['const']
+                    )
+                    self.generation_context.generate_function_declaration(
+                        to=to,
+                        function_name=f"visitedLink{property.codegen_properties.computed_style_name_for_methods}ResolvingCurrentColorApplyingColorFilter",
+                        function_specifiers=['inline'],
+                        return_type='WebCore::Color',
+                        function_qualifiers=['const']
+                    )
+
+                self.generation_context.generate_function_declaration(
+                    to=to,
+                    function_name=f"visitedDependent{property.codegen_properties.computed_style_name_for_methods}",
+                    function_specifiers=['inline'],
+                    return_type='WebCore::Color',
+                    argument_types=['OptionSet<PaintBehavior> = { }'],
+                    function_qualifiers=['const']
+                )
+                self.generation_context.generate_function_declaration(
+                    to=to,
+                    function_name=f"visitedDependent{property.codegen_properties.computed_style_name_for_methods}ApplyingColorFilter",
+                    function_specifiers=['inline'],
+                    return_type='WebCore::Color',
+                    argument_types=['OptionSet<PaintBehavior> = { }'],
+                    function_qualifiers=['const']
+                )
+
+            if property.codegen_properties.computed_style_has_explicitly_set_storage_path:
+                self.generation_context.generate_function_declaration(
+                    to=to,
+                    function_name=f"hasExplicitlySet{property.codegen_properties.computed_style_name_for_methods}",
+                    function_specifiers=['inline'],
+                    return_type='bool',
+                    function_qualifiers=['const']
+                )
+            to.newline()
+
+    def _generate_logical_property_getter_declarations(self, *, to):
+        for property_group_name, property_group in self.style_properties.logical_property_groups.items():
+            kind = property_group['kind']
+            # Only axis/side groups whose representative property is opted into UsedStyle are generated.
+            if kind == 'axis':
+                representative = property_group['physical']['horizontal']
+            elif kind == 'side':
+                representative = property_group['physical']['bottom']
+            else:
+                continue
+            if representative.codegen_properties.skip_computed_style or representative.codegen_properties.skip_computed_style_getter:
+                continue
+            if representative.codegen_properties.used_style not in self.EVALUATE_ZOOMED_VALUES:
+                continue
+
+            to.write(f"// Logical getters for '{property_group_name}' properties of type '{kind}'.")
+            if kind == 'axis':
+                horizontal_property = property_group['physical']['horizontal']
+                vertical_property = property_group['physical']['vertical']
+
+                # NOTE: Choice of which property we use here is arbitrary, they must always have the same types.
+                getter_return_type = horizontal_property.getter_return_type
+
+                for property in [horizontal_property, vertical_property]:
+                    to.write(f"inline {getter_return_type} logical{property.id_without_prefix}(WritingMode) const;")
+                for property in [horizontal_property, vertical_property]:
+                    to.write(f"inline {getter_return_type} logical{property.id_without_prefix}() const;")
+            else:
+                property = property_group['physical']['bottom']
+                prefix = Name(property_group_name)
+
+                if property.codegen_properties.used_style in self.EVALUATE_ZOOMED_VALUES:
+                    return_type = self._evaluate_zoomed_return_type(property.codegen_properties.used_style)
+                    for edge in ['Start', 'End', 'Before', 'After', 'LogicalLeft', 'LogicalRight']:
+                        to.write(f"{return_type} {prefix.id_without_prefix_with_lowercase_first_letter}{edge}(WritingMode, ReferenceSize) const;")
+                    for edge in ['Start', 'End', 'Before', 'After', 'LogicalLeft', 'LogicalRight']:
+                        to.write(f"{return_type} {prefix.id_without_prefix_with_lowercase_first_letter}{edge}(ReferenceSize) const;")
+                    for edge in ['Start', 'End', 'Before', 'After', 'LogicalLeft', 'LogicalRight']:
+                        to.write(f"{return_type} {prefix.id_without_prefix_with_lowercase_first_letter}{edge}(WritingMode, LayoutUnit) const;")
+                    for edge in ['Start', 'End', 'Before', 'After', 'LogicalLeft', 'LogicalRight']:
+                        to.write(f"{return_type} {prefix.id_without_prefix_with_lowercase_first_letter}{edge}(LayoutUnit) const;")
+                else:
+                    # NOTE: Choice of which property we use here is arbitrary, they must always have the same types.
+                    getter_return_type = property.getter_return_type
+
+                    for edge in ['Start', 'End', 'Before', 'After', 'LogicalLeft', 'LogicalRight']:
+                        to.write(f"inline {getter_return_type} {prefix.id_without_prefix_with_lowercase_first_letter}{edge}(WritingMode) const;")
+                    for edge in ['Start', 'End', 'Before', 'After', 'LogicalLeft', 'LogicalRight']:
+                        to.write(f"inline {getter_return_type} {prefix.id_without_prefix_with_lowercase_first_letter}{edge}() const;")
+            to.newline()
+
+    def generate_used_style_properties_h(self):
+        with open('UsedStyleProperties.h', 'w') as output_file:
+            writer = Writer(output_file)
+
+            self.generation_context.generate_heading(
+                to=writer
+            )
+
+            self.generation_context.generate_required_header_pragma(
+                to=writer
+            )
+
+            self.generation_context.generate_includes(
+                to=writer,
+                system_headers=[
+                    "<WebCore/LayoutUnit.h>",
+                    "<WebCore/StyleComputedStyle.h>",
+                    "<WebCore/UsedStyleReferenceSize.h>",
+                    "<optional>",
+                    "<wtf/CheckedPtr.h>",
+                    "<wtf/CheckedRef.h>",
+                ]
+            )
+
+            with self.generation_context.namespace("WebCore", to=writer):
+                writer.write(f"class RenderElement;")
+                writer.newline()
+
+                writer.write(f"class UsedStyleProperties {{")
+                writer.write(f"public:")
+
+                with writer.indent():
+                    writer.write(f"const Style::ComputedStyle& computedStyle() const LIFETIME_BOUND {{ return m_computedStyle.get(); }}")
+                    writer.newline()
+
+                    self._generate_property_getter_declarations(
+                        to=writer
+                    )
+                    self._generate_logical_property_getter_declarations(
+                        to=writer
+                    )
+
+                writer.write(f"protected:")
+
+                with writer.indent():
+                    writer.write(f"// UsedStyle wraps a computed style and the renderer it describes, held as a pair. The")
+                    writer.write(f"// renderer is used for renderer-derived references (e.g. the containing block, see")
+                    writer.write(f"// resolveReferenceSize). const: a UsedStyle view never rebinds either member, so they")
+                    writer.write(f"// can be read without a stack-local guard.")
+                    writer.write(f"UsedStyleProperties(const Style::ComputedStyle& computedStyle LIFETIME_BOUND, const RenderElement* renderer LIFETIME_BOUND)")
+                    with writer.indent():
+                        writer.write(f": m_computedStyle(computedStyle)")
+                        writer.write(f", m_renderer(renderer)")
+                    writer.write(f"{{")
+                    writer.write(f"}}")
+                    writer.newline()
+
+                    writer.write(f"// Resolves the reference a percentage value evaluates against (e.g. the containing")
+                    writer.write(f"// block inline size). Renderer-derived, so hand-written out-of-line in UsedStyle.cpp.")
+                    writer.write(f"LayoutUnit resolveReferenceSize(ReferenceSize) const;")
+                    writer.newline()
+
+                    writer.write(f"const CheckedRef<const Style::ComputedStyle> m_computedStyle;")
+                    writer.write(f"const CheckedPtr<const RenderElement> m_renderer;")
+                writer.write(f"}};")
+                writer.newline()
+
+    # Generate UsedStyleProperties.cpp
+
+    def generate_used_style_properties_cpp(self):
+        with open('UsedStyleProperties.cpp', 'w') as output_file:
+            writer = Writer(output_file)
+
+            self.generation_context.generate_heading(
+                to=writer
+            )
+
+            self.generation_context.generate_cpp_required_includes(
+                to=writer,
+                header="UsedStyleProperties.h"
+            )
+
+            self.generation_context.generate_includes(
+                to=writer,
+                system_headers=[
+                    "<WebCore/StyleComputedStyle+GettersInlines.h>",
+                    "<WebCore/StylePrimitiveNumericTypes+EvaluationMinimum.h>",
+                ]
+            )
+
+            with self.generation_context.namespace("WebCore", to=writer):
+                for property in self.style_properties.all:
+                    if property.codegen_properties.skip_computed_style:
+                        continue
+                    if property.codegen_properties.is_logical:
+                        continue
+                    if property.codegen_properties.longhands:
+                        continue
+                    if property.codegen_properties.cascade_alias:
+                        continue
+                    if property.codegen_properties.coordinated_value_list_property:
+                        continue
+                    if property.codegen_properties.used_style not in self.EVALUATE_ZOOMED_VALUES:
+                        continue
+
+                    getter = property.codegen_properties.computed_style_getter
+                    return_type = self._evaluate_zoomed_return_type(property.codegen_properties.used_style)
+                    returns_optional = return_type != 'LayoutUnit'
+
+                    def write_body(value_expression, reference_expression):
+                        # nullopt for `auto`; the caller decides what `auto` resolves to.
+                        if returns_optional:
+                            writer.write(f"if ({value_expression}.isAuto())")
+                            with writer.indent():
+                                writer.write(f"return {{ }};")
+                        writer.write(f"return Style::evaluateMinimum<LayoutUnit>({value_expression}, {reference_expression}, computedStyle().usedZoomForLength());")
+
+                    writer.write(f"{return_type} UsedStyleProperties::{getter}(ReferenceSize referenceSize) const")
+                    writer.write(f"{{")
+                    with writer.indent():
+                        write_body(f"computedStyle().{getter}()", "[&] { return resolveReferenceSize(referenceSize); }")
+                    writer.write(f"}}")
+                    writer.newline()
+                    writer.write(f"{return_type} UsedStyleProperties::{getter}(LayoutUnit reference) const")
+                    writer.write(f"{{")
+                    with writer.indent():
+                        write_body(f"computedStyle().{getter}()", "reference")
+                    writer.write(f"}}")
+                    writer.newline()
+
+                # Logical evaluate-zoomed getters (e.g. margin-{block,inline}-*), forwarding to the
+                # writing-mode-resolved computed getter.
+                for property_group_name, property_group in self.style_properties.logical_property_groups.items():
+                    if property_group['kind'] != 'side':
+                        continue
+                    property = property_group['physical']['bottom']
+                    if property.codegen_properties.skip_computed_style or property.codegen_properties.skip_computed_style_getter:
+                        continue
+                    if property.codegen_properties.used_style not in self.EVALUATE_ZOOMED_VALUES:
+                        continue
+
+                    return_type = self._evaluate_zoomed_return_type(property.codegen_properties.used_style)
+                    returns_optional = return_type != 'LayoutUnit'
+
+                    def write_logical_body(value_expression, reference_expression):
+                        if returns_optional:
+                            writer.write(f"if ({value_expression}.isAuto())")
+                            with writer.indent():
+                                writer.write(f"return {{ }};")
+                        writer.write(f"return Style::evaluateMinimum<LayoutUnit>({value_expression}, {reference_expression}, computedStyle().usedZoomForLength());")
+
+                    prefix = Name(property_group_name)
+                    for edge in ['Start', 'End', 'Before', 'After', 'LogicalLeft', 'LogicalRight']:
+                        name = f"{prefix.id_without_prefix_with_lowercase_first_letter}{edge}"
+                        writer.write(f"{return_type} UsedStyleProperties::{name}(WritingMode writingMode, ReferenceSize referenceSize) const")
+                        writer.write(f"{{")
+                        with writer.indent():
+                            write_logical_body(f"computedStyle().{name}(writingMode)", "[&] { return resolveReferenceSize(referenceSize); }")
+                        writer.write(f"}}")
+                        writer.newline()
+                        writer.write(f"{return_type} UsedStyleProperties::{name}(ReferenceSize referenceSize) const")
+                        writer.write(f"{{")
+                        with writer.indent():
+                            write_logical_body(f"computedStyle().{name}()", "[&] { return resolveReferenceSize(referenceSize); }")
+                        writer.write(f"}}")
+                        writer.newline()
+                        writer.write(f"{return_type} UsedStyleProperties::{name}(WritingMode writingMode, LayoutUnit reference) const")
+                        writer.write(f"{{")
+                        with writer.indent():
+                            write_logical_body(f"computedStyle().{name}(writingMode)", "reference")
+                        writer.write(f"}}")
+                        writer.newline()
+                        writer.write(f"{return_type} UsedStyleProperties::{name}(LayoutUnit reference) const")
+                        writer.write(f"{{")
+                        with writer.indent():
+                            write_logical_body(f"computedStyle().{name}()", "reference")
+                        writer.write(f"}}")
+                        writer.newline()
+
+
 # Generates `StyleChangedAnimatablePropertiesGenerated.cpp`.
 class GenerateStyleChangedAnimatablePropertiesGenerated:
     def __init__(self, generation_context):
@@ -11694,6 +12090,7 @@ def main():
         GenerateStyleExtractorGenerated,
         GenerateStyleInterpolationWrapperMap,
         GenerateStylePropertyShorthandFunctions,
+        GenerateUsedStyle,
     ]
 
     for generator in generators:

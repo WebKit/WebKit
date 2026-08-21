@@ -150,6 +150,9 @@ _AUTO_GENERATED_FILES = [
     'Source/WebCore/css/scripts/test/TestCSSPropertiesResults/StyleInterpolationWrapperMap.h',
     'Source/WebCore/css/scripts/test/TestCSSPropertiesResults/StylePropertyShorthandFunctions.cpp',
     'Source/WebCore/css/scripts/test/TestCSSPropertiesResults/StylePropertyShorthandFunctions.h',
+    'Source/WebCore/css/scripts/test/TestCSSPropertiesResults/UsedStyleProperties+GettersInlines.h',
+    'Source/WebCore/css/scripts/test/TestCSSPropertiesResults/UsedStyleProperties.cpp',
+    'Source/WebCore/css/scripts/test/TestCSSPropertiesResults/UsedStyleProperties.h',
 ]
 
 
