@@ -101,7 +101,7 @@ TreeResolver::~TreeResolver()
     m_document->styleScope().updateAnchorPositioningStateAfterStyleResolution();
 }
 
-TreeResolver::Scope::Scope(Document& document, Box<NewStyleDuringResolutionMap> newStyleDuringResolutionMap)
+TreeResolver::Scope::Scope(Document& document, Update& update)
     : resolver(document.styleScope().resolver())
 {
     document.setIsResolvingTreeStyle(true);
@@ -110,7 +110,7 @@ TreeResolver::Scope::Scope(Document& document, Box<NewStyleDuringResolutionMap> 
     for (Ref shadowRoot : document.inDocumentShadowRoots())
         const_cast<ShadowRoot&>(shadowRoot.get()).styleScope().resolver();
 
-    selectorMatchingState.containerQueryEvaluationState.newStyleDuringResolutionMap = WTF::move(newStyleDuringResolutionMap);
+    selectorMatchingState.containerQueryEvaluationState.styleUpdate = &update;
 }
 
 TreeResolver::Scope::Scope(ShadowRoot& shadowRoot, Scope& enclosingScope)
@@ -375,8 +375,6 @@ auto TreeResolver::resolveElement(Element& element, const Style::ComputedStyle* 
             descendantsToResolve = DescendantsToResolve::All;
         }
     }
-
-    m_newStyleDuringResolutionMap->add(element, ComputedStyle::clonePtr(*update.style));
 
     auto resolveAndAddPseudoElementStyle = [&](const PseudoElementIdentifier& pseudoElementIdentifier) {
         const Style::ComputedStyle* existingPseudoStyle = existingStyle ? existingStyle->pseudoElementStyle(pseudoElementIdentifier) : nullptr;
@@ -1516,10 +1514,7 @@ std::unique_ptr<Update> TreeResolver::resolve()
 
     if (!m_update)
         m_update = makeUnique<Update>(m_document);
-
-    m_newStyleDuringResolutionMap->clear();
-
-    m_scopeStack.append(adoptRef(*new Scope(m_document, m_newStyleDuringResolutionMap)));
+    m_scopeStack.append(adoptRef(*new Scope(m_document, *m_update)));
     m_parentStack.append(Parent(m_document));
 
     resolveComposedTree();

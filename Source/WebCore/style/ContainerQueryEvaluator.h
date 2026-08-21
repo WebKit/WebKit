@@ -28,7 +28,6 @@
 #include "GenericMediaQueryEvaluator.h"
 #include "StyleScopeOrdinal.h"
 #include "StyleUpdate.h"
-#include <wtf/Box.h>
 #include <wtf/Ref.h>
 
 namespace WebCore {
@@ -37,18 +36,9 @@ class Element;
 
 namespace Style {
 
-using NewStyleDuringResolutionMap = WeakHashMap<Element, std::unique_ptr<ComputedStyle>, WeakPtrImplWithEventTargetData>;
-
 struct ContainerQueryEvaluationState {
     Vector<Ref<const Element>> sizeQueryContainers;
-
-    // During style resolution, newly resolved styles aren't committed to the
-    // render tree until the render tree is updated, which occurs after style
-    // resolution. Container style queries rely on fresh style data that was
-    // resolved during style resolution but not committed yet. This map lives
-    // in TreeResolver and is updated with newly resolved styles once they're
-    // produced, so the container query evaluator can use it.
-    Box<NewStyleDuringResolutionMap> newStyleDuringResolutionMap;
+    CheckedPtr<Style::Update> styleUpdate;
 };
 
 class ContainerQueryEvaluator : public MQ::GenericMediaQueryEvaluator<ContainerQueryEvaluator> {
