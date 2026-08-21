@@ -226,6 +226,7 @@ bool CSSPropertyParser::parseValue(CSSPropertyID property, IsImportant important
     int initialParsedPropertiesSize = parsedProperties.size();
 
     range.consumeWhitespace();
+    range.trimTrailingWhitespace();
 
     CSS::PropertyParserResult result { parsedProperties };
 

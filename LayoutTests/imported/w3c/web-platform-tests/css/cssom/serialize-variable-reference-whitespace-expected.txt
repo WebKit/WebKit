@@ -1,0 +1,10 @@
+
+PASS Longhand set to a color through an IDL attribute is trimmed
+PASS Longhand set to a variable reference through an IDL attribute is trimmed
+PASS Longhand set to a variable reference through setProperty() is trimmed
+PASS Shorthand set to a variable reference through an IDL attribute is trimmed
+PASS Shorthand set to a variable reference through setProperty() is trimmed
+PASS Custom property set to a variable reference through setProperty() is trimmed
+PASS Whitespace other than spaces is trimmed too
+PASS Whitespace inside a variable reference is preserved
+
