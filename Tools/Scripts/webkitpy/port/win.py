@@ -357,7 +357,7 @@ class WinPort(ApplePort):
         except:
             _log.warn("Failed to delete preference files.")
 
-    def setup_test_run(self, device_type=None):
+    def setup_test_run(self, device_type=None, workers_per_device=1):
         atexit.register(self.restore_crash_log_saving)
         self.setup_crash_log_saving()
         self.prevent_error_dialogs()

@@ -52,6 +52,55 @@ def run(*popenargs, **kwargs):
         return subprocess.run(*popenargs, timeout=timeout, **kwargs)
 
 
+def wait_until_exit(process, timeout=None):
+    """Waits for a process to exit, killing it if it overruns its timeout.
+
+    Returns (returncode, stdout, stderr). A process which had to be killed reports a non-zero returncode. Waits on
+    the process rather than through Timeout, so this is safe to call off the main thread."""
+    try:
+        stdout, stderr = process.communicate(timeout=timeout)
+        return process.returncode, stdout, stderr
+    except TimeoutExpired:
+        process.kill()
+        stdout, stderr = process.communicate()
+        # A process killed for overrunning its timeout has not succeeded, even if it happened to exit 0 as we killed it.
+        return process.returncode or 1, stdout, stderr
+
+
+def run_all(commands, timeout=None, popen=None, **kwargs):
+    """Starts every command before waiting on any of them, and returns each one's (returncode, stdout, stderr).
+
+    Each process is drained by its own thread, because a process which fills its stdout pipe stays blocked until
+    something reads it: waiting on them one after another would let the later ones stall while an earlier one is read.
+
+    The whole set shares `timeout`. `popen` overrides how each command is started, which is how a caller with a mock
+    executive keeps these off real subprocesses."""
+    popen = popen or subprocess.Popen
+    processes = []
+    results = [None] * len(commands)
+
+    try:
+        for command in commands:
+            processes.append(popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, **kwargs))
+    except BaseException:
+        # Commands already started would otherwise outlive the call which failed to start the rest.
+        for process in processes:
+            process.kill()
+            process.communicate()
+        raise
+
+    def drain(index, process):
+        results[index] = wait_until_exit(process, timeout=timeout)
+
+    threads = [Thread(target=drain, args=(index, process), name='run-all-{}'.format(index))
+               for index, process in enumerate(processes)]
+    for thread in threads:
+        thread.start()
+    for thread in threads:
+        thread.join()
+    return results
+
+
 class Thread(threading.Thread):
     @classmethod
     def terminated(cls):

@@ -28,6 +28,7 @@ from webkitcorepy import string_utils
 from webkitcorepy import TaskPool
 
 from webkitpy.common.iteration_compatibility import iteritems
+from webkitpy.common.unclaimed_shard import UnclaimedShard
 from webkitpy.port.server_process import ServerProcess, _log as server_process_logger
 
 _log = logging.getLogger(__name__)
@@ -46,12 +47,14 @@ class _NoisyOutputFilter(logging.Filter):
 _log.addFilter(_NoisyOutputFilter())
 
 
-def setup_shard(port=None, devices=None, log_limit=None):
+def setup_shard(port=None, devices=None, log_limit=None, run_singly=False):
     if devices and getattr(port, 'DEVICE_MANAGER', None):
         port.DEVICE_MANAGER.AVAILABLE_DEVICES = devices.get('available_devices', [])
         port.DEVICE_MANAGER.INITIALIZED_DEVICES = devices.get('initialized_devices', None)
+        if devices.get('provisioning'):
+            port._provisioning.adopt_provisioning_state(devices['provisioning'])
 
-    return _Worker.setup(port=port, log_limit=log_limit)
+    return _Worker.setup(port=port, log_limit=log_limit, run_singly=run_singly)
 
 
 def run_shard(name, *tests):
@@ -117,6 +120,8 @@ class Runner(object):
 
     ELAPSED_THRESHOLD = 3
 
+    WORKERS_PER_DEVICE = 2
+
     NAME_FOR_STATUS = [
         'Passed',
         'Failed',
@@ -138,10 +143,12 @@ class Runner(object):
         self.expectations = expectations
         self.exit_after_n_failures = None
         self._failure_count = 0
+        self._unclaimed_shard_count = 0
+        self._abandoned_test_count = 0
 
     # FIXME API tests should run as an app, we won't need this function <https://bugs.webkit.org/show_bug.cgi?id=175204>
     @staticmethod
-    def command_for_port(port, args):
+    def command_for_port(port, args, worker_number=None):
         if (port.get_option('force')):
             args.append('--force')
         if (port.get_option('remote_layer_tree')):
@@ -156,12 +163,38 @@ class Runner(object):
             args.append('--no-use-gpu-process')
         if getattr(port, 'DEVICE_MANAGER', None):
             assert port.DEVICE_MANAGER.INITIALIZED_DEVICES
-            return ['/usr/bin/xcrun', 'simctl', 'spawn', port.DEVICE_MANAGER.INITIALIZED_DEVICES[0].udid] + args
+            device = port.target_host(worker_number) if worker_number is not None else port.any_ready_device()
+            if device is None:
+                device = port.DEVICE_MANAGER.INITIALIZED_DEVICES[0]
+            return ['/usr/bin/xcrun', 'simctl', 'spawn', device.udid] + args
         elif 'device' in port.port_name:
             raise RuntimeError(f'Running api tests on {port.port_name} is not supported')
         elif port.host.platform.is_win():
             args[0] = os.path.splitext(args[0])[0] + '.exe'
         return args
+
+    def _handle_unclaimed_shard(self, name, dispatched_count, value, fruitless_attempts, num_workers, redispatch):
+        """Sends a shard no device would run back around, or gives up on it.
+
+        Called on the thread that owns the alarm, where devices still coming up get handed over."""
+        self.port.advance_provisioning()
+        if not isinstance(value, UnclaimedShard) or not value.tests:
+            return
+        fruitless_attempts = self.port.fruitless_attempts_after(dispatched_count, len(value.tests), fruitless_attempts)
+        if self.port.should_abandon_shard(fruitless_attempts, num_workers):
+            # Re-dispatching now would spin until the run timed out.
+            self._abandoned_test_count += len(value.tests)
+            reason = ('No usable devices remain' if not self.port.has_usable_device()
+                      else f'No device took {name} after {fruitless_attempts} attempts')
+            _log.error('{}; {} tests in {} will not run'.format(reason, len(value.tests), name))
+            return
+        self._unclaimed_shard_count += 1
+        redispatch(value.name, value.tests, fruitless_attempts=fruitless_attempts)
+
+    @staticmethod
+    def _shards_longest_first(shards):
+        """Biggest shard first, so the longest one is not the last thing left running by itself."""
+        return sorted(shards.items(), key=lambda item: (-len(item[1]), item[0]))
 
     @staticmethod
     def _shard_tests(tests, fully_parallel):
@@ -227,12 +260,15 @@ class Runner(object):
             Runner.instance = self
             mutually_exclusive_groups = list(self.port.sharding_groups(suite='api-tests').keys())
             workers = (num_workers if num_workers and num_workers >= self._num_workers else max(self.port.default_child_processes() or self._num_workers, self._num_workers) if mutually_exclusive_groups else self._num_workers)
+            if self.port.devices():
+                workers = max(workers, len(self.port.devices()) * Runner.WORKERS_PER_DEVICE)
 
             devices = None
             if getattr(self.port, 'DEVICE_MANAGER', None):
                 devices = dict(
                     available_devices=self.port.DEVICE_MANAGER.AVAILABLE_DEVICES,
                     initialized_devices=self.port.DEVICE_MANAGER.INITIALIZED_DEVICES,
+                    provisioning=self.port.provisioning_state(),
                 )
 
             supplied_tests_raw = self.port.get_option('test_parallel_safety')
@@ -281,6 +317,9 @@ class Runner(object):
                 else:
                     batch_workers = self._num_workers
 
+                # Refilled for every pool: a worker holds its device until it exits.
+                self.port.prepare_devices_for_workers(workers_per_device=Runner.WORKERS_PER_DEVICE)
+
                 with TaskPool(
                     workers=batch_workers,
                     mutually_exclusive_groups=non_system_groups,
@@ -294,26 +333,44 @@ class Runner(object):
                             pool.do(run_test_parallel_safety_single_iteration, test_name, repeat=True, group=test_parallel_safety_group)
 
                     # Run regular shards
-                    for name, shard_tests in iteritems(shards):
+                    def dispatch_shard(name, shard_tests, fruitless_attempts=0):
+                        pool.do(run_shard, name, *shard_tests, callback=lambda value: handle_shard_result(name, len(shard_tests), value, fruitless_attempts))
+
+                    def handle_shard_result(name, dispatched_count, value, fruitless_attempts):
+                        self._handle_unclaimed_shard(name, dispatched_count, value, fruitless_attempts,
+                                                     batch_workers, dispatch_shard)
+
+                    for name, shard_tests in Runner._shards_longest_first(shards):
                         if name.startswith('test-parallel-safety.'):
                             continue
 
-                        pool.do(run_shard, name, *shard_tests)
+                        dispatch_shard(name, shard_tests)
 
                     pool.wait()
 
             # Run system shard tests after all parallel tests complete (unless in test-parallel-safety mode)
             if non_allowlisted_tests and not self.port.get_option('test_parallel_safety'):
-                _log.info(f'Running {len(non_allowlisted_tests)} system shard tests sequentially')
+                # One worker a device: the allowlist does not trust these beside another test on the same one.
+                system_shard_workers = max(1, len(self.port.devices()))
+                _log.info(f'Running {len(non_allowlisted_tests)} system shard tests across {system_shard_workers} device(s)')
+                self.port.prepare_devices_for_workers(workers_per_device=1)
                 with TaskPool(
-                    workers=1,  # System shard tests run with single worker to avoid conflicts
+                    workers=system_shard_workers,
                     mutually_exclusive_groups=[],
-                    setup=setup_shard, setupkwargs=dict(port=self.port, devices=devices, log_limit=self.log_limit), teardown=teardown_shard,
+                    setup=setup_shard, setupkwargs=dict(port=self.port, devices=devices, log_limit=self.log_limit, run_singly=True), teardown=teardown_shard,
                 ) as pool:
                     # Group system shard tests by suite for efficiency
                     non_allowlisted_shards = Runner._shard_tests(non_allowlisted_tests, False)
-                    for name, shard_tests in iteritems(non_allowlisted_shards):
-                        pool.do(run_shard, name, *shard_tests)
+
+                    def dispatch_system_shard(name, shard_tests, fruitless_attempts=0):
+                        pool.do(run_shard, name, *shard_tests, callback=lambda value: handle_system_shard_result(name, len(shard_tests), value, fruitless_attempts))
+
+                    def handle_system_shard_result(name, dispatched_count, value, fruitless_attempts):
+                        self._handle_unclaimed_shard(name, dispatched_count, value, fruitless_attempts,
+                                                     system_shard_workers, dispatch_system_shard)
+
+                    for name, shard_tests in Runner._shards_longest_first(non_allowlisted_shards):
+                        dispatch_system_shard(name, shard_tests)
 
                     pool.wait()
             elif self.port.get_option('test_parallel_safety'):
@@ -322,6 +379,11 @@ class Runner(object):
         finally:
             server_process_logger.setLevel(original_level)
             Runner.instance = None
+
+        if self._abandoned_test_count:
+            # Never-run tests are absent from the results, so without this the run reports success having skipped them.
+            raise RuntimeError('{} tests could not be run because no device would take them'.format(
+                self._abandoned_test_count))
 
     def result_map_by_status(self, status=None):
         map = {}
@@ -336,17 +398,20 @@ class _Worker(object):
     EXCEEDED_LOG_LINE_MESSAGE = 'EXCEEDED LOG LINE THRESHOLD OF {}\n'
 
     @classmethod
-    def setup(cls, port=None, log_limit=None):
-        cls.instance = cls(port, log_limit)
+    def setup(cls, port=None, log_limit=None, run_singly=False):
+        cls.instance = cls(port, log_limit, run_singly)
 
     @classmethod
     def teardown(cls):
         cls.instance = None
 
-    def __init__(self, port, log_limit):
+    def __init__(self, port, log_limit, run_singly=False):
         self._port = port
         self.host = port.host
         self.log_limit = log_limit
+        self.worker_number = int((TaskPool.Process.name).split('/')[-1]) if TaskPool.Process.name else None
+        self._run_singly = run_singly or bool(port.get_option('run_singly'))
+        self._device_suspect = True
 
         # ServerProcess doesn't allow for a timeout of 'None,' this uses a week instead of None.
         self._timeout = int(self._port.get_option('timeout')) if self._port.get_option('timeout') else 60 * 24 * 7
@@ -377,7 +442,7 @@ class _Worker(object):
 
         server_process = ServerProcess(
             self._port, binary_name,
-            Runner.command_for_port(self._port, [self._port.path_to_api_test(binary_name), '--filter', test]),
+            Runner.command_for_port(self._port, [self._port.path_to_api_test(binary_name), '--filter', test], worker_number=self.worker_number),
             env=self._port.environment_for_api_tests())
 
         status = Runner.STATUS_RUNNING
@@ -452,6 +517,9 @@ class _Worker(object):
 
             server_process.stop()
 
+        if status in (Runner.STATUS_CRASHED, Runner.STATUS_TIMEOUT):
+            self._device_suspect = True
+
         TaskPool.Process.queue.send(TaskPool.Task(
             report_result, None, TaskPool.Process.name,
             f'{binary_name}.{test}',
@@ -464,14 +532,20 @@ class _Worker(object):
         binary_name = name.split('.')[0]
         remaining_tests = ['.'.join(test.split('.')[1:]) for test in tests]
 
+        # Only when something already went wrong, since a healthy run should not pay for the check.
+        if self._device_suspect and not self._port.target_host_is_usable(self.worker_number):
+            _log.error(f'{TaskPool.Process.name} cannot reach its device; returning {name} to be run elsewhere')
+            return UnclaimedShard(list(tests), name=name)
+        self._device_suspect = False
+
         # Try to run the shard in a single process.
-        while remaining_tests and not self._port.get_option('run_singly'):
+        while remaining_tests and not self._run_singly:
             starting_length = len(remaining_tests)
             server_process = ServerProcess(
                 self._port, binary_name,
                 Runner.command_for_port(self._port, [
                     self._port.path_to_api_test(binary_name), '--filter', ':'.join(remaining_tests)
-                ]), env=self._port.environment_for_api_tests())
+                ], worker_number=self.worker_number), env=self._port.environment_for_api_tests())
 
             try:
                 started = time.time()
@@ -486,6 +560,7 @@ class _Worker(object):
 
                     # If we've triggered a timeout, we don't know which test caused it. Break out and run singly.
                     if stdout is None and server_process.timed_out:
+                        self._device_suspect = True
                         break
 
                     if stdout is None and server_process.has_crashed():
@@ -506,7 +581,7 @@ class _Worker(object):
                     if len(stdout_split) != 2 or not (stdout_split[0].startswith('**') and stdout_split[0].endswith('**')):
                         buffer += stdout
                         continue
-                    if last_test is not None:
+                    if last_test is not None and last_test in remaining_tests:
                         remaining_tests.remove(last_test)
 
                         for line in buffer.splitlines(False):
@@ -529,7 +604,13 @@ class _Worker(object):
 
                 # We assume that stderr is only relevant if there is a crash (meaning we triggered an assert)
                 if last_test:
-                    remaining_tests.remove(last_test)
+                    # report_result keeps the worse of two statuses, so this crash would outrank a later pass.
+                    if last_status == Runner.STATUS_CRASHED and not self._port.target_host_is_usable(self.worker_number, force_update=True):
+                        unclaimed = [f'{binary_name}.{remaining}' for remaining in remaining_tests]
+                        _log.error(f'{TaskPool.Process.name} lost its device partway through {name}; returning {len(unclaimed)} remaining tests')
+                        return UnclaimedShard(unclaimed, name=name)
+                    if last_test in remaining_tests:
+                        remaining_tests.remove(last_test)
                     stdout_buffer = string_utils.decode(server_process.pop_all_buffered_stdout(), target_type=str)
                     stderr_buffer = string_utils.decode(server_process.pop_all_buffered_stderr(), target_type=str) if last_status == Runner.STATUS_CRASHED else ''
                     for line in (stdout_buffer + stderr_buffer).splitlines():
@@ -563,5 +644,11 @@ class _Worker(object):
                 server_process.stop()
 
         # Now, just try and run the rest of the tests singly.
-        for test in remaining_tests:
+        for index, test in enumerate(remaining_tests):
+            if self._device_suspect and not self._port.target_host_is_usable(self.worker_number):
+                # Every remaining test would otherwise be recorded as a failure it did not have.
+                unclaimed = [f'{binary_name}.{remaining}' for remaining in remaining_tests[index:]]
+                _log.error(f'{TaskPool.Process.name} lost its device partway through {name}; returning {len(unclaimed)} remaining tests')
+                return UnclaimedShard(unclaimed, name=name)
+            self._device_suspect = False
             self._run_single_test(binary_name, test)

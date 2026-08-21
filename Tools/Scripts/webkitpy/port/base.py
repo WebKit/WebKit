@@ -211,6 +211,69 @@ class Port(object):
     def target_host(self, worker_number=None):
         return self.host
 
+    def devices(self):
+        """The devices tests run on, empty for a port that tests on the host it runs from."""
+        return []
+
+    def any_ready_device(self):
+        """A device fit to run something that belongs to no worker, such as listing tests."""
+        return None
+
+    def device_for_upload(self):
+        """A device to describe the configuration results are uploaded under.
+
+        Never one a worker has claimed: taking that would leave a worker with no device for the whole run."""
+        return self.any_ready_device() or self.target_host(0)
+
+    def fruitless_attempts_after(self, dispatched, returned, fruitless_attempts):
+        """Counts only the attempts that ran nothing.
+
+        A shard that comes back smaller made progress, so it can go around as many times as it keeps shrinking. One
+        that comes back whole found no device willing to run it."""
+        return 0 if returned < dispatched else fruitless_attempts + 1
+
+    # A shard has to outlast one bad device per worker before it is given up on, and at least this many even when
+    # there are fewer workers than that.
+    FEWEST_SHARD_ATTEMPTS_BEFORE_ABANDONING = 3
+
+    def should_abandon_shard(self, fruitless_attempts, num_workers):
+        """Whether to stop handing a shard around.
+
+        A worker with nothing to claim yet is waiting on a device still coming up rather than out of options, so a
+        shard is only abandoned once no device is coming and the ones here have all refused it."""
+        if self.expects_more_devices():
+            return False
+        if not self.has_usable_device():
+            return True
+        return fruitless_attempts >= max(self.FEWEST_SHARD_ATTEMPTS_BEFORE_ABANDONING, num_workers)
+
+    def prepare_devices_for_workers(self, workers_per_device=1):
+        """Hands the devices to the workers about to start. Ports without devices have nothing to hand over."""
+        return None
+
+    def has_usable_device(self):
+        """Whether any device is still there to run tests on. A port that tests on its own host always has one."""
+        return True
+
+    def expects_more_devices(self):
+        """Whether more devices are still on their way. Ports without devices are never waiting for one."""
+        return False
+
+    def advance_provisioning(self):
+        """Hands over any device that has become ready. Ports without devices have nothing to hand over."""
+        return None
+
+    def provisioning_state(self):
+        """What a worker needs in order to claim a device. Ports without devices have nothing to pass on."""
+        return None
+
+    def target_host_is_usable(self, worker_number=None, force_update=False):
+        """Whether this worker's device can still run tests.
+
+        Ports that test on something which can go away underneath us override this. The default is that the host
+        running the tests is the host we are on, which is as available as we are."""
+        return True
+
     def is_simulator(self):
         return False
 
@@ -759,7 +822,7 @@ class Port(object):
         # to have multiple copies of webkit checked out and built.
         return self._build_path('layout-test-results')
 
-    def setup_test_run(self, device_type=None):
+    def setup_test_run(self, device_type=None, workers_per_device=1):
         """Perform port-specific work at the beginning of a test run."""
         pass
 
