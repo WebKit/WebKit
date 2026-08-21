@@ -50,6 +50,7 @@
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaSamplesDecoder);
+WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(MediaSamplesDecoder::InFlightFrame);
 
 static constexpr uint32_t microsecondsTimeScale = 1000000;
 
@@ -490,7 +491,7 @@ Ref<MediaSamplesDecoder::DecodePromise> MediaSamplesDecoder::decodeOnQueue(Media
             auto metadata = item;
             metadata.data = nullptr;
             metadata.flags = MediaSample::IsSync | (item.flags & MediaSample::IsNonDisplaying);
-            m_inFlight.add(sequence, InFlightFrame { WTF::move(metadata), firstSequence });
+            m_inFlight.add(sequence, makeUniqueRef<InFlightFrame>(WTF::move(metadata), firstSequence));
             promises.append(videoDecoder->decode({ protect(item.data)->makeContiguous(), item.isSync(), sequence, durationInMicroseconds(item) }));
         }
 
@@ -688,7 +689,7 @@ void MediaSamplesDecoder::didDecodeVideo(Ref<VideoFrame>&& frame, int64_t sequen
     auto iterator = m_inFlight.find(sequence);
     if (iterator == m_inFlight.end())
         return;
-    auto [metadata, blockSequence] = WTF::move(iterator->value);
+    auto [metadata, blockSequence] = WTF::move(iterator->value.get());
     m_inFlight.remove(iterator);
 
     if (metadata.flags & MediaSample::IsNonDisplaying)

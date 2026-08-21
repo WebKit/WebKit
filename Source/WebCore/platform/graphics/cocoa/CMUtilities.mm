@@ -858,6 +858,16 @@ static std::expected<RetainPtr<CMSampleBufferRef>, ASCIILiteral> decodedVideoToC
     return sampleBuffer;
 }
 
+static RetainPtr<CFStringRef> compressedAlphaDataAttachmentKey()
+{
+    return CFSTR("org.webkit.CompressedAlphaData");
+}
+
+RetainPtr<CFArrayRef> compressedAlphaData(CMSampleBufferRef sampleBuffer)
+{
+    return dynamic_cf_cast<CFArrayRef>(PAL::CMGetAttachment(sampleBuffer, compressedAlphaDataAttachmentKey(), nullptr));
+}
+
 std::expected<RetainPtr<CMSampleBufferRef>, ASCIILiteral> toCMSampleBuffer(const MediaSamplesBlock& samples, CMFormatDescriptionRef formatDescription)
 {
     if (!samples.info())
@@ -931,6 +941,14 @@ std::expected<RetainPtr<CMSampleBufferRef>, ASCIILiteral> toCMSampleBuffer(const
             // Attach HDR10+ (aka SMPTE ST 2094-40) metadata, if present:
             if (samples[i].hdrMetadataType == PlatformMediaCapabilitiesHdrMetadataType::SmpteSt209440 && samples[i].hdrMetadata)
                 CFDictionarySetValue(attachments, PAL::kCMSampleAttachmentKey_HDR10PlusPerFrameData, Ref { *samples[i].hdrMetadata }->createCFData().get());
+        }
+        if (std::ranges::all_of(samples, [](auto& sample) { return !!sample.alphaData; })) {
+            RetainPtr alphaDatas = adoptCF(CFArrayCreateMutable(kCFAllocatorDefault, samples.size(), &kCFTypeArrayCallBacks));
+            for (auto& sample : samples) {
+                RetainPtr alphaData = RefPtr { sample.alphaData }->createCFData();
+                CFArrayAppendValue(alphaDatas, alphaData);
+            }
+            PAL::CMSetAttachment(rawSampleBuffer, compressedAlphaDataAttachmentKey(), alphaDatas, kCMAttachmentMode_ShouldPropagate);
         }
     } else if (samples.isAudio() && samples.discontinuity())
         PAL::CMSetAttachment(rawSampleBuffer, PAL::kCMSampleBufferAttachmentKey_FillDiscontinuitiesWithSilence, *samples.discontinuity() ? kCFBooleanTrue : kCFBooleanFalse, kCMAttachmentMode_ShouldPropagate);
@@ -1074,6 +1092,17 @@ UniqueRef<MediaSamplesBlock> samplesBlockFromCMSampleBuffer(CMSampleBufferRef cm
             return mediaSampleItemForSample(subSamples[index], MediaTime::zeroTime(), MediaTime::zeroTime());
         return mediaSampleItemForSample(subSamples[index], trims[index].first, trims[index].second);
     });
+    if (RetainPtr alphaDatas = compressedAlphaData(cmSample)) {
+        // toCMSampleBuffer() stores one alpha plane per sample; on a mismatch, drop the alpha rather than pair it with the wrong frame.
+        size_t alphaCount = CFArrayGetCount(alphaDatas);
+        bool countsMatch = alphaCount == samples.size();
+        if (!countsMatch)
+            RELEASE_LOG_ERROR(Media, "samplesBlockFromCMSampleBuffer: %zu alpha planes for %zu samples, dropping alpha", alphaCount, samples.size());
+        for (size_t index = 0; countsMatch && index < samples.size(); ++index) {
+            if (RetainPtr alphaData = dynamic_cf_cast<CFDataRef>(CFArrayGetValueAtIndex(alphaDatas, index)))
+                samples[index].alphaData = SharedBuffer::create(alphaData);
+        }
+    }
     return makeUniqueRef<MediaSamplesBlock>(info.get(), WTF::move(samples));
 }
 
