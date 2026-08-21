@@ -988,6 +988,18 @@ void DeleteSelectionCommand::removeRedundantBlocks()
     }
 }
 
+static bool isEmptyInlineEditingHost(const Position& position)
+{
+    RefPtr container = position.containerNode();
+    if (!container)
+        return false;
+    RefPtr editableRoot = container->rootEditableElement();
+    if (!editableRoot || editableRoot->hasChildNodes())
+        return false;
+    CheckedPtr renderer = editableRoot->renderer();
+    return renderer && renderer->isRenderInline();
+}
+
 void DeleteSelectionCommand::doApply()
 {
     // If selection has not been set to a custom selection when the command was created,
@@ -1061,7 +1073,8 @@ void DeleteSelectionCommand::doApply()
         // a different ending position.
         if (!m_endingPosition.containerNode() || !m_endingPosition.containerNode()->isConnected())
             return;
-        insertNodeAt(HTMLBRElement::create(document()), m_endingPosition);
+        if (!isEmptyInlineEditingHost(m_endingPosition))
+            insertNodeAt(HTMLBRElement::create(document()), m_endingPosition);
     }
 
     bool shouldRebalaceWhiteSpace = true;
