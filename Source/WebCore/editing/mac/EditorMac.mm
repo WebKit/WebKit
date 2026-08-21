@@ -219,7 +219,7 @@ static void getImage(Element& imageElement, RefPtr<Image>& image, CachedImage*& 
 
 void Editor::selectionWillChange()
 {
-    if (!hasComposition() || ignoreSelectionChanges() || document().selection().isNone() || !document().hasLivingRenderTree())
+    if (!hasComposition() || ignoreSelectionChanges() || document().selection().isNone() || document().renderTreeState() != Document::RenderTreeState::Built)
         return;
 
     cancelComposition();

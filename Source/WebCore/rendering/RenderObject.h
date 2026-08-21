@@ -1039,7 +1039,7 @@ public:
     virtual bool shouldPaintSelectionGaps() const { return false; }
 
     // When performing a global document tear-down, or when going into the back/forward cache, the renderer of the document is cleared.
-    bool renderTreeBeingDestroyed() const; // Defined in RenderObjectInlines.h
+    bool renderTreeBeingDestroyed() const; // Defined in RenderObjectDocument.h
 
     void destroy();
 

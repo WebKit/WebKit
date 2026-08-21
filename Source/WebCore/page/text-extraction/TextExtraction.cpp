@@ -2220,7 +2220,7 @@ static Expected<ResolvedMouseTarget, String> resolveMouseTarget(Node& targetNode
     if (!element || !element->isConnected())
         return makeUnexpected("Target element could not be found; uid may be stale"_s);
 
-    if (!element->document().hasLivingRenderTree())
+    if (element->document().renderTreeState() != Document::RenderTreeState::Built)
         return makeUnexpected("Target belongs to a detached document; uid may be stale"_s);
 
     {

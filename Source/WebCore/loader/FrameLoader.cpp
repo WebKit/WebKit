@@ -737,9 +737,9 @@ void FrameLoader::clear(RefPtr<Document>&& newDocument, bool clearWindowProperti
     if (neededClear && document->backForwardCacheState() != Document::InBackForwardCache) {
         document->cancelParsing();
         document->stopActiveDOMObjects();
-        bool hadLivingRenderTree = document->hasLivingRenderTree();
+        bool hadRenderTree = document->renderTreeState() == Document::RenderTreeState::Built;
         document->willBeRemovedFromFrame();
-        if (hadLivingRenderTree)
+        if (hadRenderTree)
             document->adjustFocusedNodeOnNodeRemoval(*document);
     }
 

@@ -214,7 +214,7 @@ LineLayout::~LineLayout()
     CheckedRef rootRenderer = flow();
     auto shouldPopulateBreakingPositionCache = [&] {
         auto mayHaveInvalidContent = isDamaged() || !m_inlineContent;
-        if (m_document->renderTreeBeingDestroyed() || mayHaveInvalidContent)
+        if (m_document->renderTreeState() == Document::RenderTreeState::BeingDestroyed || mayHaveInvalidContent)
             return false;
         return !m_inlineContentCache.inlineItems().isPopulatedFromCache();
     };

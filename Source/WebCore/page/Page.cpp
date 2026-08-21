@@ -655,7 +655,7 @@ void Page::destroyRenderTrees()
         if (!localFrame->document())
             continue;
         Ref document = *localFrame->document();
-        if (document->hasLivingRenderTree())
+        if (document->renderTreeState() == Document::RenderTreeState::Built)
             document->destroyRenderTree();
     }
 }

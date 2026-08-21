@@ -153,7 +153,7 @@ void LegacyRenderSVGResourceContainer::markAllClientLayersForInvalidation()
         return;
 
     Ref document = (*m_clientLayers.begin())->renderer().document();
-    if (!document->view() || document->renderTreeBeingDestroyed())
+    if (!document->view() || document->renderTreeState() == Document::RenderTreeState::BeingDestroyed)
         return;
 
     auto inLayout = document->view()->layoutContext().isInLayout();

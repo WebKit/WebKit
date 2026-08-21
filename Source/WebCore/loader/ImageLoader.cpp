@@ -212,7 +212,7 @@ void ImageLoader::updateFromElement(RelevantMutation relevantMutation)
     // down the raw HTML parsing case by loading images we don't intend to display.
     Ref element = this->element();
     Ref document = element->document();
-    if (!document->hasLivingRenderTree())
+    if (document->renderTreeState() != Document::RenderTreeState::Built)
         return;
 
     auto attr = element->imageSourceURL();
@@ -685,7 +685,7 @@ void ImageLoader::dispatchPendingBeforeLoadEvent()
         return;
     if (!m_image)
         return;
-    if (!element().document().hasLivingRenderTree())
+    if (element().document().renderTreeState() != Document::RenderTreeState::Built)
         return;
     m_hasPendingBeforeLoadEvent = false;
     if (!element().isConnected())
@@ -700,7 +700,7 @@ void ImageLoader::dispatchPendingLoadEvent()
     if (!m_image)
         return;
     m_hasPendingLoadEvent = false;
-    if (element().document().hasLivingRenderTree())
+    if (element().document().renderTreeState() == Document::RenderTreeState::Built)
         dispatchLoadEvent();
 
     // Only consider updating the protection ref-count of the Element immediately before returning
@@ -714,7 +714,7 @@ void ImageLoader::dispatchPendingErrorEvent()
         return;
     m_hasPendingErrorEvent = false;
     loadEventSender().cancelEvent(*this, eventNames().errorEvent);
-    if (element().document().hasLivingRenderTree())
+    if (element().document().renderTreeState() == Document::RenderTreeState::Built)
         protect(element())->dispatchEvent(Event::create(eventNames().errorEvent, Event::CanBubble::No, Event::IsCancelable::No));
 
     // Only consider updating the protection ref-count of the Element immediately before returning

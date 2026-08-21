@@ -927,7 +927,7 @@ void Document::removedLastRef()
 
     // FIXME: This condition is usually true, and can probably be unconditional.
     if (m_referencingNodeCount) {
-        RELEASE_ASSERT(!hasLivingRenderTree());
+        RELEASE_ASSERT(renderTreeState() != RenderTreeState::Built);
         // We must make sure not to be retaining any of our children through
         // these extra pointers or we will create a reference cycle.
         m_focusedElement = nullptr;
@@ -2285,7 +2285,7 @@ RefPtr<Range> Document::caretRangeFromPoint(int x, int y, HitTestSource source)
 
 std::optional<BoundaryPoint> Document::caretPositionFromPoint(const LayoutPoint& clientPoint, HitTestSource source)
 {
-    if (!hasLivingRenderTree())
+    if (renderTreeState() != RenderTreeState::Built)
         return std::nullopt;
 
     LayoutPoint localPoint;
@@ -2316,7 +2316,7 @@ std::optional<BoundaryPoint> Document::caretPositionFromPoint(const LayoutPoint&
 
 RefPtr<CaretPosition> Document::caretPositionFromPoint(double x, double y, CaretPositionFromPointOptions options)
 {
-    if (!hasLivingRenderTree())
+    if (renderTreeState() != RenderTreeState::Built)
         return nullptr;
 
     LayoutPoint localPoint;
@@ -2930,7 +2930,7 @@ void Document::resolveStyle(ResolveStyleType type)
 
 void Document::updateTextRenderer(Text& text, unsigned offsetOfReplacedText, unsigned lengthOfReplacedText)
 {
-    if (!hasLivingRenderTree())
+    if (renderTreeState() != RenderTreeState::Built)
         return;
 
     ensurePendingRenderTreeUpdate().addText(text, { offsetOfReplacedText, lengthOfReplacedText, std::nullopt });
@@ -2938,7 +2938,7 @@ void Document::updateTextRenderer(Text& text, unsigned offsetOfReplacedText, uns
 
 void Document::updateSVGRenderer(SVGElement& element, Style::SVGRendererUpdateType kind)
 {
-    if (!hasLivingRenderTree())
+    if (renderTreeState() != RenderTreeState::Built)
         return;
 
     // TransformAttributeOnly bypasses Style::Update so it does not flip needsStyleRecalc()
@@ -2963,7 +2963,7 @@ void Document::updateSVGRenderer(SVGElement& element, Style::SVGRendererUpdateTy
 
 Style::Update& Document::ensurePendingRenderTreeUpdate()
 {
-    ASSERT(hasLivingRenderTree());
+    ASSERT(renderTreeState() == RenderTreeState::Built);
 
     if (!m_pendingRenderTreeUpdate)
         m_pendingRenderTreeUpdate = makeUnique<Style::Update>(*this);
@@ -3193,7 +3193,7 @@ std::unique_ptr<Style::ComputedStyle> Document::styleForElementIgnoringPendingSt
 
     std::optional<Style::ComputedStyle> updatedDocumentStyle;
     CheckedPtr parentStyle = parentStyleArg;
-    if (!parentStyle && m_needsFullStyleRebuild && hasLivingRenderTree()) {
+    if (!parentStyle && m_needsFullStyleRebuild && renderTreeState() == RenderTreeState::Built) {
         updatedDocumentStyle.emplace(Style::resolveForDocument(*this));
         parentStyle = &*updatedDocumentStyle;
     }
@@ -3466,6 +3466,7 @@ void Document::createRenderTree()
 
     // FIXME: It would be better if we could pass the resolved document style directly here.
     m_renderView = createRenderer<RenderView>(*this, Style::ComputedStyle::create());
+    m_renderTreeState = RenderTreeState::Built;
     auto* renderView = m_renderView.get();
     Node::setRenderer(renderView);
 
@@ -3487,7 +3488,7 @@ void Document::didBecomeCurrentDocumentInFrame()
     if (!m_frame)
         return;
 
-    if (!hasLivingRenderTree())
+    if (renderTreeState() != RenderTreeState::Built)
         createRenderTree();
     if (!m_frame)
         return;
@@ -3570,7 +3571,7 @@ void Document::detachFromCachedFrame(CachedFrameBase& cachedFrame)
 
 void Document::destroyRenderTree()
 {
-    ASSERT(hasLivingRenderTree());
+    ASSERT(renderTreeState() == RenderTreeState::Built);
     ASSERT(frame());
     ASSERT(frame()->document() == this);
     ASSERT(page());
@@ -3578,7 +3579,7 @@ void Document::destroyRenderTree()
     // Prevent Widget tree changes from committing until the RenderView is dead and gone.
     WidgetHierarchyUpdatesSuspensionScope suspendWidgetHierarchyUpdates;
 
-    SetForScope change(m_renderTreeBeingDestroyed, true);
+    auto scope = SetForScope { m_renderTreeState, RenderTreeState::BeingDestroyed, RenderTreeState::NotBuilt };
 
     if (isTopDocument())
         clearAXObjectCache();
@@ -3665,7 +3666,7 @@ void Document::willBeRemovedFromFrame()
 
     styleScope().clearResolver();
 
-    if (hasLivingRenderTree())
+    if (renderTreeState() == RenderTreeState::Built)
         destroyRenderTree();
 
     if (auto* pluginDocument = dynamicDowncast<PluginDocument>(*this))
@@ -4406,7 +4407,7 @@ void Document::implicitClose()
     }
 
 #if PLATFORM(COCOA) || PLATFORM(WIN) || PLATFORM(GTK)
-    if (frame && hasLivingRenderTree() && AXObjectCache::accessibilityEnabled()) {
+    if (frame && renderTreeState() == RenderTreeState::Built && AXObjectCache::accessibilityEnabled()) {
         // The AX cache may have been cleared at this point, but we need to make sure it contains an
         // AX object to send the notification to. getOrCreate will make sure that an valid AX object
         // exists in the cache (we ignore the return value because we don't need it here). This is
@@ -5635,7 +5636,7 @@ void Document::processApplicationManifest(const ApplicationManifest& application
 
 MouseEventWithHitTestResults Document::prepareMouseEvent(const HitTestRequest& request, const DoublePoint& documentPoint, const PlatformMouseEvent& event)
 {
-    if (!hasLivingRenderTree())
+    if (renderTreeState() != RenderTreeState::Built)
         return MouseEventWithHitTestResults(event, HitTestResult(DoublePoint()));
 
     HitTestResult result(documentPoint);
@@ -8065,7 +8066,7 @@ Document* Document::mainFrameDocument() const
 
     // FIXME: This special-casing avoids incorrectly determined top documents during the process
     // of AXObjectCache teardown or notification posting for cached or being-destroyed documents.
-    if (backForwardCacheState() == NotInBackForwardCache && !m_renderTreeBeingDestroyed) {
+    if (backForwardCacheState() == NotInBackForwardCache && renderTreeState() != RenderTreeState::BeingDestroyed) {
         Document* localMainDocument = nullptr;
         if (RefPtr localMainFrame = this->localMainFrame())
             localMainDocument = localMainFrame->document();

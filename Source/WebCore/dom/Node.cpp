@@ -880,7 +880,7 @@ static Node::Editability NODELETE computeEditabilityFromComputedStyle(const Styl
 
 Node::Editability Node::computeEditabilityWithStyle(const Style::ComputedStyle* incomingStyle, UserSelectAllTreatment treatment, ShouldUpdateStyle shouldUpdateStyle) const
 {
-    if (!document().hasLivingRenderTree() || isPseudoElement())
+    if (document().renderTreeState() != Document::RenderTreeState::Built || isPseudoElement())
         return Editability::ReadOnly;
 
     Ref document = this->document();
@@ -3016,7 +3016,7 @@ void Node::setUsesEffectiveTextDirection(bool value)
 
 bool Node::inRenderedDocument() const
 {
-    return isConnected() && document().hasLivingRenderTree();
+    return isConnected() && document().renderTreeState() == Document::RenderTreeState::Built;
 }
 
 void Node::notifyInspectorOfRendererChange()

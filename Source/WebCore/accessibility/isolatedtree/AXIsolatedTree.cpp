@@ -1050,7 +1050,7 @@ void AXIsolatedTree::updateChildren(AccessibilityObject& axObject, ResolveNodeCh
         return;
     }
 
-    if (!axObject.document() || !axObject.document()->hasLivingRenderTree())
+    if (!axObject.document() || axObject.document()->renderTreeState() != Document::RenderTreeState::Built)
         return;
 
     // We're about to do a lot of work, so start the attribute cache.

@@ -447,7 +447,7 @@ void AccessibilityScrollView::addChildren()
 AccessibilityObject* AccessibilityScrollView::webAreaObject() const
 {
     RefPtr document = this->document();
-    if (!document || !document->hasLivingRenderTree() || m_remoteFrame)
+    if (!document || document->renderTreeState() != Document::RenderTreeState::Built || m_remoteFrame)
         return nullptr;
 
     if (CheckedPtr cache = axObjectCache())

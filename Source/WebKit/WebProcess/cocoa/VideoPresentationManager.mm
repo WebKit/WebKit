@@ -74,7 +74,7 @@ using namespace WebCore;
 static FloatRect inlineVideoFrame(HTMLVideoElement& element)
 {
     Ref document = element.document();
-    if (!document->hasLivingRenderTree() || document->activeDOMObjectsAreStopped())
+    if (document->renderTreeState() != Document::RenderTreeState::Built || document->activeDOMObjectsAreStopped())
         return { };
 
     document->updateLayout(LayoutOptions::IgnorePendingStylesheets);

@@ -52,7 +52,7 @@ namespace Style {
 
 Style::ComputedStyle resolveForDocument(const Document& document)
 {
-    ASSERT(document.hasLivingRenderTree());
+    ASSERT(document.renderTreeState() == Document::RenderTreeState::Built);
 
     CheckedRef renderView = *document.renderView();
 

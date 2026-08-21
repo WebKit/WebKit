@@ -146,7 +146,7 @@ CheckedRef<Layout::ElementBox> BoxTreeUpdater::build()
 
 void BoxTreeUpdater::tearDown()
 {
-    if (m_document->renderTreeBeingDestroyed())
+    if (m_document->renderTreeState() == Document::RenderTreeState::BeingDestroyed)
         return rootLayoutBox().destroyChildren();
 
     Vector<CheckedRef<Layout::Box>> boxesToDetach;

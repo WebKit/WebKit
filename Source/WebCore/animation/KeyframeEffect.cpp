@@ -2499,7 +2499,7 @@ void KeyframeEffect::applyPendingAcceleratedActions()
         case AcceleratedAction::Stop:
             ASSERT(document());
             renderer->animationFinished(m_blendingKeyframes);
-            if (!document()->renderTreeBeingDestroyed())
+            if (document()->renderTreeState() != Document::RenderTreeState::BeingDestroyed)
                 protect(m_target)->invalidateStyleAndLayerComposition();
             m_runningAccelerated = canBeAccelerated() ? RunningAccelerated::NotStarted : RunningAccelerated::Prevented;
             break;

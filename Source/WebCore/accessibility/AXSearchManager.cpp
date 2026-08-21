@@ -223,7 +223,7 @@ static void appendAccessibilityObject(Ref<AXCoreObject> object, AccessibilityObj
         if (!frameView)
             return;
         RefPtr document = frameView->frame().document();
-        if (!document || !document->hasLivingRenderTree())
+        if (!document || document->renderTreeState() != Document::RenderTreeState::Built)
             return;
 
         CheckedPtr cache = axObject->axObjectCache();

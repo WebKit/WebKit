@@ -1221,7 +1221,7 @@ bool MediaElementSession::requiresPlaybackTargetRouteMonitoring() const
 static bool isElementMainContentForPurposesOfAutoplay(const HTMLMediaElement& element, bool shouldHitTestMainFrame)
 {
     Ref document = element.document();
-    if (!document->hasLivingRenderTree() || document->activeDOMObjectsAreStopped() || element.isSuspended() || !element.hasAudio() || !element.hasVideo())
+    if (document->renderTreeState() != Document::RenderTreeState::Built || document->activeDOMObjectsAreStopped() || element.isSuspended() || !element.hasAudio() || !element.hasVideo())
         return false;
 
     // Elements which have not yet been laid out, or which are not yet in the DOM, cannot be main content.

@@ -839,8 +839,13 @@ public:
     const Style::ComputedStyle& initialStyle() const LIFETIME_BOUND;
     void invalidateCachedInitialStyle();
 
-    bool renderTreeBeingDestroyed() const { return m_renderTreeBeingDestroyed; }
-    bool hasLivingRenderTree() const { return renderView() && !renderTreeBeingDestroyed(); }
+    enum class RenderTreeState : uint8_t {
+        NotBuilt,
+        Built,
+        BeingDestroyed,
+    };
+    RenderTreeState renderTreeState() const { return m_renderTreeState; }
+
     void updateRenderTree(std::unique_ptr<Style::Update> styleUpdate);
 
     bool updateLayoutIfDimensionsOutOfDate(Element&, OptionSet<DimensionsCheck> = { DimensionsCheck::Width, DimensionsCheck::Height }, OptionSet<LayoutOptions> = { });
@@ -2799,7 +2804,7 @@ private:
     bool m_sawElementsInKnownNamespaces { false };
     bool m_isSrcdocDocument { false };
 
-    bool m_renderTreeBeingDestroyed { false };
+    RenderTreeState m_renderTreeState { RenderTreeState::NotBuilt };
     bool m_hasPreparedForDestruction { false };
 
     bool m_hasStyleWithViewportUnits { false };

@@ -317,7 +317,7 @@ void LocalFrame::setView(RefPtr<LocalFrameView>&& view)
     
     m_eventHandler->clear();
 
-    RELEASE_ASSERT(!m_doc || !m_doc->hasLivingRenderTree());
+    RELEASE_ASSERT(!m_doc || m_doc->renderTreeState() != Document::RenderTreeState::Built);
 
     m_view = WTF::move(view);
     

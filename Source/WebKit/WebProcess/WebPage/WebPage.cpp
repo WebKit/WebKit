@@ -7779,7 +7779,7 @@ void WebPage::didChangeSelection(LocalFrame& frame)
         return;
 
     callOnMainRunLoop([protectedThis = Ref { *this }, frame = Ref { frame }] {
-        if (!frame->document() || !frame->document()->hasLivingRenderTree() || frame->selection().isNone()) [[unlikely]]
+        if (!frame->document() || frame->document()->renderTreeState() != Document::RenderTreeState::Built || frame->selection().isNone()) [[unlikely]]
             return;
 
         protectedThis->preemptivelySendAutocorrectionContext();
@@ -8106,7 +8106,7 @@ void WebPage::didEndUserTriggeredSelectionChanges()
 void WebPage::discardedComposition(const Document& document)
 {
     send(Messages::WebPageProxy::CompositionWasCanceled());
-    if (!document.hasLivingRenderTree())
+    if (document.renderTreeState() != Document::RenderTreeState::Built)
         return;
 
     sendEditorStateUpdate();
@@ -8601,7 +8601,7 @@ void WebPage::sendEditorStateUpdate()
     if (!frame)
         return;
 
-    if (frame->editor().ignoreSelectionChanges() || !frame->document() || !frame->document()->hasLivingRenderTree())
+    if (frame->editor().ignoreSelectionChanges() || !frame->document() || frame->document()->renderTreeState() != Document::RenderTreeState::Built)
         return;
 
     m_pendingEditorStateUpdateStatus = PendingEditorStateUpdateStatus::NotScheduled;
