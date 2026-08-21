@@ -38,15 +38,22 @@ class PipeWireCaptureDeviceManager : public RefCounted<PipeWireCaptureDeviceMana
 public:
     static RefPtr<PipeWireCaptureDeviceManager> create(OptionSet<CaptureDevice::DeviceType>);
     PipeWireCaptureDeviceManager(OptionSet<CaptureDevice::DeviceType>);
+    ~PipeWireCaptureDeviceManager();
 
     void computeCaptureDevices(CompletionHandler<void()>&&);
     const Vector<CaptureDevice>& captureDevices() const LIFETIME_BOUND { return m_devices; }
     CaptureSourceOrError createCaptureSource(const CaptureDevice&, MediaDeviceHashSalts&&, const MediaConstraints*);
 
 private:
+    void provisionDevices(int pipewireFd);
+    void notifyDevicesComputed();
+
     OptionSet<CaptureDevice::DeviceType> m_deviceTypes;
     GRefPtr<GstDeviceProvider> m_pipewireDeviceProvider;
     Vector<CaptureDevice> m_devices;
+    std::optional<int> m_pipewireFd;
+    RefPtr<DesktopPortalCamera> m_portal;
+    Vector<CompletionHandler<void()>> m_pendingDeviceCallbacks;
 };
 
 } // namespace WebCore

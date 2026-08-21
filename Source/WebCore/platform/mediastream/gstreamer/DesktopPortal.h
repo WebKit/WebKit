@@ -38,19 +38,20 @@ class DesktopPortal : public RefCounted<DesktopPortal> {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(DesktopPortal);
 public:
     DesktopPortal(ASCIILiteral, GRefPtr<GDBusProxy>&&);
-    virtual ~DesktopPortal() = default;
+    virtual ~DesktopPortal();
 
     GRefPtr<GVariant> getProperty(ASCIILiteral name);
 
     using ResponseCallback = CompletionHandler<void(GVariant*)>;
     void waitResponseSignal(CStringView objectPath, ResponseCallback&& = [](auto*) { });
 
-    void notifyResponse(GVariant* parameters) { m_currentResponseCallback(parameters); }
+    void notifyResponse(GVariant* parameters);
 
 protected:
     ASCIILiteral m_interfaceName;
     GRefPtr<GDBusProxy> m_proxy;
     ResponseCallback m_currentResponseCallback;
+    unsigned m_responseSignalId { 0 };
 };
 
 class DesktopPortalCamera : public DesktopPortal {

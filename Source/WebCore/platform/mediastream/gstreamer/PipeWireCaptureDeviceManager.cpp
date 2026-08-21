@@ -25,6 +25,8 @@
 #include "GStreamerCaptureDeviceManager.h"
 #include "GStreamerVideoCaptureSource.h"
 #include "MockRealtimeMediaSourceCenter.h"
+#include <errno.h>
+#include <unistd.h>
 #include <wtf/Scope.h>
 
 namespace WebCore {
@@ -47,6 +49,43 @@ PipeWireCaptureDeviceManager::PipeWireCaptureDeviceManager(OptionSet<CaptureDevi
     });
 }
 
+PipeWireCaptureDeviceManager::~PipeWireCaptureDeviceManager()
+{
+    notifyDevicesComputed();
+    m_portal = nullptr;
+}
+
+void PipeWireCaptureDeviceManager::notifyDevicesComputed()
+{
+    auto callbacks = std::exchange(m_pendingDeviceCallbacks, { });
+    for (auto& callback : callbacks)
+        callback();
+}
+
+void PipeWireCaptureDeviceManager::provisionDevices(int fd)
+{
+    // pw_context_connect_fd() closes the socket it is given when it disconnects, so the provider
+    // gets a copy each time and the one the portal handed over stays good for the next enumeration.
+    int providerFd = dup(fd);
+    if (providerFd == -1) {
+        GST_WARNING("Unable to duplicate the PipeWire remote fd: %s", g_strerror(errno));
+        return;
+    }
+
+    g_object_set(m_pipewireDeviceProvider.get(), "fd", providerFd, nullptr);
+    gst_device_provider_start(m_pipewireDeviceProvider.get());
+
+    GList* devices = gst_device_provider_get_devices(m_pipewireDeviceProvider.get());
+    GST_DEBUG("Provisioning VideoCaptureDeviceManager with %u device(s).", g_list_length(devices));
+    auto& manager = GStreamerVideoCaptureDeviceManager::singleton();
+    while (devices) {
+        manager.addDevice(adoptGRef(GST_DEVICE_CAST(devices->data)));
+        devices = g_list_delete_link(devices, devices);
+    }
+
+    gst_device_provider_stop(m_pipewireDeviceProvider.get());
+}
+
 void PipeWireCaptureDeviceManager::computeCaptureDevices(CompletionHandler<void()>&& callback)
 {
     if (MockRealtimeMediaSourceCenter::mockRealtimeMediaSourceCenterEnabled()) {
@@ -54,47 +93,46 @@ void PipeWireCaptureDeviceManager::computeCaptureDevices(CompletionHandler<void(
         return;
     }
 
-#if PLATFORM(WPE)
-    callback();
-    return;
-#endif
     if (!m_pipewireDeviceProvider || !gstObjectHasProperty(GST_OBJECT_CAST(m_pipewireDeviceProvider.get()), "fd"_s)) {
         GST_WARNING("PipeWire Device Provider is missing or too old. Please install PipeWire >= 0.3.64.");
         callback();
         return;
     }
 
-    auto portal = DesktopPortalCamera::create();
-
-    GST_DEBUG("Checking with Camera portal");
-    if (!portal || !portal->isCameraPresent()) {
-        GST_DEBUG("Portal not present or has no camera");
+    // Every getUserMedia() and enumerateDevices() call ends up here, and the portal raises a dialog
+    // for each request it is sent, so the remote is opened once and kept.
+    if (m_pipewireFd) {
+        provisionDevices(*m_pipewireFd);
         callback();
         return;
     }
 
+    m_pendingDeviceCallbacks.append(WTF::move(callback));
+    if (m_pendingDeviceCallbacks.size() > 1) {
+        GST_DEBUG("Camera portal request already in flight");
+        return;
+    }
+
+    m_portal = DesktopPortalCamera::create();
+
+    GST_DEBUG("Checking with Camera portal");
+    if (!m_portal || !m_portal->isCameraPresent()) {
+        GST_DEBUG("Portal not present or has no camera");
+        notifyDevicesComputed();
+        return;
+    }
+
     GST_DEBUG("Attempting to access the camera");
-    portal->accessCamera([this, callback = WTF::move(callback)](auto fd) mutable {
-        if (!fd) {
+    m_portal->accessCamera([this](auto fd) mutable {
+        if (!fd)
             GST_DEBUG("Camera access unavailable");
-            callback();
-            return;
+        else {
+            GST_DEBUG("FD from portal: %d", *fd);
+            m_pipewireFd = *fd;
+            provisionDevices(*fd);
         }
 
-        GST_DEBUG("FD from portal: %d", *fd);
-        g_object_set(m_pipewireDeviceProvider.get(), "fd", *fd, nullptr);
-        gst_device_provider_start(m_pipewireDeviceProvider.get());
-
-        GList* devices = gst_device_provider_get_devices(m_pipewireDeviceProvider.get());
-        GST_DEBUG("Provisioning VideoCaptureDeviceManager with %u device(s).", g_list_length(devices));
-        auto& manager = GStreamerVideoCaptureDeviceManager::singleton();
-        while (devices) {
-            manager.addDevice(adoptGRef(GST_DEVICE_CAST(devices->data)));
-            devices = g_list_delete_link(devices, devices);
-        }
-
-        gst_device_provider_stop(m_pipewireDeviceProvider.get());
-        callback();
+        notifyDevicesComputed();
     });
 }
 
