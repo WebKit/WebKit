@@ -478,6 +478,7 @@ public:
 #endif
 
     virtual void doneWithKeyEvent(const NativeWebKeyboardEvent&, bool wasEventHandled) = 0;
+    virtual void doneWithWheelEvent(const NativeWebWheelEvent&, bool wasEventHandled) { }
 #if ENABLE(TOUCH_EVENTS)
     virtual void doneWithTouchEvent(const WebTouchEvent&, bool wasEventHandled) = 0;
 #endif

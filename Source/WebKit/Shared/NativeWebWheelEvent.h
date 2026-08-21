@@ -44,6 +44,7 @@ typedef union _GdkEvent GdkEvent;
 #endif
 
 #if PLATFORM(WPE) && ENABLE(WPE_PLATFORM)
+#include <wpe/GRefPtrWPE.h>
 typedef struct _WPEEvent WPEEvent;
 #endif
 
@@ -83,6 +84,8 @@ public:
     NSEvent* nativeEvent() const { return m_nativeEvent.get(); }
 #elif PLATFORM(GTK)
     GdkEvent* nativeEvent() const { return m_nativeEvent.get(); }
+#elif PLATFORM(WPE) && ENABLE(WPE_PLATFORM)
+    WPEEvent* nativeEvent() const { return m_nativeEvent.get(); }
 #elif PLATFORM(WIN)
     const MSG* nativeEvent() const LIFETIME_BOUND { return &m_nativeEvent; }
 #else
@@ -96,6 +99,8 @@ private:
     GRefPtr<GdkEvent> m_nativeEvent;
 #elif PLATFORM(GTK)
     GUniquePtr<GdkEvent> m_nativeEvent;
+#elif PLATFORM(WPE) && ENABLE(WPE_PLATFORM)
+    GRefPtr<WPEEvent> m_nativeEvent;
 #elif PLATFORM(WIN)
     MSG m_nativeEvent;
 #endif

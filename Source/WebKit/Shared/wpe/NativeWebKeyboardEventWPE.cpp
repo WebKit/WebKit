@@ -34,6 +34,7 @@ namespace WebKit {
 
 NativeWebKeyboardEvent::NativeWebKeyboardEvent(WPEEvent* event, const String& text, bool isAutorepeat)
     : WebKeyboardEvent(WebEventFactory::createWebKeyboardEvent(event, text, isAutorepeat))
+    , m_nativeEvent(event)
 {
 }
 
