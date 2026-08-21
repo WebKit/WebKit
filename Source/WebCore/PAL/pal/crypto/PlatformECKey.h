@@ -50,9 +50,9 @@ public:
 
     CryptoOperationReturnValue deriveBits(const PlatformECKey& publicKey) const;
 
-    CryptoOperationReturnValue sign(SpanConstUInt8 message, CryptoDigestHashFunction) const;
+    CryptoOperationReturnValue sign(const VectorUInt8& message, CryptoDigestHashFunction) const;
 
-    CryptoOperationReturnValue doVerify(SpanConstUInt8 message, SpanConstUInt8 signature, CryptoDigestHashFunction) const;
+    CryptoOperationReturnValue doVerify(const VectorUInt8& message, const VectorUInt8& signature, CryptoDigestHashFunction) const;
 
     PlatformECKey toPub() const;
 
@@ -60,11 +60,11 @@ public:
 
     CryptoOperationReturnValue exportX963Private() const;
 
-    static std::optional<PlatformECKey> importX963Pub(SpanConstUInt8, NamedCurve);
+    static std::optional<PlatformECKey> importX963Pub(const VectorUInt8&, NamedCurve);
 
-    static std::optional<PlatformECKey> importX963Private(SpanConstUInt8, NamedCurve);
+    static std::optional<PlatformECKey> importX963Private(const VectorUInt8&, NamedCurve);
 
-    static std::optional<PlatformECKey> importCompressedPub(SpanConstUInt8, NamedCurve);
+    static std::optional<PlatformECKey> importCompressedPub(const VectorUInt8&, size_t offset, NamedCurve);
 
 private:
     PlatformECKey(const pal::ECKey&);

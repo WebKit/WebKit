@@ -52,7 +52,7 @@ std::optional<CryptoKeyPair> CryptoKeyOKP::platformGeneratePair(CryptoAlgorithmI
     case CryptoAlgorithmIdentifier::Ed25519: {
         auto privateKeyPlatform = PAL::Crypto::EdKey::generatePrivateKey(PAL::Crypto::EdSigningAlgorithm::ED25519);
         RELEASE_ASSERT(privateKeyPlatform.size() == 32);
-        auto publicKeyPlatformRv = PAL::Crypto::EdKey::privateToPublic(PAL::Crypto::EdSigningAlgorithm::ED25519, privateKeyPlatform.span());
+        auto publicKeyPlatformRv = PAL::Crypto::EdKey::privateToPublic(PAL::Crypto::EdSigningAlgorithm::ED25519, privateKeyPlatform);
         if (publicKeyPlatformRv.errorCode != PAL::Crypto::Error::Success)
             return std::nullopt;
         bool isPublicKeyExtractable = true;
@@ -65,7 +65,7 @@ std::optional<CryptoKeyPair> CryptoKeyOKP::platformGeneratePair(CryptoAlgorithmI
     case CryptoAlgorithmIdentifier::X25519: {
         auto privateKeyPlatform = PAL::Crypto::EdKey::generatePrivateKeyKeyAgreement(PAL::Crypto::EdKeyAgreementAlgorithm::X25519);
         RELEASE_ASSERT(privateKeyPlatform.size() == 32);
-        auto publicKeyPlatformRv = PAL::Crypto::EdKey::privateToPublicKeyAgreement(PAL::Crypto::EdKeyAgreementAlgorithm::X25519, privateKeyPlatform.span());
+        auto publicKeyPlatformRv = PAL::Crypto::EdKey::privateToPublicKeyAgreement(PAL::Crypto::EdKeyAgreementAlgorithm::X25519, privateKeyPlatform);
         if (publicKeyPlatformRv.errorCode != PAL::Crypto::Error::Success)
             return std::nullopt;
         bool isPublicKeyExtractable = true;
@@ -91,9 +91,9 @@ bool CryptoKeyOKP::platformCheckPairedKeys(CryptoAlgorithmIdentifier identifier,
 
     switch (identifier) {
     case CryptoAlgorithmIdentifier::Ed25519:
-        return PAL::Crypto::EdKey::validateKeyPair(PAL::Crypto::EdSigningAlgorithm::ED25519, privateKey.span(), publicKey.span());
+        return PAL::Crypto::EdKey::validateKeyPair(PAL::Crypto::EdSigningAlgorithm::ED25519, privateKey, publicKey);
     case CryptoAlgorithmIdentifier::X25519:
-        return PAL::Crypto::EdKey::validateKeyPairKeyAgreement(PAL::Crypto::EdKeyAgreementAlgorithm::X25519, privateKey.span(), publicKey.span());
+        return PAL::Crypto::EdKey::validateKeyPairKeyAgreement(PAL::Crypto::EdKeyAgreementAlgorithm::X25519, privateKey, publicKey);
     default:
         RELEASE_ASSERT_NOT_REACHED();
         return false;
@@ -357,12 +357,12 @@ String CryptoKeyOKP::generateJwkX() const
     ASSERT(type() == CryptoKeyType::Private);
     switch (namedCurve()) {
     case NamedCurve::Ed25519: {
-        auto publicKeyPlatformRv = PAL::Crypto::EdKey::privateToPublic(PAL::Crypto::EdSigningAlgorithm::ED25519, platformKey().span());
+        auto publicKeyPlatformRv = PAL::Crypto::EdKey::privateToPublic(PAL::Crypto::EdSigningAlgorithm::ED25519, platformKey());
         RELEASE_ASSERT(publicKeyPlatformRv.errorCode == PAL::Crypto::Error::Success);
         return base64URLEncodeToString(publicKeyPlatformRv.result.span());
     }
     case NamedCurve::X25519: {
-        auto publicKeyPlatformRv = PAL::Crypto::EdKey::privateToPublicKeyAgreement(PAL::Crypto::EdKeyAgreementAlgorithm::X25519, platformKey().span());
+        auto publicKeyPlatformRv = PAL::Crypto::EdKey::privateToPublicKeyAgreement(PAL::Crypto::EdKeyAgreementAlgorithm::X25519, platformKey());
         RELEASE_ASSERT(publicKeyPlatformRv.errorCode == PAL::Crypto::Error::Success);
         return base64URLEncodeToString(publicKeyPlatformRv.result.span());
     }

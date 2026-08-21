@@ -33,12 +33,12 @@ VectorUInt8 generatePrivateKey(EdSigningAlgorithm);
 
 VectorUInt8 generatePrivateKeyKeyAgreement(EdKeyAgreementAlgorithm);
 
-CryptoOperationReturnValue privateToPublic(EdSigningAlgorithm, SpanConstUInt8 privateKey);
+CryptoOperationReturnValue privateToPublic(EdSigningAlgorithm, const VectorUInt8& privateKey);
 
-CryptoOperationReturnValue privateToPublicKeyAgreement(EdKeyAgreementAlgorithm, SpanConstUInt8 privateKey);
+CryptoOperationReturnValue privateToPublicKeyAgreement(EdKeyAgreementAlgorithm, const VectorUInt8& privateKey);
 
-bool validateKeyPair(EdSigningAlgorithm, SpanConstUInt8 privateKey, SpanConstUInt8 publicKey);
+bool validateKeyPair(EdSigningAlgorithm, const VectorUInt8& privateKey, const VectorUInt8& publicKey);
 
-bool validateKeyPairKeyAgreement(EdKeyAgreementAlgorithm, SpanConstUInt8 privateKey, SpanConstUInt8 publicKey);
+bool validateKeyPairKeyAgreement(EdKeyAgreementAlgorithm, const VectorUInt8& privateKey, const VectorUInt8& publicKey);
 
 } // namespace PAL::Crypto::EdKey

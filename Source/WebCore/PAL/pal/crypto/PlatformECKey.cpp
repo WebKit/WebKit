@@ -52,14 +52,14 @@ CryptoOperationReturnValue PlatformECKey::deriveBits(const PlatformECKey& public
     return m_key->deriveBits(publicKey.m_key.get());
 }
 
-CryptoOperationReturnValue PlatformECKey::sign(SpanConstUInt8 message, CryptoDigestHashFunction hashFunction) const
+CryptoOperationReturnValue PlatformECKey::sign(const VectorUInt8& message, CryptoDigestHashFunction hashFunction) const
 {
-    return m_key->sign(escapableSpan(message), hashFunction);
+    return m_key->sign(escapableSpan(borrow(message)->span()), hashFunction);
 }
 
-CryptoOperationReturnValue PlatformECKey::doVerify(SpanConstUInt8 message, SpanConstUInt8 signature, CryptoDigestHashFunction hashFunction) const
+CryptoOperationReturnValue PlatformECKey::doVerify(const VectorUInt8& message, const VectorUInt8& signature, CryptoDigestHashFunction hashFunction) const
 {
-    return m_key->verify(escapableSpan(message), escapableSpan(signature), hashFunction);
+    return m_key->verify(escapableSpan(borrow(message)->span()), escapableSpan(borrow(signature)->span()), hashFunction);
 }
 
 PlatformECKey PlatformECKey::toPub() const
@@ -77,27 +77,27 @@ CryptoOperationReturnValue PlatformECKey::exportX963Private() const
     return m_key->exportX963Private();
 }
 
-std::optional<PlatformECKey> PlatformECKey::importX963Pub(SpanConstUInt8 data, NamedCurve curve)
+std::optional<PlatformECKey> PlatformECKey::importX963Pub(const VectorUInt8& data, NamedCurve curve)
 {
-    auto result = pal::ECKey::importX963Pub(escapableSpan(data), curve);
+    auto result = pal::ECKey::importX963Pub(escapableSpan(borrow(data)->span()), curve);
     if (result)
         return { { result.get() } };
 
     return std::nullopt;
 }
 
-std::optional<PlatformECKey> PlatformECKey::importX963Private(SpanConstUInt8 data, NamedCurve curve)
+std::optional<PlatformECKey> PlatformECKey::importX963Private(const VectorUInt8& data, NamedCurve curve)
 {
-    auto result = pal::ECKey::importX963Private(escapableSpan(data), curve);
+    auto result = pal::ECKey::importX963Private(escapableSpan(borrow(data)->span()), curve);
     if (result)
         return { { result.get() } };
 
     return std::nullopt;
 }
 
-std::optional<PlatformECKey> PlatformECKey::importCompressedPub(SpanConstUInt8 data, NamedCurve curve)
+std::optional<PlatformECKey> PlatformECKey::importCompressedPub(const VectorUInt8& data, size_t offset, NamedCurve curve)
 {
-    auto result = pal::ECKey::importCompressedPub(escapableSpan(data), curve);
+    auto result = pal::ECKey::importCompressedPub(escapableSpan(borrow(data)->span().subspan(offset)), curve);
     if (result)
         return { { result.get() } };
 

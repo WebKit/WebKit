@@ -41,7 +41,7 @@ static ExceptionOr<Vector<uint8_t>> signECDSACryptoKit(CryptoAlgorithmIdentifier
 {
     if (!isValidHashParameter(hash))
         return Exception { ExceptionCode::OperationError };
-    auto rv = key.sign(data.span(), toCKHashFunction(hash));
+    auto rv = key.sign(data, toCKHashFunction(hash));
     if (rv.errorCode != PAL::Crypto::Error::Success)
         return Exception { ExceptionCode::OperationError };
     return WTF::move(rv.result);
@@ -51,7 +51,7 @@ static ExceptionOr<bool> verifyECDSACryptoKit(CryptoAlgorithmIdentifier hash, co
 {
     if (!isValidHashParameter(hash))
         return Exception { ExceptionCode::OperationError };
-    return key.doVerify(data.span(), signature.span(), toCKHashFunction(hash)).errorCode == PAL::Crypto::Error::Success;
+    return key.doVerify(data, signature, toCKHashFunction(hash)).errorCode == PAL::Crypto::Error::Success;
 }
 
 ExceptionOr<Vector<uint8_t>> CryptoAlgorithmECDSA::platformSign(const CryptoAlgorithmEcdsaParams& parameters, const CryptoKeyEC& key, const Vector<uint8_t>& data)

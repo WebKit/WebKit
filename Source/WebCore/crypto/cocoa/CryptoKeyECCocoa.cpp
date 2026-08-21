@@ -109,7 +109,7 @@ RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportRaw(CryptoAlgorithmIdentifier ide
     if (!doesUncompressedPointMatchNamedCurve(curve, keyData.size()))
         return nullptr;
 
-    auto rv = PAL::Crypto::PlatformECKey::importX963Pub(keyData.span(), curve);
+    auto rv = PAL::Crypto::PlatformECKey::importX963Pub(keyData, curve);
     if (!rv)
         return nullptr;
     return create(identifier, curve, CryptoKeyType::Public, WTF::move(*rv), extractable, usages);
@@ -149,7 +149,7 @@ RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportJWKPrivate(CryptoAlgorithmIdentif
     binaryInput.appendVector(y);
     binaryInput.appendVector(d);
 
-    auto rv = PAL::Crypto::PlatformECKey::importX963Private(binaryInput.span(), curve);
+    auto rv = PAL::Crypto::PlatformECKey::importX963Private(binaryInput, curve);
     if (!rv)
         return nullptr;
     return create(identifier, curve, CryptoKeyType::Private, WTF::move(*rv), extractable, usages);
@@ -242,7 +242,7 @@ RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportSpki(CryptoAlgorithmIdentifier id
         return platformImportRaw(identifier, curve, Vector<uint8_t>(keyData.subspan(index, keyData.size() - index)), extractable, usages);
 
     // CryptoKit can read pure compressed so no need for index++ here.
-    auto rv = PAL::Crypto::PlatformECKey::importCompressedPub(keyData.subspan(index, keyData.size() - index), curve);
+    auto rv = PAL::Crypto::PlatformECKey::importCompressedPub(keyData, index, curve);
     if (!rv)
         return nullptr;
     return create(identifier, curve, CryptoKeyType::Public, WTF::move(*rv), extractable, usages);
@@ -344,7 +344,7 @@ RefPtr<CryptoKeyEC> CryptoKeyEC::platformImportPkcs8(CryptoAlgorithmIdentifier i
         return nullptr;
     keyBinary.append(keyData.subspan(privateKeyPos, privateKeySize));
 
-    auto rv = PAL::Crypto::PlatformECKey::importX963Private(keyBinary.span(), curve);
+    auto rv = PAL::Crypto::PlatformECKey::importX963Private(keyBinary, curve);
     if (!rv)
         return nullptr;
     return create(identifier, curve, CryptoKeyType::Private, WTF::move(*rv), extractable, usages);
