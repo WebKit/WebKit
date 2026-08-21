@@ -61,7 +61,7 @@ using BrowsingContext = Inspector::Protocol::BidiBrowsingContext::BrowsingContex
 using EvaluateResultType = Inspector::Protocol::BidiScript::EvaluateResultType;
 
 static RefPtr<Inspector::Protocol::BidiScript::RemoteValue> deserializeRemoteValue(const JSON::Value*);
-static RefPtr<JSON::Value> parseLocalValue(const JSON::Value&, bool* usesUnsupportedType = nullptr);
+static RefPtr<JSON::Value> parseLocalValue(const JSON::Value&, bool* usesUnsupportedType = nullptr, bool* usesHandle = nullptr);
 
 static String protocolRealmIdentifierString(RealmIdentifier realmIdentifier)
 {
@@ -162,7 +162,7 @@ static RefPtr<Inspector::Protocol::BidiScript::RemoteValue> deserializeRemoteVal
     return resultValue.setType(RemoteValueType::Undefined).release();
 }
 
-static RefPtr<JSON::Value> parseLocalValue(const JSON::Value& jsonValue, bool* usesUnsupportedType)
+static RefPtr<JSON::Value> parseLocalValue(const JSON::Value& jsonValue, bool* usesUnsupportedType, bool* usesHandle)
 {
     // Parse and deserialize together so a malformed nested value cannot be accepted and then coerced.
     // FIXME: Implement RemoteReference and Channel types instead of using null placeholders.
@@ -195,6 +195,8 @@ static RefPtr<JSON::Value> parseLocalValue(const JSON::Value& jsonValue, bool* u
             return nullptr;
         if (usesUnsupportedType)
             *usesUnsupportedType = true;
+        if (usesHandle)
+            *usesHandle = true;
         return JSON::Value::null();
     }
 
@@ -289,7 +291,7 @@ static RefPtr<JSON::Value> parseLocalValue(const JSON::Value& jsonValue, bool* u
         auto resultArray = JSON::Array::create();
         for (unsigned i = 0; i < valueArray->length(); ++i) {
             Ref element = valueArray->get(i);
-            auto parsedElement = parseLocalValue(element.get(), usesUnsupportedType);
+            auto parsedElement = parseLocalValue(element.get(), usesUnsupportedType, usesHandle);
             if (!parsedElement)
                 return nullptr;
             resultArray->pushValue(parsedElement.releaseNonNull());
@@ -309,14 +311,14 @@ static RefPtr<JSON::Value> parseLocalValue(const JSON::Value& jsonValue, bool* u
                 return nullptr;
 
             Ref valueElement = pairArray->get(1);
-            auto parsedValue = parseLocalValue(valueElement.get(), usesUnsupportedType);
+            auto parsedValue = parseLocalValue(valueElement.get(), usesUnsupportedType, usesHandle);
             if (!parsedValue)
                 return nullptr;
 
             String key;
             Ref keyValue = pairArray->get(0);
             if (!keyValue->asString(key)) {
-                auto parsedKey = parseLocalValue(keyValue.get(), usesUnsupportedType);
+                auto parsedKey = parseLocalValue(keyValue.get(), usesUnsupportedType, usesHandle);
                 if (!parsedKey)
                     return nullptr;
                 if (!parsedKey->asString(key))
@@ -345,14 +347,14 @@ static RefPtr<JSON::Value> parseLocalValue(const JSON::Value& jsonValue, bool* u
             if (keyElement->asString(key))
                 entryArray->pushValue(JSON::Value::create(key));
             else {
-                auto parsedKey = parseLocalValue(keyElement.get(), usesUnsupportedType);
+                auto parsedKey = parseLocalValue(keyElement.get(), usesUnsupportedType, usesHandle);
                 if (!parsedKey)
                     return nullptr;
                 entryArray->pushValue(parsedKey.releaseNonNull());
             }
 
             Ref valueElement = pairArray->get(1);
-            auto parsedValue = parseLocalValue(valueElement.get(), usesUnsupportedType);
+            auto parsedValue = parseLocalValue(valueElement.get(), usesUnsupportedType, usesHandle);
             if (!parsedValue)
                 return nullptr;
             entryArray->pushValue(parsedValue.releaseNonNull());
@@ -373,6 +375,7 @@ void BidiScriptAgent::callFunction(const String& functionDeclaration, bool await
     // FIXME: handle non-BrowsingContext obtained from `Target`.
     // https://bugs.webkit.org/show_bug.cgi?id=304062
     std::optional<BrowsingContext> browsingContext;
+    std::optional<RealmIdentifier> targetRealmIdentifier;
     String sandbox;
 
     if (auto contextJSON = target->getValue("context"_s)) {
@@ -387,9 +390,9 @@ void BidiScriptAgent::callFunction(const String& functionDeclaration, bool await
         String realmValue;
         ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!realmJSON->asString(realmValue), InvalidParameter);
         ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(realmValue.isEmpty(), FrameNotFound);
-        auto realmIdentifier = parseRealmIdentifier(realmValue);
-        ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!realmIdentifier, FrameNotFound);
-        browsingContext = browsingContextForRealm(*realmIdentifier);
+        targetRealmIdentifier = parseRealmIdentifier(realmValue);
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!targetRealmIdentifier, FrameNotFound);
+        browsingContext = browsingContextForRealm(*targetRealmIdentifier);
         ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!browsingContext, FrameNotFound);
     } else
         ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(true, InvalidParameter);
@@ -400,12 +403,13 @@ void BidiScriptAgent::callFunction(const String& functionDeclaration, bool await
     auto& [topLevelContextHandle, frameHandle] = pageAndFrameHandles.value();
 
     bool argumentsUseUnsupportedType = false;
+    bool argumentsUseHandle = false;
     auto argumentsArray = JSON::Array::create();
     if (arguments) {
         for (size_t i = 0; i < arguments->length(); ++i) {
-            auto parsedArgument = parseLocalValue(arguments->get(i).get(), &argumentsUseUnsupportedType);
-            ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!parsedArgument, InvalidParameter);
-            argumentsArray->pushValue(parsedArgument.releaseNonNull());
+            Ref argument = arguments->get(i);
+            ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!parseLocalValue(argument.get(), &argumentsUseUnsupportedType, &argumentsUseHandle), InvalidParameter);
+            argumentsArray->pushValue(WTF::move(argument));
         }
     }
 
@@ -418,17 +422,31 @@ void BidiScriptAgent::callFunction(const String& functionDeclaration, bool await
             ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS(InvalidParameter, result.error());
     }
 
+    std::optional<double> maxObjectDepth;
+    if (optionalSerializationOptions) {
+        if (auto depth = optionalSerializationOptions->getDouble("maxObjectDepth"_s))
+            maxObjectDepth = *depth;
+    }
+
     ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(!sandbox.isEmpty(), NotImplemented, "Sandbox targets are not supported yet."_s);
+    ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(argumentsUseHandle, NoSuchHandle);
     ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(argumentsUseUnsupportedType, NotImplemented, "Remote references and channels are not supported yet."_s);
     ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(optionalThis, NotImplemented, "Custom this values are not supported yet."_s);
 
-    session->getBidiRealmInfo(topLevelContextHandle, frameHandle, [weakThis = WeakPtr { *this }, callback = WTF::move(callback), topLevelContextHandle = topLevelContextHandle.isolatedCopy(), frameHandle = frameHandle.isolatedCopy(), functionDeclaration = functionDeclaration.isolatedCopy(), argumentsArray = WTF::move(argumentsArray), userActivation = optionalUserActivation.value_or(false)](std::optional<RealmIdentifier>&& realmIdentifier) mutable {
+    // FIXME: Apply `maxDomDepth` and `includeShadowTree` during result serialization.
+    // https://bugs.webkit.org/show_bug.cgi?id=313658
+    // FIXME: Handle the `resultOwnership` option.
+    // https://bugs.webkit.org/show_bug.cgi?id=328254
+    // FIXME: Handle the custom `this` option.
+    // https://bugs.webkit.org/show_bug.cgi?id=328207
+
+    session->getBidiRealmInfo(topLevelContextHandle, frameHandle, [weakThis = WeakPtr { *this }, callback = WTF::move(callback), topLevelContextHandle = topLevelContextHandle.isolatedCopy(), frameHandle = frameHandle.isolatedCopy(), targetRealmIdentifier, functionDeclaration = functionDeclaration.isolatedCopy(), argumentsArray = WTF::move(argumentsArray), awaitPromise, maxObjectDepth, userActivation = optionalUserActivation.value_or(false)](std::optional<RealmIdentifier>&& realmIdentifier) mutable {
         CheckedPtr protectedThis = weakThis;
         if (!protectedThis) {
             callback(makeUnexpected(STRING_FOR_PREDEFINED_ERROR_NAME(InternalError)));
             return;
         }
-        if (!realmIdentifier) {
+        if (!realmIdentifier || (targetRealmIdentifier && *targetRealmIdentifier != *realmIdentifier)) {
             callback(makeUnexpected(STRING_FOR_PREDEFINED_ERROR_NAME(FrameNotFound)));
             return;
         }
@@ -440,58 +458,20 @@ void BidiScriptAgent::callFunction(const String& functionDeclaration, bool await
         }
 
         String realmID = protocolRealmIdentifierString(*realmIdentifier);
-        session->evaluateJavaScriptFunction(topLevelContextHandle, frameHandle, functionDeclaration, WTF::move(argumentsArray), false, userActivation, std::nullopt, [weakThis, callback = WTF::move(callback), realmID = WTF::move(realmID)](Inspector::CommandResult<String>&& stringResult) mutable {
-            CheckedPtr protectedThis = weakThis;
-            if (!protectedThis) {
-                callback(makeUnexpected(STRING_FOR_PREDEFINED_ERROR_NAME(InternalError)));
-                return;
-            }
-
-            // FIXME: Properly serialize RemoteValue types according to WebDriver BiDi spec.
-            // https://bugs.webkit.org/show_bug.cgi?id=301159
-
-            // FIXME: Properly fill ExceptionDetails remaining fields once we have a way to get them instead of just the error message.
-            // https://bugs.webkit.org/show_bug.cgi?id=288058
-            if (!stringResult) {
-                if (stringResult.error().startsWith("JavaScriptError"_s)) {
-                    String errorMessage = stringResult.error().substring("JavaScriptError;"_s.length());
-                    // Construct error object structure for RemoteValue.value per BiDi spec.
-                    auto errorObject = JSON::Object::create();
-                    errorObject->setString("message"_s, errorMessage);
-                    auto exceptionValue = Inspector::Protocol::BidiScript::RemoteValue::create()
-                        .setType(Inspector::Protocol::BidiScript::RemoteValueType::Error)
-                        .release();
-                    exceptionValue->setValue(WTF::move(errorObject));
-                    auto stackTrace = Inspector::Protocol::BidiScript::StackTrace::create()
-                        .setCallFrames(JSON::ArrayOf<Inspector::Protocol::BidiScript::StackFrame>::create())
-                        .release();
-                    auto exceptionDetails = Inspector::Protocol::BidiScript::ExceptionDetails::create()
-                        .setText(errorMessage)
-                        .setLineNumber(0)
-                        .setColumnNumber(0)
-                        .setException(WTF::move(exceptionValue))
-                        .setStackTrace(WTF::move(stackTrace))
-                        .release();
-
-                    callback({ { EvaluateResultType::Exception, realmID, nullptr, WTF::move(exceptionDetails) } });
+        session->evaluateBidiCallFunction(topLevelContextHandle, frameHandle, realmIdentifier, functionDeclaration, WTF::move(argumentsArray), awaitPromise, maxObjectDepth, userActivation, std::nullopt,
+            [weakThis, callback = WTF::move(callback), realmID = WTF::move(realmID), functionDeclaration = functionDeclaration.isolatedCopy()](Inspector::CommandResult<String>&& result) mutable {
+                CheckedPtr protectedThis = weakThis;
+                if (!protectedThis) {
+                    callback(makeUnexpected(STRING_FOR_PREDEFINED_ERROR_NAME(InternalError)));
+                    return;
+                }
+                if (!result) {
+                    callback(makeUnexpected(result.error()));
                     return;
                 }
 
-                callback(makeUnexpected(stringResult.error()));
-                return;
-            }
-
-            auto resultValue = JSON::Value::parseJSON(stringResult.value());
-            ASYNC_FAIL_WITH_PREDEFINED_ERROR_AND_DETAILS_IF(!resultValue, InternalError, "Failed to parse callFunction result as JSON"_s);
-
-            auto resultObject = Inspector::Protocol::BidiScript::RemoteValue::create()
-                .setType(Inspector::Protocol::BidiScript::RemoteValueType::Object)
-                .release();
-
-            resultObject->setValue(resultValue.releaseNonNull());
-
-            callback({ { EvaluateResultType::Success, realmID, WTF::move(resultObject), nullptr } });
-        });
+                protectedThis->finishEvaluateBidiScriptResult(realmID, functionDeclaration, WTF::move(result), WTF::move(callback));
+            });
     });
 }
 
@@ -652,11 +632,16 @@ void BidiScriptAgent::finishEvaluateBidiScriptResult(const String& realmID, cons
         return;
     }
 
+    String resultRealmID = envelopeObject->getString("realm"_s);
+    if (resultRealmID.isEmpty())
+        resultRealmID = realmID;
+
     // Handle JavaScript exception (success == false means user's JS code threw).
     if (!envelopeObject->getBoolean("success"_s).value_or(false)) {
         String errorMessage = "JavaScript exception"_s;
         String errorName = "Error"_s;
         String errorStack;
+        RefPtr<BidiScript::RemoteValue> exceptionRemote;
 
         // Extract exception details from the envelope's "error" field.
         if (auto errorValue = envelopeObject->getValue("error"_s)) {
@@ -667,20 +652,24 @@ void BidiScriptAgent::finishEvaluateBidiScriptResult(const String& realmID, cons
                     errorName = name;
                 if (auto stack = errorObj->getString("stack"_s); !stack.isNull())
                     errorStack = stack;
+                if (auto exception = errorObj->getValue("exception"_s))
+                    exceptionRemote = deserializeRemoteValue(exception.get());
             }
         }
 
-        // Construct a basic error object structure for RemoteValue.value.
-        auto errorObject = JSON::Object::create();
-        errorObject->setString("name"_s, errorName);
-        errorObject->setString("message"_s, errorMessage);
-        if (!errorStack.isNull())
-            errorObject->setString("stack"_s, errorStack);
+        if (!exceptionRemote) {
+            // Preserve the existing fallback for malformed exception envelopes.
+            auto errorObject = JSON::Object::create();
+            errorObject->setString("name"_s, errorName);
+            errorObject->setString("message"_s, errorMessage);
+            if (!errorStack.isNull())
+                errorObject->setString("stack"_s, errorStack);
 
-        auto exceptionRemote = BidiScript::RemoteValue::create()
-            .setType(BidiScript::RemoteValueType::Error)
-            .release();
-        exceptionRemote->setValue(WTF::move(errorObject));
+            exceptionRemote = BidiScript::RemoteValue::create()
+                .setType(BidiScript::RemoteValueType::Error)
+                .release();
+            exceptionRemote->setValue(WTF::move(errorObject));
+        }
 
         // stackTrace is required by protocol - empty until full stack trace extraction is implemented (bug 304548).
         auto stackTrace = BidiScript::StackTrace::create()
@@ -690,16 +679,16 @@ void BidiScriptAgent::finishEvaluateBidiScriptResult(const String& realmID, cons
             .setText(errorMessage)
             .setLineNumber(0)
             .setColumnNumber(0)
-            .setException(WTF::move(exceptionRemote))
+            .setException(exceptionRemote.releaseNonNull())
             .setStackTrace(WTF::move(stackTrace))
             .release();
-        callback({ { BidiScript::EvaluateResultType::Exception, realmID, nullptr, WTF::move(exceptionDetails) } });
+        callback({ { BidiScript::EvaluateResultType::Exception, resultRealmID, nullptr, WTF::move(exceptionDetails) } });
         return;
     }
 
     auto resultValue = envelopeObject->getValue("result"_s);
     auto remote = deserializeRemoteValue(resultValue.get());
-    callback({ { BidiScript::EvaluateResultType::Success, realmID, WTF::move(remote), nullptr } });
+    callback({ { BidiScript::EvaluateResultType::Success, resultRealmID, WTF::move(remote), nullptr } });
 }
 
 void BidiScriptAgent::getRealms(const BrowsingContext& optionalBrowsingContext, std::optional<Inspector::Protocol::BidiScript::RealmType>&& optionalRealmType, Inspector::CommandCallback<Ref<JSON::ArrayOf<Inspector::Protocol::BidiScript::RealmInfo>>>&& callback)
@@ -1046,7 +1035,7 @@ bool BidiScriptAgent::isFrameExecutionReady(const FrameInfoData& frameInfo)
 
 std::optional<String> BidiScriptAgent::contextHandleForFrame(const FrameInfoData& frameInfo)
 {
-    RefPtr session = m_session.get();
+    RefPtr session = m_session;
     if (!session)
         return std::nullopt;
 

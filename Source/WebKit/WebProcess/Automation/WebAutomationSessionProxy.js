@@ -25,9 +25,18 @@
 
 //# sourceURL=__InjectedScript_WebAutomationSessionProxy.js
 
-(function (sessionIdentifier, currentFrameIdentifier, evaluate, createUUID, isValidNodeIdentifier, isKnownReference, addKnownReference) {
+(function (sessionIdentifier, currentFrameIdentifier, evaluate, createUUID, isValidNodeIdentifier, isKnownReference, addKnownReference, callFunctionWithUserActivation, isPromise) {
 
 const sessionNodePropertyName = "session-node-" + sessionIdentifier;
+
+class InvalidArgumentError extends Error
+{
+    constructor(message)
+    {
+        super(message);
+        this.name = "InvalidParameter";
+    }
+}
 
 let AutomationSessionProxy = class AutomationSessionProxy
 {
@@ -50,6 +59,13 @@ let AutomationSessionProxy = class AutomationSessionProxy
     evaluateBidiScript(expression, awaitPromise, maxObjectDepth, frameID, callbackID, resultCallback, callbackTimeout)
     {
         this._executeBidiScript(expression, awaitPromise, maxObjectDepth, callbackTimeout)
+            .then(result => { resultCallback(frameID, callbackID, JSON.stringify(result)); })
+            .catch(error => { resultCallback(frameID, callbackID, error); });
+    }
+
+    evaluateBidiCallFunction(functionDeclaration, argumentStrings, awaitPromise, maxObjectDepth, userActivation, frameID, callbackID, resultCallback, callbackTimeout)
+    {
+        this._executeBidiCallFunction(functionDeclaration, argumentStrings, awaitPromise, maxObjectDepth, userActivation, callbackTimeout)
             .then(result => { resultCallback(frameID, callbackID, JSON.stringify(result)); })
             .catch(error => { resultCallback(frameID, callbackID, error); });
     }
@@ -174,6 +190,153 @@ let AutomationSessionProxy = class AutomationSessionProxy
                     clearTimeout(timeoutIdentifier);
                 }
             });
+    }
+
+    _bidiExceptionResult(error)
+    {
+        let object = error && typeof error === "object" ? error : {};
+        let exception;
+        try {
+            exception = this.serializeBidiRemoteValue(error, Infinity);
+        } catch {
+            exception = { type: "error" };
+        }
+        return {
+            success: false,
+            error: {
+                name: object.name || "Error",
+                message: object.message || String(error),
+                stack: object.stack || "",
+                exception: exception
+            }
+        };
+    }
+
+    _executeBidiCallFunction(functionDeclaration, argumentStrings, awaitPromise, maxObjectDepth, userActivation, callbackTimeout)
+    {
+        let timeoutPromise;
+        let timeoutIdentifier = 0;
+        if (callbackTimeout >= 0) {
+            timeoutPromise = new Promise((resolve, reject) => {
+                timeoutIdentifier = setTimeout(() => {
+                    reject({ name: "JavaScriptTimeout", message: `script timed out after ${callbackTimeout}ms` });
+                }, callbackTimeout);
+            });
+        }
+
+        let executionPromise;
+        try {
+            let lines = functionDeclaration.split("\n");
+            let prefixLines = [];
+            while (lines.length && lines[0].startsWith("//"))
+                prefixLines.push(lines.shift());
+
+            let prefix = prefixLines.join("\n");
+            if (prefix)
+                prefix += "\n";
+
+            let functionValue = evaluate(prefix + "(" + lines.join("\n") + "\n)");
+            if (typeof functionValue !== "function")
+                throw new InvalidArgumentError("Function declaration did not evaluate to a callable value.");
+
+            this._clearStaleNodes();
+            let argumentValues = argumentStrings.map(argument => this._deserializeBidiLocalValue(JSON.parse(argument)));
+            let result = callFunctionWithUserActivation(userActivation, functionValue, null, ...argumentValues);
+            let serializationMaxObjectDepth = maxObjectDepth === null ? Infinity : maxObjectDepth;
+
+            if (awaitPromise && isPromise(result)) {
+                executionPromise = result.then(value => {
+                    return { success: true, result: this.serializeBidiRemoteValue(value, serializationMaxObjectDepth) };
+                }, error => this._bidiExceptionResult(error));
+            } else
+                executionPromise = Promise.resolve({ success: true, result: this.serializeBidiRemoteValue(result, serializationMaxObjectDepth) });
+        } catch (error) {
+            if (error instanceof InvalidArgumentError)
+                executionPromise = Promise.reject(error);
+            else
+                executionPromise = Promise.resolve(this._bidiExceptionResult(error));
+        }
+
+        executionPromise = executionPromise.catch(error => {
+            if (error instanceof InvalidArgumentError)
+                throw error;
+            return this._bidiExceptionResult(error);
+        });
+        let promises = [executionPromise];
+        if (timeoutPromise)
+            promises.push(timeoutPromise);
+        return Promise.race(promises)
+            .finally(() => {
+                if (timeoutIdentifier)
+                    clearTimeout(timeoutIdentifier);
+            });
+    }
+
+    _deserializeBidiLocalValue(localValue)
+    {
+        if (!localValue || typeof localValue !== "object")
+            throw new InvalidArgumentError("LocalValue must be an object.");
+
+        switch (localValue.type) {
+        case "undefined":
+            return undefined;
+        case "null":
+            return null;
+        case "string":
+        case "boolean":
+            return localValue.value;
+        case "number":
+            if (typeof localValue.value === "number")
+                return localValue.value;
+            switch (localValue.value) {
+            case "NaN":
+                return NaN;
+            case "-0":
+                return -0;
+            case "Infinity":
+                return Infinity;
+            case "-Infinity":
+                return -Infinity;
+            default:
+                throw new InvalidArgumentError("Invalid number LocalValue.");
+            }
+        case "bigint":
+            try {
+                return BigInt(localValue.value);
+            } catch {
+                throw new InvalidArgumentError("Invalid bigint LocalValue.");
+            }
+        case "array":
+            return localValue.value.map(value => this._deserializeBidiLocalValue(value));
+        case "date": {
+            let value = new Date(localValue.value);
+            if (Number.isNaN(value.valueOf()))
+                throw new InvalidArgumentError("Invalid date LocalValue.");
+            return value;
+        }
+        case "map":
+            return new Map(this._deserializeBidiLocalValueEntries(localValue.value));
+        case "object":
+            return Object.fromEntries(this._deserializeBidiLocalValueEntries(localValue.value));
+        case "regexp":
+            try {
+                return new RegExp(localValue.value.pattern, localValue.value.flags);
+            } catch {
+                throw new InvalidArgumentError("Invalid regexp LocalValue.");
+            }
+        case "set":
+            return new Set(localValue.value.map(value => this._deserializeBidiLocalValue(value)));
+        default:
+            throw new InvalidArgumentError("Unsupported LocalValue type.");
+        }
+    }
+
+    _deserializeBidiLocalValueEntries(entries)
+    {
+        return entries.map(entry => {
+            let key = typeof entry[0] === "string" ? entry[0] : this._deserializeBidiLocalValue(entry[0]);
+            return [key, this._deserializeBidiLocalValue(entry[1])];
+        });
     }
 
     _jsonParse(string)
