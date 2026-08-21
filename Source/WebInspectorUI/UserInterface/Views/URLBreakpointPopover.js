@@ -36,9 +36,9 @@ WI.URLBreakpointPopover = class URLBreakpointPopover extends WI.BreakpointPopove
 
     // Static
 
-    static get supportsEditing()
+    static get supportsOptions()
     {
-        return WI.URLBreakpoint.supportsEditing;
+        return WI.URLBreakpoint.supportsOptions;
     }
 
     // Protected
@@ -60,7 +60,7 @@ WI.URLBreakpointPopover = class URLBreakpointPopover extends WI.BreakpointPopove
         createOption(WI.UIString("Containing"), WI.URLBreakpoint.Type.Text);
         createOption(WI.UIString("Matching"), WI.URLBreakpoint.Type.RegularExpression);
 
-        this._typeSelectElement.value = WI.URLBreakpoint.Type.Text;
+        this._typeSelectElement.value = this.breakpoint?.type || WI.URLBreakpoint.Type.Text;
         this._typeSelectElement.addEventListener("change", (event) => {
             this._updateEditor();
             this._urlCodeMirror.focus();
@@ -80,6 +80,7 @@ WI.URLBreakpointPopover = class URLBreakpointPopover extends WI.BreakpointPopove
             lineWrapping: false,
             matchBrackets: false,
             scrollbarStyle: null,
+            value: this.breakpoint?.url || "",
         });
         this._updateEditor();
 
@@ -98,6 +99,7 @@ WI.URLBreakpointPopover = class URLBreakpointPopover extends WI.BreakpointPopove
         setTimeout(() => {
             this._urlCodeMirror.refresh();
             this._urlCodeMirror.focus();
+            this._urlCodeMirror.setCursor(this._urlCodeMirror.lineCount(), 0);
 
             this.update();
         });

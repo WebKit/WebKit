@@ -56,7 +56,7 @@ WI.Breakpoint = class Breakpoint extends WI.Object
         let json = {};
         if (this._disabled)
             json.disabled = this._disabled;
-        if (this.editable) {
+        if (this.supportsOptions) {
             if (this._condition)
                 json.condition = this._condition;
             if (this._ignoreCount)
@@ -86,6 +86,12 @@ WI.Breakpoint = class Breakpoint extends WI.Object
     {
         // Overridden by subclasses if needed.
         return true;
+    }
+
+    get supportsOptions()
+    {
+        // Overridden by subclasses if needed.
+        return false;
     }
 
     get editable()
@@ -122,7 +128,7 @@ WI.Breakpoint = class Breakpoint extends WI.Object
 
     set condition(condition)
     {
-        console.assert(this.editable, this);
+        console.assert(this.supportsOptions, this);
         console.assert(typeof condition === "string");
 
         if (this._condition === condition)
@@ -135,14 +141,14 @@ WI.Breakpoint = class Breakpoint extends WI.Object
 
     get ignoreCount()
     {
-        console.assert(this.editable, this);
+        console.assert(this.supportsOptions, this);
 
         return this._ignoreCount;
     }
 
     set ignoreCount(ignoreCount)
     {
-        console.assert(this.editable, this);
+        console.assert(this.supportsOptions, this);
 
         console.assert(ignoreCount >= 0, "Ignore count cannot be negative.");
         if (ignoreCount < 0)
@@ -158,14 +164,14 @@ WI.Breakpoint = class Breakpoint extends WI.Object
 
     get autoContinue()
     {
-        console.assert(this.editable, this);
+        console.assert(this.supportsOptions, this);
 
         return this._autoContinue;
     }
 
     set autoContinue(cont)
     {
-        console.assert(this.editable, this);
+        console.assert(this.supportsOptions, this);
 
         if (this._autoContinue === cont)
             return;
@@ -177,14 +183,14 @@ WI.Breakpoint = class Breakpoint extends WI.Object
 
     get actions()
     {
-        console.assert(this.editable, this);
+        console.assert(this.supportsOptions, this);
 
         return this._actions;
     }
 
     get probeActions()
     {
-        console.assert(this.editable, this);
+        console.assert(this.supportsOptions, this);
 
         return this._actions.filter(function(action) {
             return action.type === WI.BreakpointAction.Type.Probe;
@@ -193,7 +199,7 @@ WI.Breakpoint = class Breakpoint extends WI.Object
 
     addAction(action, {precedingAction} = {})
     {
-        console.assert(this.editable, this);
+        console.assert(this.supportsOptions, this);
         console.assert(action instanceof WI.BreakpointAction, action);
 
         action.addEventListener(WI.BreakpointAction.Event.Modified, this._handleBreakpointActionModified, this);
@@ -214,7 +220,7 @@ WI.Breakpoint = class Breakpoint extends WI.Object
 
     removeAction(action)
     {
-        console.assert(this.editable, this);
+        console.assert(this.supportsOptions, this);
         console.assert(action instanceof WI.BreakpointAction, action);
 
         var index = this._actions.indexOf(action);
@@ -234,7 +240,7 @@ WI.Breakpoint = class Breakpoint extends WI.Object
 
     clearActions(type)
     {
-        console.assert(this.editable, this);
+        console.assert(this.supportsOptions, this);
 
         if (!type)
             this._actions = [];
@@ -246,7 +252,7 @@ WI.Breakpoint = class Breakpoint extends WI.Object
 
     reset()
     {
-        console.assert(this.editable, this);
+        console.assert(this.supportsOptions, this);
 
         this.condition = "";
         this.ignoreCount = 0;
@@ -263,7 +269,7 @@ WI.Breakpoint = class Breakpoint extends WI.Object
 
     optionsToProtocol()
     {
-        console.assert(this.editable, this);
+        console.assert(this.supportsOptions, this);
 
         let payload = {};
 
@@ -310,7 +316,7 @@ WI.Breakpoint = class Breakpoint extends WI.Object
 
     _handleBreakpointActionModified(event)
     {
-        console.assert(this.editable, this);
+        console.assert(this.supportsOptions, this);
 
         this.dispatchEventToListeners(WI.Breakpoint.Event.ActionsDidChange);
     }

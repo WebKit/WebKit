@@ -34,9 +34,9 @@ WI.EventBreakpointPopover = class EventBreakpointPopover extends WI.BreakpointPo
 
     // Static
 
-    static get supportsEditing()
+    static get supportsOptions()
     {
-        return WI.EventBreakpoint.supportsEditing;
+        return WI.EventBreakpoint.supportsOptions;
     }
 
     // CodeMirrorCompletionController delegate
@@ -59,6 +59,34 @@ WI.EventBreakpointPopover = class EventBreakpointPopover extends WI.BreakpointPo
 
     populateContent()
     {
+        if (this.breakpoint && this.breakpoint.type !== WI.EventBreakpoint.Type.Listener) {
+            let typeLabelElement = document.createElement("label");
+            typeLabelElement.textContent = WI.UIString("Type");
+
+            this._typeSelectElement = document.createElement("select");
+            this._typeSelectElement.id = "edit-breakpoint-popover-content-type";
+
+            let createOption = (text, value) => {
+                let optionElement = this._typeSelectElement.appendChild(document.createElement("option"));
+                optionElement.textContent = text;
+                optionElement.value = value;
+            };
+            createOption(WI.repeatedUIString.allAnimationFrames(), WI.EventBreakpoint.Type.AnimationFrame);
+            createOption(WI.repeatedUIString.allIntervals(), WI.EventBreakpoint.Type.Interval);
+            createOption(WI.repeatedUIString.allTimeouts(), WI.EventBreakpoint.Type.Timeout);
+
+            this._typeSelectElement.value = this.breakpoint.type;
+            typeLabelElement.setAttribute("for", this._typeSelectElement.id);
+
+            this.addRow("type", typeLabelElement, this._typeSelectElement);
+
+            setTimeout(() => {
+                this._typeSelectElement.focus();
+                this.update();
+            });
+            return;
+        }
+
         let content = document.createDocumentFragment();
 
         let eventLabelElement = document.createElement("label");
@@ -73,6 +101,7 @@ WI.EventBreakpointPopover = class EventBreakpointPopover extends WI.BreakpointPo
             mode: "text/plain",
             matchBrackets: true,
             scrollbarStyle: null,
+            value: this.breakpoint?.eventName || "",
         });
 
         this._domEventNameCompletionController = new WI.CodeMirrorCompletionController(WI.CodeMirrorCompletionController.Mode.Basic, this._domEventNameCodeMirror, this);
@@ -102,7 +131,7 @@ WI.EventBreakpointPopover = class EventBreakpointPopover extends WI.BreakpointPo
 
             this._caseSensitiveCheckboxElement = caseSensitiveLabel.appendChild(document.createElement("input"));
             this._caseSensitiveCheckboxElement.type = "checkbox";
-            this._caseSensitiveCheckboxElement.checked = true;
+            this._caseSensitiveCheckboxElement.checked = this.breakpoint?.caseSensitive ?? true;
 
             caseSensitiveLabel.append(WI.UIString("Case Sensitive"));
         }
@@ -113,7 +142,7 @@ WI.EventBreakpointPopover = class EventBreakpointPopover extends WI.BreakpointPo
 
             this._isRegexCheckboxElement = isRegexLabel.appendChild(document.createElement("input"));
             this._isRegexCheckboxElement.type = "checkbox";
-            this._isRegexCheckboxElement.checked = false;
+            this._isRegexCheckboxElement.checked = this.breakpoint?.isRegex || false;
             this._isRegexCheckboxElement.addEventListener("change", (event) => {
                 this._updateDOMEventNameCodeMirrorMode();
             });
@@ -137,6 +166,9 @@ WI.EventBreakpointPopover = class EventBreakpointPopover extends WI.BreakpointPo
 
     createBreakpoint(options = {})
     {
+        if (this._typeSelectElement)
+            return new WI.EventBreakpoint(this._typeSelectElement.value, options);
+
         console.assert(!options.eventName, options);
         options.eventName = this._domEventNameCodeMirror.getValue();
         if (!options.eventName)
@@ -144,8 +176,13 @@ WI.EventBreakpointPopover = class EventBreakpointPopover extends WI.BreakpointPo
 
         if (this._caseSensitiveCheckboxElement)
             options.caseSensitive = this._caseSensitiveCheckboxElement.checked;
+        else if (this.breakpoint)
+            options.caseSensitive = this.breakpoint.caseSensitive;
+
         if (this._isRegexCheckboxElement)
             options.isRegex = this._isRegexCheckboxElement.checked;
+        else if (this.breakpoint)
+            options.isRegex = this.breakpoint.isRegex;
 
         return new WI.EventBreakpoint(WI.EventBreakpoint.Type.Listener, options);
     }

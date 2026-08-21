@@ -462,7 +462,7 @@ WI.appendContextMenuItemsForDOMNodeBreakpoints = function(contextMenu, domNode, 
     contextMenu.appendSeparator();
 
     if (breakpoints.length === 1)
-        WI.BreakpointPopover.appendContextMenuItems(contextMenu, breakpoints[0], options.popoverTargetElement);
+        WI.DOMBreakpointPopover.appendContextMenuItems(contextMenu, breakpoints[0], options.popoverTargetElement, options.popoverDelegate);
     else if (breakpoints.length) {
         let shouldEnable = breakpoints.some((breakpoint) => breakpoint.disabled);
         contextMenu.appendItem(shouldEnable ? WI.UIString("Enable Breakpoints") : WI.UIString("Disable Breakpoints"), () => {

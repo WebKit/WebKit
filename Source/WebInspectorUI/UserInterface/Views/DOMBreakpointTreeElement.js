@@ -38,4 +38,50 @@ WI.DOMBreakpointTreeElement = class DOMBreakpointTreeElement extends WI.Breakpoi
 
         super(breakpoint, {classNames, title});
     }
+
+    // Public
+
+    populateContextMenu(contextMenu, event)
+    {
+        WI.DOMBreakpointPopover.appendContextMenuItems(contextMenu, this.breakpoint, this.status, this);
+
+        super.populateContextMenu(contextMenu, event);
+    }
+
+    // Popover delegate
+
+    willDismissPopover(popover)
+    {
+        console.assert(popover instanceof WI.DOMBreakpointPopover, popover);
+
+        let breakpoint = popover.breakpoint;
+        if (!breakpoint || breakpoint === this.breakpoint)
+            return;
+
+        let matches = (existing) => existing !== this.breakpoint && existing.equals(breakpoint);
+        if (WI.domDebuggerManager.domBreakpointsForNode(breakpoint.domNode).some(matches) || WI.domDebuggerManager.domBreakpointsForURL(breakpoint.url).some(matches)) {
+            InspectorFrontendHost.beep();
+            return;
+        }
+
+        let wasSelected = this.selected;
+        let treeOutline = this.treeOutline;
+
+        this.breakpoint.remove();
+        WI.domDebuggerManager.addDOMBreakpoint(breakpoint);
+
+        if (wasSelected) {
+            const omitFocus = true;
+            const selectedByUser = false;
+            const suppressNotification = true;
+            treeOutline?.findTreeElement(breakpoint)?.select(omitFocus, selectedByUser, suppressNotification);
+        }
+    }
+
+    // Private
+
+    _handleStatusImageElementDoubleClicked(event)
+    {
+        WI.DOMBreakpointPopover.show(this.breakpoint, this.status, this);
+    }
 };
