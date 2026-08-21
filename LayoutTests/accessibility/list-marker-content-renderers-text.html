@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../resources/js-test.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+<style>
+@counter-style rtl-cyclic { system: cyclic; symbols: "\627"; }
+.rtl-string li { list-style-type: "\627\644\641"; }
+.rtl-counter li { list-style-type: rtl-cyclic; }
+.rtl-list { direction: rtl; }
+.marker-content li::marker { content: "radish "; }
+</style>
+</head>
+<body>
+<div id="content">
+    <ul class="rtl-string"><li id="string">Item A</li></ul>
+    <a role="button" href="#" id="string-button" aria-labelledby="string-button string"><span>Reply</span></a>
+
+    <ul class="rtl-counter"><li id="counter">Item B</li></ul>
+    <a role="button" href="#" id="counter-button" aria-labelledby="counter-button counter"><span>Reply</span></a>
+
+    <ol class="rtl-list"><li id="decimal">Item C</li></ol>
+    <a role="button" href="#" id="decimal-button" aria-labelledby="decimal-button decimal"><span>Reply</span></a>
+
+    <ul class="marker-content"><li id="generated">Item D</li></ul>
+    <a role="button" href="#" id="generated-button" aria-labelledby="generated-button generated"><span>Reply</span></a>
+</div>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+description("This tests that a marker keeping its text in content renderers does not report that text to callers asking for text without list markers.");
+
+function nameOf(buttonId) {
+    document.getElementById(buttonId).focus();
+    return platformValueForW3CName(accessibilityController.focusedElement);
+}
+
+function itemValue(itemId) {
+    return accessibilityController.accessibleElementById(itemId).stringValue;
+}
+
+if (window.accessibilityController) {
+    // Each list below gives its marker content renderers to hold the text with: the string and the
+    // counter style symbol are right-to-left, and a right-to-left list makes even decimal need bidi
+    // resolution. aria-labelledby asks for the name without list markers, so none of that text
+    // belongs in these names, nor in the list item's own value.
+    shouldBeEqualToString("nameOf('string-button')", "Reply Item A");
+    shouldBeEqualToString("itemValue('string')", "AXValue: Item A");
+
+    shouldBeEqualToString("nameOf('counter-button')", "Reply Item B");
+    shouldBeEqualToString("itemValue('counter')", "AXValue: Item B");
+
+    shouldBeEqualToString("nameOf('decimal-button')", "Reply Item C");
+    shouldBeEqualToString("itemValue('decimal')", "AXValue: Item C");
+
+    // A `content` marker is the exception: it computes no text of its own, so the renderers holding
+    // its content are the only source and they keep contributing. accname asks for that text in the
+    // name, see accname/name/comp_name_from_pseudo_content_marker.tentative.html.
+    shouldBeEqualToString("nameOf('generated-button')", "Reply radish Item D");
+
+    document.getElementById("content").style.visibility = "hidden";
+}
+</script>
+</body>
+</html>

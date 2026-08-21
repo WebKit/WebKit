@@ -113,6 +113,7 @@
 #include "RenderImage.h"
 #include "RenderListBox.h"
 #include "RenderListItem.h"
+#include "RenderListMarker.h"
 #include "RenderTableCell.h"
 #include "RenderView.h"
 #include "RuleFeature.h"
@@ -917,6 +918,10 @@ bool AccessibilityNodeObject::canHaveChildren() const
     // When <noscript> is not being used (its renderer() == 0), ignore its children
     if (node() && !renderer() && WebCore::elementName(node()) == ElementName::HTML_noscript)
         return false;
+
+    if (CheckedPtr listMarker = dynamicDowncast<RenderListMarker>(renderer()))
+        return listMarker->hasContentProperty();
+
     // If this is an AccessibilityRenderObject, then it's okay if this object
     // doesn't have a node - there are some renderers that don't have associated
     // nodes, like scroll areas and css-generated text.

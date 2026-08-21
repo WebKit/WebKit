@@ -1,0 +1,16 @@
+This tests that a marker keeping its text in content renderers does not report that text to callers asking for text without list markers.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS nameOf('string-button') is "Reply Item A"
+PASS itemValue('string') is "AXValue: Item A"
+PASS nameOf('counter-button') is "Reply Item B"
+PASS itemValue('counter') is "AXValue: Item B"
+PASS nameOf('decimal-button') is "Reply Item C"
+PASS itemValue('decimal') is "AXValue: Item C"
+PASS nameOf('generated-button') is "Reply radish Item D"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
