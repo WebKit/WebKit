@@ -373,18 +373,14 @@ inline int msToSeconds(double ms)
 }
 
 // 0: Sunday, 1: Monday, etc.
-inline int msToWeekDay(double ms)
-{
-    int wd = (static_cast<int>(msToDays(ms)) + 4) % 7;
-    if (wd < 0)
-        wd += 7;
-    return wd;
-}
-
+// Branchless (days + 4) mod 7 over the whole int32_t range, using x mod 7 == floor(x * 8 / 7) mod 8:
+// multiply by ceil(2^40 / 7) << 24, add 4 * 2^61 (1970-01-01 is Thursday) plus a rounding bias, and keep the top 3 bits.
+// Ben Joffe, "A faster way to calculate the day-of-the-week" (2026), https://www.benjoffe.com/fast-day-of-week
 inline int32_t weekDay(int32_t days)
 {
-    int32_t result = (days + 4) % 7;
-    return result >= 0 ? result : result + 7;
+    constexpr uint64_t multiplier = 0x2492492493000000ull;
+    constexpr uint64_t thursdayOffset = 0x9400ull << 48;
+    return static_cast<int32_t>((static_cast<uint64_t>(static_cast<int64_t>(days)) * multiplier + thursdayOffset) >> 61);
 }
 
 inline int monthFromDayInYear(int dayInYear, bool leapYear)

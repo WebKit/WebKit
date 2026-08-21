@@ -1437,10 +1437,8 @@ std::optional<ParsedISODateTime> parseISODateTime(StringView string, TemporalPro
 
 uint8_t dayOfWeek(PlainDate plainDate)
 {
-    Int128 dateDays = static_cast<Int128>(dateToDaysFrom1970(plainDate.year(), plainDate.month() - 1, plainDate.day()));
-    int weekDay = static_cast<int>((dateDays + 4) % 7);
-    if (weekDay < 0)
-        weekDay += 7;
+    int32_t days = WTF::daysFromYearMonth(plainDate.year(), plainDate.month() - 1) + (plainDate.day() - 1);
+    int32_t weekDay = WTF::weekDay(days);
     return !weekDay ? 7 : weekDay;
 }
 
