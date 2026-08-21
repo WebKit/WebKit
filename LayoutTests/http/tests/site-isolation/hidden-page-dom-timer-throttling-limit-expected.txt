@@ -1,0 +1,13 @@
+Tests that the hidden-page DOM timer throttling auto-increase limit reaches the process of an out-of-process subframe whose view was created while the page was hidden
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+The page is hidden, so create the subframe now.
+PASS mainFrameLimit is > 1000
+PASS subframeLimit is mainFrameLimit
+PASS subframeAlignmentInterval is subframeLimit
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -319,6 +319,8 @@ public:
     double requestAnimationFrameInterval() const;
     bool NODELETE scriptedAnimationsAreSuspended() const;
     bool NODELETE areTimersThrottled() const;
+    double domTimerAlignmentInterval() const;
+    double domTimerAlignmentIntervalIncreaseLimit() const;
 
     enum EventThrottlingBehavior { Responsive, Unresponsive };
     void NODELETE setEventThrottlingBehaviorOverride(std::optional<EventThrottlingBehavior>);

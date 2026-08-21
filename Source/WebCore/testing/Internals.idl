@@ -964,6 +964,9 @@ enum ContentsFormat {
     DOMString requestAnimationFrameThrottlingReasons();
     boolean areTimersThrottled();
 
+    double domTimerAlignmentInterval();
+    double domTimerAlignmentIntervalIncreaseLimit();
+
     undefined setLowPowerModeEnabled(boolean enabled);
     undefined setAggressiveThermalMitigationEnabled(boolean enabled);
     undefined setOutsideViewportThrottlingEnabled(boolean enabled);

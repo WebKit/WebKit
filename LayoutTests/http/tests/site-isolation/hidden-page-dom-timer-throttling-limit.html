@@ -1,0 +1,77 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true HiddenPageDOMTimerThrottlingEnabled=true HiddenPageDOMTimerThrottlingAutoIncreases=true ] -->
+
+<!DOCTYPE html>
+<html>
+<body>
+<script src="/js-test-resources/js-test.js"></script>
+<script>
+description("Tests that the hidden-page DOM timer throttling auto-increase limit reaches the process of an out-of-process subframe whose view was created while the page was hidden");
+
+var jsTestIsAsync = true;
+var mainFrameLimit;
+var subframeLimit;
+var subframeAlignmentInterval;
+var testFrame;
+
+// The subframe is cross-origin, so its internals object cannot be reached directly.
+window.addEventListener("message", function(event) {
+    subframeLimit = event.data.limit;
+    subframeAlignmentInterval = event.data.alignmentInterval;
+    checkResults();
+}, false);
+
+function runTest()
+{
+    // This test starts working before DOMContentLoaded, which is when js-test.js would call this. Arm
+    // the watchdog of the harness first, so that a failing run reports its output instead of hanging.
+    testRunner.waitUntilDone();
+
+    // Wait for the main frame to observe the change, so that the subframe is created after the page is
+    // already hidden. The limit is a pool-wide value that the UI process only broadcasts when its page
+    // counter changes, so the process of a subframe created now is one that launched after the last
+    // broadcast.
+    document.addEventListener("visibilitychange", pageDidHide);
+    testRunner.setPageVisibility("hidden");
+}
+
+function pageDidHide()
+{
+    document.removeEventListener("visibilitychange", pageDidHide);
+
+    mainFrameLimit = internals.domTimerAlignmentIntervalIncreaseLimit();
+
+    debug("The page is hidden, so create the subframe now.");
+    testFrame = document.createElement("iframe");
+    testFrame.src = "http://localhost:8000/site-isolation/resources/dom-timer-throttling-state-frame.html";
+    testFrame.onload = frameDidLoad;
+    document.body.appendChild(testFrame);
+}
+
+function frameDidLoad()
+{
+    testFrame.contentWindow.postMessage("report-dom-timer-throttling-state", "*");
+}
+
+function checkResults()
+{
+    // Restore visibility before asserting: leaving the page hidden costs the harness the result of the
+    // test if one of these assertions fails.
+    testRunner.resetPageVisibility();
+
+    // The exact limit is 20 s per page with the preference enabled, but the number of such pages in the
+    // pool is not this test's business. What matters is that the subframe's process agrees with the main
+    // frame's rather than being stuck at the default of 0.
+    shouldBeGreaterThan("mainFrameLimit", "1000");
+    shouldBe("subframeLimit", "mainFrameLimit");
+
+    // The subframe's view was created while the page was already hidden, so maximum throttling applies
+    // to it immediately instead of ramping. This is the value that used to be clamped to the 1 s floor.
+    shouldBe("subframeAlignmentInterval", "subframeLimit");
+
+    finishJSTest();
+}
+
+runTest();
+</script>
+</body>
+</html>

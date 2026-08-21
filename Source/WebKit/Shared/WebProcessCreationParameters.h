@@ -286,6 +286,7 @@ struct WebProcessCreationParameters {
     HashSet<WebCore::RegistrableDomain> storageAccessPromptQuirksDomains;
     ScriptTrackingPrivacyRules scriptTrackingPrivacyRules;
 
+    Seconds hiddenPageDOMTimerThrottlingIncreaseLimit;
     Seconds memoryFootprintPollIntervalForTesting;
     Vector<uint64_t> memoryFootprintNotificationThresholds;
 

@@ -224,6 +224,7 @@ using WebCore::SystemSettings::State = WebCore::SystemSettingsState;
     HashSet<WebCore::RegistrableDomain> storageAccessPromptQuirksDomains;
     WebKit::ScriptTrackingPrivacyRules scriptTrackingPrivacyRules;
 
+    Seconds hiddenPageDOMTimerThrottlingIncreaseLimit;
     Seconds memoryFootprintPollIntervalForTesting;
     Vector<uint64_t> memoryFootprintNotificationThresholds;
 

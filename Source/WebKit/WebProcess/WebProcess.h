@@ -780,6 +780,8 @@ private:
     HashMap<PageGroupIdentifier, Ref<WebPageGroupProxy>> m_pageGroupMap;
     const RefPtr<InjectedBundle> m_injectedBundle;
 
+    Seconds m_hiddenPageDOMTimerThrottlingIncreaseLimit;
+
     EventDispatcher m_eventDispatcher;
 #if PLATFORM(IOS_FAMILY)
     ViewUpdateDispatcher m_viewUpdateDispatcher;

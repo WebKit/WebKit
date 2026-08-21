@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+
+// The embedder is cross-origin, so it cannot reach this internals object. It asks for the DOM timer
+// throttling state of this frame's page through messages.
+window.addEventListener("message", function() {
+    if (!window.internals) {
+        parent.postMessage("no internals", "*");
+        return;
+    }
+    parent.postMessage({
+        limit: internals.domTimerAlignmentIntervalIncreaseLimit(),
+        alignmentInterval: internals.domTimerAlignmentInterval()
+    }, "*");
+}, false);
+
+</script>
+</body>
+</html>
