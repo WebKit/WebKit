@@ -1,0 +1,29 @@
+Tests that drawImage() of an HDR image into a float16 canvas preserves HDR values, and that an SDR canvas is unaffected.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+canvas.dataset.colorSpace: srgb
+canvas.dataset.renderingMode: Accelerated
+
+=== globalCompositeOperation = "source-over" ===
+PASS HDR image -> float16 ("source-over"): has an extended-range component (max 1.6816), brightest pixel [0.0062, 1.6816, 0.0000, 1.0000]
+PASS HDR image -> unorm8 ("source-over"): is within the SDR range (max 0.9961)
+PASS SDR image -> float16 ("source-over"): is within the SDR range (max 0.5020)
+PASS SDR image -> unorm8 ("source-over"): is within the SDR range (max 0.5020)
+
+=== globalCompositeOperation = "copy" ===
+PASS HDR image -> float16 ("copy"): has an extended-range component (max 1.6816), brightest pixel [0.0062, 1.6816, 0.0000, 1.0000]
+PASS HDR image -> unorm8 ("copy"): is within the SDR range (max 0.9961)
+PASS SDR image -> float16 ("copy"): is within the SDR range (max 0.5020)
+PASS SDR image -> unorm8 ("copy"): is within the SDR range (max 0.5020)
+
+=== globalCompositeOperation = "source-in" ===
+PASS HDR image -> float16 ("source-in"): has an extended-range component (max 1.6816), brightest pixel [0.0062, 1.6816, 0.0000, 1.0000]
+PASS HDR image -> unorm8 ("source-in"): is within the SDR range (max 0.9961)
+PASS SDR image -> float16 ("source-in"): is within the SDR range (max 0.5020)
+PASS SDR image -> unorm8 ("source-in"): is within the SDR range (max 0.5020)
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

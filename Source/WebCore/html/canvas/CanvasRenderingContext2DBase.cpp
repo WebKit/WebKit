@@ -1753,6 +1753,10 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(Document& document, Ca
     auto observer = image->imageObserver();
     auto shouldPostProcess { true };
 
+#if ENABLE(PIXEL_FORMAT_RGBA16F)
+    auto drawsHDRContent = (isHDR() && image->hasHDRContent()) ? DrawsHDRContent::Yes : DrawsHDRContent::No;
+#endif
+
     if (image->drawsSVGImage()) {
         image->setImageObserver(nullptr);
         image->setContainerSize(imageRect.size());
@@ -1761,6 +1765,9 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(Document& document, Ca
     if (RefPtr bitmapImage = dynamicDowncast<BitmapImage>(*image)) {
         // Drawing an animated image to a canvas should draw the first frame (except for a few layout tests)
         if (image->isAnimated() && !document.settings().animatedImageDebugCanvasDrawingEnabled()) {
+            // FIXME: This draws the SDR base image, so an animated HDR image loses its HDR
+            // content: the copy is backed by a NativeImageSource, which never reports a gain
+            // map and always prefers DecodingDestination::Base.
             bitmapImage = BitmapImage::create(image->nativeImage());
             if (!bitmapImage)
                 return { };
@@ -1776,6 +1783,11 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(Document& document, Ca
         orientation,
         document.settings().imageSubsamplingEnabled() ? AllowImageSubsampling::Yes : AllowImageSubsampling::No,
         document.settings().showDebugBorders() ? ShowDebugBackground::Yes : ShowDebugBackground::No
+#if ENABLE(PIXEL_FORMAT_RGBA16F)
+        ,
+        drawsHDRContent,
+        document.settings().hdrAcceleratedApplyGainMapEnabled() ? AllowAcceleratedApplyGainMap::Yes : AllowAcceleratedApplyGainMap::No
+#endif
     };
 
     bool repaintEntireCanvas = false;
@@ -1783,7 +1795,7 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(Document& document, Ca
         c->drawImage(*image, normalizedDstRect, normalizedSrcRect, options);
         repaintEntireCanvas = true;
     } else if (isFullCanvasCompositeMode(op)) {
-        fullCanvasCompositedDrawImage(*image, normalizedDstRect, normalizedSrcRect, op);
+        fullCanvasCompositedDrawImage(*image, normalizedDstRect, normalizedSrcRect, op, options.drawsHDRContent(), options.allowAcceleratedApplyGainMap());
         repaintEntireCanvas = true;
     } else if (op == CompositeOperator::Copy) {
         clearCanvas();
@@ -2063,7 +2075,7 @@ static void drawImageToContext(ImageBuffer& imageBuffer, GraphicsContext& contex
     context.drawImageBuffer(imageBuffer, dest, src, options);
 }
 
-template<class T> void CanvasRenderingContext2DBase::fullCanvasCompositedDrawImage(T& image, const FloatRect& dest, const FloatRect& src, CompositeOperator op)
+template<class T> void CanvasRenderingContext2DBase::fullCanvasCompositedDrawImage(T& image, const FloatRect& dest, const FloatRect& src, CompositeOperator op, DrawsHDRContent drawsHDRContent, AllowAcceleratedApplyGainMap allowAcceleratedApplyGainMap)
 {
     ASSERT(isFullCanvasCompositeMode(op));
 
@@ -2089,7 +2101,7 @@ template<class T> void CanvasRenderingContext2DBase::fullCanvasCompositedDrawIma
     buffer->context().translate(-transformedAdjustedRect.location());
     buffer->context().translate(croppedOffset);
     buffer->context().concatCTM(effectiveTransform);
-    drawImageToContext(image, buffer->context(), adjustedDest, src, { CompositeOperator::SourceOver });
+    drawImageToContext(image, buffer->context(), adjustedDest, src, { CompositeOperator::SourceOver, drawsHDRContent, allowAcceleratedApplyGainMap });
 
     compositeBuffer(*buffer, bufferRect, op);
 }
