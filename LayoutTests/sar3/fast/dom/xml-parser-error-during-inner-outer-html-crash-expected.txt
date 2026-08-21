@@ -1,0 +1,4 @@
+This tests encountering a XML parser error during outerHTML. WebKit should not expose the shared document fragment.
+
+PASS
+
