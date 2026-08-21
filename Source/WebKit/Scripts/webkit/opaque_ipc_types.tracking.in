@@ -188,6 +188,7 @@
     [Legacy] StructureParam WebCore::PixelBufferSourceView.bytes()
     [Legacy] StructureParam JSC::ArrayBufferContents.span()
 
+    [NeedsReview] StructureParam GRefPtr<GByteArray>.data()
     [NeedsReview] StructureParam GRefPtr<GVariant>.data()
 
     [SecurityGatedReply] MessageParamReply WebPage.OpenPDFWithPreview data

@@ -26,6 +26,7 @@
 #include "config.h"
 #include "ArgumentCodersGLib.h"
 
+#include "GeneratedSerializers.h"
 #include <gio/gio.h>
 #include <gio/gunixfdlist.h>
 #include <wtf/Vector.h>
@@ -34,36 +35,6 @@
 #include <wtf/text/CString.h>
 
 namespace IPC {
-
-void ArgumentCoder<GRefPtr<GByteArray>>::encode(Encoder& encoder, const GRefPtr<GByteArray>& array)
-{
-    if (!array) {
-        encoder << false;
-        return;
-    }
-
-    encoder << true;
-    encoder << span(array);
-}
-
-std::optional<GRefPtr<GByteArray>> ArgumentCoder<GRefPtr<GByteArray>>::decode(Decoder& decoder)
-{
-    auto isEngaged = decoder.decode<bool>();
-    if (!isEngaged) [[unlikely]]
-        return std::nullopt;
-
-    if (!(*isEngaged))
-        return GRefPtr<GByteArray>();
-
-    auto data = decoder.decode<std::span<const uint8_t>>();
-    if (!data) [[unlikely]]
-        return std::nullopt;
-
-    GRefPtr<GByteArray> array = adoptGRef(g_byte_array_sized_new(data->size()));
-    g_byte_array_append(array.get(), data->data(), data->size());
-
-    return array;
-}
 
 void ArgumentCoder<GRefPtr<GTlsCertificate>>::encode(Encoder& encoder, const GRefPtr<GTlsCertificate>& certificate)
 {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Igalia S.L.
+ * Copyright (C) 2026 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,30 +23,37 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "CoreIPCGByteArray.h"
 
-#include "ArgumentCoders.h"
-#include <gio/gio.h>
-#include <wtf/glib/GRefPtr.h>
+#if USE(GLIB)
 
-typedef struct _GTlsCertificate GTlsCertificate;
-typedef struct _GUnixFDList GUnixFDList;
+#include <glib.h>
+#include <wtf/glib/GSpanExtras.h>
 
-namespace IPC {
+namespace WebKit {
 
-template<> struct ArgumentCoder<GRefPtr<GTlsCertificate>> {
-    static void encode(Encoder&, const GRefPtr<GTlsCertificate>&);
-    static std::optional<GRefPtr<GTlsCertificate>> decode(Decoder&);
-};
+CoreIPCGByteArray::CoreIPCGByteArray(const GRefPtr<GByteArray>& array)
+    : m_data(array)
+{
+}
 
-template<> struct ArgumentCoder<GTlsCertificateFlags> {
-    static void encode(Encoder&, GTlsCertificateFlags);
-    static std::optional<GTlsCertificateFlags> decode(Decoder&);
-};
+CoreIPCGByteArray::CoreIPCGByteArray(std::span<const uint8_t> data)
+    : m_data(adoptGRef(g_byte_array_sized_new(data.size())))
+{
+    g_byte_array_append(m_data.get(), data.data(), data.size());
+}
 
-template<> struct ArgumentCoder<GRefPtr<GUnixFDList>> {
-    static void encode(Encoder&, const GRefPtr<GUnixFDList>&);
-    static std::optional<GRefPtr<GUnixFDList>> decode(Decoder&);
-};
+std::span<const uint8_t> CoreIPCGByteArray::data() const
+{
+    return span(m_data);
+}
 
-} // namespace IPC
+CoreIPCGByteArray::operator GRefPtr<GByteArray>() const
+{
+    return m_data;
+}
+
+} // namespace WebKit
+
+#endif // USE(GLIB)
