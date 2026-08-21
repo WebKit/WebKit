@@ -6007,11 +6007,8 @@ void WebPageProxy::receivedNavigationActionPolicyDecision(WebProcessProxy& proce
             ASSERT(!destinationSuspendedPage || navigation->targetItem());
             RefPtr suspendedPage = destinationSuspendedPage ? RefPtr { protectedBackForwardCache->takeSuspendedPage(*protect(navigation->targetItem())) } : nullptr;
 
-            // It is difficult to get history right if we have several WebPage objects inside a single WebProcess for the same WebPageProxy. As a result, if we make sure to
-            // clear any SuspendedPageProxy for the current page that are backed by the destination process before we proceed with the navigation. This makes sure the WebPage
-            // we are about to create in the destination process will be the only one associated with this WebPageProxy.
             if (!destinationSuspendedPage && frame->isMainFrame())
-                protectedBackForwardCache->removeEntriesForPageAndProcess(*this, processNavigatingTo);
+                removeSuspendedPagesBeforeNavigation(processNavigatingTo);
 
             ASSERT(suspendedPage.get() == destinationSuspendedPage);
             if (suspendedPage && suspendedPage->pageIsClosedOrClosing())
@@ -10574,6 +10571,15 @@ void WebPageProxy::showBrowsingWarning(RefPtr<WebKit::BrowsingWarning>&& safeBro
     m_uiClient->didShowSafeBrowsingWarning();
 }
 
+void WebPageProxy::removeSuspendedPagesBeforeNavigation(WebProcessProxy& process)
+{
+    // It is difficult to get history right if we have several WebPage objects inside a single WebProcess for the same
+    // WebPageProxy. As a result, we clear any SuspendedPageProxy for the current page that are backed by the
+    // destination process before we proceed with the navigation. This makes sure the WebPage we are about to create in
+    // the destination process will be the only one associated with this WebPageProxy.
+    protect(backForwardCache())->removeEntriesForPageAndProcess(*this, process);
+}
+
 void WebPageProxy::performProcessSwapForNavigationResponse(API::Navigation& navigation, Ref<BrowsingContextGroup>&& browsingContextGroupForSwap, Ref<WebProcessProxy>&& processForNavigation, WebCore::ProcessSwapDisposition processSwapDisposition, NetworkResourceLoadIdentifier existingNetworkResourceLoadIdentifierToResume, MonotonicTime originalNavigationStartTime, CompletionHandler<void(bool success)>&& completionHandler)
 {
     auto preventProcessShutdown = processForNavigation->shutdownPreventingScope();
@@ -10601,6 +10607,8 @@ void WebPageProxy::performProcessSwapForNavigationResponse(API::Navigation& navi
 
         if (!m_provisionalPage)
             send(Messages::WebPage::StopLoadingDueToProcessSwap());
+
+        removeSuspendedPagesBeforeNavigation(processForNavigation);
 
         continueNavigationInNewProcess(*navigation, *mainFrame, nullptr, browsingContextGroupForSwap, WTF::move(processForNavigation), ProcessSwapRequestedByClient::No, ShouldTreatAsContinuingLoad::YesAfterProvisionalLoadStarted, existingNetworkResourceLoadIdentifierToResume, LoadedWebArchive::No, NavigationUpgradeToHTTPSBehavior::BasedOnPolicy, processSwapDisposition, nullptr, originalNavigationStartTime);
         completionHandler(true);
