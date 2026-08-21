@@ -23,7 +23,12 @@
 
 #if ENABLE_SWIFT_DEMO_URI_SCHEME
 
+#if os(Windows)
+// FIXME: (rdar://185504483) conflict with Windows Swift Foundation's ICU
+import FoundationEssentials
+#else
 import Foundation
+#endif
 import WebKit_Internal
 
 extension Data {
