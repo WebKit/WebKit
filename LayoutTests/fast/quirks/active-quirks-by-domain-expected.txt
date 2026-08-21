@@ -90,7 +90,7 @@ https://www.forbes.com/
 https://gizmodo.com/
     (none)
 https://play.geforcenow.com/
-    (none)
+    NeedsGeforcenowWarningDisplayNoneQuirk
 https://www.google.com/
     MaybeBypassBackForwardCache
 https://www.google.com/maps/
@@ -181,7 +181,7 @@ https://officeapps.live.com/
     ShouldAvoidResizingWhenInputViewBoundsChangeQuirk
     ShouldDisableDataURLPaddingValidation
 https://madisoncity.k12.al.us/
-    (none)
+    NeedsFormControlToBeMouseFocusableQuirk
 https://mailchimp.com/
     (none)
 https://www.marcus.com/

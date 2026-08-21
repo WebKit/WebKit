@@ -26,40 +26,41 @@
 #pragma once
 
 #include <initializer_list>
+#include <wtf/BitSet.h>
 #include <wtf/Platform.h>
 
 namespace WebCore {
 
-struct QuirksData {
-    bool isAirIndiaExpress : 1 { false };
-    bool isAmazon : 1 { false };
-    bool isBankOfAmerica : 1 { false };
-    bool isBestBuy : 1 { false };
-    bool isBing : 1 { false };
-    bool isCBSSports : 1 { false };
-    bool isCEAC : 1 { false };
-    bool isDictionary : 1 { false };
-    bool isEA : 1 { false };
-    bool isESPN : 1 { false };
-    bool isFacebook : 1 { false };
-    bool isGoogleDocs : 1 { false };
-    bool isGoogleProperty : 1 { false };
-    bool isGoogleMaps : 1 { false };
-    bool isIHeart : 1 { false };
-    bool isInVideo : 1 { false };
-    bool isLinkedIn : 1 { false };
-    bool isNBA : 1 { false };
-    bool isNetflix : 1 { false };
-    bool isOutlook : 1 { false };
-    bool isSoundCloud : 1 { false };
-    bool isThesaurus : 1 { false };
-    bool isTikTok : 1 { false };
-    bool isVimeo : 1 { false };
-    bool isWalmart : 1 { false };
-    bool isWebEx : 1 { false };
-    bool isYouTube : 1 { false };
-    bool isZoom : 1 { false };
+enum class QuirkSite : uint8_t {
+    Amazon,
+    BankOfAmerica,
+    BestBuy,
+    Bing,
+    CBSSports,
+    CEAC,
+    Dictionary,
+    EA,
+    Facebook,
+    GoogleDocs,
+    GoogleProperty,
+    GoogleMaps,
+    IHeart,
+    InVideo,
+    LinkedIn,
+    NBA,
+    Netflix,
+    Outlook,
+    SoundCloud,
+    Thesaurus,
+    TikTok,
+    Vimeo,
+    Walmart,
+    WebEx,
 
+    NumberOfSites
+};
+
+struct QuirksData {
     enum class SiteSpecificQuirk {
 #if PLATFORM(IOS) || PLATFORM(VISION)
         AllowLayeredFullscreenVideos,
@@ -290,7 +291,20 @@ struct QuirksData {
         NumberOfQuirks
     };
 
-    WTF::BitSet<static_cast<size_t>(SiteSpecificQuirk::NumberOfQuirks)> activeQuirks;
+    using QuirkBitSet = WTF::BitSet<static_cast<size_t>(SiteSpecificQuirk::NumberOfQuirks)>;
+    using QuirkSiteBitSet = WTF::BitSet<static_cast<size_t>(QuirkSite::NumberOfSites)>;
+    QuirkBitSet activeQuirks;
+    QuirkSiteBitSet sites;
+
+    inline bool isSite(QuirkSite candidate) const
+    {
+        return sites.get(static_cast<size_t>(candidate));
+    }
+
+    inline void addSite(QuirkSite site)
+    {
+        sites.set(static_cast<size_t>(site));
+    }
 
     inline bool quirkIsEnabled(SiteSpecificQuirk quirk) const
     {
@@ -320,7 +334,7 @@ struct QuirksData {
 
     // Requires check at moment of use
     std::optional<bool> needsDisableDOMPasteAccessQuirk;
-    std::optional<bool> shouldDisableElementFullscreen;
+    bool shouldDisableElementFullscreen { false };
 
 #if ENABLE(TOUCH_EVENTS) || ENABLE(TOUCH_EVENT_REGIONS)
     enum class ShouldDispatchSimulatedMouseEvents : uint8_t {

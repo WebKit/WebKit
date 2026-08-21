@@ -2080,6 +2080,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/PrewarmInformation.h
     page/PrintContext.h
     page/ProcessWarming.h
+    page/QuirkMatch.h
     page/Quirks.h
     page/QuirksData.h
     page/RemoteDOMWindow.h
