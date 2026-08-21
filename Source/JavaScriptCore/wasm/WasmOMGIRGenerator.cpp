@@ -954,7 +954,11 @@ private:
 
     void mutatorFence();
 
+    Value* emitGetArraySize(Value* array, bool canTrap);
     Value* emitGetArraySizeWithNullCheck(Type arrayType, Value*);
+    void emitArrayRangeCheck(Value* arraySize, Value* offset, Value* size, ExceptionType);
+    Value* emitArrayElementAddress(StorageType elementType, Value* array, Value* index);
+    void emitArrayFillRange(StorageType elementType, Value* array, Value* offset, Value* fillValue, Value* size);
     void emitNullCheck(Value*, ExceptionType);
     bool emitNullCheckBeforeAccess(Value*, ptrdiff_t offset);
     void emitArraySetUnchecked(TypeSignatureIndex, Value*, Value*, Value*);
@@ -3758,16 +3762,50 @@ auto OMGIRGenerator::addArrayNewFixed(TypeSignatureIndex typeIndex, ArgumentList
     return { };
 }
 
-Value* OMGIRGenerator::emitGetArraySizeWithNullCheck(Type arrayType, Value* array)
+Value* OMGIRGenerator::emitGetArraySize(Value* array, bool canTrap)
 {
-    int32_t offset = safeCast<int32_t>(JSWebAssemblyArray::offsetOfSize());
-    bool canTrap = false;
-    if (arrayType.isNullable())
-        canTrap = emitNullCheckBeforeAccess(array, offset);
     B3::Kind kind = canTrap ? trapping(WasmArrayLength) : B3::Kind(WasmArrayLength);
     auto* arrayLength = m_currentBlock->appendNew<WasmArrayLengthValue>(m_proc, kind, Int32, origin(), pointerOfWasmRef(array));
     m_heaps.decorateWasmArrayLength(&m_heaps.JSWebAssemblyArray_size, arrayLength);
     return arrayLength;
+}
+
+Value* OMGIRGenerator::emitGetArraySizeWithNullCheck(Type arrayType, Value* array)
+{
+    bool canTrap = false;
+    if (arrayType.isNullable())
+        canTrap = emitNullCheckBeforeAccess(array, safeCast<int32_t>(JSWebAssemblyArray::offsetOfSize()));
+    return emitGetArraySize(array, canTrap);
+}
+
+void OMGIRGenerator::emitArrayRangeCheck(Value* arraySize, Value* offset, Value* size, ExceptionType exceptionType)
+{
+    Value* end = m_currentBlock->appendNew<Value>(m_proc, Add, origin(), pointerOfInt32(offset), pointerOfInt32(size));
+    CheckValue* check = m_currentBlock->appendNew<CheckValue>(m_proc, Check, origin(), m_currentBlock->appendNew<Value>(m_proc, Above, origin(), end, pointerOfInt32(arraySize)));
+    check->setGenerator([=, this, origin = this->origin()] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
+        this->emitExceptionCheck(jit, origin, exceptionType);
+    });
+}
+
+Value* OMGIRGenerator::emitArrayElementAddress(StorageType elementType, Value* array, Value* index)
+{
+    Value* arrayPtr = pointerOfWasmRef(array);
+    Value* payload;
+    if (JSWebAssemblyArray::needsV128AlignmentMask(elementType)) {
+        // A PreciseAllocation only guarantees 8-byte alignment, so v128 elements have to be found by
+        // rounding up at runtime rather than by a fixed offset.
+        payload = m_currentBlock->appendNew<Value>(m_proc, BitAnd, origin(),
+            m_currentBlock->appendNew<Value>(m_proc, Add, origin(), arrayPtr,
+                m_currentBlock->appendNew<ConstPtrValue>(m_proc, origin(), JSWebAssemblyArray::offsetOfData() + 15)),
+            m_currentBlock->appendNew<ConstPtrValue>(m_proc, origin(), static_cast<intptr_t>(-16)));
+    } else {
+        payload = m_currentBlock->appendNew<Value>(m_proc, Add, origin(), arrayPtr,
+            m_currentBlock->appendNew<ConstPtrValue>(m_proc, origin(), JSWebAssemblyArray::alignedOffsetOfData(elementType.elementSize())));
+    }
+
+    return m_currentBlock->appendNew<Value>(m_proc, Add, origin(), payload,
+        m_currentBlock->appendNew<Value>(m_proc, Mul, origin(), pointerOfInt32(index),
+            m_currentBlock->appendNew<ConstPtrValue>(m_proc, origin(), elementType.elementSize())));
 }
 
 auto OMGIRGenerator::addArrayGet(ExtGCOpType arrayGetKind, TypeSignatureIndex typeIndex, TypedExpression arrayref, ExpressionType index, ExpressionType& result) -> PartialResult
@@ -3901,6 +3939,78 @@ auto OMGIRGenerator::addArrayLen(TypedExpression arrayref, ExpressionType& resul
     return { };
 }
 
+static std::optional<uint8_t> repeatedFillByte(Value* value, size_t elementSize)
+{
+    ASSERT(elementSize <= sizeof(uint64_t));
+    uint64_t bits;
+    if (value->hasInt())
+        bits = value->asInt();
+    else if (value->hasFloat())
+        bits = std::bit_cast<uint32_t>(value->asFloat());
+    else if (value->hasDouble())
+        bits = std::bit_cast<uint64_t>(value->asDouble());
+    else
+        return std::nullopt;
+
+    uint8_t byte = bits & 0xff;
+    for (size_t i = 1; i < elementSize; ++i) {
+        if (((bits >> (i * 8)) & 0xff) != byte)
+            return std::nullopt;
+    }
+    return byte;
+}
+
+void OMGIRGenerator::emitArrayFillRange(StorageType elementType, Value* array, Value* offsetValue, Value* valueValue, Value* sizeValue)
+{
+    size_t elementSize = elementType.elementSize();
+    Value* address = emitArrayElementAddress(elementType, array, offsetValue);
+    Value* count = pointerOfInt32(sizeValue);
+
+    if (isRefType(elementType.unpacked())) {
+        callWasmOperation(m_currentBlock, B3::Void, operationWasmArrayFillRefs, address, valueValue, count);
+        emitWriteBarrier(pointerOfWasmRef(array));
+        return;
+    }
+
+    if (elementType.unpacked().isV128()) {
+        Value* lane0 = m_currentBlock->appendNew<SIMDValue>(m_proc, origin(), B3::VectorExtractLane, B3::Int64, SIMDLane::i64x2, SIMDSignMode::None, uint8_t { 0 }, valueValue);
+        Value* lane1 = m_currentBlock->appendNew<SIMDValue>(m_proc, origin(), B3::VectorExtractLane, B3::Int64, SIMDLane::i64x2, SIMDSignMode::None, uint8_t { 1 }, valueValue);
+        callWasmOperation(m_currentBlock, B3::Void, operationWasmArrayFill16B, address, lane0, lane1, count);
+        return;
+    }
+
+    if (elementSize == 1) {
+        m_currentBlock->appendNew<BulkMemoryValue>(m_proc, MemoryFill, origin(), address, valueValue, count);
+        return;
+    }
+
+    if (auto fillByte = repeatedFillByte(valueValue, elementSize)) {
+        m_currentBlock->appendNew<BulkMemoryValue>(m_proc, MemoryFill, origin(), address, constant(Int32, *fillByte),
+            m_currentBlock->appendNew<Value>(m_proc, Mul, origin(), count,
+                m_currentBlock->appendNew<ConstPtrValue>(m_proc, origin(), elementSize)));
+        return;
+    }
+
+    Value* bits = valueValue;
+    if (bits->type().isFloat())
+        bits = m_currentBlock->appendNew<Value>(m_proc, BitwiseCast, origin(), bits);
+    if (bits->type() == Int32)
+        bits = m_currentBlock->appendNew<Value>(m_proc, ZExt32, origin(), bits);
+
+    switch (elementSize) {
+    case 2:
+        callWasmOperation(m_currentBlock, B3::Void, operationWasmArrayFill2B, address, bits, count);
+        return;
+    case 4:
+        callWasmOperation(m_currentBlock, B3::Void, operationWasmArrayFill4B, address, bits, count);
+        return;
+    case 8:
+        callWasmOperation(m_currentBlock, B3::Void, operationWasmArrayFill8B, address, bits, count);
+        return;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
 auto OMGIRGenerator::addArrayFill(TypeSignatureIndex typeIndex, TypedExpression arrayref, ExpressionType offset, ExpressionType value, ExpressionType size) -> PartialResult
 {
     StorageType elementType;
@@ -3911,62 +4021,75 @@ auto OMGIRGenerator::addArrayFill(TypeSignatureIndex typeIndex, TypedExpression 
     Value* valueValue = get(value);
     Value* sizeValue = get(size);
 
-    if (arrayref.type().isNullable())
-        emitNullCheck(arrayValue, ExceptionType::NullArrayFill);
+    Value* arraySize = emitGetArraySizeWithNullCheck(arrayref.type(), arrayValue);
+    emitArrayRangeCheck(arraySize, offsetValue, sizeValue, ExceptionType::OutOfBoundsArrayFill);
 
-    Value* resultValue;
-    if (!elementType.unpacked().isV128()) {
-        Value* valueGPR = valueValue;
-        if (valueValue->type().isFloat())
-            valueGPR = m_currentBlock->appendNew<Value>(m_proc, BitwiseCast, origin(), valueGPR);
-        resultValue = callWasmOperation(m_currentBlock, toB3Type(Types::I32), operationWasmArrayFill,
-            instanceValue(), arrayValue, offsetValue, valueGPR, sizeValue);
-    } else {
-        Value* lane0 = m_currentBlock->appendNew<SIMDValue>(m_proc, origin(), B3::VectorExtractLane, B3::Int64, SIMDLane::i64x2, SIMDSignMode::None, uint8_t { 0 }, valueValue);
-        Value* lane1 = m_currentBlock->appendNew<SIMDValue>(m_proc, origin(), B3::VectorExtractLane, B3::Int64, SIMDLane::i64x2, SIMDSignMode::None, uint8_t { 1 }, valueValue);
-        resultValue = callWasmOperation(m_currentBlock, toB3Type(Types::I32), operationWasmArrayFillVector,
-            instanceValue(), arrayValue, offsetValue, lane0, lane1, sizeValue);
-    }
+    auto* fillPath = m_proc.addBlock();
+    auto* continuation = m_proc.addBlock();
 
-    {
-        CheckValue* check = m_currentBlock->appendNew<CheckValue>(m_proc, Check, origin(),
-            m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), resultValue, constant(Int32, 0)));
+    m_currentBlock->appendNewControlValue(m_proc, B3::Branch, origin(), sizeValue,
+        FrequentedBlock(fillPath), FrequentedBlock(continuation));
+    fillPath->addPredecessor(m_currentBlock);
+    continuation->addPredecessor(m_currentBlock);
 
-        check->setGenerator([=, this, origin = this->origin()] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
-            this->emitExceptionCheck(jit, origin, ExceptionType::OutOfBoundsArrayFill);
-        });
-    }
+    m_currentBlock = fillPath;
+    emitArrayFillRange(elementType, arrayValue, offsetValue, valueValue, sizeValue);
+    m_currentBlock->appendNewControlValue(m_proc, Jump, origin(), continuation);
+    continuation->addPredecessor(m_currentBlock);
+
+    m_currentBlock = continuation;
 
     return { };
 }
 
-auto OMGIRGenerator::addArrayCopy(TypeSignatureIndex, TypedExpression dst, ExpressionType dstOffset, TypeSignatureIndex, TypedExpression src, ExpressionType srcOffset, ExpressionType size) -> PartialResult
+auto OMGIRGenerator::addArrayCopy(TypeSignatureIndex dstTypeIndex, TypedExpression dst, ExpressionType dstOffset, TypeSignatureIndex srcTypeIndex, TypedExpression src, ExpressionType srcOffset, ExpressionType size) -> PartialResult
 {
+    StorageType elementType;
+    getArrayElementType(dstTypeIndex, elementType);
+    size_t elementSize = elementType.elementSize();
+
+    // Both element addresses and the byte count are scaled by the destination's stride, so a source
+    // whose stride differed would read outside its payload.
+    StorageType srcElementType;
+    getArrayElementType(srcTypeIndex, srcElementType);
+    RELEASE_ASSERT(srcElementType.elementSize() == elementSize);
+
     auto dstValue = get(dst);
     auto dstOffsetValue = get(dstOffset);
     auto srcValue = get(src);
     auto srcOffsetValue = get(srcOffset);
     auto sizeValue = get(size);
 
-    if (dst.type().isNullable())
-        emitNullCheck(dstValue, ExceptionType::NullArrayCopy);
-    if (src.type().isNullable())
-        emitNullCheck(srcValue, ExceptionType::NullArrayCopy);
+    Value* dstSize = emitGetArraySizeWithNullCheck(dst.type(), dstValue);
+    Value* srcSize = emitGetArraySizeWithNullCheck(src.type(), srcValue);
+    emitArrayRangeCheck(dstSize, dstOffsetValue, sizeValue, ExceptionType::OutOfBoundsArrayCopy);
+    emitArrayRangeCheck(srcSize, srcOffsetValue, sizeValue, ExceptionType::OutOfBoundsArrayCopy);
 
-    Value* resultValue = callWasmOperation(m_currentBlock, toB3Type(Types::I32), operationWasmArrayCopy,
-        instanceValue(),
-        dstValue, dstOffsetValue,
-        srcValue, srcOffsetValue,
-        sizeValue);
+    auto* copyPath = m_proc.addBlock();
+    auto* continuation = m_proc.addBlock();
 
+    m_currentBlock->appendNewControlValue(m_proc, B3::Branch, origin(), sizeValue,
+        FrequentedBlock(copyPath), FrequentedBlock(continuation));
+    copyPath->addPredecessor(m_currentBlock);
+    continuation->addPredecessor(m_currentBlock);
+
+    m_currentBlock = copyPath;
     {
-        CheckValue* check = m_currentBlock->appendNew<CheckValue>(m_proc, Check, origin(),
-            m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), resultValue, constant(Int32, 0)));
+        Value* dstAddress = emitArrayElementAddress(elementType, dstValue, dstOffsetValue);
+        Value* srcAddress = emitArrayElementAddress(elementType, srcValue, srcOffsetValue);
+        Value* byteCount = m_currentBlock->appendNew<Value>(m_proc, Mul, origin(), pointerOfInt32(sizeValue),
+            m_currentBlock->appendNew<ConstPtrValue>(m_proc, origin(), elementSize));
 
-        check->setGenerator([=, this, origin = this->origin()] (CCallHelpers& jit, const B3::StackmapGenerationParams&) {
-            this->emitExceptionCheck(jit, origin, ExceptionType::OutOfBoundsArrayCopy);
-        });
+        if (isRefType(elementType.unpacked())) {
+            callWasmOperation(m_currentBlock, B3::Void, operationWasmArrayCopyRefs, dstAddress, srcAddress, byteCount);
+            emitWriteBarrier(pointerOfWasmRef(dstValue));
+        } else
+            m_currentBlock->appendNew<BulkMemoryValue>(m_proc, MemoryCopy, origin(), dstAddress, srcAddress, byteCount);
     }
+    m_currentBlock->appendNewControlValue(m_proc, Jump, origin(), continuation);
+    continuation->addPredecessor(m_currentBlock);
+
+    m_currentBlock = continuation;
 
     return { };
 }

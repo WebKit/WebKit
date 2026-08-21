@@ -85,7 +85,7 @@ function testArrayFill() {
          (start 0))
     `),
     WebAssembly.RuntimeError,
-    "array.fill to a null reference"
+    "access to a null reference"
   );
 
   assert.throws(
@@ -98,7 +98,7 @@ function testArrayFill() {
          (start 0))
     `),
     WebAssembly.RuntimeError,
-    "array.fill to a null reference"
+    "access to a null reference"
   );
 
   assert.throws(
@@ -303,7 +303,7 @@ function testArrayCopy() {
          (start 0))
     `),
     WebAssembly.RuntimeError,
-    "array.copy to a null reference"
+    "access to a null reference"
   );
 
   assert.throws(
@@ -316,7 +316,7 @@ function testArrayCopy() {
          (start 0))
     `),
     WebAssembly.RuntimeError,
-    "array.copy to a null reference"
+    "access to a null reference"
   );
 
   assert.throws(
@@ -328,7 +328,7 @@ function testArrayCopy() {
          (start 0))
     `),
     WebAssembly.RuntimeError,
-    "array.copy to a null reference"
+    "access to a null reference"
   );
 
   assert.throws(
@@ -341,7 +341,7 @@ function testArrayCopy() {
          (start 0))
     `),
     WebAssembly.RuntimeError,
-    "array.copy to a null reference"
+    "access to a null reference"
   );
 
   assert.throws(

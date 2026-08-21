@@ -32,6 +32,7 @@
 
 #include "ButterflyInlines.h"
 #include "FrameTracers.h"
+#include "GCMemoryOperations.h"
 #include "IteratorOperations.h"
 #include "JITExceptions.h"
 #include "JSArrayBufferViewInlines.h"
@@ -55,7 +56,10 @@
 #include "WasmOSREntryPlan.h"
 #include "WasmOperationsInlines.h"
 #include "WasmWorklist.h"
+#include <algorithm>
 #include <bit>
+#include <span>
+#include <string.h>
 #include <wtf/DataLog.h>
 #include <wtf/Locker.h>
 #include <wtf/StdLibExtras.h>
@@ -1749,27 +1753,61 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationWasmArrayNewEmpty, EncodedJSValue, (J
     return JSValue::encode(array);
 }
 
-JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationWasmArrayFill, UCPUStrictInt32, (JSWebAssemblyInstance* instance, EncodedJSValue arrayValue, uint32_t offset, uint64_t value, uint32_t size))
+template<typename Element>
+static ALWAYS_INLINE void fillArrayElements(void* payload, Element element, size_t elementCount)
 {
-    CallFrame* callFrame = DECLARE_WASM_CALL_FRAME(instance);
-    assertCalleeIsReferenced(callFrame, instance);
-    VM& vm = instance->vm();
-    WasmOperationPrologueCallFrameTracer tracer(vm, callFrame, OUR_RETURN_ADDRESS);
-    return toUCPUStrictInt32(arrayFill(vm, arrayValue, offset, value, size));
+#if OS(DARWIN)
+    // memset_pattern* truncates a trailing partial instance of the pattern, so widening a narrow
+    // element to a wider pattern never writes past the end.
+    // https://developer.apple.com/library/archive/documentation/System/Conceptual/ManPages_iPhoneOS/man3/memset_pattern4.3.html
+    size_t byteCount = elementCount * sizeof(Element);
+    if constexpr (sizeof(Element) == sizeof(uint16_t)) {
+        uint32_t pattern = (static_cast<uint32_t>(element) << 16) | element;
+        memset_pattern4(payload, &pattern, byteCount);
+    } else if constexpr (sizeof(Element) == sizeof(uint32_t))
+        memset_pattern4(payload, &element, byteCount);
+    else if constexpr (sizeof(Element) == sizeof(uint64_t))
+        memset_pattern8(payload, &element, byteCount);
+    else {
+        static_assert(sizeof(Element) == 16);
+        memset_pattern16(payload, &element, byteCount);
+    }
+#else
+    std::ranges::fill(std::span { static_cast<Element*>(payload), elementCount }, element);
+#endif
 }
 
-JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationWasmArrayFillVector, UCPUStrictInt32, (JSWebAssemblyInstance* instance, EncodedJSValue arrayValue, uint32_t offset, uint64_t lane0, uint64_t lane1, uint32_t size))
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationWasmArrayFill2B, void, (void* payload, uint64_t value, size_t elementCount))
 {
-    CallFrame* callFrame = DECLARE_WASM_CALL_FRAME(instance);
-    assertCalleeIsReferenced(callFrame, instance);
-    VM& vm = instance->vm();
-    WasmOperationPrologueCallFrameTracer tracer(vm, callFrame, OUR_RETURN_ADDRESS);
-    return toUCPUStrictInt32(arrayFill(vm, arrayValue, offset, v128_t { lane0, lane1 }, size));
+    fillArrayElements(payload, static_cast<uint16_t>(value), elementCount);
 }
 
-JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationWasmArrayCopy, UCPUStrictInt32, (JSWebAssemblyInstance* instance, EncodedJSValue dst, uint32_t dstOffset, EncodedJSValue src, uint32_t srcOffset, uint32_t size))
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationWasmArrayFill4B, void, (void* payload, uint64_t value, size_t elementCount))
 {
-    return toUCPUStrictInt32(arrayCopy(instance, dst, dstOffset, src, srcOffset, size));
+    fillArrayElements(payload, static_cast<uint32_t>(value), elementCount);
+}
+
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationWasmArrayFill8B, void, (void* payload, uint64_t value, size_t elementCount))
+{
+    fillArrayElements(payload, value, elementCount);
+}
+
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationWasmArrayFill16B, void, (void* payload, uint64_t lane0, uint64_t lane1, size_t elementCount))
+{
+    fillArrayElements(payload, v128_t { lane0, lane1 }, elementCount);
+}
+
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationWasmArrayFillRefs, void, (uint64_t* payload, uint64_t value, size_t elementCount))
+{
+    // A reference is stored whole so the concurrent collector cannot observe a torn JSValue.
+    volatile uint64_t* cursor = payload;
+    for (size_t i = 0; i < elementCount; ++i)
+        cursor[i] = value;
+}
+
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationWasmArrayCopyRefs, void, (uint64_t* dst, const uint64_t* src, size_t byteCount))
+{
+    gcSafeMemmove(dst, src, byteCount);
 }
 
 JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationWasmArrayInitElem, UCPUStrictInt32, (JSWebAssemblyInstance* instance, EncodedJSValue dst, uint32_t dstOffset, uint32_t srcElementIndex, uint32_t srcOffset, uint32_t size))

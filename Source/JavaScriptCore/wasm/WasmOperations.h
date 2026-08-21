@@ -132,9 +132,13 @@ JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationWasmArrayNewVector, EncodedJSValue, 
 JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationWasmArrayNewData, EncodedJSValue, (JSWebAssemblyInstance* instance, uint32_t typeIndex, uint32_t dataSegmentIndex, uint32_t arraySize, uint32_t offset));
 JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationWasmArrayNewElem, EncodedJSValue, (JSWebAssemblyInstance* instance, uint32_t typeIndex, uint32_t elemSegmentIndex, uint32_t arraySize, uint32_t offset));
 JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationWasmArrayNewEmpty, EncodedJSValue, (JSWebAssemblyInstance* instance, uint32_t typeIndex, uint32_t size));
-JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationWasmArrayFill, UCPUStrictInt32, (JSWebAssemblyInstance*, EncodedJSValue, uint32_t, uint64_t, uint32_t));
-JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationWasmArrayFillVector, UCPUStrictInt32, (JSWebAssemblyInstance*, EncodedJSValue, uint32_t, uint64_t, uint64_t, uint32_t));
-JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationWasmArrayCopy, UCPUStrictInt32, (JSWebAssemblyInstance*, EncodedJSValue, uint32_t, EncodedJSValue, uint32_t, uint32_t));
+// The Fill operations take an element count; the Copy operation takes a byte count.
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationWasmArrayFill2B, void, (void* payload, uint64_t value, size_t elementCount));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationWasmArrayFill4B, void, (void* payload, uint64_t value, size_t elementCount));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationWasmArrayFill8B, void, (void* payload, uint64_t value, size_t elementCount));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationWasmArrayFill16B, void, (void* payload, uint64_t lane0, uint64_t lane1, size_t elementCount));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationWasmArrayFillRefs, void, (uint64_t* payload, uint64_t value, size_t elementCount));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationWasmArrayCopyRefs, void, (uint64_t* dst, const uint64_t* src, size_t byteCount));
 JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationWasmArrayInitElem, UCPUStrictInt32, (JSWebAssemblyInstance*, EncodedJSValue, uint32_t, uint32_t, uint32_t, uint32_t));
 JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationWasmArrayInitData, UCPUStrictInt32, (JSWebAssemblyInstance*, EncodedJSValue, uint32_t, uint32_t, uint32_t, uint32_t));
 JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationWasmAnyConvertExtern, EncodedJSValue, (EncodedJSValue));

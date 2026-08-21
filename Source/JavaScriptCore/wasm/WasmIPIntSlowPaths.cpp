@@ -938,7 +938,7 @@ WASM_IPINT_EXTERN_CPP_DECL(array_fill, IPIntStackEntry* sp)
     EncodedJSValue arrayref = sp[3].ref;
     JSValue arrayValue = JSValue::decode(arrayref);
     if (arrayValue.isNull()) [[unlikely]]
-        IPINT_THROW(Wasm::ExceptionType::NullArrayFill);
+        IPINT_THROW(Wasm::ExceptionType::NullAccess);
 
     ASSERT(arrayValue.isObject());
     JSWebAssemblyArray* arrayObject = uncheckedDowncast<JSWebAssemblyArray>(arrayValue.getObject());
@@ -974,7 +974,7 @@ WASM_IPINT_EXTERN_CPP_DECL(array_copy, IPIntStackEntry* sp)
     uint32_t size = sp[0].i32;
 
     if (JSValue::decode(dst).isNull() || JSValue::decode(src).isNull()) [[unlikely]]
-        IPINT_THROW(Wasm::ExceptionType::NullArrayCopy);
+        IPINT_THROW(Wasm::ExceptionType::NullAccess);
 
     if (!Wasm::arrayCopy(instance, dst, dstOffset, src, srcOffset, size)) [[unlikely]]
         IPINT_THROW(Wasm::ExceptionType::OutOfBoundsArrayCopy);

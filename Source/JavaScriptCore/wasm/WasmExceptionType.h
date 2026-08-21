@@ -61,8 +61,6 @@ namespace Wasm {
     macro(BadArrayNewInitElem, "Out of bounds or failed to allocate in array.new_elem"_s) \
     macro(BadArrayNewInitData, "Out of bounds or failed to allocate in array.new_data"_s) \
     macro(NullAccess, "access to a null reference"_s) \
-    macro(NullArrayFill, "array.fill to a null reference"_s) \
-    macro(NullArrayCopy, "array.copy to a null reference"_s) \
     macro(NullArrayInitElem, "array.init_elem to a null reference"_s) \
     macro(NullArrayInitData, "array.init_data to a null reference"_s) \
     macro(TypeErrorInvalidValueUse, "an exported wasm function cannot contain an invalid parameter or return value"_s) \
@@ -129,8 +127,6 @@ ALWAYS_INLINE bool isTypeErrorExceptionType(ExceptionType type)
     case ExceptionType::BadArrayNewInitElem:
     case ExceptionType::BadArrayNewInitData:
     case ExceptionType::NullAccess:
-    case ExceptionType::NullArrayFill:
-    case ExceptionType::NullArrayCopy:
     case ExceptionType::NullArrayInitElem:
     case ExceptionType::NullArrayInitData:
     case ExceptionType::NullRefAsNonNull:

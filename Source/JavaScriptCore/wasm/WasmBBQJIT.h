@@ -1437,6 +1437,10 @@ public:
     [[nodiscard]] PartialResult addArrayNewFixed(TypeSignatureIndex typeIndex, ArgumentList& args, ExpressionType& result);
 
     void emitArrayGetPayload(StorageType, GPRReg arrayGPR, GPRReg payloadGPR);
+    void emitZeroExtendI32(Value, GPRReg resultGPR);
+    void emitGetArraySizeWithNullCheck(TypedExpression array, GPRReg lengthGPR);
+    void emitArrayRangeCheck(GPRReg lengthGPR, Value offset, Value size, ExceptionType);
+    void emitArrayElementAddress(StorageType elementType, Value array, Value index, GPRReg resultGPR);
 
     [[nodiscard]] PartialResult addArrayGet(ExtGCOpType arrayGetKind, TypeSignatureIndex typeIndex, TypedExpression arrayref, ExpressionType index, ExpressionType& result);
 

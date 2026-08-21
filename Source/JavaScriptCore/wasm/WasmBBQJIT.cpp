@@ -30,6 +30,7 @@
 #if ENABLE(WEBASSEMBLY_BBQJIT)
 
 #include "B3Common.h"
+#include "B3Operations.h"
 #include "B3ValueRep.h"
 #include "BinarySwitch.h"
 #include "BytecodeStructs.h"
@@ -1689,32 +1690,84 @@ void BBQJIT::pushArrayNewFromSegment(ArraySegmentOperation operation, TypeSignat
         consume(src);
         consume(srcOffset);
         consume(size);
-        emitThrowException(ExceptionType::NullArrayCopy);
+        emitThrowException(ExceptionType::NullAccess);
         return { };
     }
 
-    if (typedDst.type().isNullable())
-        emitThrowOnNullReference(ExceptionType::NullArrayCopy, loadIfNecessary(dst));
-    if (typedSrc.type().isNullable())
-        emitThrowOnNullReference(ExceptionType::NullArrayCopy, loadIfNecessary(src));
+    StorageType elementType = getArrayElementType(dstTypeIndex);
+    size_t elementSize = elementType.elementSize();
+    ASSERT(hasOneBitSet(elementSize));
+    // Both element addresses and the byte count are scaled by the destination's stride, so a source
+    // whose stride differed would read outside its payload.
+    RELEASE_ASSERT(getArrayElementType(srcTypeIndex).elementSize() == elementSize);
 
-    Vector<Value, 8> arguments = {
-        instanceValue(),
-        dst,
-        dstOffset,
-        src,
-        srcOffset,
-        size
-    };
-    Value shouldThrow = topValue(TypeKind::I32);
-    emitCCall(&operationWasmArrayCopy, arguments, shouldThrow);
-    Location shouldThrowLocation = loadIfNecessary(shouldThrow);
+    {
+        // Both lengths are loaded first because a null array traps ahead of either range being out of
+        // bounds, and the load is what traps.
+        ScratchScope<2, 0> lengths(*this);
+        GPRReg dstLengthGPR = lengths.gpr(0);
+        GPRReg srcLengthGPR = lengths.gpr(1);
+
+        emitGetArraySizeWithNullCheck(typedDst, dstLengthGPR);
+        emitGetArraySizeWithNullCheck(typedSrc, srcLengthGPR);
+
+        emitArrayRangeCheck(dstLengthGPR, dstOffset, size, ExceptionType::OutOfBoundsArrayCopy);
+        emitArrayRangeCheck(srcLengthGPR, srcOffset, size, ExceptionType::OutOfBoundsArrayCopy);
+    }
 
     LOG_INSTRUCTION("ArrayCopy", dstTypeIndex, dst, dstOffset, srcTypeIndex, src, srcOffset, size);
 
-    recordJumpToThrowException(ExceptionType::OutOfBoundsArrayCopy, m_jit.branchTest32(ResultCondition::Zero, shouldThrowLocation.asGPR()));
+    bool isEmptyRange = size.isConst() && !size.asI32();
+    if (!isEmptyRange) {
+        // An empty range has nothing left to do once it is in bounds, and collection code copies empty
+        // ranges constantly, so branch around the call. Both edges of that branch have to agree on
+        // where every value lives, which is what the flush establishes.
+        flushRegisters();
 
-    consume(shouldThrow);
+        Vector<Value, 8> arguments;
+        JumpList isEmpty;
+        {
+            // emitCCall() cannot run with scratches held, so compute the arguments here and name the
+            // registers they landed in once the scope has released them.
+            ScratchScope<3, 0> scratches(*this);
+            GPRReg dstAddressGPR = scratches.gpr(0);
+            GPRReg srcAddressGPR = scratches.gpr(1);
+            GPRReg byteCountGPR = scratches.gpr(2);
+
+            emitZeroExtendI32(size, byteCountGPR);
+            if (!size.isConst())
+                isEmpty.append(m_jit.branchTest32(ResultCondition::Zero, byteCountGPR));
+
+            emitArrayElementAddress(elementType, dst, dstOffset, dstAddressGPR);
+            emitArrayElementAddress(elementType, src, srcOffset, srcAddressGPR);
+            m_jit.lshift64(byteCountGPR, TrustedImm32(getLSBSet(elementSize)), byteCountGPR);
+
+            arguments = {
+                Value::pinned(TypeKind::I64, Location::fromGPR(dstAddressGPR)),
+                Value::pinned(TypeKind::I64, Location::fromGPR(srcAddressGPR)),
+                Value::pinned(TypeKind::I64, Location::fromGPR(byteCountGPR)),
+            };
+        }
+
+        if (isRefType(elementType.unpacked())) {
+            // A reference has to move whole or the concurrent collector could read a torn JSValue, which
+            // a byte-wise copy does not promise.
+            emitCCall(&operationWasmArrayCopyRefs, arguments);
+
+            // emitWriteBarrier() allocates its own scratches, so stage the cell somewhere they cannot take.
+            emitMove(dst, Location::fromGPR(wasmScratchGPR));
+            emitWriteBarrier(wasmScratchGPR);
+        } else
+            emitCCall(&B3::operationMemoryCopy, arguments);
+
+        isEmpty.link(m_jit);
+    }
+
+    consume(dst);
+    consume(dstOffset);
+    consume(src);
+    consume(srcOffset);
+    consume(size);
 
     return { };
 }
@@ -5717,6 +5770,71 @@ void BBQJIT::emitArrayGetPayload(StorageType type, GPRReg arrayGPR, GPRReg paylo
     // For all other types, alignment shift is a compile-time constant
     // since JSCell always has >=8-byte alignment.
     m_jit.addPtr(MacroAssembler::TrustedImm32(JSWebAssemblyArray::alignedOffsetOfData(type.elementSize())), arrayGPR, payloadGPR);
+}
+
+void BBQJIT::emitZeroExtendI32(Value value, GPRReg resultGPR)
+{
+    ASSERT(value.type() == TypeKind::I32);
+    if (value.isConst()) {
+        m_jit.move(TrustedImm32(value.asI32()), resultGPR);
+        return;
+    }
+
+    // locationOf() binds a value that only lives in its canonical slot, which is how a constant
+    // materialized by emitStoreConst() is found.
+    Location location = locationOf(value);
+    if (location.isRegister())
+        m_jit.zeroExtend32ToWord(location.asGPR(), resultGPR);
+    else
+        m_jit.load32(location.asAddress(), resultGPR);
+}
+
+void BBQJIT::emitArrayRangeCheck(GPRReg lengthGPR, Value offset, Value size, ExceptionType exceptionType)
+{
+    // The scratches below are free to reallocate any unlocked register, including one holding the length.
+    ASSERT(m_gprAllocator.isLocked(lengthGPR));
+
+    ScratchScope<2, 0> scratches(*this);
+    GPRReg endGPR = scratches.gpr(0);
+    GPRReg sizeGPR = scratches.gpr(1);
+
+    emitZeroExtendI32(offset, endGPR);
+    if (size.isConst())
+        m_jit.add64(TrustedImm64(static_cast<uint64_t>(static_cast<uint32_t>(size.asI32()))), endGPR);
+    else {
+        emitZeroExtendI32(size, sizeGPR);
+        m_jit.add64(sizeGPR, endGPR);
+    }
+
+    recordJumpToThrowException(exceptionType, m_jit.branch64(RelationalCondition::Above, endGPR, lengthGPR));
+}
+
+void BBQJIT::emitGetArraySizeWithNullCheck(TypedExpression array, GPRReg lengthGPR)
+{
+    Location arrayLocation = loadIfNecessary(array.value());
+    if (array.type().isNullable())
+        emitThrowOnNullReferenceBeforeAccess(arrayLocation, JSWebAssemblyArray::offsetOfSize());
+    m_jit.load32(Address(arrayLocation.asGPR(), JSWebAssemblyArray::offsetOfSize()), lengthGPR);
+}
+
+void BBQJIT::emitArrayElementAddress(StorageType elementType, Value array, Value index, GPRReg resultGPR)
+{
+    ASSERT(resultGPR != wasmScratchGPR);
+    size_t elementSize = elementType.elementSize();
+    ASSERT(hasOneBitSet(elementSize));
+
+    emitMove(array, Location::fromGPR(wasmScratchGPR));
+    emitArrayGetPayload(elementType, wasmScratchGPR, resultGPR);
+
+    if (index.isConst()) {
+        if (uint32_t elementIndex = static_cast<uint32_t>(index.asI32()))
+            m_jit.add64(TrustedImm64(static_cast<uint64_t>(elementIndex) * elementSize), resultGPR);
+        return;
+    }
+
+    emitZeroExtendI32(index, wasmScratchGPR);
+    m_jit.lshift64(wasmScratchGPR, TrustedImm32(getLSBSet(elementSize)), wasmScratchGPR);
+    m_jit.add64(wasmScratchGPR, resultGPR);
 }
 
 } // namespace JSC::Wasm::BBQJITImpl

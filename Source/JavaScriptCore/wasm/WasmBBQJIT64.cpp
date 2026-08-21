@@ -33,6 +33,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #if ENABLE(WEBASSEMBLY_BBQJIT)
 
 #include "B3Common.h"
+#include "B3Operations.h"
 #include "B3ValueRep.h"
 #include "BinarySwitch.h"
 #include "BytecodeStructs.h"
@@ -1890,56 +1891,110 @@ void BBQJIT::emitArraySetUnchecked(TypeSignatureIndex typeIndex, Value arrayref,
         consume(offset);
         consume(value);
         consume(size);
-        emitThrowException(ExceptionType::NullArrayFill);
+        emitThrowException(ExceptionType::NullAccess);
         return { };
     }
 
-    if (typedArray.type().isNullable())
-        emitThrowOnNullReference(ExceptionType::NullArrayFill, loadIfNecessary(arrayref));
-
-    Value shouldThrow = topValue(TypeKind::I32);
-    if (value.type() != TypeKind::V128) {
-        value = marshallToI64(value);
-        Vector<Value, 8> arguments = {
-            instanceValue(),
-            arrayref,
-            offset,
-            value,
-            size
-        };
-        emitCCall(&operationWasmArrayFill, arguments, shouldThrow);
-    } else {
-        ASSERT(!value.isConst());
-        Location valueLocation = loadIfNecessary(value);
-        consume(value);
-
-        Value lane0, lane1;
-        {
-            ScratchScope<2, 0> scratches(*this);
-            lane0 = Value::pinned(TypeKind::I64, Location::fromGPR(scratches.gpr(0)));
-            lane1 = Value::pinned(TypeKind::I64, Location::fromGPR(scratches.gpr(1)));
-
-            m_jit.vectorExtractLaneInt64(TrustedImm32(0), valueLocation.asFPR(), scratches.gpr(0));
-            m_jit.vectorExtractLaneInt64(TrustedImm32(1), valueLocation.asFPR(), scratches.gpr(1));
-        }
-
-        Vector<Value, 8> arguments = {
-            instanceValue(),
-            arrayref,
-            offset,
-            lane0,
-            lane1,
-            size,
-        };
-        emitCCall(operationWasmArrayFillVector, arguments, shouldThrow);
+    StorageType elementType = getArrayElementType(typeIndex);
+    {
+        ScratchScope<1, 0> length(*this);
+        emitGetArraySizeWithNullCheck(typedArray, length.gpr(0));
+        emitArrayRangeCheck(length.gpr(0), offset, size, ExceptionType::OutOfBoundsArrayFill);
     }
-    Location shouldThrowLocation = loadIfNecessary(shouldThrow);
 
     LOG_INSTRUCTION("ArrayFill", typeIndex, arrayref, offset, value, size);
 
-    recordJumpToThrowException(ExceptionType::OutOfBoundsArrayFill, m_jit.branchTest32(ResultCondition::Zero, shouldThrowLocation.asGPR()));
+    bool isEmptyRange = size.isConst() && !size.asI32();
+    if (!isEmptyRange) {
+        bool fillsVector = value.type() == TypeKind::V128;
+        ASSERT_IMPLIES(fillsVector, !value.isConst());
+        // Reinterpreting a float fill value as its bits flushes it, which has to happen on both edges
+        // of the branch below, not just the one that calls.
+        Value fillBits = fillsVector ? value : marshallToI64(value);
 
-    consume(shouldThrow);
+        // An empty range has nothing left to do once it is in bounds, and collection code fills empty
+        // ranges constantly, so branch around the call. Both edges of that branch have to agree on
+        // where every value lives, which is what the flush establishes.
+        flushRegisters();
+
+        Vector<Value, 8> arguments;
+        JumpList isEmpty;
+        {
+            // emitCCall() cannot run with scratches held, so compute the arguments here and name the
+            // registers they landed in once the scope has released them.
+            ScratchScope<4, 0> scratches(*this);
+            GPRReg payloadGPR = scratches.gpr(0);
+            GPRReg countGPR = scratches.gpr(1);
+            GPRReg valueGPR = scratches.gpr(2);
+            GPRReg lane1GPR = scratches.gpr(3);
+
+            emitZeroExtendI32(size, countGPR);
+            if (!size.isConst())
+                isEmpty.append(m_jit.branchTest32(ResultCondition::Zero, countGPR));
+
+            emitArrayElementAddress(elementType, arrayref, offset, payloadGPR);
+
+            Value payload = Value::pinned(TypeKind::I64, Location::fromGPR(payloadGPR));
+            Value count = Value::pinned(TypeKind::I64, Location::fromGPR(countGPR));
+
+            if (fillsVector) {
+                // Read the lanes out of the slot the flush left them in; binding the vector to a
+                // register here is something the branch's other edge would not have done.
+                static_assert(tempSlotSize >= static_cast<int>(sizeof(v128_t)));
+                ASSERT(locationOf(fillBits).isMemory());
+                Address slot = locationOf(fillBits).asAddress();
+                m_jit.load64(slot, valueGPR);
+                m_jit.load64(slot.withOffset(sizeof(uint64_t)), lane1GPR);
+                arguments = {
+                    payload,
+                    Value::pinned(TypeKind::I64, Location::fromGPR(valueGPR)),
+                    Value::pinned(TypeKind::I64, Location::fromGPR(lane1GPR)),
+                    count,
+                };
+            } else {
+                emitMove(fillBits, Location::fromGPR(valueGPR));
+                // A one-byte element goes to the memory fill, which takes its pattern as an i32.
+                TypeKind valueType = elementType.elementSize() == 1 ? TypeKind::I32 : TypeKind::I64;
+                arguments = { payload, Value::pinned(valueType, Location::fromGPR(valueGPR)), count };
+            }
+        }
+
+        if (fillsVector)
+            emitCCall(&operationWasmArrayFill16B, arguments);
+        else if (isRefType(elementType.unpacked())) {
+            // A reference has to be stored whole or the concurrent collector could read a torn JSValue,
+            // which a wider store does not promise.
+            emitCCall(&operationWasmArrayFillRefs, arguments);
+
+            // emitWriteBarrier() allocates its own scratches, so stage the cell somewhere they cannot take.
+            emitMove(arrayref, Location::fromGPR(wasmScratchGPR));
+            emitWriteBarrier(wasmScratchGPR);
+        } else {
+            switch (elementType.elementSize()) {
+            case 1:
+                emitCCall(&B3::operationMemoryFill, arguments);
+                break;
+            case 2:
+                emitCCall(&operationWasmArrayFill2B, arguments);
+                break;
+            case 4:
+                emitCCall(&operationWasmArrayFill4B, arguments);
+                break;
+            case 8:
+                emitCCall(&operationWasmArrayFill8B, arguments);
+                break;
+            default:
+                RELEASE_ASSERT_NOT_REACHED();
+            }
+        }
+
+        isEmpty.link(m_jit);
+    }
+
+    consume(arrayref);
+    consume(offset);
+    consume(value);
+    consume(size);
 
     return { };
 }
