@@ -56,7 +56,7 @@ PASS stroke-opacity presentation attribute supported on a relevant element
 PASS stroke-width presentation attribute supported on a relevant element
 PASS text-anchor presentation attribute supported on a relevant element
 PASS text-decoration presentation attribute supported on a relevant element
-FAIL text-overflow presentation attribute supported on a relevant element assert_true: Presentation attribute text-overflow="ellipsis" should be supported on text element expected true got false
+PASS text-overflow presentation attribute supported on a relevant element
 PASS text-rendering presentation attribute supported on a relevant element
 PASS transform-origin presentation attribute supported on a relevant element
 FAIL transform presentation attribute supported on a relevant element assert_true: Presentation attribute transform="scale(2)" should be supported on g element expected true got false

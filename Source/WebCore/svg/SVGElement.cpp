@@ -1030,6 +1030,8 @@ CSSPropertyID SVGElement::cssPropertyIdForSVGAttributeName(const QualifiedName& 
         return CSSPropertyTextAnchor;
     case AttributeNames::text_decorationAttr:
         return CSSPropertyTextDecoration;
+    case AttributeNames::text_overflowAttr:
+        return CSSPropertyTextOverflow;
     case AttributeNames::text_renderingAttr:
         return CSSPropertyTextRendering;
     case AttributeNames::unicode_bidiAttr:

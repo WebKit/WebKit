@@ -49,7 +49,7 @@ PASS stroke-opacity presentation attribute supported on an unknown SVG element
 PASS stroke-width presentation attribute supported on an unknown SVG element
 PASS text-anchor presentation attribute supported on an unknown SVG element
 PASS text-decoration presentation attribute supported on an unknown SVG element
-FAIL text-overflow presentation attribute supported on an unknown SVG element assert_true: Presentation attribute text-overflow="ellipsis" should be supported on unknown element expected true got false
+PASS text-overflow presentation attribute supported on an unknown SVG element
 PASS text-rendering presentation attribute supported on an unknown SVG element
 PASS transform-origin presentation attribute supported on an unknown SVG element
 PASS unicode-bidi presentation attribute supported on an unknown SVG element

@@ -188,6 +188,7 @@ targetX
 targetY
 text-anchor
 text-decoration
+text-overflow
 text-rendering
 textLength
 title
