@@ -1,4 +1,19 @@
 ==================
+WPE WebKit 2.53.91
+==================
+
+What's new in WPE WebKit 2.53.91?
+
+  - Enable paint damage propagation by default.
+  - Handle video orientation in the Skia compositor.
+  - Do not use cached credentials when the Authorization header is present.
+  - Fix scrollbar rendering issues due to incorrect damage tracking.
+  - Add logging fallback to the standard error output when journald is not reachable.
+  - Require Ninja for building. Using the CMake Makefile generator is no longer supported.
+  - Fix the build with CMake 4.4 or newer.
+  - Fix several crashes and rendering issues.
+
+==================
 WPE WebKit 2.53.90
 ==================
 
