@@ -5217,8 +5217,6 @@ webkit.org/b/315517 imported/w3c/web-platform-tests/css/css-values/attr-pseudo-e
 
 webkit.org/b/315756 fast/css/container-query-orientation-modal-dialog-crash.html [ Crash Pass ]
 
-webkit.org/b/315925 inspector/heap/getRemoteObject.html [ Failure Pass ]
-
 webkit.org/b/316158 fullscreen/full-screen-enter-while-exiting-mid-completion-handler.html [ Crash Pass ]
 
 webkit.org/b/316192 [ Release ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-mediaelementaudiosourcenode-interface/no-cors.https.html [ Crash Pass ]

@@ -830,7 +830,7 @@ webkit.org/b/206708 fast/animation/request-animation-frame-iframe.html [ Pass Fa
 imported/w3c/web-platform-tests/webrtc-encoded-transform/script-transform.https.html [ Pass Failure ]
 imported/w3c/web-platform-tests/webrtc-encoded-transform/script-write-twice-transform.https.html [ Pass Failure ]
 
-webkit.org/b/206903 inspector/heap/getRemoteObject.html [ Pass Crash Failure ]
+webkit.org/b/206903 inspector/heap/getRemoteObject.html [ Pass Crash ]
 
 webkit.org/b/207141 [ Debug ] inspector/canvas/create-context-bitmaprenderer.html [ Pass Failure ]
 

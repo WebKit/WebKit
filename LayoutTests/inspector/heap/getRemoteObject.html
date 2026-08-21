@@ -80,6 +80,14 @@ function test()
         name: "GetRemoteObjectCollectedObject",
         description: "Calling Heap.getRemoteObject for an object that has been collected should result in an error.",
         test(resolve, reject) {
+            function findNodeByPropertyName(objectId, maps, propertyName, callback) {
+                for (let node of maps) {
+                    WI.HeapSnapshotWorkerProxy.singleton().callMethod(objectId, "retainers", node.id, ({edges}) => {
+                        if (edges.some((edge) => (edge.type === "Property" || edge.type === "Variable") && edge.data === propertyName))
+                            callback(node);
+                    });
+                }
+            }
             HeapAgent.snapshot((error, timestamp, snapshotStringData) => { // All pre-existing objects.
                 InspectorTest.evaluateInPage("triggerCreateMapObject()");
                 HeapAgent.snapshot((error, timestamp, snapshotStringData) => { // Newly created objects.
@@ -93,11 +101,12 @@ function test()
                             InspectorTest.evaluateInPage("triggerDeleteMapObject()");
                             HeapAgent.gc();
 
-                            let heapSnapshotNode = maps.reduce((result, x) => result.id < x.id ? x : result, maps[0]);
-                            HeapAgent.getRemoteObject(heapSnapshotNode.id, "test", (error, remoteObjectPayload) => {
-                                InspectorTest.expectThat(error, "Should get an error when object has been collected.");
-                                InspectorTest.pass(error);
-                                resolve();
+                            findNodeByPropertyName(objectId, maps, "myMap", (heapSnapshotNode) => {
+                                HeapAgent.getRemoteObject(heapSnapshotNode.id, "test", (error, remoteObjectPayload) => {
+                                    InspectorTest.expectThat(error, "Should get an error when object has been collected.");
+                                    InspectorTest.pass(error);
+                                    resolve();
+                                });
                             });
                         });
                     });
