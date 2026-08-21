@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
+
+function finish()
+{
+    document.getElementById("result").textContent = "PASS";
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+window.onload = function() {
+    // Force the decode so the RLE24 absolute-mode path actually runs. The image
+    // is a truncated OS/2 RLE24 BMP whose absolute-mode run begins mid-row,
+    // which used to make the decoder read past the end of the buffer.
+    document.getElementById("testImage").decode().then(finish, finish);
+};
+</script>
+</head>
+<body>
+<p>Decoding a truncated OS/2 RLE24 BMP whose absolute-mode run starts mid-row. The test passes if it does not crash.</p>
+<p id="result"></p>
+<img id="testImage" src="resources/bmp-rle24-absolute-run-crash.bmp">
+</body>
+</html>
