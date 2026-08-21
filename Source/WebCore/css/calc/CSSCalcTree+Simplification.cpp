@@ -1009,41 +1009,65 @@ std::optional<Child> simplify(Clamp& root, const SimplificationOptions& options)
         return { WTF::move(root.val) };
     }
 
-    // FIXME: Are any of these transforms kosher?
-    // If only MIN and VAL have matching units, we can transform clamp(MIN, VAL, MAX) aka (max(MIN, min(VAL, MAX)) into a min(newVAL, MAX).
-    // If only VAL and MAX have matching units, we can transform clamp(MIN, VAL, MAX) aka (max(MIN, min(VAL, MAX)) into a max(MIN, newVAL).
+    auto convertToMin = [&] -> std::optional<Child> {
+        Vector<Child> newChildren;
+        newChildren.reserveInitialCapacity(2);
+        newChildren.append(WTF::move(root.val));
+        newChildren.append(get<Child>(WTF::move(root.max)));
+
+        auto min = Min { .children = WTF::move(newChildren) };
+        auto minType = toType(min);
+        if (!minType)
+            return std::nullopt;
+
+        return makeChild(WTF::move(min), *minType);
+    };
+
+    auto convertToMax = [&] -> std::optional<Child> {
+        Vector<Child> newChildren;
+        newChildren.reserveInitialCapacity(2);
+        newChildren.append(get<Child>(WTF::move(root.min)));
+        newChildren.append(WTF::move(root.val));
+
+        auto max = Max { .children = WTF::move(newChildren) };
+        auto maxType = toType(max);
+        if (!maxType)
+            return std::nullopt;
+
+        return makeChild(WTF::move(max), *maxType);
+    };
 
     return WTF::switchOn(root.val,
         [&]<Numeric T>(T& val) -> std::optional<Child> {
             if (minIsNone) {
                 auto& maxChild = get<Child>(root.max);
                 if (!WTF::holdsAlternative<T>(maxChild))
-                    return { };
+                    return convertToMin();
 
                 auto& max = get<T>(maxChild);
 
                 if (!unitsMatch(val, max, options))
-                    return { };
+                    return convertToMin();
 
                 // As units already match, we only have to check that one of the arguments is `magnitudeComparable`.
                 if (!magnitudeComparable(val, options))
-                    return { };
+                    return convertToMin();
 
                 // - clamp(none, VAL, MAX) is equivalent to min(VAL, MAX)
                 return makeChildWithValueBasedOn(executeMathOperation<Min>(val.value, max.value), val);
             } else if (maxIsNone) {
                 auto& minChild = get<Child>(root.min);
                 if (!WTF::holdsAlternative<T>(minChild))
-                    return { };
+                    return convertToMax();
 
                 auto& min = get<T>(minChild);
 
                 if (!unitsMatch(min, val, options))
-                    return { };
+                    return convertToMax();
 
                 // As units already match, we only have to check that one of the arguments is `magnitudeComparable`.
                 if (!magnitudeComparable(val, options))
-                    return { };
+                    return convertToMax();
 
                 // - clamp(MIN, VAL, none) is equivalent to max(MIN, VAL)
                 return makeChildWithValueBasedOn(executeMathOperation<Max>(min.value, val.value), val);
