@@ -448,6 +448,15 @@ void MediaPlayerPrivateWirelessPlayback::setReadyState(MediaPlayer::ReadyState r
         player->readyStateChanged();
 }
 
+void MediaPlayerPrivateWirelessPlayback::updateReadyState()
+{
+    RefPtr route = this->route();
+    if (!route || !route->ready() || !maxTimeSeekable())
+        return;
+
+    setReadyState(MediaPlayerReadyState::HaveEnoughData);
+}
+
 String MediaPlayerPrivateWirelessPlayback::engineDescription() const
 {
     static NeverDestroyed<String> description(MAKE_STATIC_STRING_IMPL("Cocoa Wireless Playback Engine"));
@@ -461,6 +470,8 @@ void MediaPlayerPrivateWirelessPlayback::timeRangeDidChange(MediaDeviceRoute& ro
 
     if (RefPtr player = m_player.get())
         player->durationChanged();
+
+    updateReadyState();
 }
 
 void MediaPlayerPrivateWirelessPlayback::readyDidChange(MediaDeviceRoute& route)
@@ -468,8 +479,7 @@ void MediaPlayerPrivateWirelessPlayback::readyDidChange(MediaDeviceRoute& route)
     ASSERT(&route == this->route());
     ALWAYS_LOG(LOGIDENTIFIER, route.ready());
 
-    if (route.ready())
-        setReadyState(MediaPlayerReadyState::HaveEnoughData);
+    updateReadyState();
 }
 
 void MediaPlayerPrivateWirelessPlayback::errorDidChange(MediaDeviceRoute& route)
