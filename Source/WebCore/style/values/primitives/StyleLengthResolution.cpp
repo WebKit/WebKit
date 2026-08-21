@@ -752,12 +752,14 @@ bool equalForLengthResolution(const ComputedStyle& styleA, const ComputedStyle& 
         return false;
     if (styleA.fontDescription().specifiedSize() != styleB.fontDescription().specifiedSize())
         return false;
-
     if (styleA.metricsOfPrimaryFont().xHeight() != styleB.metricsOfPrimaryFont().xHeight())
         return false;
     if (styleA.metricsOfPrimaryFont().zeroWidth() != styleB.metricsOfPrimaryFont().zeroWidth())
         return false;
-
+    if (styleA.metricsOfPrimaryFont().lineSpacing() != styleB.metricsOfPrimaryFont().lineSpacing())
+        return false;
+    if (styleA.specifiedLineHeight() != styleB.specifiedLineHeight())
+        return false;
     if (styleA.zoom() != styleB.zoom())
         return false;
 
