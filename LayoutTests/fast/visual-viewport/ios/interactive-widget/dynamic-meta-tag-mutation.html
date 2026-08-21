@@ -1,0 +1,66 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+    <meta id="viewport-meta" name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+    <style>
+        input {
+            width: 400px;
+            height: 50px;
+        }
+    </style>
+    <script src="../../../../resources/js-test.js"></script>
+    <script src="../../../../resources/ui-helper.js"></script>
+</head>
+<body>
+    <input id="input" type="text">
+    <script>
+        jsTestIsAsync = true;
+
+        async function setInteractiveWidget(value) {
+            document.getElementById("viewport-meta").content = `width=device-width, initial-scale=1, maximum-scale=1, interactive-widget=${value}`;
+            await UIHelper.ensureVisibleContentRectAndStablePresentationUpdate();
+        }
+
+        addEventListener("load", async () => {
+            let textField = document.querySelector("input");
+            await setInteractiveWidget("resizes-content");
+
+            window.initialLayoutViewport = internals.layoutViewportRect();
+
+            await UIHelper.activateElement(textField);
+            await UIHelper.waitForKeyboardToShow();
+            await UIHelper.ensureVisibleContentRectAndStablePresentationUpdate();
+
+            window.keyboardTopInView = (await UIHelper.inputViewBoundsInWebView()).top;
+
+            debug("interactive-widget=resizes-content:");
+            shouldBeTrue('internals.layoutViewportRect().height < window.initialLayoutViewport.height');
+            shouldBeTrue('internals.visualViewportRect().height == internals.layoutViewportRect().height');
+            shouldBeTrue('internals.layoutViewportRect().height == window.keyboardTopInView');
+
+            await setInteractiveWidget("overlays-content");
+
+            debug("\ninteractive-widget=overlays-content:");
+            await new Promise(resolve => shouldBecomeEqual('internals.layoutViewportRect().height', 'window.initialLayoutViewport.height', resolve));
+            shouldBeTrue('internals.visualViewportRect().height == internals.layoutViewportRect().height');
+
+            await setInteractiveWidget("resize-content");
+
+            debug("\nInvalid value falls back to resizes-visual:");
+            await new Promise(resolve => shouldBecomeEqual('internals.layoutViewportRect().height', 'window.initialLayoutViewport.height', resolve));
+            shouldBeTrue('internals.visualViewportRect().height < internals.layoutViewportRect().height');
+            shouldBeTrue('internals.visualViewportRect().height == window.keyboardTopInView');
+
+            await setInteractiveWidget("resizes-content");
+
+            debug("\ninteractive-widget=resizes-content:");
+            await new Promise(resolve => shouldBecomeEqual('internals.visualViewportRect().height', 'internals.layoutViewportRect().height', resolve));
+            shouldBeTrue('internals.layoutViewportRect().height < window.initialLayoutViewport.height');
+            shouldBeTrue('internals.layoutViewportRect().height == window.keyboardTopInView');
+
+            finishJSTest();
+        });
+    </script>
+</body>
+
+</html>

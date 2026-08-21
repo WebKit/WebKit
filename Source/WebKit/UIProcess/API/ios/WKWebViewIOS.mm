@@ -1280,7 +1280,15 @@ static void changeContentOffsetBoundedInValidRange(UIScrollView *scrollView, Web
         [self _updateNeedsTopScrollPocketDueToVisibleContentInset];
 #endif
 
+        bool interactiveWidgetValueChanged = mainFrameCommitData.viewportMetaTagInteractiveWidget != _perProcessState.viewportMetaTagInteractiveWidget;
+
         _perProcessState.viewportMetaTagInteractiveWidget = mainFrameCommitData.viewportMetaTagInteractiveWidget;
+
+        if (interactiveWidgetValueChanged) {
+            [self _dispatchSetViewLayoutSize:[self activeViewLayoutSize:self.bounds]];
+            needUpdateVisibleContentRects = true;
+        }
+
         _perProcessState.viewportMetaTagWidth = mainFrameCommitData.viewportMetaTagWidth;
         _perProcessState.viewportMetaTagWidthWasExplicit = mainFrameCommitData.viewportMetaTagWidthWasExplicit;
         _perProcessState.viewportMetaTagCameFromImageDocument = mainFrameCommitData.viewportMetaTagCameFromImageDocument;
