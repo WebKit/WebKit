@@ -379,6 +379,9 @@ const WebM = (function() {
         //     .duration    - Sample duration in milliseconds
         //     .isSync      - true for keyframe
         //     .data        - Override frame data (Uint8Array, optional)
+        //     .relativeTime - Override the block's timecode relative to the cluster's,
+        //                     in milliseconds (optional, may be negative). Only affects
+        //                     this block; the running timecode keeps accumulating durations.
         mediaSegment(options) {
             const tracks = options.tracks;
             const clusterTimecode = (tracks[0] && tracks[0].baseDecodeTime) || 0;
@@ -415,7 +418,7 @@ const WebM = (function() {
                             : OPUS_SILENCE);
                     currentBlocks.push({
                         trackId: track.id,
-                        relativeTime,
+                        relativeTime: sample.relativeTime !== undefined ? sample.relativeTime : relativeTime,
                         isSync: sample.isSync,
                         duration: sample.duration,
                         data: frameData,

@@ -1,0 +1,30 @@
+Tests WebM block timecodes that precede their cluster, and clusters appended out of order.
+
+A block preceding its cluster is a decode error
+EVENT(sourceopen)
+EVENT(updateend)
+EVENT(error)
+EVENT(updateend)
+EXPECTED (source.readyState == 'closed') OK
+Two clusters appended out of order are accepted
+EVENT(sourceopen)
+EVENT(updateend)
+EVENT(updateend)
+EXPECTED (source.readyState == 'open') OK
+EXPECTED (sourceBuffer.buffered.length == '2') OK
+EXPECTED (sourceBuffer.buffered.start(0) == '0') OK
+EXPECTED (sourceBuffer.buffered.end(0) == '2') OK
+EXPECTED (sourceBuffer.buffered.start(1) == '5') OK
+EXPECTED (sourceBuffer.buffered.end(1) == '7') OK
+Out of order clusters over a populated track buffer
+EVENT(sourceopen)
+EVENT(updateend)
+EVENT(updateend)
+EXPECTED (sourceBuffer.buffered.length == '1') OK
+RUN(sourceBuffer.abort())
+EVENT(updateend)
+EXPECTED (source.readyState == 'open') OK
+EXPECTED (sourceBuffer.buffered.start(0) == '0') OK
+EXPECTED (sourceBuffer.buffered.end(sourceBuffer.buffered.length - 1) == '7') OK
+END OF TEST
+

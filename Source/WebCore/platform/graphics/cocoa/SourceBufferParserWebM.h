@@ -100,6 +100,7 @@ public:
         VariableFrameDuration,
         ReaderFailed,
         ParserShutdown,
+        NonMonotonicTimecode,
     };
 
     enum class State : uint8_t {
@@ -167,6 +168,19 @@ public:
 
         virtual void consumeAdditionalBlockData(const webm::BlockAdditions&) { }
 
+        // Tracks the highest absolute timecode seen in the current cluster. Equal timecodes are
+        // allowed: frames sharing a presentation time are to be decoded but not displayed.
+        // Returns false if the timecode goes backwards.
+        bool updateLastAbsoluteTimecode(const MediaTime& presentationTime)
+        {
+            if (m_lastAbsoluteTimecode && presentationTime < *m_lastAbsoluteTimecode)
+                return false;
+            m_lastAbsoluteTimecode = presentationTime;
+            return true;
+        }
+
+        void resetLastAbsoluteTimecode() { m_lastAbsoluteTimecode.reset(); }
+
         virtual void resetCompletedFramesState()
         {
             m_completeBlockBuffer = nullptr;
@@ -209,6 +223,7 @@ public:
         std::optional<size_t> m_completePacketSize;
         // Size of the currently incomplete parsed packet.
         size_t m_partialBytesRead { 0 };
+        std::optional<MediaTime> m_lastAbsoluteTimecode;
     };
 
     class VideoTrackData : public TrackData {
@@ -225,6 +240,7 @@ public:
         }
 
         void flushPendingSamples();
+        void discardPendingSamples();
 
     private:
         ASCIILiteral logClassName() const { return "VideoTrackData"_s; }
@@ -276,6 +292,7 @@ private:
     bool isSupportedVideoCodec(StringView);
     bool isSupportedAudioCodec(StringView);
     void flushPendingVideoSamples();
+    void discardPendingVideoSamples();
 
     // webm::Callback
     webm::Status OnElementBegin(const webm::ElementMetadata&, webm::Action*) final;

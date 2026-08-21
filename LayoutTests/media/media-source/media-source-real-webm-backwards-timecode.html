@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-source-real-webm-backwards-timecode</title>
+    <script src="webm-generator.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    // Block timecodes must increase within a cluster, but media segments may be appended out of
+    // order. Tests that the former is rejected and the latter does not produce a sample with a
+    // negative duration.
+
+    var source;
+    var sourceBuffer;
+
+    function cluster(baseDecodeTime)
+    {
+        return WebM.mediaSegment({
+            simpleBlock: true,
+            tracks: [{ id: 1, type: 'video', baseDecodeTime: baseDecodeTime, samples: [
+                { duration: 1000, isSync: true },
+                { duration: 1000, isSync: true },
+            ]}]
+        });
+    }
+
+    // A cluster whose second block precedes its first: absolute timecodes 2000ms then 500ms.
+    function backwardsCluster()
+    {
+        return WebM.mediaSegment({
+            simpleBlock: true,
+            tracks: [{ id: 1, type: 'video', baseDecodeTime: 2000, samples: [
+                { duration: 1000, isSync: true },
+                { duration: 1000, isSync: true, relativeTime: -1500 },
+            ]}]
+        });
+    }
+
+    function concat(first, second)
+    {
+        var buffer = new Uint8Array(first.length + second.length);
+        buffer.set(first, 0);
+        buffer.set(second, first.length);
+        return buffer;
+    }
+
+    async function openSource()
+    {
+        source = new MediaSource();
+        video.src = URL.createObjectURL(source);
+        await waitFor(source, 'sourceopen');
+
+        sourceBuffer = source.addSourceBuffer(WebM.VIDEO_TYPE);
+        sourceBuffer.appendBuffer(WebM.initSegment({ tracks: [{ id: 1, type: 'video' }] }));
+        await waitFor(sourceBuffer, 'updateend');
+    }
+
+    async function runTest() {
+        findMediaElement();
+
+        if (!MediaSource.isTypeSupported(WebM.VIDEO_TYPE)) {
+            consoleWrite('SKIPPED: ' + WebM.VIDEO_TYPE + ' is not supported');
+            return;
+        }
+
+        consoleWrite('A block preceding its cluster is a decode error');
+        await openSource();
+
+        // Both events are queued together by the append error algorithm, so listen for them
+        // before the append rather than in sequence.
+        var errorFired = waitFor(sourceBuffer, 'error');
+        var updateEnded = waitFor(sourceBuffer, 'updateend');
+        sourceBuffer.appendBuffer(backwardsCluster());
+        await errorFired;
+        await updateEnded;
+        testExpected('source.readyState', 'closed');
+
+        consoleWrite('Two clusters appended out of order are accepted');
+        await openSource();
+
+        // The queued last sample of the first cluster cannot take its duration from the second
+        // cluster's first frame; it falls back to the track's default duration.
+        sourceBuffer.appendBuffer(concat(cluster(5000), cluster(0)));
+        await waitFor(sourceBuffer, 'updateend');
+        testExpected('source.readyState', 'open');
+        testExpected('sourceBuffer.buffered.length', 2);
+        testExpectedEqualWithTolerance('sourceBuffer.buffered.start(0)', 0, 0.05);
+        testExpectedEqualWithTolerance('sourceBuffer.buffered.end(0)', 2, 0.05);
+        testExpectedEqualWithTolerance('sourceBuffer.buffered.start(1)', 5, 0.05);
+        testExpectedEqualWithTolerance('sourceBuffer.buffered.end(1)', 7, 0.05);
+
+        consoleWrite('Out of order clusters over a populated track buffer');
+        await openSource();
+
+        sourceBuffer.appendBuffer(cluster(0));
+        await waitFor(sourceBuffer, 'updateend');
+        testExpected('sourceBuffer.buffered.length', 1);
+
+        // abort() unsets the highest presentation timestamp on the track buffer while leaving its
+        // samples in place, which is what reaches the coded frame removal steps below.
+        run('sourceBuffer.abort()');
+
+        sourceBuffer.appendBuffer(concat(cluster(5000), cluster(1000)));
+        await waitFor(sourceBuffer, 'updateend');
+        testExpected('source.readyState', 'open');
+        testExpectedEqualWithTolerance('sourceBuffer.buffered.start(0)', 0, 0.05);
+        testExpectedEqualWithTolerance('sourceBuffer.buffered.end(sourceBuffer.buffered.length - 1)', 7, 0.05);
+    }
+
+    window.addEventListener('load', event => {
+        runTest().then(endTest).catch(failTest);
+    });
+    </script>
+</head>
+<body>
+    <div>Tests WebM block timecodes that precede their cluster, and clusters appended out of order.</div>
+    <video></video>
+</body>
+</html>

@@ -562,6 +562,9 @@ ExceptionOr<int> WebMParser::parse(Ref<const SharedBuffer>&& segment)
         continue;
     }
 
+    // The append is rejected: drop the samples queued by the partially parsed media segment.
+    discardPendingVideoSamples();
+
     return m_status.code;
 }
 
@@ -750,6 +753,11 @@ Status WebMParser::OnClusterBegin(const ElementMetadata&, const Cluster& cluster
 
     if (cluster.timecode.is_present())
         m_currentTimecode = cluster.timecode.value();
+
+    // A WebM media segment is a single cluster, and media segments may be appended in any order,
+    // so timecodes are only required to increase within a cluster.
+    for (auto& track : m_tracks)
+        track->resetLastAbsoluteTimecode();
 
     *action = Action::kRead;
 
@@ -979,7 +987,19 @@ webm::Status WebMParser::OnFrame(const FrameMetadata& metadata, Reader* reader, 
         return Skip(reader, bytesRemaining);
     }
 
-    auto result = trackData->consumeFrameData(*reader, metadata, bytesRemaining, MediaTime(block->timecode + m_currentTimecode, m_timescale) + m_currentDuration, isKey);
+    auto presentationTime = MediaTime(static_cast<int64_t>(m_currentTimecode + block->timecode), m_timescale) + m_currentDuration;
+
+    // https://w3c.github.io/mse-byte-stream-format-webm/
+    // The append error algorithm must run unless "Block & SimpleBlock elements are in time
+    // increasing order consistent with [WEBM]". The timecodes are compared per track within the
+    // current cluster: a cluster interleaves the blocks of all of its tracks, and audio blocks
+    // sharing a video block's timecode are written before it.
+    if (!trackData->updateLastAbsoluteTimecode(presentationTime)) {
+        ERROR_LOG_IF_POSSIBLE(LOGIDENTIFIER, "Timecode ", presentationTime, " on track ", trackNumber, " is not monotonically increasing");
+        return Status(Status::Code(ErrorCode::NonMonotonicTimecode));
+    }
+
+    auto result = trackData->consumeFrameData(*reader, metadata, bytesRemaining, presentationTime, isKey);
     if (std::holds_alternative<webm::Status>(result))
         return std::get<webm::Status>(result);
     m_currentDuration += std::get<MediaTime>(result);
@@ -1037,6 +1057,14 @@ void WebMParser::flushPendingVideoSamples()
     for (auto& track : m_tracks) {
         if (auto* videoTrack = dynamicDowncast<WebMParser::VideoTrackData>(track.get()))
             videoTrack->flushPendingSamples();
+    }
+}
+
+void WebMParser::discardPendingVideoSamples()
+{
+    for (auto& track : m_tracks) {
+        if (auto* videoTrack = dynamicDowncast<WebMParser::VideoTrackData>(track.get()))
+            videoTrack->discardPendingSamples();
     }
 }
 
@@ -1109,6 +1137,12 @@ WebMParser::ConsumeFrameDataResult WebMParser::VideoTrackData::consumeFrameData(
     }
 #endif
 
+    // A frame's duration is the start time of the frame that follows it. The queued sample may come
+    // from an earlier cluster, which need not precede this one in time; a frame starting before it
+    // can't close it, so give it the same fallback duration it would get at the end of an append.
+    if (m_pendingMediaSamples.size() && presentationTime < m_pendingMediaSamples.last().presentationTime)
+        flushPendingSamples();
+
     processPendingMediaSamples(presentationTime);
 
     if (formatDescription() && (!m_trackInfo || *formatDescription() != *m_trackInfo)) {
@@ -1168,6 +1202,11 @@ void WebMParser::VideoTrackData::processPendingMediaSamples(const MediaTime& pre
     if (!m_pendingMediaSamples.size())
         return;
     auto& lastSample = m_pendingMediaSamples.last();
+    // The queued sample may come from an earlier cluster, which need not precede this one in time;
+    // a frame starting before it can't close it, so leave it queued, as is done for frames sharing
+    // a presentation time.
+    if (presentationTime < lastSample.presentationTime)
+        return;
     lastSample.duration = presentationTime - lastSample.presentationTime;
     if (presentationTime == lastSample.presentationTime)
         return;
@@ -1215,6 +1254,15 @@ void WebMParser::VideoTrackData::flushPendingSamples()
     else if (m_lastDuration)
         duration = *m_lastDuration;
     processPendingMediaSamples(presentationTime + duration);
+    m_lastPresentationTime.reset();
+}
+
+void WebMParser::VideoTrackData::discardPendingSamples()
+{
+    // The media segment those samples belong to was rejected; they must not be emitted, and the
+    // duration of the next segment's first sample must not be derived from them.
+    m_pendingMediaSamples.clear();
+    m_lastDuration.reset();
     m_lastPresentationTime.reset();
 }
 

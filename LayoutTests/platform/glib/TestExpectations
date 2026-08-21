@@ -608,6 +608,8 @@ media/media-source/media-source-video-seek-pause.html [ Failure Pass ]
 # GStreamer incorrectly demux the webm and creates gaps.
 webkit.org/b/266195 media/media-source/media-managedmse-multipletracks-bufferedchange.html [ Failure ]
 
+webkit.org/b/322164 media/media-source/media-source-real-webm-backwards-timecode.html [ Failure ]
+
 # Support to pause with 0 rate playback seems to work only in GStreamer ports
 media/media-source/media-source-play-zero-playbackrate.html [ Pass ]
 

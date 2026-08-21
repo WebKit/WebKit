@@ -324,6 +324,9 @@ DecodeOrderSampleMap::iterator DecodeOrderSampleMap::findSyncSampleAfterDecodeIt
 
 PresentationOrderSampleMap::iterator_range PresentationOrderSampleMap::findSamplesBetweenPresentationTimes(const MediaTime& beginTime, const MediaTime& endTime) LIFETIME_BOUND
 {
+    if (endTime <= beginTime)
+        return { end(), end() };
+
     // startTime is inclusive, so use lower_bound to include samples wich start exactly at startTime.
     // endTime is not inclusive, so use lower_bound to exclude samples which start exactly at endTime.
     auto lower_bound = m_samples.lower_bound(beginTime);
@@ -335,6 +338,9 @@ PresentationOrderSampleMap::iterator_range PresentationOrderSampleMap::findSampl
 
 PresentationOrderSampleMap::iterator_range PresentationOrderSampleMap::findSamplesBetweenPresentationTimesFromEnd(const MediaTime& beginTime, const MediaTime& endTime) LIFETIME_BOUND
 {
+    if (endTime <= beginTime)
+        return { end(), end() };
+
     reverse_iterator rangeEnd = std::find_if(rbegin(), rend(), [&endTime](const auto& value) {
         return value.first < endTime;
     });
