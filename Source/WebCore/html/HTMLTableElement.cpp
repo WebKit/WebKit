@@ -25,7 +25,10 @@
 #include "config.h"
 #include "HTMLTableElement.h"
 
+#include "CSSColor.h"
+#include "CSSColorValue.h"
 #include "CSSImageValue.h"
+#include "CSSKeywordColor.h"
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
 #include "CSSValuePool.h"
@@ -402,8 +405,12 @@ void HTMLTableElement::attributeChanged(const QualifiedName& name, const AtomStr
 
     CellBorders bordersBefore = cellBorders();
     unsigned short oldPadding = m_padding;
+    bool hadBorderColorAttr = m_borderColorAttr;
 
     switch (name.nodeName()) {
+    case AttributeNames::bordercolorAttr:
+        m_borderColorAttr = !newValue.isEmpty();
+        break;
     case AttributeNames::borderAttr:
         // FIXME: This attribute is a mess.
         m_borderAttr = parseBorderWidthAttribute(newValue);
@@ -440,7 +447,7 @@ void HTMLTableElement::attributeChanged(const QualifiedName& name, const AtomStr
         break;
     }
 
-    if (bordersBefore != cellBorders() || oldPadding != m_padding) {
+    if (bordersBefore != cellBorders() || oldPadding != m_padding || hadBorderColorAttr != m_borderColorAttr) {
         m_sharedCellStyle = nullptr;
         bool cellChanged = false;
         for (auto& child : childrenOfType<Element>(*this))
@@ -504,30 +511,39 @@ Ref<MutableStyleProperties> HTMLTableElement::createSharedCellStyle() const
 {
     auto style = MutableStyleProperties::create();
 
+    // border-color is not an inherited property, so the interior cell borders implied by the border and
+    // rules attributes resolve to the cell's own currentColor. The legacy bordercolor attribute is the
+    // exception: it propagates to those borders, via border-color: inherit on the table sections and rows.
+    auto cellBorderColor = [&] -> Ref<CSSValue> {
+        if (m_borderColorAttr)
+            return CSSKeywordValue::create(CSSValueInherit);
+        return CSSColorValue::create(CSS::Color { CSS::KeywordColor { CSSValueCurrentcolor } });
+    };
+
     switch (cellBorders()) {
     case CellBorders::SolidColsOnly:
         style->setProperty(CSSPropertyBorderLeftWidth, CSSValueThin);
         style->setProperty(CSSPropertyBorderRightWidth, CSSValueThin);
         style->setProperty(CSSPropertyBorderLeftStyle, CSSValueSolid);
         style->setProperty(CSSPropertyBorderRightStyle, CSSValueSolid);
-        style->setProperty(CSSPropertyBorderColor, CSSKeywordValue::create(CSSValueInherit));
+        style->setProperty(CSSPropertyBorderColor, cellBorderColor());
         break;
     case CellBorders::SolidRowsOnly:
         style->setProperty(CSSPropertyBorderTopWidth, CSSValueThin);
         style->setProperty(CSSPropertyBorderBottomWidth, CSSValueThin);
         style->setProperty(CSSPropertyBorderTopStyle, CSSValueSolid);
         style->setProperty(CSSPropertyBorderBottomStyle, CSSValueSolid);
-        style->setProperty(CSSPropertyBorderColor, CSSKeywordValue::create(CSSValueInherit));
+        style->setProperty(CSSPropertyBorderColor, cellBorderColor());
         break;
     case CellBorders::Solid:
         style->setProperty(CSSPropertyBorderWidth, CSSPrimitiveValue::create(1, CSSUnitType::Px));
         style->setProperty(CSSPropertyBorderStyle, CSSKeywordValue::create(CSSValueSolid));
-        style->setProperty(CSSPropertyBorderColor, CSSKeywordValue::create(CSSValueInherit));
+        style->setProperty(CSSPropertyBorderColor, cellBorderColor());
         break;
     case CellBorders::Inset:
         style->setProperty(CSSPropertyBorderWidth, CSSPrimitiveValue::create(1, CSSUnitType::Px));
         style->setProperty(CSSPropertyBorderStyle, CSSKeywordValue::create(CSSValueInset));
-        style->setProperty(CSSPropertyBorderColor, CSSKeywordValue::create(CSSValueInherit));
+        style->setProperty(CSSPropertyBorderColor, cellBorderColor());
         break;
     case CellBorders::None:
         // If 'rules=none' then allow any borders set at cell level to take effect. 
