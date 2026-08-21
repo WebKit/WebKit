@@ -449,6 +449,7 @@ void RemoteMediaPlayerProxy::mediaPlayerReadyStateChanged()
     m_cachedState.seekableTimeRangesLastModifiedTime = player->seekableTimeRangesLastModifiedTime();
     m_cachedState.liveUpdateInterval = player->liveUpdateInterval();
     m_cachedState.hasAvailableVideoFrame = player->hasAvailableVideoFrame();
+    m_cachedState.videoFrameHasAlpha = player->videoFrameHasAlpha();
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     m_cachedState.wirelessVideoPlaybackDisabled = player->wirelessVideoPlaybackDisabled();
 #endif
@@ -621,6 +622,7 @@ void RemoteMediaPlayerProxy::updateCachedMediaCharacteristics()
     RefPtr player = m_player;
     m_cachedState.hasAudio = player->hasAudio();
     m_cachedState.hasVideo = player->hasVideo();
+    m_cachedState.videoFrameHasAlpha = player->videoFrameHasAlpha();
     m_cachedState.hasClosedCaptions = player->hasClosedCaptions();
     m_cachedState.languageOfPrimaryAudioTrack = player->languageOfPrimaryAudioTrack();
 }

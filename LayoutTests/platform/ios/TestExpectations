@@ -3631,6 +3631,9 @@ webkit.org/b/229154 webrtc/peer-connection-audio-mute2.html [ Pass Failure ]
 # WebM with vp9 is not supported on iOS (lacking decoder)
 http/tests/media/video-webm-stall.html [ Skip ]
 media/media-vp9-reschange-webm.html [ Skip ]
+media/video-with-alpha.html [ Skip ]
+media/video-with-alpha-misaligned-keyframes.html [ Skip ]
+media/video-with-alpha-midrange.html [ Skip ]
 
 # webkit.org/b/277760 [ iOS ] 2x imported/w3c/web-platform-tests/html/rendering/widgets/input-checkbox-switch-rtl.tentative.html (layout-tests) are ref mismatch
 webkit.org/b/229291 imported/w3c/web-platform-tests/html/rendering/replaced-elements/images/revoked-blob-print.html [ Pass ImageOnlyFailure ]

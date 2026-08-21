@@ -47,6 +47,7 @@ public:
         MediaTime duration { MediaTime::zeroTime() };
         std::pair<MediaTime, MediaTime> trimInterval { MediaTime::zeroTime(), MediaTime::zeroTime() };
         MediaSampleDataType data;
+        RefPtr<SharedBuffer> alphaData { nullptr };
         RefPtr<SharedBuffer> hdrMetadata { nullptr };
         std::optional<PlatformMediaCapabilitiesHdrMetadataType> hdrMetadataType { std::nullopt };
         uint32_t flags { };

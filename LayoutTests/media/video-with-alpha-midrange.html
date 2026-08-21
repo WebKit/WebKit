@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>video-with-alpha-midrange</title>
+    <script src=video-test.js></script>
+    <script>
+    // The video is one colour in four vertical stripes at 0, 10%, 50% and 100% opacity.
+
+    function pixel(x, y)
+    {
+        let canvas = document.createElement("canvas");
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        let context = canvas.getContext("2d");
+        context.drawImage(video, 0, 0);
+        return context.getImageData(x, y, 1, 1).data;
+    }
+
+    async function start()
+    {
+        findMediaElement();
+        video.src = "content/video-with-alpha-midrange.webm";
+        await waitFor(video, "canplaythrough");
+        video.currentTime = 0.5;
+        await waitFor(video, "seeked");
+
+        consoleWrite("<br>Alpha of each stripe.");
+        testExpected("pixel(25, 100)[3]", 0);
+        testExpected("pixel(75, 100)[3]", 26);
+        testExpected("pixel(125, 100)[3]", 128);
+        testExpected("pixel(175, 100)[3]", 255);
+
+        consoleWrite("<br>Colour of the 50% stripe against the opaque one.");
+        testExpected("Math.abs(pixel(125, 100)[0] - pixel(175, 100)[0])", 20, "<");
+        testExpected("Math.abs(pixel(125, 100)[1] - pixel(175, 100)[1])", 20, "<");
+        testExpected("Math.abs(pixel(125, 100)[2] - pixel(175, 100)[2])", 20, "<");
+        endTest();
+    }
+    </script>
+</head>
+<body onload="start()">
+    <video id="video"></video>
+</body>
+</html>

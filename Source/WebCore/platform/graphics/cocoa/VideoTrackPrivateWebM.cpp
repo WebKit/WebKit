@@ -157,6 +157,15 @@ uint32_t VideoTrackPrivateWebM::height() const
     return 0;
 }
 
+bool VideoTrackPrivateWebM::hasAlpha() const
+{
+    if (!m_track.video.is_present())
+        return false;
+
+    auto& video = m_track.video.value();
+    return video.alpha_mode.is_present() && video.alpha_mode.value();
+}
+
 double VideoTrackPrivateWebM::framerate() const
 {
     if (!m_track.video.is_present())

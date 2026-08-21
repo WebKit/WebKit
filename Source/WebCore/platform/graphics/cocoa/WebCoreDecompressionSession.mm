@@ -27,15 +27,19 @@
 #import "WebCoreDecompressionSession.h"
 
 #import "CMUtilities.h"
+#import "CVUtilities.h"
 #import "FormatDescriptionUtilities.h"
 #import "IOSurface.h"
 #import "Logging.h"
 #import "MediaSampleAVFObjC.h"
 #import "PixelBufferConformerCV.h"
+#import "SharedBuffer.h"
+#import "VP9UtilitiesCocoa.h"
 #import "VideoDecoder.h"
 #import "VideoDecoderVTB.h"
 #import "VideoFrame.h"
 #import <CoreFoundation/CoreFoundation.h>
+#import <CoreImage/CoreImage.h>
 #import <CoreMedia/CMBufferQueue.h>
 #import <CoreMedia/CMFormatDescription.h>
 #import <map>
@@ -56,6 +60,178 @@
 #import <pal/cf/CoreMediaSoftLink.h>
 
 namespace WebCore {
+
+static RetainPtr<CMSampleBufferRef> createAlphaSampleBuffer(CFArrayRef alphaDatas, CMSampleBufferRef colorSample)
+{
+    CMItemCount count = CFArrayGetCount(alphaDatas);
+    if (!count || count != CMItemCount(PAL::CMSampleBufferGetNumSamples(colorSample)))
+        return nullptr;
+
+    RetainPtr formatDescription = PAL::CMSampleBufferGetFormatDescription(colorSample);
+
+    CMBlockBufferRef rawBlockBuffer = nullptr;
+    if (PAL::CMBlockBufferCreateEmpty(kCFAllocatorDefault, count, 0, &rawBlockBuffer) != kCMBlockBufferNoErr || !rawBlockBuffer)
+        return nullptr;
+    RetainPtr blockBuffer = adoptCF(rawBlockBuffer);
+
+    Vector<CMSampleTimingInfo> timings;
+    Vector<size_t> sizes;
+    Vector<bool> syncFlags;
+    timings.reserveInitialCapacity(count);
+    sizes.reserveInitialCapacity(count);
+    syncFlags.reserveInitialCapacity(count);
+
+    for (CMItemCount index = 0; index < count; ++index) {
+        RetainPtr alphaData = dynamic_cf_cast<CFDataRef>(CFArrayGetValueAtIndex(alphaDatas, index));
+        if (!alphaData)
+            return nullptr;
+
+        RetainPtr sampleBlockBuffer = SharedBuffer::create(alphaData.get())->createCMBlockBuffer();
+        if (!sampleBlockBuffer || PAL::CMBlockBufferAppendBufferReference(blockBuffer.get(), sampleBlockBuffer.get(), 0, 0, 0) != kCMBlockBufferNoErr)
+            return nullptr;
+
+        CMSampleTimingInfo timing { };
+        if (PAL::CMSampleBufferGetSampleTimingInfo(colorSample, index, &timing) != noErr)
+            return nullptr;
+        timings.append(timing);
+        sizes.append(CFDataGetLength(alphaData.get()));
+
+        bool isSync = false;
+#if ENABLE(VP9)
+        // The alpha stream's keyframes are not guaranteed to align with the
+        // color track's, so derive its sync flag from its own bitstream.
+        isSync = vpxFrameIsKeyframe(PAL::CMFormatDescriptionGetMediaSubType(formatDescription.get()), span(alphaData.get()));
+#endif
+        syncFlags.append(isSync);
+    }
+
+    CMSampleBufferRef rawSampleBuffer = nullptr;
+    if (PAL::CMSampleBufferCreateReady(kCFAllocatorDefault, blockBuffer.get(), formatDescription.get(), count, count, timings.span().data(), count, sizes.span().data(), &rawSampleBuffer) != noErr)
+        return nullptr;
+
+    RetainPtr sampleBuffer = adoptCF(rawSampleBuffer);
+
+    RetainPtr attachmentsArray = PAL::CMSampleBufferGetSampleAttachmentsArray(sampleBuffer.get(), true);
+    if (attachmentsArray && CFArrayGetCount(attachmentsArray.get()) == count) {
+        for (CMItemCount index = 0; index < count; ++index) {
+            if (syncFlags[index])
+                continue;
+            RetainPtr attachments = checked_cf_cast<CFMutableDictionaryRef>(CFArrayGetValueAtIndex(attachmentsArray.get(), index));
+            CFDictionarySetValue(attachments.get(), PAL::kCMSampleAttachmentKey_NotSync, kCFBooleanTrue);
+        }
+    }
+
+    return sampleBuffer;
+}
+
+static RetainPtr<CIImage> createMaskImage(CVPixelBufferRef alphaBuffer)
+{
+    auto format = CVPixelBufferGetPixelFormatType(alphaBuffer);
+    if (format != kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange) {
+        RELEASE_LOG_ERROR(Media, "WebM alpha merge: alpha plane has unexpected format %d", int(format));
+        return nullptr;
+    }
+
+    // CoreImage does not export kCIImageColorSpace on watchOS.
+    RetainPtr image = adoptNS([[CIImage alloc] initWithCVPixelBuffer:alphaBuffer options:@{ @"CIImageColorSpace": [NSNull null] }]);
+    if (!image)
+        return nullptr;
+
+    // The plane stores coverage over the whole 0-255 range, so undo the rescaling that reading it as video range applies.
+    static constexpr double videoRangeBlack = 16.0 / 255.0;
+    static constexpr double videoRangeWhite = 235.0 / 255.0;
+
+    return [image imageByApplyingFilter:@"CIColorMatrix" withInputParameters:@{
+        @"inputRVector": [CIVector vectorWithX:videoRangeWhite - videoRangeBlack Y:0 Z:0 W:0],
+        @"inputBiasVector": [CIVector vectorWithX:videoRangeBlack Y:0 Z:0 W:0],
+    }];
+}
+
+static RetainPtr<CVPixelBufferRef> mergeColorAndAlphaPixelBuffers(CVPixelBufferRef colorBuffer, CVPixelBufferRef alphaBuffer, CIContext *context, CVPixelBufferPoolRef pool)
+{
+    if (!colorBuffer || !alphaBuffer || !context || !pool)
+        return nullptr;
+
+    size_t width = CVPixelBufferGetWidth(colorBuffer);
+    size_t height = CVPixelBufferGetHeight(colorBuffer);
+    if (width != CVPixelBufferGetWidth(alphaBuffer) || height != CVPixelBufferGetHeight(alphaBuffer)) {
+        RELEASE_LOG_ERROR(Media, "WebM alpha merge: color (%zux%zu) and alpha (%zux%zu) dimensions differ", width, height, CVPixelBufferGetWidth(alphaBuffer), CVPixelBufferGetHeight(alphaBuffer));
+        return nullptr;
+    }
+
+    RetainPtr colorImage = adoptNS([[CIImage alloc] initWithCVPixelBuffer:colorBuffer]);
+    RetainPtr alphaImage = createMaskImage(alphaBuffer);
+    if (!colorImage || !alphaImage)
+        return nullptr;
+
+    RetainPtr output = [colorImage imageByApplyingFilter:@"CIBlendWithRedMask" withInputParameters:@{ @"inputMaskImage": alphaImage.get() }];
+    if (!output)
+        return nullptr;
+
+    auto outputBuffer = createCVPixelBufferFromPool(pool);
+    if (!outputBuffer) {
+        RELEASE_LOG_ERROR(Media, "WebM alpha merge: CVPixelBufferPool allocation failed (status=%d)", int(outputBuffer.error()));
+        return nullptr;
+    }
+    RetainPtr merged = *outputBuffer;
+
+    CVBufferPropagateAttachments(colorBuffer, merged.get());
+    CVBufferSetAttachment(merged.get(), kCVImageBufferAlphaChannelModeKey, kCVImageBufferAlphaChannelMode_PremultipliedAlpha, kCVAttachmentMode_ShouldPropagate);
+
+    RetainPtr colorSpace = createCGColorSpaceForCVPixelBuffer(colorBuffer);
+    [context render:output.get() toCVPixelBuffer:merged.get() bounds:CGRectMake(0, 0, width, height) colorSpace:colorSpace.get()];
+
+    return merged;
+}
+
+static RetainPtr<CMFormatDescriptionRef> createFormatDescriptionWithAlpha(CVPixelBufferRef pixelBuffer)
+{
+    CMVideoFormatDescriptionRef rawDescription = nullptr;
+    if (PAL::CMVideoFormatDescriptionCreateForImageBuffer(kCFAllocatorDefault, pixelBuffer, &rawDescription) != noErr)
+        return nullptr;
+    RetainPtr description = adoptCF(rawDescription);
+
+    RetainPtr sourceExtensions = PAL::CMFormatDescriptionGetExtensions(description.get());
+    RetainPtr extensions = adoptCF(CFDictionaryCreateMutableCopy(kCFAllocatorDefault, 0, sourceExtensions.get()));
+    if (!extensions)
+        return description;
+    CFDictionarySetValue(extensions.get(), PAL::kCMFormatDescriptionExtension_ContainsAlphaChannel, kCFBooleanTrue);
+    CFDictionarySetValue(extensions.get(), PAL::kCMFormatDescriptionExtension_AlphaChannelMode, PAL::kCMFormatDescriptionAlphaChannelMode_PremultipliedAlpha);
+
+    rawDescription = nullptr;
+    if (PAL::CMVideoFormatDescriptionCreate(kCFAllocatorDefault, CVPixelBufferGetPixelFormatType(pixelBuffer), CVPixelBufferGetWidth(pixelBuffer), CVPixelBufferGetHeight(pixelBuffer), extensions.get(), &rawDescription) != noErr)
+        return description;
+    return adoptCF(rawDescription);
+}
+
+static RetainPtr<CMSampleBufferRef> createSampleBufferWithPixelBuffer(CVPixelBufferRef pixelBuffer, CMSampleBufferRef sourceSampleBuffer, CMFormatDescriptionRef description)
+{
+    if (!description)
+        return nullptr;
+
+    CMSampleTimingInfo timing {
+        PAL::CMSampleBufferGetOutputDuration(sourceSampleBuffer),
+        PAL::CMSampleBufferGetOutputPresentationTimeStamp(sourceSampleBuffer),
+        PAL::CMSampleBufferGetOutputPresentationTimeStamp(sourceSampleBuffer),
+    };
+    CMSampleBufferRef rawSampleBuffer = nullptr;
+    if (PAL::CMSampleBufferCreateReadyWithImageBuffer(kCFAllocatorDefault, pixelBuffer, description, &timing, &rawSampleBuffer) != noErr)
+        return nullptr;
+    RetainPtr sampleBuffer = adoptCF(rawSampleBuffer);
+
+    if (RetainPtr sourceAttachments = PAL::CMSampleBufferGetSampleAttachmentsArray(sourceSampleBuffer, false); sourceAttachments && CFArrayGetCount(sourceAttachments.get())) {
+        RetainPtr destAttachments = PAL::CMSampleBufferGetSampleAttachmentsArray(sampleBuffer.get(), true);
+        if (destAttachments && CFArrayGetCount(destAttachments.get())) {
+            RetainPtr sourceDict = checked_cf_cast<CFDictionaryRef>(CFArrayGetValueAtIndex(sourceAttachments.get(), 0));
+            RetainPtr destDict = checked_cf_cast<CFMutableDictionaryRef>(CFArrayGetValueAtIndex(destAttachments.get(), 0));
+            CFDictionaryApplyFunction(sourceDict.get(), [](const void* key, const void* value, void* context) {
+                CFDictionarySetValue(static_cast<CFMutableDictionaryRef>(context), key, value);
+            }, destDict.get());
+        }
+    }
+
+    return sampleBuffer;
+}
 
 Ref<WebCoreDecompressionSession> WebCoreDecompressionSession::createOpenGL(GuaranteedSerialFunctionDispatcher* dispatcher)
 {
@@ -102,11 +278,30 @@ void WebCoreDecompressionSession::invalidate()
 {
     assertIsMainThread();
     m_invalidated = true;
-    Locker lock { m_lock };
-    m_dispatcher->dispatch([decoder = WTF::move(m_videoDecoder)] {
-        if (decoder)
-            decoder->close();
-    });
+    RefPtr<WebCoreDecompressionSession> alphaSession;
+    {
+        Locker lock { m_lock };
+        alphaSession = std::exchange(m_alphaDecompressionSession, nullptr);
+        m_dispatcher->dispatch([decoder = WTF::move(m_videoDecoder)] {
+            if (decoder)
+                decoder->close();
+        });
+    }
+    if (alphaSession)
+        alphaSession->invalidate();
+}
+
+void WebCoreDecompressionSession::setResourceOwner(const ProcessIdentity& resourceOwner)
+{
+    m_resourceOwner = resourceOwner;
+
+    RefPtr<WebCoreDecompressionSession> alphaSession;
+    {
+        Locker lock { m_lock };
+        alphaSession = m_alphaDecompressionSession;
+    }
+    if (alphaSession)
+        alphaSession->setResourceOwner(resourceOwner);
 }
 
 void WebCoreDecompressionSession::assignResourceOwner(CVImageBufferRef imageBuffer)
@@ -405,10 +600,14 @@ auto WebCoreDecompressionSession::decodeSample(CMSampleBufferRef sample, Decodin
     DecodingPromise::Producer producer;
     auto promise = producer.promise();
     m_dispatcher->dispatch([protectedThis = RefPtr { this }, producer = WTF::move(producer), sample = RetainPtr { sample }, flags, flushId = m_flushId.load()]() mutable {
-        if (flushId == protectedThis->m_flushId)
-            protectedThis->decodeSampleInternal(sample.get(), flags)->chainTo(WTF::move(producer));
-        else
+        if (flushId != protectedThis->m_flushId) {
             producer.reject(noErr);
+            return;
+        }
+        if (RetainPtr alphaDatas = compressedAlphaData(sample.get()))
+            protectedThis->decodeSampleWithAlpha(sample.get(), alphaDatas.get(), flags)->chainTo(WTF::move(producer));
+        else
+            protectedThis->decodeSampleInternal(sample.get(), flags)->chainTo(WTF::move(producer));
     });
     return promise;
 }
@@ -581,6 +780,114 @@ Ref<WebCoreDecompressionSession::DecodingPromise> WebCoreDecompressionSession::d
     return promise;
 }
 
+Ref<WebCoreDecompressionSession::DecodingPromise> WebCoreDecompressionSession::decodeSampleWithAlpha(CMSampleBufferRef sample, CFArrayRef alphaDatas, DecodingFlags flags)
+{
+    assertIsCurrent(m_dispatcher.get());
+
+    RetainPtr alphaSampleBuffer = createAlphaSampleBuffer(alphaDatas, sample);
+    if (!alphaSampleBuffer)
+        return decodeSampleInternal(sample, flags);
+
+    RefPtr<WebCoreDecompressionSession> alphaSession;
+    {
+        Locker lock { m_lock };
+        if (!m_alphaDecompressionSession && !isInvalidated()) {
+            m_alphaDecompressionSession = WebCoreDecompressionSession::create(@{
+                (__bridge NSString *)kCVPixelBufferPixelFormatTypeKey: @(kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange),
+                (__bridge NSString *)kCVPixelBufferIOSurfacePropertiesKey: @{ },
+            }, m_dispatcher.ptr());
+            protect(m_alphaDecompressionSession)->setResourceOwner(m_resourceOwner);
+        }
+        alphaSession = m_alphaDecompressionSession;
+    }
+    if (!alphaSession)
+        return decodeSampleInternal(sample, flags);
+
+    ASSERT(!compressedAlphaData(alphaSampleBuffer.get()));
+
+    // Decode directly on the current dispatcher turn so a flush cannot slip in between the alpha and color decodes.
+    Ref<DecodingPromise> alphaPromise = alphaSession->decodeSampleInternal(alphaSampleBuffer.get(), flags);
+    Ref<DecodingPromise> colorPromise = decodeSampleInternal(sample, flags);
+
+    DecodingPromise::Producer producer;
+    Ref promise = producer.promise();
+
+    DecodingPromise::allSettled({ colorPromise, alphaPromise })->whenSettled(m_dispatcher, [protectedThis = Ref { *this }, this, alphaSession, producer = WTF::move(producer)](auto&& results) mutable {
+        assertIsCurrent(m_dispatcher.get());
+        auto& colorResult = (*results)[0];
+        auto& alphaResult = (*results)[1];
+
+        if (!colorResult) {
+            producer.reject(colorResult.error());
+            return;
+        }
+
+        if (!alphaResult && alphaResult.error() == kVTInvalidSessionErr) {
+            RELEASE_LOG_ERROR(Media, "WebM alpha decoder session invalidated, will recreate on the next sample");
+            Locker lock { m_lock };
+            m_alphaDecompressionSession = nullptr;
+        }
+
+        Vector<RetainPtr<CVPixelBufferRef>> alphaPixelBuffers;
+        if (alphaResult && alphaResult->size() == colorResult->size()) {
+            alphaPixelBuffers = WTF::map(*alphaResult, [&](auto& sample) -> RetainPtr<CVPixelBufferRef> {
+                RetainPtr alphaSampleBuffer = sample;
+                if (!alphaSampleBuffer)
+                    return nullptr;
+                RetainPtr alphaPixelBuffer = PAL::CMSampleBufferGetImageBuffer(alphaSampleBuffer.get());
+                alphaSession->assignResourceOwner(alphaPixelBuffer.get());
+                return alphaPixelBuffer;
+            });
+        }
+
+        producer.resolve(protectedThis->compositeAlphaOntoColorFrames(WTF::move(*colorResult), alphaPixelBuffers));
+    });
+
+    return promise;
+}
+
+Vector<RetainPtr<CMSampleBufferRef>> WebCoreDecompressionSession::compositeAlphaOntoColorFrames(Vector<RetainPtr<CMSampleBufferRef>>&& colorFrames, const Vector<RetainPtr<CVPixelBufferRef>>& alphaPixelBuffers)
+{
+    assertIsCurrent(m_dispatcher.get());
+
+    Vector<RetainPtr<CMSampleBufferRef>> output;
+    output.reserveInitialCapacity(colorFrames.size());
+
+    for (size_t index = 0; index < colorFrames.size(); ++index) {
+        auto& colorFrame = colorFrames[index];
+        if (!colorFrame)
+            continue;
+
+        RetainPtr alphaPixelBuffer = index < alphaPixelBuffers.size() ? alphaPixelBuffers[index] : nullptr;
+        if (alphaPixelBuffer) {
+            RetainPtr colorPixelBuffer = PAL::CMSampleBufferGetImageBuffer(colorFrame.get());
+            int32_t width = colorPixelBuffer ? static_cast<int32_t>(CVPixelBufferGetWidth(colorPixelBuffer.get())) : 0;
+            int32_t height = colorPixelBuffer ? static_cast<int32_t>(CVPixelBufferGetHeight(colorPixelBuffer.get())) : 0;
+            if (!m_mergedPixelBufferPool || width != m_mergedPoolWidth || height != m_mergedPoolHeight) {
+                m_mergedPixelBufferPool = createIOSurfaceCVPixelBufferPool(width, height, kCVPixelFormatType_32BGRA, 4).value_or(nullptr);
+                m_mergedFormatDescription = nullptr;
+                m_mergedPoolWidth = width;
+                m_mergedPoolHeight = height;
+            }
+            if (!m_ciContext)
+                m_ciContext = [CIContext contextWithOptions:nil];
+            RetainPtr merged = mergeColorAndAlphaPixelBuffers(colorPixelBuffer.get(), alphaPixelBuffer.get(), m_ciContext.get(), m_mergedPixelBufferPool.get());
+            if (merged) {
+                if (!m_mergedFormatDescription)
+                    m_mergedFormatDescription = createFormatDescriptionWithAlpha(merged.get());
+                if (auto mergedSample = createSampleBufferWithPixelBuffer(merged.get(), colorFrame.get(), m_mergedFormatDescription.get())) {
+                    output.append(WTF::move(mergedSample));
+                    continue;
+                }
+            }
+        }
+
+        output.append(colorFrame);
+    }
+
+    return output;
+}
+
 RetainPtr<CVPixelBufferRef> WebCoreDecompressionSession::decodeSampleSync(CMSampleBufferRef sample)
 {
     auto result = ensureDecoderForSample(sample);
@@ -605,6 +912,13 @@ RetainPtr<CVPixelBufferRef> WebCoreDecompressionSession::decodeSampleSync(CMSamp
 void WebCoreDecompressionSession::flush()
 {
     m_flushId++;
+    RefPtr<WebCoreDecompressionSession> alphaSession;
+    {
+        Locker lock { m_lock };
+        alphaSession = m_alphaDecompressionSession;
+    }
+    if (alphaSession)
+        alphaSession->flush();
     m_dispatcher->dispatch([protectedThis = RefPtr { this }] {
         protectedThis->m_waitingForKeyframe = true;
     });

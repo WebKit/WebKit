@@ -670,6 +670,26 @@ std::optional<VP8FrameHeader> parseVP8FrameHeader(std::span<const uint8_t> frame
     return header;
 }
 
+bool vpxFrameIsKeyframe(FourCharCode codec, std::span<const uint8_t> frameData)
+{
+    if (frameData.empty())
+        return false;
+
+    if (codec == 'vp09') {
+        vp9_parser::Vp9HeaderParser parser;
+        if (!parser.ParseUncompressedHeader(frameData.data(), frameData.size()))
+            return false;
+        return parser.key();
+    }
+
+    if (codec == 'vp08') {
+        auto header = parseVP8FrameHeader(frameData);
+        return header && header->keyframe;
+    }
+
+    return false;
+}
+
 Ref<VideoInfo> createVideoInfoFromVP8Header(const VP8FrameHeader& header, const webm::Video& video)
 {
     VPCodecConfigurationRecord record;

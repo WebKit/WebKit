@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>video-with-alpha-misaligned-keyframes</title>
+    <script src=video-test.js></script>
+    <script>
+    // The alpha (BlockAdditional) stream's keyframes are deliberately not
+    // aligned with the color track's: color has keyframes at 0s/1s/2s, alpha
+    // at 0s/1.5s only. Seeking to 1s lands on a color keyframe whose alpha
+    // frame is a delta the alpha decoder cannot start from. Playback must not
+    // error out, and alpha must recover once the alpha stream reaches its own
+    // next keyframe (1.5s). What the undecodable plane does until then is left
+    // to the port. The video is a solid green frame whose left half is authored
+    // fully transparent and right half fully opaque.
+
+    function pixelAlpha(x, y)
+    {
+        let canvas = document.createElement("canvas");
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        let context = canvas.getContext("2d");
+        context.drawImage(video, 0, 0);
+        return context.getImageData(x, y, 1, 1).data[3];
+    }
+
+    async function start()
+    {
+        findMediaElement();
+        video.src = "content/video-with-alpha-misaligned-keyframes.webm";
+        await waitFor(video, "canplaythrough");
+
+        consoleWrite("<br>Seek within the aligned beginning; alpha decodes from the first frame.");
+        video.currentTime = 0.5;
+        await waitFor(video, "seeked");
+        testExpected("pixelAlpha(40, 60)", 32, "<");
+        testExpected("pixelAlpha(120, 60)", 224, ">");
+
+        consoleWrite("<br>Seek to the color keyframe at 1s, where the alpha frame is a delta: no error, and the opaque half stays opaque.");
+        video.currentTime = 1.05;
+        await waitFor(video, "seeked");
+        testExpected("video.error", null);
+        testExpected("pixelAlpha(120, 60)", 224, ">");
+
+        consoleWrite("<br>Seek past the alpha stream's own keyframe at 1.5s; alpha must recover.");
+        video.currentTime = 1.7;
+        await waitFor(video, "seeked");
+        testExpected("video.error", null);
+        testExpected("pixelAlpha(40, 60)", 32, "<");
+        testExpected("pixelAlpha(120, 60)", 224, ">");
+        endTest();
+    }
+    </script>
+</head>
+<body onload="start()">
+    <video id="video"></video>
+</body>
+</html>

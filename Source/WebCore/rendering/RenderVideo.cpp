@@ -546,7 +546,7 @@ bool RenderVideo::foregroundIsKnownToBeOpaqueInRect(const LayoutRect& localRect,
         return false;
 
     if (RefPtr player = videoElement->player())
-        return player->hasAvailableVideoFrame();
+        return !player->videoFrameHasAlpha() && player->hasAvailableVideoFrame();
 
     return false;
 }
