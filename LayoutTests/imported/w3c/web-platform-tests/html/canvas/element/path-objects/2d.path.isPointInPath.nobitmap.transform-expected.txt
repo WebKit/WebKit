@@ -1,0 +1,6 @@
+2d.path.isPointInPath.nobitmap.transform
+The transformation matrix mutators apply on a canvas with no bitmap
+Actual output:
+
+PASS The transformation matrix mutators apply on a canvas with no bitmap
+

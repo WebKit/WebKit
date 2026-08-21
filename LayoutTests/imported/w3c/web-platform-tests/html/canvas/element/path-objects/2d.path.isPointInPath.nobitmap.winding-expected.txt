@@ -1,0 +1,6 @@
+2d.path.isPointInPath.nobitmap.winding
+isPointInPath() honours the fill rule on a canvas with no bitmap
+Actual output:
+
+PASS isPointInPath() honours the fill rule on a canvas with no bitmap
+

@@ -166,9 +166,11 @@ void CanvasRenderingContext2D::drawFocusIfNeeded(Path2D& path, Element& element)
 
 void CanvasRenderingContext2D::drawFocusIfNeededInternal(const Path& path, Element& element)
 {
-    auto* context = effectiveDrawingContext();
     Ref canvas = this->canvas();
-    if (!element.focused() || !hasInvertibleTransform() || path.isEmpty() || !element.isDescendantOf(canvas.get()) || !context)
+    if (!element.focused() || !hasInvertibleTransform() || path.isEmpty() || !element.isDescendantOf(canvas.get()))
+        return;
+    auto* context = effectiveDrawingContext();
+    if (!context)
         return;
     CheckedPtr canvasStyle = canvas->computedStyle();
     auto zoomFactor = canvasStyle ? canvasStyle->usedZoom() : 1.f;

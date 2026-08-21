@@ -877,9 +877,6 @@ void CanvasRenderingContext2DBase::setFilterString(const String& filterString)
 
 void CanvasRenderingContext2DBase::scale(double sx, double sy)
 {
-    GraphicsContext* c = effectiveDrawingContext();
-    if (!c)
-        return;
     if (!hasInvertibleTransform()) [[unlikely]]
         return;
 
@@ -897,15 +894,13 @@ void CanvasRenderingContext2DBase::scale(double sx, double sy)
     if (!hasInvertibleTransform()) [[unlikely]]
         return;
 
-    c->scale(FloatSize(floatX, floatY));
+    if (auto* c = effectiveDrawingContext())
+        c->scale(FloatSize(floatX, floatY));
     m_path.transform(AffineTransform().scaleNonUniform(1.0 / floatX, 1.0 / floatY));
 }
 
 void CanvasRenderingContext2DBase::rotate(double angleInRadians)
 {
-    GraphicsContext* c = effectiveDrawingContext();
-    if (!c)
-        return;
     if (!hasInvertibleTransform()) [[unlikely]]
         return;
 
@@ -919,15 +914,13 @@ void CanvasRenderingContext2DBase::rotate(double angleInRadians)
 
     realizeSaves();
     updateStateTransform(newTransform); // Rotate never causes non-invertible matrices.
-    c->rotate(angleInRadians);
+    if (auto* c = effectiveDrawingContext())
+        c->rotate(angleInRadians);
     m_path.transform(AffineTransform().rotateRadians(-angleInRadians));
 }
 
 void CanvasRenderingContext2DBase::translate(double tx, double ty)
 {
-    GraphicsContext* c = effectiveDrawingContext();
-    if (!c)
-        return;
     if (!hasInvertibleTransform()) [[unlikely]]
         return;
 
@@ -944,15 +937,13 @@ void CanvasRenderingContext2DBase::translate(double tx, double ty)
     // Translate may end up making infinities which are non-invertible.
     if (!hasInvertibleTransform()) [[unlikely]]
         return;
-    c->translate(tx, ty);
+    if (auto* c = effectiveDrawingContext())
+        c->translate(tx, ty);
     m_path.transform(AffineTransform().translate(-tx, -ty));
 }
 
 void CanvasRenderingContext2DBase::transform(double m11, double m12, double m21, double m22, double dx, double dy)
 {
-    GraphicsContext* c = effectiveDrawingContext();
-    if (!c)
-        return;
     if (!hasInvertibleTransform()) [[unlikely]]
         return;
 
@@ -968,7 +959,8 @@ void CanvasRenderingContext2DBase::transform(double m11, double m12, double m21,
     updateStateTransform(newTransform);
     if (!hasInvertibleTransform()) [[unlikely]]
         return;
-    c->concatCTM(transform); // Note: concat with the incoming transform, not the full transform (newTransform).
+    if (auto* c = effectiveDrawingContext())
+        c->concatCTM(transform); // Note: concat with the incoming transform, not the full transform (newTransform).
     auto inverse = transform.inverse();
     ASSERT(inverse);
     if (inverse)
@@ -982,10 +974,6 @@ Ref<DOMMatrix> CanvasRenderingContext2DBase::getTransform() const
 
 void CanvasRenderingContext2DBase::setTransform(double m11, double m12, double m21, double m22, double dx, double dy)
 {
-    GraphicsContext* c = effectiveDrawingContext();
-    if (!c)
-        return;
-
     if (!std::isfinite(m11) || !std::isfinite(m21) || !std::isfinite(dx) || !std::isfinite(m12) || !std::isfinite(m22) || !std::isfinite(dy))
         return;
 
@@ -1006,16 +994,13 @@ ExceptionOr<void> CanvasRenderingContext2DBase::setTransform(DOMMatrix2DInit&& m
 
 void CanvasRenderingContext2DBase::resetTransform()
 {
-    GraphicsContext* c = effectiveDrawingContext();
-    if (!c)
-        return;
-
     if (hasInvertibleTransform())
         m_path.transform(state().transform);
 
     realizeSaves();
 
-    c->setCTM(baseTransform());
+    if (auto* c = effectiveDrawingContext())
+        c->setCTM(baseTransform());
     updateStateTransform({ });
 }
 
@@ -1304,9 +1289,7 @@ bool CanvasRenderingContext2DBase::isPointInPathInternal(const Path& path, doubl
 {
     if (!std::isfinite(x) || !std::isfinite(y))
         return false;
-    
-    if (!effectiveDrawingContext())
-        return false;
+
     if (!hasInvertibleTransform()) [[unlikely]]
         return false;
 
@@ -1322,8 +1305,6 @@ bool CanvasRenderingContext2DBase::isPointInStrokeInternal(const Path& path, dou
     if (!std::isfinite(x) || !std::isfinite(y))
         return false;
 
-    if (!effectiveDrawingContext())
-        return false;
     if (!hasInvertibleTransform()) [[unlikely]]
         return false;
 
