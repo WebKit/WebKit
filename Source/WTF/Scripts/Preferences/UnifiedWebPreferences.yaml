@@ -5856,6 +5856,7 @@ MediaSessionCaptureToggleAPIEnabled:
       default: false
     WebCore:
       default: false
+  sharedPreferenceForWebProcess: true
 
 MediaSessionCoordinatorEnabled:
   type: bool
@@ -7616,6 +7617,7 @@ ScreenCaptureEnabled:
       default: WebKit::defaultShouldEnableScreenCapture()
     WebCore:
       default: false
+  sharedPreferenceForWebProcess: true
 
 ScreenOrientationAPIEnabled:
   type: bool
