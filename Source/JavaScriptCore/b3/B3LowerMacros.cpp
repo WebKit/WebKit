@@ -1381,7 +1381,7 @@ private:
 
             Value* isNull = nullptr;
             if (referenceIsNullable) {
-                if (auto offset = castAccessOffset(); offset && offset.value() <= Wasm::maxAcceptableOffsetForNullReference()) {
+                if (auto offset = castAccessOffset(); Options::useWasmFaultSignalHandler() && offset && offset.value() <= Wasm::maxAcceptableOffsetForNullReference()) {
                     isNull = constant(Int32, 0);
                     canTrap = true;
                 } else

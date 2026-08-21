@@ -2285,8 +2285,10 @@ void BBQJIT::emitRefTestOrCast(CastKind castKind, const TypedExpression& typedVa
 
     JumpList doneCases;
     if (typedValue.type().isNullable()) {
-        if (auto offset = castAccessOffset(); offset && offset.value() <= maxAcceptableOffsetForNullReference()) {
-            // We will have access which will be trapped.
+        if (auto offset = castAccessOffset(); Options::useWasmFaultSignalHandler() && offset && offset.value() <= maxAcceptableOffsetForNullReference()) {
+            // The cast below dereferences the reference at this offset, so a null lands in the
+            // guard region and the fault handler turns it into a trap. Without the handler
+            // installed there is nothing to catch it, so the check must be emitted.
         } else {
             if (allowNull)
                 doneCases.append(m_jit.branchIfNull(valueGPR));
