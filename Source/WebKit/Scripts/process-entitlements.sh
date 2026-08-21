@@ -141,9 +141,6 @@ function mac_process_network_entitlements()
             plistbuddy Add :com.apple.security.hardened-process.checked-allocations.no-tagged-receive bool YES
         fi
 
-        # FIXME: This should be removed after crash investigation as part of <rdar://problem/160965793>
-        plistbuddy Add :com.apple.private.get-system-corpse bool YES
-
         if [[ "${WK_USE_FATAL_EXCEPTIONS}" == YES ]]
         then
             plistbuddy Add :com.apple.private.pac.exception bool YES
