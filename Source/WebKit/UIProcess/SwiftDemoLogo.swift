@@ -23,11 +23,7 @@
 
 #if ENABLE_SWIFT_DEMO_URI_SCHEME
 
-#if os(Windows)
-import FoundationEssentials
-#else
 import Foundation
-#endif
 import WebKit_Internal
 
 extension Data {
