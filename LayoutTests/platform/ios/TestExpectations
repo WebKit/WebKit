@@ -1640,6 +1640,13 @@ webkit.org/b/180725 editing/caret/color-span-inside-editable.html [ ImageOnlyFai
 
 webkit.org/b/180286 editing/input/editable-container-with-word-wrap-normal.html [ Failure ]
 
+# Moving the selection out of a composition only aborts the composition on macOS, where
+# Editor::selectionWillChange() cancels it. That function is an empty stub on every other
+# port, so no compositionend is dispatched. Same gap as
+# fast/events/ime-compositionend-on-selection-change.html.
+editing/input/compositionend-after-clicking-outside-editable.html [ Failure ]
+editing/input/compositionend-data-after-aborting-composition.html [ Failure ]
+
 # Font tests that fail:
 fonts/font-fallback-prefers-pictographs.html [ ImageOnlyFailure ]
 

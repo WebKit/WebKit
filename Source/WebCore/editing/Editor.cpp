@@ -2457,6 +2457,10 @@ void Editor::setComposition(const String& text, SetCompositionMode mode)
     else
         selectComposition();
 
+    // Cancelling a composition does not remove the pending composition text from the document, so the
+    // compositionend event has to report the text that is left behind rather than the empty string.
+    String textForCompositionEndEvent = mode == CancelComposition ? compositionText() : text;
+
     RefPtr previousCompositionNode = m_compositionNode;
     m_compositionNode = nullptr;
     m_customCompositionUnderlines.clear();
@@ -2477,8 +2481,19 @@ void Editor::setComposition(const String& text, SetCompositionMode mode)
 
     insertTextForConfirmedComposition(text);
 
-    if (RefPtr target = document->focusedElement())
-        target->dispatchEvent(CompositionEvent::create(eventNames().compositionendEvent, document->windowProxy(), text));
+    // Clicking outside the editable element moves focus away before the composition is torn down, so
+    // there is no focused element left to dispatch to. Fall back to the element the composition belongs
+    // to rather than dropping the compositionend event altogether.
+    RefPtr<Element> target = document->focusedElement();
+    if (!target && previousCompositionNode) {
+        if (RefPtr textControl = enclosingTextFormControl(firstPositionInOrBeforeNode(previousCompositionNode.get())))
+            target = WTF::move(textControl);
+        else
+            target = previousCompositionNode->rootEditableElement();
+    }
+
+    if (target)
+        target->dispatchEvent(CompositionEvent::create(eventNames().compositionendEvent, document->windowProxy(), textForCompositionEndEvent));
 
     if (mode == CancelComposition) {
         // An open typing command that disagrees about current selection would cause issues with typing later on.

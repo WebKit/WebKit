@@ -1,0 +1,11 @@
+Some text.^
+Not editable.
+compositionstart target=editable data=""
+compositionupdate target=editable data="^"
+compositionend target=editable data="^"
+activeElement=BODY
+editable.textContent="Some text.^"
+hasMarkedText=false
+
+PASS compositionend is fired on the editable element when a composition is aborted by clicking outside of it
+

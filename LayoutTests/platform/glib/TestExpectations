@@ -1586,6 +1586,13 @@ webkit.org/b/239345 editing/execCommand/insert-ordered-list-and-delete.html [ Fa
 
 webkit.org/b/179605 editing/execCommand/underline-selection-containing-image.html [ Failure ]
 
+# Moving the selection out of a composition only aborts the composition on macOS, where
+# Editor::selectionWillChange() cancels it. That function is an empty stub on every other
+# port, so no compositionend is dispatched. Same gap as
+# fast/events/ime-compositionend-on-selection-change.html.
+editing/input/compositionend-after-clicking-outside-editable.html [ Failure ]
+editing/input/compositionend-data-after-aborting-composition.html [ Failure ]
+
 # Assertion failure if ASSERT_ENABLED
 webkit.org/b/286128 [ Release ] editing/inserting/insert-list-user-select-none-crash.html [ Crash Pass Timeout ]
 
