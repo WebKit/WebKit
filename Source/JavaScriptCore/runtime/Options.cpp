@@ -439,7 +439,10 @@ unsigned Options::computeNumberOfWorkerThreads(int maxNumberOfWorkerThreads, int
 
     // Be paranoid, it is the OS we're dealing with, after all.
     ASSERT(cpusToUse >= 1);
-    return std::max(cpusToUse, minimum);
+    cpusToUse = std::max(cpusToUse, minimum);
+    if constexpr (!isDarwin())
+        return std::min(cpusToUse, 32);
+    return cpusToUse;
 }
 
 int32_t Options::computePriorityDeltaOfWorkerThreads(int32_t twoCorePriorityDelta, int32_t multiCorePriorityDelta)
