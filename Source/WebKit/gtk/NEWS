@@ -1,4 +1,16 @@
 =================
+WebKitGTK 2.53.91
+=================
+
+What's new in WebKitGTK 2.53.91?
+
+  - Handle video orientation in skia compositor.
+  - Do not use cached credentials when Authorization header is present.
+  - Fix scrollbar rendering issues due to incorrect damage.
+  - Add log fallback when journald is not reachable
+  - Fix several crashes and rendering issues.
+
+=================
 WebKitGTK 2.53.90
 =================
 
