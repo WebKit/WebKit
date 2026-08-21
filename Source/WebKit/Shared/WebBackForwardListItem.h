@@ -33,6 +33,7 @@
 #include <WebCore/ProcessIdentifier.h>
 #include <wtf/CheckedPtr.h>
 #include <wtf/Ref.h>
+#include <wtf/SwiftAccessors.h>
 #include <wtf/SwiftBridging.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
@@ -67,6 +68,7 @@ public:
 
     const String& NODELETE originalURL() const LIFETIME_BOUND;
     const String& NODELETE url() const LIFETIME_BOUND;
+    SWIFT_COPYING_ACCESSOR(url, String)
     const String& NODELETE title() const LIFETIME_BOUND;
     bool NODELETE wasCreatedByJSWithoutUserInteraction() const;
 
