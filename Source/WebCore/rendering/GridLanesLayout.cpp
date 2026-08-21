@@ -97,11 +97,11 @@ GridArea GridLanesLayout::gridAreaForDefiniteGridAxisItem(const RenderBox& gridI
 LayoutUnit GridLanesLayout::calculateGridLanesIntrinsicLogicalWidth(RenderBox& gridItem, Phase layoutPhase)
 {
     switch (layoutPhase) {
-    case Phase::MinContentPhase:
+    case Phase::MinContent:
         return gridItem.computeSizingKeywordLogicalWidthUsing(CSS::Keyword::MinContent { }, { }, gridItem.borderAndPaddingLogicalWidth());
-    case Phase::MaxContentPhase:
+    case Phase::MaxContent:
         return gridItem.computeSizingKeywordLogicalWidthUsing(CSS::Keyword::MaxContent { }, { }, gridItem.borderAndPaddingLogicalWidth());
-    case Phase::LayoutPhase:
+    case Phase::Layout:
         ASSERT_NOT_REACHED();
         return { };
     }
@@ -135,7 +135,7 @@ void GridLanesLayout::setItemContainingBlockToGridArea(const GridTrackSizingAlgo
 void GridLanesLayout::insertIntoGridAndLayoutItem(const GridTrackSizingAlgorithm& algorithm, RenderBox& gridItem, const GridArea& area, Phase layoutPhase)
 {
     auto shouldOverrideLogicalWidth = [&](RenderBox& gridItem, Phase layoutPhase) {
-        if (layoutPhase == Phase::LayoutPhase)
+        if (layoutPhase == Phase::Layout)
             return false;
 
         if (!(gridItem.style().logicalWidth().isAuto() || gridItem.style().logicalWidth().isPercent()))

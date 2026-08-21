@@ -47,9 +47,9 @@ public:
     }
 
     enum class Phase : uint8_t {
-        LayoutPhase,
-        MinContentPhase,
-        MaxContentPhase
+        Layout,
+        MinContent,
+        MaxContent
     };
 
     void initializeGridLanes(unsigned gridAxisTracks, Style::GridTrackSizingDirection stackingAxisDirection);

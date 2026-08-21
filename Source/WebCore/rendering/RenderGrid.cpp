@@ -656,7 +656,7 @@ void RenderGrid::layoutGridLanes(RelayoutChildren relayoutChildren)
             auto gridAxisDirection = stackingAxisDirection == Style::GridTrackSizingDirection::Rows ? Style::GridTrackSizingDirection::Columns : Style::GridTrackSizingDirection::Rows;
             unsigned gridAxisTracksBeforeAutoPlacement = currentGrid().numTracks(gridAxisDirection);
 
-            m_gridLanesLayout.performGridLanesPlacement(m_trackSizingAlgorithm, gridAxisTracksBeforeAutoPlacement, stackingAxisDirection, GridLanesLayout::Phase::LayoutPhase);
+            m_gridLanesLayout.performGridLanesPlacement(m_trackSizingAlgorithm, gridAxisTracksBeforeAutoPlacement, stackingAxisDirection, GridLanesLayout::Phase::Layout);
         };
 
         if (hasStackingAxisRows())
@@ -860,10 +860,10 @@ std::pair<LayoutUnit, LayoutUnit> RenderGrid::computeIntrinsicLogicalWidths() co
 
         // To determine the width of the grid when we have a grid lanes layout in the column direction we need to perform a layout with the min and max
         // content sizes. We will override the grid items widths to accomplish this and then calculate the final grid content size after placement.
-        m_gridLanesLayout.performGridLanesPlacement(algorithm, gridAxisTracksCountBeforeAutoPlacement, Style::GridTrackSizingDirection::Columns, GridLanesLayout::Phase::MinContentPhase);
+        m_gridLanesLayout.performGridLanesPlacement(algorithm, gridAxisTracksCountBeforeAutoPlacement, Style::GridTrackSizingDirection::Columns, GridLanesLayout::Phase::MinContent);
         minLogicalWidth = m_gridLanesLayout.gridContentSize();
 
-        m_gridLanesLayout.performGridLanesPlacement(algorithm, gridAxisTracksCountBeforeAutoPlacement, Style::GridTrackSizingDirection::Columns, GridLanesLayout::Phase::MaxContentPhase);
+        m_gridLanesLayout.performGridLanesPlacement(algorithm, gridAxisTracksCountBeforeAutoPlacement, Style::GridTrackSizingDirection::Columns, GridLanesLayout::Phase::MaxContent);
         maxLogicalWidth = m_gridLanesLayout.gridContentSize();
     }
 
