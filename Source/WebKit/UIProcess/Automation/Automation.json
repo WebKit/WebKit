@@ -92,7 +92,8 @@
                 "NoSuchScript",
                 "NoSuchHistoryEntry",
                 "NodeIsNotAnElement",
-                "UnableToSetFileInput"
+                "UnableToSetFileInput",
+                "NoSuchHandle"
             ]
         },
         {
