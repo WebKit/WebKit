@@ -1573,12 +1573,26 @@ WebContentMode WebPageProxy::effectiveContentModeAfterAdjustingPolicies(API::Web
         policies.setCustomNavigatorPlatform("iPhone"_s);
     };
 
+    auto applyCapabilityPoliciesForContentMode = [&](WebContentMode contentMode) {
+        bool shouldEmulateDesktopClassHardware = contentMode == WebContentMode::Desktop && m_configuration->backgroundTextExtractionEnabled();
+#if ENABLE(TOUCH_EVENTS)
+        bool shouldOmitTouchEventDOMAttributes = shouldEmulateDesktopClassHardware
+            || (contentMode == WebContentMode::Desktop && needsSiteSpecificQuirks && Quirks::shouldOmitTouchEventDOMAttributesForDesktopWebsite(request.url()));
+        policies.setOverrideTouchEventDOMAttributesEnabled(!shouldOmitTouchEventDOMAttributes);
+#endif
+#if ENABLE(IOS_TOUCH_EVENTS)
+        policies.setOverrideShouldReportZeroMaxTouchPoints(shouldEmulateDesktopClassHardware);
+#endif
+        policies.setOverrideShouldReportViewportSizeAsScreenSize(shouldEmulateDesktopClassHardware && !desktopClassBrowsingSupported());
+    };
+
     if (needsSiteSpecificQuirks) {
         if (auto selectors = Quirks::defaultVisibilityAdjustmentSelectors(request.url()))
             policies.setVisibilityAdjustmentSelectors({ WTF::move(*selectors) });
 
         if (Quirks::needsIPhoneUserAgent(request.url())) {
             applyIPhoneUserAgent();
+            applyCapabilityPoliciesForContentMode(WebContentMode::Mobile);
             return WebContentMode::Mobile;
         }
     }
@@ -1589,6 +1603,7 @@ WebContentMode WebPageProxy::effectiveContentModeAfterAdjustingPolicies(API::Web
 
     if (!useDesktopBrowsingMode) {
         policies.setIdempotentModeAutosizingOnlyHonorsPercentages(true);
+        applyCapabilityPoliciesForContentMode(WebContentMode::Mobile);
         return WebContentMode::Mobile;
     }
 
@@ -1620,10 +1635,7 @@ WebContentMode WebPageProxy::effectiveContentModeAfterAdjustingPolicies(API::Web
         m_preferFasterClickOverDoubleTap = true;
     }
 
-#if ENABLE(TOUCH_EVENTS)
-    if (needsSiteSpecificQuirks && Quirks::shouldOmitTouchEventDOMAttributesForDesktopWebsite(request.url()))
-        policies.setOverrideTouchEventDOMAttributesEnabled(false);
-#endif
+    applyCapabilityPoliciesForContentMode(WebContentMode::Desktop);
 
     policies.setInlineMediaPlaybackPolicy(WebsiteInlineMediaPlaybackPolicy::DoesNotRequirePlaysInlineAttribute);
 

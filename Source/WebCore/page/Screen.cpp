@@ -75,6 +75,11 @@ static bool shouldFlipScreenDimensions(const LocalFrame& frame)
     return document && document->quirks().shouldFlipScreenDimensions();
 }
 
+static bool shouldReportScreenSizeAsAvailableScreenSize(const LocalFrame& frame)
+{
+    return shouldApplyScreenFingerprintingProtections(frame) || frame.settings().shouldReportViewportSizeAsScreenSize();
+}
+
 int Screen::height() const
 {
     RefPtr frame = this->frame();
@@ -152,7 +157,7 @@ int Screen::availHeight() const
     if (frame->settings().webAPIStatisticsEnabled())
         ResourceLoadObserver::singleton().logScreenAPIAccessed(*protect(frame->document()), ScreenAPIsAccessed::AvailHeight);
 
-    if (shouldApplyScreenFingerprintingProtections(*frame))
+    if (shouldReportScreenSizeAsAvailableScreenSize(*frame))
         return static_cast<int>(frame->screenSize().height());
 
     return static_cast<int>(screenAvailableRect(protect(frame->view()).get()).height());
@@ -167,7 +172,7 @@ int Screen::availWidth() const
     if (frame->settings().webAPIStatisticsEnabled())
         ResourceLoadObserver::singleton().logScreenAPIAccessed(*protect(frame->document()), ScreenAPIsAccessed::AvailWidth);
 
-    if (shouldApplyScreenFingerprintingProtections(*frame))
+    if (shouldReportScreenSizeAsAvailableScreenSize(*frame))
         return static_cast<int>(frame->screenSize().width());
 
     return static_cast<int>(screenAvailableRect(protect(frame->view()).get()).width());

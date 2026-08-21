@@ -1203,6 +1203,18 @@ FloatSize LocalFrame::screenSize() const
         return m_overrideScreenSize->size;
 
     auto defaultSize = screenRect(protect(view()).get()).size();
+
+    if (settings().shouldReportViewportSizeAsScreenSize()) {
+        if (RefPtr view = this->view()) {
+            auto unobscuredSize = view->unobscuredContentRectIncludingScrollbars().size();
+            return {
+                static_cast<float>(view->mapFromLayoutToCSSUnits(unobscuredSize.width())),
+                static_cast<float>(view->mapFromLayoutToCSSUnits(unobscuredSize.height()))
+            };
+        }
+        return defaultSize;
+    }
+
     RefPtr document = this->document();
     if (!document)
         return defaultSize;

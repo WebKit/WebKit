@@ -72,6 +72,10 @@ public:
 #if ENABLE(TOUCH_EVENTS)
     std::optional<bool> overrideTouchEventDOMAttributesEnabled;
 #endif
+#if ENABLE(IOS_TOUCH_EVENTS)
+    std::optional<bool> overrideShouldReportZeroMaxTouchPoints;
+#endif
+    std::optional<bool> overrideShouldReportViewportSizeAsScreenSize;
     std::optional<bool> globalPrivacyControlEnabled;
     WebsiteAutoplayPolicy autoplayPolicy { WebsiteAutoplayPolicy::Default };
     WebsitePopUpPolicy popUpPolicy { WebsitePopUpPolicy::Default };

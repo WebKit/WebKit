@@ -70,6 +70,10 @@ struct WebKit::WebsitePoliciesData {
 #if ENABLE(TOUCH_EVENTS)
     std::optional<bool> overrideTouchEventDOMAttributesEnabled;
 #endif
+#if ENABLE(IOS_TOUCH_EVENTS)
+    std::optional<bool> overrideShouldReportZeroMaxTouchPoints;
+#endif
+    std::optional<bool> overrideShouldReportViewportSizeAsScreenSize;
     std::optional<bool> globalPrivacyControlEnabled;
     WebKit::WebsiteAutoplayPolicy autoplayPolicy;
     WebKit::WebsitePopUpPolicy popUpPolicy;

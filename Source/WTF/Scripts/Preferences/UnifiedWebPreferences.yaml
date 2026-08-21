@@ -8248,6 +8248,25 @@ ShouldPrintBackgrounds:
     WebCore:
       default: false
 
+ShouldReportViewportSizeAsScreenSize:
+  type: bool
+  status: embedder
+  humanReadableName: "Report Viewport Size As Screen Size"
+  humanReadableDescription: "Report the viewport size instead of the real screen size"
+  defaultValue:
+    WebCore:
+      default: false
+
+ShouldReportZeroMaxTouchPoints:
+  type: bool
+  status: embedder
+  humanReadableName: "Report Zero Max Touch Points"
+  humanReadableDescription: "Report navigator.maxTouchPoints as 0"
+  condition: ENABLE(IOS_TOUCH_EVENTS)
+  defaultValue:
+    WebCore:
+      default: false
+
 ShouldRespectImageOrientation:
   type: bool
   status: embedder

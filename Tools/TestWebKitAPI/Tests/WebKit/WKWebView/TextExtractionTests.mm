@@ -3170,4 +3170,100 @@ TEST(TextExtractionTests, ExtractFromPDFLink)
 
 #endif // ENABLE(UNIFIED_PDF)
 
+#if PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)
+
+static RetainPtr<TestWKWebView> createWebViewForContentModeTesting(BOOL backgroundTextExtractionEnabled)
+{
+    RetainPtr configuration = adoptNS([WKWebViewConfiguration new]);
+    [configuration _setBackgroundTextExtractionEnabled:backgroundTextExtractionEnabled];
+    return adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 400) configuration:configuration]);
+}
+
+static void loadUsingContentMode(TestWKWebView *webView, WKContentMode contentMode)
+{
+    RetainPtr preferences = adoptNS([[WKWebpagePreferences alloc] init]);
+    [preferences setPreferredContentMode:contentMode];
+    [webView synchronouslyLoadHTMLString:@"<body>Hello world</body>" preferences:preferences];
+}
+
+static int intByEvaluatingJavaScript(TestWKWebView *webView, NSString *script)
+{
+    return [[webView objectByEvaluatingJavaScript:script] intValue];
+}
+
+#if ENABLE(TOUCH_EVENTS)
+
+static bool touchEventDOMAttributesAreExposed(TestWKWebView *webView)
+{
+    return [[webView objectByEvaluatingJavaScript:@"'ontouchstart' in window"] boolValue];
+}
+
+#endif
+
+static bool isSmallScreenDevice()
+{
+    return UIDevice.currentDevice.userInterfaceIdiom == UIUserInterfaceIdiomPhone;
+}
+
+static void expectDesktopClassHardwareEmulation(TestWKWebView *webView)
+{
+#if ENABLE(IOS_TOUCH_EVENTS)
+    EXPECT_EQ(0, intByEvaluatingJavaScript(webView, @"navigator.maxTouchPoints"));
+#endif
+#if ENABLE(TOUCH_EVENTS)
+    EXPECT_FALSE(touchEventDOMAttributesAreExposed(webView));
+#endif
+
+    if (!isSmallScreenDevice())
+        return;
+
+    int innerWidth = intByEvaluatingJavaScript(webView, @"innerWidth");
+    int innerHeight = intByEvaluatingJavaScript(webView, @"innerHeight");
+    EXPECT_EQ(innerWidth, intByEvaluatingJavaScript(webView, @"screen.width"));
+    EXPECT_EQ(innerHeight, intByEvaluatingJavaScript(webView, @"screen.height"));
+    EXPECT_EQ(innerWidth, intByEvaluatingJavaScript(webView, @"screen.availWidth"));
+    EXPECT_EQ(innerHeight, intByEvaluatingJavaScript(webView, @"screen.availHeight"));
+}
+
+static void expectNoDesktopClassHardwareEmulation(TestWKWebView *webView)
+{
+#if ENABLE(IOS_TOUCH_EVENTS)
+    EXPECT_EQ(5, intByEvaluatingJavaScript(webView, @"navigator.maxTouchPoints"));
+#endif
+#if ENABLE(TOUCH_EVENTS)
+    EXPECT_TRUE(touchEventDOMAttributesAreExposed(webView));
+#endif
+
+    if (!isSmallScreenDevice())
+        return;
+
+    int innerWidth = intByEvaluatingJavaScript(webView, @"innerWidth");
+    EXPECT_NE(innerWidth, intByEvaluatingJavaScript(webView, @"screen.width"));
+}
+
+TEST(TextExtractionTests, DesktopClassHardwareEmulationInDesktopContentMode)
+{
+    RetainPtr webView = createWebViewForContentModeTesting(YES);
+    {
+        loadUsingContentMode(webView, WKContentModeDesktop);
+        expectDesktopClassHardwareEmulation(webView);
+    }
+    {
+        loadUsingContentMode(webView, WKContentModeMobile);
+        expectNoDesktopClassHardwareEmulation(webView);
+    }
+    {
+        RetainPtr mobileWebView = createWebViewForContentModeTesting(YES);
+        loadUsingContentMode(mobileWebView, WKContentModeMobile);
+        expectNoDesktopClassHardwareEmulation(mobileWebView);
+    }
+    {
+        RetainPtr webViewWithoutTextExtraction = createWebViewForContentModeTesting(NO);
+        loadUsingContentMode(webViewWithoutTextExtraction, WKContentModeDesktop);
+        expectNoDesktopClassHardwareEmulation(webViewWithoutTextExtraction);
+    }
+}
+
+#endif // PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)
+
 } // namespace TestWebKitAPI

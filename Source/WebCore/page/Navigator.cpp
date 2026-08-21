@@ -457,11 +457,13 @@ int Navigator::maxTouchPoints() const
 {
 #if ENABLE(IOS_TOUCH_EVENTS) && !PLATFORM(MACCATALYST)
     RefPtr document = this->document();
-    if (!document || !document->quirks().needsZeroMaxTouchPointsQuirk())
-        return 5;
-#endif
+    if (document && (document->quirks().needsZeroMaxTouchPointsQuirk() || document->settings().shouldReportZeroMaxTouchPoints()))
+        return 0;
 
+    return 5;
+#else
     return 0;
+#endif
 }
 
 NavigatorUAData& Navigator::userAgentData() const
