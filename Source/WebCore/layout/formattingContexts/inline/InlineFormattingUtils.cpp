@@ -589,12 +589,15 @@ std::pair<InlineLayoutUnit, InlineLayoutUnit> InlineFormattingUtils::textEmphasi
 LineEndingTruncationPolicy InlineFormattingUtils::lineEndingTruncationPolicy(const Style::ComputedStyle& rootStyle, size_t numberOfContentfulLines, std::optional<size_t> numberOfVisibleLinesAllowed, bool currentLineIsContentful)
 {
     if (numberOfVisibleLinesAllowed) {
-        // text-overflow: ellipsis should not apply inside clamping content.
         if (!currentLineIsContentful) {
             // Content with no inline should never ever receive ellipsis.
             return LineEndingTruncationPolicy::NoTruncation;
         }
-        return *numberOfVisibleLinesAllowed == numberOfContentfulLines ? LineEndingTruncationPolicy::WhenContentOverflowsInBlockDirection : LineEndingTruncationPolicy::NoTruncation;
+        if (numberOfContentfulLines >= *numberOfVisibleLinesAllowed) {
+            // The clamped line's block ellipsis replaces the text-overflow ellipsis, while the lines below it are not visible at all.
+            return numberOfContentfulLines == *numberOfVisibleLinesAllowed ? LineEndingTruncationPolicy::WhenContentOverflowsInBlockDirection : LineEndingTruncationPolicy::NoTruncation;
+        }
+        // Lines above the clamp point are not affected by clamping, so text-overflow is what may truncate them.
     }
 
     // Truncation is in effect when the block container has overflow other than visible.
