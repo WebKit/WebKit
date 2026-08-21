@@ -9,9 +9,11 @@
 # CMAKE_Swift_COMPILER_LAUNCHER, which testing showed CMake/Ninja can
 # silently fail to apply to some Swift rules).
 
+import os
 import re
 import subprocess
 import sys
+import tempfile
 
 # Swift's C++ interop changes which imported members are @unsafe between
 # toolchain versions, so an `unsafe` that is required on one toolchain emits
@@ -114,6 +116,12 @@ def process_args(argv):
             # Split -Wl,arg1,arg2 into -Xlinker arg1 -Xlinker arg2
             for wl_arg in arg[len("-Wl,"):].split(","):
                 args.extend(["-Xlinker", wl_arg])
+        elif os.name == "nt" and arg.startswith("/") and len(arg) > 1:
+            # CMake passes raw MSVC linker switches like /machine:x64 and
+            # /INCREMENTAL:NO straight through. A leading "/" is
+            # never a plain path on Windows (paths use "\" or a drive letter),
+            # so this is unambiguous.
+            args.extend(["-Xlinker", arg])
         elif arg.startswith("--original-swift-compiler="):
             real_swiftc = arg[len("--original-swift-compiler="):]
         elif arg.startswith("-D") and "=" in arg:
@@ -134,14 +142,56 @@ def process_args(argv):
     return real_swiftc, args
 
 
+def quote_response_file_token(arg):
+    if not re.search(r"\s", arg):
+        return arg
+    # Windows argv-unescaping rules (the platform this is used on):
+    # a backslash is literal unless it precedes a quote, and N backslashes
+    # before a quote collapse to N/2.
+    escaped = arg.replace("\\", "\\\\").replace('"', '\\"')
+    return '"' + escaped + '"'
+
+
+def write_response_file(args):
+    fd, path = tempfile.mkstemp(prefix="swiftc-wrapper-", suffix=".rsp")
+    with os.fdopen(fd, "w") as f:
+        for arg in args:
+            f.write(quote_response_file_token(arg))
+            f.write("\n")
+    return path
+
+
 def main(argv):
     real_swiftc, args = process_args(argv)
+    flat_command = [real_swiftc] + args
 
-    process = subprocess.run(
-        [real_swiftc] + args,
-        stdout=sys.stdout,
-        stderr=subprocess.PIPE,
-    )
+    if os.name == "nt" and "-explicit-module-build" not in args:
+        # WebKit's swiftc invocations run tens of thousands of characters long
+        # (hundreds of -I flags); Windows' CreateProcess caps a command line at
+        # ~32767 characters
+        response_file = write_response_file(args)
+        command = [real_swiftc, "@" + response_file]
+    else:
+        if os.name == "nt":
+            cmdline = subprocess.list2cmdline(flat_command)
+            if len(cmdline) >= 32767:
+                sys.stderr.write(
+                    f"swiftc-wrapper: command line is {len(cmdline)} characters, "
+                    "over the Windows 32767 limit, and -explicit-module-build "
+                    "prevents relaying it through a response file\n")
+                return 1
+        command = flat_command
+        response_file = None
+
+    try:
+        process = subprocess.run(
+            command,
+            stdout=sys.stdout,
+            stderr=subprocess.PIPE,
+        )
+    finally:
+        if response_file:
+            os.remove(response_file)
 
     stderr_text = process.stderr.decode(errors="replace")
     filtered_lines = filter_benign_warnings(stderr_text.splitlines(keepends=True))
