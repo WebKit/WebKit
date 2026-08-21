@@ -137,6 +137,7 @@ private:
     void updateImageSource(FullScreenMediaDetails&&);
 #endif
     Awaitable<void> exitFullScreen();
+    Awaitable<void> enterInWindowFullScreen(IPC::Connection&, WebCore::FrameIdentifier);
     Awaitable<bool> beganEnterFullScreen(IPC::Connection&, WebCore::FrameIdentifier, WebCore::IntRect initialFrameInRootViewCoordinates, WebCore::IntRect finalFrameInRootViewCoordinates);
     Awaitable<void> beganExitFullScreen(WebCore::IntRect initialFrameInRootViewCoordinates, WebCore::IntRect finalFrameInRootViewCoordinates);
     void closeFullScreen(IPC::Connection&);

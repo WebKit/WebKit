@@ -1,0 +1,12 @@
+Entering viewer mode (in-window fullscreen) on a video in a cross-site iframe must also put the ancestor iframe element into fullscreen. The iframe lives in the main frame's process, so this checks that fullscreen propagates across the process boundary; without it the viewer is sized by viewport units against the iframe's small inline box.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS frameResult is "entered viewer mode"
+PASS document.querySelector('iframe').matches(':fullscreen') is true
+PASS document.querySelector('iframe').getBoundingClientRect().width is > 200
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

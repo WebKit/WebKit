@@ -170,6 +170,7 @@ extern ASCIILiteral errorAsString(Error);
 
 #define MESSAGE_CHECK_BASE(assertion, connection) MESSAGE_CHECK_COMPLETION_BASE(assertion, connection, (void)0)
 #define MESSAGE_CHECK_BASE_COROUTINE(assertion, connection) MESSAGE_CHECK_COMPLETION_BASE_COROUTINE(assertion, connection, (void)0)
+#define MESSAGE_CHECK_BASE_COROUTINE_VOID(assertion, connection) MESSAGE_CHECK_COMPLETION_BASE_COROUTINE_VOID(assertion, connection, (void)0)
 
 #define MESSAGE_CHECK_OPTIONAL_CONNECTION_BASE(assertion, connection) do { \
     if (!(assertion)) [[unlikely]] { \
@@ -197,6 +198,16 @@ extern ASCIILiteral errorAsString(Error);
         CRASH_IF_TESTING \
         { completion; } \
         co_return { }; \
+    } \
+} while (0)
+
+#define MESSAGE_CHECK_COMPLETION_BASE_COROUTINE_VOID(assertion, connection, completion) do { \
+    if (!(assertion)) [[unlikely]] { \
+        RELEASE_LOG_FAULT_WITH_PAYLOAD(IPC, __FILE__ " " CONNECTION_STRINGIFY_MACRO(__LINE__) ": Invalid message dispatched %s", CString(WTF_PRETTY_FUNCTION)); \
+        IPC::markCurrentlyDispatchedMessageAsInvalid(connection, "Message check failed: " #assertion ## _s); \
+        CRASH_IF_TESTING \
+        { completion; } \
+        co_return; \
     } \
 } while (0)
 

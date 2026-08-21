@@ -479,8 +479,18 @@ void WebFullScreenManager::performEnterFullScreen()
     }
 
     if (m_pendingMode == HTMLMediaElementEnums::VideoFullscreenModeInWindow) {
-        willEnterFullScreen(*element, WTF::move(m_pendingWillEnterCallback), WTF::move(m_pendingDidEnterCallback), m_pendingMode);
-        m_inWindowFullScreenMode = true;
+        ASSERT(m_elementFrameIdentifier);
+        m_page->sendWithAsyncReply(Messages::WebFullScreenManagerProxy::EnterInWindowFullScreen(*m_elementFrameIdentifier), [
+            this,
+            protectedThis = Ref { *this },
+            element = Ref { *element },
+            mode = m_pendingMode,
+            willEnterFullScreenCallback = WTF::move(m_pendingWillEnterCallback),
+            didEnterFullScreenCallback = WTF::move(m_pendingDidEnterCallback)
+        ] mutable {
+            willEnterFullScreen(element, WTF::move(willEnterFullScreenCallback), WTF::move(didEnterFullScreenCallback), mode);
+            m_inWindowFullScreenMode = true;
+        });
     } else {
         ASSERT(m_elementFrameIdentifier);
         m_page->sendWithAsyncReply(Messages::WebFullScreenManagerProxy::EnterFullScreen(*m_elementFrameIdentifier, protect(m_element->document())->quirks().blocksReturnToFullscreenFromPictureInPictureQuirk(), WTF::move(mediaDetails)), [
@@ -951,6 +961,9 @@ void WebFullScreenManager::enterFullScreenForOwnerElements(WebCore::FrameIdentif
     }
     for (auto element : elements | std::views::reverse)
         DocumentFullscreen::elementEnterFullscreen(element);
+
+    if (!elements.isEmpty())
+        protect(elements.last()->document())->updateLayout();
 
     completionHandler();
 }

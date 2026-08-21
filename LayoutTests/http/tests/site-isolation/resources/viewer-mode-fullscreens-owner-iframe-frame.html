@@ -1,0 +1,30 @@
+<video muted width="640" height="480" src="/media-resources/content/test.mp4"></video>
+<script>
+const video = document.querySelector("video");
+
+video.addEventListener("canplay", () => {
+    if (!window.internals)
+        return window.parent.postMessage("FAIL: no internals", "*");
+
+    let reported = false;
+    const reportReady = async () => {
+        if (reported)
+            return;
+        reported = true;
+        if (window.testRunner)
+            await testRunner.updatePresentation();
+        window.parent.postMessage("entered viewer mode", "*");
+    };
+
+    window.addEventListener("resize", reportReady, { once: true });
+    document.addEventListener("fullscreenchange", () => {
+        setTimeout(reportReady, 1000);
+    }, { once: true });
+
+    internals.withUserGesture(() => {
+        internals.enterViewerMode(video);
+    });
+}, { once: true });
+
+video.addEventListener("error", () => window.parent.postMessage("FAIL: video failed to load", "*"), { once: true });
+</script>

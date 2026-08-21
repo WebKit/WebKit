@@ -9483,7 +9483,7 @@ PlatformMediaSession::DisplayType HTMLMediaElement::displayType() const
         return PlatformMediaSession::DisplayType::Fullscreen;
     if (m_videoFullscreenMode & VideoFullscreenModePictureInPicture)
         return PlatformMediaSession::DisplayType::Optimized;
-    if (m_videoFullscreenMode == VideoFullscreenModeNone)
+    if (m_videoFullscreenMode == VideoFullscreenModeNone || m_videoFullscreenMode == VideoFullscreenModeInWindow)
         return PlatformMediaSession::DisplayType::Normal;
 
     ASSERT_NOT_REACHED();

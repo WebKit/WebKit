@@ -363,6 +363,15 @@ Awaitable<void> WebFullScreenManagerProxy::exitFullScreen()
         page->fullscreenClient().willExitFullscreen(page.get());
 }
 
+Awaitable<void> WebFullScreenManagerProxy::enterInWindowFullScreen(IPC::Connection& connection, FrameIdentifier frameID)
+{
+    MESSAGE_CHECK_BASE_COROUTINE_VOID(isFrameInSendingProcess(frameID, connection), connection);
+
+    co_await AwaitableFromCompletionHandler<NeedsPresentationUpdate> { [this, protectedThis = Ref { *this }, frameID] (auto completionHandler) {
+        enterFullScreenForOwnerElementsInOtherProcesses(frameID, WTF::move(completionHandler));
+    } };
+}
+
 #if ENABLE(QUICKLOOK_FULLSCREEN)
 void WebFullScreenManagerProxy::prepareQuickLookImageURL(CompletionHandler<void(URL&&)>&& completionHandler) const
 {
