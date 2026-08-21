@@ -1,0 +1,84 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ SpatialPortalEnabled=true ModelElementEnabled=true ModelProcessEnabled=true allowTestOnlyIPC=true ] -->
+<html>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script src="../model-element/resources/model-utils.js"></script>
+<script src="resources/spatial-portal-utils.js"></script>
+<style>
+    .portal { spatial: portal; width: 400px; height: 300px; }
+</style>
+<body>
+<script>
+'use strict';
+
+window.internals?.disableModelLoadDelaysForTesting();
+
+const asset = "2x2x2-center.usdz";
+const translated = as3d(new DOMMatrixReadOnly().translate(200, 0, 0));
+
+promise_test(async t => {
+    const portal = createPortal(t);
+    const model = appendModel(portal, asset);
+    await model.ready;
+
+    assert_3d_matrix_is_identity(model.entityTransform, true);
+}, `an untransformed child reports an identity entityTransform`);
+
+promise_test(async t => {
+    const portal = createPortal(t);
+    const model = appendModel(portal, asset);
+    await model.ready;
+
+    model.entityTransform = translated;
+    assert_3d_matrix_approx_equals(model.entityTransform, translated);
+}, `entityTransform on a child reads back what was set`);
+
+promise_test(async t => {
+    const portal = createPortal(t);
+    const model = appendModel(portal, asset);
+    await model.ready;
+
+    model.style.translate = "200px 0 0";
+    assert_throws_dom("InvalidStateError", () => {
+        model.entityTransform = translated;
+    });
+}, `entityTransform is refused while a CSS transform applies`);
+
+promise_test(async t => {
+    const portal = createPortal(t);
+    const model = appendModel(portal, asset);
+    await model.ready;
+
+    // Deliberately one task: a stale computed style would make the setter refuse.
+    model.style.translate = "200px 0 0";
+    model.style.translate = "";
+    model.entityTransform = translated;
+
+    assert_3d_matrix_approx_equals(model.entityTransform, translated);
+}, `entityTransform is accepted right after a CSS transform is cleared in the same task`);
+
+promise_test(async t => {
+    const portal = createPortal(t);
+    const model = appendModel(portal, asset);
+    await model.ready;
+
+    model.entityTransform = as3d(new DOMMatrixReadOnly().translate(-200, 0, 0));
+    model.style.translate = "200px 0 0";
+
+    const overridden = await waitForEntityTransform(model, transform => !transform.isIdentity
+        && Math.abs(transform.m41 - 200) < epsilon, "CSS overriding the scripted transform");
+    assert_3d_matrix_approx_equals(overridden, translated);
+}, `a CSS transform overrides a transform previously set through entityTransform`);
+
+promise_test(async t => {
+    const portal = createPortal(t);
+    const model = appendModel(portal, asset, "orbit");
+    await model.ready;
+
+    model.entityTransform = translated;
+    assert_3d_matrix_approx_equals(model.entityTransform, translated);
+}, `entityTransform is accepted on a child whose stagemode is set`);
+
+</script>
+</body>
+</html>

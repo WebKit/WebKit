@@ -206,6 +206,11 @@ private:
         bool loop { false };
         double playbackRate { 1.0 };
         std::optional<WebCore::ModelPlayerAnimationState> animationStateToRestore;
+#if ENABLE(SPATIAL_PORTAL)
+        // Set from CSS or the entityTransform attribute. Stored rather than applied directly because it can arrive
+        // before the entity exists, and has to be recomposed whenever the container's scale changes.
+        simd_float4x4 childTransform { matrix_identity_float4x4 };
+#endif
     };
     using TrackedModelMap = HashMap<WebCore::NodeIdentifier, UniqueRef<TrackedModel>>;
 
@@ -219,6 +224,9 @@ private:
     WebCore::StageModeOperation effectiveStageModeOperation() const;
     void updateTransformSRT();
     void notifyModelPlayerOfTransformChange();
+#if ENABLE(SPATIAL_PORTAL)
+    RESRT childEntityTransformSRT(const TrackedModel&) const;
+#endif
     void applyDefaultIBL();
     void updateForCurrentStageMode();
     void setUpLoadedEntity(WebCore::NodeIdentifier, WKRKEntity *);
@@ -270,6 +278,7 @@ private:
 #if ENABLE(SPATIAL_PORTAL)
     WebCore::PortalTransformKind m_portalTransform { WebCore::PortalTransformKind::Auto };
     WebCore::PortalActionKind m_portalAction { WebCore::PortalActionKind::None };
+    bool m_isSpatialPortal { false };
 #endif
 
     // For interactions

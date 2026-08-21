@@ -693,6 +693,27 @@ void ModelProcessModelPlayerProxy::notifyModelPlayerOfTransformChange()
     send(Messages::ModelProcessModelPlayer::DidUpdateEntityTransform(*m_nodeID, transform));
 }
 
+#if ENABLE(SPATIAL_PORTAL)
+
+RESRT ModelProcessModelPlayerProxy::childEntityTransformSRT(const TrackedModel& tracked) const
+{
+    RESRT srt {
+        .scale = tracked.originalEntityScale,
+        .rotation = simd_quaternion(0, simd_make_float3(1, 0, 0)),
+        .translation = simd_make_float3(0, 0, 0),
+    };
+
+    if (simd_equal(tracked.childTransform, matrix_identity_float4x4))
+        return srt;
+
+    RESRT childSRT = REMakeSRTFromMatrix(tracked.childTransform);
+    childSRT.translation /= effectivePointsPerMeter(m_layer.get());
+
+    return REMakeSRTFromMatrix(simd_mul(RESRTMatrix(childSRT), RESRTMatrix(srt)));
+}
+
+#endif // ENABLE(SPATIAL_PORTAL)
+
 void ModelProcessModelPlayerProxy::updateTransform()
 {
     if (!m_layer)
@@ -702,11 +723,17 @@ void ModelProcessModelPlayerProxy::updateTransform()
     if (!m_containerEntityWrapper)
         return;
 
-    // The container owns the global transforms (stagemode, portal-transform) and each model sits beneath with only its original scale applied.
+    // The container owns the global transforms (stagemode, portal-transform) and each model sits beneath with only its own scale and transform applied.
     [m_containerEntityWrapper setTransform:WKEntityTransform({ m_transformSRT.scale, m_transformSRT.rotation, m_transformSRT.translation })];
     for (UniqueRef<TrackedModel>& tracked : m_trackedModels.values()) {
-        if (tracked->entity)
-            [tracked->entity setTransform:WKEntityTransform({ tracked->originalEntityScale, simd_quaternion(0, simd_make_float3(1, 0, 0)), simd_make_float3(0, 0, 0) })];
+        if (!tracked->entity)
+            continue;
+#if ENABLE(SPATIAL_PORTAL)
+        RESRT childSRT = childEntityTransformSRT(tracked);
+#else
+        RESRT childSRT { .scale = tracked->originalEntityScale, .rotation = simd_quaternion(0, simd_make_float3(1, 0, 0)), .translation = simd_make_float3(0, 0, 0) };
+#endif
+        [tracked->entity setTransform:WKEntityTransform({ childSRT.scale, childSRT.rotation, childSRT.translation })];
     }
 #else
     RetainPtr reportingEntity = m_modelRKEntity;
@@ -825,10 +852,20 @@ void ModelProcessModelPlayerProxy::didFinishLoading(WebCore::REModelLoader& load
     [m_stageModeInteractionDriver setContainerTransformInPortal];
 #endif // HAVE(CORE_RE)
 
-    if (m_entityTransformToRestore) {
-        setEntityTransform(nodeID, *m_entityTransformToRestore);
+    auto entityTransformToRestore = std::exchange(m_entityTransformToRestore, std::nullopt);
+#if ENABLE(SPATIAL_PORTAL)
+    // FIXME: ModelProcessModelPlayer::m_entityTransform is a single value shared by every child,
+    // so the transform it saves for a reload is whichever child reported last, already composed with the container.
+    // Feeding that back per node would apply the container twice, so it is dropped here instead. A CSS transform
+    // survives regardless, because WebCore re-derives it from style at load; one set through the entityTransform
+    // attribute does not, and is lost across a suspend/resume. Fixed by keying that cache per node.
+    if (m_isSpatialPortal)
+        entityTransformToRestore = std::nullopt;
+#endif
+
+    if (entityTransformToRestore) {
+        setEntityTransform(nodeID, *entityTransformToRestore);
         notifyModelPlayerOfTransformChange();
-        m_entityTransformToRestore = std::nullopt;
     } else {
         computeTransform(true);
         updateTransform();
@@ -1137,8 +1174,25 @@ std::optional<WebCore::LayerHostingContextIdentifier> ModelProcessModelPlayerPro
     return WebCore::LayerHostingContextIdentifier(m_layerHostingContext->contextID());
 }
 
-void ModelProcessModelPlayerProxy::setEntityTransform(WebCore::NodeIdentifier, WebCore::TransformationMatrix transform)
+void ModelProcessModelPlayerProxy::setEntityTransform(WebCore::NodeIdentifier nodeID, WebCore::TransformationMatrix transform)
 {
+#if ENABLE(SPATIAL_PORTAL)
+    if (m_isSpatialPortal) {
+        auto& tracked = ensureTrackedModel(nodeID);
+        simd_float4x4 matrix = transform;
+        if (simd_equal(tracked.childTransform, matrix))
+            return;
+
+        tracked.childTransform = matrix;
+
+        if (RetainPtr entity = tracked.entity) {
+            RESRT childSRT = childEntityTransformSRT(tracked);
+            [entity setTransform:WKEntityTransform({ childSRT.scale, childSRT.rotation, childSRT.translation })];
+        }
+        return;
+    }
+#endif
+
     RESRT newSRT = REMakeSRTFromMatrix(transform);
     m_transformSRT = modelLocalizedTransformSRT(newSRT);
     m_entityTransformSetByScript = true;
@@ -1419,6 +1473,8 @@ void ModelProcessModelPlayerProxy::setHasPortal(bool hasPortal)
 
 void ModelProcessModelPlayerProxy::setPortalTransform(WebCore::PortalTransformKind kind)
 {
+    m_isSpatialPortal = true;
+
     if (m_portalTransform == kind)
         return;
 

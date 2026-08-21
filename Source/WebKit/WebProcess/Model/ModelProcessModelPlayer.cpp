@@ -509,9 +509,9 @@ void ModelProcessModelPlayer::setHasPortal(bool hasPortal)
 
 void ModelProcessModelPlayer::setPortalTransform(WebCore::PortalTransformKind kind)
 {
-    if (m_portalTransform == kind)
-        return;
-
+    // Deliberately unconditional. Skipping the send when the value matches the default
+    // would leave a portal whose portal-transform is the initial `auto` indistinguishable
+    // from a standalone <model>.
     m_portalTransform = kind;
     send(Messages::ModelProcessModelPlayerProxy::SetPortalTransform(m_portalTransform));
 }

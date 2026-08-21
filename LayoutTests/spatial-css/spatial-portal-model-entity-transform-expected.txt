@@ -1,0 +1,8 @@
+
+PASS an untransformed child reports an identity entityTransform
+PASS entityTransform on a child reads back what was set
+PASS entityTransform is refused while a CSS transform applies
+PASS entityTransform is accepted right after a CSS transform is cleared in the same task
+PASS a CSS transform overrides a transform previously set through entityTransform
+PASS entityTransform is accepted on a child whose stagemode is set
+

@@ -2740,10 +2740,12 @@ bool KeyframeEffect::ticksContinuouslyWhileActive() const
     if (doesNotAffectStyles)
         return false;
 
-    auto targetHasDisplayContents = [&]() {
-        return m_target && !m_pseudoElementIdentifier && m_target->hasDisplayContents();
+    // A renderer-less target can still have a resolved style kept for it — display:contents, and a <model> inside
+    // a spatial:portal — in which case there is something to animate and this has to keep ticking.
+    auto targetHasStyleToAnimate = [&]() {
+        return m_target && !m_pseudoElementIdentifier && m_target->renderOrDisplayContentsStyle();
     };
-    if (!renderer() && !m_blendingKeyframes.properties().contains(CSSPropertyDisplay) && !targetHasDisplayContents())
+    if (!renderer() && !m_blendingKeyframes.properties().contains(CSSPropertyDisplay) && !targetHasStyleToAnimate())
         return false;
 
     if (isCompletelyAccelerated() && isRunningAccelerated()) {

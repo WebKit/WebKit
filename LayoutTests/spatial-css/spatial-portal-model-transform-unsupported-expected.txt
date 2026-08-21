@@ -1,0 +1,6 @@
+CONSOLE MESSAGE: Ignoring a transform on a <model> inside a spatial portal: only uniform, shear-free transforms are supported.
+CONSOLE MESSAGE: Ignoring a transform on a <model> inside a spatial portal: only uniform, shear-free transforms are supported.
+
+PASS a non-uniform CSS scale on a child is refused and the last accepted transform is kept
+PASS a shearing CSS transform on a child is refused and the last accepted transform is kept
+

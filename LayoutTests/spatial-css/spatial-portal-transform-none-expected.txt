@@ -1,4 +1,6 @@
 
 PASS portal-transform: none is independent of the portal's size
 PASS portal-transform: none still centers the portal's content
+PASS portal-transform: none keeps centering its content when a child is transformed
+PASS a child's transform does not affect the fit when portal-transform flips to auto
 

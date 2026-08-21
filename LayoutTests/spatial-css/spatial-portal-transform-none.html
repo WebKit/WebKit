@@ -43,6 +43,43 @@ promise_test(async t => {
     assert_3d_matrix_approx_equals(transform, new DOMMatrixReadOnly().translate(-100, -50, -201));
 }, `portal-transform: none still centers the portal's content`);
 
+promise_test(async t => {
+    const portal = createPortal(t);
+    const model = appendModel(portal, offsetCube);
+    await model.ready;
+    await waitForPortalTransform(portal, portalTransformIsResolved, "portal");
+
+    model.style.translate = "200px 0 0";
+    model.style.scale = "2 2 2";
+    const applied = await waitForEntityTransform(model, transform => !transform.isIdentity, "child transform");
+
+    assert_3d_matrix_approx_equals(applied, as3d(new DOMMatrixReadOnly().translate(200, 0, 0).scale3d(2)));
+    assert_3d_matrix_approx_equals(resolvedPortalTransform(portal), new DOMMatrixReadOnly().translate(-100, -50, -201));
+}, `portal-transform: none keeps centering its content when a child is transformed`);
+
+promise_test(async t => {
+    const plainPortal = createPortal(t);
+    const plainModel = appendModel(plainPortal, centeredCube);
+    const transformedPortal = createPortal(t);
+    const transformedModel = appendModel(transformedPortal, centeredCube);
+    await Promise.all([plainModel.ready, transformedModel.ready]);
+
+    transformedModel.style.translate = "200px 0 0";
+    await waitForEntityTransform(transformedModel, transform => !transform.isIdentity, "child transform");
+
+    const plainBefore = await waitForPortalTransform(plainPortal, portalTransformIsResolved, "plain portal");
+    const transformedBefore = await waitForPortalTransform(transformedPortal, portalTransformIsResolved, "transformed portal");
+
+    plainPortal.style.portalTransform = "auto";
+    transformedPortal.style.portalTransform = "auto";
+
+    const refitted = before => transform => transform && !portalTransformsApproxEqual(transform, before);
+    const plainFit = await waitForPortalTransform(plainPortal, refitted(plainBefore), "plain fit");
+    const transformedFit = await waitForPortalTransform(transformedPortal, refitted(transformedBefore), "transformed fit");
+
+    assert_3d_matrix_approx_equals(transformedFit, plainFit);
+}, `a child's transform does not affect the fit when portal-transform flips to auto`);
+
 </script>
 </body>
 </html>

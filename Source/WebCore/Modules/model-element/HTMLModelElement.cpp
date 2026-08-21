@@ -110,6 +110,8 @@
 #if ENABLE(SPATIAL_PORTAL)
 #include "ElementAncestorIteratorInlines.h"
 #include "SpatialPortalController.h"
+#include "StyleTransformResolver.h"
+#include "TransformOperationData.h"
 #endif
 
 namespace WebCore {
@@ -422,6 +424,19 @@ bool HTMLModelElement::rendererIsNeeded(const Style::ComputedStyle& style)
     return HTMLElement::rendererIsNeeded(style);
 }
 
+ModelPlayer* HTMLModelElement::effectiveModelPlayer() const
+{
+    if (m_modelPlayer)
+        return m_modelPlayer.get();
+
+#if ENABLE(SPATIAL_PORTAL)
+    if (CheckedPtr controller = m_lastRegisteredPortalController.get())
+        return controller->playerForChild(nodeIdentifier());
+#endif
+
+    return nullptr;
+}
+
 #if ENABLE(SPATIAL_PORTAL)
 RefPtr<const Element> HTMLModelElement::findPortalAncestor() const
 {
@@ -452,6 +467,22 @@ SpatialPortalController* HTMLModelElement::lastRegisteredPortalController() cons
     return m_lastRegisteredPortalController.get();
 }
 
+void HTMLModelElement::updateEntityTransformFromCSS()
+{
+    CheckedPtr controller = findPortalController();
+    if (!controller)
+        return;
+
+    CheckedPtr style = computedStyle();
+    if (!style)
+        return;
+
+    using TransformOption = Style::TransformResolver::Option;
+    auto transform = Style::TransformResolver::computeTransform(*style, TransformOperationData(FloatRect { }), { TransformOption::Translate, TransformOption::Rotate, TransformOption::Scale });
+
+    controller->childTransformDidChange(*this, transform);
+}
+
 void HTMLModelElement::updateSpatialPortalController()
 {
     CheckedPtr controller = findPortalController();
@@ -480,6 +511,11 @@ void HTMLModelElement::didFailLoadingInsidePortal(const ResourceError&)
 
     m_dataMemoryCost.store(0, std::memory_order_relaxed);
     reportExtraMemoryCost();
+}
+
+void HTMLModelElement::didUpdateEntityTransformInsidePortal(const TransformationMatrix& transform)
+{
+    m_entityTransform = DOMMatrixReadOnly::create(transform, DOMMatrixReadOnly::Is2D::No);
 }
 
 void HTMLModelElement::spatialPortalContextDidChange()
@@ -1105,14 +1141,34 @@ const DOMMatrixReadOnly& HTMLModelElement::entityTransform() const
 
 ExceptionOr<void> HTMLModelElement::setEntityTransform(const DOMMatrixReadOnly& transform)
 {
+#if ENABLE(SPATIAL_PORTAL)
+    bool insidePortal = isInsidePortal();
+#else
+    constexpr bool insidePortal = false;
+#endif
+
 #if ENABLE(MODEL_ELEMENT_STAGE_MODE)
-    if (canSetEntityTransform())
+    if (!insidePortal && canSetEntityTransform())
         return Exception { ExceptionCode::InvalidStateError, "Transform is read-only unless StageMode is set to 'none'"_s };
 #endif
 
-    auto player = m_modelPlayer;
+#if ENABLE(SPATIAL_PORTAL)
+    if (insidePortal) {
+        Ref document = this->document();
+        document->updateStyleIfNeeded();
+
+        CheckedPtr style = computedStyle();
+        if (style && Style::TransformResolver::hasTransformRelatedProperty(*style))
+            return Exception { ExceptionCode::InvalidStateError, "Transform is read-only while a CSS transform applies to a model inside a spatial portal"_s };
+    }
+#endif
+
+    RefPtr player = effectiveModelPlayer();
     if (!player) {
-        ASSERT_NOT_REACHED();
+#if ENABLE(SPATIAL_PORTAL)
+        if (!insidePortal)
+#endif
+            ASSERT_NOT_REACHED();
         return Exception { ExceptionCode::UnknownError };
     }
 
@@ -1487,19 +1543,6 @@ void HTMLModelElement::setCamera(HTMLModelElementCamera camera, DOMPromiseDeferr
 
 #if ENABLE(MODEL_ELEMENT_ANIMATIONS_CONTROL)
 
-ModelPlayer* HTMLModelElement::modelPlayerForAnimation() const
-{
-    if (m_modelPlayer)
-        return m_modelPlayer.get();
-
-#if ENABLE(SPATIAL_PORTAL)
-    if (CheckedPtr controller = m_lastRegisteredPortalController.get())
-        return controller->playerForChild(nodeIdentifier());
-#endif
-
-    return nullptr;
-}
-
 void HTMLModelElement::applyInitialAnimationState(ModelPlayer& modelPlayer)
 {
     auto nodeID = nodeIdentifier();
@@ -1515,19 +1558,19 @@ void HTMLModelElement::setPlaybackRate(double playbackRate)
 
     m_playbackRate = playbackRate;
 
-    if (RefPtr modelPlayer = modelPlayerForAnimation())
+    if (RefPtr modelPlayer = effectiveModelPlayer())
         modelPlayer->setPlaybackRate(nodeIdentifier(), playbackRate, [](double) { });
 }
 
 double HTMLModelElement::duration() const
 {
-    RefPtr modelPlayer = modelPlayerForAnimation();
+    RefPtr modelPlayer = effectiveModelPlayer();
     return modelPlayer ? modelPlayer->duration(nodeIdentifier()) : 0;
 }
 
 bool HTMLModelElement::paused() const
 {
-    RefPtr modelPlayer = modelPlayerForAnimation();
+    RefPtr modelPlayer = effectiveModelPlayer();
     return modelPlayer ? modelPlayer->paused(nodeIdentifier()) : true;
 }
 
@@ -1543,7 +1586,7 @@ void HTMLModelElement::pause(DOMPromiseDeferred<void>&& promise)
 
 void HTMLModelElement::setPaused(bool paused, DOMPromiseDeferred<void>&& promise)
 {
-    RefPtr modelPlayer = modelPlayerForAnimation();
+    RefPtr modelPlayer = effectiveModelPlayer();
     if (!modelPlayer) {
         promise.reject();
         return;
@@ -1564,7 +1607,7 @@ bool HTMLModelElement::autoplay() const
 
 void HTMLModelElement::updateAutoplay()
 {
-    if (RefPtr modelPlayer = modelPlayerForAnimation())
+    if (RefPtr modelPlayer = effectiveModelPlayer())
         modelPlayer->setAutoplay(nodeIdentifier(), autoplay());
 }
 
@@ -1575,19 +1618,19 @@ bool HTMLModelElement::loop() const
 
 void HTMLModelElement::updateLoop()
 {
-    if (RefPtr modelPlayer = modelPlayerForAnimation())
+    if (RefPtr modelPlayer = effectiveModelPlayer())
         modelPlayer->setLoop(nodeIdentifier(), loop());
 }
 
 double HTMLModelElement::currentTime() const
 {
-    RefPtr modelPlayer = modelPlayerForAnimation();
+    RefPtr modelPlayer = effectiveModelPlayer();
     return modelPlayer ? modelPlayer->currentTime(nodeIdentifier()).seconds() : 0;
 }
 
 void HTMLModelElement::setCurrentTime(double currentTime)
 {
-    if (RefPtr modelPlayer = modelPlayerForAnimation())
+    if (RefPtr modelPlayer = effectiveModelPlayer())
         modelPlayer->setCurrentTime(nodeIdentifier(), Seconds(currentTime), [] { });
 }
 

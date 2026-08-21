@@ -107,6 +107,7 @@ public:
 #if ENABLE(SPATIAL_PORTAL)
     void didFinishLoadingInsidePortal();
     void didFailLoadingInsidePortal(const ResourceError&);
+    void didUpdateEntityTransformInsidePortal(const TransformationMatrix&);
     void spatialPortalContextDidChange();
     SpatialPortalController* lastRegisteredPortalController() const;
 #endif
@@ -201,6 +202,11 @@ public:
 #endif
 
     void sizeMayHaveChanged();
+
+#if ENABLE(SPATIAL_PORTAL)
+    bool isInsidePortal() const;
+    void updateEntityTransformFromCSS();
+#endif
 
     void paintCurrentFrameInContext(GraphicsContext&, const FloatRect&);
 
@@ -311,8 +317,9 @@ private:
     RefPtr<const Element> findPortalAncestor() const;
     SpatialPortalController* findPortalController() const;
     void updateSpatialPortalController();
-    bool isInsidePortal() const;
 #endif
+
+    ModelPlayer* effectiveModelPlayer() const;
 
     void reportExtraMemoryCost();
 
@@ -321,8 +328,6 @@ private:
     void updateAutoplay();
     bool loop() const;
     void updateLoop();
-    // A <model> inside a spatial portal has no player of its own; the portal owns one.
-    ModelPlayer* modelPlayerForAnimation() const;
 #endif
 
 #if ENABLE(MODEL_ELEMENT_ENVIRONMENT_MAP)

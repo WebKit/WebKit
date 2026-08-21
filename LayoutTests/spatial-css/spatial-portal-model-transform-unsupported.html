@@ -1,0 +1,53 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ SpatialPortalEnabled=true ModelElementEnabled=true ModelProcessEnabled=true allowTestOnlyIPC=true ] -->
+<html>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script src="../model-element/resources/model-utils.js"></script>
+<script src="resources/spatial-portal-utils.js"></script>
+<style>
+    .portal { spatial: portal; width: 400px; height: 300px; }
+</style>
+<body>
+<script>
+'use strict';
+
+window.internals?.disableModelLoadDelaysForTesting();
+
+const asset = "2x2x2-center.usdz";
+
+// Kept in its own file: a refused transform is the likeliest path to a crash, which would take every test with it.
+const withAcceptedTranslate = async test => {
+    const portal = createPortal(test);
+    const model = appendModel(portal, asset);
+    await model.ready;
+
+    model.style.translate = "200px 0 0";
+    const accepted = await waitForEntityTransform(model, transform => !transform.isIdentity, "accepted translate");
+    assert_3d_matrix_approx_equals(accepted, as3d(new DOMMatrixReadOnly().translate(200, 0, 0)));
+
+    return { portal, model, accepted };
+};
+
+// A sleep rather than a wait: there is no positive signal for a transform that was never applied.
+const assertUnchangedAfter = async (model, accepted) => {
+    await sleepForSeconds(0.3);
+    assert_3d_matrix_approx_equals(model.entityTransform, accepted);
+};
+
+promise_test(async t => {
+    const { model, accepted } = await withAcceptedTranslate(t);
+
+    model.style.scale = "1 2 1";
+    await assertUnchangedAfter(model, accepted);
+}, `a non-uniform CSS scale on a child is refused and the last accepted transform is kept`);
+
+promise_test(async t => {
+    const { model, accepted } = await withAcceptedTranslate(t);
+
+    model.style.transform = "matrix3d(1, 0, 0, 0, 0.5, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)";
+    await assertUnchangedAfter(model, accepted);
+}, `a shearing CSS transform on a child is refused and the last accepted transform is kept`);
+
+</script>
+</body>
+</html>

@@ -31,6 +31,21 @@ promise_test(async t => {
     assert_3d_matrix_approx_equals(narrowTransform.scale3d(2), wideTransform);
 }, `portal-transform: auto scales the portal's content to fit the portal box`);
 
+promise_test(async t => {
+    const portal = createPortal(t);
+    const model = appendModel(portal, flatRectangle);
+    await model.ready;
+
+    const fit = await waitForPortalTransform(portal, portalTransformIsResolved, "portal");
+
+    model.style.translate = "200px 0 0";
+    model.style.scale = "2 2 2";
+    const applied = await waitForEntityTransform(model, transform => !transform.isIdentity, "child transform");
+
+    assert_3d_matrix_approx_equals(applied, as3d(new DOMMatrixReadOnly().translate(200, 0, 0).scale3d(2)));
+    assert_3d_matrix_approx_equals(resolvedPortalTransform(portal), fit);
+}, `portal-transform: auto ignores a transform on a child model`);
+
 </script>
 </body>
 </html>

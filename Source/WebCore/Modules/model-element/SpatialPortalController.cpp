@@ -326,6 +326,8 @@ void SpatialPortalController::loadChildModelIfReady(HTMLModelElement& model)
 
     it->value.loadedModel = modelData;
 
+    model.updateEntityTransformFromCSS();
+
     if (RefPtr<ModelPlayer> placeholder = std::exchange(it->value.placeholder, nullptr)) {
         auto animationState = placeholder->currentAnimationState(nodeID);
         auto transformState = placeholder->currentTransformState(nodeID);
@@ -707,6 +709,26 @@ void SpatialPortalController::modelDidFailLoading(ModelPlayer&, NodeIdentifier n
 
     if (RefPtr child = it->value.element.get())
         child->didFailLoadingInsidePortal(error);
+}
+
+void SpatialPortalController::childTransformDidChange(HTMLModelElement& model, const TransformationMatrix& transform)
+{
+    auto nodeID = model.nodeIdentifier();
+    if (hostedModelElement(nodeID) != &model)
+        return;
+
+    RefPtr player = m_modelPlayer;
+    if (!player)
+        return;
+
+    if (!player->supportsTransform(transform)) {
+        logWarning(*player, "Ignoring a transform on a <model> inside a spatial portal: only uniform, shear-free transforms are supported."_s);
+        return;
+    }
+
+    player->setEntityTransform(nodeID, transform);
+
+    model.didUpdateEntityTransformInsidePortal(transform);
 }
 
 void SpatialPortalController::modelDidUnload(ModelPlayer& player)

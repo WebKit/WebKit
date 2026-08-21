@@ -55,6 +55,8 @@ public:
 
     explicit TransformResolver(TransformationMatrix&, const ComputedStyle&);
 
+    static bool hasTransformRelatedProperty(const ComputedStyle&);
+
     static bool affectedByTransformOrigin(const ComputedStyle&);
     bool affectedByTransformOrigin() const;
 

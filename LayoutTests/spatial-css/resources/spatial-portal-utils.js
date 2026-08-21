@@ -75,3 +75,22 @@ async function waitForPortalTransform(portal, predicate, description, timeout = 
         await sleepForSeconds(0.1);
     }
 }
+
+async function waitForEntityTransform(model, predicate, description, timeout = 5000) {
+    const startTime = Date.now();
+
+    while (true) {
+        const transform = model.entityTransform;
+        if (predicate(transform))
+            return transform;
+
+        if (Date.now() - startTime > timeout)
+            throw new Error(`Timeout waiting for the child's entity transform: ${description}`);
+
+        await sleepForSeconds(0.1);
+    }
+}
+
+// The 3D matrix assertions reject a 2D argument outright, and DOMMatrix stays 2D until an operation touches z.
+const as3d = matrix => new DOMMatrixReadOnly(matrix.toFloat64Array());
+

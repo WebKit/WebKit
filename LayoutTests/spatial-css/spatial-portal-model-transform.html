@@ -1,0 +1,118 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ SpatialPortalEnabled=true ModelElementEnabled=true ModelProcessEnabled=true allowTestOnlyIPC=true ] -->
+<html>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script src="../model-element/resources/model-utils.js"></script>
+<script src="resources/spatial-portal-utils.js"></script>
+<style>
+    .portal { spatial: portal; width: 400px; height: 300px; }
+
+    /* In the stylesheet so it applies before the asset resolves. */
+    #preloaded { translate: 200px 0 0; }
+</style>
+<body>
+<script>
+'use strict';
+
+window.internals?.disableModelLoadDelaysForTesting();
+
+const asset = "2x2x2-center.usdz";
+
+const settledEntityTransform = (model, description) =>
+    waitForEntityTransform(model, transform => !transform.isIdentity, description);
+
+promise_test(async t => {
+    const portal = createPortal(t);
+    const model = appendModel(portal, asset);
+    await model.ready;
+
+    model.style.translate = "200px 0 0";
+    const transform = await settledEntityTransform(model, "translate");
+
+    assert_3d_matrix_approx_equals(transform, as3d(new DOMMatrixReadOnly().translate(200, 0, 0)));
+}, `CSS translate on a child becomes its entity transform`);
+
+promise_test(async t => {
+    const portal = createPortal(t);
+    const model = appendModel(portal, asset);
+    await model.ready;
+
+    model.style.rotate = "45deg";
+    const transform = await settledEntityTransform(model, "rotate");
+
+    assert_3d_matrix_approx_equals(transform, as3d(new DOMMatrixReadOnly().rotate(0, 0, 45)));
+}, `CSS rotate on a child becomes its entity transform`);
+
+promise_test(async t => {
+    const portal = createPortal(t);
+    const model = appendModel(portal, asset);
+    await model.ready;
+
+    model.style.scale = "2 2 2";
+    const transform = await settledEntityTransform(model, "scale");
+
+    assert_3d_matrix_approx_equals(transform, as3d(new DOMMatrixReadOnly().scale3d(2)));
+}, `CSS scale on a child becomes its entity transform`);
+
+promise_test(async t => {
+    const portal = createPortal(t);
+    const model = appendModel(portal, asset);
+    await model.ready;
+
+    model.style.transform = "rotate3d(0, 1, 0, 45deg)";
+    const transform = await settledEntityTransform(model, "transform");
+
+    assert_3d_matrix_approx_equals(transform, as3d(new DOMMatrixReadOnly().rotate(0, 45, 0)));
+}, `the CSS transform property on a child becomes its entity transform`);
+
+promise_test(async t => {
+    const portal = createPortal(t);
+    const model = appendModel(portal, asset);
+    await model.ready;
+
+    model.style.translate = "200px 0 0";
+    model.style.rotate = "45deg";
+    const composed = await settledEntityTransform(model, "composed");
+
+    assert_3d_matrix_approx_equals(composed, as3d(new DOMMatrixReadOnly().translate(200, 0, 0).rotate(0, 0, 45)));
+}, `translate and rotate on a child compose in the order css-transforms-2 defines`);
+
+promise_test(async t => {
+    const portal = createPortal(t);
+    const first = appendModel(portal, asset);
+    const second = appendModel(portal, asset);
+    await Promise.all([first.ready, second.ready]);
+
+    first.style.translate = "200px 0 0";
+    await settledEntityTransform(first, "first");
+
+    assert_3d_matrix_is_identity(second.entityTransform, true);
+}, `a CSS transform on one child leaves its sibling alone`);
+
+promise_test(async t => {
+    const portal = createPortal(t);
+
+    const preloaded = appendModel(portal, asset);
+    preloaded.id = "preloaded";
+    await preloaded.ready;
+
+    const applied = await settledEntityTransform(preloaded, "a transform authored before the asset resolved");
+    assert_3d_matrix_approx_equals(applied, as3d(new DOMMatrixReadOnly().translate(200, 0, 0)));
+}, `a transform set before the asset loads is applied once it does`);
+
+promise_test(async t => {
+    const portal = createPortal(t);
+    const model = appendModel(portal, asset);
+    await model.ready;
+
+    model.style.translate = "200px 0 0";
+    await settledEntityTransform(model, "translate");
+
+    model.style.translate = "";
+    const cleared = await waitForEntityTransform(model, transform => transform.isIdentity, "cleared");
+    assert_3d_matrix_is_identity(cleared, true);
+}, `clearing a CSS transform on a child returns it to identity`);
+
+</script>
+</body>
+</html>

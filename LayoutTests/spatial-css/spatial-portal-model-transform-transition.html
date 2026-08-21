@@ -1,0 +1,72 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ SpatialPortalEnabled=true ModelElementEnabled=true ModelProcessEnabled=true allowTestOnlyIPC=true ] -->
+<html>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script src="../model-element/resources/model-utils.js"></script>
+<script src="resources/spatial-portal-utils.js"></script>
+<style>
+    .portal { spatial: portal; width: 400px; height: 300px; }
+</style>
+<body>
+<script>
+'use strict';
+
+window.internals?.disableModelLoadDelaysForTesting();
+
+const asset = "2x2x2-center.usdz";
+
+const sampleWhileAnimating = (model, seconds) => new Promise(resolve => {
+    const deltas = [];
+    const start = performance.now();
+    const tick = () => {
+        deltas.push(model.entityTransform.m41);
+        if (performance.now() - start < seconds * 1000) {
+            requestAnimationFrame(tick);
+            return;
+        }
+        resolve(deltas);
+    };
+    requestAnimationFrame(tick);
+});
+
+promise_test(async t => {
+    const portal = createPortal(t);
+    const model = appendModel(portal, asset);
+    await model.ready;
+
+    model.style.transition = "translate 1s linear";
+    model.style.translate = "400px 0 0";
+
+    const deltas = await sampleWhileAnimating(model, 0.5);
+    const finalDelta = await new Promise(resolve => {
+        t.step_timeout(() => resolve(model.entityTransform.m41), 1000);
+    });
+
+    assert_greater_than(Math.abs(finalDelta), epsilon, "the transition reached a measurable end value");
+
+    const intermediate = deltas.filter(delta => Math.abs(delta) > epsilon
+        && Math.abs(delta) < Math.abs(finalDelta) - epsilon);
+    assert_greater_than(intermediate.length, 0, "the translation passed through intermediate values");
+}, `a CSS transition on a child's translate is interpolated rather than snapped`);
+
+promise_test(async t => {
+    const portal = createPortal(t);
+    const model = appendModel(portal, asset);
+    await model.ready;
+
+    model.style.transition = "translate 1s linear";
+    model.style.translate = "400px 0 0";
+
+    await new Promise(resolve => t.step_timeout(resolve, 1500));
+    const settled = model.entityTransform.m41;
+
+    model.style.transition = "";
+    model.style.translate = "400px 0 0";
+    const immediate = model.entityTransform.m41;
+
+    assert_approx_equals(settled, immediate, epsilon, "the transition settles on the value it would reach directly");
+}, `a CSS transition on a child settles on its end value`);
+
+</script>
+</body>
+</html>

@@ -44,6 +44,11 @@ TransformResolver::TransformResolver(TransformationMatrix& transform, const Comp
 {
 }
 
+bool TransformResolver::hasTransformRelatedProperty(const ComputedStyle& style)
+{
+    return style.hasTransformRelatedProperty();
+}
+
 bool TransformResolver::affectedByTransformOrigin(const ComputedStyle& style)
 {
     return style.rotate().affectedByTransformOrigin()

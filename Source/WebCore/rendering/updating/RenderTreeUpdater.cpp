@@ -70,6 +70,10 @@
 #include "ContentChangeObserver.h"
 #endif
 
+#if ENABLE(SPATIAL_PORTAL)
+#include "HTMLModelElement.h"
+#endif
+
 namespace WebCore {
 
 RenderTreeUpdater::Parent::Parent(ContainerNode& root)
@@ -462,6 +466,20 @@ void RenderTreeUpdater::updateElementRenderer(Element& element, const Style::Ele
         if (!elementUpdateStyle.logicalContainIntrinsicHeight().hasAuto())
             element.clearLastRememberedLogicalHeight();
     }
+
+#if ENABLE(SPATIAL_PORTAL)
+    // A <model> inside a spatial portal generates no renderer but drives a 3D entity from its resolved style, so a
+    // copy is kept for it. Cloned, not moved, because createRenderer() below still consumes the original, and only
+    // when the display:{contents|none} store above has not already taken it.
+    RefPtr modelInPortal = dynamicDowncast<HTMLModelElement>(element);
+    if (!hasDisplayContentsOrNone && modelInPortal && !element.renderer() && modelInPortal->isInsidePortal()) {
+        element.storeDisplayContentsOrNoneStyle(Style::ComputedStyle::clonePtr(elementUpdateStyle));
+
+        // Pushed from here rather than during style resolution, which clears the cached computed style before it runs.
+        if (!elementUpdate.changes.isEmpty())
+            modelInPortal->updateEntityTransformFromCSS();
+    }
+#endif
 
     auto scopeExit = makeScopeExit([&] {
         if (!hasDisplayContentsOrNone) {

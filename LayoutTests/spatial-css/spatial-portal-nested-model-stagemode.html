@@ -105,6 +105,17 @@ promise_test(async t => {
     }, "entityTransform is read-only once the model is no longer nested");
 }, `stagemode becomes live again when a <model> is moved out of a spatial portal`);
 
+promise_test(async t => {
+    const portal = createPortal(t);
+    const subject = appendModel(portal, centeredCube, "orbit");
+    await subject.ready;
+
+    subject.style.translate = "200px 0 0";
+    const applied = await waitForEntityTransform(subject, transform => !transform.isIdentity, "under stage mode");
+
+    assert_3d_matrix_approx_equals(applied, as3d(new DOMMatrixReadOnly().translate(200, 0, 0)));
+}, `a CSS transform on a child still applies when its stagemode is set`);
+
 </script>
 </body>
 </html>

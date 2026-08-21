@@ -1,3 +1,4 @@
 
 PASS portal-transform: auto scales the portal's content to fit the portal box
+PASS portal-transform: auto ignores a transform on a child model
 

@@ -1,0 +1,4 @@
+
+PASS a CSS transition on a child's translate is interpolated rather than snapped
+PASS a CSS transition on a child settles on its end value
+

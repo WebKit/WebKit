@@ -75,6 +75,7 @@ public:
     void childModelDidChange(HTMLModelElement&);
     void childVisibilityStateChanged(HTMLModelElement&);
     void childWasSuspended(HTMLModelElement&);
+    void childTransformDidChange(HTMLModelElement&, const TransformationMatrix&);
 
     Element* portalElement() const { return m_portalElement.get(); }
     unsigned numberOfHostedModels() const { return m_hostedModels.size(); }

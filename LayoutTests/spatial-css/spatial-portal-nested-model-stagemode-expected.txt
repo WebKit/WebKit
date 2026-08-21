@@ -4,4 +4,5 @@ PASS portal-action on the portal takes effect regardless of a nested <model>'s s
 PASS stagemode on a standalone <model> is still honored
 PASS portal-action: orbit fits the content the same way stagemode: orbit fits a standalone <model>
 PASS stagemode becomes live again when a <model> is moved out of a spatial portal
+PASS a CSS transform on a child still applies when its stagemode is set
 
