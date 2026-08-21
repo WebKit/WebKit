@@ -1372,7 +1372,8 @@ class YarrGenerator final : public YarrJITInfo {
 
     MacroAssembler::Jump checkNotEnoughInput(MacroAssembler::RegisterID additionalAmount)
     {
-        ASSERT(m_direction == Forward);
+        if (m_direction == Backward)
+            return m_jit.branch32(MacroAssembler::LessThan, m_regs.index, additionalAmount);
         m_jit.add32(m_regs.index, additionalAmount);
         return m_jit.branch32(MacroAssembler::Above, additionalAmount, m_regs.length);
     }
@@ -2588,27 +2589,34 @@ class YarrGenerator final : public YarrJITInfo {
             charactersMatch.link(&m_jit);
         }
 
-        m_jit.add32(MacroAssembler::TrustedImm32(1), m_regs.index);
-        m_jit.add32(MacroAssembler::TrustedImm32(1), patternIndex);
+        consumeIndex(MacroAssembler::TrustedImm32(1));
+        advance(patternIndex, MacroAssembler::TrustedImm32(1));
 
         if (m_decodeSurrogatePairs) {
             auto isBMPChar = m_jit.branch32(MacroAssembler::LessThan, patternCharacter, MacroAssembler::TrustedImm32(0x10000));
-            m_jit.add32(MacroAssembler::TrustedImm32(1), m_regs.index);
-            m_jit.add32(MacroAssembler::TrustedImm32(1), patternIndex);
+            consumeIndex(MacroAssembler::TrustedImm32(1));
+            advance(patternIndex, MacroAssembler::TrustedImm32(1));
             isBMPChar.link(&m_jit);
         }
 
         if (!!duplicateNamedGroupId) {
-            MacroAssembler::RegisterID endIndex = character; // We can reuse the character register here as we already matched.
+            MacroAssembler::RegisterID subpatternAddress = character; // We can reuse the character register here as we already matched.
 
             if (subpatternIdReg == InvalidGPRReg) {
                 subpatternIdReg = m_regs.unicodeAndSubpatternIdTemp;
                 loadDuplicateNamedGroupSubpatternId(duplicateNamedGroupId, subpatternIdReg);
             }
-            loadSubPatternEnd(subpatternIdReg, endIndex);
-            m_jit.branch32(MacroAssembler::NotEqual, patternIndex, endIndex).linkTo(loop, &m_jit);
+            loadSubPatternAddress(subpatternIdReg, subpatternAddress);
+            m_jit.branch32(MacroAssembler::NotEqual, patternIndex, MacroAssembler::Address(subpatternAddress, m_direction == Backward ? 0 : sizeof(int))).linkTo(loop, &m_jit);
         } else
-            m_jit.branch32(MacroAssembler::NotEqual, patternIndex, subpatternEndAddress(subpatternId)).linkTo(loop, &m_jit);
+            m_jit.branch32(MacroAssembler::NotEqual, patternIndex, m_direction == Backward ? subpatternStartAddress(subpatternId) : subpatternEndAddress(subpatternId)).linkTo(loop, &m_jit);
+    }
+
+    void computeBackReferenceSizeAndFirstPatternIndex(MacroAssembler::RegisterID patternIndex, MacroAssembler::RegisterID patternTemp)
+    {
+        m_jit.sub32(patternIndex, patternTemp);
+        if (m_direction == Backward)
+            m_jit.add32(patternTemp, patternIndex);
     }
 
     void generateBackReference(bool isNamed, size_t opIndex)
@@ -2674,8 +2682,8 @@ class YarrGenerator final : public YarrJITInfo {
         case QuantifierType::FixedCount: {
             MacroAssembler::Label outerLoop(&m_jit);
 
-            // PatternTemp should contain pattern end index at this point. Compute pattern size.
-            m_jit.sub32(patternIndex, patternTemp);
+            // PatternIndex and patternTemp should contain the pattern start and end index at this point.
+            computeBackReferenceSizeAndFirstPatternIndex(patternIndex, patternTemp);
             op.m_jumps.append(checkNotEnoughInput(patternTemp));
 
             matchBackreference(opIndex, op.m_jumps, characterOrTemp, patternIndex, patternTemp, subpatternIdReg == m_regs.unicodeAndSubpatternIdTemp ? subpatternIdReg : InvalidGPRReg);
@@ -2705,8 +2713,8 @@ class YarrGenerator final : public YarrJITInfo {
 
             MacroAssembler::Label outerLoop(&m_jit);
 
-            // PatternTemp should contain pattern end index at this point. Compute pattern size.
-            m_jit.sub32(patternIndex, patternTemp);
+            // PatternIndex and patternTemp should contain the pattern start and end index at this point.
+            computeBackReferenceSizeAndFirstPatternIndex(patternIndex, patternTemp);
             storeToFrame(patternTemp, parenthesesFrameLocation + BackTrackInfoBackReference::backReferenceSizeIndex());
 
             matches.append(checkNotEnoughInput(patternTemp));
@@ -2778,7 +2786,7 @@ class YarrGenerator final : public YarrJITInfo {
             // zero-width progress guard sees the current position even
             // when checkNotEnoughInput bails out early.
             storeToFrame(m_regs.index, parenthesesFrameLocation + BackTrackInfoBackReference::beginIndex());
-            m_jit.sub32(patternIndex, patternTemp);
+            computeBackReferenceSizeAndFirstPatternIndex(patternIndex, patternTemp);
             matches.append(checkNotEnoughInput(patternTemp));
 
             matchBackreference(opIndex, incompleteMatches, characterOrTemp, patternIndex, patternTemp, subpatternIdReg == m_regs.unicodeAndSubpatternIdTemp ? subpatternIdReg : InvalidGPRReg);
@@ -2817,7 +2825,7 @@ class YarrGenerator final : public YarrJITInfo {
             failures.append(m_jit.branchTest32(MacroAssembler::Zero, matchAmount));
 
             loadFromFrame(parenthesesFrameLocation + BackTrackInfoBackReference::backReferenceSizeIndex(), matchSize);
-            m_jit.sub32(matchSize, m_regs.index);
+            rewindIndex(matchSize);
 
             m_jit.sub32(MacroAssembler::TrustedImm32(1), matchAmount);
             storeToFrame(matchAmount, parenthesesFrameLocation + BackTrackInfoBackReference::matchAmountIndex());
@@ -5771,6 +5779,8 @@ class YarrGenerator final : public YarrJITInfo {
                 case PatternTerm::Type::AssertionBOI:
                 case PatternTerm::Type::AssertionEOI:
                 case PatternTerm::Type::AssertionWordBoundary:
+                case PatternTerm::Type::NumberedBackReference:
+                case PatternTerm::Type::NamedBackReference:
                     term.inputPosition = inputPosition;
                     break;
 
@@ -5809,10 +5819,6 @@ class YarrGenerator final : public YarrJITInfo {
                         return unsupported();
                     term.inputPosition = inputPosition;
                     break;
-
-                case PatternTerm::Type::NumberedBackReference:
-                case PatternTerm::Type::NamedBackReference:
-                    return unsupported();
 
                 case PatternTerm::Type::DotStarEnclosure:
                     RELEASE_ASSERT_NOT_REACHED();
@@ -7039,24 +7045,19 @@ class YarrGenerator final : public YarrJITInfo {
         m_jit.load32(duplicateNamedGroupAddress(duplicateNamedGroupId), subpatternIdGPR);
     }
 
-    void loadSubPattern(MacroAssembler::RegisterID subpatternIdGPR, MacroAssembler::RegisterID startIndexGPR, MacroAssembler::RegisterID endIndexOrLenGPR)
+    void loadSubPatternAddress(MacroAssembler::RegisterID subpatternIdGPR, MacroAssembler::RegisterID addressGPR)
     {
         if (m_needsInternalSubpatternOutput) {
             auto frameBase = frameAddress();
-            m_jit.getEffectiveAddress(MacroAssembler::BaseIndex(frameBase.base, subpatternIdGPR, MacroAssembler::TimesEight, frameBase.offset + m_internalSubpatternOutputOffsetInFrame * sizeof(void*)), endIndexOrLenGPR);
+            m_jit.getEffectiveAddress(MacroAssembler::BaseIndex(frameBase.base, subpatternIdGPR, MacroAssembler::TimesEight, frameBase.offset + m_internalSubpatternOutputOffsetInFrame * sizeof(void*)), addressGPR);
         } else
-            m_jit.getEffectiveAddress(MacroAssembler::BaseIndex(m_regs.output, subpatternIdGPR, MacroAssembler::TimesEight), endIndexOrLenGPR);
-        m_jit.loadPair32(endIndexOrLenGPR, startIndexGPR, endIndexOrLenGPR);
+            m_jit.getEffectiveAddress(MacroAssembler::BaseIndex(m_regs.output, subpatternIdGPR, MacroAssembler::TimesEight), addressGPR);
     }
 
-    void loadSubPatternEnd(MacroAssembler::RegisterID subpatternIdGPR, MacroAssembler::RegisterID endIndex)
+    void loadSubPattern(MacroAssembler::RegisterID subpatternIdGPR, MacroAssembler::RegisterID startIndexGPR, MacroAssembler::RegisterID endIndexOrLenGPR)
     {
-        if (m_needsInternalSubpatternOutput) {
-            auto frameBase = frameAddress();
-            m_jit.getEffectiveAddress(MacroAssembler::BaseIndex(frameBase.base, subpatternIdGPR, MacroAssembler::TimesEight, frameBase.offset + m_internalSubpatternOutputOffsetInFrame * sizeof(void*)), endIndex);
-        } else
-            m_jit.getEffectiveAddress(MacroAssembler::BaseIndex(m_regs.output, subpatternIdGPR, MacroAssembler::TimesEight), endIndex);
-        m_jit.load32(MacroAssembler::Address(endIndex, sizeof(int)), endIndex);
+        loadSubPatternAddress(subpatternIdGPR, endIndexOrLenGPR);
+        m_jit.loadPair32(endIndexOrLenGPR, startIndexGPR, endIndexOrLenGPR);
     }
 
 public:
