@@ -239,10 +239,14 @@ def parse_args(args):
                  "Specify multiple times for multiple sets of overrides."),
         optparse.make_option("--compare-port", action="store", default=None,
             help="Use the specified port's baselines first"),
+        optparse.make_option("--show-results", action="store_true",
+                             default=False, dest="show_results",
+                             help="Launch a browser with results after the tests "
+                                  "are done"),
         optparse.make_option("--no-show-results", action="store_false",
-            default=True, dest="show_results",
-            help="Don't launch a browser with results after the tests "
-                 "are done"),
+                             dest="show_results",
+                             help="Don't launch a browser with results after the tests "
+                                  "are done (default)"),
         optparse.make_option("--full-results-html", action="store_true",
             default=False,
             help="Show all failures in results.html, rather than only regressions"),

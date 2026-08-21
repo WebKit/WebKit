@@ -182,7 +182,7 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
         self.should_test_processes = not self._platform.is_win()
 
     def serial_test_basic(self):
-        options, args = parse_args(tests_included=True)
+        options, args = parse_args(['--show-results'], tests_included=True)
         logging_stream = StringIO()
         host = MockHost()
         port_obj = host.port_factory.get(options.platform, options)
@@ -920,7 +920,7 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
 
         host = MockHost()
         with host.filesystem.mkdtemp() as tmpdir:
-            _, _, user = logging_run(['--results-directory=' + str(tmpdir)], tests_included=True, host=host)
+            _, _, user = logging_run(['--show-results', '--results-directory=' + str(tmpdir)], tests_included=True, host=host)
             self.assertEqual(user.opened_urls, [path.abspath_to_uri(host.platform, host.filesystem.join(tmpdir, 'results.html'))])
 
     def serial_test_results_directory_default(self):
@@ -928,7 +928,7 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
         # look for what the output results url was.
 
         # This is the default location.
-        _, _, user = logging_run(tests_included=True)
+        _, _, user = logging_run(['--show-results'], tests_included=True)
         self.assertEqual(user.opened_urls, [path.abspath_to_uri(MockHost().platform, '/tmp/layout-test-results/results.html')])
 
     def serial_test_results_directory_relative(self):
@@ -937,8 +937,18 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
         host = MockHost()
         host.filesystem.maybe_make_directory('/tmp/cwd')
         host.filesystem.chdir('/tmp/cwd')
-        _, _, user = logging_run(['--results-directory=foo'], tests_included=True, host=host)
+        _, _, user = logging_run(['--show-results', '--results-directory=foo'], tests_included=True, host=host)
         self.assertEqual(user.opened_urls, [path.abspath_to_uri(host.platform, '/tmp/cwd/foo/results.html')])
+
+    def serial_test_no_show_results_by_default(self):
+        # We run a configuration that should fail, to generate output, and check
+        # that no browser is launched with the results unless asked for.
+        options, _ = parse_args([])
+        self.assertFalse(options.show_results)
+
+        _, err, user = logging_run(tests_included=True)
+        self.assertEqual(user.opened_urls, [])
+        self.assertIn('/tmp/layout-test-results/results.html', err.getvalue())
 
     def test_retrying_and_flaky_tests(self):
         host = MockHost()

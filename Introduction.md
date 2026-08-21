@@ -1389,9 +1389,12 @@ mirroring the same directory structure as `LayoutTests`.
 For example, the actual output produced for `LayoutTests/editing/inserting/typing-001.html`,
 if failed, will appear in `WebKitBuild/Debug/layout-test-results/editing/inserting/typing-001-actual.txt`.
 run-webkit-tests also generates a web page with the summary of results in
-`WebKitBuild/Debug/layout-test-results/results.html` and automatically tries to open it in Safari using the local build of WebKit.
+`WebKitBuild/Debug/layout-test-results/results.html`, and prints the path to it at the end of
+a run with unexpected results so that you can open it manually.
 
-> If Safari fails to launch, specify `--no-show-results` and open results.html file manually.
+> Specify `--show-results` to have run-webkit-tests automatically open results.html in a browser
+> using the local build of WebKit once the tests are done. If the browser fails to launch, drop
+> the option and open results.html yourself.
 
 ### Updating Expected Results
 
