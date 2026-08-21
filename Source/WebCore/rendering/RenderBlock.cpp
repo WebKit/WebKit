@@ -867,9 +867,9 @@ std::pair<LayoutUnit, LayoutUnit> RenderBlock::intrinsicLogicalMarginStartAndEnd
     auto& marginEnd = child.style().marginEnd(writingMode());
     auto startValue = LayoutUnit { };
     auto endValue = LayoutUnit { };
-    if (!marginStart.isAuto() && !shouldTrimChildMargin(Style::MarginTrimSide::InlineStart, child))
+    if (!marginStart.isAuto())
         startValue = Style::evaluateMinimum<LayoutUnit>(marginStart, 0_lu, child.style().usedZoomForLength());
-    if (!marginEnd.isAuto() && !shouldTrimChildMargin(Style::MarginTrimSide::InlineEnd, child))
+    if (!marginEnd.isAuto())
         endValue = Style::evaluateMinimum<LayoutUnit>(marginEnd, 0_lu, child.style().usedZoomForLength());
     return { startValue, endValue };
 }

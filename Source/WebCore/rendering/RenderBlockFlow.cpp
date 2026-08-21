@@ -1752,14 +1752,9 @@ bool RenderBlockFlow::isChildEligibleForMarginTrim(Style::MarginTrimSide marginT
     case Style::MarginTrimSide::BlockEnd:
         // The block-end margin of a block-level last child, when trimming at the block-end edge.
         return lastInFlowChildBox() == &child;
-    case Style::MarginTrimSide::InlineStart:
-    case Style::MarginTrimSide::InlineEnd:
-        // It has no effect on the inline-axis margins of block-level descendants, nor on any margins of inline-level descendants.
-        return false;
-    default:
-        ASSERT_NOT_REACHED();
-        return false;
     }
+    ASSERT_NOT_REACHED();
+    return false;
 }
 
 LayoutUnit RenderBlockFlow::clearFloatsIfNeeded(RenderBox& child, MarginInfo& marginInfo, LayoutUnit oldTopPosMargin, LayoutUnit oldTopNegMargin, LayoutUnit yPos)

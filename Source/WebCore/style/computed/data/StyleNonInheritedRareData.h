@@ -260,7 +260,7 @@ public:
     PREFERRED_TYPE(EnumSet<BoxAxis>) unsigned anchorFunctionScrollCompensatedAxes : 2;
     PREFERRED_TYPE(bool) unsigned isPopoverInvoker : 1;
     PREFERRED_TYPE(bool) unsigned useSVGZoomRulesForLength : 1;
-    PREFERRED_TYPE(MarginTrim) unsigned marginTrim : 4;
+    PREFERRED_TYPE(MarginTrim) unsigned marginTrim : 2;
     PREFERRED_TYPE(Contain) unsigned contain : 5;
     PREFERRED_TYPE(OverflowContinue) unsigned overflowContinue : 1;
     PREFERRED_TYPE(ScrollSnapStop) unsigned scrollSnapStop : 1;

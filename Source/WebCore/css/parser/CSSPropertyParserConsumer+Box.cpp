@@ -34,51 +34,34 @@
 #include "CSSPropertyParserConsumer+Ident.h"
 #include "CSSPropertyParserConsumer+LengthPercentageDefinitions.h"
 #include "CSSValueKeywords.h"
-#include "CSSValueList.h"
 
 namespace WebCore {
 namespace CSSPropertyParserHelpers {
 
 RefPtr<CSSValue> consumeMarginTrim(CSSParserTokenRange& range, CSS::PropertyParserState&)
 {
-    // <'margin-trim'> = none | [ block || inline ] | [ block-start || inline-start || block-end || inline-end ]
+    // <'margin-trim'> = none | block | [ block-start || block-end ]
     // https://drafts.csswg.org/css-box/#margin-trim
 
-    auto firstValue = range.peek().id();
-    if (firstValue == CSSValueNone)
+    switch (range.peek().id()) {
+    case CSSValueNone:
+    case CSSValueBlock:
         return consumeIdent(range).releaseNonNull();
-
-    // FIXME: Multiple values should be appended in canonical order.
-    Vector<CSSValueID, 4> idents;
-    if (firstValue == CSSValueBlock || firstValue == CSSValueInline) {
-        while (auto ident = consumeIdentRaw<CSSValueBlock, CSSValueInline>(range)) {
-            if (idents.contains(*ident))
-                return nullptr;
-            idents.append(*ident);
-        }
-    } else {
-        while (auto ident = consumeIdentRaw<CSSValueBlockStart, CSSValueBlockEnd, CSSValueInlineStart, CSSValueInlineEnd>(range)) {
-            if (idents.contains(*ident))
-                return nullptr;
-            idents.append(*ident);
-        }
-        // Try to serialize into either block or inline form
-        if (idents.size() == 2) {
-            if (idents.contains(CSSValueBlockStart) && idents.contains(CSSValueBlockEnd))
-                return CSSKeywordValue::create(CSSValueBlock);
-            if (idents.contains(CSSValueInlineStart) && idents.contains(CSSValueInlineEnd))
-                return CSSKeywordValue::create(CSSValueInline);
-        } else if (idents.size() == 4) {
-            CSSValueListBuilder list;
-            list.append(CSSKeywordValue::create(CSSValueBlock));
-            list.append(CSSKeywordValue::create(CSSValueInline));
-            return CSSValueList::createSpaceSeparated(WTF::move(list));
-        }
+    default:
+        break;
     }
-    CSSValueListBuilder list;
-    for (auto ident : idents)
-        list.append(CSSKeywordValue::create(ident));
-    return CSSValueList::createSpaceSeparated(WTF::move(list));
+
+    auto firstIdent = consumeIdentRaw<CSSValueBlockStart, CSSValueBlockEnd>(range);
+    if (!firstIdent)
+        return nullptr;
+
+    auto secondIdent = consumeIdentRaw<CSSValueBlockStart, CSSValueBlockEnd>(range);
+    if (!secondIdent)
+        return CSSKeywordValue::create(*firstIdent);
+    if (*secondIdent == *firstIdent)
+        return nullptr;
+
+    return CSSKeywordValue::create(CSSValueBlock);
 }
 
 } // namespace CSSPropertyParserHelpers

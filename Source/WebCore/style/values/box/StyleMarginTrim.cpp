@@ -33,58 +33,21 @@ namespace Style {
 
 auto CSSValueConversion<MarginTrim>::operator()(BuilderState& state, const CSSValue& value) -> MarginTrim
 {
-    // See if value is "block" or "inline" before trying to parse a list
-    if (RefPtr keywordValue = dynamicDowncast<CSSKeywordValue>(value)) {
-        switch (keywordValue->valueID()) {
-        case CSSValueBlock:
-            return { Style::MarginTrimSide::BlockStart, Style::MarginTrimSide::BlockEnd };
-        case CSSValueInline:
-            return { Style::MarginTrimSide::InlineStart, Style::MarginTrimSide::InlineEnd };
-        case CSSValueBlockStart:
-            return { Style::MarginTrimSide::BlockStart };
-        case CSSValueBlockEnd:
-            return { Style::MarginTrimSide::BlockEnd };
-        case CSSValueInlineStart:
-            return { Style::MarginTrimSide::InlineStart };
-        case CSSValueInlineEnd:
-            return { Style::MarginTrimSide::InlineEnd };
-        default:
-            state.setCurrentPropertyInvalidAtComputedValueTime();
-            return CSS::Keyword::None { };
-        }
-    }
-
-    auto list = requiredListDowncast<CSSValueList, CSSKeywordValue>(state, value);
-    if (!list)
+    RefPtr keywordValue = requiredDowncast<CSSKeywordValue>(state, value);
+    if (!keywordValue)
         return CSS::Keyword::None { };
 
-    MarginTrimSideEnumSet result;
-    for (Ref item : *list) {
-        switch (item->valueID()) {
-        case CSSValueBlock:
-            result.value.add({ Style::MarginTrimSide::BlockStart, Style::MarginTrimSide::BlockEnd });
-            break;
-        case CSSValueInline:
-            result.value.add({ Style::MarginTrimSide::InlineStart, Style::MarginTrimSide::InlineEnd });
-            break;
-        case CSSValueBlockStart:
-            result.value.add(Style::MarginTrimSide::BlockStart);
-            break;
-        case CSSValueBlockEnd:
-            result.value.add(Style::MarginTrimSide::BlockEnd);
-            break;
-        case CSSValueInlineStart:
-            result.value.add(Style::MarginTrimSide::InlineStart);
-            break;
-        case CSSValueInlineEnd:
-            result.value.add(Style::MarginTrimSide::InlineEnd);
-            break;
-        default:
-            state.setCurrentPropertyInvalidAtComputedValueTime();
-            return CSS::Keyword::None { };
-        }
+    switch (keywordValue->valueID()) {
+    case CSSValueBlock:
+        return { Style::MarginTrimSide::BlockStart, Style::MarginTrimSide::BlockEnd };
+    case CSSValueBlockStart:
+        return { Style::MarginTrimSide::BlockStart };
+    case CSSValueBlockEnd:
+        return { Style::MarginTrimSide::BlockEnd };
+    default:
+        state.setCurrentPropertyInvalidAtComputedValueTime();
+        return CSS::Keyword::None { };
     }
-    return result;
 }
 
 } // namespace Style
