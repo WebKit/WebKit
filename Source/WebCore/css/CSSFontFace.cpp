@@ -651,11 +651,11 @@ void CSSFontFace::setStatus(Status newStatus)
         break;
     }
 
-    iterateClients(m_clients, [&](CSSFontFaceClient& client) {
-        client.fontStateChanged(*this, m_status, newStatus);
-    });
+    auto oldStatus = std::exchange(m_status, newStatus);
 
-    m_status = newStatus;
+    iterateClients(m_clients, [&](CSSFontFaceClient& client) {
+        client.fontStateChanged(*this, oldStatus, newStatus);
+    });
 
     Seconds blockPeriodTimeout;
     Seconds swapPeriodTimeout;
