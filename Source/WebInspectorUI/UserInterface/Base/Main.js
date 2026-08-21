@@ -1481,9 +1481,6 @@ WI.showSourceCodeForFrame = function(frameIdentifier, options = {})
 
 WI.showSourceCode = function(sourceCode, options = {})
 {
-    const positionToReveal = options.positionToReveal;
-
-    console.assert(!positionToReveal || positionToReveal instanceof WI.SourceCodePosition, positionToReveal);
     var representedObject = sourceCode;
 
     if (representedObject instanceof WI.Script) {
@@ -1491,7 +1488,24 @@ WI.showSourceCode = function(sourceCode, options = {})
         representedObject = representedObject.resource || representedObject;
     }
 
-    var cookie = positionToReveal ? {lineNumber: positionToReveal.lineNumber, columnNumber: positionToReveal.columnNumber} : {};
+    let cookie = {};
+
+    let positionToReveal = options.positionToReveal;
+    if (positionToReveal) {
+        console.assert(positionToReveal instanceof WI.SourceCodePosition, positionToReveal);
+        cookie.lineNumber = positionToReveal.lineNumber;
+        cookie.columnNumber = positionToReveal.columnNumber;
+    }
+
+    let textRangeToSelect = options.textRangeToSelect;
+    if (textRangeToSelect) {
+        console.assert(textRangeToSelect instanceof WI.TextRange, textRangeToSelect);
+        cookie.startLine = textRangeToSelect.startLine;
+        cookie.startColumn = textRangeToSelect.startColumn;
+        cookie.endLine = textRangeToSelect.endLine;
+        cookie.endColumn = textRangeToSelect.endColumn;
+    }
+
     WI.showRepresentedObject(representedObject, cookie, options);
 };
 
