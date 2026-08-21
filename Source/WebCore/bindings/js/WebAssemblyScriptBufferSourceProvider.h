@@ -38,7 +38,8 @@ class WebAssemblyScriptBufferSourceProvider final : public JSC::BaseWebAssemblyS
 public:
     static Ref<WebAssemblyScriptBufferSourceProvider> create(const ScriptBuffer& scriptBuffer, URL&& sourceURL, Ref<JSC::ScriptFetcher>&& scriptFetcher)
     {
-        return adoptRef(*new WebAssemblyScriptBufferSourceProvider(scriptBuffer, JSC::SourceOrigin { WTF::move(sourceURL), WTF::move(scriptFetcher) }, sourceURL.string()));
+        String sourceURLString = sourceURL.string();
+        return adoptRef(*new WebAssemblyScriptBufferSourceProvider(scriptBuffer, JSC::SourceOrigin { WTF::move(sourceURL), WTF::move(scriptFetcher) }, WTF::move(sourceURLString)));
     }
 
     unsigned hash() const final
