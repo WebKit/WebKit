@@ -27,6 +27,7 @@
 
 #include <WebCore/FloatSize.h>
 #include <WebCore/IntSize.h>
+#include <limits>
 
 #if USE(CG)
 #include <CoreGraphics/CoreGraphics.h>
@@ -117,6 +118,21 @@ TEST(IntSize, DiagonalLengthAndArea)
 
     EXPECT_EQ(1638400, test.diagonalLengthSquared());
     EXPECT_EQ(786432U, test.area().value());
+}
+
+TEST(IntSize, UnclampedArea)
+{
+    constexpr auto intMin = std::numeric_limits<int>::min();
+
+    EXPECT_EQ(786432ULL, WebCore::IntSize(1024, 768).unclampedArea());
+    EXPECT_EQ(786432ULL, WebCore::IntSize(-1024, 768).unclampedArea());
+    EXPECT_EQ(786432ULL, WebCore::IntSize(-1024, -768).unclampedArea());
+    EXPECT_EQ(786432U, WebCore::IntSize(-1024, -768).area().value());
+
+    EXPECT_EQ(2147483648ULL, WebCore::IntSize(intMin, 1).unclampedArea());
+    EXPECT_EQ(2147483648ULL, WebCore::IntSize(1, intMin).unclampedArea());
+    EXPECT_EQ(2147483648ULL, WebCore::IntSize(intMin, 1).area().value());
+    EXPECT_EQ(4611686018427387904ULL, WebCore::IntSize(intMin, intMin).unclampedArea());
 }
 
 TEST(IntSize, Scale)
