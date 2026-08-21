@@ -287,7 +287,9 @@ struct QuirksData {
         ShouldSuppressHLSSubtitles,
         ShouldSuppressMediaSessionPauseActionOnInterruption,
         ShouldBlockAudiblePlaybackWhileAudioIsPlaying,
-
+#if PLATFORM(COCOA)
+        NeedsWebKitMediaKeysTransportStreamIsTypeSupportedQuirk,
+#endif
         NumberOfQuirks
     };
 

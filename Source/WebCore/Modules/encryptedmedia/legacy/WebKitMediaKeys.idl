@@ -31,6 +31,6 @@
     constructor(DOMString keySystem);
 
     [CallWith=CurrentDocument] WebKitMediaKeySession createSession(DOMString type, Uint8Array initData);
-    static boolean isTypeSupported(DOMString keySystem, optional DOMString type);
+    [CallWith=CurrentDocument] static boolean isTypeSupported(DOMString keySystem, optional DOMString type);
     readonly attribute DOMString keySystem;
 };

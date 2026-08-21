@@ -28,6 +28,7 @@
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
 
+#include "DocumentQuirks.h"
 #include "HTMLMediaElement.h"
 #include "JSDOMPromiseDeferred.h"
 #include "MediaKeySystemRequest.h"
@@ -115,12 +116,21 @@ ExceptionOr<Ref<WebKitMediaKeySession>> WebKitMediaKeys::createSession(Document&
     return session;
 }
 
-bool WebKitMediaKeys::isTypeSupported(const String& keySystem, const String& mimeType)
+bool WebKitMediaKeys::isTypeSupported(const Document& document, const String& keySystem, const String& mimeType)
 {
     // 1. If keySystem contains an unrecognized or unsupported Key System, return false and abort these steps.
     // Key system string comparison is case-sensitive.
     if (keySystem.isEmpty() || !LegacyCDM::supportsKeySystem(keySystem))
         return false;
+
+#if PLATFORM(COCOA)
+    if (document.quirks().needsWebKitMediaKeysTransportStreamIsTypeSupportedQuirk()
+        && keySystem == "com.apple.fps.1_0"_s
+        && mimeType.startsWithIgnoringASCIICase("video/mp2t"_s))
+        return true;
+#else
+    UNUSED_PARAM(document);
+#endif
 
     // 2. If type is null or an empty string, return true and abort these steps.
     if (mimeType.isEmpty())

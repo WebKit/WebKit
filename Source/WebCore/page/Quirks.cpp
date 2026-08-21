@@ -2886,6 +2886,15 @@ bool Quirks::shouldReportVisibleDueToActivePictureInPictureContent() const
 }
 #endif
 
+#if PLATFORM(COCOA)
+bool Quirks::needsWebKitMediaKeysTransportStreamIsTypeSupportedQuirk() const
+{
+    QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
+
+    return m_quirksData.quirkIsEnabled(QuirksData::SiteSpecificQuirk::NeedsWebKitMediaKeysTransportStreamIsTypeSupportedQuirk);
+}
+#endif
+
 URL Quirks::topDocumentURL() const
 {
     if (!m_topDocumentURLForTesting.isEmpty()) [[unlikely]]
@@ -3557,6 +3566,9 @@ static constexpr Quirk table[] = {
             NeedsWebKitMediaTextTrackDisplayQuirk,
             ShouldDeferIntersectionObserversDuringResize,
             ShouldBlockAudiblePlaybackWhileAudioIsPlaying,
+#if PLATFORM(COCOA)
+            NeedsWebKitMediaKeysTransportStreamIsTypeSupportedQuirk,
+#endif
         }) },
 
 #if ENABLE(CONTENT_CHANGE_OBSERVER)

@@ -234,6 +234,7 @@ https://soylent.com/
     (none)
 https://open.spotify.com/
     NeedsBodyScrollbarWidthNoneDisabledQuirk
+    NeedsWebKitMediaKeysTransportStreamIsTypeSupportedQuirk
     NeedsWebKitMediaTextTrackDisplayQuirk
     ShouldAvoidStartingSelectionOnMouseDownOverPointerCursor
     ShouldBlockAudiblePlaybackWhileAudioIsPlaying
