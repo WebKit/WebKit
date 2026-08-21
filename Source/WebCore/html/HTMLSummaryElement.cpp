@@ -101,7 +101,7 @@ void HTMLSummaryElement::defaultEventHandler(Event& event)
             return;
         }
 
-        if (auto* keyboardEvent = dynamicDowncast<KeyboardEvent>(event)) {
+        if (auto* keyboardEvent = dynamicDowncast<KeyboardEvent>(event); keyboardEvent && document().focusedElement() == this) {
             if (keyboardEvent->type() == eventNames.keydownEvent && keyboardEvent->keyIdentifier() == "U+0020"_s) {
                 setActive(true);
                 // No setDefaultHandled() - IE dispatches a keypress in this case.
