@@ -44,6 +44,10 @@
 #import <apfs/apfs_fsctl.h>
 #endif
 
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
+#import <pwd.h>
+#endif
+
 SOFT_LINK_PRIVATE_FRAMEWORK(Bom)
 SOFT_LINK(Bom, BOMCopierNew, BOMCopier, (), ())
 SOFT_LINK(Bom, BOMCopierFree, void, (BOMCopier copier), (copier))
@@ -354,6 +358,22 @@ String darwinTempDirectory()
     }
     return String::fromUTF8(resolvedPath);
 }
+
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
+std::optional<String> homeDirectory()
+{
+    // According to the man page for getpwuid_r, we should use sysconf(_SC_GETPW_R_SIZE_MAX) to determine the size of the buffer.
+    // However, a buffer size of 4096 should be sufficient, since PATH_MAX is 1024.
+    std::array<char, 4096> buffer;
+    passwd pwd;
+    passwd* result = nullptr;
+    if (getpwuid_r(getuid(), &pwd, buffer.data(), buffer.size(), &result) || !result) {
+        RELEASE_LOG_ERROR(Process, "Couldn't find home directory, errno=%d", errno);
+        return std::nullopt;
+    }
+    return String::fromUTF8(pwd.pw_dir);
+}
+#endif // PLATFORM(MAC) || PLATFORM(MACCATALYST)
 
 } // namespace FileSystemImpl
 } // namespace WTF

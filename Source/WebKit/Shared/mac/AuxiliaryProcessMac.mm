@@ -43,7 +43,6 @@
 #import <pal/spi/cocoa/CoreServicesSPI.h>
 #import <pal/spi/cocoa/LaunchServicesSPI.h>
 #import <pal/spi/mac/QuarantineSPI.h>
-#import <pwd.h>
 #import <stdlib.h>
 #import <sys/sysctl.h>
 #import <sysexits.h>
@@ -626,20 +625,6 @@ static String getUserDirectorySuffix(const AuxiliaryProcessInitializationParamet
     return makeString([[NSBundle mainBundle] bundleIdentifier], '+', clientIdentifier);
 }
 
-std::optional<String> AuxiliaryProcess::getHomeDirectory()
-{
-    // According to the man page for getpwuid_r, we should use sysconf(_SC_GETPW_R_SIZE_MAX) to determine the size of the buffer.
-    // However, a buffer size of 4096 should be sufficient, since PATH_MAX is 1024.
-    char buffer[4096];
-    passwd pwd;
-    passwd* result = nullptr;
-    if (getpwuid_r(getuid(), &pwd, buffer, sizeof(buffer), &result) || !result) {
-        RELEASE_LOG_ERROR(Process, "Couldn't find home directory, errno=%d", errno);
-        return std::nullopt;
-    }
-    return String::fromUTF8(pwd.pw_dir);
-}
-
 static void closeOpenDirectoryConnections()
 {
     if (mbr_close_connectionsPtr())
@@ -678,7 +663,7 @@ static void populateSandboxInitializationParameters(SandboxInitializationParamet
     sandboxParameters.addConfDirectoryParameter("DARWIN_USER_TEMP_DIR"_s, _CS_DARWIN_USER_TEMP_DIR);
     sandboxParameters.addConfDirectoryParameter("DARWIN_USER_CACHE_DIR"_s, _CS_DARWIN_USER_CACHE_DIR);
 
-    std::optional<String> homeDirectory = AuxiliaryProcess::getHomeDirectory();
+    std::optional<String> homeDirectory = FileSystem::homeDirectory();
     RELEASE_ASSERT(homeDirectory);
     
     sandboxParameters.addPathParameter("HOME_DIR"_s, homeDirectory->utf8().data());
@@ -791,7 +776,7 @@ void AuxiliaryProcess::openDirectoryCacheInvalidated(SandboxExtension::Handle&& 
 
     sandboxExtension->consume();
 
-    getHomeDirectory();
+    FileSystem::homeDirectory();
 
     closeOpenDirectoryConnections();
 

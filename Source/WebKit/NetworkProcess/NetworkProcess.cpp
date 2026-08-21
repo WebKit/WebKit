@@ -553,7 +553,7 @@ static void addPathsBlockedForSandboxExtensions(const WebsiteDataStoreParameters
     String cacheDirectory = FileSystem::parentPath(parameters.networkSessionParameters.networkCacheDirectory);
     String websiteDataDirectory = FileSystem::parentPath(parameters.networkSessionParameters.indexedDBDirectory);
 #if PLATFORM(MAC)
-    std::optional<String> optionalHomeDirectory = AuxiliaryProcess::getHomeDirectory();
+    std::optional<String> optionalHomeDirectory = FileSystem::homeDirectory();
     RELEASE_ASSERT(optionalHomeDirectory);
     String homeDirectory = *optionalHomeDirectory;
     String homeRelativeHTTPStoragesDirectory = makeString(homeDirectory, "/Library/HTTPStorages"_s);

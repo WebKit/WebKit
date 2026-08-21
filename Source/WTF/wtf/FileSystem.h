@@ -198,6 +198,10 @@ WTF_EXPORT_PRIVATE bool setAllowsMaterializingDatalessFiles(bool, PolicyScope);
 WTF_EXPORT_PRIVATE std::optional<bool> allowsMaterializingDatalessFiles(PolicyScope);
 #endif
 
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
+WTF_EXPORT_PRIVATE std::optional<String> homeDirectory();
+#endif
+
 // Impl for systems that do not already have createTemporaryDirectory
 #if !OS(WINDOWS) && !PLATFORM(COCOA) && !PLATFORM(PLAYSTATION) && !PLATFORM(GLIB)
 WTF_EXPORT_PRIVATE String createTemporaryDirectory();

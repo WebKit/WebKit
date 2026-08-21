@@ -2085,6 +2085,19 @@ void WebPageProxy::tryCloseTimedOut()
     closePage();
 }
 
+static std::optional<URL> storageClassBaseURL(const URL& url)
+{
+#if PLATFORM(MAC)
+    auto homeDirectory = FileSystem::homeDirectory();
+    if (!homeDirectory)
+        return std::nullopt;
+    String notesGroupPath = FileSystem::pathByAppendingComponents(*homeDirectory, std::initializer_list<StringView>({ "Library"_s, "Group Containers"_s, "group.com.apple.notes"_s }));
+    if (FileSystem::isAncestor(notesGroupPath, url.fileSystemPath()))
+        return url.truncatedForUseAsBase();
+#endif // PLATFORM(MAC)
+    return std::nullopt;
+}
+
 void WebPageProxy::maybeInitializeSandboxExtensionHandle(WebProcessProxy& process, const URL& url, const URL& resourceDirectoryURL, bool checkAssumedReadAccessToResourceURL, CompletionHandler<void(std::optional<SandboxExtension::Handle>&&)>&& completionHandler)
 {
     if (!url.protocolIsFile())
@@ -2122,6 +2135,43 @@ void WebPageProxy::maybeInitializeSandboxExtensionHandle(WebProcessProxy& proces
             protectedProcess->addSandboxExtensionForFile(path, *handle);
         return handle;
     };
+
+    enum class IsBaseURL : bool { No, Yes };
+
+    auto createSandboxExtensionForURL = [&] (const URL& url, IsBaseURL isBaseURL) -> bool {
+        auto path = url.fileSystemPath();
+        if (path.isNull()) {
+            WEBPAGEPROXY_RELEASE_LOG_ERROR(Sandbox, "maybeInitializeSandboxExtensionHandle: path is null");
+            completionHandler(std::nullopt);
+            return true;
+        }
+
+        if (auto sandboxExtensionHandle = createSandboxExtension(path)) {
+            WEBPAGEPROXY_RELEASE_LOG(Sandbox, "maybeInitializeSandboxExtensionHandle: created sandbox extension to path");
+            if (isBaseURL == IsBaseURL::Yes) {
+                process.assumeReadAccessToBaseURL(*this, url.string(), [sandboxExtensionHandle = WTF::move(*sandboxExtensionHandle), completionHandler = WTF::move(completionHandler)] mutable {
+                    completionHandler(WTF::move(sandboxExtensionHandle));
+                });
+                return true;
+            }
+            completionHandler(WTF::move(*sandboxExtensionHandle));
+            return true;
+        }
+        return false;
+    };
+
+    // If the file URL has a special storage class, we need to create a sandbox extension for the base URL.
+    // Creating a sandbox extension higher up in the hierarchy will not work, since the system only provides
+    // a sandbox extension to the base URL for the UI process.
+    if (auto baseURL = storageClassBaseURL(url)) {
+        WEBPAGEPROXY_RELEASE_LOG(Sandbox, "maybeInitializeSandboxExtensionHandle: url has special storage class; creating extension for the base URL");
+        if (createSandboxExtensionForURL(*baseURL, IsBaseURL::Yes))
+            return;
+        if (createSandboxExtensionForURL(url, IsBaseURL::No))
+            return;
+        completionHandler(std::nullopt);
+        return;
+    }
 
     if (!resourceDirectoryURL.isEmpty()) {
         if (!url.string().startsWith(resourceDirectoryURL.string()))
@@ -2173,32 +2223,12 @@ void WebPageProxy::maybeInitializeSandboxExtensionHandle(WebProcessProxy& proces
 
     // We failed to issue an universal file read access sandbox, fall back to issuing one for the base URL instead.
     auto baseURL = url.truncatedForUseAsBase();
-    auto basePath = baseURL.fileSystemPath();
-    if (basePath.isNull()) {
-        WEBPAGEPROXY_RELEASE_LOG_ERROR(Sandbox, "maybeInitializeSandboxExtensionHandle: base path is null");
-        return completionHandler(std::nullopt);
-    }
-
-    if (auto sandboxExtensionHandle = createSandboxExtension(basePath)) {
-        WEBPAGEPROXY_RELEASE_LOG(Sandbox, "maybeInitializeSandboxExtensionHandle: created sandbox extension to base path");
-        process.assumeReadAccessToBaseURL(*this, baseURL.string(), [sandboxExtensionHandle = WTF::move(*sandboxExtensionHandle), completionHandler = WTF::move(completionHandler)] mutable {
-            completionHandler(WTF::move(sandboxExtensionHandle));
-        });
+    if (createSandboxExtensionForURL(baseURL, IsBaseURL::Yes))
         return;
-    }
 
     // We failed to issue read access to the base path, fall back to issuing one for the full URL instead.
-    auto fullPath = url.fileSystemPath();
-    if (fullPath.isNull()) {
-        WEBPAGEPROXY_RELEASE_LOG_ERROR(Sandbox, "maybeInitializeSandboxExtensionHandle: full path is null");
-        return completionHandler(std::nullopt);
-    }
-
-    if (auto sandboxExtensionHandle = createSandboxExtension(fullPath)) {
-        WEBPAGEPROXY_RELEASE_LOG(Sandbox, "maybeInitializeSandboxExtensionHandle: created sandbox extension to full path");
-        completionHandler(WTF::move(*sandboxExtensionHandle));
+    if (createSandboxExtensionForURL(url, IsBaseURL::No))
         return;
-    }
 
     WEBPAGEPROXY_RELEASE_LOG_ERROR(Sandbox, "maybeInitializeSandboxExtensionHandle: unable to create sandbox extension");
     completionHandler(std::nullopt);
