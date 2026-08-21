@@ -49,7 +49,7 @@ SWIFT_TOOLCHAIN_BUNDLE_IDENTIFIER = 'org.webkit.swift'
 USER_TOOLCHAINS_DIR = '/Users/buildbot/Library/Developer/Toolchains'
 DEFAULT_PATH = '/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin'
 CMAKE_BIN_DIR = '/Applications/CMake.app/Contents/bin/'
-# Message printed by run-webkit-tests when uploading the results fails, please keep this in sync with run_webkit_tests.py.
+# Message printed by run-webkit-tests when uploading the results fails, please keep this in sync with run_layout_tests.py.
 FAILED_RESULTS_UPLOAD_MESSAGE = 'Failed to upload test results to'
 
 
