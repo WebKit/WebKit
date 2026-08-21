@@ -93,6 +93,8 @@ private:
     void wakeThreads(const AbstractLocker&, unsigned enqueuedTier);
     unsigned planLoad(JITPlan&);
 
+    bool shouldUseTieredCompilerThreadQOS() const;
+
     size_t queueLength(const AbstractLocker&) const;
     size_t NODELETE totalOngoingCompilations(const AbstractLocker&) const;
 
@@ -127,6 +129,10 @@ private:
     Vector<Ref<JITPlan>, 16> m_readyPlans;
 
     Lock m_suspensionLock;
+#if HAVE(QOS_CLASSES)
+    // Threads we donated QoS to; overrides ended and cleared in resumeAllThreads(). Guarded by m_suspensionLock.
+    Vector<Ref<Thread>, 8> m_donatedThreads;
+#endif
     Box<Lock> m_lock;
 
     const Ref<AutomaticThreadCondition> m_planEnqueued;

@@ -37,6 +37,11 @@
 #include "VMInlines.h"
 #include <wtf/TZoneMallocInlines.h>
 
+#if HAVE(QOS_CLASSES)
+#include <wtf/NumberOfCores.h>
+#include <wtf/Threading.h>
+#endif
+
 namespace JSC {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(JITWorklist);
@@ -208,6 +213,21 @@ size_t JITWorklist::totalOngoingCompilations(const AbstractLocker&) const
     return total;
 }
 
+bool JITWorklist::shouldUseTieredCompilerThreadQOS() const
+{
+#if HAVE(QOS_CLASSES)
+    if (!Options::useTieredCompilerThreadQOS())
+        return false;
+#if CPU(ARM64)
+    return WTF::numberOfPerformanceProcessorCores() <= static_cast<int>(Options::smallDeviceMaxPerformanceCores());
+#else
+    return WTF::numberOfProcessorCores() <= static_cast<int>(Options::smallDeviceMaxLogicalCores());
+#endif
+#else
+    return false;
+#endif
+}
+
 void JITWorklist::suspendAllThreads() WTF_IGNORES_THREAD_SAFETY_ANALYSIS
 {
     m_suspensionLock.lock();
@@ -216,12 +236,28 @@ void JITWorklist::suspendAllThreads() WTF_IGNORES_THREAD_SAFETY_ANALYSIS
         if (!thread->m_rightToRun.tryLock())
             busyThreads.append(thread.copyRef());
     }
+#if HAVE(QOS_CLASSES)
+    m_donatedThreads.clear();
+    if (shouldUseTieredCompilerThreadQOS()) {
+        for (auto& thread : busyThreads) {
+            if (RefPtr<Thread> underlyingThread = thread->m_underlyingThread.get()) {
+                underlyingThread->startQOSOverride(Thread::defaultQOS);
+                m_donatedThreads.append(underlyingThread.releaseNonNull());
+            }
+        }
+    }
+#endif
     for (auto& thread : busyThreads)
         thread->m_rightToRun.lock();
 }
 
 void JITWorklist::resumeAllThreads() WTF_IGNORES_THREAD_SAFETY_ANALYSIS
 {
+#if HAVE(QOS_CLASSES)
+    for (auto& thread : m_donatedThreads)
+        thread->endQOSOverride();
+    m_donatedThreads.clear();
+#endif
     for (auto& thread : m_threads)
         thread->m_rightToRun.unlock();
     m_suspensionLock.unlock();

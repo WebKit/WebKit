@@ -32,4 +32,10 @@ WTF_EXPORT_PRIVATE int numberOfProcessorCores();
 WTF_EXPORT_PRIVATE int numberOfPhysicalProcessorCores();
 #endif
 
+#if CPU(ARM64) && OS(DARWIN)
+// Number of performance ("P") cores on Apple silicon ("hw.perflevel0.physicalcpu"), falling back to
+// numberOfProcessorCores() if unavailable. The WTF_numberOfPerformanceProcessorCores env var overrides it.
+WTF_EXPORT_PRIVATE int numberOfPerformanceProcessorCores();
+#endif
+
 }
