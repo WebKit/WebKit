@@ -186,7 +186,7 @@ GridSpan Grid::gridItemSpan(const RenderBox& gridItem, Style::GridTrackSizingDir
     return gridItemArea(gridItem).span(direction);
 }
 
-void Grid::setupGridForMasonryLayout()
+void Grid::setupForGridLanesLayout()
 {
     // FIXME(248472): See if we can resize grid instead of clearing it here: https://bugs.webkit.org/show_bug.cgi?id=248472
     m_grid.clear();

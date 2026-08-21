@@ -37,7 +37,7 @@ public:
     static GridSpan translatedDefiniteGridSpan(unsigned startLine, unsigned endLine);
     static GridSpan indefiniteGridSpan();
 
-    static GridSpan masonryAxisTranslatedDefiniteGridSpan();
+    static GridSpan stackingAxisTranslatedDefiniteGridSpan();
 
     friend bool operator==(const GridSpan&, const GridSpan&) = default;
 

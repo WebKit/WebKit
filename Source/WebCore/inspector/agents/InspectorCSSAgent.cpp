@@ -857,7 +857,7 @@ static std::optional<InspectorCSSAgent::LayoutFlag> layoutFlagContextType(Render
     if (CheckedPtr renderGrid = dynamicDowncast<RenderGrid>(renderer)) {
         if (renderGrid->isSubgrid())
             return InspectorCSSAgent::LayoutFlag::Subgrid;
-        if (renderGrid->isMasonry())
+        if (renderGrid->isGridLanes())
             return InspectorCSSAgent::LayoutFlag::GridLanes;
         return InspectorCSSAgent::LayoutFlag::Grid;
     }

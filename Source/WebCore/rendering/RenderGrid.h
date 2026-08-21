@@ -27,7 +27,7 @@
 #pragma once
 
 #include "Grid.h"
-#include "GridMasonryLayout.h"
+#include "GridLanesLayout.h"
 #include "GridTrackSizingAlgorithm.h"
 #include "RenderBlock.h"
 #include "StyleGridTrackSizingDirection.h"
@@ -111,11 +111,11 @@ public:
     bool willStretchItem(const RenderBox& item, LogicalBoxAxis containingAxis, StretchingMode = StretchingMode::Normal) const override;
 
     // These functions handle the actual implementation of layoutBlock based on if
-    // the grid is a standard grid or a masonry one. While masonry is an extension of grid,
+    // the grid is a standard grid or a grid lanes one. While grid lanes layout is an extension of grid,
     // keeping the logic in the same function was leading to a messy amount of if statements being added to handle
-    // specific masonry cases.
+    // specific grid lanes cases.
     void layoutGrid(RelayoutChildren);
-    void layoutMasonry(RelayoutChildren);
+    void layoutGridLanes(RelayoutChildren);
 
     // Computes the span relative to this RenderGrid, even if the RenderBox is a grid item
     // of a descendant subgrid.
@@ -132,11 +132,11 @@ public:
     // nested subgrids, where ancestor may not be our direct parent.
     bool isSubgridOf(Style::GridTrackSizingDirection, const RenderGrid& ancestor) const;
 
-    bool NODELETE isMasonry() const;
-    bool isMasonry(Style::GridTrackSizingDirection) const;
-    bool isMasonry(LogicalBoxAxis axis) const { return isMasonry(Style::gridTrackSizingDirection(axis)); }
-    bool areMasonryRows() const { return isMasonry(Style::GridTrackSizingDirection::Rows); }
-    bool areMasonryColumns() const { return isMasonry(Style::GridTrackSizingDirection::Columns); }
+    bool NODELETE isGridLanes() const;
+    bool isStackingAxis(Style::GridTrackSizingDirection) const;
+    bool isStackingAxis(LogicalBoxAxis axis) const { return isStackingAxis(Style::gridTrackSizingDirection(axis)); }
+    bool hasStackingAxisRows() const { return isStackingAxis(Style::GridTrackSizingDirection::Rows); }
+    bool hasStackingAxisColumns() const { return isStackingAxis(Style::GridTrackSizingDirection::Columns); }
 
     const Grid& NODELETE currentGrid() const LIFETIME_BOUND;
     Grid& NODELETE currentGrid() LIFETIME_BOUND;
@@ -149,7 +149,7 @@ public:
     LayoutUnit gridGap(Style::GridTrackSizingDirection) const;
     LayoutUnit gridGap(Style::GridTrackSizingDirection, std::optional<LayoutUnit> availableSize) const;
 
-    LayoutUnit NODELETE masonryContentSize() const;
+    LayoutUnit NODELETE gridLanesContentSize() const;
 
     void updateIntrinsicLogicalHeightsForRowSizingFirstPassCacheAvailability();
     std::optional<GridItemSizeCache>& NODELETE intrinsicLogicalHeightsForRowSizingFirstPass() const LIFETIME_BOUND;
@@ -164,7 +164,7 @@ public:
 private:
     friend class GridTrackSizingAlgorithm;
     friend class GridTrackSizingAlgorithmStrategy;
-    friend class GridMasonryLayout;
+    friend class GridLanesLayout;
     friend class PositionedLayoutConstraints;
     friend class LayoutIntegration::GridLayout;
 
@@ -226,7 +226,7 @@ private:
     void updateGridAreaForAspectRatioItems(const Vector<RenderBox*>&, RenderGridLayoutState&);
 
     void layoutGridItems(RenderGridLayoutState&);
-    void layoutMasonryItems(RenderGridLayoutState&);
+    void layoutGridLanesItems(RenderGridLayoutState&);
 
     void populateGridPositionsForDirection(const GridTrackSizingAlgorithm&, Style::GridTrackSizingDirection);
 
@@ -297,7 +297,7 @@ private:
         mutable std::reference_wrapper<Grid> m_currentGrid { std::ref(m_layoutGrid) };
     } m_grid;
 
-    // FIXME: Refactor m_trackSizingAlgorithm to be inside of layoutGrid and layoutMasonry.
+    // FIXME: Refactor m_trackSizingAlgorithm to be inside of layoutGrid and layoutGridLanes.
     // https://bugs.webkit.org/show_bug.cgi?id=277496
     GridTrackSizingAlgorithm m_trackSizingAlgorithm;
 
@@ -325,7 +325,7 @@ private:
         Vector<LayoutUnit>& sizes(Style::GridTrackSizingDirection direction) LIFETIME_BOUND { return direction == Style::GridTrackSizingDirection::Columns ? columnSizes : rowSizes; }
     } m_resolvedTrackList;
 
-    mutable GridMasonryLayout m_masonryLayout;
+    mutable GridLanesLayout m_gridLanesLayout;
 
     mutable std::optional<GridItemSizeCache> m_intrinsicLogicalHeightsForRowSizingFirstPass;
 

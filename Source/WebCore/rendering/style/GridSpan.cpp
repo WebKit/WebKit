@@ -45,7 +45,7 @@ GridSpan GridSpan::indefiniteGridSpan()
     return GridSpan(0, 1, Indefinite);
 }
 
-GridSpan GridSpan::masonryAxisTranslatedDefiniteGridSpan()
+GridSpan GridSpan::stackingAxisTranslatedDefiniteGridSpan()
 {
     return GridSpan(0, 1, TranslatedDefinite);
 }

@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 #include "config.h"
-#include "GridMasonryLayout.h"
+#include "GridLanesLayout.h"
 
 #include "GridLayoutFunctions.h"
 #include "RenderBoxInlines.h"
@@ -36,43 +36,42 @@
 
 namespace WebCore {
 
-void GridMasonryLayout::initializeMasonry(unsigned gridAxisTracks, Style::GridTrackSizingDirection masonryAxisDirection)
+void GridLanesLayout::initializeGridLanes(unsigned gridAxisTracks, Style::GridTrackSizingDirection stackingAxisDirection)
 {
-    // Reset global variables as they may contain state from previous runs of Masonry.
-    m_masonryAxisDirection = masonryAxisDirection;
-    m_masonryAxisGridGap = m_renderGrid->gridGap(m_masonryAxisDirection);
+    // Reset global variables as they may contain state from previous runs of grid lanes layout.
+    m_stackingAxisDirection = stackingAxisDirection;
+    m_stackingAxisGridGap = m_renderGrid->gridGap(m_stackingAxisDirection);
     m_gridAxisTracksCount = gridAxisTracks;
     m_gridContentSize = 0;
     m_itemOffsets.clear();
 
-    m_renderGrid->currentGrid().setupGridForMasonryLayout();
+    m_renderGrid->currentGrid().setupForGridLanesLayout();
     m_renderGrid->populateExplicitGridAndOrderIterator();
 
     resizeAndResetRunningPositions();
 }
 
-void GridMasonryLayout::performMasonryPlacement(const GridTrackSizingAlgorithm& algorithm, unsigned gridAxisTracks, Style::GridTrackSizingDirection masonryAxisDirection, GridMasonryLayout::MasonryLayoutPhase layoutPhase)
+void GridLanesLayout::performGridLanesPlacement(const GridTrackSizingAlgorithm& algorithm, unsigned gridAxisTracks, Style::GridTrackSizingDirection stackingAxisDirection, Phase layoutPhase)
 {
-    initializeMasonry(gridAxisTracks, masonryAxisDirection);
+    initializeGridLanes(gridAxisTracks, stackingAxisDirection);
 
     m_renderGrid->populateGridPositionsForDirection(algorithm, Style::GridTrackSizingDirection::Columns);
     m_renderGrid->populateGridPositionsForDirection(algorithm, Style::GridTrackSizingDirection::Rows);
 
-    // 2.3 Masonry Layout Algorithm
-    // https://drafts.csswg.org/css-grid-3/#masonry-layout-algorithm
-    
+    // 4.4 Grid Lanes Layout and Placement Algorithm
+    // https://drafts.csswg.org/css-grid-3/#grid-lanes-layout-algorithm
     // the insertIntoGridAndLayoutItem() will modify the m_autoFlowNextCursor, so m_autoFlowNextCursor needs to be reset.
     m_autoFlowNextCursor = 0;
 
-    placeMasonryItems(algorithm, layoutPhase);
+    placeGridLanesItems(algorithm, layoutPhase);
 }
 
-void GridMasonryLayout::resizeAndResetRunningPositions()
+void GridLanesLayout::resizeAndResetRunningPositions()
 {
     m_runningPositions.fill(LayoutUnit(), m_gridAxisTracksCount);
 }
 
-void GridMasonryLayout::placeMasonryItems(const GridTrackSizingAlgorithm& algorithm, GridMasonryLayout::MasonryLayoutPhase layoutPhase)
+void GridLanesLayout::placeGridLanesItems(const GridTrackSizingAlgorithm& algorithm, Phase layoutPhase)
 {
     if (!m_gridAxisTracksCount)
         return;
@@ -87,22 +86,22 @@ void GridMasonryLayout::placeMasonryItems(const GridTrackSizingAlgorithm& algori
     }
 }
 
-GridArea GridMasonryLayout::gridAreaForDefiniteGridAxisItem(const RenderBox& gridItem) const
+GridArea GridLanesLayout::gridAreaForDefiniteGridAxisItem(const RenderBox& gridItem) const
 {
     auto itemSpan = m_renderGrid->currentGrid().gridItemSpan(gridItem, gridAxisDirection());
     ASSERT(!itemSpan.isIndefinite());
     itemSpan.translate(m_renderGrid->currentGrid().explicitGridStart(gridAxisDirection()));
-    return masonryGridAreaFromGridAxisSpan(itemSpan);
+    return gridAreaFromGridAxisSpan(itemSpan);
 }
 
-LayoutUnit GridMasonryLayout::calculateMasonryIntrinsicLogicalWidth(RenderBox& gridItem, GridMasonryLayout::MasonryLayoutPhase layoutPhase)
+LayoutUnit GridLanesLayout::calculateGridLanesIntrinsicLogicalWidth(RenderBox& gridItem, Phase layoutPhase)
 {
     switch (layoutPhase) {
-    case MasonryLayoutPhase::MinContentPhase:
+    case Phase::MinContentPhase:
         return gridItem.computeSizingKeywordLogicalWidthUsing(CSS::Keyword::MinContent { }, { }, gridItem.borderAndPaddingLogicalWidth());
-    case MasonryLayoutPhase::MaxContentPhase:
+    case Phase::MaxContentPhase:
         return gridItem.computeSizingKeywordLogicalWidthUsing(CSS::Keyword::MaxContent { }, { }, gridItem.borderAndPaddingLogicalWidth());
-    case MasonryLayoutPhase::LayoutPhase:
+    case Phase::LayoutPhase:
         ASSERT_NOT_REACHED();
         return { };
     }
@@ -110,7 +109,7 @@ LayoutUnit GridMasonryLayout::calculateMasonryIntrinsicLogicalWidth(RenderBox& g
     return { };
 }
 
-void GridMasonryLayout::setItemContainingBlockToGridArea(const GridTrackSizingAlgorithm& algorithm, RenderBox& gridItem)
+void GridLanesLayout::setItemContainingBlockToGridArea(const GridTrackSizingAlgorithm& algorithm, RenderBox& gridItem)
 {
     CheckedPtr<RenderGrid> containingBlock = dynamicDowncast<RenderGrid>(gridItem.containingBlock());
     if (!containingBlock) {
@@ -129,20 +128,20 @@ void GridMasonryLayout::setItemContainingBlockToGridArea(const GridTrackSizingAl
         gridItem.setGridAreaContentLogicalWidth(containingBlock->contentBoxLogicalWidth());
     }
 
-    // FIXME(249230): Try to cache masonry layout sizes
+    // FIXME(249230): Try to cache grid lanes layout sizes
     gridItem.setChildNeedsLayout(MarkingBehavior::MarkOnlyThis);
 }
 
-void GridMasonryLayout::insertIntoGridAndLayoutItem(const GridTrackSizingAlgorithm& algorithm, RenderBox& gridItem, const GridArea& area, GridMasonryLayout::MasonryLayoutPhase layoutPhase)
+void GridLanesLayout::insertIntoGridAndLayoutItem(const GridTrackSizingAlgorithm& algorithm, RenderBox& gridItem, const GridArea& area, Phase layoutPhase)
 {
-    auto shouldOverrideLogicalWidth = [&](RenderBox& gridItem, GridMasonryLayout::MasonryLayoutPhase layoutPhase) {
-        if (layoutPhase == MasonryLayoutPhase::LayoutPhase)
+    auto shouldOverrideLogicalWidth = [&](RenderBox& gridItem, Phase layoutPhase) {
+        if (layoutPhase == Phase::LayoutPhase)
             return false;
 
         if (!(gridItem.style().logicalWidth().isAuto() || gridItem.style().logicalWidth().isPercent()))
             return false;
 
-        ASSERT(m_renderGrid->isMasonry(Style::GridTrackSizingDirection::Columns));
+        ASSERT(m_renderGrid->isStackingAxis(Style::GridTrackSizingDirection::Columns));
 
         if (gridItem.style().writingMode().isOrthogonal(m_renderGrid->style().writingMode()))
             return false;
@@ -154,7 +153,7 @@ void GridMasonryLayout::insertIntoGridAndLayoutItem(const GridTrackSizingAlgorit
     };
 
     if (shouldOverrideLogicalWidth(gridItem, layoutPhase))
-        gridItem.setOverridingBorderBoxLogicalWidth(calculateMasonryIntrinsicLogicalWidth(gridItem, layoutPhase));
+        gridItem.setOverridingBorderBoxLogicalWidth(calculateGridLanesIntrinsicLogicalWidth(gridItem, layoutPhase));
 
     m_renderGrid->currentGrid().insert(gridItem, area);
     setItemContainingBlockToGridArea(algorithm, gridItem);
@@ -163,10 +162,10 @@ void GridMasonryLayout::insertIntoGridAndLayoutItem(const GridTrackSizingAlgorit
     m_autoFlowNextCursor = gridAxisSpanFromArea(area).endLine() % m_gridAxisTracksCount;
 }
 
-LayoutUnit GridMasonryLayout::masonryAxisMarginBoxForItem(const RenderBox& gridItem)
+LayoutUnit GridLanesLayout::stackingAxisMarginBoxForItem(const RenderBox& gridItem)
 {
     LayoutUnit marginBoxSize;
-    if (m_masonryAxisDirection == Style::GridTrackSizingDirection::Rows) {
+    if (m_stackingAxisDirection == Style::GridTrackSizingDirection::Rows) {
         if (GridLayoutFunctions::isOrthogonalGridItem(m_renderGrid, gridItem))
             marginBoxSize = gridItem.isHorizontalWritingMode() ? gridItem.borderBoxWidth() + gridItem.horizontalMarginExtent() : gridItem.borderBoxHeight() + gridItem.verticalMarginExtent();
         else
@@ -181,7 +180,7 @@ LayoutUnit GridMasonryLayout::masonryAxisMarginBoxForItem(const RenderBox& gridI
     return marginBoxSize;
 }
 
-void GridMasonryLayout::updateRunningPositions(const RenderBox& gridItem, const GridArea& area)
+void GridLanesLayout::updateRunningPositions(const RenderBox& gridItem, const GridArea& area)
 {
     auto gridAxisSpan = gridAxisSpanFromArea(area);
     ASSERT(gridAxisSpan.startLine() < m_runningPositions.size() && gridAxisSpan.endLine() <= m_runningPositions.size());
@@ -191,8 +190,8 @@ void GridMasonryLayout::updateRunningPositions(const RenderBox& gridItem, const 
     for (auto line : gridAxisSpan)
         previousRunningPosition = std::max(previousRunningPosition, m_runningPositions[line]);
 
-    auto newRunningPosition = masonryAxisMarginBoxForItem(gridItem) + previousRunningPosition + m_masonryAxisGridGap;
-    m_gridContentSize = std::max(m_gridContentSize, newRunningPosition - m_masonryAxisGridGap);
+    auto newRunningPosition = stackingAxisMarginBoxForItem(gridItem) + previousRunningPosition + m_stackingAxisGridGap;
+    m_gridContentSize = std::max(m_gridContentSize, newRunningPosition - m_stackingAxisGridGap);
 
     for (auto span : gridAxisSpan)
         m_runningPositions[span] = newRunningPosition;
@@ -200,13 +199,13 @@ void GridMasonryLayout::updateRunningPositions(const RenderBox& gridItem, const 
     updateItemOffset(gridItem, previousRunningPosition);
 }
 
-void GridMasonryLayout::updateItemOffset(const RenderBox& gridItem, LayoutUnit offset)
+void GridLanesLayout::updateItemOffset(const RenderBox& gridItem, LayoutUnit offset)
 {
     // We set() and not add() to update the value if the |gridItem| is already inserted
     m_itemOffsets.set(gridItem, offset);
 }
 
-LayoutUnit GridMasonryLayout::maxRunningPositionForSpan(unsigned startLine, unsigned spanLength) const
+LayoutUnit GridLanesLayout::maxRunningPositionForSpan(unsigned startLine, unsigned spanLength) const
 {
     LayoutUnit maxPosition;
     for (unsigned lineOffset = 0; lineOffset < spanLength; lineOffset++)
@@ -214,12 +213,12 @@ LayoutUnit GridMasonryLayout::maxRunningPositionForSpan(unsigned startLine, unsi
     return maxPosition;
 }
 
-GridArea GridMasonryLayout::gridAreaForIndefiniteGridAxisItem(const RenderBox& item)
+GridArea GridLanesLayout::gridAreaForIndefiniteGridAxisItem(const RenderBox& item)
 {
     auto itemSpanLength = std::min<unsigned>(Style::GridPositionsResolver::spanSizeForAutoPlacedItem(item, gridAxisDirection()), m_gridAxisTracksCount);
     auto gridAxisLines = m_gridAxisTracksCount + 1;
 
-    // Get flow-tolerance from the masonry container's style
+    // Get flow-tolerance from the grid lanes container's style
     const auto& tolerance = m_renderGrid->style().flowTolerance();
 
     if (tolerance.isInfinite()) {
@@ -232,7 +231,7 @@ GridArea GridMasonryLayout::gridAreaForIndefiniteGridAxisItem(const RenderBox& i
             startingLine = 0;
 
         auto gridAxisPosition = GridSpan::translatedDefiniteGridSpan(startingLine, startingLine + itemSpanLength);
-        return masonryGridAreaFromGridAxisSpan(gridAxisPosition);
+        return gridAreaFromGridAxisSpan(gridAxisPosition);
     }
 
     // For normal and length-percentage tolerances, find positions within tolerance of the shortest track
@@ -284,10 +283,10 @@ GridArea GridMasonryLayout::gridAreaForIndefiniteGridAxisItem(const RenderBox& i
     }
 
     auto gridAxisPosition = GridSpan::translatedDefiniteGridSpan(smallestMaxPosLine, smallestMaxPosLine + itemSpanLength);
-    return masonryGridAreaFromGridAxisSpan(gridAxisPosition);
+    return gridAreaFromGridAxisSpan(gridAxisPosition);
 }
 
-LayoutUnit GridMasonryLayout::offsetForGridItem(const RenderBox& gridItem) const
+LayoutUnit GridLanesLayout::offsetForGridItem(const RenderBox& gridItem) const
 {
     const auto& offsetIter = m_itemOffsets.find(gridItem);
     if (offsetIter == m_itemOffsets.end())
@@ -295,27 +294,27 @@ LayoutUnit GridMasonryLayout::offsetForGridItem(const RenderBox& gridItem) const
     return offsetIter->value;
 }
 
-inline Style::GridTrackSizingDirection GridMasonryLayout::gridAxisDirection() const
+inline Style::GridTrackSizingDirection GridLanesLayout::gridAxisDirection() const
 {
-    // The masonry axis and grid axis can never be the same. 
+    // The stacking axis and grid axis can never be the same.
     // They are always perpendicular to each other.
-    return orthogonalDirection(m_masonryAxisDirection);
+    return orthogonalDirection(m_stackingAxisDirection);
 }
 
-bool GridMasonryLayout::hasDefiniteGridAxisPosition(const RenderBox& gridItem, Style::GridTrackSizingDirection gridAxisDirection) const
+bool GridLanesLayout::hasDefiniteGridAxisPosition(const RenderBox& gridItem, Style::GridTrackSizingDirection gridAxisDirection) const
 {
     return !Style::GridPositionsResolver::resolveGridPositionsFromStyle(m_renderGrid, gridItem, gridAxisDirection).isIndefinite();
 }
 
-GridSpan GridMasonryLayout::gridAxisSpanFromArea(const GridArea& gridArea) const
+GridSpan GridLanesLayout::gridAxisSpanFromArea(const GridArea& gridArea) const
 {
     return gridArea.span(gridAxisDirection());
 }
 
-GridArea GridMasonryLayout::masonryGridAreaFromGridAxisSpan(const GridSpan& gridAxisSpan) const
+GridArea GridLanesLayout::gridAreaFromGridAxisSpan(const GridSpan& gridAxisSpan) const
 {
-    return m_masonryAxisDirection == Style::GridTrackSizingDirection::Rows
-        ? GridArea { m_masonryAxisSpan, gridAxisSpan }
-        : GridArea { gridAxisSpan, m_masonryAxisSpan };
+    return m_stackingAxisDirection == Style::GridTrackSizingDirection::Rows
+        ? GridArea { m_stackingAxisSpan, gridAxisSpan }
+        : GridArea { gridAxisSpan, m_stackingAxisSpan };
 }
 } // end namespace WebCore

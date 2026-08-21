@@ -89,7 +89,7 @@ public:
     void setNeedsItemsPlacement(bool);
     bool needsItemsPlacement() const { return m_needsItemsPlacement; };
 
-    void setupGridForMasonryLayout();
+    void setupForGridLanesLayout();
     unsigned maxRows() const { return m_maxRows; }
     unsigned maxColumns() const { return m_maxColumns; }
 private:

@@ -39,43 +39,43 @@ enum class GridTrackSizingDirection : bool;
 
 class RenderGrid;
 
-class GridMasonryLayout {
+class GridLanesLayout {
 public:
-    GridMasonryLayout(RenderGrid& renderGrid)
+    GridLanesLayout(RenderGrid& renderGrid)
         : m_renderGrid(renderGrid)
     {
     }
 
-    enum class MasonryLayoutPhase : uint8_t {
+    enum class Phase : uint8_t {
         LayoutPhase,
         MinContentPhase,
         MaxContentPhase
     };
 
-    void initializeMasonry(unsigned gridAxisTracks, Style::GridTrackSizingDirection masonryAxisDirection);
-    void performMasonryPlacement(const GridTrackSizingAlgorithm&, unsigned gridAxisTracks, Style::GridTrackSizingDirection masonryAxisDirection, GridMasonryLayout::MasonryLayoutPhase);
+    void initializeGridLanes(unsigned gridAxisTracks, Style::GridTrackSizingDirection stackingAxisDirection);
+    void performGridLanesPlacement(const GridTrackSizingAlgorithm&, unsigned gridAxisTracks, Style::GridTrackSizingDirection stackingAxisDirection, Phase);
     LayoutUnit NODELETE offsetForGridItem(const RenderBox&) const;
     LayoutUnit gridContentSize() const { return m_gridContentSize; };
-    LayoutUnit gridGap() const { return m_masonryAxisGridGap; };
+    LayoutUnit gridGap() const { return m_stackingAxisGridGap; };
 
 private:
     GridArea gridAreaForIndefiniteGridAxisItem(const RenderBox& item);
     GridArea gridAreaForDefiniteGridAxisItem(const RenderBox&) const;
 
-    void placeMasonryItems(const GridTrackSizingAlgorithm&, GridMasonryLayout::MasonryLayoutPhase);
+    void placeGridLanesItems(const GridTrackSizingAlgorithm&, Phase);
     void setItemContainingBlockToGridArea(const GridTrackSizingAlgorithm&, RenderBox&);
-    void insertIntoGridAndLayoutItem(const GridTrackSizingAlgorithm&, RenderBox&, const GridArea&, GridMasonryLayout::MasonryLayoutPhase);
-    LayoutUnit calculateMasonryIntrinsicLogicalWidth(RenderBox&, GridMasonryLayout::MasonryLayoutPhase);
+    void insertIntoGridAndLayoutItem(const GridTrackSizingAlgorithm&, RenderBox&, const GridArea&, Phase);
+    LayoutUnit calculateGridLanesIntrinsicLogicalWidth(RenderBox&, Phase);
 
     void resizeAndResetRunningPositions();
-    LayoutUnit masonryAxisMarginBoxForItem(const RenderBox& gridItem);
+    LayoutUnit stackingAxisMarginBoxForItem(const RenderBox& gridItem);
     void updateRunningPositions(const RenderBox& gridItem, const GridArea&);
     void updateItemOffset(const RenderBox& gridItem, LayoutUnit offset);
     LayoutUnit maxRunningPositionForSpan(unsigned startLine, unsigned spanLength) const;
     inline Style::GridTrackSizingDirection NODELETE gridAxisDirection() const;
 
-    bool hasDefiniteGridAxisPosition(const RenderBox& gridItem, Style::GridTrackSizingDirection masonryDirection) const;
-    GridArea NODELETE masonryGridAreaFromGridAxisSpan(const GridSpan&) const;
+    bool hasDefiniteGridAxisPosition(const RenderBox& gridItem, Style::GridTrackSizingDirection gridAxisDirection) const;
+    GridArea NODELETE gridAreaFromGridAxisSpan(const GridSpan&) const;
     GridSpan NODELETE gridAxisSpanFromArea(const GridArea&) const;
 
     unsigned m_gridAxisTracksCount;
@@ -83,11 +83,11 @@ private:
     Vector<LayoutUnit> m_runningPositions;
     HashMap<SingleThreadWeakRef<const RenderBox>, LayoutUnit> m_itemOffsets;
     const CheckedRef<RenderGrid> m_renderGrid;
-    LayoutUnit m_masonryAxisGridGap;
+    LayoutUnit m_stackingAxisGridGap;
     LayoutUnit m_gridContentSize;
 
-    Style::GridTrackSizingDirection m_masonryAxisDirection;
-    const GridSpan m_masonryAxisSpan = GridSpan::masonryAxisTranslatedDefiniteGridSpan();
+    Style::GridTrackSizingDirection m_stackingAxisDirection;
+    const GridSpan m_stackingAxisSpan = GridSpan::stackingAxisTranslatedDefiniteGridSpan();
 
     unsigned m_autoFlowNextCursor;
 };

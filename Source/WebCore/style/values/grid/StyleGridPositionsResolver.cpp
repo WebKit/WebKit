@@ -285,9 +285,9 @@ NamedLineCollection::NamedLineCollection(const RenderGrid& initialGrid, const Cu
             auto* currentAncestorSubgridParent = downcast<RenderGrid>(currentAncestorSubgrid.parent());
             auto& currentAncestorStyle = currentAncestorSubgrid.style();
 
-            // auto-placed subgrids inside a masonry grid do not inherit any line names
-            if ((currentAncestorSubgridParent->areMasonryRows() && (currentAncestorStyle.gridItemColumnStart().isAuto() || currentAncestorStyle.gridItemColumnStart().isSpan()))
-                || (currentAncestorSubgridParent->areMasonryColumns() && (currentAncestorStyle.gridItemRowStart().isAuto() || currentAncestorStyle.gridItemRowStart().isSpan())))
+            // auto-placed subgrids inside a grid lanes container do not inherit any line names
+            if ((currentAncestorSubgridParent->hasStackingAxisRows() && (currentAncestorStyle.gridItemColumnStart().isAuto() || currentAncestorStyle.gridItemColumnStart().isSpan()))
+                || (currentAncestorSubgridParent->hasStackingAxisColumns() && (currentAncestorStyle.gridItemRowStart().isAuto() || currentAncestorStyle.gridItemRowStart().isSpan())))
                 return;
             // Translate our explicit grid set of lines into the coordinate space of the
             // parent grid, adjusting direction/side as needed.

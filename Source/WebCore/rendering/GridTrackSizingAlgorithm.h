@@ -166,14 +166,14 @@ private:
     using SpanLength = unsigned;
 
     void setup(Style::GridTrackSizingDirection, unsigned numTracks, SizingOperation, std::optional<LayoutUnit> availableSpace);
-    struct MasonryMinMaxTrackSize {
+    struct GridLanesMinMaxTrackSize {
         LayoutUnit minContentSize;
         LayoutUnit maxContentSize;
         LayoutUnit minSize;
     };
 
-    struct MasonryMinMaxTrackSizeWithGridSpan {
-        MasonryMinMaxTrackSize trackSize;
+    struct GridLanesMinMaxTrackSizeWithGridSpan {
+        GridLanesMinMaxTrackSize trackSize;
         GridSpan gridSpan;
     };
 
@@ -186,7 +186,7 @@ private:
 
     // Helper methods for step 2. resolveIntrinsicTrackSizes().
     void sizeTrackToFitNonSpanningItem(const GridSpan&, RenderBox& gridItem, GridTrack&, RenderGridLayoutState&);
-    void sizeTrackToFitSingleSpanMasonryGroup(const GridSpan&, MasonryMinMaxTrackSize&, GridTrack&);
+    void sizeTrackToFitSingleSpanGridLanesGroup(const GridSpan&, GridLanesMinMaxTrackSize&, GridTrack&);
 
     bool NODELETE spanningItemCrossesFlexibleSizedTracks(const GridSpan&) const;
 
@@ -209,7 +209,7 @@ private:
     // 2. Distribute space to intrinsic tracks
     // This step behaves similar to increaseSizesToAccommodateSpanningItems() where we start at the lowest span length and distribute space to the tracks.
     // Then look at the next smallest span length, and repeat step 2 until we exhaust all grid items.
-    template <TrackSizeComputationVariant variant> void increaseSizesToAccommodateSpanningItemsMasonry(StdMap<SpanLength, Vector<MasonryMinMaxTrackSizeWithGridSpan>>&);
+    template <TrackSizeComputationVariant variant> void increaseSizesToAccommodateSpanningItemsGridLanes(StdMap<SpanLength, Vector<GridLanesMinMaxTrackSizeWithGridSpan>>&);
 
     // 12.5 Resolve Intrinsic Track Sizing : Step 4
     // https://drafts.csswg.org/css-grid-2/#algo-spanning-items
@@ -225,12 +225,12 @@ private:
     //
     // 2. Distribute space to intrinsic tracks
     // This step behaves similar to increaseSizesToAccommodateSpanningItems() where we consider all track items at once instead of per span length.
-    template <TrackSizeComputationVariant variant> void increaseSizesToAccommodateSpanningItemsMasonryWithFlex(Vector<MasonryMinMaxTrackSizeWithGridSpan>&);
+    template <TrackSizeComputationVariant variant> void increaseSizesToAccommodateSpanningItemsGridLanesWithFlex(Vector<GridLanesMinMaxTrackSizeWithGridSpan>&);
 
-    void convertIndefiniteItemsToDefiniteMasonry(const StdMap<SpanLength, MasonryMinMaxTrackSize>& gridTrackSpans, StdMap<SpanLength, Vector<MasonryMinMaxTrackSizeWithGridSpan>>&, Vector<MasonryMinMaxTrackSizeWithGridSpan>&);
+    void convertIndefiniteItemsToDefiniteGridLanes(const StdMap<SpanLength, GridLanesMinMaxTrackSize>& gridTrackSpans, StdMap<SpanLength, Vector<GridLanesMinMaxTrackSizeWithGridSpan>>&, Vector<GridLanesMinMaxTrackSizeWithGridSpan>&);
 
     LayoutUnit itemSizeForTrackSizeComputationPhase(TrackSizeComputationPhase, RenderBox&, RenderGridLayoutState&) const;
-    LayoutUnit NODELETE itemSizeForTrackSizeComputationPhaseMasonry(TrackSizeComputationPhase, const MasonryMinMaxTrackSize&) const;
+    LayoutUnit NODELETE itemSizeForTrackSizeComputationPhaseGridLanes(TrackSizeComputationPhase, const GridLanesMinMaxTrackSize&) const;
 
     template <TrackSizeComputationVariant variant, TrackSizeComputationPhase phase> void distributeSpaceToTracks(Vector<CheckedRef<GridTrack>>& tracks, Vector<CheckedRef<GridTrack>>* growBeyondGrowthLimitsTracks, LayoutUnit& freeSpace) const;
 
@@ -253,7 +253,7 @@ private:
 
     // Build up a map of min/max sizes for each span length for use during resolving intrinsic track sizes.
     // We also need to keep track of definite items separately, since they do not contribute to every track like indefinite items do.
-    void computeDefiniteAndIndefiniteItemsForMasonry(StdMap<SpanLength, MasonryMinMaxTrackSize>&, StdMap<SpanLength, Vector<MasonryMinMaxTrackSizeWithGridSpan>>&, Vector<MasonryMinMaxTrackSizeWithGridSpan>&, RenderGridLayoutState&);
+    void computeDefiniteAndIndefiniteItemsForGridLanes(StdMap<SpanLength, GridLanesMinMaxTrackSize>&, StdMap<SpanLength, Vector<GridLanesMinMaxTrackSizeWithGridSpan>>&, Vector<GridLanesMinMaxTrackSizeWithGridSpan>&, RenderGridLayoutState&);
 
     // Track sizing algorithm steps. Note that the "Maximize Tracks" step is done
     // entirely inside the strategies, that's why we don't need an additional
@@ -261,15 +261,15 @@ private:
     void initializeTrackSizes();
     void resolveIntrinsicTrackSizes(RenderGridLayoutState&);
 
-    // Masonry Implementation of https://drafts.csswg.org/css-grid-2/#algo-content.
-    // To implement Masonry performanently, we need to abandon the traditional Grid approach of treating
+    // Grid lanes implementation of https://drafts.csswg.org/css-grid-2/#algo-content.
+    // To implement grid lanes layout performanently, we need to abandon the traditional Grid approach of treating
     // each item individually and start grouping items based on their span. A grid item has 3 major values we care about
     // the minContentSize, maxContentSize, and minSize. These values can be aggregated together and then the max will be chosen.
     // The main three scenarios we need to focus on are items that only span 1 track, items that span multiple tracks without crossing a flex track,
     // and items that span multiple tracks with crossing a flex track.
     //
     // Further details on the optimization can be found at https://fantasai.inkedblade.net/style/specs/masonry/performance.
-    void resolveIntrinsicTrackSizesMasonry(RenderGridLayoutState&);
+    void resolveIntrinsicTrackSizesGridLanes(RenderGridLayoutState&);
     void stretchFlexibleTracks(std::optional<LayoutUnit> freeSpace, RenderGridLayoutState&);
     void stretchAutoTracks();
 
@@ -287,7 +287,7 @@ private:
     void advanceNextState();
     bool NODELETE isValidTransition() const;
 
-    bool isDirectionInMasonryDirection() const;
+    bool isDirectionInStackingAxis() const;
 
     // Data.
     bool wasSetup() const { return !!m_strategy; }
