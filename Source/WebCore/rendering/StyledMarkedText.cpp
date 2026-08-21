@@ -30,6 +30,7 @@
 #include "ElementRuleCollector.h"
 #include "IntSize.h"
 #include "LocalFrameView.h"
+#include "LocalFrameViewInlines.h"
 #include "RenderElement.h"
 #include "RenderObjectDocument.h"
 #include "RenderText.h"

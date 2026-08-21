@@ -29,6 +29,7 @@
 #include "InlineIteratorBox.h"
 #include "InlineIteratorLineBox.h"
 #include "InlineIteratorLineBoxInlines.h"
+#include "LocalFrameViewInlines.h"
 #include "RenderBoxModelObjectInlines.h"
 #include "RenderMultiColumnFlow.h"
 #include "RenderObjectDocument.h"

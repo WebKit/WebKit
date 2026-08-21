@@ -314,7 +314,7 @@ rendering/MarkedText.cpp
 rendering/RenderBlock.cpp
 rendering/RenderBox.cpp
 rendering/RenderElement.cpp
-rendering/RenderEmbeddedObject.cpp
+[ macOS ] rendering/RenderEmbeddedObject.cpp
 rendering/RenderFragmentContainer.cpp
 rendering/RenderFrameSet.cpp
 rendering/RenderGeometryMap.cpp

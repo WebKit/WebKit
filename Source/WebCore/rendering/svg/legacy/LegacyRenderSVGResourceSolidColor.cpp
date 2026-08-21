@@ -23,6 +23,7 @@
 #include "GraphicsContext.h"
 #include "LocalFrame.h"
 #include "LocalFrameView.h"
+#include "LocalFrameViewInlines.h"
 #include "RenderElement.h"
 #include "RenderObjectDocument.h"
 #include "RenderView.h"

@@ -33,6 +33,7 @@
 #include "InlineIteratorBoxInlines.h"
 #include "InlineIteratorLineBox.h"
 #include "LocalFrameView.h"
+#include "LocalFrameViewInlines.h"
 #include "PaintInfo.h"
 #include "PaintInfoInlines.h"
 #include "RenderBlockFlow.h"

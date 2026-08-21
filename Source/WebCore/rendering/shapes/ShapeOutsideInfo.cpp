@@ -31,7 +31,9 @@
 #include "ShapeOutsideInfo.h"
 
 #include "BoxLayoutShape.h"
+#include "DocumentPage.h"
 #include "FloatingObjects.h"
+#include "LocalFrameViewInlines.h"
 #include "NullGraphicsContext.h"
 #include "RenderBlockFlowInlines.h"
 #include "RenderBoxInlines.h"

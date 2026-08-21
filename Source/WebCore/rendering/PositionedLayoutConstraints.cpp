@@ -30,6 +30,7 @@
 #include "ContainerNodeInlines.h"
 #include "InlineIteratorBoxInlines.h"
 #include "InlineIteratorInlineBox.h"
+#include "LocalFrameViewInlines.h"
 #include "RenderElementInlines.h"
 #include "RenderGrid.h"
 #include "RenderInline.h"

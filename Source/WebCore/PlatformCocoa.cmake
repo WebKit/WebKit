@@ -1029,7 +1029,6 @@ list(REMOVE_ITEM WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     page/DOMSelection.h
     page/GetComposedRangesOptions.h
-    page/LocalFrameViewInlines.h
     page/NavigationNavigationType.h
     page/NavigatorLoginStatus.h
     page/NavigatorUAData.h

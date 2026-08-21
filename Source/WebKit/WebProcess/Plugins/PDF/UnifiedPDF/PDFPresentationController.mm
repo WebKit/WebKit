@@ -36,6 +36,7 @@
 #include <WebCore/GraphicsLayer.h>
 #include <WebCore/GraphicsLayerFactory.h>
 #include <WebCore/LocalFrameView.h>
+#include <WebCore/LocalFrameViewInlines.h>
 #include <WebCore/Path.h>
 #include <WebCore/PathSegment.h>
 #include <WebCore/PathSegmentData.h>

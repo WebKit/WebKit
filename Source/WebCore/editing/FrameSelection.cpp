@@ -68,6 +68,7 @@
 #include "LocalFrame.h"
 #include "LocalFrameInlines.h"
 #include "LocalFrameView.h"
+#include "LocalFrameViewInlines.h"
 #include "Logging.h"
 #include "MutableStyleProperties.h"
 #include "OpacityCaretAnimator.h"

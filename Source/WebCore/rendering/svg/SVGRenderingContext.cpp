@@ -27,6 +27,7 @@
 #include "config.h"
 #include "SVGRenderingContext.h"
 
+#include "DocumentPage.h"
 #include "LegacyRenderSVGImage.h"
 #include "LegacyRenderSVGResourceClipper.h"
 #include "LegacyRenderSVGResourceFilter.h"
@@ -34,6 +35,7 @@
 #include "LegacyRenderSVGRoot.h"
 #include "LocalFrame.h"
 #include "LocalFrameView.h"
+#include "LocalFrameViewInlines.h"
 #include "PathOperation.h"
 #include "RenderElementInlines.h"
 #include "RenderLayer.h"

@@ -37,6 +37,7 @@
 #include "ImageOverlay.h"
 #include "LocalFrameInlines.h"
 #include "LocalFrameView.h"
+#include "LocalFrameViewInlines.h"
 #include "Page.h"
 #include "RenderImage.h"
 #include "RenderObjectDocument.h"

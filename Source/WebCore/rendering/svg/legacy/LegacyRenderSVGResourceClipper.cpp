@@ -33,6 +33,7 @@
 #include "LegacyRenderSVGShape.h"
 #include "LocalFrame.h"
 #include "LocalFrameView.h"
+#include "LocalFrameViewInlines.h"
 #include "Logging.h"
 #include "RenderObjectDocument.h"
 #include "RenderSVGText.h"

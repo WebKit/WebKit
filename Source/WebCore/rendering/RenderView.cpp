@@ -835,11 +835,6 @@ float RenderView::pageZoomFactor() const
     return frameView().frame().pageZoomFactor();
 }
 
-LocalFrameView& RenderView::frameView() const
-{
-    return m_frameView.get();
-}
-
 FloatSize RenderView::sizeForCSSSmallViewportUnits() const
 {
     return frameView().sizeForCSSSmallViewportUnits();

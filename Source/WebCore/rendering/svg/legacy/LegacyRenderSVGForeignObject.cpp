@@ -26,6 +26,7 @@
 #include "HitTestResult.h"
 #include "LayoutRepainter.h"
 #include "LegacyRenderSVGResource.h"
+#include "LocalFrameViewInlines.h"
 #include "RenderBoxInlines.h"
 #include "RenderBoxModelObjectInlines.h"
 #include "RenderSVGBlockInlines.h"

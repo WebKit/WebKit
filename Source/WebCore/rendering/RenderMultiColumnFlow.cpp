@@ -28,6 +28,7 @@
 #include "RenderMultiColumnFlow.h"
 
 #include "HitTestResult.h"
+#include "LocalFrameViewInlines.h"
 #include "RenderBoxInlines.h"
 #include "RenderBoxModelObjectInlines.h"
 #include "RenderIterator.h"

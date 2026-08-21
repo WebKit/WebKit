@@ -26,6 +26,7 @@
 #include "config.h"
 #include "RenderScrollbarPart.h"
 
+#include "LocalFrameViewInlines.h"
 #include "PaintInfo.h"
 #include "RenderBoxInlines.h"
 #include "RenderBoxModelObjectInlines.h"

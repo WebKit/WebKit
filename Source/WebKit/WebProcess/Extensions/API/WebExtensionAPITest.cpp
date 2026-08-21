@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2026 Apple Inc. All rights reserved.
  * Copyright (C) 2025 Igalia, S.L. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -41,6 +41,7 @@
 #include <JavaScriptCore/APICast.h>
 #include <JavaScriptCore/ScriptCallStack.h>
 #include <JavaScriptCore/ScriptCallStackFactory.h>
+#include <WebCore/DocumentPage.h>
 #include <WebCore/LocalFrameInlines.h>
 
 namespace WebKit {

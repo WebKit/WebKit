@@ -1387,6 +1387,7 @@
 		3AD4AB8A2C3CABCD00A3E7F3 /* OwnerPermissionsPolicyData.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AD4AB892C3CABCD00A3E7F3 /* OwnerPermissionsPolicyData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3AD4AB8C2C3CADF700A3E7F3 /* Allowlist.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AD4AB8B2C3CADF700A3E7F3 /* Allowlist.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3ADA87B52AC4ECDB00A75301 /* ArchiveError.h in Headers */ = {isa = PBXBuildFile; fileRef = 3ADA87B42AC4ECDA00A75301 /* ArchiveError.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		3AE082FA302C58C1007F51A3 /* LocalFrameViewInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B46C0542DC4B821002E22C4 /* LocalFrameViewInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3AFF5D282F1AC7DD0003108B /* DocumentSecurityPolicy.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AFF5D272F1AC7DD0003108B /* DocumentSecurityPolicy.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3BB6B81122A7D313003A2A69 /* TabSize.h in Headers */ = {isa = PBXBuildFile; fileRef = 3BB6B80F22A7D311003A2A69 /* TabSize.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3C244FEAA375AC633F88BE6F /* RenderLayerModelObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C244FE4A375AC633F88BE6F /* RenderLayerModelObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -47442,6 +47443,8 @@
 				9B46C0502DC4AB14002E22C4 /* LocalFrameInlines.h in Headers */,
 				656D373E0ADBA5DE00A4554D /* LocalFrameLoaderClient.h in Headers */,
 				65CBFEFA0974F607001DAC25 /* LocalFrameView.h in Headers */,
+				3AE082FA302C58C1007F51A3 /* LocalFrameViewInlines.h in Headers */,
+				3AE082FA302C58C1007F51A3 /* LocalFrameViewInlines.h in Headers */,
 				113D0B521F9FDD2B00F611BB /* LocalFrameViewLayoutContext.h in Headers */,
 				E35B907F23F60A50000011FF /* LocalizedDeviceModel.h in Headers */,
 				935207BE09BD410A00F2038D /* LocalizedStrings.h in Headers */,
