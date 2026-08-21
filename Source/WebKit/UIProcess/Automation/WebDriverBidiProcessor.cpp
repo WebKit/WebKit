@@ -203,6 +203,8 @@ static String toBidiErrorCode(int errorCode, const String& inspectorInternalMsg)
         return "no such script"_s;
     case Inspector::Protocol::Automation::ErrorMessage::NoSuchHistoryEntry:
         return "no such history entry"_s;
+    case Inspector::Protocol::Automation::ErrorMessage::NoSuchHandle:
+        return "no such handle"_s;
     default:
         return "unknown error"_s;
     }
