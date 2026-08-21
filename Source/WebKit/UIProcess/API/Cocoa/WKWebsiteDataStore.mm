@@ -1523,18 +1523,18 @@ struct WKWebsiteData {
 
 + (void)_setDisabledSecurityFlagsForTesting:(NSArray<NSString *> *)flagNames
 {
-#if defined(ENGINEERING_BUILD) && ENGINEERING_BUILD
+#if ENABLE(DEVELOPER_MODE)
     WebKit::SecurityFlagsController::singleton().setDisabledFlagsNamedForTesting(makeVector<String>(flagNames));
-#endif // ENGINEERING_BUILD
+#endif
 }
 
 - (void)_isSecurityFlagEnabledInNetworkProcessForTesting:(NSString *)flagName completionHandler:(void(^)(NSNumber *))completionHandler
 {
-#if defined(ENGINEERING_BUILD) && ENGINEERING_BUILD
+#if ENABLE(DEVELOPER_MODE)
     protect(protect(*_websiteDataStore)->networkProcess())->isSecurityFlagEnabledForTesting(flagName, [completionHandlerCopy = makeBlockPtr(completionHandler)] (std::optional<bool> enabled) {
         completionHandlerCopy(enabled ? [NSNumber numberWithBool:*enabled] : nil);
     });
-#endif // ENGINEERING_BUILD
+#endif
 }
 
 + (void)_setWebPushActionHandler:(WKWebsiteDataStore *(^)(_WKWebPushAction *))handler

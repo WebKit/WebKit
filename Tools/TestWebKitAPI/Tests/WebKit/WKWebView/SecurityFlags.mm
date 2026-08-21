@@ -31,7 +31,7 @@
 #import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <wtf/RetainPtr.h>
 
-#if defined(ENGINEERING_BUILD) && ENGINEERING_BUILD
+#if ENABLE(DEVELOPER_MODE)
 
 static NSString * const testSecurityFlagName = @"radar184485266";
 
@@ -143,4 +143,4 @@ TEST_F(SecurityFlagsUserDefaultTest, TestingSPIIgnoresTheUserDefault)
 
 } // namespace TestWebKitAPI
 
-#endif // ENGINEERING_BUILD
+#endif // ENABLE(DEVELOPER_MODE)

@@ -225,9 +225,6 @@ set(CMAKE_LINK_DEPENDS_NO_SHARED ON)
 
 set(USE_ANGLE_EGL ON)
 
-# FIXME: CMake is not used for Production at this moment. https://bugs.webkit.org/show_bug.cgi?id=322112
-SET_AND_EXPOSE_TO_BUILD(ENGINEERING_BUILD ON)
-
 function(WEBKIT_ADD_SDK_IMPORTED_LIBRARY _target _library)
     if (NOT TARGET ${_target})
         add_library(${_target} UNKNOWN IMPORTED)

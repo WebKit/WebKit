@@ -1067,7 +1067,7 @@ void Options::initializeWithOptionsCustomization(const ScopedLambda<void()>& opt
             RELEASE_ASSERT(OptionsHelper::addressOfOption(gcMaxHeapSizeID) ==  &Options::gcMaxHeapSize());
             RELEASE_ASSERT(OptionsHelper::addressOfOption(forceOSRExitToLLIntID) ==  &Options::forceOSRExitToLLInt());
 
-#if defined(ENGINEERING_BUILD) && ENGINEERING_BUILD
+#if ENABLE(DEVELOPER_MODE)
             Config::enableRestrictedOptions();
 #endif
 

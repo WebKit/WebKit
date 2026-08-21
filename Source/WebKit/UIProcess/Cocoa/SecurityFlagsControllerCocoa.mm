@@ -32,7 +32,7 @@
 
 namespace WebKit {
 
-#if defined(ENGINEERING_BUILD) && ENGINEERING_BUILD
+#if ENABLE(DEVELOPER_MODE)
 
 static NSString * const disabledSecurityFlagsDefaultsKey = @"WebKitDebugDisabledSecurityFlags";
 
@@ -66,6 +66,6 @@ Vector<String> SecurityFlagsController::platformPersistentlyDisabledFlagNames()
     return { };
 }
 
-#endif // ENGINEERING_BUILD
+#endif // ENABLE(DEVELOPER_MODE)
 
 } // namespace WebKit
