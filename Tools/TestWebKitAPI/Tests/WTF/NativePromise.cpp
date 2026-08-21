@@ -35,9 +35,12 @@
 
 #include "Helpers/Test.h"
 #include "Helpers/Utilities.h"
+#include <memory>
 #include <wtf/Atomics.h>
+#include <wtf/CoroutineUtilities.h>
 #include <wtf/Lock.h>
 #include <wtf/Locker.h>
+#include <wtf/NativePromiseCoroutine.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCountedFixedVector.h>
 #include <wtf/RefPtr.h>
@@ -1878,6 +1881,199 @@ TEST(NativePromise, TakePhotoExample)
                 EXPECT_TRUE(false); // Got an unexpected error.
             queue->beginShutdown();
         });
+    });
+}
+
+// MARK: - Coroutine (co_await) support
+
+using CoTestPromise = NativePromise<int, double>; // Exclusive.
+using CoTestPromiseNonExcl = NativePromise<int, double, PromiseOption::Default | PromiseOption::NonExclusive>;
+using CoMoveOnlyPromise = NativePromise<std::unique_ptr<int>, double>;
+
+// Awaits `promise` via `co_await promise` (resuming on the main thread), runs `check` on the
+// settled Result, then sets `done`.
+template<typename PromiseType, typename CheckFunction>
+static Task coAwaitOnMain(Ref<PromiseType> promise, CheckFunction check, bool& done)
+{
+    auto result = co_await promise;
+    EXPECT_TRUE(WorkQueue::mainSingleton().isCurrent());
+    check(result);
+    done = true;
+}
+
+// Awaits `promise` on `queue` via awaitOn(), runs `check` on the settled Result, then shuts
+// the queue down.
+template<typename PromiseType, typename CheckFunction>
+static Task coAwaitOnQueue(Ref<WorkQueueWithShutdown> queue, Ref<PromiseType> promise, CheckFunction check)
+{
+    auto result = co_await promise->awaitOn(queue.get());
+    assertIsCurrent(queue.get());
+    check(result);
+    queue->beginShutdown();
+}
+
+// co_await two promises in sequence, proving linear composition, resuming on main each time.
+static Task coAwaitChainOnMain(Ref<CoTestPromise> first, Ref<CoTestPromise> second, bool& done)
+{
+    auto firstResult = co_await first;
+    EXPECT_TRUE(WorkQueue::mainSingleton().isCurrent());
+    EXPECT_TRUE(firstResult.has_value());
+    EXPECT_EQ(firstResult.value(), 1);
+
+    auto secondResult = co_await second;
+    EXPECT_TRUE(WorkQueue::mainSingleton().isCurrent());
+    EXPECT_TRUE(secondResult.has_value());
+    EXPECT_EQ(secondResult.value(), 2);
+    done = true;
+}
+
+// A coroutine whose return type is Awaitable<Result>: it forwards the awaited promise's
+// settled Result (resolution or rejection) as its own return value. This is how failure is
+// propagated across a coroutine boundary, since co_await does not short-circuit on rejection.
+static Awaitable<CoTestPromise::Result> coForwardResult(Ref<CoTestPromise> promise)
+{
+    co_return co_await promise;
+}
+
+// Consumes coForwardResult(), proving a rejection is carried through as the returned Result.
+static Task coAwaitForwardedRejection(bool& done)
+{
+    auto result = co_await coForwardResult(CoTestPromise::createAndReject(42.0));
+    EXPECT_TRUE(WorkQueue::mainSingleton().isCurrent());
+    EXPECT_FALSE(result.has_value());
+    EXPECT_EQ(result.error(), 42.0);
+    done = true;
+}
+
+// Fast path: the promise is already settled before the co_await.
+TEST(NativePromise, CoAwaitAlreadyResolvedOnMainThread)
+{
+    runInCurrentRunLoopUntilDone([](RunLoop&, bool& done) {
+        coAwaitOnMain(CoTestPromise::createAndResolve(42), [](auto& result) {
+            EXPECT_TRUE(result.has_value());
+            EXPECT_EQ(result.value(), 42);
+        }, done);
+    });
+}
+
+TEST(NativePromise, CoAwaitAlreadyRejectedOnMainThread)
+{
+    runInCurrentRunLoopUntilDone([](RunLoop&, bool& done) {
+        coAwaitOnMain(CoTestPromise::createAndReject(42.0), [](auto& result) {
+            EXPECT_FALSE(result.has_value());
+            EXPECT_EQ(result.error(), 42.0);
+        }, done);
+    });
+}
+
+// Primary path: the promise is pending at the co_await and settled later.
+TEST(NativePromise, CoAwaitPendingResolveOnMainThread)
+{
+    runInCurrentRunLoopUntilDone([](RunLoop&, bool& done) {
+        CoTestPromise::Producer producer;
+        coAwaitOnMain(producer.promise(), [](auto& result) {
+            EXPECT_TRUE(result.has_value());
+            EXPECT_EQ(result.value(), 42);
+        }, done);
+        producer.resolve(42); // The coroutine has suspended; resume happens on the next run loop cycle.
+    });
+}
+
+TEST(NativePromise, CoAwaitPendingRejectOnMainThread)
+{
+    runInCurrentRunLoopUntilDone([](RunLoop&, bool& done) {
+        CoTestPromise::Producer producer;
+        coAwaitOnMain(producer.promise(), [](auto& result) {
+            EXPECT_FALSE(result.has_value());
+            EXPECT_EQ(result.error(), 42.0);
+        }, done);
+        producer.reject(42.0);
+    });
+}
+
+// Explicit dispatcher: co_await promise->awaitOn(queue), already-settled promise.
+TEST(NativePromise, CoAwaitResolvedOnWorkQueue)
+{
+    AutoWorkQueue awq;
+    auto queue = awq.queue();
+    queue->dispatch([queue] {
+        coAwaitOnQueue(queue, CoTestPromiseNonExcl::createAndResolve(42), [](auto& result) {
+            EXPECT_TRUE(result.has_value());
+            EXPECT_EQ(result.value(), 42);
+        });
+    });
+}
+
+// Explicit dispatcher, pending promise settled later from the same queue.
+TEST(NativePromise, CoAwaitPendingOnWorkQueue)
+{
+    AutoWorkQueue awq;
+    auto queue = awq.queue();
+    queue->dispatch([queue] {
+        RefPtr producer = adoptRef(new RefCountedProducer());
+        auto promise = producer->promise();
+        Ref delayedSettleTask = adoptRef(*new DelayedSettle(queue, producer, TestPromise::Result(42), 10));
+        delayedSettleTask->dispatch();
+        coAwaitOnQueue(queue, WTF::move(promise), [](auto& result) {
+            EXPECT_TRUE(result.has_value());
+            EXPECT_EQ(result.value(), 42);
+        });
+    });
+}
+
+// Sync-resume guard: an already-settled RunSynchronouslyOnTarget promise resumes the
+// coroutine without suspending (exercises the bool await_suspend synchronous path).
+TEST(NativePromise, CoAwaitAlreadySettledRunSynchronously)
+{
+    runInCurrentRunLoop([](RunLoop&) {
+        CoTestPromise::Producer producer(PromiseDispatchMode::RunSynchronouslyOnTarget);
+        producer.resolve(42);
+        bool done = false;
+        coAwaitOnMain(producer.promise(), [](auto& result) {
+            EXPECT_TRUE(result.has_value());
+            EXPECT_EQ(result.value(), 42);
+        }, done);
+        EXPECT_TRUE(done); // Resumed synchronously, no run loop cycle required.
+    });
+}
+
+// Several sequential co_awaits, mixing a pre-settled and a pending promise.
+TEST(NativePromise, CoAwaitChainedOnMainThread)
+{
+    runInCurrentRunLoopUntilDone([](RunLoop&, bool& done) {
+        CoTestPromise::Producer secondProducer;
+        coAwaitChainOnMain(CoTestPromise::createAndResolve(1), secondProducer.promise(), done);
+        secondProducer.resolve(2);
+    });
+}
+
+// Non-exclusive promise consumed via co_await (result is copied, not moved).
+TEST(NativePromise, CoAwaitNonExclusiveOnMainThread)
+{
+    runInCurrentRunLoopUntilDone([](RunLoop&, bool& done) {
+        coAwaitOnMain(CoTestPromiseNonExcl::createAndResolve(7), [](auto& result) {
+            EXPECT_TRUE(result.has_value());
+            EXPECT_EQ(result.value(), 7);
+        }, done);
+    });
+}
+
+// Exclusive promise with a move-only resolve type, proving move semantics on co_await.
+TEST(NativePromise, CoAwaitMoveOnlyResultOnMainThread)
+{
+    runInCurrentRunLoopUntilDone([](RunLoop&, bool& done) {
+        coAwaitOnMain(CoMoveOnlyPromise::createAndResolve(makeUniqueWithoutFastMallocCheck<int>(99)), [](auto& result) {
+            EXPECT_TRUE(result.has_value());
+            EXPECT_EQ(*result.value(), 99);
+        }, done);
+    });
+}
+
+// A rejection propagates through a coroutine that returns Awaitable<Result> and co_returns it.
+TEST(NativePromise, CoAwaitForwardRejectionThroughAwaitable)
+{
+    runInCurrentRunLoopUntilDone([](RunLoop&, bool& done) {
+        coAwaitForwardedRejection(done);
     });
 }
 

@@ -44,6 +44,7 @@
 #include <WebCore/MediaSampleConverter.h>
 #include <WebCore/ShareableBitmapHandle.h>
 #include <WebCore/SharedTimebase.h>
+#include <wtf/CoroutineUtilities.h>
 #include <wtf/Forward.h>
 #include <wtf/Logger.h>
 #include <wtf/MediaTime.h>
@@ -102,9 +103,9 @@ private:
 
     void newTrackInfoForTrack(RemoteAudioVideoRendererIdentifier, TrackIdentifier, Ref<WebCore::TrackInfo>&&);
     void enqueueSample(RemoteAudioVideoRendererIdentifier, TrackIdentifier, WebCore::MediaSamplesBlock&&, std::optional<MediaTime>, CompletionHandler<void(bool)>&&);
-    void requestMediaDataWhenReady(RemoteAudioVideoRendererIdentifier, TrackIdentifier);
+    Awaitable<void> requestMediaDataWhenReady(RemoteAudioVideoRendererIdentifier, TrackIdentifier);
 
-    void notifyTimeReachedAndStall(RemoteAudioVideoRendererIdentifier, const MediaTime&, CompletionHandler<void(WebCore::MediaTimePromise::Result&&)>&&);
+    Awaitable<WebCore::MediaTimePromise::Result> notifyTimeReachedAndStall(RemoteAudioVideoRendererIdentifier, MediaTime);
     void cancelTimeReachedAction(RemoteAudioVideoRendererIdentifier);
     void performTaskAtTime(RemoteAudioVideoRendererIdentifier, const MediaTime&);
 
@@ -121,8 +122,8 @@ private:
     void pause(RemoteAudioVideoRendererIdentifier, std::optional<MonotonicTime>);
     void setRate(RemoteAudioVideoRendererIdentifier, double);
     void stall(RemoteAudioVideoRendererIdentifier);
-    void prepareToSeek(RemoteAudioVideoRendererIdentifier, const MediaTime&, CompletionHandler<void(WebCore::MediaTimePromise::Result&&)>&&);
-    void finishSeek(RemoteAudioVideoRendererIdentifier, const MediaTime&, CompletionHandler<void(GenericPromise::Result&&)>&&);
+    Awaitable<WebCore::MediaTimePromise::Result> prepareToSeek(RemoteAudioVideoRendererIdentifier, MediaTime);
+    Awaitable<GenericPromise::Result> finishSeek(RemoteAudioVideoRendererIdentifier, MediaTime);
     void setScreenReserved(RemoteAudioVideoRendererIdentifier, bool);
 
     // AudioInterface
@@ -147,7 +148,7 @@ private:
     void setVideoPlaybackMetricsUpdateInterval(RemoteAudioVideoRendererIdentifier, double);
     void flushAndRemoveImage(RemoteAudioVideoRendererIdentifier);
     void currentVideoFrame(RemoteAudioVideoRendererIdentifier, CompletionHandler<void(std::optional<RemoteVideoFrameProxy::Properties>)>&&) const;
-    void currentBitmapImage(RemoteAudioVideoRendererIdentifier, CompletionHandler<void(std::optional<WebCore::ShareableBitmap::Handle>&&)>&&) const;
+    Awaitable<std::optional<WebCore::ShareableBitmap::Handle>> currentBitmapImage(RemoteAudioVideoRendererIdentifier) const;
 
     // VideoFullscreenInterface
 #if ENABLE(VIDEO_PRESENTATION_MODE)

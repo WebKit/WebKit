@@ -36,7 +36,7 @@ messages -> NetworkRTCProvider {
     StopResolver(WebKit::LibWebRTCResolverIdentifier identifier)
 
 #if PLATFORM(COCOA)
-    GetInterfaceName(URL url, WebKit::WebPageProxyIdentifier pageIdentifier, struct WebKit::RTCSocketCreationFlags flags, WebCore::RegistrableDomain domain) -> (String interfaceName) async
+    GetInterfaceName(URL url, WebKit::WebPageProxyIdentifier pageIdentifier, struct WebKit::RTCSocketCreationFlags flags, WebCore::RegistrableDomain domain) -> (String interfaceName)
 #endif
 
     SendToSocket(WebCore::LibWebRTCSocketIdentifier identifier, std::span<const uint8_t> data, WebKit::WebRTCNetwork::SocketAddress address, struct WebKit::RTCPacketOptions options)

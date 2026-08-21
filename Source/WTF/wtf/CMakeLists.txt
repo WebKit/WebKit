@@ -204,6 +204,7 @@ set(WTF_PUBLIC_HEADERS
     module.modulemap
     NakedPtr.h
     NativePromise.h
+    NativePromiseCoroutine.h
     NaturalLoops.h
     NeverDestroyed.h
     NoLock.h
