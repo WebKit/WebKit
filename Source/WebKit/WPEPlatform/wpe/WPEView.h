@@ -139,6 +139,9 @@ WPE_API void                  wpe_view_buffer_released              (WPEView    
                                                                      WPEBuffer          *buffer);
 WPE_API void                  wpe_view_event                        (WPEView            *view,
                                                                      WPEEvent           *event);
+WPE_API void                  wpe_view_event_processed              (WPEView            *view,
+                                                                     WPEEvent           *event,
+                                                                     gboolean            handled);
 WPE_API guint                 wpe_view_compute_press_count          (WPEView            *view,
                                                                      gdouble             x,
                                                                      gdouble             y,

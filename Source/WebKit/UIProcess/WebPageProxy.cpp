@@ -5169,11 +5169,16 @@ void WebPageProxy::wheelEventHandlingCompleted(bool wasHandled)
     else
         LOG_WITH_STREAM(WheelEvents, stream << "WebPageProxy::wheelEventHandlingCompleted - no event, handled " << wasHandled);
 
-    if (oldestProcessedEvent && !wasHandled) {
+    if (oldestProcessedEvent) {
         Ref event = *oldestProcessedEvent;
-        m_uiClient->didNotHandleWheelEvent(this, event.get());
-        if (RefPtr pageClient = m_pageClient.get())
-            pageClient->wheelEventWasNotHandledByWebCore(event.get());
+        RefPtr pageClient = m_pageClient.get();
+        if (!wasHandled) {
+            m_uiClient->didNotHandleWheelEvent(this, event.get());
+            if (pageClient)
+                pageClient->wheelEventWasNotHandledByWebCore(event.get());
+        }
+        if (pageClient)
+            pageClient->doneWithWheelEvent(event.get(), wasHandled);
     }
 
     if (RefPtr eventToSend = wheelEventCoalescer().nextEventToDispatch()) {
