@@ -30,6 +30,7 @@
 #include "ImageBitmap.h"
 #include "ImageBuffer.h"
 #include "InspectorInstrumentation.h"
+#include "NativeImage.h"
 #include "OffscreenCanvas.h"
 #include <wtf/TZoneMallocInlines.h>
 
@@ -90,6 +91,7 @@ ExceptionOr<void> ImageBitmapRenderingContext::transferFromImageBitmap(RefPtr<Im
         m_buffer = nullptr;
         updateMemoryCost(0);
     }
+    m_bufferNativeImage = nullptr;
     canvasBase->didDraw(FloatRect { { }, canvasBase->size() });
     return { };
 }
@@ -101,6 +103,7 @@ RefPtr<ImageBuffer> ImageBitmapRenderingContext::transferToImageBuffer()
     if (!m_buffer)
         return ImageBuffer::create(size, RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, 1, DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
     RefPtr result = std::exchange(m_buffer, { });
+    m_bufferNativeImage = nullptr;
     updateMemoryCost(0);
     canvasBase->setOriginClean();
     canvasBase->didDraw(FloatRect { { }, size });
@@ -117,6 +120,20 @@ RefPtr<ImageBuffer> ImageBitmapRenderingContext::surfaceBufferToImageBuffer(Surf
         }
     }
     return m_buffer;
+}
+
+RefPtr<NativeImage> ImageBitmapRenderingContext::surfaceBufferToNativeImage(SurfaceBuffer sourceBuffer)
+{
+    if (m_bufferNativeImage)
+        return m_bufferNativeImage;
+    RefPtr buffer = surfaceBufferToImageBuffer(sourceBuffer);
+    if (!buffer)
+        return nullptr;
+    // The copy is what GraphicsContext::drawImageBuffer would make for each individual draw of a
+    // deferred context. It is cached here, as it stays valid until the next bitmap is transferred
+    // in, and the buffer might be transferred out to a context that draws to it.
+    m_bufferNativeImage = buffer->copyNativeImage();
+    return m_bufferNativeImage;
 }
 
 }

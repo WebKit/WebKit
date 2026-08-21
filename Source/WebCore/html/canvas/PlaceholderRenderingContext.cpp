@@ -32,6 +32,7 @@
 #include "GraphicsLayer.h"
 #include "GraphicsLayerContentsDisplayDelegate.h"
 #include "HTMLCanvasElement.h"
+#include "NativeImage.h"
 #include "OffscreenCanvas.h"
 #include <wtf/TZoneMallocInlines.h>
 
@@ -116,6 +117,8 @@ PlaceholderRenderingContext::PlaceholderRenderingContext(HTMLCanvasElement& canv
 {
 }
 
+PlaceholderRenderingContext::~PlaceholderRenderingContext() = default;
+
 HTMLCanvasElement& PlaceholderRenderingContext::canvas() const
 {
     return downcast<HTMLCanvasElement>(canvasBase());
@@ -137,6 +140,7 @@ void PlaceholderRenderingContext::setPlaceholderBuffer(Ref<ImageBuffer>&& newBuf
     IntSize newSize = newBuffer->truncatedLogicalSize();
     updateMemoryCost(newBuffer->memoryCost());
     m_buffer = WTF::move(newBuffer);
+    m_bufferNativeImage = nullptr;
     Ref canvas = this->canvas();
     canvas->setSizeForControllingContext(newSize);
     if (originClean)
@@ -156,6 +160,19 @@ PixelFormat PlaceholderRenderingContext::pixelFormat() const
 RefPtr<ImageBuffer> PlaceholderRenderingContext::surfaceBufferToImageBuffer(SurfaceBuffer)
 {
     return m_buffer;
+}
+
+RefPtr<NativeImage> PlaceholderRenderingContext::surfaceBufferToNativeImage(SurfaceBuffer)
+{
+    if (m_bufferNativeImage)
+        return m_bufferNativeImage;
+    RefPtr buffer = m_buffer;
+    if (!buffer)
+        return nullptr;
+    // The copy is what GraphicsContext::drawImageBuffer would make for each individual draw of a
+    // deferred context. It is cached here, as it stays valid until the next placeholder buffer.
+    m_bufferNativeImage = buffer->copyNativeImage();
+    return m_bufferNativeImage;
 }
 
 bool PlaceholderRenderingContext::isSurfaceBufferTransparentBlack(SurfaceBuffer) const

@@ -499,8 +499,10 @@ private:
     FloatRect inflatedStrokeRect(const FloatRect&) const;
 
     template<class T> void fullCanvasCompositedDrawImage(T&, const FloatRect&, const FloatRect&, CompositeOperator);
+    template<class T> bool drawSourceImage(T&, const FloatRect& dstRect, const FloatRect& srcRect);
 
     RefPtr<ImageBuffer> surfaceBufferToImageBuffer(SurfaceBuffer) final;
+    RefPtr<NativeImage> surfaceBufferToNativeImage(SurfaceBuffer) final;
     bool isSurfaceBufferTransparentBlack(SurfaceBuffer) const override;
 #if USE(SKIA)
     RefPtr<GraphicsLayerContentsDisplayDelegate> layerContentsDisplayDelegate() override;
@@ -520,6 +522,7 @@ private:
 
     static constexpr unsigned MaxSaveCount = 1024 * 16;
     mutable RefPtr<ImageBuffer> m_buffer;
+    RefPtr<NativeImage> m_bufferNativeImage;
 
     // When layers are opened, m_stateStack contains target switchers where the top
     // targetSwitcher on the stack draws to the targetSwitcher under it, ... until

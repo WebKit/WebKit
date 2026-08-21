@@ -48,6 +48,7 @@ class GraphicsContext;
 class Image;
 class ImageBuffer;
 class IntRect;
+class NativeImage;
 class ScriptExecutionContext;
 class SecurityOrigin;
 class WebCoreOpaqueRoot;
@@ -75,6 +76,11 @@ public:
     virtual void setSizeForControllingContext(IntSize) = 0;
 
     WEBCORE_EXPORT RefPtr<ImageBuffer> makeRenderingResultsAvailable(ShouldApplyPostProcessingToDirtyRect = ShouldApplyPostProcessingToDirtyRect::Yes);
+
+    // Returns the rendering results as an image, for contexts that can produce one without an
+    // intermediate ImageBuffer. Returns nullptr if the caller must use
+    // makeRenderingResultsAvailable() instead.
+    WEBCORE_EXPORT RefPtr<NativeImage> copyNativeImage() const;
 
     void setOriginClean() { m_originClean = true; }
     void setOriginTainted() { m_originClean = false; }

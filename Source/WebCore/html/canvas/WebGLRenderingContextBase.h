@@ -101,6 +101,7 @@ class HTMLImageElement;
 class ImageData;
 class IntSize;
 class KHRParallelShaderCompile;
+class NativeImage;
 class NVShaderNoperspectiveInterpolation;
 class OESDrawBuffersIndexed;
 class OESElementIndexUint;
@@ -444,6 +445,7 @@ public:
     void didUpdateCanvasSizeProperties(bool) override;
 
     RefPtr<ImageBuffer> surfaceBufferToImageBuffer(SurfaceBuffer) final;
+    RefPtr<NativeImage> surfaceBufferToNativeImage(SurfaceBuffer) final;
     bool isSurfaceBufferTransparentBlack(SurfaceBuffer) const final { return false; }
 
     RefPtr<ByteArrayPixelBuffer> drawingBufferToPixelBuffer();
@@ -724,8 +726,21 @@ protected:
 
     bool m_compositingResultsNeedUpdating { false };
     bool m_memoryCostUpdateScheduled { false };
-    RefPtr<ImageBuffer> m_readDrawingBuffer;
-    RefPtr<ImageBuffer> m_readDisplayBuffer;
+
+    // Temporary holder for both ImageBuffer and NativeImage requests.
+    // Once ImageBuffer requests have been removed, this will be reverted to RefPtr<NativeImage>.
+    struct ReadSurfaceBuffer {
+        RefPtr<NativeImage> image;
+        RefPtr<ImageBuffer> buffer;
+
+        bool isEmpty() const { return !image && !buffer; }
+        void clear();
+        size_t memoryCost() const;
+    };
+    ReadSurfaceBuffer& readSurfaceBuffer(SurfaceBuffer);
+
+    ReadSurfaceBuffer m_readDrawingBuffer;
+    ReadSurfaceBuffer m_readDisplayBuffer;
 
     // Enabled extension objects.
     // FIXME: Move some of these to WebGLRenderingContext, the ones not needed for WebGL2

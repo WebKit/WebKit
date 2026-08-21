@@ -65,6 +65,7 @@ public:
     std::optional<FramesPerSecond> preferredRenderingUpdateFramesPerSecond() const override;
 
     RefPtr<ImageBuffer> surfaceBufferToImageBuffer(SurfaceBuffer) override;
+    RefPtr<NativeImage> surfaceBufferToNativeImage(SurfaceBuffer) override;
     bool isSurfaceBufferTransparentBlack(SurfaceBuffer) const final { return false; }
 
     // GPUCanvasContext methods:
@@ -139,7 +140,8 @@ private:
     bool m_suppressEDR { false };
 #endif // HAVE(SUPPORT_HDR_DISPLAY)
     bool m_compositingResultsNeedsUpdating { false };
-    RefPtr<ImageBuffer> m_readDisplayBuffer;
+    RefPtr<ImageBuffer> m_readDisplayBuffer; // Temporary until content is provided as NativeImage.
+    RefPtr<NativeImage> m_readDisplayBufferImage;
 };
 
 } // namespace WebCore

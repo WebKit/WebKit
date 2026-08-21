@@ -66,6 +66,8 @@ class PlaceholderRenderingContext final : public CanvasRenderingContext {
 public:
     static std::unique_ptr<PlaceholderRenderingContext> create(HTMLCanvasElement&);
 
+    ~PlaceholderRenderingContext();
+
     HTMLCanvasElement& NODELETE canvas() const;
     IntSize NODELETE size() const;
     void setPlaceholderBuffer(Ref<ImageBuffer>&&, bool originClean, bool opaque);
@@ -73,6 +75,7 @@ public:
     PlaceholderRenderingContextSource& source() const { return m_source; }
 
     RefPtr<ImageBuffer> surfaceBufferToImageBuffer(SurfaceBuffer) final;
+    RefPtr<NativeImage> surfaceBufferToNativeImage(SurfaceBuffer) final;
     bool isSurfaceBufferTransparentBlack(SurfaceBuffer) const final;
     void didUpdateCanvasSizeProperties(bool) final;
 
@@ -83,7 +86,8 @@ private:
     bool isOpaque() const final { return m_opaque; }
 
     const Ref<PlaceholderRenderingContextSource> m_source;
-    RefPtr<ImageBuffer> m_buffer;
+    RefPtr<ImageBuffer> m_buffer; // Temporary until content is provided as NativeImage.
+    RefPtr<NativeImage> m_bufferNativeImage;
     bool m_opaque { false };
 };
 

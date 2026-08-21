@@ -68,6 +68,7 @@
 #include "ImageBuffer.h"
 #include "ImageData.h"
 #include "InspectorInstrumentation.h"
+#include "NativeImage.h"
 #include "OffscreenCanvas.h"
 #include "PaintRenderingContext2D.h"
 #include "Path2D.h"
@@ -290,6 +291,17 @@ RefPtr<ImageBuffer> CanvasRenderingContext2DBase::surfaceBufferToImageBuffer(Sur
     return buffer();
 }
 
+RefPtr<NativeImage> CanvasRenderingContext2DBase::surfaceBufferToNativeImage(SurfaceBuffer)
+{
+    if (m_bufferNativeImage)
+        return m_bufferNativeImage;
+    RefPtr buffer = this->buffer();
+    if (!buffer)
+        return nullptr;
+    m_bufferNativeImage = buffer->copyNativeImage();
+    return m_bufferNativeImage;
+}
+
 bool CanvasRenderingContext2DBase::isSurfaceBufferTransparentBlack(SurfaceBuffer) const
 {
     // Before the first draw (or first access to the drawing buffer), the drawing buffer is transparent black.
@@ -337,6 +349,7 @@ void CanvasRenderingContext2DBase::didUpdateCanvasSizeProperties(bool sizeChange
         restore();
     m_stateStack.first() = State();
     m_path.clear();
+    m_bufferNativeImage = nullptr;
     m_cachedContents.emplace<CachedContentsTransparent>();
     m_hasDeferredOperations = false;
     clearAccumulatedDirtyRect();
@@ -1840,8 +1853,7 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(CanvasBase& sourceCanv
 
     auto targetSwitcher = CanvasFilterContextSwitcher::create(*this, normalizedDstRect);
 
-    GraphicsContext* c = effectiveDrawingContext();
-    if (!c)
+    if (!effectiveDrawingContext())
         return { };
     if (!hasInvertibleTransform()) [[unlikely]]
         return { };
@@ -1849,31 +1861,14 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(CanvasBase& sourceCanv
     Ref protectedCanvas { sourceCanvas };
     checkOrigin(&sourceCanvas);
 
-    RefPtr buffer = sourceCanvas.makeRenderingResultsAvailable(ShouldApplyPostProcessingToDirtyRect::No);
-    if (!buffer)
+    // The contents are obtained as an immutable image, so no intermediate ImageBuffer is needed.
+    // This also makes drawing the canvas to itself work, as the image stays valid after the canvas
+    // is cleared.
+    RefPtr image = sourceCanvas.copyNativeImage();
+    if (!image)
         return { };
 
-    bool repaintEntireCanvas = false;
-    if (rectContainsCanvas(normalizedDstRect)) {
-        c->drawImageBuffer(*buffer, normalizedDstRect, normalizedSrcRect, { state().globalComposite, state().globalBlend });
-        repaintEntireCanvas = true;
-    } else if (isFullCanvasCompositeMode(state().globalComposite)) {
-        fullCanvasCompositedDrawImage(*buffer, normalizedDstRect, normalizedSrcRect, state().globalComposite);
-        repaintEntireCanvas = true;
-    } else if (state().globalComposite == CompositeOperator::Copy) {
-        if (&sourceCanvas == &canvasBase()) {
-            if (auto copy = createCompatibleImageBuffer(*c, normalizedSrcRect.size())) {
-                copy->context().drawImageBuffer(*buffer, -normalizedSrcRect.location());
-                clearCanvas();
-                c->drawImageBuffer(*copy, normalizedDstRect, { { }, normalizedSrcRect.size() }, { state().globalComposite, state().globalBlend });
-            }
-        } else {
-            clearCanvas();
-            c->drawImageBuffer(*buffer, normalizedDstRect, normalizedSrcRect, { state().globalComposite, state().globalBlend });
-        }
-        repaintEntireCanvas = true;
-    } else
-        c->drawImageBuffer(*buffer, normalizedDstRect, normalizedSrcRect, { state().globalComposite, state().globalBlend });
+    bool repaintEntireCanvas = drawSourceImage(*image, normalizedDstRect, normalizedSrcRect);
 
     auto shouldUseDrawOptionsWithoutPostProcessing = sourceCanvas.renderingContext() && sourceCanvas.renderingContext()->is2d() && !sourceCanvas.havePendingCanvasNoiseInjection();
     didDraw(repaintEntireCanvas, targetSwitcher ? targetSwitcher->expandedBounds() : normalizedDstRect, shouldUseDrawOptionsWithoutPostProcessing ? defaultDidDrawOptionsWithoutPostProcessing() : defaultDidDrawOptions());
@@ -2006,6 +2001,7 @@ ExceptionOr<Ref<DOMMatrix>> CanvasRenderingContext2DBase::drawElementImage(Canva
 
 void CanvasRenderingContext2DBase::clearCanvas()
 {
+    m_bufferNativeImage = nullptr;
     auto* c = effectiveDrawingContext();
     if (!c)
         return;
@@ -2080,6 +2076,37 @@ static void drawImageToContext(Image& image, GraphicsContext& context, const Flo
 static void drawImageToContext(ImageBuffer& imageBuffer, GraphicsContext& context, const FloatRect& dest, const FloatRect& src, ImagePaintingOptions options)
 {
     context.drawImageBuffer(imageBuffer, dest, src, options);
+}
+
+static void drawImageToContext(NativeImage& image, GraphicsContext& context, const FloatRect& dest, const FloatRect& src, ImagePaintingOptions options)
+{
+    context.drawNativeImage(image, dest, src, options);
+}
+
+// Draws the source to the canvas, obeying the compositing rules of the canvas 2D context.
+// Returns true if the whole canvas was repainted.
+template<class T> bool CanvasRenderingContext2DBase::drawSourceImage(T& source, const FloatRect& dstRect, const FloatRect& srcRect)
+{
+    auto* c = effectiveDrawingContext();
+    if (!c)
+        return false;
+
+    ImagePaintingOptions options { state().globalComposite, state().globalBlend };
+    if (rectContainsCanvas(dstRect)) {
+        drawImageToContext(source, *c, dstRect, srcRect, options);
+        return true;
+    }
+    if (isFullCanvasCompositeMode(state().globalComposite)) {
+        fullCanvasCompositedDrawImage(source, dstRect, srcRect, state().globalComposite);
+        return true;
+    }
+    if (state().globalComposite == CompositeOperator::Copy) {
+        clearCanvas();
+        drawImageToContext(source, *c, dstRect, srcRect, options);
+        return true;
+    }
+    drawImageToContext(source, *c, dstRect, srcRect, options);
+    return false;
 }
 
 template<class T> void CanvasRenderingContext2DBase::fullCanvasCompositedDrawImage(T& image, const FloatRect& dest, const FloatRect& src, CompositeOperator op)
@@ -2391,6 +2418,7 @@ void CanvasRenderingContext2DBase::didDrawEntireCanvas(OptionSet<DidDrawOption> 
 
 void CanvasRenderingContext2DBase::didDraw(std::optional<FloatRect> rect, OptionSet<DidDrawOption> options)
 {
+    m_bufferNativeImage = nullptr;
     if (!options.contains(DidDrawOption::PreserveCachedContents))
         m_cachedContents.emplace<CachedContentsUnknown>();
 
