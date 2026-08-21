@@ -1899,6 +1899,11 @@ void VM::reconcileWeakReferencesAtGCEnd()
     m_syncResumeCallCache->reconcileWeakReferencesAtGCEnd(*this);
 }
 
+void VM::clearMicrotaskCallCaches()
+{
+    m_syncResumeCallCache->clear();
+}
+
 template<typename Visitor>
 void VM::visitAggregateImpl(Visitor& visitor)
 {

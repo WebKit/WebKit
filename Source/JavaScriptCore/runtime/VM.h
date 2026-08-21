@@ -936,6 +936,7 @@ public:
 
     const UniqueRef<MicrotaskCallCache> m_syncResumeCallCache;
     MicrotaskCallCache& syncResumeCallCache() { return m_syncResumeCallCache.get(); }
+    void clearMicrotaskCallCaches();
 
     enum class StructureChainIntegrityEvent : uint8_t {
         Add,

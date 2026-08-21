@@ -73,16 +73,20 @@ void MicrotaskCall::unlinkOrUpgradeImpl(VM&, CodeBlock* oldCodeBlock, CodeBlock*
     m_addressForCall = nullptr;
 }
 
+void MicrotaskCall::clear()
+{
+    if (isOnList())
+        remove();
+    m_addressForCall = nullptr;
+    m_codeBlock = nullptr;
+    m_functionExecutable = nullptr;
+    m_numParameters = 0;
+}
+
 void MicrotaskCall::reconcileWeakReferencesAtGCEnd(VM& vm)
 {
-    if ((m_functionExecutable && !vm.heap.isMarked(m_functionExecutable)) || (m_codeBlock && !vm.heap.isMarked(m_codeBlock))) {
-        if (isOnList())
-            remove();
-        m_addressForCall = nullptr;
-        m_codeBlock = nullptr;
-        m_functionExecutable = nullptr;
-        m_numParameters = 0;
-    }
+    if ((m_functionExecutable && !vm.heap.isMarked(m_functionExecutable)) || (m_codeBlock && !vm.heap.isMarked(m_codeBlock)))
+        clear();
 }
 
 } // namespace JSC
