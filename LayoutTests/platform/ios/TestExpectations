@@ -10027,3 +10027,5 @@ http/tests/resourceLoadStatistics/website-data-removal-for-site-navigated-to-wit
 
 # rdar://175824217 (New Test (312034@main): imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-plus-filter-2.html is a constant IMAGE failure on iOS 26 and later.)
 imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-plus-filter-2.html [ ImageOnlyFailure ]
+
+webkit.org/b/322305 fast/visual-viewport/ios/interactive-widget/resizes-content-orientation-rotations.html [ Failure ]
