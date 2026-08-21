@@ -70,6 +70,7 @@ enum class GPUVertexFormat : uint8_t {
     Sint32x2,
     Sint32x3,
     Sint32x4,
+    Snorm1010102,
     Unorm1010102,
     Unorm8x4Bgra,
 };
@@ -155,6 +156,8 @@ inline WebGPU::VertexFormat convertToBacking(GPUVertexFormat vertexFormat)
         return WebGPU::VertexFormat::Sint32x3;
     case GPUVertexFormat::Sint32x4:
         return WebGPU::VertexFormat::Sint32x4;
+    case GPUVertexFormat::Snorm1010102:
+        return WebGPU::VertexFormat::Snorm1010102;
     case GPUVertexFormat::Unorm1010102:
         return WebGPU::VertexFormat::Unorm1010102;
     case GPUVertexFormat::Unorm8x4Bgra:

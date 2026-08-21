@@ -167,6 +167,8 @@ static MTLVertexFormat toMetal(WebCore::WebGPU::VertexFormat format)
         return MTLVertexFormatInt3;
     case WebCore::WebGPU::VertexFormat::Sint32x4:
         return MTLVertexFormatInt4;
+    case WebCore::WebGPU::VertexFormat::Snorm1010102:
+        return MTLVertexFormatInt1010102Normalized;
     case WebCore::WebGPU::VertexFormat::Unorm1010102:
         return MTLVertexFormatUInt1010102Normalized;
     case WebCore::WebGPU::VertexFormat::Unorm8x4Bgra:

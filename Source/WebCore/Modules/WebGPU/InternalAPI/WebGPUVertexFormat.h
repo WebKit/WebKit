@@ -69,6 +69,7 @@ enum class VertexFormat : uint8_t {
     Sint32x2,
     Sint32x3,
     Sint32x4,
+    Snorm1010102,
     Unorm1010102,
     Unorm8x4Bgra,
 };

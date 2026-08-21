@@ -338,6 +338,8 @@ static MTLVertexFormat NODELETE vertexFormat(WGPUVertexFormat vertexFormat)
         return MTLVertexFormatInt3;
     case WGPUVertexFormat_Sint32x4:
         return MTLVertexFormatInt4;
+    case WGPUVertexFormat_Snorm1010102:
+        return MTLVertexFormatInt1010102Normalized;
     case WGPUVertexFormat_Unorm1010102:
         return MTLVertexFormatUInt1010102Normalized;
     case WGPUVertexFormat_Unorm8x4Bgra:
@@ -430,6 +432,7 @@ static size_t NODELETE vertexFormatSize(WGPUVertexFormat vertexFormat)
         return 12;
     case WGPUVertexFormat_Sint32x4:
         return 16;
+    case WGPUVertexFormat_Snorm1010102:
     case WGPUVertexFormat_Unorm1010102:
         return 4;
     case WGPUVertexFormat_Unorm8x4Bgra:
@@ -540,6 +543,8 @@ static ASCIILiteral name(WGPUVertexFormat format)
         return "Int3"_s;
     case WGPUVertexFormat_Sint32x4:
         return "Int4"_s;
+    case WGPUVertexFormat_Snorm1010102:
+        return "SInt1010102Normalized"_s;
     case WGPUVertexFormat_Unorm1010102:
         return "UInt1010102Normalized"_s;
     case WGPUVertexFormat_Unorm8x4Bgra:
@@ -604,6 +609,7 @@ static constexpr WGPUVertexFormatType NODELETE formatType(WGPUVertexFormat forma
     case WGPUVertexFormat_Float32x2:
     case WGPUVertexFormat_Float32x3:
     case WGPUVertexFormat_Float32x4:
+    case WGPUVertexFormat_Snorm1010102:
     case WGPUVertexFormat_Unorm1010102:
     case WGPUVertexFormat_Unorm8x4Bgra:
         return WGPUVertexFormatType::Float;

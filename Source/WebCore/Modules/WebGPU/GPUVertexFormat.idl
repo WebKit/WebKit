@@ -67,6 +67,7 @@
     "sint32x2",
     "sint32x3",
     "sint32x4",
+    "snorm10-10-10-2",
     "unorm10-10-10-2",
     "unorm8x4-bgra",
 };

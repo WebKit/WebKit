@@ -25,4 +25,7 @@ PASS :wgsl_matches_api:feature="subgroup_uniformity"
 PASS :wgsl_matches_api:feature="swizzle_assignment"
 PASS :wgsl_matches_api:feature="linear_indexing"
 PASS :wgsl_matches_api:feature="texture_formats_tier1"
+PASS :wgsl_matches_api:feature="immediate_address_space"
+PASS :wgsl_matches_api:feature="fragment_depth"
+PASS :wgsl_matches_api:feature="buffer_view"
 

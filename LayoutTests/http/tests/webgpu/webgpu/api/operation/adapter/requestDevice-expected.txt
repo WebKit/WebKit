@@ -65,6 +65,9 @@ PASS :features,known:feature="texture-formats-tier1"
 PASS :features,known:feature="texture-formats-tier2"
 PASS :features,known:feature="primitive-index"
 PASS :features,known:feature="texture-component-swizzle"
+PASS :features,known:feature="subgroup-size-control"
+PASS :features,known:feature="atomic-vec2u-min-max"
+PASS :features,known:feature="texture-compression-unaligned"
 FAIL :limits,unknown: assert_unreached:
   - EXCEPTION: TypeError: Value NaN is outside the range [0, 9007199254740991]
     requestDevice@[native code]

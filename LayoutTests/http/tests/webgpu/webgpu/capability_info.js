@@ -77,6 +77,10 @@ export const kAllBufferUsageBits = kBufferUsages.reduce(
   0
 );
 
+/** An arbitrary invalid buffer usage bit. */
+export const kSomeBogusBufferUsage = 0x4000_0000;
+assert((kSomeBogusBufferUsage & kAllBufferUsageBits) === 0);
+
 // Errors
 
 /** Per-GPUErrorFilter info. */
@@ -225,7 +229,7 @@ const kTextureUsageInfo =
 /** List of all GPUTextureUsage values. */
 export const kTextureUsages = numericKeysOf(kTextureUsageInfo);
 /** Bitmask of all known texture usages. */
-const kAllTextureUsages = kTextureUsages.reduce((acc, usage) => acc | usage, 0);
+export const kAllTextureUsages = kTextureUsages.reduce((acc, usage) => acc | usage, 0);
 
 /** An arbitrary invalid texture usage bit. */
 export const kSomeBogusTextureUsage = 0x4000_0000;
@@ -366,7 +370,8 @@ makeTable(
     'sint32x4': [4, 'sint', 4, 16, 'vec4<i32>'],
     // 32 bit packed
     'unorm10-10-10-2': ['packed', 'unorm', 4, 4, 'vec4<f32>'],
-    'unorm8x4-bgra': ['packed', 'unorm', 4, 4, 'vec4<f32>']
+    'unorm8x4-bgra': ['packed', 'unorm', 4, 4, 'vec4<f32>'],
+    'snorm10-10-10-2': ['packed', 'snorm', 4, 4, 'vec4<f32>']
   });
 /** List of all GPUVertexFormat values. */
 export const kVertexFormats = keysOf(kVertexFormatInfo);
@@ -965,7 +970,10 @@ export const kFeatureNameInfo =
   'texture-formats-tier1': {},
   'texture-formats-tier2': {},
   'primitive-index': {},
-  'texture-component-swizzle': {}
+  'texture-component-swizzle': {},
+  'subgroup-size-control': {},
+  ['atomic-vec2u-min-max']: {},
+  ['texture-compression-unaligned']: {}
 };
 /** List of all GPUFeatureName values. */
 export const kFeatureNames = keysOf(kFeatureNameInfo);
@@ -982,4 +990,7 @@ export const kKnownWGSLLanguageFeatures = [
 'subgroup_uniformity',
 'swizzle_assignment',
 'linear_indexing',
-'texture_formats_tier1'];
+'texture_formats_tier1',
+'immediate_address_space',
+'fragment_depth',
+'buffer_view'];

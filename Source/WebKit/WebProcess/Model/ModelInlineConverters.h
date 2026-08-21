@@ -152,6 +152,8 @@ static WebCore::WebGPU::VertexFormat toVertexFormat(MTLVertexFormat format)
         return WebCore::WebGPU::VertexFormat::Sint32x3;
     case MTLVertexFormatInt4:
         return WebCore::WebGPU::VertexFormat::Sint32x4;
+    case MTLVertexFormatInt1010102Normalized:
+        return WebCore::WebGPU::VertexFormat::Snorm1010102;
     case MTLVertexFormatUInt1010102Normalized:
         return WebCore::WebGPU::VertexFormat::Unorm1010102;
     case MTLVertexFormatUChar4Normalized_BGRA:

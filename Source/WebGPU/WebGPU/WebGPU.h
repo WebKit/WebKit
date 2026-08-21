@@ -717,6 +717,7 @@ typedef enum WGPUVertexFormat {
     WGPUVertexFormat_Sint32x2,
     WGPUVertexFormat_Sint32x3,
     WGPUVertexFormat_Sint32x4,
+    WGPUVertexFormat_Snorm1010102,
     WGPUVertexFormat_Unorm1010102,
     WGPUVertexFormat_Unorm8x4Bgra,
     WGPUVertexFormat_Force32 = 0x7FFFFFFF

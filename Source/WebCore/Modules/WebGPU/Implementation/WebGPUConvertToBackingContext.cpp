@@ -734,6 +734,8 @@ WGPUVertexFormat ConvertToBackingContext::convertToBacking(VertexFormat vertexFo
         return WGPUVertexFormat_Sint32x3;
     case VertexFormat::Sint32x4:
         return WGPUVertexFormat_Sint32x4;
+    case VertexFormat::Snorm1010102:
+        return WGPUVertexFormat_Snorm1010102;
     case VertexFormat::Unorm1010102:
         return WGPUVertexFormat_Unorm1010102;
     case VertexFormat::Unorm8x4Bgra:
