@@ -2874,26 +2874,34 @@ static inline bool NODELETE isSpaceThatNeedsReplacing(char16_t c)
     // http://www.whatwg.org/specs/web-apps/current-work/multipage/common-microsyntaxes.html#space-character
     // This function returns true for 0x000B also, so that this is backward compatible.
     // Otherwise, the test LayoutTests/canvas/philip/tests/2d.text.draw.space.collapse.space.html will fail
-    return c == 0x0009 || c == 0x000A || c == 0x000B || c == 0x000C || c == 0x000D;
+    return c >= 0x0009 && c <= 0x000D;
+}
+
+template<typename CharacterType>
+static inline String createStringByNormalizingSpaces(std::span<const CharacterType> characters, size_t indexOfFirstSpace)
+{
+    ASSERT(indexOfFirstSpace < characters.size());
+
+    std::span<CharacterType> normalized;
+    auto result = String::createUninitialized(characters.size(), normalized);
+
+    memcpySpan(normalized, characters.first(indexOfFirstSpace));
+    for (size_t i = indexOfFirstSpace; i != characters.size(); ++i) {
+        auto character = characters[i];
+        normalized[i] = isSpaceThatNeedsReplacing(character) ? ' ' : character;
+    }
+    return result;
 }
 
 String CanvasRenderingContext2DBase::normalizeSpaces(const String& text)
 {
-    size_t i = text.find(isSpaceThatNeedsReplacing);
-    if (i == notFound)
+    size_t indexOfFirstSpace = text.find(isSpaceThatNeedsReplacing);
+    if (indexOfFirstSpace == notFound)
         return text;
 
-    unsigned textLength = text.length();
-    Vector<char16_t> charVector(textLength);
-    StringView(text).getCharacters(charVector.mutableSpan());
-
-    charVector[i++] = ' ';
-
-    for (; i < textLength; ++i) {
-        if (isSpaceThatNeedsReplacing(charVector[i]))
-            charVector[i] = ' ';
-    }
-    return String::adopt(WTF::move(charVector));
+    if (text.is8Bit())
+        return createStringByNormalizingSpaces(text.span8(), indexOfFirstSpace);
+    return createStringByNormalizingSpaces(text.span16(), indexOfFirstSpace);
 }
 
 static bool canUseCachedShapedText(const TextRun& textRun)
