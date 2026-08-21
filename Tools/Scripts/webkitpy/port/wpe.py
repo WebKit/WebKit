@@ -46,6 +46,7 @@ class WPEPort(GLibPort):
     port_name = "wpe"
     webdriver_name = "WPEWebDriver"
     supports_localhost_aliases = True
+    _wpe_legacy_api = False
 
     def __init__(self, *args, **kwargs):
         super(WPEPort, self).__init__(*args, **kwargs)
