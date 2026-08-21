@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+<script src="../resources/cookie-utilities.js"></script>
+</head>
+<body>
+<script>
+window.jsTestIsAsync = true;
+
+description("Tests that SameSite=Strict and SameSite=Lax cookies for 127.0.0.1 are not sent with a fetch() initiated from a srcdoc iframe nested inside a cross-origin iframe. The srcdoc inherits its parent's origin, so a request from the srcdoc back to the top-level origin is cross-site and must not receive SameSite-restricted cookies.");
+
+const kCookieValue = "9";
+
+function checkCookies(cookies)
+{
+    debug("Cookies sent with cross-site fetch initiated from srcdoc iframe inside cross-origin iframe:");
+    if (cookies.error) {
+        testFailed(`fetch from srcdoc failed: ${cookies.error}`);
+        return;
+    }
+    if (cookies.strict === undefined)
+        testPassed('Do not have cookie "strict".');
+    else
+        testFailed(`Should not have cookie "strict". But do with value ${cookies.strict}.`);
+
+    if (cookies.lax === undefined)
+        testPassed('Do not have cookie "lax".');
+    else
+        testFailed(`Should not have cookie "lax". But do with value ${cookies.lax}.`);
+
+    if (cookies["implicit-default"] === kCookieValue)
+        testPassed(`Has cookie "implicit-default" with value ${kCookieValue}.`);
+    else
+        testFailed(`Should have cookie "implicit-default" with value ${kCookieValue}. Got ${cookies["implicit-default"]}.`);
+}
+
+async function runTest()
+{
+    await resetCookies();
+    await setCookie("strict", kCookieValue, {"SameSite": "Strict", "Max-Age": 100, "path": "/"});
+    await setCookie("lax", kCookieValue, {"SameSite": "Lax", "Max-Age": 100, "path": "/"});
+    await setCookie("implicit-default", kCookieValue, {"SameSite": null, "Max-Age": 100, "path": "/"});
+
+    let cookiesPromise = new Promise((resolve) => {
+        window.addEventListener("message", (event) => {
+            if (event.data && event.data.type === "cookies-from-srcdoc")
+                resolve(event.data.cookies);
+        }, {once: true});
+    });
+
+    let attackerIframe = document.createElement("iframe");
+    attackerIframe.src = "http://localhost:8000/cookies/same-site/resources/srcdoc-creator-inside-cross-origin-iframe.html";
+    document.body.appendChild(attackerIframe);
+
+    let cookies = await cookiesPromise;
+    checkCookies(cookies);
+
+    document.body.removeChild(attackerIframe);
+
+    await resetCookies();
+    finishJSTest();
+}
+runTest();
+</script>
+</body>
+</html>
