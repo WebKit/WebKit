@@ -39,8 +39,7 @@ public:
     int value() const;
     void updateValue();
 
-    WEBCORE_EXPORT String markerTextWithoutSuffix() const;
-    String NODELETE markerTextWithSuffix() const;
+    WEBCORE_EXPORT String markerText(RenderListMarker::IncludeSuffix = RenderListMarker::IncludeSuffix::Yes) const;
 
     void updateListMarkerNumbers();
 
