@@ -180,8 +180,11 @@ inline float roundevenf(float value)
 {
     float rounded = std::round(value);
     if (std::fabs(value - rounded) == 0.5f) {
-        if (std::fmod(rounded, 2.0f) != 0.0f)
-            return rounded - std::copysign(1.0f, value);
+        if (std::fmod(rounded, 2.0f) != 0.0f) {
+            // copysign is needed for the tie that rounds to zero: -0.5 lands on
+            // -1.0 - -1.0, which is +0.0, but roundeven(-0.5) is -0.0.
+            return std::copysign(rounded - std::copysign(1.0f, value), value);
+        }
     }
     return rounded;
 }
@@ -190,8 +193,11 @@ inline double roundeven(double value)
 {
     double rounded = std::round(value);
     if (std::fabs(value - rounded) == 0.5) {
-        if (std::fmod(rounded, 2.0) != 0.0)
-            return rounded - std::copysign(1.0, value);
+        if (std::fmod(rounded, 2.0) != 0.0) {
+            // copysign is needed for the tie that rounds to zero: -0.5 lands on
+            // -1.0 - -1.0, which is +0.0, but roundeven(-0.5) is -0.0.
+            return std::copysign(rounded - std::copysign(1.0, value), value);
+        }
     }
     return rounded;
 }

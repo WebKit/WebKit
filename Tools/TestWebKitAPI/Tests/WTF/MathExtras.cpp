@@ -786,4 +786,45 @@ TEST(WTF, divideRoundedUp)
     EXPECT_EQ(divideRoundedUp<size_t>(std::numeric_limits<size_t>::max() - 1, std::numeric_limits<size_t>::max()), 1U);
 }
 
+static bool isNegativeZero(float value)
+{
+    return !value && std::signbit(value);
+}
+
+static bool isNegativeZero(double value)
+{
+    return !value && std::signbit(value);
+}
+
+TEST(WTF, roundeven)
+{
+    EXPECT_EQ(roundevenf(0.5f), 0.0f);
+    EXPECT_EQ(roundevenf(1.5f), 2.0f);
+    EXPECT_EQ(roundevenf(2.5f), 2.0f);
+    EXPECT_EQ(roundevenf(3.5f), 4.0f);
+    EXPECT_EQ(roundevenf(-1.5f), -2.0f);
+    EXPECT_EQ(roundevenf(-2.5f), -2.0f);
+    EXPECT_EQ(roundevenf(-3.5f), -4.0f);
+
+    EXPECT_EQ(roundeven(0.5), 0.0);
+    EXPECT_EQ(roundeven(1.5), 2.0);
+    EXPECT_EQ(roundeven(2.5), 2.0);
+    EXPECT_EQ(roundeven(3.5), 4.0);
+    EXPECT_EQ(roundeven(-1.5), -2.0);
+    EXPECT_EQ(roundeven(-2.5), -2.0);
+    EXPECT_EQ(roundeven(-3.5), -4.0);
+
+    // A tie that rounds to zero keeps the sign of the operand. wasm's f32.nearest and
+    // f64.nearest are specified this way and the hardware instructions agree, so the
+    // polyfill used when __builtin_roundeven is unavailable must too.
+    EXPECT_TRUE(isNegativeZero(roundevenf(-0.5f)));
+    EXPECT_TRUE(isNegativeZero(roundeven(-0.5)));
+    EXPECT_TRUE(isNegativeZero(roundevenf(-0.0f)));
+    EXPECT_TRUE(isNegativeZero(roundeven(-0.0)));
+    EXPECT_TRUE(isNegativeZero(roundevenf(-0.25f)));
+    EXPECT_TRUE(isNegativeZero(roundeven(-0.25)));
+    EXPECT_FALSE(isNegativeZero(roundevenf(0.5f)));
+    EXPECT_FALSE(isNegativeZero(roundeven(0.5)));
+}
+
 } // namespace TestWebKitAPI
