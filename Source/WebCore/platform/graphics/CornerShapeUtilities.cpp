@@ -629,8 +629,8 @@ void borderContourPath(Path& path, const RectCorners<CornerInput>& cornerRects, 
             path.addLineTo(contour.miterEnd);
         };
 
-        if (outsetMiter == OutsetMiter::Yes) {
-            double curvature = cornerRects[key].curvature;
+        double curvature = cornerRects[key].curvature;
+        if (outsetMiter == OutsetMiter::Yes && std::isfinite(curvature)) {
             if (targetRect && curvature > 0.0 && curvature < 1.0) {
                 addMorphedOutsetCorner(path, cornerRects[key], deviceScaleFactor, started);
                 continue;
