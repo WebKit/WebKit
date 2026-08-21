@@ -34,11 +34,8 @@
 namespace TestWebKitAPI {
 
 class Printer : public ::testing::EmptyTestEventListener {
-    virtual void OnTestPartResult(const ::testing::TestPartResult& test_part_result)
+    static std::string descriptionFor(const ::testing::TestPartResult& test_part_result)
     {
-        if (!test_part_result.failed())
-            return;
-
         std::stringstream stream;
         stream << "\n";
         if (test_part_result.file_name())
@@ -46,20 +43,33 @@ class Printer : public ::testing::EmptyTestEventListener {
         else
             stream << "File name unavailable";
         stream << "\n" << test_part_result.summary() << "\n\n";
-        failures += stream.str();
+        return stream.str();
+    }
+
+    virtual void OnTestPartResult(const ::testing::TestPartResult& test_part_result)
+    {
+        if (test_part_result.skipped())
+            skips += descriptionFor(test_part_result);
+        else if (test_part_result.failed())
+            failures += descriptionFor(test_part_result);
     }
 
     virtual void OnTestEnd(const ::testing::TestInfo& test_info)
     {
-        if (test_info.result()->Passed())
+        const auto& result = *test_info.result();
+        if (result.Passed())
             std::cout << "**PASS** " << test_info.test_case_name() << "." << test_info.name() << "\n";
+        else if (result.Skipped())
+            std::cout << "**DISABLED** " << test_info.test_case_name() << "." << test_info.name() << "\n" << skips;
         else
             std::cout << "**FAIL** " << test_info.test_case_name() << "." << test_info.name() << "\n" << failures;
 
         failures = std::string();
+        skips = std::string();
     }
 
     std::string failures;
+    std::string skips;
 };
 
 TestsController& TestsController::singleton()
