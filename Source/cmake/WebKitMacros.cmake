@@ -1063,16 +1063,21 @@ function(_WEBKIT_COMPUTE_SWIFT_SHARED_CLANG_FLAGS _outvar)
     # -I/-isystem/-fmodule-map-file/-fvisibility are not in the hash and stay
     # per-target. Per-target target_compile_definitions are intentionally NOT
     # forwarded here; the wrapper no longer mirrors plain -D to -Xcc.
+    if (WIN32)
+        set(_dllimport_decl "__declspec(dllimport)")
+    else ()
+        set(_dllimport_decl "")
+    endif ()
     set(_flags
         -DENABLE_WEBGPU_SWIFT=1
-        -DJS_EXPORT_PRIVATE=
+        -DJS_EXPORT_PRIVATE=${_dllimport_decl}
         -DNODELETE=
-        -DPAL_EXPORT=
+        -DPAL_EXPORT=${_dllimport_decl}
         -DUCHAR_TYPE=char16_t
-        -DWEBCORE_EXPORT=
+        -DWEBCORE_EXPORT=${_dllimport_decl}
         -DWEBCORE_TESTSUPPORT_EXPORT=
         -DWK_EXPORT=
-        -DWTF_EXPORT_PRIVATE=
+        -DWTF_EXPORT_PRIVATE=${_dllimport_decl}
         -D__WEBGPU__
     )
     # iOS WebKit_Internal headers gate textual #imports behind this macro that
