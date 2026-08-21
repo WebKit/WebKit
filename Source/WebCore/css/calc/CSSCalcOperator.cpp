@@ -66,7 +66,6 @@ TextStream& operator<<(TextStream& ts, Operator op)
     case Operator::ProgressNoClamp: ts << "progress(no-clamp)"_s; break;
     case Operator::Random: ts << "random"_s; break;
     case Operator::CalcMix: ts << "calc-mix"_s; break;
-    case Operator::Blend: ts << "blend"_s; break;
     }
     return ts;
 }

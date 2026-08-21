@@ -39,7 +39,6 @@ WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(Acos);
 WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(Asin);
 WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(Atan);
 WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(Atan2);
-WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(Blend);
 WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(CalcMix);
 WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(Clamp);
 WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(Cos);
@@ -203,7 +202,10 @@ Child subtract(Child&& a, Child&& b)
 
 Child blend(Child&& from, Child&& to, double progress)
 {
-    return makeChild(Blend { .progress = progress, .from = WTF::move(from), .to = WTF::move(to) });
+    return add(
+        multiply(WTF::move(from), number(1 - progress)),
+        multiply(WTF::move(to), number(progress))
+    );
 }
 
 static size_t computeDepth(const Child& root)

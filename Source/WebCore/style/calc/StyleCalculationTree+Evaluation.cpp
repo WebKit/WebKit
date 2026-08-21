@@ -48,7 +48,6 @@ static auto evaluate(const IndirectNode<Max>&, double percentResolutionLength, c
 static auto evaluate(const IndirectNode<Hypot>&, double percentResolutionLength, const ZoomFactor&) -> double;
 static auto evaluate(const IndirectNode<Random>&, double percentResolutionLength, const ZoomFactor&) -> double;
 static auto evaluate(const IndirectNode<CalcMix>&, double percentResolutionLength, const ZoomFactor&) -> double;
-static auto evaluate(const IndirectNode<Blend>&, double percentResolutionLength, const ZoomFactor&) -> double;
 template<typename Op>
 static auto evaluate(const IndirectNode<Op>&, double percentResolutionLength, const ZoomFactor&) -> double;
 
@@ -149,11 +148,6 @@ double evaluate(const IndirectNode<CalcMix>& root, double percentResolutionLengt
     return executeMathOperation<CalcMix>(root->children, [&](const auto& item) -> std::pair<double, double> {
         return { evaluate(item.value, percentResolutionLength, usedZoom), item.weight };
     });
-}
-
-double evaluate(const IndirectNode<Blend>& root, double percentResolutionLength, const ZoomFactor& usedZoom)
-{
-    return (1.0 - root->progress) * evaluate(root->from, percentResolutionLength, usedZoom) + root->progress * evaluate(root->to, percentResolutionLength, usedZoom);
 }
 
 template<typename Op> double evaluate(const IndirectNode<Op>& root, double percentResolutionLength, const ZoomFactor& usedZoom)

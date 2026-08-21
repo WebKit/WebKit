@@ -32,7 +32,6 @@ namespace WebCore {
 namespace Style {
 namespace Calculation {
 
-static auto copy(double) -> double;
 static auto copy(const std::optional<Child>& root) -> std::optional<Child>;
 static auto copy(const Random::Fixed&) -> Random::Fixed;
 static auto copy(const CSS::Keyword::None&) -> CSS::Keyword::None;
@@ -51,11 +50,6 @@ static auto copy(const IndirectNode<Op>&) -> Child;
 Tree copy(const Tree& tree)
 {
     return Tree { .root = copy(tree.root) };
-}
-
-double copy(double value)
-{
-    return value;
 }
 
 std::optional<Child> copy(const std::optional<Child>& root)

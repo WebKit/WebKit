@@ -64,7 +64,6 @@ enum class Operator : uint8_t {
     ProgressNoClamp,
     Random,
     CalcMix,
-    Blend,
 };
 
 TextStream& operator<<(TextStream&, Operator);
