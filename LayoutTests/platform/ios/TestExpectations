@@ -9642,9 +9642,6 @@ imported/w3c/web-platform-tests/mixed-content/gen/top.meta/unset/video-tag.https
 imported/w3c/web-platform-tests/preload/link-header-preload-non-html.html [ Crash ] # rdar://178339957
 imported/w3c/web-platform-tests/preload/single-download-preload.html [ Crash ] # rdar://178339957
 
-
-imported/w3c/web-platform-tests/resource-timing/resource_initiator_types.html [ Crash Failure ] # rdar://178339779
-
 imported/w3c/web-platform-tests/service-workers/idlharness.https.any.html [ Crash ] # rdar://178339789
 
 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-canvas-tainting-video.https.html [ Crash ] # rdar://178339706
