@@ -549,6 +549,9 @@ void write(TextStream& ts, const RenderObject& renderer, OptionSet<RenderAsTextF
         return;
     }
 
+    if (CheckedPtr listMarker = dynamicDowncast<RenderListMarker>(renderer); listMarker && listMarker->synthesizesGlyph())
+        return;
+
     for (auto& child : childrenOfType<RenderObject>(downcast<RenderElement>(renderer))) {
         if (child.hasLayer())
             continue;

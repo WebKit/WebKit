@@ -243,6 +243,12 @@ static EnumSet<Layout::ElementBox::ListMarkerAttribute> calculateListMarkerAttri
     return listMarkerAttributes;
 }
 
+static bool markerTextSynthesizesGlyph(const RenderText& textRenderer)
+{
+    CheckedPtr marker = dynamicDowncast<RenderListMarker>(textRenderer.parent()->parent());
+    return marker && marker->synthesizesGlyph();
+}
+
 UniqueRef<Layout::Box> BoxTreeUpdater::createLayoutBox(RenderObject& renderer)
 {
     std::unique_ptr<Style::ComputedStyle> firstLineStyle = firstLineStyleFor(renderer);
@@ -287,6 +293,8 @@ UniqueRef<Layout::Box> BoxTreeUpdater::createLayoutBox(RenderObject& renderer)
             contentCharacteristic.add(Layout::InlineTextBox::ContentCharacteristic::HasPositionDependentContentWidth);
         if (*hasStrongDirectionalityContent)
             contentCharacteristic.add(Layout::InlineTextBox::ContentCharacteristic::HasStrongDirectionalityContent);
+        if (markerTextSynthesizesGlyph(*textRenderer))
+            contentCharacteristic.add(Layout::InlineTextBox::ContentCharacteristic::HasSynthesizedGlyph);
 
         return makeUniqueRef<Layout::InlineTextBox>(text, isCombinedText, contentCharacteristic, WTF::move(style), WTF::move(firstLineStyle));
     }
@@ -368,6 +376,8 @@ static void updateContentCharacteristic(const RenderText& rendererText, Layout::
         contentCharacteristic.add(Layout::InlineTextBox::ContentCharacteristic::HasPositionDependentContentWidth);
     if (inlineTextBox.hasStrongDirectionalityContent())
         contentCharacteristic.add(Layout::InlineTextBox::ContentCharacteristic::HasStrongDirectionalityContent);
+    if (inlineTextBox.hasSynthesizedGlyph())
+        contentCharacteristic.add(Layout::InlineTextBox::ContentCharacteristic::HasSynthesizedGlyph);
 
     if (inlineTextBox.canUseSimpleFontCodePath() && Layout::TextUtil::canUseSimplifiedTextMeasuring(inlineTextBox.content(), rendererStyle->fontCascade(), rendererStyle->collapseWhiteSpace(), &rendererText.firstLineStyle()))
         contentCharacteristic.add(Layout::InlineTextBox::ContentCharacteristic::CanUseSimplifiedContentMeasuring);
@@ -433,6 +443,8 @@ void BoxTreeUpdater::updateContent(const RenderText& textRenderer)
     }
     if (*hasStrongDirectionalityContent)
         contentCharacteristic.add(Layout::InlineTextBox::ContentCharacteristic::HasStrongDirectionalityContent);
+    if (markerTextSynthesizesGlyph(textRenderer))
+        contentCharacteristic.add(Layout::InlineTextBox::ContentCharacteristic::HasSynthesizedGlyph);
 
     inlineTextBox->setContent(text, contentCharacteristic);
 }

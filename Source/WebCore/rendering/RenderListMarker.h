@@ -62,6 +62,7 @@ public:
 
     bool NODELETE isInside() const;
     bool isDisclosureMarker() const;
+    bool synthesizesGlyph() const;
 
     void updateInlineMarginsAndContent();
 
@@ -131,7 +132,6 @@ private:
     void paintDisclosureMarker(GraphicsContext&, const FloatRect& markerRect);
 
     RefPtr<CSSRegisteredCounterStyle> counterStyle() const;
-    bool drawsBulletShape() const;
     bool textNeedsBidiResolution() const;
 
 private:

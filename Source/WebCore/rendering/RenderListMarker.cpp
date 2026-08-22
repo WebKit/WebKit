@@ -37,6 +37,7 @@
 #include "GraphicsContext.h"
 #include "InlineIteratorBoxInlines.h"
 #include "PaintInfoInlines.h"
+#include "PseudoElement.h"
 #include "RenderBlockFlow.h"
 #include "RenderBlockInlines.h"
 #include "RenderBoxInlines.h"
@@ -174,7 +175,7 @@ static bool counterStyleChainHasStrongDirectionalitySymbols(const CSSRegisteredC
 
 bool RenderListMarker::textNeedsBidiResolution() const
 {
-    if (hasContentProperty() || isImage() || drawsBulletShape() || style().listStyleType().isNone())
+    if (hasContentProperty() || isImage() || synthesizesGlyph() || style().listStyleType().isNone())
         return false;
 
     if (auto markerString = style().listStyleType().tryString())
@@ -192,7 +193,7 @@ bool RenderListMarker::textNeedsBidiResolution() const
 
 bool RenderListMarker::needsContentContainer() const
 {
-    return hasContentProperty() || textNeedsBidiResolution();
+    return hasContentProperty() || textNeedsBidiResolution() || synthesizesGlyph();
 }
 
 RenderBlockFlow* RenderListMarker::contentContainer() const
@@ -268,7 +269,6 @@ void RenderListMarker::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffse
         return;
     }
 
-    // The bespoke bullet/text/image painting below only applies to the foreground and accessibility phases.
     if (paintInfo.phase != PaintPhase::Foreground && paintInfo.phase != PaintPhase::Accessibility)
         return;
 
@@ -309,17 +309,6 @@ void RenderListMarker::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffse
     context.setStrokeStyle(StrokeStyle::SolidStroke);
     context.setStrokeThickness(1.0f);
     context.setFillColor(color);
-
-    if (drawsBulletShape()) {
-        auto listStyleType = style().listStyleType();
-        if (listStyleType.isDisc())
-            context.fillEllipse(markerRect);
-        else if (listStyleType.isCircle())
-            context.strokeEllipse(markerRect);
-        else
-            context.fillRect(markerRect);
-        return;
-    }
 
     if (m_textContent.isEmpty())
         return;
@@ -424,7 +413,7 @@ void RenderListMarker::layoutContentContainer(RenderBlockFlow& container)
     auto contentBaseline = container.firstLineBaseline().value_or(container.logicalHeight());
     container.setLogicalTop(markerAscent - contentBaseline);
 
-    if (textNeedsBidiResolution()) {
+    if (textNeedsBidiResolution() || synthesizesGlyph()) {
         setLogicalHeight(style().metricsOfPrimaryFont().intHeight());
         m_layoutBounds = layoutBoundForTextContent(m_textContent.textWithSuffix);
     } else {
@@ -448,9 +437,12 @@ void RenderListMarker::imageChanged(WrappedImagePtr o, const IntRect* rect)
         RefPtr image = m_image;
         if (image && o == image->data()) {
             if (image->errorOccurred()) {
-                // A failed image turns this into a text marker, and that text may need content subtree.
-                if (RefPtr element = m_listItem ? m_listItem->element() : nullptr)
-                    element->invalidateStyle();
+                // A failed image turns this into a text marker, and that text needs renderers the marker was not built with.
+                RefPtr element = m_listItem ? m_listItem->element() : nullptr;
+                if (RefPtr pseudoElement = dynamicDowncast<PseudoElement>(element.get()))
+                    element = pseudoElement->hostElement();
+                if (element)
+                    element->invalidateStyleAndRenderersForSubtree();
             }
             if (borderBoxWidth() != image->imageSize(this, style().usedZoom()).width() || borderBoxHeight() != image->imageSize(this, style().usedZoom()).height() || image->errorOccurred())
                 setNeedsLayoutAndInvalidateContentLogicalWidths();
@@ -518,7 +510,7 @@ void RenderListMarker::updateContent()
 
     // The marker text is only known here (counter values resolve at layout), while the renderers
     // holding it were created from style. Push the text down so the inline formatting context has something to lay out.
-    if (textNeedsBidiResolution())
+    if (textNeedsBidiResolution() || synthesizesGlyph())
         updateContentContainerText();
 }
 
@@ -533,6 +525,11 @@ void RenderListMarker::updateContentContainerText()
     CheckedPtr textRenderer = dynamicDowncast<RenderText>(container->firstChild());
     if (!textRenderer) {
         ASSERT_NOT_REACHED();
+        return;
+    }
+
+    if (synthesizesGlyph()) {
+        textRenderer->setText(m_textContent.textWithoutSuffix().toString());
         return;
     }
 
@@ -564,6 +561,8 @@ void RenderListMarker::computeIntrinsicLogicalWidthContributions()
         return;
     }
 
+    ASSERT(!hasContentProperty());
+
     std::optional<FontCascade> systemUIFontCascade;
     // Use system-ui font for disclosure triangles
     if (isDisclosureMarker())
@@ -572,9 +571,7 @@ void RenderListMarker::computeIntrinsicLogicalWidthContributions()
     auto& font = systemUIFontCascade ? *systemUIFontCascade : style().fontCascade();
 
     LayoutUnit logicalWidth;
-    if (drawsBulletShape())
-        logicalWidth = (font.metricsOfPrimaryFont().intAscent() * 2 / 3 + 1) / 2 + 2;
-    else if (!m_textContent.isEmpty())
+    if (!m_textContent.isEmpty())
         logicalWidth = font.width(textRunForContent(m_textContent, style()));
 
     m_minContentLogicalWidthContribution = logicalWidth;
@@ -594,7 +591,7 @@ void RenderListMarker::updateInlineMargins()
         if (isImage())
             return { 0, markerPadding };
 
-        if (drawsBulletShape())
+        if (synthesizesGlyph())
             return { -1, fontMetrics.intAscent() - minContentLogicalWidthContribution() + 1 };
 
         return { };
@@ -605,7 +602,7 @@ void RenderListMarker::updateInlineMargins()
             return { -minContentLogicalWidthContribution() - markerPadding, markerPadding };
 
         int offset = fontMetrics.intAscent() * 2 / 3;
-        if (drawsBulletShape())
+        if (synthesizesGlyph())
             return { -offset - markerPadding - 1, offset + markerPadding + 1 - minContentLogicalWidthContribution() };
 
         if (m_textContent.isEmpty() && !contentContainer())
@@ -688,30 +685,23 @@ FloatRect RenderListMarker::relativeMarkerRect()
     if (isImage())
         return { 0.f, 0.f, protect(m_image)->imageSize(this, style().usedZoom()).width(), protect(m_image)->imageSize(this, style().usedZoom()).height() };
 
-    FloatRect relativeRect;
-    if (drawsBulletShape()) {
-        auto& fontMetrics = style().metricsOfPrimaryFont();
-        auto ascent = fontMetrics.ascent();
-        auto bulletWidth = (ascent * 2 / 3 + 1) / 2;
-        relativeRect = { 1, 3 * (ascent - ascent * 2 / 3) / 2, bulletWidth, bulletWidth };
-    } else {
-        if (m_textContent.isEmpty())
-            return { };
+    if (m_textContent.isEmpty())
+        return { };
 
+    FloatRect relativeRect;
+    if (isDisclosureMarker()) {
         // Use system-ui font for disclosure triangles
-        if (isDisclosureMarker()) {
-            auto systemUIFontCascade = disclosureMarkerFontCascade(style(), protect(document()));
-            auto& fontMetrics = style().metricsOfPrimaryFont();
-            auto& systemUIFontMetrics = systemUIFontCascade.metricsOfPrimaryFont();
-            auto width = systemUIFontCascade.width(textRunForContent(m_textContent, style()));
-            auto height = systemUIFontMetrics.height();
-            // Center vertically within the original font metrics
-            auto yOffset = (fontMetrics.height() - height) / 2.0f;
-            relativeRect = { 0.f, yOffset, width, height };
-        } else {
-            auto& font = style().fontCascade();
-            relativeRect = { 0.f, 0.f, font.width(textRunForContent(m_textContent, style())), font.metricsOfPrimaryFont().height() };
-        }
+        auto systemUIFontCascade = disclosureMarkerFontCascade(style(), protect(document()));
+        auto& fontMetrics = style().metricsOfPrimaryFont();
+        auto& systemUIFontMetrics = systemUIFontCascade.metricsOfPrimaryFont();
+        auto width = systemUIFontCascade.width(textRunForContent(m_textContent, style()));
+        auto height = systemUIFontMetrics.height();
+        // Center vertically within the original font metrics
+        auto yOffset = (fontMetrics.height() - height) / 2.0f;
+        relativeRect = { 0.f, yOffset, width, height };
+    } else {
+        auto& font = style().fontCascade();
+        relativeRect = { 0.f, 0.f, font.width(textRunForContent(m_textContent, style())), font.metricsOfPrimaryFont().height() };
     }
 
     if (!writingMode().isHorizontal()) {
@@ -736,10 +726,10 @@ RefPtr<CSSRegisteredCounterStyle> RenderListMarker::counterStyle() const
     return document().counterStyleRegistry().resolvedCounterStyle(*counterStyle);
 }
 
-bool RenderListMarker::drawsBulletShape() const
+bool RenderListMarker::synthesizesGlyph() const
 {
-    // `content` supersedes list-style-type, so a content marker never draws a bullet glyph.
-    if (hasContentProperty())
+    // `content` supersedes list-style-type, so a content marker never draws in place of a glyph, and a list-style-image marker draws the image instead.
+    if (hasContentProperty() || isImage())
         return false;
     auto& listType = style().listStyleType();
     return listType.isCircle() || listType.isDisc() || listType.isSquare();

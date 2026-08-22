@@ -65,6 +65,11 @@ InlineLayoutUnit TextUtil::width(const InlineTextBox& inlineTextBox, const FontC
     if (from == to)
         return 0;
 
+    if (inlineTextBox.hasSynthesizedGlyph()) {
+        // The glyph the counter style's character would draw is not used: TextBoxPainter draws in its place, sized from the font metrics, and reserving that same size here keeps the two in step.
+        return (fontCascade.metricsOfPrimaryFont().intAscent() * 2 / 3 + 1) / 2 + 2;
+    }
+
     if (inlineTextBox.isCombined())
         return fontCascade.size();
 

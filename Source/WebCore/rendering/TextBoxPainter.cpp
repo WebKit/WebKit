@@ -37,6 +37,7 @@
 #include "InlineIteratorLineBox.h"
 #include "InlineIteratorTextBoxInlines.h"
 #include "InlineTextBoxStyle.h"
+#include "LayoutInlineTextBox.h"
 #include "LineSelection.h"
 #include "PaintInfo.h"
 #include "PaintInfoInlines.h"
@@ -250,6 +251,16 @@ void TextBoxPainter::paint()
 
     if (m_paintInfo.phase == PaintPhase::Selection && m_paintInfo.paintBehavior.contains(PaintBehavior::IncludeDocumentMarkers))
         paintPlatformDocumentMarkers();
+
+    if (hasSynthesizedGlyph()) {
+        if (m_paintInfo.phase == PaintPhase::Foreground)
+            paintSynthesizedGlyph();
+        if (glyphRotation) {
+            auto backRotation = *glyphRotation == RotationDirection::Clockwise ? RotationDirection::Counterclockwise : RotationDirection::Clockwise;
+            m_paintInfo.context().concatCTM(rotation(m_paintRect, backRotation));
+        }
+        return;
+    }
 
     if (m_paintInfo.phase == PaintPhase::Foreground) {
         auto shouldPaintBackgroundFill = [&] {
@@ -660,6 +671,37 @@ static bool NODELETE isTransparent(const StyledMarkedText& markedText)
     default:
         return false;
     }
+}
+
+bool TextBoxPainter::hasSynthesizedGlyph() const
+{
+    CheckedPtr inlineTextBox = dynamicDowncast<Layout::InlineTextBox>(m_textBox.box().layoutBox());
+    return inlineTextBox && inlineTextBox->hasSynthesizedGlyph();
+}
+
+void TextBoxPainter::paintSynthesizedGlyph()
+{
+    // Drawn from the font metrics rather than from the character the counter style produced, matching the width TextUtil::width reserved for it.
+    auto& fontMetrics = m_style->metricsOfPrimaryFont();
+    auto ascent = fontMetrics.ascent();
+    auto bulletWidth = (ascent * 2 / 3 + 1) / 2;
+    auto markerRect = FloatRect { 1, 3 * (ascent - ascent * 2 / 3) / 2, bulletWidth, bulletWidth };
+    markerRect.moveBy(m_paintRect.location());
+
+    auto& context = m_paintInfo.context();
+    auto color = m_style->visitedDependentTextFillColorApplyingColorFilter();
+    context.setStrokeColor(color);
+    context.setStrokeStyle(StrokeStyle::SolidStroke);
+    context.setStrokeThickness(1.0f);
+    context.setFillColor(color);
+
+    auto listStyleType = m_style->listStyleType();
+    if (listStyleType.isDisc())
+        context.fillEllipse(markerRect);
+    else if (listStyleType.isCircle())
+        context.strokeEllipse(markerRect);
+    else
+        context.fillRect(markerRect);
 }
 
 void TextBoxPainter::paintForeground(const StyledMarkedText& markedText)
