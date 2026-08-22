@@ -38,6 +38,7 @@
 namespace WebCore {
 
 class TrackBase;
+class TrackOpaqueRoot;
 using TrackID = uint64_t;
 
 class TrackListBase : public RefCounted<TrackListBase>, public EventTarget, public ActiveDOMObject {
@@ -64,8 +65,8 @@ public:
 
     void didMoveToNewDocument(Document&);
 
-    using OpaqueRootObserver = WTF::Observer<WebCoreOpaqueRoot()>;
-    void setOpaqueRootObserver(const OpaqueRootObserver& observer) { m_opaqueRootObserver = observer; };
+    TrackOpaqueRoot* trackOpaqueRoot() { return m_trackOpaqueRoot.get(); }
+    virtual void setOpaqueRoot(TrackOpaqueRoot&);
 
     // Needs to be public so tracks can call it
     void scheduleChangeEvent();
@@ -88,7 +89,7 @@ private:
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
 
-    WeakPtr<OpaqueRootObserver> m_opaqueRootObserver;
+    RefPtr<TrackOpaqueRoot> m_trackOpaqueRoot;
     bool m_isChangeEventScheduled { false };
 };
 
