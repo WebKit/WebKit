@@ -162,7 +162,6 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(PathOrShapeGradientApplier);
 
 bool PathOrShapeGradientApplier::applyResource(RenderElement& renderer, const Style::ComputedStyle& style, GraphicsContext*& context, const GradientData& gradientData, OptionSet<RenderSVGResourceMode> resourceMode)
 {
-    context->save();
     applyGradientResource(renderer, style, *context, gradientData, resourceMode);
     return true;
 }
@@ -170,7 +169,6 @@ bool PathOrShapeGradientApplier::applyResource(RenderElement& renderer, const St
 void PathOrShapeGradientApplier::postApplyResource(RenderElement&, GraphicsContext*& context, const GradientData&, SVGUnitTypes::SVGUnitType, const AffineTransform&, OptionSet<RenderSVGResourceMode> resourceMode, const Path* path, const RenderElement* shape)
 {
     LegacyRenderSVGResource::fillAndStrokePathOrShape(*context, resourceMode, path, shape);
-    context->restore();
 }
 
 #if USE(CG)
