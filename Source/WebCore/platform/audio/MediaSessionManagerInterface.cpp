@@ -35,6 +35,7 @@
 #include "PlatformMediaSession.h"
 #include <algorithm>
 #include <ranges>
+#include <wtf/HexNumber.h>
 #include <wtf/MainThread.h>
 #include <wtf/RunLoop.h>
 #include <wtf/TZoneMallocInlines.h>

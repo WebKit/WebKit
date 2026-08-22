@@ -16303,7 +16303,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         },
         [] (const WebKit::WebFoundTextRange::CueData& cueData) -> RetainPtr<WKFoundTextRange> {
             RetainPtr foundCueTextRange = adoptNS([[WKFoundCueTextRange alloc] init]);
-            [foundCueTextRange setMediaElementIdentifier:cueData.mediaElementIdentifier.toRawValue()];
+            [foundCueTextRange setMediaElementIdentifier:cueData.mediaElementIdentifier.toUInt64()];
             [foundCueTextRange setDocumentOffset:cueData.documentOffset];
             [foundCueTextRange setSeekTimeMilliseconds:cueData.seekTimeMilliseconds];
             return foundCueTextRange;

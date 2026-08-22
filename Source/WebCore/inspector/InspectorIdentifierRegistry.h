@@ -97,7 +97,7 @@ public:
     // across processes, so both forms agree in the common case.
     static inline String protocolFrameId(WebCore::FrameIdentifier frameID)
     {
-        return protocolFrameId(frameID, ObjectIdentifier<WebCore::ProcessIdentifierType>(frameID.toRawValue() >> 32));
+        return protocolFrameId(frameID, ObjectIdentifier<WebCore::ProcessIdentifierType>(frameID.toUInt64() >> 32));
     }
 
     static inline String protocolRequestId(WebCore::ProcessIdentifier pid, WebCore::ResourceLoaderIdentifier resourceID)

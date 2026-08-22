@@ -33,38 +33,22 @@
 
 namespace WTF {
 
-uint64_t ObjectIdentifierMainThreadAccessTraits<uint64_t>::generateIdentifierInternal()
+uint64_t ObjectIdentifierMainThreadAccessTraits::generateIdentifierInternal()
 {
     ASSERT(isMainThread()); // You should use AtomicObjectIdentifier if you're hitting this assertion.
     static uint64_t current = 0;
     return ++current;
 }
 
-void printInternal(PrintStream& out, const ObjectIdentifierGenericBase<uint64_t>& identifier)
+void printInternal(PrintStream& out, const ObjectIdentifierGenericBase& identifier)
 {
-    out.print(identifier.toRawValue());
+    out.print(identifier.toUInt64());
 }
 
-uint64_t ObjectIdentifierThreadSafeAccessTraits<uint64_t>::generateIdentifierInternal()
+uint64_t ObjectIdentifierThreadSafeAccessTraits::generateIdentifierInternal()
 {
     static std::atomic<uint64_t> current;
     return ++current;
-}
-
-UUID ObjectIdentifierMainThreadAccessTraits<UUID>::generateIdentifierInternal()
-{
-    ASSERT(isMainThread()); // You should use AtomicObjectIdentifier if you're hitting this assertion.
-    return UUID::createVersion4();
-}
-
-UUID ObjectIdentifierThreadSafeAccessTraits<UUID>::generateIdentifierInternal()
-{
-    return UUID::createVersion4();
-}
-
-void printInternal(PrintStream& out, const ObjectIdentifierGenericBase<UUID>& identifier)
-{
-    out.print(identifier.toRawValue());
 }
 
 } // namespace WTF

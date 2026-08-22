@@ -27,6 +27,7 @@
 #import <wtf/text/TextStream.h>
 
 #import <CoreFoundation/CoreFoundation.h>
+#import <wtf/HexNumber.h>
 
 TEST(WTF_TextStream, CFString)
 {

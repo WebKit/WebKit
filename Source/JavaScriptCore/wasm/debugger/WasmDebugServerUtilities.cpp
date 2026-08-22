@@ -43,6 +43,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #include "WasmVirtualAddress.h"
 #include <cstring>
 #include <wtf/DataLog.h>
+#include <wtf/HexNumber.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>

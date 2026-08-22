@@ -85,6 +85,7 @@
 #import "WebCoreFrameView.h"
 #import <AppKit/NSAccessibilityConstants.h>
 #import <pal/spi/cocoa/NSAccessibilitySPI.h>
+#import <wtf/HexNumber.h>
 #import <wtf/ObjCRuntimeExtras.h>
 #import <wtf/RuntimeApplicationChecks.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>

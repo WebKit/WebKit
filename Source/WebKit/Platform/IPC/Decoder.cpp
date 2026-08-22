@@ -96,7 +96,7 @@ Decoder::Decoder(std::span<const uint8_t> buffer, BufferDeallocator&& bufferDeal
     if (!destinationID) [[unlikely]]
         return;
     // 0 is a valid destinationID but we can at least reject -1 which is the HashTable deleted value.
-    if (*destinationID && !WTF::ObjectIdentifierGenericBase<uint64_t>::isValidIdentifier(*destinationID)) {
+    if (*destinationID && !WTF::ObjectIdentifierGenericBase::isValidIdentifier(*destinationID)) {
         markInvalid();
         return;
     }
@@ -116,7 +116,7 @@ Decoder::Decoder(std::span<const uint8_t> stream, uint64_t destinationID)
     , m_destinationID { destinationID }
 {
     // 0 is a valid destinationID but we can at least reject -1 which is the HashTable deleted value.
-    if (destinationID && !WTF::ObjectIdentifierGenericBase<uint64_t>::isValidIdentifier(destinationID)) {
+    if (destinationID && !WTF::ObjectIdentifierGenericBase::isValidIdentifier(destinationID)) {
         markInvalid();
         return;
     }

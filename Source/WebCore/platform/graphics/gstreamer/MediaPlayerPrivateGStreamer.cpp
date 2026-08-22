@@ -90,6 +90,7 @@
 #include <gst/video/gstvideometa.h>
 #include <limits>
 #include <wtf/FileSystem.h>
+#include <wtf/HexNumber.h>
 #include <wtf/glib/WTFGType.h>
 #include <wtf/MathExtras.h>
 #include <wtf/MediaTime.h>

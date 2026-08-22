@@ -1507,7 +1507,7 @@ ExceptionOr<void> Internals::resumeAnimations() const
 uint64_t Internals::identifierForTimeline(AnimationTimeline& timeline) const
 {
 #if ENABLE(THREADED_ANIMATIONS)
-    return timeline.acceleratedTimelineIdentifier().toRawValue();
+    return timeline.acceleratedTimelineIdentifier().toUInt64();
 #else
     UNUSED_PARAM(timeline);
     return 0;

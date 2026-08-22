@@ -809,7 +809,7 @@ void IDBTransaction::renameIndex(IDBIndex& index, const String& newName)
     auto objectStoreIdentifier = index.objectStore().info().identifier();
     auto indexIdentifier = index.info().identifier();
 
-    LOG(IndexedDBOperations, "IDB rename index operation: %s to %s under object store %" PRIu64, index.info().condensedLoggingString().utf8().data(), newName.utf8().data(), objectStoreIdentifier.toRawValue());
+    LOG(IndexedDBOperations, "IDB rename index operation: %s to %s under object store %" PRIu64, index.info().condensedLoggingString().utf8().data(), newName.utf8().data(), objectStoreIdentifier.toUInt64());
     scheduleOperation(IDBClient::TransactionOperationImpl::create(*this, [protectedThis = Ref { *this }] (const auto& result) {
         protectedThis->didRenameIndexOnServer(result);
     }, [protectedThis = Ref { *this }, objectStoreIdentifier, indexIdentifier, newName = newName.isolatedCopy()] (auto& operation) {
@@ -1399,7 +1399,7 @@ void IDBTransaction::deleteIndex(IDBObjectStoreIdentifier objectStoreIdentifier,
     ASSERT(canCurrentThreadAccessThreadLocalData(m_database->originThread()));
     ASSERT(isVersionChange());
 
-    LOG(IndexedDBOperations, "IDB delete index operation: %s (%" PRIu64 ")", indexName.utf8().data(), objectStoreIdentifier.toRawValue());
+    LOG(IndexedDBOperations, "IDB delete index operation: %s (%" PRIu64 ")", indexName.utf8().data(), objectStoreIdentifier.toUInt64());
     scheduleOperation(IDBClient::TransactionOperationImpl::create(*this, [protectedThis = Ref { *this }] (const auto& result) {
         protectedThis->didDeleteIndexOnServer(result);
     }, [protectedThis = Ref { *this }, objectStoreIdentifier, indexName = indexName.isolatedCopy()] (auto& operation) {

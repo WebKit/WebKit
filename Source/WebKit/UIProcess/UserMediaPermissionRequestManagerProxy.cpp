@@ -50,6 +50,7 @@
 #include <WebCore/UserMediaRequest.h>
 #include <algorithm>
 #include <wtf/CryptographicallyRandomNumber.h>
+#include <wtf/HexNumber.h>
 #include <wtf/LoggerHelper.h>
 #include <wtf/Scope.h>
 #include <wtf/StdLibExtras.h>

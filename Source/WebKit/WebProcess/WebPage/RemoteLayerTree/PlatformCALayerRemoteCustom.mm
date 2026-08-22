@@ -88,7 +88,7 @@ PlatformCALayerRemoteCustom::PlatformCALayerRemoteCustom(HTMLVideoElement& video
 
 #if ENABLE(MODEL_PROCESS)
 PlatformCALayerRemoteCustom::PlatformCALayerRemoteCustom(WebCore::PlatformCALayer::LayerType layerType, Ref<WebCore::ModelContext> modelContext, PlatformCALayerClient* owner, RemoteLayerTreeContext& context)
-    : PlatformCALayerRemoteCustom(layerType, modelContext->modelContentsLayerHostingContextIdentifier().toRawValue(), owner, context)
+    : PlatformCALayerRemoteCustom(layerType, modelContext->modelContentsLayerHostingContextIdentifier().toUInt64(), owner, context)
 {
     m_modelContext = modelContext.ptr();
 }

@@ -144,6 +144,7 @@
 #include <utility>
 #include <wtf/Borrow.h>
 #include <wtf/DataLog.h>
+#include <wtf/HexNumber.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/SetForScope.h>
 #include <wtf/TZoneMallocInlines.h>

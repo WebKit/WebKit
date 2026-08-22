@@ -381,7 +381,7 @@ static AtomString effectiveViewTransitionName(RenderLayerModelObject& renderer, 
             if (isCrossDocument)
                 return nullAtom();
 
-            return makeAtomString("-ua-auto-"_s, String::number(element->nodeIdentifier().toRawValue()));
+            return makeAtomString("-ua-auto-"_s, String::number(element->nodeIdentifier().toUInt64()));
         },
         [&](const CSS::Keyword::MatchElement&) {
             SUPPRESS_UNCHECKED_LOCAL auto scope = computeScope();
@@ -389,7 +389,7 @@ static AtomString effectiveViewTransitionName(RenderLayerModelObject& renderer, 
                 return nullAtom();
 
             Ref element = *renderer.element();
-            return makeAtomString("-ua-auto-"_s, String::number(element->nodeIdentifier().toRawValue()));
+            return makeAtomString("-ua-auto-"_s, String::number(element->nodeIdentifier().toUInt64()));
         },
         [&](const Style::CustomIdent& customIdent) {
             SUPPRESS_UNCHECKED_LOCAL auto scope = computeScope();

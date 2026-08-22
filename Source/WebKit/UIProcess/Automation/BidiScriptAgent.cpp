@@ -47,6 +47,7 @@
 #include <algorithm>
 #include <wtf/Borrow.h>
 #include <wtf/CallbackAggregator.h>
+#include <wtf/HexNumber.h>
 #include <wtf/ProcessID.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/URL.h>

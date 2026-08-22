@@ -78,20 +78,20 @@ public:
     Error flushSentMessages();
     void invalidate();
 
-    template<typename T, typename U, typename V, typename W>
-    Error send(T&& message, ObjectIdentifierGeneric<U, V, W> destinationID);
+    template<typename T, typename U, typename V>
+    Error send(T&& message, ObjectIdentifierGeneric<U, V> destinationID);
     using AsyncReplyID = Connection::AsyncReplyID;
-    template<typename T, typename C, typename U, typename V, typename W>
-    std::optional<AsyncReplyID> sendWithAsyncReply(T&& message, C&& completionHandler, ObjectIdentifierGeneric<U, V, W> destinationID);
-    template<typename T, typename C, typename U, typename V, typename W>
-    std::optional<AsyncReplyID> sendWithAsyncReplyOnDispatcher(T&& message, GuaranteedSerialFunctionDispatcher&, C&& completionHandler, ObjectIdentifierGeneric<U, V, W> destinationID);
+    template<typename T, typename C, typename U, typename V>
+    std::optional<AsyncReplyID> sendWithAsyncReply(T&& message, C&& completionHandler, ObjectIdentifierGeneric<U, V> destinationID);
+    template<typename T, typename C, typename U, typename V>
+    std::optional<AsyncReplyID> sendWithAsyncReplyOnDispatcher(T&& message, GuaranteedSerialFunctionDispatcher&, C&& completionHandler, ObjectIdentifierGeneric<U, V> destinationID);
 
     template<typename T>
     using SendSyncResult = Connection::SendSyncResult<T>;
-    template<typename T, typename U, typename V, typename W>
-    SendSyncResult<T> sendSync(T&& message, ObjectIdentifierGeneric<U, V, W> destinationID);
-    template<typename T, typename U, typename V, typename W>
-    Error waitForAndDispatchImmediately(ObjectIdentifierGeneric<U, V, W> destinationID, OptionSet<WaitForOption> = { });
+    template<typename T, typename U, typename V>
+    SendSyncResult<T> sendSync(T&& message, ObjectIdentifierGeneric<U, V> destinationID);
+    template<typename T, typename U, typename V>
+    Error waitForAndDispatchImmediately(ObjectIdentifierGeneric<U, V> destinationID, OptionSet<WaitForOption> = { });
     template<typename>
     Error waitForAsyncReplyAndDispatchImmediately(AsyncReplyID);
 
@@ -169,8 +169,8 @@ private:
     friend class WebKit::IPCTestingAPI::JSIPCStreamClientConnection;
 };
 
-template<typename T, typename U, typename V, typename W>
-Error StreamClientConnection::send(T&& message, ObjectIdentifierGeneric<U, V, W> destinationID)
+template<typename T, typename U, typename V>
+Error StreamClientConnection::send(T&& message, ObjectIdentifierGeneric<U, V> destinationID)
 {
 #if ENABLE(CORE_IPC_SIGNPOSTS)
     emitSendSignpost(message.name());
@@ -200,8 +200,8 @@ Error StreamClientConnection::send(T&& message, ObjectIdentifierGeneric<U, V, W>
     return m_connection->send(std::forward<T>(message), destinationID, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
 }
 
-template<typename T, typename C, typename U, typename V, typename W>
-std::optional<StreamClientConnection::AsyncReplyID> StreamClientConnection::sendWithAsyncReply(T&& message, C&& completionHandler, ObjectIdentifierGeneric<U, V, W> destinationID)
+template<typename T, typename C, typename U, typename V>
+std::optional<StreamClientConnection::AsyncReplyID> StreamClientConnection::sendWithAsyncReply(T&& message, C&& completionHandler, ObjectIdentifierGeneric<U, V> destinationID)
 {
 #if ENABLE(CORE_IPC_SIGNPOSTS)
     uintptr_t signpostIdentifier = 0;
@@ -258,8 +258,8 @@ std::optional<StreamClientConnection::AsyncReplyID> StreamClientConnection::send
     return std::nullopt;
 }
 
-template<typename T, typename C, typename U, typename V, typename W>
-std::optional<StreamClientConnection::AsyncReplyID> StreamClientConnection::sendWithAsyncReplyOnDispatcher(T&& message, GuaranteedSerialFunctionDispatcher& dispatcher, C&& completionHandler, ObjectIdentifierGeneric<U, V, W> destinationID)
+template<typename T, typename C, typename U, typename V>
+std::optional<StreamClientConnection::AsyncReplyID> StreamClientConnection::sendWithAsyncReplyOnDispatcher(T&& message, GuaranteedSerialFunctionDispatcher& dispatcher, C&& completionHandler, ObjectIdentifierGeneric<U, V> destinationID)
 {
 #if ENABLE(CORE_IPC_SIGNPOSTS)
     uintptr_t signpostIdentifier = 0;
@@ -331,8 +331,8 @@ bool StreamClientConnection::trySendStream(std::span<uint8_t> span, T& message, 
     return false;
 }
 
-template<typename T, typename U, typename V, typename W>
-StreamClientConnection::SendSyncResult<T> StreamClientConnection::sendSync(T&& message, ObjectIdentifierGeneric<U, V, W> destinationID)
+template<typename T, typename U, typename V>
+StreamClientConnection::SendSyncResult<T> StreamClientConnection::sendSync(T&& message, ObjectIdentifierGeneric<U, V> destinationID)
 {
 #if ENABLE(CORE_IPC_SIGNPOSTS)
     uintptr_t signpostIdentifier = 0;
@@ -365,8 +365,8 @@ StreamClientConnection::SendSyncResult<T> StreamClientConnection::sendSync(T&& m
     return m_connection->sendSync(std::forward<T>(message), destinationID.toUInt64(), timeout);
 }
 
-template<typename T, typename U, typename V, typename W>
-Error StreamClientConnection::waitForAndDispatchImmediately(ObjectIdentifierGeneric<U, V, W> destinationID, OptionSet<WaitForOption> waitForOptions)
+template<typename T, typename U, typename V>
+Error StreamClientConnection::waitForAndDispatchImmediately(ObjectIdentifierGeneric<U, V> destinationID, OptionSet<WaitForOption> waitForOptions)
 {
     Timeout timeout = defaultTimeout();
     return m_connection->waitForAndDispatchImmediately<T>(destinationID, timeout, waitForOptions);

@@ -34,6 +34,7 @@
 #include "RenderObjectInlines.h"
 #include "StyleContain.h"
 #include "StyleObjectViewBox.h"
+#include <wtf/HexNumber.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {

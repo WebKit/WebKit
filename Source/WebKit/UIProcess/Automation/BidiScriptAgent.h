@@ -49,7 +49,7 @@
 namespace WebKit {
 
 enum PreloadScriptIdentifierType { };
-using PreloadScriptIdentifier = ObjectIdentifier<PreloadScriptIdentifierType, uint64_t>;
+using PreloadScriptIdentifier = ObjectIdentifier<PreloadScriptIdentifierType>;
 
 class WebAutomationSession;
 class WebFrameProxy;

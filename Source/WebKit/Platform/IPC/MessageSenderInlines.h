@@ -120,12 +120,12 @@ template<typename MessageType> inline bool MessageSender::send(MessageType&& mes
     return send(std::forward<MessageType>(message), destinationID, { });
 }
 
-template<typename MessageType, typename U, typename V, typename W> inline bool MessageSender::send(MessageType&& message, ObjectIdentifierGeneric<U, V, W> destinationID)
+template<typename MessageType, typename U, typename V> inline bool MessageSender::send(MessageType&& message, ObjectIdentifierGeneric<U, V> destinationID)
 {
     return send(std::forward<MessageType>(message), destinationID.toUInt64(), { });
 }
 
-template<typename MessageType, typename U, typename V, typename W> inline bool MessageSender::send(MessageType&& message, ObjectIdentifierGeneric<U, V, W> destinationID, OptionSet<SendOption> options)
+template<typename MessageType, typename U, typename V> inline bool MessageSender::send(MessageType&& message, ObjectIdentifierGeneric<U, V> destinationID, OptionSet<SendOption> options)
 {
     return send(std::forward<MessageType>(message), destinationID.toUInt64(), options);
 }
@@ -145,12 +145,12 @@ template<typename MessageType> inline auto MessageSender::sendSync(MessageType&&
     return sendSync(std::forward<MessageType>(message), messageSenderDestinationID(), timeout, options);
 }
 
-template<typename MessageType, typename U, typename V, typename W> inline auto MessageSender::sendSync(MessageType&& message, ObjectIdentifierGeneric<U, V, W> destinationID) -> SendSyncResult<MessageType>
+template<typename MessageType, typename U, typename V> inline auto MessageSender::sendSync(MessageType&& message, ObjectIdentifierGeneric<U, V> destinationID) -> SendSyncResult<MessageType>
 {
     return sendSync(std::forward<MessageType>(message), destinationID.toUInt64(), Timeout::infinity(), { });
 }
 
-template<typename MessageType, typename U, typename V, typename W> inline auto MessageSender::sendSync(MessageType&& message, ObjectIdentifierGeneric<U, V, W> destinationID, Timeout timeout, OptionSet<SendSyncOption> options) -> SendSyncResult<MessageType>
+template<typename MessageType, typename U, typename V> inline auto MessageSender::sendSync(MessageType&& message, ObjectIdentifierGeneric<U, V> destinationID, Timeout timeout, OptionSet<SendSyncOption> options) -> SendSyncResult<MessageType>
 {
     return sendSync(std::forward<MessageType>(message), destinationID.toUInt64(), timeout, options);
 }
@@ -170,12 +170,12 @@ template<typename MessageType, typename C> inline std::optional<AsyncReplyID> Me
     return sendWithAsyncReply(std::forward<MessageType>(message), std::forward<C>(completionHandler), destinationID, { });
 }
 
-template<typename MessageType, typename C, typename U, typename V, typename W> inline std::optional<AsyncReplyID> MessageSender::sendWithAsyncReply(MessageType&& message, C&& completionHandler, ObjectIdentifierGeneric<U, V, W> destinationID)
+template<typename MessageType, typename C, typename U, typename V> inline std::optional<AsyncReplyID> MessageSender::sendWithAsyncReply(MessageType&& message, C&& completionHandler, ObjectIdentifierGeneric<U, V> destinationID)
 {
     return sendWithAsyncReply(std::forward<MessageType>(message), std::forward<C>(completionHandler), destinationID.toUInt64(), { });
 }
 
-template<typename MessageType, typename C, typename U, typename V, typename W> inline std::optional<AsyncReplyID> MessageSender::sendWithAsyncReply(MessageType&& message, C&& completionHandler, ObjectIdentifierGeneric<U, V, W> destinationID, OptionSet<SendOption> options)
+template<typename MessageType, typename C, typename U, typename V> inline std::optional<AsyncReplyID> MessageSender::sendWithAsyncReply(MessageType&& message, C&& completionHandler, ObjectIdentifierGeneric<U, V> destinationID, OptionSet<SendOption> options)
 {
     return sendWithAsyncReply(std::forward<MessageType>(message), std::forward<C>(completionHandler), destinationID.toUInt64(), options);
 }

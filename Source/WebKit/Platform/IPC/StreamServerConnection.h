@@ -112,7 +112,7 @@ public:
 
     void open(Client&, StreamConnectionWorkQueue&);
     void invalidate();
-    template<typename T, typename RawValue> Error send(T&& message, const ObjectIdentifierGenericBase<RawValue>& destinationID);
+    template<typename T> Error send(T&& message, const ObjectIdentifierGenericBase& destinationID);
 
     template<typename T, typename... Arguments>
     void sendSyncReply(Connection::SyncRequestID, Arguments&&...);
@@ -167,8 +167,8 @@ private:
     friend class StreamConnectionWorkQueue;
 };
 
-template<typename T, typename RawValue>
-Error StreamServerConnection::send(T&& message, const ObjectIdentifierGenericBase<RawValue>& destinationID)
+template<typename T>
+Error StreamServerConnection::send(T&& message, const ObjectIdentifierGenericBase& destinationID)
 {
     return m_connection->send(std::forward<T>(message), destinationID);
 }

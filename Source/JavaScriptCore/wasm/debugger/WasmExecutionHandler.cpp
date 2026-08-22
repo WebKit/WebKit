@@ -55,6 +55,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #endif
 #include <wtf/Assertions.h>
 #include <wtf/DataLog.h>
+#include <wtf/HexNumber.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>
@@ -345,7 +346,7 @@ static inline VM* findVM(uint64_t vmId)
 {
     VM* result = nullptr;
     VMManager::forEachVM([&](VM& vm) {
-        if (vm.debugState()->isStopped && vmId == vm.identifier().toRawValue()) {
+        if (vm.debugState()->isStopped && vmId == vm.identifier().toUInt64()) {
             result = &vm;
             return IterationStatus::Done;
         }
@@ -753,7 +754,7 @@ struct ThreadInfo {
 
 void ExecutionHandler::sendStopReply(AbstractLocker& locker) WTF_REQUIRES_LOCK(m_lock)
 {
-    sendStopReplyForThread(locker, m_debuggee->identifier().toRawValue());
+    sendStopReplyForThread(locker, m_debuggee->identifier().toUInt64());
 }
 
 void ExecutionHandler::sendStopReplyForThread(AbstractLocker& locker, uint64_t vmId) WTF_REQUIRES_LOCK(m_lock)
@@ -780,7 +781,7 @@ void ExecutionHandler::sendStopReplyForThread(AbstractLocker& locker, uint64_t v
         auto* state = vm.debugState();
         if (!state->isStopped)
             return IterationStatus::Continue;
-        uint64_t tid = vm.identifier().toRawValue();
+        uint64_t tid = vm.identifier().toUInt64();
         allThreads.append({ tid, getStopPC(*state), getThreadName(*state, tid), stopReasonToInfo(*state).reasonSuffix });
         if (tid == vmId)
             std::swap(allThreads[0], allThreads.last());
@@ -792,7 +793,7 @@ void ExecutionHandler::sendStopReplyForThread(AbstractLocker& locker, uint64_t v
     // actually triggered the stop event (breakpoint/step/trap/interrupt/new-module-load).
     // Passive threads get signal 0 so LLDB's ShouldSelect() returns false for them, allowing
     // the event thread to win thread selection in HandleProcessStateChangedEvent.
-    bool isPassiveThread = state->stopReason == DebugState::Reason::Interrupted && m_debuggee && vmId != m_debuggee->identifier().toRawValue();
+    bool isPassiveThread = state->stopReason == DebugState::Reason::Interrupted && m_debuggee && vmId != m_debuggee->identifier().toUInt64();
     auto stopInfo = isPassiveThread
         ? StopReasonInfo { signalStopString(0), "signal"_s }
         : stopReasonToInfo(*state);
@@ -938,7 +939,7 @@ String ExecutionHandler::callStackStringFor(uint64_t vmId)
 
     VM* targetVM = m_debuggee;
     RELEASE_ASSERT(targetVM);
-    if (targetVM->identifier().toRawValue() != vmId)
+    if (targetVM->identifier().toUInt64() != vmId)
         targetVM = findVM(vmId);
 
     if (!targetVM) {

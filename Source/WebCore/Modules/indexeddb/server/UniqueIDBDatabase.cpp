@@ -779,7 +779,7 @@ void UniqueIDBDatabase::createIndexAsyncAfterQuotaCheck(UniqueIDBDatabaseTransac
         return didCreateIndexAsyncForTransaction(transaction, indexInfo, IDBError { ExceptionCode::InvalidStateError, "Object store does not exist."_s });
 
     objectStoreInfo->addExistingIndex(indexInfo);
-    m_databaseInfo->setMaxIndexID(indexInfo.identifier().toRawValue());
+    m_databaseInfo->setMaxIndexID(indexInfo.identifier().toUInt64());
 
     bool needsToWaitGenerateIndexKey = false;
     protect(m_backingStore)->forEachObjectStoreRecord(transaction.info().identifier(), indexInfo.objectStoreIdentifier(), [&, protectedTransaction](auto&& recordOrError) mutable {

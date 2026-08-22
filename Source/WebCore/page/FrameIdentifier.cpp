@@ -42,7 +42,7 @@ FrameIdentifier generateFrameIdentifier()
 
 TextStream& operator<<(TextStream& stream, FrameIdentifier identifier)
 {
-    stream << "FrameIdentifier("_s << (identifier.toRawValue() >> 32) << ", "_s << static_cast<uint32_t>(identifier.toRawValue()) << ')';
+    stream << "FrameIdentifier("_s << (identifier.toUInt64() >> 32) << ", "_s << static_cast<uint32_t>(identifier.toUInt64()) << ')';
     return stream;
 }
 

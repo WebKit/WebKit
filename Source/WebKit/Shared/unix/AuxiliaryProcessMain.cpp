@@ -80,7 +80,7 @@ bool AuxiliaryProcessMainCommon::parseCommandLine(int argc, char** argv)
     else
         return false;
 
-    if (!m_parameters.processIdentifier->toRawValue() || m_parameters.connectionIdentifier.handle.value() <= 0)
+    if (!m_parameters.processIdentifier->toUInt64() || m_parameters.connectionIdentifier.handle.value() <= 0)
         return false;
 
 #if ENABLE(DEVELOPER_MODE)

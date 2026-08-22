@@ -134,7 +134,7 @@ static void resume()
 
 static void switchTarget(VM* newDebuggee)
 {
-    executionHandler->switchTarget(newDebuggee->identifier().toRawValue());
+    executionHandler->switchTarget(newDebuggee->identifier().toUInt64());
     validateStop();
     CHECK(executionHandler->debuggeeVM() == newDebuggee, "Switch to new debuggee failed");
 }

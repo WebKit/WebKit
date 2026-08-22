@@ -37,6 +37,7 @@
 #include <wtf/Compiler.h>
 #include <wtf/DataLog.h>
 #include <wtf/Function.h>
+#include <wtf/HexNumber.h>
 #include <wtf/Lock.h>
 #include <wtf/NumberOfCores.h>
 #include <wtf/PtrTag.h>

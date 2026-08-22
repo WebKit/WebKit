@@ -380,7 +380,7 @@ uint32_t RemoteLayerTreeTransaction::LayerCreationProperties::hostingContextID()
 {
 #if ENABLE(MODEL_PROCESS)
     if (auto* modelContext = std::get_if<Ref<WebCore::ModelContext>>(&additionalData))
-        return (*modelContext)->modelContentsLayerHostingContextIdentifier().toRawValue();
+        return (*modelContext)->modelContentsLayerHostingContextIdentifier().toUInt64();
 #endif
 
     if (auto* customData = std::get_if<CustomData>(&additionalData))

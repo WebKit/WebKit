@@ -29,6 +29,7 @@
 #include "AffineTransform.h"
 #include "GeometryUtilities.h"
 #include <numbers>
+#include <wtf/HexNumber.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {

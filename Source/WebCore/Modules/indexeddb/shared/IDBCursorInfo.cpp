@@ -105,7 +105,7 @@ std::optional<IDBIndexIdentifier> IDBCursorInfo::sourceIndexIdentifier() const
 
 String IDBCursorInfo::loggingString() const
 {
-    auto sourceIdentifier = std::holds_alternative<IDBObjectStoreIdentifier>(m_sourceIdentifier) ? std::get<IDBObjectStoreIdentifier>(m_sourceIdentifier).toRawValue() : std::get<IDBIndexIdentifier>(m_sourceIdentifier).toRawValue();
+    auto sourceIdentifier = std::holds_alternative<IDBObjectStoreIdentifier>(m_sourceIdentifier) ? std::get<IDBObjectStoreIdentifier>(m_sourceIdentifier).toUInt64() : std::get<IDBIndexIdentifier>(m_sourceIdentifier).toUInt64();
 
     if (m_source == IndexedDB::CursorSource::Index)
         return makeString("<Crsr: "_s, m_cursorIdentifier.loggingString(), " Idx "_s, sourceIdentifier, ", OS "_s, m_objectStoreIdentifier, ", tx "_s, m_transactionIdentifier.loggingString(), '>');

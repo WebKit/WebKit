@@ -38,7 +38,7 @@ unsigned WebFoundTextRange::PDFData::hash() const
 
 unsigned WebFoundTextRange::CueData::hash() const
 {
-    return pairIntHash(pairIntHash(mediaElementIdentifier.toRawValue(), documentOffset), seekTimeMilliseconds);
+    return pairIntHash(pairIntHash(mediaElementIdentifier.toUInt64(), documentOffset), seekTimeMilliseconds);
 }
 
 unsigned WebFoundTextRange::hash() const
@@ -103,7 +103,7 @@ TextStream& operator<<(TextStream& ts, const WebFoundTextRange::PDFData& data)
 
 TextStream& operator<<(TextStream& ts, const WebFoundTextRange::CueData& data)
 {
-    ts << "[media element: " << data.mediaElementIdentifier.toRawValue() << ", document offset: " << data.documentOffset << ", seek time (ms): " << data.seekTimeMilliseconds << "]";
+    ts << "[media element: " << data.mediaElementIdentifier.toUInt64() << ", document offset: " << data.documentOffset << ", seek time (ms): " << data.seekTimeMilliseconds << "]";
     return ts;
 }
 

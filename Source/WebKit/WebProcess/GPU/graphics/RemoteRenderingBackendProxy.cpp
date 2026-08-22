@@ -126,8 +126,8 @@ void RemoteRenderingBackendProxy::ensureGPUProcessConnection()
     });
 }
 
-template<typename T, typename U, typename V, typename W>
-auto RemoteRenderingBackendProxy::send(T&& message, ObjectIdentifierGeneric<U, V, W> destination)
+template<typename T, typename U, typename V>
+auto RemoteRenderingBackendProxy::send(T&& message, ObjectIdentifierGeneric<U, V> destination)
 {
     RefPtr connection = this->connection();
     if (!connection) [[unlikely]]
@@ -140,8 +140,8 @@ auto RemoteRenderingBackendProxy::send(T&& message, ObjectIdentifierGeneric<U, V
     return result;
 }
 
-template<typename T, typename U, typename V, typename W>
-auto RemoteRenderingBackendProxy::sendSync(T&& message, ObjectIdentifierGeneric<U, V, W> destination)
+template<typename T, typename U, typename V>
+auto RemoteRenderingBackendProxy::sendSync(T&& message, ObjectIdentifierGeneric<U, V> destination)
 {
     RefPtr connection = this->connection();
     if (!connection)
@@ -154,8 +154,8 @@ auto RemoteRenderingBackendProxy::sendSync(T&& message, ObjectIdentifierGeneric<
     return result;
 }
 
-template<typename T, typename C, typename U, typename V, typename W>
-auto RemoteRenderingBackendProxy::sendWithAsyncReply(T&& message, C&& callback, ObjectIdentifierGeneric<U, V, W> destination)
+template<typename T, typename C, typename U, typename V>
+auto RemoteRenderingBackendProxy::sendWithAsyncReply(T&& message, C&& callback, ObjectIdentifierGeneric<U, V> destination)
 {
     RefPtr connection = this->connection();
     if (!connection) [[unlikely]]

@@ -129,7 +129,7 @@ IDBError MemoryIDBBackingStore::commitTransaction(const IDBResourceIdentifier& t
 
 IDBError MemoryIDBBackingStore::createObjectStore(const IDBResourceIdentifier& transactionIdentifier, const IDBObjectStoreInfo& info)
 {
-    LOG(IndexedDB, "MemoryIDBBackingStore::createObjectStore - adding OS %s with ID %" PRIu64, info.name().utf8().data(), info.identifier().toRawValue());
+    LOG(IndexedDB, "MemoryIDBBackingStore::createObjectStore - adding OS %s with ID %" PRIu64, info.name().utf8().data(), info.identifier().toUInt64());
 
     ASSERT(m_databaseInfo);
     if (m_databaseInfo->hasObjectStore(info.name()))
@@ -623,7 +623,7 @@ IDBError MemoryIDBBackingStore::addIndex(const IDBResourceIdentifier& transactio
     auto error = objectStore->addIndex(*transaction, indexInfo);
     if (error.isNull()) {
         objectStoreInfo->addExistingIndex(indexInfo);
-        m_databaseInfo->setMaxIndexID(indexInfo.identifier().toRawValue());
+        m_databaseInfo->setMaxIndexID(indexInfo.identifier().toUInt64());
     }
 
     return error;

@@ -163,8 +163,8 @@ public:
 
     void cookiesDidChange(API::HTTPCookieStore&);
 
-    template<typename T, typename RawValue>
-    void sendToAllProcesses(const T& message, const ObjectIdentifierGenericBase<RawValue>& destinationID);
+    template<typename T>
+    void sendToAllProcesses(const T& message, const ObjectIdentifierGenericBase& destinationID);
 
     bool isFeatureEnabled(const String& featureName) const;
 
@@ -299,8 +299,8 @@ private:
     RefPtr<HTTPCookieStoreObserver> m_cookieStoreObserver;
 };
 
-template<typename T, typename RawValue>
-void WebExtensionController::sendToAllProcesses(const T& message, const ObjectIdentifierGenericBase<RawValue>& destinationID)
+template<typename T>
+void WebExtensionController::sendToAllProcesses(const T& message, const ObjectIdentifierGenericBase& destinationID)
 {
     for (Ref process : allProcesses()) {
         if (process->canSendMessage())

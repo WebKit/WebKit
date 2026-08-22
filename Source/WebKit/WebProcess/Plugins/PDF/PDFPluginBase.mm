@@ -92,6 +92,7 @@
 #import <WebCore/StyleColorOptions.h>
 #import <WebCore/VoidCallback.h>
 #import <wtf/CheckedArithmetic.h>
+#import <wtf/HexNumber.h>
 #import <wtf/StdLibExtras.h>
 #import <wtf/TZoneMallocInlines.h>
 #import <wtf/cf/VectorCF.h>

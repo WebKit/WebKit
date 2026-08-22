@@ -41,7 +41,6 @@ namespace WTF {
 
 class Seconds;
 class MediaTime;
-class UUID;
 class URL;
 
 struct HexNumberBuffer;
@@ -407,8 +406,7 @@ TextStream& operator<<(TextStream& ts, const std::pair<T, U>& pair)
 WTF_EXPORT_PRIVATE TextStream& operator<<(TextStream&, Seconds);
 WTF_EXPORT_PRIVATE TextStream& operator<<(TextStream&, ReducedResolutionSeconds);
 WTF_EXPORT_PRIVATE TextStream& operator<<(TextStream&, const MediaTime&);
-WTF_EXPORT_PRIVATE TextStream& operator<<(TextStream&, const ObjectIdentifierGenericBase<uint64_t>&);
-WTF_EXPORT_PRIVATE TextStream& operator<<(TextStream&, const ObjectIdentifierGenericBase<UUID>&);
+WTF_EXPORT_PRIVATE TextStream& operator<<(TextStream&, const ObjectIdentifierGenericBase&);
 WTF_EXPORT_PRIVATE TextStream& operator<<(TextStream&, const URL&);
 
 #if PLATFORM(COCOA)
