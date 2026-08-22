@@ -1,0 +1,7 @@
+non-editable text
+editable text
+
+PASS selection-outside-focused-editing-host
+PASS Collapsing selection outside the focused editing host shouldn't cause the blur
+FAIL Modifying selection should do nothing assert_true: expected true got false
+

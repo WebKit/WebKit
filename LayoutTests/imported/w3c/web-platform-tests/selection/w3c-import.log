@@ -9,8 +9,6 @@ Do NOT modify or remove this file.
 
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
-user-select
-Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
@@ -43,6 +41,13 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/selection/collapse-15.html
 /LayoutTests/imported/w3c/web-platform-tests/selection/collapse-30.html
 /LayoutTests/imported/w3c/web-platform-tests/selection/collapse-45.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/collapse-common-ancestor-1-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/collapse-common-ancestor-1.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/collapse-common-ancestor-2-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/collapse-common-ancestor-2.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/collapse-common-ancestor-3-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/collapse-common-ancestor-3.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/collapse-common-ancestor-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/selection/collapse.htm
 /LayoutTests/imported/w3c/web-platform-tests/selection/collapse.js
 /LayoutTests/imported/w3c/web-platform-tests/selection/collapseToStartEnd.html
@@ -50,6 +55,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/selection/deleteFromDocument-HTMLDetails.html
 /LayoutTests/imported/w3c/web-platform-tests/selection/deleteFromDocument.html
 /LayoutTests/imported/w3c/web-platform-tests/selection/drag-disabled-textarea-shadow-dom.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/drag-out-of-floated-content.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/drag-selection-contenteditable-to-out-of-flow-user-select-none.html
 /LayoutTests/imported/w3c/web-platform-tests/selection/drag-selection-extend-to-user-select-none.html
 /LayoutTests/imported/w3c/web-platform-tests/selection/extend-00.html
 /LayoutTests/imported/w3c/web-platform-tests/selection/extend-20.html
@@ -88,6 +95,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/selection/selection-direction-on-double-click.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/selection/selection-direction-on-single-click.html
 /LayoutTests/imported/w3c/web-platform-tests/selection/selection-direction-on-triple-click.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/selection-focused-element-becomes-nonfocusable.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/selection-incremental-change-repaint-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/selection-incremental-change-repaint-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/selection-incremental-change-repaint.html
 /LayoutTests/imported/w3c/web-platform-tests/selection/selection-modify-extend-word-generated-content.html
 /LayoutTests/imported/w3c/web-platform-tests/selection/selection-nested-video.html
 /LayoutTests/imported/w3c/web-platform-tests/selection/selection-range-after-editinghost-removed.html
@@ -95,6 +106,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/selection/selection-range-in-shadow-after-the-shadow-removed.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/selection/selection-select-all-move-input-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/selection/selection-shadow-dom-crash-print.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/selection-test-utils.js
 /LayoutTests/imported/w3c/web-platform-tests/selection/setBaseAndExtent.html
 /LayoutTests/imported/w3c/web-platform-tests/selection/stringifier.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/selection/stringifier_editable_element.tentative.html

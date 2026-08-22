@@ -14286,6 +14286,8 @@
         "web-platform-tests/selection/caret/after-designMode-off-ref.html",
         "web-platform-tests/selection/caret/collapse-pre-linestart-ref.html",
         "web-platform-tests/selection/caret/editing-host-has-only-invisible-br-ref.html",
+        "web-platform-tests/selection/collapse-common-ancestor-ref.html",
+        "web-platform-tests/selection/selection-incremental-change-repaint-ref.html",
         "web-platform-tests/selection/selection-shadow-dom-crash-print.html",
         "web-platform-tests/selection/shadow-dom/cross-shadow-boundary-1-ref.html",
         "web-platform-tests/selection/shadow-dom/cross-shadow-boundary-2-ref.html",

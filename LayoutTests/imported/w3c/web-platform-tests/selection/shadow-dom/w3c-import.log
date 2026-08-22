@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/selection/shadow-dom/cross-shadow-boundary-1-expected.html
@@ -31,6 +29,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/selection/shadow-dom/cross-shadow-boundary-6-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/selection/shadow-dom/cross-shadow-boundary-6-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/selection/shadow-dom/cross-shadow-boundary-6.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/shadow-dom/cross-shadow-boundary-extend.html
 /LayoutTests/imported/w3c/web-platform-tests/selection/shadow-dom/cross-shadow-boundary-img-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/selection/shadow-dom/cross-shadow-boundary-img-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/selection/shadow-dom/cross-shadow-boundary-img.html
@@ -40,3 +39,4 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/selection/shadow-dom/cross-shadow-boundary-select-root-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/selection/shadow-dom/cross-shadow-boundary-select-root-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/selection/shadow-dom/cross-shadow-boundary-select-root.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/shadow-dom/selection-at-nodes-not-part-of-flattened-tree.html

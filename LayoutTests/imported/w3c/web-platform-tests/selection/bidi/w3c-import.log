@@ -10,8 +10,9 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/selection/bidi/modify-extend-by-character.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/bidi/modify-move-by-character.html
 /LayoutTests/imported/w3c/web-platform-tests/selection/bidi/modify.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/selection/bidi/selection-modify-bidi-data.js
