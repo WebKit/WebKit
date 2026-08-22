@@ -99,7 +99,6 @@ class Box;
 namespace Style {
 class ComputedStyle;
 class PseudoElementRequest;
-enum class MarginTrimSide : uint8_t;
 }
 
 enum class Affinity : bool;

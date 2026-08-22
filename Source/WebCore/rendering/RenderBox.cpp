@@ -2984,12 +2984,14 @@ void RenderBox::computeLogicalWidth(LogicalExtentComputedValues& computedValues)
 
     // Margin calculations.
     if (hasPerpendicularContainingBlock || isFloating() || isInline()) {
-        computedValues.margins.start = computeOrTrimInlineMargin(containingBlock, Style::MarginTrimSide::BlockStart, [&] {
-            return Style::evaluateMinimum<LayoutUnit>(styleToUse.marginStart(), containerLogicalWidth, styleToUse.usedZoomForLength());
-        });
-        computedValues.margins.end = computeOrTrimInlineMargin(containingBlock, Style::MarginTrimSide::BlockEnd, [&] {
-            return Style::evaluateMinimum<LayoutUnit>(styleToUse.marginEnd(), containerLogicalWidth, styleToUse.usedZoomForLength());
-        });
+        computedValues.margins.start = Style::evaluateMinimum<LayoutUnit>(styleToUse.marginStart(), containerLogicalWidth, styleToUse.usedZoomForLength());
+        computedValues.margins.end = Style::evaluateMinimum<LayoutUnit>(styleToUse.marginEnd(), containerLogicalWidth, styleToUse.usedZoomForLength());
+        if (CheckedPtr blockFlow = dynamicDowncast<RenderBlockFlow>(containingBlock); hasPerpendicularContainingBlock && blockFlow) {
+            if (blockFlow->shouldTrimChildMargin(Style::MarginTrimSide::BlockStart, *this))
+                computedValues.margins.start = 0_lu;
+            if (blockFlow->shouldTrimChildMargin(Style::MarginTrimSide::BlockEnd, *this))
+                computedValues.margins.end = 0_lu;
+        }
     } else {
         auto containerLogicalWidthForAutoMargins = containerLogicalWidth;
         if (avoidsFloats() && containingBlock.containsFloats())
@@ -3327,17 +3329,6 @@ bool RenderBox::sizesLogicalWidthToFitContent() const
     }
 
     return false;
-}
-
-template<typename Function>
-LayoutUnit RenderBox::computeOrTrimInlineMargin(const RenderBlock& containingBlock, Style::MarginTrimSide marginSide, NOESCAPE const Function& computeInlineMargin) const
-{
-    if (containingBlock.shouldTrimChildMargin(marginSide, *this)) {
-        // FIXME(255434): The margin should be trimmed within the context of its layout
-        // system (block) and should not be done at this level within RenderBox.
-        return 0_lu;
-    }
-    return computeInlineMargin();
 }
 
 void RenderBox::computeInlineDirectionMargins(const RenderBlock& containingBlock, LayoutUnit containerWidth, std::optional<LayoutUnit> availableSpaceAdjustedWithFloats, LayoutUnit childWidth, LayoutUnit& marginStart, LayoutUnit& marginEnd) const

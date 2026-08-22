@@ -65,6 +65,11 @@ inline LegacyRootInlineBox* RenderBlockFlow::legacyRootBox() const
 
 inline bool RenderBlockFlow::hasOverhangingFloats() const { return parent() && containsFloats() && lowestFloatLogicalBottom() > logicalHeight(); }
 
+inline bool RenderBlockFlow::shouldTrimChildMargin(Style::MarginTrimSide marginTrimSide, const RenderBox& child) const
+{
+    return style().marginTrim().contains(marginTrimSide) && isChildEligibleForMarginTrim(marginTrimSide, child);
+}
+
 inline LayoutUnit RenderBlockFlow::endPaddingWidthForCaret() const
 {
     RefPtr protectedElement = element();

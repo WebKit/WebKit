@@ -56,6 +56,7 @@
 #include "PositionedLayoutConstraints.h"
 #include "RelayoutScopeForScrollbarChange.h"
 #include "RenderBlockFlow.h"
+#include "RenderBlockFlowInlines.h"
 #include "RenderBlockInlines.h"
 #include "RenderBoxFragmentInfo.h"
 #include "RenderBoxInlines.h"
@@ -3212,8 +3213,9 @@ void RenderBlock::layoutExcludedChildren(RelayoutChildren relayoutChildren)
     
     LayoutUnit fieldsetBorderBefore = borderBefore();
     LayoutUnit legendLogicalHeight = logicalHeightForChild(legend);
-    LayoutUnit legendBeforeMargin = shouldTrimChildMargin(Style::MarginTrimSide::BlockStart, legend) ? 0_lu : marginBeforeForChild(legend);
-    LayoutUnit legendAfterMargin = shouldTrimChildMargin(Style::MarginTrimSide::BlockEnd, legend) ? 0_lu : marginAfterForChild(legend);
+    CheckedPtr blockFlow = dynamicDowncast<RenderBlockFlow>(*this);
+    LayoutUnit legendBeforeMargin = blockFlow && blockFlow->shouldTrimChildMargin(Style::MarginTrimSide::BlockStart, legend) ? 0_lu : marginBeforeForChild(legend);
+    LayoutUnit legendAfterMargin = blockFlow && blockFlow->shouldTrimChildMargin(Style::MarginTrimSide::BlockEnd, legend) ? 0_lu : marginAfterForChild(legend);
     LayoutUnit topPositionForLegend = std::max(0_lu, (fieldsetBorderBefore - legendLogicalHeight) / 2);
     LayoutUnit bottomPositionForLegend = topPositionForLegend + legendLogicalHeight + legendAfterMargin;
 

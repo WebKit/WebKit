@@ -53,6 +53,10 @@ namespace InlineIterator {
 class LineBoxIterator;
 }
 
+namespace Style {
+enum class MarginTrimSide : uint8_t;
+}
+
 #if ENABLE(TEXT_AUTOSIZING)
 enum LineCount {
     NOT_SET = 0, NO_LINE = 1, ONE_LINE = 2, MULTI_LINE = 3
@@ -163,6 +167,7 @@ protected:
 
 public:
     MarginValues marginValuesForChild(RenderBox& child) const;
+    inline bool shouldTrimChildMargin(Style::MarginTrimSide, const RenderBox&) const;
     void dirtyForLayoutFromPercentageHeightDescendant(RenderBox&);
 
     class MarginInfo {
@@ -403,8 +408,6 @@ public:
     std::optional<LayoutUnit> lastLineBaseline() const override;
 
 protected:
-    bool isChildEligibleForMarginTrim(Style::MarginTrimSide, const RenderBox&) const final;
-
     bool shouldResetLogicalHeightBeforeLayout() const override { return true; }
 
     std::pair<LayoutUnit, LayoutUnit> computeIntrinsicLogicalWidths() const override;
@@ -453,6 +456,8 @@ protected:
     void layoutExcludedChildren(RelayoutChildren) override;
 
 private:
+    bool isChildEligibleForMarginTrim(Style::MarginTrimSide, const RenderBox&) const;
+
     bool recomputeLogicalWidthAndColumnWidth();
     LayoutUnit columnGap() const;
     
