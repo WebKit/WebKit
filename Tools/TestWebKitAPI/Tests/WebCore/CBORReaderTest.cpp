@@ -31,6 +31,7 @@
 
 #if ENABLE(WEB_AUTHN)
 
+#include <WebCore/AuthenticationExtensionsClientOutputs.h>
 #include <WebCore/CBORReader.h>
 #include <limits>
 #include <utility>
@@ -762,6 +763,20 @@ TEST(CBORReaderTest, TestUnsupportedSimplevalue)
         EXPECT_FALSE(cbor.has_value());
         EXPECT_TRUE(errorCode == CBORReader::DecoderError::UnsupportedSimpleValue);
     }
+}
+
+TEST(CBORReaderTest, AuthExtensionsFromCBOR_CredPropsWithoutRk)
+{
+    // CBOR encoding of {"credProps": {}} — credProps map present but no "rk" key.
+    // a1                          -- map(1)
+    //    69                       -- text(9)
+    //       63726564 50726f7073   -- "credProps"
+    //    a0                       -- map(0)
+    Vector<uint8_t> cborData { 0xa1, 0x69, 0x63, 0x72, 0x65, 0x64, 0x50, 0x72, 0x6f, 0x70, 0x73, 0xa0 };
+    auto result = WebCore::AuthenticationExtensionsClientOutputs::fromCBOR(cborData);
+    ASSERT_TRUE(result.has_value());
+    ASSERT_TRUE(result->credProps.has_value());
+    EXPECT_FALSE(result->credProps->rk);
 }
 
 } // namespace TestWebKitAPI
