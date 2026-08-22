@@ -507,7 +507,6 @@ Vector<ASCIILiteral> serializedIdentifiers()
         "WebCore::DictationContext"_s,
         "WebCore::NodeIdentifier"_s,
         "WebCore::FetchIdentifier"_s,
-        "WebCore::FileSystemHandleGlobalIdentifier"_s,
         "WebCore::FileSystemHandleIdentifier"_s,
         "WebCore::FileSystemSyncAccessHandleIdentifier"_s,
         "WebCore::FileSystemWritableFileStreamIdentifier"_s,

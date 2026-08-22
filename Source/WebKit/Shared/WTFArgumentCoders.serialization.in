@@ -247,11 +247,6 @@ template: struct WebKit::WebTransportSessionIdentifierType
     [Validator='WTF::ObjectIdentifierGenericBase<uint64_t>::isValidIdentifier(*toUInt64)'] uint64_t toUInt64()
 }
 
-template: struct WebCore::FileSystemHandleGlobalIdentifierType
-[WebKitPlatform, CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WTF::UUIDObjectIdentifier {
-    [Validator='WTF::ObjectIdentifierGenericBase<WTF::UUID>::isValidIdentifier(*toRawValue)'] WTF::UUID toRawValue()
-}
-
 #if OS(WINDOWS)
 using WTF::ProcessID = int;
 #else

@@ -1482,7 +1482,7 @@ public:
             write(FileSystemHandleTag);
             write(std::to_underlying(handle.kind()));
             write(handle.name());
-            write(std::span<const uint8_t> { handle.globalIdentifier().toRawValue().span() });
+            write(std::span<const uint8_t> { handle.globalIdentifier().span() });
             ASSERT(!context->securityOrigin()->isOpaque());
             write(context->securityOrigin()->toString());
             if (RefPtr connection = fileSystemStorageConnectionForContext(*context)) {

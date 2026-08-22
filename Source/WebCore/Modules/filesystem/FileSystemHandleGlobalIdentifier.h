@@ -25,11 +25,10 @@
 
 #pragma once
 
-#include <wtf/ObjectIdentifier.h>
+#include <wtf/UUID.h>
 
 namespace WebCore {
 
-struct FileSystemHandleGlobalIdentifierType;
-using FileSystemHandleGlobalIdentifier = UUIDObjectIdentifier<FileSystemHandleGlobalIdentifierType>;
+using FileSystemHandleGlobalIdentifier = WTF::UUID;
 
 } // namespace WebCore

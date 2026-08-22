@@ -355,11 +355,6 @@ def message_to_struct_declaration(receiver, message):
 
 def atomic_object_identifier(type):
     # FIXME: This can be derived from *.serialization.in files.
-    uuid_object_identifiers = [
-        'WebCore::FileSystemHandleGlobalIdentifier',
-    ]
-    if type in uuid_object_identifiers:
-        return 'UUID'
     atomic_object_identifiers = [
         'WebCore::FileSystemHandleIdentifier',
         'WebCore::FileSystemSyncAccessHandleIdentifier',
@@ -446,7 +441,6 @@ def serialized_identifiers():
         'WebCore::DictationContext',
         'WebCore::NodeIdentifier',
         'WebCore::FetchIdentifier',
-        'WebCore::FileSystemHandleGlobalIdentifier',
         'WebCore::FileSystemHandleIdentifier',
         'WebCore::FileSystemSyncAccessHandleIdentifier',
         'WebCore::FileSystemWritableFileStreamIdentifier',
@@ -624,6 +618,7 @@ def types_that_cannot_be_forward_declared():
         'WebCore::DictationContext',
         'WebCore::DragApplicationFlags',
         'WebCore::DragEventTargetData',
+        'WebCore::FileSystemHandleGlobalIdentifier',
         'WebCore::FloatBoxExtent',
         'WebCore::GCGLExtension',
         'WebCore::GlyphBufferAdvance',
@@ -1275,6 +1270,7 @@ def headers_for_type(type, for_implementation_file=False):
         'WebCore::FontInternalAttributes': ['<WebCore/Font.h>'],
         'WebCore::FileChooserSettings': ['<WebCore/FileChooser.h>'],
         'WebCore::FillLightMode': ['<WebCore/FillLightMode.h>'],
+        'WebCore::FileSystemHandleGlobalIdentifier': ['<WebCore/FileSystemHandleGlobalIdentifier.h>'],
         'WebCore::FirstPartyWebsiteDataRemovalMode': ['<WebCore/NetworkStorageSession.h>'],
         'WebCore::FontChanges': ['<WebCore/FontAttributeChanges.h>'],
         'WebCore::FontPlatformDataAttributes': ['<WebCore/FontPlatformData.h>'],

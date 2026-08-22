@@ -104,7 +104,7 @@ Expected<std::pair<WebCore::FileSystemHandleGlobalIdentifier, WebCore::FileSyste
     if (!newHandle)
         return makeUnexpected(FileSystemStorageError::Unknown);
 
-    auto globalIdentifier = WebCore::FileSystemHandleGlobalIdentifier::generate();
+    auto globalIdentifier = WTF::UUID::createVersion4();
     newHandle->setGlobalIdentifier(globalIdentifier);
 
     auto newHandleIdentifier = newHandle->identifier();

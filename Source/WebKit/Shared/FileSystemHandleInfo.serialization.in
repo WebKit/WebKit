@@ -22,6 +22,8 @@
 
 enum class WebCore::FileSystemHandleKind : bool;
 
+using WebCore::FileSystemHandleGlobalIdentifier = WTF::UUID;
+
 struct WebCore::FileSystemHandleInfo {
     WebCore::FileSystemHandleGlobalIdentifier globalIdentifier;
     WebCore::FileSystemHandleIdentifier identifier;

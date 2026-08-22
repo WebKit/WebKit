@@ -2153,7 +2153,7 @@ IDBError SQLiteIDBBackingStore::addFileSystemHandleRecordsForObjectStoreRecord(i
     for (auto& record : records) {
         auto sql = cachedStatement(SQL::AddFileSystemHandleRecord, "INSERT INTO FileSystemHandleRecords VALUES (?, ?, ?, ?, ?);"_s);
         CheckedPtr statement = sql.get();
-        auto rawIdentifier = record.identifier.toRawValue();
+        auto rawIdentifier = record.identifier;
         if (!statement
             || statement->bindInt64(1, recordID) != SQLITE_OK
             || statement->bindBlob(2, rawIdentifier.span()) != SQLITE_OK

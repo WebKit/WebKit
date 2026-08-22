@@ -71,7 +71,7 @@ void FileSystemHandle::close()
 
 void FileSystemHandle::markAsUnresolved(ClientOrigin&& origin, Ref<FileSystemStorageConnection>&& connection)
 {
-    ASSERT(m_globalIdentifier.toRawValue());
+    ASSERT(!!m_globalIdentifier);
     m_isUnresolved = true;
     m_origin = WTF::move(origin);
     connection->addGlobalIdentifierReference(ClientOrigin { m_origin }, m_globalIdentifier);
