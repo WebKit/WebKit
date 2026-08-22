@@ -41,12 +41,12 @@
 #include "WebFrameProxy.h"
 #include "WebPageProxy.h"
 #include "WebProcessPool.h"
+#include <JavaScriptCore/MathCommon.h>
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/SecurityOriginData.h>
 #include <algorithm>
 #include <cmath>
-#include <limits>
 #include <wtf/Borrow.h>
 #include <wtf/CallbackAggregator.h>
 #include <wtf/HexNumber.h>
@@ -64,11 +64,14 @@ using EvaluateResultType = Inspector::Protocol::BidiScript::EvaluateResultType;
 static RefPtr<Inspector::Protocol::BidiScript::RemoteValue> deserializeRemoteValue(const JSON::Value*);
 static Ref<JSON::Value> deserializeLocalValue(const JSON::Value&);
 
-static Inspector::CommandResult<std::optional<int>> validateDepthParameter(const JSON::Object& options, ASCIILiteral key)
+static Inspector::CommandResult<void> updateValidatedDepthParameter(const JSON::Object& options, ASCIILiteral key, std::optional<double>& depth)
 {
     if (auto json = options.getValue(key)) {
-        if (json->isNull())
-            return std::optional<int> { };
+        if (json->isNull()) {
+            depth = std::nullopt;
+            return { };
+        }
+
         double value;
         if (!json->asDouble(value))
             return makeUnexpected(STRING_FOR_PREDEFINED_ERROR_NAME(InvalidParameter));
@@ -78,12 +81,12 @@ static Inspector::CommandResult<std::optional<int>> validateDepthParameter(const
             return makeUnexpected(STRING_FOR_PREDEFINED_ERROR_NAME(InvalidParameter));
         if (std::floor(value) != value)
             return makeUnexpected(STRING_FOR_PREDEFINED_ERROR_NAME(InvalidParameter));
-        if (value > std::numeric_limits<int>::max())
+        if (value > JSC::maxSafeInteger())
             return makeUnexpected(STRING_FOR_PREDEFINED_ERROR_NAME(InvalidParameter));
-        return std::optional<int> { static_cast<int>(value) };
+        depth = value;
     }
 
-    return std::optional<int> { };
+    return { };
 }
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(BidiScriptAgent);
@@ -98,8 +101,6 @@ BidiScriptAgent::~BidiScriptAgent() = default;
 
 static RefPtr<Inspector::Protocol::BidiScript::RemoteValue> deserializeRemoteValue(const JSON::Value* jsonValue)
 {
-    // FIXME: Implement full BiDi RemoteValue deserialization (array, object, map, set, etc.)
-    // https://bugs.webkit.org/show_bug.cgi?id=288060
     using RemoteValue = Inspector::Protocol::BidiScript::RemoteValue;
     using RemoteValueType = Inspector::Protocol::BidiScript::RemoteValueType;
 
@@ -109,75 +110,22 @@ static RefPtr<Inspector::Protocol::BidiScript::RemoteValue> deserializeRemoteVal
         return resultValue.setType(RemoteValueType::Undefined).release();
 
     String typeString = object->getString("type"_s);
+    auto parsedType = Inspector::Protocol::WebDriverBidiHelpers::parseEnumValueFromString<RemoteValueType>(typeString);
+    if (!parsedType)
+        return resultValue.setType(RemoteValueType::Undefined).release();
 
-    // Primitive types with values.
-    if (typeString == "string"_s) {
-        auto remoteValue = resultValue.setType(RemoteValueType::String).release();
-        remoteValue->setValue(JSON::Value::create(object->getString("value"_s)));
-        return remoteValue;
-    }
-    if (typeString == "number"_s) {
-        auto remoteValue = resultValue.setType(RemoteValueType::Number).release();
-        if (auto num = object->getDouble("value"_s))
-            remoteValue->setValue(JSON::Value::create(*num));
-        else
-            remoteValue->setValue(JSON::Value::create(object->getString("value"_s)));
-        return remoteValue;
-    }
-    if (typeString == "boolean"_s) {
-        auto remoteValue = resultValue.setType(RemoteValueType::Boolean).release();
-        if (auto b = object->getBoolean("value"_s))
-            remoteValue->setValue(JSON::Value::create(*b));
-        return remoteValue;
-    }
-    if (typeString == "bigint"_s) {
-        auto remoteValue = resultValue.setType(RemoteValueType::Bigint).release();
-        remoteValue->setValue(JSON::Value::create(object->getString("value"_s)));
-        return remoteValue;
-    }
+    auto remoteValue = resultValue.setType(*parsedType).release();
+    if (auto value = object->getValue("value"_s))
+        remoteValue->setValue(value.releaseNonNull());
 
-    // Primitive types without values.
-    if (typeString == "null"_s)
-        return resultValue.setType(RemoteValueType::Null).release();
-    if (typeString == "symbol"_s)
-        return resultValue.setType(RemoteValueType::Symbol).release();
-    if (typeString == "function"_s)
-        return resultValue.setType(RemoteValueType::Function).release();
+    if (auto sharedId = object->getString("sharedId"_s); !sharedId.isNull())
+        remoteValue->setSharedId(sharedId);
+    if (auto handle = object->getString("handle"_s); !handle.isNull())
+        remoteValue->setHandle(handle);
+    if (auto internalId = object->getString("internalId"_s); !internalId.isNull())
+        remoteValue->setInternalId(internalId);
 
-    // Simple structured types.
-    if (typeString == "date"_s) {
-        auto remoteValue = resultValue.setType(RemoteValueType::Date).release();
-        remoteValue->setValue(JSON::Value::create(object->getString("value"_s)));
-        return remoteValue;
-    }
-    if (typeString == "regexp"_s) {
-        auto remoteValue = resultValue.setType(RemoteValueType::Regexp).release();
-        if (auto value = object->getValue("value"_s))
-            remoteValue->setValue(value.releaseNonNull());
-        return remoteValue;
-    }
-
-    // Other types that serialize without values.
-    if (typeString == "promise"_s)
-        return resultValue.setType(RemoteValueType::Promise).release();
-    if (typeString == "error"_s)
-        return resultValue.setType(RemoteValueType::Error).release();
-
-    // For unknown/unhandled types, pass through the original JSON structure.
-    // This allows complex types like iterators, objects, arrays, etc. to be preserved
-    // even if we don't explicitly deserialize them yet.
-    if (!typeString.isNull()) {
-        // Try to match known type strings to enum values.
-        if (typeString == "object"_s) {
-            auto remoteValue = resultValue.setType(RemoteValueType::Object).release();
-            if (auto value = object->getValue("value"_s))
-                remoteValue->setValue(value.releaseNonNull());
-            return remoteValue;
-        }
-        // For any other unknown types, default to undefined.
-    }
-
-    return resultValue.setType(RemoteValueType::Undefined).release();
+    return remoteValue;
 }
 
 static Ref<JSON::Value> deserializeLocalValue(const JSON::Value& jsonValue)
@@ -452,31 +400,31 @@ void BidiScriptAgent::evaluate(const String& expression, bool awaitPromise, Ref<
     ASYNC_FAIL_IF_UNEXPECTED_RESULT(pageAndFrameHandles);
     ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!session->webPageProxyForHandle(*browsingContext), FrameNotFound);
 
-    std::optional<int> maxObjectDepth;
+    // SerializationOptions defaults: DOM depth 0, object depth unlimited, and
+    // no shadow-tree children.
+    std::optional<double> maxObjectDepth;
+    std::optional<double> maxDomDepth { 0 };
+    String includeShadowTree = "none"_s;
     if (optionalSerializationOptions) {
         auto& serializationOptions = *optionalSerializationOptions;
 
-        auto validatedDomDepth = validateDepthParameter(serializationOptions, "maxDomDepth"_s);
-        ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!validatedDomDepth, InvalidParameter);
-        // FIXME: Propagate maxDomDepth and includeShadowTree once the WebProcess serializer supports
-        // DOM serialization options.
-        // https://bugs.webkit.org/show_bug.cgi?id=288060
-
-        auto validatedObjDepth = validateDepthParameter(serializationOptions, "maxObjectDepth"_s);
-        ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!validatedObjDepth, InvalidParameter);
-        maxObjectDepth = *validatedObjDepth;
+        auto maxDomDepthValidationResult = updateValidatedDepthParameter(serializationOptions, "maxDomDepth"_s, maxDomDepth);
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!maxDomDepthValidationResult, InvalidParameter);
+        auto maxObjectDepthValidationResult = updateValidatedDepthParameter(serializationOptions, "maxObjectDepth"_s, maxObjectDepth);
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!maxObjectDepthValidationResult, InvalidParameter);
 
         if (auto includeShadowTreeJSON = serializationOptions.getValue("includeShadowTree"_s)) {
             String includeShadowTreeValue;
             ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!includeShadowTreeJSON->asString(includeShadowTreeValue), InvalidParameter);
-            auto includeShadowTree = Inspector::Protocol::WebDriverBidiHelpers::parseEnumValueFromString<Inspector::Protocol::BidiScript::SerializationOptions::IncludeShadowTree>(includeShadowTreeValue);
-            ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!includeShadowTree, InvalidParameter);
+            auto parsedIncludeShadowTree = Inspector::Protocol::WebDriverBidiHelpers::parseEnumValueFromString<Inspector::Protocol::BidiScript::SerializationOptions::IncludeShadowTree>(includeShadowTreeValue);
+            ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!parsedIncludeShadowTree, InvalidParameter);
+            includeShadowTree = includeShadowTreeValue;
         }
     }
 
     String realmID = generateRealmIdForBrowsingContext(*browsingContext);
 
-    session->evaluateBidiScript(*browsingContext, emptyString(), expression, awaitPromise, maxObjectDepth, std::nullopt,
+    session->evaluateBidiScript(*browsingContext, emptyString(), expression, awaitPromise, maxObjectDepth, maxDomDepth, includeShadowTree, std::nullopt,
         [weakThis = WeakPtr { *this }, callback = WTF::move(callback), realmID = realmID.isolatedCopy(), expression = expression.isolatedCopy()](Inspector::CommandResult<String>&& result) mutable {
             CheckedPtr protectedThis = weakThis.get();
             if (!protectedThis)
@@ -1092,6 +1040,11 @@ Ref<Inspector::Protocol::BidiScript::ExceptionDetails> BidiScriptAgent::buildExc
         errorObject->setString("stack"_s, stack);
 
     exceptionRemote->setValue(WTF::move(errorObject));
+
+    if (auto serializedException = exceptionObject.getValue("exception"_s)) {
+        if (auto remoteValue = deserializeRemoteValue(serializedException.get()))
+            exceptionRemote = remoteValue.releaseNonNull();
+    }
 
     return BidiScript::ExceptionDetails::create()
         .setLineNumber(static_cast<int>(parsedStack.topLineNumber))
