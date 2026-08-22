@@ -252,7 +252,9 @@ void HTMLDialogElement::close(const String& result, Element* source)
 
     removeAttribute(openAttr);
 
-    if (isModal())
+    bool wasModal = isModal();
+
+    if (wasModal)
         removeFromTopLayer();
 
     setIsModal(false);
@@ -260,15 +262,14 @@ void HTMLDialogElement::close(const String& result, Element* source)
     if (!result.isNull())
         m_returnValue = result;
 
-    // FIXME: Focus should only be restored when the document's focused element is still inside
-    // this dialog, or when the dialog was modal. Adding that condition requires show() to run the
-    // dialog focusing steps reliably first: focusability is determined from a possibly stale
-    // computed style, so for a dialog that was previously shown and closed no candidate looks
-    // focusable and focus never enters the dialog. See webkit.org/b/321623.
     if (RefPtr element = std::exchange(m_previouslyFocusedElement, nullptr).get()) {
-        FocusOptions options;
-        options.preventScroll = true;
-        element->focus(options);
+        RefPtr focusedElement = document().focusedElement();
+        bool focusIsInsideDialog = focusedElement == this || (focusedElement && focusedElement->isComposedTreeDescendantOf(*this));
+        if (wasModal || focusIsInsideDialog) {
+            FocusOptions options;
+            options.preventScroll = true;
+            element->focus(options);
+        }
     }
 
     queueTaskToDispatchEvent(TaskSource::UserInteraction, Event::create(eventNames().closeEvent, Event::CanBubble::No, Event::IsCancelable::No));
