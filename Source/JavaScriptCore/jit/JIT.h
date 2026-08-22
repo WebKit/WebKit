@@ -628,7 +628,7 @@ namespace JSC {
         void emitNewFuncExprCommon(const JSInstruction*);
         void emitVarInjectionCheck(bool needsVarInjectionChecks, GPRReg);
         void emitVarReadOnlyCheck(ResolveType, GPRReg scratchGPR);
-        void emitNotifyWriteWatchpoint(GPRReg pointerToSet);
+        void emitNotifyWriteWatchpoint(GPRReg pointerToSetAndScratch);
         void emitGetScope(VirtualRegister destination);
         void emitCheckTraps();
 

@@ -58,48 +58,26 @@ inline void SymbolTable::notifyCreation(VM& vm, JSScope* scope, const char* reas
     }
 }
 
-inline SymbolTableEntry::SymbolTableEntry(const SymbolTableEntry& other)
-    : m_bits(SlimFlag)
-{
-    *this = other;
-}
-
-inline SymbolTableEntry& SymbolTableEntry::operator=(const SymbolTableEntry& other)
-{
-    if (other.isFat()) [[unlikely]]
-        return copySlow(other);
-    freeFatEntry();
-    m_bits = other.m_bits;
-    return *this;
-}
-
-inline SymbolTableEntry SymbolTable::get(const ConcurrentJSLocker&, UniquedStringImpl* key)
+inline SymbolTableEntry::Fast SymbolTable::get(const ConcurrentJSLocker&, UniquedStringImpl* key)
 {
     return m_map.get(key);
 }
 
-inline SymbolTableEntry SymbolTable::get(UniquedStringImpl* key)
+inline SymbolTableEntry::Fast SymbolTable::get(UniquedStringImpl* key)
 {
     ConcurrentJSLocker locker(m_lock);
     return get(locker, key);
 }
 
-inline SymbolTableEntry SymbolTable::inlineGet(const ConcurrentJSLocker&, UniquedStringImpl* key)
+inline SymbolTableEntry::Fast SymbolTable::inlineGet(const ConcurrentJSLocker&, UniquedStringImpl* key)
 {
     return m_map.inlineGet(key);
 }
 
-inline SymbolTableEntry SymbolTable::inlineGet(UniquedStringImpl* key)
+inline SymbolTableEntry::Fast SymbolTable::inlineGet(UniquedStringImpl* key)
 {
     ConcurrentJSLocker locker(m_lock);
     return inlineGet(locker, key);
-}
-
-inline SymbolTableEntry::FatEntry* SymbolTableEntry::inflate()
-{
-    if (isFat()) [[likely]]
-        return fatEntry();
-    return inflateSlow();
 }
 
 inline bool SymbolTable::trySetArgumentsLength(VM& vm, uint32_t length)
@@ -135,8 +113,7 @@ inline void SymbolTable::prepareToWatchScopedArgument(SymbolTableEntry& entry, u
     if (!m_arguments)
         return;
 
-    WatchpointSet* watchpoints = entry.watchpointSet();
-    m_arguments->trySetWatchpointSet(i, watchpoints);
+    m_arguments->trySetWatchpointSet(i, entry.watchpointSet());
 }
 
 } // namespace JSC

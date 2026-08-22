@@ -263,7 +263,7 @@ void CyclicModuleRecord::initializeEnvironment(JSGlobalObject* globalObject, Ref
         // Module environment contains the heap allocated "var", "function", "let", "const", and "class".
         // When creating the environment, we initialized all the slots with empty, it's ok for lexical values.
         // But for "var" and "function", we should initialize it with undefined. They are contained in the declared variables.
-        SymbolTableEntry entry = symbolTable->get(variable.key.get());
+        SymbolTableEntry::Fast entry = symbolTable->get(variable.key.get());
         VarOffset offset = entry.varOffset();
         if (!offset.isStack()) {
             bool putResult = false;
@@ -282,7 +282,7 @@ void CyclicModuleRecord::initializeEnvironment(JSGlobalObject* globalObject, Ref
         // 24.a.ii. Else,
         // 24.a.ii.1. Perform ! env.CreateMutableBinding(dn, false).
         UnlinkedFunctionExecutable* unlinkedFunctionExecutable = unlinkedCodeBlock->functionDecl(i);
-        SymbolTableEntry entry = symbolTable->get(unlinkedFunctionExecutable->name().impl());
+        SymbolTableEntry::Fast entry = symbolTable->get(unlinkedFunctionExecutable->name().impl());
         VarOffset offset = entry.varOffset();
         if (!offset.isStack()) {
             ASSERT(!unlinkedFunctionExecutable->name().isEmpty());

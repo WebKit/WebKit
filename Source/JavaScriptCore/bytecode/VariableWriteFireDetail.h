@@ -38,7 +38,7 @@ public:
 
     JS_EXPORT_PRIVATE void dump(PrintStream&) const final;
     
-    JS_EXPORT_PRIVATE static void touch(VM&, WatchpointSet*, JSObject*, const PropertyName&);
+    JS_EXPORT_PRIVATE static void touch(VM&, InlineWatchpointSet*, JSObject*, const PropertyName&);
 
 private:
     VariableWriteFireDetail(ClangVTableWorkaroundTag, const PropertyName&);

@@ -1454,7 +1454,7 @@ JSValue Graph::tryGetConstantClosureVar(JSValue base, ScopeOffset offset)
     
     SymbolTable* symbolTable = activation->symbolTable();
     JSValue value;
-    WatchpointSet* set;
+    InlineWatchpointSet* set;
     {
         ConcurrentJSLocker locker(symbolTable->m_lock);
         

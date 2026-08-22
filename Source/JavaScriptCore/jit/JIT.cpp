@@ -103,10 +103,10 @@ BaselineUnlinkedCallLinkInfo* JIT::addUnlinkedCallLinkInfo()
     return &m_unlinkedCalls.alloc();
 }
 
-void JIT::emitNotifyWriteWatchpoint(GPRReg pointerToSet)
+void JIT::emitNotifyWriteWatchpoint(GPRReg pointerToSetAndScratch)
 {
-    auto ok = branchTestPtr(Zero, pointerToSet);
-    addSlowCase(branch8(NotEqual, Address(pointerToSet, WatchpointSet::offsetOfState()), TrustedImm32(IsInvalidated)));
+    auto ok = branchTestPtr(Zero, pointerToSetAndScratch);
+    addSlowCase(branchIfInlineWatchpointSetIsStillValid(pointerToSetAndScratch));
     ok.link(this);
 }
 

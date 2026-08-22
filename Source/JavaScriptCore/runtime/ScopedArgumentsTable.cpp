@@ -121,7 +121,7 @@ ScopedArgumentsTable* ScopedArgumentsTable::trySet(VM& vm, uint32_t i, ScopeOffs
     return result;
 }
 
-void ScopedArgumentsTable::trySetWatchpointSet(uint32_t i, WatchpointSet* watchpoints)
+void ScopedArgumentsTable::trySetWatchpointSet(uint32_t i, InlineWatchpointSet* watchpoints)
 {
     if (!watchpoints)
         return;

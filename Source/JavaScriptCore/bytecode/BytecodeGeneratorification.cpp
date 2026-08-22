@@ -155,7 +155,7 @@ private:
         unsigned identifierIndex = m_codeBlock->numberOfIdentifiers();
         m_codeBlock->addIdentifier(identifier);
         ScopeOffset scopeOffset = m_generatorFrameSymbolTable->takeNextScopeOffset(NoLockingNecessary);
-        m_generatorFrameSymbolTable->set(NoLockingNecessary, identifier.impl(), SymbolTableEntry(VarOffset(scopeOffset)));
+        m_generatorFrameSymbolTable->add(NoLockingNecessary, identifier.impl(), SymbolTableEntry(VarOffset(scopeOffset)));
 
         Storage storage = {
             identifier,

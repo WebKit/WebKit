@@ -61,7 +61,7 @@ types [
     :ToThisStatus,
     :TypeLocation,
     :WasmBoundLabel,
-    :WatchpointSet,
+    :InlineWatchpointSet,
     :WriteBarrierStructureID,
 
     :ValueProfileAndVirtualRegisterBuffer,
@@ -552,7 +552,7 @@ op :get_from_scope,
     metadata: {
         getPutInfo: GetPutInfo,
         _: {
-            watchpointSet: WatchpointSet.*,
+            watchpointSet: InlineWatchpointSet.*,
             structureID: WriteBarrierStructureID,
         },
         operand: uintptr_t,
@@ -575,7 +575,7 @@ op :put_to_scope,
         getPutInfo: GetPutInfo,
         _: {
             structureID: WriteBarrierStructureID,
-            watchpointSet: WatchpointSet.*,
+            watchpointSet: InlineWatchpointSet.*,
         },
         operand: uintptr_t,
     },

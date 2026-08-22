@@ -625,6 +625,18 @@ public:
             ::JSC::encode(encoder, buffer[i], vector[i]);
     }
 
+    template<typename Range>
+    void encodeRange(Encoder& encoder, unsigned size, const Range& range)
+    {
+        m_size = size;
+        if (!m_size)
+            return;
+        T* buffer = this->template allocate<T>(encoder, m_size);
+        unsigned i = 0;
+        for (const auto& element : range)
+            buffer[i++].encode(encoder, element);
+    }
+
     template<typename... Args, typename VectorContainer>
     void decode(Decoder& decoder, VectorContainer& vector, Args... args) const
     {
@@ -649,6 +661,13 @@ public:
         ::JSC::encode(encoder, m_second, pair.second);
     }
 
+    template<typename Key, typename Value>
+    void encode(Encoder& encoder, const WTF::KeyValuePair<Key, Value>& pair)
+    {
+        ::JSC::encode(encoder, m_first, pair.key);
+        ::JSC::encode(encoder, m_second, pair.value);
+    }
+
     void decode(Decoder& decoder, std::pair<SourceType<First>, SourceType<Second>>& pair) const
     {
         ::JSC::decode(decoder, m_first, pair.first);
@@ -669,11 +688,7 @@ public:
     template<WTF::ShouldValidateKey shouldValidateKey>
     void encode(Encoder& encoder, const Map<SourceType<Key>, SourceType<Value>, shouldValidateKey>& map)
     {
-        SourceType<decltype(m_entries)> entriesVector(map.size());
-        unsigned i = 0;
-        for (const auto& it : map)
-            entriesVector[i++] = { it.key, it.value };
-        m_entries.encode(encoder, entriesVector);
+        m_entries.encodeRange(encoder, map.size(), map);
     }
 
     template<WTF::ShouldValidateKey shouldValidateKey>
@@ -681,8 +696,8 @@ public:
     {
         SourceType<decltype(m_entries)> decodedEntries;
         m_entries.decode(decoder, decodedEntries);
-        for (const auto& pair : decodedEntries)
-            map.set(pair.first, pair.second);
+        for (auto& pair : decodedEntries)
+            map.set(WTF::move(pair.first), WTF::move(pair.second));
     }
 
 private:

@@ -3,7 +3,6 @@ API/JSCallbackObject.h
 API/JSClassRef.h
 API/JSObjectRef.h
 API/JSRetainPtr.h
-BytecodeStructs.h
 bytecode/InlineCacheHandler.h
 bytecode/PropertyInlineCacheClearingWatchpoint.h
 bytecode/SharedJITStubSet.h
@@ -27,7 +26,6 @@ jit/OperationResult.h
 parser/Parser.h
 parser/SourceProvider.h
 profiler/ProfilerEvent.h
-runtime/GetPutInfo.h
 runtime/IndexingHeader.h
 runtime/JSArrayBuffer.h
 runtime/JSDataView.h

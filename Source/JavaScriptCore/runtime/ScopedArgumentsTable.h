@@ -35,7 +35,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace JSC {
 
-class WatchpointSet;
+class InlineWatchpointSet;
 
 // This class's only job is to hold onto the list of ScopeOffsets for each argument that a
 // function has. Most of the time, the BytecodeGenerator will create one of these and it will
@@ -71,7 +71,7 @@ public:
     ScopedArgumentsTable* trySetLength(VM&, uint32_t newLength);
     
     ScopeOffset get(uint32_t i) const { return m_arguments.at(i); }
-    WatchpointSet* getWatchpointSet(uint32_t i) const { return m_watchpointSets.at(i); }
+    InlineWatchpointSet* getWatchpointSet(uint32_t i) const { return m_watchpointSets.at(i); }
     
     void lock()
     {
@@ -79,7 +79,7 @@ public:
     }
     
     ScopedArgumentsTable* trySet(VM&, uint32_t index, ScopeOffset);
-    void NODELETE trySetWatchpointSet(uint32_t index, WatchpointSet* watchpoints);
+    void NODELETE trySetWatchpointSet(uint32_t index, InlineWatchpointSet* watchpoints);
     void clearWatchpointSet(uint32_t index) { m_watchpointSets[index] = nullptr; }
 
     DECLARE_EXPORT_INFO;
@@ -95,7 +95,7 @@ private:
     ScopedArgumentsTable* tryClone(VM&);
     
     ArgumentScopeBufferType m_arguments;
-    Vector<WatchpointSet*> m_watchpointSets;
+    Vector<InlineWatchpointSet*> m_watchpointSets;
     bool m_locked; // Being locked means that there are multiple references to this object and none of them expect to see the others' modifications. This means that modifications need to make a copy first.
 };
 

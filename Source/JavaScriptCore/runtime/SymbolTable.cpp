@@ -45,15 +45,6 @@ const ClassInfo SymbolTable::s_info = { "SymbolTable"_s, nullptr, nullptr, nullp
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(SymbolTableEntryFatEntry);
 
-SymbolTableEntry& SymbolTableEntry::copySlow(const SymbolTableEntry& other)
-{
-    ASSERT(other.isFat());
-    FatEntry* newFatEntry = new FatEntry(*other.fatEntry());
-    freeFatEntry();
-    m_bits = std::bit_cast<intptr_t>(newFatEntry);
-    return *this;
-}
-
 void SymbolTable::destroy(JSCell* cell)
 {
     SymbolTable* thisObject = static_cast<SymbolTable*>(cell);
@@ -66,21 +57,10 @@ void SymbolTableEntry::freeFatEntrySlow()
     delete fatEntry();
 }
 
-void SymbolTableEntry::prepareToWatch()
+void SymbolTableEntry::inflate()
 {
-    if (!isWatchable())
-        return;
-    FatEntry* entry = inflate();
-    if (entry->m_watchpoints)
-        return;
-    entry->m_watchpoints = WatchpointSet::create(ClearWatchpoint);
-}
-
-SymbolTableEntry::FatEntry* SymbolTableEntry::inflateSlow()
-{
-    FatEntry* entry = new FatEntry(m_bits);
-    m_bits = std::bit_cast<intptr_t>(entry);
-    return entry;
+    ASSERT(!isFat());
+    m_bits = std::bit_cast<intptr_t>(new FatEntry(m_bits));
 }
 
 SymbolTable::SymbolTable(VM& vm)
@@ -325,7 +305,7 @@ RefPtr<TypeSet> SymbolTable::globalTypeSetForVariable(const ConcurrentJSLocker& 
 }
 
 #if ASSERT_ENABLED
-bool SymbolTable::hasScopedWatchpointSet(WatchpointSet* watchpointSet)
+bool SymbolTable::hasScopedWatchpointSet(InlineWatchpointSet* watchpointSet)
 {
     for (auto iter = m_map.begin(), end = m_map.end(); iter != end; ++iter) {
         if (!iter->value.varOffset().isScope())

@@ -13059,17 +13059,40 @@ IGNORE_CLANG_WARNINGS_END
 
     void compileNotifyWrite()
     {
-        LBasicBlock isNotInvalidated = m_out.newBlock();
-        LBasicBlock continuation = m_out.newBlock();
+        InlineWatchpointSet* set = m_node->watchpointSet();
 
-        LValue set = m_out.constIntPtr(m_node->watchpointSet());
-        LValue state = m_out.load8ZeroExt32(set, m_heaps.WatchpointSet_state);
+        LBasicBlock slowPath = m_out.newBlock();
+        LBasicBlock continuation = m_out.newBlock();
+        LBasicBlock lastNext = m_out.insertNewBlocksBefore(slowPath);
+
+        LValue inflatedSet;
+        if (RefPtr knownInflatedSet = set->inflatedSetConcurrently())
+            inflatedSet = m_out.constIntPtr(knownInflatedSet.get());
+        else {
+            LBasicBlock isNotThinInvalidated = m_out.newBlock();
+            LBasicBlock isInflated = m_out.newBlock();
+
+            LValue data = m_out.loadPtr(m_out.constIntPtr(set), m_heaps.InlineWatchpointSet_data);
+            m_out.branch(
+                m_out.equal(data, m_out.constIntPtr(InlineWatchpointSet::encodeState(IsInvalidated))),
+                unsure(continuation), unsure(isNotThinInvalidated));
+
+            m_out.appendTo(isNotThinInvalidated, isInflated);
+            m_out.branch(
+                m_out.testNonZeroPtr(data, m_out.constIntPtr(InlineWatchpointSet::IsThinFlag)),
+                unsure(slowPath), unsure(isInflated));
+
+            m_out.appendTo(isInflated, slowPath);
+            inflatedSet = data;
+        }
+
+        LValue state = m_out.load8ZeroExt32(inflatedSet, m_heaps.WatchpointSet_state);
         m_out.branch(
             m_out.equal(state, m_out.constInt32(IsInvalidated)),
-            usually(continuation), rarely(isNotInvalidated));
+            usually(continuation), rarely(slowPath));
 
-        LBasicBlock lastNext = m_out.appendTo(isNotInvalidated, continuation);
-        vmCall(Void, operationNotifyWrite, m_vmValue, set);
+        m_out.appendTo(slowPath, continuation);
+        vmCall(Void, operationNotifyWrite, m_vmValue, m_out.constIntPtr(set));
         m_out.jump(continuation);
 
         m_out.appendTo(continuation, lastNext);

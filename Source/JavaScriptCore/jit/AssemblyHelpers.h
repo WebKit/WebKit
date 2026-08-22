@@ -893,6 +893,27 @@ public:
         return branchTestPtr(Zero, stringImplGPR, TrustedImm32(JSString::isRopeInPointer));
     }
 
+    JumpList branchIfInlineWatchpointSetIsStillValid(GPRReg setThenScratchGPR)
+    {
+        JumpList result;
+        loadPtr(Address(setThenScratchGPR, InlineWatchpointSet::offsetOfData()), setThenScratchGPR);
+        auto isThinInvalidated = branchPtr(Equal, setThenScratchGPR, TrustedImmPtr(InlineWatchpointSet::encodeState(IsInvalidated)));
+        result.append(branchTestPtr(NonZero, setThenScratchGPR, TrustedImm32(InlineWatchpointSet::IsThinFlag)));
+        result.append(branch8(NotEqual, Address(setThenScratchGPR, WatchpointSet::offsetOfState()), TrustedImm32(IsInvalidated)));
+        isThinInvalidated.link(this);
+        return result;
+    }
+
+    JumpList branchIfInlineWatchpointSetIsStillValid(InlineWatchpointSet& set, GPRReg scratchGPR)
+    {
+        if (RefPtr inflatedSet = set.inflatedSetConcurrently()) {
+            move(TrustedImmPtr(inflatedSet.get()), scratchGPR);
+            return JumpList { branch8(NotEqual, Address(scratchGPR, WatchpointSet::offsetOfState()), TrustedImm32(IsInvalidated)) };
+        }
+        move(TrustedImmPtr(&set), scratchGPR);
+        return branchIfInlineWatchpointSetIsStillValid(scratchGPR);
+    }
+
     JumpList branchIfResizableOrGrowableSharedTypedArrayIsOutOfBounds(GPRReg baseGPR, GPRReg scratchGPR, GPRReg scratch2GPR, std::optional<TypedArrayType>);
     void loadTypedArrayByteLength(GPRReg baseGPR, GPRReg valueGPR, GPRReg scratchGPR, GPRReg scratch2GPR, TypedArrayType);
     std::tuple<Jump, JumpList> loadDataViewByteLength(GPRReg baseGPR, GPRReg valueGPR, GPRReg scratchGPR, GPRReg scratch2GPR, TypedArrayType);

@@ -10388,18 +10388,13 @@ void SpeculativeJIT::compileArrayPush(Node* node)
 
 void SpeculativeJIT::compileNotifyWrite(Node* node)
 {
-    GPRTemporary set(this);
+    GPRTemporary scratch(this);
 
-    GPRReg setGPR = set.gpr();
-    move(TrustedImmPtr(node->watchpointSet()), setGPR);
+    GPRReg scratchGPR = scratch.gpr();
+    InlineWatchpointSet* set = node->watchpointSet();
+    JumpList slowCases = branchIfInlineWatchpointSetIsStillValid(*set, scratchGPR);
+    addSlowPathGenerator(slowPathCall(slowCases, this, operationNotifyWrite, NeedToSpill, ExceptionCheckRequirement::CheckNotNeeded, NoResult, TrustedImmPtr(&vm()), TrustedImmPtr(set)));
 
-    Jump slowCase = branch8(
-        NotEqual,
-        Address(setGPR, WatchpointSet::offsetOfState()),
-        TrustedImm32(IsInvalidated));
-    
-    addSlowPathGenerator(slowPathCall(slowCase, this, operationNotifyWrite, NeedToSpill, ExceptionCheckRequirement::CheckNotNeeded, NoResult, TrustedImmPtr(&vm()), setGPR));
-    
     noResult(node);
 }
 

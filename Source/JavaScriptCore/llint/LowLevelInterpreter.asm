@@ -215,6 +215,8 @@ const CalleeSaveSpaceStackAligned = (CalleeSaveSpaceAsVirtualRegisters * SlotSiz
 const ClearWatchpoint = constexpr ClearWatchpoint
 const IsWatched = constexpr IsWatched
 const IsInvalidated = constexpr IsInvalidated
+const InlineWatchpointSetThinFlag = constexpr InlineWatchpointSet::IsThinFlag
+const InlineWatchpointSetThinInvalidated = constexpr (InlineWatchpointSet::encodeState(IsInvalidated))
 
 # ShadowChicken data
 const ShadowChickenTailMarker = constexpr ShadowChicken::Packet::tailMarkerValue
@@ -1416,8 +1418,12 @@ macro skipIfIsRememberedOrInEden(cell, slowPath)
 .done:
 end
 
-macro notifyWrite(set, slow)
-    bbneq WatchpointSet::m_state[set], IsInvalidated, slow
+macro notifyWrite(set, scratch, slow)
+    loadp InlineWatchpointSet::m_data[set], scratch
+    bpeq scratch, InlineWatchpointSetThinInvalidated, .done
+    btpnz scratch, InlineWatchpointSetThinFlag, slow
+    bbneq WatchpointSet::m_state[scratch], IsInvalidated, slow
+.done:
 end
 
 macro varReadOnlyCheck(slowPath, scratch)
