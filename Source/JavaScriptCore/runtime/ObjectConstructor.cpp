@@ -348,7 +348,10 @@ JSC_DEFINE_HOST_FUNCTION(objectConstructorAssign, (JSGlobalObject* globalObject,
             Vector<UniquedStringImpl*, 32> properties; // structures ensures the lifetimes of these strings.
             MarkedArgumentBufferWithSize<32> values;
             MarkedArgumentBuffer structures;
-            for (unsigned i = 1; i < argsCount; ++i) {
+            unsigned startIndex = 1;
+            if (objectCloneFast(vm, targetObject, asObject(callFrame->uncheckedArgument(1))))
+                startIndex = 2;
+            for (unsigned i = startIndex; i < argsCount; ++i) {
                 JSValue sourceValue = callFrame->uncheckedArgument(i);
                 JSObject* source = asObject(sourceValue);
                 auto sourceStructure = source->structure();
