@@ -177,14 +177,21 @@ Error StreamClientConnection::send(T&& message, ObjectIdentifierGeneric<U, V, W>
 #endif
 
     static_assert(!T::isSync, "Message is sync!");
-    Timeout timeout = defaultTimeout();
-    auto error = trySendDestinationIDIfNeeded(destinationID.toUInt64(), timeout);
-    if (error != Error::NoError)
-        return error;
 
-    auto span = m_buffer.tryAcquire(timeout);
-    if (!span)
-        return Error::FailedToAcquireBufferSpan;
+    std::optional<std::span<uint8_t>> span;
+    if (destinationID.toUInt64() == m_currentDestinationID)
+        span = m_buffer.acquireNoWait();
+
+    if (!span) {
+        Timeout timeout = defaultTimeout();
+        auto error = trySendDestinationIDIfNeeded(destinationID.toUInt64(), timeout);
+        if (error != Error::NoError)
+            return error;
+        span = m_buffer.tryAcquire(timeout);
+        if (!span)
+            return Error::FailedToAcquireBufferSpan;
+    }
+
     if constexpr (T::isStreamEncodable) {
         if (trySendStream(*span, message))
             return Error::NoError;

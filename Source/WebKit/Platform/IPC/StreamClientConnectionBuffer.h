@@ -39,6 +39,7 @@ public:
     StreamClientConnectionBuffer(StreamClientConnectionBuffer&&);
     StreamClientConnectionBuffer& operator=(StreamClientConnectionBuffer&&);
 
+    std::optional<std::span<uint8_t>> acquireNoWait();
     std::optional<std::span<uint8_t>> tryAcquire(Timeout);
     std::optional<std::span<uint8_t>> tryAcquireAll(Timeout);
 
@@ -126,6 +127,21 @@ inline StreamClientConnectionBuffer::StreamClientConnectionBuffer(Ref<WebCore::S
     sharedClientOffset().store(ClientOffset::serverIsSleepingTag, std::memory_order_relaxed);
     // Write starts from 0 with a limit of the whole buffer.
     sharedClientLimit().store(static_cast<ClientLimit>(0), std::memory_order_relaxed);
+}
+
+inline std::optional<std::span<uint8_t>> StreamClientConnectionBuffer::acquireNoWait()
+{
+    ClientLimit clientLimit = sharedClientLimit().load(std::memory_order_acquire);
+    // This would mean we try to send messages after a timeout. It is a programming error.
+    // Since the value is trusted, we only assert.
+    ASSERT(clientLimit != ClientLimit::clientIsWaitingTag);
+
+    if (clientLimit == ClientLimit::clientIsWaitingTag)
+        return std::nullopt;
+    auto result = alignedMutableSpan(m_clientOffset, toLimit(clientLimit));
+    if (result.size() >= minimumMessageSize)
+        return result;
+    return std::nullopt;
 }
 
 inline std::optional<std::span<uint8_t>> StreamClientConnectionBuffer::tryAcquire(Timeout timeout)
