@@ -57,10 +57,21 @@ bool Inst::hasLateUseOrDef()
     return result;
 }
 
-bool Inst::needsPadding(Inst* prevInst, Inst* nextInst)
+Inst::PaddingSummary Inst::paddingSummary()
 {
-    bool result = prevInst && nextInst && prevInst->hasLateUseOrDef() && nextInst->hasEarlyDef();
-    return result;
+    PaddingSummary summary;
+    if (kind.opcode == Patch) {
+        summary.hasEarlyDef = !extraEarlyClobberedRegs().isEmpty();
+        summary.hasLateUseOrDef = !extraClobberedRegs().isEmpty();
+        if (summary.hasEarlyDef && summary.hasLateUseOrDef)
+            return summary;
+    }
+    forEachArg(
+        [&] (Arg&, Arg::Role role, Bank, Width) {
+            summary.hasEarlyDef |= Arg::isEarlyDef(role);
+            summary.hasLateUseOrDef |= Arg::isLateUse(role) || Arg::isLateDef(role);
+        });
+    return summary;
 }
 
 bool Inst::hasArgEffects()

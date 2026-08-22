@@ -30,6 +30,8 @@
 
 #include "AirCode.h"
 #include "AirInsertionSet.h"
+#include "AirInstInlines.h"
+#include "Options.h"
 
 namespace JSC { namespace B3 { namespace Air {
 
@@ -37,10 +39,16 @@ void padInterference(Code& code)
 {
     InsertionSet insertionSet(code);
     for (BasicBlock* block : code) {
+        if (block->size() < 2)
+            continue;
+
+        bool prevHasLateUseOrDef = block->at(0).paddingSummary().hasLateUseOrDef;
         for (unsigned instIndex = 1; instIndex < block->size(); ++instIndex) {
             Inst& inst = block->at(instIndex);
-            if (Inst::needsPadding(&block->at(instIndex - 1), &inst))
+            Inst::PaddingSummary summary = inst.paddingSummary();
+            if (prevHasLateUseOrDef && summary.hasEarlyDef)
                 insertionSet.insert(instIndex, Padding, inst.origin);
+            prevHasLateUseOrDef = summary.hasLateUseOrDef;
         }
         insertionSet.execute(block);
     }

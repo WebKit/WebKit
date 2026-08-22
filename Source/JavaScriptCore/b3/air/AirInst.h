@@ -194,12 +194,15 @@ struct Inst {
     template<typename Thing, typename Functor>
     static void forEachUse(Inst* prevInst, Inst* nextInst, const Functor&);
 
-    // Some summaries about all arguments. These are useful for needsPadding().
+    struct PaddingSummary {
+        bool hasEarlyDef { false };
+        bool hasLateUseOrDef { false };
+    };
+    PaddingSummary paddingSummary();
+
     bool hasEarlyDef();
     bool hasLateUseOrDef();
 
-    static bool needsPadding(Inst* prevInst, Inst* nextInst);
-    
     // Use this to report which registers are live. This should be done just before codegen. Note
     // that for efficiency, reportUsedRegisters() only works for the Patch opcode.
     void reportUsedRegisters(const RegisterSet&);
