@@ -89,6 +89,12 @@
             ]
         },
         {
+            "id": "SharedId",
+            "description": "A reference to a DOM node that is usable in any realm.",
+            "spec": "https://w3c.github.io/webdriver-bidi/#type-script-SharedId",
+            "type": "string"
+        },
+        {
             "id": "RemoteValue",
             "description": "A mirror object that is used to introspect values accessible from the ECMAScript runtime. The fields used and their semantics depends on the value's type (<cod>BidiScript.RemoteValueType</code>)",
             "spec": "https://w3c.github.io/webdriver-bidi/#type-script-RemoteValue",
@@ -96,6 +102,7 @@
             "properties": [
                 { "name": "type", "$ref": "BidiScript.RemoteValueType" },
                 { "name": "value", "type": "any", "optional": true },
+                { "name": "sharedId", "$ref": "BidiScript.SharedId", "optional": true, "description": "Represents a reference to a remote DOM node." },
                 { "name": "handle", "$ref": "BidiScript.Handle", "optional": true, "description": "Represents a reference to a remote Node. Applicable if `type` property is `node`, `nodelist`, `htmlcollection`." },
                 { "name": "internalId", "$ref": "BidiScript.InternalId", "optional": true, "description": "Represents a reference to a remote script value. If both `handle` and `internalId` are specified, `internalId` takes precedence." }
             ]
@@ -147,8 +154,8 @@
             "spec": "https://w3c.github.io/webdriver-bidi/#type-script-SerializationOptions",
             "type": "object",
             "properties": [
-                { "name": "maxDomDepth", "type": "number", "optional": true },
-                { "name": "maxObjectDepth", "type": "number", "optional": true },
+                { "name": "maxDomDepth", "type": "number", "optional": true, "nullable": true },
+                { "name": "maxObjectDepth", "type": "number", "optional": true, "nullable": true },
                 { "name": "includeShadowTree", "type": "string", "enum": ["none", "open", "all"], "optional": true }
             ]
         },

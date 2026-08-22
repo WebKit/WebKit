@@ -25,7 +25,7 @@
 
 //# sourceURL=__InjectedScript_WebAutomationSessionProxy.js
 
-(function (sessionIdentifier, currentFrameIdentifier, evaluate, createUUID, isValidNodeIdentifier, isKnownReference, addKnownReference) {
+(function (sessionIdentifier, currentFrameIdentifier, evaluate, createUUID, isValidNodeIdentifier, isKnownReference, addKnownReference, shadowRootForElement, specialBidiRemoteValueType) {
 
 const sessionNodePropertyName = "session-node-" + sessionIdentifier;
 const jsonStringify = JSON.stringify;
@@ -60,6 +60,7 @@ let AutomationSessionProxy = class AutomationSessionProxy
 {
     constructor()
     {
+        // FIXME: <https://webkit.org/b/328548> Use weak node-reference storage for Classic and BiDi.
         this._nodeToIdMap = new Map;
         this._idToNodeMap = new Map;
         this._staleIdentifiers = new Set;
@@ -74,9 +75,9 @@ let AutomationSessionProxy = class AutomationSessionProxy
             .catch(error => { resultCallback(frameID, callbackID, error); });
     }
 
-    evaluateBidiScript(expression, awaitPromise, maxObjectDepth, frameID, callbackID, resultCallback, callbackTimeout)
+    evaluateBidiScript(expression, awaitPromise, maxObjectDepth, maxDomDepth, includeShadowTree, frameID, callbackID, resultCallback, callbackTimeout)
     {
-        this._executeBidiScript(expression, awaitPromise, maxObjectDepth, callbackTimeout).then(result => {
+        this._executeBidiScript(expression, awaitPromise, maxObjectDepth, maxDomDepth, includeShadowTree, callbackTimeout).then(result => {
             let serializedResult;
             let serializationError;
             try {
@@ -178,7 +179,7 @@ let AutomationSessionProxy = class AutomationSessionProxy
             });
     }
 
-    _executeBidiScript(expression, awaitPromise, maxObjectDepth, callbackTimeout)
+    _executeBidiScript(expression, awaitPromise, maxObjectDepth, maxDomDepth, includeShadowTree, callbackTimeout)
     {
         let timeoutPromise;
         let timeoutIdentifier = 0;
@@ -191,8 +192,19 @@ let AutomationSessionProxy = class AutomationSessionProxy
         }
 
         let promise = new Promise((resolve, reject) => {
+            this._clearStaleNodes();
+
             let resolveWithExceptionResult = error => {
+                let serializedException;
+                try {
+                    serializedException = this.serializeBidiRemoteValue(error);
+                } catch (serializationError) {
+                    reject(createBidiScriptError(serializationError, "InternalError", "Script exception serialization failed."));
+                    return;
+                }
+
                 let errorProperties = {
+                    exception: serializedException,
                     name: safelyReadStringProperty(error, "name"),
                     message: safelyReadStringProperty(error, "message"),
                     stack: safelyReadStringProperty(error, "stack")
@@ -202,7 +214,7 @@ let AutomationSessionProxy = class AutomationSessionProxy
 
             let serializeAndResolveResult = value => {
                 try {
-                    let serializedValue = this.serializeBidiRemoteValue(value, maxObjectDepth);
+                    let serializedValue = this.serializeBidiRemoteValue(value, maxObjectDepth, maxDomDepth, includeShadowTree);
                     resolve({ success: true, result: serializedValue });
                 } catch (error) {
                     reject(createBidiScriptError(error, "InternalError", "Script result serialization failed."));
@@ -234,6 +246,7 @@ let AutomationSessionProxy = class AutomationSessionProxy
             serializeAndResolveResult(result);
         });
 
+        // FIXME: <https://webkit.org/b/328581> Prevent page-defined array iterators from affecting script.evaluate.
         let promises = [promise];
         if (timeoutPromise)
             promises.push(timeoutPromise);
@@ -395,18 +408,18 @@ let AutomationSessionProxy = class AutomationSessionProxy
 
     _clearStaleNodes()
     {
-        for (let [node, identifier] of this._nodeToIdMap) {
+        reflectApply(mapForEach, this._nodeToIdMap, [(identifier, node) => {
             const rootNode = node.getRootNode({ composed: true });
             if (rootNode !== document) {
                 this._nodeToIdMap.delete(node);
                 this._idToNodeMap.delete(identifier);
                 this._staleIdentifiers.add(identifier);
             }
-        }
+        }]);
     }
 
     // BiDi Script utilities for W3C WebDriver BiDi specification.
-    serializeBidiRemoteValue(value, maxObjectDepth = null, serializationInternalMap = new Map)
+    serializeBidiRemoteValue(value, maxObjectDepth = null, maxDomDepth = 0, includeShadowTree = "none", serializationInternalMap = new Map)
     {
         // Handle primitives.
         if (value === null) return { type: "null" };
@@ -422,13 +435,23 @@ let AutomationSessionProxy = class AutomationSessionProxy
         }
         if (typeof value === "bigint") return { type: "bigint", value: value.toString() };
         if (typeof value === "symbol") return { type: "symbol" };
+
+        let specialType = specialBidiRemoteValueType(value);
+        if (specialType !== null)
+            return { type: specialType };
+
         if (typeof value === "function") return { type: "function" };
 
         if (typeof value !== "object")
             return { type: "undefined" };
 
+        // FIXME: <https://webkit.org/b/328591> Recognize WindowProxy objects for child browsing contexts.
         if (value === window)
             return { type: "window", value: { context: "context-id-placeholder" } };
+
+        // FIXME: <https://webkit.org/b/328651> Recognize objects, including DOM nodes, from other JavaScript realms.
+        if (value instanceof Node)
+            return this._serializeBidiNode(value, maxObjectDepth, maxDomDepth, includeShadowTree, serializationInternalMap);
         if (value instanceof Date)
             return { type: "date", value: value.toISOString() };
         if (value instanceof RegExp)
@@ -438,11 +461,15 @@ let AutomationSessionProxy = class AutomationSessionProxy
         if (value instanceof Promise)
             return { type: "promise" };
         if (Array.isArray(value))
-            return this._serializeBidiList(value, "array", maxObjectDepth, serializationInternalMap);
+            return this._serializeBidiList(value, "array", maxObjectDepth, maxDomDepth, includeShadowTree, serializationInternalMap);
         if (value instanceof Map)
-            return this._serializeBidiMap(value, maxObjectDepth, serializationInternalMap);
+            return this._serializeBidiMap(value, maxObjectDepth, maxDomDepth, includeShadowTree, serializationInternalMap);
         if (value instanceof Set)
-            return this._serializeBidiList(value, "set", maxObjectDepth, serializationInternalMap);
+            return this._serializeBidiList(value, "set", maxObjectDepth, maxDomDepth, includeShadowTree, serializationInternalMap);
+        if (value instanceof NodeList)
+            return this._serializeBidiList(value, "nodelist", maxObjectDepth, maxDomDepth, includeShadowTree, serializationInternalMap);
+        if (value instanceof HTMLCollection)
+            return this._serializeBidiList(value, "htmlcollection", maxObjectDepth, maxDomDepth, includeShadowTree, serializationInternalMap);
         if (value instanceof WeakMap)
             return { type: "weakmap" };
         if (value instanceof WeakSet)
@@ -452,7 +479,7 @@ let AutomationSessionProxy = class AutomationSessionProxy
         if (ArrayBuffer.isView(value))
             return { type: "typedarray" };
 
-        return this._serializeBidiMapping(value, maxObjectDepth, serializationInternalMap);
+        return this._serializeBidiMapping(value, maxObjectDepth, maxDomDepth, includeShadowTree, serializationInternalMap);
     }
 
     _setBidiInternalIdsIfNeeded(serializationInternalMap, remoteValue, value)
@@ -468,7 +495,7 @@ let AutomationSessionProxy = class AutomationSessionProxy
         remoteValue.internalId = previouslySerializedRemoteValue.internalId;
     }
 
-    _serializeBidiList(value, type, maxObjectDepth, serializationInternalMap)
+    _serializeBidiList(value, type, maxObjectDepth, maxDomDepth, includeShadowTree, serializationInternalMap)
     {
         let remoteValue = { type };
         let knownObject = serializationInternalMap.has(value);
@@ -480,17 +507,17 @@ let AutomationSessionProxy = class AutomationSessionProxy
         remoteValue.value = [];
         if (type === "set") {
             reflectApply(setForEach, value, [childValue => {
-                remoteValue.value.push(this.serializeBidiRemoteValue(childValue, childObjectDepth, serializationInternalMap));
+                remoteValue.value.push(this.serializeBidiRemoteValue(childValue, childObjectDepth, maxDomDepth, includeShadowTree, serializationInternalMap));
             }]);
             return remoteValue;
         }
 
         for (let i = 0; i < value.length; ++i)
-            remoteValue.value.push(this.serializeBidiRemoteValue(value[i], childObjectDepth, serializationInternalMap));
+            remoteValue.value.push(this.serializeBidiRemoteValue(value[i], childObjectDepth, maxDomDepth, includeShadowTree, serializationInternalMap));
         return remoteValue;
     }
 
-    _serializeBidiMap(value, maxObjectDepth, serializationInternalMap)
+    _serializeBidiMap(value, maxObjectDepth, maxDomDepth, includeShadowTree, serializationInternalMap)
     {
         let remoteValue = { type: "map" };
         let knownObject = serializationInternalMap.has(value);
@@ -501,14 +528,14 @@ let AutomationSessionProxy = class AutomationSessionProxy
         let childObjectDepth = maxObjectDepth === null ? null : maxObjectDepth - 1;
         remoteValue.value = [];
         reflectApply(mapForEach, value, [(childValue, key) => {
-            let serializedKey = typeof key === "string" ? key : this.serializeBidiRemoteValue(key, childObjectDepth, serializationInternalMap);
-            let serializedValue = this.serializeBidiRemoteValue(childValue, childObjectDepth, serializationInternalMap);
+            let serializedKey = typeof key === "string" ? key : this.serializeBidiRemoteValue(key, childObjectDepth, maxDomDepth, includeShadowTree, serializationInternalMap);
+            let serializedValue = this.serializeBidiRemoteValue(childValue, childObjectDepth, maxDomDepth, includeShadowTree, serializationInternalMap);
             remoteValue.value.push([serializedKey, serializedValue]);
         }]);
         return remoteValue;
     }
 
-    _serializeBidiMapping(value, maxObjectDepth, serializationInternalMap)
+    _serializeBidiMapping(value, maxObjectDepth, maxDomDepth, includeShadowTree, serializationInternalMap)
     {
         let remoteValue = { type: "object" };
         let knownObject = serializationInternalMap.has(value);
@@ -521,12 +548,69 @@ let AutomationSessionProxy = class AutomationSessionProxy
         let keys = Object.keys(value);
         for (let i = 0; i < keys.length; ++i) {
             let key = keys[i];
-            let serializedValue = this.serializeBidiRemoteValue(value[key], childObjectDepth, serializationInternalMap);
+            let serializedValue = this.serializeBidiRemoteValue(value[key], childObjectDepth, maxDomDepth, includeShadowTree, serializationInternalMap);
             remoteValue.value.push([key, serializedValue]);
         }
         return remoteValue;
     }
 
+    _serializeBidiNode(value, maxObjectDepth, maxDomDepth, includeShadowTree, serializationInternalMap)
+    {
+        let remoteValue = { type: "node" };
+        let nodeDocument = value.nodeType === Node.DOCUMENT_NODE ? value : value.ownerDocument;
+        if (nodeDocument === document)
+            remoteValue.sharedId = this._identifierForNode(value);
+
+        let knownObject = serializationInternalMap.has(value);
+        this._setBidiInternalIdsIfNeeded(serializationInternalMap, remoteValue, value);
+        if (knownObject)
+            return remoteValue;
+
+        let serialized = {
+            nodeType: value.nodeType,
+            childNodeCount: value.childNodes.length
+        };
+
+        if (value.nodeValue !== null)
+            serialized.nodeValue = value.nodeValue;
+
+        if (value instanceof Element || value instanceof Attr) {
+            serialized.localName = value.localName;
+            serialized.namespaceURI = value.namespaceURI;
+        }
+
+        let shouldSerializeChildren = maxDomDepth !== 0;
+        if (value instanceof ShadowRoot) {
+            if (includeShadowTree === "none" || (includeShadowTree === "open" && value.mode === "closed"))
+                shouldSerializeChildren = false;
+        }
+
+        if (shouldSerializeChildren) {
+            let childDomDepth = maxDomDepth === null ? null : maxDomDepth - 1;
+            serialized.children = [];
+            let childNodes = value.childNodes;
+            for (let i = 0; i < childNodes.length; ++i)
+                serialized.children.push(this.serializeBidiRemoteValue(childNodes[i], maxObjectDepth, childDomDepth, includeShadowTree, serializationInternalMap));
+        }
+
+        if (value instanceof Element) {
+            serialized.attributes = {};
+            for (let i = 0; i < value.attributes.length; ++i) {
+                let attribute = value.attributes[i];
+                serialized.attributes[attribute.name] = attribute.value;
+            }
+
+            // FIXME: <https://webkit.org/b/328583> Prevent script.evaluate result serialization from exposing closed shadow roots to page code.
+            let shadowRoot = shadowRootForElement(value);
+            serialized.shadowRoot = shadowRoot ? this.serializeBidiRemoteValue(shadowRoot, maxObjectDepth, maxDomDepth, includeShadowTree, serializationInternalMap) : null;
+        }
+
+        if (value instanceof ShadowRoot)
+            serialized.mode = value.mode;
+
+        remoteValue.value = serialized;
+        return remoteValue;
+    }
 };
 
 return new AutomationSessionProxy;

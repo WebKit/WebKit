@@ -41,12 +41,12 @@
 #include "WebFrameProxy.h"
 #include "WebPageProxy.h"
 #include "WebProcessPool.h"
+#include <JavaScriptCore/MathCommon.h>
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/SecurityOriginData.h>
 #include <algorithm>
 #include <cmath>
-#include <limits>
 #include <wtf/Borrow.h>
 #include <wtf/CallbackAggregator.h>
 #include <wtf/HexNumber.h>
@@ -64,11 +64,14 @@ using EvaluateResultType = Inspector::Protocol::BidiScript::EvaluateResultType;
 static RefPtr<Inspector::Protocol::BidiScript::RemoteValue> deserializeRemoteValue(const JSON::Value*);
 static Ref<JSON::Value> deserializeLocalValue(const JSON::Value&);
 
-static Inspector::CommandResult<std::optional<int>> validateDepthParameter(const JSON::Object& options, ASCIILiteral key)
+static Inspector::CommandResult<void> updateValidatedDepthParameter(const JSON::Object& options, ASCIILiteral key, std::optional<double>& depth)
 {
     if (auto json = options.getValue(key)) {
-        if (json->isNull())
-            return std::optional<int> { };
+        if (json->isNull()) {
+            depth = std::nullopt;
+            return { };
+        }
+
         double value;
         if (!json->asDouble(value))
             return makeUnexpected(STRING_FOR_PREDEFINED_ERROR_NAME(InvalidParameter));
@@ -78,12 +81,12 @@ static Inspector::CommandResult<std::optional<int>> validateDepthParameter(const
             return makeUnexpected(STRING_FOR_PREDEFINED_ERROR_NAME(InvalidParameter));
         if (std::floor(value) != value)
             return makeUnexpected(STRING_FOR_PREDEFINED_ERROR_NAME(InvalidParameter));
-        if (value > std::numeric_limits<int>::max())
+        if (value > JSC::maxSafeInteger())
             return makeUnexpected(STRING_FOR_PREDEFINED_ERROR_NAME(InvalidParameter));
-        return std::optional<int> { static_cast<int>(value) };
+        depth = value;
     }
 
-    return std::optional<int> { };
+    return { };
 }
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(BidiScriptAgent);
@@ -114,6 +117,8 @@ static RefPtr<Inspector::Protocol::BidiScript::RemoteValue> deserializeRemoteVal
     auto remoteValue = resultValue.setType(*parsedType).release();
     if (auto value = object->getValue("value"_s))
         remoteValue->setValue(value.releaseNonNull());
+    if (auto sharedId = object->getString("sharedId"_s); !sharedId.isNull())
+        remoteValue->setSharedId(sharedId);
     if (auto handle = object->getString("handle"_s); !handle.isNull())
         remoteValue->setHandle(handle);
     if (auto internalId = object->getString("internalId"_s); !internalId.isNull())
@@ -401,31 +406,31 @@ void BidiScriptAgent::evaluate(const String& expression, bool awaitPromise, Ref<
     ASYNC_FAIL_IF_UNEXPECTED_RESULT(pageAndFrameHandles);
     ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!session->webPageProxyForHandle(*browsingContext), FrameNotFound);
 
-    std::optional<int> maxObjectDepth;
+    // SerializationOptions defaults: DOM depth 0, object depth unlimited, and
+    // no shadow-tree children.
+    std::optional<double> maxObjectDepth;
+    std::optional<double> maxDomDepth { 0 };
+    String includeShadowTree = "none"_s;
     if (optionalSerializationOptions) {
         auto& serializationOptions = *optionalSerializationOptions;
 
-        auto validatedDomDepth = validateDepthParameter(serializationOptions, "maxDomDepth"_s);
-        ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!validatedDomDepth, InvalidParameter);
-        // FIXME: Propagate maxDomDepth and includeShadowTree once the WebProcess serializer supports
-        // DOM serialization options.
-        // https://bugs.webkit.org/show_bug.cgi?id=288060
-
-        auto validatedObjDepth = validateDepthParameter(serializationOptions, "maxObjectDepth"_s);
-        ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!validatedObjDepth, InvalidParameter);
-        maxObjectDepth = *validatedObjDepth;
+        auto maxDomDepthValidationResult = updateValidatedDepthParameter(serializationOptions, "maxDomDepth"_s, maxDomDepth);
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!maxDomDepthValidationResult, InvalidParameter);
+        auto maxObjectDepthValidationResult = updateValidatedDepthParameter(serializationOptions, "maxObjectDepth"_s, maxObjectDepth);
+        ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!maxObjectDepthValidationResult, InvalidParameter);
 
         if (auto includeShadowTreeJSON = serializationOptions.getValue("includeShadowTree"_s)) {
             String includeShadowTreeValue;
             ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!includeShadowTreeJSON->asString(includeShadowTreeValue), InvalidParameter);
-            auto includeShadowTree = Inspector::Protocol::WebDriverBidiHelpers::parseEnumValueFromString<Inspector::Protocol::BidiScript::SerializationOptions::IncludeShadowTree>(includeShadowTreeValue);
-            ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!includeShadowTree, InvalidParameter);
+            auto parsedIncludeShadowTree = Inspector::Protocol::WebDriverBidiHelpers::parseEnumValueFromString<Inspector::Protocol::BidiScript::SerializationOptions::IncludeShadowTree>(includeShadowTreeValue);
+            ASYNC_FAIL_WITH_PREDEFINED_ERROR_IF(!parsedIncludeShadowTree, InvalidParameter);
+            includeShadowTree = includeShadowTreeValue;
         }
     }
 
     String realmID = generateRealmIdForBrowsingContext(*browsingContext);
 
-    session->evaluateBidiScript(*browsingContext, emptyString(), expression, awaitPromise, maxObjectDepth, std::nullopt,
+    session->evaluateBidiScript(*browsingContext, emptyString(), expression, awaitPromise, maxObjectDepth, maxDomDepth, includeShadowTree, std::nullopt,
         [weakThis = WeakPtr { *this }, callback = WTF::move(callback), realmID = realmID.isolatedCopy(), expression = expression.isolatedCopy()](Inspector::CommandResult<String>&& result) mutable {
             CheckedPtr protectedThis = weakThis.get();
             if (!protectedThis)
@@ -1004,11 +1009,7 @@ Ref<Inspector::Protocol::BidiScript::ExceptionDetails> BidiScriptAgent::buildExc
     String exceptionMessage = "JavaScript exception occurred"_s;
     ParsedStackTrace parsedStack { .callFrames = JSON::ArrayOf<BidiScript::StackFrame>::create() };
 
-    // FIXME: Use the serialized thrown JavaScript value instead of this temporary Error RemoteValue.
-    // https://bugs.webkit.org/show_bug.cgi?id=304548
-    Ref<BidiScript::RemoteValue> exceptionValue = BidiScript::RemoteValue::create()
-        .setType(BidiScript::RemoteValueType::Error)
-        .release();
+    RefPtr<BidiScript::RemoteValue> exceptionValue;
 
     String message = exceptionObject.getString("message"_s);
     if (!message.isNull())
@@ -1018,20 +1019,30 @@ Ref<Inspector::Protocol::BidiScript::ExceptionDetails> BidiScriptAgent::buildExc
     if (!stack.isNull())
         parsedStack = parseStackTrace(stack);
 
-    auto errorObject = JSON::Object::create();
-    String name = exceptionObject.getString("name"_s);
-    errorObject->setString("name"_s, name.isNull() ? "Error"_s : name);
-    errorObject->setString("message"_s, exceptionMessage);
-    if (!stack.isNull())
-        errorObject->setString("stack"_s, stack);
+    if (auto serializedException = exceptionObject.getValue("exception"_s)) {
+        if (auto remoteValue = deserializeRemoteValue(serializedException.get()))
+            exceptionValue = WTF::move(remoteValue);
+    }
 
-    exceptionValue->setValue(WTF::move(errorObject));
+    if (!exceptionValue) {
+        auto errorObject = JSON::Object::create();
+        String name = exceptionObject.getString("name"_s);
+        errorObject->setString("name"_s, name.isNull() ? "Error"_s : name);
+        errorObject->setString("message"_s, exceptionMessage);
+        if (!stack.isNull())
+            errorObject->setString("stack"_s, stack);
+
+        exceptionValue = BidiScript::RemoteValue::create()
+            .setType(BidiScript::RemoteValueType::Error)
+            .release();
+        exceptionValue->setValue(WTF::move(errorObject));
+    }
 
     return BidiScript::ExceptionDetails::create()
         .setLineNumber(parsedStack.topLineNumber)
         .setColumnNumber(parsedStack.topColumnNumber)
         .setText(exceptionMessage)
-        .setException(WTF::move(exceptionValue))
+        .setException(exceptionValue.releaseNonNull())
         .setStackTrace(BidiScript::StackTrace::create()
             .setCallFrames(WTF::move(parsedStack.callFrames))
             .release())
