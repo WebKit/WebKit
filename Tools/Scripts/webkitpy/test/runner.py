@@ -22,7 +22,6 @@
 
 """code to actually run a list of python tests."""
 
-import re
 import time
 import unittest
 
@@ -35,6 +34,8 @@ class Runner(object):
         self.tests_run = []
         self.errors = []
         self.failures = []
+        self.expected_failures = []
+        self.unexpected_successes = []
         self.worker_factory = lambda caller: _Worker(caller, self.loader)
 
     def run(self, test_names, num_workers):
@@ -44,7 +45,8 @@ class Runner(object):
         with message_pool.get(self, self.worker_factory, num_workers) as pool:
             pool.run(('test', test_name) for test_name in test_names)
 
-    def handle(self, message_name, source, test_name=None, delay=None, failures=None, errors=None):
+    def handle(self, message_name, source, test_name=None, delay=None, failures=None, errors=None,
+               expected_failures=None, unexpected_successes=None):
         if message_name == 'did_spawn_worker':
             return
 
@@ -60,7 +62,12 @@ class Runner(object):
             self.failures.append((test_name, failures))
         if errors:
             self.errors.append((test_name, errors))
-        self.printer.print_finished_test(source, test_name, delay, failures, errors)
+        if expected_failures:
+            self.expected_failures.extend(expected_failures)
+        if unexpected_successes:
+            self.unexpected_successes.extend(unexpected_successes)
+        self.printer.print_finished_test(source, test_name, delay, failures, errors,
+                                         expected_failures, unexpected_successes)
 
 
 class _Worker(object):
@@ -81,11 +88,13 @@ class _Worker(object):
                len(result.skipped) + len(result.expectedFailures) +
                len(result.unexpectedSuccesses) + result.successes) == result.testsRun
 
-        failures = ([failure[1] for failure in result.failures]
-                    + ["UNEXPECTED SUCCESS" for _ in result.unexpectedSuccesses])
+        failures = [failure[1] for failure in result.failures]
+        expected_failures = [failure[0].id() for failure in result.expectedFailures]
+        unexpected_successes = [test.id() for test in result.unexpectedSuccesses]
 
         self._caller.post('finished_test', test_name, time.time() - start,
-                          failures, [error[1] for error in result.errors])
+                          failures, [error[1] for error in result.errors],
+                          expected_failures, unexpected_successes)
 
 
 class TestResult(unittest.TestResult):

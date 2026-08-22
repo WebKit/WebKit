@@ -120,16 +120,20 @@ class Printer(object):
 
         write(self._test_line(self.running_tests[0], suffix))
 
-    def print_finished_test(self, source, test_name, test_time, failures, errors):
+    def print_finished_test(self, source, test_name, test_time, failures, errors,
+                            expected_failures=None, unexpected_successes=None):
         write = self.meter.writeln
-        if failures:
-            lines = failures[0].splitlines() + ['']
+        if failures or unexpected_successes:
+            lines = (failures or []) + ['UNEXPECTED SUCCESS' for _ in (unexpected_successes or [])]
             suffix = ' failed:'
             self.num_failures += 1
         elif errors:
             lines = errors[0].splitlines() + ['']
             suffix = ' erred:'
             self.num_errors += 1
+        elif expected_failures:
+            suffix = ' expected failure'
+            lines = []
         else:
             suffix = ' passed'
             lines = []

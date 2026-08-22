@@ -113,3 +113,16 @@ class RunnerTest(unittest.TestCase):
         self.assertEqual(len(runner.tests_run), 3)
         self.assertEqual(len(runner.failures), 1)
         self.assertEqual(len(runner.errors), 1)
+
+    def test_run_expected_failures(self):
+        options = MockOptions(verbose=0, timing=False, child_processes=1, quiet=False, pass_through=False)
+        stream = StringIO()
+        loader = FakeLoader(('test1 (Foo)', 'x', ''),
+                            ('test2 (Foo)', 'u', ''))
+        runner = Runner(Printer(stream, options), loader)
+        runner.run(['Foo.test1', 'Foo.test2'], 1)
+        self.assertEqual(len(runner.tests_run), 2)
+        self.assertEqual(len(runner.failures), 0)
+        self.assertEqual(len(runner.errors), 0)
+        self.assertEqual(len(runner.expected_failures), 1)
+        self.assertEqual(len(runner.unexpected_successes), 1)

@@ -110,12 +110,22 @@ class TestRunner(object):
                         for member in value:
                             sys.stderr.write(member[1] + '\n')
                     result = True
+                if incremental.unexpectedSuccesses:
+                    sys.stdout.write('unexpectedly passed\n')
+                    if args.log_level <= logging.ERROR:
+                        sys.stderr.write('\n')
+                        for test in incremental.unexpectedSuccesses:
+                            sys.stderr.write(f'UNEXPECTED SUCCESS: {test.id()}\n')
+                    result = True
                 if result:
                     continue
 
                 if incremental.skipped or not incremental.testsRun:
                     chars += 8
                     sys.stdout.write('skipped\n')
+                elif incremental.expectedFailures:
+                    chars += 16
+                    sys.stdout.write('expected failure\n')
                 else:
                     chars += 7
                     sys.stdout.write('passed\n')
@@ -129,7 +139,7 @@ class TestRunner(object):
 
         print('\nRan {} of {} tests in {:0.3f} seconds\n'.format(results.testsRun, len(tests_to_run), tm() - start_time))
 
-        if results.failures or results.errors:
+        if results.failures or results.errors or results.unexpectedSuccesses:
             print('FAILED')
             for attribute in ('failure', 'error'):
                 value = getattr(results, attribute + 's')
@@ -145,11 +155,18 @@ class TestRunner(object):
                         for line in part[1].splitlines():
                             print('{}{}'.format(' ' * self.INDENT * 3, line))
                         print()
+            if results.unexpectedSuccesses:
+                print(f'    {len(results.unexpectedSuccesses)} unexpected success(es)')
+                if args.log_level < logging.WARNING:
+                    for test in results.unexpectedSuccesses:
+                        print(f'        {self.id(test)}')
             return 1
         elif not results.testsRun:
             print('No tests run')
             return -1
         print('SUCCESS')
+        if results.expectedFailures:
+            print(f'    {len(results.expectedFailures)} expected failure(s)')
         return 0
 
     def main(self, *args, **kwargs):
