@@ -53,10 +53,10 @@ std::optional<Type> Type::add(Type type1, Type type2)
             return std::nullopt;
     } else if (type1.percentHint && !type2.percentHint) {
         // If type1 has a non-null percent hint hint and type2 doesn’t, apply the percent hint hint to type2.
-        type2.percentHint = *type1.percentHint;
+        type2.applyPercentHint(*type1.percentHint);
     } else if (!type1.percentHint && type2.percentHint) {
         // Vice versa if type2 has a non-null percent hint and type1 doesn’t.
-        type1.percentHint = *type2.percentHint;
+        type1.applyPercentHint(*type2.percentHint);
     }
 
     // 3.
@@ -75,7 +75,7 @@ std::optional<Type> Type::add(Type type1, Type type2)
     // - If type1 and/or type2 contain "percent" with a non-zero value, and type1 and/or type2 contain a key other than "percent" with a non-zero value
     if ((type1[BaseType::Percent] || type2[BaseType::Percent]) && (type1.hasNonPercentEntry() || type2.hasNonPercentEntry())) {
         // For each base type other than "percent" hint:
-        for (auto hint : Type::allPotentialPercentHintTypes()) {
+        for (auto hint : Type::allPercentHintTypesExceptPercent()) {
             auto type1Copy = type1;
             auto type2Copy = type2;
 
@@ -128,10 +128,10 @@ std::optional<Type> Type::multiply(Type type1, Type type2)
         }
     } else if (type1.percentHint && !type2.percentHint) {
         // If type1 has a non-null percent hint hint and type2 doesn’t, apply the percent hint hint to type2.
-        type2.percentHint = *type1.percentHint;
+        type2.applyPercentHint(*type1.percentHint);
     } else if (!type1.percentHint && type2.percentHint) {
         // Vice versa if type2 has a non-null percent hint and type1 doesn’t.
-        type1.percentHint = *type2.percentHint;
+        type1.applyPercentHint(*type2.percentHint);
     }
 
     // 4. Copy all of type1’s entries to finalType, then for each `baseType` → `power` of type2:
@@ -288,11 +288,6 @@ Type Type::determineType(CSSUnitType unitType)
         return Type { .flex = 1 };
 
     case CSSUnitType::Percentage:
-        // NOTE: This is the context-independent type. When context is available, this may be transformed into a percent-hint.
-
-        // the type is «[ "percent" → 1 ]».
-        return Type { .percent = 1 };
-
     case CSSUnitType::Calc:
     case CSSUnitType::CalcPercentageWithAngle:
     case CSSUnitType::CalcPercentageWithLength:
@@ -317,7 +312,7 @@ Type::PercentHintValue Type::determinePercentHint(CSS::Category category)
     case CSS::Category::Frequency:
     case CSS::Category::Resolution:
     case CSS::Category::Flex:
-        return { };
+        return PercentHint::Percent;
 
     case CSS::Category::LengthPercentage:
         return PercentHint::Length;
@@ -336,7 +331,7 @@ bool Type::matches(CSS::Category category) const
     case CSS::Category::Number:
         return matchesAny<Match::Number>();
     case CSS::Category::Percentage:
-        return matchesAny<Match::Percent>();
+        return matchesAny<Match::Percent>({ .percentHint = PercentHint::Percent });
     case CSS::Category::Length:
         return matchesAny<Match::Length>();
     case CSS::Category::Angle:
@@ -350,9 +345,9 @@ bool Type::matches(CSS::Category category) const
     case CSS::Category::Flex:
         return matchesAny<Match::Flex>();
     case CSS::Category::LengthPercentage:
-        return matchesAny<Match::Length, Match::Percent>({ .allowsPercentHint = true });
+        return matchesAny<Match::Length, Match::Percent>({ .percentHint = PercentHint::Length });
     case CSS::Category::AnglePercentage:
-        return matchesAny<Match::Angle, Match::Percent>({ .allowsPercentHint = true });
+        return matchesAny<Match::Angle, Match::Percent>({ .percentHint = PercentHint::Angle });
     }
 
     ASSERT_NOT_REACHED();
@@ -383,32 +378,41 @@ std::optional<CSS::Category> Type::calculationCategory() const
 
     switch (*matchingUnit) {
     case BaseType::Length:
-        if (percentHint)
+        if (!percentHint)
+            return CSS::Category::Length;
+        if (percentHint == PercentHint::Length)
             return CSS::Category::LengthPercentage;
-        return CSS::Category::Length;
+        return std::nullopt;
     case BaseType::Angle:
-        if (percentHint)
+        if (!percentHint)
+            return CSS::Category::Angle;
+        if (percentHint == PercentHint::Angle)
             return CSS::Category::AnglePercentage;
-        return CSS::Category::Angle;
+        return std::nullopt;
     case BaseType::Time:
-        ASSERT(!percentHint);
-        return CSS::Category::Time;
+        if (!percentHint)
+            return CSS::Category::Time;
+        return std::nullopt;
     case BaseType::Frequency:
-        ASSERT(!percentHint);
-        return CSS::Category::Frequency;
+        if (!percentHint)
+            return CSS::Category::Frequency;
+        return std::nullopt;
     case BaseType::Resolution:
-        ASSERT(!percentHint);
-        return CSS::Category::Resolution;
+        if (!percentHint)
+            return CSS::Category::Resolution;
+        return std::nullopt;
     case BaseType::Flex:
-        ASSERT(!percentHint);
-        return CSS::Category::Flex;
+        if (!percentHint)
+            return CSS::Category::Flex;
+        return std::nullopt;
     case BaseType::Percent:
-        ASSERT(!percentHint);
-        return CSS::Category::Percentage;
+        if (!percentHint || percentHint == PercentHint::Percent)
+            return CSS::Category::Percentage;
+        return std::nullopt;
     }
 
     ASSERT_NOT_REACHED();
-    return CSS::Category::Number;
+    return std::nullopt;
 }
 
 static ASCIILiteral literal(BaseType baseType)
@@ -436,6 +440,7 @@ static ASCIILiteral literal(PercentHint percentHint)
     case PercentHint::Frequency: return "frequency"_s;
     case PercentHint::Resolution: return "resolution"_s;
     case PercentHint::Flex: return "flex"_s;
+    case PercentHint::Percent: return "percent"_s;
     }
 
     ASSERT_NOT_REACHED();
