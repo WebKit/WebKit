@@ -236,9 +236,9 @@ private:
     WriteBarrier<Unknown> m_slot;
 };
 
-static constexpr PropertyOffset promiseCapabilityResolvePropertyOffset = 0;
-static constexpr PropertyOffset promiseCapabilityRejectPropertyOffset = 1;
-static constexpr PropertyOffset promiseCapabilityPromisePropertyOffset = 2;
+static constexpr PropertyOffset promiseCapabilityPromisePropertyOffset = 0;
+static constexpr PropertyOffset promiseCapabilityResolvePropertyOffset = 1;
+static constexpr PropertyOffset promiseCapabilityRejectPropertyOffset = 2;
 
 JSC_DECLARE_HOST_FUNCTION(promiseResolvingFunctionResolve);
 JSC_DECLARE_HOST_FUNCTION(promiseResolvingFunctionReject);
