@@ -109,7 +109,12 @@ public:
     std::span<uint8_t> getBufferContents();
 
     std::optional<DrawIndexCacheContainerIterator> canSkipDrawIndexedValidation(uint32_t firstIndex, uint32_t indexCount, uint32_t vertexCount, MTLIndexType, uint32_t primitiveOffset, id<MTLIndirectCommandBuffer> = nil) const;
+<<<<<<< HEAD
     void drawIndexedValidated(uint32_t firstIndex, uint32_t indexCount, uint32_t vertexCount, MTLIndexType, uint32_t primitiveOffset, uint64_t validationGeneration, id<MTLIndirectCommandBuffer> = nil);
+=======
+    uint64_t drawIndexedCacheInvalidationCount() const { return m_drawIndexedCacheInvalidationCount; }
+    void drawIndexedValidated(uint64_t invalidationCountAtDispatch, uint32_t firstIndex, uint32_t indexCount, uint32_t vertexCount, MTLIndexType, uint32_t primitiveOffset, id<MTLIndirectCommandBuffer> = nil);
+>>>>>>> 51dfdb0612eb (Stale completion-handler cache repopulation in drawIndexedValidated bypasses index clamp shader causing GPU OOB)
     void skippedDrawIndexedValidation(CommandEncoder&, DrawIndexCacheContainerIterator);
 
     bool didReadOOB(id<MTLIndirectCommandBuffer> = nil) const;
@@ -159,6 +164,7 @@ private:
     using MappedRanges = RangeSet<Range<size_t>>;
     MappedRanges m_mappedRanges;
     WGPUMapModeFlags m_mapMode { WGPUMapMode_None };
+    uint64_t m_drawIndexedCacheInvalidationCount { 0 };
     uint32_t m_maxUnsignedIndex { 0 };
     uint16_t m_maxUshortIndex { 0 };
 

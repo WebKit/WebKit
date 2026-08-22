@@ -493,8 +493,15 @@ std::optional<DrawIndexCacheContainerIterator> Buffer::canSkipDrawIndexedValidat
     return std::nullopt;
 }
 
+<<<<<<< HEAD
 void Buffer::drawIndexedValidated(uint32_t firstIndex, uint32_t indexCount, uint32_t vertexCount, MTLIndexType indexType, uint32_t primitiveOffset, uint64_t validationGeneration, id<MTLIndirectCommandBuffer> icb)
+=======
+void Buffer::drawIndexedValidated(uint64_t invalidationCountAtDispatch, uint32_t firstIndex, uint32_t indexCount, uint32_t vertexCount, MTLIndexType indexType, uint32_t primitiveOffset, id<MTLIndirectCommandBuffer> icb)
+>>>>>>> 51dfdb0612eb (Stale completion-handler cache repopulation in drawIndexedValidated bypasses index clamp shader causing GPU OOB)
 {
+    if (invalidationCountAtDispatch != m_drawIndexedCacheInvalidationCount)
+        return;
+
     constexpr auto maxCacheSize = 1000000;
     if (m_drawIndexedCache.size() > maxCacheSize)
         m_drawIndexedCache.clear();
@@ -611,10 +618,21 @@ void Buffer::indirectBufferInvalidated(CommandEncoder* commandEncoder)
 
     m_gpuResourceMap.clear();
     m_drawIndexedCache.clear();
+<<<<<<< HEAD
     ++m_contentsGeneration;
     ++m_indexContentsGeneration;
     m_indexValueUpperBoundUint = UINT32_MAX;
     m_indexValueUpperBoundUshort = UINT16_MAX;
+=======
+    ++m_drawIndexedCacheInvalidationCount;
+    m_indirectCache = {
+        .indirectOffset = UINT64_MAX,
+        .indexBufferOffsetInBytes = UINT64_MAX,
+        .minVertexCount = 0,
+        .minInstanceCount = 0,
+        .indexType = MTLIndexTypeUInt16
+    };
+>>>>>>> 51dfdb0612eb (Stale completion-handler cache repopulation in drawIndexedValidated bypasses index clamp shader causing GPU OOB)
 }
 
 void Buffer::removeSkippedValidationCommandEncoder(uint64_t uniqueId)
