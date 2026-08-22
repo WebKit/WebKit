@@ -2576,3 +2576,5 @@ imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-plus-filter-2
 
 # rdar://184139090 ([macOS 27] fast/mediastream/mediastreamtrack-video-frameRate-clone-increasing.html is a flaky test failure)
 [ Tahoe+ ] fast/mediastream/mediastreamtrack-video-frameRate-clone-increasing.html [ Pass Failure ]
+
+webkit.org/b/322313 accessibility/isolated-tree/aria-owns-id-change.html [ Timeout ]
