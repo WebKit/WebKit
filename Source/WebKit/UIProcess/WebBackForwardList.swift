@@ -919,10 +919,6 @@ final class WebBackForwardList {
             guard let matchedItem = childFrameItem else {
                 return nil
             }
-            let existingFrameID = Optional(fromCxx: matchedItem.frameID())
-            if existingFrameID == nil {
-                matchedItem.updateFrameID(childFrameID)
-            }
         }
         guard let childFrameItem else {
             return nil
