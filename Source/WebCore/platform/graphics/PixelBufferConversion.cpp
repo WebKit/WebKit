@@ -366,11 +366,95 @@ static bool UNUSED_FUNCTION NODELETE isSupportedConversionFormat(PixelFormat pix
     case PixelFormat::BGRA8:
     case PixelFormat::BGRX8:
 #if ENABLE(PIXEL_FORMAT_RGBA16F)
+<<<<<<< HEAD
     case PixelFormat::RGBA16F:
 #endif
         return true;
     default:
         return false;
+=======
+static Float16 readFloat16(const std::span<const uint8_t>& span8, size_t offset)
+{
+    union {
+        Float16 float16 { };
+        std::array<uint8_t, sizeof(Float16)> bytes;
+    } float16OrBytesUnion;
+    for (size_t i = 0; i < sizeof(Float16); ++i)
+        float16OrBytesUnion.bytes[i] = span8[offset + i];
+    return float16OrBytesUnion.float16;
+}
+
+static void writeFloat16(Float16 f16, const std::span<uint8_t>& spanFloat16, size_t offset)
+{
+    union {
+        Float16 float16 { };
+        std::array<uint8_t, sizeof(Float16)> bytes;
+    } float16OrBytesUnion(f16);
+    for (size_t i = 0; i < sizeof(Float16); ++i)
+        spanFloat16[offset + i] = float16OrBytesUnion.bytes[i];
+}
+
+static void convertImagePixelsFromFloat16ToFloat16(const ConstPixelBufferConversionView& source, const PixelBufferConversionView& destination, const IntSize& destinationSize)
+{
+    // FIXME: Float16-to-Float16 color-space conversion is unimplemented; fall through and copy
+    // verbatim. Do not early-return on a color-space mismatch: the destination is allocated
+    // uninitialized, so skipping the write would leak heap bytes through getPixelBuffer().
+
+    struct Pixel16 {
+        Float16 r;
+        Float16 g;
+        Float16 b;
+        Float16 a;
+    };
+    static_assert(sizeof(Float16) == 2);
+    static_assert(sizeof(Pixel16) == 4 * sizeof(Float16));
+
+    // FIXME: This lambda should be moved to separate functions and the caller passes a pointer to one of them.
+    auto convertSinglePixel16 = [](const auto& sourceSpan, auto sourceAlphaFormat, auto& destinationSpan, auto destinationAlphaFormat) {
+        ASSERT(sourceSpan.size_bytes() == sizeof(Pixel16));
+        ASSERT(destinationSpan.size_bytes() == sizeof(Pixel16));
+
+        if (sourceAlphaFormat == destinationAlphaFormat) {
+            memcpySpan(destinationSpan, sourceSpan);
+            return;
+        }
+
+        const auto& sourcePixel16 = reinterpretCastSpanStartTo<Pixel16>(sourceSpan);
+        auto& destinationPixel16 = reinterpretCastSpanStartTo<Pixel16>(destinationSpan);
+
+        if (destinationAlphaFormat == AlphaPremultiplication::Premultiplied) {
+            auto fa = float(sourcePixel16.a);
+            destinationPixel16.r = Float16(float(sourcePixel16.r) * fa);
+            destinationPixel16.g = Float16(float(sourcePixel16.g) * fa);
+            destinationPixel16.b = Float16(float(sourcePixel16.b) * fa);
+            destinationPixel16.a = Float16(fa);
+            return;
+        }
+
+        if (auto fa = float(sourcePixel16.a)) {
+            destinationPixel16.r = Float16(float(sourcePixel16.r) / fa);
+            destinationPixel16.g = Float16(float(sourcePixel16.g) / fa);
+            destinationPixel16.b = Float16(float(sourcePixel16.b) / fa);
+            destinationPixel16.a = Float16(fa);
+            return;
+        }
+
+        memcpySpan(destinationSpan, sourceSpan);
+    };
+
+    size_t sourceRowStart = 0;
+    size_t destinationRowStart = 0;
+    size_t bytesPerRow = destinationSize.width() * sizeof(Pixel16);
+
+    for (int y = 0; y < destinationSize.height(); ++y) {
+        for (size_t x = 0; x < bytesPerRow; x += sizeof(Pixel16)) {
+            const auto sourceSpan = source.rows.subspan(sourceRowStart + x, sizeof(Pixel16));
+            auto destinationSpan = destination.rows.subspan(destinationRowStart + x, sizeof(Pixel16));
+            convertSinglePixel16(sourceSpan, source.format.alphaFormat, destinationSpan, destination.format.alphaFormat);
+        }
+        sourceRowStart += source.bytesPerRow;
+        destinationRowStart += destination.bytesPerRow;
+>>>>>>> e66d0b93bf1f (Converting Float16 pixels buffers to Unpremultiplied or premultiplied may miss the last row)
     }
 }
 
