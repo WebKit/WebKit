@@ -26,6 +26,7 @@
 #include "config.h"
 #include "EventRegion.h"
 
+#include "BorderShape.h"
 #include "EventTrackingRegions.h"
 #include "HTMLFormControlElement.h"
 #include "Logging.h"
@@ -52,7 +53,21 @@ EventRegionContext::EventRegionContext(EventRegion& eventRegion)
 
 EventRegionContext::~EventRegionContext() = default;
 
+void EventRegionContext::unite(const BorderShape& borderShape, float deviceScaleFactor, const RenderObject& renderer, const Style::ComputedStyle& style, bool overrideUserModifyIsEditable, ContributeToInteractionRegions contributeToInteractionRegions)
+{
+    if (!borderShape.hasNonRoundCornerShape()) {
+        unite(borderShape.snappedShapedRectForOuterShape(deviceScaleFactor), renderer, style, overrideUserModifyIsEditable, contributeToInteractionRegions);
+        return;
+    }
+    uniteRegion(borderShape.approximateAsRegion(deviceScaleFactor), borderShape.snappedOuterRect(deviceScaleFactor), renderer, style, overrideUserModifyIsEditable, contributeToInteractionRegions);
+}
+
 void EventRegionContext::unite(const FloatRoundedRect& roundedRect, const RenderObject& renderer, const Style::ComputedStyle& style, bool overrideUserModifyIsEditable, ContributeToInteractionRegions contributeToInteractionRegions)
+{
+    uniteRegion(approximateAsRegion(roundedRect), roundedRect.rect(), renderer, style, overrideUserModifyIsEditable, contributeToInteractionRegions);
+}
+
+void EventRegionContext::uniteRegion(Region&& shapeRegion, const FloatRect& bounds, const RenderObject& renderer, const Style::ComputedStyle& style, bool overrideUserModifyIsEditable, ContributeToInteractionRegions contributeToInteractionRegions)
 {
     auto transformAndClipIfNeeded = [&](auto input, auto transform) {
         if (m_transformStack.isEmpty() && m_clipStack.isEmpty())
@@ -65,7 +80,7 @@ void EventRegionContext::unite(const FloatRoundedRect& roundedRect, const Render
         return transformedAndClippedInput;
     };
 
-    auto region = transformAndClipIfNeeded(approximateAsRegion(roundedRect), [](auto affineTransform, auto region) {
+    auto region = transformAndClipIfNeeded(WTF::move(shapeRegion), [](auto affineTransform, auto region) {
         return affineTransform.mapRegion(region);
     });
     m_eventRegion.unite(region, renderer, style, overrideUserModifyIsEditable);
@@ -74,7 +89,7 @@ void EventRegionContext::unite(const FloatRoundedRect& roundedRect, const Render
     if (contributeToInteractionRegions == ContributeToInteractionRegions::No)
         return;
 
-    auto rect = roundedRect.rect();
+    auto rect = bounds;
     if (auto* modelObject = dynamicDowncast<RenderLayerModelObject>(renderer))
         rect = snapRectToDevicePixelsIfNeeded(rect, *modelObject);
     auto layerBounds = transformAndClipIfNeeded(rect, [](auto affineTransform, auto rect) {
@@ -95,6 +110,7 @@ void EventRegionContext::unite(const FloatRoundedRect& roundedRect, const Render
 
     uniteInteractionRegions(renderer, layerBounds, clipOffset, transform);
 #else
+    UNUSED_PARAM(bounds);
     UNUSED_PARAM(renderer);
     UNUSED_PARAM(contributeToInteractionRegions);
 #endif

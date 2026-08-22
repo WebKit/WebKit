@@ -866,7 +866,10 @@ bool RenderTheme::paint(const RenderBox& box, ControlPart& part, const PaintInfo
     auto controlStyle = extractControlStyleForRenderer(box);
     auto& context = paintInfo.context();
 
-    context.drawControlPart(part, borderShape.deprecatedPixelSnappedRoundedRect(deviceScaleFactor), deviceScaleFactor, controlStyle);
+    auto partRect = borderShape.hasNonRoundCornerShape()
+        ? FloatRoundedRect { borderShape.snappedOuterRect(deviceScaleFactor) }
+        : borderShape.snappedShapedRectForOuterShape(deviceScaleFactor);
+    context.drawControlPart(part, partRect, deviceScaleFactor, controlStyle);
     return false;
 }
 
@@ -890,6 +893,15 @@ bool RenderTheme::paint(const RenderBox& box, const PaintInfo& paintInfo, const 
 
     float deviceScaleFactor = protect(box.document())->deviceScaleFactor();
     FloatRect devicePixelSnappedRect = snapRectToDevicePixels(rect, deviceScaleFactor);
+
+    // Control art knows only a corner radius, so the part is clipped to the contour. Done here rather than per
+    // part, because each draws its own way and some never reach drawControlPart().
+    bool needsCornerShapeClip = box.style().border().hasNonRoundCornerShape();
+    GraphicsContextStateSaver cornerShapeStateSaver(paintInfo.context(), needsCornerShapeClip);
+    if (needsCornerShapeClip) {
+        auto borderShape = BorderShape::shapeForBorderRect(box.style(), LayoutRect(devicePixelSnappedRect));
+        paintInfo.context().clipPath(borderShape.pathForOuterShape(deviceScaleFactor));
+    }
 
     switch (appearance) {
     case StyleAppearance::Checkbox:

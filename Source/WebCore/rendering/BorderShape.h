@@ -33,6 +33,7 @@
 #include "LayoutRoundedRect.h"
 #include "RectCorners.h"
 #include "RectEdges.h"
+#include "Region.h"
 #include "RenderStyleConstants.h"
 #include <optional>
 
@@ -49,8 +50,6 @@ class ComputedStyle;
 }
 
 // BorderShape is used to fill and clip to the shape formed by the border and padding boxes with border-radius.
-// In future, this may be a more complex shape than a rounded rect, so accessors that return rounded rects
-// are deprecated.
 class BorderShape {
 public:
     static BorderShape shapeForBorderRect(const Style::ComputedStyle&, const LayoutRect& borderRect, RectEdges<bool> closedEdges = { true });
@@ -61,6 +60,7 @@ public:
     // allow for scaling the corner radii; radii expand outward or shrink inward based on the offset
     // between borderRect and offsetRect.
     static BorderShape shapeForOffsetRect(const Style::ComputedStyle&, const LayoutRect& borderRect, const LayoutRect& offsetRect, const RectEdges<LayoutUnit>& edgeWidths, RectEdges<bool> closedEdges = { true });
+    static BorderShape shapeForOffsetRect(const LayoutRect& borderRect, const LayoutRoundedRectRadii&, const RectCorners<float>& cornerCurvatures, const LayoutRect& offsetRect);
 
     BorderShape(const LayoutRect& borderRect, const RectEdges<LayoutUnit>& borderWidths);
     BorderShape(const LayoutRect& borderRect, const RectEdges<LayoutUnit>& borderWidths, const LayoutRoundedRectRadii&);
@@ -76,16 +76,22 @@ public:
     // Takes `closedEdges` into account.
     const RectEdges<LayoutUnit>& borderWidths() const LIFETIME_BOUND { return m_borderWidths; }
 
-    LayoutRoundedRect NODELETE deprecatedRoundedRect() const;
-    LayoutRoundedRect NODELETE deprecatedInnerRoundedRect() const;
-    FloatRoundedRect deprecatedPixelSnappedRoundedRect(float deviceScaleFactor) const;
-    FloatRoundedRect deprecatedPixelSnappedInnerRoundedRect(float deviceScaleFactor) const;
+    LayoutRoundedRect NODELETE shapedRectForOuterShape() const;
+    LayoutRoundedRect NODELETE shapedRectForInnerShape() const;
+    FloatRoundedRect snappedShapedRectForOuterShape(float deviceScaleFactor) const;
+    FloatRoundedRect snappedShapedRectForInnerShape(float deviceScaleFactor) const;
 
     // Returns true if the given rect is entirely inside the inner/outer shape.
     bool innerShapeContains(const LayoutRect&) const;
     bool outerShapeContains(const LayoutRect&) const;
 
     bool shapeIntersectsHitTestLocation(const HitTestLocation&, float deviceScaleFactor) const;
+
+    Region approximateAsRegion(float deviceScaleFactor, unsigned stepLength = 20) const;
+
+    Vector<FloatPoint> outerShapeAsPolygon(float deviceScaleFactor, unsigned stepsPerHalf = 8) const;
+
+    static std::optional<Path> pathForShapedRect(const FloatRoundedRect&, const RectCorners<float>& cornerCurvatures);
 
     // Returns true if no corner regions of the outer border intersect the given rect,
     // meaning border painting can use simpler rectangular paths.

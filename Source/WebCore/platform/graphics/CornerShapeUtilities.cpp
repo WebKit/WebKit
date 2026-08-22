@@ -661,6 +661,14 @@ void borderContourPath(Path& path, const RectCorners<CornerInput>& cornerRects, 
     path.closeSubpath();
 }
 
+Vector<FloatPoint> sampleCornerShape(const CornerInput& input, unsigned stepsPerHalf)
+{
+    auto corner = resolveCornerAdjustment(makeCorner(input), input.startInset, input.endInset).corner;
+    Vector<FloatPoint> points;
+    sampleDrawnCorner(corner, stepsPerHalf, points);
+    return points;
+}
+
 static Vector<FloatPoint> normalizedInnerCornerHull(double curvature)
 {
     if (curvature >= 0.0)

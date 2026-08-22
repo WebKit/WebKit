@@ -1,0 +1,70 @@
+<!DOCTYPE html><!-- webkit-test-runner [ UseSystemAppearance=true ] -->
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>corner-shape: a hosted material needs a shape mask layer even without a clipping layer of its own</title>
+    <style>
+        body {
+            margin: 0;
+            background: linear-gradient(red, blue) fixed;
+        }
+
+        .material {
+            height: 150px;
+            border-radius: 40px;
+            -apple-visual-effect: -apple-system-glass-material;
+        }
+
+        #round { width: 200px; corner-shape: round; }
+        #square { width: 201px; corner-shape: square; }
+        #bevel { width: 202px; corner-shape: bevel; }
+        #notch { width: 203px; corner-shape: notch; }
+    </style>
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+
+        const EXPECT_MASK = {
+            200: ['round', false],
+            201: ['square', false],
+            202: ['bevel', true],
+            203: ['notch', true],
+        };
+
+        function runTest()
+        {
+            if (!window.internals) {
+        document.getElementById('results').textContent = 'This test requires window.internals.';
+        return;
+            }
+
+            const tree = window.internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_CLIPPING);
+            const masked = new Set();
+            const lines = tree.split('\n');
+            let currentWidth = null;
+            for (let index = 0; index < lines.length; index++) {
+        const bounds = lines[index].match(/\(bounds (\d+)\.\d+ 150\.\d+\)/);
+        if (bounds)
+                    currentWidth = bounds[1];
+        if (lines[index].includes('(mask layer') && currentWidth)
+                    masked.add(currentWidth);
+            }
+
+            const results = Object.keys(EXPECT_MASK).map(width => {
+        const [shape, expected] = EXPECT_MASK[width];
+        const hasMask = masked.has(width);
+        return `${shape}: mask layer ${hasMask ? 'present' : 'absent'}, expected `
+                    + `${expected ? 'present' : 'absent'} - ${hasMask === expected ? 'PASS' : 'FAIL'}`;
+            });
+            document.getElementById('results').textContent = results.join('\n');
+        }
+    </script>
+</head>
+<body onload="runTest()">
+    <div class="material" id="round"></div>
+    <div class="material" id="square"></div>
+    <div class="material" id="bevel"></div>
+    <div class="material" id="notch"></div>
+    <pre id="results"></pre>
+</body>
+</html>

@@ -24,7 +24,9 @@
 
 #pragma once
 
+#include <WebCore/FloatPoint.h>
 #include <WebCore/RectCorners.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
@@ -46,6 +48,9 @@ enum class OutsetMiter : bool { No, Yes };
 
 // https://drafts.csswg.org/css-borders-4/#contour-path
 void borderContourPath(Path&, const RectCorners<CornerInput>&, const FloatRect* targetRect = nullptr, OutsetMiter = OutsetMiter::No, float deviceScaleFactor = 1.0f);
+
+// Points along one corner's drawn curve.
+Vector<FloatPoint> sampleCornerShape(const CornerInput&, unsigned stepsPerHalf);
 
 // https://drafts.csswg.org/css-borders-4/#corner-shape-constrain-radii
 double oppositeCornerScaleFactor(const RectCorners<CornerInput>&);

@@ -1,0 +1,4 @@
+round: mask layer absent, expected absent - PASS
+square: mask layer absent, expected absent - PASS
+bevel: mask layer present, expected present - PASS
+notch: mask layer present, expected present - PASS

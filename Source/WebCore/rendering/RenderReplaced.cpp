@@ -294,7 +294,7 @@ void RenderReplaced::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
             auto contributeToInteractionRegions = (svgRootHasChildrenOrFilters && !isSkippedContentRoot(*this))
                 ? EventRegionContext::ContributeToInteractionRegions::No
                 : EventRegionContext::ContributeToInteractionRegions::Yes;
-            paintInfo.eventRegionContext()->unite(borderShape.deprecatedPixelSnappedRoundedRect(protect(document())->deviceScaleFactor()), *this, style(), false, contributeToInteractionRegions);
+            paintInfo.eventRegionContext()->unite(borderShape, protect(document())->deviceScaleFactor(), *this, style(), false, contributeToInteractionRegions);
         }
 
         if (svgRootHasChildrenOrFilters && !isSkippedContentRoot(*this))

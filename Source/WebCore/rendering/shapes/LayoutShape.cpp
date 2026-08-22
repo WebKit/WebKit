@@ -30,6 +30,7 @@
 #include "config.h"
 #include "LayoutShape.h"
 
+#include "BorderShape.h"
 #include "BoxLayoutShape.h"
 #include "GraphicsContext.h"
 #include "ImageBuffer.h"
@@ -235,12 +236,26 @@ Ref<const LayoutShape> LayoutShape::createRasterShape(Image* image, float thresh
     return createShape();
 }
 
-Ref<const LayoutShape> LayoutShape::createBoxShape(const LayoutRoundedRect& roundedRect, WritingMode writingMode, float logicalMargin)
+Ref<const LayoutShape> LayoutShape::createBoxShape(const LayoutRoundedRect& roundedRect, const RectCorners<float>& cornerCurvatures, float deviceScaleFactor, WritingMode writingMode, float logicalMargin)
 {
     ASSERT(roundedRect.rect().width() >= 0 && roundedRect.rect().height() >= 0);
 
     FloatRoundedRect bounds { roundedRect };
-    auto shape = adoptRef(*new BoxLayoutShape(bounds));
+
+    auto shapeForContour = [&] {
+        if (logicalMargin > 0) {
+            auto marginRect = roundedRect.rect();
+            marginRect.inflate(LayoutUnit(logicalMargin));
+            return BorderShape::shapeForOffsetRect(roundedRect.rect(), roundedRect.radii(), cornerCurvatures, marginRect);
+        }
+        return BorderShape { roundedRect.rect(), { }, roundedRect.radii(), cornerCurvatures };
+    }();
+
+    Vector<FloatPoint> contour;
+    if (shapeForContour.hasNonRoundCornerShape())
+        contour = shapeForContour.outerShapeAsPolygon(deviceScaleFactor, 16);
+
+    Ref shape = adoptRef(*new BoxLayoutShape(bounds, WTF::move(contour)));
     shape->m_writingMode = writingMode;
     shape->m_margin = logicalMargin;
 

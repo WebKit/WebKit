@@ -1,0 +1,132 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>CSS Borders and Box Decorations 4: a layer's event region follows 'corner-shape', not the rounded rect</title>
+    <style>
+        body {
+            margin: 0;
+        }
+
+        .scroller {
+            overflow: scroll;
+            height: 50px;
+            width: 50px;
+        }
+
+        .scrollcontent {
+            height: 100px;
+            width: 50px;
+        }
+
+        .testdiv {
+            box-sizing: border-box;
+            height: 200px;
+            border-radius: 50px;
+            background-color: blue;
+            will-change: transform;
+        }
+
+        #square { width: 200px; corner-shape: square; }
+        #round { width: 201px; corner-shape: round; }
+        #bevel { width: 202px; corner-shape: bevel; }
+        #scoop { width: 203px; corner-shape: scoop; }
+        #notch { width: 204px; corner-shape: notch; }
+    </style>
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+
+        const BOX_HEIGHT = 200;
+
+        const SHAPES = [
+            { name: 'square', width: 200 },
+            { name: 'round', width: 201 },
+            { name: 'bevel', width: 202 },
+            { name: 'scoop', width: 203 },
+            { name: 'notch', width: 204 },
+        ];
+
+        function eventRegionAreaByLayerWidth(tree)
+        {
+            const areaByWidth = new Map();
+            let currentWidth = null;
+            let inEventRegion = false;
+
+            for (const line of tree.split('\n')) {
+                const bounds = line.match(/\(bounds (\d+)\.\d+ 200\.\d+\)/);
+                if (bounds) {
+                    currentWidth = bounds[1];
+                    inEventRegion = false;
+                    continue;
+                }
+
+                if (line.includes('(event region')) {
+                    inEventRegion = true;
+                    continue;
+                }
+
+                if (!inEventRegion)
+                    continue;
+
+                const rect = line.match(/\(rect \(-?\d+,-?\d+\) width=(\d+) height=(\d+)\)/);
+                if (!rect) {
+                    inEventRegion = false;
+                    continue;
+                }
+
+                const area = parseInt(rect[1], 10) * parseInt(rect[2], 10);
+                areaByWidth.set(currentWidth, (areaByWidth.get(currentWidth) || 0) + area);
+            }
+
+            return areaByWidth;
+        }
+
+        function runTest()
+        {
+            if (!window.internals) {
+                document.getElementById('results').textContent = 'This test requires window.internals.';
+                return;
+            }
+
+            const tree = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_EVENT_REGION);
+            const areaByWidth = eventRegionAreaByLayerWidth(tree);
+
+            const areaFor = shape => areaByWidth.get(String(shape.width));
+            const results = [];
+
+            for (const shape of SHAPES) {
+                const found = areaFor(shape) !== undefined;
+                results.push(`${shape.name}: event region found - ${found ? 'PASS' : 'FAIL'}`);
+            }
+
+            const [square, round] = SHAPES;
+
+            results.push(`square covers its whole box - ${areaFor(square) === square.width * BOX_HEIGHT ? 'PASS' : 'FAIL'}`);
+
+            for (const shape of SHAPES.slice(1)) {
+                const area = areaFor(shape);
+                const covered = area !== undefined && area < shape.width * BOX_HEIGHT;
+                results.push(`${shape.name} leaves its corners uncovered - ${covered ? 'PASS' : 'FAIL'}`);
+            }
+
+            for (const shape of SHAPES.slice(2)) {
+                const differs = areaFor(shape) !== undefined && areaFor(round) !== undefined
+                    && areaFor(shape) !== areaFor(round);
+                results.push(`${shape.name} differs from round - ${differs ? 'PASS' : 'FAIL'}`);
+            }
+
+            document.getElementById('results').textContent = results.join('\n');
+        }
+    </script>
+</head>
+<body onload="runTest()">
+    <div class="scroller"><div class="scrollcontent"></div></div>
+    <div class="testdiv" id="square"></div>
+    <div class="testdiv" id="round"></div>
+    <div class="testdiv" id="bevel"></div>
+    <div class="testdiv" id="scoop"></div>
+    <div class="testdiv" id="notch"></div>
+    <pre id="results"></pre>
+</body>
+</html>

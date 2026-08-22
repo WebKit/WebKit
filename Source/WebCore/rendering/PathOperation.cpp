@@ -27,6 +27,7 @@
 #include "PathOperation.h"
 
 #include "AnimationUtilities.h"
+#include "BorderShape.h"
 #include "CSSRayValue.h"
 #include "SVGElement.h"
 #include "SVGElementTypeHelpers.h"
@@ -138,6 +139,9 @@ Ref<PathOperation> BoxPathOperation::clone() const
 std::optional<Path> BoxPathOperation::getPath(const TransformOperationData& data, Style::ZoomFactor) const
 {
     if (auto motionPathData = data.motionPathData) {
+        if (auto shaped = BorderShape::pathForShapedRect(motionPathData->offsetRect(), motionPathData->cornerCurvatures))
+            return shaped;
+
         Path path;
         path.addRoundedRect(motionPathData->offsetRect(), PathRoundedRect::Strategy::PreferBezier);
         return path;

@@ -315,6 +315,8 @@ public:
     virtual void setBackdropFiltersRect(const FloatRoundedRect& backdropFiltersRect) { m_backdropFiltersRect = backdropFiltersRect; }
     const FloatRoundedRect& backdropFiltersRect() const LIFETIME_BOUND { return m_backdropFiltersRect; }
 
+    void setBackdropFiltersShapePath(const Path& path) { m_backdropFiltersShapePath = path; }
+
     BlendMode blendMode() const { return m_blendMode; }
     virtual void setBlendMode(BlendMode blendMode) { m_blendMode = blendMode; }
 
@@ -695,6 +697,7 @@ protected:
     ScalingFilter m_contentsMinificationFilter = ScalingFilter::Linear;
     ScalingFilter m_contentsMagnificationFilter = ScalingFilter::Linear;
     FloatRoundedRect m_backdropFiltersRect;
+    Path m_backdropFiltersShapePath;
     std::optional<FloatRect> m_animationExtent;
 
     EventRegion m_eventRegion;

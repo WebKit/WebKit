@@ -32,17 +32,22 @@
 #include "FloatRoundedRect.h"
 #include "LayoutShape.h"
 #include "RenderStyleConstants.h"
+#include <optional>
 
 namespace WebCore {
 
+class Path;
 class RenderBox;
 
 LayoutRoundedRect computeRoundedRectForBoxShape(CSSBoxType, const RenderBox&);
 
+std::optional<Path> computePathForBoxShape(CSSBoxType, const RenderBox&, float deviceScaleFactor);
+
 class BoxLayoutShape final : public LayoutShape {
 public:
-    BoxLayoutShape(const FloatRoundedRect& bounds)
+    BoxLayoutShape(const FloatRoundedRect& bounds, Vector<FloatPoint>&& contour = { })
         : m_bounds(bounds)
+        , m_contour(WTF::move(contour))
     {
     }
 
@@ -56,6 +61,7 @@ private:
     FloatRoundedRect shapeMarginBounds() const;
 
     FloatRoundedRect m_bounds;
+    Vector<FloatPoint> m_contour;
 };
 
 } // namespace WebCore

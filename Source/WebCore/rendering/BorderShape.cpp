@@ -41,6 +41,7 @@
 #include "LayoutRoundedRect.h"
 #include "Path.h"
 #include "StyleComputedStyle+GettersInlines.h"
+#include <algorithm>
 #include <cmath>
 
 namespace WebCore {
@@ -129,6 +130,18 @@ BorderShape BorderShape::shapeForBorderRect(const Style::ComputedStyle& style, c
     return BorderShape { borderRect, usedBorderWidths };
 }
 
+BorderShape BorderShape::shapeForOffsetRect(const LayoutRect& borderRect, const LayoutRoundedRectRadii& borderRadii, const RectCorners<float>& cornerCurvatures, const LayoutRect& offsetRect)
+{
+    auto radii = borderRadii;
+    radii.expand(borderRect.y() - offsetRect.y(), offsetRect.maxY() - borderRect.maxY(), borderRect.x() - offsetRect.x(), offsetRect.maxX() - borderRect.maxX());
+    if (!radii.areRenderableInRect(offsetRect))
+        radii.makeRenderableInRect(offsetRect);
+
+    auto shape = BorderShape { offsetRect, { }, radii, cornerCurvatures };
+    shape.m_offsetReferenceRect = LayoutRoundedRect { borderRect, borderRadii };
+    return shape;
+}
+
 BorderShape BorderShape::shapeForOffsetRect(const Style::ComputedStyle& style, const LayoutRect& borderRect, const LayoutRect& offsetRect, const RectEdges<LayoutUnit>& edgeWidths, RectEdges<bool> closedEdges)
 {
     auto usedEdgeWidths = applyClosedEdges(edgeWidths, closedEdges);
@@ -198,22 +211,22 @@ BorderShape BorderShape::shapeWithBorderWidths(const RectEdges<LayoutUnit>& bord
     return shape;
 }
 
-LayoutRoundedRect BorderShape::deprecatedRoundedRect() const
+LayoutRoundedRect BorderShape::shapedRectForOuterShape() const
 {
     return m_borderRect;
 }
 
-LayoutRoundedRect BorderShape::deprecatedInnerRoundedRect() const
+LayoutRoundedRect BorderShape::shapedRectForInnerShape() const
 {
     return m_innerEdgeRect;
 }
 
-FloatRoundedRect BorderShape::deprecatedPixelSnappedRoundedRect(float deviceScaleFactor) const
+FloatRoundedRect BorderShape::snappedShapedRectForOuterShape(float deviceScaleFactor) const
 {
     return m_borderRect.pixelSnappedRoundedRectForPainting(deviceScaleFactor);
 }
 
-FloatRoundedRect BorderShape::deprecatedPixelSnappedInnerRoundedRect(float deviceScaleFactor) const
+FloatRoundedRect BorderShape::snappedShapedRectForInnerShape(float deviceScaleFactor) const
 {
     return m_innerEdgeRect.pixelSnappedRoundedRectForPainting(deviceScaleFactor);
 }
@@ -434,12 +447,118 @@ static void addAlignedToCurveOffsetContour(Path& path, const FloatRoundedRect& r
     borderContourPath(path, referenceCorners, &targetRect, outsetMiter);
 }
 
+static void buildOuterCornerInputs(const FloatRoundedRect& outerSnapped, const RectCorners<float>& cornerCurvatures, const std::optional<FloatRoundedRect>& offsetReference, RectCorners<CornerInput>& cornerRects)
+{
+    buildCornerInputs(outerSnapped, cornerCurvatures, 0, 0, 0, 0, cornerRects);
+    rebuildOffsetCornersFromReference(cornerRects, offsetReference, cornerCurvatures, outerSnapped.rect());
+}
+
 static void addOuterCornerShapeToPath(Path& path, const FloatRoundedRect& outerSnapped, const RectCorners<float>& cornerCurvatures, const std::optional<FloatRoundedRect>& offsetReferenceRect)
 {
     RectCorners<CornerInput> cornerRects;
-    buildCornerInputs(outerSnapped, cornerCurvatures, 0, 0, 0, 0, cornerRects);
-    rebuildOffsetCornersFromReference(cornerRects, offsetReferenceRect, cornerCurvatures, outerSnapped.rect());
+    buildOuterCornerInputs(outerSnapped, cornerCurvatures, offsetReferenceRect, cornerRects);
     borderContourPath(path, cornerRects);
+}
+
+static FloatPoint outerVertexForCorner(const FloatRect& rect, BoxCorner corner)
+{
+    switch (corner) {
+    case BoxCorner::TopLeft:     return rect.minXMinYCorner();
+    case BoxCorner::TopRight:    return rect.maxXMinYCorner();
+    case BoxCorner::BottomLeft:  return rect.minXMaxYCorner();
+    case BoxCorner::BottomRight: return rect.maxXMaxYCorner();
+    }
+    return { };
+}
+
+static Vector<FloatPoint> densifyContour(const Vector<FloatPoint>& points, float maximumSpacing)
+{
+    Vector<FloatPoint> dense;
+    for (size_t index = 0; index + 1 < points.size(); ++index) {
+        auto start = points[index];
+        auto span = points[index + 1] - start;
+        dense.append(start);
+
+        auto interiorCount = static_cast<unsigned>(std::floor(span.diagonalLength() / maximumSpacing));
+        for (unsigned step = 1; step <= interiorCount; ++step)
+            dense.append(start + span.scaled(float(step) / (interiorCount + 1)));
+    }
+    if (!points.isEmpty())
+        dense.append(points.last());
+    return dense;
+}
+
+Vector<FloatPoint> BorderShape::outerShapeAsPolygon(float deviceScaleFactor, unsigned stepsPerHalf) const
+{
+    auto outerSnapped = m_borderRect.pixelSnappedRoundedRectForPainting(deviceScaleFactor);
+    RectCorners<CornerInput> cornerRects;
+    buildOuterCornerInputs(outerSnapped, m_cornerCurvatures, snappedOffsetReferenceRect(deviceScaleFactor), cornerRects);
+
+    Vector<FloatPoint> contour;
+    for (auto key : { BoxCorner::TopRight, BoxCorner::BottomRight, BoxCorner::BottomLeft, BoxCorner::TopLeft })
+        contour.appendVector(sampleCornerShape(cornerRects[key], stepsPerHalf));
+
+    if (!contour.isEmpty())
+        contour.append(contour.first());
+    return contour;
+}
+
+std::optional<Path> BorderShape::pathForShapedRect(const FloatRoundedRect& roundedRect, const RectCorners<float>& cornerCurvatures)
+{
+    auto& radii = roundedRect.radii();
+    auto isRound = [](float curvature, const FloatSize& radius) {
+        return curvature == 1.0f || radius.isEmpty();
+    };
+    if (isRound(cornerCurvatures.topLeft(), radii.topLeft())
+        && isRound(cornerCurvatures.topRight(), radii.topRight())
+        && isRound(cornerCurvatures.bottomLeft(), radii.bottomLeft())
+        && isRound(cornerCurvatures.bottomRight(), radii.bottomRight()))
+        return std::nullopt;
+
+    RectCorners<CornerInput> cornerRects;
+    buildCornerInputs(roundedRect, cornerCurvatures, 0, 0, 0, 0, cornerRects);
+
+    Path path;
+    borderContourPath(path, cornerRects);
+    return path;
+}
+
+Region BorderShape::approximateAsRegion(float deviceScaleFactor, unsigned stepLength) const
+{
+    auto outerSnapped = m_borderRect.pixelSnappedRoundedRectForPainting(deviceScaleFactor);
+    if (!hasNonRoundCornerShape())
+        return WebCore::approximateAsRegion(outerSnapped, stepLength);
+
+    RectCorners<CornerInput> cornerRects;
+    buildOuterCornerInputs(outerSnapped, m_cornerCurvatures, snappedOffsetReferenceRect(deviceScaleFactor), cornerRects);
+
+    auto rect = outerSnapped.rect();
+    Region region;
+    region.unite(enclosingIntRect(rect));
+
+    for (auto key : { BoxCorner::TopLeft, BoxCorner::TopRight, BoxCorner::BottomLeft, BoxCorner::BottomRight }) {
+        const auto& input = cornerRects[key];
+
+        auto extent = std::max(0.0, std::min(input.width, input.height));
+        auto step = std::max(1u, stepLength);
+        auto count = std::clamp(static_cast<unsigned>((extent + step / 2.0) / step), 2u, 20u);
+
+        bool straightSided = !input.curvature || std::isinf(input.curvature);
+        auto samples = sampleCornerShape(input, straightSided ? 1 : count);
+        if (samples.size() < 2)
+            continue;
+        if (straightSided)
+            samples = densifyContour(samples, std::max(1.0, extent / count));
+
+        auto vertex = outerVertexForCorner(rect, key);
+        for (auto& point : samples) {
+            FloatRect cornerRect { vertex, FloatSize { } };
+            cornerRect.extend(point);
+            region.subtract(roundedIntRect(cornerRect));
+        }
+    }
+
+    return region;
 }
 
 Path BorderShape::pathForOuterCornerShape(const FloatRoundedRect& outerSnapped, const std::optional<FloatRoundedRect>& snappedOffsetReference) const

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>CSS Borders and Box Decorations 4: a &lt;coord-box&gt; 'clip-path' follows 'corner-shape' — reference</title>
+    <style>
+        body {
+            margin: 0;
+            background-color: white;
+        }
+
+        .box {
+            position: relative;
+            float: left;
+            box-sizing: border-box;
+            width: 200px;
+            height: 200px;
+            margin: 20px;
+            border: 20px solid transparent;
+        }
+
+        .overflowing {
+            position: absolute;
+            inset: -40px;
+            background-color: blue;
+        }
+
+        #border-box {
+            clip-path: polygon(
+        60px 0px, 140px 0px, 200px 60px, 200px 140px,
+        140px 200px, 60px 200px, 0px 140px, 0px 60px);
+        }
+
+        #padding-box {
+            clip-path: polygon(
+        68.284px 20px, 131.716px 20px, 180px 68.284px, 180px 131.716px,
+        131.716px 180px, 68.284px 180px, 20px 131.716px, 20px 68.284px);
+        }
+    </style>
+</head>
+<body>
+    <div class="box" id="border-box"><div class="overflowing"></div></div>
+    <div class="box" id="padding-box"><div class="overflowing"></div></div>
+</body>
+</html>

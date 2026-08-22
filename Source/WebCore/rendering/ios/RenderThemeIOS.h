@@ -36,6 +36,7 @@ OBJC_CLASS UIImage;
 
 namespace WebCore {
 
+class BorderShape;
 class GraphicsContext;
 struct AttachmentLayout;
 
@@ -172,7 +173,7 @@ private:
     RenderThemeIOS();
     virtual ~RenderThemeIOS();
 
-    void paintTextFieldInnerShadow(const PaintInfo&, const FloatRoundedRect&);
+    void paintTextFieldInnerShadow(const PaintInfo&, const BorderShape&, float deviceScaleFactor);
 
     Color checkboxRadioBorderColor(OptionSet<ControlStyle::State>, OptionSet<StyleColorOptions>);
     Color checkboxRadioBackgroundColor(const Style::ComputedStyle&, OptionSet<ControlStyle::State>, OptionSet<StyleColorOptions>);

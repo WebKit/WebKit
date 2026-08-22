@@ -304,7 +304,7 @@ void RenderThemeIOS::adjustTextFieldStyle(Style::ComputedStyle& style, const Ele
     adjustBackgroundColor();
 }
 
-void RenderThemeIOS::paintTextFieldInnerShadow(const PaintInfo& paintInfo, const FloatRoundedRect& roundedRect)
+void RenderThemeIOS::paintTextFieldInnerShadow(const PaintInfo& paintInfo, const BorderShape& borderShape, float deviceScaleFactor)
 {
     auto& context = paintInfo.context();
 
@@ -315,14 +315,14 @@ void RenderThemeIOS::paintTextFieldInnerShadow(const PaintInfo& paintInfo, const
     context.setFillColor(Color::black);
 
     Path innerShadowPath;
-    FloatRect innerShadowRect = roundedRect.rect();
+    FloatRect innerShadowRect = borderShape.snappedOuterRect(deviceScaleFactor);
     innerShadowRect.inflate(std::max<float>(innerShadowOffset.width(), innerShadowOffset.height()) + innerShadowBlur);
     innerShadowPath.addRect(innerShadowRect);
 
-    FloatRoundedRect innerShadowHoleRect = roundedRect;
     // FIXME: This is not from the spec; but without it we get antialiasing fringe from the fill; we need a better solution.
-    innerShadowHoleRect.inflate(0.5);
-    innerShadowPath.addRoundedRect(innerShadowHoleRect);
+    auto inflatedShape = borderShape;
+    inflatedShape.inflate(LayoutUnit(0.5));
+    inflatedShape.addOuterShapeToPath(innerShadowPath, deviceScaleFactor);
 
     context.setFillRule(WindRule::EvenOdd);
     context.fillPath(innerShadowPath);
@@ -342,12 +342,13 @@ void RenderThemeIOS::paintTextFieldDecorations(const RenderBox& box, const Paint
         shouldPaintFillAndInnerShadow = true;
 
     if (PAL::currentUserInterfaceIdiomIsVision() && shouldPaintFillAndInnerShadow) {
+        auto deviceScaleFactor = protect(box.document())->deviceScaleFactor();
         auto borderShape = BorderShape::shapeForBorderRect(box.style(), LayoutRect(rect));
-        auto path = borderShape.pathForOuterShape(protect(box.document())->deviceScaleFactor());
+        auto path = borderShape.pathForOuterShape(deviceScaleFactor);
         context.setFillColor(Color::black.colorWithAlphaByte(10));
         context.drawPath(path);
         context.clipPath(path);
-        paintTextFieldInnerShadow(paintInfo,  borderShape.deprecatedPixelSnappedRoundedRect(protect(box.document())->deviceScaleFactor()));
+        paintTextFieldInnerShadow(paintInfo, borderShape, deviceScaleFactor);
     }
 }
 

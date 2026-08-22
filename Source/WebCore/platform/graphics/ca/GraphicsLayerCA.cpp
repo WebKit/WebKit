@@ -2804,7 +2804,7 @@ void GraphicsLayerCA::updateBackdropFiltersRect()
 
     auto backdropRectRelativeToBackdropLayer = m_backdropFiltersRect;
     backdropRectRelativeToBackdropLayer.setLocation({ });
-    updateClippingStrategy(*backdropLayer, m_backdropClippingLayer, backdropRectRelativeToBackdropLayer);
+    updateClippingStrategy(*backdropLayer, m_backdropClippingLayer, backdropRectRelativeToBackdropLayer, &m_backdropFiltersShapePath);
 
     if (m_layerClones) {
         for (auto& clone : m_layerClones->backdropLayerClones) {
@@ -2816,7 +2816,7 @@ void GraphicsLayerCA::updateBackdropFiltersRect()
             RefPtr<PlatformCALayer> backdropClippingLayerClone = m_layerClones->backdropClippingLayerClones.get(cloneID);
 
             bool hadBackdropClippingLayer = backdropClippingLayerClone;
-            updateClippingStrategy(backdropCloneLayer, backdropClippingLayerClone, backdropRectRelativeToBackdropLayer);
+            updateClippingStrategy(backdropCloneLayer, backdropClippingLayerClone, backdropRectRelativeToBackdropLayer, &m_backdropFiltersShapePath);
 
             if (!backdropClippingLayerClone)
                 m_layerClones->backdropClippingLayerClones.remove(cloneID);
@@ -3257,9 +3257,10 @@ void GraphicsLayerCA::updateContentsColorLayer()
 
 // The clipping strategy depends on whether the rounded rect has equal corner radii.
 // roundedRect is in the coordinate space of clippingLayer.
-void GraphicsLayerCA::updateClippingStrategy(PlatformCALayer& clippingLayer, RefPtr<PlatformCALayer>& shapeMaskLayer, const FloatRoundedRect& roundedRect)
+void GraphicsLayerCA::updateClippingStrategy(PlatformCALayer& clippingLayer, RefPtr<PlatformCALayer>& shapeMaskLayer, const FloatRoundedRect& roundedRect, const Path* shapePath)
 {
-    bool hasShapePath = !contentsClipShapePath().isEmpty();
+    // A corner-shape contour can only be expressed as a shape mask, so skip the corner-radius fast paths.
+    bool hasShapePath = shapePath && !shapePath->isEmpty();
 
 #if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
     if (!hasShapePath && m_isSeparated && roundedRect.radii().hasEvenCorners() && clippingLayer.bounds() == roundedRect.rect()) {
@@ -3296,7 +3297,7 @@ void GraphicsLayerCA::updateClippingStrategy(PlatformCALayer& clippingLayer, Ref
     shapeMaskLayer->setBounds(shapeBounds);
     
     if (hasShapePath) {
-        auto localPath = contentsClipShapePath();
+        auto localPath = *shapePath;
         localPath.translate(-toFloatSize(rectLocation));
         shapeMaskLayer->setShapePath(localPath);
     } else {
@@ -3336,7 +3337,7 @@ void GraphicsLayerCA::updateContentsRects()
         contentsClippingLayer->setPosition(m_contentsClippingRect.rect().location());
         contentsClippingLayer->setBounds(m_contentsClippingRect.rect());
         
-        updateClippingStrategy(contentsClippingLayer, m_contentsShapeMaskLayer, m_contentsClippingRect);
+        updateClippingStrategy(contentsClippingLayer, m_contentsShapeMaskLayer, m_contentsClippingRect, &contentsClipShapePath());
 
         if (RefPtr contentsLayer = m_contentsLayer; contentsLayer && gainedOrLostClippingLayer) {
             contentsLayer->removeFromSuperlayer();
@@ -3379,7 +3380,7 @@ void GraphicsLayerCA::updateContentsRects()
             RefPtr<PlatformCALayer> shapeMaskLayerClone = m_layerClones->contentsShapeMaskLayerClones.get(cloneID);
 
             bool hadShapeMask = shapeMaskLayerClone;
-            updateClippingStrategy(Ref { clone.value }, shapeMaskLayerClone, m_contentsClippingRect);
+            updateClippingStrategy(Ref { clone.value }, shapeMaskLayerClone, m_contentsClippingRect, &contentsClipShapePath());
 
             if (!shapeMaskLayerClone)
                 m_layerClones->contentsShapeMaskLayerClones.remove(cloneID);

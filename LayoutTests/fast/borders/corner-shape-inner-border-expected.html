@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>CSS Borders and Box Decorations 4: a thick border's inner edge follows 'corner-shape' — reference</title>
+    <style>
+        body {
+            margin: 0;
+            background-color: white;
+        }
+
+        .target {
+            position: relative;
+            box-sizing: border-box;
+            width: 200px;
+            height: 200px;
+            margin: 20px;
+            background-color: red;
+            clip-path: polygon(
+        60px 0px, 140px 0px, 200px 60px, 200px 140px,
+        140px 200px, 60px 200px, 0px 140px, 0px 60px);
+        }
+
+        .target::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-color: green;
+            clip-path: polygon(
+        68.284px 20px, 131.716px 20px, 180px 68.284px, 180px 131.716px,
+        131.716px 180px, 68.284px 180px, 20px 131.716px, 20px 68.284px);
+        }
+    </style>
+</head>
+<body>
+    <div class="target"></div>
+</body>
+</html>
