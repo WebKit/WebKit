@@ -546,7 +546,7 @@ editing/mac/selection/25228.html
 
 # WebKitTestRunner needs testRunner.setCallCloseOnWebViews
 # http://webkit.org/b/46714
-accessibility/mac/search-predicate-visited-links.html
+accessibility/search-predicate-visited-links.html
 
 # AX tests that require hit testing do not work in WK2.
 webkit.org/b/71298 accessibility/mac/html-slider-indicator.html

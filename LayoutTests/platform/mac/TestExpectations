@@ -2065,7 +2065,7 @@ webkit.org/b/266996 imported/w3c/web-platform-tests/css/css-writing-modes/mongol
 fast/gradients/conic-stop-with-offset-zero-in-middle.html [ ImageOnlyFailure ]
 
 # Requires (ACCESSIBILITY_NON_BLINKING_CURSOR)
-accessibility/mac/prefers-non-blinking-cursor.html [ Skip ]
+accessibility/prefers-non-blinking-cursor.html [ Skip ]
 
 # web-platform-tests/svg/painting/reftests failures
 imported/w3c/web-platform-tests/svg/painting/reftests/marker-path-021.svg [ ImageOnlyFailure ]

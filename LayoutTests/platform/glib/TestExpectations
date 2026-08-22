@@ -1170,6 +1170,33 @@ accessibility/display-contents/tree-and-treeitems.html [ Failure ]
 accessibility/combobox/mac [ Skip ]
 accessibility/shadow-dom/reference-target/mac [ Skip ]
 
+accessibility/aria-image-emits-object-replacement.html [ Failure ]
+accessibility/bezier-path-curves.html [ Failure ]
+accessibility/css-speech-speak.html [ Failure ]
+accessibility/heading-clickpoint.html [ Failure ]
+accessibility/index-for-zero-offset-text-marker.html [ Failure ]
+accessibility/large-text-area.html [ Failure ]
+accessibility/line-requests-starting-after-first-line.html [ Failure ]
+accessibility/listmarker-suffix.html [ Failure ]
+accessibility/mixed-checkbox.html [ Failure ]
+accessibility/native-vs-nonnative-checkboxes.html [ Failure ]
+accessibility/offset-from-root-outside-text-run.html [ Failure ]
+accessibility/range-from-webarea.html [ Failure ]
+accessibility/replace-text-with-empty-range.html [ Failure ]
+accessibility/replace-text-with-range-on-webarea-element.html [ Failure ]
+accessibility/replace-text-with-range.html [ Failure ]
+accessibility/search-predicate-visited-links.html [ Failure Timeout ]
+accessibility/shadow-dom/reference-target/aria-describedby.html [ Failure ]
+accessibility/stitched-text-marker-range-for-ui-element.html [ Failure ]
+accessibility/string-range-contains-listmarker.html [ Failure ]
+accessibility/text-marker-emitted-newlines.html [ Failure ]
+accessibility/text-marker-length.html [ Failure ]
+accessibility/text-marker-string-excludes-generated-content.html [ Failure ]
+accessibility/text-markers-for-input-with-placeholder.html [ Failure ]
+
+# Requires (ACCESSIBILITY_NON_BLINKING_CURSOR), so internals.setPrefersNonBlinkingCursor is undefined here.
+accessibility/prefers-non-blinking-cursor.html [ Skip ]
+
 accessibility/textarea-line-for-index.html [ Skip ]
 
 # AX support for datetime input elements needs to be completed in glib platforms.
