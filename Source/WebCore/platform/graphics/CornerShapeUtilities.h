@@ -43,9 +43,10 @@ struct CornerInput {
 };
 
 enum class OutsetMiter : bool { No, Yes };
+enum class ContourStart : bool { FirstCorner, TopEdge };
 
 // https://drafts.csswg.org/css-borders-4/#contour-path
-void borderContourPath(Path&, const RectCorners<CornerInput>&, const FloatRect* targetRect = nullptr, OutsetMiter = OutsetMiter::No, float deviceScaleFactor = 1.0f);
+void borderContourPath(Path&, const RectCorners<CornerInput>&, const FloatRect* targetRect = nullptr, OutsetMiter = OutsetMiter::No, float deviceScaleFactor = 1.0f, ContourStart = ContourStart::FirstCorner);
 
 // https://drafts.csswg.org/css-borders-4/#corner-shape-constrain-radii
 double oppositeCornerScaleFactor(const RectCorners<CornerInput>&);

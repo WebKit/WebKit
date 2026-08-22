@@ -605,12 +605,18 @@ static void addMorphedOutsetCorner(Path& path, const CornerInput& input, float d
 } // namespace
 
 // https://drafts.csswg.org/css-borders-4/#contour-path
-void borderContourPath(Path& path, const RectCorners<CornerInput>& cornerRects, const FloatRect* targetRect, OutsetMiter outsetMiter, float deviceScaleFactor)
+void borderContourPath(Path& path, const RectCorners<CornerInput>& cornerRects, const FloatRect* targetRect, OutsetMiter outsetMiter, float deviceScaleFactor, ContourStart contourStart)
 {
     RectCorners<Corner> corners;
     buildCorners(corners, cornerRects);
 
     bool started = false;
+
+    if (contourStart == ContourStart::TopEdge) {
+        path.moveTo(corners[BoxCorner::TopLeft].end);
+        started = true;
+    }
+
     for (auto key : { BoxCorner::TopRight, BoxCorner::BottomRight, BoxCorner::BottomLeft, BoxCorner::TopLeft }) {
         const auto& corner = corners[key];
         double startInset = cornerRects[key].startInset;

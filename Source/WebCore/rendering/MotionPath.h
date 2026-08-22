@@ -26,6 +26,7 @@
 #pragma once
 
 #include <WebCore/FloatRoundedRect.h>
+#include <WebCore/RectCorners.h>
 #include <WebCore/RenderLayerModelObject.h>
 
 namespace WebCore {
@@ -46,6 +47,7 @@ struct MotionPathData {
     FloatRoundedRect containingBlockBoundingRect;
     FloatPoint offsetFromContainingBlock;
     FloatPoint usedStartingPosition;
+    RectCorners<float> cornerCurvatures { 1.0f, 1.0f, 1.0f, 1.0f };
 
     FloatPoint NODELETE currentOffset() const;
     FloatRoundedRect NODELETE offsetRect() const;

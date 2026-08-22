@@ -87,6 +87,8 @@ public:
 
     bool shapeIntersectsHitTestLocation(const HitTestLocation&, float deviceScaleFactor) const;
 
+    static std::optional<Path> pathForShapedRect(const FloatRoundedRect&, const RectCorners<float>& cornerCurvatures);
+
     // Returns true if no corner regions of the outer border intersect the given rect,
     // meaning border painting can use simpler rectangular paths.
     bool allCornersClippedOut(const LayoutRect&) const;

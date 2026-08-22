@@ -442,6 +442,26 @@ static void addOuterCornerShapeToPath(Path& path, const FloatRoundedRect& outerS
     borderContourPath(path, cornerRects);
 }
 
+std::optional<Path> BorderShape::pathForShapedRect(const FloatRoundedRect& roundedRect, const RectCorners<float>& cornerCurvatures)
+{
+    auto& radii = roundedRect.radii();
+    auto isRound = [](float curvature, const FloatSize& radius) {
+        return curvature == 1.0f || radius.isEmpty();
+    };
+    if (isRound(cornerCurvatures.topLeft(), radii.topLeft())
+        && isRound(cornerCurvatures.topRight(), radii.topRight())
+        && isRound(cornerCurvatures.bottomLeft(), radii.bottomLeft())
+        && isRound(cornerCurvatures.bottomRight(), radii.bottomRight()))
+        return std::nullopt;
+
+    RectCorners<CornerInput> cornerRects;
+    buildCornerInputs(roundedRect, cornerCurvatures, 0, 0, 0, 0, cornerRects);
+
+    Path path;
+    borderContourPath(path, cornerRects, nullptr, OutsetMiter::No, 1.0f, ContourStart::TopEdge);
+    return path;
+}
+
 Path BorderShape::pathForOuterCornerShape(const FloatRoundedRect& outerSnapped, const std::optional<FloatRoundedRect>& snappedOffsetReference) const
 {
     Path path;

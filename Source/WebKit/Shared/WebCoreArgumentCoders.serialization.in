@@ -1053,6 +1053,14 @@ header: <WebCore/RectEdges.h>
     bool left();
 }
 
+header: <WebCore/RectCorners.h>
+[CustomHeader] class WebCore::RectCorners<float> {
+    float topLeft();
+    float topRight();
+    float bottomLeft();
+    float bottomRight();
+}
+
 [CustomHeader] class WebCore::RectEdges<WebCore::Color> {
     WebCore::Color top();
     WebCore::Color right();
@@ -2079,6 +2087,7 @@ header: <WebCore/MotionPath.h>
     WebCore::FloatRoundedRect containingBlockBoundingRect;
     WebCore::FloatPoint offsetFromContainingBlock;
     WebCore::FloatPoint usedStartingPosition;
+    WebCore::RectCorners<float> cornerCurvatures;
 };
 
 header: <WebCore/TransformOperationData.h>

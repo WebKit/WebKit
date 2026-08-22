@@ -113,6 +113,7 @@ std::optional<MotionPathData> MotionPath::motionPathDataForRenderer(const Render
 
     MotionPathData data;
     data.containingBlockBoundingRect = containingBlockRectForRenderer(renderer, *container, offsetPath);
+    data.cornerCurvatures = BorderShape::shapeForBorderRect(container->style(), container->borderBoxRect()).cornerCurvatures();
     data.offsetFromContainingBlock = offsetFromContainer(renderer, *container, data.containingBlockBoundingRect.rect());
 
     auto zoom = renderer.style().usedZoomForLength();
