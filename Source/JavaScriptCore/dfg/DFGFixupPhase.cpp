@@ -295,8 +295,8 @@ private:
                 fixEdge<DoubleRepUse>(node->child1());
                 fixEdge<DoubleRepUse>(node->child2());
                 node->setResult(NodeResultDouble);
+                node->clearFlags(NodeMustGenerate);
             }
-            node->clearFlags(NodeMustGenerate);
             break;
         }
 
