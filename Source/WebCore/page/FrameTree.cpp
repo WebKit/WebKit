@@ -49,8 +49,10 @@ FrameTree::FrameTree(Frame& thisFrame, Frame* parentFrame)
 
 FrameTree::~FrameTree()
 {
-    for (RefPtr child = firstChild(); child; child = child->tree().nextSibling())
+    for (RefPtr child = firstChild(); child; child = child->tree().nextSibling()) {
+        child->tree().detachFromParent();
         child->disconnectView();
+    }
 }
 
 void FrameTree::setSpecifiedName(const AtomString& specifiedName)
