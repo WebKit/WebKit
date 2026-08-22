@@ -31,6 +31,18 @@ shouldBe(Promise.withResolvers.length, 0);
 }
 
 async function test() {
+    // withResolvers() returns functions in proper order.
+    // 27.2.4.9 Promise.withResolvers Step 4-6
+    // https://tc39.es/ecma262/2026/multipage/control-abstraction-objects.html#sec-promise.withResolvers
+    {
+        let ownKeys = Reflect.ownKeys(Promise.withResolvers());
+        let expectedKeys = ["promise", "resolve", "reject"];
+        shouldBe(ownKeys.length, expectedKeys.length);
+        for (let i = 0; i < expectedKeys.length; i++) {
+            shouldBe(ownKeys[i], expectedKeys[i]);
+        }
+    }
+
     // sync resolve
     {
         let {promise, resolve, reject} = Promise.withResolvers();
