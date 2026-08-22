@@ -2355,7 +2355,9 @@ imported/w3c/web-platform-tests/mathml/relations/css-styling/first-line-first-le
 imported/w3c/web-platform-tests/mathml/relations/css-styling/first-line-first-letter-pseudo-elements-004.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/mathml/relations/css-styling/table-width-3.html [ ImageOnlyFailure ]
 
-imported/w3c/web-platform-tests/mathml/relations/html5-tree/href-navigation.html [ Skip ] # timeout
+webkit.org/b/322327 imported/w3c/web-platform-tests/mathml/relations/html5-tree/href-navigation.html [ Skip ]
+webkit.org/b/322327 imported/w3c/web-platform-tests/mathml/relations/html5-tree/a-rel-policy.html [ Skip ]
+webkit.org/b/322327 imported/w3c/web-platform-tests/mathml/relations/html5-tree/href-target-base.html [ Skip ]
 imported/w3c/web-platform-tests/mathml/relations/text-and-math/non-mathml-children-in-annotation.tentative.html [ ImageOnlyFailure ]
 
 # This MathML test should be rewritten.
