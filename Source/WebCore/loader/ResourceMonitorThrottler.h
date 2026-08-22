@@ -76,7 +76,7 @@ private:
     private:
         void removeExpired(ContinuousApproximateTime);
 
-        PriorityQueue<ContinuousApproximateTime> m_accessTimes;
+        PriorityQueue<ContinuousApproximateTime, std::greater<ContinuousApproximateTime>> m_accessTimes;
         ContinuousApproximateTime m_newestAccessTime { -ContinuousApproximateTime::infinity() };
     };
 

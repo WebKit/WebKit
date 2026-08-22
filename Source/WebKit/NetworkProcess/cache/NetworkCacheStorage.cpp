@@ -108,12 +108,12 @@ private:
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(Storage::ReadOperation);
 
-bool Storage::isHigherPriority(const std::unique_ptr<ReadOperation>& a, const std::unique_ptr<ReadOperation>& b)
+bool Storage::ReadOperationIsLowerPriority::operator()(const std::unique_ptr<ReadOperation>& a, const std::unique_ptr<ReadOperation>& b) const
 {
     if (a->priority() == b->priority())
-        return a->identifier() < b->identifier();
+        return a->identifier() > b->identifier();
 
-    return a->priority() > b->priority();
+    return a->priority() < b->priority();
 }
 
 void Storage::ReadOperation::updateForStart(size_t readOperationDispatchCount)

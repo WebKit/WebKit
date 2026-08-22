@@ -175,7 +175,7 @@ void Worklist::completePlanSynchronously(Plan& plan)
 {
     {
         Locker locker { *m_lock };
-        m_queue.decreaseKey([&] (QueueElement& element) {
+        m_queue.increaseKey([&] (QueueElement& element) {
             if (element.plan == &plan) {
                 element.priority = Priority::Synchronous;
                 return true;

@@ -84,27 +84,30 @@ private:
         unsigned taskNumber { 0 };
     };
 
-    static bool firstIsHigherPriority(const Task&, const Task&);
+    // The queue serves its greatest element, so High compares greater than Low and, within one
+    // priority, an earlier task number compares greater.
+    struct TaskIsLowerPriority {
+        bool operator()(const Task& first, const Task& second) const
+        {
+            if (first.priority != second.priority)
+                return first.priority == Priority::Low;
+
+            return first.taskNumber > second.taskNumber;
+        }
+    };
+
     unsigned nextTaskNumber() { return ++m_currentTaskNumber; }
 
     ImageTranslationLanguageIdentifiers m_languageIdentifiers;
     WeakPtr<Page> m_page;
     Timer m_resumeProcessingTimer;
     WeakHashMap<HTMLImageElement, URL, WeakPtrImplWithEventTargetData> m_queuedElements;
-    PriorityQueue<Task, firstIsHigherPriority> m_queue;
+    PriorityQueue<Task, TaskIsLowerPriority> m_queue;
     unsigned m_pendingRequestCount { 0 };
     unsigned m_currentTaskNumber { 0 };
     std::unique_ptr<PAL::HysteresisActivity> m_imageQueueEmptyHysteresis;
     bool m_analysisOfAllImagesOnPageHasStarted { false };
 };
-
-inline bool ImageAnalysisQueue::firstIsHigherPriority(const Task& first, const Task& second)
-{
-    if (first.priority != second.priority)
-        return first.priority == Priority::High;
-
-    return first.taskNumber < second.taskNumber;
-}
 
 } // namespace WebCore
 

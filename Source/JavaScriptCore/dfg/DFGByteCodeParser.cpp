@@ -338,12 +338,15 @@ void InliningPlan::surveyCallSites(Site& parent, CodeBlock* codeBlock, unsigned 
     }
 }
 
-static bool isHigherPriorityInliningCandidate(InliningPlan::Site* const& left, InliningPlan::Site* const& right)
-{
-    if (left->score != right->score)
-        return left->score > right->score;
-    return left->surveyIndex < right->surveyIndex;
-}
+// Served first is the highest score, then the earliest surveyed site.
+struct InliningCandidateIsLowerPriority {
+    bool operator()(InliningPlan::Site* left, InliningPlan::Site* right) const
+    {
+        if (left->score != right->score)
+            return left->score < right->score;
+        return left->surveyIndex > right->surveyIndex;
+    }
+};
 
 void InliningPlan::build(CodeBlock* rootCodeBlock, JITType jitType)
 {
@@ -359,7 +362,7 @@ void InliningPlan::build(CodeBlock* rootCodeBlock, JITType jitType)
 
     surveyCallSites(m_root, rootCodeBlock, m_root.depth + 1);
 
-    PriorityQueue<InliningPlan::Site*, isHigherPriorityInliningCandidate> queue;
+    PriorityQueue<InliningPlan::Site*, InliningCandidateIsLowerPriority> queue;
 
     auto makeAdmissible = [&](const auto& sites) {
         for (Site* site : sites)

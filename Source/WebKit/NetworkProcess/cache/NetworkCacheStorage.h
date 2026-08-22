@@ -190,7 +190,9 @@ private:
     void addToRecordFilter(const Key&);
     void deleteFiles(const Key&);
 
-    static bool NODELETE isHigherPriority(const std::unique_ptr<ReadOperation>&, const std::unique_ptr<ReadOperation>&);
+    struct ReadOperationIsLowerPriority {
+        bool NODELETE operator()(const std::unique_ptr<ReadOperation>&, const std::unique_ptr<ReadOperation>&) const;
+    };
 
     size_t estimateRecordsSize(unsigned recordCount, unsigned blobCount) const;
     uint32_t volumeBlockSize() const;
@@ -217,7 +219,7 @@ private:
     Vector<Key::HashType> m_recordFilterHashesAddedDuringSynchronization;
     Vector<Key::HashType> m_blobFilterHashesAddedDuringSynchronization;
 
-    PriorityQueue<std::unique_ptr<ReadOperation>, &isHigherPriority> m_pendingReadOperations;
+    PriorityQueue<std::unique_ptr<ReadOperation>, ReadOperationIsLowerPriority> m_pendingReadOperations;
     HashMap<ReadOperationIdentifier, std::unique_ptr<ReadOperation>> m_activeReadOperations;
     WebCore::Timer m_readOperationTimeoutTimer;
 

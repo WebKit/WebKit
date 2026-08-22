@@ -34,8 +34,8 @@
 
 constexpr std::size_t operator""_z(unsigned long long n) { return n; }
 
-template<typename T, bool (*isHigherPriority)(const T&, const T&)>
-static void enqueue(PriorityQueue<T, isHigherPriority>& queue, T element)
+template<typename T, typename Compare, size_t inlineCapacity>
+static void enqueue(PriorityQueue<T, Compare, inlineCapacity>& queue, T element)
 {
     size_t sizeBefore = queue.size();
     queue.enqueue(WTF::move(element));
@@ -43,8 +43,8 @@ static void enqueue(PriorityQueue<T, isHigherPriority>& queue, T element)
     EXPECT_FALSE(queue.isEmpty());
 }
 
-template<typename T, bool (*isHigherPriority)(const T&, const T&)>
-static T dequeue(PriorityQueue<T, isHigherPriority>& queue)
+template<typename T, typename Compare, size_t inlineCapacity>
+static T dequeue(PriorityQueue<T, Compare, inlineCapacity>& queue)
 {
     EXPECT_FALSE(queue.isEmpty());
     size_t sizeBefore = queue.size();
@@ -65,19 +65,21 @@ TEST(WTF_PriorityQueue, Basic)
     for (unsigned i = 0; i < numElements; ++i)
         enqueue(queue, i);
 
+    // The default std::less serves the greatest element first, like std::priority_queue.
     for (unsigned i = 0; i < numElements; ++i) {
-        EXPECT_EQ(i, queue.peek());
-        EXPECT_EQ(i, dequeue(queue));
-        EXPECT_EQ(numElements - i - 1, queue.size());
+        unsigned expected = numElements - i - 1;
+        EXPECT_EQ(expected, queue.peek());
+        EXPECT_EQ(expected, dequeue(queue));
+        EXPECT_EQ(expected, queue.size());
     }
 
     EXPECT_TRUE(queue.isEmpty());
 }
 
-TEST(WTF_PriorityQueue, CustomPriorityFunction)
+TEST(WTF_PriorityQueue, ReversedComparator)
 {
     const unsigned numElements = 10;
-    PriorityQueue<unsigned, &isGreaterThan<unsigned>> queue;
+    PriorityQueue<unsigned, std::greater<unsigned>> queue;
 
     EXPECT_EQ(0_z, queue.size());
     EXPECT_TRUE(queue.isEmpty());
@@ -89,29 +91,29 @@ TEST(WTF_PriorityQueue, CustomPriorityFunction)
     }
 
     for (unsigned i = 0; i < numElements; ++i) {
-        EXPECT_EQ(numElements - i - 1, queue.peek());
-        EXPECT_EQ(numElements - i - 1, dequeue(queue));
+        EXPECT_EQ(i, queue.peek());
+        EXPECT_EQ(i, dequeue(queue));
         EXPECT_EQ(numElements - i - 1, queue.size());
     }
 
     EXPECT_TRUE(queue.isEmpty());
 }
 
-template<bool (*isHigherPriority)(const unsigned&, const unsigned&)>
-struct CompareMove {
-    static bool compare(const MoveOnly& m1, const MoveOnly& m2)
-    {
-        return isHigherPriority(m1.value(), m2.value());
-    }
+struct MoveOnlyIsLessThan {
+    bool operator()(const MoveOnly& a, const MoveOnly& b) const { return a.value() < b.value(); }
+};
+
+struct MoveOnlyIsGreaterThan {
+    bool operator()(const MoveOnly& a, const MoveOnly& b) const { return a.value() > b.value(); }
 };
 
 TEST(WTF_PriorityQueue, MoveOnly)
 {
-    PriorityQueue<MoveOnly, &CompareMove<&isLessThan<unsigned>>::compare> queue;
+    PriorityQueue<MoveOnly, MoveOnlyIsLessThan> queue;
 
     Vector<unsigned> values = { 23, 54, 4, 8, 1, 2, 4, 0 };
     Vector<unsigned> sorted = values;
-    std::ranges::sort(sorted);
+    std::ranges::sort(sorted, std::greater<unsigned>());
 
     for (auto value : values)
         queue.enqueue(MoveOnly(value));
@@ -124,19 +126,19 @@ TEST(WTF_PriorityQueue, MoveOnly)
 
 TEST(WTF_PriorityQueue, DecreaseKey)
 {
-    PriorityQueue<MoveOnly, &CompareMove<&isLessThan<unsigned>>::compare> queue;
+    PriorityQueue<MoveOnly, MoveOnlyIsLessThan> queue;
 
     Vector<unsigned> values = { 23, 54, 4, 8, 1, 2, 4, 0 };
     Vector<unsigned> sorted = values;
-    sorted[3] = 12;
-    std::ranges::sort(sorted);
+    sorted[3] = 3;
+    std::ranges::sort(sorted, std::greater<unsigned>());
 
     for (auto value : values)
         queue.enqueue(MoveOnly(value));
 
     queue.decreaseKey([] (MoveOnly& m) {
         if (m.value() == 8) {
-            m = MoveOnly(12);
+            m = MoveOnly(3);
             return true;
         }
         return false;
@@ -150,7 +152,7 @@ TEST(WTF_PriorityQueue, DecreaseKey)
 
 TEST(WTF_PriorityQueue, IncreaseKey)
 {
-    PriorityQueue<MoveOnly, &CompareMove<&isGreaterThan<unsigned>>::compare> queue;
+    PriorityQueue<MoveOnly, MoveOnlyIsLessThan> queue;
 
     Vector<unsigned> values = { 23, 54, 4, 8, 1, 2, 4, 0 };
     Vector<unsigned> sorted = values;
@@ -174,9 +176,36 @@ TEST(WTF_PriorityQueue, IncreaseKey)
     }
 }
 
+// Under a reversed comparator a smaller value compares greater, so shrinking a value increases its key.
+TEST(WTF_PriorityQueue, IncreaseKeyWithAReversedComparator)
+{
+    PriorityQueue<MoveOnly, MoveOnlyIsGreaterThan> queue;
+
+    Vector<unsigned> values = { 23, 54, 4, 8, 1, 2, 4, 0 };
+    Vector<unsigned> sorted = values;
+    sorted[3] = 3;
+    std::ranges::sort(sorted);
+
+    for (auto value : values)
+        queue.enqueue(MoveOnly(value));
+
+    queue.increaseKey([] (MoveOnly& m) {
+        if (m.value() == 8) {
+            m = MoveOnly(3);
+            return true;
+        }
+        return false;
+    });
+
+    for (auto sortedValue : sorted) {
+        auto value = queue.dequeue();
+        EXPECT_EQ(sortedValue, value.value());
+    }
+}
+
 TEST(WTF_PriorityQueue, Iteration)
 {
-    PriorityQueue<MoveOnly, &CompareMove<&isGreaterThan<unsigned>>::compare> queue;
+    PriorityQueue<MoveOnly, MoveOnlyIsGreaterThan> queue;
 
     Vector<unsigned> values = { 23, 54, 4, 8, 1, 2, 4, 0 };
     Vector<unsigned> sorted = values;
@@ -194,6 +223,99 @@ TEST(WTF_PriorityQueue, Iteration)
     if (values.size() == sorted.size()) {
         for (size_t i = 0; i < values.size(); ++i)
             EXPECT_EQ(sorted[i], values[i]);
+    }
+}
+
+TEST(WTF_PriorityQueue, EqualElementsAreAValidHeap)
+{
+    PriorityQueue<unsigned> queue;
+
+    for (unsigned value : { 4u, 1u, 4u, 1u, 4u })
+        enqueue(queue, value);
+
+    EXPECT_TRUE(queue.isValidHeap());
+
+    // Finding nothing still validates the heap, so a queue holding equal elements must not trip it.
+    auto matchNothing = [] (unsigned&) {
+        return false;
+    };
+    queue.decreaseKey(matchNothing);
+    queue.increaseKey(matchNothing);
+
+    EXPECT_EQ(4u, dequeue(queue));
+    EXPECT_EQ(4u, dequeue(queue));
+    EXPECT_EQ(4u, dequeue(queue));
+    EXPECT_EQ(1u, dequeue(queue));
+    EXPECT_EQ(1u, dequeue(queue));
+    EXPECT_TRUE(queue.isEmpty());
+}
+
+static bool comparatorIsReversed { false };
+
+struct ReversibleComparator {
+    bool operator()(const unsigned& left, const unsigned& right) const
+    {
+        return comparatorIsReversed ? left > right : left < right;
+    }
+};
+
+TEST(WTF_PriorityQueue, IsValidHeapDetectsAGreaterChild)
+{
+    PriorityQueue<unsigned, ReversibleComparator> queue;
+
+    comparatorIsReversed = false;
+    for (unsigned i = 0; i < 8; ++i)
+        enqueue(queue, i);
+    EXPECT_TRUE(queue.isValidHeap());
+
+    // Reversing the order the elements were sifted with leaves every child greater than its parent.
+    comparatorIsReversed = true;
+    EXPECT_FALSE(queue.isValidHeap());
+
+    comparatorIsReversed = false;
+}
+
+struct PrioritizedTask {
+    unsigned priority { 0 };
+    unsigned ticket { 0 };
+};
+
+// Shaped like the real clients: a greater priority is served first and equal priorities are served FIFO.
+struct PrioritizedTaskIsLowerPriority {
+    bool operator()(const PrioritizedTask& left, const PrioritizedTask& right) const
+    {
+        if (left.priority == right.priority)
+            return left.ticket > right.ticket;
+        return left.priority < right.priority;
+    }
+};
+
+TEST(WTF_PriorityQueue, IncreaseKeyMovesTowardsTheFront)
+{
+    PriorityQueue<PrioritizedTask, PrioritizedTaskIsLowerPriority> queue;
+
+    unsigned ticket = 0;
+    for (unsigned priority : { 3u, 2u, 3u, 2u, 3u })
+        queue.enqueue({ priority, ticket++ });
+
+    queue.increaseKey([] (PrioritizedTask& task) {
+        if (task.ticket != 4)
+            return false;
+        task.priority = 5;
+        return true;
+    });
+
+    EXPECT_TRUE(queue.isValidHeap());
+
+    Vector<unsigned> served;
+    while (!queue.isEmpty())
+        served.append(queue.dequeue().ticket);
+
+    Vector<unsigned> expected = { 4, 0, 2, 1, 3 };
+    EXPECT_EQ(expected.size(), served.size());
+    if (expected.size() == served.size()) {
+        for (size_t i = 0; i < expected.size(); ++i)
+            EXPECT_EQ(expected[i], served[i]);
     }
 }
 
@@ -244,8 +366,8 @@ TEST(WTF_PriorityQueue, RandomActions)
             if (!values.size())
                 continue;
 
-            // Sort with greater so the last element should be the one we dequeue.
-            std::ranges::sort(values, std::greater<uint64_t>());
+            // Sort ascending so the last element is the greatest, which is the one we dequeue.
+            std::ranges::sort(values);
             EXPECT_EQ(values.takeLast(), queue.dequeue());
 
             continue;

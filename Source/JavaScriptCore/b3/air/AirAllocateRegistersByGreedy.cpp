@@ -448,9 +448,11 @@ public:
         out.print("<", m_tmp, ", ", WTF::RawHex(m_priority), ">");
     }
 
-    static bool NODELETE isHigherPriority(const TmpPriority& left, const TmpPriority& right)
+    // The packed priority is built so that a numerically greater value is more urgent, which is the
+    // order PriorityQueue serves.
+    friend bool NODELETE operator<(const TmpPriority& left, const TmpPriority& right)
     {
-        return left.m_priority > right.m_priority;
+        return left.m_priority < right.m_priority;
     }
 
 private:
@@ -3641,7 +3643,7 @@ private:
     Vector<StackSlot*> m_spillSlotTable;
     IndexMap<Reg, RegisterRange> m_regRanges;
     GenerationalSet<uint8_t, SaVector> m_visited;
-    PriorityQueue<TmpPriority, TmpPriority::isHigherPriority> m_queue;
+    PriorityQueue<TmpPriority> m_queue;
     IndexMap<BasicBlock*, PhaseInsertionSet> m_insertionSets;
     BlockWorklist m_fastBlocks;
     UseCounts m_useCounts;

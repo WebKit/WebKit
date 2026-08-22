@@ -25,24 +25,30 @@
 
 #pragma once
 
-#include <wtf/MathExtras.h>
+#include <functional>
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
 
 namespace WTF {
 
-// This class implements a basic priority queue. The class is backed as a binary heap, like std::priority_queue.
+// This class implements a basic priority queue. The class is backed as a binary heap and follows the
+// conventions of std::priority_queue: Compare is a less-than ordering, and peek() and dequeue() serve
+// the element that is greatest under it.
+//
 // PriorityQueue has a couple of advantages over std::priority_queue:
 //
 // 1) The backing vector is fastMalloced.
 // 2) You can iterate the elements.
 // 3) It has in-place decrease/increaseKey methods, although they are still O(n) rather than O(log(n)).
 
-template<typename T, bool (*isHigherPriority)(const T&, const T&) = &isLessThan<T>, size_t inlineCapacity = 0>
+template<typename T, typename Compare = std::less<T>, size_t inlineCapacity = 0>
 class PriorityQueue final {
     WTF_DEPRECATED_MAKE_FAST_ALLOCATED(PriorityQueue);
     using BufferType = Vector<T, inlineCapacity>;
     using const_iterator = typename BufferType::const_iterator;
+    // Compare is default-constructed on each use, which a function pointer type survives as a null
+    // one, so reject those instead of calling through them.
+    static_assert(!std::is_pointer_v<Compare>, "Compare must be a functor type, not a function pointer.");
 public:
     size_t size() const { return m_buffer.size(); }
     bool isEmpty() const { return m_buffer.isEmpty(); }
@@ -63,12 +69,15 @@ public:
         return result;
     }
 
+    // Call decreaseKey after making the accepted element compare less than it did, and increaseKey
+    // after making it compare greater. The greatest element is served first, so increaseKey is the
+    // one that moves an element towards the front of the queue.
     void decreaseKey(NOESCAPE const Invocable<bool(T&)> auto& desiredElement)
     {
         for (size_t i = 0; i < m_buffer.size(); ++i) {
             if (desiredElement(m_buffer[i])) {
                 siftDown(i);
-                return;
+                break;
             }
         }
         ASSERT(isValidHeap());
@@ -79,7 +88,7 @@ public:
         for (size_t i = 0; i < m_buffer.size(); ++i) {
             if (desiredElement(m_buffer[i])) {
                 siftUp(i);
-                return;
+                break;
             }
         }
         ASSERT(isValidHeap());
@@ -91,15 +100,17 @@ public:
     bool isValidHeap() const
     {
         for (size_t i = 0; i < m_buffer.size(); ++i) {
-            if (leftChildOf(i) < m_buffer.size() && !isHigherPriority(m_buffer[i], m_buffer[leftChildOf(i)]))
+            if (leftChildOf(i) < m_buffer.size() && isLessThan(m_buffer[i], m_buffer[leftChildOf(i)]))
                 return false;
-            if (rightChildOf(i) < m_buffer.size() && !isHigherPriority(m_buffer[i], m_buffer[rightChildOf(i)]))
+            if (rightChildOf(i) < m_buffer.size() && isLessThan(m_buffer[i], m_buffer[rightChildOf(i)]))
                 return false;
         }
         return true;
     }
 
 protected:
+    static bool isLessThan(const T& a, const T& b) { return Compare { }(a, b); }
+
     static inline size_t parentOf(size_t location) { ASSERT(location); return (location - 1) / 2; }
     static constexpr size_t leftChildOf(size_t location) { return location * 2 + 1; }
     static constexpr size_t rightChildOf(size_t location) { return leftChildOf(location) + 1; }
@@ -108,7 +119,7 @@ protected:
     {
         while (location) {
             auto parent = parentOf(location);
-            if (isHigherPriority(m_buffer[parent], m_buffer[location]))
+            if (!isLessThan(m_buffer[parent], m_buffer[location]))
                 return;
 
             std::swap(m_buffer[parent], m_buffer[location]);
@@ -119,17 +130,17 @@ protected:
     void siftDown(size_t location)
     {
         while (leftChildOf(location) < m_buffer.size()) {
-            size_t higherPriorityChild;
+            size_t greatestChild;
             if (rightChildOf(location) < m_buffer.size()) [[likely]]
-                higherPriorityChild = isHigherPriority(m_buffer[leftChildOf(location)], m_buffer[rightChildOf(location)]) ? leftChildOf(location) : rightChildOf(location);
+                greatestChild = isLessThan(m_buffer[leftChildOf(location)], m_buffer[rightChildOf(location)]) ? rightChildOf(location) : leftChildOf(location);
             else
-                higherPriorityChild = leftChildOf(location);
+                greatestChild = leftChildOf(location);
 
-            if (isHigherPriority(m_buffer[location], m_buffer[higherPriorityChild]))
+            if (!isLessThan(m_buffer[location], m_buffer[greatestChild]))
                 return;
 
-            std::swap(m_buffer[location], m_buffer[higherPriorityChild]);
-            location = higherPriorityChild;
+            std::swap(m_buffer[location], m_buffer[greatestChild]);
+            location = greatestChild;
         }
     }
 

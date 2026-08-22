@@ -29,8 +29,6 @@
 
 #if ENABLE(WEBASSEMBLY)
 
-#include <queue>
-
 #include <wtf/AutomaticThread.h>
 #include <wtf/PrintStream.h>
 #include <wtf/PriorityQueue.h>
@@ -56,11 +54,12 @@ public:
 
     JS_EXPORT_PRIVATE void completePlanSynchronously(Plan&);
 
+    // The queue serves its greatest element, so a greater Priority is more urgent.
     enum class Priority {
-        Shutdown,
-        Synchronous,
+        Preparation,
         Compilation,
-        Preparation
+        Synchronous,
+        Shutdown
     };
 
     void dump(PrintStream&) const;
@@ -80,19 +79,23 @@ private:
         void NODELETE setToNextPriority();
     };
 
-    static bool isHigherPriority(const QueueElement& left, const QueueElement& right)
-    {
-        if (left.priority == right.priority)
-            return left.ticket > right.ticket;
-        return left.priority > right.priority;
-    }
+    struct QueueElementIsLowerPriority {
+        bool NODELETE operator()(const QueueElement& left, const QueueElement& right) const
+        {
+            // Within one Priority, the earliest ticket is served first.
+            if (left.priority == right.priority)
+                return left.ticket > right.ticket;
+
+            return left.priority < right.priority;
+        }
+    };
 
     Box<Lock> m_lock;
     const Ref<AutomaticThreadCondition> m_planEnqueued;
     // Technically, this could overflow but that's unlikely. Even if it did, we will just compile things of the same
-    // Priority it the wrong order, which isn't wrong, just suboptimal.
+    // Priority in the wrong order, which isn't wrong, just suboptimal.
     Ticket m_lastGrantedTicket { 0 };
-    PriorityQueue<QueueElement, isHigherPriority, 10> m_queue;
+    PriorityQueue<QueueElement, QueueElementIsLowerPriority, 10> m_queue;
     Vector<Ref<Thread>> m_threads;
 };
 
