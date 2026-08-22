@@ -59,8 +59,12 @@ class FakeModuleSuite(object):
                 result.addError(tc, (None, None, None))
             elif self.result == '.':
                 result.addSuccess(tc)
+            elif self.result == 'x':
+                result.addExpectedFailure(tc, (None, None, None))
+            elif self.result == 'u':
+                result.addUnexpectedSuccess(tc)
             else:
-                assert False, "unreachable"
+                assert False, f'unreachable: {self.result!r}'
         finally:
             result.stopTest(tc)
 
