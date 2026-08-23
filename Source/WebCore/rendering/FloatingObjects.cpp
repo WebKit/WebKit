@@ -444,7 +444,9 @@ void FloatingObjects::shiftFloatsBy(LayoutUnit blockShift)
             removePlacedObject(floatBox.get());
 
         floatBox->m_frameRect.move(shiftX, shiftY);
-        floatBox->renderer()->move(shiftX, shiftY);
+        // Only a float this container lays out moves with this container's content. Anything else in the list is a copy of an entry in another box's list.
+        if (floatBox->renderer()->containingBlock() == &renderer())
+            floatBox->renderer()->move(shiftX, shiftY);
 
         if (isPlaced)
             addPlacedObject(floatBox.get());

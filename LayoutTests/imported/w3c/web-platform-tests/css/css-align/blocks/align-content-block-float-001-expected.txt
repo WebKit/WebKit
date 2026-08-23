@@ -1,0 +1,6 @@
+
+PASS .box 1: start
+PASS .box 2: center
+PASS .box 3: end
+PASS .box 4: space-around
+

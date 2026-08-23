@@ -874,6 +874,9 @@ LayoutUnit RenderBlockFlow::shiftForAlignContent(LayoutUnit intrinsicLogicalHeig
             svgTextLayout->shiftLineBy(-space, 0);
     } else {
         for (CheckedPtr child = firstChildBox(); child; child = child->nextSiblingBox()) {
+            // A float is in our float list too and moves with it below, so leave it alone here.
+            if (child->isFloating())
+                continue;
             setLogicalTopForChild(*child, logicalTopForChild(*child) + space);
             if (child->isOutOfFlowPositioned() && child->style().hasStaticBlockPosition(isHorizontalWritingMode())) {
                 ASSERT(child->layer());
