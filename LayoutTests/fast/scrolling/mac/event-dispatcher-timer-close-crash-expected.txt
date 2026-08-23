@@ -1,0 +1,1 @@
+PASS if no crash in the UI process during page close.
