@@ -1138,16 +1138,19 @@ void SVGElement::postConnectionSteps()
 
 bool SVGElement::isResourceContainerTagName(const QualifiedName& tagName)
 {
-    static NeverDestroyed resourceContainerTags = MemoryCompactLookupOnlyRobinHoodHashSet<QualifiedName> {
-        SVGNames::clipPathTag,
-        SVGNames::filterTag,
-        SVGNames::linearGradientTag,
-        SVGNames::markerTag,
-        SVGNames::maskTag,
-        SVGNames::patternTag,
-        SVGNames::radialGradientTag,
+    if (tagName.namespaceURI() != SVGNames::svgNamespaceURI)
+        return false;
+
+    static NeverDestroyed resourceContainerLocalNames = MemoryCompactLookupOnlyRobinHoodHashSet<AtomString> {
+        SVGNames::clipPathTag->localName(),
+        SVGNames::filterTag->localName(),
+        SVGNames::linearGradientTag->localName(),
+        SVGNames::markerTag->localName(),
+        SVGNames::maskTag->localName(),
+        SVGNames::patternTag->localName(),
+        SVGNames::radialGradientTag->localName(),
     };
-    return resourceContainerTags.get().contains(tagName);
+    return resourceContainerLocalNames.get().contains(tagName.localName());
 }
 
 bool SVGElement::isInSVGResourceContainer() const
