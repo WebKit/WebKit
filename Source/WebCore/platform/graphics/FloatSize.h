@@ -140,6 +140,12 @@ public:
         return { -m_height, m_width };
     }
 
+    // The z component of the 3D cross product of the two sizes taken as vectors in the z = 0 plane.
+    constexpr float cross(const FloatSize& a) const
+    {
+        return m_width * a.height() - m_height * a.width();
+    }
+
     constexpr float diagonalLengthSquared() const
     {
         return m_width * m_width + m_height * m_height;

@@ -140,6 +140,12 @@ public:
         return m_x * a.x() + m_y * a.y();
     }
 
+    // The z component of the 3D cross product of the two points taken as vectors in the z = 0 plane.
+    constexpr float cross(const FloatPoint& a) const
+    {
+        return m_x * a.y() - m_y * a.x();
+    }
+
     float slopeAngleRadians() const;
 
     float length() const

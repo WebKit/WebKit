@@ -35,8 +35,8 @@
 #include <algorithm>
 #include <array>
 #include <cmath>
-#include <limits>
 #include <numbers>
+#include <optional>
 #include <utility>
 
 namespace WebCore {
@@ -86,6 +86,9 @@ static bool isRound(const Corner& corner) { return corner.curvature == 1.0; }
 static bool isBevel(const Corner& corner) { return corner.curvature == 0.0; }
 static bool isNotch(const Corner& corner) { return std::isinf(corner.curvature) && corner.curvature < 0.0; }
 static bool isSquare(const Corner& corner) { return std::isinf(corner.curvature) && corner.curvature > 0.0; }
+// A shallow concave corner (scoop and anything between scoop and bevel) is drawn from its endpoint tangents
+// rather than from the superellipse exponent.
+static bool isShallowConcave(const Corner& corner) { return corner.curvature < 0.0 && corner.curvature >= -1.0; }
 static bool isEmpty(const Corner& corner)
 {
     return (corner.outer - corner.start).diagonalLength() < limit
@@ -124,18 +127,20 @@ static Corner makeCorner(const CornerInput& input)
     };
 }
 
-// The summed per-endpoint offsets are the start and end normal vectors whose perpendiculars give the outset miter
-// tangents. The radii are carried through for the concave self-intersection test.
-struct CornerAdjustment {
-    Corner corner;
-    FloatSize startNormal;
-    FloatSize endNormal;
-    double startRadius { 0 };
-    double endRadius { 0 };
-    FloatPoint targetCornerOuter;
-    FloatSize unitVectorTowardStart;
-    FloatSize unitVectorTowardEnd;
+struct ResolvedCorner {
+    Corner adjusted;
+    FloatPoint miterStart;
+    FloatPoint miterEnd;
+    std::optional<FloatPoint> tangentVertex;
+    std::optional<FloatPoint> collapsePoint;
 };
+
+static std::optional<FloatPoint> findMiterArmCrossing(const FloatPoint& startArmOuter, const FloatPoint& startArmInner, const FloatPoint& endArmOuter, const FloatPoint& endArmInner)
+{
+    if (auto crossing = findSegmentLineIntersection(startArmOuter, startArmInner, endArmOuter, endArmInner))
+        return crossing;
+    return findSegmentLineIntersection(endArmOuter, endArmInner, startArmOuter, startArmInner);
+}
 
 // Defined in https://drafts.csswg.org/css-borders-4/#corner-shape-interpolation
 static double normalizedSuperellipseHalfCorner(double superellipseParameter)
@@ -147,62 +152,88 @@ static double normalizedSuperellipseHalfCorner(double superellipseParameter)
     return superellipseParameter < 0.0 ? 1.0 - convexHalfCorner : convexHalfCorner;
 }
 
-// Offsets both curve endpoints along the corner's two edge vectors, scaling the offset normal per-axis by the two corner radii
-static CornerAdjustment computeCornerAdjustment(const Corner& original, double startInset, double endInset)
+// Moves the corner's curve endpoints to where the offset contour needs them, and works out where the
+// contour leaves the corner for the target rect's edges.
+static ResolvedCorner resolveCorner(const Corner& original, double startInset, double endInset)
 {
+    auto degenerateAt = [&](FloatPoint point) -> ResolvedCorner {
+        return { { point, point, point, point, { }, original.curvature, original.orientation }, point, point, std::nullopt, std::nullopt };
+    };
+
     auto vectorTowardStart = original.start - original.outer;
     auto vectorTowardEnd = original.end - original.outer;
+    // The curve's start point sits `endRadius` along one edge of the corner box and its end point `startRadius` along the other.
     double endRadius = vectorTowardStart.diagonalLength();
     double startRadius = vectorTowardEnd.diagonalLength();
-    if (startRadius < limit || endRadius < limit) {
-        CornerAdjustment degenerate;
-        degenerate.corner = original;
-        degenerate.startRadius = startRadius;
-        degenerate.endRadius = endRadius;
-        degenerate.targetCornerOuter = original.outer;
-        return degenerate;
+
+    if (isEmpty(original)) {
+        auto [directionX, directionY] = inwardDirection(original.orientation);
+        auto [verticalEdgeBorder, horizontalEdgeBorder] = edgeBorders(original.orientation, startInset, endInset);
+        return degenerateAt(original.outer + FloatSize(directionX * verticalEdgeBorder, directionY * horizontalEdgeBorder));
     }
 
     auto unitVectorTowardStart = vectorTowardStart.normalized();
     auto unitVectorTowardEnd = vectorTowardEnd.normalized();
-    auto targetCornerOuter = original.outer + unitVectorTowardStart * float(endInset) + unitVectorTowardEnd * float(startInset);
+    auto targetCornerOuter = original.outer + unitVectorTowardStart.scaled(float(endInset)) + unitVectorTowardEnd.scaled(float(startInset));
 
-    double clampedHalfCornerX = normalizedSuperellipseHalfCorner(std::clamp(original.curvature, -1.0, 1.0));
     // Where the endpoint offset directions sit between the corner's two edges: 0 runs along the edge the
-    // endpoint lies on, 1 runs perpendicular to it, and 0.5 is the diagonal between the two, weighted by
-    // the radii
-    double controlPointX = (1.0 / (std::numbers::sqrt2 - 1.0)) * clampedHalfCornerX - 1.0 / std::numbers::sqrt2;
+    // endpoint lies on, 1 runs perpendicular to it, and 0.5 is the diagonal between the two.
+    double halfCornerX = normalizedSuperellipseHalfCorner(original.curvature);
+    double controlPointX = std::clamp((1.0 / (std::numbers::sqrt2 - 1.0)) * halfCornerX - 1.0 / std::numbers::sqrt2, 0.0, 1.0);
 
-    // Bevel corner as the common tangent to two circles centred on corner-start and corner-end with radii the signed insets
-    // negative sign: outward, away from box, postive sign: inward, towards box center
-    double insetDiff = std::clamp(endInset - startInset, -startRadius, endRadius);
-    double root = std::sqrt(std::max(0.0, startRadius * startRadius + endRadius * endRadius - insetDiff * insetDiff));
-    double bevelNormalVectorX = endRadius * insetDiff + startRadius * root;
-    double bevelNormalVectorY = -startRadius * insetDiff + endRadius * root;
-    double bevelDenominator = startRadius * bevelNormalVectorY + endRadius * bevelNormalVectorX;
-    double bevelControlPointX = bevelDenominator != 0.0 ? (startRadius * bevelNormalVectorY) / bevelDenominator : 0.5;
+    double insetDifference = endInset - startInset;
+    if (original.curvature <= 0.0 && (insetDifference <= -startRadius || insetDifference >= endRadius))
+        return degenerateAt(targetCornerOuter);
 
-    // The two endpoints get separate directions, placed symmetrically either side of controlPointX. How far
-    // apart they land comes from the bevel tangent, which sits at the midpoint unless the two insets differ,
-    // so equal insets give both endpoints the same direction.
-    double startControlPointX = original.curvature < 0.0
-        ? bevelControlPointX * (2.0 * controlPointX)
-        : 1.0 - (1.0 - bevelControlPointX) * (2.0 * (1.0 - controlPointX));
-    double endControlPointX = 2.0 * controlPointX - startControlPointX;
+    double startControlPointX = controlPointX;
+    double endControlPointX = controlPointX;
+    if (insetDifference) {
+        // Bevel corner as the common tangent to two circles centred on corner-start and corner-end with radii the signed insets
+        // negative sign: outward, away from box, positive sign: inward, towards box center
+        double root = std::sqrt(std::max(0.0, startRadius * startRadius + endRadius * endRadius - insetDifference * insetDifference));
+        double bevelNormalVectorX = endRadius * insetDifference + startRadius * root;
+        double bevelNormalVectorY = -startRadius * insetDifference + endRadius * root;
+        double bevelDenominator = startRadius * bevelNormalVectorY + endRadius * bevelNormalVectorX;
+        double bevelControlPointX = bevelDenominator != 0.0 ? (startRadius * bevelNormalVectorY) / bevelDenominator : 0.5;
+
+        // The two endpoints get separate directions, placed symmetrically either side of controlPointX. How far
+        // apart they land comes from the bevel tangent, which sits at the midpoint unless the two insets differ,
+        // so equal insets give both endpoints the same direction.
+        startControlPointX = original.curvature < 0.0
+            ? bevelControlPointX * (2.0 * controlPointX)
+            : 1.0 - (1.0 - bevelControlPointX) * (2.0 * (1.0 - controlPointX));
+        endControlPointX = 2.0 * controlPointX - startControlPointX;
+    }
 
     // Per-axis normal vectors: the corner radii weight each component, so elliptical corners offset correctly.
-    auto startNormal = FloatSize(float((1.0 - startControlPointX) * startRadius), float(startControlPointX * endRadius)).normalized();
-    auto endNormal = FloatSize(float(endControlPointX * startRadius), float((1.0 - endControlPointX) * endRadius)).normalized();
+    auto unmappedStartNormal = FloatSize(float((1.0 - startControlPointX) * startRadius), float(startControlPointX * endRadius)).normalized();
+    auto unmappedEndNormal = FloatSize(float(endControlPointX * startRadius), float((1.0 - endControlPointX) * endRadius)).normalized();
 
-    auto startOffsetTowardStart = vectorTowardStart.directionScaledBy(float(startNormal.width() * startInset));
-    auto startOffsetTowardEnd = vectorTowardEnd.directionScaledBy(float(startNormal.height() * startInset));
-    auto endOffsetTowardStart = vectorTowardStart.directionScaledBy(float(endNormal.width() * endInset));
-    auto endOffsetTowardEnd = vectorTowardEnd.directionScaledBy(float(endNormal.height() * endInset));
+    auto startNormal = unitVectorTowardStart.scaled(unmappedStartNormal.width()) + unitVectorTowardEnd.scaled(unmappedStartNormal.height());
+    auto endNormal = unitVectorTowardStart.scaled(unmappedEndNormal.width()) + unitVectorTowardEnd.scaled(unmappedEndNormal.height());
+    auto startTangent = startNormal.perpendicular().scaled(-1);
+    auto endTangent = endNormal.perpendicular();
 
-    auto adjustedStart = original.start + startOffsetTowardStart + startOffsetTowardEnd;
-    auto adjustedOuter = original.outer + endOffsetTowardStart + startOffsetTowardEnd;
-    auto adjustedEnd = original.end + endOffsetTowardStart + endOffsetTowardEnd;
-    auto adjustedCenter = original.center + startOffsetTowardStart + endOffsetTowardEnd;
+    auto adjustedStart = original.start + startNormal.scaled(float(startInset));
+    auto adjustedEnd = original.end + endNormal.scaled(float(endInset));
+
+    auto miterStart = adjustedStart;
+    auto miterEnd = adjustedEnd;
+
+    if (startInset < 0.0) {
+        miterStart = findLineIntersection(adjustedStart, startTangent, targetCornerOuter, unitVectorTowardStart).value_or(adjustedStart);
+        if (original.curvature >= 0.0)
+            adjustedStart = miterStart;
+    }
+    if (endInset < 0.0) {
+        miterEnd = findLineIntersection(adjustedEnd, endTangent, targetCornerOuter, unitVectorTowardEnd).value_or(adjustedEnd);
+        if (original.curvature >= 0.0)
+            adjustedEnd = miterEnd;
+    }
+
+    float adjustedWidth = dotProduct(adjustedStart - adjustedEnd, unitVectorTowardStart);
+    auto adjustedOuter = adjustedStart - unitVectorTowardStart.scaled(adjustedWidth);
+    auto adjustedCenter = adjustedEnd + unitVectorTowardStart.scaled(adjustedWidth);
 
     Corner adjusted {
         adjustedStart,
@@ -214,70 +245,18 @@ static CornerAdjustment computeCornerAdjustment(const Corner& original, double s
         original.orientation,
     };
 
-    return {
-        .corner = adjusted,
-        .startNormal = startOffsetTowardStart + startOffsetTowardEnd,
-        .endNormal = endOffsetTowardStart + endOffsetTowardEnd,
-        .startRadius = startRadius,
-        .endRadius = endRadius,
-        .targetCornerOuter = targetCornerOuter,
-        .unitVectorTowardStart = unitVectorTowardStart,
-        .unitVectorTowardEnd = unitVectorTowardEnd,
-    };
-}
+    ResolvedCorner resolved;
+    resolved.adjusted = adjusted;
+    resolved.miterStart = miterStart;
+    resolved.miterEnd = miterEnd;
 
-// Moves the corner's four vertices to where the inset contour needs them. A corner with no radius has no
-// curve to offset, so it collapses to a single point at the inset rect's corner. A corner with no inset is
-// returned unchanged.
-static CornerAdjustment resolveCornerAdjustment(const Corner& original, double startInset, double endInset)
-{
-    auto unchanged = [](const Corner& corner) -> CornerAdjustment {
-        CornerAdjustment adjustment;
-        adjustment.corner = corner;
-        adjustment.targetCornerOuter = corner.outer;
-        return adjustment;
-    };
+    if (isShallowConcave(adjusted))
+        resolved.tangentVertex = findLineIntersection(adjustedStart, startTangent, adjustedEnd, endTangent);
 
-    if (isEmpty(original)) {
-        if (startInset == 0.0 && endInset == 0.0)
-            return unchanged(original);
-        // Choose a corner position such that the two edges meet on the inset rect rather than on the border
-        // box: the vertical edge's inset moves it horizontally, the horizontal edge's inset vertically.
-        auto [directionX, directionY] = inwardDirection(original.orientation);
-        auto [verticalEdgeBorder, horizontalEdgeBorder] = edgeBorders(original.orientation, startInset, endInset);
-        auto targetCorner = original.outer + FloatSize(directionX * verticalEdgeBorder, directionY * horizontalEdgeBorder);
-        return unchanged({ targetCorner, targetCorner, targetCorner, targetCorner, { }, original.curvature, original.orientation });
-    }
+    if (isConcave(original) && startInset < 0.0 && endInset < 0.0 && (-endInset >= startRadius || -startInset >= endRadius))
+        resolved.collapsePoint = findMiterArmCrossing(miterStart, adjustedStart, miterEnd, adjustedEnd);
 
-    if (startInset == 0.0 && endInset == 0.0)
-        return unchanged(original);
-
-    if (std::isfinite(original.curvature))
-        return computeCornerAdjustment(original, startInset, endInset);
-
-    double strokeA = isNotch(original) ? -1.0 : 0.0;
-    double strokeB = 1.0;
-
-    auto offset1 = (original.outer - original.start).directionScaledBy(float(startInset * strokeA));
-    auto offset2 = (original.end - original.outer).directionScaledBy(float(startInset * strokeB));
-    auto offset3 = (original.center - original.end).directionScaledBy(float(endInset * strokeB));
-    auto offset4 = (original.start - original.center).directionScaledBy(float(endInset * strokeA));
-
-    auto adjustedOuter = original.outer + offset2 + offset3;
-    auto adjustedCenter = original.center + offset4 + offset1;
-
-    // Notch and square keep the offsets above, but take their miter vectors from the shared construction.
-    auto adjustment = computeCornerAdjustment(original, startInset, endInset);
-    adjustment.corner = {
-        original.start + offset1 + offset2,
-        adjustedOuter,
-        original.end + offset3 + offset4,
-        adjustedCenter,
-        cornerRadii(adjustedCenter, adjustedOuter),
-        original.curvature,
-        original.orientation,
-    };
-    return adjustment;
+    return resolved;
 }
 
 static bool extendPathForSharpCorner(Path& path, const Corner& corner)
@@ -348,52 +327,71 @@ static std::array<BezierSegment, 2> superellipseCornerBeziers(const Corner& corn
     BezierSegment secondHalf { midpoint, mapPointToCorner(corner, transpose(secondControl)), mapPointToCorner(corner, transpose(firstControl)), corner.end };
     return { firstHalf, secondHalf };
 }
-
-// Control point of the quadratic that approximates the corner, giving the curve's tangent at its endpoints
-static FloatPoint quadraticControlPoint(const Corner& corner)
+static BezierSegment shallowConcaveCornerBezier(const Corner& corner, const FloatPoint& tangentVertex)
 {
-    auto drawn = isConcave(corner) ? inverseCorner(corner) : corner;
-    if (drawn.curvature >= 1.0)
-        return drawn.outer;
-    auto handles = superellipseBezierHandles(drawn.curvature);
-    float normalizedControl = 2.0f * float(handles.halfCorner) - 0.5f;
-    return mapPointToCorner(drawn, FloatSize(normalizedControl, normalizedControl));
+    constexpr float circleHandle = 0.5522847498307933f; // 4 / 3 * (sqrt(2) - 1): cubic approximation of a quarter circle
+    Corner mappingFrame = corner;
+    mappingFrame.center = tangentVertex;
+    return {
+        corner.start,
+        mapPointToCorner(mappingFrame, { 0.0f, 1.0f - circleHandle }),
+        mapPointToCorner(mappingFrame, { 1.0f - circleHandle, 0.0f }),
+        corner.end,
+    };
 }
 
-static void addCurvedCorner(Path& path, const Corner& corner)
+static Vector<BezierSegment> cornerCurveBeziers(const ResolvedCorner& corner)
 {
-    if (isNotch(corner)) {
-        path.addLineTo(corner.start);
-        path.addLineTo(corner.center);
-        path.addLineTo(corner.end);
+    if (isShallowConcave(corner.adjusted) && corner.tangentVertex)
+        return { shallowConcaveCornerBezier(corner.adjusted, *corner.tangentVertex) };
+
+    Vector<BezierSegment> curves;
+    for (const auto& curve : superellipseCornerBeziers(corner.adjusted))
+        curves.append(curve);
+    return curves;
+}
+
+static void addCurvedCorner(Path& path, const ResolvedCorner& corner)
+{
+    const auto& adjusted = corner.adjusted;
+
+    if (isNotch(adjusted)) {
+        path.addLineTo(adjusted.center);
+        path.addLineTo(adjusted.end);
         return;
     }
 
-    if (isConcave(corner)) {
-        addCurvedCorner(path, inverseCorner(corner));
+    if (isShallowConcave(adjusted) && corner.tangentVertex) {
+        auto curve = shallowConcaveCornerBezier(adjusted, *corner.tangentVertex);
+        path.addBezierCurveTo(curve.controlPoint1, curve.controlPoint2, curve.end);
         return;
     }
 
-    path.addLineTo(corner.start);
+    if (isConcave(adjusted)) {
+        auto inverted = corner;
+        inverted.adjusted = inverseCorner(adjusted);
+        addCurvedCorner(path, inverted);
+        return;
+    }
 
-    if (isBevel(corner)) {
-        path.addLineTo(corner.end);
+    if (isSquare(adjusted)) {
+        path.addLineTo(adjusted.outer);
+        path.addLineTo(adjusted.end);
         return;
     }
-    if (isRound(corner)) {
-        addEllipticalArc(path, corner);
+    if (isBevel(adjusted)) {
+        path.addLineTo(adjusted.end);
         return;
     }
-    if (isSquare(corner)) {
-        path.addLineTo(corner.outer);
-        path.addLineTo(corner.end);
+    if (isRound(adjusted)) {
+        addEllipticalArc(path, adjusted);
         return;
     }
 
     // General superellipse: squircle (s=2) and superellipse(n)
-    if (extendPathForSharpCorner(path, corner))
+    if (extendPathForSharpCorner(path, adjusted))
         return;
-    for (const auto& curve : superellipseCornerBeziers(corner))
+    for (const auto& curve : cornerCurveBeziers(corner))
         path.addBezierCurveTo(curve.controlPoint1, curve.controlPoint2, curve.end);
 }
 
@@ -409,7 +407,7 @@ static FloatPoint sharpInnerCornerPoint(const FloatRect& innerRect, BoxCorner or
 }
 
 // rect ∩ corner-carve
-static void addTrimmedSuperellipseCorner(Path& path, const Corner& corner, const FloatRect& innerRect, bool& started)
+static void addTrimmedSuperellipseCorner(Path& path, const ResolvedCorner& corner, const FloatRect& innerRect, bool& started)
 {
     auto lineOrMoveTo = [&](FloatPoint point) {
         if (!started) {
@@ -420,13 +418,13 @@ static void addTrimmedSuperellipseCorner(Path& path, const Corner& corner, const
     };
 
     Vector<BezierSegment> clippedCurves;
-    for (const auto& bezier : superellipseCornerBeziers(corner)) {
+    for (const auto& bezier : cornerCurveBeziers(corner)) {
         for (const auto& curve : trimBezierToRect(bezier, innerRect))
             clippedCurves.append(curve);
     }
 
     if (clippedCurves.isEmpty()) {
-        lineOrMoveTo(sharpInnerCornerPoint(innerRect, corner.orientation));
+        lineOrMoveTo(sharpInnerCornerPoint(innerRect, corner.adjusted.orientation));
         return;
     }
     for (const auto& curve : clippedCurves) {
@@ -435,234 +433,74 @@ static void addTrimmedSuperellipseCorner(Path& path, const Corner& corner, const
     }
 }
 
-static void buildCorners(RectCorners<Corner>& corners, const RectCorners<CornerInput>& cornerRects)
+static void addClampedSharpCorner(Path& path, const ResolvedCorner& corner, const FloatRect& targetRect, bool& started)
 {
-    for (auto key : { BoxCorner::TopLeft, BoxCorner::TopRight, BoxCorner::BottomLeft, BoxCorner::BottomRight }) {
-        auto& input = cornerRects[key];
-        auto original = makeCorner(input);
-        auto corner = resolveCornerAdjustment(original, input.startInset, input.endInset).corner;
-        corners[key] = corner;
-    }
-}
-
-using ContourEdge = std::pair<FloatPoint, FloatPoint>;
-
-// Outer miters. Convex corners miter along the equivalent-quadratic control point, concave ones
-// along the curve tangent. When the outset exceeds a corner radius the two miters cross and the curve collapses.
-struct OutsetCornerContour {
-    FloatPoint miterStart;
-    FloatPoint miterEnd;
-    bool collapsed { false };
-    FloatPoint collapsePoint;
-};
-
-static std::optional<FloatPoint> findMiterArmCrossing(const FloatPoint& startArmOuter, const FloatPoint& startArmInner, const FloatPoint& endArmOuter, const FloatPoint& endArmInner)
-{
-    if (auto crossing = findSegmentLineIntersection(startArmOuter, startArmInner, endArmOuter, endArmInner))
-        return crossing;
-    return findSegmentLineIntersection(endArmOuter, endArmInner, startArmOuter, startArmInner);
-}
-
-static OutsetCornerContour outsetCornerContour(const Corner& adjusted, const CornerAdjustment& adjustment, double startInset, double endInset)
-{
-    auto clipOuter = adjustment.targetCornerOuter;
-    ContourEdge startLine { clipOuter + adjustment.unitVectorTowardStart, clipOuter };
-    ContourEdge endLine { clipOuter + adjustment.unitVectorTowardEnd, clipOuter };
-
-    OutsetCornerContour contour;
-    if (isConcave(adjusted)) {
-        auto startTangent = adjustment.startNormal.perpendicular().scaled(-1);
-        auto endTangent = adjustment.endNormal.perpendicular();
-        contour.miterStart = findIntersection(startLine.first, startLine.second, adjusted.start, adjusted.start + startTangent).value_or(adjusted.start);
-        contour.miterEnd = findIntersection(endLine.first, endLine.second, adjusted.end, adjusted.end + endTangent).value_or(adjusted.end);
-
-        bool swallowsAnArm = -endInset >= adjustment.startRadius || -startInset >= adjustment.endRadius;
-        if (startInset < 0.0 && endInset < 0.0 && swallowsAnArm) {
-            if (auto crossing = findMiterArmCrossing(contour.miterStart, adjusted.start, contour.miterEnd, adjusted.end)) {
-                contour.collapsed = true;
-                contour.collapsePoint = *crossing;
-            }
-        }
-        return contour;
-    }
-
-    auto controlPoint = quadraticControlPoint(adjusted);
-    contour.miterStart = findIntersection(startLine.first, startLine.second, adjusted.start, controlPoint).value_or(adjusted.start);
-    contour.miterEnd = findIntersection(endLine.first, endLine.second, adjusted.end, controlPoint).value_or(adjusted.end);
-    return contour;
-}
-
-// Flatten the drawn corner curve (start..end) into points, matching addCurvedCorner's geometry.
-static void sampleDrawnCorner(const Corner& corner, unsigned stepsPerHalf, Vector<FloatPoint>& out)
-{
-    if (isConcave(corner)) {
-        sampleDrawnCorner(inverseCorner(corner), stepsPerHalf, out);
-        return;
-    }
-    out.append(corner.start);
-    if (isBevel(corner)) {
-        out.append(corner.end);
-        return;
-    }
-    if (isSquare(corner)) {
-        out.append(corner.outer);
-        out.append(corner.end);
-        return;
-    }
-    for (auto& segment : superellipseCornerBeziers(corner)) {
-        for (unsigned step = 1; step <= stepsPerHalf; ++step)
-            out.append(pointOnBezierAtParameter(segment, double(step) / stepsPerHalf));
-    }
-}
-
-static std::optional<FloatSize> outsetArmDirection(const FloatPoint& from, const FloatPoint& to)
-{
-    auto direction = to - from;
-    if (direction.diagonalLength() < limit)
-        return std::nullopt;
-    return direction.normalized();
-}
-
-// The outset contour is a straight arm, then the curve, then another straight arm. Fitting the curve with its
-// end tangents forced to the arm directions makes each junction smooth, instead of the crease that shows when
-// the curve and the arm arrive at different angles.
-static void addTangentJoinedCorner(Path& path, const Corner& adjusted, const OutsetCornerContour& contour, float deviceScaleFactor, bool& started)
-{
-    constexpr double flatnessTolerance = 0.25; // device pixels
-    double radius = std::max(adjusted.radii.width(), adjusted.radii.height());
-    double scale = deviceScaleFactor > 0.0f ? deviceScaleFactor : 1.0;
-    double quarterArcChords = std::numbers::pi / 2.0 * std::sqrt(radius * scale / (8.0 * flatnessTolerance));
-    unsigned stepsPerHalf = std::max(2u, static_cast<unsigned>(std::clamp(std::ceil(quarterArcChords / 2.0), 4.0, 64.0)));
-
-    Vector<FloatPoint> samples;
-    sampleDrawnCorner(adjusted, stepsPerHalf, samples);
-    if (samples.size() < 2) {
-        addCurvedCorner(path, adjusted);
-        return;
-    }
-
-    constexpr unsigned bezierSegmentCount = 18;
-    addCatmullRomBeziers(path, samples, bezierSegmentCount, started,
-        outsetArmDirection(contour.miterStart, samples.first()), outsetArmDirection(samples.last(), contour.miterEnd));
-}
-
-// The outset+miter curve for a single corner, flattened from its start miter to its end miter.
-static Vector<FloatPoint> cornerOutsetSamples(const CornerInput& input, double curvature, unsigned stepsPerHalf)
-{
-    CornerInput swapped = input;
-    swapped.curvature = curvature;
-    auto adjustment = resolveCornerAdjustment(makeCorner(swapped), input.startInset, input.endInset);
-    auto contour = outsetCornerContour(adjustment.corner, adjustment, input.startInset, input.endInset);
-
-    Vector<FloatPoint> points;
-    points.append(contour.miterStart);
-    if (contour.collapsed) {
-        // Degenerate concave miter: the curve becomes the crossing of the two arms.
-        points.append(contour.collapsePoint);
-        points.append(contour.collapsePoint);
-    } else
-        sampleDrawnCorner(adjustment.corner, stepsPerHalf, points);
-    points.append(contour.miterEnd);
-    return points;
-}
-
-// Cubic Hermite morph of the outset curve over s in (0, 1), anchored on the contour that is constructed at s = 0 and s = 1.
-static void addMorphedOutsetCorner(Path& path, const CornerInput& input, float deviceScaleFactor, bool& started)
-{
-    constexpr double flatnessTolerance = 0.25; // device pixels
-    double radius = std::max(input.width, input.height) + std::max(std::abs(input.startInset), std::abs(input.endInset));
-    double scale = deviceScaleFactor > 0.0f ? deviceScaleFactor : 1.0;
-    double quarterArcChords = std::numbers::pi / 2.0 * std::sqrt(radius * scale / (8.0 * flatnessTolerance));
-    unsigned stepsPerHalf = std::max(2u, static_cast<unsigned>(std::clamp(std::ceil(quarterArcChords / 2.0), 4.0, 64.0)));
-    unsigned sampleCount = 2 * stepsPerHalf + 4;
-    constexpr double epsilon = 0.04; // curvature step for the endpoint-velocity finite differences
-
-    auto anchor = [&](double sampleCurvature) {
-        return resampleByArcLength(cornerOutsetSamples(input, sampleCurvature, stepsPerHalf), sampleCount);
+    auto clampToTarget = [&](FloatPoint point) {
+        return FloatPoint {
+            std::clamp(point.x(), targetRect.x(), targetRect.maxX()),
+            std::clamp(point.y(), targetRect.y(), targetRect.maxY())
+        };
     };
-    auto velocity = [&](const Vector<FloatPoint>& ahead, const Vector<FloatPoint>& behind, double deltaCurvature) {
-        Vector<FloatSize> perPointVelocity(sampleCount);
-        for (unsigned index = 0; index < sampleCount; ++index)
-            perPointVelocity[index] = (ahead[index] - behind[index]).scaled(1.0f / deltaCurvature);
-        return perPointVelocity;
+    auto lineOrMoveTo = [&](FloatPoint point) {
+        if (!started) {
+            path.moveTo(point);
+            started = true;
+        } else
+            path.addLineTo(point);
     };
 
-    auto startAnchor = anchor(0.0);
-    auto endAnchor = anchor(1.0);
-    auto startVelocity = velocity(anchor(epsilon), startAnchor, epsilon); // dPosition/ds at s = 0 (from above)
-    auto endVelocity = velocity(anchor(1.0 + epsilon), endAnchor, epsilon); // dPosition/ds at s = +1 (from above)
-
-    auto morphedCorner = hermiteInterpolate(startAnchor, startVelocity, endAnchor, endVelocity, input.curvature);
-    if (morphedCorner.size() < 2)
-        return;
-
-    constexpr unsigned bezierSegmentCount = 18;
-    addCatmullRomBeziers(path, morphedCorner, bezierSegmentCount, started,
-        outsetArmDirection(morphedCorner[0], morphedCorner[1]),
-        outsetArmDirection(morphedCorner[morphedCorner.size() - 2], morphedCorner[morphedCorner.size() - 1]));
+    lineOrMoveTo(clampToTarget(corner.miterStart));
+    path.addLineTo(clampToTarget(isNotch(corner.adjusted) ? corner.adjusted.center : corner.adjusted.outer));
+    path.addLineTo(clampToTarget(corner.miterEnd));
 }
 
 } // namespace
 
 // https://drafts.csswg.org/css-borders-4/#contour-path
-void borderContourPath(Path& path, const RectCorners<CornerInput>& cornerRects, const FloatRect* targetRect, OutsetMiter outsetMiter, float deviceScaleFactor, ContourStart contourStart)
+void borderContourPath(Path& path, const RectCorners<CornerInput>& cornerRects, const FloatRect* targetRect, ContourStart contourStart)
 {
-    RectCorners<Corner> corners;
-    buildCorners(corners, cornerRects);
-
     bool started = false;
 
+    // offset-path's <coord-box> wants the contour to begin on the top edge instead of at the first corner.
     if (contourStart == ContourStart::TopEdge) {
-        path.moveTo(corners[BoxCorner::TopLeft].end);
+        path.moveTo(makeCorner(cornerRects[BoxCorner::TopLeft]).end);
         started = true;
     }
 
-    for (auto key : { BoxCorner::TopRight, BoxCorner::BottomRight, BoxCorner::BottomLeft, BoxCorner::TopLeft }) {
-        const auto& corner = corners[key];
-        double startInset = cornerRects[key].startInset;
-        double endInset = cornerRects[key].endInset;
-
-        auto addOutsetCorner = [&](const OutsetCornerContour& contour) {
-            if (!started) {
-                path.moveTo(contour.miterStart);
-                started = true;
-            } else
-                path.addLineTo(contour.miterStart);
-            if (contour.collapsed)
-                path.addLineTo(contour.collapsePoint);
-            else
-                addTangentJoinedCorner(path, corner, contour, deviceScaleFactor, started);
-            path.addLineTo(contour.miterEnd);
-        };
-
-        double curvature = cornerRects[key].curvature;
-        if (outsetMiter == OutsetMiter::Yes && std::isfinite(curvature)) {
-            if (targetRect && curvature > 0.0 && curvature < 1.0) {
-                addMorphedOutsetCorner(path, cornerRects[key], deviceScaleFactor, started);
-                continue;
-            }
-            auto adjustment = computeCornerAdjustment(makeCorner(cornerRects[key]), startInset, endInset);
-            addOutsetCorner(outsetCornerContour(corner, adjustment, startInset, endInset));
-            continue;
-        }
-
-        // An outward offset must still reach the offset rect's edges when no target rect was given
-        if ((startInset < 0.0 || endInset < 0.0) && std::isfinite(corner.curvature) && !isEmpty(corner)) {
-            auto adjustment = computeCornerAdjustment(makeCorner(cornerRects[key]), startInset, endInset);
-            addOutsetCorner(outsetCornerContour(corner, adjustment, startInset, endInset));
-            continue;
-        }
-        // Inset: carve the superellipse corner's curve to the target rect.
-        if (targetRect && std::isfinite(corner.curvature) && !isEmpty(corner)) {
-            addTrimmedSuperellipseCorner(path, corner, *targetRect, started);
-            continue;
-        }
-
+    auto lineOrMoveTo = [&](FloatPoint point) {
         if (!started) {
-            path.moveTo(corner.start);
+            path.moveTo(point);
             started = true;
+        } else
+            path.addLineTo(point);
+    };
+
+    for (auto key : { BoxCorner::TopRight, BoxCorner::BottomRight, BoxCorner::BottomLeft, BoxCorner::TopLeft }) {
+        const auto& input = cornerRects[key];
+        auto corner = resolveCorner(makeCorner(input), input.startInset, input.endInset);
+        const auto& adjusted = corner.adjusted;
+
+        bool insetToTargetRect = targetRect && input.startInset >= 0.0 && input.endInset >= 0.0
+            && !isEmpty(adjusted);
+        if (insetToTargetRect) {
+            if (std::isfinite(adjusted.curvature))
+                addTrimmedSuperellipseCorner(path, corner, *targetRect, started);
+            else
+                addClampedSharpCorner(path, corner, *targetRect, started);
+            continue;
         }
+
+        lineOrMoveTo(corner.miterStart);
+        if (corner.collapsePoint) {
+            path.addLineTo(*corner.collapsePoint);
+            path.addLineTo(corner.miterEnd);
+            continue;
+        }
+
+        if ((adjusted.start - corner.miterStart).diagonalLength() >= limit)
+            path.addLineTo(adjusted.start);
         addCurvedCorner(path, corner);
+        path.addLineTo(corner.miterEnd);
     }
     path.closeSubpath();
 }

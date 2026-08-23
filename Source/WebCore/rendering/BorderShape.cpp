@@ -430,8 +430,7 @@ static void addAlignedToCurveOffsetContour(Path& path, const FloatRoundedRect& r
     RectCorners<CornerInput> referenceCorners;
     buildCornerInputs(referenceSnapped, cornerCurvatures, -leftOffset, -topOffset, -rightOffset, -bottomOffset, referenceCorners);
 
-    auto outsetMiter = referenceRect.contains(targetRect) ? OutsetMiter::No : OutsetMiter::Yes;
-    borderContourPath(path, referenceCorners, &targetRect, outsetMiter);
+    borderContourPath(path, referenceCorners, &targetRect);
 }
 
 static void addOuterCornerShapeToPath(Path& path, const FloatRoundedRect& outerSnapped, const RectCorners<float>& cornerCurvatures, const std::optional<FloatRoundedRect>& offsetReferenceRect)
@@ -458,7 +457,7 @@ std::optional<Path> BorderShape::pathForShapedRect(const FloatRoundedRect& round
     buildCornerInputs(roundedRect, cornerCurvatures, 0, 0, 0, 0, cornerRects);
 
     Path path;
-    borderContourPath(path, cornerRects, nullptr, OutsetMiter::No, 1.0f, ContourStart::TopEdge);
+    borderContourPath(path, cornerRects, nullptr, ContourStart::TopEdge);
     return path;
 }
 
