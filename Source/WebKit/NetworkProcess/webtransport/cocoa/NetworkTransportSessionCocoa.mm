@@ -254,7 +254,19 @@ static RetainPtr<nw_parameters_t> createParameters(NetworkConnectionToWebProcess
 
     auto configureTCP = options.requireUnreliable ? NW_PARAMETERS_DISABLE_PROTOCOL : NW_PARAMETERS_DEFAULT_CONFIGURATION;
 
+<<<<<<< HEAD
     return adoptNS(nw_parameters_create_webtransport_http(configureWebTransport, configureTLS, configureQUIC, configureTCP));
+=======
+    RetainPtr parameters = adoptNS(softLink_Network_nw_parameters_create_webtransport_http(configureWebTransport, configureTLS, configureQUIC, configureTCP));
+    String bundleIdentifier = connectionToWebProcess.networkProcess().uiProcessBundleIdentifier();
+    if (CheckedPtr sessionCocoa = downcast<NetworkSessionCocoa>(connectionToWebProcess.networkProcess().networkSession(connectionToWebProcess.sessionID())))
+        bundleIdentifier = sessionCocoa->sourceApplicationBundleIdentifier();
+    setNWParametersApplicationIdentifiers(parameters.get(), bundleIdentifier.utf8().data(), connectionToWebProcess.networkProcess().sourceApplicationAuditToken(), emptyString());
+    bool isTracker = isKnownTracker(WebCore::RegistrableDomain { url });
+    bool isFirstParty = WebCore::RegistrableDomain { clientOrigin.clientOrigin } == WebCore::RegistrableDomain { clientOrigin.topOrigin };
+    setNWParametersTrackerOptions(parameters.get(), false, isFirstParty, isTracker, IsRTC::No);
+    return parameters;
+>>>>>>> 669fce73f5f9 ([cocoa] uiProcessBundleIdentifier may mark the WebTransport connection incorrectly)
 }
 
 RefPtr<NetworkTransportSession> NetworkTransportSession::create(NetworkConnectionToWebProcess& connectionToWebProcess, WebTransportSessionIdentifier identifier, URL&& url, WebCore::WebTransportOptions&& options, Vector<KeyValuePair<String, String>>&& additionalHeaders, WebKit::WebPageProxyIdentifier&& pageID, WebCore::ClientOrigin&& clientOrigin)
