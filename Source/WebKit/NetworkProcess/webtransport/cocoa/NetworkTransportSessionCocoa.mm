@@ -33,6 +33,7 @@
 #import "MessageSenderInlines.h"
 #import "NetworkConnectionToWebProcess.h"
 #import "NetworkProcess.h"
+#import "NetworkRTCUtilitiesCocoa.h"
 #import "NetworkSessionCocoa.h"
 #import "NetworkTransportStream.h"
 #import "WebTransportSessionMessages.h"
@@ -43,6 +44,7 @@
 #import <WebCore/ExceptionCode.h>
 #import <WebCore/HTTPParsers.h>
 #import <WebCore/RFC8941.h>
+#import <WebCore/RegistrableDomain.h>
 #import <WebCore/WebTransportConnectionInfo.h>
 #import <WebCore/WebTransportConnectionStats.h>
 #import <WebCore/WebTransportReceiveStreamStats.h>
@@ -254,7 +256,16 @@ static RetainPtr<nw_parameters_t> createParameters(NetworkConnectionToWebProcess
 
     auto configureTCP = options.requireUnreliable ? NW_PARAMETERS_DISABLE_PROTOCOL : NW_PARAMETERS_DEFAULT_CONFIGURATION;
 
+<<<<<<< HEAD
     return adoptNS(nw_parameters_create_webtransport_http(configureWebTransport, configureTLS, configureQUIC, configureTCP));
+=======
+    RetainPtr parameters = adoptNS(softLink_Network_nw_parameters_create_webtransport_http(configureWebTransport, configureTLS, configureQUIC, configureTCP));
+    setNWParametersApplicationIdentifiers(parameters.get(), connectionToWebProcess.networkProcess().uiProcessBundleIdentifier().utf8().data(), connectionToWebProcess.networkProcess().sourceApplicationAuditToken(), emptyString());
+    bool isTracker = isKnownTracker(WebCore::RegistrableDomain { url });
+    bool isFirstParty = WebCore::RegistrableDomain { clientOrigin.clientOrigin } == WebCore::RegistrableDomain { clientOrigin.topOrigin };
+    setNWParametersTrackerOptions(parameters.get(), false, isFirstParty, isTracker, IsRTC::No);
+    return parameters;
+>>>>>>> ca088424bb54 ([cocoa] WebTransport is not marking connections)
 }
 
 RefPtr<NetworkTransportSession> NetworkTransportSession::create(NetworkConnectionToWebProcess& connectionToWebProcess, WebTransportSessionIdentifier identifier, URL&& url, WebCore::WebTransportOptions&& options, Vector<KeyValuePair<String, String>>&& additionalHeaders, WebKit::WebPageProxyIdentifier&& pageID, WebCore::ClientOrigin&& clientOrigin)
