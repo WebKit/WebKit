@@ -48,7 +48,7 @@ static const EVP_CIPHER* aesAlgorithm(size_t keySize)
     return nullptr;
 }
 
-static std::optional<Vector<uint8_t>> cryptEncrypt(const Vector<uint8_t>& key, const Vector<uint8_t>& iv, Vector<uint8_t>&& plainText)
+static std::optional<Vector<uint8_t>> cryptEncrypt(const Vector<uint8_t>& key, const Vector<uint8_t>& iv, Vector<uint8_t>&& plainText, CryptoAlgorithmAESCBC::Padding padding)
 {
     const EVP_CIPHER* algorithm = aesAlgorithm(key.size());
     if (!algorithm)
@@ -62,12 +62,15 @@ static std::optional<Vector<uint8_t>> cryptEncrypt(const Vector<uint8_t>& key, c
         return std::nullopt;
 
     size_t plainSize = plainText.size();
-    const size_t cipherTextLen = roundUpToMultipleOf(EVP_CIPHER_block_size(algorithm), plainSize + 1);
+    const size_t cipherTextLen = roundUpToMultipleOf(EVP_CIPHER_block_size(algorithm), padding == CryptoAlgorithmAESCBC::Padding::Yes ? plainSize + 1 : plainSize);
     Vector<uint8_t> cipherText(cipherTextLen);
 
     // Initialize the encryption operation
     if (1 != EVP_EncryptInit_ex(ctx.get(), algorithm, nullptr, key.span().data(), iv.span().data()))
         return std::nullopt;
+
+    if (padding == CryptoAlgorithmAESCBC::Padding::No)
+        EVP_CIPHER_CTX_set_padding(ctx.get(), 0);
 
     // Provide the message to be encrypted, and obtain the encrypted output
     if (1 != EVP_EncryptUpdate(ctx.get(), cipherText.mutableSpan().data(), &len, plainText.span().data(), plainSize))
@@ -80,7 +83,7 @@ static std::optional<Vector<uint8_t>> cryptEncrypt(const Vector<uint8_t>& key, c
     return cipherText;
 }
 
-static std::optional<Vector<uint8_t>> cryptDecrypt(const Vector<uint8_t>& key, const Vector<uint8_t>& iv, const Vector<uint8_t>& cipherText)
+static std::optional<Vector<uint8_t>> cryptDecrypt(const Vector<uint8_t>& key, const Vector<uint8_t>& iv, const Vector<uint8_t>& cipherText, CryptoAlgorithmAESCBC::Padding padding)
 {
     const EVP_CIPHER* algorithm = aesAlgorithm(key.size());
     if (!algorithm)
@@ -101,6 +104,9 @@ static std::optional<Vector<uint8_t>> cryptDecrypt(const Vector<uint8_t>& key, c
     if (1 != EVP_DecryptInit_ex(ctx.get(), algorithm, nullptr, key.span().data(), iv.span().data()))
         return std::nullopt;
 
+    if (padding == CryptoAlgorithmAESCBC::Padding::No)
+        EVP_CIPHER_CTX_set_padding(ctx.get(), 0);
+
     // Provide the message to be decrypted, and obtain the plaintext output
     if (1 != EVP_DecryptUpdate(ctx.get(), plainText.mutableSpan().data(), &len, cipherText.span().data(), cipherSize))
         return std::nullopt;
@@ -116,17 +122,17 @@ static std::optional<Vector<uint8_t>> cryptDecrypt(const Vector<uint8_t>& key, c
     return plainText;
 }
 
-ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAESCBC::platformEncrypt(const CryptoAlgorithmAesCbcCfbParams& parameters, const CryptoKeyAES& key, const Vector<uint8_t>& plainText, Padding)
+ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAESCBC::platformEncrypt(const CryptoAlgorithmAesCbcCfbParams& parameters, const CryptoKeyAES& key, const Vector<uint8_t>& plainText, Padding padding)
 {
-    auto output = cryptEncrypt(key.key(), parameters.ivVector(), Vector<uint8_t>(plainText));
+    auto output = cryptEncrypt(key.key(), parameters.ivVector(), Vector<uint8_t>(plainText), padding);
     if (!output)
         return Exception { ExceptionCode::OperationError };
     return WTF::move(*output);
 }
 
-ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAESCBC::platformDecrypt(const CryptoAlgorithmAesCbcCfbParams& parameters, const CryptoKeyAES& key, const Vector<uint8_t>& cipherText, Padding)
+ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAESCBC::platformDecrypt(const CryptoAlgorithmAesCbcCfbParams& parameters, const CryptoKeyAES& key, const Vector<uint8_t>& cipherText, Padding padding)
 {
-    auto output = cryptDecrypt(key.key(), parameters.ivVector(), cipherText);
+    auto output = cryptDecrypt(key.key(), parameters.ivVector(), cipherText, padding);
     if (!output)
         return Exception { ExceptionCode::OperationError };
     return WTF::move(*output);

@@ -48,7 +48,7 @@ using PlatformECKeyContainer = std::unique_ptr<typename std::remove_pointer<gcry
 #endif
 
 #if USE(OPENSSL)
-#include "crypto/openssl/OpenSSLCryptoUniquePtr.h"
+#include <WebCore/OpenSSLCryptoUniquePtr.h>
 namespace WebCore {
 using PlatformECKeyContainer = WebCore::EvpPKeyPtr;
 }

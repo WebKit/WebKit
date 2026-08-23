@@ -26,7 +26,7 @@
 #include "config.h"
 #include "MockHidService.h"
 
-#if ENABLE(WEB_AUTHN)
+#if ENABLE(WEB_AUTHN) && PLATFORM(COCOA)
 
 #include "Logging.h"
 #include "MockHidConnection.h"
@@ -73,4 +73,4 @@ void MockHidService::validateExpectedCommandsCompleted()
 }
 
 } // namespace WebKit
-#endif // ENABLE(WEB_AUTHN)
+#endif // ENABLE(WEB_AUTHN) && PLATFORM(COCOA)

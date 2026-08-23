@@ -21,3 +21,7 @@ list(APPEND WebCore_SOURCES
     crypto/openssl/OpenSSLUtilities.cpp
     crypto/openssl/SerializedCryptoKeyWrapOpenSSL.cpp
 )
+
+list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
+    crypto/openssl/OpenSSLCryptoUniquePtr.h
+)

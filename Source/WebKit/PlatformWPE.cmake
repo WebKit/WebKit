@@ -487,6 +487,8 @@ else ()
 endif ()
 
 list(APPEND WebKit_MESSAGES_IN_FILES
+    UIProcess/WebAuthentication/WebAuthenticatorCoordinatorProxy
+
     WebProcess/glib/SystemSettingsManager
 )
 
