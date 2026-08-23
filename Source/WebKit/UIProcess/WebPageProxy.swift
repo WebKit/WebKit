@@ -42,7 +42,7 @@ extension WebKit.WebPageProxy {
                 type,
                 state,
                 isInteractingWithFocusedElement,
-                consuming: .init({ _, _, _, _ in continuation.resume() }, WTF.ThreadLikeAssertion(WTF.CurrentThreadLike()))
+                consuming: .init({ _ in continuation.resume() }, WTF.ThreadLikeAssertion(WTF.CurrentThreadLike()))
             )
         }
     }

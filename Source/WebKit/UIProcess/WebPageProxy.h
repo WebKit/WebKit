@@ -656,6 +656,7 @@ struct RemoteSnapshotIdentifierType;
 struct ResourceLoadInfo;
 struct RemotePageParameters;
 struct RunJavaScriptParameters;
+struct SelectWithGestureResult;
 struct SessionState;
 struct SharedPreferencesForWebProcess;
 struct TapIdentifierType;
@@ -1203,7 +1204,8 @@ public:
     void processDidResume();
 
 #if PLATFORM(COCOA)
-    void selectWithGesture(std::optional<WebCore::FrameIdentifier>, WebCore::IntPoint, GestureType, GestureRecognizerState, bool isInteractingWithFocusedElement, CompletionHandler<void(const WebCore::IntPoint&, GestureType, GestureRecognizerState, OptionSet<SelectionFlags>)>&&);
+    using SelectWithGestureCompletionHandler = CompletionHandler<void(SelectWithGestureResult)>;
+    void selectWithGesture(std::optional<WebCore::FrameIdentifier>, WebCore::IntPoint, GestureType, GestureRecognizerState, bool isInteractingWithFocusedElement, SelectWithGestureCompletionHandler&&);
 
     void didReceivePositionInformation(const InteractionInformationAtPosition&);
     void requestPositionInformation(const InteractionInformationRequest&);

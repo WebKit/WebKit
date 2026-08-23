@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <WebCore/IntPoint.h>
+#include <wtf/OptionSet.h>
 #include <wtf/Platform.h>
 
 namespace WebKit {
@@ -83,5 +85,12 @@ enum class TextInteractionSource : uint8_t {
 
 enum class SelectionEndpoint : bool { Start, End };
 enum class SelectionWasFlipped : bool { No, Yes };
+
+struct SelectWithGestureResult {
+    WebCore::IntPoint point;
+    GestureType gestureType { GestureType::Loupe };
+    GestureRecognizerState gestureState { GestureRecognizerState::Possible };
+    OptionSet<SelectionFlags> flags;
+};
 
 } // namespace WebKit

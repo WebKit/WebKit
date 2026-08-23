@@ -1126,7 +1126,7 @@ public:
 #if PLATFORM(COCOA)
     bool shouldAllowSingleClickToChangeSelection(WebCore::Node& targetNode, const WebCore::VisibleSelection& newSelection, WebCore::MouseEventInputSource);
     HashMap<WebCore::FrameIdentifier, WebCore::AttributedString> attributedStringsForRemoteFrames(WebCore::FrameIdentifier rootFrameIdentifier, const Vector<WebCore::FrameIdentifier>&);
-    void selectWithGesture(std::optional<WebCore::FrameIdentifier>, const WebCore::IntPoint&, GestureType, GestureRecognizerState, bool isInteractingWithFocusedElement, CompletionHandler<void(const WebCore::IntPoint&, GestureType, GestureRecognizerState, OptionSet<SelectionFlags>, std::optional<WebCore::RemoteUserInputEventData>)>&&);
+    void selectWithGesture(std::optional<WebCore::FrameIdentifier>, const WebCore::IntPoint&, GestureType, GestureRecognizerState, bool isInteractingWithFocusedElement, CompletionHandler<void(SelectWithGestureResult, std::optional<WebCore::RemoteUserInputEventData>)>&&);
     void updateFocusBeforeSelectingTextAtLocation(std::optional<WebCore::FrameIdentifier>, const WebCore::IntPoint&);
     WebCore::VisiblePosition visiblePositionInFocusedNodeForPoint(const WebCore::LocalFrame&, const WebCore::IntPoint&, bool isInteractingWithFocusedElement);
 

@@ -70,7 +70,7 @@ messages -> WebPage WantsAsyncDispatchMessage {
     SetLastKnownMousePosition(WebCore::FrameIdentifier frameID, WebCore::DoublePoint eventPoint, WebCore::DoublePoint globalPoint, enum:uint8_t std::optional<WebCore::LastKnownMousePositionSource> source);
 
 #if PLATFORM(COCOA)
-    SelectWithGesture(std::optional<WebCore::FrameIdentifier> frameID, WebCore::IntPoint point, enum:uint8_t WebKit::GestureType gestureType, enum:uint8_t WebKit::GestureRecognizerState gestureState, bool isInteractingWithFocusedElement) -> (WebCore::IntPoint point, enum:uint8_t WebKit::GestureType gestureType, enum:uint8_t WebKit::GestureRecognizerState gestureState, OptionSet<WebKit::SelectionFlags> flags, struct std::optional<WebCore::RemoteUserInputEventData> remoteUserInputEventData)
+    SelectWithGesture(std::optional<WebCore::FrameIdentifier> frameID, WebCore::IntPoint point, enum:uint8_t WebKit::GestureType gestureType, enum:uint8_t WebKit::GestureRecognizerState gestureState, bool isInteractingWithFocusedElement) -> (struct WebKit::SelectWithGestureResult result, struct std::optional<WebCore::RemoteUserInputEventData> remoteUserInputEventData)
     RequestPositionInformation(struct WebKit::InteractionInformationRequest request)
     SelectPositionAtPoint(WebCore::IntPoint point, bool isInteractingWithFocusedElement) -> ()
     UpdateSelectionWithExtentPoint(WebCore::IntPoint point, bool isInteractingWithFocusedElement, enum:bool WebKit::RespectSelectionAnchor respectSelectionAnchor) -> (bool endIsMoving)
