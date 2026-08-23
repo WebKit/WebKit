@@ -1,0 +1,7 @@
+
+FAIL CTAP HID with keep alive message in a mock hid authenticator. promise_test: Unhandled rejection with value: object "NotAllowedError: This request has been cancelled by the user."
+FAIL CTAP HID with fast data arrival in a mock hid authenticator. promise_test: Unhandled rejection with value: object "NotAllowedError: This request has been cancelled by the user."
+FAIL CTAP HID with continue after empty report in a mock hid authenticator. promise_test: Unhandled rejection with value: object "NotAllowedError: This request has been cancelled by the user."
+FAIL CTAP HID with continue after wrong channel id in a mock hid authenticator. promise_test: Unhandled rejection with value: object "NotAllowedError: This request has been cancelled by the user."
+FAIL CTAP HID with continue after wrong nonce error in a mock hid authenticator. promise_test: Unhandled rejection with value: object "NotAllowedError: This request has been cancelled by the user."
+

@@ -55,6 +55,8 @@ list(APPEND WebKit_LIBRARIES
 list(APPEND WebKit_MESSAGES_IN_FILES
     UIProcess/ViewGestureController
 
+    UIProcess/WebAuthentication/WebAuthenticatorCoordinatorProxy
+
     UIProcess/glib/AcceleratedBackingStore
 
     WebProcess/WebPage/ViewGestureGeometryCollector

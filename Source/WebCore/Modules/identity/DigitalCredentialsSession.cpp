@@ -31,6 +31,8 @@
 #include "AbortSignal.h"
 #include "CredentialRequestCoordinator.h"
 #include "Document.h"
+#include "JSDOMConvertInterface.h"
+#include "JSDOMConvertNullable.h"
 #include "JSDOMPromiseDeferred.h"
 #include "TaskSource.h"
 #include <Logging.h>

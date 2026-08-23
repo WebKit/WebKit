@@ -74,6 +74,7 @@ set(WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/Modules/web-locks"
     "${WEBCORE_DIR}/Modules/webaudio"
     "${WEBCORE_DIR}/Modules/webauthn"
+    "${WEBCORE_DIR}/Modules/webauthn/apdu"
     "${WEBCORE_DIR}/Modules/webauthn/cbor"
     "${WEBCORE_DIR}/Modules/webauthn/fido"
     "${WEBCORE_DIR}/Modules/webcodecs"

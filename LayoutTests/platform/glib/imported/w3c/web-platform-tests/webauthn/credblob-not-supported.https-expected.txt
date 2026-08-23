@@ -1,0 +1,3 @@
+
+FAIL creation requesting credBlob without authenticator support promise_test: Unhandled rejection with value: object "NotSupportedError: Not implemented."
+

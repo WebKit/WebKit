@@ -32,7 +32,9 @@
 
 #if ENABLE(WEB_AUTHN)
 
+#if PLATFORM(COCOA)
 #include "CommonCryptoDERUtilities.h"
+#endif
 #include "FidoConstants.h"
 #include "WebAuthenticationConstants.h"
 #include "WebAuthenticationUtils.h"
@@ -42,6 +44,19 @@ namespace fido {
 using namespace WebCore;
 
 namespace {
+
+#if !PLATFORM(COCOA)
+// Per X.690 08/2015: https://www.itu.int/rec/T-REC-X.680-X.693/en
+const unsigned char SequenceMark = 0x30;
+const size_t MaxLengthInOneByte = 128;
+
+static size_t bytesUsedToEncodedLength(uint8_t octet)
+{
+    if (octet < MaxLengthInOneByte)
+        return 1;
+    return octet - MaxLengthInOneByte + 1;
+}
+#endif
 
 // In a U2F registration response, the key is in X9.62 format:
 // - a constant 0x04 prefix to indicate an uncompressed key
