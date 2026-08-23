@@ -1202,11 +1202,25 @@ void WebMParser::VideoTrackData::processPendingMediaSamples(const MediaTime& pre
     if (!m_pendingMediaSamples.size())
         return;
     auto& lastSample = m_pendingMediaSamples.last();
+<<<<<<< HEAD
     // The queued sample may come from an earlier cluster, which need not precede this one in time;
     // a frame starting before it can't close it, so leave it queued, as is done for frames sharing
     // a presentation time.
     if (presentationTime < lastSample.presentationTime)
         return;
+=======
+    // The WebM container does not encode per-frame durations; we derive them
+    // from the gap to the next frame's presentation time. A malformed cluster
+    // whose block timestamps decrease would yield a negative duration here,
+    // which propagates to SourceBufferPrivate::processMediaSample() as
+    // frameEndTimestamp < presentationTimestamp. Treat any non-increasing
+    // timestamp the same as the existing equal-timestamp case below: leave the
+    // pending sample queued (with zero duration) until a later frame arrives.
+    if (presentationTime < lastSample.presentationTime) {
+        lastSample.duration = MediaTime::zeroTime();
+        return;
+    }
+>>>>>>> bd4c91c57d10 (Malformed WebM with non-monotonically increasing presentation timestamps can cause a crash.)
     lastSample.duration = presentationTime - lastSample.presentationTime;
     if (presentationTime == lastSample.presentationTime)
         return;

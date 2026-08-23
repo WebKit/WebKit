@@ -1,0 +1,11 @@
+Tests that appending a WebM cluster whose block timestamps decrease, after abort(), does not crash.
+
+EVENT(sourceopen)
+EVENT(updateend)
+EVENT(updateend)
+RUN(sourceBuffer.abort())
+EVENT(updateend)
+EVENT(updateend)
+EXPECTED (source.readyState == 'open') OK
+END OF TEST
+
