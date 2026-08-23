@@ -2836,12 +2836,8 @@ bool CanvasRenderingContext2DBase::canDrawText(double x, double y, bool fill, st
         return false;
 
     // If gradient size is zero, nothing would be painted.
-    RefPtr gradient = c->strokeGradient();
-    if (!fill && gradient && gradient->isZeroSize())
-        return false;
-
-    gradient = c->fillGradient();
-    if (fill && gradient && gradient->isZeroSize())
+    RefPtr gradient = fill ? c->fillGradient() : c->strokeGradient();
+    if (gradient && gradient->isZeroSize())
         return false;
 
     return true;
