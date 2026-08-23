@@ -597,7 +597,7 @@ void HistoryController::updateForStandardLoad(HistoryUpdateType updateType)
         if (RefPtr page = m_frame->page())
             addVisitedLink(*page, historyURL);
 
-        if (!documentLoader->didCreateGlobalHistoryEntry() && documentLoader->unreachableURL().isEmpty() && !protect(m_frame->document())->url().isEmpty())
+        if (!documentLoader->didCreateGlobalHistoryEntry() && documentLoader->unreachableURL().isEmpty())
             protect(frameLoader->client())->updateGlobalHistoryRedirectLinks();
     }
 }
@@ -757,9 +757,6 @@ void HistoryController::recursiveUpdateForCommit()
 void HistoryController::updateForSameDocumentNavigation()
 {
     Ref frame = m_frame.get();
-    if (protect(frame->document())->url().isEmpty())
-        return;
-
     RefPtr page = frame->page();
     if (!page)
         return;
@@ -828,7 +825,7 @@ bool HistoryController::currentItemShouldBeReplaced() const
     //   and that was the about:blank Document created when the browsing context
     //   was created, then the navigation must be done with replacement enabled."
     RefPtr currentItem = m_currentItem;
-    return currentItem && !m_previousItem && equalIgnoringASCIICase(currentItem->urlString(), aboutBlankURL().string());
+    return currentItem && !m_previousItem && currentItem->isInitialAboutBlank() == IsInitialAboutBlank::Yes;
 }
 
 void HistoryController::clearPreviousItem()

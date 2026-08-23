@@ -369,7 +369,7 @@ GCC_MAYBE_NO_INLINE static Ref<Frame> createMainFrame(Page& page, PageConfigurat
 {
     page.relaxAdoptionRequirement();
     return switchOn(WTF::move(clientCreator), [&] (PageConfiguration::LocalMainFrameCreationParameters&& creationParameters) -> Ref<Frame> {
-        return LocalFrame::createMainFrame(page, WTF::move(creationParameters.clientCreator), identifier, creationParameters.effectiveSandboxFlags, creationParameters.effectiveReferrerPolicy, mainFrameOpener.get(), WTF::move(frameTreeSyncData));
+        return LocalFrame::createMainFrame(page, WTF::move(creationParameters.clientCreator), identifier, creationParameters.effectiveSandboxFlags, creationParameters.effectiveReferrerPolicy, mainFrameOpener.get(), WTF::move(creationParameters.initialDocumentCreator), WTF::move(frameTreeSyncData));
     }, [&] (CompletionHandler<UniqueRef<RemoteFrameClient>(RemoteFrame&)>&& remoteFrameClientCreator) -> Ref<Frame> {
         return RemoteFrame::createMainFrame(page, WTF::move(remoteFrameClientCreator), identifier, mainFrameOpener.get(), WTF::move(frameTreeSyncData));
     });

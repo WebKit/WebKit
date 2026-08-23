@@ -221,6 +221,7 @@ public:
 
     WeakRef<WebPageProxy> page;
     OptionSet<WebCore::ActivityState> activityState;
+    uint64_t activityStateChangeSequence { };
     RunLoop::Timer audibleActivityTimer;
     std::optional<WebCore::Color> backgroundColor;
     WebCore::LayoutSize baseLayoutViewportSize;

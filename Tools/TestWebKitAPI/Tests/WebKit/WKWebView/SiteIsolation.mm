@@ -11316,21 +11316,18 @@ TEST(SiteIsolation, OpenAboutBlankFromAboutBlank)
     [navigationDelegate waitForDidFinishNavigation];
     RetainPtr uiDelegate = adoptNS([TestUIDelegate new]);
     RetainPtr<WKWebView> opened;
-    __block bool openedFinishedLoading { false };
-    RetainPtr openedNavigationDelegate = adoptNS([TestNavigationDelegate new]);
-    openedNavigationDelegate.get().didFinishNavigation = ^(WKWebView *, WKNavigation *navigation) {
-        openedFinishedLoading = true;
-    };
+    bool openedWebViewCreated { false };
     uiDelegate.get().createWebViewWithConfiguration = [&](WKWebViewConfiguration *configuration, WKNavigationAction *action, WKWindowFeatures *windowFeatures) {
         opened = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:configuration]);
-        opened.get().navigationDelegate = openedNavigationDelegate.get();
         opened.get().UIDelegate = uiDelegate.get();
+        openedWebViewCreated = true;
         return opened.get();
     };
     [webView setUIDelegate:uiDelegate.get()];
 
     [webView evaluateJavaScript:@"window.open()" completionHandler:nil];
-    Util::run(&openedFinishedLoading);
+    Util::run(&openedWebViewCreated);
+    EXPECT_WK_STREQ("about:blank", [opened stringByEvaluatingJavaScript:@"document.URL"]);
 }
 
 TEST(SiteIsolation, OpenNonEmptySiteFromAboutBlank)
@@ -11375,22 +11372,18 @@ TEST(SiteIsolation, OpenEmptySiteFromProcessWithNonEmptySite)
     [navigationDelegate waitForDidFinishNavigation];
     RetainPtr uiDelegate = adoptNS([TestUIDelegate new]);
     RetainPtr<WKWebView> opened;
-    __block bool openedFinishedLoading { false };
-    RetainPtr openedNavigationDelegate = adoptNS([TestNavigationDelegate new]);
-    [openedNavigationDelegate allowAnyTLSCertificate];
-    openedNavigationDelegate.get().didFinishNavigation = ^(WKWebView *, WKNavigation *navigation) {
-        openedFinishedLoading = true;
-    };
+    bool openedWebViewCreated { false };
     uiDelegate.get().createWebViewWithConfiguration = [&](WKWebViewConfiguration *configuration, WKNavigationAction *action, WKWindowFeatures *windowFeatures) {
         opened = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectZero configuration:configuration]);
-        opened.get().navigationDelegate = openedNavigationDelegate.get();
         opened.get().UIDelegate = uiDelegate.get();
+        openedWebViewCreated = true;
         return opened.get();
     };
     [webView setUIDelegate:uiDelegate.get()];
 
     [webView evaluateJavaScript:@"window.open()" completionHandler:nil];
-    Util::run(&openedFinishedLoading);
+    Util::run(&openedWebViewCreated);
+    EXPECT_WK_STREQ("about:blank", [opened stringByEvaluatingJavaScript:@"document.URL"]);
 }
 
 TEST(SiteIsolation, MultiProcessBFCacheIframeProcessSurvival)

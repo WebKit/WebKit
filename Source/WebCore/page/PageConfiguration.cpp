@@ -38,6 +38,7 @@
 #include "CryptoClient.h"
 #include "DatabaseProvider.h"
 #include "DiagnosticLoggingClient.h"
+#include "Document.h"
 #include "DocumentSyncClient.h"
 #include "DragClient.h"
 #include "EditorClient.h"

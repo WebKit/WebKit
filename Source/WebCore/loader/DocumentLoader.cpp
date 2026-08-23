@@ -1337,8 +1337,10 @@ void DocumentLoader::commitData(const SharedBuffer& data)
             document->securityOrigin().grantLoadLocalResources();
         }
 
-        if (frameLoader()->stateMachine().creatingInitialEmptyDocument())
+        if (frameLoader()->stateMachine().creatingInitialEmptyDocument()) {
+            m_writer.setEncoding(response().textEncodingName(), DocumentWriter::IsEncodingUserChosen::No);
             return;
+        }
 
 #if ENABLE(WEB_ARCHIVE) || ENABLE(MHTML)
         if (RefPtr archive = m_archive; archive && archive->shouldOverrideBaseURL())
@@ -1627,7 +1629,7 @@ void DocumentLoader::loadApplicationManifest(CompletionHandler<void(const std::o
     if (!document->isTopDocument())
         return;
 
-    if (document->url().isEmpty() || document->url().protocolIsAbout())
+    if (document->url().protocolIsAbout())
         return;
 
     RefPtr head = document->head();
@@ -2464,7 +2466,7 @@ void DocumentLoader::startIconLoading()
     if (!m_frame->isMainFrame())
         return;
 
-    if (document->url().isEmpty() || document->url().protocolIsAbout())
+    if (document->url().protocolIsAbout())
         return;
 
     m_linkIcons = LinkIconCollector { *document }.iconsOfTypes({ LinkIconType::Favicon, LinkIconType::TouchIcon, LinkIconType::TouchPrecomposedIcon });

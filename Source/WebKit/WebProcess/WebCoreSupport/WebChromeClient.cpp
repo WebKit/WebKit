@@ -378,7 +378,7 @@ void WebChromeClient::focusedFrameChanged(Frame* frame)
     protect(WebProcess::singleton().parentProcessConnection())->send(Messages::WebPageProxy::FocusedFrameChanged(webFrame ? std::make_optional(webFrame->frameID()) : std::nullopt), m_page->identifier());
 }
 
-RefPtr<Page> WebChromeClient::createWindow(LocalFrame& frame, const String& openedMainFrameName, const WindowFeatures& windowFeatures, const NavigationAction& navigationAction)
+RefPtr<Page> WebChromeClient::createWindow(LocalFrame& frame, Document* creator, const String& openedMainFrameName, const WindowFeatures& windowFeatures, const NavigationAction& navigationAction)
 {
 #if ENABLE(FULLSCREEN_API)
     if (RefPtr document = frame.document())
@@ -452,7 +452,7 @@ RefPtr<Page> WebChromeClient::createWindow(LocalFrame& frame, const String& open
     parameters->oldPageID = page->identifier();
     parameters->isPopup = windowFeatures.wantsPopup();
 
-    webProcess.createWebPage(*newPageID, WTF::move(*parameters));
+    webProcess.createWebPageWithInitialDocumentCreator(*newPageID, WTF::move(*parameters), creator);
     return webProcess.webPage(*newPageID)->corePage();
 }
 

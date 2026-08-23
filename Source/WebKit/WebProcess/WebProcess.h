@@ -104,6 +104,7 @@ enum class UserInterfaceIdiom : uint8_t;
 
 namespace WebCore {
 class CPUMonitor;
+class Document;
 class Frame;
 class PageGroup;
 class SecurityOriginData;
@@ -239,6 +240,7 @@ public:
 
     WebPage* webPage(WebCore::PageIdentifier) const;
     void createWebPage(WebCore::PageIdentifier, WebPageCreationParameters&&);
+    void createWebPageWithInitialDocumentCreator(WebCore::PageIdentifier, WebPageCreationParameters&&, RefPtr<WebCore::Document>);
     Awaitable<unsigned> countWebPagesForTesting();
     void removeWebPage(WebCore::PageIdentifier);
     WebPage* NODELETE focusedWebPage() const;

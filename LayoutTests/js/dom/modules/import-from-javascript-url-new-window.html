@@ -15,7 +15,7 @@ function test() {
 
 // Called from the opened window once import() settles.
 function concludeTest(result, isTypeError) {
-    var pass = isTypeError && result === "TypeError: Cannot import a module from a document with no base URL.";
+    var pass = isTypeError && result === "TypeError: Module name, 'x' does not resolve to a valid URL.";
     document.getElementById("console").textContent = pass ? "PASS" : ("FAIL: " + result);
 
     if (w)
@@ -33,7 +33,7 @@ function concludeTest(result, isTypeError) {
     }
 }
 </script>
-This test passes if import() in the null-URL initial document of a new top-level window rejects with a TypeError instead of crashing the WebContent process.
+This test passes if import() in the initial about:blank document of a new top-level window rejects with a TypeError instead of crashing the WebContent process.
 <div id="console">FAIL, test did not run</div>
 </body>
 </html>

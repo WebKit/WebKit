@@ -722,13 +722,7 @@ Document::Document(LocalFrame* frame, const Settings& settings, const URL& url, 
     setEventTargetFlag(EventTargetFlag::IsConnected);
     addToDocumentsMap();
 
-    // We depend on the url getting immediately set in subframes, but we
-    // also depend on the url NOT getting immediately set in opened windows.
-    // See fast/dom/early-frame-url.html
-    // and fast/dom/location-new-window-no-crash.html, respectively.
-    // FIXME: Can/should we unify this behavior?
-    if ((frame && frame->ownerElement()) || !url.isEmpty())
-        setURL(URL { url });
+    setURL(URL { url });
 
     if (!frame)
         setUsesNullCustomElementRegistry();
@@ -2053,8 +2047,7 @@ void Document::setReadyState(ReadyState readyState)
             if (auto* eventTiming = documentEventTimingFromNavigationTiming())
                 eventTiming->domLoading = now;
             // We do this here instead of in the Document constructor because monotonicTimestamp() is 0 when the Document constructor is running.
-            if (!url().isEmpty())
-                WTFBeginSignpostWithTimeDelta(this, NavigationAndPaintTiming, -Seconds(monotonicTimestamp()), "Loading %" PRIVATE_LOG_STRING " | isMainFrame: %d", url().string().utf8().data(), frame() && frame()->isMainFrame());
+            WTFBeginSignpostWithTimeDelta(this, NavigationAndPaintTiming, -Seconds(monotonicTimestamp()), "Loading %" PRIVATE_LOG_STRING " | isMainFrame: %d", url().string().utf8().data(), frame() && frame()->isMainFrame());
             WTFEmitSignpost(this, NavigationAndPaintTiming, "domLoading");
         }
         break;
@@ -4709,7 +4702,7 @@ void Document::setURL(URL&& url)
 const URL& Document::urlForBindings()
 {
     auto shouldAdjustURL = [this] {
-        if (m_url.url().isEmpty() || !loader() || !isTopDocument() || !frame())
+        if (!loader() || !isTopDocument() || !frame())
             return false;
 
         Ref protectedThis { *this };
@@ -4780,7 +4773,7 @@ const URL& Document::urlForBindings()
     if (shouldAdjustURL)
         return m_adjustedURL;
 
-    return m_url.url().isEmpty() ? aboutBlankURL() : m_url.url();
+    return m_url.url();
 }
 
 URL Document::adjustedURL() const
@@ -4799,12 +4792,15 @@ URL Document::fallbackBaseURL() const
         [](const URL& url) { return url; }
     );
 
-    if (documentURL.isAboutSrcDoc()) {
-        if (auto* parent = parentDocument())
-            return parent->baseURL();
+    if (isSrcdocDocument()) {
+        ASSERT(!m_aboutBaseURL.isNull());
+        return m_aboutBaseURL;
     }
 
     if (documentURL.isAboutBlank()) {
+        if (!m_aboutBaseURL.isNull())
+            return m_aboutBaseURL;
+
         auto* creator = parentDocument();
         if (!creator && frame()) {
             if (auto* localOpener = dynamicDowncast<LocalFrame>(frame()->opener()))
@@ -4947,6 +4943,12 @@ void Document::processSpeculationRules()
 SpeculationRules& Document::speculationRules() const
 {
     return m_speculationRules;
+}
+
+void Document::setAboutBaseURL(const URL& url)
+{
+    m_aboutBaseURL = url;
+    updateBaseURL();
 }
 
 void Document::setBaseURLOverride(const URL& url)
@@ -5780,7 +5782,7 @@ ClonedDocumentType Document::clonedDocumentType() const
 
 Ref<Node> Document::cloneNodeInternal(Document&, CloningOperation type, CustomElementRegistry* registry) const
 {
-    Ref clone = createCloned(clonedDocumentType(), settings(), url(), baseURL(), baseURLOverride(), m_documentURI, m_compatibilityMode, protect(contextDocument()), securityOriginPolicy(), contentType(), protect(decoder()).get());
+    Ref clone = createCloned(clonedDocumentType(), settings(), url(), baseURL(), m_aboutBaseURL, baseURLOverride(), m_documentURI, m_compatibilityMode, protect(contextDocument()), securityOriginPolicy(), contentType(), protect(decoder()).get());
     switch (type) {
     case CloningOperation::SelfOnly:
     case CloningOperation::SelfWithTemplateContent:
@@ -5808,6 +5810,7 @@ SerializedNode Document::serializeNode(CloningOperation type) const
             clonedDocumentType(),
             url(),
             m_baseURL,
+            m_aboutBaseURL,
             m_baseURLOverride,
             m_documentURI,
             contentType(),
@@ -5815,7 +5818,7 @@ SerializedNode Document::serializeNode(CloningOperation type) const
     };
 }
 
-Ref<Document> Document::createCloned(ClonedDocumentType clonedDocumentType, const Settings& settings, const URL& url, const URL& baseURL, const URL& baseURLOverride, const Variant<String, URL>& documentURI, DocumentCompatibilityMode compatibilityMode, Document& contextDocument, SecurityOriginPolicy* securityOriginPolicy, const String& contentType, TextResourceDecoder* decoder)
+Ref<Document> Document::createCloned(ClonedDocumentType clonedDocumentType, const Settings& settings, const URL& url, const URL& baseURL, const URL& aboutBaseURL, const URL& baseURLOverride, const Variant<String, URL>& documentURI, DocumentCompatibilityMode compatibilityMode, Document& contextDocument, SecurityOriginPolicy* securityOriginPolicy, const String& contentType, TextResourceDecoder* decoder)
 {
     Ref clone = [&] -> Ref<Document> {
         switch (clonedDocumentType) {
@@ -5833,8 +5836,9 @@ Ref<Document> Document::createCloned(ClonedDocumentType clonedDocumentType, cons
         RELEASE_ASSERT_NOT_REACHED();
     } ();
 
-    ASSERT(clone->m_url == url);
+    ASSERT(clone->m_url == (url.isEmpty() ? aboutBlankURL() : url));
     clone->m_baseURL = baseURL;
+    clone->m_aboutBaseURL = aboutBaseURL;
     clone->m_baseURLOverride = baseURLOverride;
     clone->m_documentURI = documentURI;
     clone->setCompatibilityMode(compatibilityMode);
@@ -8478,59 +8482,77 @@ void Document::initSecurityContext()
     RefPtr parentDocument = ownerElement() ? &ownerElement()->document() : nullptr;
     if (parentDocument && m_frame->loader().shouldTreatURLAsSrcdocDocument(url())) {
         m_isSrcdocDocument = true;
-        setBaseURLOverride(parentDocument->baseURL());
+        setAboutBaseURL(parentDocument->baseURL());
     }
 
     if (!SecurityPolicy::shouldInheritSecurityOriginFromOwner(m_url))
         return;
 
-    // If we do not obtain a meaningful origin from the URL, then we try to
-    // find one via the frame hierarchy.
+    RefPtr initialDocumentCreator = m_frame->loader().initialDocumentCreator();
+    if (initialDocumentCreator)
+        setAboutBaseURL(initialDocumentCreator->baseURL());
+
+    // If we do not obtain a meaningful origin from the URL, then we use the
+    // initial document's explicit creator or try to find an owner via the frame hierarchy.
     RefPtr parentFrame = m_frame->tree().parent();
     RefPtr openerFrame = dynamicDowncast<LocalFrame>(m_frame->opener());
 
-    RefPtr ownerFrame = dynamicDowncast<LocalFrame>(parentFrame.get());
-    if (!ownerFrame)
-        ownerFrame = openerFrame;
+    RefPtr ownerDocument = initialDocumentCreator;
+    if (!ownerDocument) {
+        RefPtr ownerFrame = dynamicDowncast<LocalFrame>(parentFrame.get());
+        if (!ownerFrame)
+            ownerFrame = openerFrame;
+        if (ownerFrame)
+            ownerDocument = ownerFrame->document();
+    }
 
-    if (!ownerFrame) {
+    if (!ownerDocument) {
         didFailToInitializeSecurityOrigin();
         return;
     }
 
+    if (initialDocumentCreator) {
+        inheritPolicyContainerFrom(initialDocumentCreator->policyContainer());
+        // Unlike WebCore's PolicyContainer, an HTML policy container does not include the opener policy.
+        // The initial document's opener policy is initialized separately below.
+        setCrossOriginOpenerPolicy({ });
+    }
     CheckedPtr contentSecurityPolicy = this->contentSecurityPolicy();
-    contentSecurityPolicy->copyStateFrom(protect(protect(ownerFrame->document())->contentSecurityPolicy()).get());
-    contentSecurityPolicy->updateSourceSelf(protect(ownerFrame->document()->securityOrigin()));
+    if (!initialDocumentCreator)
+        contentSecurityPolicy->copyStateFrom(protect(ownerDocument->contentSecurityPolicy()).get());
+    contentSecurityPolicy->updateSourceSelf(protect(ownerDocument->securityOrigin()));
 
-    setCrossOriginEmbedderPolicy(ownerFrame->document()->crossOriginEmbedderPolicy());
-    setIsOriginKeyed(ownerFrame->document()->isOriginKeyed());
+    setCrossOriginEmbedderPolicy(ownerDocument->crossOriginEmbedderPolicy());
+    setIsOriginKeyed(ownerDocument->isOriginKeyed());
 
     // https://html.spec.whatwg.org/multipage/browsers.html#creating-a-new-browsing-context (Step 12)
     // If creator is non-null and creator's origin is same origin with creator's relevant settings object's top-level origin, then set coop
     // to creator's browsing context's top-level browsing context's active document's cross-origin opener policy.
-    if (m_frame->isMainFrame() && openerFrame && openerFrame->document() && openerFrame->document()->isSameOriginAsTopDocument())
-        setCrossOriginOpenerPolicy(openerFrame->document()->crossOriginOpenerPolicy());
+    if (m_frame->isMainFrame() && ownerDocument->isSameOriginAsTopDocument()) {
+        if (RefPtr topDocument = ownerDocument->mainFrameDocument())
+            setCrossOriginOpenerPolicy(topDocument->crossOriginOpenerPolicy());
+    }
 
     // Per <http://www.w3.org/TR/upgrade-insecure-requests/>, new browsing contexts must inherit from an
     // ongoing set of upgraded requests. When opening a new browsing context, we need to capture its
     // existing upgrade request. Nested browsing contexts are handled during DocumentWriter::begin.
-    if (RefPtr openerDocument = openerFrame ? openerFrame->document() : nullptr)
-        contentSecurityPolicy->inheritInsecureNavigationRequestsToUpgradeFromOpener(*protect(openerDocument->contentSecurityPolicy()));
+    if (m_frame->isMainFrame())
+        contentSecurityPolicy->inheritInsecureNavigationRequestsToUpgradeFromOpener(*protect(ownerDocument->contentSecurityPolicy()));
 
     if (isSandboxed(SandboxFlag::Origin)) {
         // If we're supposed to inherit our security origin from our owner,
         // but we're also sandboxed, the only thing we inherit is the ability
         // to load local resources. This lets about:blank iframes in file://
         // URL documents load images and other resources from the file system.
-        if (ownerFrame->document()->securityOrigin().canLoadLocalResources())
+        if (ownerDocument->securityOrigin().canLoadLocalResources())
             securityOrigin().grantLoadLocalResources();
         return;
     }
 
-    setCookieURL(ownerFrame->document()->cookieURL());
+    setCookieURL(ownerDocument->cookieURL());
     // We alias the SecurityOrigins to match Firefox, see Bug 15313
     // https://bugs.webkit.org/show_bug.cgi?id=15313
-    setSecurityOriginPolicy(ownerFrame->document()->securityOriginPolicy());
+    setSecurityOriginPolicy(ownerDocument->securityOriginPolicy());
 }
 
 void Document::initContentSecurityPolicy()

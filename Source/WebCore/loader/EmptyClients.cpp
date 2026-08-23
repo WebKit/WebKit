@@ -616,7 +616,7 @@ class EmptyVisitedLinkStore final : public VisitedLinkStore {
     void NODELETE addVisitedLink(Page&, SharedStringHash) final { }
 };
 
-RefPtr<Page> EmptyChromeClient::createWindow(LocalFrame&, const String&, const WindowFeatures&, const NavigationAction&)
+RefPtr<Page> EmptyChromeClient::createWindow(LocalFrame&, Document*, const String&, const WindowFeatures&, const NavigationAction&)
 {
     return nullptr;
 }
@@ -1303,7 +1303,8 @@ PageConfiguration pageConfigurationWithEmptyClients(std::optional<PageIdentifier
                 return makeUniqueRefWithoutRefCountedCheck<EmptyFrameLoaderClient>(frameLoader);
             } },
             SandboxFlags::all(),
-            ReferrerPolicy::EmptyString
+            ReferrerPolicy::EmptyString,
+            nullptr
         },
         generateFrameIdentifier(),
         nullptr,

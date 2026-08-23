@@ -1052,10 +1052,15 @@ WebPage* WebProcess::webPage(PageIdentifier pageID) const
 
 void WebProcess::createWebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 {
+    createWebPageWithInitialDocumentCreator(pageID, WTF::move(parameters), nullptr);
+}
+
+void WebProcess::createWebPageWithInitialDocumentCreator(PageIdentifier pageID, WebPageCreationParameters&& parameters, RefPtr<Document> initialDocumentCreator)
+{
     m_hasEverHadAnyWebPages = true;
 
     auto addResult = m_pageMap.ensure(pageID, [&] {
-        return WebPage::create(pageID, WTF::move(parameters));
+        return WebPage::create(pageID, WTF::move(parameters), WTF::move(initialDocumentCreator));
     });
     Ref page { addResult.iterator->value };
 

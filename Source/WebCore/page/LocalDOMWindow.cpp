@@ -2914,6 +2914,8 @@ ExceptionOr<RefPtr<Frame>> LocalDOMWindow::createWindow(const String& urlString,
     if (!newFrame)
         return RefPtr<Frame> { nullptr };
 
+    RefPtr localNewFrame = dynamicDowncast<LocalFrame>(newFrame);
+
     // https://html.spec.whatwg.org/#the-rules-for-choosing-a-navigable
     // Consume user activation when a new browsing context is created.
     if (created == CreatedNewPage::Yes)
@@ -2937,11 +2939,13 @@ ExceptionOr<RefPtr<Frame>> LocalDOMWindow::createWindow(const String& urlString,
     if (window && window->isInsecureScriptAccess(activeWindow, completedURL))
         return noopener ? RefPtr<Frame> { nullptr } : newFrame;
 
-    RefPtr localNewFrame = dynamicDowncast<LocalFrame>(newFrame);
     if (prepareDialogFunction && localNewFrame)
         prepareDialogFunction(*protect(localNewFrame->document()->window()));
 
-    if (created == CreatedNewPage::Yes) {
+    if (created == CreatedNewPage::Yes && localNewFrame && (completedURL.isEmpty() || completedURL.isAboutBlank())) {
+        if (!completedURL.isEmpty() && completedURL != aboutBlankURL())
+            localNewFrame->loader().updateURLAndHistory(completedURL, nullptr);
+    } else if (created == CreatedNewPage::Yes) {
         ResourceRequest resourceRequest { WTF::move(completedURL), referrer, ResourceRequestCachePolicy::UseProtocolCachePolicy };
         FrameLoader::addSameSiteInfoToRequestIfNeeded(resourceRequest, openerDocument.get());
         FrameLoadRequest frameLoadRequest { protect(activeWindow.document()).releaseNonNull(), protect(protect(activeWindow.document())->securityOrigin()), WTF::move(resourceRequest), selfTargetFrameName(), initiatedByMainFrame };

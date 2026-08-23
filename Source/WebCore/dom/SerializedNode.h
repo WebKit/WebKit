@@ -69,6 +69,7 @@ struct SerializedNode {
         ClonedDocumentType type;
         URL url;
         URL baseURL;
+        URL aboutBaseURL;
         URL baseURLOverride;
         Variant<String, URL> documentURI;
         String contentType;

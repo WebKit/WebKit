@@ -379,7 +379,7 @@ private:
     bool m_inProgress { false };
 };
 
-FrameLoader::FrameLoader(LocalFrame& frame, CompletionHandler<UniqueRef<LocalFrameLoaderClient>(LocalFrame&, FrameLoader&)>&& clientCreator)
+FrameLoader::FrameLoader(LocalFrame& frame, CompletionHandler<UniqueRef<LocalFrameLoaderClient>(LocalFrame&, FrameLoader&)>&& clientCreator, RefPtr<Document>&& initialDocumentCreator)
     : m_frame(frame)
     , m_client(clientCreator(frame, *this))
     , m_policyChecker(makeUniqueRef<PolicyChecker>(frame))
@@ -390,6 +390,7 @@ FrameLoader::FrameLoader(LocalFrame& frame, CompletionHandler<UniqueRef<LocalFra
     , m_loadType(FrameLoadType::Standard)
     , m_checkTimer(*this, &FrameLoader::checkTimerFired)
     , m_crossOriginParentSyntheticSameDocLoadEventTimer(*this, &FrameLoader::crossOriginParentSyntheticSameDocLoadEventTimerFired)
+    , m_initialDocumentCreator(WTF::move(initialDocumentCreator))
     , m_documentPrefetcher(DocumentPrefetcher::create(frame))
 {
 }
@@ -422,9 +423,13 @@ LocalFrame& FrameLoader::frame() const
 void FrameLoader::init()
 {
     // This somewhat odd set of steps gives the frame an initial empty document.
-    setPolicyDocumentLoader(m_client->createDocumentLoader(ResourceRequest(URL({ }, emptyString())), SubstituteData()));
+    ResourceRequest initialRequest { URL({ }, emptyString()) };
+    initialRequest.setIsSameSite(true);
+    initialRequest.setIsTopSite(m_frame->isMainFrame());
+    setPolicyDocumentLoader(m_client->createDocumentLoader(WTF::move(initialRequest), SubstituteData()));
     setProvisionalDocumentLoader(m_policyDocumentLoader.copyRef());
     protect(m_provisionalDocumentLoader)->startLoadingMainResource();
+    m_initialDocumentCreator = nullptr;
     setPolicyDocumentLoader(nullptr);
 
     Ref frame = m_frame.get();
@@ -3194,9 +3199,13 @@ void FrameLoader::setOriginalURLForDownloadRequest(ResourceRequest& request)
     URL originalURL;
     RefPtr initiator = m_frame->document();
     if (initiator) {
-        originalURL = initiator->firstPartyForCookies();
-        // If there is no main document URL, it means that this document is newly opened and just for download purpose.
-        // In this case, we need to set the originalURL to this document's opener's main document URL.
+        // Initial top-level documents used to have an empty URL. Preserve the empty original URL used for direct
+        // downloads now that such documents have an explicit about:blank URL.
+        if (!m_frame->isMainFrame() || !m_stateMachine.isDisplayingInitialEmptyDocument())
+            originalURL = initiator->firstPartyForCookies();
+
+        // If there is no main document URL, this document was newly opened just for the download.
+        // In this case, use the opener's main document URL when an opener is available.
         if (originalURL.isEmpty()) {
             if (RefPtr localOpener = dynamicDowncast<LocalFrame>(m_frame->opener()); localOpener && localOpener->document()) {
                 originalURL = localOpener->document()->firstPartyForCookies();
@@ -5115,7 +5124,7 @@ std::pair<RefPtr<Frame>, CreatedNewPage> createWindow(LocalFrame& openerFrame, F
     NavigationAction action { request, NavigationType::Other };
     action.setShouldOpenExternalURLsPolicy(shouldOpenExternalURLsPolicy);
     action.setNewFrameOpenerPolicy(features.wantsNoOpener() ? NewFrameOpenerPolicy::Suppress : NewFrameOpenerPolicy::Allow);
-    RefPtr page = oldPage->chrome().createWindow(openerFrame, openedMainFrameName, features, action);
+    RefPtr page = oldPage->chrome().createWindow(openerFrame, features.wantsNoOpener() ? nullptr : &request.requester(), openedMainFrameName, features, action);
     if (!page)
         return { nullptr, CreatedNewPage::No };
 

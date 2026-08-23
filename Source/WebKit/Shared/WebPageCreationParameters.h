@@ -116,6 +116,7 @@ struct WebPageCreationParameters {
     WebCore::IntSize viewSize { };
 
     OptionSet<WebCore::ActivityState> activityState { };
+    uint64_t activityStateChangeSequence { };
     
     WebPreferencesStore store { };
 #if ENABLE(TILED_CA_DRAWING_AREA)

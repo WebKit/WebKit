@@ -48,8 +48,7 @@ static void analyzeDialogArguments(WKPageRef page, WKFrameRef frame, WKSecurityO
     EXPECT_EQ(page, WKFrameGetPage(frame));
 
     WKRetainPtr<WKURLRef> url = adoptWK(WKFrameCopyURL(frame));
-    WKRetainPtr<WKStringRef> urlString = adoptWK(WKURLCopyString(url.get()));
-    EXPECT_WK_STREQ("about:blank", urlString.get());
+    EXPECT_NULL(url.get());
 
     if (securityOrigin) {
         WKRetainPtr<WKStringRef> protocol = adoptWK(WKSecurityOriginCopyProtocol(securityOrigin));

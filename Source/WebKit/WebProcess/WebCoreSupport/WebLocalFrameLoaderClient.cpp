@@ -952,7 +952,8 @@ LocalFrame* WebLocalFrameLoaderClient::dispatchCreatePage(const NavigationAction
     WindowFeatures windowFeatures;
     windowFeatures.noopener = newFrameOpenerPolicy == NewFrameOpenerPolicy::Suppress;
 
-    RefPtr newPage = webPage->corePage()->chrome().createWindow(protect(m_localFrame), openedMainFrameName, windowFeatures, navigationAction);
+    RefPtr creator = newFrameOpenerPolicy == NewFrameOpenerPolicy::Suppress ? nullptr : m_localFrame->document();
+    RefPtr newPage = webPage->corePage()->chrome().createWindow(protect(m_localFrame), creator.get(), openedMainFrameName, windowFeatures, navigationAction);
     if (!newPage)
         return nullptr;
     

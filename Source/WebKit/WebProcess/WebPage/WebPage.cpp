@@ -546,11 +546,11 @@ public:
     }
 };
 
-Ref<WebPage> WebPage::create(PageIdentifier pageID, WebPageCreationParameters&& parameters)
+Ref<WebPage> WebPage::create(PageIdentifier pageID, WebPageCreationParameters&& parameters, RefPtr<Document> initialDocumentCreator)
 {
     auto mainFrameOpenerIdentifier = parameters.mainFrameOpenerIdentifier;
     String openedMainFrameName = parameters.openedMainFrameName;
-    auto page = adoptRef(*new WebPage(pageID, WTF::move(parameters)));
+    Ref page = adoptRef(*new WebPage(pageID, WTF::move(parameters), WTF::move(initialDocumentCreator)));
 
     if (RefPtr injectedBundle = WebProcess::singleton().injectedBundle())
         injectedBundle->didCreatePage(page);
@@ -602,7 +602,7 @@ static Vector<UserContentURLPattern> parseAndAllowAccessToCORSDisablingPatterns(
     });
 }
 
-static PageConfiguration::MainFrameCreationParameters mainFrameCreationParameters(Ref<WebFrame>&& mainFrame, auto frameType, auto initialSandboxFlags, auto initialReferrerPolicy)
+static PageConfiguration::MainFrameCreationParameters mainFrameCreationParameters(Ref<WebFrame>&& mainFrame, auto frameType, auto initialSandboxFlags, auto initialReferrerPolicy, RefPtr<Document>&& initialDocumentCreator)
 {
     auto invalidator = mainFrame->makeInvalidator();
     switch (frameType) {
@@ -612,7 +612,8 @@ static PageConfiguration::MainFrameCreationParameters mainFrameCreationParameter
                 return makeUniqueRefWithoutRefCountedCheck<WebLocalFrameLoaderClient>(localFrame, frameLoader, WTF::move(mainFrame), WTF::move(invalidator));
             } },
             initialSandboxFlags,
-            initialReferrerPolicy
+            initialReferrerPolicy,
+            WTF::move(initialDocumentCreator)
         };
     case Frame::FrameType::Remote:
         return CompletionHandler<UniqueRef<RemoteFrameClient>(RemoteFrame&)> { [mainFrame = WTF::move(mainFrame), invalidator = WTF::move(invalidator)] (auto&) mutable {
@@ -632,7 +633,7 @@ static RefPtr<Frame> frameFromIdentifier(std::optional<FrameIdentifier> identifi
     return webFrame->coreFrame();
 }
 
-WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
+WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters, RefPtr<Document>&& initialDocumentCreator)
     : m_internals(makeUniqueRef<Internals>())
     , m_identifier(pageID)
     , m_viewSize(parameters.viewSize)
@@ -718,6 +719,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 #endif
     , m_layerVolatilityTimer(*this, &WebPage::layerVolatilityTimerFired)
     , m_activityState(parameters.activityState)
+    , m_activityStateChangeSequence(parameters.activityStateChangeSequence)
     , m_userInterfaceLayoutDirection(parameters.userInterfaceLayoutDirection)
     , m_overrideContentSecurityPolicy { WTF::move(parameters.overrideContentSecurityPolicy) }
     , m_cpuLimit(parameters.cpuLimit)
@@ -811,7 +813,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
         WebBackForwardListProxy::create(*this),
         WebProcess::singleton().cookieJar(),
         makeUniqueRef<WebProgressTrackerClient>(*this),
-        mainFrameCreationParameters(m_mainFrame.copyRef(), frameType, parameters.initialSandboxFlags, parameters.initialReferrerPolicy),
+        mainFrameCreationParameters(m_mainFrame.copyRef(), frameType, parameters.initialSandboxFlags, parameters.initialReferrerPolicy, WTF::move(initialDocumentCreator)),
         m_mainFrame->frameID(),
         frameFromIdentifier(parameters.mainFrameOpenerIdentifier),
         makeUniqueRef<WebSpeechRecognitionProvider>(pageID),
@@ -1758,7 +1760,9 @@ void WebPage::reinitializeWebPage(WebPageCreationParameters&& parameters)
     setObscuredContentInsets(parameters.obscuredContentInsets);
 
     if (m_activityState != parameters.activityState)
-        setActivityState(parameters.activityState, ActivityStateChangeAsynchronous, [] { });
+        setActivityState(parameters.activityState, ActivityStateChangeAsynchronous, parameters.activityStateChangeSequence, [] { });
+    else
+        m_activityStateChangeSequence = std::max(m_activityStateChangeSequence, parameters.activityStateChangeSequence);
 
 #if HAVE(APP_ACCENT_COLORS)
     setAccentColor(parameters.accentColor);
@@ -4853,9 +4857,18 @@ void WebPage::windowActivityDidChange()
 #endif
 }
 
-void WebPage::setActivityState(OptionSet<ActivityState> activityState, ActivityStateChangeID activityStateChangeID, CompletionHandler<void()>&& callback)
+void WebPage::setActivityState(OptionSet<ActivityState> activityState, ActivityStateChangeID activityStateChangeID, uint64_t activityStateChangeSequence, CompletionHandler<void()>&& callback)
 {
     LOG_WITH_STREAM(ActivityState, stream << "WebPage " << identifier().toUInt64() << " setActivityState to " << activityState);
+
+    if (activityStateChangeSequence < m_activityStateChangeSequence) {
+        // Synchronous page creation can overtake previously sent asynchronous activity state messages. Replaying
+        // their visibility state would temporarily hide the new page, but other changes can represent observable
+        // transitions, such as focus events, and still need to be applied.
+        static constexpr OptionSet visibilityState { ActivityState::IsVisible, ActivityState::IsVisibleOrOccluded, ActivityState::IsVisuallyIdle };
+        activityState = (activityState - visibilityState) | (m_activityState & visibilityState);
+    } else
+        m_activityStateChangeSequence = activityStateChangeSequence;
 
     auto changed = m_activityState ^ activityState;
     m_activityState = activityState;
@@ -8642,7 +8655,12 @@ void WebPage::loadAndDecodeImage(WebCore::ResourceRequest&& request, std::option
     if (!page)
         return completionHandler(makeUnexpected(decodeError(url)));
 
-    request.setFirstPartyForCookies(page->mainFrameURL());
+    RefPtr localMainFrame = page->localMainFrame();
+    RefPtr mainFrameDocument = localMainFrame ? localMainFrame->document() : nullptr;
+    if (mainFrameDocument)
+        request.setFirstPartyForCookies(mainFrameDocument->firstPartyForCookies());
+    else
+        request.setFirstPartyForCookies(page->mainFrameURL());
     WebProcess::singleton().ensureNetworkProcessConnection().connection().sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::LoadImageForDecoding(WTF::move(request), m_webPageProxyIdentifier, maximumBytesFromNetwork), [completionHandler = WTF::move(completionHandler), sizeConstraint, url] (Expected<Ref<WebCore::FragmentedSharedBuffer>, WebCore::ResourceError>&& result) mutable {
         if (!result)
             return completionHandler(makeUnexpected(WTF::move(result.error())));

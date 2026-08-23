@@ -176,6 +176,7 @@ namespace WebCore {
 class AXIsolatedTree;
 class CachedPage;
 class CaptureDevice;
+class Document;
 class DocumentLoader;
 class DocumentSyncData;
 class DragData;
@@ -618,7 +619,7 @@ String plainTextForDisplay(const std::optional<WebCore::SimpleRange>&);
 
 class WebPage final : public API::ObjectImpl<API::Object::Type::BundlePage>, public IPC::MessageReceiver, public IPC::MessageSender {
 public:
-    static Ref<WebPage> create(WebCore::PageIdentifier, WebPageCreationParameters&&);
+    static Ref<WebPage> create(WebCore::PageIdentifier, WebPageCreationParameters&&, RefPtr<WebCore::Document> initialDocumentCreator = nullptr);
 
     virtual ~WebPage();
 
@@ -2253,7 +2254,7 @@ public:
     void updateRemoteIntersectionObservers();
 
 private:
-    WebPage(WebCore::PageIdentifier, WebPageCreationParameters&&);
+    WebPage(WebCore::PageIdentifier, WebPageCreationParameters&&, RefPtr<WebCore::Document>&&);
 
     void constructFrameTree(WebFrame& parent, const FrameTreeCreationParameters&);
 
@@ -2386,7 +2387,7 @@ private:
     void updateIsInWindow(bool isInitialState = false);
     void visibilityDidChange();
     void windowActivityDidChange();
-    void setActivityState(OptionSet<WebCore::ActivityState>, ActivityStateChangeID, CompletionHandler<void()>&&);
+    void setActivityState(OptionSet<WebCore::ActivityState>, ActivityStateChangeID, uint64_t activityStateChangeSequence, CompletionHandler<void()>&&);
     void validateCommand(const String&, CompletionHandler<void(bool, int32_t)>&&);
     void executeEditCommand(const String&, const String&);
     void setEditable(bool);
@@ -3275,6 +3276,7 @@ private:
     bool m_useAsyncScrolling { false };
 
     OptionSet<WebCore::ActivityState> m_activityState;
+    uint64_t m_activityStateChangeSequence { };
 
     bool m_isAppNapEnabled { true };
 
