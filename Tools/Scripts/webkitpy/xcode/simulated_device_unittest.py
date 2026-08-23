@@ -21,6 +21,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import json
+import plistlib
 import unittest
 
 from webkitcorepy import Version
@@ -29,6 +30,7 @@ from webkitpy.common.system.executive_mock import MockExecutive2
 from webkitpy.common.system.filesystem_mock import MockFileSystem
 from webkitpy.common.system.systemhost_mock import MockSystemHost
 from webkitpy.xcode.device_type import DeviceType
+from webkitpy.xcode import simulated_device
 from webkitpy.xcode.simulated_device import DeviceRequest, SimulatedDeviceManager, SimulatedDevice
 
 simctl_json_output = """{
@@ -655,3 +657,95 @@ class SimulatedDeviceTest(unittest.TestCase):
 
         for device in devices:
             self.assertEqual(SimulatedDevice.DeviceState.SHUT_DOWN, device.state(force_update=True))
+
+
+class LaunchdConfigurationBeforeBootTest(unittest.TestCase):
+    """Configuration a device needs launchd to have is written before it boots, so it applies to the boot itself.
+    webkitpy defines the configuration; ports add to it through apple_additions."""
+
+    class FakeDevice(object):
+        udid = 'UDID-1'
+
+        def __init__(self, configuration):
+            self.platform_device = self
+            self.launchd_configuration = configuration
+
+    def _write(self, configuration, files=None):
+        host = MockSystemHost(filesystem=MockFileSystem(files=files or {}))
+        SimulatedDeviceManager._configure_launchd_before_booting(self.FakeDevice(configuration), host)
+        return host
+
+    def _path(self, name='example.plist'):
+        return '/private/var/tmp/com.apple.CoreSimulator.SimDevice.UDID-1/' + name
+
+    def test_configuration_is_written_before_boot(self):
+        host = self._write({'example.plist': {'first': True, 'second': False}})
+        self.assertEqual(
+            plistlib.loads(host.filesystem.read_binary_file(self._path())),
+            {'first': True, 'second': False})
+
+    def test_every_named_file_is_written(self):
+        host = self._write({'one.plist': {'a': True}, 'two.plist': {'b': True}})
+        self.assertEqual(plistlib.loads(host.filesystem.read_binary_file(self._path('one.plist'))), {'a': True})
+        self.assertEqual(plistlib.loads(host.filesystem.read_binary_file(self._path('two.plist'))), {'b': True})
+
+    def test_nothing_written_without_configuration(self):
+        host = self._write({})
+        self.assertFalse(host.filesystem.exists(self._path()))
+
+    def test_existing_keys_are_kept(self):
+        existing = plistlib.dumps({'keep': False})
+        host = self._write({'example.plist': {'first': True}}, files={self._path(): existing})
+        self.assertEqual(
+            plistlib.loads(host.filesystem.read_binary_file(self._path())),
+            {'keep': False, 'first': True})
+
+    def test_unreadable_file_is_replaced_rather_than_raising(self):
+        host = self._write({'example.plist': {'first': True}}, files={self._path(): b'not a plist'})
+        self.assertEqual(plistlib.loads(host.filesystem.read_binary_file(self._path())), {'first': True})
+
+    def test_failure_to_write_is_not_fatal(self):
+        host = MockSystemHost(filesystem=MockFileSystem())
+
+        def refuse(path, contents):
+            raise IOError('read-only')
+
+        host.filesystem.write_binary_file = refuse
+        # A device that boots unconfigured is better than a run that cannot start.
+        SimulatedDeviceManager._configure_launchd_before_booting(
+            self.FakeDevice({'example.plist': {'first': True}}), host)
+
+
+class LaunchdStateCleanupTest(unittest.TestCase):
+    """The configuration we write lives in the device's temp directory, so it goes away when the device does."""
+
+    def test_state_directory_is_removed_on_tear_down(self):
+        SimulatedDeviceTest.reset_simulated_device_manager()
+        host = SimulatedDeviceTest.mock_host_for_simctl()
+        devices = SimulatedDeviceManager.available_devices(host)
+        self.assertTrue(devices)
+
+        device = devices[0]
+        SimulatedDeviceManager.INITIALIZED_DEVICES = [device]
+        path = host.filesystem.join(
+            SimulatedDeviceManager.launchd_state_path.format(device.udid), 'disabled.plist')
+        host.filesystem.maybe_make_directory(host.filesystem.dirname(path))
+        host.filesystem.write_binary_file(path, b'contents')
+        self.assertTrue(host.filesystem.exists(path))
+
+        SimulatedDeviceManager.tear_down(host)
+        self.assertFalse(host.filesystem.exists(path), 'the plist we wrote should not outlive the device')
+
+
+class LaunchdConfigurationDefaultTest(unittest.TestCase):
+    """webkitpy defines the configuration a simulator boots with; apple_additions only adds to it."""
+
+    def test_chronod_is_disabled_by_default(self):
+        host = SimulatedDeviceTest.mock_host_for_simctl()
+        SimulatedDeviceTest.reset_simulated_device_manager()
+        devices = SimulatedDeviceManager.available_devices(host)
+        self.assertTrue(devices)
+        # FIXME: rdar://129075664
+        self.assertEqual(
+            devices[0].platform_device.launchd_configuration.get('disabled.plist'),
+            {'com.apple.chronod': True})

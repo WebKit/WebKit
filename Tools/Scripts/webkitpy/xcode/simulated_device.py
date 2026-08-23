@@ -24,6 +24,7 @@ import atexit
 import json
 import logging
 import os
+import plistlib
 import re
 import time
 
@@ -81,6 +82,7 @@ class SimulatedDeviceManager(object):
     xcrun = '/usr/bin/xcrun'
     simulator_device_path = '~/Library/Developer/CoreSimulator/Devices'
     simulator_bundle_id = 'com.apple.iphonesimulator'
+    launchd_state_path = '/private/var/tmp/com.apple.CoreSimulator.SimDevice.{}'
     _device_identifier_to_name = {}
     _managing_simulator_app = False
     _last_updated_state = 0
@@ -373,11 +375,44 @@ class SimulatedDeviceManager(object):
             state = device.platform_device.is_usable(force_update=True)
 
     @staticmethod
+    def _configure_launchd_before_booting(device, host):
+        """Puts the device's launchd configuration in place before the simulator starts.
+
+        launchd_sim reads its configuration as it starts, so what is written here applies to the boot itself rather
+        than having to be applied to a running device afterwards. The directory is named after the UDID, which is
+        known before the device boots.
+
+        On a key this configuration sets, its value wins; other pre-existing keys the runtime shipped are preserved."""
+        configuration = getattr(device.platform_device, 'launchd_configuration', None)
+        if not configuration:
+            return
+
+        directory = SimulatedDeviceManager.launchd_state_path.format(device.udid)
+        for name, entries in configuration.items():
+            path = host.filesystem.join(directory, name)
+            contents = {}
+            if host.filesystem.exists(path):
+                try:
+                    contents = plistlib.loads(host.filesystem.read_binary_file(path))
+                except Exception as error:
+                    _log.warning(u'Could not read {}, replacing it: {}'.format(path, error))
+            contents.update(entries)
+            try:
+                host.filesystem.maybe_make_directory(directory)
+                host.filesystem.write_binary_file(path, plistlib.dumps(contents))
+                _log.debug(u'Wrote {} for {} before booting'.format(name, device.udid))
+            except Exception as error:
+                # Not fatal: the device still boots, just without this configuration.
+                _log.warning(u'Could not write {} for {} before booting: {}'.format(name, device.udid, error))
+
+    @staticmethod
     def _boot_device(device, host=None):
         host = host or SystemHost.get_default()
 
         # FIXME: remove this workaround after rdar://129789675 has been resolved.
         host.executive.run_command(['sh', '-c', "mkdir -m 700 -p " + "~/Library/Developer/CoreSimulator/Devices/" + device.udid + "/data/private/var/db"])
+
+        SimulatedDeviceManager._configure_launchd_before_booting(device, host)
 
         _log.debug(u"Booting device '{}'".format(device.udid))
         device.platform_device.booted_by_script = True
@@ -536,6 +571,10 @@ class SimulatedDeviceManager(object):
             return
 
         deadline = time.time() + timeout
+        launchd_state_directories = [
+            SimulatedDeviceManager.launchd_state_path.format(device.udid)
+            for device in SimulatedDeviceManager.INITIALIZED_DEVICES if device
+        ]
         while SimulatedDeviceManager.INITIALIZED_DEVICES:
             device = SimulatedDeviceManager.INITIALIZED_DEVICES[0]
             if device is None:
@@ -544,6 +583,9 @@ class SimulatedDeviceManager(object):
             device.platform_device._tear_down(deadline - time.time())
 
         SimulatedDeviceManager.INITIALIZED_DEVICES = None
+
+        for directory in launchd_state_directories:
+            host.filesystem.rmtree(directory)
 
         # If we were managing the simulator, there are some cache files we need to remove
         for directory in host.filesystem.glob('/tmp/com.apple.CoreSimulator.SimDevice.*'):
@@ -589,12 +631,17 @@ class SimulatedDevice(object):
         self.filesystem = host.filesystem
         self.platform = host.platform
 
-        self.environment_extras = [
-            [SimulatedDeviceManager.xcrun, 'simctl', 'spawn', self.udid, 'launchctl', 'unload', '-w', f'{runtime_root}/System/Library/LaunchDaemons/com.apple.chronod.plist'],  # FIXME: rdar://129075664
-        ]
+        self.launchd_configuration = {
+            'disabled.plist': {'com.apple.chronod': True},  # FIXME: rdar://129075664
+        }
+
+        self.environment_extras = []
 
         if apple_additions():
             self.environment_extras.extend(apple_additions().environment_extras(udid))
+            additional = getattr(apple_additions(), 'launchd_configuration', lambda: {})() or {}
+            for plist_name, entries in additional.items():
+                self.launchd_configuration.setdefault(plist_name, {}).update(entries)
 
         # Determine tear down behavior
         self.booted_by_script = False
