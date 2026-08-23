@@ -7114,7 +7114,7 @@ void HTMLMediaElement::userCancelledLoad(ShouldDestroyMediaPlayer shouldDestroyM
     updateActiveTextTrackCues(MediaTime::zeroTime());
 }
 
-void HTMLMediaElement::clearMediaPlayer()
+void HTMLMediaElement::clearMediaPlayer() WTF_IGNORES_THREAD_SAFETY_ANALYSIS
 {
     invalidateWatchtimeTimer();
     invalidateBufferingStopwatch();
@@ -7154,6 +7154,12 @@ void HTMLMediaElement::clearMediaPlayer()
     }
 
     if (RefPtr player = m_player) {
+#if ENABLE(WEB_AUDIO)
+        RefPtr audioSourceNode = m_audioSourceNode.get();
+        std::optional<Locker<Lock>> audioSourceNodeLocker;
+        if (audioSourceNode)
+            audioSourceNodeLocker.emplace(audioSourceNode->processLock());
+#endif
         player->invalidate();
         m_player = nullptr;
     }
