@@ -411,7 +411,7 @@ void TextBoxPainter::paintForegroundAndDecorations()
     auto hasSelectionDecoration = [&] {
         if (!shouldPaintSelectionForeground)
             return false;
-        auto selectionStyle = m_renderer->selectionPseudoStyle();
+        CheckedPtr selectionStyle = m_renderer->selectionPseudoStyle();
         return selectionStyle && !selectionStyle->textDecorationLineInEffect().isNone();
     };
 

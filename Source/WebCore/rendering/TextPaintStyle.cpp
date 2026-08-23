@@ -167,7 +167,7 @@ TextPaintStyle computeTextSelectionPaintStyle(const TextPaintStyle& textPaintSty
         selectionPaintStyle.emphasisMarkColor = emphasisMarkForeground;
 
     RefPtr view = renderer.frame().view();
-    if (auto pseudoStyle = renderer.selectionPseudoStyle()) {
+    if (CheckedPtr pseudoStyle = renderer.selectionPseudoStyle()) {
         selectionPaintStyle.hasExplicitlySetFillColor = pseudoStyle->hasExplicitlySetColor();
         selectionShadow = paintInfo.forceTextColor() ? Style::TextShadows { CSS::Keyword::None { } } : pseudoStyle->textShadow();
         auto viewportSize = view ? view->size() : IntSize();

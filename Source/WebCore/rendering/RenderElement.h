@@ -122,7 +122,7 @@ public:
 
     bool hasEligibleContainmentForSizeQuery() const;
 
-    std::unique_ptr<Style::ComputedStyle> selectionPseudoStyle() const;
+    const Style::ComputedStyle* selectionPseudoStyle() const LIFETIME_BOUND;
 
     // Obtains the selection colors that should be used when painting a selection.
     Color selectionBackgroundColor() const;

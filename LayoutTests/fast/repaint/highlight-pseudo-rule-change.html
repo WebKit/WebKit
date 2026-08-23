@@ -32,8 +32,6 @@ getSelection().addRange(range(selectionTarget));
 const ruleFor = id => [...document.styleSheets[0].cssRules].find(rule => rule.selectorText && rule.selectorText.includes(id));
 
 // A mutation confined to a highlight pseudo-element must still repaint the originating element.
-// FIXME: ::selection still reports NO REPAINT, because selectionPseudoStyle() resolves without
-// caching, so there is no previous value to compare against.
 // These cases depend on the highlight pseudo styles having been resolved and cached by painting,
 // the way they are on a real page. A display with nothing dirty may not repaint the text at all, so
 // dirty the page first, otherwise there is no previous style to compare against and the test is flaky.
