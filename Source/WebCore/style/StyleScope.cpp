@@ -548,7 +548,7 @@ void Scope::updateActiveStyleSheets(UpdateType updateType)
     RELEASE_ASSERT(!m_isUpdatingStyleResolver);
     ASSERT(!m_pendingUpdate);
 
-    if (m_document->renderTreeState() != Document::RenderTreeState::Built)
+    if (!m_document->canEverRender())
         return;
 
     if (m_document->inStyleRecalc() || m_document->inRenderTreeUpdate()) {
@@ -817,10 +817,10 @@ void Scope::pendingUpdateTimerFired()
 const Vector<Ref<StyleSheet>>& Scope::styleSheetsForStyleSheetList()
 {
     // FIXME: StyleSheetList content should be updated separately from style resolver updates.
-    if (m_document->renderTreeState() == Document::RenderTreeState::Built)
+    if (m_document->canEverRender())
         flushPendingUpdate();
     else if (m_pendingUpdate) {
-        // Documents without a living render tree (e.g. created by DOMParser) can't do full
+        // Documents that never make renderers (e.g. created by DOMParser) can't do full
         // style updates but should still have an accessible styleSheets collection per spec.
         m_pendingUpdate = { };
         m_styleSheetsForStyleSheetList = collectActiveStyleSheets().styleSheetsForStyleSheetList;

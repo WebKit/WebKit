@@ -4164,6 +4164,11 @@ bool Document::isFullyActive() const
     return frame->isMainFrame() || frame->loader().client().isProvisionalFrame();
 }
 
+bool Document::canEverRender() const
+{
+    return isFullyActive() && !m_isNonRenderedPlaceholder;
+}
+
 // https://html.spec.whatwg.org/multipage/interaction.html#fully-active-descendant-of-a-top-level-traversable-with-user-attention
 // "System focus" here is a property of the top-level traversable (the window), not of this
 // frame's subtree, so it checks FocusController window state rather than Document::hasFocus().

@@ -235,7 +235,7 @@ void HistoryController::saveDocumentState()
 
     ASSERT(m_frame->document());
     Ref document = *m_frame->document();
-    if (item->isCurrentDocument(document) && document->renderTreeState() == Document::RenderTreeState::Built) {
+    if (item->isCurrentDocument(document) && document->canEverRender()) {
         if (RefPtr documentLoader = document->loader())
             item->setShouldOpenExternalURLsPolicy(documentLoader->shouldOpenExternalURLsPolicyToPropagate());
 

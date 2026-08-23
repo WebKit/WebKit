@@ -846,6 +846,8 @@ public:
     };
     RenderTreeState renderTreeState() const { return m_renderTreeState; }
 
+    WEBCORE_EXPORT bool canEverRender() const;
+
     void updateRenderTree(std::unique_ptr<Style::Update> styleUpdate);
 
     bool updateLayoutIfDimensionsOutOfDate(Element&, OptionSet<DimensionsCheck> = { DimensionsCheck::Width, DimensionsCheck::Height }, OptionSet<LayoutOptions> = { });

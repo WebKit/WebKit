@@ -880,7 +880,7 @@ static Node::Editability NODELETE computeEditabilityFromComputedStyle(const Styl
 
 Node::Editability Node::computeEditabilityWithStyle(const Style::ComputedStyle* incomingStyle, UserSelectAllTreatment treatment, ShouldUpdateStyle shouldUpdateStyle) const
 {
-    if (document().renderTreeState() != Document::RenderTreeState::Built || isPseudoElement())
+    if (!document().canEverRender() || isPseudoElement())
         return Editability::ReadOnly;
 
     Ref document = this->document();
