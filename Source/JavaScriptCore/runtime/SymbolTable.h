@@ -351,7 +351,7 @@ private:
         return std::bit_cast<FatEntry*>(m_bits);
     }
     
-    void NODELETE inflate();
+    JS_EXPORT_PRIVATE void NODELETE inflate();
     
     ALWAYS_INLINE intptr_t bits() const
     {
