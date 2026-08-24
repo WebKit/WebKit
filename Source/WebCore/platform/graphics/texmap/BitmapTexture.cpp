@@ -36,6 +36,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/StdLibExtras.h>
 
 #if USE(CAIRO)
 #include "CairoUtilities.h"
@@ -338,20 +339,17 @@ void BitmapTexture::updateContents(const void* srcData, const IntRect& targetRec
 
     // prepare temporaryData if necessary
     if (requireSubImageBuffer) {
-        WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib/Win port
-        temporaryData.resize(targetRect.width() * targetRect.height() * bytesPerPixel);
-        auto dst = temporaryData.mutableSpan().data();
-        data = dst;
-        auto bits = static_cast<const uint8_t*>(srcData);
-        auto src = bits + sourceOffset.y() * bytesPerLine + sourceOffset.x() * bytesPerPixel;
         const int targetBytesPerLine = targetRect.width() * bytesPerPixel;
-        for (int y = 0; y < targetRect.height(); ++y) {
-            memcpy(dst, src, targetBytesPerLine);
-            src += bytesPerLine;
-            dst += targetBytesPerLine;
-        }
-        WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+        const size_t targetHeight = targetRect.height();
+        const size_t sourceStart = sourceOffset.y() * bytesPerLine + sourceOffset.x() * bytesPerPixel;
+        auto src = unsafeMakeSpan(static_cast<const uint8_t*>(srcData), sourceStart + targetHeight * bytesPerLine).subspan(sourceStart);
 
+        temporaryData.resize(targetRect.width() * targetRect.height() * bytesPerPixel);
+        auto dst = temporaryData.mutableSpan();
+        for (size_t y = 0; y < targetHeight; ++y)
+            memcpySpan(dst.subspan(y * targetBytesPerLine, targetBytesPerLine), src.subspan(y * bytesPerLine, targetBytesPerLine));
+
+        data = dst.data();
         bytesPerLine = targetBytesPerLine;
         adjustedSourceOffset = IntPoint(0, 0);
     }
