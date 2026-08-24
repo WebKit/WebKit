@@ -71,7 +71,7 @@ function minimumUuidForResults(results, limit) {
 
 function commitsForResults(results, limit, allCommits = true) {
     const minDisplayedUuid = minimumUuidForResults(results, limit);
-    let commits = [];
+    let commitsByUuid = new Map();
     let repositories = new Set();
     let currentCommitIndex = CommitBank.commits.length - 1;
     Object.keys(results).forEach((key) => {
@@ -83,6 +83,7 @@ function commitsForResults(results, limit, allCommits = true) {
 
                 if (!allCommits)
                     currentCommitIndex = CommitBank.commits.length - 1;
+
                 while (currentCommitIndex >= 0) {
                     if (CommitBank.commits[currentCommitIndex].uuid < result.uuid)
                         break;
@@ -90,30 +91,26 @@ function commitsForResults(results, limit, allCommits = true) {
                         candidateCommits.push(CommitBank.commits[currentCommitIndex]);
                     --currentCommitIndex;
                 }
+
                 if (candidateCommits.length === 0 || candidateCommits[candidateCommits.length - 1].uuid !== result.uuid)
                     candidateCommits.push({
                         id: '?',
                         uuid: result.uuid,
                     });
 
-                let index = 0;
                 candidateCommits.forEach(commit => {
                     if (commit.repository_id)
                         repositories.add(commit.repository_id);
-                    while (index < commits.length) {
-                        if (commit.uuid === commits[index].uuid)
-                            return;
-                        if (commit.uuid > commits[index].uuid) {
-                            commits.splice(index, 0, commit);
-                            return;
-                        }
-                        ++index;
-                    }
-                    commits.push(commit);
+                    if (!commitsByUuid.has(commit.uuid))
+                        commitsByUuid.set(commit.uuid, commit);
                 });
             });
         });
     });
+
+    let commits = [...commitsByUuid.values()];
+    commits.sort((a, b) => b.uuid - a.uuid);
+
     if (currentCommitIndex >= 0 && commits.length) {
         let trailingRepositories = new Set(repositories);
         trailingRepositories.delete(commits[commits.length - 1].repository_id);
@@ -127,26 +124,23 @@ function commitsForResults(results, limit, allCommits = true) {
         }
     }
 
-    repositories = [...repositories];
-    repositories.sort();
     return commits;
 }
 
 function scaleForCommits(commits) {
-    let scale = [];
+    let scale = Array.from({length: commits.length}, () => ({}));
     for (let i = commits.length - 1; i >= 0; --i) {
         const repository_id = commits[i].repository_id ? commits[i].repository_id : '?';
-        scale.unshift({});
-        scale[0][repository_id] = commits[i];
-        if (scale.length < 2)
+        scale[i][repository_id] = commits[i];
+        if (i === commits.length - 1)
             continue;
-        Object.keys(scale[1]).forEach((key) => {
+        Object.keys(scale[i + 1]).forEach((key) => {
             if (key === repository_id || key === '?' || key === 'uuid')
                 return;
-            scale[0][key] = scale[1][key];
+            scale[i][key] = scale[i + 1][key];
         });
-        scale[0].uuid = Math.max(...Object.keys(scale[0]).map((key) => {
-            return scale[0][key].uuid;
+        scale[i].uuid = Math.max(...Object.keys(scale[i]).map((key) => {
+            return scale[i][key].uuid;
         }));
     }
     return scale;
