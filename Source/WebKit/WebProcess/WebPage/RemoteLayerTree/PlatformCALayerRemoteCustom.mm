@@ -32,8 +32,8 @@
 #import "WebProcess.h"
 #import <AVFoundation/AVFoundation.h>
 #import <WebCore/GraphicsLayerCA.h>
-#import <WebCore/HTMLVideoElement.h>
 #import <WebCore/PlatformCALayerCocoa.h>
+#import <WebCore/VideoLayerContext.h>
 #import <WebCore/WebCoreCALayerExtras.h>
 #import <WebCore/WebLayer.h>
 #import <wtf/RetainPtr.h>
@@ -66,10 +66,10 @@ Ref<PlatformCALayerRemote> PlatformCALayerRemoteCustom::create(Ref<WebCore::Mode
 #endif
 
 #if HAVE(AVKIT)
-Ref<PlatformCALayerRemote> PlatformCALayerRemoteCustom::create(WebCore::HTMLVideoElement& videoElement, PlatformCALayerClient* owner, RemoteLayerTreeContext& context)
+Ref<PlatformCALayerRemote> PlatformCALayerRemoteCustom::create(const WebCore::VideoLayerContext& videoLayerContext, WebCore::HTMLVideoElement& videoElement, PlatformCALayerClient* owner, RemoteLayerTreeContext& context)
 {
-    auto layer = adoptRef(*new PlatformCALayerRemoteCustom(videoElement, owner, context));
-    context.layerDidEnterContext(layer.get(), layer->layerType(), videoElement);
+    Ref layer = adoptRef(*new PlatformCALayerRemoteCustom(videoLayerContext, owner, context));
+    context.layerDidEnterContext(layer.get(), layer->layerType(), videoLayerContext, videoElement);
     return WTF::move(layer);
 }
 #endif
@@ -80,8 +80,8 @@ PlatformCALayerRemoteCustom::PlatformCALayerRemoteCustom(WebCore::PlatformCALaye
     m_layerHostingContext = LayerHostingContext::createTransportLayerForRemoteHosting(hostedContextIdentifier);
 }
 
-PlatformCALayerRemoteCustom::PlatformCALayerRemoteCustom(HTMLVideoElement& videoElement, PlatformCALayerClient* owner, RemoteLayerTreeContext& context)
-    : PlatformCALayerRemoteCustom(PlatformCALayer::LayerType::LayerTypeAVPlayerLayer, videoElement.layerHostingContext().contextID, owner, context)
+PlatformCALayerRemoteCustom::PlatformCALayerRemoteCustom(const WebCore::VideoLayerContext& videoLayerContext, PlatformCALayerClient* owner, RemoteLayerTreeContext& context)
+    : PlatformCALayerRemoteCustom(PlatformCALayer::LayerType::LayerTypeAVPlayerLayer, videoLayerContext.hostingContext.contextID, owner, context)
 {
     m_hasVideo = true;
 }

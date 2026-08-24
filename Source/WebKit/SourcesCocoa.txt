@@ -71,6 +71,7 @@ NetworkProcess/webrtc/NetworkRTCUDPSocketCocoa.mm @nonARC
 GPUProcess/EntryPoint/Cocoa/XPCService/GPUServiceEntryPoint.mm @nonARC
 GPUProcess/cocoa/GPUConnectionToWebProcessCocoa.mm @nonARC
 GPUProcess/cocoa/GPUProcessCocoa.mm @nonARC
+GPUProcess/cocoa/RemoteLayerHostingManager.mm @nonARC
 GPUProcess/graphics/Model/MeshImpl.cpp
 GPUProcess/graphics/Model/WebKitMesh.mm
 GPUProcess/graphics/RemoteGraphicsContextGLCocoa.cpp
@@ -464,6 +465,7 @@ UIProcess/Cocoa/PlatformWritingToolsUtilities.mm @nonARC
 UIProcess/Cocoa/PlatformXRCoordinator.mm @nonARC
 UIProcess/Cocoa/PlaybackSessionManagerProxy.mm @nonARC
 UIProcess/Cocoa/ProcessAssertionCocoa.mm @nonARC
+UIProcess/Cocoa/RemoteLayerHostingManagerProxy.mm @nonARC
 UIProcess/Cocoa/ResourceLoadDelegate.mm @nonARC
 UIProcess/Cocoa/SafeBrowsingUtilities.mm @nonARC
 UIProcess/Cocoa/SecurityFlagsControllerCocoa.mm @nonARC
@@ -498,6 +500,8 @@ UIProcess/Cocoa/WKTextEffectManager.mm @nonARC
 UIProcess/Cocoa/WKTextPlaceholder.mm @nonARC
 UIProcess/Cocoa/WKTextSelectionRect.mm @nonARC
 UIProcess/Cocoa/WKWebViewContentProviderRegistry.mm @nonARC
+UIProcess/Cocoa/WKVideoLayerHost.mm @nonARC
+UIProcess/Cocoa/WKVideoLayerHostView.mm @nonARC
 
 UIProcess/DigitalCredentials/WKDigitalCredentialsPicker.mm @nonARC
 
@@ -975,6 +979,8 @@ RemoteImageBufferSetMessageReceiver.cpp @cost:5
 RemoteImageDecoderAVFManagerMessageReceiver.cpp
 RemoteImageDecoderAVFProxyMessageReceiver.cpp
 RemoteLayerTreeDrawingAreaProxyMessageReceiver.cpp
+RemoteLayerHostingManagerMessageReceiver.cpp
+RemoteLayerHostingManagerProxyMessageReceiver.cpp
 RemoteLegacyCDMFactoryProxyMessageReceiver.cpp
 RemoteLegacyCDMProxyMessageReceiver.cpp
 RemoteLegacyCDMSessionMessageReceiver.cpp

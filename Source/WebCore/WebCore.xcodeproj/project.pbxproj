@@ -6899,6 +6899,7 @@
 		E3B2F0F01D7F4CB500B0C9D1 /* LoadableClassicScript.h in Headers */ = {isa = PBXBuildFile; fileRef = E3B2F0E41D7F35EC00B0C9D1 /* LoadableClassicScript.h */; };
 		E3BBC24723835526006EC39F /* CSSValueKey.h in Headers */ = {isa = PBXBuildFile; fileRef = E3BBC2452383551A006EC39F /* CSSValueKey.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E3BFBA6C2E036BE600A38E4F /* HostingContext.h in Headers */ = {isa = PBXBuildFile; fileRef = E3BFBA6B2E036BE600A38E4F /* HostingContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		CD9A10022F70000200AA0002 /* VideoLayerContext.h in Headers */ = {isa = PBXBuildFile; fileRef = CD9A10012F70000100AA0001 /* VideoLayerContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E3C0412F254CA29B0021D0E6 /* SystemSoundManager.h in Headers */ = {isa = PBXBuildFile; fileRef = E3C0412D254CA29B0021D0E6 /* SystemSoundManager.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E3C04138254CB30D0021D0E6 /* SystemSoundDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = E3C04131254CA6660021D0E6 /* SystemSoundDelegate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E3C788EE2D035C9500D6C13D /* LogClient.h in Headers */ = {isa = PBXBuildFile; fileRef = E3C788ED2D035C9500D6C13D /* LogClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -22805,6 +22806,7 @@
 		E3BF19E622AF302A009C9926 /* HashChangeEvent.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = HashChangeEvent.cpp; sourceTree = "<group>"; };
 		E3BF19E722AF309F009C9926 /* SecurityPolicyViolationEvent.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SecurityPolicyViolationEvent.cpp; sourceTree = "<group>"; };
 		E3BFBA6B2E036BE600A38E4F /* HostingContext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HostingContext.h; sourceTree = "<group>"; };
+		CD9A10012F70000100AA0001 /* VideoLayerContext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VideoLayerContext.h; sourceTree = "<group>"; };
 		E3C0412D254CA29B0021D0E6 /* SystemSoundManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SystemSoundManager.h; sourceTree = "<group>"; };
 		E3C04131254CA6660021D0E6 /* SystemSoundDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SystemSoundDelegate.h; sourceTree = "<group>"; };
 		E3C04132254CA7110021D0E6 /* SystemSoundManager.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SystemSoundManager.cpp; sourceTree = "<group>"; };
@@ -37173,6 +37175,7 @@
 				E4AFCFA40DAF29A300F5F55C /* UnitBezier.h */,
 				0F5A57CA229B18AE0025EDA9 /* VelocityData.cpp */,
 				0F1A0C36229A481800D37ADB /* VelocityData.h */,
+				CD9A10012F70000100AA0001 /* VideoLayerContext.h */,
 				1DAB3113251D725C00FC9485 /* VideoLayerManager.h */,
 				075033A6252BD36800F70CE3 /* VideoPlaybackQualityMetrics.h */,
 				CDAD8DF42BED37E600107D24 /* VideoTarget.h */,
@@ -49939,6 +49942,7 @@
 				41DEEFB02719B29000CB8D74 /* VideoFrameRequestCallback.h in Headers */,
 				416049332743B0E800A86FA0 /* VideoFrameTimeMetadata.h in Headers */,
 				E300511729DB9A1300E1C3A4 /* VideoFullscreenCaptions.h in Headers */,
+				CD9A10022F70000200AA0002 /* VideoLayerContext.h in Headers */,
 				1DAB3114251D725C00FC9485 /* VideoLayerManager.h in Headers */,
 				1DAB3115251D74DB00FC9485 /* VideoLayerManagerObjC.h in Headers */,
 				41DD3C2D2902C47700369BEF /* VideoMatrixCoefficients.h in Headers */,

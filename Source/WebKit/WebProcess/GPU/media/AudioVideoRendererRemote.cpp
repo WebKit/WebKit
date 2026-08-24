@@ -409,7 +409,9 @@ PlatformLayer* AudioVideoRendererRemote::platformVideoLayer() const
 #if PLATFORM(COCOA)
     Locker locker { m_lock };
     if (!m_videoLayer && m_layerHostingContext.contextID) {
-        auto expandedVideoLayerSize = expandedIntSize(videoLayerSize());
+        // m_lock is already held, so read m_videoLayerSize directly rather than through
+        // videoLayerSize(), which would take it a second time. WTF::Lock is not recursive.
+        auto expandedVideoLayerSize = expandedIntSize(m_videoLayerSize);
         m_videoLayer = createVideoLayerRemote(const_cast<AudioVideoRendererRemote&>(*this), m_layerHostingContext.contextID, WebCore::MediaPlayer::VideoGravity::ResizeAspect, expandedVideoLayerSize);
         m_videoLayerManager->setVideoLayer(m_videoLayer.get(), expandedVideoLayerSize);
     }

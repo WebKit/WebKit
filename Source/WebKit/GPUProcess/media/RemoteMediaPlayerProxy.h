@@ -371,7 +371,11 @@ private:
     void bitmapImageForCurrentTime(CompletionHandler<void(std::optional<WebCore::ShareableBitmap::Handle>&&)>&&);
 
     void setShouldDisableHDR(bool);
-    void requestHostingContext(CompletionHandler<void(WebCore::HostingContext)>&&);
+    using LayerHostingContextCallback = CompletionHandler<void(WebCore::HostingContext)>;
+    void requestHostingContext(LayerHostingContextCallback&&);
+    void updateContentLayerForRemoteLayerHosting();
+    void removeContentLayerForRemoteLayerHosting();
+    bool remoteLayerHostingBypassesWebContentProcess() const;
     void setShouldCheckHardwareSupport(bool);
 #if HAVE(SPATIAL_TRACKING_LABEL)
     void setDefaultSpatialTrackingLabel(const String&);

@@ -44,6 +44,7 @@
 #import <WebCore/LocalFrameView.h>
 #import <WebCore/Page.h>
 #import <WebCore/PixelFormat.h>
+#import <WebCore/VideoLayerContext.h>
 #import <wtf/SetForScope.h>
 #import <wtf/SystemTracing.h>
 #import <wtf/TZoneMallocInlines.h>
@@ -123,25 +124,25 @@ void RemoteLayerTreeContext::layerDidEnterContext(PlatformCALayerRemote& layer, 
 }
 
 #if HAVE(AVKIT)
-void RemoteLayerTreeContext::layerDidEnterContext(PlatformCALayerRemote& layer, PlatformCALayer::LayerType type, WebCore::HTMLVideoElement& videoElement)
+void RemoteLayerTreeContext::layerDidEnterContext(PlatformCALayerRemote& layer, PlatformCALayer::LayerType type, const WebCore::VideoLayerContext& videoLayerContext, WebCore::HTMLVideoElement& videoElement)
 {
     PlatformLayerIdentifier layerID = layer.layerID();
 
 #if ENABLE(MACH_PORT_LAYER_HOSTING)
-    layer.setSendRightAnnotated(videoElement.layerHostingContext().sendRightAnnotated);
+    layer.setSendRightAnnotated(videoLayerContext.hostingContext.sendRightAnnotated);
 #endif
 
     RemoteLayerTreeTransaction::LayerCreationProperties creationProperties;
     layer.populateCreationProperties(creationProperties, *this, type);
     ASSERT(!creationProperties.videoElementData);
     creationProperties.videoElementData = RemoteLayerTreeTransaction::LayerCreationProperties::VideoElementData {
-        videoElement.identifier(),
-        videoElement.videoLayerSize(),
-        videoElement.naturalSize()
+        videoLayerContext.mediaElementIdentifier,
+        videoLayerContext.videoLayerSize,
+        videoLayerContext.naturalSize
     };
 
     protect(protect(webPage())->videoPresentationManager())->setupRemoteLayerHosting(videoElement);
-    m_videoLayers.add(layerID, videoElement.identifier());
+    m_videoLayers.add(layerID, videoLayerContext.mediaElementIdentifier);
 
     m_createdLayers.add(layerID, WTF::move(creationProperties));
     m_livePlatformLayers.add(layerID, &layer);

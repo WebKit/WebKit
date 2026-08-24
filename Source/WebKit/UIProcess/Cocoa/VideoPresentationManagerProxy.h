@@ -62,6 +62,7 @@ constexpr size_t DefaultMockPictureInPictureWindowHeight = 100;
 class WebPageProxy;
 class PlaybackSessionManagerProxy;
 class PlaybackSessionModelContext;
+class RemoteLayerHostingManagerProxy;
 class VideoPresentationManagerProxy;
 #if ENABLE(ENDOWMENT_BASED_APPLICATION_STATE_TRACKING)
 class LayerHostingVisibilityPropagator;
@@ -248,7 +249,11 @@ private:
 
     void hasVideoInPictureInPictureDidChange(bool);
 
-    RetainPtr<WKLayerHostView> createLayerHostViewWithID(PlaybackSessionContextIdentifier, const WebCore::HostingContext&, const WebCore::FloatSize& initialSize, float hostingScaleFactor);
+    RetainPtr<CocoaView> createLayerHostViewWithID(PlaybackSessionContextIdentifier, const WebCore::HostingContext&, const WebCore::FloatSize& initialSize, float hostingScaleFactor);
+    RetainPtr<CocoaView> createRemoteLayerHostViewWithID(PlaybackSessionContextIdentifier, const WebCore::FloatSize& initialSize);
+    // FIXME: Remove along with WKLayerHostView once RemoteLayerHostingBypassesWebContentProcess
+    // is enabled unconditionally. See https://bugs.webkit.org/show_bug.cgi?id=309973.
+    RetainPtr<WKLayerHostView> createLegacyLayerHostViewWithID(PlaybackSessionContextIdentifier, const WebCore::HostingContext&, const WebCore::FloatSize& initialSize, float hostingScaleFactor);
 
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
     void setVisibilityPropagationViewForLayerHostView(UIView *, WKLayerHostView *);
@@ -316,6 +321,8 @@ private:
     void callCloseCompletionHandlers();
 
     void videosInElementFullscreenChanged();
+    RefPtr<RemoteLayerHostingManagerProxy> remoteLayerHostingManager();
+    bool remoteLayerHostingBypassesWebContentProcess() const;
 
 #if !RELEASE_LOG_DISABLED
     const Logger& NODELETE logger() const;

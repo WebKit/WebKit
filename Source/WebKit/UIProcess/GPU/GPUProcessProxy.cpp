@@ -66,6 +66,10 @@
 #include <wtf/spi/darwin/XPCSPI.h>
 #endif
 
+#if PLATFORM(COCOA)
+#include "RemoteLayerHostingManagerProxy.h"
+#endif
+
 #if USE(SANDBOX_EXTENSIONS_FOR_CACHE_AND_TEMP_DIRECTORY_ACCESS)
 #include "SandboxUtilities.h"
 #include <wtf/FileSystem.h>
@@ -169,6 +173,9 @@ GPUProcessProxy::GPUProcessProxy()
     : AuxiliaryProcessProxy("GPUProcess"_s, WebProcessPool::anyProcessPoolNeedsUIBackgroundAssertion() ? ShouldTakeUIBackgroundAssertion::Yes : ShouldTakeUIBackgroundAssertion::No)
 #if ENABLE(MEDIA_STREAM)
     , m_useMockCaptureDevices(MockRealtimeMediaSourceCenter::mockRealtimeMediaSourceCenterEnabled())
+#endif
+#if PLATFORM(COCOA)
+    , m_remoteLayerHostingManagerProxy { RemoteLayerHostingManagerProxy::create(*this) }
 #endif
 {
     connect();

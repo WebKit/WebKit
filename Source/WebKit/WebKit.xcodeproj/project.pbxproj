@@ -2360,6 +2360,8 @@
 		CA05397923EE324400A553DC /* ContentAsStringIncludesChildFrames.h in Headers */ = {isa = PBXBuildFile; fileRef = CA05397823EE324400A553DC /* ContentAsStringIncludesChildFrames.h */; };
 		CD003A5319D49B5D005ABCE0 /* WebMediaKeyStorageManager.h in Headers */ = {isa = PBXBuildFile; fileRef = CD003A5119D49B5D005ABCE0 /* WebMediaKeyStorageManager.h */; };
 		CD0C6831201FD10100A59409 /* WKFullScreenViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = CD0C682F201FD10100A59409 /* WKFullScreenViewController.h */; };
+		CD150CA72F64E68C00E66163 /* RemoteLayerHostingManager.h in Headers */ = {isa = PBXBuildFile; fileRef = CD150CA32F64E68400E66163 /* RemoteLayerHostingManager.h */; };
+		CD150CAB2F64E6B000E66163 /* RemoteLayerHostingManagerProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = CD150CA82F64E6A900E66163 /* RemoteLayerHostingManagerProxy.h */; };
 		CD19A26E1A13E834008D650E /* WebDiagnosticLoggingClient.h in Headers */ = {isa = PBXBuildFile; fileRef = CD19A26A1A13E821008D650E /* WebDiagnosticLoggingClient.h */; };
 		CD19D2EA2046406F0017074A /* FullscreenTouchSecheuristic.h in Headers */ = {isa = PBXBuildFile; fileRef = CD19D2E82046406F0017074A /* FullscreenTouchSecheuristic.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CD4570D424411D0F00A3DCEB /* AudioSessionRoutingArbitrator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD4570CB2440FB2A00A3DCEB /* AudioSessionRoutingArbitrator.cpp */; };
@@ -8407,6 +8409,18 @@
 		CD09FD0A26152E2300E4ACF1 /* WebKitSwift.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = WebKitSwift.xcconfig; sourceTree = "<group>"; };
 		CD0C682F201FD10100A59409 /* WKFullScreenViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKFullScreenViewController.h; sourceTree = "<group>"; };
 		CD0C6830201FD10100A59409 /* WKFullScreenViewController.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKFullScreenViewController.mm; sourceTree = "<group>"; };
+		CD150CA12F64E68400E66163 /* GPUConnectionToWebProcessCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = GPUConnectionToWebProcessCocoa.mm; sourceTree = "<group>"; };
+		CD150CA22F64E68400E66163 /* GPUProcessCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = GPUProcessCocoa.mm; sourceTree = "<group>"; };
+		CD150CA32F64E68400E66163 /* RemoteLayerHostingManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteLayerHostingManager.h; sourceTree = "<group>"; };
+		CD150CA42F64E68400E66163 /* RemoteLayerHostingManager.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = RemoteLayerHostingManager.mm; sourceTree = "<group>"; };
+		CD150CA52F64E68400E66163 /* RemoteLayerHostingManager.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = RemoteLayerHostingManager.messages.in; sourceTree = "<group>"; };
+		CD150CA82F64E6A900E66163 /* RemoteLayerHostingManagerProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteLayerHostingManagerProxy.h; sourceTree = "<group>"; };
+		CD150CA92F64E6A900E66163 /* RemoteLayerHostingManagerProxy.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = RemoteLayerHostingManagerProxy.mm; sourceTree = "<group>"; };
+		CD150CAA2F64E6A900E66163 /* RemoteLayerHostingManagerProxy.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = RemoteLayerHostingManagerProxy.messages.in; sourceTree = "<group>"; };
+		CD150CAC2F650EF700E66163 /* RemoteLayerHostingManagerMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteLayerHostingManagerMessageReceiver.cpp; sourceTree = "<group>"; };
+		CD150CAD2F650EF700E66163 /* RemoteLayerHostingManagerMessages.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteLayerHostingManagerMessages.h; sourceTree = "<group>"; };
+		CD150CAE2F650EF700E66163 /* RemoteLayerHostingManagerProxyMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteLayerHostingManagerProxyMessageReceiver.cpp; sourceTree = "<group>"; };
+		CD150CAF2F650EF700E66163 /* RemoteLayerHostingManagerProxyMessages.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteLayerHostingManagerProxyMessages.h; sourceTree = "<group>"; };
 		CD19A2691A13E820008D650E /* WebDiagnosticLoggingClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebDiagnosticLoggingClient.cpp; sourceTree = "<group>"; };
 		CD19A26A1A13E821008D650E /* WebDiagnosticLoggingClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebDiagnosticLoggingClient.h; sourceTree = "<group>"; };
 		CD19D2E82046406F0017074A /* FullscreenTouchSecheuristic.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FullscreenTouchSecheuristic.h; sourceTree = "<group>"; };
@@ -8484,6 +8498,10 @@
 		CD8FD70D2EF3272300291438 /* RemoteMediaResourceLoader.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = RemoteMediaResourceLoader.messages.in; sourceTree = "<group>"; };
 		CD8FD70E2EF3283600291438 /* RemoteMediaResourceLoaderMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = RemoteMediaResourceLoaderMessageReceiver.cpp; path = /Volumes/Users/jer/Projects/WebKit.git/OpenSource/WebKitBuild/Debug/DerivedSources/WebKit/RemoteMediaResourceLoaderMessageReceiver.cpp; sourceTree = "<absolute>"; };
 		CD8FD70F2EF3283600291438 /* RemoteMediaResourceLoaderMessages.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = RemoteMediaResourceLoaderMessages.h; path = /Volumes/Users/jer/Projects/WebKit.git/OpenSource/WebKitBuild/Debug/DerivedSources/WebKit/RemoteMediaResourceLoaderMessages.h; sourceTree = "<absolute>"; };
+		CD913E322F68EDAC00D8EA53 /* WKVideoLayerHostView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKVideoLayerHostView.h; sourceTree = "<group>"; };
+		CD913E332F68EDAC00D8EA53 /* WKVideoLayerHostView.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKVideoLayerHostView.mm; sourceTree = "<group>"; };
+		CD913E342F68EDC200D8EA53 /* WKVideoLayerHost.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKVideoLayerHost.h; sourceTree = "<group>"; };
+		CD913E352F68EDC200D8EA53 /* WKVideoLayerHost.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKVideoLayerHost.mm; sourceTree = "<group>"; };
 		CD95493526159004008372D9 /* libWebKitSwift.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libWebKitSwift.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		CD9A649F27C8972C003827C0 /* UIProcessLogInitialization.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UIProcessLogInitialization.h; sourceTree = "<group>"; };
 		CD9A64A027C8972C003827C0 /* UIProcessLogInitialization.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = UIProcessLogInitialization.cpp; sourceTree = "<group>"; };
@@ -10931,6 +10949,9 @@
 				C145CC0E23DCA427003A5EEB /* PreferenceObserver.h */,
 				C15CBB3323F34C3800300CC7 /* PreferenceObserver.mm */,
 				3AA50E2C28D37F8700D024E4 /* ProcessAssertionCocoa.mm */,
+				CD150CA82F64E6A900E66163 /* RemoteLayerHostingManagerProxy.h */,
+				CD150CAA2F64E6A900E66163 /* RemoteLayerHostingManagerProxy.messages.in */,
+				CD150CA92F64E6A900E66163 /* RemoteLayerHostingManagerProxy.mm */,
 				5CB7AFDD23C5273D00E49CF3 /* ResourceLoadDelegate.h */,
 				5CB7AFDE23C5273D00E49CF3 /* ResourceLoadDelegate.mm */,
 				F46CCD8E2EDD1B9C00D4BA3E /* SafeBrowsingUtilities.h */,
@@ -11001,6 +11022,10 @@
 				CE45945B240F85B90078019F /* WKTextSelectionRect.mm */,
 				076897EF2D07B330006F9FA7 /* WKUIDelegateAdapter.swift */,
 				079A4DAF2D73EA4A00CA387F /* WKURLSchemeHandlerAdapter.swift */,
+				CD913E342F68EDC200D8EA53 /* WKVideoLayerHost.h */,
+				CD913E352F68EDC200D8EA53 /* WKVideoLayerHost.mm */,
+				CD913E322F68EDAC00D8EA53 /* WKVideoLayerHostView.h */,
+				CD913E332F68EDAC00D8EA53 /* WKVideoLayerHostView.mm */,
 				2D7AAFD218C8640600A7ACD4 /* WKWebViewContentProvider.h */,
 				2DC6D9C118C44A610043BAD4 /* WKWebViewContentProviderRegistry.h */,
 				2DC6D9C218C44A610043BAD4 /* WKWebViewContentProviderRegistry.mm */,
@@ -12476,7 +12501,7 @@
 		2D9FB1FF2375209D0049F936 /* GPUProcess */ = {
 			isa = PBXGroup;
 			children = (
-				079D1D9C2698DBD000883577 /* cocoa */,
+				CD150CA62F64E68400E66163 /* cocoa */,
 				2D9FB20D2375209D0049F936 /* EntryPoint */,
 				550640A124071A2900AAE045 /* graphics */,
 				2D9FB2042375209D0049F936 /* ios */,
@@ -13749,6 +13774,10 @@
 				1D47659925CE74AC007AF312 /* RemoteImageDecoderAVFManagerMessages.h */,
 				1D47658F25CCCE92007AF312 /* RemoteImageDecoderAVFProxyMessageReceiver.cpp */,
 				1D47659025CCCE93007AF312 /* RemoteImageDecoderAVFProxyMessages.h */,
+				CD150CAC2F650EF700E66163 /* RemoteLayerHostingManagerMessageReceiver.cpp */,
+				CD150CAD2F650EF700E66163 /* RemoteLayerHostingManagerMessages.h */,
+				CD150CAE2F650EF700E66163 /* RemoteLayerHostingManagerProxyMessageReceiver.cpp */,
+				CD150CAF2F650EF700E66163 /* RemoteLayerHostingManagerProxyMessages.h */,
 				0FF24A2B1879E4BC003ABF0C /* RemoteLayerTreeDrawingAreaProxyMessageReceiver.cpp */,
 				0FF24A2C1879E4BC003ABF0C /* RemoteLayerTreeDrawingAreaProxyMessages.h */,
 				CDE555292406B896008A3DDB /* RemoteLegacyCDMFactoryProxyMessageReceiver.cpp */,
@@ -17517,6 +17546,18 @@
 			path = forms;
 			sourceTree = "<group>";
 		};
+		CD150CA62F64E68400E66163 /* cocoa */ = {
+			isa = PBXGroup;
+			children = (
+				CD150CA12F64E68400E66163 /* GPUConnectionToWebProcessCocoa.mm */,
+				CD150CA22F64E68400E66163 /* GPUProcessCocoa.mm */,
+				CD150CA32F64E68400E66163 /* RemoteLayerHostingManager.h */,
+				CD150CA52F64E68400E66163 /* RemoteLayerHostingManager.messages.in */,
+				CD150CA42F64E68400E66163 /* RemoteLayerHostingManager.mm */,
+			);
+			path = cocoa;
+			sourceTree = "<group>";
+		};
 		CD4570D82444CA1700A3DCEB /* Media */ = {
 			isa = PBXGroup;
 			children = (
@@ -18811,6 +18852,8 @@
 				F451C0FE2703B263002BA03B /* RemoteGraphicsContextProxy.h in Headers */,
 				2D47B56D1810714E003A3AEE /* RemoteLayerBackingStore.h in Headers */,
 				2DDF731518E95060004F5A66 /* RemoteLayerBackingStoreCollection.h in Headers */,
+				CD150CA72F64E68C00E66163 /* RemoteLayerHostingManager.h in Headers */,
+				CD150CAB2F64E6B000E66163 /* RemoteLayerHostingManagerProxy.h in Headers */,
 				5F4D67D682584880B7E5A569 /* RemoteLayerTreeCommitBundle.h in Headers */,
 				1AB16AEA164B3A8800290D62 /* RemoteLayerTreeContext.h in Headers */,
 				1AB16ADE1648598400290D62 /* RemoteLayerTreeDrawingArea.h in Headers */,

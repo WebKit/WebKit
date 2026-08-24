@@ -367,6 +367,8 @@
     [Legacy] StructureParam WebCore::HostingContext.sendRightAnnotated
 
     [NotSentFromWebContent] MessageParam VideoPresentationManager.SetVideoLayerFrameFenced sendRightAnnotated
+    [NotSentFromWebContent] MessageParam RemoteLayerHostingManager.SetRemoteLayerSizeFenced sendRightAnnotated
+    [NotSentFromWebContent] MessageParam RemoteLayerHostingManager.SetRemoteLayerVideoGravityFenced sendRightAnnotated
 }
 
 [UnsafeWrapper] RetainPtr<CFDataRef> {

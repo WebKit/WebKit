@@ -1355,7 +1355,7 @@ bool RenderLayerBacking::updateConfiguration(const RenderLayer* compositingAnces
             && videoElement->document().page()->chrome().client().isUsingUISideCompositing()
 #endif
             )
-            m_graphicsLayer->setContentsToVideoElement(videoElement, GraphicsLayer::ContentsLayerPurpose::Media);
+            m_graphicsLayer->setContentsToVideoLayer(videoElement->videoLayerContext(), videoElement, GraphicsLayer::ContentsLayerPurpose::Media);
         else
             m_graphicsLayer->setContentsToPlatformLayer(videoElement->platformLayer(), GraphicsLayer::ContentsLayerPurpose::Media);
         updateContentsRects();

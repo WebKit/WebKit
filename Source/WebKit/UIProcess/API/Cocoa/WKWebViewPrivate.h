@@ -379,6 +379,18 @@ for this property.
 - (void)_createWebArchiveForFrames:(NSArray<WKFrameInfo *> *)frames rootFrame:(WKFrameInfo *)rootFrame completionHandler:(void (^)(NSData *, NSError *))completionHandler WK_API_AVAILABLE(macos(26.4), ios(26.4), visionos(26.4));
 - (void)_getContentsAsStringWithCompletionHandler:(void (^)(NSString *, NSError *))completionHandler WK_API_AVAILABLE(macos(10.13), ios(11.0));
 - (void)_getContentsAsStringWithCompletionHandlerKeepIPCConnectionAliveForTesting:(void (^)(NSString *, NSError *))completionHandler;
+
+// Counts the video layer hosts tracked for the GPU process this view is using, in the UI
+// process and in the GPU process respectively. These count every media player the GPU
+// process has reported a video layer for, across all pages using that GPU process, so they
+// are only meaningful in a test with a single web view.
+- (NSUInteger)_hostedVideoLayerCountForTesting;
+- (void)_gpuProcessHostedVideoLayerCountForTesting:(void (^)(NSUInteger))completionHandler;
+
+// A dump of the CALayer hierarchy on the GPU process side of the video layer hosting
+// boundary, which cannot be reached by walking this process's layers. Synchronous; testing
+// and debugging only.
+- (NSString *)_gpuProcessRemoteLayerTreeAsTextForTesting;
 - (void)_getContentsOfAllFramesAsStringWithCompletionHandler:(void (^)(NSString *))completionHandler WK_API_AVAILABLE(macos(11.0), ios(14.0));
 - (void)_getContentsAsAttributedStringWithCompletionHandler:(void (^)(NSAttributedString *, NSDictionary<NSAttributedStringDocumentAttributeKey, id> *, NSError *))completionHandler WK_API_AVAILABLE(macos(10.15), ios(13.0));
 

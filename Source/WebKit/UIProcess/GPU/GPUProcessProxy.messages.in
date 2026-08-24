@@ -27,7 +27,7 @@
     DispatchedTo=UI,
     ExceptionForEnabledBy
 ]
-messages -> GPUProcessProxy {
+messages -> GPUProcessProxy WantsDispatchMessage {
 
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
     DidCreateContextForVisibilityPropagation(WebKit::WebPageProxyIdentifier pageProxyID, WebCore::PageIdentifier pageID, WebKit::LayerHostingContextID contextID)

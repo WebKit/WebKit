@@ -132,6 +132,10 @@
 #include "RemoteImageDecoderAVFProxyMessages.h"
 #endif
 
+#if PLATFORM(COCOA)
+#include "RemoteLayerHostingManager.h"
+#endif
+
 #if ENABLE(GPU_PROCESS)
 #include "RemoteMediaEngineConfigurationFactoryProxy.h"
 #include "RemoteMediaEngineConfigurationFactoryProxyMessages.h"
@@ -397,6 +401,10 @@ GPUConnectionToWebProcess::~GPUConnectionToWebProcess()
     RELEASE_ASSERT(RunLoop::isMain());
 
     m_connection->invalidate();
+
+#if PLATFORM(COCOA)
+    protect(m_gpuProcess)->remoteLayerHostingManager().removeAllRemoteLayersForProcess(m_webProcessIdentifier);
+#endif
 
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
     m_sampleBufferDisplayLayerManager->close();

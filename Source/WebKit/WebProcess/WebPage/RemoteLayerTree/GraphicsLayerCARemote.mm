@@ -35,12 +35,12 @@
 #include "WebPage.h"
 #include "WebProcess.h"
 #include <WebCore/GraphicsLayerContentsDisplayDelegate.h>
-#include <WebCore/HTMLVideoElement.h>
 #include <WebCore/LocalFrameView.h>
 #include <WebCore/Model.h>
 #include <WebCore/PlatformCALayerDelegatedContents.h>
 #include <WebCore/PlatformScreen.h>
 #include <WebCore/RemoteFrame.h>
+#include <WebCore/VideoLayerContext.h>
 #include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(MODEL_PROCESS)
@@ -111,10 +111,10 @@ Ref<PlatformCALayer> GraphicsLayerCARemote::createPlatformCALayerHost(WebCore::L
 }
 
 #if HAVE(AVKIT)
-Ref<PlatformCALayer> GraphicsLayerCARemote::createPlatformVideoLayer(WebCore::HTMLVideoElement& videoElement, PlatformCALayerClient* owner)
+Ref<PlatformCALayer> GraphicsLayerCARemote::createPlatformVideoLayer(const WebCore::VideoLayerContext& videoLayerContext, WebCore::HTMLVideoElement& videoElement, PlatformCALayerClient* owner)
 {
     Ref context = *m_context;
-    return PlatformCALayerRemote::create(videoElement, owner, context.get());
+    return PlatformCALayerRemote::create(videoLayerContext, videoElement, owner, context.get());
 }
 #endif
 

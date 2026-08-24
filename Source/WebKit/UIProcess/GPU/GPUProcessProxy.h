@@ -75,6 +75,7 @@ class SandboxExtensionHandle;
 class WebPageProxy;
 class WebProcessProxy;
 class WebsiteDataStore;
+class RemoteLayerHostingManagerProxy;
 
 struct CoreIPCAuditToken;
 struct GPUProcessConnectionParameters;
@@ -181,6 +182,8 @@ public:
     void postWillTakeSnapshotNotification(CompletionHandler<void()>&&);
 
     void sinkCompletedSnapshotToPDF(RemoteSnapshotIdentifier, const WebCore::FloatSize&, WebCore::FrameIdentifier root, CompletionHandler<void(RefPtr<WebCore::SharedBuffer>&&)>&&);
+
+    RemoteLayerHostingManagerProxy& remoteLayerHostingManagerProxy() LIFETIME_BOUND;
 #endif
     void sinkCompletedSnapshotToBitmap(RemoteSnapshotIdentifier, const WebCore::FloatSize&, WebCore::FrameIdentifier root, CompletionHandler<void(std::optional<WebCore::ShareableBitmap::Handle>&&)>&&);
     void releaseSnapshot(RemoteSnapshotIdentifier);
@@ -210,6 +213,7 @@ private:
 
     // IPC::Connection::Client
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
+    void didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) override;
     void didClose(IPC::Connection&) override;
     void didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName, const Vector<uint32_t>& indicesOfObjectsFailingDecoding) override;
 
@@ -263,6 +267,7 @@ private:
 #if PLATFORM(COCOA)
     static bool s_enableMetalDebugDeviceInNewGPUProcessesForTesting;
     static bool s_enableMetalShaderValidationInNewGPUProcessesForTesting;
+    const Ref<RemoteLayerHostingManagerProxy> m_remoteLayerHostingManagerProxy;
 #endif
 
     HashSet<PAL::SessionID> m_sessionIDs;
