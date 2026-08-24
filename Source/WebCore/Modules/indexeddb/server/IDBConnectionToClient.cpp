@@ -229,7 +229,7 @@ void IDBConnectionToClient::setClientProcessSuspended(bool isSuspended)
     // in-progress transactions, which cannot finish while the client is suspended.
     m_databaseConnections.forEach([](UniqueIDBDatabaseConnection& connection) {
         if (CheckedPtr database = connection.database())
-            database->abortInProgressTransactionsBlockedOnSuspendedClients();
+            database->didSuspendClientProcess();
     });
 }
 

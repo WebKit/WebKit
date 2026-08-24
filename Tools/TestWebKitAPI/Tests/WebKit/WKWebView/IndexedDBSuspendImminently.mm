@@ -535,3 +535,90 @@ TEST(IndexedDB, AbortMultipleTransactionsOfSuspendedProcess)
     EXPECT_WK_STREQ([secondHandler waitForMessage].body, @"second transaction completed");
     EXPECT_WK_STREQ([firstHandler waitForMessage].body, @"all first transactions aborted");
 }
+
+TEST(IndexedDB, AbortManyQueuedTransactionsOfSuspendedProcess)
+{
+    // Every queued transaction of the suspended client gets started and then immediately aborted,
+    // which used to happen recursively, one nested scheduling pass per transaction, and overflowed
+    // the network process's stack.
+    static NSString *firstClientString = @"<script> \
+        function post(message) { \
+            window.webkit.messageHandlers.testHandler.postMessage(message); \
+        } \
+        var transactionCount = 2000; \
+        var request = indexedDB.open('ManyQueuedSuspendedTransactionsDatabase'); \
+        request.onupgradeneeded = function(event) { \
+            event.target.result.createObjectStore('Store'); \
+        }; \
+        request.onerror = function() { \
+            post('first database error'); \
+        }; \
+        request.onsuccess = function(event) { \
+            var db = event.target.result; \
+            var firstTransaction = db.transaction('Store', 'readwrite'); \
+            var objectStore = firstTransaction.objectStore('Store'); \
+            function keepTransactionAlive() { \
+                objectStore.get('TestKey').onsuccess = keepTransactionAlive; \
+            } \
+            keepTransactionAlive(); \
+            for (var i = 1; i < transactionCount; i++) { \
+                var transaction = db.transaction('Store', 'readwrite'); \
+                transaction.objectStore('Store').put('Value' + i, 'Key' + i); \
+            } \
+            objectStore.get('TestKey').onsuccess = function() { \
+                post('first transactions queued'); \
+            }; \
+        }; \
+        </script>";
+
+    static NSString *secondClientString = @"<script> \
+        function post(message) { \
+            window.webkit.messageHandlers.testHandler.postMessage(message); \
+        } \
+        var request = indexedDB.open('ManyQueuedSuspendedTransactionsDatabase'); \
+        request.onerror = function() { \
+            post('second database error'); \
+        }; \
+        request.onsuccess = function(event) { \
+            var transaction = event.target.result.transaction('Store', 'readwrite'); \
+            transaction.oncomplete = function() { \
+                post('second transaction completed'); \
+            }; \
+            transaction.objectStore('Store').put('OtherValue', 'OtherKey'); \
+        }; \
+        </script>";
+
+    readyToContinue = false;
+    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
+        readyToContinue = true;
+    }];
+    TestWebKitAPI::Util::run(&readyToContinue);
+
+    RetainPtr firstHandler = adoptNS([TestScriptMessageHandler new]);
+    RetainPtr firstConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [firstConfiguration setProcessPool:adoptNS([[WKProcessPool alloc] init]).get()];
+    [[firstConfiguration userContentController] addScriptMessageHandler:firstHandler.get() name:@"testHandler"];
+    RetainPtr firstWebView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:firstConfiguration.get()]);
+    [firstWebView loadHTMLString:firstClientString baseURL:[NSURL URLWithString:@"http://webkit.org"]];
+    // The final request is sent after every queued transaction, so its reply means the server has
+    // them all.
+    EXPECT_WK_STREQ([firstHandler waitForMessage].body, @"first transactions queued");
+    pid_t networkProcessIdentifier = [[WKWebsiteDataStore defaultDataStore] _networkProcessIdentifier];
+    EXPECT_NE(networkProcessIdentifier, 0);
+
+    // One transaction of the first client is in progress and the rest are queued behind it. They all
+    // block the second client, so suspending the first client aborts them one after another.
+    [firstWebView _setThrottleStateForTesting:0];
+
+    RetainPtr secondHandler = adoptNS([TestScriptMessageHandler new]);
+    RetainPtr secondConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [secondConfiguration setProcessPool:adoptNS([[WKProcessPool alloc] init]).get()];
+    [[secondConfiguration userContentController] addScriptMessageHandler:secondHandler.get() name:@"testHandler"];
+    RetainPtr secondWebView = adoptNS([[WKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:secondConfiguration.get()]);
+    [secondWebView loadHTMLString:secondClientString baseURL:[NSURL URLWithString:@"http://webkit.org"]];
+
+    EXPECT_WK_STREQ([secondHandler waitForMessage].body, @"second transaction completed");
+
+    // Aborting the queued transactions must not have taken down the network process.
+    EXPECT_EQ(networkProcessIdentifier, [[WKWebsiteDataStore defaultDataStore] _networkProcessIdentifier]);
+}
