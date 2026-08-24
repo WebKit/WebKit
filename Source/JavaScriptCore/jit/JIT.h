@@ -289,15 +289,7 @@ namespace JSC {
         template<typename Op> void compileOpStrictEqJump(const JSInstruction*);
 
         enum class WriteBarrierMode { UnconditionalWriteBarrier, ShouldFilterBase, ShouldFilterValue, ShouldFilterBaseAndValue };
-#if COMPILER(GCC) && GCC_VERSION < 120300
-        // Workaround for GCC < 12.3.0 ICE with using-enum in templates: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=103081
-        static constexpr auto UnconditionalWriteBarrier = WriteBarrierMode::UnconditionalWriteBarrier;
-        static constexpr auto ShouldFilterBase = WriteBarrierMode::ShouldFilterBase;
-        static constexpr auto ShouldFilterValue = WriteBarrierMode::ShouldFilterValue;
-        static constexpr auto ShouldFilterBaseAndValue = WriteBarrierMode::ShouldFilterBaseAndValue;
-#else
         using enum WriteBarrierMode;
-#endif
         // value register in write barrier is used before any scratch registers
         // so may safely be the same as either of the scratch registers.
         void emitWriteBarrier(JSValueRegs owner, WriteBarrierMode);

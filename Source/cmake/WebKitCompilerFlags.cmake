@@ -254,12 +254,6 @@ if (COMPILER_IS_GCC_OR_CLANG)
         )
     endif ()
 
-    # GCC < 12.0 gives false warnings for mismatched-new-delete <https://webkit.org/b/241516>
-    if ((CMAKE_CXX_COMPILER_ID MATCHES "GNU") AND (CMAKE_CXX_COMPILER_VERSION VERSION_LESS "12.0.0"))
-        WEBKIT_PREPEND_GLOBAL_COMPILER_FLAGS(-Wno-mismatched-new-delete)
-        WEBKIT_PREPEND_GLOBAL_COMPILER_FLAGS(-Wno-uninitialized)
-    endif ()
-
     # GCC gives false warnings for subobject-linkage <https://gcc.gnu.org/bugzilla/show_bug.cgi?id=105595>
     if (CMAKE_CXX_COMPILER_ID MATCHES "GNU")
         WEBKIT_PREPEND_GLOBAL_COMPILER_FLAGS(-Wno-subobject-linkage)

@@ -132,8 +132,8 @@ if (NOT HAS_RUN_WEBKIT_COMMON)
     endif ()
 
     if (${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
-        if (${CMAKE_CXX_COMPILER_VERSION} VERSION_LESS "12.2.0")
-            message(FATAL_ERROR "GCC 12.2 or newer is required to build WebKit. Use a newer GCC version or Clang.")
+        if (${CMAKE_CXX_COMPILER_VERSION} VERSION_LESS "13.1.0")
+            message(FATAL_ERROR "GCC 13.1 or newer is required to build WebKit. Use a newer GCC version or Clang.")
         endif ()
     endif ()
 
