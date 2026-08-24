@@ -878,6 +878,21 @@ void XMLDocumentParser::startElementNs(const xmlChar* xmlLocalName, const xmlCha
         }
     }
 
+#ifdef RC_REMOVE_SEC_ACCEL_3
+    std::optional<ThrowOnDynamicMarkupInsertionCountIncrementer> markupInsertionCountIncrementer;
+    std::optional<CustomElementReactionStack> customElementReactionStack;
+
+    if (willConstructCustomElement) [[unlikely]] {
+        markupInsertionCountIncrementer.emplace(*document);
+        protect(document->eventLoop())->performMicrotaskCheckpoint(document->vm());
+        customElementReactionStack.emplace(document->globalObject());
+    }
+
+    Vector<Attribute> prefixedAttributes;
+    bool shouldUseNullCustomElementRegistry = false;
+    bool handledAttributes = handleNamespaceAttributes(prefixedAttributes, namespaces, shouldUseNullCustomElementRegistry);
+    bool success = handledAttributes ? handleElementAttributes(prefixedAttributes, libxmlAttributes, numAttributes, shouldUseNullCustomElementRegistry) : false;
+#else
     // Copy every span libxml2 owns into WebKit-owned storage here, before any code that can
     // run script such as performMicrotaskCheckpoint().
     Vector<Attribute> prefixedAttributes;
@@ -897,6 +912,7 @@ void XMLDocumentParser::startElementNs(const xmlChar* xmlLocalName, const xmlCha
             return;
         customElementReactionStack.emplace(document->globalObject());
     }
+#endif // RC_REMOVE_SEC_ACCEL_3
 
     RefPtr registry = shouldUseNullCustomElementRegistry ? nullptr : CustomElementRegistry::registryForNodeOrTreeScope(*currentNode, protect(currentNode->treeScope()));
     auto newElement = document->createElement(qName, true, registry.get());
