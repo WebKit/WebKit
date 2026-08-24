@@ -34,9 +34,10 @@ PROJECTS = ['JavaScriptCore', 'PAL', 'WebCore', 'WebDriver', 'WebGPU', 'WebInspe
 
 
 class Checker(object):
-    def __init__(self, name, description):
+    def __init__(self, name, description, new_description=None):
         self._name = name
         self._description = description
+        self._new_description = new_description
 
     def name(self):
         return self._name
@@ -71,6 +72,8 @@ class Checker(object):
         for checker in cls.enumerate():
             if checker.description() == description:
                 return checker
+            if checker._new_description == description:
+                return checker
         return None
 
     @classmethod
@@ -94,7 +97,8 @@ CHECKERS = [
     Checker('UncheckedCallArgsChecker', 'Unchecked call argument for a raw pointer/reference parameter'),
     Checker('UncheckedLocalVarsChecker', 'Unchecked raw pointer or reference not provably backed by checked variable'),
     Checker('UncountedCallArgsChecker', 'Uncounted call argument for a raw pointer/reference parameter'),
-    Checker('UncountedLambdaCapturesChecker', 'Lambda capture of uncounted or unchecked variable'),
+    Checker('UncountedLambdaCapturesChecker', 'Lambda capture of uncounted or unchecked variable', 'Lambda capture of uncounted variable'),
+    Checker('UncheckedLambdaCapturesChecker', 'Lambda capture of unchecked variable'),
     Checker('UncountedLocalVarsChecker', 'Uncounted raw pointer or reference not provably backed by ref-counted variable'),
     Checker('UnretainedCallArgsChecker', 'Unretained call argument for a raw pointer/reference parameter'),
     Checker('UnretainedLambdaCapturesChecker', 'Lambda capture of unretained variables'),
