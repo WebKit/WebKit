@@ -47,9 +47,8 @@ static bool readUInt32(SharedBuffer& buffer, size_t& offset, uint32_t& value)
     if (buffer.size() - offset < sizeof(value))
         return false;
 
-    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // non-Apple ports
-    value = ntohl(*reinterpret_cast_ptr<const uint32_t*>(buffer.span().subspan(offset).data()));
-    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+    memcpySpan(asMutableByteSpan(value), buffer.span().subspan(offset, sizeof(value)));
+    value = ntohl(value);
     offset += sizeof(value);
 
     return true;
@@ -61,9 +60,8 @@ static bool readUInt16(SharedBuffer& buffer, size_t& offset, uint16_t& value)
     if (buffer.size() - offset < sizeof(value))
         return false;
 
-    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // non-Apple ports
-    value = ntohs(*reinterpret_cast_ptr<const uint16_t*>(buffer.span().subspan(offset).data()));
-    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+    memcpySpan(asMutableByteSpan(value), buffer.span().subspan(offset, sizeof(value)));
+    value = ntohs(value);
     offset += sizeof(value);
 
     return true;
@@ -259,13 +257,11 @@ bool convertWOFFToSfnt(SharedBuffer& woff, Vector<uint8_t>& sfnt)
             return false;
 
         // Write an sfnt table directory entry.
-        WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
-        uint32_t* sfntTableDirectoryPtr = reinterpret_cast_ptr<uint32_t*>(sfnt.mutableSpan().subspan(sfntTableDirectoryCursor).data());
-        *sfntTableDirectoryPtr++ = htonl(tableTag);
-        *sfntTableDirectoryPtr++ = htonl(tableOrigChecksum);
-        *sfntTableDirectoryPtr++ = htonl(sfnt.size());
-        *sfntTableDirectoryPtr++ = htonl(tableOrigLength);
-        WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+        auto sfntTableDirectoryEntry = spanReinterpretCast<uint32_t>(sfnt.mutableSubspan(sfntTableDirectoryCursor, 4 * sizeof(uint32_t)));
+        sfntTableDirectoryEntry[0] = htonl(tableTag);
+        sfntTableDirectoryEntry[1] = htonl(tableOrigChecksum);
+        sfntTableDirectoryEntry[2] = htonl(sfnt.size());
+        sfntTableDirectoryEntry[3] = htonl(tableOrigLength);
         sfntTableDirectoryCursor += 4 * sizeof(uint32_t);
 
         if (tableCompLength == tableOrigLength) {
