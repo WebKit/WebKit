@@ -1434,7 +1434,12 @@ void LineBuilder::handleBlockContent(const InlineItem& blockItem)
     // top would double-count the margin. Roll back m_lineLogicalRect.top too so the line's reported
     // bottom doesn't inherit the eager advance (which would shift the next line down).
     auto& marginState = blockLayoutState().marginState();
-    if (!marginState.atBeforeSideOfBlock) {
+    // Unless the margin collapses out through the root's before edge, the line's top already includes it: either
+    // initialize advanced the line by it, or the previous line's bottom absorbed it as a self collapsing block box's
+    // offset. Block layout applies the margin from the container's own position, so take it back off before handing over.
+    auto marginCollapsesThroughBeforeSide = marginState.atBeforeSideOfBlock && marginState.canCollapseMarginBeforeWithChildren;
+    auto lineTopIncludesPendingMargin = !marginCollapsesThroughBeforeSide;
+    if (lineTopIncludesPendingMargin) {
         if (auto blockMargin = marginState.margin())
             m_lineLogicalRect = { m_lineLogicalRect.top() - blockMargin, m_lineInitialLogicalRect.left(), m_lineInitialLogicalRect.width(), m_lineInitialLogicalRect.height() };
     }
