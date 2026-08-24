@@ -114,8 +114,9 @@ std::optional<AffineTransform> SVGTransformList::concatenate() const
 {
     if (m_items.isEmpty())
         return std::nullopt;
-    AffineTransform result;
-    for (auto& transform : m_items)
+    auto items = m_items.span();
+    AffineTransform result = items.front()->matrix().value();
+    for (auto& transform : items.subspan(1))
         result *= transform->matrix().value();
     return result;
 }
