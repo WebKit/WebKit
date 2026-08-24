@@ -196,6 +196,7 @@ private:
     ALWAYS_INLINE bool parseNumberAfterDecimalPoint();
     ALWAYS_INLINE bool parseNumberAfterExponentIndicator();
     ALWAYS_INLINE bool parseMultilineComment();
+    NEVER_INLINE std::optional<JSTokenType> scanSingleLineComment(JSToken*, bool checkForDirectives);
 
     ALWAYS_INLINE void parseCommentDirective();
     ALWAYS_INLINE String parseCommentDirectiveValue();

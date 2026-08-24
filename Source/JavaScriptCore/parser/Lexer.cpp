@@ -2073,6 +2073,63 @@ void Lexer<T>::fillTokenInfo(JSToken* tokenRecord, JSTextPosition endPosition)
 }
 
 template <typename T>
+NEVER_INLINE std::optional<JSTokenType> Lexer<T>::scanSingleLineComment(JSToken* tokenRecord, bool checkForDirectives)
+{
+    if (checkForDirectives) {
+        // Script comment directives like "//# sourceURL=test.js".
+        if ((m_current == '#' || m_current == '@') && isWhiteSpace(peek(1))) [[unlikely]] {
+            shift();
+            shift();
+            parseCommentDirective();
+        }
+    }
+
+    auto endPosition = currentPosition();
+
+    using UnsignedType = SameSizeUnsignedInteger<T>;
+    constexpr auto lineFeedMask = SIMD::splat<UnsignedType>('\n');
+    constexpr auto carriageReturnMask = SIMD::splat<UnsignedType>('\r');
+    constexpr auto u2028Mask = SIMD::splat<UnsignedType>(static_cast<UnsignedType>(0x2028));
+    constexpr auto u2029Mask = SIMD::splat<UnsignedType>(static_cast<UnsignedType>(0x2029));
+    auto vectorMatch = [&](auto input) ALWAYS_INLINE_LAMBDA {
+        auto lineFeed = SIMD::equal(input, lineFeedMask);
+        auto carriageReturn = SIMD::equal(input, carriageReturnMask);
+        if constexpr (std::is_same_v<T, Latin1Character>) {
+            auto mask = SIMD::bitOr(lineFeed, carriageReturn);
+            return SIMD::findFirstNonZeroIndex(mask);
+        } else {
+            auto u2028 = SIMD::equal(input, u2028Mask);
+            auto u2029 = SIMD::equal(input, u2029Mask);
+            auto mask = SIMD::bitOr(lineFeed, carriageReturn, u2028, u2029);
+            return SIMD::findFirstNonZeroIndex(mask);
+        }
+    };
+
+    auto scalarMatch = [&](auto character) ALWAYS_INLINE_LAMBDA {
+        return isLineTerminator(character);
+    };
+
+    m_code = SIMD::find(std::span { currentSourcePtr(), m_codeEnd }, vectorMatch, scalarMatch);
+    if (m_code == m_codeEnd) {
+        m_current = 0;
+        fillTokenInfo(tokenRecord, endPosition);
+        return EOFTOK;
+    }
+
+    m_current = *m_code;
+    shiftLineTerminator();
+    m_atLineStart = true;
+    m_hasLineTerminatorBeforeToken = true;
+    // The caller restarts the token scan unless a restricted keyword needs the
+    // automatic semicolon that the line terminator implies.
+    if (!isRestrKeyword(tokenRecord->m_type))
+        return std::nullopt;
+
+    fillTokenInfo(tokenRecord, endPosition);
+    return SEMICOLON;
+}
+
+template <typename T>
 JSTokenType Lexer<T>::lexWithoutClearingLineTerminator(JSToken* tokenRecord, OptionSet<LexerFlags> lexerFlags, bool strictMode)
 {
     JSTokenData* tokenData = &tokenRecord->m_data;
@@ -2168,7 +2225,9 @@ start:
         if (m_current == '!' && peek(1) == '-' && peek(2) == '-') {
             if (m_scriptMode == JSParserScriptMode::Classic) {
                 // <!-- marks the beginning of a line comment (for www usage)
-                goto inSingleLineComment;
+                if (auto result = scanSingleLineComment(tokenRecord, false))
+                    return *result;
+                goto start;
             }
         }
         if (m_current == '<') {
@@ -2229,7 +2288,9 @@ start:
             if ((m_atLineStart || m_hasLineTerminatorBeforeToken) && m_current == '>') {
                 if (m_scriptMode == JSParserScriptMode::Classic) {
                     shift();
-                    goto inSingleLineComment;
+                    if (auto result = scanSingleLineComment(tokenRecord, false))
+                        return *result;
+                    goto start;
                 }
             }
             token = (!m_hasLineTerminatorBeforeToken) ? MINUSMINUS : AUTOMINUSMINUS;
@@ -2269,7 +2330,9 @@ start:
         shift();
         if (m_current == '/') {
             shift();
-            goto inSingleLineCommentCheckForDirectives;
+            if (auto result = scanSingleLineComment(tokenRecord, true))
+                return *result;
+            goto start;
         }
         if (m_current == '*') {
             shift();
@@ -2920,7 +2983,9 @@ start:
         if (next == '!' && !currentOffset()) {
             shift();
             shift();
-            goto inSingleLineComment;
+            if (auto result = scanSingleLineComment(tokenRecord, false))
+                return *result;
+            goto start;
         }
 
         bool isValidPrivateName;
@@ -3049,62 +3114,6 @@ start:
 
     m_atLineStart = false;
     goto returnToken;
-
-inSingleLineCommentCheckForDirectives:
-    // Script comment directives like "//# sourceURL=test.js".
-    if ((m_current == '#' || m_current == '@') && isWhiteSpace(peek(1))) [[unlikely]] {
-        shift();
-        shift();
-        parseCommentDirective();
-    }
-    // Fall through to complete single line comment parsing.
-
-inSingleLineComment:
-    {
-        auto endPosition = currentPosition();
-
-        using UnsignedType = SameSizeUnsignedInteger<T>;
-        constexpr auto lineFeedMask = SIMD::splat<UnsignedType>('\n');
-        constexpr auto carriageReturnMask = SIMD::splat<UnsignedType>('\r');
-        constexpr auto u2028Mask = SIMD::splat<UnsignedType>(static_cast<UnsignedType>(0x2028));
-        constexpr auto u2029Mask = SIMD::splat<UnsignedType>(static_cast<UnsignedType>(0x2029));
-        auto vectorMatch = [&](auto input) ALWAYS_INLINE_LAMBDA {
-            auto lineFeed = SIMD::equal(input, lineFeedMask);
-            auto carriageReturn = SIMD::equal(input, carriageReturnMask);
-            if constexpr (std::is_same_v<T, Latin1Character>) {
-                auto mask = SIMD::bitOr(lineFeed, carriageReturn);
-                return SIMD::findFirstNonZeroIndex(mask);
-            } else {
-                auto u2028 = SIMD::equal(input, u2028Mask);
-                auto u2029 = SIMD::equal(input, u2029Mask);
-                auto mask = SIMD::bitOr(lineFeed, carriageReturn, u2028, u2029);
-                return SIMD::findFirstNonZeroIndex(mask);
-            }
-        };
-
-        auto scalarMatch = [&](auto character) ALWAYS_INLINE_LAMBDA {
-            return isLineTerminator(character);
-        };
-
-        m_code = SIMD::find(std::span { currentSourcePtr(), m_codeEnd }, vectorMatch, scalarMatch);
-        if (m_code == m_codeEnd) {
-            m_current = 0;
-            token = EOFTOK;
-            fillTokenInfo(tokenRecord, endPosition);
-            return token;
-        }
-
-        m_current = *m_code;
-        shiftLineTerminator();
-        m_atLineStart = true;
-        m_hasLineTerminatorBeforeToken = true;
-        if (!isRestrKeyword(tokenRecord->m_type))
-            goto start;
-
-        token = SEMICOLON;
-        fillTokenInfo(tokenRecord, endPosition);
-        return token;
-    }
 
 returnToken:
     fillTokenInfo(tokenRecord, currentPosition());
