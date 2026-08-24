@@ -493,7 +493,7 @@ bool MacApplication::isAdobeInstaller()
 
 bool MacApplication::isMiniBrowser()
 {
-    static bool isMiniBrowser = applicationBundleIsEqualTo("org.webkit.MiniBrowser"_s);
+    static bool isMiniBrowser = applicationBundleIsEqualTo("org.webkit.MiniBrowser"_s) || applicationBundleIsEqualTo("org.webkit.SwiftBrowser"_s);
     return isMiniBrowser;
 }
 
@@ -617,7 +617,7 @@ bool IOSApplication::isDataActivation()
 
 bool IOSApplication::isMiniBrowser()
 {
-    static bool isMiniBrowser = applicationBundleIsEqualTo("org.webkit.MiniBrowser"_s);
+    static bool isMiniBrowser = applicationBundleIsEqualTo("org.webkit.MiniBrowser"_s) || applicationBundleIsEqualTo("org.webkit.SwiftBrowser"_s);
     return isMiniBrowser;
 }
 

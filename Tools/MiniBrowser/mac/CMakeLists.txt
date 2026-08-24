@@ -2,7 +2,7 @@ set(MINIBROWSER_DIR "${TOOLS_DIR}/MiniBrowser/mac")
 
 find_library(SECURITYINTERFACE_LIBRARY SecurityInterface)
 
-set(PRODUCT_BUNDLE_IDENTIFIER "org.WebKit.MiniBrowser")
+set(PRODUCT_BUNDLE_IDENTIFIER "org.webkit.MiniBrowser")
 
 #FIXME: This should not need WEBCORE_EXPORT defined.  This means we are including WebCore headers, and we should not.
 add_definitions("-include MiniBrowser_Prefix.pch -DWEBCORE_EXPORT=")
