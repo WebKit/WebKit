@@ -59,6 +59,8 @@ public:
 private:
     explicit NetworkBroadcastChannelRegistry(NetworkProcess&);
 
+    bool isOriginAllowedForConnection(IPC::Connection&, const WebCore::ClientOrigin&) const;
+
     const Ref<NetworkProcess> m_networkProcess;
     using NameToConnectionIdentifiersMap = HashMap<String, Vector<IPC::Connection::UniqueID>>;
     HashMap<WebCore::ClientOrigin, NameToConnectionIdentifiersMap> m_broadcastChannels;

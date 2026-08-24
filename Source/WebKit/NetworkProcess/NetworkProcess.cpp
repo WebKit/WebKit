@@ -535,7 +535,6 @@ auto NetworkProcess::allowsFirstPartyForCookies(WebCore::ProcessIdentifier proce
     }
 
     auto result = set.contains(firstPartyDomain);
-    ASSERT(result || terminateOrDisallow == AllowCookieAccess::Disallow);
     return result ? AllowCookieAccess::Allow : terminateOrDisallow;
 }
 
