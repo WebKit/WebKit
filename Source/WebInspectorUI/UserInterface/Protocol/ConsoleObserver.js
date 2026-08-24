@@ -45,7 +45,7 @@ WI.ConsoleObserver = class ConsoleObserver extends InspectorBackend.Dispatcher
 
     messagesCleared(reason)
     {
-        WI.consoleManager.messagesCleared(reason);
+        WI.consoleManager.messagesCleared(this._target, reason);
     }
 
     heapSnapshot(timestamp, snapshotStringData, title)

@@ -1,0 +1,142 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/inspector/resources/inspector-test.js"></script>
+<script>
+// Utilities for page code.
+function addSubframe() {
+    const iframe = document.createElement("iframe");
+    iframe.src = "http://localhost:8000/site-isolation/inspector/console/resources/console-subframe.html";
+    document.body.appendChild(iframe);
+}
+
+function tellSubframe(what) {
+    frames[0].postMessage(what, "*");
+}
+
+function mainFrameError(text) {
+    console.error(text);
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("SiteIsolation.Console.ClearScope");
+
+    // console.clear() reaches only the calling frame's console agent, but the frontend clears
+    // its whole log, so other agents keep messages the user was told were cleared.
+
+    let mainFrameTarget = null;
+    let subframeTarget = null;
+    let framesReady = false;
+
+    // Distinct message text per case: a repeat of a stored message takes a different path.
+    async function setUpFrames() {
+        if (framesReady)
+            return;
+
+        mainFrameTarget = WI.targets.find((target) => target.type === WI.TargetType.Frame);
+
+        let [readyEvent] = await Promise.all([
+            WI.consoleManager.awaitEvent(WI.ConsoleManager.Event.MessageAdded),
+            InspectorTest.evaluateInPage(`addSubframe()`),
+        ]);
+        subframeTarget = readyEvent.data.message.target;
+
+        // console.clear() from page script only reaches the agent when the API is allowed.
+        await subframeTarget.ConsoleAgent.setConsoleClearAPIEnabled(true);
+
+        framesReady = true;
+    }
+
+    // Resolves on whichever arrives, so a test can assert which one the backend chose.
+    function awaitMessageAddedOrRepeat() {
+        return new Promise((resolve) => {
+            function cleanup() {
+                WI.consoleManager.removeEventListener(WI.ConsoleManager.Event.MessageAdded, addedListener);
+                WI.consoleManager.removeEventListener(WI.ConsoleManager.Event.PreviousMessageRepeatCountUpdated, repeatListener);
+            }
+
+            let addedListener = WI.consoleManager.addEventListener(WI.ConsoleManager.Event.MessageAdded, (event) => {
+                cleanup();
+                resolve({kind: "message-added", messageText: event.data.message.messageText});
+            });
+
+            let repeatListener = WI.consoleManager.addEventListener(WI.ConsoleManager.Event.PreviousMessageRepeatCountUpdated, (event) => {
+                cleanup();
+                resolve({kind: "repeat-count-updated", count: event.data.count});
+            });
+        });
+    }
+
+    suite.addTestCase({
+        name: "SiteIsolation.Console.ClearScope.ClearEmptiesEveryAgent",
+        description: "console.clear() in one frame should clear every frame's console agent, not just its own.",
+        async test() {
+            InspectorTest.expectTrue(WI.isSiteIsolationEnabled(), "Site Isolation should be enabled.");
+            await setUpFrames();
+            InspectorTest.expectNotEqual(subframeTarget, mainFrameTarget, "The subframe should have its own target, distinct from the main frame's.");
+
+            await Promise.all([
+                WI.consoleManager.awaitEvent(WI.ConsoleManager.Event.MessageAdded),
+                InspectorTest.evaluateInPage(`mainFrameError("clear-scope-replay")`),
+            ]);
+
+            await Promise.all([
+                WI.consoleManager.awaitEvent(WI.ConsoleManager.Event.Cleared),
+                InspectorTest.evaluateInPage(`tellSubframe("clear")`),
+            ]);
+
+            // Re-enabling Console replays whatever the agent still buffers.
+            let replayed = [];
+            let listener = WI.consoleManager.addEventListener(WI.ConsoleManager.Event.MessageAdded, (event) => {
+                if (event.data.message.target === mainFrameTarget)
+                    replayed.push(event.data.message.messageText);
+            });
+
+            await mainFrameTarget.ConsoleAgent.disable();
+            await mainFrameTarget.ConsoleAgent.enable();
+
+            WI.consoleManager.removeEventListener(WI.ConsoleManager.Event.MessageAdded, listener);
+
+            InspectorTest.expectEqual(replayed.length, 0, "The main frame's agent should have no messages left to replay after a console.clear() in another frame.");
+            for (let messageText of replayed)
+                InspectorTest.log(`    Unexpectedly replayed: ${JSON.stringify(messageText)}`);
+        },
+    });
+
+    suite.addTestCase({
+        name: "SiteIsolation.Console.ClearScope.ClearResetsDedupState",
+        description: "After a console.clear() in another frame, a re-logged message should arrive as a new message rather than a repeat of a cleared one.",
+        async test() {
+            await setUpFrames();
+
+            await Promise.all([
+                WI.consoleManager.awaitEvent(WI.ConsoleManager.Event.MessageAdded),
+                InspectorTest.evaluateInPage(`mainFrameError("clear-scope-refresh")`),
+            ]);
+
+            await Promise.all([
+                WI.consoleManager.awaitEvent(WI.ConsoleManager.Event.Cleared),
+                InspectorTest.evaluateInPage(`tellSubframe("clear")`),
+            ]);
+
+            // A stale pre-clear copy would make this a repeat-count update instead, which the
+            // frontend drops: clearing the log discarded the view the count would apply to.
+            let [result] = await Promise.all([
+                awaitMessageAddedOrRepeat(),
+                InspectorTest.evaluateInPage(`mainFrameError("clear-scope-refresh")`),
+            ]);
+
+            InspectorTest.expectEqual(result.kind, "message-added", "A message logged after a console.clear() should arrive as a new message, not a repeat count update.");
+        },
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Under Site Isolation, console.clear() in one frame must clear every frame's console agent.</p>
+</body>
+</html>
