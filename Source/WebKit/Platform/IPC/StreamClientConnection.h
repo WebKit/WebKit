@@ -32,6 +32,7 @@
 #include "MessageNames.h"
 #include "StreamClientConnectionBuffer.h"
 #include "StreamServerConnection.h"
+#include <atomic>
 #include <wtf/CheckedPtr.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/Scope.h>
@@ -112,7 +113,15 @@ public:
     Seconds defaultTimeoutDuration() const { return m_defaultTimeoutDuration; }
 
 #if ENABLE(CORE_IPC_SIGNPOSTS)
-    static bool signpostsEnabled();
+    static inline bool signpostsEnabled()
+    {
+        auto state = s_signpostState.load(std::memory_order_relaxed);
+        if (state == SignpostState::NotChecked) [[unlikely]] {
+            signpostsEnabledSlow();
+            state = s_signpostState.load(std::memory_order_relaxed);
+        }
+        return state == SignpostState::Enabled;
+    }
     static void NODELETE forceEnableSignposts();
 #endif
 
@@ -134,6 +143,10 @@ private:
     void wakeUpServer(WakeUpServer);
 
 #if ENABLE(CORE_IPC_SIGNPOSTS)
+    enum class SignpostState : uint8_t { NotChecked, Disabled, Enabled };
+    static inline std::atomic<SignpostState> s_signpostState { SignpostState::NotChecked };
+
+    static void signpostsEnabledSlow();
     static uintptr_t generateSignpostIdentifier();
     void emitSendSignpost(MessageName);
 #endif
@@ -173,7 +186,8 @@ template<typename T, typename U, typename V>
 Error StreamClientConnection::send(T&& message, ObjectIdentifierGeneric<U, V> destinationID)
 {
 #if ENABLE(CORE_IPC_SIGNPOSTS)
-    emitSendSignpost(message.name());
+    if (signpostsEnabled())
+        emitSendSignpost(message.name());
 #endif
 
     static_assert(!T::isSync, "Message is sync!");

@@ -194,23 +194,15 @@ void StreamClientConnection::removeWorkQueueMessageReceiver(ReceiverName name, u
 
 #if ENABLE(CORE_IPC_SIGNPOSTS)
 
-static bool streamingIPCSignpostsEnabled = false;
-
 void StreamClientConnection::forceEnableSignposts()
 {
-    streamingIPCSignpostsEnabled = true;
+    s_signpostState.store(SignpostState::Enabled, std::memory_order_relaxed);
 }
 
-bool StreamClientConnection::signpostsEnabled()
+void StreamClientConnection::signpostsEnabledSlow()
 {
-    static bool hasReadPreferences = false;
-    if (!hasReadPreferences) [[unlikely]] {
-        if (!isInAuxiliaryProcess() && CFPreferencesGetAppBooleanValue(CFSTR("WebKitDebugStreamingIPCSignposts"), kCFPreferencesCurrentApplication, nullptr))
-            streamingIPCSignpostsEnabled = true;
-        hasReadPreferences = true;
-    }
-
-    return streamingIPCSignpostsEnabled;
+    bool enabled = !isInAuxiliaryProcess() && CFPreferencesGetAppBooleanValue(CFSTR("WebKitDebugStreamingIPCSignposts"), kCFPreferencesCurrentApplication, nullptr);
+    s_signpostState.store(enabled ? SignpostState::Enabled : SignpostState::Disabled, std::memory_order_relaxed);
 }
 
 uintptr_t StreamClientConnection::generateSignpostIdentifier()
