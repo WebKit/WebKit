@@ -206,11 +206,14 @@ void RenderTreeBuilder::Block::attach(RenderBlock& parent, RenderPtr<RenderObjec
     };
 
     if (!shouldBuildAnonymousBlock()) {
-        auto isEmptyIgnoringExcludedMarker = [&] {
-            CheckedPtr firstChild = parent.firstChild();
-            return !firstChild || (isExcludedMarker(parent, *firstChild) && !firstChild->nextSibling());
+        auto hasInFlowChild = [&](auto& container) {
+            CheckedPtr firstInFlowChild = container.firstInFlowChild();
+            if (!firstInFlowChild)
+                return false;
+            // An excluded marker takes no part in in-flow layout either, so it leaves the decision to the content.
+            return !isExcludedMarker(container, *firstInFlowChild) || firstInFlowChild->nextInFlowSibling();
         };
-        if (isEmptyIgnoringExcludedMarker() && !child->isFloatingOrOutOfFlowPositioned())
+        if (!child->isFloatingOrOutOfFlowPositioned() && !hasInFlowChild(parent))
             parent.setChildrenInline(child->isInline());
         else if (child->isInline() && !isExcludedMarker(parent, *child)) {
             // An excluded marker takes no part in in-flow layout, so it does not make the children inline.
