@@ -42,7 +42,7 @@ public:
     template<typename... Arguments>
     static Ref<RefCountable> create(Arguments&&... arguments)
     {
-        static_assert(!HasRefPtrMemberFunctions<T>::value, "T should not be RefCounted");
+        static_assert(!HasRefPtrMemberFunctions<T>, "T should not be RefCounted");
         return adoptRef(*new RefCountable(std::forward<Arguments>(arguments)...));
     }
 
@@ -80,7 +80,7 @@ private:
     RefCountable(Arguments&&... arguments)
         : m_value(std::forward<Arguments>(arguments)...)
     {
-        static_assert(!HasRefPtrMemberFunctions<T>::value, "T should not be RefCounted");
+        static_assert(!HasRefPtrMemberFunctions<T>, "T should not be RefCounted");
     }
 
     T m_value;

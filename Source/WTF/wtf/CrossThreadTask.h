@@ -88,7 +88,7 @@ void callMemberFunctionForCrossThreadTask(C* object, MF function, ArgsTuple&& ar
 }
 
 template<typename T, typename... Parameters, typename... Arguments>
-requires (WTF::HasRefPtrMemberFunctions<T>::value)
+requires (WTF::HasRefPtrMemberFunctions<T>)
 CrossThreadTask createCrossThreadTask(T& callee, void (T::*method)(Parameters...), const Arguments&... arguments)
 {
     return CrossThreadTask([callee = RefPtr { &callee }, method, arguments = std::make_tuple(crossThreadCopy(arguments)...)]() mutable {
@@ -97,7 +97,7 @@ CrossThreadTask createCrossThreadTask(T& callee, void (T::*method)(Parameters...
 }
 
 template<typename T, typename... Parameters, typename... Arguments>
-requires (!WTF::HasRefPtrMemberFunctions<T>::value)
+requires (!WTF::HasRefPtrMemberFunctions<T>)
 CrossThreadTask createCrossThreadTask(T& callee, void (T::*method)(Parameters...), const Arguments&... arguments)
 {
     return CrossThreadTask([callee = &callee, method, arguments = std::make_tuple(crossThreadCopy(arguments)...)]() mutable {

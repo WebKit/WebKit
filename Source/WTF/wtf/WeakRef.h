@@ -85,7 +85,7 @@ public:
     {
         static_assert(IsCompleteType<T>, "T must be a complete type (are you missing an #include?)");
         static_assert(
-            HasRefPtrMemberFunctions<T>::value || HasCheckedPtrMemberFunctions<T>::value || IsDeprecatedWeakRefSmartPointerException<std::remove_cv_t<T>>::value,
+            HasRefPtrMemberFunctions<T> || HasCheckedPtrMemberFunctions<T> || IsDeprecatedWeakRefSmartPointerException<std::remove_cv_t<T>>::value,
             "Classes that offer weak pointers should also offer RefPtr or CheckedPtr. Please do not add new exceptions.");
 
         return !m_impl.isHashTableEmptyValue() ? static_cast<T*>(m_impl->template get<T>()) : nullptr;
@@ -95,7 +95,7 @@ public:
     {
         static_assert(IsCompleteType<T>, "T must be a complete type (are you missing an #include?)");
         static_assert(
-            HasRefPtrMemberFunctions<T>::value || HasCheckedPtrMemberFunctions<T>::value || IsDeprecatedWeakRefSmartPointerException<std::remove_cv_t<T>>::value,
+            HasRefPtrMemberFunctions<T> || HasCheckedPtrMemberFunctions<T> || IsDeprecatedWeakRefSmartPointerException<std::remove_cv_t<T>>::value,
             "Classes that offer weak pointers should also offer RefPtr or CheckedPtr. Please do not add new exceptions.");
 
         ASSERT_WITH_SECURITY_IMPLICATION(canSafelyBeUsed());
@@ -108,7 +108,7 @@ public:
     {
         static_assert(IsCompleteType<T>, "T must be a complete type (are you missing an #include?)");
         static_assert(
-            HasRefPtrMemberFunctions<T>::value || HasCheckedPtrMemberFunctions<T>::value || IsDeprecatedWeakRefSmartPointerException<std::remove_cv_t<T>>::value,
+            HasRefPtrMemberFunctions<T> || HasCheckedPtrMemberFunctions<T> || IsDeprecatedWeakRefSmartPointerException<std::remove_cv_t<T>>::value,
             "Classes that offer weak pointers should also offer RefPtr or CheckedPtr. Please do not add new exceptions.");
 
         ASSERT_WITH_SECURITY_IMPLICATION(canSafelyBeUsed());
@@ -240,14 +240,14 @@ inline WeakPtr<match_constness_t<Source, Target>, WeakPtrImpl> dynamicDowncast(W
 }
 
 template<typename T, typename WeakPtrImpl, typename PtrTraits = RawPtrTraits<T>>
-    requires HasRefPtrMemberFunctions<T>::value
+    requires HasRefPtrMemberFunctions<T>
 ALWAYS_INLINE CLANG_POINTER_CONVERSION Ref<T, PtrTraits> protect(const WeakRef<T, WeakPtrImpl>& weakRef)
 {
     return Ref<T, PtrTraits>(weakRef.get());
 }
 
 template<typename T, typename WeakPtrImpl, typename CheckedPtrTraits = RawPtrTraits<T>>
-    requires (HasCheckedPtrMemberFunctions<T>::value && !HasRefPtrMemberFunctions<T>::value)
+    requires (HasCheckedPtrMemberFunctions<T> && !HasRefPtrMemberFunctions<T>)
 ALWAYS_INLINE CLANG_POINTER_CONVERSION CheckedRef<T, CheckedPtrTraits> protect(const WeakRef<T, WeakPtrImpl>& weakRef)
 {
     return CheckedRef<T, CheckedPtrTraits>(weakRef.get());

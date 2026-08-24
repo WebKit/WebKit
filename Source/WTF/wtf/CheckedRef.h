@@ -287,7 +287,7 @@ inline const CheckedPtr<match_constness_t<ArgType, ExpectedType>> dynamicDowncas
 }
 
 template<typename T, typename PtrTraits = RawPtrTraits<T>>
-    requires (HasCheckedPtrMemberFunctions<T>::value && !HasRefPtrMemberFunctions<T>::value)
+    requires (HasCheckedPtrMemberFunctions<T> && !HasRefPtrMemberFunctions<T>)
 ALWAYS_INLINE CLANG_POINTER_CONVERSION CheckedRef<T, PtrTraits> protect(T& reference)
 {
     return CheckedRef<T, PtrTraits>(reference);
@@ -306,7 +306,7 @@ CheckedRef<T, PtrTraits> protect(CheckedRef<T, PtrTraits>&&)
 }
 
 template<typename T, typename PtrTraits = RawPtrTraits<T>>
-    requires (HasCheckedPtrMemberFunctions<T>::value && !HasRefPtrMemberFunctions<T>::value)
+    requires (HasCheckedPtrMemberFunctions<T> && !HasRefPtrMemberFunctions<T>)
 ALWAYS_INLINE CLANG_POINTER_CONVERSION CheckedRef<T, PtrTraits> protect(const UniqueRef<T>& reference)
 {
     return CheckedRef<T, PtrTraits>(reference.get());

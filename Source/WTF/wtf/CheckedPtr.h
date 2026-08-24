@@ -236,7 +236,7 @@ struct IsSmartPtr<CheckedPtr<T, U>> {
 };
 
 template<typename T, typename PtrTraits = RawPtrTraits<T>>
-    requires (HasCheckedPtrMemberFunctions<T>::value && !HasRefPtrMemberFunctions<T>::value)
+    requires (HasCheckedPtrMemberFunctions<T> && !HasRefPtrMemberFunctions<T>)
 ALWAYS_INLINE CLANG_POINTER_CONVERSION CheckedPtr<T, PtrTraits> protect(T* ptr)
 {
     return CheckedPtr<T, PtrTraits>(ptr);
@@ -255,7 +255,7 @@ CheckedPtr<T, PtrTraits> protect(CheckedPtr<T, PtrTraits>&&)
 }
 
 template<typename T, typename Deleter, typename PtrTraits = RawPtrTraits<T>>
-    requires (HasCheckedPtrMemberFunctions<T>::value && !HasRefPtrMemberFunctions<T>::value)
+    requires (HasCheckedPtrMemberFunctions<T> && !HasRefPtrMemberFunctions<T>)
 ALWAYS_INLINE CLANG_POINTER_CONVERSION CheckedPtr<T, PtrTraits> protect(const std::unique_ptr<T, Deleter>& ptr)
 {
     return CheckedPtr<T, PtrTraits>(ptr.get());

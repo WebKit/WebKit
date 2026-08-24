@@ -199,7 +199,7 @@ public:
         return m_set.size();
     }
 
-    void forEach(NOESCAPE const Function<void(T&)>& callback) requires HasRefPtrMemberFunctions<T>::value
+    void forEach(NOESCAPE const Function<void(T&)>& callback) requires HasRefPtrMemberFunctions<T>
     {
         auto items = compactMap(m_set, [](const KeyType& item) -> RefPtr<T> {
             return RefPtr { item.get() };
@@ -208,7 +208,7 @@ public:
             callback(item.get());
     }
 
-    void forEach(NOESCAPE const Function<void(T&)>& callback) requires (HasCheckedPtrMemberFunctions<T>::value && !HasRefPtrMemberFunctions<T>::value)
+    void forEach(NOESCAPE const Function<void(T&)>& callback) requires (HasCheckedPtrMemberFunctions<T> && !HasRefPtrMemberFunctions<T>)
     {
         auto items = compactMap(m_set, [](const KeyType& item) -> CheckedPtr<T> {
             return CheckedPtr { item.get() };
