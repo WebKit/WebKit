@@ -1,0 +1,55 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script src="/js-test-resources/js-test.js"></script>
+<script>
+description("Dragging a text selection to a point below a cross-origin iframe's bottom edge should autoscroll the iframe's own content and keep extending the selection, the same way it would for an in-process iframe. This requires mouse events to keep being delivered to the iframe's process once the drag point leaves its on-screen bounds.");
+jsTestIsAsync = true;
+
+let reportedSelection = "";
+let reportedScrollY = 0;
+addEventListener("message", (event) => {
+    if (event.data === "ready")
+        runTest();
+    else if (typeof event.data === "string" && event.data.startsWith("selection:"))
+        reportedSelection = event.data.substring("selection:".length);
+    else if (typeof event.data === "string" && event.data.startsWith("scrollY:"))
+        reportedScrollY = parseInt(event.data.substring("scrollY:".length));
+});
+
+function wait(milliseconds)
+{
+    return new Promise(resolve => setTimeout(resolve, milliseconds));
+}
+
+let initialSelection = "";
+let finalSelection = "";
+let finalScrollY = 0;
+
+async function runTest()
+{
+    eventSender.dragMode = false;
+
+    // Press down near the top of the iframe's visible content (not near any edge, so this alone
+    // should not autoscroll) and take a small initial selection.
+    await eventSender.asyncMouseMoveTo(20, 20);
+    await eventSender.asyncMouseDown();
+    await eventSender.asyncMouseMoveTo(60, 20);
+    await wait(100);
+    initialSelection = reportedSelection;
+    shouldBeTrue("initialSelection.length > 0");
+
+    // Now move to, and hold at, a point below the iframe's bottom edge (the iframe is 100px
+    // tall) and give the 50ms autoscroll timer several ticks to fire. The selection can only
+    // keep growing, and the iframe can only keep scrolling, if that held mouse position keeps
+    // being delivered to the iframe's process even though it's outside the iframe's own bounds.
+    await eventSender.asyncMouseMoveTo(20, 300);
+    await wait(500);
+    await eventSender.asyncMouseUp();
+
+    finalSelection = reportedSelection;
+    finalScrollY = reportedScrollY;
+    shouldBeTrue("finalScrollY > 0");
+    shouldBeTrue("finalSelection.length > initialSelection.length");
+    finishJSTest();
+}
+</script>
+<iframe style="position: absolute; left: 0; top: 0; width: 100px; height: 100px; border: none;" src="http://localhost:8000/site-isolation/resources/tall-selectable-text-frame.html"></iframe>

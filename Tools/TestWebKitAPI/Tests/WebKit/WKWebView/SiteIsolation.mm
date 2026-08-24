@@ -2690,6 +2690,51 @@ TEST(SiteIsolation, PropagateMouseEventsToSubframe)
     EXPECT_WK_STREQ("mouseup,40,40", eventTypes[2]);
 }
 
+TEST(SiteIsolation, MouseCaptureOutsideSubframeDuringDrag)
+{
+    auto mainframeHTML = "<script>"
+    "    window.eventTypes = [];"
+    "    window.addEventListener('message', function(event) {"
+    "        window.eventTypes.push(event.data);"
+    "    });"
+    "</script>"
+    "<iframe src='https://domain2.com/subframe' style='position: absolute; left: 0; top: 0; width: 100px; height: 100px; border: none;'></iframe>"_s;
+
+    auto subframeHTML = "<script>"
+    "    addEventListener('mousedown', (event) => { window.parent.postMessage('mousedown', '*') });"
+    "    addEventListener('mousemove', (event) => { window.parent.postMessage('mousemove', '*') });"
+    "    addEventListener('mouseup', (event) => { window.parent.postMessage('mouseup', '*') });"
+    "    alert('iframe loaded');"
+    "</script>"_s;
+
+    HTTPServer server({
+        { "/mainframe"_s, { mainframeHTML } },
+        { "/subframe"_s, { subframeHTML } }
+    }, HTTPServer::Protocol::HttpsProxy);
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server, CGRectMake(0, 0, 800, 600));
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://domain1.com/mainframe"]]];
+    EXPECT_WK_STREQ("iframe loaded", [webView _test_waitForAlert]);
+
+    // Press down inside the 100x100 subframe, then drag to and release at a point well
+    // outside its bounds (in the main frame's own area). Without mouse capture spanning the
+    // RemoteFrame boundary, the main frame re-hit-tests on every move and stops forwarding
+    // events to the subframe's process as soon as the point leaves its on-screen rect, so the
+    // subframe would never see the mousemove/mouseup below.
+    CGPoint insideSubframe = [webView convertPoint:CGPointMake(50, 50) toView:nil];
+    CGPoint outsideSubframe = [webView convertPoint:CGPointMake(400, 400) toView:nil];
+    [webView mouseDownAtPoint:insideSubframe simulatePressure:NO];
+    [webView mouseDragToPoint:outsideSubframe];
+    [webView mouseUpAtPoint:outsideSubframe];
+    [webView waitForPendingMouseEvents];
+
+    NSArray<NSString *> *eventTypes = [webView objectByEvaluatingJavaScript:@"window.eventTypes"];
+    while (eventTypes.count != 3u)
+        eventTypes = [webView objectByEvaluatingJavaScript:@"window.eventTypes"];
+    EXPECT_WK_STREQ("mousedown", eventTypes[0]);
+    EXPECT_WK_STREQ("mousemove", eventTypes[1]);
+    EXPECT_WK_STREQ("mouseup", eventTypes[2]);
+}
+
 TEST(SiteIsolation, RunOpenPanel)
 {
     HTTPServer server({

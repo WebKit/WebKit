@@ -2094,8 +2094,21 @@ HandleUserInputEventResult EventHandler::handleMousePressEvent(const PlatformMou
 
     if (!passedToScrollbar) {
         auto subframe = subframeForHitTestResult(mouseEvent);
-        if (auto remoteMouseEventData = userInputEventDataForRemoteFrame(dynamicDowncast<RemoteFrame>(subframe).get(), mouseEvent.hitTestResult().doublePointInInnerNodeFrame()))
-            return *remoteMouseEventData;
+        if (RefPtr remoteSubframe = dynamicDowncast<RemoteFrame>(subframe)) {
+            if (auto remoteMouseEventData = userInputEventDataForRemoteFrame(remoteSubframe, mouseEvent.hitTestResult().doublePointInInnerNodeFrame())) {
+                // Start capturing future events for this frame, mirroring the LocalFrame case below.
+                // Without this, a drag that leaves the remote subframe's on-screen bounds gets
+                // re-hit-tested into whatever's underneath instead of continuing to be delivered to
+                // the process that owns it.
+                if (m_mousePressed) {
+                    m_capturingMouseEventsElement = remoteSubframe->ownerElement();
+                    m_eventHandlerWillResetCapturingMouseEventsElement = true;
+                    if (!m_capturingMouseEventsElement)
+                        m_isCapturingRootElementForMouseEvents = true;
+                }
+                return *remoteMouseEventData;
+            }
+        }
 
         if (RefPtr localSubframe = dynamicDowncast<LocalFrame>(subframe)) {
             auto result = passMousePressEventToSubframe(mouseEvent, *localSubframe);
