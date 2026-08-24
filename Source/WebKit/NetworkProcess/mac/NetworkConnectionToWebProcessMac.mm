@@ -28,6 +28,7 @@
 
 #import "CoreIPCAuditToken.h"
 #import "Logging.h"
+#import <mutex>
 #import <pal/spi/cocoa/LaunchServicesSPI.h>
 #import <wtf/SoftLinking.h>
 #import <wtf/cocoa/VectorCocoa.h>
@@ -119,11 +120,19 @@ void NetworkConnectionToWebProcess::checkInWebProcess(const CoreIPCAuditToken& a
         return;
     }
 
-    RELEASE_LOG(Process, "Launch Services checkin starting, infoDictionary = %{public}@", (__bridge NSDictionary *)infoDictionary.get());
+    // The info dictionary is identical for every WebContent process, so only log it once per
+    // NetworkProcess. Logging it on every checkin can quarantine this process for high logging
+    // volume when WebContent processes are launched at a high rate.
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [&] {
+        RELEASE_LOG(Process, "Launch Services checkin infoDictionary = %{public}@", (__bridge NSDictionary *)infoDictionary.get());
+    });
 
     auto block = makeBlockPtr([weakThis = WeakPtr { *this }, auditToken = auditToken](CFDictionaryRef result, CFErrorRef error) mutable {
-        NSDictionary *dictionary = (__bridge NSDictionary *)result;
-        RELEASE_LOG(Process, "Launch Services checkin completed, result = %{public}@, error = %{public}@", dictionary, (__bridge NSError *)error);
+        if (error)
+            RELEASE_LOG_ERROR(Process, "Launch Services checkin failed, error = %{public}@", (__bridge NSError *)error);
+        else
+            RELEASE_LOG(Process, "Launch Services checkin completed, result = %{public}@", (__bridge NSDictionary *)result);
 
         callOnMainRunLoop([weakThis = WTF::move(weakThis), auditToken = WTF::move(auditToken)] mutable {
             RefPtr protectedThis = weakThis.get();
@@ -138,7 +147,7 @@ void NetworkConnectionToWebProcess::checkInWebProcess(const CoreIPCAuditToken& a
     Boolean ok = _LSApplicationCheckInProxyPtr()(kLSDefaultSessionID, auditToken.auditToken(), infoDictionary.get(), block.get());
 
     if (!ok)
-        RELEASE_LOG(Process, "Launch Services checkin did not succeed");
+        RELEASE_LOG_ERROR(Process, "Launch Services checkin did not succeed");
 }
 #endif
 
