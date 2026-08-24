@@ -202,10 +202,10 @@ void CanvasNoiseInjection::postProcessDirtyCanvasBuffer(ImageBuffer* imageBuffer
     if (!is<ByteArrayPixelBuffer>(pixelBuffer))
         return;
 
-    if (postProcessPixelBufferResults(*pixelBuffer, salt)) {
+    if (postProcessPixelBufferResults(*pixelBuffer, salt))
         imageBuffer->putPixelBuffer(*pixelBuffer, { IntPoint::zero(), dirtyRect.size() }, dirtyRect.location());
-        m_postProcessDirtyRect = { };
-    }
+
+    m_postProcessDirtyRect = { };
 }
 
 static std::pair<int, int> NODELETE lowerAndUpperBound(int component1, int component2, int component3)

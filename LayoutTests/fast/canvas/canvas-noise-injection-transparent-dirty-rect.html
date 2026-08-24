@@ -1,0 +1,51 @@
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+<script>
+    description("Test that a dirty rect whose pixels are all transparent is cleared once the canvas has been read back.");
+
+    function hasPendingCanvasNoiseInjection(canvas) {
+        return internals.doesCanvasHavePendingCanvasNoiseInjection(canvas);
+    }
+
+    function expectFalse(result, msg) {
+        expectTrue(!result, msg);
+    }
+
+    if (window.internals) {
+        let canvas = document.createElement("canvas");
+        internals.setCanvasNoiseInjectionSalt(canvas, 5);
+        document.body.appendChild(canvas);
+
+        let ctx = canvas.getContext("2d");
+        expectFalse(hasPendingCanvasNoiseInjection(canvas), "Initial canvas should not have pending dirty rects");
+
+        ctx.fillStyle = "rgba(0, 0, 0, 0)";
+        ctx.fillRect(0, 0, 50, 50);
+        expectTrue(hasPendingCanvasNoiseInjection(canvas), "fillRect with a transparent fill should require noise injection");
+
+        ctx.getImageData(0, 0, canvas.width, canvas.height);
+        expectFalse(hasPendingCanvasNoiseInjection(canvas), "getImageData should clear the dirty rect when every pixel in it is transparent");
+
+        ctx.fillRect(60, 60, 50, 50);
+        expectTrue(hasPendingCanvasNoiseInjection(canvas), "fillRect with a transparent fill should require noise injection");
+
+        canvas.toDataURL();
+        expectFalse(hasPendingCanvasNoiseInjection(canvas), "toDataURL should clear the dirty rect when every pixel in it is transparent");
+
+        ctx.fillStyle = "blue";
+        ctx.fillRect(0, 0, 50, 50);
+        expectTrue(hasPendingCanvasNoiseInjection(canvas), "fillRect with an opaque fill should require noise injection");
+
+        ctx.getImageData(0, 0, canvas.width, canvas.height);
+        expectFalse(hasPendingCanvasNoiseInjection(canvas), "getImageData should apply all required noise");
+
+        document.body.removeChild(canvas);
+    } else
+        document.body.innerHTML = "window.internals is required for this test";
+
+</script>
+</body>
+</html>
