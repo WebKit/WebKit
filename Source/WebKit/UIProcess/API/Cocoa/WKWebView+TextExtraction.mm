@@ -71,7 +71,7 @@ constexpr Seconds defaultInteractionPresentationUpdateTimeout = 100_ms;
 
 #if PLATFORM(IOS_FAMILY)
 namespace ForcedDisplayRefreshProperties {
-constexpr Seconds refreshInterval = 250_ms;
+constexpr Seconds refreshInterval = 100_ms;
 constexpr Seconds maximumDuration = 2_min;
 constexpr Seconds interactionPresentationUpdateTimeout = 1_s;
 static_assert(interactionPresentationUpdateTimeout > refreshInterval);
