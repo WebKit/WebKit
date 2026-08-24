@@ -463,5 +463,8 @@ x-apple-data-detectors-type
 x-apple-pdf-annotation
 x-itunes-inherit-uri-query-component
 x-webkit-airplay
+x-webkit-fieldofview
+x-webkit-pitch
 x-webkit-projection
 x-webkit-wirelessvideoplaybackdisabled
+x-webkit-yaw
