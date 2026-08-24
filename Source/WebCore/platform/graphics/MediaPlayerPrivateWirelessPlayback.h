@@ -72,12 +72,14 @@ private:
 
     MediaPlaybackTargetWirelessPlayback* wirelessPlaybackTarget() const;
     MediaDeviceRoute* route() const;
+    bool hasRoute() const;
 
     void updateURLIfNeeded();
 
     void setNetworkState(MediaPlayer::NetworkState);
     void setReadyState(MediaPlayer::ReadyState);
     void updateReadyState();
+    void notifyRateAndPlaybackStateChanged();
 
     // MediaPlayerPrivateInterface
     constexpr MediaPlayerType mediaPlayerType() const final { return MediaPlayerType::WirelessPlayback; }

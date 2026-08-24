@@ -185,6 +185,8 @@ void MediaPlayerPrivateWirelessPlayback::setWirelessPlaybackTarget(Ref<MediaPlay
 
     ALWAYS_LOG(LOGIDENTIFIER, playbackTarget->type());
 
+    bool hadRoute = hasRoute();
+
     if (RefPtr route = this->route()) {
         route->disconnectFromSession();
         route->setClient(nullptr);
@@ -192,16 +194,17 @@ void MediaPlayerPrivateWirelessPlayback::setWirelessPlaybackTarget(Ref<MediaPlay
 
     m_playbackTarget = WTF::move(playbackTarget);
 
-    if (!wirelessPlaybackTarget())
-        return;
-
     if (RefPtr route = this->route()) {
         route->setClient(this);
         updateURLIfNeeded();
         return;
     }
 
-    setNetworkState(MediaPlayer::NetworkState::FormatError);
+    if (hadRoute)
+        notifyRateAndPlaybackStateChanged();
+
+    if (wirelessPlaybackTarget())
+        setNetworkState(MediaPlayer::NetworkState::FormatError);
 }
 
 void MediaPlayerPrivateWirelessPlayback::setShouldPlayToPlaybackTarget(bool shouldPlay)
@@ -214,6 +217,7 @@ void MediaPlayerPrivateWirelessPlayback::setShouldPlayToPlaybackTarget(bool shou
     m_shouldPlayToTarget = shouldPlayToTarget;
 
     if (!isCurrentPlaybackTargetWireless()) {
+        notifyRateAndPlaybackStateChanged();
         setNetworkState(MediaPlayer::NetworkState::FormatError);
         return;
     }
@@ -222,6 +226,17 @@ void MediaPlayerPrivateWirelessPlayback::setShouldPlayToPlaybackTarget(bool shou
 
     if (RefPtr player = m_player.get())
         player->currentPlaybackTargetIsWirelessChanged(true);
+}
+
+void MediaPlayerPrivateWirelessPlayback::notifyRateAndPlaybackStateChanged()
+{
+    RefPtr player = m_player.get();
+    if (!player)
+        return;
+
+    ALWAYS_LOG(LOGIDENTIFIER, "effectiveRate = ", effectiveRate(), ", paused = ", paused());
+    player->rateChanged();
+    player->playbackStateChanged();
 }
 
 MediaPlaybackTargetWirelessPlayback* MediaPlayerPrivateWirelessPlayback::wirelessPlaybackTarget() const
@@ -234,6 +249,11 @@ MediaDeviceRoute* MediaPlayerPrivateWirelessPlayback::route() const
     if (RefPtr wirelessPlaybackTarget = this->wirelessPlaybackTarget())
         return wirelessPlaybackTarget->route();
     return nullptr;
+}
+
+bool MediaPlayerPrivateWirelessPlayback::hasRoute() const
+{
+    return !!route();
 }
 
 void MediaPlayerPrivateWirelessPlayback::updateURLIfNeeded()
@@ -317,9 +337,8 @@ Ref<MediaTimePromise> MediaPlayerPrivateWirelessPlayback::seekToTarget(const See
 
 bool MediaPlayerPrivateWirelessPlayback::paused() const
 {
-    if (RefPtr route = this->route())
-        return !route->playing();
-    return false;
+    RefPtr route = this->route();
+    return !route || !route->playing();
 }
 
 MediaTime MediaPlayerPrivateWirelessPlayback::startTime() const
