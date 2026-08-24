@@ -125,7 +125,11 @@ public:
     // Pseudo element types applying to all elements.
     EnumSet<PseudoElementType> universalPseudoElementTypes() const { return m_universalPseudoElementTypes; }
 
+#ifdef RC_REMOVE_SEC_ACCEL_3
+    const Vector<StyleRulePage*>& pageRules() const LIFETIME_BOUND { return m_pageRules; }
+#else
     const Vector<Ref<StyleRulePage>>& pageRules() const LIFETIME_BOUND { return m_pageRules; }
+#endif
 
     unsigned ruleCount() const { return m_ruleCount; }
 
@@ -236,7 +240,11 @@ private:
     RuleDataVector m_universalPseudoElementRules;
     EnumSet<PseudoElementType> m_universalHTMLPseudoElementTypes;
     EnumSet<PseudoElementType> m_universalPseudoElementTypes;
+#ifdef RC_REMOVE_SEC_ACCEL_3
+    Vector<StyleRulePage*> m_pageRules;
+#else
     Vector<Ref<StyleRulePage>> m_pageRules;
+#endif
     RefPtr<StyleRuleViewTransition> m_viewTransitionRule;
     RuleFeatureSet m_features;
     Vector<DynamicMediaQueryRules> m_dynamicMediaQueryRules;

@@ -49,7 +49,11 @@ private:
     WTF::String NODELETE pageName(int pageIndex) const;
 
     void matchPageRules(RuleSet* rules, bool isLeftPage, bool isFirstPage, const WTF::String& pageName);
+#ifdef RC_REMOVE_SEC_ACCEL_3
+    void matchPageRulesForList(Vector<StyleRulePage*>& matchedRules, const Vector<StyleRulePage*>& rules, bool isLeftPage, bool isFirstPage, const WTF::String& pageName);
+#else
     void matchPageRulesForList(Vector<Ref<StyleRulePage>>& matchedRules, const Vector<Ref<StyleRulePage>>& rules, bool isLeftPage, bool isFirstPage, const WTF::String& pageName);
+#endif
 
     ScopeRuleSets& m_ruleSets;
     WritingMode m_rootWritingMode;
