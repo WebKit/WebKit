@@ -91,12 +91,7 @@ class PrintSpecial final : public Special {
 public:
     PrintSpecial(Printer::PrintRecordList*);
     ~PrintSpecial() final;
-    
-    // You cannot use this register to pass arguments. It just so happens that this register is not
-    // used for arguments in the C calling convention. By the way, this is the only thing that causes
-    // this special to be specific to C calls.
-    static constexpr GPRReg scratchRegister = GPRInfo::nonArgGPR0;
-    
+
 private:
     void forEachArg(Inst&, const ScopedLambda<Inst::EachArgCallback>&) final;
     bool isValid(Inst&) final;
@@ -106,21 +101,12 @@ private:
     MacroAssembler::Jump generate(Inst&, CCallHelpers&, GenerationContext&) final;
     RegisterSet extraEarlyClobberedRegs(Inst&) final;
     RegisterSet extraClobberedRegs(Inst&) final;
-    
+
     void dumpImpl(PrintStream&) const final;
     void deepDumpImpl(PrintStream&) const final;
-    
-    static constexpr unsigned specialArgOffset = 0;
+
     static constexpr unsigned numSpecialArgs = 1;
-    static constexpr unsigned calleeArgOffset = numSpecialArgs;
-    static constexpr unsigned numCalleeArgs = 1;
-    static constexpr unsigned returnGPArgOffset = numSpecialArgs + numCalleeArgs;
-    static constexpr unsigned numReturnGPArgs = 2;
-    static constexpr unsigned returnFPArgOffset = numSpecialArgs + numCalleeArgs + numReturnGPArgs;
-    static constexpr unsigned numReturnFPArgs = 1;
-    static constexpr unsigned argArgOffset =
-    numSpecialArgs + numCalleeArgs + numReturnGPArgs + numReturnFPArgs;
-    
+
     Printer::PrintRecordList* m_printRecordList;
 };
 

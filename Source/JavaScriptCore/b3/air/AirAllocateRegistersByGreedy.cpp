@@ -1392,9 +1392,9 @@ private:
         // First pass: collect coalescable pairs and the cannot-spill-in-place set.
         for (BasicBlock* block : m_code) {
             for (Inst& inst : block->insts()) {
-                inst.forEachArg([&](Arg& arg, Arg::Role, Bank, Width) {
+                for (Arg& arg : inst.args()) {
                     if (arg.isTmp() && inst.admitsStack(arg))
-                        return;
+                        continue;
 
                     // Arg cannot be spilled in-place.
                     arg.forEachTmpFast([&](Tmp& tmp) {
@@ -1403,7 +1403,7 @@ private:
                         else
                             cannotSpillInPlaceFP.add(tmp);
                     });
-                });
+                }
                 if (mayBeCoalescable(inst)) {
                     ASSERT(inst.args().size() == 2);
                     if (inst.args()[0].isReg() || inst.args()[1].isReg()) {
@@ -2753,12 +2753,28 @@ private:
         if (tmpData.liveRange.size() < splitMinRangeSize)
             return false; // Not enough instructions to be worthwhile
 
-        auto instUsesOrDefsTmp = [](Inst& inst, Tmp tmp) {
-            bool result = false;
+        struct ClobberSite {
+            Point point;
+            BasicBlock* block;
+            bool usesOrDefsTmp;
+        };
+        Vector<ClobberSite, 16> clobberSites;
+        // A call clobbers every caller-saved register at a single point, so the same instruction is
+        // reached once per candidate register below. What is computed here depends only on the
+        // point, thus caching here.
+        auto clobberSiteAt = [&](Point point) -> ClobberSite {
+            auto iterator = std::ranges::lower_bound(clobberSites, point, { }, &ClobberSite::point);
+            if (iterator != clobberSites.end() && iterator->point == point)
+                return *iterator;
+            BasicBlock* block = findBlockContainingPoint(point);
+            Inst& inst = block->at(this->instIndex(positionOfHead(block), point));
+            bool usesOrDefsTmp = false;
             inst.forEachTmpFast([&](Tmp useOrDef) {
-                result |= useOrDef == tmp;
+                usesOrDefsTmp |= useOrDef == tmp;
             });
-            return result;
+            ClobberSite site { point, block, usesOrDefsTmp };
+            clobberSites.insert(iterator - clobberSites.begin(), site);
+            return site;
         };
         ASSERT(tmpData.spillCost() != unspillableCost); // Should have evicted.
 
@@ -2773,10 +2789,8 @@ private:
             m_regRanges[r].forEachConflict(tmpData.liveRange, width,
                 [&](auto& conflict) -> IterationStatus {
                     if (conflict.tmp.isReg() && conflict.interval.distance() == 1) {
-                        BasicBlock* block = findBlockContainingPoint(conflict.interval.begin());
-                        unsigned instIndex = this->instIndex(positionOfHead(block), conflict.interval.begin());
-                        Inst& inst = block->at(instIndex);
-                        if (instUsesOrDefsTmp(inst, tmp)) {
+                        ClobberSite site = clobberSiteAt(conflict.interval.begin());
+                        if (site.usesOrDefsTmp) {
                             // If the inst that clobbers regs also use/def the tmp trying to be split, then
                             // can't split the tmp around this clobber.
                             // FIXME: could allow uses, but then we'd have to make split tmp conflict with any
@@ -2785,7 +2799,7 @@ private:
                             return IterationStatus::Done;
                         }
                         // Times 2 for 'MOV tmp, gapTmp' and 'MOV gapTmp, tmp'
-                        splitCost += UseDefCost(adjustedBlockFrequency(block) * 2);
+                        splitCost += UseDefCost(adjustedBlockFrequency(site.block) * 2);
                         if (splitCost >= minSplitCost)
                             return IterationStatus::Done; // Not the best or already over limit, exit early.
                         return IterationStatus::Continue;
@@ -2849,6 +2863,28 @@ private:
     // Note that the use/def lists are computed only once and not kept up to date.
     // So after a Tmp is split or spilled that Tmp's use/def list may include instructions that now
     // reference the new split tmp or spill slot rather than the Tmp itself.
+    // Only the Tmps matter when indexing use/def sites, not their roles, so the role-free walk is
+    // used. This asserts the two walks really do enumerate the same Tmps for every opcode form.
+    static void validateFastTmpEnumeration(Inst& inst)
+    {
+        auto collect = [](auto&& walk) {
+            Vector<int, 8> values;
+            walk([&](Tmp& tmp) { values.append(tmp.internalValue()); });
+            std::ranges::sort(values);
+            Vector<int, 8> unique;
+            for (int value : values) {
+                if (unique.isEmpty() || unique.last() != value)
+                    unique.append(value);
+            }
+            return unique;
+        };
+        auto fast = collect([&](auto&& functor) { inst.forEachTmpFast(functor); });
+        auto viaArgs = collect([&](auto&& functor) {
+            inst.forEachArg([&](Arg& arg, Arg::Role, Bank, Width) { arg.forEachTmpFast(functor); });
+        });
+        RELEASE_ASSERT(fast == viaArgs, fast.size(), viaArgs.size());
+    }
+
     void ensureUseDefLists()
     {
         if (m_hasUseDefLists)
@@ -2859,11 +2895,11 @@ private:
         for (BasicBlock* block : m_code) {
             Point instPoint = this->positionOfHead(block);
             for (Inst& inst : block->insts()) {
-                inst.forEachArg([&](Arg& arg, Arg::Role, Bank, Width) {
-                    arg.forEachTmpFast([&](Tmp& tmp) {
-                        m_useDefLists[tmp].add(instPoint);
-                    });
+                inst.forEachTmpFast([&](Tmp& tmp) {
+                    m_useDefLists[tmp].add(instPoint);
                 });
+                if (Options::airValidateGreedRegAlloc()) [[unlikely]]
+                    validateFastTmpEnumeration(inst);
                 instPoint += PointOffsets::PointsPerInst;
             }
         }
@@ -3094,6 +3130,24 @@ private:
             Point positionOfHead = this->positionOfHead(block);
             for (unsigned instIndex = 0; instIndex < block->size(); ++instIndex) {
                 Inst& inst = block->at(instIndex);
+
+                // Everything below is reached only through an Arg that is a spilled Tmp of this
+                // bank, and deciding whether the instruction mentions one does not need the Arg roles.
+                bool mayMentionSpilledTmp = false;
+                inst.forEachTmpFast([&](Tmp& tmp) {
+                    if (!mayMentionSpilledTmp && tmp.bank() == bank && spillSlot<bank>(tmp))
+                        mayMentionSpilledTmp = true;
+                });
+                if (!mayMentionSpilledTmp) {
+                    if (Options::airValidateGreedRegAlloc()) [[unlikely]] {
+                        inst.forEachArg([&](Arg& arg, Arg::Role, Bank argBank, Width) {
+                            if (arg.isTmp() && argBank == bank)
+                                RELEASE_ASSERT(!spillSlot<bank>(arg.tmp()));
+                        });
+                    }
+                    continue;
+                }
+
                 unsigned indexOfEarly = positionOfEarly(positionOfHead, instIndex);
 
                 bool useMove32IfDidSpill = false;
