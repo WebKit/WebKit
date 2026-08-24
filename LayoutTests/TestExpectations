@@ -2643,6 +2643,9 @@ imported/w3c/web-platform-tests/svg/linking/reftests/media-fragment-spatial-pixe
 imported/w3c/web-platform-tests/svg/linking/reftests/media-fragment-spatial-pixel-implicit.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/linking/reftests/media-fragment-spatial-viewbox-only.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/linking/reftests/media-fragment-spatial-viewbox-width.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/svg/linking/reftests/svgview-and-xywh.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/svg/linking/reftests/svgview-spaces-around-semicolon.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/svg/linking/reftests/svgview-spaces.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/struct/reftests/use-external-resource-nested-image.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/struct/reftests/use-external-resource-nested-symbol.html [ ImageOnlyFailure ]
 
