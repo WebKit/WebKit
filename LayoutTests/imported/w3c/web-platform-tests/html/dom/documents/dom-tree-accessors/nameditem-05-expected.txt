@@ -7,4 +7,8 @@ PASS If there are two embeds, a collection should be returned. (name and id)
 PASS If there are two embeds, a collection should be returned. (id and name)
 PASS A name shouldn't affect getting an embed by id
 PASS An id shouldn't affect getting an embed by name
+PASS Dynamically removing the name attribute from embed elements, should not be accessible.
+PASS Dynamically updating the name attribute from embed elements, should be accessible by its name.
+PASS Dynamically updating the id attribute from embed elements, should be accessible only by its name.
+PASS embed elements that is removed, should not be accessible.
 

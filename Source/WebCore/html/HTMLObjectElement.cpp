@@ -28,11 +28,9 @@
 #include "CSSValueKeywords.h"
 #include "CachedImage.h"
 #include "ContainerNodeInlines.h"
-#include "ElementAncestorIteratorInlines.h"
 #include "ElementChildIteratorInlines.h"
 #include "FrameLoader.h"
 #include "HTMLDocument.h"
-#include "HTMLEmbedElement.h"
 #include "HTMLFormElement.h"
 #include "HTMLImageLoader.h"
 #include "HTMLMetaElement.h"
@@ -78,20 +76,6 @@ Ref<HTMLObjectElement> HTMLObjectElement::create(const QualifiedName& tagName, D
 HTMLObjectElement::~HTMLObjectElement()
 {
     clearForm();
-}
-
-// https://html.spec.whatwg.org/multipage/dom.html#exposed
-bool HTMLObjectElement::isExposed() const
-{
-    for (Ref ancestor : ancestorsOfType<HTMLObjectElement>(*this)) {
-        if (ancestor->isExposed())
-            return false;
-    }
-    for (auto& descendant : descendantsOfType<HTMLElement>(*this)) {
-        if (is<HTMLObjectElement>(descendant) || is<HTMLEmbedElement>(descendant))
-            return false;
-    }
-    return true;
 }
 
 int HTMLObjectElement::defaultTabIndex() const

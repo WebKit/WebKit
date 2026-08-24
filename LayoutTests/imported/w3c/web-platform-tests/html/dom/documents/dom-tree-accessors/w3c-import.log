@@ -10,14 +10,13 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/documents/dom-tree-accessors/Document.body.html
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/documents/dom-tree-accessors/Document.currentScript.html
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/documents/dom-tree-accessors/Document.getElementsByClassName-null-undef.html
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/documents/dom-tree-accessors/Element.getElementsByClassName-null-undef.html
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/documents/dom-tree-accessors/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/documents/dom-tree-accessors/cross-domain.js
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/documents/dom-tree-accessors/document.embeds-document.plugins-01.html
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/documents/dom-tree-accessors/document.forms.html
@@ -45,4 +44,11 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/documents/dom-tree-accessors/nameditem-06.html
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/documents/dom-tree-accessors/nameditem-07.html
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/documents/dom-tree-accessors/nameditem-08.html
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/documents/dom-tree-accessors/nameditem-empty-name-dynamic-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/documents/dom-tree-accessors/nameditem-img-name-added-cached-list.html
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/documents/dom-tree-accessors/nameditem-img-name-added.html
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/documents/dom-tree-accessors/nameditem-img-name-dynamic.html
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/documents/dom-tree-accessors/nameditem-img-name-removed.html
 /LayoutTests/imported/w3c/web-platform-tests/html/dom/documents/dom-tree-accessors/nameditem-names.html
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/documents/dom-tree-accessors/nameditem-no-shadowing.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/html/dom/documents/dom-tree-accessors/nameditem-tree-order.html

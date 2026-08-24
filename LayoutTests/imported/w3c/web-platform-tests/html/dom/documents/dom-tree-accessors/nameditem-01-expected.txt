@@ -1,3 +1,9 @@
 
 PASS img elements that have a name and id attribute, should be accessible by both values.
+PASS img elements that have a name and id attribute with same value.
+PASS Dynamically removing the name attribute from img elements, should not be accessible.
+PASS Dynamically removing the id attribute from img elements, should still be accessible by name value.
+PASS Dynamically updating the name attribute from img elements, should be accessible by values.
+PASS Dynamically updating the id attribute from img elements, should be accessible by values.
+PASS img elements that is removed, should not be accessible.
 

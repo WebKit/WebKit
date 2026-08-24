@@ -7,4 +7,8 @@ PASS If an iframe has an id and no name, it should not be returned.
 PASS If an iframe has a name and a different id, it should be returned by its name.
 PASS If an iframe has an id and a different name, it should not be returned by its id.
 PASS An iframe whose name looks like an array index should work.
+PASS Dynamically removing the name attribute from iframe elements, should not be accessible.
+PASS Dynamically updating the name attribute from iframe elements, should be accessible by its name.
+PASS Dynamically updating the id attribute from iframe elements, should be accessible only by its name.
+PASS iframe elements that is removed, should not be accessible.
 

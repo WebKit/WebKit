@@ -7,4 +7,8 @@ PASS If there are two forms, a collection should be returned. (name and id)
 PASS If there are two forms, a collection should be returned. (id and name)
 PASS A name shouldn't affect getting an form by id
 PASS An id shouldn't affect getting an form by name
+PASS Dynamically removing the name attribute from form elements, should not be accessible.
+PASS Dynamically updating the name attribute from form elements, should be accessible by its name.
+PASS Dynamically updating the id attribute from form elements, should be accessible only by its name.
+PASS form elements that is removed, should not be accessible.
 

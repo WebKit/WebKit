@@ -64,16 +64,6 @@ Ref<HTMLEmbedElement> HTMLEmbedElement::create(Document& document)
     return create(embedTag, document);
 }
 
-// https://html.spec.whatwg.org/multipage/dom.html#exposed
-bool HTMLEmbedElement::isExposed() const
-{
-    for (Ref ancestor : ancestorsOfType<HTMLObjectElement>(*this)) {
-        if (ancestor->isExposed())
-            return false;
-    }
-    return true;
-}
-
 static inline RenderWidget* findWidgetRenderer(const Node* node)
 {
     if (!node->renderer())

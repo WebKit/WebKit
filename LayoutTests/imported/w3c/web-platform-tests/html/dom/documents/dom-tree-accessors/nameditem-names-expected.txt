@@ -1,18 +1,23 @@
 
-PASS An embed name appears in a document's property names if the embed is exposed.
-FAIL An embed name does not appears in a document's property names if the embed is inside another embed. assert_false: expected false got true
+PASS An embed name appears in a document's property names.
 PASS A form name appears in a document's property names.
 PASS An iframe name appears in a document's property names.
 PASS An img name appears in a document's property names when the img has no id.
-PASS An object name appears in a document's property names if the object is exposed.
-PASS An object id appears in a document's property names if the object is exposed.
-FAIL An object name does not appear in a document's property names if the object is inside another object. assert_false: expected false got true
-FAIL An object id does not appear in a document's property names if the object is inside another object. assert_false: expected false got true
+PASS An object name appears in a document's property names.
+PASS An object id appears in a document's property names.
+PASS An embed name appears in a document's property names when the embed is inside an object that is not showing its fallback content.
+PASS An object name appears in a document's property names when the object is inside an object that is not showing its fallback content.
+PASS An object id appears in a document's property names when the object is inside an object that is not showing its fallback content.
+PASS An object with object and embed descendants is returned by the named getter (name).
+PASS An object with an object descendant is returned by the named getter (id).
+PASS An embed inside an object that is not showing its fallback content is returned by the named getter.
+PASS An object inside an object that is not showing its fallback content is returned by the named getter (name).
+PASS An object inside an object that is not showing its fallback content is returned by the named getter (id).
 PASS An img name appears in a document's property names when the img has an id.
 PASS An img id appears in a document's property names when the img has a name.
 PASS An img id does not appear in a document's property names when the img has no name.
 PASS A document's property names can include integer strings.
 PASS A template name does not appear in a document's property names.
 PASS An img name does not appear in a document's property names when the img is in a template's document fragment.
-FAIL A document's property names appear in tree order. assert_greater_than: expected a number greater than 7 but got 0
+FAIL A document's property names appear in tree order. assert_greater_than: expected a number greater than 6 but got 0
 
