@@ -366,6 +366,9 @@ void RemotePageProxy::setDrawingArea(DrawingAreaProxy* drawingArea)
         return;
     }
 
+    if (m_drawingArea && m_drawingArea->identifier() == drawingArea->identifier())
+        return;
+
     m_drawingArea = RemotePageDrawingAreaProxy::create(*drawingArea, m_process);
     RefPtr websitePolicies = page->mainFrameWebsitePolicies();
     m_process->send(

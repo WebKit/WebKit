@@ -1580,12 +1580,16 @@ void WebPageProxy::setBrowsingContextGroup(BrowsingContextGroup& browsingContext
     if (protectedBrowsingContextGroup.ptr() == &browsingContextGroup)
         return;
 
+    m_browsingContextGroup = browsingContextGroup;
+
     if (protect(preferences())->siteIsolationEnabled()) {
         protectedBrowsingContextGroup->removePage(*this);
         browsingContextGroup.addPage(*this);
-    }
 
-    m_browsingContextGroup = browsingContextGroup;
+        protect(browsingContextGroup)->forEachRemotePage(*this, [drawingArea = m_drawingArea](auto& remotePageProxy) {
+            remotePageProxy.setDrawingArea(drawingArea.get());
+        });
+    }
 }
 
 #if ENABLE(VIDEO)
@@ -1646,6 +1650,7 @@ void WebPageProxy::swapToProvisionalPage(Ref<ProvisionalPageProxy>&& provisional
 
     ASSERT(!m_mainFrame);
     m_mainFrame = provisionalPage->mainFrame();
+
     ASSERT(!m_drawingArea);
     setDrawingArea(provisionalPage->takeDrawingArea());
 

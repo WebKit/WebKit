@@ -13355,6 +13355,7 @@ TEST(SiteIsolation, RestoredPageWithIframeIsRenderedAfterCrossSiteBFCacheRoundTr
     while (!frameTreesMatch(frameTrees(webView.get()).get(), Vector<ExpectedFrameTree> { expectedAfterGoBack }))
         TestWebKitAPI::Util::spinRunLoop();
     checkFrameTreesInProcesses(webView.get(), Vector<ExpectedFrameTree> { expectedAfterGoBack });
+    [webView waitForNextPresentationUpdate];
 
     [webView goForward];
     [navigationDelegate waitForDidFinishNavigation];
