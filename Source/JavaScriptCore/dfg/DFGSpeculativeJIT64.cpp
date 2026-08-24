@@ -1079,10 +1079,10 @@ void SpeculativeJIT::emitCall(Node* node)
             SuppressRegisterAllocationValidation suppressScope(*this);
             Label mainPath = label();
             emitStoreCallSiteIndex(callSite);
-            auto slowCases = callLinkInfo->emitDirectTailCallFastPath(*this, scopedLambda<void()>([&] {
+            auto slowCases = callLinkInfo->emitDirectTailCallFastPath(*this, [&] {
                 CallFrameShuffler shuffler { *this, shuffleData };
                 shuffler.prepareForTailCall();
-            }));
+            });
             Label slowPath = label();
             if (!callLinkInfo->isDataIC() || !slowCases.empty()) {
                 slowCases.link(this);
@@ -1122,7 +1122,7 @@ void SpeculativeJIT::emitCall(Node* node)
     if (m_graph.m_plan.isUnlinked())
         loadLinkableConstant(callLinkInfoConstant, callLinkInfoGPR);
     if (isTail) {
-        CallLinkInfo::emitTailCallFastPath(*this, callLinkInfo, scopedLambda<void()>([&] {
+        CallLinkInfo::emitTailCallFastPath(*this, callLinkInfo, [&] {
             if (node->op() == TailCall) {
                 CallFrameShuffler shuffler { *this, shuffleData };
                 shuffler.setCalleeJSValueRegs(BaselineJITRegisters::Call::calleeJSR);
@@ -1136,7 +1136,7 @@ void SpeculativeJIT::emitCall(Node* node)
                 preserved.add(BaselineJITRegisters::Call::calleeGPR, IgnoreVectors);
                 prepareForTailCallSlow(WTF::move(preserved));
             }
-        }));
+        });
         abortWithReason(JITDidReturnFromTailCall);
     } else {
         CallLinkInfo::emitFastPath(*this, callLinkInfo);
@@ -3906,14 +3906,14 @@ void SpeculativeJIT::compile(Node* node)
     case StringCharAt: {
         // Relies on StringCharAt and StringAt node having same basic layout as GetByVal
         JSValueRegsTemporary result;
-        compileGetByValOnString(node, scopedLambda<std::tuple<JSValueRegs, DataFormat>(DataFormat preferredFormat, bool needsFlush)>([&] (DataFormat preferredFormat, bool needsFlush) {
+        compileGetByValOnString(node, [&] (DataFormat preferredFormat, bool needsFlush) {
             result = JSValueRegsTemporary(this);
             JSValueRegs resultRegs = result.regs();
             ASSERT(preferredFormat == DataFormatJS || preferredFormat == DataFormatCell);
             if (needsFlush)
                 flushRegisters();
             return std::tuple { resultRegs, preferredFormat };
-        }));
+        });
         break;
     }
 
@@ -3958,7 +3958,7 @@ void SpeculativeJIT::compile(Node* node)
     case GetByVal: {
         JSValueRegsTemporary result;
         std::optional<JSValueRegsFlushedCallResult> flushedResult;
-        compileGetByVal(node, scopedLambda<std::tuple<JSValueRegs, DataFormat>(DataFormat preferredFormat, bool needsFlush)>([&](DataFormat preferredFormat, bool needsFlush) {
+        compileGetByVal(node, [&](DataFormat preferredFormat, bool needsFlush) {
             JSValueRegs resultRegs;
             switch (preferredFormat) {
             case DataFormatDouble:
@@ -3977,7 +3977,7 @@ void SpeculativeJIT::compile(Node* node)
             }
             };
             return std::tuple { resultRegs, preferredFormat };
-        }));
+        });
         break;
     }
 
@@ -6195,7 +6195,9 @@ void SpeculativeJIT::compile(Node* node)
             SpeculateStrictInt32Operand index(this, m_graph.varArgChild(node, 1));
             GPRTemporary result(this, Reuse, index);
 
-            compileHasIndexedProperty(node, operationHasIndexedProperty, scopedLambda<std::tuple<GPRReg, GPRReg>()>([&] { return std::make_pair(index.gpr(), result.gpr()); }));
+            compileHasIndexedProperty(node, operationHasIndexedProperty, [&] {
+                return std::make_pair(index.gpr(), result.gpr());
+            });
             unblessedBooleanResult(result.gpr(), node);
             break;
         }

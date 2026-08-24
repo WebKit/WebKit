@@ -42,13 +42,13 @@ void computeUsesForBytecodeIndex(Block* codeBlock, const JSInstruction* instruct
     if (opcodeID != op_enter && codeBlock->wasCompiledWithDebuggingOpcodes() && codeBlock->scopeRegister().isValid())
         functor(codeBlock->scopeRegister());
 
-    computeUsesForBytecodeIndexImpl(instruction, checkpoint, scopedLambda<void(VirtualRegister)>(functor));
+    computeUsesForBytecodeIndexImpl(instruction, checkpoint, functor);
 }
 
 template<typename Block, typename Functor>
 void computeDefsForBytecodeIndex(Block* codeBlock, const JSInstruction* instruction, Checkpoint checkpoint, const Functor& functor)
 {
-    computeDefsForBytecodeIndexImpl(codeBlock->numVars(), instruction, checkpoint, scopedLambda<void(VirtualRegister)>(functor));
+    computeDefsForBytecodeIndexImpl(codeBlock->numVars(), instruction, checkpoint, functor);
 }
 
 #undef CALL_FUNCTOR

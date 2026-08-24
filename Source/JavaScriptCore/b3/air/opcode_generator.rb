@@ -786,7 +786,7 @@ writeH("OpcodeUtils") {
             outp.puts "case Opcode::#{opcode.name}:"
         end
     }
-    outp.puts "forEachArgCustom(scopedLambdaRef<EachArgCallback>(functor));"
+    outp.puts "forEachArgCustom(functor);"
     outp.puts "return;"
     outp.puts "default:"
     outp.puts "forEachArgSimple(functor);"

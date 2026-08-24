@@ -524,10 +524,10 @@ template<typename Source> static Vector<uint8_t> encodeToVector(Source&& source,
 {
     Vector<uint8_t> result;
 
-    bool success = encode(std::forward<Source>(source), mimeType, quality, scopedLambdaRef<PutBytesCallback>([&] (std::span<const uint8_t> data) {
+    bool success = encode(std::forward<Source>(source), mimeType, quality, [&] (std::span<const uint8_t> data) {
         result.append(data);
         return data.size();
-    }));
+    });
     if (!success)
         return { };
 

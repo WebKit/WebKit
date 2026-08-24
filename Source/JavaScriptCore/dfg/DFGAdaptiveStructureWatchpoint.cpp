@@ -76,10 +76,9 @@ void AdaptiveStructureWatchpoint::fireInternal(VM& vm, const FireDetail& detail)
     
     dataLogLnIf(DFG::shouldDumpDisassembly(), "Firing watchpoint ", RawPointer(this), " (", m_key, ") on ", *m_codeBlock);
 
-    auto lambda = scopedLambda<void(PrintStream&)>([&](PrintStream& out) {
+    LazyFireDetail lazyDetail([&](PrintStream& out) {
         out.print("Adaptation of ", m_key, " failed: ", detail);
     });
-    LazyFireDetail lazyDetail(lambda);
     m_codeBlock->jettison(Profiler::JettisonDueToUnprofiledWatchpoint, CountReoptimization, &lazyDetail);
 }
 

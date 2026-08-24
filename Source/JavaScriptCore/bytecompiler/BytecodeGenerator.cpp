@@ -530,7 +530,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
     if (shouldCaptureAllOfTheThings)
         functionNode->varDeclarations().markAllVariablesAsCaptured();
     
-    auto captures = scopedLambda<bool (UniquedStringImpl*)>([&] (UniquedStringImpl* uid) -> bool {
+    auto captures = [&] (UniquedStringImpl* uid) -> bool {
         if (!shouldCaptureSomeOfTheThings)
             return false;
         if (m_needsArguments && uid == propertyNames().arguments.impl()) {
@@ -541,7 +541,7 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
             return true;
         }
         return functionNode->captures(uid);
-    });
+    };
     auto varKind = [&] (UniquedStringImpl* uid) -> VarKind {
         return captures(uid) ? VarKind::Scope : VarKind::Stack;
     };
@@ -4974,12 +4974,12 @@ void BytecodeGenerator::emitEnumeration(ThrowableExpressionData* node, Expressio
             emitLabel(loopStart.get());
             emitLoopHint();
 
-            emitTryWithFinallyThatDoesNotShadowException(finallyContext, scopedLambda<void(BytecodeGenerator&)>([&](BytecodeGenerator& generator) {
+            emitTryWithFinallyThatDoesNotShadowException(finallyContext, [&](BytecodeGenerator& generator) {
                 callBack(generator, value.get());
                 generator.emitJump(*scope->continueTarget());
-            }), scopedLambda<void(BytecodeGenerator&)>([&](BytecodeGenerator& generator) {
+            }, [&](BytecodeGenerator& generator) {
                 generator.emitIteratorGenericClose(iterator.get(), node, EmitAwait::Yes);
-            }));
+            });
 
             emitLabel(*scope->continueTarget());
             RELEASE_ASSERT(forLoopNode->isForOfNode());
@@ -5058,12 +5058,12 @@ void BytecodeGenerator::emitEnumeration(ThrowableExpressionData* node, Expressio
             emitJumpIfTrue(done.get(), loopDone.get());
         }
 
-        emitTryWithFinallyThatDoesNotShadowException(finallyContext, scopedLambda<void(BytecodeGenerator&)>([&](BytecodeGenerator& generator) {
+        emitTryWithFinallyThatDoesNotShadowException(finallyContext, [&](BytecodeGenerator& generator) {
             callBack(generator, value.get());
             generator.emitJump(loopStart.get());
-        }), scopedLambda<void(BytecodeGenerator&)>([&](BytecodeGenerator& generator) {
+        }, [&](BytecodeGenerator& generator) {
             generator.emitIteratorGenericClose(iterator.get(), node);
-        }));
+        });
 
         bool breakLabelIsBound = scope->breakTargetMayBeBound();
         if (breakLabelIsBound)

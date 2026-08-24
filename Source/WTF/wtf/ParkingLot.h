@@ -81,8 +81,8 @@ public:
     {
         return parkConditionallyImpl(
             address,
-            scopedLambdaRef<bool()>(validation),
-            scopedLambdaRef<void()>(beforeSleep),
+            validation,
+            beforeSleep,
             timeout);
     }
 
@@ -135,7 +135,7 @@ public:
     template<typename Callback>
     static void unparkOne(const void* address, const Callback& callback)
     {
-        unparkOneImpl(address, scopedLambdaRef<intptr_t(UnparkResult)>(callback));
+        unparkOneImpl(address, callback);
     }
     
     WTF_EXPORT_PRIVATE static unsigned unparkCount(const void* address, unsigned count);
@@ -163,7 +163,7 @@ public:
     {
         // FIXME: Static analysis is complaining about `const ScopedLambda<void (uintptr_t, const void *)> &`
         // being forward-declared but ScopedLambda.h is included at the top of this file.
-        SUPPRESS_FORWARD_DECL_ARG forEachImpl(scopedLambdaRef<void(uintptr_t, const void*)>(func));
+        SUPPRESS_FORWARD_DECL_ARG forEachImpl(func);
     }
 
 private:

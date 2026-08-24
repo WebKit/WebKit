@@ -88,7 +88,7 @@ void OMGPlan::dumpDisassembly(const Callee& callee, CompilationContext& context,
         const char* asmPrefix = "asm              ";
 
         B3::Value* prevOrigin = nullptr;
-        auto forEachInst = scopedLambda<void(B3::Air::Inst&)>([&] (B3::Air::Inst& inst) {
+        auto forEachInst = [&] (B3::Air::Inst& inst) {
             if (inst.origin && inst.origin != prevOrigin && context.procedure->code().shouldPreserveB3Origins()) {
                 if (String string = inst.origin->compilerConstructionSite(); !string.isNull())
                     out.println(string);
@@ -113,7 +113,7 @@ void OMGPlan::dumpDisassembly(const Callee& callee, CompilationContext& context,
 
                 prevOrigin = inst.origin;
             }
-        });
+        };
 
         disassembler->dump(context.procedure->code(), out, linkBuffer, airPrefix, asmPrefix, forEachInst);
         linkBuffer.didAlreadyDisassemble();

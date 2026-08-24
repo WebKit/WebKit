@@ -1415,7 +1415,7 @@ public:
     void compilePutByVal(Node*);
     void compilePutByValMegamorphic(Node*);
 
-    // We use a scopedLambda to placate register allocation validation.
+    // We use a ScopedLambda to placate register allocation validation.
     void compileGetByVal(Node*, const ScopedLambda<std::tuple<JSValueRegs, DataFormat>(DataFormat preferredFormat, bool needsFlush)>& prefix);
 
     void compileMultiGetByVal(Node*);

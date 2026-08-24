@@ -190,14 +190,14 @@ bool JIT::compileTailCall(const Op&, BaselineUnlinkedCallLinkInfo*, unsigned)
 template<>
 bool JIT::compileTailCall(const OpTailCall& bytecode, BaselineUnlinkedCallLinkInfo* callLinkInfo, unsigned callLinkInfoIndex)
 {
-    CallLinkInfo::emitTailCallFastPath(*this, callLinkInfo, scopedLambda<void()>([&] {
+    CallLinkInfo::emitTailCallFastPath(*this, callLinkInfo, [&] {
         CallFrameShuffleData shuffleData = CallFrameShuffleData::createForBaselineOrLLIntTailCall(bytecode, m_unlinkedCodeBlock->numParameters());
         CallFrameShuffler shuffler { *this, shuffleData };
         shuffler.setCalleeJSValueRegs(BaselineJITRegisters::Call::calleeJSR);
         shuffler.lockGPR(BaselineJITRegisters::Call::callLinkInfoGPR);
         shuffler.lockGPR(BaselineJITRegisters::Call::callTargetGPR);
         shuffler.prepareForTailCall();
-    }));
+    });
 
     auto doneLocation = label();
     m_callCompilationInfo[callLinkInfoIndex].doneLocation = doneLocation;
@@ -262,14 +262,14 @@ void JIT::compileOpCall(const JSInstruction* instruction)
         compileTailCall(bytecode, callLinkInfo, callLinkInfoIndex);
     else {
         if constexpr (Op::opcodeID == op_tail_call_varargs) {
-            CallLinkInfo::emitTailCallFastPath(*this, callLinkInfo, scopedLambda<void()>([&] {
+            CallLinkInfo::emitTailCallFastPath(*this, callLinkInfo, [&] {
                 emitRestoreCalleeSaves();
                 prepareForTailCallSlow(RegisterSet {
                     BaselineJITRegisters::Call::calleeJSR.payloadGPR(),
                     BaselineJITRegisters::Call::callLinkInfoGPR,
                     BaselineJITRegisters::Call::callTargetGPR,
                 });
-            }));
+            });
             auto doneLocation = label();
             m_callCompilationInfo[callLinkInfoIndex].doneLocation = doneLocation;
         } else {

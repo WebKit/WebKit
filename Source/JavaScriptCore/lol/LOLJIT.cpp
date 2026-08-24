@@ -3268,10 +3268,10 @@ MacroAssemblerCodeRef<JITThunkPtrTag> LOLJIT::generateOpGetFromScopeThunk(VM& vm
             jit.load32(Address(metadataGPR, OpGetFromScope::Metadata::offsetOfStructureID()), scratch1GPR);
             slowCase.append(jit.branch32(NotEqual, Address(scopeGPR, JSCell::structureIDOffset()), scratch1GPR));
 
-            jit.jitAssert(scopedLambda<Jump(void)>([&] () -> Jump {
+            jit.jitAssert([&] () -> Jump {
                 loadGlobalObject(jit, scratch1GPR);
                 return jit.branchPtr(Equal, scopeGPR, scratch1GPR);
-            }));
+            });
 
             jit.loadPtr(Address(metadataGPR, Metadata::offsetOfOperand()), scratch1GPR);
 
@@ -3439,10 +3439,10 @@ void LOLJIT::emit_op_put_to_scope(const JSInstruction* currentInstruction)
             load32(structureIDAddress, s_scratch);
             addSlowCase(branch32(NotEqual, Address(scopeGPR, JSCell::structureIDOffset()), s_scratch));
 
-            jitAssert(scopedLambda<Jump(void)>([&] () -> Jump {
+            jitAssert([&] () -> Jump {
                 loadGlobalObject(s_scratch);
                 return branchPtr(Equal, scopeGPR, s_scratch);
-            }));
+            });
 
             loadPtr(Address(scopeGPR, JSObject::butterflyOffset()), s_scratch);
             loadPtr(operandAddress, metadataGPR);

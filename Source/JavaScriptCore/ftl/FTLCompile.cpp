@@ -396,10 +396,10 @@ void compile(State& state, Safepoint::Result& safepointResult)
         compilation->addDescription(Profiler::OriginStack(), out.toCString());
         out.reset();
 
-        state.dumpDisassembly(out, *state.b3CodeLinkBuffer, scopedLambda<void(DFG::Node*)>([&] (DFG::Node*) {
+        state.dumpDisassembly(out, *state.b3CodeLinkBuffer, [&] (DFG::Node*) {
             compilation->addDescription({ }, out.toCString());
             out.reset();
-        }));
+        });
         compilation->addDescription({ }, out.toCString());
         out.reset();
 

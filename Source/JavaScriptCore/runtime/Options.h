@@ -114,7 +114,7 @@ public:
 
     ALWAYS_INLINE static void initialize(const Invocable<void()> auto& optionsCustomizationCallback)
     {
-        SUPPRESS_FORWARD_DECL_ARG initializeWithOptionsCustomization(scopedLambda<void()>(optionsCustomizationCallback));
+        SUPPRESS_FORWARD_DECL_ARG initializeWithOptionsCustomization(optionsCustomizationCallback);
     }
 
     static void finalize();

@@ -16,7 +16,7 @@ ftl/FTLFormattedValue.h
 ftl/FTLState.h
 heap/AbstractSlotVisitor.h
 heap/Heap.h
-heap/HeapInlines.h
+[ macOS ] heap/HeapInlines.h
 heap/HeapProfiler.h
 heap/HeapSnapshotBuilder.h
 heap/SlotVisitor.h

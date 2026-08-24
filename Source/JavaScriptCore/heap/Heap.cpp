@@ -2151,7 +2151,7 @@ NEVER_INLINE void Heap::collectInMutatorThread()
                     }
                 }
             };
-            callWithCurrentThreadState(scopedLambda<void(CurrentThreadState&)>(WTF::move(lambda)));
+            callWithCurrentThreadState(lambda);
             return;
         }
     }

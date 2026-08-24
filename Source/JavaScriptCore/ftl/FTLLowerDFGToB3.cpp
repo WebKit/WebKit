@@ -14095,9 +14095,9 @@ IGNORE_CLANG_WARNINGS_END
                     jit.store32(
                         CCallHelpers::TrustedImm32(callSiteIndex.bits()),
                         CCallHelpers::highWordFor(CallFrameSlot::argumentCountIncludingThis));
-                    callLinkInfo->emitDirectTailCallFastPath(jit, scopedLambda<void()>([&]{
+                    callLinkInfo->emitDirectTailCallFastPath(jit, [&] {
                         CallFrameShuffler(jit, shuffleData).prepareForTailCall();
-                    }));
+                    });
 
                     jit.abortWithReason(JITDidReturnFromTailCall);
 
@@ -14261,11 +14261,11 @@ IGNORE_CLANG_WARNINGS_END
                 auto* callLinkInfo = state->addCallLinkInfo(codeOrigin);
                 callLinkInfo->setUpCall(CallLinkInfo::TailCall);
 
-                CallLinkInfo::emitTailCallFastPath(jit, callLinkInfo, scopedLambda<void()>([&] {
+                CallLinkInfo::emitTailCallFastPath(jit, callLinkInfo, [&] {
                     CallFrameShuffler shuffler { jit, shuffleData };
                     shuffler.setCalleeJSValueRegs(BaselineJITRegisters::Call::calleeJSR);
                     shuffler.prepareForTailCall();
-                }));
+                });
                 jit.abortWithReason(JITDidReturnFromTailCall);
             });
     }
@@ -14589,14 +14589,14 @@ IGNORE_CLANG_WARNINGS_END
                 ASSERT(!usedRegisters.contains(GPRInfo::regT2, IgnoreVectors)); // Used on the slow path.
 
                 if (isTailCall) {
-                    CallLinkInfo::emitTailCallFastPath(jit, callLinkInfo, scopedLambda<void()>([&] {
+                    CallLinkInfo::emitTailCallFastPath(jit, callLinkInfo, [&] {
                         jit.emitRestoreCalleeSavesFor(state->jitCode->calleeSaveRegisters());
                         RegisterSet preserved;
                         preserved.add(BaselineJITRegisters::Call::calleeGPR, IgnoreVectors);
                         preserved.add(BaselineJITRegisters::Call::callLinkInfoGPR, IgnoreVectors);
                         preserved.add(BaselineJITRegisters::Call::callTargetGPR, IgnoreVectors);
                         jit.prepareForTailCallSlow(preserved);
-                    }));
+                    });
                     jit.abortWithReason(JITDidReturnFromTailCall);
                 } else {
                     CallLinkInfo::emitFastPath(jit, callLinkInfo);
@@ -14847,14 +14847,14 @@ IGNORE_CLANG_WARNINGS_END
                 bool isTailCall = CallLinkInfo::callModeFor(callType) == CallMode::Tail;
 
                 if (isTailCall) {
-                    CallLinkInfo::emitTailCallFastPath(jit, callLinkInfo, scopedLambda<void()>([&] {
+                    CallLinkInfo::emitTailCallFastPath(jit, callLinkInfo, [&] {
                         jit.emitRestoreCalleeSavesFor(state->jitCode->calleeSaveRegisters());
                         RegisterSet preserved;
                         preserved.add(BaselineJITRegisters::Call::calleeGPR, IgnoreVectors);
                         preserved.add(BaselineJITRegisters::Call::callLinkInfoGPR, IgnoreVectors);
                         preserved.add(BaselineJITRegisters::Call::callTargetGPR, IgnoreVectors);
                         jit.prepareForTailCallSlow(preserved);
-                    }));
+                    });
                     jit.abortWithReason(JITDidReturnFromTailCall);
                 } else {
                     CallLinkInfo::emitFastPath(jit, callLinkInfo);

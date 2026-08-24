@@ -39,7 +39,7 @@ JS_EXPORT_PRIVATE void initializeWithOptionsCustomization(const ScopedLambda<voi
 
 ALWAYS_INLINE void initialize(const Invocable<void()> auto& optionsCustomizationCallback)
 {
-    SUPPRESS_FORWARD_DECL_ARG initializeWithOptionsCustomization(scopedLambda<void()>(optionsCustomizationCallback));
+    SUPPRESS_FORWARD_DECL_ARG initializeWithOptionsCustomization(optionsCustomizationCallback);
 }
 
 } // namespace JSC

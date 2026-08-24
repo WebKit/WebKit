@@ -25,24 +25,46 @@
 
 #include "config.h"
 #include <wtf/ScopedLambda.h>
-#include <wtf/Vector.h>
 
 namespace TestWebKitAPI {
 
-// This test relies on this module being compiled with -fno-elide-constructors
-TEST(WTF_ScopedLambda, NoRVOLivenessBug)
+static int sumOverRange(unsigned count, const ScopedLambda<int(unsigned)>& mapper)
 {
-    Vector<int> vector;
-    for (unsigned i = 0; i < 10; ++i)
-        vector.append(i);
-    
-    auto lambda = scopedLambda<int(size_t)>(
-        [=] (size_t i) -> int {
-            return vector[i];
-        });
-    
-    for (unsigned i = 0; i < 10; ++i)
-        EXPECT_EQ(i, static_cast<unsigned>(lambda(i)));
+    int result = 0;
+    for (unsigned i = 0; i < count; ++i)
+        result += mapper(i);
+    return result;
+}
+
+TEST(WTF_ScopedLambda, ImplicitConversionFromTemporary)
+{
+    int scale = 3;
+    EXPECT_EQ(30, sumOverRange(5, [&] (unsigned i) -> int {
+        return i * scale;
+    }));
+}
+
+TEST(WTF_ScopedLambda, ImplicitConversionFromLValue)
+{
+    int scale = 3;
+    auto mapper = [&] (unsigned i) -> int {
+        return i * scale;
+    };
+    EXPECT_EQ(30, sumOverRange(5, mapper));
+
+    ScopedLambda<int(unsigned)> scopedMapper = mapper;
+    EXPECT_EQ(30, sumOverRange(5, scopedMapper));
+}
+
+TEST(WTF_ScopedLambda, ImplicitConversionCallsSameFunctorInstance)
+{
+    unsigned callCount = 0;
+    auto mapper = [&] (unsigned i) -> int {
+        ++callCount;
+        return i;
+    };
+    EXPECT_EQ(10, sumOverRange(5, mapper));
+    EXPECT_EQ(5u, callCount);
 }
 
 } // namespace TestWebKitAPI

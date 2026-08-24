@@ -267,10 +267,10 @@ inline void emitRestoreInstanceFrameIfNeeded(CCallHelpers& jit, GPRReg currentIn
         // these slots via positive-FP-offset ValueReps, so they must shift too.
         jit.move(MacroAssembler::stackPointerRegister, scratch1);
 
-        jit.jitAssert(scopedLambda<MacroAssembler::Jump()>([&] {
+        jit.jitAssert([&] {
             jit.addPtr(CCallHelpers::TrustedImm32(topSourceOffsetFromFP), GPRInfo::callFrameRegister, scratch2);
             return jit.branchPtr(CCallHelpers::AboveOrEqual, scratch2, MacroAssembler::stackPointerRegister);
-        }));
+        });
 
         JIT_COMMENT(jit, "Copy loop start");
         auto loop = jit.label();

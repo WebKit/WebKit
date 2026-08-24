@@ -87,11 +87,11 @@ struct GenericSequenceConverter {
     {
         auto& vm = JSC::getVM(&lexicalGlobalObject);
         auto scope = DECLARE_THROW_SCOPE(vm);
-        WebCore::forEachInIterable(&lexicalGlobalObject, object, scopedLambda<void(JSC::VM&, JSC::JSGlobalObject*, JSC::JSValue)>([&sequence](JSC::VM& vm, JSC::JSGlobalObject* lexicalGlobalObject, JSC::JSValue nextValue) {
+        WebCore::forEachInIterable(&lexicalGlobalObject, object, [&sequence](JSC::VM& vm, JSC::JSGlobalObject* lexicalGlobalObject, JSC::JSValue nextValue) {
             auto scope = DECLARE_THROW_SCOPE(vm);
 
             InnerConverter::convert(scope, *lexicalGlobalObject, nextValue, sequence);
-        }));
+        });
         RETURN_IF_EXCEPTION(scope, Result::exception());
 
         return Result { WTF::move(sequence) };
@@ -106,11 +106,11 @@ struct GenericSequenceConverter {
     {
         auto& vm = JSC::getVM(&lexicalGlobalObject);
         auto scope = DECLARE_THROW_SCOPE(vm);
-        WebCore::forEachInIterable(lexicalGlobalObject, object, method, scopedLambda<void(JSC::VM&, JSC::JSGlobalObject&, JSC::JSValue)>([&sequence](JSC::VM& vm, JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue nextValue) {
+        WebCore::forEachInIterable(lexicalGlobalObject, object, method, [&sequence](JSC::VM& vm, JSC::JSGlobalObject& lexicalGlobalObject, JSC::JSValue nextValue) {
             auto scope = DECLARE_THROW_SCOPE(vm);
 
             InnerConverter::convert(scope, lexicalGlobalObject, nextValue, sequence);
-        }));
+        });
         RETURN_IF_EXCEPTION(scope, Result::exception());
 
         return Result { WTF::move(sequence) };

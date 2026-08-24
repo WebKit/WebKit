@@ -1683,6 +1683,7 @@ using WTF::weakOrderingCast;
 using WTF::zeroBytes;
 using WTF::secureZeroBytes;
 using WTF::zeroSpan;
+using WTF::ConstInvocable;
 using WTF::DerivedFromOrConvertibleTo;
 using WTF::IntegralOrEnum;
 using WTF::Invocable;

@@ -86,12 +86,11 @@ void MarkingConstraintSolver::drain(BitVector& unexecuted)
     auto end = unexecuted.end();
     if (iter == end)
         return;
-    auto pickNext = scopedLambda<std::optional<unsigned>()>(
-        [&] () -> std::optional<unsigned> {
-            if (iter == end)
-                return std::nullopt;
-            return *iter++;
-        });
+    auto pickNext = [&] () -> std::optional<unsigned> {
+        if (iter == end)
+            return std::nullopt;
+        return *iter++;
+    };
     execute(NextConstraintFirst, pickNext);
     unexecuted.clearAll();
 }
@@ -123,17 +122,16 @@ void MarkingConstraintSolver::converge(const Vector<MarkingConstraint*>& order)
             return;
     }
     
-    auto pickNext = scopedLambda<std::optional<unsigned>()>(
-        [&] () -> std::optional<unsigned> {
-            if (didVisitSomething())
-                return std::nullopt;
-            
-            if (index >= order.size())
-                return std::nullopt;
-            
-            MarkingConstraint& constraint = *order[index++];
-            return constraint.index();
-        });
+    auto pickNext = [&] () -> std::optional<unsigned> {
+        if (didVisitSomething())
+            return std::nullopt;
+
+        if (index >= order.size())
+            return std::nullopt;
+
+        MarkingConstraint& constraint = *order[index++];
+        return constraint.index();
+    };
     
     execute(ParallelWorkFirst, pickNext);
 }

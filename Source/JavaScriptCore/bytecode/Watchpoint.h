@@ -45,7 +45,7 @@ struct ArrayBufferViewWatchpointAdaptor;
 class VM;
 
 class FireDetail {
-    void* operator new(size_t) = delete;
+    WTF_FORBID_HEAP_ALLOCATION;
     
 public:
     virtual ~FireDetail() = default;
@@ -69,17 +69,18 @@ private:
     const char* m_string;
 };
 
+template<ConstInvocable<void(PrintStream&)> Functor>
 class LazyFireDetail final : public FireDetail {
 public:
-    LazyFireDetail(ScopedLambda<void(PrintStream&)>& lambda)
-        : m_lambda(lambda)
+    LazyFireDetail(Functor functor)
+        : m_functor(WTF::move(functor))
     {
     }
 
-    void dump(PrintStream& out) const final { m_lambda(out); }
+    void dump(PrintStream& out) const final { m_functor(out); }
 
 private:
-    ScopedLambda<void(PrintStream&)>& m_lambda;
+    Functor m_functor;
 };
 
 class WatchpointSet;

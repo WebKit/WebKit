@@ -69,7 +69,7 @@ public:
 
     VM& vm() { return graph.m_vm; }
 
-    void dumpDisassembly(PrintStream&, LinkBuffer&, const ScopedLambda<void(DFG::Node*)>& perDFGNodeCallback = scopedLambda<void(DFG::Node*)>([] (DFG::Node*) { }));
+    void dumpDisassembly(PrintStream&, LinkBuffer&, const ScopedLambda<void(DFG::Node*)>& perDFGNodeCallback = [] (DFG::Node*) { });
 
     PropertyInlineCache* addPropertyInlineCache();
     OptimizingCallLinkInfo* addCallLinkInfo(CodeOrigin);

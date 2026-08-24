@@ -48,8 +48,7 @@ WTF_EXPORT_PRIVATE MessageStatus sendMessageScoped(const ThreadSuspendLocker&, T
 template<typename Functor>
 MessageStatus sendMessage(const ThreadSuspendLocker& locker, Thread& targetThread, const Functor& func)
 {
-    auto lambda = scopedLambdaRef<void(PlatformRegisters&)>(func);
-    return sendMessageScoped(locker, targetThread, lambda);
+    return sendMessageScoped(locker, targetThread, func);
 }
 
 } // namespace WTF

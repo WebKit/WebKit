@@ -76,7 +76,7 @@ void OSREntryPlan::dumpDisassembly(CompilationContext& context, LinkBuffer& link
         const char* asmPrefix = "asm              ";
 
         B3::Value* prevOrigin = nullptr;
-        auto forEachInst = scopedLambda<void(B3::Air::Inst&)>([&] (B3::Air::Inst& inst) {
+        auto forEachInst = [&] (B3::Air::Inst& inst) {
             if (inst.origin && inst.origin != prevOrigin && context.procedure->code().shouldPreserveB3Origins()) {
                 if (String string = inst.origin->compilerConstructionSite(); !string.isNull())
                     dataLogLn(string);
@@ -85,7 +85,7 @@ void OSREntryPlan::dumpDisassembly(CompilationContext& context, LinkBuffer& link
                 dataLogLn();
                 prevOrigin = inst.origin;
             }
-        });
+        };
 
         disassembler->dump(context.procedure->code(), WTF::dataFile(), linkBuffer, airPrefix, asmPrefix, forEachInst);
         linkBuffer.didAlreadyDisassemble();
