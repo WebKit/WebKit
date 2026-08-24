@@ -35,7 +35,7 @@ namespace WebCore {
 PlatformVideoTarget VideoTargetFactory::createTargetFromEndpoint(const VideoReceiverEndpoint& endpoint)
 {
     FigVideoTargetRef videoTarget;
-    OSStatus status = FigVideoTargetCreateWithVideoReceiverEndpointID(kCFAllocatorDefault, endpoint.get(), nullptr, &videoTarget);
+    OSStatus status = PAL::softLink_MediaToolbox_FigVideoTargetCreateWithVideoReceiverEndpointID(kCFAllocatorDefault, endpoint.get(), nullptr, &videoTarget);
     if (status != noErr)
         return nullptr;
 
