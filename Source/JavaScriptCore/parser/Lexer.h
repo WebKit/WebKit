@@ -125,8 +125,6 @@ public:
         m_hasLineTerminatorBeforeToken = terminator;
     }
 
-    JSTokenType lexExpectIdentifier(JSToken*, OptionSet<LexerFlags>, bool strictMode);
-
     ALWAYS_INLINE StringView getToken(const JSToken& token)
     {
         SourceProvider* sourceProvider = m_source->provider();
@@ -354,64 +352,6 @@ bool isSafeBuiltinIdentifier(VM&, const Identifier*);
 #else
 ALWAYS_INLINE bool isSafeBuiltinIdentifier(VM&, const Identifier*) { return true; }
 #endif // ASSERT_ENABLED
-
-template <typename T>
-ALWAYS_INLINE JSTokenType Lexer<T>::lexExpectIdentifier(JSToken* tokenRecord, OptionSet<LexerFlags> lexerFlags, bool strictMode)
-{
-    JSTokenData* tokenData = &tokenRecord->m_data;
-    ASSERT(lexerFlags.contains(LexerFlags::IgnoreReservedWords));
-    const T* start = m_code;
-    const T* ptr = start;
-    const T* end = m_codeEnd;
-    JSTextPosition startPosition = currentPosition();
-    if (ptr >= end) {
-        ASSERT(ptr == end);
-        goto slowCase;
-    }
-    if (!WTF::isASCIIAlpha(*ptr))
-        goto slowCase;
-    ++ptr;
-    while (ptr < end) {
-        if (!WTF::isASCIIAlphanumeric(*ptr))
-            break;
-        ++ptr;
-    }
-
-    // Here's the shift
-    if (ptr < end) {
-        if ((!WTF::isASCII(*ptr)) || (*ptr == '\\') || (*ptr == '_') || (*ptr == '$'))
-            goto slowCase;
-        m_current = *ptr;
-    } else
-        m_current = 0;
-
-    m_code = ptr;
-    ASSERT(currentOffset() >= currentLineStartOffset());
-
-    // Create the identifier if needed
-    if (lexerFlags.contains(LexerFlags::DontBuildKeywords)
-#if ASSERT_ENABLED
-        && !m_parsingBuiltinFunction
-#endif
-        )
-        tokenData->ident = nullptr;
-    else
-        tokenData->ident = makeLatin1Identifier({ start, ptr });
-
-    tokenRecord->m_startPosition = startPosition;
-    tokenRecord->m_endPosition = currentPosition();
-#if ASSERT_ENABLED
-    if (m_parsingBuiltinFunction) {
-        if (!isSafeBuiltinIdentifier(m_vm, tokenData->ident))
-            return ERRORTOK;
-    }
-#endif
-
-    return IDENT;
-    
-slowCase:
-    return lex(tokenRecord, lexerFlags, strictMode);
-}
 
 template <typename T>
 ALWAYS_INLINE JSTokenType Lexer<T>::lex(JSToken* tokenRecord, OptionSet<LexerFlags> lexerFlags, bool strictMode)
