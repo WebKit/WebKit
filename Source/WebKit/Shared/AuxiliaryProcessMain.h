@@ -45,7 +45,7 @@ protected:
     AuxiliaryProcessInitializationParameters m_parameters;
 };
 
-template<typename AuxiliaryProcessType, bool HasSingleton = true>
+template<typename AuxiliaryProcessType>
 class AuxiliaryProcessMainBase : public AuxiliaryProcessMainCommon {
 public:
     virtual bool platformInitialize() { return true; }
@@ -53,8 +53,7 @@ public:
 
     virtual void initializeAuxiliaryProcess(AuxiliaryProcessInitializationParameters&& parameters)
     {
-        if constexpr (HasSingleton)
-            AuxiliaryProcessType::singleton().initialize(WTF::move(parameters));
+        AuxiliaryProcessType::singleton().initialize(WTF::move(parameters));
     }
 
     int run(int argc, char** argv)
@@ -79,20 +78,6 @@ public:
 
         return EXIT_SUCCESS;
     }
-};
-
-template<typename AuxiliaryProcessType>
-class AuxiliaryProcessMainBaseNoSingleton : public AuxiliaryProcessMainBase<AuxiliaryProcessType, false> {
-public:
-    AuxiliaryProcessType& process() { return *m_process; };
-
-    void initializeAuxiliaryProcess(AuxiliaryProcessInitializationParameters&& parameters) override
-    {
-        m_process = AuxiliaryProcessType::create(WTF::move(parameters));
-    }
-
-protected:
-    RefPtr<AuxiliaryProcessType> m_process;
 };
 
 template<typename AuxiliaryProcessMainType>

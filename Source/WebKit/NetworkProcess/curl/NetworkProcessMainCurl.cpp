@@ -32,16 +32,16 @@
 
 namespace WebKit {
 
-class NetworkProcessMainCurl final: public AuxiliaryProcessMainBaseNoSingleton<NetworkProcess> {
+class NetworkProcessMainCurl final: public AuxiliaryProcessMainBase<NetworkProcess> {
 public:
     void platformFinalize() override
     {
         Vector<PAL::SessionID> sessionIDs;
-        process().forEachNetworkSession([&sessionIDs](auto& session) {
+        NetworkProcess::singleton().forEachNetworkSession([&sessionIDs](auto& session) {
             sessionIDs.append(session.sessionID());
         });
         for (auto& sessionID : sessionIDs)
-            process().destroySession(sessionID);
+            NetworkProcess::singleton().destroySession(sessionID);
     }
 };
 

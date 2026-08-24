@@ -161,7 +161,7 @@ public:
     using DomainInNeedOfStorageAccess = WebCore::RegistrableDomain;
     using OpenerDomain = WebCore::RegistrableDomain;
 
-    static Ref<NetworkProcess> create(AuxiliaryProcessInitializationParameters&&);
+    static NetworkProcess& singleton();
     ~NetworkProcess();
     static constexpr WTF::AuxiliaryProcessType processType = WTF::AuxiliaryProcessType::Network;
 
@@ -514,7 +514,7 @@ public:
 #endif
 
 private:
-    explicit NetworkProcess(AuxiliaryProcessInitializationParameters&&);
+    NetworkProcess();
 
     void platformInitializeNetworkProcess(const NetworkProcessCreationParameters&);
 

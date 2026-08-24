@@ -38,7 +38,7 @@
 
 namespace WebKit {
 
-class NetworkProcessMainSoup final: public AuxiliaryProcessMainBaseNoSingleton<NetworkProcess> {
+class NetworkProcessMainSoup final: public AuxiliaryProcessMainBase<NetworkProcess> {
 public:
     bool platformInitialize() override
     {
@@ -53,11 +53,11 @@ public:
         // Needed to destroy the SoupSession and SoupCookieJar, e.g. to avoid
         // leaking SQLite temporary journaling files.
         Vector<PAL::SessionID> sessionIDs;
-        process().forEachNetworkSession([&sessionIDs](auto& session) {
+        NetworkProcess::singleton().forEachNetworkSession([&sessionIDs](auto& session) {
             sessionIDs.append(session.sessionID());
         });
         for (auto& sessionID : sessionIDs)
-            process().destroySession(sessionID);
+            NetworkProcess::singleton().destroySession(sessionID);
     }
 };
 

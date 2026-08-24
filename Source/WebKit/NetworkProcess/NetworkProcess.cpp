@@ -99,6 +99,7 @@
 #include <algorithm>
 #include <wtf/CallbackAggregator.h>
 #include <wtf/CryptographicallyRandomNumber.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/OptionSet.h>
 #include <wtf/ProcessPrivilege.h>
 #include <wtf/RunLoop.h>
@@ -171,12 +172,13 @@ static void callExitSoon(IPC::Connection*)
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(NetworkProcess);
 
-Ref<NetworkProcess> NetworkProcess::create(AuxiliaryProcessInitializationParameters&& parameters)
+NetworkProcess& NetworkProcess::singleton()
 {
-    return adoptRef(*new NetworkProcess(WTF::move(parameters)));
+    static NeverDestroyed<Ref<NetworkProcess>> networkProcess = adoptRef(*new NetworkProcess);
+    return networkProcess.get().get();
 }
 
-NetworkProcess::NetworkProcess(AuxiliaryProcessInitializationParameters&& parameters)
+NetworkProcess::NetworkProcess()
     : m_downloadManager(*this)
 #if HAVE(LSDATABASECONTEXT)
     , m_launchServicesDatabaseObserver(LaunchServicesDatabaseObserver::create())
@@ -208,8 +210,6 @@ NetworkProcess::NetworkProcess(AuxiliaryProcessInitializationParameters&& parame
         for (auto& webProcessConnection : weakThis->m_webProcessConnections.values())
             webProcessConnection->setOnLineState(isOnLine);
     });
-
-    initialize(WTF::move(parameters));
 }
 
 NetworkProcess::~NetworkProcess() = default;
