@@ -174,21 +174,15 @@ class ResultsDatabase(object):
 
     @classmethod
     @defer.inlineCallbacks
-    def does_result_match(cls, test, result_type=None, commit=None, configuration=None, suite=None, default=None):
+    def does_result_match(cls, test, result_type=None, commit=None, configuration=None, suite=None):
         logs = []
         data = yield cls.get_results(suite, test, commit, configuration, logger=lambda log: logs.append(log))
-        if data is None:
+        if not data:
             defer.returnValue(None)
             return
-        if not data:
-            if not default:
-                defer.returnValue(None)
-                return
-            actual = default
-        else:
-            results = data[0].get('results')[0]
-            actual = results.get('actual')
 
+        results = data[0].get('results')[0]
+        actual = results.get('actual')
         does_result_match = actual == result_type
         output = {
             'does_result_match': does_result_match,

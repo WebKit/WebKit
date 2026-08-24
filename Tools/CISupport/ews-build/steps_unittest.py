@@ -56,6 +56,12 @@ from .steps import *
 FakeBuild.addStepsAfterCurrentStep = lambda FakeBuild, step_factories: None
 FakeBuild._builderid = 1
 
+# Several tests below replace FindUnexpectedStaticAnalyzerResults methods on the class rather than
+# with self.patch, so the replacements outlive the test that made them. Capture the real
+# implementations here, at import time, so tests that need them can patch them back.
+REAL_FILTER_RESULTS_USING_RESULTS_DB = FindUnexpectedStaticAnalyzerResults.filter_results_using_results_db
+REAL_WRITE_UNEXPECTED_RESULTS_FILE_TO_MASTER = FindUnexpectedStaticAnalyzerResults.write_unexpected_results_file_to_master
+
 # Prevent unit-tests from talking to live bugzilla and github servers
 BugzillaMixin.fetch_data_from_url_with_authentication_bugzilla = lambda x, y: None
 GitHubMixin.fetch_data_from_url_with_authentication_github = lambda x, y: None
@@ -11646,6 +11652,68 @@ class TestFindUnexpectedStaticAnalyzerResults(BuildStepMixinAdditions, unittest.
         self.assertEqual([], next_steps)
         return rc
 
+    def configureResultsDatabase(self, rows_by_test):
+        self.patch(FindUnexpectedStaticAnalyzerResults, 'filter_results_using_results_db', REAL_FILTER_RESULTS_USING_RESULTS_DB)
+        self.patch(FindUnexpectedStaticAnalyzerResults, 'write_unexpected_results_file_to_master', REAL_WRITE_UNEXPECTED_RESULTS_FILE_TO_MASTER)
+        self.patch(ResultsDatabase, 'has_commit', classmethod(lambda cls, commit=None: defer.succeed(True)))
+
+        def fake_get_results(cls, suite, test=None, commit=None, configuration=None, logger=None):
+            if test is None:
+                return defer.succeed([{'results': [{'actual': 'FAIL'}]}])
+            return defer.succeed(rows_by_test.get(test, []))
+
+        self.patch(ResultsDatabase, 'get_results', classmethod(fake_get_results))
+
+    def expectCheckExpectationsCommand(self, stdout):
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        log_environ=False,
+                        logfiles={'json': self.jsonFileName},
+                        command=['python3', 'Tools/Scripts/compare-static-analysis-results', 'wkdir/build/new', '--build-output', SCAN_BUILD_OUTPUT_DIR, '--check-expectations', '--platform', 'mac'],
+                        env={'RESULTS_SERVER_API_KEY': 'test-api-key'})
+            .log('stdio', stdout=stdout)
+            .exit(0),
+        )
+
+    @defer.inlineCallbacks
+    def test_no_results_db_data_rebuilds_without_change(self):
+        self.configureStep(True)
+        FindUnexpectedStaticAnalyzerResults.decode_results_data = lambda self: {'passes': {'WebCore': {'UncountedCallArgsChecker': []}}, 'failures': {'WebCore': {'UncountedCallArgsChecker': ['Modules/webtransport/DatagramSink.cpp']}}}
+        self.configureResultsDatabase({})
+        next_steps = []
+        self.patch(self.build, 'addStepsAfterCurrentStep', lambda s: next_steps.extend(s))
+        self.expectCheckExpectationsCommand('Total unexpected issues: 1\nTotal unexpected failing files: 1\n')
+        self.expect_outcome(result=SUCCESS, state_string='1 new issue 1 failing file ')
+        with current_hostname(EWS_BUILD_HOSTNAMES[0]):
+            yield self.run_step()
+        self.assertEqual([ValidateChange(verifyBugClosed=False, addURLs=False), RevertAppliedChanges(exclude=['new*', 'scan-build-output*']), ScanBuildWithoutChange()], next_steps)
+
+    @defer.inlineCallbacks
+    def test_no_results_db_data_for_failures_escalates_despite_empty_passes(self):
+        self.configureStep(True)
+        FindUnexpectedStaticAnalyzerResults.decode_results_data = lambda self: {'passes': {}, 'failures': {'WebCore': {'UncountedCallArgsChecker': ['Modules/webtransport/DatagramSink.cpp']}}}
+        self.configureResultsDatabase({})
+        next_steps = []
+        self.patch(self.build, 'addStepsAfterCurrentStep', lambda s: next_steps.extend(s))
+        self.expectCheckExpectationsCommand('Total unexpected issues: 1\nTotal unexpected failing files: 1\n')
+        self.expect_outcome(result=SUCCESS, state_string='1 new issue 1 failing file ')
+        with current_hostname(EWS_BUILD_HOSTNAMES[0]):
+            yield self.run_step()
+        self.assertEqual([ValidateChange(verifyBugClosed=False, addURLs=False), RevertAppliedChanges(exclude=['new*', 'scan-build-output*']), ScanBuildWithoutChange()], next_steps)
+
+    @defer.inlineCallbacks
+    def test_pre_existing_failure_is_filtered_without_rebuilding(self):
+        self.configureStep(True)
+        FindUnexpectedStaticAnalyzerResults.decode_results_data = lambda self: {'passes': {'WebCore': {'UncountedCallArgsChecker': []}}, 'failures': {'WebCore': {'UncountedCallArgsChecker': ['Modules/webtransport/DatagramSink.cpp']}}}
+        self.configureResultsDatabase({'WebCore/Modules/webtransport/DatagramSink.cpp/UncountedCallArgsChecker': [{'results': [{'actual': 'FAIL'}]}]})
+        next_steps = []
+        self.patch(self.build, 'addStepsAfterCurrentStep', lambda s: next_steps.extend(s))
+        self.expectCheckExpectationsCommand('Total unexpected issues: 1\nTotal unexpected failing files: 1\n')
+        self.expect_outcome(result=SUCCESS, state_string='Found no unexpected results')
+        with current_hostname(EWS_BUILD_HOSTNAMES[0]):
+            yield self.run_step()
+        self.assertEqual([], next_steps)
+
 
 class TestDownloadUnexpectedResultsfromMaster(BuildStepMixinAdditions, unittest.TestCase):
     READ_LIMIT = 1000
@@ -12186,22 +12254,33 @@ class TestResultsDatabaseFailureHandling(unittest.TestCase):
         self.assertNotIn('Reported WithinStepDirtyTree flaky tests:', logs)
 
     @defer.inlineCallbacks
-    def test_does_result_match_returns_none_on_request_failure_even_with_default(self):
+    def test_does_result_match_returns_none_on_request_failure(self):
         with self._mock_twisted_request(None):
             result = yield ResultsDatabase.does_result_match(
                 'JavaScriptCore/b3/air/AirAllocateStackByGraphColoring.cpp/NoDeleteChecker',
-                result_type='FAIL', suite='safer-cpp-checks', default='PASS',
+                result_type='FAIL', suite='safer-cpp-checks',
             )
         self.assertIsNone(result)
 
     @defer.inlineCallbacks
-    def test_does_result_match_uses_default_on_empty_success(self):
+    def test_does_result_match_returns_none_when_there_is_no_result_for_the_test(self):
         with self._mock_twisted_request(self._ok_response([])):
             result = yield ResultsDatabase.does_result_match(
-                'foo.cpp/Checker', result_type='FAIL', suite='safer-cpp-checks', default='PASS',
+                'foo.cpp/Checker', result_type='FAIL', suite='safer-cpp-checks',
             )
-        self.assertIsNotNone(result)
-        self.assertFalse(result['does_result_match'])
+        self.assertIsNone(result)
+
+    @defer.inlineCallbacks
+    def test_does_result_match_compares_a_real_result(self):
+        with self._mock_twisted_request(self._ok_response([{'results': [{'actual': 'FAIL'}]}])):
+            failing = yield ResultsDatabase.does_result_match(
+                'foo.cpp/Checker', result_type='FAIL', suite='safer-cpp-checks',
+            )
+            passing = yield ResultsDatabase.does_result_match(
+                'foo.cpp/Checker', result_type='PASS', suite='safer-cpp-checks',
+            )
+        self.assertTrue(failing['does_result_match'])
+        self.assertFalse(passing['does_result_match'])
 
     @defer.inlineCallbacks
     def test_is_test_pre_existing_failure_flags_request_failure(self):

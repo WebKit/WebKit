@@ -8140,7 +8140,7 @@ class FindUnexpectedStaticAnalyzerResults(shell.ShellCommand, AnalyzeChange, Add
             self.setProperty('num_failing_files', len(filtered_failures))
         if filtered_passes is not None:
             self.setProperty('num_passing_files', len(filtered_passes))
-        successful_filter = filtered_failures is not None or filtered_passes is not None
+        successful_filter = filtered_failures is not None and filtered_passes is not None
         return defer.returnValue(successful_filter)
 
     @defer.inlineCallbacks
@@ -8160,10 +8160,10 @@ class FindUnexpectedStaticAnalyzerResults(shell.ShellCommand, AnalyzeChange, Add
                         configuration=configuration,
                         commit=identifier,
                         suite=self.suite,
-                        default='PASS'
                     )
                     if not data:
-                        yield self._addToLog(self.results_db_log_name, f"Failed to match results for {test_name}, falling back to tip-of-tree\n")
+                        yield self._addToLog(self.results_db_log_name, f"Could not determine from results-db whether {test_name} is pre-existing at '{identifier}' with configuration {configuration}, falling back to tip-of-tree\n")
+                        yield self._addToLog('stdio', f'Results database cannot say whether {test_name} is pre-existing, rebuilding without the change to find out.\n')
                         return defer.returnValue(None)
                     yield self._addToLog(self.results_db_log_name, f"\n{test_name}: pre-existing={data['does_result_match']}\nResponse from results-db: {data}\n{data['logs']}")
 
