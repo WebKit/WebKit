@@ -48,7 +48,7 @@ public:
     constexpr AddressType(AddressType::Kind addressType)
         : m_type(addressType)
     { }
-#if !PLATFORM(PLAYSTATION)
+#if !PLATFORM(PLAYSTATION) && ENABLE(JIT)
     AddressType(B3::Type);
 #endif
     explicit constexpr AddressType(bool is64Bit)
