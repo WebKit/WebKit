@@ -663,6 +663,7 @@ void testSelectInvert();
 void testCheckSelect();
 void testCheckSelectCheckSelect();
 void testCheckSelectAndCSE();
+void testCheckSelectAndDeadCheckCSE();
 void testPowDoubleByIntegerLoop(double xOperand, int32_t yOperand);
 double b3Pow(double x, int y);
 void testTruncOrHigh();

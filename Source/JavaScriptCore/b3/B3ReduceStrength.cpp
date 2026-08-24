@@ -4398,14 +4398,17 @@ private:
         // Now handle all values between the source and the check.
         for (unsigned i = startIndex + 1; i < predecessor->size(); ++i) {
             Value* value = predecessor->at(i);
+            ValueKey key = value->key(); // Compute before cloneValue mutates the Value
             value->owner = nullptr;
 
             cloneValue(value);
 
             if (value->type() != Void)
                 m_insertionSet.insertValue(m_index, value);
-            else
+            else {
+                m_pureCSE.remove(key, value);
                 m_proc.deleteValue(value);
+            }
         }
 
         // Finally, deal with the check.
