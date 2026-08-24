@@ -201,7 +201,7 @@ public:
     Dominators& dominators();
     JS_EXPORT_PRIVATE NaturalLoops& naturalLoops();
     BackwardsCFG& backwardsCFG();
-    BackwardsDominators& backwardsDominators();
+    JS_EXPORT_PRIVATE BackwardsDominators& backwardsDominators();
 
     void addFastConstant(const ValueKey&);
     bool NODELETE isFastConstant(const ValueKey&);
