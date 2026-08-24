@@ -28,7 +28,7 @@ import subprocess
 import sys
 import time
 
-from webkitcorepy import Terminal, run
+from webkitcorepy import Terminal
 from webkitscmpy import local, Commit
 
 
@@ -46,7 +46,7 @@ class Command(object):
             if not value:
                 continue
             for v in value if isinstance(value, (list, tuple)) else [value]:
-                result &= run(
+                result &= repository.run_command_on_repo(
                     [repository.executable(), 'config', '--add', 'branch.{}.{}'.format(branch, key), str(v)],
                     cwd=repository.root_path, capture_output=True,
                 ).returncode == 0
@@ -221,6 +221,7 @@ class FilteredCommand(Command):
         log_output = subprocess.Popen(
             [repository.executable(), command] + args,
             cwd=repository.root_path,
+            env=local.Git.sanitize_repo_env() if repository.is_git else None,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             encoding='utf-8',

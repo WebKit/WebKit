@@ -97,7 +97,7 @@ class CherryPick(Command):
             bug=[issue.link] if issue else [],
         )
 
-        return run(
+        return repository.run_command_on_repo(
             [repository.executable(), 'cherry-pick', '-e', commit.hash],
             cwd=repository.root_path,
             env=env,

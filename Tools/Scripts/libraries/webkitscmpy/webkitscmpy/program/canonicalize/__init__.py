@@ -28,7 +28,7 @@ import subprocess
 import sys
 from dataclasses import asdict, dataclass
 
-from webkitcorepy import arguments, run, string_utils
+from webkitcorepy import arguments, string_utils
 from webkitscmpy import log
 from ..command import Command
 
@@ -105,7 +105,7 @@ class Canonicalize(Command):
 
         num_commits_to_canonicalize = args.number
         if not num_commits_to_canonicalize:
-            result = run([
+            result = repository.run_command_on_repo([
                 repository.executable(), 'rev-list',
                 '--count', '--no-merges',
                 '{remote}/{branch}..{branch}'.format(remote=args.remote, branch=branch),

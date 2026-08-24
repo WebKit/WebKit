@@ -29,7 +29,7 @@ import logging
 import sys
 import subprocess
 
-from webkitcorepy import arguments, string_utils, run
+from webkitcorepy import arguments, string_utils
 from webkitbugspy import bugzilla
 from webkitscmpy import local
 from webkitscmpy.program.pull_request import PullRequest as PullRequestProgram
@@ -138,8 +138,8 @@ class WebPlatformTestExporter(object):
 
     def _run_wpt_git(self, commands, capture_output=False, stderr=None):
         if stderr:
-            return run([local.Git.executable()] + commands, cwd=self._wpt_repo.path, stderr=stderr)
-        return run([local.Git.executable()] + commands, cwd=self._wpt_repo.path, capture_output=capture_output)
+            return self._wpt_repo.run_command_on_repo([local.Git.executable()] + commands, cwd=self._wpt_repo.path, stderr=stderr)
+        return self._wpt_repo.run_command_on_repo([local.Git.executable()] + commands, cwd=self._wpt_repo.path, capture_output=capture_output)
 
     def has_wpt_changes(self):
         _log.info('Checking for WPT changes')

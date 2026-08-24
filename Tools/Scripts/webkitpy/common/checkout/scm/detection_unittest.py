@@ -29,6 +29,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import logging
+import os
 import unittest
 
 from webkitpy.common.checkout.scm.detection import SCMDetector
@@ -43,6 +44,13 @@ class SCMDetectorTest(unittest.TestCase):
         filesystem = MockFileSystem()
         executive = MockExecutive(should_log=True)
         detector = SCMDetector(filesystem, executive)
+
+        original_environ = os.environ.copy()
+        def restore():
+            os.environ.clear()
+            os.environ.update(original_environ)
+        self.addCleanup(restore)
+        os.environ.clear()
 
         with OutputCapture(level=logging.INFO) as captured:
             scm = detector.detect_scm_system('/')

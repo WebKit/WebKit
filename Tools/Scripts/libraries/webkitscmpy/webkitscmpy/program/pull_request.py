@@ -163,7 +163,7 @@ class PullRequest(Command):
         # Next, add all modified file
         for file in set(modified) - set(repository.modified(staged=True)):
             log.info('    Adding {}...'.format(file))
-            if run([repository.executable(), 'add', file], cwd=repository.root_path).returncode:
+            if repository.run_command_on_repo([repository.executable(), 'add', file], cwd=repository.root_path).returncode:
                 sys.stderr.write("Failed to add '{}'\n".format(file))
                 return 1
 
@@ -184,12 +184,12 @@ class PullRequest(Command):
             sys.stderr.write('No modified files\n')
             return 1
         log.info('Amending commit...' if will_amend else 'Creating commit...')
-        env = os.environ
+        env = os.environ.copy()
         if getattr(args, '_title', None):
             env['COMMIT_MESSAGE_TITLE'] = getattr(args, '_title')
         if bug_urls:
             env['COMMIT_MESSAGE_BUG'] = bug_urls
-        if run(
+        if repository.run_command_on_repo(
             [repository.executable(), 'commit', '--date=now'] + (['--amend'] if will_amend else []),
             cwd=repository.root_path,
             env=env,
@@ -210,7 +210,7 @@ class PullRequest(Command):
     @classmethod
     def issue_from_commits(cls, repository, source_remote, branch_point):
         head = repository.commit(include_log=True, include_identifier=False)
-        if run([
+        if repository.run_command_on_repo([
             repository.executable(), 'merge-base', '--is-ancestor',
             head.hash, 'remotes/{}/{}'.format(source_remote, branch_point.branch),
         ], capture_output=True, cwd=repository.root_path).returncode:
@@ -342,12 +342,12 @@ class PullRequest(Command):
             sys.stderr.write("'{}' is not a remote in this repository\n".format(source_remote))
             return None
 
-        did_local_branch_diverge = bool(run([
+        did_local_branch_diverge = bool(repository.run_command_on_repo([
             repository.executable(), 'merge-base', '--is-ancestor',
             branch_point.branch,
             'remotes/{}/{}'.format(source_remote, branch_point.branch),
         ], cwd=repository.root_path).returncode)
-        if did_local_branch_diverge and run([
+        if did_local_branch_diverge and repository.run_command_on_repo([
             repository.executable(), 'branch', '-f',
             branch_point.branch,
             'remotes/{}/{}'.format(source_remote, branch_point.branch),
@@ -386,7 +386,7 @@ class PullRequest(Command):
                 command_line = path.split(' ')
                 if command_line[0] == 'python3' and os.name == 'nt':
                     command_line[0] = sys.executable
-                command = run(command_line, cwd=repository.root_path)
+                command = repository.run_command_on_repo(command_line, cwd=repository.root_path)
                 if command.returncode == 0:
                     log.info('    Ran {}!'.format(name))
                     break
@@ -408,11 +408,11 @@ class PullRequest(Command):
                     modified = list(set(modified).union(set(repository.modified(staged=False))))
                 for file in set(modified) - set(repository.modified(staged=True)):
                     log.info('    Adding {}...'.format(file))
-                    if run([repository.executable(), 'add', file], cwd=repository.root_path).returncode:
+                    if repository.run_command_on_repo([repository.executable(), 'add', file], cwd=repository.root_path).returncode:
                         sys.stderr.write("Failed to add '{}'\n".format(file))
                         return False
 
-                if modified and run(
+                if modified and repository.run_command_on_repo(
                     [repository.executable(), 'commit', '--amend', '--date=now', '--no-edit'],
                     cwd=repository.root_path,
                 ).returncode:
@@ -521,7 +521,7 @@ class PullRequest(Command):
             )
             if response == 'Yes':
                 cleaned = re.sub(r'Reviewed by .+\n?', '', bad_commits[0].message)
-                if run([repository.executable(), 'commit', '--amend', '-m', cleaned], cwd=repository.root_path).returncode:
+                if repository.run_command_on_repo([repository.executable(), 'commit', '--amend', '-m', cleaned], cwd=repository.root_path).returncode:
                     sys.stderr.write("Failed to amend commit message\n")
                     return 1
                 commits = list(repository.commits(begin={'hash': branch_point.hash}, end={'branch': repository.branch}))
@@ -603,7 +603,7 @@ class PullRequest(Command):
                 source_remote = match.group(1)
                 print("Making the PR against the '{}' remote".format(source_remote))
 
-        if run(
+        if repository.run_command_on_repo(
             [repository.executable(), 'config', 'branch.{}.target'.format(repository.branch), source_remote],
             cwd=repository.root_path, capture_output=True,
         ).returncode:
@@ -657,7 +657,7 @@ class PullRequest(Command):
                         base_url = '/'.join(base_url.split('/')[:3]) + '/'
                     else:
                         base_url = base_url.split(':')[0] + ':'
-                    if target not in repository.source_remotes(personal=True) and run(
+                    if target not in repository.source_remotes(personal=True) and repository.run_command_on_repo(
                         [repository.executable(), 'remote', 'add', target, '{}{}.git'.format(base_url, pr_target)],
                         capture_output=True, cwd=repository.root_path,
                     ).returncode not in [0, 3]:
@@ -717,15 +717,15 @@ class PullRequest(Command):
                         json=dict(branch=branch_point.branch),
                         authenticated=True,
                     ) is not None
-                if did_update_branch and run([repository.executable(), 'fetch', target, branch_point.branch], cwd=repository.root_path, capture_output=True).returncode:
+                if did_update_branch and repository.run_command_on_repo([repository.executable(), 'fetch', target, branch_point.branch], cwd=repository.root_path, capture_output=True).returncode:
                     sys.stderr.write("Failed to fetch '{}' for '{}.' Error is non fatal, continuing...\n".format(target, branch_point.branch))
             if not did_update_branch and rebasing:
                 log.info("Syncing '{}' to remote '{}'".format(branch_point.branch, target))
-                if run([repository.executable(), 'push', target, '{branch}:{branch}'.format(branch=branch_point.branch)], cwd=repository.root_path, env=push_env).returncode:
+                if repository.run_command_on_repo([repository.executable(), 'push', target, '{branch}:{branch}'.format(branch=branch_point.branch)], cwd=repository.root_path, env=push_env).returncode:
                     sys.stderr.write("Failed to sync '{}' to '{}.' Error is non fatal, continuing...\n".format(branch_point.branch, target))
 
         log.info("Pushing '{}' to '{}'...".format(repository.branch, target))
-        if run(
+        if repository.run_command_on_repo(
             [repository.executable(), "push", "-f"]
             + (["-u"] if set_upstream else [])
             + [target, repository.branch],
@@ -746,9 +746,9 @@ class PullRequest(Command):
 
             history_branch = '{}-{}'.format(repository.branch, count)
             log.info("Creating '{}' as a reference branch".format(history_branch))
-            if run([
+            if repository.run_command_on_repo([
                 repository.executable(), 'branch', history_branch, repository.branch,
-            ], cwd=repository.root_path).returncode or run([
+            ], cwd=repository.root_path).returncode or repository.run_command_on_repo([
                 repository.executable(), 'push', '-f', target, history_branch,
             ], cwd=repository.root_path, env=push_env).returncode:
                 sys.stderr.write("Failed to create and push '{}' to '{}'\n".format(history_branch, target))

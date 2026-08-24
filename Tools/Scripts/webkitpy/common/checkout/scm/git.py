@@ -68,18 +68,21 @@ class Git(SCM):
         else:
             self._patch_directories = patch_directories
 
+    def run(self, *args, **kwargs):
+        kwargs['env'] = local.Git.sanitize_repo_env(kwargs.get('env'))
+        if 'cwd' not in kwargs:
+            kwargs['cwd'] = self.checkout_root
+        return super().run(*args, **kwargs)
+
     def _run_git(self, command_args, **kwargs):
         full_command_args = [self.executable_name] + command_args
-        full_kwargs = kwargs
-        if not 'cwd' in full_kwargs:
-            full_kwargs['cwd'] = self.checkout_root
-        return self.run(full_command_args, **full_kwargs)
+        return self.run(full_command_args, **kwargs)
 
     @classmethod
     def in_working_directory(cls, path, executive=None):
         try:
             executive = executive or Executive()
-            return executive.run_command([cls.executable_name, 'rev-parse', '--is-inside-work-tree'], cwd=path, ignore_errors=True).rstrip() == "true"
+            return executive.run_command([cls.executable_name, 'rev-parse', '--is-inside-work-tree'], cwd=path, env=local.Git.sanitize_repo_env(), ignore_errors=True).rstrip() == "true"
         except OSError:
             # The Windows bots seem to through a WindowsError when git isn't installed.
             return False
@@ -87,7 +90,7 @@ class Git(SCM):
     @classmethod
     def clone(cls, url, directory, executive=None):
         executive = executive or Executive()
-        return executive.run_command([cls.executable_name, 'clone', '-v', url, directory])
+        return executive.run_command([cls.executable_name, 'clone', '-v', url, directory], env=local.Git.sanitize_repo_env())
 
     def find_checkout_root(self, path):
         # "git rev-parse --show-cdup" would be another way to get to the root
@@ -103,7 +106,7 @@ class Git(SCM):
         # Pass the cwd if provided so that we can handle the case of running webkit-patch outside of the working directory.
         # FIXME: This should use an Executive.
         executive = executive or Executive()
-        return executive.run_command([cls.executable_name, "config", "--get-all", key], ignore_errors=True, cwd=cwd).rstrip('\n')
+        return executive.run_command([cls.executable_name, "config", "--get-all", key], ignore_errors=True, cwd=cwd, env=local.Git.sanitize_repo_env()).rstrip('\n')
 
     @staticmethod
     def commit_success_regexp():
@@ -289,9 +292,9 @@ class Git(SCM):
         head = self.rev_parse('HEAD')
         merge_base = self.merge_base(git_commit, find_branch=find_branch)
         if not commit_message or merge_base == head:
-            command = [self.executable_name, 'diff', '--binary', '--no-color', '--no-ext-diff', '--full-index', '--no-renames']
+            command = ['diff', '--binary', '--no-color', '--no-ext-diff', '--full-index', '--no-renames']
         else:
-            command = [self.executable_name, 'format-patch', '--no-signature', '--stdout', '--binary']
+            command = ['format-patch', '--no-signature', '--stdout', '--binary']
 
         # Put code changes at the top of the patch and layout tests
         # at the bottom, this makes for easier reviewing.
@@ -301,7 +304,7 @@ class Git(SCM):
             command += ['-O{}'.format(order_file)]
 
         if git_index:
-            assert command[1] == 'diff'
+            assert command[0] == 'diff'
             command += ['--cached']
         elif git_commit:
             command += [merge_base]
@@ -316,7 +319,7 @@ class Git(SCM):
         if changed_files:
             command += ['--'] + changed_files
 
-        return self.run(command, decode_output=False, cwd=self.checkout_root)
+        return self._run_git(command, decode_output=False)
 
     def _run_git_svn_find_rev(self, revision_or_treeish, branch=None):
         # git svn find-rev requires SVN revisions to begin with the character 'r'.

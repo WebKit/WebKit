@@ -146,7 +146,7 @@ class TestDownloader(object):
         needs_clone = not self._filesystem.exists(directory)
         if needs_clone:
             _log.info('Cloning %s into %s...' % (url, directory))
-            run([Git.executable(), 'clone', url, directory], check=True)
+            run([Git.executable(), 'clone', url, directory], check=True, env=Git.sanitize_repo_env())
 
         git = Git(directory)
         if not needs_clone and self._options.fetch is True:

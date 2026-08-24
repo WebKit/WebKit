@@ -90,11 +90,11 @@ class Clean(Command):
         regex = re.compile(r'^{}-(?P<count>\d+)$'.format(argument))
         for to_delete in repository.branches_for(remote=False):
             if to_delete == argument or regex.match(to_delete):
-                code += run([repository.executable(), 'branch', '-D', to_delete], cwd=repository.root_path).returncode
+                code += repository.run_command_on_repo([repository.executable(), 'branch', '-D', to_delete], cwd=repository.root_path).returncode
                 did_delete = True
         for to_delete in repository.branches_for(remote=target):
             if to_delete == argument or regex.match(to_delete) and target == 'fork':
-                code += run([repository.executable(), 'push', target, '--delete', to_delete], cwd=repository.root_path, env=push_env).returncode
+                code += repository.run_command_on_repo([repository.executable(), 'push', target, '--delete', to_delete], cwd=repository.root_path, env=push_env).returncode
                 did_delete = True
 
         if not did_delete:
@@ -167,6 +167,6 @@ class DeletePRBranches(Command):
                 continue
             name = match.group('name')
             log.info('Deleting {}...'.format(name))
-            result += run([repository.executable(), 'fetch', name, '-f'], cwd=repository.root_path).returncode
+            result += repository.run_command_on_repo([repository.executable(), 'fetch', name, '-f'], cwd=repository.root_path).returncode
 
         return result

@@ -172,6 +172,14 @@ class MockExecutive(object):
         pass
 
     def popen(self, args, cwd=None, env=None, **kwargs):
+        if (args[0] == 'git' or args[0].endswith('/git')) and not (
+            len(args) >= 2 and (
+                args[1] in ('check-ref-format', 'lfs') or
+                (args[1] == 'rev-parse' and len(args) >= 3 and args[2] == '--local-env-vars')
+            )
+        ):
+            assert env is None or 'GIT_DIR' not in env
+
         self.calls.append(args)
         if self._should_log:
             cwd_string = ""

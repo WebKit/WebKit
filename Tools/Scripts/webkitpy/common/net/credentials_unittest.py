@@ -138,13 +138,13 @@ password: "SECRETSAUCE"
     def test_credentials_from_environment(self):
         credentials = MockedCredentials("example.com")
 
-        saved_environ = os.environ.copy()
+        self.addCleanup(os.environ.pop, 'WEBKIT_BUGZILLA_USERNAME', None)
+        self.addCleanup(os.environ.pop, 'WEBKIT_BUGZILLA_PASSWORD', None)
         os.environ['WEBKIT_BUGZILLA_USERNAME'] = "foo"
         os.environ['WEBKIT_BUGZILLA_PASSWORD'] = "bar"
         username, password = credentials._credentials_from_environment()
         self.assertEqual(username, "foo")
         self.assertEqual(password, "bar")
-        os.environ = saved_environ
 
     def test_read_credentials_without_git_repo(self):
         # FIXME: This should share more code with test_keyring_without_git_repo

@@ -87,6 +87,6 @@ class WPTPaths:
                 user_directory = Terminal.input(f'Press `Enter` to use the default or input a directory of your choice: ')
                 repository_directory = user_directory.strip() or repository_directory
 
-        if run([local.Git.executable(), 'clone', f'{WPT_GH_URL}.git', repository_directory]).returncode:
+        if run([local.Git.executable(), 'clone', f'{WPT_GH_URL}.git', repository_directory], env=local.Git.sanitize_repo_env()).returncode:
             return None
         return repository_directory

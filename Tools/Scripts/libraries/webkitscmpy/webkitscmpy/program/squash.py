@@ -67,7 +67,7 @@ class Squash(Command):
 
     @classmethod
     def get_commits_hashes(cls, repository, base_commit):
-        result = run([repository.executable(), 'rev-list', 'HEAD...{}'.format(base_commit.hash)], capture_output=True, cwd=repository.root_path)
+        result = repository.run_command_on_repo([repository.executable(), 'rev-list', 'HEAD...{}'.format(base_commit.hash)], capture_output=True, cwd=repository.root_path)
         if result.returncode:
             sys.stderr.write(result.stderr)
             sys.stderr.write('Failed to get all commits from HEAD to {}'.format(base_commit.hash))
@@ -76,7 +76,7 @@ class Squash(Command):
 
     @classmethod
     def undo_reset(cls, repository):
-        return run([repository.executable(), 'reset', "'HEAD@{1}'"], cwd=repository.root_path)
+        return repository.run_command_on_repo([repository.executable(), 'reset', "'HEAD@{1}'"], cwd=repository.root_path)
 
     @classmethod
     def squash_commit(cls, args, repository, branch_point, **kwargs):
@@ -100,7 +100,7 @@ class Squash(Command):
             return 1
 
         if args.interactive:
-            result = run([repository.executable(), 'rebase', '-i'] + [base_commit.hash], cwd=repository.root_path)
+            result = repository.run_command_on_repo([repository.executable(), 'rebase', '-i'] + [base_commit.hash], cwd=repository.root_path)
         else:
             previous_history = ''
             commit_hash_list = cls.get_commits_hashes(repository, base_commit)
@@ -109,7 +109,7 @@ class Squash(Command):
             if not args.no_sub_commit_message:
                 commits = map(lambda hash: repository.find(hash, include_log=True), commit_hash_list)
                 previous_history += '\n\n'.join(map(lambda commit: commit.message, commits))
-            result = run([repository.executable(), 'reset'] + [base_commit.hash], cwd=repository.root_path)
+            result = repository.run_command_on_repo([repository.executable(), 'reset'] + [base_commit.hash], cwd=repository.root_path)
             if result.returncode:
                 sys.stderr.write('Failed to merge the diff.')
                 cls.undo_reset()
@@ -118,13 +118,13 @@ class Squash(Command):
                 sys.stderr.write('Failed to detect any diff to merge.')
                 return 1
             for file in modified_files:
-                if run([repository.executable(), 'add', file], cwd=repository.root_path).returncode:
+                if repository.run_command_on_repo([repository.executable(), 'add', file], cwd=repository.root_path).returncode:
                     sys.stderr.write("Failed to add '{}'\n".format(file))
                     return 1
             env = os.environ
             env['COMMIT_MESSAGE_CONTENT'] = '\n\nThis commit include:\n\n' + previous_history
 
-            result = run([repository.executable(), 'commit', '--date=now'], cwd=repository.root_path, env=env)
+            result = repository.run_command_on_repo([repository.executable(), 'commit', '--date=now'], cwd=repository.root_path, env=env)
             log.info('    Squashed {} commits'.format(len(commit_hash_list)))
 
         if result.returncode:

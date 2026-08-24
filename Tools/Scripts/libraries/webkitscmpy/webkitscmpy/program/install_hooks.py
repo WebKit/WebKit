@@ -27,7 +27,7 @@ import shutil
 import sys
 
 from webkitbugspy import radar
-from webkitcorepy import Terminal, Version, run, string_utils
+from webkitcorepy import Terminal, Version, string_utils
 
 from webkitscmpy import local, log, remote
 
@@ -89,7 +89,7 @@ class InstallHooks(Command):
 
     @classmethod
     def _security_levels(cls, repository):
-        proc = run(
+        proc = repository.run_command_on_repo(
             [local.Git.executable(), 'config', '--get-regexp', 'webkitscmpy.remotes'],
             capture_output=True, cwd=repository.root_path,
             encoding='utf-8',
@@ -115,7 +115,7 @@ class InstallHooks(Command):
             if match:
                 result['{}:{}'.format(match.group('host'), match.group('path')).lower()] = levels_by_name.get(name, None)
 
-        proc = run(
+        proc = repository.run_command_on_repo(
             [local.Git.executable(), 'config', '--get-regexp', 'remote.+url'],
             capture_output=True, cwd=repository.root_path,
             encoding='utf-8',
@@ -225,7 +225,7 @@ class InstallHooks(Command):
                 sys.stderr.write('No hooks installed because user canceled hook installation\n')
                 return 1
             elif response == 'Change':
-                if run(
+                if repository.run_command_on_repo(
                     [local.Git.executable(), 'config', 'core.hookspath', default_target_directory],
                     capture_output=True, cwd=repository.root_path,
                 ).returncode:

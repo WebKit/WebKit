@@ -27,7 +27,7 @@ import time
 
 from .command import Command
 from .install_hooks import InstallHooks
-from webkitcorepy import arguments, run, string_utils, CallByNeed, Editor, OutputCapture, TaskPool, Terminal
+from webkitcorepy import arguments, string_utils, CallByNeed, Editor, OutputCapture, TaskPool, Terminal
 from webkitscmpy import log, local, remote as wspremote
 
 requests = CallByNeed(lambda: __import__('requests'))
@@ -36,7 +36,7 @@ HTTPBasicAuth = CallByNeed(lambda: __import__('requests.auth', fromlist=['HTTPBa
 
 def _fetch(path, remote):
     log.info('    Fetching {}...'.format(remote))
-    result = run(
+    result = local.Git.run_command_on_repo(
         [local.Git.executable(), 'fetch', '--prune', '--quiet', remote],
         cwd=path, capture_output=True, encoding='utf-8', errors='replace',
     )
@@ -59,7 +59,7 @@ class Setup(Command):
     def fetch(cls, repository):
         from webkitscmpy.mocks.local import Git as MockGit
 
-        remote_cmd = run(
+        remote_cmd = repository.run_command_on_repo(
             [repository.executable(), 'remote'],
             capture_output=True, cwd=repository.root_path,
             encoding='utf-8',
@@ -210,12 +210,12 @@ class Setup(Command):
 
     @classmethod
     def _add_remote(cls, repository, name, url, fetch=True):
-        returncode = run(
+        returncode = repository.run_command_on_repo(
             [repository.executable(), 'remote', 'add', name, url],
             capture_output=True, cwd=repository.root_path,
         ).returncode
         if returncode == 3:
-            returncode = run(
+            returncode = repository.run_command_on_repo(
                 [repository.executable(), 'remote', 'set-url', name, url],
                 capture_output=True, cwd=repository.root_path,
             ).returncode
@@ -228,7 +228,7 @@ class Setup(Command):
         if not fetch:
             return 0
 
-        returncode = run(
+        returncode = repository.run_command_on_repo(
             [repository.executable(), 'fetch', name],
             capture_output=True, cwd=repository.root_path,
         ).returncode
@@ -261,7 +261,7 @@ class Setup(Command):
             email = Terminal.input('Enter git user email for this repository: ')
 
         if email != local_config.get('user.email'):
-            if run(
+            if repository.run_command_on_repo(
                 [local.Git.executable(), 'config', 'user.email', email], capture_output=True, cwd=repository.root_path,
             ).returncode:
                 sys.stderr.write('Failed to set the git user email to {} for this repository\n'.format(email))
@@ -284,7 +284,7 @@ class Setup(Command):
             name = Terminal.input('Enter git user name for this repository: ')
 
         if name != local_config.get('user.name'):
-            if run(
+            if repository.run_command_on_repo(
                 [local.Git.executable(), 'config', 'user.name', name], capture_output=True, cwd=repository.root_path,
             ).returncode:
                 sys.stderr.write('Failed to set the git user name to {} for this repository\n'.format(name))
@@ -296,7 +296,7 @@ class Setup(Command):
 
         if repository.metadata and os.path.isfile(os.path.join(repository.metadata, local.Git.GIT_CONFIG_EXTENSION)):
             log.info('Adding project git config to repository config...')
-            result += run(
+            result += repository.run_command_on_repo(
                 [local.Git.executable(), 'config', 'include.path', os.path.join('..', os.path.basename(repository.metadata), local.Git.GIT_CONFIG_EXTENSION)],
                 capture_output=True, cwd=repository.root_path,
             ).returncode
@@ -305,11 +305,11 @@ class Setup(Command):
             log.info('No project git config found, continuing')
 
         log.info('Setting better Objective-C diffing behavior for this repository...')
-        result += run(
+        result += repository.run_command_on_repo(
             [local.Git.executable(), 'config', 'diff.objcpp.xfuncname', '^[-+@a-zA-Z_].*$'],
             capture_output=True, cwd=repository.root_path,
         ).returncode
-        result += run(
+        result += repository.run_command_on_repo(
             [local.Git.executable(), 'config', 'diff.objcppheader.xfuncname', '^[@a-zA-Z_].*$'],
             capture_output=True, cwd=repository.root_path,
         ).returncode
@@ -323,7 +323,7 @@ class Setup(Command):
         ) == 'Yes'):
             for command in commands_to_color:
                 if not local_config.get(command):
-                    result += run(
+                    result += repository.run_command_on_repo(
                         [local.Git.executable(), 'config', command, 'auto'],
                         capture_output=True, cwd=repository.root_path,
                     ).returncode
@@ -331,7 +331,7 @@ class Setup(Command):
         if args.merge is None:
             args.merge = repository.config(location='project')['pull.rebase'] == 'false'
         log.info('Using {} merge strategy for this repository'.format('merge commits as a' if args.merge else 'a rebase'))
-        if run(
+        if repository.run_command_on_repo(
             [local.Git.executable(), 'config', 'pull.rebase', 'false' if args.merge else 'true'],
             capture_output=True, cwd=repository.root_path,
         ).returncode:
@@ -340,7 +340,7 @@ class Setup(Command):
 
         if not local_config.get('webkitscmpy.auto-update-changelog'):
             log.info('Setting auto-updates for commit message changelogs when amending...')
-            if run(
+            if repository.run_command_on_repo(
                 [local.Git.executable(), 'config', 'webkitscmpy.auto-update-changelog', 'true'],
                 cwd=repository.root_path,
             ).returncode:
@@ -355,7 +355,7 @@ class Setup(Command):
                 default='No', options=('Yes', 'No', 'Later'),
             )
             if response in ['Yes', 'No']:
-                if run(
+                if repository.run_command_on_repo(
                     [local.Git.executable(), 'config', 'webkitscmpy.auto-rebase-branch', 'true' if response == 'Yes' else 'false'],
                     capture_output=True, cwd=repository.root_path,
                 ).returncode:
@@ -379,7 +379,7 @@ class Setup(Command):
                     default=repository.config(location='project')['webkitscmpy.history'],
                     options=repository.PROJECT_CONFIG_OPTIONS['webkitscmpy.history'],
                 )
-            if pr_history and run(
+            if pr_history and repository.run_command_on_repo(
                 [local.Git.executable(), 'config', 'webkitscmpy.history', pr_history],
                 capture_output=True, cwd=repository.root_path,
             ).returncode:
@@ -420,7 +420,7 @@ class Setup(Command):
 
             if not editor:
                 log.info('Using the default git editor for this repository')
-            elif run(
+            elif repository.run_command_on_repo(
                 [local.Git.executable(), 'config', 'core.editor', editor],
                 capture_output=True,
                 cwd=repository.root_path,
@@ -436,7 +436,7 @@ class Setup(Command):
         rmt = repository.remote()
         if rmt and getattr(rmt, 'credentials', None):
             username, password = rmt.credentials()
-            if username and password and not run([
+            if username and password and not repository.run_command_on_repo([
                 repository.executable(), 'config',
                 'credential.{}.helper'.format('/'.join(rmt.url.split('/')[:3])),
                 '!f() {{ {} -C {} credentials; }}; f'.format(sys.argv[0], rmt.url),
@@ -448,7 +448,7 @@ class Setup(Command):
             "http(s) based remotes will prompt for your password every time when pushing,\nit is recommended to convert to a ssh remote, would you like to convert to a ssh remote?",
             default='Yes',
         ) == 'Yes':
-            if run([
+            if repository.run_command_on_repo([
                 local.Git.executable(), 'config', 'remote.origin.url',
                 'git@{}:{}.git'.format(http_remote.group('host'), http_remote.group('path')),
             ], capture_output=True, cwd=repository.root_path).returncode:
@@ -599,7 +599,7 @@ Automation may create pull requests and forks in unexpected locations
                 print('Setup failed')
             else:
                 print('Setup succeeded!')
-                run(
+                repository.run_command_on_repo(
                     [local.Git.executable(), 'config', 'webkitscmpy.setup', 'true'],
                     capture_output=True,
                     cwd=repository.root_path,

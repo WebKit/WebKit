@@ -67,10 +67,10 @@ class Checkout(object):
 
     @staticmethod
     def clone(url, path, remotes, credentials, sentinal_file=None, checkout_data=None, disable_origin=True, post_clone_commands=None):
-        run([local.Git.executable(), 'clone', url, path], cwd=os.path.dirname(path))
-        run([local.Git.executable(), 'config', 'pull.ff', 'only'], cwd=path)
+        local.Git.run_command_on_repo([local.Git.executable(), 'clone', url, path], cwd=os.path.dirname(path))
+        local.Git.run_command_on_repo([local.Git.executable(), 'config', 'pull.ff', 'only'], cwd=path)
         if disable_origin:
-            run([local.Git.executable(), 'remote', 'set-url', '--push', 'origin', 'INVALID'], cwd=os.path.dirname(path))
+            local.Git.run_command_on_repo([local.Git.executable(), 'remote', 'set-url', '--push', 'origin', 'INVALID'], cwd=os.path.dirname(path))
 
         Checkout.add_remotes(local.Git(path), remotes)
         Checkout.add_credentials(local.Git(path), credentials)
@@ -90,7 +90,7 @@ class Checkout(object):
     @staticmethod
     def add_remotes(repository, remotes):
         for name, url in (remotes or {}).items():
-            run([repository.executable(), 'remote', 'add', name, url], cwd=repository.root_path)
+            repository.run_command_on_repo([repository.executable(), 'remote', 'add', name, url], cwd=repository.root_path)
 
     @staticmethod
     def add_credentials(repository, credentials):
@@ -100,7 +100,7 @@ class Checkout(object):
             username = creds.get('username')
             password = creds.get('password')
             if username:
-                run(
+                repository.run_command_on_repo(
                     [repository.executable(), 'config', '--local', 'credential.{}.username'.format(url), username],
                     cwd=repository.root_path,
                 )
@@ -111,7 +111,7 @@ class Checkout(object):
         if not git_credentials_content:
             return
 
-        run([repository.executable(), 'config', '--local', 'credential.helper', 'store'], cwd=repository.root_path)
+        repository.run_command_on_repo([repository.executable(), 'config', '--local', 'credential.helper', 'store'], cwd=repository.root_path)
         with open(os.path.expanduser('~/.git-credentials'), 'w') as f:
             f.write(git_credentials_content)
 
@@ -140,7 +140,7 @@ class Checkout(object):
 
         if http_proxy and run([
             local.Git.executable(), 'config', '--global', 'http.proxy', 'http://{}'.format(http_proxy),
-        ]).returncode:
+        ], env=local.Git.sanitize_repo_env()).returncode:
             split_proxy = http_proxy.split('@')
             raise self.Exception("Failed to set https proxy to '{}'".format(
                 '{}@{}'.format('*' * len(split_proxy[0]), split_proxy[1]) if '@' in http_proxy else http_proxy,
@@ -203,7 +203,7 @@ class Checkout(object):
             sys.stderr.write('Cannot query checkout, clone still pending...\n')
             return None
 
-        result = run(
+        result = self.repository.run_command_on_repo(
             [self.repository.executable(), 'show-ref', branch],
             cwd=self.repository.root_path,
             capture_output=True,
@@ -228,7 +228,7 @@ class Checkout(object):
             return False
 
         if tag:
-            return not run(
+            return not self.repository.run_command_on_repo(
                 [self.repository.executable(), 'push', remote, tag],
                 cwd=self.repository.root_path,
             ).returncode
@@ -240,7 +240,7 @@ class Checkout(object):
         # Make an attempt to push commits one-at-a-time to ensure we get CI jobs for each commit
         # Only push commits one-at-a-time if we are a) on main or b) have less than 50 individual commits.
         # This prevents branch-management from spinning up thousands of CI jobs or causing commits.webkit.org to hang.
-        sentinel = run(
+        sentinel = self.repository.run_command_on_repo(
             [self.repository.executable(), 'rev-list', '--count', '{}/{}..{}'.format(remote, dest_branch or branch, branch)],
             cwd=self.repository.root_path,
             capture_output=True,
@@ -249,12 +249,12 @@ class Checkout(object):
         num_commits = 1 if sentinel.returncode else int(sentinel.stdout.rstrip())
         while num_commits > 1 and (num_commits < 50 or branch == self.repository.default_branch):
             num_commits -= 1
-            run(
+            self.repository.run_command_on_repo(
                 [self.repository.executable(), 'push', remote, '{}~{}:{}'.format(branch, num_commits, dest_branch or branch)],
                 cwd=self.repository.root_path,
             )
 
-        return not run(
+        return not self.repository.run_command_on_repo(
             [self.repository.executable(), 'push', remote, '{}:{}'.format(branch, dest_branch or branch)],
             cwd=self.repository.root_path,
         ).returncode
@@ -278,7 +278,7 @@ class Checkout(object):
         return did_succeed
 
     def fetch(self, remote=REMOTE):
-        return not run(
+        return not self.repository.run_command_on_repo(
             [self.repository.executable(), 'fetch', remote, '--prune'],
             cwd=self.repository.root_path,
         ).returncode
@@ -297,8 +297,8 @@ class Checkout(object):
         elif not self.repository.prod_branches.match(branch):
             return False
         elif track and branch not in self.repository.branches_for(remote=remote):
-            run([self.repository.executable(), 'fetch', '--prune'], cwd=self.repository.root_path)
-            run(
+            self.repository.run_command_on_repo([self.repository.executable(), 'fetch', '--prune'], cwd=self.repository.root_path)
+            self.repository.run_command_on_repo(
                 [self.repository.executable(), 'branch', '--track', branch, 'remotes/{}/{}'.format(remote, branch)],
                 cwd=self.repository.root_path,
             )
@@ -306,7 +306,7 @@ class Checkout(object):
         elif not track and self.is_updated(branch, remote=remote):
             return True
 
-        run(
+        self.repository.run_command_on_repo(
             [self.repository.executable(), 'fetch', remote, '{}:{}'.format(branch, branch)],
             cwd=self.repository.root_path,
         )
@@ -344,7 +344,7 @@ class Checkout(object):
                 return
 
             if track:
-                run(
+                self.repository.run_command_on_repo(
                     [self.repository.executable(), 'branch', '--track', branch, 'remotes/{}/{}'.format(remote, branch)],
                     cwd=self.repository.root_path,
                 )

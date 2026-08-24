@@ -68,7 +68,7 @@ class SCM:
         self.checkout_root = self.find_checkout_root(self.cwd)
 
     # A wrapper used by subclasses to create processes.
-    def run(self, args, cwd=None, input=None, error_handler=None, ignore_errors=False, return_exit_code=False, return_stderr=True, decode_output=True):
+    def run(self, args, cwd=None, input=None, error_handler=None, ignore_errors=False, return_exit_code=False, return_stderr=True, decode_output=True, env=None):
         # FIXME: We should set cwd appropriately.
         return self._executive.run_command(args,
             cwd=cwd,
@@ -77,7 +77,8 @@ class SCM:
             ignore_errors=ignore_errors,
             return_exit_code=return_exit_code,
             return_stderr=return_stderr,
-            decode_output=decode_output)
+            decode_output=decode_output,
+            env=env)
 
     # SCM always returns repository relative path, but sometimes we need
     # absolute paths to pass to rm, etc.

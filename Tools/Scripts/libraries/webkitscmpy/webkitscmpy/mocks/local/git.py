@@ -237,6 +237,30 @@ Your branch is up to date with 'origin/{branch}'.
 nothing to commit, working tree clean
 '''.format(branch=self.branch),
                     ),
+            ), mocks.Subprocess.Route(
+                self.executable, 'rev-parse', '--local-env-vars',
+                # No cwd, because this never reads touches the cwd.
+                completion=mocks.ProcessCompletion(
+                    returncode=0,
+                    stdout='\n'.join([
+                        'GIT_ALTERNATE_OBJECT_DIRECTORIES',
+                        'GIT_CONFIG',
+                        'GIT_CONFIG_PARAMETERS',
+                        'GIT_CONFIG_COUNT',
+                        'GIT_OBJECT_DIRECTORY',
+                        'GIT_DIR',
+                        'GIT_WORK_TREE',
+                        'GIT_IMPLICIT_WORK_TREE',
+                        'GIT_GRAFT_FILE',
+                        'GIT_INDEX_FILE',
+                        'GIT_NO_REPLACE_OBJECTS',
+                        'GIT_REPLACE_REF_BASE',
+                        'GIT_PREFIX',
+                        'GIT_SHALLOW_FILE',
+                        'GIT_COMMON_DIR',
+                        '',
+                    ]),
+                ),
             ),
             mocks.Subprocess.Route(
                 self.executable, 'rev-parse', '--show-toplevel',
@@ -266,6 +290,20 @@ nothing to commit, working tree clean
                     returncode=0,
                     stdout='{}\n'.format('HEAD' if self.detached else self.branch),
                 ),
+            ), mocks.Subprocess.Route(
+                self.executable, 'rev-parse', '--abbrev-ref', 'origin/HEAD',
+                cwd=self.path,
+                generator=lambda *args, **kwargs: mocks.ProcessCompletion(
+                    returncode=0,
+                    stdout='origin/{}\n'.format(default_branch),
+                ),
+            ), mocks.Subprocess.Route(
+                self.executable, 'rev-parse', '.*',
+                cwd=self.path,
+                generator=lambda *args, **kwargs: mocks.ProcessCompletion(
+                    returncode=0,
+                    stdout='{}\n'.format(self.find(args[2]).hash),
+                ) if self.find(args[2]) else mocks.ProcessCompletion(returncode=128)
             ), mocks.Subprocess.Route(
                 self.executable, 'remote', 'get-url', '.*',
                 cwd=self.path,
@@ -325,20 +363,6 @@ nothing to commit, working tree clean
                         '{hash}\trefs/tags/{tag}\n{hash}\trefs/tags/{tag}^{{}}'.format(hash=commit.hash, tag=tag) for tag, commit in sorted(self.tags.items())
                     ]) + '\n',
                 ),
-            ), mocks.Subprocess.Route(
-                self.executable, 'rev-parse', '--abbrev-ref', 'origin/HEAD',
-                cwd=self.path,
-                generator=lambda *args, **kwargs: mocks.ProcessCompletion(
-                    returncode=0,
-                    stdout='origin/{}\n'.format(default_branch),
-                ),
-            ), mocks.Subprocess.Route(
-                self.executable, 'rev-parse', '.*',
-                cwd=self.path,
-                generator=lambda *args, **kwargs: mocks.ProcessCompletion(
-                    returncode=0,
-                    stdout='{}\n'.format(self.find(args[2]).hash),
-                ) if self.find(args[2]) else mocks.ProcessCompletion(returncode=128)
             ), mocks.Subprocess.Route(
                 self.executable, 'log', re.compile(r'.+'), '-1', '--no-decorate', '--date=unix',
                 cwd=self.path,
@@ -1041,7 +1065,7 @@ nothing to commit, working tree clean
                 commits_to_edit.insert(0, commit)
 
         stdout = StringIO()
-        original_env = {key: os.environ.get('OLDPWD') for key in [
+        original_env = {key: os.environ.get(key) for key in [
             'OLDPWD', 'GIT_COMMIT',
             'GIT_AUTHOR_NAME', 'GIT_AUTHOR_EMAIL',
             'GIT_COMMITTER_NAME', 'GIT_COMMITTER_EMAIL',
