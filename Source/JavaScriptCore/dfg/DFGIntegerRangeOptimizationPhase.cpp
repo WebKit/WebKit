@@ -1021,24 +1021,62 @@ public:
     {
     }
 
-    std::optional<std::tuple<int32_t, int32_t>> NODELETE rangeFor(Node* node)
+    struct RangeBound {
+        int32_t value;
+        const Relationship* proof { nullptr };
+    };
+
+    std::optional<std::tuple<RangeBound, RangeBound>> NODELETE rangeFor(Node* node)
     {
         if (node->isInt32Constant()) {
             int32_t value = node->asInt32();
-            return std::tuple { value, value };
+            return std::tuple { RangeBound { value }, RangeBound { value } };
         }
 
         auto iter = m_relationships.find(node);
         if (iter == m_relationships.end())
             return std::nullopt;
 
-        int32_t minValue = std::numeric_limits<int32_t>::min();
-        int32_t maxValue = std::numeric_limits<int32_t>::max();
-        for (Relationship relationship : iter->value) {
-            minValue = WTF::max(minValue, relationship.minValueOfLeft());
-            maxValue = WTF::min(maxValue, relationship.maxValueOfLeft());
+        RangeBound minBound { std::numeric_limits<int32_t>::min() };
+        RangeBound maxBound { std::numeric_limits<int32_t>::max() };
+        for (const Relationship& relationship : iter->value) {
+            int32_t candidateMin = relationship.minValueOfLeft();
+            if (candidateMin > minBound.value) {
+                minBound.value = candidateMin;
+                minBound.proof = &relationship;
+            }
+            int32_t candidateMax = relationship.maxValueOfLeft();
+            if (candidateMax < maxBound.value) {
+                maxBound.value = candidateMax;
+                maxBound.proof = &relationship;
+            }
         }
-        return std::tuple { minValue, maxValue };
+        return std::tuple { minBound, maxBound };
+    }
+
+    // Pin the upstream nodes referenced by the proof relationships behind one
+    // or more range bounds. Call before flipping a checked op to
+    // Arith::Unchecked. Prevents later phases (DCE, etc.) from removing the
+    // producers IRO consulted.
+    //
+    // FIXME: NodeMustGenerate is sticky. If the IRO-unmarked consumer later
+    // dies, its pinned dependency stays alive uselessly. Switch to
+    // reference-counted effect edges (from the unmarked node to each pinned
+    // producer, counted by DCE) so the pin self-cleans when the consumer is removed.
+    template<typename... Bounds>
+    void pinRangeBounds(const Bounds&... bounds)
+    {
+        (pinRangeBoundProof(bounds), ...);
+    }
+
+    void pinRangeBoundProof(const RangeBound& bound)
+    {
+        if (!bound.proof)
+            return;
+        if (Node* right = bound.proof->right().node(); right && !right->isConstant())
+            right->mergeFlags(NodeMustGenerate);
+        if (Node* left = bound.proof->left().node(); left && !left->isConstant())
+            left->mergeFlags(NodeMustGenerate);
     }
 
     // Be careful: do not use this to infer a relationship that will not be pruned later,
@@ -1314,7 +1352,9 @@ public:
                     auto range = rangeFor(node->child1().node());
                     if (!range)
                         break;
-                    auto [minValue, maxValue] = range.value();
+                    auto [minBound, maxBound] = range.value();
+                    int32_t minValue = minBound.value;
+                    int32_t maxValue = maxBound.value;
 
                     executeNode(block->at(nodeIndex));
 
@@ -1326,12 +1366,15 @@ public:
                     bool absIsUnchecked = !shouldCheckOverflow(node->arithMode());
                     if (maxValue < 0 || (absIsUnchecked && maxValue <= 0)) {
                         node->convertToArithNegate();
-                        if (absIsUnchecked || minValue > std::numeric_limits<int>::min())
+                        if (absIsUnchecked || minValue > std::numeric_limits<int>::min()) {
+                            pinRangeBounds(minBound, maxBound);
                             node->setArithMode(Arith::Unchecked);
+                        }
                         changed = true;
                         continue;
                     }
                     if (minValue > std::numeric_limits<int>::min()) {
+                        pinRangeBounds(minBound);
                         node->setArithMode(Arith::Unchecked);
                         changed = true;
                         continue;
@@ -1348,12 +1391,16 @@ public:
                     auto leftRange = rangeFor(node->child1().node());
                     if (!leftRange)
                         break;
-                    auto [leftMinValue, leftMaxValue] = leftRange.value();
+                    auto [leftMin, leftMax] = leftRange.value();
+                    int32_t leftMinValue = leftMin.value;
+                    int32_t leftMaxValue = leftMax.value;
 
                     auto rightRange = rangeFor(node->child2().node());
                     if (!rightRange)
                         break;
-                    auto [rightMinValue, rightMaxValue] = rightRange.value();
+                    auto [rightMin, rightMax] = rightRange.value();
+                    int32_t rightMinValue = rightMin.value;
+                    int32_t rightMaxValue = rightMax.value;
 
                     dataLogLnIf(DFGIntegerRangeOptimizationPhaseInternal::verbose, "    leftMinValue = ", leftMinValue, ", leftMaxValue = ", leftMaxValue, ", rightMinValue = ", rightMinValue, ", rightMaxValue = ", rightMaxValue);
 
@@ -1371,6 +1418,7 @@ public:
 
                     dataLogLnIf(DFGIntegerRangeOptimizationPhaseInternal::verbose, "    It's in bounds.");
 
+                    pinRangeBounds(leftMin, leftMax, rightMin, rightMax);
                     executeNode(block->at(nodeIndex));
                     node->setArithMode(Arith::Unchecked);
                     changed = true;
@@ -1386,12 +1434,16 @@ public:
                     auto leftRange = rangeFor(node->child1().node());
                     if (!leftRange)
                         break;
-                    auto [leftMinValue, leftMaxValue] = leftRange.value();
+                    auto [leftMin, leftMax] = leftRange.value();
+                    int32_t leftMinValue = leftMin.value;
+                    int32_t leftMaxValue = leftMax.value;
 
                     auto rightRange = rangeFor(node->child2().node());
                     if (!rightRange)
                         break;
-                    auto [rightMinValue, rightMaxValue] = rightRange.value();
+                    auto [rightMin, rightMax] = rightRange.value();
+                    int32_t rightMinValue = rightMin.value;
+                    int32_t rightMaxValue = rightMax.value;
 
                     dataLogLnIf(DFGIntegerRangeOptimizationPhaseInternal::verbose, "    leftMinValue = ", leftMinValue, ", leftMaxValue = ", leftMaxValue, ", rightMinValue = ", rightMinValue, ", rightMaxValue = ", rightMaxValue);
 
@@ -1409,6 +1461,7 @@ public:
 
                     dataLogLnIf(DFGIntegerRangeOptimizationPhaseInternal::verbose, "    It's in bounds.");
 
+                    pinRangeBounds(leftMin, leftMax, rightMin, rightMax);
                     executeNode(block->at(nodeIndex));
                     node->setArithMode(Arith::Unchecked);
                     changed = true;
@@ -1424,12 +1477,16 @@ public:
                     auto leftRange = rangeFor(node->child1().node());
                     if (!leftRange)
                         break;
-                    auto [leftMinValue, leftMaxValue] = leftRange.value();
+                    auto [leftMin, leftMax] = leftRange.value();
+                    int32_t leftMinValue = leftMin.value;
+                    int32_t leftMaxValue = leftMax.value;
 
                     auto rightRange = rangeFor(node->child2().node());
                     if (!rightRange)
                         break;
-                    auto [rightMinValue, rightMaxValue] = rightRange.value();
+                    auto [rightMin, rightMax] = rightRange.value();
+                    int32_t rightMinValue = rightMin.value;
+                    int32_t rightMaxValue = rightMax.value;
 
                     dataLogLnIf(DFGIntegerRangeOptimizationPhaseInternal::verbose, "    leftMinValue = ", leftMinValue, ", leftMaxValue = ", leftMaxValue, ", rightMinValue = ", rightMinValue, ", rightMaxValue = ", rightMaxValue);
 
@@ -1449,14 +1506,17 @@ public:
 
                     executeNode(block->at(nodeIndex));
                     if (node->arithMode() == Arith::CheckOverflow) {
+                        pinRangeBounds(leftMin, leftMax, rightMin, rightMax);
                         node->setArithMode(Arith::Unchecked);
                         changed = true;
                     } else {
                         // If both sign are the same, negative zero never appears.
                         if (leftMinValue >= 0 && rightMinValue >= 0) {
+                            pinRangeBounds(leftMin, leftMax, rightMin, rightMax);
                             node->setArithMode(Arith::Unchecked);
                             changed = true;
                         } else if (leftMaxValue < 0 && rightMaxValue < 0) {
+                            pinRangeBounds(leftMin, leftMax, rightMin, rightMax);
                             node->setArithMode(Arith::Unchecked);
                             changed = true;
                         }
