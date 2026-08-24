@@ -44,6 +44,7 @@
 #include "RenderView.h"
 #include "SVGPaintServerHandlingInlines.h"
 #include "SVGPathFromElement.h"
+#include "SVGTransformComputation.h"
 #include "SVGURIReference.h"
 #include "SVGVisitedRendererTracking.h"
 #include "StyleComputedStyle+GettersInlines.h"
@@ -179,7 +180,7 @@ bool RenderSVGShape::setupNonScalingStrokeContext(AffineTransform& strokeTransfo
 
 AffineTransform RenderSVGShape::nonScalingStrokeTransform() const
 {
-    return protect(graphicsElement())->getScreenCTM(StyleUpdateStrategy::Disallow);
+    return SVGTransformComputation(*this).computeTransformToSVGRoot();
 }
 
 void RenderSVGShape::fillShape(const Style::ComputedStyle& style, GraphicsContext& context)

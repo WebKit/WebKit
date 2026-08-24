@@ -70,10 +70,8 @@ public:
                     ancestorContainer = enclosingLayerRenderer;
             } else
                 ancestorContainer = stopAtRenderer;
-        } else if (trackingMode == TransformState::TrackSVGScreenCTMMatrix && stopAtRenderer) {
-            ASSERT(stopAtRenderer->isComposited());
+        } else if (trackingMode == TransformState::TrackSVGScreenCTMMatrix && stopAtRenderer)
             ancestorContainer = ancestorsOfType<RenderLayerModelObject>(*stopAtRenderer).first();
-        }
 
         TransformState transformState(TransformState::ApplyTransformDirection, FloatPoint { });
         transformState.setTransformMatrixTracking(trackingMode);
@@ -105,6 +103,26 @@ public:
 
         ctm.translate(-toFloatSize(m_renderer->nominalSVGLayoutLocation()));
         return ctm;
+    }
+
+    AffineTransform computeTransformToSVGRoot() const
+    {
+        auto* svgRoot = ancestorsOfType<RenderSVGRoot>(m_renderer.get()).first();
+        if (!svgRoot)
+            return { };
+
+        // Accumulate up to and including the anonymous RenderSVGViewportContainer, which carries the 'viewBox'
+        // transformation (and page zoom) -- but stop before the transform of 'svgRoot' itself.
+        auto* viewportContainer = svgRoot->viewportContainer();
+        if (!viewportContainer)
+            return { };
+
+        auto ctm = computeAccumulatedTransform(viewportContainer, TransformState::TrackSVGScreenCTMMatrix);
+        auto zoom = svgRoot->style().usedZoom();
+        if (zoom == 1)
+            return ctm;
+
+        return AffineTransform::makeScale({ 1 / zoom, 1 / zoom }).multiply(ctm);
     }
 
     FloatSize calculateAccumulatedSVGAncestorTransformScale()
