@@ -424,23 +424,29 @@ bool GraphicsContextGLANGLE::reshapeFBOs(const IntSize& size)
     const int height = size.height();
     GLuint colorFormat = attrs.alpha ? GL_RGBA : GL_RGB;
 
-    // Resize multisample FBO.
+    // Resize multisample FBO. Until the drawing buffer is first used the renderbuffers are attached
+    // but given zero-sized storage, so a canvas that is created and never drawn to costs nothing.
+    // ensureMultisampleStorageBeforeUse() resizes them in place on first use.
+    bool deferMultisampleStorage = m_multisampleAllocationDeferred;
+    m_multisampleStorageDiscarded = attrs.antialias && deferMultisampleStorage;
     if (attrs.antialias) {
         GLint maxSampleCount;
         GL_GetIntegerv(GL_MAX_SAMPLES_ANGLE, &maxSampleCount);
         // Using more than 4 samples is slow on some hardware and is unlikely to
         // produce a significantly better result.
         GLint sampleCount = std::min(4, maxSampleCount);
+        int multisampleWidth = deferMultisampleStorage ? 0 : width;
+        int multisampleHeight = deferMultisampleStorage ? 0 : height;
         GL_BindFramebuffer(GL_FRAMEBUFFER, m_multisampleFBO);
         GL_BindRenderbuffer(GL_RENDERBUFFER, m_multisampleColorBuffer);
-        GL_RenderbufferStorageMultisampleANGLE(GL_RENDERBUFFER, sampleCount, m_internalColorFormat, width, height);
+        GL_RenderbufferStorageMultisampleANGLE(GL_RENDERBUFFER, sampleCount, m_internalColorFormat, multisampleWidth, multisampleHeight);
         GL_FramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, m_multisampleColorBuffer);
         if (attrs.stencil || attrs.depth) {
             ASSERT(m_internalDepthStencilFormat);
             ASSERT(!attrs.stencil || m_internalDepthStencilFormat == GL_STENCIL_INDEX8 || m_internalDepthStencilFormat == GL_DEPTH24_STENCIL8_OES);
             ASSERT(!attrs.depth || m_internalDepthStencilFormat != GL_STENCIL_INDEX8);
             GL_BindRenderbuffer(GL_RENDERBUFFER, m_multisampleDepthStencilBuffer);
-            GL_RenderbufferStorageMultisampleANGLE(GL_RENDERBUFFER, sampleCount, m_internalDepthStencilFormat, width, height);
+            GL_RenderbufferStorageMultisampleANGLE(GL_RENDERBUFFER, sampleCount, m_internalDepthStencilFormat, multisampleWidth, multisampleHeight);
             // WebGL 1.0's rules state that combined depth/stencil renderbuffers
             // have to be attached to the synthetic DEPTH_STENCIL_ATTACHMENT point.
             if (attrs.stencil && attrs.depth)
@@ -451,7 +457,8 @@ bool GraphicsContextGLANGLE::reshapeFBOs(const IntSize& size)
                 GL_FramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_multisampleDepthStencilBuffer);
         }
         GL_BindRenderbuffer(GL_RENDERBUFFER, 0);
-        if (GL_CheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+        // A zero-sized multisample framebuffer is deliberately incomplete until first use.
+        if (!deferMultisampleStorage && GL_CheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
             // FIXME: cleanup.
             notImplemented();
         }
@@ -742,6 +749,7 @@ void GraphicsContextGLANGLE::clearDepth(GCGLclampf depth)
 
 void GraphicsContextGLANGLE::readPixels(IntRect rect, GCGLenum format, GCGLenum type, std::span<uint8_t> data, GCGLint alignment, GCGLint rowLength, GCGLboolean reverseRowOrder)
 {
+    ensureMultisampleStorageBeforeUse();
     if (!makeContextCurrent())
         return;
     ScopedBufferBinding scopedPixelPackBufferReset(GL_PIXEL_PACK_BUFFER, 0, m_isForWebGL2);
@@ -751,6 +759,7 @@ void GraphicsContextGLANGLE::readPixels(IntRect rect, GCGLenum format, GCGLenum 
 
 std::optional<IntSize> GraphicsContextGLANGLE::readPixelsWithStatus(IntRect rect, GCGLenum format, GCGLenum type, GCGLboolean reverseRowOrder, std::span<uint8_t> data)
 {
+    ensureMultisampleStorageBeforeUse();
     if (!makeContextCurrent())
         return std::nullopt;
     ScopedBufferBinding scopedPixelPackBufferReset(GL_PIXEL_PACK_BUFFER, 0, m_isForWebGL2);
@@ -760,6 +769,7 @@ std::optional<IntSize> GraphicsContextGLANGLE::readPixelsWithStatus(IntRect rect
 
 void GraphicsContextGLANGLE::readPixelsBufferObject(IntRect rect, GCGLenum format, GCGLenum type, GCGLintptr offset, GCGLint alignment, GCGLint rowLength)
 {
+    ensureMultisampleStorageBeforeUse();
     if (!makeContextCurrent())
         return;
 
@@ -819,7 +829,7 @@ std::optional<IntSize> GraphicsContextGLANGLE::readPixelsImpl(IntRect rect, GCGL
 
 void GraphicsContextGLANGLE::prepareTexture()
 {
-    if (contextAttributes().antialias)
+    if (contextAttributes().antialias && !m_multisampleStorageDiscarded)
         resolveMultisamplingIfNecessary();
 
     if (m_preserveDrawingBufferTexture) {
@@ -842,12 +852,76 @@ void GraphicsContextGLANGLE::prepareTexture()
 RefPtr<PixelBuffer> GraphicsContextGLANGLE::readRenderingResults()
 {
     ScopedRestoreReadFramebufferBinding fboBinding(m_isForWebGL2, m_state.boundReadFBO);
-    if (contextAttributes().antialias) {
+    if (contextAttributes().antialias && !m_multisampleStorageDiscarded) {
         resolveMultisamplingIfNecessary();
         fboBinding.markBindingChanged();
     }
     fboBinding.bindFramebuffer(m_fbo);
     return readPixelsForPaintResults();
+}
+
+void GraphicsContextGLANGLE::ensureMultisampleStorageBeforeUse()
+{
+    if (!m_multisampleAllocationDeferred)
+        return;
+    m_multisampleAllocationDeferred = false;
+    if (!contextAttributes().antialias)
+        return;
+    // reshapeFBOs() attached the renderbuffers but gave them no storage, so there is work to do here
+    // regardless of what any earlier reshape recorded.
+    m_multisampleStorageDiscarded = true;
+    ensureMultisampleStorage();
+}
+
+void GraphicsContextGLANGLE::ensureMultisampleStorage()
+{
+    if (!m_multisampleStorageDiscarded)
+        return;
+    auto size = getInternalFramebufferSize();
+    if (size.isEmpty() || !makeContextCurrent())
+        return;
+
+    m_multisampleStorageDiscarded = false;
+
+    GLint maxSampleCount = 0;
+    GL_GetIntegerv(GL_MAX_SAMPLES_ANGLE, &maxSampleCount);
+    GLint sampleCount = std::min(4, maxSampleCount);
+    auto attrs = contextAttributes();
+
+    // Unlike reshapeFBOs(), this runs in the middle of an arbitrary command stream rather than from
+    // reshape(), so every binding it touches has to be put back afterwards.
+    GLint previousRenderbuffer = 0;
+    GL_GetIntegerv(GL_RENDERBUFFER_BINDING, &previousRenderbuffer);
+
+    // Only the renderbuffer storage changes. The renderbuffers are already attached to
+    // m_multisampleFBO, so the framebuffer structure is untouched and the drawing buffer is not
+    // recreated. Going through reshapeFBOs() here would tear down the drawing buffer and its EGL
+    // pbuffer, which is not safe from inside a draw call.
+    GL_BindFramebuffer(GL_FRAMEBUFFER, m_multisampleFBO);
+    GL_BindRenderbuffer(GL_RENDERBUFFER, m_multisampleColorBuffer);
+    GL_RenderbufferStorageMultisampleANGLE(GL_RENDERBUFFER, sampleCount, m_internalColorFormat, size.width(), size.height());
+    if (m_multisampleDepthStencilBuffer) {
+        GL_BindRenderbuffer(GL_RENDERBUFFER, m_multisampleDepthStencilBuffer);
+        GL_RenderbufferStorageMultisampleANGLE(GL_RENDERBUFFER, sampleCount, m_internalDepthStencilFormat, size.width(), size.height());
+    }
+    GL_BindRenderbuffer(GL_RENDERBUFFER, previousRenderbuffer);
+
+    // The new storage is undefined, and any clear the page has already issued went to the zero-sized
+    // storage, so give it the same defined contents reshape() would have.
+    {
+        ScopedGLCapability scopedScissor(GL_SCISSOR_TEST, GL_FALSE);
+        ScopedGLCapability scopedDither(GL_DITHER, GL_FALSE);
+        GCGLbitfield clearMask = GL_COLOR_BUFFER_BIT;
+        if (attrs.depth)
+            clearMask |= GL_DEPTH_BUFFER_BIT;
+        if (attrs.stencil)
+            clearMask |= GL_STENCIL_BUFFER_BIT;
+        GL_Clear(clearMask);
+    }
+
+    GL_BindFramebuffer(GL_FRAMEBUFFER, m_state.boundDrawFBO);
+    if (m_isForWebGL2 && m_state.boundDrawFBO != m_state.boundReadFBO)
+        GL_BindFramebuffer(GL_READ_FRAMEBUFFER, m_state.boundReadFBO);
 }
 
 void GraphicsContextGLANGLE::reshape(int width, int height)
@@ -909,7 +983,10 @@ void GraphicsContextGLANGLE::reshape(int width, int height)
         clearMask |= GL_STENCIL_BUFFER_BIT;
     }
 
-    GL_Clear(clearMask);
+    // Skipped while the multisample storage is deferred: the default framebuffer is incomplete until
+    // ensureMultisampleStorage() runs, and it clears the storage itself when it allocates it.
+    if (!m_multisampleStorageDiscarded)
+        GL_Clear(clearMask);
 
     GL_ClearColor(clearColor[0], clearColor[1], clearColor[2], clearColor[3]);
     GL_ColorMask(colorMask[0], colorMask[1], colorMask[2], colorMask[3]);
@@ -1227,6 +1304,10 @@ void GraphicsContextGLANGLE::compressedTexSubImage3D(GCGLenum target, int level,
 
 GCGLenum GraphicsContextGLANGLE::checkFramebufferStatus(GCGLenum target)
 {
+    // Querying the default framebuffer's status must report FRAMEBUFFER_COMPLETE, which a deferred,
+    // zero-sized multisample framebuffer is not, so give it its storage first.
+    ensureMultisampleStorageBeforeUse();
+
     if (!makeContextCurrent())
         return GL_INVALID_OPERATION;
 
@@ -1288,6 +1369,7 @@ void GraphicsContextGLANGLE::compileShader(PlatformGLObject shader)
 
 void GraphicsContextGLANGLE::copyTexImage2D(GCGLenum target, GCGLint level, GCGLenum internalformat, GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height, GCGLint border)
 {
+    ensureMultisampleStorageBeforeUse();
     if (!makeContextCurrent())
         return;
 
@@ -1306,6 +1388,7 @@ void GraphicsContextGLANGLE::copyTexImage2D(GCGLenum target, GCGLint level, GCGL
 
 void GraphicsContextGLANGLE::copyTexSubImage2D(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height)
 {
+    ensureMultisampleStorageBeforeUse();
     if (!makeContextCurrent())
         return;
 
@@ -2641,6 +2724,7 @@ void GraphicsContextGLANGLE::readBuffer(GCGLenum src)
 
 void GraphicsContextGLANGLE::copyTexSubImage3D(GCGLenum target, GCGLint level, GCGLint xoffset, GCGLint yoffset, GCGLint zoffset, GCGLint x, GCGLint y, GCGLsizei width, GCGLsizei height)
 {
+    ensureMultisampleStorageBeforeUse();
     if (!makeContextCurrent())
         return;
 
@@ -3553,6 +3637,13 @@ bool GraphicsContextGLANGLE::validateClearBufferv(GCGLenum buffer, size_t values
 
 void GraphicsContextGLANGLE::prepareForDrawingBufferWriteIfBound()
 {
+    if (m_state.boundDrawFBO == m_multisampleFBO) {
+        // Writing the antialiased drawing buffer needs the multisample storage that reshapeFBOs()
+        // deferred. prepareForDrawingBufferWrite() itself only concerns m_fbo, so it is not wanted
+        // here, matching the behaviour before multisample storage became lazy.
+        ensureMultisampleStorageBeforeUse();
+        return;
+    }
     if (m_state.boundDrawFBO != m_fbo)
         return;
     prepareForDrawingBufferWrite();

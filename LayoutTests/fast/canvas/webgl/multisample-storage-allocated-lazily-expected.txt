@@ -1,0 +1,46 @@
+Multisample storage for an antialiased WebGL drawing buffer is allocated lazily, on first use. Verifies that deferring it is not observable: rendering, readback, reported drawing buffer size and context liveness must all be unaffected, whether or not the canvas is drawn to.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+Untouched context (never drawn to):
+PASS gl.drawingBufferWidth is 256
+PASS gl.drawingBufferHeight is 128
+PASS gl.getContextAttributes().antialias is true
+PASS gl.isContextLost() is false
+PASS gl.checkFramebufferStatus(gl.FRAMEBUFFER) is gl.FRAMEBUFFER_COMPLETE
+PASS centre pixel of an undrawn drawing buffer is [0, 0, 0, 0]
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getRenderbufferParameter(gl.RENDERBUFFER, gl.RENDERBUFFER_WIDTH) is 2
+PASS gl.getError() is gl.NO_ERROR
+
+Drawing into the context allocates the storage lazily:
+PASS centre pixel after drawing is [255, 0, 0, 255]
+PASS gl.drawingBufferWidth is 256
+PASS gl.drawingBufferHeight is 128
+PASS gl.isContextLost() is false
+PASS gl.getError() is gl.NO_ERROR
+
+Clearing without drawing:
+PASS centre pixel after clear only is [0, 255, 0, 255]
+PASS gl.isContextLost() is false
+PASS gl.getError() is gl.NO_ERROR
+
+preserveDrawingBuffer:true keeps its contents:
+PASS centre pixel after drawing is [255, 0, 0, 255]
+PASS centre pixel read a second time is [255, 0, 0, 255]
+PASS gl.isContextLost() is false
+PASS gl.getError() is gl.NO_ERROR
+
+Resizing:
+PASS gl.drawingBufferWidth is 512
+PASS centre pixel after resize and draw is [255, 0, 0, 255]
+PASS gl.isContextLost() is false
+PASS gl.getError() is gl.NO_ERROR
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

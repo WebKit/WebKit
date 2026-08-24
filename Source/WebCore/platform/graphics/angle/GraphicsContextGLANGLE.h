@@ -403,6 +403,11 @@ protected:
     RefPtr<PixelBuffer> readPixelsForPaintResults();
 
     bool reshapeFBOs(const IntSize&);
+    // The multisample renderbuffers are attached by reshapeFBOs() but left with zero-sized storage
+    // until the drawing buffer is first used, so a canvas that is never drawn to or read back from
+    // does not pay for them. These give them their real storage.
+    void ensureMultisampleStorage();
+    void ensureMultisampleStorageBeforeUse();
     void prepareTexture();
     void resolveMultisamplingIfNecessary(const IntRect& = IntRect());
     void attachDepthAndStencilBufferIfNeeded(GCGLuint internalDepthStencilFormat, int width, int height);
@@ -437,6 +442,10 @@ protected:
     GCGLuint m_multisampleFBO { 0 };
     GCGLuint m_multisampleDepthStencilBuffer { 0 };
     GCGLuint m_multisampleColorBuffer { 0 };
+    // True until the drawing buffer is first used, while the multisample renderbuffers are attached
+    // but have no storage. m_multisampleStorageDiscarded tracks whether storage is currently missing.
+    bool m_multisampleAllocationDeferred { true };
+    bool m_multisampleStorageDiscarded { false };
     // For preserveDrawingBuffer:true without multisampling.
     GCGLuint m_preserveDrawingBufferTexture { 0 };
     // Attaches m_texture when m_preserveDrawingBufferTexture is non-zero.
