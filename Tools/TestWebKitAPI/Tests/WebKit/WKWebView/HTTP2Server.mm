@@ -29,7 +29,6 @@
 
 #import "Helpers/Utilities.h"
 #import "Helpers/cocoa/HTTPServer.h"
-#import "Helpers/cocoa/TestUIDelegate.h"
 #import "Helpers/cocoa/TestWKWebView.h"
 #import <wtf/RetainPtr.h>
 
@@ -84,7 +83,7 @@ TEST(HTTP2Server, POSTBody)
     HTTPServer server([&](Connection connection) {
         connection.receiveHTTPMessagingRequest([&, connection](HTTPRequestData&& request) {
             if (request.path == "/"_s) {
-                connection.sendHTTPMessagingResponse(HTTPResponse("<script>fetch('/submit', { method: 'POST', body: 'hello world' }).then(() => alert('done'))</script>"_s));
+                connection.sendHTTPMessagingResponse(HTTPResponse("hello"_s));
                 return;
             }
             receivedMethod = request.method.createNSString();
@@ -95,7 +94,7 @@ TEST(HTTP2Server, POSTBody)
 
     RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
     [webView synchronouslyLoadRequestIgnoringSSLErrors:server.request()];
-    EXPECT_WK_STREQ("done", [webView _test_waitForAlert]);
+    EXPECT_WK_STREQ("ok", [webView objectByCallingAsyncFunction:@"const response = await fetch('/submit', { method: 'POST', body: 'hello world' }); return await response.text()" withArguments:@{ }]);
 
     RetainPtr<NSData> bodyData = [@"hello world" dataUsingEncoding:NSUTF8StringEncoding];
     EXPECT_WK_STREQ("POST", receivedMethod.get());
@@ -106,30 +105,27 @@ TEST(HTTP2Server, POSTBody)
 TEST(HTTP2Server, NonDefaultStatusCodeAndResponseHeader)
 {
     HTTPServer server({
-        { "/"_s, HTTPResponse("<script>fetch('/missing').then(response => alert(`${response.status}:${response.headers.get('X-Custom-Response-Header')}`))</script>"_s) },
+        { "/"_s, HTTPResponse("hello"_s) },
         { "/missing"_s, HTTPResponse(404, { { "X-Custom-Response-Header"_s, "responsevalue"_s } }) }
     }, HTTPServer::Protocol::Http2);
 
     RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
     [webView synchronouslyLoadRequestIgnoringSSLErrors:server.request()];
-    EXPECT_WK_STREQ("404:responsevalue", [webView _test_waitForAlert]);
+    EXPECT_WK_STREQ("404:responsevalue", [webView objectByCallingAsyncFunction:@"const response = await fetch('/missing'); return `${response.status}:${response.headers.get('X-Custom-Response-Header')}`" withArguments:@{ }]);
     EXPECT_WK_STREQ("h2", [webView stringByEvaluatingJavaScript:@"performance.getEntriesByType('resource')[0].nextHopProtocol"]);
 }
 
 TEST(HTTP2Server, MultipleRequestsOverOneConnection)
 {
     HTTPServer server({
-        { "/"_s, HTTPResponse("<script>"
-            "Promise.all([fetch('/a').then(response => response.text()), fetch('/b').then(response => response.text())])"
-            ".then(([a, b]) => alert(`${a}:${b}`))"
-            "</script>"_s) },
+        { "/"_s, HTTPResponse("hello"_s) },
         { "/a"_s, HTTPResponse("a"_s) },
         { "/b"_s, HTTPResponse("b"_s) },
     }, HTTPServer::Protocol::Http2);
 
     RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
     [webView synchronouslyLoadRequestIgnoringSSLErrors:server.request()];
-    EXPECT_WK_STREQ("a:b", [webView _test_waitForAlert]);
+    EXPECT_WK_STREQ("a:b", [webView objectByCallingAsyncFunction:@"const [a, b] = await Promise.all([fetch('/a').then(response => response.text()), fetch('/b').then(response => response.text())]); return `${a}:${b}`" withArguments:@{ }]);
 
     EXPECT_EQ(server.totalRequests(), 3u);
     EXPECT_WK_STREQ("true", [webView stringByEvaluatingJavaScript:@"performance.getEntriesByType('resource').every(entry => entry.nextHopProtocol === 'h2').toString()"]);
