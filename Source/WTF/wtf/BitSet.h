@@ -216,17 +216,7 @@ ALWAYS_INLINE constexpr bool BitSet<bitSetSize, WordType>::concurrentTestAndSet(
     WordType mask = one << (n % wordSize);
     size_t index = n / wordSize;
     WordType* data = dependency.consume(&bits[index]);
-    // transactionRelaxed() returns true if the bit was changed. If the bit was changed,
-    // then the previous bit must have been false since we're trying to set it. Hence,
-    // the result of transactionRelaxed() is the inverse of our expected result.
-    return !std::bit_cast<Atomic<WordType>*>(data)->transactionRelaxed(
-        [&] (WordType& value) -> bool {
-            if (value & mask)
-                return false;
-            
-            value |= mask;
-            return true;
-        });
+    return !!(std::bit_cast<Atomic<WordType>*>(data)->exchangeOr(mask, std::memory_order_relaxed) & mask);
 }
 
 template<size_t bitSetSize, typename WordType>
@@ -235,17 +225,7 @@ ALWAYS_INLINE constexpr bool BitSet<bitSetSize, WordType>::concurrentTestAndClea
     WordType mask = one << (n % wordSize);
     size_t index = n / wordSize;
     WordType* data = dependency.consume(&bits[index]);
-    // transactionRelaxed() returns true if the bit was changed. If the bit was changed,
-    // then the previous bit must have been true since we're trying to clear it. Hence,
-    // the result of transactionRelaxed() matches our expected result.
-    return std::bit_cast<Atomic<WordType>*>(data)->transactionRelaxed(
-        [&] (WordType& value) -> bool {
-            if (!(value & mask))
-                return false;
-            
-            value &= ~mask;
-            return true;
-        });
+    return !!(std::bit_cast<Atomic<WordType>*>(data)->exchangeAnd(static_cast<WordType>(~mask), std::memory_order_relaxed) & mask);
 }
 
 template<size_t bitSetSize, typename WordType>
