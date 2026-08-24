@@ -791,7 +791,7 @@ SVGSVGElement* SVGSVGElement::findRootAnchor(StringView fragmentIdentifier) cons
     return nullptr;
 }
 
-bool SVGSVGElement::scrollToFragment(StringView fragmentIdentifier)
+bool SVGSVGElement::setViewForFragment(StringView fragmentIdentifier)
 {
     CheckedPtr renderer = downcast<RenderLayerModelObject>(this->renderer());
 
@@ -859,7 +859,7 @@ bool SVGSVGElement::scrollToFragment(StringView fragmentIdentifier)
     return false;
 }
 
-void SVGSVGElement::resetScrollAnchor()
+void SVGSVGElement::resetViewToDefault()
 {
     if (!m_useCurrentView && m_currentViewFragmentIdentifier.isEmpty())
         return;

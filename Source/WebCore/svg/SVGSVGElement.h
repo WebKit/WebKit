@@ -87,8 +87,8 @@ public: // DOM
 public:
     static Ref<SVGSVGElement> create(const QualifiedName&, Document&);
     static Ref<SVGSVGElement> create(Document&);
-    bool scrollToFragment(StringView fragmentIdentifier);
-    void resetScrollAnchor();
+    bool setViewForFragment(StringView fragmentIdentifier);
+    void resetViewToDefault();
 
     using PropertyRegistry = SVGPropertyOwnerRegistry<SVGSVGElement, SVGGraphicsElement, SVGFitToViewBox>;
     using SVGGraphicsElement::ref;

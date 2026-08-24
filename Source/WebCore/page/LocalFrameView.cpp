@@ -3242,9 +3242,9 @@ bool LocalFrameView::scrollToAnchorFragment(StringView fragmentIdentifier)
         if (fragmentIdentifier.isEmpty())
             return false;
         if (auto rootElement = DocumentSVG::rootElement(document.get())) {
-            if (rootElement->scrollToFragment(fragmentIdentifier))
+            if (rootElement->setViewForFragment(fragmentIdentifier))
                 return true;
-            // If SVG failed to scrollToAnchor() and anchorElement is null, no other scrolling will be possible.
+            // If the fragment addressed no SVG view and anchorElement is null, no other scrolling will be possible.
             if (!anchorElement)
                 return false;
         }
@@ -3420,10 +3420,10 @@ void LocalFrameView::resetScrollAnchor()
 
     if (is<SVGDocument>(document.get())) {
         if (auto rootElement = DocumentSVG::rootElement(document.get())) {
-            // We need to update the layout before resetScrollAnchor(), otherwise we
+            // We need to update the layout before resetting the view, otherwise we
             // could really mess things up if resetting the anchor comes at a bad moment.
             document->updateStyleIfNeeded();
-            rootElement->resetScrollAnchor();
+            rootElement->resetViewToDefault();
         }
     }
 }
