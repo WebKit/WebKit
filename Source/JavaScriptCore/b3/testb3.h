@@ -1292,6 +1292,7 @@ void testShuffleDoesntTrashCalleeSaves();
 void testDemotePatchpointTerminal();
 void testReportUsedRegistersLateUseFollowedByEarlyDefDoesNotMarkUseAsDead();
 void testInfiniteLoopDoesntCauseBadHoisting();
+void testBackwardsDominatorsWithMultipleBackEdges();
 void testDivImmArgFloat(float, float);
 void testDivImmsFloat(float, float);
 void testModArgDouble(double);
