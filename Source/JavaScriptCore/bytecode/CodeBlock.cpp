@@ -335,8 +335,6 @@ CodeBlock::CodeBlock(VM& vm, Structure* structure, CopyParsedBlockTag, CodeBlock
     checker().set(CrashChecker::This, checker().hash(this));
     checker().set(CrashChecker::Metadata, checker().hash(this, m_metadata.get()));
 #if ENABLE(JIT)
-    // DFG/FTL blocks share m_metadata but never run the finishCreation LINK loop, so they own no
-    // metadata-resident PICs; they keep the baseline's PICs alive transitively via m_alternative.
     ASSERT(m_metadataPropertyInlineCaches.isEmpty());
 #endif
 }
@@ -480,9 +478,6 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
     };
 
 #if ENABLE(JIT)
-    // Milestone 1: seed a metadata-resident get_by_id PIC at link time so LLInt can dispatch through
-    // the shared handler chain (the same PIC Baseline reads). Note: the local must NOT be named
-    // "identifier" (shadows CodeBlock::identifier(int)).
     auto link_propertyInlineCache = [&](const auto& instruction, auto bytecode, auto& metadata) {
         if (Options::useJIT()) {
             auto* pic = m_metadataPropertyInlineCaches.add();
@@ -870,12 +865,6 @@ void CodeBlock::setupWithUnlinkedBaselineCode(Ref<BaselineJITCode> jitCode)
         break;
     }
 
-    // Milestone 1: op_get_by_id dispatches on a metadata-resident PIC that is created per CodeBlock in
-    // finishCreation, while doneLocation/slowPathStartLocation belong to this BaselineJITCode, which is
-    // shared by every CodeBlock linked from the same UnlinkedCodeBlock. Copy them in here so that
-    // CodeBlocks adopting already-compiled baseline code -- and therefore never running JIT::link -- get
-    // them too. A null doneLocation reaches DFG OSR exit as the return address of a reconstructed inlined
-    // getter frame, and a null slowPathStartLocation is the far jump target of a handler stub's failure exit.
     for (auto& locations : jitCode->m_metadataPropertyInlineCacheLocations) {
         auto& metadata = instructions().at(locations.bytecodeIndex.offset())->as<OpGetById>().metadata(this);
         auto* propertyCache = std::bit_cast<PropertyInlineCache*>(metadata.m_propertyInlineCache);
@@ -1224,8 +1213,7 @@ inline void CodeBlock::forEachPropertyInlineCache(Func func)
             }
         }
     }
-    // Metadata-resident get_by_id PICs (Milestone 1). Non-empty only for the owning LLInt/Baseline
-    // block; DFG/FTL blocks iterate an empty Bag (they reach these PICs via m_alternative instead).
+
     for (auto* propertyCache : m_metadataPropertyInlineCaches) {
         if (func(*propertyCache) == IterationStatus::Done)
             return;
@@ -1573,9 +1561,6 @@ void CodeBlock::finalizeLLIntInlineCaches()
         });
 
 #if !ENABLE(JIT)
-        // Under ENABLE(JIT), op_get_by_id's cached LLInt path never warms m_modeMetadata (it uses the
-        // shared metadata-resident PIC, whose staleness is handled by PropertyInlineCache::visitWeak via
-        // forEachPropertyInlineCache). Only the non-JIT LLInt path warms m_modeMetadata.
         m_metadata->forEach<OpGetById>([&] (auto& metadata) {
             clearIfNeeded(metadata.m_modeMetadata, "get by id"_s);
         });

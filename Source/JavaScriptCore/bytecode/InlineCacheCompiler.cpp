@@ -25,7 +25,6 @@
 
 #include "config.h"
 #include "InlineCacheCompiler.h"
-#include "GPRInfo.h"
 
 #if ENABLE(JIT)
 
@@ -5649,17 +5648,6 @@ static void getterCallFromGetterSetterImpl(CCallHelpers& jit, JSValueRegs baseJS
         jit.addPtr(CCallHelpers::TrustedImm32(InlineCacheHandlerWithJSCall::offsetOfCallLinkInfo()), GPRInfo::handlerGPR, BaselineJITRegisters::Call::callLinkInfoGPR);
     }
     // FIXME: Maybe this can tail call on ARM64
-#if 0
-    // Debugging aid for the DataIC frame convention: dumps the state this thunk depends on right
-    // before the getter call. Useful when a caller enters this thunk with the wrong register state --
-    // e.g. an LLInt tier reaching it with GPRInfo::jitDataRegister holding PB instead of a
-    // BaselineJITData*, which makes the sp recomputation below load a bytecode word as the stack
-    // offset, so the ldp in emitDataICRestoreAfterCall faults on a garbage sp.
-    jit.println(  "getter entry fp: ", CCallHelpers::framePointerRegister,
-                "\n             sp: ", CCallHelpers::stackPointerRegister,
-                "\n             lr: ", CCallHelpers::linkRegister,
-                "\n    handler gpr: ", GPRInfo::handlerGPR);
-#endif
     CallLinkInfo::emitDataICFastPath(jit);
     jit.setupResults(resultJSR);
 

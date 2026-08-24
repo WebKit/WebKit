@@ -85,10 +85,6 @@ private:
     FixedVector<Value> m_constants;
 };
 
-// doneLocation / slowPathStartLocation for an op_get_by_id site whose PropertyInlineCache lives in
-// CodeBlock metadata instead of BaselineJITData. Both describe *this* BaselineJITCode, which is shared
-// by every CodeBlock linked from the same UnlinkedCodeBlock, so they are recorded here at link time and
-// copied into each CodeBlock's metadata-resident PIC by CodeBlock::setupWithUnlinkedBaselineCode.
 struct BaselineMetadataPropertyInlineCacheLocations {
     BytecodeIndex bytecodeIndex;
     CodeLocationLabel<JSInternalPtrTag> doneLocation;

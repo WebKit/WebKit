@@ -571,16 +571,10 @@ void JIT::emit_op_get_by_id(const JSInstruction* currentInstruction)
 
     emitGetVirtualRegister(baseVReg, baseJSR);
 
-    // Milestone 1: dispatch on the metadata-resident PIC (created at CodeBlock::finishCreation, LLInt
-    // link time). Baseline no longer allocates its own get_by_id PIC in BaselineJITData, and it must not
-    // touch any particular CodeBlock's PIC at compile time -- this code is shared by every CodeBlock
-    // linked from m_unlinkedCodeBlock. The PIC is a purely runtime load, and JIT::link records this
-    // site's resume locations on the BaselineJITCode for setupWithUnlinkedBaselineCode to distribute.
     loadPtrFromMetadata(bytecode, OpGetById::Metadata::offsetOfPropertyInlineCache(), propertyCacheGPR);
 
     emitJumpSlowCaseIfNotJSCell(baseJSR, baseVReg);
 
-    // CacheType::Unset -> plain per-node chain dispatch (no inline structure check), exactly like get_by_val.
     JITGetByIdGenerator gen(
         nullptr, static_cast<PropertyInlineCache*>(nullptr), JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), RegisterSet::stubUnavailableRegisters(),
         CacheableIdentifier::createFromIdentifierOwnedByCodeBlock(m_unlinkedCodeBlock, *ident), baseJSR, resultJSR, propertyCacheGPR, AccessType::GetById, CacheType::Unset);
@@ -635,10 +629,6 @@ void JIT::emitSlow_op_get_by_id(const JSInstruction*, Vector<SlowCaseEntry>::ite
 {
     ASSERT(BytecodeIndex(m_bytecodeIndex.offset()) == m_bytecodeIndex);
     JITGetByIdGenerator& gen = m_getByIds[m_getByIdIndex++];
-    // Milestone 1: the fast path is plain chain dispatch (CacheType::Unset), so there is no inline
-    // structure check and thus no m_dataICHandlerCases to relink. Do NOT call generateDataICSlowPath
-    // (it asserts !m_dataICHandlerCases.empty()); just link the not-a-cell slow cases and call the
-    // slow-path thunk, mirroring generateGetByValSlowCase.
     linkAllSlowCases(iter);
     gen.reportBaselineDataICSlowPathBegin(label());
     nearCallThunk(CodeLocationLabel { InlineCacheCompiler::generateSlowPathCode(vm(), gen.accessType()).retaggedCode<NoPtrTag>() });

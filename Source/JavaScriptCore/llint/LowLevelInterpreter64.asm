@@ -1679,15 +1679,11 @@ llintOpWithMetadata(op_get_by_id, OpGetById, macro (size, get, dispatch, metadat
     loadConstantOrVariableCell(size, t0, t3, .opGetByIdSlow)   # base cell -> t3 (documented contract)
     metadata(t2, t1)                                           # t2 = &OpGetById::Metadata
     if JIT
-        # Handler-IC dispatch (mirrors Baseline emitDataICHandlerDispatch, JITInlineCacheGenerator.cpp).
-        # Contract: base cell in t3; marshal base->a0 (baseJSR), PIC->a1 (propertyCacheGPR), head node->ws0 (handlerGPR).
-        loadp OpGetById::Metadata::m_propertyInlineCache[t2], a1   # a1 = HandlerPropertyInlineCache* (0 if useJIT() == false)
-        btpz a1, .opGetByIdSlow                                    # unseeded -> slow (also lets GetByStatus warm modeMetadata)
-        loadp constexpr (PropertyInlineCache::offsetOfHandler())[a1], ws0  # ws0 = head node
-        move t3, a0                                               # a0 = baseJSR
-        # The generic-handoff / terminal path may C-call and GC; PC (t4) is caller-saved and the
-        # CallSiteIndex must be current for valueProfile ([PB,PC]) after the call returns, so bracket
-        # the dispatch with storePC/loadPC.
+        loadp OpGetById::Metadata::m_propertyInlineCache[t2], a1
+        btpz a1, .opGetByIdSlow
+        loadp constexpr (PropertyInlineCache::offsetOfHandler())[a1], ws0
+        move t3, a0
+
         storePC()
         call constexpr (InlineCacheHandler::offsetOfLLIntCallTarget())[ws0], JITStubRoutinePtrTag
         loadPC()
@@ -1707,29 +1703,6 @@ llintOpWithMetadata(op_get_by_id, OpGetById, macro (size, get, dispatch, metadat
     return(r0)
 end)
 
-
-# Handler-IC handlers for op_get_by_id (Milestone 1). The op body enters the head node via
-#     call [ws0 + offsetOfLLIntCallTarget], JITStubRoutinePtrTag
-# with base in a0 (baseJSR), PIC in a1 (propertyCacheGPR), and the head node in ws0 (handlerGPR).
-# The whole chain runs in ONE call/ret frame, exactly like the compiled DataIC chain: the call entry
-# runs getByIdLLIntHandlerPrologue (mirrors InlineCacheCompiler::emitDataICPrologue), and every
-# chain-walk step enters the NEXT node at offsetOfLLIntJumpTarget (== callTarget + prologueSizeInBytesDataIC),
-# which SKIPS the prologue -- so the prologue runs exactly once per traversal and the hitting handler's
-# epilogue+ret (or the compiled thunk's) balances it. Without this, walking two signing handlers would
-# pacibsp twice and the retab would return to a garbage (still-signed) address (arm64e SIGBUS).
-# Interpreted handlers (self/proto/miss) run the epilogue and ret on a hit; on a structure miss they load
-# m_next and jmp to the next node's jump entry (mirrors emitDataICJumpNextHandler). Definitions are
-# unconditional (so InitBytecodes' setEntryAddress always resolves); the bodies are gated 'if JIT'.
-#
-# Register discipline: a0 (base), a1 (PIC), ws0 (current node) and r0 (result) are all live across the
-# whole walk. In particular a1/PIC MUST survive to the generic handler's hand-off into the compiled
-# slow-path thunk, which reads the PIC from propertyCacheGPR (== a1). Interpreted handlers therefore use
-# t2 as scratch, NOT t1 -- t1 aliases a1 (== propertyCacheGPR) on x86_64 and arm64. t2 (== a2 == r1) is
-# dead on entry and only reused by valueProfile after the call returns (write-only), so it is safe.
-
-# Mirror emitDataICPrologue/emitDataICEpilogue so the LLInt handlers share the DataIC chain's single-frame,
-# signed-return convention. The emitted size MUST equal prologueSizeInBytesDataIC (pacibsp = 4 on ARM64E,
-# push = 1 on x86_64, 0 elsewhere) because m_llintJumpTarget == m_llintCallTarget + prologueSizeInBytesDataIC.
 macro getByIdLLIntHandlerPrologue()
     if X86_64
         push cfr
@@ -1780,8 +1753,6 @@ op(llint_get_by_id_prototype_handler, macro ()
     end
 end)
 
-# Retained for a future CacheType::GetByIdMiss; in M1 Miss nodes carry CacheType::Unset and reach the generic
-# handler instead, so this label is defined-but-unused (kept to avoid churn if Miss gets its own cacheType).
 op(llint_get_by_id_miss_handler, macro ()
     if JIT
         getByIdLLIntHandlerPrologue()
@@ -1798,8 +1769,6 @@ op(llint_get_by_id_miss_handler, macro ()
     end
 end)
 
-# JS-calling nodes (getter/setter/custom/proxy/megamorphic-getter) are UNSAFE to enter from LLInt: their
-# compiled thunks recompute SP from jitDataRegister (== PB under LLInt). Walk straight to the next node.
 op(llint_get_by_id_skip_handler, macro ()
     if JIT
         getByIdLLIntHandlerPrologue()
@@ -1810,13 +1779,6 @@ op(llint_get_by_id_skip_handler, macro ()
     end
 end)
 
-# Terminal / non-interpretable modes (Unset terminal, ArrayLength, StringLength, Stub, and the Miss node in
-# M1): run our prologue (so the single-frame convention holds when this node is the head), then TAIL-JUMP
-# into the existing compiled thunk chain at ITS jump target (offsetOfJumpTarget), which SKIPS the thunk's
-# own emitDataICPrologue -- our prologue already established the one frame / signed return, so the thunk
-# must not run it again. a0/a1/ws0 are already set; the thunk's epilogue+ret returns directly to
-# op_get_by_id with the value in r0. cfr is never changed. Do NOT create an OASM frame here
-# (functionPrologue sets cfr = sp, which would break the thunk's CallFrame* recovery).
 op(llint_get_by_id_generic_handler, macro ()
     if JIT
         getByIdLLIntHandlerPrologue()

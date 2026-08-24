@@ -170,13 +170,7 @@ protected:
     RefPtr<PolymorphicAccessJITStubRoutine> m_stubRoutine;
     RefPtr<AccessCase> m_accessCase;
     std::unique_ptr<PropertyInlineCacheClearingWatchpoint> m_watchpoint;
-    // LLInt Handler-IC entries: runtime addresses of a static offlineasm handler chosen from
-    // m_cacheType / makesJSCalls (see llintCallTargetForHandler in InlineCacheHandler.cpp).
-    // m_llintCallTarget is the call entry (runs the DataIC prologue); m_llintJumpTarget is the
-    // chain-walk entry (== callTarget + prologueSizeInBytesDataIC, skipping the prologue) so the
-    // prologue runs exactly once per chain traversal, exactly like m_callTarget/m_jumpTarget.
-    // Tagged JITStubRoutinePtrTag with no address diversity, like m_callTarget. Set at node creation.
-    // Placed after m_watchpoint so the hot region ending at m_uid is undisturbed.
+
     CodePtr<JITStubRoutinePtrTag> m_llintCallTarget;
     CodePtr<JITStubRoutinePtrTag> m_llintJumpTarget;
 };

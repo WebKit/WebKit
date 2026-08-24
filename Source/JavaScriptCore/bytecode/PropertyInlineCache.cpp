@@ -840,14 +840,10 @@ void HandlerPropertyInlineCache::initializeForMetadataResidentGetById(VM& vm, Co
 {
     ASSERT(!isCompilationThread());
     accessType = AccessType::GetById;
-    // Must stay Unset: with a compile-time cacheType hint, prependHandler would promote an inlined
-    // handler (see prependHandler) and populate inline fields that LLInt ignores, causing a stale
-    // inline-data divergence between LLInt and Baseline. Keep the shared PIC hint-free in M1.
     preconfiguredCacheType = CacheType::Unset;
     m_identifier = identifier;
     m_globalObject = codeBlock->globalObject();
-    // callSiteIndex == bytecodeIndex is the invariant that lets operationGetByIdOptimize's
-    // ICSlowPathCallFrameTracer write the correct CallSiteIndex for LLInt exception unwinding.
+
     callSiteIndex = CallSiteIndex(bytecodeIndex);
     codeOrigin = CodeOrigin(bytecodeIndex);
     initializeWithUnitHandler(codeBlock, InlineCacheCompiler::generateSlowPathHandler(vm, AccessType::GetById));
