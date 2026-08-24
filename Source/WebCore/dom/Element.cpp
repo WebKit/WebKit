@@ -4309,8 +4309,11 @@ void Element::focus(const FocusOptions& options)
         newTarget = findFocusDelegateForTarget(*root, options.trigger);
         if (!newTarget)
             return;
-    } else if (!isProgramaticallyFocusable(*newTarget))
+    } else if (!isProgramaticallyFocusable(*newTarget)) {
+        if (this == document->documentElement())
+            document->setFocusedElement(nullptr);
         return;
+    }
 
     if (RefPtr page = document->page()) {
         Ref frame = *document->frame();
