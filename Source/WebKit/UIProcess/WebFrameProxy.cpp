@@ -76,11 +76,13 @@
 #include <WebCore/SecurityOriginData.h>
 #include <WebCore/SecurityPolicy.h>
 #include <WebCore/ShareableBitmapHandle.h>
+#include <WebCore/Site.h>
 #include <WebCore/WebKitJSHandle.h>
 #include <stdio.h>
 #include <wtf/CallbackAggregator.h>
 #include <wtf/CheckedPtr.h>
 #include <wtf/RunLoop.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/WeakRef.h>
 #include <wtf/text/WTFString.h>
@@ -110,6 +112,28 @@ namespace WebKit {
 using namespace WebCore;
 
 class WebPageProxy;
+
+static constexpr Seconds unloadEventsExpirationDelay { 1_s };
+
+class FrameProcessRefWithExpiration : public RefCounted<FrameProcessRefWithExpiration> {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(FrameProcessRefWithExpiration);
+public:
+    static Ref<FrameProcessRefWithExpiration> create(Ref<FrameProcess>&& frameProcess, Seconds expirationDelay)
+    {
+        ASSERT(RunLoop::isMain());
+        return adoptRef(*new FrameProcessRefWithExpiration(WTF::move(frameProcess), expirationDelay));
+    }
+
+private:
+    FrameProcessRefWithExpiration(Ref<FrameProcess>&& frameProcess, Seconds expirationDelay)
+        : m_frameProcess(WTF::move(frameProcess))
+        , m_expirationTimer(RunLoop::mainSingleton(), "FrameProcessRefWithExpiration::ExpirationTimer"_s, [this] { m_frameProcess = nullptr; }) {
+        m_expirationTimer.startOneShot(expirationDelay);
+    }
+
+    RefPtr<FrameProcess> m_frameProcess;
+    RunLoop::Timer m_expirationTimer;
+};
 
 static HashMap<FrameIdentifier, WeakRef<WebFrameProxy>>& NODELETE allFrames()
 {
@@ -659,7 +683,10 @@ void WebFrameProxy::commitProvisionalFrame(IPC::Connection& connection, FrameIde
 {
     ASSERT(m_page);
     if (m_provisionalFrame) {
-        protect(process())->send(Messages::WebPage::LoadDidCommitInAnotherProcess(frameID, m_provisionalFrame->process().coreProcessIdentifier(), m_layerHostingContextIdentifier, nullptr), *webPageIDInCurrentProcess());
+        ASSERT(url().isEmpty() || WebCore::Site { url() } != WebCore::Site { request.url() });
+
+        // Keep FrameProcess alive until message reply, so the current active document could finish dispatching necessary events.
+        protect(process())->sendWithAsyncReply(Messages::WebPage::LoadDidCommitInAnotherProcess(frameID, m_provisionalFrame->process().coreProcessIdentifier(), m_layerHostingContextIdentifier, nullptr), [keepAlive = FrameProcessRefWithExpiration::create(Ref { frameProcess() }, unloadEventsExpirationDelay)] { }, *webPageIDInCurrentProcess());
 
         WebCore::ProcessIdentifier oldProcessID = process().coreProcessIdentifier();
         std::optional<WebCore::PageIdentifier> oldPageID = webPageIDInCurrentProcess();

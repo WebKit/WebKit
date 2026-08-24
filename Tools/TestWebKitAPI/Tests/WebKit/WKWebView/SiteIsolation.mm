@@ -8029,7 +8029,7 @@ TEST(SiteIsolation, Events)
         @"pagereveal",
 #endif
         @"resize",
-        // FIXME: <rdar://150216569> There should be a pageswap from webkit.org here.
+        @"pageswap",
     ];
     if (![webkitMessages isEqualToArray:expectedWebKitMessages]) {
         WTFLogAlways("Actual webkit messages: %@", webkitMessages.get());
