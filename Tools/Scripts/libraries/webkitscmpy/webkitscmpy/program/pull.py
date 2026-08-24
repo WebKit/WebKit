@@ -22,8 +22,8 @@
 
 import sys
 
-from .branch import Branch
 from .command import Command
+from .stack import Stack
 from webkitcorepy import arguments
 from webkitscmpy import local
 
@@ -59,6 +59,12 @@ class Pull(Command):
                 if rmt in bp_remotes:
                     remote = rmt
                     break
+
+            if (members := Stack.members(repository, repository.branch)) is None:
+                return 1
+            if len(members) > 1:
+                return Stack.rebase(repository, remote=remote, prune=args.prune)
+
             return repository.pull(rebase=True, branch=branch_point.branch, remote=remote, prune=args.prune)
         if args.prune is not None:
             sys.stderr.write("'prune' arguments only valid for 'git' checkouts\n")

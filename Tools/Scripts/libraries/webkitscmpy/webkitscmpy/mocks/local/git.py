@@ -55,7 +55,7 @@ class Git(mocks.Subprocess):
         remote=None, tags=None,
         detached=None, default_branch='main',
         git_svn=False, remotes=None, editor=None,
-        is_worktree=False,
+        is_worktree=False, git_version='2.50.1',
     ):
         self.path = path
         self.default_branch = default_branch
@@ -63,6 +63,7 @@ class Git(mocks.Subprocess):
         self.detached = detached or False
         self.is_worktree = is_worktree
         self.push_error = None
+        self.git_version = git_version
 
         self.tags = tags or {}
 
@@ -672,9 +673,18 @@ nothing to commit, working tree clean
                 cwd=self.path,
                 generator=lambda *args, **kwargs: self._fetch_with_refspec(args[3:]),
             ), mocks.Subprocess.Route(
+                self.executable, '--version',
+                cwd=self.path,
+                generator=lambda *args, **kwargs: mocks.ProcessCompletion(
+                    returncode=0,
+                    stdout=f'git version {self.git_version}\n',
+                ),
+            ), mocks.Subprocess.Route(
                 self.executable, 'rebase', '--onto', re.compile(r'.+'), re.compile(r'.+'), re.compile(r'.+'),
                 cwd=self.path,
-                generator=lambda *args, **kwargs: self.rebase(args[3], args[4], args[5]),
+                generator=lambda *args, **kwargs: self.rebase(
+                    args[3], args[4], args[5], update_refs='--update-refs' in args,
+                ),
             ), mocks.Subprocess.Route(
                 self.executable, 'branch', '-f', re.compile(r'.+'), re.compile(r'.+'),
                 cwd=self.path,
@@ -1315,16 +1325,28 @@ nothing to commit, working tree clean
         self.modified = {}
         return mocks.ProcessCompletion(returncode=0)
 
-    def rebase(self, target, base, head):
-        if target not in self.commits or base not in self.commits or head not in self.commits:
+    def rebase(self, target, base, head, update_refs=False):
+        target_commit = self.commits[target][-1] if target in self.commits else self.find(target)
+        if not target_commit:
+            return mocks.ProcessCompletion(returncode=1)
+        if head not in self.commits or (base not in self.commits and not self.find(base)):
             return mocks.ProcessCompletion(returncode=1)
 
-        base = self.commits[target][-1]
-        self.commits[head][0] = base
-        for commit in self.commits[head][1:]:
-            commit.branch_point = base.branch_point or base.identifier
-            if base.branch_point:
-                commit.identifier += base.identifier
+        chain = [head]
+        while update_refs:
+            parent = self.commits[chain[-1]][0].branch
+            if parent == target_commit.branch or parent not in self.commits or parent in chain:
+                break
+            chain.append(parent)
+
+        for branch in reversed(chain):
+            self.commits[branch][0] = target_commit
+            for commit in self.commits[branch][1:]:
+                commit.branch_point = target_commit.branch_point or target_commit.identifier
+                if target_commit.branch_point:
+                    commit.identifier += target_commit.identifier
+            target_commit = self.commits[branch][-1]
+        self.head = self.commits[head][-1]  # 'git rebase --onto <onto> <base> <branch>' checks out <branch>
         return mocks.ProcessCompletion(returncode=0)
 
     def pull(self, autostash=False):
