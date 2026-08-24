@@ -383,3 +383,35 @@
 }
 
 @end
+
+namespace WebKit {
+
+NSString *nameForTextExtractionAction(_WKTextExtractionAction action)
+{
+    switch (action) {
+    case _WKTextExtractionActionClick:
+        return @"Click";
+    case _WKTextExtractionActionSelectText:
+        return @"SelectText";
+    case _WKTextExtractionActionSelectMenuItem:
+        return @"SelectMenuItem";
+    case _WKTextExtractionActionTextInput:
+        return @"TextInput";
+    case _WKTextExtractionActionKeyPress:
+        return @"KeyPress";
+    case _WKTextExtractionActionHighlightText:
+        return @"HighlightText";
+    case _WKTextExtractionActionScrollBy:
+        return @"ScrollBy";
+    case _WKTextExtractionActionHover:
+        return @"Hover";
+    }
+    return @"?";
+}
+
+RetainPtr<_WKTextExtractionResult> createEmptyTextExtractionResult()
+{
+    return adoptNS([[_WKTextExtractionResult alloc] initWithWebView:nil origin:nil textContent:@"" filteredOutAnyText:NO shortenedURLs:@{ } textToContainerMap:{ }]);
+}
+
+} // namespace WebKit
