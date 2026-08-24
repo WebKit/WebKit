@@ -8151,6 +8151,8 @@ fast/forms/form-control-refresh/checkbox-radio-inactive-appearance-dark-bg-light
 fast/forms/form-control-refresh/checkbox-radio-inactive-appearance-light-bg-dark-color-scheme.html [ Skip ]
 fast/forms/form-control-refresh/progress-window-inactive-state-dark-mode.html [ Skip ]
 fast/forms/form-control-refresh/progress-window-inactive-state-light-mode.html [ Skip ]
+fast/forms/form-control-refresh/spinbutton-window-inactive-state-dark-mode.html [ Skip ]
+fast/forms/form-control-refresh/spinbutton-window-inactive-state-light-mode.html [ Skip ]
 
 # rdar://155348715 (REGRESSION (Liquid Glass): [ iOS 26 ] 72 WPT/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-select-*.html tests are constantly failing (IMAGE).)
 # Explicit pass expectations for many of these tests are set above. Uncomment that block once this is resolved.

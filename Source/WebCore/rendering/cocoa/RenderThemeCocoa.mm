@@ -1469,6 +1469,7 @@ bool RenderThemeCocoa::controlSupportsTints(const RenderElement& box) const
     case StyleAppearance::Checkbox:
     case StyleAppearance::Radio:
         return isChecked(box) || isIndeterminate(box);
+    case StyleAppearance::InnerSpinButton:
     case StyleAppearance::ListButton:
     case StyleAppearance::ProgressBar:
     case StyleAppearance::SliderHorizontal:
