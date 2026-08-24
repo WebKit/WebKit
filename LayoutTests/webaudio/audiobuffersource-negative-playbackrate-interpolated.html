@@ -30,7 +30,7 @@
 
         bufferSource.connect(context.destination);
         bufferSource.playbackRate.value = -0.75;
-        bufferSource.start(0);
+        bufferSource.start(0, (sourceFrames - 1) / sampleRate);
 
         context.oncomplete = checkAllTests;
         context.startRendering();

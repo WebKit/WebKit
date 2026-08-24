@@ -36,7 +36,7 @@
         bufferSource.loop = true;
         bufferSource.loopStart = startLoop;
         bufferSource.loopEnd = endLoop;
-        bufferSource.start(0, startLoop, loopDuration);
+        bufferSource.start(0, endLoop - 1 / sampleRate, loopDuration);
         bufferSource.stop(loopDuration * 2);
 
         context.oncomplete = checkAllTests;

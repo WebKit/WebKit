@@ -52,6 +52,14 @@ constexpr double DefaultGrainDuration = 0.020; // 20ms
 // to minimize linear interpolation aliasing.
 const double MaxRate = 1024;
 
+// Converts a time to a sample frame, keeping any genuine sub-sample position but snapping values
+// that are only off by floating-point round-off (sampleRate * (k / sampleRate) != k for integer k).
+SUPPRESS_NODELETE static double NODELETE timeToFractionalSampleFrame(double time, double sampleRate)
+{
+    constexpr double oversampleFactor = 1024;
+    return std::round(time * sampleRate * oversampleFactor) / oversampleFactor;
+}
+
 static float NODELETE computeSampleUsingLinearInterpolation(std::span<const float> source, unsigned readIndex, unsigned readIndex2, float interpolationFactor)
 {
     if (readIndex == readIndex2 && readIndex >= 1) {
@@ -248,14 +256,26 @@ bool AudioBufferSourceNode::renderFromBuffer(AudioBus& bus, unsigned destination
         virtualDeltaFrames = virtualMaxFrame - virtualMinFrame;
     }
 
-    if (m_virtualReadIndex >= virtualMaxFrame) {
-        // Early exit to avoid going past the end of the source buffer.
-        if (!m_isLooping)
-            return false;
+    if (!reverse) {
+        if (m_virtualReadIndex >= virtualMaxFrame) {
+            // Early exit to avoid going past the end of the source buffer.
+            if (!m_isLooping)
+                return false;
 
-        // Wrap back to the beginning of the loop.
-        m_virtualReadIndex = (m_loopStart < 0) ? 0 : (m_loopStart * m_buffer->sampleRate());
-        m_virtualReadIndex = std::min(m_virtualReadIndex, static_cast<double>(bufferLength) - 1);
+            // Wrap back to the beginning of the loop.
+            m_virtualReadIndex = (m_loopStart < 0) ? 0 : (m_loopStart * m_buffer->sampleRate());
+            m_virtualReadIndex = std::min(m_virtualReadIndex, static_cast<double>(bufferLength) - 1);
+        }
+    } else if (m_isLooping && m_virtualReadIndex < virtualMinFrame) {
+        // https://webaudio.github.io/web-audio-api/#playback-AudioBufferSourceNode
+        // For a negative playback rate, only an offset before the loop start is clamped, to the
+        // loop start. An offset past the loop end is left alone so playback descends into the loop.
+        m_virtualReadIndex = virtualMinFrame;
+    } else if (m_virtualReadIndex >= bufferLength) {
+        // The playhead starts past the end of the buffer, e.g. for an offset at the buffer
+        // duration. There is nothing to read, so output silence rather than a partially
+        // written bus.
+        return false;
     }
 
     // Sanity check that our playback rate isn't larger than the loop size.
@@ -265,10 +285,14 @@ bool AudioBufferSourceNode::renderFromBuffer(AudioBus& bus, unsigned destination
     // Get local copy.
     double virtualReadIndex = m_virtualReadIndex;
 
+    int framesToProcess = numberOfFrames;
+
     // Adjust the read index by the startFrameOffset (compensated by the pitch rate) because
     // we always start output on a frame boundary with interpolation if necessary.
-    if (startFrameOffset < 0 && pitchRate)
-        virtualReadIndex += std::abs(startFrameOffset * pitchRate);
+    if (startFrameOffset < 0 && pitchRate) {
+        double skippedFrames = std::abs(startFrameOffset * pitchRate);
+        virtualReadIndex += reverse ? -skippedFrames : skippedFrames;
+    }
 
     bool needsInterpolation = virtualReadIndex != floor(virtualReadIndex)
         || virtualDeltaFrames != floor(virtualDeltaFrames)
@@ -276,7 +300,6 @@ bool AudioBufferSourceNode::renderFromBuffer(AudioBus& bus, unsigned destination
         || virtualMinFrame != floor(virtualMinFrame);
 
     // Render loop - reading from the source buffer to the destination using linear interpolation.
-    int framesToProcess = numberOfFrames;
 
     // Optimize for the very common case of playing back with pitchRate == 1.
     // We can avoid the linear interpolation.
@@ -307,9 +330,7 @@ bool AudioBufferSourceNode::renderFromBuffer(AudioBus& bus, unsigned destination
     } else if (pitchRate == -1 && !needsInterpolation) {
         int readIndex = static_cast<int>(virtualReadIndex);
         int deltaFrames = static_cast<int>(virtualDeltaFrames);
-        int maxFrame = static_cast<int>(virtualMaxFrame);
-        if (readIndex > maxFrame)
-            readIndex = maxFrame;
+        readIndex = std::min(readIndex, static_cast<int>(bufferLength) - 1);
 
         int minFrame = static_cast<int>(virtualMinFrame) - 1;
         while (framesToProcess > 0) {
@@ -614,14 +635,11 @@ void AudioBufferSourceNode::adjustGrainParameters()
     } else
         m_grainDuration = clampTo(m_grainDuration, 0.0,  bufferDuration - m_grainOffset);
 
-    // We call timeToSampleFrame here since at playbackRate == 1 we don't want to go through linear interpolation
-    // at a sub-sample position since it will degrade the quality.
-    // When aligned to the sample-frame the playback will be identical to the PCM data stored in the buffer.
-    // Since playbackRate == 1 is very common, it's worth considering quality.
-    if (playbackRate().value() < 0)
-        m_virtualReadIndex = AudioUtilities::timeToSampleFrame(m_grainOffset + m_grainDuration, m_buffer->sampleRate()) - 1;
-    else
-        m_virtualReadIndex = AudioUtilities::timeToSampleFrame(m_grainOffset, m_buffer->sampleRate());
+    // The playhead starts at offset, whatever the sign of the playback rate.
+    // https://webaudio.github.io/web-audio-api/#playback-AudioBufferSourceNode
+    // A whole-frame offset stays whole so that playback at |rate| == 1 is a straight copy of the
+    // PCM data rather than a quality-degrading interpolation at a sub-sample position.
+    m_virtualReadIndex = timeToFractionalSampleFrame(m_grainOffset, m_buffer->sampleRate());
 }
 
 double AudioBufferSourceNode::totalPitchRate()
