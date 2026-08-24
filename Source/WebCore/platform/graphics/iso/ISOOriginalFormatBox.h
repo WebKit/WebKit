@@ -38,7 +38,7 @@ public:
 
     FourCC dataFormat() const { return m_dataFormat; }
 
-    bool parse(const ByteView&, unsigned& offset) final;
+    WEBCORE_EXPORT bool parse(const ByteView&, unsigned& offset) final;
     bool pack(MutableByteView&, unsigned& offset) const final;
 
 private:
