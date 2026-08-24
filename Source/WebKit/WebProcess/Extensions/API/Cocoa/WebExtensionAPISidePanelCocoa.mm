@@ -94,6 +94,24 @@ static Expected<std::optional<WebExtensionActionClickBehavior>, WebExtensionErro
     return { actionClickBehavior.boolValue ? WebExtensionActionClickBehavior::OpenSidebar : WebExtensionActionClickBehavior::OpenPopup };
 }
 
+using SidebarTargetIdentifiers = std::tuple<std::optional<WebExtensionWindowIdentifier>, std::optional<WebExtensionTabIdentifier>>;
+
+static Expected<SidebarTargetIdentifiers, WebExtensionError> parseRequiredTabOrWindowIdentifiers(NSDictionary *options)
+{
+    auto tabResult = parseTabIdentifier(options);
+    if (!tabResult)
+        return makeUnexpected(tabResult.error());
+
+    auto windowResult = parseWindowIdentifier(options);
+    if (!windowResult)
+        return makeUnexpected(windowResult.error());
+
+    if (!tabResult.value() && !windowResult.value())
+        return makeUnexpected(toErrorString(nullString(), @"options", @"it must specify at least one of 'tabId' or 'windowId'"));
+
+    return SidebarTargetIdentifiers { WTF::move(windowResult.value()), WTF::move(tabResult.value()) };
+}
+
 static NSDictionary<NSString *, id> *serializeSidebarParameters(WebExtensionSidebarParameters const& parameters)
 {
     NSMutableDictionary *serializedParameters = [NSMutableDictionary new];
@@ -205,22 +223,11 @@ void WebExtensionAPISidePanel::open(NSDictionary *options, Ref<WebExtensionCallb
         return;
     }
 
-    auto tabResult = parseTabIdentifier(options);
-    if ((*outExceptionString = indicatesError(tabResult).get()))
+    auto identifiers = parseRequiredTabOrWindowIdentifiers(options);
+    if ((*outExceptionString = indicatesError(identifiers).get()))
         return;
 
-    auto tabId = WTF::move(tabResult.value());
-
-    auto windowResult = parseWindowIdentifier(options);
-    if ((*outExceptionString = indicatesError(windowResult).get()))
-        return;
-
-    auto windowId = WTF::move(windowResult.value());
-
-    if (!windowId && !tabId) {
-        *outExceptionString = toErrorString(nullString(), @"details", @"it must specify at least one of 'tabId' or 'windowId'").createNSString().get();
-        return;
-    }
+    auto [windowId, tabId] = WTF::move(identifiers.value());
 
     WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::SidebarOpen(windowId, tabId), [protectedThis = Ref { *this }, callback = WTF::move(callback)](Expected<void, WebExtensionError>&& result) {
         if (!result) {
@@ -229,6 +236,38 @@ void WebExtensionAPISidePanel::open(NSDictionary *options, Ref<WebExtensionCallb
         }
 
         callback->call();
+    }, extensionContext().identifier());
+}
+
+void WebExtensionAPISidePanel::close(NSDictionary *options, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
+{
+    auto identifiers = parseRequiredTabOrWindowIdentifiers(options);
+    if ((*outExceptionString = indicatesError(identifiers).get()))
+        return;
+
+    auto [windowId, tabId] = WTF::move(identifiers.value());
+
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::SidebarClose(windowId, tabId), [protectedThis = Ref { *this }, callback = WTF::move(callback)](Expected<void, WebExtensionError>&& result) {
+        if (!result) {
+            callback->reportError(result.error().createNSString().get());
+            return;
+        }
+
+        callback->call();
+    }, extensionContext().identifier());
+}
+
+void WebExtensionAPISidePanel::getLayout(Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
+{
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::SidebarGetLayout(), [protectedThis = Ref { *this }, callback = WTF::move(callback)](Expected<WebExtensionSidebarSide, WebExtensionError>&& result) {
+        if (!result) {
+            callback->reportError(result.error().createNSString().get());
+            return;
+        }
+
+        callback->call(toJSValueRef(callback->globalContext(), @{
+            @"side": result.value() == WebExtensionSidebarSide::Right ? @"right" : @"left",
+        }));
     }, extensionContext().identifier());
 }
 

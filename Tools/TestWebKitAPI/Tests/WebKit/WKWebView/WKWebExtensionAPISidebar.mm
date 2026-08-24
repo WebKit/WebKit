@@ -31,6 +31,8 @@
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/_WKFeature.h>
 #import <WebKit/_WKWebExtensionSidebar.h>
+#import <wtf/Ref.h>
+#import <wtf/RefCounted.h>
 
 namespace TestWebKitAPI {
 
@@ -177,6 +179,29 @@ protected:
     WKWebExtensionControllerConfiguration *sidebarConfig;
     RetainPtr<WKWebExtension> extension;
 };
+
+class SidebarCallCounts : public RefCounted<SidebarCallCounts> {
+public:
+    static Ref<SidebarCallCounts> create() { return adoptRef(*new SidebarCallCounts); }
+
+    int present { 0 };
+    int close { 0 };
+
+private:
+    SidebarCallCounts() = default;
+};
+
+static Ref<SidebarCallCounts> installSidebarCallCounters(TestWebExtensionManager *manager)
+{
+    auto counts = SidebarCallCounts::create();
+    manager.internalDelegate.presentSidebar = ^(_WKWebExtensionSidebar *) {
+        counts->present++;
+    };
+    manager.internalDelegate.closeSidebar = ^(_WKWebExtensionSidebar *) {
+        counts->close++;
+    };
+    return counts;
+}
 
 #pragma mark - Common Tests
 
@@ -769,18 +794,12 @@ TEST_F(WKWebExtensionAPISidebar, SidebarActionOpenFailsWithoutUserGesture)
         @"sidebar.html": @"<h1>Sidebar</h1>",
     };
 
-    int presentSidebarCallCount = 0;
-    int *presentSidebarCallCountPtr = &presentSidebarCallCount;
-
     auto manager = getManagerFor(resources, sidebarActionManifest);
-
-    manager.get().internalDelegate.presentSidebar = ^(_WKWebExtensionSidebar *) {
-        (*presentSidebarCallCountPtr)++;
-    };
+    auto sidebarCalls = installSidebarCallCounters(manager.get());
 
     [manager loadAndRun];
 
-    EXPECT_EQ(presentSidebarCallCount, 0);
+    EXPECT_EQ(sidebarCalls->present, 0);
 }
 
 TEST_F(WKWebExtensionAPISidebar, SidebarActionCloseFailsWithoutUserGesture)
@@ -795,18 +814,12 @@ TEST_F(WKWebExtensionAPISidebar, SidebarActionCloseFailsWithoutUserGesture)
         @"sidebar.html": @"<h1>Sidebar</h1>",
     };
 
-    int closeSidebarCallCount = 0;
-    int *closeSidebarCallCountPtr = &closeSidebarCallCount;
-
     auto manager = getManagerFor(resources, sidebarActionManifest);
-
-    manager.get().internalDelegate.closeSidebar = ^(_WKWebExtensionSidebar *) {
-        (*closeSidebarCallCountPtr)++;
-    };
+    auto sidebarCalls = installSidebarCallCounters(manager.get());
 
     [manager loadAndRun];
 
-    EXPECT_EQ(closeSidebarCallCount, 0);
+    EXPECT_EQ(sidebarCalls->close, 0);
 }
 
 TEST_F(WKWebExtensionAPISidebar, SidebarActionToggleFailsWithoutUserGesture)
@@ -821,25 +834,13 @@ TEST_F(WKWebExtensionAPISidebar, SidebarActionToggleFailsWithoutUserGesture)
         @"sidebar.html": @"<h1>Sidebar</h1>",
     };
 
-    int openSidebarCallCount = 0;
-    int *openSidebarCallCountPtr = &openSidebarCallCount;
-    int closeSidebarCallCount = 0;
-    int *closeSidebarCallCountPtr = &closeSidebarCallCount;
-
     auto manager = getManagerFor(resources, sidebarActionManifest);
-
-    manager.get().internalDelegate.presentSidebar = ^(_WKWebExtensionSidebar *) {
-        (*openSidebarCallCountPtr)++;
-    };
-
-    manager.get().internalDelegate.closeSidebar = ^(_WKWebExtensionSidebar *) {
-        (*closeSidebarCallCountPtr)++;
-    };
+    auto sidebarCalls = installSidebarCallCounters(manager.get());
 
     [manager loadAndRun];
 
-    EXPECT_EQ(openSidebarCallCount, 0);
-    EXPECT_EQ(closeSidebarCallCount, 0);
+    EXPECT_EQ(sidebarCalls->present, 0);
+    EXPECT_EQ(sidebarCalls->close, 0);
 }
 
 TEST_F(WKWebExtensionAPISidebar, SidebarActionOpenSucceedsWithUserGesture)
@@ -935,17 +936,12 @@ TEST_F(WKWebExtensionAPISidebar, SidebarActionToggleSucceedsWithUserGesture)
         @"sidebar.html": @"<h1>Sidebar</h1>",
     };
 
-    int openSidebarCallCount = 0;
-    int *openSidebarCallCountPtr = &openSidebarCallCount;
-
     auto manager = getManagerFor(resources, sidebarActionManifest);
-    manager.get().internalDelegate.presentSidebar = ^(_WKWebExtensionSidebar *) {
-        (*openSidebarCallCountPtr)++;
-    };
+    auto sidebarCalls = installSidebarCallCounters(manager.get());
 
     [manager loadAndRun];
 
-    EXPECT_EQ(openSidebarCallCount, 1);
+    EXPECT_EQ(sidebarCalls->present, 1);
 }
 
 #pragma mark - SidePanel Tests
@@ -955,10 +951,12 @@ TEST_F(WKWebExtensionAPISidebar, SidePanelAPIAvailableWhenManifestRequests)
     auto *script = @[
         @"browser.test.assertFalse(browser.sidePanel === undefined)",
         @"browser.test.assertFalse(browser.sidePanel?.open === undefined)",
+        @"browser.test.assertFalse(browser.sidePanel?.close === undefined)",
         @"browser.test.assertFalse(browser.sidePanel?.getOptions === undefined)",
         @"browser.test.assertFalse(browser.sidePanel?.setOptions === undefined)",
         @"browser.test.assertFalse(browser.sidePanel?.getPanelBehavior === undefined)",
         @"browser.test.assertFalse(browser.sidePanel?.setPanelBehavior === undefined)",
+        @"browser.test.assertFalse(browser.sidePanel?.getLayout === undefined)",
 
         @"browser.test.assertDeepEq(browser.sidebarAction, undefined)",
 
@@ -975,6 +973,7 @@ TEST_F(WKWebExtensionAPISidebar, SidePanelAPIDisallowsMissingArguments)
         @"browser.test.assertThrows(() => browser.sidePanel.setOptions())",
         @"browser.test.assertThrows(() => browser.sidePanel.setPanelBehavior())",
         @"browser.test.assertThrows(() => browser.sidePanel.open())",
+        @"browser.test.assertThrows(() => browser.sidePanel.close())",
         @"browser.test.notifyPass()",
     ];
 
@@ -1199,18 +1198,12 @@ TEST_F(WKWebExtensionAPISidebar, SidePanelOpenForTabFailsWithoutUserGesture)
         @"sidebar.html": @"<h1>Sidebar</h1>",
     };
 
-    int presentSidebarCallCount = 0;
-    int *presentSidebarCallCountPtr = &presentSidebarCallCount;
-
     auto manager = getManagerFor(resources, sidePanelManifest);
-
-    manager.get().internalDelegate.presentSidebar = ^(_WKWebExtensionSidebar *) {
-        (*presentSidebarCallCountPtr)++;
-    };
+    auto sidebarCalls = installSidebarCallCounters(manager.get());
 
     [manager loadAndRun];
 
-    EXPECT_EQ(presentSidebarCallCount, 0);
+    EXPECT_EQ(sidebarCalls->present, 0);
 }
 
 TEST_F(WKWebExtensionAPISidebar, SidePanelOpenForWindowFailsWithoutUserGesture)
@@ -1227,18 +1220,12 @@ TEST_F(WKWebExtensionAPISidebar, SidePanelOpenForWindowFailsWithoutUserGesture)
         @"sidebar.html": @"<h1>Sidebar</h1>",
     };
 
-    int presentSidebarCallCount = 0;
-    int *presentSidebarCallCountPtr = &presentSidebarCallCount;
-
     auto manager = getManagerFor(resources, sidePanelManifest);
-
-    manager.get().internalDelegate.presentSidebar = ^(_WKWebExtensionSidebar *) {
-        (*presentSidebarCallCountPtr)++;
-    };
+    auto sidebarCalls = installSidebarCallCounters(manager.get());
 
     [manager loadAndRun];
 
-    EXPECT_EQ(presentSidebarCallCount, 0);
+    EXPECT_EQ(sidebarCalls->present, 0);
 }
 
 TEST_F(WKWebExtensionAPISidebar, SidePanelOpenForTabSucceedsWithUserGesture)
@@ -1436,6 +1423,141 @@ TEST_F(WKWebExtensionAPISidebar, SidePanelActionClickDoesNotOpenPathlessSidebar)
 
     EXPECT_EQ(presentSidebarCallCount, 0);
     EXPECT_EQ(presentActionPopupCallCount, 1);
+}
+
+TEST_F(WKWebExtensionAPISidebar, SidePanelCloseRequiresTabOrWindow)
+{
+    auto *script = @[
+        @"browser.test.assertThrows(() => browser.sidePanel.close({}), /it must specify at least one of 'tabId' or 'windowId'/i)",
+        @"browser.test.notifyPass()",
+    ];
+
+    Util::loadAndRunExtension(sidePanelManifest, @{ @"background.js": Util::constructScript(script) }, sidebarConfig);
+}
+
+TEST_F(WKWebExtensionAPISidebar, SidePanelCloseForTabClosesTabPanel)
+{
+    auto *script = @[
+        @"let [tab] = await browser.tabs.query({})",
+
+        // Give the tab a panel of its own, then open it for that tab
+        @"await browser.sidePanel.setOptions({ tabId: tab.id, path: '/sidebar.html', enabled: true })",
+        @"await browser.test.runWithUserGesture(() => {",
+        @"  return browser.test.assertSafeResolve(() => browser.sidePanel.open({ tabId: tab.id }))",
+        @"})",
+
+        // Closing that tab's panel resolves and asks the app to close the sidebar.
+        @"await browser.test.assertSafeResolve(() => browser.sidePanel.close({ tabId: tab.id }))",
+
+        @"browser.test.notifyPass()",
+    ];
+
+    auto *resources = @{
+        @"background.js": Util::constructScript(script),
+        @"sidebar.html": @"<h1>Sidebar</h1>",
+    };
+
+    auto manager = getManagerFor(resources, sidePanelManifest);
+    auto sidebarCalls = installSidebarCallCounters(manager.get());
+
+    [manager loadAndRun];
+
+    EXPECT_EQ(sidebarCalls->present, 1);
+    EXPECT_EQ(sidebarCalls->close, 1);
+}
+
+TEST_F(WKWebExtensionAPISidebar, SidePanelCloseForWindowClosesGlobalPanel)
+{
+    auto *script = @[
+        @"let currentWindow = await browser.windows.getCurrent()",
+
+        @"await browser.test.runWithUserGesture(() => {",
+        @"  return browser.test.assertSafeResolve(() => browser.sidePanel.open({ windowId: currentWindow.id }))",
+        @"})",
+
+        @"await browser.test.assertSafeResolve(() => browser.sidePanel.close({ windowId: currentWindow.id }))",
+
+        @"browser.test.notifyPass()",
+    ];
+
+    auto *resources = @{
+        @"background.js": Util::constructScript(script),
+        @"sidebar.html": @"<h1>Sidebar</h1>",
+    };
+
+    auto manager = getManagerFor(resources, sidePanelManifest);
+    auto sidebarCalls = installSidebarCallCounters(manager.get());
+
+    [manager loadAndRun];
+
+    EXPECT_EQ(sidebarCalls->present, 1);
+    EXPECT_EQ(sidebarCalls->close, 1);
+}
+
+TEST_F(WKWebExtensionAPISidebar, SidePanelCloseForTabRejectsWhenOnlyGlobalOpen)
+{
+    auto *script = @[
+        @"let currentWindow = await browser.windows.getCurrent()",
+        @"let [tab] = await browser.tabs.query({})",
+
+        // Only the global panel is open for this window; the tab has no panel of its own.
+        @"await browser.test.runWithUserGesture(() => {",
+        @"  return browser.test.assertSafeResolve(() => browser.sidePanel.open({ windowId: currentWindow.id }))",
+        @"})",
+
+        // Closing by tab when only the global panel is open rejects rather than closing it.
+        @"await browser.test.assertRejects(browser.sidePanel.close({ tabId: tab.id }), /no side panel is open for the specified tab/i)",
+
+        @"browser.test.notifyPass()",
+    ];
+
+    auto *resources = @{
+        @"background.js": Util::constructScript(script),
+        @"sidebar.html": @"<h1>Sidebar</h1>",
+    };
+
+    auto manager = getManagerFor(resources, sidePanelManifest);
+    auto sidebarCalls = installSidebarCallCounters(manager.get());
+
+    [manager loadAndRun];
+
+    EXPECT_EQ(sidebarCalls->present, 1);
+    EXPECT_EQ(sidebarCalls->close, 0);
+}
+
+TEST_F(WKWebExtensionAPISidebar, SidePanelCloseIsNoOpWhenAlreadyClosed)
+{
+    auto *script = @[
+        @"let currentWindow = await browser.windows.getCurrent()",
+
+        // A valid close call with no open panel should no-op / not throw an error
+        @"await browser.test.assertSafeResolve(() => browser.sidePanel.close({ windowId: currentWindow.id }))",
+
+        @"browser.test.notifyPass()",
+    ];
+
+    auto *resources = @{
+        @"background.js": Util::constructScript(script),
+        @"sidebar.html": @"<h1>Sidebar</h1>",
+    };
+
+    auto manager = getManagerFor(resources, sidePanelManifest);
+    // The close delegate must be present so the close resolves; a nil block would make it reject.
+    manager.get().internalDelegate.closeSidebar = ^(_WKWebExtensionSidebar *) { };
+
+    [manager loadAndRun];
+}
+
+TEST_F(WKWebExtensionAPISidebar, SidePanelGetLayoutReturnsSide)
+{
+    auto *script = @[
+        @"let layout = await browser.sidePanel.getLayout()",
+        @"browser.test.assertEq(typeof layout, 'object')",
+        @"browser.test.assertTrue(layout.side === 'left' || layout.side === 'right', 'getLayout().side must be either left or right')",
+        @"browser.test.notifyPass()",
+    ];
+
+    Util::loadAndRunExtension(sidePanelManifest, @{ @"background.js": Util::constructScript(script) }, sidebarConfig);
 }
 
 #pragma mark - Per-Window Rendering Tests

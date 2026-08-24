@@ -30,4 +30,9 @@ struct WebKit::WebExtensionSidebarParameters {
     std::optional<WebKit::WebExtensionTabIdentifier> tabIdentifier;
 };
 
+enum class WebKit::WebExtensionSidebarSide : uint8_t {
+    Left,
+    Right,
+};
+
 #endif

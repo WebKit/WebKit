@@ -29,6 +29,11 @@
 
 namespace WebKit {
 
+enum class WebExtensionSidebarSide : uint8_t {
+    Left,
+    Right,
+};
+
 struct WebExtensionSidebarParameters {
     bool enabled { true };
     String panelPath { emptyString() };

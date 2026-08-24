@@ -29,6 +29,12 @@
 @class _WKWebExtensionBookmark;
 @protocol _WKWebExtensionBookmark;
 
+/*! @abstract Indicates the side of the browser window on which the extension sidebar is displayed. */
+typedef NS_ENUM(NSInteger, _WKWebExtensionSidebarSide) {
+    _WKWebExtensionSidebarSideLeft,
+    _WKWebExtensionSidebarSideRight,
+} WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+
 
 WK_HEADER_AUDIT_BEGIN(nullability, sendability)
 
@@ -149,6 +155,14 @@ WK_API_AVAILABLE(macos(15.4), ios(18.4), visionos(2.4))
  with ``-[WKWebExtensionContext sidebarForTab:]``.
  */
 - (void)_webExtensionController:(WKWebExtensionController * _Nonnull)controller didInvalidateSidebar:(_WKWebExtensionSidebar * _Nonnull)sidebar forExtensionContext:(WKWebExtensionContext * _Nonnull)context;
+
+/*!
+ @abstract Called to determine which side of the browser window the extension sidebar is displayed on.
+ @param controller The web extension controller initiating the request.
+ @param context The context within which the web extension is running.
+ @return The side of the window on which the sidebar pane is shown.
+ */
+- (_WKWebExtensionSidebarSide)_webExtensionController:(WKWebExtensionController * _Nonnull)controller sidebarSideForExtensionContext:(WKWebExtensionContext * _Nonnull)context;
 
 /*!
  @abstract Called when the root-level bookmarks are needed to begin building the bookmark tree.

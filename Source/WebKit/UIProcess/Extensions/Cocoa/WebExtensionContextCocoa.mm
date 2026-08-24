@@ -1156,6 +1156,34 @@ finish:
     return result;
 }
 
+// Retrieves the specified tab, or the specified window's active tab, or the frontmost window's active tab if neither was specified.
+Expected<Ref<WebExtensionTab>, WebExtensionError> WebExtensionContext::getTabFromIdentifiers(std::optional<WebExtensionWindowIdentifier> windowIdentifier, std::optional<WebExtensionTabIdentifier> tabIdentifier) const
+{
+    if (tabIdentifier) {
+        RefPtr tab = getTab(*tabIdentifier);
+        if (!tab)
+            return makeUnexpected(@"the tab was not found");
+        return tab.releaseNonNull();
+    }
+
+    RefPtr<WebExtensionWindow> window;
+    if (windowIdentifier) {
+        window = getWindow(*windowIdentifier);
+        if (!window)
+            return makeUnexpected(@"the window was not found");
+    } else
+        window = frontmostWindow();
+
+    if (!window)
+        return makeUnexpected(@"no windows are open");
+
+    RefPtr tab = window->activeTab();
+    if (!tab)
+        return makeUnexpected(@"an unknown error occurred");
+
+    return tab.releaseNonNull();
+}
+
 void WebExtensionContext::forgetTab(WebExtensionTabIdentifier identifier) const
 {
     RefPtr tab = m_tabMap.take(identifier);

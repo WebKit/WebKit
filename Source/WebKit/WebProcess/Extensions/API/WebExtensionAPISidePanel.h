@@ -44,6 +44,9 @@ public:
     void setPanelBehavior(NSDictionary *behavior, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
 
     void open(NSDictionary *options, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
+    void close(NSDictionary *options, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
+
+    void getLayout(Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
 #endif // PLATFORM(COCOA)
 };
 

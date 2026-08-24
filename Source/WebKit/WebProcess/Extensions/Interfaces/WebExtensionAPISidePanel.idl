@@ -47,5 +47,8 @@ dictionary WebExtensionSidePanelBehavior {
     [RaisesException] void setPanelBehavior([NSDictionary] any behavior, [Optional, CallbackHandler] function callback);
 
     [RaisesException] void open([NSDictionary] any options, [Optional, CallbackHandler] function callback);
+    [RaisesException] void close([NSDictionary] any options, [Optional, CallbackHandler] function callback);
+
+    [RaisesException] void getLayout([Optional, CallbackHandler] function callback);
 
 };
