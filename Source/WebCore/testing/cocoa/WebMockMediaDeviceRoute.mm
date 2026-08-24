@@ -78,6 +78,16 @@ NSErrorDomain const WebMockMediaDeviceRouteErrorDomain = @"WebMockMediaDeviceRou
 @synthesize routeDisplayName;
 @synthesize protocolType;
 
+- (instancetype)init
+{
+    if (!(self = [super init]))
+        return nil;
+
+    timeRange = CMTimeRangeMake(kCMTimeZero, CMTimeMakeWithSeconds(60, 1000));
+
+    return self;
+}
+
 - (void)seekToPosition:(CMTime)position tolerance:(CMTime)tolerance
 {
     RetainPtr playbackPosition = adoptNS([allocAVPlaybackUserInterfacePlaybackPositionInstance() initWithPosition:position hostTime:CMClockGetTime(CMClockGetHostTimeClock()) rate:0]);
