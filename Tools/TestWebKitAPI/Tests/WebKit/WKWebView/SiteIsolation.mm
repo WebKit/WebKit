@@ -84,6 +84,8 @@
 #endif
 
 #if PLATFORM(MAC)
+#import "Helpers/mac/AppKitSPI.h"
+
 @interface NSApplication ()
 - (void)_setKeyWindow:(NSWindow *)newKeyWindow;
 @end
@@ -3292,6 +3294,64 @@ TEST(SiteIsolation, SetMarkedTextInCrossOriginIframe)
     [webView unmarkText];
     Util::runFor(10_ms);
     EXPECT_WK_STREQ("hello", [webView stringByEvaluatingJavaScript:@"input.value" inFrame:childFrameInfo.get()]);
+}
+
+TEST(SiteIsolation, FirstRectForCharacterRangeInCrossOriginIframe)
+{
+    // The iframe below has a 100px margin and its own document has no margin, so an input placed at
+    // (20, 30) inside it should land at (120, 130) in main frame coordinates. Render the same input
+    // directly in the main frame at that flattened position as a same-window control: any rendering
+    // detail specific to <input> (default border/padding/line-height) affects both identically, so
+    // comparing the two rects (rather than hand-computing an expected value) isolates whether the
+    // cross-process coordinate transform itself is correct.
+    HTTPServer server({
+        { "/control"_s, { "<body style='margin: 0'><input id='input' style='position: absolute; left: 120px; top: 130px;' value='test'></body>"_s } },
+        { "/mainframe"_s, { "<body style='margin: 0'><iframe id='iframe' style='margin: 100px; width: 400px; height: 300px; border: none;' src='https://domain2.com/subframe'></iframe></body>"_s } },
+        { "/subframe"_s, { "<body style='margin: 0'><input id='input' style='position: absolute; left: 20px; top: 30px;' value='test'></body>"_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+    RetainPtr configuration = server.httpsProxyConfiguration();
+    enableSiteIsolation(configuration);
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration]);
+    RetainPtr navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [navigationDelegate allowAnyTLSCertificate];
+    webView.get().navigationDelegate = navigationDelegate.get();
+
+    auto firstRectForRange = [webView] {
+        __block bool done = false;
+        __block NSRect result = NSZeroRect;
+        [static_cast<id<NSTextInputClient_Async>>(webView.get()) firstRectForCharacterRange:NSMakeRange(0, 1) completionHandler:^(NSRect rect, NSRange) {
+            result = rect;
+            done = true;
+        }];
+        Util::run(&done);
+        return result;
+    };
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://domain1.com/control"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    [webView stringByEvaluatingJavaScript:@"input.focus()"];
+    [webView waitForNextPresentationUpdate];
+    NSRect controlRect = firstRectForRange();
+    EXPECT_FALSE(NSIsEmptyRect(controlRect));
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://domain1.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    RetainPtr childFrameInfo = [webView firstChildFrame];
+
+    // Focus is a no-op for cross-origin non-main-frame iframes without a user gesture; retry until
+    // it lands (bounded, so a regression fails the assertion below rather than hanging).
+    // If the query is routed to the wrong process (the main frame's, which has no focused element),
+    // it silently returns an empty rect forever.
+    NSRect rect = NSZeroRect;
+    EXPECT_TRUE(Util::waitFor([&] {
+        [webView objectByEvaluatingJavaScriptWithUserGesture:@"input.focus()" inFrame:childFrameInfo.get()];
+        [webView waitForNextPresentationUpdate];
+        rect = firstRectForRange();
+        return !NSIsEmptyRect(rect);
+    }, 500));
+
+    EXPECT_NEAR(rect.origin.x, controlRect.origin.x, 2);
+    EXPECT_NEAR(rect.origin.y, controlRect.origin.y, 2);
 }
 #endif
 
