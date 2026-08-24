@@ -1,6 +1,6 @@
 // swift-interface-format-version: 1.0
-// swift-module-flags: -enable-objc-interop -enable-library-evolution -swift-version 5 -enforce-exclusivity=checked -O -library-level api -enable-experimental-feature Macros -enable-experimental-feature ExtensionMacros -module-abi-name SwiftUI -enable-experimental-feature IsolatedAny2 -enable-upcoming-feature InferSendableFromCaptures -enable-experimental-feature DebugDescriptionMacro -enable-bare-slash-regex -user-module-version 7.0.84.1.401 -module-name SwiftUI_SPI -module-abi-name SwiftUI -package-name SwiftUI
-// swift-module-flags-ignorable: -public-module-name SwiftUI -formal-cxx-interoperability-mode=off -project-name SwiftUI -interface-compiler-version 6.2
+// swift-module-flags: -enable-objc-interop -enable-library-evolution -language-mode 5 -O -library-level api -enable-experimental-feature AnyAppleOSAvailability -enable-upcoming-feature InferSendableFromCaptures -enable-experimental-feature DebugDescriptionMacro -enable-bare-slash-regex -user-module-version 8.0.84.1.104 -module-name SwiftUI_SPI -module-abi-name SwiftUI -package-name SwiftUI
+// swift-module-flags-ignorable:  -formal-cxx-interoperability-mode=off -interface-compiler-version 6.4
 import _Concurrency
 import CoreFoundation
 import QuartzCore
