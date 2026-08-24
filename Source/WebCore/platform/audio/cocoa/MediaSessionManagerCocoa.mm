@@ -756,7 +756,8 @@ void MediaSessionManagerCocoa::updateNowPlayingInfo()
 
 void MediaSessionManagerCocoa::audioOutputDeviceChanged()
 {
-    ASSERT(m_audioHardwareListener);
+    if (!m_audioHardwareListener)
+        return;
     m_supportedAudioHardwareBufferSizes = m_audioHardwareListener->supportedBufferSizes();
     m_defaultBufferSize = AudioSession::singleton().preferredBufferSize();
     AudioSession::singleton().audioOutputDeviceChanged();

@@ -30,6 +30,12 @@
 #include <wtf/Logger.h>
 #include <wtf/TZoneMallocInlines.h>
 
+#if PLATFORM(MAC)
+#include <WebCore/AudioHardwareListener.h>
+#include <WebCore/MediaSessionManagerCocoa.h>
+#include <wtf/RefCounted.h>
+#endif
+
 namespace TestWebKitAPI {
 using namespace WebCore;
 
@@ -109,5 +115,65 @@ TEST(PlatformMediaSessionManager, PausingFrontSessionDemotesItInCurrentSession)
     // With the bug, the reorder hits a copy and currentSession() is still A.
     EXPECT_EQ(manager->currentSession().get(), static_cast<PlatformMediaSessionInterface*>(sessionB.ptr()));
 }
+
+#if PLATFORM(MAC)
+
+// Stands in for the audio-hardware listener the UI-process proxy retains under site isolation:
+// kept alive by the test and fired manually after the manager has dropped its own reference.
+class TestFiringAudioHardwareListener final : public AudioHardwareListener, public RefCounted<TestFiringAudioHardwareListener> {
+public:
+    static Ref<TestFiringAudioHardwareListener> create(Client& client) { return adoptRef(*new TestFiringAudioHardwareListener(client)); }
+
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
+
+    void fireOutputDeviceChanged() { m_client.audioOutputDeviceChanged(); }
+
+private:
+    explicit TestFiringAudioHardwareListener(Client& client)
+        : AudioHardwareListener(client)
+    {
+    }
+};
+
+class TestMediaSessionManagerCocoa final : public MediaSessionManagerCocoa {
+public:
+    static Ref<TestMediaSessionManagerCocoa> create() { return adoptRef(*new TestMediaSessionManagerCocoa()); }
+
+private:
+    TestMediaSessionManagerCocoa()
+        : MediaSessionManagerCocoa(std::nullopt)
+    {
+    }
+};
+
+TEST(PlatformMediaSessionManager, AudioOutputDeviceChangeAfterLastSessionRemovedDoesNotCrash)
+{
+    RefPtr<TestFiringAudioHardwareListener> listener;
+    AudioHardwareListener::setCreationFunction([&](AudioHardwareListener::Client& client) -> Ref<AudioHardwareListener> {
+        Ref newListener = TestFiringAudioHardwareListener::create(client);
+        listener = newListener.ptr();
+        return newListener;
+    });
+
+    auto manager = TestMediaSessionManagerCocoa::create();
+    auto client = makeUnique<TestMediaSessionClient>(manager.get());
+    auto session = PlatformMediaSession::create(*client);
+
+    // Registering the first session creates MediaSessionManagerCocoa::m_audioHardwareListener.
+    session->setActive(true);
+    ASSERT_TRUE(listener);
+
+    // Removing the last session clears m_audioHardwareListener; the listener object survives here
+    // (as the proxy keeps it alive under site isolation) and can still deliver a device change.
+    session->setActive(false);
+
+    // Before the fix this dereferenced the now-null m_audioHardwareListener and crashed.
+    listener->fireOutputDeviceChanged();
+
+    AudioHardwareListener::resetCreationFunction();
+}
+
+#endif // PLATFORM(MAC)
 
 } // namespace TestWebKitAPI
