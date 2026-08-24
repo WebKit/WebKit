@@ -180,7 +180,10 @@ class Version(object):
     def __eq__(self, other):
         if other is None:
             return False
-        return tuple(self) == tuple(other)
+        try:
+            return tuple(self) == tuple(other)
+        except TypeError:
+            return NotImplemented
 
     def __lt__(self, other):
         if other is None:
