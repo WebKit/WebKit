@@ -79,7 +79,7 @@ class TestBranch(testing.PathTestCase):
             self.assertEqual(local.Git(self.path).branch, 'eng/example')
 
         self.assertEqual(captured.root.log.getvalue(), "Creating the local development branch 'eng/example'...\n")
-        self.assertEqual(captured.stdout.getvalue(), "Enter name of new branch (or issue URL): \nCreated the local development branch 'eng/example'\n")
+        self.assertEqual(captured.stdout.getvalue(), "Enter name of new branch: \nCreated the local development branch 'eng/example'\n")
 
     def test_prompt_number(self):
         with MockTerminal.input('2'), OutputCapture(level=logging.INFO) as captured, mocks.local.Git(self.path), bmocks.Bugzilla(
@@ -93,7 +93,7 @@ class TestBranch(testing.PathTestCase):
             self.assertEqual(0, program.main(args=('branch', '-v'), path=self.path))
             self.assertEqual(local.Git(self.path).branch, 'eng/Example-feature-1')
         self.assertEqual(captured.root.log.getvalue(), "Creating the local development branch 'eng/Example-feature-1'...\n")
-        self.assertEqual(captured.stdout.getvalue(), "Enter issue URL or title of new issue: \nCreated the local development branch 'eng/Example-feature-1'\n")
+        self.assertEqual(captured.stdout.getvalue(), "Enter issue URL, Bugzilla ID, or title of new issue: \nCreated the local development branch 'eng/Example-feature-1'\n")
 
     def test_prompt_url(self):
         with MockTerminal.input('<rdar://2>'), OutputCapture(level=logging.INFO) as captured, mocks.local.Git(self.path), \
@@ -133,7 +133,7 @@ class TestBranch(testing.PathTestCase):
         )
         self.assertEqual(
             captured.stdout.getvalue(),
-            "Enter issue URL or title of new issue: \n"
+            "Enter issue URL, Bugzilla ID, or title of new issue: \n"
             "Existing radar to CC (leave empty to create new radar): \n"
             "Created the local development branch 'eng/Example-feature-1'\n",
         )
@@ -167,7 +167,7 @@ class TestBranch(testing.PathTestCase):
         )
         self.assertEqual(
             captured.stdout.getvalue(),
-            "Enter issue URL or title of new issue: \n"
+            "Enter issue URL, Bugzilla ID, or title of new issue: \n"
             "Existing radar to CC (leave empty to create new radar): \n"
             "Created the local development branch 'eng/Example-feature-1'\n",
         )
@@ -201,7 +201,7 @@ class TestBranch(testing.PathTestCase):
         )
         self.assertEqual(
             captured.stdout.getvalue(),
-            "Enter issue URL or title of new issue: \n"
+            "Enter issue URL, Bugzilla ID, or title of new issue: \n"
             "Existing radar to CC (leave empty to create new radar): \n"
             "Created the local development branch 'eng/Example-feature-1'\n",
         )
@@ -235,7 +235,7 @@ class TestBranch(testing.PathTestCase):
         )
         self.assertEqual(
             captured.stdout.getvalue(),
-            "Enter issue URL or title of new issue: \n"
+            "Enter issue URL, Bugzilla ID, or title of new issue: \n"
             "Existing radar to CC (leave empty to create new radar): \n"
             "Created the local development branch 'eng/Example-feature-1'\n",
         )
@@ -272,7 +272,7 @@ class TestBranch(testing.PathTestCase):
         )
         self.assertEqual(
             captured.stdout.getvalue(),
-            "Enter issue URL or title of new issue: \n"
+            "Enter issue URL, Bugzilla ID, or title of new issue: \n"
             "Created the local development branch 'eng/Example-feature-1'\n",
         )
 
@@ -311,7 +311,7 @@ class TestBranch(testing.PathTestCase):
         )
         self.assertEqual(
             captured.stdout.getvalue(),
-            "Enter issue URL or title of new issue: \n"
+            "Enter issue URL, Bugzilla ID, or title of new issue: \n"
             "Existing radar to CC (leave empty to create new radar): \n"
             "Created the local development branch 'eng/Example-feature-1'\n",
         )
@@ -342,7 +342,7 @@ class TestBranch(testing.PathTestCase):
         )
         self.assertEqual(
             captured.stdout.getvalue(),
-            "Enter issue URL or title of new issue: \n"
+            "Enter issue URL, Bugzilla ID, or title of new issue: \n"
             "Created the local development branch 'eng/Example-feature-1'\n",
         )
 
@@ -399,9 +399,9 @@ class TestBranch(testing.PathTestCase):
 
         self.assertEqual(
             captured.stdout.getvalue(),
-            '''Enter issue URL or title of new issue: 
-Issue description: 
-What project should the bug be associated with?:
+            'Enter issue URL, Bugzilla ID, or title of new issue: \n'
+            'Issue description: \n'
+            '''What project should the bug be associated with?:
     1) CFNetwork
     2) WebKit
 : 
@@ -440,9 +440,9 @@ Created the local development branch 'eng/Area-New-Issue'
 
         self.assertEqual(
             captured.stdout.getvalue(),
-            '''Enter issue URL or title of new issue: 
-Issue description: 
-What component in 'WebKit' should the bug be associated with?:
+            'Enter issue URL or title of new issue: \n'
+            'Issue description: \n'
+            '''What component in 'WebKit' should the bug be associated with?:
     1) SVG
     2) Scrolling
     3) Tables

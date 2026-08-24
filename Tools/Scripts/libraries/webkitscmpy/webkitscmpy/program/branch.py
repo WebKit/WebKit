@@ -125,10 +125,14 @@ class Branch(Command):
             args.issue = repository.config().get('branch.{}.bug'.format(repository.branch))
 
         if not args.issue:
-            if Tracker.instance() and getattr(args, 'update_issue', True):
-                prompt = '{}nter issue URL or title of new issue: '.format('{}, e'.format(why) if why else 'E')
+            prefix = f'{why}, e' if why else 'E'
+            target = 'title of new issue' if getattr(args, 'update_issue', True) else 'name of new branch'
+            if Tracker.instance() and not redact and not Tracker.instance().hide_title:
+                prompt = f'{prefix}nter issue URL, {Tracker.instance().NAME} ID, or {target}: '
+            elif Tracker.instance():
+                prompt = f'{prefix}nter issue URL or {target}: '
             else:
-                prompt = '{}nter name of new branch (or issue URL): '.format('{}, e'.format(why) if why else 'E')
+                prompt = f'{prefix}nter name of new branch: '
             args.issue = Terminal.input(prompt, alert_after=2 * Terminal.RING_INTERVAL)
 
         if string_utils.decode(args.issue).isnumeric() and Tracker.instance() and not redact and not Tracker.instance().hide_title:
