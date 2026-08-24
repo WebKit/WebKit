@@ -598,11 +598,11 @@ template <int shiftAmount> ALWAYS_INLINE void Lexer<T>::internalShift()
 template <typename T>
 ALWAYS_INLINE void Lexer<T>::shift()
 {
-    // At one point timing showed that setting m_current to 0 unconditionally was faster than an if-else sequence.
-    m_current = 0;
     ++m_code;
     if (m_code < m_codeEnd) [[likely]]
         m_current = *m_code;
+    else
+        m_current = 0;
 }
 
 template <typename T>
