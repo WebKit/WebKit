@@ -104,7 +104,7 @@ __declspec(naked) void ScaleRowDown2_SSSE3(const uint8_t* src_ptr,
     movdqu     xmm0, [eax]
     movdqu     xmm1, [eax + 16]
     lea        eax,  [eax + 32]
-    psrlw      xmm0, 8          // isolate odd pixels.
+    psrlw      xmm0, 8       // isolate odd pixels.
     psrlw      xmm1, 8
     packuswb   xmm0, xmm1
     movdqu     [edx], xmm0
@@ -138,7 +138,7 @@ __declspec(naked) void ScaleRowDown2Linear_SSSE3(const uint8_t* src_ptr,
     lea        eax,  [eax + 32]
     pmaddubsw  xmm0, xmm4  // horizontal add
     pmaddubsw  xmm1, xmm4
-    pavgw      xmm0, xmm5       // (x + 1) / 2
+    pavgw      xmm0, xmm5    // (x + 1) / 2
     pavgw      xmm1, xmm5
     packuswb   xmm0, xmm1
     movdqu     [edx], xmm0
@@ -213,7 +213,7 @@ __declspec(naked) void ScaleRowDown2_AVX2(const uint8_t* src_ptr,
     vpsrlw      ymm0, ymm0, 8  // isolate odd pixels.
     vpsrlw      ymm1, ymm1, 8
     vpackuswb   ymm0, ymm0, ymm1
-    vpermq      ymm0, ymm0, 0xd8       // unmutate vpackuswb
+    vpermq      ymm0, ymm0, 0xd8    // unmutate vpackuswb
     vmovdqu     [edx], ymm0
     lea         edx, [edx + 32]
     sub         ecx, 32
@@ -249,7 +249,7 @@ __declspec(naked) void ScaleRowDown2Linear_AVX2(const uint8_t* src_ptr,
     vpavgw      ymm0, ymm0, ymm5  // (x + 1) / 2
     vpavgw      ymm1, ymm1, ymm5
     vpackuswb   ymm0, ymm0, ymm1
-    vpermq      ymm0, ymm0, 0xd8       // unmutate vpackuswb
+    vpermq      ymm0, ymm0, 0xd8    // unmutate vpackuswb
     vmovdqu     [edx], ymm0
     lea         edx, [edx + 32]
     sub         ecx, 32
@@ -319,7 +319,7 @@ __declspec(naked) void ScaleRowDown4_SSSE3(const uint8_t* src_ptr,
     // src_stride ignored
     mov        edx, [esp + 12]  // dst_ptr
     mov        ecx, [esp + 16]  // dst_width
-    pcmpeqb    xmm5, xmm5       // generate mask 0x00ff0000
+    pcmpeqb    xmm5, xmm5     // generate mask 0x00ff0000
     psrld      xmm5, 24
     pslld      xmm5, 16
 
@@ -424,7 +424,7 @@ __declspec(naked) void ScaleRowDown4_AVX2(const uint8_t* src_ptr,
     vpermq      ymm0, ymm0, 0xd8  // unmutate vpackuswb
     vpsrlw      ymm0, ymm0, 8
     vpackuswb   ymm0, ymm0, ymm0
-    vpermq      ymm0, ymm0, 0xd8       // unmutate vpackuswb
+    vpermq      ymm0, ymm0, 0xd8    // unmutate vpackuswb
     vmovdqu     [edx], xmm0
     lea         edx, [edx + 16]
     sub         ecx, 16
@@ -687,7 +687,7 @@ __declspec(naked) void ScaleRowDown38_SSSE3(const uint8_t* src_ptr,
     pshufb     xmm1, xmm5
     paddusb    xmm0, xmm1
 
-    movq       qword ptr [edx], xmm0       // write 12 pixels
+    movq       qword ptr [edx], xmm0    // write 12 pixels
     movhlps    xmm1, xmm0
     movd       [edx + 8], xmm1
     lea        edx, [edx + 12]
@@ -1030,7 +1030,7 @@ __declspec(naked) void ScaleARGBRowDown2Linear_SSE2(const uint8_t* src_argb,
     lea        eax,  [eax + 32]
     movdqa     xmm2, xmm0
     shufps     xmm0, xmm1, 0x88  // even pixels
-    shufps     xmm2, xmm1, 0xdd       // odd pixels
+    shufps     xmm2, xmm1, 0xdd    // odd pixels
     pavgb      xmm0, xmm2
     movdqu     [edx], xmm0
     lea        edx, [edx + 16]
@@ -1216,7 +1216,7 @@ __declspec(naked) void ScaleARGBCols_SSE2(uint8_t* dst_argb,
     test       ecx, 2
     je         xloop29
 
-        // 2 Pixels.
+         // 2 Pixels.
     movd       xmm0, [esi + eax * 4]  // 1 source x0 pixels
     movd       xmm1, [esi + edx * 4]  // 1 source x1 pixels
     pextrw     eax, xmm2, 5  // get x2 integer.
@@ -1229,7 +1229,7 @@ __declspec(naked) void ScaleARGBCols_SSE2(uint8_t* dst_argb,
     test       ecx, 1
     je         xloop99
 
-        // 1 Pixels.
+         // 1 Pixels.
     movd       xmm0, [esi + eax * 4]  // 1 source x2 pixels
     movd       dword ptr [edi], xmm0
  xloop99:

@@ -1759,25 +1759,25 @@ void ScaleRowUp2_Bilinear_16_AVX2(const uint16_t* src_ptr,
 void ScaleAddRow_SSE2(const uint8_t* src_ptr,
                       uint16_t* dst_ptr,
                       int src_width) {
-      asm volatile("pxor        %%xmm5,%%xmm5                 \n"
+  asm volatile("pxor        %%xmm5,%%xmm5                 \n"
 
                // 16 pixel loop.
                LABELALIGN
-      "1:          \n"
-      "movdqu      (%0),%%xmm3                   \n"
-      "lea         0x10(%0),%0                   \n"  // src_ptr += 16
-      "movdqu      (%1),%%xmm0                   \n"
-      "movdqu      0x10(%1),%%xmm1               \n"
-      "movdqa      %%xmm3,%%xmm2                 \n"
-      "punpcklbw   %%xmm5,%%xmm2                 \n"
-      "punpckhbw   %%xmm5,%%xmm3                 \n"
-      "paddusw     %%xmm2,%%xmm0                 \n"
-      "paddusw     %%xmm3,%%xmm1                 \n"
-      "movdqu      %%xmm0,(%1)                   \n"
-      "movdqu      %%xmm1,0x10(%1)               \n"
-      "lea         0x20(%1),%1                   \n"
-      "sub         $0x10,%2                      \n"
-      "jg          1b                            \n"
+               "1:          \n"
+               "movdqu      (%0),%%xmm3                   \n"
+               "lea         0x10(%0),%0                   \n"  // src_ptr += 16
+               "movdqu      (%1),%%xmm0                   \n"
+               "movdqu      0x10(%1),%%xmm1               \n"
+               "movdqa      %%xmm3,%%xmm2                 \n"
+               "punpcklbw   %%xmm5,%%xmm2                 \n"
+               "punpckhbw   %%xmm5,%%xmm3                 \n"
+               "paddusw     %%xmm2,%%xmm0                 \n"
+               "paddusw     %%xmm3,%%xmm1                 \n"
+               "movdqu      %%xmm0,(%1)                   \n"
+               "movdqu      %%xmm1,0x10(%1)               \n"
+               "lea         0x20(%1),%1                   \n"
+               "sub         $0x10,%2                      \n"
+               "jg          1b                            \n"
                : "+r"(src_ptr),   // %0
                  "+r"(dst_ptr),   // %1
                  "+r"(src_width)  // %2
@@ -1790,23 +1790,23 @@ void ScaleAddRow_SSE2(const uint8_t* src_ptr,
 void ScaleAddRow_AVX2(const uint8_t* src_ptr,
                       uint16_t* dst_ptr,
                       int src_width) {
-      asm volatile("vpxor       %%ymm5,%%ymm5,%%ymm5          \n"
+  asm volatile("vpxor       %%ymm5,%%ymm5,%%ymm5          \n"
 
                LABELALIGN
-      "1:          \n"
-      "vmovdqu     (%0),%%ymm3                   \n"
-      "lea         0x20(%0),%0                   \n"  // src_ptr += 32
-      "vpermq      $0xd8,%%ymm3,%%ymm3           \n"
-      "vpunpcklbw  %%ymm5,%%ymm3,%%ymm2          \n"
-      "vpunpckhbw  %%ymm5,%%ymm3,%%ymm3          \n"
-      "vpaddusw    (%1),%%ymm2,%%ymm0            \n"
-      "vpaddusw    0x20(%1),%%ymm3,%%ymm1        \n"
-      "vmovdqu     %%ymm0,(%1)                   \n"
-      "vmovdqu     %%ymm1,0x20(%1)               \n"
-      "lea         0x40(%1),%1                   \n"
-      "sub         $0x20,%2                      \n"
-      "jg          1b                            \n"
-      "vzeroupper  \n"
+               "1:          \n"
+               "vmovdqu     (%0),%%ymm3                   \n"
+               "lea         0x20(%0),%0                   \n"  // src_ptr += 32
+               "vpermq      $0xd8,%%ymm3,%%ymm3           \n"
+               "vpunpcklbw  %%ymm5,%%ymm3,%%ymm2          \n"
+               "vpunpckhbw  %%ymm5,%%ymm3,%%ymm3          \n"
+               "vpaddusw    (%1),%%ymm2,%%ymm0            \n"
+               "vpaddusw    0x20(%1),%%ymm3,%%ymm1        \n"
+               "vmovdqu     %%ymm0,(%1)                   \n"
+               "vmovdqu     %%ymm1,0x20(%1)               \n"
+               "lea         0x40(%1),%1                   \n"
+               "sub         $0x20,%2                      \n"
+               "jg          1b                            \n"
+               "vzeroupper  \n"
                : "+r"(src_ptr),   // %0
                  "+r"(dst_ptr),   // %1
                  "+r"(src_width)  // %2

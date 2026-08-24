@@ -1127,9 +1127,10 @@ __arm_locally_streaming void ARGBToUVMatrixRow_SME(
     uint8_t* dst_v,
     int width,
     const struct ArgbConstants* c) {
-  int8_t uvconstants[8] = {
-      (int8_t)c->kRGBToU[0], (int8_t)c->kRGBToU[1], (int8_t)c->kRGBToU[2], (int8_t)c->kRGBToU[3],
-      (int8_t)c->kRGBToV[0], (int8_t)c->kRGBToV[1], (int8_t)c->kRGBToV[2], (int8_t)c->kRGBToV[3]};
+  int8_t uvconstants[8] = {(int8_t)c->kRGBToU[0], (int8_t)c->kRGBToU[1],
+                           (int8_t)c->kRGBToU[2], (int8_t)c->kRGBToU[3],
+                           (int8_t)c->kRGBToV[0], (int8_t)c->kRGBToV[1],
+                           (int8_t)c->kRGBToV[2], (int8_t)c->kRGBToV[3]};
   ARGBToUVMatrixRow_SVE_SC(src_argb, src_stride_argb, dst_u, dst_v, width,
                            uvconstants);
 }

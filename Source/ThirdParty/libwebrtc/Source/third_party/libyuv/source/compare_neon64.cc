@@ -116,7 +116,7 @@ uint32_t HashDjb2_NEON(const uint8_t* src, int count, uint32_t seed) {
   uint32_t hash = seed;
   const uint32_t c16 = 0x92d9e201;  // 33^16
   uint32_t tmp, tmp2;
-      asm("ld1         {v16.4s, v17.4s, v18.4s, v19.4s}, [%[kIdx]] \n"
+  asm("ld1         {v16.4s, v17.4s, v18.4s, v19.4s}, [%[kIdx]] \n"
       "ld1         {v4.4s, v5.4s, v6.4s, v7.4s}, [%[kMuls]] \n"
 
       // count is always a multiple of 16.

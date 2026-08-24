@@ -15,6 +15,8 @@
 #ifdef __linux__
 #include <ctype.h>
 #include <sys/utsname.h>
+#include <signal.h>
+#include <setjmp.h>
 #endif
 
 #include "libyuv/cpu_id.h"
@@ -37,6 +39,14 @@ static void KernelVersion(int* version) {
       }
     }
   }
+}
+#endif
+
+#ifdef __linux__
+static sigjmp_buf vdpphps_jmpbuf;
+static void vdpphps_sigill_handler(int sig) {
+  (void)sig;
+  siglongjmp(vdpphps_jmpbuf, 1);
 }
 #endif
 
@@ -182,6 +192,7 @@ int main(int argc, const char* argv[]) {
     int has_avxvnni = TestCpuFlag(kCpuHasAVXVNNI);
     int has_avxvnniint8 = TestCpuFlag(kCpuHasAVXVNNIINT8);
     int has_amxint8 = TestCpuFlag(kCpuHasAMXINT8);
+    int has_avx512bmm = TestCpuFlag(kCpuHasAVX512BMM);
     printf("Has X86 0x%x\n", has_x86);
     printf("Has SSE2 0x%x\n", has_sse2);
     printf("Has SSSE3 0x%x\n", has_ssse3);
@@ -204,6 +215,30 @@ int main(int argc, const char* argv[]) {
     printf("HAS AVXVNNI 0x%x\n", has_avxvnni);
     printf("Has AVXVNNIINT8 0x%x\n", has_avxvnniint8);
     printf("Has AMXINT8 0x%x\n", has_amxint8);
+    printf("Has AVX512BMM 0x%x\n", has_avx512bmm);
+
+#ifdef __linux__
+    // Test VDPPHPS instruction
+    {
+      struct sigaction act, oldact;
+      memset(&act, 0, sizeof(act));
+      act.sa_handler = vdpphps_sigill_handler;
+      sigaction(SIGILL, &act, &oldact);
+
+      printf("Testing VDPPHPS instruction... ");
+      fflush(stdout);
+
+      if (sigsetjmp(vdpphps_jmpbuf, 1) == 0) {
+        // VDPPHPS xmm0, xmm0, xmm0
+        __asm__ volatile(".byte 0x62, 0xf2, 0x7c, 0x08, 0x52, 0xc0" : : : "xmm0");
+        printf("Works!\n");
+      } else {
+        printf("Crashed (SIGILL)!\n");
+      }
+
+      sigaction(SIGILL, &oldact, NULL);
+    }
+#endif
   }
 #endif  // defined(__i386__) || defined(__x86_64__) || defined(_M_IX86) ||
         // defined(_M_X64)

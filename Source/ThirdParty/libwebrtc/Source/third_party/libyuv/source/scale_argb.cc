@@ -779,9 +779,9 @@ int ARGBScaleClip(const uint8_t* src_argb,
                   int clip_width,
                   int clip_height,
                   enum FilterMode filtering) {
-  if (!src_argb || src_width == 0 || src_height == 0 || !dst_argb ||
-      dst_width <= 0 || dst_height <= 0 || clip_x < 0 || clip_y < 0 ||
-      clip_width > 32768 || clip_height > 32768 ||
+  if (!src_argb || src_width == 0 || src_height == 0 || src_height == INT_MIN ||
+      !dst_argb || dst_width <= 0 || dst_height <= 0 || clip_x < 0 ||
+      clip_y < 0 || clip_width > 32768 || clip_height > 32768 ||
       (clip_x + clip_width) > dst_width ||
       (clip_y + clip_height) > dst_height) {
     return -1;
@@ -802,8 +802,9 @@ int ARGBScale(const uint8_t* src_argb,
               int dst_width,
               int dst_height,
               enum FilterMode filtering) {
-  if (!src_argb || src_width == 0 || src_height == 0 || src_width > 32768 ||
-      src_height > 32768 || !dst_argb || dst_width <= 0 || dst_height <= 0) {
+  if (!src_argb || src_width == 0 || src_height == 0 || src_height == INT_MIN ||
+      src_width > 32768 || src_height > 32768 || !dst_argb || dst_width <= 0 ||
+      dst_height <= 0) {
     return -1;
   }
   return ScaleARGB(src_argb, src_stride_argb, src_width, src_height, dst_argb,
@@ -835,16 +836,19 @@ int YUVToARGBScaleClip(const uint8_t* src_y,
   int r;
   (void)src_fourcc;  // TODO(fbarchard): implement and/or assert.
   (void)dst_fourcc;
-  const int abs_src_height = (src_height < 0) ? -src_height : src_height;
   if (!src_y || !src_u || !src_v || !dst_argb || src_width <= 0 ||
-      src_width > INT_MAX / 4 || src_height == 0 || dst_width <= 0 ||
-      dst_height <= 0 || clip_width <= 0 || clip_height <= 0) {
+      src_width > INT_MAX / 4 || src_height == 0 || src_height == INT_MIN ||
+      dst_width <= 0 || dst_height <= 0 || clip_width <= 0 ||
+      clip_height <= 0) {
     return -1;
   }
+  const int abs_src_height = (src_height < 0) ? -src_height : src_height;
   const uint64_t argb_buffer_size = (uint64_t)src_width * abs_src_height * 4;
+#if UINT64_MAX > SIZE_MAX
   if (argb_buffer_size > SIZE_MAX) {
     return -1;  // Invalid size.
   }
+#endif
   uint8_t* argb_buffer = (uint8_t*)malloc((size_t)argb_buffer_size);
   if (!argb_buffer) {
     return 1;  // Out of memory runtime error.

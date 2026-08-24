@@ -64,7 +64,7 @@ __declspec(naked) void TransposeWx8_SSSE3(const uint8_t* src,
     mov       eax, ebp
     movdqa    xmm7, xmm6
     palignr   xmm7, xmm7, 8
-    // Second round of bit swap.
+     // Second round of bit swap.
     punpcklwd xmm0, xmm2
     punpcklwd xmm1, xmm3
     movdqa    xmm2, xmm0
@@ -77,8 +77,8 @@ __declspec(naked) void TransposeWx8_SSSE3(const uint8_t* src,
     movdqa    xmm7, xmm5
     palignr   xmm6, xmm6, 8
     palignr   xmm7, xmm7, 8
-    // Third round of bit swap.
-    // Write to the destination pointer.
+     // Third round of bit swap.
+     // Write to the destination pointer.
     punpckldq xmm0, xmm4
     movq      qword ptr [edx], xmm0
     movdqa    xmm4, xmm0
@@ -173,7 +173,7 @@ __declspec(naked) void TransposeUVWx8_SSE2(const uint8_t* src,
     movdqa    xmm7, xmm5
     lea       eax, [eax + 8 * edi + 16]
     neg       edi
-        // Second round of bit swap.
+         // Second round of bit swap.
     movdqa    xmm5, xmm0
     punpcklwd xmm0, xmm2
     punpckhwd xmm5, xmm2
@@ -193,8 +193,8 @@ __declspec(naked) void TransposeUVWx8_SSE2(const uint8_t* src,
     punpckhwd xmm6, xmm7
     movdqa    xmm7, xmm6
 
-        // Third round of bit swap.
-        // Write to the destination pointer.
+         // Third round of bit swap.
+         // Write to the destination pointer.
     movdqa    xmm6, xmm0
     punpckldq xmm0, xmm4
     punpckhdq xmm6, xmm4

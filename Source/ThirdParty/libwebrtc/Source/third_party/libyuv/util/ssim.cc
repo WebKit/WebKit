@@ -244,23 +244,23 @@ double GetSSIMFullKernel(const uint8_t* org,
 
 // Read 8 pixels at line #L, and convert to 16bit, perform weighting
 // and acccumulate.
-#define LOAD_LINE_PAIR(L, WEIGHT)                                            \
-  do {                                                                       \
-    const __m128i v0 =                                                       \
-        _mm_loadl_epi64(reinterpret_cast<const __m128i*>(org + (L)*stride)); \
-    const __m128i v1 =                                                       \
-        _mm_loadl_epi64(reinterpret_cast<const __m128i*>(rec + (L)*stride)); \
-    const __m128i w0 = _mm_unpacklo_epi8(v0, zero);                          \
-    const __m128i w1 = _mm_unpacklo_epi8(v1, zero);                          \
-    const __m128i ww0 = _mm_mullo_epi16(w0, (WEIGHT).values_.m_);            \
-    const __m128i ww1 = _mm_mullo_epi16(w1, (WEIGHT).values_.m_);            \
-    x = _mm_add_epi32(x, _mm_unpacklo_epi16(ww0, zero));                     \
-    y = _mm_add_epi32(y, _mm_unpacklo_epi16(ww1, zero));                     \
-    x = _mm_add_epi32(x, _mm_unpackhi_epi16(ww0, zero));                     \
-    y = _mm_add_epi32(y, _mm_unpackhi_epi16(ww1, zero));                     \
-    xx = _mm_add_epi32(xx, _mm_madd_epi16(ww0, w0));                         \
-    xy = _mm_add_epi32(xy, _mm_madd_epi16(ww0, w1));                         \
-    yy = _mm_add_epi32(yy, _mm_madd_epi16(ww1, w1));                         \
+#define LOAD_LINE_PAIR(L, WEIGHT)                                              \
+  do {                                                                         \
+    const __m128i v0 =                                                         \
+        _mm_loadl_epi64(reinterpret_cast<const __m128i*>(org + (L) * stride)); \
+    const __m128i v1 =                                                         \
+        _mm_loadl_epi64(reinterpret_cast<const __m128i*>(rec + (L) * stride)); \
+    const __m128i w0 = _mm_unpacklo_epi8(v0, zero);                            \
+    const __m128i w1 = _mm_unpacklo_epi8(v1, zero);                            \
+    const __m128i ww0 = _mm_mullo_epi16(w0, (WEIGHT).values_.m_);              \
+    const __m128i ww1 = _mm_mullo_epi16(w1, (WEIGHT).values_.m_);              \
+    x = _mm_add_epi32(x, _mm_unpacklo_epi16(ww0, zero));                       \
+    y = _mm_add_epi32(y, _mm_unpacklo_epi16(ww1, zero));                       \
+    x = _mm_add_epi32(x, _mm_unpackhi_epi16(ww0, zero));                       \
+    y = _mm_add_epi32(y, _mm_unpackhi_epi16(ww1, zero));                       \
+    xx = _mm_add_epi32(xx, _mm_madd_epi16(ww0, w0));                           \
+    xy = _mm_add_epi32(xy, _mm_madd_epi16(ww0, w1));                           \
+    yy = _mm_add_epi32(yy, _mm_madd_epi16(ww1, w1));                           \
   } while (0)
 
 #define ADD_AND_STORE_FOUR_EPI32(M, OUT)                    \
