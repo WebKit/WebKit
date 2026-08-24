@@ -701,7 +701,8 @@ void ImageLoader::dispatchPendingLoadEvent()
     if (!m_image)
         return;
     m_hasPendingLoadEvent = false;
-    Ref document = element().document();
+    Ref protectedElement = element();
+    Ref document = protectedElement->document();
     if (document->canEverRender())
         dispatchLoadEvent();
 
@@ -716,9 +717,10 @@ void ImageLoader::dispatchPendingErrorEvent()
         return;
     m_hasPendingErrorEvent = false;
     loadEventSender().cancelEvent(*this, eventNames().errorEvent);
-    Ref document = element().document();
+    Ref protectedElement = element();
+    Ref document = protectedElement->document();
     if (document->canEverRender())
-        protect(element())->dispatchEvent(Event::create(eventNames().errorEvent, Event::CanBubble::No, Event::IsCancelable::No));
+        protectedElement->dispatchEvent(Event::create(eventNames().errorEvent, Event::CanBubble::No, Event::IsCancelable::No));
 
     // Only consider updating the protection ref-count of the Element immediately before returning
     // from this function as doing so might result in the destruction of this ImageLoader.
