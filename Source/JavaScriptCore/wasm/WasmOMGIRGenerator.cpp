@@ -853,7 +853,7 @@ public:
     [[nodiscard]] PartialResult endBlock(ControlEntry&, std::span<TypedExpression> enclosedStack);
     [[nodiscard]] PartialResult addEndToUnreachable(ControlEntry&, std::span<TypedExpression> enclosedStack);
 
-    [[nodiscard]] PartialResult NODELETE endTopLevel(std::span<const TypedExpression>) { return { }; }
+    [[nodiscard]] PartialResult endTopLevel(std::span<const TypedExpression>) { return { }; }
 
     // Fused comparison stubs (B3 will do this for us later).
     [[nodiscard]] PartialResult NODELETE addFusedBranchCompare(OpType, ControlType&, ExpressionType, std::span<const TypedExpression>) { RELEASE_ASSERT_NOT_REACHED(); }

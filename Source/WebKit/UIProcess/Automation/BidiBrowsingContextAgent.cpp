@@ -347,7 +347,7 @@ void BidiBrowsingContextAgent::getTree(const BrowsingContext& optionalRoot, std:
 
     auto resultsObject = JSON::ArrayOf<Inspector::Protocol::BidiBrowsingContext::Info>::create();
     getNextTree(WTF::move(pagesToProcess), WTF::move(resultsObject), WTF::move(maxDepth), [callback = WTF::move(callback)](auto&& result) {
-        callback({ { result.value() } });
+        callback(WTF::move(result));
     });
 }
 

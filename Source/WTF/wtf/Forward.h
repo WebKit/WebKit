@@ -337,8 +337,6 @@ using WTF::WeakRef;
 using WTF::WorkQueue;
 using WTF::makeUniqueRef;
 
-template<class T, class E> using Expected = std::experimental::expected<T, E>;
-
 // Sometimes an inline method simply forwards to another one and does nothing else. If it were
 // just a forward declaration of that method then you would only need a forward declaration of
 // its return types and parameter types too, but because it's inline and it actually needs to

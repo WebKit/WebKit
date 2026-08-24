@@ -163,12 +163,12 @@ void ProxyingPageAgent::frameDestroyed(FrameIdentifier frameID)
 
 void ProxyingPageAgent::didCreateFrontendAndBackend()
 {
-    enable();
+    std::ignore = enable();
 }
 
 void ProxyingPageAgent::willDestroyFrontendAndBackend(DisconnectReason)
 {
-    disable();
+    std::ignore = disable();
 }
 
 // MARK: - Enable / disable IPC flow

@@ -79,7 +79,7 @@ PageAgentProxy::~PageAgentProxy()
     // Clear the enabledPageProxy slot on our InstrumentingAgents so a later frame commit
     // doesn't dereference this freed proxy from InspectorInstrumentation. Mirrors
     // FrameNetworkAgentProxy::~FrameNetworkAgentProxy().
-    disable();
+    std::ignore = disable();
 }
 
 void PageAgentProxy::didCreateFrontendAndBackend()
@@ -88,7 +88,7 @@ void PageAgentProxy::didCreateFrontendAndBackend()
 
 void PageAgentProxy::willDestroyFrontendAndBackend(Inspector::DisconnectReason)
 {
-    disable();
+    std::ignore = disable();
 }
 
 CommandResult<void> PageAgentProxy::enable()

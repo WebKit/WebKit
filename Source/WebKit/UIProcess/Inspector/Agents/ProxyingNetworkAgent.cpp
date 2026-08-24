@@ -188,12 +188,12 @@ void ProxyingNetworkAgent::removeAllRegisteredReceivers()
 
 void ProxyingNetworkAgent::didCreateFrontendAndBackend()
 {
-    enable();
+    std::ignore = enable();
 }
 
 void ProxyingNetworkAgent::willDestroyFrontendAndBackend(DisconnectReason)
 {
-    disable();
+    std::ignore = disable();
 }
 
 void ProxyingNetworkAgent::enableInstrumentationForProcess(WebKit::WebProcessProxy& webProcess, WebCore::PageIdentifier pageID)

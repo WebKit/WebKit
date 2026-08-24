@@ -370,7 +370,7 @@ void WebInspectorBackend::ensureNetworkInstrumentationForFrame(LocalFrame& frame
 
     CheckedRef resourceDataStore = m_resourceDataStore.get();
     auto proxy = makeUnique<FrameNetworkAgentProxy>(webContext, *page, resourceDataStore.get(), m_extraRequestHeaders);
-    proxy->enable();
+    std::ignore = proxy->enable();
     m_frameNetworkAgentProxies.add(frameID, WTF::move(proxy));
 }
 
@@ -696,7 +696,7 @@ void WebInspectorBackend::ensurePageInstrumentationForFrame(LocalFrame& frame)
     };
 
     auto proxy = makeUnique<PageAgentProxy>(webContext, *page);
-    proxy->enable();
+    std::ignore = proxy->enable();
 
     // Seed the just-created proxy with the current toggle: a frame can commit after
     // setShowPaintRects(true) was fanned out, and would otherwise default to off.

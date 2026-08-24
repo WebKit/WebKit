@@ -156,7 +156,7 @@ void FrameCSSAgent::didCreateFrontendAndBackend()
 
 void FrameCSSAgent::willDestroyFrontendAndBackend(Inspector::DisconnectReason)
 {
-    disable();
+    std::ignore = disable();
 }
 
 Inspector::CommandResult<void> FrameCSSAgent::enable()

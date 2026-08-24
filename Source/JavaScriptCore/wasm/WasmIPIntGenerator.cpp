@@ -273,9 +273,9 @@ public:
 
     // References
 
-    [[nodiscard]] PartialResult NODELETE addRefIsNull(ExpressionType, ExpressionType&);
+    [[nodiscard]] PartialResult addRefIsNull(ExpressionType, ExpressionType&);
     [[nodiscard]] PartialResult addRefFunc(FunctionSpaceIndex, ExpressionType&);
-    [[nodiscard]] PartialResult NODELETE addRefAsNonNull(ExpressionType, ExpressionType&);
+    [[nodiscard]] PartialResult addRefAsNonNull(ExpressionType, ExpressionType&);
     [[nodiscard]] PartialResult addRefEq(ExpressionType, ExpressionType, ExpressionType&);
 
     // Tables
@@ -293,7 +293,7 @@ public:
 
     [[nodiscard]] PartialResult getLocal(uint32_t index, ExpressionType&);
     [[nodiscard]] PartialResult setLocal(uint32_t, ExpressionType);
-    [[nodiscard]] PartialResult NODELETE teeLocal(uint32_t, ExpressionType, ExpressionType& result);
+    [[nodiscard]] PartialResult teeLocal(uint32_t, ExpressionType, ExpressionType& result);
 
     // Globals
 

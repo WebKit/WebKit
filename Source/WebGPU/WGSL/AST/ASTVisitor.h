@@ -128,7 +128,7 @@ public:
     virtual void visit(AST::Continuing&);
 
     bool NODELETE hasError() const;
-    Result<void> NODELETE result();
+    Result<void> result();
 
     template<typename T> void checkErrorAndVisit(T& x)
     {

@@ -111,14 +111,14 @@ public:
     {
     }
 
-    Ref(Ref&& other)
+    Ref(Ref&& other) noexcept
         : m_ptr(&other.leakRef())
     {
         ASSERT(m_ptr);
     }
 
     template<typename X, typename Y>
-    Ref(Ref<X, Y>&& other)
+    Ref(Ref<X, Y>&& other) noexcept
         : m_ptr(&other.leakRef())
     {
         ASSERT(m_ptr);

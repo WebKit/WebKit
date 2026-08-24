@@ -62,7 +62,7 @@ void FrameDOMStorageAgent::didCreateFrontendAndBackend()
 
 void FrameDOMStorageAgent::willDestroyFrontendAndBackend(Inspector::DisconnectReason)
 {
-    disable();
+    std::ignore = disable();
 }
 
 Inspector::CommandResult<void> FrameDOMStorageAgent::enable()

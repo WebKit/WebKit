@@ -979,7 +979,7 @@ TEST(NativePromise, MoveOnlyType)
     MyPromise::createAndResolve(makeUniqueWithoutFastMallocCheck<int>(87))->whenSettled(queue,
         [queue](MyPromise::Result&& val) {
             EXPECT_TRUE(val.has_value());
-            EXPECT_EQ(87, *(val.value()));
+            EXPECT_EQ(87, *(*val));
         });
 
     MyPromise::createAndReject(makeUniqueWithoutFastMallocCheck<int>(87))->whenSettled(queue,

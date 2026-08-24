@@ -666,7 +666,7 @@ public:
                     if constexpr (std::is_void_v<ResolveValueT>)
                         producer->resolve(i, detail::VoidPlaceholder());
                     else
-                        producer->resolve(i, maybeMove(result.value()));
+                        producer->resolve(i, maybeMove(*result));
                     return;
                 }
                 if constexpr (std::is_void_v<RejectValueT>)
@@ -1056,7 +1056,7 @@ public:
                 if constexpr (std::is_void_v<ResolveValueT>)
                     return invokeWithVoidOrWithArg(WTF::move(resolveFunction), detail::VoidPlaceholder());
                 else
-                    return invokeWithVoidOrWithArg(WTF::move(resolveFunction), maybeMove(result.value()));
+                    return invokeWithVoidOrWithArg(WTF::move(resolveFunction), maybeMove(*result));
             }
             return invokeWithVoidOrWithArg(WTF::move(rejectFunction), maybeMove(result.error()));
         }, callSite);
@@ -1076,7 +1076,7 @@ public:
                 if constexpr (std::is_void_v<ResolveValueT>)
                     return invokeWithVoidOrWithArg(thisVal.get(), resolveMethod, detail::VoidPlaceholder());
                 else
-                    return invokeWithVoidOrWithArg(thisVal.get(), resolveMethod, maybeMove(result.value()));
+                    return invokeWithVoidOrWithArg(thisVal.get(), resolveMethod, maybeMove(*result));
             }
             return invokeWithVoidOrWithArg(thisVal.get(), rejectMethod, maybeMove(result.error()));
         }, callSite);

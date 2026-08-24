@@ -64,7 +64,7 @@ public:
     virtual RefPtr<StyleRuleWithNesting> prepareChildStyleRuleForNesting(StyleRule&);
     virtual void getChildStyleSheets(HashSet<Ref<CSSStyleSheet>>&) { }
 
-    WEBCORE_EXPORT ExceptionOr<void> NODELETE setCssText(const String&);
+    WEBCORE_EXPORT ExceptionOr<void> setCssText(const String&);
 
 protected:
     explicit CSSRule(CSSStyleSheet*);

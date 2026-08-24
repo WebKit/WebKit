@@ -138,7 +138,7 @@ bool ImageFrameAnimator::startAnimation(SubsamplingLevel subsamplingLevel, const
 
     if (options.decodingMode() == DecodingMode::Asynchronous) {
         LOG(Images, "ImageFrameAnimator::%s - %p - url: %s. Decoding for frame at index = %d will be requested.", __FUNCTION__, this, sourceUTF8().data(), nextFrameIndex());
-        source->requestNativeImageAtIndexIfNeeded(nextFrameIndex(), subsamplingLevel, ImageAnimatingState::Yes, options);
+        std::ignore = source->requestNativeImageAtIndexIfNeeded(nextFrameIndex(), subsamplingLevel, ImageAnimatingState::Yes, options);
     }
 
     auto time = MonotonicTime::now();

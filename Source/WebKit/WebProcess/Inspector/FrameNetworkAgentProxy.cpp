@@ -77,7 +77,7 @@ FrameNetworkAgentProxy::FrameNetworkAgentProxy(WebAgentContext& context, WebPage
 
 FrameNetworkAgentProxy::~FrameNetworkAgentProxy()
 {
-    disable();
+    std::ignore = disable();
 }
 
 void FrameNetworkAgentProxy::didCreateFrontendAndBackend()
@@ -86,7 +86,7 @@ void FrameNetworkAgentProxy::didCreateFrontendAndBackend()
 
 void FrameNetworkAgentProxy::willDestroyFrontendAndBackend(DisconnectReason)
 {
-    disable();
+    std::ignore = disable();
 }
 
 CommandResult<void> FrameNetworkAgentProxy::enable()
