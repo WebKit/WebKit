@@ -197,9 +197,9 @@ void CanvasBase::notifyObserversCanvasDisplayBufferPrepared()
         observer->canvasDisplayBufferPrepared(*this);
 }
 
-HashSet<Element*> CanvasBase::cssCanvasClients() const
+HashSet<Ref<Element>> CanvasBase::cssCanvasClients() const
 {
-    HashSet<Element*> cssCanvasClients;
+    HashSet<Ref<Element>> cssCanvasClients;
     for (CheckedRef observer : m_observers) {
         RefPtr image = dynamicDowncast<Style::CanvasImage>(observer.get());
         if (!image)
@@ -208,7 +208,7 @@ HashSet<Element*> CanvasBase::cssCanvasClients() const
         for (auto entry : image->clients()) {
             CheckedRef client = entry.key;
             if (RefPtr element = client->element())
-                cssCanvasClients.add(element.get());
+                cssCanvasClients.add(element.releaseNonNull());
         }
     }
     return cssCanvasClients;

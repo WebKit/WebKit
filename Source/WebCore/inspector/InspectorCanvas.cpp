@@ -290,7 +290,7 @@ JSC::JSValue InspectorCanvas::resolveContext(JSC::JSGlobalObject* exec)
     );
 }
 
-HashSet<Element*> InspectorCanvas::cssCanvasClientNodes() const
+HashSet<Ref<Element>> InspectorCanvas::cssCanvasClientNodes() const
 {
     return WTF::switchOn(m_context,
         [](const WeakRef<CanvasRenderingContext>& weakContext) {
@@ -299,14 +299,14 @@ HashSet<Element*> InspectorCanvas::cssCanvasClientNodes() const
         },
         [](const WeakRef<GPUDevice, WeakPtrImplWithEventTargetData>& weakDevice) {
             Ref device = weakDevice;
-            HashSet<Element*> cssCanvasClientNodes;
+            HashSet<Ref<Element>> cssCanvasClientNodes;
             Locker locker { CanvasRenderingContext::instancesLock() };
             for (SUPPRESS_UNCOUNTED_ARG auto* context : CanvasRenderingContext::instances()) {
                 if (!context->isContextThread() || !canvasContextMatchesDevice(*context, device))
                     continue;
 
-                for (auto& cssCanvasClientNode : context->canvasBase().cssCanvasClients())
-                    cssCanvasClientNodes.add(cssCanvasClientNode);
+                for (Ref cssCanvasClientNode : context->canvasBase().cssCanvasClients())
+                    cssCanvasClientNodes.add(WTF::move(cssCanvasClientNode));
             }
             return cssCanvasClientNodes;
         }

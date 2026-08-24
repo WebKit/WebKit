@@ -129,10 +129,10 @@ Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::DOM::N
         return makeUnexpected(errorString);
 
     auto nodeIds = JSON::ArrayOf<Inspector::Protocol::DOM::NodeId>::create();
-    for (RefPtr cssCanvasClientNode : inspectorCanvas->cssCanvasClientNodes()) {
+    for (Ref cssCanvasClientNode : inspectorCanvas->cssCanvasClientNodes()) {
         // FIXME: <https://webkit.org/b/213499> Web Inspector: allow DOM nodes to be instrumented at any point, regardless of whether the main document has also been instrumented
         if (auto documentNodeId = domAgent->boundNodeId(protect(cssCanvasClientNode->document()).ptr()))
-            nodeIds->addItem(domAgent->pushNodeToFrontend(errorString, documentNodeId, cssCanvasClientNode));
+            nodeIds->addItem(domAgent->pushNodeToFrontend(errorString, documentNodeId, cssCanvasClientNode.ptr()));
     }
 
     m_pendingCSSCanvasClientNodesChange.remove(*inspectorCanvas);

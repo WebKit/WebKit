@@ -82,7 +82,7 @@ public:
 
     JSC::JSValue resolveContext(JSC::JSGlobalObject*);
 
-    HashSet<Element*> cssCanvasClientNodes() const;
+    HashSet<Ref<Element>> cssCanvasClientNodes() const;
     size_t memoryCost() const;
 
     void canvasChanged();
