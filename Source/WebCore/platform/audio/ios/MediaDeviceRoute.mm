@@ -243,6 +243,19 @@ static MediaTimeRange convert(CMTimeRange timeRange)
     return { WTF::move(start), start + PAL::toMediaTime(timeRange.duration) };
 }
 
+static CMTime convert(MediaDeviceRoute::SeekTolerance tolerance)
+{
+    switch (tolerance) {
+    case MediaDeviceRoute::SeekTolerance::Precise:
+        return PAL::kCMTimeZero;
+    case MediaDeviceRoute::SeekTolerance::Approximate:
+        return PAL::kCMTimePositiveInfinity;
+    }
+
+    ASSERT_NOT_REACHED();
+    return PAL::kCMTimeZero;
+}
+
 static std::optional<MediaPlaybackSourceError> convert(NSError * _Nullable error)
 {
     if (!error)
@@ -311,10 +324,9 @@ WebMediaDevicePlatformRoute *MediaDeviceRoute::platformRoute() const
     return m_platformRoute.get();
 }
 
-void MediaDeviceRoute::setPlaybackPosition(MediaTime playbackPosition)
+void MediaDeviceRoute::seekToPosition(MediaTime playbackPosition, SeekTolerance tolerance)
 {
-    // FIXME: We should introduce a proper seek-with-tolerance function on MediaDeviceRoute rather than assuming a zero tolerance here.
-    [[m_playbackControlObserver playbackControl] seekToPosition:convert(WTF::move(playbackPosition)) tolerance:PAL::kCMTimeZero];
+    [[m_playbackControlObserver playbackControl] seekToPosition:convert(WTF::move(playbackPosition)) tolerance:convert(tolerance)];
 }
 
 MediaDeviceRoute::~MediaDeviceRoute()

@@ -96,6 +96,8 @@ public:
     bool muted() const;
     void setMuted(bool);
 
+    String lastSeekTolerance() const;
+
 private:
     MockMediaDeviceRoute();
 

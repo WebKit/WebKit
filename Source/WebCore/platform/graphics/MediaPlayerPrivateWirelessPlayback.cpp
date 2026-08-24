@@ -295,6 +295,13 @@ bool MediaPlayerPrivateWirelessPlayback::hasAudio() const
     return false;
 }
 
+static MediaDeviceRoute::SeekTolerance seekTolerance(const SeekTarget& seekTarget)
+{
+    if (!seekTarget.negativeThreshold && !seekTarget.positiveThreshold)
+        return MediaDeviceRoute::SeekTolerance::Precise;
+    return MediaDeviceRoute::SeekTolerance::Approximate;
+}
+
 Ref<MediaTimePromise> MediaPlayerPrivateWirelessPlayback::seekToTarget(const SeekTarget& seekTarget)
 {
     RefPtr route = this->route();
@@ -303,7 +310,8 @@ Ref<MediaTimePromise> MediaPlayerPrivateWirelessPlayback::seekToTarget(const See
 
     ALWAYS_LOG(LOGIDENTIFIER, seekTarget);
     m_seekPromise.emplace(PlatformMediaError::Cancelled);
-    route->setPlaybackPosition(seekTarget.time);
+
+    route->seekToPosition(seekTarget.time, seekTolerance(seekTarget));
     return *m_seekPromise;
 }
 

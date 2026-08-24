@@ -43,6 +43,7 @@
     attribute MockMediaDeviceRouteTimeRange timeRange;
     attribute float volume;
     attribute boolean muted;
+    readonly attribute DOMString lastSeekTolerance;
 };
 
 [

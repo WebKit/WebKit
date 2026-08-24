@@ -1,0 +1,63 @@
+<!DOCTYPE html><!-- webkit-test-runner [ WirelessPlaybackMediaPlayerEnabled=true ] -->
+<html>
+    <head>
+        <script src='../media-file.js'></script>
+        <script src='../video-test.js'></script>
+        <script>
+            var route;
+            var video;
+
+            async function start()
+            {
+                if (window.internals)
+                    internals.mockMediaDeviceRouteController.enabled = true;
+
+                route = internals.mockMediaDeviceRouteController.createMockMediaDeviceRoute();
+                run(`internals.mockMediaDeviceRouteController.activateRoute(route)`);
+
+                const urlPromise = new Promise((resolve) => {
+                    route.setURLCallback(async (url) => {
+                        resolve(url);
+                    });
+                });
+
+                video = document.getElementsByTagName('video')[0];
+                run(`video.src = findMediaFile('video', '../content/test')`);
+                run(`route.playbackRate = 1`);
+                run(`route.timeRange = { start: 0, duration: 60 }`);
+                run(`video.play()`);
+                await urlPromise;
+
+                const canplaythroughPromise = waitFor(video, 'canplaythrough');
+                run(`route.ready = true`);
+                await canplaythroughPromise;
+
+                consoleWrite('Setting currentTime requests a precise seek.');
+                run(`video.currentTime = 30`);
+                await waitFor(video, 'seeked');
+                testExpected('route.lastSeekTolerance', 'precise');
+
+                consoleWrite('Seeking forward with fastSeek() requests an approximate seek.');
+                run(`video.fastSeek(45)`);
+                await waitFor(video, 'seeked');
+                testExpected('route.lastSeekTolerance', 'approximate');
+
+                consoleWrite('Setting currentTime again requests a precise seek.');
+                run(`video.currentTime = 50`);
+                await waitFor(video, 'seeked');
+                testExpected('route.lastSeekTolerance', 'precise');
+
+                consoleWrite('Seeking backward with fastSeek() requests an approximate seek.');
+                run(`video.fastSeek(15)`);
+                await waitFor(video, 'seeked');
+                testExpected('route.lastSeekTolerance', 'approximate');
+
+                endTest();
+            }
+        </script>
+    </head>
+    <body onload='start()'>
+        <video controls></video>
+        <p>Test that MediaDeviceRoute requests a precise seek when setting currentTime and an approximate seek for fastSeek().</p>
+    </body>
+</html>

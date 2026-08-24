@@ -132,7 +132,8 @@ public:
     bool muted() const;
     float volume() const;
 
-    void setPlaybackPosition(MediaTime);
+    enum class SeekTolerance : bool { Approximate, Precise };
+    void seekToPosition(MediaTime, SeekTolerance);
     void setPlaying(bool);
     void setPlaybackSpeed(float);
     void setScanSpeed(float);

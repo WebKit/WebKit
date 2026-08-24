@@ -201,6 +201,18 @@ void MockMediaDeviceRoute::setMuted(bool muted)
     [m_platformRoute setMuted:muted];
 }
 
+String MockMediaDeviceRoute::lastSeekTolerance() const
+{
+    CMTime tolerance = [m_platformRoute lastSeekTolerance];
+    if (CMTIME_IS_INVALID(tolerance))
+        return "none"_s;
+    if (CMTIME_COMPARE_INLINE(tolerance, ==, kCMTimeZero))
+        return "precise"_s;
+    if (CMTIME_IS_POSITIVE_INFINITY(tolerance))
+        return "approximate"_s;
+    return "unexpected"_s;
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(WIRELESS_PLAYBACK_MEDIA_PLAYER)

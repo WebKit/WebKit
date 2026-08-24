@@ -49,6 +49,7 @@ NSErrorDomain const WebMockMediaDeviceRouteErrorDomain = @"WebMockMediaDeviceRou
     RefPtr<WebCore::MockMediaDeviceRouteURLCallback> _urlCallback;
     RefPtr<WebCore::DOMPromise> _urlPromise;
     BOOL _connected;
+    CMTime _lastSeekTolerance;
 }
 
 @synthesize timeRange;
@@ -84,12 +85,19 @@ NSErrorDomain const WebMockMediaDeviceRouteErrorDomain = @"WebMockMediaDeviceRou
         return nil;
 
     timeRange = CMTimeRangeMake(kCMTimeZero, CMTimeMakeWithSeconds(60, 1000));
+    _lastSeekTolerance = kCMTimeInvalid;
 
     return self;
 }
 
+- (CMTime)lastSeekTolerance
+{
+    return _lastSeekTolerance;
+}
+
 - (void)seekToPosition:(CMTime)position tolerance:(CMTime)tolerance
 {
+    _lastSeekTolerance = tolerance;
     RetainPtr playbackPosition = adoptNS([allocAVPlaybackUserInterfacePlaybackPositionInstance() initWithPosition:position hostTime:CMClockGetTime(CMClockGetHostTimeClock()) rate:0]);
     self.playbackPosition = playbackPosition.get();
 }

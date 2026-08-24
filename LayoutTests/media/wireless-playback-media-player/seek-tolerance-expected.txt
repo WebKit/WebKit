@@ -1,0 +1,28 @@
+
+Test that MediaDeviceRoute requests a precise seek when setting currentTime and an approximate seek for fastSeek().
+
+RUN(internals.mockMediaDeviceRouteController.activateRoute(route))
+RUN(video.src = findMediaFile('video', '../content/test'))
+RUN(route.playbackRate = 1)
+RUN(route.timeRange = { start: 0, duration: 60 })
+RUN(video.play())
+RUN(route.ready = true)
+EVENT(canplaythrough)
+Setting currentTime requests a precise seek.
+RUN(video.currentTime = 30)
+EVENT(seeked)
+EXPECTED (route.lastSeekTolerance == 'precise') OK
+Seeking forward with fastSeek() requests an approximate seek.
+RUN(video.fastSeek(45))
+EVENT(seeked)
+EXPECTED (route.lastSeekTolerance == 'approximate') OK
+Setting currentTime again requests a precise seek.
+RUN(video.currentTime = 50)
+EVENT(seeked)
+EXPECTED (route.lastSeekTolerance == 'precise') OK
+Seeking backward with fastSeek() requests an approximate seek.
+RUN(video.fastSeek(15))
+EVENT(seeked)
+EXPECTED (route.lastSeekTolerance == 'approximate') OK
+END OF TEST
+
