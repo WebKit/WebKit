@@ -323,6 +323,7 @@ public:
     void terminateAllWebContentProcesses(ProcessTerminationReason);
     void terminateServiceWorkersForSession(PAL::SessionID);
     void terminateServiceWorkers();
+    void terminateSharedWorkers();
 
     void setShouldMakeNextWebProcessLaunchFailForTesting(bool value) { m_shouldMakeNextWebProcessLaunchFailForTesting = value; }
     bool shouldMakeNextWebProcessLaunchFailForTesting() const { return m_shouldMakeNextWebProcessLaunchFailForTesting; }
