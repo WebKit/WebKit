@@ -26,7 +26,7 @@ import os
 import re
 import time
 
-from webkitpy.api_tests.runner import Runner
+from webkitpy.api_tests.runner import EarlyExitException, Runner
 from webkitpy.api_tests.test_expectations import (
     APITestExpectations, PASS, FAIL, CRASH, TIMEOUT,
     runner_status_to_expectation,
@@ -360,9 +360,12 @@ class Manager(object):
         try:
             _log.info('Running tests')
             runner = Runner(self._port, self._stream, expectations=self._expectations)
+            runner.exit_after_n_failures = getattr(self._options, 'exit_after_n_failures', None)
             for i in range(self._options.iterations):
                 _log.debug(f'\nIteration {i + 1}')
                 runner.run(test_names, int(self._options.child_processes) if self._options.child_processes else None)
+        except EarlyExitException as e:
+            self._stream.writeln(f'\nExiting early after {e.failure_count} failures.')
         except KeyboardInterrupt:
             # If we receive a KeyboardInterrupt, print results.
             self._stream.writeln('')
