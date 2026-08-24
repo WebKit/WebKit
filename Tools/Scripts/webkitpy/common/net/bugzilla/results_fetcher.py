@@ -26,14 +26,11 @@
 # THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 # SUCH DAMAGE.
 
-import json
 import logging
 import re
 
 import requests
 
-from webkitpy.common.config.urls import ewsserver_default_host
-from webkitpy.common.net.bugzilla import bugzilla
 from webkitpy.common.net.bugzilla.ews import EWS
 
 try:
@@ -152,63 +149,6 @@ def lookup_ews_results(ews_build_urls, bot_filter_name=None):
             break
 
     return ews_results
-
-
-def lookup_ews_results_from_bugzilla_patch(patch, bot_filter_name=None):
-    _log.info(
-        "Looking for EWS results in patch attachment %s from bug %s"
-        % (patch.id(), patch.bug().id())
-    )
-    ews_bubbles_url = "https://{}/status/{}/".format(ewsserver_default_host, patch.id())
-    _log.debug("Querying bubble status at {}".format(ews_bubbles_url))
-    ews_bubbles_status_request = requests.get(ews_bubbles_url)
-    ews_bubbles_status_request.raise_for_status()
-    ews_bubbles_status = json.loads(ews_bubbles_status_request.text)
-
-    ews_bubbles_urls = [v["url"] for v in ews_bubbles_status.values()]
-
-    return lookup_ews_results(ews_bubbles_urls, bot_filter_name)
-
-
-def lookup_ews_results_from_bugzilla(
-    bugzilla_id, is_bug_id=True, attachment_fetcher=None, bot_filter_name=None
-):
-    attachment_fetcher = (
-        bugzilla.Bugzilla() if attachment_fetcher is None else attachment_fetcher
-    )
-
-    if is_bug_id:
-        bug_info = attachment_fetcher.fetch_bug(bugzilla_id)
-        attachments = [
-            attachments
-            for attachments in bug_info.attachments(include_obsolete=False)
-            if attachments.is_patch()
-        ]
-
-        if len(attachments) > 1:
-            msg = (
-                "Found more than one non-obsolete patch in bug {}. "
-                "Please specify which one to process."
-            ).format(bugzilla_id)
-            raise RuntimeError(msg)
-
-        if len(attachments) < 1:
-            msg = (
-                "Couldn't find any non-obsolete patch in bug {}. "
-                "Please specify which one to process."
-            ).format(bugzilla_id)
-            raise RuntimeError(msg)
-
-        patch = attachments[0]
-
-    else:
-        patch = attachment_fetcher.fetch_attachment(bugzilla_id)
-
-    if not patch.is_patch():
-        msg = "Attachment {} its not a patch. Can't continue.".format(bugzilla_id)
-        raise RuntimeError(msg)
-
-    return lookup_ews_results_from_bugzilla_patch(patch, bot_filter_name)
 
 
 def lookup_ews_results_from_pr(pr):

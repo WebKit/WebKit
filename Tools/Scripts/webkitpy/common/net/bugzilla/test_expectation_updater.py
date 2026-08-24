@@ -35,10 +35,7 @@ import requests
 from webkitscmpy import local
 
 from webkitpy.common.host import Host
-from webkitpy.common.net.bugzilla.results_fetcher import (
-    lookup_ews_results_from_bugzilla,
-    lookup_ews_results_from_repo_via_pr,
-)
+from webkitpy.common.net.bugzilla.results_fetcher import lookup_ews_results_from_repo_via_pr
 from webkitpy.common.net.layouttestresults import LayoutTestResults
 from webkitpy.common.webkit_finder import WebKitFinder
 from webkitpy.layout_tests.controllers.test_result_writer import TestResultWriter
@@ -96,28 +93,6 @@ def argument_parser(prog=None):
         title="Subcommands", dest="subcommand", required=True
     )
 
-    bugzilla_parser = subparsers.add_parser(
-        "bugzilla", help="Update from Bugzilla patch, from EWS bots"
-    )
-
-    bugzilla_parser.add_argument(
-        "-a",
-        "--is-attachment-id",
-        dest="is_bug_id",
-        action="store_false",
-        default=True,
-        help="Search by attachment id (rather than bug id)",
-    )
-    bugzilla_parser.add_argument(
-        "-b",
-        "--bot-filter",
-        dest="bot_filter_name",
-        action="store",
-        default=None,
-        help="Only process results for bots where BOT_FILTER_NAME is a substring of the bot name",
-    )
-    bugzilla_parser.add_argument("bugzilla_id", help="Bugzilla bug ID to lookup")
-
     github_pr_parser = subparsers.add_parser(
         "github-pr", help="Update from GitHub PR, from EWS bots"
     )
@@ -172,33 +147,12 @@ class TestExpectationUpdater(object):
                 _log.info("Updating " + test_name + " for " + platform_name + " ( REMOVED: " + expected_filename + ")")
                 self.filesystem.remove(expected_filename)
 
-    def fetch_from_bugzilla(
-        self, bugzilla_id, is_bug_id=True, bot_filter_name=None, attachment_fetcher=None
-    ):
-        self.ews_results = lookup_ews_results_from_bugzilla(
-            bugzilla_id,
-            is_bug_id,
-            attachment_fetcher,
-            bot_filter_name,
-        )
-
     def fetch_from_github_pr(self, repository):
         self.ews_results = lookup_ews_results_from_repo_via_pr(repository)
 
     def do_update(self):
         if len(self.ews_results) == 0:
-            if self.bot_filter_name:
-                msg = (
-                    "Couldn't find any failed EWS result in attachment/patch {} that "
-                    "matches filter name."
-                ).format(self.patch.id())
-                raise RuntimeError(msg)
-
-            msg = (
-                "Couldn't find any failed EWS result for attachment/patch {}. "
-                "Try to specify a bot filter name manually."
-            ).format(self.patch.id())
-            raise RuntimeError(msg)
+            raise RuntimeError("Couldn't find any failed EWS result for this pull request.")
 
         generic_bots = [platform_name for platform_name in self.ews_results if platform_name == "mac-wk2"]
         platform_bots = [platform_name for platform_name in self.ews_results if platform_name != "mac-wk2"]
@@ -224,11 +178,7 @@ def main(_argv, _stdout, _stderr, prog=None):
 
     updater = TestExpectationUpdater(port)
 
-    if options.subcommand == "bugzilla":
-        updater.fetch_from_bugzilla(
-            options.bugzilla_id, options.is_bug_id, options.bot_filter_name
-        )
-    elif options.subcommand == "github-pr":
+    if options.subcommand == "github-pr":
         repo_path = WebKitFinder(host.filesystem).webkit_base()
         repository = local.Scm.from_path(
             path=repo_path,

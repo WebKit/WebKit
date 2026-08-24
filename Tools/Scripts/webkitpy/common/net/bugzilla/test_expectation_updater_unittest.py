@@ -600,9 +600,9 @@ class TestExpectationUpdaterTest(unittest.TestCase):
             "win": ["https://ews-build.webkit.org/results/win/r12345.zip"],
         }
 
-        with mock.patch('webkitpy.common.net.bugzilla.test_expectation_updater.lookup_ews_results_from_bugzilla', mock.Mock(return_value=ews_results)), mock.patch('requests.get', MockRequestsGet):
+        with mock.patch('webkitpy.common.net.bugzilla.test_expectation_updater.lookup_ews_results_from_repo_via_pr', mock.Mock(return_value=ews_results)), mock.patch('requests.get', MockRequestsGet):
             updater = TestExpectationUpdater(port)
-            updater.fetch_from_bugzilla("123456", True, False, None)
+            updater.fetch_from_github_pr(None)
             updater.do_update()
             # mac-wk2 expectation
             self.assertTrue(self._is_matching(host, "imported/w3c/web-platform-tests/fetch/api/redirect/redirect-count-cross-origin-expected.txt", "a"))

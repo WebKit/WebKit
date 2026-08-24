@@ -225,20 +225,6 @@ class ResultsFetcherTest(unittest.TestCase):
             )
         )
 
-    def test_lookup_ews_results_from_bugzilla(self):
-        with mock.patch("requests.Session.get", MockRequestsGet), mock.patch("requests.get", MockRequestsGet):
-            actual = results_fetcher.lookup_ews_results_from_bugzilla("123456", True, MockBugzilla())
-            expected = {
-                "mac-wk1": [
-                    "https://ews-build.webkit.org/results/mac-wk1/r12345.zip",
-                    "https://ews-build.webkit.org/results/mac-debug-wk1/r12345.zip",
-                ],
-                "mac-wk2": ["https://ews-build.webkit.org/results/mac-wk2/r12345.zip"],
-                "ios": ["https://ews-build.webkit.org/results/ios/r12345.zip"],
-                "win": ["https://ews-build.webkit.org/results/win/r12345.zip"],
-            }
-            self.assertEqual(expected, actual)
-
 
 class ResultsFetcherGitHubTest(PathTestCase):
     basepath = "dir"
