@@ -142,7 +142,7 @@ ProvisionalPageProxy::ProvisionalPageProxy(WebPageProxy& page, Ref<FrameProcess>
         previousMainFrame->transferNavigationCallbackToFrame(mainFrame);
     }
 
-    if (isProcessSwappingOnNavigationResponse && previousMainFrame)
+    if (isProcessSwappingOnNavigationResponse && previousMainFrame && !m_shouldReuseMainFrame)
         protect(m_mainFrame)->copyCertificateInfoForProcessSwapOnNavigationResponse(m_provisionalLoadURL, *previousMainFrame);
 
     // Normally, notification of a server redirect comes from the WebContent process.
