@@ -2177,23 +2177,6 @@ ts","version":4,"num_passes":42158,"pixel_tests_enabled":false,"date":"11:28AM o
         self.expect_outcome(result=FAILURE, state_string='layout-tests (failure)')
         return self.run_step()
 
-    def test_success_wpt_import_bot(self):
-        self.configureStep()
-        self.setProperty('fullPlatform', 'ios-simulator')
-        self.setProperty('configuration', 'release')
-        self.setProperty('patch_author', 'webkit-wpt-import-bot@igalia.com')
-        self.expectRemoteCommands(
-            ExpectShell(workdir='wkdir',
-                        logfiles={'json': self.jsonFileName},
-                        log_environ=False,
-                        timeout=19800,
-                        command=['/bin/bash', '--posix', '-o', 'pipefail', '-c', 'python3 Tools/Scripts/run-webkit-tests --no-build --no-show-results --no-new-test-results --clobber-old-results --release --results-directory layout-test-results --debug-rwt-logging imported/w3c/web-platform-tests 2>&1 | Tools/Scripts/filter-test-logs layout'],
-                        )
-            .exit(0),
-        )
-        self.expect_outcome(result=SUCCESS, state_string='Passed layout tests')
-        return self.run_step()
-
     def test_failure_no_failure_limits(self):
         self.configureStep()
         self.setProperty('fullPlatform', 'ios-simulator')

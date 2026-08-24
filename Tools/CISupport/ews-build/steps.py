@@ -1464,10 +1464,6 @@ class GetTestExpectationsBaseline(shell.ShellCommand, ShellMixin):
         platform = self.getProperty('platform')
         self.command += customBuildFlag(platform, self.getProperty('fullPlatform'))
 
-        patch_author = self.getProperty('patch_author')
-        if patch_author in ['webkit-wpt-import-bot@igalia.com']:
-            self.command += ['imported/w3c/web-platform-tests']
-
         additionalArguments = self.getProperty('additionalArguments', '')
         if additionalArguments:
             self.command += additionalArguments
@@ -1495,10 +1491,6 @@ class GetUpdatedTestExpectations(steps.ShellSequence, ShellMixin):
         configuration_flag = [f"--{self.getProperty('configuration')}"] if self.getProperty('configuration') else []
         platform_flag = customBuildFlag(self.getProperty('platform'), self.getProperty('fullPlatform'))
         run_webkit_command = ['python3', 'Tools/Scripts/run-webkit-tests', '--print-expectations'] + configuration_flag + platform_flag
-
-        patch_author = self.getProperty('patch_author')
-        if patch_author in ['webkit-wpt-import-bot@igalia.com']:
-            run_webkit_command += ['imported/w3c/web-platform-tests']
 
         additionalArguments = self.getProperty('additionalArguments', '')
         if additionalArguments:
@@ -3937,10 +3929,7 @@ class RunWebKitTests(shell.Test, ResultsDBReportMixin, AddToLogMixin, ShellMixin
         self.command += ['--results-directory', self.resultDirectory]
         self.command += ['--debug-rwt-logging']
 
-        patch_author = self.getProperty('patch_author')
-        if patch_author in ['webkit-wpt-import-bot@igalia.com']:
-            self.command += ['imported/w3c/web-platform-tests']
-        elif GitHub.NO_FAILURE_LIMITS_LABEL in self.getProperty('github_labels', []):
+        if GitHub.NO_FAILURE_LIMITS_LABEL in self.getProperty('github_labels', []):
             self.command += ['--no-retry']
             self.maxTime = 60 * 90
         else:
