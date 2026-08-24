@@ -3,10 +3,6 @@ if (CMAKE_SYSTEM_NAME STREQUAL "iOS")
     set_target_properties(WebCore PROPERTIES
         INSTALL_NAME_DIR "${WebCore_INSTALL_NAME_DIR}"
     )
-    target_link_options(WebCore PRIVATE
-        -compatibility_version 1.0.0
-        -current_version ${WEBKIT_MAC_VERSION}
-    )
 endif ()
 
 file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/WebCore/Modules")

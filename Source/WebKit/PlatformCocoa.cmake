@@ -122,6 +122,10 @@ list(APPEND WebKit_SOURCES
     UIProcess/API/Cocoa/_WKResourceLoadStatisticsFirstParty.mm
     UIProcess/API/Cocoa/_WKResourceLoadStatisticsThirdParty.mm
     ${WEBKIT_DIR}/UIProcess/API/Cocoa/Logger+Extras.swift
+    ${WEBKIT_DIR}/UIProcess/API/Cocoa/ObjectiveCBlockConversions.swift
+    ${WEBKIT_DIR}/UIProcess/API/Cocoa/WebKitSwiftOverlay.swift
+    ${WEBKIT_DIR}/UIProcess/API/Cocoa/WKContentWorld.swift
+    ${WEBKIT_DIR}/UIProcess/API/Cocoa/_WKRectEdge+Extras.swift
 
     UIProcess/Cocoa/PreferenceObserver.mm
     UIProcess/Cocoa/WKShareSheet.mm
@@ -500,11 +504,8 @@ list(APPEND WebKit_SOURCES
     ${WEBKIT_DIR}/ModelProcess/cocoa/WKUSDStageConverter.swift
     ${WEBKIT_DIR}/Platform/spi/visionos/WKSurroundingsEffect.swift
     ${WEBKIT_DIR}/Platform/spi/visionos/WKSurroundingsEffectView.swift
-    ${WEBKIT_DIR}/UIProcess/API/Cocoa/ObjectiveCBlockConversions.swift
-    ${WEBKIT_DIR}/UIProcess/API/Cocoa/WebKitSwiftOverlay.swift
     ${WEBKIT_DIR}/UIProcess/API/Cocoa/WKWebViewConfiguration+Extras.swift
     ${WEBKIT_DIR}/UIProcess/API/Cocoa/WKWebpagePreferences+Extras.swift
-    ${WEBKIT_DIR}/UIProcess/API/Cocoa/_WKRectEdge+Extras.swift
     ${WEBKIT_DIR}/UIProcess/API/Swift/URLSchemeHandler.swift
     ${WEBKIT_DIR}/UIProcess/API/Swift/WebPage.swift
     ${WEBKIT_DIR}/UIProcess/API/Swift/WebPage+BackForwardList.swift
@@ -627,7 +628,6 @@ set(WebKit_FORWARDING_HEADERS_DIRECTORIES
     WebProcess/InjectedBundle/API/mac
 )
 
-set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -compatibility_version 1 -current_version ${WEBKIT_MAC_VERSION}")
 target_link_options(WebKit PRIVATE -framework AuthKit)
 
 
@@ -2525,6 +2525,10 @@ add_custom_target(WebKit_CopyModules ALL DEPENDS
         "${_wk_modules_dir}/module.modulemap"
         "${_wk_modules_dir}/module.private.modulemap")
 list(APPEND WebKit_DEPENDENCIES WebKit_CopyModules)
+
+# The staging command above depends on WebKit, so this target must not be added
+# to WebKit_DEPENDENCIES; ALL is what gets it built.
+add_custom_target(WebKit_StageSwiftModuleMac ALL DEPENDS ${_wk_swiftmodule_outputs})
 
 add_custom_command(
     OUTPUT "${_wk_modules_dir}/WebKit.swiftcrossimport/SwiftUI.swiftoverlay"

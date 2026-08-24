@@ -258,10 +258,6 @@ set(WebKitLegacy_POST_BUILD_COMMAND
 set_target_properties(WebKitLegacy PROPERTIES
     INSTALL_NAME_DIR "${WebKitLegacy_INSTALL_NAME_DIR}"
 )
-target_link_options(WebKitLegacy PRIVATE
-    -compatibility_version 1.0.0
-    -current_version ${WEBKIT_MAC_VERSION}
-)
 
 target_link_options(WebKitLegacy PRIVATE
     -exported_symbols_list ${WEBKITLEGACY_DIR}/WebKitLegacy-iOS.exp
@@ -1725,4 +1721,4 @@ set(WebKitLegacy_PROJECT_HEADERS
     mac/WebView/WebViewRenderingUpdateScheduler.h
 )
 
-set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -compatibility_version 1 -current_version ${WEBKIT_MAC_VERSION} -framework SecurityInterface")
+set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -framework SecurityInterface")

@@ -183,10 +183,6 @@ if (WEBKIT_SDK_IS_IOS_FAMILY)
     set_target_properties(JavaScriptCore PROPERTIES
         INSTALL_NAME_DIR "${JavaScriptCore_INSTALL_NAME_DIR}"
     )
-    target_link_options(JavaScriptCore PRIVATE
-        -compatibility_version 1.0.0
-        -current_version ${WEBKIT_MAC_VERSION}
-    )
 
     if (WTF_LIBRARY_TYPE STREQUAL "STATIC")
         target_link_options(JavaScriptCore PRIVATE

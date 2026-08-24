@@ -569,7 +569,11 @@ sub determineArchitecture
         }
     }
 
-    if (isCMakeBuild()) {
+    # Apple Cocoa already resolved the architecture above, and it is the one the
+    # CMake presets build (CMAKE_OSX_ARCHITECTURES=arm64e); cmake --system-information
+    # reports CMAKE_SYSTEM_PROCESSOR, which is arm64, and probing it costs a full
+    # compiler run on every invocation.
+    if (isCMakeBuild() && !isAppleCocoaWebKit()) {
         if (isCrossCompilation()) {
             my $compiler = "gcc";
             $compiler = $ENV{'CC'} if (defined($ENV{'CC'}));
@@ -872,6 +876,7 @@ sub argumentsForConfiguration()
     push(@args, '--visionos-simulator') if (defined $xcodeSDKPlatformName && $xcodeSDKPlatformName eq 'xrsimulator');
     push(@args, '--maccatalyst') if (defined $xcodeSDKPlatformName && $xcodeSDKPlatformName eq 'maccatalyst');
     push(@args, '--32-bit') if ($architecture eq "x86");
+    push(@args, '--cmake') if (isAppleCocoaWebKit() && isCMakeBuild());
     push(@args, '--gtk') if isGtk();
     push(@args, '--wpe') if isWPE();
     push(@args, '--jsc-only') if isJSCOnly();
@@ -1186,6 +1191,19 @@ sub usesPerConfigurationBuildDirectory
     return (defined $ENV{"WEBKIT_OUTPUTDIR"});
 }
 
+# The directory Xcode builds into, whether or not this invocation selected the
+# CMake tree. Products only Xcode knows how to build (Safari and the frameworks
+# above WebKit) live here even when WebKit itself came from cmake-mac.
+sub xcodeConfigurationProductDir
+{
+    determineBaseProductDir();
+    determineConfiguration();
+    return $baseProductDir if usesPerConfigurationBuildDirectory();
+    my $dir = File::Spec->catdir($baseProductDir, $configuration);
+    $dir .= "-" . xcodeSDKPlatformName() if isEmbeddedWebKit() || isMacCatalystWebKit();
+    return $dir;
+}
+
 sub determineConfigurationProductDir
 {
     return if defined $configurationProductDir;
@@ -1193,23 +1211,19 @@ sub determineConfigurationProductDir
     determineConfiguration();
     if (isWin() || isPlayStation() || (isJSCOnly() && isWindows())) {
         $configurationProductDir = File::Spec->catdir($baseProductDir, $configuration);
+    } elsif (usesPerConfigurationBuildDirectory()) {
+        $configurationProductDir = "$baseProductDir";
+    } elsif (isGtk() or isWPE() or isJSCOnly() or shouldBuildForCrossTarget() or inCrossTargetEnvironment()) {
+        $configurationProductDir = "$baseProductDir/$portName/$configuration";
+    } elsif (isAppleCocoaWebKit() && isCMakeBuild()) {
+        # Sanitizer presets build into a dedicated dir, e.g. cmake-mac/ASan.
+        my $cmakeConfiguration = $configuration;
+        $cmakeConfiguration = "ASan" if asanIsEnabled();
+        $cmakeConfiguration = "TSan" if tsanIsEnabled();
+        $configurationProductDir = "$baseProductDir/cmake-mac/$cmakeConfiguration";
+        $configurationProductDir .= "-" . xcodeSDKPlatformName() if isEmbeddedWebKit() || isMacCatalystWebKit();
     } else {
-        if (usesPerConfigurationBuildDirectory()) {
-            $configurationProductDir = "$baseProductDir";
-        } else {
-            if (isGtk() or isWPE() or isJSCOnly() or shouldBuildForCrossTarget() or inCrossTargetEnvironment()) {
-                $configurationProductDir = "$baseProductDir/$portName/$configuration";
-            } elsif (isAppleCocoaWebKit() && isCMakeBuild()) {
-                # Sanitizer presets build into a dedicated dir, e.g. cmake-mac/ASan.
-                my $cmakeConfiguration = $configuration;
-                $cmakeConfiguration = "ASan" if asanIsEnabled();
-                $cmakeConfiguration = "TSan" if tsanIsEnabled();
-                $configurationProductDir = "$baseProductDir/cmake-mac/$cmakeConfiguration";
-            } else {
-                $configurationProductDir = "$baseProductDir/$configuration";
-            }
-            $configurationProductDir .= "-" . xcodeSDKPlatformName() if isEmbeddedWebKit() || isMacCatalystWebKit();
-        }
+        $configurationProductDir = xcodeConfigurationProductDir();
     }
 }
 
@@ -1598,6 +1612,11 @@ sub safariPath
         # Use Safari.app in product directory if present (good for Safari development team).
         if (-d "$configurationProductDir/Safari.app") {
             $safariBundle = "$configurationProductDir/Safari.app";
+        } else {
+            # Safari is built by Xcode, so with --cmake the product directory holds
+            # no Safari.app. Fall back to the Xcode tree before the installed Safari.
+            my $xcodeProductDir = xcodeConfigurationProductDir();
+            $safariBundle = "$xcodeProductDir/Safari.app" if -d "$xcodeProductDir/Safari.app";
         }
     }
 
@@ -3270,6 +3289,8 @@ Usage: @{[basename($0)]} [options] <application-path>
   --help                            Show this help message
   --no-saved-state                  Launch the application without state restoration
   --debug|release                   build configuration
+  --cmake                           Use the CMake build
+  --xcode                           Use the Xcode build
 
 Options specific to macOS:
   -g|--guard-malloc                 Enable Guard Malloc
@@ -3307,7 +3328,7 @@ sub argumentsForRunAndDebugMacWebKitApp()
     return @args;
 }
 
-sub setupMacWebKitEnvironment($)
+sub prependMacWebKitDyldPaths($)
 {
     my ($dyldFrameworkPath) = @_;
 
@@ -3317,6 +3338,13 @@ sub setupMacWebKitEnvironment($)
     prependToEnvironmentVariableList("__XPC_DYLD_FRAMEWORK_PATH", $dyldFrameworkPath);
     prependToEnvironmentVariableList("DYLD_LIBRARY_PATH", $dyldFrameworkPath);
     prependToEnvironmentVariableList("__XPC_DYLD_LIBRARY_PATH", $dyldFrameworkPath);
+}
+
+sub setupMacWebKitEnvironment
+{
+    # Prepended in reverse so the first path given ends up searched first.
+    prependMacWebKitDyldPaths($_) for reverse @_;
+
     $ENV{WEBKIT_UNSET_DYLD_FRAMEWORK_PATH} = "YES";
 
     setUpGuardMallocIfNeeded();
@@ -3671,14 +3699,29 @@ sub commandLineArgumentsForRestrictedEnvironmentVariables($)
     return map { ($prefix, "$_=$ENV{$_}") } grep { /^DYLD_/ } keys %ENV;
 }
 
+sub dyldFrameworkPathsForMacWebKitApp($)
+{
+    my ($appPath) = @_;
+    my @paths = (productDir());
+
+    # An app taken from the Xcode tree while WebKit came from cmake-mac needs both:
+    # WebKit and friends from the CMake tree, everything above WebKit (SafariShared,
+    # SafariSharedUI, ...) from the Xcode one. Listed second so the CMake tree wins
+    # for the frameworks both trees provide.
+    my $xcodeProductDir = xcodeConfigurationProductDir();
+    push(@paths, $xcodeProductDir) if $xcodeProductDir ne $paths[0] && index($appPath, "$xcodeProductDir/") == 0;
+
+    return @paths;
+}
+
 sub runMacWebKitApp($;$$)
 {
     my ($appPath, $useOpenCommand, $openDocumentPath) = @_;
-    my $productDir = productDir();
-    print "Starting @{[basename($appPath)]} with DYLD_FRAMEWORK_PATH set to point to built WebKit in $productDir.\n";
+    my @frameworkPaths = dyldFrameworkPathsForMacWebKitApp($appPath);
+    print "Starting @{[basename($appPath)]} with DYLD_FRAMEWORK_PATH set to point to built WebKit in @{[join(', ', @frameworkPaths)]}.\n";
 
     local %ENV = %ENV;
-    setupMacWebKitEnvironment($productDir);
+    setupMacWebKitEnvironment(@frameworkPaths);
 
     if (defined($useOpenCommand) && $useOpenCommand == USE_OPEN_COMMAND) {
         my $appPathForOpen = $appPath;
@@ -3719,11 +3762,11 @@ sub execMacWebKitAppForDebugging($)
     chomp $debuggerPath;
     die "Can't find the lldb executable.\n" unless -x $debuggerPath;
 
-    my $productDir = productDir();
-    setupMacWebKitEnvironment($productDir);
+    my @frameworkPaths = dyldFrameworkPathsForMacWebKitApp($appPath);
+    setupMacWebKitEnvironment(@frameworkPaths);
 
     my @architectureFlags = ($architectureSwitch, architecture());
-    print "Starting @{[basename($appPath)]} under lldb with DYLD_FRAMEWORK_PATH set to point to built WebKit in $productDir.\n";
+    print "Starting @{[basename($appPath)]} under lldb with DYLD_FRAMEWORK_PATH set to point to built WebKit in @{[join(', ', @frameworkPaths)]}.\n";
     exec { $debuggerPath } $debuggerPath, @architectureFlags, $argumentsSeparator, $appPath, argumentsForRunAndDebugMacWebKitApp() or die;
 }
 

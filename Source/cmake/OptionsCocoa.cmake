@@ -357,6 +357,13 @@ endif ()
 add_link_options("$<$<NOT:$<CONFIG:Debug>>:-Wl,-dead_strip>")
 add_link_options(-Wl,-dead_strip_dylibs)
 
+# Mirrors DYLIB_COMPATIBILITY_VERSION / DYLIB_CURRENT_VERSION in
+# Configurations/Version.xcconfig. Set globally rather than per framework so that
+# every dylib carries them: clients linked against the Xcode frameworks record a
+# required compatibility version of 1.0.0, and dyld refuses to substitute a dylib
+# that declares 0.0.0. Shared-only, since ld rejects these flags for executables.
+string(APPEND CMAKE_SHARED_LINKER_FLAGS " -compatibility_version 1.0.0 -current_version ${WEBKIT_MAC_VERSION}")
+
 # Linked globally because PAL has Swift sources that get force-loaded into WebCore,
 # and WebCore does not link JavaScriptCore directly on all platforms.
 find_library(SWIFTCORE_LIBRARY swiftCore HINTS ${CMAKE_OSX_SYSROOT}/usr/lib/swift REQUIRED)
