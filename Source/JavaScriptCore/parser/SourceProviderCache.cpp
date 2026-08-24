@@ -31,6 +31,15 @@ namespace JSC {
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(SourceProviderCache);
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(SourceProviderCacheItem);
 
+SourceProviderCache::SourceProviderCache(unsigned sourceLength)
+{
+    static constexpr unsigned conservativeSourceBytesPerEntry = 512;
+    static constexpr unsigned maximumEntriesToReserve = 64 * 1024;
+
+    unsigned estimatedEntries = sourceLength / conservativeSourceBytesPerEntry;
+    m_map.reserveInitialCapacity(std::min(estimatedEntries, maximumEntriesToReserve));
+}
+
 SourceProviderCache::~SourceProviderCache()
 {
     clear();

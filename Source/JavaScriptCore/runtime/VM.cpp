@@ -1044,7 +1044,7 @@ SourceProviderCache* VM::addSourceProviderCache(SourceProvider* sourceProvider)
 {
     auto addResult = sourceProviderCacheMap.add(sourceProvider, nullptr);
     if (addResult.isNewEntry)
-        addResult.iterator->value = adoptRef(new SourceProviderCache);
+        addResult.iterator->value = SourceProviderCache::create(sourceProvider->source().length());
     return addResult.iterator->value.get();
 }
 
