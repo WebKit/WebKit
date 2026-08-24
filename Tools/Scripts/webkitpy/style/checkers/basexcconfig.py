@@ -50,21 +50,22 @@ class BaseXcconfigChecker(object):
 
         common_base_xcconfig_path = os.path.join(
             os.path.dirname(__file__), '../../../../..', 'Configurations/CommonBase.xcconfig')
-        for line in open(common_base_xcconfig_path):
-            # Find lines containing assignments.
-            lhs, operator, rhs = map(str.strip, line.partition('='))
+        with open(common_base_xcconfig_path) as common_base_xcconfig_file:
+            for line in common_base_xcconfig_file:
+                # Find lines containing assignments.
+                lhs, operator, rhs = map(str.strip, line.partition('='))
 
-            # Skip non-assignment lines, comments, and WK_ variables which are allowed to be overridden.
-            if operator != '=' or lhs.startswith('//') or lhs.startswith('WK_'):
-                continue
+                # Skip non-assignment lines, comments, and WK_ variables which are allowed to be overridden.
+                if operator != '=' or lhs.startswith('//') or lhs.startswith('WK_'):
+                    continue
 
-            # Discard any setting condition.
-            name = lhs.partition('[')[0]
+                # Discard any setting condition.
+                name = lhs.partition('[')[0]
 
-            if '$(inherited)' in rhs:
-                inherited_vars[name] = 1
-            elif not self.default_vars.get(name):
-                override_vars[name] = 1
+                if '$(inherited)' in rhs:
+                    inherited_vars[name] = 1
+                elif not self.default_vars.get(name):
+                    override_vars[name] = 1
 
         return inherited_vars, override_vars
 

@@ -5046,21 +5046,21 @@ def update_include_state(filename, include_state, io=codecs):
       True if a header was succesfully added. False otherwise.
     """
     io = _unit_test_config.get(INCLUDE_IO_INJECTION_KEY, codecs)
-    header_file = None
     try:
         header_file = io.open(filename, 'r', 'utf8', 'replace')
     except IOError:
         return False
-    line_number = 0
-    for line in header_file:
-        line_number += 1
-        clean_line = cleanse_comments(line)
-        matched = _RE_PATTERN_INCLUDE.search(clean_line)
-        if matched:
-            include = matched.group(2)
-            # The value formatting is cute, but not really used right now.
-            # What matters here is that the key is in include_state.
-            include_state.setdefault(include, '%s:%d' % (filename, line_number))
+    with header_file:
+        line_number = 0
+        for line in header_file:
+            line_number += 1
+            clean_line = cleanse_comments(line)
+            matched = _RE_PATTERN_INCLUDE.search(clean_line)
+            if matched:
+                include = matched.group(2)
+                # The value formatting is cute, but not really used right now.
+                # What matters here is that the key is in include_state.
+                include_state.setdefault(include, '%s:%d' % (filename, line_number))
     return True
 
 
