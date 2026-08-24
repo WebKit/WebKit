@@ -587,14 +587,22 @@ void CanvasRenderingContext2DBase::beginLayer()
 
     modifiableState().targetSwitcher = CanvasLayerContextSwitcher::create(*this, backingStoreBounds(), WTF::move(filter));
 
-    // Reset layer rendering state.
-    setGlobalAlpha(1.0);
-    setGlobalCompositeOperation("source-over"_s);
-    setShadowOffsetX(0);
-    setShadowOffsetY(0);
-    setShadowBlur(0);
-    setShadowColor("black"_s);
-    setFilterString("none"_s);
+    // Reset layer rendering state to its defaults.
+    auto& state = modifiableState();
+    state.globalAlpha = 1;
+    state.globalComposite = CompositeOperator::SourceOver;
+    state.globalBlend = BlendMode::Normal;
+    state.shadowOffset = { };
+    state.shadowBlur = 0;
+    state.shadowColor = Color::transparentBlack;
+    state.filterString = "none"_s;
+    state.filter = Style::Filter { CSS::Keyword::None { } };
+
+    if (auto* c = effectiveDrawingContext()) {
+        c->setAlpha(1);
+        c->setCompositeOperation(CompositeOperator::SourceOver, BlendMode::Normal);
+        c->setDropShadow({ { }, 0, Color::transparentBlack, ShadowRadiusMode::Legacy });
+    }
 }
 
 void CanvasRenderingContext2DBase::endLayer()
