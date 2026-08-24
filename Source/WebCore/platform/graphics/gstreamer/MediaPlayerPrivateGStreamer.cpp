@@ -203,19 +203,6 @@ MediaPlayerPrivateGStreamer::MediaPlayerPrivateGStreamer(MediaPlayer& player)
         m_quirksManagerForTesting->setHolePunchEnabledForTesting(true);
     }
 
-#if USE(COORDINATED_GRAPHICS)
-    m_contentsBufferProxy = CoordinatedPlatformLayerBufferProxy::create([weakThis = ThreadSafeWeakPtr { *this }] {
-        RefPtr self = weakThis.get();
-        if (!self)
-            return;
-        // The layer we were previously attached to may have just been destroyed and recreated
-        // (e.g. restoring the page from the back/forward cache rebuilds the render tree),
-        // losing whatever frame it was displaying. Re-deliver the current sample so the new
-        // layer isn't left blank, a paused player will otherwise never push a new one.
-        self->pushTextureToCompositor(IsDuplicateSample::Yes);
-    });
-#endif
-
     ensureGStreamerInitialized();
     m_audioSink = createAudioSink();
 }
@@ -3858,12 +3845,22 @@ void MediaPlayerPrivateGStreamer::isLoopingChanged()
 }
 
 #if USE(COORDINATED_GRAPHICS)
-PlatformLayer* MediaPlayerPrivateGStreamer::platformLayer() const
+void MediaPlayerPrivateGStreamer::setPlatformLayerBufferProxy(Ref<CoordinatedPlatformLayerBufferProxy>&& proxy)
 {
-    return m_contentsBufferProxy.get();
+    m_contentsBufferProxy = WTF::move(proxy);
+    // Push any pending frame if needed.
+    if (isHolePunchRenderingEnabled())
+        pushNextHolePunchBuffer(IsInitialBuffer::Yes);
+    else
+        pushTextureToCompositor(IsDuplicateSample::Yes, IsInitialBuffer::Yes);
 }
 
-void MediaPlayerPrivateGStreamer::pushTextureToCompositor(IsDuplicateSample isDuplicateSample)
+RefPtr<CoordinatedPlatformLayerBufferProxy> MediaPlayerPrivateGStreamer::platformLayerBufferProxy() const
+{
+    return m_contentsBufferProxy;
+}
+
+void MediaPlayerPrivateGStreamer::pushTextureToCompositor(IsDuplicateSample isDuplicateSample, IsInitialBuffer isInitialBuffer)
 {
     Locker sampleLocker { m_sampleMutex };
     if (!GST_IS_SAMPLE(m_sample.get()))
@@ -3875,6 +3872,10 @@ void MediaPlayerPrivateGStreamer::pushTextureToCompositor(IsDuplicateSample isDu
     if (isDuplicateSample == IsDuplicateSample::No)
         ++m_sampleCount;
 
+    RefPtr proxy = m_contentsBufferProxy;
+    if (!proxy || !proxy->isValid())
+        return;
+
     if (!m_videoInfo)
         m_videoInfo = VideoFrameGStreamer::infoFromCaps(GRefPtr(gst_sample_get_caps(m_sample.get())));
 
@@ -3882,7 +3883,11 @@ void MediaPlayerPrivateGStreamer::pushTextureToCompositor(IsDuplicateSample isDu
     options.info = m_videoInfo;
     auto frame = VideoFrameGStreamer::createWrappedSample(m_sample, options);
 
-    m_contentsBufferProxy->setDisplayBuffer(CoordinatedPlatformLayerBufferVideo::create(WTF::move(frame), m_videoDecoderPlatform, !m_isUsingFallbackVideoSink, m_textureMapperFlags));
+    auto buffer = CoordinatedPlatformLayerBufferVideo::create(WTF::move(frame), m_videoDecoderPlatform, !m_isUsingFallbackVideoSink, m_textureMapperFlags);
+    if (isInitialBuffer == IsInitialBuffer::Yes)
+        proxy->setInitialDisplayBuffer(WTF::move(buffer));
+    else
+        proxy->setDisplayBuffer(WTF::move(buffer));
 }
 #endif // USE(COORDINATED_GRAPHICS)
 
@@ -4174,9 +4179,13 @@ void MediaPlayerPrivateGStreamer::flushCurrentBuffer()
     }
 
 #if USE(COORDINATED_GRAPHICS)
+    RefPtr proxy = m_contentsBufferProxy;
+    if (!proxy)
+        return;
+
     auto shouldWait = m_videoDecoderPlatform == GstVideoDecoderPlatform::Video4Linux ? CoordinatedPlatformLayerBufferProxy::ShouldWait::Yes : CoordinatedPlatformLayerBufferProxy::ShouldWait::No;
     GST_DEBUG_OBJECT(pipeline(), "Flushing video sample %s", shouldWait == CoordinatedPlatformLayerBufferProxy::ShouldWait::Yes ? "synchronously" : "");
-    m_contentsBufferProxy->dropCurrentBufferWhilePreservingTexture(shouldWait);
+    proxy->dropCurrentBufferWhilePreservingTexture(shouldWait);
 #endif
 }
 #endif
@@ -4437,11 +4446,21 @@ GstElement* MediaPlayerPrivateGStreamer::createHolePunchVideoSink()
     return sink;
 }
 
-void MediaPlayerPrivateGStreamer::pushNextHolePunchBuffer()
+void MediaPlayerPrivateGStreamer::pushNextHolePunchBuffer(IsInitialBuffer isInitialBuffer)
 {
     ASSERT(isHolePunchRenderingEnabled());
 #if USE(COORDINATED_GRAPHICS)
-    m_contentsBufferProxy->setDisplayBuffer(CoordinatedPlatformLayerBufferHolePunch::create(m_size, m_videoSink.get(), m_quirksManagerForTesting ? m_quirksManagerForTesting.copyRef() : protect(&GStreamerQuirksManager::singleton())));
+    RefPtr proxy = m_contentsBufferProxy;
+    if (!proxy)
+        return;
+
+    auto buffer = CoordinatedPlatformLayerBufferHolePunch::create(m_size, m_videoSink.get(), m_quirksManagerForTesting ? m_quirksManagerForTesting.copyRef() : protect(&GStreamerQuirksManager::singleton()));
+    if (isInitialBuffer == IsInitialBuffer::Yes)
+        proxy->setInitialDisplayBuffer(WTF::move(buffer));
+    else
+        proxy->setDisplayBuffer(WTF::move(buffer));
+#else
+    UNUSED_PARAM(isInitialBuffer);
 #endif
 }
 

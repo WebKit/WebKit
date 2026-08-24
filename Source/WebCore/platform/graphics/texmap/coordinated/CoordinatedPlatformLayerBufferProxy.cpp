@@ -33,24 +33,18 @@
 
 namespace WebCore {
 
-Ref<CoordinatedPlatformLayerBufferProxy> CoordinatedPlatformLayerBufferProxy::create()
+Ref<CoordinatedPlatformLayerBufferProxy> CoordinatedPlatformLayerBufferProxy::create(Ref<CoordinatedPlatformLayer>&& layer)
 {
-    return adoptRef(*new CoordinatedPlatformLayerBufferProxy());
+    return adoptRef(*new CoordinatedPlatformLayerBufferProxy(WTF::move(layer)));
 }
 
-CoordinatedPlatformLayerBufferProxy::CoordinatedPlatformLayerBufferProxy() = default;
-
+CoordinatedPlatformLayerBufferProxy::CoordinatedPlatformLayerBufferProxy(Ref<CoordinatedPlatformLayer>&& layer)
+    : m_layer(WTF::move(layer))
 #if ENABLE(VIDEO) && USE(GSTREAMER)
-Ref<CoordinatedPlatformLayerBufferProxy> CoordinatedPlatformLayerBufferProxy::create(Function<void()>&& layerAttachedCallback)
-{
-    return adoptRef(*new CoordinatedPlatformLayerBufferProxy(WTF::move(layerAttachedCallback)));
-}
-
-CoordinatedPlatformLayerBufferProxy::CoordinatedPlatformLayerBufferProxy(Function<void()>&& layerAttachedCallback)
-    : m_layerAttachedCallback(WTF::move(layerAttachedCallback))
-{
-}
+    , m_compositingRunLoop(m_layer->compositingRunLoop())
 #endif
+{
+}
 
 CoordinatedPlatformLayerBufferProxy::~CoordinatedPlatformLayerBufferProxy()
 {
@@ -60,69 +54,42 @@ CoordinatedPlatformLayerBufferProxy::~CoordinatedPlatformLayerBufferProxy()
 #endif
 }
 
-void CoordinatedPlatformLayerBufferProxy::setTargetLayer(CoordinatedPlatformLayer* layer)
+void CoordinatedPlatformLayerBufferProxy::invalidate()
 {
-    ASSERT(RunLoop::isMain());
+    assertIsMainThread();
+    m_layer = nullptr;
 #if ENABLE(VIDEO) && USE(GSTREAMER)
-    bool didAttachLayer = false;
-    RefPtr<RunLoop> compositingRunLoop;
+    m_compositingRunLoop = nullptr;
 #endif
-    {
-        Locker locker { m_lock };
-        if (m_layer == layer)
-            return;
+}
 
-        m_layer = layer;
-        if (m_layer) {
-#if ENABLE(VIDEO) && USE(GSTREAMER)
-            m_compositingRunLoop = m_layer->compositingRunLoop();
-            compositingRunLoop = m_compositingRunLoop;
-            didAttachLayer = true;
-#endif
-        } else {
-            m_pendingBuffer = nullptr;
-#if ENABLE(VIDEO) && USE(GSTREAMER)
-            m_compositingRunLoop = nullptr;
-#endif
-        }
-    }
+void CoordinatedPlatformLayerBufferProxy::setInitialDisplayBuffer(std::unique_ptr<CoordinatedPlatformLayerBuffer>&& buffer)
+{
+    assertIsMainThread();
+    if (!m_layer)
+        return;
 
-#if ENABLE(VIDEO) && USE(GSTREAMER)
-    if (didAttachLayer && m_layerAttachedCallback && compositingRunLoop) {
-        compositingRunLoop->dispatch([protectedThis = Ref { *this }] {
-            protectedThis->m_layerAttachedCallback();
-        });
-    }
-#endif
+    m_pendingBuffer = WTF::move(buffer);
 }
 
 void CoordinatedPlatformLayerBufferProxy::consumePendingBufferIfNeeded()
 {
-    ASSERT(RunLoop::isMain());
-    Locker locker { m_lock };
+    assertIsMainThread();
     if (!m_pendingBuffer)
         return;
 
-    if (m_layer) {
-        assertIsHeld(m_layer->lock());
-        m_layer->setContentsBuffer(WTF::move(m_pendingBuffer));
+    if (RefPtr layer = m_layer) {
+        assertIsHeld(layer->lock());
+        layer->setContentsBuffer(WTF::move(m_pendingBuffer));
     } else
         m_pendingBuffer = nullptr;
 }
 
 void CoordinatedPlatformLayerBufferProxy::setDisplayBuffer(std::unique_ptr<CoordinatedPlatformLayerBuffer>&& buffer)
 {
-    RefPtr<CoordinatedPlatformLayer> layer;
-    {
-        Locker locker { m_lock };
-        if (!m_layer) {
-            m_pendingBuffer = WTF::move(buffer);
-            return;
-        }
-
-        m_pendingBuffer = nullptr;
-        layer = m_layer;
-    }
+    RefPtr layer = m_layer;
+    if (!layer)
+        return;
 
     {
         Locker layerLocker { layer->lock() };
@@ -134,21 +101,17 @@ void CoordinatedPlatformLayerBufferProxy::setDisplayBuffer(std::unique_ptr<Coord
 #if ENABLE(VIDEO) && USE(GSTREAMER)
 void CoordinatedPlatformLayerBufferProxy::dropCurrentBufferWhilePreservingTexture(ShouldWait shouldWait)
 {
-    RefPtr<RunLoop> compositingRunLoop;
-    {
-        Locker locker { m_lock };
-        if (!m_layer || !m_compositingRunLoop)
-            return;
+    RefPtr layer = m_layer;
+    if (!layer)
+        return;
 
-        compositingRunLoop = m_compositingRunLoop;
-    }
+    RefPtr compositingRunLoop = m_compositingRunLoop;
+    if (!compositingRunLoop)
+        return;
 
     auto dropCurrentBuffer = [this, protectedThis = Ref { *this }] {
-        Locker locker { m_lock };
-        if (!m_layer)
-            return;
-
-        m_layer->replaceCurrentContentsBufferWithCopy();
+        if (RefPtr layer = m_layer)
+            layer->replaceCurrentContentsBufferWithCopy();
     };
 
     if (shouldWait == ShouldWait::No) {

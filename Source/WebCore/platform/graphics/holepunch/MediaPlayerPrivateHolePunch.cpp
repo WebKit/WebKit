@@ -38,12 +38,7 @@ MediaPlayerPrivateHolePunch::MediaPlayerPrivateHolePunch(MediaPlayer& player)
     : m_player(player)
     , m_readyTimer(RunLoop::mainSingleton(), "MediaPlayerPrivateHolePunch::ReadyTimer"_s, this, &MediaPlayerPrivateHolePunch::notifyReadyState)
     , m_networkState(MediaPlayer::NetworkState::Empty)
-#if USE(COORDINATED_GRAPHICS)
-    , m_contentsBufferProxy(CoordinatedPlatformLayerBufferProxy::create())
-#endif
 {
-    pushNextHolePunchBuffer();
-
     // Delay the configuration of the HTMLMediaElement, as during this stage this is not
     // the MediaPlayer private yet and calls from HTMLMediaElement won't reach this.
     m_readyTimer.startOneShot(0_s);
@@ -52,9 +47,15 @@ MediaPlayerPrivateHolePunch::MediaPlayerPrivateHolePunch(MediaPlayer& player)
 MediaPlayerPrivateHolePunch::~MediaPlayerPrivateHolePunch() = default;
 
 #if USE(COORDINATED_GRAPHICS)
-PlatformLayer* MediaPlayerPrivateHolePunch::platformLayer() const
+void MediaPlayerPrivateHolePunch::setPlatformLayerBufferProxy(Ref<CoordinatedPlatformLayerBufferProxy>&& proxy)
 {
-    return m_contentsBufferProxy.get();
+    m_contentsBufferProxy = WTF::move(proxy);
+    m_contentsBufferProxy->setInitialDisplayBuffer(CoordinatedPlatformLayerBufferHolePunch::create(m_size));
+}
+
+RefPtr<CoordinatedPlatformLayerBufferProxy> MediaPlayerPrivateHolePunch::platformLayerBufferProxy() const
+{
+    return m_contentsBufferProxy;
 }
 #endif
 
@@ -68,7 +69,11 @@ FloatSize MediaPlayerPrivateHolePunch::naturalSize() const
 
 void MediaPlayerPrivateHolePunch::pushNextHolePunchBuffer()
 {
-    m_contentsBufferProxy->setDisplayBuffer(CoordinatedPlatformLayerBufferHolePunch::create(m_size));
+    RefPtr proxy = m_contentsBufferProxy;
+    if (!proxy || !proxy->isValid())
+        return;
+
+    proxy->setDisplayBuffer(CoordinatedPlatformLayerBufferHolePunch::create(m_size));
 }
 
 static HashSet<String>& mimeTypeCache()

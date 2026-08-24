@@ -79,6 +79,7 @@ class GraphicsLayerKeyframeValueList;
 class HTMLVideoElement;
 class Image;
 class ImageBuffer;
+class MediaPlayer;
 class Model;
 class Settings;
 class TiledBacking;
@@ -407,6 +408,9 @@ public:
     virtual void removeModelContents() { }
 #endif
     virtual void setContentsToVideoElement(HTMLVideoElement&, ContentsLayerPurpose) { }
+#if ENABLE(VIDEO)
+    WEBCORE_EXPORT virtual void setContentsToMediaPlayer(MediaPlayer*, ContentsLayerPurpose);
+#endif
     virtual void setContentsDisplayDelegate(RefPtr<GraphicsLayerContentsDisplayDelegate>&&, ContentsLayerPurpose);
     WEBCORE_EXPORT virtual RefPtr<GraphicsLayerAsyncContentsDisplayDelegate> createAsyncContentsDisplayDelegate(GraphicsLayerAsyncContentsDisplayDelegate* existing);
 #if ENABLE(MODEL_ELEMENT)

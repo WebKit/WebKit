@@ -43,6 +43,7 @@
 #include "GraphicsLayerFilterAnimationValue.h"
 #include "GraphicsLayerKeyframeValueList.h"
 #include "Image.h"
+#include "MediaPlayer.h"
 #include "NativeImage.h"
 #include <wtf/Locker.h>
 
@@ -85,7 +86,7 @@ GraphicsLayerCoordinated::GraphicsLayerCoordinated(Type layerType, GraphicsLayer
 GraphicsLayerCoordinated::~GraphicsLayerCoordinated()
 {
     if (m_contentsBufferProxy)
-        m_contentsBufferProxy->setTargetLayer(nullptr);
+        m_contentsBufferProxy->invalidate();
     m_platformLayer->setOwner(nullptr);
     if (m_parent)
         downcast<GraphicsLayerCoordinated>(*m_parent).noteLayerPropertyChanged(Change::Children, ScheduleFlush::Yes);
@@ -398,24 +399,33 @@ void GraphicsLayerCoordinated::setContentsNeedsDisplayInRect(const FloatRect& re
     noteLayerPropertyChanged(Change::ContentsBufferNeedsDisplay, ScheduleFlush::Yes);
 }
 
-void GraphicsLayerCoordinated::setContentsToPlatformLayer(PlatformLayer* contentsLayer, ContentsLayerPurpose)
+#if ENABLE(VIDEO) && USE(GSTREAMER)
+void GraphicsLayerCoordinated::setContentsToMediaPlayer(MediaPlayer* player, ContentsLayerPurpose)
 {
-    if (m_contentsBufferProxy == contentsLayer)
+    // Never try to get or set the proxy on a player that doesn't support accelerated rendering (null media player).
+    if (player && !player->supportsAcceleratedRendering())
+        player = nullptr;
+
+    if (player && m_contentsBufferProxy && player->platformLayerBufferProxy() == m_contentsBufferProxy)
+        return;
+
+    if (!player && !m_contentsBufferProxy)
         return;
 
     if (m_contentsBufferProxy)
-        m_contentsBufferProxy->setTargetLayer(nullptr);
-
-    m_contentsBufferProxy = contentsLayer;
+        m_contentsBufferProxy->invalidate();
 
     EnumSet<Change> change = { Change::ContentsBuffer };
-    if (m_contentsBufferProxy) {
-        m_contentsBufferProxy->setTargetLayer(m_platformLayer.ptr());
+    if (player) {
+        m_contentsBufferProxy = CoordinatedPlatformLayerBufferProxy::create(m_platformLayer.copyRef());
+        player->setPlatformLayerBufferProxy(Ref { *m_contentsBufferProxy });
         m_contentsDisplayDelegate = nullptr;
         change.add(Change::ContentsBufferNeedsDisplay);
-    }
+    } else
+        m_contentsBufferProxy = nullptr;
     noteLayerPropertyChanged(change, ScheduleFlush::Yes);
 }
+#endif
 
 void GraphicsLayerCoordinated::setContentsDisplayDelegate(RefPtr<GraphicsLayerContentsDisplayDelegate>&& delegate, ContentsLayerPurpose)
 {
@@ -430,7 +440,7 @@ void GraphicsLayerCoordinated::setContentsDisplayDelegate(RefPtr<GraphicsLayerCo
         m_contentsDisplayDelegate->setThreadSafeGrContext(m_platformLayer->threadSafeGrContext());
 #endif
         if (m_contentsBufferProxy) {
-            m_contentsBufferProxy->setTargetLayer(nullptr);
+            m_contentsBufferProxy->invalidate();
             m_contentsBufferProxy = nullptr;
         }
         change.add(Change::ContentsBufferNeedsDisplay);

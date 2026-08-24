@@ -84,7 +84,9 @@ private:
     void setContentsClipShapePath(const Path&) override;
     void setContentsNeedsDisplay() override;
     void setContentsNeedsDisplayInRect(const FloatRect&) override;
-    void setContentsToPlatformLayer(PlatformLayer*, ContentsLayerPurpose) override;
+#if ENABLE(VIDEO) && USE(GSTREAMER)
+    void setContentsToMediaPlayer(MediaPlayer*, ContentsLayerPurpose) override;
+#endif
     void setContentsDisplayDelegate(RefPtr<GraphicsLayerContentsDisplayDelegate>&&, ContentsLayerPurpose) override;
     RefPtr<GraphicsLayerAsyncContentsDisplayDelegate> createAsyncContentsDisplayDelegate(GraphicsLayerAsyncContentsDisplayDelegate*) override;
     void setContentsToImage(Image*) override;

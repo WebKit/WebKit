@@ -35,6 +35,7 @@
 #include "GraphicsLayerFilterAnimationValue.h"
 #include "GraphicsLayerKeyframeValueList.h"
 #include "LayoutRect.h"
+#include "MediaPlayer.h"
 #include "MediaPlayerEnums.h"
 #include "RotateTransformOperation.h"
 #include <wtf/FileHandle.h>
@@ -747,6 +748,13 @@ RefPtr<GraphicsLayerAsyncContentsDisplayDelegate> GraphicsLayer::createAsyncCont
 {
     return nullptr;
 }
+
+#if ENABLE(VIDEO)
+void GraphicsLayer::setContentsToMediaPlayer(MediaPlayer* player, ContentsLayerPurpose purpose)
+{
+    SUPPRESS_FORWARD_DECL_ARG setContentsToPlatformLayer(player ? player->platformLayer() : nullptr, purpose);
+}
+#endif
 
 void GraphicsLayer::getDebugBorderInfo(Color& color, float& width) const
 {

@@ -33,10 +33,10 @@ OBJC_CLASS CALayer;
 using PlatformLayer = CALayer;
 #elif USE(COORDINATED_GRAPHICS)
 namespace WebCore {
-class CoordinatedPlatformLayerBufferProxy;
+class CoordinatedPlatformLayer;
 };
-using PlatformLayer = WebCore::CoordinatedPlatformLayerBufferProxy;
-#elif USE(TEXTURE_MAPPER)
+using PlatformLayer = WebCore::CoordinatedPlatformLayer;
+#elif USE(TEXTURE_MAPPER) && !USE(COORDINATED_GRAPHICS)
 namespace WebCore {
 class TextureMapperPlatformLayer;
 };

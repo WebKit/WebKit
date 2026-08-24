@@ -1357,7 +1357,7 @@ bool RenderLayerBacking::updateConfiguration(const RenderLayer* compositingAnces
             )
             m_graphicsLayer->setContentsToVideoElement(videoElement, GraphicsLayer::ContentsLayerPurpose::Media);
         else
-            m_graphicsLayer->setContentsToPlatformLayer(videoElement->platformLayer(), GraphicsLayer::ContentsLayerPurpose::Media);
+            m_graphicsLayer->setContentsToMediaPlayer(videoElement->player(), GraphicsLayer::ContentsLayerPurpose::Media);
         updateContentsRects();
     }
 #endif

@@ -64,7 +64,9 @@ public:
     void pause() final { };
 
 #if USE(COORDINATED_GRAPHICS)
-    PlatformLayer* NODELETE platformLayer() const final;
+    PlatformLayer* NODELETE platformLayer() const final { return nullptr; }
+    void setPlatformLayerBufferProxy(Ref<CoordinatedPlatformLayerBufferProxy>&&) final;
+    RefPtr<CoordinatedPlatformLayerBufferProxy> platformLayerBufferProxy() const final;
 #endif
 
     FloatSize naturalSize() const final;
