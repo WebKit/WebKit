@@ -1,0 +1,16 @@
+drawElementsInstancedBaseVertexBaseInstanceWEBGL must reject out-of-range baseVertex
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getError() is gl.NO_ERROR
+PASS gl.getError() is gl.INVALID_OPERATION
+PASS gl.getError() is gl.INVALID_OPERATION
+PASS gl.getError() is gl.INVALID_OPERATION
+PASS gl.getError() is gl.INVALID_OPERATION
+PASS no GPU process crash
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

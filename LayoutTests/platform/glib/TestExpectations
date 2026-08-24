@@ -2700,6 +2700,9 @@ http/tests/webgl/1.0.x/conformance/textures/misc/origin-clean-conformance-offscr
 webgl/webgl-draft-extensions-flag-default.html [ Skip ]
 webgl/webgl-draft-extensions-flag-on.html [ Skip ]
 
+# ANGLE disables base vertex/base instance on Linux.
+webkit.org/b/319507 fast/canvas/webgl/draw-elements-base-vertex-out-of-bounds.html [ Skip ]
+
 # WEBGL2 failures
 webkit.org/b/251107 webgl/2.0.y/conformance2/extensions/ext-render-snorm.html [ Failure ]
 webkit.org/b/251107 webgl/2.0.y/conformance2/textures/video/tex-2d-r16f-red-half_float.html [ Timeout Pass ]
