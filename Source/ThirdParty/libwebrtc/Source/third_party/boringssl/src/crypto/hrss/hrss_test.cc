@@ -26,7 +26,7 @@
 BSSL_NAMESPACE_BEGIN
 namespace {
 
-// poly3_rand sets |r| to a random value (albeit with bias).
+// poly3_rand sets `r` to a random value (albeit with bias).
 static void poly3_rand(poly3 *p) {
   RAND_bytes(reinterpret_cast<uint8_t *>(p), sizeof(poly3));
   p->s.v[WORDS_PER_POLY - 1] &= (UINT64_C(1) << BITS_IN_LAST_WORD) - 1;
@@ -37,7 +37,7 @@ static void poly3_rand(poly3 *p) {
   }
 }
 
-// poly3_word_add sets (|s1|, |a1|) += (|s2|, |a2|).
+// poly3_word_add sets (`s1`, `a1`) += (`s2`, `a2`).
 static void poly3_word_add(crypto_word_t *s1, crypto_word_t *a1,
                            const crypto_word_t s2, const crypto_word_t a2) {
   const crypto_word_t t = *s1 ^ a2;
@@ -60,7 +60,7 @@ TEST(HRSS, Poly3Invert) {
     r.a.v[i / BITS_PER_WORD] = (UINT64_C(1) << (i % BITS_PER_WORD));
     HRSS_poly3_invert(&inverse, &r);
     HRSS_poly3_mul(&result, &inverse, &r);
-    // r×r⁻¹ = 1, and |p| contains 1.
+    // r×r⁻¹ = 1, and `p` contains 1.
     EXPECT_EQ(
         Bytes(reinterpret_cast<const uint8_t *>(&p), sizeof(p)),
         Bytes(reinterpret_cast<const uint8_t *>(&result), sizeof(result)));
@@ -83,13 +83,13 @@ TEST(HRSS, Poly3Invert) {
   for (size_t i = 0; i < 500; i++) {
     poly3 r;
     poly3_rand(&r);
-    // Drop the term at x^700 because |HRSS_poly3_invert| only handles reduced
+    // Drop the term at x^700 because `HRSS_poly3_invert` only handles reduced
     // inputs.
     r.s.v[WORDS_PER_POLY - 1] &= (UINT64_C(1) << (BITS_IN_LAST_WORD - 1)) - 1;
     r.a.v[WORDS_PER_POLY - 1] &= (UINT64_C(1) << (BITS_IN_LAST_WORD - 1)) - 1;
     HRSS_poly3_invert(&inverse, &r);
     HRSS_poly3_mul(&result, &inverse, &r);
-    // r×r⁻¹ = 1, and |p| contains 1.
+    // r×r⁻¹ = 1, and `p` contains 1.
     EXPECT_EQ(
         Bytes(reinterpret_cast<const uint8_t *>(&p), sizeof(p)),
         Bytes(reinterpret_cast<const uint8_t *>(&result), sizeof(result)));
@@ -97,11 +97,11 @@ TEST(HRSS, Poly3Invert) {
 }
 
 TEST(HRSS, Poly3UnreducedInput) {
-  // Check that |poly3_mul| works correctly with inputs that aren't reduced mod
+  // Check that `poly3_mul` works correctly with inputs that aren't reduced mod
   // Φ(N).
   poly3 r, inverse, result, one;
   poly3_rand(&r);
-  // Drop the term at x^700 because |HRSS_poly3_invert| only handles reduced
+  // Drop the term at x^700 because `HRSS_poly3_invert` only handles reduced
   // inputs.
   r.s.v[WORDS_PER_POLY - 1] &= (UINT64_C(1) << (BITS_IN_LAST_WORD - 1)) - 1;
   r.a.v[WORDS_PER_POLY - 1] &= (UINT64_C(1) << (BITS_IN_LAST_WORD - 1)) - 1;
@@ -113,7 +113,7 @@ TEST(HRSS, Poly3UnreducedInput) {
   EXPECT_EQ(Bytes(reinterpret_cast<const uint8_t *>(&one), sizeof(one)),
             Bytes(reinterpret_cast<const uint8_t *>(&result), sizeof(result)));
 
-  // |r| is reduced mod Φ(N), so add x^701 - 1 and recompute to ensure that we
+  // `r` is reduced mod Φ(N), so add x^701 - 1 and recompute to ensure that we
   // get the same answer. (Since (x^701 - 1) ≡ 0 mod Φ(N).)
   poly3_word_add(&r.s.v[0], &r.a.v[0], 1, 1);
   poly3_word_add(&r.s.v[WORDS_PER_POLY - 1], &r.a.v[WORDS_PER_POLY - 1], 0,
@@ -504,8 +504,8 @@ TEST(HRSS, ABI) {
   OPENSSL_memcpy(scratch + sizeof(kCanary) + POLY_MUL_RQ_SCRATCH_SPACE, kCanary,
                  sizeof(kCanary));
 
-  // The function should not touch more than |POLY_MUL_RQ_SCRATCH_SPACE| bytes
-  // of |scratch|.
+  // The function should not touch more than `POLY_MUL_RQ_SCRATCH_SPACE` bytes
+  // of `scratch`.
   CHECK_ABI(poly_Rq_mul, r, a, b, &scratch[sizeof(kCanary)]);
 
   EXPECT_EQ(Bytes(scratch, sizeof(kCanary)), Bytes(kCanary));

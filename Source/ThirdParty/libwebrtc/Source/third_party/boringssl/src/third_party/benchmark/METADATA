@@ -1,0 +1,16 @@
+name: "benchmark"
+description:
+    "A library to benchmark code snippets, similar to unit tests."
+
+third_party {
+  homepage: "https://github.com/google/benchmark"
+  identifier {
+    type: "Git"
+    value: "https://github.com/google/benchmark"
+    primary_source: true
+    version: "1.9.5"
+  }
+  version: "1.9.5"
+  last_upgrade_date { year: 2026 month: 2 day: 9 }
+  license_type: PERMISSIVE
+}

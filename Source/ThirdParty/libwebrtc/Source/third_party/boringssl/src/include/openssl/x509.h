@@ -81,7 +81,7 @@ OPENSSL_EXPORT int X509_up_ref(X509 *x509);
 // The caller must call `X509_free` on the result to release the reference.
 //
 // WARNING: Although the result is non-const for use with `X509_free`, it is
-// still shared with other parts of the appplication for the same object. Avoid
+// still shared with other parts of the application for the same object. Avoid
 // mutating shared `X509`s.
 OPENSSL_EXPORT X509 *X509_dup_ref(const X509 *x509);
 
@@ -107,7 +107,7 @@ OPENSSL_EXPORT X509 *d2i_X509(X509 **out, const uint8_t **inp, long len);
 
 // X509_parse_with_algorithms parses an X.509 structure from `buf` and returns a
 // fresh X509 or NULL on error. There must not be any trailing data in `buf`.
-// The returned structure (if any) increment's `buf`'s reference count and
+// The returned structure (if any) increments `buf`'s reference count and
 // retains a reference to it.
 //
 // Only the `num_algs` algorithms from `algs` will be considered when parsing
@@ -310,7 +310,7 @@ typedef STACK_OF(GENERAL_NAME) GENERAL_NAMES;
 // X509_get0_authority_issuer returns the authorityCertIssuer of `x509`'s
 // authority key identifier, if the extension and field are present. (See
 // RFC 5280, section 4.2.1.1.) It returns NULL if the extension is not present,
-// if it is present but lacks a authorityCertIssuer field, or if some extension
+// if it is present but lacks an authorityCertIssuer field, or if some extension
 // in `x509` was invalid.
 //
 // TODO(crbug.com/boringssl/381): Decoding an `X509` object will not check for
@@ -321,7 +321,7 @@ OPENSSL_EXPORT const GENERAL_NAMES *X509_get0_authority_issuer(X509 *x509);
 // X509_get0_authority_serial returns the authorityCertSerialNumber of `x509`'s
 // authority key identifier, if the extension and field are present. (See
 // RFC 5280, section 4.2.1.1.) It returns NULL if the extension is not present,
-// if it is present but lacks a authorityCertSerialNumber field, or if some
+// if it is present but lacks an authorityCertSerialNumber field, or if some
 // extension in `x509` was invalid.
 //
 // TODO(crbug.com/boringssl/381): Decoding an `X509` object will not check for
@@ -1689,7 +1689,7 @@ OPENSSL_EXPORT int X509_EXTENSION_set_object(X509_EXTENSION *ex,
 // to non-critical if `crit` is zero.
 OPENSSL_EXPORT int X509_EXTENSION_set_critical(X509_EXTENSION *ex, int crit);
 
-// X509_EXTENSION_set_data set's `ex`'s extension value to a copy of `data`. It
+// X509_EXTENSION_set_data sets `ex`'s extension value to a copy of `data`. It
 // returns one on success and zero on error.
 OPENSSL_EXPORT int X509_EXTENSION_set_data(X509_EXTENSION *ex,
                                            const ASN1_OCTET_STRING *data);
@@ -1888,7 +1888,7 @@ OPENSSL_EXPORT X509_EXTENSION *X509V3_EXT_i2d(int ext_nid, int crit,
 #define X509V3_ADD_DEFAULT 0L
 
 // X509V3_ADD_APPEND causes the function to unconditionally appended the new
-// extension to to the extensions list, even if there is a duplicate.
+// extension to the extensions list, even if there is a duplicate.
 #define X509V3_ADD_APPEND 1L
 
 // X509V3_ADD_REPLACE causes the function to replace the existing extension, or
@@ -3330,7 +3330,7 @@ OPENSSL_EXPORT void X509_VERIFY_PARAM_set_time_posix(X509_VERIFY_PARAM *param,
 // X509_VERIFY_PARAM_add0_policy adds `policy` to the user-initial-policy-set
 // (see Section 6.1.1 of RFC 5280). On success, it takes ownership of
 // `policy` and returns one. Otherwise, it returns zero and the caller retains
-// owneship of `policy`.
+// ownership of `policy`.
 OPENSSL_EXPORT int X509_VERIFY_PARAM_add0_policy(X509_VERIFY_PARAM *param,
                                                  ASN1_OBJECT *policy);
 
@@ -5031,7 +5031,7 @@ OPENSSL_EXPORT ASN1_OCTET_STRING *a2i_IPADDRESS(const char *ipasc);
 // decoded mask. IPv4 ranges are represented as 8-byte strings and IPv6 ranges
 // as 32-byte strings. On failure, it returns NULL.
 //
-// The text format decoded by this function is not the standard CIDR notiation.
+// The text format decoded by this function is not the standard CIDR notation.
 // Instead, the mask after the "/" is represented as another IP address. For
 // example, "192.168.0.0/16" would be written "192.168.0.0/255.255.0.0".
 OPENSSL_EXPORT ASN1_OCTET_STRING *a2i_IPADDRESS_NC(const char *ipasc);
@@ -5303,10 +5303,13 @@ BORINGSSL_MAKE_DELETER(GENERAL_NAME, GENERAL_NAME_free)
 BORINGSSL_MAKE_DELETER(GENERAL_SUBTREE, GENERAL_SUBTREE_free)
 BORINGSSL_MAKE_DELETER(NAME_CONSTRAINTS, NAME_CONSTRAINTS_free)
 BORINGSSL_MAKE_DELETER(NETSCAPE_SPKI, NETSCAPE_SPKI_free)
+BORINGSSL_MAKE_DELETER(NOTICEREF, NOTICEREF_free)
 BORINGSSL_MAKE_DELETER(POLICY_CONSTRAINTS, POLICY_CONSTRAINTS_free)
 BORINGSSL_MAKE_DELETER(POLICY_MAPPING, POLICY_MAPPING_free)
 BORINGSSL_MAKE_DELETER(POLICYINFO, POLICYINFO_free)
+BORINGSSL_MAKE_DELETER(POLICYQUALINFO, POLICYQUALINFO_free)
 BORINGSSL_MAKE_DELETER(RSA_PSS_PARAMS, RSA_PSS_PARAMS_free)
+BORINGSSL_MAKE_DELETER(USERNOTICE, USERNOTICE_free)
 BORINGSSL_MAKE_DELETER(X509, X509_free)
 BORINGSSL_MAKE_UP_REF(X509, X509_up_ref)
 BORINGSSL_MAKE_DELETER(X509_ALGOR, X509_ALGOR_free)
@@ -5330,7 +5333,7 @@ BORINGSSL_MAKE_DELETER(X509_VERIFY_PARAM, X509_VERIFY_PARAM_free)
 
 BSSL_NAMESPACE_END
 
-}  // extern C++
+}       // extern C++
 #endif  // !BORINGSSL_NO_CXX
 
 #define X509_R_AKID_MISMATCH 100

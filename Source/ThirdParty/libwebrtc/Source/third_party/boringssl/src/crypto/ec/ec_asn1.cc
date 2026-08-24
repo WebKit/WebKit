@@ -83,7 +83,7 @@ EC_KEY *bssl::ec_key_parse_private_key(
         ec_key_parse_parameters(&child, allowed_groups);
     if (inner_group == nullptr) {
       // If the caller already supplied a group, any explicit group is required
-      // to match. On mismatch, |ec_key_parse_parameters| will fail to recognize
+      // to match. On mismatch, `ec_key_parse_parameters` will fail to recognize
       // any other groups, so remap the error.
       if (group != nullptr &&
           ERR_equals(ERR_peek_last_error(), ERR_LIB_EC, EC_R_UNKNOWN_GROUP)) {
@@ -92,7 +92,7 @@ EC_KEY *bssl::ec_key_parse_private_key(
       }
       return nullptr;
     }
-    // Overriding |allowed_groups| above ensures the only returned group will be
+    // Overriding `allowed_groups` above ensures the only returned group will be
     // the matching one.
     assert(group == nullptr || inner_group == group);
     group = inner_group;
@@ -134,7 +134,7 @@ EC_KEY *bssl::ec_key_parse_private_key(
         // encoded as a BIT STRING with bits ordered as in the DER encoding.
         !CBS_get_u8(&public_key, &padding) ||  //
         padding != 0 ||
-        // Explicitly check |public_key| is non-empty to save the conversion
+        // Explicitly check `public_key` is non-empty to save the conversion
         // form later.
         CBS_len(&public_key) == 0 ||
         !EC_POINT_oct2point(group, ret->pub_key, CBS_data(&public_key),
@@ -260,7 +260,7 @@ static int parse_explicit_prime_curve(CBS *in,
       !CBS_get_asn1(&params, &curve, CBS_ASN1_SEQUENCE) ||
       !CBS_get_asn1(&curve, &out->a, CBS_ASN1_OCTETSTRING) ||
       !CBS_get_asn1(&curve, &out->b, CBS_ASN1_OCTETSTRING) ||
-      // |curve| has an optional BIT STRING seed which we ignore.
+      // `curve` has an optional BIT STRING seed which we ignore.
       !CBS_get_optional_asn1(&curve, nullptr, nullptr, CBS_ASN1_BITSTRING) ||
       CBS_len(&curve) != 0 ||
       !CBS_get_asn1(&params, &base, CBS_ASN1_OCTETSTRING) ||
@@ -300,12 +300,12 @@ static int parse_explicit_prime_curve(CBS *in,
   return 1;
 }
 
-// integers_equal returns one if |bytes| is a big-endian encoding of |bn|, and
+// integers_equal returns one if `bytes` is a big-endian encoding of `bn`, and
 // zero otherwise.
 static int integers_equal(const CBS *bytes, const BIGNUM *bn) {
   // Although, in SEC 1, Field-Element-to-Octet-String has a fixed width,
-  // OpenSSL mis-encodes the |a| and |b|, so we tolerate any number of leading
-  // zeros. (This matters for P-521 whose |b| has a leading 0.)
+  // OpenSSL mis-encodes the `a` and `b`, so we tolerate any number of leading
+  // zeros. (This matters for P-521 whose `b` has a leading 0.)
   CBS copy = *bytes;
   while (CBS_len(&copy) > 0 && CBS_data(&copy)[0] == 0) {
     CBS_skip(&copy, 1);
@@ -343,7 +343,7 @@ const EC_GROUP *bssl::ec_key_parse_curve_name(
 }
 
 EC_GROUP *EC_KEY_parse_curve_name(CBS *cbs) {
-  // This function only ever returns a static |EC_GROUP|, but currently returns
+  // This function only ever returns a static `EC_GROUP`, but currently returns
   // a non-const pointer for historical reasons.
   return const_cast<EC_GROUP *>(ec_key_parse_curve_name(cbs, get_all_groups()));
 }
@@ -413,7 +413,7 @@ const EC_GROUP *bssl::ec_key_parse_parameters(
 }
 
 EC_GROUP *EC_KEY_parse_parameters(CBS *cbs) {
-  // This function only ever returns a static |EC_GROUP|, but currently returns
+  // This function only ever returns a static `EC_GROUP`, but currently returns
   // a non-const pointer for historical reasons.
   return const_cast<EC_GROUP *>(ec_key_parse_parameters(cbs, get_all_groups()));
 }
@@ -430,8 +430,8 @@ int EC_POINT_point2cbb(CBB *out, const EC_GROUP *group, const EC_POINT *point,
 }
 
 EC_KEY *d2i_ECPrivateKey(EC_KEY **out, const uint8_t **inp, long len) {
-  // This function treats its |out| parameter differently from other |d2i|
-  // functions. If supplied, take the group from |*out|.
+  // This function treats its `out` parameter differently from other `d2i`
+  // functions. If supplied, take the group from `*out`.
   const EC_GROUP *group = nullptr;
   if (out != nullptr && *out != nullptr) {
     group = EC_KEY_get0_group(*out);
@@ -518,7 +518,7 @@ int i2o_ECPublicKey(const EC_KEY *key, uint8_t **outp) {
     return 0;
   }
   const ECKey *key_impl = FromOpaque(key);
-  // No initial capacity because |EC_POINT_point2cbb| will internally reserve
+  // No initial capacity because `EC_POINT_point2cbb` will internally reserve
   // the right size in one shot, so it's best to leave this at zero.
   int ret = I2DFromCBB(
       /*initial_capacity=*/0, outp, [&](CBB *cbb) -> bool {

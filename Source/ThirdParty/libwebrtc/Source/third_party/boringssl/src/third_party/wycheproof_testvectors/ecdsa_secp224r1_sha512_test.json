@@ -1,7 +1,7 @@
 {
   "algorithm": "ECDSA",
   "schema": "ecdsa_verify_schema_v1.json",
-  "numberOfTests": 548,
+  "numberOfTests": 550,
   "header": [
     "Test vectors of type EcdsaVerify are meant for the verification",
     "of ASN encoded ECDSA signatures."
@@ -7698,6 +7698,46 @@
           "msg": "68656c6c6f2c20776f726c64",
           "sig": "3030020f00e95d1f470fc1ec22d6baa3a3d5c6021d00ffffffffffffffffffffffffffff16a2e0b8f03e13dd29455c5c2a3a",
           "result": "invalid"
+        }
+      ]
+    },
+    {
+      "type": "EcdsaVerify",
+      "source": {
+        "name": "github/davidben/ecdsa-s-pow2",
+        "version": "0.1"
+      },
+      "publicKey": {
+        "type": "EcPublicKey",
+        "curve": "secp224r1",
+        "keySize": 224,
+        "uncompressed": "04c31a7b09080e7d8b6bdcd6635f8e8d032ff7167e6e0293518428a99c2634e41847b4c741b2a518f1de804fd2334193ab078609535662802f",
+        "wx": "c31a7b09080e7d8b6bdcd6635f8e8d032ff7167e6e0293518428a99c",
+        "wy": "2634e41847b4c741b2a518f1de804fd2334193ab078609535662802f"
+      },
+      "publicKeyDer": "304e301006072a8648ce3d020106052b81040021033a0004c31a7b09080e7d8b6bdcd6635f8e8d032ff7167e6e0293518428a99c2634e41847b4c741b2a518f1de804fd2334193ab078609535662802f",
+      "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nME4wEAYHKoZIzj0CAQYFK4EEACEDOgAEwxp7CQgOfYtr3NZjX46NAy/3Fn5uApNR\nhCipnCY05BhHtMdBsqUY8d6AT9IzQZOrB4YJU1ZigC8=\n-----END PUBLIC KEY-----\n",
+      "sha": "SHA-512",
+      "tests": [
+        {
+          "tcId": 549,
+          "comment": "s = 2^128",
+          "flags": [
+            "ValidSignature"
+          ],
+          "msg": "68656c6c6f2c20776f726c64",
+          "sig": "3032021d0096cd1b74f0be055d2d35ba25d70b0f75a5ab5d3faee363652224cc7e02110100000000000000000000000000000000",
+          "result": "valid"
+        },
+        {
+          "tcId": 550,
+          "comment": "s = n - 2^128",
+          "flags": [
+            "ValidSignature"
+          ],
+          "msg": "68656c6c6f2c20776f726c64",
+          "sig": "303e021d0096cd1b74f0be055d2d35ba25d70b0f75a5ab5d3faee363652224cc7e021d00fffffffffffffffffffffffeffff16a2e0b8f03e13dd29455c5c2a3d",
+          "result": "valid"
         }
       ]
     }

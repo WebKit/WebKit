@@ -86,7 +86,7 @@ STACK_OF(X509_EXTENSION) *X509_REQ_get_extensions(const X509_REQ *req) {
   }
 
   const X509_ATTRIBUTE *attr = X509_REQ_get_attr(req, idx);
-  // TODO(davidben): |X509_ATTRIBUTE_get0_type| is not const-correct. It should
+  // TODO(davidben): `X509_ATTRIBUTE_get0_type` is not const-correct. It should
   // take and return a const pointer.
   const ASN1_TYPE *ext = X509_ATTRIBUTE_get0_type((X509_ATTRIBUTE *)attr, 0);
   if (!ext || ext->type != V_ASN1_SEQUENCE) {

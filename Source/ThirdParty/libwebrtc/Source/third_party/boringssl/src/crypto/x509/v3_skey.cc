@@ -89,7 +89,7 @@ static void *s2i_skey_id(const X509V3_EXT_METHOD *method, const X509V3_CTX *ctx,
   }
 
   if (ctx->subject_req) {
-    pk = &ctx->subject_req->req_info->pubkey->public_key;
+    pk = FromOpaque(ctx->subject_req->req_info->pubkey)->public_key.get();
   } else {
     pk = X509_get0_pubkey_bitstr(ctx->subject_cert);
   }

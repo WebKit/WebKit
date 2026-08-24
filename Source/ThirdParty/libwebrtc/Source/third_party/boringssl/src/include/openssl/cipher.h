@@ -15,7 +15,7 @@
 #ifndef OPENSSL_HEADER_CIPHER_H
 #define OPENSSL_HEADER_CIPHER_H
 
-#include <openssl/base.h>   // IWYU pragma: export
+#include <openssl/base.h>  // IWYU pragma: export
 
 #if defined(__cplusplus)
 extern "C" {
@@ -76,11 +76,18 @@ OPENSSL_EXPORT const EVP_CIPHER *EVP_get_cipherbynid(int nid);
 // An `EVP_CIPHER_CTX` represents the state of an encryption or decryption in
 // progress.
 
-// EVP_CIPHER_CTX_init initialises an, already allocated, `EVP_CIPHER_CTX`.
+// EVP_CIPHER_CTX_init sets an uninitialized `EVP_CIPHER_CTX` to the zero state.
+// This is the same as setting the structure to zero.
+//
+// This function is used for initializing uninitialized memory in an
+// `EVP_CIPHER_CTX`, e.g. if it is declared as a local variable on the stack.
+// This function should not be used on objects that have already been
+// initialized.
 OPENSSL_EXPORT void EVP_CIPHER_CTX_init(EVP_CIPHER_CTX *ctx);
 
-// EVP_CIPHER_CTX_new allocates a fresh `EVP_CIPHER_CTX`, calls
-// `EVP_CIPHER_CTX_init` and returns it, or NULL on allocation failure.
+// EVP_CIPHER_CTX_new returns a newly-allocated `EVP_CIPHER_CTX` in the zero
+// state, or NULL on allocation failure. The caller must use
+// `EVP_CIPHER_CTX_free` to release the resulting object.
 OPENSSL_EXPORT EVP_CIPHER_CTX *EVP_CIPHER_CTX_new(void);
 
 // EVP_CIPHER_CTX_cleanup frees any memory referenced by `ctx`. It returns
@@ -92,7 +99,8 @@ OPENSSL_EXPORT int EVP_CIPHER_CTX_cleanup(EVP_CIPHER_CTX *ctx);
 OPENSSL_EXPORT void EVP_CIPHER_CTX_free(EVP_CIPHER_CTX *ctx);
 
 // EVP_CIPHER_CTX_copy sets `out` to be a duplicate of the current state of
-// `in`. The `out` argument must have been previously initialised.
+// `in`. The `out` argument must have been previously initialised, e.g. with
+// `EVP_CIPHER_CTX_init` or `EVP_CIPHER_CTX_new`.
 OPENSSL_EXPORT int EVP_CIPHER_CTX_copy(EVP_CIPHER_CTX *out,
                                        const EVP_CIPHER_CTX *in);
 
@@ -104,12 +112,45 @@ OPENSSL_EXPORT int EVP_CIPHER_CTX_reset(EVP_CIPHER_CTX *ctx);
 // Cipher context configuration.
 
 // EVP_CipherInit_ex configures `ctx` for a fresh encryption (or decryption, if
-// `enc` is zero) operation using `cipher`. If `ctx` has been previously
-// configured with a cipher then `cipher`, `key` and `iv` may be `NULL` and
-// `enc` may be -1 to reuse the previous values. The operation will use `key`
-// as the key and `iv` as the IV (if any). These should have the correct
-// lengths given by `EVP_CIPHER_key_length` and `EVP_CIPHER_iv_length`. It
-// returns one on success and zero on error.
+// `enc` is zero) operation using `cipher`. The memory in `ctx` must already
+// have been initialized, e.g. with `EVP_CIPHER_CTX_init` or
+// `EVP_CIPHER_CTX_new`. If non-NULL, `key` and `iv` will be used as the key and
+// IV, respectively. These must point to `EVP_CIPHER_key_length` and
+// `EVP_CIPHER_iv_length` bytes, respectively. It returns one on success and
+// zero on error.
+//
+// This function may be called multiple times on a single `EVP_CIPHER_CTX`,
+// either to reset an existing object, or to configure a single operation in
+// multiple steps. In such cases:
+//
+// - `cipher` may be NULL to reuse the previous cipher state. A non-NULL
+//   `cipher` will reset all cipher state, including the key and IV, even if
+//   configuring the same `EVP_CIPHER` as before.
+//
+// - `key` and `iv` may be NULL to either reuse the previous value, or leave
+//   them unconfigured.
+//
+// - `enc` may be -1 to reuse the previous value. In ciphers that use a
+//   different key schedule between encryption and decryption (e.g. CBC and ECB
+//   modes), callers must configure `key` and `enc` together.
+//
+// Some example multi-step configuration patterns:
+//
+// - If setting a variable-length key with `EVP_CIPHER_CTX_set_key_length`,
+//   first configure only `cipher`, then use `EVP_CIPHER_CTX_set_key_length`,
+//   and finally configure `key`, leaving `cipher` NULL.
+//
+// - If setting a variable-length IV with `EVP_CTRL_AEAD_SET_IVLEN`, first
+//   configure `cipher` and `key`, then use `EVP_CTRL_AEAD_SET_IVLEN`, and
+//   finally configure `iv`, leaving other parameters NULL.
+//
+// - If retaining a long-lived context to reuse the key schedule across
+//   operations, first configure only `cipher` and `key` on the long-lived
+//   context, then copy the key schedule to a per-operation context with
+//   `EVP_CIPHER_CTX_copy`, and finally configure only `iv` on the per-operation
+//   context.
+//
+// WARNING: This API is difficult to use correctly. Use `EVP_AEAD` for AEADs.
 OPENSSL_EXPORT int EVP_CipherInit_ex(EVP_CIPHER_CTX *ctx,
                                      const EVP_CIPHER *cipher, ENGINE *engine,
                                      const uint8_t *key, const uint8_t *iv,
@@ -129,12 +170,13 @@ OPENSSL_EXPORT int EVP_DecryptInit_ex(EVP_CIPHER_CTX *ctx,
 // Cipher operations.
 
 // EVP_EncryptUpdate_ex encrypts `in_len` bytes from `in` and writes up to
-// `max_out` bytes of ciphertext to `out`. On success, it sets `*out_len` to
+// `max_out_len` bytes of ciphertext to `out`. On success, it sets `*out_len` to
 // the number of output bytes and returns one. Otherwise, it returns zero.
 //
-// If `max_out` is not large enough for the output, the function will return
+// If `max_out_len` is not large enough for the output, the function will return
 // zero. The size of output buffer needed depends on the cipher and the number
-// of bytes encrypted by `ctx` thus far.
+// of bytes encrypted by `ctx` thus far. `EVP_CIPHER_CTX_max_next_update` will
+// return the maximum output for this call.
 //
 // In ciphers whose block size is not 1, such as CBC, individual calls to
 // `EVP_EncryptUpdate_ex` may output more or less than `in_len` bytes: a single
@@ -147,12 +189,13 @@ OPENSSL_EXPORT int EVP_EncryptUpdate_ex(EVP_CIPHER_CTX *ctx, uint8_t *out,
                                         const uint8_t *in, size_t in_len);
 
 // EVP_EncryptFinal_ex2 finishes an encryption operation and writes up to
-// `max_out` bytes of output to out. On success, it sets `*out_len` to the
+// `max_out_len` bytes of output to out. On success, it sets `*out_len` to the
 // number of bytes written and returns one. Otherwise, it returns zero.
 //
-// If `max_out` is not large enough for the output, the function will return
+// If `max_out_len` is not large enough for the output, the function will return
 // zero. The size of output buffer needed depends on the cipher and the number
-// of bytes encrypted.
+// of bytes encrypted. `EVP_CIPHER_CTX_max_final` will return the maximum output
+// for this call.
 //
 // If the block size is 1, there will be no final output at all; otherwise, at
 // most one block of ciphertext will be written to the output.
@@ -166,12 +209,13 @@ OPENSSL_EXPORT int EVP_EncryptFinal_ex2(EVP_CIPHER_CTX *ctx, uint8_t *out,
                                         size_t *out_len, size_t max_out_len);
 
 // EVP_DecryptUpdate_ex decrypts `in_len` bytes from `in` and writes up to
-// `max_out` bytes of plaintext to `out`. On success, it sets `*out_len` to
+// `max_out_len` bytes of plaintext to `out`. On success, it sets `*out_len` to
 // the number of output bytes and returns one. Otherwise, it returns zero.
 //
-// If `max_out` is not large enough for the output, the function will return
+// If `max_out_len` is not large enough for the output, the function will return
 // zero. The size of output buffer needed depends on the cipher and the number
-// of bytes decrypted by `ctx` thus far.
+// of bytes decrypted by `ctx` thus far. `EVP_CIPHER_CTX_max_next_update` will
+// return the maximum output for this call.
 //
 // In ciphers whose block size is not 1, such as CBC, individual calls to
 // `EVP_DecryptUpdate_ex` may output more or less than `in_len` bytes: a single
@@ -187,12 +231,13 @@ OPENSSL_EXPORT int EVP_DecryptUpdate_ex(EVP_CIPHER_CTX *ctx, uint8_t *out,
                                         const uint8_t *in, size_t in_len);
 
 // EVP_DecryptFinal_ex2 finishes a decryption operation and writes up to
-// `max_out` bytes of output to out. On success, it sets `*out_len` to the
+// `max_out_len` bytes of output to out. On success, it sets `*out_len` to the
 // number of bytes written and returns one. Otherwise, it returns zero.
 //
-// If `max_out` is not large enough for the output, the function will return
+// If `max_out_len` is not large enough for the output, the function will return
 // zero. The size of output buffer needed depends on the cipher and the number
-// of bytes decrypted.
+// of bytes decrypted. `EVP_CIPHER_CTX_max_final` will return the maximum output
+// for this call.
 //
 // If the block size is 1, there will be no final output at all; otherwise, at
 // most one block of ciphertext will be written to the output.
@@ -223,6 +268,19 @@ OPENSSL_EXPORT int EVP_CipherUpdateAAD(EVP_CIPHER_CTX *ctx, const uint8_t *in,
 // `EVP_DecryptFinal_ex2` depending on how `ctx` has been setup.
 OPENSSL_EXPORT int EVP_CipherFinal_ex2(EVP_CIPHER_CTX *ctx, uint8_t *out,
                                        size_t *out_len, size_t max_out_len);
+
+// EVP_CIPHER_CTX_max_next_update returns the maximum number of bytes that may
+// be output from `ctx` by a call to `EVP_CipherUpdate_ex` with `in_len` bytes
+// of input. This takes the current state of `ctx` into account, so the output
+// will change as bytes are passed in and out.
+OPENSSL_EXPORT size_t EVP_CIPHER_CTX_max_next_update(const EVP_CIPHER_CTX *ctx,
+                                                     size_t in_len);
+
+// EVP_CIPHER_CTX_max_final returns the maximum number of bytes that may
+// be output from `ctx` by a call to `EVP_CipherFinal_ex2`. This takes the
+// current state of `ctx` into account, so the output will change as bytes are
+// passed in and out.
+OPENSSL_EXPORT size_t EVP_CIPHER_CTX_max_final(const EVP_CIPHER_CTX *ctx);
 
 
 // Cipher context accessors.
@@ -285,6 +343,11 @@ OPENSSL_EXPORT int EVP_CIPHER_CTX_set_padding(EVP_CIPHER_CTX *ctx, int pad);
 // EVP_CIPHER_CTX_set_key_length sets the key length for `ctx`. This is only
 // valid for ciphers that can take a variable length key. It returns one on
 // success and zero on error.
+//
+// In order to use this function, |ctx| must have been configured with an
+// |EVP_CIPHER| with |EVP_CipherInit_ex|. Callers should first configure only
+// the cipher, leaving |key| NULL, call |EVP_CIPHER_CTX_set_key_length|, and
+// finally call |EVP_CipherInit_ex| with a NULL |cipher| and non-NULL |key|.
 OPENSSL_EXPORT int EVP_CIPHER_CTX_set_key_length(EVP_CIPHER_CTX *ctx,
                                                  unsigned key_len);
 
@@ -396,25 +459,40 @@ OPENSSL_EXPORT int EVP_BytesToKey(const EVP_CIPHER *type, const EVP_MD *md,
 
 // EVP_CIPH_FLAG_NON_FIPS_ALLOW is meaningless. In OpenSSL it permits non-FIPS
 // algorithms in FIPS mode. But BoringSSL FIPS mode doesn't prohibit algorithms
-// (it's up the the caller to use the FIPS module in a fashion compliant with
+// (it's up to the caller to use the FIPS module in a fashion compliant with
 // their needs). Thus this exists only to allow code to compile.
 #define EVP_CIPH_FLAG_NON_FIPS_ALLOW 0
 
 
 // Deprecated functions
 
-// EVP_CipherInit acts like EVP_CipherInit_ex except that `EVP_CIPHER_CTX_init`
-// is called on `cipher` first, if `cipher` is not NULL.
+// EVP_CipherInit acts like `EVP_CipherInit_ex` except that
+// `EVP_CIPHER_CTX_init` is called on `cipher` first, if `cipher` is not NULL.
+//
+// `EVP_CIPHER_CTX_init` is used for initializing uninitialized memory in an
+// `EVP_CIPHER_CTX`, e.g. if it is declared as a local variable on the stack.
+// Thus this function should not be used on objects that have already been
+// initialized.
+//
+// WARNING: This differs from OpenSSL 1.1.x, where `EVP_CipherInit` and
+// `EVP_CipherInit_ex` are largely equivalent. This difference is because
+// BoringSSL, like OpenSSL 1.0.x, still supports stack-allocating
+// `EVP_CIPHER_CTX`. Implementing the OpenSSL 1.1.x semantics would introduce
+// uninitialized reads in those callers.
 OPENSSL_EXPORT int EVP_CipherInit(EVP_CIPHER_CTX *ctx, const EVP_CIPHER *cipher,
                                   const uint8_t *key, const uint8_t *iv,
                                   int enc);
 
 // EVP_EncryptInit calls `EVP_CipherInit` with `enc` equal to one.
+//
+// WARNING: See discussion in `EVP_CipherInit`.
 OPENSSL_EXPORT int EVP_EncryptInit(EVP_CIPHER_CTX *ctx,
                                    const EVP_CIPHER *cipher, const uint8_t *key,
                                    const uint8_t *iv);
 
 // EVP_DecryptInit calls `EVP_CipherInit` with `enc` equal to zero.
+//
+// WARNING: See discussion in `EVP_CipherInit`.
 OPENSSL_EXPORT int EVP_DecryptInit(EVP_CIPHER_CTX *ctx,
                                    const EVP_CIPHER *cipher, const uint8_t *key,
                                    const uint8_t *iv);
@@ -640,7 +718,7 @@ struct evp_cipher_ctx_st {
   const EVP_CIPHER *cipher;
 
   // app_data is a pointer to opaque, user data.
-  void *app_data;      // application stuff
+  void *app_data;  // application stuff
 
   // cipher_data points to the `cipher` specific state.
   void *cipher_data;

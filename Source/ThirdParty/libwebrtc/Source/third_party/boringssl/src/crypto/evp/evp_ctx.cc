@@ -42,7 +42,7 @@ static UniquePtr<EvpPkeyCtx> evp_pkey_ctx_new(
   ret->pkey = UpRef(pkey);
 
   if (pmeth->init && pmeth->init(ret.get(), alg) <= 0) {
-    ret->pmeth = nullptr;  // Don't call |pmeth->cleanup|.
+    ret->pmeth = nullptr;  // Don't call `pmeth->cleanup`.
     return nullptr;
   }
 
@@ -71,9 +71,9 @@ EVP_PKEY_CTX *EVP_PKEY_CTX_new(EVP_PKEY *pkey, ENGINE *e) {
 }
 
 EVP_PKEY_CTX *EVP_PKEY_CTX_new_id(int id, ENGINE *e) {
-  // |EVP_PKEY_RSA_PSS| is intentionally omitted from this list. These are types
-  // that can be created without an |EVP_PKEY|, and we do not support
-  // |EVP_PKEY_RSA_PSS| keygen.
+  // `EVP_PKEY_RSA_PSS` is intentionally omitted from this list. These are types
+  // that can be created without an `EVP_PKEY`, and we do not support
+  // `EVP_PKEY_RSA_PSS` keygen.
   const EVP_PKEY_ALG *alg = nullptr;
   switch (id) {
     case EVP_PKEY_RSA:

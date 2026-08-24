@@ -70,7 +70,7 @@ static uint64_t load_4(const uint8_t *in) {
 typedef uint64_t fe_limb_t;
 #define FE_NUM_LIMBS 5
 
-// assert_fe asserts that |f| satisfies bounds:
+// assert_fe asserts that `f` satisfies bounds:
 //
 //  [[0x0 ~> 0x8cccccccccccc],
 //   [0x0 ~> 0x8cccccccccccc],
@@ -87,7 +87,7 @@ typedef uint64_t fe_limb_t;
     }                                                                   \
   } while (0)
 
-// assert_fe_loose asserts that |f| satisfies bounds:
+// assert_fe_loose asserts that `f` satisfies bounds:
 //
 //  [[0x0 ~> 0x1a666666666664],
 //   [0x0 ~> 0x1a666666666664],
@@ -109,7 +109,7 @@ typedef uint64_t fe_limb_t;
 typedef uint32_t fe_limb_t;
 #define FE_NUM_LIMBS 10
 
-// assert_fe asserts that |f| satisfies bounds:
+// assert_fe asserts that `f` satisfies bounds:
 //
 //  [[0x0 ~> 0x4666666], [0x0 ~> 0x2333333],
 //   [0x0 ~> 0x4666666], [0x0 ~> 0x2333333],
@@ -127,7 +127,7 @@ typedef uint32_t fe_limb_t;
     }                                                                    \
   } while (0)
 
-// assert_fe_loose asserts that |f| satisfies bounds:
+// assert_fe_loose asserts that `f` satisfies bounds:
 //
 //  [[0x0 ~> 0xd333332], [0x0 ~> 0x6999999],
 //   [0x0 ~> 0xd333332], [0x0 ~> 0x6999999],
@@ -151,7 +151,7 @@ static_assert(sizeof(fe) == sizeof(fe_limb_t) * FE_NUM_LIMBS,
               "fe_limb_t[FE_NUM_LIMBS] is inconsistent with fe");
 
 static void fe_frombytes_strict(fe *h, const uint8_t s[32]) {
-  // |fiat_25519_from_bytes| requires the top-most bit be clear.
+  // `fiat_25519_from_bytes` requires the top-most bit be clear.
   declassify_assert((s[31] & 0x80) == 0);
   fiat_25519_from_bytes(h->v, s);
   assert_fe(h->v);
@@ -286,7 +286,7 @@ static void fe_neg(fe_loose *h, const fe *f) {
 //
 // Preconditions: b in {0,1}.
 static void fe_cmov(fe_loose *f, const fe_loose *g, fe_limb_t b) {
-  // Silence an unused function warning. |fiat_25519_selectznz| isn't quite the
+  // Silence an unused function warning. `fiat_25519_selectznz` isn't quite the
   // calling convention the rest of this code wants, so implement it by hand.
   //
   // TODO(davidben): Switch to fiat's calling convention, or ask fiat to emit a
@@ -693,14 +693,14 @@ static void cmov(ge_precomp *t, const ge_precomp *u, uint8_t b) {
 
 void bssl::x25519_ge_scalarmult_small_precomp(
     ge_p3 *h, const uint8_t a[32], const uint8_t precomp_table[15 * 2 * 32]) {
-  // precomp_table is first expanded into matching |ge_precomp|
+  // precomp_table is first expanded into matching `ge_precomp`
   // elements.
   ge_precomp multiples[15];
 
   unsigned i;
   for (i = 0; i < 15; i++) {
     // The precomputed table is assumed to already clear the top bit, so
-    // |fe_frombytes_strict| may be used directly.
+    // `fe_frombytes_strict` may be used directly.
     const uint8_t *bytes = &precomp_table[i * (2 * 32)];
     fe x, y;
     fe_frombytes_strict(&x, bytes);
@@ -713,7 +713,7 @@ void bssl::x25519_ge_scalarmult_small_precomp(
     fe_mul_llt(&out->xy2d, &out->xy2d, &d2);
   }
 
-  // See the comment above |k25519SmallPrecomp| about the structure of the
+  // See the comment above `k25519SmallPrecomp` about the structure of the
   // precomputed elements. This loop does 64 additions and 64 doublings to
   // calculate the result.
   ge_p3_0(h);
@@ -1024,7 +1024,7 @@ static void ge_double_scalarmult_vartime(ge_p2 *r, const uint8_t *a,
   }
 }
 
-// int64_lshift21 returns |a << 21| but is defined when shifting bits into the
+// int64_lshift21 returns `a << 21` but is defined when shifting bits into the
 // sign bit. This works around a language flaw in C.
 static int64_t int64_lshift21(int64_t a) {
   return (int64_t)((uint64_t)a << 21);

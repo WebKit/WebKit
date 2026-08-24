@@ -516,7 +516,7 @@ bool Client(const std::vector<std::string> &args) {
       fprintf(stderr, "Bad NPN protocol: '%s'\n", proto.c_str());
       return false;
     }
-    // |SSL_CTX_set_next_proto_select_cb| is not const-correct.
+    // `SSL_CTX_set_next_proto_select_cb` is not const-correct.
     SSL_CTX_set_next_proto_select_cb(ctx.get(), NextProtoSelectCallback,
                                      const_cast<char *>(proto.c_str()));
   }

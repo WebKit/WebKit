@@ -21,7 +21,7 @@ import (
 
 func canBeShimCertificate(c *Credential) bool {
 	// Some options can only be set with the credentials API.
-	return c.Type == CredentialTypeX509 && !c.MustMatchIssuer && c.TrustAnchorID == nil
+	return c.Type == CredentialTypeX509 && !c.MustMatchIssuer && c.Properties.Empty()
 }
 
 func addCertificateSelectionTests() {

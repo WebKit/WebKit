@@ -126,7 +126,7 @@ static const uint8_t kECKeyWithZerosRawPrivate[] = {
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01};
 
-// DecodeECPrivateKey decodes |in| as an ECPrivateKey structure and returns the
+// DecodeECPrivateKey decodes `in` as an ECPrivateKey structure and returns the
 // result or nullptr on error.
 static bssl::UniquePtr<EC_KEY> DecodeECPrivateKey(const uint8_t *in,
                                                   size_t in_len) {
@@ -139,7 +139,7 @@ static bssl::UniquePtr<EC_KEY> DecodeECPrivateKey(const uint8_t *in,
   return ret;
 }
 
-// EncodeECPrivateKey encodes |key| as an ECPrivateKey structure into |*out|. It
+// EncodeECPrivateKey encodes `key` as an ECPrivateKey structure into `*out`. It
 // returns true on success or false on error.
 static bool EncodeECPrivateKey(std::vector<uint8_t> *out, const EC_KEY *key) {
   ScopedCBB cbb;
@@ -220,6 +220,7 @@ TEST(ECTest, ZeroPadding) {
 
   // Buffer too small.
   EXPECT_EQ(0u, EC_KEY_priv2oct(key.get(), buf, sizeof(buf) - 1));
+  EXPECT_TRUE(ErrorsAreAndClear({{ERR_LIB_EC, EC_R_BUFFER_TOO_SMALL}}));
 
   // Extra space in buffer.
   uint8_t large_buf[33];
@@ -239,7 +240,7 @@ TEST(ECTest, ZeroPadding) {
   EXPECT_TRUE(EncodeECPrivateKey(&out, key.get()));
   EXPECT_EQ(Bytes(kECKeyWithZeros), Bytes(out.data(), out.size()));
 
-  // Test the key can be constructed with |EC_KEY_oct2*|.
+  // Test the key can be constructed with `EC_KEY_oct2*`.
   key.reset(EC_KEY_new_by_curve_name(NID_X9_62_prime256v1));
   ASSERT_TRUE(key);
   ASSERT_TRUE(EC_KEY_oct2key(key.get(), kECKeyWithZerosPublic,
@@ -249,15 +250,17 @@ TEST(ECTest, ZeroPadding) {
   EXPECT_TRUE(EncodeECPrivateKey(&out, key.get()));
   EXPECT_EQ(Bytes(kECKeyWithZeros), Bytes(out.data(), out.size()));
 
-  // |EC_KEY_oct2priv|'s format is fixed-width and must match the group order.
+  // `EC_KEY_oct2priv`'s format is fixed-width and must match the group order.
   key.reset(EC_KEY_new_by_curve_name(NID_X9_62_prime256v1));
   ASSERT_TRUE(key);
   EXPECT_FALSE(EC_KEY_oct2priv(key.get(), kECKeyWithZerosRawPrivate + 1,
                                sizeof(kECKeyWithZerosRawPrivate) - 1));
+  EXPECT_TRUE(ErrorsAreAndClear({{ERR_LIB_EC, EC_R_DECODE_ERROR}}));
   uint8_t padded[sizeof(kECKeyWithZerosRawPrivate) + 1] = {0};
   memcpy(padded + 1, kECKeyWithZerosRawPrivate,
          sizeof(kECKeyWithZerosRawPrivate));
   EXPECT_FALSE(EC_KEY_oct2priv(key.get(), padded, sizeof(padded)));
+  EXPECT_TRUE(ErrorsAreAndClear({{ERR_LIB_EC, EC_R_DECODE_ERROR}}));
 }
 
 TEST(ECTest, SpecifiedCurve) {
@@ -338,10 +341,10 @@ TEST(ECTest, ArbitraryCurve) {
   ASSERT_TRUE(EC_GROUP_set_generator(group.get(), generator.get(), order.get(),
                                      BN_value_one()));
 
-  // |group| should not have a curve name.
+  // `group` should not have a curve name.
   EXPECT_EQ(NID_undef, EC_GROUP_get_curve_name(group.get()));
 
-  // Copy |key| to |key2| using |group|.
+  // Copy `key` to `key2` using `group`.
   UniquePtr<EC_KEY> key2(EC_KEY_new());
   ASSERT_TRUE(key2);
   UniquePtr<EC_POINT> point(EC_POINT_new(group.get()));
@@ -361,7 +364,7 @@ TEST(ECTest, ArbitraryCurve) {
   // The key must be valid according to the new group too.
   EXPECT_TRUE(EC_KEY_check_key(key2.get()));
 
-  // Make a second instance of |group|.
+  // Make a second instance of `group`.
   UniquePtr<EC_GROUP> group2(
       EC_GROUP_new_curve_GFp(p.get(), a.get(), b.get(), ctx.get()));
   ASSERT_TRUE(group2);
@@ -389,8 +392,8 @@ TEST(ECTest, ArbitraryCurve) {
   EXPECT_NE(0, EC_GROUP_cmp(group.get(), group3.get(), nullptr));
 
 #if !defined(BORINGSSL_SHARED_LIBRARY)
-  // group4 has non-minimal components that do not fit in |EC_SCALAR| and the
-  // future |EC_FELEM|.
+  // group4 has non-minimal components that do not fit in `EC_SCALAR` and the
+  // future `EC_FELEM`.
   ASSERT_TRUE(bn_resize_words(p.get(), 32));
   ASSERT_TRUE(bn_resize_words(a.get(), 32));
   ASSERT_TRUE(bn_resize_words(b.get(), 32));
@@ -412,7 +415,7 @@ TEST(ECTest, ArbitraryCurve) {
 #endif
 
   // group5 is the same group, but the curve coefficients are passed in
-  // unreduced and the caller does not pass in a |BN_CTX|.
+  // unreduced and the caller does not pass in a `BN_CTX`.
   ASSERT_TRUE(BN_sub(a.get(), a.get(), p.get()));
   ASSERT_TRUE(BN_add(b.get(), b.get(), p.get()));
   UniquePtr<EC_GROUP> group5(
@@ -487,7 +490,7 @@ TEST(ECTest, EmptyKey) {
   EXPECT_FALSE(EC_KEY_get0_private_key(key.get()));
 }
 
-// Test that point arithmetic works with custom curves using an arbitrary |a|,
+// Test that point arithmetic works with custom curves using an arbitrary `a`,
 // rather than -3, as is common (and more efficient).
 TEST(ECTest, BrainpoolP256r1) {
   static const char kP[] =
@@ -573,7 +576,7 @@ TEST_P(ECCurveTest, SetAffine) {
   EXPECT_TRUE(EC_POINT_set_affine_coordinates_GFp(group(), point.get(), x.get(),
                                                   y.get(), nullptr));
 
-  // Subtract one from |y| to make the point no longer on the curve.
+  // Subtract one from `y` to make the point no longer on the curve.
   EXPECT_TRUE(BN_sub(y.get(), y.get(), BN_value_one()));
 
   // Points not on the curve should be rejected.
@@ -605,7 +608,7 @@ TEST_P(ECCurveTest, IsOnCurve) {
   ASSERT_TRUE(p);
   ASSERT_TRUE(EC_POINT_copy(p.get(), EC_KEY_get0_public_key(key.get())));
 
-  // This should never happen outside of a bug, but |EC_POINT_is_on_curve|
+  // This should never happen outside of a bug, but `EC_POINT_is_on_curve`
   // rejects points not on the curve.
   OPENSSL_memset(&p->raw.X, 0, sizeof(p->raw.X));
   EXPECT_FALSE(EC_POINT_is_on_curve(group(), p.get(), nullptr));
@@ -630,7 +633,7 @@ TEST_P(ECCurveTest, Compare) {
   // Two different points should not compare as equal.
   EXPECT_EQ(1, EC_POINT_cmp(group(), pub1, pub2, nullptr));
 
-  // Serialize |pub1| and parse it back out. This gives a point in affine
+  // Serialize `pub1` and parse it back out. This gives a point in affine
   // coordinates.
   std::vector<uint8_t> serialized;
   ASSERT_TRUE(
@@ -647,7 +650,7 @@ TEST_P(ECCurveTest, Compare) {
   ASSERT_TRUE(EC_POINT_add(group(), p.get(), p.get(), pub2, nullptr));
   EXPECT_EQ(1, EC_POINT_cmp(group(), p.get(), pub1, nullptr));
 
-  // Negate |pub2|. It should no longer compare as equal. This tests that we
+  // Negate `pub2`. It should no longer compare as equal. This tests that we
   // check both x and y coordinate.
   UniquePtr<EC_POINT> q(EC_POINT_new(group()));
   ASSERT_TRUE(q);
@@ -655,7 +658,7 @@ TEST_P(ECCurveTest, Compare) {
   ASSERT_TRUE(EC_POINT_invert(group(), q.get(), nullptr));
   EXPECT_EQ(1, EC_POINT_cmp(group(), q.get(), pub2, nullptr));
 
-  // Return |p| to the original value. It should be equal to |pub1| again.
+  // Return `p` to the original value. It should be equal to `pub1` again.
   ASSERT_TRUE(EC_POINT_add(group(), p.get(), p.get(), q.get(), nullptr));
   EXPECT_EQ(0, EC_POINT_cmp(group(), p.get(), pub1, nullptr));
 
@@ -664,7 +667,7 @@ TEST_P(ECCurveTest, Compare) {
   ASSERT_TRUE(inf1);
   ASSERT_TRUE(inf2);
   ASSERT_TRUE(EC_POINT_set_to_infinity(group(), inf1.get()));
-  // |q| is currently -|pub2|.
+  // `q` is currently -`pub2`.
   ASSERT_TRUE(EC_POINT_add(group(), inf2.get(), pub2, q.get(), nullptr));
   EXPECT_EQ(0, EC_POINT_cmp(group(), inf1.get(), inf2.get(), nullptr));
   EXPECT_EQ(1, EC_POINT_cmp(group(), inf1.get(), p.get(), nullptr));
@@ -732,7 +735,7 @@ TEST_P(ECCurveTest, MulZero) {
 }
 
 // Test that multiplying by the order produces ∞ and, moreover, that callers may
-// do so. |EC_POINT_mul| is almost exclusively used with reduced scalars, with
+// do so. `EC_POINT_mul` is almost exclusively used with reduced scalars, with
 // this exception. This comes from consumers following NIST SP 800-56A section
 // 5.6.2.3.2. (Though all our curves have cofactor one, so this check isn't
 // useful.)
@@ -759,7 +762,7 @@ TEST_P(ECCurveTest, MulOrder) {
       << "p * order did not return point at infinity.";
 }
 
-// Test that |EC_POINT_mul| works with out-of-range scalars. The operation will
+// Test that `EC_POINT_mul` works with out-of-range scalars. The operation will
 // not be constant-time, but we'll compute the right answer.
 TEST_P(ECCurveTest, MulOutOfRange) {
   UniquePtr<BIGNUM> n_minus_one(BN_dup(EC_GROUP_get0_order(group())));
@@ -889,7 +892,7 @@ TEST_P(ECCurveTest, IgnoreOct2PointReturnValue) {
 
   ASSERT_FALSE(EC_POINT_oct2point(group(), point.get(), serialized.data(),
                                   serialized.size(), nullptr));
-  // After a failure, |point| should have been set to the generator to defend
+  // After a failure, `point` should have been set to the generator to defend
   // against code that doesn't check the return value.
   ASSERT_EQ(0, EC_POINT_cmp(group(), point.get(),
                             EC_GROUP_get0_generator(group()), nullptr));
@@ -945,7 +948,7 @@ TEST_P(ECCurveTest, P224Bug) {
   EXPECT_EQ(0, EC_POINT_cmp(group(), ret.get(), g, nullptr));
 
 #if !defined(BORINGSSL_SHARED_LIBRARY)
-  // Repeat the computation with |ec_point_mul_scalar_public|, which ties the
+  // Repeat the computation with `ec_point_mul_scalar_public`, which ties the
   // additions together.
   EC_SCALAR sc31, sc32;
   ASSERT_TRUE(ec_bignum_to_scalar(group(), &sc31, bn31.get()));
@@ -1494,19 +1497,64 @@ TEST(ECTest, HashToCurve) {
   static const uint8_t kMessage[] = {4, 5, 6, 7};
   EXPECT_FALSE(ec_hash_to_curve_p384_xmd_sha384_sswu(
       EC_group_p224(), &raw, kDST, sizeof(kDST), kMessage, sizeof(kMessage)));
+  EXPECT_TRUE(ErrorsAreAndClear({{ERR_LIB_EC, EC_R_GROUP_MISMATCH}}));
   EXPECT_FALSE(EC_hash_to_curve_p384_xmd_sha384_sswu(
       EC_group_p224(), p_p224.get(), kDST, sizeof(kDST), kMessage,
       sizeof(kMessage)));
+  EXPECT_TRUE(ErrorsAreAndClear({{ERR_LIB_EC, EC_R_GROUP_MISMATCH}}));
   EXPECT_FALSE(EC_hash_to_curve_p384_xmd_sha384_sswu(
       EC_group_p224(), p_p384.get(), kDST, sizeof(kDST), kMessage,
       sizeof(kMessage)));
+  EXPECT_TRUE(ErrorsAreAndClear({{ERR_LIB_EC, EC_R_INCOMPATIBLE_OBJECTS}}));
   EXPECT_FALSE(EC_hash_to_curve_p384_xmd_sha384_sswu(
       EC_group_p384(), p_p224.get(), kDST, sizeof(kDST), kMessage,
       sizeof(kMessage)));
+  EXPECT_TRUE(ErrorsAreAndClear({{ERR_LIB_EC, EC_R_INCOMPATIBLE_OBJECTS}}));
 
   // Zero-length DSTs are not allowed.
   EXPECT_FALSE(ec_hash_to_curve_p384_xmd_sha384_sswu(
       EC_group_p384(), &raw, nullptr, 0, kMessage, sizeof(kMessage)));
+  EXPECT_TRUE(ErrorsAreAndClear({{ERR_LIB_EC, std::nullopt}}));
+}
+
+// Test the WPA3 SAE hash-to-curve construction. Test vector from Appendix J.10
+// of IEEE Std 802.11-2024.
+TEST(ECTest, WPA3SAEHashToCurve) {
+  static const uint8_t kSalt[] = {0x62, 0x79, 0x74, 0x65, 0x6d, 0x65};
+  static const uint8_t kIKM[] = {0x6d, 0x65, 0x6b, 0x6d, 0x69, 0x74, 0x61,
+                                 0x73, 0x64, 0x69, 0x67, 0x6f, 0x61, 0x74,
+                                 0x70, 0x73, 0x6b, 0x34, 0x69, 0x6e, 0x74,
+                                 0x65, 0x72, 0x6e, 0x65, 0x74};
+  static const uint8_t kExpected[] = {
+      0x04, 0xb6, 0xe3, 0x8c, 0x98, 0x75, 0x0c, 0x68, 0x4b, 0x5d, 0x17,
+      0xc3, 0xd8, 0xc9, 0xa4, 0x10, 0x0b, 0x39, 0x93, 0x12, 0x79, 0x18,
+      0x7c, 0xa6, 0xcc, 0xed, 0x5f, 0x37, 0xef, 0x46, 0xdd, 0xfa, 0x97,
+      0x56, 0x87, 0xe9, 0x72, 0xe5, 0x0f, 0x73, 0xe3, 0x89, 0x88, 0x61,
+      0xe7, 0xed, 0xad, 0x21, 0xbe, 0xa7, 0xd5, 0xf6, 0x22, 0xdf, 0x88,
+      0x24, 0x3b, 0xb8, 0x04, 0x92, 0x0a, 0xe8, 0xe6, 0x47, 0xfa};
+
+  const EC_GROUP *group = EC_group_p256();
+  UniquePtr<EC_POINT> point(EC_POINT_new(group));
+  ASSERT_TRUE(point);
+  ASSERT_TRUE(EC_wpa3_sae_hash_to_curve_p256(
+      group, point.get(), kSalt, sizeof(kSalt), kIKM, sizeof(kIKM)));
+
+  std::vector<uint8_t> buf;
+  ASSERT_TRUE(
+      EncodeECPoint(&buf, group, point.get(), POINT_CONVERSION_UNCOMPRESSED));
+  EXPECT_EQ(Bytes(kExpected), Bytes(buf));
+
+  // The function should check for the wrong group.
+  UniquePtr<EC_POINT> point_p384(EC_POINT_new(EC_group_p384()));
+  ASSERT_TRUE(point_p384);
+  EXPECT_FALSE(EC_wpa3_sae_hash_to_curve_p256(EC_group_p384(), point_p384.get(),
+                                              kSalt, sizeof(kSalt), kIKM,
+                                              sizeof(kIKM)));
+  EXPECT_FALSE(EC_wpa3_sae_hash_to_curve_p256(EC_group_p256(), point_p384.get(),
+                                              kSalt, sizeof(kSalt), kIKM,
+                                              sizeof(kIKM)));
+  EXPECT_FALSE(EC_wpa3_sae_hash_to_curve_p256(
+      EC_group_p384(), point.get(), kSalt, sizeof(kSalt), kIKM, sizeof(kIKM)));
 }
 
 #if !defined(BORINGSSL_SHARED_LIBRARY)

@@ -26,6 +26,8 @@ bar:
 
 	# Synthesized symbols do not use the GOT.
 	movq BORINGSSL_bcm_text_start@GOTPCREL(%rip), %r11
+	movq BORINGSSL_bcm_text_end@GOTPCREL(%rip), %r11
+	movq BORINGSSL_bcm_text_hash@GOTPCREL(%rip), %r11
 	movq foobar_bss_get@GOTPCREL(%rip), %r11
 
 	# Transforming moves run the transform in-place after the load.

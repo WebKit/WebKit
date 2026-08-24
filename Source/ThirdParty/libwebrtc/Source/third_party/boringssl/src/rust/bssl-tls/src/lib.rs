@@ -36,6 +36,7 @@ extern crate core;
 use core::panic::AssertUnwindSafe;
 
 pub mod alerts;
+pub mod ciphers;
 pub mod config;
 pub mod connection;
 pub mod context;
@@ -45,6 +46,10 @@ mod ffi;
 pub mod io;
 mod methods;
 pub mod sessions;
+#[cfg(feature = "std")]
+/// Synchronous I/O high-level APIs.
+pub mod sync_io;
+
 #[macro_use]
 #[doc(hidden)]
 mod macros;
@@ -65,8 +70,16 @@ pub(crate) trait Methods {
     unsafe extern "C" fn from_ssl<'a>(ssl: *mut bssl_sys::SSL) -> Option<&'a Self>;
 }
 
+pub(crate) trait PrivateKeyMethods: Methods {
+    fn private_key_methods(&self) -> Option<&dyn credentials::PrivateKeyDelegate>;
+}
+
 pub(crate) trait VerifyCertificateMethods: Methods {
     fn verify_certificate_methods(&self) -> Option<&dyn credentials::VerifyCertificate>;
+}
+
+pub(crate) trait EarlyCallbackMethods<M>: Methods {
+    fn early_callback_handler(&self) -> Option<&dyn credentials::early_callback::EarlyCallback<M>>;
 }
 
 #[inline]

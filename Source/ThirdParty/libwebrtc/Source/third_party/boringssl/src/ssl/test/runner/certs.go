@@ -491,9 +491,7 @@ func ParseX509Certificate(der []byte) (*x509.Certificate, error) {
 	if err != nil {
 		return nil, err
 	}
-	if cert.PublicKey == nil {
-		reparseSPKI(cert)
-	}
+	reparseSPKI(cert)
 	return cert, nil
 }
 

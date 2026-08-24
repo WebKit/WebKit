@@ -52,7 +52,7 @@ void bssl::RSAZ_1024_mod_exp_avx2(BN_ULONG result_norm[16],
   assert((uintptr_t)storage % 64 == 0);
 
   BN_ULONG *a_inv, *m, *result, *table_s = storage + 40 * 3, *R2 = table_s;
-  // Note |R2| aliases |table_s|.
+  // Note `R2` aliases `table_s`.
   if (((((uintptr_t)storage & 4095) + 320) >> 12) != 0) {
     result = storage;
     a_inv = storage + 40;
@@ -67,7 +67,7 @@ void bssl::RSAZ_1024_mod_exp_avx2(BN_ULONG result_norm[16],
   rsaz_1024_norm2red_avx2(a_inv, base_norm);
   rsaz_1024_norm2red_avx2(R2, RR);
 
-  // Convert |R2| from the usual radix, giving R = 2^1024, to RSAZ's radix,
+  // Convert `R2` from the usual radix, giving R = 2^1024, to RSAZ's radix,
   // giving R = 2^(36*29) = 2^1044.
   rsaz_1024_mul_avx2(R2, R2, R2, m, k0);
   // R2 = 2^2048 * 2^2048 / 2^1044 = 2^3052
@@ -119,7 +119,7 @@ void bssl::RSAZ_1024_mod_exp_avx2(BN_ULONG result_norm[16],
     wvalue = (wvalue >> (index % 8)) & 31;
     index -= 5;
 
-    rsaz_1024_gather5_avx2(a_inv, table_s, wvalue);  // Borrow |a_inv|.
+    rsaz_1024_gather5_avx2(a_inv, table_s, wvalue);  // Borrow `a_inv`.
     rsaz_1024_mul_avx2(result, result, a_inv, m, k0);
   }
 
@@ -128,7 +128,7 @@ void bssl::RSAZ_1024_mod_exp_avx2(BN_ULONG result_norm[16],
 
   wvalue = p_str[0] & 15;
 
-  rsaz_1024_gather5_avx2(a_inv, table_s, wvalue);  // Borrow |a_inv|.
+  rsaz_1024_gather5_avx2(a_inv, table_s, wvalue);  // Borrow `a_inv`.
   rsaz_1024_mul_avx2(result, result, a_inv, m, k0);
 
   // Convert from Montgomery.

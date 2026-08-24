@@ -18,9 +18,9 @@ section	.text code align=64
 ALIGN	32
 _aesni_ctr32_ghash_6x:
 
-	vmovdqu	xmm2,XMMWORD[32+r11]
+	vmovdqu	xmm2,XMMWORD[32+r11]  ; borrow %xmm2, .Lone_msb
 	sub	r8,6
-	vpxor	xmm4,xmm4,xmm4
+	vpxor	xmm4,xmm4,xmm4  ; %xmm4   = 0
 	vmovdqu	xmm15,XMMWORD[((0-128))+r9]
 	vpaddb	xmm10,xmm1,xmm2
 	vpaddb	xmm11,xmm10,xmm2
@@ -28,46 +28,46 @@ _aesni_ctr32_ghash_6x:
 	vpaddb	xmm13,xmm12,xmm2
 	vpaddb	xmm14,xmm13,xmm2
 	vpxor	xmm9,xmm1,xmm15
-	vmovdqu	XMMWORD[(16+8)+rsp],xmm4
+	vmovdqu	XMMWORD[(16+8)+rsp],xmm4  ; "%xmm7" = 0
 	jmp	NEAR $L$oop6x
 
 ALIGN	32
 $L$oop6x:
 	add	ebx,100663296
-	jc	NEAR $L$handle_ctr32
-	vmovdqu	xmm3,XMMWORD[((0-32))+rsi]
-	vpaddb	xmm1,xmm14,xmm2
+	jc	NEAR $L$handle_ctr32  ; discard ?
+	vmovdqu	xmm3,XMMWORD[((0-32))+rsi]  ; %xmm3^1
+	vpaddb	xmm1,xmm14,xmm2  ; next counter value
 	vpxor	xmm10,xmm10,xmm15
 	vpxor	xmm11,xmm11,xmm15
 
 $L$resume_ctr32:
-	vmovdqu	XMMWORD[rdi],xmm1
+	vmovdqu	XMMWORD[rdi],xmm1  ; save next counter value
 	vpclmulqdq	xmm5,xmm7,xmm3,0x10
 	vpxor	xmm12,xmm12,xmm15
-	vmovups	xmm2,XMMWORD[((16-128))+r9]
+	vmovups	xmm2,XMMWORD[((16-128))+r9]  ; borrow %xmm2 for %xmm15
 	vpclmulqdq	xmm6,xmm7,xmm3,0x01
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+; At this point, the current block of 96 (0x60) bytes has already been
+; loaded into registers. Concurrently with processing it, we want to
+; load the next 96 bytes of input for the next round. Obviously, we can
+; only do this if there are at least 96 more bytes of input beyond the
+; input we're currently processing, or else we'd read past the end of
+; the input buffer. Here, we set |%r12| to 96 if there are at least 96
+; bytes of input beyond the 96 bytes we're already processing, and we
+; set |%r12| to 0 otherwise. In the case where we set |%r12| to 96,
+; we'll read in the next block so that it is in registers for the next
+; loop iteration. In the case where we set |%r12| to 0, we'll re-read
+; the current block and then ignore what we re-read.
+; 
+; At this point, |%r14| points to the current (already read into
+; registers) block, and |%r15| points to 2*96 bytes before the end of
+; the input. Thus, |%r14| > |%r15| means that we do not have the next
+; 96-byte block to read in, and |%r14| <= |%r15| means we do.
 	xor	r12,r12
 	cmp	r15,r14
 
 	vaesenc	xmm9,xmm9,xmm2
-	vmovdqu	xmm0,XMMWORD[((48+8))+rsp]
+	vmovdqu	xmm0,XMMWORD[((48+8))+rsp]  ; I[4]
 	vpxor	xmm13,xmm13,xmm15
 	vpclmulqdq	xmm1,xmm7,xmm3,0x00
 	vaesenc	xmm10,xmm10,xmm2
@@ -75,12 +75,12 @@ $L$resume_ctr32:
 	setnc	r12b
 	vpclmulqdq	xmm7,xmm7,xmm3,0x11
 	vaesenc	xmm11,xmm11,xmm2
-	vmovdqu	xmm3,XMMWORD[((16-32))+rsi]
+	vmovdqu	xmm3,XMMWORD[((16-32))+rsi]  ; %xmm3^2
 	neg	r12
 	vaesenc	xmm12,xmm12,xmm2
 	vpxor	xmm6,xmm6,xmm5
 	vpclmulqdq	xmm5,xmm0,xmm3,0x00
-	vpxor	xmm8,xmm8,xmm4
+	vpxor	xmm8,xmm8,xmm4  ; modulo-scheduled
 	vaesenc	xmm13,xmm13,xmm2
 	vpxor	xmm4,xmm1,xmm5
 	and	r12,0x60
@@ -91,9 +91,9 @@ $L$resume_ctr32:
 	vpclmulqdq	xmm2,xmm0,xmm3,0x01
 	lea	r14,[r12*1+r14]
 	vaesenc	xmm9,xmm9,xmm15
-	vpxor	xmm8,xmm8,XMMWORD[((16+8))+rsp]
+	vpxor	xmm8,xmm8,XMMWORD[((16+8))+rsp]  ; modulo-scheduled [vpxor %xmm7,%xmm8,%xmm8]
 	vpclmulqdq	xmm3,xmm0,xmm3,0x11
-	vmovdqu	xmm0,XMMWORD[((64+8))+rsp]
+	vmovdqu	xmm0,XMMWORD[((64+8))+rsp]  ; I[3]
 	vaesenc	xmm10,xmm10,xmm15
 	movbe	r13,QWORD[88+r14]
 	vaesenc	xmm11,xmm11,xmm15
@@ -102,7 +102,7 @@ $L$resume_ctr32:
 	mov	QWORD[((32+8))+rsp],r13
 	vaesenc	xmm13,xmm13,xmm15
 	mov	QWORD[((40+8))+rsp],r12
-	vmovdqu	xmm5,XMMWORD[((48-32))+rsi]
+	vmovdqu	xmm5,XMMWORD[((48-32))+rsi]  ; borrow %xmm5 for %xmm3^3
 	vaesenc	xmm14,xmm14,xmm15
 
 	vmovups	xmm15,XMMWORD[((48-128))+r9]
@@ -116,11 +116,11 @@ $L$resume_ctr32:
 	vpclmulqdq	xmm3,xmm0,xmm5,0x01
 	vaesenc	xmm11,xmm11,xmm15
 	vpclmulqdq	xmm5,xmm0,xmm5,0x11
-	vmovdqu	xmm0,XMMWORD[((80+8))+rsp]
+	vmovdqu	xmm0,XMMWORD[((80+8))+rsp]  ; I[2]
 	vaesenc	xmm12,xmm12,xmm15
 	vaesenc	xmm13,xmm13,xmm15
 	vpxor	xmm4,xmm4,xmm1
-	vmovdqu	xmm1,XMMWORD[((64-32))+rsi]
+	vmovdqu	xmm1,XMMWORD[((64-32))+rsi]  ; borrow %xmm1 for %xmm3^4
 	vaesenc	xmm14,xmm14,xmm15
 
 	vmovups	xmm15,XMMWORD[((64-128))+r9]
@@ -136,13 +136,13 @@ $L$resume_ctr32:
 	vaesenc	xmm11,xmm11,xmm15
 	movbe	r12,QWORD[64+r14]
 	vpclmulqdq	xmm1,xmm0,xmm1,0x11
-	vmovdqu	xmm0,XMMWORD[((96+8))+rsp]
+	vmovdqu	xmm0,XMMWORD[((96+8))+rsp]  ; I[1]
 	vaesenc	xmm12,xmm12,xmm15
 	mov	QWORD[((48+8))+rsp],r13
 	vaesenc	xmm13,xmm13,xmm15
 	mov	QWORD[((56+8))+rsp],r12
 	vpxor	xmm4,xmm4,xmm2
-	vmovdqu	xmm2,XMMWORD[((96-32))+rsi]
+	vmovdqu	xmm2,XMMWORD[((96-32))+rsi]  ; borrow %xmm2 for %xmm3^5
 	vaesenc	xmm14,xmm14,xmm15
 
 	vmovups	xmm15,XMMWORD[((80-128))+r9]
@@ -155,7 +155,7 @@ $L$resume_ctr32:
 	movbe	r13,QWORD[56+r14]
 	vpxor	xmm7,xmm7,xmm1
 	vpclmulqdq	xmm1,xmm0,xmm2,0x01
-	vpxor	xmm8,xmm8,XMMWORD[((112+8))+rsp]
+	vpxor	xmm8,xmm8,XMMWORD[((112+8))+rsp]  ; accumulate I[0]
 	vaesenc	xmm11,xmm11,xmm15
 	movbe	r12,QWORD[48+r14]
 	vpclmulqdq	xmm2,xmm0,xmm2,0x11
@@ -164,7 +164,7 @@ $L$resume_ctr32:
 	vaesenc	xmm13,xmm13,xmm15
 	mov	QWORD[((72+8))+rsp],r12
 	vpxor	xmm4,xmm4,xmm3
-	vmovdqu	xmm3,XMMWORD[((112-32))+rsi]
+	vmovdqu	xmm3,XMMWORD[((112-32))+rsi]  ; %xmm3^6
 	vaesenc	xmm14,xmm14,xmm15
 
 	vmovups	xmm15,XMMWORD[((96-128))+r9]
@@ -191,7 +191,7 @@ $L$resume_ctr32:
 	vmovups	xmm15,XMMWORD[((112-128))+r9]
 	vpslldq	xmm5,xmm6,8
 	vpxor	xmm4,xmm4,xmm2
-	vmovdqu	xmm3,XMMWORD[16+r11]
+	vmovdqu	xmm3,XMMWORD[16+r11]  ; .Lpoly
 
 	vaesenc	xmm9,xmm9,xmm15
 	vpxor	xmm7,xmm7,xmm8
@@ -200,13 +200,13 @@ $L$resume_ctr32:
 	movbe	r13,QWORD[24+r14]
 	vaesenc	xmm11,xmm11,xmm15
 	movbe	r12,QWORD[16+r14]
-	vpalignr	xmm0,xmm4,xmm4,8
+	vpalignr	xmm0,xmm4,xmm4,8  ; 1st phase
 	vpclmulqdq	xmm4,xmm4,xmm3,0x10
 	mov	QWORD[((96+8))+rsp],r13
 	vaesenc	xmm12,xmm12,xmm15
 	mov	QWORD[((104+8))+rsp],r12
 	vaesenc	xmm13,xmm13,xmm15
-	vmovups	xmm1,XMMWORD[((128-128))+r9]
+	vmovups	xmm1,XMMWORD[((128-128))+r9]  ; borrow %xmm1 for %xmm15
 	vaesenc	xmm14,xmm14,xmm15
 
 	vaesenc	xmm9,xmm9,xmm1
@@ -223,7 +223,7 @@ $L$resume_ctr32:
 	vaesenc	xmm14,xmm14,xmm1
 	vmovups	xmm1,XMMWORD[((160-128))+r9]
 	cmp	r10d,11
-	jb	NEAR $L$enc_tail
+	jb	NEAR $L$enc_tail  ; 128-bit key
 
 	vaesenc	xmm9,xmm9,xmm15
 	vaesenc	xmm10,xmm10,xmm15
@@ -240,7 +240,7 @@ $L$resume_ctr32:
 	vmovups	xmm15,XMMWORD[((176-128))+r9]
 	vaesenc	xmm14,xmm14,xmm1
 	vmovups	xmm1,XMMWORD[((192-128))+r9]
-	je	NEAR $L$enc_tail
+	je	NEAR $L$enc_tail  ; 192-bit key
 
 	vaesenc	xmm9,xmm9,xmm15
 	vaesenc	xmm10,xmm10,xmm15
@@ -257,16 +257,16 @@ $L$resume_ctr32:
 	vmovups	xmm15,XMMWORD[((208-128))+r9]
 	vaesenc	xmm14,xmm14,xmm1
 	vmovups	xmm1,XMMWORD[((224-128))+r9]
-	jmp	NEAR $L$enc_tail
+	jmp	NEAR $L$enc_tail  ; 256-bit key
 
 ALIGN	32
 $L$handle_ctr32:
-	vmovdqu	xmm0,XMMWORD[r11]
-	vpshufb	xmm6,xmm1,xmm0
-	vmovdqu	xmm5,XMMWORD[48+r11]
-	vpaddd	xmm10,xmm6,XMMWORD[64+r11]
+	vmovdqu	xmm0,XMMWORD[r11]  ; borrow %xmm0 for .Lbswap_mask
+	vpshufb	xmm6,xmm1,xmm0  ; byte-swap counter
+	vmovdqu	xmm5,XMMWORD[48+r11]  ; borrow %xmm5, .Ltwo_lsb
+	vpaddd	xmm10,xmm6,XMMWORD[64+r11]  ; .Lone_lsb
 	vpaddd	xmm11,xmm6,xmm5
-	vmovdqu	xmm3,XMMWORD[((0-32))+rsi]
+	vmovdqu	xmm3,XMMWORD[((0-32))+rsi]  ; %xmm3^1
 	vpaddd	xmm12,xmm10,xmm5
 	vpshufb	xmm10,xmm10,xmm0
 	vpaddd	xmm13,xmm11,xmm5
@@ -275,17 +275,17 @@ $L$handle_ctr32:
 	vpaddd	xmm14,xmm12,xmm5
 	vpshufb	xmm12,xmm12,xmm0
 	vpxor	xmm11,xmm11,xmm15
-	vpaddd	xmm1,xmm13,xmm5
+	vpaddd	xmm1,xmm13,xmm5  ; byte-swapped next counter value
 	vpshufb	xmm13,xmm13,xmm0
 	vpshufb	xmm14,xmm14,xmm0
-	vpshufb	xmm1,xmm1,xmm0
+	vpshufb	xmm1,xmm1,xmm0  ; next counter value
 	jmp	NEAR $L$resume_ctr32
 
 ALIGN	32
 $L$enc_tail:
 	vaesenc	xmm9,xmm9,xmm15
-	vmovdqu	XMMWORD[(16+8)+rsp],xmm7
-	vpalignr	xmm8,xmm4,xmm4,8
+	vmovdqu	XMMWORD[(16+8)+rsp],xmm7  ; postpone vpxor %xmm7,%xmm8,%xmm8
+	vpalignr	xmm8,xmm4,xmm4,8  ; 2nd phase
 	vaesenc	xmm10,xmm10,xmm15
 	vpclmulqdq	xmm4,xmm4,xmm3,0x10
 	vpxor	xmm2,xmm1,XMMWORD[rcx]
@@ -298,16 +298,16 @@ $L$enc_tail:
 	vaesenc	xmm14,xmm14,xmm15
 	vpxor	xmm7,xmm1,XMMWORD[64+rcx]
 	vpxor	xmm3,xmm1,XMMWORD[80+rcx]
-	vmovdqu	xmm1,XMMWORD[rdi]
+	vmovdqu	xmm1,XMMWORD[rdi]  ; load next counter value
 
 	vaesenclast	xmm9,xmm9,xmm2
-	vmovdqu	xmm2,XMMWORD[32+r11]
+	vmovdqu	xmm2,XMMWORD[32+r11]  ; borrow %xmm2, .Lone_msb
 	vaesenclast	xmm10,xmm10,xmm0
 	vpaddb	xmm0,xmm1,xmm2
 	mov	QWORD[((112+8))+rsp],r13
 	lea	rcx,[96+rcx]
-
-	prefetcht0	[512+rcx]
+; These two prefetches were added in BoringSSL. See change that added them.
+	prefetcht0	[512+rcx]  ; We use 96-byte block so prefetch 2 lines (128 bytes)
 	prefetcht0	[576+rcx]
 	vaesenclast	xmm11,xmm11,xmm5
 	vpaddb	xmm5,xmm0,xmm2
@@ -325,24 +325,24 @@ $L$enc_tail:
 	sub	r8,0x6
 	jc	NEAR $L$6x_done
 
-	vmovups	XMMWORD[(-96)+rdx],xmm9
+	vmovups	XMMWORD[(-96)+rdx],xmm9  ; save output
 	vpxor	xmm9,xmm1,xmm15
 	vmovups	XMMWORD[(-80)+rdx],xmm10
-	vmovdqa	xmm10,xmm0
+	vmovdqa	xmm10,xmm0  ; 0 latency
 	vmovups	XMMWORD[(-64)+rdx],xmm11
-	vmovdqa	xmm11,xmm5
+	vmovdqa	xmm11,xmm5  ; 0 latency
 	vmovups	XMMWORD[(-48)+rdx],xmm12
-	vmovdqa	xmm12,xmm6
+	vmovdqa	xmm12,xmm6  ; 0 latency
 	vmovups	XMMWORD[(-32)+rdx],xmm13
-	vmovdqa	xmm13,xmm7
+	vmovdqa	xmm13,xmm7  ; 0 latency
 	vmovups	XMMWORD[(-16)+rdx],xmm14
-	vmovdqa	xmm14,xmm3
-	vmovdqu	xmm7,XMMWORD[((32+8))+rsp]
+	vmovdqa	xmm14,xmm3  ; 0 latency
+	vmovdqu	xmm7,XMMWORD[((32+8))+rsp]  ; I[5]
 	jmp	NEAR $L$oop6x
 
 $L$6x_done:
-	vpxor	xmm8,xmm8,XMMWORD[((16+8))+rsp]
-	vpxor	xmm8,xmm8,xmm4
+	vpxor	xmm8,xmm8,XMMWORD[((16+8))+rsp]  ; modulo-scheduled
+	vpxor	xmm8,xmm8,xmm4  ; modulo-scheduled
 
 	ret
 
@@ -356,15 +356,15 @@ $L$SEH_begin_aesni_gcm_decrypt_1:
 _CET_ENDBR
 	xor	rax,rax
 
-
-
-	cmp	r8,0x60
+; We call |_aesni_ctr32_ghash_6x|, which requires at least 96 (0x60)
+; bytes of input.
+	cmp	r8,0x60  ; minimal accepted length
 	jb	NEAR $L$gcm_dec_abort
 
 	push	rbp
 
 $L$SEH_prologue_aesni_gcm_decrypt_2:
-	mov	rbp,rsp
+	mov	rbp,rsp  ; save stack pointer
 
 	push	rbx
 
@@ -381,19 +381,19 @@ $L$SEH_prologue_aesni_gcm_decrypt_6:
 	push	r15
 
 $L$SEH_prologue_aesni_gcm_decrypt_7:
-	lea	rsp,[((-168))+rsp]
+	lea	rsp,[((-168))+rsp]  ; 8 extra bytes to align the stack
 $L$SEH_prologue_aesni_gcm_decrypt_8:
 $L$SEH_prologue_aesni_gcm_decrypt_9:
-
-
-
+; Load the last two parameters. These go into %rdi and %rsi, which are
+; non-volatile on Windows, so stash them in the parameter stack area
+; first.
 	mov	QWORD[16+rbp],rdi
 $L$SEH_prologue_aesni_gcm_decrypt_10:
 	mov	QWORD[24+rbp],rsi
 $L$SEH_prologue_aesni_gcm_decrypt_11:
 	mov	rdi,QWORD[48+rbp]
 	mov	rsi,QWORD[56+rbp]
-
+; Save non-volatile XMM registers.
 	movaps	XMMWORD[(-208)+rbp],xmm6
 $L$SEH_prologue_aesni_gcm_decrypt_12:
 	movaps	XMMWORD[(-192)+rbp],xmm7
@@ -418,17 +418,17 @@ $L$SEH_endprologue_aesni_gcm_decrypt_22:
 	vzeroupper
 
 	mov	r12,QWORD[64+rbp]
-	vmovdqu	xmm1,XMMWORD[rdi]
+	vmovdqu	xmm1,XMMWORD[rdi]  ; input counter value
 	add	rsp,-128
 	mov	ebx,DWORD[12+rdi]
 	lea	r11,[$L$bswap_mask]
-	lea	r14,[((-128))+r9]
-	mov	r15,0xf80
-	vmovdqu	xmm8,XMMWORD[r12]
-	and	rsp,-128
-	vmovdqu	xmm0,XMMWORD[r11]
-	lea	r9,[128+r9]
-	lea	rsi,[32+rsi]
+	lea	r14,[((-128))+r9]  ; borrow %r14
+	mov	r15,0xf80  ; borrow %r15
+	vmovdqu	xmm8,XMMWORD[r12]  ; load Xi
+	and	rsp,-128  ; ensure stack alignment
+	vmovdqu	xmm0,XMMWORD[r11]  ; borrow %xmm0 for .Lbswap_mask
+	lea	r9,[128+r9]  ; size optimization
+	lea	rsi,[32+rsi]  ; size optimization
 	mov	r10d,DWORD[((240-128))+r9]
 	vpshufb	xmm8,xmm8,xmm0
 
@@ -438,26 +438,26 @@ $L$SEH_endprologue_aesni_gcm_decrypt_22:
 	jc	NEAR $L$dec_no_key_aliasing
 	cmp	r15,768
 	jnc	NEAR $L$dec_no_key_aliasing
-	sub	rsp,r15
+	sub	rsp,r15  ; avoid aliasing with key
 $L$dec_no_key_aliasing:
 
-	vmovdqu	xmm7,XMMWORD[80+rcx]
+	vmovdqu	xmm7,XMMWORD[80+rcx]  ; I[5]
 	mov	r14,rcx
 	vmovdqu	xmm4,XMMWORD[64+rcx]
 
-
-
-
-
-
-
+; |_aesni_ctr32_ghash_6x| requires |%r15| to point to 2*96 (0xc0)
+; bytes before the end of the input. Note, in particular, that this is
+; correct even if |%r8| is not an even multiple of 96 or 16. XXX: This
+; seems to require that |%rcx| + |%r8| >= 2*96 (0xc0); i.e. |%rcx| must
+; not be near the very beginning of the address space when |%r8| < 2*96
+; (0xc0).
 	lea	r15,[((-192))+r8*1+rcx]
 
 	vmovdqu	xmm5,XMMWORD[48+rcx]
 	shr	r8,4
 	xor	rax,rax
 	vmovdqu	xmm6,XMMWORD[32+rcx]
-	vpshufb	xmm7,xmm7,xmm0
+	vpshufb	xmm7,xmm7,xmm0  ; passed to _aesni_ctr32_ghash_6x
 	vmovdqu	xmm2,XMMWORD[16+rcx]
 	vpshufb	xmm4,xmm4,xmm0
 	vmovdqu	xmm3,XMMWORD[rcx]
@@ -474,15 +474,15 @@ $L$dec_no_key_aliasing:
 	call	_aesni_ctr32_ghash_6x
 
 	mov	r12,QWORD[64+rbp]
-	vmovups	XMMWORD[(-96)+rdx],xmm9
+	vmovups	XMMWORD[(-96)+rdx],xmm9  ; save output
 	vmovups	XMMWORD[(-80)+rdx],xmm10
 	vmovups	XMMWORD[(-64)+rdx],xmm11
 	vmovups	XMMWORD[(-48)+rdx],xmm12
 	vmovups	XMMWORD[(-32)+rdx],xmm13
 	vmovups	XMMWORD[(-16)+rdx],xmm14
 
-	vpshufb	xmm8,xmm8,XMMWORD[r11]
-	vmovdqu	XMMWORD[r12],xmm8
+	vpshufb	xmm8,xmm8,XMMWORD[r11]  ; .Lbswap_mask
+	vmovdqu	XMMWORD[r12],xmm8  ; output Xi
 
 	vzeroupper
 	movaps	xmm6,XMMWORD[((-208))+rbp]
@@ -497,7 +497,7 @@ $L$dec_no_key_aliasing:
 	movaps	xmm15,XMMWORD[((-64))+rbp]
 	mov	rdi,QWORD[16+rbp]
 	mov	rsi,QWORD[24+rbp]
-	lea	rsp,[((-40))+rbp]
+	lea	rsp,[((-40))+rbp]  ; restore %rsp to fixed allocation
 
 	pop	r15
 
@@ -520,8 +520,8 @@ $L$SEH_end_aesni_gcm_decrypt_23:
 ALIGN	32
 _aesni_ctr32_6x:
 
-	vmovdqu	xmm4,XMMWORD[((0-128))+r9]
-	vmovdqu	xmm2,XMMWORD[32+r11]
+	vmovdqu	xmm4,XMMWORD[((0-128))+r9]  ; borrow %xmm4 for %xmm15
+	vmovdqu	xmm2,XMMWORD[32+r11]  ; borrow %xmm2, .Lone_msb
 	lea	r13,[((-1))+r10]
 	vmovups	xmm15,XMMWORD[((16-128))+r9]
 	lea	r12,[((32-128))+r9]
@@ -554,7 +554,7 @@ $L$oop_ctr32:
 	dec	r13d
 	jnz	NEAR $L$oop_ctr32
 
-	vmovdqu	xmm3,XMMWORD[r12]
+	vmovdqu	xmm3,XMMWORD[r12]  ; last round key
 	vaesenc	xmm9,xmm9,xmm15
 	vpxor	xmm4,xmm3,XMMWORD[rcx]
 	vaesenc	xmm10,xmm10,xmm15
@@ -586,9 +586,9 @@ $L$oop_ctr32:
 	ret
 ALIGN	32
 $L$handle_ctr32_2:
-	vpshufb	xmm6,xmm1,xmm0
-	vmovdqu	xmm5,XMMWORD[48+r11]
-	vpaddd	xmm10,xmm6,XMMWORD[64+r11]
+	vpshufb	xmm6,xmm1,xmm0  ; byte-swap counter
+	vmovdqu	xmm5,XMMWORD[48+r11]  ; borrow %xmm5, .Ltwo_lsb
+	vpaddd	xmm10,xmm6,XMMWORD[64+r11]  ; .Lone_lsb
 	vpaddd	xmm11,xmm6,xmm5
 	vpaddd	xmm12,xmm10,xmm5
 	vpshufb	xmm10,xmm10,xmm0
@@ -598,12 +598,12 @@ $L$handle_ctr32_2:
 	vpaddd	xmm14,xmm12,xmm5
 	vpshufb	xmm12,xmm12,xmm0
 	vpxor	xmm11,xmm11,xmm4
-	vpaddd	xmm1,xmm13,xmm5
+	vpaddd	xmm1,xmm13,xmm5  ; byte-swapped next counter value
 	vpshufb	xmm13,xmm13,xmm0
 	vpxor	xmm12,xmm12,xmm4
 	vpshufb	xmm14,xmm14,xmm0
 	vpxor	xmm13,xmm13,xmm4
-	vpshufb	xmm1,xmm1,xmm0
+	vpshufb	xmm1,xmm1,xmm0  ; next counter value
 	vpxor	xmm14,xmm14,xmm4
 	jmp	NEAR $L$oop_ctr32
 
@@ -622,16 +622,16 @@ EXTERN	BORINGSSL_function_hit
 %endif
 	xor	rax,rax
 
-
-
-
-	cmp	r8,0x60*3
+; We call |_aesni_ctr32_6x| twice, each call consuming 96 bytes of
+; input. Then we call |_aesni_ctr32_ghash_6x|, which requires at
+; least 96 more bytes of input.
+	cmp	r8,0x60*3  ; minimal accepted length
 	jb	NEAR $L$gcm_enc_abort
 
 	push	rbp
 
 $L$SEH_prologue_aesni_gcm_encrypt_2:
-	mov	rbp,rsp
+	mov	rbp,rsp  ; save stack pointer
 
 	push	rbx
 
@@ -648,19 +648,19 @@ $L$SEH_prologue_aesni_gcm_encrypt_6:
 	push	r15
 
 $L$SEH_prologue_aesni_gcm_encrypt_7:
-	lea	rsp,[((-168))+rsp]
+	lea	rsp,[((-168))+rsp]  ; 8 extra bytes to align the stack
 $L$SEH_prologue_aesni_gcm_encrypt_8:
 $L$SEH_prologue_aesni_gcm_encrypt_9:
-
-
-
+; Load the last two parameters. These go into %rdi and %rsi, which are
+; non-volatile on Windows, so stash them in the parameter stack area
+; first.
 	mov	QWORD[16+rbp],rdi
 $L$SEH_prologue_aesni_gcm_encrypt_10:
 	mov	QWORD[24+rbp],rsi
 $L$SEH_prologue_aesni_gcm_encrypt_11:
 	mov	rdi,QWORD[48+rbp]
 	mov	rsi,QWORD[56+rbp]
-
+; Save non-volatile XMM registers.
 	movaps	XMMWORD[(-208)+rbp],xmm6
 $L$SEH_prologue_aesni_gcm_encrypt_12:
 	movaps	XMMWORD[(-192)+rbp],xmm7
@@ -684,15 +684,15 @@ $L$SEH_prologue_aesni_gcm_encrypt_21:
 $L$SEH_endprologue_aesni_gcm_encrypt_22:
 	vzeroupper
 
-	vmovdqu	xmm1,XMMWORD[rdi]
+	vmovdqu	xmm1,XMMWORD[rdi]  ; input counter value
 	add	rsp,-128
 	mov	ebx,DWORD[12+rdi]
 	lea	r11,[$L$bswap_mask]
-	lea	r14,[((-128))+r9]
-	mov	r15,0xf80
-	lea	r9,[128+r9]
-	vmovdqu	xmm0,XMMWORD[r11]
-	and	rsp,-128
+	lea	r14,[((-128))+r9]  ; borrow %r14
+	mov	r15,0xf80  ; borrow %r15
+	lea	r9,[128+r9]  ; size optimization
+	vmovdqu	xmm0,XMMWORD[r11]  ; borrow %xmm0 for .Lbswap_mask
+	and	rsp,-128  ; ensure stack alignment
 	mov	r10d,DWORD[((240-128))+r9]
 
 	and	r14,r15
@@ -701,24 +701,24 @@ $L$SEH_endprologue_aesni_gcm_encrypt_22:
 	jc	NEAR $L$enc_no_key_aliasing
 	cmp	r15,768
 	jnc	NEAR $L$enc_no_key_aliasing
-	sub	rsp,r15
+	sub	rsp,r15  ; avoid aliasing with key
 $L$enc_no_key_aliasing:
 
 	mov	r14,rdx
 
-
-
-
-
-
-
-
+; |_aesni_ctr32_ghash_6x| requires |%r15| to point to 2*96 (0xc0)
+; bytes before the end of the input. Note, in particular, that this is
+; correct even if |%r8| is not an even multiple of 96 or 16. Unlike in
+; the decryption case, there's no caveat that |%rdx| must not be near
+; the very beginning of the address space, because we know that
+; |%r8| >= 3*96 from the check above, and so we know
+; |%rdx| + |%r8| >= 2*96 (0xc0).
 	lea	r15,[((-192))+r8*1+rdx]
 
 	shr	r8,4
 
 	call	_aesni_ctr32_6x
-	vpshufb	xmm8,xmm9,xmm0
+	vpshufb	xmm8,xmm9,xmm0  ; save bswapped output on stack
 	vpshufb	xmm2,xmm10,xmm0
 	vmovdqu	XMMWORD[112+rsp],xmm8
 	vpshufb	xmm4,xmm11,xmm0
@@ -727,26 +727,26 @@ $L$enc_no_key_aliasing:
 	vmovdqu	XMMWORD[80+rsp],xmm4
 	vpshufb	xmm6,xmm13,xmm0
 	vmovdqu	XMMWORD[64+rsp],xmm5
-	vpshufb	xmm7,xmm14,xmm0
+	vpshufb	xmm7,xmm14,xmm0  ; passed to _aesni_ctr32_ghash_6x
 	vmovdqu	XMMWORD[48+rsp],xmm6
 
 	call	_aesni_ctr32_6x
 
 	mov	r12,QWORD[64+rbp]
-	lea	rsi,[32+rsi]
-	vmovdqu	xmm8,XMMWORD[r12]
+	lea	rsi,[32+rsi]  ; size optimization
+	vmovdqu	xmm8,XMMWORD[r12]  ; load Xi
 	sub	r8,12
 	mov	rax,0x60*2
 	vpshufb	xmm8,xmm8,xmm0
 
 	call	_aesni_ctr32_ghash_6x
-	vmovdqu	xmm7,XMMWORD[32+rsp]
-	vmovdqu	xmm0,XMMWORD[r11]
-	vmovdqu	xmm3,XMMWORD[((0-32))+rsi]
+	vmovdqu	xmm7,XMMWORD[32+rsp]  ; I[5]
+	vmovdqu	xmm0,XMMWORD[r11]  ; borrow %xmm0 for .Lbswap_mask
+	vmovdqu	xmm3,XMMWORD[((0-32))+rsi]  ; %xmm3^1
 	vpunpckhqdq	xmm1,xmm7,xmm7
-	vmovdqu	xmm15,XMMWORD[((32-32))+rsi]
-	vmovups	XMMWORD[(-96)+rdx],xmm9
-	vpshufb	xmm9,xmm9,xmm0
+	vmovdqu	xmm15,XMMWORD[((32-32))+rsi]  ; borrow %xmm15 for
+	vmovups	XMMWORD[(-96)+rdx],xmm9  ; save output
+	vpshufb	xmm9,xmm9,xmm0  ; but keep bswapped copy
 	vpxor	xmm1,xmm1,xmm7
 	vmovups	XMMWORD[(-80)+rdx],xmm10
 	vpshufb	xmm10,xmm10,xmm0
@@ -758,18 +758,18 @@ $L$enc_no_key_aliasing:
 	vpshufb	xmm13,xmm13,xmm0
 	vmovups	XMMWORD[(-16)+rdx],xmm14
 	vpshufb	xmm14,xmm14,xmm0
-	vmovdqu	XMMWORD[16+rsp],xmm9
-	vmovdqu	xmm6,XMMWORD[48+rsp]
-	vmovdqu	xmm0,XMMWORD[((16-32))+rsi]
+	vmovdqu	XMMWORD[16+rsp],xmm9  ; free %xmm9
+	vmovdqu	xmm6,XMMWORD[48+rsp]  ; I[4]
+	vmovdqu	xmm0,XMMWORD[((16-32))+rsi]  ; borrow %xmm0 for %xmm3^2
 	vpunpckhqdq	xmm2,xmm6,xmm6
 	vpclmulqdq	xmm5,xmm7,xmm3,0x00
 	vpxor	xmm2,xmm2,xmm6
 	vpclmulqdq	xmm7,xmm7,xmm3,0x11
 	vpclmulqdq	xmm1,xmm1,xmm15,0x00
 
-	vmovdqu	xmm9,XMMWORD[64+rsp]
+	vmovdqu	xmm9,XMMWORD[64+rsp]  ; I[3]
 	vpclmulqdq	xmm4,xmm6,xmm0,0x00
-	vmovdqu	xmm3,XMMWORD[((48-32))+rsi]
+	vmovdqu	xmm3,XMMWORD[((48-32))+rsi]  ; %xmm3^3
 	vpxor	xmm4,xmm4,xmm5
 	vpunpckhqdq	xmm5,xmm9,xmm9
 	vpclmulqdq	xmm6,xmm6,xmm0,0x11
@@ -779,9 +779,9 @@ $L$enc_no_key_aliasing:
 	vmovdqu	xmm15,XMMWORD[((80-32))+rsi]
 	vpxor	xmm2,xmm2,xmm1
 
-	vmovdqu	xmm1,XMMWORD[80+rsp]
+	vmovdqu	xmm1,XMMWORD[80+rsp]  ; I[2]
 	vpclmulqdq	xmm7,xmm9,xmm3,0x00
-	vmovdqu	xmm0,XMMWORD[((64-32))+rsi]
+	vmovdqu	xmm0,XMMWORD[((64-32))+rsi]  ; borrow %xmm0 for %xmm3^4
 	vpxor	xmm7,xmm7,xmm4
 	vpunpckhqdq	xmm4,xmm1,xmm1
 	vpclmulqdq	xmm9,xmm9,xmm3,0x11
@@ -790,9 +790,9 @@ $L$enc_no_key_aliasing:
 	vpclmulqdq	xmm5,xmm5,xmm15,0x00
 	vpxor	xmm5,xmm5,xmm2
 
-	vmovdqu	xmm2,XMMWORD[96+rsp]
+	vmovdqu	xmm2,XMMWORD[96+rsp]  ; I[1]
 	vpclmulqdq	xmm6,xmm1,xmm0,0x00
-	vmovdqu	xmm3,XMMWORD[((96-32))+rsi]
+	vmovdqu	xmm3,XMMWORD[((96-32))+rsi]  ; %xmm3^5
 	vpxor	xmm6,xmm6,xmm7
 	vpunpckhqdq	xmm7,xmm2,xmm2
 	vpclmulqdq	xmm1,xmm1,xmm0,0x11
@@ -802,9 +802,9 @@ $L$enc_no_key_aliasing:
 	vmovdqu	xmm15,XMMWORD[((128-32))+rsi]
 	vpxor	xmm4,xmm4,xmm5
 
-	vpxor	xmm8,xmm8,XMMWORD[112+rsp]
+	vpxor	xmm8,xmm8,XMMWORD[112+rsp]  ; accumulate I[0]
 	vpclmulqdq	xmm5,xmm2,xmm3,0x00
-	vmovdqu	xmm0,XMMWORD[((112-32))+rsi]
+	vmovdqu	xmm0,XMMWORD[((112-32))+rsi]  ; borrow %xmm0 for %xmm3^6
 	vpunpckhqdq	xmm9,xmm8,xmm8
 	vpxor	xmm5,xmm5,xmm6
 	vpclmulqdq	xmm2,xmm2,xmm3,0x11
@@ -814,7 +814,7 @@ $L$enc_no_key_aliasing:
 	vpxor	xmm4,xmm7,xmm4
 
 	vpclmulqdq	xmm6,xmm8,xmm0,0x00
-	vmovdqu	xmm3,XMMWORD[((0-32))+rsi]
+	vmovdqu	xmm3,XMMWORD[((0-32))+rsi]  ; %xmm3^1
 	vpunpckhqdq	xmm1,xmm14,xmm14
 	vpclmulqdq	xmm8,xmm8,xmm0,0x11
 	vpxor	xmm1,xmm1,xmm14
@@ -824,8 +824,8 @@ $L$enc_no_key_aliasing:
 	vpxor	xmm7,xmm8,xmm2
 	vpxor	xmm6,xmm9,xmm4
 
-	vmovdqu	xmm0,XMMWORD[((16-32))+rsi]
-	vpxor	xmm9,xmm7,xmm5
+	vmovdqu	xmm0,XMMWORD[((16-32))+rsi]  ; borrow %xmm0 for %xmm3^2
+	vpxor	xmm9,xmm7,xmm5  ; aggregated Karatsuba post-processing
 	vpclmulqdq	xmm4,xmm14,xmm3,0x00
 	vpxor	xmm6,xmm6,xmm9
 	vpunpckhqdq	xmm2,xmm13,xmm13
@@ -838,25 +838,25 @@ $L$enc_no_key_aliasing:
 	vpxor	xmm7,xmm7,xmm6
 
 	vpclmulqdq	xmm5,xmm13,xmm0,0x00
-	vmovdqu	xmm3,XMMWORD[((48-32))+rsi]
+	vmovdqu	xmm3,XMMWORD[((48-32))+rsi]  ; %xmm3^3
 	vpxor	xmm5,xmm5,xmm4
 	vpunpckhqdq	xmm9,xmm12,xmm12
 	vpclmulqdq	xmm13,xmm13,xmm0,0x11
 	vpxor	xmm9,xmm9,xmm12
 	vpxor	xmm13,xmm13,xmm14
-	vpalignr	xmm14,xmm8,xmm8,8
+	vpalignr	xmm14,xmm8,xmm8,8  ; 1st phase
 	vpclmulqdq	xmm2,xmm2,xmm15,0x10
 	vmovdqu	xmm15,XMMWORD[((80-32))+rsi]
 	vpxor	xmm2,xmm2,xmm1
 
 	vpclmulqdq	xmm4,xmm12,xmm3,0x00
-	vmovdqu	xmm0,XMMWORD[((64-32))+rsi]
+	vmovdqu	xmm0,XMMWORD[((64-32))+rsi]  ; borrow %xmm0 for %xmm3^4
 	vpxor	xmm4,xmm4,xmm5
 	vpunpckhqdq	xmm1,xmm11,xmm11
 	vpclmulqdq	xmm12,xmm12,xmm3,0x11
 	vpxor	xmm1,xmm1,xmm11
 	vpxor	xmm12,xmm12,xmm13
-	vxorps	xmm7,xmm7,XMMWORD[16+rsp]
+	vxorps	xmm7,xmm7,XMMWORD[16+rsp]  ; accumulate %xmm9
 	vpclmulqdq	xmm9,xmm9,xmm15,0x00
 	vpxor	xmm9,xmm9,xmm2
 
@@ -864,12 +864,12 @@ $L$enc_no_key_aliasing:
 	vxorps	xmm8,xmm8,xmm14
 
 	vpclmulqdq	xmm5,xmm11,xmm0,0x00
-	vmovdqu	xmm3,XMMWORD[((96-32))+rsi]
+	vmovdqu	xmm3,XMMWORD[((96-32))+rsi]  ; %xmm3^5
 	vpxor	xmm5,xmm5,xmm4
 	vpunpckhqdq	xmm2,xmm10,xmm10
 	vpclmulqdq	xmm11,xmm11,xmm0,0x11
 	vpxor	xmm2,xmm2,xmm10
-	vpalignr	xmm14,xmm8,xmm8,8
+	vpalignr	xmm14,xmm8,xmm8,8  ; 2nd phase
 	vpxor	xmm11,xmm11,xmm12
 	vpclmulqdq	xmm1,xmm1,xmm15,0x10
 	vmovdqu	xmm15,XMMWORD[((128-32))+rsi]
@@ -880,7 +880,7 @@ $L$enc_no_key_aliasing:
 	vxorps	xmm8,xmm8,xmm14
 
 	vpclmulqdq	xmm4,xmm10,xmm3,0x00
-	vmovdqu	xmm0,XMMWORD[((112-32))+rsi]
+	vmovdqu	xmm0,XMMWORD[((112-32))+rsi]  ; borrow %xmm0 for %xmm3^6
 	vpxor	xmm4,xmm4,xmm5
 	vpunpckhqdq	xmm9,xmm8,xmm8
 	vpclmulqdq	xmm10,xmm10,xmm3,0x11
@@ -896,25 +896,25 @@ $L$enc_no_key_aliasing:
 	vpxor	xmm7,xmm7,xmm10
 	vpxor	xmm6,xmm6,xmm2
 
-	vpxor	xmm4,xmm7,xmm5
+	vpxor	xmm4,xmm7,xmm5  ; aggregated Karatsuba post-processing
 	vpxor	xmm6,xmm6,xmm4
 	vpslldq	xmm1,xmm6,8
-	vmovdqu	xmm3,XMMWORD[16+r11]
+	vmovdqu	xmm3,XMMWORD[16+r11]  ; .Lpoly
 	vpsrldq	xmm6,xmm6,8
 	vpxor	xmm8,xmm5,xmm1
 	vpxor	xmm7,xmm7,xmm6
 
-	vpalignr	xmm2,xmm8,xmm8,8
+	vpalignr	xmm2,xmm8,xmm8,8  ; 1st phase
 	vpclmulqdq	xmm8,xmm8,xmm3,0x10
 	vpxor	xmm8,xmm8,xmm2
 
-	vpalignr	xmm2,xmm8,xmm8,8
+	vpalignr	xmm2,xmm8,xmm8,8  ; 2nd phase
 	vpclmulqdq	xmm8,xmm8,xmm3,0x10
 	vpxor	xmm2,xmm2,xmm7
 	vpxor	xmm8,xmm8,xmm2
 	mov	r12,QWORD[64+rbp]
-	vpshufb	xmm8,xmm8,XMMWORD[r11]
-	vmovdqu	XMMWORD[r12],xmm8
+	vpshufb	xmm8,xmm8,XMMWORD[r11]  ; .Lbswap_mask
+	vmovdqu	XMMWORD[r12],xmm8  ; output Xi
 
 	vzeroupper
 	movaps	xmm6,XMMWORD[((-208))+rbp]
@@ -929,7 +929,7 @@ $L$enc_no_key_aliasing:
 	movaps	xmm15,XMMWORD[((-64))+rbp]
 	mov	rdi,QWORD[16+rbp]
 	mov	rsi,QWORD[24+rbp]
-	lea	rsp,[((-40))+rbp]
+	lea	rsp,[((-40))+rbp]  ; restore %rsp to fixed allocation
 
 	pop	r15
 
@@ -949,7 +949,9 @@ $L$SEH_end_aesni_gcm_encrypt_23:
 
 
 section	.rdata rdata align=8
+
 ALIGN	64
+aesni_gcm_constants:
 $L$bswap_mask:
 	DB	15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,0
 $L$poly:
@@ -981,7 +983,7 @@ ALIGN	4
 section	.xdata rdata align=8
 ALIGN	4
 $L$SEH_info_aesni_gcm_decrypt_0:
-	DB	1
+	DB	1  ; version 1, no flags
 	DB	$L$SEH_endprologue_aesni_gcm_decrypt_22-$L$SEH_begin_aesni_gcm_decrypt_1
 	DB	33
 	DB	213
@@ -1041,7 +1043,7 @@ $L$SEH_info_aesni_gcm_decrypt_0:
 
 	DW	0
 $L$SEH_info_aesni_gcm_encrypt_0:
-	DB	1
+	DB	1  ; version 1, no flags
 	DB	$L$SEH_endprologue_aesni_gcm_encrypt_22-$L$SEH_begin_aesni_gcm_encrypt_1
 	DB	33
 	DB	213

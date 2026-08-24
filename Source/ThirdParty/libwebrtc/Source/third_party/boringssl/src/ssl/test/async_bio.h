@@ -30,10 +30,10 @@ bssl::UniquePtr<BIO> AsyncBioCreate();
 // and write quota count in packets rather than bytes.
 bssl::UniquePtr<BIO> AsyncBioCreateDatagram();
 
-// AsyncBioAllowRead increments |bio|'s read quota by |count|.
+// AsyncBioAllowRead increments `bio`'s read quota by `count`.
 void AsyncBioAllowRead(BIO *bio, size_t count);
 
-// AsyncBioAllowWrite increments |bio|'s write quota by |count|.
+// AsyncBioAllowWrite increments `bio`'s write quota by `count`.
 void AsyncBioAllowWrite(BIO *bio, size_t count);
 
 

@@ -1,0 +1,839 @@
+{
+  "numberOfTests": 83,
+  "header": [
+    "Test vectors of type JwCrypto are intended for tests that verify the ",
+    "operations of a JSON Web Encryption/Signature library."
+  ],
+  "notes": {
+    "JsonSerialization": {
+      "bugType": "BASIC",
+      "description": "The JWE/JWS is encoded with JSON serialization instead of compact serialization."
+    },
+    "JsonWebKeyset": {
+      "bugType": "BASIC",
+      "description": "The provided keys are actually JSON Web Keysets instead of single JSON Web Keys."
+    }
+  },
+  "schema": "json_web_crypto_schema_v1.json",
+  "testGroups": [
+    {
+      "type": "JsonWebCrypto",
+      "source": {
+        "name": "google-wycheproof",
+        "version": "0.2"
+      },
+      "comment": "jws_aes",
+      "private": {
+        "alg": "HS256",
+        "use": "sig",
+        "k": "-ebuDNsVZ2iJtoZ-akfXTSCt4UO2cruLCsbWlBinggE",
+        "kid": "kid-aes-sign",
+        "kty": "oct"
+      },
+      "tests": [
+        {
+          "tcId": 1,
+          "comment": "acceptsValid",
+          "jws": "eyJhbGciOiJIUzI1NiIsImtpZCI6ImtpZC1hZXMtc2lnbiJ9.Zm9v.TD37p4c_0jmreSrBSDmE0F3mYSPtkZ3WrSyI5wb_KTg",
+          "result": "valid",
+          "flags": []
+        },
+        {
+          "tcId": 2,
+          "comment": "rejectsModifiedSignature",
+          "jws": "eyJhbGciOiJIUzI1NiIsImtpZCI6ImtpZC1hZXMtc2lnbiJ9.Zm9v.XD37p4c_0jmreSrBSDmE0F3mYSPtkZ3WrSyI5wb_KTg",
+          "result": "invalid",
+          "flags": []
+        },
+        {
+          "tcId": 3,
+          "comment": "rejectsMissingSignature",
+          "jws": "eyJhbGciOiJIUzI1NiIsImtpZCI6ImtpZC1hZXMtc2lnbiJ9.Zm9v.",
+          "result": "invalid",
+          "flags": []
+        },
+        {
+          "tcId": 4,
+          "comment": "rejectsMissingSignatureAndSeparator",
+          "jws": "eyJhbGciOiJIUzI1NiIsImtpZCI6ImtpZC1hZXMtc2lnbiJ9.Zm9v",
+          "result": "invalid",
+          "flags": []
+        },
+        {
+          "tcId": 5,
+          "comment": "rejectsModifiedPayload",
+          "jws": "eyJhbGciOiJIUzI1NiIsImtpZCI6ImtpZC1hZXMtc2lnbiJ9.WG9v.TD37p4c_0jmreSrBSDmE0F3mYSPtkZ3WrSyI5wb_KTg",
+          "result": "invalid",
+          "flags": []
+        },
+        {
+          "tcId": 6,
+          "comment": "rejectsMissingPayload",
+          "jws": "eyJhbGciOiJIUzI1NiIsImtpZCI6ImtpZC1hZXMtc2lnbiJ9..TD37p4c_0jmreSrBSDmE0F3mYSPtkZ3WrSyI5wb_KTg",
+          "result": "invalid",
+          "flags": []
+        },
+        {
+          "tcId": 7,
+          "comment": "rejectsMissingPayloadAndSeparator",
+          "jws": "eyJhbGciOiJIUzI1NiIsImtpZCI6ImtpZC1hZXMtc2lnbiJ9.TD37p4c_0jmreSrBSDmE0F3mYSPtkZ3WrSyI5wb_KTg",
+          "result": "invalid",
+          "flags": []
+        },
+        {
+          "tcId": 8,
+          "comment": "rejectsModifiedHeader",
+          "jws": "eyJhbGciOiJIUzI1NiIsImtpZCI6IlhpZC1hZXMtc2lnbiJ9.Zm9v.TD37p4c_0jmreSrBSDmE0F3mYSPtkZ3WrSyI5wb_KTg",
+          "result": "invalid",
+          "flags": []
+        },
+        {
+          "tcId": 9,
+          "comment": "rejectsMissingHeader",
+          "jws": ".Zm9v.TD37p4c_0jmreSrBSDmE0F3mYSPtkZ3WrSyI5wb_KTg",
+          "result": "invalid",
+          "flags": []
+        },
+        {
+          "tcId": 10,
+          "comment": "rejectsMissingHeaderAndSeparator",
+          "jws": "Zm9v.TD37p4c_0jmreSrBSDmE0F3mYSPtkZ3WrSyI5wb_KTg",
+          "result": "invalid",
+          "flags": []
+        },
+        {
+          "tcId": 11,
+          "comment": "rejectsMissingHeaderAndSignature",
+          "jws": ".Zm9v.",
+          "result": "invalid",
+          "flags": []
+        },
+        {
+          "tcId": 12,
+          "comment": "rejectsMissingHeaderSignatureAndSeparators",
+          "jws": "Zm9v",
+          "result": "invalid",
+          "flags": []
+        },
+        {
+          "tcId": 13,
+          "comment": "rejectsEmptyString",
+          "jws": "",
+          "result": "invalid",
+          "flags": []
+        },
+        {
+          "tcId": 14,
+          "comment": "rejectsExtraEmptyComponent",
+          "jws": "eyJhbGciOiJIUzI1NiIsImtpZCI6ImtpZC1hZXMtc2lnbiJ9.Zm9v.TD37p4c_0jmreSrBSDmE0F3mYSPtkZ3WrSyI5wb_KTg.",
+          "result": "invalid",
+          "flags": []
+        },
+        {
+          "tcId": 15,
+          "comment": "rejectsExtraComponent",
+          "jws": "eyJhbGciOiJIUzI1NiIsImtpZCI6ImtpZC1hZXMtc2lnbiJ9.Zm9v.TD37p4c_0jmreSrBSDmE0F3mYSPtkZ3WrSyI5wb_KTg.foo",
+          "result": "invalid",
+          "flags": []
+        },
+        {
+          "tcId": 16,
+          "comment": "rejectsNoneAlgorithmAndMissingSignature",
+          "jws": "eyJhbGciOiJub25lIiwia2lkIjoia2lkLWFlcy1zaWduIn0.Zm9v.",
+          "result": "invalid",
+          "flags": []
+        },
+        {
+          "tcId": 17,
+          "comment": "rejectsValidJsonSerialization",
+          "jws": {
+            "payload": "Zm9v",
+            "signatures": [
+              {
+                "protected": "eyJhbGciOiJIUzI1NiIsImtpZCI6ImtpZC1hZXMtc2lnbiJ9",
+                "header": {
+                  "unknown": "untrustworthy"
+                },
+                "signature": "TD37p4c_0jmreSrBSDmE0F3mYSPtkZ3WrSyI5wb_KTg"
+              }
+            ]
+          },
+          "result": "invalid",
+          "flags": [
+            "JsonSerialization"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "JsonWebCrypto",
+      "source": {
+        "name": "google-wycheproof",
+        "version": "0.2"
+      },
+      "comment": "jws_ec",
+      "private": {
+        "alg": "ES256",
+        "use": "sig",
+        "x": "04N0xi21hshyvBp7I167sbE_bXqyqkAPfefdklMO7wY",
+        "y": "UI8exy-C06a7DUnjIdENkxeFtHM4-l_41LqEw9nVgmw",
+        "crv": "P-256",
+        "d": "yy49oPcINGK2ps0LmtxpB6UTEOiITghHBif6wDqmJ3c",
+        "kid": "kid-ec-sign",
+        "kty": "EC"
+      },
+      "public": {
+        "alg": "ES256",
+        "use": "sig",
+        "x": "04N0xi21hshyvBp7I167sbE_bXqyqkAPfefdklMO7wY",
+        "y": "UI8exy-C06a7DUnjIdENkxeFtHM4-l_41LqEw9nVgmw",
+        "crv": "P-256",
+        "kid": "kid-ec-sign",
+        "kty": "EC"
+      },
+      "tests": [
+        {
+          "tcId": 18,
+          "comment": "acceptsValid",
+          "jws": "eyJhbGciOiJFUzI1NiIsImtpZCI6ImtpZC1lYy1zaWduIn0.Zm9v.5cA0OHyMP7ezamUd5c9kV-FrGxdx4hbGXOdplQkutrqWrte5P-pAvsE3Ve6xSyU3YDQwUHjVVOtvcrEbbnZ8yA",
+          "result": "valid",
+          "flags": []
+        },
+        {
+          "tcId": 19,
+          "comment": "rejectsModifiedSignature",
+          "jws": "eyJhbGciOiJFUzI1NiIsImtpZCI6ImtpZC1lYy1zaWduIn0.Zm9v.XcA0OHyMP7ezamUd5c9kV-FrGxdx4hbGXOdplQkutrqWrte5P-pAvsE3Ve6xSyU3YDQwUHjVVOtvcrEbbnZ8yA",
+          "result": "invalid",
+          "flags": []
+        },
+        {
+          "tcId": 20,
+          "comment": "rejectsMissingSignature",
+          "jws": "eyJhbGciOiJFUzI1NiIsImtpZCI6ImtpZC1lYy1zaWduIn0.Zm9v.",
+          "result": "invalid",
+          "flags": []
+        },
+        {
+          "tcId": 21,
+          "comment": "rejectsMissingSignatureAndSeparator",
+          "jws": "eyJhbGciOiJFUzI1NiIsImtpZCI6ImtpZC1lYy1zaWduIn0.Zm9v",
+          "result": "invalid",
+          "flags": []
+        },
+        {
+          "tcId": 22,
+          "comment": "rejectsModifiedPayload",
+          "jws": "eyJhbGciOiJFUzI1NiIsImtpZCI6ImtpZC1lYy1zaWduIn0.WG9v.5cA0OHyMP7ezamUd5c9kV-FrGxdx4hbGXOdplQkutrqWrte5P-pAvsE3Ve6xSyU3YDQwUHjVVOtvcrEbbnZ8yA",
+          "result": "invalid",
+          "flags": []
+        },
+        {
+          "tcId": 23,
+          "comment": "rejectsMissingPayload",
+          "jws": "eyJhbGciOiJFUzI1NiIsImtpZCI6ImtpZC1lYy1zaWduIn0..5cA0OHyMP7ezamUd5c9kV-FrGxdx4hbGXOdplQkutrqWrte5P-pAvsE3Ve6xSyU3YDQwUHjVVOtvcrEbbnZ8yA",
+          "result": "invalid",
+          "flags": []
+        },
+        {
+          "tcId": 24,
+          "comment": "rejectsMissingPayloadAndSeparator",
+          "jws": "eyJhbGciOiJFUzI1NiIsImtpZCI6ImtpZC1lYy1zaWduIn0.5cA0OHyMP7ezamUd5c9kV-FrGxdx4hbGXOdplQkutrqWrte5P-pAvsE3Ve6xSyU3YDQwUHjVVOtvcrEbbnZ8yA",
+          "result": "invalid",
+          "flags": []
+        },
+        {
+          "tcId": 25,
+          "comment": "rejectsModifiedHeader",
+          "jws": "eyJhbGciOiJFUzI1NiIsImtpZCI6IlhpZC1lYy1zaWduIn0.Zm9v.5cA0OHyMP7ezamUd5c9kV-FrGxdx4hbGXOdplQkutrqWrte5P-pAvsE3Ve6xSyU3YDQwUHjVVOtvcrEbbnZ8yA",
+          "result": "invalid",
+          "flags": []
+        },
+        {
+          "tcId": 26,
+          "comment": "rejectsMissingHeader",
+          "jws": ".Zm9v.5cA0OHyMP7ezamUd5c9kV-FrGxdx4hbGXOdplQkutrqWrte5P-pAvsE3Ve6xSyU3YDQwUHjVVOtvcrEbbnZ8yA",
+          "result": "invalid",
+          "flags": []
+        },
+        {
+          "tcId": 27,
+          "comment": "rejectsMissingHeaderAndSeparator",
+          "jws": "Zm9v.5cA0OHyMP7ezamUd5c9kV-FrGxdx4hbGXOdplQkutrqWrte5P-pAvsE3Ve6xSyU3YDQwUHjVVOtvcrEbbnZ8yA",
+          "result": "invalid",
+          "flags": []
+        },
+        {
+          "tcId": 28,
+          "comment": "rejectsMissingHeaderAndSignature",
+          "jws": ".Zm9v.",
+          "result": "invalid",
+          "flags": []
+        },
+        {
+          "tcId": 29,
+          "comment": "rejectsMissingHeaderSignatureAndSeparators",
+          "jws": "Zm9v",
+          "result": "invalid",
+          "flags": []
+        },
+        {
+          "tcId": 30,
+          "comment": "rejectsEmptyString",
+          "jws": "",
+          "result": "invalid",
+          "flags": []
+        },
+        {
+          "tcId": 31,
+          "comment": "rejectsSymmetryConfusionAttacks_aesKeyFromEcVerificationKeyBytes",
+          "jws": "eyJhbGciOiJIUzI1NiIsImtpZCI6ImtpZC1lYy1zaWduIn0.Zm9v.TgWtz2FIRukBQ_mA5sgHa0Ybtgn7bl-YBPAi7Z0XdHU",
+          "result": "invalid",
+          "flags": []
+        },
+        {
+          "tcId": 32,
+          "comment": "rejectsAttackerProvidedEmbeddedJwk",
+          "jws": "eyJhbGciOiJFUzI1NiIsImtpZCI6ImtpZC1lYy1zaWduIiwiandrIjp7Imt0eSI6IkVDIiwia2lkIjoia2lkLWVjLXNpZ24iLCJ1c2UiOiJzaWciLCJhbGciOiJFUzI1NiIsIngiOiJNZG5UWkRJaERKYmZBU2RGcWFtY3BPMkNoOUdOS0sybTBNUWxoNDAyU3BvIiwieSI6Ijdhdko0bHFfV3l4LW5MUERCUTJZcHl0dUh5TWlvMDdCVXl2bDNqYUMtMVkiLCJjcnYiOiJQLTI1NiJ9fQ.Zm9v.4jmsollQD8ZxvySzXYnIEYA4fwaZi2ZbC0aI1J4LYmW2Bn31NhKdjms2N6o51Dff5-InWXQF9m45VtTexl6yjg",
+          "result": "invalid",
+          "flags": []
+        }
+      ]
+    },
+    {
+      "type": "JsonWebCrypto",
+      "source": {
+        "name": "google-wycheproof",
+        "version": "0.2"
+      },
+      "comment": "jws_rsa",
+      "private": {
+        "alg": "RS256",
+        "use": "sig",
+        "n": "kqGboBfAWttWPCA-0cGRgsY6SaYoIARt0B_PkaEcIq9HPYNdu9n6UuWHuuTHrjF_ZoQW97r5HaAorNvrMEGTGdxCHZdEtkHvNVVmrtxTBLiQCbCozXhFoIrVcr3qUBrdGnNn_M3jJi7Wg7p_-x62nS5gNG875oyheRkutHsQXikFZwsN3q_TsPNOVlCiHy8mxzaFTUQGm-X8UYexFyAivlDSjgDJLAZSWfxd7k9Gxuwa3AUfQqQcVcegmgKGCaErQ3qQbh1x7WB6iopE3_-GZ8HMAVtR9AmrVscqYsnjhaCehfAI0iKKs8zXr8tISc0ORbaalrkk03H1ZrsEnDKEWQ",
+        "e": "AQAB",
+        "d": "YsfIRYN6rDqSz5KRf1E9q7HK1o6-_UK-j7S-asb0Y1FdVs1GuiRQhMPoOjmhY3Io93EI3_7vj8uzWzAUMsAaTxOY3sJnIbktYuqTcD0xGD8VmdGPBkx963db8B6M2UYfqZARf7dbzP9EuB1N1miMcTsqyGgfHGOk7CXQ1vkIv8Uww38KMtEdJ3iB8r-f3qcu-UJjE7Egw9CxKOMjArOXxZEr4VnoIXrImrcTxBfjdY8GbzXGATiPQLur5GT99ZDW78falsir-b5Ean6HNyOeuaJuceT-yjgCXn57Rd3oIHD94CrjNtjBusoLdjbr489L8K9ksCh1gynzLGkeeWgVGQ",
+        "p": "0xalbl1PJbSBGD4XOjIYJLwMYyHMiM06SBauMGzBfCask5DN5jH68Kw1yPS4wkLpx4ltGLuy0X5mMaZzrSOkBGb27-NizBgB2-L279XotznWeh2jbF05Kqzkoz3VaX_7dRhCHEhOopMQh619hA1bwaJyW1k8aNlLPTl3BotkP4M",
+        "q": "sdQsQVz3tI7hmisAgiIjppOssEnZaZO0ONeRRDxBHGLe3BCo1FJoMMQryOAlglayjQnnWjQ-BpwUpa0r9YQhVLweoNEIig6Beph7iYRZgOHEiiTTgUIGgXAL6xhsby1PueUfT0xsN1Y7qt5f5EwOfu7tnFqNyJXIp9W1NQgU6fM",
+        "dp": "kEpEnuJNfdqa-_VFb1RayJF6bjDmXQTcN_a47wUIZVMSWHR9KkMz41v0D_-oY7HVl73Kw0NagnVCaeH75HgeX5v6ZBQsrpIigynr3hl8T_LLNwIXebVnpFI2n5de0BTZ0DraxfZvOhYJEJV43NE8zWm7fdHLx2fxVFJ5mBGkXv0",
+        "dq": "U_xJCnXF51iz5AP7MXq-K6YDIR8_t0UzEMV-riNm_OkVKAoWMnDZFG8R3sU98djQaxwKT-fsg2KjvbuTz1igBUzzijAvQESpkiUB82i2fNAj6rqJybpNKESq3FWkoL1dsgYsS19knJ31gDWWRFRHZFujjPyXiexz4BBmjK1Mc1E",
+        "qi": "Uvb84tWiJF3fB-U9wZSPi7juGgrzeXS_LYtf5fcdV0fZg_h_5nSVpXyYyQ-PK218qEC5MlDkaHKRD9wBOe_eU_zJTNoXzB2oAcgl2MapBWUMytbiF84ghP_2K9UD63ZVsyrorSZhmsJIBBuqQjrmk0tIdpMdlMxLYhrbYwFxUqc",
+        "kid": "kid-rsa-sign",
+        "kty": "RSA"
+      },
+      "public": {
+        "alg": "RS256",
+        "use": "sig",
+        "n": "kqGboBfAWttWPCA-0cGRgsY6SaYoIARt0B_PkaEcIq9HPYNdu9n6UuWHuuTHrjF_ZoQW97r5HaAorNvrMEGTGdxCHZdEtkHvNVVmrtxTBLiQCbCozXhFoIrVcr3qUBrdGnNn_M3jJi7Wg7p_-x62nS5gNG875oyheRkutHsQXikFZwsN3q_TsPNOVlCiHy8mxzaFTUQGm-X8UYexFyAivlDSjgDJLAZSWfxd7k9Gxuwa3AUfQqQcVcegmgKGCaErQ3qQbh1x7WB6iopE3_-GZ8HMAVtR9AmrVscqYsnjhaCehfAI0iKKs8zXr8tISc0ORbaalrkk03H1ZrsEnDKEWQ",
+        "e": "AQAB",
+        "kid": "kid-rsa-sign",
+        "kty": "RSA"
+      },
+      "tests": [
+        {
+          "tcId": 33,
+          "comment": "acceptsValid",
+          "jws": "eyJhbGciOiJSUzI1NiIsImtpZCI6ImtpZC1yc2Etc2lnbiJ9.Zm9v.HUwxI1-cZrZgcuOgBQ7G7NE-GrqK79l6GV1KT4DKXnSMFwC8pfZCzE7pmLE7mYpLCIvzC87yuOjuhT0uW5oe6aaAEtR978cm-q8dfly45flqMrd_ifhi9GCsMlyi8dpQ42Ou1etZljFZuWjfyk8CN1c5DaHRwhqjScAPIFp6xmzKIRUJ_xdQfUSfSlujLaixtScU518EoNP4oo1v7E8RAz6ZO4g2N4Xqs8OvSxYydcoTEg42QnLHe9JnXgI37Q5gSwinwaPsG3Ry56UYiLoL8mCUa74S51y02VsIgVmmGWgaXjM-i_lCiKQDBiBnvWlka4XhVuvd6ZWibM9cbCPtPg",
+          "result": "valid",
+          "flags": []
+        },
+        {
+          "tcId": 34,
+          "comment": "rejectsModifiedSignature",
+          "jws": "eyJhbGciOiJSUzI1NiIsImtpZCI6ImtpZC1yc2Etc2lnbiJ9.Zm9v.XUwxI1-cZrZgcuOgBQ7G7NE-GrqK79l6GV1KT4DKXnSMFwC8pfZCzE7pmLE7mYpLCIvzC87yuOjuhT0uW5oe6aaAEtR978cm-q8dfly45flqMrd_ifhi9GCsMlyi8dpQ42Ou1etZljFZuWjfyk8CN1c5DaHRwhqjScAPIFp6xmzKIRUJ_xdQfUSfSlujLaixtScU518EoNP4oo1v7E8RAz6ZO4g2N4Xqs8OvSxYydcoTEg42QnLHe9JnXgI37Q5gSwinwaPsG3Ry56UYiLoL8mCUa74S51y02VsIgVmmGWgaXjM-i_lCiKQDBiBnvWlka4XhVuvd6ZWibM9cbCPtPg",
+          "result": "invalid",
+          "flags": []
+        },
+        {
+          "tcId": 35,
+          "comment": "rejectsMissingSignature",
+          "jws": "eyJhbGciOiJSUzI1NiIsImtpZCI6ImtpZC1yc2Etc2lnbiJ9.Zm9v.",
+          "result": "invalid",
+          "flags": []
+        },
+        {
+          "tcId": 36,
+          "comment": "rejectsMissingSignatureAndSeparator",
+          "jws": "eyJhbGciOiJSUzI1NiIsImtpZCI6ImtpZC1yc2Etc2lnbiJ9.Zm9v",
+          "result": "invalid",
+          "flags": []
+        },
+        {
+          "tcId": 37,
+          "comment": "rejectsModifiedPayload",
+          "jws": "eyJhbGciOiJSUzI1NiIsImtpZCI6ImtpZC1yc2Etc2lnbiJ9.WG9v.HUwxI1-cZrZgcuOgBQ7G7NE-GrqK79l6GV1KT4DKXnSMFwC8pfZCzE7pmLE7mYpLCIvzC87yuOjuhT0uW5oe6aaAEtR978cm-q8dfly45flqMrd_ifhi9GCsMlyi8dpQ42Ou1etZljFZuWjfyk8CN1c5DaHRwhqjScAPIFp6xmzKIRUJ_xdQfUSfSlujLaixtScU518EoNP4oo1v7E8RAz6ZO4g2N4Xqs8OvSxYydcoTEg42QnLHe9JnXgI37Q5gSwinwaPsG3Ry56UYiLoL8mCUa74S51y02VsIgVmmGWgaXjM-i_lCiKQDBiBnvWlka4XhVuvd6ZWibM9cbCPtPg",
+          "result": "invalid",
+          "flags": []
+        },
+        {
+          "tcId": 38,
+          "comment": "rejectsMissingPayload",
+          "jws": "eyJhbGciOiJSUzI1NiIsImtpZCI6ImtpZC1yc2Etc2lnbiJ9..HUwxI1-cZrZgcuOgBQ7G7NE-GrqK79l6GV1KT4DKXnSMFwC8pfZCzE7pmLE7mYpLCIvzC87yuOjuhT0uW5oe6aaAEtR978cm-q8dfly45flqMrd_ifhi9GCsMlyi8dpQ42Ou1etZljFZuWjfyk8CN1c5DaHRwhqjScAPIFp6xmzKIRUJ_xdQfUSfSlujLaixtScU518EoNP4oo1v7E8RAz6ZO4g2N4Xqs8OvSxYydcoTEg42QnLHe9JnXgI37Q5gSwinwaPsG3Ry56UYiLoL8mCUa74S51y02VsIgVmmGWgaXjM-i_lCiKQDBiBnvWlka4XhVuvd6ZWibM9cbCPtPg",
+          "result": "invalid",
+          "flags": []
+        },
+        {
+          "tcId": 39,
+          "comment": "rejectsMissingPayloadAndSeparator",
+          "jws": "eyJhbGciOiJSUzI1NiIsImtpZCI6ImtpZC1yc2Etc2lnbiJ9.HUwxI1-cZrZgcuOgBQ7G7NE-GrqK79l6GV1KT4DKXnSMFwC8pfZCzE7pmLE7mYpLCIvzC87yuOjuhT0uW5oe6aaAEtR978cm-q8dfly45flqMrd_ifhi9GCsMlyi8dpQ42Ou1etZljFZuWjfyk8CN1c5DaHRwhqjScAPIFp6xmzKIRUJ_xdQfUSfSlujLaixtScU518EoNP4oo1v7E8RAz6ZO4g2N4Xqs8OvSxYydcoTEg42QnLHe9JnXgI37Q5gSwinwaPsG3Ry56UYiLoL8mCUa74S51y02VsIgVmmGWgaXjM-i_lCiKQDBiBnvWlka4XhVuvd6ZWibM9cbCPtPg",
+          "result": "invalid",
+          "flags": []
+        },
+        {
+          "tcId": 40,
+          "comment": "rejectsModifiedHeader",
+          "jws": "eyJhbGciOiJSUzI1NiIsImtpZCI6IlhpZC1yc2Etc2lnbiJ9.Zm9v.HUwxI1-cZrZgcuOgBQ7G7NE-GrqK79l6GV1KT4DKXnSMFwC8pfZCzE7pmLE7mYpLCIvzC87yuOjuhT0uW5oe6aaAEtR978cm-q8dfly45flqMrd_ifhi9GCsMlyi8dpQ42Ou1etZljFZuWjfyk8CN1c5DaHRwhqjScAPIFp6xmzKIRUJ_xdQfUSfSlujLaixtScU518EoNP4oo1v7E8RAz6ZO4g2N4Xqs8OvSxYydcoTEg42QnLHe9JnXgI37Q5gSwinwaPsG3Ry56UYiLoL8mCUa74S51y02VsIgVmmGWgaXjM-i_lCiKQDBiBnvWlka4XhVuvd6ZWibM9cbCPtPg",
+          "result": "invalid",
+          "flags": []
+        },
+        {
+          "tcId": 41,
+          "comment": "rejectsMissingHeader",
+          "jws": ".Zm9v.HUwxI1-cZrZgcuOgBQ7G7NE-GrqK79l6GV1KT4DKXnSMFwC8pfZCzE7pmLE7mYpLCIvzC87yuOjuhT0uW5oe6aaAEtR978cm-q8dfly45flqMrd_ifhi9GCsMlyi8dpQ42Ou1etZljFZuWjfyk8CN1c5DaHRwhqjScAPIFp6xmzKIRUJ_xdQfUSfSlujLaixtScU518EoNP4oo1v7E8RAz6ZO4g2N4Xqs8OvSxYydcoTEg42QnLHe9JnXgI37Q5gSwinwaPsG3Ry56UYiLoL8mCUa74S51y02VsIgVmmGWgaXjM-i_lCiKQDBiBnvWlka4XhVuvd6ZWibM9cbCPtPg",
+          "result": "invalid",
+          "flags": []
+        },
+        {
+          "tcId": 42,
+          "comment": "rejectsMissingHeaderAndSeparator",
+          "jws": "Zm9v.HUwxI1-cZrZgcuOgBQ7G7NE-GrqK79l6GV1KT4DKXnSMFwC8pfZCzE7pmLE7mYpLCIvzC87yuOjuhT0uW5oe6aaAEtR978cm-q8dfly45flqMrd_ifhi9GCsMlyi8dpQ42Ou1etZljFZuWjfyk8CN1c5DaHRwhqjScAPIFp6xmzKIRUJ_xdQfUSfSlujLaixtScU518EoNP4oo1v7E8RAz6ZO4g2N4Xqs8OvSxYydcoTEg42QnLHe9JnXgI37Q5gSwinwaPsG3Ry56UYiLoL8mCUa74S51y02VsIgVmmGWgaXjM-i_lCiKQDBiBnvWlka4XhVuvd6ZWibM9cbCPtPg",
+          "result": "invalid",
+          "flags": []
+        },
+        {
+          "tcId": 43,
+          "comment": "rejectsMissingHeaderAndSignature",
+          "jws": ".Zm9v.",
+          "result": "invalid",
+          "flags": []
+        },
+        {
+          "tcId": 44,
+          "comment": "rejectsMissingHeaderSignatureAndSeparator",
+          "jws": "Zm9v",
+          "result": "invalid",
+          "flags": []
+        },
+        {
+          "tcId": 45,
+          "comment": "rejectsEmptyString",
+          "jws": "",
+          "result": "invalid",
+          "flags": []
+        }
+      ]
+    },
+    {
+      "type": "JsonWebCrypto",
+      "source": {
+        "name": "google-wycheproof",
+        "version": "0.2"
+      },
+      "comment": "jws_rsa_roca_key",
+      "private": {
+        "alg": "RS256",
+        "use": "sig",
+        "n": "AanFpofbj7KjD4Lf-N2hVMKR7yewSyXhhbirIMTGpfYEhZ_lnt5UoK98DnKIgArXGTu3MaW_HhFw16HGaTDUHqPrId7fe4r11CqRw09yBFuW79V8sYIwHdzCaWflUI6auImYbVfoN9_nD5n8N8SY9DwXw7mwZM9wREPXoDPgOoIWl6q_MPsp7n0zs3Z5ZaiQWOOzl1S9OhwAfSiiOwz6efnXEaxuTEtPd7BjSx7NaFka8Dx9U7YqXy2RFj1O9PjyaDGuRh7YXsX3iMUSP_wSyHQg_c_qHRtKUsNSGCT7OZg0hzm2KphtjnayKJvC64vAbROBR4Ubg6Bxg9IQVZ-QYyE",
+        "e": "AQAB",
+        "d": "NGpEqgz5j8BLNI1mEcK-sIVOr9AgMDWnRKisjAz4eWTtHlYiTLSWY4QeMzNir_LzBEr1LbZteTAvG5dVc9FpRDy6Grngd6bzy5nONYWPy8a1F88V-zT5OCgm2cd9N1EMzsOZEm1gE4xae1Z1dxptVsiGK-HvRypG_SMacch063aSDM46Asvao8PjqWGy-ZGwnaprx5ME4ZWRMKtov8BVMvkrs1KeM7TtjMg27hvreTueu8fbgNc9U93S2sWjw_4YvS72idsM95e-MCNwhKkrfufNhc5-8-pxD6cbiu8BnG4gR0vuQUNJFx16BsskC7JgOwEUhUg1Q0pYYj3DA54OwQ",
+        "p": "ARXNC8pC9mwATep-hd8UJIPF-zxRT3SLSo-oqcfvsfxh31YwlKtfIx7TZgXY1Zqva9zzxJZYxR1XrJp3M0Ny5yRSz04EE7tOjSC3-vR2oIGtkWPFUUF4VpEwrDzqPrZa7JKY-ZJ0qchxLYwzKj7LgEA2HY8l1GBQzHYqqbblMNyF",
+        "q": "AYhb2gXYokQugcoSDcl9jeeqwpccV-1Fv93RTtaFMoDJ5kJipWpmTIuT06ZLVc0-2FNl9U3HaiNnHgT07Sjnllj2XGBH5tFT-2u8UUby7QEX8I5QRrdCs6FEtoIxY-eGZWD5MbF8bwrdE1xuhk7dvxlGcEzsAqWMU1ORoRdCZgzt",
+        "dp": "b2E6rOmUK1Ej7DS2L-6_hSXHyTNAjBWc22RgTg1Ia0xCYygvM1Z9mkpfyVBatB5JPNlvpGgK_-y7A2NvZkeXbPTWsQzpbFveMZQSRhmZ2ORiOoJORdWdv7CoHfQ9GJfz6gLzbUjhGcBm5qNM-MhWr2gDCfW85LEAiRAp426Y3JE",
+        "dq": "43ITjgYJ8qpfFKuokGAXLe_AQ-brVaF0Wvrlz9eA8kWYFG2o5GgPAW6dZ64OPB-tOZNGQ2NRNNqm_UqaXHb7ofCWlj24ISqk-cw99XoHR_X_vg_tHnktNlRl1E0bU_CFvlRWqUOv_0Uu3ws3EmrbR6ScnwrFcgBJoY0vLBOSovU",
+        "qi": "azvnD35JmJmI6VoGG4J_koriDC-VENRIzJy9P9paHUtk7vVVPWfC2GzsvHXTF1ZrvqYmG-NtYxRkps6AQ8QKio9XbQ7tTnYmbCH9rSXj7yim3A9Rry92_LsplWRW2H_EIviYk4XdQY3SpSXCbd30fpVcJRhzF_SJ2ifEIPWd3NA",
+        "kid": "kid-rsa-roca-sign",
+        "kty": "RSA"
+      },
+      "public": {
+        "alg": "RS256",
+        "use": "sig",
+        "n": "AanFpofbj7KjD4Lf-N2hVMKR7yewSyXhhbirIMTGpfYEhZ_lnt5UoK98DnKIgArXGTu3MaW_HhFw16HGaTDUHqPrId7fe4r11CqRw09yBFuW79V8sYIwHdzCaWflUI6auImYbVfoN9_nD5n8N8SY9DwXw7mwZM9wREPXoDPgOoIWl6q_MPsp7n0zs3Z5ZaiQWOOzl1S9OhwAfSiiOwz6efnXEaxuTEtPd7BjSx7NaFka8Dx9U7YqXy2RFj1O9PjyaDGuRh7YXsX3iMUSP_wSyHQg_c_qHRtKUsNSGCT7OZg0hzm2KphtjnayKJvC64vAbROBR4Ubg6Bxg9IQVZ-QYyE",
+        "e": "AQAB",
+        "kid": "kid-rsa-roca-sign",
+        "kty": "RSA"
+      },
+      "tests": [
+        {
+          "tcId": 46,
+          "comment": "rejectsKeyWithRocaVulnerability",
+          "jws": "eyJhbGciOiJSUzI1NiIsImtpZCI6ImtpZC1yc2Etcm9jYS1zaWduIn0.Zm9v.AF_6dFYBEaaI5OlOehaktwYarwKZwFFeKTNwz9ar6ntNh4k8oeQwiODJqT1nnX2KhrWMUc80JJIdaCq3y7wOSmlPrqRgrL5r9xqfQdokirCuynoq4Lbi226VlZmijmkyYtSeEbzvkhyjbY8cDQF_c2DMMQG8FBRNJPOSTxi_I75Twj0877G-16i3bAWcvFxcNKGQzSQNcp5Lvh15N2I3PDM5W7HaFwPO0drzLR9dsDW9uDCqHvMMyshC7rgZdqfXpkaJL8Whn_mUScnLxS7J-2wVt9xKY3LpR97HoanIK-rcqYS_eq9hY_65te4qbwPCtQMjipIgIGo9HZrNRomAB1c",
+          "result": "invalid",
+          "flags": []
+        }
+      ]
+    },
+    {
+      "type": "JsonWebCrypto",
+      "source": {
+        "name": "google-wycheproof",
+        "version": "0.2"
+      },
+      "comment": "jws_mixedSymmetryKeyset",
+      "private": {
+        "keys": [
+          {
+            "alg": "HS256",
+            "use": "sig",
+            "k": "-ebuDNsVZ2iJtoZ-akfXTSCt4UO2cruLCsbWlBinggE",
+            "kid": "kid-aes-sign",
+            "kty": "oct"
+          },
+          {
+            "alg": "ES256",
+            "use": "sig",
+            "x": "04N0xi21hshyvBp7I167sbE_bXqyqkAPfefdklMO7wY",
+            "y": "UI8exy-C06a7DUnjIdENkxeFtHM4-l_41LqEw9nVgmw",
+            "crv": "P-256",
+            "kid": "kid-ec-sign",
+            "kty": "EC"
+          }
+        ]
+      },
+      "tests": [
+        {
+          "tcId": 47,
+          "comment": "rejectsValid",
+          "jws": "eyJhbGciOiJIUzI1NiIsImtpZCI6ImtpZC1hZXMtc2lnbiJ9.Zm9v.TD37p4c_0jmreSrBSDmE0F3mYSPtkZ3WrSyI5wb_KTg",
+          "result": "invalid",
+          "flags": [
+            "JsonWebKeyset"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "JsonWebCrypto",
+      "source": {
+        "name": "google-wycheproof",
+        "version": "0.2"
+      },
+      "comment": "jws_keyset",
+      "private": {
+        "keys": [
+          {
+            "alg": "HS256",
+            "use": "sig",
+            "k": "-ebuDNsVZ2iJtoZ-akfXTSCt4UO2cruLCsbWlBinggE",
+            "kid": "kid-aes-sign",
+            "kty": "oct"
+          },
+          {
+            "alg": "HS256",
+            "use": "sig",
+            "k": "-xbuDNsVZ2iJtoZ-akfXTSCt4UO2cruLCsbWlBinggE",
+            "kid": "kid-aes-sign-2",
+            "kty": "oct"
+          }
+        ]
+      },
+      "tests": [
+        {
+          "tcId": 48,
+          "comment": "acceptsValid",
+          "jws": "eyJhbGciOiJIUzI1NiIsImtpZCI6ImtpZC1hZXMtc2lnbiJ9.Zm9v.TD37p4c_0jmreSrBSDmE0F3mYSPtkZ3WrSyI5wb_KTg",
+          "result": "valid",
+          "flags": [
+            "JsonWebKeyset"
+          ]
+        },
+        {
+          "tcId": 49,
+          "comment": "rejectsModifiedSignature",
+          "jws": "eyJhbGciOiJIUzI1NiIsImtpZCI6ImtpZC1hZXMtc2lnbiJ9.Zm9v.XD37p4c_0jmreSrBSDmE0F3mYSPtkZ3WrSyI5wb_KTg",
+          "result": "invalid",
+          "flags": [
+            "JsonWebKeyset"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "JsonWebCrypto",
+      "source": {
+        "name": "google-wycheproof",
+        "version": "0.2"
+      },
+      "comment": "jwe_aes",
+      "private": {
+        "alg": "A256KW",
+        "use": "enc",
+        "k": "W1vBUI1-5HARc-qyT8hcYBt6q9sFNsztBrhlbl9W2CA",
+        "kid": "kid-aes-encrypt",
+        "kty": "oct"
+      },
+      "tests": [
+        {
+          "tcId": 50,
+          "comment": "acceptsValid",
+          "jwe": "eyJhbGciOiJBMjU2S1ciLCJraWQiOiJraWQtYWVzLWVuY3J5cHQiLCJlbmMiOiJBMjU2Q0JDLUhTNTEyIn0.LuAAkW6Y609GBgbxDM5V-es3SUNL-rdFVhFNIrLpe1o0f2ldS6sI1SGftpRSmy1PFW58DJaRPwVE7mGsChY6x68-GZB4T1-r.La_y01ijrXjd1d4sY761og.8QQpwqfEv-4h80BWn40xaw.f6dsHvd-MIqQAyu5D6-ZdptbF0ettEHFGcAvmNgu7jo",
+          "result": "valid",
+          "flags": []
+        },
+        {
+          "tcId": 51,
+          "comment": "rejectsModifiedAuthenticationTag",
+          "jwe": "eyJhbGciOiJBMjU2S1ciLCJraWQiOiJraWQtYWVzLWVuY3J5cHQiLCJlbmMiOiJBMjU2Q0JDLUhTNTEyIn0.LuAAkW6Y609GBgbxDM5V-es3SUNL-rdFVhFNIrLpe1o0f2ldS6sI1SGftpRSmy1PFW58DJaRPwVE7mGsChY6x68-GZB4T1-r.La_y01ijrXjd1d4sY761og.8QQpwqfEv-4h80BWn40xaw.X6dsHvd-MIqQAyu5D6-ZdptbF0ettEHFGcAvmNgu7jo",
+          "result": "invalid",
+          "flags": []
+        },
+        {
+          "tcId": 52,
+          "comment": "rejectsMissingAuthenticationTag",
+          "jwe": "eyJhbGciOiJBMjU2S1ciLCJraWQiOiJraWQtYWVzLWVuY3J5cHQiLCJlbmMiOiJBMjU2Q0JDLUhTNTEyIn0.LuAAkW6Y609GBgbxDM5V-es3SUNL-rdFVhFNIrLpe1o0f2ldS6sI1SGftpRSmy1PFW58DJaRPwVE7mGsChY6x68-GZB4T1-r.La_y01ijrXjd1d4sY761og.8QQpwqfEv-4h80BWn40xaw.",
+          "result": "invalid",
+          "flags": []
+        },
+        {
+          "tcId": 53,
+          "comment": "rejectsMissingAuthenticationTagAndSeparator",
+          "jwe": "eyJhbGciOiJBMjU2S1ciLCJraWQiOiJraWQtYWVzLWVuY3J5cHQiLCJlbmMiOiJBMjU2Q0JDLUhTNTEyIn0.LuAAkW6Y609GBgbxDM5V-es3SUNL-rdFVhFNIrLpe1o0f2ldS6sI1SGftpRSmy1PFW58DJaRPwVE7mGsChY6x68-GZB4T1-r.La_y01ijrXjd1d4sY761og.8QQpwqfEv-4h80BWn40xaw",
+          "result": "invalid",
+          "flags": []
+        },
+        {
+          "tcId": 54,
+          "comment": "rejectsModifiedCiphertext",
+          "jwe": "eyJhbGciOiJBMjU2S1ciLCJraWQiOiJraWQtYWVzLWVuY3J5cHQiLCJlbmMiOiJBMjU2Q0JDLUhTNTEyIn0.LuAAkW6Y609GBgbxDM5V-es3SUNL-rdFVhFNIrLpe1o0f2ldS6sI1SGftpRSmy1PFW58DJaRPwVE7mGsChY6x68-GZB4T1-r.La_y01ijrXjd1d4sY761og.XQQpwqfEv-4h80BWn40xaw.f6dsHvd-MIqQAyu5D6-ZdptbF0ettEHFGcAvmNgu7jo",
+          "result": "invalid",
+          "flags": []
+        },
+        {
+          "tcId": 55,
+          "comment": "rejectsMissingCiphertext",
+          "jwe": "eyJhbGciOiJBMjU2S1ciLCJraWQiOiJraWQtYWVzLWVuY3J5cHQiLCJlbmMiOiJBMjU2Q0JDLUhTNTEyIn0.LuAAkW6Y609GBgbxDM5V-es3SUNL-rdFVhFNIrLpe1o0f2ldS6sI1SGftpRSmy1PFW58DJaRPwVE7mGsChY6x68-GZB4T1-r.La_y01ijrXjd1d4sY761og..f6dsHvd-MIqQAyu5D6-ZdptbF0ettEHFGcAvmNgu7jo",
+          "result": "invalid",
+          "flags": []
+        },
+        {
+          "tcId": 56,
+          "comment": "rejectsMissingCiphertextAndSeparator",
+          "jwe": "eyJhbGciOiJBMjU2S1ciLCJraWQiOiJraWQtYWVzLWVuY3J5cHQiLCJlbmMiOiJBMjU2Q0JDLUhTNTEyIn0.LuAAkW6Y609GBgbxDM5V-es3SUNL-rdFVhFNIrLpe1o0f2ldS6sI1SGftpRSmy1PFW58DJaRPwVE7mGsChY6x68-GZB4T1-r.La_y01ijrXjd1d4sY761og.f6dsHvd-MIqQAyu5D6-ZdptbF0ettEHFGcAvmNgu7jo",
+          "result": "invalid",
+          "flags": []
+        },
+        {
+          "tcId": 57,
+          "comment": "rejectsModifiedIv",
+          "jwe": "eyJhbGciOiJBMjU2S1ciLCJraWQiOiJraWQtYWVzLWVuY3J5cHQiLCJlbmMiOiJBMjU2Q0JDLUhTNTEyIn0.LuAAkW6Y609GBgbxDM5V-es3SUNL-rdFVhFNIrLpe1o0f2ldS6sI1SGftpRSmy1PFW58DJaRPwVE7mGsChY6x68-GZB4T1-r.Xa_y01ijrXjd1d4sY761og.8QQpwqfEv-4h80BWn40xaw.f6dsHvd-MIqQAyu5D6-ZdptbF0ettEHFGcAvmNgu7jo",
+          "result": "invalid",
+          "flags": []
+        },
+        {
+          "tcId": 58,
+          "comment": "rejectsMissingIv",
+          "jwe": "eyJhbGciOiJBMjU2S1ciLCJraWQiOiJraWQtYWVzLWVuY3J5cHQiLCJlbmMiOiJBMjU2Q0JDLUhTNTEyIn0.LuAAkW6Y609GBgbxDM5V-es3SUNL-rdFVhFNIrLpe1o0f2ldS6sI1SGftpRSmy1PFW58DJaRPwVE7mGsChY6x68-GZB4T1-r..8QQpwqfEv-4h80BWn40xaw.f6dsHvd-MIqQAyu5D6-ZdptbF0ettEHFGcAvmNgu7jo",
+          "result": "invalid",
+          "flags": []
+        },
+        {
+          "tcId": 59,
+          "comment": "rejectsMissingIvAndSeparator",
+          "jwe": "eyJhbGciOiJBMjU2S1ciLCJraWQiOiJraWQtYWVzLWVuY3J5cHQiLCJlbmMiOiJBMjU2Q0JDLUhTNTEyIn0.LuAAkW6Y609GBgbxDM5V-es3SUNL-rdFVhFNIrLpe1o0f2ldS6sI1SGftpRSmy1PFW58DJaRPwVE7mGsChY6x68-GZB4T1-r.8QQpwqfEv-4h80BWn40xaw.f6dsHvd-MIqQAyu5D6-ZdptbF0ettEHFGcAvmNgu7jo",
+          "result": "invalid",
+          "flags": []
+        },
+        {
+          "tcId": 60,
+          "comment": "rejectsModifiedEncryptedKey",
+          "jwe": "eyJhbGciOiJBMjU2S1ciLCJraWQiOiJraWQtYWVzLWVuY3J5cHQiLCJlbmMiOiJBMjU2Q0JDLUhTNTEyIn0.XuAAkW6Y609GBgbxDM5V-es3SUNL-rdFVhFNIrLpe1o0f2ldS6sI1SGftpRSmy1PFW58DJaRPwVE7mGsChY6x68-GZB4T1-r.La_y01ijrXjd1d4sY761og.8QQpwqfEv-4h80BWn40xaw.f6dsHvd-MIqQAyu5D6-ZdptbF0ettEHFGcAvmNgu7jo",
+          "result": "invalid",
+          "flags": []
+        },
+        {
+          "tcId": 61,
+          "comment": "rejectsMissingEncryptedKey",
+          "jwe": "eyJhbGciOiJBMjU2S1ciLCJraWQiOiJraWQtYWVzLWVuY3J5cHQiLCJlbmMiOiJBMjU2Q0JDLUhTNTEyIn0..La_y01ijrXjd1d4sY761og.8QQpwqfEv-4h80BWn40xaw.f6dsHvd-MIqQAyu5D6-ZdptbF0ettEHFGcAvmNgu7jo",
+          "result": "invalid",
+          "flags": []
+        },
+        {
+          "tcId": 62,
+          "comment": "rejectsMissingEncryptedKeyAndSeparator",
+          "jwe": "eyJhbGciOiJBMjU2S1ciLCJraWQiOiJraWQtYWVzLWVuY3J5cHQiLCJlbmMiOiJBMjU2Q0JDLUhTNTEyIn0.La_y01ijrXjd1d4sY761og.8QQpwqfEv-4h80BWn40xaw.f6dsHvd-MIqQAyu5D6-ZdptbF0ettEHFGcAvmNgu7jo",
+          "result": "invalid",
+          "flags": []
+        },
+        {
+          "tcId": 63,
+          "comment": "rejectsModifiedHeader",
+          "jwe": "eyJhbGciOiJBMjU2S1ciLCJraWQiOiJYaWQtYWVzLWVuY3J5cHQiLCJlbmMiOiJBMjU2Q0JDLUhTNTEyIn0.LuAAkW6Y609GBgbxDM5V-es3SUNL-rdFVhFNIrLpe1o0f2ldS6sI1SGftpRSmy1PFW58DJaRPwVE7mGsChY6x68-GZB4T1-r.La_y01ijrXjd1d4sY761og.8QQpwqfEv-4h80BWn40xaw.f6dsHvd-MIqQAyu5D6-ZdptbF0ettEHFGcAvmNgu7jo",
+          "result": "invalid",
+          "flags": []
+        },
+        {
+          "tcId": 64,
+          "comment": "rejectsMissingHeader",
+          "jwe": ".LuAAkW6Y609GBgbxDM5V-es3SUNL-rdFVhFNIrLpe1o0f2ldS6sI1SGftpRSmy1PFW58DJaRPwVE7mGsChY6x68-GZB4T1-r.La_y01ijrXjd1d4sY761og.8QQpwqfEv-4h80BWn40xaw.f6dsHvd-MIqQAyu5D6-ZdptbF0ettEHFGcAvmNgu7jo",
+          "result": "invalid",
+          "flags": []
+        },
+        {
+          "tcId": 65,
+          "comment": "rejectsMissingHeaderAndSeparator",
+          "jwe": "LuAAkW6Y609GBgbxDM5V-es3SUNL-rdFVhFNIrLpe1o0f2ldS6sI1SGftpRSmy1PFW58DJaRPwVE7mGsChY6x68-GZB4T1-r.La_y01ijrXjd1d4sY761og.8QQpwqfEv-4h80BWn40xaw.f6dsHvd-MIqQAyu5D6-ZdptbF0ettEHFGcAvmNgu7jo",
+          "result": "invalid",
+          "flags": []
+        },
+        {
+          "tcId": 66,
+          "comment": "rejectsValidJsonSerialization",
+          "jwe": {
+            "protected": "eyJhbGciOiJBMjU2S1ciLCJraWQiOiJraWQtYWVzLWVuY3J5cHQiLCJlbmMiOiJBMjU2Q0JDLUhTNTEyIn0",
+            "unprotected": {
+              "unknown": "untrustworthy"
+            },
+            "header": {
+              "unknown2": "untrustworthy"
+            },
+            "encrypted_key": "LuAAkW6Y609GBgbxDM5V-es3SUNL-rdFVhFNIrLpe1o0f2ldS6sI1SGftpRSmy1PFW58DJaRPwVE7mGsChY6x68-GZB4T1-r",
+            "iv": "La_y01ijrXjd1d4sY761og",
+            "ciphertext": "8QQpwqfEv-4h80BWn40xaw",
+            "tag": "f6dsHvd-MIqQAyu5D6-ZdptbF0ettEHFGcAvmNgu7jo"
+          },
+          "result": "invalid",
+          "flags": [
+            "JsonSerialization"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "JsonWebCrypto",
+      "source": {
+        "name": "google-wycheproof",
+        "version": "0.2"
+      },
+      "comment": "jwe_ec",
+      "private": {
+        "alg": "ECDH-ES+A128KW",
+        "use": "enc",
+        "x": "weNJy2HscCSM6AEDTDg04biOvhFhyyWvOHQfeF_PxMQ",
+        "y": "e8lnCO-AlStT-NJVX-crhB7QRYhiix03illJOVAOyck",
+        "d": "VEmDZpDXXK8p8N0Cndsxs924q6nS1RXFASRl6BfUqdw",
+        "crv": "P-256",
+        "kid": "kid-ec-decrypt",
+        "kty": "EC"
+      },
+      "tests": [
+        {
+          "tcId": 67,
+          "comment": "acceptsValid",
+          "jwe": "eyJhbGciOiJFQ0RILUVTK0ExMjhLVyIsImVuYyI6IkExMjhDQkMtSFMyNTYiLCJlcGsiOnsia3R5IjoiRUMiLCJ4Ijoib0JHZzlCeHhJYWlmaHktSHdEcUFPM3luZGlLTzFSbjhvcTZ2MlRLSjZKRSIsInkiOiJCMm9aZVVsc0tXYXhfXzl4ZURDY0owYXRVYVZuTzZzYjhObmZ1dmxyNGNnIiwiY3J2IjoiUC0yNTYifX0.EMryDi1xUlchLZUZLT85xvMBBYMwDBRHFtF50_txDpQVpQPHsYgUIA.orxQswpocXaaLOTTxOKgnQ.O0YdzsAyykfgsLRAFoGazA.ZWQPNGDlM-RYlv5cFOxTbQ",
+          "result": "valid",
+          "flags": []
+        },
+        {
+          "tcId": 68,
+          "comment": "rejectsModifiedAuthenticationTag",
+          "jwe": "eyJhbGciOiJFQ0RILUVTK0ExMjhLVyIsImVuYyI6IkExMjhDQkMtSFMyNTYiLCJlcGsiOnsia3R5IjoiRUMiLCJ4Ijoib0JHZzlCeHhJYWlmaHktSHdEcUFPM3luZGlLTzFSbjhvcTZ2MlRLSjZKRSIsInkiOiJCMm9aZVVsc0tXYXhfXzl4ZURDY0owYXRVYVZuTzZzYjhObmZ1dmxyNGNnIiwiY3J2IjoiUC0yNTYifX0.EMryDi1xUlchLZUZLT85xvMBBYMwDBRHFtF50_txDpQVpQPHsYgUIA.orxQswpocXaaLOTTxOKgnQ.O0YdzsAyykfgsLRAFoGazA.XWQPNGDlM-RYlv5cFOxTbQ",
+          "result": "invalid",
+          "flags": []
+        },
+        {
+          "tcId": 69,
+          "comment": "rejectsMissingAuthenticationTag",
+          "jwe": "eyJhbGciOiJFQ0RILUVTK0ExMjhLVyIsImVuYyI6IkExMjhDQkMtSFMyNTYiLCJlcGsiOnsia3R5IjoiRUMiLCJ4Ijoib0JHZzlCeHhJYWlmaHktSHdEcUFPM3luZGlLTzFSbjhvcTZ2MlRLSjZKRSIsInkiOiJCMm9aZVVsc0tXYXhfXzl4ZURDY0owYXRVYVZuTzZzYjhObmZ1dmxyNGNnIiwiY3J2IjoiUC0yNTYifX0.EMryDi1xUlchLZUZLT85xvMBBYMwDBRHFtF50_txDpQVpQPHsYgUIA.orxQswpocXaaLOTTxOKgnQ.O0YdzsAyykfgsLRAFoGazA.",
+          "result": "invalid",
+          "flags": []
+        },
+        {
+          "tcId": 70,
+          "comment": "rejectsMissingAuthenticationTagAndSeparator",
+          "jwe": "eyJhbGciOiJFQ0RILUVTK0ExMjhLVyIsImVuYyI6IkExMjhDQkMtSFMyNTYiLCJlcGsiOnsia3R5IjoiRUMiLCJ4Ijoib0JHZzlCeHhJYWlmaHktSHdEcUFPM3luZGlLTzFSbjhvcTZ2MlRLSjZKRSIsInkiOiJCMm9aZVVsc0tXYXhfXzl4ZURDY0owYXRVYVZuTzZzYjhObmZ1dmxyNGNnIiwiY3J2IjoiUC0yNTYifX0.EMryDi1xUlchLZUZLT85xvMBBYMwDBRHFtF50_txDpQVpQPHsYgUIA.orxQswpocXaaLOTTxOKgnQ.O0YdzsAyykfgsLRAFoGazA",
+          "result": "invalid",
+          "flags": []
+        },
+        {
+          "tcId": 71,
+          "comment": "rejectsModifiedCiphertext",
+          "jwe": "eyJhbGciOiJFQ0RILUVTK0ExMjhLVyIsImVuYyI6IkExMjhDQkMtSFMyNTYiLCJlcGsiOnsia3R5IjoiRUMiLCJ4Ijoib0JHZzlCeHhJYWlmaHktSHdEcUFPM3luZGlLTzFSbjhvcTZ2MlRLSjZKRSIsInkiOiJCMm9aZVVsc0tXYXhfXzl4ZURDY0owYXRVYVZuTzZzYjhObmZ1dmxyNGNnIiwiY3J2IjoiUC0yNTYifX0.EMryDi1xUlchLZUZLT85xvMBBYMwDBRHFtF50_txDpQVpQPHsYgUIA.orxQswpocXaaLOTTxOKgnQ.X0YdzsAyykfgsLRAFoGazA.ZWQPNGDlM-RYlv5cFOxTbQ",
+          "result": "invalid",
+          "flags": []
+        },
+        {
+          "tcId": 72,
+          "comment": "rejectsMissingCiphertext",
+          "jwe": "eyJhbGciOiJFQ0RILUVTK0ExMjhLVyIsImVuYyI6IkExMjhDQkMtSFMyNTYiLCJlcGsiOnsia3R5IjoiRUMiLCJ4Ijoib0JHZzlCeHhJYWlmaHktSHdEcUFPM3luZGlLTzFSbjhvcTZ2MlRLSjZKRSIsInkiOiJCMm9aZVVsc0tXYXhfXzl4ZURDY0owYXRVYVZuTzZzYjhObmZ1dmxyNGNnIiwiY3J2IjoiUC0yNTYifX0.EMryDi1xUlchLZUZLT85xvMBBYMwDBRHFtF50_txDpQVpQPHsYgUIA.orxQswpocXaaLOTTxOKgnQ..ZWQPNGDlM-RYlv5cFOxTbQ",
+          "result": "invalid",
+          "flags": []
+        },
+        {
+          "tcId": 73,
+          "comment": "rejectsMissingCiphertextAndSeparator",
+          "jwe": "eyJhbGciOiJFQ0RILUVTK0ExMjhLVyIsImVuYyI6IkExMjhDQkMtSFMyNTYiLCJlcGsiOnsia3R5IjoiRUMiLCJ4Ijoib0JHZzlCeHhJYWlmaHktSHdEcUFPM3luZGlLTzFSbjhvcTZ2MlRLSjZKRSIsInkiOiJCMm9aZVVsc0tXYXhfXzl4ZURDY0owYXRVYVZuTzZzYjhObmZ1dmxyNGNnIiwiY3J2IjoiUC0yNTYifX0.EMryDi1xUlchLZUZLT85xvMBBYMwDBRHFtF50_txDpQVpQPHsYgUIA.orxQswpocXaaLOTTxOKgnQ.ZWQPNGDlM-RYlv5cFOxTbQ",
+          "result": "invalid",
+          "flags": []
+        },
+        {
+          "tcId": 74,
+          "comment": "rejectsModifiedIv",
+          "jwe": "eyJhbGciOiJFQ0RILUVTK0ExMjhLVyIsImVuYyI6IkExMjhDQkMtSFMyNTYiLCJlcGsiOnsia3R5IjoiRUMiLCJ4Ijoib0JHZzlCeHhJYWlmaHktSHdEcUFPM3luZGlLTzFSbjhvcTZ2MlRLSjZKRSIsInkiOiJCMm9aZVVsc0tXYXhfXzl4ZURDY0owYXRVYVZuTzZzYjhObmZ1dmxyNGNnIiwiY3J2IjoiUC0yNTYifX0.EMryDi1xUlchLZUZLT85xvMBBYMwDBRHFtF50_txDpQVpQPHsYgUIA.XrxQswpocXaaLOTTxOKgnQ.O0YdzsAyykfgsLRAFoGazA.ZWQPNGDlM-RYlv5cFOxTbQ",
+          "result": "invalid",
+          "flags": []
+        },
+        {
+          "tcId": 75,
+          "comment": "rejectsMissingIv",
+          "jwe": "eyJhbGciOiJFQ0RILUVTK0ExMjhLVyIsImVuYyI6IkExMjhDQkMtSFMyNTYiLCJlcGsiOnsia3R5IjoiRUMiLCJ4Ijoib0JHZzlCeHhJYWlmaHktSHdEcUFPM3luZGlLTzFSbjhvcTZ2MlRLSjZKRSIsInkiOiJCMm9aZVVsc0tXYXhfXzl4ZURDY0owYXRVYVZuTzZzYjhObmZ1dmxyNGNnIiwiY3J2IjoiUC0yNTYifX0.EMryDi1xUlchLZUZLT85xvMBBYMwDBRHFtF50_txDpQVpQPHsYgUIA..O0YdzsAyykfgsLRAFoGazA.ZWQPNGDlM-RYlv5cFOxTbQ",
+          "result": "invalid",
+          "flags": []
+        },
+        {
+          "tcId": 76,
+          "comment": "rejectsMissingIvAndSeparator",
+          "jwe": "eyJhbGciOiJFQ0RILUVTK0ExMjhLVyIsImVuYyI6IkExMjhDQkMtSFMyNTYiLCJlcGsiOnsia3R5IjoiRUMiLCJ4Ijoib0JHZzlCeHhJYWlmaHktSHdEcUFPM3luZGlLTzFSbjhvcTZ2MlRLSjZKRSIsInkiOiJCMm9aZVVsc0tXYXhfXzl4ZURDY0owYXRVYVZuTzZzYjhObmZ1dmxyNGNnIiwiY3J2IjoiUC0yNTYifX0.EMryDi1xUlchLZUZLT85xvMBBYMwDBRHFtF50_txDpQVpQPHsYgUIA.O0YdzsAyykfgsLRAFoGazA.ZWQPNGDlM-RYlv5cFOxTbQ",
+          "result": "invalid",
+          "flags": []
+        },
+        {
+          "tcId": 77,
+          "comment": "rejectsModifiedEncryptedKey",
+          "jwe": "eyJhbGciOiJFQ0RILUVTK0ExMjhLVyIsImVuYyI6IkExMjhDQkMtSFMyNTYiLCJlcGsiOnsia3R5IjoiRUMiLCJ4Ijoib0JHZzlCeHhJYWlmaHktSHdEcUFPM3luZGlLTzFSbjhvcTZ2MlRLSjZKRSIsInkiOiJCMm9aZVVsc0tXYXhfXzl4ZURDY0owYXRVYVZuTzZzYjhObmZ1dmxyNGNnIiwiY3J2IjoiUC0yNTYifX0.XMryDi1xUlchLZUZLT85xvMBBYMwDBRHFtF50_txDpQVpQPHsYgUIA.orxQswpocXaaLOTTxOKgnQ.O0YdzsAyykfgsLRAFoGazA.ZWQPNGDlM-RYlv5cFOxTbQ",
+          "result": "invalid",
+          "flags": []
+        },
+        {
+          "tcId": 78,
+          "comment": "rejectsMissingEncryptedKey",
+          "jwe": "eyJhbGciOiJFQ0RILUVTK0ExMjhLVyIsImVuYyI6IkExMjhDQkMtSFMyNTYiLCJlcGsiOnsia3R5IjoiRUMiLCJ4Ijoib0JHZzlCeHhJYWlmaHktSHdEcUFPM3luZGlLTzFSbjhvcTZ2MlRLSjZKRSIsInkiOiJCMm9aZVVsc0tXYXhfXzl4ZURDY0owYXRVYVZuTzZzYjhObmZ1dmxyNGNnIiwiY3J2IjoiUC0yNTYifX0..orxQswpocXaaLOTTxOKgnQ.O0YdzsAyykfgsLRAFoGazA.ZWQPNGDlM-RYlv5cFOxTbQ",
+          "result": "invalid",
+          "flags": []
+        },
+        {
+          "tcId": 79,
+          "comment": "rejectsMissingEncryptedKeyAndSeparator",
+          "jwe": "eyJhbGciOiJFQ0RILUVTK0ExMjhLVyIsImVuYyI6IkExMjhDQkMtSFMyNTYiLCJlcGsiOnsia3R5IjoiRUMiLCJ4Ijoib0JHZzlCeHhJYWlmaHktSHdEcUFPM3luZGlLTzFSbjhvcTZ2MlRLSjZKRSIsInkiOiJCMm9aZVVsc0tXYXhfXzl4ZURDY0owYXRVYVZuTzZzYjhObmZ1dmxyNGNnIiwiY3J2IjoiUC0yNTYifX0.orxQswpocXaaLOTTxOKgnQ.O0YdzsAyykfgsLRAFoGazA.ZWQPNGDlM-RYlv5cFOxTbQ",
+          "result": "invalid",
+          "flags": []
+        },
+        {
+          "tcId": 80,
+          "comment": "rejectsModifiedHeader",
+          "jwe": "eyJBbGciOiJFQ0RILUVTK0ExMjhLVyIsImVuYyI6IkExMjhDQkMtSFMyNTYiLCJlcGsiOnsia3R5IjoiRUMiLCJ4Ijoib0JHZzlCeHhJYWlmaHktSHdEcUFPM3luZGlLTzFSbjhvcTZ2MlRLSjZKRSIsInkiOiJCMm9aZVVsc0tXYXhfXzl4ZURDY0owYXRVYVZuTzZzYjhObmZ1dmxyNGNnIiwiY3J2IjoiUC0yNTYifX0.EMryDi1xUlchLZUZLT85xvMBBYMwDBRHFtF50_txDpQVpQPHsYgUIA.orxQswpocXaaLOTTxOKgnQ.O0YdzsAyykfgsLRAFoGazA.ZWQPNGDlM-RYlv5cFOxTbQ",
+          "result": "invalid",
+          "flags": []
+        },
+        {
+          "tcId": 81,
+          "comment": "rejectsMissingHeader",
+          "jwe": ".EMryDi1xUlchLZUZLT85xvMBBYMwDBRHFtF50_txDpQVpQPHsYgUIA.orxQswpocXaaLOTTxOKgnQ.O0YdzsAyykfgsLRAFoGazA.ZWQPNGDlM-RYlv5cFOxTbQ",
+          "result": "invalid",
+          "flags": []
+        },
+        {
+          "tcId": 82,
+          "comment": "rejectsMissingHeaderAndSeparator",
+          "jwe": "EMryDi1xUlchLZUZLT85xvMBBYMwDBRHFtF50_txDpQVpQPHsYgUIA.orxQswpocXaaLOTTxOKgnQ.O0YdzsAyykfgsLRAFoGazA.ZWQPNGDlM-RYlv5cFOxTbQ",
+          "result": "invalid",
+          "flags": []
+        },
+        {
+          "tcId": 83,
+          "comment": "rejectsInvalidCurvePoint",
+          "jwe": "eyJhbGciOiJFQ0RILUVTK0ExMjhLVyIsImVuYyI6IkExMjhDQkMtSFMyNTYiLCJlcGsiOnsia3R5IjoiRUMiLCJ4IjoiZ1RsaTY1ZVRRN3otQmgxNDdmZjhLM203azJVaURpRzJMcFlrV0FhRkpDYyIsInkiOiJjTEFuakthNGJ6akQ3REpWUHdhOUVQclJ6TUc3ck9OZ3NpVUQta2YzMEZzIiwiY3J2IjoiUC0yNTYifX0.qGAdxtEnrV_3zbIxU2ZKrMWcejNltjA_dtefBFnRh9A2z9cNIqYRWg.pEA5kX304PMCOmFSKX_cEg.a9fwUrx2JXi1OnWEMOmZhXd94-bEGCH9xxRwqcGuG2AMo-AwHoljdsH5C_kcTqlXS5p51OB1tvgQcMwB5rpTxg.72CHiYFecyDvuUa43KKT6w",
+          "result": "invalid",
+          "flags": []
+        }
+      ]
+    }
+  ]
+}

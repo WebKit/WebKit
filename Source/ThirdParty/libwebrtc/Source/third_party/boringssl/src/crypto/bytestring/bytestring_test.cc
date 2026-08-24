@@ -16,6 +16,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <optional>
 #include <vector>
 
 #include <gtest/gtest.h>
@@ -222,6 +223,7 @@ TEST(CBSTest, GetASN1) {
   CBS_init(&data, kData1, sizeof(kData1));
   EXPECT_FALSE(CBS_peek_asn1_tag(&data, CBS_ASN1_BOOLEAN));
   EXPECT_TRUE(CBS_peek_asn1_tag(&data, CBS_ASN1_SEQUENCE));
+  EXPECT_EQ(CBS_peek_any_asn1_tag(&data), CBS_ASN1_SEQUENCE);
 
   ASSERT_TRUE(CBS_get_asn1(&data, &contents, CBS_ASN1_SEQUENCE));
   EXPECT_EQ(Bytes("\x01\x02"), Bytes(CBS_data(&contents), CBS_len(&contents)));
@@ -249,6 +251,10 @@ TEST(CBSTest, GetASN1) {
   CBS_init(&data, nullptr, 0);
   // peek at empty data.
   EXPECT_FALSE(CBS_peek_asn1_tag(&data, CBS_ASN1_SEQUENCE));
+  EXPECT_EQ(CBS_peek_any_asn1_tag(&data), 0u);
+  // Zero is not a valid tag. Make sure the function does not get confused by
+  // |CBS_peek_any_asn1_tag|'s return value.
+  EXPECT_FALSE(CBS_peek_asn1_tag(&data, 0));
 
   CBS_init(&data, nullptr, 0);
   // optional elements at empty data.
@@ -356,9 +362,9 @@ TEST(CBSTest, ParseASN1Tag) {
       {true,
        CBS_ASN1_PRIVATE | CBS_ASN1_CONSTRUCTED | 0x1fffffff,
        {0xff, 0x81, 0xff, 0xff, 0xff, 0x7f, 0}},
-      // Tag number fits in |uint32_t| but not |CBS_ASN1_TAG_NUMBER_MASK|.
+      // Tag number fits in `uint32_t` but not `CBS_ASN1_TAG_NUMBER_MASK`.
       {false, 0, {0xff, 0x82, 0xff, 0xff, 0xff, 0x7f, 0}},
-      // Tag number does not fit in |uint32_t|.
+      // Tag number does not fit in `uint32_t`.
       {false, 0, {0xff, 0x90, 0x80, 0x80, 0x80, 0, 0}},
       // Tag number is not minimally-encoded
       {false, 0, {0x5f, 0x80, 0x1f, 0}},
@@ -424,10 +430,10 @@ TEST(CBBTest, InitUninitialized) {
 
 TEST(CBBTest, Basic) {
   static const uint8_t kExpected[] = {
-      0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a,
-      0x0b, 0x0c, 0x0d, 0x0e, 0x0f, 0x10, 0x11, 0x12, 0x13, 0x14,
-      0x03, 0x02, 0x0a, 0x09, 0x08, 0x07, 0x12, 0x11, 0x10, 0x0f,
-      0x0e, 0x0d, 0x0c, 0x0b, 0x00, 0x00, 0x00, 0x00};
+      0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b,
+      0x0c, 0x0d, 0x0e, 0x0f, 0x10, 0x11, 0x12, 0x13, 0x14, 0x03, 0x02,
+      0x0a, 0x09, 0x08, 0x07, 0x12, 0x11, 0x10, 0x0f, 0x0e, 0x0d, 0x0c,
+      0x0b, 0x00, 0x00, 0x00, 0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66};
   uint8_t *buf;
   size_t buf_len;
 
@@ -447,6 +453,7 @@ TEST(CBBTest, Basic) {
   ASSERT_TRUE(CBB_add_u32le(cbb.get(), 0x708090a));
   ASSERT_TRUE(CBB_add_u64le(cbb.get(), 0xb0c0d0e0f101112));
   ASSERT_TRUE(CBB_add_zeros(cbb.get(), 4));
+  ASSERT_TRUE(CBB_add_u48(cbb.get(), 0x112233445566));
   ASSERT_TRUE(CBB_finish(cbb.get(), &buf, &buf_len));
 
   UniquePtr<uint8_t> scoper(buf);
@@ -474,15 +481,17 @@ TEST(CBBTest, Fixed) {
   ASSERT_TRUE(CBB_init_fixed(&cbb, buf, 1));
   ASSERT_TRUE(CBB_add_u8(&cbb, 1));
   EXPECT_FALSE(CBB_add_u8(&cbb, 2));
-  // We do not need |CBB_cleanup| or |bssl::ScopedCBB| here because a fixed
-  // |CBB| has no allocations. Leak-checking tools will confirm there was
+  EXPECT_TRUE(ErrorsAreAndClear({{ERR_LIB_CRYPTO, ERR_R_OVERFLOW}}));
+  // We do not need `CBB_cleanup` or |bssl::ScopedCBB| here because a fixed
+  // `CBB` has no allocations. Leak-checking tools will confirm there was
   // nothing to clean up.
 
-  // However, it should be harmless to call |CBB_cleanup|.
+  // However, it should be harmless to call `CBB_cleanup`.
   CBB cbb2;
   ASSERT_TRUE(CBB_init_fixed(&cbb2, buf, 1));
   ASSERT_TRUE(CBB_add_u8(&cbb2, 1));
   EXPECT_FALSE(CBB_add_u8(&cbb2, 2));
+  EXPECT_TRUE(ErrorsAreAndClear({{ERR_LIB_CRYPTO, ERR_R_OVERFLOW}}));
   CBB_cleanup(&cbb2);
 }
 
@@ -497,6 +506,8 @@ TEST(CBBTest, FinishChild) {
   ASSERT_TRUE(CBB_add_u8_length_prefixed(cbb.get(), &child));
 
   EXPECT_FALSE(CBB_finish(&child, &out_buf, &out_size));
+  EXPECT_TRUE(
+      ErrorsAreAndClear({{ERR_LIB_CRYPTO, ERR_R_SHOULD_NOT_HAVE_BEEN_CALLED}}));
 
   ASSERT_TRUE(CBB_finish(cbb.get(), &out_buf, &out_size));
   UniquePtr<uint8_t> scoper(out_buf);
@@ -542,7 +553,7 @@ TEST(CBBTest, DiscardChild) {
   ASSERT_TRUE(CBB_init(cbb.get(), 0));
   ASSERT_TRUE(CBB_add_u8(cbb.get(), 0xaa));
 
-  // Discarding |cbb|'s children preserves the byte written.
+  // Discarding `cbb`'s children preserves the byte written.
   CBB_discard_child(cbb.get());
 
   ASSERT_TRUE(CBB_add_u8_length_prefixed(cbb.get(), &contents));
@@ -560,7 +571,7 @@ TEST(CBBTest, DiscardChild) {
       CBB_add_u16_length_prefixed(&inner_contents, &inner_inner_contents));
   ASSERT_TRUE(CBB_add_u8(&inner_inner_contents, 0x99));
 
-  // Discard everything from |inner_contents| down.
+  // Discard everything from `inner_contents` down.
   CBB_discard_child(&contents);
 
   uint8_t *buf;
@@ -623,7 +634,7 @@ TEST(CBBDeathTest, DiscardMisuse) {
   EXPECT_DEATH_IF_SUPPORTED(CBB_discard(cbb.get(), 5), "");
   CBB child;
   ASSERT_TRUE(CBB_add_u8_length_prefixed(cbb.get(), &child));
-  // Discard from a |cbb| with an unflushed child.
+  // Discard from a `cbb` with an unflushed child.
   EXPECT_DEATH_IF_SUPPORTED(CBB_discard(cbb.get(), 1), "");
   EXPECT_DEATH_IF_SUPPORTED(CBB_discard(&child, 1), "");
   ASSERT_TRUE(CBB_add_u8(&child, 1));
@@ -644,15 +655,29 @@ TEST(CBBTest, Misuse) {
   ASSERT_TRUE(CBB_add_u8(&child, 1));
   ASSERT_TRUE(CBB_add_u8(cbb.get(), 2));
 
-  // Since we wrote to |cbb|, |child| is now invalid and attempts to write to
+  // Since we wrote to `cbb`, `child` is now invalid and attempts to write to
   // it should fail.
   EXPECT_FALSE(CBB_add_u8(&child, 1));
+  EXPECT_TRUE(
+      ErrorsAreAndClear({{ERR_LIB_CRYPTO, ERR_R_SHOULD_NOT_HAVE_BEEN_CALLED}}));
   EXPECT_FALSE(CBB_add_u16(&child, 1));
+  EXPECT_TRUE(
+      ErrorsAreAndClear({{ERR_LIB_CRYPTO, ERR_R_SHOULD_NOT_HAVE_BEEN_CALLED}}));
   EXPECT_FALSE(CBB_add_u24(&child, 1));
+  EXPECT_TRUE(
+      ErrorsAreAndClear({{ERR_LIB_CRYPTO, ERR_R_SHOULD_NOT_HAVE_BEEN_CALLED}}));
   EXPECT_FALSE(CBB_add_u8_length_prefixed(&child, &contents));
+  EXPECT_TRUE(
+      ErrorsAreAndClear({{ERR_LIB_CRYPTO, ERR_R_SHOULD_NOT_HAVE_BEEN_CALLED}}));
   EXPECT_FALSE(CBB_add_u16_length_prefixed(&child, &contents));
+  EXPECT_TRUE(
+      ErrorsAreAndClear({{ERR_LIB_CRYPTO, ERR_R_SHOULD_NOT_HAVE_BEEN_CALLED}}));
   EXPECT_FALSE(CBB_add_asn1(&child, &contents, 1));
+  EXPECT_TRUE(
+      ErrorsAreAndClear({{ERR_LIB_CRYPTO, ERR_R_SHOULD_NOT_HAVE_BEEN_CALLED}}));
   EXPECT_FALSE(CBB_add_bytes(&child, (const uint8_t *)"a", 1));
+  EXPECT_TRUE(
+      ErrorsAreAndClear({{ERR_LIB_CRYPTO, ERR_R_SHOULD_NOT_HAVE_BEEN_CALLED}}));
 
   ASSERT_TRUE(CBB_finish(cbb.get(), &buf, &buf_len));
   UniquePtr<uint8_t> scoper(buf);
@@ -962,7 +987,7 @@ static const ImplicitStringTest kImplicitStringTests[] = {
     {"\x80\x03\x61\x61\x61", 5, true, "aaa", 3},
     // An implicit-tagged string.
     {"\xa0\x09\x04\x01\x61\x04\x01\x61\x04\x01\x61", 11, true, "aaa", 3},
-    // |CBS_get_asn1_implicit_string| only accepts one level deep of nesting.
+    // `CBS_get_asn1_implicit_string` only accepts one level deep of nesting.
     {"\xa0\x0b\x24\x06\x04\x01\x61\x04\x01\x61\x04\x01\x61", 13, false, nullptr,
      0},
     // The outer tag must match.
@@ -1297,12 +1322,12 @@ TEST(CBSTest, ASN1Int64) {
 TEST(CBBTest, Zero) {
   CBB cbb;
   CBB_zero(&cbb);
-  // Calling |CBB_cleanup| on a zero-state |CBB| must not crash.
+  // Calling `CBB_cleanup` on a zero-state `CBB` must not crash.
   CBB_cleanup(&cbb);
 }
 
 TEST(CBBTest, ScopedCBBCleanup) {
-  // It is valid to |CBB_cleanup| a |ScopedCBB|.
+  // It is valid to `CBB_cleanup` a `ScopedCBB`.
   ScopedCBB cbb;
   ASSERT_TRUE(CBB_init(cbb.get(), 32));
   CBB_cleanup(cbb.get());
@@ -1317,6 +1342,7 @@ TEST(CBBTest, Reserve) {
   ASSERT_TRUE(CBB_init_fixed(cbb.get(), buf, sizeof(buf)));
   // Too large.
   EXPECT_FALSE(CBB_reserve(cbb.get(), &ptr, 11));
+  EXPECT_TRUE(ErrorsAreAndClear({{ERR_LIB_CRYPTO, ERR_R_OVERFLOW}}));
 
   cbb.Reset();
   ASSERT_TRUE(CBB_init_fixed(cbb.get(), buf, sizeof(buf)));
@@ -1340,31 +1366,59 @@ TEST(CBBTest, StickyError) {
   ASSERT_TRUE(CBB_add_u8_length_prefixed(cbb.get(), &child));
   ASSERT_TRUE(CBB_add_bytes(&child, kZeros, sizeof(kZeros)));
   ASSERT_FALSE(CBB_flush(cbb.get()));
+  EXPECT_TRUE(ErrorsAreAndClear({{ERR_LIB_CRYPTO, ERR_R_OVERFLOW}}));
 
   // All future operations should fail.
   uint8_t *ptr;
   size_t len;
   EXPECT_FALSE(CBB_add_u8(cbb.get(), 0));
+  EXPECT_TRUE(
+      ErrorsAreAndClear({{ERR_LIB_CRYPTO, ERR_R_SHOULD_NOT_HAVE_BEEN_CALLED}}));
   EXPECT_FALSE(CBB_finish(cbb.get(), &ptr, &len));
+  EXPECT_TRUE(
+      ErrorsAreAndClear({{ERR_LIB_CRYPTO, ERR_R_SHOULD_NOT_HAVE_BEEN_CALLED}}));
 
   // Write an input that cannot fit in a fixed CBB.
   cbb.Reset();
   uint8_t buf;
   ASSERT_TRUE(CBB_init_fixed(cbb.get(), &buf, 1));
   ASSERT_FALSE(CBB_add_bytes(cbb.get(), kZeros, sizeof(kZeros)));
+  EXPECT_TRUE(ErrorsAreAndClear({{ERR_LIB_CRYPTO, ERR_R_OVERFLOW}}));
 
   // All future operations should fail.
   EXPECT_FALSE(CBB_add_u8(cbb.get(), 0));
+  EXPECT_TRUE(
+      ErrorsAreAndClear({{ERR_LIB_CRYPTO, ERR_R_SHOULD_NOT_HAVE_BEEN_CALLED}}));
   EXPECT_FALSE(CBB_finish(cbb.get(), &ptr, &len));
+  EXPECT_TRUE(
+      ErrorsAreAndClear({{ERR_LIB_CRYPTO, ERR_R_SHOULD_NOT_HAVE_BEEN_CALLED}}));
 
   // Write a u32 that cannot fit in a u24.
   cbb.Reset();
   ASSERT_TRUE(CBB_init(cbb.get(), 0));
   ASSERT_FALSE(CBB_add_u24(cbb.get(), 1u << 24));
+  EXPECT_TRUE(ErrorsAreAndClear({{ERR_LIB_CRYPTO, ERR_R_OVERFLOW}}));
+
+  // All future operations should fail.
+  EXPECT_FALSE(CBB_add_u8(cbb.get(), 0));
+  EXPECT_TRUE(
+      ErrorsAreAndClear({{ERR_LIB_CRYPTO, ERR_R_SHOULD_NOT_HAVE_BEEN_CALLED}}));
+  EXPECT_FALSE(CBB_finish(cbb.get(), &ptr, &len));
+  EXPECT_TRUE(
+      ErrorsAreAndClear({{ERR_LIB_CRYPTO, ERR_R_SHOULD_NOT_HAVE_BEEN_CALLED}}));
+
+  // Write a u64 that cannot fit in a u48.
+  cbb.Reset();
+  ASSERT_TRUE(CBB_init(cbb.get(), 0));
+  ASSERT_FALSE(CBB_add_u48(cbb.get(), uint64_t{1} << 48));
+  EXPECT_TRUE(
+      ErrorsAreAndClear({{ERR_LIB_CRYPTO, ERR_R_OVERFLOW}}));
 
   // All future operations should fail.
   EXPECT_FALSE(CBB_add_u8(cbb.get(), 0));
   EXPECT_FALSE(CBB_finish(cbb.get(), &ptr, &len));
+  EXPECT_TRUE(
+      ErrorsAreAndClear({{ERR_LIB_CRYPTO, ERR_R_SHOULD_NOT_HAVE_BEEN_CALLED}}));
 }
 
 TEST(CBSTest, BitString) {
@@ -1487,7 +1541,7 @@ TEST(CBBTest, AddOIDFromText) {
 
   const struct {
     std::vector<uint8_t> der;
-    // If true, |der| is valid but has a component that exceeds 2^64-1.
+    // If true, `der` is valid but has a component that exceeds 2^64-1.
     bool overflow;
   } kInvalidDER[] = {
       // The empty string is not an OID.
@@ -1578,7 +1632,7 @@ TEST(CBBTest, AddRelativeOIDFromText) {
 
   const struct {
     std::vector<uint8_t> der;
-    // If true, |der| is valid but has a component that exceeds 2^64-1.
+    // If true, `der` is valid but has a component that exceeds 2^64-1.
     bool overflow;
   } kInvalidDER[] = {
       // The empty string is not a relative OID.
@@ -1729,6 +1783,8 @@ TEST(CBBTest, FlushASN1SetOf) {
     ASSERT_TRUE(CBB_add_asn1(cbb.get(), &child, CBS_ASN1_SET));
     ASSERT_TRUE(CBB_add_bytes(&child, t.data(), t.size()));
     EXPECT_FALSE(CBB_flush_asn1_set_of(&child));
+    EXPECT_TRUE(ErrorsAreAndClear(
+        {{ERR_LIB_CRYPTO, ERR_R_SHOULD_NOT_HAVE_BEEN_CALLED}}));
   }
 }
 
@@ -2077,6 +2133,60 @@ TEST(CBSTest, BogusTime) {
   }
 }
 
+TEST(CBSTest, ParseTime) {
+  tm expected = {};
+  expected.tm_year = 70; // 1970
+  expected.tm_mon = 0;   // January
+  expected.tm_mday = 1;
+  expected.tm_hour = 4;
+  expected.tm_min = 0;
+  expected.tm_sec = 0;
+
+  // 1970-01-01 00:00:00 -0400 should be 1970-01-01 04:00:00 UTC
+  CBS cbs;
+  tm tm;
+  cbs = StringAsBytes("700101000000-0400");
+  ASSERT_TRUE(CBS_parse_utc_time(&cbs, &tm, /*allow_timezone_offset=*/1));
+  EXPECT_EQ(tm.tm_year, expected.tm_year);
+  EXPECT_EQ(tm.tm_mon, expected.tm_mon);
+  EXPECT_EQ(tm.tm_mday, expected.tm_mday);
+  EXPECT_EQ(tm.tm_hour, expected.tm_hour);
+  EXPECT_EQ(tm.tm_min, expected.tm_min);
+  EXPECT_EQ(tm.tm_sec, expected.tm_sec);
+
+  cbs = StringAsBytes("19700101000000-0400");
+  ASSERT_TRUE(
+      CBS_parse_generalized_time(&cbs, &tm, /*allow_timezone_offset=*/1));
+  EXPECT_EQ(tm.tm_year, expected.tm_year);
+  EXPECT_EQ(tm.tm_mon, expected.tm_mon);
+  EXPECT_EQ(tm.tm_mday, expected.tm_mday);
+  EXPECT_EQ(tm.tm_hour, expected.tm_hour);
+  EXPECT_EQ(tm.tm_min, expected.tm_min);
+  EXPECT_EQ(tm.tm_sec, expected.tm_sec);
+
+  // 1970-01-01 08:00:00 +0400 should be 1970-01-01 04:00:00 UTC
+  expected.tm_hour = 4;
+  cbs = StringAsBytes("700101080000+0400");
+  ASSERT_TRUE(CBS_parse_utc_time(&cbs, &tm, /*allow_timezone_offset=*/1));
+  EXPECT_EQ(tm.tm_year, expected.tm_year);
+  EXPECT_EQ(tm.tm_mon, expected.tm_mon);
+  EXPECT_EQ(tm.tm_mday, expected.tm_mday);
+  EXPECT_EQ(tm.tm_hour, expected.tm_hour);
+  EXPECT_EQ(tm.tm_min, expected.tm_min);
+  EXPECT_EQ(tm.tm_sec, expected.tm_sec);
+
+  expected.tm_hour = 4;
+  cbs = StringAsBytes("19700101080000+0400");
+  ASSERT_TRUE(
+      CBS_parse_generalized_time(&cbs, &tm, /*allow_timezone_offset=*/1));
+  EXPECT_EQ(tm.tm_year, expected.tm_year);
+  EXPECT_EQ(tm.tm_mon, expected.tm_mon);
+  EXPECT_EQ(tm.tm_mday, expected.tm_mday);
+  EXPECT_EQ(tm.tm_hour, expected.tm_hour);
+  EXPECT_EQ(tm.tm_min, expected.tm_min);
+  EXPECT_EQ(tm.tm_sec, expected.tm_sec);
+}
+
 TEST(CBSTest, GetU64Decimal) {
   const struct {
     uint64_t val;
@@ -2124,6 +2234,66 @@ TEST(CBSTest, GetU64Decimal) {
     CBS_init(&cbs, reinterpret_cast<const uint8_t *>(invalid), strlen(invalid));
     uint64_t v;
     EXPECT_FALSE(CBS_get_u64_decimal(&cbs, &v));
+  }
+}
+
+TEST(CBSTest, OIDComponent) {
+  const struct {
+    // enc is an encoded OID component.
+    std::vector<uint8_t> enc;
+    // v is the decoded OID component, or nullopt if invalid.
+    std::optional<uint64_t> v;
+  } kTests[] = {
+      // The empty string is not an OID component.
+      {{}, std::nullopt},
+      // Some valid OID components.
+      {{0x00}, 0},
+      {{0x01}, 1},
+      {{0x7f}, 127},
+      {{0x81, 0x00}, 128},
+      {{0x81, 0x01}, 129},
+      {{0x81, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x7f},
+       UINT64_MAX},
+      // 2^64 is too large and overflows.
+      {{0x82, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x00},
+       std::nullopt},
+      // Non-minimal OID components are invalid.
+      {{0x80, 0x01}, std::nullopt},
+      {{0x80, 0x81, 0x00}, std::nullopt},
+      {{0x80, 0x81, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x7f},
+       std::nullopt},
+      // Truncated OID component.
+      {{0xff}, std::nullopt},
+      {{0x81}, std::nullopt},
+  };
+  for (const auto &t : kTests) {
+    SCOPED_TRACE(Bytes(t.enc));
+    CBS cbs;
+    CBS_init(&cbs, t.enc.data(), t.enc.size());
+    uint64_t v;
+    if (!t.v.has_value()) {
+      EXPECT_FALSE(CBS_get_asn1_oid_component(&cbs, &v));
+      continue;
+    }
+
+    ASSERT_TRUE(CBS_get_asn1_oid_component(&cbs, &v));
+    EXPECT_EQ(v, t.v.value());
+    EXPECT_EQ(CBS_len(&cbs), 0u);
+
+    // Trailing data should be left in `cbs`.
+    std::vector<uint8_t> trailing_data = t.enc;
+    trailing_data.push_back(42);
+    CBS_init(&cbs, trailing_data.data(), trailing_data.size());
+    ASSERT_TRUE(CBS_get_asn1_oid_component(&cbs, &v));
+    EXPECT_EQ(v, t.v.value());
+    EXPECT_EQ(CBS_data(&cbs), trailing_data.data() + t.enc.size());
+    EXPECT_EQ(CBS_len(&cbs), 1u);
+
+    // Test serialization.
+    ScopedCBB cbb;
+    ASSERT_TRUE(CBB_init(cbb.get(), t.enc.size()));
+    ASSERT_TRUE(CBB_add_asn1_oid_component(cbb.get(), t.v.value()));
+    EXPECT_EQ(Bytes(CBBAsSpan(cbb.get())), Bytes(t.enc));
   }
 }
 

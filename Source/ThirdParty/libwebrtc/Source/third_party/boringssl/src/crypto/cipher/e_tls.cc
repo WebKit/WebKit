@@ -108,8 +108,8 @@ static size_t aead_tls_tag_len(const EVP_AEAD_CTX *ctx, const size_t in_len) {
 
   const size_t hmac_len = HMAC_size(tls_ctx->hmac_ctx);
   const size_t block_size = EVP_CIPHER_CTX_block_size(&tls_ctx->cipher_ctx);
-  // An overflow of |in_len + hmac_len| doesn't affect the result mod
-  // |block_size|, provided that |block_size| is a smaller power of two.
+  // An overflow of `in_len + hmac_len` doesn't affect the result mod
+  // `block_size`, provided that `block_size` is a smaller power of two.
   assert(block_size == 8 /*3DES*/ || block_size == 16 /*AES*/);
   const size_t pad_len = block_size - ((in_len + hmac_len) & (block_size - 1));
   return hmac_len + pad_len;
@@ -145,7 +145,7 @@ static int aead_tls_sealv(const EVP_AEAD_CTX *ctx,
     return 0;
   }
 
-  // To allow for CBC mode which changes cipher length, |ad| doesn't include the
+  // To allow for CBC mode which changes cipher length, `ad` doesn't include the
   // length for legacy ciphers.
   uint8_t ad_extra[2];
   CRYPTO_store_u16_be(ad_extra, static_cast<uint16_t>(in_len));
@@ -217,7 +217,7 @@ static int aead_tls_sealv(const EVP_AEAD_CTX *ctx,
 
             // Feed the MAC into the cipher in two steps. First complete the
             // final partial block from encrypting the input and split the
-            // result between |out| and |out_tag|. Then feed the rest.
+            // result between `out` and `out_tag`. Then feed the rest.
             const size_t early_mac_len = block_size - remaining;
             assert(early_mac_len < block_size);
             assert(len + block_size - early_mac_len == in_len);
@@ -329,9 +329,9 @@ static int aead_tls_openv(const EVP_AEAD_CTX *ctx,
 
   const size_t mac_len = HMAC_size(tls_ctx->hmac_ctx);
 
-  // Split the decrypted record into |iovecs_without_trailer| and |trailer|,
+  // Split the decrypted record into `iovecs_without_trailer` and `trailer`,
   // based on the public lower bound of where the plaintext ends. The plaintext
-  // is followed by |mac_len| and then at most 256 bytes of padding.
+  // is followed by `mac_len` and then at most 256 bytes of padding.
   InplaceVector<CRYPTO_IOVEC, CRYPTO_IOVEC_MAX> iovecs_without_trailer;
   iovecs_without_trailer.CopyFrom(iovecs);
   uint8_t trailer_buf[EVP_MAX_MD_SIZE + 256];
@@ -341,7 +341,7 @@ static int aead_tls_openv(const EVP_AEAD_CTX *ctx,
   BSSL_CHECK(trailer.has_value());
 
   // Remove CBC padding. Code from here on is timing-sensitive with respect to
-  // |padding_ok|, |trailer_minus_padding|, and derived values.
+  // `padding_ok`, `trailer_minus_padding`, and derived values.
   crypto_word_t padding_ok;
   size_t trailer_minus_padding;
   if (!EVP_tls_cbc_remove_padding(&padding_ok, &trailer_minus_padding,
@@ -352,16 +352,16 @@ static int aead_tls_openv(const EVP_AEAD_CTX *ctx,
     return 0;
   }
 
-  // If the padding is valid, |trailer->first(trailer_minus_padding)| is the
+  // If the padding is valid, `trailer->first(trailer_minus_padding)` is the
   // last bytes of plaintext and the MAC. Otherwise, it is still large enough to
-  // extract a MAC, but it will be irrelevant. Note that |trailer_minus_padding|
+  // extract a MAC, but it will be irrelevant. Note that `trailer_minus_padding`
   // is secret.
   declassify_assert(trailer_minus_padding >= mac_len);
   size_t data_in_trailer_len = trailer_minus_padding - mac_len;
   size_t max_data_in_trailer_len = trailer->size() - mac_len;
   size_t data_len = total - trailer->size() + data_in_trailer_len;
 
-  // To allow for CBC mode which changes cipher length, |ad_len| doesn't
+  // To allow for CBC mode which changes cipher length, `ad_len` doesn't
   // include the length for legacy ciphers.
   uint8_t ad_extra[2];
   CRYPTO_store_u16_be(ad_extra, static_cast<uint16_t>(data_len));

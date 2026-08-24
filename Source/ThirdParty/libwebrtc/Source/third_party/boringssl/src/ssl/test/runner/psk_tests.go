@@ -803,7 +803,7 @@ func addPSKTests() {
 				&rsaCertificate,
 				&pskSHA256Credential,
 			},
-			// The ClientHello is not good for the certficate, so the
+			// The ClientHello is not good for the certificate, so the
 			// shim should pick the PSK.
 			flags: []string{"-expect-selected-credential", "1"},
 			expectations: connectionExpectations{

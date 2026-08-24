@@ -379,6 +379,10 @@ func (hs *serverHandshakeState) readClientHello() error {
 		return fmt.Errorf("tls: client included signature_algorithms before TLS 1.2")
 	}
 
+	if config.Bugs.ExpectGREASE && !containsSigAlgsGREASE(hs.clientHello.signatureAlgorithms) {
+		return fmt.Errorf("tls: no GREASE signature_algorithms value found")
+	}
+
 	// Check the client cipher list is consistent with the version.
 	if clientVersOK && clientVers.protocolVersion() < VersionTLS12 && slices.ContainsFunc(hs.clientHello.cipherSuites, isTLS12Cipher) {
 		return fmt.Errorf("tls: client offered TLS 1.2 cipher before TLS 1.2")
@@ -1180,9 +1184,9 @@ func (hs *serverHandshakeState) doTLS13Handshake() error {
 		if config.Bugs.AlwaysMatchTrustAnchorID {
 			certMsg.matchedTrustAnchor = true
 		} else {
-			if hs.clientHello.trustAnchors != nil && useCert.TrustAnchorID != nil {
+			if hs.clientHello.trustAnchors != nil && useCert.Properties.TrustAnchorID != nil {
 				for _, id := range hs.clientHello.trustAnchors {
-					if bytes.Equal(useCert.TrustAnchorID, id) {
+					if bytes.Equal(useCert.Properties.TrustAnchorID, id) {
 						certMsg.matchedTrustAnchor = true
 					}
 				}

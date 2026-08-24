@@ -100,12 +100,32 @@ impl<C: ec::Curve> PublicKey<C> {
     /// produce the digest if the curve of this public key is P-384.
     pub fn verify(&self, signed_msg: &[u8], signature: &[u8]) -> Result<(), InvalidSignatureError> {
         let digest = C::hash(signed_msg);
+        self.verify_already_hashed(&digest, signature)
+    }
+
+    /// Verify `signature` as a valid ASN.1-based signature of `hashed_msg` with
+    /// this public key. `hashed_msg` must already have been hashed with a
+    /// secure hash function: passing unhashed data here breaks the security
+    /// properties of the signature scheme. If you have unhashed data, use
+    /// `verify` instead.
+    ///
+    /// This function exists because sometimes the "wrong" hash function is used
+    /// with a key. A key should not be used with different hash functions and
+    /// there is an obvious correspondence between NIST's standard elliptic
+    /// curves and the SHA-2 family of hash functions that implicitly defines
+    /// the correct hash function to use with a given key. But, if mistakes have
+    /// been made, this function is here for you.
+    pub fn verify_already_hashed(
+        &self,
+        hashed_msg: &[u8],
+        signature: &[u8],
+    ) -> Result<(), InvalidSignatureError> {
         let result = self.point.with_point_as_ec_key(|ec_key| unsafe {
             // Safety: `ec_key` is valid per `with_point_as_ec_key`.
             bssl_sys::ECDSA_verify(
                 /*type=*/ 0,
-                digest.as_slice().as_ffi_ptr(),
-                digest.len(),
+                hashed_msg.as_ffi_ptr(),
+                hashed_msg.len(),
                 signature.as_ffi_ptr(),
                 signature.len(),
                 ec_key,
@@ -170,7 +190,7 @@ pub enum ParsedPrivateKey {
 }
 
 impl ParsedPrivateKey {
-    /// Parses an ECPrivateKey structure froma DER encoded structure per [RFC 5915],
+    /// Parses an ECPrivateKey structure from a DER encoded structure per [RFC 5915],
     /// whose curve is specified by the `ECParameters`.
     ///
     /// Unless the curve group is one of the variants of [`Group`], this method returns [`None`].
@@ -373,10 +393,18 @@ mod test {
         )
         .unwrap();
         assert!(public_key.verify(signed_message, sig.as_slice()).is_ok());
+        let mut digest = C::hash(signed_message);
+        assert!(public_key
+            .verify_already_hashed(digest.as_slice(), sig.as_slice())
+            .is_ok());
         assert!(public_key
             .verify_p1363(signed_message, sig_p1363.as_slice())
             .is_ok());
 
+        digest[0] ^= 1;
+        assert!(public_key
+            .verify_already_hashed(digest.as_slice(), sig.as_slice())
+            .is_err());
         sig[10] ^= 1;
         assert!(public_key.verify(signed_message, sig.as_slice()).is_err());
         sig_p1363[10] ^= 1;

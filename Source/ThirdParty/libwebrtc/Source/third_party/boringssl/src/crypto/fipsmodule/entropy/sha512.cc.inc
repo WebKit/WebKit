@@ -74,8 +74,8 @@ void SHA384_Init(SHA512_CTX *sha) {
 }
 
 void SHA384_Final(uint8_t out[kSHA384DigestLength], SHA512_CTX *sha) {
-  // This function must be paired with |SHA384_Init|, which sets
-  // |sha->md_len| to |kSHA384DigestLength|.
+  // This function must be paired with `SHA384_Init`, which sets
+  // `sha->md_len` to `kSHA384DigestLength`.
   sha512_final_impl(out, kSHA384DigestLength, sha);
   return;
 }

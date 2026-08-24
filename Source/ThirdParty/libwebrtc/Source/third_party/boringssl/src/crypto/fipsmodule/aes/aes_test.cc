@@ -257,7 +257,7 @@ TEST(AESTest, WrapBadLengths) {
   AES_KEY aes;
   ASSERT_EQ(0, AES_set_encrypt_key(key, 128, &aes));
 
-  // Input lengths to |AES_wrap_key| must be a multiple of 8 and at least 16.
+  // Input lengths to `AES_wrap_key` must be a multiple of 8 and at least 16.
   static const size_t kLengths[] = {0, 1,  2,  3,  4,  5,  6,  7, 8,
                                     9, 10, 11, 12, 13, 14, 15, 20};
   for (size_t len : kLengths) {
@@ -542,8 +542,8 @@ print("static const uint32_t kTable[256] = {%s};\n" % body)
       0xf307f2f0, 0xfd0efffb, 0xa779b492, 0xa970b999, 0xbb6bae84, 0xb562a38f,
       0x9f5d80be, 0x91548db5, 0x834f9aa8, 0x8d4697a3};
 
-  // Note |block| is byte-swapped so block[i] >> 24 is the first element of
-  // block[i]. (See |aes_ref_set_encrypt_key|).
+  // Note `block` is byte-swapped so block[i] >> 24 is the first element of
+  // block[i]. (See `aes_ref_set_encrypt_key`).
   for (size_t i = 0; i < 4; i++) {
     uint32_t in = block[i];
     block[i] = kInvMixColumn[in >> 24];
@@ -559,7 +559,7 @@ int aes_ref_set_decrypt_key(const uint8_t *key, int bits, AES_KEY *out) {
   }
 
   // bsaes expects the decryption round keys in reverse order. Note there are
-  // |out->rounds + 1| round keys.
+  // `out->rounds + 1` round keys.
   for (size_t i = 0; i < out->rounds / 2; i++) {
     std::swap(out->rd_key[4 * i], out->rd_key[4 * (out->rounds - i)]);
     std::swap(out->rd_key[4 * i + 1], out->rd_key[4 * (out->rounds - i) + 1]);

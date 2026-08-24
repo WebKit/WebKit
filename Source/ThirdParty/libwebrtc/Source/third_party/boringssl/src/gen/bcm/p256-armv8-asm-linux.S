@@ -6,6 +6,7 @@
 #if !defined(OPENSSL_NO_ASM) && defined(OPENSSL_AARCH64) && defined(__ELF__)
 .section	.rodata
 .align	5
+p256_constants:
 .Lpoly:
 .quad	0xffffffffffffffff,0x00000000ffffffff,0x0000000000000000,0xffffffff00000001
 .LRR:	//	2^512 mod P precomputed for NIST P256 polynomial

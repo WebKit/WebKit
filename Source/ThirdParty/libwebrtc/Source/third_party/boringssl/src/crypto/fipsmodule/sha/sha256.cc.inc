@@ -106,9 +106,9 @@ static void sha256_final_impl(uint8_t *out, size_t md_len, SHA256_CTX *c) {
 
 bcm_infallible bssl::BCM_sha256_final(uint8_t out[SHA256_DIGEST_LENGTH],
                                       SHA256_CTX *c) {
-  // Ideally we would assert |sha->md_len| is |SHA256_DIGEST_LENGTH| tomatch the
-  // size hint, but calling code often pairs |SHA224_Init| with |SHA256_Final|
-  // and expects |sha->md_len| to carry the size over.
+  // Ideally we would assert `sha->md_len` is `SHA256_DIGEST_LENGTH` tomatch the
+  // size hint, but calling code often pairs `SHA224_Init` with `SHA256_Final`
+  // and expects `sha->md_len` to carry the size over.
   //
   // TODO(davidben): Add an assert and fix code to match them up.
   sha256_final_impl(out, c->md_len, c);
@@ -117,8 +117,8 @@ bcm_infallible bssl::BCM_sha256_final(uint8_t out[SHA256_DIGEST_LENGTH],
 
 bcm_infallible bssl::BCM_sha224_final(uint8_t out[SHA224_DIGEST_LENGTH],
                                       SHA256_CTX *ctx) {
-  // This function must be paired with |SHA224_Init|, which sets |ctx->md_len|
-  // to |SHA224_DIGEST_LENGTH|.
+  // This function must be paired with `SHA224_Init`, which sets `ctx->md_len`
+  // to `SHA224_DIGEST_LENGTH`.
   assert(ctx->md_len == SHA224_DIGEST_LENGTH);
   sha256_final_impl(out, SHA224_DIGEST_LENGTH, ctx);
   return bcm_infallible::approved;

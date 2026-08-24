@@ -17,6 +17,9 @@
 # exporters/cmake/OpenSSLConfig.cmake.in in OpenSSL.
 
 include(${CMAKE_CURRENT_LIST_DIR}/OpenSSLTargets.cmake)
+include(CMakeFindDependencyMacro)
+
+find_dependency(Threads)
 
 # Recursively collect dependency locations for the imported targets.
 macro(_openssl_config_libraries libraries target)

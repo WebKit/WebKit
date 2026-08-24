@@ -1,0 +1,407 @@
+{
+  "algorithm": "RSAES-OAEP",
+  "schema": "rsaes_oaep_decrypt_schema_v1.json",
+  "numberOfTests": 32,
+  "header": [
+    "Test vectors of type RsaOeapDecrypt check decryption with OAEP."
+  ],
+  "notes": {
+    "EncryptionWithLabel": {
+      "bugType": "FUNCTIONALITY",
+      "description": "RSA-OAEP allows an optional parameter label, that is associated with the message. This test vector contains a ciphertext that was encrypted with a non-empty label."
+    },
+    "InvalidCiphertext": {
+      "bugType": "MISSING_STEP",
+      "description": "The test vector contains an invalid ciphertext. The test vectors distinguish between InvalidOaepPadding (cases where returning information about the error can lead to Manger's attack) and InvalidCiphertext (cases where the ciphertext is malformed and a decryption should not even be attempted.)"
+    },
+    "InvalidOaepPadding": {
+      "bugType": "CONFIDENTIALITY",
+      "description": "The test vector contains an invalid OAEP padding. Implementations must ensure that different error conditions cannot be distinguished, since otherwise Manger's attack against OAEP may be possible. ",
+      "links": [
+        "https://www.iacr.org/archive/crypto2001/21390229.pdf"
+      ],
+      "cves": [
+        "CVE-2020-26939"
+      ]
+    },
+    "Normal": {
+      "bugType": "BASIC",
+      "description": "The test vector contains a pseudorandomly generated, valid test case. Implementations are expected to pass this test."
+    }
+  },
+  "testGroups": [
+    {
+      "type": "RsaesOaepDecrypt",
+      "source": {
+        "name": "google-wycheproof",
+        "version": "0.9"
+      },
+      "keySize": 2048,
+      "sha": "SHA-512/224",
+      "mgf": "MGF1",
+      "mgfSha": "SHA-1",
+      "privateKey": {
+        "modulus": "00a38fbcf34eef1810cb2ae21fef1e9a1e037f7d25d43e8b4f051ea74c367bddb2327a7bccc5334fe610f7a9855e2b76c1e9715970c22c274616fd9460d727afe9a149c23b6b9730c13c4f6213e0c112a49db2e55993b60c520eb73042c7a0b1bfe4e27b11a4c7395057235233fd8ab3898ad56a7893077bbc4414b4089a594c9cbec5deca092efb4d84d977b9f37fd982341da963a20af680ff4a774ec85a104a684648b0a90b6cc4f7d4808db666ebab808a21020f8c005c6793f196187811935526caf1b6cee47a0c14e0823f87d7aa82e9f5a635ca116686d2da719cda269c39d863571c606e5ce5334254e49648fcfcf502a1321cc071f1000d562723156f",
+        "privateExponent": "2b24625411297ac10f3de7f84163e285f1294312e3d97d7861e2d481034c07cd9587fe38a47964e54beb6f9108a6514453b57cc083cf0eaaebac866346cd2696eadea03779291f8890c66599d5aa47a7191b93685dd0628e90681c7838dcb795e4a3229024551256912d7564d6472c15270424f9d9da5af66d44c2ba143062c6f78c2b8b7142bd607a440bc0fd975b3c47eeeef249443901d13a7555abd6b269a8977a180f8c33aafbb29945437e96fa63c743481f8565eb0cafbf6329e7c4aaf994e63c307d1db55a9778178ceaab79a66959626eba5c3c47f8ef42311f4a9bc4efcbbc7150e46068bdedbd600429584af196cceb58bcfb608cd2eb63bf4949",
+        "publicExponent": "010001",
+        "prime1": "00cf1a10979d8a1f7893cf63c2a9d4f5ca59d4131057141b7f3a7d534740f05c096d12b91f3c84ea8f76e18e52011c59bcfae7ed0b99c879ee0239f47c0d3595892ae81e42572457c1371ed850fe873f8e89b3573e9cafc55ea40fa820e4c6394ca4502507302b7584d30c772c3ed893beb5a8896bd5ea9dbf6fdc175ccfe908f9",
+        "prime2": "00ca2df29e5e31c9f248b1e74933325fdcae4752bb938d397977e85bf460c70ceb3e39dde6a80c1b6686384a7dafd42f7357a242e648a9726ad52ddb253c459bb2c1d58818f5d5b73998042844d8aec83842c5588b99008b54b0dc0b046110fdc906d26b9c32699f9b4146e67a32b9797efd9a2e6dd5406dd2a7a43b4730c1d3a7",
+        "exponent1": "00b129cbedd73fb42252d783b09fd5e4994074d2061567c709f48007409a05c3c5f07fa6cb58db1f48b0dacd03cb9d740adcdc90046f7e7707aaf1e6fa43d685e03c4b2aaf779a4853aa1281dbef90c546eaf6f6f841d37f54b1a60f1e6c7641c8157bd5e12b4cd21058f67defe4a722e46ec40922ad713196f55ae2c56bba1f09",
+        "exponent2": "00820b2fe5619d10d240a3fdaa7dbdc71f41122b4aefcb84ce76ac048999be2eb7195d4b37d39b85fc5a14d70525158c37da844a17a96124714711a9c5b790e667027a8081dd8e4bbe45e356ab81dc5a78a5aa1e1c1c9bd702f08778a6a670b16c9e70b63acfca54991e51a669af3ad1c53705f71b3a71a8b238965072a80fe43d",
+        "coefficient": "00c81a1e220957e1be8def9ed8ae40fcfd0af6b2605325f138568457b3245b955a94c1a832bc68c0eb60f42848207ad5fc782e305fc69f2be07ab59d53f37619ae94373abc1f536c817a308c8ed139052ebd451984ffca212c599449538fe74075a4a137f0858b17158ed367eb1d6f85161e339fcf04449c1bb9f55e5e8ab28e54"
+      },
+      "privateKeyPkcs8": "308204bf020100300d06092a864886f70d0101010500048204a9308204a50201000282010100a38fbcf34eef1810cb2ae21fef1e9a1e037f7d25d43e8b4f051ea74c367bddb2327a7bccc5334fe610f7a9855e2b76c1e9715970c22c274616fd9460d727afe9a149c23b6b9730c13c4f6213e0c112a49db2e55993b60c520eb73042c7a0b1bfe4e27b11a4c7395057235233fd8ab3898ad56a7893077bbc4414b4089a594c9cbec5deca092efb4d84d977b9f37fd982341da963a20af680ff4a774ec85a104a684648b0a90b6cc4f7d4808db666ebab808a21020f8c005c6793f196187811935526caf1b6cee47a0c14e0823f87d7aa82e9f5a635ca116686d2da719cda269c39d863571c606e5ce5334254e49648fcfcf502a1321cc071f1000d562723156f0203010001028201002b24625411297ac10f3de7f84163e285f1294312e3d97d7861e2d481034c07cd9587fe38a47964e54beb6f9108a6514453b57cc083cf0eaaebac866346cd2696eadea03779291f8890c66599d5aa47a7191b93685dd0628e90681c7838dcb795e4a3229024551256912d7564d6472c15270424f9d9da5af66d44c2ba143062c6f78c2b8b7142bd607a440bc0fd975b3c47eeeef249443901d13a7555abd6b269a8977a180f8c33aafbb29945437e96fa63c743481f8565eb0cafbf6329e7c4aaf994e63c307d1db55a9778178ceaab79a66959626eba5c3c47f8ef42311f4a9bc4efcbbc7150e46068bdedbd600429584af196cceb58bcfb608cd2eb63bf494902818100cf1a10979d8a1f7893cf63c2a9d4f5ca59d4131057141b7f3a7d534740f05c096d12b91f3c84ea8f76e18e52011c59bcfae7ed0b99c879ee0239f47c0d3595892ae81e42572457c1371ed850fe873f8e89b3573e9cafc55ea40fa820e4c6394ca4502507302b7584d30c772c3ed893beb5a8896bd5ea9dbf6fdc175ccfe908f902818100ca2df29e5e31c9f248b1e74933325fdcae4752bb938d397977e85bf460c70ceb3e39dde6a80c1b6686384a7dafd42f7357a242e648a9726ad52ddb253c459bb2c1d58818f5d5b73998042844d8aec83842c5588b99008b54b0dc0b046110fdc906d26b9c32699f9b4146e67a32b9797efd9a2e6dd5406dd2a7a43b4730c1d3a702818100b129cbedd73fb42252d783b09fd5e4994074d2061567c709f48007409a05c3c5f07fa6cb58db1f48b0dacd03cb9d740adcdc90046f7e7707aaf1e6fa43d685e03c4b2aaf779a4853aa1281dbef90c546eaf6f6f841d37f54b1a60f1e6c7641c8157bd5e12b4cd21058f67defe4a722e46ec40922ad713196f55ae2c56bba1f0902818100820b2fe5619d10d240a3fdaa7dbdc71f41122b4aefcb84ce76ac048999be2eb7195d4b37d39b85fc5a14d70525158c37da844a17a96124714711a9c5b790e667027a8081dd8e4bbe45e356ab81dc5a78a5aa1e1c1c9bd702f08778a6a670b16c9e70b63acfca54991e51a669af3ad1c53705f71b3a71a8b238965072a80fe43d02818100c81a1e220957e1be8def9ed8ae40fcfd0af6b2605325f138568457b3245b955a94c1a832bc68c0eb60f42848207ad5fc782e305fc69f2be07ab59d53f37619ae94373abc1f536c817a308c8ed139052ebd451984ffca212c599449538fe74075a4a137f0858b17158ed367eb1d6f85161e339fcf04449c1bb9f55e5e8ab28e54",
+      "privateKeyPem": "-----BEGIN PRIVATE KEY-----\nMIIEvwIBADANBgkqhkiG9w0BAQEFAASCBKkwggSlAgEAAoIBAQCjj7zzTu8YEMsq\n4h/vHpoeA399JdQ+i08FHqdMNnvdsjJ6e8zFM0/mEPephV4rdsHpcVlwwiwnRhb9\nlGDXJ6/poUnCO2uXMME8T2IT4MESpJ2y5VmTtgxSDrcwQsegsb/k4nsRpMc5UFcj\nUjP9irOJitVqeJMHe7xEFLQImllMnL7F3soJLvtNhNl3ufN/2YI0Haljogr2gP9K\nd07IWhBKaEZIsKkLbMT31ICNtmbrq4CKIQIPjABcZ5Pxlhh4EZNVJsrxts7kegwU\n4II/h9eqgun1pjXKEWaG0tpxnNomnDnYY1ccYG5c5TNCVOSWSPz89QKhMhzAcfEA\nDVYnIxVvAgMBAAECggEAKyRiVBEpesEPPef4QWPihfEpQxLj2X14YeLUgQNMB82V\nh/44pHlk5Uvrb5EIplFEU7V8wIPPDqrrrIZjRs0mlureoDd5KR+IkMZlmdWqR6cZ\nG5NoXdBijpBoHHg43LeV5KMikCRVElaRLXVk1kcsFScEJPnZ2lr2bUTCuhQwYsb3\njCuLcUK9YHpEC8D9l1s8R+7u8klEOQHROnVVq9ayaaiXehgPjDOq+7KZRUN+lvpj\nx0NIH4Vl6wyvv2Mp58Sq+ZTmPDB9HbVal3gXjOqreaZpWWJuulw8R/jvQjEfSpvE\n78u8cVDkYGi97b1gBClYSvGWzOtYvPtgjNLrY79JSQKBgQDPGhCXnYofeJPPY8Kp\n1PXKWdQTEFcUG386fVNHQPBcCW0SuR88hOqPduGOUgEcWbz65+0Lmch57gI59HwN\nNZWJKugeQlckV8E3HthQ/oc/jomzVz6cr8VepA+oIOTGOUykUCUHMCt1hNMMdyw+\n2JO+taiJa9Xqnb9v3Bdcz+kI+QKBgQDKLfKeXjHJ8kix50kzMl/crkdSu5ONOXl3\n6Fv0YMcM6z453eaoDBtmhjhKfa/UL3NXokLmSKlyatUt2yU8RZuywdWIGPXVtzmY\nBChE2K7IOELFWIuZAItUsNwLBGEQ/ckG0mucMmmfm0FG5noyuXl+/ZoubdVAbdKn\npDtHMMHTpwKBgQCxKcvt1z+0IlLXg7Cf1eSZQHTSBhVnxwn0gAdAmgXDxfB/pstY\n2x9IsNrNA8uddArc3JAEb353B6rx5vpD1oXgPEsqr3eaSFOqEoHb75DFRur29vhB\n039UsaYPHmx2QcgVe9XhK0zSEFj2fe/kpyLkbsQJIq1xMZb1WuLFa7ofCQKBgQCC\nCy/lYZ0Q0kCj/ap9vccfQRIrSu/LhM52rASJmb4utxldSzfTm4X8WhTXBSUVjDfa\nhEoXqWEkcUcRqcW3kOZnAnqAgd2OS75F41argdxaeKWqHhwcm9cC8Id4pqZwsWye\ncLY6z8pUmR5RpmmvOtHFNwX3GzpxqLI4llByqA/kPQKBgQDIGh4iCVfhvo3vntiu\nQPz9CvayYFMl8ThWhFezJFuVWpTBqDK8aMDrYPQoSCB61fx4LjBfxp8r4Hq1nVPz\ndhmulDc6vB9TbIF6MIyO0TkFLr1FGYT/yiEsWZRJU4/nQHWkoTfwhYsXFY7TZ+sd\nb4UWHjOfzwREnBu59V5eirKOVA==\n-----END PRIVATE KEY-----\n",
+      "tests": [
+        {
+          "tcId": 1,
+          "comment": "",
+          "flags": [
+            "Normal"
+          ],
+          "msg": "",
+          "ct": "a267f69bde8edbce4aab2501807226f42a5a8e03d894ae42a1c4336b25f256e767e1bb2841d52ecb8c18d72747c6a5bfc13ef8abc612d86f01d39e6d9e9f8ef3fcbe8286b76665379275ceaded35e13c2073f0f0caafab064a430fdc919543ae0bc47212f01528ca6414490879736fc197edd9d18e769ab09c71a5fe195046deebe4e48d322007678d1a25abeb9f3d9cfc253eb41a4ec0283ae284cab72e2cb8bf44a099bdd38284894e67135d933b941cae80bb7aa2ca885027442cd09047a29fef36d106cd432af9c1db3190b9ee58a52152680dd2c7f9e808320ac9666112a92cc396c9dac3e1aa0608c4edd267ea9f9f6e190d8875dd527f9bc28a7325c8",
+          "label": "",
+          "result": "valid"
+        },
+        {
+          "tcId": 2,
+          "comment": "",
+          "flags": [
+            "Normal"
+          ],
+          "msg": "0000000000000000000000000000000000000000",
+          "ct": "0a5ec4397f1f76ff233468af4f6315fb34a26eceee3ab17cabe83f7e17b70672329802ba4622dda92477cec50c01595f51f4e09f2a4df92fc2aa206f64f1099e1c612e41f7b15a1ac73dcf42fc7c0c5663b9f3b8e21ebeb9642c4ddd3eee3da8aae7c87fe11e7d83a18a2d813a5da24256f63bbce3221a618280dfe6f64c60752aa23013e56793e6d6dd19f232c265839e873d8618edb318a382f46d5525ed140564756c98ed989cac2f5473a94e5c7221ad3e6b03d6ffdc4c9a3d78a4713dcf4eb250161e02436cbfe4bc6f3846452035970d26bfb9253bd7807a8716085d0394288c7c9aab29857e05c474c9411d5cc8d18146730468f1377d753d68784942",
+          "label": "",
+          "result": "valid"
+        },
+        {
+          "tcId": 3,
+          "comment": "",
+          "flags": [
+            "Normal"
+          ],
+          "msg": "54657374",
+          "ct": "2876c178eec18add346e39fcb1a009260c47515ad96dc37852dcae5b70da154571744bfbe316a8b6cc3d5832e2bf2c37024a5c7b64ecbe7bbdf834b390eed2fd926cbff24668a697d26aac7160fa79889263fe713963e2468bee7dcd5957a9813069719208831a55dd572c1b6d21c4f6dd78585878549a5a33f455e17eb62ae610d1c30f88de4c8248c3c1a9bf177bfb6df218c58f628d862ea119c57c773429a9b9db3afc33231c25ecbef2dd75a319782ff0746380368507f149f572e92833834b37031e0f7482a6ad789f811300e902c617004f618840a678081a5cf6f03134aa53441adad15817a2f63597e78ee33672b9fec56717061d81ae31b06a0723",
+          "label": "",
+          "result": "valid"
+        },
+        {
+          "tcId": 4,
+          "comment": "",
+          "flags": [
+            "Normal"
+          ],
+          "msg": "313233343030",
+          "ct": "0b23dac580cae4aaff2bddbcf2a2d167131e5c77e74abd49c345ddf28346e53579445f5d711c9eb57ec0725f420e9d0f9d09f7e65cf6f1ad95f7a213b75bf48458b105644945dd37fbf94b6510b76b915e057a8f762b7d42349245fa4d17f52d78d506fbc8dc88d6aa7c606bdb7e08c2a7371eb57b3a028db984d1543d5adbf6bf466d5cf347a603cf53fa3e42772a83915270fff591e9d87fcd8a3a80c598bacb353de316020adfb3ff2c14de50cb6f7bda9dd1a0bced7dad99b8b2665cf8e0ac9d12f69daeba00b926bfb5b97f17481fbe072306a912ef2c143ea3f0629d1da48f61c5ed0535c6077de1f5d3dff9098e664f010dafe412c6e3c4ec7ee1822d",
+          "label": "",
+          "result": "valid"
+        },
+        {
+          "tcId": 5,
+          "comment": "",
+          "flags": [
+            "Normal"
+          ],
+          "msg": "4d657373616765",
+          "ct": "750a483335681028cdb8a031bec85120742df4b208e8182f2c9556d3b4de40c7a550e01efd28890275230acd5a91d4e0871286008a3ccdf90be16fb6e813762a8c402525d17da721898dc00f7b7c771bc60b887b740eec1a8df140846db5f244274503c428e80b7eeb4dcf37b4ca90be8aa9fa802c4c7e2f0e9b85cbbb8ef776f3c4bb1c23607dece4372524c5349a387b2898fcd4351786572e4b079062ae0e2238fb6039e27e3ca69b73e5d6119faab8e1f10ac8a42fa467d390d31cf2647b517564ba7f31eea877b93978abb4ed3c79be5e7d92cd0a2af3362ae48c724a2b388090463ed33f70242699924e3fe0ca915ff776d22ff3f28fcf5a8a461e55c8",
+          "label": "",
+          "result": "valid"
+        },
+        {
+          "tcId": 6,
+          "comment": "",
+          "flags": [
+            "Normal"
+          ],
+          "msg": "61",
+          "ct": "0ff4dc61f78ef8abbdc6eba524ded6dbb370c24e594006fe2456380c7c71010e913c79a27ba54053242dfb6da89e6880b1c4424b2896172c936cbb62c48635077047919f90379842a20c5c8d5ee95c63f9c5fb0dacbd9205559b405c81caf4c1ce9039e03b1e59fe61c7b72fa6311d7e50e363e8ad5146c26049d661dc050062a68aaa98189f9e28f705873b24885d864ad8f0eed30b6613729a7103b33eac7de085e3dbc40bbbd6d030f2788ae611d0e8c172a9739a5dc7f4906525ad99c349ead48df5fb71e6ccf0f8af09fb1ec0c58effc6bf05f61bfde74bb5148044cdff4ed8658a107816899c7375776e87a442a8a193a596849f2d2d014e3d3af945b1",
+          "label": "",
+          "result": "valid"
+        },
+        {
+          "tcId": 7,
+          "comment": "",
+          "flags": [
+            "Normal"
+          ],
+          "msg": "e0e1e2e3e4e5e6e7e8e9eaebecedeeeff0f1f2f3f4f5f6f7f8f9fafbfcfdfeff",
+          "ct": "010ab62d6d972200b73e6716aa2dd845a01920b769bb240bc4b1ee1331221eeb16688147c1ba5c2c9a8bdd6130736c9668c6533c69a478a11a757d6debd9b8b165b4d69ff7a4b262a819462dc734437e9de64fdfb959559319fe5e3d1a42a0cc255fd96ca4bf00edfac699c524c92eba1fa3f15dda3e5f5af2f9e0dd4f80403662620513824bd4586625e55b5092a7b556ee2a1b27247aa1e678aa569f2c1492629b01314a98e0ea0d58aaed6c663cedb960a1e5f69b359cdaf4b344aaecb30de97d8b7c2cbf2951ab23acbc4830b7f64a4bc95ac2a7f5bc72dad1bb679f87d90689573eee783bc3bbb2dc5c78d659f623afc0ba622c6352f365bf073e2aeaf3",
+          "label": "",
+          "result": "valid"
+        },
+        {
+          "tcId": 8,
+          "comment": "",
+          "flags": [
+            "EncryptionWithLabel"
+          ],
+          "msg": "313233343030",
+          "ct": "0be615ddb57be641df536cbfeb49a1caf61a6eb7aa19478077e647ee7d1042be4ee49dbfa0d8a0f956f66b0e39357b839aae80090d7f2a4fbbd85208b23131e23420e26ee1adb243dfefb1574881bb27400f6fb62065b8d2458a9b4aea116092c0df3fadcc64091136d0d4d9aca768e9c9cd3dbeeb7211341ad93fc16c67af22c1e29bfe333fb3949d9720c3f07082b3fc32bc19b333c6c245ecb3181c7ea88bb47b809699e04e33d6af6f91b73821d82bbbfdfdb4fce09372cb6dfba9b8a88a45f3d21e5bd3b81d1579fbd116e7e37f8f65b80cc801cae02712d974b419307f10e88bc9db9fbf99563aeb3baf21db58dd0b0b7d6a86ff4ba63688c97a82764b",
+          "label": "0000000000000000",
+          "result": "valid"
+        },
+        {
+          "tcId": 9,
+          "comment": "",
+          "flags": [
+            "EncryptionWithLabel"
+          ],
+          "msg": "313233343030",
+          "ct": "2e295d5d887d935dc66db6e28bd029cdf7c91f3bb26740e722cbc1f9b261b08aa9665131d182e7f3decbb4ed54f0dfe3db64791d7eb1619023d8e1f7963d845f0226e60f2b25402f2d33fbe807a87b2a482afabfaa72fd1d4ca1c25924823535616de264a6fc7ba6277c74f15e1fc50aef78019fc2a9fe253c6c91750b31b0d031dd0fa55c38e8d3a4237fd190a178c544349ada360de6dc1861345afc8944d8a9c46b5575273df84724a92a641061a5aeaf5b942983bdae3dff542126955d078a9a3154824b4ecf0258d1d33b0de37448be64e7b4fedd66fe46da84b9de83653e554e57c2140782056e4cd2a98b6577d404d01bbc4af5e53a369f49cec73bc2",
+          "label": "000102030405060708090a0b0c0d0e0f10111213",
+          "result": "valid"
+        },
+        {
+          "tcId": 10,
+          "comment": "",
+          "flags": [
+            "EncryptionWithLabel"
+          ],
+          "msg": "313233343030",
+          "ct": "65ebbcfef9da9aa8168753873000faaaf8ca6c83029fd95cb786b1cdb774d3f6b9ca1480645792992d78df0638899f8f0f0da99c5ad9700ea572527a8863615a3e07640a167536caecf87aad7452895925dfd867cb05345a1a9b7c5e7b4dcd4ddae8b2ce42f72473c4c01364df731d1ebfc8b679b4967eb4faf3f4fe2e8c735b95a6aa71d94c1e30a8f7402a0d39083247a11c146b19f3c9c7be9511e6cf78a6d59e9771f8302f6f6f92de8e6e5bc04e14f0a416802b1a3388515b463a30b1aa103fd3b3945ec2e08cda06f68bddf3a3339abae5ed3b06039cf61281ff6b87e721a6fe20982b9660c32df968241480b1d3995cc30bde81ddfbbf793aa033a104",
+          "label": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+          "result": "valid"
+        },
+        {
+          "tcId": 11,
+          "comment": "Longest valid message size",
+          "flags": [
+            "Normal"
+          ],
+          "msg": "787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878787878",
+          "ct": "55e3eb814557fef769f3ec6bbae10f33884f4252328294a1b4a3d99c5e1a4c73dcfec7f6534ddbc9af652575070c499896849123804953d792cbbf51c925c6b486e15c85fd72517e95c18c26067a52985c5d8db2e6a7d21915b0e787ca7820ac53f4aa5ecb5de48c8a9e256637fc175a9d90c99eb62f2e1fb972065d3efeb55bf1d79cb2d6c3a929aab6c8c83cfb6172a58e5681539477bcf29abf2b0c09714dc826f06eb72eea49e9fd533373ad164a78be5bd2d64dcfa1d8a6049ffd0680b37b28ceeb6c0c8fba0c951fd3d92761e3bcf702bfbd73d44796272868707ebf7a3146a9ae0c602025c1bc15d948e1ddff1db1f4c9d2f0571735f1b9594bbf370e",
+          "label": "",
+          "result": "valid"
+        },
+        {
+          "tcId": 12,
+          "comment": "first byte of l_hash modified",
+          "flags": [
+            "InvalidOaepPadding"
+          ],
+          "msg": "313233343030",
+          "ct": "9b828c7410d492dfd277322513f352fedc378ae87f0109157134d7b7fa0fad14898def0c374a60fde18b725d9c176e7145d9f595341e04d918bd52a764a98e66ff754b70c785951a75c50be230d7f3ad87099074796a4c74c9d807ace8280659ee9f8f4395d4da2f549f3cb8f24032109942ad5f25d5e23c9f4b770276337f588135431db1abf44470553dc1836809147ecec9ca51066d16faced6a8382451be398e2ef3ca796b2edf2a355cd170714bd5aaa84717367bc24c258b9b9be72cd714eb961a80d169cfcbcd17ed8aa49449568f5ecaf14fb0432e91197ddb6da605de6c3c7e6d6a8f37d47b32dcd1de015c39a5853d411908d8e5291fb9eb5b89b3",
+          "label": "",
+          "result": "invalid"
+        },
+        {
+          "tcId": 13,
+          "comment": "last byte of l_hash modified",
+          "flags": [
+            "InvalidOaepPadding"
+          ],
+          "msg": "313233343030",
+          "ct": "465532c8806b9306875e35fa72a6e75262519e5734be9ab1b8d56aba2b3b28fa309a1501a2d394e6c82f64466482c578b21b8446da9067d4de020862de0640abdf5e0bbf9a7a656c4d4a6986c8e8656044934add4d323e2d18a33c2897f837d28a9e7a83b7b7d3fecebd671f98a956457840598e118b980d46a24e399a13f94b1775b353998ec843dbd43c236bf720689cd049d1fa6b071eb06be46269f900573a7301e7039d7e4d1a1aa3504f8ba2006d5e7847cff7f9435eba8f29782612bd59cd77fbf5320e95c76946b663a14a905f1e690d42158cad7814a713f7709e1bfa14d05c72f86037996d987398257fbffb73a8ee9ff2ddfd2bac981f00a8ee6c",
+          "label": "",
+          "result": "invalid"
+        },
+        {
+          "tcId": 14,
+          "comment": "l_hash changed to all 0",
+          "flags": [
+            "InvalidOaepPadding"
+          ],
+          "msg": "313233343030",
+          "ct": "846b920ac1b0d735762682784c5349fb2007ca3e90c8ac0d9d7d10651440961d2cd638fd6b8b7e2f83fc92aba13bd2383cbde75822a77a2da59786ef91ae1cfc533a0c533f8da6f9ced977f5294cfd682d31140035d30505269a5a3a7f57cc2c4131e4e8caf72a2cc3c8d26c6fe1a14fac2460de889a99b30501378f3e3dddaa83ad8ea69b865ca0baf2cbb7d1a0098a6955cde1a297e2ffb6ff35bbfb15d85177b46d28fa7be800c8b45ffa1cba5e52d1ae7337176b552c168738291002cbb3cb97931f3f457a0d836d45190afe3c30383b5c06428423a1b1e8948167074eafcbf32caa0236258d1755d75ed8796b8e664f29a88f82ca5ef8b8976e408dc0f6",
+          "label": "",
+          "result": "invalid"
+        },
+        {
+          "tcId": 15,
+          "comment": "l_hash changed to all 1",
+          "flags": [
+            "InvalidOaepPadding"
+          ],
+          "msg": "313233343030",
+          "ct": "7a9f62dc8c719cba7dced175b2e43584c1bf6721295ebe6257c59a89cd3dfddc0331843724e8089ef4ab8f14c70b8ee0a9ee7835d54fdc95cfa8a3dbbf4231b04fe4d99afd20943e331a022b101af6aa93877f7d1c1eee3287b2b36dc5f8bb4f36fb416fca80875dba47a2a0f9e790af457cd1f3902867be0313f6fad6e253c6958b13d24ae841b9de3ab5a5be2fe405c0a6ed2ba74aabc32595e68a55da9ad7ecdd4b038dc9ed1fe92dbf04a600e13123c24fc6c52d604b40ffcbec50092e4a7814c8f67041399790908079e9f8b7320171b8f00eae70faba6c32c153467b8a24866444550f8cd4d4586751629c6bbeb3810318da1f683ec0cae5e188431faa",
+          "label": "",
+          "result": "invalid"
+        },
+        {
+          "tcId": 16,
+          "comment": "first byte of ps modified",
+          "flags": [
+            "InvalidOaepPadding"
+          ],
+          "msg": "313233343030",
+          "ct": "74a432ca167b83610e3c2037494e0f5cb705ff887eb41df63080aca68f609b39b19aaea1d98cffd4051fdbc6f66e7ac8f5d6df18f4f9fc9ab5c3b2ec4c20a68aca2c4366a715e187ba8fb48913926d2becd3482ef60ed21c1d01c58aa467d42d2607270f8ca1d67858ddcff72fa02ce9614db47b14662f53a0e86ad629ea050c00154a29389fa7582910aad11face8ef585a223d63d5cb59e85af6b60c5b26a1ac48da6f924eea33e3e9be386ee49f9d20f1fc37c001d3ef7e61fb837bb13ff8171ff3f51643d1c06ad56ca1de6e3c47d8339cdf5b9f3f544bef068948c311764cc057d6e40aa7a1e5b672c3212f08f1da69a64d6a485545679ca66b670891d7",
+          "label": "",
+          "result": "invalid"
+        },
+        {
+          "tcId": 17,
+          "comment": "all bits in ps flipped",
+          "flags": [
+            "InvalidOaepPadding"
+          ],
+          "msg": "313233343030",
+          "ct": "5308aeb54161e6d030d559e31ba4734f8ebd2abf3ac485a9d0f5ee483d058ce279b975cdb5934d7a251143e58a4f8cb6ded641d18c3de377b885e33fcabff07647342d87a88de4af70442ea971ab8353b5615fbb6df6ac11b469be992ed2364400dfad5185053c4a51dc9aef03e1c51fa4797e1416204d5ae9f12280b1c023c411cfa0b28f56fb851cc2a6e014af8fc08a10f069be8fe3363480af0b6ac9341eb87cc315f217518bec723741ea55a64bd79b3b2359c90bb325295a3e7c7cacd1b524a0681dc2a295727f820f156da9ba5cd2890d83850f7f724db5fbc173f93a062da3a644d106317a87d64b2c1b827bd9701565020c12fd389a13d82943ea02",
+          "label": "",
+          "result": "invalid"
+        },
+        {
+          "tcId": 18,
+          "comment": "ps terminated by 0xff",
+          "flags": [
+            "InvalidOaepPadding"
+          ],
+          "msg": "313233343030",
+          "ct": "866788fb5d47ba075bea9880fab75f6bab991de4841e99b9a4076a42be6bf1721e5cdc5ca2513f175d3aec94cd9ba5c9cb35623c3afc059b0bf02490a8b0bec8101f17d4a68ab0f8a89046d99a2e4a20641cb0d37fec4fa6b0d0cbe19dfa2db1fc315d835a6d6ea9bced32b6074d40f7f7249174b6e6a28f404b82452ea2eb9f625df254c892a0e6712f015f487895ecd37fe68c9b9463a13d572f3fa7ad297437bb613086555cb94ef8ecebfbf4f995152cb0a5d173b15fe857b44ec5377aec8f39c3b355d3dab270488519c7818b0057647be2fcca27b3da0fa87294c4c236b7ba841962d9cb6dc6abab5f1cdaa3bab584b203e2ad786cf2ce34d49b6025d7",
+          "label": "",
+          "result": "invalid"
+        },
+        {
+          "tcId": 19,
+          "comment": "ps is all zero",
+          "flags": [
+            "InvalidOaepPadding"
+          ],
+          "msg": "313233343030",
+          "ct": "44d7d4618d419b3de3d7d082401dc5d4e9010ddaec4f1eb4957bab00770f42fb9fb2ee117deac02758d4da15ece3c250f325e6b92fb2c6ab1d60bb42ced5780a4ce64b7197db62e07449a0a23f69ab7713ec020741c0d64e05bec6277e4cad53cfbaa1e303788b382c11001d771f62d0da41e39d848bc200e012e2754be977be08af40ecfdfcae3dc9386d84573977dd5da85fa0409f304b0febcf5ebf61aa977b449e2fa1acbbf3de730d99becb52e8c120c80f26f069768f035a390bb7b07cc7151e20c6415a39443086e174b1996f82f57a3f7e00ce30ea6075c4d5915a6ac438c66ad6015b52c2a560ad90937854a5b8dbe63e56e0e92a438b1df80ec6d6",
+          "label": "",
+          "result": "invalid"
+        },
+        {
+          "tcId": 20,
+          "comment": "ps replaced by 0xff's",
+          "flags": [
+            "InvalidOaepPadding"
+          ],
+          "msg": "313233343030",
+          "ct": "399628b8f0f1bb6a2df1df8f26b70b1bb4d80d48f0d65605b7c74729b4dad11d6778ee5f573c59b104736271f5a0dba06c0c05376aeff63e0b0bc60616734d75436d7cbdbea248c96e934d8712de6c562e2519d4fa49dfc0d0f869a22ab7fdb127a9fea00b9f81b8ffc8b24ffd2d77bebbaa548fd113d9b2fc036ca4121be5b896af9f9bc35c8470e56222d8956b37f1b82e12e876abc968efa5acba610b26bc6434a555415e68b4a14c2fa61d109122595183166663913814c139660bced0cfe3e6917e526e70819c65c6866bc7525a9896140f9e8ae0389560eacbd37ed0cfad0bd973b7aa9229dbcbdd1c8123c6f3b560a05fb54492ec7ef33860ed011cb5",
+          "label": "",
+          "result": "invalid"
+        },
+        {
+          "tcId": 21,
+          "comment": "seed is all 0",
+          "flags": [],
+          "msg": "313233343030",
+          "ct": "76d3de94e5818e2a936b5d12612e49bac4a148a54baa5fd13c923d01b13aaa37ccfa8b5c613e26bd43cd3a5b8423a3d3efecaec94a7ef7fa15a390683da4342a628ea8752b73a7b0e6580d246a773ea6a5c34a6cf0a452f0f4c7ae1b2ba739380e4dc691062d9994910c65a6ad2b09bc31105ff6c092b3c1a447362375f27ba9eeee865345e26e4933bc3760d44db4676609d67c23dbb3ad787fad3ef99157e6929f90d13c218874ea896147b9882496877d9676faf5c821ecb03dc6d4df514812be0681845aca804c8341e07975d988e3eb6e6fbf050ec396385bf8cd0249fc03a63c25f8a98465d2107bc69048c23b7b23a172ee00ed1a8a5f03b831b6a479",
+          "label": "",
+          "result": "valid"
+        },
+        {
+          "tcId": 22,
+          "comment": "seed is all 1",
+          "flags": [],
+          "msg": "313233343030",
+          "ct": "4d024fa9dc4208145c346a07efac549c5b119aadcff0ffdc41af0af69a344f5329166c2b305bb7011a8aae1f4e8a5424a70dbedeb6c4d41f6219ea7faba62baec3b29d3751307f7101cf5d36784ba00f96ea923102fc8e37d78d3fe85dbb7f525c0f5140b0d857e57c45b6219c7bcc871a223ff3d726b2c50d1242d842234e68155f17c09494c1f1d40db9d5669e79c4cf884d068fdd7c1aa6c7bc474d73eec1f547c9a5fcfb77090ff6f0f57c560d6b1b3c7e409c26daa5b7aeb50c3ee1ab24e97a8515c5e803f9fffc0138aa9de59ec3e544e57867c8342f1a83137f3e2f11feff43d3ef5e87eeedd7e243ad9a31c0bd6d8182aecba04232e20bfa8d8ba43f",
+          "label": "",
+          "result": "valid"
+        },
+        {
+          "tcId": 23,
+          "comment": "First byte is 1",
+          "flags": [
+            "InvalidOaepPadding"
+          ],
+          "msg": "313233343030",
+          "ct": "25000026dfab5acf71817b64e3061e7b2abbd7f567dcf40745c3fc9bc654095d02fb31b4e64dcd7410b30cf24e09834ae0361248f47df8d8d4b0c5730eeced521a566ffd65f1b89050d13a04b3d286c2620368fd162c5549a970b0d64b3cb76d3cf48a52e8392e99ead599560c224ae018d34b774f45e850fa65320cbe95d630c524ceee0a518acb1e40c04583b59171166cee8d49bf31973f549256b4b1e751eebfb3fbbcd5de96dfac07c6d2ee5fe56a188f418acf918872fce7134f1acb315f95280ebc6528ee8b4f5093bc14e380e473a9755959424e6f1c72cf469c0c3e5b4b5395a76db19f9179dfa49c7cb1a7ccff2335593fab78d7e64bce9ec23b42",
+          "label": "",
+          "result": "invalid"
+        },
+        {
+          "tcId": 24,
+          "comment": "m is 0",
+          "flags": [
+            "InvalidOaepPadding"
+          ],
+          "msg": "313233343030",
+          "ct": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+          "label": "",
+          "result": "invalid"
+        },
+        {
+          "tcId": 25,
+          "comment": "m is 1",
+          "flags": [
+            "InvalidOaepPadding"
+          ],
+          "msg": "313233343030",
+          "ct": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001",
+          "label": "",
+          "result": "invalid"
+        },
+        {
+          "tcId": 26,
+          "comment": "m is n-1",
+          "flags": [
+            "InvalidOaepPadding"
+          ],
+          "msg": "313233343030",
+          "ct": "a38fbcf34eef1810cb2ae21fef1e9a1e037f7d25d43e8b4f051ea74c367bddb2327a7bccc5334fe610f7a9855e2b76c1e9715970c22c274616fd9460d727afe9a149c23b6b9730c13c4f6213e0c112a49db2e55993b60c520eb73042c7a0b1bfe4e27b11a4c7395057235233fd8ab3898ad56a7893077bbc4414b4089a594c9cbec5deca092efb4d84d977b9f37fd982341da963a20af680ff4a774ec85a104a684648b0a90b6cc4f7d4808db666ebab808a21020f8c005c6793f196187811935526caf1b6cee47a0c14e0823f87d7aa82e9f5a635ca116686d2da719cda269c39d863571c606e5ce5334254e49648fcfcf502a1321cc071f1000d562723156e",
+          "label": "",
+          "result": "invalid"
+        },
+        {
+          "tcId": 27,
+          "comment": "added n to c",
+          "flags": [
+            "InvalidCiphertext"
+          ],
+          "msg": "313233343030",
+          "ct": "aeb397b8cfb9fcbbca56bfdce1c16b85169dd99dbb894898c864853eb9c2c2e7abbedb2a364fee9b8fb81be4a03a13d1867b51571f2318f3acf536748e83a46df9fac79fb4dd0df93848ad78f1787e35fbb85fe909e189944349763d14b8a6ed5db7820d6da3c227019fb29fd908bc4c320c892e0e417e49fd99855cd7b428937e0c4c26fc76a151542d71f835f70405c5701a63979ce0597f180189491fa905337b8693bf0d77a4abd3aca294b7b71afc64bed3b048edda152daa487ed50a7401c3dde8547d9e7ac53ba037f906eef2a2a7fcc93c732455b2e719158d3cc3b9de67c51d0965a422ecb1244ab87642068b5b51a23fcca484b7e3d242a604979c",
+          "label": "",
+          "result": "invalid"
+        },
+        {
+          "tcId": 28,
+          "comment": "ciphertext not reduced",
+          "flags": [
+            "InvalidCiphertext"
+          ],
+          "msg": "313233343030",
+          "ct": "8d3e39f8d0a532ab2a6331134e600ddd50182d6620214900812ebc4abd8c35480b0d013f23ae689852248dca818d94227623e42e3dfd14d92f6ee0b9ad749ed134955db2b02acaf4090c80f68e176483ad817578e3fa542018e8b6efa0a2d167d61059453708d90331e3fa574dbc3b067f817408cc68afd4147f643cc17c71ff477017c1c6e0d697ef7f1055c577d5efea8eedac02d908b734e316893d7685a8f6cfe1fe6504def0e9a672266b552a3e7d73191c990c993d4318514745860425112f1a45a16e49f75d272c902691c4457b23b7179f761a1871901ad2b858b5f1fb945d23f96c447bf7e4be253f299cfb6fede994295082066fd3ef484c482b0300",
+          "label": "",
+          "result": "invalid"
+        },
+        {
+          "tcId": 29,
+          "comment": "ciphertext is empty",
+          "flags": [
+            "InvalidCiphertext"
+          ],
+          "msg": "313233343030",
+          "ct": "",
+          "label": "",
+          "result": "invalid"
+        },
+        {
+          "tcId": 30,
+          "comment": "prepended bytes to ciphertext",
+          "flags": [
+            "InvalidCiphertext"
+          ],
+          "msg": "313233343030",
+          "ct": "00000b23dac580cae4aaff2bddbcf2a2d167131e5c77e74abd49c345ddf28346e53579445f5d711c9eb57ec0725f420e9d0f9d09f7e65cf6f1ad95f7a213b75bf48458b105644945dd37fbf94b6510b76b915e057a8f762b7d42349245fa4d17f52d78d506fbc8dc88d6aa7c606bdb7e08c2a7371eb57b3a028db984d1543d5adbf6bf466d5cf347a603cf53fa3e42772a83915270fff591e9d87fcd8a3a80c598bacb353de316020adfb3ff2c14de50cb6f7bda9dd1a0bced7dad99b8b2665cf8e0ac9d12f69daeba00b926bfb5b97f17481fbe072306a912ef2c143ea3f0629d1da48f61c5ed0535c6077de1f5d3dff9098e664f010dafe412c6e3c4ec7ee1822d",
+          "label": "",
+          "result": "invalid"
+        },
+        {
+          "tcId": 31,
+          "comment": "appended bytes to ciphertext",
+          "flags": [
+            "InvalidCiphertext"
+          ],
+          "msg": "313233343030",
+          "ct": "0b23dac580cae4aaff2bddbcf2a2d167131e5c77e74abd49c345ddf28346e53579445f5d711c9eb57ec0725f420e9d0f9d09f7e65cf6f1ad95f7a213b75bf48458b105644945dd37fbf94b6510b76b915e057a8f762b7d42349245fa4d17f52d78d506fbc8dc88d6aa7c606bdb7e08c2a7371eb57b3a028db984d1543d5adbf6bf466d5cf347a603cf53fa3e42772a83915270fff591e9d87fcd8a3a80c598bacb353de316020adfb3ff2c14de50cb6f7bda9dd1a0bced7dad99b8b2665cf8e0ac9d12f69daeba00b926bfb5b97f17481fbe072306a912ef2c143ea3f0629d1da48f61c5ed0535c6077de1f5d3dff9098e664f010dafe412c6e3c4ec7ee1822d0000",
+          "label": "",
+          "result": "invalid"
+        },
+        {
+          "tcId": 32,
+          "comment": "truncated ciphertext",
+          "flags": [
+            "InvalidCiphertext"
+          ],
+          "msg": "313233343030",
+          "ct": "23dac580cae4aaff2bddbcf2a2d167131e5c77e74abd49c345ddf28346e53579445f5d711c9eb57ec0725f420e9d0f9d09f7e65cf6f1ad95f7a213b75bf48458b105644945dd37fbf94b6510b76b915e057a8f762b7d42349245fa4d17f52d78d506fbc8dc88d6aa7c606bdb7e08c2a7371eb57b3a028db984d1543d5adbf6bf466d5cf347a603cf53fa3e42772a83915270fff591e9d87fcd8a3a80c598bacb353de316020adfb3ff2c14de50cb6f7bda9dd1a0bced7dad99b8b2665cf8e0ac9d12f69daeba00b926bfb5b97f17481fbe072306a912ef2c143ea3f0629d1da48f61c5ed0535c6077de1f5d3dff9098e664f010dafe412c6e3c4ec7ee1822d",
+          "label": "",
+          "result": "invalid"
+        }
+      ]
+    }
+  ]
+}

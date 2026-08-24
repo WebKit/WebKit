@@ -25,7 +25,7 @@ using namespace bssl;
 // kMaxDepth limits the recursion depth to avoid overflowing the stack.
 static const uint32_t kMaxDepth = 128;
 
-// is_string_type returns one if |tag| is a string type and zero otherwise. It
+// is_string_type returns one if `tag` is a string type and zero otherwise. It
 // ignores the constructed bit.
 static int is_string_type(CBS_ASN1_TAG tag) {
   // While BER supports constructed BIT STRINGS, OpenSSL misparses them. To
@@ -50,10 +50,10 @@ static int is_string_type(CBS_ASN1_TAG tag) {
   }
 }
 
-// cbs_find_ber walks an ASN.1 structure in |orig_in| and sets |*ber_found|
+// cbs_find_ber walks an ASN.1 structure in `orig_in` and sets `*ber_found`
 // depending on whether an indefinite length element or constructed string was
-// found. The value of |orig_in| is not changed. It returns one on success (i.e.
-// |*ber_found| was set) and zero on error.
+// found. The value of `orig_in` is not changed. It returns one on success (i.e.
+// `*ber_found` was set) and zero on error.
 static int cbs_find_ber(const CBS *orig_in, int *ber_found, uint32_t depth) {
   if (depth > kMaxDepth) {
     return 0;
@@ -94,8 +94,8 @@ static int cbs_find_ber(const CBS *orig_in, int *ber_found, uint32_t depth) {
   return 1;
 }
 
-// cbs_get_eoc returns one if |cbs| begins with an "end of contents" (EOC) value
-// and zero otherwise. If an EOC was found, it advances |cbs| past it.
+// cbs_get_eoc returns one if `cbs` begins with an "end of contents" (EOC) value
+// and zero otherwise. If an EOC was found, it advances `cbs` past it.
 static int cbs_get_eoc(CBS *cbs) {
   if (CBS_len(cbs) >= 2 &&
       CBS_data(cbs)[0] == 0 && CBS_data(cbs)[1] == 0) {
@@ -104,11 +104,11 @@ static int cbs_get_eoc(CBS *cbs) {
   return 0;
 }
 
-// cbs_convert_ber reads BER data from |in| and writes DER data to |out|. If
-// |string_tag| is non-zero, then all elements must match |string_tag| up to the
-// constructed bit and primitive element bodies are written to |out| without
+// cbs_convert_ber reads BER data from `in` and writes DER data to `out`. If
+// `string_tag` is non-zero, then all elements must match `string_tag` up to the
+// constructed bit and primitive element bodies are written to `out` without
 // element headers. This is used when concatenating the fragments of a
-// constructed string. If |looking_for_eoc| is set then any EOC elements found
+// constructed string. If `looking_for_eoc` is set then any EOC elements found
 // will cause the function to return after consuming it. It returns one on
 // success and zero on error.
 static int cbs_convert_ber(CBS *in, CBB *out, CBS_ASN1_TAG string_tag,
@@ -136,7 +136,7 @@ static int cbs_convert_ber(CBS *in, CBB *out, CBS_ASN1_TAG string_tag,
 
     if (string_tag != 0) {
       // This is part of a constructed string. All elements must match
-      // |string_tag| up to the constructed bit and get appended to |out|
+      // `string_tag` up to the constructed bit and get appended to `out`
       // without a child element.
       if ((tag & ~CBS_ASN1_CONSTRUCTED) != string_tag) {
         return 0;
@@ -235,7 +235,7 @@ int bssl::CBS_get_asn1_implicit_string(CBS *in, CBS *out, uint8_t **out_storage,
   }
 
   // Otherwise, try to parse an implicitly-tagged constructed string.
-  // |CBS_asn1_ber_to_der| is assumed to have run, so only allow one level deep
+  // `CBS_asn1_ber_to_der` is assumed to have run, so only allow one level deep
   // of nesting.
   CBB result;
   CBS child;

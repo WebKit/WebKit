@@ -14,7 +14,9 @@
 
 package runner
 
-import "slices"
+import (
+	"slices"
+)
 
 func addKeyUpdateTests() {
 	// TLS tests.
@@ -266,7 +268,6 @@ func addKeyUpdateTests() {
 		config: Config{
 			MaxVersion: VersionTLS13,
 			Bugs: ProtocolBugs{
-				MaxPacketLength: 512,
 				ACKFlightDTLS: func(c *DTLSController, prev, received []DTLSMessage, records []DTLSRecordNumberInfo) {
 					if received[0].Type != typeKeyUpdate {
 						c.WriteACK(c.OutEpoch(), records)

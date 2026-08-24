@@ -1020,7 +1020,9 @@ Loop_16_xx:
 
 
 .section	__TEXT,__const
+
 .align	6
+sha256_constants:
 
 LK256:
 .long	0x428a2f98,0x71374491,0xb5c0fbcf,0xe9b5dba5
@@ -1050,6 +1052,7 @@ LK256:
 .private_extern	_sha256_block_data_order_hw
 
 .align	6
+.alt_entry _sha256_block_data_order_hw
 _sha256_block_data_order_hw:
 	// Armv8.3-A PAuth: even though x30 is pushed to stack it is not popped later.
 	AARCH64_VALID_CALL_TARGET

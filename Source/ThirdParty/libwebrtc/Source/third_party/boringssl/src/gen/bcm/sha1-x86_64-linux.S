@@ -25,11 +25,11 @@ _CET_ENDBR
 .cfi_offset	%r13,-40
 	pushq	%r14
 .cfi_offset	%r14,-48
-	movq	%rdi,%r8
+	movq	%rdi,%r8  // reassigned argument
 	subq	$72,%rsp
-	movq	%rsi,%r9
+	movq	%rsi,%r9  // reassigned argument
 	andq	$-64,%rsp
-	movq	%rdx,%r10
+	movq	%rdx,%r10  // reassigned argument
 	movq	%rax,64(%rsp)
 .cfi_escape	0x0f,0x06,0x77,0xc0,0x00,0x06,0x23,0x08
 .Lprologue:
@@ -1252,32 +1252,32 @@ sha1_block_data_order_hw:
 _CET_ENDBR
 	movdqu	(%rdi),%xmm0
 	movd	16(%rdi),%xmm1
-	movdqa	K_XX_XX+160(%rip),%xmm3
+	movdqa	K_XX_XX+160(%rip),%xmm3  // byte-n-word swap
 
 	movdqu	(%rsi),%xmm4
-	pshufd	$27,%xmm0,%xmm0
+	pshufd	$27,%xmm0,%xmm0  // flip word order
 	movdqu	16(%rsi),%xmm5
-	pshufd	$27,%xmm1,%xmm1
+	pshufd	$27,%xmm1,%xmm1  // flip word order
 	movdqu	32(%rsi),%xmm6
 	pshufb	%xmm3,%xmm4
 	movdqu	48(%rsi),%xmm7
 	pshufb	%xmm3,%xmm5
 	pshufb	%xmm3,%xmm6
-	movdqa	%xmm1,%xmm9
+	movdqa	%xmm1,%xmm9  // offload %xmm1
 	pshufb	%xmm3,%xmm7
 	jmp	.Loop_shaext
 
 .align	16
 .Loop_shaext:
 	decq	%rdx
-	leaq	64(%rsi),%r8
+	leaq	64(%rsi),%r8  // next input block
 	paddd	%xmm4,%xmm1
 	cmovneq	%r8,%rsi
 	prefetcht0	512(%rsi)
-	movdqa	%xmm0,%xmm8
+	movdqa	%xmm0,%xmm8  // offload %xmm0
 	sha1msg1	%xmm5,%xmm4
 	movdqa	%xmm0,%xmm2
-	sha1rnds4	$0,%xmm1,%xmm0
+	sha1rnds4	$0,%xmm1,%xmm0  // 0-3...
 	sha1nexte	%xmm5,%xmm2
 	pxor	%xmm6,%xmm4
 	sha1msg1	%xmm6,%xmm5
@@ -1290,7 +1290,7 @@ _CET_ENDBR
 	sha1msg2	%xmm4,%xmm5
 	sha1msg1	%xmm7,%xmm6
 	movdqa	%xmm0,%xmm2
-	sha1rnds4	$0,%xmm1,%xmm0
+	sha1rnds4	$0,%xmm1,%xmm0  // 0-3...
 	sha1nexte	%xmm7,%xmm2
 	pxor	%xmm4,%xmm6
 	sha1msg1	%xmm4,%xmm7
@@ -1303,7 +1303,7 @@ _CET_ENDBR
 	sha1msg2	%xmm6,%xmm7
 	sha1msg1	%xmm5,%xmm4
 	movdqa	%xmm0,%xmm2
-	sha1rnds4	$0,%xmm1,%xmm0
+	sha1rnds4	$0,%xmm1,%xmm0  // 0-3...
 	sha1nexte	%xmm5,%xmm2
 	pxor	%xmm6,%xmm4
 	sha1msg1	%xmm6,%xmm5
@@ -1316,7 +1316,7 @@ _CET_ENDBR
 	sha1msg2	%xmm4,%xmm5
 	sha1msg1	%xmm7,%xmm6
 	movdqa	%xmm0,%xmm2
-	sha1rnds4	$1,%xmm1,%xmm0
+	sha1rnds4	$1,%xmm1,%xmm0  // 0-3...
 	sha1nexte	%xmm7,%xmm2
 	pxor	%xmm4,%xmm6
 	sha1msg1	%xmm4,%xmm7
@@ -1329,7 +1329,7 @@ _CET_ENDBR
 	sha1msg2	%xmm6,%xmm7
 	sha1msg1	%xmm5,%xmm4
 	movdqa	%xmm0,%xmm2
-	sha1rnds4	$1,%xmm1,%xmm0
+	sha1rnds4	$1,%xmm1,%xmm0  // 0-3...
 	sha1nexte	%xmm5,%xmm2
 	pxor	%xmm6,%xmm4
 	sha1msg1	%xmm6,%xmm5
@@ -1342,7 +1342,7 @@ _CET_ENDBR
 	sha1msg2	%xmm4,%xmm5
 	sha1msg1	%xmm7,%xmm6
 	movdqa	%xmm0,%xmm2
-	sha1rnds4	$2,%xmm1,%xmm0
+	sha1rnds4	$2,%xmm1,%xmm0  // 0-3...
 	sha1nexte	%xmm7,%xmm2
 	pxor	%xmm4,%xmm6
 	sha1msg1	%xmm4,%xmm7
@@ -1355,7 +1355,7 @@ _CET_ENDBR
 	sha1msg2	%xmm6,%xmm7
 	sha1msg1	%xmm5,%xmm4
 	movdqa	%xmm0,%xmm2
-	sha1rnds4	$2,%xmm1,%xmm0
+	sha1rnds4	$2,%xmm1,%xmm0  // 0-3...
 	sha1nexte	%xmm5,%xmm2
 	pxor	%xmm6,%xmm4
 	sha1msg1	%xmm6,%xmm5
@@ -1368,7 +1368,7 @@ _CET_ENDBR
 	sha1msg2	%xmm4,%xmm5
 	sha1msg1	%xmm7,%xmm6
 	movdqa	%xmm0,%xmm2
-	sha1rnds4	$2,%xmm1,%xmm0
+	sha1rnds4	$2,%xmm1,%xmm0  // 0-3...
 	sha1nexte	%xmm7,%xmm2
 	pxor	%xmm4,%xmm6
 	sha1msg1	%xmm4,%xmm7
@@ -1381,30 +1381,30 @@ _CET_ENDBR
 	sha1msg2	%xmm6,%xmm7
 	movdqu	(%rsi),%xmm4
 	movdqa	%xmm0,%xmm2
-	sha1rnds4	$3,%xmm1,%xmm0
+	sha1rnds4	$3,%xmm1,%xmm0  // 64-67
 	sha1nexte	%xmm5,%xmm2
 	movdqu	16(%rsi),%xmm5
 	pshufb	%xmm3,%xmm4
 
 	movdqa	%xmm0,%xmm1
-	sha1rnds4	$3,%xmm2,%xmm0
+	sha1rnds4	$3,%xmm2,%xmm0  // 68-71
 	sha1nexte	%xmm6,%xmm1
 	movdqu	32(%rsi),%xmm6
 	pshufb	%xmm3,%xmm5
 
 	movdqa	%xmm0,%xmm2
-	sha1rnds4	$3,%xmm1,%xmm0
+	sha1rnds4	$3,%xmm1,%xmm0  // 72-75
 	sha1nexte	%xmm7,%xmm2
 	movdqu	48(%rsi),%xmm7
 	pshufb	%xmm3,%xmm6
 
 	movdqa	%xmm0,%xmm1
-	sha1rnds4	$3,%xmm2,%xmm0
+	sha1rnds4	$3,%xmm2,%xmm0  // 76-79
 	sha1nexte	%xmm9,%xmm1
 	pshufb	%xmm3,%xmm7
 
 	paddd	%xmm8,%xmm0
-	movdqa	%xmm1,%xmm9
+	movdqa	%xmm1,%xmm9  // offload %xmm1
 
 	jnz	.Loop_shaext
 
@@ -1422,7 +1422,7 @@ _CET_ENDBR
 sha1_block_data_order_ssse3:
 .cfi_startproc	
 _CET_ENDBR
-	movq	%rsp,%r11
+	movq	%rsp,%r11  // frame pointer
 .cfi_def_cfa_register	%r11
 	pushq	%rbx
 .cfi_offset	%rbx,-16
@@ -1430,46 +1430,46 @@ _CET_ENDBR
 .cfi_offset	%rbp,-24
 	pushq	%r12
 .cfi_offset	%r12,-32
-	pushq	%r13
+	pushq	%r13  // redundant, done to share Win64 SE handler
 .cfi_offset	%r13,-40
 	pushq	%r14
 .cfi_offset	%r14,-48
 	leaq	-64(%rsp),%rsp
 	andq	$-64,%rsp
-	movq	%rdi,%r8
-	movq	%rsi,%r9
-	movq	%rdx,%r10
+	movq	%rdi,%r8  // reassigned argument
+	movq	%rsi,%r9  // reassigned argument
+	movq	%rdx,%r10  // reassigned argument
 
 	shlq	$6,%r10
 	addq	%r9,%r10
 	leaq	K_XX_XX+64(%rip),%r14
 
-	movl	0(%r8),%eax
+	movl	0(%r8),%eax  // load context
 	movl	4(%r8),%ebx
 	movl	8(%r8),%ecx
 	movl	12(%r8),%edx
-	movl	%ebx,%esi
+	movl	%ebx,%esi  // magic seed
 	movl	16(%r8),%ebp
 	movl	%ecx,%edi
 	xorl	%edx,%edi
 	andl	%edi,%esi
 
-	movdqa	64(%r14),%xmm6
-	movdqa	-64(%r14),%xmm9
-	movdqu	0(%r9),%xmm0
+	movdqa	64(%r14),%xmm6  // pbswap mask
+	movdqa	-64(%r14),%xmm9  // K_00_19
+	movdqu	0(%r9),%xmm0  // load input to %xmm[0-3]
 	movdqu	16(%r9),%xmm1
 	movdqu	32(%r9),%xmm2
 	movdqu	48(%r9),%xmm3
-	pshufb	%xmm6,%xmm0
+	pshufb	%xmm6,%xmm0  // byte swap
 	pshufb	%xmm6,%xmm1
 	pshufb	%xmm6,%xmm2
 	addq	$64,%r9
-	paddd	%xmm9,%xmm0
+	paddd	%xmm9,%xmm0  // add K_00_19
 	pshufb	%xmm6,%xmm3
 	paddd	%xmm9,%xmm1
 	paddd	%xmm9,%xmm2
-	movdqa	%xmm0,0(%rsp)
-	psubd	%xmm9,%xmm0
+	movdqa	%xmm0,0(%rsp)  // X[]+K xfer to IALU
+	psubd	%xmm9,%xmm0  // restore X[]
 	movdqa	%xmm1,16(%rsp)
 	psubd	%xmm9,%xmm1
 	movdqa	%xmm2,32(%rsp)
@@ -2466,14 +2466,14 @@ _CET_ENDBR
 	addl	%edi,%eax
 	rorl	$7,%ecx
 	addl	%ebx,%eax
-	addl	0(%r8),%eax
+	addl	0(%r8),%eax  // update context
 	addl	4(%r8),%esi
 	addl	8(%r8),%ecx
 	addl	12(%r8),%edx
 	movl	%eax,0(%r8)
 	addl	16(%r8),%ebp
 	movl	%esi,4(%r8)
-	movl	%esi,%ebx
+	movl	%esi,%ebx  // magic seed
 	movl	%ecx,8(%r8)
 	movl	%ecx,%edi
 	movl	%edx,12(%r8)
@@ -2579,7 +2579,7 @@ _CET_ENDBR
 	addl	%edi,%eax
 	rorl	$7,%ecx
 	addl	%ebx,%eax
-	addl	0(%r8),%eax
+	addl	0(%r8),%eax  // update context
 	addl	4(%r8),%esi
 	addl	8(%r8),%ecx
 	movl	%eax,0(%r8)
@@ -2620,46 +2620,46 @@ _CET_ENDBR
 .cfi_offset	%rbp,-24
 	pushq	%r12
 .cfi_offset	%r12,-32
-	pushq	%r13
+	pushq	%r13  // redundant, done to share Win64 SE handler
 .cfi_offset	%r13,-40
 	pushq	%r14
 .cfi_offset	%r14,-48
 	leaq	-64(%rsp),%rsp
 	vzeroupper
 	andq	$-64,%rsp
-	movq	%rdi,%r8
-	movq	%rsi,%r9
-	movq	%rdx,%r10
+	movq	%rdi,%r8  // reassigned argument
+	movq	%rsi,%r9  // reassigned argument
+	movq	%rdx,%r10  // reassigned argument
 
 	shlq	$6,%r10
 	addq	%r9,%r10
 	leaq	K_XX_XX+64(%rip),%r14
 
-	movl	0(%r8),%eax
+	movl	0(%r8),%eax  // load context
 	movl	4(%r8),%ebx
 	movl	8(%r8),%ecx
 	movl	12(%r8),%edx
-	movl	%ebx,%esi
+	movl	%ebx,%esi  // magic seed
 	movl	16(%r8),%ebp
 	movl	%ecx,%edi
 	xorl	%edx,%edi
 	andl	%edi,%esi
 
-	vmovdqa	64(%r14),%xmm6
-	vmovdqa	-64(%r14),%xmm11
-	vmovdqu	0(%r9),%xmm0
+	vmovdqa	64(%r14),%xmm6  // pbswap mask
+	vmovdqa	-64(%r14),%xmm11  // K_00_19
+	vmovdqu	0(%r9),%xmm0  // load input to %xmm[0-3]
 	vmovdqu	16(%r9),%xmm1
 	vmovdqu	32(%r9),%xmm2
 	vmovdqu	48(%r9),%xmm3
-	vpshufb	%xmm6,%xmm0,%xmm0
+	vpshufb	%xmm6,%xmm0,%xmm0  // byte swap
 	addq	$64,%r9
 	vpshufb	%xmm6,%xmm1,%xmm1
 	vpshufb	%xmm6,%xmm2,%xmm2
 	vpshufb	%xmm6,%xmm3,%xmm3
-	vpaddd	%xmm11,%xmm0,%xmm4
+	vpaddd	%xmm11,%xmm0,%xmm4  // add K_00_19
 	vpaddd	%xmm11,%xmm1,%xmm5
 	vpaddd	%xmm11,%xmm2,%xmm6
-	vmovdqa	%xmm4,0(%rsp)
+	vmovdqa	%xmm4,0(%rsp)  // X[]+K xfer to IALU
 	vmovdqa	%xmm5,16(%rsp)
 	vmovdqa	%xmm6,32(%rsp)
 	jmp	.Loop_avx
@@ -3594,14 +3594,14 @@ _CET_ENDBR
 	addl	%edi,%eax
 	shrdl	$7,%ecx,%ecx
 	addl	%ebx,%eax
-	addl	0(%r8),%eax
+	addl	0(%r8),%eax  // update context
 	addl	4(%r8),%esi
 	addl	8(%r8),%ecx
 	addl	12(%r8),%edx
 	movl	%eax,0(%r8)
 	addl	16(%r8),%ebp
 	movl	%esi,4(%r8)
-	movl	%esi,%ebx
+	movl	%esi,%ebx  // magic seed
 	movl	%ecx,8(%r8)
 	movl	%ecx,%edi
 	movl	%edx,12(%r8)
@@ -3709,7 +3709,7 @@ _CET_ENDBR
 	addl	%ebx,%eax
 	vzeroupper
 
-	addl	0(%r8),%eax
+	addl	0(%r8),%eax  // update context
 	addl	4(%r8),%esi
 	addl	8(%r8),%ecx
 	movl	%eax,0(%r8)
@@ -3755,9 +3755,9 @@ _CET_ENDBR
 	pushq	%r14
 .cfi_offset	%r14,-48
 	vzeroupper
-	movq	%rdi,%r8
-	movq	%rsi,%r9
-	movq	%rdx,%r10
+	movq	%rdi,%r8  // reassigned argument
+	movq	%rsi,%r9  // reassigned argument
+	movq	%rdx,%r10  // reassigned argument
 
 	leaq	-640(%rsp),%rsp
 	shlq	$6,%r10
@@ -3766,14 +3766,14 @@ _CET_ENDBR
 	addq	%r9,%r10
 	leaq	K_XX_XX+64(%rip),%r14
 
-	movl	0(%r8),%eax
+	movl	0(%r8),%eax  // load context
 	cmpq	%r10,%r13
-	cmovaeq	%r9,%r13
+	cmovaeq	%r9,%r13  // next or same block
 	movl	4(%r8),%ebp
 	movl	8(%r8),%ecx
 	movl	12(%r8),%edx
 	movl	16(%r8),%esi
-	vmovdqu	64(%r14),%ymm6
+	vmovdqu	64(%r14),%ymm6  // pbswap mask
 
 	vmovdqu	(%r9),%xmm0
 	vmovdqu	16(%r9),%xmm1
@@ -3787,12 +3787,12 @@ _CET_ENDBR
 	vpshufb	%ymm6,%ymm1,%ymm1
 	vinserti128	$1,48(%r13),%ymm3,%ymm3
 	vpshufb	%ymm6,%ymm2,%ymm2
-	vmovdqu	-64(%r14),%ymm11
+	vmovdqu	-64(%r14),%ymm11  // K_00_19
 	vpshufb	%ymm6,%ymm3,%ymm3
 
-	vpaddd	%ymm11,%ymm0,%ymm4
+	vpaddd	%ymm11,%ymm0,%ymm4  // add K_00_19
 	vpaddd	%ymm11,%ymm1,%ymm5
-	vmovdqu	%ymm4,0(%rsp)
+	vmovdqu	%ymm4,0(%rsp)  // X[]+K xfer to IALU
 	vpaddd	%ymm11,%ymm2,%ymm6
 	vmovdqu	%ymm5,32(%rsp)
 	vpaddd	%ymm11,%ymm3,%ymm7
@@ -3867,7 +3867,7 @@ _CET_ENDBR
 	andnl	%edx,%ebp,%edi
 	andl	%ecx,%ebp
 	xorl	%edi,%ebp
-	jmp	.Lalign32_1
+	jmp	.Lalign32_1  // see "Decoded ICache" in manual
 .align	32
 .Lalign32_1:
 	vpalignr	$8,%ymm6,%ymm7,%ymm8
@@ -4246,7 +4246,7 @@ _CET_ENDBR
 	xorl	%esi,%ecx
 	addl	%r12d,%ebx
 	andl	%edi,%ecx
-	jmp	.Lalign32_2
+	jmp	.Lalign32_2  // see "Decoded ICache" in manual
 .align	32
 .Lalign32_2:
 	vpalignr	$8,%ymm6,%ymm7,%ymm8
@@ -4622,38 +4622,38 @@ _CET_ENDBR
 	rorxl	$27,%esi,%r12d
 	addl	%r12d,%edx
 	leaq	128(%r9),%r13
-	leaq	128(%r9),%rdi
+	leaq	128(%r9),%rdi  // borrow %edi
 	cmpq	%r10,%r13
-	cmovaeq	%r9,%r13
+	cmovaeq	%r9,%r13  // next or previous block
 
-
-	addl	0(%r8),%edx
+// output is d-e-[a]-f-b-c => A=d,F=e,C=f,D=b,E=c
+	addl	0(%r8),%edx  // update context
 	addl	4(%r8),%esi
 	addl	8(%r8),%ebp
 	movl	%edx,0(%r8)
 	addl	12(%r8),%ebx
 	movl	%esi,4(%r8)
-	movl	%edx,%eax
+	movl	%edx,%eax  // A=d
 	addl	16(%r8),%ecx
 	movl	%ebp,%r12d
 	movl	%ebp,8(%r8)
-	movl	%ebx,%edx
-
+	movl	%ebx,%edx  // D=b
+// xchg	%ecx,%ebp			# F=c, C=f
 	movl	%ebx,12(%r8)
-	movl	%esi,%ebp
+	movl	%esi,%ebp  // F=e
 	movl	%ecx,16(%r8)
-
-	movl	%ecx,%esi
-	movl	%r12d,%ecx
-
+// mov	%ebp,16(%r8)
+	movl	%ecx,%esi  // E=c
+	movl	%r12d,%ecx  // C=f
+// xchg	%ebp,%esi				# E=c, F=e
 
 	cmpq	%r10,%r9
 	je	.Ldone_avx2
-	vmovdqu	64(%r14),%ymm6
-	cmpq	%r10,%rdi
+	vmovdqu	64(%r14),%ymm6  // pbswap mask
+	cmpq	%r10,%rdi  // borrowed %edi
 	ja	.Last_avx2
 
-	vmovdqu	-64(%rdi),%xmm0
+	vmovdqu	-64(%rdi),%xmm0  // low part of %ymm0
 	vmovdqu	-48(%rdi),%xmm1
 	vmovdqu	-32(%rdi),%xmm2
 	vmovdqu	-16(%rdi),%xmm3
@@ -5033,7 +5033,7 @@ _CET_ENDBR
 	xorl	%eax,%edx
 	addl	%r12d,%ecx
 	andl	%edi,%edx
-	jmp	.Lalign32_3
+	jmp	.Lalign32_3  // see "Decoded ICache" in manual
 .align	32
 .Lalign32_3:
 	vmovdqu	%ymm6,64(%rsp)
@@ -5388,26 +5388,26 @@ _CET_ENDBR
 	addl	%r12d,%edx
 	leaq	128(%rsp),%r13
 
-
-	addl	0(%r8),%edx
+// output is d-e-[a]-f-b-c => A=d,F=e,C=f,D=b,E=c
+	addl	0(%r8),%edx  // update context
 	addl	4(%r8),%esi
 	addl	8(%r8),%ebp
 	movl	%edx,0(%r8)
 	addl	12(%r8),%ebx
 	movl	%esi,4(%r8)
-	movl	%edx,%eax
+	movl	%edx,%eax  // A=d
 	addl	16(%r8),%ecx
 	movl	%ebp,%r12d
 	movl	%ebp,8(%r8)
-	movl	%ebx,%edx
-
+	movl	%ebx,%edx  // D=b
+// xchg	%ecx,%ebp			# F=c, C=f
 	movl	%ebx,12(%r8)
-	movl	%esi,%ebp
+	movl	%esi,%ebp  // F=e
 	movl	%ecx,16(%r8)
-
-	movl	%ecx,%esi
-	movl	%r12d,%ecx
-
+// mov	%ebp,16(%r8)
+	movl	%ecx,%esi  // E=c
+	movl	%r12d,%ecx  // C=f
+// xchg	%ebp,%esi				# E=c, F=e
 
 	cmpq	%r10,%r9
 	jbe	.Loop_avx2
@@ -5433,16 +5433,16 @@ _CET_ENDBR
 .section	.rodata
 .align	64
 K_XX_XX:
-.long	0x5a827999,0x5a827999,0x5a827999,0x5a827999
-.long	0x5a827999,0x5a827999,0x5a827999,0x5a827999
-.long	0x6ed9eba1,0x6ed9eba1,0x6ed9eba1,0x6ed9eba1
-.long	0x6ed9eba1,0x6ed9eba1,0x6ed9eba1,0x6ed9eba1
-.long	0x8f1bbcdc,0x8f1bbcdc,0x8f1bbcdc,0x8f1bbcdc
-.long	0x8f1bbcdc,0x8f1bbcdc,0x8f1bbcdc,0x8f1bbcdc
-.long	0xca62c1d6,0xca62c1d6,0xca62c1d6,0xca62c1d6
-.long	0xca62c1d6,0xca62c1d6,0xca62c1d6,0xca62c1d6
-.long	0x00010203,0x04050607,0x08090a0b,0x0c0d0e0f
-.long	0x00010203,0x04050607,0x08090a0b,0x0c0d0e0f
+.long	0x5a827999,0x5a827999,0x5a827999,0x5a827999  // K_00_19
+.long	0x5a827999,0x5a827999,0x5a827999,0x5a827999  // K_00_19
+.long	0x6ed9eba1,0x6ed9eba1,0x6ed9eba1,0x6ed9eba1  // K_20_39
+.long	0x6ed9eba1,0x6ed9eba1,0x6ed9eba1,0x6ed9eba1  // K_20_39
+.long	0x8f1bbcdc,0x8f1bbcdc,0x8f1bbcdc,0x8f1bbcdc  // K_40_59
+.long	0x8f1bbcdc,0x8f1bbcdc,0x8f1bbcdc,0x8f1bbcdc  // K_40_59
+.long	0xca62c1d6,0xca62c1d6,0xca62c1d6,0xca62c1d6  // K_60_79
+.long	0xca62c1d6,0xca62c1d6,0xca62c1d6,0xca62c1d6  // K_60_79
+.long	0x00010203,0x04050607,0x08090a0b,0x0c0d0e0f  // pbswap mask
+.long	0x00010203,0x04050607,0x08090a0b,0x0c0d0e0f  // pbswap mask
 .byte	0xf,0xe,0xd,0xc,0xb,0xa,0x9,0x8,0x7,0x6,0x5,0x4,0x3,0x2,0x1,0x0
 .byte	83,72,65,49,32,98,108,111,99,107,32,116,114,97,110,115,102,111,114,109,32,102,111,114,32,120,56,54,95,54,52,44,32,67,82,89,80,84,79,71,65,77,83,32,98,121,32,60,97,112,112,114,111,64,111,112,101,110,115,115,108,46,111,114,103,62,0
 .align	64

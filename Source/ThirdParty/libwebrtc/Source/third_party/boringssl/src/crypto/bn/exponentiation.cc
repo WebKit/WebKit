@@ -80,7 +80,7 @@ static int mod_exp_even(BIGNUM *r, const BIGNUM *a, const BIGNUM *p,
     return BN_one(r);
   }
 
-  // Make a copy of |a|, in case it aliases |r|.
+  // Make a copy of `a`, in case it aliases `r`.
   BN_CTXScope scope(ctx);
   BIGNUM *tmp = BN_CTX_get(ctx);
   if (tmp == nullptr || !BN_copy(tmp, a)) {

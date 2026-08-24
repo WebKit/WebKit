@@ -232,7 +232,7 @@ TEST(Crypto, CPUIDEnvVariable) {
 
       // Syntax errors are silently ignored.
       // TODO(davidben): We should also test something like " 1: 2", but that
-      // currently fails because |strtoull| skips leading spaces.
+      // currently fails because `strtoull` skips leading spaces.
       {{0x12345678, 0x12345678, 0x12345678, 0x12345678},
        "nope",
        {0x12345678, 0x12345678, 0x12345678, 0x12345678}},

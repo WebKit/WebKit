@@ -30,30 +30,30 @@ static_assert(sizeof(BN_ULONG) * BN_MONT_CTX_N0_LIMBS == sizeof(uint64_t),
               "uint64_t is insufficient precision for n0");
 
 uint64_t bssl::bn_mont_n0(const BIGNUM *n) {
-  // These conditions are checked by the caller, |BN_MONT_CTX_set| or
-  // |BN_MONT_CTX_new_consttime|.
+  // These conditions are checked by the caller, `BN_MONT_CTX_set` or
+  // `BN_MONT_CTX_new_consttime`.
   assert(!BN_is_zero(n));
   assert(!BN_is_negative(n));
   assert(BN_is_odd(n));
 
   // r == 2**(BN_MONT_CTX_N0_LIMBS * BN_BITS2) ensures that we can do integer
-  // division by |r| by simply ignoring |BN_MONT_CTX_N0_LIMBS| limbs. Similarly,
-  // we can calculate values modulo |r| by just looking at the lowest
-  // |BN_MONT_CTX_N0_LIMBS| limbs. This is what makes Montgomery multiplication
+  // division by `r` by simply ignoring `BN_MONT_CTX_N0_LIMBS` limbs. Similarly,
+  // we can calculate values modulo `r` by just looking at the lowest
+  // `BN_MONT_CTX_N0_LIMBS` limbs. This is what makes Montgomery multiplication
   // efficient.
   //
   // As shown in Algorithm 1 of "Fast Prime Field Elliptic Curve Cryptography
   // with 256 Bit Primes" by Shay Gueron and Vlad Krasnov, in the loop of a
-  // multi-limb Montgomery multiplication of |a * b (mod n)|, given the
-  // unreduced product |t == a * b|, we repeatedly calculate:
+  // multi-limb Montgomery multiplication of `a * b (mod n)`, given the
+  // unreduced product `t == a * b`, we repeatedly calculate:
   //
-  //    t1 := t % r         |t1| is |t|'s lowest limb (see previous paragraph).
+  //    t1 := t % r         `t1` is `t`'s lowest limb (see previous paragraph).
   //    t2 := t1*n0*n
   //    t3 := t + t2
-  //    t := t3 / r         copy all limbs of |t3| except the lowest to |t|.
+  //    t := t3 / r         copy all limbs of `t3` except the lowest to `t`.
   //
   // In the last step, it would only make sense to ignore the lowest limb of
-  // |t3| if it were zero. The middle steps ensure that this is the case:
+  // `t3` if it were zero. The middle steps ensure that this is the case:
   //
   //                            t3 ==  0 (mod r)
   //                        t + t2 ==  0 (mod r)
@@ -64,10 +64,10 @@ uint64_t bssl::bn_mont_n0(const BIGNUM *n) {
   //                            n0 == -1/n (mod r)
   //
   // Thus, in each iteration of the loop, we multiply by the constant factor
-  // |n0|, the negative inverse of n (mod r).
+  // `n0`, the negative inverse of n (mod r).
 
   // n_mod_r = n % r. As explained above, this is done by taking the lowest
-  // |BN_MONT_CTX_N0_LIMBS| limbs of |n|.
+  // `BN_MONT_CTX_N0_LIMBS` limbs of `n`.
   uint64_t n_mod_r = n->d[0];
 #if BN_MONT_CTX_N0_LIMBS == 2
   if (n->width > 1) {
@@ -80,7 +80,7 @@ uint64_t bssl::bn_mont_n0(const BIGNUM *n) {
   return bn_neg_inv_mod_u64(n_mod_r);
 }
 
-// bn_neg_inv_mod_u64 calculates -1/n mod 2^64. |n| must be odd.
+// bn_neg_inv_mod_u64 calculates -1/n mod 2^64. `n` must be odd.
 static uint64_t bn_neg_inv_mod_u64(uint64_t n) {
   // This is a modified version of the technique described in
   // https://crypto.stackexchange.com/a/47496 and

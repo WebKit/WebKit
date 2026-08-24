@@ -1,7 +1,7 @@
 {
   "algorithm": "ECDSA",
   "schema": "ecdsa_verify_schema_v1.json",
-  "numberOfTests": 557,
+  "numberOfTests": 559,
   "header": [
     "Test vectors of type EcdsaVerify are meant for the verification",
     "of ASN encoded ECDSA signatures."
@@ -7939,6 +7939,46 @@
           "msg": "68656c6c6f2c20776f726c64",
           "sig": "30818502405522624724163b74c02b1951cc3603f834cf724c4c362df1299c63358fccf78faac1a3beb356d9e6be799ee68053efb8e24e2c7ef7a225224a78697d6356ff9a024100aadd9db8dbe9c48b3fd4e6ae33c9fc07cb308db3b3c9d20ed6639cca70330870553e5c414ca92619418661197fac10471db1d381085ddaddb58796829ca90066",
           "result": "invalid"
+        }
+      ]
+    },
+    {
+      "type": "EcdsaVerify",
+      "source": {
+        "name": "github/davidben/ecdsa-s-pow2",
+        "version": "0.1"
+      },
+      "publicKey": {
+        "type": "EcPublicKey",
+        "curve": "brainpoolP512r1",
+        "keySize": 512,
+        "uncompressed": "04206b2ad718245aea23fcc88c8b1a199d56a20f6f10ce80a3816162fdebacde2d1e18ab725e5d01e36ec21844280ead44344eaafade7ffe47b71215e199a214eb4bef07b7b20d111b095e7f3a2299672a47db5145aa0d5ea8258458db3e16f948700b4fb5fce4b2098e95cd5965ad10ae012baad56222a435cd14842c55be4a5d",
+        "wx": "206b2ad718245aea23fcc88c8b1a199d56a20f6f10ce80a3816162fdebacde2d1e18ab725e5d01e36ec21844280ead44344eaafade7ffe47b71215e199a214eb",
+        "wy": "4bef07b7b20d111b095e7f3a2299672a47db5145aa0d5ea8258458db3e16f948700b4fb5fce4b2098e95cd5965ad10ae012baad56222a435cd14842c55be4a5d"
+      },
+      "publicKeyDer": "30819b301406072a8648ce3d020106092b240303020801010d0381820004206b2ad718245aea23fcc88c8b1a199d56a20f6f10ce80a3816162fdebacde2d1e18ab725e5d01e36ec21844280ead44344eaafade7ffe47b71215e199a214eb4bef07b7b20d111b095e7f3a2299672a47db5145aa0d5ea8258458db3e16f948700b4fb5fce4b2098e95cd5965ad10ae012baad56222a435cd14842c55be4a5d",
+      "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMIGbMBQGByqGSM49AgEGCSskAwMCCAEBDQOBggAEIGsq1xgkWuoj/MiMixoZnVai\nD28QzoCjgWFi/eus3i0eGKtyXl0B427CGEQoDq1ENE6q+t5//ke3EhXhmaIU60vv\nB7eyDREbCV5/OiKZZypH21FFqg1eqCWEWNs+FvlIcAtPtfzksgmOlc1ZZa0QrgEr\nqtViIqQ1zRSELFW+Sl0=\n-----END PUBLIC KEY-----\n",
+      "sha": "SHA-512",
+      "tests": [
+        {
+          "tcId": 558,
+          "comment": "s = 2^128",
+          "flags": [
+            "ValidSignature"
+          ],
+          "msg": "68656c6c6f2c20776f726c64",
+          "sig": "305502403ee7dc0a46270f29a56ad048a1fe21c5665bd8e75e7f79c3b4a64cb48b30ff5faeadfb34f6e579be828a5458723e2d1669af9b690e2542919c5cadabdde5943402110100000000000000000000000000000000",
+          "result": "valid"
+        },
+        {
+          "tcId": 559,
+          "comment": "s = n - 2^128",
+          "flags": [
+            "ValidSignature"
+          ],
+          "msg": "68656c6c6f2c20776f726c64",
+          "sig": "30818502403ee7dc0a46270f29a56ad048a1fe21c5665bd8e75e7f79c3b4a64cb48b30ff5faeadfb34f6e579be828a5458723e2d1669af9b690e2542919c5cadabdde59434024100aadd9db8dbe9c48b3fd4e6ae33c9fc07cb308db3b3c9d20ed6639cca70330870553e5c414ca92619418661197fac10461db1d381085ddaddb58796829ca90069",
+          "result": "valid"
         }
       ]
     }

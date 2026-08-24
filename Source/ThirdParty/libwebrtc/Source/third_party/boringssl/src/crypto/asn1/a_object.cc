@@ -117,7 +117,7 @@ ASN1_OBJECT *c2i_ASN1_OBJECT(ASN1_OBJECT **out, const unsigned char **inp,
         ASN1_OBJECT_create(NID_undef, CBS_data(cbs), CBS_len(cbs),
                            /*sn=*/nullptr, /*ln=*/nullptr);
     if (ret != nullptr) {
-      // |c2i_ASN1_OBJECT| consumes its whole input on success.
+      // `c2i_ASN1_OBJECT` consumes its whole input on success.
       BSSL_CHECK(CBS_skip(cbs, CBS_len(cbs)));
     }
     return ret;

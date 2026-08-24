@@ -76,7 +76,7 @@ enum API {
   kRawAPI,
 };
 
-// VerifyECDSASig checks that verifying |ecdsa_sig| gives |expected_result|.
+// VerifyECDSASig checks that verifying `ecdsa_sig` gives `expected_result`.
 static void VerifyECDSASig(API api, const uint8_t *digest, size_t digest_len,
                            const ECDSA_SIG *ecdsa_sig, EC_KEY *eckey,
                            int expected_result) {
@@ -102,7 +102,7 @@ static void VerifyECDSASig(API api, const uint8_t *digest, size_t digest_len,
 }
 
 // TestTamperedSig verifies that signature verification fails when a valid
-// signature is tampered with. |ecdsa_sig| must be a valid signature, which will
+// signature is tampered with. `ecdsa_sig` must be a valid signature, which will
 // be modified.
 static void TestTamperedSig(API api, const uint8_t *digest,
                             size_t digest_len, ECDSA_SIG *ecdsa_sig,
@@ -269,7 +269,7 @@ TEST(ECDSATest, MaxSigLen) {
     SCOPED_TRACE(bits);
     size_t order_len = BitsToBytes(bits);
 
-    // Create the largest possible |ECDSA_SIG| of the given constraints.
+    // Create the largest possible `ECDSA_SIG` of the given constraints.
     bssl::UniquePtr<ECDSA_SIG> sig(ECDSA_SIG_new());
     ASSERT_TRUE(sig);
     std::vector<uint8_t> bytes(order_len, 0xff);

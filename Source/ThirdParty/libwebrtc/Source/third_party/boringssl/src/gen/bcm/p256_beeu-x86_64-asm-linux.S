@@ -39,7 +39,7 @@ _CET_ENDBR
 .cfi_adjust_cfa_offset	80
 	movq	%rdi,0(%rsp)
 
-
+// X=1, Y=0
 	movq	$1,%r8
 	xorq	%r9,%r9
 	xorq	%r10,%r10
@@ -52,7 +52,7 @@ _CET_ENDBR
 	xorq	%r15,%r15
 	xorq	%rbp,%rbp
 
-
+// Copy a/n into B/A on the stack.
 	vmovdqu	0(%rsi),%xmm0
 	vmovdqu	16(%rsi),%xmm1
 	vmovdqu	%xmm0,48(%rsp)
@@ -72,23 +72,23 @@ _CET_ENDBR
 	jz	.Lbeeu_loop_end
 
 
+// 0 < B < |n|,
+// 0 < A <= |n|,
+// (1)      X*a  ==  B   (mod |n|),
+// (2) (-1)*Y*a  ==  A   (mod |n|)
 
-
-
-
-
-
-
-
+// Now divide B by the maximum possible power of two in the
+// integers, and divide X by the same value mod |n|. When we're
+// done, (1) still holds.
 	movq	$1,%rcx
 
-
+// Note that B > 0
 .Lbeeu_shift_loop_XB:
 	movq	%rcx,%rbx
 	andq	48(%rsp),%rbx
 	jnz	.Lbeeu_shift_loop_end_XB
 
-
+// Ensure X is even and divide by two.
 	movq	$1,%rbx
 	andq	%r8,%rbx
 	jz	.Lshift1_0
@@ -107,10 +107,10 @@ _CET_ENDBR
 
 	shlq	$1,%rcx
 
-
-
-
-
+// Test wraparound of the shift parameter. The probability to have 32 zeroes
+// in a row is small Therefore having the value below equal $0x8000000 or
+// $0x8000 does not affect the performance. We choose 0x8000000 because it
+// is the maximal immediate value possible.
 	cmpq	$0x8000000,%rcx
 	jne	.Lbeeu_shift_loop_XB
 
@@ -119,8 +119,8 @@ _CET_ENDBR
 	testq	%rcx,%rcx
 	jz	.Lbeeu_no_shift_XB
 
-
-
+// Copy shifted values.
+// Remember not to override t3=rcx
 	movq	8+48(%rsp),%rax
 	movq	16+48(%rsp),%rbx
 	movq	24+48(%rsp),%rsi
@@ -134,16 +134,16 @@ _CET_ENDBR
 
 
 .Lbeeu_no_shift_XB:
-
+// Same for A and Y.  Afterwards, (2) still holds.
 	movq	$1,%rcx
 
-
+// Note that A > 0
 .Lbeeu_shift_loop_YA:
 	movq	%rcx,%rbx
 	andq	16(%rsp),%rbx
 	jnz	.Lbeeu_shift_loop_end_YA
 
-
+// Ensure X is even and divide by two.
 	movq	$1,%rbx
 	andq	%r12,%rbx
 	jz	.Lshift1_1
@@ -162,10 +162,10 @@ _CET_ENDBR
 
 	shlq	$1,%rcx
 
-
-
-
-
+// Test wraparound of the shift parameter. The probability to have 32 zeroes
+// in a row is small therefore having the value below equal $0x8000000 or
+// $0x8000 Does not affect the performance. We choose 0x8000000 because it
+// is the maximal immediate value possible.
 	cmpq	$0x8000000,%rcx
 	jne	.Lbeeu_shift_loop_YA
 
@@ -174,8 +174,8 @@ _CET_ENDBR
 	testq	%rcx,%rcx
 	jz	.Lbeeu_no_shift_YA
 
-
-
+// Copy shifted values.
+// Remember not to override t3=rcx
 	movq	8+16(%rsp),%rax
 	movq	16+16(%rsp),%rbx
 	movq	24+16(%rsp),%rsi
@@ -189,7 +189,7 @@ _CET_ENDBR
 
 
 .Lbeeu_no_shift_YA:
-
+// T = B-A (A,B < 2^256)
 	movq	48(%rsp),%rax
 	movq	56(%rsp),%rbx
 	movq	64(%rsp),%rsi
@@ -197,10 +197,10 @@ _CET_ENDBR
 	subq	16(%rsp),%rax
 	sbbq	24(%rsp),%rbx
 	sbbq	32(%rsp),%rsi
-	sbbq	40(%rsp),%rcx
+	sbbq	40(%rsp),%rcx  // borrow from shift
 	jnc	.Lbeeu_B_bigger_than_A
 
-
+// A = A - B
 	movq	16(%rsp),%rax
 	movq	24(%rsp),%rbx
 	movq	32(%rsp),%rsi
@@ -214,7 +214,7 @@ _CET_ENDBR
 	movq	%rsi,32(%rsp)
 	movq	%rcx,40(%rsp)
 
-
+// Y = Y + X
 	addq	%r8,%r12
 	adcq	%r9,%r13
 	adcq	%r10,%r14
@@ -223,13 +223,13 @@ _CET_ENDBR
 	jmp	.Lbeeu_loop
 
 .Lbeeu_B_bigger_than_A:
-
+// B = T = B - A
 	movq	%rax,48(%rsp)
 	movq	%rbx,56(%rsp)
 	movq	%rsi,64(%rsp)
 	movq	%rcx,72(%rsp)
 
-
+// X = Y + X
 	addq	%r12,%r8
 	adcq	%r13,%r9
 	adcq	%r14,%r10
@@ -239,21 +239,21 @@ _CET_ENDBR
 	jmp	.Lbeeu_loop
 
 .Lbeeu_loop_end:
+// The Euclid's algorithm loop ends when A == beeu(a,n);
+// Therefore (-1)*Y*a == A (mod |n|), Y>0
 
-
-
-
+// Verify that A = 1 ==> (-1)*Y*a = A = 1  (mod |n|)
 	movq	16(%rsp),%rbx
 	subq	$1,%rbx
 	orq	24(%rsp),%rbx
 	orq	32(%rsp),%rbx
 	orq	40(%rsp),%rbx
-
+// If not, fail.
 	jnz	.Lbeeu_err
 
-
-
-
+// From this point on, we no longer need X
+// Therefore we use it as a temporary storage.
+// X = n
 	movq	0(%rdx),%r8
 	movq	8(%rdx),%r9
 	movq	16(%rdx),%r10
@@ -267,28 +267,28 @@ _CET_ENDBR
 	movq	%r15,40(%rsp)
 	movq	%rbp,48(%rsp)
 
-
+// If Y>n ==> Y=Y-n
 	subq	%r8,%r12
 	sbbq	%r9,%r13
 	sbbq	%r10,%r14
 	sbbq	%r11,%r15
 	sbbq	$0,%rbp
 
-
+// Choose old Y or new Y
 	cmovcq	16(%rsp),%r12
 	cmovcq	24(%rsp),%r13
 	cmovcq	32(%rsp),%r14
 	cmovcq	40(%rsp),%r15
 	jnc	.Lbeeu_reduction_loop
 
-
+// X = n - Y (n, Y < 2^256), (Cancel the (-1))
 	subq	%r12,%r8
 	sbbq	%r13,%r9
 	sbbq	%r14,%r10
 	sbbq	%r15,%r11
 
 .Lbeeu_save:
-
+// Save the inverse(<2^256) to out.
 	movq	0(%rsp),%rdi
 
 	movq	%r8,0(%rdi)
@@ -296,12 +296,12 @@ _CET_ENDBR
 	movq	%r10,16(%rdi)
 	movq	%r11,24(%rdi)
 
-
+// Return 1.
 	movq	$1,%rax
 	jmp	.Lbeeu_finish
 
 .Lbeeu_err:
-
+// Return 0.
 	xorq	%rax,%rax
 
 .Lbeeu_finish:

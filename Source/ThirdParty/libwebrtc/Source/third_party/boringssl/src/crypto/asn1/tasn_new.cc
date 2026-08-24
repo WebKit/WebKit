@@ -88,10 +88,11 @@ int bssl::ASN1_item_ex_new(ASN1_VALUE **pval, const ASN1_ITEM *it) {
           return 1;
         }
       }
-      *pval = reinterpret_cast<ASN1_VALUE *>(OPENSSL_zalloc(it->size));
-      if (!*pval) {
+      void *obj = OPENSSL_zalloc(it->size);
+      if (obj == nullptr) {
         goto memerr;
       }
+      asn1_store_ptr(pval, obj);
       asn1_set_choice_selector(pval, -1, it);
       if (asn1_cb && !asn1_cb(ASN1_OP_NEW_POST, pval, it, nullptr)) {
         goto auxerr2;
@@ -111,10 +112,11 @@ int bssl::ASN1_item_ex_new(ASN1_VALUE **pval, const ASN1_ITEM *it) {
           return 1;
         }
       }
-      *pval = reinterpret_cast<ASN1_VALUE *>(OPENSSL_zalloc(it->size));
-      if (!*pval) {
+      void *obj = OPENSSL_zalloc(it->size);
+      if (obj == nullptr) {
         goto memerr;
       }
+      asn1_store_ptr(pval, obj);
       asn1_refcount_set_one(pval, it);
       asn1_enc_init(pval, it);
       for (i = 0, tt = it->templates; i < it->tcount; tt++, i++) {
@@ -146,7 +148,7 @@ auxerr:
 static void asn1_item_clear(ASN1_VALUE **pval, const ASN1_ITEM *it) {
   switch (it->itype) {
     case ASN1_ITYPE_EXTERN:
-      *pval = nullptr;
+      asn1_store_ptr(pval, nullptr);
       break;
 
     case ASN1_ITYPE_PRIMITIVE:
@@ -163,46 +165,39 @@ static void asn1_item_clear(ASN1_VALUE **pval, const ASN1_ITEM *it) {
 
     case ASN1_ITYPE_CHOICE:
     case ASN1_ITYPE_SEQUENCE:
-      *pval = nullptr;
+      asn1_store_ptr(pval, nullptr);
       break;
   }
 }
 
 static int ASN1_template_new(ASN1_VALUE **pval, const ASN1_TEMPLATE *tt) {
   const ASN1_ITEM *it = ASN1_ITEM_ptr(tt->item);
-  int ret;
   if (tt->flags & ASN1_TFLG_OPTIONAL) {
     asn1_template_clear(pval, tt);
     return 1;
   }
-  // If ANY DEFINED BY nothing to do
-
+  // If ANY DEFINED BY, there is nothing to do.
   if (tt->flags & ASN1_TFLG_ADB_MASK) {
-    *pval = nullptr;
+    asn1_store_ptr(pval, nullptr);
     return 1;
   }
-  // If SET OF or SEQUENCE OF, its a STACK
+  // If SET OF or SEQUENCE OF, it's a STACK.
   if (tt->flags & ASN1_TFLG_SK_MASK) {
-    STACK_OF(ASN1_VALUE) *skval;
-    skval = sk_ASN1_VALUE_new_null();
+    STACK_OF(ASN1_VALUE) *skval = sk_ASN1_VALUE_new_null();
     if (!skval) {
-      ret = 0;
-      goto done;
+      return 0;
     }
-    *pval = (ASN1_VALUE *)skval;
-    ret = 1;
-    goto done;
+    asn1_store_ptr(pval, skval);
+    return 1;
   }
-  // Otherwise pass it back to the item routine
-  ret = ASN1_item_ex_new(pval, it);
-done:
-  return ret;
+  // Otherwise, pass it back to the item routine.
+  return ASN1_item_ex_new(pval, it);
 }
 
 static void asn1_template_clear(ASN1_VALUE **pval, const ASN1_TEMPLATE *tt) {
-  // If ADB or STACK just NULL the field
+  // If ADB or STACK, just NULL the field.
   if (tt->flags & (ASN1_TFLG_ADB_MASK | ASN1_TFLG_SK_MASK)) {
-    *pval = nullptr;
+    asn1_store_ptr(pval, nullptr);
   } else {
     asn1_item_clear(pval, ASN1_ITEM_ptr(tt->item));
   }
@@ -216,8 +211,8 @@ static int ASN1_primitive_new(ASN1_VALUE **pval, const ASN1_ITEM *it) {
     return 0;
   }
 
-  // Historically, |it->funcs| for primitive types contained an
-  // |ASN1_PRIMITIVE_FUNCS| table of callbacks.
+  // Historically, `it->funcs` for primitive types contained an
+  // `ASN1_PRIMITIVE_FUNCS` table of callbacks.
   assert(it->funcs == nullptr);
 
   int utype;
@@ -228,33 +223,32 @@ static int ASN1_primitive_new(ASN1_VALUE **pval, const ASN1_ITEM *it) {
   }
   switch (utype) {
     case V_ASN1_OBJECT:
-      *pval = (ASN1_VALUE *)OBJ_get_undef();
+      asn1_store_ptr(pval, OBJ_get_undef());
       return 1;
 
     case V_ASN1_BOOLEAN:
-      *(ASN1_BOOLEAN *)pval = (ASN1_BOOLEAN)it->size;
+      *reinterpret_cast<ASN1_BOOLEAN *>(pval) =
+          static_cast<ASN1_BOOLEAN>(it->size);
       return 1;
 
     case V_ASN1_NULL:
-      *pval = (ASN1_VALUE *)1;
+      asn1_store_ptr(pval, reinterpret_cast<ASN1_VALUE *>(1));
       return 1;
 
     case V_ASN1_ANY: {
-      ASN1_TYPE *typ = New<ASN1_TYPE>();
+      ASN1_TYPE *typ = ASN1_TYPE_new();
       if (!typ) {
         return 0;
       }
-      typ->value.ptr = nullptr;
-      typ->type = -1;
-      *pval = (ASN1_VALUE *)typ;
+      asn1_store_ptr(pval, typ);
       break;
     }
 
     default:
-      *pval = (ASN1_VALUE *)ASN1_STRING_type_new(utype);
+      asn1_store_ptr(pval, ASN1_STRING_type_new(utype));
       break;
   }
-  if (*pval) {
+  if (asn1_load_ptr(pval)) {
     return 1;
   }
   return 0;
@@ -262,8 +256,8 @@ static int ASN1_primitive_new(ASN1_VALUE **pval, const ASN1_ITEM *it) {
 
 static void asn1_primitive_clear(ASN1_VALUE **pval, const ASN1_ITEM *it) {
   int utype;
-  // Historically, |it->funcs| for primitive types contained an
-  // |ASN1_PRIMITIVE_FUNCS| table of callbacks.
+  // Historically, `it->funcs` for primitive types contained an
+  // `ASN1_PRIMITIVE_FUNCS` table of callbacks.
   assert(it == nullptr || it->funcs == nullptr);
   if (!it || (it->itype == ASN1_ITYPE_MSTRING)) {
     utype = -1;
@@ -271,8 +265,10 @@ static void asn1_primitive_clear(ASN1_VALUE **pval, const ASN1_ITEM *it) {
     utype = it->utype;
   }
   if (utype == V_ASN1_BOOLEAN) {
-    *(ASN1_BOOLEAN *)pval = (ASN1_BOOLEAN)it->size;
+    // `ASN1_BOOLEAN` is not a pointer type.
+    *reinterpret_cast<ASN1_BOOLEAN *>(pval) =
+        static_cast<ASN1_BOOLEAN>(it->size);
   } else {
-    *pval = nullptr;
+    asn1_store_ptr(pval, nullptr);
   }
 }

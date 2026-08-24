@@ -263,7 +263,7 @@ static int bn_count_low_zero_bits_word(BN_ULONG l) {
   int bits = 0;
 
 #if BN_BITS2 > 32
-  // Check if the lower half of |x| are all zero.
+  // Check if the lower half of `x` are all zero.
   mask = constant_time_is_zero_w(l << (BN_BITS2 - 32));
   // If the lower half is all zeros, it is included in the bit count and we
   // count the upper half. Otherwise, we count the lower half.
@@ -311,7 +311,7 @@ int BN_count_low_zero_bits(const BIGNUM *bn) {
     ret |= first_nonzero & (i * BN_BITS2 + bits);
   }
 
-  // If got to the end of |bn| and saw no non-zero words, |bn| is zero. |ret|
+  // If got to the end of `bn` and saw no non-zero words, `bn` is zero. `ret`
   // will then remain zero.
   return ret;
 }

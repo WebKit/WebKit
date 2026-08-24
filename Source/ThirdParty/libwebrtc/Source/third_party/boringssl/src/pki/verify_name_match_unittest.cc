@@ -148,7 +148,7 @@ TEST_P(VerifyNameMatchSimpleTest, ExtraRdnDoesNotMatch) {
                                SequenceValueFromString(der)));
 }
 
-// Runs VerifyNameMatchSimpleTest for all combinations of value_type and and
+// Runs VerifyNameMatchSimpleTest for all combinations of value_type and
 // suffix.
 INSTANTIATE_TEST_SUITE_P(InstantiationName, VerifyNameMatchSimpleTest,
                          ::testing::Combine(::testing::ValuesIn(kValueTypes),

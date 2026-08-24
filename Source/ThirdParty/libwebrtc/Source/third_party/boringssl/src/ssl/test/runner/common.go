@@ -18,6 +18,7 @@ import (
 	"time"
 
 	"boringssl.googlesource.com/boringssl.git/ssl/test/runner/hpke"
+	"golang.org/x/crypto/cryptobyte"
 )
 
 const (
@@ -1276,7 +1277,7 @@ type ProtocolBugs struct {
 	EmptyTicketSessionID bool
 
 	// NewSessionIDLength, if non-zero is the length of the session ID to use
-	// when issung new sessions.
+	// when issuing new sessions.
 	NewSessionIDLength int
 
 	// SendClientHelloSessionID, if not nil, is the session ID sent in the
@@ -2042,7 +2043,7 @@ type ProtocolBugs struct {
 	// extension to indicate a match.
 	SendNonEmptyTrustAnchorMatch bool
 
-	// AlwaysSendAvailableTrustAnchors, if true, causese the server to always
+	// AlwaysSendAvailableTrustAnchors, if true, causes the server to always
 	// send available trust anchors in EncryptedExtensions, even if unsolicited.
 	AlwaysSendAvailableTrustAnchors bool
 
@@ -2433,6 +2434,50 @@ func (c *Config) verifySignatureAlgorithms() []signatureAlgorithm {
 	return supportedSignatureAlgorithms
 }
 
+type TrustAnchorRange struct {
+	Base     []byte
+	Min, Max uint64
+}
+
+const (
+	certPropTrustAnchorID              uint16 = 0
+	certPropTrustAnchorGroupInclusions uint16 = 1
+)
+
+type CertificatePropertyList struct {
+	TrustAnchorID              []byte
+	TrustAnchorGroupInclusions []TrustAnchorRange
+}
+
+func (c *CertificatePropertyList) Empty() bool {
+	return len(c.TrustAnchorID) == 0 && len(c.TrustAnchorGroupInclusions) == 0
+}
+
+func (c *CertificatePropertyList) Marshal() []byte {
+	bb := cryptobyte.NewBuilder(nil)
+	bb.AddUint16LengthPrefixed(func(props *cryptobyte.Builder) {
+		if len(c.TrustAnchorID) != 0 {
+			props.AddUint16(certPropTrustAnchorID)
+			// The ID is encoded directly in the property data, with
+			// no additional length prefix.
+			addUint16LengthPrefixedBytes(props, c.TrustAnchorID)
+		}
+		if len(c.TrustAnchorGroupInclusions) != 0 {
+			props.AddUint16(certPropTrustAnchorGroupInclusions)
+			props.AddUint16LengthPrefixed(func(prop *cryptobyte.Builder) {
+				prop.AddUint16LengthPrefixed(func(ranges *cryptobyte.Builder) {
+					for _, r := range c.TrustAnchorGroupInclusions {
+						addUint8LengthPrefixedBytes(ranges, r.Base)
+						ranges.AddUint64(r.Min)
+						ranges.AddUint64(r.Max)
+					}
+				})
+			})
+		}
+	})
+	return bb.BytesOrPanic()
+}
+
 type CredentialType int
 
 const (
@@ -2522,9 +2567,9 @@ type Credential struct {
 	// AppendToImportedPSKIdentity is a byte string that is appended to the
 	// imported PSK identity.
 	AppendToImportedPSKIdentity []byte
-	// TrustAnchorID, if not empty, is the trust anchor ID for the issuer
-	// of the certificate chain.
-	TrustAnchorID []byte
+	// Properties is the certificate properties (draft-ietf-tls-trust-anchor-ids)
+	// associated with this credential.
+	Properties CertificatePropertyList
 }
 
 func (c *Credential) WithSignatureAlgorithms(sigAlgs ...signatureAlgorithm) *Credential {
@@ -2560,8 +2605,14 @@ func (c *Credential) signatureAlgorithms() []signatureAlgorithm {
 
 func (c *Credential) WithTrustAnchorID(id []byte) *Credential {
 	ret := *c
-	ret.TrustAnchorID = id
+	ret.Properties.TrustAnchorID = id
 	ret.MustMatchIssuer = true
+	return &ret
+}
+
+func (c *Credential) WithProperties(props CertificatePropertyList) *Credential {
+	ret := *c
+	ret.Properties = props
 	return &ret
 }
 
@@ -2743,6 +2794,12 @@ var (
 
 func containsGREASE(values []uint16) bool {
 	return slices.ContainsFunc(values, isGREASEValue)
+}
+
+func containsSigAlgsGREASE(values []signatureAlgorithm) bool {
+	return slices.ContainsFunc(values, func(s signatureAlgorithm) bool {
+		return isGREASEValue(uint16(s))
+	})
 }
 
 func isAllZero(v []byte) bool {

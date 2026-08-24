@@ -18,6 +18,7 @@ import (
 	"slices"
 
 	"boringssl.googlesource.com/boringssl.git/ssl/test/runner/kyber"
+	"golang.org/x/crypto/cryptobyte"
 )
 
 type keyType int
@@ -54,13 +55,13 @@ func (ka *rsaKeyAgreement) generateServerKeyExchange(config *Config, cert *Crede
 	}
 	ka.exportKey = key
 
-	modulus := key.N.Bytes()
-	exponent := big.NewInt(int64(key.E)).Bytes()
-	serverRSAParams := make([]byte, 0, 2+len(modulus)+2+len(exponent))
-	serverRSAParams = append(serverRSAParams, byte(len(modulus)>>8), byte(len(modulus)))
-	serverRSAParams = append(serverRSAParams, modulus...)
-	serverRSAParams = append(serverRSAParams, byte(len(exponent)>>8), byte(len(exponent)))
-	serverRSAParams = append(serverRSAParams, exponent...)
+	bb := cryptobyte.NewBuilder(nil)
+	addUint16LengthPrefixedBytes(bb, key.N.Bytes())
+	addUint16LengthPrefixedBytes(bb, big.NewInt(int64(key.E)).Bytes())
+	serverRSAParams, err := bb.Bytes()
+	if err != nil {
+		return nil, err
+	}
 
 	var sigAlg signatureAlgorithm
 	if ka.version.protocolVersion() >= VersionTLS12 {
@@ -76,21 +77,16 @@ func (ka *rsaKeyAgreement) generateServerKeyExchange(config *Config, cert *Crede
 	}
 
 	skx := new(serverKeyExchangeMsg)
-	sigAlgsLen := 0
+	bb = cryptobyte.NewBuilder(nil)
+	bb.AddBytes(serverRSAParams)
 	if ka.version.protocolVersion() >= VersionTLS12 {
-		sigAlgsLen = 2
+		bb.AddUint16(uint16(sigAlg))
 	}
-	skx.key = make([]byte, len(serverRSAParams)+sigAlgsLen+2+len(sig))
-	copy(skx.key, serverRSAParams)
-	k := skx.key[len(serverRSAParams):]
-	if ka.version.protocolVersion() >= VersionTLS12 {
-		k[0] = byte(sigAlg >> 8)
-		k[1] = byte(sigAlg)
-		k = k[2:]
+	addUint16LengthPrefixedBytes(bb, sig)
+	skx.key, err = bb.Bytes()
+	if err != nil {
+		return nil, err
 	}
-	k[0] = byte(len(sig) >> 8)
-	k[1] = byte(len(sig))
-	copy(k[2:], sig)
 
 	return skx, nil
 }
@@ -648,21 +644,16 @@ func (ka *signedKeyAgreement) signParameters(config *Config, cert *Credential, c
 	if config.Bugs.UnauthenticatedECDH {
 		skx.key = params
 	} else {
-		sigAlgsLen := 0
+		bb := cryptobyte.NewBuilder(nil)
+		bb.AddBytes(params)
 		if ka.version.protocolVersion() >= VersionTLS12 {
-			sigAlgsLen = 2
+			bb.AddUint16(uint16(sigAlg))
 		}
-		skx.key = make([]byte, len(params)+sigAlgsLen+2+len(sig))
-		copy(skx.key, params)
-		k := skx.key[len(params):]
-		if ka.version.protocolVersion() >= VersionTLS12 {
-			k[0] = byte(sigAlg >> 8)
-			k[1] = byte(sigAlg)
-			k = k[2:]
+		addUint16LengthPrefixedBytes(bb, sig)
+		skx.key, err = bb.Bytes()
+		if err != nil {
+			return nil, err
 		}
-		k[0] = byte(len(sig) >> 8)
-		k[1] = byte(len(sig))
-		copy(k[2:], sig)
 	}
 
 	return skx, nil
@@ -716,7 +707,7 @@ func (ka *signedKeyAgreement) verifyParameters(config *Config, clientHello *clie
 }
 
 // ecdheKeyAgreement implements a TLS key agreement where the server
-// generates a ephemeral EC public/private key pair and signs it. The
+// generates an ephemeral EC public/private key pair and signs it. The
 // pre-master secret is then calculated using ECDH. The signature may
 // either be ECDSA or RSA.
 type ecdheKeyAgreement struct {
@@ -757,15 +748,17 @@ func (ka *ecdheKeyAgreement) generateServerKeyExchange(config *Config, cert *Cre
 	}
 
 	// http://tools.ietf.org/html/rfc4492#section-5.4
-	serverECDHParams := make([]byte, 1+2+1+len(publicKey))
-	serverECDHParams[0] = 3 // named curve
+	bb := cryptobyte.NewBuilder(nil)
+	bb.AddUint8(3) // named curve
 	if config.Bugs.SendCurve != 0 {
 		curveID = config.Bugs.SendCurve
 	}
-	serverECDHParams[1] = byte(curveID >> 8)
-	serverECDHParams[2] = byte(curveID)
-	serverECDHParams[3] = byte(len(publicKey))
-	copy(serverECDHParams[4:], publicKey)
+	bb.AddUint16(uint16(curveID))
+	addUint8LengthPrefixedBytes(bb, publicKey)
+	serverECDHParams, err := bb.Bytes()
+	if err != nil {
+		return nil, err
+	}
 
 	return ka.auth.signParameters(config, cert, clientHello, hello, serverECDHParams)
 }

@@ -117,8 +117,8 @@ static void copy_int_param(T *dest, const T *src, T default_val,
   }
 }
 
-// x509_verify_param_merge merges fields from |src| to |dest|. If both |src| and
-// |dest| have some field set, |prefer_src| determines whether |src| or |dest|'s
+// x509_verify_param_merge merges fields from `src` to `dest`. If both `src` and
+// `dest` have some field set, `prefer_src` determines whether `src` or `dest`'s
 // version is used.
 static int x509_verify_param_merge(X509_VERIFY_PARAM *dest,
                                    const X509_VERIFY_PARAM *src,
@@ -136,12 +136,12 @@ static int x509_verify_param_merge(X509_VERIFY_PARAM *dest,
   copy_int_param(&dest->trust, &src->trust, /*default_val=*/0, prefer_src);
   copy_int_param(&dest->depth, &src->depth, /*default_val=*/-1, prefer_src);
 
-  // |check_time|, unlike all other parameters, does not honor |prefer_src|.
-  // This means |X509_VERIFY_PARAM_set1| will not overwrite it. This behavior
+  // `check_time`, unlike all other parameters, does not honor `prefer_src`.
+  // This means `X509_VERIFY_PARAM_set1` will not overwrite it. This behavior
   // comes from OpenSSL but may have been a bug.
   if (!(dest->flags & X509_V_FLAG_USE_CHECK_TIME)) {
     dest->check_time = src->check_time;
-    // The source |X509_V_FLAG_USE_CHECK_TIME| flag, if set, is copied below.
+    // The source `X509_V_FLAG_USE_CHECK_TIME` flag, if set, is copied below.
   }
 
   dest->flags |= src->flags;
@@ -186,14 +186,14 @@ static int x509_verify_param_merge(X509_VERIFY_PARAM *dest,
 int X509_VERIFY_PARAM_inherit(X509_VERIFY_PARAM *dest,
                               const X509_VERIFY_PARAM *src) {
   // Prefer the destination. That is, this function only changes unset
-  // parameters in |dest|.
+  // parameters in `dest`.
   return x509_verify_param_merge(dest, src, /*prefer_src=*/false);
 }
 
 int X509_VERIFY_PARAM_set1(X509_VERIFY_PARAM *to,
                            const X509_VERIFY_PARAM *from) {
-  // Prefer the source. That is, values in |to| are only preserved if they were
-  // unset in |from|.
+  // Prefer the source. That is, values in `to` are only preserved if they were
+  // unset in `from`.
   return x509_verify_param_merge(to, from, /*prefer_src=*/true);
 }
 

@@ -149,8 +149,8 @@ static const ASN1_STRING_TABLE *asn1_string_table_get(int nid) {
     tbl = lh_ASN1_STRING_TABLE_retrieve(string_tables, &key);
   }
   string_tables_lock.UnlockRead();
-  // Note returning |tbl| without the lock is only safe because
-  // |ASN1_STRING_TABLE_add| cannot modify or delete existing entries. If we
+  // Note returning `tbl` without the lock is only safe because
+  // `ASN1_STRING_TABLE_add` cannot modify or delete existing entries. If we
   // wish to support that, this function must copy the result under a lock.
   return tbl;
 }

@@ -204,9 +204,9 @@ static size_t num_trial_division_primes(const BIGNUM *n) {
 }
 
 // BN_PRIME_CHECKS_BLINDED is the iteration count for blinding the constant-time
-// primality test. See |BN_primality_test| for details. This number is selected
-// so that, for a candidate N-bit RSA prime, picking |BN_PRIME_CHECKS_BLINDED|
-// random N-bit numbers will have at least |BN_prime_checks_for_size(N)| values
+// primality test. See `BN_primality_test` for details. This number is selected
+// so that, for a candidate N-bit RSA prime, picking `BN_PRIME_CHECKS_BLINDED`
+// random N-bit numbers will have at least `BN_prime_checks_for_size(N)` values
 // in range with high probability.
 //
 // The following Python script computes the blinding factor needed for the
@@ -231,8 +231,8 @@ def choose(a, b):
   return r
 
 def failure_rate(min_uniform, iterations):
-  """ Returns the probability that, for |iterations| candidate witnesses, fewer
-      than |min_uniform| of them will be uniform. """
+  """ Returns the probability that, for `iterations` candidate witnesses, fewer
+      than `min_uniform` of them will be uniform. """
   prob = 0.0
   for i in xrange(min_uniform):
     prob += (choose(iterations, i) *
@@ -353,8 +353,8 @@ loop:
       return 0;
     }
 
-    // Interleave |ret| and |t|'s primality tests to avoid paying the full
-    // iteration count on |ret| only to quickly discover |t| is composite.
+    // Interleave `ret` and `t`'s primality tests to avoid paying the full
+    // iteration count on `ret` only to quickly discover `t` is composite.
     //
     // TODO(davidben): This doesn't quite work because an iteration count of 1
     // still runs the blinding mechanism.
@@ -387,7 +387,7 @@ loop:
 static int bn_trial_division(uint16_t *out, const BIGNUM *bn) {
   const size_t num_primes = num_trial_division_primes(bn);
   for (size_t i = 1; i < num_primes; i++) {
-    // During RSA key generation, |bn| may be secret, but only if |bn| was
+    // During RSA key generation, `bn` may be secret, but only if `bn` was
     // prime, so it is safe to leak failed trial divisions.
     if (constant_time_declassify_int(bn_mod_u16_consttime(bn, kPrimes[i]) ==
                                      0)) {
@@ -407,7 +407,7 @@ int bssl::bn_miller_rabin_init(BN_MILLER_RABIN *miller_rabin,
                                const BN_MONT_CTX *mont, BN_CTX *ctx) {
   // This function corresponds to steps 1 through 3 of FIPS 186-5, B.3.1.
   const BIGNUM *w = &mont->N;
-  // Note we do not call |BN_CTX_start| in this function. We intentionally
+  // Note we do not call `BN_CTX_start` in this function. We intentionally
   // allocate values in the containing scope so they outlive this function.
   miller_rabin->w1 = BN_CTX_get(ctx);
   miller_rabin->m = BN_CTX_get(ctx);
@@ -434,7 +434,7 @@ int bssl::bn_miller_rabin_init(BN_MILLER_RABIN *miller_rabin,
   // Precompute some values in Montgomery form.
   if (!bn_one_to_montgomery(miller_rabin->one_mont, mont, ctx) ||
       // w - 1 is -1 mod w, so we can compute it in the Montgomery domain, -R,
-      // with a subtraction. (|one_mont| cannot be zero.)
+      // with a subtraction. (`one_mont` cannot be zero.)
       !bn_usub_consttime(miller_rabin->w1_mont, w, miller_rabin->one_mont)) {
     return 0;
   }
@@ -459,8 +459,8 @@ int bssl::bn_miller_rabin_iteration(const BN_MILLER_RABIN *miller_rabin,
     return 0;
   }
 
-  // is_possibly_prime is all ones if we have determined |b| is not a composite
-  // witness for |w|. This is equivalent to going to step 4.7 in the original
+  // is_possibly_prime is all ones if we have determined `b` is not a composite
+  // witness for `w`. This is equivalent to going to step 4.7 in the original
   // algorithm. To avoid timing leaks, we run the algorithm to the end for prime
   // inputs.
   is_possibly_prime = 0;
@@ -473,8 +473,8 @@ int bssl::bn_miller_rabin_iteration(const BN_MILLER_RABIN *miller_rabin,
 
   // Step 4.5.
   //
-  // To avoid leaking |a|, we run the loop to |w_bits| and mask off all
-  // iterations once |j| = |a|.
+  // To avoid leaking `a`, we run the loop to `w_bits` and mask off all
+  // iterations once `j` = `a`.
   for (int j = 1; j < miller_rabin->w_bits; j++) {
     if (constant_time_declassify_w(constant_time_eq_int(j, miller_rabin->a) &
                                    ~is_possibly_prime)) {
@@ -492,7 +492,7 @@ int bssl::bn_miller_rabin_iteration(const BN_MILLER_RABIN *miller_rabin,
     // witness.
     crypto_word_t z_is_w1_mont = BN_equal_consttime(z, miller_rabin->w1_mont);
     z_is_w1_mont = 0 - z_is_w1_mont;    // Make it all zeros or all ones.
-    is_possibly_prime |= z_is_w1_mont;  // Go to step 4.7 if |z_is_w1_mont|.
+    is_possibly_prime |= z_is_w1_mont;  // Go to step 4.7 if `z_is_w1_mont`.
 
     // Step 4.5.3. If z = 1 and the loop is not done, the previous value of z
     // was not -1. There are no non-trivial square roots of 1 modulo a prime, so
@@ -514,20 +514,20 @@ int BN_primality_test(int *out_is_probably_prime, const BIGNUM *w, int checks,
   // generation. We generate RSA keys by selecting two large, secret primes with
   // rejection sampling.
   //
-  // We thus treat |w| as secret if turns out to be a large prime. However, if
-  // |w| is composite, we treat this and |w| itself as public. (Conversely, if
-  // |w| is prime, that it is prime is public. Only the value is secret.) This
+  // We thus treat `w` as secret if turns out to be a large prime. However, if
+  // `w` is composite, we treat this and `w` itself as public. (Conversely, if
+  // `w` is prime, that it is prime is public. Only the value is secret.) This
   // is fine for RSA key generation, but note it is important that we use
   // rejection sampling, with each candidate prime chosen independently. This
   // would not work for, e.g., an algorithm which looked for primes in
   // consecutive integers. These assumptions allow us to discard composites
-  // quickly. We additionally treat |w| as public when it is a small prime to
+  // quickly. We additionally treat `w` as public when it is a small prime to
   // simplify trial decryption and some edge cases.
   //
   // One RSA key generation will call this function on exactly two primes and
   // many more composites. The overall cost is a combination of several factors:
   //
-  // 1. Checking if |w| is divisible by a small prime is much faster than
+  // 1. Checking if `w` is divisible by a small prime is much faster than
   //    learning it is composite by Miller-Rabin (see below for details on that
   //    cost). Trial division by p saves 1/p of Miller-Rabin calls, so this is
   //    worthwhile until p exceeds the ratio of the two costs.
@@ -538,11 +538,11 @@ int BN_primality_test(int *out_is_probably_prime, const BIGNUM *w, int checks,
   //    trial decryption, in practice, cost one Miller-Rabin iteration. Only the
   //    two actual primes cost the full iteration count.
   //
-  // 3. A Miller-Rabin iteration is a modular exponentiation plus |a| additional
-  //    modular squares, where |a| is the number of factors of two in |w-1|. |a|
+  // 3. A Miller-Rabin iteration is a modular exponentiation plus `a` additional
+  //    modular squares, where `a` is the number of factors of two in `w-1`. `a`
   //    is likely small (the distribution falls exponentially), but it is also
-  //    potentially secret, so we loop up to its log(w) upper bound when |w| is
-  //    prime. When |w| is composite, we break early, so only two calls pay this
+  //    potentially secret, so we loop up to its log(w) upper bound when `w` is
+  //    prime. When `w` is composite, we break early, so only two calls pay this
   //    cost. (Note that all calls pay the modular exponentiation which is,
   //    itself, log(w) modular multiplications and squares.)
   //
@@ -610,14 +610,14 @@ int BN_primality_test(int *out_is_probably_prime, const BIGNUM *w, int checks,
   // The following loop performs in inner iteration of the Miller-Rabin
   // Primality test (Step 4).
   //
-  // The algorithm as specified in FIPS 186-5 leaks information on |w|, the RSA
+  // The algorithm as specified in FIPS 186-5 leaks information on `w`, the RSA
   // private key. Instead, we run through each iteration unconditionally,
   // performing modular multiplications, masking off any effects to behave
   // equivalently to the specified algorithm.
   //
-  // We also blind the number of values of |b| we try. Steps 4.1–4.2 say to
-  // discard out-of-range values. To avoid leaking information on |w|, we use
-  // |bn_rand_secret_range| which, rather than discarding bad values, adjusts
+  // We also blind the number of values of `b` we try. Steps 4.1–4.2 say to
+  // discard out-of-range values. To avoid leaking information on `w`, we use
+  // `bn_rand_secret_range` which, rather than discarding bad values, adjusts
   // them to be in range. Though not uniformly selected, these adjusted values
   // are still usable as Miller-Rabin checks.
   //
@@ -628,14 +628,14 @@ int BN_primality_test(int *out_is_probably_prime, const BIGNUM *w, int checks,
   // function is more complex and has more timing risk than necessary.
   //
   // We count both total iterations and uniform ones and iterate until we've
-  // reached at least |BN_PRIME_CHECKS_BLINDED| and |iterations|, respectively.
+  // reached at least `BN_PRIME_CHECKS_BLINDED` and `iterations`, respectively.
   // If the latter is large enough, it will be the limiting factor with high
   // probability and we won't leak information.
   //
   // Note this blinding does not impact most calls when picking primes because
   // composites are rejected early. Only the two secret primes see extra work.
 
-  // Using |constant_time_lt_w| seems to prevent the compiler from optimizing
+  // Using `constant_time_lt_w` seems to prevent the compiler from optimizing
   // this into two jumps.
   for (int i = 1; constant_time_declassify_w(
            (i <= BN_PRIME_CHECKS_BLINDED) |

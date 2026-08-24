@@ -33,10 +33,10 @@ static int is_valid_code_point(uint32_t v) {
   return 1;
 }
 
-// BOTTOM_BITS returns a byte with the bottom |n| bits set.
+// BOTTOM_BITS returns a byte with the bottom `n` bits set.
 #define BOTTOM_BITS(n) (uint8_t)((1u << (n)) - 1)
 
-// TOP_BITS returns a byte with the top |n| bits set.
+// TOP_BITS returns a byte with the top `n` bits set.
 #define TOP_BITS(n) ((uint8_t)~BOTTOM_BITS(8 - (n)))
 
 int CBS_get_utf8(CBS *cbs, uint32_t *out) {

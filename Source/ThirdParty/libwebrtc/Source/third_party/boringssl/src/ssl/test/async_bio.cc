@@ -20,8 +20,6 @@
 #include <openssl/bio.h>
 #include <openssl/mem.h>
 
-#include "../../crypto/internal.h"
-
 
 namespace {
 
@@ -47,7 +45,8 @@ AsyncBio *GetData(BIO *bio) {
   return static_cast<AsyncBio *>(BIO_get_data(bio));
 }
 
-static int AsyncWrite(BIO *bio, const char *in, int inl) {
+static int AsyncWriteEx(BIO *bio, const char *in, size_t inl,
+                        size_t *out_written) {
   AsyncBio *a = GetData(bio);
   BIO *next = BIO_next(bio);
   if (a == nullptr || next == nullptr) {
@@ -59,17 +58,17 @@ static int AsyncWrite(BIO *bio, const char *in, int inl) {
   if (a->write_quota == 0) {
     BIO_set_retry_write(bio);
     errno = EAGAIN;
-    return -1;
+    return 0;
   }
 
-  if (!a->datagram && static_cast<size_t>(inl) > a->write_quota) {
-    inl = static_cast<int>(a->write_quota);
+  if (!a->datagram && inl > a->write_quota) {
+    inl = a->write_quota;
   }
-  int ret = BIO_write(next, in, inl);
-  if (ret <= 0) {
+  int ret = BIO_write_ex(next, in, inl, out_written);
+  if (!ret) {
     BIO_copy_next_retry(bio);
   } else {
-    a->write_quota -= (a->datagram ? 1 : ret);
+    a->write_quota -= (a->datagram ? 1 : *out_written);
   }
   return ret;
 }
@@ -151,7 +150,7 @@ static const BIO_METHOD *AsyncBioMethod() {
   static const BIO_METHOD *method = [] {
     BIO_METHOD *ret = BIO_meth_new(AsyncBioMethodType(), "async bio");
     BSSL_CHECK(ret);
-    BSSL_CHECK(BIO_meth_set_write(ret, AsyncWrite));
+    BSSL_CHECK(BIO_meth_set_write_ex(ret, AsyncWriteEx));
     BSSL_CHECK(BIO_meth_set_read(ret, AsyncRead));
     BSSL_CHECK(BIO_meth_set_ctrl(ret, AsyncCtrl));
     BSSL_CHECK(BIO_meth_set_create(ret, AsyncNew));

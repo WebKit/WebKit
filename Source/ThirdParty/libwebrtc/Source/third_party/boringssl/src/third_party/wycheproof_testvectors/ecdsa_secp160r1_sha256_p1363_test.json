@@ -1,0 +1,4290 @@
+{
+  "algorithm": "ECDSA",
+  "schema": "ecdsa_p1363_verify_schema_v1.json",
+  "numberOfTests": 228,
+  "header": [
+    "Test vectors of type EcdsaVerify are meant for the verification",
+    "of IEEE P1363 encoded ECDSA signatures."
+  ],
+  "notes": {
+    "ArithmeticError": {
+      "bugType": "EDGE_CASE",
+      "description": "Some implementations of ECDSA have arithmetic errors that occur when intermediate results have extreme values. This test vector has been constructed to test such occurrences.",
+      "cves": [
+        "CVE-2017-18146"
+      ]
+    },
+    "EdgeCaseShamirMultiplication": {
+      "bugType": "EDGE_CASE",
+      "description": "Shamir proposed a fast method for computing the sum of two scalar multiplications efficiently. This test vector has been constructed so that an intermediate result is the point at infinity if Shamir's method is used."
+    },
+    "IntegerOverflow": {
+      "bugType": "CAN_OF_WORMS",
+      "description": "The test vector contains an r and s that has been modified, so that the original value is restored if the implementation ignores the most significant bits.",
+      "effect": "Without further analysis it is unclear if the modification can be used to forge signatures."
+    },
+    "InvalidSignature": {
+      "bugType": "AUTH_BYPASS",
+      "description": "The signature contains special case values such as r=0 and s=0. Buggy implementations may accept such values, if the implementation does not check boundaries and computes s^(-1) == 0.",
+      "effect": "Accepting such signatures can have the effect that an adversary can forge signatures without even knowing the message to sign.",
+      "cves": [
+        "CVE-2022-21449",
+        "CVE-2021-43572",
+        "CVE-2022-24884"
+      ]
+    },
+    "ModifiedInteger": {
+      "bugType": "CAN_OF_WORMS",
+      "description": "The test vector contains an r and s that has been modified. The goal is to check for arithmetic errors.",
+      "effect": "Without further analysis it is unclear if the modification can be used to forge signatures."
+    },
+    "ModularInverse": {
+      "bugType": "EDGE_CASE",
+      "description": "The test vectors contains a signature where computing the modular inverse of s hits an edge case.",
+      "effect": "While the signature in this test vector is constructed and similar cases are unlikely to occur, it is important to determine if the underlying arithmetic error can be used to forge signatures.",
+      "cves": [
+        "CVE-2019-0865"
+      ]
+    },
+    "PointDuplication": {
+      "bugType": "EDGE_CASE",
+      "description": "Some implementations of ECDSA do not handle duplication and points at infinity correctly. This is a test vector that has been specially crafted to check for such an omission.",
+      "cves": [
+        "2020-12607",
+        "CVE-2015-2730"
+      ]
+    },
+    "RangeCheck": {
+      "bugType": "CAN_OF_WORMS",
+      "description": "The test vector contains an r and s that has been modified. By adding or subtracting the order of the group (or other values) the test vector checks whether signature verification verifies the range of r and s.",
+      "effect": "Without further analysis it is unclear if the modification can be used to forge signatures."
+    },
+    "SignatureSize": {
+      "bugType": "LEGACY",
+      "description": "This test vector contains valid values for r and s. But the values are encoded using a smaller number of bytes. The size of an IEEE P1363 encoded signature should always be twice the number of bytes of the size of the order. Some libraries accept signatures with less bytes. To our knowledge no standard (i.e., IEEE P1363 or RFC 7515) requires any explicit checks of the signature size during signature verification."
+    },
+    "SmallRandS": {
+      "bugType": "EDGE_CASE",
+      "description": "The test vectors contains a signature where both r and s are small integers. Some libraries cannot verify such signatures.",
+      "effect": "While the signature in this test vector is constructed and similar cases are unlikely to occur, it is important to determine if the underlying arithmetic error can be used to forge signatures.",
+      "cves": [
+        "2020-13895"
+      ]
+    },
+    "SpecialCaseHash": {
+      "bugType": "EDGE_CASE",
+      "description": "The test vector contains a signature where the hash of the message is a special case, e.g., contains a long run of 0 or 1 bits."
+    },
+    "Untruncatedhash": {
+      "bugType": "MISSING_STEP",
+      "description": "If the size of the digest is longer than the size of the underlying order of the multiplicative subgroup then the hash digest must be truncated during signature generation and verification. This test vector contains a signature where this step has been omitted."
+    },
+    "ValidSignature": {
+      "bugType": "BASIC",
+      "description": "The test vector contains a valid signature that was generated pseudorandomly. Such signatures should not fail to verify unless some of the parameters (e.g. curve or hash function) are not supported."
+    }
+  },
+  "testGroups": [
+    {
+      "type": "EcdsaP1363Verify",
+      "source": {
+        "name": "google-wycheproof",
+        "version": "0.9rc5"
+      },
+      "publicKey": {
+        "type": "EcPublicKey",
+        "curve": "secp160r1",
+        "keySize": 160,
+        "uncompressed": "0450cd6584a80522992ecc20c20280c358c15e5085e0a12cbbb20fbec12ce194c0f90b72331db90fce",
+        "wx": "50cd6584a80522992ecc20c20280c358c15e5085",
+        "wy": "00e0a12cbbb20fbec12ce194c0f90b72331db90fce"
+      },
+      "publicKeyDer": "303e301006072a8648ce3d020106052b81040008032a000450cd6584a80522992ecc20c20280c358c15e5085e0a12cbbb20fbec12ce194c0f90b72331db90fce",
+      "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMD4wEAYHKoZIzj0CAQYFK4EEAAgDKgAEUM1lhKgFIpkuzCDCAoDDWMFeUIXgoSy7\nsg++wSzhlMD5C3IzHbkPzg==\n-----END PUBLIC KEY-----\n",
+      "sha": "SHA-256",
+      "tests": [
+        {
+          "tcId": 1,
+          "comment": "signature malleability",
+          "flags": [
+            "ValidSignature"
+          ],
+          "msg": "313233343030",
+          "sig": "00c0d64c9119a1ef31b0b2a60b24a93580b2ff29e500a064880a1352852176abfa15c2787c05d84f5e8d",
+          "result": "valid"
+        },
+        {
+          "tcId": 2,
+          "comment": "replaced r by r + n",
+          "flags": [
+            "RangeCheck"
+          ],
+          "msg": "313233343030",
+          "sig": "01c0d64c9119a1ef31b0b49ad41dd0e4547d744c3c005f9b77f5ecad7ade8955fab336af32cdf225c3ca",
+          "result": "invalid"
+        },
+        {
+          "tcId": 3,
+          "comment": "replaced r by r + 256 * n",
+          "flags": [
+            "RangeCheck"
+          ],
+          "msg": "313233343030",
+          "sig": "0100c0d64c9119a1ef31b2a76f044c58094b282180e500005f9b77f5ecad7ade8955fab336af32cdf225c3ca",
+          "result": "invalid"
+        },
+        {
+          "tcId": 4,
+          "comment": "replaced r by n - r",
+          "flags": [
+            "ModifiedInteger"
+          ],
+          "msg": "313233343030",
+          "sig": "003f29b36ee65e10ce4f4f4ebdd47e79531775f872005f9b77f5ecad7ade8955fab336af32cdf225c3ca",
+          "result": "invalid"
+        },
+        {
+          "tcId": 5,
+          "comment": "replaced r by r + 2**161",
+          "flags": [
+            "IntegerOverflow"
+          ],
+          "msg": "313233343030",
+          "sig": "02c0d64c9119a1ef31b0b2a60b24a93580b2ff29e5005f9b77f5ecad7ade8955fab336af32cdf225c3ca",
+          "result": "invalid"
+        },
+        {
+          "tcId": 6,
+          "comment": "replaced r by r + 2**225",
+          "flags": [
+            "IntegerOverflow"
+          ],
+          "msg": "313233343030",
+          "sig": "020000000000000000c0d64c9119a1ef31b0b2a60b24a93580b2ff29e50000000000000000005f9b77f5ecad7ade8955fab336af32cdf225c3ca",
+          "result": "invalid"
+        },
+        {
+          "tcId": 7,
+          "comment": "replaced s by s + n",
+          "flags": [
+            "RangeCheck"
+          ],
+          "msg": "313233343030",
+          "sig": "015f9b77f5ecad7ade8957ef7c2fd6e1a1bc9ae621005f9b77f5ecad7ade8955fab336af32cdf225c3ca",
+          "result": "invalid"
+        },
+        {
+          "tcId": 8,
+          "comment": "replaced s by s + 256 * n",
+          "flags": [
+            "RangeCheck"
+          ],
+          "msg": "313233343030",
+          "sig": "01005f9b77f5ecad7ade8b4ac3ac5e5e069867481aca00005f9b77f5ecad7ade8955fab336af32cdf225c3ca",
+          "result": "invalid"
+        },
+        {
+          "tcId": 9,
+          "comment": "replaced s by s + 2**161",
+          "flags": [
+            "IntegerOverflow"
+          ],
+          "msg": "313233343030",
+          "sig": "025f9b77f5ecad7ade8955fab336af32cdf225c3ca005f9b77f5ecad7ade8955fab336af32cdf225c3ca",
+          "result": "invalid"
+        },
+        {
+          "tcId": 10,
+          "comment": "replaced s by s + 2**225",
+          "flags": [
+            "IntegerOverflow"
+          ],
+          "msg": "313233343030",
+          "sig": "0200000000000000005f9b77f5ecad7ade8955fab336af32cdf225c3ca0000000000000000005f9b77f5ecad7ade8955fab336af32cdf225c3ca",
+          "result": "invalid"
+        },
+        {
+          "tcId": 11,
+          "comment": "Signature with special case values r=0 and s=0",
+          "flags": [
+            "InvalidSignature"
+          ],
+          "msg": "313233343030",
+          "sig": "000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+          "result": "invalid"
+        },
+        {
+          "tcId": 12,
+          "comment": "Signature with special case values r=0 and s=1",
+          "flags": [
+            "InvalidSignature"
+          ],
+          "msg": "313233343030",
+          "sig": "000000000000000000000000000000000000000000000000000000000000000000000000000000000001",
+          "result": "invalid"
+        },
+        {
+          "tcId": 13,
+          "comment": "Signature with special case values r=0 and s=n",
+          "flags": [
+            "InvalidSignature"
+          ],
+          "msg": "313233343030",
+          "sig": "0000000000000000000000000000000000000000000100000000000000000001f4c8f927aed3ca752257",
+          "result": "invalid"
+        },
+        {
+          "tcId": 14,
+          "comment": "Signature with special case values r=0 and s=n - 1",
+          "flags": [
+            "InvalidSignature"
+          ],
+          "msg": "313233343030",
+          "sig": "0000000000000000000000000000000000000000000100000000000000000001f4c8f927aed3ca752256",
+          "result": "invalid"
+        },
+        {
+          "tcId": 15,
+          "comment": "Signature with special case values r=0 and s=n + 1",
+          "flags": [
+            "InvalidSignature"
+          ],
+          "msg": "313233343030",
+          "sig": "0000000000000000000000000000000000000000000100000000000000000001f4c8f927aed3ca752258",
+          "result": "invalid"
+        },
+        {
+          "tcId": 16,
+          "comment": "Signature with special case values r=0 and s=p",
+          "flags": [
+            "InvalidSignature"
+          ],
+          "msg": "313233343030",
+          "sig": "00000000000000000000000000000000000000000000ffffffffffffffffffffffffffffffff7fffffff",
+          "result": "invalid"
+        },
+        {
+          "tcId": 17,
+          "comment": "Signature with special case values r=0 and s=p + 1",
+          "flags": [
+            "InvalidSignature"
+          ],
+          "msg": "313233343030",
+          "sig": "00000000000000000000000000000000000000000000ffffffffffffffffffffffffffffffff80000000",
+          "result": "invalid"
+        },
+        {
+          "tcId": 18,
+          "comment": "Signature with special case values r=1 and s=0",
+          "flags": [
+            "InvalidSignature"
+          ],
+          "msg": "313233343030",
+          "sig": "000000000000000000000000000000000000000001000000000000000000000000000000000000000000",
+          "result": "invalid"
+        },
+        {
+          "tcId": 19,
+          "comment": "Signature with special case values r=1 and s=1",
+          "flags": [
+            "InvalidSignature"
+          ],
+          "msg": "313233343030",
+          "sig": "000000000000000000000000000000000000000001000000000000000000000000000000000000000001",
+          "result": "invalid"
+        },
+        {
+          "tcId": 20,
+          "comment": "Signature with special case values r=1 and s=n",
+          "flags": [
+            "InvalidSignature"
+          ],
+          "msg": "313233343030",
+          "sig": "0000000000000000000000000000000000000000010100000000000000000001f4c8f927aed3ca752257",
+          "result": "invalid"
+        },
+        {
+          "tcId": 21,
+          "comment": "Signature with special case values r=1 and s=n - 1",
+          "flags": [
+            "InvalidSignature"
+          ],
+          "msg": "313233343030",
+          "sig": "0000000000000000000000000000000000000000010100000000000000000001f4c8f927aed3ca752256",
+          "result": "invalid"
+        },
+        {
+          "tcId": 22,
+          "comment": "Signature with special case values r=1 and s=n + 1",
+          "flags": [
+            "InvalidSignature"
+          ],
+          "msg": "313233343030",
+          "sig": "0000000000000000000000000000000000000000010100000000000000000001f4c8f927aed3ca752258",
+          "result": "invalid"
+        },
+        {
+          "tcId": 23,
+          "comment": "Signature with special case values r=1 and s=p",
+          "flags": [
+            "InvalidSignature"
+          ],
+          "msg": "313233343030",
+          "sig": "00000000000000000000000000000000000000000100ffffffffffffffffffffffffffffffff7fffffff",
+          "result": "invalid"
+        },
+        {
+          "tcId": 24,
+          "comment": "Signature with special case values r=1 and s=p + 1",
+          "flags": [
+            "InvalidSignature"
+          ],
+          "msg": "313233343030",
+          "sig": "00000000000000000000000000000000000000000100ffffffffffffffffffffffffffffffff80000000",
+          "result": "invalid"
+        },
+        {
+          "tcId": 25,
+          "comment": "Signature with special case values r=n and s=0",
+          "flags": [
+            "InvalidSignature"
+          ],
+          "msg": "313233343030",
+          "sig": "0100000000000000000001f4c8f927aed3ca752257000000000000000000000000000000000000000000",
+          "result": "invalid"
+        },
+        {
+          "tcId": 26,
+          "comment": "Signature with special case values r=n and s=1",
+          "flags": [
+            "InvalidSignature"
+          ],
+          "msg": "313233343030",
+          "sig": "0100000000000000000001f4c8f927aed3ca752257000000000000000000000000000000000000000001",
+          "result": "invalid"
+        },
+        {
+          "tcId": 27,
+          "comment": "Signature with special case values r=n and s=n",
+          "flags": [
+            "InvalidSignature"
+          ],
+          "msg": "313233343030",
+          "sig": "0100000000000000000001f4c8f927aed3ca7522570100000000000000000001f4c8f927aed3ca752257",
+          "result": "invalid"
+        },
+        {
+          "tcId": 28,
+          "comment": "Signature with special case values r=n and s=n - 1",
+          "flags": [
+            "InvalidSignature"
+          ],
+          "msg": "313233343030",
+          "sig": "0100000000000000000001f4c8f927aed3ca7522570100000000000000000001f4c8f927aed3ca752256",
+          "result": "invalid"
+        },
+        {
+          "tcId": 29,
+          "comment": "Signature with special case values r=n and s=n + 1",
+          "flags": [
+            "InvalidSignature"
+          ],
+          "msg": "313233343030",
+          "sig": "0100000000000000000001f4c8f927aed3ca7522570100000000000000000001f4c8f927aed3ca752258",
+          "result": "invalid"
+        },
+        {
+          "tcId": 30,
+          "comment": "Signature with special case values r=n and s=p",
+          "flags": [
+            "InvalidSignature"
+          ],
+          "msg": "313233343030",
+          "sig": "0100000000000000000001f4c8f927aed3ca75225700ffffffffffffffffffffffffffffffff7fffffff",
+          "result": "invalid"
+        },
+        {
+          "tcId": 31,
+          "comment": "Signature with special case values r=n and s=p + 1",
+          "flags": [
+            "InvalidSignature"
+          ],
+          "msg": "313233343030",
+          "sig": "0100000000000000000001f4c8f927aed3ca75225700ffffffffffffffffffffffffffffffff80000000",
+          "result": "invalid"
+        },
+        {
+          "tcId": 32,
+          "comment": "Signature with special case values r=n - 1 and s=0",
+          "flags": [
+            "InvalidSignature"
+          ],
+          "msg": "313233343030",
+          "sig": "0100000000000000000001f4c8f927aed3ca752256000000000000000000000000000000000000000000",
+          "result": "invalid"
+        },
+        {
+          "tcId": 33,
+          "comment": "Signature with special case values r=n - 1 and s=1",
+          "flags": [
+            "InvalidSignature"
+          ],
+          "msg": "313233343030",
+          "sig": "0100000000000000000001f4c8f927aed3ca752256000000000000000000000000000000000000000001",
+          "result": "invalid"
+        },
+        {
+          "tcId": 34,
+          "comment": "Signature with special case values r=n - 1 and s=n",
+          "flags": [
+            "InvalidSignature"
+          ],
+          "msg": "313233343030",
+          "sig": "0100000000000000000001f4c8f927aed3ca7522560100000000000000000001f4c8f927aed3ca752257",
+          "result": "invalid"
+        },
+        {
+          "tcId": 35,
+          "comment": "Signature with special case values r=n - 1 and s=n - 1",
+          "flags": [
+            "InvalidSignature"
+          ],
+          "msg": "313233343030",
+          "sig": "0100000000000000000001f4c8f927aed3ca7522560100000000000000000001f4c8f927aed3ca752256",
+          "result": "invalid"
+        },
+        {
+          "tcId": 36,
+          "comment": "Signature with special case values r=n - 1 and s=n + 1",
+          "flags": [
+            "InvalidSignature"
+          ],
+          "msg": "313233343030",
+          "sig": "0100000000000000000001f4c8f927aed3ca7522560100000000000000000001f4c8f927aed3ca752258",
+          "result": "invalid"
+        },
+        {
+          "tcId": 37,
+          "comment": "Signature with special case values r=n - 1 and s=p",
+          "flags": [
+            "InvalidSignature"
+          ],
+          "msg": "313233343030",
+          "sig": "0100000000000000000001f4c8f927aed3ca75225600ffffffffffffffffffffffffffffffff7fffffff",
+          "result": "invalid"
+        },
+        {
+          "tcId": 38,
+          "comment": "Signature with special case values r=n - 1 and s=p + 1",
+          "flags": [
+            "InvalidSignature"
+          ],
+          "msg": "313233343030",
+          "sig": "0100000000000000000001f4c8f927aed3ca75225600ffffffffffffffffffffffffffffffff80000000",
+          "result": "invalid"
+        },
+        {
+          "tcId": 39,
+          "comment": "Signature with special case values r=n + 1 and s=0",
+          "flags": [
+            "InvalidSignature"
+          ],
+          "msg": "313233343030",
+          "sig": "0100000000000000000001f4c8f927aed3ca752258000000000000000000000000000000000000000000",
+          "result": "invalid"
+        },
+        {
+          "tcId": 40,
+          "comment": "Signature with special case values r=n + 1 and s=1",
+          "flags": [
+            "InvalidSignature"
+          ],
+          "msg": "313233343030",
+          "sig": "0100000000000000000001f4c8f927aed3ca752258000000000000000000000000000000000000000001",
+          "result": "invalid"
+        },
+        {
+          "tcId": 41,
+          "comment": "Signature with special case values r=n + 1 and s=n",
+          "flags": [
+            "InvalidSignature"
+          ],
+          "msg": "313233343030",
+          "sig": "0100000000000000000001f4c8f927aed3ca7522580100000000000000000001f4c8f927aed3ca752257",
+          "result": "invalid"
+        },
+        {
+          "tcId": 42,
+          "comment": "Signature with special case values r=n + 1 and s=n - 1",
+          "flags": [
+            "InvalidSignature"
+          ],
+          "msg": "313233343030",
+          "sig": "0100000000000000000001f4c8f927aed3ca7522580100000000000000000001f4c8f927aed3ca752256",
+          "result": "invalid"
+        },
+        {
+          "tcId": 43,
+          "comment": "Signature with special case values r=n + 1 and s=n + 1",
+          "flags": [
+            "InvalidSignature"
+          ],
+          "msg": "313233343030",
+          "sig": "0100000000000000000001f4c8f927aed3ca7522580100000000000000000001f4c8f927aed3ca752258",
+          "result": "invalid"
+        },
+        {
+          "tcId": 44,
+          "comment": "Signature with special case values r=n + 1 and s=p",
+          "flags": [
+            "InvalidSignature"
+          ],
+          "msg": "313233343030",
+          "sig": "0100000000000000000001f4c8f927aed3ca75225800ffffffffffffffffffffffffffffffff7fffffff",
+          "result": "invalid"
+        },
+        {
+          "tcId": 45,
+          "comment": "Signature with special case values r=n + 1 and s=p + 1",
+          "flags": [
+            "InvalidSignature"
+          ],
+          "msg": "313233343030",
+          "sig": "0100000000000000000001f4c8f927aed3ca75225800ffffffffffffffffffffffffffffffff80000000",
+          "result": "invalid"
+        },
+        {
+          "tcId": 46,
+          "comment": "Signature with special case values r=p and s=0",
+          "flags": [
+            "InvalidSignature"
+          ],
+          "msg": "313233343030",
+          "sig": "00ffffffffffffffffffffffffffffffff7fffffff000000000000000000000000000000000000000000",
+          "result": "invalid"
+        },
+        {
+          "tcId": 47,
+          "comment": "Signature with special case values r=p and s=1",
+          "flags": [
+            "InvalidSignature"
+          ],
+          "msg": "313233343030",
+          "sig": "00ffffffffffffffffffffffffffffffff7fffffff000000000000000000000000000000000000000001",
+          "result": "invalid"
+        },
+        {
+          "tcId": 48,
+          "comment": "Signature with special case values r=p and s=n",
+          "flags": [
+            "InvalidSignature"
+          ],
+          "msg": "313233343030",
+          "sig": "00ffffffffffffffffffffffffffffffff7fffffff0100000000000000000001f4c8f927aed3ca752257",
+          "result": "invalid"
+        },
+        {
+          "tcId": 49,
+          "comment": "Signature with special case values r=p and s=n - 1",
+          "flags": [
+            "InvalidSignature"
+          ],
+          "msg": "313233343030",
+          "sig": "00ffffffffffffffffffffffffffffffff7fffffff0100000000000000000001f4c8f927aed3ca752256",
+          "result": "invalid"
+        },
+        {
+          "tcId": 50,
+          "comment": "Signature with special case values r=p and s=n + 1",
+          "flags": [
+            "InvalidSignature"
+          ],
+          "msg": "313233343030",
+          "sig": "00ffffffffffffffffffffffffffffffff7fffffff0100000000000000000001f4c8f927aed3ca752258",
+          "result": "invalid"
+        },
+        {
+          "tcId": 51,
+          "comment": "Signature with special case values r=p and s=p",
+          "flags": [
+            "InvalidSignature"
+          ],
+          "msg": "313233343030",
+          "sig": "00ffffffffffffffffffffffffffffffff7fffffff00ffffffffffffffffffffffffffffffff7fffffff",
+          "result": "invalid"
+        },
+        {
+          "tcId": 52,
+          "comment": "Signature with special case values r=p and s=p + 1",
+          "flags": [
+            "InvalidSignature"
+          ],
+          "msg": "313233343030",
+          "sig": "00ffffffffffffffffffffffffffffffff7fffffff00ffffffffffffffffffffffffffffffff80000000",
+          "result": "invalid"
+        },
+        {
+          "tcId": 53,
+          "comment": "Signature with special case values r=p + 1 and s=0",
+          "flags": [
+            "InvalidSignature"
+          ],
+          "msg": "313233343030",
+          "sig": "00ffffffffffffffffffffffffffffffff80000000000000000000000000000000000000000000000000",
+          "result": "invalid"
+        },
+        {
+          "tcId": 54,
+          "comment": "Signature with special case values r=p + 1 and s=1",
+          "flags": [
+            "InvalidSignature"
+          ],
+          "msg": "313233343030",
+          "sig": "00ffffffffffffffffffffffffffffffff80000000000000000000000000000000000000000000000001",
+          "result": "invalid"
+        },
+        {
+          "tcId": 55,
+          "comment": "Signature with special case values r=p + 1 and s=n",
+          "flags": [
+            "InvalidSignature"
+          ],
+          "msg": "313233343030",
+          "sig": "00ffffffffffffffffffffffffffffffff800000000100000000000000000001f4c8f927aed3ca752257",
+          "result": "invalid"
+        },
+        {
+          "tcId": 56,
+          "comment": "Signature with special case values r=p + 1 and s=n - 1",
+          "flags": [
+            "InvalidSignature"
+          ],
+          "msg": "313233343030",
+          "sig": "00ffffffffffffffffffffffffffffffff800000000100000000000000000001f4c8f927aed3ca752256",
+          "result": "invalid"
+        },
+        {
+          "tcId": 57,
+          "comment": "Signature with special case values r=p + 1 and s=n + 1",
+          "flags": [
+            "InvalidSignature"
+          ],
+          "msg": "313233343030",
+          "sig": "00ffffffffffffffffffffffffffffffff800000000100000000000000000001f4c8f927aed3ca752258",
+          "result": "invalid"
+        },
+        {
+          "tcId": 58,
+          "comment": "Signature with special case values r=p + 1 and s=p",
+          "flags": [
+            "InvalidSignature"
+          ],
+          "msg": "313233343030",
+          "sig": "00ffffffffffffffffffffffffffffffff8000000000ffffffffffffffffffffffffffffffff7fffffff",
+          "result": "invalid"
+        },
+        {
+          "tcId": 59,
+          "comment": "Signature with special case values r=p + 1 and s=p + 1",
+          "flags": [
+            "InvalidSignature"
+          ],
+          "msg": "313233343030",
+          "sig": "00ffffffffffffffffffffffffffffffff8000000000ffffffffffffffffffffffffffffffff80000000",
+          "result": "invalid"
+        },
+        {
+          "tcId": 60,
+          "comment": "Edge case for Shamir multiplication",
+          "flags": [
+            "EdgeCaseShamirMultiplication"
+          ],
+          "msg": "3730353035",
+          "sig": "00de3a6ee112b425f2144e452abaa9d11a237cec61009c406f41e1688cd89e0a1651c5740c961c59949e",
+          "result": "valid"
+        },
+        {
+          "tcId": 61,
+          "comment": "special case hash",
+          "flags": [
+            "SpecialCaseHash"
+          ],
+          "msg": "343236343739373234",
+          "sig": "00ad3f5fc09120df90e8740111934bdc50723172a100410ae1236da5eda0b327bdbc9e6d545a34764051",
+          "result": "valid"
+        },
+        {
+          "tcId": 62,
+          "comment": "special case hash",
+          "flags": [
+            "SpecialCaseHash"
+          ],
+          "msg": "37313338363834383931",
+          "sig": "002a08a7f52a3506c5ff0b0bdfc41ed256a998deca003d5324b851f80f334befa39b77241cf06535a1f6",
+          "result": "valid"
+        },
+        {
+          "tcId": 63,
+          "comment": "special case hash",
+          "flags": [
+            "SpecialCaseHash"
+          ],
+          "msg": "3130333539333331363638",
+          "sig": "0048dbbef868af35b058bd34e507e85fc61fd60f31002efb7e448ba59de5835198c3d5f5015113a3dae5",
+          "result": "valid"
+        },
+        {
+          "tcId": 64,
+          "comment": "special case hash",
+          "flags": [
+            "SpecialCaseHash"
+          ],
+          "msg": "33393439343031323135",
+          "sig": "00a679ae2d7bc1f7d4c03fb2325928b253b090a56f00646f90a9210a87b28324d7c50a454abcdca7f53c",
+          "result": "valid"
+        },
+        {
+          "tcId": 65,
+          "comment": "special case hash",
+          "flags": [
+            "SpecialCaseHash"
+          ],
+          "msg": "31333434323933303739",
+          "sig": "0047398e906863d57ea273977083d36ce35f1f619e0024959c9b1f06bb8822bd8fac8f45945fd1c7ebeb",
+          "result": "valid"
+        },
+        {
+          "tcId": 66,
+          "comment": "special case hash",
+          "flags": [
+            "SpecialCaseHash"
+          ],
+          "msg": "33373036323131373132",
+          "sig": "00599bcba0ff3fe6f2d8b2544e3b824731666d19b100f5d15469fce1e244750792f327bb6ee5e8299f94",
+          "result": "valid"
+        },
+        {
+          "tcId": 67,
+          "comment": "special case hash",
+          "flags": [
+            "SpecialCaseHash"
+          ],
+          "msg": "333433363838373132",
+          "sig": "004b24155af66bc983050381c2579ad91a85c48d4f0028b0d445e93fa372a59b7030c67d2124b9bbd65f",
+          "result": "valid"
+        },
+        {
+          "tcId": 68,
+          "comment": "special case hash",
+          "flags": [
+            "SpecialCaseHash"
+          ],
+          "msg": "31333531353330333730",
+          "sig": "0057999b6dcf7d77337d8445543f1ee0d212d7f85b005f4c8fa2f113b3637504b42160ddae852daa1d78",
+          "result": "valid"
+        },
+        {
+          "tcId": 69,
+          "comment": "special case hash",
+          "flags": [
+            "SpecialCaseHash"
+          ],
+          "msg": "36353533323033313236",
+          "sig": "000788eca735904e004f414f5bdb087365fae662d30099e52af8c7f20ce34f31831ea32f6503c03c3a29",
+          "result": "valid"
+        },
+        {
+          "tcId": 70,
+          "comment": "special case hash",
+          "flags": [
+            "SpecialCaseHash"
+          ],
+          "msg": "31353634333436363033",
+          "sig": "00f7bd7de59fe7791add20a4992425e20c1435de4a00c5a9fea1317a237486a19894c4e2e8475eeac5c5",
+          "result": "valid"
+        },
+        {
+          "tcId": 71,
+          "comment": "special case hash",
+          "flags": [
+            "SpecialCaseHash"
+          ],
+          "msg": "34343239353339313137",
+          "sig": "006e3647dfed9c5ae3cc481528a35f5741e9dc10c100569c3937c0a118cb49358a640670916ba346db03",
+          "result": "valid"
+        },
+        {
+          "tcId": 72,
+          "comment": "special case hash",
+          "flags": [
+            "SpecialCaseHash"
+          ],
+          "msg": "3130393533323631333531",
+          "sig": "005f603ecbac6982960efb6d8853de3ddfb4b2236e00b4b779028c7e8ea850242607e6463884620188ac",
+          "result": "valid"
+        },
+        {
+          "tcId": 73,
+          "comment": "special case hash",
+          "flags": [
+            "SpecialCaseHash"
+          ],
+          "msg": "35393837333530303431",
+          "sig": "001da6db19788b81fc3ddb980bdefa9a54d33717d000018b151eeb8c79bf5be669f12cb784615e098317",
+          "result": "valid"
+        },
+        {
+          "tcId": 74,
+          "comment": "special case hash",
+          "flags": [
+            "SpecialCaseHash"
+          ],
+          "msg": "33343633303036383738",
+          "sig": "007add46bab0d2c221d03f6a93d0fcc9e1a54b0c7200b1781bd689a5334597b802713a0fd6f561132c82",
+          "result": "valid"
+        },
+        {
+          "tcId": 75,
+          "comment": "special case hash",
+          "flags": [
+            "SpecialCaseHash"
+          ],
+          "msg": "39383137333230323837",
+          "sig": "008311662f6c665414a4eba51c328b0379455230ce00bed6cbdce059464888cb4912aa34b5dcb9e62123",
+          "result": "valid"
+        },
+        {
+          "tcId": 76,
+          "comment": "special case hash",
+          "flags": [
+            "SpecialCaseHash"
+          ],
+          "msg": "33323232303431303436",
+          "sig": "00f86aa3566274a62777e474e85598fa2d56ae19e400459c11cbc8a2ed4b794b6deed3c7ef7a4a45961f",
+          "result": "valid"
+        },
+        {
+          "tcId": 77,
+          "comment": "special case hash",
+          "flags": [
+            "SpecialCaseHash"
+          ],
+          "msg": "36363636333037313034",
+          "sig": "003c2c6830a0733d25facdf0048a9d6c3b2921aecf000c7e0c333dc82930f5f8a4337b379db7f0a526ee",
+          "result": "valid"
+        },
+        {
+          "tcId": 78,
+          "comment": "special case hash",
+          "flags": [
+            "SpecialCaseHash"
+          ],
+          "msg": "31303335393531383938",
+          "sig": "00face1b45e18a0f9dabed5ff09bb800ec0536987c009e60b1c0a87937fc198034b4365622290cab54c1",
+          "result": "valid"
+        },
+        {
+          "tcId": 79,
+          "comment": "special case hash",
+          "flags": [
+            "SpecialCaseHash"
+          ],
+          "msg": "31383436353937313935",
+          "sig": "00e3cafaa1fefe07ba010efe4ef7823cbb2e05d32b00151f1b481a24ddd5df98c04d058548fd06f47f21",
+          "result": "valid"
+        },
+        {
+          "tcId": 80,
+          "comment": "special case hash",
+          "flags": [
+            "SpecialCaseHash"
+          ],
+          "msg": "33313336303436313839",
+          "sig": "009bda6733d547555fd2aa1391ff421302005d2a4d004aac3e7c1dbc99a85560a921f34ecb3e8ba37466",
+          "result": "valid"
+        },
+        {
+          "tcId": 81,
+          "comment": "special case hash",
+          "flags": [
+            "SpecialCaseHash"
+          ],
+          "msg": "32363633373834323534",
+          "sig": "0053a8f7b311fbd2b71cfbc781c50923bf4c4233350033cf2cf617f565b831d82e93e8fb58de938dbbb5",
+          "result": "valid"
+        },
+        {
+          "tcId": 82,
+          "comment": "special case hash",
+          "flags": [
+            "SpecialCaseHash"
+          ],
+          "msg": "31363532313030353234",
+          "sig": "003332e2dd4080616b964e7bfd569e7b3ca0767b380065e0c755d4dcf460fbbd2640d347298f2a29c156",
+          "result": "valid"
+        },
+        {
+          "tcId": 83,
+          "comment": "special case hash",
+          "flags": [
+            "SpecialCaseHash"
+          ],
+          "msg": "35373438303831363936",
+          "sig": "00d94703055d7a99e1727c20182565339945693cee000130502398839f604729760999ed64350e576517",
+          "result": "valid"
+        },
+        {
+          "tcId": 84,
+          "comment": "special case hash",
+          "flags": [
+            "SpecialCaseHash"
+          ],
+          "msg": "36333433393133343638",
+          "sig": "005c1a34fcc2cbcaf2778e85e94ada69e18ab4064800c3798cb473af1d33b2df5ddfd7d48329dba04d31",
+          "result": "valid"
+        },
+        {
+          "tcId": 85,
+          "comment": "special case hash",
+          "flags": [
+            "SpecialCaseHash"
+          ],
+          "msg": "31353431313033353938",
+          "sig": "00e063a77c688cb1a3deae3cfc44b9004105aa3c0e008f1e9b2fe1239931b0aa35b8ff7d555f076e8eac",
+          "result": "valid"
+        },
+        {
+          "tcId": 86,
+          "comment": "special case hash",
+          "flags": [
+            "SpecialCaseHash"
+          ],
+          "msg": "3130343738353830313238",
+          "sig": "006f11c31e65689b848136fe044722081ded5f3bbc00e975164548bbaff051e8fcbe3e7fd1da7460527a",
+          "result": "valid"
+        },
+        {
+          "tcId": 87,
+          "comment": "special case hash",
+          "flags": [
+            "SpecialCaseHash"
+          ],
+          "msg": "3130353336323835353638",
+          "sig": "008ec112600f5423fec61a9eac11c2d7f202660afb003c3ef6efda5343622a9cb37114989019bcec3016",
+          "result": "valid"
+        },
+        {
+          "tcId": 88,
+          "comment": "special case hash",
+          "flags": [
+            "SpecialCaseHash"
+          ],
+          "msg": "393533393034313035",
+          "sig": "00eaff9d359729732e49327affafe0750e42be994c00b4f2ec9b4ab9705c1e407ce062b4220f74cb8209",
+          "result": "valid"
+        },
+        {
+          "tcId": 89,
+          "comment": "special case hash",
+          "flags": [
+            "SpecialCaseHash"
+          ],
+          "msg": "393738383438303339",
+          "sig": "00b7237f113c3c39892e21bc1530089eb2623e1ab5001647796cd696dbf9fa852b14ee59b103823940f3",
+          "result": "valid"
+        },
+        {
+          "tcId": 90,
+          "comment": "special case hash",
+          "flags": [
+            "SpecialCaseHash"
+          ],
+          "msg": "33363130363732343432",
+          "sig": "0041d8153033a3144823afc2301780de5cc70792fa000a9add978d502c71a16a0432451513c7255a4ec4",
+          "result": "valid"
+        },
+        {
+          "tcId": 91,
+          "comment": "special case hash",
+          "flags": [
+            "SpecialCaseHash"
+          ],
+          "msg": "31303534323430373035",
+          "sig": "0094b7bbbb637080eadb0052b09edc4e1cf971af18003fbe47451bb32f532c4f7c87125d40bd535f4478",
+          "result": "valid"
+        },
+        {
+          "tcId": 92,
+          "comment": "special case hash",
+          "flags": [
+            "SpecialCaseHash"
+          ],
+          "msg": "35313734343438313937",
+          "sig": "00eadd4b4acce3825872573405025d1603eea896e400df0a9702fc9e237d05ba8ffdc37f646df9cbebbf",
+          "result": "valid"
+        },
+        {
+          "tcId": 93,
+          "comment": "special case hash",
+          "flags": [
+            "SpecialCaseHash"
+          ],
+          "msg": "31393637353631323531",
+          "sig": "00a5bc403170737f5f296da2edf46c979b00f6b4bb008f0ce6d5f7e485753bf3f850254c5c32b385205a",
+          "result": "valid"
+        },
+        {
+          "tcId": 94,
+          "comment": "special case hash",
+          "flags": [
+            "SpecialCaseHash"
+          ],
+          "msg": "33343437323533333433",
+          "sig": "006f10822c847280ca0c687e209d7738db57315dfc007ffbab843768815a87be79b2f1edce6be8423480",
+          "result": "valid"
+        },
+        {
+          "tcId": 95,
+          "comment": "special case hash",
+          "flags": [
+            "SpecialCaseHash"
+          ],
+          "msg": "333638323634333138",
+          "sig": "0040a127c4d89b3e793bc7e42d3931266e2e2b7acf00bf18fa3b5982dbdd02d4814f5a0327fed477646b",
+          "result": "valid"
+        },
+        {
+          "tcId": 96,
+          "comment": "special case hash",
+          "flags": [
+            "SpecialCaseHash"
+          ],
+          "msg": "33323631313938363038",
+          "sig": "00acfc8f05a71e19aedd5619453c827caec3e08204004163d41bd88c689114bebdb0b14ca63de2e636ae",
+          "result": "valid"
+        },
+        {
+          "tcId": 97,
+          "comment": "special case hash",
+          "flags": [
+            "SpecialCaseHash"
+          ],
+          "msg": "39363738373831303934",
+          "sig": "00b381bbb8746403e6fe9d77791bf6b9ad01b8c32b00e793bf926db9c1ee35daf0457e890d34e3f702ec",
+          "result": "valid"
+        },
+        {
+          "tcId": 98,
+          "comment": "special case hash",
+          "flags": [
+            "SpecialCaseHash"
+          ],
+          "msg": "34393538383233383233",
+          "sig": "00ff086f8fb05d39d6718bc58ad004bdb1a3460e8f003661b0d1b65b20f5a6e77aac3930b08f99efccd3",
+          "result": "valid"
+        },
+        {
+          "tcId": 99,
+          "comment": "special case hash",
+          "flags": [
+            "SpecialCaseHash"
+          ],
+          "msg": "383234363337383337",
+          "sig": "009a6ac4de9b691f5d8e7b8620e432672014dc14fb0019ed53655eb2795b2e44c1a69be207e5a12f94c8",
+          "result": "valid"
+        },
+        {
+          "tcId": 100,
+          "comment": "special case hash",
+          "flags": [
+            "SpecialCaseHash"
+          ],
+          "msg": "3131303230383333373736",
+          "sig": "00de41eab8fbe839db07b3aa27580d87fb21b0043d008e9b72997d8ab82a4c7391d94dbb4904231539b0",
+          "result": "valid"
+        },
+        {
+          "tcId": 101,
+          "comment": "special case hash",
+          "flags": [
+            "SpecialCaseHash"
+          ],
+          "msg": "313333383731363438",
+          "sig": "0040bcf243c5a448103497a72ce415850d86f9417a00bec384be063e3a32be528abb64f8754c5934ad1a",
+          "result": "valid"
+        },
+        {
+          "tcId": 102,
+          "comment": "special case hash",
+          "flags": [
+            "SpecialCaseHash"
+          ],
+          "msg": "333232313434313632",
+          "sig": "002b81c2a07a21637df18094dae7236476211fa25100e94a910c43c29f347cfe87cd8cec7d924abb8582",
+          "result": "valid"
+        },
+        {
+          "tcId": 103,
+          "comment": "special case hash",
+          "flags": [
+            "SpecialCaseHash"
+          ],
+          "msg": "3130363836363535353436",
+          "sig": "00f41ce5f7d5f448dd918485bea20a4a2b7bdb894c000bb4afabf1af4bef661dca6573f4cbed564d5b71",
+          "result": "valid"
+        },
+        {
+          "tcId": 104,
+          "comment": "special case hash",
+          "flags": [
+            "SpecialCaseHash"
+          ],
+          "msg": "3632313535323436",
+          "sig": "00ee1309c51d9bb6dff0fd6e182dc910e90745651e00b06de7056a70a8b41efa496c4ed4448a423dac20",
+          "result": "valid"
+        },
+        {
+          "tcId": 105,
+          "comment": "special case hash",
+          "flags": [
+            "SpecialCaseHash"
+          ],
+          "msg": "37303330383138373734",
+          "sig": "00d74a14b7d315bf1ae536d9f28861eb34f16c669100e7cafdee9e360da3b139fa6b1855391bd4072dbf",
+          "result": "valid"
+        },
+        {
+          "tcId": 106,
+          "comment": "special case hash",
+          "flags": [
+            "SpecialCaseHash"
+          ],
+          "msg": "35393234353233373434",
+          "sig": "006b7b7ebfcc4acfcb41a8a6a072b745f274382b760038a09a2023d79b6242185529aede41eba8f52332",
+          "result": "valid"
+        },
+        {
+          "tcId": 107,
+          "comment": "special case hash",
+          "flags": [
+            "SpecialCaseHash"
+          ],
+          "msg": "31343935353836363231",
+          "sig": "007caa1b32fb6a67b204878b3694699237eccd055800b1701539856d9713d3eafb326ca181057c781f60",
+          "result": "valid"
+        },
+        {
+          "tcId": 108,
+          "comment": "special case hash",
+          "flags": [
+            "SpecialCaseHash"
+          ],
+          "msg": "34303035333134343036",
+          "sig": "007bf85d33ccb2308d51017419197e53f24a482f6c00591cbb3ebb4f1bf6571f17b86d07e5f80c6118e9",
+          "result": "valid"
+        },
+        {
+          "tcId": 109,
+          "comment": "special case hash",
+          "flags": [
+            "SpecialCaseHash"
+          ],
+          "msg": "33303936343537353132",
+          "sig": "00f876e72b8bd7b156e7ed218186a355a9240c945100ab7df020cbfbf2b8f267290efdf39bc9014558ce",
+          "result": "valid"
+        },
+        {
+          "tcId": 110,
+          "comment": "special case hash",
+          "flags": [
+            "SpecialCaseHash"
+          ],
+          "msg": "32373834303235363230",
+          "sig": "009f6ba902a1ae32d7fb6c62f84013365ca6f9b712004c27061486ee0e3da5da9706d8927c37eec8f057",
+          "result": "valid"
+        },
+        {
+          "tcId": 111,
+          "comment": "special case hash",
+          "flags": [
+            "SpecialCaseHash"
+          ],
+          "msg": "32363138373837343138",
+          "sig": "002ad7961a2515241e9d8675c05aa6fa1488714a380017dea0a256ab4e20c9554c5f5b0c491271fb0689",
+          "result": "valid"
+        },
+        {
+          "tcId": 112,
+          "comment": "special case hash",
+          "flags": [
+            "SpecialCaseHash"
+          ],
+          "msg": "31363432363235323632",
+          "sig": "006dbf66690812e4bf295181b1c5ce381e9979e6b60080eb3c881c7c8452fe722b78ec4e0d3788c476e7",
+          "result": "valid"
+        },
+        {
+          "tcId": 113,
+          "comment": "special case hash",
+          "flags": [
+            "SpecialCaseHash"
+          ],
+          "msg": "36383234313839343336",
+          "sig": "00e2386217f55b3b7f7710d487cefe7940542737de0090367b1ec7be80868927fde3d1484a80c4f1a983",
+          "result": "valid"
+        },
+        {
+          "tcId": 114,
+          "comment": "special case hash",
+          "flags": [
+            "SpecialCaseHash"
+          ],
+          "msg": "343834323435343235",
+          "sig": "009562a2ba7e709d09c6d5daab76a27e14978dc9d20015e896d5ce8c1b1512eb033ff1c008d04b4b38be",
+          "result": "valid"
+        },
+        {
+          "tcId": 115,
+          "comment": "Signature generated without truncating the hash",
+          "flags": [
+            "Untruncatedhash"
+          ],
+          "msg": "313233343030",
+          "sig": "00a2e4471c0ebd7be819fcbe6480583738c7337e1e00bad0f1ced7e0d0ab01adc1371c66e9cad153928d",
+          "result": "invalid"
+        }
+      ]
+    },
+    {
+      "type": "EcdsaP1363Verify",
+      "source": {
+        "name": "google-wycheproof",
+        "version": "0.9rc5"
+      },
+      "publicKey": {
+        "type": "EcPublicKey",
+        "curve": "secp160r1",
+        "keySize": 160,
+        "uncompressed": "049452cac89fd846036b3f4ddf995da4bc958e19115f8b30d6cca6988ab496ff2f17e24f08faac75b7",
+        "wx": "009452cac89fd846036b3f4ddf995da4bc958e1911",
+        "wy": "5f8b30d6cca6988ab496ff2f17e24f08faac75b7"
+      },
+      "publicKeyDer": "303e301006072a8648ce3d020106052b81040008032a00049452cac89fd846036b3f4ddf995da4bc958e19115f8b30d6cca6988ab496ff2f17e24f08faac75b7",
+      "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMD4wEAYHKoZIzj0CAQYFK4EEAAgDKgAElFLKyJ/YRgNrP03fmV2kvJWOGRFfizDW\nzKaYirSW/y8X4k8I+qx1tw==\n-----END PUBLIC KEY-----\n",
+      "sha": "SHA-256",
+      "tests": [
+        {
+          "tcId": 116,
+          "comment": "k*G has a large x-coordinate",
+          "flags": [
+            "ArithmeticError"
+          ],
+          "msg": "313233343030",
+          "sig": "00ffffffffffffffffffffffffffffffff7ffffffc0100000000000000000001f4c8f927aed3ca752254",
+          "result": "valid"
+        }
+      ]
+    },
+    {
+      "type": "EcdsaP1363Verify",
+      "source": {
+        "name": "google-wycheproof",
+        "version": "0.9rc5"
+      },
+      "publicKey": {
+        "type": "EcPublicKey",
+        "curve": "secp160r1",
+        "keySize": 160,
+        "uncompressed": "04b005b80cb0733576bd27520bf7ac44f28e73371809738b9aeb21252938e9a5fa885a4bfa3705e084",
+        "wx": "00b005b80cb0733576bd27520bf7ac44f28e733718",
+        "wy": "09738b9aeb21252938e9a5fa885a4bfa3705e084"
+      },
+      "publicKeyDer": "303e301006072a8648ce3d020106052b81040008032a0004b005b80cb0733576bd27520bf7ac44f28e73371809738b9aeb21252938e9a5fa885a4bfa3705e084",
+      "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMD4wEAYHKoZIzj0CAQYFK4EEAAgDKgAEsAW4DLBzNXa9J1IL96xE8o5zNxgJc4ua\n6yElKTjppfqIWkv6NwXghA==\n-----END PUBLIC KEY-----\n",
+      "sha": "SHA-256",
+      "tests": [
+        {
+          "tcId": 117,
+          "comment": "r,s are large",
+          "flags": [
+            "ArithmeticError"
+          ],
+          "msg": "313233343030",
+          "sig": "0000000000000000000001f4c8f927aed44a7522550000000000000000000001f4c8f927aed44a752254",
+          "result": "valid"
+        },
+        {
+          "tcId": 118,
+          "comment": "incorrect size of signature",
+          "flags": [
+            "ArithmeticError",
+            "SignatureSize"
+          ],
+          "msg": "313233343030",
+          "sig": "01f4c8f927aed44a75225501f4c8f927aed44a752254",
+          "result": "invalid"
+        }
+      ]
+    },
+    {
+      "type": "EcdsaP1363Verify",
+      "source": {
+        "name": "google-wycheproof",
+        "version": "0.9rc5"
+      },
+      "publicKey": {
+        "type": "EcPublicKey",
+        "curve": "secp160r1",
+        "keySize": 160,
+        "uncompressed": "04f0a6c8100e5720ab62dc981061abc4add9a1933c3673d536905fbe48defe2b2a8637f38f2e1843c4",
+        "wx": "00f0a6c8100e5720ab62dc981061abc4add9a1933c",
+        "wy": "3673d536905fbe48defe2b2a8637f38f2e1843c4"
+      },
+      "publicKeyDer": "303e301006072a8648ce3d020106052b81040008032a0004f0a6c8100e5720ab62dc981061abc4add9a1933c3673d536905fbe48defe2b2a8637f38f2e1843c4",
+      "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMD4wEAYHKoZIzj0CAQYFK4EEAAgDKgAE8KbIEA5XIKti3JgQYavErdmhkzw2c9U2\nkF++SN7+KyqGN/OPLhhDxA==\n-----END PUBLIC KEY-----\n",
+      "sha": "SHA-256",
+      "tests": [
+        {
+          "tcId": 119,
+          "comment": "r and s^-1 have a large Hamming weight",
+          "flags": [
+            "ArithmeticError"
+          ],
+          "msg": "313233343030",
+          "sig": "00000000000000000000000000000000007fffffff0017644e8c2ec89d185d9167f301adcdedae3f5b35",
+          "result": "valid"
+        }
+      ]
+    },
+    {
+      "type": "EcdsaP1363Verify",
+      "source": {
+        "name": "google-wycheproof",
+        "version": "0.9rc5"
+      },
+      "publicKey": {
+        "type": "EcPublicKey",
+        "curve": "secp160r1",
+        "keySize": 160,
+        "uncompressed": "04711d5c4035baebc8e46bf09434a8aebbb0f678d08f66aea6922e491d02960c4e1baa2c22bcbad408",
+        "wx": "711d5c4035baebc8e46bf09434a8aebbb0f678d0",
+        "wy": "008f66aea6922e491d02960c4e1baa2c22bcbad408"
+      },
+      "publicKeyDer": "303e301006072a8648ce3d020106052b81040008032a0004711d5c4035baebc8e46bf09434a8aebbb0f678d08f66aea6922e491d02960c4e1baa2c22bcbad408",
+      "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMD4wEAYHKoZIzj0CAQYFK4EEAAgDKgAEcR1cQDW668jka/CUNKiuu7D2eNCPZq6m\nki5JHQKWDE4bqiwivLrUCA==\n-----END PUBLIC KEY-----\n",
+      "sha": "SHA-256",
+      "tests": [
+        {
+          "tcId": 120,
+          "comment": "r and s^-1 have a large Hamming weight",
+          "flags": [
+            "ArithmeticError"
+          ],
+          "msg": "313233343030",
+          "sig": "00000000000000000000000000000000007fffffff00749adb63d26b6d8f49ae9a5725ade8880d9c9b6c",
+          "result": "valid"
+        }
+      ]
+    },
+    {
+      "type": "EcdsaP1363Verify",
+      "source": {
+        "name": "google-wycheproof",
+        "version": "0.9rc5"
+      },
+      "publicKey": {
+        "type": "EcPublicKey",
+        "curve": "secp160r1",
+        "keySize": 160,
+        "uncompressed": "04b3e8857e27393fb609bb7e4d42bb612704d9eef2668439313310a849e17faca660f5f5346e11c1a9",
+        "wx": "00b3e8857e27393fb609bb7e4d42bb612704d9eef2",
+        "wy": "668439313310a849e17faca660f5f5346e11c1a9"
+      },
+      "publicKeyDer": "303e301006072a8648ce3d020106052b81040008032a0004b3e8857e27393fb609bb7e4d42bb612704d9eef2668439313310a849e17faca660f5f5346e11c1a9",
+      "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMD4wEAYHKoZIzj0CAQYFK4EEAAgDKgAEs+iFfic5P7YJu35NQrthJwTZ7vJmhDkx\nMxCoSeF/rKZg9fU0bhHBqQ==\n-----END PUBLIC KEY-----\n",
+      "sha": "SHA-256",
+      "tests": [
+        {
+          "tcId": 121,
+          "comment": "small r and s",
+          "flags": [
+            "SmallRandS",
+            "ArithmeticError"
+          ],
+          "msg": "313233343030",
+          "sig": "000000000000000000000000000000000000000004000000000000000000000000000000000000000001",
+          "result": "valid"
+        },
+        {
+          "tcId": 122,
+          "comment": "incorrect size of signature",
+          "flags": [
+            "SmallRandS",
+            "ArithmeticError",
+            "SignatureSize"
+          ],
+          "msg": "313233343030",
+          "sig": "0401",
+          "result": "invalid"
+        }
+      ]
+    },
+    {
+      "type": "EcdsaP1363Verify",
+      "source": {
+        "name": "google-wycheproof",
+        "version": "0.9rc5"
+      },
+      "publicKey": {
+        "type": "EcPublicKey",
+        "curve": "secp160r1",
+        "keySize": 160,
+        "uncompressed": "041b66bc474c8220de08f3db0fdc984b008828ff5df94509a6596f822f62580acc988bf962ef9e32b8",
+        "wx": "1b66bc474c8220de08f3db0fdc984b008828ff5d",
+        "wy": "00f94509a6596f822f62580acc988bf962ef9e32b8"
+      },
+      "publicKeyDer": "303e301006072a8648ce3d020106052b81040008032a00041b66bc474c8220de08f3db0fdc984b008828ff5df94509a6596f822f62580acc988bf962ef9e32b8",
+      "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMD4wEAYHKoZIzj0CAQYFK4EEAAgDKgAEG2a8R0yCIN4I89sP3JhLAIgo/135RQmm\nWW+CL2JYCsyYi/li754yuA==\n-----END PUBLIC KEY-----\n",
+      "sha": "SHA-256",
+      "tests": [
+        {
+          "tcId": 123,
+          "comment": "small r and s",
+          "flags": [
+            "SmallRandS",
+            "ArithmeticError"
+          ],
+          "msg": "313233343030",
+          "sig": "000000000000000000000000000000000000000004000000000000000000000000000000000000000003",
+          "result": "valid"
+        },
+        {
+          "tcId": 124,
+          "comment": "incorrect size of signature",
+          "flags": [
+            "SmallRandS",
+            "ArithmeticError",
+            "SignatureSize"
+          ],
+          "msg": "313233343030",
+          "sig": "0403",
+          "result": "invalid"
+        }
+      ]
+    },
+    {
+      "type": "EcdsaP1363Verify",
+      "source": {
+        "name": "google-wycheproof",
+        "version": "0.9rc5"
+      },
+      "publicKey": {
+        "type": "EcPublicKey",
+        "curve": "secp160r1",
+        "keySize": 160,
+        "uncompressed": "048ac14539432e062ff2b1f6086926bfc87e342e98bdc182b2ec96ac855f1057cd99731a054067a153",
+        "wx": "008ac14539432e062ff2b1f6086926bfc87e342e98",
+        "wy": "00bdc182b2ec96ac855f1057cd99731a054067a153"
+      },
+      "publicKeyDer": "303e301006072a8648ce3d020106052b81040008032a00048ac14539432e062ff2b1f6086926bfc87e342e98bdc182b2ec96ac855f1057cd99731a054067a153",
+      "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMD4wEAYHKoZIzj0CAQYFK4EEAAgDKgAEisFFOUMuBi/ysfYIaSa/yH40Lpi9wYKy\n7JashV8QV82ZcxoFQGehUw==\n-----END PUBLIC KEY-----\n",
+      "sha": "SHA-256",
+      "tests": [
+        {
+          "tcId": 125,
+          "comment": "small r and s",
+          "flags": [
+            "SmallRandS",
+            "ArithmeticError"
+          ],
+          "msg": "313233343030",
+          "sig": "000000000000000000000000000000000000000004000000000000000000000000000000000000000004",
+          "result": "valid"
+        },
+        {
+          "tcId": 126,
+          "comment": "incorrect size of signature",
+          "flags": [
+            "SmallRandS",
+            "ArithmeticError",
+            "SignatureSize"
+          ],
+          "msg": "313233343030",
+          "sig": "0404",
+          "result": "invalid"
+        }
+      ]
+    },
+    {
+      "type": "EcdsaP1363Verify",
+      "source": {
+        "name": "google-wycheproof",
+        "version": "0.9rc5"
+      },
+      "publicKey": {
+        "type": "EcPublicKey",
+        "curve": "secp160r1",
+        "keySize": 160,
+        "uncompressed": "044a5c77d11ddaa568733d8a6cb79b497e6a644944339c2514eda2e275ceffb9a7fc4c8d0470b37638",
+        "wx": "4a5c77d11ddaa568733d8a6cb79b497e6a644944",
+        "wy": "339c2514eda2e275ceffb9a7fc4c8d0470b37638"
+      },
+      "publicKeyDer": "303e301006072a8648ce3d020106052b81040008032a00044a5c77d11ddaa568733d8a6cb79b497e6a644944339c2514eda2e275ceffb9a7fc4c8d0470b37638",
+      "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMD4wEAYHKoZIzj0CAQYFK4EEAAgDKgAESlx30R3apWhzPYpst5tJfmpkSUQznCUU\n7aLidc7/uaf8TI0EcLN2OA==\n-----END PUBLIC KEY-----\n",
+      "sha": "SHA-256",
+      "tests": [
+        {
+          "tcId": 127,
+          "comment": "small r and s",
+          "flags": [
+            "SmallRandS",
+            "ArithmeticError"
+          ],
+          "msg": "313233343030",
+          "sig": "000000000000000000000000000000000000000004000000000000000000000000000000000000000005",
+          "result": "valid"
+        },
+        {
+          "tcId": 128,
+          "comment": "incorrect size of signature",
+          "flags": [
+            "SmallRandS",
+            "ArithmeticError",
+            "SignatureSize"
+          ],
+          "msg": "313233343030",
+          "sig": "0405",
+          "result": "invalid"
+        }
+      ]
+    },
+    {
+      "type": "EcdsaP1363Verify",
+      "source": {
+        "name": "google-wycheproof",
+        "version": "0.9rc5"
+      },
+      "publicKey": {
+        "type": "EcPublicKey",
+        "curve": "secp160r1",
+        "keySize": 160,
+        "uncompressed": "04d647227272d00b979027118533e43191144b0dc5e1973087ec8ad1021bd5085750db61bb01e0720e",
+        "wx": "00d647227272d00b979027118533e43191144b0dc5",
+        "wy": "00e1973087ec8ad1021bd5085750db61bb01e0720e"
+      },
+      "publicKeyDer": "303e301006072a8648ce3d020106052b81040008032a0004d647227272d00b979027118533e43191144b0dc5e1973087ec8ad1021bd5085750db61bb01e0720e",
+      "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMD4wEAYHKoZIzj0CAQYFK4EEAAgDKgAE1kcicnLQC5eQJxGFM+QxkRRLDcXhlzCH\n7IrRAhvVCFdQ22G7AeByDg==\n-----END PUBLIC KEY-----\n",
+      "sha": "SHA-256",
+      "tests": [
+        {
+          "tcId": 129,
+          "comment": "small r and s",
+          "flags": [
+            "SmallRandS",
+            "ArithmeticError"
+          ],
+          "msg": "313233343030",
+          "sig": "000000000000000000000000000000000000000005000000000000000000000000000000000000000001",
+          "result": "valid"
+        },
+        {
+          "tcId": 130,
+          "comment": "incorrect size of signature",
+          "flags": [
+            "SmallRandS",
+            "ArithmeticError",
+            "SignatureSize"
+          ],
+          "msg": "313233343030",
+          "sig": "0501",
+          "result": "invalid"
+        }
+      ]
+    },
+    {
+      "type": "EcdsaP1363Verify",
+      "source": {
+        "name": "google-wycheproof",
+        "version": "0.9rc5"
+      },
+      "publicKey": {
+        "type": "EcPublicKey",
+        "curve": "secp160r1",
+        "keySize": 160,
+        "uncompressed": "048af4564c54294dda3b25926a18e380b1e7b09ac0092f03efc33c71ae81d79d9159e851e9f6ff7eb9",
+        "wx": "008af4564c54294dda3b25926a18e380b1e7b09ac0",
+        "wy": "092f03efc33c71ae81d79d9159e851e9f6ff7eb9"
+      },
+      "publicKeyDer": "303e301006072a8648ce3d020106052b81040008032a00048af4564c54294dda3b25926a18e380b1e7b09ac0092f03efc33c71ae81d79d9159e851e9f6ff7eb9",
+      "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMD4wEAYHKoZIzj0CAQYFK4EEAAgDKgAEivRWTFQpTdo7JZJqGOOAseewmsAJLwPv\nwzxxroHXnZFZ6FHp9v9+uQ==\n-----END PUBLIC KEY-----\n",
+      "sha": "SHA-256",
+      "tests": [
+        {
+          "tcId": 131,
+          "comment": "small r and s",
+          "flags": [
+            "SmallRandS",
+            "ArithmeticError"
+          ],
+          "msg": "313233343030",
+          "sig": "000000000000000000000000000000000000000005000000000000000000000000000000000000000003",
+          "result": "valid"
+        },
+        {
+          "tcId": 132,
+          "comment": "incorrect size of signature",
+          "flags": [
+            "SmallRandS",
+            "ArithmeticError",
+            "SignatureSize"
+          ],
+          "msg": "313233343030",
+          "sig": "0503",
+          "result": "invalid"
+        }
+      ]
+    },
+    {
+      "type": "EcdsaP1363Verify",
+      "source": {
+        "name": "google-wycheproof",
+        "version": "0.9rc5"
+      },
+      "publicKey": {
+        "type": "EcPublicKey",
+        "curve": "secp160r1",
+        "keySize": 160,
+        "uncompressed": "04c92eace9be7eb45cddabf28e9aad82512fd388c62b976b866ecb6c105abf665bd4023bd345cb1eed",
+        "wx": "00c92eace9be7eb45cddabf28e9aad82512fd388c6",
+        "wy": "2b976b866ecb6c105abf665bd4023bd345cb1eed"
+      },
+      "publicKeyDer": "303e301006072a8648ce3d020106052b81040008032a0004c92eace9be7eb45cddabf28e9aad82512fd388c62b976b866ecb6c105abf665bd4023bd345cb1eed",
+      "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMD4wEAYHKoZIzj0CAQYFK4EEAAgDKgAEyS6s6b5+tFzdq/KOmq2CUS/TiMYrl2uG\nbstsEFq/ZlvUAjvTRcse7Q==\n-----END PUBLIC KEY-----\n",
+      "sha": "SHA-256",
+      "tests": [
+        {
+          "tcId": 133,
+          "comment": "small r and s",
+          "flags": [
+            "SmallRandS",
+            "ArithmeticError"
+          ],
+          "msg": "313233343030",
+          "sig": "000000000000000000000000000000000000000005000000000000000000000000000000000000000005",
+          "result": "valid"
+        },
+        {
+          "tcId": 134,
+          "comment": "incorrect size of signature",
+          "flags": [
+            "SmallRandS",
+            "ArithmeticError",
+            "SignatureSize"
+          ],
+          "msg": "313233343030",
+          "sig": "0505",
+          "result": "invalid"
+        }
+      ]
+    },
+    {
+      "type": "EcdsaP1363Verify",
+      "source": {
+        "name": "google-wycheproof",
+        "version": "0.9rc5"
+      },
+      "publicKey": {
+        "type": "EcPublicKey",
+        "curve": "secp160r1",
+        "keySize": 160,
+        "uncompressed": "04677f2286d0e8bcff8f90b0a46a8bba725c61bb5d1165ae399950632fc05c2f5e30e4fd51267866e6",
+        "wx": "677f2286d0e8bcff8f90b0a46a8bba725c61bb5d",
+        "wy": "1165ae399950632fc05c2f5e30e4fd51267866e6"
+      },
+      "publicKeyDer": "303e301006072a8648ce3d020106052b81040008032a0004677f2286d0e8bcff8f90b0a46a8bba725c61bb5d1165ae399950632fc05c2f5e30e4fd51267866e6",
+      "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMD4wEAYHKoZIzj0CAQYFK4EEAAgDKgAEZ38ihtDovP+PkLCkaou6clxhu10RZa45\nmVBjL8BcL14w5P1RJnhm5g==\n-----END PUBLIC KEY-----\n",
+      "sha": "SHA-256",
+      "tests": [
+        {
+          "tcId": 135,
+          "comment": "small r and s",
+          "flags": [
+            "SmallRandS",
+            "ArithmeticError"
+          ],
+          "msg": "313233343030",
+          "sig": "000000000000000000000000000000000000000005000000000000000000000000000000000000000006",
+          "result": "valid"
+        },
+        {
+          "tcId": 136,
+          "comment": "incorrect size of signature",
+          "flags": [
+            "SmallRandS",
+            "ArithmeticError",
+            "SignatureSize"
+          ],
+          "msg": "313233343030",
+          "sig": "0506",
+          "result": "invalid"
+        },
+        {
+          "tcId": 137,
+          "comment": "r is larger than n",
+          "flags": [
+            "ArithmeticError"
+          ],
+          "msg": "313233343030",
+          "sig": "0100000000000000000001f4c8f927aed3ca75225c000000000000000000000000000000000000000006",
+          "result": "invalid"
+        }
+      ]
+    },
+    {
+      "type": "EcdsaP1363Verify",
+      "source": {
+        "name": "google-wycheproof",
+        "version": "0.9rc5"
+      },
+      "publicKey": {
+        "type": "EcPublicKey",
+        "curve": "secp160r1",
+        "keySize": 160,
+        "uncompressed": "044b914c600d694b498efa62645b3ba9350b968732bc96deec7a8e02e6d1c25dff5ed22fc0a17d9cd8",
+        "wx": "4b914c600d694b498efa62645b3ba9350b968732",
+        "wy": "00bc96deec7a8e02e6d1c25dff5ed22fc0a17d9cd8"
+      },
+      "publicKeyDer": "303e301006072a8648ce3d020106052b81040008032a00044b914c600d694b498efa62645b3ba9350b968732bc96deec7a8e02e6d1c25dff5ed22fc0a17d9cd8",
+      "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMD4wEAYHKoZIzj0CAQYFK4EEAAgDKgAES5FMYA1pS0mO+mJkWzupNQuWhzK8lt7s\neo4C5tHCXf9e0i/AoX2c2A==\n-----END PUBLIC KEY-----\n",
+      "sha": "SHA-256",
+      "tests": [
+        {
+          "tcId": 138,
+          "comment": "s is larger than n",
+          "flags": [
+            "ArithmeticError"
+          ],
+          "msg": "313233343030",
+          "sig": "0000000000000000000000000000000000000000050100000000000000000001f4c8f927aed3ca87f8de",
+          "result": "invalid"
+        }
+      ]
+    },
+    {
+      "type": "EcdsaP1363Verify",
+      "source": {
+        "name": "google-wycheproof",
+        "version": "0.9rc5"
+      },
+      "publicKey": {
+        "type": "EcPublicKey",
+        "curve": "secp160r1",
+        "keySize": 160,
+        "uncompressed": "045094345ff85c68fe99627eede704362af196aecf53499a272ceb4668c02b4b11e567eae9709f0618",
+        "wx": "5094345ff85c68fe99627eede704362af196aecf",
+        "wy": "53499a272ceb4668c02b4b11e567eae9709f0618"
+      },
+      "publicKeyDer": "303e301006072a8648ce3d020106052b81040008032a00045094345ff85c68fe99627eede704362af196aecf53499a272ceb4668c02b4b11e567eae9709f0618",
+      "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMD4wEAYHKoZIzj0CAQYFK4EEAAgDKgAEUJQ0X/hcaP6ZYn7t5wQ2KvGWrs9TSZon\nLOtGaMArSxHlZ+rpcJ8GGA==\n-----END PUBLIC KEY-----\n",
+      "sha": "SHA-256",
+      "tests": [
+        {
+          "tcId": 139,
+          "comment": "small r and s^-1",
+          "flags": [
+            "ArithmeticError"
+          ],
+          "msg": "313233343030",
+          "sig": "000000000000000000000000000000000000000100001c3870e1c3870e1c387118f7eb1684277916fdbd",
+          "result": "valid"
+        }
+      ]
+    },
+    {
+      "type": "EcdsaP1363Verify",
+      "source": {
+        "name": "google-wycheproof",
+        "version": "0.9rc5"
+      },
+      "publicKey": {
+        "type": "EcPublicKey",
+        "curve": "secp160r1",
+        "keySize": 160,
+        "uncompressed": "045e2bb1e908df355fb09ac567021edbc0d0fd704765ee7405ef872af6f2550c123826058ebc8309fb",
+        "wx": "5e2bb1e908df355fb09ac567021edbc0d0fd7047",
+        "wy": "65ee7405ef872af6f2550c123826058ebc8309fb"
+      },
+      "publicKeyDer": "303e301006072a8648ce3d020106052b81040008032a00045e2bb1e908df355fb09ac567021edbc0d0fd704765ee7405ef872af6f2550c123826058ebc8309fb",
+      "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMD4wEAYHKoZIzj0CAQYFK4EEAAgDKgAEXiux6QjfNV+wmsVnAh7bwND9cEdl7nQF\n74cq9vJVDBI4JgWOvIMJ+w==\n-----END PUBLIC KEY-----\n",
+      "sha": "SHA-256",
+      "tests": [
+        {
+          "tcId": 140,
+          "comment": "smallish r and s^-1",
+          "flags": [
+            "ArithmeticError"
+          ],
+          "msg": "313233343030",
+          "sig": "00000000000000000000000000002d9b4d347952cd001164a61fc3dfa342ba186e32381b34b324117a46",
+          "result": "valid"
+        }
+      ]
+    },
+    {
+      "type": "EcdsaP1363Verify",
+      "source": {
+        "name": "google-wycheproof",
+        "version": "0.9rc5"
+      },
+      "publicKey": {
+        "type": "EcPublicKey",
+        "curve": "secp160r1",
+        "keySize": 160,
+        "uncompressed": "04de53fcbfc744edfc6be04af83518829b5fa630169fed2940a16623e8f60eec87c32aed905d25feb7",
+        "wx": "00de53fcbfc744edfc6be04af83518829b5fa63016",
+        "wy": "009fed2940a16623e8f60eec87c32aed905d25feb7"
+      },
+      "publicKeyDer": "303e301006072a8648ce3d020106052b81040008032a0004de53fcbfc744edfc6be04af83518829b5fa630169fed2940a16623e8f60eec87c32aed905d25feb7",
+      "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMD4wEAYHKoZIzj0CAQYFK4EEAAgDKgAE3lP8v8dE7fxr4Er4NRiCm1+mMBaf7SlA\noWYj6PYO7IfDKu2QXSX+tw==\n-----END PUBLIC KEY-----\n",
+      "sha": "SHA-256",
+      "tests": [
+        {
+          "tcId": 141,
+          "comment": "100-bit r and small s^-1",
+          "flags": [
+            "ArithmeticError"
+          ],
+          "msg": "313233343030",
+          "sig": "00000000000000001033e67e37b32b445580bf4efb004cb34cb34cb34cb34cb3e2bdb53bb3e1d213282c",
+          "result": "valid"
+        }
+      ]
+    },
+    {
+      "type": "EcdsaP1363Verify",
+      "source": {
+        "name": "google-wycheproof",
+        "version": "0.9rc5"
+      },
+      "publicKey": {
+        "type": "EcPublicKey",
+        "curve": "secp160r1",
+        "keySize": 160,
+        "uncompressed": "04366bb0c1db172c0da7a94d6b962b2bfb99db430dadb55cacb92dcf86d7e7373db40159c23c6ad8db",
+        "wx": "366bb0c1db172c0da7a94d6b962b2bfb99db430d",
+        "wy": "00adb55cacb92dcf86d7e7373db40159c23c6ad8db"
+      },
+      "publicKeyDer": "303e301006072a8648ce3d020106052b81040008032a0004366bb0c1db172c0da7a94d6b962b2bfb99db430dadb55cacb92dcf86d7e7373db40159c23c6ad8db",
+      "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMD4wEAYHKoZIzj0CAQYFK4EEAAgDKgAENmuwwdsXLA2nqU1rlisr+5nbQw2ttVys\nuS3PhtfnNz20AVnCPGrY2w==\n-----END PUBLIC KEY-----\n",
+      "sha": "SHA-256",
+      "tests": [
+        {
+          "tcId": 142,
+          "comment": "small r and 100 bit s^-1",
+          "flags": [
+            "ArithmeticError"
+          ],
+          "msg": "313233343030",
+          "sig": "00000000000000000000000000000000000000010000382efed3dc7e18cf41aec7248f4e56087f9734a0",
+          "result": "valid"
+        }
+      ]
+    },
+    {
+      "type": "EcdsaP1363Verify",
+      "source": {
+        "name": "google-wycheproof",
+        "version": "0.9rc5"
+      },
+      "publicKey": {
+        "type": "EcPublicKey",
+        "curve": "secp160r1",
+        "keySize": 160,
+        "uncompressed": "0486e01061fc02e52057346370636a5b5cc3710e72ccfb1063a51118d442d5044cb0ecdade51ab7dd3",
+        "wx": "0086e01061fc02e52057346370636a5b5cc3710e72",
+        "wy": "00ccfb1063a51118d442d5044cb0ecdade51ab7dd3"
+      },
+      "publicKeyDer": "303e301006072a8648ce3d020106052b81040008032a000486e01061fc02e52057346370636a5b5cc3710e72ccfb1063a51118d442d5044cb0ecdade51ab7dd3",
+      "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMD4wEAYHKoZIzj0CAQYFK4EEAAgDKgAEhuAQYfwC5SBXNGNwY2pbXMNxDnLM+xBj\npREY1ELVBEyw7NreUat90w==\n-----END PUBLIC KEY-----\n",
+      "sha": "SHA-256",
+      "tests": [
+        {
+          "tcId": 143,
+          "comment": "100-bit r and s^-1",
+          "flags": [
+            "ArithmeticError"
+          ],
+          "msg": "313233343030",
+          "sig": "0000000000000000062522bbd3ecbe7c39e93e7c2400382efed3dc7e18cf41aec7248f4e56087f9734a0",
+          "result": "valid"
+        }
+      ]
+    },
+    {
+      "type": "EcdsaP1363Verify",
+      "source": {
+        "name": "google-wycheproof",
+        "version": "0.9rc5"
+      },
+      "publicKey": {
+        "type": "EcPublicKey",
+        "curve": "secp160r1",
+        "keySize": 160,
+        "uncompressed": "0440e16716c249fb4743fc761afb05dc34cd447fc8179c76ae7ac1f0b0c5f248bdb8140b91ebfeaa2a",
+        "wx": "40e16716c249fb4743fc761afb05dc34cd447fc8",
+        "wy": "179c76ae7ac1f0b0c5f248bdb8140b91ebfeaa2a"
+      },
+      "publicKeyDer": "303e301006072a8648ce3d020106052b81040008032a000440e16716c249fb4743fc761afb05dc34cd447fc8179c76ae7ac1f0b0c5f248bdb8140b91ebfeaa2a",
+      "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMD4wEAYHKoZIzj0CAQYFK4EEAAgDKgAEQOFnFsJJ+0dD/HYa+wXcNM1Ef8gXnHau\nesHwsMXySL24FAuR6/6qKg==\n-----END PUBLIC KEY-----\n",
+      "sha": "SHA-256",
+      "tests": [
+        {
+          "tcId": 144,
+          "comment": "r and s^-1 are close to n",
+          "flags": [
+            "ArithmeticError"
+          ],
+          "msg": "313233343030",
+          "sig": "0000000000000000000001f4c8f927aed44a7521da00aaaaaaaaaaaaaaaaaaabf885fb6fc9e286f8c18f",
+          "result": "valid"
+        }
+      ]
+    },
+    {
+      "type": "EcdsaP1363Verify",
+      "source": {
+        "name": "google-wycheproof",
+        "version": "0.9rc5"
+      },
+      "publicKey": {
+        "type": "EcPublicKey",
+        "curve": "secp160r1",
+        "keySize": 160,
+        "uncompressed": "04864d501f8697acb9c337651fcdfa51e1c4109d96e5f336151f7e2de56f7c7bd21216a299175d0152",
+        "wx": "00864d501f8697acb9c337651fcdfa51e1c4109d96",
+        "wy": "00e5f336151f7e2de56f7c7bd21216a299175d0152"
+      },
+      "publicKeyDer": "303e301006072a8648ce3d020106052b81040008032a0004864d501f8697acb9c337651fcdfa51e1c4109d96e5f336151f7e2de56f7c7bd21216a299175d0152",
+      "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMD4wEAYHKoZIzj0CAQYFK4EEAAgDKgAEhk1QH4aXrLnDN2UfzfpR4cQQnZbl8zYV\nH34t5W98e9ISFqKZF10BUg==\n-----END PUBLIC KEY-----\n",
+      "sha": "SHA-256",
+      "tests": [
+        {
+          "tcId": 145,
+          "comment": "r and s are 64-bit integer",
+          "flags": [
+            "ArithmeticError"
+          ],
+          "msg": "313233343030",
+          "sig": "000000000000000000000000009c44febf31c3594f00000000000000000000000000839ed28247c2b06b",
+          "result": "valid"
+        },
+        {
+          "tcId": 146,
+          "comment": "incorrect size of signature",
+          "flags": [
+            "ArithmeticError",
+            "SignatureSize"
+          ],
+          "msg": "313233343030",
+          "sig": "9c44febf31c3594f839ed28247c2b06b",
+          "result": "invalid"
+        }
+      ]
+    },
+    {
+      "type": "EcdsaP1363Verify",
+      "source": {
+        "name": "google-wycheproof",
+        "version": "0.9rc5"
+      },
+      "publicKey": {
+        "type": "EcPublicKey",
+        "curve": "secp160r1",
+        "keySize": 160,
+        "uncompressed": "04cf100b573c0b7056bfec897f77945860204ddcd6657eb109fef49cbc8e195e0fd72679b0c5589d82",
+        "wx": "00cf100b573c0b7056bfec897f77945860204ddcd6",
+        "wy": "657eb109fef49cbc8e195e0fd72679b0c5589d82"
+      },
+      "publicKeyDer": "303e301006072a8648ce3d020106052b81040008032a0004cf100b573c0b7056bfec897f77945860204ddcd6657eb109fef49cbc8e195e0fd72679b0c5589d82",
+      "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMD4wEAYHKoZIzj0CAQYFK4EEAAgDKgAEzxALVzwLcFa/7Il/d5RYYCBN3NZlfrEJ\n/vScvI4ZXg/XJnmwxVidgg==\n-----END PUBLIC KEY-----\n",
+      "sha": "SHA-256",
+      "tests": [
+        {
+          "tcId": 147,
+          "comment": "r and s are 100-bit integer",
+          "flags": [
+            "ArithmeticError"
+          ],
+          "msg": "313233343030",
+          "sig": "000000000000000009df8b682430beef6f5fd7c7ce00000000000000000fd0a62e13778f4222a0d61c8a",
+          "result": "valid"
+        },
+        {
+          "tcId": 148,
+          "comment": "incorrect size of signature",
+          "flags": [
+            "ArithmeticError",
+            "SignatureSize"
+          ],
+          "msg": "313233343030",
+          "sig": "09df8b682430beef6f5fd7c7ce0fd0a62e13778f4222a0d61c8a",
+          "result": "invalid"
+        }
+      ]
+    },
+    {
+      "type": "EcdsaP1363Verify",
+      "source": {
+        "name": "google-wycheproof",
+        "version": "0.9rc5"
+      },
+      "publicKey": {
+        "type": "EcPublicKey",
+        "curve": "secp160r1",
+        "keySize": 160,
+        "uncompressed": "0410844ee5316f9ba469d9e3483875f2857e7f7c50414432cb1abcfb910152671e4c4912c3c2c1552f",
+        "wx": "10844ee5316f9ba469d9e3483875f2857e7f7c50",
+        "wy": "414432cb1abcfb910152671e4c4912c3c2c1552f"
+      },
+      "publicKeyDer": "303e301006072a8648ce3d020106052b81040008032a000410844ee5316f9ba469d9e3483875f2857e7f7c50414432cb1abcfb910152671e4c4912c3c2c1552f",
+      "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMD4wEAYHKoZIzj0CAQYFK4EEAAgDKgAEEIRO5TFvm6Rp2eNIOHXyhX5/fFBBRDLL\nGrz7kQFSZx5MSRLDwsFVLw==\n-----END PUBLIC KEY-----\n",
+      "sha": "SHA-256",
+      "tests": [
+        {
+          "tcId": 149,
+          "comment": "r and s are 128-bit integer",
+          "flags": [
+            "ArithmeticError"
+          ],
+          "msg": "313233343030",
+          "sig": "00000000008a598e563a89f526c32ebec8de26367a000000000084f633e2042630e99dd0f1e16f7a04bf",
+          "result": "valid"
+        },
+        {
+          "tcId": 150,
+          "comment": "incorrect size of signature",
+          "flags": [
+            "ArithmeticError",
+            "SignatureSize"
+          ],
+          "msg": "313233343030",
+          "sig": "8a598e563a89f526c32ebec8de26367a84f633e2042630e99dd0f1e16f7a04bf",
+          "result": "invalid"
+        }
+      ]
+    },
+    {
+      "type": "EcdsaP1363Verify",
+      "source": {
+        "name": "google-wycheproof",
+        "version": "0.9rc5"
+      },
+      "publicKey": {
+        "type": "EcPublicKey",
+        "curve": "secp160r1",
+        "keySize": 160,
+        "uncompressed": "0475c77dec4e111a041ee2b266a0e50c6c89995a66fce77370c6b780a579b62ad5af630ac823cf2b97",
+        "wx": "75c77dec4e111a041ee2b266a0e50c6c89995a66",
+        "wy": "00fce77370c6b780a579b62ad5af630ac823cf2b97"
+      },
+      "publicKeyDer": "303e301006072a8648ce3d020106052b81040008032a000475c77dec4e111a041ee2b266a0e50c6c89995a66fce77370c6b780a579b62ad5af630ac823cf2b97",
+      "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMD4wEAYHKoZIzj0CAQYFK4EEAAgDKgAEdcd97E4RGgQe4rJmoOUMbImZWmb853Nw\nxreApXm2KtWvYwrII88rlw==\n-----END PUBLIC KEY-----\n",
+      "sha": "SHA-256",
+      "tests": [
+        {
+          "tcId": 151,
+          "comment": "r and s are 160-bit integer",
+          "flags": [
+            "ArithmeticError"
+          ],
+          "msg": "313233343030",
+          "sig": "00aa6eeb5823f7fa31b466bb473797f0d0314c0be000e2977c479e6d25703cebbc6bd561938cc9d1bfb9",
+          "result": "valid"
+        }
+      ]
+    },
+    {
+      "type": "EcdsaP1363Verify",
+      "source": {
+        "name": "google-wycheproof",
+        "version": "0.9rc5"
+      },
+      "publicKey": {
+        "type": "EcPublicKey",
+        "curve": "secp160r1",
+        "keySize": 160,
+        "uncompressed": "0407970e499d36b850864ce1d6b00d62cb70e2d2e0e30d4b3c346017c766878f93fcbba65cd80a1f59",
+        "wx": "07970e499d36b850864ce1d6b00d62cb70e2d2e0",
+        "wy": "00e30d4b3c346017c766878f93fcbba65cd80a1f59"
+      },
+      "publicKeyDer": "303e301006072a8648ce3d020106052b81040008032a000407970e499d36b850864ce1d6b00d62cb70e2d2e0e30d4b3c346017c766878f93fcbba65cd80a1f59",
+      "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMD4wEAYHKoZIzj0CAQYFK4EEAAgDKgAEB5cOSZ02uFCGTOHWsA1iy3Di0uDjDUs8\nNGAXx2aHj5P8u6Zc2AofWQ==\n-----END PUBLIC KEY-----\n",
+      "sha": "SHA-256",
+      "tests": [
+        {
+          "tcId": 152,
+          "comment": "s == 1",
+          "flags": [
+            "ArithmeticError"
+          ],
+          "msg": "313233343030",
+          "sig": "0055555555555555555555fc42fdb7e4f1437c60c8000000000000000000000000000000000000000001",
+          "result": "valid"
+        },
+        {
+          "tcId": 153,
+          "comment": "s == 0",
+          "flags": [
+            "ArithmeticError"
+          ],
+          "msg": "313233343030",
+          "sig": "0055555555555555555555fc42fdb7e4f1437c60c8000000000000000000000000000000000000000000",
+          "result": "invalid"
+        }
+      ]
+    },
+    {
+      "type": "EcdsaP1363Verify",
+      "source": {
+        "name": "google-wycheproof",
+        "version": "0.9rc5"
+      },
+      "publicKey": {
+        "type": "EcPublicKey",
+        "curve": "secp160r1",
+        "keySize": 160,
+        "uncompressed": "042e54dda8f55b1e7d1d5ec7abe03aeba4d02778f4e3349b3c2cbab77adbc22bda5cb1dceefe9853c5",
+        "wx": "2e54dda8f55b1e7d1d5ec7abe03aeba4d02778f4",
+        "wy": "00e3349b3c2cbab77adbc22bda5cb1dceefe9853c5"
+      },
+      "publicKeyDer": "303e301006072a8648ce3d020106052b81040008032a00042e54dda8f55b1e7d1d5ec7abe03aeba4d02778f4e3349b3c2cbab77adbc22bda5cb1dceefe9853c5",
+      "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMD4wEAYHKoZIzj0CAQYFK4EEAAgDKgAELlTdqPVbHn0dXser4DrrpNAnePTjNJs8\nLLq3etvCK9pcsdzu/phTxQ==\n-----END PUBLIC KEY-----\n",
+      "sha": "SHA-256",
+      "tests": [
+        {
+          "tcId": 154,
+          "comment": "edge case modular inverse",
+          "flags": [
+            "ModularInverse",
+            "ArithmeticError"
+          ],
+          "msg": "313233343030",
+          "sig": "0055555555555555555555fc42fdb7e4f1437c60c8007c552832921df597c4ace3db26fa344bca60d63c",
+          "result": "valid"
+        }
+      ]
+    },
+    {
+      "type": "EcdsaP1363Verify",
+      "source": {
+        "name": "google-wycheproof",
+        "version": "0.9rc5"
+      },
+      "publicKey": {
+        "type": "EcPublicKey",
+        "curve": "secp160r1",
+        "keySize": 160,
+        "uncompressed": "04c0a2ce5228dd74ba6f59e71691e3062a13abceeef6ac644914405b4c7d7e81196d67267fb8f5d5c1",
+        "wx": "00c0a2ce5228dd74ba6f59e71691e3062a13abceee",
+        "wy": "00f6ac644914405b4c7d7e81196d67267fb8f5d5c1"
+      },
+      "publicKeyDer": "303e301006072a8648ce3d020106052b81040008032a0004c0a2ce5228dd74ba6f59e71691e3062a13abceeef6ac644914405b4c7d7e81196d67267fb8f5d5c1",
+      "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMD4wEAYHKoZIzj0CAQYFK4EEAAgDKgAEwKLOUijddLpvWecWkeMGKhOrzu72rGRJ\nFEBbTH1+gRltZyZ/uPXVwQ==\n-----END PUBLIC KEY-----\n",
+      "sha": "SHA-256",
+      "tests": [
+        {
+          "tcId": 155,
+          "comment": "edge case modular inverse",
+          "flags": [
+            "ModularInverse",
+            "ArithmeticError"
+          ],
+          "msg": "313233343030",
+          "sig": "0055555555555555555555fc42fdb7e4f1437c60c8007227092d21ea03d5d5f1e18287ca9de2d9842908",
+          "result": "valid"
+        }
+      ]
+    },
+    {
+      "type": "EcdsaP1363Verify",
+      "source": {
+        "name": "google-wycheproof",
+        "version": "0.9rc5"
+      },
+      "publicKey": {
+        "type": "EcPublicKey",
+        "curve": "secp160r1",
+        "keySize": 160,
+        "uncompressed": "048b2c4e24ac2561217c6f518a92d6337c5399f0c4ceb401ef5335e33ffaa24bf52be79d0de4da777a",
+        "wx": "008b2c4e24ac2561217c6f518a92d6337c5399f0c4",
+        "wy": "00ceb401ef5335e33ffaa24bf52be79d0de4da777a"
+      },
+      "publicKeyDer": "303e301006072a8648ce3d020106052b81040008032a00048b2c4e24ac2561217c6f518a92d6337c5399f0c4ceb401ef5335e33ffaa24bf52be79d0de4da777a",
+      "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMD4wEAYHKoZIzj0CAQYFK4EEAAgDKgAEiyxOJKwlYSF8b1GKktYzfFOZ8MTOtAHv\nUzXjP/qiS/Ur550N5Np3eg==\n-----END PUBLIC KEY-----\n",
+      "sha": "SHA-256",
+      "tests": [
+        {
+          "tcId": 156,
+          "comment": "edge case modular inverse",
+          "flags": [
+            "ModularInverse",
+            "ArithmeticError"
+          ],
+          "msg": "313233343030",
+          "sig": "0055555555555555555555fc42fdb7e4f1437c60c80073ff1e5eaf95fbba2ad422e406afe13c2f680d59",
+          "result": "valid"
+        }
+      ]
+    },
+    {
+      "type": "EcdsaP1363Verify",
+      "source": {
+        "name": "google-wycheproof",
+        "version": "0.9rc5"
+      },
+      "publicKey": {
+        "type": "EcPublicKey",
+        "curve": "secp160r1",
+        "keySize": 160,
+        "uncompressed": "04dd04be1d60f64d2191e165004888810ab390b8d1667da446df9cf909a92fece72f97b45336fc1ad1",
+        "wx": "00dd04be1d60f64d2191e165004888810ab390b8d1",
+        "wy": "667da446df9cf909a92fece72f97b45336fc1ad1"
+      },
+      "publicKeyDer": "303e301006072a8648ce3d020106052b81040008032a0004dd04be1d60f64d2191e165004888810ab390b8d1667da446df9cf909a92fece72f97b45336fc1ad1",
+      "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMD4wEAYHKoZIzj0CAQYFK4EEAAgDKgAE3QS+HWD2TSGR4WUASIiBCrOQuNFmfaRG\n35z5Cakv7Ocvl7RTNvwa0Q==\n-----END PUBLIC KEY-----\n",
+      "sha": "SHA-256",
+      "tests": [
+        {
+          "tcId": 157,
+          "comment": "edge case modular inverse",
+          "flags": [
+            "ModularInverse",
+            "ArithmeticError"
+          ],
+          "msg": "313233343030",
+          "sig": "0055555555555555555555fc42fdb7e4f1437c60c8006502b995cec50420e530affe1fd415f33e83baf0",
+          "result": "valid"
+        }
+      ]
+    },
+    {
+      "type": "EcdsaP1363Verify",
+      "source": {
+        "name": "google-wycheproof",
+        "version": "0.9rc5"
+      },
+      "publicKey": {
+        "type": "EcPublicKey",
+        "curve": "secp160r1",
+        "keySize": 160,
+        "uncompressed": "04f02086e126cbf8ccdf66198cc22692e8951e4ee2a0bc138f30f9b536b4188647a41c441c22e76535",
+        "wx": "00f02086e126cbf8ccdf66198cc22692e8951e4ee2",
+        "wy": "00a0bc138f30f9b536b4188647a41c441c22e76535"
+      },
+      "publicKeyDer": "303e301006072a8648ce3d020106052b81040008032a0004f02086e126cbf8ccdf66198cc22692e8951e4ee2a0bc138f30f9b536b4188647a41c441c22e76535",
+      "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMD4wEAYHKoZIzj0CAQYFK4EEAAgDKgAE8CCG4SbL+MzfZhmMwiaS6JUeTuKgvBOP\nMPm1NrQYhkekHEQcIudlNQ==\n-----END PUBLIC KEY-----\n",
+      "sha": "SHA-256",
+      "tests": [
+        {
+          "tcId": 158,
+          "comment": "edge case modular inverse",
+          "flags": [
+            "ModularInverse",
+            "ArithmeticError"
+          ],
+          "msg": "313233343030",
+          "sig": "0055555555555555555555fc42fdb7e4f1437c60c8001d44f47b4ef8625a2e0f5b4fbd01926248f8f35f",
+          "result": "valid"
+        }
+      ]
+    },
+    {
+      "type": "EcdsaP1363Verify",
+      "source": {
+        "name": "google-wycheproof",
+        "version": "0.9rc5"
+      },
+      "publicKey": {
+        "type": "EcPublicKey",
+        "curve": "secp160r1",
+        "keySize": 160,
+        "uncompressed": "048f94567d5935089ae574bd0376507f9a04002fa3c6f93a987b417f59ec75436ac72c44a5c5b0c8e2",
+        "wx": "008f94567d5935089ae574bd0376507f9a04002fa3",
+        "wy": "00c6f93a987b417f59ec75436ac72c44a5c5b0c8e2"
+      },
+      "publicKeyDer": "303e301006072a8648ce3d020106052b81040008032a00048f94567d5935089ae574bd0376507f9a04002fa3c6f93a987b417f59ec75436ac72c44a5c5b0c8e2",
+      "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMD4wEAYHKoZIzj0CAQYFK4EEAAgDKgAEj5RWfVk1CJrldL0DdlB/mgQAL6PG+TqY\ne0F/Wex1Q2rHLESlxbDI4g==\n-----END PUBLIC KEY-----\n",
+      "sha": "SHA-256",
+      "tests": [
+        {
+          "tcId": 159,
+          "comment": "edge case modular inverse",
+          "flags": [
+            "ModularInverse",
+            "ArithmeticError"
+          ],
+          "msg": "313233343030",
+          "sig": "0055555555555555555555fc42fdb7e4f1437c60c80042dbf3750b69fe223ab5132f0d60d74eec81bffa",
+          "result": "valid"
+        }
+      ]
+    },
+    {
+      "type": "EcdsaP1363Verify",
+      "source": {
+        "name": "google-wycheproof",
+        "version": "0.9rc5"
+      },
+      "publicKey": {
+        "type": "EcPublicKey",
+        "curve": "secp160r1",
+        "keySize": 160,
+        "uncompressed": "04cfbb06497d29896f83fb0cd2d2b026ad5ce56eda702486a360d789e4ab4226d3c6df99d4603b1c8c",
+        "wx": "00cfbb06497d29896f83fb0cd2d2b026ad5ce56eda",
+        "wy": "702486a360d789e4ab4226d3c6df99d4603b1c8c"
+      },
+      "publicKeyDer": "303e301006072a8648ce3d020106052b81040008032a0004cfbb06497d29896f83fb0cd2d2b026ad5ce56eda702486a360d789e4ab4226d3c6df99d4603b1c8c",
+      "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMD4wEAYHKoZIzj0CAQYFK4EEAAgDKgAEz7sGSX0piW+D+wzS0rAmrVzlbtpwJIaj\nYNeJ5KtCJtPG35nUYDscjA==\n-----END PUBLIC KEY-----\n",
+      "sha": "SHA-256",
+      "tests": [
+        {
+          "tcId": 160,
+          "comment": "edge case modular inverse",
+          "flags": [
+            "ModularInverse",
+            "ArithmeticError"
+          ],
+          "msg": "313233343030",
+          "sig": "0055555555555555555555fc42fdb7e4f1437c60c800654c1cd3f3f0df06fe29df7d8859bc3c84306bb1",
+          "result": "valid"
+        }
+      ]
+    },
+    {
+      "type": "EcdsaP1363Verify",
+      "source": {
+        "name": "google-wycheproof",
+        "version": "0.9rc5"
+      },
+      "publicKey": {
+        "type": "EcPublicKey",
+        "curve": "secp160r1",
+        "keySize": 160,
+        "uncompressed": "041125a95f1921eb144d0d9b209d4e95f2e375318cc97bf57b75f7c1920173bdbfd90198901f1bcaef",
+        "wx": "1125a95f1921eb144d0d9b209d4e95f2e375318c",
+        "wy": "00c97bf57b75f7c1920173bdbfd90198901f1bcaef"
+      },
+      "publicKeyDer": "303e301006072a8648ce3d020106052b81040008032a00041125a95f1921eb144d0d9b209d4e95f2e375318cc97bf57b75f7c1920173bdbfd90198901f1bcaef",
+      "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMD4wEAYHKoZIzj0CAQYFK4EEAAgDKgAEESWpXxkh6xRNDZsgnU6V8uN1MYzJe/V7\ndffBkgFzvb/ZAZiQHxvK7w==\n-----END PUBLIC KEY-----\n",
+      "sha": "SHA-256",
+      "tests": [
+        {
+          "tcId": 161,
+          "comment": "edge case modular inverse",
+          "flags": [
+            "ModularInverse",
+            "ArithmeticError"
+          ],
+          "msg": "313233343030",
+          "sig": "0055555555555555555555fc42fdb7e4f1437c60c8004672732533be565079f89319b5ff635d5feace33",
+          "result": "valid"
+        }
+      ]
+    },
+    {
+      "type": "EcdsaP1363Verify",
+      "source": {
+        "name": "google-wycheproof",
+        "version": "0.9rc5"
+      },
+      "publicKey": {
+        "type": "EcPublicKey",
+        "curve": "secp160r1",
+        "keySize": 160,
+        "uncompressed": "0460627b04d812f257c8f6ba8f1b3ef2f42e800464a10b1cbab5000850f206cb326d999da5223f9366",
+        "wx": "60627b04d812f257c8f6ba8f1b3ef2f42e800464",
+        "wy": "00a10b1cbab5000850f206cb326d999da5223f9366"
+      },
+      "publicKeyDer": "303e301006072a8648ce3d020106052b81040008032a000460627b04d812f257c8f6ba8f1b3ef2f42e800464a10b1cbab5000850f206cb326d999da5223f9366",
+      "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMD4wEAYHKoZIzj0CAQYFK4EEAAgDKgAEYGJ7BNgS8lfI9rqPGz7y9C6ABGShCxy6\ntQAIUPIGyzJtmZ2lIj+TZg==\n-----END PUBLIC KEY-----\n",
+      "sha": "SHA-256",
+      "tests": [
+        {
+          "tcId": 162,
+          "comment": "edge case modular inverse",
+          "flags": [
+            "ModularInverse",
+            "ArithmeticError"
+          ],
+          "msg": "313233343030",
+          "sig": "0055555555555555555555fc42fdb7e4f1437c60c80043a9e1aafefdd33ce4c4fbfee2c702156668d95c",
+          "result": "valid"
+        }
+      ]
+    },
+    {
+      "type": "EcdsaP1363Verify",
+      "source": {
+        "name": "google-wycheproof",
+        "version": "0.9rc5"
+      },
+      "publicKey": {
+        "type": "EcPublicKey",
+        "curve": "secp160r1",
+        "keySize": 160,
+        "uncompressed": "047b77bc3d04bc19f3f2a6c912fa162a47c43a1946424d2b07969606a33fad0ef461125a3ba05c14db",
+        "wx": "7b77bc3d04bc19f3f2a6c912fa162a47c43a1946",
+        "wy": "424d2b07969606a33fad0ef461125a3ba05c14db"
+      },
+      "publicKeyDer": "303e301006072a8648ce3d020106052b81040008032a00047b77bc3d04bc19f3f2a6c912fa162a47c43a1946424d2b07969606a33fad0ef461125a3ba05c14db",
+      "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMD4wEAYHKoZIzj0CAQYFK4EEAAgDKgAEe3e8PQS8GfPypskS+hYqR8Q6GUZCTSsH\nlpYGoz+tDvRhElo7oFwU2w==\n-----END PUBLIC KEY-----\n",
+      "sha": "SHA-256",
+      "tests": [
+        {
+          "tcId": 163,
+          "comment": "edge case modular inverse",
+          "flags": [
+            "ModularInverse",
+            "ArithmeticError"
+          ],
+          "msg": "313233343030",
+          "sig": "0055555555555555555555fc42fdb7e4f1437c60c8003f0d604c19d9ef8b60ddb845cf61c0338ec1a10f",
+          "result": "valid"
+        }
+      ]
+    },
+    {
+      "type": "EcdsaP1363Verify",
+      "source": {
+        "name": "google-wycheproof",
+        "version": "0.9rc5"
+      },
+      "publicKey": {
+        "type": "EcPublicKey",
+        "curve": "secp160r1",
+        "keySize": 160,
+        "uncompressed": "04082d452466c9f351b822206932e26c35729831b4501327aef0810b7b197b92d45ac0628ec3271954",
+        "wx": "082d452466c9f351b822206932e26c35729831b4",
+        "wy": "501327aef0810b7b197b92d45ac0628ec3271954"
+      },
+      "publicKeyDer": "303e301006072a8648ce3d020106052b81040008032a0004082d452466c9f351b822206932e26c35729831b4501327aef0810b7b197b92d45ac0628ec3271954",
+      "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMD4wEAYHKoZIzj0CAQYFK4EEAAgDKgAECC1FJGbJ81G4IiBpMuJsNXKYMbRQEyeu\n8IELexl7ktRawGKOwycZVA==\n-----END PUBLIC KEY-----\n",
+      "sha": "SHA-256",
+      "tests": [
+        {
+          "tcId": 164,
+          "comment": "edge case modular inverse",
+          "flags": [
+            "ModularInverse",
+            "ArithmeticError"
+          ],
+          "msg": "313233343030",
+          "sig": "0055555555555555555555fc42fdb7e4f1437c60c8000ce12be05ba565a557af187cc0ccbe1680b57d88",
+          "result": "valid"
+        }
+      ]
+    },
+    {
+      "type": "EcdsaP1363Verify",
+      "source": {
+        "name": "google-wycheproof",
+        "version": "0.9rc5"
+      },
+      "publicKey": {
+        "type": "EcPublicKey",
+        "curve": "secp160r1",
+        "keySize": 160,
+        "uncompressed": "04bb63c68077a6c7e7466887d0613c0a0a9a96627ca45f84beb4e337cdbea9768c5bb04f53adb682ec",
+        "wx": "00bb63c68077a6c7e7466887d0613c0a0a9a96627c",
+        "wy": "00a45f84beb4e337cdbea9768c5bb04f53adb682ec"
+      },
+      "publicKeyDer": "303e301006072a8648ce3d020106052b81040008032a0004bb63c68077a6c7e7466887d0613c0a0a9a96627ca45f84beb4e337cdbea9768c5bb04f53adb682ec",
+      "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMD4wEAYHKoZIzj0CAQYFK4EEAAgDKgAEu2PGgHemx+dGaIfQYTwKCpqWYnykX4S+\ntOM3zb6pdoxbsE9TrbaC7A==\n-----END PUBLIC KEY-----\n",
+      "sha": "SHA-256",
+      "tests": [
+        {
+          "tcId": 165,
+          "comment": "edge case modular inverse",
+          "flags": [
+            "ModularInverse",
+            "ArithmeticError"
+          ],
+          "msg": "313233343030",
+          "sig": "0055555555555555555555fc42fdb7e4f1437c60c80060d76f2b701e3228533e0ee26c4935dd3a5e6a5d",
+          "result": "valid"
+        }
+      ]
+    },
+    {
+      "type": "EcdsaP1363Verify",
+      "source": {
+        "name": "google-wycheproof",
+        "version": "0.9rc5"
+      },
+      "publicKey": {
+        "type": "EcPublicKey",
+        "curve": "secp160r1",
+        "keySize": 160,
+        "uncompressed": "042b3a7058fdbd423b96168d487e072feb1a0544d6b6b31631ede8673761d6d3e48e8e966479c08fc3",
+        "wx": "2b3a7058fdbd423b96168d487e072feb1a0544d6",
+        "wy": "00b6b31631ede8673761d6d3e48e8e966479c08fc3"
+      },
+      "publicKeyDer": "303e301006072a8648ce3d020106052b81040008032a00042b3a7058fdbd423b96168d487e072feb1a0544d6b6b31631ede8673761d6d3e48e8e966479c08fc3",
+      "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMD4wEAYHKoZIzj0CAQYFK4EEAAgDKgAEKzpwWP29QjuWFo1Ifgcv6xoFRNa2sxYx\n7ehnN2HW0+SOjpZkecCPww==\n-----END PUBLIC KEY-----\n",
+      "sha": "SHA-256",
+      "tests": [
+        {
+          "tcId": 166,
+          "comment": "point at infinity during verify",
+          "flags": [
+            "PointDuplication",
+            "ArithmeticError"
+          ],
+          "msg": "313233343030",
+          "sig": "0080000000000000000000fa647c93d769e53a912b0055555555555555555555fc42fdb7e4f1437c60c7",
+          "result": "invalid"
+        }
+      ]
+    },
+    {
+      "type": "EcdsaP1363Verify",
+      "source": {
+        "name": "google-wycheproof",
+        "version": "0.9rc5"
+      },
+      "publicKey": {
+        "type": "EcPublicKey",
+        "curve": "secp160r1",
+        "keySize": 160,
+        "uncompressed": "0459611a33fb3425881e31e0f61f2182e4fce3bd89c0291abfc4d1145a5001de56bdfa96be446d30b6",
+        "wx": "59611a33fb3425881e31e0f61f2182e4fce3bd89",
+        "wy": "00c0291abfc4d1145a5001de56bdfa96be446d30b6"
+      },
+      "publicKeyDer": "303e301006072a8648ce3d020106052b81040008032a000459611a33fb3425881e31e0f61f2182e4fce3bd89c0291abfc4d1145a5001de56bdfa96be446d30b6",
+      "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMD4wEAYHKoZIzj0CAQYFK4EEAAgDKgAEWWEaM/s0JYgeMeD2HyGC5PzjvYnAKRq/\nxNEUWlAB3la9+pa+RG0wtg==\n-----END PUBLIC KEY-----\n",
+      "sha": "SHA-256",
+      "tests": [
+        {
+          "tcId": 167,
+          "comment": "edge case for signature malleability",
+          "flags": [
+            "ArithmeticError"
+          ],
+          "msg": "313233343030",
+          "sig": "0080000000000000000000fa647c93d769e53a912b0080000000000000000000fa647c93d769e53a912b",
+          "result": "valid"
+        }
+      ]
+    },
+    {
+      "type": "EcdsaP1363Verify",
+      "source": {
+        "name": "google-wycheproof",
+        "version": "0.9rc5"
+      },
+      "publicKey": {
+        "type": "EcPublicKey",
+        "curve": "secp160r1",
+        "keySize": 160,
+        "uncompressed": "0431eaca167a3c657869e55d7e48bcc525c26e6277cf3b34543a52b1611717d94ba8237980ab02e218",
+        "wx": "31eaca167a3c657869e55d7e48bcc525c26e6277",
+        "wy": "00cf3b34543a52b1611717d94ba8237980ab02e218"
+      },
+      "publicKeyDer": "303e301006072a8648ce3d020106052b81040008032a000431eaca167a3c657869e55d7e48bcc525c26e6277cf3b34543a52b1611717d94ba8237980ab02e218",
+      "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMD4wEAYHKoZIzj0CAQYFK4EEAAgDKgAEMerKFno8ZXhp5V1+SLzFJcJuYnfPOzRU\nOlKxYRcX2UuoI3mAqwLiGA==\n-----END PUBLIC KEY-----\n",
+      "sha": "SHA-256",
+      "tests": [
+        {
+          "tcId": 168,
+          "comment": "edge case for signature malleability",
+          "flags": [
+            "ArithmeticError"
+          ],
+          "msg": "313233343030",
+          "sig": "0080000000000000000000fa647c93d769e53a912b0080000000000000000000fa647c93d769e53a912c",
+          "result": "valid"
+        }
+      ]
+    },
+    {
+      "type": "EcdsaP1363Verify",
+      "source": {
+        "name": "google-wycheproof",
+        "version": "0.9rc5"
+      },
+      "publicKey": {
+        "type": "EcPublicKey",
+        "curve": "secp160r1",
+        "keySize": 160,
+        "uncompressed": "0467883840b961f31142fdaa4225d9186894d533ec648886fef0e60348e90621f6b7a553f05d8ff5a7",
+        "wx": "67883840b961f31142fdaa4225d9186894d533ec",
+        "wy": "648886fef0e60348e90621f6b7a553f05d8ff5a7"
+      },
+      "publicKeyDer": "303e301006072a8648ce3d020106052b81040008032a000467883840b961f31142fdaa4225d9186894d533ec648886fef0e60348e90621f6b7a553f05d8ff5a7",
+      "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMD4wEAYHKoZIzj0CAQYFK4EEAAgDKgAEZ4g4QLlh8xFC/apCJdkYaJTVM+xkiIb+\n8OYDSOkGIfa3pVPwXY/1pw==\n-----END PUBLIC KEY-----\n",
+      "sha": "SHA-256",
+      "tests": [
+        {
+          "tcId": 169,
+          "comment": "u1 == 1",
+          "flags": [
+            "ArithmeticError"
+          ],
+          "msg": "313233343030",
+          "sig": "0055555555555555555555fc42fdb7e4f1437c60c50176b4a5e85f3924c3da86c3eb284543c6006dcf86",
+          "result": "invalid"
+        }
+      ]
+    },
+    {
+      "type": "EcdsaP1363Verify",
+      "source": {
+        "name": "google-wycheproof",
+        "version": "0.9rc5"
+      },
+      "publicKey": {
+        "type": "EcPublicKey",
+        "curve": "secp160r1",
+        "keySize": 160,
+        "uncompressed": "042bea5e4da06c9e290a65d59f9c44f0149616d9ec4b9a64a3835d7e249f969d2ccb997878efabaa19",
+        "wx": "2bea5e4da06c9e290a65d59f9c44f0149616d9ec",
+        "wy": "4b9a64a3835d7e249f969d2ccb997878efabaa19"
+      },
+      "publicKeyDer": "303e301006072a8648ce3d020106052b81040008032a00042bea5e4da06c9e290a65d59f9c44f0149616d9ec4b9a64a3835d7e249f969d2ccb997878efabaa19",
+      "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMD4wEAYHKoZIzj0CAQYFK4EEAAgDKgAEK+peTaBsnikKZdWfnETwFJYW2exLmmSj\ng11+JJ+WnSzLmXh476uqGQ==\n-----END PUBLIC KEY-----\n",
+      "sha": "SHA-256",
+      "tests": [
+        {
+          "tcId": 170,
+          "comment": "u1 == n - 1",
+          "flags": [
+            "ArithmeticError"
+          ],
+          "msg": "313233343030",
+          "sig": "0055555555555555555555fc42fdb7e4f1437c60c500894b5a17a0c6db3c257d25a6ca0a19e1947c7528",
+          "result": "valid"
+        }
+      ]
+    },
+    {
+      "type": "EcdsaP1363Verify",
+      "source": {
+        "name": "google-wycheproof",
+        "version": "0.9rc5"
+      },
+      "publicKey": {
+        "type": "EcPublicKey",
+        "curve": "secp160r1",
+        "keySize": 160,
+        "uncompressed": "04b1fc10305d2e83868c9e40e8426896297b7f3e0091a1e1f88d1fb0f95380f19c98f55a0854c6b494",
+        "wx": "00b1fc10305d2e83868c9e40e8426896297b7f3e00",
+        "wy": "0091a1e1f88d1fb0f95380f19c98f55a0854c6b494"
+      },
+      "publicKeyDer": "303e301006072a8648ce3d020106052b81040008032a0004b1fc10305d2e83868c9e40e8426896297b7f3e0091a1e1f88d1fb0f95380f19c98f55a0854c6b494",
+      "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMD4wEAYHKoZIzj0CAQYFK4EEAAgDKgAEsfwQMF0ug4aMnkDoQmiWKXt/PgCRoeH4\njR+w+VOA8ZyY9VoIVMa0lA==\n-----END PUBLIC KEY-----\n",
+      "sha": "SHA-256",
+      "tests": [
+        {
+          "tcId": 171,
+          "comment": "u2 == 1",
+          "flags": [
+            "ArithmeticError"
+          ],
+          "msg": "313233343030",
+          "sig": "0055555555555555555555fc42fdb7e4f1437c60c50055555555555555555555fc42fdb7e4f1437c60c5",
+          "result": "valid"
+        }
+      ]
+    },
+    {
+      "type": "EcdsaP1363Verify",
+      "source": {
+        "name": "google-wycheproof",
+        "version": "0.9rc5"
+      },
+      "publicKey": {
+        "type": "EcPublicKey",
+        "curve": "secp160r1",
+        "keySize": 160,
+        "uncompressed": "049eabf3380b193e547dd2610152ea76048806b9e1413a8a53711c915d17c16df98300ee414f11dbdd",
+        "wx": "009eabf3380b193e547dd2610152ea76048806b9e1",
+        "wy": "413a8a53711c915d17c16df98300ee414f11dbdd"
+      },
+      "publicKeyDer": "303e301006072a8648ce3d020106052b81040008032a00049eabf3380b193e547dd2610152ea76048806b9e1413a8a53711c915d17c16df98300ee414f11dbdd",
+      "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMD4wEAYHKoZIzj0CAQYFK4EEAAgDKgAEnqvzOAsZPlR90mEBUup2BIgGueFBOopT\ncRyRXRfBbfmDAO5BTxHb3Q==\n-----END PUBLIC KEY-----\n",
+      "sha": "SHA-256",
+      "tests": [
+        {
+          "tcId": 172,
+          "comment": "u2 == n - 1",
+          "flags": [
+            "ArithmeticError"
+          ],
+          "msg": "313233343030",
+          "sig": "0055555555555555555555fc42fdb7e4f1437c60c500aaaaaaaaaaaaaaaaaaabf885fb6fc9e286f8c192",
+          "result": "valid"
+        }
+      ]
+    },
+    {
+      "type": "EcdsaP1363Verify",
+      "source": {
+        "name": "google-wycheproof",
+        "version": "0.9rc5"
+      },
+      "publicKey": {
+        "type": "EcPublicKey",
+        "curve": "secp160r1",
+        "keySize": 160,
+        "uncompressed": "042b9e690b79e165b04e0df6fc84e58ac94ac63a927a9532b9ee40bff794f9888b1a2e0b8a30f4f550",
+        "wx": "2b9e690b79e165b04e0df6fc84e58ac94ac63a92",
+        "wy": "7a9532b9ee40bff794f9888b1a2e0b8a30f4f550"
+      },
+      "publicKeyDer": "303e301006072a8648ce3d020106052b81040008032a00042b9e690b79e165b04e0df6fc84e58ac94ac63a927a9532b9ee40bff794f9888b1a2e0b8a30f4f550",
+      "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMD4wEAYHKoZIzj0CAQYFK4EEAAgDKgAEK55pC3nhZbBODfb8hOWKyUrGOpJ6lTK5\n7kC/95T5iIsaLguKMPT1UA==\n-----END PUBLIC KEY-----\n",
+      "sha": "SHA-256",
+      "tests": [
+        {
+          "tcId": 173,
+          "comment": "edge case for u1",
+          "flags": [
+            "ArithmeticError"
+          ],
+          "msg": "313233343030",
+          "sig": "00000000000000000000000000000000007ffffffd007ce6e1f81fbdb6ebf382414e62c1c14200249a82",
+          "result": "valid"
+        }
+      ]
+    },
+    {
+      "type": "EcdsaP1363Verify",
+      "source": {
+        "name": "google-wycheproof",
+        "version": "0.9rc5"
+      },
+      "publicKey": {
+        "type": "EcPublicKey",
+        "curve": "secp160r1",
+        "keySize": 160,
+        "uncompressed": "04409c92512c25d7fdf331487d4bb1ca8312ea27b4db6909d4a0768e609a52064c266e152a36b49b7a",
+        "wx": "409c92512c25d7fdf331487d4bb1ca8312ea27b4",
+        "wy": "00db6909d4a0768e609a52064c266e152a36b49b7a"
+      },
+      "publicKeyDer": "303e301006072a8648ce3d020106052b81040008032a0004409c92512c25d7fdf331487d4bb1ca8312ea27b4db6909d4a0768e609a52064c266e152a36b49b7a",
+      "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMD4wEAYHKoZIzj0CAQYFK4EEAAgDKgAEQJySUSwl1/3zMUh9S7HKgxLqJ7TbaQnU\noHaOYJpSBkwmbhUqNrSbeg==\n-----END PUBLIC KEY-----\n",
+      "sha": "SHA-256",
+      "tests": [
+        {
+          "tcId": 174,
+          "comment": "edge case for u1",
+          "flags": [
+            "ArithmeticError"
+          ],
+          "msg": "313233343030",
+          "sig": "00000000000000000000000000000000007ffffffd00304d26aa02922e73b2c60f12e7f288b0b43f3783",
+          "result": "valid"
+        }
+      ]
+    },
+    {
+      "type": "EcdsaP1363Verify",
+      "source": {
+        "name": "google-wycheproof",
+        "version": "0.9rc5"
+      },
+      "publicKey": {
+        "type": "EcPublicKey",
+        "curve": "secp160r1",
+        "keySize": 160,
+        "uncompressed": "0439226e3be69faee8861f1fbaf4523da7bd2d1bcdc7a528956daf7f7e5c21288732c69372ca327ecd",
+        "wx": "39226e3be69faee8861f1fbaf4523da7bd2d1bcd",
+        "wy": "00c7a528956daf7f7e5c21288732c69372ca327ecd"
+      },
+      "publicKeyDer": "303e301006072a8648ce3d020106052b81040008032a000439226e3be69faee8861f1fbaf4523da7bd2d1bcdc7a528956daf7f7e5c21288732c69372ca327ecd",
+      "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMD4wEAYHKoZIzj0CAQYFK4EEAAgDKgAEOSJuO+afruiGHx+69FI9p70tG83HpSiV\nba9/flwhKIcyxpNyyjJ+zQ==\n-----END PUBLIC KEY-----\n",
+      "sha": "SHA-256",
+      "tests": [
+        {
+          "tcId": 175,
+          "comment": "edge case for u1",
+          "flags": [
+            "ArithmeticError"
+          ],
+          "msg": "313233343030",
+          "sig": "00000000000000000000000000000000007ffffffd002b9afe309194473695a328cfe89a314ee772f616",
+          "result": "valid"
+        }
+      ]
+    },
+    {
+      "type": "EcdsaP1363Verify",
+      "source": {
+        "name": "google-wycheproof",
+        "version": "0.9rc5"
+      },
+      "publicKey": {
+        "type": "EcPublicKey",
+        "curve": "secp160r1",
+        "keySize": 160,
+        "uncompressed": "0474a34455bc9222dc9f189672e0c72cb3d7bf8491605793269a796edfb97deeb50f30477571c76d32",
+        "wx": "74a34455bc9222dc9f189672e0c72cb3d7bf8491",
+        "wy": "605793269a796edfb97deeb50f30477571c76d32"
+      },
+      "publicKeyDer": "303e301006072a8648ce3d020106052b81040008032a000474a34455bc9222dc9f189672e0c72cb3d7bf8491605793269a796edfb97deeb50f30477571c76d32",
+      "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMD4wEAYHKoZIzj0CAQYFK4EEAAgDKgAEdKNEVbySItyfGJZy4Mcss9e/hJFgV5Mm\nmnlu37l97rUPMEd1ccdtMg==\n-----END PUBLIC KEY-----\n",
+      "sha": "SHA-256",
+      "tests": [
+        {
+          "tcId": 176,
+          "comment": "edge case for u1",
+          "flags": [
+            "ArithmeticError"
+          ],
+          "msg": "313233343030",
+          "sig": "00000000000000000000000000000000007ffffffd000b63c499d27b74e8894b705f6dcab0b5834c4785",
+          "result": "valid"
+        }
+      ]
+    },
+    {
+      "type": "EcdsaP1363Verify",
+      "source": {
+        "name": "google-wycheproof",
+        "version": "0.9rc5"
+      },
+      "publicKey": {
+        "type": "EcPublicKey",
+        "curve": "secp160r1",
+        "keySize": 160,
+        "uncompressed": "04b1031e0781fecf813633cb3884e930913e65ba5bcc8860779ca7e174df787d66f671a8fa337994cf",
+        "wx": "00b1031e0781fecf813633cb3884e930913e65ba5b",
+        "wy": "00cc8860779ca7e174df787d66f671a8fa337994cf"
+      },
+      "publicKeyDer": "303e301006072a8648ce3d020106052b81040008032a0004b1031e0781fecf813633cb3884e930913e65ba5bcc8860779ca7e174df787d66f671a8fa337994cf",
+      "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMD4wEAYHKoZIzj0CAQYFK4EEAAgDKgAEsQMeB4H+z4E2M8s4hOkwkT5lulvMiGB3\nnKfhdN94fWb2caj6M3mUzw==\n-----END PUBLIC KEY-----\n",
+      "sha": "SHA-256",
+      "tests": [
+        {
+          "tcId": 177,
+          "comment": "edge case for u1",
+          "flags": [
+            "ArithmeticError"
+          ],
+          "msg": "313233343030",
+          "sig": "00000000000000000000000000000000007ffffffd003c499d27b74e8894b5a1effb88d50da2d531e626",
+          "result": "valid"
+        }
+      ]
+    },
+    {
+      "type": "EcdsaP1363Verify",
+      "source": {
+        "name": "google-wycheproof",
+        "version": "0.9rc5"
+      },
+      "publicKey": {
+        "type": "EcPublicKey",
+        "curve": "secp160r1",
+        "keySize": 160,
+        "uncompressed": "04987ff07d407ee7a41a65a7ac6929c13d0a6e480059813e21d5f2fe748f06be7328a9862af2bc7c57",
+        "wx": "00987ff07d407ee7a41a65a7ac6929c13d0a6e4800",
+        "wy": "59813e21d5f2fe748f06be7328a9862af2bc7c57"
+      },
+      "publicKeyDer": "303e301006072a8648ce3d020106052b81040008032a0004987ff07d407ee7a41a65a7ac6929c13d0a6e480059813e21d5f2fe748f06be7328a9862af2bc7c57",
+      "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMD4wEAYHKoZIzj0CAQYFK4EEAAgDKgAEmH/wfUB+56QaZaesaSnBPQpuSABZgT4h\n1fL+dI8GvnMoqYYq8rx8Vw==\n-----END PUBLIC KEY-----\n",
+      "sha": "SHA-256",
+      "tests": [
+        {
+          "tcId": 178,
+          "comment": "edge case for u1",
+          "flags": [
+            "ArithmeticError"
+          ],
+          "msg": "313233343030",
+          "sig": "00000000000000000000000000000000007ffffffd0078933a4f6e9d11296b43dff711aa1b45aa63cc4c",
+          "result": "valid"
+        }
+      ]
+    },
+    {
+      "type": "EcdsaP1363Verify",
+      "source": {
+        "name": "google-wycheproof",
+        "version": "0.9rc5"
+      },
+      "publicKey": {
+        "type": "EcPublicKey",
+        "curve": "secp160r1",
+        "keySize": 160,
+        "uncompressed": "04c071a26e5e5257fe26bdb8013f48bbae17a2f3192cf253cf4973d3c2dc250ec4c1e71c1ed3653786",
+        "wx": "00c071a26e5e5257fe26bdb8013f48bbae17a2f319",
+        "wy": "2cf253cf4973d3c2dc250ec4c1e71c1ed3653786"
+      },
+      "publicKeyDer": "303e301006072a8648ce3d020106052b81040008032a0004c071a26e5e5257fe26bdb8013f48bbae17a2f3192cf253cf4973d3c2dc250ec4c1e71c1ed3653786",
+      "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMD4wEAYHKoZIzj0CAQYFK4EEAAgDKgAEwHGibl5SV/4mvbgBP0i7rhei8xks8lPP\nSXPTwtwlDsTB5xwe02U3hg==\n-----END PUBLIC KEY-----\n",
+      "sha": "SHA-256",
+      "tests": [
+        {
+          "tcId": 179,
+          "comment": "edge case for u1",
+          "flags": [
+            "ArithmeticError"
+          ],
+          "msg": "313233343030",
+          "sig": "00000000000000000000000000000000007ffffffd00d27b74e8894b5a17a0c876fa832050294d0ede01",
+          "result": "valid"
+        }
+      ]
+    },
+    {
+      "type": "EcdsaP1363Verify",
+      "source": {
+        "name": "google-wycheproof",
+        "version": "0.9rc5"
+      },
+      "publicKey": {
+        "type": "EcPublicKey",
+        "curve": "secp160r1",
+        "keySize": 160,
+        "uncompressed": "04db3da2a11095b2aefd141f26c9b20e43a1f4cecdeb2666f06ebfcfcdfa3f9890769b0db3b85a8a3f",
+        "wx": "00db3da2a11095b2aefd141f26c9b20e43a1f4cecd",
+        "wy": "00eb2666f06ebfcfcdfa3f9890769b0db3b85a8a3f"
+      },
+      "publicKeyDer": "303e301006072a8648ce3d020106052b81040008032a0004db3da2a11095b2aefd141f26c9b20e43a1f4cecdeb2666f06ebfcfcdfa3f9890769b0db3b85a8a3f",
+      "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMD4wEAYHKoZIzj0CAQYFK4EEAAgDKgAE2z2ioRCVsq79FB8mybIOQ6H0zs3rJmbw\nbr/Pzfo/mJB2mw2zuFqKPw==\n-----END PUBLIC KEY-----\n",
+      "sha": "SHA-256",
+      "tests": [
+        {
+          "tcId": 180,
+          "comment": "edge case for u1",
+          "flags": [
+            "ArithmeticError"
+          ],
+          "msg": "313233343030",
+          "sig": "00000000000000000000000000000000007ffffffd00b080eb3eba27e3743ee6c3ba1d023f83c7643e58",
+          "result": "valid"
+        }
+      ]
+    },
+    {
+      "type": "EcdsaP1363Verify",
+      "source": {
+        "name": "google-wycheproof",
+        "version": "0.9rc5"
+      },
+      "publicKey": {
+        "type": "EcPublicKey",
+        "curve": "secp160r1",
+        "keySize": 160,
+        "uncompressed": "040f9d71fb48e807f2e66bfdffab87c78d24cf2d658125943f73180928436be5db4228efb72769021e",
+        "wx": "0f9d71fb48e807f2e66bfdffab87c78d24cf2d65",
+        "wy": "008125943f73180928436be5db4228efb72769021e"
+      },
+      "publicKeyDer": "303e301006072a8648ce3d020106052b81040008032a00040f9d71fb48e807f2e66bfdffab87c78d24cf2d658125943f73180928436be5db4228efb72769021e",
+      "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMD4wEAYHKoZIzj0CAQYFK4EEAAgDKgAED51x+0joB/Lma/3/q4fHjSTPLWWBJZQ/\ncxgJKENr5dtCKO+3J2kCHg==\n-----END PUBLIC KEY-----\n",
+      "sha": "SHA-256",
+      "tests": [
+        {
+          "tcId": 181,
+          "comment": "edge case for u1",
+          "flags": [
+            "ArithmeticError"
+          ],
+          "msg": "313233343030",
+          "sig": "00000000000000000000000000000000007ffffffd00eb2eda56a5606183576c3f3be8b20e9e1fc45dec",
+          "result": "valid"
+        }
+      ]
+    },
+    {
+      "type": "EcdsaP1363Verify",
+      "source": {
+        "name": "google-wycheproof",
+        "version": "0.9rc5"
+      },
+      "publicKey": {
+        "type": "EcPublicKey",
+        "curve": "secp160r1",
+        "keySize": 160,
+        "uncompressed": "04feaa6f5ba970d904fe254dd45cf4f1d397f8b5c6dbcddef5385bb2ec2e5844b4566cc22f015d864b",
+        "wx": "00feaa6f5ba970d904fe254dd45cf4f1d397f8b5c6",
+        "wy": "00dbcddef5385bb2ec2e5844b4566cc22f015d864b"
+      },
+      "publicKeyDer": "303e301006072a8648ce3d020106052b81040008032a0004feaa6f5ba970d904fe254dd45cf4f1d397f8b5c6dbcddef5385bb2ec2e5844b4566cc22f015d864b",
+      "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMD4wEAYHKoZIzj0CAQYFK4EEAAgDKgAE/qpvW6lw2QT+JU3UXPTx05f4tcbbzd71\nOFuy7C5YRLRWbMIvAV2GSw==\n-----END PUBLIC KEY-----\n",
+      "sha": "SHA-256",
+      "tests": [
+        {
+          "tcId": 182,
+          "comment": "edge case for u1",
+          "flags": [
+            "ArithmeticError"
+          ],
+          "msg": "313233343030",
+          "sig": "00000000000000000000000000000000007ffffffd0083191e07e04249140c7fb37a9665ed91ca5087d5",
+          "result": "valid"
+        }
+      ]
+    },
+    {
+      "type": "EcdsaP1363Verify",
+      "source": {
+        "name": "google-wycheproof",
+        "version": "0.9rc5"
+      },
+      "publicKey": {
+        "type": "EcPublicKey",
+        "curve": "secp160r1",
+        "keySize": 160,
+        "uncompressed": "0452c0322e296d02806a55800e67b9334ed4005cd1f60f5556e7563b756d8a17cd6977cdde16531660",
+        "wx": "52c0322e296d02806a55800e67b9334ed4005cd1",
+        "wy": "00f60f5556e7563b756d8a17cd6977cdde16531660"
+      },
+      "publicKeyDer": "303e301006072a8648ce3d020106052b81040008032a000452c0322e296d02806a55800e67b9334ed4005cd1f60f5556e7563b756d8a17cd6977cdde16531660",
+      "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMD4wEAYHKoZIzj0CAQYFK4EEAAgDKgAEUsAyLiltAoBqVYAOZ7kzTtQAXNH2D1VW\n51Y7dW2KF81pd83eFlMWYA==\n-----END PUBLIC KEY-----\n",
+      "sha": "SHA-256",
+      "tests": [
+        {
+          "tcId": 183,
+          "comment": "edge case for u1",
+          "flags": [
+            "ArithmeticError"
+          ],
+          "msg": "313233343030",
+          "sig": "00000000000000000000000000000000007ffffffd0044a5ad0bd0636d9e12be92d365050cf0ca3e3a94",
+          "result": "valid"
+        }
+      ]
+    },
+    {
+      "type": "EcdsaP1363Verify",
+      "source": {
+        "name": "google-wycheproof",
+        "version": "0.9rc5"
+      },
+      "publicKey": {
+        "type": "EcPublicKey",
+        "curve": "secp160r1",
+        "keySize": 160,
+        "uncompressed": "0450c07170fdea6845c09c3da29cc8ee670059291999d3cf10ef65514e890c056a08c505ad13dbfe03",
+        "wx": "50c07170fdea6845c09c3da29cc8ee6700592919",
+        "wy": "0099d3cf10ef65514e890c056a08c505ad13dbfe03"
+      },
+      "publicKeyDer": "303e301006072a8648ce3d020106052b81040008032a000450c07170fdea6845c09c3da29cc8ee670059291999d3cf10ef65514e890c056a08c505ad13dbfe03",
+      "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMD4wEAYHKoZIzj0CAQYFK4EEAAgDKgAEUMBxcP3qaEXAnD2inMjuZwBZKRmZ088Q\n72VRTokMBWoIxQWtE9v+Aw==\n-----END PUBLIC KEY-----\n",
+      "sha": "SHA-256",
+      "tests": [
+        {
+          "tcId": 184,
+          "comment": "edge case for u1",
+          "flags": [
+            "ArithmeticError"
+          ],
+          "msg": "313233343030",
+          "sig": "00000000000000000000000000000000007ffffffd0015cd7f1848ca239b4ad19467f44d18a773b97b0b",
+          "result": "valid"
+        }
+      ]
+    },
+    {
+      "type": "EcdsaP1363Verify",
+      "source": {
+        "name": "google-wycheproof",
+        "version": "0.9rc5"
+      },
+      "publicKey": {
+        "type": "EcPublicKey",
+        "curve": "secp160r1",
+        "keySize": 160,
+        "uncompressed": "0405cc25d16018b88388a41cfe3547ebda232de5ebbf2017c6bc837a738dca9c8e91b3fbe06d154497",
+        "wx": "05cc25d16018b88388a41cfe3547ebda232de5eb",
+        "wy": "00bf2017c6bc837a738dca9c8e91b3fbe06d154497"
+      },
+      "publicKeyDer": "303e301006072a8648ce3d020106052b81040008032a000405cc25d16018b88388a41cfe3547ebda232de5ebbf2017c6bc837a738dca9c8e91b3fbe06d154497",
+      "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMD4wEAYHKoZIzj0CAQYFK4EEAAgDKgAEBcwl0WAYuIOIpBz+NUfr2iMt5eu/IBfG\nvIN6c43KnI6Rs/vgbRVElw==\n-----END PUBLIC KEY-----\n",
+      "sha": "SHA-256",
+      "tests": [
+        {
+          "tcId": 185,
+          "comment": "edge case for u2",
+          "flags": [
+            "ArithmeticError"
+          ],
+          "msg": "313233343030",
+          "sig": "00000000000000000000000000000000007ffffffd00aaaaaaaaaaaaaaaaaaabf885fb6fc9e2b1a36c39",
+          "result": "valid"
+        }
+      ]
+    },
+    {
+      "type": "EcdsaP1363Verify",
+      "source": {
+        "name": "google-wycheproof",
+        "version": "0.9rc5"
+      },
+      "publicKey": {
+        "type": "EcPublicKey",
+        "curve": "secp160r1",
+        "keySize": 160,
+        "uncompressed": "04e2cada2f22ae694fee3a3287ce8dc0691af40c9ff6a592e8c723bec635a76c9c6482d2b60dddb986",
+        "wx": "00e2cada2f22ae694fee3a3287ce8dc0691af40c9f",
+        "wy": "00f6a592e8c723bec635a76c9c6482d2b60dddb986"
+      },
+      "publicKeyDer": "303e301006072a8648ce3d020106052b81040008032a0004e2cada2f22ae694fee3a3287ce8dc0691af40c9ff6a592e8c723bec635a76c9c6482d2b60dddb986",
+      "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMD4wEAYHKoZIzj0CAQYFK4EEAAgDKgAE4sraLyKuaU/uOjKHzo3AaRr0DJ/2pZLo\nxyO+xjWnbJxkgtK2Dd25hg==\n-----END PUBLIC KEY-----\n",
+      "sha": "SHA-256",
+      "tests": [
+        {
+          "tcId": 186,
+          "comment": "edge case for u2",
+          "flags": [
+            "ArithmeticError"
+          ],
+          "msg": "313233343030",
+          "sig": "00000000000000000000000000000000007ffffffd005d0e82e246fc758108ac747e6f91ebfc3800d367",
+          "result": "valid"
+        }
+      ]
+    },
+    {
+      "type": "EcdsaP1363Verify",
+      "source": {
+        "name": "google-wycheproof",
+        "version": "0.9rc5"
+      },
+      "publicKey": {
+        "type": "EcPublicKey",
+        "curve": "secp160r1",
+        "keySize": 160,
+        "uncompressed": "04267471b41f818bb8176e2a012f963cd9b6fa2575c14ea6247c7431a05fd7422de905afdbc6c8e166",
+        "wx": "267471b41f818bb8176e2a012f963cd9b6fa2575",
+        "wy": "00c14ea6247c7431a05fd7422de905afdbc6c8e166"
+      },
+      "publicKeyDer": "303e301006072a8648ce3d020106052b81040008032a0004267471b41f818bb8176e2a012f963cd9b6fa2575c14ea6247c7431a05fd7422de905afdbc6c8e166",
+      "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMD4wEAYHKoZIzj0CAQYFK4EEAAgDKgAEJnRxtB+Bi7gXbioBL5Y82bb6JXXBTqYk\nfHQxoF/XQi3pBa/bxsjhZg==\n-----END PUBLIC KEY-----\n",
+      "sha": "SHA-256",
+      "tests": [
+        {
+          "tcId": 187,
+          "comment": "edge case for u2",
+          "flags": [
+            "ArithmeticError"
+          ],
+          "msg": "313233343030",
+          "sig": "00000000000000000000000000000000007ffffffd00e6ae9daaf56f8b83815b6de2e022c30a5fa4f229",
+          "result": "valid"
+        }
+      ]
+    },
+    {
+      "type": "EcdsaP1363Verify",
+      "source": {
+        "name": "google-wycheproof",
+        "version": "0.9rc5"
+      },
+      "publicKey": {
+        "type": "EcPublicKey",
+        "curve": "secp160r1",
+        "keySize": 160,
+        "uncompressed": "049ae2a06f674401b28a799181ad23badd115066d13430009efd1271ea1962d35effebfdf5c94d46d2",
+        "wx": "009ae2a06f674401b28a799181ad23badd115066d1",
+        "wy": "3430009efd1271ea1962d35effebfdf5c94d46d2"
+      },
+      "publicKeyDer": "303e301006072a8648ce3d020106052b81040008032a00049ae2a06f674401b28a799181ad23badd115066d13430009efd1271ea1962d35effebfdf5c94d46d2",
+      "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMD4wEAYHKoZIzj0CAQYFK4EEAAgDKgAEmuKgb2dEAbKKeZGBrSO63RFQZtE0MACe\n/RJx6hli017/6/31yU1G0g==\n-----END PUBLIC KEY-----\n",
+      "sha": "SHA-256",
+      "tests": [
+        {
+          "tcId": 188,
+          "comment": "edge case for u2",
+          "flags": [
+            "ArithmeticError"
+          ],
+          "msg": "313233343030",
+          "sig": "00000000000000000000000000000000007ffffffd0044bdeb62114743cb00008678e702d02fe3b75eb7",
+          "result": "valid"
+        }
+      ]
+    },
+    {
+      "type": "EcdsaP1363Verify",
+      "source": {
+        "name": "google-wycheproof",
+        "version": "0.9rc5"
+      },
+      "publicKey": {
+        "type": "EcPublicKey",
+        "curve": "secp160r1",
+        "keySize": 160,
+        "uncompressed": "04d086921c342ee56be74e87950e1c260b070c74690c5ad644b7806b75469af63d8ba276c568e8e27a",
+        "wx": "00d086921c342ee56be74e87950e1c260b070c7469",
+        "wy": "0c5ad644b7806b75469af63d8ba276c568e8e27a"
+      },
+      "publicKeyDer": "303e301006072a8648ce3d020106052b81040008032a0004d086921c342ee56be74e87950e1c260b070c74690c5ad644b7806b75469af63d8ba276c568e8e27a",
+      "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMD4wEAYHKoZIzj0CAQYFK4EEAAgDKgAE0IaSHDQu5WvnToeVDhwmCwcMdGkMWtZE\nt4BrdUaa9j2LonbFaOjieg==\n-----END PUBLIC KEY-----\n",
+      "sha": "SHA-256",
+      "tests": [
+        {
+          "tcId": 189,
+          "comment": "edge case for u2",
+          "flags": [
+            "ArithmeticError"
+          ],
+          "msg": "313233343030",
+          "sig": "00000000000000000000000000000000007ffffffd00deb62114743cb0000001b3aa8fa7770551110483",
+          "result": "valid"
+        }
+      ]
+    },
+    {
+      "type": "EcdsaP1363Verify",
+      "source": {
+        "name": "google-wycheproof",
+        "version": "0.9rc5"
+      },
+      "publicKey": {
+        "type": "EcPublicKey",
+        "curve": "secp160r1",
+        "keySize": 160,
+        "uncompressed": "04c5f85f1245c93cf37f8258d3f18e15ae64bf3724c3c3f7dc1229fb8b5ad0274eae7c98d5fc9ef67a",
+        "wx": "00c5f85f1245c93cf37f8258d3f18e15ae64bf3724",
+        "wy": "00c3c3f7dc1229fb8b5ad0274eae7c98d5fc9ef67a"
+      },
+      "publicKeyDer": "303e301006072a8648ce3d020106052b81040008032a0004c5f85f1245c93cf37f8258d3f18e15ae64bf3724c3c3f7dc1229fb8b5ad0274eae7c98d5fc9ef67a",
+      "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMD4wEAYHKoZIzj0CAQYFK4EEAAgDKgAExfhfEkXJPPN/gljT8Y4VrmS/NyTDw/fc\nEin7i1rQJ06ufJjV/J72eg==\n-----END PUBLIC KEY-----\n",
+      "sha": "SHA-256",
+      "tests": [
+        {
+          "tcId": 190,
+          "comment": "edge case for u2",
+          "flags": [
+            "ArithmeticError"
+          ],
+          "msg": "313233343030",
+          "sig": "00000000000000000000000000000000007ffffffd00bd6c4228e87960000001728c26273f36d7ace6af",
+          "result": "valid"
+        }
+      ]
+    },
+    {
+      "type": "EcdsaP1363Verify",
+      "source": {
+        "name": "google-wycheproof",
+        "version": "0.9rc5"
+      },
+      "publicKey": {
+        "type": "EcPublicKey",
+        "curve": "secp160r1",
+        "keySize": 160,
+        "uncompressed": "044148e9ba110487844c41c6a990ce6029fbacd7daabf5a94d89ac5ad633a85b6879affc41860f2ac5",
+        "wx": "4148e9ba110487844c41c6a990ce6029fbacd7da",
+        "wy": "00abf5a94d89ac5ad633a85b6879affc41860f2ac5"
+      },
+      "publicKeyDer": "303e301006072a8648ce3d020106052b81040008032a00044148e9ba110487844c41c6a990ce6029fbacd7daabf5a94d89ac5ad633a85b6879affc41860f2ac5",
+      "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMD4wEAYHKoZIzj0CAQYFK4EEAAgDKgAEQUjpuhEEh4RMQcapkM5gKfus19qr9alN\niaxa1jOoW2h5r/xBhg8qxQ==\n-----END PUBLIC KEY-----\n",
+      "sha": "SHA-256",
+      "tests": [
+        {
+          "tcId": 191,
+          "comment": "edge case for u2",
+          "flags": [
+            "ArithmeticError"
+          ],
+          "msg": "313233343030",
+          "sig": "00000000000000000000000000000000007ffffffd00114743cb00000000000021ccc0e671308267fdb2",
+          "result": "valid"
+        }
+      ]
+    },
+    {
+      "type": "EcdsaP1363Verify",
+      "source": {
+        "name": "google-wycheproof",
+        "version": "0.9rc5"
+      },
+      "publicKey": {
+        "type": "EcPublicKey",
+        "curve": "secp160r1",
+        "keySize": 160,
+        "uncompressed": "046f690efb076a7dda2a0f990736ba6cd208144f1babfccb16e59dd7aecddb51f4e4d2bfc2ae172f0a",
+        "wx": "6f690efb076a7dda2a0f990736ba6cd208144f1b",
+        "wy": "00abfccb16e59dd7aecddb51f4e4d2bfc2ae172f0a"
+      },
+      "publicKeyDer": "303e301006072a8648ce3d020106052b81040008032a00046f690efb076a7dda2a0f990736ba6cd208144f1babfccb16e59dd7aecddb51f4e4d2bfc2ae172f0a",
+      "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMD4wEAYHKoZIzj0CAQYFK4EEAAgDKgAEb2kO+wdqfdoqD5kHNrps0ggUTxur/MsW\n5Z3Xrs3bUfTk0r/CrhcvCg==\n-----END PUBLIC KEY-----\n",
+      "sha": "SHA-256",
+      "tests": [
+        {
+          "tcId": 192,
+          "comment": "edge case for u2",
+          "flags": [
+            "ArithmeticError"
+          ],
+          "msg": "313233343030",
+          "sig": "00000000000000000000000000000000007ffffffd0067063e7063e7063e7064b08f5189b9de97b88155",
+          "result": "valid"
+        }
+      ]
+    },
+    {
+      "type": "EcdsaP1363Verify",
+      "source": {
+        "name": "google-wycheproof",
+        "version": "0.9rc5"
+      },
+      "publicKey": {
+        "type": "EcPublicKey",
+        "curve": "secp160r1",
+        "keySize": 160,
+        "uncompressed": "0484b25a24491ce040eb6dc900f8ee90c6684ac8e595a985e609ce016a897b913c5dff35776ceb682a",
+        "wx": "0084b25a24491ce040eb6dc900f8ee90c6684ac8e5",
+        "wy": "0095a985e609ce016a897b913c5dff35776ceb682a"
+      },
+      "publicKeyDer": "303e301006072a8648ce3d020106052b81040008032a000484b25a24491ce040eb6dc900f8ee90c6684ac8e595a985e609ce016a897b913c5dff35776ceb682a",
+      "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMD4wEAYHKoZIzj0CAQYFK4EEAAgDKgAEhLJaJEkc4EDrbckA+O6QxmhKyOWVqYXm\nCc4Baol7kTxd/zV3bOtoKg==\n-----END PUBLIC KEY-----\n",
+      "sha": "SHA-256",
+      "tests": [
+        {
+          "tcId": 193,
+          "comment": "edge case for u2",
+          "flags": [
+            "ArithmeticError"
+          ],
+          "msg": "313233343030",
+          "sig": "00000000000000000000000000000000007ffffffd00b8e38e38e38e38e38e3a4d3bd063c5600b1bb53f",
+          "result": "valid"
+        }
+      ]
+    },
+    {
+      "type": "EcdsaP1363Verify",
+      "source": {
+        "name": "google-wycheproof",
+        "version": "0.9rc5"
+      },
+      "publicKey": {
+        "type": "EcPublicKey",
+        "curve": "secp160r1",
+        "keySize": 160,
+        "uncompressed": "0496d267106dd68444ae300966bac62e18238042d45111e87654afbbad4272a264a6ba5a3320eedc2b",
+        "wx": "0096d267106dd68444ae300966bac62e18238042d4",
+        "wy": "5111e87654afbbad4272a264a6ba5a3320eedc2b"
+      },
+      "publicKeyDer": "303e301006072a8648ce3d020106052b81040008032a000496d267106dd68444ae300966bac62e18238042d45111e87654afbbad4272a264a6ba5a3320eedc2b",
+      "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMD4wEAYHKoZIzj0CAQYFK4EEAAgDKgAEltJnEG3WhESuMAlmusYuGCOAQtRREeh2\nVK+7rUJyomSmulozIO7cKw==\n-----END PUBLIC KEY-----\n",
+      "sha": "SHA-256",
+      "tests": [
+        {
+          "tcId": 194,
+          "comment": "edge case for u2",
+          "flags": [
+            "ArithmeticError"
+          ],
+          "msg": "313233343030",
+          "sig": "00000000000000000000000000000000007ffffffd0055555555555555555555fc42fdb7e4f118d1b61e",
+          "result": "valid"
+        }
+      ]
+    },
+    {
+      "type": "EcdsaP1363Verify",
+      "source": {
+        "name": "google-wycheproof",
+        "version": "0.9rc5"
+      },
+      "publicKey": {
+        "type": "EcPublicKey",
+        "curve": "secp160r1",
+        "keySize": 160,
+        "uncompressed": "04c06afc4b760ec9b2dca49a4b3617e7237657191ff0b5ec38b9180e7ee4aa86fa19384dd28e342a9c",
+        "wx": "00c06afc4b760ec9b2dca49a4b3617e7237657191f",
+        "wy": "00f0b5ec38b9180e7ee4aa86fa19384dd28e342a9c"
+      },
+      "publicKeyDer": "303e301006072a8648ce3d020106052b81040008032a0004c06afc4b760ec9b2dca49a4b3617e7237657191ff0b5ec38b9180e7ee4aa86fa19384dd28e342a9c",
+      "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMD4wEAYHKoZIzj0CAQYFK4EEAAgDKgAEwGr8S3YOybLcpJpLNhfnI3ZXGR/wtew4\nuRgOfuSqhvoZOE3SjjQqnA==\n-----END PUBLIC KEY-----\n",
+      "sha": "SHA-256",
+      "tests": [
+        {
+          "tcId": 195,
+          "comment": "edge case for u2",
+          "flags": [
+            "ArithmeticError"
+          ],
+          "msg": "313233343030",
+          "sig": "00000000000000000000000000000000007ffffffd0080000000000000000000fa647c93d769a53a912d",
+          "result": "valid"
+        }
+      ]
+    },
+    {
+      "type": "EcdsaP1363Verify",
+      "source": {
+        "name": "google-wycheproof",
+        "version": "0.9rc5"
+      },
+      "publicKey": {
+        "type": "EcPublicKey",
+        "curve": "secp160r1",
+        "keySize": 160,
+        "uncompressed": "0493df7994eab8a87973e7e216df0672a82114ae2c6aa28ee71bf4154d04aed59a392761c3d1dc411b",
+        "wx": "0093df7994eab8a87973e7e216df0672a82114ae2c",
+        "wy": "6aa28ee71bf4154d04aed59a392761c3d1dc411b"
+      },
+      "publicKeyDer": "303e301006072a8648ce3d020106052b81040008032a000493df7994eab8a87973e7e216df0672a82114ae2c6aa28ee71bf4154d04aed59a392761c3d1dc411b",
+      "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMD4wEAYHKoZIzj0CAQYFK4EEAAgDKgAEk995lOq4qHlz5+IW3wZyqCEUrixqoo7n\nG/QVTQSu1Zo5J2HD0dxBGw==\n-----END PUBLIC KEY-----\n",
+      "sha": "SHA-256",
+      "tests": [
+        {
+          "tcId": 196,
+          "comment": "edge case for u2",
+          "flags": [
+            "ArithmeticError"
+          ],
+          "msg": "313233343030",
+          "sig": "00000000000000000000000000000000007ffffffd00f3574ed57ab7c5c1c0aeb155eca538ef150d0a40",
+          "result": "valid"
+        }
+      ]
+    },
+    {
+      "type": "EcdsaP1363Verify",
+      "source": {
+        "name": "google-wycheproof",
+        "version": "0.9rc5"
+      },
+      "publicKey": {
+        "type": "EcPublicKey",
+        "curve": "secp160r1",
+        "keySize": 160,
+        "uncompressed": "0459ea346ba437153d58a8795b7e078689251d5423f113b9caa5855a8ebe9a6d0b1acf280e342a93da",
+        "wx": "59ea346ba437153d58a8795b7e078689251d5423",
+        "wy": "00f113b9caa5855a8ebe9a6d0b1acf280e342a93da"
+      },
+      "publicKeyDer": "303e301006072a8648ce3d020106052b81040008032a000459ea346ba437153d58a8795b7e078689251d5423f113b9caa5855a8ebe9a6d0b1acf280e342a93da",
+      "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMD4wEAYHKoZIzj0CAQYFK4EEAAgDKgAEWeo0a6Q3FT1YqHlbfgeGiSUdVCPxE7nK\npYVajr6abQsazygONCqT2g==\n-----END PUBLIC KEY-----\n",
+      "sha": "SHA-256",
+      "tests": [
+        {
+          "tcId": 197,
+          "comment": "point duplication during verification",
+          "flags": [
+            "PointDuplication"
+          ],
+          "msg": "313233343030",
+          "sig": "0089499f94eae245d5a9b5374975ece521d855975a00b1218927935126f18c8f57445bc5ea2a9b62ffcc",
+          "result": "valid"
+        }
+      ]
+    },
+    {
+      "type": "EcdsaP1363Verify",
+      "source": {
+        "name": "google-wycheproof",
+        "version": "0.9rc5"
+      },
+      "publicKey": {
+        "type": "EcPublicKey",
+        "curve": "secp160r1",
+        "keySize": 160,
+        "uncompressed": "0459ea346ba437153d58a8795b7e078689251d54230eec46355a7aa571416592f4e530d7f14bd56c25",
+        "wx": "59ea346ba437153d58a8795b7e078689251d5423",
+        "wy": "0eec46355a7aa571416592f4e530d7f14bd56c25"
+      },
+      "publicKeyDer": "303e301006072a8648ce3d020106052b81040008032a000459ea346ba437153d58a8795b7e078689251d54230eec46355a7aa571416592f4e530d7f14bd56c25",
+      "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMD4wEAYHKoZIzj0CAQYFK4EEAAgDKgAEWeo0a6Q3FT1YqHlbfgeGiSUdVCMO7EY1\nWnqlcUFlkvTlMNfxS9VsJQ==\n-----END PUBLIC KEY-----\n",
+      "sha": "SHA-256",
+      "tests": [
+        {
+          "tcId": 198,
+          "comment": "duplication bug",
+          "flags": [
+            "PointDuplication"
+          ],
+          "msg": "313233343030",
+          "sig": "0089499f94eae245d5a9b5374975ece521d855975a00b1218927935126f18c8f57445bc5ea2a9b62ffcc",
+          "result": "invalid"
+        }
+      ]
+    },
+    {
+      "type": "EcdsaP1363Verify",
+      "source": {
+        "name": "google-wycheproof",
+        "version": "0.9rc5"
+      },
+      "publicKey": {
+        "type": "EcPublicKey",
+        "curve": "secp160r1",
+        "keySize": 160,
+        "uncompressed": "04c1329e5abc05dc8cb22c6c5e900c119fe700880b89643fbd2f156366b3a44316c8bb10e46e305055",
+        "wx": "00c1329e5abc05dc8cb22c6c5e900c119fe700880b",
+        "wy": "0089643fbd2f156366b3a44316c8bb10e46e305055"
+      },
+      "publicKeyDer": "303e301006072a8648ce3d020106052b81040008032a0004c1329e5abc05dc8cb22c6c5e900c119fe700880b89643fbd2f156366b3a44316c8bb10e46e305055",
+      "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMD4wEAYHKoZIzj0CAQYFK4EEAAgDKgAEwTKeWrwF3IyyLGxekAwRn+cAiAuJZD+9\nLxVjZrOkQxbIuxDkbjBQVQ==\n-----END PUBLIC KEY-----\n",
+      "sha": "SHA-256",
+      "tests": [
+        {
+          "tcId": 199,
+          "comment": "point with x-coordinate 0",
+          "flags": [
+            "ArithmeticError"
+          ],
+          "msg": "313233343030",
+          "sig": "0000000000000000000000000000000000000000010055555555555555555555fc42fdb7e4f1437c60c7",
+          "result": "invalid"
+        }
+      ]
+    },
+    {
+      "type": "EcdsaP1363Verify",
+      "source": {
+        "name": "google-wycheproof",
+        "version": "0.9rc5"
+      },
+      "publicKey": {
+        "type": "EcPublicKey",
+        "curve": "secp160r1",
+        "keySize": 160,
+        "uncompressed": "041195e142718809c541296eac4d6201af46695d5d233f099afd1ff16acb1071b4199e61e2a9c346eb",
+        "wx": "1195e142718809c541296eac4d6201af46695d5d",
+        "wy": "233f099afd1ff16acb1071b4199e61e2a9c346eb"
+      },
+      "publicKeyDer": "303e301006072a8648ce3d020106052b81040008032a00041195e142718809c541296eac4d6201af46695d5d233f099afd1ff16acb1071b4199e61e2a9c346eb",
+      "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMD4wEAYHKoZIzj0CAQYFK4EEAAgDKgAEEZXhQnGICcVBKW6sTWIBr0ZpXV0jPwma\n/R/xassQcbQZnmHiqcNG6w==\n-----END PUBLIC KEY-----\n",
+      "sha": "SHA-256",
+      "tests": [
+        {
+          "tcId": 200,
+          "comment": "point with x-coordinate 0",
+          "flags": [
+            "ArithmeticError"
+          ],
+          "msg": "313233343030",
+          "sig": "0200000000000000000000000000000000000000000033333333333333333333975b6507efc3f54aa077",
+          "result": "invalid"
+        }
+      ]
+    },
+    {
+      "type": "EcdsaP1363Verify",
+      "source": {
+        "name": "google-wycheproof",
+        "version": "0.9rc5"
+      },
+      "publicKey": {
+        "type": "EcPublicKey",
+        "curve": "secp160r1",
+        "keySize": 160,
+        "uncompressed": "04c9f7e7bc377bffc4e2a79e4836e61ed5c775dabe073a1e62494b22fa27642f51d6f4c5d35d70db5a",
+        "wx": "00c9f7e7bc377bffc4e2a79e4836e61ed5c775dabe",
+        "wy": "073a1e62494b22fa27642f51d6f4c5d35d70db5a"
+      },
+      "publicKeyDer": "303e301006072a8648ce3d020106052b81040008032a0004c9f7e7bc377bffc4e2a79e4836e61ed5c775dabe073a1e62494b22fa27642f51d6f4c5d35d70db5a",
+      "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMD4wEAYHKoZIzj0CAQYFK4EEAAgDKgAEyffnvDd7/8Tip55INuYe1cd12r4HOh5i\nSUsi+idkL1HW9MXTXXDbWg==\n-----END PUBLIC KEY-----\n",
+      "sha": "SHA-256",
+      "tests": [
+        {
+          "tcId": 201,
+          "comment": "comparison with point at infinity ",
+          "flags": [
+            "ArithmeticError"
+          ],
+          "msg": "313233343030",
+          "sig": "0055555555555555555555fc42fdb7e4f1437c60c70033333333333333333333975b6507efc3f54aa077",
+          "result": "invalid"
+        }
+      ]
+    },
+    {
+      "type": "EcdsaP1363Verify",
+      "source": {
+        "name": "google-wycheproof",
+        "version": "0.9rc5"
+      },
+      "publicKey": {
+        "type": "EcPublicKey",
+        "curve": "secp160r1",
+        "keySize": 160,
+        "uncompressed": "042102b319abe9060e9d4520b0b6a8ab9641b3b5d32b4067358970714a0f24ae1f351884a7d8588042",
+        "wx": "2102b319abe9060e9d4520b0b6a8ab9641b3b5d3",
+        "wy": "2b4067358970714a0f24ae1f351884a7d8588042"
+      },
+      "publicKeyDer": "303e301006072a8648ce3d020106052b81040008032a00042102b319abe9060e9d4520b0b6a8ab9641b3b5d32b4067358970714a0f24ae1f351884a7d8588042",
+      "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMD4wEAYHKoZIzj0CAQYFK4EEAAgDKgAEIQKzGavpBg6dRSCwtqirlkGztdMrQGc1\niXBxSg8krh81GISn2FiAQg==\n-----END PUBLIC KEY-----\n",
+      "sha": "SHA-256",
+      "tests": [
+        {
+          "tcId": 202,
+          "comment": "extreme value for k and edgecase s",
+          "flags": [
+            "ArithmeticError"
+          ],
+          "msg": "313233343030",
+          "sig": "0002f997f33c5ed04c55d3edf8675d3e92e8f466860055555555555555555555fc42fdb7e4f1437c60c7",
+          "result": "valid"
+        }
+      ]
+    },
+    {
+      "type": "EcdsaP1363Verify",
+      "source": {
+        "name": "google-wycheproof",
+        "version": "0.9rc5"
+      },
+      "publicKey": {
+        "type": "EcPublicKey",
+        "curve": "secp160r1",
+        "keySize": 160,
+        "uncompressed": "04a185a284dc8e55e796e084ca5f4ddf5bb8d70a0bd39ec502b4b767c9697963ec98bcd6d613c135e8",
+        "wx": "00a185a284dc8e55e796e084ca5f4ddf5bb8d70a0b",
+        "wy": "00d39ec502b4b767c9697963ec98bcd6d613c135e8"
+      },
+      "publicKeyDer": "303e301006072a8648ce3d020106052b81040008032a0004a185a284dc8e55e796e084ca5f4ddf5bb8d70a0bd39ec502b4b767c9697963ec98bcd6d613c135e8",
+      "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMD4wEAYHKoZIzj0CAQYFK4EEAAgDKgAEoYWihNyOVeeW4ITKX03fW7jXCgvTnsUC\ntLdnyWl5Y+yYvNbWE8E16A==\n-----END PUBLIC KEY-----\n",
+      "sha": "SHA-256",
+      "tests": [
+        {
+          "tcId": 203,
+          "comment": "extreme value for k and s^-1",
+          "flags": [
+            "ArithmeticError"
+          ],
+          "msg": "313233343030",
+          "sig": "0002f997f33c5ed04c55d3edf8675d3e92e8f466860024924924924924924924d9d3914ecfd51cec297a",
+          "result": "valid"
+        }
+      ]
+    },
+    {
+      "type": "EcdsaP1363Verify",
+      "source": {
+        "name": "google-wycheproof",
+        "version": "0.9rc5"
+      },
+      "publicKey": {
+        "type": "EcPublicKey",
+        "curve": "secp160r1",
+        "keySize": 160,
+        "uncompressed": "0491c7b4456a9ec11f893316f05e8e81a7b434859a0124d84d6dfd221aa928d768f533219eb6d5bccc",
+        "wx": "0091c7b4456a9ec11f893316f05e8e81a7b434859a",
+        "wy": "0124d84d6dfd221aa928d768f533219eb6d5bccc"
+      },
+      "publicKeyDer": "303e301006072a8648ce3d020106052b81040008032a000491c7b4456a9ec11f893316f05e8e81a7b434859a0124d84d6dfd221aa928d768f533219eb6d5bccc",
+      "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMD4wEAYHKoZIzj0CAQYFK4EEAAgDKgAEkce0RWqewR+JMxbwXo6Bp7Q0hZoBJNhN\nbf0iGqko12j1MyGettW8zA==\n-----END PUBLIC KEY-----\n",
+      "sha": "SHA-256",
+      "tests": [
+        {
+          "tcId": 204,
+          "comment": "extreme value for k and s^-1",
+          "flags": [
+            "ArithmeticError"
+          ],
+          "msg": "313233343030",
+          "sig": "0002f997f33c5ed04c55d3edf8675d3e92e8f4668600ccccccccccccccccccce5d6d941fbf0fd52a81df",
+          "result": "valid"
+        }
+      ]
+    },
+    {
+      "type": "EcdsaP1363Verify",
+      "source": {
+        "name": "google-wycheproof",
+        "version": "0.9rc5"
+      },
+      "publicKey": {
+        "type": "EcPublicKey",
+        "curve": "secp160r1",
+        "keySize": 160,
+        "uncompressed": "044549f25af5fc3a560c62f91fd555f922df27110342890b6465457119a56148c7637a21144cac650b",
+        "wx": "4549f25af5fc3a560c62f91fd555f922df271103",
+        "wy": "42890b6465457119a56148c7637a21144cac650b"
+      },
+      "publicKeyDer": "303e301006072a8648ce3d020106052b81040008032a00044549f25af5fc3a560c62f91fd555f922df27110342890b6465457119a56148c7637a21144cac650b",
+      "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMD4wEAYHKoZIzj0CAQYFK4EEAAgDKgAERUnyWvX8OlYMYvkf1VX5It8nEQNCiQtk\nZUVxGaVhSMdjeiEUTKxlCw==\n-----END PUBLIC KEY-----\n",
+      "sha": "SHA-256",
+      "tests": [
+        {
+          "tcId": 205,
+          "comment": "extreme value for k and s^-1",
+          "flags": [
+            "ArithmeticError"
+          ],
+          "msg": "313233343030",
+          "sig": "0002f997f33c5ed04c55d3edf8675d3e92e8f466860033333333333333333333975b6507efc3f54aa078",
+          "result": "valid"
+        }
+      ]
+    },
+    {
+      "type": "EcdsaP1363Verify",
+      "source": {
+        "name": "google-wycheproof",
+        "version": "0.9rc5"
+      },
+      "publicKey": {
+        "type": "EcPublicKey",
+        "curve": "secp160r1",
+        "keySize": 160,
+        "uncompressed": "047f49ac03c66731929b4ef03c7445b386d64025ea02461eb07d492bc8afca10d37f469b14dd2d9449",
+        "wx": "7f49ac03c66731929b4ef03c7445b386d64025ea",
+        "wy": "02461eb07d492bc8afca10d37f469b14dd2d9449"
+      },
+      "publicKeyDer": "303e301006072a8648ce3d020106052b81040008032a00047f49ac03c66731929b4ef03c7445b386d64025ea02461eb07d492bc8afca10d37f469b14dd2d9449",
+      "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMD4wEAYHKoZIzj0CAQYFK4EEAAgDKgAEf0msA8ZnMZKbTvA8dEWzhtZAJeoCRh6w\nfUkryK/KENN/RpsU3S2USQ==\n-----END PUBLIC KEY-----\n",
+      "sha": "SHA-256",
+      "tests": [
+        {
+          "tcId": 206,
+          "comment": "extreme value for k and s^-1",
+          "flags": [
+            "ArithmeticError"
+          ],
+          "msg": "313233343030",
+          "sig": "0002f997f33c5ed04c55d3edf8675d3e92e8f4668600db6db6db6db6db6db6dd1af567d8defead88f8dd",
+          "result": "valid"
+        }
+      ]
+    },
+    {
+      "type": "EcdsaP1363Verify",
+      "source": {
+        "name": "google-wycheproof",
+        "version": "0.9rc5"
+      },
+      "publicKey": {
+        "type": "EcPublicKey",
+        "curve": "secp160r1",
+        "keySize": 160,
+        "uncompressed": "04179d0a5fa8be0b89d8efd25948e8624e3eb1b8a0f614fbdda7c63019c4ad480b01a6f38b7d173138",
+        "wx": "179d0a5fa8be0b89d8efd25948e8624e3eb1b8a0",
+        "wy": "00f614fbdda7c63019c4ad480b01a6f38b7d173138"
+      },
+      "publicKeyDer": "303e301006072a8648ce3d020106052b81040008032a0004179d0a5fa8be0b89d8efd25948e8624e3eb1b8a0f614fbdda7c63019c4ad480b01a6f38b7d173138",
+      "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMD4wEAYHKoZIzj0CAQYFK4EEAAgDKgAEF50KX6i+C4nY79JZSOhiTj6xuKD2FPvd\np8YwGcStSAsBpvOLfRcxOA==\n-----END PUBLIC KEY-----\n",
+      "sha": "SHA-256",
+      "tests": [
+        {
+          "tcId": 207,
+          "comment": "extreme value for k",
+          "flags": [
+            "ArithmeticError"
+          ],
+          "msg": "313233343030",
+          "sig": "0002f997f33c5ed04c55d3edf8675d3e92e8f46686000eb00091546e2d1fc7dcc249da653f08707af318",
+          "result": "valid"
+        }
+      ]
+    },
+    {
+      "type": "EcdsaP1363Verify",
+      "source": {
+        "name": "google-wycheproof",
+        "version": "0.9rc5"
+      },
+      "publicKey": {
+        "type": "EcPublicKey",
+        "curve": "secp160r1",
+        "keySize": 160,
+        "uncompressed": "04aa5cb12acdf9a8336864190c1dd6df86f98f4c4fb2ffdde9e2b9b558c9bfdf7aa9c7f7ec090c61d2",
+        "wx": "00aa5cb12acdf9a8336864190c1dd6df86f98f4c4f",
+        "wy": "00b2ffdde9e2b9b558c9bfdf7aa9c7f7ec090c61d2"
+      },
+      "publicKeyDer": "303e301006072a8648ce3d020106052b81040008032a0004aa5cb12acdf9a8336864190c1dd6df86f98f4c4fb2ffdde9e2b9b558c9bfdf7aa9c7f7ec090c61d2",
+      "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMD4wEAYHKoZIzj0CAQYFK4EEAAgDKgAEqlyxKs35qDNoZBkMHdbfhvmPTE+y/93p\n4rm1WMm/33qpx/fsCQxh0g==\n-----END PUBLIC KEY-----\n",
+      "sha": "SHA-256",
+      "tests": [
+        {
+          "tcId": 208,
+          "comment": "extreme value for k and edgecase s",
+          "flags": [
+            "ArithmeticError"
+          ],
+          "msg": "313233343030",
+          "sig": "004a96b5688ef573284664698968c38bb913cbfc820055555555555555555555fc42fdb7e4f1437c60c7",
+          "result": "valid"
+        }
+      ]
+    },
+    {
+      "type": "EcdsaP1363Verify",
+      "source": {
+        "name": "google-wycheproof",
+        "version": "0.9rc5"
+      },
+      "publicKey": {
+        "type": "EcPublicKey",
+        "curve": "secp160r1",
+        "keySize": 160,
+        "uncompressed": "044f052d5ded4b999f95025401553e1cd6a3f47d6b4b4c60ab8e9ab5a0fb004224047396052236b818",
+        "wx": "4f052d5ded4b999f95025401553e1cd6a3f47d6b",
+        "wy": "4b4c60ab8e9ab5a0fb004224047396052236b818"
+      },
+      "publicKeyDer": "303e301006072a8648ce3d020106052b81040008032a00044f052d5ded4b999f95025401553e1cd6a3f47d6b4b4c60ab8e9ab5a0fb004224047396052236b818",
+      "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMD4wEAYHKoZIzj0CAQYFK4EEAAgDKgAETwUtXe1LmZ+VAlQBVT4c1qP0fWtLTGCr\njpq1oPsAQiQEc5YFIja4GA==\n-----END PUBLIC KEY-----\n",
+      "sha": "SHA-256",
+      "tests": [
+        {
+          "tcId": 209,
+          "comment": "extreme value for k and s^-1",
+          "flags": [
+            "ArithmeticError"
+          ],
+          "msg": "313233343030",
+          "sig": "004a96b5688ef573284664698968c38bb913cbfc820024924924924924924924d9d3914ecfd51cec297a",
+          "result": "valid"
+        }
+      ]
+    },
+    {
+      "type": "EcdsaP1363Verify",
+      "source": {
+        "name": "google-wycheproof",
+        "version": "0.9rc5"
+      },
+      "publicKey": {
+        "type": "EcPublicKey",
+        "curve": "secp160r1",
+        "keySize": 160,
+        "uncompressed": "043a53aa2df4ec5bc2748e4370e608ebdd6a2566660fdf61b9eaf36bac285002e1bfcc62e9e55171db",
+        "wx": "3a53aa2df4ec5bc2748e4370e608ebdd6a256666",
+        "wy": "0fdf61b9eaf36bac285002e1bfcc62e9e55171db"
+      },
+      "publicKeyDer": "303e301006072a8648ce3d020106052b81040008032a00043a53aa2df4ec5bc2748e4370e608ebdd6a2566660fdf61b9eaf36bac285002e1bfcc62e9e55171db",
+      "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMD4wEAYHKoZIzj0CAQYFK4EEAAgDKgAEOlOqLfTsW8J0jkNw5gjr3WolZmYP32G5\n6vNrrChQAuG/zGLp5VFx2w==\n-----END PUBLIC KEY-----\n",
+      "sha": "SHA-256",
+      "tests": [
+        {
+          "tcId": 210,
+          "comment": "extreme value for k and s^-1",
+          "flags": [
+            "ArithmeticError"
+          ],
+          "msg": "313233343030",
+          "sig": "004a96b5688ef573284664698968c38bb913cbfc8200ccccccccccccccccccce5d6d941fbf0fd52a81df",
+          "result": "valid"
+        }
+      ]
+    },
+    {
+      "type": "EcdsaP1363Verify",
+      "source": {
+        "name": "google-wycheproof",
+        "version": "0.9rc5"
+      },
+      "publicKey": {
+        "type": "EcPublicKey",
+        "curve": "secp160r1",
+        "keySize": 160,
+        "uncompressed": "04747c6174595d49f17bb3a36c8b7166421fff8f9f5d9784617bdd66817754e964a1c622c40cfdab3c",
+        "wx": "747c6174595d49f17bb3a36c8b7166421fff8f9f",
+        "wy": "5d9784617bdd66817754e964a1c622c40cfdab3c"
+      },
+      "publicKeyDer": "303e301006072a8648ce3d020106052b81040008032a0004747c6174595d49f17bb3a36c8b7166421fff8f9f5d9784617bdd66817754e964a1c622c40cfdab3c",
+      "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMD4wEAYHKoZIzj0CAQYFK4EEAAgDKgAEdHxhdFldSfF7s6Nsi3FmQh//j59dl4Rh\ne91mgXdU6WShxiLEDP2rPA==\n-----END PUBLIC KEY-----\n",
+      "sha": "SHA-256",
+      "tests": [
+        {
+          "tcId": 211,
+          "comment": "extreme value for k and s^-1",
+          "flags": [
+            "ArithmeticError"
+          ],
+          "msg": "313233343030",
+          "sig": "004a96b5688ef573284664698968c38bb913cbfc820033333333333333333333975b6507efc3f54aa078",
+          "result": "valid"
+        }
+      ]
+    },
+    {
+      "type": "EcdsaP1363Verify",
+      "source": {
+        "name": "google-wycheproof",
+        "version": "0.9rc5"
+      },
+      "publicKey": {
+        "type": "EcPublicKey",
+        "curve": "secp160r1",
+        "keySize": 160,
+        "uncompressed": "0402489c58f2679bd170cb48776c5c6b2c6c8510233244ffe4760912f715c443133a384ecde72e6844",
+        "wx": "02489c58f2679bd170cb48776c5c6b2c6c851023",
+        "wy": "3244ffe4760912f715c443133a384ecde72e6844"
+      },
+      "publicKeyDer": "303e301006072a8648ce3d020106052b81040008032a000402489c58f2679bd170cb48776c5c6b2c6c8510233244ffe4760912f715c443133a384ecde72e6844",
+      "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMD4wEAYHKoZIzj0CAQYFK4EEAAgDKgAEAkicWPJnm9Fwy0h3bFxrLGyFECMyRP/k\ndgkS9xXEQxM6OE7N5y5oRA==\n-----END PUBLIC KEY-----\n",
+      "sha": "SHA-256",
+      "tests": [
+        {
+          "tcId": 212,
+          "comment": "extreme value for k and s^-1",
+          "flags": [
+            "ArithmeticError"
+          ],
+          "msg": "313233343030",
+          "sig": "004a96b5688ef573284664698968c38bb913cbfc8200db6db6db6db6db6db6dd1af567d8defead88f8dd",
+          "result": "valid"
+        }
+      ]
+    },
+    {
+      "type": "EcdsaP1363Verify",
+      "source": {
+        "name": "google-wycheproof",
+        "version": "0.9rc5"
+      },
+      "publicKey": {
+        "type": "EcPublicKey",
+        "curve": "secp160r1",
+        "keySize": 160,
+        "uncompressed": "044d0bdafb33dfb43af69e8e130dd901d129ac427a1f74bde4f32ad5bb21ae7cae079c9fc583fe196d",
+        "wx": "4d0bdafb33dfb43af69e8e130dd901d129ac427a",
+        "wy": "1f74bde4f32ad5bb21ae7cae079c9fc583fe196d"
+      },
+      "publicKeyDer": "303e301006072a8648ce3d020106052b81040008032a00044d0bdafb33dfb43af69e8e130dd901d129ac427a1f74bde4f32ad5bb21ae7cae079c9fc583fe196d",
+      "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMD4wEAYHKoZIzj0CAQYFK4EEAAgDKgAETQva+zPftDr2no4TDdkB0SmsQnofdL3k\n8yrVuyGufK4HnJ/Fg/4ZbQ==\n-----END PUBLIC KEY-----\n",
+      "sha": "SHA-256",
+      "tests": [
+        {
+          "tcId": 213,
+          "comment": "extreme value for k",
+          "flags": [
+            "ArithmeticError"
+          ],
+          "msg": "313233343030",
+          "sig": "004a96b5688ef573284664698968c38bb913cbfc82000eb00091546e2d1fc7dcc249da653f08707af318",
+          "result": "valid"
+        }
+      ]
+    },
+    {
+      "type": "EcdsaP1363Verify",
+      "source": {
+        "name": "google-wycheproof",
+        "version": "0.9rc5"
+      },
+      "publicKey": {
+        "type": "EcPublicKey",
+        "curve": "secp160r1",
+        "keySize": 160,
+        "uncompressed": "044a96b5688ef573284664698968c38bb913cbfc8223a628553168947d59dcc912042351377ac5fb32",
+        "wx": "4a96b5688ef573284664698968c38bb913cbfc82",
+        "wy": "23a628553168947d59dcc912042351377ac5fb32"
+      },
+      "publicKeyDer": "303e301006072a8648ce3d020106052b81040008032a00044a96b5688ef573284664698968c38bb913cbfc8223a628553168947d59dcc912042351377ac5fb32",
+      "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMD4wEAYHKoZIzj0CAQYFK4EEAAgDKgAESpa1aI71cyhGZGmJaMOLuRPL/IIjpihV\nMWiUfVncyRIEI1E3esX7Mg==\n-----END PUBLIC KEY-----\n",
+      "sha": "SHA-256",
+      "tests": [
+        {
+          "tcId": 214,
+          "comment": "public key shares x-coordinate with generator",
+          "flags": [
+            "PointDuplication"
+          ],
+          "msg": "313233343030",
+          "sig": "0176b4a5e85f3924c3da86c3eb284543c6006dcf860024924924924924924924d9d3914ecfd51cec297a",
+          "result": "invalid"
+        },
+        {
+          "tcId": 215,
+          "comment": "public key shares x-coordinate with generator",
+          "flags": [
+            "PointDuplication"
+          ],
+          "msg": "313233343030",
+          "sig": "00894b5a17a0c6db3c257d25a6ca0a19e1947c75280024924924924924924924d9d3914ecfd51cec297a",
+          "result": "invalid"
+        }
+      ]
+    },
+    {
+      "type": "EcdsaP1363Verify",
+      "source": {
+        "name": "google-wycheproof",
+        "version": "0.9rc5"
+      },
+      "publicKey": {
+        "type": "EcPublicKey",
+        "curve": "secp160r1",
+        "keySize": 160,
+        "uncompressed": "044a96b5688ef573284664698968c38bb913cbfc82dc59d7aace976b82a62336edfbdcaec8053a04cd",
+        "wx": "4a96b5688ef573284664698968c38bb913cbfc82",
+        "wy": "00dc59d7aace976b82a62336edfbdcaec8053a04cd"
+      },
+      "publicKeyDer": "303e301006072a8648ce3d020106052b81040008032a00044a96b5688ef573284664698968c38bb913cbfc82dc59d7aace976b82a62336edfbdcaec8053a04cd",
+      "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMD4wEAYHKoZIzj0CAQYFK4EEAAgDKgAESpa1aI71cyhGZGmJaMOLuRPL/ILcWdeq\nzpdrgqYjNu373K7IBToEzQ==\n-----END PUBLIC KEY-----\n",
+      "sha": "SHA-256",
+      "tests": [
+        {
+          "tcId": 216,
+          "comment": "public key shares x-coordinate with generator",
+          "flags": [
+            "PointDuplication"
+          ],
+          "msg": "313233343030",
+          "sig": "0176b4a5e85f3924c3da86c3eb284543c6006dcf860024924924924924924924d9d3914ecfd51cec297a",
+          "result": "invalid"
+        },
+        {
+          "tcId": 217,
+          "comment": "public key shares x-coordinate with generator",
+          "flags": [
+            "PointDuplication"
+          ],
+          "msg": "313233343030",
+          "sig": "00894b5a17a0c6db3c257d25a6ca0a19e1947c75280024924924924924924924d9d3914ecfd51cec297a",
+          "result": "invalid"
+        }
+      ]
+    },
+    {
+      "type": "EcdsaP1363Verify",
+      "source": {
+        "name": "google-wycheproof",
+        "version": "0.9rc5"
+      },
+      "publicKey": {
+        "type": "EcPublicKey",
+        "curve": "secp160r1",
+        "keySize": 160,
+        "uncompressed": "04b0046a56f874d30ea2ba7ac1a935fd9d754ee6417b9a54d275806819ec30b15618f5625115241f46",
+        "wx": "00b0046a56f874d30ea2ba7ac1a935fd9d754ee641",
+        "wy": "7b9a54d275806819ec30b15618f5625115241f46"
+      },
+      "publicKeyDer": "303e301006072a8648ce3d020106052b81040008032a0004b0046a56f874d30ea2ba7ac1a935fd9d754ee6417b9a54d275806819ec30b15618f5625115241f46",
+      "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMD4wEAYHKoZIzj0CAQYFK4EEAAgDKgAEsARqVvh00w6iunrBqTX9nXVO5kF7mlTS\ndYBoGewwsVYY9WJRFSQfRg==\n-----END PUBLIC KEY-----\n",
+      "sha": "SHA-256",
+      "tests": [
+        {
+          "tcId": 218,
+          "comment": "pseudorandom signature",
+          "flags": [
+            "ValidSignature"
+          ],
+          "msg": "",
+          "sig": "0049c9656cd8cbee4456548d63a7fc480791909c42006ff78980793ee086a2e66e01a490bdfc03f2d302",
+          "result": "valid"
+        },
+        {
+          "tcId": 219,
+          "comment": "pseudorandom signature",
+          "flags": [
+            "ValidSignature"
+          ],
+          "msg": "4d7367",
+          "sig": "000f5720c6bd95624b603b2be5a75e487b34268d5f00bfd6d370b516687113b12a4fc95eebb874a646fa",
+          "result": "valid"
+        },
+        {
+          "tcId": 220,
+          "comment": "pseudorandom signature",
+          "flags": [
+            "ValidSignature"
+          ],
+          "msg": "313233343030",
+          "sig": "002dfc21da5c39d441fc6683e54da009f413a0ff8700647382b3e39a8ac8cbe02f4666d045928a0eb061",
+          "result": "valid"
+        },
+        {
+          "tcId": 221,
+          "comment": "pseudorandom signature",
+          "flags": [
+            "ValidSignature"
+          ],
+          "msg": "0000000000000000000000000000000000000000",
+          "sig": "004f71014057dde59269ba089c49082dab3ffa9af3008d1abb842b2f932a04c2dd19a2f2109a57c88c32",
+          "result": "valid"
+        }
+      ]
+    },
+    {
+      "type": "EcdsaP1363Verify",
+      "source": {
+        "name": "github/davidben/ecdsa-r-s-edge-cases",
+        "version": "0.1"
+      },
+      "publicKey": {
+        "type": "EcPublicKey",
+        "curve": "secp160r1",
+        "keySize": 160,
+        "uncompressed": "0439891bd61138e775cd012518ff00f59ae01c473325026b77b1c44affb1592dcf711b4290e9404c9f",
+        "wx": "39891bd61138e775cd012518ff00f59ae01c4733",
+        "wy": "25026b77b1c44affb1592dcf711b4290e9404c9f"
+      },
+      "publicKeyDer": "303e301006072a8648ce3d020106052b81040008032a000439891bd61138e775cd012518ff00f59ae01c473325026b77b1c44affb1592dcf711b4290e9404c9f",
+      "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMD4wEAYHKoZIzj0CAQYFK4EEAAgDKgAEOYkb1hE453XNASUY/wD1muAcRzMlAmt3\nscRK/7FZLc9xG0KQ6UBMnw==\n-----END PUBLIC KEY-----\n",
+      "sha": "SHA-256",
+      "tests": [
+        {
+          "tcId": 222,
+          "comment": "r = 4, x = 4 is valid",
+          "flags": [
+            "ValidSignature"
+          ],
+          "msg": "68656c6c6f2c20776f726c64",
+          "sig": "0000000000000000000000000000000000000000040100000000000000000001f4c8f927aed3ca752254",
+          "result": "valid"
+        }
+      ]
+    },
+    {
+      "type": "EcdsaP1363Verify",
+      "source": {
+        "name": "github/davidben/ecdsa-r-s-edge-cases",
+        "version": "0.1"
+      },
+      "publicKey": {
+        "type": "EcPublicKey",
+        "curve": "secp160r1",
+        "keySize": 160,
+        "uncompressed": "041a56b4e2ab0384b1daa35459f77066b5918b49d5a3a47844c1b449a82f14658948402cf8c592e0af",
+        "wx": "1a56b4e2ab0384b1daa35459f77066b5918b49d5",
+        "wy": "a3a47844c1b449a82f14658948402cf8c592e0af"
+      },
+      "publicKeyDer": "303e301006072a8648ce3d020106052b81040008032a00041a56b4e2ab0384b1daa35459f77066b5918b49d5a3a47844c1b449a82f14658948402cf8c592e0af",
+      "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMD4wEAYHKoZIzj0CAQYFK4EEAAgDKgAEGla04qsDhLHao1RZ93BmtZGLSdWjpHhE\nwbRJqC8UZYlIQCz4xZLgrw==\n-----END PUBLIC KEY-----\n",
+      "sha": "SHA-256",
+      "tests": [
+        {
+          "tcId": 223,
+          "comment": "r = 5, x = 4 is invalid",
+          "flags": [
+            "ArithmeticError"
+          ],
+          "msg": "68656c6c6f2c20776f726c64",
+          "sig": "0000000000000000000000000000000000000000050100000000000000000001f4c8f927aed3ca752254",
+          "result": "invalid"
+        }
+      ]
+    },
+    {
+      "type": "EcdsaP1363Verify",
+      "source": {
+        "name": "github/davidben/ecdsa-r-s-edge-cases",
+        "version": "0.1"
+      },
+      "publicKey": {
+        "type": "EcPublicKey",
+        "curve": "secp160r1",
+        "keySize": 160,
+        "uncompressed": "0439891bd61138e775cd012518ff00f59ae01c473325026b77b1c44affb1592dcf711b4290e9404c9f",
+        "wx": "39891bd61138e775cd012518ff00f59ae01c4733",
+        "wy": "25026b77b1c44affb1592dcf711b4290e9404c9f"
+      },
+      "publicKeyDer": "303e301006072a8648ce3d020106052b81040008032a000439891bd61138e775cd012518ff00f59ae01c473325026b77b1c44affb1592dcf711b4290e9404c9f",
+      "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMD4wEAYHKoZIzj0CAQYFK4EEAAgDKgAEOYkb1hE453XNASUY/wD1muAcRzMlAmt3\nscRK/7FZLc9xG0KQ6UBMnw==\n-----END PUBLIC KEY-----\n",
+      "sha": "SHA-256",
+      "tests": [
+        {
+          "tcId": 224,
+          "comment": "r = 4 + n, x = 4 is invalid; r was not reduced mod n",
+          "flags": [
+            "ArithmeticError"
+          ],
+          "msg": "68656c6c6f2c20776f726c64",
+          "sig": "0100000000000000000001f4c8f927aed3ca75225b0100000000000000000001f4c8f927aed3ca752254",
+          "result": "invalid"
+        }
+      ]
+    },
+    {
+      "type": "EcdsaP1363Verify",
+      "source": {
+        "name": "github/davidben/ecdsa-r-s-edge-cases",
+        "version": "0.1"
+      },
+      "publicKey": {
+        "type": "EcPublicKey",
+        "curve": "secp160r1",
+        "keySize": 160,
+        "uncompressed": "042a675dfed49c0f8c298abae00cd7afdcb7fd84caa94d8033f6cbbb84b9f8b7e4838c495c46439355",
+        "wx": "2a675dfed49c0f8c298abae00cd7afdcb7fd84ca",
+        "wy": "a94d8033f6cbbb84b9f8b7e4838c495c46439355"
+      },
+      "publicKeyDer": "303e301006072a8648ce3d020106052b81040008032a00042a675dfed49c0f8c298abae00cd7afdcb7fd84caa94d8033f6cbbb84b9f8b7e4838c495c46439355",
+      "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMD4wEAYHKoZIzj0CAQYFK4EEAAgDKgAEKmdd/tScD4wpirrgDNev3Lf9hMqpTYAz\n9su7hLn4t+SDjElcRkOTVQ==\n-----END PUBLIC KEY-----\n",
+      "sha": "SHA-256",
+      "tests": [
+        {
+          "tcId": 225,
+          "comment": "r = p - 4, x = p - 3 is invalid",
+          "flags": [
+            "ArithmeticError"
+          ],
+          "msg": "68656c6c6f2c20776f726c64",
+          "sig": "00ffffffffffffffffffffffffffffffff7ffffffb0100000000000000000001f4c8f927aed3ca752254",
+          "result": "invalid"
+        }
+      ]
+    },
+    {
+      "type": "EcdsaP1363Verify",
+      "source": {
+        "name": "github/davidben/ecdsa-r-s-edge-cases",
+        "version": "0.1"
+      },
+      "publicKey": {
+        "type": "EcPublicKey",
+        "curve": "secp160r1",
+        "keySize": 160,
+        "uncompressed": "04d8add22064027856c162243ab09ea966429752978822a506712385ab3ebe5c61737c3bbb722b06b9",
+        "wx": "d8add22064027856c162243ab09ea96642975297",
+        "wy": "8822a506712385ab3ebe5c61737c3bbb722b06b9"
+      },
+      "publicKeyDer": "303e301006072a8648ce3d020106052b81040008032a0004d8add22064027856c162243ab09ea966429752978822a506712385ab3ebe5c61737c3bbb722b06b9",
+      "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMD4wEAYHKoZIzj0CAQYFK4EEAAgDKgAE2K3SIGQCeFbBYiQ6sJ6pZkKXUpeIIqUG\ncSOFqz6+XGFzfDu7cisGuQ==\n-----END PUBLIC KEY-----\n",
+      "sha": "SHA-256",
+      "tests": [
+        {
+          "tcId": 226,
+          "comment": "r = 4 + p, x = 4 is invalid; values only match mod p",
+          "flags": [
+            "ArithmeticError"
+          ],
+          "msg": "68656c6c6f2c20776f726c64",
+          "sig": "00ffffffffffffffffffffffffffffffff800000030100000000000000000001f4c8f927aed3ca752254",
+          "result": "invalid"
+        }
+      ]
+    },
+    {
+      "type": "EcdsaP1363Verify",
+      "source": {
+        "name": "github/davidben/ecdsa-s-pow2",
+        "version": "0.1"
+      },
+      "publicKey": {
+        "type": "EcPublicKey",
+        "curve": "secp160r1",
+        "keySize": 160,
+        "uncompressed": "0438e974e6806ed396b0ad08cbd1cd1d21f608857d21dd9d59b27af25a3766438589b60e44c9fee90b",
+        "wx": "38e974e6806ed396b0ad08cbd1cd1d21f608857d",
+        "wy": "21dd9d59b27af25a3766438589b60e44c9fee90b"
+      },
+      "publicKeyDer": "303e301006072a8648ce3d020106052b81040008032a000438e974e6806ed396b0ad08cbd1cd1d21f608857d21dd9d59b27af25a3766438589b60e44c9fee90b",
+      "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMD4wEAYHKoZIzj0CAQYFK4EEAAgDKgAEOOl05oBu05awrQjL0c0dIfYIhX0h3Z1Z\nsnryWjdmQ4WJtg5Eyf7pCw==\n-----END PUBLIC KEY-----\n",
+      "sha": "SHA-256",
+      "tests": [
+        {
+          "tcId": 227,
+          "comment": "s = 2^128",
+          "flags": [
+            "ValidSignature"
+          ],
+          "msg": "68656c6c6f2c20776f726c64",
+          "sig": "00484bca2a60bb74b76167ac65a841eab791d1cc4d000000000100000000000000000000000000000000",
+          "result": "valid"
+        },
+        {
+          "tcId": 228,
+          "comment": "s = n - 2^128",
+          "flags": [
+            "ValidSignature"
+          ],
+          "msg": "68656c6c6f2c20776f726c64",
+          "sig": "00484bca2a60bb74b76167ac65a841eab791d1cc4d00ffffffff000000000001f4c8f927aed3ca752257",
+          "result": "valid"
+        }
+      ]
+    }
+  ]
+}

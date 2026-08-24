@@ -84,7 +84,9 @@ my ($zero,$rcon,$mask,$in0,$in1,$tmp,$key)=
 # execute-only memory. On AArch32, put it in .text and use adr.
 $code.= ".section .rodata\n" if ($flavour =~ /64/);
 $code.=<<___;
+
 .align	5
+${prefix}_constants:
 .Lrcon:
 .long	0x01,0x01,0x01,0x01
 .long	0x0c0f0e0d,0x0c0f0e0d,0x0c0f0e0d,0x0c0f0e0d	// rotate-n-splat

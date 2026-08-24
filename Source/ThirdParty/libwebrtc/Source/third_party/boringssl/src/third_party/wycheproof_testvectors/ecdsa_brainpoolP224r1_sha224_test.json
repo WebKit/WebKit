@@ -1,7 +1,7 @@
 {
   "algorithm": "ECDSA",
   "schema": "ecdsa_verify_schema_v1.json",
-  "numberOfTests": 451,
+  "numberOfTests": 453,
   "header": [
     "Test vectors of type EcdsaVerify are meant for the verification",
     "of ASN encoded ECDSA signatures."
@@ -6724,6 +6724,46 @@
           "msg": "68656c6c6f2c20776f726c64",
           "sig": "303d021c283ecb55d9bc9979d5e7cfda8a2f04672ee943b49221435c5a586c62021d00d7c134aa264366862a18302575d0fb98d116bc4b6ddebca3a5a7939c",
           "result": "invalid"
+        }
+      ]
+    },
+    {
+      "type": "EcdsaVerify",
+      "source": {
+        "name": "github/davidben/ecdsa-s-pow2",
+        "version": "0.1"
+      },
+      "publicKey": {
+        "type": "EcPublicKey",
+        "curve": "brainpoolP224r1",
+        "keySize": 224,
+        "uncompressed": "042c2fd58b6a82809af91a28225cf79e632472a1054d589de972f7dbd353ee4fb4dd0341e9b9b15d94e775c9f4d1b152c07abb0b6c40cee567",
+        "wx": "2c2fd58b6a82809af91a28225cf79e632472a1054d589de972f7dbd3",
+        "wy": "53ee4fb4dd0341e9b9b15d94e775c9f4d1b152c07abb0b6c40cee567"
+      },
+      "publicKeyDer": "3052301406072a8648ce3d020106092b2403030208010105033a00042c2fd58b6a82809af91a28225cf79e632472a1054d589de972f7dbd353ee4fb4dd0341e9b9b15d94e775c9f4d1b152c07abb0b6c40cee567",
+      "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMFIwFAYHKoZIzj0CAQYJKyQDAwIIAQEFAzoABCwv1YtqgoCa+RooIlz3nmMkcqEF\nTVid6XL329NT7k+03QNB6bmxXZTndcn00bFSwHq7C2xAzuVn\n-----END PUBLIC KEY-----\n",
+      "sha": "SHA-224",
+      "tests": [
+        {
+          "tcId": 452,
+          "comment": "s = 2^128",
+          "flags": [
+            "ValidSignature"
+          ],
+          "msg": "68656c6c6f2c20776f726c64",
+          "sig": "3032021d00a1df7811e3bd627ed4838ce23b174aed337ef2867baeaa6e896587c302110100000000000000000000000000000000",
+          "result": "valid"
+        },
+        {
+          "tcId": 453,
+          "comment": "s = n - 2^128",
+          "flags": [
+            "ValidSignature"
+          ],
+          "msg": "68656c6c6f2c20776f726c64",
+          "sig": "303e021d00a1df7811e3bd627ed4838ce23b174aed337ef2867baeaa6e896587c3021d00d7c134aa264366862a18302475d0fb98d116bc4b6ddebca3a5a7939f",
+          "result": "valid"
         }
       ]
     }

@@ -20,8 +20,11 @@
 #include <stdio.h>
 #include <string.h>
 
+#include <initializer_list>
 #include <iosfwd>
+#include <optional>
 #include <string_view>
+#include <utility>
 #include <vector>
 
 #include <gtest/gtest.h>
@@ -73,8 +76,18 @@ bool DecodeHex(std::vector<uint8_t> *out, std::string_view in);
 std::string EncodeHex(bssl::Span<const uint8_t> in);
 
 // ErrorEquals asserts that `err` is an error with library `lib` and reason
-// `reason`.
-testing::AssertionResult ErrorEquals(uint32_t err, int lib, int reason);
+// `reason`. Pass `std::nullopt` to either of them to not assert on it.
+testing::AssertionResult ErrorEquals(uint32_t err, std::optional<int> lib,
+                                     std::optional<int> reason);
+
+// ErrorsAreAndClear asserts that the first (i.e. least recent, and thus most
+// specific) errors on the error queue are as specified, and then clears the
+// remainder of the queue. The first entry in `libs_and_reasons` shall be the
+// error first read from `ERR_get_error`. `libs_and_reasons` is not allowed to
+// be empty; instead, to just clear and assert nothing, call `ERR_clear_error`.
+testing::AssertionResult ErrorsAreAndClear(
+    std::initializer_list<std::pair<std::optional<int>, std::optional<int>>>
+        libs_and_reasons);
 
 // HexToBignum decodes `hex` as a hexadecimal, big-endian, unsigned integer and
 // returns it as a `BIGNUM`, or nullptr on error.

@@ -36,7 +36,7 @@ int EVP_SignUpdate(EVP_MD_CTX *ctx, const void *data, size_t len) {
 
 int EVP_SignFinal(const EVP_MD_CTX *ctx, uint8_t *sig, unsigned *out_sig_len,
                   EVP_PKEY *pkey) {
-  // Ensure the final result will fit in |unsigned|.
+  // Ensure the final result will fit in `unsigned`.
   size_t sig_len = EVP_PKEY_size(pkey);
   if (sig_len > UINT_MAX) {
     sig_len = UINT_MAX;

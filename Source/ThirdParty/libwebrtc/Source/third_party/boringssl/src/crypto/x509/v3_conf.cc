@@ -45,7 +45,7 @@ static unsigned char *generic_asn1(const char *value, const X509V3_CTX *ctx,
 
 X509_EXTENSION *X509V3_EXT_nconf(const CONF *conf, const X509V3_CTX *ctx,
                                  const char *name, const char *value) {
-  // If omitted, fill in an empty |X509V3_CTX|.
+  // If omitted, fill in an empty `X509V3_CTX`.
   X509V3_CTX ctx_tmp;
   if (ctx == nullptr) {
     X509V3_set_ctx(&ctx_tmp, nullptr, nullptr, nullptr, nullptr, 0);
@@ -68,7 +68,7 @@ X509_EXTENSION *X509V3_EXT_nconf(const CONF *conf, const X509V3_CTX *ctx,
 
 X509_EXTENSION *X509V3_EXT_nconf_nid(const CONF *conf, const X509V3_CTX *ctx,
                                      int ext_nid, const char *value) {
-  // If omitted, fill in an empty |X509V3_CTX|.
+  // If omitted, fill in an empty `X509V3_CTX`.
   X509V3_CTX ctx_tmp;
   if (ctx == nullptr) {
     X509V3_set_ctx(&ctx_tmp, nullptr, nullptr, nullptr, nullptr, 0);
@@ -105,9 +105,9 @@ static X509_EXTENSION *do_ext_nconf(const CONF *conf, const X509V3_CTX *ctx,
   // Now get internal extension representation based on type
   if (method->v2i) {
     if (*value == '@') {
-      // TODO(davidben): This is the only place where |X509V3_EXT_nconf|'s
-      // |conf| parameter is used. All other codepaths use the copy inside
-      // |ctx|. Should this be switched and then the parameter ignored?
+      // TODO(davidben): This is the only place where `X509V3_EXT_nconf`'s
+      // `conf` parameter is used. All other codepaths use the copy inside
+      // `ctx`. Should this be switched and then the parameter ignored?
       if (conf == nullptr) {
         OPENSSL_PUT_ERROR(X509V3, X509V3_R_NO_CONFIG_DATABASE);
         return nullptr;
@@ -136,7 +136,7 @@ static X509_EXTENSION *do_ext_nconf(const CONF *conf, const X509V3_CTX *ctx,
     // TODO(davidben): Should this check be removed? This matches OpenSSL, but
     // r2i-based extensions do not necessarily require a config database. The
     // two built-in extensions only use it some of the time, and already handle
-    // |X509V3_get_section| returning NULL.
+    // `X509V3_get_section` returning NULL.
     if (!ctx->db) {
       OPENSSL_PUT_ERROR(X509V3, X509V3_R_NO_CONFIG_DATABASE);
       return nullptr;

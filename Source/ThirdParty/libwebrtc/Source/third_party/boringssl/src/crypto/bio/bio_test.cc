@@ -196,27 +196,48 @@ static bool WaitForSocket(Socket sock, WaitType wait_type) {
   // there's an issue.
   static const int kTimeoutSeconds = 5;
 #if defined(OPENSSL_WINDOWS)
-  fd_set read_set, write_set;
+  fd_set read_set, write_set, except_set;
   FD_ZERO(&read_set);
   FD_ZERO(&write_set);
+  FD_ZERO(&except_set);
   fd_set *wait_set = wait_type == WaitType::kRead ? &read_set : &write_set;
   FD_SET(sock, wait_set);
+  FD_SET(sock, &except_set);
   timeval timeout;
   timeout.tv_sec = kTimeoutSeconds;
   timeout.tv_usec = 0;
-  if (select(0 /* unused on Windows */, &read_set, &write_set, nullptr,
+  if (select(0 /* unused on Windows */, &read_set, &write_set, &except_set,
              &timeout) <= 0) {
     return false;
   }
-  return FD_ISSET(sock, wait_set);
+  return FD_ISSET(sock, wait_set) || FD_ISSET(sock, &except_set);
 #else
-  short events = wait_type == WaitType::kRead ? POLLIN : POLLOUT;
-  pollfd fd = {/*fd=*/sock, events, /*revents=*/0};
-  return poll(&fd, 1, kTimeoutSeconds * 1000) == 1 && (fd.revents & events);
+  pollfd pfd;
+  pfd.fd = sock;
+  // poll implicitly listens for POLLERR and POLLHUP.
+  pfd.events = wait_type == WaitType::kRead ? POLLIN : POLLOUT;
+  pfd.revents = 0;
+  int ret;
+  do {
+    ret = poll(&pfd, 1, kTimeoutSeconds * 1000);
+  } while (ret < 0 && errno == EINTR);
+  return ret == 1 && pfd.revents != 0;
 #endif
 }
 
 TEST(BIOTest, SocketConnect) {
+  // We wish to test non-blocking connect() behavior, but a hermetic test can
+  // only easily use loopback. On most platforms, a loopback connect() seems to
+  // reliably returns EINPROGRESS. This test will assert that it does, to ensure
+  // we have indeed tested this code. On other platforms (see
+  // https://crbug.com/517591971), this test may not exercise as much as we'd
+  // like.
+#if defined(OPENSSL_APPLE) || defined(OPENSSL_LINUX) || defined(OPENSSL_WINDOWS)
+  constexpr bool kLoopbackConnectIsReliablyAsync = true;
+#else
+  constexpr bool kLoopbackConnectIsReliablyAsync = false;
+#endif
+
   static const char kTestMessage[] = "test";
   OwnedSocket listening_sock = ListenLoopback(/*backlog=*/1);
   ASSERT_TRUE(listening_sock.is_valid()) << LastSocketError();
@@ -234,18 +255,20 @@ TEST(BIOTest, SocketConnect) {
              ntohs(addr.ToIPv4().sin_port));
   }
 
-  // Using a connect BIO implicitly connects to it.
-  {
-    // Connect to it with a connect BIO.
-    UniquePtr<BIO> bio(BIO_new_connect(hostname));
-    ASSERT_TRUE(bio);
+  auto expect_blocked_on_connect = [](BIO *bio, int ret) {
+    EXPECT_EQ(ret, -1);
+    EXPECT_TRUE(BIO_should_retry(bio));
+    EXPECT_TRUE(BIO_should_io_special(bio));
+    EXPECT_EQ(BIO_RR_CONNECT, BIO_get_retry_reason(bio));
+  };
 
-    // Write a test message to the BIO. This is assumed to be smaller than the
-    // transport buffer.
-    ASSERT_EQ(static_cast<int>(sizeof(kTestMessage)),
-              BIO_write(bio.get(), kTestMessage, sizeof(kTestMessage)))
-        << LastSocketError();
+  auto wait_for_writable = [](BIO *bio) {
+    int fd = BIO_get_fd(bio, nullptr);
+    ASSERT_GT(fd, -1);
+    ASSERT_TRUE(WaitForSocket(static_cast<Socket>(fd), WaitType::kWrite));
+  };
 
+  auto accept_socket_and_read = [&] {
     // Accept the socket.
     OwnedSocket sock(accept(listening_sock.get(), addr.addr_mut(), &addr.len));
     ASSERT_TRUE(sock.is_valid()) << LastSocketError();
@@ -257,6 +280,20 @@ TEST(BIOTest, SocketConnect) {
         << LastSocketError();
     EXPECT_EQ(Bytes(kTestMessage, sizeof(kTestMessage)),
               Bytes(buf, sizeof(buf)));
+  };
+
+  // Using a connect BIO implicitly connects to it.
+  {
+    // Connect to it with a connect BIO.
+    UniquePtr<BIO> bio(BIO_new_connect(hostname));
+    ASSERT_TRUE(bio);
+
+    // Write a test message to the BIO. This is assumed to be smaller than the
+    // transport buffer.
+    ASSERT_EQ(static_cast<int>(sizeof(kTestMessage)),
+              BIO_write(bio.get(), kTestMessage, sizeof(kTestMessage)))
+        << LastSocketError();
+    accept_socket_and_read();
   }
 
   // Explicitly connect to the BIO first.
@@ -268,16 +305,101 @@ TEST(BIOTest, SocketConnect) {
     ASSERT_EQ(static_cast<int>(sizeof(kTestMessage)),
               BIO_write(bio.get(), kTestMessage, sizeof(kTestMessage)))
         << LastSocketError();
+    accept_socket_and_read();
+  }
 
-    // Accept and read.
-    OwnedSocket sock(accept(listening_sock.get(), addr.addr_mut(), &addr.len));
-    ASSERT_TRUE(sock.is_valid()) << LastSocketError();
-    char buf[sizeof(kTestMessage)];
+  // Connect in non-blocking mode.
+  {
+    UniquePtr<BIO> bio(BIO_new_connect(hostname));
+    ASSERT_TRUE(bio);
+    ASSERT_EQ(1, BIO_set_nbio(bio.get(), 1));
+
+    int ret = BIO_do_connect(bio.get());
+    if (kLoopbackConnectIsReliablyAsync) {
+      EXPECT_EQ(-1, ret);
+    }
+    if (ret <= 0) {
+      expect_blocked_on_connect(bio.get(), ret);
+      // Try again, without waiting on the socket, to test that we correctly
+      // pick up the new socket state. It is possible the socket is ready
+      // anyway, in which case this test run will not exercise this case, but
+      // most likely it will still be waiting.
+      ret = BIO_do_connect(bio.get());
+    }
+    if (ret <= 0) {
+      expect_blocked_on_connect(bio.get(), ret);
+      // Wait for the underlying socket to become writable and try again.
+      ASSERT_NO_FATAL_FAILURE(wait_for_writable(bio.get()));
+      ret = BIO_do_connect(bio.get());
+    }
+
+    ASSERT_EQ(1, ret) << LastSocketError();
     ASSERT_EQ(static_cast<int>(sizeof(kTestMessage)),
-              recv(sock.get(), buf, sizeof(buf), 0))
+              BIO_write(bio.get(), kTestMessage, sizeof(kTestMessage)))
         << LastSocketError();
-    EXPECT_EQ(Bytes(kTestMessage, sizeof(kTestMessage)),
-              Bytes(buf, sizeof(buf)));
+    accept_socket_and_read();
+  }
+
+  // Implicitly connect in non-blocking mode.
+  {
+    UniquePtr<BIO> bio(BIO_new_connect(hostname));
+    ASSERT_TRUE(bio);
+    ASSERT_EQ(1, BIO_set_nbio(bio.get(), 1));
+
+    int ret = BIO_write(bio.get(), kTestMessage, sizeof(kTestMessage));
+    if (kLoopbackConnectIsReliablyAsync) {
+      EXPECT_EQ(-1, ret);
+    }
+    if (ret <= 0) {
+      expect_blocked_on_connect(bio.get(), ret);
+      // Try again, without waiting on the socket, to test that we correctly
+      // pick up the new socket state. It is possible the socket is ready
+      // anyway, in which case this test run will not exercise this case, but
+      // most likely it will still be waiting.
+      ret = BIO_write(bio.get(), kTestMessage, sizeof(kTestMessage));
+    }
+    if (ret <= 0) {
+      expect_blocked_on_connect(bio.get(), ret);
+      // Wait for the underlying socket to become writable and try again.
+      ASSERT_NO_FATAL_FAILURE(wait_for_writable(bio.get()));
+      ret = BIO_write(bio.get(), kTestMessage, sizeof(kTestMessage));
+    }
+
+    ASSERT_EQ(static_cast<int>(sizeof(kTestMessage)), ret) << LastSocketError();
+    accept_socket_and_read();
+  }
+
+  // Close the socket to test failed connects.
+  listening_sock.reset();
+
+  auto expect_connect_error = [](BIO *bio) {
+    EXPECT_FALSE(BIO_should_retry(bio));
+    EXPECT_FALSE(BIO_should_io_special(bio));
+#if defined(OPENSSL_WINDOWS)
+    EXPECT_EQ(WSAGetLastError(), WSAECONNREFUSED);
+    // TODO(crbug.com/518014953): Also check the error queue.
+#else
+    EXPECT_EQ(errno, ECONNREFUSED);
+    EXPECT_TRUE(ErrorEquals(ERR_get_error(), ERR_LIB_SYS, ECONNREFUSED));
+#endif
+    ERR_clear_error();
+  };
+
+  // |BIO_do_connect| should observe the error.
+  {
+    UniquePtr<BIO> bio(BIO_new_connect(hostname));
+    ASSERT_TRUE(bio);
+    EXPECT_EQ(-1, BIO_do_connect(bio.get()));
+    expect_connect_error(bio.get());
+  }
+
+  // Using a connect BIO implicitly connects to it, which should observe the
+  // error.
+  {
+    UniquePtr<BIO> bio(BIO_new_connect(hostname));
+    ASSERT_TRUE(bio);
+    EXPECT_EQ(-1, BIO_write(bio.get(), kTestMessage, sizeof(kTestMessage)));
+    expect_connect_error(bio.get());
   }
 
   // Connect in non-blocking mode.
@@ -287,29 +409,16 @@ TEST(BIOTest, SocketConnect) {
     ASSERT_EQ(1, BIO_set_nbio(bio.get(), 1));
 
     ASSERT_EQ(-1, BIO_do_connect(bio.get()));
-    EXPECT_TRUE(BIO_should_retry(bio.get()));
-    EXPECT_TRUE(BIO_should_io_special(bio.get()));
-    EXPECT_EQ(BIO_RR_CONNECT, BIO_get_retry_reason(bio.get()));
-
-    // Wait for the underlying socket to become writable and try again.
-    int fd = BIO_get_fd(bio.get(), nullptr);
-    ASSERT_GT(fd, -1);
-    ASSERT_TRUE(WaitForSocket(static_cast<Socket>(fd), WaitType::kWrite));
-    ASSERT_EQ(1, BIO_do_connect(bio.get()));
-
-    ASSERT_EQ(static_cast<int>(sizeof(kTestMessage)),
-              BIO_write(bio.get(), kTestMessage, sizeof(kTestMessage)))
-        << LastSocketError();
-
-    // Accept and read.
-    OwnedSocket sock(accept(listening_sock.get(), addr.addr_mut(), &addr.len));
-    ASSERT_TRUE(sock.is_valid()) << LastSocketError();
-    char buf[sizeof(kTestMessage)];
-    ASSERT_EQ(static_cast<int>(sizeof(kTestMessage)),
-              recv(sock.get(), buf, sizeof(buf), 0))
-        << LastSocketError();
-    EXPECT_EQ(Bytes(kTestMessage, sizeof(kTestMessage)),
-              Bytes(buf, sizeof(buf)));
+    if (kLoopbackConnectIsReliablyAsync) {
+      EXPECT_TRUE(BIO_should_retry(bio.get()));
+    }
+    if (BIO_should_retry(bio.get())) {
+      expect_blocked_on_connect(bio.get(), -1);
+      // Wait for the underlying socket to observe the error and try again.
+      ASSERT_NO_FATAL_FAILURE(wait_for_writable(bio.get()));
+      ASSERT_EQ(-1, BIO_do_connect(bio.get()));
+    }
+    expect_connect_error(bio.get());
   }
 
   // Implicitly connect in non-blocking mode.
@@ -319,27 +428,16 @@ TEST(BIOTest, SocketConnect) {
     ASSERT_EQ(1, BIO_set_nbio(bio.get(), 1));
 
     ASSERT_EQ(-1, BIO_write(bio.get(), kTestMessage, sizeof(kTestMessage)));
-    EXPECT_TRUE(BIO_should_retry(bio.get()));
-    EXPECT_TRUE(BIO_should_io_special(bio.get()));
-    EXPECT_EQ(BIO_RR_CONNECT, BIO_get_retry_reason(bio.get()));
-
-    // Wait for the underlying socket to become writable and try again.
-    int fd = BIO_get_fd(bio.get(), nullptr);
-    ASSERT_GT(fd, -1);
-    ASSERT_TRUE(WaitForSocket(static_cast<Socket>(fd), WaitType::kWrite));
-    ASSERT_EQ(static_cast<int>(sizeof(kTestMessage)),
-              BIO_write(bio.get(), kTestMessage, sizeof(kTestMessage)))
-        << LastSocketError();
-
-    // Accept and read.
-    OwnedSocket sock(accept(listening_sock.get(), addr.addr_mut(), &addr.len));
-    ASSERT_TRUE(sock.is_valid()) << LastSocketError();
-    char buf[sizeof(kTestMessage)];
-    ASSERT_EQ(static_cast<int>(sizeof(kTestMessage)),
-              recv(sock.get(), buf, sizeof(buf), 0))
-        << LastSocketError();
-    EXPECT_EQ(Bytes(kTestMessage, sizeof(kTestMessage)),
-              Bytes(buf, sizeof(buf)));
+    if (kLoopbackConnectIsReliablyAsync) {
+      EXPECT_TRUE(BIO_should_retry(bio.get()));
+    }
+    if (BIO_should_retry(bio.get())) {
+      expect_blocked_on_connect(bio.get(), -1);
+      // Wait for the underlying socket to observe the error and try again.
+      ASSERT_NO_FATAL_FAILURE(wait_for_writable(bio.get()));
+      ASSERT_EQ(-1, BIO_write(bio.get(), kTestMessage, sizeof(kTestMessage)));
+    }
+    expect_connect_error(bio.get());
   }
 }
 
@@ -347,7 +445,7 @@ TEST(BIOTest, SocketNonBlocking) {
   OwnedSocket listening_sock = ListenLoopback(/*backlog=*/1);
   ASSERT_TRUE(listening_sock.is_valid()) << LastSocketError();
 
-  // Connect to |listening_sock|.
+  // Connect to `listening_sock`.
   SockaddrStorage addr;
   ASSERT_EQ(getsockname(listening_sock.get(), addr.addr_mut(), &addr.len), 0)
       << LastSocketError();
@@ -370,13 +468,13 @@ TEST(BIOTest, SocketNonBlocking) {
   // Exchange data through the socket.
   static const char kTestMessage[] = "hello, world";
 
-  // Reading from |accept_bio| should not block.
+  // Reading from `accept_bio` should not block.
   char buf[sizeof(kTestMessage)];
   int ret = BIO_read(accept_bio.get(), buf, sizeof(buf));
   EXPECT_EQ(ret, -1);
   EXPECT_TRUE(BIO_should_read(accept_bio.get())) << LastSocketError();
 
-  // Writing to |connect_bio| should eventually overflow the transport buffers
+  // Writing to `connect_bio` should eventually overflow the transport buffers
   // and also give a retryable error.
   int bytes_written = 0;
   for (;;) {
@@ -390,7 +488,7 @@ TEST(BIOTest, SocketNonBlocking) {
   }
   EXPECT_GT(bytes_written, 0);
 
-  // |accept_bio| should readable. Drain it. Note data is not always available
+  // `accept_bio` should readable. Drain it. Note data is not always available
   // from loopback immediately, notably on macOS, so wait for the socket first.
   int bytes_read = 0;
   while (bytes_read < bytes_written) {
@@ -401,7 +499,7 @@ TEST(BIOTest, SocketNonBlocking) {
     bytes_read += ret;
   }
 
-  // |connect_bio| should become writeable again.
+  // `connect_bio` should become writable again.
   ASSERT_TRUE(WaitForSocket(accept_sock.get(), WaitType::kWrite))
       << LastSocketError();
   ret = BIO_write(connect_bio.get(), kTestMessage, sizeof(kTestMessage));
@@ -456,9 +554,9 @@ TEST(BIOTest, ReadASN1) {
   struct ASN1Test {
     bool should_succeed;
     std::vector<uint8_t> input;
-    // suffix_len is the number of zeros to append to |input|.
+    // suffix_len is the number of zeros to append to `input`.
     size_t suffix_len;
-    // expected_len, if |should_succeed| is true, is the expected length of the
+    // expected_len, if `should_succeed` is true, is the expected length of the
     // ASN.1 element.
     size_t expected_len;
     size_t max_len;
@@ -505,6 +603,7 @@ TEST(BIOTest, ReadASN1) {
     int ok = BIO_read_asn1(bio.get(), &out, &out_len, t.max_len);
     if (!ok) {
       out = nullptr;
+      EXPECT_TRUE(ErrorsAreAndClear({{ERR_LIB_ASN1, std::nullopt}}));
     }
     UniquePtr<uint8_t> out_storage(out);
 
@@ -556,7 +655,7 @@ TEST(BIOTest, ReadASN1ErrorNegative) {
 
 
 TEST(BIOTest, MemReadOnly) {
-  // A memory BIO created from |BIO_new_mem_buf| is a read-only buffer.
+  // A memory BIO created from `BIO_new_mem_buf` is a read-only buffer.
   static const char kData[] = "abcdefghijklmno";
   UniquePtr<BIO> bio(BIO_new_mem_buf(kData, strlen(kData)));
   ASSERT_TRUE(bio);
@@ -619,7 +718,7 @@ TEST(BIOTest, MemReadOnly) {
 }
 
 TEST(BIOTest, MemWritable) {
-  // A memory BIO created from |BIO_new| is writable.
+  // A memory BIO created from `BIO_new` is writable.
   UniquePtr<BIO> bio(BIO_new(BIO_s_mem()));
   ASSERT_TRUE(bio);
 
@@ -653,7 +752,7 @@ TEST(BIOTest, MemWritable) {
   EXPECT_EQ(BIO_read(bio.get(), buf, sizeof(buf)), 0);
   EXPECT_FALSE(BIO_should_read(bio.get()));
 
-  // Restore the default. A writable memory |BIO| is typically used in this mode
+  // Restore the default. A writable memory `BIO` is typically used in this mode
   // so additional data can be written when exhausted.
   EXPECT_EQ(BIO_set_mem_eof_return(bio.get(), -1), 1);
 
@@ -686,14 +785,14 @@ TEST(BIOTest, MemWritable) {
   check_bio_contents(Bytes("hijklmnopq"));
   EXPECT_EQ(BIO_eof(bio.get()), 0);
 
-  // The read buffer exceeds the |BIO|, so we consume everything.
+  // The read buffer exceeds the `BIO`, so we consume everything.
   ret = BIO_read(bio.get(), buf, sizeof(buf));
   ASSERT_GT(ret, 0);
   EXPECT_EQ(Bytes(buf, ret), Bytes("hijklmnopq"));
   check_bio_contents(Bytes(""));
   EXPECT_EQ(BIO_eof(bio.get()), 1);
 
-  // The |BIO| is now empty.
+  // The `BIO` is now empty.
   EXPECT_EQ(BIO_read(bio.get(), buf, sizeof(buf)), -1);
   EXPECT_TRUE(BIO_should_read(bio.get()));
 
@@ -748,7 +847,7 @@ TEST(BIOTest, Gets) {
       std::vector<char> buf(t.gets_len, 'a');
       int ret = BIO_gets(bio, buf.data(), t.gets_len);
       ASSERT_GE(ret, 0);
-      // |BIO_gets| should write a NUL terminator, not counted in the return
+      // `BIO_gets` should write a NUL terminator, not counted in the return
       // value.
       EXPECT_EQ(Bytes(buf.data(), ret + 1),
                 Bytes(t.gets_result.data(), t.gets_result.size() + 1));
@@ -777,49 +876,49 @@ TEST(BIOTest, Gets) {
       if (t.bio.find('\0') == std::string::npos) {
         SCOPED_TRACE("file");
 
-        // Test |BIO_new_file|.
+        // Test `BIO_new_file`.
         UniquePtr<BIO> bio(BIO_new_file(file.path().c_str(), "rb"));
         ASSERT_TRUE(bio);
         check_bio_gets(bio.get());
 
-        // Test |BIO_read_filename|.
+        // Test `BIO_read_filename`.
         bio.reset(BIO_new(BIO_s_file()));
         ASSERT_TRUE(bio);
         ASSERT_TRUE(BIO_read_filename(bio.get(), file.path().c_str()));
         check_bio_gets(bio.get());
 
-        // Test |BIO_NOCLOSE|.
+        // Test `BIO_NOCLOSE`.
         ScopedFILE file_obj = file.Open("rb");
         ASSERT_TRUE(file_obj);
         bio.reset(BIO_new_fp(file_obj.get(), BIO_NOCLOSE));
         ASSERT_TRUE(bio);
         check_bio_gets(bio.get());
 
-        // Test |BIO_CLOSE|.
+        // Test `BIO_CLOSE`.
         file_obj = file.Open("rb");
         ASSERT_TRUE(file_obj);
         bio.reset(BIO_new_fp(file_obj.get(), BIO_CLOSE));
         ASSERT_TRUE(bio);
-        file_obj.release();  // |BIO_new_fp| took ownership on success.
+        file_obj.release();  // `BIO_new_fp` took ownership on success.
         check_bio_gets(bio.get());
       }
 
       {
         SCOPED_TRACE("fd");
 
-        // Test |BIO_NOCLOSE|.
+        // Test `BIO_NOCLOSE`.
         ScopedFD fd = file.OpenFD(kOpenReadOnlyBinary);
         ASSERT_TRUE(fd.is_valid());
         UniquePtr<BIO> bio(BIO_new_fd(fd.get(), BIO_NOCLOSE));
         ASSERT_TRUE(bio);
         check_bio_gets(bio.get());
 
-        // Test |BIO_CLOSE|.
+        // Test `BIO_CLOSE`.
         fd = file.OpenFD(kOpenReadOnlyBinary);
         ASSERT_TRUE(fd.is_valid());
         bio.reset(BIO_new_fd(fd.get(), BIO_CLOSE));
         ASSERT_TRUE(bio);
-        fd.release();  // |BIO_new_fd| took ownership on success.
+        fd.release();  // `BIO_new_fd` took ownership on success.
         check_bio_gets(bio.get());
       }
     }
@@ -853,7 +952,7 @@ TEST(BIOTest, FileEOF) {
   ASSERT_EQ(0, BIO_read(bio.get(), buf, sizeof(buf)));
   EXPECT_EQ(BIO_eof(bio.get()), 1);
   // Reset the BIO. File BIOs have an unusual return value convention for
-  // |BIO_reset|.
+  // `BIO_reset`.
   EXPECT_EQ(BIO_reset(bio.get()), 0);
   // This should clear the EOF indicator for the stream.
   EXPECT_EQ(BIO_eof(bio.get()), 0);
@@ -892,13 +991,13 @@ TEST(BIOTest, FileMode) {
 #endif
   };
 
-  // |BIO_read_filename| should open in binary mode.
+  // `BIO_read_filename` should open in binary mode.
   UniquePtr<BIO> bio(BIO_new(BIO_s_file()));
   ASSERT_TRUE(bio);
   ASSERT_TRUE(BIO_read_filename(bio.get(), temp.path().c_str()));
   expect_binary_mode(bio.get());
 
-  // |BIO_new_file| should use the specified mode.
+  // `BIO_new_file` should use the specified mode.
   bio.reset(BIO_new_file(temp.path().c_str(), "rb"));
   ASSERT_TRUE(bio);
   expect_binary_mode(bio.get());
@@ -907,7 +1006,7 @@ TEST(BIOTest, FileMode) {
   ASSERT_TRUE(bio);
   expect_text_mode(bio.get());
 
-  // |BIO_new_fp| inherits the file's existing mode by default.
+  // `BIO_new_fp` inherits the file's existing mode by default.
   ScopedFILE file = temp.Open("rb");
   ASSERT_TRUE(file);
   bio.reset(BIO_new_fp(file.get(), BIO_NOCLOSE));
@@ -920,7 +1019,7 @@ TEST(BIOTest, FileMode) {
   ASSERT_TRUE(bio);
   expect_text_mode(bio.get());
 
-  // However, |BIO_FP_TEXT| changes the file to be text mode, no matter how it
+  // However, `BIO_FP_TEXT` changes the file to be text mode, no matter how it
   // was opened.
   file = temp.Open("rb");
   ASSERT_TRUE(file);
@@ -934,7 +1033,7 @@ TEST(BIOTest, FileMode) {
   ASSERT_TRUE(bio);
   expect_text_mode(bio.get());
 
-  // |BIO_new_fd| inherits the FD's existing mode.
+  // `BIO_new_fd` inherits the FD's existing mode.
   ScopedFD fd = temp.OpenFD(kOpenReadOnlyBinary);
   ASSERT_TRUE(fd.is_valid());
   bio.reset(BIO_new_fd(fd.get(), BIO_NOCLOSE));
@@ -990,7 +1089,7 @@ TEST(BIOTest, FileIO) {
       ASSERT_TRUE(bio);
     }
 
-    // Seek to "world". Note |BIO_seek|'s return values are wildly inconsistent
+    // Seek to "world". Note `BIO_seek`'s return values are wildly inconsistent
     // between BIOs.
     EXPECT_EQ(BIO_tell(bio.get()), 0);
     if (use_fd) {
@@ -1025,9 +1124,7 @@ TEST(BIOTest, FileFDError) {
   {
     UniquePtr<BIO> bio(BIO_new_file(temp.path().c_str(), "rb"));
     ASSERT_TRUE(bio);
-    // TODO(crbug.com/42290372): File BIOs currently return zero instead of -1
-    // on write error.
-    EXPECT_EQ(BIO_write(bio.get(), "foo", 3), 0);
+    EXPECT_EQ(BIO_write(bio.get(), "foo", 3), -1);
     EXPECT_FALSE(BIO_should_retry(bio.get()));
   }
 
@@ -1062,7 +1159,7 @@ TEST(BIOTest, FileFDError) {
   }
 }
 
-// Run through the tests twice, swapping |bio1| and |bio2|, for symmetry.
+// Run through the tests twice, swapping `bio1` and `bio2`, for symmetry.
 class BIOPairTest : public testing::TestWithParam<bool> {};
 
 TEST_P(BIOPairTest, TestPair) {
@@ -1175,19 +1272,19 @@ TEST_P(BIOPairTest, TestPair) {
   EXPECT_EQ(Bytes("12345"), Bytes(buf, 5));
   EXPECT_FALSE(BIO_eof(bio1.get()));
 
-  // Destroying |bio2| implicitly closes it, and discards unread data.
+  // Destroying `bio2` implicitly closes it, and discards unread data.
   EXPECT_EQ(5, BIO_write(bio2.get(), "12345", 5));
   bio2 = nullptr;
 
-  // |bio1| no longer has the "init" flag set, so reads and writes will fail at
+  // `bio1` no longer has the "init" flag set, so reads and writes will fail at
   // the BIO framework.
   EXPECT_FALSE(BIO_get_init(bio1.get()));
-  EXPECT_EQ(-2, BIO_write(bio1.get(), "12345", 5));
+  EXPECT_EQ(-1, BIO_write(bio1.get(), "12345", 5));
   EXPECT_TRUE(ErrorEquals(ERR_get_error(), ERR_LIB_BIO, BIO_R_UNINITIALIZED));
-  EXPECT_EQ(-2, BIO_read(bio1.get(), buf, sizeof(buf)));
+  EXPECT_EQ(-1, BIO_read(bio1.get(), buf, sizeof(buf)));
   EXPECT_TRUE(ErrorEquals(ERR_get_error(), ERR_LIB_BIO, BIO_R_UNINITIALIZED));
 
-  // Although in this disconnected state, |BIO_ctrl| works. |bio1| should
+  // Although in this disconnected state, `BIO_ctrl` works. `bio1` should
   // report EOF when it has no peer.
   EXPECT_TRUE(BIO_eof(bio1.get()));
 
@@ -1198,33 +1295,33 @@ TEST_P(BIOPairTest, TestPair) {
 
 INSTANTIATE_TEST_SUITE_P(All, BIOPairTest, testing::Values(false, true));
 
-// |BIO_free| returns whether the input |BIO| was shared.
+// `BIO_free` returns whether the input `BIO` was shared.
 TEST(BIOTest, BIOFreeReturnValue) {
   BIO *bio = BIO_new_mem_buf(nullptr, 0);
   ASSERT_TRUE(bio);
   BIO_up_ref(bio);
   BIO_up_ref(bio);
 
-  // |BIO_free| should return one when the last reference is dropped.
+  // `BIO_free` should return one when the last reference is dropped.
   EXPECT_EQ(0, BIO_free(bio));
   EXPECT_EQ(0, BIO_free(bio));
   EXPECT_EQ(1, BIO_free(bio));
 
-  // |BIO_free| of nullptr vacuously returns one.
+  // `BIO_free` of nullptr vacuously returns one.
   EXPECT_EQ(1, BIO_free(nullptr));
 }
 
 TEST(BIOTest, BIOFreeReturnValueChain) {
-  // We have no built-in filter BIOs, but |BIO_push| works with any |BIO|, so
-  // just chain memory |BIO|s, even though it does nothing.
+  // We have no built-in filter BIOs, but `BIO_push` works with any `BIO`, so
+  // just chain memory `BIO`s, even though it does nothing.
   UniquePtr<BIO> bio1(BIO_new_mem_buf(nullptr, 0));
   ASSERT_TRUE(bio1);
   UniquePtr<BIO> bio2(BIO_new_mem_buf(nullptr, 0));
   ASSERT_TRUE(bio2);
   BIO_push(bio1.get(), UpRef(bio2).release());
 
-  // |bio1| now owns a copy of |bio2|, but it is still shared with the |bio2|
-  // pointer. |BIO_free| should still return one because the input object was
+  // `bio1` now owns a copy of `bio2`, but it is still shared with the `bio2`
+  // pointer. `BIO_free` should still return one because the input object was
   // freed.
   EXPECT_EQ(1, BIO_free(bio1.release()));
 }
@@ -1264,7 +1361,7 @@ TEST(BIOTest, BIOChain) {
     BIO_push(bio.get(), next.release());
   }
 
-  // Check the |BIO_next| chain is what we expect.
+  // Check the `BIO_next` chain is what we expect.
   auto expect_bio_chain = [](BIO *b, const std::vector<int> &types) {
     for (int type : types) {
       ASSERT_TRUE(b);
@@ -1276,7 +1373,7 @@ TEST(BIOTest, BIOChain) {
   expect_bio_chain(bio.get(), {method1->first, method2->first, method3->first,
                                method4->first});
 
-  // |BIO_find_type| should find all of them.
+  // `BIO_find_type` should find all of them.
   for (const auto &method : {method1, method2, method3, method4}) {
     SCOPED_TRACE(method->first);
     BIO *found = BIO_find_type(bio.get(), method->first);
@@ -1284,7 +1381,7 @@ TEST(BIOTest, BIOChain) {
     EXPECT_EQ(BIO_method_type(found), method->first);
   }
 
-  // |BIO_find_type| can also look by mask.
+  // `BIO_find_type` can also look by mask.
   BIO *found = BIO_find_type(bio.get(), BIO_TYPE_FILTER);
   ASSERT_TRUE(found);
   EXPECT_EQ(BIO_method_type(found), method1->first);
@@ -1314,6 +1411,170 @@ TEST(BIOTest, BIOChain) {
   // The remainder was returned.
   expect_bio_chain(rest.get(),
                    {method2->first, method3->first, method4->first});
+}
+
+TEST(BIOTest, CanonicalizeErrors) {
+  // Make a custom BIO with a programmable return value.
+  UniquePtr<BIO_METHOD> method(BIO_meth_new(0, nullptr));
+  ASSERT_TRUE(method);
+  BIO_meth_set_read(method.get(), [](BIO *bio, char *, int) -> int {
+    return *static_cast<int *>(BIO_get_data(bio));
+  });
+  BIO_meth_set_write(method.get(), [](BIO *bio, const char *, int) -> int {
+    return *static_cast<int *>(BIO_get_data(bio));
+  });
+
+  int return_value = -1;
+  UniquePtr<BIO> bio(BIO_new(method.get()));
+  ASSERT_TRUE(bio);
+  BIO_set_data(bio.get(), &return_value);
+  BIO_set_init(bio.get(), 1);
+
+  // Any return value < 0 from BIO_read is an error, which should be -1.
+  char buf[10];
+  return_value = -2;
+  EXPECT_EQ(BIO_read(bio.get(), buf, sizeof(buf)), -1);
+  return_value = -1;
+  EXPECT_EQ(BIO_read(bio.get(), buf, sizeof(buf)), -1);
+
+  // Zero is EOF and should be preserved.
+  return_value = 0;
+  EXPECT_EQ(BIO_read(bio.get(), buf, sizeof(buf)), 0);
+
+  // Any return value <= 0 from BIO_write is an error, which should be -1.
+  return_value = -2;
+  EXPECT_EQ(BIO_write(bio.get(), "foo", 3), -1);
+  return_value = -1;
+  EXPECT_EQ(BIO_write(bio.get(), "foo", 3), -1);
+  return_value = 0;
+  EXPECT_EQ(BIO_write(bio.get(), "foo", 3), -1);
+}
+
+// BIO_write should work with BIOs that implement BIO_write_ex and vice versa.
+TEST(BIOTest, WriteExConversion) {
+  enum class WriteResult { kSuccess, kFail, kRetry };
+  struct MockWrite {
+    std::string expected_data;
+    WriteResult result = WriteResult::kSuccess;
+    size_t bytes_written = 0;
+    int fail_return = -1;  // Only used for write_method failure
+  };
+
+  UniquePtr<BIO_METHOD> write_method(BIO_meth_new(0, nullptr));
+  ASSERT_TRUE(write_method);
+  BIO_meth_set_write(
+      write_method.get(), [](BIO *bio, const char *in, int len) -> int {
+        auto *state = static_cast<MockWrite *>(BIO_get_data(bio));
+        EXPECT_EQ(std::string(in, len), state->expected_data);
+        BIO_clear_retry_flags(bio);
+        switch (state->result) {
+          case WriteResult::kSuccess:
+            return static_cast<int>(state->bytes_written);
+          case WriteResult::kFail:
+            return state->fail_return;
+          case WriteResult::kRetry:
+            BIO_set_retry_write(bio);
+            return -1;
+        }
+        return -1;
+      });
+
+  UniquePtr<BIO_METHOD> write_ex_method(BIO_meth_new(0, nullptr));
+  ASSERT_TRUE(write_ex_method);
+  BIO_meth_set_write_ex(
+      write_ex_method.get(),
+      [](BIO *bio, const char *in, size_t len, size_t *out_written) -> int {
+        auto *state = static_cast<MockWrite *>(BIO_get_data(bio));
+        EXPECT_EQ(std::string(in, len), state->expected_data);
+        BIO_clear_retry_flags(bio);
+        switch (state->result) {
+          case WriteResult::kSuccess:
+            *out_written = state->bytes_written;
+            return 1;
+          case WriteResult::kFail:
+            return 0;
+          case WriteResult::kRetry:
+            BIO_set_retry_write(bio);
+            return 0;
+        }
+        return 0;
+      });
+
+  for (const BIO_METHOD *meth : {write_method.get(), write_ex_method.get()}) {
+    SCOPED_TRACE(meth == write_method.get() ? "write" : "write_ex");
+
+    auto make_bio = [&](MockWrite *mock_write) -> UniquePtr<BIO> {
+      UniquePtr<BIO> bio(BIO_new(meth));
+      if (bio == nullptr) {
+        return nullptr;
+      }
+      BIO_set_data(bio.get(), mock_write);
+      BIO_set_init(bio.get(), 1);
+      return bio;
+    };
+
+    MockWrite mock_write;
+    static const char kInput[] = "hello";
+    mock_write.expected_data = kInput;
+
+    // Test BIO_write
+    {
+      auto bio = make_bio(&mock_write);
+      ASSERT_TRUE(bio);
+
+      mock_write.result = WriteResult::kSuccess;
+      mock_write.bytes_written = 5;
+      EXPECT_EQ(BIO_write(bio.get(), kInput, strlen(kInput)), 5);
+      EXPECT_FALSE(BIO_should_retry(bio.get()));
+
+      mock_write.result = WriteResult::kFail;
+      mock_write.fail_return = -1;
+      EXPECT_EQ(BIO_write(bio.get(), kInput, strlen(kInput)), -1);
+      EXPECT_FALSE(BIO_should_retry(bio.get()));
+
+      // Test both return values for |write_method|.
+      mock_write.fail_return = 0;
+      EXPECT_EQ(BIO_write(bio.get(), kInput, strlen(kInput)), -1);
+      EXPECT_FALSE(BIO_should_retry(bio.get()));
+
+      mock_write.result = WriteResult::kRetry;
+      EXPECT_EQ(BIO_write(bio.get(), kInput, strlen(kInput)), -1);
+      EXPECT_TRUE(BIO_should_retry(bio.get()));
+      EXPECT_TRUE(BIO_should_write(bio.get()));
+    }
+
+    // Test BIO_write_ex
+    {
+      auto bio = make_bio(&mock_write);
+      ASSERT_TRUE(bio);
+      size_t written = 0;
+
+      mock_write.result = WriteResult::kSuccess;
+      mock_write.bytes_written = 5;
+      EXPECT_EQ(BIO_write_ex(bio.get(), kInput, strlen(kInput), &written), 1);
+      EXPECT_EQ(written, 5u);
+      EXPECT_FALSE(BIO_should_retry(bio.get()));
+
+      // `out_written` can be nullptr.
+      EXPECT_EQ(BIO_write_ex(bio.get(), kInput, strlen(kInput), nullptr), 1);
+      EXPECT_FALSE(BIO_should_retry(bio.get()));
+
+      mock_write.result = WriteResult::kFail;
+      mock_write.fail_return = -1;
+      EXPECT_EQ(BIO_write_ex(bio.get(), kInput, strlen(kInput), &written), 0);
+      EXPECT_FALSE(BIO_should_retry(bio.get()));
+
+      // Test both return values for |write_method|.
+      mock_write.fail_return = 0;
+      EXPECT_EQ(BIO_write_ex(bio.get(), kInput, strlen(kInput), &written), 0);
+      EXPECT_FALSE(BIO_should_retry(bio.get()));
+
+      mock_write.result = WriteResult::kRetry;
+      EXPECT_EQ(BIO_write_ex(bio.get(), kInput, strlen(kInput), &written), 0);
+      EXPECT_TRUE(BIO_should_retry(bio.get()));
+      EXPECT_TRUE(BIO_should_write(bio.get()));
+    }
+  }
 }
 
 }  // namespace

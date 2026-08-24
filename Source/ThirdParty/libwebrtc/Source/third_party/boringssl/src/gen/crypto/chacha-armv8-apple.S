@@ -7,6 +7,7 @@
 .section	__TEXT,__const
 
 .align	5
+chacha_constants:
 Lsigma:
 .quad	0x3320646e61707865,0x6b20657479622d32		// endian-neutral
 Lone:
@@ -298,6 +299,7 @@ Loop_tail:
 .private_extern	_ChaCha20_ctr32_neon
 
 .align	5
+.alt_entry _ChaCha20_ctr32_neon
 _ChaCha20_ctr32_neon:
 	AARCH64_SIGN_LINK_REGISTER
 	stp	x29,x30,[sp,#-96]!
@@ -795,6 +797,7 @@ Ldone_neon:
 
 
 .align	5
+.alt_entry ChaCha20_512_neon
 ChaCha20_512_neon:
 	AARCH64_SIGN_LINK_REGISTER
 	stp	x29,x30,[sp,#-96]!

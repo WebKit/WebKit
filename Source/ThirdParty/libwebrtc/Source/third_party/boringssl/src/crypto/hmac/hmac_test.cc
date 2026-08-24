@@ -109,7 +109,7 @@ static void RunWycheproofTest(const char *path, const EVP_MD *md) {
     unsigned out_len;
     ASSERT_TRUE(HMAC(md, key.data(), key.size(), msg.data(), msg.size(), out,
                      &out_len));
-    // Wycheproof tests truncate the tags down to |tagSize|.
+    // Wycheproof tests truncate the tags down to `tagSize`.
     ASSERT_LE(tag.size(), out_len);
     EXPECT_EQ(Bytes(out, tag.size()), Bytes(tag));
   });

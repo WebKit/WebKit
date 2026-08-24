@@ -69,13 +69,13 @@ MAKE_MLDSA_TRAITS(44)
 MAKE_MLDSA_TRAITS(65)
 MAKE_MLDSA_TRAITS(87)
 
-// For each ML-DSA variant, the |EvpPkey| must hold a public or private key.
+// For each ML-DSA variant, the `EvpPkey` must hold a public or private key.
 // EVP uses the same type for public and private keys, so the representation
 // must support both. The private key type contains the public key struct in it,
 // so we use a pointer to either a PrivateKeyData<Traits> or
 // PublicKeyData<Traits>, with a common base class to dispatch between them.
 //
-// TODO(crbug.com/404286922): In C++20, we need fewer |typename|s in front of
+// TODO(crbug.com/404286922): In C++20, we need fewer `typename`s in front of
 // dependent type names.
 
 template <typename Traits>
@@ -252,8 +252,7 @@ struct MLDSAImplementation {
 
   static evp_decode_result_t DecodePublic(const EVP_PKEY_ALG *alg, EvpPkey *out,
                                           CBS *params, CBS *key) {
-    // The parameters must be omitted. See
-    // draft-ietf-lamps-dilithium-certificates-13, Section 2.
+    // The parameters must be omitted. See RFC 9881, Section 2.
     if (CBS_len(params) != 0) {
       OPENSSL_PUT_ERROR(EVP, EVP_R_DECODE_ERROR);
       return evp_decode_error;
@@ -264,7 +263,7 @@ struct MLDSAImplementation {
 
   static int EncodePublic(CBB *out, const EvpPkey *pkey) {
     const auto *pub = GetKeyData(pkey)->GetPublicKey();
-    // See draft-ietf-lamps-dilithium-certificates-13, Sections 2 and 4.
+    // See RFC 9881, Sections 2 and 4.
     CBB spki, algorithm, key_bitstring;
     if (!CBB_add_asn1(out, &spki, CBS_ASN1_SEQUENCE) ||
         !CBB_add_asn1(&spki, &algorithm, CBS_ASN1_SEQUENCE) ||
@@ -302,17 +301,16 @@ struct MLDSAImplementation {
   static evp_decode_result_t DecodePrivate(const EVP_PKEY_ALG *alg,
                                            EvpPkey *out, CBS *params,
                                            CBS *key) {
-    // The parameters must be omitted. See
-    // draft-ietf-lamps-dilithium-certificates-13, Section 2.
+    // The parameters must be omitted. See RFC 9881, Section 2.
     if (CBS_len(params) != 0) {
       OPENSSL_PUT_ERROR(EVP, EVP_R_DECODE_ERROR);
       return evp_decode_error;
     }
 
-    // See draft-ietf-lamps-dilithium-certificates-13, Section 6. Three
-    // different encodings were specified, adding complexity to the question of
-    // whether a private key is valid. We only implement the "seed"
-    // representation. Give this case a different error for easier diagnostics.
+    // See RFC 9881, Section 6. Three different encodings were specified, adding
+    // complexity to the question of whether a private key is valid. We only
+    // implement the "seed" representation. Give this case a different error for
+    // easier diagnostics.
     //
     // The "expandedKey" representation was a last-minute accommodation for
     // legacy hardware, which should be updated to use seeds. Supporting it
@@ -345,8 +343,7 @@ struct MLDSAImplementation {
       OPENSSL_PUT_ERROR(EVP, EVP_R_NOT_A_PRIVATE_KEY);
       return 0;
     }
-    // See draft-ietf-lamps-dilithium-certificates-13, Sections 2 and 6. We
-    // encode only the seed representation.
+    // See RFC 9881, Sections 2 and 6. We encode only the seed representation.
     CBB pkcs8, algorithm, private_key;
     if (!CBB_add_asn1(out, &pkcs8, CBS_ASN1_SEQUENCE) ||
         !CBB_add_asn1_uint64(&pkcs8, 0 /* version */) ||

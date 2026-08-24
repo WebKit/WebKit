@@ -22,7 +22,6 @@
 
 #include <algorithm>
 #include <functional>
-#include <optional>
 #include <utility>
 #include <vector>
 
@@ -69,7 +68,7 @@ PacketedBio *GetData(BIO *bio) {
   return static_cast<PacketedBio *>(BIO_get_data(bio));
 }
 
-// ReadAll reads |len| bytes from |bio| into |out|. It returns 1 on success and
+// ReadAll reads `len` bytes from `bio` into `out`. It returns 1 on success and
 // 0 or -1 on error.
 static int ReadAll(BIO *bio, bssl::Span<uint8_t> out) {
   while (!out.empty()) {
@@ -83,10 +82,11 @@ static int ReadAll(BIO *bio, bssl::Span<uint8_t> out) {
   return 1;
 }
 
-static int PacketedWrite(BIO *bio, const char *in, int inl) {
+static int PacketedWriteEx(BIO *bio, const char *in, size_t inl,
+                           size_t *out_written) {
   BIO *next = BIO_next(bio);
   if (next == nullptr) {
-    return -1;
+    return 0;
   }
 
   BIO_clear_retry_flags(bio);
@@ -94,21 +94,20 @@ static int PacketedWrite(BIO *bio, const char *in, int inl) {
   // Write the header.
   uint8_t header[5];
   header[0] = kOpcodePacket;
+  BSSL_CHECK(inl <= UINT32_MAX - 1);
   CRYPTO_store_u32_be(header + 1, inl);
-  int ret = BIO_write(next, header, sizeof(header));
-  if (ret <= 0) {
+  if (!BIO_write_all(next, header, sizeof(header))) {
     BIO_copy_next_retry(bio);
-    return ret;
+    return 0;
   }
 
   // Write the buffer.
-  ret = BIO_write(next, in, inl);
-  if (ret < 0 || (inl > 0 && ret == 0)) {
+  if (!BIO_write_all(next, in, inl)) {
     BIO_copy_next_retry(bio);
-    return ret;
+    return 0;
   }
-  assert(ret == inl);
-  return ret;
+  *out_written = inl;
+  return 1;
 }
 
 static int PacketedRead(BIO *bio, char *out, int outl) {
@@ -231,7 +230,7 @@ static int PacketedRead(BIO *bio, char *out, int outl) {
       data->interrupt = [=] {
         DTLSv1_set_initial_timeout_duration(data->ssl, duration_ms);
         // A real caller is expected to immediately check the new timeout and
-        // call |DTLSv1_handle_timeout| if the timeout is now expired. We do not
+        // call `DTLSv1_handle_timeout` if the timeout is now expired. We do not
         // this automatically, so that the test can send ExpectNextTimeout(0)
         // first.
         return true;
@@ -301,7 +300,7 @@ static const BIO_METHOD *PacketedBioMethod() {
   static const BIO_METHOD *method = [] {
     BIO_METHOD *ret = BIO_meth_new(PacketedBioMethodType(), "packeted bio");
     BSSL_CHECK(ret);
-    BSSL_CHECK(BIO_meth_set_write(ret, PacketedWrite));
+    BSSL_CHECK(BIO_meth_set_write_ex(ret, PacketedWriteEx));
     BSSL_CHECK(BIO_meth_set_read(ret, PacketedRead));
     BSSL_CHECK(BIO_meth_set_ctrl(ret, PacketedCtrl));
     BSSL_CHECK(BIO_meth_set_destroy(ret, PacketedFree));

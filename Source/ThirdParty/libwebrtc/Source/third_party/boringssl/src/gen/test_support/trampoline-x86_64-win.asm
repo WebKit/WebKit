@@ -14,13 +14,13 @@ default	rel
 section	.text code align=64
 
 
-
-
-
-
-
-
-
+; abi_test_trampoline loads callee-saved registers from |state|, calls |func|
+; with |argv|, then saves the callee-saved registers into |state|. It returns
+; the result of |func|. If |unwind| is non-zero, this function triggers unwind
+; instrumentation.
+; uint64_t abi_test_trampoline(void (*func)(...), CallerState *state,
+; const uint64_t *argv, size_t argc,
+; int unwind);
 global	abi_test_trampoline
 
 ALIGN	16
@@ -28,15 +28,15 @@ abi_test_trampoline:
 
 $L$SEH_begin_abi_test_trampoline_1:
 _CET_ENDBR
-
-
-
-
-
-
-
-
-
+; Stack layout:
+; 8 bytes - align
+; 224 bytes - saved caller registers
+; 8 bytes - scratch space
+; 8 bytes - saved copy of $unwind (SysV-only)
+; 8 bytes - saved copy of $state
+; 8 bytes - saved copy of $func
+; 8 bytes - if needed for stack alignment
+; 8*10 bytes - parameters for $func
 	sub	rsp,344
 
 $L$SEH_prologue_abi_test_trampoline_2:
@@ -113,13 +113,13 @@ $L$SEH_endprologue_abi_test_trampoline_21:
 	movdqa	xmm13,XMMWORD[176+rdx]
 	movdqa	xmm14,XMMWORD[192+rdx]
 	movdqa	xmm15,XMMWORD[208+rdx]
-
+; Stash $func and $state, so they are available after the call returns.
 	mov	QWORD[88+rsp],rcx
 	mov	QWORD[96+rsp],rdx
 
-
-
-
+; Load parameters. Note this will clobber $argv and $argc, so we can
+; only use non-parameter volatile registers. There are three, and they
+; are the same between SysV and Win64: %rax, %r10, and %r11.
 	mov	r10,r8
 	mov	r11,r9
 	dec	r11
@@ -143,11 +143,11 @@ $L$args_loop:
 	dec	r11
 	js	NEAR $L$args_done
 
-
-
-
-
-
+; This block should be:
+; movq (%r10), %rtmp
+; movq %rtmp, (%rax)
+; There are no spare registers available, so we spill into the scratch
+; space.
 	mov	QWORD[104+rsp],r11
 	mov	r11,QWORD[r10]
 	mov	QWORD[rax],r11
@@ -163,13 +163,13 @@ $L$args_done:
 	test	r10,r10
 	jz	NEAR $L$no_unwind
 
-
+; Set the trap flag.
 	pushfq
 	or	QWORD[rsp],0x100
 	popfq
 
-
-
+; Run an instruction to trigger a breakpoint immediately before the
+; call.
 	nop
 global	abi_test_unwind_start
 abi_test_unwind_start:
@@ -178,11 +178,11 @@ abi_test_unwind_start:
 global	abi_test_unwind_return
 abi_test_unwind_return:
 
-
-
-
+; Clear the trap flag. Note this assumes the trap flag was clear on
+; entry. We do not support instrumenting an unwind-instrumented
+; |abi_test_trampoline|.
 	pushfq
-	and	QWORD[rsp],-0x101
+	and	QWORD[rsp],-0x101  ; -0x101 is ~0x100
 	popfq
 global	abi_test_unwind_stop
 abi_test_unwind_stop:
@@ -193,7 +193,7 @@ $L$no_unwind:
 	call	rax
 
 $L$call_done:
-
+; Store what $func did our state, so our caller can check.
 	mov	rdx,QWORD[96+rsp]
 	mov	QWORD[rdx],rbx
 	mov	QWORD[8+rdx],rbp
@@ -252,7 +252,7 @@ $L$call_done:
 	add	rsp,344
 
 
-
+; %rax already contains $func's return value, unmodified.
 	ret
 
 $L$SEH_end_abi_test_trampoline_22:
@@ -505,9 +505,9 @@ _CET_ENDBR
 	pxor	xmm15,xmm15
 	ret
 
-
-
-
+; abi_test_bad_unwind_wrong_register preserves the ABI, but annotates the wrong
+; register in unwind metadata.
+; void abi_test_bad_unwind_wrong_register(void);
 global	abi_test_bad_unwind_wrong_register
 
 ALIGN	16
@@ -516,12 +516,12 @@ abi_test_bad_unwind_wrong_register:
 $L$SEH_begin_abi_test_bad_unwind_wrong_register_1:
 _CET_ENDBR
 	push	r12
-
-$L$SEH_prologue_abi_test_bad_unwind_wrong_register_2:
+; This should be %r13
+$L$SEH_prologue_abi_test_bad_unwind_wrong_register_2:  ; This should be %r13
 $L$SEH_endprologue_abi_test_bad_unwind_wrong_register_3:
-
-
-
+; Windows evaluates epilogs directly in the unwinder, rather than using
+; unwind codes. Add a nop so there is one non-epilog point (immediately
+; before the nop) where the unwinder can observe the mistake.
 	nop
 	pop	r12
 
@@ -530,9 +530,9 @@ $L$SEH_end_abi_test_bad_unwind_wrong_register_4:
 
 
 
-
-
-
+; abi_test_bad_unwind_temporary preserves the ABI, but temporarily corrupts the
+; storage space for a saved register, breaking unwind.
+; void abi_test_bad_unwind_temporary(void);
 global	abi_test_bad_unwind_temporary
 
 ALIGN	16
@@ -548,11 +548,11 @@ $L$SEH_endprologue_abi_test_bad_unwind_temporary_3:
 	mov	rax,r12
 	inc	rax
 	mov	QWORD[rsp],rax
-
-
+; Unwinding from here is incorrect. Although %r12 itself has not been
+; changed, the unwind codes say to look in (%rsp) instead.
 
 	mov	QWORD[rsp],r12
-
+; Unwinding is now fixed.
 
 	pop	r12
 
@@ -561,9 +561,9 @@ $L$SEH_endprologue_abi_test_bad_unwind_temporary_3:
 $L$SEH_end_abi_test_bad_unwind_temporary_4:
 
 
-
-
-
+; abi_test_get_and_clear_direction_flag clears the direction flag. If the flag
+; was previously set, it returns one. Otherwise, it returns zero.
+; int abi_test_get_and_clear_direction_flag(void);
 global	abi_test_get_and_clear_direction_flag
 
 abi_test_get_and_clear_direction_flag:
@@ -576,8 +576,8 @@ _CET_ENDBR
 	ret
 
 
-
-
+; abi_test_set_direction_flag sets the direction flag.
+; void abi_test_set_direction_flag(void);
 global	abi_test_set_direction_flag
 
 abi_test_set_direction_flag:
@@ -585,10 +585,10 @@ _CET_ENDBR
 	std
 	ret
 
-
-
-
-
+; abi_test_bad_unwind_epilog preserves the ABI, and correctly annotates the
+; prolog, but the epilog does not match Win64's rules, breaking unwind during
+; the epilog.
+; void abi_test_bad_unwind_epilog(void);
 global	abi_test_bad_unwind_epilog
 
 ALIGN	16
@@ -600,7 +600,7 @@ $L$SEH_endprologue_abi_test_bad_unwind_epilog_3:
 
 	nop
 
-
+; The epilog should begin here, but the nop makes it invalid.
 	pop	r12
 	nop
 	ret
@@ -628,7 +628,7 @@ ALIGN	4
 section	.xdata rdata align=8
 ALIGN	4
 $L$SEH_info_abi_test_trampoline_0:
-	DB	1
+	DB	1  ; version 1, no flags
 	DB	$L$SEH_endprologue_abi_test_trampoline_21-$L$SEH_begin_abi_test_trampoline_1
 	DB	38
 	DB	0
@@ -691,7 +691,7 @@ $L$SEH_info_abi_test_trampoline_0:
 	DW	43
 
 $L$SEH_info_abi_test_bad_unwind_wrong_register_0:
-	DB	1
+	DB	1  ; version 1, no flags
 	DB	$L$SEH_endprologue_abi_test_bad_unwind_wrong_register_3-$L$SEH_begin_abi_test_bad_unwind_wrong_register_1
 	DB	1
 	DB	0
@@ -700,7 +700,7 @@ $L$SEH_info_abi_test_bad_unwind_wrong_register_0:
 
 	DW	0
 $L$SEH_info_abi_test_bad_unwind_temporary_0:
-	DB	1
+	DB	1  ; version 1, no flags
 	DB	$L$SEH_endprologue_abi_test_bad_unwind_temporary_3-$L$SEH_begin_abi_test_bad_unwind_temporary_1
 	DB	1
 	DB	0
@@ -709,7 +709,7 @@ $L$SEH_info_abi_test_bad_unwind_temporary_0:
 
 	DW	0
 $L$SEH_info_abi_test_bad_unwind_epilog_0:
-	DB	1
+	DB	1  ; version 1, no flags
 	DB	$L$SEH_endprologue_abi_test_bad_unwind_epilog_3-$L$SEH_begin_abi_test_bad_unwind_epilog_1
 	DB	1
 	DB	0

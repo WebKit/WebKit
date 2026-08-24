@@ -387,7 +387,7 @@ static int SSL_SESSION_to_bytes_full(const SSL_SESSION *in, CBB *cbb,
 static int SSL_SESSION_to_bytes_if_not_resumable(const SSL_SESSION *in,
                                                  CBB *out, int for_ticket) {
   if (in->not_resumable) {
-    // If the caller has an unresumable session, e.g. if |SSL_get_session|
+    // If the caller has an unresumable session, e.g. if `SSL_get_session`
     // were called on a TLS 1.3 or False Started connection, serialize with
     // a placeholder value so it is not accidentally deserialized into a
     // resumable one.
@@ -399,8 +399,8 @@ static int SSL_SESSION_to_bytes_if_not_resumable(const SSL_SESSION *in,
 }
 
 // SSL_SESSION_parse_string gets an optional ASN.1 OCTET STRING explicitly
-// tagged with |tag| from |cbs| and saves it in |*out|. If the element was not
-// found, it sets |*out| to NULL. It returns one on success, whether or not the
+// tagged with `tag` from `cbs` and saves it in `*out`. If the element was not
+// found, it sets `*out` to NULL. It returns one on success, whether or not the
 // element was found, and zero on decode error.
 static int SSL_SESSION_parse_string(CBS *cbs, UniquePtr<char> *out,
                                     CBS_ASN1_TAG tag) {
@@ -427,7 +427,7 @@ static int SSL_SESSION_parse_string(CBS *cbs, UniquePtr<char> *out,
 }
 
 // SSL_SESSION_parse_octet_string gets an optional ASN.1 OCTET STRING explicitly
-// tagged with |tag| from |cbs| and stows it in |*out|. It returns one on
+// tagged with `tag` from `cbs` and stows it in `*out`. It returns one on
 // success, whether or not the element was found, and zero on decode error.
 static bool SSL_SESSION_parse_octet_string(CBS *cbs, Array<uint8_t> *out,
                                            CBS_ASN1_TAG tag) {
@@ -518,7 +518,7 @@ UniquePtr<SSL_SESSION> SSL_SESSION_parse(CBS *cbs,
       // Require sessions have versions valid in either TLS or DTLS. The session
       // will not be used by the handshake if not applicable, but, for
       // simplicity, never parse a session that does not pass
-      // |ssl_protocol_version_from_wire|.
+      // `ssl_protocol_version_from_wire`.
       ssl_version > UINT16_MAX ||  //
       !ssl_protocol_version_from_wire(&unused, ssl_version)) {
     OPENSSL_PUT_ERROR(SSL, SSL_R_INVALID_SSL_SESSION);
@@ -564,7 +564,7 @@ UniquePtr<SSL_SESSION> SSL_SESSION_parse(CBS *cbs,
     OPENSSL_PUT_ERROR(SSL, SSL_R_INVALID_SSL_SESSION);
     return nullptr;
   }
-  // |peer| is processed with the certificate chain.
+  // `peer` is processed with the certificate chain.
 
   CBS sid_ctx;
   if (!CBS_get_optional_asn1_octet_string(
@@ -694,7 +694,7 @@ UniquePtr<SSL_SESSION> SSL_SESSION_parse(CBS *cbs,
     OPENSSL_PUT_ERROR(SSL, SSL_R_INVALID_SSL_SESSION);
     return nullptr;
   }
-  /* TODO: in time we can include |is_server| for servers too, then we can
+  /* TODO: in time we can include `is_server` for servers too, then we can
      enforce that client and server sessions are never mixed up. */
 
   ret->is_server = is_server;
@@ -824,7 +824,7 @@ int SSL_SESSION_to_bytes_for_ticket(const SSL_SESSION *in, uint8_t **out_data,
   return 1;
 }
 
-int i2d_SSL_SESSION(SSL_SESSION *in, uint8_t **pp) {
+int i2d_SSL_SESSION(const SSL_SESSION *in, uint8_t **pp) {
   ScopedCBB cbb;
   if (!CBB_init(cbb.get(), 256) ||
       !SSL_SESSION_to_bytes_if_not_resumable(in, cbb.get(), 0)) {

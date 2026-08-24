@@ -50,7 +50,7 @@ var skipWeakSymbols = []*regexp.Regexp{
 	regexp.MustCompile(`^DW\.ref\.__gxx_personality_.*`), // libstdc++ exception handling
 	regexp.MustCompile(`^_Z6memchr.*`),                   // memchr()
 	regexp.MustCompile(`^_Z6strchr.*`),                   // strchr()
-	regexp.MustCompile(`^_ZN9__gnu_cxx.*`),               // __gnu_cxx::
+	regexp.MustCompile(`^_ZNr?V?K?9__gnu_cxx.*`),         // __gnu_cxx::
 	regexp.MustCompile(`^_ZTI.*`),                        // typeinfo
 	regexp.MustCompile(`^_ZTS.*`),                        // typeinfo name
 	regexp.MustCompile(`^_ZTV.*`),                        // vtable

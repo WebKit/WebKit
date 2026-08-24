@@ -93,7 +93,7 @@ TEST(PoolTest, Pooled) {
                                  CRYPTO_BUFFER_len(buf3.get())));
   EXPECT_NE(buf.get(), buf3.get());
 
-  // When the last refcount on |buf3| is dropped, it is removed from the pool.
+  // When the last refcount on `buf3` is dropped, it is removed from the pool.
   buf3 = nullptr;
   EXPECT_EQ(1u, lh_CryptoBuffer_num_items(FromOpaque(pool.get())->bufs_));
 
@@ -122,7 +122,7 @@ TEST(PoolTest, Pooled) {
   EXPECT_EQ(sizeof(kData1), CRYPTO_BUFFER_len(buf6.get()));
   EXPECT_NE(buf.get(), buf6.get());
 
-  // Subsequent lookups of |kData1| should return |buf6|.
+  // Subsequent lookups of `kData1` should return `buf6`.
   UniquePtr<CRYPTO_BUFFER> buf7(
       CRYPTO_BUFFER_new(kData1, sizeof(kData1), pool.get()));
   EXPECT_EQ(buf7.get(), buf6.get());
@@ -162,7 +162,7 @@ TEST(PoolTest, Threads) {
   UniquePtr<CRYPTO_BUFFER_POOL> pool(CRYPTO_BUFFER_POOL_new());
   ASSERT_TRUE(pool);
 
-  // Race threads making pooled |CRYPTO_BUFFER|s.
+  // Race threads making pooled `CRYPTO_BUFFER`s.
   static const uint8_t kData[4] = {1, 2, 3, 4};
   static const uint8_t kData2[3] = {4, 5, 6};
   static const uint8_t kData3[3] = {7, 8, 9};
@@ -190,7 +190,7 @@ TEST(PoolTest, Threads) {
   EXPECT_EQ(Bytes(kData2), Bytes(CRYPTO_BUFFER_data(buf3.get()),
                                  CRYPTO_BUFFER_len(buf3.get())));
 
-  // Reference-counting of |CRYPTO_BUFFER| interacts with pooling. Race an
+  // Reference-counting of `CRYPTO_BUFFER` interacts with pooling. Race an
   // increment and free.
   {
     UniquePtr<CRYPTO_BUFFER> buf_ref;
@@ -199,11 +199,11 @@ TEST(PoolTest, Threads) {
     thread.join();
   }
 
-  // |buf|'s data is still valid.
+  // `buf`'s data is still valid.
   EXPECT_EQ(Bytes(kData), Bytes(CRYPTO_BUFFER_data(buf.get()),
                                 CRYPTO_BUFFER_len(buf.get())));
 
-  // Race a thread re-creating the |CRYPTO_BUFFER| with another thread freeing
+  // Race a thread re-creating the `CRYPTO_BUFFER` with another thread freeing
   // it. Do this twice with sleeps so ThreadSanitizer can observe two different
   // interleavings. Ideally we would run this test under a tool that could
   // search all interleavings.

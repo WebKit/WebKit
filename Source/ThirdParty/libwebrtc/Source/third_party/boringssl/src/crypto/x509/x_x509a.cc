@@ -58,7 +58,7 @@ int X509_alias_set1(X509 *x, const uint8_t *name, ossl_ssize_t len) {
   auto *impl = FromOpaque(x);
   X509_CERT_AUX *aux;
   // TODO(davidben): Empty aliases are not meaningful in PKCS#12, and the
-  // getters cannot quite represent them. Also erase the object if |len| is
+  // getters cannot quite represent them. Also erase the object if `len` is
   // zero.
   if (!name) {
     if (!impl || !impl->aux || !impl->aux->alias) {
@@ -81,7 +81,7 @@ int X509_keyid_set1(X509 *x, const uint8_t *id, ossl_ssize_t len) {
   auto *impl = FromOpaque(x);
   X509_CERT_AUX *aux;
   // TODO(davidben): Empty key IDs are not meaningful in PKCS#12, and the
-  // getters cannot quite represent them. Also erase the object if |len| is
+  // getters cannot quite represent them. Also erase the object if `len` is
   // zero.
   if (!id) {
     if (!impl || !impl->aux || !impl->aux->keyid) {

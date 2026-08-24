@@ -385,9 +385,9 @@ typedef struct cipher_alias_st {
   const char *name = nullptr;
 
   // The following fields are bitmasks for the corresponding fields on
-  // |SSL_CIPHER|. A cipher matches a cipher alias iff, for each bitmask, the
+  // `SSL_CIPHER`. A cipher matches a cipher alias iff, for each bitmask, the
   // bit corresponding to the cipher's value is set to 1. If any bitmask is
-  // all zeroes, the alias matches nothing. Use |~0u| for the default value.
+  // all zeroes, the alias matches nothing. Use `~0u` for the default value.
   uint32_t algorithm_mkey = ~0u;
   uint32_t algorithm_auth = ~0u;
   uint32_t algorithm_enc = ~0u;
@@ -557,10 +557,10 @@ static bool is_cipher_list_separator(char c, bool is_strict) {
   return !is_strict && (c == ' ' || c == ';' || c == ',');
 }
 
-// rule_equals returns whether the NUL-terminated string |rule| is equal to the
-// |buf_len| bytes at |buf|.
+// rule_equals returns whether the NUL-terminated string `rule` is equal to the
+// `buf_len` bytes at `buf`.
 static bool rule_equals(const char *rule, const char *buf, size_t buf_len) {
-  // |strncmp| alone only checks that |buf| is a prefix of |rule|.
+  // `strncmp` alone only checks that `buf` is a prefix of `rule`.
   return strncmp(rule, buf, buf_len) == 0 && rule[buf_len] == '\0';
 }
 
@@ -657,15 +657,15 @@ bool ssl_cipher_is_deprecated(const SSL_CIPHER *cipher) {
          cipher->algorithm_enc == SSL_3DES;
 }
 
-// ssl_cipher_apply_rule applies the rule type |rule| to ciphers matching its
-// parameters in the linked list from |*head_p| to |*tail_p|. It writes the new
-// head and tail of the list to |*head_p| and |*tail_p|, respectively.
+// ssl_cipher_apply_rule applies the rule type `rule` to ciphers matching its
+// parameters in the linked list from `*head_p` to `*tail_p`. It writes the new
+// head and tail of the list to `*head_p` and `*tail_p`, respectively.
 //
-// - If |cipher_id| is non-zero, only that cipher is selected.
-// - Otherwise, if |strength_bits| is non-negative, it selects ciphers
+// - If `cipher_id` is non-zero, only that cipher is selected.
+// - Otherwise, if `strength_bits` is non-negative, it selects ciphers
 //   of that strength.
-// - Otherwise, |alias| must be non-null. It selects ciphers that matches
-//   |*alias|.
+// - Otherwise, `alias` must be non-null. It selects ciphers that matches
+//   `*alias`.
 static void ssl_cipher_apply_rule(uint16_t cipher_id, const CIPHER_ALIAS *alias,
                                   int rule, int strength_bits, bool in_group,
                                   CIPHER_ORDER **head_p,
@@ -712,7 +712,7 @@ static void ssl_cipher_apply_rule(uint16_t cipher_id, const CIPHER_ALIAS *alias,
     cp = curr->cipher;
 
     // Selection criteria is either a specific cipher, the value of
-    // |strength_bits|, or the algorithms used.
+    // `strength_bits`, or the algorithms used.
     if (cipher_id != 0) {
       if (cipher_id != cp->protocol_id) {
         continue;

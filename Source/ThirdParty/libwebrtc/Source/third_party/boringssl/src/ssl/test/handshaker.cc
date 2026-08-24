@@ -66,8 +66,8 @@ bool Handshaker(const TestConfig *config, int rfd, int wfd,
     return false;
   }
 
-  // Set |O_NONBLOCK| in order to break out of the loop when we hit
-  // |SSL_ERROR_WANT_READ|, so that we can send |kControlMsgWantRead| to the
+  // Set `O_NONBLOCK` in order to break out of the loop when we hit
+  // `SSL_ERROR_WANT_READ`, so that we can send `kControlMsgWantRead` to the
   // proxy.
   if (fcntl(rfd, F_SETFL, O_NONBLOCK) != 0) {
     perror("fcntl");
@@ -161,7 +161,7 @@ bool GenerateHandshakeHint(const TestConfig *config,
     return false;
   }
 
-  // TODO(davidben): When split handshakes is replaced, move this into |NewSSL|.
+  // TODO(davidben): When split handshakes is replaced, move this into `NewSSL`.
   assert(config->is_server);
   SSL_set_accept_state(ssl.get());
 

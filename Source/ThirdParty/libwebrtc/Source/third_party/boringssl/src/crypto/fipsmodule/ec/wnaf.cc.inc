@@ -85,8 +85,8 @@ void bssl::ec_compute_wNAF(const EC_GROUP *group, int8_t *out,
 
     out[j] = digit;
 
-    // Incorporate the next bit. Previously, |window_val| <= |next_bit|, so if
-    // we shift and add at most one copy of |bit|, this will continue to hold
+    // Incorporate the next bit. Previously, `window_val` <= `next_bit`, so if
+    // we shift and add at most one copy of `bit`, this will continue to hold
     // afterwards.
     window_val >>= 1;
     window_val += bit * bn_is_bit_set_words(scalar->words, group->order.N.width,
@@ -98,7 +98,7 @@ void bssl::ec_compute_wNAF(const EC_GROUP *group, int8_t *out,
   assert(window_val == 0);
 }
 
-// compute_precomp sets |out[i]| to (2*i+1)*p, for i from 0 to |len|.
+// compute_precomp sets `out[i]` to (2*i+1)*p, for i from 0 to `len`.
 static void compute_precomp(const EC_GROUP *group, EC_JACOBIAN *out,
                             const EC_JACOBIAN *p, size_t len) {
   ec_GFp_simple_point_copy(&out[0], p);
@@ -120,10 +120,10 @@ static void lookup_precomp(const EC_GROUP *group, EC_JACOBIAN *out,
   }
 }
 
-// EC_WNAF_WINDOW_BITS is the window size to use for |ec_GFp_mont_mul_public|.
+// EC_WNAF_WINDOW_BITS is the window size to use for `ec_GFp_mont_mul_public`.
 #define EC_WNAF_WINDOW_BITS 4
 
-// EC_WNAF_TABLE_SIZE is the table size to use for |ec_GFp_mont_mul_public|.
+// EC_WNAF_TABLE_SIZE is the table size to use for `ec_GFp_mont_mul_public`.
 #define EC_WNAF_TABLE_SIZE (1 << (EC_WNAF_WINDOW_BITS - 1))
 
 // EC_WNAF_STACK is the number of points worth of data to stack-allocate and

@@ -15,7 +15,7 @@
 #ifndef OPENSSL_HEADER_SLHDSA_H
 #define OPENSSL_HEADER_SLHDSA_H
 
-#include <openssl/base.h>   // IWYU pragma: export
+#include <openssl/base.h>  // IWYU pragma: export
 
 #if defined(__cplusplus)
 extern "C" {
@@ -24,6 +24,10 @@ extern "C" {
 
 // SLH-DSA.
 
+
+// SLHDSA_SHA2_128S_SEED_BYTES is the number of bytes in an SLH-DSA-SHA2-128s
+// private seed.
+#define SLHDSA_SHA2_128S_SEED_BYTES 48
 
 // SLHDSA_SHA2_128S_PUBLIC_KEY_BYTES is the number of bytes in an
 // SLH-DSA-SHA2-128s public key.
@@ -37,6 +41,10 @@ extern "C" {
 // SLH-DSA-SHA2-128s signature.
 #define SLHDSA_SHA2_128S_SIGNATURE_BYTES 7856
 
+// SLHDSA_SHAKE_256F_SEED_BYTES is the number of bytes in an SLH-DSA-SHAKE-256f
+// private seed.
+#define SLHDSA_SHAKE_256F_SEED_BYTES 96
+
 // SLHDSA_SHAKE_256F_PUBLIC_KEY_BYTES is the number of bytes in an
 // SLH-DSA-SHAKE-256f public key.
 #define SLHDSA_SHAKE_256F_PUBLIC_KEY_BYTES 64
@@ -48,6 +56,22 @@ extern "C" {
 // SLHDSA_SHAKE_256F_SIGNATURE_BYTES is the number of bytes in an
 // SLH-DSA-SHAKE-256f signature.
 #define SLHDSA_SHAKE_256F_SIGNATURE_BYTES 49856
+
+// SLHDSA_SHA2_128S_generate_key_from_seed generates a SLH-DSA-SHA2-128s key
+// pair from the given `seed` and writes the result to `out_public_key` and
+// `out_private_key`.
+OPENSSL_EXPORT void SLHDSA_SHA2_128S_generate_key_from_seed(
+    uint8_t out_public_key[SLHDSA_SHA2_128S_PUBLIC_KEY_BYTES],
+    uint8_t out_private_key[SLHDSA_SHA2_128S_PRIVATE_KEY_BYTES],
+    const uint8_t seed[SLHDSA_SHA2_128S_SEED_BYTES]);
+
+// SLHDSA_SHAKE_256F_generate_key_from_seed generates a SLH-DSA-SHA2-128s key
+// pair from the given `seed` and writes the result to `out_public_key` and
+// `out_private_key`.
+OPENSSL_EXPORT void SLHDSA_SHAKE_256F_generate_key_from_seed(
+    uint8_t out_public_key[SLHDSA_SHAKE_256F_PUBLIC_KEY_BYTES],
+    uint8_t out_private_key[SLHDSA_SHAKE_256F_PRIVATE_KEY_BYTES],
+    const uint8_t seed[SLHDSA_SHAKE_256F_SEED_BYTES]);
 
 // SLHDSA_SHA2_128S_generate_key generates a SLH-DSA-SHA2-128s key pair and
 // writes the result to `out_public_key` and `out_private_key`.

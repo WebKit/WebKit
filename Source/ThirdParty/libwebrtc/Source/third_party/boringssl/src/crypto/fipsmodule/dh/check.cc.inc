@@ -67,12 +67,12 @@ int DH_check_pub_key(const DH *dh, const BIGNUM *pub_key, int *out_flags) {
   }
   BN_CTXScope scope(ctx.get());
 
-  // Check |pub_key| is greater than 1.
+  // Check `pub_key` is greater than 1.
   if (BN_cmp(pub_key, BN_value_one()) <= 0) {
     *out_flags |= DH_CHECK_PUBKEY_TOO_SMALL;
   }
 
-  // Check |pub_key| is less than |impl->p| - 1.
+  // Check `pub_key` is less than `impl->p` - 1.
   BIGNUM *tmp = BN_CTX_get(ctx.get());
   if (tmp == nullptr || !BN_copy(tmp, impl->p.get()) || !BN_sub_word(tmp, 1)) {
     return 0;
@@ -82,9 +82,9 @@ int DH_check_pub_key(const DH *dh, const BIGNUM *pub_key, int *out_flags) {
   }
 
   if (impl->q != nullptr) {
-    // Check |pub_key|^|impl->q| is 1 mod |impl->p|. This is necessary for RFC
+    // Check `pub_key`^`impl->q` is 1 mod `impl->p`. This is necessary for RFC
     // 5114 groups which are not safe primes but pick a generator on a
-    // prime-order subgroup of size |impl->q|.
+    // prime-order subgroup of size `impl->q`.
     if (!BN_mod_exp_mont(tmp, pub_key, impl->q.get(), impl->p.get(), ctx.get(),
                          nullptr)) {
       return 0;

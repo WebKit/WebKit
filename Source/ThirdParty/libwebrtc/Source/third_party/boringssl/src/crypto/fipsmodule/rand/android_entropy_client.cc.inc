@@ -59,7 +59,7 @@ int bssl_get_seed_from_daemon(uint8_t *out_entropy, size_t *inout_entropy_len) {
   }
 
   if (done != BSSL_ENTROPY_DAEMON_RESPONSE_LEN) {
-    // The daemon should always write |BSSL_ENTROPY_DAEMON_RESPONSE_LEN| bytes
+    // The daemon should always write `BSSL_ENTROPY_DAEMON_RESPONSE_LEN` bytes
     // on every connection.
     goto out;
   }

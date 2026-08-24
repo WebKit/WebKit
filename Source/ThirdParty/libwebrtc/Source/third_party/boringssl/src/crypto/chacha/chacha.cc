@@ -150,7 +150,7 @@ void CRYPTO_chacha_20(uint8_t *out, const uint8_t *in, size_t in_len,
 #else
 
 // chacha_core performs 20 rounds of ChaCha on the input words in
-// |input| and writes the 64 output bytes to |output|.
+// `input` and writes the 64 output bytes to `output`.
 static void chacha_core(uint8_t output[64], const uint32_t input[16]) {
   uint32_t x[16];
   int i;

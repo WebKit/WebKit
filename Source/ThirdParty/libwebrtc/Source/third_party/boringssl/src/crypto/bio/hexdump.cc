@@ -46,8 +46,8 @@ static char to_char(uint8_t b) {
   return b;
 }
 
-// hexdump_write adds |len| bytes of |data| to the current hex dump described by
-// |ctx|.
+// hexdump_write adds `len` bytes of `data` to the current hex dump described by
+// `ctx`.
 static int hexdump_write(struct hexdump_ctx *ctx, const uint8_t *data,
                          size_t len) {
   char buf[10];
@@ -106,9 +106,9 @@ static int hexdump_write(struct hexdump_ctx *ctx, const uint8_t *data,
   return 1;
 }
 
-// finish flushes any buffered data in |ctx|.
+// finish flushes any buffered data in `ctx`.
 static int finish(struct hexdump_ctx *ctx) {
-  // See the comments in |hexdump| for the details of this format.
+  // See the comments in `hexdump` for the details of this format.
   const unsigned n_bytes = ctx->used;
   unsigned l;
   char buf[5];

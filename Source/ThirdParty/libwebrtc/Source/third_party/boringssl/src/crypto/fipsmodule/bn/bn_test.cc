@@ -53,8 +53,8 @@ static int HexToBIGNUMWithReturn(UniquePtr<BIGNUM> *out, const char *in) {
   return ret;
 }
 
-// A BIGNUMFileTest wraps a FileTest to give |BIGNUM| values and also allows
-// injecting oversized |BIGNUM|s.
+// A BIGNUMFileTest wraps a FileTest to give `BIGNUM` values and also allows
+// injecting oversized `BIGNUM`s.
 class BIGNUMFileTest {
  public:
   BIGNUMFileTest(FileTest *t, unsigned large_mask)
@@ -95,7 +95,7 @@ class BIGNUMFileTest {
       return nullptr;
     }
     if (resize) {
-      // Test with an oversized |BIGNUM| if necessary.
+      // Test with an oversized `BIGNUM` if necessary.
       if ((large_mask_ & (1 << num_bignums_)) &&
           !bn_resize_words(ret.get(), ret->width * 2 + 1)) {
         return nullptr;
@@ -155,9 +155,9 @@ static void TestSum(BIGNUMFileTest *t, BN_CTX *ctx) {
   ASSERT_TRUE(BN_sub(ret.get(), sum.get(), b.get()));
   EXPECT_BIGNUMS_EQUAL("Sum - B", a.get(), ret.get());
 
-  // Test that the functions work when |r| and |a| point to the same |BIGNUM|,
-  // or when |r| and |b| point to the same |BIGNUM|. TODO: Test the case where
-  // all of |r|, |a|, and |b| point to the same |BIGNUM|.
+  // Test that the functions work when `r` and `a` point to the same `BIGNUM`,
+  // or when `r` and `b` point to the same `BIGNUM`. TODO: Test the case where
+  // all of `r`, `a`, and `b` point to the same `BIGNUM`.
   ASSERT_TRUE(BN_copy(ret.get(), a.get()));
   ASSERT_TRUE(BN_add(ret.get(), ret.get(), b.get()));
   EXPECT_BIGNUMS_EQUAL("A + B (r is a)", sum.get(), ret.get());
@@ -182,7 +182,7 @@ static void TestSum(BIGNUMFileTest *t, BN_CTX *ctx) {
   ASSERT_TRUE(BN_sub(ret.get(), sum.get(), ret.get()));
   EXPECT_BIGNUMS_EQUAL("Sum - B (r is b)", a.get(), ret.get());
 
-  // Test |BN_uadd| and |BN_usub| with the prerequisites they are documented as
+  // Test `BN_uadd` and `BN_usub` with the prerequisites they are documented as
   // having. Note that these functions are frequently used when the
   // prerequisites don't hold. In those cases, they are supposed to work as if
   // the prerequisite hold, but we don't test that yet. TODO: test that.
@@ -196,9 +196,9 @@ static void TestSum(BIGNUMFileTest *t, BN_CTX *ctx) {
     ASSERT_TRUE(BN_usub(ret.get(), sum.get(), b.get()));
     EXPECT_BIGNUMS_EQUAL("Sum -u B", a.get(), ret.get());
 
-    // Test that the functions work when |r| and |a| point to the same |BIGNUM|,
-    // or when |r| and |b| point to the same |BIGNUM|. TODO: Test the case where
-    // all of |r|, |a|, and |b| point to the same |BIGNUM|.
+    // Test that the functions work when `r` and `a` point to the same `BIGNUM`,
+    // or when `r` and `b` point to the same `BIGNUM`. TODO: Test the case where
+    // all of `r`, `a`, and `b` point to the same `BIGNUM`.
     ASSERT_TRUE(BN_copy(ret.get(), a.get()));
     ASSERT_TRUE(BN_uadd(ret.get(), ret.get(), b.get()));
     EXPECT_BIGNUMS_EQUAL("A +u B (r is a)", sum.get(), ret.get());
@@ -236,7 +236,7 @@ static void TestSum(BIGNUMFileTest *t, BN_CTX *ctx) {
     EXPECT_BIGNUMS_EQUAL("|B - Sum|", a.get(), ret.get());
   }
 
-  // Test with |BN_add_word| and |BN_sub_word| if |b| is small enough.
+  // Test with `BN_add_word` and `BN_sub_word` if `b` is small enough.
   BN_ULONG b_word = BN_get_word(b.get());
   if (!BN_is_negative(b.get()) && b_word != (BN_ULONG)-1) {
     ASSERT_TRUE(BN_copy(ret.get(), a.get()));
@@ -551,7 +551,7 @@ static void TestQuotient(BIGNUMFileTest *t, BN_CTX *ctx) {
     BN_set_negative(remainder.get(), 0);
   }
 
-  // Test with |BN_mod_word| and |BN_div_word| if the divisor is small enough.
+  // Test with `BN_mod_word` and `BN_div_word` if the divisor is small enough.
   BN_ULONG b_word = BN_get_word(b.get());
   if (b_word != (BN_ULONG)-1) {
     BN_ULONG remainder_word = BN_get_word(remainder.get());
@@ -598,7 +598,7 @@ static void TestModMul(BIGNUMFileTest *t, BN_CTX *ctx) {
   EXPECT_BIGNUMS_EQUAL("A * B (mod M)", mod_mul.get(), ret.get());
 
   if (BN_is_odd(m.get())) {
-    // Reduce |a| and |b| and test the Montgomery version.
+    // Reduce `a` and `b` and test the Montgomery version.
     UniquePtr<BN_MONT_CTX> mont(BN_MONT_CTX_new_for_modulus(m.get(), ctx));
     ASSERT_TRUE(mont);
 
@@ -635,16 +635,16 @@ static void TestModMul(BIGNUMFileTest *t, BN_CTX *ctx) {
       bn_to_montgomery_small(b_words.get(), b_words.get(), m_width, mont.get());
       bn_mod_mul_montgomery_small(r_words.get(), a_words.get(), b_words.get(),
                                   m_width, mont.get());
-      // Use the second half of |tmp| so ASan will catch out-of-bounds writes.
+      // Use the second half of `tmp` so ASan will catch out-of-bounds writes.
       bn_from_montgomery_small(r_words.get(), m_width, r_words.get(), m_width,
                                mont.get());
       ASSERT_TRUE(bn_set_words(ret.get(), r_words.get(), m_width));
       EXPECT_BIGNUMS_EQUAL("A * B (mod M) (Montgomery, words)", mod_mul.get(),
                            ret.get());
 
-      // |bn_from_montgomery_small| must additionally work on double-width
-      // inputs. Test this by running |bn_from_montgomery_small| on the result
-      // of a product. Note |a_words| * |b_words| has an extra factor of R^2, so
+      // `bn_from_montgomery_small` must additionally work on double-width
+      // inputs. Test this by running `bn_from_montgomery_small` on the result
+      // of a product. Note `a_words` * `b_words` has an extra factor of R^2, so
       // we must reduce twice.
       auto prod_words = std::make_unique<BN_ULONG[]>(m_width * 2);
       bn_mul_small(prod_words.get(), m_width * 2, a_words.get(), m_width,
@@ -676,13 +676,13 @@ static void TestModSquare(BIGNUMFileTest *t, BN_CTX *ctx) {
   ASSERT_TRUE(BN_mod_mul(ret.get(), a.get(), a.get(), m.get(), ctx));
   EXPECT_BIGNUMS_EQUAL("A * A (mod M)", mod_square.get(), ret.get());
 
-  // Repeat the operation with |a_copy|.
+  // Repeat the operation with `a_copy`.
   ASSERT_TRUE(BN_copy(a_copy.get(), a.get()));
   ASSERT_TRUE(BN_mod_mul(ret.get(), a.get(), a_copy.get(), m.get(), ctx));
   EXPECT_BIGNUMS_EQUAL("A * A_copy (mod M)", mod_square.get(), ret.get());
 
   if (BN_is_odd(m.get())) {
-    // Reduce |a| and test the Montgomery version.
+    // Reduce `a` and test the Montgomery version.
     UniquePtr<BN_MONT_CTX> mont(BN_MONT_CTX_new_for_modulus(m.get(), ctx));
     UniquePtr<BIGNUM> a_tmp(BN_new());
     ASSERT_TRUE(mont);
@@ -695,7 +695,7 @@ static void TestModSquare(BIGNUMFileTest *t, BN_CTX *ctx) {
     EXPECT_BIGNUMS_EQUAL("A * A (mod M) (Montgomery)", mod_square.get(),
                          ret.get());
 
-    // Repeat the operation with |a_copy|.
+    // Repeat the operation with `a_copy`.
     ASSERT_TRUE(BN_copy(a_copy.get(), a_tmp.get()));
     ASSERT_TRUE(BN_mod_mul_montgomery(ret.get(), a_tmp.get(), a_copy.get(),
                                       mont.get(), ctx));
@@ -719,12 +719,12 @@ static void TestModSquare(BIGNUMFileTest *t, BN_CTX *ctx) {
       EXPECT_BIGNUMS_EQUAL("A * A (mod M) (Montgomery, words)",
                            mod_square.get(), ret.get());
 
-      // Repeat the operation with |a_copy_words|.
+      // Repeat the operation with `a_copy_words`.
       OPENSSL_memcpy(a_copy_words.get(), a_words.get(),
                      m_width * sizeof(BN_ULONG));
       bn_mod_mul_montgomery_small(r_words.get(), a_words.get(),
                                   a_copy_words.get(), m_width, mont.get());
-      // Use the second half of |tmp| so ASan will catch out-of-bounds writes.
+      // Use the second half of `tmp` so ASan will catch out-of-bounds writes.
       bn_from_montgomery_small(r_words.get(), m_width, r_words.get(), m_width,
                                mont.get());
       ASSERT_TRUE(bn_set_words(ret.get(), r_words.get(), m_width));
@@ -889,8 +889,10 @@ static void TestGCD(BIGNUMFileTest *t, BN_CTX *ctx) {
   if (!BN_is_one(gcd.get())) {
     EXPECT_FALSE(BN_mod_inverse(ret.get(), a.get(), b.get(), ctx))
         << "A^-1 (mod B) computed, but it does not exist";
+    EXPECT_TRUE(ErrorsAreAndClear({{ERR_LIB_BN, std::nullopt}}));
     EXPECT_FALSE(BN_mod_inverse(ret.get(), b.get(), a.get(), ctx))
         << "B^-1 (mod A) computed, but it does not exist";
+    EXPECT_TRUE(ErrorsAreAndClear({{ERR_LIB_BN, std::nullopt}}));
 
     if (!BN_is_zero(b.get())) {
       UniquePtr<BIGNUM> a_reduced(BN_new());
@@ -901,6 +903,7 @@ static void TestGCD(BIGNUMFileTest *t, BN_CTX *ctx) {
                                             a_reduced.get(), b.get(), ctx))
           << "A^-1 (mod B) computed, but it does not exist";
       EXPECT_TRUE(no_inverse);
+      EXPECT_TRUE(ErrorsAreAndClear({{ERR_LIB_BN, std::nullopt}}));
     }
 
     if (!BN_is_zero(a.get())) {
@@ -912,6 +915,7 @@ static void TestGCD(BIGNUMFileTest *t, BN_CTX *ctx) {
                                             b_reduced.get(), a.get(), ctx))
           << "B^-1 (mod A) computed, but it does not exist";
       EXPECT_TRUE(no_inverse);
+      EXPECT_TRUE(ErrorsAreAndClear({{ERR_LIB_BN, std::nullopt}}));
     }
   }
 
@@ -972,14 +976,14 @@ static void RunBNFileTest(FileTest *t, BN_CTX *ctx) {
     return;
   }
 
-  // Run the test with normalize-sized |BIGNUM|s.
+  // Run the test with normalize-sized `BIGNUM`s.
   BIGNUMFileTest bn_test(t, 0);
   BN_CTX_start(ctx);
   func(&bn_test, ctx);
   BN_CTX_end(ctx);
   unsigned num_bignums = bn_test.num_bignums();
 
-  // Repeat the test with all combinations of large and small |BIGNUM|s.
+  // Repeat the test with all combinations of large and small `BIGNUM`s.
   for (unsigned large_mask = 1; large_mask < (1u << num_bignums);
        large_mask++) {
     SCOPED_TRACE(large_mask);
@@ -1043,7 +1047,7 @@ TEST_F(BNTest, SumTestVectors) {
 TEST_F(BNTest, BN2BinPadded) {
   auto test_decode = [&](Span<const uint8_t> in, const BIGNUM *expected) {
     UniquePtr<BIGNUM> decoded(BN_new());
-    // |BN_lebin2bn| should correctly override an existing value.
+    // `BN_lebin2bn` should correctly override an existing value.
     ASSERT_TRUE(BN_rand(decoded.get(), /*bits=*/128, BN_RAND_TOP_ANY,
                         BN_RAND_BOTTOM_ANY));
     BN_set_negative(decoded.get(), 1);
@@ -1096,7 +1100,7 @@ TEST_F(BNTest, BN2BinPadded) {
     EXPECT_EQ(Bytes(reference, bytes), Bytes(out + sizeof(out) - bytes, bytes));
     test_decode(out, n.get());
 
-    // Repeat some tests with a non-minimal |BIGNUM|.
+    // Repeat some tests with a non-minimal `BIGNUM`.
     EXPECT_TRUE(bn_resize_words(n.get(), 32));
 
     EXPECT_FALSE(BN_bn2bin_padded(out, bytes - 1, n.get()));
@@ -1110,7 +1114,7 @@ TEST_F(BNTest, BN2BinPadded) {
 TEST_F(BNTest, LittleEndian) {
   auto test_decode = [&](Span<const uint8_t> in, const BIGNUM *expected) {
     UniquePtr<BIGNUM> decoded(BN_new());
-    // |BN_lebin2bn| should correctly override an existing value.
+    // `BN_lebin2bn` should correctly override an existing value.
     ASSERT_TRUE(BN_rand(decoded.get(), /*bits=*/128, BN_RAND_TOP_ANY,
                         BN_RAND_BOTTOM_ANY));
     BN_set_negative(decoded.get(), 1);
@@ -1122,7 +1126,7 @@ TEST_F(BNTest, LittleEndian) {
   ASSERT_TRUE(x);
   test_decode({}, x.get());
 
-  // Test edge case at 0. Fill |out| with garbage to ensure |BN_bn2le_padded|
+  // Test edge case at 0. Fill `out` with garbage to ensure `BN_bn2le_padded`
   // wrote the result.
   uint8_t out[256], zeros[256];
   OPENSSL_memset(out, -1, sizeof(out));
@@ -1136,7 +1140,7 @@ TEST_F(BNTest, LittleEndian) {
     ASSERT_TRUE(
         BN_rand(x.get(), bytes * 8, BN_RAND_TOP_ONE, BN_RAND_BOTTOM_ANY));
 
-    // Fill |out| with garbage to ensure |BN_bn2le_padded| wrote the result.
+    // Fill `out` with garbage to ensure `BN_bn2le_padded` wrote the result.
     OPENSSL_memset(out, -1, sizeof(out));
     ASSERT_TRUE(BN_bn2le_padded(out, sizeof(out), x.get()));
 
@@ -1353,7 +1357,7 @@ TEST_F(BNTest, Rand) {
         }
 
         if (bits == 0) {
-          // Nothing additional to check. The |BN_num_bits| check ensures we
+          // Nothing additional to check. The `BN_num_bits` check ensures we
           // always got zero.
         } else if (bits == 1) {
           // Bit zero is bit n-1.
@@ -1528,8 +1532,8 @@ TEST_F(BNTest, NegativeZero) {
   BN_set_negative(a.get(), 1);
   EXPECT_FALSE(BN_is_negative(a.get()));
 
-  // Test that forcibly creating a negative zero does not break |BN_bn2hex| or
-  // |BN_bn2dec|.
+  // Test that forcibly creating a negative zero does not break `BN_bn2hex` or
+  // `BN_bn2dec`.
   a->neg = 1;
   UniquePtr<char> dec(BN_bn2dec(a.get()));
   UniquePtr<char> hex(BN_bn2hex(a.get()));
@@ -1538,7 +1542,7 @@ TEST_F(BNTest, NegativeZero) {
   EXPECT_STREQ("-0", dec.get());
   EXPECT_STREQ("-0", hex.get());
 
-  // Test that |BN_rshift| and |BN_rshift1| will not produce a negative zero.
+  // Test that `BN_rshift` and `BN_rshift1` will not produce a negative zero.
   ASSERT_TRUE(BN_set_word(a.get(), 1));
   BN_set_negative(a.get(), 1);
 
@@ -1550,7 +1554,7 @@ TEST_F(BNTest, NegativeZero) {
   EXPECT_TRUE(BN_is_zero(c.get()));
   EXPECT_FALSE(BN_is_negative(c.get()));
 
-  // Test that |BN_div_word| will not produce a negative zero.
+  // Test that `BN_div_word` will not produce a negative zero.
   ASSERT_NE((BN_ULONG)-1, BN_div_word(a.get(), 2));
   EXPECT_TRUE(BN_is_zero(a.get()));
   EXPECT_FALSE(BN_is_negative(a.get()));
@@ -1639,7 +1643,7 @@ TEST_F(BNTest, ExpZeroModOne) {
                                    ctx(), nullptr));
   EXPECT_TRUE(BN_is_zero(r.get()));
 
-  // |BN_mod_exp_mont| and |BN_mod_exp_mont_consttime| require fully-reduced
+  // `BN_mod_exp_mont` and `BN_mod_exp_mont_consttime` require fully-reduced
   // inputs, so a**0 mod 1 is not a valid call. 0**0 mod 1 is valid, however.
   ASSERT_TRUE(BN_mod_exp_mont(r.get(), zero.get(), zero.get(), BN_value_one(),
                               ctx(), nullptr));
@@ -1793,24 +1797,24 @@ TEST_F(BNTest, Pow2) {
       ASSERT_TRUE(
           BN_rand(random.get(), len, BN_RAND_TOP_TWO, BN_RAND_BOTTOM_ANY));
 
-      // Test BN_is_pow2 on |r|.
+      // Test BN_is_pow2 on `r`.
       EXPECT_FALSE(BN_is_pow2(random.get()));
 
-      // Test BN_mod_pow2 on |r|.
+      // Test BN_mod_pow2 on `r`.
       ASSERT_TRUE(
           BN_mod(expected.get(), random.get(), power_of_two.get(), ctx()));
       ASSERT_TRUE(BN_mod_pow2(actual.get(), random.get(), e));
       EXPECT_BIGNUMS_EQUAL("random (mod power_of_two)", expected.get(),
                            actual.get());
 
-      // Test BN_nnmod_pow2 on |r|.
+      // Test BN_nnmod_pow2 on `r`.
       ASSERT_TRUE(
           BN_nnmod(expected.get(), random.get(), power_of_two.get(), ctx()));
       ASSERT_TRUE(BN_nnmod_pow2(actual.get(), random.get(), e));
       EXPECT_BIGNUMS_EQUAL("random (mod power_of_two), non-negative",
                            expected.get(), actual.get());
 
-      // Test BN_nnmod_pow2 on -|r|.
+      // Test BN_nnmod_pow2 on -`r`.
       BN_set_negative(random.get(), 1);
       ASSERT_TRUE(
           BN_nnmod(expected.get(), random.get(), power_of_two.get(), ctx()));
@@ -2338,7 +2342,7 @@ TEST_F(BNTest, PrimeChecking) {
     EXPECT_EQ(bn_probably_prime, result_3);
   }
 
-  // BN_primality_test works with null |BN_CTX|.
+  // BN_primality_test works with null `BN_CTX`.
   ASSERT_TRUE(BN_set_word(p.get(), 5));
   ASSERT_TRUE(
       BN_primality_test(&is_probably_prime_1, p.get(),
@@ -2391,7 +2395,7 @@ TEST_F(BNTest, DISABLED_WycheproofPrimality) {
               std::find(result.flags.begin(), result.flags.end(),
                         "WorstCaseMillerRabin") != result.flags.end()) {
             // Skip the worst case Miller-Rabin cases.
-            // |BN_prime_checks_for_generation| relies on such values being rare
+            // `BN_prime_checks_for_generation` relies on such values being rare
             // when generating primes.
             continue;
           }
@@ -2557,7 +2561,7 @@ TEST_F(BNTest, NonMinimal) {
 
   for (size_t width = 1; width < 10; width++) {
     SCOPED_TRACE(width);
-    // Make |ten| and |zero| wider.
+    // Make `ten` and `zero` wider.
     EXPECT_TRUE(bn_resize_words(ten.get(), width));
     EXPECT_EQ(static_cast<int>(width), ten->width);
     EXPECT_TRUE(bn_resize_words(zero.get(), width));
@@ -2602,8 +2606,8 @@ TEST_F(BNTest, NonMinimal) {
     const uint8_t *ptr;
     size_t len;
     ASSERT_TRUE(BIO_mem_contents(bio.get(), &ptr, &len));
-    // TODO(davidben): |BN_print| removes leading zeros within a byte, while
-    // |BN_bn2hex| rounds up to a byte, except for zero which it prints as
+    // TODO(davidben): `BN_print` removes leading zeros within a byte, while
+    // `BN_bn2hex` rounds up to a byte, except for zero which it prints as
     // "0". Fix this discrepancy?
     EXPECT_EQ(Bytes("a"), Bytes(ptr, len));
 
@@ -2614,7 +2618,7 @@ TEST_F(BNTest, NonMinimal) {
     EXPECT_EQ(Bytes("0"), Bytes(ptr, len));
   }
 
-  // |ten| may be resized back down to one word.
+  // `ten` may be resized back down to one word.
   EXPECT_TRUE(bn_resize_words(ten.get(), 1));
   EXPECT_EQ(1, ten->width);
 
@@ -2626,7 +2630,7 @@ TEST_F(BNTest, NonMinimal) {
   EXPECT_EQ(4, eight->width);
   EXPECT_TRUE(BN_is_pow2(eight.get()));
 
-  // |BN_MONT_CTX| is always stored minimally and uses the same R independent of
+  // `BN_MONT_CTX` is always stored minimally and uses the same R independent of
   // input width. Additionally, mont->RR is always the same width as mont->N,
   // even if it fits in a smaller value.
   static const uint8_t kP[] = {
@@ -2638,7 +2642,7 @@ TEST_F(BNTest, NonMinimal) {
   ASSERT_TRUE(p);
 
   // Test both the constant-time and variable-time functions at both minimal and
-  // non-minimal |p|.
+  // non-minimal `p`.
   UniquePtr<BN_MONT_CTX> mont(BN_MONT_CTX_new_for_modulus(p.get(), ctx()));
   ASSERT_TRUE(mont);
   UniquePtr<BN_MONT_CTX> mont2(BN_MONT_CTX_new_consttime(p.get(), ctx()));
@@ -2735,12 +2739,14 @@ TEST_F(BNTest, ModSqrtInvalid) {
   UniquePtr<BIGNUM> bn4588033 = ASCIIToBIGNUM("4588033");
   ASSERT_TRUE(bn4588033);
 
-  // |BN_mod_sqrt| may fail or return an arbitrary value, so we do not use
-  // |TestModSqrt| or |TestNotModSquare|. We only promise it will not crash or
+  // `BN_mod_sqrt` may fail or return an arbitrary value, so we do not use
+  // `TestModSqrt` or `TestNotModSquare`. We only promise it will not crash or
   // infinite loop. (For some invalid inputs, it may even be non-deterministic.)
   // See CVE-2022-0778.
   BN_free(BN_mod_sqrt(nullptr, bn2140141.get(), bn4588033.get(), ctx()));
+  ERR_clear_error();
   BN_free(BN_mod_sqrt(nullptr, bn2140142.get(), bn4588033.get(), ctx()));
+  ERR_clear_error();
 }
 
 // Test that constructing Montgomery contexts for large bignums is not possible.
@@ -2754,14 +2760,16 @@ TEST_F(BNTest, MontgomeryLarge) {
   UniquePtr<BN_MONT_CTX> mont(
       BN_MONT_CTX_new_for_modulus(large_bignum.get(), ctx()));
   EXPECT_FALSE(mont);
+  EXPECT_TRUE(ErrorsAreAndClear({{ERR_LIB_BN, BN_R_BIGNUM_TOO_LONG}}));
 
-  // The same limit should apply when |BN_mod_exp_mont_consttime| internally
-  // constructs a |BN_MONT_CTX|.
+  // The same limit should apply when `BN_mod_exp_mont_consttime` internally
+  // constructs a `BN_MONT_CTX`.
   UniquePtr<BIGNUM> r(BN_new());
   ASSERT_TRUE(r);
   EXPECT_FALSE(BN_mod_exp_mont_consttime(r.get(), BN_value_one(),
                                          large_bignum.get(), large_bignum.get(),
                                          ctx(), nullptr));
+  EXPECT_TRUE(ErrorsAreAndClear({{ERR_LIB_BN, BN_R_BIGNUM_TOO_LONG}}));
 }
 
 TEST_F(BNTest, FormatWord) {
@@ -2771,7 +2779,7 @@ TEST_F(BNTest, FormatWord) {
   snprintf(buf, sizeof(buf), BN_HEX_FMT1, BN_ULONG{1234});
   EXPECT_STREQ(buf, "4d2");
 
-  // |BN_HEX_FMT2| is zero-padded up to the maximum value.
+  // `BN_HEX_FMT2` is zero-padded up to the maximum value.
 #if defined(OPENSSL_64_BIT)
   snprintf(buf, sizeof(buf), BN_HEX_FMT2, BN_ULONG{1234});
   EXPECT_STREQ(buf, "00000000000004d2");

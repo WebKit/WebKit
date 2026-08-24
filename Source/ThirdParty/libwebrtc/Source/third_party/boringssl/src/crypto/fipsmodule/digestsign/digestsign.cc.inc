@@ -176,8 +176,8 @@ int EVP_DigestSign(EVP_MD_CTX *ctx, uint8_t *out_sig, size_t *out_sig_len,
   int ret = 0;
 
   if (uses_prehash(ctx->pctx, evp_sign)) {
-    // If |out_sig| is NULL, the caller is only querying the maximum output
-    // length. |data| should only be incorporated in the final call.
+    // If `out_sig` is NULL, the caller is only querying the maximum output
+    // length. `data` should only be incorporated in the final call.
     if (out_sig != nullptr && !EVP_DigestSignUpdate(ctx, data, data_len)) {
       goto end;
     }

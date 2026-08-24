@@ -75,11 +75,9 @@ bool ParseOCSPCertID(der::Input raw_tlv, OCSPCertID *out) {
   if (!parser.ReadTag(CBS_ASN1_INTEGER, &out->serial_number)) {
     return false;
   }
-  CertErrors errors;
-  if (!VerifySerialNumber(out->serial_number, false /*warnings_only*/,
-                          &errors)) {
-    return false;
-  }
+  // TODO(crbug.com/533048005): We do not check `out->serial_number` is a valid
+  // INTEGER because our certificate serial parser does not yet check for valid
+  // INTEGERs. This ensures those non-integers can be represented in OCSP.
 
   return !parser.HasMore();
 }
@@ -601,7 +599,7 @@ bool CheckCertIDMatchesCertificate(
 // would either pass in the parsed bits, or have a better abstraction for lazily
 // parsing.
 std::shared_ptr<const ParsedCertificate> OCSPParseCertificate(
-    std::string_view der) {
+    Span<const uint8_t> der) {
   ParseCertificateOptions parse_options;
   parse_options.allow_invalid_serial_numbers = true;
 
@@ -613,9 +611,9 @@ std::shared_ptr<const ParsedCertificate> OCSPParseCertificate(
   // parsing model.
   CertErrors errors;
   return ParsedCertificate::Create(
-      bssl::UniquePtr<CRYPTO_BUFFER>(CRYPTO_BUFFER_new(
-          reinterpret_cast<const uint8_t *>(der.data()), der.size(), nullptr)),
-      {}, &errors);
+      bssl::UniquePtr<CRYPTO_BUFFER>(
+          CRYPTO_BUFFER_new(der.data(), der.size(), nullptr)),
+      parse_options, &errors);
 }
 
 // Checks that the ResponderID `id` matches the certificate `cert` either
@@ -716,7 +714,7 @@ std::shared_ptr<const ParsedCertificate> OCSPParseCertificate(
   //  (3) Has signed the OCSP response using its public key.
   for (const auto &responder_cert_tlv : response.certs) {
     std::shared_ptr<const ParsedCertificate> cur_responder_certificate =
-        OCSPParseCertificate(BytesAsStringView(responder_cert_tlv));
+        OCSPParseCertificate(responder_cert_tlv);
 
     // If failed parsing the certificate, keep looking.
     if (!cur_responder_certificate) {
@@ -936,11 +934,12 @@ OCSPRevocationStatus CheckOCSP(
   std::shared_ptr<const ParsedCertificate> parsed_certificate;
   std::shared_ptr<const ParsedCertificate> parsed_issuer_certificate;
   if (!certificate) {
-    parsed_certificate = OCSPParseCertificate(certificate_der);
+    parsed_certificate = OCSPParseCertificate(StringAsBytes(certificate_der));
     certificate = parsed_certificate.get();
   }
   if (!issuer_certificate) {
-    parsed_issuer_certificate = OCSPParseCertificate(issuer_certificate_der);
+    parsed_issuer_certificate =
+        OCSPParseCertificate(StringAsBytes(issuer_certificate_der));
     issuer_certificate = parsed_issuer_certificate.get();
   }
 

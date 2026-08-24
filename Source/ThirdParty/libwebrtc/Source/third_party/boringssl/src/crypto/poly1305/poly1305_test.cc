@@ -22,8 +22,10 @@
 #include <openssl/poly1305.h>
 
 #include "../internal.h"
+#include "../test/abi_test.h"
 #include "../test/file_test.h"
 #include "../test/test_util.h"
+#include "internal.h"
 
 
 BSSL_NAMESPACE_BEGIN
@@ -47,14 +49,14 @@ static void TestSIMD(unsigned excess, const std::vector<uint8_t> &key,
   done += todo;
 
   for (;;) {
-    // Feed 128 + |excess| bytes to test SIMD mode.
+    // Feed 128 + `excess` bytes to test SIMD mode.
     if (done + 128 + excess > in.size()) {
       break;
     }
     CRYPTO_poly1305_update(&state, in.data() + done, 128 + excess);
     done += 128 + excess;
 
-    // Feed |excess| bytes to ensure SIMD mode can handle short inputs.
+    // Feed `excess` bytes to ensure SIMD mode can handle short inputs.
     if (done + excess > in.size()) {
       break;
     }
@@ -95,7 +97,7 @@ TEST(Poly1305Test, TestVectors) {
     CRYPTO_poly1305_finish(&state, out);
     EXPECT_EQ(Bytes(out), Bytes(mac)) << "Streaming Poly1305 failed.";
 
-    // Test |CRYPTO_poly1305_init| and |CRYPTO_poly1305_finish| work on
+    // Test `CRYPTO_poly1305_init` and `CRYPTO_poly1305_finish` work on
     // unaligned values.
     alignas(8) uint8_t unaligned_key[32 + 1];
     OPENSSL_memcpy(unaligned_key + 1, key.data(), 32);
@@ -114,6 +116,33 @@ TEST(Poly1305Test, TestVectors) {
     TestSIMD(48, key, in, mac);
   });
 }
+
+#if defined(SUPPORTS_ABI_TEST) && defined(OPENSSL_POLY1305_NEON)
+TEST(Poly1305Test, ABI) {
+  if (!CRYPTO_is_NEON_capable()) {
+    return;
+  }
+
+  fe1305x2 r, x, y, c;
+  OPENSSL_memset(&r, 0, sizeof(r));
+  OPENSSL_memset(&x, 1, sizeof(x));
+  OPENSSL_memset(&y, 2, sizeof(y));
+  OPENSSL_memset(&c, 3, sizeof(c));
+
+  CHECK_ABI(openssl_poly1305_neon2_addmulmod, &r, &x, &y, &c);
+
+  fe1305x2 h;
+  OPENSSL_memset(&h, 0, sizeof(h));
+
+  fe1305x2 precomp[2];
+  OPENSSL_memset(&precomp, 4, sizeof(precomp));
+
+  uint8_t buf[256] = {0};
+  for (size_t len : {0, 16, 32, 48, 64, 80}) {
+    CHECK_ABI(openssl_poly1305_neon2_blocks, &h, precomp, buf, len);
+  }
+}
+#endif
 
 }  // namespace
 BSSL_NAMESPACE_END

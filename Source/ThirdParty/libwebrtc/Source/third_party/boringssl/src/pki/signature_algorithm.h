@@ -55,7 +55,9 @@ enum class SignatureAlgorithm {
   kRsaPssSha256,
   kRsaPssSha384,
   kRsaPssSha512,
-  kMtcProofDraftDavidben08,
+  kMtcProofDraftPlants04,
+  // The MTC draft versions use the same OID, so make them an alias.
+  kMtcProofDraftDavidben08 = kMtcProofDraftPlants04,
   kMldsa44,
   kMldsa65,
   kMldsa87,

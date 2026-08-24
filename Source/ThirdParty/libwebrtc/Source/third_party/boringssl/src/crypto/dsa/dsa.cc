@@ -476,15 +476,15 @@ int DSA_SIG_set0(DSA_SIG *sig, BIGNUM *r, BIGNUM *s) {
   return 1;
 }
 
-// mod_mul_consttime sets |r| to |a| * |b| modulo |mont->N|, treating |a| and
-// |b| as secret. This function internally uses Montgomery reduction, but
+// mod_mul_consttime sets `r` to `a` * `b` modulo `mont->N`, treating `a` and
+// `b` as secret. This function internally uses Montgomery reduction, but
 // neither inputs nor outputs are in Montgomery form.
 static int mod_mul_consttime(BIGNUM *r, const BIGNUM *a, const BIGNUM *b,
                              const BN_MONT_CTX *mont, BN_CTX *ctx) {
   BN_CTXScope scope(ctx);
   BIGNUM *tmp = BN_CTX_get(ctx);
-  // |BN_mod_mul_montgomery| removes a factor of R, so we cancel it with a
-  // single |BN_to_montgomery| which adds one factor of R.
+  // `BN_mod_mul_montgomery` removes a factor of R, so we cancel it with a
+  // single `BN_to_montgomery` which adds one factor of R.
   return tmp != nullptr &&  //
          BN_to_montgomery(tmp, a, mont, ctx) &&
          BN_mod_mul_montgomery(r, tmp, b, mont, ctx);
@@ -524,7 +524,7 @@ DSA_SIG *DSA_do_sign(const uint8_t *digest, size_t digest_len, const DSA *dsa) {
     // not impact valid parameters because the probability of requiring even one
     // retry is negligible, let alone 32. Unfortunately, DSA was mis-specified,
     // so invalid parameters are reachable from most callers handling untrusted
-    // private keys. (The |dsa_check_key| call above is not sufficient. Checking
+    // private keys. (The `dsa_check_key` call above is not sufficient. Checking
     // whether arbitrary parameters form a valid DSA group is expensive.)
     static const int kMaxIterations = 32;
     int iters = 0;
@@ -534,9 +534,9 @@ DSA_SIG *DSA_do_sign(const uint8_t *digest, size_t digest_len, const DSA *dsa) {
     }
 
     if (digest_len > BN_num_bytes(impl->q.get())) {
-      // If the digest length is greater than the size of |impl->q| use the
+      // If the digest length is greater than the size of `impl->q` use the
       // BN_num_bits(impl->q) leftmost bits of the digest, see FIPS 186-3, 4.2.
-      // Note the above check that |impl->q| is a multiple of 8 bits.
+      // Note the above check that `impl->q` is a multiple of 8 bits.
       digest_len = BN_num_bytes(impl->q.get());
     }
 
@@ -544,8 +544,8 @@ DSA_SIG *DSA_do_sign(const uint8_t *digest, size_t digest_len, const DSA *dsa) {
       goto err;
     }
 
-    // |m| is bounded by 2^(num_bits(q)), which is slightly looser than q. This
-    // violates |bn_mod_add_consttime| and |mod_mul_consttime|'s preconditions.
+    // `m` is bounded by 2^(num_bits(q)), which is slightly looser than q. This
+    // violates `bn_mod_add_consttime` and `mod_mul_consttime`'s preconditions.
     // (The underlying algorithms could accept looser bounds, but we reduce for
     // simplicity.)
     size_t q_width = bn_minimal_width(impl->q.get());
@@ -555,8 +555,8 @@ DSA_SIG *DSA_do_sign(const uint8_t *digest, size_t digest_len, const DSA *dsa) {
     bn_reduce_once_in_place(m.d, 0 /* no carry word */, impl->q->d,
                             xr.d /* scratch space */, q_width);
 
-    // Compute s = inv(k) (m + xr) mod q. Note |impl->method_mont_q| is
-    // initialized by |dsa_sign_setup|.
+    // Compute s = inv(k) (m + xr) mod q. Note `impl->method_mont_q` is
+    // initialized by `dsa_sign_setup`.
     if (!mod_mul_consttime(&xr, impl->priv_key.get(), r,
                            impl->method_mont_q.get(), ctx) ||
         !bn_mod_add_consttime(s, &xr, &m, impl->q.get(), ctx) ||
@@ -773,7 +773,7 @@ err:
   return ret;
 }
 
-// der_len_len returns the number of bytes needed to represent a length of |len|
+// der_len_len returns the number of bytes needed to represent a length of `len`
 // in DER.
 static size_t der_len_len(size_t len) {
   if (len < 0x80) {
@@ -795,7 +795,7 @@ int DSA_size(const DSA *dsa) {
   }
 
   size_t order_len = BN_num_bytes(impl->q.get());
-  // Compute the maximum length of an |order_len| byte integer. Defensively
+  // Compute the maximum length of an `order_len` byte integer. Defensively
   // assume that the leading 0x00 is included.
   size_t integer_len = 1 /* tag */ + der_len_len(order_len + 1) + 1 + order_len;
   if (integer_len < order_len) {
@@ -834,13 +834,13 @@ static int dsa_sign_setup(const DSAImpl *dsa, BN_CTX *ctx, BIGNUM **out_kinv,
     OPENSSL_PUT_ERROR(DSA, ERR_R_BN_LIB);
     goto err;
   }
-  // Note |BN_mod| below is not constant-time and may leak information about
-  // |r|. |dsa->p| may be significantly larger than |dsa->q|, so this is not
+  // Note `BN_mod` below is not constant-time and may leak information about
+  // `r`. `dsa->p` may be significantly larger than `dsa->q`, so this is not
   // easily performed in constant-time with Montgomery reduction.
   //
-  // However, |r| at this point is g^k (mod p). It is almost the value of |r|
+  // However, `r` at this point is g^k (mod p). It is almost the value of `r`
   // revealed in the signature anyway (g^k (mod p) (mod q)), going from it to
-  // |k| would require computing a discrete log.
+  // `k` would require computing a discrete log.
   bn_declassify(r);
   if (!BN_mod(r, r, dsa->q.get(), ctx) ||
       // Compute part of 's = inv(k) (m + xr) mod q' using Fermat's Little

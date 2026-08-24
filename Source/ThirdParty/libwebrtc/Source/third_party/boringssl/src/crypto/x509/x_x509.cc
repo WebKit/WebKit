@@ -45,15 +45,6 @@ static constexpr CBS_ASN1_TAG kExtensionsTag =
     CBS_ASN1_CONSTRUCTED | CBS_ASN1_CONTEXT_SPECIFIC | 3;
 
 X509Impl::X509Impl() : RefCounted(CheckSubClass()) {
-  asn1_string_init(&serialNumber, V_ASN1_INTEGER);
-  x509_algor_init(&tbs_sig_alg);
-  x509_name_init(&issuer);
-  asn1_string_init(&notBefore, -1);
-  asn1_string_init(&notAfter, -1);
-  x509_name_init(&subject);
-  x509_pubkey_init(&key);
-  x509_algor_init(&sig_alg);
-  asn1_string_init(&signature, V_ASN1_BIT_STRING);
   CRYPTO_new_ex_data(&ex_data);
 }
 
@@ -62,24 +53,7 @@ X509 *X509_new() { return New<X509Impl>(); }
 X509Impl::~X509Impl() {
   CRYPTO_free_ex_data(&g_ex_data_class, &ex_data);
 
-  asn1_string_cleanup(&serialNumber);
-  x509_algor_cleanup(&tbs_sig_alg);
-  x509_name_cleanup(&issuer);
-  asn1_string_cleanup(&notBefore);
-  asn1_string_cleanup(&notAfter);
-  x509_name_cleanup(&subject);
-  x509_pubkey_cleanup(&key);
-  ASN1_BIT_STRING_free(issuerUID);
-  ASN1_BIT_STRING_free(subjectUID);
   sk_X509_EXTENSION_pop_free(extensions, X509_EXTENSION_free);
-  x509_algor_cleanup(&sig_alg);
-  asn1_string_cleanup(&signature);
-  CRYPTO_BUFFER_free(buf);
-  ASN1_OCTET_STRING_free(skid);
-  AUTHORITY_KEYID_free(akid);
-  CRL_DIST_POINTS_free(crldp);
-  GENERAL_NAMES_free(altname);
-  NAME_CONSTRAINTS_free(nc);
   X509_CERT_AUX_free(aux);
 }
 
@@ -100,7 +74,7 @@ X509 *X509_parse_with_algorithms(CRYPTO_BUFFER *buf,
   }
 
   // Save the buffer to cache the original encoding.
-  ret->buf = UpRef(buf).release();
+  ret->buf = UpRef(buf);
 
   // Parse the Certificate.
   CBS cbs, cert, tbs;
@@ -111,13 +85,13 @@ X509 *X509_parse_with_algorithms(CRYPTO_BUFFER *buf,
       // module often omit overflow checks.
       CBS_len(&cert) > INT_MAX / 2 ||
       !CBS_get_asn1(&cert, &tbs, CBS_ASN1_SEQUENCE) ||
-      !x509_parse_algorithm(&cert, &ret->sig_alg) ||
+      !x509_parse_algorithm(&cert, ret->sig_alg.get()) ||
       // For just the signature field, we accept non-minimal BER lengths, though
       // not indefinite-length encoding. See b/18228011.
       //
       // TODO(crbug.com/boringssl/354): Switch the affected callers to convert
       // the certificate before parsing and then remove this workaround.
-      !asn1_parse_bit_string_with_bad_length(&cert, &ret->signature) ||
+      !asn1_parse_bit_string_with_bad_length(&cert, ret->signature.get()) ||
       CBS_len(&cert) != 0) {
     OPENSSL_PUT_ERROR(ASN1, ASN1_R_DECODE_ERROR);
     return nullptr;
@@ -134,7 +108,7 @@ X509 *X509_parse_with_algorithms(CRYPTO_BUFFER *buf,
       return nullptr;
     }
     // The version must be one of v1(0), v2(1), or v3(2).
-    // TODO(https://crbug.com/42290225): Also reject |X509_VERSION_1|. v1 is
+    // TODO(https://crbug.com/42290225): Also reject `X509_VERSION_1`. v1 is
     // DEFAULT, so DER requires it be omitted.
     if (version != X509_VERSION_1 && version != X509_VERSION_2 &&
         version != X509_VERSION_3) {
@@ -146,13 +120,13 @@ X509 *X509_parse_with_algorithms(CRYPTO_BUFFER *buf,
     ret->version = X509_VERSION_1;
   }
   CBS validity;
-  if (!asn1_parse_integer(&tbs, &ret->serialNumber, /*tag=*/0) ||
-      !x509_parse_algorithm(&tbs, &ret->tbs_sig_alg) ||
+  if (!asn1_parse_integer(&tbs, ret->serialNumber.get(), /*tag=*/0) ||
+      !x509_parse_algorithm(&tbs, ret->tbs_sig_alg.get()) ||
       !x509_parse_name(&tbs, &ret->issuer) ||
       !CBS_get_asn1(&tbs, &validity, CBS_ASN1_SEQUENCE) ||
-      !asn1_parse_time(&validity, &ret->notBefore,
+      !asn1_parse_time(&validity, ret->notBefore.get(),
                        /*allow_utc_timezone_offset=*/1) ||
-      !asn1_parse_time(&validity, &ret->notAfter,
+      !asn1_parse_time(&validity, ret->notAfter.get(),
                        /*allow_utc_timezone_offset=*/1) ||
       CBS_len(&validity) != 0 ||  //
       !x509_parse_name(&tbs, &ret->subject) ||
@@ -163,17 +137,17 @@ X509 *X509_parse_with_algorithms(CRYPTO_BUFFER *buf,
   // Per RFC 5280, section 4.1.2.8, these fields require v2 or v3:
   if (ret->version >= X509_VERSION_2 &&
       CBS_peek_asn1_tag(&tbs, kIssuerUIDTag)) {
-    ret->issuerUID = ASN1_BIT_STRING_new();
+    ret->issuerUID.reset(ASN1_BIT_STRING_new());
     if (ret->issuerUID == nullptr ||
-        !asn1_parse_bit_string(&tbs, ret->issuerUID, kIssuerUIDTag)) {
+        !asn1_parse_bit_string(&tbs, ret->issuerUID.get(), kIssuerUIDTag)) {
       return nullptr;
     }
   }
   if (ret->version >= X509_VERSION_2 &&
       CBS_peek_asn1_tag(&tbs, kSubjectUIDTag)) {
-    ret->subjectUID = ASN1_BIT_STRING_new();
+    ret->subjectUID.reset(ASN1_BIT_STRING_new());
     if (ret->subjectUID == nullptr ||
-        !asn1_parse_bit_string(&tbs, ret->subjectUID, kSubjectUIDTag)) {
+        !asn1_parse_bit_string(&tbs, ret->subjectUID.get(), kSubjectUIDTag)) {
       return nullptr;
     }
   }
@@ -227,11 +201,11 @@ static UniquePtr<X509> x509_parse(CBS *cbs) {
 int bssl::x509_marshal_tbs_cert(CBB *cbb, const X509 *x509) {
   auto *impl = FromOpaque(x509);
   if (impl->buf != nullptr) {
-    // Replay the saved TBSCertificate from the |CRYPTO_BUFFER|, to verify
-    // exactly what we parsed. The |CRYPTO_BUFFER| contains the full
+    // Replay the saved TBSCertificate from the `CRYPTO_BUFFER`, to verify
+    // exactly what we parsed. The `CRYPTO_BUFFER` contains the full
     // Certificate, so we need to find the TBSCertificate portion.
     CBS cbs, cert, tbs;
-    CRYPTO_BUFFER_init_CBS(impl->buf, &cbs);
+    CRYPTO_BUFFER_init_CBS(impl->buf.get(), &cbs);
     if (!CBS_get_asn1(&cbs, &cert, CBS_ASN1_SEQUENCE) ||
         !CBS_get_asn1_element(&cert, &tbs, CBS_ASN1_SEQUENCE)) {
       // This should be impossible.
@@ -252,18 +226,19 @@ int bssl::x509_marshal_tbs_cert(CBB *cbb, const X509 *x509) {
       return 0;
     }
   }
-  if (!asn1_marshal_integer(&tbs, &impl->serialNumber, /*tag=*/0) ||
-      !x509_marshal_algorithm(&tbs, &impl->tbs_sig_alg) ||
+  if (!asn1_marshal_integer(&tbs, impl->serialNumber.get(), /*tag=*/0) ||
+      !x509_marshal_algorithm(&tbs, impl->tbs_sig_alg.get()) ||
       !x509_marshal_name(&tbs, &impl->issuer) ||
       !CBB_add_asn1(&tbs, &validity, CBS_ASN1_SEQUENCE) ||
-      !asn1_marshal_time(&validity, &impl->notBefore) ||
-      !asn1_marshal_time(&validity, &impl->notAfter) ||
+      !asn1_marshal_time(&validity, impl->notBefore.get()) ||
+      !asn1_marshal_time(&validity, impl->notAfter.get()) ||
       !x509_marshal_name(&tbs, &impl->subject) ||
       !x509_marshal_public_key(&tbs, &impl->key) ||
       (impl->issuerUID != nullptr &&
-       !asn1_marshal_bit_string(&tbs, impl->issuerUID, kIssuerUIDTag)) ||
+       !asn1_marshal_bit_string(&tbs, impl->issuerUID.get(), kIssuerUIDTag)) ||
       (impl->subjectUID != nullptr &&
-       !asn1_marshal_bit_string(&tbs, impl->subjectUID, kSubjectUIDTag))) {
+       !asn1_marshal_bit_string(&tbs, impl->subjectUID.get(),
+                                kSubjectUIDTag))) {
     return 0;
   }
   if (impl->extensions != nullptr) {
@@ -284,8 +259,8 @@ static int x509_marshal(CBB *cbb, const X509 *x509) {
   auto *impl = FromOpaque(x509);
   return CBB_add_asn1(cbb, &cert, CBS_ASN1_SEQUENCE) &&
          x509_marshal_tbs_cert(&cert, x509) &&
-         x509_marshal_algorithm(&cert, &impl->sig_alg) &&
-         asn1_marshal_bit_string(&cert, &impl->signature, /*tag=*/0) &&
+         x509_marshal_algorithm(&cert, impl->sig_alg.get()) &&
+         asn1_marshal_bit_string(&cert, impl->signature.get(), /*tag=*/0) &&
          CBB_flush(cbb);
 }
 
@@ -304,40 +279,8 @@ int i2d_X509(const X509 *x509, uint8_t **outp) {
       [&](CBB *cbb) -> bool { return x509_marshal(cbb, x509); });
 }
 
-static int x509_new_cb(ASN1_VALUE **pval, const ASN1_ITEM *it) {
-  *pval = (ASN1_VALUE *)X509_new();
-  return *pval != nullptr;
-}
-
-static void x509_free_cb(ASN1_VALUE **pval, const ASN1_ITEM *it) {
-  X509_free((X509 *)*pval);
-  *pval = nullptr;
-}
-
-static int x509_parse_cb(ASN1_VALUE **pval, CBS *cbs, const ASN1_ITEM *it,
-                         int opt) {
-  if (opt && !CBS_peek_asn1_tag(cbs, CBS_ASN1_SEQUENCE)) {
-    return 1;
-  }
-
-  UniquePtr<X509> ret = x509_parse(cbs);
-  if (ret == nullptr) {
-    return 0;
-  }
-
-  X509_free((X509 *)*pval);
-  *pval = (ASN1_VALUE *)ret.release();
-  return 1;
-}
-
-static int x509_i2d_cb(ASN1_VALUE **pval, unsigned char **out,
-                       const ASN1_ITEM *it) {
-  return i2d_X509((X509 *)*pval, out);
-}
-
-static const ASN1_EXTERN_FUNCS x509_extern_funcs = {x509_new_cb, x509_free_cb,
-                                                    x509_parse_cb, x509_i2d_cb};
-IMPLEMENT_EXTERN_ASN1(X509, x509_extern_funcs)
+IMPLEMENT_EXTERN_ASN1_PARSE_NEW(X509, X509_new, X509_free, CBS_ASN1_SEQUENCE,
+                                x509_parse, x509_marshal)
 
 X509 *X509_dup(const X509 *x509) {
   uint8_t *der = nullptr;
@@ -489,7 +432,6 @@ int i2d_X509_AUX(const X509 *a, unsigned char **pp) {
 
 int i2d_re_X509_tbs(X509 *x509, uint8_t **outp) {
   auto *impl = FromOpaque(x509);
-  CRYPTO_BUFFER_free(impl->buf);
   impl->buf = nullptr;
   return i2d_X509_tbs(x509, outp);
 }
@@ -502,26 +444,26 @@ int i2d_X509_tbs(const X509 *x509, uint8_t **outp) {
 
 int X509_set1_signature_algo(X509 *x509, const X509_ALGOR *algo) {
   auto *impl = FromOpaque(x509);
-  return X509_ALGOR_copy(&impl->sig_alg, algo) &&
-         X509_ALGOR_copy(&impl->tbs_sig_alg, algo);
+  return X509_ALGOR_copy(impl->sig_alg.get(), algo) &&
+         X509_ALGOR_copy(impl->tbs_sig_alg.get(), algo);
 }
 
 int X509_set1_signature_value(X509 *x509, const uint8_t *sig, size_t sig_len) {
-  return ASN1_STRING_set(&FromOpaque(x509)->signature, sig, sig_len);
+  return ASN1_STRING_set(FromOpaque(x509)->signature.get(), sig, sig_len);
 }
 
 void X509_get0_signature(const ASN1_BIT_STRING **psig, const X509_ALGOR **palg,
                          const X509 *x) {
   const auto *impl = FromOpaque(x);
   if (psig) {
-    *psig = &impl->signature;
+    *psig = impl->signature.get();
   }
   if (palg) {
-    *palg = &impl->sig_alg;
+    *palg = impl->sig_alg.get();
   }
 }
 
 int X509_get_signature_nid(const X509 *x) {
   const auto *impl = FromOpaque(x);
-  return OBJ_obj2nid(impl->sig_alg.algorithm);
+  return OBJ_obj2nid(impl->sig_alg->algorithm);
 }

@@ -1022,7 +1022,9 @@ Loop_16_xx:
 
 
 .section	.rodata
+
 .align	6
+sha512_constants:
 
 LK512:
 .quad	0x428a2f98d728ae22,0x7137449123ef65cd

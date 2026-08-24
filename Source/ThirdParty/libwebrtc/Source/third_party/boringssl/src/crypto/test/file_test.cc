@@ -42,7 +42,7 @@ FileTest::FileTest(std::unique_ptr<FileTest::LineReader> reader,
 
 FileTest::~FileTest() {}
 
-// FindDelimiter returns a pointer to the first '=' or ':' in |str| or nullptr
+// FindDelimiter returns a pointer to the first '=' or ':' in `str` or nullptr
 // if there is none.
 static const char *FindDelimiter(const char *str) {
   while (*str) {
@@ -54,7 +54,7 @@ static const char *FindDelimiter(const char *str) {
   return nullptr;
 }
 
-// StripSpace returns a string containing up to |len| characters from |str| with
+// StripSpace returns a string containing up to `len` characters from `str` with
 // leading and trailing whitespace removed.
 static std::string StripSpace(const char *str, size_t len) {
   // Remove leading space.

@@ -164,8 +164,8 @@ int bssl::ec_simple_scalar_to_montgomery_inv_vartime(const EC_GROUP *group,
   // even though for this interface it is not mandatory.
 
   // r = a^-1 in the Montgomery domain. This is
-  // |ec_scalar_to_montgomery| followed by |ec_scalar_inv0_montgomery|, but
-  // |ec_scalar_inv0_montgomery| followed by |ec_scalar_from_montgomery| is
+  // `ec_scalar_to_montgomery` followed by `ec_scalar_inv0_montgomery`, but
+  // `ec_scalar_inv0_montgomery` followed by `ec_scalar_from_montgomery` is
   // equivalent and slightly more efficient.
   ec_scalar_inv0_montgomery(group, r, a);
   ec_scalar_from_montgomery(group, r, r);

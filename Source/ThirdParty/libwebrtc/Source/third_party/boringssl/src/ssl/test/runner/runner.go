@@ -47,6 +47,7 @@ import (
 	"boringssl.googlesource.com/boringssl.git/util/testresult"
 	"filippo.io/mldsa"
 	"golang.org/x/crypto/cryptobyte"
+	"golang.org/x/term"
 )
 
 var (
@@ -59,7 +60,7 @@ var (
 	mallocTest         = flag.Int64("malloc-test", -1, "If non-negative, run each test with each malloc in turn failing from the given number onwards.")
 	mallocTestDebug    = flag.Bool("malloc-test-debug", false, "If true, ask bssl_shim to abort rather than fail a malloc. This can be used with a specific value for --malloc-test to identity the malloc failing that is causing problems.")
 	jsonOutput         = flag.String("json-output", "", "The file to output JSON results to.")
-	pipe               = flag.Bool("pipe", false, "If true, print status output suitable for piping into another program.")
+	pipe               = flag.Bool("pipe", !term.IsTerminal(int(os.Stdout.Fd())), "If true, print status output suitable for piping into another program.")
 	testToRun          = flag.String("test", "", "Semicolon-separated patterns of tests to run, or empty to run all tests")
 	skipTest           = flag.String("skip", "", "Semicolon-separated patterns of tests to skip")
 	allowHintMismatch  = flag.String("allow-hint-mismatch", "", "Semicolon-separated patterns of tests where hints may mismatch")
@@ -1365,7 +1366,7 @@ type shimProcess struct {
 }
 
 // newShimProcess starts a new shim with the specified executable, flags, and
-// environment. It internally creates a TCP listener and adds the the -port
+// environment. It internally creates a TCP listener and adds the -port
 // flag.
 func newShimProcess(dispatcher *shimDispatcher, shimPath string, flags []string, env []string) (*shimProcess, error) {
 	listener, err := dispatcher.NewShim()
@@ -1613,7 +1614,9 @@ func appendCredentialFlags(flags []string, cred *Credential, prefix string, newC
 	default:
 		panic(fmt.Sprintf("unknown PSK hash %s", cred.PSKHash))
 	}
-	handleBase64Field("trust-anchor-id", cred.TrustAnchorID)
+	if !cred.Properties.Empty() {
+		handleBase64Field("cert-properties", cred.Properties.Marshal())
+	}
 	return flags
 }
 

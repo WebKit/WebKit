@@ -35,7 +35,7 @@ class OPENSSL_EXPORT Certificate {
   ~Certificate();
   Certificate& operator=(const Certificate& other) = delete;
 
-  // FromDER returns a certificate from an DER-encoded X.509 object in `der`.
+  // FromDER returns a certificate from a DER-encoded X.509 object in `der`.
   // In the event of a failure, it will return no value, and `out_diagnostic`
   // may be set to a string of human readable debugging information if
   // information about the failure is available.

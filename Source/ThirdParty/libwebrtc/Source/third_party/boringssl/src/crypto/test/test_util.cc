@@ -70,18 +70,64 @@ std::string EncodeHex(bssl::Span<const uint8_t> in) {
   return ret;
 }
 
-testing::AssertionResult ErrorEquals(uint32_t err, int lib, int reason) {
-  if (ERR_equals(err, lib, reason)) {
+testing::AssertionResult ErrorEquals(uint32_t err, std::optional<int> lib,
+                                     std::optional<int> reason) {
+  bool lib_matches = !lib.has_value() || (ERR_GET_LIB(err) == lib.value());
+  bool reason_matches =
+      !reason.has_value() || (ERR_GET_REASON(err) == reason.value());
+
+  if (lib_matches && reason_matches) {
     return testing::AssertionSuccess();
   }
 
   char buf[128], expected[128];
-  return testing::AssertionFailure()
-         << "Got \"" << ERR_error_string_n(err, buf, sizeof(buf))
-         << "\", wanted \""
-         << ERR_error_string_n(ERR_PACK(lib, reason), expected,
-                               sizeof(expected))
-         << "\"";
+  if (lib.has_value() && reason.has_value()) {
+    return testing::AssertionFailure()
+           << "Got \"" << ERR_error_string_n(err, buf, sizeof(buf))
+           << "\", wanted \""
+           << ERR_error_string_n(ERR_PACK(lib.value(), reason.value()),
+                                 expected, sizeof(expected))
+           << "\"";
+  } else if (lib.has_value()) {
+    return testing::AssertionFailure()
+           << "Got \"" << ERR_error_string_n(err, buf, sizeof(buf))
+           << "\", wanted something with library \""
+           << ERR_lib_error_string(ERR_PACK(lib.value(), 0)) << "\"";
+  } else if (reason.has_value()) {
+    return testing::AssertionFailure()
+           << "Got \"" << ERR_error_string_n(err, buf, sizeof(buf))
+           << "\", wanted something with reason \""
+           << ERR_reason_error_string(ERR_PACK(0, reason.value())) << "\"";
+  } else {
+    return testing::AssertionFailure()
+           << "Unreachable code: the always-true assertion failed";
+  }
+}
+
+testing::AssertionResult ErrorsAreAndClear(
+    std::initializer_list<std::pair<std::optional<int>, std::optional<int>>>
+        libs_and_reasons) {
+  if (libs_and_reasons.size() == 0) {
+    return testing::AssertionFailure()
+           << "ErrorsAreAndClear with empty list of errors is nonsensical - "
+              "just use ERR_clear_error directly!";
+  }
+  bool have_failures = false;
+  testing::AssertionResult all_failures = testing::AssertionFailure();
+  for (const auto &[lib, reason] : libs_and_reasons) {
+    uint32_t err = ERR_get_error();
+    testing::AssertionResult this_result = ErrorEquals(err, lib, reason);
+    if (this_result) {
+      continue;
+    }
+    all_failures << this_result.message();
+    have_failures = true;
+  }
+  if (have_failures) {
+    return all_failures;
+  }
+  ERR_clear_error();
+  return testing::AssertionSuccess();
 }
 
 bssl::UniquePtr<BIGNUM> HexToBIGNUM(const char *hex) {

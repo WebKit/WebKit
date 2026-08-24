@@ -28,8 +28,8 @@
 // newlib uses u_short in socket.h without defining it.
 typedef unsigned short u_short;
 #endif
-#include <sys/types.h>
 #include <sys/socket.h>
+#include <sys/types.h>
 #else
 #include <winsock2.h>
 typedef int socklen_t;
@@ -43,6 +43,7 @@ struct bio_method_st {
   int type;
   const char *name;
   int (*bwrite)(BIO *, const char *, int);
+  int (*bwrite_ex)(BIO *, const char *, size_t, size_t *);
   int (*bread)(BIO *, char *, int);
   int (*bgets)(BIO *, char *, int);
   long (*ctrl)(BIO *, int, long, void *);
@@ -106,8 +107,11 @@ int bio_socket_nbio(int sock, int on);
 // TODO(fork): remove all callers of this.
 void bio_clear_socket_error();
 
-// bio_sock_error returns the last socket error on `sock`.
-int bio_sock_error(int sock);
+// bio_socket_finish_connect attempts to complete an in-progress, non-blocking
+// connect operation on `sock`. It returns one if the connect operation
+// succeeded. Otherwise, it returns zero and sets the last socket error to the
+// reason it failed.
+int bio_socket_finish_connect(int sock);
 
 // bio_socket_should_retry returns non-zero if `return_value` indicates an error
 // and the last socket error indicates that it's non-fatal.

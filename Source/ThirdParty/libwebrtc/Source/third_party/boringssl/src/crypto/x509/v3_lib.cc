@@ -35,7 +35,7 @@ using namespace bssl;
 static bssl::Vector<const X509V3_EXT_METHOD *> *ext_list = nullptr;
 
 int X509V3_EXT_add(X509V3_EXT_METHOD *ext) {
-  // We only support |ASN1_ITEM|-based extensions.
+  // We only support `ASN1_ITEM`-based extensions.
   assert(ext->it != nullptr);
 
   // TODO(crbug.com/42290461): This API is not locked and doesn't check for

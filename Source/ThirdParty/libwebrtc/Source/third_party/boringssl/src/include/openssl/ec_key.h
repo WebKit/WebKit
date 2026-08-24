@@ -16,7 +16,7 @@
 #ifndef OPENSSL_HEADER_EC_KEY_H
 #define OPENSSL_HEADER_EC_KEY_H
 
-#include <openssl/base.h>   // IWYU pragma: export
+#include <openssl/base.h>  // IWYU pragma: export
 
 #include <openssl/ec.h>
 #include <openssl/engine.h>
@@ -101,7 +101,7 @@ OPENSSL_EXPORT unsigned EC_KEY_get_enc_flags(const EC_KEY *key);
 // bitwise-OR of `EC_PKEY_*` values.
 OPENSSL_EXPORT void EC_KEY_set_enc_flags(EC_KEY *key, unsigned flags);
 
-// EC_KEY_get_conv_form returns the conversation form that will be used by
+// EC_KEY_get_conv_form returns the conversion form that will be used by
 // `key`.
 OPENSSL_EXPORT point_conversion_form_t EC_KEY_get_conv_form(const EC_KEY *key);
 

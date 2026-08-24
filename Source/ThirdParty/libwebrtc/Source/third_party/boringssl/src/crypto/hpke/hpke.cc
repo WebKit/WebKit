@@ -451,7 +451,7 @@ static int p256_private_key_from_seed(uint8_t out_priv[P256_PRIVATE_KEY_LEN],
       return 0;
     }
 
-    // |ec_scalar_from_bytes| checks that the scalar is less than the order.
+    // `ec_scalar_from_bytes` checks that the scalar is less than the order.
     if (ec_scalar_from_bytes(group, &private_scalar, out_priv,
                              P256_PRIVATE_KEY_LEN) &&
         !ec_scalar_is_zero(group, &private_scalar)) {
@@ -994,14 +994,14 @@ void EVP_HPKE_KEY_free(EVP_HPKE_KEY *key) {
 }
 
 int EVP_HPKE_KEY_copy(EVP_HPKE_KEY *dst, const EVP_HPKE_KEY *src) {
-  // For now, |EVP_HPKE_KEY| is trivially copyable.
+  // For now, `EVP_HPKE_KEY` is trivially copyable.
   OPENSSL_memcpy(dst, src, sizeof(EVP_HPKE_KEY));
   return 1;
 }
 
 void EVP_HPKE_KEY_move(EVP_HPKE_KEY *out, EVP_HPKE_KEY *in) {
   EVP_HPKE_KEY_cleanup(out);
-  // For now, |EVP_HPKE_KEY| is trivially movable.
+  // For now, `EVP_HPKE_KEY` is trivially movable.
   // Note that Rust may move this structure. See
   // bssl-crypto/src/scoped.rs:EvpHpkeKey.
   OPENSSL_memcpy(out, in, sizeof(EVP_HPKE_KEY));
@@ -1366,7 +1366,7 @@ static void hpke_nonce(const EVP_HPKE_CTX *ctx, uint8_t *out_nonce,
                        size_t nonce_len) {
   assert(nonce_len >= 8);
 
-  // Write padded big-endian bytes of |ctx->seq| to |out_nonce|.
+  // Write padded big-endian bytes of `ctx->seq` to `out_nonce`.
   OPENSSL_memset(out_nonce, 0, nonce_len);
   uint64_t seq_copy = ctx->seq;
   for (size_t i = 0; i < 8; i++) {
@@ -1374,7 +1374,7 @@ static void hpke_nonce(const EVP_HPKE_CTX *ctx, uint8_t *out_nonce,
     seq_copy >>= 8;
   }
 
-  // XOR the encoded sequence with the |ctx->base_nonce|.
+  // XOR the encoded sequence with the `ctx->base_nonce`.
   for (size_t i = 0; i < nonce_len; i++) {
     out_nonce[i] ^= ctx->base_nonce[i];
   }

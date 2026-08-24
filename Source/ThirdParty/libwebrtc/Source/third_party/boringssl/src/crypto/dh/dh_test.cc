@@ -65,7 +65,7 @@ TEST(DHTest, Basic) {
 
   EXPECT_EQ(Bytes(key1), Bytes(key2));
 
-  // |DH_compute_key|, unlike |DH_compute_key_padded|, removes leading zeros
+  // `DH_compute_key`, unlike `DH_compute_key_padded`, removes leading zeros
   // from the output, so the key will not have a fixed length. This test uses a
   // small, 64-bit prime, so check for at least 32 bits of output after removing
   // leading zeros.
@@ -371,7 +371,7 @@ TEST(DHTest, Overwrite) {
   ASSERT_TRUE(key2);
   ASSERT_TRUE(DH_generate_key(key2.get()));
 
-  // Overwrite |key1|'s contents with |key2|.
+  // Overwrite `key1`'s contents with `key2`.
   p.reset(BN_dup(DH_get0_p(key2.get())));
   ASSERT_TRUE(p);
   g.reset(BN_dup(DH_get0_g(key2.get())));
@@ -387,7 +387,7 @@ TEST(DHTest, Overwrite) {
   pub.release();
   priv.release();
 
-  // Verify that |key1| and |key2| behave equivalently.
+  // Verify that `key1` and `key2` behave equivalently.
   buf1.resize(DH_size(key1.get()));
   ASSERT_GT(DH_compute_key_padded(buf1.data(), peer_key.get(), key1.get()), 0);
   std::vector<uint8_t> buf2(DH_size(key2.get()));
@@ -412,7 +412,7 @@ TEST(DHTest, GenerateKeyTwice) {
   ASSERT_TRUE(DH_set0_key(key2.get(), /*pub_key=*/nullptr, priv_key.get()));
   priv_key.release();
 
-  // This time, calling |DH_generate_key| preserves the old key and recomputes
+  // This time, calling `DH_generate_key` preserves the old key and recomputes
   // the public key.
   ASSERT_TRUE(DH_generate_key(key2.get()));
   EXPECT_EQ(BN_cmp(DH_get0_priv_key(key1.get()), DH_get0_priv_key(key2.get())),
@@ -428,15 +428,20 @@ TEST(DHTest, InvalidParameters) {
   auto check_invalid_group = [](DH *dh) {
     // All operations on egregiously invalid groups should fail.
     EXPECT_FALSE(DH_generate_key(dh));
+    EXPECT_TRUE(ErrorsAreAndClear({{ERR_LIB_DH, DH_R_INVALID_PARAMETERS}}));
     int check_result;
     EXPECT_FALSE(DH_check(dh, &check_result));
+    EXPECT_TRUE(ErrorsAreAndClear({{ERR_LIB_DH, DH_R_INVALID_PARAMETERS}}));
     UniquePtr<BIGNUM> pub_key(BN_new());
     ASSERT_TRUE(pub_key);
     ASSERT_TRUE(BN_set_u64(pub_key.get(), 42));
     EXPECT_FALSE(DH_check_pub_key(dh, pub_key.get(), &check_result));
+    EXPECT_TRUE(ErrorsAreAndClear({{ERR_LIB_DH, DH_R_INVALID_PARAMETERS}}));
     uint8_t buf[1024];
     EXPECT_EQ(DH_compute_key(buf, pub_key.get(), dh), -1);
+    EXPECT_TRUE(ErrorsAreAndClear({{ERR_LIB_DH, DH_R_INVALID_PARAMETERS}}));
     EXPECT_EQ(DH_compute_key_padded(buf, pub_key.get(), dh), -1);
+    EXPECT_TRUE(ErrorsAreAndClear({{ERR_LIB_DH, DH_R_INVALID_PARAMETERS}}));
   };
 
   UniquePtr<BIGNUM> p(BN_get_rfc3526_prime_2048(nullptr));

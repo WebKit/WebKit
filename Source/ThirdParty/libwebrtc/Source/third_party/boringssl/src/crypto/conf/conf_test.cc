@@ -13,22 +13,23 @@
 // limitations under the License.
 
 #include <algorithm>
+#include <map>
 #include <string>
 #include <vector>
-#include <map>
 
 #include <openssl/bio.h>
 #include <openssl/conf.h>
 
 #include <gtest/gtest.h>
 
+#include "../test/test_util.h"
 #include "internal.h"
-
 
 BSSL_NAMESPACE_BEGIN
 namespace {
 
-// A |CONF| is an unordered list of sections, where each section contains an
+
+// A `CONF` is an unordered list of sections, where each section contains an
 // ordered list of (name, value) pairs.
 using ConfModel =
     std::map<std::string, std::vector<std::pair<std::string, std::string>>>;
@@ -95,7 +96,7 @@ static void ExpectConfEquals(const CONF *conf, const ConfModel &model) {
     }
   }
 
-  // There should not be any other values in |conf|. |conf| currently stores
+  // There should not be any other values in `conf`. `conf` currently stores
   // both sections and values in the same map.
   EXPECT_EQ(lh_CONF_SECTION_num_items(conf->sections), model.size());
   EXPECT_EQ(lh_CONF_VALUE_num_items(conf->values), total_values);
@@ -153,7 +154,7 @@ key5 = value5
           },
       },
 
-      // Trailing backslashes are line continations.
+      // Trailing backslashes are line continuations.
       {
           "key=\\\nvalue\nkey2=foo\\\nbar=baz",
           {
@@ -436,6 +437,7 @@ key2 = value2
     UniquePtr<CONF> conf(NCONF_new(nullptr));
     ASSERT_TRUE(conf);
     EXPECT_FALSE(NCONF_load_bio(conf.get(), bio.get(), nullptr));
+    EXPECT_TRUE(ErrorsAreAndClear({{ERR_LIB_CONF, std::nullopt}}));
   }
 }
 
@@ -473,7 +475,7 @@ TEST(ConfTest, ParseList) {
        /*remove_whitespace=*/1,
        {"ab cd", "", "ef gh"}},
   };
-  for (const auto& t : kTests) {
+  for (const auto &t : kTests) {
     SCOPED_TRACE(t.list);
     SCOPED_TRACE(t.sep);
     SCOPED_TRACE(t.remove_whitespace);

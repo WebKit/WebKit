@@ -19,6 +19,9 @@
 
 #include <openssl/asn1.h>
 #include <openssl/asn1t.h>
+#include <openssl/span.h>
+
+#include "../internal.h"
 
 
 BSSL_NAMESPACE_BEGIN
@@ -104,6 +107,31 @@ void asn1_string_init(ASN1_STRING *str, int type);
 // freeing `str` itself.
 void asn1_string_cleanup(ASN1_STRING *str);
 
+// A ScopedASN1String is a stack-allocatable `ASN1_STRING` with managed
+// lifetime.
+// TODO(crbug.com/443769299): Once `ASN1_STRING` is no longer public, this can
+// instead use `DECLARE_OPAQUE_STRUCT`.
+class ScopedASN1String {
+ public:
+  explicit ScopedASN1String(int type) { asn1_string_init(&str_, type); }
+  ScopedASN1String(const ScopedASN1String &) = delete;
+  ScopedASN1String &operator=(const ScopedASN1String &) = delete;
+  ~ScopedASN1String() { asn1_string_cleanup(&str_); }
+
+  ASN1_STRING *get() { return &str_; }
+  const ASN1_STRING *get() const { return &str_; }
+  ASN1_STRING *operator->() { return &str_; }
+  const ASN1_STRING *operator->() const { return &str_; }
+
+ private:
+  ASN1_STRING str_;
+};
+
+// asn1_parse_string_unchecked parses a DER-encoded string of type `str_type`,
+// tagged with `tag`. It does not check the contents.
+int asn1_parse_string_unchecked(CBS *cbs, ASN1_STRING *out, int str_type,
+                                CBS_ASN1_TAG tag);
+
 // The following functions parse a DER-encoded ASN.1 value of the specified
 // type from `cbs` and write the result to `*out`. If `tag` is non-zero, the
 // value is implicitly tagged with `tag`. On success, they return one and
@@ -113,6 +141,7 @@ int asn1_parse_bit_string(CBS *cbs, ASN1_BIT_STRING *out, CBS_ASN1_TAG tag);
 int asn1_parse_integer(CBS *cbs, ASN1_INTEGER *out, CBS_ASN1_TAG tag);
 int asn1_parse_enumerated(CBS *cbs, ASN1_ENUMERATED *out, CBS_ASN1_TAG tag);
 int asn1_parse_octet_string(CBS *cbs, ASN1_STRING *out, CBS_ASN1_TAG tag);
+int asn1_parse_t61_string(CBS *cbs, ASN1_STRING *out, CBS_ASN1_TAG tag);
 int asn1_parse_bmp_string(CBS *cbs, ASN1_BMPSTRING *out, CBS_ASN1_TAG tag);
 int asn1_parse_universal_string(CBS *cbs, ASN1_UNIVERSALSTRING *out,
                                 CBS_ASN1_TAG tag);
@@ -168,10 +197,6 @@ const void *asn1_type_value_as_pointer(const ASN1_TYPE *a);
 // takes ownership of `str`.
 void asn1_type_set0_string(ASN1_TYPE *a, ASN1_STRING *str);
 
-// asn1_type_cleanup releases memory associated with `a`'s value, without
-// freeing `a` itself.
-void asn1_type_cleanup(ASN1_TYPE *a);
-
 // asn1_parse_any parses a DER-encoded ASN.1 value of any type from `cbs` and
 // writes the result to `*out`. On success, it advances `cbs` past the parsed
 // element and returns one. On entry, `*out` must contain an `ASN1_TYPE` in some
@@ -185,11 +210,11 @@ int asn1_parse_any(CBS *cbs, ASN1_TYPE *out);
 int asn1_parse_any_as_string(CBS *cbs, ASN1_STRING *out);
 
 // asn1_marshal_any marshals `in` as a DER-encoded ASN.1 value and writes the
-// result to `out`. It returns one on success and zeron on error.
+// result to `out`. It returns one on success and zero on error.
 int asn1_marshal_any(CBB *out, const ASN1_TYPE *in);
 
 // asn1_marshal_any_string marshals `in` as a DER-encoded ASN.1 value and writes
-// the result to `out`. It returns one on success and zeron on error.
+// the result to `out`. It returns one on success and zero on error.
 int asn1_marshal_any_string(CBB *out, const ASN1_STRING *in);
 
 
@@ -209,25 +234,31 @@ void ASN1_item_ex_free(ASN1_VALUE **pval, const ASN1_ITEM *it);
 
 void ASN1_template_free(ASN1_VALUE **pval, const ASN1_TEMPLATE *tt);
 
-// ASN1_item_ex_d2i parses `len` bytes from `*in` as a structure of type `it`
-// and writes the result to `*pval`. If `tag` is non-negative, `it` is
-// implicitly tagged with the tag specified by `tag` and `aclass`. If `opt` is
-// non-zero, the value is optional.
-//
-// This function returns one and advances `*in` if an object was successfully
-// parsed, -1 if an optional value was successfully skipped, and zero on error.
-int ASN1_item_ex_d2i(ASN1_VALUE **pval, const unsigned char **in, long len,
-                     const ASN1_ITEM *it, int tag, int aclass, char opt);
-
-// ASN1_item_ex_i2d encodes `*pval` as a value of type `it` to `out` under the
-// i2d output convention. It returns a non-zero length on success and -1 on
-// error. If `tag` is -1. the tag and class come from `it`. Otherwise, the tag
-// number is `tag` and the class is `aclass`. This is used for implicit tagging.
-// This function treats a missing value as an error, not an optional field.
-int ASN1_item_ex_i2d(ASN1_VALUE **pval, unsigned char **out,
-                     const ASN1_ITEM *it, int tag, int aclass);
-
 void ASN1_primitive_free(ASN1_VALUE **pval, const ASN1_ITEM *it);
+
+// asn1_load_ptr returns `*pval`, but without asserting `*pval`'s underlying
+// type for strict aliasing. This helper must be used when the field's
+// underlying type is not known statically. It must not be used for
+// `ASN1_BOOLEAN` fields, which are not a pointers.
+inline ASN1_VALUE *asn1_load_ptr(ASN1_VALUE **pval) {
+  ASN1_VALUE *ret;
+  OPENSSL_memcpy(&ret, pval, sizeof(ASN1_VALUE *));
+  return ret;
+}
+
+// asn1_load_ptr_as behaves like `asn1_load_ptr`, but casts the result to `T*`.
+template <typename T>
+inline T *asn1_load_ptr_as(ASN1_VALUE **pval) {
+  return reinterpret_cast<T *>(asn1_load_ptr(pval));
+}
+
+// asn1_store_ptr sets `*pval` to `v`, but without asserting `*pval`'s
+// underlying type for strict aliasing. This helper must be used when the
+// field's underlying type is not known statically. It must not be used for
+// `ASN1_BOOLEAN` fields, which are not a pointers.
+inline void asn1_store_ptr(ASN1_VALUE **pval, const void *v) {
+  OPENSSL_memcpy(pval, &v, sizeof(v));
+}
 
 // asn1_get_choice_selector returns the CHOICE selector value for `*pval`, which
 // must of type `it`.
@@ -253,10 +284,9 @@ int asn1_refcount_dec_and_test_zero(ASN1_VALUE **pval, const ASN1_ITEM *it);
 void asn1_enc_init(ASN1_VALUE **pval, const ASN1_ITEM *it);
 void asn1_enc_free(ASN1_VALUE **pval, const ASN1_ITEM *it);
 
-// asn1_enc_restore, if `*pval` has a saved encoding, writes it to `out` under
-// the i2d output convention, sets `*len` to the length, and returns one. If it
-// has no saved encoding, it returns zero.
-int asn1_enc_restore(int *len, unsigned char **out, ASN1_VALUE **pval,
+// asn1_enc_restore, if `*pval` has a saved encoding, sets `*out` to it, and
+// returns one. If it has no saved encoding, it returns zero.
+int asn1_enc_restore(Span<const uint8_t> *out, ASN1_VALUE **pval,
                      const ASN1_ITEM *it);
 
 // asn1_enc_save saves `inlen` bytes from `in` as `*pval`'s saved encoding. It
@@ -267,6 +297,16 @@ int asn1_enc_save(ASN1_VALUE **pval, const uint8_t *in, size_t inlen,
 
 // asn1_encoding_clear clears the cached encoding in `enc`.
 void asn1_encoding_clear(ASN1_ENCODING *enc);
+
+// asn1_tag_to_cbs converts a tag from this library's representation (the
+// `V_ASN1_*` constants) to that of `CBS` and `CBB`. It returns the tag on
+// success and zero if the input could not be represented. (Zero would be
+// [UNIVERSAL 0], which is a reserved tag value.)
+//
+// The resulting tag will not have the constructed bit set. The caller must OR
+// the result with `CBS_ASN1_CONSTRUCTED` if necessary, before passing to
+// `CBS` and `CBB` functions.
+CBS_ASN1_TAG asn1_tag_to_cbs(int aclass, int tag);
 
 typedef struct {
   int nid;
@@ -300,8 +340,10 @@ typedef int ASN1_i2d_func(ASN1_VALUE *a, unsigned char **in);
 typedef int ASN1_ex_parse(ASN1_VALUE **pval, CBS *cbs, const ASN1_ITEM *it,
                           int opt);
 
-typedef int ASN1_ex_i2d(ASN1_VALUE **pval, unsigned char **out,
-                        const ASN1_ITEM *it);
+// An ASN1_ex_marshal function should marshal `*pval`, a value of type `it`, to
+// `cbb` and return one on success or zero on error.
+typedef int ASN1_ex_marshal(CBB *cbb, ASN1_VALUE **pval, const ASN1_ITEM *it);
+
 typedef int ASN1_ex_new_func(ASN1_VALUE **pval, const ASN1_ITEM *it);
 typedef void ASN1_ex_free_func(ASN1_VALUE **pval, const ASN1_ITEM *it);
 
@@ -309,19 +351,25 @@ typedef struct ASN1_EXTERN_FUNCS_st {
   ASN1_ex_new_func *asn1_ex_new;
   ASN1_ex_free_func *asn1_ex_free;
   ASN1_ex_parse *asn1_ex_parse;
-  ASN1_ex_i2d *asn1_ex_i2d;
+  ASN1_ex_marshal *asn1_ex_marshal;
 } ASN1_EXTERN_FUNCS;
 
-#define IMPLEMENT_EXTERN_ASN1_SIMPLE(name, new_func, free_func, tag,           \
-                                     parse_func, i2d_func)                     \
+// IMPLEMENT_EXTERN_ASN1_PARSE_NEW implements an `ASN1_ITEM` for a type whose
+// parse function returns a new object.
+#define IMPLEMENT_EXTERN_ASN1_PARSE_NEW(name, new_func, free_func, tag,        \
+                                        parse_func, marshal_func)              \
   static int name##_new_cb(ASN1_VALUE **pval, const ASN1_ITEM *it) {           \
-    *pval = (ASN1_VALUE *)new_func();                                          \
-    return *pval != nullptr;                                                   \
+    name *obj = new_func();                                                    \
+    if (obj == nullptr) {                                                      \
+      return 0;                                                                \
+    }                                                                          \
+    asn1_store_ptr(pval, obj);                                                 \
+    return 1;                                                                  \
   }                                                                            \
                                                                                \
   static void name##_free_cb(ASN1_VALUE **pval, const ASN1_ITEM *it) {         \
-    free_func((name *)*pval);                                                  \
-    *pval = nullptr;                                                           \
+    free_func(asn1_load_ptr_as<name>(pval));                                   \
+    asn1_store_ptr(pval, nullptr);                                             \
   }                                                                            \
                                                                                \
   static int name##_parse_cb(ASN1_VALUE **pval, CBS *cbs, const ASN1_ITEM *it, \
@@ -330,22 +378,40 @@ typedef struct ASN1_EXTERN_FUNCS_st {
       return 1;                                                                \
     }                                                                          \
                                                                                \
-    if ((*pval == nullptr && !name##_new_cb(pval, it)) ||                      \
-        !parse_func(cbs, (name *)*pval)) {                                     \
+    bssl::UniquePtr<name> ret = parse_func(cbs);                               \
+    if (ret == nullptr) {                                                      \
       return 0;                                                                \
     }                                                                          \
+    name##_free_cb(pval, it);                                                  \
+    asn1_store_ptr(pval, ret.release());                                       \
     return 1;                                                                  \
   }                                                                            \
                                                                                \
-  static int name##_i2d_cb(ASN1_VALUE **pval, unsigned char **out,             \
-                           const ASN1_ITEM *it) {                              \
-    return i2d_func((name *)*pval, out);                                       \
+  static int name##_marshal_cb(CBB *cbb, ASN1_VALUE **pval,                    \
+                               const ASN1_ITEM *it) {                          \
+    return marshal_func(cbb, asn1_load_ptr_as<name>(pval));                    \
   }                                                                            \
                                                                                \
   static const ASN1_EXTERN_FUNCS name##_extern_funcs = {                       \
-      name##_new_cb, name##_free_cb, name##_parse_cb, name##_i2d_cb};          \
+      name##_new_cb, name##_free_cb, name##_parse_cb, name##_marshal_cb};      \
                                                                                \
   IMPLEMENT_EXTERN_ASN1(name, name##_extern_funcs)
+
+// IMPLEMENT_EXTERN_ASN1_PARSE_INTO implements an `ASN1_ITEM` for a type whose
+// parse function writes into an existing object.
+#define IMPLEMENT_EXTERN_ASN1_PARSE_INTO(name, new_func, free_func, tag, \
+                                         parse_func, marshal_func)       \
+                                                                         \
+  static bssl::UniquePtr<name> name##_parse_new(CBS *cbs) {              \
+    bssl::UniquePtr<name> ret(new_func());                               \
+    if (ret == nullptr || !parse_func(cbs, ret.get())) {                 \
+      return 0;                                                          \
+    }                                                                    \
+    return ret;                                                          \
+  }                                                                      \
+                                                                         \
+  IMPLEMENT_EXTERN_ASN1_PARSE_NEW(name, new_func, free_func, tag,        \
+                                  name##_parse_new, marshal_func)
 
 // ASN1_TIME is an `ASN1_ITEM` whose ASN.1 type is X.509 Time (RFC 5280) and C
 // type is `ASN1_TIME*`.

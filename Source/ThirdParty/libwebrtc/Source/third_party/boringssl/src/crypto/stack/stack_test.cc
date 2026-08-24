@@ -470,7 +470,7 @@ TEST(StackTest, SortAndDedup) {
     ASSERT_TRUE(PushToStack(sk.get(), std::move(obj)));
   }
 
-  // |not_owned| does not own its contents, so we cannot use bssl::UniquePtr.
+  // `not_owned` does not own its contents, so we cannot use bssl::UniquePtr.
   STACK_OF(TEST_INT) *not_owned = sk_TEST_INT_dup(sk.get());
   ASSERT_TRUE(not_owned);
   sk_TEST_INT_sort_and_dedup(not_owned, nullptr);
@@ -553,7 +553,7 @@ TEST(StackTest, Sort) {
                  sizeof(int) * vec.size());
       SCOPED_TRACE(testing::PrintToString(vec));
 
-      // Convert it to a |STACK_OF(TEST_INT)|.
+      // Convert it to a `STACK_OF(TEST_INT)`.
       UniquePtr<STACK_OF(TEST_INT)> sk(sk_TEST_INT_new(compare));
       ASSERT_TRUE(sk);
       for (int v : vec) {

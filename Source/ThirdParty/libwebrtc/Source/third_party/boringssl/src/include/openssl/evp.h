@@ -181,10 +181,9 @@ OPENSSL_EXPORT const EVP_PKEY_ALG *EVP_pkey_x25519(void);
 // The `EVP_PKEY_id` value is `EVP_PKEY_ED25519`.
 OPENSSL_EXPORT const EVP_PKEY_ALG *EVP_pkey_ed25519(void);
 
-// EVP_pkey_ml_dsa_* implement ML-DSA keys, encoded as in
-// draft-ietf-lamps-dilithium-certificates. The `EVP_PKEY_id` values are
-// `EVP_PKEY_ML_DSA_*`. In the private key representation, only the "seed" form
-// is serialized or parsed.
+// EVP_pkey_ml_dsa_* implement ML-DSA keys, encoded as in RFC 9881. The
+// `EVP_PKEY_id` values are `EVP_PKEY_ML_DSA_*`. In the private key
+// representation, only the "seed" form is serialized or parsed.
 //
 // To configure OpenSSL to output the standard "seed" form, configure the
 // "ml-dsa.output_formats" provider parameter so that "seed-only" is first. This
@@ -1026,6 +1025,50 @@ OPENSSL_EXPORT int EVP_PKEY_CTX_set1_signature_context_string(
 // `EVP_PKEY_CTX_set_rsa_keygen_pubexp` and `EVP_PKEY_keygen`.
 OPENSSL_EXPORT EVP_PKEY *EVP_RSA_gen(unsigned bits);
 
+// EVP_PKEY_from_rsa_public_key decodes `len` bytes from `in` as a DER-encoded
+// RSAPublicKey structure (RFC 8017) of algorithm `alg`. It returns a
+// newly-allocated `EVP_PKEY` on success or NULL on error. `alg` must be an
+// RSA-based algorithm, i.e. `EVP_pkey_rsa` or one of `EVP_pkey_rsa_pss_*`. If
+// unsure, use `EVP_pkey_rsa`.
+OPENSSL_EXPORT EVP_PKEY *EVP_PKEY_from_rsa_public_key(const EVP_PKEY_ALG *alg,
+                                                      const uint8_t *in,
+                                                      size_t len);
+
+// EVP_PKEY_from_rsa_private_key decodes `len` bytes from `in` as a DER-encoded
+// RSAPrivateKey structure (RFC 8017) of algorithm `alg`. It returns a
+// newly-allocated `EVP_PKEY` on success or NULL on error. `alg` must be an
+// RSA-based algorithm, i.e. `EVP_pkey_rsa` or one of `EVP_pkey_rsa_pss_*`. If
+// unsure, use `EVP_pkey_rsa`.
+OPENSSL_EXPORT EVP_PKEY *EVP_PKEY_from_rsa_private_key(const EVP_PKEY_ALG *alg,
+                                                       const uint8_t *in,
+                                                       size_t len);
+
+// EVP_PKEY_marshal_rsa_public_key marshals `key` as a DER-encoded RSAPublicKey
+// structure (RFC 8017) and writes the result to `cbb`. It returns one on
+// success and zero on error. If `key` is not of type `EVP_PKEY_RSA` or
+// `EVP_PKEY_RSA_PSS`, it returns zero.
+//
+// WARNING: If `key` is of type `EVP_PKEY_RSA_PSS`, this representation does not
+// encode the key's RSA-PSS restrictions. If decoding with
+// `EVP_PKEY_from_rsa_public_key`, callers are expected to pass an appropriate
+// `EVP_PKEY_ALG` out of band. If decoding into a low-level `RSA` object, the
+// result will be an unrestricted key.
+OPENSSL_EXPORT int EVP_PKEY_marshal_rsa_public_key(CBB *cbb,
+                                                   const EVP_PKEY *key);
+
+// EVP_PKEY_marshal_rsa_private_key marshals `key` as a DER-encoded
+// RSAPrivateKey structure (RFC 8017) and writes the result to `cbb`. It returns
+// one on success and zero on error. If `key` is not of type `EVP_PKEY_RSA` or
+// `EVP_PKEY_RSA_PSS`, it returns zero.
+//
+// WARNING: If `key` is of type `EVP_PKEY_RSA_PSS`, this representation does not
+// encode the key's RSA-PSS restrictions. If decoding with
+// `EVP_PKEY_from_rsa_private_key`, callers are expected to pass an appropriate
+// `EVP_PKEY_ALG` out of band. If decoding into a low-level `RSA` object, the
+// result will be an unrestricted key.
+OPENSSL_EXPORT int EVP_PKEY_marshal_rsa_private_key(CBB *cbb,
+                                                    const EVP_PKEY *key);
+
 // EVP_PKEY_CTX_set_rsa_padding sets the padding type to use. It should be one
 // of the `RSA_*_PADDING` values. Returns one on success or zero on error. By
 // default, the padding is `RSA_PKCS1_PADDING`.
@@ -1120,6 +1163,50 @@ OPENSSL_EXPORT int EVP_PKEY_CTX_get0_rsa_oaep_label(EVP_PKEY_CTX *ctx,
 
 // EC specific control functions.
 
+// The following functions decode `len` bytes from `in` as an EC public key in
+// compressed or uncompressed X9.62 format, respectively. The EC curve is
+// determined by `alg`, which must be an EC algorithm (i.e. one of
+// `EVP_pkey_ec_*`).
+//
+// The functions return a newly-allocated `EVP_PKEY` on success or NULL on
+// error.
+//
+// To support both uncompressed and compressed forms, call
+// `EVP_PKEY_from_ec_uncompressed_point` when the input begins with 0x04 and
+// `EVP_PKEY_from_ec_compressed_point` otherwise. Uncompressed form is more
+// common.
+OPENSSL_EXPORT EVP_PKEY *EVP_PKEY_from_ec_uncompressed_point(
+    const EVP_PKEY_ALG *alg, const uint8_t *in, size_t len);
+OPENSSL_EXPORT EVP_PKEY *EVP_PKEY_from_ec_compressed_point(
+    const EVP_PKEY_ALG *alg, const uint8_t *in, size_t len);
+
+// The following functions marshal `key`'s EC public key in compressed or
+// uncompressed X9.62 format, respectively, and write the result to `cbb`. They
+// return one on success and zero on error. It is an error if `key` is not an EC
+// key.
+OPENSSL_EXPORT int EVP_PKEY_marshal_ec_uncompressed_point(CBB *cbb,
+                                                          const EVP_PKEY *key);
+OPENSSL_EXPORT int EVP_PKEY_marshal_ec_compressed_point(CBB *cbb,
+                                                        const EVP_PKEY *key);
+
+// EVP_PKEY_from_ec_private_scalar decodes `len` bytes from `in` as an EC
+// private key, encoded as a big-endian, zero-padded integer. The EC curve is
+// determined by `alg`, which must be an EC algorithm (i.e. one of
+// `EVP_pkey_ec_*`). The input must be fully reduced and padded to the size of
+// the group order (e.g. 32 bytes for P-256) or the import will fail.
+//
+// This function returns a newly-allocated `EVP_PKEY` on success or NULL on
+// error.
+OPENSSL_EXPORT EVP_PKEY *EVP_PKEY_from_ec_private_scalar(
+    const EVP_PKEY_ALG *alg, const uint8_t *in, size_t len);
+
+// EVP_PKEY_marshal_ec_private_scalar marshals `key`'s private key as a
+// big-endian, zero-padded integer EC scalar and writes the result to `cbb`. It
+// returns one on success or zero on error. It is an error if `key` is not an EC
+// key.
+OPENSSL_EXPORT int EVP_PKEY_marshal_ec_private_scalar(CBB *cbb,
+                                                      const EVP_PKEY *key);
+
 // EVP_PKEY_get_ec_curve_nid returns `pkey`'s curve as a NID constant, such as
 // `NID_X9_62_prime256v1`, or `NID_undef` if `pkey` is not an EC key.
 OPENSSL_EXPORT int EVP_PKEY_get_ec_curve_nid(const EVP_PKEY *pkey);
@@ -1137,7 +1224,7 @@ OPENSSL_EXPORT int EVP_PKEY_CTX_set_ec_paramgen_curve_nid(EVP_PKEY_CTX *ctx,
 
 // Diffie-Hellman-specific control functions.
 
-// EVP_PKEY_CTX_set_dh_pad configures configures whether `ctx`, which must be an
+// EVP_PKEY_CTX_set_dh_pad configures whether `ctx`, which must be an
 // `EVP_PKEY_derive` operation, configures the handling of leading zeros in the
 // Diffie-Hellman shared secret. If `pad` is zero, leading zeros are removed
 // from the secret. If `pad` is non-zero, the fixed-width shared secret is used

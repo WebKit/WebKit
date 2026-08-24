@@ -17,6 +17,7 @@
 #include <openssl/asn1t.h>
 #include <openssl/x509.h>
 
+#include "../asn1/internal.h"
 #include "internal.h"
 
 
@@ -31,7 +32,7 @@ using namespace bssl;
 
 static int rinf_cb(int operation, ASN1_VALUE **pval, const ASN1_ITEM *it,
                    void *exarg) {
-  bssl::X509_REQ_INFO *rinf = (bssl::X509_REQ_INFO *)*pval;
+  X509_REQ_INFO *rinf = asn1_load_ptr_as<X509_REQ_INFO>(pval);
 
   if (operation == ASN1_OP_NEW_POST) {
     rinf->attributes = sk_X509_ATTRIBUTE_new_null();

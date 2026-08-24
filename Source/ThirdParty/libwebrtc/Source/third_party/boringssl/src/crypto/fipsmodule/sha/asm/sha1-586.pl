@@ -47,7 +47,7 @@
 # August 2009.
 #
 # George Spelvin has tipped that F_40_59(b,c,d) can be rewritten as
-# '(c&d) + (b&(c^d))', which allows to accumulate partial results
+# '(c&d) + (b&(c^d))', which allows accumulating partial results
 # and lighten "pressure" on scratch registers. This resulted in
 # >12% performance improvement on contemporary AMD cores (with no
 # degradation on other CPUs:-). Also, the code was revised to maximize

@@ -163,7 +163,7 @@ static void assert_within(const void *start, const void *symbol,
 static void BORINGSSL_maybe_set_module_text_permissions(int permission) {
   // Android may be compiled in execute-only-memory mode, in which case the
   // .text segment cannot be read. That conflicts with the need for a FIPS
-  // module to hash its own contents, therefore |mprotect| is used to make
+  // module to hash its own contents, therefore `mprotect` is used to make
   // the module's .text readable for the duration of the hashing process. In
   // other build configurations this is a no-op.
   const uintptr_t page_size = getpagesize();

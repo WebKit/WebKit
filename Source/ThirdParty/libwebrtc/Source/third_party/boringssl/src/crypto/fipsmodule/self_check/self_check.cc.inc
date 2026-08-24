@@ -297,7 +297,7 @@ err:
 //
 // Self tests that are slow are deferred until the corresponding algorithm is
 // actually exercised, in FIPS mode. (In non-FIPS mode these tests are only run
-// when requested by |BORINGSSL_self_test|.)
+// when requested by `BORINGSSL_self_test`.)
 
 static int boringssl_self_test_rsa_sign() {
   UniquePtr<RSA> rsa_key(self_test_rsa_private_key());
@@ -484,7 +484,7 @@ static int boringssl_self_test_ecc() {
       0xa5, 0x2c, 0xb5, 0x9f, 0xeb, 0x70, 0xae, 0xde, 0x6c, 0xe3, 0xbf,
       0xb3, 0xe0, 0x10, 0x54, 0x85, 0xab, 0xd8, 0x61, 0xd7, 0x7b,
   };
-  // kP256PointResult is |kP256Scalar|×|kP256Point|.
+  // kP256PointResult is `kP256Scalar`×`kP256Point`.
   static const uint8_t kP256PointResult[65] = {
       0x04, 0xf1, 0x63, 0x00, 0x88, 0xc5, 0xd5, 0xe9, 0x05, 0x52, 0xac,
       0xb6, 0xec, 0x68, 0x76, 0xb8, 0x73, 0x7f, 0x0f, 0x72, 0x34, 0xe6,

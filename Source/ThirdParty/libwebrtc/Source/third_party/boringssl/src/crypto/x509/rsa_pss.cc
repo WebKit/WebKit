@@ -35,7 +35,7 @@ using namespace bssl;
 static int rsa_pss_cb(int operation, ASN1_VALUE **pval, const ASN1_ITEM *it,
                       void *exarg) {
   if (operation == ASN1_OP_FREE_PRE) {
-    RSA_PSS_PARAMS *pss = (RSA_PSS_PARAMS *)*pval;
+    RSA_PSS_PARAMS *pss = asn1_load_ptr_as<RSA_PSS_PARAMS>(pval);
     X509_ALGOR_free(pss->maskHash);
   }
   return 1;
@@ -100,7 +100,7 @@ int bssl::x509_rsa_ctx_to_pss(EVP_MD_CTX *ctx, X509_ALGOR *algor) {
       return 0;
   }
 
-  // Encode |params| to an |ASN1_STRING|.
+  // Encode `params` to an `ASN1_STRING`.
   uint8_t buf[128];   // The largest param fits comfortably in 128 bytes.
   CBB cbb;
   CBB_init_fixed(&cbb, buf, sizeof(buf));
@@ -117,7 +117,7 @@ int bssl::x509_rsa_ctx_to_pss(EVP_MD_CTX *ctx, X509_ALGOR *algor) {
                        params_str.get())) {
     return 0;
   }
-  params_str.release();  // |X509_ALGOR_set0| took ownership.
+  params_str.release();  // `X509_ALGOR_set0` took ownership.
   return 1;
 }
 
@@ -154,7 +154,7 @@ int bssl::x509_print_rsa_pss_params(BIO *bp, const X509_ALGOR *sigalg,
   uint32_t salt_len = 0;
   switch (params) {
     case rsa_pss_none:
-      // |rsa_pss_decode| will never return this.
+      // `rsa_pss_decode` will never return this.
       OPENSSL_PUT_ERROR(X509, ERR_R_INTERNAL_ERROR);
       return 0;
     case rsa_pss_sha256:

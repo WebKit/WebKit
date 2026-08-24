@@ -108,7 +108,7 @@ ASN1_GENERALIZEDTIME *ASN1_TIME_to_generalizedtime(const ASN1_TIME *in,
     }
   } else {
     assert(in->type == V_ASN1_UTCTIME);
-    // |ASN1_TIME_check| implies a bound on the string's lengths. In particular,
+    // `ASN1_TIME_check` implies a bound on the string's lengths. In particular,
     // the longest possible UTCTime is "YYMMDDHHMMSS+HHMM", with the (invalid)
     // timezone offsets.
     static constexpr size_t kMaxUTCTimeLength = 17;

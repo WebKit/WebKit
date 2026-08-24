@@ -20,13 +20,16 @@
 #include "internal.h"
 
 
+using namespace bssl;
+
 const char *SSL_state_string_long(const SSL *ssl) {
-  if (ssl->s3->hs == nullptr) {
+  const auto *ssl_impl = FromOpaque(ssl);
+  if (ssl_impl->s3->hs == nullptr) {
     return "SSL negotiation finished successfully";
   }
 
-  return ssl->server ? ssl_server_handshake_state(ssl->s3->hs.get())
-                     : ssl_client_handshake_state(ssl->s3->hs.get());
+  return ssl_impl->server ? ssl_server_handshake_state(ssl_impl->s3->hs.get())
+                          : ssl_client_handshake_state(ssl_impl->s3->hs.get());
 }
 
 const char *SSL_state_string(const SSL *ssl) { return "!!!!!!"; }

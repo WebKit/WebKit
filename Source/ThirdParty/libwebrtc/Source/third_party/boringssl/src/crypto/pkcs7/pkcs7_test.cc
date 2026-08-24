@@ -106,7 +106,7 @@ static void TestCertReparse(bssl::Span<const uint8_t> der) {
   ASSERT_TRUE(PKCS7_get_certificates(certs2.get(), &pkcs7));
   EXPECT_EQ(0u, CBS_len(&pkcs7));
 
-  // PKCS#7 stores certificates in a SET OF, so |PKCS7_bundle_certificates| may
+  // PKCS#7 stores certificates in a SET OF, so `PKCS7_bundle_certificates` may
   // not preserve the original order. All of our test inputs are already sorted,
   // but this check should be relaxed if we add others.
   ASSERT_EQ(sk_X509_num(certs.get()), sk_X509_num(certs2.get()));
@@ -190,7 +190,7 @@ static void TestCRLReparse(bssl::Span<const uint8_t> der) {
   ASSERT_TRUE(PKCS7_get_CRLs(crls2.get(), &pkcs7));
   EXPECT_EQ(0u, CBS_len(&pkcs7));
 
-  // PKCS#7 stores CRLs in a SET OF, so |PKCS7_bundle_CRLs| may not preserve the
+  // PKCS#7 stores CRLs in a SET OF, so `PKCS7_bundle_CRLs` may not preserve the
   // original order. All of our test inputs are already sorted, but this check
   // should be relaxed if we add others.
   ASSERT_EQ(sk_X509_CRL_num(crls.get()), sk_X509_CRL_num(crls.get()));
@@ -420,8 +420,8 @@ xzfKY2TzxLiOmctG0hXFkH5J
       PEM_read_bio_X509_CRL(bio.get(), nullptr, nullptr, nullptr));
   ASSERT_TRUE(crl2);
 
-  // DER's SET OF ordering sorts by tag, then length, so |crl1| comes before
-  // |crl2|.
+  // DER's SET OF ordering sorts by tag, then length, so `crl1` comes before
+  // `crl2`.
   auto check_order = [&](X509_CRL *new_crl1, X509_CRL *new_crl2) {
     // Bundle the CRLs in the new order.
     bssl::UniquePtr<STACK_OF(X509_CRL)> new_crls(sk_X509_CRL_new_null());

@@ -21,9 +21,9 @@
 using namespace bssl;
 
 // Be aware that different sets of AES functions use incompatible key
-// representations, varying in format of the key schedule, the |AES_KEY.rounds|
+// representations, varying in format of the key schedule, the `AES_KEY.rounds`
 // value, or both. Therefore they cannot mix. Also, on AArch64, the plain-C
-// code, above, is incompatible with the |aes_hw_*| functions.
+// code, above, is incompatible with the `aes_hw_*` functions.
 
 bcm_infallible bssl::BCM_aes_encrypt(const uint8_t *in, uint8_t *out,
                                      const AES_KEY *key) {
@@ -84,8 +84,8 @@ bcm_status bssl::BCM_aes_set_decrypt_key(const uint8_t *key, unsigned bits,
 }
 
 #if defined(HWAES) && (defined(OPENSSL_X86) || defined(OPENSSL_X86_64))
-// On x86 and x86_64, |aes_hw_set_decrypt_key|, we implement
-// |aes_hw_encrypt_key_to_decrypt_key| in assembly and rely on C code to combine
+// On x86 and x86_64, `aes_hw_set_decrypt_key`, we implement
+// `aes_hw_encrypt_key_to_decrypt_key` in assembly and rely on C code to combine
 // the operations.
 int bssl::aes_hw_set_decrypt_key(const uint8_t *user_key, int bits,
                                  AES_KEY *key) {
@@ -107,7 +107,7 @@ int bssl::aes_hw_set_encrypt_key(const uint8_t *user_key, int bits,
 #endif
 
 #if defined(VPAES) && defined(OPENSSL_X86)
-// On x86, there is no |vpaes_ctr32_encrypt_blocks|, so we implement it
+// On x86, there is no `vpaes_ctr32_encrypt_blocks`, so we implement it
 // ourselves. This avoids all callers needing to account for a missing function.
 void bssl::vpaes_ctr32_encrypt_blocks(const uint8_t *in, uint8_t *out,
                                       size_t blocks, const AES_KEY *key,
@@ -131,7 +131,7 @@ void bssl::vpaes_ctr32_encrypt_blocks_with_bsaes(const uint8_t *in,
                                                  uint8_t *out, size_t blocks,
                                                  const AES_KEY *key,
                                                  const uint8_t ivec[16]) {
-  // |bsaes_ctr32_encrypt_blocks| is faster than |vpaes_ctr32_encrypt_blocks|,
+  // `bsaes_ctr32_encrypt_blocks` is faster than `vpaes_ctr32_encrypt_blocks`,
   // but it takes at least one full 8-block batch to amortize the conversion.
   if (blocks < 8) {
     vpaes_ctr32_encrypt_blocks(in, out, blocks, key, ivec);
@@ -140,9 +140,9 @@ void bssl::vpaes_ctr32_encrypt_blocks_with_bsaes(const uint8_t *in,
 
   size_t bsaes_blocks = blocks;
   if (bsaes_blocks % 8 < 6) {
-    // |bsaes_ctr32_encrypt_blocks| internally works in 8-block batches. If the
+    // `bsaes_ctr32_encrypt_blocks` internally works in 8-block batches. If the
     // final batch is too small (under six blocks), it is faster to loop over
-    // |vpaes_encrypt|. Round |bsaes_blocks| down to a multiple of 8.
+    // `vpaes_encrypt`. Round `bsaes_blocks` down to a multiple of 8.
     bsaes_blocks -= bsaes_blocks % 8;
   }
 
@@ -160,7 +160,7 @@ void bssl::vpaes_ctr32_encrypt_blocks_with_bsaes(const uint8_t *in,
   uint32_t ctr = CRYPTO_load_u32_be(ivec + 12) + bsaes_blocks;
   CRYPTO_store_u32_be(new_ivec + 12, ctr);
 
-  // Finish any remaining blocks with |vpaes_ctr32_encrypt_blocks|.
+  // Finish any remaining blocks with `vpaes_ctr32_encrypt_blocks`.
   vpaes_ctr32_encrypt_blocks(in, out, blocks, key, new_ivec);
 }
 #endif  // BSAES

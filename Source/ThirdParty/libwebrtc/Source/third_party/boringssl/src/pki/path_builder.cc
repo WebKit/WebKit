@@ -752,7 +752,8 @@ VerifyError CertPathBuilderResultPath::GetVerifyError() const {
   // Diagnostic string is always "everything" about the path.
   std::string diagnostic = errors.ToDebugString(certs);
   if (!errors.ContainsHighSeverityErrors()) {
-    // TODO(bbe3): Having to check this after seems awkward: crbug.com/boringssl/713
+    // TODO(bbe3): Having to check this after seems awkward:
+    // crbug.com/boringssl/713
     if (GetTrustedCert()) {
       return VerifyError(VerifyError::StatusCode::PATH_VERIFIED, 0,
                          std::move(diagnostic));
@@ -888,7 +889,7 @@ const VerifyError CertPathBuilder::Result::GetBestPathVerifyError() const {
     return GetBestValidPath()->GetVerifyError();
   }
   // We can only return one error. Returning the errors corresponding to the
-  // limits if they they appear on any path will make this error prominent even
+  // limits if they appear on any path will make this error prominent even
   // if there are other paths with different or multiple errors.
   if (exceeded_iteration_limit) {
     return VerifyError(

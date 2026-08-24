@@ -46,8 +46,8 @@ static ssize_t read_eintr(int fd, void *out, size_t len) {
   return ret;
 }
 
-// read_file opens |path| and reads until end-of-file. On success, it returns
-// one and sets |*out_ptr| and |*out_len| to a newly-allocated buffer with the
+// read_file opens `path` and reads until end-of-file. On success, it returns
+// one and sets `*out_ptr` and `*out_len` to a newly-allocated buffer with the
 // contents. Otherwise, it returns zero.
 static int read_file(char **out_ptr, size_t *out_len, const char *path) {
   int fd = open_eintr(path, O_RDONLY);

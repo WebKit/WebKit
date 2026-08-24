@@ -42,8 +42,8 @@ int ASN1_INTEGER_cmp(const ASN1_INTEGER *x, const ASN1_INTEGER *y) {
 
   int ret = ASN1_STRING_cmp(x, y);
   if (neg) {
-    // This could be |-ret|, but |ASN1_STRING_cmp| is not forbidden from
-    // returning |INT_MIN|.
+    // This could be `-ret`, but `ASN1_STRING_cmp` is not forbidden from
+    // returning `INT_MIN`.
     if (ret < 0) {
       return 1;
     } else if (ret > 0) {
@@ -56,7 +56,7 @@ int ASN1_INTEGER_cmp(const ASN1_INTEGER *x, const ASN1_INTEGER *y) {
   return ret;
 }
 
-// negate_twos_complement negates |len| bytes from |buf| in-place, interpreted
+// negate_twos_complement negates `len` bytes from `buf` in-place, interpreted
 // as a signed, big-endian two's complement value.
 static void negate_twos_complement(uint8_t *buf, size_t len) {
   uint8_t borrow = 0;
@@ -96,7 +96,7 @@ int i2c_ASN1_INTEGER(const ASN1_INTEGER *in, unsigned char **outp) {
     return 0;
   }
 
-  // |ASN1_INTEGER|s should be represented minimally, but it is possible to
+  // `ASN1_INTEGER`s should be represented minimally, but it is possible to
   // construct invalid ones. Skip leading zeros so this does not produce an
   // invalid encoding or break invariants.
   CBS cbs;
@@ -159,7 +159,7 @@ static int asn1_parse_integer_contents(Span<const uint8_t> in,
     return 0;
   }
 
-  // Convert to |ASN1_INTEGER|'s sign-and-magnitude representation. First,
+  // Convert to `ASN1_INTEGER`'s sign-and-magnitude representation. First,
   // determine the size needed for a minimal result.
   if (is_negative) {
     // 0xff00...01 through 0xff7f..ff have a two's complement of 0x00ff...ff
@@ -353,7 +353,7 @@ static int asn1_string_get_int64(int64_t *out, const ASN1_STRING *a, int type) {
   }
   int64_t i64;
   int fits_in_i64;
-  // Check |v != 0| to handle manually-constructed negative zeros.
+  // Check `v != 0` to handle manually-constructed negative zeros.
   if ((a->type & V_ASN1_NEG) && v != 0) {
     i64 = (int64_t)(0u - v);
     fits_in_i64 = i64 < 0;

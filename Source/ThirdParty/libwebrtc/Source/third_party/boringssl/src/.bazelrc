@@ -39,6 +39,15 @@ build:windows --cxxopt=/std:c++17
 build:linux --cxxopt=-Werror
 build:macos --cxxopt=-Werror
 
+# Google Benchmark needs this flag enabled to not have warnings (which are
+# turned into errors above) in its Mutex code.
+#
+# Can remove when https://github.com/google/benchmark/issues/2263 is resolved
+# and our version of Google Benchmark is updated past the fix.
+#
+# Only enabled on macOS, as Linux defaults to GCC which doesn't support this.
+build:macos --cxxopt=-DHAVE_THREAD_SAFETY_ATTRIBUTES=1
+
 # Without setting a minimum macOS version, std::optional does not work.
 build:macos --cxxopt=-mmacosx-version-min=10.15
 

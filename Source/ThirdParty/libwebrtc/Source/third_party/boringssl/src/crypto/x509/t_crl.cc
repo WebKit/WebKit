@@ -41,7 +41,7 @@ int X509_CRL_print(BIO *out, const X509_CRL *x) {
   if (BIO_printf(out, "Certificate Revocation List (CRL):\n") <= 0 ||
       BIO_printf(out, "%8sVersion %ld (0x%lx)\n", "", version + 1,
                  (unsigned long)version) <= 0 ||
-      // Note this and the other |X509_signature_print| call both print the
+      // Note this and the other `X509_signature_print` call both print the
       // outer signature algorithm, rather than printing the inner and outer
       // ones separately. This matches OpenSSL, though it was probably a bug.
       !X509_signature_print(out, sig_alg, nullptr)) {
@@ -77,7 +77,7 @@ int X509_CRL_print(BIO *out, const X509_CRL *x) {
     return 0;
   }
 
-  // TODO(crbug.com/442860745): |X509_CRL_get_REVOKED| is not const-correct.
+  // TODO(crbug.com/442860745): `X509_CRL_get_REVOKED` is not const-correct.
   const STACK_OF(X509_REVOKED) *rev =
       X509_CRL_get_REVOKED(const_cast<X509_CRL *>(x));
   if (sk_X509_REVOKED_num(rev) > 0) {

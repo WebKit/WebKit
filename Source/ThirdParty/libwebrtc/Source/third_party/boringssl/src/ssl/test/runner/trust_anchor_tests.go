@@ -352,4 +352,83 @@ func addTrustAnchorTests() {
 		expectedError:      ":UNEXPECTED_EXTENSION:",
 		expectedLocalError: "remote error: unsupported extension",
 	})
+
+	group := []byte{1, 2, 3, 4, 5}
+	// These ranges match the test group.
+	match := TrustAnchorRange{Base: []byte{1, 2, 3, 4}, Min: 1, Max: 10}
+	matchExact := TrustAnchorRange{Base: []byte{1, 2, 3, 4}, Min: 5, Max: 5}
+	// These ranges do not.
+	wrongBase := TrustAnchorRange{Base: []byte{1, 2, 3, 5}, Min: 5, Max: 10}
+	componentTooLow := TrustAnchorRange{Base: []byte{1, 2, 3, 4}, Min: 1, Max: 4}
+	componentTooHigh := TrustAnchorRange{Base: []byte{1, 2, 3, 4}, Min: 6, Max: 10}
+	matchParent := TrustAnchorRange{Base: []byte{1, 2, 3}, Min: 1, Max: 10}
+	matchChild := TrustAnchorRange{Base: []byte{1, 2, 3, 4, 5}, Min: 1, Max: 10}
+	matchChild2 := TrustAnchorRange{Base: []byte{1, 2, 3, 4, 5}, Min: 0, Max: 0}
+	matchGrandChild := TrustAnchorRange{Base: []byte{1, 2, 3, 4, 5, 6}, Min: 1, Max: 10}
+
+	testCases = append(testCases, testCase{
+		testType: serverTest,
+		name:     "TrustAnchorGroups-Match-Server",
+		config: Config{
+			MinVersion:          VersionTLS13,
+			RequestTrustAnchors: [][]byte{group},
+			Bugs: ProtocolBugs{
+				ExpectPeerAvailableTrustAnchors: [][]byte{id1, id2},
+				ExpectPeerMatchTrustAnchor:      ptrTo(true),
+			},
+		},
+		shimCredentials: []*Credential{
+			// Neither the ID nor the group inclusions match.
+			rsaCertificate.WithMustMatchIssuer(true).WithProperties(CertificatePropertyList{
+				TrustAnchorID: id1,
+				TrustAnchorGroupInclusions: []TrustAnchorRange{
+					wrongBase, componentTooLow, componentTooHigh, matchParent, matchChild, matchChild2, matchGrandChild,
+				},
+			}),
+			// The group inclusions match, after skipping some irrelevant inclusions.
+			ecdsaP256Certificate.WithMustMatchIssuer(true).WithProperties(CertificatePropertyList{
+				TrustAnchorID: id2,
+				TrustAnchorGroupInclusions: []TrustAnchorRange{
+					wrongBase, match,
+				},
+			}),
+		},
+		expectations: connectionExpectations{
+			peerCertificate: &ecdsaP256Certificate,
+		},
+		flags: []string{"-expect-selected-credential", "1"},
+	})
+
+	testCases = append(testCases, testCase{
+		testType: serverTest,
+		name:     "TrustAnchorGroups-MatchExact-Server",
+		config: Config{
+			MinVersion:          VersionTLS13,
+			RequestTrustAnchors: [][]byte{group},
+			Bugs: ProtocolBugs{
+				ExpectPeerAvailableTrustAnchors: [][]byte{id1, id2},
+				ExpectPeerMatchTrustAnchor:      ptrTo(true),
+			},
+		},
+		shimCredentials: []*Credential{
+			// Neither the ID nor the group inclusions match.
+			rsaCertificate.WithMustMatchIssuer(true).WithProperties(CertificatePropertyList{
+				TrustAnchorID: id1,
+				TrustAnchorGroupInclusions: []TrustAnchorRange{
+					wrongBase, componentTooLow, componentTooHigh, matchParent, matchChild, matchGrandChild,
+				},
+			}),
+			// The group inclusions match, after skipping some irrelevant inclusions.
+			ecdsaP256Certificate.WithMustMatchIssuer(true).WithProperties(CertificatePropertyList{
+				TrustAnchorID: id2,
+				TrustAnchorGroupInclusions: []TrustAnchorRange{
+					wrongBase, matchExact,
+				},
+			}),
+		},
+		expectations: connectionExpectations{
+			peerCertificate: &ecdsaP256Certificate,
+		},
+		flags: []string{"-expect-selected-credential", "1"},
+	})
 }

@@ -121,7 +121,7 @@ STACK_OF(CONF_VALUE) *i2v_GENERAL_NAME(const X509V3_EXT_METHOD *method,
                                        const GENERAL_NAME *gen,
                                        STACK_OF(CONF_VALUE) *ret) {
   // Note the error-handling for this function relies on there being at most
-  // one |X509V3_add_value| call. If there were two and the second failed, we
+  // one `X509V3_add_value` call. If there were two and the second failed, we
   // would need to sometimes free the first call's result.
   unsigned char *p;
   char oline[256], htmp[5];
@@ -325,7 +325,7 @@ static int copy_issuer(const X509V3_CTX *ctx, GENERAL_NAMES *gens) {
     if (!sk_GENERAL_NAME_push(gens, gen)) {
       goto err;
     }
-    // Ownership of |gen| has moved from |ialt| to |gens|.
+    // Ownership of `gen` has moved from `ialt` to `gens`.
     sk_GENERAL_NAME_set(ialt, j, nullptr);
   }
 

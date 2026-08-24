@@ -151,7 +151,7 @@ TEST(X25519Test, SmallOrder) {
   EXPECT_FALSE(ctwrapX25519(out, private_key, kSmallOrderPoint))
       << "X25519 returned success with a small-order input.";
 
-  // For callers which don't check, |out| should still be filled with zeros.
+  // For callers which don't check, `out` should still be filled with zeros.
   static const uint8_t kZeros[32] = {0};
   EXPECT_EQ(Bytes(kZeros), Bytes(out));
 }

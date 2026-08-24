@@ -35,25 +35,25 @@ BSSL_NAMESPACE_BEGIN
 class BignumCtx : public bignum_ctx {
  public:
   ~BignumCtx() {
-    // All |BN_CTX_start| calls must be matched with |BN_CTX_end|, otherwise the
+    // All `BN_CTX_start` calls must be matched with `BN_CTX_end`, otherwise the
     // function may use more memory than expected, potentially without bound if
-    // done in a loop. Assert that all |BIGNUM|s have been released.
+    // done in a loop. Assert that all `BIGNUM`s have been released.
     assert(used_ == 0 || error_);
   }
 
-  // bignums_ is the stack of |BIGNUM|s managed by this |BN_CTX|.
+  // bignums_ is the stack of `BIGNUM`s managed by this `BN_CTX`.
   Vector<UniquePtr<BIGNUM>> bignums_;
-  // stack_ is the stack of |BN_CTX_start| frames. It is the value of |used_| at
-  // the time |BN_CTX_start| was called.
+  // stack_ is the stack of `BN_CTX_start` frames. It is the value of `used_` at
+  // the time `BN_CTX_start` was called.
   Vector<size_t> stack_;
-  // used_ is the number of |BIGNUM|s from |bignums_| that have been used.
+  // used_ is the number of `BIGNUM`s from `bignums_` that have been used.
   size_t used_ = 0;
-  // error_ is whether any operation on this |BN_CTX| failed. All subsequent
+  // error_ is whether any operation on this `BN_CTX` failed. All subsequent
   // operations will fail.
   bool error_ = false;
-  // defer_error_ is whether an operation on this |BN_CTX| has failed, but no
+  // defer_error_ is whether an operation on this `BN_CTX` has failed, but no
   // error has been pushed to the queue yet. This is used to defer errors from
-  // |BN_CTX_start| to |BN_CTX_get|.
+  // `BN_CTX_start` to `BN_CTX_get`.
   bool defer_error_ = false;
 };
 
@@ -71,14 +71,14 @@ void BN_CTX_start(BN_CTX *ctx) {
   auto *impl = FromOpaque(ctx);
 
   if (impl->error_) {
-    // Once an operation has failed, |impl->stack| no longer matches the number
-    // of |BN_CTX_end| calls to come. Do nothing.
+    // Once an operation has failed, `impl->stack` no longer matches the number
+    // of `BN_CTX_end` calls to come. Do nothing.
     return;
   }
 
   if (!impl->stack_.Push(impl->used_)) {
     impl->error_ = true;
-    // |BN_CTX_start| cannot fail, so defer the error to |BN_CTX_get|.
+    // `BN_CTX_start` cannot fail, so defer the error to `BN_CTX_get`.
     impl->defer_error_ = true;
     ERR_clear_error();
   }
@@ -107,7 +107,7 @@ BIGNUM *BN_CTX_get(BN_CTX *ctx) {
 
   BIGNUM *ret = impl->bignums_[impl->used_].get();
   BN_zero(ret);
-  // This is bounded by |impl->bignums_.size()|, so it cannot overflow.
+  // This is bounded by `impl->bignums_.size()`, so it cannot overflow.
   impl->used_++;
   return ret;
 }
@@ -116,8 +116,8 @@ void BN_CTX_end(BN_CTX *ctx) {
   auto *impl = FromOpaque(ctx);
 
   if (impl->error_) {
-    // Once an operation has failed, |impl->stack_| no longer matches the number
-    // of |BN_CTX_end| calls to come. Do nothing.
+    // Once an operation has failed, `impl->stack_` no longer matches the number
+    // of `BN_CTX_end` calls to come. Do nothing.
     return;
   }
 

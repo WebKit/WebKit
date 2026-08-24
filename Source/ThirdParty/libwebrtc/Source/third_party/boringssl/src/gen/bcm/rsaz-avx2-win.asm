@@ -28,7 +28,7 @@ $L$SEH_begin_rsaz_1024_sqr_avx2:
 	mov	rcx,r9
 	mov	r8,QWORD[40+rsp]
 
-
+; 702 cycles, 14% faster than rsaz_1024_mul_avx2
 
 _CET_ENDBR
 	lea	rax,[rsp]
@@ -60,23 +60,23 @@ _CET_ENDBR
 $L$sqr_1024_body:
 	mov	rbp,rax
 
-	mov	r13,rdx
+	mov	r13,rdx  ; reassigned argument
 	sub	rsp,832
 	mov	r15,r13
-	sub	rdi,-128
+	sub	rdi,-128  ; size optimization
 	sub	rsi,-128
 	sub	r13,-128
 
-	and	r15,4095
+	and	r15,4095  ; see if %r13 crosses page
 	add	r15,32*10
 	shr	r15,12
 	vpxor	ymm9,ymm9,ymm9
 	jz	NEAR $L$sqr_1024_no_n_copy
 
-
-
-
-
+; unaligned 256-bit load that crosses page boundary can
+; cause >2x performance degradation here, so if %r13 does
+; cross page boundary, copy it to stack and make sure stack
+; frame doesn't...
 	sub	rsp,32*10
 	vmovdqu	ymm0,YMMWORD[((0-128))+r13]
 	and	rsp,-2048
@@ -98,7 +98,7 @@ $L$sqr_1024_body:
 	vmovdqu	YMMWORD[(192-128)+r13],ymm6
 	vmovdqu	YMMWORD[(224-128)+r13],ymm7
 	vmovdqu	YMMWORD[(256-128)+r13],ymm8
-	vmovdqu	YMMWORD[(288-128)+r13],ymm9
+	vmovdqu	YMMWORD[(288-128)+r13],ymm9  ; %ymm9 is zero
 
 $L$sqr_1024_no_n_copy:
 	and	rsp,-1024
@@ -112,18 +112,18 @@ $L$sqr_1024_no_n_copy:
 	vmovdqu	ymm7,YMMWORD[((224-128))+rsi]
 	vmovdqu	ymm8,YMMWORD[((256-128))+rsi]
 
-	lea	rbx,[192+rsp]
+	lea	rbx,[192+rsp]  ; 64+128=192
 	vmovdqu	ymm15,YMMWORD[$L$and_mask]
 	jmp	NEAR $L$OOP_GRANDE_SQR_1024
 
 ALIGN	32
 $L$OOP_GRANDE_SQR_1024:
-	lea	r9,[((576+128))+rsp]
-	lea	r12,[448+rsp]
+	lea	r9,[((576+128))+rsp]  ; size optimization
+	lea	r12,[448+rsp]  ; 64+128+256=448
 
-
-
-
+; the squaring is performed as described in Variant B of
+; "Speeding up Big-Number Squaring", so start by calculating
+; the A*2=A+A vector
 	vpaddq	ymm1,ymm1,ymm1
 	vpbroadcastq	ymm10,QWORD[((0-128))+rsi]
 	vpaddq	ymm2,ymm2,ymm2
@@ -145,7 +145,7 @@ $L$OOP_GRANDE_SQR_1024:
 
 	vpmuludq	ymm0,ymm10,YMMWORD[((0-128))+rsi]
 	vpbroadcastq	ymm11,QWORD[((32-128))+rsi]
-	vmovdqu	YMMWORD[(288-192)+rbx],ymm9
+	vmovdqu	YMMWORD[(288-192)+rbx],ymm9  ; zero upper half
 	vpmuludq	ymm1,ymm1,ymm10
 	vmovdqu	YMMWORD[(320-448)+r12],ymm9
 	vpmuludq	ymm2,ymm2,ymm10
@@ -282,10 +282,10 @@ $L$sqr_entry_1024:
 	vpmuludq	ymm12,ymm10,YMMWORD[((192-128))+rsi]
 	vpaddq	ymm3,ymm3,ymm12
 	vpmuludq	ymm14,ymm10,YMMWORD[((192-128))+r9]
-	vpbroadcastq	ymm0,QWORD[((256-128))+r15]
+	vpbroadcastq	ymm0,QWORD[((256-128))+r15]  ; borrow %ymm0 for %ymm10
 	vpaddq	ymm4,ymm4,ymm14
 	vpmuludq	ymm5,ymm10,YMMWORD[((224-128))+r9]
-	vpbroadcastq	ymm10,QWORD[((0+8-128))+r15]
+	vpbroadcastq	ymm10,QWORD[((0+8-128))+r15]  ; for next iteration
 	vpaddq	ymm5,ymm5,YMMWORD[((448-448))+r12]
 
 	vmovdqu	YMMWORD[(384-448)+r12],ymm3
@@ -306,11 +306,11 @@ $L$sqr_entry_1024:
 
 	dec	r14d
 	jnz	NEAR $L$OOP_SQR_1024
-
-	vmovdqu	ymm8,YMMWORD[256+rsp]
-	vmovdqu	ymm1,YMMWORD[288+rsp]
-	vmovdqu	ymm2,YMMWORD[320+rsp]
-	lea	rbx,[192+rsp]
+; we need to fix indices 32-39 to avoid overflow
+	vmovdqu	ymm8,YMMWORD[256+rsp]  ; 32*8-192(%rbx),
+	vmovdqu	ymm1,YMMWORD[288+rsp]  ; 32*9-192(%rbx)
+	vmovdqu	ymm2,YMMWORD[320+rsp]  ; 32*10-192(%rbx)
+	lea	rbx,[192+rsp]  ; 64+128=192
 
 	vpsrlq	ymm14,ymm8,29
 	vpand	ymm8,ymm8,ymm15
@@ -406,17 +406,17 @@ $L$OOP_REDUCE_1024:
 	vpaddq	ymm7,ymm7,ymm10
 	vpmuludq	ymm14,ymm12,YMMWORD[((256-128))+r13]
 	vmovd	xmm12,eax
-
+; vmovdqu	32*1-8-128(%r13), %ymm11		# moved below
 	vpaddq	ymm8,ymm8,ymm14
-
+; vmovdqu	32*2-8-128(%r13), %ymm10		# moved below
 	vpbroadcastq	ymm12,xmm12
 
-	vpmuludq	ymm11,ymm13,YMMWORD[((32-8-128))+r13]
+	vpmuludq	ymm11,ymm13,YMMWORD[((32-8-128))+r13]  ; see above
 	vmovdqu	ymm14,YMMWORD[((96-8-128))+r13]
 	mov	rdx,rax
 	imul	rax,QWORD[((-128))+r13]
 	vpaddq	ymm1,ymm1,ymm11
-	vpmuludq	ymm10,ymm13,YMMWORD[((64-8-128))+r13]
+	vpmuludq	ymm10,ymm13,YMMWORD[((64-8-128))+r13]  ; see above
 	vmovdqu	ymm11,YMMWORD[((128-8-128))+r13]
 	add	r11,rax
 	mov	rax,rdx
@@ -435,7 +435,7 @@ $L$OOP_REDUCE_1024:
 	imul	eax,ecx
 	vpaddq	ymm4,ymm4,ymm11
 	vpmuludq	ymm10,ymm10,ymm13
-	DB	0xc4,0x41,0x7e,0x6f,0x9d,0x58,0x00,0x00,0x00
+	DB	0xc4,0x41,0x7e,0x6f,0x9d,0x58,0x00,0x00,0x00  ; vmovdqu		32*7-8-128(%r13), %ymm11
 	and	eax,0x1fffffff
 	vpaddq	ymm5,ymm5,ymm10
 	vpmuludq	ymm14,ymm14,ymm13
@@ -443,7 +443,7 @@ $L$OOP_REDUCE_1024:
 	vpaddq	ymm6,ymm6,ymm14
 	vpmuludq	ymm11,ymm11,ymm13
 	vmovdqu	ymm9,YMMWORD[((288-8-128))+r13]
-	vmovd	xmm0,eax
+	vmovd	xmm0,eax  ; borrow ACC0 for Y2
 	imul	rax,QWORD[((-128))+r13]
 	vpaddq	ymm7,ymm7,ymm11
 	vpmuludq	ymm10,ymm10,ymm13
@@ -460,14 +460,14 @@ $L$OOP_REDUCE_1024:
 	vpaddq	ymm1,ymm1,ymm14
 	vpmuludq	ymm13,ymm13,ymm0
 	vpmuludq	ymm11,ymm11,ymm12
-	DB	0xc4,0x41,0x7e,0x6f,0xb5,0xf0,0xff,0xff,0xff
+	DB	0xc4,0x41,0x7e,0x6f,0xb5,0xf0,0xff,0xff,0xff  ; vmovdqu		32*4-16-128(%r13), %ymm14
 	vpaddq	ymm13,ymm13,ymm1
 	vpaddq	ymm2,ymm2,ymm11
 	vpmuludq	ymm10,ymm10,ymm12
 	vmovdqu	ymm11,YMMWORD[((160-16-128))+r13]
 	DB	0x67
 	vmovq	rax,xmm13
-	vmovdqu	YMMWORD[rsp],ymm13
+	vmovdqu	YMMWORD[rsp],ymm13  ; transfer %r9-%r12
 	vpaddq	ymm3,ymm3,ymm10
 	vpmuludq	ymm14,ymm14,ymm12
 	vmovdqu	ymm10,YMMWORD[((192-16-128))+r13]
@@ -484,7 +484,7 @@ $L$OOP_REDUCE_1024:
 	add	rax,r12
 	vpaddq	ymm7,ymm7,ymm14
 	vpmuludq	ymm11,ymm11,ymm12
-
+; vmovdqu	32*2-24-128(%r13), %ymm14	# moved below
 	mov	r9,rax
 	imul	eax,ecx
 	vpaddq	ymm8,ymm8,ymm11
@@ -496,7 +496,7 @@ $L$OOP_REDUCE_1024:
 	vpaddq	ymm9,ymm9,ymm10
 	vpbroadcastq	ymm12,xmm12
 
-	vpmuludq	ymm14,ymm0,YMMWORD[((64-24-128))+r13]
+	vpmuludq	ymm14,ymm0,YMMWORD[((64-24-128))+r13]  ; see above
 	vmovdqu	ymm10,YMMWORD[((128-24-128))+r13]
 	mov	rdx,rax
 	imul	rax,QWORD[((-128))+r13]
@@ -519,7 +519,7 @@ $L$OOP_REDUCE_1024:
 	vpaddq	ymm3,ymm4,ymm10
 	vpmuludq	ymm14,ymm14,ymm0
 	vmovdqu	ymm10,YMMWORD[((224-24-128))+r13]
-	imul	rdx,QWORD[((24-128))+r13]
+	imul	rdx,QWORD[((24-128))+r13]  ; future %r12
 	add	r11,rax
 	lea	rax,[r10*1+r9]
 	vpaddq	ymm4,ymm5,ymm14
@@ -542,7 +542,7 @@ $L$OOP_REDUCE_1024:
 
 	dec	r14d
 	jnz	NEAR $L$OOP_REDUCE_1024
-	lea	r12,[448+rsp]
+	lea	r12,[448+rsp]  ; size optimization
 	vpaddq	ymm0,ymm13,ymm9
 	vpxor	ymm9,ymm9,ymm9
 
@@ -696,7 +696,7 @@ $L$sqr_1024_in_tail:
 
 	mov	rbx,QWORD[((-8))+rax]
 
-	lea	rsp,[rax]
+	lea	rsp,[rax]  ; restore %rsp
 
 $L$sqr_1024_epilogue:
 	mov	rdi,QWORD[8+rsp]	;WIN64 epilogue
@@ -751,14 +751,14 @@ $L$mul_1024_body:
 	mov	rbp,rax
 
 	vzeroall
-	mov	r13,rdx
+	mov	r13,rdx  ; reassigned argument
 	sub	rsp,64
 
-
-
-
-
-
+; unaligned 256-bit load that crosses page boundary can
+; cause severe performance degradation here, so if %rsi does
+; cross page boundary, swap it with %r13 [meaning that caller
+; is advised to lay down %rsi and %r13 next to each other, so
+; that only one can cross page boundary].
 	DB	0x67,0x67
 	mov	r15,rsi
 	and	r15,4095
@@ -769,20 +769,20 @@ $L$mul_1024_body:
 	cmovnz	r13,r15
 
 	mov	r15,rcx
-	sub	rsi,-128
+	sub	rsi,-128  ; size optimization
 	sub	rcx,-128
 	sub	rdi,-128
 
-	and	r15,4095
+	and	r15,4095  ; see if %rcx crosses page
 	add	r15,32*10
 	DB	0x67,0x67
 	shr	r15,12
 	jz	NEAR $L$mul_1024_no_n_copy
 
-
-
-
-
+; unaligned 256-bit load that crosses page boundary can
+; cause severe performance degradation here, so if %rcx does
+; cross page boundary, copy it to stack and make sure stack
+; frame doesn't...
 	sub	rsp,32*10
 	vmovdqu	ymm0,YMMWORD[((0-128))+rcx]
 	and	rsp,-512
@@ -813,13 +813,13 @@ $L$mul_1024_body:
 	vpxor	ymm7,ymm7,ymm7
 	vmovdqu	YMMWORD[(256-128)+rcx],ymm8
 	vmovdqa	ymm8,ymm0
-	vmovdqu	YMMWORD[(288-128)+rcx],ymm9
+	vmovdqu	YMMWORD[(288-128)+rcx],ymm9  ; %ymm9 is zero after vzeroall
 $L$mul_1024_no_n_copy:
 	and	rsp,-64
 
 	mov	rbx,QWORD[r13]
 	vpbroadcastq	ymm10,QWORD[r13]
-	vmovdqu	YMMWORD[rsp],ymm0
+	vmovdqu	YMMWORD[rsp],ymm0  ; clear top of stack
 	xor	r9,r9
 	DB	0x67
 	xor	r10,r10
@@ -828,12 +828,12 @@ $L$mul_1024_no_n_copy:
 
 	vmovdqu	ymm15,YMMWORD[$L$and_mask]
 	mov	r14d,9
-	vmovdqu	YMMWORD[(288-128)+rdi],ymm9
+	vmovdqu	YMMWORD[(288-128)+rdi],ymm9  ; %ymm9 is zero after vzeroall
 	jmp	NEAR $L$oop_mul_1024
 
 ALIGN	32
 $L$oop_mul_1024:
-	vpsrlq	ymm9,ymm3,29
+	vpsrlq	ymm9,ymm3,29  ; correct %ymm3(*)
 	mov	rax,rbx
 	imul	rax,QWORD[((-128))+rsi]
 	add	rax,r9
@@ -859,7 +859,7 @@ $L$oop_mul_1024:
 	vpbroadcastq	ymm11,xmm11
 	vpaddq	ymm2,ymm2,ymm12
 	vpmuludq	ymm13,ymm10,YMMWORD[((96-128))+rsi]
-	vpand	ymm3,ymm3,ymm15
+	vpand	ymm3,ymm3,ymm15  ; correct %ymm3
 	vpaddq	ymm3,ymm3,ymm13
 	vpmuludq	ymm0,ymm10,YMMWORD[((128-128))+rsi]
 	vpaddq	ymm4,ymm4,ymm0
@@ -868,7 +868,7 @@ $L$oop_mul_1024:
 	vpmuludq	ymm13,ymm10,YMMWORD[((192-128))+rsi]
 	vpaddq	ymm6,ymm6,ymm13
 	vpmuludq	ymm0,ymm10,YMMWORD[((224-128))+rsi]
-	vpermq	ymm9,ymm9,0x93
+	vpermq	ymm9,ymm9,0x93  ; correct %ymm3
 	vpaddq	ymm7,ymm7,ymm0
 	vpmuludq	ymm12,ymm10,YMMWORD[((256-128))+rsi]
 	vpbroadcastq	ymm10,QWORD[8+r13]
@@ -902,10 +902,10 @@ $L$oop_mul_1024:
 	vpmuludq	ymm12,ymm11,YMMWORD[((192-128))+rcx]
 	vpaddq	ymm6,ymm6,ymm12
 	vpmuludq	ymm13,ymm11,YMMWORD[((224-128))+rcx]
-	vpblendd	ymm12,ymm9,ymm14,3
+	vpblendd	ymm12,ymm9,ymm14,3  ; correct %ymm3
 	vpaddq	ymm7,ymm7,ymm13
 	vpmuludq	ymm0,ymm11,YMMWORD[((256-128))+rcx]
-	vpaddq	ymm3,ymm3,ymm12
+	vpaddq	ymm3,ymm3,ymm12  ; correct %ymm3
 	vpaddq	ymm8,ymm8,ymm0
 
 	mov	rax,rbx
@@ -918,9 +918,9 @@ $L$oop_mul_1024:
 	vmovdqu	ymm13,YMMWORD[((-8+64-128))+rsi]
 
 	mov	rax,r10
-	vpblendd	ymm9,ymm9,ymm14,0xfc
+	vpblendd	ymm9,ymm9,ymm14,0xfc  ; correct %ymm3
 	imul	eax,r8d
-	vpaddq	ymm4,ymm4,ymm9
+	vpaddq	ymm4,ymm4,ymm9  ; correct %ymm3
 	and	eax,0x1fffffff
 
 	imul	rbx,QWORD[((16-128))+rsi]
@@ -1108,7 +1108,7 @@ $L$oop_mul_1024:
 	vpmuludq	ymm13,ymm13,ymm10
 	vpbroadcastq	ymm10,QWORD[32+r13]
 	vpaddq	ymm9,ymm9,ymm13
-	add	r13,32
+	add	r13,32  ; %r13++
 
 	vmovdqu	ymm0,YMMWORD[((-24+32-128))+rcx]
 	imul	rax,QWORD[((-128))+rcx]
@@ -1119,9 +1119,9 @@ $L$oop_mul_1024:
 	vpmuludq	ymm0,ymm0,ymm11
 	vmovq	rbx,xmm10
 	vmovdqu	ymm13,YMMWORD[((-24+96-128))+rcx]
-	vpaddq	ymm0,ymm1,ymm0
+	vpaddq	ymm0,ymm1,ymm0  ; %ymm0==%ymm0
 	vpmuludq	ymm12,ymm12,ymm11
-	vmovdqu	YMMWORD[rsp],ymm0
+	vmovdqu	YMMWORD[rsp],ymm0  ; transfer %r9-%r12
 	vpaddq	ymm1,ymm2,ymm12
 	vmovdqu	ymm0,YMMWORD[((-24+128-128))+rcx]
 	vpmuludq	ymm13,ymm13,ymm11
@@ -1289,7 +1289,7 @@ $L$mul_1024_in_tail:
 
 	mov	rbx,QWORD[((-8))+rax]
 
-	lea	rsp,[rax]
+	lea	rsp,[rax]  ; restore %rsp
 
 $L$mul_1024_epilogue:
 	mov	rdi,QWORD[8+rsp]	;WIN64 epilogue
@@ -1303,7 +1303,7 @@ ALIGN	32
 rsaz_1024_red2norm_avx2:
 
 _CET_ENDBR
-	sub	rdx,-128
+	sub	rdx,-128  ; size optimization
 	xor	rax,rax
 	mov	r8,QWORD[((-128))+rdx]
 	mov	r9,QWORD[((-120))+rdx]
@@ -1316,7 +1316,7 @@ _CET_ENDBR
 	add	rax,r8
 	add	rax,r9
 	add	rax,r10
-	adc	r11,0
+	adc	r11,0  ; consume eventual carry
 	mov	QWORD[rcx],rax
 	mov	rax,r11
 	mov	r8,QWORD[((-104))+rdx]
@@ -1327,7 +1327,7 @@ _CET_ENDBR
 	shr	r10,12
 	add	rax,r8
 	add	rax,r9
-	adc	r10,0
+	adc	r10,0  ; consume eventual carry
 	mov	QWORD[8+rcx],rax
 	mov	rax,r10
 	mov	r11,QWORD[((-88))+rdx]
@@ -1338,7 +1338,7 @@ _CET_ENDBR
 	shr	r9,18
 	add	rax,r11
 	add	rax,r8
-	adc	r9,0
+	adc	r9,0  ; consume eventual carry
 	mov	QWORD[16+rcx],rax
 	mov	rax,r9
 	mov	r10,QWORD[((-72))+rdx]
@@ -1349,7 +1349,7 @@ _CET_ENDBR
 	shr	r8,24
 	add	rax,r10
 	add	rax,r11
-	adc	r8,0
+	adc	r8,0  ; consume eventual carry
 	mov	QWORD[24+rcx],rax
 	mov	rax,r8
 	mov	r9,QWORD[((-56))+rdx]
@@ -1363,7 +1363,7 @@ _CET_ENDBR
 	add	rax,r9
 	add	rax,r10
 	add	rax,r11
-	adc	r8,0
+	adc	r8,0  ; consume eventual carry
 	mov	QWORD[32+rcx],rax
 	mov	rax,r8
 	mov	r9,QWORD[((-32))+rdx]
@@ -1374,7 +1374,7 @@ _CET_ENDBR
 	shr	r11,7
 	add	rax,r9
 	add	rax,r10
-	adc	r11,0
+	adc	r11,0  ; consume eventual carry
 	mov	QWORD[40+rcx],rax
 	mov	rax,r11
 	mov	r8,QWORD[((-16))+rdx]
@@ -1385,7 +1385,7 @@ _CET_ENDBR
 	shr	r10,13
 	add	rax,r8
 	add	rax,r9
-	adc	r10,0
+	adc	r10,0  ; consume eventual carry
 	mov	QWORD[48+rcx],rax
 	mov	rax,r10
 	mov	r11,QWORD[rdx]
@@ -1396,7 +1396,7 @@ _CET_ENDBR
 	shr	r9,19
 	add	rax,r11
 	add	rax,r8
-	adc	r9,0
+	adc	r9,0  ; consume eventual carry
 	mov	QWORD[56+rcx],rax
 	mov	rax,r9
 	mov	r10,QWORD[16+rdx]
@@ -1407,7 +1407,7 @@ _CET_ENDBR
 	shr	r8,25
 	add	rax,r10
 	add	rax,r11
-	adc	r8,0
+	adc	r8,0  ; consume eventual carry
 	mov	QWORD[64+rcx],rax
 	mov	rax,r8
 	mov	r9,QWORD[32+rdx]
@@ -1421,7 +1421,7 @@ _CET_ENDBR
 	add	rax,r9
 	add	rax,r10
 	add	rax,r11
-	adc	r8,0
+	adc	r8,0  ; consume eventual carry
 	mov	QWORD[72+rcx],rax
 	mov	rax,r8
 	mov	r9,QWORD[56+rdx]
@@ -1432,7 +1432,7 @@ _CET_ENDBR
 	shr	r11,8
 	add	rax,r9
 	add	rax,r10
-	adc	r11,0
+	adc	r11,0  ; consume eventual carry
 	mov	QWORD[80+rcx],rax
 	mov	rax,r11
 	mov	r8,QWORD[72+rdx]
@@ -1443,7 +1443,7 @@ _CET_ENDBR
 	shr	r10,14
 	add	rax,r8
 	add	rax,r9
-	adc	r10,0
+	adc	r10,0  ; consume eventual carry
 	mov	QWORD[88+rcx],rax
 	mov	rax,r10
 	mov	r11,QWORD[88+rdx]
@@ -1454,7 +1454,7 @@ _CET_ENDBR
 	shr	r9,20
 	add	rax,r11
 	add	rax,r8
-	adc	r9,0
+	adc	r9,0  ; consume eventual carry
 	mov	QWORD[96+rcx],rax
 	mov	rax,r9
 	mov	r10,QWORD[104+rdx]
@@ -1465,7 +1465,7 @@ _CET_ENDBR
 	shr	r8,26
 	add	rax,r10
 	add	rax,r11
-	adc	r8,0
+	adc	r8,0  ; consume eventual carry
 	mov	QWORD[104+rcx],rax
 	mov	rax,r8
 	mov	r9,QWORD[120+rdx]
@@ -1479,7 +1479,7 @@ _CET_ENDBR
 	add	rax,r9
 	add	rax,r10
 	add	rax,r11
-	adc	r8,0
+	adc	r8,0  ; consume eventual carry
 	mov	QWORD[112+rcx],rax
 	mov	rax,r8
 	mov	r9,QWORD[144+rdx]
@@ -1490,7 +1490,7 @@ _CET_ENDBR
 	shr	r11,9
 	add	rax,r9
 	add	rax,r10
-	adc	r11,0
+	adc	r11,0  ; consume eventual carry
 	mov	QWORD[120+rcx],rax
 	mov	rax,r11
 	ret
@@ -1503,17 +1503,17 @@ ALIGN	32
 rsaz_1024_norm2red_avx2:
 
 _CET_ENDBR
-	sub	rcx,-128
+	sub	rcx,-128  ; size optimization
 	mov	r8,QWORD[rdx]
 	mov	eax,0x1fffffff
 	mov	r9,QWORD[8+rdx]
 	mov	r11,r8
 	shr	r11,0
-	and	r11,rax
+	and	r11,rax  ; &0x1fffffff
 	mov	QWORD[((-128))+rcx],r11
 	mov	r10,r8
 	shr	r10,29
-	and	r10,rax
+	and	r10,rax  ; &0x1fffffff
 	mov	QWORD[((-120))+rcx],r10
 	shrd	r8,r9,58
 	and	r8,rax
@@ -1521,7 +1521,7 @@ _CET_ENDBR
 	mov	r10,QWORD[16+rdx]
 	mov	r8,r9
 	shr	r8,23
-	and	r8,rax
+	and	r8,rax  ; &0x1fffffff
 	mov	QWORD[((-104))+rcx],r8
 	shrd	r9,r10,52
 	and	r9,rax
@@ -1529,7 +1529,7 @@ _CET_ENDBR
 	mov	r11,QWORD[24+rdx]
 	mov	r9,r10
 	shr	r9,17
-	and	r9,rax
+	and	r9,rax  ; &0x1fffffff
 	mov	QWORD[((-88))+rcx],r9
 	shrd	r10,r11,46
 	and	r10,rax
@@ -1537,7 +1537,7 @@ _CET_ENDBR
 	mov	r8,QWORD[32+rdx]
 	mov	r10,r11
 	shr	r10,11
-	and	r10,rax
+	and	r10,rax  ; &0x1fffffff
 	mov	QWORD[((-72))+rcx],r10
 	shrd	r11,r8,40
 	and	r11,rax
@@ -1545,11 +1545,11 @@ _CET_ENDBR
 	mov	r9,QWORD[40+rdx]
 	mov	r11,r8
 	shr	r11,5
-	and	r11,rax
+	and	r11,rax  ; &0x1fffffff
 	mov	QWORD[((-56))+rcx],r11
 	mov	r10,r8
 	shr	r10,34
-	and	r10,rax
+	and	r10,rax  ; &0x1fffffff
 	mov	QWORD[((-48))+rcx],r10
 	shrd	r8,r9,63
 	and	r8,rax
@@ -1557,7 +1557,7 @@ _CET_ENDBR
 	mov	r10,QWORD[48+rdx]
 	mov	r8,r9
 	shr	r8,28
-	and	r8,rax
+	and	r8,rax  ; &0x1fffffff
 	mov	QWORD[((-32))+rcx],r8
 	shrd	r9,r10,57
 	and	r9,rax
@@ -1565,7 +1565,7 @@ _CET_ENDBR
 	mov	r11,QWORD[56+rdx]
 	mov	r9,r10
 	shr	r9,22
-	and	r9,rax
+	and	r9,rax  ; &0x1fffffff
 	mov	QWORD[((-16))+rcx],r9
 	shrd	r10,r11,51
 	and	r10,rax
@@ -1573,7 +1573,7 @@ _CET_ENDBR
 	mov	r8,QWORD[64+rdx]
 	mov	r10,r11
 	shr	r10,16
-	and	r10,rax
+	and	r10,rax  ; &0x1fffffff
 	mov	QWORD[rcx],r10
 	shrd	r11,r8,45
 	and	r11,rax
@@ -1581,7 +1581,7 @@ _CET_ENDBR
 	mov	r9,QWORD[72+rdx]
 	mov	r11,r8
 	shr	r11,10
-	and	r11,rax
+	and	r11,rax  ; &0x1fffffff
 	mov	QWORD[16+rcx],r11
 	shrd	r8,r9,39
 	and	r8,rax
@@ -1589,11 +1589,11 @@ _CET_ENDBR
 	mov	r10,QWORD[80+rdx]
 	mov	r8,r9
 	shr	r8,4
-	and	r8,rax
+	and	r8,rax  ; &0x1fffffff
 	mov	QWORD[32+rcx],r8
 	mov	r11,r9
 	shr	r11,33
-	and	r11,rax
+	and	r11,rax  ; &0x1fffffff
 	mov	QWORD[40+rcx],r11
 	shrd	r9,r10,62
 	and	r9,rax
@@ -1601,7 +1601,7 @@ _CET_ENDBR
 	mov	r11,QWORD[88+rdx]
 	mov	r9,r10
 	shr	r9,27
-	and	r9,rax
+	and	r9,rax  ; &0x1fffffff
 	mov	QWORD[56+rcx],r9
 	shrd	r10,r11,56
 	and	r10,rax
@@ -1609,7 +1609,7 @@ _CET_ENDBR
 	mov	r8,QWORD[96+rdx]
 	mov	r10,r11
 	shr	r10,21
-	and	r10,rax
+	and	r10,rax  ; &0x1fffffff
 	mov	QWORD[72+rcx],r10
 	shrd	r11,r8,50
 	and	r11,rax
@@ -1617,7 +1617,7 @@ _CET_ENDBR
 	mov	r9,QWORD[104+rdx]
 	mov	r11,r8
 	shr	r11,15
-	and	r11,rax
+	and	r11,rax  ; &0x1fffffff
 	mov	QWORD[88+rcx],r11
 	shrd	r8,r9,44
 	and	r8,rax
@@ -1625,7 +1625,7 @@ _CET_ENDBR
 	mov	r10,QWORD[112+rdx]
 	mov	r8,r9
 	shr	r8,9
-	and	r8,rax
+	and	r8,rax  ; &0x1fffffff
 	mov	QWORD[104+rcx],r8
 	shrd	r9,r10,38
 	and	r9,rax
@@ -1633,11 +1633,11 @@ _CET_ENDBR
 	mov	r11,QWORD[120+rdx]
 	mov	r9,r10
 	shr	r9,3
-	and	r9,rax
+	and	r9,rax  ; &0x1fffffff
 	mov	QWORD[120+rcx],r9
 	mov	r8,r10
 	shr	r8,32
-	and	r8,rax
+	and	r8,rax  ; &0x1fffffff
 	mov	QWORD[128+rcx],r8
 	shrd	r10,r11,61
 	and	r10,rax
@@ -1645,12 +1645,12 @@ _CET_ENDBR
 	xor	r8,r8
 	mov	r10,r11
 	shr	r10,26
-	and	r10,rax
+	and	r10,rax  ; &0x1fffffff
 	mov	QWORD[144+rcx],r10
 	shrd	r11,r8,55
 	and	r11,rax
 	mov	QWORD[152+rcx],r11
-	mov	QWORD[160+rcx],r8
+	mov	QWORD[160+rcx],r8  ; zero
 	mov	QWORD[168+rcx],r8
 	mov	QWORD[176+rcx],r8
 	mov	QWORD[184+rcx],r8
@@ -1696,22 +1696,22 @@ _CET_ENDBR
 
 	lea	rax,[((-136))+rsp]
 $L$SEH_begin_rsaz_1024_gather5:
-
-	DB	0x48,0x8d,0x60,0xe0
-	DB	0xc5,0xf8,0x29,0x70,0xe0
-	DB	0xc5,0xf8,0x29,0x78,0xf0
-	DB	0xc5,0x78,0x29,0x40,0x00
-	DB	0xc5,0x78,0x29,0x48,0x10
-	DB	0xc5,0x78,0x29,0x50,0x20
-	DB	0xc5,0x78,0x29,0x58,0x30
-	DB	0xc5,0x78,0x29,0x60,0x40
-	DB	0xc5,0x78,0x29,0x68,0x50
-	DB	0xc5,0x78,0x29,0x70,0x60
-	DB	0xc5,0x78,0x29,0x78,0x70
+; I can't trust assembler to use specific encoding:-(
+	DB	0x48,0x8d,0x60,0xe0  ; lea	-0x20(%rax),%rsp
+	DB	0xc5,0xf8,0x29,0x70,0xe0  ; vmovaps %xmm6,-0x20(%rax)
+	DB	0xc5,0xf8,0x29,0x78,0xf0  ; vmovaps %xmm7,-0x10(%rax)
+	DB	0xc5,0x78,0x29,0x40,0x00  ; vmovaps %xmm8,0(%rax)
+	DB	0xc5,0x78,0x29,0x48,0x10  ; vmovaps %xmm9,0x10(%rax)
+	DB	0xc5,0x78,0x29,0x50,0x20  ; vmovaps %xmm10,0x20(%rax)
+	DB	0xc5,0x78,0x29,0x58,0x30  ; vmovaps %xmm11,0x30(%rax)
+	DB	0xc5,0x78,0x29,0x60,0x40  ; vmovaps %xmm12,0x40(%rax)
+	DB	0xc5,0x78,0x29,0x68,0x50  ; vmovaps %xmm13,0x50(%rax)
+	DB	0xc5,0x78,0x29,0x70,0x60  ; vmovaps %xmm14,0x60(%rax)
+	DB	0xc5,0x78,0x29,0x78,0x70  ; vmovaps %xmm15,0x70(%rax)
 	lea	rsp,[((-256))+rsp]
 	and	rsp,-32
 	lea	r10,[$L$inc]
-	lea	rax,[((-128))+rsp]
+	lea	rax,[((-128))+rsp]  ; control u-op density
 
 	vmovd	xmm4,r8d
 	vmovdqa	ymm0,YMMWORD[r10]
@@ -1758,7 +1758,7 @@ $L$SEH_begin_rsaz_1024_gather5:
 	vpcmpeqd	ymm14,ymm14,ymm4
 	vpcmpeqd	ymm15,ymm15,ymm4
 
-	vmovdqa	ymm7,YMMWORD[((-32))+r10]
+	vmovdqa	ymm7,YMMWORD[((-32))+r10]  ; .Lgather_permd
 	lea	rdx,[128+rdx]
 	mov	r8d,9
 
@@ -1804,7 +1804,7 @@ $L$oop_gather_1024:
 	vpor	ymm5,ymm5,ymm3
 
 	vpor	ymm4,ymm4,ymm5
-	vextracti128	xmm5,ymm4,1
+	vextracti128	xmm5,ymm4,1  ; upper half is cleared
 	vpor	xmm5,xmm5,xmm4
 	vpermd	ymm5,ymm7,ymm5
 	vmovdqu	YMMWORD[rcx],ymm5
@@ -1832,7 +1832,9 @@ $L$oop_gather_1024:
 $L$SEH_end_rsaz_1024_gather5:
 
 section	.rdata rdata align=8
+
 ALIGN	64
+rsaz_avx2_constants:
 $L$and_mask:
 	DQ	0x1fffffff,0x1fffffff,0x1fffffff,0x1fffffff
 $L$scatter_permd:
@@ -1861,27 +1863,27 @@ rsaz_se_handler:
 	pushfq
 	sub	rsp,64
 
-	mov	rax,QWORD[120+r8]
-	mov	rbx,QWORD[248+r8]
+	mov	rax,QWORD[120+r8]  ; pull context->Rax
+	mov	rbx,QWORD[248+r8]  ; pull context->Rip
 
-	mov	rsi,QWORD[8+r9]
-	mov	r11,QWORD[56+r9]
+	mov	rsi,QWORD[8+r9]  ; disp->ImageBase
+	mov	r11,QWORD[56+r9]  ; disp->HandlerData
 
-	mov	r10d,DWORD[r11]
-	lea	r10,[r10*1+rsi]
-	cmp	rbx,r10
+	mov	r10d,DWORD[r11]  ; HandlerData[0]
+	lea	r10,[r10*1+rsi]  ; prologue label
+	cmp	rbx,r10  ; context->Rip<prologue label
 	jb	NEAR $L$common_seh_tail
 
-	mov	r10d,DWORD[4+r11]
-	lea	r10,[r10*1+rsi]
-	cmp	rbx,r10
+	mov	r10d,DWORD[4+r11]  ; HandlerData[1]
+	lea	r10,[r10*1+rsi]  ; epilogue label
+	cmp	rbx,r10  ; context->Rip>=epilogue label
 	jae	NEAR $L$common_seh_tail
 
-	mov	rbp,QWORD[160+r8]
+	mov	rbp,QWORD[160+r8]  ; pull context->Rbp
 
-	mov	r10d,DWORD[8+r11]
-	lea	r10,[r10*1+rsi]
-	cmp	rbx,r10
+	mov	r10d,DWORD[8+r11]  ; HandlerData[2]
+	lea	r10,[r10*1+rsi]  ; "in tail" label
+	cmp	rbx,r10  ; context->Rip>="in tail" label
 	cmovc	rax,rbp
 
 	mov	r15,QWORD[((-48))+rax]
@@ -1897,38 +1899,38 @@ rsaz_se_handler:
 	mov	QWORD[160+r8],rbp
 	mov	QWORD[144+r8],rbx
 
-	lea	rsi,[((-216))+rax]
-	lea	rdi,[512+r8]
-	mov	ecx,20
-	DD	0xa548f3fc
+	lea	rsi,[((-216))+rax]  ; %xmm save area
+	lea	rdi,[512+r8]  ; & context.Xmm6
+	mov	ecx,20  ; 10*sizeof(%xmm0)/sizeof(%rax)
+	DD	0xa548f3fc  ; cld; rep movsq
 
 $L$common_seh_tail:
 	mov	rdi,QWORD[8+rax]
 	mov	rsi,QWORD[16+rax]
-	mov	QWORD[152+r8],rax
-	mov	QWORD[168+r8],rsi
-	mov	QWORD[176+r8],rdi
+	mov	QWORD[152+r8],rax  ; restore context->Rsp
+	mov	QWORD[168+r8],rsi  ; restore context->Rsi
+	mov	QWORD[176+r8],rdi  ; restore context->Rdi
 
-	mov	rdi,QWORD[40+r9]
-	mov	rsi,r8
-	mov	ecx,154
-	DD	0xa548f3fc
+	mov	rdi,QWORD[40+r9]  ; disp->ContextRecord
+	mov	rsi,r8  ; context
+	mov	ecx,154  ; sizeof(CONTEXT)
+	DD	0xa548f3fc  ; cld; rep movsq
 
 	mov	rsi,r9
-	xor	rcx,rcx
-	mov	rdx,QWORD[8+rsi]
-	mov	r8,QWORD[rsi]
-	mov	r9,QWORD[16+rsi]
-	mov	r10,QWORD[40+rsi]
-	lea	r11,[56+rsi]
-	lea	r12,[24+rsi]
-	mov	QWORD[32+rsp],r10
-	mov	QWORD[40+rsp],r11
-	mov	QWORD[48+rsp],r12
-	mov	QWORD[56+rsp],rcx
+	xor	rcx,rcx  ; arg1, UNW_FLAG_NHANDLER
+	mov	rdx,QWORD[8+rsi]  ; arg2, disp->ImageBase
+	mov	r8,QWORD[rsi]  ; arg3, disp->ControlPc
+	mov	r9,QWORD[16+rsi]  ; arg4, disp->FunctionEntry
+	mov	r10,QWORD[40+rsi]  ; disp->ContextRecord
+	lea	r11,[56+rsi]  ; &disp->HandlerData
+	lea	r12,[24+rsi]  ; &disp->EstablisherFrame
+	mov	QWORD[32+rsp],r10  ; arg5
+	mov	QWORD[40+rsp],r11  ; arg6
+	mov	QWORD[48+rsp],r12  ; arg7
+	mov	QWORD[56+rsp],rcx  ; arg8, (NULL)
 	call	QWORD[__imp_RtlVirtualUnwind]
 
-	mov	eax,1
+	mov	eax,1  ; ExceptionContinueSearch
 	add	rsp,64
 	popfq
 	pop	r15
@@ -1969,18 +1971,18 @@ $L$SEH_info_rsaz_1024_mul_avx2:
 	DD	0
 $L$SEH_info_rsaz_1024_gather5:
 	DB	0x01,0x36,0x17,0x0b
-	DB	0x36,0xf8,0x09,0x00
-	DB	0x31,0xe8,0x08,0x00
-	DB	0x2c,0xd8,0x07,0x00
-	DB	0x27,0xc8,0x06,0x00
-	DB	0x22,0xb8,0x05,0x00
-	DB	0x1d,0xa8,0x04,0x00
-	DB	0x18,0x98,0x03,0x00
-	DB	0x13,0x88,0x02,0x00
-	DB	0x0e,0x78,0x01,0x00
-	DB	0x09,0x68,0x00,0x00
-	DB	0x04,0x01,0x15,0x00
-	DB	0x00,0xb3,0x00,0x00
+	DB	0x36,0xf8,0x09,0x00  ; vmovaps 0x90(rsp),xmm15
+	DB	0x31,0xe8,0x08,0x00  ; vmovaps 0x80(rsp),xmm14
+	DB	0x2c,0xd8,0x07,0x00  ; vmovaps 0x70(rsp),xmm13
+	DB	0x27,0xc8,0x06,0x00  ; vmovaps 0x60(rsp),xmm12
+	DB	0x22,0xb8,0x05,0x00  ; vmovaps 0x50(rsp),xmm11
+	DB	0x1d,0xa8,0x04,0x00  ; vmovaps 0x40(rsp),xmm10
+	DB	0x18,0x98,0x03,0x00  ; vmovaps 0x30(rsp),xmm9
+	DB	0x13,0x88,0x02,0x00  ; vmovaps 0x20(rsp),xmm8
+	DB	0x0e,0x78,0x01,0x00  ; vmovaps 0x10(rsp),xmm7
+	DB	0x09,0x68,0x00,0x00  ; vmovaps 0x00(rsp),xmm6
+	DB	0x04,0x01,0x15,0x00  ; sub	  rsp,0xa8
+	DB	0x00,0xb3,0x00,0x00  ; set_frame r11
 %else
 ; Work around https://bugzilla.nasm.us/show_bug.cgi?id=3392738
 ret

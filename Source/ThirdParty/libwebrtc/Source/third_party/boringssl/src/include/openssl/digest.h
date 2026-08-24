@@ -62,17 +62,21 @@ OPENSSL_EXPORT const EVP_MD *EVP_get_digestbyobj(const ASN1_OBJECT *obj);
 // An EVP_MD_CTX represents the state of a specific digest operation in
 // progress.
 
-// EVP_MD_CTX_init initialises an, already allocated, `EVP_MD_CTX`. This is the
-// same as setting the structure to zero.
+// EVP_MD_CTX_init sets an uninitialized `EVP_MD_CTX` to the zero state. This
+// is the same as setting the structure to zero.
+//
+// This function is used for initializing uninitialized memory in an
+// `EVP_MD_CTX`, e.g. if it is declared as a local variable on the stack. This
+// function should not be used on objects that have already been initialized.
 OPENSSL_EXPORT void EVP_MD_CTX_init(EVP_MD_CTX *ctx);
 
-// EVP_MD_CTX_new allocates and initialises a fresh `EVP_MD_CTX` and returns
-// it, or NULL on allocation failure. The caller must use `EVP_MD_CTX_free` to
-// release the resulting object.
+// EVP_MD_CTX_new returns a newly-allocated `EVP_MD_CTX` in the zero state, or
+// NULL on allocation failure. The caller must use `EVP_MD_CTX_free` to release
+// the resulting object.
 OPENSSL_EXPORT EVP_MD_CTX *EVP_MD_CTX_new(void);
 
-// EVP_MD_CTX_cleanup frees any resources owned by `ctx` and resets it to a
-// freshly initialised state. It does not free `ctx` itself. It returns one.
+// EVP_MD_CTX_cleanup frees any resources owned by `ctx` and resets it to the
+// zero state. It does not free `ctx` itself. It returns one.
 OPENSSL_EXPORT int EVP_MD_CTX_cleanup(EVP_MD_CTX *ctx);
 
 // EVP_MD_CTX_cleanse zeros the digest state in `ctx` and then performs the
@@ -85,8 +89,9 @@ OPENSSL_EXPORT void EVP_MD_CTX_cleanse(EVP_MD_CTX *ctx);
 // EVP_MD_CTX_free calls `EVP_MD_CTX_cleanup` and then frees `ctx` itself.
 OPENSSL_EXPORT void EVP_MD_CTX_free(EVP_MD_CTX *ctx);
 
-// EVP_MD_CTX_copy_ex sets `out`, which must already be initialised, to be a
-// copy of `in`. It returns one on success and zero on allocation failure.
+// EVP_MD_CTX_copy_ex sets `out` to be a copy of `in`. It returns one on success
+// and zero on allocation failure. `out` must have been previously initialized,
+// e.g. with `EVP_MD_CTX_init` or `EVP_MD_CTX_new`.
 OPENSSL_EXPORT int EVP_MD_CTX_copy_ex(EVP_MD_CTX *out, const EVP_MD_CTX *in);
 
 // EVP_MD_CTX_move sets `out`, which must already be initialised, to the hash
@@ -100,15 +105,15 @@ OPENSSL_EXPORT int EVP_MD_CTX_reset(EVP_MD_CTX *ctx);
 
 // Digest operations.
 
-// EVP_DigestInit_ex configures `ctx`, which must already have been
-// initialised, for a fresh hashing operation using `type`. It returns one on
-// success and zero on allocation failure.
+// EVP_DigestInit_ex configures `ctx`, whose memory must already have been
+// initialised (e.g. with `EVP_MD_CTX_init` or `EVP_MD_CTX_new`), for a fresh
+// hashing operation using `type`. It returns one on success and zero on
+// allocation failure.
+//
+// This function may be used to reconfigure an `EVP_MD_CTX` that was previously
+// used for another operation.
 OPENSSL_EXPORT int EVP_DigestInit_ex(EVP_MD_CTX *ctx, const EVP_MD *type,
                                      ENGINE *engine);
-
-// EVP_DigestInit acts like `EVP_DigestInit_ex` except that `ctx` is
-// initialised before use.
-OPENSSL_EXPORT int EVP_DigestInit(EVP_MD_CTX *ctx, const EVP_MD *type);
 
 // EVP_DigestUpdate hashes `len` bytes from `data` into the hashing operation
 // in `ctx`. It returns one.
@@ -248,8 +253,32 @@ OPENSSL_EXPORT int EVP_marshal_digest_algorithm_no_params(CBB *cbb,
 
 // Deprecated functions.
 
-// EVP_MD_CTX_copy sets `out`, which must /not/ be initialised, to be a copy of
-// `in`. It returns one on success and zero on error.
+// EVP_DigestInit calls `EVP_MD_CTX_init`, followed by `EVP_DigestInit_ex`.
+//
+// `EVP_MD_CTX_init` is used for initializing uninitialized memory in an
+// `EVP_MD_CTX`, e.g. if it is declared as a local variable on the stack. Thus
+// this function should not be used on objects that have already been
+// initialized.
+//
+// WARNING: This differs from OpenSSL 1.1.x, where `EVP_DigestInit` and
+// `EVP_DigestInit_ex` are largely equivalent. This difference is because
+// BoringSSL, like OpenSSL 1.0.x, still supports stack-allocating `EVP_MD_CTX`.
+// Implementing the OpenSSL 1.1.x semantics would introduce uninitialized reads
+// in those callers.
+OPENSSL_EXPORT int EVP_DigestInit(EVP_MD_CTX *ctx, const EVP_MD *type);
+
+// EVP_MD_CTX_copy calls `EVP_MD_CTX_init`, followed by `EVP_MD_CTX_copy_ex`.
+//
+// `EVP_MD_CTX_init` is used for initializing uninitialized memory in an
+// `EVP_MD_CTX`, e.g. if it is declared as a local variable on the stack. Thus
+// this function should not be used on objects that have already been
+// initialized.
+//
+// WARNING: This differs from OpenSSL 1.1.x, where `EVP_MD_CTX_copy` and
+// |EVP_MD_CTX_copy_ex| are largely equivalent. This difference is because
+// BoringSSL, like OpenSSL 1.0.x, still supports stack-allocating `EVP_MD_CTX`.
+// Implementing the OpenSSL 1.1.x semantics would introduce uninitialized reads
+// in those callers.
 OPENSSL_EXPORT int EVP_MD_CTX_copy(EVP_MD_CTX *out, const EVP_MD_CTX *in);
 
 // EVP_add_digest does nothing and returns one. It exists only for
@@ -285,7 +314,7 @@ OPENSSL_EXPORT void EVP_MD_CTX_set_flags(EVP_MD_CTX *ctx, int flags);
 
 // EVP_MD_CTX_FLAG_NON_FIPS_ALLOW is meaningless. In OpenSSL it permits non-FIPS
 // algorithms in FIPS mode. But BoringSSL FIPS mode doesn't prohibit algorithms
-// (it's up the the caller to use the FIPS module in a fashion compliant with
+// (it's up to the caller to use the FIPS module in a fashion compliant with
 // their needs). Thus this exists only to allow code to compile.
 #define EVP_MD_CTX_FLAG_NON_FIPS_ALLOW 0
 

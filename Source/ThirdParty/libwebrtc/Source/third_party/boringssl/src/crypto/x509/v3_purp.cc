@@ -60,9 +60,9 @@ static int check_purpose_timestamp_sign(const X509_PURPOSE *xp, const X509 *x,
                                         int ca);
 static int no_check(const X509_PURPOSE *xp, const X509 *x, int ca);
 
-// X509_TRUST_NONE is not a valid |X509_TRUST_*| constant. It is used by
-// |X509_PURPOSE_ANY| to indicate that it has no corresponding trust type and
-// cannot be used with |X509_STORE_CTX_set_purpose|.
+// X509_TRUST_NONE is not a valid `X509_TRUST_*` constant. It is used by
+// `X509_PURPOSE_ANY` to indicate that it has no corresponding trust type and
+// cannot be used with `X509_STORE_CTX_set_purpose`.
 #define X509_TRUST_NONE (-1)
 
 static const X509_PURPOSE xstandard[] = {
@@ -79,7 +79,7 @@ static const X509_PURPOSE xstandard[] = {
     {X509_PURPOSE_CRL_SIGN, X509_TRUST_COMPAT, check_purpose_crl_sign,
      "crlsign"},
     {X509_PURPOSE_ANY, X509_TRUST_NONE, no_check, "any"},
-    // |X509_PURPOSE_OCSP_HELPER| performs no actual checks. OpenSSL's OCSP
+    // `X509_PURPOSE_OCSP_HELPER` performs no actual checks. OpenSSL's OCSP
     // implementation relied on the caller performing EKU and KU checks.
     {X509_PURPOSE_OCSP_HELPER, X509_TRUST_COMPAT, no_check, "ocsphelper"},
     {X509_PURPOSE_TIMESTAMP_SIGN, X509_TRUST_TSA, check_purpose_timestamp_sign,
@@ -100,9 +100,9 @@ int X509_check_purpose(X509 *x, int id, int ca) {
   if (pt == nullptr) {
     return 0;
   }
-  // Historically, |check_purpose| implementations other than |X509_PURPOSE_ANY|
-  // called |check_ca|. This is redundant with the |X509_V_ERR_INVALID_CA|
-  // logic, but |X509_check_purpose| is public API, so we preserve this
+  // Historically, `check_purpose` implementations other than `X509_PURPOSE_ANY`
+  // called `check_ca`. This is redundant with the `X509_V_ERR_INVALID_CA`
+  // logic, but `X509_check_purpose` is public API, so we preserve this
   // behavior.
   if (ca && id != X509_PURPOSE_ANY && !check_ca(x)) {
     return 0;
@@ -167,13 +167,13 @@ static int setup_dp(X509 *x, DIST_POINT *dp) {
 static int setup_crldp(X509 *x) {
   int j;
   auto *impl = FromOpaque(x);
-  impl->crldp = reinterpret_cast<STACK_OF(DIST_POINT) *>(
-      X509_get_ext_d2i(x, NID_crl_distribution_points, &j, nullptr));
+  impl->crldp.reset(reinterpret_cast<STACK_OF(DIST_POINT) *>(
+      X509_get_ext_d2i(x, NID_crl_distribution_points, &j, nullptr)));
   if (impl->crldp == nullptr && j != -1) {
     return 0;
   }
-  for (size_t i = 0; i < sk_DIST_POINT_num(impl->crldp); i++) {
-    if (!setup_dp(x, sk_DIST_POINT_value(impl->crldp, i))) {
+  for (size_t i = 0; i < sk_DIST_POINT_num(impl->crldp.get()); i++) {
+    if (!setup_dp(x, sk_DIST_POINT_value(impl->crldp.get(), i))) {
       return 0;
     }
   }
@@ -219,7 +219,7 @@ int bssl::x509v3_cache_extensions(X509 *x) {
         impl->ex_flags |= EXFLAG_INVALID;
         impl->ex_pathlen = 0;
       } else {
-        // TODO(davidben): |ASN1_INTEGER_get| returns -1 on overflow,
+        // TODO(davidben): `ASN1_INTEGER_get` returns -1 on overflow,
         // which currently acts as if the constraint isn't present. This
         // works (an overflowing path length constraint may as well be
         // infinity), but Chromium's verifier simply treats values above
@@ -299,13 +299,13 @@ int bssl::x509v3_cache_extensions(X509 *x) {
     impl->ex_flags |= EXFLAG_INVALID;
   }
 
-  impl->skid = reinterpret_cast<ASN1_OCTET_STRING *>(
-      X509_get_ext_d2i(x, NID_subject_key_identifier, &j, nullptr));
+  impl->skid.reset(reinterpret_cast<ASN1_OCTET_STRING *>(
+      X509_get_ext_d2i(x, NID_subject_key_identifier, &j, nullptr)));
   if (impl->skid == nullptr && j != -1) {
     impl->ex_flags |= EXFLAG_INVALID;
   }
-  impl->akid = reinterpret_cast<AUTHORITY_KEYID *>(
-      X509_get_ext_d2i(x, NID_authority_key_identifier, &j, nullptr));
+  impl->akid.reset(reinterpret_cast<AUTHORITY_KEYID *>(
+      X509_get_ext_d2i(x, NID_authority_key_identifier, &j, nullptr)));
   if (impl->akid == nullptr && j != -1) {
     impl->ex_flags |= EXFLAG_INVALID;
   }
@@ -313,18 +313,18 @@ int bssl::x509v3_cache_extensions(X509 *x) {
   if (!X509_NAME_cmp(X509_get_subject_name(x), X509_get_issuer_name(x))) {
     impl->ex_flags |= EXFLAG_SI;
     // If SKID matches AKID also indicate self signed
-    if (X509_check_akid(x, impl->akid) == X509_V_OK &&
+    if (X509_check_akid(x, impl->akid.get()) == X509_V_OK &&
         !ku_reject(x, X509v3_KU_KEY_CERT_SIGN)) {
       impl->ex_flags |= EXFLAG_SS;
     }
   }
-  impl->altname = reinterpret_cast<STACK_OF(GENERAL_NAME) *>(
-      X509_get_ext_d2i(x, NID_subject_alt_name, &j, nullptr));
+  impl->altname.reset(reinterpret_cast<STACK_OF(GENERAL_NAME) *>(
+      X509_get_ext_d2i(x, NID_subject_alt_name, &j, nullptr)));
   if (impl->altname == nullptr && j != -1) {
     impl->ex_flags |= EXFLAG_INVALID;
   }
-  impl->nc = reinterpret_cast<NAME_CONSTRAINTS *>(
-      X509_get_ext_d2i(x, NID_name_constraints, &j, nullptr));
+  impl->nc.reset(reinterpret_cast<NAME_CONSTRAINTS *>(
+      X509_get_ext_d2i(x, NID_name_constraints, &j, nullptr)));
   if (impl->nc == nullptr && j != -1) {
     impl->ex_flags |= EXFLAG_INVALID;
   }
@@ -347,7 +347,7 @@ int bssl::x509v3_cache_extensions(X509 *x) {
   return (impl->ex_flags & EXFLAG_INVALID) == 0;
 }
 
-// check_ca returns one if |x| should be considered a CA certificate and zero
+// check_ca returns one if `x` should be considered a CA certificate and zero
 // otherwise.
 static int check_ca(const X509 *x) {
   // keyUsage if present should allow cert signing
@@ -370,9 +370,9 @@ int X509_check_ca(const X509 *x) {
   return check_ca(x);
 }
 
-// check_purpose returns one if |x| is a valid part of a certificate path for
-// extended key usage |required_xku| and at least one of key usages in
-// |required_kus|. |ca| indicates whether |x| is a CA or end-entity certificate.
+// check_purpose returns one if `x` is a valid part of a certificate path for
+// extended key usage `required_xku` and at least one of key usages in
+// `required_kus`. `ca` indicates whether `x` is a CA or end-entity certificate.
 static int check_purpose(const X509 *x, int ca, int required_xku,
                          int required_kus) {
   // Check extended key usage on the entire chain.
@@ -480,7 +480,7 @@ int X509_check_issued(const X509 *issuer, const X509 *subject) {
 
   const auto *subject_impl = FromOpaque(subject);
   if (subject_impl->akid) {
-    int ret = X509_check_akid(issuer, subject_impl->akid);
+    int ret = X509_check_akid(issuer, subject_impl->akid.get());
     if (ret != X509_V_OK) {
       return ret;
     }
@@ -500,7 +500,7 @@ int bssl::X509_check_akid(const X509 *issuer, const AUTHORITY_KEYID *akid) {
   // Check key ids (if present)
   auto *issuer_impl = FromOpaque(issuer);
   if (akid->keyid && issuer_impl->skid &&
-      ASN1_OCTET_STRING_cmp(akid->keyid, issuer_impl->skid)) {
+      ASN1_OCTET_STRING_cmp(akid->keyid, issuer_impl->skid.get())) {
     return X509_V_ERR_AKID_SKID_MISMATCH;
   }
   // Check serial number
@@ -528,8 +528,8 @@ int bssl::X509_check_akid(const X509 *issuer, const AUTHORITY_KEYID *akid) {
 }
 
 uint32_t X509_get_extension_flags(X509 *x) {
-  // Ignore the return value. On failure, |impl->ex_flags| will include
-  // |EXFLAG_INVALID|.
+  // Ignore the return value. On failure, `impl->ex_flags` will include
+  // `EXFLAG_INVALID`.
   x509v3_cache_extensions(x);
   const auto *impl = FromOpaque(x);
   return impl->ex_flags;
@@ -544,7 +544,7 @@ uint32_t X509_get_key_usage(X509 *x) {
     return impl->ex_kusage;
   }
   // If there is no extension, key usage is unconstrained, so set all bits to
-  // one. Note that, although we use |UINT32_MAX|, |ex_kusage| only contains the
+  // one. Note that, although we use `UINT32_MAX`, `ex_kusage` only contains the
   // first 16 bits when the extension is present.
   return UINT32_MAX;
 }
@@ -567,7 +567,7 @@ const ASN1_OCTET_STRING *X509_get0_subject_key_id(X509 *x509) {
     return nullptr;
   }
   auto *impl = FromOpaque(x509);
-  return impl->skid;
+  return impl->skid.get();
 }
 
 const ASN1_OCTET_STRING *X509_get0_authority_key_id(X509 *x509) {

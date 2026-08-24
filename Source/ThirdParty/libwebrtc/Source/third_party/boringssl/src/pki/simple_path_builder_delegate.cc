@@ -68,6 +68,17 @@ bool SimplePathBuilderDelegate::IsDebugLogEnabled() { return false; }
 
 bool SimplePathBuilderDelegate::AcceptPreCertificates() { return false; }
 
+std::optional<SimplePathBuilderDelegate::MTCCosigner>
+SimplePathBuilderDelegate::GetMTCCosigner(Span<const uint8_t> cosigner_id) {
+  return std::nullopt;
+}
+
+bool SimplePathBuilderDelegate::IsCosignatureVerificationResultAcceptable(
+    const MTCAnchor* mtc_anchor,
+    std::vector<std::vector<uint8_t>> valid_additional_cosigners) {
+  return true;
+}
+
 void SimplePathBuilderDelegate::DebugLog(std::string_view msg) {}
 
 SignatureVerifyCache *SimplePathBuilderDelegate::GetVerifyCache() {

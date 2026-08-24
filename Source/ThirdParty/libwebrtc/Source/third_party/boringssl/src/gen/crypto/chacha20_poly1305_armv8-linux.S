@@ -7,6 +7,7 @@
 .section	.rodata
 
 .align	7
+chacha20_poly1305_constants:
 .Lchacha20_consts:
 .byte	'e','x','p','a','n','d',' ','3','2','-','b','y','t','e',' ','k'
 .Linc:
@@ -20,6 +21,7 @@
 
 .type	.Lpoly_hash_ad_internal,%function
 .align	6
+chacha20_poly1305_helpers:
 .Lpoly_hash_ad_internal:
 .cfi_startproc
 	cbnz	x4, .Lpoly_hash_intro

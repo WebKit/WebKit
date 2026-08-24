@@ -183,7 +183,7 @@ EC_GROUP *EC_GROUP_new_curve_GFp(const BIGNUM *p, const BIGNUM *a,
     ctx = new_ctx.get();
   }
 
-  // Historically, |a| and |b| were not required to be fully reduced.
+  // Historically, `a` and `b` were not required to be fully reduced.
   // TODO(davidben): Can this be removed?
   BN_CTXScope scope(ctx);
   BIGNUM *a_reduced = BN_CTX_get(ctx);
@@ -209,10 +209,10 @@ int EC_GROUP_set_generator(EC_GROUP *group, const EC_POINT *generator,
                            const BIGNUM *order, const BIGNUM *cofactor) {
   if (group->curve_name != NID_undef || group->has_order ||
       generator->group != group) {
-    // |EC_GROUP_set_generator| may only be used with |EC_GROUP|s returned by
-    // |EC_GROUP_new_curve_GFp| and may only used once on each group.
-    // |generator| must have been created from |EC_GROUP_new_curve_GFp|, not a
-    // copy, so that |generator->group->generator| is set correctly.
+    // `EC_GROUP_set_generator` may only be used with `EC_GROUP`s returned by
+    // `EC_GROUP_new_curve_GFp` and may only used once on each group.
+    // `generator` must have been created from `EC_GROUP_new_curve_GFp`, not a
+    // copy, so that `generator->group->generator` is set correctly.
     OPENSSL_PUT_ERROR(EC, ERR_R_SHOULD_NOT_HAVE_BEEN_CALLED);
     return 0;
   }
@@ -231,7 +231,7 @@ int EC_GROUP_set_generator(EC_GROUP *group, const EC_POINT *generator,
   // Require that p < 2×order. This simplifies some ECDSA operations.
   //
   // Note any curve which did not satisfy this must have been invalid or use a
-  // tiny prime (less than 17). See the proof in |field_element_to_scalar| in
+  // tiny prime (less than 17). See the proof in `field_element_to_scalar` in
   // the ECDSA implementation.
   UniquePtr<BIGNUM> tmp(BN_new());
   if (tmp == nullptr || !BN_lshift1(tmp.get(), order)) {
@@ -251,7 +251,7 @@ int EC_GROUP_set_generator(EC_GROUP *group, const EC_POINT *generator,
   group->field_greater_than_order = BN_cmp(&group->field.N, order) > 0;
   group->generator.raw.X = affine.X;
   group->generator.raw.Y = affine.Y;
-  // |raw.Z| was set to 1 by |EC_GROUP_new_curve_GFp|.
+  // `raw.Z` was set to 1 by `EC_GROUP_new_curve_GFp`.
   group->has_order = 1;
   return 1;
 }
@@ -303,7 +303,7 @@ EC_GROUP *EC_GROUP_dup(const EC_GROUP *a) {
   }
   auto *custom = static_cast<const ECCustomGroup *>(a);
 
-  // Groups are logically immutable (but for |EC_GROUP_set_generator| which must
+  // Groups are logically immutable (but for `EC_GROUP_set_generator` which must
   // be called early on), so we simply take a reference.
   ECCustomGroup *group = const_cast<ECCustomGroup *>(custom);
   group->UpRefInternal();
@@ -323,8 +323,8 @@ int EC_GROUP_cmp(const EC_GROUP *a, const EC_GROUP *b, BN_CTX *ignored) {
     return 0;
   }
 
-  // |a| and |b| are both custom curves. We compare the entire curve
-  // structure. If |a| or |b| is incomplete (due to legacy OpenSSL mistakes,
+  // `a` and `b` are both custom curves. We compare the entire curve
+  // structure. If `a` or `b` is incomplete (due to legacy OpenSSL mistakes,
   // custom curve construction is sadly done in two parts) but otherwise not the
   // same object, we consider them always unequal.
   return a->meth != b->meth ||  //
@@ -358,7 +358,7 @@ int EC_GROUP_order_bits(const EC_GROUP *group) {
 
 int EC_GROUP_get_cofactor(const EC_GROUP *group, BIGNUM *cofactor,
                           BN_CTX *ctx) {
-  // All |EC_GROUP|s have cofactor 1.
+  // All `EC_GROUP`s have cofactor 1.
   return BN_set_word(cofactor, 1);
 }
 
@@ -495,7 +495,7 @@ int EC_POINT_cmp(const EC_GROUP *group, const EC_POINT *a, const EC_POINT *b,
     return -1;
   }
 
-  // Note |EC_POINT_cmp| returns zero for equality and non-zero for inequality.
+  // Note `EC_POINT_cmp` returns zero for equality and non-zero for inequality.
   return ec_GFp_simple_points_equal(group, &a->raw, &b->raw) ? 0 : 1;
 }
 
@@ -661,7 +661,7 @@ static int arbitrary_bignum_to_scalar(const EC_GROUP *group, EC_SCALAR *out,
 int bssl::ec_point_mul_no_self_test(const EC_GROUP *group, EC_POINT *r,
                                     const BIGNUM *g_scalar, const EC_POINT *p,
                                     const BIGNUM *p_scalar, BN_CTX *ctx) {
-  // Previously, this function set |r| to the point at infinity if there was
+  // Previously, this function set `r` to the point at infinity if there was
   // nothing to multiply. But, nobody should be calling this function with
   // nothing to multiply in the first place.
   if ((g_scalar == nullptr && p_scalar == nullptr) ||
@@ -685,8 +685,8 @@ int bssl::ec_point_mul_no_self_test(const EC_GROUP *group, EC_POINT *r,
     ctx = new_ctx.get();
   }
 
-  // If both |g_scalar| and |p_scalar| are non-NULL,
-  // |ec_point_mul_scalar_public| would share the doublings between the two
+  // If both `g_scalar` and `p_scalar` are non-NULL,
+  // `ec_point_mul_scalar_public` would share the doublings between the two
   // products, which would be more efficient. However, we conservatively assume
   // the caller needs a constant-time operation. (ECDSA verification does not
   // use this function.)
@@ -768,7 +768,7 @@ int bssl::ec_point_mul_scalar(const EC_GROUP *group, EC_JACOBIAN *r,
 
   // Check the result is on the curve to defend against fault attacks or bugs.
   // This has negligible cost compared to the multiplication.
-  if (!ec_GFp_simple_is_on_curve(group, r)) {
+  if (!constant_time_declassify_int(ec_GFp_simple_is_on_curve(group, r))) {
     OPENSSL_PUT_ERROR(EC, ERR_R_INTERNAL_ERROR);
     return 0;
   }
@@ -810,7 +810,7 @@ int bssl::ec_point_mul_scalar_batch(
 
   // Check the result is on the curve to defend against fault attacks or bugs.
   // This has negligible cost compared to the multiplication.
-  if (!ec_GFp_simple_is_on_curve(group, r)) {
+  if (!constant_time_declassify_int(ec_GFp_simple_is_on_curve(group, r))) {
     OPENSSL_PUT_ERROR(EC, ERR_R_INTERNAL_ERROR);
     return 0;
   }
@@ -841,7 +841,7 @@ int bssl::ec_point_mul_scalar_precomp(
 
   // Check the result is on the curve to defend against fault attacks or bugs.
   // This has negligible cost compared to the multiplication.
-  if (!ec_GFp_simple_is_on_curve(group, r)) {
+  if (!constant_time_declassify_int(ec_GFp_simple_is_on_curve(group, r))) {
     OPENSSL_PUT_ERROR(EC, ERR_R_INTERNAL_ERROR);
     return 0;
   }
@@ -891,7 +891,7 @@ int bssl::ec_get_x_coordinate_as_scalar(const EC_GROUP *group, EC_SCALAR *out,
   // order. These may not have the same size. However, we must have p < 2×order,
   // assuming p is not tiny (p >= 17).
   //
-  // Thus |bytes| will fit in |order.width + 1| words, and we can reduce by
+  // Thus `bytes` will fit in `order.width + 1` words, and we can reduce by
   // performing at most one subtraction.
   //
   // Proof: We only work with prime order curves, so the number of points on
@@ -905,7 +905,7 @@ int bssl::ec_get_x_coordinate_as_scalar(const EC_GROUP *group, EC_SCALAR *out,
   //                     p  < 2×order
   //
   // Additionally, one can manually check this property for built-in curves. It
-  // is enforced for legacy custom curves in |EC_GROUP_set_generator|.
+  // is enforced for legacy custom curves in `EC_GROUP_set_generator`.
   const BIGNUM *order = EC_GROUP_get0_order(group);
   BN_ULONG words[EC_MAX_WORDS + 1] = {0};
   bn_big_endian_to_words(words, order->width + 1, bytes, len);
@@ -953,7 +953,7 @@ int EC_GROUP_get_asn1_flag(const EC_GROUP *group) {
 
 const EC_METHOD *EC_GROUP_method_of(const EC_GROUP *group) {
   // This function exists purely to give callers a way to call
-  // |EC_METHOD_get_field_type|. cryptography.io crashes if |EC_GROUP_method_of|
+  // `EC_METHOD_get_field_type`. cryptography.io crashes if `EC_GROUP_method_of`
   // returns NULL, so return some other garbage pointer.
   return (const EC_METHOD *)0x12340000;
 }

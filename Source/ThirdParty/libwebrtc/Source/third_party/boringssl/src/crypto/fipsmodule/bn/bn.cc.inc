@@ -28,8 +28,8 @@
 
 using namespace bssl;
 
-// BN_MAX_WORDS is the maximum number of words allowed in a |BIGNUM|. It is
-// sized so byte and bit counts of a |BIGNUM| always fit in |int|, with room to
+// BN_MAX_WORDS is the maximum number of words allowed in a `BIGNUM`. It is
+// sized so byte and bit counts of a `BIGNUM` always fit in `int`, with room to
 // spare.
 #define BN_MAX_WORDS (INT_MAX / (4 * BN_BITS2))
 
@@ -123,25 +123,25 @@ DEFINE_METHOD_FUNCTION(BIGNUM, BN_value_one) {
 }
 
 // BN_num_bits_word returns the minimum number of bits needed to represent the
-// value in |l|.
+// value in `l`.
 unsigned BN_num_bits_word(BN_ULONG l) {
-  // |BN_num_bits| is often called on RSA prime factors. These have public bit
+  // `BN_num_bits` is often called on RSA prime factors. These have public bit
   // lengths, but all bits beyond the high bit are secret, so count bits in
   // constant time.
   BN_ULONG x, mask;
   int bits = (l != 0);
 
 #if BN_BITS2 > 32
-  // Look at the upper half of |x|. |x| is at most 64 bits long.
+  // Look at the upper half of `x`. `x` is at most 64 bits long.
   x = l >> 32;
-  // Set |mask| to all ones if |x| (the top 32 bits of |l|) is non-zero and all
+  // Set `mask` to all ones if `x` (the top 32 bits of `l`) is non-zero and all
   // all zeros otherwise.
   mask = 0u - x;
   mask = (0u - (mask >> (BN_BITS2 - 1)));
-  // If |x| is non-zero, the lower half is included in the bit count in full,
+  // If `x` is non-zero, the lower half is included in the bit count in full,
   // and we count the upper half. Otherwise, we count the lower half.
   bits += 32 & mask;
-  l ^= (x ^ l) & mask;  // |l| is |x| if |mask| and remains |l| otherwise.
+  l ^= (x ^ l) & mask;  // `l` is `x` if `mask` and remains `l` otherwise.
 #endif
 
   // The remaining blocks are analogous iterations at lower powers of two.
@@ -235,7 +235,7 @@ int bssl::bn_set_words(BIGNUM *bn, const BN_ULONG *words, size_t num) {
     return 0;
   }
   OPENSSL_memmove(bn->d, words, num * sizeof(BN_ULONG));
-  // |bn_wexpand| verified that |num| isn't too large.
+  // `bn_wexpand` verified that `num` isn't too large.
   bn->width = (int)num;
   bn->neg = 0;
   return 1;
@@ -255,7 +255,7 @@ void bssl::bn_set_static_words(BIGNUM *bn, const BN_ULONG *words, size_t num) {
 }
 
 int bssl::bn_fits_in_words(const BIGNUM *bn, size_t num) {
-  // All words beyond |num| must be zero.
+  // All words beyond `num` must be zero.
   BN_ULONG mask = 0;
   for (size_t i = num; i < (size_t)bn->width; i++) {
     mask |= bn->d[i];

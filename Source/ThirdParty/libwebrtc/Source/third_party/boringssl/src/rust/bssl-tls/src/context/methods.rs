@@ -21,19 +21,34 @@ use core::{
 use once_cell::sync::Lazy;
 
 use crate::{
+    EarlyCallbackMethods,
     Methods,
+    PrivateKeyMethods,
     VerifyCertificateMethods,
     context::{
+        DtlsExternalVerifierMode,
         DtlsMode,
         QuicMode,
-        TlsMode, //
+        TlsExternalVerifierMode, //
+        TlsMode,
     },
-    credentials::VerifyCertificate,
+    credentials::{
+        PrivateKeyDelegate,
+        VerifyCertificate,
+        early_callback::EarlyCallback,
+        methods::{
+            complete,
+            decrypt,
+            sign, //
+        }, //
+    },
     methods::drop_box_rust_methods, //
 };
 
 pub(crate) struct RustContextMethods<M> {
+    pub(crate) private_key_methods: Option<Box<dyn PrivateKeyDelegate>>,
     pub(crate) verify_certificate_methods: Option<Box<dyn VerifyCertificate>>,
+    pub(crate) early_callback_handler: Option<Box<dyn EarlyCallback<M>>>,
     _p: PhantomData<fn() -> M>,
 }
 
@@ -42,7 +57,9 @@ pub(crate) struct RustContextMethods<M> {
 impl<M> RustContextMethods<M> {
     pub fn new() -> Self {
         Self {
+            private_key_methods: None,
             verify_certificate_methods: None,
+            early_callback_handler: None,
             _p: PhantomData,
         }
     }
@@ -64,9 +81,21 @@ impl<M: HasTlsContextMethod> Methods for RustContextMethods<M> {
     }
 }
 
+impl<M: HasTlsContextMethod> PrivateKeyMethods for RustContextMethods<M> {
+    fn private_key_methods(&self) -> Option<&dyn PrivateKeyDelegate> {
+        self.private_key_methods.as_deref()
+    }
+}
+
 impl<M: HasTlsContextMethod> VerifyCertificateMethods for RustContextMethods<M> {
     fn verify_certificate_methods(&self) -> Option<&dyn VerifyCertificate> {
         self.verify_certificate_methods.as_deref()
+    }
+}
+
+impl<M: HasTlsContextMethod> EarlyCallbackMethods<M> for RustContextMethods<M> {
+    fn early_callback_handler(&self) -> Option<&dyn EarlyCallback<M>> {
+        self.early_callback_handler.as_deref()
     }
 }
 
@@ -92,26 +121,54 @@ pub(crate) trait HasTlsContextMethod {
     fn registration() -> c_int;
 }
 
-impl HasTlsContextMethod for TlsMode {
-    #[inline(always)]
-    fn registration() -> c_int {
-        static TLS_CONTEXT_METHOD: Lazy<c_int> = Lazy::new(register_tls_context_vtable::<TlsMode>);
-        *TLS_CONTEXT_METHOD
-    }
+macro_rules! impl_has_tls_context_method {
+    ($($mode:ty),+ $(,)?) => {
+        $(
+            impl HasTlsContextMethod for $mode {
+                #[inline(always)]
+                fn registration() -> c_int {
+                    static TLS_CONTEXT_METHOD: Lazy<c_int> =
+                        Lazy::new(register_tls_context_vtable::<$mode>);
+                    *TLS_CONTEXT_METHOD
+                }
+            }
+        )+
+    };
 }
 
-impl HasTlsContextMethod for DtlsMode {
-    #[inline(always)]
-    fn registration() -> c_int {
-        static TLS_CONTEXT_METHOD: Lazy<c_int> = Lazy::new(register_tls_context_vtable::<DtlsMode>);
-        *TLS_CONTEXT_METHOD
-    }
+impl_has_tls_context_method! {
+    TlsMode,
+    TlsExternalVerifierMode,
+    DtlsMode,
+    DtlsExternalVerifierMode,
+    QuicMode,
 }
 
-impl HasTlsContextMethod for QuicMode {
-    #[inline(always)]
-    fn registration() -> c_int {
-        static TLS_CONTEXT_METHOD: Lazy<c_int> = Lazy::new(register_tls_context_vtable::<QuicMode>);
-        *TLS_CONTEXT_METHOD
-    }
+pub(super) trait HasPrivateKeyMethods {
+    const METHODS: *const bssl_sys::SSL_PRIVATE_KEY_METHOD;
+}
+
+macro_rules! impl_private_key_methods {
+    ($wrapper:ident, $($mode:ty),+ $(,)?) => {
+        $(
+            impl HasPrivateKeyMethods for $mode {
+                const METHODS: *const bssl_sys::SSL_PRIVATE_KEY_METHOD = {
+                    &bssl_sys::SSL_PRIVATE_KEY_METHOD {
+                        sign: Some(sign::<$wrapper<$mode>>),
+                        decrypt: Some(decrypt::<$wrapper<$mode>>),
+                        complete: Some(complete::<$wrapper<$mode>>),
+                    } as _
+                };
+            }
+        )+
+    };
+}
+
+impl_private_key_methods! {
+    RustContextMethods,
+    TlsMode,
+    TlsExternalVerifierMode,
+    DtlsMode,
+    DtlsExternalVerifierMode,
+    QuicMode,
 }

@@ -337,7 +337,7 @@ static STACK_OF(TRUST_TOKEN_PRETOKEN) *pmbtoken_blind(
   }
 
   for (size_t i = 0; i < count; i++) {
-    // Insert |pretoken| into |pretokens| early to simplify error-handling.
+    // Insert `pretoken` into `pretokens` early to simplify error-handling.
     TRUST_TOKEN_PRETOKEN *pretoken = New<TRUST_TOKEN_PRETOKEN>();
     if (pretoken == nullptr ||
         !sk_TRUST_TOKEN_PRETOKEN_push(pretokens, pretoken)) {
@@ -356,7 +356,7 @@ static STACK_OF(TRUST_TOKEN_PRETOKEN) *pmbtoken_blind(
       OPENSSL_memcpy(pretoken->t, pretoken->salt, TRUST_TOKEN_NONCE_SIZE);
     }
 
-    // We sample |pretoken->r| in Montgomery form to simplify inverting.
+    // We sample `pretoken->r` in Montgomery form to simplify inverting.
     if (!ec_random_nonzero_scalar(group, &pretoken->r,
                                   kDefaultAdditionalData)) {
       goto err;
@@ -833,7 +833,7 @@ static int pmbtoken_sign(const PMBTOKEN_METHOD *method,
 
       uint8_t s[TRUST_TOKEN_NONCE_SIZE];
       RAND_bytes(s, TRUST_TOKEN_NONCE_SIZE);
-      // The |jacobians| and |affines| contain Sp, Wp, and Wsp.
+      // The `jacobians` and `affines` contain Sp, Wp, and Wsp.
       EC_JACOBIAN jacobians[3];
       EC_AFFINE affines[3];
       if (!method->hash_s(group, &jacobians[0], &Tp_affine, s) ||
@@ -996,7 +996,7 @@ static STACK_OF(TRUST_TOKEN) *pmbtoken_unblind(
       goto err;
     }
 
-    // Serialize the token. Include |key_id| to avoid an extra copy in the layer
+    // Serialize the token. Include `key_id` to avoid an extra copy in the layer
     // above.
     CBB token_cbb;
     size_t point_len = ec_point_byte_len(group, POINT_CONVERSION_UNCOMPRESSED);
@@ -1106,7 +1106,7 @@ static int pmbtoken_read(const PMBTOKEN_METHOD *method,
   }
 
   // We perform three multiplications with S and T. This is enough that it is
-  // worth using |ec_point_mul_scalar_precomp|.
+  // worth using `ec_point_mul_scalar_precomp`.
   EC_JACOBIAN S_jacobian;
   EC_PRECOMP S_precomp, T_precomp;
   ec_affine_to_jacobian(group, &S_jacobian, &S);
@@ -1198,7 +1198,7 @@ static PMBTOKEN_METHOD pmbtoken_exp1_method;
 static CRYPTO_once_t pmbtoken_exp1_method_once = CRYPTO_ONCE_INIT;
 
 static void pmbtoken_exp1_init_method_impl() {
-  // This is the output of |ec_hash_to_scalar_p384_xmd_sha512_draft07| with DST
+  // This is the output of `ec_hash_to_scalar_p384_xmd_sha512_draft07` with DST
   // "PMBTokens Experiment V1 HashH" and message "generator".
   static const uint8_t kH[] = {
       0x04, 0x82, 0xd5, 0x68, 0xf5, 0x39, 0xf6, 0x08, 0x19, 0xa1, 0x75,
@@ -1373,7 +1373,7 @@ static PMBTOKEN_METHOD pmbtoken_exp2_method;
 static CRYPTO_once_t pmbtoken_exp2_method_once = CRYPTO_ONCE_INIT;
 
 static void pmbtoken_exp2_init_method_impl() {
-  // This is the output of |ec_hash_to_scalar_p384_xmd_sha512_draft07| with DST
+  // This is the output of `ec_hash_to_scalar_p384_xmd_sha512_draft07` with DST
   // "PMBTokens Experiment V2 HashH" and message "generator".
   static const uint8_t kH[] = {
       0x04, 0xbc, 0x27, 0x24, 0x99, 0xfa, 0xc9, 0xa4, 0x74, 0x6f, 0xf9,
@@ -1548,7 +1548,7 @@ static PMBTOKEN_METHOD pmbtoken_pst1_method;
 static CRYPTO_once_t pmbtoken_pst1_method_once = CRYPTO_ONCE_INIT;
 
 static void pmbtoken_pst1_init_method_impl() {
-  // This is the output of |ec_hash_to_scalar_p384_xmd_sha384| with DST
+  // This is the output of `ec_hash_to_scalar_p384_xmd_sha384` with DST
   // "PMBTokens PST V1 HashH" and message "generator".
   static const uint8_t kH[] = {
       0x04, 0x4c, 0xfa, 0xd4, 0x33, 0x6d, 0x8c, 0x4e, 0x18, 0xce, 0x1a,

@@ -162,7 +162,7 @@ size_t EC_POINT_point2oct(const EC_GROUP *group, const EC_POINT *point,
     return 0;
   }
   if (buf == nullptr) {
-    // When |buf| is NULL, just return the number of bytes that would be
+    // When `buf` is NULL, just return the number of bytes that would be
     // written, without doing an expensive Jacobian-to-affine conversion.
     if (ec_GFp_simple_is_at_infinity(group, &point->raw)) {
       OPENSSL_PUT_ERROR(EC, EC_R_POINT_AT_INFINITY);

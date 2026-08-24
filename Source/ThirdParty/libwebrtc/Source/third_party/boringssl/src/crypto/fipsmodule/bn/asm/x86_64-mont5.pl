@@ -3479,7 +3479,7 @@ bn_gather5:
 	# I can't trust assembler to use specific encoding:-(
 	.byte	0x4c,0x8d,0x14,0x24			#lea    (%rsp),%r10
 .cfi_def_cfa_register	%r10
-	.byte	0x48,0x81,0xec,0x08,0x01,0x00,0x00	#sub	$0x108,%rsp
+	.byte	0x48,0x81,0xec,0x08,0x01,0x00,0x00	#sub	\$0x108,%rsp
 	lea	.Linc(%rip),%rax
 	and	\$-16,%rsp		# shouldn't be formally required
 
@@ -3575,7 +3575,9 @@ ___
 }
 $code.=<<___;
 .section .rodata
+
 .align	64
+mont5_increments:
 .Linc:
 	.long	0,0, 1,1
 	.long	2,2, 2,2

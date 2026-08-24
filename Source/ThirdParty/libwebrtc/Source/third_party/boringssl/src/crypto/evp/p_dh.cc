@@ -77,7 +77,7 @@ static int dh_param_copy(EvpPkey *to, const EvpPkey *from) {
     return 0;
   }
 
-  // |DH_set0_pqg| took ownership of |p|, |q|, and |g|.
+  // `DH_set0_pqg` took ownership of `p`, `q`, and `g`.
   return 1;
 }
 
@@ -252,7 +252,7 @@ static int pkey_dh_ctrl(EvpPkeyCtx *ctx, int type, int p1, void *p2) {
   DH_PKEY_CTX *dctx = reinterpret_cast<DH_PKEY_CTX *>(ctx->data);
   switch (type) {
     case EVP_PKEY_CTRL_PEER_KEY:
-      // |EVP_PKEY_derive_set_peer| requires the key implement this command,
+      // `EVP_PKEY_derive_set_peer` requires the key implement this command,
       // even if it is a no-op.
       return 1;
 

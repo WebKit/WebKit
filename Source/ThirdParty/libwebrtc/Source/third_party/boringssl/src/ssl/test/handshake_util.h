@@ -26,12 +26,12 @@
 #define HANDSHAKER_SUPPORTED
 #endif
 
-// RetryAsync is called after a failed operation on |ssl| with return code
-// |ret|. If the operation should be retried, it simulates one asynchronous
+// RetryAsync is called after a failed operation on `ssl` with return code
+// `ret`. If the operation should be retried, it simulates one asynchronous
 // event and returns true. Otherwise it returns false.
 bool RetryAsync(SSL *ssl, int ret);
 
-// CheckIdempotentError runs |func|, an operation on |ssl|, ensuring that
+// CheckIdempotentError runs `func`, an operation on `ssl`, ensuring that
 // errors are idempotent.
 int CheckIdempotentError(const char *name, SSL *ssl, std::function<int()> func);
 
@@ -41,20 +41,20 @@ inline constexpr int kExitCodeMustFail = 90;
 #if defined(HANDSHAKER_SUPPORTED)
 // DoSplitHandshake delegates the SSL handshake to a separate process, called
 // the handshaker.  This process proxies I/O between the handshaker and the
-// client, using the |BIO| from |ssl|.  After a successful handshake, |ssl| is
-// replaced with a new |SSL| object, in a way that is intended to be invisible
+// client, using the `BIO` from `ssl`.  After a successful handshake, `ssl` is
+// replaced with a new `SSL` object, in a way that is intended to be invisible
 // to the caller.
 bool DoSplitHandshake(bssl::UniquePtr<SSL> *ssl, SettingsWriter *writer,
                       bool is_resume);
 
 // GetHandshakeHint requests a handshake hint from the handshaker process and
-// configures the result on |ssl|. It returns true on success and false on
+// configures the result on `ssl`. It returns true on success and false on
 // error.
 bool GetHandshakeHint(SSL *ssl, SettingsWriter *writer, bool is_resume,
                       const SSL_CLIENT_HELLO *client_hello);
 
 // The protocol between the proxy and the handshaker is defined by these
-// single-character prefixes. |kControlMsgDone| uses 'H' for compatibility with
+// single-character prefixes. `kControlMsgDone` uses 'H' for compatibility with
 // older binaries.
 inline constexpr char kControlMsgWantRead = 'R';        // Handshaker wants data
 inline constexpr char kControlMsgWriteCompleted = 'W';  // Proxy has sent data

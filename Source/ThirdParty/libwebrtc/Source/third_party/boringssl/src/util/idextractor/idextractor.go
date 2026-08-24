@@ -29,11 +29,11 @@ type Options struct {
 	DumpFullTree bool
 	// KeepGoing does not bail out on parse errors.
 	KeepGoing bool
-	// Language is the langauge to parse the AST as.
+	// Language is the language to parse the AST as.
 	Language string
 }
 
-// New creates a new identiifer extractor.
+// New creates a new identifier extractor.
 func New(reporter func(IdentifierInfo) error, options Options) *extractor {
 	x := &extractor{
 		extractorStatic: &extractorStatic{

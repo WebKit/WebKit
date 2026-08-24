@@ -35,8 +35,8 @@ EC_KEY *EC_KEY_derive_from_secret(const EC_GROUP *group, const uint8_t *secret,
     return nullptr;
   }
 
-  // Assemble a label string to provide some key separation in case |secret| is
-  // misused, but ultimately it's on the caller to ensure |secret| is suitably
+  // Assemble a label string to provide some key separation in case `secret` is
+  // misused, but ultimately it's on the caller to ensure `secret` is suitably
   // separated.
   static const char kLabel[] = "derive EC key ";
   char info[sizeof(kLabel) + EC_KEY_DERIVE_MAX_NAME_LEN];
@@ -70,9 +70,9 @@ EC_KEY *EC_KEY_derive_from_secret(const EC_GROUP *group, const uint8_t *secret,
   bssl::UniquePtr<BIGNUM> priv(BN_bin2bn(derived, derived_len, nullptr));
   bssl::UniquePtr<EC_POINT> pub(EC_POINT_new(group));
   if (key == nullptr || ctx == nullptr || priv == nullptr || pub == nullptr ||
-      // Reduce |priv| with Montgomery reduction. First, convert "from"
-      // Montgomery form to compute |priv| * R^-1 mod |order|. This requires
-      // |priv| be under order * R, which is true if the group order is large
+      // Reduce `priv` with Montgomery reduction. First, convert "from"
+      // Montgomery form to compute `priv` * R^-1 mod `order`. This requires
+      // `priv` be under order * R, which is true if the group order is large
       // enough. 2^(num_bytes(order)) < 2^8 * order, so:
       //
       //    priv < 2^8 * order * 2^128 < order * order < order * R

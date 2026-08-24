@@ -45,9 +45,9 @@ BSSL_NAMESPACE_BEGIN
 // allocation and not new T[n].
 //
 // When called with no arguments, it performs value-initialization, not
-// default-initialization. This means that, if selects a non-user-provided
+// default-initialization. This means that, if it selects a non-user-provided
 // constructor, the object will be zero-initialized. (As in any C++ type, once
-// `T` gains a user-provided constructors, it is responsible for initializing
+// `T` gains a user-provided constructor, it is responsible for initializing
 // all fields explicitly.)
 //
 // Note: unlike `new`, this does not support non-public constructors.
@@ -131,7 +131,7 @@ class RefCounted {
   // should call these. `DecRefInternal` returns true if the object was freed
   // and false if there are still references.
   void UpRefInternal() const {
-    // Safety: the folowing call does not mutate anything other than the atomic
+    // Safety: the following call does not mutate anything other than the atomic
     // ref-count variable.
     CRYPTO_refcount_inc(&references_);
   }

@@ -67,7 +67,7 @@ EVP_PKEY *PEM_read_bio_PrivateKey(BIO *bp, EVP_PKEY **x, pem_password_cb *cb,
     if (!cb) {
       cb = PEM_def_callback;
     }
-    pass_len = cb(psbuf, PEM_BUFSIZE, 0, u);
+    pass_len = cb(psbuf, PEM_BUFSIZE, /*enc=*/0, u);
     if (pass_len < 0) {
       OPENSSL_PUT_ERROR(PEM, PEM_R_BAD_PASSWORD_READ);
       X509_SIG_free(p8);
@@ -82,7 +82,7 @@ EVP_PKEY *PEM_read_bio_PrivateKey(BIO *bp, EVP_PKEY **x, pem_password_cb *cb,
     ret = EVP_PKCS82PKEY(p8inf);
     if (x) {
       if (*x) {
-        EVP_PKEY_free((EVP_PKEY *)*x);
+        EVP_PKEY_free(*x);
       }
       *x = ret;
     }
@@ -96,7 +96,13 @@ EVP_PKEY *PEM_read_bio_PrivateKey(BIO *bp, EVP_PKEY **x, pem_password_cb *cb,
     ret = d2i_PrivateKey(EVP_PKEY_EC, x, &p, len);
   } else if (strcmp(nm, PEM_STRING_DSA) == 0) {
     ret = d2i_PrivateKey(EVP_PKEY_DSA, x, &p, len);
+  } else {
+    // `PEM_bytes_read_bio` should not have returned a PEM type this function
+    // does not recognized.
+    OPENSSL_PUT_ERROR(PEM, ERR_R_INTERNAL_ERROR);
+    goto err;
   }
+
 p8err:
   if (ret == nullptr) {
     OPENSSL_PUT_ERROR(PEM, ERR_R_ASN1_LIB);
@@ -108,7 +114,7 @@ err:
   return ret;
 }
 
-int PEM_write_bio_PrivateKey(BIO *bp, EVP_PKEY *x, const EVP_CIPHER *enc,
+int PEM_write_bio_PrivateKey(BIO *bp, const EVP_PKEY *x, const EVP_CIPHER *enc,
                              const unsigned char *pass, int pass_len,
                              pem_password_cb *cb, void *u) {
   return PEM_write_bio_PKCS8PrivateKey(bp, x, enc, (const char *)pass, pass_len,
@@ -127,7 +133,7 @@ EVP_PKEY *PEM_read_PrivateKey(FILE *fp, EVP_PKEY **x, pem_password_cb *cb,
   return ret;
 }
 
-int PEM_write_PrivateKey(FILE *fp, EVP_PKEY *x, const EVP_CIPHER *enc,
+int PEM_write_PrivateKey(FILE *fp, const EVP_PKEY *x, const EVP_CIPHER *enc,
                          const unsigned char *pass, int pass_len,
                          pem_password_cb *cb, void *u) {
   BIO *b = BIO_new_fp(fp, BIO_NOCLOSE);

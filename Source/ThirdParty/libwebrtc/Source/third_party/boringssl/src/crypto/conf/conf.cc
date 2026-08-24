@@ -154,7 +154,7 @@ static int is_quote(char c) { return c == '"' || c == '\'' || c == '`'; }
 static int is_esc(char c) { return c == '\\'; }
 
 static int is_conf_ws(char c) {
-  // This differs from |OPENSSL_isspace| in that CONF does not accept '\v' and
+  // This differs from `OPENSSL_isspace` in that CONF does not accept '\v' and
   // '\f' as whitespace.
   return c == ' ' || c == '\t' || c == '\r' || c == '\n';
 }
@@ -285,7 +285,7 @@ static int add_string(const CONF *conf, CONF_SECTION *section,
 
   CONF_VALUE *old_value;
   if (!lh_CONF_VALUE_insert(conf->values, &old_value, value)) {
-    // Remove |value| from |section->values|, so we do not leave a dangling
+    // Remove `value` from `section->values`, so we do not leave a dangling
     // pointer.
     sk_CONF_VALUE_pop(section->values);
     return 0;

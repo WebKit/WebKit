@@ -336,7 +336,9 @@ $code .= <<____;
 .size	gcm_ghash_ssse3,.-gcm_ghash_ssse3
 
 .section .rodata
+
 .align	16
+ghash_ssse3_constants:
 # .Lreverse_bytes is a permutation which, if applied with pshufb, reverses the
 # bytes in an XMM register.
 .Lreverse_bytes:

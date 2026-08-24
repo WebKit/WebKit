@@ -67,7 +67,7 @@ static int ccm128_init_state(const struct ccm128_context *ctx,
   const unsigned M = ctx->M;
   const unsigned L = ctx->L;
 
-  // |L| determines the expected |nonce_len| and the limit for |plaintext_len|.
+  // `L` determines the expected `nonce_len` and the limit for `plaintext_len`.
   if (plaintext_len > CRYPTO_ccm128_max_input(ctx)) {
     OPENSSL_PUT_ERROR(CIPHER, CIPHER_R_TOO_LARGE);
     return 0;
@@ -155,8 +155,8 @@ static int ccm128_init_state(const struct ccm128_context *ctx,
     return 0;
   }
 
-  // Assemble the first block for encrypting and decrypting. The bottom |L|
-  // bytes are replaced with a counter and all bit the encoding of |L| is
+  // Assemble the first block for encrypting and decrypting. The bottom `L`
+  // bytes are replaced with a counter and all bit the encoding of `L` is
   // cleared in the first byte.
   state->nonce[0] &= 7;
   return 1;

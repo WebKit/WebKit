@@ -1020,7 +1020,9 @@ sha512_block_data_order_nohw:
 .size	sha512_block_data_order_nohw,.-sha512_block_data_order_nohw
 
 .section	.rodata
+
 .align	6
+sha512_constants:
 .type	.LK512,%object
 .LK512:
 .quad	0x428a2f98d728ae22,0x7137449123ef65cd

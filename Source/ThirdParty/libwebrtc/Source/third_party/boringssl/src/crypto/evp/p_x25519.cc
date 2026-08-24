@@ -333,7 +333,7 @@ static int pkey_x25519_derive(EvpPkeyCtx *ctx, uint8_t *out, size_t *out_len) {
 static int pkey_x25519_ctrl(EvpPkeyCtx *ctx, int type, int p1, void *p2) {
   switch (type) {
     case EVP_PKEY_CTRL_PEER_KEY:
-      // |EVP_PKEY_derive_set_peer| requires the key implement this command,
+      // `EVP_PKEY_derive_set_peer` requires the key implement this command,
       // even if it is a no-op.
       return 1;
 

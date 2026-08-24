@@ -15,6 +15,17 @@
 package runner
 
 func addCompliancePolicyTests() {
+	// When testing curves and signature algorithms, we need to exclude RSA key
+	// exchange ciphers, otherwise the server will just fall back to those. One
+	// of the compliance policies still allows these, despite the issues being
+	// known since 1998.
+	var ecdheAndSignCiphers []uint16
+	for _, suite := range testCipherSuites {
+		if !isPSKSuite(suite.name) && !isRSAKeyExchange(suite.name) {
+			ecdheAndSignCiphers = append(ecdheAndSignCiphers, suite.id)
+		}
+	}
+
 	for _, protocol := range []protocol{tls, quic} {
 		for _, suite := range testCipherSuites {
 			var isFIPSCipherSuite bool
@@ -35,6 +46,8 @@ func addCompliancePolicyTests() {
 				TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,
 				TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384:
 				isWPACipherSuite = true
+				isCNSA1CipherSuite = true
+			case TLS_RSA_WITH_AES_256_GCM_SHA384:
 				isCNSA1CipherSuite = true
 			}
 
@@ -173,6 +186,7 @@ func addCompliancePolicyTests() {
 					config: Config{
 						MinVersion:       VersionTLS12,
 						MaxVersion:       VersionTLS13,
+						CipherSuites:     ecdheAndSignCiphers,
 						CurvePreferences: []CurveID{curve.id},
 					},
 					flags: []string{
@@ -188,6 +202,7 @@ func addCompliancePolicyTests() {
 					config: Config{
 						MinVersion:       VersionTLS12,
 						MaxVersion:       VersionTLS13,
+						CipherSuites:     ecdheAndSignCiphers,
 						CurvePreferences: []CurveID{curve.id},
 					},
 					flags: []string{
@@ -289,6 +304,7 @@ func addCompliancePolicyTests() {
 					config: Config{
 						MinVersion:                VersionTLS12,
 						MaxVersion:                maxVersion,
+						CipherSuites:              ecdheAndSignCiphers,
 						VerifySignatureAlgorithms: []signatureAlgorithm{sigalg.id},
 					},
 					// Use the base certificate. We wish to pick up the signature algorithm
@@ -303,9 +319,10 @@ func addCompliancePolicyTests() {
 					protocol: protocol,
 					name:     "Compliance" + policy.flag + "-" + protocol.String() + "-Client-" + sigalg.name,
 					config: Config{
-						MinVersion: VersionTLS12,
-						MaxVersion: maxVersion,
-						Credential: cert,
+						MinVersion:   VersionTLS12,
+						MaxVersion:   maxVersion,
+						CipherSuites: ecdheAndSignCiphers,
+						Credential:   cert,
 					},
 					flags: []string{
 						policy.flag,

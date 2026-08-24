@@ -201,7 +201,7 @@ static void omac_with_tag_iovec_out(const struct aead_aes_eax_ctx *aes_ctx,
       });
 }
 
-// Encrypts/decrypts |in_len| bytes from |in| to |out| using AES-CTR with |n| as
+// Encrypts/decrypts `in_len` bytes from `in` to `out` using AES-CTR with `n` as
 // the IV.
 static void aes_ctr(const struct aead_aes_eax_ctx *aes_ctx,
                     Span<const CRYPTO_IOVEC> iovecs,
@@ -273,9 +273,7 @@ static int aead_aes_eax_openv_detached(const EVP_AEAD_CTX *ctx,
     return 0;
   }
 
-  const uint64_t in_len_64 = bssl::iovec::TotalLength(iovecs);
-  if (in_tag.size() != EVP_AEAD_AES_EAX_TAG_LEN ||
-      in_len_64 > (UINT64_C(1) << 36) + AES_BLOCK_SIZE) {
+  if (in_tag.size() != EVP_AEAD_AES_EAX_TAG_LEN) {
     OPENSSL_PUT_ERROR(CIPHER, CIPHER_R_BAD_DECRYPT);
     return 0;
   }

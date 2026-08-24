@@ -31,10 +31,7 @@ use crate::{
         TlsConnection, //
     },
     context::TlsContextBuilder,
-    credentials::{
-        Certificate,
-        TlsCredentialBuilder, //
-    },
+    credentials::{Certificate, TlsCredential, TlsCredentialBuilder},
     errors::Error,
     io::{
         AbstractReader,
@@ -49,45 +46,42 @@ use bssl_x509::{
     certificates::X509Certificate,
     keys::PrivateKey,
     params::Trust,
-    store::X509StoreBuilder, //
+    store::{
+        X509Store,
+        X509StoreBuilder, //
+    },
 };
 use futures::future::join;
 
-const CA: &[u8] = include_bytes!("../../test-data/BoringSSLCATest.crt");
-const RSA_SERVER_CERT: &[u8] = include_bytes!("../../test-data/BoringSSLServerTest-RSA.crt");
-const RSA_SERVER_KEY: &[u8] = include_bytes!("../../test-data/BoringSSLServerTest-RSA.key");
+pub(crate) const CA: &[u8] = include_bytes!("../../test-data/BoringSSLCATest.crt");
+pub(crate) const RSA_SERVER_CERT: &[u8] =
+    include_bytes!("../../test-data/BoringSSLServerTest-RSA.crt");
+pub(crate) const RSA_SERVER_KEY: &[u8] =
+    include_bytes!("../../test-data/BoringSSLServerTest-RSA.key");
+pub(crate) const P256_SERVER_CERT: &[u8] =
+    include_bytes!("../../test-data/BoringSSLServerTest-ECDSA-P256.crt");
+pub(crate) const P256_SERVER_KEY: &[u8] =
+    include_bytes!("../../test-data/BoringSSLServerTest-ECDSA-P256.key");
+pub(crate) const P256_SERVER_KEY_DER: &[u8] =
+    include_bytes!("../../test-data/BoringSSLServerTest-ECDSA-P256.der");
 
+mod credentials;
 mod datagram;
 mod handshake;
 mod transport;
 
 /// Dumb server-client pair that does no certificate verification.
 fn dumb_server_client() -> Result<(TlsConnection<Server>, TlsConnection<Client>), Error> {
-    let ca = Certificate::parse_one_from_pem(CA, None)?;
-    let server_cert = Certificate::parse_one_from_pem(RSA_SERVER_CERT, None)?;
-    let server_key = PrivateKey::from_pem(RSA_SERVER_KEY, || unreachable!())?;
-
     let mut server_ctx_builder = TlsContextBuilder::new_tls();
-    let server_cred = {
-        let mut builder = TlsCredentialBuilder::new();
-        builder
-            .with_certificate_chain(&[server_cert, ca])?
-            .with_private_key(server_key)?;
-        builder.build()
-    };
-    server_ctx_builder.with_credential(server_cred.unwrap())?;
+    server_ctx_builder.with_credential(load_x509_credential())?;
     let server_ctx = server_ctx_builder.build();
-    let server_conn = server_ctx.new_server_connection(None)?.build();
+    let server_conn = server_ctx.new_server_connection().build();
 
     let mut client_ctx_builder = TlsContextBuilder::new_tls();
-    let mut cert_store = X509StoreBuilder::new();
-    cert_store
-        .set_trust(Trust::SslServer)?
-        .add_cert(X509Certificate::parse_one_from_pem(CA)?)?;
-    let cert_store = cert_store.build();
+    let cert_store = load_trust_store(Trust::SslServer);
     client_ctx_builder.with_certificate_store(&cert_store);
     let client_ctx = client_ctx_builder.build();
-    let client_conn = client_ctx.new_client_connection(None)?.build();
+    let client_conn = client_ctx.new_client_connection().build();
 
     Ok((server_conn, client_conn))
 }
@@ -102,7 +96,7 @@ fn sync_ping_pong<
     mut client_conn: TlsConnection<Client, M>,
 ) -> Result<(), Error> {
     let thread = std::thread::spawn(move || {
-        server_conn.in_handshake().unwrap().accept()?;
+        server_conn.accept()?;
         assert!(!server_conn.is_in_handshake());
         // TODO: switch to `From` impls when Rust compiler is bumped to 1.95.0.
         let mut message = [MaybeUninit::uninit(); 21];
@@ -119,7 +113,7 @@ fn sync_ping_pong<
         Ok::<_, Error>(())
     });
 
-    client_conn.in_handshake().unwrap().connect()?;
+    client_conn.connect()?;
     assert!(!client_conn.is_in_handshake());
     client_conn.sync_write(b"BoringSSL is awesome!")?;
     let mut message = [MaybeUninit::uninit(); 19];
@@ -369,6 +363,33 @@ pub(crate) fn create_mock_datagram() -> (
     create_mock_socket::<MockDatagram>()
 }
 
+/// Builds a [`TlsCredential`] from the test RSA certificate chain (server cert + CA)
+/// and private key.
+pub(crate) fn load_x509_credential() -> TlsCredential {
+    let ca = Certificate::parse_one_from_pem(CA, None).unwrap();
+    let server_cert = Certificate::parse_one_from_pem(RSA_SERVER_CERT, None).unwrap();
+    let server_key = PrivateKey::from_pem(RSA_SERVER_KEY, || unreachable!()).unwrap();
+
+    let mut builder = TlsCredentialBuilder::new();
+    builder
+        .with_certificate_chain(&[server_cert, ca])
+        .unwrap()
+        .with_private_key(server_key)
+        .unwrap();
+    builder.build().unwrap()
+}
+
+/// Builds an X509 trust store with the test CA certificate.
+pub(crate) fn load_trust_store(trust: Trust) -> X509Store {
+    let mut cert_store = X509StoreBuilder::new();
+    cert_store
+        .set_trust(trust)
+        .unwrap()
+        .add_cert(X509Certificate::parse_one_from_pem(CA).unwrap())
+        .unwrap();
+    cert_store.build()
+}
+
 #[test]
 fn test_async() -> Result<(), Error> {
     let (mut server_conn, mut client_conn) = dumb_server_client()?;
@@ -418,14 +439,7 @@ fn test_async() -> Result<(), Error> {
 }
 
 pub async fn drive_handshake<R>(conn: &mut TlsConnection<R>) {
-    assert!(
-        conn.in_handshake()
-            .unwrap()
-            .async_handshake()
-            .await
-            .unwrap()
-            .is_none()
-    );
+    assert!(conn.async_handshake().await.unwrap().is_none());
 }
 
 #[test]

@@ -111,10 +111,6 @@ static int file_free(BIO *bio) {
 }
 
 static int file_read(BIO *b, char *out, int outl) {
-  if (!BIO_get_init(b)) {
-    return 0;
-  }
-
   size_t ret = fread(out, 1, outl, (FILE *)BIO_get_data(b));
   if (ret == 0 && ferror((FILE *)BIO_get_data(b))) {
     OPENSSL_PUT_SYSTEM_ERROR();
@@ -122,20 +118,23 @@ static int file_read(BIO *b, char *out, int outl) {
     return -1;
   }
 
-  // fread reads at most |outl| bytes, so |ret| fits in an int.
+  // fread reads at most `outl` bytes, so `ret` fits in an int.
   return (int)ret;
 }
 
-static int file_write(BIO *b, const char *in, int inl) {
-  if (!BIO_get_init(b)) {
+static int file_write_ex(BIO *b, const char *in, size_t inl,
+                         size_t *out_written) {
+  if (fwrite(in, inl, 1, (FILE *)BIO_get_data(b)) == 0) {
     return 0;
   }
-
-  int ret = (int)fwrite(in, inl, 1, (FILE *)BIO_get_data(b));
-  if (ret > 0) {
-    ret = inl;
-  }
-  return ret;
+  // We currently ask |fwrite| to write one "object" of size |inl|, rather than
+  // |inl| objects of size 1. |fwrite| will only succeed if it wrote the whole
+  // input.
+  //
+  // TODO(crbug.com/518854940): This also means we discard information about
+  // partial writes.
+  *out_written = inl;
+  return 1;
 }
 
 static long file_ctrl(BIO *b, int cmd, long num, void *ptr) {
@@ -157,10 +156,10 @@ static long file_ctrl(BIO *b, int cmd, long num, void *ptr) {
       static_assert((BIO_CLOSE & BIO_FP_TEXT) == 0,
                     "BIO_CLOSE and BIO_FP_TEXT must not collide");
 #if defined(OPENSSL_WINDOWS)
-      // If |BIO_FP_TEXT| is not set, OpenSSL will switch the file to binary
+      // If `BIO_FP_TEXT` is not set, OpenSSL will switch the file to binary
       // mode. BoringSSL intentionally diverges here because it means code
-      // tested under POSIX will inadvertently change the state of |FILE|
-      // objects when wrapping them in a |BIO|.
+      // tested under POSIX will inadvertently change the state of `FILE`
+      // objects when wrapping them in a `BIO`.
       if (num & BIO_FP_TEXT) {
         _setmode(_fileno(reinterpret_cast<FILE *>(ptr)), _O_TEXT);
       }
@@ -226,7 +225,7 @@ static int file_gets(BIO *bp, char *buf, int size) {
   if (!fgets(buf, size, (FILE *)BIO_get_data(bp))) {
     buf[0] = 0;
     // TODO(davidben): This doesn't distinguish error and EOF. This should check
-    // |ferror| as in |file_read|.
+    // `ferror` as in `file_read`.
     return 0;
   }
 
@@ -234,9 +233,16 @@ static int file_gets(BIO *bp, char *buf, int size) {
 }
 
 static const BIO_METHOD methods_filep = {
-    BIO_TYPE_FILE,      "FILE pointer", file_write,
-    file_read,          file_gets,      file_ctrl,
-    /*create=*/nullptr, file_free,      /*callback_ctrl=*/nullptr,
+    BIO_TYPE_FILE,
+    "FILE pointer",
+    /*bwrite=*/nullptr,
+    file_write_ex,
+    file_read,
+    file_gets,
+    file_ctrl,
+    /*create=*/nullptr,
+    file_free,
+    /*callback_ctrl=*/nullptr,
 };
 
 const BIO_METHOD *BIO_s_file() { return &methods_filep; }

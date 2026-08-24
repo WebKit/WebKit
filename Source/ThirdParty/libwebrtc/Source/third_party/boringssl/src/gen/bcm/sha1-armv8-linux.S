@@ -1204,7 +1204,9 @@ sha1_block_data_order_hw:
 	ret
 .size	sha1_block_data_order_hw,.-sha1_block_data_order_hw
 .section	.rodata
+
 .align	6
+sha1_constants:
 .Lconst:
 .long	0x5a827999,0x5a827999,0x5a827999,0x5a827999	//K_00_19
 .long	0x6ed9eba1,0x6ed9eba1,0x6ed9eba1,0x6ed9eba1	//K_20_39

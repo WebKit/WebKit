@@ -46,7 +46,7 @@ int bssl::EVP_tls_cbc_remove_padding(crypto_word_t *out_padding_ok,
   // length byte. Thus, with the length byte included, there are i+1
   // bytes of padding.
   //
-  // We can't check just |padding_length+1| bytes because that leaks
+  // We can't check just `padding_length+1` bytes because that leaks
   // decrypted information. Therefore we always have to check the maximum
   // amount of padding possible. (Again, the length of the record is
   // public information so we can use it.)
@@ -57,21 +57,21 @@ int bssl::EVP_tls_cbc_remove_padding(crypto_word_t *out_padding_ok,
 
   for (size_t i = 0; i < to_check; i++) {
     uint8_t mask = constant_time_ge_8(padding_length, i);
-    // The value barrier on |(in_len - 1 - i)| isn't needed to enforce
+    // The value barrier on `(in_len - 1 - i)` isn't needed to enforce
     // constant-time. It is just there to prevent a false positive in
     // constant-time checks by valgrind.
     uint8_t b = in[value_barrier_w(in_len - 1 - i)];
-    // The final |padding_length+1| bytes should all have the value
-    // |padding_length|. Therefore the XOR should be zero.
+    // The final `padding_length+1` bytes should all have the value
+    // `padding_length`. Therefore the XOR should be zero.
     good &= ~(mask & (padding_length ^ b));
   }
 
-  // If any of the final |padding_length+1| bytes had the wrong value,
-  // one or more of the lower eight bits of |good| will be cleared.
+  // If any of the final `padding_length+1` bytes had the wrong value,
+  // one or more of the lower eight bits of `good` will be cleared.
   good = constant_time_eq_w(0xff, good & 0xff);
 
-  // Always treat |padding_length| as zero on error. If, assuming block size of
-  // 16, a padding of [<15 arbitrary bytes> 15] treated |padding_length| as 16
+  // Always treat `padding_length` as zero on error. If, assuming block size of
+  // 16, a padding of [<15 arbitrary bytes> 15] treated `padding_length` as 16
   // and returned -1, distinguishing good MAC and bad padding from bad MAC and
   // bad padding would give POODLE's padding oracle.
   padding_length = good & (padding_length + 1);
@@ -86,7 +86,7 @@ void bssl::EVP_tls_cbc_copy_mac(uint8_t *out, size_t md_size, const uint8_t *in,
   uint8_t *rotated_mac = rotated_mac1;
   uint8_t *rotated_mac_tmp = rotated_mac2;
 
-  // mac_end is the index of |in| just after the end of the MAC.
+  // mac_end is the index of `in` just after the end of the MAC.
   size_t mac_end = in_len;
   size_t mac_start = mac_end - md_size;
 
@@ -114,15 +114,15 @@ void bssl::EVP_tls_cbc_copy_mac(uint8_t *out, size_t md_size, const uint8_t *in,
     mac_started |= is_mac_start;
     uint8_t mac_ended = constant_time_ge_8(i, mac_end);
     rotated_mac[j] |= in[i] & mac_started & ~mac_ended;
-    // Save the offset that |mac_start| is mapped to.
+    // Save the offset that `mac_start` is mapped to.
     rotate_offset |= j & is_mac_start;
   }
 
   // Now rotate the MAC. We rotate in log(md_size) steps, one for each bit
   // position.
   for (size_t offset = 1; offset < md_size; offset <<= 1, rotate_offset >>= 1) {
-    // Rotate by |offset| iff the corresponding bit is set in
-    // |rotate_offset|, placing the result in |rotated_mac_tmp|.
+    // Rotate by `offset` iff the corresponding bit is set in
+    // `rotate_offset`, placing the result in `rotated_mac_tmp`.
     const uint8_t skip_rotate = (rotate_offset & 1) - 1;
     for (size_t i = 0, j = offset; i < md_size; i++, j++) {
       if (j >= md_size) {
@@ -132,7 +132,7 @@ void bssl::EVP_tls_cbc_copy_mac(uint8_t *out, size_t md_size, const uint8_t *in,
           constant_time_select_8(skip_rotate, rotated_mac[i], rotated_mac[j]);
     }
 
-    // Swap pointers so |rotated_mac| contains the (possibly) rotated value.
+    // Swap pointers so `rotated_mac` contains the (possibly) rotated value.
     // Note the number of iterations and thus the identity of these pointers is
     // public information.
     uint8_t *tmp = rotated_mac;
@@ -147,8 +147,8 @@ int bssl::EVP_sha1_final_with_secret_suffix(SHA_CTX *ctx,
                                             uint8_t out[SHA_DIGEST_LENGTH],
                                             const uint8_t *in, size_t len,
                                             size_t max_len) {
-  // Bound the input length so |total_bits| below fits in four bytes. This is
-  // redundant with TLS record size limits. This also ensures |input_idx| below
+  // Bound the input length so `total_bits` below fits in four bytes. This is
+  // redundant with TLS record size limits. This also ensures `input_idx` below
   // does not overflow.
   size_t max_len_bits = max_len << 3;
   if (ctx->Nh != 0 ||
@@ -158,7 +158,7 @@ int bssl::EVP_sha1_final_with_secret_suffix(SHA_CTX *ctx,
     return 0;
   }
 
-  // We need to hash the following into |ctx|:
+  // We need to hash the following into `ctx`:
   //
   // - ctx->data[:ctx->num]
   // - in[:len]
@@ -169,7 +169,7 @@ int bssl::EVP_sha1_final_with_secret_suffix(SHA_CTX *ctx,
   size_t last_block = num_blocks - 1;
   size_t max_blocks = (ctx->num + max_len + 1 + 8 + SHA_CBLOCK - 1) >> 6;
 
-  // The bounds above imply |total_bits| fits in four bytes.
+  // The bounds above imply `total_bits` fits in four bytes.
   size_t total_bits = ctx->Nl + (len << 3);
   uint8_t length_bytes[4];
   CRYPTO_store_u32_be(length_bytes, total_bits);
@@ -177,13 +177,13 @@ int bssl::EVP_sha1_final_with_secret_suffix(SHA_CTX *ctx,
   // We now construct and process each expected block in constant-time.
   uint8_t block[SHA_CBLOCK] = {0};
   uint32_t result[5] = {0};
-  // input_idx is the index into |in| corresponding to the current block.
-  // However, we allow this index to overflow beyond |max_len|, to simplify the
+  // input_idx is the index into `in` corresponding to the current block.
+  // However, we allow this index to overflow beyond `max_len`, to simplify the
   // 0x80 byte.
   size_t input_idx = 0;
   for (size_t i = 0; i < max_blocks; i++) {
-    // Fill |block| with data from the partial block in |ctx| and |in|. We copy
-    // as if we were hashing up to |max_len| and then zero the excess later.
+    // Fill `block` with data from the partial block in `ctx` and `in`. We copy
+    // as if we were hashing up to `max_len` and then zero the excess later.
     size_t block_start = 0;
     if (i == 0) {
       OPENSSL_memcpy(block, ctx->data, ctx->num);
@@ -197,12 +197,12 @@ int bssl::EVP_sha1_final_with_secret_suffix(SHA_CTX *ctx,
       OPENSSL_memcpy(block + block_start, in + input_idx, to_copy);
     }
 
-    // Zero any bytes beyond |len| and add the 0x80 byte.
+    // Zero any bytes beyond `len` and add the 0x80 byte.
     for (size_t j = block_start; j < SHA_CBLOCK; j++) {
       // input[idx] corresponds to block[j].
       size_t idx = input_idx + j - block_start;
-      // The barriers on |len| are not strictly necessary. However, without
-      // them, GCC compiles this code by incorporating |len| into the loop
+      // The barriers on `len` are not strictly necessary. However, without
+      // them, GCC compiles this code by incorporating `len` into the loop
       // counter and subtracting it out later. This is still constant-time, but
       // it frustrates attempts to validate this.
       uint8_t is_in_bounds = constant_time_lt_8(idx, value_barrier_w(len));
@@ -239,8 +239,8 @@ int bssl::EVP_sha256_final_with_secret_suffix(SHA256_CTX *ctx,
                                               uint8_t out[SHA256_DIGEST_LENGTH],
                                               const uint8_t *in, size_t len,
                                               size_t max_len) {
-  // Bound the input length so |total_bits| below fits in four bytes. This is
-  // redundant with TLS record size limits. This also ensures |input_idx| below
+  // Bound the input length so `total_bits` below fits in four bytes. This is
+  // redundant with TLS record size limits. This also ensures `input_idx` below
   // does not overflow.
   size_t max_len_bits = max_len << 3;
   if (ctx->Nh != 0 ||
@@ -250,7 +250,7 @@ int bssl::EVP_sha256_final_with_secret_suffix(SHA256_CTX *ctx,
     return 0;
   }
 
-  // We need to hash the following into |ctx|:
+  // We need to hash the following into `ctx`:
   //
   // - ctx->data[:ctx->num]
   // - in[:len]
@@ -261,7 +261,7 @@ int bssl::EVP_sha256_final_with_secret_suffix(SHA256_CTX *ctx,
   size_t last_block = num_blocks - 1;
   size_t max_blocks = (ctx->num + max_len + 1 + 8 + SHA256_CBLOCK - 1) >> 6;
 
-  // The bounds above imply |total_bits| fits in four bytes.
+  // The bounds above imply `total_bits` fits in four bytes.
   size_t total_bits = ctx->Nl + (len << 3);
   uint8_t length_bytes[4];
   CRYPTO_store_u32_be(length_bytes, total_bits);
@@ -269,13 +269,13 @@ int bssl::EVP_sha256_final_with_secret_suffix(SHA256_CTX *ctx,
   // We now construct and process each expected block in constant-time.
   uint8_t block[SHA256_CBLOCK] = {0};
   uint32_t result[8] = {0};
-  // input_idx is the index into |in| corresponding to the current block.
-  // However, we allow this index to overflow beyond |max_len|, to simplify the
+  // input_idx is the index into `in` corresponding to the current block.
+  // However, we allow this index to overflow beyond `max_len`, to simplify the
   // 0x80 byte.
   size_t input_idx = 0;
   for (size_t i = 0; i < max_blocks; i++) {
-    // Fill |block| with data from the partial block in |ctx| and |in|. We copy
-    // as if we were hashing up to |max_len| and then zero the excess later.
+    // Fill `block` with data from the partial block in `ctx` and `in`. We copy
+    // as if we were hashing up to `max_len` and then zero the excess later.
     size_t block_start = 0;
     if (i == 0) {
       OPENSSL_memcpy(block, ctx->data, ctx->num);
@@ -289,12 +289,12 @@ int bssl::EVP_sha256_final_with_secret_suffix(SHA256_CTX *ctx,
       OPENSSL_memcpy(block + block_start, in + input_idx, to_copy);
     }
 
-    // Zero any bytes beyond |len| and add the 0x80 byte.
+    // Zero any bytes beyond `len` and add the 0x80 byte.
     for (size_t j = block_start; j < SHA256_CBLOCK; j++) {
       // input[idx] corresponds to block[j].
       size_t idx = input_idx + j - block_start;
-      // The barriers on |len| are not strictly necessary. However, without
-      // them, GCC compiles this code by incorporating |len| into the loop
+      // The barriers on `len` are not strictly necessary. However, without
+      // them, GCC compiles this code by incorporating `len` into the loop
       // counter and subtracting it out later. This is still constant-time, but
       // it frustrates attempts to validate this.
       uint8_t is_in_bounds = constant_time_lt_8(idx, value_barrier_w(len));
@@ -372,7 +372,7 @@ static int tls_cbc_digest_record_sha1(
     SHA1_Update(&ctx, iovec.out, iovec.len);
   }
 
-  // Hash the remaining data without leaking |data_in_trailer_size|.
+  // Hash the remaining data without leaking `data_in_trailer_size`.
   uint8_t mac_out[SHA_DIGEST_LENGTH];
   if (!EVP_sha1_final_with_secret_suffix(&ctx, mac_out, trailer.data(),
                                          data_in_trailer_size,
@@ -428,7 +428,7 @@ static int tls_cbc_digest_record_sha256(
     SHA256_Update(&ctx, iovec.out, iovec.len);
   }
 
-  // Hash the remaining data without leaking |data_in_trailer_size|.
+  // Hash the remaining data without leaking `data_in_trailer_size`.
   uint8_t mac_out[SHA256_DIGEST_LENGTH];
   if (!EVP_sha256_final_with_secret_suffix(&ctx, mac_out, trailer.data(),
                                            data_in_trailer_size,

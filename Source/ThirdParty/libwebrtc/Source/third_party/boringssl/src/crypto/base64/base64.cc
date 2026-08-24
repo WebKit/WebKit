@@ -24,18 +24,18 @@
 
 using namespace bssl;
 
-// constant_time_lt_args_8 behaves like |constant_time_lt_8| but takes |uint8_t|
+// constant_time_lt_args_8 behaves like `constant_time_lt_8` but takes `uint8_t`
 // arguments for a slightly simpler implementation.
 static uint8_t constant_time_lt_args_8(uint8_t a, uint8_t b) {
   crypto_word_t aw = a;
   crypto_word_t bw = b;
-  // |crypto_word_t| is larger than |uint8_t|, so |aw| and |bw| have the same
-  // MSB. |aw| < |bw| iff MSB(|aw| - |bw|) is 1.
+  // `crypto_word_t` is larger than `uint8_t`, so `aw` and `bw` have the same
+  // MSB. `aw` < `bw` iff MSB(`aw` - `bw`) is 1.
   return constant_time_msb_w(aw - bw);
 }
 
-// constant_time_in_range_8 returns |CONSTTIME_TRUE_8| if |min| <= |a| <= |max|
-// and |CONSTTIME_FALSE_8| otherwise.
+// constant_time_in_range_8 returns `CONSTTIME_TRUE_8` if `min` <= `a` <= `max`
+// and `CONSTTIME_FALSE_8` otherwise.
 static uint8_t constant_time_in_range_8(uint8_t a, uint8_t min, uint8_t max) {
   a -= min;
   return constant_time_lt_args_8(a, max - min + 1);
@@ -242,7 +242,7 @@ static uint8_t base64_ascii_to_bin(uint8_t a) {
 }
 
 // base64_decode_quad decodes a single “quad” (i.e. four characters) of base64
-// data and writes up to three bytes to |out|. It sets |*out_num_bytes| to the
+// data and writes up to three bytes to `out`. It sets `*out_num_bytes` to the
 // number of bytes written, which will be less than three if the quad ended
 // with padding.  It returns one on success or zero on error.
 static int base64_decode_quad(uint8_t *out, size_t *out_num_bytes,

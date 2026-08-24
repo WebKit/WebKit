@@ -21,6 +21,7 @@
 #include <openssl/err.h>
 #include <openssl/evp.h>
 #include <openssl/mlkem.h>
+#include <openssl/rand.h>
 
 #include "./internal.h"
 
@@ -136,6 +137,23 @@ void BM_SpeedMLKEM768KeyGenOnly(benchmark::State &state) {
   }
 }
 
+void BM_SpeedMLKEM768PrivateKeyFromSeedOnly(benchmark::State &state) {
+  for (auto _ : state) {
+    state.PauseTiming();
+    uint8_t seed[MLKEM_SEED_BYTES];
+    RAND_bytes(seed, sizeof(seed));
+    benchmark::DoNotOptimize(seed);
+    state.ResumeTiming();
+
+    MLKEM768_private_key priv;
+    if (!MLKEM768_private_key_from_seed(&priv, seed, sizeof(seed))) {
+      state.SkipWithError("MLKEM768_private_key_from_seed failed");
+      return;
+    }
+    benchmark::DoNotOptimize(priv);
+  }
+}
+
 void BM_SpeedMLKEM768DecapOnly(benchmark::State &state) {
   uint8_t ciphertext[MLKEM768_CIPHERTEXT_BYTES];
   // This ciphertext is nonsense, but decap is constant-time so, for the
@@ -211,6 +229,23 @@ void BM_SpeedMLKEM1024KeyGenOnly(benchmark::State &state) {
     uint8_t encoded_public_key[MLKEM1024_PUBLIC_KEY_BYTES];
     MLKEM1024_generate_key(encoded_public_key, nullptr, &priv);
     benchmark::DoNotOptimize(encoded_public_key);
+    benchmark::DoNotOptimize(priv);
+  }
+}
+
+void BM_SpeedMLKEM1024PrivateKeyFromSeedOnly(benchmark::State &state) {
+  for (auto _ : state) {
+    state.PauseTiming();
+    uint8_t seed[MLKEM_SEED_BYTES];
+    RAND_bytes(seed, sizeof(seed));
+    benchmark::DoNotOptimize(seed);
+    state.ResumeTiming();
+
+    MLKEM1024_private_key priv;
+    if (!MLKEM1024_private_key_from_seed(&priv, seed, sizeof(seed))) {
+      state.SkipWithError("MLKEM1024_private_key_from_seed failed");
+      return;
+    }
     benchmark::DoNotOptimize(priv);
   }
 }
@@ -294,10 +329,14 @@ BSSL_BENCH_LAZY_REGISTER() {
   BENCHMARK(BM_SpeedMLKEM1024ParseEncap)->Apply(bssl::bench::SetThreads);
 
   BENCHMARK(BM_SpeedMLKEM768KeyGenOnly)->Apply(bssl::bench::SetThreads);
+  BENCHMARK(BM_SpeedMLKEM768PrivateKeyFromSeedOnly)
+      ->Apply(bssl::bench::SetThreads);
   BENCHMARK(BM_SpeedMLKEM768DecapOnly)->Apply(bssl::bench::SetThreads);
   BENCHMARK(BM_SpeedMLKEM768ParseOnly)->Apply(bssl::bench::SetThreads);
   BENCHMARK(BM_SpeedMLKEM768EncapOnly)->Apply(bssl::bench::SetThreads);
   BENCHMARK(BM_SpeedMLKEM1024KeyGenOnly)->Apply(bssl::bench::SetThreads);
+  BENCHMARK(BM_SpeedMLKEM1024PrivateKeyFromSeedOnly)
+      ->Apply(bssl::bench::SetThreads);
   BENCHMARK(BM_SpeedMLKEM1024DecapOnly)->Apply(bssl::bench::SetThreads);
   BENCHMARK(BM_SpeedMLKEM1024ParseOnly)->Apply(bssl::bench::SetThreads);
   BENCHMARK(BM_SpeedMLKEM1024EncapOnly)->Apply(bssl::bench::SetThreads);

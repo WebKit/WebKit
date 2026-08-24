@@ -254,7 +254,7 @@ static int rsa_padding_check_PKCS1_type_2(uint8_t *out, size_t *out_len,
   // PKCS#1 v1.5 decryption. See "PKCS #1 v2.2: RSA Cryptography
   // Standard", section 7.2.2.
   if (from_len < RSA_PKCS1_PADDING_SIZE) {
-    // |from| is zero-padded to the size of the RSA modulus, a public value, so
+    // `from` is zero-padded to the size of the RSA modulus, a public value, so
     // this can be rejected in non-constant time.
     OPENSSL_PUT_ERROR(RSA, RSA_R_KEY_SIZE_TOO_SMALL);
     return 0;
@@ -278,16 +278,16 @@ static int rsa_padding_check_PKCS1_type_2(uint8_t *out, size_t *out_len,
   // We must have found the end of PS.
   valid_index &= ~looking_for_index;
 
-  // PS must be at least 8 bytes long, and it starts two bytes into |from|.
+  // PS must be at least 8 bytes long, and it starts two bytes into `from`.
   valid_index &= constant_time_ge_w(zero_index, 2 + 8);
 
   // Skip the zero byte.
   zero_index++;
 
   // NOTE: Although this logic attempts to be constant time, the API contracts
-  // of this function and |RSA_decrypt| with |RSA_PKCS1_PADDING| make it
+  // of this function and `RSA_decrypt` with `RSA_PKCS1_PADDING` make it
   // impossible to completely avoid Bleichenbacher's attack. Consumers should
-  // use |RSA_PADDING_NONE| and perform the padding check in constant-time
+  // use `RSA_PADDING_NONE` and perform the padding check in constant-time
   // combined with a swap to a random session key or other mitigation.
   CONSTTIME_DECLASSIFY(&valid_index, sizeof(valid_index));
   CONSTTIME_DECLASSIFY(&zero_index, sizeof(zero_index));
@@ -300,7 +300,7 @@ static int rsa_padding_check_PKCS1_type_2(uint8_t *out, size_t *out_len,
   const size_t msg_len = from_len - zero_index;
   if (msg_len > max_out) {
     // This shouldn't happen because this function is always called with
-    // |max_out| as the key size and |from_len| is bounded by the key size.
+    // `max_out` as the key size and `from_len` is bounded by the key size.
     OPENSSL_PUT_ERROR(RSA, RSA_R_PKCS_DECODING_ERROR);
     return 0;
   }

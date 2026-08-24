@@ -38,8 +38,8 @@
 {"Wrapper": "modulewrapper", "In": "vectors/TLS13.bz2", "Out": "expected/TLS13.bz2"},
 {"Wrapper": "testmodulewrapper", "In": "vectors/PBKDF.bz2", "Out": "expected/PBKDF.bz2"},
 {"Wrapper": "testmodulewrapper", "In": "vectors/EDDSA.bz2", "Out": "expected/EDDSA.bz2"},
-{"Wrapper": "testmodulewrapper", "In": "vectors/SHAKE-128.bz2", "Out": "expected/SHAKE-128.bz2"},
-{"Wrapper": "testmodulewrapper", "In": "vectors/SHAKE-256.bz2", "Out": "expected/SHAKE-256.bz2"},
+{"Wrapper": "modulewrapper", "In": "vectors/SHAKE-128.bz2", "Out": "expected/SHAKE-128.bz2"},
+{"Wrapper": "modulewrapper", "In": "vectors/SHAKE-256.bz2", "Out": "expected/SHAKE-256.bz2"},
 {"Wrapper": "testmodulewrapper", "In": "vectors/cSHAKE-128.bz2", "Out": "expected/cSHAKE-128.bz2"},
 {"Wrapper": "testmodulewrapper", "In": "vectors/cSHAKE-256.bz2", "Out": "expected/cSHAKE-256.bz2"}
 ]

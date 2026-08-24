@@ -98,10 +98,10 @@ int HMAC_Init_ex(HMAC_CTX *ctx, const void *key, size_t key_len,
     md = ctx->md;
   }
 
-  // If either |key| is non-NULL or |md| has changed, initialize with a new key
+  // If either `key` is non-NULL or `md` has changed, initialize with a new key
   // rather than rewinding the previous one.
   //
-  // TODO(davidben,eroman): Passing the previous |md| with a NULL |key| is
+  // TODO(davidben,eroman): Passing the previous `md` with a NULL `key` is
   // ambiguous between using the empty key and reusing the previous key. There
   // exist callers which intend the latter, but the former is an awkward edge
   // case. Fix to API to avoid this.
@@ -165,7 +165,7 @@ int HMAC_Final(HMAC_CTX *ctx, uint8_t *out, unsigned int *out_len) {
 
   FIPS_service_indicator_lock_state();
   // TODO(davidben): The only thing that can officially fail here is
-  // |EVP_MD_CTX_copy_ex|, but even that should be impossible in this case.
+  // `EVP_MD_CTX_copy_ex`, but even that should be impossible in this case.
   if (!EVP_DigestFinal_ex(&ctx->md_ctx, buf, &i) ||
       !EVP_MD_CTX_copy_ex(&ctx->md_ctx, &ctx->o_ctx) ||
       !EVP_DigestUpdate(&ctx->md_ctx, buf, i) ||

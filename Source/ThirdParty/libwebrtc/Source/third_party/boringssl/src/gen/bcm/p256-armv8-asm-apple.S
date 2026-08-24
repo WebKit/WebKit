@@ -6,6 +6,7 @@
 #if !defined(OPENSSL_NO_ASM) && defined(OPENSSL_AARCH64) && defined(__APPLE__)
 .section	__TEXT,__const
 .align	5
+p256_constants:
 Lpoly:
 .quad	0xffffffffffffffff,0x00000000ffffffff,0x0000000000000000,0xffffffff00000001
 LRR:	//	2^512 mod P precomputed for NIST P256 polynomial
@@ -55,6 +56,7 @@ _ecp_nistz256_mul_mont:
 .private_extern	_ecp_nistz256_sqr_mont
 
 .align	4
+.alt_entry _ecp_nistz256_sqr_mont
 _ecp_nistz256_sqr_mont:
 	AARCH64_SIGN_LINK_REGISTER
 	stp	x29,x30,[sp,#-32]!
@@ -81,6 +83,7 @@ _ecp_nistz256_sqr_mont:
 .private_extern	_ecp_nistz256_div_by_2
 
 .align	4
+.alt_entry _ecp_nistz256_div_by_2
 _ecp_nistz256_div_by_2:
 	AARCH64_SIGN_LINK_REGISTER
 	stp	x29,x30,[sp,#-16]!
@@ -105,6 +108,7 @@ _ecp_nistz256_div_by_2:
 .private_extern	_ecp_nistz256_mul_by_2
 
 .align	4
+.alt_entry _ecp_nistz256_mul_by_2
 _ecp_nistz256_mul_by_2:
 	AARCH64_SIGN_LINK_REGISTER
 	stp	x29,x30,[sp,#-16]!
@@ -133,6 +137,7 @@ _ecp_nistz256_mul_by_2:
 .private_extern	_ecp_nistz256_mul_by_3
 
 .align	4
+.alt_entry _ecp_nistz256_mul_by_3
 _ecp_nistz256_mul_by_3:
 	AARCH64_SIGN_LINK_REGISTER
 	stp	x29,x30,[sp,#-16]!
@@ -173,6 +178,7 @@ _ecp_nistz256_mul_by_3:
 .private_extern	_ecp_nistz256_sub
 
 .align	4
+.alt_entry _ecp_nistz256_sub
 _ecp_nistz256_sub:
 	AARCH64_SIGN_LINK_REGISTER
 	stp	x29,x30,[sp,#-16]!
@@ -197,6 +203,7 @@ _ecp_nistz256_sub:
 .private_extern	_ecp_nistz256_neg
 
 .align	4
+.alt_entry _ecp_nistz256_neg
 _ecp_nistz256_neg:
 	AARCH64_SIGN_LINK_REGISTER
 	stp	x29,x30,[sp,#-16]!
@@ -223,6 +230,7 @@ _ecp_nistz256_neg:
 // to x4-x7 and b[0] - to x3
 
 .align	4
+.alt_entry __ecp_nistz256_mul_mont
 __ecp_nistz256_mul_mont:
 	mul	x14,x4,x3		// a[0]*b[0]
 	umulh	x8,x4,x3
@@ -359,6 +367,7 @@ __ecp_nistz256_mul_mont:
 // to x4-x7
 
 .align	4
+.alt_entry __ecp_nistz256_sqr_mont
 __ecp_nistz256_sqr_mont:
 	//  |  |  |  |  |  |a1*a0|  |
 	//  |  |  |  |  |a2*a0|  |  |
@@ -483,6 +492,7 @@ __ecp_nistz256_sqr_mont:
 // contexts, e.g. in multiplication by 2 and 3...
 
 .align	4
+.alt_entry __ecp_nistz256_add_to
 __ecp_nistz256_add_to:
 	adds	x14,x14,x8		// ret = a+b
 	adcs	x15,x15,x9
@@ -508,6 +518,7 @@ __ecp_nistz256_add_to:
 
 
 .align	4
+.alt_entry __ecp_nistz256_sub_from
 __ecp_nistz256_sub_from:
 	ldp	x8,x9,[x2]
 	ldp	x10,x11,[x2,#16]
@@ -535,6 +546,7 @@ __ecp_nistz256_sub_from:
 
 
 .align	4
+.alt_entry __ecp_nistz256_sub_morf
 __ecp_nistz256_sub_morf:
 	ldp	x8,x9,[x2]
 	ldp	x10,x11,[x2,#16]
@@ -562,6 +574,7 @@ __ecp_nistz256_sub_morf:
 
 
 .align	4
+.alt_entry __ecp_nistz256_div_by_2
 __ecp_nistz256_div_by_2:
 	subs	x8,x14,#1		// adds	x8,x4,#-1 // tmp = a+modulus
 	adcs	x9,x15,x12
@@ -593,6 +606,7 @@ __ecp_nistz256_div_by_2:
 .private_extern	_ecp_nistz256_point_double
 
 .align	5
+.alt_entry _ecp_nistz256_point_double
 _ecp_nistz256_point_double:
 	AARCH64_SIGN_LINK_REGISTER
 	stp	x29,x30,[sp,#-96]!
@@ -738,6 +752,7 @@ Ldouble_shortcut:
 .private_extern	_ecp_nistz256_point_add
 
 .align	5
+.alt_entry _ecp_nistz256_point_add
 _ecp_nistz256_point_add:
 	AARCH64_SIGN_LINK_REGISTER
 	stp	x29,x30,[sp,#-96]!
@@ -995,6 +1010,7 @@ Ladd_done:
 .private_extern	_ecp_nistz256_point_add_affine
 
 .align	5
+.alt_entry _ecp_nistz256_point_add_affine
 _ecp_nistz256_point_add_affine:
 	AARCH64_SIGN_LINK_REGISTER
 	stp	x29,x30,[sp,#-80]!
@@ -1208,6 +1224,7 @@ _ecp_nistz256_point_add_affine:
 .private_extern	_ecp_nistz256_ord_mul_mont
 
 .align	4
+.alt_entry _ecp_nistz256_ord_mul_mont
 _ecp_nistz256_ord_mul_mont:
 	AARCH64_VALID_CALL_TARGET
 	// Armv8.3-A PAuth: even though x30 is pushed to stack it is not popped later.
@@ -1420,6 +1437,7 @@ _ecp_nistz256_ord_mul_mont:
 .private_extern	_ecp_nistz256_ord_sqr_mont
 
 .align	4
+.alt_entry _ecp_nistz256_ord_sqr_mont
 _ecp_nistz256_ord_sqr_mont:
 	AARCH64_VALID_CALL_TARGET
 	// Armv8.3-A PAuth: even though x30 is pushed to stack it is not popped later.
@@ -1612,6 +1630,7 @@ Loop_ord_sqr:
 .private_extern	_ecp_nistz256_select_w5
 
 .align	4
+.alt_entry _ecp_nistz256_select_w5
 _ecp_nistz256_select_w5:
 	AARCH64_VALID_CALL_TARGET
 
@@ -1676,6 +1695,7 @@ Lselect_w5_loop:
 .private_extern	_ecp_nistz256_select_w7
 
 .align	4
+.alt_entry _ecp_nistz256_select_w7
 _ecp_nistz256_select_w7:
 	AARCH64_VALID_CALL_TARGET
 

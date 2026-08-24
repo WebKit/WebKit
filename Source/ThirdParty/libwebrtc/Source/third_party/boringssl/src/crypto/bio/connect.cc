@@ -18,6 +18,7 @@
 
 #include <assert.h>
 #include <errno.h>
+#include <limits.h>
 #include <string.h>
 
 #if !defined(OPENSSL_WINDOWS)
@@ -30,6 +31,7 @@
 #include <ws2tcpip.h>
 #endif
 
+#include <algorithm>
 #include <utility>
 
 #include <openssl/err.h>
@@ -74,9 +76,9 @@ struct BIO_CONNECT {
 static int closesocket(int sock) { return close(sock); }
 #endif
 
-// split_host_and_port sets |*out_host| and |*out_port| to the host and port
-// parsed from |name|. It returns one on success or zero on error. Even when
-// successful, |*out_port| may be NULL on return if no port was specified.
+// split_host_and_port sets `*out_host` and `*out_port` to the host and port
+// parsed from `name`. It returns one on success or zero on error. Even when
+// successful, `*out_port` may be NULL on return if no port was specified.
 static int split_host_and_port(UniquePtr<char> *out_host,
                                UniquePtr<char> *out_port, const char *name) {
   const char *host, *port = nullptr;
@@ -209,21 +211,19 @@ static int conn_state(BIO *bio, BIO_CONNECT *c) {
         break;
 
       case BIO_CONN_S_BLOCKED_CONNECT:
-        i = bio_sock_error(FromOpaque(bio)->num);
-        if (i) {
-          if (bio_socket_should_retry(ret)) {
+        if (!bio_socket_finish_connect(FromOpaque(bio)->num)) {
+          if (bio_socket_should_retry(-1)) {
             BIO_set_retry_special(bio);
             c->state = BIO_CONN_S_BLOCKED_CONNECT;
             BIO_set_retry_reason(bio, BIO_RR_CONNECT);
-            ret = -1;
           } else {
             BIO_clear_retry_flags(bio);
             OPENSSL_PUT_SYSTEM_ERROR();
             OPENSSL_PUT_ERROR(BIO, BIO_R_NBIO_CONNECT_ERROR);
             ERR_add_error_data(4, "host=", c->param_hostname.get(), ":",
                                c->param_port.get());
-            ret = 0;
           }
+          ret = -1;
           goto exit_loop;
         } else {
           c->state = BIO_CONN_S_OK;
@@ -311,28 +311,32 @@ static int conn_read(BIO *bio, char *out, int out_len) {
   return ret;
 }
 
-static int conn_write(BIO *bio, const char *in, int in_len) {
-  int ret;
-  BIO_CONNECT *data;
-
-  data = (BIO_CONNECT *)BIO_get_data(bio);
+static int conn_write_ex(BIO *bio, const char *in, size_t in_len,
+                         size_t *out_written) {
+  BIO_CONNECT *data = (BIO_CONNECT *)BIO_get_data(bio);
   if (data->state != BIO_CONN_S_OK) {
-    ret = conn_state(bio, data);
-    if (ret <= 0) {
-      return ret;
+    if (conn_state(bio, data) <= 0) {
+      return 0;
     }
   }
 
   bio_clear_socket_error();
-  ret = (int)send(FromOpaque(bio)->num, in, in_len, 0);
+#if defined(OPENSSL_WINDOWS)
+  in_len = std::min(in_len, size_t{INT_MAX});
+  int ret = send(FromOpaque(bio)->num, in, static_cast<int>(in_len), 0);
+#else
+  ssize_t ret = send(FromOpaque(bio)->num, in, in_len, 0);
+#endif
   BIO_clear_retry_flags(bio);
   if (ret <= 0) {
     if (bio_socket_should_retry(ret)) {
       BIO_set_retry_write(bio);
     }
+    return 0;
   }
 
-  return ret;
+  *out_written = ret;
+  return 1;
 }
 
 static long conn_ctrl(BIO *bio, int cmd, long num, void *ptr) {
@@ -427,9 +431,9 @@ BIO *BIO_new_connect(const char *hostname) {
 }
 
 static const BIO_METHOD methods_connectp = {
-    BIO_TYPE_CONNECT, "socket connect", conn_write,
-    conn_read,        /*gets=*/nullptr, conn_ctrl,
-    conn_new,         conn_free,        conn_callback_ctrl,
+    BIO_TYPE_CONNECT, "socket connect",   /*bwrite=*/nullptr, conn_write_ex,
+    conn_read,        /*gets=*/nullptr,   conn_ctrl,          conn_new,
+    conn_free,        conn_callback_ctrl,
 };
 
 const BIO_METHOD *BIO_s_connect() { return &methods_connectp; }

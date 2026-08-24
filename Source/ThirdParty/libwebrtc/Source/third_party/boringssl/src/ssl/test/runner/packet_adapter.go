@@ -172,7 +172,7 @@ func (p *packetAdaptor) ExpectNoNextTimeout() error {
 	return err
 }
 
-// UpdatePeerTimeout instructs the peer to set the timeoput to the specified value.
+// UpdatePeerTimeout instructs the peer to set the timeout to the specified value.
 func (p *packetAdaptor) SetPeerTimeout(d time.Duration) error {
 	p.log(fmt.Sprintf("Setting timeout to to %d ms", d.Milliseconds()), nil)
 

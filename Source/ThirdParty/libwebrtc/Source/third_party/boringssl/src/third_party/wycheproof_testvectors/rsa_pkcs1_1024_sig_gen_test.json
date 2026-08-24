@@ -1,0 +1,529 @@
+{
+  "algorithm": "RSASSA-PKCS1-v1_5",
+  "numberOfTests": 33,
+  "header": [
+    "Test vectors of class RsassaPkcs1Generate are intended for checking the",
+    "generation of RSA PKCS #1 v 1.5 signatures."
+  ],
+  "notes": {
+    "SmallModulus": {
+      "bugType": "WEAK_PARAMS",
+      "description": "The key for this test vector has a modulus of size < 2048."
+    },
+    "SmallPublicKey": {
+      "bugType": "WEAK_PARAMS",
+      "description": "The key for this test vector uses a small public key."
+    },
+    "WeakHash": {
+      "bugType": "WEAK_PARAMS",
+      "description": "The key for this test vector uses a weak hash function."
+    }
+  },
+  "schema": "rsassa_pkcs1_generate_schema_v1.json",
+  "testGroups": [
+    {
+      "privateKey": {
+        "privateExponent": "5ff4a47e690ea338573e3d8b3fea5c32378ff4296855a51017cba86a9f3de9b1dc0fbe36c76b9bbd1c4a170a5f448c2a8489b3f3ac858be4aacb3daaa14dccc183622eedd3ae6f0427a2a298b51b97818a5430f13705f42d8b25476f939c935e389e30d9ade5d0180920135f5aef0c5fecd15f00b83b51dab8ba930d88826801",
+        "publicExponent": "010001",
+        "modulus": "00d0941e63a980fa92fb25ed4c7b3307f827023034ae7f1a7491f0699ca7607285e62ad8e994bac21b8b6e305e334f4874067d28e304230dca7f0e85f7ce595770b6e054c9f844ba86c0696eeba0769d8d4a347e8fe85c724ac1c44994af18a39e719f721f1bc50c46a39e6c075fcd1649f01f22608ce7dc6955502258336987d9"
+      },
+      "keyAsn": "30818902818100d0941e63a980fa92fb25ed4c7b3307f827023034ae7f1a7491f0699ca7607285e62ad8e994bac21b8b6e305e334f4874067d28e304230dca7f0e85f7ce595770b6e054c9f844ba86c0696eeba0769d8d4a347e8fe85c724ac1c44994af18a39e719f721f1bc50c46a39e6c075fcd1649f01f22608ce7dc6955502258336987d90203010001",
+      "keyDer": "30819f300d06092a864886f70d010101050003818d0030818902818100d0941e63a980fa92fb25ed4c7b3307f827023034ae7f1a7491f0699ca7607285e62ad8e994bac21b8b6e305e334f4874067d28e304230dca7f0e85f7ce595770b6e054c9f844ba86c0696eeba0769d8d4a347e8fe85c724ac1c44994af18a39e719f721f1bc50c46a39e6c075fcd1649f01f22608ce7dc6955502258336987d90203010001",
+      "keyPem": "-----BEGIN PUBLIC KEY-----\nMIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDQlB5jqYD6kvsl7Ux7Mwf4JwIw\nNK5/GnSR8Gmcp2ByheYq2OmUusIbi24wXjNPSHQGfSjjBCMNyn8OhffOWVdwtuBU\nyfhEuobAaW7roHadjUo0fo/oXHJKwcRJlK8Yo55xn3IfG8UMRqOebAdfzRZJ8B8i\nYIzn3GlVUCJYM2mH2QIDAQAB\n-----END PUBLIC KEY-----",
+      "keySize": 1024,
+      "privateKeyPem": "-----BEGIN RSA PRIVATE KEY-----\nMIICXQIBAAKBgQDQlB5jqYD6kvsl7Ux7Mwf4JwIwNK5/GnSR8Gmcp2ByheYq2OmU\nusIbi24wXjNPSHQGfSjjBCMNyn8OhffOWVdwtuBUyfhEuobAaW7roHadjUo0fo/o\nXHJKwcRJlK8Yo55xn3IfG8UMRqOebAdfzRZJ8B8iYIzn3GlVUCJYM2mH2QIDAQAB\nAoGAX/SkfmkOozhXPj2LP+pcMjeP9CloVaUQF8uoap896bHcD742x2ubvRxKFwpf\nRIwqhImz86yFi+Sqyz2qoU3MwYNiLu3Trm8EJ6KimLUbl4GKVDDxNwX0LYslR2+T\nnJNeOJ4w2a3l0BgJIBNfWu8MX+zRXwC4O1HauLqTDYiCaAECQQDogtEtXwviaoA1\nnxPAghC9y/dZ3+5pUxPvqIhpGWWbBk48ZWomevYnXtGviaXf6eJbMaArr71ZRFt1\nB6IpiaaBAkEA5aZc+maL2FfVkTWnjBjIrbfCIjaOnXSrrY6DKZ96w8KteqRN2wXe\n6m2bINuvCahhUoShfHLTcjJAM0aF6n4lWQJBAKMnyOjxnUFQQo9eBVo86sqEahnj\nDUVTStYNiUtWyvmxvwyajZZbCogt/S4UhRVO5cvgUujU9SXC1fqVVLGZKgECQQCR\n8XzrQRokfgVih/eXh/SYucwtFADkPc4QuR3P6OMK34CCDULRK1T0JH3Oju4ZNCHN\nYC6EOTD5RMgaDfpzAIHZAkB1kVpFR3C0kIJCN2EkTM7GWm5IrplmNEtnVhD6ytkW\nL6W9HMUQjDIsL7PBRPgHdzosfQl/Y+XI072M6O+sKt4E\n-----END RSA PRIVATE KEY-----",
+      "privateKeyPkcs8": "30820277020100300d06092a864886f70d0101010500048202613082025d02010002818100d0941e63a980fa92fb25ed4c7b3307f827023034ae7f1a7491f0699ca7607285e62ad8e994bac21b8b6e305e334f4874067d28e304230dca7f0e85f7ce595770b6e054c9f844ba86c0696eeba0769d8d4a347e8fe85c724ac1c44994af18a39e719f721f1bc50c46a39e6c075fcd1649f01f22608ce7dc6955502258336987d902030100010281805ff4a47e690ea338573e3d8b3fea5c32378ff4296855a51017cba86a9f3de9b1dc0fbe36c76b9bbd1c4a170a5f448c2a8489b3f3ac858be4aacb3daaa14dccc183622eedd3ae6f0427a2a298b51b97818a5430f13705f42d8b25476f939c935e389e30d9ade5d0180920135f5aef0c5fecd15f00b83b51dab8ba930d88826801024100e882d12d5f0be26a80359f13c08210bdcbf759dfee695313efa8886919659b064e3c656a267af6275ed1af89a5dfe9e25b31a02bafbd59445b7507a22989a681024100e5a65cfa668bd857d59135a78c18c8adb7c222368e9d74abad8e83299f7ac3c2ad7aa44ddb05deea6d9b20dbaf09a8615284a17c72d3723240334685ea7e2559024100a327c8e8f19d4150428f5e055a3ceaca846a19e30d45534ad60d894b56caf9b1bf0c9a8d965b0a882dfd2e1485154ee5cbe052e8d4f525c2d5fa9554b1992a0102410091f17ceb411a247e056287f79787f498b9cc2d1400e43dce10b91dcfe8e30adf80820d42d12b54f4247dce8eee193421cd602e843930f944c81a0dfa730081d9024075915a454770b49082423761244ccec65a6e48ae9966344b675610facad9162fa5bd1cc5108c322c2fb3c144f807773a2c7d097f63e5c8d3bd8ce8efac2ade04",
+      "sha": "SHA-1",
+      "type": "RsassaPkcs1Generate",
+      "source": {
+        "name": "google-wycheproof",
+        "version": "0.8r12"
+      },
+      "tests": [
+        {
+          "tcId": 1,
+          "comment": "",
+          "msg": "",
+          "sig": "03e64d148e05201b021fb5d3d72ab6abd4294be6c1673277ba5822ad2fe7ce4bb29ac547b2fdf09c2894ea0e31e76f1b3e1937db91c389467e9a8ac7be0a4f674456f01c5b4fa4277a26028b49b16e25689827d0a4b9f1c25a63350dc15131da908a05c7cfa8c08a67ac9efe3b0cd04aba7db12064cbc36729eaaec540c4bc12",
+          "result": "acceptable",
+          "flags": [
+            "SmallModulus",
+            "WeakHash"
+          ]
+        },
+        {
+          "tcId": 2,
+          "comment": "",
+          "msg": "0000000000000000000000000000000000000000",
+          "sig": "1d19763e80121e228ac4dbb3be8448560aac613ec74b168efe1d8a8335b77e6d8c3cc0f641de8c8e26a2aff9d32a4ab77340912fec0e60e89257b5b6b19c8deb866c2d2349fe63a06ac6b72397b478cdd4198ead64f8d36b9df29651e95ac7b886978cffbb5f7498f136b1ded7580cbcbb31620415eb71cdb5bd615b47eff813",
+          "result": "acceptable",
+          "flags": [
+            "SmallModulus",
+            "WeakHash"
+          ]
+        },
+        {
+          "tcId": 3,
+          "comment": "",
+          "msg": "54657374",
+          "sig": "0891ef2061c4d3377744cd7243ccc444619df533f4eadee216f7ffb9244e86d3e0162fc82c0b9502dc7aeebaf7884067e5f18f21b395c43bbfce5559ae84157ffde2aa457b7f44675e706af443acd9e38070428dfc6471a24cdc0d44f9283ac158704ad114375f10c24e3adbd12c55dabb78b8c41d3938124acc74126c82bb0b",
+          "result": "acceptable",
+          "flags": [
+            "SmallModulus",
+            "WeakHash"
+          ]
+        },
+        {
+          "tcId": 4,
+          "comment": "",
+          "msg": "313233343030",
+          "sig": "8277e8984d536f81667feeee7e24068ca5bb8b815210b3e9fa82294e11cae92c45164c9dd5683be4650e4b7709eb8879f793ae804620750b26032894e53333158f6afa6b52318e6c730a4a55d5a0fca6d029744f2ecaa2e00d3d6dffa0716acefd5c91afeda74b7f1a1bd7e635283bfa2142ace513da24eb8f25f3578a401ba7",
+          "result": "acceptable",
+          "flags": [
+            "SmallModulus",
+            "WeakHash"
+          ]
+        },
+        {
+          "tcId": 5,
+          "comment": "",
+          "msg": "4d657373616765",
+          "sig": "b41191a7a1d11e973600e9a28c8d6e6d1513f7d970cb05ad50c686bd6fc42b7848559b2b3073a8cc9839f464d82f8a7d864cbc9698cc1a4b5b8c8103d07e9d79e5d24e1b3ab69053461bd76ac3b62935c31ef9f0c44120bf5c0a012eeedbd2a39d347cf6676ee8c81a88eb87eef2708edd793ebb79d6fced626e6475681fe73d",
+          "result": "acceptable",
+          "flags": [
+            "SmallModulus",
+            "WeakHash"
+          ]
+        },
+        {
+          "tcId": 6,
+          "comment": "",
+          "msg": "61",
+          "sig": "29f69d320ea3221cd0704300f456295becf54e877c2b9b2704dc47ef992588c7dcc1648d17172d8c76362c488aadb3437be488fe667a192c5db1440f70d102361d7e85ffab370c7bdaceba0d15b1f32ba0801ccddc9fbaed1323834a60d19ff13ecd46a27f06e79cb0d3aefdefc0c69d8e85fbe8761d83f35e362355ba675933",
+          "result": "acceptable",
+          "flags": [
+            "SmallModulus",
+            "WeakHash"
+          ]
+        },
+        {
+          "tcId": 7,
+          "comment": "",
+          "msg": "e0e1e2e3e4e5e6e7e8e9eaebecedeeeff0f1f2f3f4f5f6f7f8f9fafbfcfdfeff",
+          "sig": "9aa3040e7df724bf506881f6a92a133ff76f6a168f0f3ced70b3363835ed6b655fae6f39416555af4071c16262da7556412d9905279d666f9e15fb8a813b313d00007cef3ed2be306b9e29e6b69c2c5bebe36aa057feba44ccb6c8619076a5b23f39729ef78bd6478249f34ee99f3abeef37c504410910d1ad3f1a712c8d697e",
+          "result": "acceptable",
+          "flags": [
+            "SmallModulus",
+            "WeakHash"
+          ]
+        },
+        {
+          "tcId": 8,
+          "comment": "",
+          "msg": "0102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9fa0a1a2a3a4a5a6a7a8a9aaabacadaeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebfc0c1c2c3c4c5c6c7c8c9cacbcccdcecfd0d1d2d3d4d5d6d7d8d9dadbdcdddedfe0e1e2e3e4e5e6e7e8e9eaebecedeeeff0f1f2f3f4f5f6f7f8f9fafbfcfdfeff000102030405060708090a0b0c0d0e0f1011121314151617",
+          "sig": "1fd0610221104c3f1e7f49d4c77c48bc169e630d5471e41100ba58dbf0ee0d4731a3d5b3c8cf9b07ad116e6cf65787650fb90bc85a9c4fe9940f4754316772c4946022178a3becbaa3d9b6252ed1353f7de834e0ac6d95d5a1f81453e89650f5690dc078df80dfe8ab614ca4881e7b001f9a11a4464b1004bb537f2b99624deb",
+          "result": "acceptable",
+          "flags": [
+            "SmallModulus",
+            "WeakHash"
+          ]
+        }
+      ]
+    },
+    {
+      "privateKey": {
+        "privateExponent": "50f854da7dec301ab50d81761a575b0436ee7a6445ef359b7bf3ef374ab323883dfcd6e6c2c43fcc1d71d0d6408faf1f5992c69846911fd2a438068fba46fea5c108f95e307fdf3904c1cba6f014c6555a79679b843e5397e2dffc5e349d7b8666bc3c5e411f39f0f2585bc7bda70b84b8f5b08c9260b39d3e8603c88d128fc1",
+        "publicExponent": "010001",
+        "modulus": "00dfbe6f882c8b0c42c3229f29cd858bead25c213b5c0346c3052f844b045ac792c81c1df5ad6a66e9d4f3f7c11096f069f5fc0d1d7da555c6e685cf672ab2a6599f01605f50c93a91d6882f5884e4cf3e9c41a790b0c44247150777f95acf69312b0ed68f3c82693e6b67f0e1ea5927c0eeab3554c2c157181f4634e77bcb088b"
+      },
+      "keyAsn": "30818902818100dfbe6f882c8b0c42c3229f29cd858bead25c213b5c0346c3052f844b045ac792c81c1df5ad6a66e9d4f3f7c11096f069f5fc0d1d7da555c6e685cf672ab2a6599f01605f50c93a91d6882f5884e4cf3e9c41a790b0c44247150777f95acf69312b0ed68f3c82693e6b67f0e1ea5927c0eeab3554c2c157181f4634e77bcb088b0203010001",
+      "keyDer": "30819f300d06092a864886f70d010101050003818d0030818902818100dfbe6f882c8b0c42c3229f29cd858bead25c213b5c0346c3052f844b045ac792c81c1df5ad6a66e9d4f3f7c11096f069f5fc0d1d7da555c6e685cf672ab2a6599f01605f50c93a91d6882f5884e4cf3e9c41a790b0c44247150777f95acf69312b0ed68f3c82693e6b67f0e1ea5927c0eeab3554c2c157181f4634e77bcb088b0203010001",
+      "keyPem": "-----BEGIN PUBLIC KEY-----\nMIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDfvm+ILIsMQsMinynNhYvq0lwh\nO1wDRsMFL4RLBFrHksgcHfWtambp1PP3wRCW8Gn1/A0dfaVVxuaFz2cqsqZZnwFg\nX1DJOpHWiC9YhOTPPpxBp5CwxEJHFQd3+VrPaTErDtaPPIJpPmtn8OHqWSfA7qs1\nVMLBVxgfRjTne8sIiwIDAQAB\n-----END PUBLIC KEY-----",
+      "keySize": 1024,
+      "privateKeyPem": "-----BEGIN RSA PRIVATE KEY-----\nMIICXAIBAAKBgQDfvm+ILIsMQsMinynNhYvq0lwhO1wDRsMFL4RLBFrHksgcHfWt\nambp1PP3wRCW8Gn1/A0dfaVVxuaFz2cqsqZZnwFgX1DJOpHWiC9YhOTPPpxBp5Cw\nxEJHFQd3+VrPaTErDtaPPIJpPmtn8OHqWSfA7qs1VMLBVxgfRjTne8sIiwIDAQAB\nAoGAUPhU2n3sMBq1DYF2GldbBDbuemRF7zWbe/PvN0qzI4g9/NbmwsQ/zB1x0NZA\nj68fWZLGmEaRH9KkOAaPukb+pcEI+V4wf985BMHLpvAUxlVaeWebhD5Tl+Lf/F40\nnXuGZrw8XkEfOfDyWFvHvacLhLj1sIySYLOdPoYDyI0Sj8ECQQDwAqJiViat5vSM\nb5gQF5aBJN4OKo+jjWvEhT4b0LSKwydhD15WbwF710vVE0zJ/twmJfD3Nw9CJJZj\n4x3VjEzhAkEA7qZg6QXAhvrz0+o6lPL5cWoPp2DBcO3IG2SgXNUom6je9jRQAGho\nLd4GAFMbQcw1ZenW7DtMo/M4XoWoQ+k26wJAZnrJeTGN3G0j+B7iD+Tyd3wVcHkN\n0ejdnhDCfz/zBtjjJJdaUY+eU5GPKJDQFePDfmpu5C/XTQewS0A7ieYZIQJAYJ1y\n9mOhwgOu2sgk11BWtBegJr8BEVryfESMt4iEXCBNw5cCHGgoZQlRnKgIjObDZ3L3\n08NeD7HTzFCIApZT6QJBALG96PfCA1ZuEvEeIzGar5zWceJVeaItbRU+7sEjtf++\nf9auagYw75VmQIBbkjHZtdqXoNHYO1U3TCKIXr/3Ip8=\n-----END RSA PRIVATE KEY-----",
+      "privateKeyPkcs8": "30820276020100300d06092a864886f70d0101010500048202603082025c02010002818100dfbe6f882c8b0c42c3229f29cd858bead25c213b5c0346c3052f844b045ac792c81c1df5ad6a66e9d4f3f7c11096f069f5fc0d1d7da555c6e685cf672ab2a6599f01605f50c93a91d6882f5884e4cf3e9c41a790b0c44247150777f95acf69312b0ed68f3c82693e6b67f0e1ea5927c0eeab3554c2c157181f4634e77bcb088b020301000102818050f854da7dec301ab50d81761a575b0436ee7a6445ef359b7bf3ef374ab323883dfcd6e6c2c43fcc1d71d0d6408faf1f5992c69846911fd2a438068fba46fea5c108f95e307fdf3904c1cba6f014c6555a79679b843e5397e2dffc5e349d7b8666bc3c5e411f39f0f2585bc7bda70b84b8f5b08c9260b39d3e8603c88d128fc1024100f002a2625626ade6f48c6f981017968124de0e2a8fa38d6bc4853e1bd0b48ac327610f5e566f017bd74bd5134cc9fedc2625f0f7370f42249663e31dd58c4ce1024100eea660e905c086faf3d3ea3a94f2f9716a0fa760c170edc81b64a05cd5289ba8def634500068682dde0600531b41cc3565e9d6ec3b4ca3f3385e85a843e936eb0240667ac979318ddc6d23f81ee20fe4f2777c1570790dd1e8dd9e10c27f3ff306d8e324975a518f9e53918f2890d015e3c37e6a6ee42fd74d07b04b403b89e619210240609d72f663a1c203aedac824d75056b417a026bf01115af27c448cb788845c204dc397021c68286509519ca8088ce6c36772f7d3c35e0fb1d3cc5088029653e9024100b1bde8f7c203566e12f11e23319aaf9cd671e25579a22d6d153eeec123b5ffbe7fd6ae6a0630ef956640805b9231d9b5da97a0d1d83b55374c22885ebff7229f",
+      "sha": "SHA-224",
+      "type": "RsassaPkcs1Generate",
+      "source": {
+        "name": "google-wycheproof",
+        "version": "0.8r12"
+      },
+      "tests": [
+        {
+          "tcId": 9,
+          "comment": "",
+          "msg": "",
+          "sig": "507e6233a3c80971daa07c13f34a532d53441e196d642fd6564b347fdceb865c55dd47330587622a30f8d4ee66bf8f163c626f8dd26b313bb4095ea1ae9d6a96a24365f4c20056998eb9d1e3f2e1c78257361e5c21e5ba76320997e8cb30021e8f11a580000891bca3537d7a2c0972e06844f1a01a1dbc9a3f8b8a2955f7005f",
+          "result": "acceptable",
+          "flags": [
+            "SmallModulus"
+          ]
+        },
+        {
+          "tcId": 10,
+          "comment": "",
+          "msg": "0000000000000000000000000000000000000000",
+          "sig": "414de39059daab523a725efe437d688824a43689766b33136aa3e6da0a2fcf1c2aeff952605c2f1a12a29e36f282e59631f442af96c7659e0717bb24807835aa06f034906670b042f8db1cdcbf3c54e25472383b6b9097a09bfbd73b2e7c10e18731c6bad47af591bdb2d376680f6cb62048a97c19f23a70e98ddedf02786efc",
+          "result": "acceptable",
+          "flags": [
+            "SmallModulus"
+          ]
+        },
+        {
+          "tcId": 11,
+          "comment": "",
+          "msg": "54657374",
+          "sig": "aa5d174e95f9a1ff88c1ce60b3aed1d39e256e28b0512cc4b52be1d41b8ccfa2a739945aefb5b697886f4f08cef365d18bdd8151acc588fd4ebf2aede9bdd904aa3481822206f3fedc5889c9f9889a8dd4d160d65e587ee228f9ef155108cb283c4e2a697a1e739827cb4a9790f96023e6ad24cabe51741a7c7cea8c52f08cdc",
+          "result": "acceptable",
+          "flags": [
+            "SmallModulus"
+          ]
+        },
+        {
+          "tcId": 12,
+          "comment": "",
+          "msg": "313233343030",
+          "sig": "54a81c62bed2f716feb2939f504db144c1c3b70485a1f35b2871ede567ffcdeb8d2ed0c57c56f21b70388d631be05b4c738e67f160f34ec42f236cef92b03d3dc8e50145b33e634a6fad8e87f84624e96feefeeaa91ddbb003c3969017dd2d102da2e7d5de8ed298139d5e503e0aaab136fb583b99ece2e6b1681699a04b977e",
+          "result": "acceptable",
+          "flags": [
+            "SmallModulus"
+          ]
+        },
+        {
+          "tcId": 13,
+          "comment": "",
+          "msg": "4d657373616765",
+          "sig": "11890613a8ae298c21bda95fbe4059c37426f41ceccb7bd79598c72ab4662e012f08b7009c15155b5ae9d132b4ede565963e6014241305279d60662f57df7119e5d4088d32bfc7e0847036f41ca71f9a92660f90ec13ee9e19717d0b567ec5a6b5978a11337d5ee4e9147352fb954817be04fb767ef35c07babb03fd04a31338",
+          "result": "acceptable",
+          "flags": [
+            "SmallModulus"
+          ]
+        },
+        {
+          "tcId": 14,
+          "comment": "",
+          "msg": "61",
+          "sig": "0fd461012145fe0ae9362eef22ee35dac0d4751a037ce4cf0792012bb179d101f9a9752e5ebc5454b18684fa1b557f3136ae68edc087dbfa4bbfaa59be42d0daa84b574a9f23238d4d538ae3e6c32f8dbd98b1138b545badcc10b184428fe2707aec73206367f147196f7b83f358377562e8c7d9f1d396a1cd9aa74f8a78cb1d",
+          "result": "acceptable",
+          "flags": [
+            "SmallModulus"
+          ]
+        },
+        {
+          "tcId": 15,
+          "comment": "",
+          "msg": "e0e1e2e3e4e5e6e7e8e9eaebecedeeeff0f1f2f3f4f5f6f7f8f9fafbfcfdfeff",
+          "sig": "307e421e06bdec1fc1750d53529f5f007eddcc991af8351477e1d67169409e3acc93367fadc412a4554854004c4a29c8af4af09793e55967ed439645034cc9e9ae565edfc861e04c763d058ff3aa29bef3942277b4c971d830be1259aa30c125a6ede65971b0120758c2a6eb21f238ff18228f344155ff9109a0f9656cae2351",
+          "result": "acceptable",
+          "flags": [
+            "SmallModulus"
+          ]
+        },
+        {
+          "tcId": 16,
+          "comment": "",
+          "msg": "0102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9fa0a1a2a3a4a5a6a7a8a9aaabacadaeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebfc0c1c2c3c4c5c6c7c8c9cacbcccdcecfd0d1d2d3d4d5d6d7d8d9dadbdcdddedfe0e1e2e3e4e5e6e7e8e9eaebecedeeeff0f1f2f3f4f5f6f7f8f9fafbfcfdfeff000102030405060708090a0b0c0d0e0f1011121314151617",
+          "sig": "019682b9c934a37ec166efae16b5ec75671fbc6322cdc91bf56a6f557001b8914050852ed7f13e96cb47fc5932a311ee677ffc05c1cf6589201b1a806f2ead9ff3c7cf327c391044fee073527a791a451a0571e50bb1e4b4f7e40847dba751f2d73f2ab2f5ab11724be81c9fcfded5a2535b593287e120870138e5534292104a",
+          "result": "acceptable",
+          "flags": [
+            "SmallModulus"
+          ]
+        }
+      ]
+    },
+    {
+      "privateKey": {
+        "privateExponent": "008505d47c271560aaf6cf65da6d5594a69c86f01622ea194071606fde369b65f5a751bce06052409c3a04c6a8b2be935bc0d084829dea8ea0998398fd2a0b0719ac1a1ae2d133fcc72d9df27b377b9a0109ef1a564e92b66963356b8da48f88fcdbc20658f74b542582925ec5cd03fb5e9a527c670465f792a69c1f6c7c5e1841",
+        "publicExponent": "010001",
+        "modulus": "00ac9048a7a4f560af91b4fcaf62a14595cb9ca9ec12000fc845e48572113cab2890adb011a919575a40760d1f23fe92509c8a5810b6d05990b909dd0f4c6014f2b31b6abd805bace99816e2eda41fd7b95405db7c5c8f4cf6babb14f550d5d0dd5179b54951fff6aa9686f30f478db649b7c7044cc202dccad00343468eaacfbf"
+      },
+      "keyAsn": "30818902818100ac9048a7a4f560af91b4fcaf62a14595cb9ca9ec12000fc845e48572113cab2890adb011a919575a40760d1f23fe92509c8a5810b6d05990b909dd0f4c6014f2b31b6abd805bace99816e2eda41fd7b95405db7c5c8f4cf6babb14f550d5d0dd5179b54951fff6aa9686f30f478db649b7c7044cc202dccad00343468eaacfbf0203010001",
+      "keyDer": "30819f300d06092a864886f70d010101050003818d0030818902818100ac9048a7a4f560af91b4fcaf62a14595cb9ca9ec12000fc845e48572113cab2890adb011a919575a40760d1f23fe92509c8a5810b6d05990b909dd0f4c6014f2b31b6abd805bace99816e2eda41fd7b95405db7c5c8f4cf6babb14f550d5d0dd5179b54951fff6aa9686f30f478db649b7c7044cc202dccad00343468eaacfbf0203010001",
+      "keyJwk": {
+        "alg": "RS256",
+        "e": "AQAB",
+        "kid": "none",
+        "kty": "RSA",
+        "n": "rJBIp6T1YK-RtPyvYqFFlcucqewSAA_IReSFchE8qyiQrbARqRlXWkB2DR8j_pJQnIpYELbQWZC5Cd0PTGAU8rMbar2AW6zpmBbi7aQf17lUBdt8XI9M9rq7FPVQ1dDdUXm1SVH_9qqWhvMPR422SbfHBEzCAtzK0ANDRo6qz78"
+      },
+      "keyPem": "-----BEGIN PUBLIC KEY-----\nMIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCskEinpPVgr5G0/K9ioUWVy5yp\n7BIAD8hF5IVyETyrKJCtsBGpGVdaQHYNHyP+klCcilgQttBZkLkJ3Q9MYBTysxtq\nvYBbrOmYFuLtpB/XuVQF23xcj0z2ursU9VDV0N1RebVJUf/2qpaG8w9HjbZJt8cE\nTMIC3MrQA0NGjqrPvwIDAQAB\n-----END PUBLIC KEY-----",
+      "keySize": 1024,
+      "privateKeyJwk": {
+        "alg": "RS256",
+        "d": "hQXUfCcVYKr2z2XabVWUppyG8BYi6hlAcWBv3jabZfWnUbzgYFJAnDoExqiyvpNbwNCEgp3qjqCZg5j9KgsHGawaGuLRM_zHLZ3yezd7mgEJ7xpWTpK2aWM1a42kj4j828IGWPdLVCWCkl7FzQP7XppSfGcEZfeSppwfbHxeGEE",
+        "dp": "di08S32sUpIoTb43AaBRhk6Z5BF-d-3gb9aY8c1dolpYt5y1irDb8NvKFySZFUhuqSadJguNmy9N7I5gsZ0gdQ",
+        "dq": "YqTwbv9JRNxiYpBa4M00Oi-fQgWNhctkbmZd4IbiSeC-6kzELidvAzdPlyHzAETERcbNVFthDRhog8ocVDwvEw",
+        "e": "AQAB",
+        "kid": "none",
+        "kty": "RSA",
+        "n": "rJBIp6T1YK-RtPyvYqFFlcucqewSAA_IReSFchE8qyiQrbARqRlXWkB2DR8j_pJQnIpYELbQWZC5Cd0PTGAU8rMbar2AW6zpmBbi7aQf17lUBdt8XI9M9rq7FPVQ1dDdUXm1SVH_9qqWhvMPR422SbfHBEzCAtzK0ANDRo6qz78",
+        "p": "05fc-rSRnbI7triMRRFRb2E14RGCd-SWEw8Mqzp1ZhAQzJjsj0DNsMGrYSwDu-OwI9iR9GGFeI-xFEN8iprnHQ",
+        "q": "0MeAUVlQndrXDzW5p2x8K9lahE02t22WE4z8eipV-IBy6LEKw3Rjyvm_jRAUyToAEhTXziMMgzL7WNrbBdUviw",
+        "qi": "PPzwRANcGFRHXh26SArFDSoFnzLRjoGclqMZmx44VaZT7A5Vd-TXZ31uC3pV_EGLEyAu4ZQwIoxL-dKK-IUcmw"
+      },
+      "privateKeyPem": "-----BEGIN RSA PRIVATE KEY-----\nMIICXAIBAAKBgQCskEinpPVgr5G0/K9ioUWVy5yp7BIAD8hF5IVyETyrKJCtsBGp\nGVdaQHYNHyP+klCcilgQttBZkLkJ3Q9MYBTysxtqvYBbrOmYFuLtpB/XuVQF23xc\nj0z2ursU9VDV0N1RebVJUf/2qpaG8w9HjbZJt8cETMIC3MrQA0NGjqrPvwIDAQAB\nAoGBAIUF1HwnFWCq9s9l2m1VlKachvAWIuoZQHFgb942m2X1p1G84GBSQJw6BMao\nsr6TW8DQhIKd6o6gmYOY/SoLBxmsGhri0TP8xy2d8ns3e5oBCe8aVk6StmljNWuN\npI+I/NvCBlj3S1QlgpJexc0D+16aUnxnBGX3kqacH2x8XhhBAkEA05fc+rSRnbI7\ntriMRRFRb2E14RGCd+SWEw8Mqzp1ZhAQzJjsj0DNsMGrYSwDu+OwI9iR9GGFeI+x\nFEN8iprnHQJBANDHgFFZUJ3a1w81uadsfCvZWoRNNrdtlhOM/HoqVfiAcuixCsN0\nY8r5v40QFMk6ABIU184jDIMy+1ja2wXVL4sCQHYtPEt9rFKSKE2+NwGgUYZOmeQR\nfnft4G/WmPHNXaJaWLectYqw2/DbyhckmRVIbqkmnSYLjZsvTeyOYLGdIHUCQGKk\n8G7/SUTcYmKQWuDNNDovn0IFjYXLZG5mXeCG4kngvupMxC4nbwM3T5ch8wBExEXG\nzVRbYQ0YaIPKHFQ8LxMCQDz88EQDXBhUR14dukgKxQ0qBZ8y0Y6BnJajGZseOFWm\nU+wOVXfk12d9bgt6VfxBixMgLuGUMCKMS/nSiviFHJs=\n-----END RSA PRIVATE KEY-----",
+      "privateKeyPkcs8": "30820276020100300d06092a864886f70d0101010500048202603082025c02010002818100ac9048a7a4f560af91b4fcaf62a14595cb9ca9ec12000fc845e48572113cab2890adb011a919575a40760d1f23fe92509c8a5810b6d05990b909dd0f4c6014f2b31b6abd805bace99816e2eda41fd7b95405db7c5c8f4cf6babb14f550d5d0dd5179b54951fff6aa9686f30f478db649b7c7044cc202dccad00343468eaacfbf0203010001028181008505d47c271560aaf6cf65da6d5594a69c86f01622ea194071606fde369b65f5a751bce06052409c3a04c6a8b2be935bc0d084829dea8ea0998398fd2a0b0719ac1a1ae2d133fcc72d9df27b377b9a0109ef1a564e92b66963356b8da48f88fcdbc20658f74b542582925ec5cd03fb5e9a527c670465f792a69c1f6c7c5e1841024100d397dcfab4919db23bb6b88c4511516f6135e1118277e496130f0cab3a75661010cc98ec8f40cdb0c1ab612c03bbe3b023d891f46185788fb114437c8a9ae71d024100d0c7805159509ddad70f35b9a76c7c2bd95a844d36b76d96138cfc7a2a55f88072e8b10ac37463caf9bf8d1014c93a001214d7ce230c8332fb58dadb05d52f8b0240762d3c4b7dac5292284dbe3701a051864e99e4117e77ede06fd698f1cd5da25a58b79cb58ab0dbf0dbca17249915486ea9269d260b8d9b2f4dec8e60b19d2075024062a4f06eff4944dc6262905ae0cd343a2f9f42058d85cb646e665de086e249e0beea4cc42e276f03374f9721f30044c445c6cd545b610d186883ca1c543c2f1302403cfcf044035c1854475e1dba480ac50d2a059f32d18e819c96a3199b1e3855a653ec0e5577e4d7677d6e0b7a55fc418b13202ee19430228c4bf9d28af8851c9b",
+      "sha": "SHA-256",
+      "type": "RsassaPkcs1Generate",
+      "source": {
+        "name": "google-wycheproof",
+        "version": "0.8r12"
+      },
+      "tests": [
+        {
+          "tcId": 17,
+          "comment": "",
+          "msg": "",
+          "sig": "a0abd165a5ef8733ba111fa0fa092630222d809d8ae811f24f8bead4968b7533af31019663713ba134e7dd345c38e7166a037025eb34adcd6891c9ec941d2e3eb1e4bded1d269272b602cb9b53568b992ddb5103914e6424c75505701a37996c8318b0b6f8640cb6b6e770ac44314b866a7c683a6903f7bba07b6f197ec554fc",
+          "result": "acceptable",
+          "flags": [
+            "SmallModulus"
+          ]
+        },
+        {
+          "tcId": 18,
+          "comment": "",
+          "msg": "0000000000000000000000000000000000000000",
+          "sig": "41339884a9b3940e8488d666bb158063c6a2a2717cae7f564834a876fcbf7098ecf3acbfabf37d38a8e6127b1e313744f1f896e165efdaea0b2e7673867842b9e94db0868ed9a92bcdcb370a4e20ff275c82595e4400a8b9e9f12482f014846b48216f321266ae6ae6338dbcdc41b711e483e6e3e728772e7f9f5ef95c30196b",
+          "result": "acceptable",
+          "flags": [
+            "SmallModulus"
+          ]
+        },
+        {
+          "tcId": 19,
+          "comment": "",
+          "msg": "54657374",
+          "sig": "8883676becdc27878ccdff53dda011e5e2f886e31e1e88d520bb161cd63aa001fded9f0656109c1507bd1ba5d3bb3e725029a236b4c3c0420a1fcfffe348c5277d6aa51bf75d9af26fdc15fc49d637b078a8b0478b5b0a9c428756d260068e5e622f193b9f9a2c1d979e3322d7f3edc32053541c6efa2485e42e99a804f94388",
+          "result": "acceptable",
+          "flags": [
+            "SmallModulus"
+          ]
+        },
+        {
+          "tcId": 20,
+          "comment": "",
+          "msg": "313233343030",
+          "sig": "9f2e01b92bc9dd32dcf24aee91467797396649a3255bac943dd0e03c9ef416f349c0cbb728704730f3c7a7c244066a94b229a6e86bde7753c8940129626307b542cc7f596583932b4fe6ea9384d5353e08654e966a64b63bd6745503f7e4383dcef74ad4516ac25c8790db6702ac5b8b057a8fae75669b6a9e689e9211a337b9",
+          "result": "acceptable",
+          "flags": [
+            "SmallModulus"
+          ]
+        },
+        {
+          "tcId": 21,
+          "comment": "",
+          "msg": "4d657373616765",
+          "sig": "3cb9557d9fe49b889319e0d41efc00cba34277caeed2b2c54fc89772c669200dd63f02f340cb6ed579a379a3fd6a568ca9d4bce206655ae4586850638ee6bffaae2bed7c7afe7353d22418d7e4f6b15e198c85b649d3e5a67f00702dd9fefed7dc72136bb4440fac58e64453e4ee63a81de4270446571b192f414116e165efc0",
+          "result": "acceptable",
+          "flags": [
+            "SmallModulus"
+          ]
+        },
+        {
+          "tcId": 22,
+          "comment": "",
+          "msg": "61",
+          "sig": "06e6fb568e366fa20d48704be40e991a291d47a464296a49c37718c1153b0fea17ac18a01ff97b32a92d07635dfb9143d011d003c9153020f5ef7fd3ef258cfe92a7a2120718fcc85c73acd34cbd50670c2e044dc3b82fca29b1017912b65d8a844515655308367d8797ae5b7fb91042df573f32de69c1842a128ac88937c0e9",
+          "result": "acceptable",
+          "flags": [
+            "SmallModulus"
+          ]
+        },
+        {
+          "tcId": 23,
+          "comment": "",
+          "msg": "e0e1e2e3e4e5e6e7e8e9eaebecedeeeff0f1f2f3f4f5f6f7f8f9fafbfcfdfeff",
+          "sig": "327238fd701dc4a829827550aad98f9bcd75e9f3831c3679998c869c1dd8381bc6b74b721e9d3377034e059d6637690ba3a184ffd98af951d43a22105a51838f72cf592d658af01adeedf721cf2eb2bb2c90c68311cb267f0cfacca903c1a2a73f7228badb5d86976f5d3371fe9b00cca048a7a0b0fc4b03da11c5a098045e07",
+          "result": "acceptable",
+          "flags": [
+            "SmallModulus"
+          ]
+        },
+        {
+          "tcId": 24,
+          "comment": "",
+          "msg": "0102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9fa0a1a2a3a4a5a6a7a8a9aaabacadaeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebfc0c1c2c3c4c5c6c7c8c9cacbcccdcecfd0d1d2d3d4d5d6d7d8d9dadbdcdddedfe0e1e2e3e4e5e6e7e8e9eaebecedeeeff0f1f2f3f4f5f6f7f8f9fafbfcfdfeff000102030405060708090a0b0c0d0e0f1011121314151617",
+          "sig": "65fd6547b4c27c06da21cfd067accbdede11ab8ddf16899d3acfd61134bbc4ed3269198733093062476906f36598a565ab32cb4b4f90e8c2acdab870bfd7f97726771050c4c67768d98514e51c28739067ca1a7890a846f6fb142d720df3c98ceb833a8cd8cc6129d22d0c5de9120c127e69e8d7b1548a474acf505897fd9f8d",
+          "result": "acceptable",
+          "flags": [
+            "SmallModulus"
+          ]
+        }
+      ]
+    },
+    {
+      "privateKey": {
+        "privateExponent": "5683206e498cd4867f94b062adaf2d3d7498150709d45ae03790731a58303b74a30d9b37b728f1c56fc34c2abf9c21e18adcf3952416d539934809cb1b516a62d80e1082b3e4d2ce749f58c7a1c0e5907fb7c6b9c9f971c80b890bfe101c5e8a83156bd4a55283a72d0634550a9bd674b771b9e1e00619eb43d6e35112e15031",
+        "publicExponent": "010001",
+        "modulus": "00a1d3912e65d994e0ba51135f78844d9a3ea5161e5450d16a8cf0173a0a309a1ee94e94385dffc5e27dea6692a1713516af86df2283c8e327e60ee26a7b7cfccb0af3f4b5efec358651996b97d5b25da933b063490cf7b67073d399b04ad55c0a89f8ec36d7f5cae757dbd3d6d0f5b77f7c94e28878397cb45cfd178f3f07ed01"
+      },
+      "keyAsn": "30818902818100a1d3912e65d994e0ba51135f78844d9a3ea5161e5450d16a8cf0173a0a309a1ee94e94385dffc5e27dea6692a1713516af86df2283c8e327e60ee26a7b7cfccb0af3f4b5efec358651996b97d5b25da933b063490cf7b67073d399b04ad55c0a89f8ec36d7f5cae757dbd3d6d0f5b77f7c94e28878397cb45cfd178f3f07ed010203010001",
+      "keyDer": "30819f300d06092a864886f70d010101050003818d0030818902818100a1d3912e65d994e0ba51135f78844d9a3ea5161e5450d16a8cf0173a0a309a1ee94e94385dffc5e27dea6692a1713516af86df2283c8e327e60ee26a7b7cfccb0af3f4b5efec358651996b97d5b25da933b063490cf7b67073d399b04ad55c0a89f8ec36d7f5cae757dbd3d6d0f5b77f7c94e28878397cb45cfd178f3f07ed010203010001",
+      "keyJwk": {
+        "alg": "RS384",
+        "e": "AQAB",
+        "kid": "none",
+        "kty": "RSA",
+        "n": "odORLmXZlOC6URNfeIRNmj6lFh5UUNFqjPAXOgowmh7pTpQ4Xf_F4n3qZpKhcTUWr4bfIoPI4yfmDuJqe3z8ywrz9LXv7DWGUZlrl9WyXakzsGNJDPe2cHPTmbBK1VwKifjsNtf1yudX29PW0PW3f3yU4oh4OXy0XP0Xjz8H7QE"
+      },
+      "keyPem": "-----BEGIN PUBLIC KEY-----\nMIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCh05EuZdmU4LpRE194hE2aPqUW\nHlRQ0WqM8Bc6CjCaHulOlDhd/8XifepmkqFxNRavht8ig8jjJ+YO4mp7fPzLCvP0\nte/sNYZRmWuX1bJdqTOwY0kM97Zwc9OZsErVXAqJ+Ow21/XK51fb09bQ9bd/fJTi\niHg5fLRc/RePPwftAQIDAQAB\n-----END PUBLIC KEY-----",
+      "keySize": 1024,
+      "privateKeyJwk": {
+        "alg": "RS384",
+        "d": "VoMgbkmM1IZ_lLBira8tPXSYFQcJ1FrgN5BzGlgwO3SjDZs3tyjxxW_DTCq_nCHhitzzlSQW1TmTSAnLG1FqYtgOEIKz5NLOdJ9Yx6HA5ZB_t8a5yflxyAuJC_4QHF6KgxVr1KVSg6ctBjRVCpvWdLdxueHgBhnrQ9bjURLhUDE",
+        "dp": "KEA7s_4BlItRuLJGA-ZdJ5ZzndHMT1g2IIYF2-JBXNQIJmfYexsGIa14Dv1H9q1N8ZSSRDOk0FGqqDYzSlvJbw",
+        "dq": "L-wND5l2yDPnp07PJ4czXBGpr42Afbk8Cjq4WdPXxwHy7jyBj0-DvUiEXxxnCwhD9FXs3i-zjpmWJvRdYAv0YQ",
+        "e": "AQAB",
+        "kid": "none",
+        "kty": "RSA",
+        "n": "odORLmXZlOC6URNfeIRNmj6lFh5UUNFqjPAXOgowmh7pTpQ4Xf_F4n3qZpKhcTUWr4bfIoPI4yfmDuJqe3z8ywrz9LXv7DWGUZlrl9WyXakzsGNJDPe2cHPTmbBK1VwKifjsNtf1yudX29PW0PW3f3yU4oh4OXy0XP0Xjz8H7QE",
+        "p": "1V9aw2J-fUuwfFMMsms-DsbPx3U5huAJyfU9hLaUCSPSk_jFW16YILVtxusAjud5oVanyKC0-lthF6T2QjOjiw",
+        "q": "wif1zXXYhl91q0Z-9fjUPuBwclBFDVIyMPo3hqZjLbuJPsnPEDkFhSG0KAUpZEMV-dN0CZFfb16GNlq4KCfTIw",
+        "qi": "Lvq4ubUogD_gLm261XXVeCS3lNvZrgtNa0OswbIqQs4v_BL_kzmvPaCDh8vnPhvTJnJUh-uXxxum-WDl3d9CBw"
+      },
+      "privateKeyPem": "-----BEGIN RSA PRIVATE KEY-----\nMIICWwIBAAKBgQCh05EuZdmU4LpRE194hE2aPqUWHlRQ0WqM8Bc6CjCaHulOlDhd\n/8XifepmkqFxNRavht8ig8jjJ+YO4mp7fPzLCvP0te/sNYZRmWuX1bJdqTOwY0kM\n97Zwc9OZsErVXAqJ+Ow21/XK51fb09bQ9bd/fJTiiHg5fLRc/RePPwftAQIDAQAB\nAoGAVoMgbkmM1IZ/lLBira8tPXSYFQcJ1FrgN5BzGlgwO3SjDZs3tyjxxW/DTCq/\nnCHhitzzlSQW1TmTSAnLG1FqYtgOEIKz5NLOdJ9Yx6HA5ZB/t8a5yflxyAuJC/4Q\nHF6KgxVr1KVSg6ctBjRVCpvWdLdxueHgBhnrQ9bjURLhUDECQQDVX1rDYn59S7B8\nUwyyaz4Oxs/HdTmG4AnJ9T2EtpQJI9KT+MVbXpggtW3G6wCO53mhVqfIoLT6W2EX\npPZCM6OLAkEAwif1zXXYhl91q0Z+9fjUPuBwclBFDVIyMPo3hqZjLbuJPsnPEDkF\nhSG0KAUpZEMV+dN0CZFfb16GNlq4KCfTIwJAKEA7s/4BlItRuLJGA+ZdJ5ZzndHM\nT1g2IIYF2+JBXNQIJmfYexsGIa14Dv1H9q1N8ZSSRDOk0FGqqDYzSlvJbwJAL+wN\nD5l2yDPnp07PJ4czXBGpr42Afbk8Cjq4WdPXxwHy7jyBj0+DvUiEXxxnCwhD9FXs\n3i+zjpmWJvRdYAv0YQJALvq4ubUogD/gLm261XXVeCS3lNvZrgtNa0OswbIqQs4v\n/BL/kzmvPaCDh8vnPhvTJnJUh+uXxxum+WDl3d9CBw==\n-----END RSA PRIVATE KEY-----",
+      "privateKeyPkcs8": "30820275020100300d06092a864886f70d01010105000482025f3082025b02010002818100a1d3912e65d994e0ba51135f78844d9a3ea5161e5450d16a8cf0173a0a309a1ee94e94385dffc5e27dea6692a1713516af86df2283c8e327e60ee26a7b7cfccb0af3f4b5efec358651996b97d5b25da933b063490cf7b67073d399b04ad55c0a89f8ec36d7f5cae757dbd3d6d0f5b77f7c94e28878397cb45cfd178f3f07ed0102030100010281805683206e498cd4867f94b062adaf2d3d7498150709d45ae03790731a58303b74a30d9b37b728f1c56fc34c2abf9c21e18adcf3952416d539934809cb1b516a62d80e1082b3e4d2ce749f58c7a1c0e5907fb7c6b9c9f971c80b890bfe101c5e8a83156bd4a55283a72d0634550a9bd674b771b9e1e00619eb43d6e35112e15031024100d55f5ac3627e7d4bb07c530cb26b3e0ec6cfc7753986e009c9f53d84b6940923d293f8c55b5e9820b56dc6eb008ee779a156a7c8a0b4fa5b6117a4f64233a38b024100c227f5cd75d8865f75ab467ef5f8d43ee0707250450d523230fa3786a6632dbb893ec9cf1039058521b4280529644315f9d37409915f6f5e86365ab82827d323024028403bb3fe01948b51b8b24603e65d2796739dd1cc4f5836208605dbe2415cd4082667d87b1b0621ad780efd47f6ad4df194924433a4d051aaa836334a5bc96f02402fec0d0f9976c833e7a74ecf2787335c11a9af8d807db93c0a3ab859d3d7c701f2ee3c818f4f83bd48845f1c670b0843f455ecde2fb38e999626f45d600bf46102402efab8b9b528803fe02e6dbad575d57824b794dbd9ae0b4d6b43acc1b22a42ce2ffc12ff9339af3da08387cbe73e1bd326725487eb97c71ba6f960e5dddf4207",
+      "sha": "SHA-384",
+      "type": "RsassaPkcs1Generate",
+      "source": {
+        "name": "google-wycheproof",
+        "version": "0.8r12"
+      },
+      "tests": [
+        {
+          "tcId": 25,
+          "comment": "",
+          "msg": "",
+          "sig": "8bda47e85848bb1d98eab90bd5f1880540204c8753a17b2552ee4778405e4c42cc3d25a4d869eb38f1e6fd122a2f52fa8685c3ef40400ade2017555ae88fa892a1ad2793f7c23762f0e54db0852cfdb2e52ebd02c8acf81b9a1e78accb5fbb57a29391cf4fa9aa298111c7b94fe240f0f576b1b52853853fce13da155f16e81d",
+          "result": "acceptable",
+          "flags": [
+            "SmallModulus"
+          ]
+        },
+        {
+          "tcId": 26,
+          "comment": "",
+          "msg": "0000000000000000000000000000000000000000",
+          "sig": "74b9a7b9548a281c5a258520c879e0e64d8a28812a7b6461c6e418e0502b61008a8e535a5b55fb64529a6a6df2f60ef33c1844b27f81532be2bc2992d0eb5e524112da90bf40adefcf206469639ff3895a9826674ee1acbdd623842ab0a9a36d48da13ba17c4ee069254da2ea418d5a8f135e2a414c0654a266d538621917545",
+          "result": "acceptable",
+          "flags": [
+            "SmallModulus"
+          ]
+        },
+        {
+          "tcId": 27,
+          "comment": "",
+          "msg": "54657374",
+          "sig": "10d9c8b0bf55586e985799be60a17979eb0461daca00ea6defcc62fe720ea502e7e486c02a48f5ca41ecd96c67b5c762a067c465c35a8e416748897ede3ee2cd3c3e1b1199da5c7f0dd0f036774a1730e63ba781d6ee43d78b067608e831a16dbec6075c8ec90e81a4d8e2ac2587b0ae43f7445478b03ab7eba2e63d4043c2e1",
+          "result": "acceptable",
+          "flags": [
+            "SmallModulus"
+          ]
+        },
+        {
+          "tcId": 28,
+          "comment": "",
+          "msg": "313233343030",
+          "sig": "2cb15eb09030fade89eabc41794d288275c456f12cb0d414311e5edb551a51c3e1354f134b27aecae50536379a871a4ce6ab2e1b999c0308f5fed2ec48d97d68885b37a1e3e26b841db103b64f720f9aef265632f4f4a207ddffe19092e8b16144b0a3443d779c0b648077d3b04b72dd4f4051ac232261ac9df65974764b97a9",
+          "result": "acceptable",
+          "flags": [
+            "SmallModulus"
+          ]
+        },
+        {
+          "tcId": 29,
+          "comment": "",
+          "msg": "4d657373616765",
+          "sig": "9c80154e3087b443fe6d9bc24faa7ea009330a210f2f1063ea1b61261507a5e3853079a0287d5b27983bd751ac782b1a5c31130978d3f2a8a95101c4ed87eacee964953ad32cd2cd4caeb7c37330d1650d7ca19dfa6e8f1c184d3dd9a3a759d6badc700b7063d2c579b336c5e141c200614ba613d9bb6493e87d26978b438573",
+          "result": "acceptable",
+          "flags": [
+            "SmallModulus"
+          ]
+        },
+        {
+          "tcId": 30,
+          "comment": "",
+          "msg": "61",
+          "sig": "99fc12c90f67dff9600c30c9f81bbf335492151345c809c05771d59ef73d438f88c5c43ba507a3cad6633641d70ec3f3c38f67cf7f2566489f59422a2dad1f647e790bbd28acc290ab392d48ce7a140184bb71023f8c9c5dcd9469ebe848063d96bad26fbd390974b38459d51727eb8c0a5b8a8ef1d3394b6f852dd2b22cd22c",
+          "result": "acceptable",
+          "flags": [
+            "SmallModulus"
+          ]
+        },
+        {
+          "tcId": 31,
+          "comment": "",
+          "msg": "e0e1e2e3e4e5e6e7e8e9eaebecedeeeff0f1f2f3f4f5f6f7f8f9fafbfcfdfeff",
+          "sig": "869b42bb93624a139bb98c043cba8fe12d612aef040e3085994824a480274c0cca24d08d178321acb048055b777d897e267cd50809bc7e9f86c276beeb8a8d59d82aa2091c66c71e41ca59738b0e18f055f9c75a01e87aaad446e64ac0183c002ea2080415ebb4f85a590622bfa4e701a6e37d0b33bd78d5ff874d8d28fda263",
+          "result": "acceptable",
+          "flags": [
+            "SmallModulus"
+          ]
+        },
+        {
+          "tcId": 32,
+          "comment": "",
+          "msg": "0102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f808182838485868788898a8b8c8d8e8f909192939495969798999a9b9c9d9e9fa0a1a2a3a4a5a6a7a8a9aaabacadaeafb0b1b2b3b4b5b6b7b8b9babbbcbdbebfc0c1c2c3c4c5c6c7c8c9cacbcccdcecfd0d1d2d3d4d5d6d7d8d9dadbdcdddedfe0e1e2e3e4e5e6e7e8e9eaebecedeeeff0f1f2f3f4f5f6f7f8f9fafbfcfdfeff000102030405060708090a0b0c0d0e0f1011121314151617",
+          "sig": "1d1d3424bfc646c0e3668ab4e9eddbf993c5efe63ee6ccc966dd467c466225bf587b9d7508a7dab8079c50cb3086b9f0fa3c6e77236744618fd651d39bed94bdf47a2a77897341f16da3db9557b2377f151375a74d9af8204e155abbb62dc7e2f6effee3ffe936b360e45ab750ce69e29f29e915baf8578017f66d85192ded04",
+          "result": "acceptable",
+          "flags": [
+            "SmallModulus"
+          ]
+        }
+      ]
+    },
+    {
+      "privateKey": {
+        "privateExponent": "5baed4f10cba539943f679e2bebad47e96a9b2b4c2a708665b7d156ef80f24de627df5887a54fd283563f774b6120b98d8b6d8ecd6656f9031cb90546b3125f54662b5860d5837f85e47cfd63f5520ae10c714c07a473af59647201c19d7590d6d5db84075738ac081be09d02fa3c82a7b170cbd33b860927a8efbf2e157357b",
+        "publicExponent": "03",
+        "modulus": "0089863f6993177d65e5f1b6d41e183ebde1fe8c0f23fa8c99893ba0267416b74d93bcf04cb77f7bbc5015f501c001fe81eed5c339fca8d6804c29523668d57b32e2058b20366c4d66c5e1684b925bd7c71959ba4b022a4ce4a04c7e4ff13fa433f81553999ed9e73dc6f4e0cec5b00452391bb7a742f5b932c0a4eccf802120cf"
+      },
+      "keyAsn": "3081870281810089863f6993177d65e5f1b6d41e183ebde1fe8c0f23fa8c99893ba0267416b74d93bcf04cb77f7bbc5015f501c001fe81eed5c339fca8d6804c29523668d57b32e2058b20366c4d66c5e1684b925bd7c71959ba4b022a4ce4a04c7e4ff13fa433f81553999ed9e73dc6f4e0cec5b00452391bb7a742f5b932c0a4eccf802120cf020103",
+      "keyDer": "30819d300d06092a864886f70d010101050003818b003081870281810089863f6993177d65e5f1b6d41e183ebde1fe8c0f23fa8c99893ba0267416b74d93bcf04cb77f7bbc5015f501c001fe81eed5c339fca8d6804c29523668d57b32e2058b20366c4d66c5e1684b925bd7c71959ba4b022a4ce4a04c7e4ff13fa433f81553999ed9e73dc6f4e0cec5b00452391bb7a742f5b932c0a4eccf802120cf020103",
+      "keyJwk": {
+        "alg": "RS256",
+        "e": "Aw",
+        "kid": "none",
+        "kty": "RSA",
+        "n": "iYY_aZMXfWXl8bbUHhg-veH-jA8j-oyZiTugJnQWt02TvPBMt397vFAV9QHAAf6B7tXDOfyo1oBMKVI2aNV7MuIFiyA2bE1mxeFoS5Jb18cZWbpLAipM5KBMfk_xP6Qz-BVTmZ7Z5z3G9ODOxbAEUjkbt6dC9bkywKTsz4AhIM8"
+      },
+      "keyPem": "-----BEGIN PUBLIC KEY-----\nMIGdMA0GCSqGSIb3DQEBAQUAA4GLADCBhwKBgQCJhj9pkxd9ZeXxttQeGD694f6M\nDyP6jJmJO6AmdBa3TZO88Ey3f3u8UBX1AcAB/oHu1cM5/KjWgEwpUjZo1Xsy4gWL\nIDZsTWbF4WhLklvXxxlZuksCKkzkoEx+T/E/pDP4FVOZntnnPcb04M7FsARSORu3\np0L1uTLApOzPgCEgzwIBAw==\n-----END PUBLIC KEY-----",
+      "keySize": 1024,
+      "privateKeyJwk": {
+        "alg": "RS256",
+        "d": "W67U8Qy6U5lD9nnivrrUfpapsrTCpwhmW30VbvgPJN5iffWIelT9KDVj93S2EguY2LbY7NZlb5Axy5BUazEl9UZitYYNWDf4XkfP1j9VIK4QxxTAekc69ZZHIBwZ11kNbV24QHVzisCBvgnQL6PIKnsXDL0zuGCSeo778uFXNXs",
+        "dp": "ATcfRJ4TG9epOdILH3AA-qZ6hV0sLKWg_I9sRVD20E51sXeSxIFVdLzG3E1X_4P08Is6QbU0sR0rMBix71_q30f5Ms7IRE9l-5DaMvdtD2abBQeDa3M",
+        "dq": "Mkr4pfbuOKIRXzXcPf7128EgCMKwmWshWB0dW5VyIXQNziJLzbGSbJDKRw",
+        "e": "Aw",
+        "kid": "none",
+        "kty": "RSA",
+        "n": "iYY_aZMXfWXl8bbUHhg-veH-jA8j-oyZiTugJnQWt02TvPBMt397vFAV9QHAAf6B7tXDOfyo1oBMKVI2aNV7MuIFiyA2bE1mxeFoS5Jb18cZWbpLAipM5KBMfk_xP6Qz-BVTmZ7Z5z3G9ODOxbAEUjkbt6dC9bkywKTsz4AhIM8",
+        "p": "AdKu5u0cqcN91rsQrygBd_m3yAvCQvhxetciZ_lyOHWwijNcJsIALxsqSnQD_0XvaNDXYo_PCavAyCUK5w_gTuv1zDYsZncY-VlHTHMjlxnoh4tFIS0",
+        "q": "S3B0-PJlVPMaDtDKXP5wyaGwDSQI5iCyBCusCWArMi4UtTNxtIpbotkvaw",
+        "qi": "AQf7NkkCvIvOEDy7RFKB5NzUKPY5Ur4yIyHU1KTVzaQfq7rOfDohgxYV1J-CvaEQdwEXhCRx06KrJW5ZZl401s3KpX-9qvR6lUUIZfObgATIYMaNmtY"
+      },
+      "privateKeyPem": "-----BEGIN RSA PRIVATE KEY-----\nMIICbwIBAAKBgQCJhj9pkxd9ZeXxttQeGD694f6MDyP6jJmJO6AmdBa3TZO88Ey3\nf3u8UBX1AcAB/oHu1cM5/KjWgEwpUjZo1Xsy4gWLIDZsTWbF4WhLklvXxxlZuksC\nKkzkoEx+T/E/pDP4FVOZntnnPcb04M7FsARSORu3p0L1uTLApOzPgCEgzwIBAwKB\ngFuu1PEMulOZQ/Z54r661H6WqbK0wqcIZlt9FW74DyTeYn31iHpU/Sg1Y/d0thIL\nmNi22OzWZW+QMcuQVGsxJfVGYrWGDVg3+F5Hz9Y/VSCuEMcUwHpHOvWWRyAcGddZ\nDW1duEB1c4rAgb4J0C+jyCp7Fwy9M7hgknqO+/LhVzV7AlYB0q7m7Rypw33WuxCv\nKAF3+bfIC8JC+HF61yJn+XI4dbCKM1wmwgAvGypKdAP/Re9o0Ndij88Jq8DIJQrn\nD+BO6/XMNixmdxj5WUdMcyOXGeiHi0UhLQIrS3B0+PJlVPMaDtDKXP5wyaGwDSQI\n5iCyBCusCWArMi4UtTNxtIpbotkvawJWATcfRJ4TG9epOdILH3AA+qZ6hV0sLKWg\n/I9sRVD20E51sXeSxIFVdLzG3E1X/4P08Is6QbU0sR0rMBix71/q30f5Ms7IRE9l\n+5DaMvdtD2abBQeDa3MCKzJK+KX27jiiEV813D3+9dvBIAjCsJlrIVgdHVuVciF0\nDc4iS82xkmyQykcCVgEH+zZJAryLzhA8u0RSgeTc1Cj2OVK+MiMh1NSk1c2kH6u6\nznw6IYMWFdSfgr2hEHcBF4QkcdOiqyVuWWZeNNbNyqV/var0epVFCGXzm4AEyGDG\njZrW\n-----END RSA PRIVATE KEY-----",
+      "privateKeyPkcs8": "30820289020100300d06092a864886f70d0101010500048202733082026f0201000281810089863f6993177d65e5f1b6d41e183ebde1fe8c0f23fa8c99893ba0267416b74d93bcf04cb77f7bbc5015f501c001fe81eed5c339fca8d6804c29523668d57b32e2058b20366c4d66c5e1684b925bd7c71959ba4b022a4ce4a04c7e4ff13fa433f81553999ed9e73dc6f4e0cec5b00452391bb7a742f5b932c0a4eccf802120cf0201030281805baed4f10cba539943f679e2bebad47e96a9b2b4c2a708665b7d156ef80f24de627df5887a54fd283563f774b6120b98d8b6d8ecd6656f9031cb90546b3125f54662b5860d5837f85e47cfd63f5520ae10c714c07a473af59647201c19d7590d6d5db84075738ac081be09d02fa3c82a7b170cbd33b860927a8efbf2e157357b025601d2aee6ed1ca9c37dd6bb10af280177f9b7c80bc242f8717ad72267f9723875b08a335c26c2002f1b2a4a7403ff45ef68d0d7628fcf09abc0c8250ae70fe04eebf5cc362c667718f959474c73239719e8878b45212d022b4b7074f8f26554f31a0ed0ca5cfe70c9a1b00d2408e620b2042bac09602b322e14b53371b48a5ba2d92f6b025601371f449e131bd7a939d20b1f7000faa67a855d2c2ca5a0fc8f6c4550f6d04e75b17792c4815574bcc6dc4d57ff83f4f08b3a41b534b11d2b3018b1ef5feadf47f932cec8444f65fb90da32f76d0f669b0507836b73022b324af8a5f6ee38a2115f35dc3dfef5dbc12008c2b0996b21581d1d5b957221740dce224bcdb1926c90ca4702560107fb364902bc8bce103cbb445281e4dcd428f63952be322321d4d4a4d5cda41fabbace7c3a21831615d49f82bda110770117842471d3a2ab256e59665e34d6cdcaa57fbdaaf47a95450865f39b8004c860c68d9ad6",
+      "sha": "SHA-256",
+      "type": "RsassaPkcs1Generate",
+      "source": {
+        "name": "google-wycheproof",
+        "version": "0.8r12"
+      },
+      "tests": [
+        {
+          "tcId": 153,
+          "comment": "short signature",
+          "msg": "3831",
+          "sig": "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000020c68149efc8a4a913a26c9170590a1ed9064323c12b6ebde15ae8c05a0e5205c91f57f5753815ff39c918",
+          "result": "acceptable",
+          "flags": [
+            "SmallModulus",
+            "SmallPublicKey"
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -19,8 +19,8 @@
 #include <openssl/evp.h>
 
 
-// Node.js assumes every cipher in |EVP_CIPHER_do_all_sorted| is accessible via
-// |EVP_get_cipherby*|.
+// Node.js assumes every cipher in `EVP_CIPHER_do_all_sorted` is accessible via
+// `EVP_get_cipherby*`.
 TEST(EVPTest, CipherDoAll) {
   EVP_CIPHER_do_all_sorted(
       [](const EVP_CIPHER *cipher, const char *name, const char *unused,
@@ -32,8 +32,8 @@ TEST(EVPTest, CipherDoAll) {
       nullptr);
 }
 
-// Node.js assumes every digest in |EVP_MD_do_all_sorted| is accessible via
-// |EVP_get_digestby*|.
+// Node.js assumes every digest in `EVP_MD_do_all_sorted` is accessible via
+// `EVP_get_digestby*`.
 TEST(EVPTest, MDDoAll) {
   EVP_MD_do_all_sorted(
       [](const EVP_MD *md, const char *name, const char *unused, void *arg) {

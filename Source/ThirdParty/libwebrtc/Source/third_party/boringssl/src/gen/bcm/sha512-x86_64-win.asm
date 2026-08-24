@@ -29,7 +29,7 @@ $L$SEH_begin_sha512_block_data_order_nohw:
 
 
 _CET_ENDBR
-	mov	rax,rsp
+	mov	rax,rsp  ; copy %rsp
 
 	push	rbx
 
@@ -43,14 +43,14 @@ _CET_ENDBR
 
 	push	r15
 
-	shl	rdx,4
+	shl	rdx,4  ; num*16
 	sub	rsp,16*8+4*8
-	lea	rdx,[rdx*8+rsi]
-	and	rsp,-64
-	mov	QWORD[((128+0))+rsp],rdi
-	mov	QWORD[((128+8))+rsp],rsi
-	mov	QWORD[((128+16))+rsp],rdx
-	mov	QWORD[152+rsp],rax
+	lea	rdx,[rdx*8+rsi]  ; inp+num*16*8
+	and	rsp,-64  ; align stack frame
+	mov	QWORD[((128+0))+rsp],rdi  ; save ctx, 1st arg
+	mov	QWORD[((128+8))+rsp],rsi  ; save inp, 2nd arh
+	mov	QWORD[((128+16))+rsp],rdx  ; save end pointer, "3rd" arg
+	mov	QWORD[152+rsp],rax  ; save copy of %rsp
 
 $L$prologue:
 
@@ -68,7 +68,7 @@ ALIGN	16
 $L$loop:
 	mov	rdi,rbx
 	lea	rbp,[K512]
-	xor	rdi,rcx
+	xor	rdi,rcx  ; magic
 	mov	r12,QWORD[rsi]
 	mov	r13,r8
 	mov	r14,rax
@@ -78,38 +78,38 @@ $L$loop:
 
 	xor	r13,r8
 	ror	r14,5
-	xor	r15,r10
+	xor	r15,r10  ; f^g
 
 	mov	QWORD[rsp],r12
 	xor	r14,rax
-	and	r15,r8
+	and	r15,r8  ; (f^g)&e
 
 	ror	r13,4
-	add	r12,r11
-	xor	r15,r10
+	add	r12,r11  ; T1+=h
+	xor	r15,r10  ; Ch(e,f,g)=((f^g)&e)^g
 
 	ror	r14,6
 	xor	r13,r8
-	add	r12,r15
+	add	r12,r15  ; T1+=Ch(e,f,g)
 
 	mov	r15,rax
-	add	r12,QWORD[rbp]
+	add	r12,QWORD[rbp]  ; T1+=K[round]
 	xor	r14,rax
 
-	xor	r15,rbx
-	ror	r13,14
+	xor	r15,rbx  ; a^b, b^c in next round
+	ror	r13,14  ; Sigma1(e)
 	mov	r11,rbx
 
 	and	rdi,r15
-	ror	r14,28
-	add	r12,r13
+	ror	r14,28  ; Sigma0(a)
+	add	r12,r13  ; T1+=Sigma1(e)
 
-	xor	r11,rdi
-	add	rdx,r12
-	add	r11,r12
+	xor	r11,rdi  ; h=Maj(a,b,c)=Ch(a^b,c,b)
+	add	rdx,r12  ; d+=T1
+	add	r11,r12  ; h+=T1
 
-	lea	rbp,[8+rbp]
-	add	r11,r14
+	lea	rbp,[8+rbp]  ; round++
+	add	r11,r14  ; h+=Sigma0(a)
 	mov	r12,QWORD[8+rsi]
 	mov	r13,rdx
 	mov	r14,r11
@@ -119,38 +119,38 @@ $L$loop:
 
 	xor	r13,rdx
 	ror	r14,5
-	xor	rdi,r9
+	xor	rdi,r9  ; f^g
 
 	mov	QWORD[8+rsp],r12
 	xor	r14,r11
-	and	rdi,rdx
+	and	rdi,rdx  ; (f^g)&e
 
 	ror	r13,4
-	add	r12,r10
-	xor	rdi,r9
+	add	r12,r10  ; T1+=h
+	xor	rdi,r9  ; Ch(e,f,g)=((f^g)&e)^g
 
 	ror	r14,6
 	xor	r13,rdx
-	add	r12,rdi
+	add	r12,rdi  ; T1+=Ch(e,f,g)
 
 	mov	rdi,r11
-	add	r12,QWORD[rbp]
+	add	r12,QWORD[rbp]  ; T1+=K[round]
 	xor	r14,r11
 
-	xor	rdi,rax
-	ror	r13,14
+	xor	rdi,rax  ; a^b, b^c in next round
+	ror	r13,14  ; Sigma1(e)
 	mov	r10,rax
 
 	and	r15,rdi
-	ror	r14,28
-	add	r12,r13
+	ror	r14,28  ; Sigma0(a)
+	add	r12,r13  ; T1+=Sigma1(e)
 
-	xor	r10,r15
-	add	rcx,r12
-	add	r10,r12
+	xor	r10,r15  ; h=Maj(a,b,c)=Ch(a^b,c,b)
+	add	rcx,r12  ; d+=T1
+	add	r10,r12  ; h+=T1
 
-	lea	rbp,[24+rbp]
-	add	r10,r14
+	lea	rbp,[24+rbp]  ; round++
+	add	r10,r14  ; h+=Sigma0(a)
 	mov	r12,QWORD[16+rsi]
 	mov	r13,rcx
 	mov	r14,r10
@@ -160,38 +160,38 @@ $L$loop:
 
 	xor	r13,rcx
 	ror	r14,5
-	xor	r15,r8
+	xor	r15,r8  ; f^g
 
 	mov	QWORD[16+rsp],r12
 	xor	r14,r10
-	and	r15,rcx
+	and	r15,rcx  ; (f^g)&e
 
 	ror	r13,4
-	add	r12,r9
-	xor	r15,r8
+	add	r12,r9  ; T1+=h
+	xor	r15,r8  ; Ch(e,f,g)=((f^g)&e)^g
 
 	ror	r14,6
 	xor	r13,rcx
-	add	r12,r15
+	add	r12,r15  ; T1+=Ch(e,f,g)
 
 	mov	r15,r10
-	add	r12,QWORD[rbp]
+	add	r12,QWORD[rbp]  ; T1+=K[round]
 	xor	r14,r10
 
-	xor	r15,r11
-	ror	r13,14
+	xor	r15,r11  ; a^b, b^c in next round
+	ror	r13,14  ; Sigma1(e)
 	mov	r9,r11
 
 	and	rdi,r15
-	ror	r14,28
-	add	r12,r13
+	ror	r14,28  ; Sigma0(a)
+	add	r12,r13  ; T1+=Sigma1(e)
 
-	xor	r9,rdi
-	add	rbx,r12
-	add	r9,r12
+	xor	r9,rdi  ; h=Maj(a,b,c)=Ch(a^b,c,b)
+	add	rbx,r12  ; d+=T1
+	add	r9,r12  ; h+=T1
 
-	lea	rbp,[8+rbp]
-	add	r9,r14
+	lea	rbp,[8+rbp]  ; round++
+	add	r9,r14  ; h+=Sigma0(a)
 	mov	r12,QWORD[24+rsi]
 	mov	r13,rbx
 	mov	r14,r9
@@ -201,38 +201,38 @@ $L$loop:
 
 	xor	r13,rbx
 	ror	r14,5
-	xor	rdi,rdx
+	xor	rdi,rdx  ; f^g
 
 	mov	QWORD[24+rsp],r12
 	xor	r14,r9
-	and	rdi,rbx
+	and	rdi,rbx  ; (f^g)&e
 
 	ror	r13,4
-	add	r12,r8
-	xor	rdi,rdx
+	add	r12,r8  ; T1+=h
+	xor	rdi,rdx  ; Ch(e,f,g)=((f^g)&e)^g
 
 	ror	r14,6
 	xor	r13,rbx
-	add	r12,rdi
+	add	r12,rdi  ; T1+=Ch(e,f,g)
 
 	mov	rdi,r9
-	add	r12,QWORD[rbp]
+	add	r12,QWORD[rbp]  ; T1+=K[round]
 	xor	r14,r9
 
-	xor	rdi,r10
-	ror	r13,14
+	xor	rdi,r10  ; a^b, b^c in next round
+	ror	r13,14  ; Sigma1(e)
 	mov	r8,r10
 
 	and	r15,rdi
-	ror	r14,28
-	add	r12,r13
+	ror	r14,28  ; Sigma0(a)
+	add	r12,r13  ; T1+=Sigma1(e)
 
-	xor	r8,r15
-	add	rax,r12
-	add	r8,r12
+	xor	r8,r15  ; h=Maj(a,b,c)=Ch(a^b,c,b)
+	add	rax,r12  ; d+=T1
+	add	r8,r12  ; h+=T1
 
-	lea	rbp,[24+rbp]
-	add	r8,r14
+	lea	rbp,[24+rbp]  ; round++
+	add	r8,r14  ; h+=Sigma0(a)
 	mov	r12,QWORD[32+rsi]
 	mov	r13,rax
 	mov	r14,r8
@@ -242,38 +242,38 @@ $L$loop:
 
 	xor	r13,rax
 	ror	r14,5
-	xor	r15,rcx
+	xor	r15,rcx  ; f^g
 
 	mov	QWORD[32+rsp],r12
 	xor	r14,r8
-	and	r15,rax
+	and	r15,rax  ; (f^g)&e
 
 	ror	r13,4
-	add	r12,rdx
-	xor	r15,rcx
+	add	r12,rdx  ; T1+=h
+	xor	r15,rcx  ; Ch(e,f,g)=((f^g)&e)^g
 
 	ror	r14,6
 	xor	r13,rax
-	add	r12,r15
+	add	r12,r15  ; T1+=Ch(e,f,g)
 
 	mov	r15,r8
-	add	r12,QWORD[rbp]
+	add	r12,QWORD[rbp]  ; T1+=K[round]
 	xor	r14,r8
 
-	xor	r15,r9
-	ror	r13,14
+	xor	r15,r9  ; a^b, b^c in next round
+	ror	r13,14  ; Sigma1(e)
 	mov	rdx,r9
 
 	and	rdi,r15
-	ror	r14,28
-	add	r12,r13
+	ror	r14,28  ; Sigma0(a)
+	add	r12,r13  ; T1+=Sigma1(e)
 
-	xor	rdx,rdi
-	add	r11,r12
-	add	rdx,r12
+	xor	rdx,rdi  ; h=Maj(a,b,c)=Ch(a^b,c,b)
+	add	r11,r12  ; d+=T1
+	add	rdx,r12  ; h+=T1
 
-	lea	rbp,[8+rbp]
-	add	rdx,r14
+	lea	rbp,[8+rbp]  ; round++
+	add	rdx,r14  ; h+=Sigma0(a)
 	mov	r12,QWORD[40+rsi]
 	mov	r13,r11
 	mov	r14,rdx
@@ -283,38 +283,38 @@ $L$loop:
 
 	xor	r13,r11
 	ror	r14,5
-	xor	rdi,rbx
+	xor	rdi,rbx  ; f^g
 
 	mov	QWORD[40+rsp],r12
 	xor	r14,rdx
-	and	rdi,r11
+	and	rdi,r11  ; (f^g)&e
 
 	ror	r13,4
-	add	r12,rcx
-	xor	rdi,rbx
+	add	r12,rcx  ; T1+=h
+	xor	rdi,rbx  ; Ch(e,f,g)=((f^g)&e)^g
 
 	ror	r14,6
 	xor	r13,r11
-	add	r12,rdi
+	add	r12,rdi  ; T1+=Ch(e,f,g)
 
 	mov	rdi,rdx
-	add	r12,QWORD[rbp]
+	add	r12,QWORD[rbp]  ; T1+=K[round]
 	xor	r14,rdx
 
-	xor	rdi,r8
-	ror	r13,14
+	xor	rdi,r8  ; a^b, b^c in next round
+	ror	r13,14  ; Sigma1(e)
 	mov	rcx,r8
 
 	and	r15,rdi
-	ror	r14,28
-	add	r12,r13
+	ror	r14,28  ; Sigma0(a)
+	add	r12,r13  ; T1+=Sigma1(e)
 
-	xor	rcx,r15
-	add	r10,r12
-	add	rcx,r12
+	xor	rcx,r15  ; h=Maj(a,b,c)=Ch(a^b,c,b)
+	add	r10,r12  ; d+=T1
+	add	rcx,r12  ; h+=T1
 
-	lea	rbp,[24+rbp]
-	add	rcx,r14
+	lea	rbp,[24+rbp]  ; round++
+	add	rcx,r14  ; h+=Sigma0(a)
 	mov	r12,QWORD[48+rsi]
 	mov	r13,r10
 	mov	r14,rcx
@@ -324,38 +324,38 @@ $L$loop:
 
 	xor	r13,r10
 	ror	r14,5
-	xor	r15,rax
+	xor	r15,rax  ; f^g
 
 	mov	QWORD[48+rsp],r12
 	xor	r14,rcx
-	and	r15,r10
+	and	r15,r10  ; (f^g)&e
 
 	ror	r13,4
-	add	r12,rbx
-	xor	r15,rax
+	add	r12,rbx  ; T1+=h
+	xor	r15,rax  ; Ch(e,f,g)=((f^g)&e)^g
 
 	ror	r14,6
 	xor	r13,r10
-	add	r12,r15
+	add	r12,r15  ; T1+=Ch(e,f,g)
 
 	mov	r15,rcx
-	add	r12,QWORD[rbp]
+	add	r12,QWORD[rbp]  ; T1+=K[round]
 	xor	r14,rcx
 
-	xor	r15,rdx
-	ror	r13,14
+	xor	r15,rdx  ; a^b, b^c in next round
+	ror	r13,14  ; Sigma1(e)
 	mov	rbx,rdx
 
 	and	rdi,r15
-	ror	r14,28
-	add	r12,r13
+	ror	r14,28  ; Sigma0(a)
+	add	r12,r13  ; T1+=Sigma1(e)
 
-	xor	rbx,rdi
-	add	r9,r12
-	add	rbx,r12
+	xor	rbx,rdi  ; h=Maj(a,b,c)=Ch(a^b,c,b)
+	add	r9,r12  ; d+=T1
+	add	rbx,r12  ; h+=T1
 
-	lea	rbp,[8+rbp]
-	add	rbx,r14
+	lea	rbp,[8+rbp]  ; round++
+	add	rbx,r14  ; h+=Sigma0(a)
 	mov	r12,QWORD[56+rsi]
 	mov	r13,r9
 	mov	r14,rbx
@@ -365,38 +365,38 @@ $L$loop:
 
 	xor	r13,r9
 	ror	r14,5
-	xor	rdi,r11
+	xor	rdi,r11  ; f^g
 
 	mov	QWORD[56+rsp],r12
 	xor	r14,rbx
-	and	rdi,r9
+	and	rdi,r9  ; (f^g)&e
 
 	ror	r13,4
-	add	r12,rax
-	xor	rdi,r11
+	add	r12,rax  ; T1+=h
+	xor	rdi,r11  ; Ch(e,f,g)=((f^g)&e)^g
 
 	ror	r14,6
 	xor	r13,r9
-	add	r12,rdi
+	add	r12,rdi  ; T1+=Ch(e,f,g)
 
 	mov	rdi,rbx
-	add	r12,QWORD[rbp]
+	add	r12,QWORD[rbp]  ; T1+=K[round]
 	xor	r14,rbx
 
-	xor	rdi,rcx
-	ror	r13,14
+	xor	rdi,rcx  ; a^b, b^c in next round
+	ror	r13,14  ; Sigma1(e)
 	mov	rax,rcx
 
 	and	r15,rdi
-	ror	r14,28
-	add	r12,r13
+	ror	r14,28  ; Sigma0(a)
+	add	r12,r13  ; T1+=Sigma1(e)
 
-	xor	rax,r15
-	add	r8,r12
-	add	rax,r12
+	xor	rax,r15  ; h=Maj(a,b,c)=Ch(a^b,c,b)
+	add	r8,r12  ; d+=T1
+	add	rax,r12  ; h+=T1
 
-	lea	rbp,[24+rbp]
-	add	rax,r14
+	lea	rbp,[24+rbp]  ; round++
+	add	rax,r14  ; h+=Sigma0(a)
 	mov	r12,QWORD[64+rsi]
 	mov	r13,r8
 	mov	r14,rax
@@ -406,38 +406,38 @@ $L$loop:
 
 	xor	r13,r8
 	ror	r14,5
-	xor	r15,r10
+	xor	r15,r10  ; f^g
 
 	mov	QWORD[64+rsp],r12
 	xor	r14,rax
-	and	r15,r8
+	and	r15,r8  ; (f^g)&e
 
 	ror	r13,4
-	add	r12,r11
-	xor	r15,r10
+	add	r12,r11  ; T1+=h
+	xor	r15,r10  ; Ch(e,f,g)=((f^g)&e)^g
 
 	ror	r14,6
 	xor	r13,r8
-	add	r12,r15
+	add	r12,r15  ; T1+=Ch(e,f,g)
 
 	mov	r15,rax
-	add	r12,QWORD[rbp]
+	add	r12,QWORD[rbp]  ; T1+=K[round]
 	xor	r14,rax
 
-	xor	r15,rbx
-	ror	r13,14
+	xor	r15,rbx  ; a^b, b^c in next round
+	ror	r13,14  ; Sigma1(e)
 	mov	r11,rbx
 
 	and	rdi,r15
-	ror	r14,28
-	add	r12,r13
+	ror	r14,28  ; Sigma0(a)
+	add	r12,r13  ; T1+=Sigma1(e)
 
-	xor	r11,rdi
-	add	rdx,r12
-	add	r11,r12
+	xor	r11,rdi  ; h=Maj(a,b,c)=Ch(a^b,c,b)
+	add	rdx,r12  ; d+=T1
+	add	r11,r12  ; h+=T1
 
-	lea	rbp,[8+rbp]
-	add	r11,r14
+	lea	rbp,[8+rbp]  ; round++
+	add	r11,r14  ; h+=Sigma0(a)
 	mov	r12,QWORD[72+rsi]
 	mov	r13,rdx
 	mov	r14,r11
@@ -447,38 +447,38 @@ $L$loop:
 
 	xor	r13,rdx
 	ror	r14,5
-	xor	rdi,r9
+	xor	rdi,r9  ; f^g
 
 	mov	QWORD[72+rsp],r12
 	xor	r14,r11
-	and	rdi,rdx
+	and	rdi,rdx  ; (f^g)&e
 
 	ror	r13,4
-	add	r12,r10
-	xor	rdi,r9
+	add	r12,r10  ; T1+=h
+	xor	rdi,r9  ; Ch(e,f,g)=((f^g)&e)^g
 
 	ror	r14,6
 	xor	r13,rdx
-	add	r12,rdi
+	add	r12,rdi  ; T1+=Ch(e,f,g)
 
 	mov	rdi,r11
-	add	r12,QWORD[rbp]
+	add	r12,QWORD[rbp]  ; T1+=K[round]
 	xor	r14,r11
 
-	xor	rdi,rax
-	ror	r13,14
+	xor	rdi,rax  ; a^b, b^c in next round
+	ror	r13,14  ; Sigma1(e)
 	mov	r10,rax
 
 	and	r15,rdi
-	ror	r14,28
-	add	r12,r13
+	ror	r14,28  ; Sigma0(a)
+	add	r12,r13  ; T1+=Sigma1(e)
 
-	xor	r10,r15
-	add	rcx,r12
-	add	r10,r12
+	xor	r10,r15  ; h=Maj(a,b,c)=Ch(a^b,c,b)
+	add	rcx,r12  ; d+=T1
+	add	r10,r12  ; h+=T1
 
-	lea	rbp,[24+rbp]
-	add	r10,r14
+	lea	rbp,[24+rbp]  ; round++
+	add	r10,r14  ; h+=Sigma0(a)
 	mov	r12,QWORD[80+rsi]
 	mov	r13,rcx
 	mov	r14,r10
@@ -488,38 +488,38 @@ $L$loop:
 
 	xor	r13,rcx
 	ror	r14,5
-	xor	r15,r8
+	xor	r15,r8  ; f^g
 
 	mov	QWORD[80+rsp],r12
 	xor	r14,r10
-	and	r15,rcx
+	and	r15,rcx  ; (f^g)&e
 
 	ror	r13,4
-	add	r12,r9
-	xor	r15,r8
+	add	r12,r9  ; T1+=h
+	xor	r15,r8  ; Ch(e,f,g)=((f^g)&e)^g
 
 	ror	r14,6
 	xor	r13,rcx
-	add	r12,r15
+	add	r12,r15  ; T1+=Ch(e,f,g)
 
 	mov	r15,r10
-	add	r12,QWORD[rbp]
+	add	r12,QWORD[rbp]  ; T1+=K[round]
 	xor	r14,r10
 
-	xor	r15,r11
-	ror	r13,14
+	xor	r15,r11  ; a^b, b^c in next round
+	ror	r13,14  ; Sigma1(e)
 	mov	r9,r11
 
 	and	rdi,r15
-	ror	r14,28
-	add	r12,r13
+	ror	r14,28  ; Sigma0(a)
+	add	r12,r13  ; T1+=Sigma1(e)
 
-	xor	r9,rdi
-	add	rbx,r12
-	add	r9,r12
+	xor	r9,rdi  ; h=Maj(a,b,c)=Ch(a^b,c,b)
+	add	rbx,r12  ; d+=T1
+	add	r9,r12  ; h+=T1
 
-	lea	rbp,[8+rbp]
-	add	r9,r14
+	lea	rbp,[8+rbp]  ; round++
+	add	r9,r14  ; h+=Sigma0(a)
 	mov	r12,QWORD[88+rsi]
 	mov	r13,rbx
 	mov	r14,r9
@@ -529,38 +529,38 @@ $L$loop:
 
 	xor	r13,rbx
 	ror	r14,5
-	xor	rdi,rdx
+	xor	rdi,rdx  ; f^g
 
 	mov	QWORD[88+rsp],r12
 	xor	r14,r9
-	and	rdi,rbx
+	and	rdi,rbx  ; (f^g)&e
 
 	ror	r13,4
-	add	r12,r8
-	xor	rdi,rdx
+	add	r12,r8  ; T1+=h
+	xor	rdi,rdx  ; Ch(e,f,g)=((f^g)&e)^g
 
 	ror	r14,6
 	xor	r13,rbx
-	add	r12,rdi
+	add	r12,rdi  ; T1+=Ch(e,f,g)
 
 	mov	rdi,r9
-	add	r12,QWORD[rbp]
+	add	r12,QWORD[rbp]  ; T1+=K[round]
 	xor	r14,r9
 
-	xor	rdi,r10
-	ror	r13,14
+	xor	rdi,r10  ; a^b, b^c in next round
+	ror	r13,14  ; Sigma1(e)
 	mov	r8,r10
 
 	and	r15,rdi
-	ror	r14,28
-	add	r12,r13
+	ror	r14,28  ; Sigma0(a)
+	add	r12,r13  ; T1+=Sigma1(e)
 
-	xor	r8,r15
-	add	rax,r12
-	add	r8,r12
+	xor	r8,r15  ; h=Maj(a,b,c)=Ch(a^b,c,b)
+	add	rax,r12  ; d+=T1
+	add	r8,r12  ; h+=T1
 
-	lea	rbp,[24+rbp]
-	add	r8,r14
+	lea	rbp,[24+rbp]  ; round++
+	add	r8,r14  ; h+=Sigma0(a)
 	mov	r12,QWORD[96+rsi]
 	mov	r13,rax
 	mov	r14,r8
@@ -570,38 +570,38 @@ $L$loop:
 
 	xor	r13,rax
 	ror	r14,5
-	xor	r15,rcx
+	xor	r15,rcx  ; f^g
 
 	mov	QWORD[96+rsp],r12
 	xor	r14,r8
-	and	r15,rax
+	and	r15,rax  ; (f^g)&e
 
 	ror	r13,4
-	add	r12,rdx
-	xor	r15,rcx
+	add	r12,rdx  ; T1+=h
+	xor	r15,rcx  ; Ch(e,f,g)=((f^g)&e)^g
 
 	ror	r14,6
 	xor	r13,rax
-	add	r12,r15
+	add	r12,r15  ; T1+=Ch(e,f,g)
 
 	mov	r15,r8
-	add	r12,QWORD[rbp]
+	add	r12,QWORD[rbp]  ; T1+=K[round]
 	xor	r14,r8
 
-	xor	r15,r9
-	ror	r13,14
+	xor	r15,r9  ; a^b, b^c in next round
+	ror	r13,14  ; Sigma1(e)
 	mov	rdx,r9
 
 	and	rdi,r15
-	ror	r14,28
-	add	r12,r13
+	ror	r14,28  ; Sigma0(a)
+	add	r12,r13  ; T1+=Sigma1(e)
 
-	xor	rdx,rdi
-	add	r11,r12
-	add	rdx,r12
+	xor	rdx,rdi  ; h=Maj(a,b,c)=Ch(a^b,c,b)
+	add	r11,r12  ; d+=T1
+	add	rdx,r12  ; h+=T1
 
-	lea	rbp,[8+rbp]
-	add	rdx,r14
+	lea	rbp,[8+rbp]  ; round++
+	add	rdx,r14  ; h+=Sigma0(a)
 	mov	r12,QWORD[104+rsi]
 	mov	r13,r11
 	mov	r14,rdx
@@ -611,38 +611,38 @@ $L$loop:
 
 	xor	r13,r11
 	ror	r14,5
-	xor	rdi,rbx
+	xor	rdi,rbx  ; f^g
 
 	mov	QWORD[104+rsp],r12
 	xor	r14,rdx
-	and	rdi,r11
+	and	rdi,r11  ; (f^g)&e
 
 	ror	r13,4
-	add	r12,rcx
-	xor	rdi,rbx
+	add	r12,rcx  ; T1+=h
+	xor	rdi,rbx  ; Ch(e,f,g)=((f^g)&e)^g
 
 	ror	r14,6
 	xor	r13,r11
-	add	r12,rdi
+	add	r12,rdi  ; T1+=Ch(e,f,g)
 
 	mov	rdi,rdx
-	add	r12,QWORD[rbp]
+	add	r12,QWORD[rbp]  ; T1+=K[round]
 	xor	r14,rdx
 
-	xor	rdi,r8
-	ror	r13,14
+	xor	rdi,r8  ; a^b, b^c in next round
+	ror	r13,14  ; Sigma1(e)
 	mov	rcx,r8
 
 	and	r15,rdi
-	ror	r14,28
-	add	r12,r13
+	ror	r14,28  ; Sigma0(a)
+	add	r12,r13  ; T1+=Sigma1(e)
 
-	xor	rcx,r15
-	add	r10,r12
-	add	rcx,r12
+	xor	rcx,r15  ; h=Maj(a,b,c)=Ch(a^b,c,b)
+	add	r10,r12  ; d+=T1
+	add	rcx,r12  ; h+=T1
 
-	lea	rbp,[24+rbp]
-	add	rcx,r14
+	lea	rbp,[24+rbp]  ; round++
+	add	rcx,r14  ; h+=Sigma0(a)
 	mov	r12,QWORD[112+rsi]
 	mov	r13,r10
 	mov	r14,rcx
@@ -652,38 +652,38 @@ $L$loop:
 
 	xor	r13,r10
 	ror	r14,5
-	xor	r15,rax
+	xor	r15,rax  ; f^g
 
 	mov	QWORD[112+rsp],r12
 	xor	r14,rcx
-	and	r15,r10
+	and	r15,r10  ; (f^g)&e
 
 	ror	r13,4
-	add	r12,rbx
-	xor	r15,rax
+	add	r12,rbx  ; T1+=h
+	xor	r15,rax  ; Ch(e,f,g)=((f^g)&e)^g
 
 	ror	r14,6
 	xor	r13,r10
-	add	r12,r15
+	add	r12,r15  ; T1+=Ch(e,f,g)
 
 	mov	r15,rcx
-	add	r12,QWORD[rbp]
+	add	r12,QWORD[rbp]  ; T1+=K[round]
 	xor	r14,rcx
 
-	xor	r15,rdx
-	ror	r13,14
+	xor	r15,rdx  ; a^b, b^c in next round
+	ror	r13,14  ; Sigma1(e)
 	mov	rbx,rdx
 
 	and	rdi,r15
-	ror	r14,28
-	add	r12,r13
+	ror	r14,28  ; Sigma0(a)
+	add	r12,r13  ; T1+=Sigma1(e)
 
-	xor	rbx,rdi
-	add	r9,r12
-	add	rbx,r12
+	xor	rbx,rdi  ; h=Maj(a,b,c)=Ch(a^b,c,b)
+	add	r9,r12  ; d+=T1
+	add	rbx,r12  ; h+=T1
 
-	lea	rbp,[8+rbp]
-	add	rbx,r14
+	lea	rbp,[8+rbp]  ; round++
+	add	rbx,r14  ; h+=Sigma0(a)
 	mov	r12,QWORD[120+rsi]
 	mov	r13,r9
 	mov	r14,rbx
@@ -693,37 +693,37 @@ $L$loop:
 
 	xor	r13,r9
 	ror	r14,5
-	xor	rdi,r11
+	xor	rdi,r11  ; f^g
 
 	mov	QWORD[120+rsp],r12
 	xor	r14,rbx
-	and	rdi,r9
+	and	rdi,r9  ; (f^g)&e
 
 	ror	r13,4
-	add	r12,rax
-	xor	rdi,r11
+	add	r12,rax  ; T1+=h
+	xor	rdi,r11  ; Ch(e,f,g)=((f^g)&e)^g
 
 	ror	r14,6
 	xor	r13,r9
-	add	r12,rdi
+	add	r12,rdi  ; T1+=Ch(e,f,g)
 
 	mov	rdi,rbx
-	add	r12,QWORD[rbp]
+	add	r12,QWORD[rbp]  ; T1+=K[round]
 	xor	r14,rbx
 
-	xor	rdi,rcx
-	ror	r13,14
+	xor	rdi,rcx  ; a^b, b^c in next round
+	ror	r13,14  ; Sigma1(e)
 	mov	rax,rcx
 
 	and	r15,rdi
-	ror	r14,28
-	add	r12,r13
+	ror	r14,28  ; Sigma0(a)
+	add	r12,r13  ; T1+=Sigma1(e)
 
-	xor	rax,r15
-	add	r8,r12
-	add	rax,r12
+	xor	rax,r15  ; h=Maj(a,b,c)=Ch(a^b,c,b)
+	add	r8,r12  ; d+=T1
+	add	rax,r12  ; h+=T1
 
-	lea	rbp,[24+rbp]
+	lea	rbp,[24+rbp]  ; round++
 	jmp	NEAR $L$rounds_16_xx
 ALIGN	16
 $L$rounds_16_xx:
@@ -732,7 +732,7 @@ $L$rounds_16_xx:
 
 	mov	r12,r13
 	ror	r13,7
-	add	rax,r14
+	add	rax,r14  ; modulo-scheduled h+=Sigma0(a)
 	mov	r14,r15
 	ror	r15,42
 
@@ -743,8 +743,8 @@ $L$rounds_16_xx:
 	shr	r14,6
 
 	ror	r15,19
-	xor	r12,r13
-	xor	r15,r14
+	xor	r12,r13  ; sigma0(X[(i+1)&0xf])
+	xor	r15,r14  ; sigma1(X[(i+14)&0xf])
 	add	r12,QWORD[72+rsp]
 
 	add	r12,QWORD[rsp]
@@ -756,43 +756,43 @@ $L$rounds_16_xx:
 
 	xor	r13,r8
 	ror	r14,5
-	xor	r15,r10
+	xor	r15,r10  ; f^g
 
 	mov	QWORD[rsp],r12
 	xor	r14,rax
-	and	r15,r8
+	and	r15,r8  ; (f^g)&e
 
 	ror	r13,4
-	add	r12,r11
-	xor	r15,r10
+	add	r12,r11  ; T1+=h
+	xor	r15,r10  ; Ch(e,f,g)=((f^g)&e)^g
 
 	ror	r14,6
 	xor	r13,r8
-	add	r12,r15
+	add	r12,r15  ; T1+=Ch(e,f,g)
 
 	mov	r15,rax
-	add	r12,QWORD[rbp]
+	add	r12,QWORD[rbp]  ; T1+=K[round]
 	xor	r14,rax
 
-	xor	r15,rbx
-	ror	r13,14
+	xor	r15,rbx  ; a^b, b^c in next round
+	ror	r13,14  ; Sigma1(e)
 	mov	r11,rbx
 
 	and	rdi,r15
-	ror	r14,28
-	add	r12,r13
+	ror	r14,28  ; Sigma0(a)
+	add	r12,r13  ; T1+=Sigma1(e)
 
-	xor	r11,rdi
-	add	rdx,r12
-	add	r11,r12
+	xor	r11,rdi  ; h=Maj(a,b,c)=Ch(a^b,c,b)
+	add	rdx,r12  ; d+=T1
+	add	r11,r12  ; h+=T1
 
-	lea	rbp,[8+rbp]
+	lea	rbp,[8+rbp]  ; round++
 	mov	r13,QWORD[16+rsp]
 	mov	rdi,QWORD[120+rsp]
 
 	mov	r12,r13
 	ror	r13,7
-	add	r11,r14
+	add	r11,r14  ; modulo-scheduled h+=Sigma0(a)
 	mov	r14,rdi
 	ror	rdi,42
 
@@ -803,8 +803,8 @@ $L$rounds_16_xx:
 	shr	r14,6
 
 	ror	rdi,19
-	xor	r12,r13
-	xor	rdi,r14
+	xor	r12,r13  ; sigma0(X[(i+1)&0xf])
+	xor	rdi,r14  ; sigma1(X[(i+14)&0xf])
 	add	r12,QWORD[80+rsp]
 
 	add	r12,QWORD[8+rsp]
@@ -816,43 +816,43 @@ $L$rounds_16_xx:
 
 	xor	r13,rdx
 	ror	r14,5
-	xor	rdi,r9
+	xor	rdi,r9  ; f^g
 
 	mov	QWORD[8+rsp],r12
 	xor	r14,r11
-	and	rdi,rdx
+	and	rdi,rdx  ; (f^g)&e
 
 	ror	r13,4
-	add	r12,r10
-	xor	rdi,r9
+	add	r12,r10  ; T1+=h
+	xor	rdi,r9  ; Ch(e,f,g)=((f^g)&e)^g
 
 	ror	r14,6
 	xor	r13,rdx
-	add	r12,rdi
+	add	r12,rdi  ; T1+=Ch(e,f,g)
 
 	mov	rdi,r11
-	add	r12,QWORD[rbp]
+	add	r12,QWORD[rbp]  ; T1+=K[round]
 	xor	r14,r11
 
-	xor	rdi,rax
-	ror	r13,14
+	xor	rdi,rax  ; a^b, b^c in next round
+	ror	r13,14  ; Sigma1(e)
 	mov	r10,rax
 
 	and	r15,rdi
-	ror	r14,28
-	add	r12,r13
+	ror	r14,28  ; Sigma0(a)
+	add	r12,r13  ; T1+=Sigma1(e)
 
-	xor	r10,r15
-	add	rcx,r12
-	add	r10,r12
+	xor	r10,r15  ; h=Maj(a,b,c)=Ch(a^b,c,b)
+	add	rcx,r12  ; d+=T1
+	add	r10,r12  ; h+=T1
 
-	lea	rbp,[24+rbp]
+	lea	rbp,[24+rbp]  ; round++
 	mov	r13,QWORD[24+rsp]
 	mov	r15,QWORD[rsp]
 
 	mov	r12,r13
 	ror	r13,7
-	add	r10,r14
+	add	r10,r14  ; modulo-scheduled h+=Sigma0(a)
 	mov	r14,r15
 	ror	r15,42
 
@@ -863,8 +863,8 @@ $L$rounds_16_xx:
 	shr	r14,6
 
 	ror	r15,19
-	xor	r12,r13
-	xor	r15,r14
+	xor	r12,r13  ; sigma0(X[(i+1)&0xf])
+	xor	r15,r14  ; sigma1(X[(i+14)&0xf])
 	add	r12,QWORD[88+rsp]
 
 	add	r12,QWORD[16+rsp]
@@ -876,43 +876,43 @@ $L$rounds_16_xx:
 
 	xor	r13,rcx
 	ror	r14,5
-	xor	r15,r8
+	xor	r15,r8  ; f^g
 
 	mov	QWORD[16+rsp],r12
 	xor	r14,r10
-	and	r15,rcx
+	and	r15,rcx  ; (f^g)&e
 
 	ror	r13,4
-	add	r12,r9
-	xor	r15,r8
+	add	r12,r9  ; T1+=h
+	xor	r15,r8  ; Ch(e,f,g)=((f^g)&e)^g
 
 	ror	r14,6
 	xor	r13,rcx
-	add	r12,r15
+	add	r12,r15  ; T1+=Ch(e,f,g)
 
 	mov	r15,r10
-	add	r12,QWORD[rbp]
+	add	r12,QWORD[rbp]  ; T1+=K[round]
 	xor	r14,r10
 
-	xor	r15,r11
-	ror	r13,14
+	xor	r15,r11  ; a^b, b^c in next round
+	ror	r13,14  ; Sigma1(e)
 	mov	r9,r11
 
 	and	rdi,r15
-	ror	r14,28
-	add	r12,r13
+	ror	r14,28  ; Sigma0(a)
+	add	r12,r13  ; T1+=Sigma1(e)
 
-	xor	r9,rdi
-	add	rbx,r12
-	add	r9,r12
+	xor	r9,rdi  ; h=Maj(a,b,c)=Ch(a^b,c,b)
+	add	rbx,r12  ; d+=T1
+	add	r9,r12  ; h+=T1
 
-	lea	rbp,[8+rbp]
+	lea	rbp,[8+rbp]  ; round++
 	mov	r13,QWORD[32+rsp]
 	mov	rdi,QWORD[8+rsp]
 
 	mov	r12,r13
 	ror	r13,7
-	add	r9,r14
+	add	r9,r14  ; modulo-scheduled h+=Sigma0(a)
 	mov	r14,rdi
 	ror	rdi,42
 
@@ -923,8 +923,8 @@ $L$rounds_16_xx:
 	shr	r14,6
 
 	ror	rdi,19
-	xor	r12,r13
-	xor	rdi,r14
+	xor	r12,r13  ; sigma0(X[(i+1)&0xf])
+	xor	rdi,r14  ; sigma1(X[(i+14)&0xf])
 	add	r12,QWORD[96+rsp]
 
 	add	r12,QWORD[24+rsp]
@@ -936,43 +936,43 @@ $L$rounds_16_xx:
 
 	xor	r13,rbx
 	ror	r14,5
-	xor	rdi,rdx
+	xor	rdi,rdx  ; f^g
 
 	mov	QWORD[24+rsp],r12
 	xor	r14,r9
-	and	rdi,rbx
+	and	rdi,rbx  ; (f^g)&e
 
 	ror	r13,4
-	add	r12,r8
-	xor	rdi,rdx
+	add	r12,r8  ; T1+=h
+	xor	rdi,rdx  ; Ch(e,f,g)=((f^g)&e)^g
 
 	ror	r14,6
 	xor	r13,rbx
-	add	r12,rdi
+	add	r12,rdi  ; T1+=Ch(e,f,g)
 
 	mov	rdi,r9
-	add	r12,QWORD[rbp]
+	add	r12,QWORD[rbp]  ; T1+=K[round]
 	xor	r14,r9
 
-	xor	rdi,r10
-	ror	r13,14
+	xor	rdi,r10  ; a^b, b^c in next round
+	ror	r13,14  ; Sigma1(e)
 	mov	r8,r10
 
 	and	r15,rdi
-	ror	r14,28
-	add	r12,r13
+	ror	r14,28  ; Sigma0(a)
+	add	r12,r13  ; T1+=Sigma1(e)
 
-	xor	r8,r15
-	add	rax,r12
-	add	r8,r12
+	xor	r8,r15  ; h=Maj(a,b,c)=Ch(a^b,c,b)
+	add	rax,r12  ; d+=T1
+	add	r8,r12  ; h+=T1
 
-	lea	rbp,[24+rbp]
+	lea	rbp,[24+rbp]  ; round++
 	mov	r13,QWORD[40+rsp]
 	mov	r15,QWORD[16+rsp]
 
 	mov	r12,r13
 	ror	r13,7
-	add	r8,r14
+	add	r8,r14  ; modulo-scheduled h+=Sigma0(a)
 	mov	r14,r15
 	ror	r15,42
 
@@ -983,8 +983,8 @@ $L$rounds_16_xx:
 	shr	r14,6
 
 	ror	r15,19
-	xor	r12,r13
-	xor	r15,r14
+	xor	r12,r13  ; sigma0(X[(i+1)&0xf])
+	xor	r15,r14  ; sigma1(X[(i+14)&0xf])
 	add	r12,QWORD[104+rsp]
 
 	add	r12,QWORD[32+rsp]
@@ -996,43 +996,43 @@ $L$rounds_16_xx:
 
 	xor	r13,rax
 	ror	r14,5
-	xor	r15,rcx
+	xor	r15,rcx  ; f^g
 
 	mov	QWORD[32+rsp],r12
 	xor	r14,r8
-	and	r15,rax
+	and	r15,rax  ; (f^g)&e
 
 	ror	r13,4
-	add	r12,rdx
-	xor	r15,rcx
+	add	r12,rdx  ; T1+=h
+	xor	r15,rcx  ; Ch(e,f,g)=((f^g)&e)^g
 
 	ror	r14,6
 	xor	r13,rax
-	add	r12,r15
+	add	r12,r15  ; T1+=Ch(e,f,g)
 
 	mov	r15,r8
-	add	r12,QWORD[rbp]
+	add	r12,QWORD[rbp]  ; T1+=K[round]
 	xor	r14,r8
 
-	xor	r15,r9
-	ror	r13,14
+	xor	r15,r9  ; a^b, b^c in next round
+	ror	r13,14  ; Sigma1(e)
 	mov	rdx,r9
 
 	and	rdi,r15
-	ror	r14,28
-	add	r12,r13
+	ror	r14,28  ; Sigma0(a)
+	add	r12,r13  ; T1+=Sigma1(e)
 
-	xor	rdx,rdi
-	add	r11,r12
-	add	rdx,r12
+	xor	rdx,rdi  ; h=Maj(a,b,c)=Ch(a^b,c,b)
+	add	r11,r12  ; d+=T1
+	add	rdx,r12  ; h+=T1
 
-	lea	rbp,[8+rbp]
+	lea	rbp,[8+rbp]  ; round++
 	mov	r13,QWORD[48+rsp]
 	mov	rdi,QWORD[24+rsp]
 
 	mov	r12,r13
 	ror	r13,7
-	add	rdx,r14
+	add	rdx,r14  ; modulo-scheduled h+=Sigma0(a)
 	mov	r14,rdi
 	ror	rdi,42
 
@@ -1043,8 +1043,8 @@ $L$rounds_16_xx:
 	shr	r14,6
 
 	ror	rdi,19
-	xor	r12,r13
-	xor	rdi,r14
+	xor	r12,r13  ; sigma0(X[(i+1)&0xf])
+	xor	rdi,r14  ; sigma1(X[(i+14)&0xf])
 	add	r12,QWORD[112+rsp]
 
 	add	r12,QWORD[40+rsp]
@@ -1056,43 +1056,43 @@ $L$rounds_16_xx:
 
 	xor	r13,r11
 	ror	r14,5
-	xor	rdi,rbx
+	xor	rdi,rbx  ; f^g
 
 	mov	QWORD[40+rsp],r12
 	xor	r14,rdx
-	and	rdi,r11
+	and	rdi,r11  ; (f^g)&e
 
 	ror	r13,4
-	add	r12,rcx
-	xor	rdi,rbx
+	add	r12,rcx  ; T1+=h
+	xor	rdi,rbx  ; Ch(e,f,g)=((f^g)&e)^g
 
 	ror	r14,6
 	xor	r13,r11
-	add	r12,rdi
+	add	r12,rdi  ; T1+=Ch(e,f,g)
 
 	mov	rdi,rdx
-	add	r12,QWORD[rbp]
+	add	r12,QWORD[rbp]  ; T1+=K[round]
 	xor	r14,rdx
 
-	xor	rdi,r8
-	ror	r13,14
+	xor	rdi,r8  ; a^b, b^c in next round
+	ror	r13,14  ; Sigma1(e)
 	mov	rcx,r8
 
 	and	r15,rdi
-	ror	r14,28
-	add	r12,r13
+	ror	r14,28  ; Sigma0(a)
+	add	r12,r13  ; T1+=Sigma1(e)
 
-	xor	rcx,r15
-	add	r10,r12
-	add	rcx,r12
+	xor	rcx,r15  ; h=Maj(a,b,c)=Ch(a^b,c,b)
+	add	r10,r12  ; d+=T1
+	add	rcx,r12  ; h+=T1
 
-	lea	rbp,[24+rbp]
+	lea	rbp,[24+rbp]  ; round++
 	mov	r13,QWORD[56+rsp]
 	mov	r15,QWORD[32+rsp]
 
 	mov	r12,r13
 	ror	r13,7
-	add	rcx,r14
+	add	rcx,r14  ; modulo-scheduled h+=Sigma0(a)
 	mov	r14,r15
 	ror	r15,42
 
@@ -1103,8 +1103,8 @@ $L$rounds_16_xx:
 	shr	r14,6
 
 	ror	r15,19
-	xor	r12,r13
-	xor	r15,r14
+	xor	r12,r13  ; sigma0(X[(i+1)&0xf])
+	xor	r15,r14  ; sigma1(X[(i+14)&0xf])
 	add	r12,QWORD[120+rsp]
 
 	add	r12,QWORD[48+rsp]
@@ -1116,43 +1116,43 @@ $L$rounds_16_xx:
 
 	xor	r13,r10
 	ror	r14,5
-	xor	r15,rax
+	xor	r15,rax  ; f^g
 
 	mov	QWORD[48+rsp],r12
 	xor	r14,rcx
-	and	r15,r10
+	and	r15,r10  ; (f^g)&e
 
 	ror	r13,4
-	add	r12,rbx
-	xor	r15,rax
+	add	r12,rbx  ; T1+=h
+	xor	r15,rax  ; Ch(e,f,g)=((f^g)&e)^g
 
 	ror	r14,6
 	xor	r13,r10
-	add	r12,r15
+	add	r12,r15  ; T1+=Ch(e,f,g)
 
 	mov	r15,rcx
-	add	r12,QWORD[rbp]
+	add	r12,QWORD[rbp]  ; T1+=K[round]
 	xor	r14,rcx
 
-	xor	r15,rdx
-	ror	r13,14
+	xor	r15,rdx  ; a^b, b^c in next round
+	ror	r13,14  ; Sigma1(e)
 	mov	rbx,rdx
 
 	and	rdi,r15
-	ror	r14,28
-	add	r12,r13
+	ror	r14,28  ; Sigma0(a)
+	add	r12,r13  ; T1+=Sigma1(e)
 
-	xor	rbx,rdi
-	add	r9,r12
-	add	rbx,r12
+	xor	rbx,rdi  ; h=Maj(a,b,c)=Ch(a^b,c,b)
+	add	r9,r12  ; d+=T1
+	add	rbx,r12  ; h+=T1
 
-	lea	rbp,[8+rbp]
+	lea	rbp,[8+rbp]  ; round++
 	mov	r13,QWORD[64+rsp]
 	mov	rdi,QWORD[40+rsp]
 
 	mov	r12,r13
 	ror	r13,7
-	add	rbx,r14
+	add	rbx,r14  ; modulo-scheduled h+=Sigma0(a)
 	mov	r14,rdi
 	ror	rdi,42
 
@@ -1163,8 +1163,8 @@ $L$rounds_16_xx:
 	shr	r14,6
 
 	ror	rdi,19
-	xor	r12,r13
-	xor	rdi,r14
+	xor	r12,r13  ; sigma0(X[(i+1)&0xf])
+	xor	rdi,r14  ; sigma1(X[(i+14)&0xf])
 	add	r12,QWORD[rsp]
 
 	add	r12,QWORD[56+rsp]
@@ -1176,43 +1176,43 @@ $L$rounds_16_xx:
 
 	xor	r13,r9
 	ror	r14,5
-	xor	rdi,r11
+	xor	rdi,r11  ; f^g
 
 	mov	QWORD[56+rsp],r12
 	xor	r14,rbx
-	and	rdi,r9
+	and	rdi,r9  ; (f^g)&e
 
 	ror	r13,4
-	add	r12,rax
-	xor	rdi,r11
+	add	r12,rax  ; T1+=h
+	xor	rdi,r11  ; Ch(e,f,g)=((f^g)&e)^g
 
 	ror	r14,6
 	xor	r13,r9
-	add	r12,rdi
+	add	r12,rdi  ; T1+=Ch(e,f,g)
 
 	mov	rdi,rbx
-	add	r12,QWORD[rbp]
+	add	r12,QWORD[rbp]  ; T1+=K[round]
 	xor	r14,rbx
 
-	xor	rdi,rcx
-	ror	r13,14
+	xor	rdi,rcx  ; a^b, b^c in next round
+	ror	r13,14  ; Sigma1(e)
 	mov	rax,rcx
 
 	and	r15,rdi
-	ror	r14,28
-	add	r12,r13
+	ror	r14,28  ; Sigma0(a)
+	add	r12,r13  ; T1+=Sigma1(e)
 
-	xor	rax,r15
-	add	r8,r12
-	add	rax,r12
+	xor	rax,r15  ; h=Maj(a,b,c)=Ch(a^b,c,b)
+	add	r8,r12  ; d+=T1
+	add	rax,r12  ; h+=T1
 
-	lea	rbp,[24+rbp]
+	lea	rbp,[24+rbp]  ; round++
 	mov	r13,QWORD[72+rsp]
 	mov	r15,QWORD[48+rsp]
 
 	mov	r12,r13
 	ror	r13,7
-	add	rax,r14
+	add	rax,r14  ; modulo-scheduled h+=Sigma0(a)
 	mov	r14,r15
 	ror	r15,42
 
@@ -1223,8 +1223,8 @@ $L$rounds_16_xx:
 	shr	r14,6
 
 	ror	r15,19
-	xor	r12,r13
-	xor	r15,r14
+	xor	r12,r13  ; sigma0(X[(i+1)&0xf])
+	xor	r15,r14  ; sigma1(X[(i+14)&0xf])
 	add	r12,QWORD[8+rsp]
 
 	add	r12,QWORD[64+rsp]
@@ -1236,43 +1236,43 @@ $L$rounds_16_xx:
 
 	xor	r13,r8
 	ror	r14,5
-	xor	r15,r10
+	xor	r15,r10  ; f^g
 
 	mov	QWORD[64+rsp],r12
 	xor	r14,rax
-	and	r15,r8
+	and	r15,r8  ; (f^g)&e
 
 	ror	r13,4
-	add	r12,r11
-	xor	r15,r10
+	add	r12,r11  ; T1+=h
+	xor	r15,r10  ; Ch(e,f,g)=((f^g)&e)^g
 
 	ror	r14,6
 	xor	r13,r8
-	add	r12,r15
+	add	r12,r15  ; T1+=Ch(e,f,g)
 
 	mov	r15,rax
-	add	r12,QWORD[rbp]
+	add	r12,QWORD[rbp]  ; T1+=K[round]
 	xor	r14,rax
 
-	xor	r15,rbx
-	ror	r13,14
+	xor	r15,rbx  ; a^b, b^c in next round
+	ror	r13,14  ; Sigma1(e)
 	mov	r11,rbx
 
 	and	rdi,r15
-	ror	r14,28
-	add	r12,r13
+	ror	r14,28  ; Sigma0(a)
+	add	r12,r13  ; T1+=Sigma1(e)
 
-	xor	r11,rdi
-	add	rdx,r12
-	add	r11,r12
+	xor	r11,rdi  ; h=Maj(a,b,c)=Ch(a^b,c,b)
+	add	rdx,r12  ; d+=T1
+	add	r11,r12  ; h+=T1
 
-	lea	rbp,[8+rbp]
+	lea	rbp,[8+rbp]  ; round++
 	mov	r13,QWORD[80+rsp]
 	mov	rdi,QWORD[56+rsp]
 
 	mov	r12,r13
 	ror	r13,7
-	add	r11,r14
+	add	r11,r14  ; modulo-scheduled h+=Sigma0(a)
 	mov	r14,rdi
 	ror	rdi,42
 
@@ -1283,8 +1283,8 @@ $L$rounds_16_xx:
 	shr	r14,6
 
 	ror	rdi,19
-	xor	r12,r13
-	xor	rdi,r14
+	xor	r12,r13  ; sigma0(X[(i+1)&0xf])
+	xor	rdi,r14  ; sigma1(X[(i+14)&0xf])
 	add	r12,QWORD[16+rsp]
 
 	add	r12,QWORD[72+rsp]
@@ -1296,43 +1296,43 @@ $L$rounds_16_xx:
 
 	xor	r13,rdx
 	ror	r14,5
-	xor	rdi,r9
+	xor	rdi,r9  ; f^g
 
 	mov	QWORD[72+rsp],r12
 	xor	r14,r11
-	and	rdi,rdx
+	and	rdi,rdx  ; (f^g)&e
 
 	ror	r13,4
-	add	r12,r10
-	xor	rdi,r9
+	add	r12,r10  ; T1+=h
+	xor	rdi,r9  ; Ch(e,f,g)=((f^g)&e)^g
 
 	ror	r14,6
 	xor	r13,rdx
-	add	r12,rdi
+	add	r12,rdi  ; T1+=Ch(e,f,g)
 
 	mov	rdi,r11
-	add	r12,QWORD[rbp]
+	add	r12,QWORD[rbp]  ; T1+=K[round]
 	xor	r14,r11
 
-	xor	rdi,rax
-	ror	r13,14
+	xor	rdi,rax  ; a^b, b^c in next round
+	ror	r13,14  ; Sigma1(e)
 	mov	r10,rax
 
 	and	r15,rdi
-	ror	r14,28
-	add	r12,r13
+	ror	r14,28  ; Sigma0(a)
+	add	r12,r13  ; T1+=Sigma1(e)
 
-	xor	r10,r15
-	add	rcx,r12
-	add	r10,r12
+	xor	r10,r15  ; h=Maj(a,b,c)=Ch(a^b,c,b)
+	add	rcx,r12  ; d+=T1
+	add	r10,r12  ; h+=T1
 
-	lea	rbp,[24+rbp]
+	lea	rbp,[24+rbp]  ; round++
 	mov	r13,QWORD[88+rsp]
 	mov	r15,QWORD[64+rsp]
 
 	mov	r12,r13
 	ror	r13,7
-	add	r10,r14
+	add	r10,r14  ; modulo-scheduled h+=Sigma0(a)
 	mov	r14,r15
 	ror	r15,42
 
@@ -1343,8 +1343,8 @@ $L$rounds_16_xx:
 	shr	r14,6
 
 	ror	r15,19
-	xor	r12,r13
-	xor	r15,r14
+	xor	r12,r13  ; sigma0(X[(i+1)&0xf])
+	xor	r15,r14  ; sigma1(X[(i+14)&0xf])
 	add	r12,QWORD[24+rsp]
 
 	add	r12,QWORD[80+rsp]
@@ -1356,43 +1356,43 @@ $L$rounds_16_xx:
 
 	xor	r13,rcx
 	ror	r14,5
-	xor	r15,r8
+	xor	r15,r8  ; f^g
 
 	mov	QWORD[80+rsp],r12
 	xor	r14,r10
-	and	r15,rcx
+	and	r15,rcx  ; (f^g)&e
 
 	ror	r13,4
-	add	r12,r9
-	xor	r15,r8
+	add	r12,r9  ; T1+=h
+	xor	r15,r8  ; Ch(e,f,g)=((f^g)&e)^g
 
 	ror	r14,6
 	xor	r13,rcx
-	add	r12,r15
+	add	r12,r15  ; T1+=Ch(e,f,g)
 
 	mov	r15,r10
-	add	r12,QWORD[rbp]
+	add	r12,QWORD[rbp]  ; T1+=K[round]
 	xor	r14,r10
 
-	xor	r15,r11
-	ror	r13,14
+	xor	r15,r11  ; a^b, b^c in next round
+	ror	r13,14  ; Sigma1(e)
 	mov	r9,r11
 
 	and	rdi,r15
-	ror	r14,28
-	add	r12,r13
+	ror	r14,28  ; Sigma0(a)
+	add	r12,r13  ; T1+=Sigma1(e)
 
-	xor	r9,rdi
-	add	rbx,r12
-	add	r9,r12
+	xor	r9,rdi  ; h=Maj(a,b,c)=Ch(a^b,c,b)
+	add	rbx,r12  ; d+=T1
+	add	r9,r12  ; h+=T1
 
-	lea	rbp,[8+rbp]
+	lea	rbp,[8+rbp]  ; round++
 	mov	r13,QWORD[96+rsp]
 	mov	rdi,QWORD[72+rsp]
 
 	mov	r12,r13
 	ror	r13,7
-	add	r9,r14
+	add	r9,r14  ; modulo-scheduled h+=Sigma0(a)
 	mov	r14,rdi
 	ror	rdi,42
 
@@ -1403,8 +1403,8 @@ $L$rounds_16_xx:
 	shr	r14,6
 
 	ror	rdi,19
-	xor	r12,r13
-	xor	rdi,r14
+	xor	r12,r13  ; sigma0(X[(i+1)&0xf])
+	xor	rdi,r14  ; sigma1(X[(i+14)&0xf])
 	add	r12,QWORD[32+rsp]
 
 	add	r12,QWORD[88+rsp]
@@ -1416,43 +1416,43 @@ $L$rounds_16_xx:
 
 	xor	r13,rbx
 	ror	r14,5
-	xor	rdi,rdx
+	xor	rdi,rdx  ; f^g
 
 	mov	QWORD[88+rsp],r12
 	xor	r14,r9
-	and	rdi,rbx
+	and	rdi,rbx  ; (f^g)&e
 
 	ror	r13,4
-	add	r12,r8
-	xor	rdi,rdx
+	add	r12,r8  ; T1+=h
+	xor	rdi,rdx  ; Ch(e,f,g)=((f^g)&e)^g
 
 	ror	r14,6
 	xor	r13,rbx
-	add	r12,rdi
+	add	r12,rdi  ; T1+=Ch(e,f,g)
 
 	mov	rdi,r9
-	add	r12,QWORD[rbp]
+	add	r12,QWORD[rbp]  ; T1+=K[round]
 	xor	r14,r9
 
-	xor	rdi,r10
-	ror	r13,14
+	xor	rdi,r10  ; a^b, b^c in next round
+	ror	r13,14  ; Sigma1(e)
 	mov	r8,r10
 
 	and	r15,rdi
-	ror	r14,28
-	add	r12,r13
+	ror	r14,28  ; Sigma0(a)
+	add	r12,r13  ; T1+=Sigma1(e)
 
-	xor	r8,r15
-	add	rax,r12
-	add	r8,r12
+	xor	r8,r15  ; h=Maj(a,b,c)=Ch(a^b,c,b)
+	add	rax,r12  ; d+=T1
+	add	r8,r12  ; h+=T1
 
-	lea	rbp,[24+rbp]
+	lea	rbp,[24+rbp]  ; round++
 	mov	r13,QWORD[104+rsp]
 	mov	r15,QWORD[80+rsp]
 
 	mov	r12,r13
 	ror	r13,7
-	add	r8,r14
+	add	r8,r14  ; modulo-scheduled h+=Sigma0(a)
 	mov	r14,r15
 	ror	r15,42
 
@@ -1463,8 +1463,8 @@ $L$rounds_16_xx:
 	shr	r14,6
 
 	ror	r15,19
-	xor	r12,r13
-	xor	r15,r14
+	xor	r12,r13  ; sigma0(X[(i+1)&0xf])
+	xor	r15,r14  ; sigma1(X[(i+14)&0xf])
 	add	r12,QWORD[40+rsp]
 
 	add	r12,QWORD[96+rsp]
@@ -1476,43 +1476,43 @@ $L$rounds_16_xx:
 
 	xor	r13,rax
 	ror	r14,5
-	xor	r15,rcx
+	xor	r15,rcx  ; f^g
 
 	mov	QWORD[96+rsp],r12
 	xor	r14,r8
-	and	r15,rax
+	and	r15,rax  ; (f^g)&e
 
 	ror	r13,4
-	add	r12,rdx
-	xor	r15,rcx
+	add	r12,rdx  ; T1+=h
+	xor	r15,rcx  ; Ch(e,f,g)=((f^g)&e)^g
 
 	ror	r14,6
 	xor	r13,rax
-	add	r12,r15
+	add	r12,r15  ; T1+=Ch(e,f,g)
 
 	mov	r15,r8
-	add	r12,QWORD[rbp]
+	add	r12,QWORD[rbp]  ; T1+=K[round]
 	xor	r14,r8
 
-	xor	r15,r9
-	ror	r13,14
+	xor	r15,r9  ; a^b, b^c in next round
+	ror	r13,14  ; Sigma1(e)
 	mov	rdx,r9
 
 	and	rdi,r15
-	ror	r14,28
-	add	r12,r13
+	ror	r14,28  ; Sigma0(a)
+	add	r12,r13  ; T1+=Sigma1(e)
 
-	xor	rdx,rdi
-	add	r11,r12
-	add	rdx,r12
+	xor	rdx,rdi  ; h=Maj(a,b,c)=Ch(a^b,c,b)
+	add	r11,r12  ; d+=T1
+	add	rdx,r12  ; h+=T1
 
-	lea	rbp,[8+rbp]
+	lea	rbp,[8+rbp]  ; round++
 	mov	r13,QWORD[112+rsp]
 	mov	rdi,QWORD[88+rsp]
 
 	mov	r12,r13
 	ror	r13,7
-	add	rdx,r14
+	add	rdx,r14  ; modulo-scheduled h+=Sigma0(a)
 	mov	r14,rdi
 	ror	rdi,42
 
@@ -1523,8 +1523,8 @@ $L$rounds_16_xx:
 	shr	r14,6
 
 	ror	rdi,19
-	xor	r12,r13
-	xor	rdi,r14
+	xor	r12,r13  ; sigma0(X[(i+1)&0xf])
+	xor	rdi,r14  ; sigma1(X[(i+14)&0xf])
 	add	r12,QWORD[48+rsp]
 
 	add	r12,QWORD[104+rsp]
@@ -1536,43 +1536,43 @@ $L$rounds_16_xx:
 
 	xor	r13,r11
 	ror	r14,5
-	xor	rdi,rbx
+	xor	rdi,rbx  ; f^g
 
 	mov	QWORD[104+rsp],r12
 	xor	r14,rdx
-	and	rdi,r11
+	and	rdi,r11  ; (f^g)&e
 
 	ror	r13,4
-	add	r12,rcx
-	xor	rdi,rbx
+	add	r12,rcx  ; T1+=h
+	xor	rdi,rbx  ; Ch(e,f,g)=((f^g)&e)^g
 
 	ror	r14,6
 	xor	r13,r11
-	add	r12,rdi
+	add	r12,rdi  ; T1+=Ch(e,f,g)
 
 	mov	rdi,rdx
-	add	r12,QWORD[rbp]
+	add	r12,QWORD[rbp]  ; T1+=K[round]
 	xor	r14,rdx
 
-	xor	rdi,r8
-	ror	r13,14
+	xor	rdi,r8  ; a^b, b^c in next round
+	ror	r13,14  ; Sigma1(e)
 	mov	rcx,r8
 
 	and	r15,rdi
-	ror	r14,28
-	add	r12,r13
+	ror	r14,28  ; Sigma0(a)
+	add	r12,r13  ; T1+=Sigma1(e)
 
-	xor	rcx,r15
-	add	r10,r12
-	add	rcx,r12
+	xor	rcx,r15  ; h=Maj(a,b,c)=Ch(a^b,c,b)
+	add	r10,r12  ; d+=T1
+	add	rcx,r12  ; h+=T1
 
-	lea	rbp,[24+rbp]
+	lea	rbp,[24+rbp]  ; round++
 	mov	r13,QWORD[120+rsp]
 	mov	r15,QWORD[96+rsp]
 
 	mov	r12,r13
 	ror	r13,7
-	add	rcx,r14
+	add	rcx,r14  ; modulo-scheduled h+=Sigma0(a)
 	mov	r14,r15
 	ror	r15,42
 
@@ -1583,8 +1583,8 @@ $L$rounds_16_xx:
 	shr	r14,6
 
 	ror	r15,19
-	xor	r12,r13
-	xor	r15,r14
+	xor	r12,r13  ; sigma0(X[(i+1)&0xf])
+	xor	r15,r14  ; sigma1(X[(i+14)&0xf])
 	add	r12,QWORD[56+rsp]
 
 	add	r12,QWORD[112+rsp]
@@ -1596,43 +1596,43 @@ $L$rounds_16_xx:
 
 	xor	r13,r10
 	ror	r14,5
-	xor	r15,rax
+	xor	r15,rax  ; f^g
 
 	mov	QWORD[112+rsp],r12
 	xor	r14,rcx
-	and	r15,r10
+	and	r15,r10  ; (f^g)&e
 
 	ror	r13,4
-	add	r12,rbx
-	xor	r15,rax
+	add	r12,rbx  ; T1+=h
+	xor	r15,rax  ; Ch(e,f,g)=((f^g)&e)^g
 
 	ror	r14,6
 	xor	r13,r10
-	add	r12,r15
+	add	r12,r15  ; T1+=Ch(e,f,g)
 
 	mov	r15,rcx
-	add	r12,QWORD[rbp]
+	add	r12,QWORD[rbp]  ; T1+=K[round]
 	xor	r14,rcx
 
-	xor	r15,rdx
-	ror	r13,14
+	xor	r15,rdx  ; a^b, b^c in next round
+	ror	r13,14  ; Sigma1(e)
 	mov	rbx,rdx
 
 	and	rdi,r15
-	ror	r14,28
-	add	r12,r13
+	ror	r14,28  ; Sigma0(a)
+	add	r12,r13  ; T1+=Sigma1(e)
 
-	xor	rbx,rdi
-	add	r9,r12
-	add	rbx,r12
+	xor	rbx,rdi  ; h=Maj(a,b,c)=Ch(a^b,c,b)
+	add	r9,r12  ; d+=T1
+	add	rbx,r12  ; h+=T1
 
-	lea	rbp,[8+rbp]
+	lea	rbp,[8+rbp]  ; round++
 	mov	r13,QWORD[rsp]
 	mov	rdi,QWORD[104+rsp]
 
 	mov	r12,r13
 	ror	r13,7
-	add	rbx,r14
+	add	rbx,r14  ; modulo-scheduled h+=Sigma0(a)
 	mov	r14,rdi
 	ror	rdi,42
 
@@ -1643,8 +1643,8 @@ $L$rounds_16_xx:
 	shr	r14,6
 
 	ror	rdi,19
-	xor	r12,r13
-	xor	rdi,r14
+	xor	r12,r13  ; sigma0(X[(i+1)&0xf])
+	xor	rdi,r14  ; sigma1(X[(i+14)&0xf])
 	add	r12,QWORD[64+rsp]
 
 	add	r12,QWORD[120+rsp]
@@ -1656,42 +1656,42 @@ $L$rounds_16_xx:
 
 	xor	r13,r9
 	ror	r14,5
-	xor	rdi,r11
+	xor	rdi,r11  ; f^g
 
 	mov	QWORD[120+rsp],r12
 	xor	r14,rbx
-	and	rdi,r9
+	and	rdi,r9  ; (f^g)&e
 
 	ror	r13,4
-	add	r12,rax
-	xor	rdi,r11
+	add	r12,rax  ; T1+=h
+	xor	rdi,r11  ; Ch(e,f,g)=((f^g)&e)^g
 
 	ror	r14,6
 	xor	r13,r9
-	add	r12,rdi
+	add	r12,rdi  ; T1+=Ch(e,f,g)
 
 	mov	rdi,rbx
-	add	r12,QWORD[rbp]
+	add	r12,QWORD[rbp]  ; T1+=K[round]
 	xor	r14,rbx
 
-	xor	rdi,rcx
-	ror	r13,14
+	xor	rdi,rcx  ; a^b, b^c in next round
+	ror	r13,14  ; Sigma1(e)
 	mov	rax,rcx
 
 	and	r15,rdi
-	ror	r14,28
-	add	r12,r13
+	ror	r14,28  ; Sigma0(a)
+	add	r12,r13  ; T1+=Sigma1(e)
 
-	xor	rax,r15
-	add	r8,r12
-	add	rax,r12
+	xor	rax,r15  ; h=Maj(a,b,c)=Ch(a^b,c,b)
+	add	r8,r12  ; d+=T1
+	add	rax,r12  ; h+=T1
 
-	lea	rbp,[24+rbp]
+	lea	rbp,[24+rbp]  ; round++
 	cmp	BYTE[7+rbp],0
 	jnz	NEAR $L$rounds_16_xx
 
 	mov	rdi,QWORD[((128+0))+rsp]
-	add	rax,r14
+	add	rax,r14  ; modulo-scheduled h+=Sigma0(a)
 	lea	rsi,[128+rsi]
 
 	add	rax,QWORD[rdi]
@@ -1846,7 +1846,7 @@ $L$SEH_begin_sha512_block_data_order_avx:
 
 
 _CET_ENDBR
-	mov	rax,rsp
+	mov	rax,rsp  ; copy %rsp
 
 	push	rbx
 
@@ -1860,14 +1860,14 @@ _CET_ENDBR
 
 	push	r15
 
-	shl	rdx,4
+	shl	rdx,4  ; num*16
 	sub	rsp,256
-	lea	rdx,[rdx*8+rsi]
-	and	rsp,-64
-	mov	QWORD[((128+0))+rsp],rdi
-	mov	QWORD[((128+8))+rsp],rsi
-	mov	QWORD[((128+16))+rsp],rdx
-	mov	QWORD[152+rsp],rax
+	lea	rdx,[rdx*8+rsi]  ; inp+num*16*8
+	and	rsp,-64  ; align stack frame
+	mov	QWORD[((128+0))+rsp],rdi  ; save ctx, 1st arg
+	mov	QWORD[((128+8))+rsp],rsi  ; save inp, 2nd arh
+	mov	QWORD[((128+16))+rsp],rdx  ; save end pointer, "3rd" arg
+	mov	QWORD[152+rsp],rax  ; save copy of %rsp
 
 	movaps	XMMWORD[(128+32)+rsp],xmm6
 	movaps	XMMWORD[(128+48)+rsp],xmm7
@@ -1891,7 +1891,7 @@ ALIGN	16
 $L$loop_avx:
 	vmovdqa	xmm11,XMMWORD[((K512+1280))]
 	vmovdqu	xmm0,XMMWORD[rsi]
-	lea	rbp,[((K512+128))]
+	lea	rbp,[((K512+128))]  ; size optimization
 	vmovdqu	xmm1,XMMWORD[16+rsi]
 	vmovdqu	xmm2,XMMWORD[32+rsi]
 	vpshufb	xmm0,xmm0,xmm11
@@ -1924,7 +1924,7 @@ $L$loop_avx:
 	vmovdqa	XMMWORD[80+rsp],xmm9
 	mov	rdi,rbx
 	vmovdqa	XMMWORD[96+rsp],xmm10
-	xor	rdi,rcx
+	xor	rdi,rcx  ; magic
 	vmovdqa	XMMWORD[112+rsp],xmm11
 	mov	r13,r8
 	jmp	NEAR $L$avx_00_47
@@ -3035,25 +3035,25 @@ se_handler:
 	pushfq
 	sub	rsp,64
 
-	mov	rax,QWORD[120+r8]
-	mov	rbx,QWORD[248+r8]
+	mov	rax,QWORD[120+r8]  ; pull context->Rax
+	mov	rbx,QWORD[248+r8]  ; pull context->Rip
 
-	mov	rsi,QWORD[8+r9]
-	mov	r11,QWORD[56+r9]
+	mov	rsi,QWORD[8+r9]  ; disp->ImageBase
+	mov	r11,QWORD[56+r9]  ; disp->HanderlData
 
-	mov	r10d,DWORD[r11]
-	lea	r10,[r10*1+rsi]
-	cmp	rbx,r10
+	mov	r10d,DWORD[r11]  ; HandlerData[0]
+	lea	r10,[r10*1+rsi]  ; prologue label
+	cmp	rbx,r10  ; context->Rip<prologue label
 	jb	NEAR $L$in_prologue
 
-	mov	rax,QWORD[152+r8]
+	mov	rax,QWORD[152+r8]  ; pull context->Rsp
 
-	mov	r10d,DWORD[4+r11]
-	lea	r10,[r10*1+rsi]
-	cmp	rbx,r10
+	mov	r10d,DWORD[4+r11]  ; HandlerData[1]
+	lea	r10,[r10*1+rsi]  ; epilogue label
+	cmp	rbx,r10  ; context->Rip>=epilogue label
 	jae	NEAR $L$in_prologue
-	mov	rsi,rax
-	mov	rax,QWORD[((128+24))+rax]
+	mov	rsi,rax  ; put aside Rsp
+	mov	rax,QWORD[((128+24))+rax]  ; pull 152(%rsp)
 
 	mov	rbx,QWORD[((-8))+rax]
 	mov	rbp,QWORD[((-16))+rax]
@@ -3061,49 +3061,49 @@ se_handler:
 	mov	r13,QWORD[((-32))+rax]
 	mov	r14,QWORD[((-40))+rax]
 	mov	r15,QWORD[((-48))+rax]
-	mov	QWORD[144+r8],rbx
-	mov	QWORD[160+r8],rbp
-	mov	QWORD[216+r8],r12
-	mov	QWORD[224+r8],r13
-	mov	QWORD[232+r8],r14
-	mov	QWORD[240+r8],r15
+	mov	QWORD[144+r8],rbx  ; restore context->Rbx
+	mov	QWORD[160+r8],rbp  ; restore context->Rbp
+	mov	QWORD[216+r8],r12  ; restore context->R12
+	mov	QWORD[224+r8],r13  ; restore context->R13
+	mov	QWORD[232+r8],r14  ; restore context->R14
+	mov	QWORD[240+r8],r15  ; restore context->R15
 
 	lea	r10,[$L$epilogue]
 	cmp	rbx,r10
-	jb	NEAR $L$in_prologue
+	jb	NEAR $L$in_prologue  ; non-AVX code
 
-	lea	rsi,[((128+32))+rsi]
-	lea	rdi,[512+r8]
+	lea	rsi,[((128+32))+rsi]  ; Xmm6- save area
+	lea	rdi,[512+r8]  ; &context.Xmm6
 	mov	ecx,12
-	DD	0xa548f3fc
+	DD	0xa548f3fc  ; cld; rep movsq
 
 $L$in_prologue:
 	mov	rdi,QWORD[8+rax]
 	mov	rsi,QWORD[16+rax]
-	mov	QWORD[152+r8],rax
-	mov	QWORD[168+r8],rsi
-	mov	QWORD[176+r8],rdi
+	mov	QWORD[152+r8],rax  ; restore context->Rsp
+	mov	QWORD[168+r8],rsi  ; restore context->Rsi
+	mov	QWORD[176+r8],rdi  ; restore context->Rdi
 
-	mov	rdi,QWORD[40+r9]
-	mov	rsi,r8
-	mov	ecx,154
-	DD	0xa548f3fc
+	mov	rdi,QWORD[40+r9]  ; disp->ContextRecord
+	mov	rsi,r8  ; context
+	mov	ecx,154  ; sizeof(CONTEXT)
+	DD	0xa548f3fc  ; cld; rep movsq
 
 	mov	rsi,r9
-	xor	rcx,rcx
-	mov	rdx,QWORD[8+rsi]
-	mov	r8,QWORD[rsi]
-	mov	r9,QWORD[16+rsi]
-	mov	r10,QWORD[40+rsi]
-	lea	r11,[56+rsi]
-	lea	r12,[24+rsi]
-	mov	QWORD[32+rsp],r10
-	mov	QWORD[40+rsp],r11
-	mov	QWORD[48+rsp],r12
-	mov	QWORD[56+rsp],rcx
+	xor	rcx,rcx  ; arg1, UNW_FLAG_NHANDLER
+	mov	rdx,QWORD[8+rsi]  ; arg2, disp->ImageBase
+	mov	r8,QWORD[rsi]  ; arg3, disp->ControlPc
+	mov	r9,QWORD[16+rsi]  ; arg4, disp->FunctionEntry
+	mov	r10,QWORD[40+rsi]  ; disp->ContextRecord
+	lea	r11,[56+rsi]  ; &disp->HandlerData
+	lea	r12,[24+rsi]  ; &disp->EstablisherFrame
+	mov	QWORD[32+rsp],r10  ; arg5
+	mov	QWORD[40+rsp],r11  ; arg6
+	mov	QWORD[48+rsp],r12  ; arg7
+	mov	QWORD[56+rsp],rcx  ; arg8, (NULL)
 	call	QWORD[__imp_RtlVirtualUnwind]
 
-	mov	eax,1
+	mov	eax,1  ; ExceptionContinueSearch
 	add	rsp,64
 	popfq
 	pop	r15
@@ -3129,11 +3129,11 @@ ALIGN	8
 $L$SEH_info_sha512_block_data_order_nohw:
 	DB	9,0,0,0
 	DD	se_handler wrt ..imagebase
-	DD	$L$prologue wrt ..imagebase,$L$epilogue wrt ..imagebase
+	DD	$L$prologue wrt ..imagebase,$L$epilogue wrt ..imagebase  ; HandlerData[]
 $L$SEH_info_sha512_block_data_order_avx:
 	DB	9,0,0,0
 	DD	se_handler wrt ..imagebase
-	DD	$L$prologue_avx wrt ..imagebase,$L$epilogue_avx wrt ..imagebase
+	DD	$L$prologue_avx wrt ..imagebase,$L$epilogue_avx wrt ..imagebase  ; HandlerData[]
 %else
 ; Work around https://bugzilla.nasm.us/show_bug.cgi?id=3392738
 ret

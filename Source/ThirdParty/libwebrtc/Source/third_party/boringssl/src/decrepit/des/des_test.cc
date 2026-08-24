@@ -69,7 +69,7 @@ TEST(DESTest, CFB) {
   for (const auto &t : kTests) {
     SCOPED_TRACE(t.numbits);
 
-    // |DES_ede3_cfb_encrypt| only supports streaming at segment boundaries.
+    // `DES_ede3_cfb_encrypt` only supports streaming at segment boundaries.
     // Segments, however, are measured in bits, not bytes. When the segment is
     // not a whole number of bytes, OpenSSL's low-level functions do not
     // implement CFB correctly. CFB-n ultimately computes a sequence of E(I_i)
@@ -80,7 +80,7 @@ TEST(DESTest, CFB) {
     // It essentially interprets CFB-1 as a funny CFB-8, with the wrong amount
     // of cipher feedback. To get the real CFB-1 out of OpenSSL's CFB-1, you put
     // each plaintext bit as into its byte, with bit at the MSB, then mask off
-    // all but the MSB of each ciphertext byte. OpenSSL's |EVP_des_ede3_cfb1|
+    // all but the MSB of each ciphertext byte. OpenSSL's `EVP_des_ede3_cfb1`
     // does this transformation internally, to work around this bug.
     //
     // In case anyone is relying on the remaining bits, we test all the output
