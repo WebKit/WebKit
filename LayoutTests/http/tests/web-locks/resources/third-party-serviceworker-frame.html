@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+
+async function register() {
+    const serviceWorkerURL = './third-party-service-worker.js?' + Date.now();
+    const registration = await navigator.serviceWorker.register(serviceWorkerURL);
+    if (registration.active)
+        return registration;
+    return new Promise((resolve) => {
+        const worker = registration.installing;
+        worker.addEventListener("statechange", () => {
+            if (worker.state == "activated")
+                resolve(registration);
+        });
+    });
+}
+
+async function runTest() {
+    await register();
+
+    if (!navigator.serviceWorker.controller)
+        await new Promise(resolve => navigator.serviceWorker.addEventListener('controllerchange', resolve));
+
+    const response = await fetch('./test1');
+    top.postMessage(await response.text(), '*');
+}
+
+runTest().catch((error) => top.postMessage(`FAIL - ${error}`, '*'));
+
+</script>
+</body>
+</html>

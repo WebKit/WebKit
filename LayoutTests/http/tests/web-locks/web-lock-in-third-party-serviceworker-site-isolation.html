@@ -1,0 +1,24 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+    setTimeout(() => testRunner.notifyDone(), 8000);
+}
+
+window.onmessage = (event) => {
+    result.textContent = event.data;
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+</script>
+<p>This tests acquiring a web lock in a service worker registered by a third-party iframe, with site isolation enabled. You should see PASS below</p>
+<div id="result">Running</div>
+<iframe src="http://localhost:8000/web-locks/resources/third-party-serviceworker-frame.html"></iframe>
+</body>
+</html>

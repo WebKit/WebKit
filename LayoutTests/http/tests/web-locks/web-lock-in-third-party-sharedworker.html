@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+
+if (window.testRunner) {
+    testRunner.setUseSeparateServiceWorkerProcess(true);
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+    setTimeout(() => testRunner.notifyDone(), 8000);
+}
+
+onmessage = (event) => {
+    result.textContent = event.data;
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+</script>
+<p>This tests acquiring a web lock in a shared worker created by a third-party frame. You should see PASS below</p>
+<div id="result">Running</div>
+<iframe src="http://localhost:8000/web-locks/resources/third-party-sharedworker-frame.html"></iframe>
+</body>
+</html>

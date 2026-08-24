@@ -700,6 +700,7 @@ void WebProcessPool::establishRemoteWorkerContextConnectionToNetworkProcess(Remo
 
     auto useProcessForRemoteWorkers = [&](WebProcessProxy& process) {
         remoteWorkerProcessProxy = process;
+        process.didBecomeRemoteWorkerHostForSite(site);
         bool alreadyEnabled = workerType == RemoteWorkerType::SharedWorker ? process.isRunningSharedWorkers() : process.isRunningServiceWorkers();
         if (!alreadyEnabled)
             process.enableRemoteWorkers(workerType, processPool->userContentControllerForRemoteWorkers());
