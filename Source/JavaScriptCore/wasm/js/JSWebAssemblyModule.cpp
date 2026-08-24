@@ -88,7 +88,7 @@ void JSWebAssemblyModule::finishCreation(VM& vm)
 void JSWebAssemblyModule::destroy(JSCell* cell)
 {
     static_cast<JSWebAssemblyModule*>(cell)->JSWebAssemblyModule::~JSWebAssemblyModule();
-    Wasm::TypeInformation::tryCleanup();
+    Wasm::TypeInformation::requestCleanup();
 }
 
 const Wasm::ModuleInformation& JSWebAssemblyModule::moduleInformation() const

@@ -862,6 +862,20 @@ bool TypeInformation::isReferenceValueAssignable(JSValue refValue, bool allowNul
     return false;
 }
 
+static std::atomic<bool> s_typeCleanupRequested { false };
+
+void TypeInformation::requestCleanup()
+{
+    s_typeCleanupRequested.store(true, std::memory_order_release);
+}
+
+void TypeInformation::cleanupIfRequested()
+{
+    if (!s_typeCleanupRequested.exchange(false, std::memory_order_acquire))
+        return;
+    tryCleanup();
+}
+
 void TypeInformation::tryCleanup()
 {
     auto& info = singleton();

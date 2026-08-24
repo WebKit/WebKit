@@ -1193,12 +1193,15 @@ public:
     // convention).
     static RefPtr<const RTT> tryGetRTT(TypeIndex);
 
-    static void tryCleanup();
+    static void requestCleanup();
+    static void cleanupIfRequested();
 
     // Total canonical entries currently retained. Used by tests.
     static size_t canonicalTypeCount();
 
 private:
+    static void tryCleanup();
+
     static Ref<const RTT> typeDefinitionForFunction(const Vector<Type, 16>& returnTypes, const Vector<Type, 16>& argumentTypes);
     static Ref<const RTT> typeDefinitionForStruct(const Vector<FieldType>& fields);
     static Ref<const RTT> typeDefinitionForArray(FieldType);

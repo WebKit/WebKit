@@ -609,6 +609,9 @@ void Heap::lastChanceToFinalize()
     m_arrayBuffers.lastChanceToFinalize();
     m_objectSpace.lastChanceToFinalize();
     releaseDelayedReleasedObjects();
+#if ENABLE(WEBASSEMBLY)
+    Wasm::TypeInformation::cleanupIfRequested();
+#endif
 
     sweepAllLogicallyEmptyWeakBlocks();
     
@@ -1311,6 +1314,9 @@ void Heap::sweepSynchronously()
     }
     m_objectSpace.sweepBlocks();
     m_objectSpace.shrink();
+#if ENABLE(WEBASSEMBLY)
+    Wasm::TypeInformation::cleanupIfRequested();
+#endif
     if (Options::logGC()) [[unlikely]] {
         MonotonicTime after = MonotonicTime::now();
         dataLog("=> ", capacity() / 1024, "kb, ", (after - before).milliseconds(), "ms");
@@ -2364,6 +2370,9 @@ void Heap::runCollectionEpilogue()
         deleteSourceProviderCaches();
         sweepEagerlyInEpilogue();
     }
+#if ENABLE(WEBASSEMBLY)
+    Wasm::TypeInformation::cleanupIfRequested();
+#endif
     
     if (HasOwnPropertyCache* cache = vm().hasOwnPropertyCache())
         cache->clear();
