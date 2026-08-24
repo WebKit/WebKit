@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2024, 2026 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -185,7 +185,7 @@ public:
 
     void applyModification(BytecodeRewriter&);
 
-    void finalize(std::unique_ptr<JSInstructionStream>);
+    [[nodiscard]] bool finalize(std::unique_ptr<JSInstructionStream>);
 
     void NODELETE dump(PrintStream&) const;
 
