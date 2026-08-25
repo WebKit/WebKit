@@ -21,7 +21,9 @@
 
 #include "TestMain.h"
 #include <WebKitImagePrivate.h>
+#include <png.h>
 #include <span>
+#include <wtf/Vector.h>
 #include <wtf/glib/GUniquePtr.h>
 
 class WebKitImageTest : public Test {
@@ -144,8 +146,9 @@ static void testWebKitImageIconInterface(WebKitImageTest*, gconstpointer)
 
 static void testWebKitImageLoadableIconLoadSync(WebKitImageTest*, gconstpointer)
 {
-    auto makeSingleRedPixel = []() -> GRefPtr<GBytes> {
-        uint8_t pixel[] = { 255, 0, 0, 255 };
+    // WebKitImage uses premultiplied alpha, a completely red component matches the alpha value when premultiplied.
+    static constexpr auto makeSingleRedPixel = [](uint8_t alpha = 255) -> GRefPtr<GBytes> {
+        uint8_t pixel[] = { alpha, 0, 0, alpha };
         return adoptGRef(g_bytes_new(pixel, sizeof(pixel)));
     };
     GRefPtr<WebKitImage> image = webkitImageNew(1, 1, 4, makeSingleRedPixel());
@@ -176,6 +179,78 @@ static void testWebKitImageLoadableIconLoadSync(WebKitImageTest*, gconstpointer)
     g_assert_cmpint(buffer[5], ==, 0x0A);
     g_assert_cmpint(buffer[6], ==, 0x1A);
     g_assert_cmpint(buffer[7], ==, 0x0A);
+
+    image = webkitImageNew(1, 1, 4, makeSingleRedPixel(0x80)); // 50% opaque red.
+    stream = adoptGRef(g_loadable_icon_load(G_LOADABLE_ICON(image.get()), 0, &type.outPtr(), nullptr, &error.outPtr()));
+
+    g_assert_no_error(error.get());
+    g_assert_nonnull(stream.get());
+    g_assert_cmpstr(type.get(), ==, "image/png");
+
+    bool pngErrored = false;
+    static constexpr auto pngErroredCallback = [](png_struct* png, const char*) {
+        bool* errored = reinterpret_cast<bool*>(png_get_error_ptr(png));
+        *errored = true;
+    };
+
+    png_struct* png = png_create_read_struct(PNG_LIBPNG_VER_STRING, &pngErrored, pngErroredCallback, pngErroredCallback);
+    g_assert_nonnull(png);
+
+    static constexpr auto pngReadCallback = [](png_struct* png, uint8_t* buffer, size_t numBytes) {
+        GRefPtr<GError> error;
+        auto* stream = G_INPUT_STREAM(png_get_io_ptr(png));
+        auto readBytes = g_input_stream_read(stream, buffer, numBytes, nullptr, &error.outPtr());
+        g_assert_cmpint(readBytes, ==, numBytes);
+        g_assert_no_error(error.get());
+    };
+    png_set_read_fn(png, stream.get(), pngReadCallback);
+
+    png_info* pngInfo = png_create_info_struct(png);
+    g_assert_nonnull(pngInfo);
+
+    png_read_info(png, pngInfo);
+    g_assert_false(pngErrored);
+
+    uint32_t pngWidth = 0, pngHeight = 0;
+    int pngDepth = 0, pngColorType = 0;
+    png_get_IHDR(png, pngInfo, &pngWidth, &pngHeight, &pngDepth, &pngColorType, nullptr, nullptr, nullptr);
+    g_assert_false(pngErrored);
+
+    g_assert_cmpuint(pngWidth, ==, 1);
+    g_assert_cmpuint(pngHeight, ==, 1);
+    g_assert_cmpuint(pngColorType, ==, PNG_COLOR_TYPE_RGBA);
+
+    if (pngColorType == PNG_COLOR_TYPE_PALETTE || (pngColorType == PNG_COLOR_TYPE_GRAY && pngDepth < 8) || png_get_valid(png, pngInfo, PNG_INFO_tRNS))
+        png_set_expand(png); // Resolve palette colors and apply transparency.
+
+    if (pngDepth == 16)
+        png_set_strip_16(png); // Lower higher bit depth images to 8bpp, it is enough for testing.
+
+    if (pngColorType == PNG_COLOR_TYPE_GRAY || pngColorType == PNG_COLOR_TYPE_GRAY_ALPHA)
+        png_set_gray_to_rgb(png); // Always produce RGB for grayscale images.
+
+    png_read_update_info(png, pngInfo);
+    g_assert_false(pngErrored);
+
+    uint32_t pngRowBytes = png_get_rowbytes(png, pngInfo);
+    Vector<uint8_t> pngRow(pngRowBytes, [](size_t) -> uint8_t {
+        return 0x00;
+    });
+    uint8_t* pngRowPointers[1] = { pngRow.mutableSpan().data() };
+    png_read_image(png, pngRowPointers);
+    g_assert_false(pngErrored);
+
+    png_read_end(png, nullptr);
+    g_assert_false(pngErrored);
+
+    // PNG pixel data is decoded in BGRA order and always stored un-premultiplied, so that is what libpng returns.
+    g_assert_cmpuint(pngRow[0], ==, 0x00);
+    g_assert_cmpuint(pngRow[1], ==, 0x00);
+    g_assert_cmpuint(pngRow[2], ==, 0xFF);
+    g_assert_cmpuint(pngRow[3], ==, 0x80);
+
+    png_destroy_info_struct(png, &pngInfo);
+    png_destroy_read_struct(&png, nullptr, nullptr);
 }
 
 static void testWebKitImageLoadableIconLoadAsync(WebKitImageTest* test, gconstpointer)
