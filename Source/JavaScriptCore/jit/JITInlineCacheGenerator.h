@@ -240,8 +240,8 @@ public:
 
     JITPutByIdGenerator(
         CodeBlock*, CompileTimePropertyInlineCache, JITType, CodeOrigin, CallSiteIndex, const RegisterSet& usedRegisters, CacheableIdentifier,
-        JSValueRegs base, JSValueRegs value, GPRReg propertyCacheGPR, GPRReg scratch, AccessType);
-    
+        JSValueRegs base, JSValueRegs value, GPRReg propertyCacheGPR, GPRReg scratch, AccessType, CacheType);
+
     void generateFastPath(CCallHelpers&);
     void generateDataICFastPath(CCallHelpers&);
     void generateDataICSlowPath(CCallHelpers&);
@@ -257,6 +257,9 @@ public:
         else
             UNUSED_PARAM(scratchGPR);
     }
+
+private:
+    CacheType m_cacheType { CacheType::PutByIdReplace };
 };
 
 class JITPutByValGenerator final : public JITInlineCacheGenerator {
@@ -452,7 +455,7 @@ public:
 
     JITInByIdGenerator(
         CodeBlock*, CompileTimePropertyInlineCache, JITType, CodeOrigin, CallSiteIndex, const RegisterSet& usedRegisters, CacheableIdentifier,
-        JSValueRegs base, JSValueRegs value, GPRReg propertyCacheGPR);
+        JSValueRegs base, JSValueRegs value, GPRReg propertyCacheGPR, CacheType);
 
     void generateFastPath(CCallHelpers&);
     void generateDataICFastPath(CCallHelpers&);
@@ -465,6 +468,9 @@ public:
     {
         JITByIdGenerator::setUpPropertyInlineCacheImpl(propertyCache, codeBlock, accessType, cacheType, codeOrigin, callSiteIndex, usedRegisters, propertyName, baseRegs, valueRegs, propertyCacheGPR);
     }
+
+private:
+    CacheType m_cacheType { CacheType::InByIdSelf };
 };
 
 class JITInstanceOfGenerator final : public JITInlineCacheGenerator {

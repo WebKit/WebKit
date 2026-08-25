@@ -276,6 +276,7 @@ op :set_private_brand, args: {
         brand: VirtualRegister,
     },
     metadata: {
+        propertyInlineCache: uintptr_t,
         oldStructureID: StructureID,
         newStructureID: StructureID,
         brand: WriteBarrier[JSCell],
@@ -287,6 +288,7 @@ op :check_private_brand,
         brand: VirtualRegister,
     },
     metadata: {
+        propertyInlineCache: uintptr_t,
         structureID: StructureID,
         brand: WriteBarrier[JSCell],
     }
@@ -299,6 +301,7 @@ op :put_by_id,
         flags: PutByIdFlags,
     },
     metadata: {
+        propertyInlineCache: uintptr_t,
         oldStructureID: StructureID,
         offset: unsigned,
         newStructureID: StructureID,
@@ -426,6 +429,7 @@ op :get_length,
         valueProfile: unsigned,
     },
     metadata: {
+        propertyInlineCache: uintptr_t,
         modeMetadata: GetByIdModeMetadata,
         arrayProfile: ArrayProfile,
     }
@@ -617,6 +621,7 @@ op :put_private_name,
         putKind: PrivateFieldPutKind,
     },
     metadata: {
+        propertyInlineCache: uintptr_t,
         property: WriteBarrier[JSCell],
         oldStructureID: StructureID,
         offset: unsigned,
@@ -631,22 +636,10 @@ op :get_private_name,
         valueProfile: unsigned,
     },
     metadata: {
+        propertyInlineCache: uintptr_t,
         structureID: StructureID,
         offset: unsigned,
         property: WriteBarrier[JSCell],
-    }
-
-# Alignment: 4
-op :get_by_val_with_this,
-    args: {
-        dst: VirtualRegister,
-        base: VirtualRegister,
-        thisValue: VirtualRegister,
-        property: VirtualRegister,
-        valueProfile: unsigned,
-    },
-    metadata: {
-        arrayProfile: ArrayProfile,
     }
 
 op :get_by_val,
@@ -657,6 +650,7 @@ op :get_by_val,
         valueProfile: unsigned,
     },
     metadata: {
+        propertyInlineCache: uintptr_t,
         arrayProfile: ArrayProfile,
     }
 
@@ -668,6 +662,7 @@ op :put_by_val,
         ecmaMode: ECMAMode,
     },
     metadata: {
+        propertyInlineCache: uintptr_t,
         arrayProfile: ArrayProfile,
     }
 
@@ -679,6 +674,7 @@ op :put_by_val_direct,
         ecmaMode: ECMAMode,
     },
     metadata: {
+        propertyInlineCache: uintptr_t,
         arrayProfile: ArrayProfile,
     }
 
@@ -687,6 +683,65 @@ op :in_by_val,
         dst: VirtualRegister,
         base: VirtualRegister,
         property: VirtualRegister,
+    },
+    metadata: {
+        propertyInlineCache: uintptr_t,
+        arrayProfile: ArrayProfile,
+    }
+
+op :del_by_id,
+    args: {
+        dst: VirtualRegister,
+        base: VirtualRegister,
+        property: unsigned,
+        ecmaMode: ECMAMode,
+    },
+    metadata: {
+        propertyInlineCache: uintptr_t,
+    }
+
+op :del_by_val,
+    args: {
+        dst: VirtualRegister,
+        base: VirtualRegister,
+        property: VirtualRegister,
+        ecmaMode: ECMAMode,
+    },
+    metadata: {
+        propertyInlineCache: uintptr_t,
+    }
+
+op :in_by_id,
+    args: {
+        dst: VirtualRegister,
+        base: VirtualRegister,
+        property: unsigned,
+    },
+    metadata: {
+        propertyInlineCache: uintptr_t,
+    }
+
+op :get_by_id_direct,
+    args: {
+        dst: VirtualRegister,
+        base: VirtualRegister,
+        property: unsigned,
+        valueProfile: unsigned, # not used in llint
+    },
+    metadata: {
+        propertyInlineCache: uintptr_t,
+        structureID: StructureID,
+        offset: unsigned,
+    }
+
+# Alignment: 4
+op :get_by_val_with_this,
+    args: {
+        dst: VirtualRegister,
+        base: VirtualRegister,
+        thisValue: VirtualRegister,
+        property: VirtualRegister,
+        valueProfile: unsigned,
     },
     metadata: {
         arrayProfile: ArrayProfile,
@@ -777,18 +832,6 @@ op :enumerator_get_by_val,
         enumeratorMetadata: EnumeratorMetadata,
     }
 
-op :get_by_id_direct,
-    args: {
-        dst: VirtualRegister,
-        base: VirtualRegister,
-        property: unsigned,
-        valueProfile: unsigned, # not used in llint
-    },
-    metadata: {
-        structureID: StructureID,
-        offset: unsigned,
-    }
-
 # Alignment: 1
 op :jneq_ptr,
     args: {
@@ -848,13 +891,6 @@ op :to_object,
         valueProfile: unsigned,
     }
 
-op :in_by_id,
-    args: {
-        dst: VirtualRegister,
-        base: VirtualRegister,
-        property: unsigned,
-    }
-
 op :has_private_name,
     args: {
         dst: VirtualRegister,
@@ -878,28 +914,12 @@ op :put_by_id_with_this,
         ecmaMode: ECMAMode,
     }
 
-op :del_by_id,
-    args: {
-        dst: VirtualRegister,
-        base: VirtualRegister,
-        property: unsigned,
-        ecmaMode: ECMAMode,
-    }
-
 op :put_by_val_with_this,
     args: {
         base: VirtualRegister,
         thisValue: VirtualRegister,
         property: VirtualRegister,
         value: VirtualRegister,
-        ecmaMode: ECMAMode,
-    }
-
-op :del_by_val,
-    args: {
-        dst: VirtualRegister,
-        base: VirtualRegister,
-        property: VirtualRegister,
         ecmaMode: ECMAMode,
     }
 
@@ -1467,11 +1487,63 @@ op :array_sort_comparator_return_trampoline
 op :fuzzer_return_early_from_loop_hint
 op :loop_osr_entry_gate
 op :llint_get_host_call_return_value
+# Handler IC nodes that LLInt can execute itself. See llintICHandlerOpcode() in
+# InlineCacheHandler.cpp for the AccessCase -> handler mapping. Shapes that call JS, allocate,
+# or call into C++ get llint_ic_skip_handler and are only executed once we reach Baseline.
+op :llint_ic_generic_handler
+op :llint_ic_skip_handler
 op :llint_get_by_id_self_handler
 op :llint_get_by_id_prototype_handler
 op :llint_get_by_id_miss_handler
-op :llint_get_by_id_generic_handler
-op :llint_get_by_id_skip_handler
+op :llint_put_by_id_replace_handler
+op :llint_put_by_id_transition_handler
+op :llint_in_by_id_hit_handler
+op :llint_in_by_id_miss_handler
+op :llint_del_by_id_delete_handler
+op :llint_del_by_id_non_configurable_handler
+op :llint_del_by_id_miss_handler
+op :llint_get_by_val_string_key_self_handler
+op :llint_get_by_val_string_key_prototype_handler
+op :llint_get_by_val_string_key_miss_handler
+op :llint_get_by_val_symbol_key_self_handler
+op :llint_get_by_val_symbol_key_prototype_handler
+op :llint_get_by_val_symbol_key_miss_handler
+op :llint_get_by_val_undefined_key_self_handler
+op :llint_get_by_val_undefined_key_prototype_handler
+op :llint_get_by_val_undefined_key_miss_handler
+op :llint_get_by_val_null_key_self_handler
+op :llint_get_by_val_null_key_prototype_handler
+op :llint_get_by_val_null_key_miss_handler
+op :llint_get_by_val_true_key_self_handler
+op :llint_get_by_val_true_key_prototype_handler
+op :llint_get_by_val_true_key_miss_handler
+op :llint_get_by_val_false_key_self_handler
+op :llint_get_by_val_false_key_prototype_handler
+op :llint_get_by_val_false_key_miss_handler
+op :llint_put_by_val_string_key_replace_handler
+op :llint_put_by_val_string_key_transition_handler
+op :llint_put_by_val_symbol_key_replace_handler
+op :llint_put_by_val_symbol_key_transition_handler
+op :llint_put_by_val_undefined_key_replace_handler
+op :llint_put_by_val_undefined_key_transition_handler
+op :llint_put_by_val_null_key_replace_handler
+op :llint_put_by_val_null_key_transition_handler
+op :llint_put_by_val_true_key_replace_handler
+op :llint_put_by_val_true_key_transition_handler
+op :llint_put_by_val_false_key_replace_handler
+op :llint_put_by_val_false_key_transition_handler
+op :llint_in_by_val_string_key_hit_handler
+op :llint_in_by_val_string_key_miss_handler
+op :llint_in_by_val_symbol_key_hit_handler
+op :llint_in_by_val_symbol_key_miss_handler
+op :llint_del_by_val_string_key_delete_handler
+op :llint_del_by_val_string_key_non_configurable_handler
+op :llint_del_by_val_string_key_miss_handler
+op :llint_del_by_val_symbol_key_delete_handler
+op :llint_del_by_val_symbol_key_non_configurable_handler
+op :llint_del_by_val_symbol_key_miss_handler
+op :llint_check_private_brand_handler
+op :llint_set_private_brand_handler
 op :llint_handle_uncaught_exception
 op :op_call_return_location
 op :op_call_ignore_result_return_location

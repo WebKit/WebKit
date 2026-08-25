@@ -478,14 +478,78 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
     };
 
 #if ENABLE(JIT)
+    // Metadata-resident PropertyInlineCache. Unlike Baseline's own caches, which live in
+    // BaselineJITData and therefore do not exist until the site is compiled, these are created here
+    // so that LLInt can walk the handler chain from the very first execution. Baseline then shares
+    // the same cache rather than allocating one of its own.
     auto link_propertyInlineCache = [&](const auto& instruction, auto bytecode, auto& metadata) {
-        if (Options::useJIT()) {
-            auto* pic = m_metadataPropertyInlineCaches.add();
-            auto cacheableIdentifier = CacheableIdentifier::createFromIdentifierOwnedByCodeBlock(m_unlinkedCode.get(), identifier(bytecode.m_property));
-            pic->initializeForMetadataResidentGetById(vm, this, cacheableIdentifier, BytecodeIndex(instruction.index()));
-            metadata.m_propertyInlineCache = std::bit_cast<uintptr_t>(pic);
-        } else
+        using Bytecode = std::decay_t<decltype(bytecode)>;
+        static constexpr OpcodeID opcode = Bytecode::opcodeID;
+
+        if (!Options::useJIT()) {
             metadata.m_propertyInlineCache = 0;
+            return;
+        }
+
+        AccessType accessType;
+        CacheType preconfiguredCacheType = CacheType::Unset;
+        CacheableIdentifier cacheableIdentifier;
+        bool propertyIsConstantInt32 = false;
+
+        if constexpr (opcode == op_get_by_id) {
+            accessType = AccessType::GetById;
+            cacheableIdentifier = CacheableIdentifier::createFromIdentifierOwnedByCodeBlock(m_unlinkedCode.get(), identifier(bytecode.m_property));
+        } else if constexpr (opcode == op_get_by_id_direct) {
+            accessType = AccessType::GetByIdDirect;
+            cacheableIdentifier = CacheableIdentifier::createFromIdentifierOwnedByCodeBlock(m_unlinkedCode.get(), identifier(bytecode.m_property));
+        } else if constexpr (opcode == op_get_length) {
+            // ArrayLength has no handler of its own, so preconfiguring it cannot divert a node away
+            // from the chain; it only keeps Baseline's inline array-length check.
+            accessType = AccessType::GetById;
+            preconfiguredCacheType = CacheType::ArrayLength;
+            cacheableIdentifier = CacheableIdentifier::createFromImmortalIdentifier(vm.propertyNames->length.impl());
+        } else if constexpr (opcode == op_put_by_id) {
+            bool isStrict = bytecode.m_flags.ecmaMode().isStrict();
+            if (bytecode.m_flags.isDirect())
+                accessType = isStrict ? AccessType::PutByIdDirectStrict : AccessType::PutByIdDirectSloppy;
+            else
+                accessType = isStrict ? AccessType::PutByIdStrict : AccessType::PutByIdSloppy;
+            cacheableIdentifier = CacheableIdentifier::createFromIdentifierOwnedByCodeBlock(m_unlinkedCode.get(), identifier(bytecode.m_property));
+        } else if constexpr (opcode == op_in_by_id) {
+            accessType = AccessType::InById;
+            cacheableIdentifier = CacheableIdentifier::createFromIdentifierOwnedByCodeBlock(m_unlinkedCode.get(), identifier(bytecode.m_property));
+        } else if constexpr (opcode == op_del_by_id) {
+            accessType = bytecode.m_ecmaMode.isStrict() ? AccessType::DeleteByIdStrict : AccessType::DeleteByIdSloppy;
+            cacheableIdentifier = CacheableIdentifier::createFromIdentifierOwnedByCodeBlock(m_unlinkedCode.get(), identifier(bytecode.m_property));
+        } else if constexpr (opcode == op_get_by_val) {
+            accessType = AccessType::GetByVal;
+            propertyIsConstantInt32 = bytecode.m_property.isConstant() && getConstant(bytecode.m_property).isInt32();
+        } else if constexpr (opcode == op_put_by_val || opcode == op_put_by_val_direct) {
+            bool isStrict = bytecode.m_ecmaMode.isStrict();
+            if constexpr (opcode == op_put_by_val_direct)
+                accessType = isStrict ? AccessType::PutByValDirectStrict : AccessType::PutByValDirectSloppy;
+            else
+                accessType = isStrict ? AccessType::PutByValStrict : AccessType::PutByValSloppy;
+            propertyIsConstantInt32 = bytecode.m_property.isConstant() && getConstant(bytecode.m_property).isInt32();
+        } else if constexpr (opcode == op_in_by_val) {
+            accessType = AccessType::InByVal;
+        } else if constexpr (opcode == op_del_by_val) {
+            accessType = bytecode.m_ecmaMode.isStrict() ? AccessType::DeleteByValStrict : AccessType::DeleteByValSloppy;
+        } else if constexpr (opcode == op_get_private_name) {
+            accessType = AccessType::GetPrivateName;
+        } else if constexpr (opcode == op_put_private_name) {
+            accessType = bytecode.m_putKind.isDefine() ? AccessType::DefinePrivateNameByVal : AccessType::SetPrivateNameByVal;
+        } else if constexpr (opcode == op_check_private_brand) {
+            accessType = AccessType::CheckPrivateBrand;
+        } else {
+            static_assert(opcode == op_set_private_brand);
+            accessType = AccessType::SetPrivateBrand;
+        }
+
+        auto* propertyCache = m_metadataPropertyInlineCaches.add();
+        propertyCache->initializeForMetadataResident(vm, this, accessType, preconfiguredCacheType, cacheableIdentifier, BytecodeIndex(instruction.index()));
+        propertyCache->propertyIsInt32 = propertyIsConstantInt32;
+        metadata.m_propertyInlineCache = std::bit_cast<uintptr_t>(propertyCache);
     };
 #endif
 
@@ -511,39 +575,29 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
         break; \
     }
 
+#if ENABLE(JIT)
+#define LINK_PROPERTY_INLINE_CACHE(__op) LINK(__op, propertyInlineCache)
+#else
+#define LINK_PROPERTY_INLINE_CACHE(__op) LINK(__op)
+#endif
+
     const auto& instructionStream = instructions();
     for (const auto& instruction : instructionStream) {
         OpcodeID opcodeID = instruction->opcodeID();
         static_assert(OpcodeIDWidthBySize<JSOpcodeTraits, OpcodeSize::Wide32>::opcodeIDSize == 1);
         m_bytecodeCost += opcodeLengths[opcodeID] + 1;
         switch (opcodeID) {
-        LINK(OpGetByVal)
-        LINK(OpGetPrivateName)
+        JSC_FOR_EACH_METADATA_PROPERTY_INLINE_CACHE_OP(LINK_PROPERTY_INLINE_CACHE)
 
-        LINK(OpGetByIdDirect)
         LINK(OpGetByValWithThis)
         LINK(OpToThis)
-
-#if ENABLE(JIT)
-        LINK(OpGetById, propertyInlineCache)
-#else
-        LINK(OpGetById)
-#endif
-        LINK(OpGetLength)
 
         LINK(OpEnumeratorNext)
         LINK(OpEnumeratorInByVal)
         LINK(OpEnumeratorHasOwnProperty)
         LINK(OpEnumeratorGetByVal)
 
-        LINK(OpInByVal)
-        LINK(OpPutByVal)
-        LINK(OpPutByValDirect)
         LINK(OpEnumeratorPutByVal)
-        LINK(OpPutPrivateName)
-
-        LINK(OpSetPrivateBrand)
-        LINK(OpCheckPrivateBrand)
 
         LINK(OpNewArray)
         LINK(OpNewArrayWithSize)
@@ -551,7 +605,6 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
 
         LINK(OpNewObject, objectAllocationProfile)
 
-        LINK(OpPutById)
         LINK(OpCreateThis)
         LINK(OpCreatePromise)
         LINK(OpCreateGenerator)
@@ -779,6 +832,7 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
 #undef INITIALIZE_METADATA
 #undef LINK_FIELD
 #undef LINK
+#undef LINK_PROPERTY_INLINE_CACHE
 
     if (m_unlinkedCode->wasCompiledWithControlFlowProfilerOpcodes())
         insertBasicBlockBoundariesForControlFlowProfiler();
@@ -796,6 +850,21 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
 }
 
 #if ENABLE(JIT)
+PropertyInlineCache* CodeBlock::metadataPropertyInlineCacheAt(BytecodeIndex bytecodeIndex)
+{
+    const auto& instruction = instructions().at(bytecodeIndex.offset());
+    switch (instruction->opcodeID()) {
+#define JSC_METADATA_PROPERTY_INLINE_CACHE_CASE(__op) \
+    case __op::opcodeID: \
+        return std::bit_cast<PropertyInlineCache*>(instruction->as<__op>().metadata(this).m_propertyInlineCache);
+    JSC_FOR_EACH_METADATA_PROPERTY_INLINE_CACHE_OP(JSC_METADATA_PROPERTY_INLINE_CACHE_CASE)
+#undef JSC_METADATA_PROPERTY_INLINE_CACHE_CASE
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+        return nullptr;
+    }
+}
+
 void CodeBlock::setBaselineJITData(std::unique_ptr<BaselineJITData>&& jitData)
 {
     ASSERT(!m_jitData);
@@ -866,8 +935,7 @@ void CodeBlock::setupWithUnlinkedBaselineCode(Ref<BaselineJITCode> jitCode)
     }
 
     for (auto& locations : jitCode->m_metadataPropertyInlineCacheLocations) {
-        auto& metadata = instructions().at(locations.bytecodeIndex.offset())->as<OpGetById>().metadata(this);
-        auto* propertyCache = std::bit_cast<PropertyInlineCache*>(metadata.m_propertyInlineCache);
+        auto* propertyCache = metadataPropertyInlineCacheAt(locations.bytecodeIndex);
         ASSERT(propertyCache);
         propertyCache->doneLocation = locations.doneLocation;
         propertyCache->slowPathStartLocation = locations.slowPathStartLocation;
@@ -1560,11 +1628,11 @@ void CodeBlock::finalizeLLIntInlineCaches()
             clearIfNeeded(metadata.m_prototypeModeMetadata, "instanceof"_s);
         });
 
-#if !ENABLE(JIT)
+        // Still reachable with ENABLE(JIT) but Options::useJIT() false: the metadata cache has no
+        // PropertyInlineCache to fall back on, so llint_slow_path_get_by_id keeps populating it.
         m_metadata->forEach<OpGetById>([&] (auto& metadata) {
             clearIfNeeded(metadata.m_modeMetadata, "get by id"_s);
         });
-#endif
 
         m_metadata->forEach<OpGetLength>([&] (auto& metadata) {
             clearIfNeeded(metadata.m_modeMetadata, "get length"_s);
@@ -1726,13 +1794,11 @@ void CodeBlock::finalizeLLIntInlineCaches()
             auto& instruction = instructions().at(bytecodeIndex.offset());
             OpcodeID opcode = instruction->opcodeID();
             switch (opcode) {
-#if !ENABLE(JIT)
             case op_get_by_id: {
                 dataLogLnIf(Options::verboseOSR(), "Clearing LLInt property access.");
                 LLIntPrototypeLoadAdaptiveStructureWatchpoint::clearLLIntGetByIdCache(instruction->as<OpGetById>().metadata(this).m_modeMetadata);
                 break;
             }
-#endif
             case op_get_length: {
                 dataLogLnIf(Options::verboseOSR(), "Clearing LLInt property access.");
                 LLIntPrototypeLoadAdaptiveStructureWatchpoint::clearLLIntGetByIdCache(instruction->as<OpGetLength>().metadata(this).m_modeMetadata);

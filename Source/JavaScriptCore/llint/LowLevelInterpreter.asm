@@ -2472,8 +2472,6 @@ end
 
 llintSlowPathOp(has_private_name)
 llintSlowPathOp(has_private_brand)
-llintSlowPathOp(del_by_id)
-llintSlowPathOp(del_by_val)
 llintSlowPathOp(create_lexical_environment)
 llintSlowPathOp(create_direct_arguments)
 llintSlowPathOp(create_scoped_arguments)

@@ -69,6 +69,30 @@ class LLIntOffsetsExtractor;
 class LLIntPrototypeLoadAdaptiveStructureWatchpoint;
 class MetadataTable;
 class PropertyInlineCache;
+
+#if ENABLE(JIT)
+// Bytecodes whose PropertyInlineCache lives in their own metadata rather than in BaselineJITData, so
+// that LLInt can walk the handler chain before the site has been Baseline-compiled. See
+// PropertyInlineCache.h and CodeBlock::metadataPropertyInlineCacheAt().
+#define JSC_FOR_EACH_METADATA_PROPERTY_INLINE_CACHE_OP(macro) \
+    macro(OpGetById) \
+    macro(OpGetByIdDirect) \
+    macro(OpGetLength) \
+    macro(OpGetByVal) \
+    macro(OpGetPrivateName) \
+    macro(OpPutById) \
+    macro(OpPutByVal) \
+    macro(OpPutByValDirect) \
+    macro(OpPutPrivateName) \
+    macro(OpInById) \
+    macro(OpInByVal) \
+    macro(OpDelById) \
+    macro(OpDelByVal) \
+    macro(OpCheckPrivateBrand) \
+    macro(OpSetPrivateBrand) \
+
+#endif
+
 class RegisterAtOffsetList;
 class ScriptExecutable;
 class UnaryArithProfile;
@@ -300,6 +324,10 @@ public:
     
 #if ENABLE(JIT)
     void setupWithUnlinkedBaselineCode(Ref<BaselineJITCode>);
+
+    // The PropertyInlineCache stored in this bytecode's metadata. Only valid for ops that carry
+    // one (see JSC_FOR_EACH_METADATA_PROPERTY_INLINE_CACHE_OP) and only when Options::useJIT().
+    PropertyInlineCache* metadataPropertyInlineCacheAt(BytecodeIndex);
 
     static constexpr ptrdiff_t offsetOfJITData() { return OBJECT_OFFSETOF(CodeBlock, m_jitData); }
 

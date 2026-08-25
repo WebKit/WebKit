@@ -7566,7 +7566,7 @@ void SpeculativeJIT::compileInById(Node* node)
         });
     JITInByIdGenerator gen(
         codeBlock(), propertyCache, JITType::DFGJIT, codeOrigin, callSite, usedRegisters, node->cacheableIdentifier(),
-        BaselineJITRegisters::InById::baseJSR, resultRegs, BaselineJITRegisters::InById::propertyCacheGPR);
+        BaselineJITRegisters::InById::baseJSR, resultRegs, BaselineJITRegisters::InById::propertyCacheGPR, CacheType::InByIdSelf);
     JumpList slowCases;
 
     loadPropertyInlineCache(propertyCacheConstant, BaselineJITRegisters::InById::propertyCacheGPR);
@@ -8306,7 +8306,7 @@ void SpeculativeJIT::cachedPutById(Node*, CodeOrigin codeOrigin, GPRReg baseGPR,
     JITPutByIdGenerator gen(
         codeBlock(), propertyCache, JITType::DFGJIT, codeOrigin, callSite, usedRegisters, identifier,
         BaselineJITRegisters::PutById::baseJSR, BaselineJITRegisters::PutById::valueJSR, BaselineJITRegisters::PutById::propertyCacheGPR,
-        BaselineJITRegisters::PutById::scratch1GPR, accessType);
+        BaselineJITRegisters::PutById::scratch1GPR, accessType, CacheType::PutByIdReplace);
     JumpList slowCases;
     auto* operation = appropriatePutByIdOptimizeFunction(accessType);
     loadPropertyInlineCache(propertyCacheConstant, BaselineJITRegisters::PutById::propertyCacheGPR);

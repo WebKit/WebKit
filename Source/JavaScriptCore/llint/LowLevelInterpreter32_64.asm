@@ -3356,6 +3356,16 @@ llintOpWithMetadata(op_set_private_brand, OpSetPrivateBrand, macro (size, get, d
     dispatch()
 end)
 
+llintOp(op_del_by_id, OpDelById, macro (size, get, dispatch)
+    callSlowPath(_llint_slow_path_del_by_id)
+    dispatch()
+end)
+
+llintOp(op_del_by_val, OpDelByVal, macro (size, get, dispatch)
+    callSlowPath(_llint_slow_path_del_by_val)
+    dispatch()
+end)
+
 llintOpWithReturn(op_in_by_id, OpInById, macro (size, get, dispatch, return)
     callSlowPath(_llint_slow_path_in_by_id)
     dispatch()

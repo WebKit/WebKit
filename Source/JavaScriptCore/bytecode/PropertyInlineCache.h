@@ -602,7 +602,10 @@ public:
     void initializeFromUnlinkedPropertyInlineCache(VM&, CodeBlock*, const BaselineUnlinkedPropertyInlineCache&);
     void initializeFromDFGUnlinkedPropertyInlineCache(CodeBlock*, const DFG::UnlinkedPropertyInlineCache&);
 
-    void initializeForMetadataResidentGetById(VM&, CodeBlock*, CacheableIdentifier, BytecodeIndex);
+    // Used for metadata-resident caches: the PIC lives in the bytecode metadata so that LLInt can
+    // reach the handler chain before the site has been Baseline-compiled, and Baseline then shares
+    // it instead of allocating one of its own.
+    void initializeForMetadataResident(VM&, CodeBlock*, AccessType, CacheType preconfigured, CacheableIdentifier, BytecodeIndex);
 
     void setInlinedHandler(CodeBlock*, Ref<InlineCacheHandler>&&);
     void clearInlinedHandler(CodeBlock*);

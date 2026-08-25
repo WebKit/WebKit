@@ -132,7 +132,10 @@ void JITByIdGenerator::generateFastCommon(CCallHelpers& jit, size_t inlineICSize
 
 void JITByIdGenerator::emitDataICSlowPath(CCallHelpers& jit, GPRReg propertyCacheGPR)
 {
-    ASSERT(!m_dataICHandlerCases.empty());
+    // A CacheType::Unset fast path is nothing but the handler dispatch, so there is no inline
+    // access to fall out of and nothing to emit here.
+    if (m_dataICHandlerCases.empty())
+        return;
     m_dataICHandlerCases.link(&jit);
     emitDataICHandlerDispatch(jit, propertyCacheGPR);
     jit.jump(m_done);
@@ -225,6 +228,8 @@ JITGetByIdWithThisGenerator::JITGetByIdWithThisGenerator(
 {
     RELEASE_ASSERT(thisRegs.payloadGPR() != thisRegs.tagGPR());
     WTF::visit([&](auto* propertyCache) {
+        if (!propertyCache)
+            return;
         setUpPropertyInlineCache(*propertyCache, codeBlock, AccessType::GetByIdWithThis, CacheType::GetByIdSelf, codeOrigin, callSite, usedRegisters, propertyName, value, base, thisRegs, propertyCacheGPR);
     }, propertyCache);
 }
@@ -258,11 +263,13 @@ void JITGetByIdWithThisGenerator::generateDataICSlowPath(CCallHelpers& jit)
 JITPutByIdGenerator::JITPutByIdGenerator(
     CodeBlock* codeBlock, CompileTimePropertyInlineCache propertyCache, JITType jitType, CodeOrigin codeOrigin, CallSiteIndex callSite, const RegisterSet& usedRegisters, CacheableIdentifier propertyName,
     JSValueRegs base, JSValueRegs value, GPRReg propertyCacheGPR, GPRReg scratch,
-    AccessType accessType)
+    AccessType accessType, CacheType cacheType)
         : JITByIdGenerator(codeBlock, propertyCache, jitType, codeOrigin, accessType, base, value)
+        , m_cacheType(cacheType)
 {
     WTF::visit([&](auto* propertyCache) {
-        setUpPropertyInlineCache(*propertyCache, codeBlock, accessType, CacheType::PutByIdReplace, codeOrigin, callSite, usedRegisters, propertyName, base, value, propertyCacheGPR, scratch);
+        if (propertyCache && cacheType != CacheType::Unset)
+            setUpPropertyInlineCache(*propertyCache, codeBlock, accessType, cacheType, codeOrigin, callSite, usedRegisters, propertyName, base, value, propertyCacheGPR, scratch);
     }, propertyCache);
 }
 
@@ -278,11 +285,17 @@ static void generatePutByIdInlineAccessBaselineDataIC(CCallHelpers& jit, GPRReg 
 void JITPutByIdGenerator::generateDataICFastPath(CCallHelpers& jit)
 {
     using BaselineJITRegisters::PutById::baseJSR;
-    using BaselineJITRegisters::PutById::valueJSR;
     using BaselineJITRegisters::PutById::propertyCacheGPR;
     using BaselineJITRegisters::PutById::scratch1GPR;
+    using BaselineJITRegisters::PutById::valueJSR;
 
     m_start = jit.label();
+    if (m_cacheType == CacheType::Unset) {
+        emitDataICHandlerDispatch(jit, propertyCacheGPR);
+        m_done = jit.label();
+        return;
+    }
+
     // The second scratch can be the same to baseJSR. In Baseline JIT, we clobber the baseJSR to save registers.
     generatePutByIdInlineAccessBaselineDataIC(jit, propertyCacheGPR, baseJSR, valueJSR, scratch1GPR, baseJSR.payloadGPR(), m_dataICHandlerCases);
     m_done = jit.label();
@@ -304,6 +317,8 @@ JITDelByValGenerator::JITDelByValGenerator(CodeBlock* codeBlock, CompileTimeProp
     : Base(codeBlock, propertyCache, jitType, codeOrigin, accessType)
 {
     WTF::visit([&](auto* propertyCache) {
+        if (!propertyCache)
+            return;
         setUpPropertyInlineCache(*propertyCache, codeBlock, accessType, CacheType::Unset, codeOrigin, callSiteIndex, usedRegisters, base, property, result, propertyCacheGPR);
     }, propertyCache);
 }
@@ -334,6 +349,8 @@ JITDelByIdGenerator::JITDelByIdGenerator(CodeBlock* codeBlock, CompileTimeProper
     : Base(codeBlock, propertyCache, jitType, codeOrigin, accessType)
 {
     WTF::visit([&](auto* propertyCache) {
+        if (!propertyCache)
+            return;
         setUpPropertyInlineCache(*propertyCache, codeBlock, accessType, CacheType::Unset, codeOrigin, callSiteIndex, usedRegisters, propertyName, base, result, propertyCacheGPR);
     }, propertyCache);
 }
@@ -364,6 +381,8 @@ JITInByValGenerator::JITInByValGenerator(CodeBlock* codeBlock, CompileTimeProper
     : Base(codeBlock, propertyCache, jitType, codeOrigin, accessType)
 {
     WTF::visit([&](auto* propertyCache) {
+        if (!propertyCache)
+            return;
         setUpPropertyInlineCache(*propertyCache, codeBlock, accessType, CacheType::Unset, codeOrigin, callSiteIndex, usedRegisters, base, property, result, arrayProfileGPR, propertyCacheGPR);
     }, propertyCache);
 }
@@ -394,12 +413,14 @@ void JITInByValGenerator::finalize(
 
 JITInByIdGenerator::JITInByIdGenerator(
     CodeBlock* codeBlock, CompileTimePropertyInlineCache propertyCache, JITType jitType, CodeOrigin codeOrigin, CallSiteIndex callSite, const RegisterSet& usedRegisters,
-    CacheableIdentifier propertyName, JSValueRegs base, JSValueRegs value, GPRReg propertyCacheGPR)
+    CacheableIdentifier propertyName, JSValueRegs base, JSValueRegs value, GPRReg propertyCacheGPR, CacheType cacheType)
     : JITByIdGenerator(codeBlock, propertyCache, jitType, codeOrigin, AccessType::InById, base, value)
+    , m_cacheType(cacheType)
 {
     RELEASE_ASSERT(base.payloadGPR() != value.tagGPR());
     WTF::visit([&](auto* propertyCache) {
-        setUpPropertyInlineCache(*propertyCache, codeBlock, AccessType::InById, CacheType::InByIdSelf, codeOrigin, callSite, usedRegisters, propertyName, base, value, propertyCacheGPR);
+        if (propertyCache && cacheType != CacheType::Unset)
+            setUpPropertyInlineCache(*propertyCache, codeBlock, AccessType::InById, cacheType, codeOrigin, callSite, usedRegisters, propertyName, base, value, propertyCacheGPR);
     }, propertyCache);
 }
 
@@ -420,11 +441,17 @@ void JITInByIdGenerator::generateFastPath(CCallHelpers& jit)
 void JITInByIdGenerator::generateDataICFastPath(CCallHelpers& jit)
 {
     using BaselineJITRegisters::InById::baseJSR;
-    using BaselineJITRegisters::InById::resultJSR;
     using BaselineJITRegisters::InById::propertyCacheGPR;
+    using BaselineJITRegisters::InById::resultJSR;
     using BaselineJITRegisters::InById::scratch1GPR;
 
     m_start = jit.label();
+    if (m_cacheType == CacheType::Unset) {
+        emitDataICHandlerDispatch(jit, propertyCacheGPR);
+        m_done = jit.label();
+        return;
+    }
+
     generateInByIdInlineAccessBaselineDataIC(jit, propertyCacheGPR, baseJSR, scratch1GPR, resultJSR, m_dataICHandlerCases);
     m_done = jit.label();
 }
@@ -441,6 +468,8 @@ JITInstanceOfGenerator::JITInstanceOfGenerator(
     : JITInlineCacheGenerator(codeBlock, propertyCache, jitType, codeOrigin, AccessType::InstanceOf)
 {
     WTF::visit([&](auto* propertyCache) {
+        if (!propertyCache)
+            return;
         setUpPropertyInlineCache(*propertyCache, codeBlock, AccessType::InstanceOf, CacheType::Unset, codeOrigin, callSiteIndex, usedRegisters, result, value, prototype, propertyCacheGPR, prototypeIsKnownObject);
     }, propertyCache);
 }
@@ -473,6 +502,8 @@ JITGetByValGenerator::JITGetByValGenerator(CodeBlock* codeBlock, CompileTimeProp
     , m_result(result)
 {
     WTF::visit([&](auto* propertyCache) {
+        if (!propertyCache)
+            return;
         setUpPropertyInlineCache(*propertyCache, codeBlock, accessType, CacheType::Unset, codeOrigin, callSiteIndex, usedRegisters, base, property, result, arrayProfileGPR, propertyCacheGPR);
     }, propertyCache);
 }
@@ -511,6 +542,8 @@ JITGetByValWithThisGenerator::JITGetByValWithThisGenerator(CodeBlock* codeBlock,
     , m_result(result)
 {
     WTF::visit([&](auto* propertyCache) {
+        if (!propertyCache)
+            return;
         setUpPropertyInlineCache(*propertyCache, codeBlock, accessType, CacheType::Unset, codeOrigin, callSiteIndex, usedRegisters, base, property, thisRegs, result, arrayProfileGPR, propertyCacheGPR);
     }, propertyCache);
 }
@@ -551,6 +584,8 @@ JITPutByValGenerator::JITPutByValGenerator(CodeBlock* codeBlock, CompileTimeProp
     , m_value(value)
 {
     WTF::visit([&](auto* propertyCache) {
+        if (!propertyCache)
+            return;
         setUpPropertyInlineCache(*propertyCache, codeBlock, accessType, CacheType::Unset, codeOrigin, callSiteIndex, usedRegisters, base, property, value, arrayProfileGPR, propertyCacheGPR);
     }, propertyCache);
 }
@@ -582,6 +617,8 @@ JITPrivateBrandAccessGenerator::JITPrivateBrandAccessGenerator(CodeBlock* codeBl
 {
     ASSERT(accessType == AccessType::CheckPrivateBrand || accessType == AccessType::SetPrivateBrand);
     WTF::visit([&](auto* propertyCache) {
+        if (!propertyCache)
+            return;
         setUpPropertyInlineCache(*propertyCache, codeBlock, accessType, CacheType::Unset, codeOrigin, callSiteIndex, usedRegisters, base, brand, propertyCacheGPR);
     }, propertyCache);
 }

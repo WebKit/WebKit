@@ -937,12 +937,12 @@ RefPtr<BaselineJITCode> JIT::link(LinkBuffer& patchBuffer)
                 gen.m_unlinkedPropertyCache->slowPathStartLocation = slowPathStartLocation;
                 continue;
             }
-            // op_get_by_id (Milestone 1) has no unlinked cache: its PropertyInlineCache is
-            // metadata-resident and thus per-CodeBlock, while these two locations belong to this
-            // BaselineJITCode, which is shared by every CodeBlock linked from the same UnlinkedCodeBlock.
-            // Record them per bytecode index; CodeBlock::setupWithUnlinkedBaselineCode copies them into
-            // each CodeBlock's metadata PIC. Do not write a PIC from here: JIT::link runs on the baseline
-            // compiler thread, and the compiling CodeBlock's PIC is live on the main thread.
+            // Ops with a metadata-resident PropertyInlineCache have no unlinked cache: the PIC is
+            // per-CodeBlock, while these two locations belong to this BaselineJITCode, which is
+            // shared by every CodeBlock linked from the same UnlinkedCodeBlock. Record them per
+            // bytecode index; CodeBlock::setupWithUnlinkedBaselineCode copies them into each
+            // CodeBlock's metadata PIC. Do not write a PIC from here: JIT::link runs on the
+            // baseline compiler thread, and the compiling CodeBlock's PIC is live on the main thread.
             metadataPropertyInlineCacheLocations.append({ gen.bytecodeIndex(), doneLocation, slowPathStartLocation });
         }
     };

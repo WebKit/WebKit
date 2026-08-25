@@ -576,9 +576,9 @@ ALWAYS_INLINE void PropertyInlineCache::setCacheType(const ConcurrentJSLockerBas
     m_cacheType = newCacheType;
 }
 
-static CodePtr<OperationPtrTag> NODELETE slowOperationFromUnlinkedPropertyInlineCache(const UnlinkedPropertyInlineCache& unlinkedPropertyCache)
+static CodePtr<OperationPtrTag> NODELETE slowOperationForAccessType(AccessType accessType)
 {
-    switch (unlinkedPropertyCache.accessType) {
+    switch (accessType) {
     case AccessType::DeleteByValStrict:
         return operationDeleteByValStrictOptimize;
     case AccessType::DeleteByValSloppy:
@@ -832,22 +832,28 @@ void HandlerPropertyInlineCache::initializeFromUnlinkedPropertyInlineCache(VM& v
     if (unlinkedPropertyCache.canBeMegamorphic)
         bufferingCountdown = 1;
 
-    m_slowOperation = slowOperationFromUnlinkedPropertyInlineCache(unlinkedPropertyCache);
+    m_slowOperation = slowOperationForAccessType(accessType);
     initializePredefinedRegisters();
 }
 
-void HandlerPropertyInlineCache::initializeForMetadataResidentGetById(VM& vm, CodeBlock* codeBlock, CacheableIdentifier identifier, BytecodeIndex bytecodeIndex)
+void HandlerPropertyInlineCache::initializeForMetadataResident(VM& vm, CodeBlock* codeBlock, AccessType type, CacheType preconfigured, CacheableIdentifier identifier, BytecodeIndex bytecodeIndex)
 {
     ASSERT(!isCompilationThread());
-    accessType = AccessType::GetById;
-    preconfiguredCacheType = CacheType::Unset;
+    accessType = type;
+    // Anything other than Unset diverts the first matching handler into m_inlinedHandler instead
+    // of the chain, where LLInt would never see it. Only shapes with no handler of their own
+    // (ArrayLength) may be preconfigured here.
+    ASSERT(preconfigured == CacheType::Unset || preconfigured == CacheType::ArrayLength);
+    preconfiguredCacheType = preconfigured;
+    if (preconfigured == CacheType::ArrayLength)
+        m_cacheType = CacheType::ArrayLength;
     m_identifier = identifier;
     m_globalObject = codeBlock->globalObject();
 
     callSiteIndex = CallSiteIndex(bytecodeIndex);
     codeOrigin = CodeOrigin(bytecodeIndex);
-    initializeWithUnitHandler(codeBlock, InlineCacheCompiler::generateSlowPathHandler(vm, AccessType::GetById));
-    m_slowOperation = operationGetByIdOptimize;
+    initializeWithUnitHandler(codeBlock, InlineCacheCompiler::generateSlowPathHandler(vm, type));
+    m_slowOperation = slowOperationForAccessType(type);
     initializePredefinedRegisters();
 }
 
@@ -883,7 +889,7 @@ void HandlerPropertyInlineCache::initializeFromDFGUnlinkedPropertyInlineCache(Co
     if (unlinkedPropertyCache.canBeMegamorphic)
         bufferingCountdown = 1;
 
-    m_slowOperation = slowOperationFromUnlinkedPropertyInlineCache(unlinkedPropertyCache);
+    m_slowOperation = slowOperationForAccessType(accessType);
     initializePredefinedRegisters();
 }
 #endif

@@ -138,6 +138,9 @@ protected:
     InlineCacheHandler();
     InlineCacheHandler(bool makesJSCalls, Ref<InlineCacheHandler>&&, Ref<PolymorphicAccessJITStubRoutine>&&, std::unique_ptr<PropertyInlineCacheClearingWatchpoint>&&, CacheType);
 
+    // Points m_llintCallTarget/m_llintJumpTarget at the given LLInt opcode's code.
+    void setLLIntTargets(OpcodeID);
+
     static Ref<InlineCacheHandler> createSlowPath(VM&, AccessType);
 
     // The selection and ordering of the fields through m_uid is deliberate.
@@ -171,6 +174,10 @@ protected:
     RefPtr<AccessCase> m_accessCase;
     std::unique_ptr<PropertyInlineCacheClearingWatchpoint> m_watchpoint;
 
+    // Entry points for LLInt's walk of this chain. Both are LLInt opcode bodies, not the
+    // handler's own stub: LLInt cannot enter compiled DataIC handlers because it does not
+    // maintain jitDataRegister. m_llintJumpTarget skips the LLInt body's prologue and is
+    // what a preceding node jumps to on a guard miss.
     CodePtr<JITStubRoutinePtrTag> m_llintCallTarget;
     CodePtr<JITStubRoutinePtrTag> m_llintJumpTarget;
 };

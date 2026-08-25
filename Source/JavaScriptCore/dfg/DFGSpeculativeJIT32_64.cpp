@@ -4938,7 +4938,7 @@ void SpeculativeJIT::compileInById(Node* node)
     auto [ propertyCache, propertyCacheConstant ] = addPropertyInlineCache();
     JITInByIdGenerator gen(
         codeBlock(), propertyCache, JITType::DFGJIT, codeOrigin, callSite, usedRegisters, node->cacheableIdentifier(),
-        JSValueRegs::payloadOnly(baseGPR), resultRegs, InvalidGPRReg);
+        JSValueRegs::payloadOnly(baseGPR), resultRegs, InvalidGPRReg, CacheType::InByIdSelf);
 
     JumpList slowCases;
 
@@ -5609,7 +5609,7 @@ void SpeculativeJIT::cachedPutById(Node* node, CodeOrigin codeOrigin, GPRReg bas
     JITPutByIdGenerator gen(
         codeBlock(), propertyCache, JITType::DFGJIT, codeOrigin, callSite, usedRegisters, identifier,
         JSValueRegs::payloadOnly(baseGPR), valueRegs, propertyCacheGPR,
-        scratchGPR, accessType);
+        scratchGPR, accessType, CacheType::PutByIdReplace);
 
     JumpList slowCases;
     if (slowPathTarget.isSet())

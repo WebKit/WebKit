@@ -62,15 +62,12 @@ void JIT::emit_op_get_by_val(const JSInstruction* currentInstruction)
     emitGetVirtualRegister(base, baseJSR);
     emitGetVirtualRegister(property, propertyJSR);
 
-    auto [ propertyCache, propertyCacheIndex ] = addUnlinkedPropertyInlineCache();
-    loadPropertyInlineCache(propertyCacheIndex, propertyCacheGPR);
+    loadPtrFromMetadata(bytecode, OpGetByVal::Metadata::offsetOfPropertyInlineCache(), propertyCacheGPR);
     materializePointerIntoMetadata(bytecode, OpGetByVal::Metadata::offsetOfArrayProfile(), profileGPR);
 
     JITGetByValGenerator gen(
-        nullptr, propertyCache, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), AccessType::GetByVal, RegisterSet::stubUnavailableRegisters(),
+        nullptr, static_cast<PropertyInlineCache*>(nullptr), JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), AccessType::GetByVal, RegisterSet::stubUnavailableRegisters(),
         baseJSR, propertyJSR, resultJSR, profileGPR, propertyCacheGPR);
-    if (isOperandConstantInt(property))
-        propertyCache->propertyIsInt32 = true;
 
     emitJumpSlowCaseIfNotJSCell(baseJSR, base);
     emitArrayProfilingSiteWithCellAndProfile(baseJSR.payloadGPR(), profileGPR, scratch1GPR);
@@ -117,13 +114,12 @@ void JIT::emit_op_get_private_name(const JSInstruction* currentInstruction)
     emitGetVirtualRegister(base, baseJSR);
     emitGetVirtualRegister(property, propertyJSR);
 
-    auto [ propertyCache, propertyCacheIndex ] = addUnlinkedPropertyInlineCache();
-    loadPropertyInlineCache(propertyCacheIndex, propertyCacheGPR);
+    loadPtrFromMetadata(bytecode, OpGetPrivateName::Metadata::offsetOfPropertyInlineCache(), propertyCacheGPR);
 
     emitJumpSlowCaseIfNotJSCell(baseJSR, base);
 
     JITGetByValGenerator gen(
-        nullptr, propertyCache, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), AccessType::GetPrivateName,
+        nullptr, static_cast<PropertyInlineCache*>(nullptr), JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), AccessType::GetPrivateName,
         RegisterSet::stubUnavailableRegisters(), baseJSR, propertyJSR, resultJSR, InvalidGPRReg, propertyCacheGPR);
 
     gen.generateDataICFastPath(*this);
@@ -157,12 +153,11 @@ void JIT::emit_op_set_private_brand(const JSInstruction* currentInstruction)
 
     emitGetVirtualRegister(base, baseJSR);
     emitGetVirtualRegister(brand, propertyJSR);
-    auto [ propertyCache, propertyCacheIndex ] = addUnlinkedPropertyInlineCache();
-    loadPropertyInlineCache(propertyCacheIndex, propertyCacheGPR);
+    loadPtrFromMetadata(bytecode, OpSetPrivateBrand::Metadata::offsetOfPropertyInlineCache(), propertyCacheGPR);
 
     emitJumpSlowCaseIfNotJSCell(baseJSR, base);
     JITPrivateBrandAccessGenerator gen(
-        nullptr, propertyCache, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), AccessType::SetPrivateBrand, RegisterSet::stubUnavailableRegisters(),
+        nullptr, static_cast<PropertyInlineCache*>(nullptr), JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), AccessType::SetPrivateBrand, RegisterSet::stubUnavailableRegisters(),
         baseJSR, propertyJSR, propertyCacheGPR);
 
     gen.generateDataICFastPath(*this);
@@ -199,13 +194,12 @@ void JIT::emit_op_check_private_brand(const JSInstruction* currentInstruction)
     emitGetVirtualRegister(base, baseJSR);
     emitGetVirtualRegister(brand, propertyJSR);
 
-    auto [ propertyCache, propertyCacheIndex ] = addUnlinkedPropertyInlineCache();
-    loadPropertyInlineCache(propertyCacheIndex, propertyCacheGPR);
+    loadPtrFromMetadata(bytecode, OpCheckPrivateBrand::Metadata::offsetOfPropertyInlineCache(), propertyCacheGPR);
 
     emitJumpSlowCaseIfNotJSCell(baseJSR, base);
 
     JITPrivateBrandAccessGenerator gen(
-        nullptr, propertyCache, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), AccessType::CheckPrivateBrand, RegisterSet::stubUnavailableRegisters(),
+        nullptr, static_cast<PropertyInlineCache*>(nullptr), JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), AccessType::CheckPrivateBrand, RegisterSet::stubUnavailableRegisters(),
         baseJSR, propertyJSR, propertyCacheGPR);
 
     gen.generateDataICFastPath(*this);
@@ -241,8 +235,7 @@ void JIT::emit_op_put_by_val(const JSInstruction* currentInstruction)
     emitGetVirtualRegister(property, propertyJSR);
     emitGetVirtualRegister(value, valueJSR);
 
-    auto [ propertyCache, propertyCacheIndex ] = addUnlinkedPropertyInlineCache();
-    loadPropertyInlineCache(propertyCacheIndex, propertyCacheGPR);
+    loadPtrFromMetadata(bytecode, Op::Metadata::offsetOfPropertyInlineCache(), propertyCacheGPR);
     materializePointerIntoMetadata(bytecode, Op::Metadata::offsetOfArrayProfile(), profileGPR);
 
     emitJumpSlowCaseIfNotJSCell(baseJSR, base);
@@ -251,12 +244,10 @@ void JIT::emit_op_put_by_val(const JSInstruction* currentInstruction)
     ECMAMode ecmaMode = this->ecmaMode(bytecode);
     bool isDirect = std::is_same_v<Op, OpPutByValDirect>;
     JITPutByValGenerator gen(
-        nullptr, propertyCache, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex),
+        nullptr, static_cast<PropertyInlineCache*>(nullptr), JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex),
         isDirect ? (ecmaMode.isStrict() ? AccessType::PutByValDirectStrict : AccessType::PutByValDirectSloppy) : (ecmaMode.isStrict() ? AccessType::PutByValStrict : AccessType::PutByValSloppy),
         RegisterSet::stubUnavailableRegisters(),
         baseJSR, propertyJSR, valueJSR, profileGPR, propertyCacheGPR);
-    if (isOperandConstantInt(property))
-        propertyCache->propertyIsInt32 = true;
 
     gen.generateDataICFastPath(*this);
     resetSP(); // We might OSR exit here, so we need to conservatively reset SP
@@ -318,13 +309,12 @@ void JIT::emit_op_put_private_name(const JSInstruction* currentInstruction)
     emitGetVirtualRegister(property, propertyJSR);
     emitGetVirtualRegister(value, valueJSR);
 
-    auto [ propertyCache, propertyCacheIndex ] = addUnlinkedPropertyInlineCache();
-    loadPropertyInlineCache(propertyCacheIndex, propertyCacheGPR);
+    loadPtrFromMetadata(bytecode, OpPutPrivateName::Metadata::offsetOfPropertyInlineCache(), propertyCacheGPR);
 
     emitJumpSlowCaseIfNotJSCell(baseJSR, base);
 
     JITPutByValGenerator gen(
-        nullptr, propertyCache, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), bytecode.m_putKind.isDefine() ? AccessType::DefinePrivateNameByVal : AccessType::SetPrivateNameByVal, RegisterSet::stubUnavailableRegisters(),
+        nullptr, static_cast<PropertyInlineCache*>(nullptr), JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), bytecode.m_putKind.isDefine() ? AccessType::DefinePrivateNameByVal : AccessType::SetPrivateNameByVal, RegisterSet::stubUnavailableRegisters(),
         baseJSR, propertyJSR, valueJSR, InvalidGPRReg, propertyCacheGPR);
 
     gen.generateDataICFastPath(*this);
@@ -430,13 +420,12 @@ void JIT::emit_op_del_by_id(const JSInstruction* currentInstruction)
 
     emitGetVirtualRegister(base, baseJSR);
 
-    auto [ propertyCache, propertyCacheIndex ] = addUnlinkedPropertyInlineCache();
-    loadPropertyInlineCache(propertyCacheIndex, propertyCacheGPR);
+    loadPtrFromMetadata(bytecode, OpDelById::Metadata::offsetOfPropertyInlineCache(), propertyCacheGPR);
 
     emitJumpSlowCaseIfNotJSCell(baseJSR, base);
 
     JITDelByIdGenerator gen(
-        nullptr, propertyCache, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), ecmaMode.isStrict() ? AccessType::DeleteByIdStrict : AccessType::DeleteByIdSloppy, RegisterSet::stubUnavailableRegisters(),
+        nullptr, static_cast<PropertyInlineCache*>(nullptr), JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), ecmaMode.isStrict() ? AccessType::DeleteByIdStrict : AccessType::DeleteByIdSloppy, RegisterSet::stubUnavailableRegisters(),
         CacheableIdentifier::createFromIdentifierOwnedByCodeBlock(m_unlinkedCodeBlock, *ident),
         baseJSR, resultJSR, propertyCacheGPR);
 
@@ -480,14 +469,13 @@ void JIT::emit_op_del_by_val(const JSInstruction* currentInstruction)
 
     emitGetVirtualRegister(base, baseJSR);
     emitGetVirtualRegister(property, propertyJSR);
-    auto [ propertyCache, propertyCacheIndex ] = addUnlinkedPropertyInlineCache();
-    loadPropertyInlineCache(propertyCacheIndex, propertyCacheGPR);
+    loadPtrFromMetadata(bytecode, OpDelByVal::Metadata::offsetOfPropertyInlineCache(), propertyCacheGPR);
 
     emitJumpSlowCaseIfNotJSCell(baseJSR, base);
     emitJumpSlowCaseIfNotJSCell(propertyJSR, property);
 
     JITDelByValGenerator gen(
-        nullptr, propertyCache, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex),
+        nullptr, static_cast<PropertyInlineCache*>(nullptr), JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex),
         bytecode.m_ecmaMode.isStrict() ? AccessType::DeleteByValStrict : AccessType::DeleteByValSloppy,
         RegisterSet::stubUnavailableRegisters(),
         baseJSR, propertyJSR, resultJSR, propertyCacheGPR);
@@ -530,14 +518,13 @@ void JIT::emit_op_get_by_id_direct(const JSInstruction* currentInstruction)
 
     emitGetVirtualRegister(baseVReg, baseJSR);
 
-    auto [ propertyCache, propertyCacheIndex ] = addUnlinkedPropertyInlineCache();
-    loadPropertyInlineCache(propertyCacheIndex, propertyCacheGPR);
+    loadPtrFromMetadata(bytecode, OpGetByIdDirect::Metadata::offsetOfPropertyInlineCache(), propertyCacheGPR);
 
     emitJumpSlowCaseIfNotJSCell(baseJSR, baseVReg);
 
     JITGetByIdGenerator gen(
-        nullptr, propertyCache, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), RegisterSet::stubUnavailableRegisters(),
-        CacheableIdentifier::createFromIdentifierOwnedByCodeBlock(m_unlinkedCodeBlock, *ident), baseJSR, resultJSR, propertyCacheGPR, AccessType::GetByIdDirect, CacheType::GetByIdSelf);
+        nullptr, static_cast<PropertyInlineCache*>(nullptr), JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), RegisterSet::stubUnavailableRegisters(),
+        CacheableIdentifier::createFromIdentifierOwnedByCodeBlock(m_unlinkedCodeBlock, *ident), baseJSR, resultJSR, propertyCacheGPR, AccessType::GetByIdDirect, CacheType::Unset);
 
     gen.generateDataICFastPath(*this);
     addSlowCase();
@@ -603,8 +590,7 @@ void JIT::emit_op_get_length(const JSInstruction* currentInstruction)
 
     emitGetVirtualRegister(baseVReg, baseJSR);
 
-    auto [ propertyCache, propertyCacheIndex ] = addUnlinkedPropertyInlineCache();
-    loadPropertyInlineCache(propertyCacheIndex, propertyCacheGPR);
+    loadPtrFromMetadata(bytecode, OpGetLength::Metadata::offsetOfPropertyInlineCache(), propertyCacheGPR);
 
     emitJumpSlowCaseIfNotJSCell(baseJSR, baseVReg);
 
@@ -612,7 +598,7 @@ void JIT::emit_op_get_length(const JSInstruction* currentInstruction)
         emitArrayProfilingSiteWithCell(bytecode, baseJSR.payloadGPR(), scratch1GPR);
 
     JITGetByIdGenerator gen(
-        nullptr, propertyCache, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), RegisterSet::stubUnavailableRegisters(),
+        nullptr, static_cast<PropertyInlineCache*>(nullptr), JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), RegisterSet::stubUnavailableRegisters(),
         CacheableIdentifier::createFromImmortalIdentifier(ident->impl()), baseJSR, resultJSR, propertyCacheGPR, AccessType::GetById, CacheType::ArrayLength);
 
     gen.generateDataICFastPath(*this);
@@ -711,15 +697,14 @@ void JIT::emit_op_put_by_id(const JSInstruction* currentInstruction)
     emitGetVirtualRegister(baseVReg, baseJSR);
     emitGetVirtualRegister(valueVReg, valueJSR);
 
-    auto [ propertyCache, propertyCacheIndex ] = addUnlinkedPropertyInlineCache();
-    loadPropertyInlineCache(propertyCacheIndex, propertyCacheGPR);
+    loadPtrFromMetadata(bytecode, OpPutById::Metadata::offsetOfPropertyInlineCache(), propertyCacheGPR);
 
     emitJumpSlowCaseIfNotJSCell(baseJSR, baseVReg);
 
     JITPutByIdGenerator gen(
-        nullptr, propertyCache, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), RegisterSet::stubUnavailableRegisters(),
+        nullptr, static_cast<PropertyInlineCache*>(nullptr), JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), RegisterSet::stubUnavailableRegisters(),
         CacheableIdentifier::createFromIdentifierOwnedByCodeBlock(m_unlinkedCodeBlock, *ident),
-        baseJSR, valueJSR, propertyCacheGPR, scratch1GPR, direct ? (ecmaMode.isStrict() ? AccessType::PutByIdDirectStrict : AccessType::PutByIdDirectSloppy) : (ecmaMode.isStrict() ? AccessType::PutByIdStrict : AccessType::PutByIdSloppy));
+        baseJSR, valueJSR, propertyCacheGPR, scratch1GPR, direct ? (ecmaMode.isStrict() ? AccessType::PutByIdDirectStrict : AccessType::PutByIdDirectSloppy) : (ecmaMode.isStrict() ? AccessType::PutByIdStrict : AccessType::PutByIdSloppy), CacheType::Unset);
 
     gen.generateDataICFastPath(*this);
     resetSP(); // We might OSR exit here, so we need to conservatively reset SP
@@ -755,14 +740,13 @@ void JIT::emit_op_in_by_id(const JSInstruction* currentInstruction)
 
     emitGetVirtualRegister(baseVReg, baseJSR);
 
-    auto [ propertyCache, propertyCacheIndex ] = addUnlinkedPropertyInlineCache();
-    loadPropertyInlineCache(propertyCacheIndex, propertyCacheGPR);
+    loadPtrFromMetadata(bytecode, OpInById::Metadata::offsetOfPropertyInlineCache(), propertyCacheGPR);
 
     emitJumpSlowCaseIfNotJSCell(baseJSR, baseVReg);
 
     JITInByIdGenerator gen(
-        nullptr, propertyCache, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), RegisterSet::stubUnavailableRegisters(),
-        CacheableIdentifier::createFromIdentifierOwnedByCodeBlock(m_unlinkedCodeBlock, *ident), baseJSR, resultJSR, propertyCacheGPR);
+        nullptr, static_cast<PropertyInlineCache*>(nullptr), JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), RegisterSet::stubUnavailableRegisters(),
+        CacheableIdentifier::createFromIdentifierOwnedByCodeBlock(m_unlinkedCodeBlock, *ident), baseJSR, resultJSR, propertyCacheGPR, CacheType::Unset);
 
     gen.generateDataICFastPath(*this);
     addSlowCase();
@@ -800,15 +784,14 @@ void JIT::emit_op_in_by_val(const JSInstruction* currentInstruction)
     emitGetVirtualRegister(base, baseJSR);
     emitGetVirtualRegister(property, propertyJSR);
 
-    auto [ propertyCache, propertyCacheIndex ] = addUnlinkedPropertyInlineCache();
-    loadPropertyInlineCache(propertyCacheIndex, propertyCacheGPR);
+    loadPtrFromMetadata(bytecode, OpInByVal::Metadata::offsetOfPropertyInlineCache(), propertyCacheGPR);
     materializePointerIntoMetadata(bytecode, OpInByVal::Metadata::offsetOfArrayProfile(), profileGPR);
 
     emitJumpSlowCaseIfNotJSCell(baseJSR, base);
     emitArrayProfilingSiteWithCellAndProfile(baseJSR.payloadGPR(), profileGPR, scratch1GPR);
 
     JITInByValGenerator gen(
-        nullptr, propertyCache, JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), AccessType::InByVal, RegisterSet::stubUnavailableRegisters(),
+        nullptr, static_cast<PropertyInlineCache*>(nullptr), JITType::BaselineJIT, CodeOrigin(m_bytecodeIndex), CallSiteIndex(m_bytecodeIndex), AccessType::InByVal, RegisterSet::stubUnavailableRegisters(),
         baseJSR, propertyJSR, resultJSR, profileGPR, propertyCacheGPR);
 
     gen.generateDataICFastPath(*this);

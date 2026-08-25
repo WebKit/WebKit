@@ -1605,17 +1605,35 @@ macro storePropertyAtVariableOffset(propertyOffsetAsInt, objectAndStorage, value
 end
 
 
+# Handler-chain dispatch for the get-by-id shape. The base object is expected in t3 and the
+# metadata in t2, matching performGetByIDHelper's contract.
+macro llintICDispatchGetById(opcodeStruct, size, slowLabel, return)
+    loadp %opcodeStruct%::Metadata::m_propertyInlineCache[t2], a1
+    btpz a1, slowLabel
+    loadp constexpr (PropertyInlineCache::offsetOfHandler())[a1], ws0
+    move t3, a0
+    storePC()
+    call constexpr (InlineCacheHandler::offsetOfLLIntCallTarget())[ws0], JITStubRoutinePtrTag
+    loadPC()
+    valueProfile(size, opcodeStruct, m_valueProfile, r0, t2)
+    return(r0)
+end
+
 llintOpWithMetadata(op_get_by_id_direct, OpGetByIdDirect, macro (size, get, dispatch, metadata, return)
     metadata(t2, t0)
     get(m_base, t0)
     loadConstantOrVariableCell(size, t0, t3, .opGetByIdDirectSlow)
-    loadi JSCell::m_structureID[t3], t1
-    loadi OpGetByIdDirect::Metadata::m_structureID[t2], t0
-    bineq t0, t1, .opGetByIdDirectSlow
-    loadi OpGetByIdDirect::Metadata::m_offset[t2], t1
-    loadPropertyAtVariableOffset(t1, t3, t0)
-    valueProfile(size, OpGetByIdDirect, m_valueProfile, t0, t2)
-    return(t0)
+    if JIT
+        llintICDispatchGetById(OpGetByIdDirect, size, .opGetByIdDirectSlow, return)
+    else
+        loadi JSCell::m_structureID[t3], t1
+        loadi OpGetByIdDirect::Metadata::m_structureID[t2], t0
+        bineq t0, t1, .opGetByIdDirectSlow
+        loadi OpGetByIdDirect::Metadata::m_offset[t2], t1
+        loadPropertyAtVariableOffset(t1, t3, t0)
+        valueProfile(size, OpGetByIdDirect, m_valueProfile, t0, t2)
+        return(t0)
+    end
 
 .opGetByIdDirectSlow:
     callSlowPath(_llint_slow_path_get_by_id_direct)
@@ -1679,16 +1697,7 @@ llintOpWithMetadata(op_get_by_id, OpGetById, macro (size, get, dispatch, metadat
     loadConstantOrVariableCell(size, t0, t3, .opGetByIdSlow)   # base cell -> t3 (documented contract)
     metadata(t2, t1)                                           # t2 = &OpGetById::Metadata
     if JIT
-        loadp OpGetById::Metadata::m_propertyInlineCache[t2], a1
-        btpz a1, .opGetByIdSlow
-        loadp constexpr (PropertyInlineCache::offsetOfHandler())[a1], ws0
-        move t3, a0
-
-        storePC()
-        call constexpr (InlineCacheHandler::offsetOfLLIntCallTarget())[ws0], JITStubRoutinePtrTag
-        loadPC()
-        valueProfile(size, OpGetById, m_valueProfile, r0, t2)
-        return(r0)
+        llintICDispatchGetById(OpGetById, size, .opGetByIdSlow, return)
     else
         performGetByIDHelper(OpGetById, m_modeMetadata, m_valueProfile, .opGetByIdSlow, size, return)
     end
@@ -1703,7 +1712,18 @@ llintOpWithMetadata(op_get_by_id, OpGetById, macro (size, get, dispatch, metadat
     return(r0)
 end)
 
-macro getByIdLLIntHandlerPrologue()
+# --- Handler IC support -------------------------------------------------------------------------
+#
+# LLInt walks the same InlineCacheHandler chain Baseline does, executing its own body for each node.
+# m_llintCallTarget names that body; m_llintJumpTarget is the same code past the prologue, which is
+# where a preceding node lands on a guard miss.
+#
+# A node's arguments are exactly what the terminal compiled slow path expects, so it must preserve
+# all of them across a miss. Scratch therefore comes only from the argument registers the access
+# type leaves unused, plus ws1: on x86_64 every usable GPR is one of a0-a5/ws0/ws1. Beware that t4
+# is PC, though handler bodies may scratch it since the call site spills PC around the call.
+
+macro llintICHandlerPrologue()
     if X86_64
         push cfr
     elsif ARM64 or ARM64E
@@ -1711,77 +1731,320 @@ macro getByIdLLIntHandlerPrologue()
     end
 end
 
-macro getByIdLLIntHandlerEpilogue()
+macro llintICHandlerEpilogue()
     if X86_64
         pop cfr
     end
 end
 
+macro llintICNextHandler()
+    loadp constexpr (InlineCacheHandler::offsetOfNext())[ws0], ws0
+    jmp constexpr (InlineCacheHandler::offsetOfLLIntJumpTarget())[ws0], JITStubRoutinePtrTag
+end
 
-op(llint_get_by_id_self_handler, macro ()
+# Wraps a guarded access as one LLInt opcode. `body` receives the label to branch to when a guard
+# fails; falling off its end means the access succeeded.
+macro llintICHandler(body)
     if JIT
-        getByIdLLIntHandlerPrologue()
-        loadi JSCell::m_structureID[a0], t2
-        bineq t2, constexpr (InlineCacheHandler::offsetOfStructureID())[ws0], .miss
-        loadis constexpr (InlineCacheHandler::offsetOfOffset())[ws0], t2
-        loadPropertyAtVariableOffset(t2, a0, r0)
-        getByIdLLIntHandlerEpilogue()
+        llintICHandlerPrologue()
+        body(.miss)
+        llintICHandlerEpilogue()
         ret
     .miss:
-        loadp constexpr (InlineCacheHandler::offsetOfNext())[ws0], ws0
-        jmp constexpr (InlineCacheHandler::offsetOfLLIntJumpTarget())[ws0], JITStubRoutinePtrTag
+        llintICNextHandler()
     else
         notSupported()
     end
+end
+
+macro icCheckStructure(base, scratch, miss)
+    loadi JSCell::m_structureID[base], scratch
+    bineq scratch, constexpr (InlineCacheHandler::offsetOfStructureID())[ws0], miss
+end
+
+macro icCheckStringKey(property, scratch, miss)
+    btqnz property, notCellMask, miss
+    bbneq JSCell::m_type[property], StringType, miss
+    loadp JSString::m_fiber[property], scratch
+    btpnz scratch, isRopeInPointer, miss
+    bpneq scratch, constexpr (InlineCacheHandler::offsetOfUid())[ws0], miss
+end
+
+macro icCheckSymbolKey(property, scratch, miss)
+    btqnz property, notCellMask, miss
+    bbneq JSCell::m_type[property], SymbolType, miss
+    loadp constexpr (Symbol::offsetOfSymbolImpl())[property], scratch
+    bpneq scratch, constexpr (InlineCacheHandler::offsetOfUid())[ws0], miss
+end
+
+macro icCheckUndefinedKey(property, scratch, miss)
+    bqneq property, ValueUndefined, miss
+end
+
+macro icCheckNullKey(property, scratch, miss)
+    bqneq property, ValueNull, miss
+end
+
+macro icCheckTrueKey(property, scratch, miss)
+    bqneq property, ValueTrue, miss
+end
+
+macro icCheckFalseKey(property, scratch, miss)
+    bqneq property, ValueFalse, miss
+end
+
+# Clobbers base and scratch.
+macro icLoadOwnProperty(base, scratch, result)
+    loadis constexpr (InlineCacheHandler::offsetOfOffset())[ws0], scratch
+    loadPropertyAtVariableOffset(scratch, base, result)
+end
+
+# Clobbers both scratches.
+macro icLoadPrototypeProperty(scratch1, scratch2, result)
+    loadis constexpr (InlineCacheHandler::offsetOfOffset())[ws0], scratch1
+    loadp constexpr (InlineCacheHandler::offsetOfHolder())[ws0], scratch2
+    loadPropertyAtVariableOffset(scratch1, scratch2, result)
+end
+
+# Preserves base. Clobbers both scratches.
+macro icStoreProperty(base, value, scratch1, scratch2)
+    loadis constexpr (InlineCacheHandler::offsetOfOffset())[ws0], scratch1
+    move base, scratch2
+    storePropertyAtVariableOffset(scratch1, scratch2, value)
+end
+
+macro icTransitionStructure(base, scratch)
+    loadi constexpr (InlineCacheHandler::offsetOfNewStructureID())[ws0], scratch
+    storei scratch, JSCell::m_structureID[base]
+end
+
+# op_get_by_id / op_get_by_id_direct / op_get_length: base = a0, cache = a1.
+op(llint_get_by_id_self_handler, macro ()
+    llintICHandler(macro (miss)
+        icCheckStructure(a0, a2, miss)
+        icLoadOwnProperty(a0, a2, r0)
+    end)
 end)
 
 op(llint_get_by_id_prototype_handler, macro ()
-    if JIT
-        getByIdLLIntHandlerPrologue()
-        loadi JSCell::m_structureID[a0], t2
-        bineq t2, constexpr (InlineCacheHandler::offsetOfStructureID())[ws0], .miss
-        loadis constexpr (InlineCacheHandler::offsetOfOffset())[ws0], t2
-        loadp constexpr (InlineCacheHandler::offsetOfHolder())[ws0], t3   # u.s1.m_holder
-        loadPropertyAtVariableOffset(t2, t3, r0)
-        getByIdLLIntHandlerEpilogue()
-        ret
-    .miss:
-        loadp constexpr (InlineCacheHandler::offsetOfNext())[ws0], ws0
-        jmp constexpr (InlineCacheHandler::offsetOfLLIntJumpTarget())[ws0], JITStubRoutinePtrTag
-    else
-        notSupported()
-    end
+    llintICHandler(macro (miss)
+        icCheckStructure(a0, a2, miss)
+        icLoadPrototypeProperty(a2, a3, r0)
+    end)
 end)
 
 op(llint_get_by_id_miss_handler, macro ()
-    if JIT
-        getByIdLLIntHandlerPrologue()
-        loadi JSCell::m_structureID[a0], t2
-        bineq t2, constexpr (InlineCacheHandler::offsetOfStructureID())[ws0], .miss
+    llintICHandler(macro (miss)
+        icCheckStructure(a0, a2, miss)
         move ValueUndefined, r0
-        getByIdLLIntHandlerEpilogue()
-        ret
-    .miss:
-        loadp constexpr (InlineCacheHandler::offsetOfNext())[ws0], ws0
-        jmp constexpr (InlineCacheHandler::offsetOfLLIntJumpTarget())[ws0], JITStubRoutinePtrTag
+    end)
+end)
+
+# op_put_by_id: value = a0, base = a1, cache = a2. The write barrier is at the call site.
+op(llint_put_by_id_replace_handler, macro ()
+    llintICHandler(macro (miss)
+        icCheckStructure(a1, a3, miss)
+        icStoreProperty(a1, a0, a3, a4)
+    end)
+end)
+
+op(llint_put_by_id_transition_handler, macro ()
+    llintICHandler(macro (miss)
+        icCheckStructure(a1, a3, miss)
+        icStoreProperty(a1, a0, a3, a4)
+        icTransitionStructure(a1, a3)
+    end)
+end)
+
+# op_in_by_id: base = a0, cache = a1. Result is boxed.
+op(llint_in_by_id_hit_handler, macro ()
+    llintICHandler(macro (miss)
+        icCheckStructure(a0, a2, miss)
+        move ValueTrue, r0
+    end)
+end)
+
+op(llint_in_by_id_miss_handler, macro ()
+    llintICHandler(macro (miss)
+        icCheckStructure(a0, a2, miss)
+        move ValueFalse, r0
+    end)
+end)
+
+# op_del_by_id: base = a0, cache = a1. Result is an unboxed bool; the call site boxes it.
+op(llint_del_by_id_delete_handler, macro ()
+    llintICHandler(macro (miss)
+        icCheckStructure(a0, a2, miss)
+        move ValueEmpty, a4
+        icStoreProperty(a0, a4, a2, a3)
+        icTransitionStructure(a0, a2)
+        move 1, r0
+    end)
+end)
+
+op(llint_del_by_id_non_configurable_handler, macro ()
+    llintICHandler(macro (miss)
+        icCheckStructure(a0, a2, miss)
+        move 0, r0
+    end)
+end)
+
+op(llint_del_by_id_miss_handler, macro ()
+    llintICHandler(macro (miss)
+        icCheckStructure(a0, a2, miss)
+        move 1, r0
+    end)
+end)
+
+# op_get_by_val / op_get_private_name: base = a0, property = a1, cache = a2, array profile = a3.
+macro getByValICHandlers(keyName, checkKey)
+    op(llint_get_by_val_%keyName%_self_handler, macro ()
+        llintICHandler(macro (miss)
+            checkKey(a1, a4, miss)
+            icCheckStructure(a0, a4, miss)
+            icLoadOwnProperty(a0, a4, r0)
+        end)
+    end)
+
+    op(llint_get_by_val_%keyName%_prototype_handler, macro ()
+        llintICHandler(macro (miss)
+            checkKey(a1, a4, miss)
+            icCheckStructure(a0, a4, miss)
+            icLoadPrototypeProperty(a4, a5, r0)
+        end)
+    end)
+
+    op(llint_get_by_val_%keyName%_miss_handler, macro ()
+        llintICHandler(macro (miss)
+            checkKey(a1, a4, miss)
+            icCheckStructure(a0, a4, miss)
+            move ValueUndefined, r0
+        end)
+    end)
+end
+
+getByValICHandlers(string_key, icCheckStringKey)
+getByValICHandlers(symbol_key, icCheckSymbolKey)
+getByValICHandlers(undefined_key, icCheckUndefinedKey)
+getByValICHandlers(null_key, icCheckNullKey)
+getByValICHandlers(true_key, icCheckTrueKey)
+getByValICHandlers(false_key, icCheckFalseKey)
+
+# op_put_by_val / op_put_private_name: base = a0, property = a1, value = a2, cache = a3,
+# array profile = a4. Only a5 and ws1 are free.
+macro putByValICHandlers(keyName, checkKey)
+    op(llint_put_by_val_%keyName%_replace_handler, macro ()
+        llintICHandler(macro (miss)
+            checkKey(a1, a5, miss)
+            icCheckStructure(a0, a5, miss)
+            icStoreProperty(a0, a2, a5, ws1)
+        end)
+    end)
+
+    op(llint_put_by_val_%keyName%_transition_handler, macro ()
+        llintICHandler(macro (miss)
+            checkKey(a1, a5, miss)
+            icCheckStructure(a0, a5, miss)
+            icStoreProperty(a0, a2, a5, ws1)
+            icTransitionStructure(a0, a5)
+        end)
+    end)
+end
+
+putByValICHandlers(string_key, icCheckStringKey)
+putByValICHandlers(symbol_key, icCheckSymbolKey)
+putByValICHandlers(undefined_key, icCheckUndefinedKey)
+putByValICHandlers(null_key, icCheckNullKey)
+putByValICHandlers(true_key, icCheckTrueKey)
+putByValICHandlers(false_key, icCheckFalseKey)
+
+# op_in_by_val / op_has_private_name / op_has_private_brand: base = a0, property = a1, cache = a2,
+# array profile = a3. Result is boxed.
+macro inByValICHandlers(keyName, checkKey)
+    op(llint_in_by_val_%keyName%_hit_handler, macro ()
+        llintICHandler(macro (miss)
+            checkKey(a1, a4, miss)
+            icCheckStructure(a0, a4, miss)
+            move ValueTrue, r0
+        end)
+    end)
+
+    op(llint_in_by_val_%keyName%_miss_handler, macro ()
+        llintICHandler(macro (miss)
+            checkKey(a1, a4, miss)
+            icCheckStructure(a0, a4, miss)
+            move ValueFalse, r0
+        end)
+    end)
+end
+
+inByValICHandlers(string_key, icCheckStringKey)
+inByValICHandlers(symbol_key, icCheckSymbolKey)
+
+# op_del_by_val: base = a0, property = a1, cache = a2. Result is an unboxed bool.
+macro delByValICHandlers(keyName, checkKey)
+    op(llint_del_by_val_%keyName%_delete_handler, macro ()
+        llintICHandler(macro (miss)
+            checkKey(a1, a3, miss)
+            icCheckStructure(a0, a3, miss)
+            move ValueEmpty, ws1
+            icStoreProperty(a0, ws1, a3, a4)
+            icTransitionStructure(a0, a3)
+            move 1, r0
+        end)
+    end)
+
+    op(llint_del_by_val_%keyName%_non_configurable_handler, macro ()
+        llintICHandler(macro (miss)
+            checkKey(a1, a3, miss)
+            icCheckStructure(a0, a3, miss)
+            move 0, r0
+        end)
+    end)
+
+    op(llint_del_by_val_%keyName%_miss_handler, macro ()
+        llintICHandler(macro (miss)
+            checkKey(a1, a3, miss)
+            icCheckStructure(a0, a3, miss)
+            move 1, r0
+        end)
+    end)
+end
+
+delByValICHandlers(string_key, icCheckStringKey)
+delByValICHandlers(symbol_key, icCheckSymbolKey)
+
+# op_check_private_brand / op_set_private_brand: base = a0, brand = a1, cache = a2. No result.
+op(llint_check_private_brand_handler, macro ()
+    llintICHandler(macro (miss)
+        icCheckStructure(a0, a3, miss)
+        icCheckSymbolKey(a1, a3, miss)
+    end)
+end)
+
+op(llint_set_private_brand_handler, macro ()
+    llintICHandler(macro (miss)
+        icCheckStructure(a0, a3, miss)
+        icCheckSymbolKey(a1, a3, miss)
+        icTransitionStructure(a0, a3)
+    end)
+end)
+
+# A node LLInt cannot execute: hand off to the next one without touching anything.
+op(llint_ic_skip_handler, macro ()
+    if JIT
+        llintICHandlerPrologue()
+        llintICNextHandler()
     else
         notSupported()
     end
 end)
 
-op(llint_get_by_id_skip_handler, macro ()
+# Terminal node. Tail-jump into the compiled slow path, which returns straight to the LLInt call
+# site. This is only safe because the slow path never hands control to another handler.
+op(llint_ic_generic_handler, macro ()
     if JIT
-        getByIdLLIntHandlerPrologue()
-        loadp constexpr (InlineCacheHandler::offsetOfNext())[ws0], ws0
-        jmp constexpr (InlineCacheHandler::offsetOfLLIntJumpTarget())[ws0], JITStubRoutinePtrTag
-    else
-        notSupported()
-    end
-end)
-
-op(llint_get_by_id_generic_handler, macro ()
-    if JIT
-        getByIdLLIntHandlerPrologue()
+        llintICHandlerPrologue()
         jmp constexpr (InlineCacheHandler::offsetOfJumpTarget())[ws0], JITStubRoutinePtrTag
     else
         notSupported()
@@ -1794,7 +2057,11 @@ llintOpWithMetadata(op_get_length, OpGetLength, macro (size, get, dispatch, meta
     loadConstantOrVariableCell(size, t0, t3, .opGetLengthSlow)
     metadata(t2, t1)
     arrayProfile(OpGetLength::Metadata::m_arrayProfile, t3, t2, t5)
-    performGetByIDHelper(OpGetLength, m_modeMetadata, m_valueProfile, .opGetLengthSlow, size, return)
+    if JIT
+        llintICDispatchGetById(OpGetLength, size, .opGetLengthSlow, return)
+    else
+        performGetByIDHelper(OpGetLength, m_modeMetadata, m_valueProfile, .opGetLengthSlow, size, return)
+    end
 
 .opGetLengthSlow:
     callSlowPath(_llint_slow_path_get_length)
@@ -1832,66 +2099,83 @@ end)
 
 
 llintOpWithMetadata(op_put_by_id, OpPutById, macro (size, get, dispatch, metadata, return)
-    get(m_base, t3)
-    loadConstantOrVariableCell(size, t3, t0, .opPutByIdSlow)
-    metadata(t5, t2)
-    loadi OpPutById::Metadata::m_oldStructureID[t5], t2
-    bineq t2, JSCell::m_structureID[t0], .opPutByIdSlow
+    if JIT
+        # value = a0, base = a1, cache = a2.
+        metadata(ws1, t7)
+        loadp OpPutById::Metadata::m_propertyInlineCache[ws1], a2
+        btpz a2, .opPutByIdSlow
+        get(m_base, t7)
+        loadConstantOrVariableCell(size, t7, a1, .opPutByIdSlow)
+        get(m_value, t7)
+        loadConstantOrVariable(size, t7, a0)
+        loadp constexpr (PropertyInlineCache::offsetOfHandler())[a2], ws0
+        storePC()
+        call constexpr (InlineCacheHandler::offsetOfLLIntCallTarget())[ws0], JITStubRoutinePtrTag
+        loadPC()
+        writeBarrierOnOperands(size, get, m_base, m_value)
+        dispatch()
+    else
+        get(m_base, t3)
+        loadConstantOrVariableCell(size, t3, t0, .opPutByIdSlow)
+        metadata(t5, t2)
+        loadi OpPutById::Metadata::m_oldStructureID[t5], t2
+        bineq t2, JSCell::m_structureID[t0], .opPutByIdSlow
 
-    # At this point, we have:
-    # t0 -> object base
-    # t2 -> current structure ID
-    # t5 -> metadata
+        # At this point, we have:
+        # t0 -> object base
+        # t2 -> current structure ID
+        # t5 -> metadata
 
-    loadi OpPutById::Metadata::m_newStructureID[t5], t1
-    btiz t1, .opPutByIdNotTransition
+        loadi OpPutById::Metadata::m_newStructureID[t5], t1
+        btiz t1, .opPutByIdNotTransition
 
-    # This is the transition case. t1 holds the new structureID. t2 holds the old structure ID.
-    # If we have a chain, we need to check it. t0 is the base. We may clobber t1 to use it as
-    # scratch.
-    loadp OpPutById::Metadata::m_structureChain[t5], t3
-    btpz t3, .opPutByIdTransitionDirect
+        # This is the transition case. t1 holds the new structureID. t2 holds the old structure ID.
+        # If we have a chain, we need to check it. t0 is the base. We may clobber t1 to use it as
+        # scratch.
+        loadp OpPutById::Metadata::m_structureChain[t5], t3
+        btpz t3, .opPutByIdTransitionDirect
 
-    structureIDToStructureWithScratch(t2, t1)
+        structureIDToStructureWithScratch(t2, t1)
 
-    loadp StructureChain::m_vector[t3], t3
-    assert(macro (ok) btpnz t3, ok end)
+        loadp StructureChain::m_vector[t3], t3
+        assert(macro (ok) btpnz t3, ok end)
 
-    loadq Structure::m_prototype[t2], t2
-    bqeq t2, ValueNull, .opPutByIdTransitionChainDone
-.opPutByIdTransitionChainLoop:
-    loadi JSCell::m_structureID[t2], t2
-    bineq t2, [t3], .opPutByIdSlow
-    addp 4, t3
-    structureIDToStructureWithScratch(t2, t1)
-    loadq Structure::m_prototype[t2], t2
-    bqneq t2, ValueNull, .opPutByIdTransitionChainLoop
+        loadq Structure::m_prototype[t2], t2
+        bqeq t2, ValueNull, .opPutByIdTransitionChainDone
+    .opPutByIdTransitionChainLoop:
+        loadi JSCell::m_structureID[t2], t2
+        bineq t2, [t3], .opPutByIdSlow
+        addp 4, t3
+        structureIDToStructureWithScratch(t2, t1)
+        loadq Structure::m_prototype[t2], t2
+        bqneq t2, ValueNull, .opPutByIdTransitionChainLoop
 
-.opPutByIdTransitionChainDone:
-    # Reload the new structure, since we clobbered it above.
-    loadi OpPutById::Metadata::m_newStructureID[t5], t1
-    # Reload base into t0
-    get(m_base, t3)
-    loadConstantOrVariable(size, t3, t0)
-
-.opPutByIdTransitionDirect:
-    storei t1, JSCell::m_structureID[t0]
-    writeBarrierOnOperandWithReload(size, get, m_base, macro ()
-        # Reload metadata into t5
-        metadata(t5, t1)
+    .opPutByIdTransitionChainDone:
+        # Reload the new structure, since we clobbered it above.
+        loadi OpPutById::Metadata::m_newStructureID[t5], t1
         # Reload base into t0
-        get(m_base, t1)
-        loadConstantOrVariable(size, t1, t0)
-    end)
+        get(m_base, t3)
+        loadConstantOrVariable(size, t3, t0)
 
-.opPutByIdNotTransition:
-    # The only thing live right now is t0, which holds the base.
-    get(m_value, t1)
-    loadConstantOrVariable(size, t1, t2)
-    loadi OpPutById::Metadata::m_offset[t5], t1
-    storePropertyAtVariableOffset(t1, t0, t2)
-    writeBarrierOnOperands(size, get, m_base, m_value)
-    dispatch()
+    .opPutByIdTransitionDirect:
+        storei t1, JSCell::m_structureID[t0]
+        writeBarrierOnOperandWithReload(size, get, m_base, macro ()
+            # Reload metadata into t5
+            metadata(t5, t1)
+            # Reload base into t0
+            get(m_base, t1)
+            loadConstantOrVariable(size, t1, t0)
+        end)
+
+    .opPutByIdNotTransition:
+        # The only thing live right now is t0, which holds the base.
+        get(m_value, t1)
+        loadConstantOrVariable(size, t1, t2)
+        loadi OpPutById::Metadata::m_offset[t5], t1
+        storePropertyAtVariableOffset(t1, t0, t2)
+        writeBarrierOnOperands(size, get, m_base, m_value)
+        dispatch()
+    end
 
 .opPutByIdSlow:
     callSlowPath(_llint_slow_path_put_by_id)
@@ -1984,6 +2268,27 @@ llintOpWithMetadata(op_get_by_val, OpGetByVal, macro (size, get, dispatch, metad
     getByValTypedArray(t0, t1, finishIntGetByVal, finishDoubleGetByVal, setLargeTypedArray, .opGetByValSlow)
 
 .opGetByValSlow:
+    if JIT
+        # base = a0, property = a1, cache = a2, array profile = a3.
+        # ws1 holds the metadata and t7 is the operand-index temporary: t4 is PC and a0-a4 carry
+        # the handler arguments.
+        metadata(ws1, t7)
+        loadp OpGetByVal::Metadata::m_propertyInlineCache[ws1], a2
+        btpz a2, .opGetByValVerySlow
+        get(m_base, t7)
+        loadConstantOrVariableCell(size, t7, a0, .opGetByValVerySlow)
+        get(m_property, t7)
+        loadConstantOrVariable(size, t7, a1)
+        leap OpGetByVal::Metadata::m_arrayProfile[ws1], a3
+        loadp constexpr (PropertyInlineCache::offsetOfHandler())[a2], ws0
+        storePC()
+        call constexpr (InlineCacheHandler::offsetOfLLIntCallTarget())[ws0], JITStubRoutinePtrTag
+        loadPC()
+        valueProfile(size, OpGetByVal, m_valueProfile, r0, a1)
+        return(r0)
+    end
+
+.opGetByValVerySlow:
     callSlowPath(_llint_slow_path_get_by_val)
     dispatch()
 
@@ -1994,24 +2299,43 @@ llintOpWithMetadata(op_get_by_val, OpGetByVal, macro (size, get, dispatch, metad
 end)
 
 llintOpWithMetadata(op_get_private_name, OpGetPrivateName, macro (size, get, dispatch, metadata, return)
-    metadata(t2, t0)
+    if JIT
+        # base = a0, property = a1, cache = a2.
+        # ws1 holds the metadata and t7 is the operand-index temporary: t4 is PC and a0-a4 carry
+        # the handler arguments.
+        metadata(ws1, t7)
+        loadp OpGetPrivateName::Metadata::m_propertyInlineCache[ws1], a2
+        btpz a2, .opGetPrivateNameSlow
+        get(m_base, t7)
+        loadConstantOrVariableCell(size, t7, a0, .opGetPrivateNameSlow)
+        get(m_property, t7)
+        loadConstantOrVariable(size, t7, a1)
+        loadp constexpr (PropertyInlineCache::offsetOfHandler())[a2], ws0
+        storePC()
+        call constexpr (InlineCacheHandler::offsetOfLLIntCallTarget())[ws0], JITStubRoutinePtrTag
+        loadPC()
+        valueProfile(size, OpGetPrivateName, m_valueProfile, r0, a1)
+        return(r0)
+    else
+        metadata(t2, t0)
 
-    # Slow path if the private field is stale
-    get(m_property, t1)
-    loadConstantOrVariable(size, t1, t0)
-    loadp OpGetPrivateName::Metadata::m_property[t2], t1
-    bpneq t1, t0, .opGetPrivateNameSlow
+        # Slow path if the private field is stale
+        get(m_property, t1)
+        loadConstantOrVariable(size, t1, t0)
+        loadp OpGetPrivateName::Metadata::m_property[t2], t1
+        bpneq t1, t0, .opGetPrivateNameSlow
 
-    get(m_base, t0)
-    loadConstantOrVariableCell(size, t0, t3, .opGetPrivateNameSlow)
-    loadi JSCell::m_structureID[t3], t1
-    loadi OpGetPrivateName::Metadata::m_structureID[t2], t0
-    bineq t0, t1, .opGetPrivateNameSlow
+        get(m_base, t0)
+        loadConstantOrVariableCell(size, t0, t3, .opGetPrivateNameSlow)
+        loadi JSCell::m_structureID[t3], t1
+        loadi OpGetPrivateName::Metadata::m_structureID[t2], t0
+        bineq t0, t1, .opGetPrivateNameSlow
 
-    loadi OpGetPrivateName::Metadata::m_offset[t2], t1
-    loadPropertyAtVariableOffset(t1, t3, t0)
-    valueProfile(size, OpGetPrivateName, m_valueProfile, t0, t2)
-    return(t0)
+        loadi OpGetPrivateName::Metadata::m_offset[t2], t1
+        loadPropertyAtVariableOffset(t1, t3, t0)
+        valueProfile(size, OpGetPrivateName, m_valueProfile, t0, t2)
+        return(t0)
+    end
 
 .opGetPrivateNameSlow:
     callSlowPath(_llint_slow_path_get_private_name)
@@ -2019,42 +2343,61 @@ llintOpWithMetadata(op_get_private_name, OpGetPrivateName, macro (size, get, dis
 end)
 
 llintOpWithMetadata(op_put_private_name, OpPutPrivateName, macro (size, get, dispatch, metadata, return)
-    get(m_base, t3)
-    loadConstantOrVariableCell(size, t3, t0, .opPutPrivateNameSlow)
-    get(m_property, t3)
-    loadConstantOrVariableCell(size, t3, t1, .opPutPrivateNameSlow)
-    metadata(t5, t2)
-    loadi OpPutPrivateName::Metadata::m_oldStructureID[t5], t2
-    bineq t2, JSCell::m_structureID[t0], .opPutPrivateNameSlow
+    if JIT
+        # base = a0, property = a1, value = a2, cache = a3.
+        metadata(ws1, t7)
+        loadp OpPutPrivateName::Metadata::m_propertyInlineCache[ws1], a3
+        btpz a3, .opPutPrivateNameSlow
+        get(m_base, t7)
+        loadConstantOrVariableCell(size, t7, a0, .opPutPrivateNameSlow)
+        get(m_property, t7)
+        loadConstantOrVariable(size, t7, a1)
+        get(m_value, t7)
+        loadConstantOrVariable(size, t7, a2)
+        loadp constexpr (PropertyInlineCache::offsetOfHandler())[a3], ws0
+        storePC()
+        call constexpr (InlineCacheHandler::offsetOfLLIntCallTarget())[ws0], JITStubRoutinePtrTag
+        loadPC()
+        writeBarrierOnOperands(size, get, m_base, m_value)
+        dispatch()
+    else
+        get(m_base, t3)
+        loadConstantOrVariableCell(size, t3, t0, .opPutPrivateNameSlow)
+        get(m_property, t3)
+        loadConstantOrVariableCell(size, t3, t1, .opPutPrivateNameSlow)
+        metadata(t5, t2)
+        loadi OpPutPrivateName::Metadata::m_oldStructureID[t5], t2
+        bineq t2, JSCell::m_structureID[t0], .opPutPrivateNameSlow
 
-    loadp OpPutPrivateName::Metadata::m_property[t5], t3
-    bpneq t3, t1, .opPutPrivateNameSlow
+        loadp OpPutPrivateName::Metadata::m_property[t5], t3
+        bpneq t3, t1, .opPutPrivateNameSlow
 
-    # At this point, we have:
-    # t0 -> object base
-    # t2 -> current structure ID
-    # t5 -> metadata
+        # At this point, we have:
+        # t0 -> object base
+        # t2 -> current structure ID
+        # t5 -> metadata
 
-    loadi OpPutPrivateName::Metadata::m_newStructureID[t5], t1
-    btiz t1, .opPutNotTransition
+        loadi OpPutPrivateName::Metadata::m_newStructureID[t5], t1
+        btiz t1, .opPutNotTransition
 
-    storei t1, JSCell::m_structureID[t0]
-    writeBarrierOnOperandWithReload(size, get, m_base, macro ()
-        # Reload metadata into t5
-        metadata(t5, t1)
-        # Reload base into t0
-        get(m_base, t1)
-        loadConstantOrVariable(size, t1, t0)
-    end)
+        storei t1, JSCell::m_structureID[t0]
+        writeBarrierOnOperandWithReload(size, get, m_base, macro ()
+            # Reload metadata into t5
+            metadata(t5, t1)
+            # Reload base into t0
+            get(m_base, t1)
+            loadConstantOrVariable(size, t1, t0)
+        end)
 
-.opPutNotTransition:
-    # The only thing live right now is t0, which holds the base.
-    get(m_value, t1)
-    loadConstantOrVariable(size, t1, t2)
-    loadi OpPutPrivateName::Metadata::m_offset[t5], t1
-    storePropertyAtVariableOffset(t1, t0, t2)
-    writeBarrierOnOperands(size, get, m_base, m_value)
-    dispatch()
+    .opPutNotTransition:
+        # The only thing live right now is t0, which holds the base.
+        get(m_value, t1)
+        loadConstantOrVariable(size, t1, t2)
+        loadi OpPutPrivateName::Metadata::m_offset[t5], t1
+        storePropertyAtVariableOffset(t1, t0, t2)
+        writeBarrierOnOperands(size, get, m_base, m_value)
+        dispatch()
+    end
 
 .opPutPrivateNameSlow:
     callSlowPath(_llint_slow_path_put_private_name)
@@ -2062,21 +2405,40 @@ llintOpWithMetadata(op_put_private_name, OpPutPrivateName, macro (size, get, dis
 end)
 
 llintOpWithMetadata(op_set_private_brand, OpSetPrivateBrand, macro (size, get, dispatch, metadata, return)
-    get(m_base, t3)
-    loadConstantOrVariableCell(size, t3, t0, .opSetPrivateBrandSlow)
-    get(m_brand, t3)
-    loadConstantOrVariableCell(size, t3, t1, .opSetPrivateBrandSlow)
-    metadata(t5, t2)
-    loadi OpSetPrivateBrand::Metadata::m_oldStructureID[t5], t2
-    bineq t2, JSCell::m_structureID[t0], .opSetPrivateBrandSlow
+    if JIT
+        # base = a0, brand = a1, cache = a2.
+        # ws1 holds the metadata and t7 is the operand-index temporary: t4 is PC and a0-a4 carry
+        # the handler arguments.
+        metadata(ws1, t7)
+        loadp OpSetPrivateBrand::Metadata::m_propertyInlineCache[ws1], a2
+        btpz a2, .opSetPrivateBrandSlow
+        get(m_base, t7)
+        loadConstantOrVariableCell(size, t7, a0, .opSetPrivateBrandSlow)
+        get(m_brand, t7)
+        loadConstantOrVariable(size, t7, a1)
+        loadp constexpr (PropertyInlineCache::offsetOfHandler())[a2], ws0
+        storePC()
+        call constexpr (InlineCacheHandler::offsetOfLLIntCallTarget())[ws0], JITStubRoutinePtrTag
+        loadPC()
+        writeBarrierOnOperand(size, get, m_base)
+        dispatch()
+    else
+        get(m_base, t3)
+        loadConstantOrVariableCell(size, t3, t0, .opSetPrivateBrandSlow)
+        get(m_brand, t3)
+        loadConstantOrVariableCell(size, t3, t1, .opSetPrivateBrandSlow)
+        metadata(t5, t2)
+        loadi OpSetPrivateBrand::Metadata::m_oldStructureID[t5], t2
+        bineq t2, JSCell::m_structureID[t0], .opSetPrivateBrandSlow
 
-    loadp OpSetPrivateBrand::Metadata::m_brand[t5], t3
-    bpneq t3, t1, .opSetPrivateBrandSlow
+        loadp OpSetPrivateBrand::Metadata::m_brand[t5], t3
+        bpneq t3, t1, .opSetPrivateBrandSlow
 
-    loadi OpSetPrivateBrand::Metadata::m_newStructureID[t5], t1
-    storei t1, JSCell::m_structureID[t0]
-    writeBarrierOnOperand(size, get, m_base)
-    dispatch()
+        loadi OpSetPrivateBrand::Metadata::m_newStructureID[t5], t1
+        storei t1, JSCell::m_structureID[t0]
+        writeBarrierOnOperand(size, get, m_base)
+        dispatch()
+    end
 
 .opSetPrivateBrandSlow:
     callSlowPath(_llint_slow_path_set_private_brand)
@@ -2084,18 +2446,36 @@ llintOpWithMetadata(op_set_private_brand, OpSetPrivateBrand, macro (size, get, d
 end)
 
 llintOpWithMetadata(op_check_private_brand, OpCheckPrivateBrand, macro (size, get, dispatch, metadata, return)
-    metadata(t5, t2)
-    get(m_base, t3)
-    loadConstantOrVariableCell(size, t3, t0, .opCheckPrivateBrandSlow)
-    get(m_brand, t3)
-    loadConstantOrVariableCell(size, t3, t1, .opCheckPrivateBrandSlow)
+    if JIT
+        # base = a0, brand = a1, cache = a2.
+        # ws1 holds the metadata and t7 is the operand-index temporary: t4 is PC and a0-a4 carry
+        # the handler arguments.
+        metadata(ws1, t7)
+        loadp OpCheckPrivateBrand::Metadata::m_propertyInlineCache[ws1], a2
+        btpz a2, .opCheckPrivateBrandSlow
+        get(m_base, t7)
+        loadConstantOrVariableCell(size, t7, a0, .opCheckPrivateBrandSlow)
+        get(m_brand, t7)
+        loadConstantOrVariable(size, t7, a1)
+        loadp constexpr (PropertyInlineCache::offsetOfHandler())[a2], ws0
+        storePC()
+        call constexpr (InlineCacheHandler::offsetOfLLIntCallTarget())[ws0], JITStubRoutinePtrTag
+        loadPC()
+        dispatch()
+    else
+        metadata(t5, t2)
+        get(m_base, t3)
+        loadConstantOrVariableCell(size, t3, t0, .opCheckPrivateBrandSlow)
+        get(m_brand, t3)
+        loadConstantOrVariableCell(size, t3, t1, .opCheckPrivateBrandSlow)
 
-    loadp OpCheckPrivateBrand::Metadata::m_brand[t5], t3
-    bqneq t3, t1, .opCheckPrivateBrandSlow
+        loadp OpCheckPrivateBrand::Metadata::m_brand[t5], t3
+        bqneq t3, t1, .opCheckPrivateBrandSlow
 
-    loadi OpCheckPrivateBrand::Metadata::m_structureID[t5], t2
-    bineq t2, JSCell::m_structureID[t0], .opCheckPrivateBrandSlow
-    dispatch()
+        loadi OpCheckPrivateBrand::Metadata::m_structureID[t5], t2
+        bineq t2, JSCell::m_structureID[t0], .opCheckPrivateBrandSlow
+        dispatch()
+    end
 
 .opCheckPrivateBrandSlow:
     callSlowPath(_llint_slow_path_check_private_brand)
@@ -2195,6 +2575,29 @@ macro putByValOp(opcodeName, opcodeStruct, osrExitPoint)
         ori constexpr ArrayProfileFlag::OutOfBounds , t2
         storei t2, %opcodeStruct%::Metadata::m_arrayProfile.m_arrayProfileFlags[t5]
     .opPutByValSlow:
+        if JIT
+            # base = a0, property = a1, value = a2, cache = a3, array profile = a4. a4 is PC, so
+            # it can only be set once PC has been spilled. ws1 holds the metadata and t7 is the
+            # operand-index temporary.
+            metadata(ws1, t7)
+            loadp %opcodeStruct%::Metadata::m_propertyInlineCache[ws1], a3
+            btpz a3, .opPutByValVerySlow
+            get(m_base, t7)
+            loadConstantOrVariableCell(size, t7, a0, .opPutByValVerySlow)
+            get(m_property, t7)
+            loadConstantOrVariable(size, t7, a1)
+            get(m_value, t7)
+            loadConstantOrVariable(size, t7, a2)
+            loadp constexpr (PropertyInlineCache::offsetOfHandler())[a3], ws0
+            storePC()
+            leap %opcodeStruct%::Metadata::m_arrayProfile[ws1], a4
+            call constexpr (InlineCacheHandler::offsetOfLLIntCallTarget())[ws0], JITStubRoutinePtrTag
+            loadPC()
+            writeBarrierOnOperands(size, get, m_base, m_value)
+            dispatch()
+        end
+
+    .opPutByValVerySlow:
         callSlowPath(_llint_slow_path_%opcodeName%)
         dispatch()
 
@@ -3751,7 +4154,22 @@ llintOpWithMetadata(op_enumerator_has_own_property, OpEnumeratorHasOwnProperty, 
     hasPropertyImpl(OpEnumeratorHasOwnProperty, size, get, dispatch, metadata, return, _slow_path_enumerator_has_own_property)
 end)
 
-llintOpWithReturn(op_in_by_id, OpInById, macro (size, get, dispatch, return)
+llintOpWithMetadata(op_in_by_id, OpInById, macro (size, get, dispatch, metadata, return)
+    if JIT
+        # base = a0, cache = a1.
+        metadata(ws1, t7)
+        loadp OpInById::Metadata::m_propertyInlineCache[ws1], a1
+        btpz a1, .opInByIdSlow
+        get(m_base, t7)
+        loadConstantOrVariableCell(size, t7, a0, .opInByIdSlow)
+        loadp constexpr (PropertyInlineCache::offsetOfHandler())[a1], ws0
+        storePC()
+        call constexpr (InlineCacheHandler::offsetOfLLIntCallTarget())[ws0], JITStubRoutinePtrTag
+        loadPC()
+        return(r0)
+    end
+
+.opInByIdSlow:
     callSlowPath(_llint_slow_path_in_by_id)
     dispatch()
 .osrReturnPoint:
@@ -3759,12 +4177,100 @@ llintOpWithReturn(op_in_by_id, OpInById, macro (size, get, dispatch, return)
     return(r0)
 end)
 
-llintOpWithReturn(op_in_by_val, OpInByVal, macro (size, get, dispatch, return)
+llintOpWithMetadata(op_in_by_val, OpInByVal, macro (size, get, dispatch, metadata, return)
+    if JIT
+        # base = a0, property = a1, cache = a2, array profile = a3.
+        # ws1 holds the metadata and t7 is the operand-index temporary: t4 is PC and a0-a4 carry
+        # the handler arguments.
+        metadata(ws1, t7)
+        loadp OpInByVal::Metadata::m_propertyInlineCache[ws1], a2
+        btpz a2, .opInByValSlow
+        get(m_base, t7)
+        loadConstantOrVariableCell(size, t7, a0, .opInByValSlow)
+        get(m_property, t7)
+        loadConstantOrVariable(size, t7, a1)
+        leap OpInByVal::Metadata::m_arrayProfile[ws1], a3
+        loadp constexpr (PropertyInlineCache::offsetOfHandler())[a2], ws0
+        storePC()
+        call constexpr (InlineCacheHandler::offsetOfLLIntCallTarget())[ws0], JITStubRoutinePtrTag
+        loadPC()
+        return(r0)
+    end
+
+.opInByValSlow:
     callSlowPath(_llint_slow_path_in_by_val)
     dispatch()
 .osrReturnPoint:
     getterSetterOSRExitReturnPoint(op_in_by_val, size)
     return(r0)
+end)
+
+llintOpWithMetadata(op_del_by_id, OpDelById, macro (size, get, dispatch, metadata, return)
+    if JIT
+        # base = a0, cache = a1. The handler returns an unboxed boolean.
+        metadata(ws1, t7)
+        loadp OpDelById::Metadata::m_propertyInlineCache[ws1], a1
+        btpz a1, .opDelByIdSlow
+        get(m_base, t7)
+        loadConstantOrVariableCell(size, t7, a0, .opDelByIdSlow)
+        loadp constexpr (PropertyInlineCache::offsetOfHandler())[a1], ws0
+        storePC()
+        call constexpr (InlineCacheHandler::offsetOfLLIntCallTarget())[ws0], JITStubRoutinePtrTag
+        loadPC()
+        # A delete handler installs a new structure with no barrier of its own, and m_dst can alias
+        # m_base ("o = delete o.x"), so the base has to be barriered before the result is stored.
+        # Only a successful delete transitions, so nothing to barrier when the result is false.
+        btqz r0, .opDelByIdReturnFalse
+        writeBarrierOnOperand(size, get, m_base)
+        get(m_dst, t2)
+        storeq ValueTrue, [cfr, t2, 8]
+        dispatch()
+
+    .opDelByIdReturnFalse:
+        get(m_dst, t2)
+        storeq ValueFalse, [cfr, t2, 8]
+        dispatch()
+    end
+
+.opDelByIdSlow:
+    callSlowPath(_llint_slow_path_del_by_id)
+    dispatch()
+end)
+
+llintOpWithMetadata(op_del_by_val, OpDelByVal, macro (size, get, dispatch, metadata, return)
+    if JIT
+        # base = a0, property = a1, cache = a2. The handler returns an unboxed boolean.
+        # ws1 holds the metadata and t7 is the operand-index temporary: t4 is PC and a0-a4 carry
+        # the handler arguments.
+        metadata(ws1, t7)
+        loadp OpDelByVal::Metadata::m_propertyInlineCache[ws1], a2
+        btpz a2, .opDelByValSlow
+        get(m_base, t7)
+        loadConstantOrVariableCell(size, t7, a0, .opDelByValSlow)
+        get(m_property, t7)
+        loadConstantOrVariableCell(size, t7, a1, .opDelByValSlow)
+        loadp constexpr (PropertyInlineCache::offsetOfHandler())[a2], ws0
+        storePC()
+        call constexpr (InlineCacheHandler::offsetOfLLIntCallTarget())[ws0], JITStubRoutinePtrTag
+        loadPC()
+        # A delete handler installs a new structure with no barrier of its own, and m_dst can alias
+        # m_base ("o = delete o.x"), so the base has to be barriered before the result is stored.
+        # Only a successful delete transitions, so nothing to barrier when the result is false.
+        btqz r0, .opDelByValReturnFalse
+        writeBarrierOnOperand(size, get, m_base)
+        get(m_dst, t2)
+        storeq ValueTrue, [cfr, t2, 8]
+        dispatch()
+
+    .opDelByValReturnFalse:
+        get(m_dst, t2)
+        storeq ValueFalse, [cfr, t2, 8]
+        dispatch()
+    end
+
+.opDelByValSlow:
+    callSlowPath(_llint_slow_path_del_by_val)
+    dispatch()
 end)
 
 llintOpWithProfile(op_get_internal_field, OpGetInternalField, macro (size, get, dispatch, return)
