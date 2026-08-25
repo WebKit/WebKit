@@ -73,13 +73,13 @@ static inline bool matchURLs(const ResourceRequest& request, const URL& cachedUR
 {
     ASSERT(options.ignoreMethod || request.httpMethod() == "GET"_s);
 
+    if (!options.ignoreSearch)
+        return equalIgnoringFragmentIdentifier(request.url(), cachedURL);
+
     URL requestURL = request.url();
     URL cachedRequestURL = cachedURL;
-
-    if (options.ignoreSearch) {
-        requestURL.setQuery({ });
-        cachedRequestURL.setQuery({ });
-    }
+    requestURL.setQuery({ });
+    cachedRequestURL.setQuery({ });
     return equalIgnoringFragmentIdentifier(requestURL, cachedRequestURL);
 }
 
