@@ -449,7 +449,7 @@ TEST(DragAndDropTests, ContentEditableMoveParagraphs)
     EXPECT_FALSE(firstParagraphOffset == NSNotFound);
     EXPECT_FALSE(secondParagraphOffset == NSNotFound);
     EXPECT_GT(firstParagraphOffset, secondParagraphOffset);
-    checkCGRectIsEqualToCGRectWithLogging(CGRectMake(251, 209, 2, 19), [simulator finalSelectionStartRect]);
+    checkCGRectIsEqualToCGRectWithLogging(CGRectMake(251, 208, 2, 19), [simulator finalSelectionStartRect]);
     EXPECT_TRUE([simulator lastKnownDropProposal].precise);
 }
 

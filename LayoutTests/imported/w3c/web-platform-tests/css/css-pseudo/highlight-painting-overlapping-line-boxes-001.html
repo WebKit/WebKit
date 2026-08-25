@@ -1,0 +1,46 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>CSS Pseudo-Elements Test: highlight painting with overlapping line boxes</title>
+<link rel="author" name="Ahmad Saleem" href="mailto:ahmad.saleem792+github@gmail.com">
+<link rel="help" href="https://drafts.csswg.org/css-pseudo-4/#highlight-bounds">
+<link rel="match" href="highlight-painting-overlapping-line-boxes-001-ref.html">
+<meta name="assert" value="The ::selection overlay of a line box covers the whole em box of the selected text, even when the line height is smaller than the em box, so that the overlay overlaps the preceding line box.">
+<link rel="stylesheet" href="/fonts/ahem.css">
+<script src="support/selections.js"></script>
+<style>
+    #layers {
+        position: relative;
+        z-index: 0;
+        width: 100px;
+    }
+    #backdrop {
+        position: absolute;
+        z-index: -1;
+        left: 0;
+        top: 55px;
+        width: 100px;
+        height: 100px;
+        background: red;
+    }
+    #target {
+        font: 100px/70px Ahem;
+        color: transparent;
+        width: 100px;
+    }
+    #target::selection {
+        background: green;
+        color: transparent;
+    }
+</style>
+<p>Test passes if there is a filled square and <strong>no red</strong>.</p>
+<div id="layers">
+    <div id="backdrop"></div>
+    <div id="target">x x</div>
+</div>
+<script>
+    const target = document.getElementById("target");
+    selectRangeWith(range => {
+        range.setStart(target.firstChild, 2);
+        range.setEnd(target.firstChild, 3);
+    });
+</script>
