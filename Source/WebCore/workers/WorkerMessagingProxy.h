@@ -39,6 +39,9 @@
 namespace WebCore {
 
 class DedicatedWorkerThread;
+#if ENABLE(WEBDRIVER_BIDI)
+class SecurityOriginData;
+#endif
 class WeakPtrImplWithEventTargetData;
 class WorkerInspectorProxy;
 class WorkerUserGestureForwarder;
@@ -74,6 +77,9 @@ private:
     void postTaskToWorkerObject(Function<void(Worker&)>&&) final;
     void postExceptionToWorkerObject(const String& errorMessage, int lineNumber, int columnNumber, const String& sourceURL) final;
     void reportErrorToWorkerObject(const String&) final;
+#if ENABLE(WEBDRIVER_BIDI)
+    void workerGlobalScopeCreated(SecurityOriginData&&);
+#endif
     void workerGlobalScopeClosed() final;
     void workerGlobalScopeDestroyed() final;
 
