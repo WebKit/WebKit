@@ -32,6 +32,7 @@ from webkitpy.common.system.systemhost_mock import MockSystemHost
 from webkitpy.xcode.device_type import DeviceType
 from webkitpy.xcode import simulated_device
 from webkitpy.xcode.simulated_device import DeviceRequest, SimulatedDeviceManager, SimulatedDevice
+from webkitpy.xcode.simulator_daemons import disabled_launchd_jobs
 
 simctl_json_output = """{
  "devicetypes" : [
@@ -740,12 +741,15 @@ class LaunchdStateCleanupTest(unittest.TestCase):
 class LaunchdConfigurationDefaultTest(unittest.TestCase):
     """webkitpy defines the configuration a simulator boots with; apple_additions only adds to it."""
 
-    def test_chronod_is_disabled_by_default(self):
+    def test_unneeded_daemons_are_disabled_by_default(self):
         host = SimulatedDeviceTest.mock_host_for_simctl()
         SimulatedDeviceTest.reset_simulated_device_manager()
         devices = SimulatedDeviceManager.available_devices(host)
         self.assertTrue(devices)
-        # FIXME: rdar://129075664
         self.assertEqual(
             devices[0].platform_device.launchd_configuration.get('disabled.plist'),
-            {'com.apple.chronod': True})
+            disabled_launchd_jobs())
+
+    def test_daemons_testing_needs_are_not_disabled(self):
+        for label in ('com.apple.sharingd', 'com.apple.eligibilityd', 'com.apple.sleepd'):
+            self.assertNotIn(label, disabled_launchd_jobs())

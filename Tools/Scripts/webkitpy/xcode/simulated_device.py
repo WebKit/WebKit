@@ -36,6 +36,7 @@ from webkitpy.common.system.systemhost import SystemHost
 from webkitpy.port.config import apple_additions
 from webkitpy.port.device import Device
 from webkitpy.xcode.device_type import DeviceType
+from webkitpy.xcode.simulator_daemons import disabled_launchd_jobs
 
 try:
     from plistlib import load as readPlist
@@ -632,7 +633,7 @@ class SimulatedDevice(object):
         self.platform = host.platform
 
         self.launchd_configuration = {
-            'disabled.plist': {'com.apple.chronod': True},  # FIXME: rdar://129075664
+            'disabled.plist': disabled_launchd_jobs(),
         }
 
         self.environment_extras = []
