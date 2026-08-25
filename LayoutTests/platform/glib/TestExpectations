@@ -3407,6 +3407,7 @@ http/tests/ipc/gpu-load-error-empty-user-info-crssh.html [ Skip ]
 http/tests/ipc/webpageproxy-didfailload-failingurl-message-check.html [ Skip ]
 ipc/usermedia-capture-start-producing-data-race.html [ Skip ]
 ipc/LocalSampleBufferDisplayLayer-flushAndRemoveImage-cross-thread-uaf.html [ Skip ]
+ipc/indexed-colorspace-null-inner-crash.html [ Skip ]
 # Hardcodes Cocoa's WebCore::CertificateInfo::trust field in the IPC payload; SOUP's
 # CertificateInfo serializes a GRefPtr<GTlsCertificate> that coreipc.js cannot construct.
 http/tests/ipc/createnewpage-file-body-sandbox-extension.html [ Skip ]
@@ -3447,6 +3448,9 @@ ipc/restrictedendpoints/deny-access-webPush.html [ Skip ]
 ipc/validate-message-check-in-networkconnectiontowebproces-crash.html [ Skip ]
 
 ### NEEDS PROPER TRIAGGING/GARDENING
+
+# Times out: the wiretap never captures m_databaseConnectionIdentifier.
+ipc/networksindexeddb-close-connection-during-version-change.html [ Skip ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of IPC testing

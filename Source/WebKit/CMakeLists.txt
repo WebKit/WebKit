@@ -1237,6 +1237,11 @@ add_custom_command(
     VERBATIM
 )
 
+# allSerializedTypes() is a single 29000-line function that clang takes tens of minutes to optimize.
+set_source_files_properties(${WebKit_DERIVED_SOURCES_DIR}/SerializedTypeInfo.${WebKit_GENERATED_SERIALIZERS_SUFFIX} PROPERTIES
+    COMPILE_OPTIONS "-O0;-DRELEASE_WITHOUT_OPTIMIZATIONS=ON"
+    SKIP_PRECOMPILE_HEADERS ON)
+
 # These files are very large and exhaust virtual memory on 32-bit ARM.
 if (WTF_CPU_ARM AND NOT CMAKE_CROSSCOMPILING)
     set(GeneratedSerializers_COMPILE_OPTIONS -O0 -DRELEASE_WITHOUT_OPTIMIZATIONS=ON)
