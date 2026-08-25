@@ -58,3 +58,11 @@ class MockRequests(unittest.TestCase):
             self.assertEqual(response.status_code, 200)
             self.assertDictEqual(response.json(), dict(content='json'))
             self.assertEqual(response.headers, {'Content-Length': '19', 'Content-Type': 'text/json'})
+
+
+class MockResponse(unittest.TestCase):
+    def test_from_json_does_not_mutate_headers(self) -> None:
+        headers = {'Accept': 'application/json'}
+        response = mocks.Response.fromJson(data=dict(content='json'), headers=headers)
+        self.assertEqual(headers, {'Accept': 'application/json'})
+        self.assertEqual(response.headers['Content-Type'], 'text/json')

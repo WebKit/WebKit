@@ -76,6 +76,10 @@ class StringUtils(unittest.TestCase):
         self.assertEqual(string_utils.split(''), [])
         self.assertEqual(string_utils.split('integer or string'), ['integer', 'string'])
 
+    def test_split_with_conjunctions(self) -> None:
+        self.assertEqual(string_utils.split('integer nor string', conjunctions=['nor']), ['integer', 'string'])
+        self.assertEqual(string_utils.split('integer and string', conjunctions=['nor']), ['integer and string'])
+
     def test_outof(self):
         self.assertEqual(string_utils.out_of(1, 3), '[1/3]')
         self.assertEqual(string_utils.out_of(1, 10), '[ 1/10]')
