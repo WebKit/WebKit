@@ -650,6 +650,13 @@ public:
     void useVariable(UniquedStringImpl* impl, bool isEval)
     {
         m_usesEval |= isEval;
+        if (impl == m_lastAddedUsedVariable) {
+            // A failure indicates that m_usedVariables was changed (a set added or removed)
+            // without clearing m_lastAddedUsedVariable.
+            ASSERT(m_usedVariables.last().contains(impl));
+            return;
+        }
+        m_lastAddedUsedVariable = impl;
         m_usedVariables.last().add(impl);
     }
     void usePrivateName(const Identifier& ident)
@@ -659,9 +666,17 @@ public:
 
     void setUsesImportMeta() { m_usesImportMeta = true; }
 
-    void pushUsedVariableSet() { m_usedVariables.append(UniquedStringImplPtrSet()); }
+    void pushUsedVariableSet()
+    {
+        m_usedVariables.append(UniquedStringImplPtrSet());
+        m_lastAddedUsedVariable = nullptr;
+    }
     size_t currentUsedVariablesSize() { return m_usedVariables.size(); }
-    void revertToPreviousUsedVariables(size_t size) { m_usedVariables.resize(size); }
+    void revertToPreviousUsedVariables(size_t size)
+    {
+        m_usedVariables.resize(size);
+        m_lastAddedUsedVariable = nullptr;
+    }
 
     void setNeedsFullActivation() { m_needsFullActivation = true; }
     bool needsFullActivation() const { return m_needsFullActivation; }
@@ -1031,6 +1046,7 @@ private:
     EvalContextType m_evalContextType { EvalContextType::None };
     DerivedContextType m_derivedContextType { DerivedContextType::None };
 
+    UniquedStringImpl* m_lastAddedUsedVariable { nullptr };
     Vector<UniquedStringImplPtrSet, 6> m_usedVariables;
 
     static void verifyLayout();
