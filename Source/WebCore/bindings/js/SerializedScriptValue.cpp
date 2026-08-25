@@ -1170,14 +1170,28 @@ private:
 
     void dumpDOMException(JSObject* obj, SerializationReturnCode& code)
     {
-        if (RefPtr exception = JSDOMException::toWrapped(m_lexicalGlobalObject->vm(), obj)) {
-            write(DOMExceptionTag);
-            write(exception->message());
-            write(exception->name());
+        RefPtr exception = JSDOMException::toWrapped(m_lexicalGlobalObject->vm(), obj);
+        if (!exception) {
+            code = SerializationReturnCode::DataCloneError;
             return;
         }
 
-        code = SerializationReturnCode::DataCloneError;
+        // A DOMException's wrapper is a JSC::ErrorInstance, so it carries the same non-standard
+        // line/column/sourceURL/stack own properties a plain Error does. Serialize them too, so a
+        // clone reports the same stack as the original.
+        auto errorInformation = JSC::extractErrorInformationFromErrorInstance(m_lexicalGlobalObject, downcast<JSC::ErrorInstance>(*obj));
+        if (!errorInformation) {
+            code = SerializationReturnCode::DataCloneError;
+            return;
+        }
+
+        write(DOMExceptionTag);
+        write(exception->message());
+        write(exception->name());
+        write(errorInformation->line);
+        write(errorInformation->column);
+        writeNullableString(errorInformation->sourceURL);
+        writeNullableString(errorInformation->stack);
     }
 
 public:
@@ -3476,8 +3490,26 @@ private:
         CachedStringRef name;
         if (!readStringData(name))
             return JSValue();
+
+        uint32_t line = 0;
+        uint32_t column = 0;
+        String sourceURL;
+        String stack;
+        bool hasErrorInformation = m_majorVersion >= 16;
+        if (hasErrorInformation) {
+            if (!read(line) || !read(column) || !readNullableString(sourceURL) || !readNullableString(stack))
+                return JSValue();
+        }
+
         auto exception = DOMException::create(message->string(), name->string());
-        return getJSValue(exception);
+        JSValue result = getJSValue(exception);
+        // Creating the wrapper captured a stack trace of the frame doing the deserializing; replace
+        // it with the serialized one so the clone reports the same stack as the original did.
+        if (hasErrorInformation) {
+            if (auto* errorInstance = dynamicDowncast<JSC::ErrorInstance>(result.getObject()))
+                errorInstance->setErrorInfoForEmbedderError(JSC::LineColumn { line, column }, WTF::move(sourceURL), WTF::move(stack));
+        }
+        return result;
     }
 
     JSValue readFileSystemHandle()

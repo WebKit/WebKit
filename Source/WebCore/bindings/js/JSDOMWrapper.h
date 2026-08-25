@@ -150,9 +150,10 @@ protected:
 
     void finishCreation(JSC::VM& vm)
     {
-        // Do not capture a JS stack trace or add own "message"/"stack" properties. DOMException
-        // exposes its name/message through WebIDL getters on the prototype.
-        Base::finishCreation(vm, JSC::ErrorInstance::StackTraceCapturePolicy::DoNotCapture);
+        // Capture a stack trace (so "stack" behaves as it does on a plain Error) but add no own
+        // "message" property; DOMException exposes its name/message through WebIDL getters on
+        // the prototype.
+        Base::finishCreationForEmbedderError(vm);
     }
 
 private:

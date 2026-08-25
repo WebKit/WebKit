@@ -176,20 +176,32 @@ void ErrorInstance::finishCreation(VM& vm, String&& message, LineColumn lineColu
         putDirect(vm, vm.propertyNames->cause, jsString(vm, WTF::move(cause)), static_cast<unsigned>(PropertyAttribute::DontEnum));
 }
 
-void ErrorInstance::finishCreation(VM& vm, StackTraceCapturePolicy policy)
+void ErrorInstance::finishCreationForEmbedderError(VM& vm)
 {
     Base::finishCreation(vm);
     ASSERT(inherits(info()));
 
-    if (policy == StackTraceCapturePolicy::Capture) {
-        std::unique_ptr<Vector<StackFrame>> stackTrace = getStackTrace(vm, this, true, nullptr, nullptr, nullptr);
-        {
-            Locker locker { cellLock() };
-            m_stackTrace = WTF::move(stackTrace);
-        }
-        vm.writeBarrier(this);
+    std::unique_ptr<Vector<StackFrame>> stackTrace = getStackTrace(vm, this, /* useCurrentFrame */ true);
+    {
+        Locker locker { cellLock() };
+        m_stackTrace = WTF::move(stackTrace);
     }
-    // Otherwise, deliberately capture no stack trace and add no own name/message/stack properties.
+    vm.writeBarrier(this);
+
+    // Deliberately add no own "message" / "cause" properties; the embedder exposes those itself.
+}
+
+void ErrorInstance::setErrorInfoForEmbedderError(LineColumn lineColumn, String&& sourceURL, String&& stackString)
+{
+    ASSERT(!m_errorInfoMaterialized);
+
+    {
+        Locker locker { cellLock() };
+        m_stackTrace = nullptr;
+    }
+    m_lineColumn = lineColumn;
+    m_sourceURL = WTF::move(sourceURL);
+    m_stackString = WTF::move(stackString);
 }
 
 // Based on ErrorPrototype's errorProtoFuncToString(), but is modified to

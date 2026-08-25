@@ -108,6 +108,11 @@ public:
     bool materializeErrorInfoIfNeeded(VM&);
     bool materializeErrorInfoIfNeeded(VM&, PropertyName);
 
+    // Replaces the stack trace captured by finishCreationForEmbedderError() with information that
+    // came from somewhere else, such as a structured clone of an embedder error. The properties are
+    // still materialized lazily, exactly as they are for a captured stack trace.
+    JS_EXPORT_PRIVATE void setErrorInfoForEmbedderError(LineColumn, String&& sourceURL, String&& stackString);
+
     void setStackPropertyAlreadyMaterialized()
     {
         if (!m_errorInfoMaterialized)
@@ -124,10 +129,10 @@ protected:
     void finishCreation(VM&, String&& message, LineColumn, String&& sourceURL, String&& stackString, String&& cause);
 
     // For subclasses (e.g. embedder error wrappers like WebCore's DOMException) that should be
-    // ErrorInstances but must not capture a JS stack trace or gain own name/message/stack
-    // properties; they provide those by other means.
-    enum class StackTraceCapturePolicy : bool { DoNotCapture, Capture };
-    JS_EXPORT_PRIVATE void finishCreation(VM&, StackTraceCapturePolicy);
+    // ErrorInstances but must not gain own "message" / "cause" properties; they expose those by
+    // other means. A stack trace is still captured, so "stack" (and "line" / "column" /
+    // "sourceURL") materialize lazily just like they do for a plain Error.
+    JS_EXPORT_PRIVATE void finishCreationForEmbedderError(VM&);
 
     JS_EXPORT_PRIVATE static bool getOwnPropertySlot(JSObject*, JSGlobalObject*, PropertyName, PropertySlot&);
     JS_EXPORT_PRIVATE static void getOwnSpecialPropertyNames(JSObject*, JSGlobalObject*, PropertyNameArrayBuilder&, DontEnumPropertiesMode);

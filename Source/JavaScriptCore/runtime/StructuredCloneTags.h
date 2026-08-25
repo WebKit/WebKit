@@ -421,7 +421,7 @@ inline ErrorType toErrorType(SerializableErrorType value)
     return ErrorType::Error;
 }
 
-constexpr unsigned CurrentMajorVersion = 15;
+constexpr unsigned CurrentMajorVersion = 16;
 constexpr unsigned CurrentMinorVersion = 0;
 inline constexpr unsigned NODELETE majorVersionFor(unsigned version) { return version & 0x00FFFFFF; }
 inline constexpr unsigned NODELETE minorVersionFor(unsigned version) { return version >> 24; }
@@ -452,6 +452,7 @@ inline constexpr unsigned NODELETE makeVersion(unsigned major, unsigned minor)
  * Version 13. added support for ErrorInstance objects.
  * Version 14. encode booleans as uint8_t instead of int32_t.
  * Version 15. changed the terminator of the indexed property section in array.
+ * Version 16. added line/column/sourceURL/stack information to DOMException.
  */
 // FIXME: We should have two versions one for JSC version changes and one for WebCore version changes.
 inline constexpr unsigned NODELETE currentVersion() { return makeVersion(CurrentMajorVersion, CurrentMinorVersion); }

@@ -1,0 +1,24 @@
+DOMException has the [[ErrorData]] internal slot, and its JS wrapper is a JSC ErrorInstance, so it exposes the same non-standard stack/line/column/sourceURL properties that a plain Error does. This matches Firefox (which also reports a stack for DOMException) and is what the WebIDL web-platform-test "If the implementation has a stack property on normal errors, it also does on DOMExceptions" requires. This test can be run directly in any browser to compare behavior.
+
+PASS: typeof new DOMException().stack is "string"
+PASS: typeof new WebTransportError().stack is true
+PASS: DOMException stack is an own property is true
+PASS: DOMException stack writable matches Error is true
+PASS: DOMException stack enumerable matches Error is false
+PASS: DOMException stack configurable matches Error is true
+PASS: typeof e.line is "number"
+PASS: typeof e.column is "number"
+PASS: typeof e.sourceURL is "string"
+PASS: e.stack forced is "string"
+PASS: e.hasOwnProperty('message') is false
+PASS: e.hasOwnProperty('name') is false
+PASS: e.message is "message"
+PASS: e.name is "name"
+PASS: DOM API threw a DOMException is true
+PASS: thrown.name is "InvalidCharacterError"
+PASS: thrown.stack names the calling function is true
+PASS: typeof new DOMException().stack with stackTraceLimit 0 is "undefined"
+PASS: structuredClone(thrown).stack matches the original is true
+PASS: structuredClone(thrown).name is "InvalidCharacterError"
+PASS: structuredClone(thrown).message is "The string contains invalid characters."
+PASS: structuredClone(thrown) is a DOMException is true
