@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/intrinsic-size/auto-min-size-001-expected.xht
@@ -52,6 +50,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/intrinsic-size/col-wrap-020-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/intrinsic-size/col-wrap-020.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/intrinsic-size/col-wrap-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/intrinsic-size/col-wrap-dynamic-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/intrinsic-size/col-wrap-dynamic.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/intrinsic-size/row-001-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/intrinsic-size/row-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/intrinsic-size/row-002-expected.xht

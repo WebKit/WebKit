@@ -1,0 +1,24 @@
+flex-direction: row
+flex-direction: row-reverse
+flex-direction: column
+flex-direction: column-reverse
+direction=ltr
+direction=rtl
+
+PASS .box > span 1
+PASS .box > span 2
+PASS .box > span 3
+PASS .box > span 4
+PASS .box > span 5
+PASS .box > span 6
+PASS .box > span 7
+PASS .box > span 8
+PASS .box > span 9
+PASS .box > span 10
+PASS .box > span 11
+PASS .box > span 12
+PASS .box > span 13
+PASS .box > span 14
+PASS .box > span 15
+PASS .box > span 16
+

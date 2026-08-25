@@ -10,11 +10,8 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/getcomputedstyle/first-line-computed-style.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_align-content-center.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_align-content-flex-end.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/getcomputedstyle/flexbox_computedstyle_align-content-flex-start.html

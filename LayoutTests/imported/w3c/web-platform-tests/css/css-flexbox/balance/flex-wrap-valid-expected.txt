@@ -1,0 +1,10 @@
+
+PASS e.style['flex-wrap'] = "nowrap" should set the property value
+PASS e.style['flex-wrap'] = "wrap" should set the property value
+PASS e.style['flex-wrap'] = "wrap-reverse" should set the property value
+FAIL e.style['flex-wrap'] = "balance" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['flex-wrap'] = "wrap balance" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['flex-wrap'] = "wrap-reverse balance" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['flex-wrap'] = "balance wrap" should set the property value assert_not_equals: property should be set got disallowed value ""
+FAIL e.style['flex-wrap'] = "balance wrap-reverse" should set the property value assert_not_equals: property should be set got disallowed value ""
+

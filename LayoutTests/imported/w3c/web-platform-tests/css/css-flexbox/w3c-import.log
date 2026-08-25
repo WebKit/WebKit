@@ -10,8 +10,6 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/META.yml
@@ -128,6 +126,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/align-self-015.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/align-self-016-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/align-self-016.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/align-self-baseline-with-flex-wrap.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/anonymous-block-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/anonymous-block.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/anonymous-flex-item-001-expected.html
@@ -142,6 +141,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/anonymous-flex-item-005.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/anonymous-flex-item-006-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/anonymous-flex-item-006.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/anonymous-flex-item-document-white-space-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/anonymous-flex-item-restyle-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/anonymous-flex-item-restyle.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/anonymous-flex-item-split-ref.html
@@ -166,6 +166,16 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/aspect-ratio-intrinsic-size-009.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/aspect-ratio-intrinsic-size-010-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/aspect-ratio-intrinsic-size-010.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/aspect-ratio-intrinsic-size-011-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/aspect-ratio-intrinsic-size-011.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/aspect-ratio-intrinsic-size-012-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/aspect-ratio-intrinsic-size-012-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/aspect-ratio-intrinsic-size-012.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/aspect-ratio-intrinsic-size-013-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/aspect-ratio-intrinsic-size-013-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/aspect-ratio-intrinsic-size-013.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/aspect-ratio-intrinsic-size-014-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/aspect-ratio-intrinsic-size-014.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/aspect-ratio-transferred-max-size-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/aspect-ratio-transferred-max-size.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/auto-height-column-with-border-and-padding-expected.html
@@ -294,6 +304,15 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-003.htm
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-004-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-004.htm
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-abspos-inset-cross-size-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-abspos-inset-cross-size-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-abspos-inset-cross-size-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-abspos-inset-nested-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-abspos-inset-nested-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-abspos-inset-nested-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-abspos-inset-nested-002-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-abspos-inset-nested-002-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-abspos-inset-nested-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-align-content-center-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-align-content-center.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-align-content-end-expected.html
@@ -304,6 +323,15 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-align-content-space-between.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-align-content-start-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-align-content-start.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-aspect-ratio-content-box-padding-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-aspect-ratio-content-box-padding-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-aspect-ratio-content-box-padding-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-aspect-ratio-cross-size-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-aspect-ratio-cross-size-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-aspect-ratio-cross-size-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-aspect-ratio-cross-size-002-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-aspect-ratio-cross-size-002-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-aspect-ratio-cross-size-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-aspect-ratio-img-column-001-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-aspect-ratio-img-column-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-aspect-ratio-img-column-002-expected.xht
@@ -372,6 +400,18 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-aspect-ratio-img-row-017.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-aspect-ratio-img-vert-lr-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-aspect-ratio-img-vert-lr.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-aspect-ratio-intrinsic-padding-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-aspect-ratio-intrinsic-padding-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-aspect-ratio-intrinsic-padding-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-aspect-ratio-percentage-height-stale-width-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-aspect-ratio-percentage-height-stale-width.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-aspect-ratio-resize-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-aspect-ratio-resize-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-aspect-ratio-resize-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-base-size-ignores-max-width-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-base-size-ignores-max-width-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-base-size-ignores-max-width.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-baseline-overflow-hidden.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-basis-001-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-basis-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-basis-002-expected.xht
@@ -397,6 +437,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-basis-012-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-basis-012.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-basis-013.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-basis-014.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-basis-content-percentage-height.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-basis-intrinsics-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-basis-item-margins-001-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-basis-item-margins-001.html
@@ -406,6 +448,12 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-child-percent-basis-resize-1-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-child-percent-basis-resize-1.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-column-relayout-assert.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-column-reverse-multiline-item-position-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-column-reverse-multiline-item-position-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-column-reverse-multiline-item-position.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-container-line-if-empty-vertical-writing-mode-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-container-line-if-empty-vertical-writing-mode-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-container-line-if-empty-vertical-writing-mode.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-container-margin-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-container-margin.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-container-max-content-001-expected.html
@@ -416,6 +464,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-container-min-content-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-container-min-content-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-container-min-content-002.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-cross-size-border-box-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-cross-size-border-box-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-cross-size-border-box-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-direction-column-001-visual.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-direction-column-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-direction-column-overlap-001.html
@@ -485,6 +536,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-grow-007.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-grow-008-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-grow-008.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-grow-009-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-grow-009.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-height-min-content-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-height-min-content.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-inline-expected.html
@@ -506,10 +559,20 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-item-max-width-min-content-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-item-max-width-min-content.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-item-min-height-min-content-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-item-min-height-min-content-overflow-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-item-min-height-min-content-overflow-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-item-min-height-min-content-overflow.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-item-min-height-min-content.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-item-min-width-min-content-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-item-min-width-min-content-max-width-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-item-min-width-min-content-max-width-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-item-min-width-min-content-max-width.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-item-min-width-min-content.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-item-percentage-height-img-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-item-percentage-in-nested-flex-bsize-001-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-item-percentage-in-nested-flex-bsize-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-item-percentage-in-nested-flex-bsize-002-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-item-percentage-in-nested-flex-bsize-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-item-position-relative-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-item-position-relative-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-item-position-relative-001.html
@@ -585,6 +648,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-minimum-size-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-minimum-size-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-minimum-size-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-minimum-size-single-axis-scroll-container.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-minimum-width-flex-items-001-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-minimum-width-flex-items-001.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-minimum-width-flex-items-002-expected.xht
@@ -650,6 +714,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-shrink-008-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-shrink-008.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-shrink-large-value-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-svg-no-intrinsic-column-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-svg-no-intrinsic-column-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-svg-no-intrinsic-column-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-vertical-align-effect-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-vertical-align-effect.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-wrap-002-expected.xht
@@ -662,6 +729,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-wrap-005.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-wrap-006-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-wrap-006.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flex-wrap-column-grow.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flexbox-align-items-center-nested-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flexbox-align-items-center-nested-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flexbox-align-items-center-nested-001.html
@@ -752,6 +820,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flexbox-baseline-align-self-baseline-vert-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flexbox-baseline-align-self-baseline-vert-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flexbox-baseline-align-self-baseline-vert-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flexbox-baseline-and-last-baseline-groups-line-size.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flexbox-baseline-empty-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flexbox-baseline-empty-001a-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flexbox-baseline-empty-001a.html
@@ -793,6 +862,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flexbox-baseline-single-item-001a.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flexbox-baseline-single-item-001b-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flexbox-baseline-single-item-001b.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flexbox-baseline-wrap-reverse-unequal-lines.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flexbox-basic-block-horiz-001-expected.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flexbox-basic-block-horiz-001-ref.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flexbox-basic-block-horiz-001.xhtml
@@ -1078,11 +1148,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flexbox-min-height-auto-002b.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flexbox-min-height-auto-002c-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flexbox-min-height-auto-002c.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flexbox-min-height-auto-003-expected.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flexbox-min-height-auto-003-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flexbox-min-height-auto-003.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flexbox-min-height-auto-004-expected.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flexbox-min-height-auto-004-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flexbox-min-height-auto-004.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flexbox-min-width-auto-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/flexbox-min-width-auto-001-ref.html
@@ -1977,6 +2043,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/gap-020.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/gap-021-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/gap-021.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/gap-collapse-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/gap-collapse-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/gap-collapse.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/grandchild-span-height-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/grandchild-span-height.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/grid-flex-item-001-expected.html
@@ -2072,6 +2141,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/mixed-containing-blocks-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/multiline-column-max-height-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/multiline-column-max-height.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/multiline-last-baseline-item-count-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/multiline-last-baseline-item-count-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/multiline-last-baseline-item-count.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/multiline-min-max.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/multiline-min-preferred-width.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/multiline-reverse-wrap-baseline-expected.html
@@ -2197,6 +2269,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/percentage-size-quirks-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/percentage-size-quirks-003-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/percentage-size-quirks-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/percentage-size-quirks-004.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/percentage-size-quirks-005.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/percentage-size-quirks.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/percentage-size-subitems-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/percentage-size-subitems-001.html
@@ -2214,6 +2288,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/position-relative-percentage-top-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/position-relative-percentage-top-003-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/position-relative-percentage-top-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/position-relative-percentage-top-004.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/position-relative-percentage-top-005.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/position-relative-stretch-height-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/position-relative-with-scrollable-with-abspos-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/quirks-auto-block-size-with-percentage-item.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-flexbox/radiobutton-min-size.html

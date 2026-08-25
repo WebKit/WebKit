@@ -4,7 +4,6 @@ x
 x
 
 PASS inline-flex with overflow:hidden produces same line box height as inline-block
-PASS inline-flex with overflow:hidden does not inflate line box from overflowing content
 PASS inline-flex with overflow:scroll synthesizes baseline from container edges
 PASS inline-flex with overflow:auto synthesizes baseline from container edges
 PASS block-level flex with overflow:hidden clamps baseline for baseline alignment

@@ -1,0 +1,15 @@
+
+PASS e.style['flex-wrap'] = "auto" should not set the property value
+PASS e.style['flex-wrap'] = "nowrap wrap" should not set the property value
+PASS e.style['flex-wrap'] = "wrap wrap" should not set the property value
+PASS e.style['flex-wrap'] = "balance balance" should not set the property value
+PASS e.style['flex-wrap'] = "balance nowrap" should not set the property value
+PASS e.style['flex-wrap'] = "nowrap balance" should not set the property value
+PASS e.style['flex-wrap'] = "wrap balance wrap" should not set the property value
+PASS e.style['flex-wrap'] = "balance wrap balance" should not set the property value
+PASS e.style['flex-wrap'] = "wrap 2 balance" should not set the property value
+PASS e.style['flex-wrap'] = "2 balance wrap" should not set the property value
+PASS e.style['flex-wrap'] = "balance 0" should not set the property value
+PASS e.style['flex-wrap'] = "balance 1.5" should not set the property value
+PASS e.style['flex-wrap'] = "balance -1" should not set the property value
+
