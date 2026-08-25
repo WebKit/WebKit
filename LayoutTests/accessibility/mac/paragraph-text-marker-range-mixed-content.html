@@ -1,0 +1,50 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="text">
+<p id="rich">Start <img src="#" alt="pic" style="width:20px;height:20px;"> mid <b>bold</b> <a href="#target">link</a> end.</p>
+<div id="loose">Loose text in a bare div.</div>
+<table border="1"><tr><td id="cell">Cell text.</td></tr></table>
+</div>
+
+<script>
+var output = "This test ensures AXParagraphTextMarkerRangeForTextMarker bounds a paragraph at block edges rather than at p elements, so a paragraph mixing an image, bold text and a link stays whole, while a bare div and a table cell each bound one of their own.\n\n";
+
+function paragraphAt(marker)
+{
+    return container.stringForTextMarkerRange(container.paragraphTextMarkerRangeForTextMarker(marker));
+}
+
+function startMarkerFor(id)
+{
+    var element = accessibilityController.accessibleElementById(id);
+    return container.startTextMarkerForTextMarkerRange(container.textMarkerRangeForElement(element));
+}
+
+if (window.accessibilityController) {
+    var container = accessibilityController.rootElement.childAtIndex(0);
+
+    var richStart = startMarkerFor("rich");
+    var richInterior = richStart;
+    for (var i = 0; i < 10; i++)
+        richInterior = container.nextTextMarker(richInterior);
+
+    output += expect("paragraphAt(richStart)", "'Start \\uFFFC mid bold link end.'");
+    output += expect("paragraphAt(richInterior)", "paragraphAt(richStart)");
+
+    output += "\nA p element is not required, any block bounds a paragraph:\n";
+    output += expect("paragraphAt(startMarkerFor('loose'))", "'Loose text in a bare div.'");
+    output += expect("paragraphAt(startMarkerFor('cell'))", "'Cell text.'");
+
+    document.getElementById("text").style.display = "none";
+
+    debug(output);
+}
+</script>
+</body>
+</html>

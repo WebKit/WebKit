@@ -1,0 +1,11 @@
+This test ensures AXParagraphTextMarkerRangeForTextMarker resolves to the whole paragraph containing the marker, that the range does not depend on which position inside the paragraph it was asked from, and that it follows the marker into the next paragraph.
+
+PASS: paragraphAt(paragraph1Start) === 'First paragraph.'
+PASS: paragraphAt(paragraph1Interior) === 'First paragraph.'
+PASS: paragraphAt(startOfParagraphAt(paragraph1Interior)) === 'First paragraph.'
+PASS: paragraphAt(paragraph2Start) === 'Second paragraph.'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,0 +1,31 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<input type="number" id="number-input">
+
+<script>
+var output = "This test ensures the AXDecrementButton and AXIncrementButton of the spinbutton behind input type='number' resolve to two distinct spin button parts, each carrying the arrow subrole for its direction.\n\n";
+
+function spinButtonPart(attributeName)
+{
+    return spinbutton.uiElementAttributeValue(attributeName);
+}
+
+if (window.accessibilityController) {
+    var spinbutton = accessibilityController.accessibleElementById("number-input").childAtIndex(0);
+    output += expect("spinbutton.role", "'AXRole: AXIncrementor'");
+    output += expect("spinButtonPart('AXDecrementButton').role", "'AXRole: AXIncrementorArrow'");
+    output += expect("spinButtonPart('AXDecrementButton').subrole", "'AXSubrole: AXDecrementArrow'");
+    output += expect("spinButtonPart('AXIncrementButton').subrole", "'AXSubrole: AXIncrementArrow'");
+    output += expect("spinButtonPart('AXDecrementButton').subrole !== spinButtonPart('AXIncrementButton').subrole", "true");
+
+    debug(output);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,49 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="text"><p id="paragraph1">First paragraph.</p><p id="paragraph2">Second paragraph.</p></div>
+
+<script>
+var output = "This test ensures AXParagraphTextMarkerRangeForTextMarker resolves to the whole paragraph containing the marker, that the range does not depend on which position inside the paragraph it was asked from, and that it follows the marker into the next paragraph.\n\n";
+
+function paragraphAt(marker)
+{
+    return container.stringForTextMarkerRange(container.paragraphTextMarkerRangeForTextMarker(marker));
+}
+
+function startOfParagraphAt(marker)
+{
+    return container.startTextMarkerForTextMarkerRange(container.paragraphTextMarkerRangeForTextMarker(marker));
+}
+
+function startMarkerFor(element)
+{
+    return container.startTextMarkerForTextMarkerRange(container.textMarkerRangeForElement(element));
+}
+
+if (window.accessibilityController) {
+    var container = accessibilityController.rootElement.childAtIndex(0);
+    var paragraph1Start = startMarkerFor(accessibilityController.accessibleElementById("paragraph1"));
+    var paragraph2Start = startMarkerFor(accessibilityController.accessibleElementById("paragraph2"));
+
+    var paragraph1Interior = paragraph1Start;
+    for (var i = 0; i < 5; i++)
+        paragraph1Interior = container.nextTextMarker(paragraph1Interior);
+
+    output += expect("paragraphAt(paragraph1Start)", "'First paragraph.'");
+    output += expect("paragraphAt(paragraph1Interior)", "'First paragraph.'");
+    output += expect("paragraphAt(startOfParagraphAt(paragraph1Interior))", "'First paragraph.'");
+    output += expect("paragraphAt(paragraph2Start)", "'Second paragraph.'");
+
+    document.getElementById("text").style.display = "none";
+
+    debug(output);
+}
+</script>
+</body>
+</html>

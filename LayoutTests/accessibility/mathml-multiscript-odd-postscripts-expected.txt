@@ -1,0 +1,10 @@
+This test ensures AXMathPostscripts pairs the scripts following the base two at a time, and that an odd trailing script yields a pair carrying a subscript with no superscript alongside it.
+
+PASS: postscripts.trim().split('\n').length === 3
+PASS: mscript.mathPostscriptsDescription.split(subscriptKey).length - 1 === 2
+PASS: postscripts.split(superscriptKey).length - 1 === 1
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

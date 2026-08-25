@@ -998,6 +998,11 @@ accessibility/aria-owns-crash-after-subtree-update.html [ Skip ]
 # installImageOverlay is a no-op on platforms without IMAGE_ANALYSIS.
 accessibility/image-overlay-elements-presentational.html [ Skip ]
 
+# AccessibilityUIElementAtspi::mathPostscriptsDescription is unimplemented, so it returns
+# null rather than the multiscript pairs these tests read.
+accessibility/mathml-multiscript-none-holds-slot.html [ Skip ]
+accessibility/mathml-multiscript-odd-postscripts.html [ Skip ]
+
 accessibility/dynamic-expanded-text.html [ Failure ]
 
 accessibility/dynamic-content-visibility.html [ Skip ]

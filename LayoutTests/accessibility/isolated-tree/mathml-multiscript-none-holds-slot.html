@@ -1,0 +1,30 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ IsAccessibilityIsolatedTreeEnabled=true ] -->
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="content"><math><mmultiscripts id="mscript"><mi>A</mi><mn>1</mn><none/><mn>3</mn></mmultiscripts></math></div>
+
+<script>
+var output = "This test ensures a MathML none element occupies its slot when AXMathPostscripts pairs up scripts, so the script following it starts a second pair as that pair's subscript rather than completing the first pair as a superscript.\n\n";
+
+if (window.accessibilityController) {
+    var subscriptKey = accessibilityController.platformName === "ios" ? "AXMSubscriptObject" : "AXMathSubscript";
+
+    var mscript = accessibilityController.accessibleElementById("mscript");
+    var postscripts = mscript.mathPostscriptsDescription;
+
+    output += expect("postscripts.split(subscriptKey).length - 1", "2");
+    output += expect("postscripts.includes('0. ' + subscriptKey)", "true");
+    output += expect("mscript.mathPostscriptsDescription.includes('1. ' + subscriptKey)", "true");
+
+    document.getElementById("content").style.display = "none";
+
+    debug(output);
+}
+</script>
+</body>
+</html>

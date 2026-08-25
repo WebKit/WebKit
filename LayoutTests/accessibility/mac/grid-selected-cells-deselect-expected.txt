@@ -1,0 +1,13 @@
+This test ensures AXSelectedCells drops a cell once its aria-selected becomes false, and that the selection an assistive technology reads is already correct when AXSelectedCellsChanged arrives.
+
+PASS: grid.selectedCells().length === 2
+PASS: grid.selectedCells()[0].isEqual(cell0) === true
+PASS: grid.selectedCells()[1].isEqual(cell1) === true
+Received AXSelectedCellsChanged.
+PASS: grid.selectedCells().length === 1
+PASS: grid.selectedCells()[0].isEqual(cell1) === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

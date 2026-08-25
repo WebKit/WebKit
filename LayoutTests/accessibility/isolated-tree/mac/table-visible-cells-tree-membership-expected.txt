@@ -1,0 +1,13 @@
+This test ensures AXVisibleCells tracks accessibility tree membership, dropping the cells of a row that leaves the tree and recovering them when the row comes back.
+
+PASS: countOf('AXVisibleCells') === 6
+PASS: countOf('AXRows') === 3
+PASS: countOf('AXVisibleCells') === 4
+PASS: countOf('AXRows') === 2
+PASS: countOf('AXVisibleCells') === 6
+PASS: countOf('AXRows') === 3
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

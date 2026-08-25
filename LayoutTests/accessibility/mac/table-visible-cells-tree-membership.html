@@ -1,0 +1,48 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="grid" role="grid">
+<div role="row"><span role="gridcell">A0</span><span role="gridcell">A1</span></div>
+<div id="middle-row" role="row"><span role="gridcell">B0</span><span role="gridcell">B1</span></div>
+<div role="row"><span role="gridcell">C0</span><span role="gridcell">C1</span></div>
+</div>
+
+<script>
+var output = "This test ensures AXVisibleCells tracks accessibility tree membership, dropping the cells of a row that leaves the tree and recovering them when the row comes back.\n\n";
+
+function countOf(attributeName)
+{
+    return grid.uiElementArrayAttributeValue(attributeName).length;
+}
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var grid = accessibilityController.accessibleElementById("grid");
+
+    output += expect("countOf('AXVisibleCells')", "6");
+    output += expect("countOf('AXRows')", "3");
+
+    setTimeout(async function() {
+        document.getElementById("middle-row").style.display = "none";
+        output += await expectAsync("countOf('AXVisibleCells')", "4");
+        output += await expectAsync("countOf('AXRows')", "2");
+
+        document.getElementById("middle-row").style.display = "";
+        output += await expectAsync("countOf('AXVisibleCells')", "6");
+        output += await expectAsync("countOf('AXRows')", "3");
+
+        document.getElementById("grid").style.display = "none";
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

@@ -61,6 +61,8 @@ typedef void (*AXPostedNotificationCallback)(id element, NSString* notification,
 - (NSString *)accessibilityDatetimeValue;
 - (NSArray *)accessibilityDetailsElements;
 - (NSArray *)accessibilityErrorMessageElements;
+- (NSArray *)accessibilityMathPostscripts;
+- (NSArray *)accessibilityMathPrescripts;
 - (NSString *)accessibilityPlaceholderValue;
 - (NSString *)stringForRange:(NSRange)range;
 - (NSAttributedString *)attributedStringForRange:(NSRange)range;
@@ -1682,14 +1684,26 @@ RefPtr<AccessibilityTextMarkerRange> AccessibilityUIElementIOS::textMarkerRangeM
     return AccessibilityTextMarkerRange::create(textMarkerRange);
 }
 
+static NSString *convertMathMultiscriptPairsToString(NSArray *pairs)
+{
+    NSMutableString *result = [NSMutableString string];
+    for (NSUInteger index = 0; index < pairs.count; ++index) {
+        NSDictionary *pair = pairs[index];
+        for (NSString *key in pair)
+            [result appendFormat:@"\t%lu. %@ = %@\n", (unsigned long)index, key, [pair[key] accessibilityLabel]];
+    }
+
+    return result;
+}
+
 JSRetainPtr<JSStringRef> AccessibilityUIElementIOS::mathPostscriptsDescription() const
 {
-    return nullptr;
+    return [convertMathMultiscriptPairsToString([m_element accessibilityMathPostscripts]) createJSStringRef];
 }
 
 JSRetainPtr<JSStringRef> AccessibilityUIElementIOS::mathPrescriptsDescription() const
 {
-    return nullptr;
+    return [convertMathMultiscriptPairsToString([m_element accessibilityMathPrescripts]) createJSStringRef];
 }
 
 static void _CGPathEnumerationIteration(void *info, const CGPathElement *element)

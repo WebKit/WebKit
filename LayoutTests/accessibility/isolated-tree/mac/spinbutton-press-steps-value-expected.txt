@@ -1,0 +1,14 @@
+This test ensures pressing the spin button parts exposed as AXDecrementButton and AXIncrementButton actually steps the value of the input type='number' behind them, down and then back up.
+
+PASS: spinButtonPart('AXDecrementButton').subrole === 'AXSubrole: AXDecrementArrow'
+PASS: spinButtonPart('AXIncrementButton').subrole === 'AXSubrole: AXIncrementArrow'
+PASS: axValue() === 'AXValue: 5'
+PASS: axValue() === 'AXValue: 4'
+PASS: domValue() === '4'
+PASS: axValue() === 'AXValue: 5'
+PASS: domValue() === '5'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

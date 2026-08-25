@@ -1,0 +1,10 @@
+This test ensures a MathML none element occupies its slot when AXMathPostscripts pairs up scripts, so the script following it starts a second pair as that pair's subscript rather than completing the first pair as a superscript.
+
+PASS: postscripts.split(subscriptKey).length - 1 === 2
+PASS: postscripts.includes('0. ' + subscriptKey) === true
+PASS: mscript.mathPostscriptsDescription.includes('1. ' + subscriptKey) === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

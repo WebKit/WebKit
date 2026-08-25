@@ -1,0 +1,78 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ IsAccessibilityIsolatedTreeEnabled=true ] -->
+<html>
+<head>
+<script src="../../../resources/accessibility-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+<style>
+#soft-wrapped { width: 6ch; font: 16px/1 monospace; }
+</style>
+</head>
+<body>
+
+<p id="content">Alpha<br>Bravo<br>Charlie</p>
+<p id="soft-wrapped">aaa bbb ccc</p>
+
+<script>
+var output = "This test ensures previous line start finds the start of the line containing the given marker, and steps back one line when that marker is already at a line start. Lines broken by a br element and lines broken only by wrapping are both covered.\n\n";
+
+function startMarkerOf(element)
+{
+    return element.startTextMarkerForTextMarkerRange(element.textMarkerRangeForElement(element));
+}
+
+function endMarkerOf(element)
+{
+    return element.endTextMarkerForTextMarkerRange(element.textMarkerRangeForElement(element));
+}
+
+function textBetween(startMarker, endMarker)
+{
+    return text.stringForTextMarkerRange(text.textMarkerRangeForMarkers(startMarker, endMarker));
+}
+
+function lineOf(marker)
+{
+    return textBetween(text.previousLineStartTextMarkerForTextMarker(marker), marker);
+}
+
+function wrappedLineOf(marker)
+{
+    var lineStart = wrappedText.previousLineStartTextMarkerForTextMarker(marker);
+    // The space at a wrap point is included by the isolated tree and not by the live tree.
+    return wrappedText.stringForTextMarkerRange(wrappedText.textMarkerRangeForMarkers(lineStart, marker)).trim();
+}
+
+if (window.accessibilityController) {
+    var content = accessibilityController.accessibleElementById("content");
+    var text = content.childAtIndex(0);
+    var bravo = content.childAtIndex(1);
+    var charlie = content.childAtIndex(2);
+
+    var alphaEnd = endMarkerOf(text);
+    var bravoEnd = endMarkerOf(bravo);
+    var charlieEnd = endMarkerOf(charlie);
+    var charlieStart = startMarkerOf(charlie);
+
+    output += expect("lineOf(alphaEnd)", "'Alpha'");
+    output += expect("lineOf(bravoEnd)", "'Bravo'");
+    output += expect("lineOf(charlieEnd)", "'Charlie'");
+    output += expect("textBetween(text.previousLineStartTextMarkerForTextMarker(charlieStart), bravoEnd)", "'Bravo'");
+
+    var wrappedText = accessibilityController.accessibleElementById("soft-wrapped").childAtIndex(0);
+    var wrappedLine1End = wrappedText.nextLineEndTextMarkerForTextMarker(startMarkerOf(wrappedText));
+    var wrappedLine2End = wrappedText.nextLineEndTextMarkerForTextMarker(wrappedLine1End);
+    var wrappedLine3End = wrappedText.nextLineEndTextMarkerForTextMarker(wrappedLine2End);
+
+    output += "\nLines broken by wrapping rather than by a br element:\n";
+    output += expect("wrappedLineOf(wrappedLine1End)", "'aaa'");
+    output += expect("wrappedLineOf(wrappedLine2End)", "'bbb'");
+    output += expect("wrappedLineOf(wrappedLine3End)", "'ccc'");
+
+    document.getElementById("content").style.display = "none";
+    document.getElementById("soft-wrapped").style.display = "none";
+
+    debug(output);
+}
+</script>
+</body>
+</html>

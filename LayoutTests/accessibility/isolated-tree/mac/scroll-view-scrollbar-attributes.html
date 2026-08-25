@@ -1,0 +1,44 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ IsAccessibilityIsolatedTreeEnabled=true ] -->
+<html>
+<head>
+<script src="../../../resources/accessibility-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+<style>
+#oversized { width: 200vw; height: 200vh; }
+</style>
+</head>
+<body>
+
+<div id="oversized"></div>
+
+<script>
+var output = "This test ensures the scroll view's AXHorizontalScrollBar and AXVerticalScrollBar each resolve to the correspondingly-oriented scrollbar, and that each is the same object the scroll view exposes as a child.\n\n";
+
+function scrollBarChildWithOrientation(scrollArea, orientation)
+{
+    for (var i = 0; i < scrollArea.childrenCount; i++) {
+        var child = scrollArea.childAtIndex(i);
+        if (child.role === "AXRole: AXScrollBar" && child.orientation === `AXOrientation: ${orientation}`)
+            return child;
+    }
+    return null;
+}
+
+if (window.accessibilityController) {
+    var scrollArea = accessibilityController.rootElement;
+
+    output += expect("scrollArea.horizontalScrollbar.role", "'AXRole: AXScrollBar'");
+    output += expect("scrollArea.horizontalScrollbar.orientation", "'AXOrientation: AXHorizontalOrientation'");
+    output += expect("scrollArea.verticalScrollbar.role", "'AXRole: AXScrollBar'");
+    output += expect("scrollArea.verticalScrollbar.orientation", "'AXOrientation: AXVerticalOrientation'");
+
+    var horizontalScrollbarChild = scrollBarChildWithOrientation(scrollArea, "AXHorizontalOrientation");
+    var verticalScrollbarChild = scrollBarChildWithOrientation(scrollArea, "AXVerticalOrientation");
+    output += expect("scrollArea.horizontalScrollbar.isEqual(horizontalScrollbarChild)", "true");
+    output += expect("scrollArea.verticalScrollbar.isEqual(verticalScrollbarChild)", "true");
+
+    debug(output);
+}
+</script>
+</body>
+</html>

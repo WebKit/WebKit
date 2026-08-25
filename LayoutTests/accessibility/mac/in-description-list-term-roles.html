@@ -1,0 +1,41 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="content">
+<dl>
+    <dt id="term-container"><span role="group"><span id="in-term-deep" role="group">Term</span></span></dt>
+</dl>
+<div id="aria-term-container" role="term"><span id="in-aria-term" role="group">ARIA term</span></div>
+<dfn id="dfn-container"><span id="in-dfn" role="group">Defined term</span></dfn>
+</div>
+
+<script>
+var output = "This test ensures AXIsInDescriptionListTerm reports whether an element is inside the term of a description list, meaning the dt of HTML's dl term-and-description grouping. Markup that names a term without being a description list term, a role='term' container or a dfn element, is not reported as one, even though macOS gives all three the AXTerm subrole.\n\n";
+
+if (window.accessibilityController) {
+    var termContainer = accessibilityController.accessibleElementById("term-container");
+    var ariaTermContainer = accessibilityController.accessibleElementById("aria-term-container");
+    var dfnContainer = accessibilityController.accessibleElementById("dfn-container");
+    var inTermDeep = accessibilityController.accessibleElementById("in-term-deep");
+    var inAriaTerm = accessibilityController.accessibleElementById("in-aria-term");
+    var inDfn = accessibilityController.accessibleElementById("in-dfn");
+
+    output += expect("termContainer.subrole", "'AXSubrole: AXTerm'");
+    output += expect("ariaTermContainer.subrole", "'AXSubrole: AXTerm'");
+    output += expect("dfnContainer.subrole", "'AXSubrole: AXTerm'");
+    output += expect("inTermDeep.isInDescriptionListTerm", "true");
+    output += expect("inTermDeep.isInDescriptionListTerm !== inAriaTerm.isInDescriptionListTerm", "true");
+    output += expect("inTermDeep.isInDescriptionListTerm !== inDfn.isInDescriptionListTerm", "true");
+
+    document.getElementById("content").style.display = "none";
+
+    debug(output);
+}
+</script>
+</body>
+</html>

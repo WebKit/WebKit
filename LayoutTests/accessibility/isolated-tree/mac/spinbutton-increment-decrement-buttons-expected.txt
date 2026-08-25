@@ -1,0 +1,12 @@
+This test ensures the AXDecrementButton and AXIncrementButton of the spinbutton behind input type='number' resolve to two distinct spin button parts, each carrying the arrow subrole for its direction.
+
+PASS: spinbutton.role === 'AXRole: AXIncrementor'
+PASS: spinButtonPart('AXDecrementButton').role === 'AXRole: AXIncrementorArrow'
+PASS: spinButtonPart('AXDecrementButton').subrole === 'AXSubrole: AXDecrementArrow'
+PASS: spinButtonPart('AXIncrementButton').subrole === 'AXSubrole: AXIncrementArrow'
+PASS: spinButtonPart('AXDecrementButton').subrole !== spinButtonPart('AXIncrementButton').subrole === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

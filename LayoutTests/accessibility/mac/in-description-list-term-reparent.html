@@ -1,0 +1,48 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="content">
+<dl><dt id="term-container"></dt></dl>
+<div id="plain-container" role="group"></div>
+<span id="target" role="group">Target</span>
+</div>
+
+<script>
+var output = "This test ensures AXIsInDescriptionListTerm is recomputed when an element is reparented, becoming set once the element is moved inside a dt and clearing again when it is moved back out.\n\n";
+
+function targetIsInTerm()
+{
+    return accessibilityController.accessibleElementById("target")?.isInDescriptionListTerm;
+}
+
+function moveTargetInto(containerId)
+{
+    document.getElementById(containerId).appendChild(document.getElementById("target"));
+}
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    output += expect("targetIsInTerm()", "false");
+
+    setTimeout(async function() {
+        moveTargetInto("term-container");
+        output += await expectAsync("targetIsInTerm()", "true");
+
+        moveTargetInto("plain-container");
+        output += await expectAsync("targetIsInTerm()", "false");
+
+        document.getElementById("content").style.display = "none";
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>

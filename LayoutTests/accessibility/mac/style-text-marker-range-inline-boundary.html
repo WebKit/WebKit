@@ -1,0 +1,47 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="content"><p id="paragraph">before<sub>sub</sub>after</p></div>
+
+<script>
+var output = "This test ensures AXStyleTextMarkerRangeForTextMarker bounds a style range at inline style boundaries inside a single paragraph, so subscripted text forms its own range separate from the text on either side of it.\n\n";
+
+function styleRangeAt(marker)
+{
+    return webArea.stringForTextMarkerRange(webArea.styleTextMarkerRangeForTextMarker(marker));
+}
+
+function characterAt(marker)
+{
+    return webArea.stringForTextMarkerRange(webArea.textMarkerRangeForMarkers(marker, webArea.nextTextMarker(marker)));
+}
+
+if (window.accessibilityController) {
+    var webArea = accessibilityController.rootElement.childAtIndex(0);
+    var paragraph = accessibilityController.accessibleElementById("paragraph");
+
+    var markers = [webArea.startTextMarkerForTextMarkerRange(webArea.textMarkerRangeForElement(paragraph))];
+    for (var i = 0; i < 13; i++)
+        markers.push(webArea.nextTextMarker(markers[i]));
+
+    var inBefore = markers[2];
+    var inSub = markers[7];
+    var inAfter = markers[11];
+
+    output += expect("characterAt(inSub)", "'u'");
+    output += expect("styleRangeAt(inSub)", "'sub'");
+    output += expect("styleRangeAt(inBefore)", "'before'");
+    output += expect("styleRangeAt(inAfter)", "'after'");
+
+    document.getElementById("content").style.display = "none";
+
+    debug(output);
+}
+</script>
+</body>
+</html>

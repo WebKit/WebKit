@@ -1,0 +1,51 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="text"><p id="paragraph">First sentence. Se<em>cond sen</em>tence here.</p></div>
+
+<script>
+var output = "This test ensures AXSentenceTextMarkerRangeForTextMarker returns the whole sentence when the marker sits inside an inline element that splits that sentence, and that the sentence is contained within the paragraph range at the same marker.\n\n";
+
+function sentenceAt(marker)
+{
+    return container.stringForTextMarkerRange(container.sentenceTextMarkerRangeForTextMarker(marker));
+}
+
+function paragraphAt(marker)
+{
+    return container.stringForTextMarkerRange(container.paragraphTextMarkerRangeForTextMarker(marker));
+}
+
+function characterAt(marker)
+{
+    return container.stringForTextMarkerRange(container.textMarkerRangeForMarkers(marker, container.nextTextMarker(marker)));
+}
+
+if (window.accessibilityController) {
+    var container = accessibilityController.rootElement.childAtIndex(0);
+    var paragraph = accessibilityController.accessibleElementById("paragraph");
+
+    var paragraphStart = container.startTextMarkerForTextMarkerRange(container.textMarkerRangeForElement(paragraph));
+
+    var markerInEm = paragraphStart;
+    for (var i = 0; i < 20; i++)
+        markerInEm = container.nextTextMarker(markerInEm);
+
+    output += expect("characterAt(markerInEm)", "'n'");
+    output += expect("sentenceAt(markerInEm)", "'Second sentence here.'");
+    output += expect("sentenceAt(paragraphStart) !== sentenceAt(markerInEm)", "true");
+    output += expect("paragraphAt(markerInEm)", "'First sentence. Second sentence here.'");
+    output += expect("paragraphAt(markerInEm).includes(sentenceAt(markerInEm))", "true");
+
+    document.getElementById("text").style.display = "none";
+
+    debug(output);
+}
+</script>
+</body>
+</html>

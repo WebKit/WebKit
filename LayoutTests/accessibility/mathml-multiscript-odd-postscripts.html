@@ -1,0 +1,31 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="content"><math><mmultiscripts id="mscript"><mi>A</mi><mn>1</mn><mi>2</mi><mn>3</mn></mmultiscripts></math></div>
+
+<script>
+var output = "This test ensures AXMathPostscripts pairs the scripts following the base two at a time, and that an odd trailing script yields a pair carrying a subscript with no superscript alongside it.\n\n";
+
+if (window.accessibilityController) {
+    var subscriptKey = accessibilityController.platformName === "ios" ? "AXMSubscriptObject" : "AXMathSubscript";
+    var superscriptKey = accessibilityController.platformName === "ios" ? "AXMSuperscriptObject" : "AXMathSuperscript";
+
+    var mscript = accessibilityController.accessibleElementById("mscript");
+    var postscripts = mscript.mathPostscriptsDescription;
+
+    output += expect("postscripts.trim().split('\\n').length", "3");
+    output += expect("mscript.mathPostscriptsDescription.split(subscriptKey).length - 1", "2");
+    output += expect("postscripts.split(superscriptKey).length - 1", "1");
+
+    document.getElementById("content").style.display = "none";
+
+    debug(output);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+This test ensures AXRelativeIndexForTextMarker returns the same receiver-local offset whether it is asked of the static text run a marker is anchored to or of the group containing that run, which reach the answer through different code paths.
+
+PASS: indexOnGroup(groupEnd) === 17
+PASS: indexOnGroup(groupEnd) - indexOnGroup(groupStart) === 17
+PASS: indexOnGroup(markerAtSix) === 6
+PASS: indexOnStaticText(markerAtSix) === 6
+PASS: indexOnGroup(markerAtSix) === indexOnStaticText(markerAtSix) === true
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
