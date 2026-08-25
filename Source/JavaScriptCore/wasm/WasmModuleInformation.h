@@ -179,9 +179,9 @@ struct ModuleInformation final : public ThreadSafeRefCounted<ModuleInformation> 
         return false;
     }
 
-    BranchHint getBranchHint(uint32_t functionOffset, uint32_t branchOffset) const
+    BranchHint getBranchHint(FunctionCodeIndex index, uint32_t branchOffset) const
     {
-        auto it = branchHints.find(functionOffset);
+        auto it = branchHints.find(static_cast<uint32_t>(toSpaceIndex(index)));
         return it == branchHints.end()
             ? BranchHint::Invalid
             : it->value.getBranchHint(branchOffset);

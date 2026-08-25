@@ -30,6 +30,7 @@
 #include "MathCommon.h"
 #include "PCToCodeOriginMap.h"
 #include "SimpleRegisterAllocator.h"
+#include "WasmBranchHints.h"
 #include "WasmCallingConvention.h"
 #include "WasmCompilationContext.h"
 #include "WasmFunctionParser.h"
@@ -1998,6 +1999,9 @@ public:
     [[nodiscard]] PartialResult addReturn(const ControlData& data, std::span<const TypedExpression> returnValues);
 
     [[nodiscard]] PartialResult addBranch(ControlData& target, Value condition, std::span<TypedExpression> results);
+
+    BranchHint currentBranchHint() const;
+    void emitHintedBrIf(ControlData& target, GPRReg condition, std::span<TypedExpression> results);
 
     [[nodiscard]] PartialResult addBranchNull(ControlData& data, ExpressionType reference, std::span<TypedExpression> returnValues, bool shouldNegate, ExpressionType& result);
 
