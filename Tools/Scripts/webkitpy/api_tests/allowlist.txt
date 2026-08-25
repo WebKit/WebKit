@@ -4219,7 +4219,8 @@ TestWebKitAPI._WKDownload.SystemPreviewUSDZBlobNaming
 [ ios ] TestWebKitAPI.FontManagerTests.ChangeFontWithPanel
 [ ios ] TestWebKitAPI.FontManagerTests.ChangeTypingAttributesWithInspectorBar
 [ ios ] TestWebKitAPI.FontManagerTests.ObservingFontPanelShouldNotCrashWhenUnparentingViewTwice
-[ ios ] TestWebKitAPI.FontManagerTests.SelectionSpanningBRDoesReportMultipleFonts
+[ ios ] TestWebKitAPI.FontManagerTests.SelectionContainingOnlyBRStillReportsAFont
+[ ios ] TestWebKitAPI.FontManagerTests.SelectionSpanningBRDoesNotReportMultipleFonts
 [ ios ] TestWebKitAPI.FontManagerTests.SelectionSpanningEmptyElementDoesNotReportMultipleFonts
 [ ios ] TestWebKitAPI.FontManagerTests.SelectionSpanningTwoFontsDoesReportMultipleFonts
 [ ios ] TestWebKitAPI.FontManagerTests.SetSelectedSystemFontAfterTogglingBold

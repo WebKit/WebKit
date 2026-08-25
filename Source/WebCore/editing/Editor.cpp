@@ -5111,12 +5111,23 @@ RefPtr<Font> Editor::fontForSelection(bool& hasMultipleFonts)
     ScriptDisallowedScope::InMainThread scriptDisallowedScope;
 
     RefPtr<Font> font;
+    RefPtr<Font> lineBreakFont;
     for (Ref node : intersectingNodes(*range)) {
         CheckedPtr renderer = node->renderer();
         if (!renderer)
             continue;
+
+        // A line break renders no text of its own, so its font must not make uniformly styled text report multiple fonts.
+        if (renderer->isBR()) {
+            if (!lineBreakFont) {
+                Ref primaryFont = renderer->style().fontCascade().primaryFont();
+                lineBreakFont = const_cast<Font*>(primaryFont.ptr());
+            }
+            continue;
+        }
+
         // The font of intermediate nodes that don't affect the rendering of text are not necessary to report, so limit to only such nodes.
-        if (!node->isTextNode() && !renderer->isBR() && !TextNodeTraversal::firstChild(node))
+        if (!node->isTextNode() && !TextNodeTraversal::firstChild(node))
             continue;
         Ref primaryFont = renderer->style().fontCascade().primaryFont();
         if (!font)
@@ -5127,7 +5138,7 @@ RefPtr<Font> Editor::fontForSelection(bool& hasMultipleFonts)
         }
     }
 
-    return font;
+    return font ? font : lineBreakFont;
 }
 
 bool Editor::canCopyExcludingStandaloneImages() const

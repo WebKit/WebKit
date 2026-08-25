@@ -623,7 +623,7 @@ TEST(FontManagerTests, SelectionSpanningTwoFontsDoesReportMultipleFonts)
     EXPECT_TRUE([fontManager isMultiple]);
 }
 
-TEST(FontManagerTests, SelectionSpanningBRDoesReportMultipleFonts)
+TEST(FontManagerTests, SelectionSpanningBRDoesNotReportMultipleFonts)
 {
     NSFontManager *fontManager = NSFontManager.sharedFontManager;
 
@@ -633,7 +633,20 @@ TEST(FontManagerTests, SelectionSpanningBRDoesReportMultipleFonts)
     [webView waitForNextPresentationUpdate];
 
     EXPECT_WK_STREQ([[fontManager selectedFont] fontName], "Helvetica");
-    EXPECT_TRUE([fontManager isMultiple]);
+    EXPECT_FALSE([fontManager isMultiple]);
+}
+
+TEST(FontManagerTests, SelectionContainingOnlyBRStillReportsAFont)
+{
+    RetainPtr fontManager = [NSFontManager sharedFontManager];
+
+    RetainPtr webView = webViewForFontManagerTesting(fontManager, @"<body contenteditable><div id=empty style='font-family: Helvetica'><br></div></body>");
+    [webView stringByEvaluatingJavaScript:@"getSelection().selectAllChildren(empty)"];
+    [webView waitForNextPresentationUpdate];
+    [webView waitForNextPresentationUpdate];
+
+    EXPECT_WK_STREQ([[fontManager selectedFont] fontName], "Helvetica");
+    EXPECT_FALSE([fontManager isMultiple]);
 }
 
 } // namespace TestWebKitAPI
