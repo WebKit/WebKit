@@ -97,6 +97,13 @@ ExceptionOr<void> FetchEvent::respondWith(Ref<DOMPromise>&& promise)
     if (m_respondWithEntered)
         return Exception { ExceptionCode::InvalidStateError, "Event respondWith flag is set"_s };
 
+    processRespondWithPromise(WTF::move(promise));
+    return { };
+}
+
+void FetchEvent::processRespondWithPromise(Ref<DOMPromise>&& promise)
+{
+    ASSERT(!m_respondWithEntered);
     m_respondPromise = promise.copyRef();
     addExtendLifetimePromise(promise.get());
 
@@ -112,8 +119,6 @@ ExceptionOr<void> FetchEvent::respondWith(Ref<DOMPromise>&& promise)
 
     if (isRegistered == DOMPromise::IsCallbackRegistered::No)
         respondWithError(createResponseError(m_request->url(), "FetchEvent unable to handle respondWith promise."_s, ResourceError::IsSanitized::Yes));
-
-    return { };
 }
 
 void FetchEvent::onResponse(ResponseCallback&& callback)

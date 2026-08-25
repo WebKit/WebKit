@@ -41,6 +41,7 @@
 #include "JSDOMFormData.h"
 #include "JSDOMPromise.h"
 #include "JSDOMPromiseDeferred.h"
+#include "Logging.h"
 #include "ResourceError.h"
 #include "ResourceResponse.h"
 #include "Settings.h"
@@ -167,12 +168,26 @@ void FetchBodyOwner::bytes(Ref<DeferredPromise>&& promise)
     m_body->bytes(*this, WTF::move(promise));
 }
 
-void FetchBodyOwner::cloneBody(JSDOMGlobalObject& globalObject, FetchBodyOwner& owner)
+std::optional<Exception> FetchBodyOwner::cloneBody(JSDOMGlobalObject& globalObject, FetchBodyOwner& owner)
 {
     m_loadingError = owner.m_loadingError;
     if (owner.isBodyNull())
-        return;
+        return { };
+
+    if (owner.m_body->isPendingStreamFormData()) {
+        // We cannot clone a PendingStream directly, we create a ReadableStream from it to ensure cloning works as expected.
+        auto streamOrException = owner.readableStream(globalObject);
+        if (streamOrException.hasException()) {
+            RELEASE_LOG_ERROR(ServiceWorker, "Unable to clone pending stream body");
+            return streamOrException.releaseException();
+        }
+        ASSERT(owner.m_body->readableStream());
+        if (owner.m_body->readableStream())
+            owner.m_body->setAsReadableStream();
+    }
+
     m_body = owner.m_body->clone(globalObject);
+    return { };
 }
 
 ExceptionOr<void> FetchBodyOwner::extractBody(FetchBody::Init&& value)
@@ -497,6 +512,16 @@ void FetchBodyOwner::setLoadingError(ResourceError&& error)
         return;
 
     m_loadingError = WTF::move(error);
+}
+
+bool FetchBodyOwner::hasClonedReadableStream() const
+{
+    if (isBodyNull())
+        return false;
+
+    RefPtr readableStreamSource = m_readableStreamSource;
+    RefPtr readableStream = body().readableStream();
+    return readableStreamSource && readableStream && readableStream->controller() != readableStreamSource->controller();
 }
 
 } // namespace WebCore

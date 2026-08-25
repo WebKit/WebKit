@@ -401,7 +401,9 @@ ExceptionOr<Ref<FetchRequest>> FetchRequest::clone(JSDOMGlobalObject& globalObje
     auto clone = adoptRef(*new FetchRequest(*context, std::nullopt, FetchHeaders::create(m_headers.get()), ResourceRequest { m_request }, FetchOptions { m_options }, String { m_referrer }));
     clone->suspendIfNeeded();
     clone->m_duplex = m_duplex;
-    clone->cloneBody(globalObject, *this);
+    if (auto exception = clone->cloneBody(globalObject, *this))
+        return { WTF::move(*exception) };
+
     clone->setNavigationPreloadIdentifier(m_navigationPreloadIdentifier);
     clone->m_enableContentExtensionsCheck = m_enableContentExtensionsCheck;
     if (auto* document = dynamicDowncast<Document>(*context); document && document->settings().localNetworkAccessEnabled())

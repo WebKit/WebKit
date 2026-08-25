@@ -104,6 +104,11 @@ public:
         ASSERT(!m_readableStream);
         m_readableStream = WTF::move(stream);
     }
+    void setAsReadableStream()
+    {
+        ASSERT(m_readableStream);
+        m_data = Ref { *m_readableStream };
+    }
 
     void convertReadableStreamToArrayBuffer(FetchBodyOwner&, CompletionHandler<void(std::optional<Exception>&&)>&&);
 
@@ -113,6 +118,7 @@ public:
 
     bool isBlob() const { return std::holds_alternative<Ref<Blob>>(m_data); }
     bool isFormData() const { return std::holds_alternative<Ref<FormData>>(m_data); }
+    bool isPendingStreamFormData() const { return std::holds_alternative<Ref<FormData>>(m_data) && formDataBody().pendingStreamState(); }
     bool isReadableStream() const { return std::holds_alternative<Ref<ReadableStream>>(m_data); }
 
 private:

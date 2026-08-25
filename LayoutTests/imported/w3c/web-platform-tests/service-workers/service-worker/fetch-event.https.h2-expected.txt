@@ -3,6 +3,7 @@ PASS global setup
 PASS The streaming request body is readable in the service worker.
 PASS Network fallback for streaming upload.
 PASS When the streaming request body is used, network fallback fails.
-PASS Running clone() in the service worker does not prevent network fallback.
+PASS Running clone() in the service worker does not prevent network fallback, and the service worker can read the request body via the clone.
+PASS Cloning the request after leaving the fetch event unhandled throws because the request body was canceled.
 PASS restore global state
 

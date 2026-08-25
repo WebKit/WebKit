@@ -96,6 +96,8 @@ public:
     bool shouldEnableContentExtensionsCheck() const { return m_enableContentExtensionsCheck; }
     void disableContentExtensionsCheck() { m_enableContentExtensionsCheck = false; }
 
+    void markAsUnhandled() { setDisturbed(); }
+
 private:
     FetchRequest(ScriptExecutionContext&, std::optional<FetchBody>&&, Ref<FetchHeaders>&&, ResourceRequest&&, FetchOptions&&, String&& referrer);
 

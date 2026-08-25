@@ -115,6 +115,7 @@ public:
 
     bool hasByteStreamController() { return !!m_controller; }
     ReadableByteStreamController* controller() { return m_controller.get(); }
+    const ReadableByteStreamController* controller() const { return m_controller.get(); }
 
     void setByobReader(ReadableStreamBYOBReader*);
     ReadableStreamBYOBReader* NODELETE byobReader();

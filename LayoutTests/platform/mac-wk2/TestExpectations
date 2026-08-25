@@ -2431,8 +2431,6 @@ webkit.org/b/321103 [ Debug ] imported/w3c/web-platform-tests/uievents/textInput
 
 webkit.org/b/321185 [ Debug ] imported/w3c/web-platform-tests/wasm/core/float_exprs.wast.js.html [ Pass Timeout ]
 
-webkit.org/b/321191 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-event.https.h2.html [ Pass Crash Failure ]
-
 webkit.org/b/321312 imported/w3c/web-platform-tests/webrtc/RTCRtpReceiver-getSynchronizationSources.https.html [ Pass Failure ]
 
 # webkit.org/b/321298 [ Release ] REGRESSION(316423@main): [macOS Release] imported/w3c/web-platform-tests/wasm/serialization/memory/window-success.tentative.https.html is a flaky crash

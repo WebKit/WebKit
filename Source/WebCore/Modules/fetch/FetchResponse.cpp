@@ -218,7 +218,9 @@ ExceptionOr<Ref<FetchResponse>> FetchResponse::clone(JSDOMGlobalObject& globalOb
 
     Ref headers = FetchHeaders::create(this->headers());
     auto clone = FetchResponse::create(context.get(), std::nullopt, WTF::move(headers), ResourceResponse { m_internalResponse });
-    clone->cloneBody(globalObject, *this);
+    if (auto exception = clone->cloneBody(globalObject, *this))
+        return { WTF::move(*exception) };
+
     clone->m_opaqueLoadIdentifier = m_opaqueLoadIdentifier;
     clone->m_bodySizeWithPadding = m_bodySizeWithPadding;
     clone->m_resourceLoaderIdentifier = m_resourceLoaderIdentifier;

@@ -60,6 +60,8 @@ public:
     void detach();
 
     void setByteController(ReadableByteStreamController&);
+    const ReadableByteStreamController* controller() const { return m_byteController.get(); }
+
     Ref<DOMPromise> pull(JSDOMGlobalObject&, ReadableByteStreamController&);
     Ref<DOMPromise> cancel(JSDOMGlobalObject&, ReadableByteStreamController&, std::optional<JSC::JSValue>&&);
 

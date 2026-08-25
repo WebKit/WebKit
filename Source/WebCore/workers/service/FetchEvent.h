@@ -72,6 +72,7 @@ public:
     const String& resultingClientId() const LIFETIME_BOUND { return m_resultingClientId; }
     DOMPromise& handled() const { return m_handled.get(); }
 
+    void processRespondWithPromise(Ref<DOMPromise>&&);
     bool respondWithEntered() const { return m_respondWithEntered; }
 
     static ResourceError createResponseError(const URL&, const String&, ResourceError::IsSanitized = ResourceError::IsSanitized::No);

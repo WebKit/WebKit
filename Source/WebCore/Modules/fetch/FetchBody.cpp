@@ -406,6 +406,8 @@ FetchBodyConsumer& FetchBody::consumer()
 
 FetchBody FetchBody::clone(JSDOMGlobalObject& globalObject)
 {
+    ASSERT(!isFormData() || !protect(formDataBody())->isPendingStream());
+
     FetchBody clone(protect(consumer())->clone());
 
     if (isArrayBuffer())

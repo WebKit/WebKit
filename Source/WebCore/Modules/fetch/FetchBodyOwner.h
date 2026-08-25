@@ -70,6 +70,7 @@ public:
     ExceptionOr<RefPtr<ReadableStream>> readableStream(JSC::JSGlobalObject&);
     bool hasReadableStreamBody() const { return m_body && m_body->hasReadableStream(); }
     bool isReadableStreamBody() const { return m_body && m_body->isReadableStream(); }
+    bool hasClonedReadableStream() const;
 
     virtual void consumeBodyAsStream();
     virtual void feedStream() { }
@@ -90,7 +91,7 @@ protected:
     const FetchBody& body() const LIFETIME_BOUND { return *m_body; }
     bool isBodyNull() const { return !m_body; }
     bool isBodyNullOrOpaque() const { return !m_body || m_isBodyOpaque; }
-    void cloneBody(JSDOMGlobalObject&, FetchBodyOwner&);
+    std::optional<Exception> cloneBody(JSDOMGlobalObject&, FetchBodyOwner&);
 
     ExceptionOr<void> extractBody(FetchBody::Init&&);
     void consumeOnceLoadingFinished(FetchBodyConsumer::Type, Ref<DeferredPromise>&&);
