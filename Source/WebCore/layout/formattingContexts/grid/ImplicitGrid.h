@@ -36,10 +36,17 @@ namespace Layout {
 
 enum class GridLayoutAlgorithm : uint8_t;
 struct GridAutoFlowOptions;
+struct LeadingImplicitTracks;
+struct UnplacedGridItems;
 
 // https://drafts.csswg.org/css-grid-1/#implicit-grids
 class ImplicitGrid {
 public:
+    // Builds the implicit grid that the grid item placement algorithm starts from: the explicit grid,
+    // grown to cover every definite item placement that falls outside of it and wide enough for the
+    // largest column span among the items without a definite column position.
+    static ImplicitGrid createInitialGrid(const UnplacedGridItems&, LeadingImplicitTracks, size_t explicitColumnsCount, size_t explicitRowsCount);
+
     ImplicitGrid(size_t totalColumnsCount, size_t totalRowsCount);
 
     size_t rowsCount() const { return m_gridMatrix.size(); }

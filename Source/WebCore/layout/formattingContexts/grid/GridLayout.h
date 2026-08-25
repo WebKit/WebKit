@@ -40,16 +40,9 @@ struct ZoomFactor;
 
 namespace Layout {
 
-class ImplicitGrid;
-
 struct GridAreaSizes;
 struct GridLayoutState;
 struct UsedMargins;
-
-struct GridDimensions {
-    size_t totalColumns { 0 };
-    size_t totalRows { 0 };
-};
 
 enum class GridLayoutScope : bool {
     Full, // Run the whole grid sizing algorithm, lay out the grid items, and align them.
@@ -60,15 +53,9 @@ class GridLayout {
 public:
     GridLayout(const GridFormattingContext&);
 
-    GridLayoutResult layout(UnplacedGridItems&, LeadingImplicitTracks, const GridLayoutState&, GridLayoutScope = GridLayoutScope::Full);
+    GridLayoutResult layout(const UnplacedGridItems&, LeadingImplicitTracks, const GridLayoutState&, GridLayoutScope = GridLayoutScope::Full);
 
 private:
-
-    auto placeGridItems(UnplacedGridItems&, LeadingImplicitTracks, const Vector<Style::GridTrackSize>& gridTemplateColumnsTrackSizes,
-        const Vector<Style::GridTrackSize>& gridTemplateRowsTrackSizes, GridAutoFlowOptions);
-
-    static GridDimensions calculateInitialImplicitGridDimensions(const UnplacedGridItems&, LeadingImplicitTracks, size_t explicitColumnsCount, size_t explicitRowsCount);
-    ImplicitGrid constructInitialImplicitGrid(const UnplacedGridItems&, LeadingImplicitTracks, size_t explicitColumnsCount, size_t explicitRowsCount);
 
     static TrackSizingFunctions convertGridTrackSizeToTrackSizingFunctions(const Style::GridTrackSize&, const Style::ZoomFactor&);
     static TrackSizingFunctionsList generateImplicitTrackSizingFunctions(size_t implicitTracksCount, const Style::GridTrackSizes& gridAutoTrackSizes, const Style::ZoomFactor&);

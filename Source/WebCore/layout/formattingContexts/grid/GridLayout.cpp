@@ -27,6 +27,7 @@
 #include "GridLayout.h"
 
 #include "GridAreaLines.h"
+#include "GridItemPlacer.h"
 #include "GridItemRect.h"
 #include "GridLayoutState.h"
 #include "GridLayoutUtils.h"
@@ -59,91 +60,6 @@ struct GridAreaSizes {
 GridLayout::GridLayout(const GridFormattingContext& gridFormattingContext)
     : m_gridFormattingContext(gridFormattingContext)
 {
-}
-
-// FIXME: Try moving this to GridFormattingContext to simplify the layout code. The initial implicit
-// grid dimensions depend only on the resolved definite item placements (from constructUnplacedGridItems),
-// the explicit track counts (from style), and the leading implicit track counts, which are all
-// available before layout, so it may be possible to compute them there instead of on GridLayout.
-GridDimensions GridLayout::calculateInitialImplicitGridDimensions(const UnplacedGridItems& unplacedGridItems, LeadingImplicitTracks leadingImplicitTracks, size_t explicitColumnsCount, size_t explicitRowsCount)
-{
-    // The explicit grid is preceded by any leading implicit tracks generated for items placed with
-    // a negative line that resolves before the grid start. Every item's line has already been
-    // shifted forward by this amount, so include the leading tracks in the initial bounds.
-    size_t maximumColumnIndex = explicitColumnsCount + leadingImplicitTracks.columnsCount;
-    size_t maximumRowIndex = explicitRowsCount + leadingImplicitTracks.rowsCount;
-
-    auto updateGridBounds = [&](const UnplacedGridItem& item) {
-        if (item.hasDefiniteRowPosition()) {
-            auto [rowStart, rowEnd] = item.definiteRowStartEnd();
-            maximumRowIndex = std::max({ maximumRowIndex, rowStart, rowEnd });
-        }
-
-        if (item.hasDefiniteColumnPosition()) {
-            auto [columnStart, columnEnd] = item.definiteColumnStartEnd();
-            maximumColumnIndex = std::max({ maximumColumnIndex, columnStart, columnEnd });
-        }
-    };
-
-    for (const auto& item : unplacedGridItems.nonAutoPositionedItems)
-        updateGridBounds(item);
-    for (const auto& item : unplacedGridItems.definiteRowPositionedItems)
-        updateGridBounds(item);
-
-    // The implicit grid always starts with at least one row. Grid coverage guarantees at least one
-    // in-flow grid item, and every item occupies at least one row, so placement would end up
-    // creating this row regardless. Starting with it means the grid matrix is never empty, which
-    // lets the column count always be read from the matrix itself.
-    maximumRowIndex = std::max<size_t>(maximumRowIndex, 1);
-
-    return {
-        maximumColumnIndex,
-        maximumRowIndex
-    };
-}
-
-ImplicitGrid GridLayout::constructInitialImplicitGrid(const UnplacedGridItems& unplacedGridItems, LeadingImplicitTracks leadingImplicitTracks, size_t explicitColumnsCount, size_t explicitRowsCount)
-{
-    auto initialDimensions = calculateInitialImplicitGridDimensions(
-        unplacedGridItems, leadingImplicitTracks, explicitColumnsCount, explicitRowsCount);
-
-    ImplicitGrid implicitGrid(initialDimensions.totalColumns, initialDimensions.totalRows);
-    // 3. Determine the columns in the implicit grid.
-    // Spec: "If the largest column span among all the items without a definite column position
-    // is larger than the width of the implicit grid, add columns to the end of the implicit grid
-    // to accommodate that column span."
-    implicitGrid.determineImplicitGridColumns(unplacedGridItems.autoPositionedItems);
-
-    return implicitGrid;
-}
-
-// 8.5. Grid Item Placement Algorithm.
-// https://drafts.csswg.org/css-grid-1/#auto-placement-algo
-auto GridLayout::placeGridItems(UnplacedGridItems& unplacedGridItems, LeadingImplicitTracks leadingImplicitTracks, const Vector<Style::GridTrackSize>& gridTemplateColumnsTrackSizes,
-    const Vector<Style::GridTrackSize>& gridTemplateRowsTrackSizes, GridAutoFlowOptions autoFlowOptions)
-{
-    struct Result {
-        GridAreas gridAreas;
-        size_t columnsCount;
-        size_t rowsCount;
-    };
-
-    auto implicitGrid = constructInitialImplicitGrid(unplacedGridItems, leadingImplicitTracks, gridTemplateColumnsTrackSizes.size(), gridTemplateRowsTrackSizes.size());
-
-    // 1. Position anything that's not auto-positioned.
-    for (auto& nonAutoPositionedItem : unplacedGridItems.nonAutoPositionedItems)
-        implicitGrid.insertUnplacedGridItem(nonAutoPositionedItem);
-
-    // 2. Process the items locked to a given row.
-    for (auto& definiteRowPositionedItem : unplacedGridItems.definiteRowPositionedItems)
-        implicitGrid.insertDefiniteRowItem(definiteRowPositionedItem, autoFlowOptions);
-
-    if (!unplacedGridItems.autoPositionedItems.isEmpty()) {
-        // 4. Process auto-positioned items
-        implicitGrid.insertAutoPositionedItems(unplacedGridItems.autoPositionedItems, autoFlowOptions);
-    }
-
-    return Result { implicitGrid.gridAreas(), implicitGrid.columnsCount(), implicitGrid.rowsCount() };
 }
 
 auto computeGridItemRects = [](const PlacedGridItems& placedGridItems, const BorderBoxPositions& inlineAxisPositions,
@@ -190,7 +106,7 @@ static GridAreaSizes computeGridAreaSizes(const PlacedGridItems& gridItems, cons
 }
 
 // https://drafts.csswg.org/css-grid-1/#layout-algorithm
-GridLayoutResult GridLayout::layout(UnplacedGridItems& unplacedGridItems, LeadingImplicitTracks leadingImplicitTracks, const GridLayoutState& gridLayoutState, GridLayoutScope scope)
+GridLayoutResult GridLayout::layout(const UnplacedGridItems& unplacedGridItems, LeadingImplicitTracks leadingImplicitTracks, const GridLayoutState& gridLayoutState, GridLayoutScope scope)
 {
     auto& gridDefinition = gridLayoutState.gridDefinition;
     auto& gridTemplateColumnsTrackSizes = gridDefinition.gridTemplateColumns.sizes;
@@ -198,7 +114,8 @@ GridLayoutResult GridLayout::layout(UnplacedGridItems& unplacedGridItems, Leadin
 
     auto& formattingContext = this->formattingContext();
     // 1. Run the Grid Item Placement Algorithm to resolve the placement of all grid items in the grid.
-    auto [ gridAreas, columnsCount, rowsCount ] = placeGridItems(unplacedGridItems, leadingImplicitTracks, gridTemplateColumnsTrackSizes, gridTemplateRowsTrackSizes, gridDefinition.autoFlowOptions);
+    auto implicitGrid = ImplicitGrid::createInitialGrid(unplacedGridItems, leadingImplicitTracks, gridTemplateColumnsTrackSizes.size(), gridTemplateRowsTrackSizes.size());
+    auto [ gridAreas, columnsCount, rowsCount ] = GridItemPlacer { gridDefinition.autoFlowOptions }.placeItems(unplacedGridItems, implicitGrid);
     auto placedGridItems = formattingContext.constructPlacedGridItems(gridAreas);
 
     auto columnTrackSizingFunctionsList = trackSizingFunctions(columnsCount, leadingImplicitTracks.columnsCount, gridTemplateColumnsTrackSizes, gridDefinition.gridAutoColumns, gridDefinition.zoom);

@@ -2075,6 +2075,7 @@ layout/formattingContexts/block/tablewrapper/TableWrapperBlockFormattingQuirks.c
 layout/formattingContexts/flex/FlexFormattingContext.cpp @header:RenderStyleGetters @cost:4
 layout/formattingContexts/flex/FlexFormattingUtils.cpp @header:RenderStyleGetters @cost:4
 layout/formattingContexts/grid/GridFormattingContext.cpp @header:RenderStyleGetters
+layout/formattingContexts/grid/GridItemPlacer.cpp @header:RenderStyleGetters
 layout/formattingContexts/grid/GridItemSizingFunctions.cpp
 layout/formattingContexts/grid/GridLayout.cpp @header:RenderStyleGetters
 layout/formattingContexts/grid/GridLayoutUtils.cpp @header:RenderStyleGetters

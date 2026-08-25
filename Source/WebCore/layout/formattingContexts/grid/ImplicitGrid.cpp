@@ -27,7 +27,7 @@
 #include "ImplicitGrid.h"
 
 #include "GridAreaLines.h"
-#include "GridLayout.h"
+#include "GridFormattingContext.h"
 #include "PlacedGridItem.h"
 #include "StyleComputedStyle+GettersInlines.h"
 #include "UnplacedGridItem.h"
@@ -45,6 +45,60 @@ namespace Layout {
 ImplicitGrid::ImplicitGrid(size_t totalColumnsCount, size_t totalRowsCount)
     : m_gridMatrix(Vector<Vector<GridCell>>(FillWith { }, totalRowsCount, Vector<GridCell>(totalColumnsCount)))
 {
+}
+
+struct GridDimensions {
+    size_t totalColumnsCount { 0 };
+    size_t totalRowsCount { 0 };
+};
+
+static GridDimensions calculateInitialImplicitGridDimensions(const UnplacedGridItems& unplacedGridItems, LeadingImplicitTracks leadingImplicitTracks, size_t explicitColumnsCount, size_t explicitRowsCount)
+{
+    // The explicit grid is preceded by any leading implicit tracks generated for items placed with
+    // a negative line that resolves before the grid start. Every item's line has already been
+    // shifted forward by this amount, so include the leading tracks in the initial bounds.
+    size_t maximumColumnIndex = explicitColumnsCount + leadingImplicitTracks.columnsCount;
+    size_t maximumRowIndex = explicitRowsCount + leadingImplicitTracks.rowsCount;
+
+    auto updateGridBounds = [&](const UnplacedGridItem& item) {
+        if (item.hasDefiniteRowPosition()) {
+            auto [rowStart, rowEnd] = item.definiteRowStartEnd();
+            maximumRowIndex = std::max({ maximumRowIndex, rowStart, rowEnd });
+        }
+
+        if (item.hasDefiniteColumnPosition()) {
+            auto [columnStart, columnEnd] = item.definiteColumnStartEnd();
+            maximumColumnIndex = std::max({ maximumColumnIndex, columnStart, columnEnd });
+        }
+    };
+
+    for (const auto& item : unplacedGridItems.nonAutoPositionedItems)
+        updateGridBounds(item);
+    for (const auto& item : unplacedGridItems.definiteRowPositionedItems)
+        updateGridBounds(item);
+
+    // The implicit grid always starts with at least one row. Grid coverage guarantees at least one
+    // in-flow grid item, and every item occupies at least one row, so placement would end up
+    // creating this row regardless. Starting with it means the grid matrix is never empty, which
+    // lets the column count always be read from the matrix itself.
+    maximumRowIndex = std::max<size_t>(maximumRowIndex, 1);
+
+    return {
+        maximumColumnIndex,
+        maximumRowIndex
+    };
+}
+
+ImplicitGrid ImplicitGrid::createInitialGrid(const UnplacedGridItems& unplacedGridItems, LeadingImplicitTracks leadingImplicitTracks, size_t explicitColumnsCount, size_t explicitRowsCount)
+{
+    auto initialDimensions = calculateInitialImplicitGridDimensions(
+        unplacedGridItems, leadingImplicitTracks, explicitColumnsCount, explicitRowsCount);
+
+    ImplicitGrid implicitGrid(initialDimensions.totalColumnsCount, initialDimensions.totalRowsCount);
+    // 3. Determine the columns in the implicit grid.
+    implicitGrid.determineImplicitGridColumns(unplacedGridItems.autoPositionedItems);
+
+    return implicitGrid;
 }
 
 void ImplicitGrid::insertUnplacedGridItem(const UnplacedGridItem& unplacedGridItem)

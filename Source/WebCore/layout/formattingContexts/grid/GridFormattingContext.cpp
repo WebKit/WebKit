@@ -355,16 +355,13 @@ GridFormattingContext::IntrinsicWidths GridFormattingContext::computeIntrinsicWi
         };
         GridLayoutState layoutState { layoutConstraints, gridDefinition, usedJustifyContent, usedAlignContent, usedColumnGap, usedRowGap };
 
-        // Clone items per scenario since the placement and sizing algorithm consumes them.
-        auto unplacedGridItemsForScenario = unplacedGridItems;
-
         // When no grid item's inline contribution depends on its own block size, the column sizes are
         // final after step 1 of the grid sizing algorithm, so ask GridLayout for that step alone.
         auto scope = m_intrinsicWidthSizingPath == IntrinsicWidthSizingPath::ColumnsOnly
             ? GridLayoutScope::ColumnSizingOnly
             : GridLayoutScope::Full;
 
-        return GridLayout { *this }.layout(unplacedGridItemsForScenario, leadingImplicitTracks, layoutState, scope).usedTrackSizes.columnSizes;
+        return GridLayout { *this }.layout(unplacedGridItems, leadingImplicitTracks, layoutState, scope).usedTrackSizes.columnSizes;
     };
 
     TrackSizes minContentColumnSizes = columnSizesForConstraint(AxisConstraint::minContent());
