@@ -60,7 +60,8 @@ private:
     bool invalidatingImagesWithAsyncDecodes() const final { return m_paintInvalidationReasons == PaintInvalidationReasons::InvalidatingImagesWithAsyncDecodes; }
     bool detectingContentfulPaint() const final { return m_paintInvalidationReasons == PaintInvalidationReasons::DetectingContentfulPaint; }
 
-    void didUpdateState(GraphicsContextState&) final { }
+    // Move this to save() override once didUpdateState is removed.
+    void didUpdateState(GraphicsContextState& state) final { state.didApplyChanges(); }
 
     void drawNativeImage(const NativeImage&, const FloatRect&, const FloatRect&, ImagePaintingOptions) final { }
 

@@ -239,6 +239,7 @@ if (ENABLE_WEBCORE)
         Tests/WebCore/FloatSegmentTest.cpp
         Tests/WebCore/FloatSizeTests.cpp
         Tests/WebCore/FlowModeTests.cpp
+        Tests/WebCore/GraphicsContextStateStackTests.cpp
         Tests/WebCore/GridPosition.cpp
         Tests/WebCore/HTMLParserIdioms.cpp
         Tests/WebCore/HTTPParsers.cpp

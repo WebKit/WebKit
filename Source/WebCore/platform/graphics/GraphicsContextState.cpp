@@ -39,8 +39,13 @@ GraphicsContextState::GraphicsContextState(const ChangeFlags& changeFlags, Inter
 
 void GraphicsContextState::repurpose(Purpose purpose)
 {
-    if (purpose == Purpose::Initial)
+    m_purpose = purpose;
+
+    if (purpose == Purpose::Initial) {
         m_changeFlags = { };
+        m_changesSinceSave = ChangeFlags::all();
+        return;
+    }
 
 #if USE(CG)
     // CGContextBeginTransparencyLayer() sets the CG global alpha to 1. Keep the clone's alpha in sync.
@@ -49,10 +54,16 @@ void GraphicsContextState::repurpose(Purpose purpose)
         m_style = std::nullopt;
         m_dropShadow = std::nullopt;
         m_compositeMode = { CompositeOperator::SourceOver, BlendMode::Normal };
+        // The platform context is the one that resets these, so they are not changes to apply to it.
+        m_changeFlags = { };
+
+        // The local state stack still has to restore these on restore().
+        m_changesSinceSave.add({ Change::Alpha, Change::Style, Change::DropShadow, Change::CompositeMode });
+        return;
     }
 #endif
-
-    m_purpose = purpose;
+    m_changeFlags = { };
+    m_changesSinceSave = { };
 }
 
 GraphicsContextState GraphicsContextState::clone(Purpose purpose) const
@@ -92,7 +103,7 @@ void GraphicsContextState::mergeLastChanges(const GraphicsContextState& state)
         if (!changes.contains(change) || this->*property == state.*property)
             return;
         this->*property = state.*property;
-        m_changeFlags.add(change);
+        addChange(change);
     });
 }
 
@@ -102,7 +113,7 @@ void GraphicsContextState::mergeAllChanges(const GraphicsContextState& state)
         if (this->*property == state.*property)
             return;
         this->*property = state.*property;
-        m_changeFlags.add(change);
+        addChange(change);
     });
 }
 
@@ -125,6 +136,137 @@ void GraphicsContextState::copyLastChangesFrom(const GraphicsContextState& state
         if (changes.contains(change))
             this->*property = state.*property;
     });
+}
+
+GraphicsContextStateStack::SmallProperties GraphicsContextStateStack::smallProperties(const GraphicsContextState& state)
+{
+    return {
+        std::to_underlying(state.imageInterpolationQuality()),
+        state.textDrawingMode().toRaw(),
+        state.shouldAntialias(),
+        state.shouldSmoothFonts(),
+        state.shouldSubpixelQuantizeFonts(),
+        state.shadowsIgnoreTransforms(),
+        state.drawLuminanceMask()
+    };
+}
+
+void GraphicsContextStateStack::applySmallProperties(GraphicsContextState& state, SmallProperties values)
+{
+    state.m_imageInterpolationQuality = static_cast<InterpolationQuality>(values.imageInterpolationQuality);
+    state.m_textDrawingMode = TextDrawingModeFlags::fromRaw(values.textDrawingMode);
+    state.m_shouldAntialias = values.shouldAntialias;
+    state.m_shouldSmoothFonts = values.shouldSmoothFonts;
+    state.m_shouldSubpixelQuantizeFonts = values.shouldSubpixelQuantizeFonts;
+    state.m_shadowsIgnoreTransforms = values.shadowsIgnoreTransforms;
+    state.m_drawLuminanceMask = values.drawLuminanceMask;
+}
+
+void GraphicsContextStateStack::save(GraphicsContextState& current, Purpose purpose)
+{
+    // We do not record unset changes, so platform context is synchronized before.
+    ASSERT(!current.changes());
+    // Going from Initial to first save(), we record all properties,
+    // because we do not know which properties the level 1 modifies.
+    ASSERT(current.purpose() != Purpose::Initial || current.changesSinceSave() == ChangeFlags::all());
+
+    auto changes = current.changesSinceSave();
+
+    if (changes.contains(Change::FillBrush))
+        m_fillBrush.append(current.fillBrush());
+    if (changes.contains(Change::StrokeBrush))
+        m_strokeBrush.append(current.strokeBrush());
+    if (changes.contains(Change::StrokeThickness))
+        m_strokeThickness.append(current.strokeThickness());
+    if (changes.contains(Change::FillRule))
+        m_fillRule.append(current.fillRule());
+    if (changes.contains(Change::StrokeStyle))
+        m_strokeStyle.append(current.strokeStyle());
+    if (changes.contains(Change::CompositeMode))
+        m_compositeMode.append(current.compositeMode());
+    if (changes.contains(Change::DropShadow))
+        m_dropShadow.append(current.dropShadow());
+    if (changes.contains(Change::Style))
+        m_style.append(current.style());
+    if (changes.contains(Change::Alpha))
+        m_alpha.append(current.alpha());
+    if (changes.containsAny(smallChanges))
+        m_smallProperties.append(smallProperties(current));
+
+    m_levels.append({ changes, current.purpose() });
+
+    current.m_changesSinceSave = { };
+    // repurpose() adds the properties it resets to the new level's changes since save, so that
+    // restore() puts them back.
+    current.repurpose(purpose);
+}
+
+template<typename T, typename VectorT>
+static void restoreValue(GraphicsContextState::ChangeFlags changesSinceSave, GraphicsContextState::ChangeFlags pushedValues, GraphicsContextState::Change change, VectorT& values, T& current)
+{
+    if (changesSinceSave.contains(change)) {
+        current = pushedValues.contains(change) ? values.takeLast() : values.last();
+        return;
+    }
+    if (pushedValues.contains(change))
+        values.removeLast();
+}
+
+void GraphicsContextStateStack::restore(GraphicsContextState& current)
+{
+    ASSERT(!m_levels.isEmpty());
+    ASSERT(!current.changes());
+
+    auto level = m_levels.takeLast();
+    auto changesSinceSave = current.changesSinceSave();
+
+    restoreValue(changesSinceSave, level.pushedValues, Change::FillBrush, m_fillBrush, current.m_fillBrush);
+    restoreValue(changesSinceSave, level.pushedValues, Change::StrokeBrush, m_strokeBrush, current.m_strokeBrush);
+    restoreValue(changesSinceSave, level.pushedValues, Change::StrokeThickness, m_strokeThickness, current.m_strokeThickness);
+    restoreValue(changesSinceSave, level.pushedValues, Change::FillRule, m_fillRule, current.m_fillRule);
+    restoreValue(changesSinceSave, level.pushedValues, Change::StrokeStyle, m_strokeStyle, current.m_strokeStyle);
+    restoreValue(changesSinceSave, level.pushedValues, Change::CompositeMode, m_compositeMode, current.m_compositeMode);
+    restoreValue(changesSinceSave, level.pushedValues, Change::DropShadow, m_dropShadow, current.m_dropShadow);
+    restoreValue(changesSinceSave, level.pushedValues, Change::Style, m_style, current.m_style);
+    restoreValue(changesSinceSave, level.pushedValues, Change::Alpha, m_alpha, current.m_alpha);
+    if (changesSinceSave.containsAny(smallChanges)) {
+        bool pushed = level.pushedValues.containsAny(smallChanges);
+        applySmallProperties(current, pushed ? m_smallProperties.takeLast() : m_smallProperties.last());
+    } else if (level.pushedValues.containsAny(smallChanges))
+        m_smallProperties.removeLast();
+
+    // The properties the level below had changed are the ones it pushed, and it will push them again
+    // if it saves again.
+    current.m_changesSinceSave = level.pushedValues;
+    current.m_purpose = level.purpose;
+
+    if (m_levels.isEmpty()) {
+        // The outermost level pushed every property and popped them all, so nothing is left. Make
+        // sure we deallocate the state stack buffers. Canvas elements will immediately save() again,
+        // but that goes into inline capacity.
+        ASSERT(m_fillBrush.isEmpty());
+        ASSERT(m_strokeBrush.isEmpty());
+        ASSERT(m_strokeThickness.isEmpty());
+        ASSERT(m_fillRule.isEmpty());
+        ASSERT(m_strokeStyle.isEmpty());
+        ASSERT(m_compositeMode.isEmpty());
+        ASSERT(m_dropShadow.isEmpty());
+        ASSERT(m_style.isEmpty());
+        ASSERT(m_alpha.isEmpty());
+        ASSERT(m_smallProperties.isEmpty());
+
+        m_levels.clear();
+        m_fillBrush.clear();
+        m_strokeBrush.clear();
+        m_strokeThickness.clear();
+        m_fillRule.clear();
+        m_strokeStyle.clear();
+        m_compositeMode.clear();
+        m_dropShadow.clear();
+        m_style.clear();
+        m_alpha.clear();
+        m_smallProperties.clear();
+    }
 }
 
 static ASCIILiteral stateChangeName(GraphicsContextState::Change change)

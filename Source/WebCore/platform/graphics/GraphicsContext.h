@@ -400,7 +400,7 @@ protected:
 
     GraphicsContextState m_state;
 private:
-    Vector<GraphicsContextState, 1> m_stack;
+    GraphicsContextStateStack m_stack;
 
     unsigned m_transparencyLayerCount { 0 };
     const IsDeferred m_isDeferred : 1; // NOLINT
