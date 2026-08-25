@@ -105,17 +105,26 @@ void* runWebAssemblySuspendingFunction(JSGlobalObject* globalObject, CallFrame* 
 
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    if (!vm.topJSPIContext) {
-        throwException(globalObject, scope, createJSWebAssemblySuspendError(globalObject, vm, "Suspending() wrapper called outside of a promising() context"_s));
+#ifndef RC_REMOVE_SEC_ACCEL_3
+    // If the topJSPIContext frame was not the entry frame then there could be interleaved C++ or something else.
+    JSPIContext* context = vm.topJSPIContext;
+    if (!context || vmEntryRecord(vm.topEntryFrame)->prevTopCallFrame() != context->limitFrame) {
+        throwException(globalObject, scope, createJSWebAssemblySuspendError(globalObject, vm, "Suspending function called outside of a promising() context"_s));
         return { };
     }
+#else
+    if (!vm.topJSPIContext) {
+        throwException(globalObject, scope, createJSWebAssemblySuspendError(globalObject, vm, "Suspending function called outside of a promising() context"_s));
+        return { };
+    }
+#endif
 
     CPURegister* vmEntryFrameCalleeSaves = vmEntryRecord(vm.topEntryFrame)->calleeSaveRegistersBuffer;
     memcpySpan(unsafeMakeSpan(vmEntryFrameCalleeSaves, NUMBER_OF_CALLEE_SAVES_REGISTERS), unsafeMakeSpan(originalCalleeSaves, NUMBER_OF_CALLEE_SAVES_REGISTERS));
 
     JSObject* callee = callFrame->jsCallee();
     JSFunctionWithFields* self = uncheckedDowncast<JSFunctionWithFields>(callee);
-    JSValue callable = self->getField(JSFunctionWithFields::Field::WebAssemblySuspendingWrappedCallable);
+    JSValue wrappedFunction = self->getField(JSFunctionWithFields::Field::WebAssemblySuspendingWrappedFunction);
 
     MarkedArgumentBuffer args;
     for (unsigned i = 0; i < callFrame->argumentCount(); ++i)
@@ -125,13 +134,13 @@ void* runWebAssemblySuspendingFunction(JSGlobalObject* globalObject, CallFrame* 
         return { };
     }
 
-    auto callData = JSC::getCallData(callable);
+    auto callData = JSC::getCallData(wrappedFunction);
     if (callData.type == CallData::Type::None) [[unlikely]] {
         throwTypeError(globalObject, scope, "Object is not callable"_s);
         return { };
     }
 
-    JSValue result = call(globalObject, callable, callData, jsUndefined(), args);
+    JSValue result = call(globalObject, wrappedFunction, callData, jsUndefined(), args);
     RETURN_IF_EXCEPTION(scope, { });
 
     JSPromise* promise = dynamicDowncast<JSPromise>(result);
@@ -174,7 +183,11 @@ void* runWebAssemblySuspendingFunction(JSGlobalObject* globalObject, CallFrame* 
     }
     if (outcome == SlicingOutcome::Error) {
         auto errorString = makeString("JSPI stack scan failed: "_s, errorMessage);
+#ifndef RC_REMOVE_SEC_ACCEL_3
+        throwException(globalObject, scope, createJSWebAssemblySuspendError(globalObject, vm, errorString));
+#else
         throwVMError(globalObject, scope, errorString);
+#endif
         return { };
     }
     ASSERT(outcome == SlicingOutcome::Success);
@@ -189,12 +202,12 @@ void* runWebAssemblySuspendingFunction(JSGlobalObject* globalObject, CallFrame* 
     return returnOutOfFrame;
 }
 
-JSFunctionWithFields* createWebAssemblySuspendingFunction(VM& vm, JSGlobalObject* globalObject, JSValue callable)
+JSFunctionWithFields* createWebAssemblySuspendingFunction(VM& vm, JSGlobalObject* globalObject, JSObject* wrappedFunction)
 {
     const String name = "WebAssembly.Suspending"_s;
     NativeExecutable* executable = vm.getHostFunction(enterWebAssemblySuspendingFunction, ImplementationVisibility::Private, NoIntrinsic, callHostFunctionAsConstructor, nullptr, 0, name);
     JSFunctionWithFields* function = JSFunctionWithFields::create(vm, globalObject, executable);
-    function->setField(vm, JSFunctionWithFields::Field::WebAssemblySuspendingWrappedCallable, callable);
+    function->setField(vm, JSFunctionWithFields::Field::WebAssemblySuspendingWrappedFunction, wrappedFunction);
     return function;
 }
 

@@ -377,6 +377,10 @@ macro makeHostFunctionCall(entry, protoCallFrame, temp1, temp2)
     else
         loadp ProtoCallFrame::globalObject[protoCallFrame], a0
         move sp, a1
+        if not RC_REMOVE_SEC_ACCEL_3
+            # See the corresponding comment in LowLevelInterpreter64.asm.
+            storep 0, PtrSize[sp]
+        end
         call temp1
     end
 end
