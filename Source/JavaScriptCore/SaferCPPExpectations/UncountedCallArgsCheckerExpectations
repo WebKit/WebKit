@@ -4,7 +4,6 @@ API/JSCallbackObject.h
 API/JSCallbackObjectFunctions.h
 API/JSClassRef.cpp
 API/JSContextRef.cpp
-[ macOS ] API/JSManagedValue.mm
 API/JSObjectRef.cpp
 API/JSRetainPtr.h
 API/JSScript.mm
@@ -37,20 +36,17 @@ bytecode/UnlinkedFunctionExecutable.cpp
 bytecompiler/BytecodeGenerator.cpp
 bytecompiler/BytecodeGenerator.h
 bytecompiler/NodesCodegen.cpp
-[ macOS ] bytecompiler/StaticPropertyAnalyzer.h
 debugger/Debugger.cpp
 dfg/DFGByteCodeParser.cpp
 dfg/DFGCommonData.cpp
 dfg/DFGConstantFoldingPhase.cpp
 dfg/DFGDesiredGlobalProperties.cpp
 dfg/DFGGraph.cpp
-[ macOS ] dfg/DFGGraphSafepoint.cpp
 dfg/DFGJITCode.cpp
 dfg/DFGJITCompiler.cpp
 dfg/DFGJITCompiler.h
 dfg/DFGJITFinalizer.cpp
 dfg/DFGLazyJSValue.cpp
-[ macOS ] dfg/DFGOperations.cpp
 dfg/DFGPlan.cpp
 dfg/DFGSpeculativeJIT.cpp
 dfg/DFGSpeculativeJIT.h
@@ -62,19 +58,16 @@ ftl/FTLJITFinalizer.cpp
 ftl/FTLLazySlowPath.cpp
 ftl/FTLLink.cpp
 ftl/FTLLowerDFGToB3.cpp
-[ macOS ] ftl/FTLOperations.cpp
 ftl/FTLSlowPathCall.cpp
 ftl/FTLState.cpp
 heap/GCIncomingRefCountedSetInlines.h
 heap/Heap.cpp
 heap/IsoCellSetInlines.h
 heap/JITStubRoutineSet.cpp
-[ macOS ] heap/MarkedSpace.cpp
 heap/MarkingConstraintSolver.cpp
 heap/ParallelSourceAdapter.h
 heap/SubspaceInlines.h
 inspector/ConsoleMessage.cpp
-[ macOS ] inspector/InspectorBackendDispatcher.cpp
 inspector/JSGlobalObjectInspectorController.cpp
 inspector/JSJavaScriptCallFrame.cpp
 inspector/ScriptCallStack.cpp
@@ -86,13 +79,11 @@ inspector/agents/InspectorHeapAgent.cpp
 inspector/agents/InspectorRuntimeAgent.cpp
 inspector/agents/InspectorScriptProfilerAgent.cpp
 inspector/agents/JSGlobalObjectRuntimeAgent.cpp
-[ macOS ] interpreter/Interpreter.cpp
 jit/BaselineJITPlan.cpp
 jit/ExecutableAllocator.cpp
 jit/GCAwareJITStubRoutine.cpp
 jit/ICStats.cpp
 jit/JIT.cpp
-[ macOS ] jit/JITOperations.cpp
 jit/JITSafepoint.cpp
 jit/JITWorklist.cpp
 jit/JITWorklistInlines.h
@@ -107,19 +98,15 @@ parser/UnlinkedSourceCode.cpp
 parser/UnlinkedSourceCode.h
 profiler/ProfilerDatabase.cpp
 profiler/ProfilerEvent.cpp
-[ macOS ] runtime/AbstractModuleRecord.cpp
 runtime/ArrayBufferView.cpp
 runtime/ArrayBufferView.h
 runtime/AtomicsObject.cpp
 runtime/CacheableIdentifierInlines.h
-[ macOS ] runtime/CachedTypes.cpp
 runtime/CodeCache.cpp
 runtime/CodeCache.h
-[ macOS ] runtime/CyclicModuleRecord.cpp
 runtime/DirectEvalExecutable.cpp
 runtime/ErrorInstance.cpp
 runtime/FunctionExecutable.cpp
-[ macOS ] runtime/HashMapHelper.h
 runtime/IndirectEvalExecutable.cpp
 runtime/InferredValue.h
 runtime/IntlObject.cpp
@@ -128,69 +115,51 @@ runtime/JSArrayBufferPrototype.cpp
 runtime/JSArrayBufferView.cpp
 runtime/JSCustomGetterFunction.cpp
 runtime/JSCustomSetterFunction.cpp
-[ macOS ] runtime/JSFunction.cpp
 runtime/JSGenericTypedArrayViewInlines.h
 runtime/JSGenericTypedArrayViewPrototypeFunctions.h
 runtime/JSGlobalObject.cpp
-[ macOS ] runtime/JSLexicalEnvironment.cpp
 runtime/JSObject.cpp
 runtime/JSObjectInlines.h
 runtime/JSRunLoopTimer.cpp
-[ macOS ] runtime/JSSegmentedVariableObject.cpp
-[ macOS ] runtime/JSString.h
 runtime/JSSymbolTableObject.cpp
-[ macOS ] runtime/MicrotaskQueue.cpp
 runtime/ModuleProgramExecutable.cpp
 runtime/NativeExecutable.cpp
 runtime/ProgramExecutable.cpp
 runtime/RegExpKey.h
-[ macOS ] runtime/RegExpObject.cpp
 runtime/SamplingProfiler.cpp
 runtime/ScriptExecutable.h
 runtime/Structure.cpp
 runtime/StructureInlines.h
-[ macOS ] runtime/SymbolConstructor.cpp
 runtime/SymbolTable.cpp
-[ macOS ] runtime/SyntheticModuleRecord.cpp
 runtime/TypeProfiler.cpp
 runtime/TypeProfilerLog.cpp
 runtime/TypeSet.cpp
-[ macOS ] runtime/VM.cpp
 runtime/VMTraps.cpp
 runtime/Watchdog.cpp
 tools/FunctionOverrides.cpp
 tools/JSDollarVM.cpp
 wasm/WasmBBQJIT.cpp
-[ iOS ] wasm/WasmBBQJIT64.cpp
-[ macOS ] wasm/WasmBBQPlan.cpp
+wasm/WasmBBQJIT64.cpp
 wasm/WasmCallee.cpp
 wasm/WasmCalleeGroup.cpp
 wasm/WasmEntryPlan.cpp
 wasm/WasmFunctionParser.h
 wasm/WasmIPIntPlan.cpp
-[ macOS ] wasm/WasmIPIntSlowPaths.cpp
 wasm/WasmMemory.cpp
 wasm/WasmMemory.h
 wasm/WasmOMGIRGenerator.cpp
-[ macOS ] wasm/WasmOMGPlan.cpp
-[ macOS ] wasm/WasmOSREntryPlan.cpp
 wasm/WasmOperationsInlines.h
 wasm/WasmPlan.cpp
-[ macOS ] wasm/WasmSectionParser.cpp
 wasm/WasmStreamingCompiler.cpp
 wasm/WasmStreamingParser.cpp
 wasm/WasmTypeDefinition.cpp
-[ macOS ] wasm/WasmTypeDefinition.h
 wasm/WasmWorklist.cpp
-[ macOS ] wasm/debugger/WasmExecutionHandler.cpp
-[ macOS ] wasm/debugger/WasmModuleDebugInfo.cpp
 wasm/js/JSWebAssembly.cpp
 wasm/js/JSWebAssemblyHelpers.h
 wasm/js/JSWebAssemblyInstance.cpp
 wasm/js/JSWebAssemblyInstance.h
 wasm/js/JSWebAssemblyMemory.cpp
 wasm/js/JSWebAssemblyMemory.h
-[ macOS ] wasm/js/JSWebAssemblyModule.cpp
 wasm/js/WebAssemblyFunction.cpp
 wasm/js/WebAssemblyFunction.h
 wasm/js/WebAssemblyInstanceConstructor.cpp

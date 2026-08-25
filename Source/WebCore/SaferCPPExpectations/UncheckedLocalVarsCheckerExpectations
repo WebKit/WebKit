@@ -1,108 +1,18 @@
-[ macOS ] HTMLElementTypeHelpers.h
-[ macOS ] MathMLElementTypeHelpers.h
-[ macOS ] Modules/highlight/AppHighlightStorage.cpp
-[ macOS ] Modules/permissions/Permissions.cpp
-[ macOS ] Modules/push-api/PushManager.cpp
-[ macOS ] SVGElementTypeHelpers.h
 accessibility/AXObjectCache.cpp
-[ macOS ] accessibility/AXTableHelpers.cpp
-[ macOS ] accessibility/AccessibilityNodeObject.cpp
 accessibility/AccessibilityRenderObject.cpp
 [ iOS ] accessibility/cocoa/AXTextMarkerCocoa.mm
 [ iOS ] accessibility/ios/AccessibilityObjectIOS.mm
 [ iOS ] accessibility/ios/WebAccessibilityObjectWrapperIOS.mm
-[ macOS ] animation/KeyframeEffectStack.cpp
-[ macOS ] bindings/js/JSDOMWrapperCache.h
-[ macOS ] bindings/js/JSEventListener.cpp
-[ macOS ] bindings/js/ScriptModuleLoader.cpp
-[ macOS ] bindings/js/WorkerModuleScriptLoader.cpp
-[ macOS ] css/typedom/DeclaredStylePropertyMap.cpp
-[ macOS ] css/typedom/InlineStylePropertyMap.cpp
-[ macOS ] dom/ComposedTreeIterator.h
 dom/ContainerNode.cpp
-[ macOS ] dom/CustomElementRegistry.cpp
-[ macOS ] dom/DataTransfer.cpp
 dom/Document.cpp
-[ macOS ] dom/Document.h
 dom/Element.cpp
-[ macOS ] dom/Element.h
-[ macOS ] dom/ElementTextDirection.cpp
-[ macOS ] dom/EventPath.cpp
-[ macOS ] dom/Node.cpp
 dom/Position.cpp
-[ macOS ] dom/PositionIterator.cpp
-[ macOS ] dom/Range.cpp
-[ macOS ] dom/SelectorQuery.cpp
-[ macOS ] dom/XMLDocument.h
-[ macOS ] editing/ApplyBlockElementCommand.cpp
-[ macOS ] editing/ApplyStyleCommand.cpp
 editing/Editing.cpp
-[ macOS ] editing/EditingStyle.cpp
-[ macOS ] editing/Editor.cpp
-[ macOS ] editing/FrameSelection.cpp
-[ macOS ] editing/MarkupAccumulator.cpp
-[ macOS ] editing/TextManipulationController.cpp
 [ iOS ] editing/cocoa/EditorCocoa.mm
-[ macOS ] editing/cocoa/NodeHTMLConverter.mm
-[ macOS ] html/GenericCachedHTMLCollection.cpp
-[ macOS ] html/HTMLAudioElement.h
-[ macOS ] html/HTMLCanvasElement.h
-[ macOS ] html/HTMLDocument.h
-[ macOS ] html/HTMLElement.h
-[ macOS ] html/HTMLFormElement.cpp
-[ macOS ] html/HTMLFrameElementBase.h
-[ macOS ] html/HTMLHeadingElement.h
-[ macOS ] html/HTMLImageElement.cpp
-[ macOS ] html/HTMLInputElement.cpp
-[ macOS ] html/HTMLLabelElement.cpp
-[ macOS ] html/HTMLMaybeFormAssociatedCustomElement.h
 [ macOS ] html/HTMLMediaElement.cpp
-[ macOS ] html/HTMLMediaElement.h
-[ macOS ] html/HTMLOptGroupElement.cpp
-[ macOS ] html/HTMLOptionElement.cpp
-[ macOS ] html/HTMLSelectElement.cpp
-[ macOS ] html/HTMLSelectedContentElement.cpp
-[ macOS ] html/HTMLSlotElement.cpp
-[ macOS ] html/HTMLSourceElement.cpp
-[ macOS ] html/HTMLSummaryElement.cpp
-[ macOS ] html/HTMLTableCellElement.h
-[ macOS ] html/HTMLTableColElement.h
-[ macOS ] html/HTMLTablePartElement.h
-[ macOS ] html/HTMLTableSectionElement.h
-[ macOS ] html/HTMLTemplateElement.cpp
-[ macOS ] html/HTMLTextAreaElement.cpp
-[ macOS ] html/HTMLTextFormControlElement.cpp
-[ macOS ] html/HTMLTextFormControlElement.h
-[ macOS ] html/HTMLTrackElement.cpp
-[ macOS ] html/HTMLVideoElement.h
-[ macOS ] html/ImageDocument.h
-[ macOS ] html/MediaDocument.h
-[ macOS ] html/MediaElementSession.cpp
-[ macOS ] html/ModelDocument.h
-[ macOS ] html/PluginDocument.h
-[ macOS ] html/RadioInputType.cpp
-[ macOS ] html/canvas/CanvasRenderingContext2D.cpp
 html/canvas/CanvasRenderingContext2DBase.cpp
-[ macOS ] html/canvas/WebGLRenderingContextBase.cpp
-[ macOS ] html/parser/HTMLConstructionSite.cpp
-[ macOS ] html/parser/HTMLTreeBuilder.cpp
-[ macOS ] html/shadow/DataListButtonElement.h
-[ macOS ] html/shadow/SelectFallbackButtonElement.h
-[ macOS ] html/shadow/SelectPopoverElement.h
-[ macOS ] html/shadow/SliderThumbElement.h
-[ macOS ] html/shadow/SpinButtonElement.h
-[ macOS ] html/shadow/TextControlInnerElements.h
-[ macOS ] html/shadow/TextPlaceholderElement.h
-[ macOS ] html/track/TextTrackList.cpp
-[ macOS ] html/track/VTTCue.cpp
 inspector/InspectorOverlay.cpp
-[ macOS ] inspector/agents/InspectorAnimationAgent.cpp
-[ macOS ] inspector/agents/InspectorCSSAgent.cpp
 inspector/agents/InspectorDOMAgent.cpp
-[ macOS ] inspector/agents/InspectorIndexedDBAgent.cpp
-[ macOS ] inspector/agents/frame/FrameCSSAgent.cpp
-[ macOS ] inspector/agents/frame/FrameDOMAgent.cpp
-[ macOS ] inspector/agents/page/PageDOMDebuggerAgent.cpp
 layout/formattingContexts/FormattingGeometry.cpp
 layout/formattingContexts/inline/InlineLineBoxBuilder.cpp
 layout/formattingContexts/inline/InlineLineBuilder.cpp
@@ -111,36 +21,22 @@ layout/formattingContexts/inline/IntrinsicWidthHandler.cpp
 layout/formattingContexts/inline/TextOnlySimpleLineBuilder.cpp
 layout/formattingContexts/inline/display/InlineDisplayContentBuilder.cpp
 layout/formattingContexts/table/TableFormattingContext.cpp
-[ iOS ] layout/formattingContexts/table/TableLayout.cpp
+layout/formattingContexts/table/TableLayout.cpp
 layout/integration/LayoutIntegrationBoxGeometryUpdater.cpp
 layout/integration/LayoutIntegrationBoxTreeUpdater.cpp
-[ macOS ] layout/integration/inline/InlineIteratorBoxModernPath.h
-[ macOS ] layout/integration/inline/LayoutIntegrationLineLayout.cpp
-[ macOS ] layout/layouttree/LayoutTreeBuilder.cpp
-[ macOS ] loader/SubframeLoader.cpp
-[ macOS ] loader/ThreadableLoader.cpp
-[ macOS ] loader/WorkerThreadableLoader.cpp
-[ macOS ] mathml/MathMLSelectElement.cpp
 [ iOS ] page/DOMTimer.cpp
-[ macOS ] page/DragController.cpp
 page/ElementTargetingController.cpp
 page/EventHandler.cpp
-[ macOS ] page/InteractionRegion.cpp
 page/IntersectionObserver.cpp
 page/LocalFrameView.cpp
-[ macOS ] page/LocalFrameViewLayoutContext.cpp
-[ macOS ] page/PointerCaptureController.cpp
 [ iOS ] page/cocoa/ContentChangeObserver.cpp
 [ iOS ] page/ios/FrameIOS.mm
-[ macOS ] platform/ScrollView.cpp
-[ macOS ] platform/graphics/Path.cpp
 platform/graphics/ca/GraphicsLayerCA.cpp
 platform/graphics/cg/CGSubimageCacheWithTimer.cpp
 [ iOS ] platform/ios/WebVideoFullscreenControllerAVKit.mm
 platform/network/cocoa/ResourceHandleCocoa.mm
 rendering/AutoTableLayout.cpp
 rendering/BackgroundPainter.cpp
-[ macOS ] rendering/CaretRectComputation.cpp
 rendering/CounterNode.cpp
 rendering/FixedTableLayout.cpp
 rendering/GridLayoutFunctions.cpp
@@ -176,10 +72,8 @@ rendering/RenderLayerBacking.cpp
 rendering/RenderLayerBackingSVGAdditions.cpp
 rendering/RenderLayerCompositor.cpp
 rendering/RenderLayerModelObject.cpp
-[ macOS ] rendering/RenderLayerSVGAdditions.cpp
 rendering/RenderLayerScrollableArea.cpp
 rendering/RenderLayoutState.cpp
-[ macOS ] rendering/RenderLineBoxList.cpp
 rendering/RenderListBox.cpp
 rendering/RenderListItem.cpp
 rendering/RenderListMarker.cpp
@@ -196,8 +90,6 @@ rendering/RenderText.cpp
 rendering/RenderText.h
 rendering/RenderTextControl.cpp
 rendering/RenderTextControlSingleLine.cpp
-[ macOS ] rendering/RenderTextFragment.h
-[ macOS ] rendering/RenderTheme.cpp
 rendering/RenderTreeAsText.cpp
 rendering/RenderVTTCue.cpp
 rendering/RenderView.cpp
@@ -222,7 +114,6 @@ rendering/svg/RenderSVGPath.cpp
 rendering/svg/RenderSVGResourceClipper.cpp
 rendering/svg/RenderSVGRoot.cpp
 rendering/svg/RenderSVGText.cpp
-[ macOS ] rendering/svg/SVGBoundingBoxComputation.cpp
 rendering/svg/SVGContainerLayout.cpp
 rendering/svg/SVGPaintServerHandlingInlines.h
 rendering/svg/SVGPathFromElement.cpp
@@ -256,7 +147,6 @@ rendering/updating/RenderTreeBuilderMultiColumn.cpp
 rendering/updating/RenderTreeBuilderRuby.cpp
 rendering/updating/RenderTreeBuilderSVG.cpp
 rendering/updating/RenderTreeBuilderTable.cpp
-[ macOS ] rendering/updating/RenderTreePosition.cpp
 rendering/updating/RenderTreeUpdater.cpp
 rendering/updating/RenderTreeUpdaterGeneratedContent.cpp
 rendering/updating/RenderTreeUpdaterViewTransition.cpp
@@ -264,7 +154,6 @@ style/AnchorPositionEvaluator.cpp
 style/ChildChangeInvalidation.cpp
 style/ElementRuleCollector.cpp
 style/InlineTextBoxStyle.cpp
-[ macOS ] style/MatchResultCache.cpp
 style/StyleAdjuster.cpp
 style/StyleBuilder.cpp
 style/StyleBuilderCustom.h
@@ -274,7 +163,6 @@ style/StyleDocumentScope.cpp
 style/StyleExtractor.cpp
 style/StyleExtractorCustom.h
 style/StyleInvalidationFunctions.h
-[ macOS ] style/StyleInvalidator.cpp
 style/StyleResolver.cpp
 style/StyleScope.cpp
 style/StyleTreeResolver.cpp
@@ -283,27 +171,10 @@ style/computed/StyleComputedStyleBase.cpp
 style/values/grid/StyleGridPositionsResolver.cpp
 style/values/images/kinds/StyleCanvasImage.cpp
 style/values/primitives/StyleLengthResolution.cpp
-[ macOS ] svg/SVGAnimateElementBase.h
-[ macOS ] svg/SVGComponentTransferFunctionElementInlines.h
-[ macOS ] svg/SVGDocument.h
 svg/SVGFilterPrimitiveStandardAttributes.cpp
-[ macOS ] svg/SVGFilterPrimitiveStandardAttributes.h
 svg/SVGGeometryElement.cpp
-[ macOS ] svg/SVGGeometryElement.h
-[ macOS ] svg/SVGGradientElement.h
-[ macOS ] svg/SVGGraphicsElement.h
 svg/SVGLengthContext.cpp
-[ macOS ] svg/SVGLinearGradientElement.cpp
-[ macOS ] svg/SVGPolyElement.h
-[ macOS ] svg/SVGRadialGradientElement.cpp
-[ macOS ] svg/SVGTextContentElement.h
-[ macOS ] svg/SVGTextPositioningElement.h
 svg/SVGUseElement.cpp
-[ macOS ] svg/animation/SVGSMILElement.h
 testing/Internals.cpp
 workers/WorkerGlobalScope.cpp
 workers/WorkerOrWorkletThread.cpp
-[ macOS ] workers/service/ServiceWorkerClientData.cpp
-[ macOS ] workers/service/ServiceWorkerWindowClient.cpp
-[ macOS ] workers/service/context/SWContextManager.cpp
-[ macOS ] xml/XPathStep.cpp

@@ -2,14 +2,10 @@ Modules/WebGPU/Implementation/WebGPUDeviceImpl.cpp
 Modules/cache/DOMCache.cpp
 Modules/cache/DOMCacheStorage.cpp
 Modules/mediastream/PeerConnectionBackend.cpp
-[ macOS ] Modules/mediastream/RTCDTMFSender.cpp
 Modules/mediastream/RTCDataChannel.cpp
 Modules/mediastream/RTCPeerConnection.cpp
 Modules/mediastream/RTCRtpSender.cpp
 Modules/push-api/PushDatabase.cpp
-[ macOS ] Modules/webaudio/AudioContext.cpp
-[ macOS ] Modules/webaudio/MediaElementAudioSourceNode.cpp
-[ macOS ] Modules/webaudio/MediaStreamAudioSourceNode.cpp
 Modules/webaudio/OfflineAudioDestinationNode.cpp
 Modules/webcodecs/WebCodecsAudioDecoder.cpp
 Modules/webcodecs/WebCodecsAudioEncoder.cpp
@@ -25,57 +21,48 @@ css/CSSValue.cpp
 css/StyleRule.cpp
 css/values/CSSValueTypes+DeprecatedCSSOMValueCreation.h
 dom/CustomElementDefaultARIA.cpp
-[ macOS ] dom/Document.cpp
-[ iOS ] dom/RejectedPromiseTracker.cpp
+dom/RejectedPromiseTracker.cpp
 inspector/agents/page/PageDOMDebuggerAgent.cpp
 loader/NetscapePlugInStreamLoader.cpp
 [ iOS ] loader/ios/LegacyPreviewLoader.mm
 page/IntelligenceTextEffectsSupport.cpp
-[ macOS ] page/OpportunisticTaskScheduler.cpp
-[ macOS ] page/Page.cpp
 page/ShareDataReader.cpp
 page/cocoa/ResourceUsageOverlayCocoa.mm
 page/writing-tools/WritingToolsController.mm
 [ iOS ] platform/PreviewConverter.cpp
-[ iOS ] platform/ScrollableArea.cpp
-[ macOS ] platform/audio/AudioDestinationResampler.cpp
+platform/ScrollableArea.cpp
 platform/cocoa/NetworkExtensionContentFilter.mm
 platform/graphics/avfoundation/InbandTextTrackPrivateAVF.cpp
 platform/graphics/avfoundation/objc/CDMInstanceFairPlayStreamingAVFObjC.mm
 platform/graphics/avfoundation/objc/InbandChapterTrackPrivateAVFObjC.mm
-[ macOS ] platform/graphics/avfoundation/objc/LocalSampleBufferDisplayLayer.mm
-[ macOS ] platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm
-[ macOS ] platform/graphics/avfoundation/objc/MediaPlayerPrivateMediaStreamAVFObjC.mm
-[ macOS ] platform/graphics/cocoa/MediaPlayerPrivateWebM.mm
 platform/graphics/cocoa/VideoMediaSampleRenderer.mm
 platform/mediarecorder/MediaRecorderPrivateEncoder.cpp
-[ macOS ] platform/mediastream/RealtimeIncomingVideoSource.cpp
 platform/mediastream/RealtimeVideoCaptureSource.cpp
 platform/mediastream/cocoa/IncomingAudioMediaStreamTrackRendererUnit.cpp
 platform/mediastream/cocoa/RealtimeIncomingVideoSourceCocoa.mm
 platform/mediastream/cocoa/RealtimeOutgoingAudioSourceCocoa.cpp
-[ iOS ] rendering/BackgroundPainter.cpp
+rendering/BackgroundPainter.cpp
 rendering/BorderPainter.cpp
-[ iOS ] rendering/RenderBox.cpp
-[ iOS ] rendering/RenderElement.cpp
-[ iOS ] rendering/RenderGrid.cpp
+rendering/RenderBox.cpp
+rendering/RenderElement.cpp
+rendering/RenderGrid.cpp
 rendering/RenderLayer.cpp
 rendering/RenderLayerCompositor.cpp
-[ iOS ] rendering/RenderListBox.cpp
-[ iOS ] rendering/RenderReplaced.cpp
-[ iOS ] rendering/RenderText.cpp
-[ iOS ] rendering/svg/RenderSVGText.cpp
-[ iOS ] style/StyleCustomProperty.cpp
-[ iOS ] style/Styleable.cpp
+rendering/RenderListBox.cpp
+rendering/RenderReplaced.cpp
+rendering/RenderText.cpp
+rendering/svg/RenderSVGText.cpp
+style/StyleCustomProperty.cpp
+style/Styleable.cpp
 style/computed/data/StyleCustomPropertyData.cpp
-[ iOS ] style/values/StyleValueTypes.h
-[ iOS ] style/values/backgrounds/StyleFillLayers.h
-[ iOS ] style/values/filter-effects/StyleFilterInterpolation.h
-[ iOS ] style/values/grid/StyleGridTrackBreadth.cpp
-[ iOS ] style/values/images/StyleGradient.cpp
-[ iOS ] style/values/primitives/StyleKeyword+CSSValueCreation.h
-[ iOS ] style/values/primitives/StyleKeyword+Serialization.h
-[ iOS ] style/values/primitives/StylePrimitiveNumericTypes+Conversions.h
+style/values/StyleValueTypes.h
+style/values/backgrounds/StyleFillLayers.h
+style/values/filter-effects/StyleFilterInterpolation.h
+style/values/grid/StyleGridTrackBreadth.cpp
+style/values/images/StyleGradient.cpp
+style/values/primitives/StyleKeyword+CSSValueCreation.h
+style/values/primitives/StyleKeyword+Serialization.h
+style/values/primitives/StylePrimitiveNumericTypes+Conversions.h
 [ Mac ] testing/MockMediaSessionCoordinator.cpp
 workers/WorkerMessagingProxy.cpp
 workers/WorkerOrWorkletThread.cpp

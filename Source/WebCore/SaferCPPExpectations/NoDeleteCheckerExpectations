@@ -1,74 +1,17 @@
-[ macOS ] Modules/contact-picker/NavigatorContacts.cpp
-[ macOS ] Modules/geolocation/Geolocation.cpp
-[ macOS ] Modules/push-api/PushEvent.cpp
-[ macOS ] Modules/webcodecs/WebCodecsVideoFrame.cpp
-[ macOS ] automation/AutomationInstrumentation.cpp
-[ macOS ] css/CSSColorValue.cpp
-[ macOS ] css/CSSCounterStyleRule.cpp
-[ macOS ] css/CSSFontFeatureValuesRule.cpp
-[ macOS ] css/CSSFontPaletteValuesRule.cpp
-[ macOS ] css/CSSKeyframesRule.cpp
-[ macOS ] css/CSSLayerStatementRule.cpp
-[ macOS ] css/CSSPropertyRule.cpp
-[ macOS ] css/CSSValueList.cpp
-[ macOS ] css/CSSValuePair.cpp
-[ macOS ] css/CSSViewTransitionRule.cpp
 css/DOMMatrixReadOnly.cpp
-[ macOS ] css/parser/CSSPropertyParserConsumer+Align.cpp
-[ macOS ] css/parser/CSSPropertyParserConsumer+Anchor.cpp
-[ macOS ] css/parser/CSSPropertyParserConsumer+Display.cpp
-[ macOS ] css/values/CSSValueTypes.cpp
-[ macOS ] css/values/primitives/CSSRatio.cpp
-[ macOS ] dom/DataTransferItem.cpp
-[ macOS ] dom/DeviceMotionEvent.cpp
 dom/Document.cpp
 dom/FragmentDirectiveRangeFinder.cpp
 dom/UserGestureIndicator.cpp
-[ macOS ] editing/EditingStyle.cpp
-[ macOS ] html/HTMLSourceElement.cpp
-[ macOS ] html/canvas/WebGLRenderingContextBase.cpp
 [ macOS ] inspector/InspectorFrontendHost.cpp
 layout/formattingContexts/inline/InlineLineBuilder.cpp
 layout/integration/LayoutIntegrationFormattingContextLayout.cpp
-[ iOS ] layout/integration/inline/LayoutIntegrationLineLayout.cpp
+layout/integration/inline/LayoutIntegrationLineLayout.cpp
 loader/EmptyClients.cpp
-[ macOS ] loader/SubresourceLoader.cpp
 loader/TextResourceDecoder.cpp
 page/EventHandler.cpp
-[ macOS ] page/Page.cpp
 [ iOS ] page/Quirks.cpp
 page/text-extraction/TextExtraction.cpp
-[ macOS ] platform/graphics/FontCascadeFonts.cpp
-[ macOS ] platform/graphics/ShadowBlur.cpp
-[ macOS ] platform/graphics/WidthIterator.cpp
-[ macOS ] platform/graphics/filters/FEDropShadow.cpp
-[ macOS ] platform/graphics/filters/FEFlood.cpp
-[ macOS ] platform/graphics/filters/FELighting.cpp
-[ macOS ] platform/ios/PlaybackSessionInterfaceIOS.mm
-[ macOS ] platform/text/BidiContext.cpp
-[ macOS ] rendering/AncestorSubgridIterator.cpp
-[ macOS ] rendering/FloatingObjects.cpp
-[ macOS ] rendering/RenderElement.cpp
 rendering/RenderGeometryMap.cpp
-[ macOS ] rendering/RenderLayer.cpp
-[ macOS ] rendering/RenderTableCell.cpp
 rendering/StyledMarkedText.cpp
-[ macOS ] rendering/TextBoxTrimmer.cpp
 rendering/TextDecorationPainter.cpp
-[ macOS ] style/RuleSet.cpp
-[ macOS ] style/StyleBuilderState.cpp
-[ macOS ] style/StyleScopeRuleSets.cpp
-[ macOS ] style/computed/StyleComputedStyleProperties+GettersCustomInlines.h
-[ macOS ] style/computed/data/StyleInheritedData.cpp
-[ macOS ] style/values/anchor-position/StylePositionArea.cpp
-[ macOS ] style/values/backgrounds/StyleRepeatStyle.cpp
-[ macOS ] style/values/fonts/StyleFontStyle.cpp
-[ macOS ] style/values/grid/StyleGridAutoFlow.cpp
-[ macOS ] style/values/masking/StyleMaskMode.cpp
-[ macOS ] style/values/overflow/StyleScrollbarGutter.cpp
-[ macOS ] style/values/scroll-animations/StyleScrollFunction.cpp
-[ macOS ] style/values/scroll-snap/StyleScrollSnapAlign.cpp
-[ macOS ] style/values/text/StyleTextAlignLast.cpp
-[ macOS ] style/values/ui/StyleResize.cpp
 testing/Internals.cpp
-[ macOS ] xml/parser/XMLDocumentParserLibxml2.cpp

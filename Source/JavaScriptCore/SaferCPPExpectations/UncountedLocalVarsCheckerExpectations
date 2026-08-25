@@ -12,7 +12,6 @@ bytecode/DeleteByStatus.cpp
 bytecode/GetByStatus.cpp
 bytecode/InByStatus.cpp
 bytecode/InlineCacheCompiler.cpp
-[ macOS ] bytecode/InlineCacheHandler.cpp
 bytecode/InstanceOfStatus.cpp
 bytecode/PropertyCondition.cpp
 bytecode/PropertyInlineCache.cpp
@@ -58,7 +57,6 @@ ftl/FTLPatchpointExceptionHandle.cpp
 heap/ConservativeRoots.cpp
 heap/JITStubRoutineSet.cpp
 inspector/AsyncStackTrace.cpp
-[ macOS ] inspector/JSJavaScriptCallFrame.cpp
 inspector/ScriptCallStackFactory.cpp
 inspector/agents/InspectorDebuggerAgent.cpp
 inspector/agents/InspectorScriptProfilerAgent.cpp
@@ -84,7 +82,7 @@ runtime/JSGlobalObject.cpp
 runtime/JSObject.cpp
 runtime/JSString.cpp
 runtime/KeyAtomStringCacheInlines.h
-[ iOS ] runtime/LiteralParser.cpp
+runtime/LiteralParser.cpp
 runtime/Lookup.h
 runtime/ProgramExecutable.cpp
 runtime/ProxyObject.cpp
@@ -106,7 +104,6 @@ wasm/WasmIPIntGenerator.cpp
 wasm/WasmIPIntPlan.cpp
 wasm/WasmIPIntSlowPaths.cpp
 wasm/WasmIRGeneratorHelpers.h
-[ macOS ] wasm/WasmInliningDecision.cpp
 wasm/WasmModule.cpp
 wasm/WasmOMGIRGenerator.cpp
 wasm/WasmOMGPlan.cpp
@@ -121,5 +118,4 @@ wasm/js/JSWebAssemblyHelpers.h
 wasm/js/JSWebAssemblyInstance.cpp
 wasm/js/WasmToJS.cpp
 wasm/js/WebAssemblyFunction.cpp
-[ macOS ] wasm/js/WebAssemblyGCStructure.cpp
 wasm/js/WebAssemblyModuleRecord.cpp

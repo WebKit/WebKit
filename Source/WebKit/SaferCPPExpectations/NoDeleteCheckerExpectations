@@ -1,4 +1,0 @@
-[ macOS ] Shared/WebGPU/WebGPUOutOfMemoryError.cpp
-[ macOS ] Shared/WebGPU/WebGPUSupportedLimits.cpp
-[ macOS ] UIProcess/WebFrameProxy.cpp
-[ macOS ] UIProcess/WebProcessProxy.cpp

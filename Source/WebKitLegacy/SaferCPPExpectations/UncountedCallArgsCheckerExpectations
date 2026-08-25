@@ -4,13 +4,11 @@ Storage/StorageAreaSync.cpp
 Storage/StorageNamespaceImpl.cpp
 Storage/StorageThread.cpp
 Storage/WebStorageNamespaceProvider.cpp
-[ macOS ] WebCoreSupport/LegacyWebPageInspectorController.cpp
 WebCoreSupport/PingHandle.h
 WebCoreSupport/SocketStreamHandleImpl.cpp
 WebCoreSupport/SocketStreamHandleImplCFNet.cpp
 WebCoreSupport/WebResourceLoadScheduler.cpp
 WebCoreSupport/WebSocketChannel.cpp
-[ macOS ] cf/WebCoreSupport/WebInspectorClientCF.cpp
 [ iOS ] ios/WebCoreSupport/WebChromeClientIOS.mm
 [ iOS ] ios/WebCoreSupport/WebFrameIOS.mm
 [ iOS ] ios/WebCoreSupport/WebGeolocation.mm
@@ -108,9 +106,7 @@ mac/DOM/DOMNode.mm
 mac/DOM/DOMNodeIterator.mm
 mac/DOM/DOMNodeList.mm
 mac/DOM/DOMProcessingInstruction.mm
-[ macOS ] mac/DOM/DOMRGBColor.mm
 mac/DOM/DOMRange.mm
-[ macOS ] mac/DOM/DOMRect.mm
 mac/DOM/DOMStyleSheet.mm
 mac/DOM/DOMStyleSheetList.mm
 mac/DOM/DOMText.mm
@@ -124,7 +120,6 @@ mac/DOM/DOMXPath.mm
 mac/DOM/DOMXPathExpression.mm
 mac/DOM/DOMXPathResult.mm
 mac/DOM/WebDOMOperations.mm
-[ macOS ] mac/History/BackForwardList.mm
 mac/History/WebBackForwardList.mm
 mac/History/WebHistoryItem.mm
 [ iOS ] mac/Misc/WebCache.mm

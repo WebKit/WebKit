@@ -3,20 +3,14 @@ API/JSAPIWrapperObject.mm
 API/JSCallbackConstructor.cpp
 API/JSCallbackObject.h
 API/JSObjectRef.cpp
-[ macOS ] API/JSVirtualMachine.mm
-[ macOS ] API/JSWrapperMap.mm
 API/ObjCCallbackFunction.mm
 b3/B3InsertionSetInlines.h
 b3/B3LowerToAir.cpp
 b3/B3ProcedureInlines.h
-[ macOS ] b3/B3ValueInlines.h
 b3/air/AirCode.cpp
 builtins/BuiltinExecutables.cpp
 builtins/BuiltinNames.cpp
-[ macOS ] bytecode/AccessCase.cpp
-[ macOS ] bytecode/AccessCase.h
 bytecode/CallLinkInfo.cpp
-[ macOS ] bytecode/CallLinkInfoBase.cpp
 bytecode/CodeBlock.cpp
 bytecode/CodeBlockInlines.h
 bytecode/Instruction.h
@@ -27,7 +21,6 @@ bytecode/UnlinkedFunctionCodeBlock.cpp
 bytecode/UnlinkedFunctionExecutable.cpp
 bytecode/UnlinkedModuleProgramCodeBlock.cpp
 bytecode/UnlinkedProgramCodeBlock.cpp
-[ macOS ] bytecode/Watchpoint.cpp
 bytecompiler/BytecodeGenerator.cpp
 bytecompiler/BytecodeGenerator.h
 bytecompiler/NodesCodegen.cpp
@@ -49,19 +42,13 @@ heap/WeakInlines.h
 inspector/JSInjectedScriptHost.cpp
 inspector/JSJavaScriptCallFrame.cpp
 inspector/agents/InspectorDebuggerAgent.cpp
-[ macOS ] inspector/agents/JSGlobalObjectDebuggerAgent.cpp
 interpreter/CallFrame.cpp
 interpreter/CallFrame.h
 interpreter/Interpreter.cpp
-[ macOS ] jit/GCAwareJITStubRoutine.cpp
-[ macOS ] jit/JITCode.cpp
 jit/JITOperations.cpp
-[ macOS ] jit/JITStubRoutine.cpp
 jit/JITThunks.cpp
-[ macOS ] llint/LLIntSlowPaths.cpp
 parser/ASTBuilder.h
 parser/NodesAnalyzeModule.cpp
-[ macOS ] runtime/ArrayBufferView.cpp
 runtime/ArrayStorage.h
 runtime/Butterfly.h
 runtime/CacheableIdentifierInlines.h
@@ -94,9 +81,7 @@ runtime/IntlSegmenter.h
 runtime/IntlSegments.h
 runtime/JSArrayBufferView.cpp
 runtime/JSCJSValueInlines.h
-[ macOS ] runtime/JSCell.cpp
 runtime/JSCell.h
-[ macOS ] runtime/JSCellInlines.h
 runtime/JSCustomGetterFunction.cpp
 runtime/JSCustomSetterFunction.cpp
 runtime/JSDestructibleObjectHeapCellType.cpp
@@ -146,7 +131,6 @@ tools/VMInspector.cpp
 wasm/WasmModule.cpp
 wasm/WasmOperations.cpp
 wasm/WasmStreamingCompiler.cpp
-[ macOS ] wasm/WasmTable.cpp
 wasm/js/JSWebAssemblyException.cpp
 wasm/js/JSWebAssemblyGlobal.cpp
 wasm/js/JSWebAssemblyHelpers.h

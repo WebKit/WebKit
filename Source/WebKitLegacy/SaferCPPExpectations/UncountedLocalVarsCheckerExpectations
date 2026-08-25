@@ -28,7 +28,6 @@ mac/Misc/WebElementDictionary.mm
 mac/Plugins/WebPluginContainerCheck.mm
 [ iOS ] mac/Plugins/WebPluginController.mm
 [ Mac ] mac/WebCoreSupport/PopupMenuMac.mm
-[ macOS ] mac/WebCoreSupport/WebChromeClient.mm
 [ Mac ] mac/WebCoreSupport/WebContextMenuClient.mm
 mac/WebCoreSupport/WebEditorClient.mm
 mac/WebCoreSupport/WebFrameLoaderClient.mm
