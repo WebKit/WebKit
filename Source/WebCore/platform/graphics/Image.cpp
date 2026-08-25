@@ -495,4 +495,19 @@ std::optional<Color> Image::singlePixelSolidColor() const
     return std::nullopt;
 }
 
+ImageObserverDisableScope::ImageObserverDisableScope(Image& image, bool disable)
+    : m_image(image)
+    , m_observer(disable ? image.imageObserver() : nullptr)
+    , m_disable(disable)
+{
+    if (m_disable)
+        m_image->setImageObserver(nullptr);
+}
+
+ImageObserverDisableScope::~ImageObserverDisableScope()
+{
+    if (m_disable)
+        m_image->setImageObserver(WTF::move(m_observer));
+}
+
 } // namespace WebCore

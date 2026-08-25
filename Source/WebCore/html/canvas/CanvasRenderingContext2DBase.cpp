@@ -1758,13 +1758,12 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(Document& document, Ca
     if (!image)
         return { };
 
-    auto observer = image->imageObserver();
+    bool drawsSVGImage = image->drawsSVGImage();
+    ImageObserverDisableScope imageObserverDisabler(*image, drawsSVGImage);
     auto shouldPostProcess { true };
 
-    if (image->drawsSVGImage()) {
-        image->setImageObserver(nullptr);
+    if (drawsSVGImage)
         image->setContainerSize(imageRect.size());
-    }
 
     if (RefPtr bitmapImage = dynamicDowncast<BitmapImage>(*image)) {
         // Drawing an animated image to a canvas should draw the first frame (except for a few layout tests)
@@ -1801,9 +1800,6 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(Document& document, Ca
         c->drawImage(*image, normalizedDstRect, normalizedSrcRect, options);
 
     didDraw(repaintEntireCanvas, targetSwitcher ? targetSwitcher->expandedBounds() : normalizedDstRect, shouldPostProcess ? defaultDidDrawOptions() : defaultDidDrawOptionsWithoutPostProcessing());
-
-    if (image->drawsSVGImage())
-        image->setImageObserver(WTF::move(observer));
 
     return { };
 }

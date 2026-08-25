@@ -224,10 +224,8 @@ ImageDrawResult SVGImage::drawForContainer(GraphicsContext& context, const Float
     if (!m_page)
         return ImageDrawResult::DidNothing;
 
-    RefPtr observer = imageObserver();
-
     // Temporarily reset image observer, we don't want to receive any changeInRect() calls due to this relayout.
-    setImageObserver(nullptr);
+    ImageObserverDisableScope imageObserverDisabler(*this);
 
     IntSize roundedContainerSize = roundedIntSize(containerSize);
     setContainerSize(roundedContainerSize);
@@ -242,10 +240,7 @@ ImageDrawResult SVGImage::drawForContainer(GraphicsContext& context, const Float
 
     protect(frameView())->scrollToFragment(initialFragmentURL);
 
-    ImageDrawResult result = draw(context, dstRect, scaledSrc, options);
-
-    setImageObserver(WTF::move(observer));
-    return result;
+    return draw(context, dstRect, scaledSrc, options);
 }
 
 bool SVGImage::hasHDRContent() const
@@ -280,13 +275,11 @@ RefPtr<NativeImage> SVGImage::nativeImage(const FloatSize& size, const Destinati
     if (!imageBuffer)
         return nullptr;
 
-    RefPtr observer = imageObserver();
-    setImageObserver(nullptr);
+    ImageObserverDisableScope imageObserverDisabler(*this);
     setContainerSize(size);
 
     imageBuffer->context().drawImage(*this, FloatPoint(0, 0));
 
-    setImageObserver(WTF::move(observer));
     return ImageBuffer::sinkIntoNativeImage(WTF::move(imageBuffer));
 }
 

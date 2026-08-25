@@ -175,15 +175,13 @@ void BitmapImage::drawLuminanceMaskPattern(GraphicsContext& context, const Float
     if (!buffer)
         return;
 
-    auto observer = imageObserver();
-
-    // Temporarily reset image observer, we don't want to receive any changeInRect() calls due to this relayout.
-    setImageObserver(nullptr);
-
     auto bufferRect = FloatRect { { }, buffer->logicalSize() };
-    draw(buffer->context(), bufferRect, tileRect, { options, DecodingMode::Synchronous, ImageOrientation::Orientation::FromImage });
+    {
+        // Temporarily reset image observer, we don't want to receive any changeInRect() calls due to this relayout.
+        ImageObserverDisableScope imageObserverDisabler(*this);
+        draw(buffer->context(), bufferRect, tileRect, { options, DecodingMode::Synchronous, ImageOrientation::Orientation::FromImage });
+    }
 
-    setImageObserver(WTF::move(observer));
     buffer->convertToLuminanceMask();
 
     context.setDrawLuminanceMask(false);

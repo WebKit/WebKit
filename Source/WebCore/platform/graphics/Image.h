@@ -33,6 +33,7 @@
 #include <WebCore/ImageOrientation.h>
 #include <WebCore/ImagePaintingOptions.h>
 #include <WebCore/ImageTypes.h>
+#include <wtf/ForbidHeapAllocation.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/TypeCasts.h>
@@ -213,6 +214,19 @@ private:
 };
 
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const Image&);
+
+class ImageObserverDisableScope {
+    WTF_FORBID_HEAP_ALLOCATION;
+    WTF_MAKE_NONCOPYABLE(ImageObserverDisableScope);
+public:
+    WEBCORE_EXPORT explicit ImageObserverDisableScope(Image&, bool disable = true);
+    WEBCORE_EXPORT ~ImageObserverDisableScope();
+
+private:
+    const Ref<Image> m_image;
+    RefPtr<ImageObserver> m_observer;
+    bool m_disable;
+};
 
 } // namespace WebCore
 
