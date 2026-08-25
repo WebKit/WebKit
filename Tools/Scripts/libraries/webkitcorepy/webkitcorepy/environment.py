@@ -61,7 +61,7 @@ class Environment(object):
     def secure(self, *extra_paths):
         '''Delete unused environment files in self.path along with the provided extra paths'''
 
-        for file in os.listdir(self.path):
+        for file in os.listdir(self.path) if self.path else []:
             path = os.path.join(self.path, file)
             if path not in self._paths:
                 os.remove(path)

@@ -35,7 +35,6 @@ import subprocess
 import sys
 import tarfile
 import tempfile
-import time
 import zipfile
 
 from collections import defaultdict
@@ -721,12 +720,12 @@ class AutoInstall(importlib.abc.MetaPathFinder):
             sys.stderr.write("Autoinstaller disabled, but 'install' called\n")
             return None
         if isinstance(package, str):
-            # we want this to throw if it hasn't been previously registered; in the case
-            # that this is being called from cls.find_module it should always exist
             packages = cls.packages[package]
         else:
             packages = cls.register(package)
-        return all([to_install.install() for to_install in packages])
+        for to_install in packages:
+            to_install.install()
+        return None
 
     @classmethod
     def install_everything(cls):

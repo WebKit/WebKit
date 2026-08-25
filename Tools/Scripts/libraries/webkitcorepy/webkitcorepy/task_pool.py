@@ -230,10 +230,6 @@ class _Process(object):
     working = False
     queue = None
     stop_repeat = False
-    name = None
-    working = False
-    queue = None
-    stop_repeat = False
     repeat_task_queue = None
 
     class LogHandler(logging.Handler):

@@ -39,7 +39,7 @@ class Response(object):
     def fromJson(data, url=None, headers=None, status_code=None):
         assert isinstance(data, list) or isinstance(data, dict)
 
-        headers = headers or {}
+        headers = dict(headers or {})
         if 'Content-Type' not in headers:
             headers['Content-Type'] = 'text/json'
 
