@@ -165,17 +165,16 @@ private:
     Watchers m_watchers;
     GeoNotifierSet m_pendingForPermissionNotifiers;
     RefPtr<GeolocationPosition> m_lastPosition;
-
-    bool m_hasBeenRequested { false };
-
-    AllowGeolocation m_allowGeolocation { AllowGeolocation::Unknown };
     String m_authorizationToken;
-    bool m_isSuspended { false };
-    bool m_resetOnResume { false };
-    bool m_hasChangedPosition { false };
     RefPtr<GeolocationPositionError> m_errorWaitingForResume;
     Timer m_resumeTimer;
     GeoNotifierSet m_requestsAwaitingCachedPosition;
+
+    AllowGeolocation m_allowGeolocation { AllowGeolocation::Unknown };
+    bool m_hasBeenRequested { false };
+    bool m_isSuspended { false };
+    bool m_resetOnResume { false };
+    bool m_hasChangedPosition { false };
 };
     
 } // namespace WebCore
