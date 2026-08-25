@@ -372,7 +372,7 @@ static const char *GetOperatorString(TOperator op,
         case TOperator::EOpLogicalAnd:
             return "&&";
         case TOperator::EOpNegative:
-            return "-";
+            return resultType.isSignedInt() ? "ANGLE_negateInt" : "-";
         case TOperator::EOpPositive:
             if (argType0->isMatrix())
             {
@@ -430,11 +430,13 @@ static const char *GetOperatorString(TOperator op,
 
         case TOperator::EOpDiv:
         case TOperator::EOpDivAssign:
-            return resultType.isSignedInt() ? "ANGLE_div" : "/";
+            return (resultType.isSignedInt() || resultType.getBasicType() == EbtUInt) ? "ANGLE_div"
+                                                                                      : "/";
 
         case TOperator::EOpIMod:
         case TOperator::EOpIModAssign:
-            return resultType.isSignedInt() ? "ANGLE_imod" : "%";
+            return (resultType.isSignedInt() || resultType.getBasicType() == EbtUInt) ? "ANGLE_imod"
+                                                                                      : "%";
 
         case TOperator::EOpEqual:
             if ((argType0->getStruct() && argType1->getStruct()) &&
@@ -629,7 +631,7 @@ static const char *GetOperatorString(TOperator op,
         case TOperator::EOpIntBitsToFloat:
         case TOperator::EOpUintBitsToFloat:
         {
-#define RETURN_AS_TYPE_SCALAR()             \
+    #define RETURN_AS_TYPE_SCALAR()             \
     do                                      \
         switch (resultType.getBasicType())  \
         {                                   \
@@ -645,7 +647,7 @@ static const char *GetOperatorString(TOperator op,
         }                                   \
     while (false)
 
-#define RETURN_AS_TYPE(post)                     \
+    #define RETURN_AS_TYPE(post)                     \
     do                                           \
         switch (resultType.getBasicType())       \
         {                                        \
@@ -686,8 +688,8 @@ static const char *GetOperatorString(TOperator op,
                 return "TOperator_TODO";
             }
 
-#undef RETURN_AS_TYPE
-#undef RETURN_AS_TYPE_SCALAR
+    #undef RETURN_AS_TYPE
+    #undef RETURN_AS_TYPE_SCALAR
         }
 
         case TOperator::EOpPackUnorm2x16:
