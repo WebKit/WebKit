@@ -34,6 +34,30 @@
 .inert {
     pointer-events: none;
 }
+
+.flex-centered {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.line-height-centered {
+    line-height: 48px;
+}
+
+.bg {
+    background-color: rgb(212, 212, 212);
+    line-height: 24px;
+}
+
+.inline-block {
+    display: inline-block;
+}
+
+fieldset, figure, table {
+    border: 0;
+    padding: 0;
+}
 </style>
 <script src="../../resources/js-test.js"></script>
 <script src="../../resources/ui-helper.js"></script>
@@ -46,6 +70,24 @@
     <div class="pill inert">NoPointerEventsBox</div>
     <div class="pill">WrapsInteractiveBox<a href="https://webkit.org/">InnerLink</a></div>
     <div class="pill pointer-cursor">PointerCursorBox</div>
+    <div class="pill flex-centered">FlexCenteredButton</div>
+    <div class="pill line-height-centered">LineHeightButton</div>
+    <h5 class="pill">CenteredHeadingPill</h5>
+    <pre class="bg">PreBlock</pre>
+    <blockquote class="bg">BlockquoteBlock</blockquote>
+    <address class="bg">AddressBlock</address>
+    <figure><figcaption class="bg">FigcaptionBlock</figcaption></figure>
+    <fieldset><legend class="bg">LegendText</legend></fieldset>
+    <table><caption class="bg">TableCaptionText</caption><tr><td>Cell</td></tr></table>
+    <samp class="bg inline-block">SampInlineBlock</samp>
+    <div class="bg" role="alert">AlertRole</div>
+    <div class="bg" role="tooltip">TooltipRole</div>
+    <div class="bg" role="status">StatusRole</div>
+    <div class="bg" role="note">NoteRole</div>
+    <div class="bg" role="img">ImgRole</div>
+    <div class="bg" role="presentation">PresentationRole</div>
+    <div class="bg" role="progressbar">ProgressbarRole</div>
+    <div class="bg" role="separator">SeparatorRole</div>
 </div>
 <script>
 jsTestIsAsync = true;
@@ -61,6 +103,8 @@ addEventListener("load", async () => {
     const hasUID = label => UIHelper.nodeIdentifierFromDebugText(debugText, label) !== null;
     const isClickable = label => debugText.split("\n").some(line => line.includes(label) && line.includes("clickable"));
 
+    self.hasUID = hasUID;
+
     continueHasUID = hasUID("ContinueButton");
     continueIsClickable = isClickable("ContinueButton");
 
@@ -73,6 +117,11 @@ addEventListener("load", async () => {
 
     pointerHasUID = hasUID("PointerCursorBox");
 
+    flexCenteredHasUID = hasUID("FlexCenteredButton");
+    flexCenteredIsClickable = isClickable("FlexCenteredButton");
+    lineHeightHasUID = hasUID("LineHeightButton");
+    headingPillHasUID = hasUID("CenteredHeadingPill");
+
     shouldBeTrue("continueHasUID");
     shouldBeTrue("continueIsClickable");
     shouldBeFalse("tallHasUID");
@@ -81,6 +130,17 @@ addEventListener("load", async () => {
     shouldBeFalse("wrapperHasUID");
     shouldBeTrue("linkHasUID");
     shouldBeTrue("pointerHasUID");
+    shouldBeTrue("flexCenteredHasUID");
+    shouldBeTrue("flexCenteredIsClickable");
+    shouldBeTrue("lineHeightHasUID");
+    shouldBeFalse("headingPillHasUID");
+
+    for (const label of ["PreBlock", "BlockquoteBlock", "AddressBlock", "FigcaptionBlock", "LegendText",
+        "TableCaptionText", "SampInlineBlock", "AlertRole", "TooltipRole", "StatusRole", "NoteRole"])
+        shouldBeFalse(`hasUID("${label}")`);
+
+    for (const label of ["ImgRole", "PresentationRole", "ProgressbarRole", "SeparatorRole"])
+        shouldBeTrue(`hasUID("${label}")`);
 
     document.getElementById("scratch").remove();
     finishJSTest();
