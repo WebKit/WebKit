@@ -3568,17 +3568,7 @@
 		41FC86482FE59A75008EED6A /* cord_analysis.h in Headers */ = {isa = PBXBuildFile; fileRef = 41FC86442FE59A66008EED6A /* cord_analysis.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		41FC864B2FE59ADB008EED6A /* cord_buffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 41FC86492FE59AD3008EED6A /* cord_buffer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		41FC864D2FE59B7B008EED6A /* cord_data_edge.h in Headers */ = {isa = PBXBuildFile; fileRef = 41FC864C2FE59B7B008EED6A /* cord_data_edge.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		41FC86502FE59BDB008EED6A /* cord_rep_btree.cc in Sources */ = {isa = PBXBuildFile; fileRef = 41FC864F2FE59BDB008EED6A /* cord_rep_btree.cc */; };
 		41FC86522FE59BE4008EED6A /* cord_rep_btree.h in Headers */ = {isa = PBXBuildFile; fileRef = 41FC864E2FE59BDB008EED6A /* cord_rep_btree.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		41FC86602FE59C47008EED6A /* cord_rep_btree_reader.cc in Sources */ = {isa = PBXBuildFile; fileRef = 41FC86572FE59C47008EED6A /* cord_rep_btree_reader.cc */; };
-		41FC86612FE59C47008EED6A /* cordz_info.cc in Sources */ = {isa = PBXBuildFile; fileRef = 41FC865E2FE59C47008EED6A /* cordz_info.cc */; };
-		41FC86622FE59C47008EED6A /* cord_rep_consume.cc in Sources */ = {isa = PBXBuildFile; fileRef = 41FC86592FE59C47008EED6A /* cord_rep_consume.cc */; };
-		41FC86632FE59C47008EED6A /* cordz_functions.cc in Sources */ = {isa = PBXBuildFile; fileRef = 41FC865C2FE59C47008EED6A /* cordz_functions.cc */; };
-		41FC86642FE59C47008EED6A /* cord_internal.cc in Sources */ = {isa = PBXBuildFile; fileRef = 41FC86532FE59C47008EED6A /* cord_internal.cc */; };
-		41FC86652FE59C47008EED6A /* cordz_handle.cc in Sources */ = {isa = PBXBuildFile; fileRef = 41FC865D2FE59C47008EED6A /* cordz_handle.cc */; };
-		41FC86662FE59C47008EED6A /* cord_rep_btree_navigator.cc in Sources */ = {isa = PBXBuildFile; fileRef = 41FC86552FE59C47008EED6A /* cord_rep_btree_navigator.cc */; };
-		41FC86672FE59C47008EED6A /* cordz_sample_token.cc in Sources */ = {isa = PBXBuildFile; fileRef = 41FC865F2FE59C47008EED6A /* cordz_sample_token.cc */; };
-		41FC86682FE59C47008EED6A /* cord_rep_crc.cc in Sources */ = {isa = PBXBuildFile; fileRef = 41FC865B2FE59C47008EED6A /* cord_rep_crc.cc */; };
 		41FC866D2FE59C53008EED6A /* cord_rep_btree_reader.h in Headers */ = {isa = PBXBuildFile; fileRef = 41FC86562FE59C47008EED6A /* cord_rep_btree_reader.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		41FC866E2FE59C53008EED6A /* cord_rep_btree_navigator.h in Headers */ = {isa = PBXBuildFile; fileRef = 41FC86542FE59C47008EED6A /* cord_rep_btree_navigator.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		41FC866F2FE59C53008EED6A /* cord_rep_crc.h in Headers */ = {isa = PBXBuildFile; fileRef = 41FC865A2FE59C47008EED6A /* cord_rep_crc.h */; settings = {ATTRIBUTES = (Public, ); }; };
