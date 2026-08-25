@@ -34,15 +34,15 @@ select,
   box-sizing: border-box;
   border: 1px solid color-mix(currentColor 50%);
   border-radius: 4px;
-  padding-block: 0.4em;
+  padding-block: 0.4lh;
   padding-inline: 1em 0.7em;
   color: inherit;
   font: inherit;
   background-color: light-dark(transparent, color-mix(currentColor 4%));
-  align-items: unset;
+  align-items: center;
   white-space: nowrap;
   cursor: default;
-  gap: 0.5em;
+  gap: 0.65em;
   min-block-size: 24px;
   min-inline-size: 4em;
   overflow: clip;
@@ -58,7 +58,7 @@ select:not([popover]),
   display: inline-flex;
 }
 
-select:enabled:hover:not(:user-invalid),
+select:hover,
 .customizable-select-button.hover {
   border-color: color-mix(currentColor 70%);
 }
@@ -71,9 +71,13 @@ select:enabled:hover:not(:user-invalid),
   background-color: light-dark(transparent, color-mix(currentColor 4%));
 }
 
-select:enabled:active,
+select:active,
 .customizable-select-button.active {
   background-color: color-mix(currentColor 8%);
+}
+
+select:user-invalid {
+  border-color: light-dark(#dc3545, oklch(from #db2a37 calc(l + 0.17) c h));
 }
 
 select:disabled,
@@ -82,10 +86,6 @@ select:disabled,
   color: color-mix(currentColor 55%);
   border-color: color-mix(currentColor 25%);
   cursor: not-allowed;
-}
-
-select:user-invalid {
-  border-color: light-dark(#dc3545, oklch(from #db2a37 calc(l + 0.17) c h));
 }
 
 select:not([multiple]) > button:first-child {
@@ -107,13 +107,11 @@ select selectedcontent,
 select::picker-icon,
 .customizable-select-button::after {
   content: "\2335" / "";
-  font-family: system-ui;
-  font-style: normal;
+  font: 100% system-ui;
   text-orientation: sideways;
-  padding-inline: 0.3em 0.15em;
+  padding-inline: 0.15em;
   margin-inline-start: auto;
   margin-block-start: -0.25em;
-  align-self: center;
 }
 
 /* ---- Picker popover ---- */
@@ -156,7 +154,7 @@ select option,
 .customizable-select-option {
   min-inline-size: 24px;
   min-block-size: max(24px, 1lh);
-  padding-block: 0.5em;
+  padding-block: 0.4lh;
   padding-inline: 0.75em 1.1em;
   display: flex;
   align-items: center;
@@ -166,26 +164,26 @@ select option,
   outline-offset: inset;
 }
 
-select option:enabled:hover,
-select option:enabled:focus-visible {
+select option:hover,
+select option:focus-visible {
   background-color: color-mix(currentColor 10%);
 }
 
-select option:enabled:active {
+select option:active {
   background-color: color-mix(currentColor 15%);
 }
 
 select option:disabled,
 .customizable-select-option.disabled {
   color: color-mix(currentColor 55%);
+  background: transparent;
   cursor: not-allowed;
 }
 
 select option::checkmark,
 .customizable-select-option::before {
   content: "\2713" / "";
-  font-family: system-ui;
-  font-style: normal;
+  font: 100% system-ui;
 }
 
 select option:not(:checked)::checkmark,
