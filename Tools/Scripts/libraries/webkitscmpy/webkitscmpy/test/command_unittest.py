@@ -28,7 +28,7 @@ from unittest.mock import patch
 
 from webkitcorepy import OutputCapture, Terminal, testing
 from webkitcorepy.mocks import Time as MockTime
-from webkitscmpy import program, mocks
+from webkitscmpy import local, program, mocks
 
 
 class TestFilteredCommandBase(testing.PathTestCase, abc.ABC):
@@ -324,3 +324,55 @@ class TestFilteredCommandRevision(TestFilteredCommandBase):
             '    git-svn-id: https://svn.example.org/repository/repository/trunk@1 268f45cc-cd09-0410-ab3c-d52691b4dbfc\n',
             self._run_log(git, ref=root.hash),
         )
+
+
+class TestWriteBranchVariables(testing.PathTestCase):
+    basepath = 'mock/repository'
+
+    def setUp(self):
+        super().setUp()
+        os.mkdir(os.path.join(self.path, '.git'))
+
+    def values_for(self, key):
+        with open(os.path.join(self.path, '.git', 'config')) as configfile:
+            return [
+                line.split('=', 1)[-1].strip() for line in configfile.readlines()
+                if line.strip().startswith(f'{key}=')
+            ]
+
+    def test_single_value_is_not_duplicated(self):
+        with OutputCapture(), mocks.local.Git(self.path):
+            repository = local.Git(self.path)
+            for _ in range(3):
+                self.assertTrue(program.Command.write_branch_variables(
+                    repository, 'eng/example',
+                    bug='https://bugs.example.com/show_bug.cgi?id=1',
+                ))
+
+            self.assertEqual(
+                self.values_for('eng/example.bug'),
+                ['https://bugs.example.com/show_bug.cgi?id=1'],
+            )
+
+    def test_value_is_replaced(self):
+        with OutputCapture(), mocks.local.Git(self.path):
+            repository = local.Git(self.path)
+            program.Command.write_branch_variables(repository, 'eng/example', title='Old title')
+            program.Command.write_branch_variables(repository, 'eng/example', title='New title')
+
+            self.assertEqual(self.values_for('eng/example.title'), ['New title'])
+            self.assertEqual(repository.config(cached=False).get('branch.eng/example.title'), 'New title')
+
+    def test_multiple_values_are_kept(self):
+        with OutputCapture(), mocks.local.Git(self.path):
+            repository = local.Git(self.path)
+            for _ in range(2):
+                program.Command.write_branch_variables(
+                    repository, 'eng/example',
+                    bug=['https://bugs.example.com/show_bug.cgi?id=1', 'rdar://2'],
+                )
+
+            self.assertEqual(
+                self.values_for('eng/example.bug'),
+                ['https://bugs.example.com/show_bug.cgi?id=1', 'rdar://2'],
+            )

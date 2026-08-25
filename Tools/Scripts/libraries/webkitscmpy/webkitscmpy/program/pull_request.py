@@ -328,14 +328,10 @@ class PullRequest(Command):
                 if result:
                     return None
 
-                bug_urls = getattr(args, '_bug_urls', None) or ''
-                if isinstance(bug_urls, (list, tuple)):
-                    bug_urls = '\n'.join(bug_urls)
-                title = getattr(args, '_title', None) or ''
                 cls.write_branch_variables(
                     repository, repository.branch,
-                    title=title,
-                    bug=bug_urls,
+                    title=getattr(args, '_title', None) or '',
+                    bug=getattr(args, '_bug_urls', None) or [],
                 )
 
         if not repository.config().get('remote.{}.url'.format(source_remote)):

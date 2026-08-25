@@ -27,7 +27,7 @@ from unittest.mock import patch
 
 from webkitbugspy import Tracker, bugzilla, radar
 from webkitbugspy import mocks as bmocks
-from webkitcorepy import OutputCapture, testing
+from webkitcorepy import OutputCapture, run, testing
 from webkitcorepy import mocks as wkmocks
 from webkitcorepy.mocks import Environment
 from webkitcorepy.mocks import Terminal as MockTerminal
@@ -567,3 +567,42 @@ Created the local development branch 'eng/4'
         self.assertEqual(captured.root.log.getvalue(), '')
         self.assertEqual(captured.stdout.getvalue(), '')
         self.assertEqual(captured.stderr.getvalue(), '')
+
+    def test_bug_urls_stored_separately(self):
+        with OutputCapture(), mocks.local.Git(self.path), bmocks.Bugzilla(
+            self.BUGZILLA.split('://')[-1],
+            issues=bmocks.ISSUES,
+            projects=bmocks.PROJECTS,
+            users=bmocks.USERS,
+            environment=Environment(
+                BUGS_EXAMPLE_COM_USERNAME='tcontributor@example.com',
+                BUGS_EXAMPLE_COM_PASSWORD='password',
+            ),
+        ), bmocks.Radar(issues=bmocks.ISSUES), patch('webkitbugspy.Tracker._trackers', [
+            bugzilla.Tracker(self.BUGZILLA, radar_importer=bmocks.USERS['Radar WebKit Bug Importer']),
+            radar.Tracker(),
+        ]), mocks.local.Svn(), MockTime, MockTerminal.input(
+            f'{self.BUGZILLA}/show_bug.cgi?id=2', '',
+        ):
+            self.assertEqual(0, program.main(args=('branch',), path=self.path))
+
+            entries = run(
+                [local.Git.executable(), 'config', '--list'],
+                cwd=self.path, capture_output=True, encoding='utf-8',
+            ).stdout.splitlines()
+
+            # Each URL is a value of its own, rather than one truncated value and one bogus key
+            self.assertEqual(
+                [line for line in entries if line.startswith('branch.eng/Example-feature-1.bug=')],
+                [
+                    f'branch.eng/Example-feature-1.bug={self.BUGZILLA}/show_bug.cgi?id=2',
+                    'branch.eng/Example-feature-1.bug=rdar://4',
+                ],
+            )
+            self.assertEqual(
+                sorted({
+                    line.split('=')[0] for line in entries
+                    if line.startswith('branch.eng/Example-feature-1.')
+                }),
+                ['branch.eng/Example-feature-1.bug', 'branch.eng/Example-feature-1.title'],
+            )

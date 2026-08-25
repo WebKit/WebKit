@@ -39,6 +39,10 @@ from webkitscmpy.program.canonicalize.committer import main as committer_main
 from webkitscmpy.program.canonicalize.message import main as message_main
 
 
+# 'git config' spells listing two ways, and both appear in the wild
+LIST_OPTION = re.compile(r'^(-l|--list)$')
+
+
 class Git(mocks.Subprocess):
     # Parse a .git/config that looks like this
     # [core]
@@ -48,7 +52,7 @@ class Git(mocks.Subprocess):
     #     merge = refs/heads/main
     RE_SINGLE_TOP = re.compile(r'^\[\s*(?P<key>\S+)\s*\]')
     RE_MULTI_TOP = re.compile(r'^\[\s*(?P<keya>\S+) "(?P<keyb>\S+)"\s*\]')
-    RE_ELEMENT = re.compile(r'^\s+(?P<key>\S+)\s*=\s*(?P<value>.*\S+)')
+    RE_ELEMENT = re.compile(r'^\s+(?P<key>[^\s=]+)\s*=\s*(?P<value>.*\S+)')
 
     def __init__(
         self, path='/.invalid-git', datafile=None,
@@ -522,12 +526,12 @@ nothing to commit, working tree clean
                 cwd=self.path,
                 generator=lambda *args, **kwargs: self.pull(autostash=True),
             ), mocks.Subprocess.Route(
-                self.executable, 'config', '-l',
+                self.executable, 'config', LIST_OPTION,
                 cwd=self.path,
                 generator=lambda *args, **kwargs:
                     mocks.ProcessCompletion(
                         returncode=0,
-                        stdout='\n'.join(['{}={}'.format(key, value) for key, value in self.config().items()])
+                        stdout='\n'.join([f'{key}={value}' for key, value in self.config_entries()])
                     ),
             ), mocks.Subprocess.Route(
                 self.executable, 'config', '--get-regexp', re.compile(r'.+'),
@@ -538,17 +542,17 @@ nothing to commit, working tree clean
                         stdout='\n'.join(['{} {}'.format(key, value) for key, value in self.config().items() if key.startswith(args[3])])
                     ),
             ), mocks.Subprocess.Route(
-                self.executable, 'config', '-l', '--file', re.compile(r'.+'),
+                self.executable, 'config', LIST_OPTION, '--file', re.compile(r'.+'),
                 cwd=self.path,
                 generator=lambda *args, **kwargs:
                     mocks.ProcessCompletion(
                         returncode=0,
                         stdout='\n'.join([
-                            '{}={}'.format(key, value) for key, value in self.config(path=os.path.join(self.path, args[4])).items()
+                            f'{key}={value}' for key, value in self.config_entries(path=os.path.join(self.path, args[4]))
                         ])
                     ),
             ), mocks.Subprocess.Route(
-                self.executable, 'config', '-l', '--global',
+                self.executable, 'config', LIST_OPTION, '--global',
                 generator=lambda *args, **kwargs:
                     mocks.ProcessCompletion(
                         returncode=0,
@@ -556,6 +560,11 @@ nothing to commit, working tree clean
                     ),
             ), mocks.Subprocess.Route(
                 self.executable, 'config', '--add', re.compile(r'.+'), re.compile(r'.+'),
+                cwd=self.path,
+                generator=lambda *args, **kwargs:
+                    self.edit_config(args[3], args[4], add=True),
+            ), mocks.Subprocess.Route(
+                self.executable, 'config', '--replace-all', re.compile(r'.+'), re.compile(r'.+'),
                 cwd=self.path,
                 generator=lambda *args, **kwargs:
                     self.edit_config(args[3], args[4]),
@@ -1125,28 +1134,33 @@ nothing to commit, working tree clean
                 'sendemail.transferencoding': 'base64',
             })
 
-        top = None
-        result = Git.config()
-        path = path or os.path.join(context.path, '.git', 'config')
+        return OrderedDict(context.config_entries(path=path))
+
+    def config_entries(self, path=None):
+        """Every configured value in order, keeping the repeated keys git allows a single option."""
+        result = list(Git.config().items())
+        path = path or os.path.join(self.path, '.git', 'config')
         if not os.path.isfile(path):
             return result
+
+        top = None
         with open(path, 'r') as configfile:
             for line in configfile.readlines():
-                match = context.RE_MULTI_TOP.match(line)
+                match = self.RE_MULTI_TOP.match(line)
                 if match:
-                    top = '{}.{}'.format(match.group('keya'), match.group('keyb'))
+                    top = f"{match.group('keya')}.{match.group('keyb')}"
                     continue
-                match = context.RE_SINGLE_TOP.match(line)
+                match = self.RE_SINGLE_TOP.match(line)
                 if match:
                     top = match.group('key')
                     continue
 
-                match = context.RE_ELEMENT.match(line)
+                match = self.RE_ELEMENT.match(line)
                 if top and match:
-                    result['{}.{}'.format(top, match.group('key'))] = match.group('value')
+                    result.append((f"{top}.{match.group('key')}", match.group('value')))
         return result
 
-    def edit_config(self, key, value):
+    def edit_config(self, key, value, add=False):
         with open(os.path.join(self.path, '.git', 'config'), 'r') as configfile:
             lines = [line for line in configfile.readlines()]
 
@@ -1157,7 +1171,7 @@ nothing to commit, working tree clean
         with open(os.path.join(self.path, '.git', 'config'), 'w') as configfile:
             for line in lines:
                 match = self.RE_ELEMENT.match(line)
-                if not match or match.group('key') != key_b:
+                if add or not match or match.group('key') != key_b:
                     configfile.write(line)
                 match = self.RE_MULTI_TOP.match(line)
                 if not match or '{}.{}'.format(match.group('keya'), match.group('keyb')) != key_a:

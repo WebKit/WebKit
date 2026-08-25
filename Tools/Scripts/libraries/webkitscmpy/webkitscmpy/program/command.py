@@ -45,9 +45,12 @@ class Command(object):
         for key, value in variables.items():
             if not value:
                 continue
-            for v in value if isinstance(value, (list, tuple)) else [value]:
+            values = value if isinstance(value, (list, tuple)) else [value]
+            for position, entry in enumerate(values):
+                # The first write clears whatever a previous run left behind, the rest accumulate
+                option = '--replace-all' if position == 0 else '--add'
                 result &= run(
-                    [repository.executable(), 'config', '--add', 'branch.{}.{}'.format(branch, key), str(v)],
+                    [repository.executable(), 'config', option, f'branch.{branch}.{key}', str(entry)],
                     cwd=repository.root_path, capture_output=True,
                 ).returncode == 0
         return result
