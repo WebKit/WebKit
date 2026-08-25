@@ -29,9 +29,7 @@
 #include "RenderBoxInlines.h"
 #include "RenderGrid.h"
 #include "StyleComputedStyle+GettersInlines.h"
-#include "StyleFitTolerance.h"
 #include "StyleGridPositionsResolver.h"
-#include "StylePrimitiveNumericTypes+Evaluation.h"
 #include "WritingMode.h"
 
 namespace WebCore {
@@ -51,7 +49,7 @@ void GridLanesLayout::initializeGridLanes(unsigned gridAxisTracks, Style::GridTr
     resizeAndResetRunningPositions();
 }
 
-void GridLanesLayout::performGridLanesPlacement(const GridTrackSizingAlgorithm& algorithm, unsigned gridAxisTracks, Style::GridTrackSizingDirection stackingAxisDirection, Phase layoutPhase)
+void GridLanesLayout::performGridLanesPlacement(const GridTrackSizingAlgorithm& algorithm, unsigned gridAxisTracks, Style::GridTrackSizingDirection stackingAxisDirection, ResolvedFitTolerance fitTolerance, Phase layoutPhase)
 {
     initializeGridLanes(gridAxisTracks, stackingAxisDirection);
 
@@ -63,7 +61,7 @@ void GridLanesLayout::performGridLanesPlacement(const GridTrackSizingAlgorithm& 
     // the insertIntoGridAndLayoutItem() will modify the m_autoFlowNextCursor, so m_autoFlowNextCursor needs to be reset.
     m_autoFlowNextCursor = 0;
 
-    placeGridLanesItems(algorithm, layoutPhase);
+    placeGridLanesItems(algorithm, fitTolerance, layoutPhase);
 }
 
 void GridLanesLayout::resizeAndResetRunningPositions()
@@ -71,7 +69,7 @@ void GridLanesLayout::resizeAndResetRunningPositions()
     m_runningPositions.fill(LayoutUnit(), m_gridAxisTracksCount);
 }
 
-void GridLanesLayout::placeGridLanesItems(const GridTrackSizingAlgorithm& algorithm, Phase layoutPhase)
+void GridLanesLayout::placeGridLanesItems(const GridTrackSizingAlgorithm& algorithm, ResolvedFitTolerance fitTolerance, Phase layoutPhase)
 {
     if (!m_gridAxisTracksCount)
         return;
@@ -81,7 +79,7 @@ void GridLanesLayout::placeGridLanesItems(const GridTrackSizingAlgorithm& algori
         if (grid.orderIterator().shouldSkipChild(*gridItem))
             continue;
 
-        auto gridArea = hasDefiniteGridAxisPosition(*gridItem, gridAxisDirection()) ? gridAreaForDefiniteGridAxisItem(*gridItem) : gridAreaForIndefiniteGridAxisItem(*gridItem);
+        auto gridArea = hasDefiniteGridAxisPosition(*gridItem, gridAxisDirection()) ? gridAreaForDefiniteGridAxisItem(*gridItem) : gridAreaForIndefiniteGridAxisItem(*gridItem, fitTolerance);
         insertIntoGridAndLayoutItem(algorithm, *gridItem, gridArea, layoutPhase);
     }
 }
@@ -213,15 +211,12 @@ LayoutUnit GridLanesLayout::maxRunningPositionForSpan(unsigned startLine, unsign
     return maxPosition;
 }
 
-GridArea GridLanesLayout::gridAreaForIndefiniteGridAxisItem(const RenderBox& item)
+GridArea GridLanesLayout::gridAreaForIndefiniteGridAxisItem(const RenderBox& item, ResolvedFitTolerance fitTolerance)
 {
     auto itemSpanLength = std::min<unsigned>(Style::GridPositionsResolver::spanSizeForAutoPlacedItem(item, gridAxisDirection()), m_gridAxisTracksCount);
     auto gridAxisLines = m_gridAxisTracksCount + 1;
 
-    // Get fit-tolerance from the grid lanes container's style
-    const auto& tolerance = m_renderGrid->style().fitTolerance();
-
-    if (tolerance.isInfinite()) {
+    if (WTF::holdsAlternative<CSS::Keyword::Infinite>(fitTolerance)) {
         // Infinite tolerance: place items strictly in order without considering track lengths
         // Use round-robin placement starting from the cursor position
         auto startingLine = m_autoFlowNextCursor;
@@ -235,31 +230,7 @@ GridArea GridLanesLayout::gridAreaForIndefiniteGridAxisItem(const RenderBox& ite
     }
 
     // For normal and length-percentage tolerances, find positions within tolerance of the shortest track
-    // Calculate tolerance value
-    auto contentBoxSize = gridAxisDirection() == Style::GridTrackSizingDirection::Columns
-        ? m_renderGrid->contentBoxLogicalHeight()
-        : m_renderGrid->contentBoxLogicalWidth();
-
-    LayoutUnit toleranceValue = tolerance.switchOn(
-        [&](const CSS::Keyword::Normal&) -> LayoutUnit {
-            // Normal resolves to 1em
-            return LayoutUnit { m_renderGrid->style().computedFontSize() };
-        },
-        [&](const typename Style::FitTolerance::Fixed& fixed) -> LayoutUnit {
-            return LayoutUnit { fixed.resolveZoom(m_renderGrid->style().usedZoomForLength()) };
-        },
-        [&](const typename Style::FitTolerance::Percentage& percentage) -> LayoutUnit {
-            return Style::evaluate<LayoutUnit>(percentage, contentBoxSize);
-        },
-        [&](const typename Style::FitTolerance::Calc& calc) -> LayoutUnit {
-            return Style::evaluate<LayoutUnit>(calc, contentBoxSize, m_renderGrid->style().usedZoomForLength());
-        },
-        [](const CSS::Keyword::Infinite&) -> LayoutUnit {
-            // This case shouldn't be reached due to the outer if check
-            ASSERT_NOT_REACHED();
-            return LayoutUnit { };
-        }
-    );
+    auto toleranceValue = std::get<LayoutUnit>(fitTolerance);
 
     // Step 1: Find the absolute shortest position across all tracks
     auto maxStartingLine = gridAxisLines - itemSpanLength;

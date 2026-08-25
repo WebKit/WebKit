@@ -52,17 +52,19 @@ public:
         MaxContent
     };
 
-    void performGridLanesPlacement(const GridTrackSizingAlgorithm&, unsigned gridAxisTracks, Style::GridTrackSizingDirection stackingAxisDirection, Phase);
+    using ResolvedFitTolerance = Variant<LayoutUnit, CSS::Keyword::Infinite>;
+
+    void performGridLanesPlacement(const GridTrackSizingAlgorithm&, unsigned gridAxisTracks, Style::GridTrackSizingDirection stackingAxisDirection, ResolvedFitTolerance, Phase);
     LayoutUnit NODELETE offsetForGridItem(const RenderBox&) const;
     LayoutUnit gridContentSize() const { return m_gridContentSize; };
 
 private:
     void initializeGridLanes(unsigned gridAxisTracks, Style::GridTrackSizingDirection stackingAxisDirection);
 
-    GridArea gridAreaForIndefiniteGridAxisItem(const RenderBox& item);
+    GridArea gridAreaForIndefiniteGridAxisItem(const RenderBox& item, ResolvedFitTolerance);
     GridArea gridAreaForDefiniteGridAxisItem(const RenderBox&) const;
 
-    void placeGridLanesItems(const GridTrackSizingAlgorithm&, Phase);
+    void placeGridLanesItems(const GridTrackSizingAlgorithm&, ResolvedFitTolerance, Phase);
     void setItemContainingBlockToGridArea(const GridTrackSizingAlgorithm&, RenderBox&);
     void insertIntoGridAndLayoutItem(const GridTrackSizingAlgorithm&, RenderBox&, const GridArea&, Phase);
     LayoutUnit calculateGridLanesIntrinsicLogicalWidth(RenderBox&, Phase);
