@@ -158,32 +158,29 @@ TEST_P(PeerConnectionIntegrationTest,
   callee()->AddAudioVideoTracks();
   // Start offer/answer exchange and wait for it to complete.
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
   // Should be one receiver each for audio/video.
   EXPECT_EQ(2U, caller()->rtp_receiver_observers().size());
   EXPECT_EQ(2U, callee()->rtp_receiver_observers().size());
   // Wait for all "first packet received" callbacks to be fired.
-  EXPECT_THAT(WaitUntil(
-                  [&] {
-                    return absl::c_all_of(
-                        caller()->rtp_receiver_observers(),
-                        [](const std::unique_ptr<MockRtpReceiverObserver>& o) {
-                          return o->first_packet_received();
-                        });
-                  },
-                  IsTrue(), {.timeout = kMaxWaitForFrames}),
-              IsRtcOk());
-  EXPECT_THAT(WaitUntil(
-                  [&] {
-                    return absl::c_all_of(
-                        callee()->rtp_receiver_observers(),
-                        [](const std::unique_ptr<MockRtpReceiverObserver>& o) {
-                          return o->first_packet_received();
-                        });
-                  },
-                  IsTrue(), {.timeout = kMaxWaitForFrames}),
-              IsRtcOk());
+  EXPECT_TRUE(WaitUntil(
+      [&] {
+        return absl::c_all_of(
+            caller()->rtp_receiver_observers(),
+            [](const std::unique_ptr<MockRtpReceiverObserver>& o) {
+              return o->first_packet_received();
+            });
+      },
+      {.timeout = kMaxWaitForFrames}));
+  EXPECT_TRUE(WaitUntil(
+      [&] {
+        return absl::c_all_of(
+            callee()->rtp_receiver_observers(),
+            [](const std::unique_ptr<MockRtpReceiverObserver>& o) {
+              return o->first_packet_received();
+            });
+      },
+      {.timeout = kMaxWaitForFrames}));
   // If new observers are set after the first packet was already received, the
   // callback should still be invoked.
   caller()->ResetRtpReceiverObservers();
@@ -213,38 +210,34 @@ TEST_P(PeerConnectionIntegrationTest,
   callee()->AddAudioVideoTracks();
   // Start offer/answer exchange and wait for it to complete.
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
   // Should be one receiver each for audio/video.
   EXPECT_EQ(2U, caller()->rtp_receiver_observers().size());
   // Wait for all "first packet received" callbacks to be fired.
-  EXPECT_THAT(WaitUntil(
-                  [&] {
-                    return absl::c_all_of(
-                        caller()->rtp_receiver_observers(),
-                        [](const std::unique_ptr<MockRtpReceiverObserver>& o) {
-                          return o->first_packet_received();
-                        });
-                  },
-                  IsTrue(), {.timeout = kMaxWaitForFrames}),
-              IsRtcOk());
+  EXPECT_TRUE(WaitUntil(
+      [&] {
+        return absl::c_all_of(
+            caller()->rtp_receiver_observers(),
+            [](const std::unique_ptr<MockRtpReceiverObserver>& o) {
+              return o->first_packet_received();
+            });
+      },
+      {.timeout = kMaxWaitForFrames}));
 
   // Renegotiate, going inactive and back to sendrecv.
   for (auto& transceiver : caller()->pc()->GetTransceivers()) {
     transceiver->SetDirectionWithError(RtpTransceiverDirection::kInactive);
   }
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
 
   callee()->ResetRtpReceiverObservers();
   for (auto& transceiver : caller()->pc()->GetTransceivers()) {
     transceiver->SetDirectionWithError(RtpTransceiverDirection::kSendRecv);
   }
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
-  EXPECT_THAT(
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
+  EXPECT_TRUE(
       WaitUntil(
           [&] {
             return absl::c_all_of(
@@ -253,8 +246,7 @@ TEST_P(PeerConnectionIntegrationTest,
                   return o->first_packet_received_after_receptive_change();
                 });
           },
-          IsTrue(), {.timeout = kMaxWaitForFrames}),
-      IsRtcOk());
+          {.timeout = kMaxWaitForFrames}));
 }
 
 TEST_P(PeerConnectionIntegrationTest, RtpSenderObserverOnFirstPacketSent) {
@@ -264,32 +256,29 @@ TEST_P(PeerConnectionIntegrationTest, RtpSenderObserverOnFirstPacketSent) {
   callee()->AddAudioVideoTracks();
   // Start offer/answer exchange and wait for it to complete.
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
   // Should be one sender each for audio/video.
   EXPECT_EQ(2U, caller()->rtp_sender_observers().size());
   EXPECT_EQ(2U, callee()->rtp_sender_observers().size());
   // Wait for all "first packet sent" callbacks to be fired.
-  EXPECT_THAT(WaitUntil(
-                  [&] {
-                    return absl::c_all_of(
-                        caller()->rtp_sender_observers(),
-                        [](const std::unique_ptr<MockRtpSenderObserver>& o) {
-                          return o->first_packet_sent();
-                        });
-                  },
-                  IsTrue(), {.timeout = kMaxWaitForFrames}),
-              IsRtcOk());
-  EXPECT_THAT(WaitUntil(
-                  [&] {
-                    return absl::c_all_of(
-                        callee()->rtp_sender_observers(),
-                        [](const std::unique_ptr<MockRtpSenderObserver>& o) {
-                          return o->first_packet_sent();
-                        });
-                  },
-                  IsTrue(), {.timeout = kMaxWaitForFrames}),
-              IsRtcOk());
+  EXPECT_TRUE(WaitUntil(
+      [&] {
+        return absl::c_all_of(
+            caller()->rtp_sender_observers(),
+            [](const std::unique_ptr<MockRtpSenderObserver>& o) {
+              return o->first_packet_sent();
+            });
+      },
+      {.timeout = kMaxWaitForFrames}));
+  EXPECT_TRUE(WaitUntil(
+      [&] {
+        return absl::c_all_of(
+            callee()->rtp_sender_observers(),
+            [](const std::unique_ptr<MockRtpSenderObserver>& o) {
+              return o->first_packet_sent();
+            });
+      },
+      {.timeout = kMaxWaitForFrames}));
   // If new observers are set after the first packet was already sent, the
   // callback should still be invoked.
   caller()->ResetRtpSenderObservers();
@@ -344,8 +333,7 @@ void TestDtmfFromSenderToReceiver(PeerConnectionIntegrationWrapper* sender,
   EXPECT_TRUE(dtmf_sender->CanInsertDtmf());
   EXPECT_TRUE(dtmf_sender->InsertDtmf("1a", 100, 50));
 
-  EXPECT_THAT(WaitUntil([&] { return observer.completed(); }, IsTrue()),
-              IsRtcOk());
+  EXPECT_TRUE(WaitUntil([&] { return observer.completed(); }));
   std::vector<std::string> tones = {"1", "a", ""};
   EXPECT_EQ(tones, observer.tones());
   dtmf_sender->UnregisterObserver();
@@ -361,10 +349,9 @@ TEST_P(PeerConnectionIntegrationTest, DtmfSenderObserver) {
   caller()->AddAudioTrack();
   callee()->AddAudioTrack();
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
   // DTLS must finish before the DTMF sender can be used reliably.
-  ASSERT_THAT(WaitUntil([&] { return DtlsConnected(); }, IsTrue()), IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return DtlsConnected(); }));
   TestDtmfFromSenderToReceiver(caller(), callee());
   TestDtmfFromSenderToReceiver(callee(), caller());
 }
@@ -380,8 +367,7 @@ TEST_P(PeerConnectionIntegrationTest, EndToEndCallWithDtls) {
   caller()->AddAudioVideoTracks();
   callee()->AddAudioVideoTracks();
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
   MediaExpectations media_expectations;
   media_expectations.ExpectBidirectionalAudioAndVideo();
   ASSERT_TRUE(ExpectNewFrames(media_expectations));
@@ -406,8 +392,7 @@ TEST_P(PeerConnectionIntegrationTest,
   caller()->AddAudioVideoTracks();
   callee()->AddAudioVideoTracks();
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
   MediaExpectations media_expectations;
   media_expectations.ExpectBidirectionalAudioAndVideo();
   ASSERT_TRUE(ExpectNewFrames(media_expectations));
@@ -431,14 +416,12 @@ TEST_P(PeerConnectionIntegrationTest,
   // Do normal offer/answer and wait for at least one frame to be received in
   // each direction.
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil(
-                  [&] {
-                    return caller()->min_video_frames_received_per_track() >
-                               0 &&
-                           callee()->min_video_frames_received_per_track() > 0;
-                  },
-                  IsTrue(), {.timeout = kMaxWaitForFrames}),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil(
+      [&] {
+        return caller()->min_video_frames_received_per_track() > 0 &&
+               callee()->min_video_frames_received_per_track() > 0;
+      },
+      {.timeout = kMaxWaitForFrames}));
 
   // Check rendered aspect ratio.
   EXPECT_EQ(16.0 / 9, caller()->local_rendered_aspect_ratio());
@@ -475,8 +458,7 @@ TEST_P(PeerConnectionIntegrationTest, EndToEndCallWithSendOnlyVideo) {
   options.offer_to_receive_video = 0;
   caller()->SetOfferAnswerOptions(options);
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
   ASSERT_EQ(callee()->pc()->GetReceivers().size(), 1u);
 
   // Expect video to be received in one direction.
@@ -501,8 +483,7 @@ TEST_P(PeerConnectionIntegrationTest, EndToEndCallWithReceiveOnlyVideo) {
   options.offer_to_receive_video = 1;
   caller()->SetOfferAnswerOptions(options);
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
   ASSERT_EQ(caller()->pc()->GetReceivers().size(), 1u);
 
   // Expect video to be received in one direction.
@@ -522,16 +503,14 @@ TEST_P(PeerConnectionIntegrationTest,
       caller()->CreateLocalVideoTrack();
   caller()->AddTrack(caller_track);
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
 
   // Add receive video.
   scoped_refptr<VideoTrackInterface> callee_track =
       callee()->CreateLocalVideoTrack();
   callee()->AddTrack(callee_track);
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
 
   // Ensure that video frames are received end-to-end.
   MediaExpectations media_expectations;
@@ -548,16 +527,14 @@ TEST_P(PeerConnectionIntegrationTest,
       callee()->CreateLocalVideoTrack();
   callee()->AddTrack(callee_track);
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
 
   // Add send video.
   scoped_refptr<VideoTrackInterface> caller_track =
       caller()->CreateLocalVideoTrack();
   caller()->AddTrack(caller_track);
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
 
   // Expect video to be received in one direction.
   MediaExpectations media_expectations;
@@ -581,15 +558,13 @@ TEST_P(PeerConnectionIntegrationTest,
   scoped_refptr<RtpSenderInterface> callee_sender =
       callee()->AddTrack(callee_track);
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
 
   // Remove receive video (i.e., callee sender track).
   callee()->pc()->RemoveTrackOrError(callee_sender);
 
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
 
   // Expect one-directional video.
   MediaExpectations media_expectations;
@@ -615,15 +590,13 @@ TEST_P(PeerConnectionIntegrationTest,
   scoped_refptr<RtpSenderInterface> callee_sender =
       callee()->AddTrack(callee_track);
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
 
   // Remove send video (i.e., caller sender track).
   caller()->pc()->RemoveTrackOrError(caller_sender);
 
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
 
   // Expect one-directional video.
   MediaExpectations media_expectations;
@@ -654,8 +627,7 @@ TEST_P(PeerConnectionIntegrationTest, AudioToVideoUpgrade) {
   }
   // Do offer/answer and make sure audio is still received end-to-end.
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
   {
     MediaExpectations media_expectations;
     media_expectations.ExpectBidirectionalAudio();
@@ -691,8 +663,7 @@ TEST_P(PeerConnectionIntegrationTest, AudioToVideoUpgrade) {
     });
   }
   callee()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
   {
     // Expect additional audio frames to be received after the upgrade.
     MediaExpectations media_expectations;
@@ -710,14 +681,12 @@ TEST_P(PeerConnectionIntegrationTest, AddAudioToVideoOnlyCall) {
   caller()->AddVideoTrack();
   callee()->AddVideoTrack();
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
   // Now add an audio track and do another offer/answer.
   caller()->AddAudioTrack();
   callee()->AddAudioTrack();
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
   // Ensure both audio and video frames are received end-to-end.
   MediaExpectations media_expectations;
   media_expectations.ExpectBidirectionalAudioAndVideo();
@@ -739,8 +708,7 @@ TEST_P(PeerConnectionIntegrationTest, BundlingEnabledWhileIceRestartOccurs) {
         sdp->description()->RemoveGroupByName("BUNDLE");
       });
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
   {
     MediaExpectations media_expectations;
     media_expectations.ExpectBidirectionalAudioAndVideo();
@@ -750,8 +718,7 @@ TEST_P(PeerConnectionIntegrationTest, BundlingEnabledWhileIceRestartOccurs) {
   callee()->SetReceivedSdpMunger(nullptr);
   caller()->SetOfferAnswerOptions(IceRestartOfferAnswerOptions());
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
 
   // Expect additional frames to be received after the ICE restart.
   {
@@ -776,16 +743,13 @@ TEST_P(PeerConnectionIntegrationTest, RotatedVideoWithCVOExtension) {
 
   // Wait for video frames to be received by both sides.
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
-  ASSERT_THAT(WaitUntil(
-                  [&] {
-                    return caller()->min_video_frames_received_per_track() >
-                               0 &&
-                           callee()->min_video_frames_received_per_track() > 0;
-                  },
-                  IsTrue(), {.timeout = kMaxWaitForFrames}),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
+  ASSERT_TRUE(WaitUntil(
+      [&] {
+        return caller()->min_video_frames_received_per_track() > 0 &&
+               callee()->min_video_frames_received_per_track() > 0;
+      },
+      {.timeout = kMaxWaitForFrames}));
 
   // Ensure that the aspect ratio is unmodified.
   // TODO(deadbeef): Where does 4:3 come from? Should be explicit in the test,
@@ -819,16 +783,13 @@ TEST_P(PeerConnectionIntegrationTest, RotatedVideoWithoutCVOExtension) {
       });
   // Wait for video frames to be received by both sides.
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
-  ASSERT_THAT(WaitUntil(
-                  [&] {
-                    return caller()->min_video_frames_received_per_track() >
-                               0 &&
-                           callee()->min_video_frames_received_per_track() > 0;
-                  },
-                  IsTrue(), {.timeout = kMaxWaitForFrames}),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
+  ASSERT_TRUE(WaitUntil(
+      [&] {
+        return caller()->min_video_frames_received_per_track() > 0 &&
+               callee()->min_video_frames_received_per_track() > 0;
+      },
+      {.timeout = kMaxWaitForFrames}));
 
   // Expect that the aspect ratio is inversed to account for the 90/270 degree
   // rotation.
@@ -865,8 +826,7 @@ TEST_P(PeerConnectionIntegrationTest, AnswererRejectsAudioSection) {
   callee()->AddTrack(callee()->CreateLocalVideoTrack());
   // Do offer/answer and wait for successful end-to-end video frames.
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
   MediaExpectations media_expectations;
   media_expectations.ExpectBidirectionalVideo();
   media_expectations.ExpectNoAudio();
@@ -907,8 +867,7 @@ TEST_P(PeerConnectionIntegrationTest, AnswererRejectsVideoSection) {
   callee()->AddTrack(callee()->CreateLocalAudioTrack());
   // Do offer/answer and wait for successful end-to-end audio frames.
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
   MediaExpectations media_expectations;
   media_expectations.ExpectBidirectionalAudio();
   media_expectations.ExpectNoVideo();
@@ -953,8 +912,7 @@ TEST_P(PeerConnectionIntegrationTest, AnswererRejectsAudioAndVideoSections) {
   }
   // Do offer/answer and wait for stable signaling state.
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
 
   // Sanity check that the callee's description has rejected m= sections.
   ASSERT_NE(nullptr, callee()->pc()->local_description());
@@ -973,13 +931,16 @@ TEST_P(PeerConnectionIntegrationTest, AnswererRejectsAudioAndVideoSections) {
 // rejected. Once the re-negotiation is done, the video flow should stop and
 // the audio flow should continue.
 TEST_P(PeerConnectionIntegrationTest, VideoRejectedInSubsequentOffer) {
+  if (sdp_semantics_ == SdpSemantics::kPlanB_DEPRECATED) {
+    // Munging allowed: kRejected (section rejection)
+    SetFieldTrials("WebRTC-NoSdpMangleAllowForTesting/Enabled,39/");
+  }
   ASSERT_TRUE(CreatePeerConnectionWrappers());
   ConnectFakeSignaling();
   caller()->AddAudioVideoTracks();
   callee()->AddAudioVideoTracks();
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
   {
     MediaExpectations media_expectations;
     media_expectations.ExpectBidirectionalAudioAndVideo();
@@ -999,9 +960,8 @@ TEST_P(PeerConnectionIntegrationTest, VideoRejectedInSubsequentOffer) {
     caller()->GetFirstTransceiverOfType(MediaType::VIDEO)->StopInternal();
   }
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue(),
-                        {.timeout = kMaxWaitForActivation}),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); },
+                        {.timeout = kMaxWaitForActivation}));
 
   // Sanity check that the caller's description has a rejected video section.
   ASSERT_NE(nullptr, caller()->pc()->local_description());
@@ -1030,8 +990,7 @@ TEST_F(PeerConnectionIntegrationTestPlanB, EnableAudioAfterRejecting) {
   scoped_refptr<RtpSenderInterface> sender =
       caller()->pc()->AddTrack(track, {"stream"}).MoveValue();
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
 
   // Remove audio track, and set offer_to_receive_audio to false to cause the
   // m= section to be completely disabled, not just "recvonly".
@@ -1040,8 +999,7 @@ TEST_F(PeerConnectionIntegrationTestPlanB, EnableAudioAfterRejecting) {
   options.offer_to_receive_audio = 0;
   caller()->SetOfferAnswerOptions(options);
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
 
   // Add the audio track again, expecting negotiation to succeed and frames to
   // flow.
@@ -1049,8 +1007,7 @@ TEST_F(PeerConnectionIntegrationTestPlanB, EnableAudioAfterRejecting) {
   options.offer_to_receive_audio = 1;
   caller()->SetOfferAnswerOptions(options);
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
 
   MediaExpectations media_expectations;
   media_expectations.CalleeExpectsSomeAudio();
@@ -1071,8 +1028,7 @@ TEST_P(PeerConnectionIntegrationTest, EndToEndCallWithoutSsrcOrMsidSignaling) {
   // Remove SSRCs and MSIDs from the received offer SDP.
   callee()->SetReceivedSdpMunger(RemoveSsrcsAndMsids);
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
   MediaExpectations media_expectations;
   media_expectations.ExpectBidirectionalAudioAndVideo();
   ASSERT_TRUE(ExpectNewFrames(media_expectations));
@@ -1093,8 +1049,7 @@ TEST_F(PeerConnectionIntegrationTestUnifiedPlan,
   // Remove SSRCs from the received offer SDP.
   callee()->SetReceivedSdpMunger(RemoveSsrcsAndKeepMsids);
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
   MediaExpectations media_expectations;
   media_expectations.ExpectBidirectionalAudio();
   ASSERT_TRUE(ExpectNewFrames(media_expectations));
@@ -1113,8 +1068,7 @@ TEST_F(PeerConnectionIntegrationTestUnifiedPlan,
   auto video_sender =
       caller()->pc()->AddTransceiver(track, video_transceiver_init).MoveValue();
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
 
   // Add receive direction.
   video_sender->SetDirectionWithError(RtpTransceiverDirection::kSendRecv);
@@ -1124,8 +1078,7 @@ TEST_F(PeerConnectionIntegrationTestUnifiedPlan,
 
   callee()->AddTrack(callee_track);
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
   // Ensure that video frames are received end-to-end.
   MediaExpectations media_expectations;
   media_expectations.ExpectBidirectionalVideo();
@@ -1147,8 +1100,7 @@ TEST_F(PeerConnectionIntegrationTestUnifiedPlan,
   caller()->SetReceivedSdpMunger(&RemoveSsrcsAndKeepMsids);
   callee()->SetReceivedSdpMunger(&RemoveSsrcsAndKeepMsids);
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
   ASSERT_EQ(2u, caller()->pc()->GetReceivers().size());
   ASSERT_EQ(2u, callee()->pc()->GetReceivers().size());
 
@@ -1190,8 +1142,7 @@ TEST_F(PeerConnectionIntegrationTestUnifiedPlan,
   caller()->SetReceivedSdpMunger(&RemoveBundleGroupSsrcsAndMidExtension);
   callee()->SetReceivedSdpMunger(&RemoveBundleGroupSsrcsAndMidExtension);
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
   ASSERT_EQ(2u, caller()->pc()->GetReceivers().size());
   ASSERT_EQ(2u, callee()->pc()->GetReceivers().size());
   // Make sure we are not bundled.
@@ -1225,6 +1176,7 @@ void ModifyPayloadTypesAndRemoveMidExtension(
 // Regression test for: http://crbug.com/webrtc/12029
 TEST_F(PeerConnectionIntegrationTestUnifiedPlan,
        EndToEndCallWithTwoVideoTracksDemultiplexedByPayloadType) {
+  SetFieldTrials("WebRTC-NoSdpMangleAllowForTesting/Enabled,26,40,80/");
   ASSERT_TRUE(CreatePeerConnectionWrappers());
   ConnectFakeSignaling();
   caller()->AddVideoTrack();
@@ -1238,8 +1190,7 @@ TEST_F(PeerConnectionIntegrationTestUnifiedPlan,
   caller()->SetReceivedSdpMunger(&RemoveSsrcsAndKeepMsids);
   callee()->SetReceivedSdpMunger(&RemoveSsrcsAndKeepMsids);
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
   ASSERT_EQ(2u, caller()->pc()->GetReceivers().size());
   ASSERT_EQ(2u, callee()->pc()->GetReceivers().size());
   // Make sure we are bundled.
@@ -1258,8 +1209,7 @@ TEST_F(PeerConnectionIntegrationTestUnifiedPlan, NoStreamsMsidLinePresent) {
   caller()->AddAudioTrack();
   caller()->AddVideoTrack();
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
   auto callee_receivers = callee()->pc()->GetReceivers();
   ASSERT_EQ(2u, callee_receivers.size());
   EXPECT_TRUE(callee_receivers[0]->stream_ids().empty());
@@ -1273,8 +1223,7 @@ TEST_F(PeerConnectionIntegrationTestUnifiedPlan, NoStreamsMsidLineMissing) {
   caller()->AddVideoTrack();
   callee()->SetReceivedSdpMunger(RemoveSsrcsAndMsids);
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
   auto callee_receivers = callee()->pc()->GetReceivers();
   ASSERT_EQ(2u, callee_receivers.size());
   ASSERT_EQ(1u, callee_receivers[0]->stream_ids().size());
@@ -1312,15 +1261,13 @@ TEST_F(PeerConnectionIntegrationTestUnifiedPlan, EndToEndCallForwardsCsrcs) {
   caller()->CreateAndSetAndSignalOffer();
 
   // Wait for some packets to arrive.
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
-  ASSERT_THAT(WaitUntil(
-                  [&] {
-                    return callee()->audio_frames_received() > 0 &&
-                           callee()->min_video_frames_received_per_track() > 0;
-                  },
-                  IsTrue(), {.timeout = kMaxWaitForFrames}),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
+  ASSERT_TRUE(WaitUntil(
+      [&] {
+        return callee()->audio_frames_received() > 0 &&
+               callee()->min_video_frames_received_per_track() > 0;
+      },
+      {.timeout = kMaxWaitForFrames}));
 
   std::vector<scoped_refptr<RtpReceiverInterface>> audio_receivers =
       callee()->GetReceiversOfType(webrtc::MediaType::AUDIO);
@@ -1359,15 +1306,13 @@ TEST_F(PeerConnectionIntegrationTestUnifiedPlan, EndToEndCallCanUpdateCsrcs) {
   caller()->CreateAndSetAndSignalOffer();
 
   // Wait for some packets to arrive.
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
-  ASSERT_THAT(WaitUntil(
-                  [&] {
-                    return callee()->audio_frames_received() > 0 &&
-                           callee()->min_video_frames_received_per_track() > 0;
-                  },
-                  IsTrue(), {.timeout = kMaxWaitForFrames}),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
+  ASSERT_TRUE(WaitUntil(
+      [&] {
+        return callee()->audio_frames_received() > 0 &&
+               callee()->min_video_frames_received_per_track() > 0;
+      },
+      {.timeout = kMaxWaitForFrames}));
 
   // Update the CSRCs.
   constexpr uint32_t kUpdatedAudioCsrc = 4321;
@@ -1406,8 +1351,7 @@ TEST_P(PeerConnectionIntegrationTest, EndToEndCallWithTwoVideoTracks) {
   caller()->AddAudioVideoTracks();
   caller()->AddVideoTrack();
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
   ASSERT_EQ(3u, callee()->pc()->GetReceivers().size());
 
   MediaExpectations media_expectations;
@@ -1456,8 +1400,7 @@ TEST_P(PeerConnectionIntegrationTest,
   // but the first m= section.
   callee()->SetReceivedSdpMunger(MakeSpecCompliantMaxBundleOffer);
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
   MediaExpectations media_expectations;
   media_expectations.ExpectBidirectionalAudioAndVideo();
   ASSERT_TRUE(ExpectNewFrames(media_expectations));
@@ -1472,8 +1415,7 @@ TEST_P(PeerConnectionIntegrationTest, GetAudioOutputLevelStatsWithOldStatsApi) {
   // Just add an audio track.
   caller()->AddAudioTrack();
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
 
   // Get the audio output level stats. Note that the level is not available
   // until an RTCP packet has been received.
@@ -1492,8 +1434,7 @@ TEST_P(PeerConnectionIntegrationTest, GetAudioInputLevelStatsWithOldStatsApi) {
   // Just add an audio track.
   caller()->AddAudioTrack();
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
 
   // Get the audio input level stats. The level should be available very
   // soon after the test starts.
@@ -1510,8 +1451,7 @@ TEST_P(PeerConnectionIntegrationTest, GetBytesReceivedStatsWithOldStatsApi) {
   caller()->AddAudioVideoTracks();
   // Do offer/answer, wait for the callee to receive some frames.
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
 
   MediaExpectations media_expectations;
   media_expectations.CalleeExpectsSomeAudioAndVideo();
@@ -1538,8 +1478,7 @@ TEST_P(PeerConnectionIntegrationTest, GetBytesSentStatsWithOldStatsApi) {
   caller()->AddTrack(video_track);
   // Do offer/answer, wait for the callee to receive some frames.
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
   MediaExpectations media_expectations;
   media_expectations.CalleeExpectsSomeAudioAndVideo();
   ASSERT_TRUE(ExpectNewFrames(media_expectations));
@@ -1562,14 +1501,11 @@ TEST_F(PeerConnectionIntegrationTestUnifiedPlan,
   auto audio_sender_2 = caller()->AddAudioTrack();
   auto video_sender_2 = caller()->AddVideoTrack();
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
 
   MediaExpectations media_expectations;
   media_expectations.CalleeExpectsSomeAudioAndVideo();
-  ASSERT_THAT(
-      WaitUntil([&] { return ExpectNewFrames(media_expectations); }, IsTrue()),
-      IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return ExpectNewFrames(media_expectations); }));
 
   std::vector<std::string> track_ids = {
       audio_sender_1->track()->id(), video_sender_1->track()->id(),
@@ -1592,14 +1528,11 @@ TEST_P(PeerConnectionIntegrationTest, NewGetStatsManyAudioAndManyVideoStreams) {
   auto audio_sender_2 = caller()->AddAudioTrack();
   auto video_sender_2 = caller()->AddVideoTrack();
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
 
   MediaExpectations media_expectations;
   media_expectations.CalleeExpectsSomeAudioAndVideo();
-  ASSERT_THAT(
-      WaitUntil([&] { return ExpectNewFrames(media_expectations); }, IsTrue()),
-      IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return ExpectNewFrames(media_expectations); }));
 
   std::vector<std::string> track_ids = {
       audio_sender_1->track()->id(), video_sender_1->track()->id(),
@@ -1662,8 +1595,7 @@ TEST_P(PeerConnectionIntegrationTest,
   // Remove SSRCs and MSIDs from the received offer SDP.
   callee()->SetReceivedSdpMunger(RemoveSsrcsAndMsids);
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
   MediaExpectations media_expectations;
   media_expectations.CalleeExpectsSomeAudio(1);
   ASSERT_TRUE(ExpectNewFrames(media_expectations));
@@ -1689,8 +1621,7 @@ TEST_P(PeerConnectionIntegrationTest,
   // Remove SSRCs and MSIDs from the received offer SDP.
   callee()->SetReceivedSdpMunger(RemoveSsrcsAndMsids);
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
 
   // Note that, since the old stats implementation associates SSRCs with tracks
   // using SDP, when SSRCs aren't signaled in SDP these stats won't have an
@@ -1714,8 +1645,7 @@ TEST_P(PeerConnectionIntegrationTest,
   // Remove SSRCs and MSIDs from the received offer SDP.
   callee()->SetReceivedSdpMunger(RemoveSsrcsAndMsids);
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
   MediaExpectations media_expectations;
   media_expectations.CalleeExpectsSomeAudio(1);
   media_expectations.CalleeExpectsSomeVideo(1);
@@ -1743,8 +1673,7 @@ TEST_P(PeerConnectionIntegrationTest, EndToEndCallWithDtls10) {
   caller()->AddAudioVideoTracks();
   callee()->AddAudioVideoTracks();
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
   MediaExpectations media_expectations;
   media_expectations.ExpectBidirectionalAudioAndVideo();
   ASSERT_TRUE(ExpectNewFrames(media_expectations));
@@ -1760,14 +1689,11 @@ TEST_P(PeerConnectionIntegrationTest, Dtls10CipherStatsAndUmaMetrics) {
   caller()->AddAudioVideoTracks();
   callee()->AddAudioVideoTracks();
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return DtlsConnected(); }, IsTrue()), IsRtcOk());
-  EXPECT_THAT(WaitUntil(
-                  [&] {
-                    return SSLStreamAdapter::IsAcceptableCipher(
-                        caller()->DtlsCipher(), KT_DEFAULT);
-                  },
-                  IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return DtlsConnected(); }));
+  EXPECT_TRUE(WaitUntil([&] {
+    return SSLStreamAdapter::IsAcceptableCipher(caller()->DtlsCipher(),
+                                                KT_DEFAULT);
+  }));
   EXPECT_THAT(WaitUntil([&] { return caller()->SrtpCipher(); },
                         Eq(SrtpCryptoSuiteToName(kDefaultSrtpCryptoSuite))),
               IsRtcOk());
@@ -1783,14 +1709,11 @@ TEST_P(PeerConnectionIntegrationTest, Dtls12CipherStatsAndUmaMetrics) {
   caller()->AddAudioVideoTracks();
   callee()->AddAudioVideoTracks();
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return DtlsConnected(); }, IsTrue()), IsRtcOk());
-  EXPECT_THAT(WaitUntil(
-                  [&] {
-                    return SSLStreamAdapter::IsAcceptableCipher(
-                        caller()->DtlsCipher(), KT_DEFAULT);
-                  },
-                  IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return DtlsConnected(); }));
+  EXPECT_TRUE(WaitUntil([&] {
+    return SSLStreamAdapter::IsAcceptableCipher(caller()->DtlsCipher(),
+                                                KT_DEFAULT);
+  }));
   EXPECT_THAT(WaitUntil([&] { return caller()->SrtpCipher(); },
                         Eq(SrtpCryptoSuiteToName(kDefaultSrtpCryptoSuite))),
               IsRtcOk());
@@ -1811,8 +1734,7 @@ TEST_P(PeerConnectionIntegrationTest, CallerDtls12ToCalleeDtls10) {
   caller()->AddAudioVideoTracks();
   callee()->AddAudioVideoTracks();
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
   MediaExpectations media_expectations;
   media_expectations.ExpectBidirectionalAudioAndVideo();
   ASSERT_TRUE(ExpectNewFrames(media_expectations));
@@ -1833,8 +1755,7 @@ TEST_P(PeerConnectionIntegrationTest, CallerDtls10ToCalleeDtls12) {
   caller()->AddAudioVideoTracks();
   callee()->AddAudioVideoTracks();
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
   MediaExpectations media_expectations;
   media_expectations.ExpectBidirectionalAudioAndVideo();
   ASSERT_TRUE(ExpectNewFrames(media_expectations));
@@ -1924,8 +1845,7 @@ TEST_P(PeerConnectionIntegrationTest, EndToEndCallWithGcmCipher) {
   caller()->AddAudioVideoTracks();
   callee()->AddAudioVideoTracks();
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
   MediaExpectations media_expectations;
   media_expectations.ExpectBidirectionalAudioAndVideo();
   ASSERT_TRUE(ExpectNewFrames(media_expectations));
@@ -1940,8 +1860,7 @@ TEST_P(PeerConnectionIntegrationTest, IceStatesReachCompletion) {
   caller()->AddAudioVideoTracks();
   callee()->AddAudioVideoTracks();
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
   EXPECT_THAT(WaitUntil([&] { return caller()->ice_gathering_state(); },
                         Eq(PeerConnectionInterface::kIceGatheringComplete),
                         {.timeout = kMaxWaitForFrames}),
@@ -2024,8 +1943,7 @@ TEST_P(PeerConnectionIntegrationTest,
   caller()->AddAudioVideoTracks();
   callee()->AddAudioVideoTracks();
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
   EXPECT_THAT(WaitUntil([&] { return caller()->ice_connection_state(); },
                         Eq(PeerConnectionInterface::kIceConnectionCompleted)),
               IsRtcOk());
@@ -2108,8 +2026,7 @@ TEST_P(PeerConnectionIntegrationIceStatesTest, MAYBE_VerifyBestConnection) {
   callee()->AddAudioVideoTracks();
   caller()->CreateAndSetAndSignalOffer();
 
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
   EXPECT_THAT(WaitUntil([&] { return caller()->ice_connection_state(); },
                         Eq(PeerConnectionInterface::kIceConnectionCompleted)),
               IsRtcOk());
@@ -2183,8 +2100,7 @@ TEST_P(PeerConnectionIntegrationTest, MediaContinuesFlowingAfterIceRestart) {
   caller()->AddAudioVideoTracks();
   callee()->AddAudioVideoTracks();
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
   EXPECT_THAT(WaitUntil([&] { return caller()->ice_connection_state(); },
                         Eq(PeerConnectionInterface::kIceConnectionCompleted),
                         {.timeout = kMaxWaitForFrames}),
@@ -2219,8 +2135,7 @@ TEST_P(PeerConnectionIntegrationTest, MediaContinuesFlowingAfterIceRestart) {
   // Have the caller initiate an ICE restart.
   caller()->SetOfferAnswerOptions(IceRestartOfferAnswerOptions());
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
   EXPECT_THAT(WaitUntil([&] { return caller()->ice_connection_state(); },
                         Eq(PeerConnectionInterface::kIceConnectionCompleted),
                         {.timeout = kMaxWaitForFrames}),
@@ -2274,8 +2189,7 @@ TEST_P(PeerConnectionIntegrationTest, EndToEndCallWithIceRenomination) {
   caller()->AddAudioVideoTracks();
   callee()->AddAudioVideoTracks();
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
   // Sanity check that ICE renomination was actually negotiated.
   const SessionDescription* desc =
       caller()->pc()->local_description()->description();
@@ -2305,8 +2219,7 @@ TEST_P(PeerConnectionIntegrationTest,
 
   caller()->AddAudioTrack();
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
   ASSERT_THAT(WaitUntil([&] { return caller()->ice_connection_state(); },
                         Eq(PeerConnectionInterface::kIceConnectionCompleted)),
               IsRtcOk());
@@ -2315,8 +2228,7 @@ TEST_P(PeerConnectionIntegrationTest,
 
   caller()->AddVideoTrack();
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
 
   EXPECT_EQ(0u, caller()->ice_connection_state_history().size());
 }
@@ -2333,8 +2245,7 @@ TEST_P(PeerConnectionIntegrationTest,
   // video and audio recvonly "m=" sections.
   caller()->AddAudioVideoTracks();
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
 
   // Negotiate again, disabling the video "m=" section (the callee will set the
   // port to 0 due to offer_to_receive_video = 0).
@@ -2348,8 +2259,7 @@ TEST_P(PeerConnectionIntegrationTest,
     });
   }
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
   // Sanity check that video "m=" section was actually rejected.
   const ContentInfo* answer_video_content =
       GetFirstVideoContent(callee()->pc()->local_description()->description());
@@ -2372,8 +2282,7 @@ TEST_P(PeerConnectionIntegrationTest,
   callee()->AddVideoTrack();
   callee()->SetRemoteOfferHandler(nullptr);
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
 
   // Verify the caller receives frames from the newly added stream, and the
   // callee receives additional frames from the re-enabled video m= section.
@@ -2401,9 +2310,8 @@ TEST_F(PeerConnectionIntegrationTestPlanB,
       callee()->pc()->CreateSender("video", "callee_stream");
   RTC_ALLOW_PLAN_B_DEPRECATION_END()
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue(),
-                        {.timeout = kMaxWaitForActivation}),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); },
+                        {.timeout = kMaxWaitForActivation}));
   // Wait for ICE to complete, without any tracks being set.
   EXPECT_THAT(WaitUntil([&] { return caller()->ice_connection_state(); },
                         Eq(PeerConnectionInterface::kIceConnectionCompleted),
@@ -2448,9 +2356,8 @@ TEST_F(PeerConnectionIntegrationTestUnifiedPlan,
         RtpTransceiverDirection::kSendRecv);
   });
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue(),
-                        {.timeout = kMaxWaitForActivation}),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); },
+                        {.timeout = kMaxWaitForActivation}));
   // Wait for ICE to complete, without any tracks being set.
   EXPECT_THAT(WaitUntil([&] { return caller()->ice_connection_state(); },
                         Eq(PeerConnectionInterface::kIceConnectionCompleted),
@@ -2487,9 +2394,8 @@ TEST_F(PeerConnectionIntegrationTestPlanB, CanSendRemoteVideoTrack) {
   // Just send a video track from the caller.
   caller()->AddVideoTrack();
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue(),
-                        {.timeout = kMaxWaitForActivation}),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); },
+                        {.timeout = kMaxWaitForActivation}));
   ASSERT_EQ(1U, callee()->remote_streams()->count());
 
   // Echo the stream back, and do a new offer/anwer (initiated by callee this
@@ -2497,9 +2403,8 @@ TEST_F(PeerConnectionIntegrationTestPlanB, CanSendRemoteVideoTrack) {
   callee()->pc()->AddStream(callee()->remote_streams()->at(0));
   RTC_ALLOW_PLAN_B_DEPRECATION_END()
   callee()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue(),
-                        {.timeout = kMaxWaitForActivation}),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); },
+                        {.timeout = kMaxWaitForActivation}));
 
   MediaExpectations media_expectations;
   media_expectations.ExpectBidirectionalVideo();
@@ -2595,10 +2500,9 @@ TEST_P(PeerConnectionIntegrationTestWithFakeClock,
   options.offer_to_receive_video = 1;
   caller()->SetOfferAnswerOptions(options);
   caller()->CreateAndSetAndSignalOffer();
-  EXPECT_THAT(WaitUntil([&] { return DtlsConnected(); }, IsTrue(),
+  EXPECT_TRUE(WaitUntil([&] { return DtlsConnected(); },
                         {.timeout = TimeDelta::Millis(total_connection_time_ms),
-                         .clock = time_controller_.get()}),
-              IsRtcOk());
+                         .clock = time_controller_.get()}));
   // Closing the PeerConnections destroys the ports before the ScopedFakeClock.
   // If this is not done a DCHECK can be hit in ports.cc, because a large
   // negative number is calculated for the rtt due to the global clock changing.
@@ -2644,9 +2548,8 @@ TEST_P(PeerConnectionIntegrationTestWithFakeClock,
   // Start candidate gathering and wait for it to complete. Candidates are not
   // signalled.
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return caller()->IceGatheringStateComplete(); },
-                        IsTrue(), {.clock = time_controller_.get()}),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return caller()->IceGatheringStateComplete(); },
+                        {.clock = time_controller_.get()}));
 
   // Call getStats, assert there are no candidates.
   scoped_refptr<const RTCStatsReport> first_report =
@@ -2664,9 +2567,8 @@ TEST_P(PeerConnectionIntegrationTestWithFakeClock,
           "candidate:2214029314 1 udp 2122260223 127.0.0.1 49152 typ host",
           nullptr)),
       [&result](RTCError r) { result = r; });
-  ASSERT_THAT(WaitUntil([&] { return result.has_value(); }, IsTrue(),
-                        {.clock = time_controller_.get()}),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return result.has_value(); },
+                        {.clock = time_controller_.get()}));
   ASSERT_TRUE(result.value().ok());
 
   // Call getStats again, assert there is a remote candidate now.
@@ -2728,7 +2630,7 @@ TEST_P(PeerConnectionIntegrationTest, TurnCustomizerUsedForTurnConnections) {
   options.offer_to_receive_video = 1;
   caller()->SetOfferAnswerOptions(options);
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return DtlsConnected(); }, IsTrue()), IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return DtlsConnected(); }));
 
   ExpectTurnCustomizerCountersIncremented(customizer1);
   ExpectTurnCustomizerCountersIncremented(customizer2);
@@ -2765,8 +2667,7 @@ TEST_P(PeerConnectionIntegrationTest, TCPUsedForTurnConnections) {
   caller()->AddAudioVideoTracks();
   callee()->AddAudioVideoTracks();
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
   EXPECT_THAT(WaitUntil([&] { return callee()->ice_connection_state(); },
                         Eq(PeerConnectionInterface::kIceConnectionConnected),
                         {.timeout = kMaxWaitForFrames}),
@@ -2835,7 +2736,7 @@ TEST_P(PeerConnectionIntegrationTest,
   options.offer_to_receive_video = 1;
   caller()->SetOfferAnswerOptions(options);
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return DtlsConnected(); }, IsTrue()), IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return DtlsConnected(); }));
 
   EXPECT_GT(client_1_cert_verifier->call_count_, 0u);
   EXPECT_GT(client_2_cert_verifier->call_count_, 0u);
@@ -2869,6 +2770,7 @@ TEST_P(PeerConnectionIntegrationTest, IceTransportFactoryUsedForConnections) {
 // fact that code at some layers was doing case-insensitive comparisons and
 // code at other layers was not.
 TEST_P(PeerConnectionIntegrationTest, CodecNamesAreCaseInsensitive) {
+  SetFieldTrials("WebRTC-NoSdpMangleAllowForTesting/Enabled,60,80/");
   ASSERT_TRUE(CreatePeerConnectionWrappers());
   ConnectFakeSignaling();
   caller()->AddAudioVideoTracks();
@@ -2900,8 +2802,7 @@ TEST_P(PeerConnectionIntegrationTest, CodecNamesAreCaseInsensitive) {
       });
 
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
 
   // Verify frames are still received end-to-end.
   MediaExpectations media_expectations;
@@ -2914,8 +2815,7 @@ TEST_P(PeerConnectionIntegrationTest, GetSourcesAudio) {
   ConnectFakeSignaling();
   caller()->AddAudioTrack();
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
   // Wait for one audio frame to be received by the callee.
   MediaExpectations media_expectations;
   media_expectations.CalleeExpectsSomeAudio(1);
@@ -2935,8 +2835,7 @@ TEST_P(PeerConnectionIntegrationTest, GetSourcesVideo) {
   ConnectFakeSignaling();
   caller()->AddVideoTrack();
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
   // Wait for two video frames to be received by the callee.
   // TODO: https://issues.webrtc.org/42220900 - wait for only one frame again
   MediaExpectations media_expectations;
@@ -2959,11 +2858,10 @@ TEST_P(PeerConnectionIntegrationTest, ConcurrentUnsignaledSsrcPackets) {
   caller()->AddAudioTrack();
   callee()->SetReceivedSdpMunger(RemoveSsrcsAndMsids);
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
 
   // Wait until the connection is established.
-  ASSERT_THAT(WaitUntil([&] { return DtlsConnected(); }, IsTrue()), IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return DtlsConnected(); }));
 
   // Drop all subsequent packets temporarily so we can coordinate the
   // concurrency.
@@ -3014,20 +2912,16 @@ TEST_P(PeerConnectionIntegrationTest, UnsignaledSsrcGetSourcesAudio) {
   caller()->AddAudioTrack();
   callee()->SetReceivedSdpMunger(RemoveSsrcsAndMsids);
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
   ASSERT_EQ(callee()->pc()->GetReceivers().size(), 1u);
   auto receiver = callee()->pc()->GetReceivers()[0];
   std::vector<RtpSource> sources;
-  EXPECT_THAT(WaitUntil(
-                  [&] {
-                    return ([&receiver, &sources]() {
-                      sources = receiver->GetSources();
-                      return !sources.empty();
-                    })();
-                  },
-                  IsTrue()),
-              IsRtcOk());
+  EXPECT_TRUE(WaitUntil([&] {
+    return ([&receiver, &sources]() {
+      sources = receiver->GetSources();
+      return !sources.empty();
+    })();
+  }));
   ASSERT_GT(sources.size(), 0u);
   EXPECT_EQ(RtpSourceType::SSRC, sources[0].source_type());
 }
@@ -3038,20 +2932,16 @@ TEST_P(PeerConnectionIntegrationTest, UnsignaledSsrcGetSourcesVideo) {
   caller()->AddVideoTrack();
   callee()->SetReceivedSdpMunger(RemoveSsrcsAndMsids);
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
   ASSERT_EQ(callee()->pc()->GetReceivers().size(), 1u);
   auto receiver = callee()->pc()->GetReceivers()[0];
   std::vector<RtpSource> sources;
-  EXPECT_THAT(WaitUntil(
-                  [&] {
-                    return ([&receiver, &sources]() {
-                      sources = receiver->GetSources();
-                      return !sources.empty();
-                    })();
-                  },
-                  IsTrue()),
-              IsRtcOk());
+  EXPECT_TRUE(WaitUntil([&] {
+    return ([&receiver, &sources]() {
+      sources = receiver->GetSources();
+      return !sources.empty();
+    })();
+  }));
   ASSERT_GT(sources.size(), 0u);
   EXPECT_EQ(RtpSourceType::SSRC, sources[0].source_type());
 }
@@ -3070,8 +2960,7 @@ TEST_P(PeerConnectionIntegrationTest,
   caller()->AddVideoTrack();
   callee()->SetReceivedSdpMunger(RemoveSsrcsAndMsids);
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
   // Wait for one video frame to be received by the callee.
   MediaExpectations media_expectations;
   media_expectations.CalleeExpectsSomeVideo(1);
@@ -3090,21 +2979,17 @@ TEST_P(PeerConnectionIntegrationTest, UnsignaledSsrcGetParametersAudio) {
   caller()->AddAudioTrack();
   callee()->SetReceivedSdpMunger(RemoveSsrcsAndMsids);
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
   ASSERT_EQ(callee()->pc()->GetReceivers().size(), 1u);
   auto receiver = callee()->pc()->GetReceivers()[0];
   RtpParameters parameters;
-  EXPECT_THAT(WaitUntil(
-                  [&] {
-                    return ([&receiver, &parameters]() {
-                      parameters = receiver->GetParameters();
-                      return !parameters.encodings.empty() &&
-                             parameters.encodings[0].ssrc.has_value();
-                    })();
-                  },
-                  IsTrue()),
-              IsRtcOk());
+  EXPECT_TRUE(WaitUntil([&] {
+    return ([&receiver, &parameters]() {
+      parameters = receiver->GetParameters();
+      return !parameters.encodings.empty() &&
+             parameters.encodings[0].ssrc.has_value();
+    })();
+  }));
   ASSERT_EQ(parameters.encodings.size(), 1u);
   EXPECT_TRUE(parameters.encodings[0].ssrc.has_value());
 }
@@ -3115,21 +3000,17 @@ TEST_P(PeerConnectionIntegrationTest, UnsignaledSsrcGetParametersVideo) {
   caller()->AddVideoTrack();
   callee()->SetReceivedSdpMunger(RemoveSsrcsAndMsids);
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
   ASSERT_EQ(callee()->pc()->GetReceivers().size(), 1u);
   auto receiver = callee()->pc()->GetReceivers()[0];
   RtpParameters parameters;
-  EXPECT_THAT(WaitUntil(
-                  [&] {
-                    return ([&receiver, &parameters]() {
-                      parameters = receiver->GetParameters();
-                      return !parameters.encodings.empty() &&
-                             parameters.encodings[0].ssrc.has_value();
-                    })();
-                  },
-                  IsTrue()),
-              IsRtcOk());
+  EXPECT_TRUE(WaitUntil([&] {
+    return ([&receiver, &parameters]() {
+      parameters = receiver->GetParameters();
+      return !parameters.encodings.empty() &&
+             parameters.encodings[0].ssrc.has_value();
+    })();
+  }));
   ASSERT_EQ(parameters.encodings.size(), 1u);
   EXPECT_TRUE(parameters.encodings[0].ssrc.has_value());
 }
@@ -3158,8 +3039,7 @@ TEST_F(PeerConnectionIntegrationTestPlanB, RemoveAndAddTrackWithNewStreamId) {
   scoped_refptr<RtpSenderInterface> sender =
       caller()->AddTrack(track, {"stream_1"});
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
   {
     MediaExpectations media_expectations;
     media_expectations.CalleeExpectsSomeAudio(1);
@@ -3169,8 +3049,7 @@ TEST_F(PeerConnectionIntegrationTestPlanB, RemoveAndAddTrackWithNewStreamId) {
   caller()->pc()->RemoveTrackOrError(sender);
   sender = caller()->AddTrack(track, {"stream_2"});
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
   // Wait for additional audio frames to be received by the callee.
   {
     MediaExpectations media_expectations;
@@ -3199,8 +3078,7 @@ TEST_P(PeerConnectionIntegrationTest, RtcEventLogOutputWriteCalled) {
 
   caller()->AddAudioVideoTracks();
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
 #endif  // !defined(WEBRTC_ENABLE_RTC_EVENT_LOG)
 }
 
@@ -3228,8 +3106,7 @@ TEST_P(PeerConnectionIntegrationTest, RtcEventLogOutputWriteCalledOnStop) {
 
   caller()->AddAudioVideoTracks();
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
 
   caller()->pc()->StopRtcEventLog();
   test_is_complete.Call();
@@ -3260,8 +3137,7 @@ TEST_P(PeerConnectionIntegrationTest, RtcEventLogOutputWriteCalledOnClose) {
 
   caller()->AddAudioVideoTracks();
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
 
   caller()->pc()->Close();
   test_is_complete.Call();
@@ -3293,8 +3169,7 @@ TEST_P(PeerConnectionIntegrationTest, MediaFlowsWhenCandidatesSetOnlyInSdp) {
   // The candidates will now be included in the session description, so
   // signaling them will start the ICE connection.
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
 
   // Ensure that media flows in both directions.
   MediaExpectations media_expectations;
@@ -3318,8 +3193,7 @@ TEST_P(PeerConnectionIntegrationTest, DisableAndEnableAudioPlayout) {
   caller()->AddAudioTrack();
   callee()->AddAudioTrack();
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
 
   // Pump messages for a second.
   run_loop().RunFor(TimeDelta::Seconds(1));
@@ -3365,8 +3239,7 @@ TEST_P(PeerConnectionIntegrationTest,
   caller()->pc()->SetAudioPlayout(false);
 
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
 
   // Wait for the callee to receive audio stats.
   EXPECT_THAT(WaitUntil([&] { return GetAudioEnergyStat(caller()); }, Gt(0),
@@ -3389,8 +3262,7 @@ TEST_P(PeerConnectionIntegrationTest, DisableAndEnableAudioRecording) {
   caller()->AddAudioTrack();
   callee()->AddAudioTrack();
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
 
   // Pump messages for a second.
   run_loop().RunFor(TimeDelta::Seconds(1));
@@ -3416,7 +3288,7 @@ TEST_P(PeerConnectionIntegrationTest,
   options.offer_to_receive_audio = 1;
   caller()->SetOfferAnswerOptions(options);
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return DtlsConnected(); }, IsTrue()), IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return DtlsConnected(); }));
   ASSERT_NE(nullptr, caller()->event_log_factory());
   ASSERT_NE(nullptr, callee()->event_log_factory());
   FakeRtcEventLog* caller_event_log =
@@ -3470,8 +3342,7 @@ TEST_P(PeerConnectionIntegrationTest, RegatherAfterChangingIceTransportType) {
   caller()->AddAudioVideoTracks();
   callee()->AddAudioVideoTracks();
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
   // Since we are doing continual gathering, the ICE transport does not reach
   // kIceGatheringComplete (see
   // P2PTransportChannel::OnCandidatesAllocationDone), and consequently not
@@ -3494,19 +3365,15 @@ TEST_P(PeerConnectionIntegrationTest, RegatherAfterChangingIceTransportType) {
   caller_config.type = PeerConnectionInterface::kAll;
   caller()->pc()->SetConfiguration(caller_config);
   // We should have gathered a new host candidate.
-  EXPECT_THAT(
-      WaitUntil([&] { return caller()->last_candidate_gathered().is_local(); },
-                IsTrue()),
-      IsRtcOk());
+  EXPECT_TRUE(WaitUntil(
+      [&] { return caller()->last_candidate_gathered().is_local(); }));
 
   // Loosen the callee's candidate filter.
   callee_config = callee()->pc()->GetConfiguration();
   callee_config.type = PeerConnectionInterface::kAll;
   callee()->pc()->SetConfiguration(callee_config);
-  EXPECT_THAT(
-      WaitUntil([&] { return callee()->last_candidate_gathered().is_local(); },
-                IsTrue()),
-      IsRtcOk());
+  EXPECT_TRUE(WaitUntil(
+      [&] { return callee()->last_candidate_gathered().is_local(); }));
 
   // Create an offer and verify that it does not contain an ICE restart (i.e new
   // ice credentials).
@@ -3555,8 +3422,7 @@ TEST_P(PeerConnectionIntegrationTest, OnIceCandidateError) {
   caller()->AddAudioVideoTracks();
   callee()->AddAudioVideoTracks();
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
   EXPECT_THAT(
       WaitUntil([&] { return caller()->error_event().error_code; }, Eq(401)),
       IsRtcOk());
@@ -3589,8 +3455,7 @@ TEST_P(PeerConnectionIntegrationTest, OnIceCandidateErrorWithEmptyAddress) {
   caller()->AddAudioVideoTracks();
   callee()->AddAudioVideoTracks();
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
   EXPECT_THAT(
       WaitUntil([&] { return caller()->error_event().error_code; }, Eq(701)),
       IsRtcOk());
@@ -3609,8 +3474,7 @@ TEST_F(PeerConnectionIntegrationTestUnifiedPlan,
   caller()->AddAudioTrack();
   callee()->AddAudioTrack();
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
   MediaExpectations media_expectations;
   media_expectations.ExpectBidirectionalAudio();
   ASSERT_TRUE(ExpectNewFrames(media_expectations));
@@ -3620,11 +3484,9 @@ TEST_F(PeerConnectionIntegrationTestUnifiedPlan,
   auto observer = make_ref_counted<MockSetSessionDescriptionObserver>();
   callee()->pc()->SetLocalDescription(observer.get(),
                                       callee()->CreateOfferAndWait().release());
-  EXPECT_THAT(WaitUntil([&] { return observer->called(); }, IsTrue()),
-              IsRtcOk());
+  EXPECT_TRUE(WaitUntil([&] { return observer->called(); }));
   caller()->CreateAndSetAndSignalOffer();  // Implicit rollback.
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
   ASSERT_TRUE(ExpectNewFrames(media_expectations));
 }
 
@@ -3639,15 +3501,13 @@ TEST_F(PeerConnectionIntegrationTestUnifiedPlan,
   auto sld_observer = make_ref_counted<MockSetSessionDescriptionObserver>();
   callee()->pc()->SetLocalDescription(sld_observer.get(),
                                       callee()->CreateOfferAndWait().release());
-  EXPECT_THAT(WaitUntil([&] { return sld_observer->called(); }, IsTrue()),
-              IsRtcOk());
+  EXPECT_TRUE(WaitUntil([&] { return sld_observer->called(); }));
   EXPECT_EQ(sld_observer->error(), "");
 
   auto srd_observer = make_ref_counted<MockSetSessionDescriptionObserver>();
   callee()->pc()->SetRemoteDescription(
       srd_observer.get(), caller()->CreateOfferAndWait().release());
-  EXPECT_THAT(WaitUntil([&] { return srd_observer->called(); }, IsTrue()),
-              IsRtcOk());
+  EXPECT_TRUE(WaitUntil([&] { return srd_observer->called(); }));
   EXPECT_EQ(srd_observer->error(), "");
 
   EXPECT_THAT(callee()->peer_connection_signaling_state_history(),
@@ -3658,6 +3518,8 @@ TEST_F(PeerConnectionIntegrationTestUnifiedPlan,
 
 TEST_F(PeerConnectionIntegrationTestUnifiedPlan,
        H264FmtpSpsPpsIdrInKeyframeParameterUsage) {
+  // Munging allowed: kVideoCodecsFmtp (85)
+  SetFieldTrials("WebRTC-NoSdpMangleAllowForTesting/Enabled,85/");
   ASSERT_TRUE(CreatePeerConnectionWrappers());
   ConnectFakeSignaling();
   caller()->AddVideoTrack();
@@ -3682,8 +3544,7 @@ TEST_F(PeerConnectionIntegrationTestUnifiedPlan,
   // Munge remote answer for SRD.
   caller()->SetReceivedSdpMunger(munger);
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
   // Observe that after munging the parameter is present in generated SDP.
   caller()->SetGeneratedSdpMunger(
       [](std::unique_ptr<SessionDescriptionInterface>& sdp) {
@@ -3710,8 +3571,7 @@ TEST_F(PeerConnectionIntegrationTestUnifiedPlan,
   caller()->pc()->AddTransceiver(MediaType::AUDIO);
 
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
   int current_size = caller()->pc()->GetTransceivers().size();
   // Add more tracks until we get close to having issues.
   // Issues have been seen at:
@@ -3727,8 +3587,7 @@ TEST_F(PeerConnectionIntegrationTestUnifiedPlan,
     auto start_time_ms = env_.clock().TimeInMilliseconds();
     caller()->CreateAndSetAndSignalOffer();
     // We want to stop when the time exceeds one second.
-    ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-                IsRtcOk());
+    ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
     auto elapsed_time_ms = env_.clock().TimeInMilliseconds() - start_time_ms;
     RTC_LOG(LS_INFO) << "Renegotiating took " << elapsed_time_ms << " ms";
     ASSERT_GT(1000, elapsed_time_ms)
@@ -3748,8 +3607,7 @@ TEST_F(PeerConnectionIntegrationTestUnifiedPlan,
   caller()->pc()->AddTransceiver(MediaType::VIDEO);
 
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
   int current_size = caller()->pc()->GetTransceivers().size();
   // Add more tracks until we get close to having issues.
   // Issues have been seen at:
@@ -3767,8 +3625,7 @@ TEST_F(PeerConnectionIntegrationTestUnifiedPlan,
     auto start_time_ms = env_.clock().TimeInMilliseconds();
     caller()->CreateAndSetAndSignalOffer();
     // We want to stop when the time exceeds one second.
-    ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-                IsRtcOk());
+    ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
     auto elapsed_time_ms = env_.clock().TimeInMilliseconds() - start_time_ms;
     RTC_LOG(LS_INFO) << "Renegotiating took " << elapsed_time_ms << " ms";
     ASSERT_GT(1000, elapsed_time_ms)
@@ -3788,8 +3645,7 @@ TEST_F(PeerConnectionIntegrationTestUnifiedPlan,
   caller()->AddAudioTrack();
   callee()->AddAudioTrack();
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
   // Wait until we can see the audio flowing.
   MediaExpectations media_expectations;
   media_expectations.CalleeExpectsSomeAudio();
@@ -3813,8 +3669,7 @@ TEST_F(PeerConnectionIntegrationTestUnifiedPlan,
     auto start_time_ms = env_.clock().TimeInMilliseconds();
     caller()->CreateAndSetAndSignalOffer();
     // We want to stop when the time exceeds one second.
-    ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-                IsRtcOk());
+    ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
     auto elapsed_time_ms = env_.clock().TimeInMilliseconds() - start_time_ms;
     RTC_LOG(LS_INFO) << "Renegotiating took " << elapsed_time_ms << " ms";
     // This is a guard against the test using excessive amounts of time.
@@ -3888,8 +3743,7 @@ TEST_P(PeerConnectionIntegrationInteropTest, NoMediaLocalToNoMediaRemote) {
   ConnectFakeSignaling();
 
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
 }
 
 TEST_P(PeerConnectionIntegrationInteropTest, OneAudioLocalToNoMediaRemote) {
@@ -3898,8 +3752,7 @@ TEST_P(PeerConnectionIntegrationInteropTest, OneAudioLocalToNoMediaRemote) {
   auto audio_sender = caller()->AddAudioTrack();
 
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
 
   // Verify that one audio receiver has been created on the remote and that it
   // has the same track ID as the sending track.
@@ -3920,8 +3773,7 @@ TEST_P(PeerConnectionIntegrationInteropTest, OneAudioOneVideoToNoMediaRemote) {
   auto audio_sender = caller()->AddAudioTrack();
 
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
 
   // Verify that one audio and one video receiver have been created on the
   // remote and that they have the same track IDs as the sending tracks.
@@ -3945,8 +3797,7 @@ TEST_P(PeerConnectionIntegrationInteropTest,
   callee()->AddAudioVideoTracks();
 
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
 
   MediaExpectations media_expectations;
   media_expectations.ExpectBidirectionalAudioAndVideo();
@@ -3961,8 +3812,7 @@ TEST_P(PeerConnectionIntegrationInteropTest,
   callee()->AddVideoTrack();
 
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
 
   // Verify that only the audio track has been negotiated.
   EXPECT_EQ(0u, caller()->GetReceiversOfType(MediaType::VIDEO).size());
@@ -3970,8 +3820,7 @@ TEST_P(PeerConnectionIntegrationInteropTest,
 
   // Reverse roles.
   callee()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
 
   MediaExpectations media_expectations;
   media_expectations.CallerExpectsSomeVideo();
@@ -3984,15 +3833,13 @@ TEST_P(PeerConnectionIntegrationTest, NewTracksDoNotCauseNewCandidates) {
   ConnectFakeSignaling();
   caller()->AddAudioVideoTracks();
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
-  ASSERT_THAT(WaitUntil([&] { return DtlsConnected(); }, IsTrue()), IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
+  ASSERT_TRUE(WaitUntil([&] { return DtlsConnected(); }));
   caller()->ExpectCandidates(0);
   callee()->ExpectCandidates(0);
   caller()->AddAudioTrack();
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
 }
 
 TEST_P(PeerConnectionIntegrationTest, MediaCallWithoutMediaEngineFails) {
@@ -4020,8 +3867,7 @@ TEST_F(PeerConnectionIntegrationTestPlanB, TwoVideoUnifiedPlanToNoMediaPlanB) {
   caller()->AddVideoTrack();
 
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
 
   // Verify that there is only one receiver and it corresponds to the first
   // added track.
@@ -4052,8 +3898,7 @@ TEST_F(PeerConnectionIntegrationTestUnifiedPlan,
   auto audio_transceiver = audio_transceiver_or_error.MoveValue();
 
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
   {
     MediaExpectations media_expectations;
     media_expectations.CalleeExpectsSomeAudio();
@@ -4064,8 +3909,7 @@ TEST_F(PeerConnectionIntegrationTestUnifiedPlan,
   caller()->pc()->AddTransceiver(caller()->CreateLocalVideoTrack());
 
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
   {
     MediaExpectations media_expectations;
     media_expectations.CalleeExpectsSomeVideo();
@@ -4084,13 +3928,11 @@ TEST_F(PeerConnectionIntegrationTestUnifiedPlan,
   auto audio_transceiver = audio_transceiver_or_error.MoveValue();
 
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
 
   audio_transceiver->StopStandard();
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
   ASSERT_EQ(0U, caller()->pc()->GetTransceivers().size());
   EXPECT_EQ(PeerConnectionInterface::kIceGatheringNew,
             caller()->pc()->ice_gathering_state());
@@ -4111,14 +3953,12 @@ TEST_F(PeerConnectionIntegrationTestUnifiedPlan,
   auto caller_transceiver = audio_transceiver_or_error.MoveValue();
 
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
   caller_transceiver->StopStandard();
 
   auto callee_transceiver = callee()->pc()->GetTransceivers()[0];
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
   EXPECT_EQ(0U, caller()->pc()->GetTransceivers().size());
   EXPECT_EQ(0U, callee()->pc()->GetTransceivers().size());
   EXPECT_EQ(0U, caller()->pc()->GetSenders().size());
@@ -4140,16 +3980,14 @@ TEST_F(PeerConnectionIntegrationTestUnifiedPlan,
   auto audio_transceiver = audio_transceiver_or_error.MoveValue();
 
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
   auto caller_track = audio_transceiver->receiver()->track();
   auto callee_track = callee()->pc()->GetReceivers()[0]->track();
   audio_transceiver->StopStandard();
   EXPECT_EQ(MediaStreamTrackInterface::TrackState::kEnded,
             caller_track->state());
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
   EXPECT_EQ(MediaStreamTrackInterface::TrackState::kEnded,
             callee_track->state());
 }
@@ -4165,16 +4003,14 @@ TEST_F(PeerConnectionIntegrationTestUnifiedPlan,
   auto audio_transceiver = audio_transceiver_or_error.MoveValue();
 
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
   auto caller_track = audio_transceiver->receiver()->track();
   auto callee_track = callee()->pc()->GetReceivers()[0]->track();
   audio_transceiver->StopStandard();
   EXPECT_EQ(MediaStreamTrackInterface::TrackState::kEnded,
             caller_track->state());
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
   EXPECT_EQ(MediaStreamTrackInterface::TrackState::kEnded,
             callee_track->state());
 }
@@ -4191,8 +4027,7 @@ TEST_P(PeerConnectionIntegrationTest, EndToEndRtpSenderVideoEncoderSelector) {
   options.offer_to_receive_video = 0;
   caller()->SetOfferAnswerOptions(options);
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
   ASSERT_EQ(callee()->pc()->GetReceivers().size(), 1u);
 
   scoped_refptr<MockEncoderSelector> encoder_selector =
@@ -4222,8 +4057,7 @@ TEST_P(PeerConnectionIntegrationTest,
   options.offer_to_receive_video = 0;
   caller()->SetOfferAnswerOptions(options);
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
   ASSERT_EQ(callee()->pc()->GetReceivers().size(), 1u);
 
   scoped_refptr<MockEncoderSelector> encoder_selector =
@@ -4334,6 +4168,8 @@ TEST_F(PeerConnectionIntegrationTestUnifiedPlan,
 
 TEST_F(PeerConnectionIntegrationTestUnifiedPlan, VideoPacketLossCausesNack) {
   RTCConfiguration config;
+  // Munging allowed: kVideoCodecsRemoved (80)
+  SetFieldTrials("WebRTC-NoSdpMangleAllowForTesting/Enabled,80/");
   ASSERT_TRUE(CreatePeerConnectionWrappersWithConfig(config, config));
   ConnectFakeSignaling();
   auto video_transceiver_or_error =
@@ -4513,10 +4349,10 @@ int SetNewSsrcs(std::unique_ptr<SessionDescriptionInterface>& sdp) {
 
 void SetNewFingerprint(std::unique_ptr<SessionDescriptionInterface>& sdp) {
   auto identity = SSLIdentity::Create("NewIdentity", KT_DEFAULT);
-  auto new_fingerprint = SSLFingerprint::CreateUnique("sha-256", *identity);
+  auto new_fingerprint = SSLFingerprint::Create("sha-256", *identity);
   for (auto& transport_info : sdp->description()->transport_infos()) {
     transport_info.description.identity_fingerprint =
-        absl::WrapUnique(new SSLFingerprint(*new_fingerprint));
+        std::make_unique<SSLFingerprint>(*new_fingerprint);
   }
 }
 
@@ -4585,8 +4421,7 @@ TEST_F(PeerConnectionIntegrationTestUnifiedPlan,
   caller()->NegotiateCorruptionDetectionHeader();
 
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
   std::vector<RtpHeaderExtensionCapability> negotiated_extensions =
       caller()->pc()->GetTransceivers()[0]->GetNegotiatedHeaderExtensions();
   // Even if `caller` wants to collect corruption score, since `callee` does not
@@ -4620,8 +4455,7 @@ TEST_F(PeerConnectionIntegrationTestUnifiedPlan,
   callee()->NegotiateCorruptionDetectionHeader();
 
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
   ASSERT_THAT(WaitUntil([&] { return caller()->GetCorruptionScoreCount(); },
                         Gt(0), {.timeout = kMaxWaitForStats}),
               IsRtcOk());
@@ -4672,8 +4506,7 @@ TEST_F(PeerConnectionIntegrationTestUnifiedPlan,
   caller()->AddAudioVideoTracks();
   callee()->AddAudioVideoTracks();
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
   ASSERT_THAT(WaitUntil([&] { return caller()->GetCorruptionScoreCount(); },
                         Eq(0), {.timeout = kMaxWaitForStats}),
               IsRtcOk());
@@ -4715,8 +4548,7 @@ TEST_F(PeerConnectionIntegrationTestUnifiedPlan,
   ASSERT_TRUE(transceiver->SetHeaderExtensionsToNegotiate(extensions).ok());
 
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
   const auto& negotiated_header_extensions = caller()
                                                  ->pc()
                                                  ->remote_description()
@@ -4753,6 +4585,10 @@ TEST_F(PeerConnectionIntegrationTestUnifiedPlan,
 // Regression test for https://issues.chromium.org/395077824
 TEST_F(PeerConnectionIntegrationTestUnifiedPlan,
        MungeOfferCodecAndReOfferWorks) {
+  // Munging allowed: kUnknownModification (1), kVideoCodecsFmtp (85)
+  // Codec replacement VP9 -> AV1 is detected as kVideoCodecsFmtp because
+  // it modifies params in-place.
+  SetFieldTrials("WebRTC-NoSdpMangleAllowForTesting/Enabled,1,85/");
   ASSERT_TRUE(CreatePeerConnectionWrappers());
   ConnectFakeSignaling();
   caller()->AddVideoTrack();
@@ -4799,6 +4635,7 @@ TEST_F(PeerConnectionIntegrationTestUnifiedPlan,
 
 TEST_F(PeerConnectionIntegrationTestUnifiedPlan,
        MungeOfferCodecAndReOfferWorksWithSetCodecPreferencesIsAFootgun) {
+  SetFieldTrials("WebRTC-NoSdpMangleAllowForTesting/Enabled,85/");
   ASSERT_TRUE(CreatePeerConnectionWrappers());
   ConnectFakeSignaling();
   caller()->AddVideoTrack();
@@ -4831,8 +4668,7 @@ TEST_F(PeerConnectionIntegrationTestUnifiedPlan,
       };
   caller()->SetGeneratedSdpMunger(munger);
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
   caller()->SetGeneratedSdpMunger(nullptr);
 
   if (!has_munged) {
@@ -4966,6 +4802,8 @@ TEST_F(PeerConnectionIntegrationTestUnifiedPlan,
 // that this mechanism will go on working.
 TEST_F(PeerConnectionIntegrationTestUnifiedPlan,
        MungeRawPacketizationChangesSubsequentSections) {
+  // Munging allowed: kVideoCodecsModifiedWithRawPacketization (88)
+  SetFieldTrials("WebRTC-NoSdpMangleAllowForTesting/Enabled,88/");
   ASSERT_TRUE(CreatePeerConnectionWrappers());
   // Add first video track.
   caller()->AddVideoTrack();
@@ -4995,8 +4833,7 @@ TEST_F(PeerConnectionIntegrationTestUnifiedPlan,
   auto observer = make_ref_counted<MockSetSessionDescriptionObserver>();
   caller()->pc()->SetLocalDescription(observer.get(), offer.release());
   // Wait for SLD to complete.
-  EXPECT_THAT(WaitUntil([&] { return observer->called(); }, IsTrue()),
-              IsRtcOk());
+  EXPECT_TRUE(WaitUntil([&] { return observer->called(); }));
   // Add a second video track.
   caller()->AddVideoTrack();
   auto offer2 = caller()->CreateOfferAndWait();
@@ -5038,8 +4875,7 @@ TEST_F(PeerConnectionIntegrationTestUnifiedPlan,
   callee_transceiver->SetDirectionWithError(RtpTransceiverDirection::kSendOnly);
 
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
   EXPECT_THAT(caller()->pc()->GetTransceivers().size(), Eq(2));
   EXPECT_THAT(callee()->pc()->GetTransceivers().size(), Eq(2));
   EXPECT_TRUE(callee_transceiver->mid().has_value());
@@ -5064,8 +4900,7 @@ TEST_F(PeerConnectionIntegrationTestUnifiedPlan,
       callee()->pc()->AddTransceiver(callee_track, sendonly_init).MoveValue();
 
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
   ASSERT_THAT(caller()->pc()->GetTransceivers().size(), Eq(2));
   // Verify that the video-sending track has not gotten associated with
   // a media section.
@@ -5106,14 +4941,10 @@ TEST_P(PeerConnectionIntegrationTest, DtlsPqc) {
   caller()->CreateDataChannel();
 
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(
-      WaitUntil(
-          [&] {
-            return PeerConnectionStateIs(
-                PeerConnectionInterface::PeerConnectionState::kConnected);
-          },
-          IsTrue()),
-      IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] {
+    return PeerConnectionStateIs(
+        PeerConnectionInterface::PeerConnectionState::kConnected);
+  }));
 
   uint16_t expected =
       webrtc::CryptoOptions::EphemeralKeyExchangeCipherGroups::kX25519_MLKEM768;
@@ -5147,14 +4978,10 @@ TEST_P(PeerConnectionIntegrationTest, DtlsPqcFieldTrial) {
   caller()->CreateDataChannel();
 
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(
-      WaitUntil(
-          [&] {
-            return PeerConnectionStateIs(
-                PeerConnectionInterface::PeerConnectionState::kConnected);
-          },
-          IsTrue()),
-      IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] {
+    return PeerConnectionStateIs(
+        PeerConnectionInterface::PeerConnectionState::kConnected);
+  }));
 
   uint16_t expected =
       webrtc::CryptoOptions::EphemeralKeyExchangeCipherGroups::kX25519_MLKEM768;
@@ -5247,18 +5074,13 @@ TEST_P(PeerConnectionIntegrationTest, CryptexRenegotiation) {
       });
 
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(
-      WaitUntil(
-          [&] {
-            return PeerConnectionStateIs(
-                PeerConnectionInterface::PeerConnectionState::kConnected);
-          },
-          IsTrue()),
-      IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] {
+    return PeerConnectionStateIs(
+        PeerConnectionInterface::PeerConnectionState::kConnected);
+  }));
   caller()->SetReceivedSdpMunger(nullptr);
   caller()->CreateAndSetAndSignalOffer();
-  ASSERT_THAT(WaitUntil([&] { return SignalingStateStable(); }, IsTrue()),
-              IsRtcOk());
+  ASSERT_TRUE(WaitUntil([&] { return SignalingStateStable(); }));
 }
 
 #ifdef WEBRTC_HAVE_SCTP
@@ -5284,6 +5106,8 @@ TEST_P(PeerConnectionIntegrationTest,
        DataChannelEncryptionDowngradeViaBundleDesyncInPrAnswer) {
   RTCConfiguration config;
   config.bundle_policy = PeerConnectionInterface::kBundlePolicyBalanced;
+  // Munging allowed: kBundle (33)
+  SetFieldTrials("Callee", "WebRTC-NoSdpMangleAllowForTesting/Enabled,33/");
   ASSERT_TRUE(CreatePeerConnectionWrappersWithConfig(config, config));
   ConnectFakeSignaling();
 
@@ -5402,6 +5226,8 @@ TEST_P(PeerConnectionIntegrationTest,
        BundleEstablishedInPrAnswerThenRemovedInFinalAnswer) {
   RTCConfiguration config;
   config.bundle_policy = PeerConnectionInterface::kBundlePolicyBalanced;
+  // Munging allowed: kBundle (33)
+  SetFieldTrials("Callee", "WebRTC-NoSdpMangleAllowForTesting/Enabled,33/");
   ASSERT_TRUE(CreatePeerConnectionWrappersWithConfig(config, config));
   ConnectFakeSignaling();
 
@@ -5487,6 +5313,8 @@ TEST_P(PeerConnectionIntegrationTest,
 
 TEST_F(PeerConnectionIntegrationTestUnifiedPlan,
        MungeOfferCodecAndReOfferCausesNoDuplicateId) {
+  // Munging allowed: kUnknownModification (codec replacement VP9 -> AV1)
+  SetFieldTrials("WebRTC-NoSdpMangleAllowForTesting/Enabled,1/");
   ASSERT_TRUE(CreatePeerConnectionWrappers());
   ConnectFakeSignaling();
   caller()->AddVideoTrack();
@@ -5533,6 +5361,8 @@ TEST_F(PeerConnectionIntegrationTestUnifiedPlan,
 
 TEST_F(PeerConnectionIntegrationTestUnifiedPlan,
        MungeOfferCodecWithNonsenseFailsAtSetLocalDescription) {
+  // Munging allowed: kUnknownModification (codec replacement VP9 -> NONSENSE)
+  SetFieldTrials("WebRTC-NoSdpMangleAllowForTesting/Enabled,1/");
   ASSERT_TRUE(CreatePeerConnectionWrappers());
   ConnectFakeSignaling();
   caller()->AddVideoTrack();

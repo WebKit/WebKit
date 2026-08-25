@@ -20,7 +20,6 @@
 #include "absl/algorithm/container.h"
 #include "api/call/transport.h"
 #include "api/environment/environment.h"
-#include "api/environment/environment_factory.h"
 #include "api/rtp_headers.h"
 #include "api/task_queue/task_queue_base.h"
 #include "api/units/time_delta.h"
@@ -39,6 +38,7 @@
 #include "modules/rtp_rtcp/source/rtp_sender_video.h"
 #include "rtc_base/rate_limiter.h"
 #include "system_wrappers/include/clock.h"
+#include "test/create_test_environment.h"
 #include "test/gtest.h"
 #include "test/run_loop.h"
 
@@ -149,7 +149,7 @@ class RtpRtcpRtxNackTest : public ::testing::Test {
  protected:
   RtpRtcpRtxNackTest()
       : fake_clock_(123456),
-        env_(CreateEnvironment(&fake_clock_)),
+        env_(CreateTestEnvironment({.time = &fake_clock_})),
         transport_(main_thread_.task_queue(),
                    main_thread_.task_queue(),
                    kTestRtxSsrc),

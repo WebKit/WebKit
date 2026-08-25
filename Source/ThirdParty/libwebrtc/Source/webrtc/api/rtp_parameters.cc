@@ -17,7 +17,9 @@
 #include <vector>
 
 #include "absl/strings/ascii.h"
+#include "absl/strings/escaping.h"
 #include "absl/strings/string_view.h"
+#include "api/media_types.h"
 #include "api/rtc_error.h"
 #include "api/rtp_header_extension_id.h"
 #include "api/rtp_transceiver_direction.h"
@@ -139,6 +141,9 @@ bool RtpCodec::IsResiliencyCodec() const {
 bool RtpCodec::IsMediaCodec() const {
   return !IsResiliencyCodec() && name != kComfortNoiseCodecName;
 }
+std::string RtpCodec::mime_type() const {
+  return (StringBuilder() << MediaTypeToString(kind) << "/" << name).Release();
+}
 RtpCodecCapability::RtpCodecCapability() = default;
 RtpCodecCapability::~RtpCodecCapability() = default;
 
@@ -148,20 +153,33 @@ RtpHeaderExtensionCapability::RtpHeaderExtensionCapability(
     : uri(uri) {}
 RtpHeaderExtensionCapability::RtpHeaderExtensionCapability(
     absl::string_view uri,
+    RtpTransceiverDirection direction)
+    : uri(uri), direction(direction) {}
+RtpHeaderExtensionCapability::RtpHeaderExtensionCapability(
+    absl::string_view uri,
+    bool preferred_encrypt,
+    RtpTransceiverDirection direction)
+    : uri(uri), preferred_encrypt(preferred_encrypt), direction(direction) {}
+RtpHeaderExtensionCapability::RtpHeaderExtensionCapability(
+    absl::string_view uri,
     RtpHeaderExtensionId preferred_id)
     : uri(uri), preferred_id(preferred_id) {}
 RtpHeaderExtensionCapability::RtpHeaderExtensionCapability(
     absl::string_view uri,
     RtpHeaderExtensionId preferred_id,
     RtpTransceiverDirection direction)
-    : uri(uri), preferred_id(preferred_id), direction(direction) {}
+    : uri(uri),
+      preferred_id(preferred_id.IsSet() ? std::optional(preferred_id)
+                                        : std::nullopt),
+      direction(direction) {}
 RtpHeaderExtensionCapability::RtpHeaderExtensionCapability(
     absl::string_view uri,
     RtpHeaderExtensionId preferred_id,
     bool preferred_encrypt,
     RtpTransceiverDirection direction)
     : uri(uri),
-      preferred_id(preferred_id),
+      preferred_id(preferred_id.IsSet() ? std::optional(preferred_id)
+                                        : std::nullopt),
       preferred_encrypt(preferred_encrypt),
       direction(direction) {}
 
@@ -216,13 +234,17 @@ RtpParameters::~RtpParameters() = default;
 
 std::string RtpExtension::ToString() const {
   StringBuilder sb;
-  sb << "{uri: " << uri;
+  sb << "{uri: " << SanitizedUriForLogging();
   sb << ", id: " << id;
   if (encrypt) {
     sb << ", encrypt";
   }
   sb << "}";
   return sb.Release();
+}
+
+std::string RtpExtension::SanitizedUriForLogging() const {
+  return absl::CEscape(uri);
 }
 
 bool RtpExtension::IsSupportedForAudio(absl::string_view uri) {
@@ -358,10 +380,12 @@ const std::vector<RtpExtension> RtpExtension::DeduplicateHeaderExtensions(
 
   // Sort the returned vector to make comparisons of header extensions reliable.
   // In order of priority, we sort by uri first, then encrypt and id last.
+  // .value() has to be used because tie compares using the <=> operator,
+  // which is defined for int, but not for RtpHeaderExtensionId.
   std::sort(filtered.begin(), filtered.end(),
             [](const RtpExtension& a, const RtpExtension& b) {
-              return std::tie(a.uri, a.encrypt, a.id) <
-                     std::tie(b.uri, b.encrypt, b.id);
+              return std::tie(a.uri, a.encrypt, a.id.value()) <
+                     std::tie(b.uri, b.encrypt, b.id.value());
             });
 
   return filtered;

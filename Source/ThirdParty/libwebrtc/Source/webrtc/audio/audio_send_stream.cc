@@ -506,6 +506,12 @@ void AudioSendStream::DeliverRtcp(std::span<const uint8_t> packet) {
 
 uint32_t AudioSendStream::OnBitrateUpdated(BitrateAllocationUpdate update) {
   RTC_DCHECK_RUN_ON(&worker_thread_checker_);
+  if (transport_overhead_per_packet_bytes_ !=
+      update.packet_overhead.bytes<size_t>()) {
+    transport_overhead_per_packet_bytes_ =
+        update.packet_overhead.bytes<size_t>();
+    UpdateOverheadPerPacket();
+  }
   // Pick a target bitrate between the constraints. Overrules the allocator if
   // it 1) allocated a bitrate of zero to disable the stream or 2) allocated a
   // higher than max to allow for e.g. extra FEC.
@@ -523,13 +529,6 @@ uint32_t AudioSendStream::OnBitrateUpdated(BitrateAllocationUpdate update) {
 
 std::optional<DataRate> AudioSendStream::GetUsedRate() const {
   return channel_send_->GetUsedRate();
-}
-
-void AudioSendStream::SetTransportOverhead(
-    int transport_overhead_per_packet_bytes) {
-  RTC_DCHECK_RUN_ON(&worker_thread_checker_);
-  transport_overhead_per_packet_bytes_ = transport_overhead_per_packet_bytes;
-  UpdateOverheadPerPacket();
 }
 
 void AudioSendStream::UpdateOverheadPerPacket() {
@@ -787,7 +786,8 @@ void AudioSendStream::ReconfigureBitrateObserver(
 
   if (!new_config.has_dscp && new_config.min_bitrate_bps != -1 &&
       new_config.max_bitrate_bps != -1 &&
-      new_config.include_in_congestion_control_allocation) {
+      (allocate_audio_without_feedback_ ||
+       new_config.include_in_congestion_control_allocation)) {
     rtp_transport_->AccountForAudioPacketsInPacedSender(true);
     rtp_transport_->IncludeOverheadInPacedSender();
     // We may get a callback immediately as the observer is registered, so

@@ -20,6 +20,7 @@
 #include "api/scoped_refptr.h"
 #include "api/video/color_space.h"
 #include "api/video/encoded_image.h"
+#include "api/video/video_codec_constants.h"
 #include "api/video/video_frame.h"
 #include "api/video/video_frame_buffer.h"
 #include "api/video_codecs/video_decoder.h"
@@ -100,7 +101,7 @@ bool Dav1dDecoder::Configure(const Settings& settings) {
   s.max_frame_delay = 1;  // For low latency decoding.
   s.all_layers = 0;       // Don't output a frame for every spatial layer.
   // Limit max frame size to avoid OOM'ing fuzzers. crbug.com/325284120.
-  s.frame_size_limit = 16384 * 16384;
+  s.frame_size_limit = kMaxFrameSizePixels;
   s.operating_point = 31;  // Decode all operating points.
 
   return dav1d_open(&context_, &s) == 0;

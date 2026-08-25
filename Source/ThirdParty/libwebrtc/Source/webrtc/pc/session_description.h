@@ -105,6 +105,13 @@ class MediaContentDescription {
     rtcp_reduced_size_ = reduced_size;
   }
 
+  // Whether RFC 3611 rcvr-rtt (receiver reference time report) was
+  // negotiated, enabling non-sender RTT (RRTR/DLRR) on this m-section.
+  bool receive_non_sender_rtt() const { return receive_non_sender_rtt_; }
+  void set_receive_non_sender_rtt(bool enable) {
+    receive_non_sender_rtt_ = enable;
+  }
+
   // Indicates support for the remote network estimate packet type. This
   // functionality is experimental and subject to change without notice.
   bool remote_estimate() const { return remote_estimate_; }
@@ -342,10 +349,11 @@ class MediaContentDescription {
  private:
   bool rtcp_mux_ = false;
   bool rtcp_reduced_size_ = false;
+  bool receive_non_sender_rtt_ = false;
   bool remote_estimate_ = false;
   bool rtcp_fb_ack_ccfb_ = false;
   int bandwidth_ = kAutoBandwidth;
-  std::string bandwidth_type_ = kApplicationSpecificBandwidth;
+  std::string bandwidth_type_{kApplicationSpecificBandwidth};
 
   std::vector<RtpExtension> rtp_header_extensions_;
   StreamParamsVec send_streams_;

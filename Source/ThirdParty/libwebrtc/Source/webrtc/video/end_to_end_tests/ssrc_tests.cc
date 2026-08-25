@@ -16,6 +16,7 @@
 #include <utility>
 #include <vector>
 
+#include "api/rtp_header_extension_id.h"
 #include "api/rtp_parameters.h"
 #include "api/task_queue/task_queue_base.h"
 #include "api/test/simulated_network.h"
@@ -41,8 +42,8 @@ namespace webrtc {
 class SsrcEndToEndTest : public test::CallTest {
  public:
   SsrcEndToEndTest() {
-    RegisterRtpExtension(
-        RtpExtension(RtpExtension::kTransportSequenceNumberUri, 1));
+    RegisterRtpExtension(RtpExtension(RtpExtension::kTransportSequenceNumberUri,
+                                      RtpHeaderExtensionId(1)));
   }
 
  protected:

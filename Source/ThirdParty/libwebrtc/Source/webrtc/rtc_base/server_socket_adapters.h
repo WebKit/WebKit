@@ -28,11 +28,6 @@ class AsyncProxyServerSocket : public BufferedReadAdapter {
   AsyncProxyServerSocket(Socket* socket, size_t buffer_size);
   ~AsyncProxyServerSocket() override;
 
-  [[deprecated]] void SubscribeConnectRequest(
-      absl::AnyInvocable<void(AsyncProxyServerSocket*, const SocketAddress&)>
-          callback) {
-    connect_request_callbacks_.AddReceiver(std::move(callback));
-  }
   void SubscribeConnectRequest(
       void* tag,
       absl::AnyInvocable<void(AsyncProxyServerSocket*, const SocketAddress&)>

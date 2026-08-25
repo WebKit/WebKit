@@ -26,8 +26,7 @@
 #include "test/gtest.h"
 #include "test/run_loop.h"
 
-using ::webrtc::CreateTestEnvironment;
-using ::webrtc::IceCandidateType;
+namespace webrtc {
 
 namespace {
 constexpr char kContentName[] = "test content";
@@ -46,45 +45,44 @@ constexpr char kIpv4AddressWithPort[] = "12.34.56.78:443";
 class PortAllocatorTest : public ::testing::Test {
  public:
   PortAllocatorTest()
-      : vss_(std::make_unique<webrtc::VirtualSocketServer>()),
+      : vss_(std::make_unique<VirtualSocketServer>()),
         main_(vss_.get()),
-        allocator_(
-            std::make_unique<webrtc::FakePortAllocator>(CreateTestEnvironment(),
-                                                        vss_.get())) {}
+        allocator_(std::make_unique<FakePortAllocator>(CreateTestEnvironment(),
+                                                       vss_.get())) {}
 
  protected:
   void SetConfigurationWithPoolSize(int candidate_pool_size) {
-    EXPECT_TRUE(allocator_->SetConfiguration(
-        webrtc::ServerAddresses(), std::vector<webrtc::RelayServerConfig>(),
-        candidate_pool_size, webrtc::NO_PRUNE));
+    EXPECT_TRUE(allocator_->SetConfiguration(ServerAddresses(),
+                                             std::vector<RelayServerConfig>(),
+                                             candidate_pool_size, NO_PRUNE));
   }
 
   void SetConfigurationWithPoolSizeExpectFailure(int candidate_pool_size) {
-    EXPECT_FALSE(allocator_->SetConfiguration(
-        webrtc::ServerAddresses(), std::vector<webrtc::RelayServerConfig>(),
-        candidate_pool_size, webrtc::NO_PRUNE));
+    EXPECT_FALSE(allocator_->SetConfiguration(ServerAddresses(),
+                                              std::vector<RelayServerConfig>(),
+                                              candidate_pool_size, NO_PRUNE));
   }
 
-  std::unique_ptr<webrtc::FakePortAllocatorSession> CreateSession(
+  std::unique_ptr<FakePortAllocatorSession> CreateSession(
       absl::string_view content_name,
       int component,
       absl::string_view ice_ufrag,
       absl::string_view ice_pwd) {
-    return std::unique_ptr<webrtc::FakePortAllocatorSession>(
-        static_cast<webrtc::FakePortAllocatorSession*>(
+    return std::unique_ptr<FakePortAllocatorSession>(
+        static_cast<FakePortAllocatorSession*>(
             allocator_
                 ->CreateSession(content_name, component, ice_ufrag, ice_pwd)
                 .release()));
   }
 
-  const webrtc::FakePortAllocatorSession* GetPooledSession() const {
-    return static_cast<const webrtc::FakePortAllocatorSession*>(
+  const FakePortAllocatorSession* GetPooledSession() const {
+    return static_cast<const FakePortAllocatorSession*>(
         allocator_->GetPooledSession());
   }
 
-  std::unique_ptr<webrtc::FakePortAllocatorSession> TakePooledSession() {
-    return std::unique_ptr<webrtc::FakePortAllocatorSession>(
-        static_cast<webrtc::FakePortAllocatorSession*>(
+  std::unique_ptr<FakePortAllocatorSession> TakePooledSession() {
+    return std::unique_ptr<FakePortAllocatorSession>(
+        static_cast<FakePortAllocatorSession*>(
             allocator_->TakePooledSession(kContentName, 0, kIceUfrag, kIcePwd)
                 .release()));
   }
@@ -97,17 +95,15 @@ class PortAllocatorTest : public ::testing::Test {
     return count;
   }
 
-  std::unique_ptr<webrtc::VirtualSocketServer> vss_;
-  webrtc::test::RunLoop main_;
-  std::unique_ptr<webrtc::FakePortAllocator> allocator_;
-  webrtc::SocketAddress stun_server_1{"11.11.11.11", 3478};
-  webrtc::SocketAddress stun_server_2{"22.22.22.22", 3478};
-  webrtc::RelayServerConfig turn_server_1{"11.11.11.11",     3478,
-                                          kTurnUsername,     kTurnPassword,
-                                          webrtc::PROTO_UDP, false};
-  webrtc::RelayServerConfig turn_server_2{"22.22.22.22",     3478,
-                                          kTurnUsername,     kTurnPassword,
-                                          webrtc::PROTO_UDP, false};
+  std::unique_ptr<VirtualSocketServer> vss_;
+  test::RunLoop main_;
+  std::unique_ptr<FakePortAllocator> allocator_;
+  SocketAddress stun_server_1{"11.11.11.11", 3478};
+  SocketAddress stun_server_2{"22.22.22.22", 3478};
+  RelayServerConfig turn_server_1{"11.11.11.11", 3478,      kTurnUsername,
+                                  kTurnPassword, PROTO_UDP, false};
+  RelayServerConfig turn_server_2{"22.22.22.22", 3478,      kTurnUsername,
+                                  kTurnPassword, PROTO_UDP, false};
 };
 
 TEST_F(PortAllocatorTest, TestDefaults) {
@@ -120,10 +116,10 @@ TEST_F(PortAllocatorTest, TestDefaults) {
 // Call CreateSession and verify that the parameters passed in and the
 // candidate filter are applied as expected.
 TEST_F(PortAllocatorTest, CreateSession) {
-  allocator_->SetCandidateFilter(webrtc::CF_RELAY);
+  allocator_->SetCandidateFilter(CF_RELAY);
   auto session = CreateSession(kContentName, 1, kIceUfrag, kIcePwd);
   ASSERT_NE(nullptr, session);
-  EXPECT_EQ(webrtc::CF_RELAY, session->candidate_filter());
+  EXPECT_EQ(CF_RELAY, session->candidate_filter());
   EXPECT_EQ(kContentName, session->content_name());
   EXPECT_EQ(1, session->component());
   EXPECT_EQ(kIceUfrag, session->ice_ufrag());
@@ -131,18 +127,18 @@ TEST_F(PortAllocatorTest, CreateSession) {
 }
 
 TEST_F(PortAllocatorTest, SetConfigurationUpdatesIceServers) {
-  webrtc::ServerAddresses stun_servers_1 = {stun_server_1};
-  std::vector<webrtc::RelayServerConfig> turn_servers_1 = {turn_server_1};
+  ServerAddresses stun_servers_1 = {stun_server_1};
+  std::vector<RelayServerConfig> turn_servers_1 = {turn_server_1};
   EXPECT_TRUE(allocator_->SetConfiguration(stun_servers_1, turn_servers_1, 0,
-                                           webrtc::NO_PRUNE));
+                                           NO_PRUNE));
   EXPECT_EQ(stun_servers_1, allocator_->stun_servers());
   EXPECT_EQ(turn_servers_1, allocator_->turn_servers());
 
   // Update with a different set of servers.
-  webrtc::ServerAddresses stun_servers_2 = {stun_server_2};
-  std::vector<webrtc::RelayServerConfig> turn_servers_2 = {turn_server_2};
+  ServerAddresses stun_servers_2 = {stun_server_2};
+  std::vector<RelayServerConfig> turn_servers_2 = {turn_server_2};
   EXPECT_TRUE(allocator_->SetConfiguration(stun_servers_2, turn_servers_2, 0,
-                                           webrtc::NO_PRUNE));
+                                           NO_PRUNE));
   EXPECT_EQ(stun_servers_2, allocator_->stun_servers());
   EXPECT_EQ(turn_servers_2, allocator_->turn_servers());
 }
@@ -191,18 +187,16 @@ TEST_F(PortAllocatorTest, SetConfigurationDestroysPooledSessions) {
 // ones created when the ICE servers change.
 TEST_F(PortAllocatorTest,
        SetConfigurationRecreatesPooledSessionsWhenIceServersChange) {
-  webrtc::ServerAddresses stun_servers_1 = {stun_server_1};
-  std::vector<webrtc::RelayServerConfig> turn_servers_1 = {turn_server_1};
-  allocator_->SetConfiguration(stun_servers_1, turn_servers_1, 1,
-                               webrtc::NO_PRUNE);
+  ServerAddresses stun_servers_1 = {stun_server_1};
+  std::vector<RelayServerConfig> turn_servers_1 = {turn_server_1};
+  allocator_->SetConfiguration(stun_servers_1, turn_servers_1, 1, NO_PRUNE);
   EXPECT_EQ(stun_servers_1, allocator_->stun_servers());
   EXPECT_EQ(turn_servers_1, allocator_->turn_servers());
 
   // Update with a different set of servers (and also change pool size).
-  webrtc::ServerAddresses stun_servers_2 = {stun_server_2};
-  std::vector<webrtc::RelayServerConfig> turn_servers_2 = {turn_server_2};
-  allocator_->SetConfiguration(stun_servers_2, turn_servers_2, 2,
-                               webrtc::NO_PRUNE);
+  ServerAddresses stun_servers_2 = {stun_server_2};
+  std::vector<RelayServerConfig> turn_servers_2 = {turn_server_2};
+  allocator_->SetConfiguration(stun_servers_2, turn_servers_2, 2, NO_PRUNE);
   EXPECT_EQ(stun_servers_2, allocator_->stun_servers());
   EXPECT_EQ(turn_servers_2, allocator_->turn_servers());
   auto session_1 = TakePooledSession();
@@ -234,8 +228,8 @@ TEST_F(PortAllocatorTest, TakePooledSessionUpdatesIceParameters) {
   auto peeked_session = GetPooledSession();
   ASSERT_NE(nullptr, peeked_session);
   EXPECT_EQ(0, peeked_session->transport_info_update_count());
-  std::unique_ptr<webrtc::FakePortAllocatorSession> session(
-      static_cast<webrtc::FakePortAllocatorSession*>(
+  std::unique_ptr<FakePortAllocatorSession> session(
+      static_cast<FakePortAllocatorSession*>(
           allocator_->TakePooledSession(kContentName, 1, kIceUfrag, kIcePwd)
               .release()));
   EXPECT_FALSE(session->pooled());
@@ -251,13 +245,13 @@ TEST_F(PortAllocatorTest, TakePooledSessionUpdatesIceParameters) {
 // session is taken. So a pooled session should gather candidates
 // unfiltered until it's returned by TakePooledSession.
 TEST_F(PortAllocatorTest, TakePooledSessionUpdatesCandidateFilter) {
-  allocator_->SetCandidateFilter(webrtc::CF_RELAY);
+  allocator_->SetCandidateFilter(CF_RELAY);
   SetConfigurationWithPoolSize(1);
   auto peeked_session = GetPooledSession();
   ASSERT_NE(nullptr, peeked_session);
-  EXPECT_EQ(webrtc::CF_ALL, peeked_session->candidate_filter());
+  EXPECT_EQ(CF_ALL, peeked_session->candidate_filter());
   auto session = TakePooledSession();
-  EXPECT_EQ(webrtc::CF_RELAY, session->candidate_filter());
+  EXPECT_EQ(CF_RELAY, session->candidate_filter());
 }
 
 // Verify that after DiscardCandidatePool, TakePooledSession doesn't return
@@ -295,26 +289,24 @@ TEST_F(PortAllocatorTest, RestrictIceCredentialsChange) {
 }
 
 TEST_F(PortAllocatorTest, SanitizeEmptyCandidateDefaultConfig) {
-  webrtc::Candidate input;
-  webrtc::Candidate output = allocator_->SanitizeCandidate(input);
+  Candidate input;
+  Candidate output = allocator_->SanitizeCandidate(input);
   EXPECT_EQ("", output.address().ipaddr().ToString());
 }
 
 TEST_F(PortAllocatorTest, SanitizeIpv4CandidateDefaultConfig) {
-  webrtc::Candidate input(1, "udp", webrtc::SocketAddress(kIpv4Address, 443), 1,
-                          "username", "password", IceCandidateType::kHost, 1,
-                          "foundation", 1, 1);
-  webrtc::Candidate output = allocator_->SanitizeCandidate(input);
+  Candidate input(1, "udp", SocketAddress(kIpv4Address, 443), 1, "username",
+                  "password", IceCandidateType::kHost, 1, "foundation", 1, 1);
+  Candidate output = allocator_->SanitizeCandidate(input);
   EXPECT_EQ(kIpv4AddressWithPort, output.address().ToString());
   EXPECT_EQ(kIpv4Address, output.address().ipaddr().ToString());
 }
 
 TEST_F(PortAllocatorTest, SanitizeIpv4CandidateMdnsObfuscationEnabled) {
   allocator_->SetMdnsObfuscationEnabledForTesting(true);
-  webrtc::Candidate input(1, "udp", webrtc::SocketAddress(kIpv4Address, 443), 1,
-                          "username", "password", IceCandidateType::kHost, 1,
-                          "foundation", 1, 1);
-  webrtc::Candidate output = allocator_->SanitizeCandidate(input);
+  Candidate input(1, "udp", SocketAddress(kIpv4Address, 443), 1, "username",
+                  "password", IceCandidateType::kHost, 1, "foundation", 1, 1);
+  Candidate output = allocator_->SanitizeCandidate(input);
   EXPECT_NE(kIpv4AddressWithPort, output.address().ToString());
   EXPECT_EQ("", output.address().ipaddr().ToString());
 }
@@ -322,10 +314,9 @@ TEST_F(PortAllocatorTest, SanitizeIpv4CandidateMdnsObfuscationEnabled) {
 TEST_F(PortAllocatorTest, SanitizePrflxCandidateMdnsObfuscationEnabled) {
   allocator_->SetMdnsObfuscationEnabledForTesting(true);
   // Create the candidate from an IP literal. This populates the hostname.
-  webrtc::Candidate input(1, "udp", webrtc::SocketAddress(kIpv4Address, 443), 1,
-                          "username", "password", IceCandidateType::kPrflx, 1,
-                          "foundation", 1, 1);
-  webrtc::Candidate output = allocator_->SanitizeCandidate(input);
+  Candidate input(1, "udp", SocketAddress(kIpv4Address, 443), 1, "username",
+                  "password", IceCandidateType::kPrflx, 1, "foundation", 1, 1);
+  Candidate output = allocator_->SanitizeCandidate(input);
   EXPECT_NE(kIpv4AddressWithPort, output.address().ToString());
   EXPECT_EQ("", output.address().ipaddr().ToString());
 }
@@ -334,11 +325,10 @@ TEST_F(PortAllocatorTest,
        SanitizePrflxCandidateMdnsObfuscationEnabledRelatedAddress) {
   allocator_->SetMdnsObfuscationEnabledForTesting(true);
   // Create the candidate from an IP literal. This populates the hostname.
-  webrtc::Candidate input(1, "udp", webrtc::SocketAddress(kIpv4Address, 443), 1,
-                          "username", "password", IceCandidateType::kPrflx, 1,
-                          "foundation", 1, 1);
+  Candidate input(1, "udp", SocketAddress(kIpv4Address, 443), 1, "username",
+                  "password", IceCandidateType::kPrflx, 1, "foundation", 1, 1);
 
-  webrtc::Candidate output = allocator_->SanitizeCandidate(input);
+  Candidate output = allocator_->SanitizeCandidate(input);
   EXPECT_NE(kIpv4AddressWithPort, output.address().ToString());
   EXPECT_EQ("", output.address().ipaddr().ToString());
   EXPECT_NE(kIpv4AddressWithPort, output.related_address().ToString());
@@ -348,12 +338,13 @@ TEST_F(PortAllocatorTest,
 TEST_F(PortAllocatorTest, SanitizeIpv4NonLiteralMdnsObfuscationEnabled) {
   // Create the candidate with an empty hostname.
   allocator_->SetMdnsObfuscationEnabledForTesting(true);
-  webrtc::IPAddress ip;
-  EXPECT_TRUE(webrtc::IPFromString(kIpv4Address, &ip));
-  webrtc::Candidate input(1, "udp", webrtc::SocketAddress(ip, 443), 1,
-                          "username", "password", IceCandidateType::kHost, 1,
-                          "foundation", 1, 1);
-  webrtc::Candidate output = allocator_->SanitizeCandidate(input);
+  IPAddress ip;
+  EXPECT_TRUE(IPFromString(kIpv4Address, &ip));
+  Candidate input(1, "udp", SocketAddress(ip, 443), 1, "username", "password",
+                  IceCandidateType::kHost, 1, "foundation", 1, 1);
+  Candidate output = allocator_->SanitizeCandidate(input);
   EXPECT_NE(kIpv4AddressWithPort, output.address().ToString());
   EXPECT_EQ("", output.address().ipaddr().ToString());
 }
+
+}  // namespace webrtc

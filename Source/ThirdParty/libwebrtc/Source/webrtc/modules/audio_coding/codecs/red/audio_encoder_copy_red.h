@@ -71,8 +71,6 @@ class AudioEncoderCopyRed final : public AudioEncoder {
   void DisableAudioNetworkAdaptor() override;
   void OnReceivedUplinkPacketLossFraction(
       float uplink_packet_loss_fraction) override;
-  void OnReceivedUplinkBandwidth(int target_audio_bitrate_bps,
-                                 std::optional<int64_t> bwe_period_ms) override;
   void OnReceivedUplinkAllocation(BitrateAllocationUpdate update) override;
   void OnReceivedRtt(int rtt_ms) override;
   void OnReceivedOverhead(size_t overhead_bytes_per_packet) override;

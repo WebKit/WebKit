@@ -11,6 +11,7 @@
 #define API_CALL_BITRATE_ALLOCATION_H_
 
 #include "api/units/data_rate.h"
+#include "api/units/data_size.h"
 #include "api/units/time_delta.h"
 
 namespace webrtc {
@@ -27,13 +28,12 @@ struct BitrateAllocationUpdate {
   double packet_loss_ratio = 0;
   // Predicted round trip time.
   TimeDelta round_trip_time = TimeDelta::PlusInfinity();
-  // `bwe_period` is deprecated.
-  // TODO: https://issues.webrtc.org/442860748 - complete removal.
-  TimeDelta bwe_period = TimeDelta::PlusInfinity();
   // Congestion window pushback bitrate reduction fraction. Used in
   // VideoStreamEncoder to reduce the bitrate by the given fraction
   // by dropping frames.
   double cwnd_reduce_ratio = 0;
+  // Transport overhead per packet in bytes (IP, UDP, etc.).
+  DataSize packet_overhead = DataSize::Zero();
 };
 
 }  // namespace webrtc

@@ -34,6 +34,7 @@ PROXY_CONSTMETHOD0(SourceState, state)
 BYPASS_PROXY_CONSTMETHOD0(bool, remote)
 BYPASS_PROXY_CONSTMETHOD0(bool, is_screencast)
 PROXY_CONSTMETHOD0(std::optional<bool>, needs_denoising)
+BYPASS_PROXY_CONSTMETHOD0(bool, allow_zero_hertz_video)
 PROXY_METHOD1(bool, GetStats, Stats*)
 PROXY_SECONDARY_METHOD2(void,
                         AddOrUpdateSink,

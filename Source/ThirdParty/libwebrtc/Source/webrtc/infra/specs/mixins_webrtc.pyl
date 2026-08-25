@@ -14,13 +14,6 @@
       },
     },
   },
-  'cores-12': {
-    'swarming': {
-      'dimensions': {
-        'cores': '12',
-      }
-    }
-  },
   # Hack to use the test-launcher-summary-output flag + emulator folders for gtest-output
   # but it's currently the only way to get the file out of the emulator.
   'fuchsia-gtest-output': {
@@ -76,19 +69,11 @@
       }
     }
   },
-  'mac_15_arm64': {
+  'mac_26_arm64': {
     'swarming': {
       'dimensions': {
         'cpu': 'arm64',
-        'os': 'Mac-15'
-      }
-    }
-  },
-  'mac_15_x64': {
-    'swarming': {
-      'dimensions': {
-        'cpu': 'x86-64',
-        'os': 'Mac-15'
+        'os': 'Mac-26'
       }
     }
   },

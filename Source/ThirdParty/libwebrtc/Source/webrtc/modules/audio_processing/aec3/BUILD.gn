@@ -311,13 +311,13 @@ if (rtc_include_tests) {
       ":vector_math",
       "..:apm_logging",
       "..:audio_buffer",
+      "..:echo_canceller_test_tools",
       "..:high_pass_filter",
       "../../../api:field_trials",
       "../../../api/audio:aec3_config",
       "../../../api/audio:echo_control",
       "../../../api/audio:neural_residual_echo_estimator_api",
       "../../../api/environment",
-      "../../../api/environment:environment_factory",
       "../../../rtc_base:checks",
       "../../../rtc_base:cpu_info",
       "../../../rtc_base:random",
@@ -379,9 +379,6 @@ if (rtc_include_tests) {
         "suppression_gain_unittest.cc",
         "vector_math_unittest.cc",
       ]
-    }
-    if (!build_with_chromium) {
-      deps += [ "..:audio_processing_unittests" ]
     }
   }
 }

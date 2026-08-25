@@ -22,7 +22,6 @@
 #include "api/local_network_access_permission.h"
 #include "api/test/mock_async_dns_resolver.h"
 #include "api/test/mock_local_network_access_permission.h"
-#include "api/test/rtc_error_matchers.h"
 #include "api/units/timestamp.h"
 #include "p2p/base/port.h"
 #include "p2p/base/port_allocator.h"
@@ -265,15 +264,13 @@ TEST_P(LocalNetworkAccessPortTest, ResolvedAddress) {
 
   if (lna_fake_result() == LnaFakeResult::kPermissionNotNeeded ||
       lna_fake_result() == LnaFakeResult::kPermissionGranted) {
-    EXPECT_THAT(WaitUntil([&] { return port_ready_; }, IsTrue(),
-                          {.clock = &time_controller_}),
-                IsRtcOk());
+    EXPECT_TRUE(
+        WaitUntil([&] { return port_ready_; }, {.clock = &time_controller_}));
     EXPECT_EQ(1u, port->Candidates().size());
     EXPECT_NE(SOCKET_ERROR, port->GetError());
   } else {
-    EXPECT_THAT(WaitUntil([&] { return port_error_; }, IsTrue(),
-                          {.clock = &time_controller_}),
-                IsRtcOk());
+    EXPECT_TRUE(
+        WaitUntil([&] { return port_error_; }, {.clock = &time_controller_}));
     EXPECT_EQ(0u, port->Candidates().size());
     EXPECT_NE(SOCKET_ERROR, port->GetError());
   }
@@ -288,15 +285,13 @@ TEST_P(LocalNetworkAccessPortTest, UnresolvedAddress) {
 
   if (lna_fake_result() == LnaFakeResult::kPermissionNotNeeded ||
       lna_fake_result() == LnaFakeResult::kPermissionGranted) {
-    EXPECT_THAT(WaitUntil([&] { return port_ready_; }, IsTrue(),
-                          {.clock = &time_controller_}),
-                IsRtcOk());
+    EXPECT_TRUE(
+        WaitUntil([&] { return port_ready_; }, {.clock = &time_controller_}));
     EXPECT_EQ(1u, port->Candidates().size());
     EXPECT_NE(SOCKET_ERROR, port->GetError());
   } else {
-    EXPECT_THAT(WaitUntil([&] { return port_error_; }, IsTrue(),
-                          {.clock = &time_controller_}),
-                IsRtcOk());
+    EXPECT_TRUE(
+        WaitUntil([&] { return port_error_; }, {.clock = &time_controller_}));
     EXPECT_EQ(0u, port->Candidates().size());
     EXPECT_NE(SOCKET_ERROR, port->GetError());
   }

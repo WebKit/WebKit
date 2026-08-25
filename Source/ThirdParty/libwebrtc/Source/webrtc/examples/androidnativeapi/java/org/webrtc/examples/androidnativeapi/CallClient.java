@@ -13,6 +13,7 @@ package org.webrtc.examples.androidnativeapi;
 import android.content.Context;
 import android.os.Handler;
 import android.os.HandlerThread;
+import org.jni_zero.NativeMethods;
 import org.webrtc.CapturerObserver;
 import org.webrtc.SurfaceTextureHelper;
 import org.webrtc.VideoCapturer;
@@ -37,36 +38,41 @@ public class CallClient {
     thread = new HandlerThread(TAG + "Thread");
     thread.start();
     handler = new Handler(thread.getLooper());
-    handler.post(() -> { nativeClient = nativeCreateClient(); });
+    handler.post(() -> { nativeClient = CallClientJni.get().createClient(); });
   }
 
   public void call(VideoSink localSink, VideoSink remoteSink, VideoCapturer videoCapturer,
       SurfaceTextureHelper videoCapturerSurfaceTextureHelper) {
     handler.post(() -> {
-      nativeCall(nativeClient, localSink, remoteSink);
+      CallClientJni.get().call(nativeClient, localSink, remoteSink);
       videoCapturer.initialize(videoCapturerSurfaceTextureHelper, applicationContext,
-          nativeGetJavaVideoCapturerObserver(nativeClient));
+          CallClientJni.get().getJavaVideoCapturerObserver(nativeClient));
       videoCapturer.startCapture(CAPTURE_WIDTH, CAPTURE_HEIGHT, CAPTURE_FPS);
     });
   }
 
   public void hangup() {
-    handler.post(() -> { nativeHangup(nativeClient); });
+    handler.post(() -> { CallClientJni.get().hangup(nativeClient); });
   }
 
   public void close() {
     handler.post(() -> {
-      nativeDelete(nativeClient);
+      CallClientJni.get().delete(nativeClient);
       nativeClient = 0;
     });
     thread.quitSafely();
   }
 
-  private static native long nativeCreateClient();
-  private static native void nativeCall(
-      long nativeAndroidCallClient, VideoSink localSink, VideoSink remoteSink);
-  private static native void nativeHangup(long nativeAndroidCallClient);
-  private static native void nativeDelete(long nativeAndroidCallClient);
-  private static native CapturerObserver nativeGetJavaVideoCapturerObserver(
-      long nativeAndroidCallClient);
+  @NativeMethods
+  interface Natives {
+    long createClient();
+
+    void call(long nativeAndroidCallClient, VideoSink localSink, VideoSink remoteSink);
+
+    void hangup(long nativeAndroidCallClient);
+
+    void delete(long nativeAndroidCallClient);
+
+    CapturerObserver getJavaVideoCapturerObserver(long nativeAndroidCallClient);
+  }
 }

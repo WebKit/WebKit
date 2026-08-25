@@ -13,12 +13,14 @@
 // the command line flag by default.
 
 #include "absl/strings/string_view.h"
+#include "api/environment/force_test_environment.h"
 #include "api/field_trials.h"
 #include "test/create_test_field_trials.h"
 
 namespace webrtc {
 
 FieldTrials CreateTestFieldTrials(absl::string_view s) {
+  AutoBypassTestEnvironmentCheck bypass;
   return FieldTrials(s);
 }
 

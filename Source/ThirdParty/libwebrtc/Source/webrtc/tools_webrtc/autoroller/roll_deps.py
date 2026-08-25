@@ -29,7 +29,8 @@ def FindRootPath():
     webrtc/src repo root.
     """
     root_dir = os.path.dirname(os.path.abspath(__file__))
-    while os.path.basename(root_dir) not in ('src', 'chromium'):
+    while not (os.path.exists(os.path.join(root_dir, 'DEPS'))
+               and os.path.exists(os.path.join(root_dir, '.git'))):
         par_dir = os.path.normpath(os.path.join(root_dir, os.pardir))
         if par_dir == root_dir:
             raise RuntimeError('Could not find the repo root.')

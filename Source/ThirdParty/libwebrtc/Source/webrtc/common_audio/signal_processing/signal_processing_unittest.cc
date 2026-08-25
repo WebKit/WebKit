@@ -19,16 +19,19 @@
 #include "rtc_base/strings/string_builder.h"
 #include "test/gtest.h"
 
-static const int16_t vector16[] = {1,
-                                   -15511,
-                                   4323,
-                                   1963,
-                                   WEBRTC_SPL_WORD16_MAX,
-                                   0,
-                                   WEBRTC_SPL_WORD16_MIN + 5,
-                                   -3333,
-                                   345};
-static const size_t kVector16Size = std::size(vector16);
+namespace webrtc {
+namespace {
+
+const int16_t vector16[] = {1,
+                            -15511,
+                            4323,
+                            1963,
+                            WEBRTC_SPL_WORD16_MAX,
+                            0,
+                            WEBRTC_SPL_WORD16_MIN + 5,
+                            -3333,
+                            345};
+const size_t kVector16Size = std::size(vector16);
 
 TEST(SplTest, MacroTest) {
   // Macros with inputs.
@@ -133,7 +136,7 @@ TEST(SplTest, AddSubSatW32) {
           INT32_MIN, std::min<int64_t>(INT32_MAX, static_cast<int64_t>(a) + b));
       const int64_t diff = std::max<int64_t>(
           INT32_MIN, std::min<int64_t>(INT32_MAX, static_cast<int64_t>(a) - b));
-      webrtc::StringBuilder ss;
+      StringBuilder ss;
       ss << a << " +/- " << b << ": sum " << sum << ", diff " << diff;
       SCOPED_TRACE(ss.str());
       EXPECT_EQ(sum, WebRtcSpl_AddSatW32(a, b));
@@ -677,3 +680,6 @@ TEST(SplTest, Resample48WithSaturationTest) {
     EXPECT_EQ(kRefValue16kHz2, out_vector_w16[i]);
   }
 }
+
+}  // namespace
+}  // namespace webrtc

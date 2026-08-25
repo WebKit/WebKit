@@ -18,6 +18,7 @@
 #include <vector>
 
 #include "absl/strings/string_view.h"
+#include "api/environment/force_test_environment.h"
 #include "rtc_base/system/file_wrapper.h"
 #include "test/gtest.h"
 #include "test/testsupport/file_utils.h"
@@ -28,12 +29,15 @@
 #include "rtc_tools/rtc_event_log_visualizer/proto/chart.pb.h"
 #endif
 
+namespace webrtc {
+namespace {
+
 class RtcEventLogAnalyzerBindingsTest : public ::testing::Test {
   void SetUp() override {
     // Read an RTC event log to a char buffer.
-    std::string file_name = webrtc::test::ResourcePath(
-        "rtc_event_log/rtc_event_log_500kbps", "binarypb");
-    webrtc::FileWrapper file = webrtc::FileWrapper::OpenReadOnly(file_name);
+    std::string file_name =
+        test::ResourcePath("rtc_event_log/rtc_event_log_500kbps", "binarypb");
+    FileWrapper file = FileWrapper::OpenReadOnly(file_name);
     ASSERT_TRUE(file.is_open());
 
     std::optional<size_t> file_size = file.FileSize();
@@ -50,6 +54,11 @@ class RtcEventLogAnalyzerBindingsTest : public ::testing::Test {
 
  protected:
   std::vector<char> event_log_contents_;
+  // The C-style binding under test (`analyze_rtc_event_log`) internally
+  // creates a production Environment using `CreateEnvironment()`. When run
+  // in tests (where force-test-environment is enabled), this would crash
+  // unless we bypass the test environment check.
+  AutoBypassTestEnvironmentCheck bypass_;
 };
 
 TEST_F(RtcEventLogAnalyzerBindingsTest, OutgoingBitrateChart) {
@@ -65,12 +74,12 @@ TEST_F(RtcEventLogAnalyzerBindingsTest, OutgoingBitrateChart) {
   ASSERT_GT(output_size, 0u);
 
   // Parse output as charts.
-  webrtc::analytics::ChartCollection collection;
+  analytics::ChartCollection collection;
   bool success = collection.ParseFromString(
       absl::string_view(output.data(), static_cast<int>(output_size)));
   ASSERT_TRUE(success);
   ASSERT_EQ(collection.charts().size(), 1);
-  EXPECT_EQ(collection.charts(0).title(), "Outgoing RTP bitrate");
+  EXPECT_EQ(collection.charts(0).title(), "Outgoing RTP/RTCP bitrate");
   EXPECT_EQ(collection.charts(0).id(), "outgoing_bitrate");
 }
 
@@ -87,7 +96,7 @@ TEST_F(RtcEventLogAnalyzerBindingsTest, NetWorkDelayFeedbackChart) {
   ASSERT_GT(output_size, 0u);
 
   // Parse output as charts.
-  webrtc::analytics::ChartCollection collection;
+  analytics::ChartCollection collection;
   bool success = collection.ParseFromString(
       absl::string_view(output.data(), static_cast<int>(output_size)));
   ASSERT_TRUE(success);
@@ -111,3 +120,6 @@ TEST_F(RtcEventLogAnalyzerBindingsTest, OutputbufferTooSmall) {
   // No output since the buffer is too small.
   ASSERT_EQ(output_size, 0u);
 }
+
+}  // namespace
+}  // namespace webrtc

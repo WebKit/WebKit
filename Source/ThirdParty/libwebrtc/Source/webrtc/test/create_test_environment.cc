@@ -18,6 +18,7 @@
 #include "absl/strings/string_view.h"
 #include "api/environment/environment.h"
 #include "api/environment/environment_factory.h"
+#include "api/environment/force_test_environment.h"
 #include "api/field_trials.h"
 #include "api/field_trials_view.h"
 #include "api/test/time_controller.h"
@@ -66,6 +67,7 @@ struct SetTime {
 }  // namespace
 
 Environment CreateTestEnvironment(CreateTestEnvironmentOptions o) {
+  AutoBypassTestEnvironmentCheck bypass;
   EnvironmentFactory factory;
 
   std::visit(SetFieldTrials{.factory = factory}, std::move(o.field_trials));

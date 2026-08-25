@@ -18,7 +18,6 @@
 #include <optional>
 #include <vector>
 
-#include "api/environment/environment_factory.h"
 #include "api/scoped_refptr.h"
 #include "api/test/mock_video_decoder.h"
 #include "api/test/mock_video_encoder.h"
@@ -41,6 +40,7 @@
 #include "modules/video_coding/include/video_coding_defines.h"
 #include "modules/video_coding/utility/simulcast_rate_allocator.h"
 #include "rtc_base/checks.h"
+#include "test/create_test_environment.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 
@@ -292,7 +292,7 @@ SimulcastTestFixtureImpl::SimulcastTestFixtureImpl(
     std::unique_ptr<VideoEncoderFactory> encoder_factory,
     std::unique_ptr<VideoDecoderFactory> decoder_factory,
     SdpVideoFormat video_format)
-    : env_(CreateEnvironment()),
+    : env_(CreateTestEnvironment()),
       codec_type_(PayloadStringToCodecType(video_format.name)) {
   encoder_ = encoder_factory->Create(env_, video_format);
   decoder_ = decoder_factory->Create(env_, video_format);

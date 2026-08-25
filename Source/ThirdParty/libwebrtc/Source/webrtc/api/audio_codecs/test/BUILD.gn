@@ -27,7 +27,6 @@ if (rtc_include_tests) {
       "../../../test:create_test_environment",
       "../../../test:test_support",
       "../../environment",
-      "../../environment:environment_factory",
       "../L16:audio_decoder_L16",
       "../L16:audio_encoder_L16",
       "../g711:audio_decoder_g711",

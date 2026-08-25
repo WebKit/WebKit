@@ -252,11 +252,6 @@ void IceTransportInternal::RemoveGatheringStateCallback(
 }
 
 void IceTransportInternal::SubscribeCandidateGathered(
-    absl::AnyInvocable<void(IceTransportInternal*, const Candidate&)>
-        callback) {
-  candidate_gathered_callbacks_.AddReceiver(std::move(callback));
-}
-void IceTransportInternal::SubscribeCandidateGathered(
     void* tag,
     absl::AnyInvocable<void(IceTransportInternal*, const Candidate&)>
         callback) {
@@ -264,19 +259,9 @@ void IceTransportInternal::SubscribeCandidateGathered(
 }
 
 void IceTransportInternal::SubscribeRoleConflict(
-    absl::AnyInvocable<void(IceTransportInternal*)> callback) {
-  role_conflict_callbacks_.AddReceiver(std::move(callback));
-}
-
-void IceTransportInternal::SubscribeRoleConflict(
     void* tag,
     absl::AnyInvocable<void(IceTransportInternal*)> callback) {
   role_conflict_callbacks_.AddReceiver(tag, std::move(callback));
-}
-
-void IceTransportInternal::SubscribeIceTransportStateChanged(
-    absl::AnyInvocable<void(IceTransportInternal*)> callback) {
-  ice_transport_state_changed_callbacks_.AddReceiver(std::move(callback));
 }
 
 void IceTransportInternal::SubscribeIceTransportStateChanged(

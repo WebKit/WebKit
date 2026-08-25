@@ -114,17 +114,7 @@ void SetRandomTestMode(bool test) {
   }
 }
 
-bool InitRandom(int seed) {
-  return InitRandom(reinterpret_cast<const char*>(&seed), sizeof(seed));
-}
 
-bool InitRandom(const char* seed, size_t len) {
-  if (!Rng().Init(seed, len)) {
-    RTC_LOG(LS_ERROR) << "Failed to init random generator!";
-    return false;
-  }
-  return true;
-}
 
 std::string CreateRandomString(size_t len) {
   std::string str;

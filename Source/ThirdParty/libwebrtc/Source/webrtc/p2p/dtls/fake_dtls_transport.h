@@ -22,6 +22,7 @@
 
 #include "absl/strings/string_view.h"
 #include "api/dtls_transport_interface.h"
+#include "api/environment/environment.h"
 #include "api/ice_transport_interface.h"
 #include "api/rtc_error.h"
 #include "api/scoped_refptr.h"
@@ -88,14 +89,18 @@ class FakeDtlsTransport : public DtlsTransportInternal {
 
   // If this constructor is called, a new fake ICE transport will be created,
   // and this FakeDtlsTransport will take the ownership.
-  FakeDtlsTransport(const std::string& name, int component)
+  FakeDtlsTransport(const Environment& env,
+                    const std::string& name,
+                    int component)
       : FakeDtlsTransport(
-            std::make_unique<FakeIceTransportInternal>(name, component)) {}
-  FakeDtlsTransport(const std::string& name,
+            std::make_unique<FakeIceTransportInternal>(env, name, component)) {}
+  FakeDtlsTransport(const Environment& env,
+                    const std::string& name,
                     int component,
                     Thread* network_thread)
       : FakeDtlsTransport(
-            std::make_unique<FakeIceTransportInternal>(name,
+            std::make_unique<FakeIceTransportInternal>(env,
+                                                       name,
                                                        component,
                                                        network_thread)) {}
 

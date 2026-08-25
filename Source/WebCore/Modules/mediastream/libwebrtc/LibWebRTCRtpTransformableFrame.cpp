@@ -73,9 +73,16 @@ bool LibWebRTCRtpTransformableFrame::isKeyFrame() const
     return videoFrame && videoFrame->IsKeyFrame();
 }
 
+static std::optional<uint32_t> timestampFromRtpTimestampInfo(const webrtc::RtpTimestampInfo& timestampInfo)
+{
+    if (auto* timestamp = std::get_if<webrtc::RtpTimestampWithOffset>(&timestampInfo))
+        return timestamp->value;
+    return std::nullopt;
+}
+
 uint64_t LibWebRTCRtpTransformableFrame::timestamp() const
 {
-    return m_rtcFrame ? m_rtcFrame->GetTimestamp() : 0;
+    return m_rtcFrame ? timestampFromRtpTimestampInfo(m_rtcFrame->GetRtpTimestampInfo()).value_or(0) : 0;
 }
 
 RTCEncodedAudioFrameMetadata LibWebRTCRtpTransformableFrame::audioMetadata() const
@@ -93,7 +100,7 @@ RTCEncodedAudioFrameMetadata LibWebRTCRtpTransformableFrame::audioMetadata() con
         });
         sequenceNumber = audioFrame->SequenceNumber();
     }
-    return { m_rtcFrame->GetSsrc(), m_rtcFrame->GetPayloadType(), WTF::move(cssrcs), sequenceNumber, m_rtcFrame->GetTimestamp(), fromStdString(m_rtcFrame->GetMimeType()) };
+    return { m_rtcFrame->GetSsrc(), m_rtcFrame->GetPayloadType(), WTF::move(cssrcs), sequenceNumber, timestampFromRtpTimestampInfo(m_rtcFrame->GetRtpTimestampInfo()), fromStdString(m_rtcFrame->GetMimeType()) };
 }
 
 RTCEncodedVideoFrameMetadata LibWebRTCRtpTransformableFrame::videoMetadata() const
@@ -108,8 +115,10 @@ RTCEncodedVideoFrameMetadata LibWebRTCRtpTransformableFrame::videoMetadata() con
         frameId = *metadata.GetFrameId();
 
     Vector<int64_t> dependencies;
-    for (auto value : metadata.GetFrameDependencies())
-        dependencies.append(value);
+    if (auto frameDependencies = metadata.GetDependencies()) {
+        for (auto value : *frameDependencies)
+            dependencies.append(value);
+    }
 
     Vector<uint32_t> cssrcs;
     if (m_rtcFrame->GetDirection() == webrtc::TransformableFrameInterface::Direction::kReceiver) {
@@ -122,7 +131,7 @@ RTCEncodedVideoFrameMetadata LibWebRTCRtpTransformableFrame::videoMetadata() con
     std::optional<int64_t> timestamp;
     if (auto presentationTimestamp = m_rtcFrame->GetPresentationTimestamp())
         timestamp = presentationTimestamp->us();
-    return { frameId, WTF::move(dependencies), metadata.GetWidth(), metadata.GetHeight(), metadata.GetSpatialIndex(), metadata.GetTemporalIndex(), m_rtcFrame->GetSsrc(), m_rtcFrame->GetPayloadType(), WTF::move(cssrcs), timestamp, m_rtcFrame->GetTimestamp(), fromStdString(m_rtcFrame->GetMimeType()) };
+    return { frameId, WTF::move(dependencies), metadata.GetWidth(), metadata.GetHeight(), metadata.GetSpatialIndex(), metadata.GetTemporalIndex(), m_rtcFrame->GetSsrc(), m_rtcFrame->GetPayloadType(), WTF::move(cssrcs), timestamp, timestampFromRtpTimestampInfo(m_rtcFrame->GetRtpTimestampInfo()), fromStdString(m_rtcFrame->GetMimeType()) };
 }
 
 Ref<RTCRtpTransformableFrame> LibWebRTCRtpTransformableFrame::clone()
@@ -151,7 +160,7 @@ void LibWebRTCRtpTransformableFrame::setOptions(const RTCEncodedVideoFrameMetada
     if (newMetadata.frameId)
         rtcMetadata.SetFrameId(*newMetadata.frameId);
     if (newMetadata.dependencies)
-        rtcMetadata.SetFrameDependencies(newMetadata.dependencies->span());
+        rtcMetadata.SetDependencies(newMetadata.dependencies->span());
     if (newMetadata.width)
         rtcMetadata.SetWidth(*newMetadata.width);
     if (newMetadata.height)

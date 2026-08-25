@@ -26,6 +26,7 @@
 #include "api/transport/bitrate_settings.h"
 #include "api/transport/network_control.h"
 #include "api/transport/network_types.h"
+#include "api/units/data_size.h"
 #include "api/units/timestamp.h"
 #include "call/rtp_config.h"
 #include "call/rtp_transport_controller_send_interface.h"
@@ -109,7 +110,6 @@ class MockRtpTransportControllerSend
               SetClientBitratePreferences,
               (const BitrateSettings&),
               (override));
-  MOCK_METHOD(void, OnTransportOverheadChanged, (size_t), (override));
   MOCK_METHOD(void, AccountForAudioPacketsInPacedSender, (bool), (override));
   MOCK_METHOD(void, IncludeOverheadInPacedSender, (), (override));
   MOCK_METHOD(void, OnReceivedPacket, (const ReceivedPacket&), (override));
@@ -131,6 +131,7 @@ class MockRtpTransportControllerSend
               ReceivedTransportCcFeedbackCount,
               (),
               (const, override));
+  MOCK_METHOD(DataSize, GetTransportOverhead, (), (const, override));
 };
 }  // namespace webrtc
 #endif  // CALL_TEST_MOCK_RTP_TRANSPORT_CONTROLLER_SEND_H_

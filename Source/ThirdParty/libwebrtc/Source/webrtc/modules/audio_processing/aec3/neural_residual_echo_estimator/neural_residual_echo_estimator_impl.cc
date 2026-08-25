@@ -25,6 +25,10 @@
 #include "absl/base/nullability.h"
 #include "api/audio/echo_canceller3_config.h"
 #include "api/audio/neural_residual_echo_estimator.h"
+#include "api/audio/tflite_model_handle.h"
+#include "api/make_ref_counted.h"
+#include "api/scoped_refptr.h"
+#include "api/task_queue/task_queue_factory.h"
 #include "modules/audio_processing/aec3/aec3_common.h"
 #include "modules/audio_processing/aec3/block.h"
 #include "modules/audio_processing/aec3/neural_residual_echo_estimator/neural_feature_extractor.h"
@@ -460,27 +464,95 @@ NeuralResidualEchoEstimatorImpl::Create(const tflite::FlatBufferModel* model,
 int NeuralResidualEchoEstimatorImpl::instance_count_ = 0;
 
 NeuralResidualEchoEstimatorImpl::NeuralResidualEchoEstimatorImpl(
-    absl_nonnull std::unique_ptr<ModelRunner> model_runner)
-    : model_runner_(std::move(model_runner)),
-      use_unbounded_mask_(
-          !model_runner_->GetOutput(ModelOutputEnum::kUnboundedEchoMask)
-               .empty()),
+    std::unique_ptr<ModelRunner> model_runner)
+    : cross_thread_state_(make_ref_counted<CrossThreadState>()),
       data_dumper_(new ApmDataDumper(++instance_count_)) {
   output_mask_.fill(0.0f);
   output_mask_unbounded_.fill(0.0f);
-  if (model_runner_->GetMetadata().version() == 1) {
-    feature_extractor_ = std::make_unique<TimeDomainFeatureExtractor>(
-        /*step_size=*/model_runner_->StepSize());
-  } else {
-    feature_extractor_ = std::make_unique<FrequencyDomainFeatureExtractor>(
-        /*step_size=*/model_runner_->StepSize());
+  if (model_runner) {
+    model_bundle_ = std::make_unique<ModelBundle>();
+    if (model_runner->GetMetadata().version() == 1) {
+      model_bundle_->feature_extractor =
+          std::make_unique<TimeDomainFeatureExtractor>(
+              /*step_size=*/model_runner->StepSize());
+    } else {
+      model_bundle_->feature_extractor =
+          std::make_unique<FrequencyDomainFeatureExtractor>(
+              /*step_size=*/model_runner->StepSize());
+    }
+    model_bundle_->use_unbounded_mask =
+        !model_runner->GetOutput(ModelOutputEnum::kUnboundedEchoMask).empty();
+    model_bundle_->model_runner = std::move(model_runner);
   }
 }
 
+absl_nonnull std::unique_ptr<NeuralResidualEchoEstimator>
+NeuralResidualEchoEstimatorImpl::CreateAsync(
+    TaskQueueFactory& task_queue_factory,
+    std::unique_ptr<tflite::OpResolver> op_resolver,
+    scoped_refptr<TfliteModelHandle> model_handle) {
+  return std::unique_ptr<NeuralResidualEchoEstimatorImpl>(
+      new NeuralResidualEchoEstimatorImpl(
+          task_queue_factory, std::move(op_resolver), std::move(model_handle)));
+}
+
+NeuralResidualEchoEstimatorImpl::NeuralResidualEchoEstimatorImpl(
+    TaskQueueFactory& task_queue_factory,
+    std::unique_ptr<tflite::OpResolver> op_resolver,
+    scoped_refptr<TfliteModelHandle> model_handle)
+    : cross_thread_state_(make_ref_counted<CrossThreadState>()),
+      data_dumper_(new ApmDataDumper(++instance_count_)) {
+  RTC_DCHECK(op_resolver);
+  RTC_DCHECK(model_handle);
+
+  output_mask_.fill(0.0f);
+  output_mask_unbounded_.fill(0.0f);
+
+  init_queue_ = task_queue_factory.CreateTaskQueue(
+      "ReeInit", TaskQueueFactory::Priority::kLow);
+
+  init_queue_->PostTask([cross_thread_state = cross_thread_state_,
+                         resolver = std::move(op_resolver),
+                         model_handle]() mutable {
+    const tflite::FlatBufferModel& model = model_handle->Get();
+    std::unique_ptr<ModelRunner> model_runner =
+        LoadTfLiteModel(&model, *resolver);
+    if (model_runner) {
+      auto bundle = std::make_unique<ModelBundle>();
+      bundle->model_handle = std::move(model_handle);
+      if (model_runner->GetMetadata().version() == 1) {
+        bundle->feature_extractor =
+            std::make_unique<TimeDomainFeatureExtractor>(
+                /*step_size=*/model_runner->StepSize());
+      } else {
+        bundle->feature_extractor =
+            std::make_unique<FrequencyDomainFeatureExtractor>(
+                /*step_size=*/model_runner->StepSize());
+      }
+      bundle->use_unbounded_mask =
+          !model_runner->GetOutput(ModelOutputEnum::kUnboundedEchoMask).empty();
+      bundle->model_runner = std::move(model_runner);
+
+      cross_thread_state->Set(std::move(bundle));
+    }
+  });
+}
+
+bool NeuralResidualEchoEstimatorImpl::IsInitialized() {
+  if (!model_bundle_) {
+    model_bundle_ = cross_thread_state_->TryGet();
+  }
+  return !!model_bundle_;
+}
+
 void NeuralResidualEchoEstimatorImpl::Reset() {
-  model_runner_->Reset();
-  if (feature_extractor_) {
-    feature_extractor_->Reset();
+  if (!IsInitialized()) {
+    return;
+  }
+  RTC_DCHECK(model_bundle_);
+  model_bundle_->model_runner->Reset();
+  if (model_bundle_->feature_extractor) {
+    model_bundle_->feature_extractor->Reset();
   }
   output_mask_.fill(0.0f);
   output_mask_unbounded_.fill(0.0f);
@@ -496,6 +568,15 @@ void NeuralResidualEchoEstimatorImpl::Estimate(
     bool dominant_nearend,
     std::span<std::array<float, kFftLengthBy2Plus1>> R2,
     std::span<std::array<float, kFftLengthBy2Plus1>> R2_unbounded) {
+  if (!IsInitialized()) {
+    for (size_t ch = 0; ch < E2.size(); ++ch) {
+      std::copy(E2[ch].begin(), E2[ch].end(), R2[ch].begin());
+      std::copy(E2[ch].begin(), E2[ch].end(), R2_unbounded[ch].begin());
+    }
+    return;
+  }
+  RTC_DCHECK(model_bundle_);
+
   DumpInputs(render, y, e);
   render_channels_.clear();
   for (int i = 0; i < render.NumChannels(); ++i) {
@@ -509,28 +590,32 @@ void NeuralResidualEchoEstimatorImpl::Estimate(
   for (size_t i = 0; i < e.size(); ++i) {
     e_channels_.emplace_back(e[i]);
   }
-  feature_extractor_->UpdateBuffers(y_channels_, ModelInputEnum::kMic);
-  feature_extractor_->UpdateBuffers(e_channels_,
-                                    ModelInputEnum::kLinearAecOutput);
-  feature_extractor_->UpdateBuffers(render_channels_, ModelInputEnum::kAecRef);
+  model_bundle_->feature_extractor->UpdateBuffers(y_channels_,
+                                                  ModelInputEnum::kMic);
+  model_bundle_->feature_extractor->UpdateBuffers(
+      e_channels_, ModelInputEnum::kLinearAecOutput);
+  model_bundle_->feature_extractor->UpdateBuffers(render_channels_,
+                                                  ModelInputEnum::kAecRef);
 
-  if (feature_extractor_->ReadyForInference()) {
-    feature_extractor_->PrepareModelInput(
-        model_runner_->GetInput(ModelInputEnum::kMic), ModelInputEnum::kMic);
-    feature_extractor_->PrepareModelInput(
-        model_runner_->GetInput(ModelInputEnum::kLinearAecOutput),
+  if (model_bundle_->feature_extractor->ReadyForInference()) {
+    model_bundle_->feature_extractor->PrepareModelInput(
+        model_bundle_->model_runner->GetInput(ModelInputEnum::kMic),
+        ModelInputEnum::kMic);
+    model_bundle_->feature_extractor->PrepareModelInput(
+        model_bundle_->model_runner->GetInput(ModelInputEnum::kLinearAecOutput),
         ModelInputEnum::kLinearAecOutput);
-    feature_extractor_->PrepareModelInput(
-        model_runner_->GetInput(ModelInputEnum::kAecRef),
+    model_bundle_->feature_extractor->PrepareModelInput(
+        model_bundle_->model_runner->GetInput(ModelInputEnum::kAecRef),
         ModelInputEnum::kAecRef);
-    if (model_runner_->Invoke()) {
+    if (model_bundle_->model_runner->Invoke()) {
       // Downsample output mask to match the AEC3 frequency resolution.
       std::span<const float> output_mask =
-          model_runner_->GetOutput(ModelOutputEnum::kEchoMask);
+          model_bundle_->model_runner->GetOutput(ModelOutputEnum::kEchoMask);
       DownsampleAndTransformMask(output_mask, output_mask_);
-      if (use_unbounded_mask_) {
+      if (model_bundle_->use_unbounded_mask) {
         std::span<const float> output_mask_unbounded =
-            model_runner_->GetOutput(ModelOutputEnum::kUnboundedEchoMask);
+            model_bundle_->model_runner->GetOutput(
+                ModelOutputEnum::kUnboundedEchoMask);
         DownsampleAndTransformMask(output_mask_unbounded,
                                    output_mask_unbounded_);
       }
@@ -540,7 +625,7 @@ void NeuralResidualEchoEstimatorImpl::Estimate(
   }
 
   // Use the latest output mask to produce output echo power estimates.
-  if (use_unbounded_mask_) {
+  if (model_bundle_->use_unbounded_mask) {
     for (size_t ch = 0; ch < E2.size(); ++ch) {
       std::transform(E2[ch].begin(), E2[ch].end(),
                      output_mask_unbounded_.begin(), R2_unbounded[ch].begin(),

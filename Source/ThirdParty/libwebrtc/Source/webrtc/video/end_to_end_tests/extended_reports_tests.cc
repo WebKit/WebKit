@@ -15,6 +15,7 @@
 #include <string>
 #include <vector>
 
+#include "api/rtp_header_extension_id.h"
 #include "api/rtp_headers.h"
 #include "api/rtp_parameters.h"
 #include "api/test/simulated_network.h"
@@ -38,11 +39,7 @@
 
 namespace webrtc {
 namespace {
-enum : int {  // The first valid value is 1.
-  kColorSpaceExtensionId = 1,
-  kTransportSequenceNumberExtensionId,
-};
-}  // namespace
+constexpr RtpHeaderExtensionId kTransportSequenceNumberExtensionId(2);
 
 class ExtendedReportsEndToEndTest : public test::CallTest {
  public:
@@ -257,4 +254,5 @@ TEST_F(ExtendedReportsEndToEndTest,
                       test::VideoTestConstants::kLongTimeout);
   RunBaseTest(&test);
 }
+}  // namespace
 }  // namespace webrtc

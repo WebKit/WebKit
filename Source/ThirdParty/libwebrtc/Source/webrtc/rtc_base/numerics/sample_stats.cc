@@ -15,7 +15,6 @@
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
 #include "rtc_base/checks.h"
-#include "system_wrappers/include/clock.h"
 
 namespace webrtc {
 
@@ -66,14 +65,6 @@ void SampleStats<TimeDelta>::AddSample(TimeDelta delta, Timestamp time) {
   stats_.AddSample({.value = delta.seconds<double>(), .time = time});
 }
 
-void SampleStats<TimeDelta>::AddSample(TimeDelta delta) {
-  RTC_DCHECK(delta.IsFinite());
-  AddSample(delta, Clock::GetRealTimeClock()->CurrentTime());
-}
-
-void SampleStats<TimeDelta>::AddSampleMs(double delta_ms) {
-  AddSample(TimeDelta::Millis(delta_ms));
-}
 void SampleStats<TimeDelta>::AddSamples(const SampleStats<TimeDelta>& other) {
   stats_.AddSamples(other.stats_);
 }
@@ -116,14 +107,6 @@ int SampleStats<TimeDelta>::Count() {
 
 void SampleStats<DataRate>::AddSample(DataRate rate, Timestamp time) {
   stats_.AddSample({.value = rate.bps<double>(), .time = time});
-}
-
-void SampleStats<DataRate>::AddSample(DataRate rate) {
-  AddSample(rate, Clock::GetRealTimeClock()->CurrentTime());
-}
-
-void SampleStats<DataRate>::AddSampleBps(double rate_bps) {
-  AddSample(DataRate::BitsPerSec(rate_bps));
 }
 
 void SampleStats<DataRate>::AddSamples(const SampleStats<DataRate>& other) {

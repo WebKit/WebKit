@@ -26,7 +26,6 @@
 #include "api/dtls_transport_interface.h"
 #include "api/environment/environment.h"
 #include "api/ice_transport_interface.h"
-#include "api/make_ref_counted.h"
 #include "api/rtc_error.h"
 #include "api/rtc_event_log/rtc_event_log.h"
 #include "api/scoped_refptr.h"
@@ -60,14 +59,6 @@
 
 namespace webrtc {
 namespace {
-// Workaround for external dependency.
-class SimpleIceTransport : public IceTransportInterface {
- public:
-  explicit SimpleIceTransport(IceTransportInternal* internal)
-      : internal_(internal) {}
-  IceTransportInternal* internal() override { return internal_; }
-  IceTransportInternal* const internal_;
-};
 
 HistogramDtlsVersion ToHistogramDtlsVersion(int version_bytes) {
   switch (version_bytes) {
@@ -275,23 +266,17 @@ DtlsTransportInternalImpl::DtlsTransportInternalImpl(
   }
 }
 
-DtlsTransportInternalImpl::DtlsTransportInternalImpl(
-    const Environment& env,
-    IceTransportInternal* ice_transport,
-    const CryptoOptions& crypto_options,
-    SSLProtocolVersion max_version,
-    SslStreamFactory ssl_stream_factory)
-    : DtlsTransportInternalImpl(
-          env,
-          make_ref_counted<SimpleIceTransport>(ice_transport),
-          crypto_options,
-          max_version,
-          ssl_stream_factory) {}
-
 DtlsTransportInternalImpl::~DtlsTransportInternalImpl() {
   if (dtls_in_stun_) {
     CompleteDtlsInStun(/*success=*/false);
   }
+  ice_transport()->ResetDtlsStunPiggybackCallbacks();
+  ice_transport()->DeregisterReceivedPacketCallback(this);
+  ice_transport()->UnsubscribeWritableState(this);
+  ice_transport()->UnsubscribeReadyToSend(this);
+  ice_transport()->UnsubscribeReceivingState(this);
+  ice_transport()->UnsubscribeSentPacket(this);
+  ice_transport()->UnsubscribeNetworkRouteChanged(this);
 }
 
 void DtlsTransportInternalImpl::CompleteDtlsInStun(bool success) {

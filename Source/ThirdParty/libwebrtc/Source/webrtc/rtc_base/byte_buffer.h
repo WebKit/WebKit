@@ -98,10 +98,6 @@ class ByteBufferWriterT {
                        val.size());
   }
   // Write an array of bytes (uint8_t)
-  [[deprecated("issues.webrtc.org/4225170 - use Write(std::span)")]]
-  void WriteBytes(const uint8_t* val, size_t len) {
-    WriteBytesInternal(reinterpret_cast<const value_type*>(val), len);
-  }
 
   void Write(std::span<const value_type> data) {
     WriteBytesInternal(data.data(), data.size());

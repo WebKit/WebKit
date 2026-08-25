@@ -1170,6 +1170,8 @@ TEST(EchoCanceller3, InjectedNeuralResidualEchoEstimatorIsUsed) {
    public:
     NeuralResidualEchoEstimatorMock() {}
 
+    bool IsInitialized() override { return true; }
+
     void Estimate(const Block& render,
                   std::span<const std::array<float, 64>> capture,
                   std::span<const std::array<float, 64>> linear_aec_output,

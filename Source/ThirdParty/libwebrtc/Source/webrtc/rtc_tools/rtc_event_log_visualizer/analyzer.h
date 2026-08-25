@@ -80,7 +80,8 @@ class EventLogAnalyzer {
 
   void InitializeMapOfNamedGraphs(bool show_detector_state,
                                   bool show_alr_state,
-                                  bool show_link_capacity);
+                                  bool show_link_capacity,
+                                  bool include_overhead = true);
 
   std::vector<std::string> GetGraphNames() const {
     std::vector<std::string> plot_names;
@@ -115,11 +116,13 @@ class EventLogAnalyzer {
 
   void CreateFractionLossGraph(Plot* plot) const;
 
-  void CreateTotalIncomingBitrateGraph(Plot* plot) const;
+  void CreateTotalIncomingBitrateGraph(Plot* plot,
+                                       bool include_overhead = true) const;
   void CreateTotalOutgoingBitrateGraph(Plot* plot,
                                        bool show_detector_state = false,
                                        bool show_alr_state = false,
-                                       bool show_link_capacity = false) const;
+                                       bool show_link_capacity = false,
+                                       bool include_overhead = true) const;
 
   void CreateStreamBitrateGraph(PacketDirection direction, Plot* plot) const;
   void CreateBitrateAllocationGraph(PacketDirection direction,

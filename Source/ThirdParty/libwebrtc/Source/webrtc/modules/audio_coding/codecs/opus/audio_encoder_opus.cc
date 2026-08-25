@@ -504,24 +504,11 @@ void AudioEncoderOpusImpl::OnReceivedTargetAudioBitrate(
   SetTargetBitrate(target_audio_bitrate_bps);
 }
 
-void AudioEncoderOpusImpl::OnReceivedUplinkBandwidthImpl(
-    int target_audio_bitrate_bps,
-    std::optional<int64_t> bwe_period_ms) {
+void AudioEncoderOpusImpl::OnReceivedUplinkAllocation(
+    BitrateAllocationUpdate update) {
+  int target_audio_bitrate_bps = update.target_bitrate.bps();
   if (audio_network_adaptor_) {
     audio_network_adaptor_->SetTargetAudioBitrate(target_audio_bitrate_bps);
-    // We give smoothed bitrate allocation to audio network adaptor as
-    // the uplink bandwidth.
-    // The BWE spikes should not affect the bitrate smoother more than 25%.
-    // To simplify the calculations we use a step response as input signal.
-    // The step response of an exponential filter is
-    // u(t) = 1 - e^(-t / time_constant).
-    // In order to limit the affect of a BWE spike within 25% of its value
-    // before
-    // the next BWE update, we would choose a time constant that fulfills
-    // 1 - e^(-bwe_period_ms / time_constant) < 0.25
-    // Then 4 * bwe_period_ms is a good choice.
-    if (bwe_period_ms)
-      bitrate_smoother_->SetTimeConstantMs(*bwe_period_ms * 4);
     bitrate_smoother_->AddSample(target_audio_bitrate_bps,
                                  env_.clock().CurrentTime());
 
@@ -540,17 +527,6 @@ void AudioEncoderOpusImpl::OnReceivedUplinkBandwidthImpl(
                  std::max(AudioEncoderOpusConfig::kMinBitrateBps,
                           target_audio_bitrate_bps - overhead_bps)));
   }
-}
-void AudioEncoderOpusImpl::OnReceivedUplinkBandwidth(
-    int target_audio_bitrate_bps,
-    std::optional<int64_t> bwe_period_ms) {
-  OnReceivedUplinkBandwidthImpl(target_audio_bitrate_bps, bwe_period_ms);
-}
-
-void AudioEncoderOpusImpl::OnReceivedUplinkAllocation(
-    BitrateAllocationUpdate update) {
-  OnReceivedUplinkBandwidthImpl(update.target_bitrate.bps(),
-                                update.bwe_period.ms());
 }
 
 void AudioEncoderOpusImpl::OnReceivedRtt(int rtt_ms) {

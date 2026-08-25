@@ -30,7 +30,6 @@
 #include "absl/strings/string_view.h"
 #include "api/audio_codecs/audio_decoder_factory.h"
 #include "api/audio_codecs/audio_format.h"
-#include "api/environment/environment_factory.h"
 #include "api/neteq/default_neteq_factory.h"
 #include "api/neteq/neteq.h"
 #include "api/scoped_refptr.h"
@@ -41,6 +40,7 @@
 #include "modules/audio_coding/neteq/tools/rtp_generator.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/string_encode.h"
+#include "test/create_test_environment.h"
 #include "test/gtest.h"
 #include "test/testsupport/file_utils.h"
 
@@ -102,7 +102,7 @@ namespace {
 std::unique_ptr<NetEq> CreateNetEq(
     const NetEq::Config& config,
     scoped_refptr<AudioDecoderFactory> decoder_factory) {
-  return DefaultNetEqFactory().Create(CreateEnvironment(), config,
+  return DefaultNetEqFactory().Create(CreateTestEnvironment(), config,
                                       std::move(decoder_factory));
 }
 

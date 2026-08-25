@@ -138,11 +138,6 @@ class RTC_EXPORT Connection : public CandidatePairInterface {
   // populated (default value false).
   ConnectionInfo stats();
 
-  [[deprecated("Use SubscribeStateChange(void* tag, ...)")]]
-  void SubscribeStateChange(
-      absl::AnyInvocable<void(Connection* connection)> callback) {
-    state_change_callbacks_.AddReceiver(std::move(callback));
-  }
   void SubscribeStateChange(
       void* tag,
       absl::AnyInvocable<void(Connection* connection)> callback) {
@@ -182,11 +177,6 @@ class RTC_EXPORT Connection : public CandidatePairInterface {
           received_packet_callback);
   void DeregisterReceivedPacketCallback();
 
-  [[deprecated("Use SubscribeReadyToSend(void* tag, ...)")]]
-  void SubscribeReadyToSend(
-      absl::AnyInvocable<void(Connection* connection)> callback) {
-    ready_to_send_callbacks_.AddReceiver(std::move(callback));
-  }
   void SubscribeReadyToSend(
       void* tag,
       absl::AnyInvocable<void(Connection* connection)> callback) {
@@ -305,12 +295,6 @@ class RTC_EXPORT Connection : public CandidatePairInterface {
 
   // This signal will be fired if this connection is nominated by the
   // controlling side.
-  [[deprecated("Use SubscribeNominated(void* tag, ...)")]]
-  void SubscribeNominated(
-      absl::AnyInvocable<void(Connection* connection)> callback) {
-    nominated_callbacks_.AddReceiver(std::move(callback));
-  }
-
   void SubscribeNominated(
       void* tag,
       absl::AnyInvocable<void(Connection* connection)> callback) {

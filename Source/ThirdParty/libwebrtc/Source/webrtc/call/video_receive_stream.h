@@ -185,6 +185,11 @@ class VideoReceiveStreamInterface : public MediaReceiveStreamInterface {
     uint32_t sender_reports_packets_sent = 0;
     uint64_t sender_reports_bytes_sent = 0;
     uint64_t sender_reports_reports_count = 0;
+    // Non-sender RTT (RRTR/DLRR), surfaced into
+    // RTCRemoteOutboundRtpStreamStats for recvonly endpoints.
+    std::optional<TimeDelta> round_trip_time;
+    TimeDelta total_round_trip_time = TimeDelta::Zero();
+    int round_trip_time_measurements = 0;
   };
 
   struct Config {

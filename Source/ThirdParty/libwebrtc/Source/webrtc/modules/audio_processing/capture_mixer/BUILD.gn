@@ -33,20 +33,80 @@ rtc_library("capture_mixer") {
   deps = [ "../../../rtc_base:checks" ]
 }
 
-rtc_library("capture_mixer_unittests") {
+rtc_library("audio_content_analyzer_unittest") {
   testonly = true
-
-  sources = [
-    "audio_content_analyzer_unittest.cc",
-    "capture_mixer_unittest.cc",
-    "channel_content_remixer_unittest.cc",
-    "dc_levels_estimator_unittest.cc",
-    "energy_estimator_unittest.cc",
-    "remixing_logic_unittest.cc",
-    "saturation_estimator_unittest.cc",
-  ]
+  sources = [ "audio_content_analyzer_unittest.cc" ]
   deps = [
     ":capture_mixer",
     "../../../test:test_support",
+  ]
+}
+
+rtc_library("capture_mixer_unittest") {
+  testonly = true
+  sources = [ "capture_mixer_unittest.cc" ]
+  deps = [
+    ":capture_mixer",
+    "../../../test:test_support",
+  ]
+}
+
+rtc_library("channel_content_remixer_unittest") {
+  testonly = true
+  sources = [ "channel_content_remixer_unittest.cc" ]
+  deps = [
+    ":capture_mixer",
+    "../../../test:test_support",
+  ]
+}
+
+rtc_library("dc_levels_estimator_unittest") {
+  testonly = true
+  sources = [ "dc_levels_estimator_unittest.cc" ]
+  deps = [
+    ":capture_mixer",
+    "../../../test:test_support",
+  ]
+}
+
+rtc_library("energy_estimator_unittest") {
+  testonly = true
+  sources = [ "energy_estimator_unittest.cc" ]
+  deps = [
+    ":capture_mixer",
+    "../../../test:test_support",
+  ]
+}
+
+rtc_library("remixing_logic_unittest") {
+  testonly = true
+  sources = [ "remixing_logic_unittest.cc" ]
+  deps = [
+    ":capture_mixer",
+    "../../../test:test_support",
+  ]
+}
+
+rtc_library("saturation_estimator_unittest") {
+  testonly = true
+  sources = [ "saturation_estimator_unittest.cc" ]
+  deps = [
+    ":capture_mixer",
+    "../../../test:test_support",
+  ]
+}
+
+rtc_library("capture_mixer_unittests") {
+  testonly = true
+
+  sources = []
+  deps = [
+    ":audio_content_analyzer_unittest",
+    ":capture_mixer_unittest",
+    ":channel_content_remixer_unittest",
+    ":dc_levels_estimator_unittest",
+    ":energy_estimator_unittest",
+    ":remixing_logic_unittest",
+    ":saturation_estimator_unittest",
   ]
 }

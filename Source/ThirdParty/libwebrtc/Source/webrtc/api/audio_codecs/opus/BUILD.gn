@@ -125,6 +125,5 @@ rtc_library("unittests") {
     "../../../test:create_test_field_trials",
     "../../../test:test_support",
     "../../environment",
-    "../../environment:environment_factory",
   ]
 }

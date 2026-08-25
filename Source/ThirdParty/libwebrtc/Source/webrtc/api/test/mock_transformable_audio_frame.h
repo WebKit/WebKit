@@ -68,6 +68,7 @@ class MockTransformableAudioFrame : public TransformableAudioFrameInterface {
               SenderCaptureTimeOffset,
               (),
               (const, override));
+  MOCK_METHOD(RtpTimestampInfo, GetRtpTimestampInfo, (), (const, override));
 };
 
 }  // namespace webrtc

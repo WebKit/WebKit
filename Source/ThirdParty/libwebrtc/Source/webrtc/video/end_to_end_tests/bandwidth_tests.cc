@@ -14,7 +14,7 @@
 #include <vector>
 
 #include "api/environment/environment.h"
-#include "api/environment/environment_factory.h"
+#include "api/rtp_header_extension_id.h"
 #include "api/rtp_headers.h"
 #include "api/rtp_parameters.h"
 #include "api/task_queue/task_queue_base.h"
@@ -37,6 +37,7 @@
 #include "rtc_base/thread.h"
 #include "rtc_base/thread_annotations.h"
 #include "test/call_test.h"
+#include "test/create_test_environment.h"
 #include "test/fake_encoder.h"
 #include "test/gtest.h"
 #include "test/rtcp_packet_parser.h"
@@ -47,11 +48,9 @@
 
 namespace webrtc {
 namespace {
-enum : int {  // The first valid value is 1.
-  kAbsSendTimeExtensionId = 1,
-  kTransportSequenceNumberId,
-};
-}  // namespace
+constexpr RtpHeaderExtensionId kAbsSendTimeExtensionId(1);
+constexpr RtpHeaderExtensionId kTransportSequenceNumberId(2);
+constexpr int kMaxBitrateBps = 3000000;
 
 class BandwidthEndToEndTest : public test::CallTest {
  public:
@@ -181,7 +180,6 @@ class BandwidthStatsTest : public test::EndToEndTest {
   }
 
  private:
-  static const int kMaxBitrateBps = 3000000;
   Call* sender_call_;
   Call* receiver_call_;
   bool has_seen_pacer_delay_;
@@ -210,7 +208,7 @@ TEST_F(BandwidthEndToEndTest, RembWithSendSideBwe) {
     explicit BweObserver(TaskQueueBase* task_queue)
         : EndToEndTest(test::VideoTestConstants::kDefaultTimeout),
           sender_call_(nullptr),
-          env_(CreateEnvironment()),
+          env_(CreateTestEnvironment()),
           sender_ssrc_(0),
           remb_bitrate_bps_(1000000),
           state_(kWaitForFirstRampUp),
@@ -412,4 +410,5 @@ TEST_F(BandwidthEndToEndTest, ReportsSetEncoderRates) {
 
   RunBaseTest(&test);
 }
+}  // namespace
 }  // namespace webrtc

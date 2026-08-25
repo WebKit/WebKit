@@ -57,6 +57,7 @@
         'mixins': ['shards-4'],
       },
       'video_timing_tests': {},
+      'videocodec_test_mediacodec': {},
       'voip_unittests': {},
       'webrtc_nonparallel_tests': {},
       # keep-sorted end
@@ -79,6 +80,8 @@
       'common_audio_unittests': {},
       'common_video_unittests': {},
       'dcsctp_unittests': {},
+      'desktop_capture_modules_tests': {},
+      'desktop_capture_unittests': {},
       'modules_tests': {
         'mixins': ['shards-2'],
       },
@@ -111,10 +114,14 @@
       'video_timing_tests': {},
       'voip_unittests': {},
       'webrtc_nonparallel_tests': {},
+      'xvfb_capture_tests': {},
       # keep-sorted end
     },
     'desktop_tests_linux_specific': {
       'shared_screencast_stream_test': {},
+    },
+    'desktop_tests_mac_specific': {
+      'desktop_capture_mac_unittests': {},
     },
     'desktop_tests_try_server_specific': {
       'video_codec_perf_tests': {
@@ -125,6 +132,9 @@
         'remove_mixins': ['resultdb-json-format'],
         'mixins': ['quick-perf-tests', 'resultdb-gtest-json-format'],
       }
+    },
+    'desktop_tests_win_specific': {
+      'desktop_capture_win_unittests': {},
     },
     'fuchsia_compatible_tests': {
       # keep-sorted start block=yes
@@ -173,7 +183,7 @@
         'mixins': ['shards-2'],
       },
       'modules_unittests': {
-        'mixins': ['shards-6', 'cores-12'],
+        'mixins': ['shards-6'],
       },
       'resource_adaptation_tests': {},
       'rtc_media_unittests': {},
@@ -191,7 +201,7 @@
         'mixins': ['xcodebuild_sim_runner']
       },
       'svc_tests': {
-        'mixins': ['shards-4', 'cores-12'],
+        'mixins': ['shards-8'],
       },
       'system_wrappers_unittests': {},
       'test_support_unittests': {},
@@ -244,18 +254,32 @@
       'android_tests',
       'android_tests_tryserver_specific',
     ],
-    'desktop_tests_tryserver': [
-      'desktop_tests',
-      'desktop_tests_try_server_specific',
-    ],
-    'linux_desktop_tests_tryserver': [
-      'desktop_tests',
-      'desktop_tests_linux_specific',
-      'desktop_tests_try_server_specific',
-    ],
     'linux_tests': [
       'desktop_tests',
       'desktop_tests_linux_specific',
+    ],
+    'linux_tests_tryserver': [
+      'desktop_tests',
+      'desktop_tests_linux_specific',
+      'desktop_tests_try_server_specific',
+    ],
+    'mac_tests': [
+      'desktop_tests',
+      'desktop_tests_mac_specific',
+    ],
+    'mac_tests_tryserver': [
+      'desktop_tests',
+      'desktop_tests_mac_specific',
+      'desktop_tests_try_server_specific',
+    ],
+    'win_tests': [
+      'desktop_tests',
+      'desktop_tests_win_specific',
+    ],
+    'win_tests_tryserver': [
+      'desktop_tests',
+      'desktop_tests_try_server_specific',
+      'desktop_tests_win_specific',
     ],
   },
 

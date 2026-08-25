@@ -26,8 +26,10 @@ void FuzzOneInput(FuzzDataHelper fuzz_data) {
     return;
   }
   RtpHeaderExtensionMap extensions;
-  extensions.Register<RtpDependencyDescriptorExtension>(1);
-  extensions.Register<RtpGenericFrameDescriptorExtension00>(2);
+  extensions.Register<RtpDependencyDescriptorExtension>(
+      RtpHeaderExtensionId(1));
+  extensions.Register<RtpGenericFrameDescriptorExtension00>(
+      RtpHeaderExtensionId(2));
   RtpPacketReceived rtp_packet(&extensions);
 
   RtpVideoFrameAssembler assembler(

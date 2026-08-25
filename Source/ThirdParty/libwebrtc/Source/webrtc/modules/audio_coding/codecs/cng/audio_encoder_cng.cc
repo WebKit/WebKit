@@ -19,6 +19,7 @@
 #include <vector>
 
 #include "api/audio_codecs/audio_encoder.h"
+#include "api/call/bitrate_allocation.h"
 #include "api/units/time_delta.h"
 #include "common_audio/vad/include/vad.h"
 #include "modules/audio_coding/codecs/cng/webrtc_cng.h"
@@ -59,8 +60,7 @@ class AudioEncoderCng final : public AudioEncoder {
   std::span<std::unique_ptr<AudioEncoder>> ReclaimContainedEncoders() override;
   void OnReceivedUplinkPacketLossFraction(
       float uplink_packet_loss_fraction) override;
-  void OnReceivedUplinkBandwidth(int target_audio_bitrate_bps,
-                                 std::optional<int64_t> bwe_period_ms) override;
+  void OnReceivedUplinkAllocation(BitrateAllocationUpdate update) override;
   std::optional<std::pair<TimeDelta, TimeDelta>> GetFrameLengthRange()
       const override;
 
@@ -227,11 +227,9 @@ void AudioEncoderCng::OnReceivedUplinkPacketLossFraction(
       uplink_packet_loss_fraction);
 }
 
-void AudioEncoderCng::OnReceivedUplinkBandwidth(
-    int target_audio_bitrate_bps,
-    std::optional<int64_t> bwe_period_ms) {
-  speech_encoder_->OnReceivedUplinkBandwidth(target_audio_bitrate_bps,
-                                             bwe_period_ms);
+void AudioEncoderCng::OnReceivedUplinkAllocation(
+    BitrateAllocationUpdate update) {
+  speech_encoder_->OnReceivedUplinkAllocation(update);
 }
 
 std::optional<std::pair<TimeDelta, TimeDelta>>

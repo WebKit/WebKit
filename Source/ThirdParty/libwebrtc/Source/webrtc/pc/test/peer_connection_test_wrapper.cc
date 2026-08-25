@@ -22,8 +22,9 @@
 #include "api/audio_codecs/audio_decoder_factory.h"
 #include "api/audio_codecs/audio_encoder_factory.h"
 #include "api/audio_options.h"
-#include "api/create_peerconnection_factory.h"
+#include "api/create_modular_peer_connection_factory.h"
 #include "api/data_channel_interface.h"
+#include "api/enable_media_with_defaults.h"
 #include "api/environment/environment.h"
 #include "api/environment/environment_factory.h"
 #include "api/field_trials_view.h"
@@ -33,11 +34,11 @@
 #include "api/media_types.h"
 #include "api/peer_connection_interface.h"
 #include "api/rtc_error.h"
+#include "api/rtc_event_log/rtc_event_log_factory.h"
 #include "api/rtp_parameters.h"
 #include "api/rtp_receiver_interface.h"
 #include "api/scoped_refptr.h"
 #include "api/sequence_checker.h"
-#include "api/test/rtc_error_matchers.h"
 #include "api/units/time_delta.h"
 #include "api/video/resolution.h"
 #include "api/video_codecs/sdp_video_format.h"
@@ -66,7 +67,6 @@
 #include "rtc_base/rtc_certificate_generator.h"
 #include "rtc_base/socket_server.h"
 #include "system_wrappers/include/clock.h"
-#include "test/gmock.h"
 #include "test/gtest.h"
 #include "test/wait_until.h"
 
@@ -182,7 +182,7 @@ bool PeerConnectionTestWrapper::CreatePc(
     std::unique_ptr<VideoDecoderFactory> video_decoder_factory,
     std::unique_ptr<FieldTrialsView> field_trials) {
   EnvironmentFactory env_factory(env_);
-  env_factory.Set(field_trials.get());
+  env_factory.Set(std::move(field_trials));
   Environment env = env_factory.Create();
   auto port_allocator =
       std::make_unique<FakePortAllocator>(env, socket_server_, network_thread_);
@@ -194,13 +194,22 @@ bool PeerConnectionTestWrapper::CreatePc(
     return false;
   }
 
-  peer_connection_factory_ = CreatePeerConnectionFactory(
-      network_thread_, worker_thread_, Thread::Current(),
-      scoped_refptr<AudioDeviceModule>(fake_audio_capture_module_),
-      audio_encoder_factory, audio_decoder_factory,
-      std::move(video_encoder_factory), std::move(video_decoder_factory),
-      nullptr /* audio_mixer */, nullptr /* audio_processing */, nullptr,
-      std::move(field_trials));
+  PeerConnectionFactoryDependencies dependencies;
+  dependencies.network_thread = network_thread_;
+  dependencies.worker_thread = worker_thread_;
+  dependencies.signaling_thread = Thread::Current();
+  dependencies.socket_factory = socket_server_;
+  dependencies.adm =
+      scoped_refptr<AudioDeviceModule>(fake_audio_capture_module_);
+  dependencies.audio_encoder_factory = audio_encoder_factory;
+  dependencies.audio_decoder_factory = audio_decoder_factory;
+  dependencies.video_encoder_factory = std::move(video_encoder_factory);
+  dependencies.video_decoder_factory = std::move(video_decoder_factory);
+  dependencies.event_log_factory = std::make_unique<RtcEventLogFactory>();
+  dependencies.env = env;
+  EnableMediaWithDefaults(dependencies);
+  peer_connection_factory_ =
+      CreateModularPeerConnectionFactory(std::move(dependencies));
   if (!peer_connection_factory_) {
     return false;
   }
@@ -263,19 +272,15 @@ PeerConnectionTestWrapper::FindFirstSendCodecWithName(
 }
 
 void PeerConnectionTestWrapper::WaitForNegotiation() {
-  EXPECT_THAT(
-      WaitUntil([&] { return !pending_negotiation_; }, ::testing::IsTrue(),
-                {.timeout = TimeDelta::Millis(kMaxWait)}),
-      IsRtcOk());
+  EXPECT_TRUE(WaitUntil([&] { return !pending_negotiation_; },
+                        {.timeout = TimeDelta::Millis(kMaxWait)}));
 }
 
 std::unique_ptr<SessionDescriptionInterface>
 PeerConnectionTestWrapper::AwaitCreateOffer() {
   auto observer = make_ref_counted<MockCreateSessionDescriptionObserver>();
   peer_connection_->CreateOffer(observer.get(), {});
-  EXPECT_THAT(
-      WaitUntil([&] { return observer->called(); }, ::testing::IsTrue()),
-      IsRtcOk());
+  EXPECT_TRUE(WaitUntil([&] { return observer->called(); }));
   return observer->MoveDescription();
 }
 
@@ -283,9 +288,7 @@ std::unique_ptr<SessionDescriptionInterface>
 PeerConnectionTestWrapper::AwaitCreateAnswer() {
   auto observer = make_ref_counted<MockCreateSessionDescriptionObserver>();
   peer_connection_->CreateAnswer(observer.get(), {});
-  EXPECT_THAT(
-      WaitUntil([&] { return observer->called(); }, ::testing::IsTrue()),
-      IsRtcOk());
+  EXPECT_TRUE(WaitUntil([&] { return observer->called(); }));
   return observer->MoveDescription();
 }
 
@@ -293,9 +296,7 @@ void PeerConnectionTestWrapper::AwaitSetLocalDescription(
     webrtc::SessionDescriptionInterface* sdp) {
   auto observer = make_ref_counted<MockSetSessionDescriptionObserver>();
   peer_connection_->SetLocalDescription(observer.get(), sdp->Clone().release());
-  EXPECT_THAT(
-      WaitUntil([&] { return observer->called(); }, ::testing::IsTrue()),
-      IsRtcOk());
+  EXPECT_TRUE(WaitUntil([&] { return observer->called(); }));
 }
 
 void PeerConnectionTestWrapper::AwaitSetRemoteDescription(
@@ -303,9 +304,7 @@ void PeerConnectionTestWrapper::AwaitSetRemoteDescription(
   auto observer = make_ref_counted<MockSetSessionDescriptionObserver>();
   peer_connection_->SetRemoteDescription(observer.get(),
                                          sdp->Clone().release());
-  EXPECT_THAT(
-      WaitUntil([&] { return observer->called(); }, ::testing::IsTrue()),
-      IsRtcOk());
+  EXPECT_TRUE(WaitUntil([&] { return observer->called(); }));
 }
 
 void PeerConnectionTestWrapper::ListenForRemoteIceCandidates(
@@ -320,14 +319,12 @@ void PeerConnectionTestWrapper::ListenForRemoteIceCandidates(
 
 void PeerConnectionTestWrapper::AwaitAddRemoteIceCandidates() {
   EXPECT_TRUE(remote_wrapper_);
-  EXPECT_THAT(
-      WaitUntil(
-          [&] {
-            return remote_wrapper_->pc()->ice_gathering_state() ==
-                   PeerConnectionInterface::kIceGatheringComplete;
-          },
-          ::testing::IsTrue(), {.timeout = TimeDelta::Millis(kMaxWait)}),
-      IsRtcOk());
+  EXPECT_TRUE(WaitUntil(
+      [&] {
+        return remote_wrapper_->pc()->ice_gathering_state() ==
+               PeerConnectionInterface::kIceGatheringComplete;
+      },
+      {.timeout = TimeDelta::Millis(kMaxWait)}));
   for (const auto& remote_ice_candidate : remote_ice_candidates_) {
     peer_connection_->AddIceCandidate(remote_ice_candidate.get());
   }
@@ -449,10 +446,8 @@ bool PeerConnectionTestWrapper::WaitForCallEstablished() {
 }
 
 bool PeerConnectionTestWrapper::WaitForConnection() {
-  EXPECT_THAT(
-      WaitUntil([&] { return CheckForConnection(); }, ::testing::IsTrue(),
-                {.timeout = TimeDelta::Millis(kMaxWait)}),
-      IsRtcOk());
+  EXPECT_TRUE(WaitUntil([&] { return CheckForConnection(); },
+                        {.timeout = TimeDelta::Millis(kMaxWait)}));
   if (testing::Test::HasFailure()) {
     return false;
   }
@@ -468,9 +463,8 @@ bool PeerConnectionTestWrapper::CheckForConnection() {
 }
 
 bool PeerConnectionTestWrapper::WaitForAudio() {
-  EXPECT_THAT(WaitUntil([&] { return CheckForAudio(); }, ::testing::IsTrue(),
-                        {.timeout = TimeDelta::Millis(kMaxWait)}),
-              IsRtcOk());
+  EXPECT_TRUE(WaitUntil([&] { return CheckForAudio(); },
+                        {.timeout = TimeDelta::Millis(kMaxWait)}));
   if (testing::Test::HasFailure()) {
     return false;
   }
@@ -485,9 +479,8 @@ bool PeerConnectionTestWrapper::CheckForAudio() {
 }
 
 bool PeerConnectionTestWrapper::WaitForVideo() {
-  EXPECT_THAT(WaitUntil([&] { return CheckForVideo(); }, ::testing::IsTrue(),
-                        {.timeout = TimeDelta::Millis(kMaxWait)}),
-              IsRtcOk());
+  EXPECT_TRUE(WaitUntil([&] { return CheckForVideo(); },
+                        {.timeout = TimeDelta::Millis(kMaxWait)}));
   if (testing::Test::HasFailure()) {
     return false;
   }

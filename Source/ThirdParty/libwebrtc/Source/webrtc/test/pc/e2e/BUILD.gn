@@ -27,9 +27,8 @@ if (!build_with_chromium) {
   }
 
   if (rtc_include_tests) {
-    group("e2e_unittests") {
-      testonly = true
-
+    rtc_cc_test("e2e_unittests") {
+      data_deps = [ "../../../resources:scenario_config_resources" ]
       deps = [
         ":peer_connection_e2e_smoke_test",
         ":peer_connection_quality_test_metric_names_test",
@@ -119,7 +118,6 @@ if (!build_with_chromium) {
         "../../../api:time_controller",
         "../../../api/audio:audio_device",
         "../../../api/environment",
-        "../../../api/environment:environment_factory",
         "../../../api/rtc_event_log:rtc_event_log_factory",
         "../../../api/test/pclf:media_configuration",
         "../../../api/test/pclf:media_quality_test_params",

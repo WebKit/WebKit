@@ -136,30 +136,4 @@ TEST(SmoothingFilterTest, GetAverageOutputsEmptyBeforeFirstSample) {
   EXPECT_EQ(kFirstSample, states.smoothing_filter.GetAverage(states.now));
 }
 
-TEST(SmoothingFilterTest, CannotChangeTimeConstantDuringInitialization) {
-  constexpr int kInitTimeMs = 100;
-  SmoothingFilterStates states(kInitTimeMs);
-  states.smoothing_filter.AddSample(0.0, states.now);
-
-  // During initialization, `SetTimeConstantMs` does not take effect.
-  states.now += TimeDelta::Millis(kInitTimeMs - 1);
-  states.smoothing_filter.AddSample(0.0, states.now);
-
-  EXPECT_FALSE(states.smoothing_filter.SetTimeConstantMs(kInitTimeMs * 2));
-  EXPECT_NE(std::exp(-1.0f / (kInitTimeMs * 2)),
-            states.smoothing_filter.alpha());
-
-  states.now += TimeDelta::Millis(1);
-  states.smoothing_filter.AddSample(0.0, states.now);
-  // When initialization finishes, the time constant should be come
-  // `kInitTimeConstantMs`.
-  EXPECT_FLOAT_EQ(std::exp(-1.0f / kInitTimeMs),
-                  states.smoothing_filter.alpha());
-
-  // After initialization, `SetTimeConstantMs` takes effect.
-  EXPECT_TRUE(states.smoothing_filter.SetTimeConstantMs(kInitTimeMs * 2));
-  EXPECT_FLOAT_EQ(std::exp(-1.0f / (kInitTimeMs * 2)),
-                  states.smoothing_filter.alpha());
-}
-
 }  // namespace webrtc

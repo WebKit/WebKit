@@ -25,7 +25,6 @@
 #include "test/run_loop.h"
 
 using ::testing::AnyNumber;
-using ::testing::InvokeWithoutArgs;
 using ::testing::Return;
 
 namespace webrtc {
@@ -76,7 +75,7 @@ TEST_F(CallStats2Test, AddAndTriggerCallback) {
   MockStatsObserver stats_observer;
   EXPECT_CALL(stats_observer, OnRttUpdate(kRtt, kRtt))
       .Times(1)
-      .WillOnce(InvokeWithoutArgs([this] { loop_.Quit(); }));
+      .WillOnce([this] { loop_.Quit(); });
 
   call_stats_.RegisterStatsObserver(&stats_observer);
   EXPECT_EQ(-1, call_stats_.LastProcessedRtt());
@@ -97,23 +96,23 @@ TEST_F(CallStats2Test, ProcessTime) {
 
   EXPECT_CALL(stats_observer, OnRttUpdate(kRtt, kRtt))
       .Times(2)
-      .WillOnce(InvokeWithoutArgs([this] {
+      .WillOnce([this] {
         // Advance clock and verify we get an update.
         fake_clock_.AdvanceTimeMilliseconds(CallStats::kUpdateInterval.ms());
-      }))
-      .WillRepeatedly(InvokeWithoutArgs([this] {
+      })
+      .WillRepeatedly([this] {
         AsyncSimulateRttUpdate(kRtt2);
         // Advance clock just too little to get an update.
         fake_clock_.AdvanceTimeMilliseconds(CallStats::kUpdateInterval.ms() -
                                             1);
-      }));
+      });
 
   // In case you're reading this and wondering how this number is arrived at,
   // please see comments in the ChangeRtt test that go into some detail.
   static constexpr const int64_t kLastAvg = 94;
   EXPECT_CALL(stats_observer, OnRttUpdate(kLastAvg, kRtt2))
       .Times(1)
-      .WillOnce(InvokeWithoutArgs([this] { loop_.Quit(); }));
+      .WillOnce([this] { loop_.Quit(); });
 
   call_stats_.RegisterStatsObserver(&stats_observer);
 
@@ -142,7 +141,7 @@ TEST_F(CallStats2Test, MultipleObservers) {
       .WillRepeatedly(Return());
   EXPECT_CALL(stats_observer_2, OnRttUpdate(kRtt, kRtt))
       .Times(AnyNumber())
-      .WillOnce(InvokeWithoutArgs([this] { loop_.Quit(); }))
+      .WillOnce([this] { loop_.Quit(); })
       .WillRepeatedly(Return());
   AsyncSimulateRttUpdate(kRtt);
   loop_.Run();
@@ -153,7 +152,7 @@ TEST_F(CallStats2Test, MultipleObservers) {
 
   EXPECT_CALL(stats_observer_1, OnRttUpdate(kRtt, kRtt))
       .Times(AnyNumber())
-      .WillOnce(InvokeWithoutArgs([this] { loop_.Quit(); }))
+      .WillOnce([this] { loop_.Quit(); })
       .WillRepeatedly(Return());
   EXPECT_CALL(stats_observer_2, OnRttUpdate(kRtt, kRtt)).Times(0);
   AsyncSimulateRttUpdate(kRtt);
@@ -188,10 +187,10 @@ TEST_F(CallStats2Test, ChangeRtt) {
 
   EXPECT_CALL(stats_observer, OnRttUpdate(kFirstRtt, kFirstRtt))
       .Times(1)
-      .WillOnce(InvokeWithoutArgs([this] {
+      .WillOnce([this] {
         fake_clock_.AdvanceTimeMilliseconds(1000);
         AsyncSimulateRttUpdate(kHighRtt);  // Reported at T1 (1000ms).
-      }));
+      });
 
   // NOTE: This relies on the internal algorithms of call_stats.cc.
   // There's a weight factor there (0.3), that weighs the previous average to
@@ -200,12 +199,12 @@ TEST_F(CallStats2Test, ChangeRtt) {
   static constexpr const int64_t kAvgRtt1 = 103;
   EXPECT_CALL(stats_observer, OnRttUpdate(kAvgRtt1, kHighRtt))
       .Times(1)
-      .WillOnce(InvokeWithoutArgs([this] {
+      .WillOnce([this] {
         // This interacts with an internal implementation detail in call_stats
         // that decays the oldest rtt value. See more below.
         fake_clock_.AdvanceTimeMilliseconds(1000);
         AsyncSimulateRttUpdate(kLowRtt);  // Reported at T2 (2000ms).
-      }));
+      });
 
   // Increase time enough for a new update, but not too much to make the
   // rtt invalid. Report a lower rtt and verify the old/high value still is sent
@@ -218,16 +217,16 @@ TEST_F(CallStats2Test, ChangeRtt) {
   static constexpr const int64_t kAvgRtt2 = 102;
   EXPECT_CALL(stats_observer, OnRttUpdate(kAvgRtt2, kHighRtt))
       .Times(1)
-      .WillOnce(InvokeWithoutArgs([this] {
+      .WillOnce([this] {
         // Advance time to make the high report invalid, the lower rtt should
         // now be in the callback.
         fake_clock_.AdvanceTimeMilliseconds(1000);
-      }));
+      });
 
   static constexpr const int64_t kAvgRtt3 = 95;
   EXPECT_CALL(stats_observer, OnRttUpdate(kAvgRtt3, kLowRtt))
       .Times(1)
-      .WillOnce(InvokeWithoutArgs([this] { loop_.Quit(); }));
+      .WillOnce([this] { loop_.Quit(); });
 
   // Trigger the first rtt value and set off the chain of callbacks.
   AsyncSimulateRttUpdate(kFirstRtt);  // Reported at T0 (0ms).
@@ -249,29 +248,29 @@ TEST_F(CallStats2Test, LastProcessedRtt) {
 
   EXPECT_CALL(stats_observer, OnRttUpdate(kRttLow, kRttLow))
       .Times(1)
-      .WillOnce(InvokeWithoutArgs([this] {
+      .WillOnce([this] {
         EXPECT_EQ(kRttLow, call_stats_.LastProcessedRtt());
         // Don't advance the clock to make sure that low and high rtt values
         // are associated with the same time stamp.
         AsyncSimulateRttUpdate(kRttHigh);
-      }));
+      });
 
   EXPECT_CALL(stats_observer, OnRttUpdate(kAvgRtt1, kRttHigh))
       .Times(AnyNumber())
-      .WillOnce(InvokeWithoutArgs([this] {
+      .WillOnce([this] {
         EXPECT_EQ(kAvgRtt1, call_stats_.LastProcessedRtt());
         fake_clock_.AdvanceTimeMilliseconds(CallStats::kUpdateInterval.ms());
         AsyncSimulateRttUpdate(kRttLow);
         AsyncSimulateRttUpdate(kRttHigh);
-      }))
+      })
       .WillRepeatedly(Return());
 
   EXPECT_CALL(stats_observer, OnRttUpdate(kAvgRtt2, kRttHigh))
       .Times(AnyNumber())
-      .WillOnce(InvokeWithoutArgs([this] {
+      .WillOnce([this] {
         EXPECT_EQ(kAvgRtt2, call_stats_.LastProcessedRtt());
         loop_.Quit();
-      }))
+      })
       .WillRepeatedly(Return());
 
   // Set a first values and verify that LastProcessedRtt initially returns the
@@ -291,7 +290,7 @@ TEST_F(CallStats2Test, ProducesHistogramMetrics) {
   call_stats_.RegisterStatsObserver(&stats_observer);
   EXPECT_CALL(stats_observer, OnRttUpdate(kRtt, kRtt))
       .Times(AnyNumber())
-      .WillRepeatedly(InvokeWithoutArgs([this] { loop_.Quit(); }));
+      .WillRepeatedly([this] { loop_.Quit(); });
 
   AsyncSimulateRttUpdate(kRtt);
   loop_.Run();

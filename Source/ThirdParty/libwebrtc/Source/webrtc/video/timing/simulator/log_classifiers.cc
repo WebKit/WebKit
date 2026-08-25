@@ -39,6 +39,10 @@ std::optional<RtxOsnLoggingStatus> GetRtxOsnLoggingStatus(
     if (!parsed_log.incoming_rtx_ssrcs().contains(stream.ssrc)) {
       continue;
     }
+    // Skip "unset rtx_ssrc" streams.
+    if (stream.ssrc == 0) {
+      continue;
+    }
     // Check all packets for this video RTX stream.
     for (const LoggedRtpPacketIncoming& incoming_packet :
          stream.incoming_packets) {

@@ -538,13 +538,15 @@ PeerConnection::PeerConnection(
             signaling_thread(),
             make_ref_counted<RtpTransceiver>(
                 env_, MediaType::AUDIO, context_.get(),
-                codec_lookup_helper_.get(), legacy_stats_.get())));
+                codec_lookup_helper_.get(), legacy_stats_.get(),
+                sdp_handler_->audio_options(), sdp_handler_->video_options())));
     rtp_manager_->transceivers()->Add(
         RtpTransceiverProxyWithInternal<RtpTransceiver>::Create(
             signaling_thread(),
             make_ref_counted<RtpTransceiver>(
                 env_, MediaType::VIDEO, context_.get(),
-                codec_lookup_helper_.get(), legacy_stats_.get())));
+                codec_lookup_helper_.get(), legacy_stats_.get(),
+                sdp_handler_->audio_options(), sdp_handler_->video_options())));
   }
 
   const int delay_ms = configuration_.report_usage_pattern_delay_ms
@@ -1605,6 +1607,11 @@ RTCError PeerConnection::SetConfiguration(
   transport_controller_s()->SetTransportStates(std::move(new_states));
   sdp_handler_->UpdateCachedIceCredentials(std::move(pooled_credentials));
   configuration_ = modified_config;
+
+  if (needs_ice_restart) {
+    sdp_handler_->UpdateNegotiationNeeded();
+  }
+
   return RTCError::OK();
 }
 

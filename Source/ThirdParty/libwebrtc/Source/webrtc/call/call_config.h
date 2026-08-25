@@ -13,6 +13,7 @@
 #include <memory>
 #include <optional>
 
+#include "absl/base/nullability.h"
 #include "api/environment/environment.h"
 #include "api/fec_controller.h"
 #include "api/metronome/metronome.h"
@@ -23,6 +24,7 @@
 #include "api/transport/bitrate_settings.h"
 #include "api/transport/network_control.h"
 #include "api/units/time_delta.h"
+#include "api/video/timing/video_jitter_timing_factory.h"
 #include "call/audio_state.h"
 #include "call/rtp_transport_config.h"
 
@@ -31,11 +33,25 @@ namespace webrtc {
 class AudioProcessing;
 
 struct CallConfig {
-  // If `network_task_queue` is set to nullptr, Call will assume that network
-  // related callbacks will be made on the same TQ as the Call instance was
-  // constructed on.
+  [[deprecated(
+      "Use CreateSingleThreaded or the multi-argument constructor instead.")]]
   explicit CallConfig(const Environment& env,
                       TaskQueueBase* network_task_queue = nullptr);
+
+  CallConfig(const Environment& env,
+             TaskQueueBase* absl_nonnull worker_task_queue,
+             TaskQueueBase* absl_nonnull network_task_queue);
+
+  static CallConfig CreateWithJoinedWorkerAndNetworkQueue(
+      const Environment& env,
+      TaskQueueBase* absl_nonnull worker_and_network_queue);
+
+  // Creates a configuration for a single-threaded Call setup where signaling,
+  // worker, and network threads are all the same current thread.
+  // Note: This does not represent typical production configurations, where
+  // worker and network threads are usually separate background threads, but it
+  // is still a supported configuration (e.g. for testing or utility programs).
+  static CallConfig CreateSingleThreaded(const Environment& env);
 
   // Move-only.
   CallConfig(CallConfig&&) = default;
@@ -75,7 +91,10 @@ struct CallConfig {
   // NetEq factory to use for this call.
   NetEqFactory* neteq_factory = nullptr;
 
+  VideoJitterTimingFactory* video_jitter_timing_factory = nullptr;
+
   TaskQueueBase* network_task_queue_ = nullptr;
+  TaskQueueBase* worker_task_queue = nullptr;
 
   Metronome* decode_metronome = nullptr;
   Metronome* encode_metronome = nullptr;

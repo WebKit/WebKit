@@ -18,6 +18,7 @@
 #include "api/audio_codecs/audio_encoder_factory.h"
 #include "api/call/transport.h"
 #include "api/media_types.h"
+#include "api/rtp_header_extension_id.h"
 #include "api/rtp_headers.h"
 #include "api/rtp_parameters.h"
 #include "api/scoped_refptr.h"
@@ -43,10 +44,8 @@
 namespace webrtc {
 namespace test {
 namespace {
-enum : int {  // The first valid value is 1.
-  kTransportSequenceNumberExtensionId = 1,
-  kAbsSendTimeExtensionId
-};
+constexpr RtpHeaderExtensionId kTransportSequenceNumberExtensionId(1);
+constexpr RtpHeaderExtensionId kAbsSendTimeExtensionId(2);
 
 std::optional<std::string> CreateAdaptationString(
     AudioStreamConfig::NetworkAdaptation config) {
@@ -89,12 +88,12 @@ std::vector<RtpExtension> GetAudioRtpExtensions(
     const AudioStreamConfig& config) {
   std::vector<RtpExtension> extensions;
   if (config.stream.in_bandwidth_estimation) {
-    extensions.push_back({RtpExtension::kTransportSequenceNumberUri,
-                          kTransportSequenceNumberExtensionId});
+    extensions.push_back(RtpExtension(RtpExtension::kTransportSequenceNumberUri,
+                                      kTransportSequenceNumberExtensionId));
   }
   if (config.stream.abs_send_time) {
     extensions.push_back(
-        {RtpExtension::kAbsSendTimeUri, kAbsSendTimeExtensionId});
+        RtpExtension(RtpExtension::kAbsSendTimeUri, kAbsSendTimeExtensionId));
   }
   return extensions;
 }
@@ -157,8 +156,6 @@ SendAudioStream::SendAudioStream(
 
   sender_->SendTask([&] {
     send_stream_ = sender_->call_->CreateAudioSendStream(send_config);
-    sender->call_->OnAudioTransportOverheadChanged(
-        sender_->transport_->packet_overhead().bytes());
   });
 }
 

@@ -25,15 +25,13 @@
 #include "api/audio_codecs/audio_encoder.h"
 #include "api/audio_codecs/opus/audio_encoder_opus_config.h"
 #include "api/environment/environment.h"
-#include "api/environment/environment_factory.h"
-#include "api/field_trials.h"
 #include "modules/audio_coding/codecs/opus/audio_encoder_opus.h"
 #include "modules/audio_coding/test/PCMFile.h"
 #include "rtc_base/buffer.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/numerics/safe_conversions.h"
 #include "rtc_base/random.h"
-#include "test/create_test_field_trials.h"
+#include "test/create_test_environment.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 #include "test/testsupport/file_utils.h"
@@ -246,7 +244,7 @@ std::vector<int16_t> EncodeDecodeSpeechUntilOneFrameIsDecoded(
 }  // namespace
 
 TEST(AudioDecoderOpusTest, MonoEncoderStereoDecoderOutputsTrivialStereo) {
-  const Environment env = EnvironmentFactory().Create();
+  const Environment env = CreateTestEnvironment();
   WhiteNoiseGenerator generator(/*amplitude_dbfs=*/-70.0);
   std::array<int16_t, kInputFrameLength> input_frame;
   // Create a mono encoder.
@@ -284,7 +282,7 @@ TEST(AudioDecoderOpusTest, MonoEncoderStereoDecoderOutputsTrivialStereo) {
 
 TEST(AudioDecoderOpusTest,
      MonoEncoderStereoDecoderOutputsTrivialStereoComfortNoise) {
-  const Environment env = EnvironmentFactory().Create();
+  const Environment env = CreateTestEnvironment();
   // Create a mono encoder.
   AudioEncoderOpusConfig encoder_config =
       GetEncoderConfig(/*num_channels=*/1, /*dtx_enabled=*/true);
@@ -328,9 +326,8 @@ TEST(AudioDecoderOpusTest,
 }
 
 TEST(AudioDecoderOpusTest, MonoEncoderStereoDecoderOutputsTrivialStereoPlc) {
-  const FieldTrials trials =
-      CreateTestFieldTrials("WebRTC-Audio-OpusGeneratePlc/Enabled/");
-  const Environment env = CreateEnvironment(&trials);
+  const Environment env = CreateTestEnvironment(
+      {.field_trials = "WebRTC-Audio-OpusGeneratePlc/Enabled/"});
   // Create a mono encoder.
   AudioEncoderOpusConfig encoder_config =
       GetEncoderConfig(/*num_channels=*/1, /*dtx_enabled=*/false);
@@ -367,7 +364,7 @@ TEST(AudioDecoderOpusTest, MonoEncoderStereoDecoderOutputsTrivialStereoPlc) {
 }
 
 TEST(AudioDecoderOpusTest, MonoEncoderStereoDecoderOutputsTrivialStereoFec) {
-  const Environment env = EnvironmentFactory().Create();
+  const Environment env = CreateTestEnvironment();
   AudioEncoderOpusConfig encoder_config =
       GetEncoderConfig(/*num_channels=*/1, /*dtx_enabled=*/false);
   encoder_config.fec_enabled = true;
@@ -422,7 +419,7 @@ TEST(AudioDecoderOpusTest, MonoEncoderStereoDecoderOutputsTrivialStereoFec) {
 
 TEST(AudioDecoderOpusTest,
      StereoEncoderStereoDecoderOutputsNonTrivialStereoComfortNoise) {
-  const Environment env = EnvironmentFactory().Create();
+  const Environment env = CreateTestEnvironment();
   // Create a stereo encoder.
   AudioEncoderOpusConfig encoder_config =
       GetEncoderConfig(/*num_channels=*/2, /*dtx_enabled=*/true);
@@ -460,9 +457,8 @@ TEST(AudioDecoderOpusTest,
 
 TEST(AudioDecoderOpusTest,
      StereoEncoderStereoDecoderOutputsNonTrivialStereoPlc) {
-  const FieldTrials trials =
-      CreateTestFieldTrials("WebRTC-Audio-OpusGeneratePlc/Enabled/");
-  const Environment env = CreateEnvironment(&trials);
+  const Environment env = CreateTestEnvironment(
+      {.field_trials = "WebRTC-Audio-OpusGeneratePlc/Enabled/"});
   // Create a stereo encoder.
   AudioEncoderOpusConfig encoder_config =
       GetEncoderConfig(/*num_channels=*/2, /*dtx_enabled=*/false);

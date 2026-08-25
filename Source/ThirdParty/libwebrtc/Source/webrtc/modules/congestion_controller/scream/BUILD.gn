@@ -112,22 +112,80 @@ rtc_library("scream_network_controller") {
 }
 
 if (rtc_include_tests) {
-  rtc_library("scream_unittests") {
+  rtc_library("delay_based_congestion_control_unittest") {
     testonly = true
-    sources = [
-      "delay_based_congestion_control_unittest.cc",
-      "loss_estimator_unittest.cc",
-      "scream_feedback_unittest.cc",
-      "scream_network_controller_unittest.cc",
-      "scream_v2_unittest.cc",
-    ]
+    sources = [ "delay_based_congestion_control_unittest.cc" ]
     deps = [
       ":delay_based_congestion_control",
+      ":scream_feedback",
+      ":scream_v2_parameters",
+      "../../../api/environment",
+      "../../../api/transport:network_control",
+      "../../../api/units:data_rate",
+      "../../../api/units:data_size",
+      "../../../api/units:time_delta",
+      "../../../api/units:timestamp",
+      "../../../system_wrappers",
+      "../../../test:create_test_environment",
+      "../../../test:test_support",
+      "test:cc_feedback_generator",
+    ]
+  }
+
+  rtc_library("loss_estimator_unittest") {
+    testonly = true
+    sources = [ "loss_estimator_unittest.cc" ]
+    deps = [
       ":loss_estimator",
       ":scream_feedback",
-      ":scream_network_controller",
-      ":scream_v2",
       ":scream_v2_parameters",
+      "../../../api/environment",
+      "../../../api/units:data_size",
+      "../../../api/units:time_delta",
+      "../../../api/units:timestamp",
+      "../../../system_wrappers",
+      "../../../test:create_test_environment",
+      "../../../test:test_support",
+    ]
+  }
+
+  rtc_library("scream_feedback_unittest") {
+    testonly = true
+    sources = [ "scream_feedback_unittest.cc" ]
+    deps = [
+      ":scream_feedback",
+      "../../../api/transport:ecn_marking",
+      "../../../api/transport:network_control",
+      "../../../api/units:data_size",
+      "../../../api/units:time_delta",
+      "../../../api/units:timestamp",
+      "../../../test:test_support",
+    ]
+  }
+
+  rtc_library("scream_network_controller_unittest") {
+    testonly = true
+    sources = [ "scream_network_controller_unittest.cc" ]
+    deps = [
+      ":scream_network_controller",
+      "../../../api/environment",
+      "../../../api/transport:network_control",
+      "../../../api/units:data_rate",
+      "../../../api/units:data_size",
+      "../../../api/units:time_delta",
+      "../../../api/units:timestamp",
+      "../../../system_wrappers",
+      "../../../test:create_test_environment",
+      "../../../test:test_support",
+      "test:cc_feedback_generator",
+    ]
+  }
+
+  rtc_library("scream_v2_unittest") {
+    testonly = true
+    sources = [ "scream_v2_unittest.cc" ]
+    deps = [
+      ":scream_v2",
       "../../../api/environment",
       "../../../api/transport:ecn_marking",
       "../../../api/transport:network_control",
@@ -141,7 +199,18 @@ if (rtc_include_tests) {
       "../../../test:test_support",
       "../../../test/network:simulated_network",
       "test:cc_feedback_generator",
-      "//third_party/abseil-cpp/absl/strings",
+    ]
+  }
+
+  rtc_library("scream_unittests") {
+    testonly = true
+    sources = []
+    deps = [
+      ":delay_based_congestion_control_unittest",
+      ":loss_estimator_unittest",
+      ":scream_feedback_unittest",
+      ":scream_network_controller_unittest",
+      ":scream_v2_unittest",
     ]
   }
 }

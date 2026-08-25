@@ -113,8 +113,9 @@ void RtpTransport::ChangePacketTransport(
     transport_to_change->UnsubscribeNetworkRouteChanged(this);
     transport_to_change->UnsubscribeWritableState(this);
     transport_to_change->UnsubscribeSentPacket(this);
-    // Reset the network route of the old transport.
-    SendNetworkRouteChanged(std::optional<NetworkRoute>());
+    // Reset the network route of the old transport. Passing nullopt clears
+    // the route and notifies subscribers that the transport is disconnected.
+    NotifyNetworkRouteChanged(std::optional<NetworkRoute>());
   }
   if (new_packet_transport) {
     new_packet_transport->SubscribeReadyToSend(
@@ -141,11 +142,22 @@ void RtpTransport::ChangePacketTransport(
             OnSentPacket(transport, info);
           }
         });
-    // Set the network route for the new transport.
-    SendNetworkRouteChanged(new_packet_transport->network_route());
+    NotifyNetworkRouteChanged(new_packet_transport->network_route());
   }
 
   transport_to_change = new_packet_transport;
+}
+
+void RtpTransport::NotifyNetworkRouteChanged(
+    std::optional<NetworkRoute> network_route) {
+  if (update_network_route_on_srtp_activation_) {
+    // Call virtual OnNetworkRouteChanged rather than SendNetworkRouteChanged
+    // directly so that subclass overrides (e.g., SrtpTransport) can process
+    // the route (such as appending SRTP overhead) before notifying subscribers.
+    OnNetworkRouteChanged(network_route);
+  } else {
+    SendNetworkRouteChanged(network_route);
+  }
 }
 
 void RtpTransport::SetRtcpPacketTransportOwned(

@@ -22,7 +22,6 @@
 #include "absl/strings/string_view.h"
 #include "api/audio/audio_processing.h"
 #include "api/audio/builtin_audio_processing_builder.h"
-#include "api/environment/environment_factory.h"
 #include "api/scoped_refptr.h"
 #include "common_audio/channel_buffer.h"
 #include "common_audio/include/audio_util.h"
@@ -32,6 +31,7 @@
 #include "modules/audio_processing/test/protobuf_utils.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/task_queue_for_test.h"
+#include "test/create_test_environment.h"
 #include "test/gtest.h"
 #include "test/testsupport/file_utils.h"
 
@@ -150,7 +150,7 @@ DebugDumpGenerator::DebugDumpGenerator(absl::string_view input_file_name,
       enable_pre_amplifier_(enable_pre_amplifier),
       worker_queue_("debug_dump_generator_worker_queue"),
       dump_file_name_(dump_file_name) {
-  apm_ = BuiltinAudioProcessingBuilder().Build(CreateEnvironment());
+  apm_ = BuiltinAudioProcessingBuilder().Build(CreateTestEnvironment());
 }
 
 DebugDumpGenerator::DebugDumpGenerator(
@@ -283,9 +283,9 @@ void DebugDumpTest::VerifyDebugDump(absl::string_view in_filename) {
       // Check that output of APM is bit-exact to the output in the dump.
       ASSERT_EQ(output_config.num_channels(),
                 static_cast<size_t>(msg->output_channel_size()));
-      ASSERT_EQ(output_config.num_frames() * sizeof(float),
-                msg->output_channel(0).size());
       for (int i = 0; i < msg->output_channel_size(); ++i) {
+        ASSERT_EQ(output_config.num_frames() * sizeof(float),
+                  msg->output_channel(i).size());
         ASSERT_EQ(0,
                   memcmp(output->channels()[i], msg->output_channel(i).data(),
                          msg->output_channel(i).size()));

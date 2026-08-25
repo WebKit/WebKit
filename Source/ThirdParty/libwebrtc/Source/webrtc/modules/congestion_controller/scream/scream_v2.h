@@ -48,6 +48,11 @@ class ScreamV2 {
     return std::min(max_target_bitrate_, target_rate_);
   }
   DataRate pacing_rate() const {
+    if (received_rate_.IsFinite()) {
+      return std::max(
+          target_rate_ * params_.pacing_factor.Get(),
+          params_.pacing_rate_received_factor.Get() * received_rate_);
+    }
     return target_rate_ * params_.pacing_factor.Get();
   }
 
@@ -66,6 +71,8 @@ class ScreamV2 {
   // Returns the maximum allowed reference window based on data in flight during
   // the last RTT.
   DataSize max_allowed_ref_window() const;
+
+  DataRate received_rate() const { return received_rate_; }
 
   // Returns the average fraction of ECN-CE marked data units per RTT.
   double l4s_alpha() const { return l4s_alpha_; }
@@ -126,6 +133,7 @@ class ScreamV2 {
   void UpdateRefWindow(const ScreamFeedback& parsed);
   void UpdateFeedbackHoldTime(const ScreamFeedback& parsed);
   void UpdateTargetRate(const ScreamFeedback& parsed);
+  void UpdateReceiveRate(const ScreamFeedback& parsed);
 
   const Environment env_;
   const ScreamV2Parameters params_;
@@ -160,6 +168,9 @@ class ScreamV2 {
   Timestamp last_data_in_flight_update_ = Timestamp::MinusInfinity();
   DataSize max_data_in_flight_this_rtt_ = DataSize::Zero();
   DataSize max_data_in_flight_prev_rtt_ = DataSize::Zero();
+  DataRate received_rate_ = DataRate::Zero();
+  DataSize accumulated_received_bytes_ = DataSize::Zero();
+  Timestamp last_received_rate_update_time_ = Timestamp::MinusInfinity();
 
   // `last_reaction_to_congestion_time` is called
   // `last_congestion_detected_time` in 4.2.2. Reference Window Update.

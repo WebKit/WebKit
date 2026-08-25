@@ -26,6 +26,7 @@ rtc_library("rtp_replayer") {
     "../../../api:time_controller",
     "../../../api:transport_api",
     "../../../api/environment",
+    "../../../api/task_queue",
     "../../../api/units:time_delta",
     "../../../api/units:timestamp",
     "../../../api/video:video_frame",

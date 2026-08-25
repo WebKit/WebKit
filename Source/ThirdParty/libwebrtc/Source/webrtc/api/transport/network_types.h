@@ -227,7 +227,6 @@ struct RTC_EXPORT NetworkEstimate {
   // Deprecated, use TargetTransferRate::target_rate instead.
   DataRate bandwidth = DataRate::Infinity();
   TimeDelta round_trip_time = TimeDelta::PlusInfinity();
-  TimeDelta bwe_period = TimeDelta::PlusInfinity();
 
   float loss_rate_ratio = 0;
 };
@@ -274,6 +273,10 @@ struct RTC_EXPORT TargetTransferRate {
   NetworkEstimate network_estimate;
   DataRate target_rate = DataRate::Zero();
   double cwnd_reduce_ratio = 0;
+
+  // True if WebRTC is actively sending near estimated link capacity (not in
+  // ALR).
+  bool is_bandwidth_limited = true;
 };
 
 // Contains updates of network controller comand state. Using optionals to

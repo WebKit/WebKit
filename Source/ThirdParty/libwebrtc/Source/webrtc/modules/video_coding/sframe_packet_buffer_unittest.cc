@@ -52,7 +52,7 @@ class SFramePacketBufferTest : public ::testing::Test {
     rtp->SetSequenceNumber(seq_num);
     rtp->SetTimestamp(timestamp);
     rtp->SetPayloadType(payload_type);
-    SFrameDescriptor desc;
+    SframeDescriptor desc;
     desc.start = (start == kStart);
     desc.end = (end == kEnd);
     desc.encryption_level = encryption_level;

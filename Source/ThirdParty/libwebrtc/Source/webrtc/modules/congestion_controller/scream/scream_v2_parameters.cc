@@ -62,11 +62,18 @@ ScreamV2Parameters::ScreamV2Parameters(const FieldTrialsView& trials)
           TimeDelta::Seconds(1)),
       initial_probing_duration("InitialProbingDuration", TimeDelta::Seconds(6)),
       pacing_factor("PacingFactor", 1.1),
+      pacing_rate_received_factor("PacingRateReceivedFactor", 0.8),
       feedback_hold_time_avg_g("FeedbackHoldTimeAvgG", 1.0 / 8.0),
       allow_large_pacing_bursts_after_congestion_time(
           "AllowLargePacingBurstsAfterCongestionTime",
           TimeDelta::Seconds(15)),
-      enable_alr("EnableAlr", true) {
+      enable_alr("EnableAlr", true),
+      alr_threshold("AlrThreshold", 0.9),
+      received_rate_window("ReceivedRateWindow", TimeDelta::Millis(100)),
+      min_pacing_delay_for_pushback("MinPacingDelayForPushback",
+                                    TimeDelta::Millis(100)),
+      max_pacing_delay_for_pushback("MaxPacingDelayForPushback",
+                                    TimeDelta::Millis(500)) {
   ParseFieldTrial({&min_ref_window,
                    &l4s_avg_g_up,
                    &l4s_avg_g_down,
@@ -100,9 +107,14 @@ ScreamV2Parameters::ScreamV2Parameters(const FieldTrialsView& trials)
                    &allow_padding_after_last_congestion_time,
                    &initial_probing_duration,
                    &pacing_factor,
+                   &pacing_rate_received_factor,
                    &feedback_hold_time_avg_g,
                    &allow_large_pacing_bursts_after_congestion_time,
-                   &enable_alr},
+                   &enable_alr,
+                   &alr_threshold,
+                   &received_rate_window,
+                   &min_pacing_delay_for_pushback,
+                   &max_pacing_delay_for_pushback},
                   trials.Lookup("WebRTC-Bwe-ScreamV2"));
 }
 

@@ -18,6 +18,7 @@
 #include "media/base/codec.h"
 #include "media/base/fake_media_engine.h"
 #include "pc/codec_configuration.h"
+#include "test/create_test_field_trials.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 
@@ -29,7 +30,7 @@ using ::testing::Field;
 using ::testing::Property;
 
 TEST(TypedCodecVendorTest, VideoCodecsFromFactoryWhenTrialEnabled) {
-  FieldTrials trials(
+  FieldTrials trials = CreateTestFieldTrials(
       "WebRTC-PayloadTypesInTransport/Enabled/"
       "WebRTC-FlexFEC-03-Advertised/Enabled/");
   FakeMediaEngine media_engine;
@@ -71,7 +72,8 @@ TEST(TypedCodecVendorTest, VideoCodecsFromFactoryWhenTrialEnabled) {
 }
 
 TEST(TypedCodecVendorTest, VideoCodecsFromFactoryWhenResiliencyAbsent) {
-  FieldTrials trials("WebRTC-PayloadTypesInTransport/Enabled/");
+  FieldTrials trials =
+      CreateTestFieldTrials("WebRTC-PayloadTypesInTransport/Enabled/");
   FakeMediaEngine media_engine;
   std::vector<Codec> video_codecs({
       CreateVideoCodec(97, "vp8"),
@@ -96,7 +98,8 @@ TEST(TypedCodecVendorTest, VideoCodecsFromFactoryWhenResiliencyAbsent) {
 }
 
 TEST(TypedCodecVendorTest, VideoCodecsLegacyWhenTrialDisabled) {
-  FieldTrials trials("WebRTC-PayloadTypesInTransport/Disabled/");
+  FieldTrials trials =
+      CreateTestFieldTrials("WebRTC-PayloadTypesInTransport/Disabled/");
   FakeMediaEngine media_engine;
   std::vector<Codec> video_codecs({
       CreateVideoCodec(97, "vp8"),
@@ -115,7 +118,8 @@ TEST(TypedCodecVendorTest, VideoCodecsLegacyWhenTrialDisabled) {
 }
 
 TEST(TypedCodecVendorTest, AudioCodecsFromFactoryWhenTrialEnabled) {
-  FieldTrials trials("WebRTC-PayloadTypesInTransport/Enabled/");
+  FieldTrials trials =
+      CreateTestFieldTrials("WebRTC-PayloadTypesInTransport/Enabled/");
   FakeMediaEngine media_engine;
   std::vector<Codec> audio_codecs({
       CreateAudioCodec(111, "opus", 48000, 2),

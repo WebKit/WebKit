@@ -15,7 +15,6 @@
 #include <cstring>
 #include <limits>
 #include <memory>
-#include <numeric>
 #include <optional>
 #include <span>
 #include <utility>
@@ -656,11 +655,14 @@ RtpHeaderExtensionMap EventGenerator::NewRtpHeaderExtensionMap(
     bool configure_all,
     const std::vector<RTPExtensionType>& excluded_extensions) {
   RtpHeaderExtensionMap extension_map;
-  std::vector<int> id(
-      RtpHeaderExtensionId::kOneByteHeaderExtensionMaxId.value() -
-      RtpHeaderExtensionId::kMinId.value() + 1);
-  std::iota(id.begin(), id.end(), RtpHeaderExtensionId::kMinId.value());
-  ShuffleInPlace(&prng_, std::span<int>(id));
+  std::vector<RtpHeaderExtensionId> id;
+  id.reserve(RtpHeaderExtensionId::kOneByteHeaderExtensionMaxId.value() -
+             RtpHeaderExtensionId::kMinId.value() + 1);
+  for (int i = RtpHeaderExtensionId::kMinId.value();
+       i <= RtpHeaderExtensionId::kOneByteHeaderExtensionMaxId.value(); ++i) {
+    id.push_back(RtpHeaderExtensionId(i));
+  }
+  ShuffleInPlace(&prng_, std::span<RtpHeaderExtensionId>(id));
 
   auto not_excluded = [&](RTPExtensionType type) -> bool {
     return !absl::c_linear_search(excluded_extensions, type);
@@ -724,7 +726,7 @@ EventGenerator::NewAudioSendStreamConfig(
   for (size_t i = 0; i < kMaxNumExtensions; i++) {
     RtpHeaderExtensionId id = extensions.GetId(kExtensions[i].type);
     if (id != RtpHeaderExtensionMap::kInvalidId) {
-      config->rtp_extensions.emplace_back(kExtensions[i].name, id.value());
+      config->rtp_extensions.emplace_back(kExtensions[i].name, id);
     }
   }
   return Create<RtcEventAudioSendStreamConfig>(std::move(config));
@@ -750,7 +752,7 @@ EventGenerator::NewVideoReceiveStreamConfig(
   for (size_t i = 0; i < kMaxNumExtensions; i++) {
     RtpHeaderExtensionId id = extensions.GetId(kExtensions[i].type);
     if (id != RtpHeaderExtensionMap::kInvalidId) {
-      config->rtp_extensions.emplace_back(kExtensions[i].name, id.value());
+      config->rtp_extensions.emplace_back(kExtensions[i].name, id);
     }
   }
   return Create<RtcEventVideoReceiveStreamConfig>(std::move(config));
@@ -770,7 +772,7 @@ EventGenerator::NewVideoSendStreamConfig(
   for (size_t i = 0; i < kMaxNumExtensions; i++) {
     RtpHeaderExtensionId id = extensions.GetId(kExtensions[i].type);
     if (id != RtpHeaderExtensionMap::kInvalidId) {
-      config->rtp_extensions.emplace_back(kExtensions[i].name, id.value());
+      config->rtp_extensions.emplace_back(kExtensions[i].name, id);
     }
   }
   return Create<RtcEventVideoSendStreamConfig>(std::move(config));

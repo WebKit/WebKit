@@ -203,9 +203,9 @@ public class NativeTestWebrtc {
     @NativeMethods
     interface Natives {
         void runTests(
-                @JniType("std::string") String commandLineFlags,
-                @JniType("std::string") String commandLineFilePath,
-                @JniType("std::string") String stdoutFilePath,
-                @JniType("std::string") String testDataDir);
+                String commandLineFlags,
+                String commandLineFilePath,
+                String stdoutFilePath,
+                String testDataDir);
     }
 }

@@ -23,6 +23,7 @@
 #include "api/environment/environment_factory.h"
 #include "api/frame_transformer_interface.h"
 #include "api/make_ref_counted.h"
+#include "api/rtp_header_extension_id.h"
 #include "api/rtp_headers.h"
 #include "api/rtp_parameters.h"
 #include "api/scoped_refptr.h"
@@ -319,7 +320,7 @@ TEST_F(RtpVideoStreamReceiver2Test, CacheColorSpaceFromLastPacketOfKeyframe) {
 
     RtpPacketReceived NextPacket() {
       RtpHeaderExtensionMap extension_map;
-      extension_map.Register<ColorSpaceExtension>(1);
+      extension_map.Register<ColorSpaceExtension>(RtpHeaderExtensionId(1));
       RtpPacketToSend packet_to_send(&extension_map);
       packet_to_send.SetSequenceNumber(sequence_number_++);
       packet_to_send.SetSsrc(kSsrc);
@@ -421,7 +422,8 @@ class ReceivedPacketGenerator {
 
   RtpPacketReceived NextPacket(bool include_corruption_header) {
     RtpHeaderExtensionMap extension_map;
-    extension_map.Register<CorruptionDetectionExtension>(/*id=*/1);
+    extension_map.Register<CorruptionDetectionExtension>(
+        RtpHeaderExtensionId(/*id=*/1));
     RtpPacketToSend packet_to_send(&extension_map);
     packet_to_send.SetSequenceNumber(sequence_number_++);
     packet_to_send.SetSsrc(kSsrc);
@@ -557,6 +559,57 @@ TEST_F(RtpVideoStreamReceiver2Test,
 }
 
 TEST_F(RtpVideoStreamReceiver2Test,
+       FrameInstrumentationDataGetsPopulatedForSyncMessage) {
+  const std::vector<uint8_t> kKeyFramePayload = {0, 1, 2, 3, 4};
+
+  // Prepare the receiver for VP9.
+  CodecParameterMap codec_params;
+  rtp_video_stream_receiver_->AddReceiveCodec(kVp9PayloadType, kVideoCodecVP9,
+                                              codec_params,
+                                              /*raw_payload=*/false);
+
+  ReceivedPacketGenerator received_packet_generator;
+  // Create a sync-only message.
+  CorruptionDetectionMessage::Builder builder;
+  builder.WithSequenceIndex(0).WithInterpretSequenceIndexAsMostSignificantBits(
+      true);
+  std::optional<CorruptionDetectionMessage> corruption_detection_msg =
+      builder.Build();
+  ASSERT_TRUE(corruption_detection_msg.has_value());
+  received_packet_generator.SetCorruptionDetectionHeader(
+      *corruption_detection_msg);
+
+  // Generate key frame packets.
+  received_packet_generator.SetPayload(kKeyFramePayload,
+                                       VideoFrameType::kVideoFrameKey);
+  // Have corruption header on the key frame.
+  RtpPacketReceived key_frame_packet =
+      received_packet_generator.NextPacket(/*include_corruption_header=*/true);
+
+  rtp_video_stream_receiver_->StartReceive();
+  mock_on_complete_frame_callback_.AppendExpectedBitstream(
+      kKeyFramePayload.data(), kKeyFramePayload.size());
+
+  EXPECT_TRUE(key_frame_packet.GetExtension<CorruptionDetectionExtension>());
+  std::unique_ptr<EncodedFrame> key_encoded_frame;
+  EXPECT_CALL(mock_on_complete_frame_callback_, DoOnCompleteFrame(_))
+      .WillOnce([&](EncodedFrame* encoded_frame) {
+        key_encoded_frame = std::make_unique<EncodedFrame>(*encoded_frame);
+      });
+  rtp_video_stream_receiver_->OnRtpPacket(key_frame_packet);
+  ASSERT_TRUE(key_encoded_frame != nullptr);
+  std::optional<FrameInstrumentationData> frame_inst_data_key_frame =
+      key_encoded_frame->CodecSpecific()->frame_instrumentation_data;
+  ASSERT_TRUE(frame_inst_data_key_frame.has_value());
+  EXPECT_EQ(frame_inst_data_key_frame->sequence_index(), 0);
+  EXPECT_TRUE(frame_inst_data_key_frame->is_sync_only());
+  EXPECT_EQ(frame_inst_data_key_frame->std_dev(), 0.0);
+  EXPECT_EQ(frame_inst_data_key_frame->luma_error_threshold(), 0);
+  EXPECT_EQ(frame_inst_data_key_frame->chroma_error_threshold(), 0);
+  EXPECT_TRUE(frame_inst_data_key_frame->sample_values().empty());
+}
+
+TEST_F(RtpVideoStreamReceiver2Test,
        FrameInstrumentationDataGetsPopulatedMSBIncreasedCorrectly) {
   const std::vector<uint8_t> kKeyFramePayload = {0, 1, 2, 3, 4};
   const std::vector<uint8_t> kDeltaFramePayload = {5, 6, 7, 8, 9};
@@ -660,7 +713,7 @@ TEST_F(RtpVideoStreamReceiver2Test, SetProtectionPayloadTypes) {
 
 TEST_F(RtpVideoStreamReceiver2Test, PacketInfoIsPropagatedIntoVideoFrames) {
   constexpr uint64_t kAbsoluteCaptureTimestamp = 12;
-  constexpr int kId0 = 1;
+  constexpr RtpHeaderExtensionId kId0(1);
 
   RtpHeaderExtensionMap extension_map;
   extension_map.Register<AbsoluteCaptureTimeExtension>(kId0);
@@ -690,7 +743,7 @@ TEST_F(RtpVideoStreamReceiver2Test, PacketInfoIsPropagatedIntoVideoFrames) {
 TEST_F(RtpVideoStreamReceiver2Test,
        MissingAbsoluteCaptureTimeIsFilledWithExtrapolatedValue) {
   constexpr uint64_t kAbsoluteCaptureTimestamp = 12;
-  constexpr int kId0 = 1;
+  constexpr RtpHeaderExtensionId kId0(1);
 
   RtpHeaderExtensionMap extension_map;
   extension_map.Register<AbsoluteCaptureTimeExtension>(kId0);
@@ -731,6 +784,70 @@ TEST_F(RtpVideoStreamReceiver2Test,
       });
   rtp_video_stream_receiver_->OnReceivedPayloadData(data, rtp_packet,
                                                     video_header, 0);
+}
+
+// Integration test (full receiver path): reproduces the post-congestion video
+// recovery freeze and verifies recovery. After prolonged subscriber-side loss
+// the publisher's RTP sequence number advances past the 16-bit half-range while
+// the receiver is stalled. When media resumes, the fresh keyframe lands at a
+// sequence number that appears "behind" the pre-stall GoP in modular
+// arithmetic; the stale GoP then shadows reference lookups and every
+// post-recovery delta frame is silently dropped ("has no GoP"), so video stays
+// frozen for 60-150s even though complete frames are arriving. This drives
+// packets through the whole receiver (packet buffer -> frame assembly ->
+// reference finder) and asserts frames keep flowing after the jump.
+// issues.webrtc.org/516639936.
+TEST_F(RtpVideoStreamReceiver2Test, RecoversAfterLargeSequenceNumberJump) {
+  const CopyOnWriteBuffer data("1234");
+  // Every frame carries the same payload so the mock's bitstream check passes
+  // for all of them and we can assert on the delivered-frame count.
+  mock_on_complete_frame_callback_.AppendExpectedBitstream(data.data(),
+                                                           data.size());
+
+  auto inject = [&](uint16_t seq, uint32_t rtp_timestamp, bool keyframe) {
+    RtpPacketReceived rtp_packet;
+    rtp_packet.SetPayloadType(kPayloadType);
+    rtp_packet.SetSequenceNumber(seq);
+    rtp_packet.SetTimestamp(rtp_timestamp);
+    rtp_packet.SetSsrc(kSsrc);
+    RTPVideoHeader video_header = GetGenericVideoHeader(
+        keyframe ? VideoFrameType::kVideoFrameKey
+                 : VideoFrameType::kVideoFrameDelta);
+    rtp_video_stream_receiver_->OnReceivedPayloadData(data, rtp_packet,
+                                                      video_header,
+                                                      /*times_nacked=*/0);
+  };
+
+  // 4 pre-stall frames (1 key + 3 delta) and 141 post-recovery frames
+  // (1 key + 140 delta) must all be delivered. The freeze needs >100
+  // post-recovery deltas to manifest: the finder's routine
+  // (last_seq_num - 100) cleanup eventually erases the new keyframe's GoP,
+  // leaving only the stale wrapped GoP, after which every further delta is
+  // dropped ("has no GoP"). Before the fix the delivered count was ~105.
+  EXPECT_CALL(mock_on_complete_frame_callback_, DoOnCompleteFrame).Times(145);
+
+  // Pre-stall stream: keyframe followed by a few deltas. Start high so the
+  // post-recovery sequence number wraps past 0. This reproduces the real-world
+  // condition: the stale pre-stall GoP then sorts numerically *after* the new
+  // keyframe and survives the reference finder's routine lower_bound cleanup,
+  // so only the stale-GoP removal can clear it.
+  uint16_t seq = 60'000;
+  uint32_t ts = 90'000;
+  inject(seq, ts, /*keyframe=*/true);
+  for (int i = 0; i < 3; ++i) {
+    inject(++seq, ts += 3'000, /*keyframe=*/false);
+  }
+
+  // Prolonged congestion: when media resumes the sequence number has advanced
+  // past the half-range (+40000, wrapping past 0 to ~34467) and the timestamp
+  // has advanced with it. A fresh (PLI-triggered) keyframe arrives, followed
+  // by delta frames.
+  seq += 40'000;
+  ts += 40'000u * 3'000u;
+  inject(seq, ts, /*keyframe=*/true);
+  for (int i = 0; i < 140; ++i) {
+    inject(++seq, ts += 3'000, /*keyframe=*/false);
+  }
 }
 
 TEST_F(RtpVideoStreamReceiver2Test,
@@ -864,7 +981,7 @@ TEST_P(RtpVideoStreamReceiver2TestH264, OutOfBandFmtpSpsPps) {
   CodecParameterMap codec_params;
   // Example parameter sets from https://tools.ietf.org/html/rfc3984#section-8.2
   // .
-  codec_params.insert({kH264FmtpSpropParameterSets, "Z0IACpZTBYmI,aMljiA=="});
+  codec_params.emplace(kH264FmtpSpropParameterSets, "Z0IACpZTBYmI,aMljiA==");
   rtp_video_stream_receiver_->AddReceiveCodec(kH264PayloadType, kVideoCodecH264,
                                               codec_params,
                                               /*raw_payload=*/false);
@@ -911,7 +1028,7 @@ TEST_P(RtpVideoStreamReceiver2TestH264, ForceSpsPpsIdrIsKeyframe) {
   CodecParameterMap codec_params;
   // Forcing can be done either with field trial or codec_params.
   if (!env_.field_trials().IsEnabled("WebRTC-SpsPpsIdrIsH264Keyframe")) {
-    codec_params.insert({kH264FmtpSpsPpsIdrInKeyframe, ""});
+    codec_params.emplace(kH264FmtpSpsPpsIdrInKeyframe, "");
   }
   rtp_video_stream_receiver_->AddReceiveCodec(kPayloadType, kVideoCodecH264,
                                               codec_params,
@@ -1167,7 +1284,8 @@ TEST_F(RtpVideoStreamReceiver2Test, ParseGenericDescriptorOnePacket) {
   rtp_video_stream_receiver_->StartReceive();
 
   RtpHeaderExtensionMap extension_map;
-  extension_map.Register<RtpGenericFrameDescriptorExtension00>(5);
+  extension_map.Register<RtpGenericFrameDescriptorExtension00>(
+      RtpHeaderExtensionId(5));
   RtpPacketReceived rtp_packet(&extension_map);
   rtp_packet.SetPayloadType(kPayloadType);
 
@@ -1210,7 +1328,8 @@ TEST_F(RtpVideoStreamReceiver2Test, ParseGenericDescriptorTwoPackets) {
   rtp_video_stream_receiver_->StartReceive();
 
   RtpHeaderExtensionMap extension_map;
-  extension_map.Register<RtpGenericFrameDescriptorExtension00>(5);
+  extension_map.Register<RtpGenericFrameDescriptorExtension00>(
+      RtpHeaderExtensionId(5));
   RtpPacketReceived first_packet(&extension_map);
 
   RtpGenericFrameDescriptor first_packet_descriptor;
@@ -1271,7 +1390,8 @@ TEST_F(RtpVideoStreamReceiver2Test, ParseGenericDescriptorRawPayload) {
   rtp_video_stream_receiver_->StartReceive();
 
   RtpHeaderExtensionMap extension_map;
-  extension_map.Register<RtpGenericFrameDescriptorExtension00>(5);
+  extension_map.Register<RtpGenericFrameDescriptorExtension00>(
+      RtpHeaderExtensionId(5));
   RtpPacketReceived rtp_packet(&extension_map);
 
   RtpGenericFrameDescriptor generic_descriptor;
@@ -1302,7 +1422,8 @@ TEST_F(RtpVideoStreamReceiver2Test, UnwrapsFrameId) {
                                               /*raw_payload=*/true);
   rtp_video_stream_receiver_->StartReceive();
   RtpHeaderExtensionMap extension_map;
-  extension_map.Register<RtpGenericFrameDescriptorExtension00>(5);
+  extension_map.Register<RtpGenericFrameDescriptorExtension00>(
+      RtpHeaderExtensionId(5));
 
   uint16_t rtp_sequence_number = 1;
   auto inject_packet = [&](uint16_t wrapped_frame_id) {
@@ -1346,7 +1467,8 @@ class RtpVideoStreamReceiver2DependencyDescriptorTest
     rtp_video_stream_receiver_->AddReceiveCodec(payload_type_,
                                                 kVideoCodecGeneric, {},
                                                 /*raw_payload=*/true);
-    extension_map_.Register<RtpDependencyDescriptorExtension>(7);
+    extension_map_.Register<RtpDependencyDescriptorExtension>(
+        RtpHeaderExtensionId(7));
     rtp_video_stream_receiver_->StartReceive();
   }
 
@@ -1663,7 +1785,7 @@ TEST_F(RtpVideoStreamReceiver2Test, TransformFrameWithAbsoluteCaptureTime) {
   receiver->AddReceiveCodec(kPayloadType, kVideoCodecGeneric, {},
                             /*raw_payload=*/false);
 
-  constexpr int kId0 = 1;
+  constexpr RtpHeaderExtensionId kId0(1);
   RtpHeaderExtensionMap extension_map;
   extension_map.Register<AbsoluteCaptureTimeExtension>(kId0);
   RtpPacketReceived rtp_packet(&extension_map);
@@ -1732,7 +1854,7 @@ INSTANTIATE_TEST_SUITE_P(PlayoutDelay,
 TEST_P(RtpVideoStreamReceiver2TestPlayoutDelay, PlayoutDelay) {
   CopyOnWriteBuffer payload_data({'1', '2', '3', '4'});
   RtpHeaderExtensionMap extension_map;
-  extension_map.Register<PlayoutDelayLimits>(1);
+  extension_map.Register<PlayoutDelayLimits>(RtpHeaderExtensionId(1));
   RtpPacketToSend packet_to_send(&extension_map);
   packet_to_send.SetPayloadType(kPayloadType);
   packet_to_send.SetSequenceNumber(1);

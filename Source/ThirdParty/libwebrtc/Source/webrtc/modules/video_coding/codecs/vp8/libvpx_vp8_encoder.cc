@@ -1023,6 +1023,8 @@ int LibvpxVp8Encoder::Encode(const VideoFrame& frame,
   if (encoded_complete_callback_ == nullptr)
     return WEBRTC_VIDEO_CODEC_UNINITIALIZED;
 
+  // A keyframe request on any stream triggers a keyframe on all streams
+  // in order to keep the temporal layering structure aligned.
   bool key_frame_requested = false;
   for (size_t i = 0; i < key_frame_request_.size() && i < send_stream_.size();
        ++i) {

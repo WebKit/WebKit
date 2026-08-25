@@ -97,7 +97,8 @@ class TurnPort : public Port {
                       .ice_username_fragment = args.username,
                       .ice_password = args.password,
                       .content_name = args.content_name,
-                      .lna_permission_factory = args.lna_permission_factory},
+                      .lna_permission_factory = args.lna_permission_factory,
+                      .ice_tiebreaker = args.ice_tiebreaker},
                      socket, *args.server_address, args.config->credentials,
                      args.relative_priority, args.config->tls_alpn_protocols,
                      args.config->tls_elliptic_curves, args.turn_customizer,
@@ -121,7 +122,12 @@ class TurnPort : public Port {
          .ice_username_fragment = args.username,
          .ice_password = args.password,
          .content_name = args.content_name,
-         .lna_permission_factory = args.lna_permission_factory},
+         .lna_permission_factory = args.lna_permission_factory
+#if WEBRTC_WEBKIT_BUILD
+         ,
+         .ice_tiebreaker = args.ice_tiebreaker
+#endif
+        },
         min_port, max_port, *args.server_address, args.config->credentials,
         args.relative_priority, args.config->tls_alpn_protocols,
         args.config->tls_elliptic_curves, args.turn_customizer,

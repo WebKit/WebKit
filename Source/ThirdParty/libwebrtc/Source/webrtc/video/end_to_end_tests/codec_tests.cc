@@ -13,6 +13,7 @@
 #include <vector>
 
 #include "api/environment/environment.h"
+#include "api/rtp_header_extension_id.h"
 #include "api/rtp_parameters.h"
 #include "api/test/video/function_video_decoder_factory.h"
 #include "api/test/video/function_video_encoder_factory.h"
@@ -39,11 +40,8 @@
 
 namespace webrtc {
 namespace {
-enum : int {  // The first valid value is 1.
-  kColorSpaceExtensionId = 1,
-  kVideoRotationExtensionId,
-};
-}  // namespace
+constexpr RtpHeaderExtensionId kColorSpaceExtensionId(1);
+constexpr RtpHeaderExtensionId kVideoRotationExtensionId(2);
 
 class CodecEndToEndTest : public test::CallTest {
  public:
@@ -281,4 +279,5 @@ TEST_P(EndToEndTestH264, SendsAndReceivesH264PacketizationMode1) {
 }
 #endif  // defined(WEBRTC_USE_H264)
 
+}  // namespace
 }  // namespace webrtc

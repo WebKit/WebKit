@@ -198,6 +198,7 @@ rtc_library("candidate") {
     "../rtc_base:net_helper",
     "../rtc_base:network_constants",
     "../rtc_base:socket_address",
+    "../rtc_base:ssl",
     "../rtc_base:stringutils",
     "../rtc_base/system:rtc_export",
     "//third_party/abseil-cpp/absl/base:core_headers",
@@ -266,9 +267,9 @@ rtc_library("sframe_types") {
   sources = [ "sframe/sframe_types.h" ]
 }
 
-rtc_library("sframe_encrypter_interface") {
+rtc_library("sframe_encryptor_interface") {
   visibility = [ "*" ]
-  sources = [ "sframe/sframe_encrypter_interface.h" ]
+  sources = [ "sframe/sframe_encryptor_interface.h" ]
   deps = [
     ":ref_count",
     ":rtc_error",
@@ -276,9 +277,9 @@ rtc_library("sframe_encrypter_interface") {
   ]
 }
 
-rtc_library("sframe_decrypter_interface") {
+rtc_library("sframe_decryptor_interface") {
   visibility = [ "*" ]
-  sources = [ "sframe/sframe_decrypter_interface.h" ]
+  sources = [ "sframe/sframe_decryptor_interface.h" ]
   deps = [
     ":ref_count",
     ":rtc_error",
@@ -302,7 +303,7 @@ rtc_library("rtp_sender_interface") {
     ":rtc_error",
     ":rtp_parameters",
     ":scoped_refptr",
-    ":sframe_encrypter_interface",
+    ":sframe_encryptor_interface",
     "../rtc_base:checks",
     "../rtc_base/system:rtc_export",
     "crypto:frame_encryptor_interface",
@@ -343,6 +344,7 @@ rtc_library("jsep") {
     ":payload_type",
     ":ref_count",
     ":rtc_error",
+    ":rtp_header_extension_id",
     ":rtp_parameters",
     ":rtp_transceiver_direction",
     ":sctp_transport_interface",
@@ -371,6 +373,7 @@ rtc_library("jsep") {
     "../rtc_base:socket_address",
     "../rtc_base:ssl",
     "../rtc_base:stringutils",
+    "../rtc_base/containers:flat_set",
     "../rtc_base/system:no_unique_address",
     "../rtc_base/system:rtc_export",
     "../system_wrappers:metrics",
@@ -489,6 +492,7 @@ rtc_library("peer_connection_interface") {
     "transport:sctp_transport_factory_interface",
     "units:time_delta",
     "video:video_bitrate_allocator_factory",
+    "video/timing:video_jitter_timing_factory",
     "video_codecs:video_codecs_api",
     "//third_party/abseil-cpp/absl/base:core_headers",
     "//third_party/abseil-cpp/absl/strings:string_view",
@@ -509,7 +513,7 @@ rtc_library("rtp_receiver_interface") {
     ":rtc_error",
     ":rtp_parameters",
     ":scoped_refptr",
-    ":sframe_decrypter_interface",
+    ":sframe_decryptor_interface",
     ":sframe_types",
     "../rtc_base:checks",
     "../rtc_base/system:rtc_export",
@@ -570,110 +574,6 @@ rtc_library("video_track_source_proxy_factory") {
     ":scoped_refptr",
     "../rtc_base:threading",
     "../rtc_base/system:rtc_export",
-  ]
-}
-
-rtc_library("libjingle_peerconnection_api") {
-  # This target is visible externally for backwards compatibility,
-  # but should not be depended on by webrtc source.
-  visibility = [ "*" ]
-  cflags = []
-  sources = [
-    # Should be removed, users of these .h files should depend directly
-    # on the associated targets.
-    "data_channel_interface.h",  # Used downstream
-    "jsep.h",  #  Used downstream
-    "legacy_stats_types.h",  # Used downstream
-    "peer_connection_interface.h",  # Used downstream
-    "rtp_receiver_interface.h",  # Used downstream
-    "rtp_sender_interface.h",  # Used downstream
-    "rtp_transceiver_interface.h",  # Used downstream
-    "sctp_transport_interface.h",  # Used downstream
-    "set_local_description_observer_interface.h",  # Used downstream
-    "set_remote_description_observer_interface.h",  # Used downstream
-    "uma_metrics.h",  # Used downstream
-    "video_track_source_proxy_factory.h",  # Used downstream
-  ]
-  deps = [
-    ":async_dns_resolver",
-    ":audio_options_api",
-    ":candidate",
-    ":data_channel_event_observer_interface",
-    ":dtls_transport_interface",
-    ":dtmf_sender_interface",
-    ":fec_controller_api",
-    ":field_trials_view",
-    ":frame_transformer_interface",
-    ":ice_transport_interface",
-    ":libjingle_logging_api",
-    ":local_network_access_permission",
-    ":media_stream_interface",
-    ":network_state_predictor_api",
-    ":packet_socket_factory",
-    ":priority",
-    ":ref_count",
-    ":rtc_error",
-    ":rtc_stats_api",
-    ":rtp_parameters",
-    ":rtp_transceiver_direction",
-    ":rtp_transport_factory",
-    ":scoped_refptr",
-    ":sequence_checker",
-    ":sframe_decrypter_interface",
-    ":sframe_encrypter_interface",
-    ":sframe_types",
-    ":turn_customizer",
-    "../p2p:dtls_transport_factory",
-    "../p2p:port",
-    "../p2p:port_allocator",
-    "../rtc_base:copy_on_write_buffer",
-    "../rtc_base:macromagic",
-    "../rtc_base:network",
-    "../rtc_base:network_constants",
-    "../rtc_base:rtc_certificate_generator",
-    "../rtc_base:socket_factory",
-    "../rtc_base:ssl",
-    "../rtc_base:ssl_adapter",
-    "../rtc_base/system:no_unique_address",
-    "../rtc_base/system:plan_b_only",
-    "adaptation:resource_adaptation_api",
-    "audio:audio_device",
-    "audio:audio_frame_processor",
-    "audio:audio_mixer_api",
-    "audio:audio_processing",
-    "audio_codecs:audio_codecs_api",
-    "crypto:frame_decryptor_interface",
-    "crypto:frame_encryptor_interface",
-    "crypto:options",
-    "environment",
-    "metronome",
-    "neteq:neteq_api",
-    "rtc_event_log:rtc_event_log_factory_interface",
-    "transport:bandwidth_estimation_settings",
-    "transport:bitrate_settings",
-    "transport:enums",
-    "transport:network_control",
-    "transport:sctp_transport_factory_interface",
-    "transport/rtp:rtp_source",
-    "units:time_delta",
-    "video:video_bitrate_allocator_factory",
-    "video_codecs:video_codecs_api",
-    "//third_party/abseil-cpp/absl/algorithm:container",
-    "//third_party/abseil-cpp/absl/base:core_headers",
-    "//third_party/abseil-cpp/absl/base:nullability",
-    "//third_party/abseil-cpp/absl/functional:any_invocable",
-    "//third_party/abseil-cpp/absl/memory",
-    "//third_party/abseil-cpp/absl/strings",
-    "//third_party/abseil-cpp/absl/strings:str_format",
-    "//third_party/abseil-cpp/absl/strings:string_view",
-
-    # Basically, don't add stuff here. You might break sensitive downstream
-    # targets like pnacl. API should not depend on anything outside of this
-    # file, really. All these should arguably go away in time.
-    "../media:rtc_media_config",  # keep
-    "../rtc_base:checks",  # keep
-    "../rtc_base:threading",  # keep
-    "../rtc_base/system:rtc_export",  # keep
   ]
 }
 
@@ -833,6 +733,7 @@ rtc_source_set("rtp_header_extension_id") {
   deps = [
     "../rtc_base:checks",
     "../rtc_base:strong_alias",
+    "//third_party/abseil-cpp/absl/base:core_headers",
     "//third_party/abseil-cpp/absl/strings:str_format",
   ]
 }
@@ -1075,14 +976,18 @@ rtc_library("rtc_event_log_output_file") {
   ]
 }
 
-rtc_source_set("rtc_stats_api") {
+rtc_library("rtc_stats_api") {
   visibility = [ "*" ]
   cflags = []
   sources = [
+    "stats/attribute.cc",
     "stats/attribute.h",
+    "stats/rtc_stats.cc",
     "stats/rtc_stats.h",
     "stats/rtc_stats_collector_callback.h",
+    "stats/rtc_stats_report.cc",
     "stats/rtc_stats_report.h",
+    "stats/rtcstats_objects.cc",
     "stats/rtcstats_objects.h",
   ]
 
@@ -1091,6 +996,7 @@ rtc_source_set("rtc_stats_api") {
     ":refcountedbase",
     ":scoped_refptr",
     "../rtc_base:checks",
+    "../rtc_base:stringutils",
     "../rtc_base/system:rtc_export",
     "units:timestamp",
   ]
@@ -1123,6 +1029,7 @@ rtc_source_set("bitrate_allocation") {
   sources = [ "call/bitrate_allocation.h" ]
   deps = [
     "units:data_rate",
+    "units:data_size",
     "units:time_delta",
   ]
 }
@@ -1846,11 +1753,13 @@ if (rtc_include_tests) {
       "peer_connection_interface_unittest.cc",
       "rtc_error_unittest.cc",
       "rtc_event_log_output_file_unittest.cc",
+      "rtp_header_extension_id_unittest.cc",
       "rtp_packet_info_unittest.cc",
       "rtp_packet_infos_unittest.cc",
       "rtp_parameters_unittest.cc",
       "scoped_refptr_unittest.cc",
       "sequence_checker_unittest.cc",
+      "test/frame_transformer_factory_unittest.cc",
       "test/peerconnection_quality_test_fixture_unittest.cc",
       "webrtc_sdp_encoding_options_unittest.cc",
       "webrtc_sdp_unittest.cc",
@@ -1860,8 +1769,13 @@ if (rtc_include_tests) {
       ":candidate",
       ":field_trials",
       ":field_trials_view",
+      ":frame_transformer_factory",
+      ":frame_transformer_interface",
       ":function_view",
       ":jsep",
+      ":mock_transformable_audio_frame",
+      ":mock_transformable_video_frame",
+      ":payload_type",
       ":peer_connection_interface",
       ":rtc_error",
       ":rtc_event_log_output_file",
@@ -1905,15 +1819,21 @@ if (rtc_include_tests) {
       "../test:test_support",
       "audio_codecs/opus:unittests",
       "environment:environment_unittests",
+      "environment:force_test_environment",
       "task_queue:task_queue_default_factory_unittests",
       "test/pclf:media_configuration",
       "test/video:video_frame_writer",
       "units:time_delta",
       "units:timestamp",
       "units:units_unittests",
+      "video:encoded_frame_unittest",
       "video:frame_buffer_unittest",
       "video:rtp_video_frame_assembler_unittests",
+      "video:video_adapter_unittest",
+      "video:video_broadcaster_unittest",
+      "video:video_common_unittest",
       "video:video_frame",
+      "video:video_frame_metadata",
       "video:video_frame_metadata_unittest",
       "video/corruption_detection:corruption_detection_unittests",
       "video/corruption_detection:frame_instrumentation_data_reader_unittest",
@@ -2016,6 +1936,7 @@ rtc_library("field_trials") {
     ":field_trials_view",
     "../rtc_base:checks",
     "../rtc_base/containers:flat_map",
+    "environment:force_test_environment",
     "//third_party/abseil-cpp/absl/base:nullability",
     "//third_party/abseil-cpp/absl/memory",
     "//third_party/abseil-cpp/absl/strings:string_view",
@@ -2030,6 +1951,7 @@ rtc_library("frame_transformer_factory") {
   ]
   deps = [
     ":frame_transformer_interface",
+    ":payload_type",
     "../audio",
     "../modules/rtp_rtcp",
     "../rtc_base:checks",

@@ -257,4 +257,11 @@ TEST_F(ProxyTest, WorkerMethod2) {
   EXPECT_EQ("Method2", fake_proxy_->Method2(arg1, arg2));
 }
 
+TEST_F(ProxyTest, DoesNotHangWhenTargetThreadQuits) {
+  signaling_thread_->Stop();
+  EXPECT_CALL(*fake_, Method0).Times(0);
+  EXPECT_CALL(*fake_, Destroy).Times(1);
+  fake_proxy_->Method0();
+}
+
 }  // namespace webrtc

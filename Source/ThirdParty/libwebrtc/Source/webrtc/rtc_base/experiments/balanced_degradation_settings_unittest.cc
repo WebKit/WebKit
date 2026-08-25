@@ -15,6 +15,7 @@
 
 #include "api/field_trials.h"
 #include "api/video/video_codec_type.h"
+#include "test/create_test_field_trials.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 
@@ -60,7 +61,7 @@ void VerifyIsDefault(
 }  // namespace
 
 TEST(BalancedDegradationSettings, GetsDefaultConfigIfNoList) {
-  FieldTrials field_trials("");
+  FieldTrials field_trials = CreateTestFieldTrials("");
   BalancedDegradationSettings settings(field_trials);
   VerifyIsDefault(settings.GetConfigs());
   EXPECT_TRUE(settings.CanAdaptUp(kVideoCodecVP8, 1, /*bitrate_bps*/ 1));
@@ -75,7 +76,7 @@ TEST(BalancedDegradationSettings, GetsDefaultConfigIfNoList) {
 }
 
 TEST(BalancedDegradationSettings, GetsConfig) {
-  FieldTrials field_trials(
+  FieldTrials field_trials = CreateTestFieldTrials(
       "WebRTC-Video-BalancedDegradationSettings/"
       "pixels:11|22|33,fps:5|15|25,other:4|5|6/");
   BalancedDegradationSettings settings(field_trials);
@@ -117,7 +118,7 @@ TEST(BalancedDegradationSettings, GetsConfig) {
 }
 
 TEST(BalancedDegradationSettings, GetsDefaultConfigForZeroFpsValue) {
-  FieldTrials field_trials(
+  FieldTrials field_trials = CreateTestFieldTrials(
       "WebRTC-Video-BalancedDegradationSettings/"
       "pixels:1000|2000|3000,fps:0|15|25/");
   BalancedDegradationSettings settings(field_trials);
@@ -125,7 +126,7 @@ TEST(BalancedDegradationSettings, GetsDefaultConfigForZeroFpsValue) {
 }
 
 TEST(BalancedDegradationSettings, GetsDefaultConfigIfPixelsDecreases) {
-  FieldTrials field_trials(
+  FieldTrials field_trials = CreateTestFieldTrials(
       "WebRTC-Video-BalancedDegradationSettings/"
       "pixels:1000|999|3000,fps:5|15|25/");
   BalancedDegradationSettings settings(field_trials);
@@ -133,7 +134,7 @@ TEST(BalancedDegradationSettings, GetsDefaultConfigIfPixelsDecreases) {
 }
 
 TEST(BalancedDegradationSettings, GetsDefaultConfigIfFramerateDecreases) {
-  FieldTrials field_trials(
+  FieldTrials field_trials = CreateTestFieldTrials(
       "WebRTC-Video-BalancedDegradationSettings/"
       "pixels:1000|2000|3000,fps:5|4|25/");
   BalancedDegradationSettings settings(field_trials);
@@ -141,7 +142,7 @@ TEST(BalancedDegradationSettings, GetsDefaultConfigIfFramerateDecreases) {
 }
 
 TEST(BalancedDegradationSettings, GetsConfigWithSpecificFps) {
-  FieldTrials field_trials(
+  FieldTrials field_trials = CreateTestFieldTrials(
       "WebRTC-Video-BalancedDegradationSettings/"
       "pixels:1000|2000|3000,fps:5|15|25,vp8_fps:7|8|9,vp9_fps:9|10|11,"
       "h264_fps:11|12|13,av1_fps:1|2|3,generic_fps:13|14|15/");
@@ -184,7 +185,7 @@ TEST(BalancedDegradationSettings, GetsConfigWithSpecificFps) {
 }
 
 TEST(BalancedDegradationSettings, GetsDefaultConfigForZeroVp8FpsValue) {
-  FieldTrials field_trials(
+  FieldTrials field_trials = CreateTestFieldTrials(
       "WebRTC-Video-BalancedDegradationSettings/"
       "pixels:1000|2000|3000,fps:7|15|25,vp8_fps:0|15|25/");
   BalancedDegradationSettings settings(field_trials);
@@ -192,7 +193,7 @@ TEST(BalancedDegradationSettings, GetsDefaultConfigForZeroVp8FpsValue) {
 }
 
 TEST(BalancedDegradationSettings, GetsDefaultConfigForInvalidFpsValue) {
-  FieldTrials field_trials(
+  FieldTrials field_trials = CreateTestFieldTrials(
       "WebRTC-Video-BalancedDegradationSettings/"
       "pixels:1000|2000|3000,fps:7|15|25,vp8_fps:10|15|2000/");
   BalancedDegradationSettings settings(field_trials);
@@ -200,7 +201,7 @@ TEST(BalancedDegradationSettings, GetsDefaultConfigForInvalidFpsValue) {
 }
 
 TEST(BalancedDegradationSettings, GetsDefaultConfigIfVp8FramerateDecreases) {
-  FieldTrials field_trials(
+  FieldTrials field_trials = CreateTestFieldTrials(
       "WebRTC-Video-BalancedDegradationSettings/"
       "pixels:1000|2000|3000,fps:4|5|25,vp8_fps:5|4|25/");
   BalancedDegradationSettings settings(field_trials);
@@ -208,7 +209,7 @@ TEST(BalancedDegradationSettings, GetsDefaultConfigIfVp8FramerateDecreases) {
 }
 
 TEST(BalancedDegradationSettings, GetsMinFps) {
-  FieldTrials field_trials(
+  FieldTrials field_trials = CreateTestFieldTrials(
       "WebRTC-Video-BalancedDegradationSettings/"
       "pixels:1000|2000|3000,fps:5|15|25/");
   BalancedDegradationSettings settings(field_trials);
@@ -223,7 +224,7 @@ TEST(BalancedDegradationSettings, GetsMinFps) {
 }
 
 TEST(BalancedDegradationSettings, GetsVp8MinFps) {
-  FieldTrials field_trials(
+  FieldTrials field_trials = CreateTestFieldTrials(
       "WebRTC-Video-BalancedDegradationSettings/"
       "pixels:1000|2000|3000,fps:5|15|25,vp8_fps:7|10|12/");
   BalancedDegradationSettings settings(field_trials);
@@ -238,7 +239,7 @@ TEST(BalancedDegradationSettings, GetsVp8MinFps) {
 }
 
 TEST(BalancedDegradationSettings, GetsMaxFps) {
-  FieldTrials field_trials(
+  FieldTrials field_trials = CreateTestFieldTrials(
       "WebRTC-Video-BalancedDegradationSettings/"
       "pixels:1000|2000|3000,fps:5|15|25/");
   BalancedDegradationSettings settings(field_trials);
@@ -251,7 +252,7 @@ TEST(BalancedDegradationSettings, GetsMaxFps) {
 }
 
 TEST(BalancedDegradationSettings, GetsVp8MaxFps) {
-  FieldTrials field_trials(
+  FieldTrials field_trials = CreateTestFieldTrials(
       "WebRTC-Video-BalancedDegradationSettings/"
       "pixels:1000|2000|3000,fps:5|15|25,vp8_fps:7|10|12/");
   BalancedDegradationSettings settings(field_trials);
@@ -264,7 +265,7 @@ TEST(BalancedDegradationSettings, GetsVp8MaxFps) {
 }
 
 TEST(BalancedDegradationSettings, GetsVp9Fps) {
-  FieldTrials field_trials(
+  FieldTrials field_trials = CreateTestFieldTrials(
       "WebRTC-Video-BalancedDegradationSettings/"
       "pixels:1000|2000|3000,fps:5|15|25,vp9_fps:7|10|12/");
   BalancedDegradationSettings settings(field_trials);
@@ -273,7 +274,7 @@ TEST(BalancedDegradationSettings, GetsVp9Fps) {
 }
 
 TEST(BalancedDegradationSettings, GetsH264Fps) {
-  FieldTrials field_trials(
+  FieldTrials field_trials = CreateTestFieldTrials(
       "WebRTC-Video-BalancedDegradationSettings/"
       "pixels:1000|2000|3000,fps:5|15|25,h264_fps:8|11|13/");
   BalancedDegradationSettings settings(field_trials);
@@ -282,7 +283,7 @@ TEST(BalancedDegradationSettings, GetsH264Fps) {
 }
 
 TEST(BalancedDegradationSettings, GetsGenericFps) {
-  FieldTrials field_trials(
+  FieldTrials field_trials = CreateTestFieldTrials(
       "WebRTC-Video-BalancedDegradationSettings/"
       "pixels:1000|2000|3000,fps:5|15|25,generic_fps:9|12|14/");
   BalancedDegradationSettings settings(field_trials);
@@ -292,7 +293,7 @@ TEST(BalancedDegradationSettings, GetsGenericFps) {
 }
 
 TEST(BalancedDegradationSettings, GetsUnlimitedForMaxValidFps) {
-  FieldTrials field_trials(
+  FieldTrials field_trials = CreateTestFieldTrials(
       "WebRTC-Video-BalancedDegradationSettings/"
       "pixels:1000|2000|3000,fps:5|15|100,vp8_fps:30|100|100/");
   const int kUnlimitedFps = std::numeric_limits<int>::max();
@@ -304,7 +305,7 @@ TEST(BalancedDegradationSettings, GetsUnlimitedForMaxValidFps) {
 }
 
 TEST(BalancedDegradationSettings, GetsConfigWithBitrate) {
-  FieldTrials field_trials(
+  FieldTrials field_trials = CreateTestFieldTrials(
       "WebRTC-Video-BalancedDegradationSettings/"
       "pixels:11|22|33,fps:5|15|25,kbps:44|88|99,kbps_res:55|111|222,"
       "vp8_kbps:11|12|13,vp8_kbps_res:14|15|16,"
@@ -351,7 +352,7 @@ TEST(BalancedDegradationSettings, GetsConfigWithBitrate) {
 }
 
 TEST(BalancedDegradationSettings, GetsDefaultConfigIfBitrateDecreases) {
-  FieldTrials field_trials(
+  FieldTrials field_trials = CreateTestFieldTrials(
       "WebRTC-Video-BalancedDegradationSettings/"
       "pixels:11|22|33,fps:5|15|25,kbps:44|43|99/");
   BalancedDegradationSettings settings(field_trials);
@@ -360,7 +361,7 @@ TEST(BalancedDegradationSettings, GetsDefaultConfigIfBitrateDecreases) {
 
 TEST(BalancedDegradationSettings,
      GetsDefaultConfigIfBitrateDecreasesWithUnsetValue) {
-  FieldTrials field_trials(
+  FieldTrials field_trials = CreateTestFieldTrials(
       "WebRTC-Video-BalancedDegradationSettings/"
       "pixels:11|22|33,fps:5|15|25,kbps:44|0|43/");
   BalancedDegradationSettings settings(field_trials);
@@ -369,7 +370,7 @@ TEST(BalancedDegradationSettings,
 
 TEST(BalancedDegradationSettings, CanAdaptUp) {
   VideoCodecType vp8 = kVideoCodecVP8;
-  FieldTrials field_trials(
+  FieldTrials field_trials = CreateTestFieldTrials(
       "WebRTC-Video-BalancedDegradationSettings/"
       "pixels:1000|2000|3000|4000,fps:5|15|25|30,kbps:0|80|0|90,"
       "vp9_kbps:40|50|60|70/");
@@ -384,7 +385,7 @@ TEST(BalancedDegradationSettings, CanAdaptUp) {
 }
 
 TEST(BalancedDegradationSettings, CanAdaptUpWithCodecType) {
-  FieldTrials field_trials(
+  FieldTrials field_trials = CreateTestFieldTrials(
       "WebRTC-Video-BalancedDegradationSettings/"
       "pixels:1000|2000|3000|4000,fps:5|15|25|30,vp8_kbps:0|30|40|50,"
       "vp9_kbps:0|60|70|80,h264_kbps:0|55|65|75,av1_kbps:0|77|88|99,"
@@ -404,7 +405,7 @@ TEST(BalancedDegradationSettings, CanAdaptUpWithCodecType) {
 
 TEST(BalancedDegradationSettings, CanAdaptUpResolution) {
   VideoCodecType vp8 = kVideoCodecVP8;
-  FieldTrials field_trials(
+  FieldTrials field_trials = CreateTestFieldTrials(
       "WebRTC-Video-BalancedDegradationSettings/"
       "pixels:1000|2000|3000|4000,fps:5|15|25|30,kbps_res:0|80|0|90,"
       "vp9_kbps_res:40|50|60|70/");
@@ -419,7 +420,7 @@ TEST(BalancedDegradationSettings, CanAdaptUpResolution) {
 }
 
 TEST(BalancedDegradationSettings, CanAdaptUpResolutionWithCodecType) {
-  FieldTrials field_trials(
+  FieldTrials field_trials = CreateTestFieldTrials(
       "WebRTC-Video-BalancedDegradationSettings/"
       "pixels:1000|2000|3000|4000,fps:5|15|25|30,vp8_kbps_res:0|30|40|50,"
       "vp9_kbps_res:0|60|70|80,h264_kbps_res:0|55|65|75,"
@@ -438,7 +439,7 @@ TEST(BalancedDegradationSettings, CanAdaptUpResolutionWithCodecType) {
 }
 
 TEST(BalancedDegradationSettings, GetsFpsDiff) {
-  FieldTrials field_trials(
+  FieldTrials field_trials = CreateTestFieldTrials(
       "WebRTC-Video-BalancedDegradationSettings/"
       "pixels:1000|2000|3000,fps:5|15|25,fps_diff:0|-2|3/");
   BalancedDegradationSettings settings(field_trials);
@@ -452,7 +453,7 @@ TEST(BalancedDegradationSettings, GetsFpsDiff) {
 }
 
 TEST(BalancedDegradationSettings, GetsNoFpsDiffIfValueBelowMinSetting) {
-  FieldTrials field_trials(
+  FieldTrials field_trials = CreateTestFieldTrials(
       "WebRTC-Video-BalancedDegradationSettings/"
       "pixels:1000|2000|3000,fps:5|15|25,fps_diff:-100|-99|-101/");
   // Min valid fps_diff setting: -99.
@@ -463,7 +464,7 @@ TEST(BalancedDegradationSettings, GetsNoFpsDiffIfValueBelowMinSetting) {
 }
 
 TEST(BalancedDegradationSettings, QpThresholdsNotSetByDefault) {
-  FieldTrials field_trials(
+  FieldTrials field_trials = CreateTestFieldTrials(
       "WebRTC-Video-BalancedDegradationSettings/"
       "pixels:1000|2000|3000,fps:5|15|25/");
   BalancedDegradationSettings settings(field_trials);
@@ -475,7 +476,7 @@ TEST(BalancedDegradationSettings, QpThresholdsNotSetByDefault) {
 }
 
 TEST(BalancedDegradationSettings, GetsConfigWithQpThresholds) {
-  FieldTrials field_trials(
+  FieldTrials field_trials = CreateTestFieldTrials(
       "WebRTC-Video-BalancedDegradationSettings/"
       "pixels:1000|2000|3000,fps:5|15|25,vp8_qp_low:89|90|88,"
       "vp8_qp_high:90|91|92,vp9_qp_low:27|28|29,vp9_qp_high:120|130|140,"
@@ -520,7 +521,7 @@ TEST(BalancedDegradationSettings, GetsConfigWithQpThresholds) {
 }
 
 TEST(BalancedDegradationSettings, GetsDefaultConfigIfOnlyHasLowThreshold) {
-  FieldTrials field_trials(
+  FieldTrials field_trials = CreateTestFieldTrials(
       "WebRTC-Video-BalancedDegradationSettings/"
       "pixels:1000|2000|3000,fps:5|15|25,vp8_qp_low:89|90|88/");
   BalancedDegradationSettings settings(field_trials);
@@ -528,7 +529,7 @@ TEST(BalancedDegradationSettings, GetsDefaultConfigIfOnlyHasLowThreshold) {
 }
 
 TEST(BalancedDegradationSettings, GetsDefaultConfigIfOnlyHasHighThreshold) {
-  FieldTrials field_trials(
+  FieldTrials field_trials = CreateTestFieldTrials(
       "WebRTC-Video-BalancedDegradationSettings/"
       "pixels:1000|2000|3000,fps:5|15|25,vp8_qp_high:90|91|92/");
   BalancedDegradationSettings settings(field_trials);
@@ -536,7 +537,7 @@ TEST(BalancedDegradationSettings, GetsDefaultConfigIfOnlyHasHighThreshold) {
 }
 
 TEST(BalancedDegradationSettings, GetsDefaultConfigIfLowEqualsHigh) {
-  FieldTrials field_trials(
+  FieldTrials field_trials = CreateTestFieldTrials(
       "WebRTC-Video-BalancedDegradationSettings/"
       "pixels:1000|2000|3000,fps:5|15|25,"
       "vp8_qp_low:89|90|88,vp8_qp_high:90|91|88/");
@@ -545,7 +546,7 @@ TEST(BalancedDegradationSettings, GetsDefaultConfigIfLowEqualsHigh) {
 }
 
 TEST(BalancedDegradationSettings, GetsDefaultConfigIfLowGreaterThanHigh) {
-  FieldTrials field_trials(
+  FieldTrials field_trials = CreateTestFieldTrials(
       "WebRTC-Video-BalancedDegradationSettings/"
       "pixels:1000|2000|3000,fps:5|15|25,"
       "vp8_qp_low:89|90|88,vp8_qp_high:90|91|87/");
@@ -554,7 +555,7 @@ TEST(BalancedDegradationSettings, GetsDefaultConfigIfLowGreaterThanHigh) {
 }
 
 TEST(BalancedDegradationSettings, GetsDefaultConfigForZeroQpValue) {
-  FieldTrials field_trials(
+  FieldTrials field_trials = CreateTestFieldTrials(
       "WebRTC-Video-BalancedDegradationSettings/"
       "pixels:1000|2000|3000,fps:5|15|25,"
       "vp8_qp_low:89|0|88,vp8_qp_high:90|91|92/");
@@ -563,7 +564,7 @@ TEST(BalancedDegradationSettings, GetsDefaultConfigForZeroQpValue) {
 }
 
 TEST(BalancedDegradationSettings, GetsVp8QpThresholds) {
-  FieldTrials field_trials(
+  FieldTrials field_trials = CreateTestFieldTrials(
       "WebRTC-Video-BalancedDegradationSettings/"
       "pixels:1000|2000|3000,fps:5|15|25,"
       "vp8_qp_low:89|90|88,vp8_qp_high:90|91|92/");
@@ -579,7 +580,7 @@ TEST(BalancedDegradationSettings, GetsVp8QpThresholds) {
 }
 
 TEST(BalancedDegradationSettings, GetsVp9QpThresholds) {
-  FieldTrials field_trials(
+  FieldTrials field_trials = CreateTestFieldTrials(
       "WebRTC-Video-BalancedDegradationSettings/"
       "pixels:1000|2000|3000,fps:5|15|25,"
       "vp9_qp_low:55|56|57,vp9_qp_high:155|156|157/");
@@ -591,7 +592,7 @@ TEST(BalancedDegradationSettings, GetsVp9QpThresholds) {
 }
 
 TEST(BalancedDegradationSettings, GetsH264QpThresholds) {
-  FieldTrials field_trials(
+  FieldTrials field_trials = CreateTestFieldTrials(
       "WebRTC-Video-BalancedDegradationSettings/"
       "pixels:1000|2000|3000,fps:5|15|25,"
       "h264_qp_low:21|22|23,h264_qp_high:41|43|42/");
@@ -603,7 +604,7 @@ TEST(BalancedDegradationSettings, GetsH264QpThresholds) {
 }
 
 TEST(BalancedDegradationSettings, GetsGenericQpThresholds) {
-  FieldTrials field_trials(
+  FieldTrials field_trials = CreateTestFieldTrials(
       "WebRTC-Video-BalancedDegradationSettings/"
       "pixels:1000|2000|3000,fps:5|15|25,"
       "generic_qp_low:2|3|4,generic_qp_high:22|23|24/");

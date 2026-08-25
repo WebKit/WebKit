@@ -204,9 +204,9 @@ class StunPortTest : public ::testing::Test {
                           .socket_factory = socket_factory(),
                           .network = network_,
                           .ice_username_fragment = CreateRandomString(16),
-                          .ice_password = CreateRandomString(22)},
+                          .ice_password = CreateRandomString(22),
+                          .ice_tiebreaker = kTiebreakerDefault},
                          0, 0, stun_servers, std::nullopt);
-    stun_port_->SetIceTiebreaker(kTiebreakerDefault);
     stun_port_->set_stun_keepalive_delay(stun_keepalive_delay_);
     // If `stun_keepalive_lifetime_` is not set, let the stun port choose its
     // lifetime from the network type.
@@ -249,11 +249,11 @@ class StunPortTest : public ::testing::Test {
                          .socket_factory = socket_factory(),
                          .network = network_,
                          .ice_username_fragment = CreateRandomString(16),
-                         .ice_password = CreateRandomString(22)},
+                         .ice_password = CreateRandomString(22),
+                         .ice_tiebreaker = kTiebreakerDefault},
                         socket_.get(), false, std::nullopt);
     stun_port_->set_server_addresses(stun_servers);
     ASSERT_TRUE(stun_port_ != nullptr);
-    stun_port_->SetIceTiebreaker(kTiebreakerDefault);
     stun_port_->SubscribePortComplete(
         this, [this](Port* port) { OnPortComplete(port); });
     stun_port_->SubscribePortError(this,

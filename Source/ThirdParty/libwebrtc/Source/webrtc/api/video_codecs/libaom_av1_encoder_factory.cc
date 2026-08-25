@@ -10,12 +10,14 @@
 
 #include "api/video_codecs/libaom_av1_encoder_factory.h"
 
-#include <array>
 #include <map>
 #include <memory>
 #include <string>
+#include <utility>
+#include <vector>
 
 #include "api/video/video_frame_buffer.h"
+#include "api/video_codecs/video_encoder_builders.h"
 #include "api/video_codecs/video_encoder_factory_interface.h"
 #include "api/video_codecs/video_encoder_interface.h"
 #include "api/video_codecs/video_encoding_general.h"
@@ -37,8 +39,6 @@ std::map<std::string, std::string> LibaomAv1EncoderFactory::CodecSpecifics()
   return {};
 }
 
-// clang-format off
-// The formater and cpplint have conflicting ideas.
 VideoEncoderFactoryInterface::Capabilities
 LibaomAv1EncoderFactory::GetEncoderCapabilities() const {
   constexpr int kMaxQp = 63;
@@ -49,10 +49,10 @@ LibaomAv1EncoderFactory::GetEncoderCapabilities() const {
   constexpr int kMaxSpatialLayersLimit = 4;
   constexpr int kMaxTemporalLayers = 4;
 
-  constexpr std::array<VideoFrameBuffer::Type, 2> kSupportedInputFormats = {
+  std::vector<VideoFrameBuffer::Type> supported_input_formats = {
       VideoFrameBuffer::Type::kI420, VideoFrameBuffer::Type::kNV12};
 
-  constexpr std::array<Rational, 7> kSupportedScalingFactors = {
+  std::vector<Rational> supported_scaling_factors = {
       {{.numerator = 2, .denominator = 1},
        {.numerator = 1, .denominator = 1},
        {.numerator = 1, .denominator = 2},
@@ -60,38 +60,43 @@ LibaomAv1EncoderFactory::GetEncoderCapabilities() const {
        {.numerator = 1, .denominator = 8},
        {.numerator = 1, .denominator = 16}}};
 
-  return {
-      .prediction_constraints = {
-           .num_buffers = kNumBuffers,
-           .max_references = kMaxReferences,
-           .max_temporal_layers = kMaxTemporalLayers,
-           .buffer_space_type = VideoEncoderFactoryInterface::Capabilities::
-               PredictionConstraints::BufferSpaceType::kSingleKeyframe,
-           .max_spatial_layers = kMaxSpatialLayersLimit,
-           .scaling_factors = {kSupportedScalingFactors.begin(),
-                               kSupportedScalingFactors.end()},
-           .supported_frame_types = {FrameType::kKeyframe,
-                                     FrameType::kStartFrame,
-                                     FrameType::kDeltaFrame}},
-      .input_constraints = {
-              .min = {.width = 64, .height = 36},
-              .max = {.width = 3840, .height = 2160},
-              .pixel_alignment = 1,
-              .input_formats = {kSupportedInputFormats.begin(),
-                                kSupportedInputFormats.end()},
-          },
-      .encoding_formats = {{.sub_sampling = EncodingFormat::k420,
-                            .bit_depth = 8}},
-      .rate_control = {
-           .qp_range = {0, kMaxQp},
-           .rc_modes = {VideoEncoderFactoryInterface::RateControlMode::kCbr,
-                        VideoEncoderFactoryInterface::RateControlMode::kCqp}},
-      .performance = {.encode_on_calling_thread = true,
-                      .min_max_effort_level = {kMinEffortLevel,
-                                               kMaxEffortLevel}},
-  };
+  return CapabilitiesBuilder()
+      .WithPredictionConstraints(
+          [&](VideoEncoderFactoryInterface::Capabilities::PredictionConstraints&
+                  p) {
+            p.set_num_buffers(kNumBuffers);
+            p.set_max_references(kMaxReferences);
+            p.set_max_temporal_layers(kMaxTemporalLayers);
+            p.set_buffer_space_type(
+                VideoEncoderFactoryInterface::Capabilities::
+                    PredictionConstraints::BufferSpaceType::kSingleKeyframe);
+            p.set_max_spatial_layers(kMaxSpatialLayersLimit);
+            p.set_scaling_factors(std::move(supported_scaling_factors));
+            p.set_supported_frame_types({FrameType::kKeyframe,
+                                         FrameType::kStartFrame,
+                                         FrameType::kDeltaFrame});
+          })
+      .WithInputConstraints(
+          [&](VideoEncoderFactoryInterface::Capabilities::InputConstraints& i) {
+            i.set_min({.width = 64, .height = 36});
+            i.set_max({.width = 3840, .height = 2160});
+            i.set_pixel_alignment(1);
+            i.set_input_formats(std::move(supported_input_formats));
+          })
+      .EncodingFormats({{.sub_sampling = EncodingFormat::k420, .bit_depth = 8}})
+      .WithBitrateControl(
+          [&](VideoEncoderFactoryInterface::Capabilities::BitrateControl& b) {
+            b.set_qp_range(0, kMaxQp);
+            using enum VideoEncoderFactoryInterface::RateControlMode;
+            b.set_rc_modes({kCbr, kCqp});
+          })
+      .WithPerformance(
+          [&](VideoEncoderFactoryInterface::Capabilities::Performance& p) {
+            p.set_encode_on_calling_thread(true);
+            p.set_min_max_effort_level(kMinEffortLevel, kMaxEffortLevel);
+          })
+      .Build();
 }
-// clang-format on
 
 std::unique_ptr<VideoEncoderInterface> LibaomAv1EncoderFactory::CreateEncoder(
     const StaticEncoderSettings& settings,

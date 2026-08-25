@@ -436,28 +436,77 @@ rtc_source_set("mock_audio_device") {
 }
 
 if (rtc_include_tests && !build_with_chromium) {
-  rtc_library("audio_device_unittests") {
+  rtc_library("fine_audio_buffer_unittest") {
     testonly = true
-
-    sources = [
-      "fine_audio_buffer_unittest.cc",
-      "include/test_audio_device_unittest.cc",
-      "test_audio_device_impl_test.cc",
+    sources = [ "fine_audio_buffer_unittest.cc" ]
+    deps = [
+      ":audio_device_buffer",
+      ":mock_audio_device",
+      "../../test:create_test_environment",
+      "../../test:test_support",
     ]
+    defines = [ "WEBRTC_DUMMY_AUDIO_BUILD" ]
+  }
+
+  rtc_library("test_audio_device_unittest") {
+    testonly = true
+    sources = [ "include/test_audio_device_unittest.cc" ]
+    deps = [
+      ":test_audio_device_module",
+      "../../api:scoped_refptr",
+      "../../api/audio:audio_device",
+      "../../api/environment",
+      "../../api/units:time_delta",
+      "../../api/units:timestamp",
+      "../../common_audio",
+      "../../rtc_base:buffer",
+      "../../rtc_base:checks",
+      "../../rtc_base:macromagic",
+      "../../rtc_base/synchronization:mutex",
+      "../../test:create_test_environment",
+      "../../test:fileutils",
+      "../../test:test_support",
+      "../../test/time_controller",
+    ]
+    defines = [ "WEBRTC_DUMMY_AUDIO_BUILD" ]
+  }
+
+  rtc_library("test_audio_device_impl_test") {
+    testonly = true
+    sources = [ "test_audio_device_impl_test.cc" ]
+    deps = [
+      ":audio_device_buffer",
+      ":audio_device_generic",
+      ":test_audio_device_module",
+      "../../api/audio:audio_device",
+      "../../api/environment",
+      "../../api/units:time_delta",
+      "../../api/units:timestamp",
+      "../../rtc_base:checks",
+      "../../rtc_base:macromagic",
+      "../../rtc_base:task_queue_for_test",
+      "../../rtc_base/synchronization:mutex",
+      "../../test:create_test_environment",
+      "../../test:test_support",
+      "../../test/time_controller",
+    ]
+    defines = [ "WEBRTC_DUMMY_AUDIO_BUILD" ]
+  }
+
+  rtc_library("audio_device_unittest") {
+    testonly = true
+    sources = [ "audio_device_unittest.cc" ]
     deps = [
       ":audio_device_buffer",
       ":audio_device_generic",
       ":audio_device_impl",
       ":mock_audio_device",
-      ":test_audio_device_module",
       "../../api:scoped_refptr",
       "../../api:sequence_checker",
       "../../api/audio:audio_device",
       "../../api/audio:create_audio_device_module",
       "../../api/environment",
-      "../../api/environment:environment_factory",
       "../../api/units:time_delta",
-      "../../api/units:timestamp",
       "../../common_audio",
       "../../rtc_base:buffer",
       "../../rtc_base:checks",
@@ -470,32 +519,48 @@ if (rtc_include_tests && !build_with_chromium) {
       "../../rtc_base:timeutils",
       "../../rtc_base/synchronization:mutex",
       "../../test:create_test_environment",
-      "../../test:fileutils",
       "../../test:test_support",
-      "../../test/time_controller",
     ]
-    if (is_linux || is_chromeos || is_mac || is_win) {
-      sources += [ "audio_device_unittest.cc" ]
-    }
     if (is_win) {
-      sources += [ "win/core_audio_utility_win_unittest.cc" ]
       deps += [
         ":audio_device_module_from_input_and_output",
         ":windows_core_audio_utility",
         "../../rtc_base/win:scoped_com_initializer",
-        "../../rtc_base/win:windows_version",
-      ]
-    }
-    if (is_android) {
-      deps += [
-        "../../sdk/android:internal_jni",
-        "../../sdk/android:libjingle_peerconnection_java",
-        "../../sdk/android:native_api_jni",
-        "../utility",
       ]
     }
     if (!rtc_include_internal_audio_device) {
       defines = [ "WEBRTC_DUMMY_AUDIO_BUILD" ]
+    }
+  }
+
+  if (is_win) {
+    rtc_library("core_audio_utility_win_unittest") {
+      testonly = true
+      sources = [ "win/core_audio_utility_win_unittest.cc" ]
+      deps = [
+        ":windows_core_audio_utility",
+        "../../rtc_base:logging",
+        "../../rtc_base/win:scoped_com_initializer",
+        "../../rtc_base/win:windows_version",
+        "../../test:test_support",
+      ]
+    }
+  }
+
+  rtc_library("audio_device_unittests") {
+    testonly = true
+
+    sources = []
+    deps = [
+      ":fine_audio_buffer_unittest",
+      ":test_audio_device_impl_test",
+      ":test_audio_device_unittest",
+    ]
+    if (is_linux || is_chromeos || is_mac || is_win) {
+      deps += [ ":audio_device_unittest" ]
+    }
+    if (is_win) {
+      deps += [ ":core_audio_utility_win_unittest" ]
     }
   }
 }

@@ -19,6 +19,7 @@
 #include "api/rtp_parameters.h"
 #include "api/sequence_checker.h"
 #include "api/task_queue/task_queue_base.h"
+#include "api/units/time_delta.h"
 #include "api/video/encoded_frame.h"
 #include "api/video/video_codec_type.h"
 #include "call/video_receive_stream.h"
@@ -94,6 +95,11 @@ void Assembler::OnDecodedFrameId(int64_t frame_id) {
   RTC_DCHECK_RUN_ON(&sequence_checker_);
   // Clear the internal `PacketBuffer` when the frames have been "decoded".
   rtp_video_stream_receiver2_.FrameDecoded(frame_id);
+}
+
+void Assembler::UpdateMaxRtt(TimeDelta max_rtt) {
+  RTC_DCHECK_RUN_ON(&sequence_checker_);
+  rtp_video_stream_receiver2_.UpdateRtt(max_rtt.ms());
 }
 
 void Assembler::OnCompleteFrame(std::unique_ptr<EncodedFrame> encoded_frame) {

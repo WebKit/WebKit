@@ -111,4 +111,4 @@ for sources that need video adaptation.
 [bitrate_constraint.h]: https://source.chromium.org/chromium/chromium/src/+/main:third_party/webrtc/video/adaptation/bitrate_constraint.h
 [AddOrUpdateSink]: https://source.chromium.org/chromium/chromium/src/+/main:third_party/webrtc/api/video/video_source_interface.h?q=AddOrUpdateSink
 [VideoSinkWants]: https://source.chromium.org/chromium/chromium/src/+/main:third_party/webrtc/api/video/video_source_interface.h?q=%22RTC_EXPORT%20VideoSinkWants%22
-[adapted_video_track_source.h]: https://source.chromium.org/chromium/chromium/src/+/main:third_party/webrtc/media/base/adapted_video_track_source.h
+[adapted_video_track_source.h]: https://source.chromium.org/chromium/chromium/src/+/main:third_party/webrtc/api/video/adapted_video_track_source.h

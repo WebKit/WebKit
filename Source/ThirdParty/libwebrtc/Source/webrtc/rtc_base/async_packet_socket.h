@@ -191,10 +191,7 @@ class RTC_EXPORT AsyncPacketSocket {
   void NotifyConnect(AsyncPacketSocket* socket) {
     connect_callbacks_.Send(socket);
   }
-  [[deprecated]] void SubscribeConnect(
-      absl::AnyInvocable<void(AsyncPacketSocket*)> callback) {
-    connect_callbacks_.AddReceiver(std::move(callback));
-  }
+
   void SubscribeConnect(void* tag,
                         absl::AnyInvocable<void(AsyncPacketSocket*)> callback) {
     connect_callbacks_.AddReceiver(tag, std::move(callback));

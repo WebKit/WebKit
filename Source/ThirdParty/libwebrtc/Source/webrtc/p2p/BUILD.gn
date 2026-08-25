@@ -139,6 +139,7 @@ rtc_library("basic_port_allocator") {
     "../api:sequence_checker",
     "../api:turn_customizer",
     "../api/environment",
+    "../api/task_queue",
     "../api/task_queue:pending_task_safety_flag",
     "../api/transport:enums",
     "../api/units:time_delta",
@@ -154,7 +155,6 @@ rtc_library("basic_port_allocator") {
     "../rtc_base:network_constants",
     "../rtc_base:socket_address",
     "../rtc_base:stringutils",
-    "../rtc_base:threading",
     "../rtc_base/memory:always_valid_pointer",
     "../rtc_base/network:received_packet",
     "../rtc_base/system:rtc_export",
@@ -894,9 +894,9 @@ rtc_source_set("relay_port_factory_interface") {
     "../api:local_network_access_permission",
     "../api:packet_socket_factory",
     "../api/environment",
+    "../api/task_queue",
     "../rtc_base:async_packet_socket",
     "../rtc_base:network",
-    "../rtc_base:threading",
   ]
 }
 
@@ -945,6 +945,7 @@ if (rtc_include_tests) {
       "../api:field_trials",
       "../api:ice_transport_interface",
       "../api:sequence_checker",
+      "../api/environment",
       "../api/task_queue",
       "../api/task_queue:pending_task_safety_flag",
       "../api/transport:enums",
@@ -1083,7 +1084,6 @@ if (rtc_include_tests) {
       "../rtc_base:ssl",
       "../rtc_base:ssl_adapter",
       "../rtc_base:threading",
-      "../rtc_base:timeutils",
       "../rtc_base/network:received_packet",
       "../rtc_base/network:sent_packet",
       "../rtc_base/synchronization:mutex",

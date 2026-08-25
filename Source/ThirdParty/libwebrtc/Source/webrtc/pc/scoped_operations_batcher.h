@@ -49,6 +49,8 @@ class ScopedOperationsBatcher {
 
   RTCError Run();
 
+  bool IsEmpty() const;
+
   // Queues non-nullptr tasks to be executed on the target thread when the
   // ScopedOperationsBatcher goes out of scope.
   void Add(SimpleBatchTask task);

@@ -27,6 +27,7 @@
 #include "api/field_trials.h"
 #include "api/field_trials_view.h"
 #include "api/rtc_event_log/rtc_event_log.h"
+#include "api/rtp_header_extension_id.h"
 #include "api/rtp_parameters.h"
 #include "api/task_queue/task_queue_base.h"
 #include "api/task_queue/task_queue_factory.h"
@@ -35,11 +36,13 @@
 #include "api/units/timestamp.h"
 #include "api/video/encoded_image.h"
 #include "api/video/video_bitrate_allocation.h"
+#include "api/video/video_frame_type.h"
 #include "api/video/video_layers_allocation.h"
 #include "api/video_codecs/spatial_layer.h"
 #include "api/video_codecs/video_encoder.h"
 #include "call/bitrate_allocator.h"
 #include "call/rtp_config.h"
+#include "call/rtp_transport_controller_send_interface.h"
 #include "call/rtp_video_sender_interface.h"
 #include "call/test/mock_bitrate_allocator.h"
 #include "call/test/mock_rtp_transport_controller_send.h"
@@ -122,7 +125,6 @@ class MockRtpVideoSender : public RtpVideoSenderInterface {
                int spatial_id,
                bool is_end_of_temporal_unit),
               (override));
-  MOCK_METHOD(void, OnTransportOverheadChanged, (size_t), (override));
   MOCK_METHOD(void,
               OnBitrateUpdated,
               (BitrateAllocationUpdate, int),
@@ -580,7 +582,7 @@ TEST_F(VideoSendStreamImplTest, UpdatesObserverOnConfigurationChange) {
   const bool kSuspend = false;
   config_.suspend_below_min_bitrate = kSuspend;
   config_.rtp.extensions.emplace_back(RtpExtension::kTransportSequenceNumberUri,
-                                      1);
+                                      RtpHeaderExtensionId(1));
   config_.rtp.ssrcs.emplace_back(1);
   config_.rtp.ssrcs.emplace_back(2);
 
@@ -643,7 +645,7 @@ TEST_F(VideoSendStreamImplTest, UpdatesObserverOnConfigurationChangeWithAlr) {
   const bool kSuspend = false;
   config_.suspend_below_min_bitrate = kSuspend;
   config_.rtp.extensions.emplace_back(RtpExtension::kTransportSequenceNumberUri,
-                                      1);
+                                      RtpHeaderExtensionId(1));
   config_.periodic_alr_bandwidth_probing = true;
   config_.rtp.ssrcs.emplace_back(1);
   config_.rtp.ssrcs.emplace_back(2);
@@ -767,12 +769,11 @@ TEST_F(VideoSendStreamImplTest, SetsScreensharePacingFactorWithFeedback) {
       SetFieldTrial(AlrExperimentSettings::kScreenshareProbingBweExperimentName,
                     kAlrProbingExperimentValue);
 
-  constexpr int kId = 1;
+  constexpr RtpHeaderExtensionId kId(1);
   config_.rtp.extensions.emplace_back(RtpExtension::kTransportSequenceNumberUri,
                                       kId);
   EXPECT_CALL(transport_controller_,
-              SetPacingFactor(kAlrProbingExperimentPaceMultiplier))
-      .Times(1);
+              SetPacingFactor(kAlrProbingExperimentPaceMultiplier));
   auto vss_impl = CreateVideoSendStreamImpl(
       TestVideoEncoderConfig(VideoEncoderConfig::ContentType::kScreen),
       &field_trials);
@@ -787,7 +788,68 @@ TEST_F(VideoSendStreamImplTest, DoesNotSetPacingFactorWithoutFeedback) {
   auto vss_impl = CreateVideoSendStreamImpl(
       TestVideoEncoderConfig(VideoEncoderConfig::ContentType::kScreen),
       &field_trials);
-  EXPECT_CALL(transport_controller_, SetPacingFactor(_)).Times(0);
+  EXPECT_CALL(transport_controller_, SetPacingFactor).Times(0);
+  vss_impl->Start();
+  vss_impl->Stop();
+}
+
+TEST_F(VideoSendStreamImplTest,
+       EnablesAlrProbingAndSetsPacingFactorWithTwccWithoutCcfb) {
+  auto field_trials =
+      SetFieldTrial("WebRTC-RFC8888CongestionControlFeedback", "Disabled");
+  // We expect EnablePeriodicAlrProbing(true) to be called.
+  EXPECT_CALL(transport_controller_, EnablePeriodicAlrProbing(true));
+
+  // We expect SetQueueTimeLimit to be called.
+  EXPECT_CALL(transport_controller_, SetQueueTimeLimit);
+
+  // We expect SetPacingFactor to be called with the default ALR experiment
+  // pacing factor (1.0).
+  EXPECT_CALL(transport_controller_, SetPacingFactor(1.0f));
+
+  config_.rtp.extensions.emplace_back(RtpExtension::kTransportSequenceNumberUri,
+                                      RtpHeaderExtensionId(1));
+
+  auto vss_impl = CreateVideoSendStreamImpl(
+      TestVideoEncoderConfig(VideoEncoderConfig::ContentType::kScreen),
+      &field_trials);
+  vss_impl->Start();
+  vss_impl->Stop();
+}
+
+TEST_F(VideoSendStreamImplTest, DoesNotConfigurePacingOrAlrWithoutFeedback) {
+  auto field_trials =
+      SetFieldTrial("WebRTC-RFC8888CongestionControlFeedback", "Disabled");
+  // We expect NONE of the pacing/ALR methods to be called on transport
+  // controller.
+  EXPECT_CALL(transport_controller_, EnablePeriodicAlrProbing).Times(0);
+  EXPECT_CALL(transport_controller_, SetQueueTimeLimit).Times(0);
+  EXPECT_CALL(transport_controller_, SetPacingFactor).Times(0);
+
+  auto vss_impl = CreateVideoSendStreamImpl(
+      TestVideoEncoderConfig(VideoEncoderConfig::ContentType::kScreen),
+      &field_trials);
+  vss_impl->Start();
+  vss_impl->Stop();
+}
+
+TEST_F(VideoSendStreamImplTest,
+       EnablesAlrProbingAndSetsQueueTimeLimitWithRfc8888) {
+  auto field_trials = SetFieldTrial("WebRTC-RFC8888CongestionControlFeedback",
+                                    "Enabled,offer:true");
+
+  // We expect EnablePeriodicAlrProbing(true) to be called.
+  EXPECT_CALL(transport_controller_, EnablePeriodicAlrProbing(true));
+
+  // We expect SetQueueTimeLimit to be called.
+  EXPECT_CALL(transport_controller_, SetQueueTimeLimit);
+
+  // We expect SetPacingFactor NOT to be called.
+  EXPECT_CALL(transport_controller_, SetPacingFactor).Times(0);
+
+  auto vss_impl = CreateVideoSendStreamImpl(
+      TestVideoEncoderConfig(VideoEncoderConfig::ContentType::kScreen),
+      &field_trials);
   vss_impl->Start();
   vss_impl->Stop();
 }
@@ -796,7 +858,7 @@ TEST_F(VideoSendStreamImplTest, ForwardsVideoBitrateAllocationWhenEnabled) {
   auto vss_impl = CreateVideoSendStreamImpl(
       TestVideoEncoderConfig(VideoEncoderConfig::ContentType::kScreen));
 
-  EXPECT_CALL(transport_controller_, SetPacingFactor(_)).Times(0);
+  EXPECT_CALL(transport_controller_, SetPacingFactor).Times(0);
   VideoStreamEncoderInterface::EncoderSink* const sink =
       static_cast<VideoStreamEncoderInterface::EncoderSink*>(vss_impl.get());
   vss_impl->Start();
@@ -1112,7 +1174,7 @@ TEST_F(VideoSendStreamImplTest, CallsVideoStreamEncoderOnBitrateUpdate) {
   const bool kSuspend = false;
   config_.suspend_below_min_bitrate = kSuspend;
   config_.rtp.extensions.emplace_back(RtpExtension::kTransportSequenceNumberUri,
-                                      1);
+                                      RtpHeaderExtensionId(1));
   auto vss_impl = CreateVideoSendStreamImpl(TestVideoEncoderConfig());
 
   vss_impl->Start();
@@ -1230,7 +1292,7 @@ TEST_F(VideoSendStreamImplTest, DisablesPaddingOnPausedEncoder) {
   const bool kSuspend = false;
   config_.suspend_below_min_bitrate = kSuspend;
   config_.rtp.extensions.emplace_back(RtpExtension::kTransportSequenceNumberUri,
-                                      1);
+                                      RtpHeaderExtensionId(1));
   VideoStream qvga_stream;
   qvga_stream.width = 320;
   qvga_stream.height = 180;
@@ -1330,7 +1392,7 @@ TEST_F(VideoSendStreamImplTest, ConfiguresBitratesForSvc) {
     const bool kSuspend = false;
     config_.suspend_below_min_bitrate = kSuspend;
     config_.rtp.extensions.emplace_back(
-        RtpExtension::kTransportSequenceNumberUri, 1);
+        RtpExtension::kTransportSequenceNumberUri, RtpHeaderExtensionId(1));
     config_.periodic_alr_bandwidth_probing = test_config.alr;
     auto vss_impl = CreateVideoSendStreamImpl(TestVideoEncoderConfig(
         test_config.screenshare
@@ -1444,6 +1506,76 @@ TEST_F(VideoSendStreamImplTest, TestElasticityForScreenshare) {
   vss_impl->Start();
   EXPECT_CALL(bitrate_allocator_, RemoveObserver(vss_impl.get()));
   vss_impl->Stop();
+}
+
+TEST_F(VideoSendStreamImplTest, GenerateKeyFrameWithMismatchedRids) {
+  // Multiple RIDs available for simulcast.
+  config_.rtp.rids = {"a", "b", "c"};
+  // Single encoder config (no simulcast, or potentially SVC).
+  auto vss_impl = CreateVideoSendStreamImpl(
+      TestVideoEncoderConfig(VideoEncoderConfig::ContentType::kRealtimeVideo));
+  vss_impl->Start();
+  // Generating a keyframe on a RID that is not available should be a noop.
+  vss_impl->GenerateKeyFrame({"c"});
+  vss_impl->Stop();
+}
+
+TEST_F(VideoSendStreamImplTest, GeneratesKeyframePerStreamWhenFeatureEnabled) {
+  FieldTrials field_trials =
+      CreateTestFieldTrials("WebRTC-Video-PerSsrcKeyframes/Enabled/");
+
+  // Set up 2 SSRC/layers.
+  config_.rtp.ssrcs.clear();
+  config_.rtp.ssrcs.push_back(1111);
+  config_.rtp.ssrcs.push_back(2222);
+
+  RtpSenderObservers observers;
+  EXPECT_CALL(transport_controller_, CreateRtpVideoSender)
+      .WillOnce(::testing::DoAll(::testing::SaveArg<5>(&observers),
+                                 ::testing::Return(&rtp_video_sender_)));
+
+  VideoEncoderConfig encoder_config = TestVideoEncoderConfig();
+  encoder_config.simulcast_layers.push_back(VideoStream());  // total 2 layers
+  auto video_send_stream =
+      CreateVideoSendStreamImpl(std::move(encoder_config), &field_trials);
+
+  ASSERT_NE(observers.intra_frame_callback, nullptr);
+
+  // Trigger intra frame request on the first SSRC.
+  std::vector<VideoFrameType> expected_layers = {
+      VideoFrameType::kVideoFrameKey, VideoFrameType::kVideoFrameDelta};
+  EXPECT_CALL(*video_stream_encoder_, SendKeyFrame(expected_layers)).Times(1);
+
+  observers.intra_frame_callback->OnReceivedIntraFrameRequest(1111);
+}
+
+TEST_F(VideoSendStreamImplTest,
+       GeneratesKeyframesOnAllStreamsWhenFeatureDisabled) {
+  FieldTrials field_trials =
+      CreateTestFieldTrials("WebRTC-Video-PerSsrcKeyframes/Disabled/");
+
+  // Set up 2 SSRC/layers.
+  config_.rtp.ssrcs.clear();
+  config_.rtp.ssrcs.push_back(1111);
+  config_.rtp.ssrcs.push_back(2222);
+
+  RtpSenderObservers observers;
+  EXPECT_CALL(transport_controller_, CreateRtpVideoSender)
+      .WillOnce(::testing::DoAll(::testing::SaveArg<5>(&observers),
+                                 ::testing::Return(&rtp_video_sender_)));
+
+  VideoEncoderConfig encoder_config = TestVideoEncoderConfig();
+  encoder_config.simulcast_layers.push_back(VideoStream());  // total 2 layers
+  auto video_send_stream =
+      CreateVideoSendStreamImpl(std::move(encoder_config), &field_trials);
+
+  ASSERT_NE(observers.intra_frame_callback, nullptr);
+
+  // Trigger intra frame request on the first SSRC.
+  EXPECT_CALL(*video_stream_encoder_, SendKeyFrame(::testing::IsEmpty()))
+      .Times(1);
+
+  observers.intra_frame_callback->OnReceivedIntraFrameRequest(1111);
 }
 
 }  // namespace internal

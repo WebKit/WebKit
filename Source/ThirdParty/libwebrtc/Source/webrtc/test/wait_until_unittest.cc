@@ -112,19 +112,6 @@ TEST(WaitUntilTest, ReturnsFalseAfterTimeoutWithSimulatedClock) {
   EXPECT_EQ(fake_clock.CurrentTime(), Timestamp::Millis(2'337));
 }
 
-TEST(WaitUntilTest, ReturnsWhenConditionIsMetWithThreadProcessingFakeClock) {
-  ScopedFakeClock fake_clock;
-
-  int counter = 0;
-  EXPECT_TRUE(WaitUntil(
-      [&] { return ++counter == 3; },
-      {.polling_interval = TimeDelta::Millis(1), .clock = &fake_clock}));
-  EXPECT_EQ(counter, 3);
-  // The fake clock should have advanced at least 2ms.
-  EXPECT_THAT(Timestamp::Micros(fake_clock.TimeNanos() * 1000),
-              Ge(Timestamp::Millis(1339)));
-}
-
 TEST(WaitUntilTest, ReturnsWhenConditionIsMetWithFakeClock) {
   FakeClock fake_clock;
 

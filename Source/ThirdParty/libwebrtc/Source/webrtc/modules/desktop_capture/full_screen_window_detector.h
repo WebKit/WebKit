@@ -47,10 +47,6 @@ class FullScreenWindowDetector
   FullScreenWindowDetector(const FullScreenWindowDetector&) = delete;
   FullScreenWindowDetector& operator=(const FullScreenWindowDetector&) = delete;
 
-  void SetHeuristicForFindingEditor(bool use_heuristic) {
-    // TODO(crbug.com/409473386): Delete this method once its usage is removed.
-  }
-
   // Returns the full-screen window in place of the original window if all the
   // criteria provided by FullScreenApplicationHandler are met, or 0 if no such
   // window found.

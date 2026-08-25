@@ -29,7 +29,6 @@
 #include "api/audio_codecs/audio_format.h"
 #include "api/audio_codecs/opus/audio_decoder_opus.h"
 #include "api/audio_codecs/opus/audio_encoder_opus.h"
-#include "api/environment/environment_factory.h"
 #include "api/neteq/default_neteq_factory.h"
 #include "api/neteq/neteq.h"
 #include "common_audio/vad/include/vad.h"
@@ -39,6 +38,7 @@
 #include "modules/audio_coding/test/Channel.h"
 #include "modules/audio_coding/test/PCMFile.h"
 #include "rtc_base/strings/string_builder.h"
+#include "test/create_test_environment.h"
 #include "test/gtest.h"
 #include "test/testsupport/file_utils.h"
 
@@ -82,7 +82,7 @@ void MonitoringAudioPacketizationCallback::GetStatistics(uint32_t* counter) {
 }
 
 TestVadDtx::TestVadDtx()
-    : env_(CreateEnvironment()),
+    : env_(CreateTestEnvironment()),
       encoder_factory_(CreateAudioEncoderFactory<AudioEncoderOpus>()),
       decoder_factory_(CreateAudioDecoderFactory<AudioDecoderOpus>()),
       acm_send_(AudioCodingModule::Create()),

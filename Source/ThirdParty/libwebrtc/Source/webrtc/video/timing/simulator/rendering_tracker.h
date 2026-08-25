@@ -80,6 +80,8 @@ class RenderingTracker : public AssembledFrameCallback,
   // any rendered frames to the `observer_`.
   void OnAssembledFrame(std::unique_ptr<EncodedFrame> assembled_frame) override;
 
+  void UpdateMaxRtt(TimeDelta max_rtt);
+
  private:
   struct VideoStreamBufferControllerObserverDecodableStats {
     TimeDelta jitter_buffer_delay = TimeDelta::Zero();
@@ -120,9 +122,9 @@ class RenderingTracker : public AssembledFrameCallback,
   // Stats state. This is needed since the stats and the decodable frame are
   // provided by the VSBC on different callbacks, but we want to log the
   // the corresponding information simultaneously to our callback.
-  std::optional<int> vsbc_frames_dropped_;
+  std::optional<int> vsbc_frames_dropped_ RTC_GUARDED_BY(sequence_checker_);
   std::optional<VideoStreamBufferControllerObserverDecodableStats>
-      vsbc_decodable_stats_;
+      vsbc_decodable_stats_ RTC_GUARDED_BY(sequence_checker_);
 
   // Outputs.
   RenderingTrackerEvents& observer_;

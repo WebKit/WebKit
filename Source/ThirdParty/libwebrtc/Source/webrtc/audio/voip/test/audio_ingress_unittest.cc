@@ -23,7 +23,6 @@
 #include "api/audio_codecs/builtin_audio_decoder_factory.h"
 #include "api/audio_codecs/builtin_audio_encoder_factory.h"
 #include "api/environment/environment.h"
-#include "api/environment/environment_factory.h"
 #include "api/neteq/neteq.h"
 #include "api/rtp_headers.h"
 #include "api/scoped_refptr.h"
@@ -106,9 +105,7 @@ class AudioIngressTest : public ::testing::Test {
   }
 
   GlobalSimulatedTimeController time_controller_{Timestamp::Micros(123456789)};
-  const Environment env_ =
-      CreateEnvironment(time_controller_.GetClock(),
-                        time_controller_.GetTaskQueueFactory());
+  const Environment env_ = CreateTestEnvironment({.time = &time_controller_});
   SineWaveGenerator wave_generator_;
   NiceMock<MockTransport> transport_;
   std::unique_ptr<ReceiveStatistics> receive_statistics_;

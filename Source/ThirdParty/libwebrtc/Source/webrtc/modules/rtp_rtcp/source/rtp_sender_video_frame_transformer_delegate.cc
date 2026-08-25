@@ -17,6 +17,7 @@
 #include <span>
 #include <string>
 #include <utility>
+#include <variant>
 #include <vector>
 
 #include "api/frame_transformer_interface.h"
@@ -89,6 +90,9 @@ class TransformableVideoSenderFrame : public TransformableVideoFrameInterface {
   }
 
   uint32_t GetTimestamp() const override { return timestamp_; }
+  RtpTimestampInfo GetRtpTimestampInfo() const override {
+    return RtpTimestampWithOffset(timestamp_);
+  }
   void SetRTPTimestamp(uint32_t timestamp) override { timestamp_ = timestamp; }
 
   uint32_t GetSsrc() const override { return ssrc_; }
@@ -234,9 +238,12 @@ void RTPSenderVideoFrameTransformerDelegate::SendVideo(
     auto* transformed_video_frame =
         static_cast<TransformableVideoSenderFrame*>(transformed_frame.get());
     RTC_CHECK(transformed_video_frame->CaptureTime().has_value());
+    RTC_CHECK(std::holds_alternative<RtpTimestampWithOffset>(
+        transformed_video_frame->GetRtpTimestampInfo()));
     sender_->SendVideo(transformed_video_frame->GetPayloadType(),
                        transformed_video_frame->GetCodecType(),
-                       transformed_video_frame->GetTimestamp(),
+                       std::get<RtpTimestampWithOffset>(
+                           transformed_video_frame->GetRtpTimestampInfo()),
                        *transformed_video_frame->CaptureTime(),
                        transformed_video_frame->GetData(),
                        transformed_video_frame->GetPreTransformPayloadSize(),
@@ -250,9 +257,12 @@ void RTPSenderVideoFrameTransformerDelegate::SendVideo(
     // TODO(bugs.webrtc.org/14708): Use an actual RTT estimate for the
     // retransmission time instead of a const default, in the same way as a
     // locally encoded frame.
+    RTC_CHECK(std::holds_alternative<RtpTimestampWithOffset>(
+        transformed_video_frame->GetRtpTimestampInfo()));
     sender_->SendVideo(transformed_video_frame->GetPayloadType(),
                        metadata.GetCodec(),
-                       transformed_video_frame->GetTimestamp(),
+                       std::get<RtpTimestampWithOffset>(
+                           transformed_video_frame->GetRtpTimestampInfo()),
                        /*capture_time=*/Timestamp::MinusInfinity(),
                        transformed_video_frame->GetData(),
                        transformed_video_frame->GetData().size(),
@@ -299,10 +309,12 @@ std::unique_ptr<TransformableVideoFrameInterface> CloneSenderVideoFrame(
   // locally encoded frame.
   VideoFrameMetadata metadata = original->Metadata();
   RTPVideoHeader new_header = RTPVideoHeader::FromMetadata(metadata);
+  RTC_CHECK(std::holds_alternative<RtpTimestampWithOffset>(
+      original->GetRtpTimestampInfo()));
   return std::make_unique<TransformableVideoSenderFrame>(
       encoded_image, new_header, original->GetPayloadType(), new_header.codec,
-      original->GetTimestamp(), kDefaultRetransmissionsTime,
-      original->GetSsrc(), metadata.GetCsrcs(),
+      std::get<RtpTimestampWithOffset>(original->GetRtpTimestampInfo()),
+      kDefaultRetransmissionsTime, original->GetSsrc(), metadata.GetCsrcs(),
       original->Rid().value_or(std::string()));
 }
 

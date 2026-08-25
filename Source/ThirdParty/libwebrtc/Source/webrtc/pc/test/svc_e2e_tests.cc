@@ -45,6 +45,7 @@
 #include "rtc_base/containers/flat_map.h"
 #include "rtc_base/logging.h"
 #include "system_wrappers/include/clock.h"
+#include "test/create_test_field_trials.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 #include "test/pc/e2e/analyzer/video/default_video_quality_analyzer.h"
@@ -312,7 +313,7 @@ MATCHER_P2(HasSpatialAndTemporalLayersSMode,
 }
 
 TEST_P(SvcTest, ScalabilityModeSupported) {
-  FieldTrials trials("");
+  FieldTrials trials = CreateTestFieldTrials("");
   if (UseDependencyDescriptor()) {
     trials.Set("WebRTC-DependencyDescriptorAdvertised", "Enabled");
   }

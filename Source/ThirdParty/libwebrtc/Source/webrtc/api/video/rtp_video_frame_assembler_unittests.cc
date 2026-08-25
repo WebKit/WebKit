@@ -14,6 +14,7 @@
 #include <span>
 #include <vector>
 
+#include "api/rtp_header_extension_id.h"
 #include "api/transport/rtp/dependency_descriptor.h"
 #include "api/video/encoded_frame.h"
 #include "api/video/rtp_video_frame_assembler.h"
@@ -65,7 +66,7 @@ class PacketBuilder {
   }
 
   template <typename T, typename... Args>
-  PacketBuilder& WithExtension(int id, const Args&... args) {
+  PacketBuilder& WithExtension(RtpHeaderExtensionId id, const Args&... args) {
     extension_manager_.Register<T>(id);
     packet_to_send_.IdentifyExtensions(extension_manager_);
     packet_to_send_.SetExtension<T>(std::forward<const Args>(args)...);
@@ -292,7 +293,8 @@ TEST(RtpVideoFrameAssembler, RawPacketizationDependencyDescriptorExtension) {
                    PacketBuilder(PayloadFormat::kRaw)
                        .WithPayload(kPayload)
                        .WithExtension<RtpDependencyDescriptorExtension>(
-                           1, dependency_structure, dependency_descriptor)
+                           RtpHeaderExtensionId(1), dependency_structure,
+                           dependency_descriptor)
                        .Build()),
                frames);
 
@@ -303,7 +305,8 @@ TEST(RtpVideoFrameAssembler, RawPacketizationDependencyDescriptorExtension) {
                    PacketBuilder(PayloadFormat::kRaw)
                        .WithPayload(kPayload)
                        .WithExtension<RtpDependencyDescriptorExtension>(
-                           1, dependency_structure, dependency_descriptor)
+                           RtpHeaderExtensionId(1), dependency_structure,
+                           dependency_descriptor)
                        .Build()),
                frames);
 
@@ -330,23 +333,23 @@ TEST(RtpVideoFrameAssembler, RawPacketizationGenericDescriptor00Extension) {
   generic.SetFirstPacketInSubFrame(true);
   generic.SetLastPacketInSubFrame(true);
   generic.SetFrameId(100);
-  AppendFrames(
-      assembler.InsertPacket(
-          PacketBuilder(PayloadFormat::kRaw)
-              .WithPayload(kPayload)
-              .WithExtension<RtpGenericFrameDescriptorExtension00>(1, generic)
-              .Build()),
-      frames);
+  AppendFrames(assembler.InsertPacket(
+                   PacketBuilder(PayloadFormat::kRaw)
+                       .WithPayload(kPayload)
+                       .WithExtension<RtpGenericFrameDescriptorExtension00>(
+                           RtpHeaderExtensionId(1), generic)
+                       .Build()),
+               frames);
 
   generic.SetFrameId(102);
   generic.AddFrameDependencyDiff(2);
-  AppendFrames(
-      assembler.InsertPacket(
-          PacketBuilder(PayloadFormat::kRaw)
-              .WithPayload(kPayload)
-              .WithExtension<RtpGenericFrameDescriptorExtension00>(1, generic)
-              .Build()),
-      frames);
+  AppendFrames(assembler.InsertPacket(
+                   PacketBuilder(PayloadFormat::kRaw)
+                       .WithPayload(kPayload)
+                       .WithExtension<RtpGenericFrameDescriptorExtension00>(
+                           RtpHeaderExtensionId(1), generic)
+                       .Build()),
+               frames);
 
   ASSERT_THAT(frames, SizeIs(2));
 

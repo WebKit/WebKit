@@ -165,13 +165,15 @@ def ci_builder(
         kwargs["priority"] = 29
 
     add_milo(name, {"ci": ci_cat, "perf": perf_cat})
-    if ci_cat and not perf_cat:
-        lkgr_builders.append(name)
     dimensions = ({"os": os_from_name(name), "pool": "luci.webrtc.ci", "cpu": kwargs.pop("cpu", DEFAULT_CPU)})
     dimensions["builderless"] = "1"
     properties = properties or {}
     properties["builder_group"] = "client.webrtc"
     properties.update(make_siso_properties("rbe-webrtc-trusted"))
+
+    if ci_cat and not perf_cat:
+        properties["gardener_rotations"] = ["webrtc"]
+        lkgr_builders.append(name)
 
     notifies = ["post_submit_failure_notifier", "infra_failure_notifier"]
     notifies += ["webrtc_tree_closer"] if name not in skipped_lkgr_bots else []

@@ -44,7 +44,7 @@ void UpdateDecodeTimer(VCMTiming& timing,
                        TimeDelta decode_time) {
   for (int i = 0; i < k25Fps.hertz(); ++i) {
     clock.AdvanceTime(decode_time);
-    timing.StopDecodeTimer(decode_time, clock.CurrentTime());
+    timing.UpdateDecodeTimeEstimate(decode_time, clock.CurrentTime());
     clock.AdvanceTime(1 / k25Fps - decode_time);
   }
 }
@@ -54,10 +54,11 @@ class FrameDecodeTimingTest : public ::testing::Test {
   FrameDecodeTimingTest()
       : field_trials_(CreateTestFieldTrials()),
         clock_(Timestamp::Millis(1000)),
-        timing_(&clock_, field_trials_),
+        timing_(&clock_, field_trials_, /*render_delay=*/TimeDelta::Zero()),
         frame_decode_scheduler_(&clock_, &timing_, field_trials_) {
-    timing_.set_render_delay(TimeDelta::Zero());
-    timing_.OnCompleteTemporalUnit(kNextRtp, clock_.CurrentTime());
+    timing_.OnCompleteFrame({.rtp_timestamp = kNextRtp,
+                             .time = clock_.CurrentTime(),
+                             .last_spatial_layer = true});
   }
 
  protected:
@@ -141,7 +142,7 @@ TEST(FrameDecodeTimingMaxWaitingTimeTest, IsZeroForZeroRenderTime) {
   constexpr Timestamp kZeroRenderTime = Timestamp::Zero();
   SimulatedClock clock(kStartTimeUs);
   FieldTrials field_trials = CreateTestFieldTrials();
-  VCMTiming timing(&clock, field_trials);
+  VCMTiming timing(&clock, field_trials, kRenderDelay);
   timing.set_playout_delay({TimeDelta::Zero(), TimeDelta::Zero()});
   FrameDecodeTiming decode_timing(&clock, &timing, field_trials);
 
@@ -180,7 +181,7 @@ TEST(FrameDecodeTimingMaxWaitingTimeTest, WithZeroDelayPacingActive) {
   constexpr TimeDelta kTimeDelta = 1 / Frequency::Hertz(60);
   constexpr Timestamp kZeroRenderTime = Timestamp::Zero();
   SimulatedClock clock(kStartTimeUs);
-  VCMTiming timing(&clock, field_trials);
+  VCMTiming timing(&clock, field_trials, kRenderDelay);
   FrameDecodeTiming decode_timing(&clock, &timing, field_trials);
 
   // MaxWaitingTime() returns zero for evenly spaced video frames.
@@ -230,7 +231,7 @@ TEST(FrameDecodeTimingMaxWaitingTimeTest,
   constexpr int64_t kStartTimeUs = 3.15e13;  // About one year in us.
   const TimeDelta kTimeDelta = TimeDelta::Millis(1000.0 / 60.0);
   SimulatedClock clock(kStartTimeUs);
-  VCMTiming timing(&clock, field_trials);
+  VCMTiming timing(&clock, field_trials, kRenderDelay);
   FrameDecodeTiming decode_timing(&clock, &timing, field_trials);
 
   clock.AdvanceTime(kTimeDelta);
@@ -263,7 +264,7 @@ TEST(FrameDecodeTimingMaxWaitingTimeTest, ReturnsZeroIfTooManyFramesAreQueued) {
   const TimeDelta kTimeDelta = TimeDelta::Millis(1000.0 / 60.0);
   constexpr Timestamp kZeroRenderTime = Timestamp::Zero();
   SimulatedClock clock(kStartTimeUs);
-  VCMTiming timing(&clock, field_trials);
+  VCMTiming timing(&clock, field_trials, kRenderDelay);
   FrameDecodeTiming decode_timing(&clock, &timing, field_trials);
 
   // MaxWaitingTime() returns zero for evenly spaced video frames.
@@ -294,8 +295,7 @@ TEST(FrameDecodeTimingMaxWaitingTimeTest, ReturnsZeroIfTooManyFramesAreQueued) {
 TEST(FrameDecodeTimingMaxWaitingTimeTest, WithVaryingRenderTimes) {
   FieldTrials field_trials = CreateTestFieldTrials();
   SimulatedClock clock(0);
-  VCMTiming timing(&clock, field_trials);
-  timing.set_render_delay(kRenderDelay);
+  VCMTiming timing(&clock, field_trials, kRenderDelay);
   UpdateDecodeTimer(timing, clock, kDecodeTime);
   FrameDecodeTiming decode_timing(&clock, &timing, field_trials);
 

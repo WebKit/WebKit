@@ -42,6 +42,7 @@
 #include "api/payload_type.h"
 #include "api/priority.h"
 #include "api/rtc_error.h"
+#include "api/rtp_header_extension_id.h"
 #include "api/rtp_headers.h"
 #include "api/rtp_parameters.h"
 #include "api/rtp_sender_interface.h"
@@ -162,7 +163,8 @@ std::vector<SdpVideoFormat> GetDefaultSupportedFormats(
     // is microseconds.) This parameter MUST be present in the SDP, but
     // we never use the actual value anywhere in our code however.
     // TODO(brandtr): Consider honouring this value in the sender and receiver.
-    flexfec_format.parameters = {{kFlexfecFmtpRepairWindow, "10000000"}};
+    flexfec_format.parameters = {
+        {std::string(kFlexfecFmtpRepairWindow), "10000000"}};
     supported_formats.push_back(flexfec_format);
   }
   return supported_formats;
@@ -826,10 +828,9 @@ std::unique_ptr<VideoMediaReceiveChannelInterface>
 WebRtcVideoEngine::CreateReceiveChannel(const Environment& env,
                                         Call* call,
                                         const MediaConfig& config,
-                                        const VideoOptions& options,
                                         const CryptoOptions& crypto_options) {
   return std::make_unique<WebRtcVideoReceiveChannel>(
-      env, call, config, options, crypto_options, decoder_factory_.get());
+      env, call, config, crypto_options, decoder_factory_.get());
 }
 
 std::vector<Codec> WebRtcVideoEngine::LegacySendCodecs(bool include_rtx) const {
@@ -871,7 +872,7 @@ WebRtcVideoEngine::GetRtpHeaderExtensions(
   std::vector<RtpHeaderExtensionCapability> result;
   // id is *not* incremented for non-default extensions. Conflicting IDs
   // need to be resolved.
-  int id = 1;
+  RtpHeaderExtensionId id(1);
   for (const auto& uri :
        {RtpExtension::kTimestampOffsetUri, RtpExtension::kAbsSendTimeUri,
         RtpExtension::kVideoRotationUri,
@@ -880,11 +881,13 @@ WebRtcVideoEngine::GetRtpHeaderExtensions(
         RtpExtension::kVideoTimingUri, RtpExtension::kColorSpaceUri,
         RtpExtension::kMidUri, RtpExtension::kRidUri,
         RtpExtension::kRepairedRidUri}) {
-    result.emplace_back(uri, id++, RtpTransceiverDirection::kSendRecv);
+    result.emplace_back(uri, id, RtpTransceiverDirection::kSendRecv);
+    id = RtpHeaderExtensionId(id.value() + 1);
   }
-  result.emplace_back(RtpExtension::kCorruptionDetectionUri, id++,
+  result.emplace_back(RtpExtension::kCorruptionDetectionUri, id,
                       /*preferred_encrypt=*/true,
                       RtpTransceiverDirection::kStopped);
+  id = RtpHeaderExtensionId(id.value() + 1);
   for (const auto& uri : {RtpExtension::kAbsoluteCaptureTimeUri}) {
     result.emplace_back(uri, id, RtpTransceiverDirection::kStopped);
   }
@@ -1264,7 +1267,6 @@ void WebRtcVideoSendChannel::ApplyEncoderSwitch(
     std::optional<SdpVideoFormat> format,
     bool allow_default_fallback) {
   RTC_DCHECK_RUN_ON(worker_thread_);
-  RTC_DCHECK(format.has_value() || allow_default_fallback);
 
   ChangedSenderParameters params;
   if (!format) {
@@ -1415,31 +1417,6 @@ WebRtcVideoSendChannel::GetRtpSendParametersCallback() const {
       return RtpParameters();
     return GetRtpSendParameters(ssrc);
   };
-}
-
-bool WebRtcVideoSendChannel::SetOptions(const VideoOptions& options) {
-  RTC_DCHECK_RUN_ON(worker_thread_);
-  default_send_options_ = options;
-  for (auto& kv : send_streams_) {
-    kv.second->SetOptions(options);
-  }
-  return true;
-}
-
-void WebRtcVideoSendChannel::WebRtcVideoSendStream::SetOptions(
-    const VideoOptions& options) {
-  RTC_DCHECK_RUN_ON(&thread_checker_);
-  VideoOptions old_options = parameters_.options;
-  parameters_.options.SetAll(options);
-  if (parameters_.options.is_screencast.value_or(false) !=
-          old_options.is_screencast.value_or(false) &&
-      parameters_.codec_settings) {
-    SetCodec(*parameters_.codec_settings, parameters_.codec_settings_list);
-    old_options.is_screencast = options.is_screencast;
-  }
-  if (parameters_.options != old_options) {
-    ReconfigureEncoder(nullptr);
-  }
 }
 
 RTCError WebRtcVideoSendChannel::SetRtpSendParameters(
@@ -1780,7 +1757,6 @@ void WebRtcVideoSendChannel::OnNetworkRouteChanged(
         RtpTransportControllerSendInterface* transport =
             call_->GetTransportControllerSend();
         transport->OnNetworkRouteChanged(name, route);
-        transport->OnTransportOverheadChanged(route.packet_overhead);
       }));
 }
 
@@ -2317,6 +2293,8 @@ WebRtcVideoSendChannel::WebRtcVideoSendStream::CreateVideoEncoderConfig(
   VideoEncoderConfig encoder_config;
   encoder_config.codec_type = PayloadStringToCodecType(codec.name);
   encoder_config.video_format = SdpVideoFormat(codec.name, codec.params);
+  encoder_config.allow_zero_hertz_video =
+      parameters_.options.allow_zero_hertz_video.value_or(false);
 
   bool is_screencast = parameters_.options.is_screencast.value_or(false);
   if (is_screencast) {
@@ -2755,6 +2733,9 @@ void WebRtcVideoSendChannel::WebRtcVideoSendStream::RecreateWebRtcStream() {
     // SVC is used instead of simulcast. Remove unnecessary SSRCs.
     if (config.rtp.ssrcs.size() > 1) {
       config.rtp.ssrcs.resize(1);
+      if (config.rtp.rids.size() > 1) {
+        config.rtp.rids.resize(1);
+      }
       if (config.rtp.rtx.ssrcs.size() > 1) {
         config.rtp.rtx.ssrcs.resize(1);
       }
@@ -2849,7 +2830,6 @@ WebRtcVideoReceiveChannel::WebRtcVideoReceiveChannel(
     const Environment& env,
     Call* absl_nonnull call,
     const MediaConfig& config,
-    const VideoOptions& options,
     const CryptoOptions& crypto_options,
     VideoDecoderFactory* absl_nullable decoder_factory)
     : MediaChannelUtil(call->network_thread(), config.enable_dscp),
@@ -3024,6 +3004,17 @@ void WebRtcVideoReceiveChannel::SetReceive(bool receive) {
   receiving_ = receive;
 }
 
+void WebRtcVideoReceiveChannel::SetReceiveNonSenderRttEnabled(bool enabled) {
+  RTC_DCHECK_RUN_ON(&thread_checker_);
+  if (enable_non_sender_rtt_ == enabled) {
+    return;
+  }
+  enable_non_sender_rtt_ = enabled;
+  for (auto& kv : receive_streams_) {
+    kv.second->SetNonSenderRttMeasurement(enabled);
+  }
+}
+
 bool WebRtcVideoReceiveChannel::ValidateReceiveSsrcAvailability(
     const StreamParams& sp) const {
   for (uint32_t ssrc : sp.ssrcs) {
@@ -3098,6 +3089,7 @@ bool WebRtcVideoReceiveChannel::AddRecvStream(const StreamParams& sp,
   if (unsignaled_frame_transformer_ && !config.frame_transformer)
     config.frame_transformer = unsignaled_frame_transformer_;
 
+  config.rtp.rtcp_xr.receiver_reference_time_report = enable_non_sender_rtt_;
   auto receive_stream = new WebRtcVideoReceiveStream(
       env_, call_, sp, std::move(config), default_stream, recv_codecs_,
       flexfec_config);
@@ -3536,8 +3528,6 @@ WebRtcVideoReceiveChannel::WebRtcVideoReceiveStream::WebRtcVideoReceiveStream(
     config_.rtp.nack.rtp_history_ms = *codec.rtx_time;
   }
 
-  config_.rtp.rtcp_xr.receiver_reference_time_report = HasRrtr(codec.codec);
-
   if (codec.ulpfec.red_rtx_payload_type != -1) {
     config_.rtp
         .rtx_associated_payload_types[codec.ulpfec.red_rtx_payload_type] =
@@ -3630,12 +3620,6 @@ bool WebRtcVideoReceiveChannel::WebRtcVideoReceiveStream::ReconfigureCodecs(
   if (config_.rtp.nack.rtp_history_ms != new_history_ms) {
     config_.rtp.nack.rtp_history_ms = new_history_ms;
     stream_->SetNackHistory(TimeDelta::Millis(new_history_ms));
-  }
-
-  const bool has_rtr = HasRrtr(codec.codec);
-  if (has_rtr != config_.rtp.rtcp_xr.receiver_reference_time_report) {
-    config_.rtp.rtcp_xr.receiver_reference_time_report = has_rtr;
-    stream_->SetRtcpXr(config_.rtp.rtcp_xr);
   }
 
   if (codec.ulpfec.red_rtx_payload_type != -1) {
@@ -3824,6 +3808,17 @@ void WebRtcVideoReceiveChannel::WebRtcVideoReceiveStream::SetFrameDecryptor(
   }
 }
 
+void WebRtcVideoReceiveChannel::WebRtcVideoReceiveStream::
+    SetNonSenderRttMeasurement(bool enabled) {
+  RTC_DCHECK_RUN_ON(&thread_checker_);
+  if (config_.rtp.rtcp_xr.receiver_reference_time_report != enabled) {
+    config_.rtp.rtcp_xr.receiver_reference_time_report = enabled;
+    if (stream_) {
+      stream_->SetRtcpXr(config_.rtp.rtcp_xr);
+    }
+  }
+}
+
 bool WebRtcVideoReceiveChannel::WebRtcVideoReceiveStream::
     SetBaseMinimumPlayoutDelayMs(int delay_ms) {
   return stream_ ? stream_->SetBaseMinimumPlayoutDelayMs(delay_ms) : false;
@@ -3985,8 +3980,11 @@ WebRtcVideoReceiveChannel::WebRtcVideoReceiveStream::GetVideoReceiverInfo(
   info.sender_reports_packets_sent = stats.sender_reports_packets_sent;
   info.sender_reports_bytes_sent = stats.sender_reports_bytes_sent;
   info.sender_reports_reports_count = stats.sender_reports_reports_count;
-  // TODO(bugs.webrtc.org/12529): RTT-related fields are missing and can only be
-  // present if DLRR is enabled.
+  // Non-sender RTT (RRTR/DLRR), surfaced for recvonly endpoints; mirrors the
+  // audio path.
+  info.round_trip_time = stats.round_trip_time;
+  info.round_trip_time_measurements = stats.round_trip_time_measurements;
+  info.total_round_trip_time = stats.total_round_trip_time;
 
   if (log_stats)
     RTC_LOG(LS_INFO) << stats.ToString(env_.clock().TimeInMilliseconds(),

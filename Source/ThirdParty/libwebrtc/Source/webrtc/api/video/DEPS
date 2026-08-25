@@ -74,4 +74,21 @@ specific_include_rules = {
   "video_frame_matchers\\.h": [
     "+test/gmock.h",
   ],
+  "adapted_video_track_source\\.h" : [
+    "+rtc_base/synchronization/mutex.h",
+    "+rtc_base/thread_annotations.h",
+  ],
+  "video_adapter\\.h" : [
+    "+common_video/framerate_controller.h",
+    "+rtc_base/synchronization/mutex.h",
+    "+rtc_base/thread_annotations.h",
+  ],
+  "video_broadcaster\\.h" : [
+    "+media/base/video_source_base.h",
+    "+rtc_base/synchronization/mutex.h",
+    "+rtc_base/thread_annotations.h",
+  ],
+  "video_common\\.h" : [
+    "+rtc_base/time_utils.h",
+  ],
 }

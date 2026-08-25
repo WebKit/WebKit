@@ -17,6 +17,7 @@
 #include <utility>
 #include <vector>
 
+#include "absl/strings/string_view.h"
 #include "api/audio_codecs/builtin_audio_decoder_factory.h"
 #include "api/audio_codecs/builtin_audio_encoder_factory.h"
 #include "api/create_peerconnection_factory.h"
@@ -33,7 +34,6 @@
 #include "api/rtp_transceiver_interface.h"
 #include "api/scoped_refptr.h"
 #include "api/set_remote_description_observer_interface.h"
-#include "api/test/rtc_error_matchers.h"
 #include "api/units/data_rate.h"
 #include "api/video/render_resolution.h"
 #include "api/video_codecs/sdp_video_format.h"
@@ -62,6 +62,7 @@
 #include "rtc_base/system/plan_b_only.h"
 #include "rtc_base/thread.h"
 #include "system_wrappers/include/metrics.h"
+#include "test/create_test_field_trials.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 #include "test/run_loop.h"
@@ -115,7 +116,9 @@ class PeerConnectionRtpBaseTest : public ::testing::Test {
                                             OpenH264DecoderTemplateAdapter,
                                             Dav1dDecoderTemplateAdapter>>(),
             nullptr /* audio_mixer */,
-            nullptr /* audio_processing */)) {
+            nullptr /* audio_processing */,
+            nullptr /* audio_frame_processor */,
+            CreateTestFieldTrialsPtr())) {
     metrics::Reset();
   }
 
@@ -130,16 +133,32 @@ class PeerConnectionRtpBaseTest : public ::testing::Test {
   }
 
   std::unique_ptr<PeerConnectionWrapper> CreatePeerConnectionWithUnifiedPlan() {
+    return CreatePeerConnectionWithUnifiedPlan("");
+  }
+
+  std::unique_ptr<PeerConnectionWrapper> CreatePeerConnectionWithUnifiedPlan(
+      absl::string_view field_trials) {
     RTCConfiguration config;
     config.sdp_semantics = SdpSemantics::kUnifiedPlan;
-    return CreatePeerConnectionInternal(config);
+    return CreatePeerConnectionInternal(config, field_trials);
   }
 
   std::unique_ptr<PeerConnectionWrapper> CreatePeerConnection(
       const RTCConfiguration& config) {
+    return CreatePeerConnection(config, "");
+  }
+
+  std::unique_ptr<PeerConnectionWrapper> CreatePeerConnection(
+      absl::string_view field_trials) {
+    return CreatePeerConnection(RTCConfiguration(), field_trials);
+  }
+
+  std::unique_ptr<PeerConnectionWrapper> CreatePeerConnection(
+      const RTCConfiguration& config,
+      absl::string_view field_trials) {
     RTCConfiguration modified_config = config;
     modified_config.sdp_semantics = sdp_semantics_;
-    return CreatePeerConnectionInternal(modified_config);
+    return CreatePeerConnectionInternal(modified_config, field_trials);
   }
 
  protected:
@@ -152,9 +171,19 @@ class PeerConnectionRtpBaseTest : public ::testing::Test {
   // adjustment.
   std::unique_ptr<PeerConnectionWrapper> CreatePeerConnectionInternal(
       const RTCConfiguration& config) {
+    return CreatePeerConnectionInternal(config, "");
+  }
+
+  std::unique_ptr<PeerConnectionWrapper> CreatePeerConnectionInternal(
+      const RTCConfiguration& config,
+      absl::string_view field_trials) {
     auto observer = std::make_unique<MockPeerConnectionObserver>();
+    PeerConnectionDependencies pc_dependencies(observer.get());
+    if (!field_trials.empty()) {
+      pc_dependencies.trials = CreateTestFieldTrialsPtr(field_trials);
+    }
     auto result = pc_factory_->CreatePeerConnectionOrError(
-        config, PeerConnectionDependencies(observer.get()));
+        config, std::move(pc_dependencies));
     EXPECT_TRUE(result.ok());
     observer->SetPeerConnectionInterface(result.value().get());
     return std::make_unique<PeerConnectionWrapper>(
@@ -770,12 +799,8 @@ TEST_F(PeerConnectionRtpTestPlanB,
       std::move(srd2_sdp),
       make_ref_counted<OnSuccessObserver<decltype(srd2_callback)>>(
           srd2_callback));
-  EXPECT_THAT(
-      WaitUntil([&] { return srd1_callback_called; }, ::testing::IsTrue()),
-      IsRtcOk());
-  EXPECT_THAT(
-      WaitUntil([&] { return srd2_callback_called; }, ::testing::IsTrue()),
-      IsRtcOk());
+  EXPECT_TRUE(WaitUntil([&] { return srd1_callback_called; }));
+  EXPECT_TRUE(WaitUntil([&] { return srd2_callback_called; }));
 }
 RTC_ALLOW_PLAN_B_DEPRECATION_END()
 
@@ -815,8 +840,10 @@ TEST_F(PeerConnectionRtpTestUnifiedPlan, UnsignaledSsrcCreatesReceiverStreams) {
 TEST_F(PeerConnectionRtpTestUnifiedPlan, TracksDoNotEndWhenSsrcChanges) {
   constexpr uint32_t kFirstMungedSsrc = 1337u;
 
+  // Munging allowed: kSsrcs (27)
   auto caller = CreatePeerConnection();
-  auto callee = CreatePeerConnection();
+  auto callee =
+      CreatePeerConnection("WebRTC-NoSdpMangleAllowForTesting/Enabled,27/");
 
   // Caller offers to receive audio and video.
   RtpTransceiverInit init;
@@ -1927,7 +1954,10 @@ TEST_F(PeerConnectionMsidSignalingTest, UnifiedPlanToPlanBAnswer) {
 }
 
 TEST_F(PeerConnectionMsidSignalingTest, PureUnifiedPlanToUs) {
-  auto caller = CreatePeerConnectionWithUnifiedPlan();
+  // Munging allowed: kUnknownModification (MSID signaling semantic
+  // modification)
+  auto caller = CreatePeerConnectionWithUnifiedPlan(
+      "WebRTC-NoSdpMangleAllowForTesting/Enabled,1/");
   caller->AddAudioTrack("caller_audio");
   auto callee = CreatePeerConnectionWithUnifiedPlan();
   callee->AddAudioTrack("callee_audio");

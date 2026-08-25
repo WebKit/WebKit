@@ -15,12 +15,25 @@
 #include <vector>
 
 #include "absl/functional/any_invocable.h"
+#include "api/function_view.h"
+#include "api/location.h"
 #include "api/rtc_error.h"
+#include "rtc_base/null_socket_server.h"
 #include "rtc_base/thread.h"
 #include "test/gtest.h"
 
 namespace webrtc {
 namespace {
+
+class FakeQuittingThread : public Thread {
+ public:
+  FakeQuittingThread() : Thread(std::make_unique<NullSocketServer>()) {}
+
+  void BlockingCallImpl(FunctionView<void()> functor,
+                        const Location& location) override {
+    // Do nothing to simulate dropping the task when quitting.
+  }
+};
 
 TEST(ScopedOperationsBatcherTest, ExecutesTasksOnTargetThread) {
   auto target_thread = Thread::Create();
@@ -148,6 +161,41 @@ TEST(ScopedOperationsBatcherTest, StopsExecutionOnError) {
   EXPECT_TRUE(task2_executed);
   EXPECT_FALSE(task3_executed);
   EXPECT_FALSE(finalizer3_executed);
+}
+
+TEST(ScopedOperationsBatcherTest, IsEmptyReflectsTaskCount) {
+  auto target_thread = Thread::Create();
+  target_thread->Start();
+
+  ScopedOperationsBatcher batcher(target_thread.get());
+  EXPECT_TRUE(batcher.IsEmpty());
+
+  batcher.Add([] {});
+  EXPECT_FALSE(batcher.IsEmpty());
+
+  EXPECT_TRUE(batcher.Run().ok());
+  EXPECT_TRUE(batcher.IsEmpty());
+}
+
+TEST(ScopedOperationsBatcherTest, AbortsGracefullyWhenTargetThreadQuits) {
+  FakeQuittingThread target_thread;
+  target_thread.Start();
+
+  ScopedOperationsBatcher batcher(&target_thread);
+  batcher.Add([] {});
+
+  // This should return an error and not hang or crash.
+  RTCError error = batcher.Run();
+  EXPECT_FALSE(error.ok());
+  EXPECT_EQ(error.type(), RTCErrorType::INTERNAL_ERROR);
+
+  // Explicitly stop `target_thread` before it is destroyed to avoid a conflict
+  // between the FakeQuittingThread destructor and ~Thread().
+  // Otherwise, the background thread continues running `ProcessMessages()` and
+  // making virtual calls (like `IsQuitting()`) while the
+  // `~FakeQuittingThread()` destructor is run and resets the vptr (which
+  // triggers a race with TSAN).
+  target_thread.Stop();
 }
 
 }  // namespace

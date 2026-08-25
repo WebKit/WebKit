@@ -29,6 +29,7 @@ class MockTransformableFrame : public TransformableFrameInterface {
  public:
   MockTransformableFrame() : TransformableFrameInterface(Passkey()) {}
 
+  MOCK_METHOD(RtpTimestampInfo, GetRtpTimestampInfo, (), (const, override));
   MOCK_METHOD(std::span<const uint8_t>, GetData, (), (const, override));
   MOCK_METHOD(void, SetData, (std::span<const uint8_t>), (override));
   MOCK_METHOD(uint8_t, GetPayloadType, (), (const, override));

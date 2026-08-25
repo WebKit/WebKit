@@ -16,6 +16,7 @@
 #include <optional>
 #include <span>
 #include <string>
+#include <variant>
 
 #include "api/ref_count.h"
 #include "api/scoped_refptr.h"
@@ -26,6 +27,17 @@
 #include "rtc_base/system/rtc_export.h"
 
 namespace webrtc {
+
+struct RtpTimestampWithOffset {
+  uint32_t value;
+  operator uint32_t() const { return value; }  // NOLINT: explicit
+};
+struct RtpTimestampWithoutOffset {
+  uint32_t value;
+  operator uint32_t() const { return value; }  // NOLINT: explicit
+};
+using RtpTimestampInfo =
+    std::variant<RtpTimestampWithOffset, RtpTimestampWithoutOffset>;
 
 // Owns the frame payload data.
 class TransformableFrameInterface {
@@ -55,8 +67,14 @@ class TransformableFrameInterface {
   virtual bool CanSetPayloadType() const { return false; }
   virtual void SetPayloadType(uint8_t payload_type) { RTC_DCHECK_NOTREACHED(); }
   virtual uint32_t GetSsrc() const = 0;
+  // The full RTP timestamp may not always be known. An example are frames not
+  // associated with a sender or receiver, where the random offset for RTP
+  // timestamp is not known. Use GetRtpTimestampInfo instead, which makes it
+  // possible to make a distinction between these two cases.
+  // TODO(https://bugs.webrtc.org/526671875): Deprecate and remove this method.
+  [[deprecated("Use GetRtpTimestampInfo instead")]]
   virtual uint32_t GetTimestamp() const = 0;
-  virtual void SetRTPTimestamp(uint32_t timestamp) = 0;
+  virtual void SetRTPTimestamp(uint32_t rtp_timestamp_with_offset) = 0;
 
   // TODO(https://bugs.webrtc.org/373365537): Remove this once its usage is
   // removed from blink.
@@ -107,6 +125,11 @@ class TransformableFrameInterface {
   // Accessible only if the absolute capture timestamp header extension is
   // enabled.
   virtual std::optional<TimeDelta> SenderCaptureTimeOffset() const = 0;
+
+  // Returns RtpTimestampWithOffset if the full RTP timestamp is known,
+  // or RtpTimestampWithoutOffset if the offset for the RTP timestamp is not
+  // known.
+  virtual RtpTimestampInfo GetRtpTimestampInfo() const = 0;
 };
 
 class TransformableVideoFrameInterface : public TransformableFrameInterface {

@@ -246,13 +246,6 @@ void AudioEncoderCopyRed::OnReceivedUplinkPacketLossFraction(
       uplink_packet_loss_fraction);
 }
 
-void AudioEncoderCopyRed::OnReceivedUplinkBandwidth(
-    int target_audio_bitrate_bps,
-    std::optional<int64_t> bwe_period_ms) {
-  speech_encoder_->OnReceivedUplinkBandwidth(target_audio_bitrate_bps,
-                                             bwe_period_ms);
-}
-
 void AudioEncoderCopyRed::OnReceivedUplinkAllocation(
     BitrateAllocationUpdate update) {
   speech_encoder_->OnReceivedUplinkAllocation(update);

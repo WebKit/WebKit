@@ -163,6 +163,10 @@ class VideoTrackSourceInterface : public MediaSourceInterface,
   virtual void ProcessConstraints(
       const VideoTrackSourceConstraints& /* constraints */) {}
 
+  // Returns true if zero-hertz mode should be allowed for non-screenshare
+  // modes.
+  virtual bool allow_zero_hertz_video() const { return false; }
+
  protected:
   ~VideoTrackSourceInterface() override = default;
 };

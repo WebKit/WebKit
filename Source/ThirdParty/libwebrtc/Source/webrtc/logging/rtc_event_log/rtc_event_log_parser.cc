@@ -26,6 +26,7 @@
 #include "api/candidate.h"
 #include "api/dtls_transport_interface.h"
 #include "api/rtc_event_log/rtc_event.h"
+#include "api/rtp_header_extension_id.h"
 #include "api/rtp_headers.h"
 #include "api/rtp_parameters.h"
 #include "api/transport/bandwidth_usage.h"
@@ -337,7 +338,7 @@ ParsedRtcEventLog::ParseStatus GetHeaderExtensions(
     RTC_PARSE_CHECK_OR_RETURN(p.has_id());
     const std::string& name = p.name();
     int id = p.id();
-    header_extensions->push_back(RtpExtension(name, id));
+    header_extensions->push_back(RtpExtension(name, RtpHeaderExtensionId(id)));
   }
   return ParsedRtcEventLog::ParseStatus::Success();
 }
@@ -1050,30 +1051,35 @@ std::vector<RtpExtension> GetRuntimeRtpHeaderExtensionConfig(
   if (proto_header_extensions.has_transmission_time_offset_id()) {
     rtp_extensions.emplace_back(
         RtpExtension::kTimestampOffsetUri,
-        proto_header_extensions.transmission_time_offset_id());
+        RtpHeaderExtensionId(
+            proto_header_extensions.transmission_time_offset_id()));
   }
   if (proto_header_extensions.has_absolute_send_time_id()) {
     rtp_extensions.emplace_back(
         RtpExtension::kAbsSendTimeUri,
-        proto_header_extensions.absolute_send_time_id());
+        RtpHeaderExtensionId(proto_header_extensions.absolute_send_time_id()));
   }
   if (proto_header_extensions.has_transport_sequence_number_id()) {
     rtp_extensions.emplace_back(
         RtpExtension::kTransportSequenceNumberUri,
-        proto_header_extensions.transport_sequence_number_id());
+        RtpHeaderExtensionId(
+            proto_header_extensions.transport_sequence_number_id()));
   }
   if (proto_header_extensions.has_audio_level_id()) {
-    rtp_extensions.emplace_back(RtpExtension::kAudioLevelUri,
-                                proto_header_extensions.audio_level_id());
+    rtp_extensions.emplace_back(
+        RtpExtension::kAudioLevelUri,
+        RtpHeaderExtensionId(proto_header_extensions.audio_level_id()));
   }
   if (proto_header_extensions.has_video_rotation_id()) {
-    rtp_extensions.emplace_back(RtpExtension::kVideoRotationUri,
-                                proto_header_extensions.video_rotation_id());
+    rtp_extensions.emplace_back(
+        RtpExtension::kVideoRotationUri,
+        RtpHeaderExtensionId(proto_header_extensions.video_rotation_id()));
   }
   if (proto_header_extensions.has_dependency_descriptor_id()) {
     rtp_extensions.emplace_back(
         RtpExtension::kDependencyDescriptorUri,
-        proto_header_extensions.dependency_descriptor_id());
+        RtpHeaderExtensionId(
+            proto_header_extensions.dependency_descriptor_id()));
   }
   return rtp_extensions;
 }
@@ -1150,15 +1156,15 @@ ParsedRtcEventLog::LoggedRtpStreamView::LoggedRtpStreamView(
 //             audio streams. Tracking bug: webrtc:6399
 RtpHeaderExtensionMap ParsedRtcEventLog::GetDefaultHeaderExtensionMap() {
   // Values from before the default RTP header extension IDs were removed.
-  constexpr int kAudioLevelDefaultId = 1;
-  constexpr int kTimestampOffsetDefaultId = 2;
-  constexpr int kAbsSendTimeDefaultId = 3;
-  constexpr int kVideoRotationDefaultId = 4;
-  constexpr int kTransportSequenceNumberDefaultId = 5;
-  constexpr int kPlayoutDelayDefaultId = 6;
-  constexpr int kVideoContentTypeDefaultId = 7;
-  constexpr int kVideoTimingDefaultId = 8;
-  constexpr int kDependencyDescriptorDefaultId = 9;
+  constexpr RtpHeaderExtensionId kAudioLevelDefaultId(1);
+  constexpr RtpHeaderExtensionId kTimestampOffsetDefaultId(2);
+  constexpr RtpHeaderExtensionId kAbsSendTimeDefaultId(3);
+  constexpr RtpHeaderExtensionId kVideoRotationDefaultId(4);
+  constexpr RtpHeaderExtensionId kTransportSequenceNumberDefaultId(5);
+  constexpr RtpHeaderExtensionId kPlayoutDelayDefaultId(6);
+  constexpr RtpHeaderExtensionId kVideoContentTypeDefaultId(7);
+  constexpr RtpHeaderExtensionId kVideoTimingDefaultId(8);
+  constexpr RtpHeaderExtensionId kDependencyDescriptorDefaultId(9);
 
   RtpHeaderExtensionMap default_map(/*extmap_allow_mixed=*/true);
   default_map.Register<AudioLevelExtension>(kAudioLevelDefaultId);
@@ -2600,7 +2606,7 @@ std::vector<LoggedPacketInfo> ParsedRtcEventLog::GetPacketInfos(
                 : TimeDelta::Zero();
         last_feedback_compact_ntp_time_ =
             feedback.report_timestamp_compact_ntp();
-        if (feedback_delta < TimeDelta::Millis(-500)) {
+        if (feedback_delta < TimeDelta::Seconds(-5)) {
           RTC_LOG(LS_WARNING)
               << "Unexpected feedback ntp time delta " << feedback_delta << ".";
           ccfb_feedback_offset = log_feedback_time;

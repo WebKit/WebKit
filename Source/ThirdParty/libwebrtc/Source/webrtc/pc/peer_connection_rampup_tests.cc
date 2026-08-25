@@ -229,12 +229,8 @@ class PeerConnectionRampUpTest : public ::testing::Test {
     ASSERT_THAT(WaitUntil([&] { return caller_->signaling_state(); },
                           ::testing::Eq(PeerConnectionInterface::kStable)),
                 IsRtcOk());
-    ASSERT_THAT(WaitUntil([&] { return caller_->IsIceGatheringDone(); },
-                          ::testing::IsTrue()),
-                IsRtcOk());
-    ASSERT_THAT(WaitUntil([&] { return callee_->IsIceGatheringDone(); },
-                          ::testing::IsTrue()),
-                IsRtcOk());
+    ASSERT_TRUE(WaitUntil([&] { return caller_->IsIceGatheringDone(); }));
+    ASSERT_TRUE(WaitUntil([&] { return callee_->IsIceGatheringDone(); }));
 
     // Connect an ICE candidate pairs.
     ASSERT_TRUE(
@@ -242,12 +238,8 @@ class PeerConnectionRampUpTest : public ::testing::Test {
     ASSERT_TRUE(
         caller_->AddIceCandidates(callee_->observer()->GetAllCandidates()));
     // This means that ICE and DTLS are connected.
-    ASSERT_THAT(WaitUntil([&] { return callee_->IsIceConnected(); },
-                          ::testing::IsTrue()),
-                IsRtcOk());
-    ASSERT_THAT(WaitUntil([&] { return caller_->IsIceConnected(); },
-                          ::testing::IsTrue()),
-                IsRtcOk());
+    ASSERT_TRUE(WaitUntil([&] { return callee_->IsIceConnected(); }));
+    ASSERT_TRUE(WaitUntil([&] { return caller_->IsIceConnected(); }));
   }
 
   void CreateTurnServer(ProtocolType type,

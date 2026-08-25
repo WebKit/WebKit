@@ -223,6 +223,9 @@ class VideoEncoderConfig {
   // Indicates whether quality scaling can be used or not.
   bool is_quality_scaling_allowed;
 
+  // Allow zero-hertz mode for regular video.
+  bool allow_zero_hertz_video;
+
   // Maximum Quantization Parameter.
   // This value is fed into EncoderStreamFactory that
   // apply it to all simulcast layers/spatial layers.

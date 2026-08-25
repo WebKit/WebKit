@@ -16,7 +16,6 @@
 #include <vector>
 
 #include "api/environment/environment.h"
-#include "api/environment/environment_factory.h"
 #include "modules/include/module_fec_types.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "modules/rtp_rtcp/source/fec_test_helper.h"
@@ -24,6 +23,7 @@
 #include "modules/rtp_rtcp/source/rtp_packet_to_send.h"
 #include "rtc_base/copy_on_write_buffer.h"
 #include "system_wrappers/include/clock.h"
+#include "test/create_test_environment.h"
 #include "test/gtest.h"
 
 namespace webrtc {
@@ -55,10 +55,12 @@ void VerifyHeader(uint16_t seq_num,
 class UlpfecGeneratorTest : public ::testing::Test {
  protected:
   UlpfecGeneratorTest()
-      : env_(CreateEnvironment(std::make_unique<SimulatedClock>(1))),
+      : clock_(1),
+        env_(CreateTestEnvironment({.time = &clock_})),
         ulpfec_generator_(env_, kRedPayloadType, kFecPayloadType),
         packet_generator_(kMediaSsrc) {}
 
+  SimulatedClock clock_;
   const Environment env_;
   UlpfecGenerator ulpfec_generator_;
   AugmentedPacketGenerator packet_generator_;

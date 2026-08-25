@@ -24,6 +24,7 @@
 #include "api/environment/environment.h"
 #include "api/make_ref_counted.h"
 #include "api/media_types.h"
+#include "api/rtp_header_extension_id.h"
 #include "api/rtp_headers.h"
 #include "api/rtp_parameters.h"
 #include "api/scoped_refptr.h"
@@ -69,12 +70,10 @@
 namespace webrtc {
 namespace test {
 namespace {
-enum : int {  // The first valid value is 1.
-  kTransportSequenceNumberExtensionId = 1,
-  kAbsSendTimeExtensionId,
-  kVideoContentTypeExtensionId,
-  kVideoRotationRtpExtensionId,
-};
+constexpr RtpHeaderExtensionId kTransportSequenceNumberExtensionId(1);
+constexpr RtpHeaderExtensionId kAbsSendTimeExtensionId(2);
+constexpr RtpHeaderExtensionId kVideoContentTypeExtensionId(3);
+constexpr RtpHeaderExtensionId kVideoRotationRtpExtensionId(4);
 
 uint8_t CodecTypeToPayloadType(VideoCodecType codec_type) {
   switch (codec_type) {

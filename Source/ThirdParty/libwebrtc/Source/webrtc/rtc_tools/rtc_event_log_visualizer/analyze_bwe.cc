@@ -30,6 +30,7 @@
 #include "api/field_trials.h"
 #include "api/function_view.h"
 #include "api/media_types.h"
+#include "api/rtp_header_extension_id.h"
 #include "api/rtp_headers.h"
 #include "api/transport/bandwidth_usage.h"
 #include "api/transport/goog_cc_factory.h"
@@ -39,7 +40,9 @@
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
 #include "logging/rtc_event_log/events/logged_rtp_rtcp.h"
+#include "logging/rtc_event_log/events/rtc_event_route_change.h"
 #include "logging/rtc_event_log/rtc_event_log_parser.h"
+#include "logging/rtc_event_log/rtc_event_processor.h"
 #include "modules/congestion_controller/goog_cc/acknowledged_bitrate_estimator_interface.h"
 #include "modules/congestion_controller/include/receive_side_congestion_controller.h"
 #include "modules/congestion_controller/rtp/transport_feedback_adapter.h"
@@ -180,12 +183,13 @@ RtpPacketReceived RtpPacketForBWEFromHeader(const RTPHeader& header) {
   RtpHeaderExtensionMap rtp_header_extensions(/*extmap_allow_mixed=*/true);
   // ReceiveSideCongestionController doesn't need to know extensions ids as
   // long as it able to get extensions by type. So any ids would work here.
-  rtp_header_extensions.Register<TransmissionOffset>(1);
-  rtp_header_extensions.Register<AbsoluteSendTime>(2);
-  rtp_header_extensions.Register<TransportSequenceNumber>(3);
-  rtp_header_extensions.Register<FakeExtensionSmall>(4);
+  rtp_header_extensions.Register<TransmissionOffset>(RtpHeaderExtensionId(1));
+  rtp_header_extensions.Register<AbsoluteSendTime>(RtpHeaderExtensionId(2));
+  rtp_header_extensions.Register<TransportSequenceNumber>(
+      RtpHeaderExtensionId(3));
+  rtp_header_extensions.Register<FakeExtensionSmall>(RtpHeaderExtensionId(4));
   // Use id > 14 to force two byte header per rtp header when this one is used.
-  rtp_header_extensions.Register<FakeExtensionLarge>(16);
+  rtp_header_extensions.Register<FakeExtensionLarge>(RtpHeaderExtensionId(16));
 
   RtpPacketReceived rtp_packet(&rtp_header_extensions);
   // Set only fields that might be relevant for the bandwidth estimatior.
@@ -231,6 +235,108 @@ RtpPacketReceived RtpPacketForBWEFromHeader(const RTPHeader& header) {
   RTC_CHECK_EQ(rtp_packet.headers_size(), header.headerLength);
 
   return rtp_packet;
+}
+
+const std::vector<LoggedRtpPacketIncoming>& GetPackets(
+    const ParsedRtcEventLog::LoggedRtpStreamIncoming& stream) {
+  return stream.incoming_packets;
+}
+
+const std::vector<LoggedRtpPacketOutgoing>& GetPackets(
+    const ParsedRtcEventLog::LoggedRtpStreamOutgoing& stream) {
+  return stream.outgoing_packets;
+}
+
+template <typename RtpStreamIterable, typename RtcpIterable>
+void CreateTotalBitrateGraph(
+    const RtpStreamIterable& rtp_streams,
+    const RtcpIterable& rtcp_packets,
+    const std::vector<LoggedRouteChangeEvent>& route_change_events,
+    const AnalyzerConfig& config,
+    bool include_overhead,
+    Plot* plot) {
+  struct PacketSizeAndType {
+    Timestamp timestamp;
+    size_t size;
+    bool is_rtp;
+  };
+  std::vector<PacketSizeAndType> packets_in_order;
+  uint32_t current_overhead = include_overhead ? 38 : 0;
+
+  auto handle_rtp = [&](auto rtp_packet) {
+    size_t packet_size = rtp_packet.rtp.total_length + current_overhead;
+    packets_in_order.push_back(PacketSizeAndType{rtp_packet.rtp.log_time(),
+                                                 packet_size, /*is_rtp=*/true});
+  };
+
+  auto handle_rtcp = [&](auto rtcp_packet) {
+    size_t packet_size = rtcp_packet.rtcp.raw_data.size() + current_overhead;
+    packets_in_order.push_back(PacketSizeAndType{
+        rtcp_packet.log_time(), packet_size, /*is_rtp=*/false});
+  };
+
+  auto handle_route_change = [&](const LoggedRouteChangeEvent& route_change) {
+    current_overhead = route_change.overhead;
+  };
+
+  webrtc::RtcEventProcessor event_processor;
+  for (const auto& stream : rtp_streams) {
+    event_processor.AddEvents(GetPackets(stream), handle_rtp);
+  }
+  event_processor.AddEvents(rtcp_packets, handle_rtcp);
+  if (include_overhead) {
+    event_processor.AddEvents(route_change_events, handle_route_change);
+  }
+
+  event_processor.ProcessEventsInOrder();
+
+  auto window_begin = packets_in_order.begin();
+  auto window_end = packets_in_order.begin();
+  size_t rtp_bytes_in_window = 0;
+  size_t rtcp_bytes_in_window = 0;
+
+  if (!packets_in_order.empty()) {
+    absl::string_view rtp_label =
+        include_overhead ? "RTP Bitrate (including overhead)" : "RTP Bitrate";
+    absl::string_view rtcp_label =
+        include_overhead ? "RTCP Bitrate (including overhead)" : "RTCP Bitrate";
+    TimeSeries bitrate_series(rtp_label, LineStyle::kLine);
+    TimeSeries rtcp_bitrate_series(rtcp_label, LineStyle::kLine);
+    for (Timestamp time = config.begin_time_;
+         time < config.end_time_ + config.step_; time += config.step_) {
+      while (window_end != packets_in_order.end() &&
+             window_end->timestamp < time) {
+        if (window_end->is_rtp) {
+          rtp_bytes_in_window += window_end->size;
+        } else {
+          rtcp_bytes_in_window += window_end->size;
+        }
+        ++window_end;
+      }
+      while (window_begin != packets_in_order.end() &&
+             window_begin->timestamp < time - config.window_duration_) {
+        if (window_begin->is_rtp) {
+          RTC_DCHECK_LE(window_begin->size, rtp_bytes_in_window);
+          rtp_bytes_in_window -= window_begin->size;
+        } else {
+          RTC_DCHECK_LE(window_begin->size, rtcp_bytes_in_window);
+          rtcp_bytes_in_window -= window_begin->size;
+        }
+        ++window_begin;
+      }
+      float window_duration_in_seconds =
+          static_cast<float>(config.window_duration_.us()) /
+          kNumMicrosecsPerSec;
+      float x = config.GetCallTimeSec(time);
+      float rtp_y = rtp_bytes_in_window * 8 / window_duration_in_seconds / 1000;
+      bitrate_series.points.emplace_back(x, rtp_y);
+      float rtcp_y =
+          rtcp_bytes_in_window * 8 / window_duration_in_seconds / 1000;
+      rtcp_bitrate_series.points.emplace_back(x, rtcp_y);
+    }
+    plot->AppendTimeSeries(std::move(bitrate_series));
+    plot->AppendTimeSeries(std::move(rtcp_bitrate_series));
+  }
 }
 
 }  // namespace
@@ -343,46 +449,14 @@ void CreateFractionLossGraph(const ParsedRtcEventLog& parsed_log,
   plot->SetTitle("Outgoing packet loss (as reported by BWE)");
 }
 
-// Plot the total bandwidth used by all RTP streams.
 void CreateTotalIncomingBitrateGraph(const ParsedRtcEventLog& parsed_log,
                                      const AnalyzerConfig& config,
-                                     Plot* plot) {
-  // TODO(terelius): This could be provided by the parser.
-  std::multimap<Timestamp, size_t> packets_in_order;
-  for (const auto& stream : parsed_log.incoming_rtp_packets_by_ssrc()) {
-    for (const LoggedRtpPacketIncoming& packet : stream.incoming_packets)
-      packets_in_order.insert(
-          std::make_pair(packet.rtp.log_time(), packet.rtp.total_length));
-  }
-
-  auto window_begin = packets_in_order.begin();
-  auto window_end = packets_in_order.begin();
-  size_t bytes_in_window = 0;
-
-  if (!packets_in_order.empty()) {
-    // Calculate a moving average of the bitrate and store in a TimeSeries.
-    TimeSeries bitrate_series("Bitrate", LineStyle::kLine);
-    for (Timestamp time = config.begin_time_;
-         time < config.end_time_ + config.step_; time += config.step_) {
-      while (window_end != packets_in_order.end() && window_end->first < time) {
-        bytes_in_window += window_end->second;
-        ++window_end;
-      }
-      while (window_begin != packets_in_order.end() &&
-             window_begin->first < time - config.window_duration_) {
-        RTC_DCHECK_LE(window_begin->second, bytes_in_window);
-        bytes_in_window -= window_begin->second;
-        ++window_begin;
-      }
-      float window_duration_in_seconds =
-          static_cast<float>(config.window_duration_.us()) /
-          kNumMicrosecsPerSec;
-      float x = config.GetCallTimeSec(time);
-      float y = bytes_in_window * 8 / window_duration_in_seconds / 1000;
-      bitrate_series.points.emplace_back(x, y);
-    }
-    plot->AppendTimeSeries(std::move(bitrate_series));
-  }
+                                     Plot* plot,
+                                     bool include_overhead) {
+  CreateTotalBitrateGraph(parsed_log.incoming_rtp_packets_by_ssrc(),
+                          parsed_log.incoming_rtcp_packets(),
+                          parsed_log.route_change_events(), config,
+                          include_overhead, plot);
 
   // Overlay the outgoing REMB over incoming bitrate.
   TimeSeries remb_series("Remb", LineStyle::kStep);
@@ -396,52 +470,20 @@ void CreateTotalIncomingBitrateGraph(const ParsedRtcEventLog& parsed_log,
   plot->SetXAxis(config.CallBeginTimeSec(), config.CallEndTimeSec(), "Time (s)",
                  kLeftMargin, kRightMargin);
   plot->SetSuggestedYAxis(0, 1, "Bitrate (kbps)", kBottomMargin, kTopMargin);
-  plot->SetTitle("Incoming RTP bitrate");
+  plot->SetTitle("Incoming RTP/RTCP bitrate");
 }
 
-// Plot the total bandwidth used by all RTP streams.
 void CreateTotalOutgoingBitrateGraph(const ParsedRtcEventLog& parsed_log,
                                      const AnalyzerConfig& config,
                                      Plot* plot,
                                      bool show_detector_state,
                                      bool show_alr_state,
-                                     bool show_link_capacity) {
-  // TODO(terelius): This could be provided by the parser.
-  std::multimap<Timestamp, size_t> packets_in_order;
-  for (const auto& stream : parsed_log.outgoing_rtp_packets_by_ssrc()) {
-    for (const LoggedRtpPacketOutgoing& packet : stream.outgoing_packets)
-      packets_in_order.insert(
-          std::make_pair(packet.rtp.log_time(), packet.rtp.total_length));
-  }
-
-  auto window_begin = packets_in_order.begin();
-  auto window_end = packets_in_order.begin();
-  size_t bytes_in_window = 0;
-
-  if (!packets_in_order.empty()) {
-    // Calculate a moving average of the bitrate and store in a TimeSeries.
-    TimeSeries bitrate_series("Bitrate", LineStyle::kLine);
-    for (Timestamp time = config.begin_time_;
-         time < config.end_time_ + config.step_; time += config.step_) {
-      while (window_end != packets_in_order.end() && window_end->first < time) {
-        bytes_in_window += window_end->second;
-        ++window_end;
-      }
-      while (window_begin != packets_in_order.end() &&
-             window_begin->first < time - config.window_duration_) {
-        RTC_DCHECK_LE(window_begin->second, bytes_in_window);
-        bytes_in_window -= window_begin->second;
-        ++window_begin;
-      }
-      float window_duration_in_seconds =
-          static_cast<float>(config.window_duration_.us()) /
-          kNumMicrosecsPerSec;
-      float x = config.GetCallTimeSec(time);
-      float y = bytes_in_window * 8 / window_duration_in_seconds / 1000;
-      bitrate_series.points.emplace_back(x, y);
-    }
-    plot->AppendTimeSeries(std::move(bitrate_series));
-  }
+                                     bool show_link_capacity,
+                                     bool include_overhead) {
+  CreateTotalBitrateGraph(parsed_log.outgoing_rtp_packets_by_ssrc(),
+                          parsed_log.outgoing_rtcp_packets(),
+                          parsed_log.route_change_events(), config,
+                          include_overhead, plot);
 
   // Overlay the send-side bandwidth estimate over the outgoing bitrate.
   TimeSeries loss_series("Loss-based estimate", LineStyle::kStep);
@@ -597,7 +639,7 @@ void CreateTotalOutgoingBitrateGraph(const ParsedRtcEventLog& parsed_log,
   plot->SetXAxis(config.CallBeginTimeSec(), config.CallEndTimeSec(), "Time (s)",
                  kLeftMargin, kRightMargin);
   plot->SetSuggestedYAxis(0, 1, "Bitrate (kbps)", kBottomMargin, kTopMargin);
-  plot->SetTitle("Outgoing RTP bitrate");
+  plot->SetTitle("Outgoing RTP/RTCP bitrate");
 }
 
 void CreateGoogCcSimulationGraph(const ParsedRtcEventLog& parsed_log,
@@ -693,6 +735,7 @@ void CreateScreamSimulationBitrateGraph(const ParsedRtcEventLog& parsed_log,
   TimeSeries target_rate_series("Target rate", LineStyle::kStep);
   TimeSeries pacing_rate_series("Pacing rate", LineStyle::kStep);
   TimeSeries send_rate_series("Send rate", LineStyle::kStep);
+  TimeSeries received_rate_series("Received rate", LineStyle::kStep);
   IntervalSeries app_limited_series("Application limited", "#5092fc",
                                     IntervalSeries::kHorizontal);
 
@@ -710,6 +753,10 @@ void CreateScreamSimulationBitrateGraph(const ParsedRtcEventLog& parsed_log,
                                            state.pacing_rate.bps() / 1000);
     send_rate_series.points.emplace_back(config.GetCallTimeSec(state.time),
                                          state.send_rate.bps() / 1000);
+    if (state.received_rate.IsFinite()) {
+      received_rate_series.points.emplace_back(
+          config.GetCallTimeSec(state.time), state.received_rate.bps() / 1000);
+    }
     if (state.is_application_limited && !previously_app_limited) {
       app_limited_start_time = config.GetCallTimeSec(state.time);
       previously_app_limited = true;
@@ -728,6 +775,7 @@ void CreateScreamSimulationBitrateGraph(const ParsedRtcEventLog& parsed_log,
   plot->AppendTimeSeries(std::move(target_rate_series));
   plot->AppendTimeSeries(std::move(pacing_rate_series));
   plot->AppendTimeSeries(std::move(send_rate_series));
+  plot->AppendTimeSeries(std::move(received_rate_series));
   plot->AppendIntervalSeries(std::move(app_limited_series));
 
   plot->SetXAxis(config.CallBeginTimeSec(), config.CallEndTimeSec(), "Time (s)",

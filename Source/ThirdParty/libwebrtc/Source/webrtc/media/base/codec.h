@@ -33,7 +33,7 @@ namespace webrtc {
 class FeedbackParam {
  public:
   FeedbackParam() = default;
-  FeedbackParam(absl::string_view id, const std::string& param)
+  FeedbackParam(absl::string_view id, absl::string_view param)
       : id_(id), param_(param) {}
   explicit FeedbackParam(absl::string_view id)
       : id_(id), param_(kParamValueEmpty) {}
@@ -142,15 +142,15 @@ struct RTC_EXPORT Codec {
   bool MatchesRtpCodec(const RtpCodec& capability) const;
 
   // Find the parameter for `key` and write the value to `out`.
-  bool GetParam(const std::string& key, std::string* out) const;
-  bool GetParam(const std::string& key, int* out) const;
+  bool GetParam(absl::string_view key, std::string* out) const;
+  bool GetParam(absl::string_view key, int* out) const;
 
-  void SetParam(const std::string& key, const std::string& value);
-  void SetParam(const std::string& key, int value);
+  void SetParam(absl::string_view key, absl::string_view value);
+  void SetParam(absl::string_view key, int value);
 
   // It is safe to input a non-existent parameter.
   // Returns true if the parameter existed, false if it did not exist.
-  bool RemoveParam(const std::string& key);
+  bool RemoveParam(absl::string_view key);
 
   bool HasFeedbackParam(const FeedbackParam& param) const;
   void AddFeedbackParam(const FeedbackParam& param);
@@ -225,13 +225,13 @@ struct RTC_EXPORT Codec {
   explicit Codec(const SdpVideoFormat& c);
 
   friend Codec CreateAudioCodec(PayloadType id,
-                                const std::string& name,
+                                absl::string_view name,
                                 int clockrate,
                                 size_t channels);
   friend Codec CreateAudioCodec(const SdpAudioFormat& c);
   friend Codec CreateAudioRtxCodec(PayloadType rtx_payload_type,
                                    PayloadType associated_payload_type);
-  friend Codec CreateVideoCodec(PayloadType id, const std::string& name);
+  friend Codec CreateVideoCodec(PayloadType id, absl::string_view name);
   friend Codec CreateVideoCodec(const SdpVideoFormat& c);
   friend Codec CreateVideoCodec(PayloadType id, const SdpVideoFormat& sdp);
 };
@@ -239,14 +239,14 @@ struct RTC_EXPORT Codec {
 using Codecs = std::vector<Codec>;
 
 Codec CreateAudioCodec(PayloadType id,
-                       const std::string& name,
+                       absl::string_view name,
                        int clockrate,
                        size_t channels);
 Codec CreateAudioCodec(const SdpAudioFormat& c);
 Codec CreateAudioRtxCodec(PayloadType rtx_payload_type,
                           PayloadType associated_payload_type);
-Codec CreateVideoCodec(const std::string& name);
-Codec CreateVideoCodec(PayloadType id, const std::string& name);
+Codec CreateVideoCodec(absl::string_view name);
+Codec CreateVideoCodec(PayloadType id, absl::string_view name);
 Codec CreateVideoCodec(const SdpVideoFormat& c);
 Codec CreateVideoCodec(PayloadType id, const SdpVideoFormat& sdp);
 Codec CreateVideoRtxCodec(PayloadType rtx_payload_type,
@@ -271,6 +271,12 @@ const Codec* FindMatchingVideoCodec(const std::vector<Codec>& supported_codecs,
 std::vector<const Codec*> FindAllMatchingCodecs(
     const std::vector<Codec>& supported_codecs,
     const Codec& codec);
+
+// Returns a copy of `format` modified to be H.264 Constrained Baseline Profile
+// (CBP) if `format` is H.264, has a valid profile-level-id, and is not already
+// CBP. Otherwise, returns std::nullopt.
+RTC_EXPORT std::optional<SdpVideoFormat> CreateH264ConstrainedBaselineProfile(
+    const SdpVideoFormat& format);
 
 RTC_EXPORT void AddH264ConstrainedBaselineProfileToSupportedFormats(
     std::vector<SdpVideoFormat>* supported_formats);

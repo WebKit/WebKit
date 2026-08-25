@@ -86,9 +86,5 @@ if (rtc_include_tests && !build_with_chromium) {
       "//testing/gtest",
       "//third_party/abseil-cpp/absl/strings:string_view",
     ]
-
-    if (is_android) {
-      shard_timeout = 900
-    }
   }
 }

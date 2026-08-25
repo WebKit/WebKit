@@ -74,9 +74,5 @@ if (rtc_include_tests) {
     if (rtc_enable_protobuf) {
       sources += []
     }
-
-    if (!build_with_chromium) {
-      deps += [ "..:audio_processing_unittests" ]
-    }
   }
 }

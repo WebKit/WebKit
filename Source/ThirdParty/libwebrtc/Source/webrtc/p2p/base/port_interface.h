@@ -58,7 +58,6 @@ class PortInterface {
   virtual void SetIceRole(IceRole role) = 0;
   virtual IceRole GetIceRole() const = 0;
 
-  virtual void SetIceTiebreaker(uint64_t tiebreaker) = 0;
   virtual uint64_t IceTiebreaker() const = 0;
 
   virtual bool SharedSocket() const = 0;
@@ -122,14 +121,6 @@ class PortInterface {
   // Indicates that we received a successful STUN binding request from an
   // address that doesn't correspond to any current connection.  To turn this
   // into a real connection, call CreateConnection.
-  [[deprecated("Use SubscribeUnknownAddress(const void* tag, ...)")]]
-  virtual void SubscribeUnknownAddress(
-      absl::AnyInvocable<void(PortInterface*,
-                              const SocketAddress&,
-                              ProtocolType,
-                              IceMessage*,
-                              const std::string&,
-                              bool)> callback) = 0;
   virtual void SubscribeUnknownAddress(
       const void* tag,
       absl::AnyInvocable<void(PortInterface*,
@@ -154,9 +145,6 @@ class PortInterface {
 
   // Signaled when this port decides to delete itself because it no longer has
   // any usefulness.
-  [[deprecated("Use SubscribePortDestroyed(const void* tag, ...)")]]
-  virtual void SubscribePortDestroyed(
-      std::function<void(PortInterface*)> callback) = 0;
   virtual void SubscribePortDestroyed(
       const void* tag,
       std::function<void(PortInterface*)> callback) = 0;
@@ -201,9 +189,6 @@ class PortInterface {
                                 const SocketAddress& addr) = 0;
 
   // Emitted each time a packet is sent on this port.
-  [[deprecated("Use SubscribeSentPacket(const void* tag, ...)")]]
-  virtual void SubscribeSentPacket(
-      absl::AnyInvocable<void(const SentPacketInfo&)> callback) = 0;
   virtual void SubscribeSentPacket(
       const void* tag,
       absl::AnyInvocable<void(const SentPacketInfo&)> callback) = 0;

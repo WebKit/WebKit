@@ -86,19 +86,23 @@ rtc_library("legacy_agc") {
 }
 
 if (rtc_include_tests) {
-  rtc_library("agc_unittests") {
+  rtc_library("mock_agc") {
     testonly = true
-    sources = [
-      "agc_manager_direct_unittest.cc",
-      "loudness_histogram_unittest.cc",
-      "mock_agc.h",
+    sources = [ "mock_agc.h" ]
+    deps = [
+      ":level_estimation",
+      "../../../test:test_support",
     ]
-    configs += [ "..:apm_debug_dump" ]
+  }
 
+  rtc_library("agc_manager_direct_unittest") {
+    testonly = true
+    sources = [ "agc_manager_direct_unittest.cc" ]
     deps = [
       ":agc",
       ":gain_control_interface",
       ":level_estimation",
+      ":mock_agc",
       "..:audio_buffer",
       "../../../api/audio:audio_processing",
       "../../../api/environment",
@@ -110,8 +114,29 @@ if (rtc_include_tests) {
       "../../../test:create_test_field_trials",
       "../../../test:fileutils",
       "../../../test:test_support",
-      "//testing/gtest",
+    ]
+    configs += [ "..:apm_debug_dump" ]
+  }
+
+  rtc_library("loudness_histogram_unittest") {
+    testonly = true
+    sources = [ "loudness_histogram_unittest.cc" ]
+    deps = [
+      ":level_estimation",
+      ":mock_agc",
+      "../../../test:fileutils",
+      "../../../test:test_support",
       "//third_party/abseil-cpp/absl/strings:string_view",
+    ]
+    configs += [ "..:apm_debug_dump" ]
+  }
+
+  rtc_library("agc_unittests") {
+    testonly = true
+    sources = []
+    deps = [
+      ":agc_manager_direct_unittest",
+      ":loudness_histogram_unittest",
     ]
   }
 }

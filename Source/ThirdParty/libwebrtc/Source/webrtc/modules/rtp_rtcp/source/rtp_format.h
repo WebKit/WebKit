@@ -60,9 +60,9 @@ class RtpPacketizer {
   // Returns true on success, false otherwise.
   virtual bool NextPacket(RtpPacketToSend* packet) = 0;
 
-  // Split payload_len into sum of integers with respect to `limits`.
+  // Splits `payload_size` into sum of integers with respect to `limits`.
   // Returns empty vector on failure.
-  static std::vector<int> SplitAboutEqually(int payload_len,
+  static std::vector<int> SplitAboutEqually(size_t payload_size,
                                             const PayloadSizeLimits& limits);
 };
 }  // namespace webrtc

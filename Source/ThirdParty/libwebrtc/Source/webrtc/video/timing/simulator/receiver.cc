@@ -56,10 +56,13 @@ Receiver::Receiver(const Environment& env,
   RTC_DCHECK_NE(ssrc_, rtx_ssrc_);
 }
 
-Receiver::~Receiver() = default;
+Receiver::~Receiver() {
+  RTC_DCHECK_RUN_ON(&sequence_checker_);
+}
 
 void Receiver::InsertSimulatedPacket(
     const RtpPacketSimulator::SimulatedPacket& simulated_packet) {
+  RTC_DCHECK_RUN_ON(&sequence_checker_);
   uint32_t packet_ssrc = simulated_packet.rtp_packet.Ssrc();
   bool is_video = (packet_ssrc == ssrc_);
   bool is_rtx = (packet_ssrc == rtx_ssrc_);

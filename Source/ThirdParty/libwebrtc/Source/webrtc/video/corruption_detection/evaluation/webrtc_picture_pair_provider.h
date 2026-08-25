@@ -48,6 +48,13 @@ class WebRtcEncoderDecoderPicturePairProvider : public PicturePairProvider,
                                                 public DecodedImageCallback {
  public:
   WebRtcEncoderDecoderPicturePairProvider(
+      const Environment& env,
+      VideoCodecType type,
+      std::unique_ptr<VideoEncoderFactory> encoder_factory,
+      std::unique_ptr<VideoDecoderFactory> decoder_factory);
+
+  // Needed for downstream usage that does not construct Environment.
+  WebRtcEncoderDecoderPicturePairProvider(
       VideoCodecType type,
       std::unique_ptr<VideoEncoderFactory> encoder_factory,
       std::unique_ptr<VideoDecoderFactory> decoder_factory);

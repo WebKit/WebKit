@@ -14,6 +14,9 @@ specific_include_rules = {
   "multiplex_encoder_adapter\\.cc": [
     "+media/base",
   ],
+  "timing\\.cc": [
+    "+video/timing/default_video_jitter_timing.h",
+  ],
   "av1_qp_parser\\.cc": [
     "+third_party/libgav1",
   ],

@@ -61,6 +61,7 @@
 #include <tuple>
 #include <utility>
 
+#include "absl/cleanup/cleanup.h"
 #include "rtc_base/event.h"
 #include "rtc_base/string_utils.h"  // IWYU pragma: keep
 #include "rtc_base/thread.h"
@@ -110,9 +111,11 @@ class MethodCall {
     if (t->IsCurrent()) {
       Invoke(std::index_sequence_for<Args...>());
     } else {
-      t->PostTask([this] {
+      // Use absl::Cleanup to ensure the event is set even if the task is
+      // dropped (e.g., because the target thread is quitting).
+      absl::Cleanup cleanup = [this] { event_.Set(); };
+      t->PostTask([this, cleanup = std::move(cleanup)] {
         Invoke(std::index_sequence_for<Args...>());
-        event_.Set();
       });
       event_.Wait(Event::kForever);
     }
@@ -145,9 +148,11 @@ class ConstMethodCall {
     if (t->IsCurrent()) {
       Invoke(std::index_sequence_for<Args...>());
     } else {
-      t->PostTask([this] {
+      // Use absl::Cleanup to ensure the event is set even if the task is
+      // dropped (e.g., because the target thread is quitting).
+      absl::Cleanup cleanup = [this] { event_.Set(); };
+      t->PostTask([this, cleanup = std::move(cleanup)] {
         Invoke(std::index_sequence_for<Args...>());
-        event_.Set();
       });
       event_.Wait(Event::kForever);
     }

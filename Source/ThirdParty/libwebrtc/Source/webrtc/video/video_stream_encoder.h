@@ -443,9 +443,6 @@ class VideoStreamEncoder : public VideoStreamEncoderInterface,
   VideoSourceSinkController video_source_sink_controller_
       RTC_GUARDED_BY(worker_queue_);
 
-  // Default bitrate limits in EncoderInfoSettings allowed.
-  const bool default_limits_allowed_;
-
   // QP parser is used to extract QP value from encoded frame when that is not
   // provided by encoder.
   QpParser qp_parser_;

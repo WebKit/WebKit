@@ -20,7 +20,6 @@
 
 #include "api/call/transport.h"
 #include "api/environment/environment.h"
-#include "api/environment/environment_factory.h"
 #include "api/rtp_headers.h"
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
@@ -42,6 +41,7 @@
 #include "rtc_base/rate_limiter.h"
 #include "system_wrappers/include/clock.h"
 #include "system_wrappers/include/ntp_time.h"
+#include "test/create_test_environment.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 #include "test/mock_transport.h"
@@ -97,7 +97,7 @@ class RtcpSenderTest : public ::testing::Test {
  protected:
   RtcpSenderTest()
       : clock_(1335900000),
-        env_(CreateEnvironment(&clock_)),
+        env_(CreateTestEnvironment({.time = &clock_})),
         receive_statistics_(ReceiveStatistics::Create(&clock_)),
         rtp_rtcp_impl_(
             ModuleRtpRtcpImpl2::CreateSendModule(env_,

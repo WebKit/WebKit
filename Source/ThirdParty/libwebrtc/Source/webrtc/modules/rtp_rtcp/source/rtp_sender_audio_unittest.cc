@@ -17,7 +17,6 @@
 
 #include "api/call/transport.h"
 #include "api/environment/environment.h"
-#include "api/environment/environment_factory.h"
 #include "api/rtp_header_extension_id.h"
 #include "api/rtp_headers.h"
 #include "api/units/timestamp.h"
@@ -28,6 +27,7 @@
 #include "modules/rtp_rtcp/source/rtp_rtcp_impl2.h"
 #include "system_wrappers/include/clock.h"
 #include "system_wrappers/include/ntp_time.h"
+#include "test/create_test_environment.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 #include "test/run_loop.h"
@@ -76,7 +76,7 @@ class RtpSenderAudioTest : public ::testing::Test {
  public:
   RtpSenderAudioTest()
       : fake_clock_(kStartTime),
-        env_(CreateEnvironment(&fake_clock_)),
+        env_(CreateTestEnvironment({.time = &fake_clock_})),
         rtp_module_(ModuleRtpRtcpImpl2::CreateSendModule(
             env_,
             {.audio = true,

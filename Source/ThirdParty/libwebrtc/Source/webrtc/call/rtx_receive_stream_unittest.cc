@@ -18,6 +18,7 @@
 
 #include "api/environment/environment.h"
 #include "api/rtc_event_log/rtc_event.h"
+#include "api/rtp_header_extension_id.h"
 #include "api/units/timestamp.h"
 #include "api/video/video_rotation.h"
 #include "call/test/mock_rtp_packet_sink_interface.h"
@@ -193,7 +194,8 @@ TEST(RtxReceiveStreamTest, CopiesRtpHeaderExtensions) {
   Environment env = CreateTestEnvironment();
   RtxReceiveStream rtx_sink(env, &media_sink, PayloadTypeMapping(), kMediaSSRC);
   RtpHeaderExtensionMap extension_map;
-  extension_map.RegisterByType(3, kRtpExtensionVideoRotation);
+  extension_map.RegisterByType(RtpHeaderExtensionId(3),
+                               kRtpExtensionVideoRotation);
   RtpPacketReceived rtx_packet(&extension_map);
   EXPECT_TRUE(rtx_packet.Parse(std::span<const uint8_t>(kRtxPacketWithCVO)));
 

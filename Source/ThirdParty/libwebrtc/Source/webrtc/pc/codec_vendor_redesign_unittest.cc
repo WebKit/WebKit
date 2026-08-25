@@ -498,5 +498,125 @@ TEST_F(CodecVendorRedesignTest, SetRawPacketizationUpdatesCodecs) {
   EXPECT_EQ(second_it->packetization, second_codec.packetization);
 }
 
+TEST_F(CodecVendorRedesignTest, TestCodecsInAnswerStricterDirectionality) {
+  std::vector<Codec> offer_send_codecs({
+      CreateAudioCodec(40, "codec0", 16000, 1),
+      CreateAudioCodec(41, "codec1", 8000, 1),
+  });
+  std::vector<Codec> answer_recv_codecs({
+      CreateAudioCodec(40, "codec0", 16000, 1),
+      CreateAudioCodec(41, "codec1", 8000, 1),
+  });
+  std::vector<Codec> answer_send_codecs({
+      CreateAudioCodec(42, "codec2", 8000, 1),
+  });
+
+  media_engine_.SetAudioSendCodecs(offer_send_codecs);
+  media_engine_.SetAudioRecvCodecs(offer_send_codecs);
+
+  auto offer_vendor = std::make_unique<CodecVendor>(
+      &media_engine_, /*rtx_enabled=*/true, trials_);
+
+  FakeMediaEngine answer_media_engine;
+  answer_media_engine.SetAudioSendCodecs(answer_send_codecs);
+  answer_media_engine.SetAudioRecvCodecs(answer_recv_codecs);
+
+  auto answer_vendor = std::make_unique<CodecVendor>(
+      &answer_media_engine, /*rtx_enabled=*/true, trials_);
+
+  MediaDescriptionOptions offer_opts(MediaType::AUDIO, "audio",
+                                     RtpTransceiverDirection::kSendOnly,
+                                     /*stopped=*/false);
+  auto offer_result = offer_vendor->GetNegotiatedCodecsForOffer(
+      offer_opts, MediaSessionOptions(), /*current_content=*/nullptr,
+      pt_suggester_);
+  ASSERT_TRUE(offer_result.ok());
+
+  MediaDescriptionOptions answer_opts(MediaType::AUDIO, "audio",
+                                      RtpTransceiverDirection::kSendOnly,
+                                      /*stopped=*/false);
+
+  auto answer_result = answer_vendor->GetNegotiatedCodecsForAnswer(
+      answer_opts, MediaSessionOptions(), RtpTransceiverDirection::kSendOnly,
+      RtpTransceiverDirection::kInactive, /*current_content=*/nullptr,
+      offer_result.value(), pt_suggester_);
+
+  ASSERT_TRUE(answer_result.ok());
+
+  const auto& answer_codecs = answer_result.value();
+
+  // We expect codec0 and codec1 to be present if we want to match legacy
+  // behavior.
+  EXPECT_THAT(answer_codecs, Contains(Field(&Codec::name, "codec0")));
+  EXPECT_THAT(answer_codecs, Contains(Field(&Codec::name, "codec1")));
+}
+
+TEST_F(CodecVendorRedesignTest, AddSecondRtxInNewOffer) {
+  // 1. Configure engine with H264-SVC, H264, and RTX for H264.
+  std::vector<Codec> codecs1({
+      CreateVideoCodec(96, "H264-SVC"), CreateVideoCodec(97, "H264"),
+      CreateVideoRtxCodec(98, 97),  // RTX for H264
+  });
+  media_engine_.SetVideoSendCodecs(codecs1);
+  media_engine_.SetVideoRecvCodecs(codecs1);
+  vendor_ = std::make_unique<CodecVendor>(&media_engine_, /*rtx_enabled=*/true,
+                                          trials_);
+
+  MediaDescriptionOptions options(MediaType::VIDEO, "video",
+                                  RtpTransceiverDirection::kSendRecv,
+                                  /*stopped=*/false);
+
+  // First offer
+  auto result1 = vendor_->GetNegotiatedCodecsForOffer(
+      options, MediaSessionOptions(), /*current_content=*/nullptr,
+      pt_suggester_);
+  ASSERT_TRUE(result1.ok());
+
+  // We expect H264-SVC, H264, and RTX for H264.
+  // Order: [H264-SVC, H264, RTX]
+  ASSERT_EQ(result1.value().size(), 3u);
+  EXPECT_EQ(result1.value()[0].name, "H264-SVC");
+  EXPECT_EQ(result1.value()[1].name, "H264");
+  EXPECT_EQ(result1.value()[2].name, "rtx");
+
+  // Create current_content from first offer result.
+  auto video_description = std::make_unique<VideoContentDescription>();
+  video_description->set_codecs(result1.value());
+  ContentInfo current_content(MediaProtocolType::kRtp, "video",
+                              std::move(video_description));
+
+  // 2. Configure engine to add RTX for H264-SVC.
+  // We insert RTX for H264-SVC (96) after H264-SVC.
+  std::vector<Codec> codecs2 = codecs1;
+  codecs2.insert(codecs2.begin() + 1, CreateVideoRtxCodec(125, 96));
+  media_engine_.SetVideoSendCodecs(codecs2);
+  media_engine_.SetVideoRecvCodecs(codecs2);
+  vendor_ = std::make_unique<CodecVendor>(&media_engine_, /*rtx_enabled=*/true,
+                                          trials_);
+
+  // Second offer (passing current_content)
+  auto result2 = vendor_->GetNegotiatedCodecsForOffer(
+      options, MediaSessionOptions(), &current_content, pt_suggester_);
+  ASSERT_TRUE(result2.ok());
+
+  // We expect:
+  // - H264-SVC, H264, RTX(for H264) from current_content (preserved order).
+  // - New RTX(for H264-SVC) appended at the end.
+  const auto& codecs = result2.value();
+  ASSERT_EQ(codecs.size(), 4u);
+  EXPECT_EQ(codecs[0].name, "H264-SVC");
+  EXPECT_EQ(codecs[1].name, "H264");
+
+  EXPECT_EQ(codecs[2].name, "rtx");
+  std::string apt2;
+  EXPECT_TRUE(codecs[2].GetParam(kCodecParamAssociatedPayloadType, &apt2));
+  EXPECT_EQ(apt2, "97");
+
+  EXPECT_EQ(codecs[3].name, "rtx");
+  std::string apt3;
+  EXPECT_TRUE(codecs[3].GetParam(kCodecParamAssociatedPayloadType, &apt3));
+  EXPECT_EQ(apt3, "96");
+}
+
 }  // namespace
 }  // namespace webrtc

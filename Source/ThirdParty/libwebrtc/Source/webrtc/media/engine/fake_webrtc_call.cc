@@ -753,9 +753,6 @@ void FakeCall::SignalChannelNetworkState(MediaType media, NetworkState state) {
   }
 }
 
-void FakeCall::OnAudioTransportOverheadChanged(
-    int /* transport_overhead_per_packet */) {}
-
 void FakeCall::OnUpdateSyncGroup(AudioReceiveStreamInterface& stream,
                                  absl::string_view sync_group) {
   auto& fake_stream = static_cast<FakeAudioReceiveStream&>(stream);

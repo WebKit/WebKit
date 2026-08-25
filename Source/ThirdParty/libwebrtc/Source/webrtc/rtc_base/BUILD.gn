@@ -1693,6 +1693,7 @@ rtc_library("ssl") {
     "system:rtc_export",
     "//third_party/abseil-cpp/absl/algorithm:container",
     "//third_party/abseil-cpp/absl/base:core_headers",
+    "//third_party/abseil-cpp/absl/base:nullability",
     "//third_party/abseil-cpp/absl/memory",
     "//third_party/abseil-cpp/absl/strings:string_view",
   ]
@@ -2155,6 +2156,7 @@ if (rtc_include_tests) {
         "numerics/mod_ops_unittest.cc",
         "numerics/moving_max_counter_unittest.cc",
         "numerics/safe_compare_unittest.cc",
+        "numerics/safe_conversions_unittest.cc",
         "numerics/safe_minmax_unittest.cc",
         "numerics/sample_counter_unittest.cc",
         "one_time_event_unittest.cc",
@@ -2216,6 +2218,7 @@ if (rtc_include_tests) {
         ":rtc_event",
         ":rtc_numerics",
         ":safe_compare",
+        ":safe_conversions",
         ":safe_minmax",
         ":sample_counter",
         ":sanitizer",
@@ -2417,7 +2420,6 @@ if (rtc_include_tests) {
         "../api:sequence_checker",
         "../api/crypto:options",
         "../api/environment",
-        "../api/environment:environment_factory",
         "../api/task_queue",
         "../api/task_queue:pending_task_safety_flag",
         "../api/task_queue:task_queue_test",
@@ -2472,6 +2474,12 @@ if (rtc_include_tests) {
 }
 
 if (is_android) {
+  import("//third_party/jni_zero/jni_zero.gni")
+  generate_jni("base_java_jni") {
+    sources = [ "java/src/org/webrtc/Logging.java" ]
+    namespace = "webrtc::jni"
+  }
+
   rtc_android_library("base_java") {
     visibility = [ "*" ]
     sources = [
@@ -2481,7 +2489,11 @@ if (is_android) {
       "java/src/org/webrtc/Size.java",
       "java/src/org/webrtc/ThreadUtils.java",
     ]
-    deps = [ "//third_party/androidx:androidx_annotation_annotation_java" ]
+    deps = [
+      ":base_java_jni_java",
+      "//third_party/androidx:androidx_annotation_annotation_java",
+      "//third_party/jni_zero:jni_zero_java",
+    ]
   }
   java_cpp_enum("network_monitor_enums") {
     sources = [ "network_monitor.h" ]

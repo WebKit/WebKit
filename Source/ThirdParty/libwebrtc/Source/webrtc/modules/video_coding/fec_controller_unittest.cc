@@ -13,10 +13,10 @@
 #include <cstdint>
 #include <vector>
 
-#include "api/environment/environment_factory.h"
 #include "modules/include/module_fec_types.h"
 #include "modules/video_coding/fec_controller_default.h"
 #include "system_wrappers/include/clock.h"
+#include "test/create_test_environment.h"
 #include "test/gtest.h"
 
 namespace webrtc {
@@ -51,7 +51,8 @@ class ProtectionBitrateCalculatorTest : public ::testing::Test {
   // a special case (e.g. frame rate in media optimization).
   ProtectionBitrateCalculatorTest()
       : clock_(1000),
-        fec_controller_(CreateEnvironment(&clock_), &protection_callback_) {}
+        fec_controller_(CreateTestEnvironment({.time = &clock_}),
+                        &protection_callback_) {}
 
   SimulatedClock clock_;
   ProtectionCallback protection_callback_;

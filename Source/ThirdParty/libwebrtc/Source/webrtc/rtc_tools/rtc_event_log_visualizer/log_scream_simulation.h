@@ -45,6 +45,7 @@ class LogScreamSimulation {
     DataRate target_rate = DataRate::Zero();
     DataRate pacing_rate = DataRate::Zero();
     DataRate send_rate = DataRate::Zero();
+    DataRate received_rate = DataRate::Zero();
 
     DataSize ref_window = DataSize::Zero();
     DataSize ref_window_i = DataSize::Zero();
@@ -94,13 +95,15 @@ class LogScreamSimulation {
   void OnCongestionControlFeedback(
       const LoggedRtcpCongestionControlFeedback& feedback);
   void OnIceConfig(const LoggedIceCandidatePairConfig& candidate);
-  void LogState(const TransportPacketsFeedback& msg);
+  void UpdateFeedbackHistory(const TransportPacketsFeedback& msg);
+  void LogState(Timestamp log_time);
 
   const Environment env_;
   std::optional<ScreamV2> scream_;
 
   Timestamp current_time_ = Timestamp::MinusInfinity();
   Timestamp last_process_ = Timestamp::MinusInfinity();
+  Timestamp last_log_state_time_ = Timestamp::MinusInfinity();
   TransportFeedbackAdapter transport_feedback_;
   BitrateTracker send_rate_tracker_;
   State::SendWindowUsage send_window_usage_ = State::kBelowRefWindow;

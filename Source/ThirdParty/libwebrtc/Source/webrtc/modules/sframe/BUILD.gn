@@ -1,0 +1,53 @@
+# Copyright 2026 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("../../webrtc.gni")
+
+rtc_library("sframe_media_encryptor_interface") {
+  visibility = [ "*" ]
+  sources = [ "sframe_media_encryptor_interface.h" ]
+  deps = [
+    "../../api:rtc_error",
+    "../../api:sframe_encryptor_interface",
+    "../../api:sframe_types",
+  ]
+}
+
+rtc_library("sframe_encryptor") {
+  visibility = [ "*" ]
+  sources = [
+    "sframe_encryptor.cc",
+    "sframe_encryptor.h",
+  ]
+  deps = [
+    ":sframe_media_encryptor_interface",
+    "../../api:make_ref_counted",
+    "../../api:rtc_error",
+    "../../api:scoped_refptr",
+    "../../api:sequence_checker",
+    "../../api:sframe_types",
+    "../../rtc_base:macromagic",
+    "../../rtc_base/system:no_unique_address",
+    "//third_party/abseil-cpp/absl/base:nullability",
+    "//third_party/sframe",
+  ]
+}
+
+if (rtc_include_tests) {
+  rtc_library("sframe_unittests") {
+    testonly = true
+    sources = [ "sframe_encryptor_decryptor_unittest.cc" ]
+    deps = [
+      ":sframe_encryptor",
+      "../../api:rtc_error",
+      "../../api:scoped_refptr",
+      "../../api:sframe_types",
+      "../../test:test_support",
+    ]
+  }
+}

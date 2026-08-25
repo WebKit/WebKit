@@ -21,7 +21,6 @@
 #include "api/audio/audio_frame.h"
 #include "api/audio_codecs/audio_format.h"
 #include "api/audio_codecs/builtin_audio_decoder_factory.h"
-#include "api/environment/environment_factory.h"
 #include "api/neteq/default_neteq_factory.h"
 #include "api/neteq/neteq.h"
 #include "api/rtp_headers.h"
@@ -29,6 +28,7 @@
 #include "modules/audio_coding/neteq/test/result_sink.h"
 #include "modules/audio_coding/neteq/tools/rtp_file_source.h"
 #include "rtc_base/strings/string_builder.h"
+#include "test/create_test_environment.h"
 #include "test/gtest.h"
 #include "test/testsupport/file_utils.h"
 
@@ -72,7 +72,7 @@ void LoadDecoders(NetEq* neteq) {
 
 NetEqDecodingTest::NetEqDecodingTest()
     : clock_(0),
-      env_(CreateEnvironment(&clock_)),
+      env_(CreateTestEnvironment({.time = &clock_})),
       config_(),
       output_sample_rate_(kInitSampleRateHz),
       algorithmic_delay_ms_(0) {

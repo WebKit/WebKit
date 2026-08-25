@@ -15,6 +15,7 @@
 #include "absl/strings/string_view.h"
 #include "api/field_trials.h"
 #include "api/field_trials_view.h"
+#include "test/create_test_field_trials.h"
 #include "test/gtest.h"
 
 namespace webrtc {
@@ -59,7 +60,7 @@ TEST(FieldTrialParserTest, ParsesValidParameters) {
 }
 
 TEST(FieldTrialParserTest, InitializesFromFieldTrial) {
-  FieldTrials field_trials(
+  FieldTrials field_trials = CreateTestFieldTrials(
       "WebRTC-OtherExperiment/Disabled/"
       "WebRTC-DummyExperiment/Enabled,f:-1.7,r:2,s:10,p:1,h:x7c/"
       "WebRTC-AnotherExperiment/Enabled,f:-3.1,otherstuff:beef/");

@@ -60,13 +60,9 @@ rtc_source_set("congestion_controller_feedback_stats") {
 }
 
 if (rtc_include_tests) {
-  rtc_library("congestion_controller_unittests") {
+  rtc_library("transport_feedback_adapter_unittest") {
     testonly = true
-
-    sources = [
-      "transport_feedback_adapter_unittest.cc",
-      "transport_feedback_demuxer_unittest.cc",
-    ]
+    sources = [ "transport_feedback_adapter_unittest.cc" ]
     deps = [
       ":transport_feedback",
       "../../../api/transport:ecn_marking",
@@ -81,7 +77,28 @@ if (rtc_include_tests) {
       "../../../test:test_support",
       "../../rtp_rtcp:ntp_time_util",
       "../../rtp_rtcp:rtp_rtcp_format",
-      "//testing/gmock",
+    ]
+  }
+
+  rtc_library("transport_feedback_demuxer_unittest") {
+    testonly = true
+    sources = [ "transport_feedback_demuxer_unittest.cc" ]
+    deps = [
+      ":transport_feedback",
+      "../../../api/transport:network_control",
+      "../../../api/units:timestamp",
+      "../../../test:test_support",
+      "../../rtp_rtcp:rtp_rtcp_format",
+    ]
+  }
+
+  rtc_library("congestion_controller_unittests") {
+    testonly = true
+
+    sources = []
+    deps = [
+      ":transport_feedback_adapter_unittest",
+      ":transport_feedback_demuxer_unittest",
     ]
   }
 }

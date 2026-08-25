@@ -39,17 +39,6 @@ uint32_t AbsoluteCaptureTimeSender::GetSource(uint32_t ssrc,
 std::optional<AbsoluteCaptureTime> AbsoluteCaptureTimeSender::OnSendPacket(
     uint32_t source,
     uint32_t rtp_timestamp,
-    uint32_t rtp_clock_frequency,
-    uint64_t absolute_capture_timestamp,
-    std::optional<int64_t> estimated_capture_clock_offset) {
-  return OnSendPacket(source, rtp_timestamp, rtp_clock_frequency,
-                      NtpTime(absolute_capture_timestamp),
-                      estimated_capture_clock_offset, /*force=*/false);
-}
-
-std::optional<AbsoluteCaptureTime> AbsoluteCaptureTimeSender::OnSendPacket(
-    uint32_t source,
-    uint32_t rtp_timestamp,
     int rtp_clock_frequency_hz,
     NtpTime absolute_capture_time,
     std::optional<int64_t> estimated_capture_clock_offset,

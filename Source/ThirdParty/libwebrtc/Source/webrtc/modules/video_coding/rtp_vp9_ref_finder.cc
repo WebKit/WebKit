@@ -33,7 +33,7 @@ RtpFrameReferenceFinder::ReturnVector RtpVp9RefFinder::ManageFrame(
   const RTPVideoHeaderVP9& codec_header =
       std::get<RTPVideoHeaderVP9>(frame->GetRtpVideoHeader().video_type_header);
 
-  if (codec_header.temporal_idx >= kMaxTemporalLayers ||
+  if (codec_header.temporal_idx >= kMaxTemporalStreams ||
       codec_header.spatial_idx >= kMaxSpatialLayers) {
     return {};
   }
@@ -234,8 +234,8 @@ bool RtpVp9RefFinder::MissingRequiredFrameVp9(uint16_t picture_id,
   size_t gof_idx = diff % info.gof->num_frames_in_gof;
   size_t temporal_idx = info.gof->temporal_idx[gof_idx];
 
-  if (temporal_idx >= kMaxTemporalLayers) {
-    RTC_LOG(LS_WARNING) << "At most " << kMaxTemporalLayers
+  if (temporal_idx >= kMaxTemporalStreams) {
+    RTC_LOG(LS_WARNING) << "At most " << kMaxTemporalStreams
                         << " temporal "
                            "layers are supported.";
     return true;
@@ -277,8 +277,8 @@ void RtpVp9RefFinder::FrameReceivedVp9(uint16_t picture_id, GofInfo* info) {
       RTC_CHECK(gof_idx < kMaxVp9FramesInGof);
 
       size_t temporal_idx = info->gof->temporal_idx[gof_idx];
-      if (temporal_idx >= kMaxTemporalLayers) {
-        RTC_LOG(LS_WARNING) << "At most " << kMaxTemporalLayers
+      if (temporal_idx >= kMaxTemporalStreams) {
+        RTC_LOG(LS_WARNING) << "At most " << kMaxTemporalStreams
                             << " temporal "
                                "layers are supported.";
         return;
@@ -296,8 +296,8 @@ void RtpVp9RefFinder::FrameReceivedVp9(uint16_t picture_id, GofInfo* info) {
     RTC_CHECK(gof_idx < kMaxVp9FramesInGof);
 
     size_t temporal_idx = info->gof->temporal_idx[gof_idx];
-    if (temporal_idx >= kMaxTemporalLayers) {
-      RTC_LOG(LS_WARNING) << "At most " << kMaxTemporalLayers
+    if (temporal_idx >= kMaxTemporalStreams) {
+      RTC_LOG(LS_WARNING) << "At most " << kMaxTemporalStreams
                           << " temporal "
                              "layers are supported.";
       return;

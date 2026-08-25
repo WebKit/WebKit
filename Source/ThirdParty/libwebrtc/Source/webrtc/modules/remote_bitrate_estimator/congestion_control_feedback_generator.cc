@@ -35,6 +35,7 @@
 namespace webrtc {
 
 constexpr DataRate kMaxFeedbackRate = DataRate::KilobitsPerSec(500);
+constexpr DataSize kTransportOverhead = DataSize::Bytes(42);
 
 CongestionControlFeedbackGenerator::CongestionControlFeedbackGenerator(
     const Environment& env,
@@ -42,13 +43,24 @@ CongestionControlFeedbackGenerator::CongestionControlFeedbackGenerator(
     : env_(env),
       rtcp_sender_(std::move(rtcp_sender)),
       min_time_between_feedback_("min_send_delta", TimeDelta::Millis(25)),
+      max_feedback_fraction_("feedback_fraction", 0.0),
       max_time_to_wait_for_packet_with_marker_("max_wait_for_marker",
                                                TimeDelta::Millis(25)),
-      max_time_between_feedback_("max_send_delta", TimeDelta::Millis(500)) {
+      max_time_between_feedback_("max_send_delta", TimeDelta::Millis(250)) {
   ParseFieldTrial(
-      {&min_time_between_feedback_, &max_time_to_wait_for_packet_with_marker_,
-       &max_time_between_feedback_},
+      {&min_time_between_feedback_, &max_feedback_fraction_,
+       &max_time_to_wait_for_packet_with_marker_, &max_time_between_feedback_},
       env.field_trials().Lookup("WebRTC-RFC8888CongestionControlFeedback"));
+}
+
+void CongestionControlFeedbackGenerator::OnSendBandwidthEstimateChanged(
+    DataRate estimate,
+    bool is_bandwidth_limited,
+    std::optional<DataSize> transport_overhead) {
+  RTC_DCHECK_RUN_ON(&sequence_checker_);
+  send_bandwidth_estimate_ = estimate;
+  is_bandwidth_limited_ = is_bandwidth_limited;
+  transport_overhead_ = transport_overhead;
 }
 
 void CongestionControlFeedbackGenerator::OnReceivedPacket(
@@ -102,7 +114,9 @@ void CongestionControlFeedbackGenerator::SendFeedback(Timestamp now) {
 
   auto feedback = std::make_unique<rtcp::CongestionControlFeedback>(
       std::move(rtcp_packet_info), compact_ntp);
-  CalculateNextPossibleSendTime(DataSize::Bytes(feedback->BlockLength()), now);
+  DataSize overhead = transport_overhead_.value_or(kTransportOverhead);
+  CalculateNextPossibleSendTime(
+      DataSize::Bytes(feedback->BlockLength()) + overhead, now);
 
   std::vector<std::unique_ptr<rtcp::RtcpPacket>> rtcp_packets;
   rtcp_packets.push_back(std::move(feedback));
@@ -115,13 +129,22 @@ void CongestionControlFeedbackGenerator::CalculateNextPossibleSendTime(
   TimeDelta time_since_last_sent = last_feedback_sent_time_.IsFinite()
                                        ? now - last_feedback_sent_time_
                                        : TimeDelta::Zero();
-  DataSize debt_payed = time_since_last_sent * kMaxFeedbackRate;
+  DataRate max_feedback_rate = kMaxFeedbackRate;
+
+  if (is_bandwidth_limited_ && max_feedback_fraction_.Get() > 0.0 &&
+      send_bandwidth_estimate_.has_value() &&
+      send_bandwidth_estimate_->IsFinite() &&
+      *send_bandwidth_estimate_ > DataRate::Zero()) {
+    max_feedback_rate =
+        *send_bandwidth_estimate_ * max_feedback_fraction_.Get();
+  }
+  DataSize debt_payed = time_since_last_sent * max_feedback_rate;
   send_rate_debt_ = debt_payed > send_rate_debt_ ? DataSize::Zero()
                                                  : send_rate_debt_ - debt_payed;
   send_rate_debt_ += feedback_size;
   last_feedback_sent_time_ = now;
   next_possible_feedback_send_time_ =
-      now + std::clamp(send_rate_debt_ / kMaxFeedbackRate,
+      now + std::clamp(send_rate_debt_ / max_feedback_rate,
                        min_time_between_feedback_.Get(),
                        max_time_between_feedback_.Get());
 }

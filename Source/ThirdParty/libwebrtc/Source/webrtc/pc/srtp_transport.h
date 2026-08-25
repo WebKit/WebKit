@@ -93,6 +93,7 @@ class SrtpTransport : public RtpTransport {
  protected:
   // If the writable state changed, fire the SignalWritableState.
   void MaybeUpdateWritableState();
+  void MaybeUpdateSrtpOverhead();
 
  private:
   void ConnectToRtpTransport();
@@ -131,8 +132,10 @@ class SrtpTransport : public RtpTransport {
   ZeroOnFreeBuffer<uint8_t> recv_key_;
 
   bool writable_ = false;
+  std::optional<int> srtp_overhead_;
 
   int decryption_failure_count_ = 0;
+  int rtcp_decryption_failure_count_ = 0;
 
   bool enable_cryptex_ = false;
   bool require_cryptex_ = false;

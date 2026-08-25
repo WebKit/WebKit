@@ -836,8 +836,11 @@ class MediaExpectations {
 
 class MockIceTransport : public IceTransportInterface {
  public:
-  MockIceTransport(const std::string& name, int component)
-      : internal_(std::make_unique<FakeIceTransportInternal>(name,
+  MockIceTransport(const Environment& env,
+                   absl::string_view name,
+                   int component)
+      : internal_(std::make_unique<FakeIceTransportInternal>(env,
+                                                             name,
                                                              component,
                                                              nullptr)) {}
   ~MockIceTransport() override = default;
@@ -855,7 +858,8 @@ class MockIceTransportFactory : public IceTransportFactory {
       int component,
       IceTransportInit init) override {
     RecordIceTransportCreated();
-    return make_ref_counted<MockIceTransport>(transport_name, component);
+    return make_ref_counted<MockIceTransport>(init.env(), transport_name,
+                                              component);
   }
   MOCK_METHOD(void, RecordIceTransportCreated, ());
 };

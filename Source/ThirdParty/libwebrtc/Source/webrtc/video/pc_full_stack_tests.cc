@@ -12,7 +12,6 @@
 #include <utility>
 #include <vector>
 
-#include "api/field_trials.h"
 #include "api/function_view.h"
 #include "api/media_stream_interface.h"
 #include "api/test/create_network_emulation_manager.h"
@@ -32,6 +31,7 @@
 #include "api/units/time_delta.h"
 #include "api/video_codecs/vp9_profile.h"
 #include "media/base/media_constants.h"
+#include "test/create_test_field_trials.h"
 #include "test/gtest.h"
 #include "test/pc/e2e/network_quality_metrics_reporter.h"
 #include "test/testsupport/file_utils.h"
@@ -575,7 +575,7 @@ TEST(PCFullStackTest, Pc_Foreman_Cif_Delay_50_0_Plr_5_H264_Sps_Pps_Idr) {
       },
       [](PeerConfigurer* bob) {
         bob->AddFieldTrials(
-            FieldTrials("WebRTC-SpsPpsIdrIsH264Keyframe/Enabled/"));
+            CreateTestFieldTrials("WebRTC-SpsPpsIdrIsH264Keyframe/Enabled/"));
         bob->SetVideoCodecs({VideoCodecConfig(kH264CodecName)});
       });
   fixture->Run(RunParams(TimeDelta::Seconds(kTestDurationSec)));
@@ -1176,7 +1176,7 @@ TEST(PCFullStackTest, Pc_Screenshare_Slides_Vp9_3sl_High_Fps) {
       network_emulation_manager->CreateEndpointPairWithTwoWayRoutes(
           BuiltInNetworkBehaviorConfig()),
       [](PeerConfigurer* alice) {
-        alice->AddFieldTrials(FieldTrials(
+        alice->AddFieldTrials(CreateTestFieldTrials(
             "WebRTC-Vp9InterLayerPred/Enabled,inter_layer_pred_mode:on/"));
         VideoConfig video(1850, 1110, 30);
         video.stream_label = "alice-video";
@@ -1208,7 +1208,7 @@ TEST(PCFullStackTest, Pc_Vp9svc_3sl_High) {
       network_emulation_manager->CreateEndpointPairWithTwoWayRoutes(
           BuiltInNetworkBehaviorConfig()),
       [](PeerConfigurer* alice) {
-        alice->AddFieldTrials(FieldTrials(
+        alice->AddFieldTrials(CreateTestFieldTrials(
             "WebRTC-Vp9InterLayerPred/Enabled,inter_layer_pred_mode:on/"));
         VideoConfig video(1280, 720, 30);
         video.stream_label = "alice-video";
@@ -1240,7 +1240,7 @@ TEST(PCFullStackTest, Pc_Vp9svc_3sl_Low) {
       network_emulation_manager->CreateEndpointPairWithTwoWayRoutes(
           BuiltInNetworkBehaviorConfig()),
       [](PeerConfigurer* alice) {
-        alice->AddFieldTrials(FieldTrials(
+        alice->AddFieldTrials(CreateTestFieldTrials(
             "WebRTC-Vp9InterLayerPred/Enabled,inter_layer_pred_mode:on/"));
         VideoConfig video(1280, 720, 30);
         video.stream_label = "alice-video";
@@ -1373,7 +1373,7 @@ TEST(PCFullStackTest, MAYBE_Pc_Simulcast_HD_High) {
       "pc_simulcast_HD_high", *network_emulation_manager->time_controller(),
       network_emulation_manager->CreateEndpointPairWithTwoWayRoutes(config),
       [](PeerConfigurer* alice) {
-        alice->AddFieldTrials(FieldTrials(
+        alice->AddFieldTrials(CreateTestFieldTrials(
             "WebRTC-ForceSimulatedOveruseIntervalMs/1000-50000-300/"));
         VideoConfig video(1920, 1080, 30);
         video.simulcast_config = VideoSimulcastConfig(3);

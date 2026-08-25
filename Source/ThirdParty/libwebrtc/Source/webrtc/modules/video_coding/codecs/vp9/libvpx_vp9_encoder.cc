@@ -1009,11 +1009,11 @@ int LibvpxVp9Encoder::Encode(const VideoFrame& input_image,
     return WEBRTC_VIDEO_CODEC_OK;
   }
 
-  // We only support one stream at the moment.
-  if (frame_types && !frame_types->empty()) {
-    if ((*frame_types)[0] == VideoFrameType::kVideoFrameKey) {
-      force_key_frame_ = true;
-    }
+  // A keyframe request on any stream triggers a keyframe on all streams
+  // in order to keep the temporal layering structure aligned.
+  if (frame_types &&
+      absl::c_linear_search(*frame_types, VideoFrameType::kVideoFrameKey)) {
+    force_key_frame_ = true;
   }
 
   if (pics_since_key_ + 1 ==

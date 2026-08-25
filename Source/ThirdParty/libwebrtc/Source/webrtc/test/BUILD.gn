@@ -30,7 +30,6 @@ if (!build_with_chromium) {
     if (rtc_include_tests) {
       deps += [
         ":test_main",
-        ":test_support_unittests",
         "pc/e2e",
       ]
     }
@@ -120,10 +119,10 @@ rtc_library("test_video_capturer") {
   ]
   deps = [
     "../api:scoped_refptr",
+    "../api/video:video_adapter",
+    "../api/video:video_broadcaster",
     "../api/video:video_frame",
     "../api/video:video_rtp_headers",
-    "../media:video_adapter",
-    "../media:video_broadcaster",
     "../rtc_base:macromagic",
     "../rtc_base/synchronization:mutex",
   ]
@@ -162,6 +161,7 @@ rtc_library("create_test_environment") {
     "../api:time_controller",
     "../api/environment",
     "../api/environment:environment_factory",
+    "../api/environment:force_test_environment",
     "../api/rtc_event_log",
     "../rtc_base:checks",
     "../system_wrappers",
@@ -175,6 +175,7 @@ rtc_library("create_test_field_trials") {
   sources = [ "create_test_field_trials.h" ]
   deps = [
     "../api:field_trials",
+    "../api/environment:force_test_environment",
     "//third_party/abseil-cpp/absl/base:nullability",
     "//third_party/abseil-cpp/absl/strings:string_view",
   ]
@@ -415,6 +416,24 @@ if (is_ios && !build_with_chromium) {
     configs += [ ":test_support_objc_config" ]
   }
 
+  # Entry point for iOS XCTest bundles. rtc_test() adds this to is_xctest
+  # targets instead of test:test_main, whose gtest main() would collide with
+  # this one.
+  rtc_library("test_main_xctest") {
+    testonly = true
+    visibility = [ "*" ]
+    sources = [ "ios/xctest_main.mm" ]
+    frameworks = [
+      "Foundation.framework",
+      "UIKit.framework",
+    ]
+    deps = [
+      ":run_loop",
+      ":test_support_objc",
+      "../rtc_base:threading",
+    ]
+  }
+
   rtc_library("google_test_runner_delegate") {
     sources = [ "ios/google_test_runner_delegate.h" ]
   }
@@ -642,8 +661,10 @@ if (rtc_include_tests) {
       deps = [
         ":test_main_lib",
         ":test_support",
+        "../api/environment:force_test_environment",
         "//third_party/abseil-cpp/absl/debugging:failure_signal_handler",
         "//third_party/abseil-cpp/absl/debugging:symbolize",
+        "//third_party/abseil-cpp/absl/flags:flag",
         "//third_party/abseil-cpp/absl/flags:parse",
       ]
     }
@@ -681,8 +702,7 @@ if (rtc_include_tests) {
       }
     }
 
-    rtc_library("fixed_fps_video_frame_writer_adapter_test") {
-      testonly = true
+    rtc_cc_test("fixed_fps_video_frame_writer_adapter_test") {
       sources = [ "testsupport/fixed_fps_video_frame_writer_adapter_test.cc" ]
       deps = [
         ":fixed_fps_video_frame_writer_adapter",
@@ -699,150 +719,571 @@ if (rtc_include_tests) {
       ]
     }
 
-    rtc_test("test_support_unittests") {
+    rtc_cc_test("call_config_utils_unittest") {
+      sources = [ "call_config_utils_unittest.cc" ]
       deps = [
         ":call_config_utils",
-        ":copy_to_file_audio_capturer_unittest",
-        ":create_frame_generator_capturer",
-        ":create_test_environment",
-        ":create_test_field_trials",
-        ":direct_transport",
-        ":fake_video_codecs",
-        ":fileutils",
-        ":fileutils_unittests",
-        ":fixed_fps_video_frame_writer_adapter_test",
-        ":frame_generator_capturer",
-        ":frame_generator_impl",
-        ":near_matcher",
-        ":perf_test",
-        ":rtc_expect_death",
-        ":rtp_test_utils",
-        ":run_loop",
         ":test_support",
-        ":test_support_test_artifacts",
-        ":video_codec_tester",
-        ":video_frame_matcher",
-        ":video_frame_writer",
-        ":video_test_common",
-        ":video_test_support",
-        ":wait_until",
-        ":y4m_frame_generator",
-        "../api:create_frame_generator",
-        "../api:create_simulcast_test_fixture_api",
-        "../api:create_time_controller",
-        "../api:field_trials",
-        "../api:frame_generator_api",
-        "../api:mock_video_codec_factory",
-        "../api:mock_video_decoder",
-        "../api:mock_video_encoder",
-        "../api:rtc_error",
-        "../api:rtc_error_matchers",
         "../api:rtp_headers",
+        "../call:video_receive_stream_api",
+      ]
+      data = test_support_unittests_resources
+      if (is_ios) {
+        deps += [ ":test_support_unittests_bundle_data" ]
+      }
+      if (!is_android) {
+        deps += [ "../modules/video_capture:video_capture_internal_impl" ]
+      }
+    }
+
+    rtc_cc_test("create_test_field_trials_unittest") {
+      sources = [ "create_test_field_trials_unittest.cc" ]
+      deps = [
+        ":create_test_field_trials",
+        ":test_support",
+        "../api:field_trials",
+        "../api/environment:force_test_environment",
+        "//third_party/abseil-cpp/absl/flags:flag",
+        "//third_party/abseil-cpp/absl/strings:string_view",
+      ]
+      data = test_support_unittests_resources
+      if (is_ios) {
+        deps += [ ":test_support_unittests_bundle_data" ]
+      }
+      if (!is_android) {
+        deps += [ "../modules/video_capture:video_capture_internal_impl" ]
+      }
+    }
+
+    rtc_cc_test("direct_transport_unittest") {
+      sources = [ "direct_transport_unittest.cc" ]
+      deps = [
+        ":direct_transport",
+        ":test_support",
         "../api:rtp_parameters",
-        "../api:scoped_refptr",
+      ]
+      data = test_support_unittests_resources
+      if (is_ios) {
+        deps += [ ":test_support_unittests_bundle_data" ]
+      }
+      if (!is_android) {
+        deps += [ "../modules/video_capture:video_capture_internal_impl" ]
+      }
+    }
+
+    rtc_cc_test("fake_vp8_encoder_unittest") {
+      sources = [ "fake_vp8_encoder_unittest.cc" ]
+      deps = [
+        ":fake_video_codecs",
+        ":test_support",
+        "../api:create_simulcast_test_fixture_api",
         "../api:simulcast_test_fixture_api",
-        "../api:time_controller",
         "../api/environment",
-        "../api/environment:environment_factory",
-        "../api/numerics",
-        "../api/task_queue",
-        "../api/task_queue:task_queue_test",
         "../api/test/video:function_video_factory",
-        "../api/test/video:video_frame_writer",
-        "../api/units:data_rate",
-        "../api/units:data_size",
-        "../api/units:frequency",
+        "../api/video_codecs:video_codecs_api",
+      ]
+      data = test_support_unittests_resources
+      if (is_ios) {
+        deps += [ ":test_support_unittests_bundle_data" ]
+      }
+      if (!is_android) {
+        deps += [ "../modules/video_capture:video_capture_internal_impl" ]
+      }
+    }
+
+    rtc_cc_test("frame_generator_capturer_unittest") {
+      sources = [ "frame_generator_capturer_unittest.cc" ]
+      deps = [
+        ":create_frame_generator_capturer",
+        ":frame_generator_capturer",
+        ":test_support",
         "../api/units:time_delta",
         "../api/units:timestamp",
+        "../api/video:video_frame",
+        "time_controller",
+      ]
+      data_deps = [ "../resources:scenario_config_resources" ]
+      if (is_ios) {
+        deps += [ ":test_support_unittests_bundle_data" ]
+      }
+      if (!is_android) {
+        deps += [ "../modules/video_capture:video_capture_internal_impl" ]
+      }
+    }
+
+    rtc_cc_test("frame_generator_unittest") {
+      sources = [ "frame_generator_unittest.cc" ]
+      deps = [
+        ":fileutils",
+        ":test_support",
+        "../api:create_frame_generator",
+        "../api:frame_generator_api",
+        "../api:scoped_refptr",
+        "../api/video:video_frame",
+        "../rtc_base:checks",
+      ]
+      data = test_support_unittests_resources
+      if (is_ios) {
+        deps += [ ":test_support_unittests_bundle_data" ]
+      }
+      if (!is_android) {
+        deps += [ "../modules/video_capture:video_capture_internal_impl" ]
+      }
+    }
+
+    rtc_cc_test("near_matcher_unittest") {
+      sources = [ "near_matcher_unittest.cc" ]
+      deps = [
+        ":near_matcher",
+        ":test_support",
+        "../api/units:data_rate",
+        "../api/units:time_delta",
+        "../api/units:timestamp",
+      ]
+      data = test_support_unittests_resources
+      if (is_ios) {
+        deps += [ ":test_support_unittests_bundle_data" ]
+      }
+      if (!is_android) {
+        deps += [ "../modules/video_capture:video_capture_internal_impl" ]
+      }
+    }
+
+    rtc_cc_test("rtp_file_reader_unittest") {
+      sources = [ "rtp_file_reader_unittest.cc" ]
+      deps = [
+        ":fileutils",
+        ":rtp_test_utils",
+        ":test_support",
+        "../modules/rtp_rtcp:rtp_rtcp_format",
+      ]
+      data = test_support_unittests_resources
+      if (is_ios) {
+        deps += [ ":test_support_unittests_bundle_data" ]
+      }
+      if (!is_android) {
+        deps += [ "../modules/video_capture:video_capture_internal_impl" ]
+      }
+    }
+
+    rtc_cc_test("rtp_file_writer_unittest") {
+      sources = [ "rtp_file_writer_unittest.cc" ]
+      deps = [
+        ":fileutils",
+        ":rtp_test_utils",
+        ":test_support",
+      ]
+      data = test_support_unittests_resources
+      if (is_ios) {
+        deps += [ ":test_support_unittests_bundle_data" ]
+      }
+      if (!is_android) {
+        deps += [ "../modules/video_capture:video_capture_internal_impl" ]
+      }
+    }
+
+    rtc_cc_test("run_loop_unittest") {
+      sources = [ "run_loop_unittest.cc" ]
+      deps = [
+        ":create_test_environment",
+        ":run_loop",
+        ":test_support",
+        "../api/environment",
+        "../api/task_queue",
+        "../api/units:time_delta",
+        "../api/units:timestamp",
+      ]
+      data = test_support_unittests_resources
+      if (is_ios) {
+        deps += [ ":test_support_unittests_bundle_data" ]
+      }
+      if (!is_android) {
+        deps += [ "../modules/video_capture:video_capture_internal_impl" ]
+      }
+    }
+
+    rtc_cc_test("ivf_frame_reader_unittest") {
+      sources = [ "testsupport/ivf_frame_reader_unittest.cc" ]
+      deps = [
+        ":create_test_environment",
+        ":fileutils",
+        ":test_support",
+        ":video_test_common",
+        ":video_test_support",
+        "../api:create_frame_generator",
+        "../api:frame_generator_api",
+        "../api:scoped_refptr",
+        "../api/environment",
+        "../api/units:time_delta",
         "../api/video:encoded_image",
         "../api/video:resolution",
         "../api/video:video_bitrate_allocation",
         "../api/video:video_frame",
-        "../api/video:video_frame_type",
-        "../api/video_codecs:builtin_video_decoder_factory",
-        "../api/video_codecs:builtin_video_encoder_factory",
-        "../api/video_codecs:scalability_mode",
         "../api/video_codecs:video_codecs_api",
-        "../call:video_receive_stream_api",
-        "../common_video",
-        "../media:codec",
-        "../media:media_constants",
         "../modules/rtp_rtcp:rtp_rtcp_format",
-        "../modules/video_coding:simulcast_test_fixture_impl",
         "../modules/video_coding:video_codec_interface",
         "../modules/video_coding:video_coding_utility",
         "../modules/video_coding:webrtc_h264",
         "../modules/video_coding:webrtc_vp8",
         "../modules/video_coding:webrtc_vp9",
         "../modules/video_coding/codecs/av1:libaom_av1_encoder",
-        "../modules/video_coding/svc:scalability_mode_util",
         "../rtc_base:checks",
-        "../rtc_base:criticalsection",
         "../rtc_base:macromagic",
-        "../rtc_base:rtc_base_tests_utils",
         "../rtc_base:rtc_event",
-        "../rtc_base:threading",
         "../rtc_base/synchronization:mutex",
+      ]
+      data = test_support_unittests_resources
+      if (is_ios) {
+        deps += [ ":test_support_unittests_bundle_data" ]
+      }
+      if (!is_android) {
+        deps += [ "../modules/video_capture:video_capture_internal_impl" ]
+      }
+    }
+
+    rtc_cc_test("ivf_video_frame_generator_unittest") {
+      sources = [ "testsupport/ivf_video_frame_generator_unittest.cc" ]
+      deps = [
+        ":create_test_environment",
+        ":fileutils",
+        ":frame_generator_impl",
+        ":test_support",
+        ":video_test_common",
+        "../api:create_frame_generator",
+        "../api:frame_generator_api",
+        "../api:scoped_refptr",
+        "../api/environment",
+        "../api/units:time_delta",
+        "../api/video:encoded_image",
+        "../api/video:video_bitrate_allocation",
+        "../api/video:video_frame",
+        "../api/video_codecs:video_codecs_api",
+        "../common_video",
+        "../modules/rtp_rtcp:rtp_rtcp_format",
+        "../modules/video_coding:video_codec_interface",
+        "../modules/video_coding:video_coding_utility",
+        "../modules/video_coding:webrtc_h264",
+        "../modules/video_coding:webrtc_vp8",
+        "../modules/video_coding:webrtc_vp9",
+        "../rtc_base:checks",
+        "../rtc_base:macromagic",
+        "../rtc_base:rtc_event",
+        "../rtc_base/synchronization:mutex",
+      ]
+      data = test_support_unittests_resources
+      if (is_ios) {
+        deps += [ ":test_support_unittests_bundle_data" ]
+      }
+      if (!is_android) {
+        deps += [ "../modules/video_capture:video_capture_internal_impl" ]
+      }
+    }
+
+    rtc_cc_test("perf_test_unittest") {
+      sources = [ "testsupport/perf_test_unittest.cc" ]
+      deps = [
+        ":perf_test",
+        ":rtc_expect_death",
+        ":test_support",
+        "../api/numerics",
+        "../api/units:timestamp",
+        "//third_party/catapult/tracing/tracing:histogram",
+      ]
+      data = test_support_unittests_resources
+      if (is_ios) {
+        deps += [ ":test_support_unittests_bundle_data" ]
+      }
+      if (!is_android) {
+        deps += [ "../modules/video_capture:video_capture_internal_impl" ]
+      }
+    }
+
+    rtc_cc_test("test_artifacts_unittest") {
+      sources = [ "testsupport/test_artifacts_unittest.cc" ]
+      deps = [
+        ":fileutils",
+        ":test_support",
+        ":test_support_test_artifacts",
         "../rtc_base/system:file_wrapper",
+        "//third_party/abseil-cpp/absl/flags:flag",
+      ]
+      data = test_support_unittests_resources
+      if (is_ios) {
+        deps += [ ":test_support_unittests_bundle_data" ]
+      }
+      if (!is_android) {
+        deps += [ "../modules/video_capture:video_capture_internal_impl" ]
+      }
+    }
+
+    rtc_cc_test("video_frame_writer_unittest") {
+      sources = [ "testsupport/video_frame_writer_unittest.cc" ]
+      deps = [
+        ":fileutils",
+        ":test_support",
+        ":video_frame_writer",
+        ":video_test_support",
+        "../api:scoped_refptr",
+        "../api/test/video:video_frame_writer",
+        "../api/video:resolution",
+        "../api/video:video_frame",
+        "//third_party/abseil-cpp/absl/strings:string_view",
+      ]
+      data = test_support_unittests_resources
+      if (is_ios) {
+        deps += [ ":test_support_unittests_bundle_data" ]
+      }
+      if (!is_android) {
+        deps += [ "../modules/video_capture:video_capture_internal_impl" ]
+      }
+    }
+
+    rtc_cc_test("y4m_frame_generator_test") {
+      sources = [ "testsupport/y4m_frame_generator_test.cc" ]
+      deps = [
+        ":fileutils",
+        ":test_support",
+        ":y4m_frame_generator",
+        "../api:frame_generator_api",
+        "//third_party/abseil-cpp/absl/strings:string_view",
+      ]
+      data = test_support_unittests_resources
+      if (is_ios) {
+        deps += [ ":test_support_unittests_bundle_data" ]
+      }
+      if (!is_android) {
+        deps += [ "../modules/video_capture:video_capture_internal_impl" ]
+      }
+    }
+
+    rtc_cc_test("y4m_frame_reader_unittest") {
+      sources = [ "testsupport/y4m_frame_reader_unittest.cc" ]
+      deps = [
+        ":fileutils",
+        ":test_support",
+        ":video_test_support",
+        "../api:scoped_refptr",
+        "../api/video:resolution",
+        "../api/video:video_frame",
+        "//third_party/abseil-cpp/absl/strings:string_view",
+      ]
+      data = test_support_unittests_resources
+      if (is_ios) {
+        deps += [ ":test_support_unittests_bundle_data" ]
+      }
+      if (!is_android) {
+        deps += [ "../modules/video_capture:video_capture_internal_impl" ]
+      }
+    }
+
+    rtc_cc_test("y4m_frame_writer_unittest") {
+      sources = [ "testsupport/y4m_frame_writer_unittest.cc" ]
+      deps = [
+        ":fileutils",
+        ":test_support",
+        ":video_frame_writer",
+      ]
+      data = test_support_unittests_resources
+      if (is_ios) {
+        deps += [ ":test_support_unittests_bundle_data" ]
+      }
+      if (!is_android) {
+        deps += [ "../modules/video_capture:video_capture_internal_impl" ]
+      }
+    }
+
+    rtc_cc_test("yuv_frame_reader_unittest") {
+      sources = [ "testsupport/yuv_frame_reader_unittest.cc" ]
+      deps = [
+        ":fileutils",
+        ":test_support",
+        ":video_test_support",
+        "../api:scoped_refptr",
+        "../api/video:resolution",
+        "../api/video:video_frame",
+      ]
+      data = test_support_unittests_resources
+      if (is_ios) {
+        deps += [ ":test_support_unittests_bundle_data" ]
+      }
+      if (!is_android) {
+        deps += [ "../modules/video_capture:video_capture_internal_impl" ]
+      }
+    }
+
+    rtc_cc_test("yuv_frame_writer_unittest") {
+      sources = [ "testsupport/yuv_frame_writer_unittest.cc" ]
+      deps = [
+        ":fileutils",
+        ":test_support",
+        ":video_frame_writer",
+      ]
+      data = test_support_unittests_resources
+      if (is_ios) {
+        deps += [ ":test_support_unittests_bundle_data" ]
+      }
+      if (!is_android) {
+        deps += [ "../modules/video_capture:video_capture_internal_impl" ]
+      }
+    }
+
+    rtc_cc_test("video_codec_tester_unittest") {
+      sources = [ "video_codec_tester_unittest.cc" ]
+      deps = [
+        ":create_test_environment",
+        ":fileutils",
+        ":test_support",
+        ":video_codec_tester",
+        "../api:mock_video_codec_factory",
+        "../api:mock_video_decoder",
+        "../api:mock_video_encoder",
+        "../api:scoped_refptr",
+        "../api/environment",
+        "../api/units:data_rate",
+        "../api/units:data_size",
+        "../api/units:frequency",
+        "../api/units:time_delta",
+        "../api/video:encoded_image",
+        "../api/video:video_frame",
+        "../api/video:video_frame_type",
+        "../api/video_codecs:builtin_video_decoder_factory",
+        "../api/video_codecs:builtin_video_encoder_factory",
+        "../api/video_codecs:scalability_mode",
+        "../api/video_codecs:video_codecs_api",
+        "../modules/video_coding:video_codec_interface",
+        "../modules/video_coding/svc:scalability_mode_util",
+        "//third_party/libyuv",
+      ]
+      data = test_support_unittests_resources
+      if (is_ios) {
+        deps += [ ":test_support_unittests_bundle_data" ]
+      }
+      if (!is_android) {
+        deps += [ "../modules/video_capture:video_capture_internal_impl" ]
+      }
+    }
+
+    rtc_cc_test("video_frame_matcher_unittest") {
+      sources = [ "video_frame_matcher_unittest.cc" ]
+      deps = [
+        ":test_support",
+        ":video_frame_matcher",
+        "../api/video:video_frame",
+      ]
+      data = test_support_unittests_resources
+      if (is_ios) {
+        deps += [ ":test_support_unittests_bundle_data" ]
+      }
+      if (!is_android) {
+        deps += [ "../modules/video_capture:video_capture_internal_impl" ]
+      }
+    }
+
+    rtc_cc_test("wait_until_unittest") {
+      sources = [ "wait_until_unittest.cc" ]
+      deps = [
+        ":run_loop",
+        ":test_support",
+        ":wait_until",
+        "../api:create_time_controller",
+        "../api:rtc_error",
+        "../api:rtc_error_matchers",
+        "../api:time_controller",
+        "../api/task_queue",
+        "../api/units:time_delta",
+        "../api/units:timestamp",
+        "../rtc_base:rtc_base_tests_utils",
         "../system_wrappers",
+      ]
+      data = test_support_unittests_resources
+      if (is_ios) {
+        deps += [ ":test_support_unittests_bundle_data" ]
+      }
+      if (!is_android) {
+        deps += [ "../modules/video_capture:video_capture_internal_impl" ]
+      }
+    }
+
+    if (rtc_enable_protobuf) {
+      rtc_cc_test("perf_test_histogram_writer_unittest") {
+        sources = [ "testsupport/perf_test_histogram_writer_unittest.cc" ]
+        deps = [
+          ":perf_test",
+          ":test_support",
+          "//third_party/catapult/tracing/tracing:histogram",
+        ]
+        data = test_support_unittests_resources
+        if (is_ios) {
+          deps += [ ":test_support_unittests_bundle_data" ]
+        }
+        if (!is_android) {
+          deps += [ "../modules/video_capture:video_capture_internal_impl" ]
+        }
+      }
+    }
+
+    rtc_cc_test("fileutils_unittests") {
+      sources = [ "testsupport/file_utils_unittest.cc" ]
+      deps = [
+        ":fileutils",
+        ":test_support",
+        "../rtc_base:checks",
+        "../rtc_base:crypto_random",
+        "//third_party/abseil-cpp/absl/strings:string_view",
+      ]
+    }
+
+    rtc_cc_test("copy_to_file_audio_capturer_unittest") {
+      sources = [ "testsupport/copy_to_file_audio_capturer_unittest.cc" ]
+      deps = [
+        ":copy_to_file_audio_capturer",
+        ":fileutils",
+        ":test_support",
+        "../modules/audio_device:test_audio_device_module",
+        "../rtc_base:buffer",
+      ]
+    }
+
+    rtc_test_suite("test_support_unittests") {
+      tests = [
+        ":call_config_utils_unittest",
+        ":create_test_field_trials_unittest",
+        ":direct_transport_unittest",
+        ":fake_vp8_encoder_unittest",
+        ":frame_generator_capturer_unittest",
+        ":frame_generator_unittest",
+        ":near_matcher_unittest",
+        ":rtp_file_reader_unittest",
+        ":rtp_file_writer_unittest",
+        ":run_loop_unittest",
+        ":ivf_frame_reader_unittest",
+        ":ivf_video_frame_generator_unittest",
+        ":perf_test_unittest",
+        ":test_artifacts_unittest",
+        ":video_frame_writer_unittest",
+        ":y4m_frame_generator_test",
+        ":y4m_frame_reader_unittest",
+        ":y4m_frame_writer_unittest",
+        ":yuv_frame_reader_unittest",
+        ":yuv_frame_writer_unittest",
+        ":video_codec_tester_unittest",
+        ":video_frame_matcher_unittest",
+        ":wait_until_unittest",
+        ":copy_to_file_audio_capturer_unittest",
+        ":fileutils_unittests",
+        ":fixed_fps_video_frame_writer_adapter_test",
         "fuzzers:fuzz_data_helper_unittest",
         "jitter:jitter_unittests",
         "pc/e2e:e2e_unittests",
         "pc/e2e/analyzer/video:video_analyzer_unittests",
         "pc/e2e/analyzer/video/dvqa:dvqa_unittests",
-        "peer_scenario/bwe_integration_tests",
-        "peer_scenario/tests",
+        "peer_scenario/bwe_integration_tests:bwe_integration_tests",
+        "peer_scenario/tests:tests",
         "scenario:scenario_unittests",
-        "time_controller",
         "time_controller:time_controller_unittests",
-        "//third_party/abseil-cpp/absl/flags:flag",
-        "//third_party/abseil-cpp/absl/strings:string_view",
-        "//third_party/libyuv",
       ]
-      sources = [
-        "call_config_utils_unittest.cc",
-        "create_test_field_trials_unittest.cc",
-        "direct_transport_unittest.cc",
-        "fake_vp8_encoder_unittest.cc",
-        "frame_generator_capturer_unittest.cc",
-        "frame_generator_unittest.cc",
-        "near_matcher_unittest.cc",
-        "rtp_file_reader_unittest.cc",
-        "rtp_file_writer_unittest.cc",
-        "run_loop_unittest.cc",
-        "testsupport/ivf_frame_reader_unittest.cc",
-        "testsupport/ivf_video_frame_generator_unittest.cc",
-        "testsupport/perf_test_unittest.cc",
-        "testsupport/test_artifacts_unittest.cc",
-        "testsupport/video_frame_writer_unittest.cc",
-        "testsupport/y4m_frame_generator_test.cc",
-        "testsupport/y4m_frame_reader_unittest.cc",
-        "testsupport/y4m_frame_writer_unittest.cc",
-        "testsupport/yuv_frame_reader_unittest.cc",
-        "testsupport/yuv_frame_writer_unittest.cc",
-        "video_codec_tester_unittest.cc",
-        "video_frame_matcher_unittest.cc",
-        "wait_until_unittest.cc",
-      ]
-
       if (rtc_enable_protobuf) {
-        sources += [ "testsupport/perf_test_histogram_writer_unittest.cc" ]
-        deps += [ "//third_party/catapult/tracing/tracing:histogram" ]
-      }
-
-      data = test_support_unittests_resources
-      if (is_android) {
-        shard_timeout = 900
-      }
-
-      if (is_ios) {
-        deps += [ ":test_support_unittests_bundle_data" ]
-      }
-
-      if (!is_android) {
-        # This is needed in order to avoid:
-        # undefined symbol: webrtc::videocapturemodule::VideoCaptureImpl::Create
-        deps += [ "../modules/video_capture:video_capture_internal_impl" ]
+        tests += [ ":perf_test_histogram_writer_unittest" ]
       }
     }
   }
@@ -966,19 +1407,6 @@ rtc_library("run_test_generic") {
   deps = [ ":run_test_interface" ]
 }
 
-rtc_library("fileutils_unittests") {
-  testonly = true
-  visibility = [ ":*" ]  # Only targets in this file can depend on this.
-  sources = [ "testsupport/file_utils_unittest.cc" ]
-  deps = [
-    ":fileutils",
-    ":test_support",
-    "../rtc_base:checks",
-    "../rtc_base:crypto_random",
-    "//third_party/abseil-cpp/absl/strings:string_view",
-  ]
-}
-
 rtc_library("direct_transport") {
   visibility = [ "*" ]
   testonly = true
@@ -990,28 +1418,23 @@ rtc_library("direct_transport") {
     "../api:rtp_headers",
     "../api:rtp_parameters",
     "../api:sequence_checker",
-    "../api:simulated_network_api",
     "../api:transport_api",
     "../api/environment",
     "../api/task_queue",
     "../api/units:time_delta",
-    "../api/units:timestamp",
     "../call:call_interfaces",
+    "../call:fake_network",
     "../call:simulated_packet_receiver",
     "../modules/rtp_rtcp:rtp_rtcp_format",
     "../rtc_base:checks",
     "../rtc_base:copy_on_write_buffer",
     "../rtc_base:macromagic",
     "../rtc_base:task_queue_for_test",
-    "../rtc_base:threading",
-    "../rtc_base:timeutils",
     "../rtc_base/network:sent_packet",
     "../rtc_base/synchronization:mutex",
     "../rtc_base/task_utils:repeating_task",
-    "../system_wrappers",
+    "//third_party/abseil-cpp/absl/base:nullability",
   ]
-  public_deps +=  # no-presubmit-check TODO(webrtc:8603)
-      [ "../call:fake_network" ]
 }
 
 rtc_library("fake_video_codecs") {
@@ -1257,6 +1680,7 @@ rtc_library("audio_codec_mocks") {
 
   deps = [
     ":test_support",
+    "../api:bitrate_allocation",
     "../api:make_ref_counted",
     "../api:scoped_refptr",
     "../api/audio_codecs:audio_codecs_api",
@@ -1279,18 +1703,6 @@ if (!build_with_chromium) {
     ]
     deps = [
       "../common_audio",
-      "../modules/audio_device:test_audio_device_module",
-      "../rtc_base:buffer",
-    ]
-  }
-
-  rtc_library("copy_to_file_audio_capturer_unittest") {
-    testonly = true
-    sources = [ "testsupport/copy_to_file_audio_capturer_unittest.cc" ]
-    deps = [
-      ":copy_to_file_audio_capturer",
-      ":fileutils",
-      ":test_support",
       "../modules/audio_device:test_audio_device_module",
       "../rtc_base:buffer",
     ]

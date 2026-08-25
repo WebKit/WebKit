@@ -122,10 +122,18 @@ void SrtpTransport::OnRtcpPacketReceived(const ReceivedIpPacket& packet) {
   }
   CopyOnWriteBuffer payload(packet.payload());
   if (!UnprotectRtcp(payload)) {
-    int type = -1;
-    GetRtcpType(payload.data(), payload.size(), &type);
-    RTC_LOG(LS_ERROR) << "Failed to unprotect RTCP packet: size="
-                      << payload.size() << ", type=" << type;
+    // Limit the error logging to avoid excessive logs when there are lots of
+    // bad packets.
+    const int kFailureLogThrottleCount = 100;
+    if (rtcp_decryption_failure_count_ % kFailureLogThrottleCount == 0) {
+      int type = -1;
+      GetRtcpType(payload.data(), payload.size(), &type);
+      RTC_LOG(LS_ERROR) << "Failed to unprotect RTCP packet: size="
+                        << payload.size() << ", type=" << type
+                        << ", previous failure count: "
+                        << rtcp_decryption_failure_count_;
+    }
+    ++rtcp_decryption_failure_count_;
     return;
   }
   SendRtcpPacketReceived(std::move(payload), packet.arrival_time(),
@@ -140,6 +148,7 @@ void SrtpTransport::OnNetworkRouteChanged(
     if (IsSrtpActive()) {
       GetSrtpOverhead(&srtp_overhead);
     }
+    srtp_overhead_ = srtp_overhead;
     network_route->packet_overhead += srtp_overhead;
   }
   SendNetworkRouteChanged(network_route);
@@ -360,6 +369,20 @@ void SrtpTransport::MaybeUpdateWritableState() {
   if (writable_ != writable) {
     writable_ = writable;
     SendWritableState(writable_);
+  }
+  MaybeUpdateSrtpOverhead();
+}
+
+void SrtpTransport::MaybeUpdateSrtpOverhead() {
+  if (!update_network_route_on_srtp_activation_ || !rtp_packet_transport()) {
+    return;
+  }
+  int srtp_overhead = 0;
+  if (IsSrtpActive()) {
+    GetSrtpOverhead(&srtp_overhead);
+  }
+  if (srtp_overhead != srtp_overhead_) {
+    OnNetworkRouteChanged(rtp_packet_transport()->network_route());
   }
 }
 

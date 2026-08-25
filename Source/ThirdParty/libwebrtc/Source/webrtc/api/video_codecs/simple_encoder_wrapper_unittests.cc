@@ -15,6 +15,7 @@
 #include "api/video/i420_buffer.h"  // IWYU pragma: keep
 #include "api/video_codecs/libaom_av1_encoder_factory.h"
 #include "api/video_codecs/simple_encoder_wrapper.h"
+#include "api/video_codecs/video_encoder_builders.h"
 #include "api/video_codecs/video_encoder_factory_interface.h"
 #include "api/video_codecs/video_encoding_general.h"
 #include "test/gmock.h"
@@ -43,47 +44,50 @@ std::unique_ptr<test::FrameReader> CreateFrameReader() {
 }
 
 TEST(SimpleEncoderWrapper, SupportedSvcModesOnlyL1T1) {
-  PredictionConstraints constraints = {
-      .num_buffers = 2,
-      .max_references = 2,
-      .max_temporal_layers = 1,
-      .buffer_space_type =
-          PredictionConstraints::BufferSpaceType::kSingleKeyframe,
-      .max_spatial_layers = 1,
-      .scaling_factors = {{.numerator = 1, .denominator = 1}},
-  };
+  PredictionConstraints constraints =
+      PredictionConstraintsBuilder()
+          .NumBuffers(2)
+          .MaxReferences(2)
+          .MaxTemporalLayers(1)
+          .BufferSpaceType(
+              PredictionConstraints::BufferSpaceType::kSingleKeyframe)
+          .MaxSpatialLayers(1)
+          .ScalingFactors({{.numerator = 1, .denominator = 1}})
+          .Build();
 
   EXPECT_THAT(SimpleEncoderWrapper::SupportedWebrtcSvcModes(constraints),
               UnorderedElementsAre("L1T1"));
 }
 
 TEST(SimpleEncoderWrapper, SupportedSvcModesUpToL1T3) {
-  PredictionConstraints constraints = {
-      .num_buffers = 8,
-      .max_references = 1,
-      .max_temporal_layers = 3,
-      .buffer_space_type =
-          PredictionConstraints::BufferSpaceType::kSingleKeyframe,
-      .max_spatial_layers = 1,
-      .scaling_factors = {{.numerator = 1, .denominator = 1},
-                          {.numerator = 1, .denominator = 2}},
-  };
+  PredictionConstraints constraints =
+      PredictionConstraintsBuilder()
+          .NumBuffers(8)
+          .MaxReferences(1)
+          .MaxTemporalLayers(3)
+          .BufferSpaceType(
+              PredictionConstraints::BufferSpaceType::kSingleKeyframe)
+          .MaxSpatialLayers(1)
+          .ScalingFactors({{.numerator = 1, .denominator = 1},
+                           {.numerator = 1, .denominator = 2}})
+          .Build();
 
   EXPECT_THAT(SimpleEncoderWrapper::SupportedWebrtcSvcModes(constraints),
               UnorderedElementsAre("L1T1", "L1T2", "L1T3"));
 }
 
 TEST(SimpleEncoderWrapper, SupportedSvcModesUpToL3T3Key) {
-  PredictionConstraints constraints = {
-      .num_buffers = 8,
-      .max_references = 2,
-      .max_temporal_layers = 3,
-      .buffer_space_type =
-          PredictionConstraints::BufferSpaceType::kSingleKeyframe,
-      .max_spatial_layers = 3,
-      .scaling_factors = {{.numerator = 1, .denominator = 1},
-                          {.numerator = 1, .denominator = 2}},
-  };
+  PredictionConstraints constraints =
+      PredictionConstraintsBuilder()
+          .NumBuffers(8)
+          .MaxReferences(2)
+          .MaxTemporalLayers(3)
+          .BufferSpaceType(
+              PredictionConstraints::BufferSpaceType::kSingleKeyframe)
+          .MaxSpatialLayers(3)
+          .ScalingFactors({{.numerator = 1, .denominator = 1},
+                           {.numerator = 1, .denominator = 2}})
+          .Build();
 
   EXPECT_THAT(
       SimpleEncoderWrapper::SupportedWebrtcSvcModes(constraints),
@@ -94,16 +98,17 @@ TEST(SimpleEncoderWrapper, SupportedSvcModesUpToL3T3Key) {
 }
 
 TEST(SimpleEncoderWrapper, SupportedSvcModesUpToS3T3) {
-  PredictionConstraints constraints = {
-      .num_buffers = 8,
-      .max_references = 2,
-      .max_temporal_layers = 3,
-      .buffer_space_type =
-          PredictionConstraints::BufferSpaceType::kMultiInstance,
-      .max_spatial_layers = 3,
-      .scaling_factors = {{.numerator = 1, .denominator = 1},
-                          {.numerator = 1, .denominator = 2}},
-  };
+  PredictionConstraints constraints =
+      PredictionConstraintsBuilder()
+          .NumBuffers(8)
+          .MaxReferences(2)
+          .MaxTemporalLayers(3)
+          .BufferSpaceType(
+              PredictionConstraints::BufferSpaceType::kMultiInstance)
+          .MaxSpatialLayers(3)
+          .ScalingFactors({{.numerator = 1, .denominator = 1},
+                           {.numerator = 1, .denominator = 2}})
+          .Build();
 
   EXPECT_THAT(SimpleEncoderWrapper::SupportedWebrtcSvcModes(constraints),
               UnorderedElementsAre("L1T1", "L1T2", "L1T3", "S2T1", "S2T2",
@@ -111,17 +116,18 @@ TEST(SimpleEncoderWrapper, SupportedSvcModesUpToS3T3) {
 }
 
 TEST(SimpleEncoderWrapper, SupportedSvcModesUpToL3T3KeyWithHScaling) {
-  PredictionConstraints constraints = {
-      .num_buffers = 8,
-      .max_references = 2,
-      .max_temporal_layers = 3,
-      .buffer_space_type =
-          PredictionConstraints::BufferSpaceType::kSingleKeyframe,
-      .max_spatial_layers = 3,
-      .scaling_factors = {{.numerator = 1, .denominator = 1},
-                          {.numerator = 1, .denominator = 2},
-                          {.numerator = 2, .denominator = 3}},
-  };
+  PredictionConstraints constraints =
+      PredictionConstraintsBuilder()
+          .NumBuffers(8)
+          .MaxReferences(2)
+          .MaxTemporalLayers(3)
+          .BufferSpaceType(
+              PredictionConstraints::BufferSpaceType::kSingleKeyframe)
+          .MaxSpatialLayers(3)
+          .ScalingFactors({{.numerator = 1, .denominator = 1},
+                           {.numerator = 1, .denominator = 2},
+                           {.numerator = 2, .denominator = 3}})
+          .Build();
 
   EXPECT_THAT(
       SimpleEncoderWrapper::SupportedWebrtcSvcModes(constraints),
@@ -138,11 +144,13 @@ TEST(SimpleEncoderWrapper, SupportedSvcModesUpToL3T3KeyWithHScaling) {
 // implementation for testing, but hey, this is just a PoC.
 TEST(SimpleEncoderWrapper, EncodeL1T1) {
   auto encoder = LibaomAv1EncoderFactory().CreateEncoder(
-      {.max_encode_dimensions = {.width = 1080, .height = 720},
-       .encoding_format = {.sub_sampling = EncodingFormat::k420,
-                           .bit_depth = 8},
-       .rc_mode = VideoEncoderFactoryInterface::StaticEncoderSettings::Cqp(),
-       .max_number_of_threads = 1},
+      StaticEncoderSettingsBuilder()
+          .MaxEncodeDimensions({.width = 1080, .height = 720})
+          .EncodingFormat(
+              {.sub_sampling = EncodingFormat::k420, .bit_depth = 8})
+          .CqpRcMode()
+          .MaxNumberOfThreads(1)
+          .Build(),
       {});
 
   std::unique_ptr<SimpleEncoderWrapper> simple_encoder =
@@ -182,11 +190,13 @@ TEST(SimpleEncoderWrapper, EncodeL1T1) {
 
 TEST(SimpleEncoderWrapper, EncodeL2T2_KEY) {
   auto encoder = LibaomAv1EncoderFactory().CreateEncoder(
-      {.max_encode_dimensions = {.width = 1080, .height = 720},
-       .encoding_format = {.sub_sampling = EncodingFormat::k420,
-                           .bit_depth = 8},
-       .rc_mode = VideoEncoderFactoryInterface::StaticEncoderSettings::Cqp(),
-       .max_number_of_threads = 1},
+      StaticEncoderSettingsBuilder()
+          .MaxEncodeDimensions({.width = 1080, .height = 720})
+          .EncodingFormat(
+              {.sub_sampling = EncodingFormat::k420, .bit_depth = 8})
+          .CqpRcMode()
+          .MaxNumberOfThreads(1)
+          .Build(),
       {});
 
   std::unique_ptr<SimpleEncoderWrapper> simple_encoder =
@@ -242,11 +252,13 @@ TEST(SimpleEncoderWrapper, EncodeL2T2_KEY) {
 
 TEST(SimpleEncoderWrapper, EncodeL1T3ForceKeyframe) {
   auto encoder = LibaomAv1EncoderFactory().CreateEncoder(
-      {.max_encode_dimensions = {.width = 1080, .height = 720},
-       .encoding_format = {.sub_sampling = EncodingFormat::k420,
-                           .bit_depth = 8},
-       .rc_mode = VideoEncoderFactoryInterface::StaticEncoderSettings::Cqp(),
-       .max_number_of_threads = 1},
+      StaticEncoderSettingsBuilder()
+          .MaxEncodeDimensions({.width = 1080, .height = 720})
+          .EncodingFormat(
+              {.sub_sampling = EncodingFormat::k420, .bit_depth = 8})
+          .CqpRcMode()
+          .MaxNumberOfThreads(1)
+          .Build(),
       {});
 
   std::unique_ptr<SimpleEncoderWrapper> simple_encoder =

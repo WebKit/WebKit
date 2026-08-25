@@ -16,6 +16,7 @@
 #include <map>
 #include <memory>
 #include <optional>
+#include <span>
 
 #include "absl/container/inlined_vector.h"
 #include "api/field_trials_view.h"
@@ -65,6 +66,11 @@ class FrameBuffer {
   std::optional<int64_t> LastContinuousTemporalUnitFrameId() const;
   std::optional<DecodabilityInfo> DecodableTemporalUnitsInfo() const;
 
+  // RTP timestamps of newly continuous temporal units, in increasing order.
+  // Timestamps are not necessarily increasing across subsequent calls.
+  // Reset on each InsertFrame call.
+  std::span<const uint32_t> NewContinuousTemporalUnits() const;
+
   int GetTotalNumberOfContinuousTemporalUnits() const;
   int GetTotalNumberOfDroppedFrames() const;
   size_t CurrentSize() const;
@@ -100,6 +106,8 @@ class FrameBuffer {
 
   int num_continuous_temporal_units_ = 0;
   int num_dropped_frames_ = 0;
+
+  absl::InlinedVector<uint32_t, 4> new_continuous_temporal_units_;
 };
 
 }  // namespace webrtc

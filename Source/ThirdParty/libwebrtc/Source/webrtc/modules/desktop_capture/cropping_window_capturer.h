@@ -71,6 +71,8 @@ class RTC_EXPORT CroppingWindowCapturer : public DesktopCapturer,
   DesktopCapturer* window_capturer() const { return window_capturer_.get(); }
 
  private:
+  void EnsureScreenCapturer();
+
   DesktopCaptureOptions options_;
   DesktopCapturer::Callback* callback_;
   std::unique_ptr<DesktopCapturer> window_capturer_;

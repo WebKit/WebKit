@@ -13,16 +13,22 @@
 #include <cstdint>
 #include <optional>
 #include <string>
+#include <utility>
 
 #include "absl/strings/string_view.h"
 #include "api/rtc_error.h"
 #include "p2p/base/p2p_constants.h"
 #include "rtc_base/network_constants.h"
 #include "rtc_base/socket_address.h"
+#include "rtc_base/ssl_fingerprint.h"
+#include "test/gmock.h"
 #include "test/gtest.h"
 
 namespace webrtc {
 namespace {
+
+using ::testing::SizeIs;
+
 constexpr absl::string_view kRawCandidate =
     "candidate:a0+B/1 1 udp 2130706432 192.168.1.5 1234 typ host generation 2";
 constexpr absl::string_view kRawHostnameCandidate =
@@ -153,6 +159,24 @@ TEST(CandidateTest, ToCandidateAttributeTcpCandidates) {
                       kCandidateFoundation1);
   candidate.set_tcptype(TCPTYPE_ACTIVE_STR);
   EXPECT_EQ(candidate.ToCandidateAttribute(true), kSdpTcpActiveCandidate);
+}
+
+TEST(CandidateTest, ToCandidateAttributeTlsCandidates) {
+  const uint8_t kDigest[] = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08,
+                             0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F, 0x10,
+                             0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18,
+                             0x19, 0x1A, 0x1B, 0x1C, 0x1D, 0x1E, 0x1F, 0x20};
+  Candidate candidate(
+      ICE_CANDIDATE_COMPONENT_RTP, "tls", SocketAddress("192.168.1.5", 443),
+      kCandidatePriority, "", "", IceCandidateType::kHost, kCandidateGeneration,
+      kCandidateFoundation1, 0, 0, SSLFingerprint("sha-256", kDigest));
+  candidate.set_tcptype(TCPTYPE_PASSIVE_STR);
+  EXPECT_EQ(
+      candidate.ToCandidateAttribute(true),
+      "candidate:a0+B/1 1 tls 2130706432 192.168.1.5 443 typ host tcptype "
+      "passive generation 2 fingerprint sha-256;"
+      "01:02:03:04:05:06:07:08:09:0A:0B:0C:0D:0E:0F:10:"
+      "11:12:13:14:15:16:17:18:19:1A:1B:1C:1D:1E:1F:20");
 }
 
 TEST(CandidateTest, TypeToString) {
@@ -324,6 +348,314 @@ TEST(CandidateTest, Parse) {
     EXPECT_EQ(c.underlying_type_for_vpn(), AdapterType::ADAPTER_TYPE_UNKNOWN);
     EXPECT_EQ(c.network_slice(), NetworkSlice::NO_SLICE);
   }
+}
+
+TEST(CandidateTest, FingerprintIsAbsentByDefault) {
+  Candidate c;
+  EXPECT_FALSE(c.fingerprint().has_value());
+}
+
+TEST(CandidateTest, SetAndGetFingerprint) {
+  const uint8_t kDigest[] = {0xAA, 0xBB, 0xCC, 0xDD, 0xEE, 0xFF, 0x00, 0x11,
+                             0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99,
+                             0xAA, 0xBB, 0xCC, 0xDD, 0xEE, 0xFF, 0x00, 0x11,
+                             0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99};
+  Candidate c;
+  c.set_fingerprint(SSLFingerprint("sha-256", kDigest));
+  ASSERT_TRUE(c.fingerprint().has_value());
+  EXPECT_EQ(c.fingerprint()->algorithm, "sha-256");
+  EXPECT_THAT(c.fingerprint()->digest, SizeIs(32));
+}
+
+TEST(CandidateTest, CopyConstructorDeepCopiesFingerprint) {
+  const uint8_t kDigest[] = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08,
+                             0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F, 0x10,
+                             0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18,
+                             0x19, 0x1A, 0x1B, 0x1C, 0x1D, 0x1E, 0x1F, 0x20};
+  Candidate original;
+  original.set_fingerprint(SSLFingerprint("sha-256", kDigest));
+  Candidate duplicate(original);
+
+  ASSERT_TRUE(original.fingerprint().has_value());
+  ASSERT_TRUE(duplicate.fingerprint().has_value());
+  EXPECT_EQ(*duplicate.fingerprint(), *original.fingerprint());
+}
+
+TEST(CandidateTest, AssignmentOperatorDeepCopiesFingerprint) {
+  const uint8_t kDigest[] = {0xDE, 0xAD, 0xBE, 0xEF, 0x01, 0x02, 0x03, 0x04,
+                             0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C,
+                             0x0D, 0x0E, 0x0F, 0x10, 0x11, 0x12, 0x13, 0x14,
+                             0x15, 0x16, 0x17, 0x18, 0x19, 0x1A, 0x1B, 0x1C};
+  Candidate original;
+  original.set_fingerprint(SSLFingerprint("sha-256", kDigest));
+
+  Candidate assigned;
+  EXPECT_FALSE(assigned.fingerprint().has_value());
+  assigned = original;
+
+  ASSERT_TRUE(original.fingerprint().has_value());
+  ASSERT_TRUE(assigned.fingerprint().has_value());
+  EXPECT_EQ(*assigned.fingerprint(), *original.fingerprint());
+}
+
+TEST(CandidateTest, CopyOfCandidateWithoutFingerprintHasNoFingerprint) {
+  Candidate original;
+  EXPECT_FALSE(original.fingerprint().has_value());
+
+  Candidate duplicate(original);
+  EXPECT_FALSE(duplicate.fingerprint().has_value());
+
+  Candidate assigned;
+  assigned = original;
+  EXPECT_FALSE(assigned.fingerprint().has_value());
+}
+
+TEST(CandidateTest, ParseTlsCandidateWithFingerprint) {
+  // TLS candidate with fingerprint extension in "algorithm;digest" format.
+  constexpr char kTlsCandidate[] =
+      "candidate:a0+B/1 1 tls 2130706432 192.168.1.5 443 typ host "
+      "generation 2 "
+      "fingerprint sha-256;"
+      "AA:BB:CC:DD:EE:FF:00:11:22:33:44:55:66:77:88:99:"
+      "AA:BB:CC:DD:EE:FF:00:11:22:33:44:55:66:77:88:99";
+  RTCErrorOr<Candidate> ret = Candidate::ParseCandidateString(kTlsCandidate);
+  ASSERT_TRUE(ret.ok()) << ret.error().message();
+  Candidate c = ret.MoveValue();
+
+  EXPECT_EQ(c.protocol(), "tls");
+  EXPECT_EQ(c.address().ToString(), "192.168.1.5:443");
+  ASSERT_TRUE(c.fingerprint().has_value());
+  EXPECT_EQ(c.fingerprint()->algorithm, "sha-256");
+  EXPECT_THAT(c.fingerprint()->digest, SizeIs(32));
+}
+
+TEST(CandidateTest, ParseTlsCandidateWithoutFingerprint) {
+  constexpr char kTlsCandidate[] =
+      "candidate:a0+B/1 1 tls 2130706432 192.168.1.5 443 typ host "
+      "generation 2";
+  RTCErrorOr<Candidate> ret = Candidate::ParseCandidateString(kTlsCandidate);
+  ASSERT_FALSE(ret.ok());
+  EXPECT_EQ(ret.error().type(), RTCErrorType::SYNTAX_ERROR);
+  EXPECT_STREQ(ret.error().message(),
+               "Missing fingerprint extension for TLS candidate");
+}
+
+TEST(CandidateTest, ParseTlsCandidateWithInvalidFingerprintFormat) {
+  constexpr char kTlsCandidate[] =
+      "candidate:a0+B/1 1 tls 2130706432 192.168.1.5 443 typ host "
+      "generation 2 fingerprint sha-256";
+  RTCErrorOr<Candidate> ret = Candidate::ParseCandidateString(kTlsCandidate);
+  ASSERT_FALSE(ret.ok());
+  EXPECT_EQ(ret.error().type(), RTCErrorType::SYNTAX_ERROR);
+  EXPECT_STREQ(ret.error().message(), "Invalid fingerprint");
+}
+
+TEST(CandidateTest, ParseTlsCandidateWithInvalidFingerprintAlgorithm) {
+  constexpr char kTlsCandidate[] =
+      "candidate:a0+B/1 1 tls 2130706432 192.168.1.5 443 typ host "
+      "generation 2 "
+      "fingerprint md5;"
+      "AA:BB:CC:DD:EE:FF:00:11:22:33:44:55:66:77:88:99:"
+      "AA:BB:CC:DD:EE:FF:00:11:22:33:44:55:66:77:88:99";
+  RTCErrorOr<Candidate> ret = Candidate::ParseCandidateString(kTlsCandidate);
+  ASSERT_FALSE(ret.ok());
+  EXPECT_EQ(ret.error().type(), RTCErrorType::SYNTAX_ERROR);
+  EXPECT_STREQ(ret.error().message(),
+               "Failed to create fingerprint from the digest.");
+}
+
+TEST(CandidateTest, ParseTlsCandidateWithUppercaseFingerprintAlgorithm) {
+  constexpr char kTlsCandidate[] =
+      "candidate:a0+B/1 1 tls 2130706432 192.168.1.5 443 typ host "
+      "generation 2 "
+      "fingerprint SHA-256;"
+      "01:02:03:04:05:06:07:08:09:0A:0B:0C:0D:0E:0F:10:"
+      "11:12:13:14:15:16:17:18:19:1A:1B:1C:1D:1E:1F:20";
+  RTCErrorOr<Candidate> ret = Candidate::ParseCandidateString(kTlsCandidate);
+  ASSERT_TRUE(ret.ok()) << ret.error().message();
+  Candidate c = ret.MoveValue();
+
+  ASSERT_TRUE(c.fingerprint().has_value());
+  EXPECT_EQ(c.fingerprint()->algorithm, "sha-256");
+}
+
+TEST(CandidateTest, ParseCandidateWithFingerprintRoundTrip) {
+  // Parse a TLS candidate with fingerprint, serialize it, and parse again
+  // to verify the fingerprint survives a full round trip.
+  constexpr char kTlsCandidate[] =
+      "candidate:a0+B/1 1 tls 2130706432 192.168.1.5 443 typ host "
+      "generation 2 "
+      "fingerprint sha-256;"
+      "01:02:03:04:05:06:07:08:09:0A:0B:0C:0D:0E:0F:10:"
+      "11:12:13:14:15:16:17:18:19:1A:1B:1C:1D:1E:1F:20";
+  RTCErrorOr<Candidate> ret = Candidate::ParseCandidateString(kTlsCandidate);
+  ASSERT_TRUE(ret.ok());
+  Candidate original = ret.MoveValue();
+
+  std::string serialized =
+      original.ToCandidateAttribute(/*include_ufrag=*/false);
+  RTCErrorOr<Candidate> reparsed = Candidate::ParseCandidateString(serialized);
+  ASSERT_TRUE(reparsed.ok()) << reparsed.error().message();
+  Candidate result = reparsed.MoveValue();
+
+  ASSERT_TRUE(original.fingerprint().has_value());
+  ASSERT_TRUE(result.fingerprint().has_value());
+  EXPECT_EQ(result.fingerprint()->algorithm, "sha-256");
+  EXPECT_EQ(*result.fingerprint(), *original.fingerprint());
+}
+
+TEST(CandidateTest, ConstructorWithFingerprint) {
+  const uint8_t kDigest[] = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08,
+                             0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F, 0x10,
+                             0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18,
+                             0x19, 0x1A, 0x1B, 0x1C, 0x1D, 0x1E, 0x1F, 0x20};
+  auto fp = SSLFingerprint("sha-256", kDigest);
+  SocketAddress address("192.168.1.5", 443);
+  Candidate c(ICE_CANDIDATE_COMPONENT_RTP, "tls", address, kCandidatePriority,
+              "", "", IceCandidateType::kHost, kCandidateGeneration,
+              kCandidateFoundation1, 0, 0, std::move(fp));
+  ASSERT_TRUE(c.fingerprint().has_value());
+  EXPECT_EQ(c.fingerprint()->algorithm, "sha-256");
+  EXPECT_THAT(c.fingerprint()->digest, SizeIs(32));
+}
+
+TEST(CandidateTest, EqualityBothFingerprintsNull) {
+  Candidate a;
+  a.set_address(SocketAddress("1.2.3.4", 1234));
+  Candidate b(a);
+  EXPECT_FALSE(a.fingerprint().has_value());
+  EXPECT_FALSE(b.fingerprint().has_value());
+  EXPECT_EQ(a, b);
+}
+
+TEST(CandidateTest, EqualityBothFingerprintsSameValue) {
+  const uint8_t kDigest[] = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08,
+                             0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F, 0x10,
+                             0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18,
+                             0x19, 0x1A, 0x1B, 0x1C, 0x1D, 0x1E, 0x1F, 0x20};
+  Candidate a;
+  a.set_address(SocketAddress("1.2.3.4", 1234));
+  a.set_fingerprint(SSLFingerprint("sha-256", kDigest));
+  Candidate b(a);
+  EXPECT_EQ(a, b);
+}
+
+TEST(CandidateTest, EqualityDifferentFingerprints) {
+  const uint8_t kDigest1[] = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08,
+                              0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F, 0x10,
+                              0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18,
+                              0x19, 0x1A, 0x1B, 0x1C, 0x1D, 0x1E, 0x1F, 0x20};
+  const uint8_t kDigest2[] = {0xFF, 0xFE, 0xFD, 0xFC, 0xFB, 0xFA, 0xF9, 0xF8,
+                              0xF7, 0xF6, 0xF5, 0xF4, 0xF3, 0xF2, 0xF1, 0xF0,
+                              0xEF, 0xEE, 0xED, 0xEC, 0xEB, 0xEA, 0xE9, 0xE8,
+                              0xE7, 0xE6, 0xE5, 0xE4, 0xE3, 0xE2, 0xE1, 0xE0};
+  Candidate a;
+  a.set_address(SocketAddress("1.2.3.4", 1234));
+  a.set_fingerprint(SSLFingerprint("sha-256", kDigest1));
+  Candidate b(a);
+  b.set_fingerprint(SSLFingerprint("sha-256", kDigest2));
+  EXPECT_NE(a, b);
+}
+
+TEST(CandidateTest, EqualityOneFingerprintNull) {
+  const uint8_t kDigest[] = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08,
+                             0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F, 0x10,
+                             0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18,
+                             0x19, 0x1A, 0x1B, 0x1C, 0x1D, 0x1E, 0x1F, 0x20};
+  Candidate a;
+  a.set_address(SocketAddress("1.2.3.4", 1234));
+  Candidate b(a);
+  b.set_fingerprint(SSLFingerprint("sha-256", kDigest));
+  EXPECT_NE(a, b);
+  EXPECT_NE(b, a);
+}
+
+TEST(CandidateTest, IsEquivalentSameFingerprint) {
+  const uint8_t kDigest[] = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08,
+                             0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F, 0x10,
+                             0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18,
+                             0x19, 0x1A, 0x1B, 0x1C, 0x1D, 0x1E, 0x1F, 0x20};
+  Candidate a(ICE_CANDIDATE_COMPONENT_RTP, "tls",
+              SocketAddress("192.168.1.5", 443), kCandidatePriority, "", "",
+              IceCandidateType::kHost, kCandidateGeneration,
+              kCandidateFoundation1, 0, 0, SSLFingerprint("sha-256", kDigest));
+  Candidate b(a);
+  EXPECT_TRUE(a.IsEquivalent(b));
+}
+
+TEST(CandidateTest, WithDifferentFingerprintsAreNotEquivalent) {
+  const uint8_t kDigest1[] = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08,
+                              0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F, 0x10,
+                              0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18,
+                              0x19, 0x1A, 0x1B, 0x1C, 0x1D, 0x1E, 0x1F, 0x20};
+  const uint8_t kDigest2[] = {0xFF, 0xFE, 0xFD, 0xFC, 0xFB, 0xFA, 0xF9, 0xF8,
+                              0xF7, 0xF6, 0xF5, 0xF4, 0xF3, 0xF2, 0xF1, 0xF0,
+                              0xEF, 0xEE, 0xED, 0xEC, 0xEB, 0xEA, 0xE9, 0xE8,
+                              0xE7, 0xE6, 0xE5, 0xE4, 0xE3, 0xE2, 0xE1, 0xE0};
+  Candidate a(ICE_CANDIDATE_COMPONENT_RTP, "tls",
+              SocketAddress("192.168.1.5", 443), kCandidatePriority, "", "",
+              IceCandidateType::kHost, kCandidateGeneration,
+              kCandidateFoundation1, 0, 0, SSLFingerprint("sha-256", kDigest1));
+  Candidate b(a);
+  b.set_fingerprint(SSLFingerprint("sha-256", kDigest2));
+  EXPECT_FALSE(a.IsEquivalent(b));
+}
+
+TEST(CandidateTest, IsEquivalentOneFingerprintNull) {
+  const uint8_t kDigest[] = {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08,
+                             0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F, 0x10,
+                             0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18,
+                             0x19, 0x1A, 0x1B, 0x1C, 0x1D, 0x1E, 0x1F, 0x20};
+  Candidate a(ICE_CANDIDATE_COMPONENT_RTP, "tls",
+              SocketAddress("192.168.1.5", 443), kCandidatePriority, "", "",
+              IceCandidateType::kHost, kCandidateGeneration,
+              kCandidateFoundation1);
+  Candidate b(a);
+  b.set_fingerprint(SSLFingerprint("sha-256", kDigest));
+  EXPECT_FALSE(a.IsEquivalent(b));
+}
+
+TEST(CandidateTest, SerializationRoundTripWithFingerprint) {
+  const uint8_t kDigest[] = {0xAA, 0xBB, 0xCC, 0xDD, 0xEE, 0xFF, 0x00, 0x11,
+                             0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99,
+                             0xAA, 0xBB, 0xCC, 0xDD, 0xEE, 0xFF, 0x00, 0x11,
+                             0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99};
+  Candidate original(ICE_CANDIDATE_COMPONENT_RTP, "tls",
+                     SocketAddress("192.168.1.5", 443), kCandidatePriority,
+                     "user", "pass", IceCandidateType::kHost,
+                     kCandidateGeneration, kCandidateFoundation1, 0, 0,
+                     SSLFingerprint("sha-256", kDigest));
+  original.set_tcptype("passive");
+
+  // Serialize to candidate attribute string and parse back.
+  std::string serialized =
+      original.ToCandidateAttribute(/*include_ufrag=*/true);
+  RTCErrorOr<Candidate> parsed = Candidate::ParseCandidateString(serialized);
+  ASSERT_TRUE(parsed.ok()) << parsed.error().message();
+  Candidate result = parsed.MoveValue();
+
+  EXPECT_EQ(result.protocol(), "tls");
+  EXPECT_EQ(result.tcptype(), TCPTYPE_PASSIVE_STR);
+  ASSERT_TRUE(original.fingerprint().has_value());
+  ASSERT_TRUE(result.fingerprint().has_value());
+  EXPECT_EQ(result.fingerprint()->algorithm, "sha-256");
+  EXPECT_EQ(*result.fingerprint(), *original.fingerprint());
+}
+
+TEST(CandidateTest, SerializeTlsCandidateWithoutFingerprintFailsOnParse) {
+  Candidate original(ICE_CANDIDATE_COMPONENT_RTP, "tls",
+                     SocketAddress("192.168.1.5", 443), kCandidatePriority,
+                     "user", "pass", IceCandidateType::kHost,
+                     kCandidateGeneration, kCandidateFoundation1);
+  original.set_tcptype("passive");
+
+  std::string serialized =
+      original.ToCandidateAttribute(/*include_ufrag=*/true);
+  RTCErrorOr<Candidate> parsed = Candidate::ParseCandidateString(serialized);
+  ASSERT_FALSE(parsed.ok());
+  EXPECT_EQ(parsed.error().type(), RTCErrorType::SYNTAX_ERROR);
+  EXPECT_STREQ(parsed.error().message(),
+               "Missing fingerprint extension for TLS candidate");
 }
 
 }  // namespace webrtc

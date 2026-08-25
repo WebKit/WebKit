@@ -91,6 +91,7 @@ rtc_library("audio_encoder_cng") {
 
   deps = [
     ":webrtc_cng",
+    "../../api:bitrate_allocation",
     "../../api/audio_codecs:audio_codecs_api",
     "../../api/units:time_delta",
     "../../common_audio",
@@ -593,6 +594,7 @@ rtc_library("neteq_test_tools") {
     ":neteq_tools",
     ":neteq_tools_minimal",
     ":pcm16b",
+    "../../api:rtp_header_extension_id",
     "../../api:rtp_headers",
     "../../api/units:timestamp",
     "../../common_audio",
@@ -723,6 +725,7 @@ rtc_library("audio_coding_modules_tests_shared") {
     "../../rtc_base:digest",
     "../../rtc_base:stringutils",
     "../../system_wrappers",
+    "../../test:create_test_environment",
     "../../test:fileutils",
     "../../test:test_support",
     "../rtp_rtcp:rtp_rtcp_format",
@@ -841,7 +844,6 @@ if (rtc_include_tests) {
       "../../api/audio_codecs/opus:audio_decoder_opus",
       "../../api/audio_codecs/opus:audio_encoder_opus",
       "../../api/environment",
-      "../../api/environment:environment_factory",
       "../../api/neteq:default_neteq_factory",
       "../../api/neteq:neteq_api",
       "../../api/units:timestamp",
@@ -850,7 +852,6 @@ if (rtc_include_tests) {
       "../../rtc_base:ip_address",
       "../../rtc_base:macromagic",
       "../../rtc_base:stringutils",
-      "../../rtc_base:timeutils",
       "../../rtc_base/synchronization:mutex",
       "../../test:create_test_environment",
       "../../test:create_test_field_trials",
@@ -877,7 +878,6 @@ if (rtc_include_tests) {
       "../../api/audio_codecs/opus:audio_encoder_opus",
       "../../api/audio_codecs/opus:audio_encoder_opus_config",
       "../../api/environment",
-      "../../api/environment:environment_factory",
       "../../api/test/metrics:global_metrics_logger_and_exporter",
       "../../api/test/metrics:metric",
       "../../rtc_base:buffer",
@@ -904,9 +904,10 @@ if (rtc_include_tests) {
       "../../api:scoped_refptr",
       "../../api/audio_codecs:audio_codecs_api",
       "../../api/audio_codecs:builtin_audio_decoder_factory",
-      "../../api/environment:environment_factory",
+      "../../api/environment",
       "../../api/neteq:default_neteq_factory",
       "../../api/neteq:neteq_api",
+      "../../test:create_test_environment",
       "../../test:test_support",
       "../rtp_rtcp:rtp_rtcp_format",
       "//testing/gtest",
@@ -933,8 +934,8 @@ if (rtc_include_tests) {
       "../../api/audio_codecs:audio_codecs_api",
       "../../api/audio_codecs:builtin_audio_encoder_factory",
       "../../api/environment",
-      "../../api/environment:environment_factory",
       "../../rtc_base:checks",
+      "../../test:create_test_environment",
       "../rtp_rtcp:rtp_rtcp_format",
       "//testing/gtest",
       "//third_party/abseil-cpp/absl/strings",
@@ -963,11 +964,12 @@ if (rtc_include_tests) {
 
       deps = [
                ":neteq_input_audio_tools",
+               "../../api:bitrate_allocation",
                "../../api/audio_codecs:audio_codecs_api",
                "../../api/audio_codecs/g722:audio_encoder_g722_config",
                "../../api/audio_codecs/opus:audio_encoder_opus",
                "../../api/audio_codecs/opus:audio_encoder_opus_config",
-               "../../api/environment:environment_factory",
+               "../../api/units:data_rate",
                "../../rtc_base:buffer",
                "../../rtc_base:checks",
                "../../test:create_test_environment",
@@ -979,9 +981,7 @@ if (rtc_include_tests) {
       data = audio_decoder_unittests_resources
 
       if (is_android) {
-        use_default_launcher = false
         deps += [ "//build/android/gtest_apk:native_test_instrumentation_test_runner_java" ]
-        shard_timeout = 900
       }
       if (is_ios) {
         deps += [ ":audio_decoder_unittests_bundle_data" ]
@@ -1068,9 +1068,7 @@ if (rtc_include_tests) {
       data = audio_codec_speed_tests_resources
 
       if (is_android) {
-        use_default_launcher = false
         deps += [ "//build/android/gtest_apk:native_test_instrumentation_test_runner_java" ]
-        shard_timeout = 900
       }
 
       if (is_ios) {
@@ -1109,6 +1107,7 @@ if (rtc_include_tests) {
       "../../api/units:timestamp",
       "../../rtc_base:checks",
       "../../system_wrappers",
+      "../../test:create_test_environment",
       "../../test:fileutils",
       "//testing/gtest",
     ]
@@ -1130,13 +1129,13 @@ if (rtc_include_tests) {
         "../../api:scoped_refptr",
         "../../api/audio_codecs:audio_codecs_api",
         "../../api/audio_codecs:builtin_audio_decoder_factory",
-        "../../api/environment:environment_factory",
         "../../api/neteq:default_neteq_factory",
         "../../api/neteq:neteq_api",
         "../../api/units:timestamp",
         "../../rtc_base:buffer",
         "../../rtc_base:checks",
         "../../rtc_base:stringutils",
+        "../../test:create_test_environment",
         "../../test:fileutils",
         "../../test:test_support",
         "//testing/gtest",
@@ -1208,6 +1207,7 @@ if (rtc_include_tests) {
 
       deps = [
         ":neteq_test_tools",
+        "../../api:rtp_header_extension_id",
         "../../api:rtp_headers",
         "../../rtc_base:checks",
         "../rtp_rtcp:rtp_rtcp_format",

@@ -23,7 +23,7 @@
 
 namespace webrtc {
 
-JVM* g_jvm;
+JVM* g_jvm = nullptr;
 
 // TODO(henrika): add more clases here if needed.
 struct {
@@ -212,10 +212,9 @@ std::string JNIEnvironment::JavaToStdString(const jstring& j_string) {
   return ret;
 }
 
-// static
 void JVM::Initialize(JavaVM* jvm) {
   RTC_LOG(LS_INFO) << "JVM::Initialize";
-  RTC_CHECK(!g_jvm);
+  RTC_CHECK(g_jvm == nullptr);
   g_jvm = new JVM(jvm);
 }
 
@@ -230,18 +229,20 @@ void JVM::Initialize(JavaVM* jvm, jobject context) {
   jni->CallStaticVoidMethod(context_utils, initialize_method, context);
 }
 
-// static
 void JVM::Uninitialize() {
   RTC_LOG(LS_INFO) << "JVM::Uninitialize";
-  RTC_DCHECK(g_jvm);
+  RTC_DCHECK(g_jvm != nullptr);
   delete g_jvm;
   g_jvm = nullptr;
 }
 
-// static
 JVM* JVM::GetInstance() {
-  RTC_DCHECK(g_jvm);
+  RTC_DCHECK(g_jvm != nullptr);
   return g_jvm;
+}
+
+bool JVM::IsInitialized() {
+  return g_jvm != nullptr;
 }
 
 JVM::JVM(JavaVM* jvm) : jvm_(jvm) {

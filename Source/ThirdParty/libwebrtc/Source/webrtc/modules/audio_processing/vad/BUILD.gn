@@ -44,24 +44,94 @@ rtc_library("vad") {
 }
 
 if (rtc_include_tests) {
-  rtc_library("vad_unittests") {
+  rtc_library("gmm_unittest") {
     testonly = true
-    sources = [
-      "gmm_unittest.cc",
-      "pitch_based_vad_unittest.cc",
-      "pitch_internal_unittest.cc",
-      "pole_zero_filter_unittest.cc",
-      "standalone_vad_unittest.cc",
-      "vad_audio_proc_unittest.cc",
-      "vad_circular_buffer_unittest.cc",
-      "voice_activity_detector_unittest.cc",
+    sources = [ "gmm_unittest.cc" ]
+    deps = [
+      ":vad",
+      "../../../test:test_support",
     ]
+  }
+
+  rtc_library("pitch_based_vad_unittest") {
+    testonly = true
+    sources = [ "pitch_based_vad_unittest.cc" ]
     deps = [
       ":vad",
       "../../../test:fileutils",
       "../../../test:test_support",
-      "//testing/gmock",
-      "//testing/gtest",
+    ]
+  }
+
+  rtc_library("pitch_internal_unittest") {
+    testonly = true
+    sources = [ "pitch_internal_unittest.cc" ]
+    deps = [
+      ":vad",
+      "../../../test:test_support",
+    ]
+  }
+
+  rtc_library("pole_zero_filter_unittest") {
+    testonly = true
+    sources = [ "pole_zero_filter_unittest.cc" ]
+    deps = [
+      ":vad",
+      "../../../test:test_support",
+    ]
+  }
+
+  rtc_library("standalone_vad_unittest") {
+    testonly = true
+    sources = [ "standalone_vad_unittest.cc" ]
+    deps = [
+      ":vad",
+      "../../../test:fileutils",
+      "../../../test:test_support",
+    ]
+  }
+
+  rtc_library("vad_audio_proc_unittest") {
+    testonly = true
+    sources = [ "vad_audio_proc_unittest.cc" ]
+    deps = [
+      ":vad",
+      "../../../test:fileutils",
+      "../../../test:test_support",
+    ]
+  }
+
+  rtc_library("vad_circular_buffer_unittest") {
+    testonly = true
+    sources = [ "vad_circular_buffer_unittest.cc" ]
+    deps = [
+      ":vad",
+      "../../../test:test_support",
+    ]
+  }
+
+  rtc_library("voice_activity_detector_unittest") {
+    testonly = true
+    sources = [ "voice_activity_detector_unittest.cc" ]
+    deps = [
+      ":vad",
+      "../../../test:fileutils",
+      "../../../test:test_support",
+    ]
+  }
+
+  rtc_library("vad_unittests") {
+    testonly = true
+    sources = []
+    deps = [
+      ":gmm_unittest",
+      ":pitch_based_vad_unittest",
+      ":pitch_internal_unittest",
+      ":pole_zero_filter_unittest",
+      ":standalone_vad_unittest",
+      ":vad_audio_proc_unittest",
+      ":vad_circular_buffer_unittest",
+      ":voice_activity_detector_unittest",
     ]
   }
 }

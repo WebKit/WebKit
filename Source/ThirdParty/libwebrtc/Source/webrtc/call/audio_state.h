@@ -34,10 +34,10 @@ class AudioState : public RefCountInterface {
     scoped_refptr<AudioMixer> audio_mixer;
 
     // The audio processing module.
-    scoped_refptr<webrtc::AudioProcessing> audio_processing;
+    scoped_refptr<AudioProcessing> audio_processing;
 
     // TODO(solenberg): Temporary: audio device module.
-    scoped_refptr<webrtc::AudioDeviceModule> audio_device_module;
+    scoped_refptr<AudioDeviceModule> audio_device_module;
 
     scoped_refptr<AsyncAudioProcessing::Factory> async_audio_processing_factory;
   };

@@ -9,9 +9,12 @@
  */
 #include "test/peer_scenario/bwe_integration_tests/stats_utilities.h"
 
+#include <algorithm>
 #include <cstdint>
+#include <map>
 #include <optional>
 #include <span>
+#include <string>
 #include <string_view>
 
 #include "api/make_ref_counted.h"
@@ -160,6 +163,48 @@ int64_t GetPacketsLost(const scoped_refptr<const RTCStatsReport>& report) {
     number_of_packets += stream_stats->packets_lost.value_or(0);
   }
   return number_of_packets;
+}
+
+TimeDelta GetAveragePacingDelay(
+    const scoped_refptr<const RTCStatsReport>& report,
+    const scoped_refptr<const RTCStatsReport>& previous_report) {
+  if (!report || !previous_report) {
+    return TimeDelta::Zero();
+  }
+  auto stats = report->GetStatsOfType<RTCOutboundRtpStreamStats>();
+  auto prev_stats =
+      previous_report->GetStatsOfType<RTCOutboundRtpStreamStats>();
+  if (stats.empty() || prev_stats.empty()) {
+    return TimeDelta::Zero();
+  }
+
+  std::map<std::string, const RTCOutboundRtpStreamStats*> prev_map;
+  for (const RTCOutboundRtpStreamStats* s : prev_stats) {
+    prev_map[s->id()] = s;
+  }
+
+  TimeDelta max_pacing_delay = TimeDelta::Zero();
+
+  for (const RTCOutboundRtpStreamStats* stream_stats : stats) {
+    auto it = prev_map.find(stream_stats->id());
+    if (it != prev_map.end()) {
+      const RTCOutboundRtpStreamStats* prev_stream = it->second;
+      double current_delay =
+          stream_stats->total_packet_send_delay.value_or(0.0);
+      double prev_delay = prev_stream->total_packet_send_delay.value_or(0.0);
+      uint64_t current_packets = stream_stats->packets_sent.value_or(0);
+      uint64_t prev_packets = prev_stream->packets_sent.value_or(0);
+
+      if (current_packets > prev_packets) {
+        double delta_delay = std::max(0.0, current_delay - prev_delay);
+        uint64_t delta_packets = current_packets - prev_packets;
+        TimeDelta stream_pacing_delay =
+            TimeDelta::Seconds(delta_delay / delta_packets);
+        max_pacing_delay = std::max(max_pacing_delay, stream_pacing_delay);
+      }
+    }
+  }
+  return max_pacing_delay;
 }
 
 }  // namespace test

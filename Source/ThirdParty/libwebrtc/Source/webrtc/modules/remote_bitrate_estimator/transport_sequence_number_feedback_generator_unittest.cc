@@ -15,6 +15,7 @@
 #include <optional>
 #include <vector>
 
+#include "api/rtp_header_extension_id.h"
 #include "api/rtp_headers.h"
 #include "api/units/data_rate.h"
 #include "api/units/data_size.h"
@@ -88,8 +89,8 @@ class TransportSequenceNumberFeedbackGeneneratorTest : public ::testing::Test {
                       Timestamp arrival_time,
                       std::optional<uint32_t> abs_send_time = std::nullopt) {
     RtpHeaderExtensionMap map;
-    map.Register<TransportSequenceNumber>(1);
-    map.Register<AbsoluteSendTime>(2);
+    map.Register<TransportSequenceNumber>(RtpHeaderExtensionId(1));
+    map.Register<AbsoluteSendTime>(RtpHeaderExtensionId(2));
     RtpPacketReceived packet(&map, arrival_time);
     packet.SetSsrc(kMediaSsrc);
     packet.SetExtension<TransportSequenceNumber>(seq);
@@ -104,7 +105,7 @@ class TransportSequenceNumberFeedbackGeneneratorTest : public ::testing::Test {
       Timestamp arrival_time,
       std::optional<FeedbackRequest> feedback_request = std::nullopt) {
     RtpHeaderExtensionMap map;
-    map.Register<TransportSequenceNumberV2>(1);
+    map.Register<TransportSequenceNumberV2>(RtpHeaderExtensionId(1));
     RtpPacketReceived packet(&map, arrival_time);
     packet.SetSsrc(kMediaSsrc);
     packet.SetExtension<TransportSequenceNumberV2>(seq, feedback_request);
@@ -455,7 +456,8 @@ TEST_F(TransportSequenceNumberFeedbackGeneneratorTest,
 TEST_F(TransportSequenceNumberFeedbackGeneneratorTest,
        TimeUntilNextProcessIsMinIntervalOn300kbps) {
   feedback_generator_.OnSendBandwidthEstimateChanged(
-      DataRate::BitsPerSec(300'000));
+      DataRate::BitsPerSec(300'000), /*is_bandwidth_limited=*/true,
+      /*transport_overhead=*/std::nullopt);
   EXPECT_EQ(feedback_generator_.Process(clock_.CurrentTime()),
             kMinSendInterval);
 }
@@ -465,7 +467,9 @@ TEST_F(TransportSequenceNumberFeedbackGeneneratorTest,
   // TimeUntilNextProcess should be limited by `kMaxSendIntervalMs` when
   // bitrate is small. We choose 0 bps as a special case, which also tests
   // erroneous behaviors like division-by-zero.
-  feedback_generator_.OnSendBandwidthEstimateChanged(DataRate::Zero());
+  feedback_generator_.OnSendBandwidthEstimateChanged(
+      DataRate::Zero(), /*is_bandwidth_limited=*/true,
+      /*transport_overhead=*/std::nullopt);
   EXPECT_EQ(feedback_generator_.Process(clock_.CurrentTime()),
             kMaxSendInterval);
 }
@@ -473,7 +477,8 @@ TEST_F(TransportSequenceNumberFeedbackGeneneratorTest,
 TEST_F(TransportSequenceNumberFeedbackGeneneratorTest,
        TimeUntilNextProcessIsMaxIntervalOn20kbps) {
   feedback_generator_.OnSendBandwidthEstimateChanged(
-      DataRate::BitsPerSec(20'000));
+      DataRate::BitsPerSec(20'000), /*is_bandwidth_limited=*/true,
+      /*transport_overhead=*/std::nullopt);
   EXPECT_EQ(feedback_generator_.Process(clock_.CurrentTime()),
             kMaxSendInterval);
 }
@@ -481,7 +486,8 @@ TEST_F(TransportSequenceNumberFeedbackGeneneratorTest,
 TEST_F(TransportSequenceNumberFeedbackGeneneratorTest,
        TwccReportsUse5PercentOfAvailableBandwidth) {
   feedback_generator_.OnSendBandwidthEstimateChanged(
-      DataRate::BitsPerSec(80'000));
+      DataRate::BitsPerSec(80'000), /*is_bandwidth_limited=*/true,
+      /*transport_overhead=*/std::nullopt);
   // 80kbps * 0.05 = TwccReportSize(68B * 8b/B) * 1000ms / SendInterval(136ms)
   EXPECT_EQ(feedback_generator_.Process(clock_.CurrentTime()),
             TimeDelta::Millis(136));

@@ -164,7 +164,7 @@ void VCMDecodedFrameCallback::Decoded(VideoFrame& decodedImage,
   const TimeDelta decode_time = decode_time_ms
                                     ? TimeDelta::Millis(*decode_time_ms)
                                     : now - *frame_info->decode_start;
-  timing_->StopDecodeTimer(decode_time, now);
+  timing_->UpdateDecodeTimeEstimate(decode_time, now);
   decodedImage.set_processing_time(
       {.start = *frame_info->decode_start,
        .finish = *frame_info->decode_start + decode_time});

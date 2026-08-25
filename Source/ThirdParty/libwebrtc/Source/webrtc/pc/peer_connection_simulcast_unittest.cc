@@ -17,6 +17,7 @@
 #include <vector>
 
 #include "absl/algorithm/container.h"
+#include "absl/strings/string_view.h"
 #include "api/audio_codecs/builtin_audio_decoder_factory.h"
 #include "api/audio_codecs/builtin_audio_encoder_factory.h"
 #include "api/create_peerconnection_factory.h"
@@ -50,6 +51,7 @@
 #include "pc/test/simulcast_layer_util.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/thread.h"
+#include "test/create_test_field_trials.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 
@@ -91,13 +93,24 @@ class PeerConnectionSimulcastTests : public ::testing::Test {
                                             OpenH264DecoderTemplateAdapter,
                                             Dav1dDecoderTemplateAdapter>>(),
             nullptr,
-            nullptr)) {}
+            nullptr,
+            nullptr,
+            CreateTestFieldTrialsPtr())) {}
 
   scoped_refptr<PeerConnectionInterface> CreatePeerConnection(
       MockPeerConnectionObserver* observer) {
+    return CreatePeerConnection(observer, "");
+  }
+
+  scoped_refptr<PeerConnectionInterface> CreatePeerConnection(
+      MockPeerConnectionObserver* observer,
+      absl::string_view field_trials) {
     PeerConnectionInterface::RTCConfiguration config;
     config.sdp_semantics = SdpSemantics::kUnifiedPlan;
     PeerConnectionDependencies pcd(observer);
+    if (!field_trials.empty()) {
+      pcd.trials = CreateTestFieldTrialsPtr(field_trials);
+    }
     auto result =
         pc_factory_->CreatePeerConnectionOrError(config, std::move(pcd));
     EXPECT_TRUE(result.ok());
@@ -106,8 +119,13 @@ class PeerConnectionSimulcastTests : public ::testing::Test {
   }
 
   std::unique_ptr<PeerConnectionWrapper> CreatePeerConnectionWrapper() {
+    return CreatePeerConnectionWrapper("");
+  }
+
+  std::unique_ptr<PeerConnectionWrapper> CreatePeerConnectionWrapper(
+      absl::string_view field_trials) {
     auto observer = std::make_unique<MockPeerConnectionObserver>();
-    auto pc = CreatePeerConnection(observer.get());
+    auto pc = CreatePeerConnection(observer.get(), field_trials);
     return std::make_unique<PeerConnectionWrapper>(pc_factory_, pc,
                                                    std::move(observer));
   }
@@ -539,7 +557,9 @@ TEST_F(PeerConnectionSimulcastTests, SimulcastAudioRejected) {
 // Check that modifying the offer to remove simulcast and at the same
 // time leaving in a RID line does not cause an exception.
 TEST_F(PeerConnectionSimulcastTests, SimulcastSldModificationRejected) {
-  auto local = CreatePeerConnectionWrapper();
+  // Munging allowed: kUnknownModification (simulcast modification RID removal)
+  auto local = CreatePeerConnectionWrapper(
+      "WebRTC-NoSdpMangleAllowForTesting/Enabled,1/");
   auto remote = CreatePeerConnectionWrapper();
   auto layers = CreateLayers({"1", "2", "3"}, true);
   AddTransceiver(local.get(), layers);

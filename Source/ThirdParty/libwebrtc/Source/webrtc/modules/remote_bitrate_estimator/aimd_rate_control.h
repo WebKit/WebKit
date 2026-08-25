@@ -63,8 +63,7 @@ class AimdRateControl {
 
   // Returns the increase rate when used bandwidth is near the link capacity.
   double GetNearMaxIncreaseRateBpsPerSecond() const;
-  // Returns the expected time between overuse signals (assuming steady state).
-  TimeDelta GetExpectedBandwidthPeriod() const;
+
 
  private:
   enum class RateControlState { kRcHold, kRcIncrease, kRcDecrease };

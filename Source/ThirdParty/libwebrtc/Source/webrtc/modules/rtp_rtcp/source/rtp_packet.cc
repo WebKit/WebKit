@@ -168,7 +168,7 @@ void RtpPacket::SetSsrc(uint32_t ssrc) {
 
 void RtpPacket::ZeroMutableExtensions() {
   for (const ExtensionInfo& extension : extension_entries_) {
-    switch (extensions_.GetType(extension.id)) {
+    switch (extensions_.GetType(RtpHeaderExtensionId(extension.id))) {
       case RTPExtensionType::kRtpExtensionNone: {
         RTC_LOG(LS_WARNING) << "Unidentified extension in the packet.";
         break;

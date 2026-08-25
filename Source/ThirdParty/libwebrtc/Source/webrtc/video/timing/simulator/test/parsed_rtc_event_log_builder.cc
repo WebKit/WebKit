@@ -23,12 +23,16 @@
 #include "api/rtc_event_log_output.h"
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
+#include "logging/rtc_event_log/events/rtc_event_rtcp_packet_incoming.h"
+#include "logging/rtc_event_log/events/rtc_event_rtcp_packet_outgoing.h"
 #include "logging/rtc_event_log/events/rtc_event_rtp_packet_incoming.h"
 #include "logging/rtc_event_log/events/rtc_event_video_receive_stream_config.h"
 #include "logging/rtc_event_log/rtc_event_log_parser.h"
 #include "logging/rtc_event_log/rtc_stream_config.h"
+#include "modules/rtp_rtcp/source/rtcp_packet.h"
 #include "modules/rtp_rtcp/source/rtp_packet_received.h"
 #include "rtc_base/checks.h"
+#include "system_wrappers/include/ntp_time.h"
 #include "test/create_test_environment.h"
 
 namespace webrtc::video_timing_simulator {
@@ -67,8 +71,8 @@ ParsedRtcEventLogBuilder::ParsedRtcEventLogBuilder()
     : log_clock_(Timestamp::Seconds(10000)),
       log_env_(CreateTestEnvironment(
           CreateTestEnvironmentOptions{.time = &log_clock_})),
-      log_(RtcEventLogFactory().Create(log_env_)),
-      parsed_log_(nullptr) {
+      parsed_log_(nullptr),
+      log_(RtcEventLogFactory().Create(log_env_)) {
   log_->StartLogging(std::make_unique<ParsingRtcEventLogOutput>(
                          [this](std::unique_ptr<ParsedRtcEventLog> parsed_log) {
                            parsed_log_ = std::move(parsed_log);
@@ -80,6 +84,10 @@ ParsedRtcEventLogBuilder::~ParsedRtcEventLogBuilder() = default;
 
 Timestamp ParsedRtcEventLogBuilder::CurrentTime() {
   return log_clock_.CurrentTime();
+}
+
+NtpTime ParsedRtcEventLogBuilder::CurrentNtpTime() {
+  return log_clock_.ConvertTimestampToNtpTime(log_clock_.CurrentTime());
 }
 
 void ParsedRtcEventLogBuilder::AdvanceTime(TimeDelta duration) {
@@ -101,6 +109,16 @@ void ParsedRtcEventLogBuilder::LogRtpPacketIncoming(
   rtp_packet.SetSsrc(ssrc);
   Log(std::make_unique<RtcEventRtpPacketIncoming>(
       rtp_packet, rtx_original_sequence_number));
+}
+
+void ParsedRtcEventLogBuilder::LogRtcpPacketOutgoing(
+    const rtcp::RtcpPacket& rtcp_packet) {
+  Log(std::make_unique<RtcEventRtcpPacketOutgoing>(rtcp_packet.Build()));
+}
+
+void ParsedRtcEventLogBuilder::LogRtcpPacketIncoming(
+    const rtcp::RtcpPacket& rtcp_packet) {
+  Log(std::make_unique<RtcEventRtcpPacketIncoming>(rtcp_packet.Build()));
 }
 
 void ParsedRtcEventLogBuilder::Log(std::unique_ptr<RtcEvent> event) {

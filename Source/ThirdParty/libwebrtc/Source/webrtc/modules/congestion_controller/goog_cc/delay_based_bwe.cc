@@ -303,8 +303,4 @@ void DelayBasedBwe::SetMinBitrate(DataRate min_bitrate) {
   rate_control_.SetMinBitrate(min_bitrate);
 }
 
-TimeDelta DelayBasedBwe::GetExpectedBwePeriod() const {
-  return rate_control_.GetExpectedBandwidthPeriod();
-}
-
 }  // namespace webrtc

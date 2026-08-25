@@ -40,10 +40,6 @@ class ProxyBinding {
   ProxyBinding(const ProxyBinding&) = delete;
   ProxyBinding& operator=(const ProxyBinding&) = delete;
 
-  [[deprecated]] void SubscribeDestroyed(
-      absl::AnyInvocable<void(ProxyBinding* proxy)> callback) {
-    destroyed_callbacks_.AddReceiver(std::move(callback));
-  }
   void SubscribeDestroyed(
       void* tag,
       absl::AnyInvocable<void(ProxyBinding* proxy)> callback) {

@@ -136,6 +136,7 @@ if (rtc_rust) {
     sources = [ "time_delta.rs" ]
     deps = [
       ":time_delta",
+      "//build/rust:cxx_cppdeps",
       "//build/rust:cxx_rustdeps",
     ]
   }
@@ -168,6 +169,7 @@ if (rtc_rust) {
     deps = [
       ":time_delta_rs",
       ":timestamp",
+      "//build/rust:cxx_cppdeps",
       "//build/rust:cxx_rustdeps",
     ]
   }

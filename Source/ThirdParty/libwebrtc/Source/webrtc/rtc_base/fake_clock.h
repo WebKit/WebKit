@@ -47,29 +47,9 @@ class FakeClock : public ClockInterface {
   int64_t time_ns_ RTC_GUARDED_BY(lock_) = 0;
 };
 
-class ThreadProcessingFakeClock : public ClockInterface {
- public:
-  int64_t TimeNanos() const override { return clock_.TimeNanos(); }
-  void SetTime(Timestamp time);
-  void AdvanceTime(TimeDelta delta);
-
- private:
-  FakeClock clock_;
-};
-
 // Helper class that sets itself as the global clock in its constructor and
 // unsets it in its destructor.
-class ScopedBaseFakeClock : public FakeClock {
- public:
-  ScopedBaseFakeClock();
-  ~ScopedBaseFakeClock() override;
-
- private:
-  ClockInterface* prev_clock_;
-};
-
-// TODO(srte): Rename this to reflect that it also does thread processing.
-class ScopedFakeClock : public ThreadProcessingFakeClock {
+class ScopedFakeClock : public FakeClock {
  public:
   ScopedFakeClock();
   ~ScopedFakeClock() override;

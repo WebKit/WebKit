@@ -15,11 +15,13 @@
 #include <iterator>
 #include <optional>
 #include <string>
+#include <utility>
 #include <vector>
 
 #include "absl/algorithm/container.h"
 #include "absl/strings/match.h"
 #include "absl/strings/str_cat.h"
+#include "absl/strings/string_view.h"
 #include "api/audio_codecs/audio_format.h"
 #include "api/field_trials_view.h"
 #include "api/media_types.h"
@@ -169,31 +171,31 @@ bool Codec::MatchesRtpCodec(const RtpCodec& codec_capability) const {
           codec_parameters.parameters == codec_capability.parameters);
 }
 
-bool Codec::GetParam(const std::string& key, std::string* out) const {
-  CodecParameterMap::const_iterator iter = params.find(key);
+bool Codec::GetParam(absl::string_view key, std::string* out) const {
+  CodecParameterMap::const_iterator iter = params.find(std::string(key));
   if (iter == params.end())
     return false;
   *out = iter->second;
   return true;
 }
 
-bool Codec::GetParam(const std::string& key, int* out) const {
-  CodecParameterMap::const_iterator iter = params.find(key);
+bool Codec::GetParam(absl::string_view key, int* out) const {
+  CodecParameterMap::const_iterator iter = params.find(std::string(key));
   if (iter == params.end())
     return false;
   return FromString(iter->second, out);
 }
 
-void Codec::SetParam(const std::string& key, const std::string& value) {
-  params[key] = value;
+void Codec::SetParam(absl::string_view key, absl::string_view value) {
+  params[std::string(key)] = std::string(value);
 }
 
-void Codec::SetParam(const std::string& key, int value) {
-  params[key] = absl::StrCat(value);
+void Codec::SetParam(absl::string_view key, int value) {
+  params[std::string(key)] = absl::StrCat(value);
 }
 
-bool Codec::RemoveParam(const std::string& key) {
-  return params.erase(key) == 1;
+bool Codec::RemoveParam(absl::string_view key) {
+  return params.erase(std::string(key)) == 1;
 }
 
 void Codec::AddFeedbackParam(const FeedbackParam& param) {
@@ -367,34 +369,43 @@ std::vector<const Codec*> FindAllMatchingCodecs(
   return result;
 }
 
+std::optional<SdpVideoFormat> CreateH264ConstrainedBaselineProfile(
+    const SdpVideoFormat& format) {
+  if (format.name != kH264CodecName) {
+    return std::nullopt;
+  }
+  const std::optional<H264ProfileLevelId> profile_level_id =
+      ParseSdpForH264ProfileLevelId(format.parameters);
+  if (!profile_level_id ||
+      profile_level_id->profile == H264Profile::kProfileConstrainedBaseline) {
+    return std::nullopt;
+  }
+  SdpVideoFormat cbp_format = format;
+  H264ProfileLevelId cbp_profile = *profile_level_id;
+  cbp_profile.profile = H264Profile::kProfileConstrainedBaseline;
+  cbp_format.parameters[kH264FmtpProfileLevelId] =
+      *H264ProfileLevelIdToString(cbp_profile);
+  return cbp_format;
+}
+
 // If a decoder supports any H264 profile, it is implicitly assumed to also
 // support constrained base line even though it's not explicitly listed.
 void AddH264ConstrainedBaselineProfileToSupportedFormats(
     std::vector<SdpVideoFormat>* supported_formats) {
-  std::vector<SdpVideoFormat> cbr_supported_formats;
+  std::vector<SdpVideoFormat> cbp_supported_formats;
 
   // For any H264 supported profile, add the corresponding constrained baseline
   // profile.
-  for (auto it = supported_formats->cbegin(); it != supported_formats->cend();
-       ++it) {
-    if (it->name == kH264CodecName) {
-      const std::optional<H264ProfileLevelId> profile_level_id =
-          ParseSdpForH264ProfileLevelId(it->parameters);
-      if (profile_level_id && profile_level_id->profile !=
-                                  H264Profile::kProfileConstrainedBaseline) {
-        SdpVideoFormat cbp_format = *it;
-        H264ProfileLevelId cbp_profile = *profile_level_id;
-        cbp_profile.profile = H264Profile::kProfileConstrainedBaseline;
-        cbp_format.parameters[kH264FmtpProfileLevelId] =
-            *H264ProfileLevelIdToString(cbp_profile);
-        cbr_supported_formats.push_back(cbp_format);
-      }
+  for (const SdpVideoFormat& format : *supported_formats) {
+    if (std::optional<SdpVideoFormat> cbp_format =
+            CreateH264ConstrainedBaselineProfile(format)) {
+      cbp_supported_formats.push_back(std::move(*cbp_format));
     }
   }
 
   size_t original_size = supported_formats->size();
   // ...if it's not already in the list.
-  std::copy_if(cbr_supported_formats.begin(), cbr_supported_formats.end(),
+  std::copy_if(cbp_supported_formats.begin(), cbp_supported_formats.end(),
                std::back_inserter(*supported_formats),
                [supported_formats](const SdpVideoFormat& format) {
                  return !format.IsCodecInList(*supported_formats);
@@ -419,29 +430,25 @@ void AddDefaultFeedbackParams(Codec* codec, const FieldTrialsView& trials) {
   codec->AddFeedbackParam(FeedbackParam(kRtcpFbParamCcm, kRtcpFbCcmParamFir));
   codec->AddFeedbackParam(FeedbackParam(kRtcpFbParamNack, kParamValueEmpty));
   codec->AddFeedbackParam(FeedbackParam(kRtcpFbParamNack, kRtcpFbNackParamPli));
-  if (codec->name == kVp8CodecName &&
-      trials.IsEnabled("WebRTC-RtcpLossNotification")) {
-    codec->AddFeedbackParam(FeedbackParam(kRtcpFbParamLntf, kParamValueEmpty));
-  }
 }
 
 Codec CreateAudioCodec(PayloadType id,
-                       const std::string& name,
+                       absl::string_view name,
                        int clockrate,
                        size_t channels) {
-  return Codec(Codec::Type::kAudio, id, name, clockrate, channels);
+  return Codec(Codec::Type::kAudio, id, std::string(name), clockrate, channels);
 }
 
 Codec CreateAudioCodec(const SdpAudioFormat& c) {
   return Codec(c);
 }
 
-Codec CreateVideoCodec(const std::string& name) {
+Codec CreateVideoCodec(absl::string_view name) {
   return CreateVideoCodec(PayloadType::NotSet(), name);
 }
 
-Codec CreateVideoCodec(PayloadType id, const std::string& name) {
-  Codec c(Codec::Type::kVideo, id, name, kVideoCodecClockrate);
+Codec CreateVideoCodec(PayloadType id, absl::string_view name) {
+  Codec c(Codec::Type::kVideo, id, std::string(name), kVideoCodecClockrate);
   if (absl::EqualsIgnoreCase(kH264CodecName, name)) {
     // This default is set for all H.264 codecs created because
     // that was the default before packetization mode support was added.

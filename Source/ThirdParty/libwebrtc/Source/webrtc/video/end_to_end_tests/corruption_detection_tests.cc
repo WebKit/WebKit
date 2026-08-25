@@ -12,6 +12,7 @@
 #include <vector>
 
 #include "api/environment/environment.h"
+#include "api/rtp_header_extension_id.h"
 #include "api/rtp_parameters.h"
 #include "api/task_queue/task_queue_base.h"
 #include "api/test/video/function_video_decoder_factory.h"
@@ -33,7 +34,7 @@ namespace webrtc {
 namespace {
 RtpExtension GetCorruptionExtension() {
   return RtpExtension(RtpExtension::kCorruptionDetectionUri,
-                      /*extension_id=*/1,
+                      RtpHeaderExtensionId(1),
                       /*encrypt=*/true);
 }
 }  // namespace

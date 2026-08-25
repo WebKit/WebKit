@@ -805,8 +805,12 @@ class RTCStatsReportVerifier {
       verifier.TestAttributeIsNonNegative<uint32_t>(outbound_stream.pli_count);
       if (*outbound_stream.frames_encoded > 0) {
         verifier.TestAttributeIsNonNegative<uint64_t>(outbound_stream.qp_sum);
+        verifier.TestAttributeIsDefined(outbound_stream.psnr_sum);
+        verifier.TestAttributeIsNonNegative(outbound_stream.psnr_measurements);
       } else {
         verifier.TestAttributeIsUndefined(outbound_stream.qp_sum);
+        verifier.TestAttributeIsUndefined(outbound_stream.psnr_sum);
+        verifier.TestAttributeIsUndefined(outbound_stream.psnr_measurements);
       }
     } else {
       verifier.TestAttributeIsUndefined(outbound_stream.fir_count);
@@ -814,10 +818,9 @@ class RTCStatsReportVerifier {
       verifier.TestAttributeIsIDReference(outbound_stream.media_source_id,
                                           RTCAudioSourceStats::kType);
       verifier.TestAttributeIsUndefined(outbound_stream.qp_sum);
+      verifier.TestAttributeIsUndefined(outbound_stream.psnr_sum);
+      verifier.TestAttributeIsUndefined(outbound_stream.psnr_measurements);
     }
-    // TODO: bugs.webrtc.org/388070060 - PSNR stats are disabled by default.
-    verifier.TestAttributeIsUndefined(outbound_stream.psnr_sum);
-    verifier.TestAttributeIsUndefined(outbound_stream.psnr_measurements);
 
     verifier.TestAttributeIsNonNegative<uint32_t>(outbound_stream.nack_count);
     verifier.TestAttributeIsOptionalIDReference(
@@ -1083,11 +1086,94 @@ TEST_F(RTCStatsIntegrationTest, GetStatsFromCallee) {
            inbound_stats.front()->round_trip_time.has_value() &&
            inbound_stats.front()->round_trip_time_measurements.has_value();
   };
-  EXPECT_THAT(
+  EXPECT_TRUE(
       WaitUntil([&] { return GetStatsReportAndReturnTrueIfRttIsDefined(); },
-                IsTrue(), {.timeout = TimeDelta::Millis(kMaxWaitMs)}),
-      IsRtcOk());
+                {.timeout = TimeDelta::Millis(kMaxWaitMs)}));
   RTCStatsReportVerifier(report.get()).VerifyReport({});
+}
+
+// A recvonly audio endpoint measures non-sender RTT (RRTR/DLRR) once rcvr-rtt
+// is negotiated, surfacing round_trip_time on remote-outbound-rtp. The SDP
+// negotiation itself is covered by the negotiation CL.
+TEST_F(RTCStatsIntegrationTest, RcvrRttNegotiatedEnablesAudioRtt) {
+  PeerConnectionInterface::RTCConfiguration config;
+  config.sdp_semantics = SdpSemantics::kUnifiedPlan;
+  PeerConnectionInterface::IceServer ice_server;
+  ice_server.uri = "stun:1.1.1.1:3478";
+  config.servers.push_back(ice_server);
+  EXPECT_TRUE(caller_->CreatePc(config, CreateBuiltinAudioEncoderFactory(),
+                                CreateBuiltinAudioDecoderFactory()));
+  EXPECT_TRUE(callee_->CreatePc(config, CreateBuiltinAudioEncoderFactory(),
+                                CreateBuiltinAudioDecoderFactory()));
+  PeerConnectionTestWrapper::Connect(caller_.get(), callee_.get());
+
+  // Caller sends audio; callee adds nothing, so it is negotiated recvonly.
+  caller_->GetAndAddUserMedia(true, AudioOptions(), false);
+  caller_->CreateOffer(PeerConnectionInterface::RTCOfferAnswerOptions());
+  EXPECT_TRUE(caller_->WaitForConnection());
+  EXPECT_TRUE(callee_->WaitForConnection());
+
+  // The recvonly callee should measure non-sender RTT.
+  // TODO(bugs.webrtc.org/516205747): runs against the virtual socket server
+  // with a real clock (a valid RTT needs an RRTR exchange plus three SR
+  // blocks), so this takes a few seconds; switch to a simulated clock when
+  // the fixture supports it.
+  scoped_refptr<const RTCStatsReport> report;
+  constexpr TimeDelta kMaxWait = TimeDelta::Seconds(10);
+  EXPECT_TRUE(WaitUntil(
+      [&] {
+        report = GetStatsFromCallee();
+        for (const auto* stats :
+             report->GetStatsOfType<RTCRemoteOutboundRtpStreamStats>()) {
+          if (stats->round_trip_time_measurements.value_or(0) > 0u) {
+            return true;
+          }
+        }
+        return false;
+      },
+      {.timeout = kMaxWait}));
+}
+
+// With rcvr-rtt negotiated, a recvonly endpoint must report non-sender RTT on
+// both the audio and video remote-outbound-rtp stats (video resolves the
+// bugs.webrtc.org/12529 stats gap).
+TEST_F(RTCStatsIntegrationTest, RcvrRttNegotiatedEnablesVideoRtt) {
+  PeerConnectionInterface::RTCConfiguration config;
+  config.sdp_semantics = SdpSemantics::kUnifiedPlan;
+  PeerConnectionInterface::IceServer ice_server;
+  ice_server.uri = "stun:1.1.1.1:3478";
+  config.servers.push_back(ice_server);
+  EXPECT_TRUE(caller_->CreatePc(config, CreateBuiltinAudioEncoderFactory(),
+                                CreateBuiltinAudioDecoderFactory()));
+  EXPECT_TRUE(callee_->CreatePc(config, CreateBuiltinAudioEncoderFactory(),
+                                CreateBuiltinAudioDecoderFactory()));
+  PeerConnectionTestWrapper::Connect(caller_.get(), callee_.get());
+
+  // Caller sends audio and video; callee adds nothing, so it is recvonly.
+  caller_->GetAndAddUserMedia(true, AudioOptions(), true);
+  caller_->CreateOffer(PeerConnectionInterface::RTCOfferAnswerOptions());
+  EXPECT_TRUE(caller_->WaitForConnection());
+  EXPECT_TRUE(callee_->WaitForConnection());
+
+  // TODO(bugs.webrtc.org/516205747): Switch to a simulated clock when the
+  // fixture supports it. See the audio test above for more details.
+  scoped_refptr<const RTCStatsReport> report;
+  constexpr TimeDelta kMaxWait = TimeDelta::Seconds(10);
+  // Both the audio and video remote-outbound-rtp must report a non-sender
+  // RTT measurement, so at least two streams carry one.
+  EXPECT_TRUE(WaitUntil(
+      [&] {
+        report = GetStatsFromCallee();
+        int with_rtt = 0;
+        for (const auto* stats :
+             report->GetStatsOfType<RTCRemoteOutboundRtpStreamStats>()) {
+          if (stats->round_trip_time_measurements.value_or(0) > 0u) {
+            ++with_rtt;
+          }
+        }
+        return with_rtt >= 2;
+      },
+      {.timeout = kMaxWait}));
 }
 
 // These tests exercise the integration of the stats selection algorithm inside
@@ -1277,7 +1363,14 @@ TEST_F(RTCStatsIntegrationTest, ExperimentalPsnrStats) {
 }
 
 TEST_F(RTCStatsIntegrationTest, ExperimentalTransportCcfbStats) {
-  StartCall("WebRTC-RFC8888CongestionControlFeedback/Enabled,offer:true/");
+  // CCFB negotiation is asymmetric: the generator sets the flag but doesn't
+  // add it to codecs' feedback_params, while the parser adds it to codecs'
+  // feedback_params. This causes false positive munging detection (71, 86)
+  // during the internal SetLocalDescription roundtrip in
+  // PeerConnectionTestWrapper.
+  StartCall(
+      "WebRTC-RFC8888CongestionControlFeedback/Enabled,offer:true/"
+      "WebRTC-NoSdpMangleAllowForTesting/Enabled,71,86/");
 
   // This assumes all other stats are ok and tests the stats which should be
   // different under the field trial.
@@ -1400,15 +1493,13 @@ TEST_F(RTCStatsRtpLifetimeTest, AudioInboundRtpMissingBeforeFirstPacket) {
   callee_->AwaitAddRemoteIceCandidates();
 
   // Nothing is preventing packets from flowing, wait for inbound-rtp to appear.
-  EXPECT_THAT(WaitUntil(
-                  [&] {
-                    report = GetStats(callee_->pc());
-                    inbound_rtps =
-                        report->GetStatsOfType<RTCInboundRtpStreamStats>();
-                    return !inbound_rtps.empty();
-                  },
-                  IsTrue(), {.timeout = TimeDelta::Millis(kGetStatsTimeoutMs)}),
-              IsRtcOk());
+  EXPECT_TRUE(WaitUntil(
+      [&] {
+        report = GetStats(callee_->pc());
+        inbound_rtps = report->GetStatsOfType<RTCInboundRtpStreamStats>();
+        return !inbound_rtps.empty();
+      },
+      {.timeout = TimeDelta::Millis(kGetStatsTimeoutMs)}));
   ASSERT_THAT(inbound_rtps, SizeIs(1));
   EXPECT_GT(inbound_rtps[0]->packets_received.value_or(0), 0u);
 }
@@ -1435,15 +1526,13 @@ TEST_F(RTCStatsRtpLifetimeTest, VideoInboundRtpMissingBeforeFirstPacket) {
   callee_->AwaitAddRemoteIceCandidates();
 
   // Nothing is preventing packets from flowing, wait for inbound-rtp to appear.
-  EXPECT_THAT(WaitUntil(
-                  [&] {
-                    report = GetStats(callee_->pc());
-                    inbound_rtps =
-                        report->GetStatsOfType<RTCInboundRtpStreamStats>();
-                    return !inbound_rtps.empty();
-                  },
-                  IsTrue(), {.timeout = TimeDelta::Millis(kGetStatsTimeoutMs)}),
-              IsRtcOk());
+  EXPECT_TRUE(WaitUntil(
+      [&] {
+        report = GetStats(callee_->pc());
+        inbound_rtps = report->GetStatsOfType<RTCInboundRtpStreamStats>();
+        return !inbound_rtps.empty();
+      },
+      {.timeout = TimeDelta::Millis(kGetStatsTimeoutMs)}));
   ASSERT_THAT(inbound_rtps, SizeIs(1));
   EXPECT_GT(inbound_rtps[0]->packets_received.value_or(0), 0u);
 }
@@ -1487,15 +1576,13 @@ TEST_F(RTCStatsRtpLifetimeTest, InboundRtpForEarlyMedia) {
   //   scope of this stats test.
   scoped_refptr<const RTCStatsReport> report;
   std::vector<const RTCInboundRtpStreamStats*> inbound_rtps;
-  EXPECT_THAT(WaitUntil(
-                  [&] {
-                    report = GetStats(caller_->pc());
-                    inbound_rtps =
-                        report->GetStatsOfType<RTCInboundRtpStreamStats>();
-                    return !inbound_rtps.empty();
-                  },
-                  IsTrue(), {.timeout = TimeDelta::Millis(kGetStatsTimeoutMs)}),
-              IsRtcOk());
+  EXPECT_TRUE(WaitUntil(
+      [&] {
+        report = GetStats(caller_->pc());
+        inbound_rtps = report->GetStatsOfType<RTCInboundRtpStreamStats>();
+        return !inbound_rtps.empty();
+      },
+      {.timeout = TimeDelta::Millis(kGetStatsTimeoutMs)}));
   ASSERT_THAT(inbound_rtps, SizeIs(1));
   EXPECT_GT(inbound_rtps[0]->packets_received.value_or(0), 0u);
 }

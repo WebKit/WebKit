@@ -609,5 +609,56 @@ TEST(ScreamV2Test, LossEventsAreNotIgnoredIfQueueDelayIsDetected) {
   EXPECT_LT(scream.ref_window(), ref_window_before_loss);
 }
 
+TEST(ScreamV2Test, KeepsTrackOfReceivedRateOver100msWindow) {
+  SimulatedClock clock(Timestamp::Seconds(1'234));
+  Environment env = CreateTestEnvironment({.time = &clock});
+  ScreamV2 scream(env);
+
+  // Initialize constraints
+  scream.SetTargetBitrateConstraints(DataRate::Zero(),
+                                     DataRate::KilobitsPerSec(2000),
+                                     DataRate::KilobitsPerSec(300));
+
+  // First feedback
+  TransportPacketsFeedback feedback1 =
+      CreateFeedback(clock.CurrentTime(), /*rtt=*/TimeDelta::Millis(100),
+                     /*number_of_ect1_packets=*/5,
+                     /*number_of_packets_in_flight=*/20);
+  scream.OnTransportPacketsFeedback(feedback1);
+
+  // feedback1 has 5 packets of 1000 bytes each = 5000 bytes.
+  // At the first feedback, received_rate is initialized to PlusInfinity.
+  EXPECT_EQ(scream.received_rate(), DataRate::PlusInfinity());
+
+  // Advance clock by 50ms (less than 100ms) and send another feedback
+  clock.AdvanceTime(TimeDelta::Millis(50));
+  TransportPacketsFeedback feedback2 =
+      CreateFeedback(clock.CurrentTime(), /*rtt=*/TimeDelta::Millis(100),
+                     /*number_of_ect1_packets=*/3,
+                     /*number_of_packets_in_flight=*/20);
+  scream.OnTransportPacketsFeedback(feedback2);
+
+  // feedback2 has 3 packets of 1000 bytes each = 3000 bytes.
+  // No new calculation because only 50ms has passed.
+  // received_rate remains PlusInfinity.
+  EXPECT_EQ(scream.received_rate(), DataRate::PlusInfinity());
+
+  // Advance clock by another 51ms (so total 101ms has passed since the last
+  // update) and send third feedback.
+  clock.AdvanceTime(TimeDelta::Millis(51));
+  TransportPacketsFeedback feedback3 =
+      CreateFeedback(clock.CurrentTime(), /*rtt=*/TimeDelta::Millis(100),
+                     /*number_of_ect1_packets=*/2,
+                     /*number_of_packets_in_flight=*/20);
+  scream.OnTransportPacketsFeedback(feedback3);
+
+  // feedback3 has 2 packets of 1000 bytes each = 2000 bytes.
+  // Total accumulated bytes since last calculation: 3000 (feedback2) + 2000
+  // (feedback3) = 5000 bytes. Total time duration passed: 50ms + 51ms = 101ms.
+  // rate = 5000 bytes / 101ms.
+  EXPECT_EQ(scream.received_rate(),
+            DataSize::Bytes(5000) / TimeDelta::Millis(101));
+}
+
 }  // namespace
 }  // namespace webrtc

@@ -143,10 +143,7 @@ class DtlsTransportInternal : public PacketTransportInternal {
 
   // Emitted whenever the Dtls handshake failed on some transport channel.
   // F: void(SSLHandshakeError)
-  template <typename F>
-  [[deprecated]] void SubscribeDtlsHandshakeError(F&& callback) {
-    dtls_handshake_error_callback_list_.AddReceiver(std::forward<F>(callback));
-  }
+
   template <typename F>
   void SubscribeDtlsHandshakeError(void* tag, F&& callback) {
     dtls_handshake_error_callback_list_.AddReceiver(tag,

@@ -214,7 +214,7 @@ TEST_P(AudioEncoderOpusTest, ToggleDtx) {
 }
 
 TEST_P(AudioEncoderOpusTest,
-       OnReceivedUplinkBandwidthWithoutAudioNetworkAdaptor) {
+       OnReceivedUplinkAllocationWithoutAudioNetworkAdaptor) {
   auto states = CreateCodec(sample_rate_hz_, 1);
   // Constants are replicated from audio_states->encoderopus.cc.
   const int kMinBitrateBps = 6000;
@@ -223,26 +223,27 @@ TEST_P(AudioEncoderOpusTest,
   states->encoder->OnReceivedOverhead(kOverheadBytesPerPacket);
   const int kOverheadBps =
       8 * kOverheadBytesPerPacket * CheckedDivExact(48000, kDefaultOpusPacSize);
+  auto set_rate = [&](int rate) {
+    BitrateAllocationUpdate update;
+    update.target_bitrate = DataRate::BitsPerSec(rate);
+    states->encoder->OnReceivedUplinkAllocation(update);
+  };
   // Set a too low bitrate.
-  states->encoder->OnReceivedUplinkBandwidth(kMinBitrateBps + kOverheadBps - 1,
-                                             std::nullopt);
+  set_rate(kMinBitrateBps + kOverheadBps - 1);
   EXPECT_EQ(kMinBitrateBps, states->encoder->GetTargetBitrate());
   // Set a too high bitrate.
-  states->encoder->OnReceivedUplinkBandwidth(kMaxBitrateBps + kOverheadBps + 1,
-                                             std::nullopt);
+  set_rate(kMaxBitrateBps + kOverheadBps + 1);
   EXPECT_EQ(kMaxBitrateBps, states->encoder->GetTargetBitrate());
   // Set the minimum rate.
-  states->encoder->OnReceivedUplinkBandwidth(kMinBitrateBps + kOverheadBps,
-                                             std::nullopt);
+  set_rate(kMinBitrateBps + kOverheadBps);
   EXPECT_EQ(kMinBitrateBps, states->encoder->GetTargetBitrate());
   // Set the maximum rate.
-  states->encoder->OnReceivedUplinkBandwidth(kMaxBitrateBps + kOverheadBps,
-                                             std::nullopt);
+  set_rate(kMaxBitrateBps + kOverheadBps);
   EXPECT_EQ(kMaxBitrateBps, states->encoder->GetTargetBitrate());
   // Set rates from kMaxBitrateBps up to 32000 bps.
   for (int rate = kMinBitrateBps + kOverheadBps; rate <= 32000 + kOverheadBps;
        rate += 1000) {
-    states->encoder->OnReceivedUplinkBandwidth(rate, std::nullopt);
+    set_rate(rate);
     EXPECT_EQ(rate - kOverheadBps, states->encoder->GetTargetBitrate());
   }
 }
@@ -283,31 +284,6 @@ TEST_P(AudioEncoderOpusTest,
 }
 
 TEST_P(AudioEncoderOpusTest,
-       InvokeAudioNetworkAdaptorOnReceivedUplinkBandwidth) {
-  FieldTrials field_trials = CreateTestFieldTrials("");
-  auto states = CreateCodec(sample_rate_hz_, 2, &field_trials);
-  states->encoder->EnableAudioNetworkAdaptor("");
-
-  auto config = CreateEncoderRuntimeConfig();
-  EXPECT_CALL(*states->mock_audio_network_adaptor, GetEncoderRuntimeConfig())
-      .WillOnce(Return(config));
-
-  // Since using mock audio network adaptor, any target audio bitrate is fine.
-  constexpr int kTargetAudioBitrate = 30000;
-  constexpr int64_t kProbingIntervalMs = 3000;
-  EXPECT_CALL(*states->mock_audio_network_adaptor,
-              SetTargetAudioBitrate(kTargetAudioBitrate));
-  EXPECT_CALL(*states->mock_bitrate_smoother,
-              SetTimeConstantMs(kProbingIntervalMs * 4));
-  EXPECT_CALL(*states->mock_bitrate_smoother,
-              AddSample(kTargetAudioBitrate, _));
-  states->encoder->OnReceivedUplinkBandwidth(kTargetAudioBitrate,
-                                             kProbingIntervalMs);
-
-  CheckEncoderRuntimeConfig(states->encoder.get(), config);
-}
-
-TEST_P(AudioEncoderOpusTest,
        InvokeAudioNetworkAdaptorOnReceivedUplinkAllocation) {
   auto states = CreateCodec(sample_rate_hz_, 2);
   states->encoder->EnableAudioNetworkAdaptor("");
@@ -318,9 +294,10 @@ TEST_P(AudioEncoderOpusTest,
 
   BitrateAllocationUpdate update;
   update.target_bitrate = DataRate::BitsPerSec(30000);
-  update.bwe_period = TimeDelta::Millis(200);
   EXPECT_CALL(*states->mock_audio_network_adaptor,
               SetTargetAudioBitrate(update.target_bitrate.bps()));
+  EXPECT_CALL(*states->mock_bitrate_smoother,
+              AddSample(update.target_bitrate.bps(), _));
 
   states->encoder->OnReceivedUplinkAllocation(update);
 
@@ -393,8 +370,9 @@ TEST_P(AudioEncoderOpusTest, PacketLossRateUpperBounded) {
 TEST_P(AudioEncoderOpusTest, DoNotInvokeSetTargetBitrateIfOverheadUnknown) {
   auto states = CreateCodec(sample_rate_hz_, 2);
 
-  states->encoder->OnReceivedUplinkBandwidth(kDefaultOpusRate * 2,
-                                             std::nullopt);
+  BitrateAllocationUpdate update;
+  update.target_bitrate = DataRate::BitsPerSec(kDefaultOpusRate * 2);
+  states->encoder->OnReceivedUplinkAllocation(update);
 
   // Since `OnReceivedOverhead` has not been called, the codec bitrate should
   // not change.
@@ -542,7 +520,9 @@ TEST_P(AudioEncoderOpusTest, EncodeAtMinBitrate) {
   Buffer encoded;
   uint32_t rtp_timestamp = 12345;  // Just a number not important to this test.
 
-  states->encoder->OnReceivedUplinkBandwidth(0, std::nullopt);
+  BitrateAllocationUpdate update;
+  update.target_bitrate = DataRate::Zero();
+  states->encoder->OnReceivedUplinkAllocation(update);
   for (int packet_index = 0; packet_index < kNumPacketsToEncode;
        packet_index++) {
     // Make sure we are not encoding before we have enough data for

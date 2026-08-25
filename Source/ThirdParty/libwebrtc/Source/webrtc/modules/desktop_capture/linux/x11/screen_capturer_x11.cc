@@ -27,7 +27,7 @@
 
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
-#include "media/base/video_common.h"
+#include "api/video/video_common.h"
 #include "modules/desktop_capture/desktop_capture_options.h"
 #include "modules/desktop_capture/desktop_capture_types.h"
 #include "modules/desktop_capture/desktop_capturer.h"

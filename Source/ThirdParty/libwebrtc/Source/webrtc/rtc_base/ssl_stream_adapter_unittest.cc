@@ -582,14 +582,12 @@ class SSLStreamAdapterTestBase : public ::testing::Test {
 
     // Now run the handshake
     if (expect_success) {
-      EXPECT_THAT(WaitUntil(
-                      [&] {
-                        return (client_ssl_->GetState() == SS_OPEN) &&
-                               (server_ssl_->GetState() == SS_OPEN);
-                      },
-                      ::testing::IsTrue(),
-                      {.timeout = handshake_wait_, .clock = &time_controller_}),
-                  IsRtcOk());
+      EXPECT_TRUE(WaitUntil(
+          [&] {
+            return (client_ssl_->GetState() == SS_OPEN) &&
+                   (server_ssl_->GetState() == SS_OPEN);
+          },
+          {.timeout = handshake_wait_, .clock = &time_controller_}));
     } else {
       EXPECT_THAT(
           WaitUntil([&] { return client_ssl_->GetState(); },
@@ -632,13 +630,12 @@ class SSLStreamAdapterTestBase : public ::testing::Test {
     while (client_ssl_->GetState() == SS_OPENING &&
            (time_controller_.GetClock()->CurrentTime() - time_start <
             TimeDelta::Minutes(60))) {
-      EXPECT_THAT(WaitUntil(
-                      [&] {
-                        return !((client_ssl_->GetState() == SS_OPEN) &&
-                                 (server_ssl_->GetState() == SS_OPEN));
-                      },
-                      ::testing::IsTrue(), {.clock = &time_controller_}),
-                  IsRtcOk());
+      EXPECT_TRUE(WaitUntil(
+          [&] {
+            return !((client_ssl_->GetState() == SS_OPEN) &&
+                     (server_ssl_->GetState() == SS_OPEN));
+          },
+          {.clock = &time_controller_}));
       time_controller_.AdvanceTime(time_increment);
     }
     EXPECT_EQ(client_ssl_->GetState(), SS_CLOSED);
@@ -663,14 +660,11 @@ class SSLStreamAdapterTestBase : public ::testing::Test {
     ASSERT_EQ(0, client_ssl_->StartSSL());
 
     // Now run the handshake.
-    EXPECT_THAT(WaitUntil(
-                    [&] {
-                      return client_ssl_->IsTlsConnected() &&
-                             server_ssl_->IsTlsConnected();
-                    },
-                    ::testing::IsTrue(),
-                    {.timeout = handshake_wait_, .clock = &time_controller_}),
-                IsRtcOk());
+    EXPECT_TRUE(WaitUntil(
+        [&] {
+          return client_ssl_->IsTlsConnected() && server_ssl_->IsTlsConnected();
+        },
+        {.timeout = handshake_wait_, .clock = &time_controller_}));
 
     // Until the identity has been verified, the state should still be
     // SS_OPENING and writes should return SR_BLOCK.

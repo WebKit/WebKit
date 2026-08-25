@@ -13,7 +13,9 @@
 
 #include <stddef.h>
 
+#include <initializer_list>
 #include <string>
+#include <utility>
 
 #include "absl/strings/string_view.h"
 #include "api/rtp_parameters.h"
@@ -32,6 +34,12 @@ struct RTC_EXPORT SdpAudioFormat {
                  int clockrate_hz,
                  size_t num_channels,
                  const CodecParameterMap& param);
+  SdpAudioFormat(
+      absl::string_view name,
+      int clockrate_hz,
+      size_t num_channels,
+      std::initializer_list<std::pair<absl::string_view, absl::string_view>>
+          param);
   SdpAudioFormat(absl::string_view name,
                  int clockrate_hz,
                  size_t num_channels,

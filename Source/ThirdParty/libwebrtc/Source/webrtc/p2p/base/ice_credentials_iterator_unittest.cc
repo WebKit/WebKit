@@ -15,8 +15,8 @@
 #include "p2p/base/transport_description.h"
 #include "test/gtest.h"
 
-using ::webrtc::IceCredentialsIterator;
-using ::webrtc::IceParameters;
+namespace webrtc {
+namespace {
 
 TEST(IceCredentialsIteratorTest, GetEmpty) {
   std::vector<IceParameters> empty;
@@ -47,3 +47,6 @@ TEST(IceCredentialsIteratorTest, GetTwo) {
   EXPECT_NE(random, two[1]);
   EXPECT_NE(random, iterator.GetIceCredentials());
 }
+
+}  // namespace
+}  // namespace webrtc

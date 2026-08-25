@@ -13,7 +13,6 @@
 #include <openssl/bio.h>
 #include <openssl/err.h>
 #include <openssl/ssl.h>
-#include <openssl/ssl3.h>
 #include <openssl/x509.h>
 
 #include <cerrno>
@@ -42,7 +41,6 @@
 #include "rtc_base/ssl_identity.h"
 #include "rtc_base/ssl_stream_adapter.h"
 #include "rtc_base/strings/str_join.h"
-#include "rtc_base/strings/string_builder.h"
 #include "rtc_base/thread.h"
 
 #ifdef OPENSSL_IS_BORINGSSL
@@ -235,12 +233,6 @@ void OpenSSLAdapter::SetAlpnProtocols(const std::vector<std::string>& protos) {
 
 void OpenSSLAdapter::SetEllipticCurves(const std::vector<std::string>& curves) {
   elliptic_curves_ = curves;
-}
-
-void OpenSSLAdapter::SetMode(SSLMode mode) {
-  RTC_DCHECK(!ssl_ctx_);
-  RTC_DCHECK(state_ == SSL_NONE);
-  ssl_mode_ = mode;
 }
 
 void OpenSSLAdapter::SetCertVerifier(
@@ -782,36 +774,6 @@ bool OpenSSLAdapter::SSLPostConnectionCheck(SSL* ssl, absl::string_view host) {
   return is_valid_cert_name;
 }
 
-void OpenSSLAdapter::SSLInfoCallback(const SSL* ssl, int where, int ret) {
-  switch (where) {
-    case SSL_CB_LOOP:
-    case SSL_CB_READ:
-    case SSL_CB_WRITE:
-      return;
-    default:
-      break;
-  }
-  StringBuilder ss;
-  ss << SSL_state_string_long(ssl);
-  if (ret == 0) {
-    RTC_LOG(LS_ERROR) << "Error during " << ss.str() << "\n";
-    return;
-  }
-  // See SSL_alert_type_string_long.
-  int severity_class = where >> 8;
-  switch (severity_class) {
-    case SSL3_AL_WARNING:
-    case SSL3_AL_FATAL:
-      ss << " " << SSL_alert_type_string_long(ret);
-      ss << " " << SSL_alert_desc_string_long(ret);
-      RTC_LOG(LS_WARNING) << ss.str();
-      break;
-    default:
-      RTC_LOG(LS_INFO) << ss.str();
-      break;
-  }
-}
-
 #ifdef WEBRTC_USE_CRYPTO_BUFFER_CALLBACK
 // static
 enum ssl_verify_result_t OpenSSLAdapter::SSLVerifyCallback(SSL* ssl,
@@ -993,7 +955,7 @@ SSL_CTX* OpenSSLAdapter::CreateContext(SSLMode mode, bool enable_cache) {
 #endif  // WEBRTC_EXCLUDE_BUILT_IN_SSL_ROOT_CERTS
 
 #if !defined(NDEBUG)
-  SSL_CTX_set_info_callback(ctx, SSLInfoCallback);
+  SSL_CTX_set_info_callback(ctx, openssl::SSLInfoCallback);
 #endif
 
 #ifdef OPENSSL_IS_BORINGSSL

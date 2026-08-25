@@ -23,7 +23,6 @@
 #include "api/audio_codecs/builtin_audio_decoder_factory.h"
 #include "api/call/transport.h"
 #include "api/crypto/crypto_options.h"
-#include "api/environment/environment_factory.h"
 #include "api/make_ref_counted.h"
 #include "api/scoped_refptr.h"
 #include "api/test/mock_frame_transformer.h"
@@ -41,6 +40,7 @@
 #include "rtc_base/logging.h"
 #include "rtc_base/string_encode.h"
 #include "system_wrappers/include/ntp_time.h"
+#include "test/create_test_environment.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 #include "test/mock_transport.h"
@@ -74,7 +74,7 @@ class ChannelReceiveTest : public Test {
   std::unique_ptr<ChannelReceiveInterface> CreateTestChannelReceive() {
     CryptoOptions crypto_options;
     auto channel = CreateChannelReceive(
-        CreateEnvironment(time_controller_.GetClock(), &log_),
+        CreateTestEnvironment({.time = &time_controller_, .event_log = &log_}),
         /* neteq_factory= */ nullptr, audio_device_module_.get(), &transport_,
         kRemoteSsrc,
         /* jitter_buffer_max_packets= */ 0,

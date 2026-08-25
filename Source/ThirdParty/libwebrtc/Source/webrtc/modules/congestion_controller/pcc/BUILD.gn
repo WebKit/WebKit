@@ -91,32 +91,89 @@ rtc_library("bitrate_controller") {
 }
 
 if (rtc_include_tests && !build_with_chromium) {
-  rtc_library("pcc_unittests") {
+  rtc_library("bitrate_controller_unittest") {
     testonly = true
-    sources = [
-      "bitrate_controller_unittest.cc",
-      "monitor_interval_unittest.cc",
-      "pcc_network_controller_unittest.cc",
-      "rtt_tracker_unittest.cc",
-      "utility_function_unittest.cc",
-    ]
+    sources = [ "bitrate_controller_unittest.cc" ]
     deps = [
       ":bitrate_controller",
       ":monitor_interval",
-      ":pcc",
-      ":pcc_controller",
-      ":rtt_tracker",
       ":utility_function",
-      "../../../api/environment",
-      "../../../api/environment:environment_factory",
       "../../../api/transport:network_control",
       "../../../api/units:data_rate",
       "../../../api/units:data_size",
       "../../../api/units:time_delta",
       "../../../api/units:timestamp",
+      "../../../test:test_support",
+    ]
+  }
+
+  rtc_library("monitor_interval_unittest") {
+    testonly = true
+    sources = [ "monitor_interval_unittest.cc" ]
+    deps = [
+      ":monitor_interval",
+      "../../../api/transport:network_control",
+      "../../../api/units:data_rate",
+      "../../../api/units:data_size",
+      "../../../api/units:time_delta",
+      "../../../api/units:timestamp",
+      "../../../test:test_support",
+    ]
+  }
+
+  rtc_library("pcc_network_controller_unittest") {
+    testonly = true
+    sources = [ "pcc_network_controller_unittest.cc" ]
+    deps = [
+      ":pcc",
+      ":pcc_controller",
+      "../../../api/environment",
+      "../../../api/transport:network_control",
+      "../../../api/units:data_rate",
+      "../../../api/units:time_delta",
+      "../../../api/units:timestamp",
       "../../../test:create_test_environment",
       "../../../test:test_support",
       "../../../test/scenario",
+    ]
+  }
+
+  rtc_library("rtt_tracker_unittest") {
+    testonly = true
+    sources = [ "rtt_tracker_unittest.cc" ]
+    deps = [
+      ":rtt_tracker",
+      "../../../api/transport:network_control",
+      "../../../api/units:time_delta",
+      "../../../api/units:timestamp",
+      "../../../test:test_support",
+    ]
+  }
+
+  rtc_library("utility_function_unittest") {
+    testonly = true
+    sources = [ "utility_function_unittest.cc" ]
+    deps = [
+      ":monitor_interval",
+      ":utility_function",
+      "../../../api/transport:network_control",
+      "../../../api/units:data_rate",
+      "../../../api/units:data_size",
+      "../../../api/units:time_delta",
+      "../../../api/units:timestamp",
+      "../../../test:test_support",
+    ]
+  }
+
+  rtc_library("pcc_unittests") {
+    testonly = true
+    sources = []
+    deps = [
+      ":bitrate_controller_unittest",
+      ":monitor_interval_unittest",
+      ":pcc_network_controller_unittest",
+      ":rtt_tracker_unittest",
+      ":utility_function_unittest",
     ]
   }
 }

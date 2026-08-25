@@ -18,7 +18,7 @@
 #include <vector>
 
 #include "absl/base/nullability.h"
-#include "media/base/video_common.h"
+#include "api/video/video_common.h"
 #include "modules/desktop_capture/desktop_geometry.h"
 #include "modules/desktop_capture/desktop_region.h"
 #include "modules/desktop_capture/frame_texture.h"

@@ -11,31 +11,35 @@
 #include "rtc_base/experiments/normalize_simulcast_size_experiment.h"
 
 #include "api/field_trials.h"
+#include "test/create_test_field_trials.h"
 #include "test/gtest.h"
 
 namespace webrtc {
 
 TEST(NormalizeSimulcastSizeExperimentTest, GetExponent) {
-  FieldTrials field_trials("WebRTC-NormalizeSimulcastResolution/Enabled-2/");
+  FieldTrials field_trials =
+      CreateTestFieldTrials("WebRTC-NormalizeSimulcastResolution/Enabled-2/");
   EXPECT_EQ(2,
             NormalizeSimulcastSizeExperiment::GetBase2Exponent(field_trials));
 }
 
 TEST(NormalizeSimulcastSizeExperimentTest, GetExponentWithTwoParameters) {
-  FieldTrials field_trials("WebRTC-NormalizeSimulcastResolution/Enabled-3-4/");
+  FieldTrials field_trials =
+      CreateTestFieldTrials("WebRTC-NormalizeSimulcastResolution/Enabled-3-4/");
   EXPECT_EQ(3,
             NormalizeSimulcastSizeExperiment::GetBase2Exponent(field_trials));
 }
 
 TEST(NormalizeSimulcastSizeExperimentTest, GetExponentFailsIfNotEnabled) {
-  FieldTrials field_trials("WebRTC-NormalizeSimulcastResolution/Disabled/");
+  FieldTrials field_trials =
+      CreateTestFieldTrials("WebRTC-NormalizeSimulcastResolution/Disabled/");
   EXPECT_FALSE(
       NormalizeSimulcastSizeExperiment::GetBase2Exponent(field_trials));
 }
 
 TEST(NormalizeSimulcastSizeExperimentTest,
      GetExponentFailsForInvalidFieldTrial) {
-  FieldTrials field_trials(
+  FieldTrials field_trials = CreateTestFieldTrials(
       "WebRTC-NormalizeSimulcastResolution/Enabled-invalid/");
   EXPECT_FALSE(
       NormalizeSimulcastSizeExperiment::GetBase2Exponent(field_trials));
@@ -44,7 +48,8 @@ TEST(NormalizeSimulcastSizeExperimentTest,
 TEST(NormalizeSimulcastSizeExperimentTest,
      GetExponentFailsForNegativeOutOfBoundValue) {
   // Supported range: [0, 5].
-  FieldTrials field_trials("WebRTC-NormalizeSimulcastResolution/Enabled--1/");
+  FieldTrials field_trials =
+      CreateTestFieldTrials("WebRTC-NormalizeSimulcastResolution/Enabled--1/");
   EXPECT_FALSE(
       NormalizeSimulcastSizeExperiment::GetBase2Exponent(field_trials));
 }
@@ -52,7 +57,8 @@ TEST(NormalizeSimulcastSizeExperimentTest,
 TEST(NormalizeSimulcastSizeExperimentTest,
      GetExponentFailsForPositiveOutOfBoundValue) {
   // Supported range: [0, 5].
-  FieldTrials field_trials("WebRTC-NormalizeSimulcastResolution/Enabled-6/");
+  FieldTrials field_trials =
+      CreateTestFieldTrials("WebRTC-NormalizeSimulcastResolution/Enabled-6/");
   EXPECT_FALSE(
       NormalizeSimulcastSizeExperiment::GetBase2Exponent(field_trials));
 }

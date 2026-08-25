@@ -20,6 +20,9 @@ inline constexpr size_t kMaxSimulcastStreams = 3;
 inline constexpr size_t kMaxSpatialLayers = 5;
 inline constexpr size_t kMaxTemporalStreams = 4;
 inline constexpr size_t kMaxPreferredPixelFormats = 5;
+inline constexpr int kMaxFrameSidePixels = 16384;
+inline constexpr int kMaxFrameSizePixels =
+    kMaxFrameSidePixels * kMaxFrameSidePixels;
 
 }  // namespace webrtc
 

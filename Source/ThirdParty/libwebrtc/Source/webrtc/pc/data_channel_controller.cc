@@ -362,9 +362,26 @@ RTCError DataChannelController::ReserveOrAllocateSid(
     std::optional<StreamId>& sid,
     std::optional<SSLRole> fallback_ssl_role) {
   if (sid.has_value()) {
-    return sid_allocator_.ReserveSid(*sid)
-               ? RTCError::OK()
-               : RTCError(RTCErrorType::INVALID_RANGE, "StreamId reserved.");
+    if (sid_allocator_.ReserveSid(*sid)) {
+      return RTCError::OK();
+    }
+    // SID is reserved. Check if it is held by a closing channel (race).
+    auto it = absl::c_find_if(sctp_data_channels_n_,
+                              [&](const auto& c) { return c->sid_n() == sid; });
+    if (it != sctp_data_channels_n_.end() &&
+        (*it)->state() == DataChannelInterface::DataState::kClosing) {
+      RTC_LOG(LS_INFO) << "Forcefully closing closing channel with sid "
+                       << sid->stream_id_int()
+                       << " due to new reservation conflict (race).";
+      (*it)->CloseAbruptlyWithError(
+          RTCError::OperationErrorWithData("Closed due to stream reuse."));
+      // The old channel is now kClosed, and its SID has been released
+      // synchronously. Retry reservation.
+      if (sid_allocator_.ReserveSid(*sid)) {
+        return RTCError::OK();
+      }
+    }
+    return RTCError::InvalidRange("StreamId reserved.");
   }
 
   // Attempt to allocate an ID based on the negotiated role.

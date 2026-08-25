@@ -511,9 +511,11 @@ class MockAudioTransport : public test::MockAudioTransport {
 // Both the tests and the code under test are very old, unstaffed and not
 // a part of webRTC stack.
 // Here sanitizers make the tests hang, without providing usefull report.
+// It also hangs under some Linux configurations.
 // So we are just disabling them, without intention to re-enable them.
-#if defined(ADDRESS_SANITIZER) || defined(MEMORY_SANITIZER) || \
-    defined(THREAD_SANITIZER) || defined(UNDEFINED_SANITIZER)
+#if defined(ADDRESS_SANITIZER) || defined(MEMORY_SANITIZER) ||   \
+    defined(THREAD_SANITIZER) || defined(UNDEFINED_SANITIZER) || \
+    defined(WEBRTC_LINUX)
 #define MAYBE_AudioDeviceTest DISABLED_AudioDeviceTest
 #else
 #define MAYBE_AudioDeviceTest AudioDeviceTest

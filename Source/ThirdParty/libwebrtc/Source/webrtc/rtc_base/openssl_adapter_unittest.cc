@@ -199,9 +199,8 @@ TEST(OpenSSLAdaptorTest, TestRealSSLConnection) {
   EXPECT_TRUE(connect_result == 0 || ssl_adapter->IsBlocking());
 
   // Wait for SSL handshake to complete.
-  EXPECT_THAT(WaitUntil([&] { return handler.IsSSLConnected(); },
-                        ::testing::IsTrue(), {.timeout = kTimeout}),
-              IsRtcOk())
+  EXPECT_TRUE(WaitUntil([&] { return handler.IsSSLConnected(); },
+                        {.timeout = kTimeout}))
       << "SSL handshake failed. Socket state: " << ssl_adapter->GetState()
       << ", Has error: " << handler.HasError();
 

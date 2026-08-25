@@ -240,6 +240,8 @@ class RTPSenderVideo : public RTPVideoFrameSenderInterface {
       RTC_GUARDED_BY(stats_mutex_);
 
   OneTimeEvent first_frame_sent_;
+  Timestamp last_fail_packetize_log_ RTC_GUARDED_BY(send_checker_) =
+      Timestamp::MinusInfinity();
 
   // E2EE Custom Video Frame Encryptor (optional)
   FrameEncryptorInterface* const frame_encryptor_ = nullptr;

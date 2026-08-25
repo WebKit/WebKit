@@ -297,8 +297,6 @@ VideoReceiveStream2::VideoReceiveStream2(
     decoder_payload_types.insert(decoder.payload_type);
   }
 
-  timing_->set_render_delay(TimeDelta::Millis(config_.render_delay_ms));
-
   if (!config_.rtp.rtx_associated_payload_types.empty()) {
     rtx_receive_stream_ = std::make_unique<RtxReceiveStream>(
         env_, &rtp_video_stream_receiver_,
@@ -613,6 +611,17 @@ VideoReceiveStreamInterface::Stats VideoReceiveStream2::GetStats() const {
     stats.sender_reports_packets_sent = rtcp_sr_stats->packets_sent;
     stats.sender_reports_bytes_sent = rtcp_sr_stats->bytes_sent;
     stats.sender_reports_reports_count = rtcp_sr_stats->reports_count;
+  }
+
+  // Non-sender RTT (RRTR/DLRR) for recvonly endpoints, reported via
+  // RTCRemoteOutboundRtpStreamStats round-trip-time fields.
+  std::optional<RtpRtcpInterface::NonSenderRttStats> non_sender_rtt_stats =
+      rtp_video_stream_receiver_.GetNonSenderRttStats();
+  if (non_sender_rtt_stats) {
+    stats.round_trip_time = non_sender_rtt_stats->round_trip_time;
+    stats.round_trip_time_measurements =
+        non_sender_rtt_stats->round_trip_time_measurements;
+    stats.total_round_trip_time = non_sender_rtt_stats->total_round_trip_time;
   }
   return stats;
 }

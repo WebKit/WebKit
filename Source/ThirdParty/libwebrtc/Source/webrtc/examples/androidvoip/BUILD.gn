@@ -24,13 +24,16 @@ if (is_android) {
     ]
 
     deps = [
+      ":generated_jni_java",
       ":resources",
       "//rtc_base:base_java",
       "//sdk/android:base_java",
       "//sdk/android:java_audio_device_module_java",
+      "//sdk/android:libjingle_peerconnection_metrics_default_java",
       "//sdk/android:video_java",
       "//third_party/androidx:androidx_core_core_java",
       "//third_party/androidx:androidx_legacy_legacy_support_v4_java",
+      "//third_party/jni_zero:jni_zero_java",
     ]
 
     shared_libraries = [ ":examples_androidvoip_jni" ]
@@ -85,6 +88,8 @@ if (is_android) {
       "//third_party/abseil-cpp/absl/memory",
       "//third_party/jni_zero",
     ]
+
+    java_targets = [ ":androidvoip" ]
   }
 
   android_resources("resources") {
@@ -95,9 +100,5 @@ if (is_android) {
       "res/values/colors.xml",
       "res/values/strings.xml",
     ]
-
-    # Needed for Bazel converter.
-    resource_dirs = [ "res" ]
-    assert(resource_dirs != [])  # Mark as used.
   }
 }

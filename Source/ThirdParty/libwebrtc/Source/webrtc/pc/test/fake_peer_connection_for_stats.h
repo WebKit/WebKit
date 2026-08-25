@@ -89,8 +89,8 @@ class FakeIceTransportFactory : public IceTransportFactory {
       const std::string& transport_name,
       int component,
       IceTransportInit init) override {
-    auto internal =
-        std::make_unique<FakeIceTransportInternal>(transport_name, component);
+    auto internal = std::make_unique<FakeIceTransportInternal>(
+        init.env(), transport_name, component);
     return make_ref_counted<FakeIceTransport>(std::move(internal));
   }
 };
@@ -441,7 +441,7 @@ class FakePeerConnectionForStats : public FakePeerConnectionBase,
     auto dtls_transport = transport_controller_->LookupDtlsTransportByMid(mid);
     if (!dtls_transport) {
       auto fake_dtls = std::make_unique<FakeDtlsTransport>(
-          transport_name, ICE_CANDIDATE_COMPONENT_RTP);
+          env(), transport_name, ICE_CANDIDATE_COMPONENT_RTP);
       auto wrapper = make_ref_counted<DtlsTransport>(fake_dtls.get());
       fake_dtls_transports_[mid] = std::move(fake_dtls);
       dtls_transport = wrapper;
@@ -487,7 +487,7 @@ class FakePeerConnectionForStats : public FakePeerConnectionBase,
     auto dtls_transport = transport_controller_->LookupDtlsTransportByMid(mid);
     if (!dtls_transport) {
       auto fake_dtls = std::make_unique<FakeDtlsTransport>(
-          transport_name, ICE_CANDIDATE_COMPONENT_RTP);
+          env(), transport_name, ICE_CANDIDATE_COMPONENT_RTP);
       auto wrapper = make_ref_counted<DtlsTransport>(fake_dtls.get());
       fake_dtls_transports_[mid] = std::move(fake_dtls);
       dtls_transport = wrapper;
@@ -716,7 +716,8 @@ class FakePeerConnectionForStats : public FakePeerConnectionBase,
     auto transceiver = RtpTransceiverProxyWithInternal<RtpTransceiver>::Create(
         signaling_thread_,
         make_ref_counted<RtpTransceiver>(env_, media_type, context_.get(),
-                                         &codec_lookup_helper_, nullptr));
+                                         &codec_lookup_helper_, nullptr,
+                                         AudioOptions(), VideoOptions()));
     transceiver->internal()->set_current_direction(
         RtpTransceiverDirection::kSendRecv);
     if (!mid.empty()) {

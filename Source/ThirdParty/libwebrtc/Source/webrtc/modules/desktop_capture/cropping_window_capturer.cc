@@ -45,22 +45,42 @@ void CroppingWindowCapturer::SetSharedMemoryFactory(
   window_capturer_->SetSharedMemoryFactory(std::move(shared_memory_factory));
 }
 
+void CroppingWindowCapturer::EnsureScreenCapturer() {
+  if (screen_capturer_) {
+    return;
+  }
+
+  screen_capturer_ = DesktopCapturer::CreateRawScreenCapturer(options_);
+  if (excluded_window_) {
+    screen_capturer_->SetExcludedWindow(excluded_window_);
+  }
+  screen_capturer_->Start(this);
+}
+
 void CroppingWindowCapturer::CaptureFrame() {
   if (ShouldUseScreenCapturer()) {
-    // We record the window position here at capture time; it may differ at
-    // frame delivery time.
-    last_window_rect_ = GetWindowRectInVirtualScreen();
-    if (!screen_capturer_) {
-      screen_capturer_ = DesktopCapturer::CreateRawScreenCapturer(options_);
-      if (excluded_window_) {
-        screen_capturer_->SetExcludedWindow(excluded_window_);
-      }
-      screen_capturer_->Start(this);
+    // If the window has moved from the last time that we started a capture,
+    // there is a possibility that DWM hasn't actually updated it's location
+    // yet, as that can happen asynchronously compared to this bounds update.
+    // To ensure that we don't accidentally capture a location the window isn't
+    // at, try to fall back to *solely* a Window Capturer if the window has
+    // recently moved.
+    // Note that last_window_rect_ is also stored to validate that the window
+    // doesn't move during the capture.
+    // Note that `ShouldUseScreenCapturer` computes the updated window rect, so
+    // we must query this after that has run.
+    const auto current_rect = GetWindowRectInVirtualScreen();
+    const bool has_moved = !last_window_rect_.equals(current_rect);
+    last_window_rect_ = current_rect;
+
+    if (!has_moved) {
+      EnsureScreenCapturer();
+      screen_capturer_->CaptureFrame();
+      return;
     }
-    screen_capturer_->CaptureFrame();
-  } else {
-    window_capturer_->CaptureFrame();
   }
+
+  window_capturer_->CaptureFrame();
 }
 
 void CroppingWindowCapturer::SetExcludedWindow(WindowId window) {

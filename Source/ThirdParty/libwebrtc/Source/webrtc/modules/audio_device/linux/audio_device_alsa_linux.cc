@@ -10,8 +10,6 @@
 
 #include "modules/audio_device/linux/audio_device_alsa_linux.h"
 
-#include <asm-generic/errno.h>
-
 #include <cerrno>
 #include <cstdint>
 #include <cstdlib>

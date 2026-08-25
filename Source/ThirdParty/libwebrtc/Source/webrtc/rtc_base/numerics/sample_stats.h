@@ -37,10 +37,6 @@ template <>
 class SampleStats<TimeDelta> {
  public:
   void AddSample(TimeDelta delta, Timestamp time);
-  [[deprecated("Use AddSample(TimeDelta, Timestamp) instead.")]]
-  void AddSample(TimeDelta delta);
-  [[deprecated("Use AddSample(TimeDelta, Timestamp) instead.")]]
-  void AddSampleMs(double delta_ms);
   void AddSamples(const SampleStats<TimeDelta>& other);
   bool IsEmpty();
   TimeDelta Max();
@@ -60,10 +56,6 @@ template <>
 class SampleStats<DataRate> {
  public:
   void AddSample(DataRate rate, Timestamp time);
-  [[deprecated("Use AddSample(DataRate, Timestamp) instead.")]]
-  void AddSample(DataRate rate);
-  [[deprecated("Use AddSample(DataRate, Timestamp) instead.")]]
-  void AddSampleBps(double rate_bps);
   void AddSamples(const SampleStats<DataRate>& other);
   bool IsEmpty();
   DataRate Max();

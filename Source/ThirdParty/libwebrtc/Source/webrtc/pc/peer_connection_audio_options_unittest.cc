@@ -29,6 +29,7 @@
 #include "pc/test/mock_peer_connection_observers.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/thread.h"
+#include "test/create_test_environment.h"
 #include "test/gmock.h"
 #include "test/gtest.h"
 #include "test/run_loop.h"
@@ -92,6 +93,7 @@ class PeerConnectionAudioOptionsTest : public ::testing::Test {
     dependencies.signaling_thread = Thread::Current();
 
     EnableFakeMedia(dependencies, std::make_unique<FakeMediaEngine>());
+    dependencies.env = CreateTestEnvironment();
 
     pc_factory_ = CreateModularPeerConnectionFactory(std::move(dependencies));
   }
@@ -117,7 +119,6 @@ class PeerConnectionAudioOptionsTest : public ::testing::Test {
             pc_.get());
     return static_cast<PeerConnection*>(proxy->internal());
   }
-
   RunLoop loop_;
   std::unique_ptr<Thread> worker_thread_;
   std::unique_ptr<Thread> network_thread_;

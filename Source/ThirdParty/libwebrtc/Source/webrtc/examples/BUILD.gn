@@ -156,6 +156,7 @@ if (is_android) {
 
   android_resources("AppRTCMobile_resources") {
     testonly = true
+    custom_package = "org.appspot.apprtc"
     sources = [
       "androidapp/res/drawable-hdpi/disconnect.png",
       "androidapp/res/drawable-hdpi/ic_action_full_screen.png",
@@ -188,11 +189,6 @@ if (is_android) {
       "androidapp/res/values/strings.xml",
       "androidapp/res/xml/preferences.xml",
     ]
-
-    # Needed for Bazel converter.
-    custom_package = "org.appspot.apprtc"
-    resource_dirs = [ "androidapp/res" ]
-    assert(resource_dirs != [])  # Mark as used.
   }
 
   rtc_instrumentation_test_apk("AppRTCMobile_test_apk") {
@@ -638,12 +634,10 @@ if (is_ios || (is_mac && target_cpu != "x86")) {
       rtc_test("apprtcmobile_tests") {
         is_xctest = true
         info_plist = "objc/AppRTCMobile/ios/Info.plist"
-        sources = [ "objc/AppRTCMobile/tests/main.mm" ]
         deps = [
           ":AppRTCMobile_lib",
           ":apprtcmobile_test_sources",
           "../sdk:framework_objc",
-          "//test:test_support_objc",
         ]
         ldflags = [ "-all_load" ]
       }
@@ -700,11 +694,11 @@ if (is_linux || is_chromeos || is_win) {
       "../api/task_queue",
       "../api/task_queue:pending_task_safety_flag",
       "../api/units:time_delta",
+      "../api/video:video_common",
       "../api/video:video_frame",
       "../api/video:video_rtp_headers",
       "../api/video_codecs:video_codecs_api",
       "../media:media_channel",
-      "../media:video_common",
       "../p2p:connection",
       "../p2p:port_allocator",
       "../pc:video_track_source",
@@ -777,7 +771,6 @@ if (is_linux || is_chromeos || is_win) {
       "../modules/audio_device",
       "../modules/audio_processing",
       "../modules/video_capture:video_capture_module",
-      "../pc:libjingle_peerconnection",
       "../rtc_base:rtc_json",
       "../test:video_test_common",
       "//third_party/abseil-cpp/absl/flags:flag",

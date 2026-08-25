@@ -79,7 +79,6 @@ CallStats::CallStats(Clock* clock, TaskQueueBase* task_queue)
       time_of_first_rtt_ms_(-1),
       task_queue_(task_queue) {
   RTC_DCHECK(task_queue_);
-  RTC_DCHECK_RUN_ON(task_queue_);
 }
 
 CallStats::~CallStats() {

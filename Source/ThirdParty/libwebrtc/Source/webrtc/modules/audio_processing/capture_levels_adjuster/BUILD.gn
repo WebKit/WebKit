@@ -27,17 +27,34 @@ rtc_library("capture_levels_adjuster") {
   ]
 }
 
-rtc_library("capture_levels_adjuster_unittests") {
+rtc_library("audio_samples_scaler_unittest") {
   testonly = true
-
-  sources = [
-    "audio_samples_scaler_unittest.cc",
-    "capture_levels_adjuster_unittest.cc",
-  ]
+  sources = [ "audio_samples_scaler_unittest.cc" ]
   deps = [
     ":capture_levels_adjuster",
     "..:audio_buffer",
     "..:audioproc_test_utils",
     "../../../test:test_support",
+  ]
+}
+
+rtc_library("capture_levels_adjuster_unittest") {
+  testonly = true
+  sources = [ "capture_levels_adjuster_unittest.cc" ]
+  deps = [
+    ":capture_levels_adjuster",
+    "..:audio_buffer",
+    "..:audioproc_test_utils",
+    "../../../test:test_support",
+  ]
+}
+
+rtc_library("capture_levels_adjuster_unittests") {
+  testonly = true
+
+  sources = []
+  deps = [
+    ":audio_samples_scaler_unittest",
+    ":capture_levels_adjuster_unittest",
   ]
 }

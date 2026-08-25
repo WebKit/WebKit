@@ -329,9 +329,9 @@ RTCError JsepTransport::VerifyCertificateFingerprint(
     return RTCError(RTCErrorType::INVALID_PARAMETER,
                     "Fingerprint provided but no identity available.");
   }
-  std::unique_ptr<SSLFingerprint> fp_tmp = SSLFingerprint::CreateUnique(
-      fingerprint->algorithm, *certificate->identity());
-  RTC_DCHECK(fp_tmp.get() != nullptr);
+  std::unique_ptr<SSLFingerprint> fp_tmp =
+      SSLFingerprint::Create(fingerprint->algorithm, *certificate->identity());
+  RTC_DCHECK(fp_tmp != nullptr);
   if (*fp_tmp == *fingerprint) {
     return RTCError::OK();
   }

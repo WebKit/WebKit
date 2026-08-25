@@ -12,12 +12,10 @@
 
 #include <cstdint>
 #include <ctime>
-#include <memory>
 
 #include "api/units/time_delta.h"
 #include "api/units/timestamp.h"
 #include "rtc_base/crypto_random.h"
-#include "rtc_base/event.h"
 #include "rtc_base/fake_clock.h"
 #include "rtc_base/thread.h"
 #include "test/gtest.h"
@@ -199,44 +197,6 @@ TEST(FakeClock, AdvanceTime) {
   EXPECT_EQ(3335223000, clock.TimeNanos());
   clock.AdvanceTime(TimeDelta::Seconds(4444u));
   EXPECT_EQ(4447335223000, clock.TimeNanos());
-}
-
-// When the clock is advanced, threads that are waiting in a socket select
-// should wake up and look at the new time. This allows tests using the
-// fake clock to run much faster, if the test is bound by time constraints
-// (such as a test for a STUN ping timeout).
-TEST(FakeClock, SettingTimeWakesThreads) {
-  int64_t real_start_time_ms = TimeMillis();
-
-  ThreadProcessingFakeClock clock;
-  SetClockForTesting(&clock);
-
-  std::unique_ptr<Thread> worker(Thread::CreateWithSocketServer());
-  worker->Start();
-
-  // Post an event that won't be executed for 10 seconds.
-  Event message_handler_dispatched;
-  worker->PostDelayedTask(
-      [&message_handler_dispatched] { message_handler_dispatched.Set(); },
-      TimeDelta::Seconds(60));
-
-  // Wait for a bit for the worker thread to be started and enter its socket
-  // select(). Otherwise this test would be trivial since the worker thread
-  // would process the event as soon as it was started.
-  Thread::Current()->SleepMs(1000);
-
-  // Advance the fake clock, expecting the worker thread to wake up
-  // and dispatch the message instantly.
-  clock.AdvanceTime(TimeDelta::Seconds(60u));
-  EXPECT_TRUE(message_handler_dispatched.Wait(TimeDelta::Zero()));
-  worker->Stop();
-
-  SetClockForTesting(nullptr);
-
-  // The message should have been dispatched long before the 60 seconds fully
-  // elapsed (just a sanity check).
-  int64_t real_end_time_ms = TimeMillis();
-  EXPECT_LT(real_end_time_ms - real_start_time_ms, 10000);
 }
 
 }  // namespace webrtc

@@ -15,6 +15,7 @@
 
 #include <cstddef>
 #include <limits>
+#include <type_traits>
 
 namespace webrtc {
 namespace internal {
@@ -72,6 +73,26 @@ struct StaticRangeCheck<Dst, Src, DST_UNSIGNED, SRC_SIGNED> {
   static const DstRange value = OVERLAPS_RANGE;
 };
 
+template <typename T>
+constexpr T PowerOfTwo(int exp) {
+  T result = 1;
+  for (int i = 0; i < exp; ++i) {
+    result *= 2;
+  }
+  return result;
+}
+
+template <typename Dst, typename Src>
+inline constexpr bool IsValueInUpperBound(Src value) {
+  if constexpr (std::is_floating_point_v<Src>) {
+    constexpr Src kUpperBound =
+        PowerOfTwo<Src>(std::numeric_limits<Dst>::digits);
+    return value < kUpperBound;
+  } else {
+    return value <= static_cast<Src>(std::numeric_limits<Dst>::max());
+  }
+}
+
 enum RangeCheckResult {
   TYPE_VALID = 0,      // Value can be represented by the destination type.
   TYPE_UNDERFLOW = 1,  // Value would overflow.
@@ -117,7 +138,7 @@ struct RangeCheckImpl<Dst, Src, DST_SIGNED, SRC_SIGNED, OVERLAPS_RANGE> {
                      value <= static_cast<Src>(DstLimits::max()),
                      value >= static_cast<Src>(DstLimits::max() * -1))
                : BASE_NUMERIC_RANGE_CHECK_RESULT(
-                     value <= static_cast<Src>(DstLimits::max()),
+                     (IsValueInUpperBound<Dst, Src>(value)),
                      value >= static_cast<Src>(DstLimits::min()));
   }
 };
@@ -160,7 +181,7 @@ struct RangeCheckImpl<Dst, Src, DST_UNSIGNED, SRC_SIGNED, OVERLAPS_RANGE> {
                ? BASE_NUMERIC_RANGE_CHECK_RESULT(true,
                                                  value >= static_cast<Src>(0))
                : BASE_NUMERIC_RANGE_CHECK_RESULT(
-                     value <= static_cast<Src>(DstLimits::max()),
+                     (IsValueInUpperBound<Dst, Src>(value)),
                      value >= static_cast<Src>(0));
   }
 };

@@ -17,6 +17,7 @@
 #include <utility>
 
 #include "absl/strings/string_view.h"
+#include "api/rtp_header_extension_id.h"
 #include "modules/audio_coding/neteq/tools/neteq_input.h"
 #include "modules/audio_coding/neteq/tools/rtp_file_source.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
@@ -34,7 +35,8 @@ class NetEqRtpDumpInput : public NetEqInput {
                     std::optional<uint32_t> ssrc_filter)
       : source_(RtpFileSource::Create(file_name, ssrc_filter)) {
     for (const auto& ext_pair : hdr_ext_map) {
-      source_->RegisterRtpHeaderExtension(ext_pair.second, ext_pair.first);
+      source_->RegisterRtpHeaderExtension(ext_pair.second,
+                                          RtpHeaderExtensionId(ext_pair.first));
     }
     packet_ = source_->NextPacket();
   }

@@ -14,26 +14,31 @@
 # See https://cs.chromium.org/chromium/src/testing/buildbot/gn_isolate_map.pyl
 # for more detailed documentation.
 
+# keep-sorted start
 {
   "All": {
     "label": "//:All",
     "type": "additional_compile_target",
   },
-  "AppRTCMobile_test_apk": {
-    "label": "//examples:AppRTCMobile_test_apk",
+  "android_examples_junit_tests": {
+    "label": "//examples:android_examples_junit_tests",
+    "type": "raw",
+  },
+  "android_instrumentation_test_apk": {
+    "label": "//sdk/android:android_instrumentation_test_apk",
     "type": "console_test_launcher",
   },
   "android_junit_tests": {
     "label": "//:android_junit_tests",
     "type": "raw",
   },
-  "android_examples_junit_tests": {
-    "label": "//examples:android_examples_junit_tests",
-    "type": "raw",
-  },
   "android_sdk_junit_tests": {
     "label": "//sdk/android:android_sdk_junit_tests",
     "type": "raw",
+  },
+  "AppRTCMobile_test_apk": {
+    "label": "//examples:AppRTCMobile_test_apk",
+    "type": "console_test_launcher",
   },
   "apprtcmobile_tests": {
     "label": "//examples:apprtcmobile_tests",
@@ -49,18 +54,6 @@
   },
   "call_tests": {
     "label": "//call:call_tests",
-    "type": "console_test_launcher",
-  },
-  "resource_adaptation_tests": {
-    "label": "//call/adaptation:resource_adaptation_tests",
-    "type": "console_test_launcher",
-  },
-  "video_adaptation_tests": {
-    "label": "//video/adaptation:video_adaptation_tests",
-    "type": "console_test_launcher",
-  },
-  "video_tests": {
-    "label": "//video:video_tests",
     "type": "console_test_launcher",
   },
   "common_audio_unittests": {
@@ -79,8 +72,20 @@
     "label": "//:default",
     "type": "additional_compile_target",
   },
-  "android_instrumentation_test_apk": {
-    "label": "//sdk/android:android_instrumentation_test_apk",
+  "desktop_capture_mac_unittests": {
+    "label": "//modules/desktop_capture:desktop_capture_mac_unittests",
+    "type": "console_test_launcher",
+  },
+  "desktop_capture_modules_tests": {
+    "label": "//modules/desktop_capture:desktop_capture_modules_tests",
+    "type": "console_test_launcher",
+  },
+  "desktop_capture_unittests": {
+    "label": "//modules/desktop_capture:desktop_capture_unittests",
+    "type": "console_test_launcher",
+  },
+  "desktop_capture_win_unittests": {
+    "label": "//modules/desktop_capture:desktop_capture_win_unittests",
     "type": "console_test_launcher",
   },
   "modules_tests": {
@@ -89,16 +94,15 @@
   },
   "modules_unittests": {
     "label": "//modules:modules_unittests",
-    "type": "windowed_test_launcher",
+    "type": "console_test_launcher",
   },
   "peerconnection_unittests": {
     "label": "//pc:peerconnection_unittests",
     "type": "console_test_launcher",
   },
-  "shared_screencast_stream_test": {
-    "label": "//modules/desktop_capture:shared_screencast_stream_test",
+  "resource_adaptation_tests": {
+    "label": "//call/adaptation:resource_adaptation_tests",
     "type": "console_test_launcher",
-    "use_pipewire": True,
   },
   "rtc_media_unittests": {
     "label": "//media:rtc_media_unittests",
@@ -132,6 +136,11 @@
     "label": "//sdk:sdk_unittests",
     "type": "console_test_launcher",
   },
+  "shared_screencast_stream_test": {
+    "label": "//modules/desktop_capture:shared_screencast_stream_test",
+    "type": "console_test_launcher",
+    "use_pipewire": True,
+  },
   "slow_peer_connection_unittests": {
     "label": "//pc:slow_peer_connection_unittests",
     "type": "console_test_launcher",
@@ -152,6 +161,10 @@
     "label": "//rtc_tools:tools_unittests",
     "type": "console_test_launcher",
   },
+  "video_adaptation_tests": {
+    "label": "//video/adaptation:video_adaptation_tests",
+    "type": "console_test_launcher",
+  },
   "video_capture_tests": {
     "label": "//modules/video_capture:video_capture_tests",
     "type": "console_test_launcher",
@@ -160,8 +173,16 @@
     "label": "//modules/video_coding:video_codec_perf_tests",
     "type": "raw",
   },
+  "video_tests": {
+    "label": "//video:video_tests",
+    "type": "console_test_launcher",
+  },
   "video_timing_tests": {
     "label": "//video/timing:video_timing_tests",
+    "type": "console_test_launcher",
+  },
+  "videocodec_test_mediacodec": {
+    "label": "//modules/video_coding:videocodec_test_mediacodec",
     "type": "console_test_launcher",
   },
   "voip_unittests": {
@@ -176,4 +197,10 @@
     "label": "//:webrtc_perf_tests",
     "type": "raw",
   },
+  "xvfb_capture_tests": {
+    "label": "//modules/desktop_capture:xvfb_capture_tests",
+    "type": "console_test_launcher",
+    "use_xvfb": True,
+  },
 }
+# keep-sorted end

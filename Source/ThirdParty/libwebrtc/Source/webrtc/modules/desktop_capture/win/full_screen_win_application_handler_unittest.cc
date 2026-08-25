@@ -19,14 +19,17 @@
 
 namespace webrtc {
 
-WindowInfo CreateTestWindow(const WCHAR* window_title,
-                            const WCHAR* window_class) {
-  return CreateTestWindow(window_title, /*height=*/240, /*width=*/320,
-                          /*extended_styles=*/0, window_class);
-}
-
 class FullScreenWinApplicationHandlerTest : public ::testing::Test {
  public:
+  WindowInfo CreateTestWindow(const WCHAR* window_title,
+                              const WCHAR* window_class) {
+    WindowInfo info = webrtc::CreateTestWindow(
+        window_title, /*height=*/240, /*width=*/320,
+        /*extended_styles=*/0, window_class);
+    created_windows_.push_back(info);
+    return info;
+  }
+
   void CreateEditorWindow(
       const WCHAR* title,
       const WCHAR* window_class = L"PPTFrameClass",
@@ -69,11 +72,13 @@ class FullScreenWinApplicationHandlerTest : public ::testing::Test {
   }
 
   void TearDown() override {
-    DestroyTestWindow(editor_window_info_);
-    DestroyTestWindow(slide_show_window_info_);
+    for (const auto& window : created_windows_) {
+      DestroyTestWindow(window);
+    }
   }
 
  protected:
+  std::vector<WindowInfo> created_windows_;
   WindowInfo editor_window_info_;
   WindowInfo slide_show_window_info_;
   std::unique_ptr<FullScreenPowerPointHandler> full_screen_ppt_handler_;
@@ -272,7 +277,6 @@ TEST_F(FullScreenWinApplicationHandlerTest,
   EXPECT_EQ(FindFullScreenWindow(), correct_slide_show);
 }
 
-// TODO(crbug.com/409473386): Add DestroyTestWindow to clean the tests.
 TEST_F(FullScreenWinApplicationHandlerTest,
        FullScreenWindowsFoundWhenMultipleEditorsAndSlideShowsExist) {
   std::vector<WindowInfo> editors = {
@@ -321,8 +325,6 @@ TEST_F(FullScreenWinApplicationHandlerTest,
 
   EXPECT_NE(FindFullScreenWindow(), slide_show);
   EXPECT_EQ(FindFullScreenWindow(), reinterpret_cast<HWND>(0));
-
-  DestroyTestWindow(second_editor_window_info);
 }
 
 TEST_F(FullScreenWinApplicationHandlerTest,

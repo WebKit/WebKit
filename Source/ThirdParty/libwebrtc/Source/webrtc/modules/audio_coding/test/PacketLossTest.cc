@@ -20,7 +20,6 @@
 #include "api/audio_codecs/audio_format.h"
 #include "api/audio_codecs/builtin_audio_decoder_factory.h"
 #include "api/environment/environment.h"
-#include "api/environment/environment_factory.h"
 #include "api/neteq/default_neteq_factory.h"
 #include "api/neteq/neteq.h"
 #include "api/units/timestamp.h"
@@ -28,6 +27,7 @@
 #include "modules/audio_coding/test/EncodeDecodeTest.h"
 #include "modules/audio_coding/test/RTPFile.h"
 #include "rtc_base/strings/string_builder.h"
+#include "test/create_test_environment.h"
 #include "test/gtest.h"
 #include "test/testsupport/file_utils.h"
 
@@ -151,7 +151,7 @@ void PacketLossTest::Perform() {
 #ifndef WEBRTC_CODEC_OPUS
   return;
 #else
-  const Environment env = CreateEnvironment();
+  const Environment env = CreateTestEnvironment();
   RTPFile rtpFile;
   std::unique_ptr<AudioCodingModule> acm(AudioCodingModule::Create());
   SdpAudioFormat send_format = SdpAudioFormat("opus", 48000, 2);

@@ -16,7 +16,6 @@
 
 #include "absl/memory/memory.h"
 #include "api/environment/environment.h"
-#include "api/environment/environment_factory.h"
 #include "api/rtc_event_log/rtc_event_log.h"
 #include "api/rtc_event_log/rtc_event_log_factory.h"
 #include "api/rtp_header_extension_id.h"
@@ -37,6 +36,7 @@
 #include "modules/rtp_rtcp/source/rtp_header_extensions.h"
 #include "modules/rtp_rtcp/source/rtp_packet_to_send.h"
 #include "rtc_base/checks.h"
+#include "test/create_test_environment.h"
 #include "test/network/network_emulation.h"
 #include "test/network/simulated_network.h"
 namespace webrtc {
@@ -44,10 +44,9 @@ namespace webrtc {
 
 namespace {
 Environment GetEnvironment(NetworkEmulationManager& net) {
-  EnvironmentFactory factory;
-  factory.Set(net.time_controller()->GetClock());
-  factory.Set(net.time_controller()->GetTaskQueueFactory());
-  return factory.Create();
+  return CreateTestEnvironment({
+      .time = net.time_controller(),
+  });
 }
 
 EmulatedRoute* CreateRoute(NetworkEmulationManager& net,

@@ -1,0 +1,41 @@
+# Copyright (c) 2026 The WebRTC project authors. All Rights Reserved.
+#
+# Use of this source code is governed by a BSD-style license
+# that can be found in the LICENSE file in the root of the source
+# tree. An additional intellectual property rights grant can be found
+# in the file PATENTS.  All contributing project authors may
+# be found in the AUTHORS file in the root of the source tree.
+
+import("//build/rust/rust_static_library.gni")
+import("//build/rust/rust_unit_test.gni")
+import("../../../webrtc.gni")
+
+# These provide the base import macros for webrtc, and thus use the templates
+# from //build and not webrtc's macros.
+if (enable_rust && rtc_include_tests) {
+  # Co-located dummy library crate used to validate explicit target colon matching.
+  # Since it lives in the same `test_subdir` directory, we can validate that the macro
+  # correctly strips the extra trailing slash right before the colon when injecting the prefix.
+  rust_static_library("webrtc_import_prefix_lib") {
+    testonly = true
+    crate_root = "webrtc_import_prefix_lib.rs"
+    sources = [ "webrtc_import_prefix_lib.rs" ]
+
+    # Don't depend on ourselves.
+    no_chromium_prelude = true
+  }
+
+  # Integration test validating the macro expansion behavior in Vendor Prefix mode.
+  # Sets `WEBRTC_GN_PREFIX = //rust/webrtc_import/test_subdir` to simulate embedded layout configurations.
+  # Utilizes the root-colon syntax (`//:webrtc_import_prefix_lib`) to import targets
+  # without forcing redundant child directory layouts.
+  rtc_rust_unittest("webrtc_import_prefix_test") {
+    crate_root = "webrtc_import_prefix_test.rs"
+    sources = [ "webrtc_import_prefix_test.rs" ]
+    deps = [
+      ":webrtc_import_prefix_lib",
+      "../:webrtc_import",
+    ]
+    rustenv = [ "WEBRTC_GN_PREFIX=//rust/webrtc_import/test_subdir" ]
+  }
+}

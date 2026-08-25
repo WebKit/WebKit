@@ -15,6 +15,7 @@
 #include <optional>
 #include <span>
 #include <utility>
+#include <variant>
 #include <vector>
 
 #include "absl/memory/memory.h"
@@ -441,6 +442,49 @@ TEST(RtpVideoStreamReceiverFrameTransformerDelegateTest,
   // Will pass the frame straight to the reciever.
   EXPECT_CALL(receiver, ManageFrame);
   delegate->TransformFrame(CreateRtpFrameObject());
+}
+
+TEST(RtpVideoStreamReceiverFrameTransformerDelegateTest,
+     GetAndSetRtpTimestampInfo) {
+  TaskQueueForTest task_queue;
+  TestRtpVideoFrameReceiver receiver;
+  auto mock_frame_transformer =
+      make_ref_counted<NiceMock<MockFrameTransformer>>();
+  SimulatedClock clock(0);
+  auto delegate =
+      make_ref_counted<RtpVideoStreamReceiverFrameTransformerDelegate>(
+          &receiver, &clock, mock_frame_transformer, task_queue.Get(), 1111);
+  delegate->Init();
+
+  RTPVideoHeader video_header;
+  uint32_t timestamp = 987654u;
+
+  EXPECT_CALL(*mock_frame_transformer, Transform)
+      .WillOnce([&](std::unique_ptr<TransformableFrameInterface>
+                        transformable_frame) {
+        auto frame =
+            absl::WrapUnique(static_cast<TransformableVideoFrameInterface*>(
+                transformable_frame.release()));
+        ASSERT_TRUE(frame);
+        EXPECT_TRUE(std::holds_alternative<RtpTimestampWithOffset>(
+            frame->GetRtpTimestampInfo()));
+        EXPECT_EQ(
+            std::get<RtpTimestampWithOffset>(frame->GetRtpTimestampInfo()),
+            timestamp);
+
+        // Test the SetRTPTimestamp setter
+        uint32_t new_timestamp = 112233u;
+        frame->SetRTPTimestamp(new_timestamp);
+        EXPECT_TRUE(std::holds_alternative<RtpTimestampWithOffset>(
+            frame->GetRtpTimestampInfo()));
+        EXPECT_EQ(
+            std::get<RtpTimestampWithOffset>(frame->GetRtpTimestampInfo()),
+            new_timestamp);
+      });
+
+  auto frame_object = CreateRtpFrameObject(video_header, /*csrcs=*/{});
+  frame_object->SetRtpTimestamp(timestamp);
+  delegate->TransformFrame(std::move(frame_object));
 }
 
 }  // namespace

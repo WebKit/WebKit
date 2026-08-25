@@ -44,11 +44,7 @@ struct TimeSeriesPoint {
 
 struct TimeSeries {
   TimeSeries() = default;  // TODO(terelius): Remove the default constructor.
-  TimeSeries(const char* label,
-             LineStyle line_style,
-             PointStyle point_style = PointStyle::kNone)
-      : label(label), line_style(line_style), point_style(point_style) {}
-  TimeSeries(const std::string& label,
+  TimeSeries(absl::string_view label,
              LineStyle line_style,
              PointStyle point_style = PointStyle::kNone)
       : label(label), line_style(line_style), point_style(point_style) {}

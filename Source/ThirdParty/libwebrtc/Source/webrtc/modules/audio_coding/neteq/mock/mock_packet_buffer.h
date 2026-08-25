@@ -14,24 +14,47 @@
 #include <cstddef>
 #include <cstdint>
 #include <optional>
+#include <string>
 
+#include "absl/strings/string_view.h"
+#include "api/field_trials_view.h"
 #include "modules/audio_coding/neteq/packet.h"
 #include "modules/audio_coding/neteq/packet_buffer.h"
 #include "test/gmock.h"
 
 namespace webrtc {
 
+class DummyFieldTrials : public webrtc::FieldTrialsView {
+ public:
+  std::string Lookup(absl::string_view key) const override { return ""; }
+};
+
 class MockPacketBuffer : public PacketBuffer {
  public:
   MockPacketBuffer(size_t max_number_of_packets,
                    const TickTimer* tick_timer,
                    StatisticsCalculator* stats)
-      : PacketBuffer(max_number_of_packets, tick_timer, stats) {}
+      : PacketBuffer(DummyFieldTrials(),
+                     max_number_of_packets,
+                     tick_timer,
+                     stats) {}
   ~MockPacketBuffer() override { Die(); }
   MOCK_METHOD(void, Die, ());
   MOCK_METHOD(void, Flush, (), (override));
+  MOCK_METHOD(void,
+              PartialFlush,
+              (int target_level_ms,
+               size_t sample_rate,
+               size_t last_decoded_length),
+              (override));
   MOCK_METHOD(bool, Empty, (), (const, override));
-  MOCK_METHOD(int, InsertPacket, (Packet && packet), (override));
+  MOCK_METHOD(int,
+              InsertPacket,
+              (Packet && packet,
+               size_t last_decoded_length,
+               size_t sample_rate,
+               int target_level_ms),
+              (override));
   MOCK_METHOD(int,
               NextTimestamp,
               (uint32_t * next_timestamp),

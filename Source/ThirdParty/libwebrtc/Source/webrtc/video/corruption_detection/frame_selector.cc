@@ -12,6 +12,7 @@
 
 #include <algorithm>
 #include <cstdint>
+#include <optional>
 
 #include "api/environment/environment.h"
 #include "api/units/time_delta.h"
@@ -59,6 +60,12 @@ FrameSelector::FrameSelector(const Environment& env,
 
 bool FrameSelector::ShouldInstrumentFrame(const VideoFrame& raw_frame,
                                           const EncodedImage& encoded_frame) {
+  return ShouldInstrumentFrame(std::make_optional(raw_frame), encoded_frame);
+}
+
+bool FrameSelector::ShouldInstrumentFrame(
+    const std::optional<VideoFrame>& raw_frame,
+    const EncodedImage& encoded_frame) {
   int layer_id = std::max(encoded_frame.SpatialIndex().value_or(0),
                           encoded_frame.SimulcastIndex().value_or(0));
   if (encoded_frame.IsKey()) {
@@ -81,8 +88,11 @@ bool FrameSelector::ShouldInstrumentFrame(const VideoFrame& raw_frame,
         Timestamp::Millis(encoded_frame.RtpTimestamp() / kVideoRtpTicksPerMs);
   }
 
-  bool is_low_overhead =
-      CanNativelyHandleFormat(raw_frame.video_frame_buffer()->type());
+  bool is_low_overhead = true;
+  if (raw_frame.has_value()) {
+    is_low_overhead =
+        CanNativelyHandleFormat(raw_frame->video_frame_buffer()->type());
+  }
   const Timespan& span =
       is_low_overhead ? low_overhead_frame_span_ : high_overhead_frame_span_;
 

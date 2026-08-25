@@ -44,10 +44,6 @@ void SetRandomGenerator(std::unique_ptr<RandomGenerator> generator);
 // For testing, we can return predictable data.
 void SetRandomTestMode(bool test);
 
-// Initializes the RNG, and seeds it with the specified entropy.
-[[deprecated]] bool InitRandom(int seed);
-[[deprecated]] bool InitRandom(const char* seed, size_t len);
-
 // Generates a (cryptographically) random string of the given length.
 // We generate base64 values so that they will be printable.
 RTC_EXPORT std::string CreateRandomString(size_t length);

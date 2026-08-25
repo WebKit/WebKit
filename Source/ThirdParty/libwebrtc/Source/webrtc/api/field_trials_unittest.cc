@@ -13,6 +13,7 @@
 #include <memory>
 
 #include "absl/strings/str_cat.h"
+#include "api/environment/force_test_environment.h"
 #include "api/field_trials_view.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/containers/flat_set.h"
@@ -27,8 +28,14 @@ using ::testing::HasSubstr;
 using ::testing::IsNull;
 using ::testing::Not;
 using ::testing::NotNull;
+using ::testing::Test;
 
-TEST(FieldTrialsTest, EmptyStringHasNoEffect) {
+class FieldTrialsTest : public Test {
+ private:
+  AutoBypassTestEnvironmentCheck bypass_;
+};
+
+TEST_F(FieldTrialsTest, EmptyStringHasNoEffect) {
   FieldTrials f("");
   f.RegisterKeysForTesting({"MyCoolTrial"});
 
@@ -36,7 +43,7 @@ TEST(FieldTrialsTest, EmptyStringHasNoEffect) {
   EXPECT_FALSE(f.IsDisabled("MyCoolTrial"));
 }
 
-TEST(FieldTrialsTest, EnabledDisabledMustBeFirstInValue) {
+TEST_F(FieldTrialsTest, EnabledDisabledMustBeFirstInValue) {
   FieldTrials f(
       "MyCoolTrial/EnabledFoo/"
       "MyUncoolTrial/DisabledBar/"
@@ -48,7 +55,7 @@ TEST(FieldTrialsTest, EnabledDisabledMustBeFirstInValue) {
   EXPECT_FALSE(f.IsEnabled("AnotherTrial"));
 }
 
-TEST(FieldTrialsTest, FieldTrialsSupportSimultaneousInstances) {
+TEST_F(FieldTrialsTest, FieldTrialsSupportSimultaneousInstances) {
   FieldTrials f1("SomeString/Enabled/");
   FieldTrials f2("SomeOtherString/Enabled/");
   f1.RegisterKeysForTesting({"SomeString", "SomeOtherString"});
@@ -61,7 +68,7 @@ TEST(FieldTrialsTest, FieldTrialsSupportSimultaneousInstances) {
   EXPECT_TRUE(f2.IsEnabled("SomeOtherString"));
 }
 
-TEST(FieldTrialsTest, CreateAcceptsValidInputs) {
+TEST_F(FieldTrialsTest, CreateAcceptsValidInputs) {
   EXPECT_THAT(FieldTrials::Create(""), NotNull());
   EXPECT_THAT(FieldTrials::Create("Audio/Enabled/"), NotNull());
   EXPECT_THAT(FieldTrials::Create("Audio/Enabled/Video/Disabled/"), NotNull());
@@ -72,7 +79,7 @@ TEST(FieldTrialsTest, CreateAcceptsValidInputs) {
               NotNull());
 }
 
-TEST(FieldTrialsTest, CreateRejectsBadInputs) {
+TEST_F(FieldTrialsTest, CreateRejectsBadInputs) {
   // Bad delimiters
   EXPECT_THAT(FieldTrials::Create("Audio/EnabledVideo/Disabled/"), IsNull());
   EXPECT_THAT(FieldTrials::Create("Audio/Enabled//Video/Disabled/"), IsNull());
@@ -96,14 +103,14 @@ TEST(FieldTrialsTest, CreateRejectsBadInputs) {
               IsNull());
 }
 
-TEST(FieldTrialsTest, StringfiyMentionsKeysAndValues) {
+TEST_F(FieldTrialsTest, StringfiyMentionsKeysAndValues) {
   // Exact format of the stringification is undefined.
   EXPECT_THAT(absl::StrCat(FieldTrials("Audio/Enabled/Video/Value/")),
               AllOf(HasSubstr("Audio"), HasSubstr("Enabled"),
                     HasSubstr("Video"), HasSubstr("Value")));
 }
 
-TEST(FieldTrialsTest, MergeCombinesFieldTrials) {
+TEST_F(FieldTrialsTest, MergeCombinesFieldTrials) {
   FieldTrials f("Video/Value1/");
   FieldTrials other("Audio/Value2/");
 
@@ -114,7 +121,7 @@ TEST(FieldTrialsTest, MergeCombinesFieldTrials) {
   EXPECT_EQ(f.Lookup("Audio"), "Value2");
 }
 
-TEST(FieldTrialsTest, MergeGivesPrecedenceToOther) {
+TEST_F(FieldTrialsTest, MergeGivesPrecedenceToOther) {
   FieldTrials f("Audio/Disabled/Video/Enabled/");
   FieldTrials other("Audio/Enabled/");
 
@@ -124,7 +131,7 @@ TEST(FieldTrialsTest, MergeGivesPrecedenceToOther) {
   EXPECT_EQ(f.Lookup("Audio"), "Enabled");
 }
 
-TEST(FieldTrialsTest, MergeDoesntChangeTrialAbsentInOther) {
+TEST_F(FieldTrialsTest, MergeDoesntChangeTrialAbsentInOther) {
   FieldTrials f("Audio/Enabled/Video/Enabled/");
   FieldTrials other("Audio/Enabled/");
 
@@ -134,7 +141,7 @@ TEST(FieldTrialsTest, MergeDoesntChangeTrialAbsentInOther) {
   EXPECT_EQ(f.Lookup("Video"), "Enabled");
 }
 
-TEST(FieldTrialsTest, SetUpdatesTrial) {
+TEST_F(FieldTrialsTest, SetUpdatesTrial) {
   FieldTrials f("Audio/Enabled/Video/Enabled/");
 
   f.Set("Audio", "Disabled");
@@ -143,7 +150,7 @@ TEST(FieldTrialsTest, SetUpdatesTrial) {
   EXPECT_EQ(f.Lookup("Audio"), "Disabled");
 }
 
-TEST(FieldTrialsTest, SettingEmptyValueRemovesFieldTrial) {
+TEST_F(FieldTrialsTest, SettingEmptyValueRemovesFieldTrial) {
   FieldTrials f("Audio/Enabled/Video/Enabled/");
 
   f.Set("Audio", "");
@@ -159,7 +166,7 @@ TEST(FieldTrialsTest, SettingEmptyValueRemovesFieldTrial) {
   EXPECT_EQ(f2.Lookup("Audio"), "Disabled");
 }
 
-TEST(FieldTrialsTest, CreateCopy) {
+TEST_F(FieldTrialsTest, CreateCopy) {
   auto f = std::make_unique<FieldTrials>("Audio/Enabled/");
   f->RegisterKeysForTesting({"Audio"});
 
@@ -169,7 +176,7 @@ TEST(FieldTrialsTest, CreateCopy) {
   EXPECT_EQ(copy->Lookup("Audio"), "Enabled");
 }
 
-TEST(FieldTrials, Immutable) {
+TEST_F(FieldTrialsTest, Immutable) {
   FieldTrials f("Audio/Enabled/");
   f.RegisterKeysForTesting({"Audio"});
 
@@ -187,6 +194,26 @@ TEST(FieldTrials, Immutable) {
   EXPECT_DEATH(f.Set("Audio", "Enabled"), "");
 #endif
 }
+
+#if GTEST_HAS_DEATH_TEST && !defined(WEBRTC_ANDROID)
+TEST(FieldTrialsDeathTest, CreateCrashesWhenForced) {
+  EXPECT_DEATH(
+      {
+        SetForceTestEnvironment(true);
+        FieldTrials::Create("");
+      },
+      "FieldTrials::Create is not allowed in tests");
+}
+
+TEST(FieldTrialsDeathTest, ConstructorCrashesWhenForced) {
+  EXPECT_DEATH(
+      {
+        SetForceTestEnvironment(true);
+        FieldTrials f("");
+      },
+      "FieldTrials constructor is not allowed in tests");
+}
+#endif
 
 }  // namespace
 }  // namespace webrtc

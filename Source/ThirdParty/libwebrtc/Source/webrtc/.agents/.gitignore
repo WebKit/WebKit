@@ -1,0 +1,9 @@
+# Ignore everything in this directory
+*
+# Except this file
+!.gitignore
+
+# Allow tracking the skills directory and its README.md
+!skills/
+skills/*
+!skills/README.md

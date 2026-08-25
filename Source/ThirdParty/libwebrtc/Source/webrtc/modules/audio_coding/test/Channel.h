@@ -47,8 +47,8 @@ struct ACMTestPayloadStats {
 
 class Channel : public AudioPacketizationCallback {
  public:
-  Channel(int16_t chID = -1);
-  ~Channel() override;
+  Channel();
+  ~Channel() override = default;
 
   int32_t SendData(AudioFrameType frameType,
                    uint8_t payloadType,
@@ -68,8 +68,6 @@ class Channel : public AudioPacketizationCallback {
   void SetFECTestWithPacketLoss(bool usePacketLoss) {
     _useFECTestWithPacketLoss = usePacketLoss;
   }
-
-  double BitRate();
 
   void set_send_timestamp(uint32_t new_send_ts) {
     external_send_timestamp_ = new_send_ts;
@@ -92,8 +90,6 @@ class Channel : public AudioPacketizationCallback {
   uint8_t _payloadData[60 * 32 * 2 * 2];
 
   Mutex _channelCritSect;
-  FILE* _bitStreamFile;
-  bool _saveBitStream;
   int16_t _lastPayloadType;
   ACMTestPayloadStats _payloadStats[MAX_NUM_PAYLOADS];
   bool _isStereo;
@@ -105,8 +101,6 @@ class Channel : public AudioPacketizationCallback {
   // FEC Test variables
   int16_t _packetLoss;
   bool _useFECTestWithPacketLoss;
-  uint64_t _beginTime;
-  uint64_t _totalBytes;
 
   // External timing info, defaulted to -1. Only used if they are
   // non-negative.

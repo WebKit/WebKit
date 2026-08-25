@@ -135,16 +135,14 @@ FrameInstrumentationGeneratorImpl::OnEncodedImage(
                             captured_frames_.front().rtp_timestamp())) {
       captured_frames_.pop();
     }
-    if (captured_frames_.empty() || captured_frames_.front().rtp_timestamp() !=
-                                        rtp_timestamp_encoded_image) {
-      RTC_LOG(LS_VERBOSE) << "No captured frames for RTC timestamp "
-                          << rtp_timestamp_encoded_image << ".";
-      return std::nullopt;
-    }
-    captured_frame = captured_frames_.front();
-
-    if (encoded_image.is_end_of_temporal_unit()) {
-      captured_frames_.pop();
+    const bool has_captured_frame =
+        !captured_frames_.empty() &&
+        captured_frames_.front().rtp_timestamp() == rtp_timestamp_encoded_image;
+    if (has_captured_frame) {
+      captured_frame = captured_frames_.front();
+      if (encoded_image.is_end_of_temporal_unit()) {
+        captured_frames_.pop();
+      }
     }
 
     layer_id = GetSpatialLayerId(encoded_image);
@@ -195,31 +193,34 @@ FrameInstrumentationGeneratorImpl::OnEncodedImage(
 
     RTC_CHECK(data.SetSequenceIndex(sequence_index));
 
-    // TODO: bugs.webrtc.org/358039777 - Maybe allow other sample sizes as well
+    bool should_instrument = false;
     if (frame_selector_) {
-      if (frame_selector_->ShouldInstrumentFrame(*captured_frame,
-                                                 encoded_image)) {
-        sample_coordinates =
-            contexts_[layer_id].frame_sampler.GetSampleCoordinatesForFrame(
-                /*num_samples=*/13);
-      }
+      should_instrument =
+          frame_selector_->ShouldInstrumentFrame(captured_frame, encoded_image);
     } else {
-      sample_coordinates =
-          contexts_[layer_id]
-              .frame_sampler.GetSampleCoordinatesForFrameIfFrameShouldBeSampled(
-                  is_key_frame, captured_frame->rtp_timestamp(),
-                  /*num_samples=*/13);
+      should_instrument = contexts_[layer_id].frame_sampler.ShouldSampleFrame(
+          is_key_frame, encoded_image.RtpTimestamp());
     }
 
-    if (sample_coordinates.empty()) {
+    if (!should_instrument) {
       if (!is_key_frame) {
         return std::nullopt;
       }
       // Sync message only.
       return data;
     }
+
+    if (!captured_frame.has_value()) {
+      RTC_LOG(LS_VERBOSE) << "No captured frames for RTC timestamp "
+                          << rtp_timestamp_encoded_image << ".";
+      // Sync message only.
+      return data;
+    }
+
+    sample_coordinates =
+        contexts_[layer_id].frame_sampler.GetSampleCoordinatesForFrame(
+            /*num_samples=*/13);
   }
-  RTC_DCHECK(captured_frame.has_value());
   RTC_DCHECK(!sample_coordinates.empty());
 
   std::optional<CorruptionDetectionFilterSettings> filter_settings =

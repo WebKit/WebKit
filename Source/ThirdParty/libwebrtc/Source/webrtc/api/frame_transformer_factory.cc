@@ -10,25 +10,20 @@
 
 #include "api/frame_transformer_factory.h"
 
+#include <cstddef>
+#include <cstdint>
 #include <memory>
+#include <optional>
+#include <string>
+#include <vector>
 
 #include "api/frame_transformer_interface.h"
+#include "api/payload_type.h"
 #include "audio/channel_receive_frame_transformer_delegate.h"
 #include "audio/channel_send_frame_transformer_delegate.h"
 #include "modules/rtp_rtcp/source/rtp_sender_video_frame_transformer_delegate.h"
-#include "rtc_base/checks.h"
 
 namespace webrtc {
-
-std::unique_ptr<TransformableVideoFrameInterface> CreateVideoSenderFrame() {
-  RTC_CHECK_NOTREACHED();
-  return nullptr;
-}
-
-std::unique_ptr<TransformableVideoFrameInterface> CreateVideoReceiverFrame() {
-  RTC_CHECK_NOTREACHED();
-  return nullptr;
-}
 
 std::unique_ptr<TransformableAudioFrameInterface> CloneAudioFrame(
     TransformableAudioFrameInterface* original) {
@@ -43,6 +38,25 @@ std::unique_ptr<TransformableVideoFrameInterface> CloneVideoFrame(
   // At the moment, only making sender frames from receiver frames is
   // supported.
   return CloneSenderVideoFrame(original);
+}
+
+std::unique_ptr<TransformableAudioFrameInterface> CreateOutgoingAudioFrame(
+    TransformableAudioFrameInterface::FrameType frame_type,
+    PayloadType payload_type,
+    uint32_t rtp_timestamp_without_offset,
+    const uint8_t* payload_data,
+    size_t payload_size,
+    std::optional<uint64_t> absolute_capture_timestamp_ms,
+    uint32_t ssrc,
+    const std::vector<uint32_t>& csrcs,
+    const std::string& codec_mime_type,
+    std::optional<uint16_t> sequence_number,
+    std::optional<uint8_t> audio_level_dbov) {
+  return CreateSenderAudioFrame(
+      frame_type, payload_type.value(),
+      RtpTimestampWithoutOffset{rtp_timestamp_without_offset}, payload_data,
+      payload_size, absolute_capture_timestamp_ms, ssrc, csrcs, codec_mime_type,
+      sequence_number, audio_level_dbov);
 }
 
 }  // namespace webrtc

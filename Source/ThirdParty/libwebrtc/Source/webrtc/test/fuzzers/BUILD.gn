@@ -41,13 +41,14 @@ rtc_library("fuzz_data_helper") {
   ]
 }
 
-rtc_library("fuzz_data_helper_unittest") {
-  testonly = true
-  sources = [ "fuzz_data_helper_unittest.cc" ]
-  deps = [
-    ":fuzz_data_helper",
-    "..:test_support",
-  ]
+if (rtc_include_tests) {
+  rtc_cc_test("fuzz_data_helper_unittest") {
+    sources = [ "fuzz_data_helper_unittest.cc" ]
+    deps = [
+      ":fuzz_data_helper",
+      "..:test_support",
+    ]
+  }
 }
 
 set_defaults("webrtc_fuzzer_test") {
@@ -67,7 +68,8 @@ template("webrtc_fuzzer_test") {
         !defined(absl_deps),
         "`absl_deps` has been deprecated, add your Abseil dependencies to the `deps` variable.")
 
-    # Abseil dependencies need to be converted to //third_party/abseil-cpp:absl when build_with_chromium=true
+    # Abseil dependencies need to be converted to //third_party/abseil-cpp:absl
+    # when build_with_chromium=true
     if (build_with_chromium) {
       absl_dependencies =
           filter_labels_include(deps, [ "//third_party/abseil-cpp/*" ])
@@ -473,11 +475,17 @@ webrtc_fuzzer_test("residual_echo_detector_fuzzer") {
 
 webrtc_fuzzer_test("sdp_parser_fuzzer") {
   sources = [ "sdp_parser_fuzzer.cc" ]
-  deps = [
-    "../../api:jsep",
-    "../../pc:libjingle_peerconnection",
-  ]
+  deps = [ "../../api:jsep" ]
   seed_corpus = "corpora/sdp-corpus"
+}
+
+webrtc_fuzzer_test("simulcast_sdp_serializer_fuzzer") {
+  sources = [ "simulcast_sdp_serializer_fuzzer.cc" ]
+  deps = [
+    ":fuzz_data_helper",
+    "../../pc:simulcast_sdp_serializer",
+  ]
+  libfuzzer_options = [ "max_len=1024" ]
 }
 
 if (!build_with_chromium) {
@@ -494,7 +502,6 @@ if (!build_with_chromium) {
       "../../api:peer_connection_interface",
       "../../api:rtc_error_matchers",
       "../../pc:integration_test_helpers",
-      "../../pc:libjingle_peerconnection",
       "../../pc:pc_test_utils",
       "../../rtc_base:checks",
       "../../test:test_support",
@@ -848,6 +855,7 @@ group("fuzzers") {
     ":rtp_video_layers_allocation_fuzzer",
     ":sctp_utils_fuzzer",
     ":sdp_parser_fuzzer",
+    ":simulcast_sdp_serializer_fuzzer",
     ":ssl_certificate_fuzzer",
     ":string_to_number_fuzzer",
     ":stun_parser_fuzzer",

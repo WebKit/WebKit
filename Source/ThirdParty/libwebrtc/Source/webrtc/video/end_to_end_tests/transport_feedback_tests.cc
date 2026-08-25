@@ -18,6 +18,7 @@
 
 #include "api/call/transport.h"
 #include "api/environment/environment.h"
+#include "api/rtp_header_extension_id.h"
 #include "api/rtp_parameters.h"
 #include "api/test/simulated_network.h"
 #include "api/transport/bitrate_settings.h"
@@ -52,10 +53,7 @@
 
 namespace webrtc {
 namespace {
-enum : int {  // The first valid value is 1.
-  kTransportSequenceNumberExtensionId = 1,
-};
-}  // namespace
+constexpr RtpHeaderExtensionId kTransportSequenceNumberExtensionId(1);
 
 TEST(TransportFeedbackMultiStreamTest, AssignsTransportSequenceNumbers) {
   static constexpr int kSendRtxPayloadType = 98;
@@ -504,4 +502,5 @@ TEST_F(TransportFeedbackEndToEndTest, TransportSeqNumOnAudioAndVideo) {
   // message when the test fail.
   test.ExpectSuccessful();
 }
+}  // namespace
 }  // namespace webrtc

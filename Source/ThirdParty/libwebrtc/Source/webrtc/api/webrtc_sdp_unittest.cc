@@ -62,6 +62,7 @@ namespace {
 
 using ::testing::ElementsAre;
 using ::testing::Field;
+using ::testing::HasSubstr;
 using ::testing::IsNull;
 using ::testing::NotNull;
 using ::testing::Property;
@@ -83,7 +84,7 @@ constexpr char kFingerprint[] =
     "a=fingerprint:sha-1 "
     "4A:AD:B9:B1:3F:82:18:3B:54:02:12:DF:3E:5D:49:6B:19:E5:7C:AB\r\n";
 constexpr char kExtmapAllowMixed[] = "a=extmap-allow-mixed\r\n";
-constexpr int kExtmapId = 1;
+constexpr RtpHeaderExtensionId kExtmapId(1);
 constexpr char kExtmapUri[] = "http://example.com/082005/ext.htm#ttime";
 constexpr char kExtmap[] =
     "a=extmap:1 http://example.com/082005/ext.htm#ttime\r\n";
@@ -3221,6 +3222,10 @@ TEST_F(WebRtcSdpTest, DeserializeSdpWithInvalidAttributeValue) {
   // ssrc
   ExpectParseFailure("a=ssrc:1", "a=ssrc:badvalue");
   ExpectParseFailure("a=ssrc-group:FEC 2 3", "a=ssrc-group:FEC badvalue 3");
+  ExpectParseFailure(
+      "a=ssrc-group:FEC 2 3",
+      "a=ssrc-group:FEC 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 "
+      "22 23 24 25 26 27 28 29 30 31 32 33 34 35");
   // rtpmap
   ExpectParseFailure("a=rtpmap:111 ", "a=rtpmap:badvalue ");
   ExpectParseFailure("opus/48000/2", "opus/badvalue/2");
@@ -3254,6 +3259,49 @@ TEST_F(WebRtcSdpTest, DeserializeSdpWithInvalidAttributeValue) {
   ExpectParseFailureWithNewLines("a=mid:video_content_name\r\n",
                                  "a=extmap:badvalue http://example.com\r\n",
                                  "a=extmap:badvalue http://example.com");
+}
+
+TEST_F(WebRtcSdpTest, DeserializeSdpWithInvalidExtmapUri) {
+  // Test raw control characters
+  ExpectParseFailureWithNewLines("a=mid:video_content_name\r\n",
+                                 "a=extmap:1 http://example.com/\x01\r\n",
+                                 "a=extmap:1 http://example.com/\x01");
+
+  // Test percent-encoded control characters
+  ExpectParseFailureWithNewLines("a=mid:video_content_name\r\n",
+                                 "a=extmap:1 http://example.com/%0a\r\n",
+                                 "a=extmap:1 http://example.com/%0a");
+  ExpectParseFailureWithNewLines("a=mid:video_content_name\r\n",
+                                 "a=extmap:1 http://example.com/%0d\r\n",
+                                 "a=extmap:1 http://example.com/%0d");
+  ExpectParseFailureWithNewLines("a=mid:video_content_name\r\n",
+                                 "a=extmap:1 http://example.com/%1f\r\n",
+                                 "a=extmap:1 http://example.com/%1f");
+  ExpectParseFailureWithNewLines("a=mid:video_content_name\r\n",
+                                 "a=extmap:1 http://example.com/%7f\r\n",
+                                 "a=extmap:1 http://example.com/%7f");
+
+  // Test invalid percent encoding
+  ExpectParseFailureWithNewLines("a=mid:video_content_name\r\n",
+                                 "a=extmap:1 http://example.com/%\r\n",
+                                 "a=extmap:1 http://example.com/%");
+  ExpectParseFailureWithNewLines("a=mid:video_content_name\r\n",
+                                 "a=extmap:1 http://example.com/%7\r\n",
+                                 "a=extmap:1 http://example.com/%7");
+  ExpectParseFailureWithNewLines("a=mid:video_content_name\r\n",
+                                 "a=extmap:1 http://example.com/%7g\r\n",
+                                 "a=extmap:1 http://example.com/%7g");
+
+  // Test valid percent-encoded characters (should succeed)
+  std::string sdp_with_valid_percent =
+      "v=0\r\n"
+      "o=- 18446744069414584320 18446462598732840960 IN IP4 127.0.0.1\r\n"
+      "s=-\r\n"
+      "t=0 0\r\n"
+      "m=video 9 RTP/SAVPF 100\r\n"
+      "a=mid:video_content_name\r\n"
+      "a=extmap:1 http://example.com/foo%20bar\r\n";
+  EXPECT_THAT(SdpDeserialize(sdp_with_valid_percent), NotNull());
 }
 
 TEST_F(WebRtcSdpTest, DeserializeSdpWithReorderedPltypes) {
@@ -3318,6 +3366,51 @@ TEST_F(WebRtcSdpTest, DeserializeSerializeRtcpWithCcfb) {
   TestDeserializeRtcpFb(jdesc_output, /* use_wildcard= */ true,
                         /* use_ccfb= */ true);
   TestSerialize(jdesc_output);
+}
+
+TEST_F(WebRtcSdpTest, DeserializeSerializeRtcpXrRcvrRtt) {
+  const char kSdpWithRcvrRtt[] =
+      "v=0\r\n"
+      "o=- 18446744069414584320 18446462598732840960 IN IP4 127.0.0.1\r\n"
+      "s=-\r\n"
+      "t=0 0\r\n"
+      "m=audio 9 RTP/SAVPF 111\r\n"
+      "a=rtpmap:111 opus/48000/2\r\n"
+      "a=rtcp-xr:rcvr-rtt=all\r\n";
+
+  // Deserialize: rcvr-rtt sets the single receive-non-sender-RTT flag.
+  std::unique_ptr<SessionDescriptionInterface> jdesc =
+      SdpDeserialize(kSdpWithRcvrRtt);
+  ASSERT_THAT(jdesc, NotNull());
+  const AudioContentDescription* acd =
+      GetFirstAudioContentDescription(jdesc->description());
+  ASSERT_THAT(acd, NotNull());
+  EXPECT_TRUE(acd->receive_non_sender_rtt());
+
+  // Serialize: the flag emits BOTH the standard rtcp-xr and the legacy
+  // rtcp-fb rrtr wire forms (interim backward-compat).
+  std::string reserialized = SdpSerialize(*jdesc);
+  EXPECT_THAT(reserialized, HasSubstr("a=rtcp-xr:rcvr-rtt=all"));
+  EXPECT_THAT(reserialized, HasSubstr("a=rtcp-fb:111 rrtr"));
+}
+
+// The legacy non-standard a=rtcp-fb:<pt> rrtr also sets the flag on parse.
+TEST_F(WebRtcSdpTest, DeserializeLegacyRtcpFbRrtr) {
+  const char kSdpWithFbRrtr[] =
+      "v=0\r\n"
+      "o=- 18446744069414584320 18446462598732840960 IN IP4 127.0.0.1\r\n"
+      "s=-\r\n"
+      "t=0 0\r\n"
+      "m=audio 9 RTP/SAVPF 111\r\n"
+      "a=rtpmap:111 opus/48000/2\r\n"
+      "a=rtcp-fb:111 rrtr\r\n";
+  std::unique_ptr<SessionDescriptionInterface> jdesc =
+      SdpDeserialize(kSdpWithFbRrtr);
+  ASSERT_THAT(jdesc, NotNull());
+  const AudioContentDescription* acd =
+      GetFirstAudioContentDescription(jdesc->description());
+  ASSERT_THAT(acd, NotNull());
+  EXPECT_TRUE(acd->receive_non_sender_rtt());
 }
 
 TEST_F(WebRtcSdpTest, DeserializeVideoFmtp) {
@@ -3928,29 +4021,6 @@ TEST_F(WebRtcSdpTest, DeserializingNegativeBandwidthLimitFails) {
   ExpectParseFailure(std::string(kSdpWithNegativeBandwidth), "b=AS:-1000");
 }
 
-// An exception to the above rule: a value of -1 for b=AS should just be
-// ignored, resulting in "kAutoBandwidth" in the deserialized object.
-// Applications historically may be using "b=AS:-1" to mean "no bandwidth
-// limit", but this is now what ommitting the attribute entirely will do, so
-// ignoring it will have the intended effect.
-TEST_F(WebRtcSdpTest, BandwidthLimitOfNegativeOneIgnored) {
-  static const char kSdpWithBandwidthOfNegativeOne[] =
-      "v=0\r\n"
-      "o=- 18446744069414584320 18446462598732840960 IN IP4 127.0.0.1\r\n"
-      "s=-\r\n"
-      "t=0 0\r\n"
-      "m=video 3457 RTP/SAVPF 120\r\n"
-      "b=AS:-1\r\n";
-
-  std::unique_ptr<SessionDescriptionInterface> jdesc_output =
-      SdpDeserialize(kSdpWithBandwidthOfNegativeOne);
-  ASSERT_THAT(jdesc_output, NotNull());
-  const VideoContentDescription* vcd =
-      GetFirstVideoContentDescription(jdesc_output->description());
-  ASSERT_THAT(vcd, NotNull());
-  EXPECT_EQ(kAutoBandwidth, vcd->bandwidth());
-}
-
 TEST_F(WebRtcSdpTest, SdpBandwidthMetrics) {
   metrics::Reset();
   auto get_sdp = [](absl::string_view value) {
@@ -3964,10 +4034,11 @@ TEST_F(WebRtcSdpTest, SdpBandwidthMetrics) {
     return sb.Release();
   };
 
-  // kSdpBandwidthNegativeOne
+  // This used to be kSdpBandwidthNegativeOne, but special
+  // treatment is removed.
   SdpDeserialize(get_sdp("-1"));
   EXPECT_METRIC_EQ(1, metrics::NumEvents("WebRTC.PeerConnection.SdpBandwidth",
-                                         kSdpBandwidthNegativeOne));
+                                         kSdpBandwidthNegative));
 
   // kSdpBandwidthZero
   SdpDeserialize(get_sdp("0"));
@@ -3986,7 +4057,7 @@ TEST_F(WebRtcSdpTest, SdpBandwidthMetrics) {
 
   // kSdpBandwidthNegative
   SdpDeserialize(get_sdp("-1000"));
-  EXPECT_METRIC_EQ(1, metrics::NumEvents("WebRTC.PeerConnection.SdpBandwidth",
+  EXPECT_METRIC_EQ(2, metrics::NumEvents("WebRTC.PeerConnection.SdpBandwidth",
                                          kSdpBandwidthNegative));
 
   // kSdpBandwidthParseFailure
@@ -5267,6 +5338,32 @@ TEST_F(WebRtcSdpTest, SframeAttributeRoundTrip) {
                   ->contents()[1]
                   .media_description()
                   ->sframe_enabled());
+}
+
+TEST_F(WebRtcSdpTest, DeserializeSdpWithZeroExtmapId) {
+  std::string sdp = kSdpString;
+  std::string invalid_extmap =
+      "a=extmap:0 http://example.com/082005/ext.htm#ttime\r\n";
+  InjectAfter("a=mid:audio_content_name\r\n", invalid_extmap, &sdp);
+  SdpParseError error;
+  std::unique_ptr<SessionDescriptionInterface> output =
+      SdpDeserialize(sdp, &error);
+
+  ASSERT_THAT(output, IsNull());
+  EXPECT_EQ(error.line, "a=extmap:0 http://example.com/082005/ext.htm#ttime");
+}
+
+TEST_F(WebRtcSdpTest, DeserializeSdpWithTooLargeExtmapId) {
+  std::string sdp = kSdpString;
+  std::string invalid_extmap =
+      "a=extmap:256 http://example.com/082005/ext.htm#ttime\r\n";
+  InjectAfter("a=mid:audio_content_name\r\n", invalid_extmap, &sdp);
+  SdpParseError error;
+  std::unique_ptr<SessionDescriptionInterface> output =
+      SdpDeserialize(sdp, &error);
+
+  ASSERT_THAT(output, IsNull());
+  EXPECT_EQ(error.line, "a=extmap:256 http://example.com/082005/ext.htm#ttime");
 }
 
 }  // namespace

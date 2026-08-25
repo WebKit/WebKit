@@ -67,11 +67,11 @@ class RTC_EXPORT VideoFrameMetadata {
   int GetTemporalIndex() const;
   void SetTemporalIndex(int temporal_index);
 
-  // TODO: https://issues.webrtc.org/515776877 - Deprecate and remove this
-  // method.
+  // TODO: https://issues.webrtc.org/515776877 - Remove this method.
+  [[deprecated("Use GetDependencies instead")]]
   std::span<const int64_t> GetFrameDependencies() const;
-  // TODO: https://issues.webrtc.org/515776877 - Deprecate and remove this
-  // method.
+  // TODO: https://issues.webrtc.org/515776877 - Remove this method.
+  [[deprecated("Use SetDependencies instead")]]
   void SetFrameDependencies(std::span<const int64_t> frame_dependencies);
   std::optional<std::span<const int64_t>> GetDependencies() const;
   void SetDependencies(std::optional<std::span<const int64_t>> dependencies);

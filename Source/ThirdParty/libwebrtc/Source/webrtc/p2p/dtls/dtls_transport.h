@@ -159,14 +159,6 @@ class DtlsTransportInternalImpl : public DtlsTransportInternal {
       SSLProtocolVersion max_version = SSL_PROTOCOL_DTLS_12,
       SslStreamFactory ssl_stream_factory = nullptr);
 
-  // This is only here while there is code outside of webrtc that calls it.
-  [[deprecated("Using internal webrtc code from outside webrtc?")]]
-  DtlsTransportInternalImpl(
-      const Environment& env,
-      IceTransportInternal* ice_transport,
-      const CryptoOptions& crypto_options,
-      SSLProtocolVersion max_version = SSL_PROTOCOL_DTLS_12,
-      SslStreamFactory ssl_stream_factory = nullptr);
 
   ~DtlsTransportInternalImpl() override;
 

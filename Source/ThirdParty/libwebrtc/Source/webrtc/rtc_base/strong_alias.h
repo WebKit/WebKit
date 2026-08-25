@@ -50,20 +50,8 @@ class StrongAlias {
   constexpr bool operator==(const StrongAlias& other) const {
     return value_ == other.value_;
   }
-  constexpr bool operator!=(const StrongAlias& other) const {
-    return value_ != other.value_;
-  }
-  constexpr bool operator<(const StrongAlias& other) const {
-    return value_ < other.value_;
-  }
-  constexpr bool operator<=(const StrongAlias& other) const {
-    return value_ <= other.value_;
-  }
-  constexpr bool operator>(const StrongAlias& other) const {
-    return value_ > other.value_;
-  }
-  constexpr bool operator>=(const StrongAlias& other) const {
-    return value_ >= other.value_;
+  constexpr auto operator<=>(const StrongAlias& other) const {
+    return value_ <=> other.value_;
   }
 
  protected:

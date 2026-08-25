@@ -68,7 +68,7 @@ RtpPacketSimulator::SimulateRtpPacketReceived(
   std::vector<uint8_t> payload(payload_size, 0u);  // Zero initialize.
   bool has_rtx_osn = logged_packet.rtx_original_sequence_number.has_value();
   if (has_rtx_osn) {
-    if (payload.size() < kRtpHeaderSize) {
+    if (payload.size() < kRtxHeaderSize) {
       RTC_LOG(LS_WARNING) << "Packet was logged with RTX OSN, but payload size "
                              "could not fit it";
     } else {

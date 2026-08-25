@@ -94,6 +94,9 @@ class VoiceChannelFactoryInterface {
   virtual ~VoiceChannelFactoryInterface() = default;
 
   // Safe to be called from the signaling thread.
+  // The `options` parameter configures stream/channel-specific settings (e.g.,
+  // jitter buffer, ANA). Global options (like AEC, AGC, NS) should be
+  // configured directly at the engine level via ApplyGlobalOptions.
   virtual std::unique_ptr<VoiceMediaSendChannelInterface> CreateSendChannel(
       const Environment& env,
       Call* call,
@@ -103,6 +106,9 @@ class VoiceChannelFactoryInterface {
       absl::AnyInvocable<void()> parameters_changed_callback = nullptr) = 0;
 
   // Safe to be called from the signaling thread.
+  // The `options` parameter configures stream/channel-specific settings (e.g.,
+  // jitter buffer). Global options (like AEC, AGC, NS) should be configured
+  // directly at the engine level via ApplyGlobalOptions.
   virtual std::unique_ptr<VoiceMediaReceiveChannelInterface>
   CreateReceiveChannel(const Environment& env,
                        Call* call,
@@ -137,7 +143,6 @@ class VideoChannelFactoryInterface {
   CreateReceiveChannel(const Environment& env,
                        Call* call,
                        const MediaConfig& config,
-                       const VideoOptions& options,
                        const CryptoOptions& crypto_options) = 0;
 };
 
@@ -155,6 +160,8 @@ class VoiceEngineInterface : public RtpHeaderExtensionQueryInterface,
   virtual void Init() = 0;
   // Stops the engine.
   virtual void Terminate() = 0;
+  // Applies global options (like APM settings) to the engine.
+  virtual void ApplyGlobalOptions(const AudioOptions& options) = 0;
 
   // TODO(solenberg): Remove once VoE API refactoring is done.
   virtual scoped_refptr<AudioState> GetAudioState() const = 0;
@@ -226,7 +233,6 @@ class VideoEngineInterface : public RtpHeaderExtensionQueryInterface,
       const Environment& env,
       Call* call,
       const MediaConfig& config,
-      const VideoOptions& options,
       const CryptoOptions& crypto_options) override = 0;
 
   // Legacy: Retrieve list of supported codecs.
@@ -303,7 +309,8 @@ RtpParameters CreateRtpParametersWithEncodings(StreamParams sp);
 // GetCapabilities(). The returned vector only shows what will definitely be
 // offered by default, i.e. the list of extensions returned from
 // GetRtpHeaderExtensions() that are not kStopped.
-std::vector<RtpExtension> GetDefaultEnabledRtpHeaderExtensions(
+std::vector<RtpHeaderExtensionCapability>
+GetDefaultEnabledRtpHeaderCapabilities(
     const RtpHeaderExtensionQueryInterface& query_interface,
     const FieldTrialsView* field_trials);
 

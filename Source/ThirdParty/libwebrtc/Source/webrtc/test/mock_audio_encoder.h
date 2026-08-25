@@ -19,6 +19,7 @@
 
 #include "absl/strings/string_view.h"
 #include "api/audio_codecs/audio_encoder.h"
+#include "api/call/bitrate_allocation.h"
 #include "api/units/data_rate.h"
 #include "api/units/time_delta.h"
 #include "rtc_base/buffer.h"
@@ -51,9 +52,8 @@ class MockAudioEncoder : public AudioEncoder {
   MOCK_METHOD(bool, SetApplication, (Application application), (override));
   MOCK_METHOD(void, SetMaxPlaybackRate, (int frequency_hz), (override));
   MOCK_METHOD(void,
-              OnReceivedUplinkBandwidth,
-              (int target_audio_bitrate_bps,
-               std::optional<int64_t> probing_interval_ms),
+              OnReceivedUplinkAllocation,
+              (BitrateAllocationUpdate update),
               (override));
   MOCK_METHOD(void,
               OnReceivedUplinkPacketLossFraction,

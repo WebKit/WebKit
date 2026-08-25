@@ -27,14 +27,16 @@ void CreateFractionLossGraph(const ParsedRtcEventLog& parsed_log,
 
 void CreateTotalIncomingBitrateGraph(const ParsedRtcEventLog& parsed_log,
                                      const AnalyzerConfig& config,
-                                     Plot* plot);
+                                     Plot* plot,
+                                     bool include_overhead = true);
 
 void CreateTotalOutgoingBitrateGraph(const ParsedRtcEventLog& parsed_log,
                                      const AnalyzerConfig& config,
                                      Plot* plot,
                                      bool show_detector_state = false,
                                      bool show_alr_state = false,
-                                     bool show_link_capacity = false);
+                                     bool show_link_capacity = false,
+                                     bool include_overhead = true);
 
 void CreateGoogCcSimulationGraph(const ParsedRtcEventLog& parsed_log,
                                  const AnalyzerConfig& config,

@@ -10,6 +10,7 @@
 
 #include "modules/rtp_rtcp/source/rtp_format.h"
 
+#include <cstddef>
 #include <cstdint>
 #include <memory>
 #include <span>
@@ -24,6 +25,8 @@
 #include "modules/video_coding/codecs/vp8/include/vp8_globals.h"
 #include "modules/video_coding/codecs/vp9/include/vp9_globals.h"
 #include "rtc_base/checks.h"
+#include "rtc_base/numerics/safe_compare.h"
+
 #ifdef RTC_ENABLE_H265
 #include "modules/rtp_rtcp/source/rtp_packetizer_h265.h"
 #endif
@@ -77,19 +80,22 @@ std::unique_ptr<RtpPacketizer> RtpPacketizer::Create(
 }
 
 std::vector<int> RtpPacketizer::SplitAboutEqually(
-    int payload_len,
+    size_t payload_size,
     const PayloadSizeLimits& limits) {
-#ifdef WEBRTC_WEBKIT_BUILD
-  if (payload_len == 0)
-    return { };
-#else
-  RTC_DCHECK_GT(payload_len, 0);
-#endif
   // First or last packet larger than normal are unsupported.
   RTC_DCHECK_GE(limits.first_packet_reduction_len, 0);
   RTC_DCHECK_GE(limits.last_packet_reduction_len, 0);
 
   std::vector<int> result;
+  if (payload_size == 0 ||
+      SafeGt(payload_size, limits.max_payload_len * 0x7000)) {
+    // Do not support frames that are so large they need almost half of the RTP
+    // sequence number space. With MTU ~= 1.2KB that puts a limit of ~34MB on a
+    // single frame. Sending such large frames over RTP is likely impractical.
+    return result;
+  }
+  int payload_len = static_cast<int>(payload_size);
+
   if (limits.max_payload_len >=
       limits.single_packet_reduction_len + payload_len) {
     result.push_back(payload_len);

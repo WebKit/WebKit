@@ -19,7 +19,7 @@
 #include <vector>
 
 #include "absl/strings/string_view.h"
-#include "api/field_trials.h"
+#include "api/environment/environment.h"
 #include "api/make_ref_counted.h"
 #include "api/rtp_header_extension_id.h"
 #include "api/transport/ecn_marking.h"
@@ -39,7 +39,7 @@
 #include "rtc_base/copy_on_write_buffer.h"
 #include "rtc_base/rtc_certificate.h"
 #include "rtc_base/ssl_identity.h"
-#include "test/create_test_field_trials.h"
+#include "test/create_test_environment.h"
 #include "test/gtest.h"
 #include "test/run_loop.h"
 
@@ -65,8 +65,8 @@ class DtlsSrtpTransportTest : public ::testing::Test {
       FakeDtlsTransport* rtp_dtls,
       FakeDtlsTransport* rtcp_dtls,
       bool rtcp_mux_enabled) {
-    auto dtls_srtp_transport =
-        std::make_unique<DtlsSrtpTransport>(rtcp_mux_enabled, field_trials_);
+    auto dtls_srtp_transport = std::make_unique<DtlsSrtpTransport>(
+        rtcp_mux_enabled, env_.field_trials());
 
     dtls_srtp_transport->SetDtlsTransports(rtp_dtls, rtcp_dtls);
 
@@ -264,22 +264,23 @@ class DtlsSrtpTransportTest : public ::testing::Test {
     SendRecvRtcpPackets();
   }
 
+  std::unique_ptr<FakeDtlsTransport> CreateFakeDtlsTransport(
+      absl::string_view name,
+      int component) {
+    return std::make_unique<FakeDtlsTransport>(
+        make_ref_counted<FakeIceTransport>(
+            std::make_unique<FakeIceTransportInternal>(env_, name, component)));
+  }
+
   test::RunLoop main_thread_;
+  const Environment env_ = CreateTestEnvironment();
   std::unique_ptr<DtlsSrtpTransport> dtls_srtp_transport1_;
   std::unique_ptr<DtlsSrtpTransport> dtls_srtp_transport2_;
   TransportObserver transport_observer1_;
   TransportObserver transport_observer2_;
 
   int sequence_number_ = 0;
-  FieldTrials field_trials_ = CreateTestFieldTrials();
 };
-
-std::unique_ptr<FakeDtlsTransport> CreateFakeDtlsTransport(
-    absl::string_view name,
-    int component) {
-  return std::make_unique<FakeDtlsTransport>(make_ref_counted<FakeIceTransport>(
-      std::make_unique<FakeIceTransportInternal>(name, component)));
-}
 
 // Tests that if RTCP muxing is enabled and transports are set after RTP
 // transport finished the handshake, SRTP is set up.
@@ -401,11 +402,11 @@ TEST_F(DtlsSrtpTransportTest, DtlsSrtpResetAfterDtlsTransportChange) {
   EXPECT_TRUE(dtls_srtp_transport2_->IsSrtpActive());
 
   auto rtp_ice3 = std::make_unique<FakeIceTransportInternal>(
-      "audio", ICE_CANDIDATE_COMPONENT_RTP);
+      env_, "audio", ICE_CANDIDATE_COMPONENT_RTP);
   auto rtp_dtls3 = std::make_unique<FakeDtlsTransport>(
       make_ref_counted<FakeIceTransport>(std::move(rtp_ice3)));
   auto rtp_ice4 = std::make_unique<FakeIceTransportInternal>(
-      "audio", ICE_CANDIDATE_COMPONENT_RTP);
+      env_, "audio", ICE_CANDIDATE_COMPONENT_RTP);
   auto rtp_dtls4 = std::make_unique<FakeDtlsTransport>(
       make_ref_counted<FakeIceTransport>(std::move(rtp_ice4)));
 

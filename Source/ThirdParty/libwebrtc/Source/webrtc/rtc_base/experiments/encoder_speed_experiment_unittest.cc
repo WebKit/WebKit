@@ -13,31 +13,34 @@
 #include "api/field_trials.h"
 #include "api/video/video_codec_type.h"
 #include "api/video_codecs/video_codec.h"
+#include "test/create_test_field_trials.h"
 #include "test/gtest.h"
 
 namespace webrtc {
 namespace {
 
 TEST(EncoderSpeedExperimentTest, EnabledByDefault) {
-  FieldTrials field_trials("");
+  FieldTrials field_trials = CreateTestFieldTrials("");
   EncoderSpeedExperiment config(field_trials);
   EXPECT_TRUE(config.IsDynamicSpeedEnabled());
 }
 
 TEST(EncoderSpeedExperimentTest, DynamicSpeedEnabled) {
-  FieldTrials field_trials("WebRTC-EncoderSpeed/dynamic_speed:true/");
+  FieldTrials field_trials =
+      CreateTestFieldTrials("WebRTC-EncoderSpeed/dynamic_speed:true/");
   EncoderSpeedExperiment config(field_trials);
   EXPECT_TRUE(config.IsDynamicSpeedEnabled());
 }
 
 TEST(EncoderSpeedExperimentTest, DynamicSpeedExplicitlyDisabled) {
-  FieldTrials field_trials("WebRTC-EncoderSpeed/dynamic_speed:false/");
+  FieldTrials field_trials =
+      CreateTestFieldTrials("WebRTC-EncoderSpeed/dynamic_speed:false/");
   EncoderSpeedExperiment config(field_trials);
   EXPECT_FALSE(config.IsDynamicSpeedEnabled());
 }
 
 TEST(EncoderSpeedExperimentTest, DefaultComplexity) {
-  FieldTrials field_trials("");
+  FieldTrials field_trials = CreateTestFieldTrials("");
   EncoderSpeedExperiment config(field_trials);
 
   // New defaults for AV1.
@@ -57,7 +60,7 @@ TEST(EncoderSpeedExperimentTest, DefaultComplexity) {
 }
 
 TEST(EncoderSpeedExperimentTest, PerCodecComplexity) {
-  FieldTrials field_trials(
+  FieldTrials field_trials = CreateTestFieldTrials(
       "WebRTC-EncoderSpeed/"
       "dynamic_speed:true,av1_camera:high,av1_screenshare:low,vp8_camera:max/");
 
@@ -84,7 +87,7 @@ TEST(EncoderSpeedExperimentTest, PerCodecComplexity) {
 }
 
 TEST(EncoderSpeedExperimentTest, PerCodecComplexityDynamicSpeedDisabled) {
-  FieldTrials field_trials(
+  FieldTrials field_trials = CreateTestFieldTrials(
       "WebRTC-EncoderSpeed/"
       "dynamic_speed:false,av1_camera:high,av1_screenshare:low/");
 
@@ -99,7 +102,7 @@ TEST(EncoderSpeedExperimentTest, PerCodecComplexityDynamicSpeedDisabled) {
 }
 
 TEST(EncoderSpeedExperimentTest, InvalidCodecComplexityValue) {
-  FieldTrials field_trials(
+  FieldTrials field_trials = CreateTestFieldTrials(
       "WebRTC-EncoderSpeed/"
       "dynamic_speed:true,vp8_camera:invalid,vp8_screenshare:max/");
 
@@ -112,7 +115,8 @@ TEST(EncoderSpeedExperimentTest, InvalidCodecComplexityValue) {
 }
 
 TEST(EncoderSpeedExperimentTest, InvalidDynamicSpeedValue) {
-  FieldTrials field_trials("WebRTC-EncoderSpeed/dynamic_speed:invalid/");
+  FieldTrials field_trials =
+      CreateTestFieldTrials("WebRTC-EncoderSpeed/dynamic_speed:invalid/");
   EncoderSpeedExperiment config(field_trials);
   EXPECT_TRUE(config.IsDynamicSpeedEnabled());  // Should default to true
 }
@@ -120,7 +124,7 @@ TEST(EncoderSpeedExperimentTest, InvalidDynamicSpeedValue) {
 TEST(EncoderSpeedExperimentTest, Vp9LowComplexityFallbackEnabled) {
   for (std::string trial : {"WebRTC-EncoderSpeed/dynamic_speed:true/",
                             "WebRTC-EncoderSpeed/dynamic_speed:false/"}) {
-    FieldTrials field_trials(trial);
+    FieldTrials field_trials = CreateTestFieldTrials(trial);
     EncoderSpeedExperiment config(field_trials,
                                   /*use_low_complexity_for_vp9=*/true);
 
@@ -145,7 +149,7 @@ TEST(EncoderSpeedExperimentTest,
         "dynamic_speed:false,vp9_camera:high,vp9_screenshare:max/",
         "WebRTC-EncoderSpeed/"
         "dynamic_speed:true,vp9_camera:high,vp9_screenshare:max/"}) {
-    FieldTrials field_trials(trial);
+    FieldTrials field_trials = CreateTestFieldTrials(trial);
     EncoderSpeedExperiment config(field_trials,
                                   /*use_low_complexity_for_vp9=*/true);
 
@@ -158,7 +162,8 @@ TEST(EncoderSpeedExperimentTest,
 }
 
 TEST(EncoderSpeedExperimentTest, Vp9LowComplexityFallbackDisabled) {
-  FieldTrials field_trials("WebRTC-EncoderSpeed/dynamic_speed:true/");
+  FieldTrials field_trials =
+      CreateTestFieldTrials("WebRTC-EncoderSpeed/dynamic_speed:true/");
   EncoderSpeedExperiment config(field_trials,
                                 /*use_low_complexity_for_vp9=*/false);
 

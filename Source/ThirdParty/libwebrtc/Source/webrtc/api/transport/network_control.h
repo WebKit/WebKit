@@ -19,6 +19,7 @@
 #include "api/field_trials_view.h"
 #include "api/transport/network_types.h"
 #include "api/units/data_rate.h"
+#include "api/units/data_size.h"
 #include "api/units/time_delta.h"
 
 namespace webrtc {
@@ -32,6 +33,8 @@ class TargetTransferRateObserver {
   // Called to provide updates to the expected target rate in case it changes
   // before the first call to OnTargetTransferRate.
   virtual void OnStartRateUpdate(DataRate) {}
+  // Called to indicate a change in transport overhead per packet.
+  virtual void OnTransportOverheadChanged(DataSize) {}
 };
 
 // Configuration sent to factory create function. The parameters here are
