@@ -1,0 +1,55 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ UnifyDamagedRegions=false ] -->
+<html lang="en">
+  <head>
+    <link rel="stylesheet" href="./common.css">
+    <style>
+      body {
+          margin-top: 50px;
+      }
+      .rect {
+          position: relative;
+          width: 64px;
+          height: 64px;
+          margin-left: 50px;
+          background-color: green;
+          will-change: transform;
+          animation-name: animate;
+          animation-duration: 5s;
+          animation-iteration-count: infinite;
+          animation-timing-function: linear;
+      }
+      /* Composited on its own and outside the parent bounds, so the parent damage cannot cover it. */
+      .descendant {
+          position: absolute;
+          left: 80px;
+          top: 0;
+          width: 64px;
+          height: 64px;
+          background-color: blue;
+          will-change: transform;
+      }
+      @keyframes animate {
+          from { opacity: 1.0; }
+          to { opacity: 0.15; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="rect">
+      <div class="descendant"></div>
+    </div>
+    <script src="./common.js"></script>
+    <script>
+      setupTestCase({disableConsoleLog: true});
+
+      setTimeout(() => {
+          var damage = latestFrameDamage();
+          if (!assertRectsEq(damage.rects, [[50, 50, 64, 64], [130, 50, 64, 64]])) {
+              failTest(`FAIL: ${failure}`);
+              return;
+          }
+          passTest();
+      }, 2000);
+    </script>
+  </body>
+</html>
