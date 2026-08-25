@@ -1748,6 +1748,7 @@
 		7BFAF8F92DE6EE7A00327F7F /* AstcDecompressor_unittest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF8F62DE6EE7A00327F7F /* AstcDecompressor_unittest.cpp */; };
 		7BFAF8FA2DE6EE7A00327F7F /* LoadToNative_unittest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF8F82DE6EE7A00327F7F /* LoadToNative_unittest.cpp */; };
 		7BFAF8FF2DE6F67600327F7F /* libutils.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7BFAF8232DE6EADC00327F7F /* libutils.a */; };
+		7BFAF9022DE6ECA700327F7F /* MSLSymbolEnv_test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BFAF9012DE6ECA700327F7F /* MSLSymbolEnv_test.cpp */; };
 		7BFAF9122DE6F85B00327F7F /* TranslatorESSL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B359DC42A7CEE9C0016DC59 /* TranslatorESSL.cpp */; };
 		7BFAF9132DE6F85B00327F7F /* BuiltInFunctionEmulatorGLSL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B359DC22A7CEE9C0016DC59 /* BuiltInFunctionEmulatorGLSL.cpp */; };
 		7BFAF9142DE6F85B00327F7F /* TranslatorGLSL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B359DCC2A7CEE9D0016DC59 /* TranslatorGLSL.cpp */; };
@@ -4158,6 +4159,7 @@
 		7BFAF8F72DE6EE7A00327F7F /* AstcDecompressorTestUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AstcDecompressorTestUtils.h; sourceTree = "<group>"; };
 		7BFAF8F82DE6EE7A00327F7F /* LoadToNative_unittest.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LoadToNative_unittest.cpp; sourceTree = "<group>"; };
 		7BFAF8FB2DE6F43700327F7F /* utils.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = utils.xcconfig; sourceTree = "<group>"; };
+		7BFAF9012DE6ECA700327F7F /* MSLSymbolEnv_test.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MSLSymbolEnv_test.cpp; sourceTree = "<group>"; };
 		7BFAF91A2DE6F8B500327F7F /* compiler_test.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = compiler_test.h; sourceTree = "<group>"; };
 		7BFAF91B2DE6F8B500327F7F /* compiler_test.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = compiler_test.cpp; sourceTree = "<group>"; };
 		7BFAF91E2DE6F8B500327F7F /* ShaderCompileTreeTest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ShaderCompileTreeTest.h; sourceTree = "<group>"; };
@@ -6736,6 +6738,7 @@
 				7BFAF8532DE6ECA700327F7F /* ImmutableString_test_autogen.cpp */,
 				7BFAF8562DE6ECA700327F7F /* IntermNode_test.cpp */,
 				7BFAF8582DE6ECA700327F7F /* MSLOutput_test.cpp */,
+				7BFAF9012DE6ECA700327F7F /* MSLSymbolEnv_test.cpp */,
 				7BFAF8762DE6ECA700327F7F /* Type_test.cpp */,
 				7BFAF87A2DE6ECA700327F7F /* VariablePacker_test.cpp */,
 			);
@@ -10879,6 +10882,7 @@
 				7BFAF8E72DE6EDE400327F7F /* matrix_utils_unittest.cpp in Sources */,
 				7BFAF8EC2DE6EDE400327F7F /* MemoryBuffer_unittest.cpp in Sources */,
 				7BFAF8A72DE6ECA700327F7F /* MSLOutput_test.cpp in Sources */,
+				7BFAF9022DE6ECA700327F7F /* MSLSymbolEnv_test.cpp in Sources */,
 				7BFAF8E62DE6EDE400327F7F /* Optional_unittest.cpp in Sources */,
 				7BFAF8F02DE6EDE400327F7F /* PoolAlloc_unittest.cpp in Sources */,
 				7BFAF8F12DE6EDE400327F7F /* SimpleMutex_unittest.cpp in Sources */,
