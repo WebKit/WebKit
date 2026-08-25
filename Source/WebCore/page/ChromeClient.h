@@ -484,6 +484,8 @@ public:
     virtual bool shouldTriggerRenderingUpdate(unsigned) const { return true; }
     // Makes a rendering update happen soon, typically in the current runloop.
     virtual void triggerRenderingUpdate() = 0;
+    // Prioritize an already scheduled rendering update over other work in the current runloop cycle.
+    virtual void prioritizeRenderingUpdate() { }
     // Schedule a rendering update that coordinates with display refresh. Returns true if scheduled. (This is only used by SVGImageChromeClient.)
     virtual bool scheduleRenderingUpdate() { return false; }
     virtual void renderingUpdateFramesPerSecondChanged() { }

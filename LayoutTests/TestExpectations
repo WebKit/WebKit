@@ -92,6 +92,12 @@ fast/events/watchos [ Skip ]
 fast/events/pointer/ios [ Skip ]
 fast/events/touch/ios [ Skip ]
 http/tests/fast/events/touch/ios [ Skip ]
+# webkit.org/b/319911 These tests assert that a pending rendering update runs before an already-due timer while
+# an earlier commit is still in flight. Rendering under that backpressure requires RemoteLayerTree with
+# AllowMultipleCommitLayerTreePending, which is disabled on iOS; Coordinated Graphics ports prioritize only
+# while the compositor is idle. Enabled on macOS WK2 in platform/mac-wk2/TestExpectations.
+fast/events/interaction-rendering-priority.html [ Skip ]
+fast/events/interaction-rendering-priority-microtask.html [ Skip ]
 fast/history/ios [ Skip ]
 fast/scrolling/gtk [ Skip ]
 fast/scrolling/ios [ Skip ]

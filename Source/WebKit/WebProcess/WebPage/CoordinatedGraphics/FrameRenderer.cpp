@@ -35,6 +35,7 @@ namespace WebKit {
 using namespace WebCore;
 
 FrameRenderer::FrameRenderer()
+    : m_prioritizedRenderingUpdateTimer([this] { prioritizedRenderingUpdateTimerFired(); })
 {
     m_renderingUpdateRunLoopObserver = makeUnique<RunLoopObserver>(RunLoopObserver::WellKnownOrder::RenderingUpdate, [this] {
         renderingUpdateRunLoopObserverFired();
@@ -81,6 +82,43 @@ void FrameRenderer::renderingUpdateRunLoopObserverFired()
 
     if (canUpdateRendering())
         updateRendering();
+}
+
+void FrameRenderer::prioritizeRenderingUpdate()
+{
+    if (m_layerTreeStateIsFrozen || m_isSuspended || m_isUpdatingRendering)
+        return;
+
+    // Interaction priority only reorders a rendering update that is already pending; it must never create one.
+    if (!m_renderingUpdateRunLoopObserver->isScheduled())
+        return;
+
+    // A new frame cannot be produced while the compositor is still rendering the previous one, so a pending
+    // update cannot run ahead of the already-due timers; keep the existing scheduling.
+    if (!canUpdateRendering())
+        return;
+
+    // All main thread timers, including the event loop's DOM timers, share the ThreadTimers heap and fire
+    // in fire-time order. Arming a timer with a far-past fire time runs the pending update ahead of any
+    // already-due timer without stopping, holding, or reordering the timers themselves. The run loop
+    // observer stays scheduled as the ordinary fallback in case the update cannot run when the timer fires.
+    // FIXME: Add a Timer interface for running ahead of all already-due timers instead of encoding
+    // priority as a far-past fire time.
+    m_prioritizedRenderingUpdateTimer.startOneShot(-1_h);
+    WindowEventLoop::breakToAllowRenderingUpdate();
+}
+
+void FrameRenderer::prioritizedRenderingUpdateTimerFired()
+{
+    // The update already ran or was invalidated through the ordinary paths since prioritization.
+    if (!m_renderingUpdateRunLoopObserver->isScheduled())
+        return;
+
+    // Leave the pending update to the still-scheduled run loop observer if it cannot run right now.
+    if (m_layerTreeStateIsFrozen || m_isSuspended || m_isUpdatingRendering || !canUpdateRendering())
+        return;
+
+    updateRendering();
 }
 
 void FrameRenderer::setLayerTreeStateIsFrozen(bool isFrozen)

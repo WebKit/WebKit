@@ -84,6 +84,7 @@ private:
     WebCore::GraphicsLayerFactory* graphicsLayerFactory() override;
     void setRootCompositingLayer(WebCore::Frame&, WebCore::GraphicsLayer*) override;
     void triggerRenderingUpdate() override;
+    void prioritizeRenderingUpdate() override;
 
     RefPtr<WebCore::DisplayRefreshMonitor> createDisplayRefreshMonitor(WebCore::PlatformDisplayID) override;
 

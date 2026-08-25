@@ -161,6 +161,12 @@ fast/repaint/placeholder-after-caps-lock-hidden.html [ Pass ]
 
 fast/events/inactive-window-no-mouse-event.html [ Pass ]
 
+# webkit.org/b/319911 macOS WK2 uses the RemoteLayerTree drawing area with AllowMultipleCommitLayerTreePending
+# enabled, so a prioritized interaction rendering update can run while an earlier commit is still in flight;
+# skipped elsewhere in LayoutTests/TestExpectations.
+fast/events/interaction-rendering-priority.html [ Pass ]
+fast/events/interaction-rendering-priority-microtask.html [ Pass ]
+
 fast/animation/request-animation-frame-in-two-pages.html [ Pass ]
 
 fast/forms/file/entries-api/image-transcode-open-panel.html [ Pass ]

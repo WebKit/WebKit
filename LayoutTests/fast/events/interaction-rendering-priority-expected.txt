@@ -1,0 +1,10 @@
+Tests that a pending interaction rendering update runs before a DOM timer.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS order.join(',') is "raf,first immediate timer,second immediate timer,delayed timer"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Choose

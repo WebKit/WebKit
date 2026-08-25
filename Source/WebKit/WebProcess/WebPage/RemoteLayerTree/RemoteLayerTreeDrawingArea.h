@@ -87,6 +87,7 @@ private:
     void addRootFrame(WebCore::FrameIdentifier) final;
     void removeRootFrame(WebCore::FrameIdentifier) final;
     void triggerRenderingUpdate() final;
+    void prioritizeRenderingUpdate() final;
     bool scheduleRenderingUpdate() final;
     void renderingUpdateFramesPerSecondChanged() final;
     void attachViewOverlayGraphicsLayer(WebCore::FrameIdentifier, WebCore::GraphicsLayer*) final;
@@ -121,6 +122,7 @@ private:
     void setExposedContentRect(const WebCore::FloatRect&) final;
 
     void displayDidRefresh(MonotonicTime) final;
+    void displayDidRefreshForTransaction(MonotonicTime, TransactionID) final;
 
     void setDeviceScaleFactor(float, CompletionHandler<void()>&&) final;
 
@@ -186,6 +188,9 @@ private:
 
     bool m_waitingForBackingStoreSwap { false };
     bool m_deferredRenderingUpdateWhileWaitingForBackingStoreSwap { false };
+    bool m_shouldInitiateInteractionPriorityCommit { false };
+    std::optional<TransactionID> m_interactionPriorityCommitTransactionID;
+    unsigned m_outstandingCommitCount { 0 };
 
     const Ref<WorkQueue> m_commitQueue;
     RefPtr<BackingStoreFlusher> m_backingStoreFlusher;

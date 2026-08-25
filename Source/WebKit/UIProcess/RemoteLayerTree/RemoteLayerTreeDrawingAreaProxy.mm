@@ -315,6 +315,28 @@ void RemoteLayerTreeDrawingAreaProxy::notifyPendingCommitLayerTree(IPC::Connecti
     }
 }
 
+void RemoteLayerTreeDrawingAreaProxy::notifyPendingInteractionCommitLayerTree(IPC::Connection& connection, TransactionID transactionID)
+{
+    ProcessState& state = processStateForConnection(connection);
+
+    MESSAGE_CHECK_BASE(allowMultipleCommitLayerTreePending(), connection);
+
+    // Consume a display refresh grant that is already in flight, or allocate the one extra slot supported by the multiple-pending-commit path.
+    if (!state.pendingCommits.isEmpty() && state.pendingCommits[0].pendingMessage == PendingCommitMessage::NotifyPendingCommitLayerTree) {
+        MESSAGE_CHECK_BASE(state.pendingCommits[0].transactionID == transactionID, connection);
+        state.pendingCommits[0].pendingMessage = PendingCommitMessage::NotifyFlushingLayerTree;
+        return;
+    }
+
+    MESSAGE_CHECK_BASE(state.pendingCommits.size() <= 1, connection);
+    if (!state.pendingCommits.isEmpty())
+        MESSAGE_CHECK_BASE(state.pendingCommits[0].pendingMessage == PendingCommitMessage::CommitLayerTree, connection);
+    MESSAGE_CHECK_BASE(state.nextLayerTreeTransactionID == transactionID, connection);
+
+    state.pendingCommits.insert(0, { transactionID, PendingCommitMessage::NotifyFlushingLayerTree, CommitDelayState::Pending });
+    state.nextLayerTreeTransactionID.increment();
+}
+
 void RemoteLayerTreeDrawingAreaProxy::notifyFlushingLayerTree(IPC::Connection& connection, TransactionID transactionID)
 {
     ProcessState& state = processStateForConnection(connection);
@@ -817,7 +839,8 @@ IPC::Error RemoteLayerTreeDrawingAreaProxy::didRefreshDisplay(ProcessState& stat
         return IPC::Error::NoError;
     }
 
-    state.pendingCommits.insert(0, { state.nextLayerTreeTransactionID, PendingCommitMessage::NotifyPendingCommitLayerTree, CommitDelayState::Pending });
+    auto transactionID = state.nextLayerTreeTransactionID;
+    state.pendingCommits.insert(0, { transactionID, PendingCommitMessage::NotifyPendingCommitLayerTree, CommitDelayState::Pending });
     state.nextLayerTreeTransactionID.increment();
 
     LOG_WITH_STREAM(RemoteLayerTree, stream << "RemoteLayerTreeDrawingAreaProxy::didRefreshDisplay new state " << state.pendingCommits);
@@ -830,7 +853,7 @@ IPC::Error RemoteLayerTreeDrawingAreaProxy::didRefreshDisplay(ProcessState& stat
     // Waiting for CA to commit is insufficient, because the render server can still be
     // using our backing store. We can improve this by waiting for the render server to commit
     // if we find API to do so, but for now we will make extra buffers if need be.
-    return connection.send(Messages::DrawingArea::DisplayDidRefresh(MonotonicTime::now()), identifier());
+    return connection.send(Messages::DrawingArea::DisplayDidRefreshForTransaction(MonotonicTime::now(), transactionID), identifier());
 }
 
 void RemoteLayerTreeDrawingAreaProxy::didRefreshDisplay(IPC::Connection* connection)

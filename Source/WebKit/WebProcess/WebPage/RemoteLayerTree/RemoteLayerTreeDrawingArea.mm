@@ -54,6 +54,7 @@
 #import <WebCore/ScrollView.h>
 #import <WebCore/Settings.h>
 #import <WebCore/TiledBacking.h>
+#import <WebCore/WindowEventLoop.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/SetForScope.h>
@@ -316,14 +317,51 @@ void RemoteLayerTreeDrawingArea::triggerRenderingUpdate()
     startRenderingUpdateTimer();
 }
 
+void RemoteLayerTreeDrawingArea::prioritizeRenderingUpdate()
+{
+    if (m_isRenderingSuspended)
+        return;
+
+    // Interaction priority only reorders a rendering update that is already pending; it must never
+    // create one. A pending update takes one of four forms: waiting for the display link handoff
+    // (m_isScheduled), waiting for the pacing timer (m_scheduleRenderingTimer), armed to run
+    // (m_updateRenderingTimer), or deferred while a previous commit awaits its backing store swap.
+    if (!m_isScheduled && !m_scheduleRenderingTimer.isActive() && !m_updateRenderingTimer.isActive() && !m_deferredRenderingUpdateWhileWaitingForBackingStoreSwap)
+        return;
+
+    if (m_waitingForBackingStoreSwap) {
+        // The existing multiple-pending-commit path makes one additional backing store available while the
+        // previous commit flushes. Only use it while at most one commit awaits its backing store flush, so
+        // the UI process has consumed every earlier CommitLayerTree by the time the new transaction arrives.
+        RefPtr page = m_webPage->corePage();
+        if (m_interactionPriorityCommitTransactionID || m_outstandingCommitCount > 1 || !page || !page->settings().allowMultipleCommitLayerTreePending())
+            return;
+        m_shouldInitiateInteractionPriorityCommit = true;
+        m_deferredRenderingUpdateWhileWaitingForBackingStoreSwap = false;
+    }
+
+    m_isScheduled = false;
+    m_scheduleRenderingTimer.stop();
+
+    // All main thread timers, including the event loop's DOM timers, share the ThreadTimers heap and fire
+    // in fire-time order. Re-arming the pending update with a far-past fire time runs it ahead of any
+    // already-due timer without stopping, holding, or reordering the timers themselves.
+    // FIXME: Add a Timer interface for running ahead of all already-due timers instead of encoding
+    // priority as a far-past fire time.
+    m_updateRenderingTimer.startOneShot(-1_h);
+    WindowEventLoop::breakToAllowRenderingUpdate();
+}
+
 void RemoteLayerTreeDrawingArea::updateRendering()
 {
+    auto shouldInitiateInteractionPriorityCommit = std::exchange(m_shouldInitiateInteractionPriorityCommit, false) && m_waitingForBackingStoreSwap;
+
     if (m_isRenderingSuspended) {
         m_hasDeferredRenderingUpdate = true;
         return;
     }
 
-    if (m_waitingForBackingStoreSwap) {
+    if (m_waitingForBackingStoreSwap && !shouldInitiateInteractionPriorityCommit) {
         m_deferredRenderingUpdateWhileWaitingForBackingStoreSwap = true;
         return;
     }
@@ -338,6 +376,10 @@ void RemoteLayerTreeDrawingArea::updateRendering()
     Ref webPage = m_webPage.get();
     if (!webPage->hasRootFrames())
         return;
+
+    auto transactionID = takeNextTransactionID();
+    if (shouldInitiateInteractionPriorityCommit)
+        m_interactionPriorityCommitTransactionID = transactionID;
 
     scaleViewToFitDocumentIfNeeded();
 
@@ -366,8 +408,10 @@ void RemoteLayerTreeDrawingArea::updateRendering()
     backingStoreCollection->willFlushLayers();
 
     // FIXME: Minimize these transactions if nothing changed.
-    auto transactionID = takeNextTransactionID();
-    send(Messages::RemoteLayerTreeDrawingAreaProxy::NotifyPendingCommitLayerTree(transactionID));
+    if (shouldInitiateInteractionPriorityCommit)
+        send(Messages::RemoteLayerTreeDrawingAreaProxy::NotifyPendingInteractionCommitLayerTree(transactionID));
+    else
+        send(Messages::RemoteLayerTreeDrawingAreaProxy::NotifyPendingCommitLayerTree(transactionID));
 
     auto transactions = WTF::map(m_rootLayers, [&](RootLayerInfo& rootLayer) -> RemoteLayerTreeCommitBundle::RootFrameData {
         backingStoreCollection->willBuildTransaction();
@@ -424,6 +468,7 @@ void RemoteLayerTreeDrawingArea::updateRendering()
     webPage->didUpdateRendering(didUpdateRenderingFlags);
 
     m_backingStoreFlusher->markHasPendingFlush();
+    m_outstandingCommitCount++;
 
     send(Messages::RemoteLayerTreeDrawingAreaProxy::NotifyFlushingLayerTree(transactionID));
 
@@ -444,8 +489,20 @@ void RemoteLayerTreeDrawingArea::updateRendering()
 
 void RemoteLayerTreeDrawingArea::didCompleteRenderingUpdateDisplayFlush(bool flushSucceeded)
 {
+    ASSERT(m_outstandingCommitCount);
+    if (m_outstandingCommitCount)
+        m_outstandingCommitCount--;
+
     protect(m_webPage)->didFlushLayerTreeAtTime(MonotonicTime::now(), flushSucceeded);
     didCompleteRenderingUpdateDisplay();
+}
+
+void RemoteLayerTreeDrawingArea::displayDidRefreshForTransaction(MonotonicTime start, TransactionID transactionID)
+{
+    // The interaction update may have consumed a display refresh grant that was already in flight.
+    if (m_interactionPriorityCommitTransactionID == transactionID)
+        return;
+    displayDidRefresh(start);
 }
 
 void RemoteLayerTreeDrawingArea::displayDidRefresh(MonotonicTime start)
@@ -454,6 +511,7 @@ void RemoteLayerTreeDrawingArea::displayDidRefresh(MonotonicTime start)
     // the callers of that function are not strictly paired.
 
     auto wasWaitingForBackingStoreSwap = std::exchange(m_waitingForBackingStoreSwap, false);
+    m_interactionPriorityCommitTransactionID = std::nullopt;
 
     if (!WebProcess::singleton().shouldUseRemoteRenderingFor(WebCore::RenderingPurpose::DOM)) {
         // This empty transaction serves to trigger CA's garbage collection of IOSurfaces. See <rdar://problem/16110687>
@@ -573,10 +631,10 @@ bool RemoteLayerTreeDrawingArea::scheduleRenderingUpdate()
             return true;
 
         callOnMainRunLoop([self = WeakPtr { this }] () {
-            if (self) {
-                self->m_isScheduled = false;
-                self->triggerRenderingUpdate();
-            }
+            if (!self || !self->m_isScheduled)
+                return;
+            self->m_isScheduled = false;
+            self->triggerRenderingUpdate();
         });
     } else
         m_scheduleRenderingTimer.startOneShot(m_preferredRenderingUpdateInterval);
