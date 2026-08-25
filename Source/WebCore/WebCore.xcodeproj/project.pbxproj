@@ -2543,6 +2543,7 @@
 		57152B5C21CC1902000C37CA /* ApduResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = 57152B5621CB2E3A000C37CA /* ApduResponse.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		57152B6E21CD995D000C37CA /* U2fCommandConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = 57152B6C21CD995C000C37CA /* U2fCommandConstructor.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		57152B7C21DD8BA1000C37CA /* U2fResponseConverter.h in Headers */ = {isa = PBXBuildFile; fileRef = 57152B7A21DD8BA1000C37CA /* U2fResponseConverter.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A11E0D012F0B0001000B0001 /* WellKnownOriginList.h in Headers */ = {isa = PBXBuildFile; fileRef = A11E0D022F0B0002000B0002 /* WellKnownOriginList.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		57152B8021DDA581000C37CA /* WebAuthenticationUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 57152B7E21DDA581000C37CA /* WebAuthenticationUtils.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5715610B234C1B49008FC7AB /* MockWebAuthenticationConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = 57156108234C1B31008FC7AB /* MockWebAuthenticationConfiguration.h */; };
 		5715610C234C1CA1008FC7AB /* MockWebAuthenticationConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = 57156108234C1B31008FC7AB /* MockWebAuthenticationConfiguration.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -13396,6 +13397,8 @@
 		57152B6C21CD995C000C37CA /* U2fCommandConstructor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = U2fCommandConstructor.h; sourceTree = "<group>"; };
 		57152B7A21DD8BA1000C37CA /* U2fResponseConverter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = U2fResponseConverter.h; sourceTree = "<group>"; };
 		57152B7B21DD8BA1000C37CA /* U2fResponseConverter.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = U2fResponseConverter.cpp; sourceTree = "<group>"; };
+		A11E0D022F0B0002000B0002 /* WellKnownOriginList.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WellKnownOriginList.h; sourceTree = "<group>"; };
+		A11E0D032F0B0003000B0003 /* WellKnownOriginList.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WellKnownOriginList.cpp; sourceTree = "<group>"; };
 		57152B7E21DDA581000C37CA /* WebAuthenticationUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebAuthenticationUtils.h; sourceTree = "<group>"; };
 		57152B7F21DDA581000C37CA /* WebAuthenticationUtils.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebAuthenticationUtils.cpp; sourceTree = "<group>"; };
 		57156108234C1B31008FC7AB /* MockWebAuthenticationConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MockWebAuthenticationConfiguration.h; sourceTree = "<group>"; };
@@ -30312,6 +30315,8 @@
 				574F55DC204F3732002948C6 /* WebAuthenticationConstants.h */,
 				57152B7F21DDA581000C37CA /* WebAuthenticationUtils.cpp */,
 				57152B7E21DDA581000C37CA /* WebAuthenticationUtils.h */,
+				A11E0D032F0B0003000B0003 /* WellKnownOriginList.cpp */,
+				A11E0D022F0B0002000B0002 /* WellKnownOriginList.h */,
 			);
 			path = webauthn;
 			sourceTree = "<group>";
@@ -49285,7 +49290,6 @@
 				83C05A5B1A686212007E5DEA /* StylePropertyShorthandFunctions.h in Headers */,
 				5A574F29131DB96D00471B88 /* StyleQuotes.h in Headers */,
 				BC2387602D84A59400698102 /* StyleRatio.h in Headers */,
-				28A097C7302E767800E50E45 /* StyleSnapLengthAsBorderWidth.h in Headers */,
 				BCEA07332CC6C395000AC148 /* StyleRayFunction.h in Headers */,
 				BCB2720C2CC1F1DB00265123 /* StyleRectFunction.h in Headers */,
 				E461802D1C8DD2900026C02C /* StyleRelations.h in Headers */,
@@ -49345,6 +49349,7 @@
 				BC7320022E732F3F00A6584F /* StyleSingleTransitionProperty.h in Headers */,
 				214FAAB5DFD52EFEDBCC69DA /* StyleSizing.h in Headers */,
 				BC4F32B52E89C4DA00F6AEC1 /* StyleSkewTransformFunction.h in Headers */,
+				28A097C7302E767800E50E45 /* StyleSnapLengthAsBorderWidth.h in Headers */,
 				BC4529E92ECBAD6E00FD066C /* StyleSpeakAs.h in Headers */,
 				BC66AF692F7E152000345E91 /* StyleString.h in Headers */,
 				BC34D2BC2E3BDAB4001EAD95 /* StyleStrokeMiterlimit.h in Headers */,
@@ -50374,6 +50379,7 @@
 				E1EE8B762413191F00E794D6 /* WebXRViewerPose.h in Headers */,
 				E1EE8B962413195000E794D6 /* WebXRViewport.h in Headers */,
 				F55B3DE01251F12D003EF269 /* WeekInputType.h in Headers */,
+				A11E0D012F0B0001000B0001 /* WellKnownOriginList.h in Headers */,
 				85031B510A44EFC700F992E0 /* WheelEvent.h in Headers */,
 				2EBBC3D81B65988300F5253D /* WheelEventDeltaFilter.h in Headers */,
 				2E9B5D8F1B66A94E008C6A24 /* WheelEventDeltaFilterMac.h in Headers */,

@@ -267,6 +267,7 @@ if (ENABLE_WEBCORE)
         Tests/WebCore/PublicSuffix.cpp
         Tests/WebCore/PushMessageCrypto.cpp
         Tests/WebCore/RegionTests.cpp
+        Tests/WebCore/WellKnownOriginList.cpp
         Tests/WebCore/RenderStyleChange.cpp
         Tests/WebCore/SecurityOrigin.cpp
         Tests/WebCore/ShareableBitmap.cpp

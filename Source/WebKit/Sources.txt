@@ -674,6 +674,8 @@ UIProcess/WebAuthentication/Mock/MockHidService.cpp
 
 UIProcess/WebAuthentication/AuthenticatorTransportService.cpp
 UIProcess/WebAuthentication/Authenticator.cpp
+UIProcess/WebAuthentication/RelatedOriginsValidator.cpp
+UIProcess/WellKnownResourceFetcher.cpp
 UIProcess/WebAuthentication/WebAuthenticatorCoordinatorProxy.cpp
 UIProcess/WebAuthentication/WebAuthenticationRequestData.cpp
 

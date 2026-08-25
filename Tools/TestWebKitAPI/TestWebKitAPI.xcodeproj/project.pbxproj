@@ -802,6 +802,7 @@
 				WebCore/Quirks.cpp,
 				WebCore/RegionTests.cpp,
 				WebCore/RegistrableDomain.cpp,
+				WebCore/WellKnownOriginList.cpp,
 				WebCore/RenderStyleChange.cpp,
 				WebCore/SampleMap.cpp,
 				WebCore/SecurityOrigin.cpp,

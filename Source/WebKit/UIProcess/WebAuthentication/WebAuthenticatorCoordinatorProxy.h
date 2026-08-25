@@ -139,6 +139,7 @@ private:
 #endif
 
     void performRequest(WebAuthenticationRequestData&&, RequestCompletionHandler&&);
+    void performRequestWithValidatedRelyingPartyIdentifier(WebAuthenticationRequestData&&, RequestCompletionHandler&&);
 
 #if HAVE(UNIFIED_ASC_AUTH_UI)
     RetainPtr<ASCCredentialRequestContext> contextForRequest(WebAuthenticationRequestData&&);
@@ -152,6 +153,7 @@ private:
     bool m_paused { false };
     bool m_isConditionalMediation { false };
     Vector<AutofillEvent> m_recentAutofills;
+    Vector<String> m_relatedOrigins;
 #endif
 
 #if HAVE(UNIFIED_ASC_AUTH_UI)

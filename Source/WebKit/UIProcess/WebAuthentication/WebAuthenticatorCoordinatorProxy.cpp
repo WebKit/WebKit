@@ -32,6 +32,7 @@
 #include "AuthenticatorManager.h"
 #include "LocalService.h"
 #include "Logging.h"
+#include "RelatedOriginsValidator.h"
 #include "WebAuthenticationFlags.h"
 #include "WebAuthenticatorCoordinatorProxyMessages.h"
 #include "WebFrameProxy.h"
@@ -152,8 +153,13 @@ void WebAuthenticatorCoordinatorProxy::handleRequest(WebAuthenticationRequestDat
     bool shouldRequestConditionalRegistration = std::holds_alternative<PublicKeyCredentialCreationOptions>(data.options) && data.mediation == MediationRequirement::Conditional;
 
     String username;
-    if (shouldRequestConditionalRegistration)
+    SecurityOriginData callerOrigin;
+    String rpId;
+    if (shouldRequestConditionalRegistration) {
         username = std::get<PublicKeyCredentialCreationOptions>(data.options).user.name;
+        callerOrigin = data.frameInfo->securityOrigin;
+        rpId = std::get<PublicKeyCredentialCreationOptions>(data.options).rp.id;
+    }
 
     CompletionHandler<void(bool)> afterConsent = [weakThis = WeakPtr { *this }, data = WTF::move(data), handler = WTF::move(handler)] (bool result) mutable {
         RefPtr protectedThis = weakThis.get();
@@ -211,16 +217,40 @@ void WebAuthenticatorCoordinatorProxy::handleRequest(WebAuthenticationRequestDat
 
     Ref authenticatorManager = m_webPageProxy->websiteDataStore().authenticatorManager();
     if (shouldRequestConditionalRegistration && !authenticatorManager->isMock() && !authenticatorManager->isVirtual()) {
-        m_webPageProxy->uiClient().requestWebAuthenticationConditonalMediationRegistration(username, [weakThis = WeakPtr { *this }, username, afterConsent = WTF::move(afterConsent), origin = origin->securityOrigin()] (std::optional<bool> consented) mutable {
+        auto callDelegateWithOrigins = [weakThis = WeakPtr { *this }, username, afterConsent = WTF::move(afterConsent), origin = origin->securityOrigin()](Vector<String>&& origins) mutable {
             RefPtr protectedThis = weakThis.get();
             if (!protectedThis)
                 return afterConsent(false);
+            protectedThis->m_relatedOrigins = WTF::move(origins);
+            protectedThis->m_webPageProxy->uiClient().requestWebAuthenticationConditonalMediationRegistration(username, Vector<String> { protectedThis->m_relatedOrigins }, [weakThis, username, afterConsent = WTF::move(afterConsent), origin](std::optional<bool> consented) mutable {
+                RefPtr protectedThis = weakThis.get();
+                if (!protectedThis)
+                    return afterConsent(false);
 #if HAVE(WEB_AUTHN_AS_MODERN)
-            afterConsent(consented ? *consented : protectedThis->removeMatchingAutofillEventForUsername(username, origin));
+                afterConsent(consented ? *consented : protectedThis->removeMatchingAutofillEventForUsername(username, origin));
 #else
-            afterConsent(consented && *consented);
+                afterConsent(consented && *consented);
 #endif
-        });
+            });
+        };
+
+        if (rpId.isEmpty())
+            callDelegateWithOrigins({ });
+        else {
+            RefPtr webPageProxy = m_webPageProxy.get();
+            if (!webPageProxy) {
+                callDelegateWithOrigins({ });
+                return;
+            }
+            bool callerMatchesRPId = callerOrigin.securityOrigin()->isMatchingRegistrableDomainSuffix(rpId);
+            RelatedOriginsValidator::validate(*webPageProxy, callerOrigin, rpId, [callDelegateWithOrigins = WTF::move(callDelegateWithOrigins), callerMatchesRPId](RelatedOriginsResult&& result) mutable {
+                if (!callerMatchesRPId && !result.isRelated) {
+                    callDelegateWithOrigins({ });
+                    return;
+                }
+                callDelegateWithOrigins(WTF::move(result.origins));
+            });
+        }
         return;
     }
 
