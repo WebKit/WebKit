@@ -42,12 +42,14 @@
 #include "CSSValueList.h"
 #include "CSSValuePair.h"
 #include "Document.h"
+#include "Element.h"
 #include "FontCascade.h"
 #include "FontCascadeDescription.h"
 #include "FontSelectionValueInlines.h"
 #include "ScriptExecutionContext.h"
 #include "Settings.h"
 #include "StyleBuilderChecking.h"
+#include "StyleComputedStyle+GettersInlines.h"
 #include "StyleComputedStyle.h"
 #include "StyleFontFamily.h"
 #include "StyleFontSizeFunctions.h"
@@ -271,11 +273,14 @@ static ResolvedFontSize fontSizeFromUnresolvedFontSize(const CSSPropertyParserHe
                             //        It's unclear in the specification if they're expected to work on OffscreenCanvas, given
                             //        that it's off-screen and therefore doesn't strictly have an associated viewport.
                             //        This needs clarification and possibly fixing.
-                            // FIXME: How should root font units work in OffscreenCanvas?
+                            // Root font units resolve against the root element's font whenever the context is a document,
+                            // including for an OffscreenCanvas created in a window. They fall back to the element's own
+                            // font only in a worker, where there is no root element.
 
                             RefPtr document = dynamicDowncast<Document>(context);
+                            CheckedPtr rootFontCascade = rootFontCascadeForRootFontUnits(context);
                             return {
-                                .size = static_cast<float>(Style::resolveLength(lengthPercentage.value, lengthUnit, CSSPropertyFontSize, fontCascade, document ? document->renderView() : nullptr)),
+                                .size = static_cast<float>(Style::resolveLength(lengthPercentage.value, lengthUnit, CSSPropertyFontSize, fontCascade, rootFontCascade.get(), document ? document->renderView() : nullptr)),
                                 .keyword = CSSValueInvalid
                             };
                         }
@@ -345,6 +350,25 @@ static ResolvedFontFamily fontFamilyFromUnresolvedFontFamily(const CSSPropertyPa
         .families = WTF::move(families),
         .hasAuthorSpecifiedNonGenericPrimaryFont = hasAuthorSpecifiedNonGenericPrimaryFont
     };
+}
+
+// MARK: - Root Font Units
+
+const FontCascade* rootFontCascadeForRootFontUnits(ScriptExecutionContext& context)
+{
+    RefPtr document = dynamicDowncast<Document>(context);
+    if (!document)
+        return nullptr;
+    RefPtr documentElement = document->documentElement();
+    if (!documentElement)
+        return nullptr;
+
+    // Deliberately does not resolve style. Callers run with script disallowed and update style
+    // before getting here, so a missing style means there is nothing to resolve against.
+    CheckedPtr rootStyle = documentElement->existingComputedStyle();
+    if (!rootStyle)
+        return nullptr;
+    return &rootStyle->fontCascade();
 }
 
 // MARK: - Unresolved Font Shorthand Resolution
