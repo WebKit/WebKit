@@ -1394,6 +1394,46 @@ void WebAutomationSessionProxy::scriptDedicatedWorkerRealmDestroyed(const String
     protect(WebProcess::singleton().parentProcessConnection())->send(Messages::WebAutomationSession::ScriptDedicatedWorkerRealmDestroyed(workerIdentifier, ownerFrameIdentifier, realmInfo.realmIdentifier, realmInfo.ownerRealmIdentifier), 0);
 }
 
+void WebAutomationSessionProxy::getDedicatedWorkerRealms(WebCore::PageIdentifier pageID, CompletionHandler<void(Vector<DedicatedWorkerRealmSnapshot>&&)>&& completionHandler)
+{
+    Vector<DedicatedWorkerRealmSnapshot> workerRealmSnapshots;
+
+    RefPtr page = WebProcess::singleton().webPage(pageID);
+    RefPtr corePage = page ? page->corePage() : nullptr;
+    if (!corePage || !corePage->isControlledByAutomation()) {
+        completionHandler(WTF::move(workerRealmSnapshots));
+        return;
+    }
+
+    for (const auto& entry : m_dedicatedWorkerRealmInfo) {
+        auto ownerFrameIdentifier = entry.key.first;
+        const auto& workerIdentifier = entry.key.second;
+        const auto& realmInfo = entry.value;
+
+        RefPtr ownerFrame = WebProcess::singleton().webFrame(ownerFrameIdentifier);
+        if (!ownerFrame || !ownerFrame->isMainFrame() || ownerFrame->page() != page.get())
+            continue;
+
+        RefPtr coreFrame = ownerFrame->coreLocalFrame();
+        RefPtr document = coreFrame ? coreFrame->document() : nullptr;
+        if (!document || document->identifier() != realmInfo.ownerDocumentIdentifier)
+            continue;
+
+        auto ownerRealmIterator = m_frameToRealmIdentifier.find(ownerFrameIdentifier);
+        if (ownerRealmIterator == m_frameToRealmIdentifier.end() || ownerRealmIterator->value != realmInfo.ownerRealmIdentifier)
+            continue;
+
+        workerRealmSnapshots.append({
+            workerIdentifier.isolatedCopy(),
+            ownerFrameIdentifier,
+            realmInfo.realmIdentifier,
+            realmInfo.ownerRealmIdentifier
+        });
+    }
+
+    completionHandler(WTF::move(workerRealmSnapshots));
+}
+
 void WebAutomationSessionProxy::ensureRealmForInitialEmptyDocument(WebCore::PageIdentifier pageID)
 {
     RefPtr page = WebProcess::singleton().webPage(pageID);

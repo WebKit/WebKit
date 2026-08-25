@@ -3368,10 +3368,11 @@ void WebAutomationSession::scriptDedicatedWorkerRealmCreated(IPC::Connection& co
     MESSAGE_CHECK_BASE(ownerRealmIterator->value.frameIdentifier == ownerFrameIdentifier, connection);
     MESSAGE_CHECK_BASE(ownerRealmIterator->value.context == ownerBrowsingContextIterator->value, connection);
 
-    if (auto existingWorkerMatches = scriptAgent.dedicatedWorkerRealmMatches(realmIdentifier, workerIdentifier, ownerFrameIdentifier, ownerRealmIdentifier))
+    if (auto existingWorkerMatches = scriptAgent.dedicatedWorkerRealmMatches(realmIdentifier, workerIdentifier, ownerFrameIdentifier, ownerRealmIdentifier)) {
         MESSAGE_CHECK_BASE(*existingWorkerMatches, connection);
-    else
-        MESSAGE_CHECK_BASE(!scriptAgent.activeRealms().contains(realmIdentifier), connection);
+        return;
+    }
+    MESSAGE_CHECK_BASE(!scriptAgent.activeRealms().contains(realmIdentifier), connection);
 
     auto origin = WTF::move(untrustedOrigin).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NeedsReview);
     scriptAgent.notifyRealmCreatedFromWorker(workerIdentifier, ownerFrameIdentifier, realmIdentifier, ownerRealmIdentifier, ownerBrowsingContextIterator->value, origin);
