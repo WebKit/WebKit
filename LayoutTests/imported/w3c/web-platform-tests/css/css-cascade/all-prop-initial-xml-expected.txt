@@ -142,6 +142,7 @@ PASS fill
 PASS fill-opacity
 PASS fill-rule
 PASS filter
+PASS fit-tolerance
 PASS flex-basis
 PASS flex-direction
 PASS flex-grow
@@ -150,7 +151,6 @@ PASS flex-wrap
 PASS float
 PASS flood-color
 PASS flood-opacity
-PASS flow-tolerance
 PASS font-family
 PASS font-feature-settings
 PASS font-kerning

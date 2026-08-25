@@ -29,7 +29,7 @@
 #include "RenderBoxInlines.h"
 #include "RenderGrid.h"
 #include "StyleComputedStyle+GettersInlines.h"
-#include "StyleFlowTolerance.h"
+#include "StyleFitTolerance.h"
 #include "StyleGridPositionsResolver.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 #include "WritingMode.h"
@@ -218,8 +218,8 @@ GridArea GridLanesLayout::gridAreaForIndefiniteGridAxisItem(const RenderBox& ite
     auto itemSpanLength = std::min<unsigned>(Style::GridPositionsResolver::spanSizeForAutoPlacedItem(item, gridAxisDirection()), m_gridAxisTracksCount);
     auto gridAxisLines = m_gridAxisTracksCount + 1;
 
-    // Get flow-tolerance from the grid lanes container's style
-    const auto& tolerance = m_renderGrid->style().flowTolerance();
+    // Get fit-tolerance from the grid lanes container's style
+    const auto& tolerance = m_renderGrid->style().fitTolerance();
 
     if (tolerance.isInfinite()) {
         // Infinite tolerance: place items strictly in order without considering track lengths
@@ -245,13 +245,13 @@ GridArea GridLanesLayout::gridAreaForIndefiniteGridAxisItem(const RenderBox& ite
             // Normal resolves to 1em
             return LayoutUnit { m_renderGrid->style().computedFontSize() };
         },
-        [&](const typename Style::FlowTolerance::Fixed& fixed) -> LayoutUnit {
+        [&](const typename Style::FitTolerance::Fixed& fixed) -> LayoutUnit {
             return LayoutUnit { fixed.resolveZoom(m_renderGrid->style().usedZoomForLength()) };
         },
-        [&](const typename Style::FlowTolerance::Percentage& percentage) -> LayoutUnit {
+        [&](const typename Style::FitTolerance::Percentage& percentage) -> LayoutUnit {
             return Style::evaluate<LayoutUnit>(percentage, contentBoxSize);
         },
-        [&](const typename Style::FlowTolerance::Calc& calc) -> LayoutUnit {
+        [&](const typename Style::FitTolerance::Calc& calc) -> LayoutUnit {
             return Style::evaluate<LayoutUnit>(calc, contentBoxSize, m_renderGrid->style().usedZoomForLength());
         },
         [](const CSS::Keyword::Infinite&) -> LayoutUnit {

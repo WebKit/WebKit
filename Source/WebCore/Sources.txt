@@ -3463,6 +3463,7 @@ style/values/fonts/StyleFontVariantNumeric.cpp
 style/values/fonts/StyleFontVariationSettings.cpp
 style/values/fonts/StyleFontWeight.cpp @header:RenderStyleGetters @cost:5
 style/values/fonts/StyleFontWidth.cpp
+style/values/grid/StyleFitTolerance.cpp
 style/values/grid/StyleGridAutoFlow.cpp
 style/values/grid/StyleGridLineNames.cpp
 style/values/grid/StyleGridNamedLinesMap.cpp
@@ -3473,7 +3474,6 @@ style/values/grid/StyleGridTemplateList.cpp @header:RenderStyleGetters @cost:6
 style/values/grid/StyleGridTrackBreadth.cpp
 style/values/grid/StyleGridTrackSize.cpp
 style/values/grid/StyleGridTrackSizes.cpp
-style/values/grid/StyleFlowTolerance.cpp
 style/values/images/kinds/StyleCachedImage.cpp @header:RenderStyleGetters @cost:6
 style/values/images/kinds/StyleCanvasImage.cpp @header:RenderStyleGetters @cost:6
 style/values/images/kinds/StyleCrossfadeImage.cpp

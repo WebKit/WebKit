@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "StyleFlowTolerance.h"
+#include "StyleFitTolerance.h"
 
 #include "StyleBuilderChecking.h"
 #include "StylePrimitiveNumericTypes+Blending.h"
@@ -37,13 +37,13 @@ using namespace CSS::Literals;
 
 // MARK: - Blending
 
-auto Blending<FlowTolerance>::canBlend(const FlowTolerance& a, const FlowTolerance& b) -> bool
+auto Blending<FitTolerance>::canBlend(const FitTolerance& a, const FitTolerance& b) -> bool
 {
     // Can only blend if both are length-percentage values
     return !a.isNormal() && !a.isInfinite() && !b.isNormal() && !b.isInfinite();
 }
 
-auto Blending<FlowTolerance>::blend(const FlowTolerance& a, const FlowTolerance& b, const BlendingContext& context) -> FlowTolerance
+auto Blending<FitTolerance>::blend(const FitTolerance& a, const FitTolerance& b, const BlendingContext& context) -> FitTolerance
 {
     if (context.isDiscrete) {
         ASSERT(!context.progress || context.progress == 1);
@@ -59,16 +59,16 @@ auto Blending<FlowTolerance>::blend(const FlowTolerance& a, const FlowTolerance&
     return a.switchOn(
         [&](const LengthPercentage<CSS::Nonnegative>& aValue) {
             return b.switchOn(
-                [&](const LengthPercentage<CSS::Nonnegative>& bValue) -> FlowTolerance {
+                [&](const LengthPercentage<CSS::Nonnegative>& bValue) -> FitTolerance {
                     return WebCore::Style::blend(aValue, bValue, context);
                 },
-                [&](auto) -> FlowTolerance {
+                [&](auto) -> FitTolerance {
                     ASSERT_NOT_REACHED();
                     return a;
                 }
             );
         },
-        [&](auto) -> FlowTolerance {
+        [&](auto) -> FitTolerance {
             ASSERT_NOT_REACHED();
             return a;
         }

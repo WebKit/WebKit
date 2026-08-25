@@ -2082,6 +2082,7 @@ localizedStrings["\u0022%s\u0022 has a non-number \u0022%s\u0022 value"] = "\u00
 localizedStrings["\u0022%s\u0022 has a non-object \u0022%s\u0022 value"] = "\u0022%s\u0022 has a non-object \u0022%s\u0022 value";
 localizedStrings["\u0022%s\u0022 has a non-string \u0022%s\u0022 value"] = "\u0022%s\u0022 has a non-string \u0022%s\u0022 value";
 localizedStrings["\u0022%s\u0022 has an invalid \u0022%s\u0022 value"] = "\u0022%s\u0022 has an invalid \u0022%s\u0022 value";
+localizedStrings["\u0022%s\u0022 is deprecated. Use \u0022%s\u0022 instead."] = "\u0022%s\u0022 is deprecated. Use \u0022%s\u0022 instead.";
 localizedStrings["\u0022%s\u0022 is not JSON serializable"] = "\u0022%s\u0022 is not JSON serializable";
 localizedStrings["\u0022%s\u0022 is not valid for %s"] = "\u0022%s\u0022 is not valid for %s";
 localizedStrings["\u0022%s\u0022 is too new to run in the inspected page"] = "\u0022%s\u0022 is too new to run in the inspected page";

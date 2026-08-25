@@ -30,9 +30,9 @@
 namespace WebCore {
 namespace Style {
 
-// <'flow-tolerance'> = normal | <length-percentage [0,∞]> | infinite
+// <'fit-tolerance'> = normal | <length-percentage [0,∞]> | infinite
 // https://drafts.csswg.org/css-grid-3/#placement-tolerance
-struct FlowTolerance : PrimitiveNumericOrKeyword<LengthPercentage<CSS::Nonnegative>, CSS::Keyword::Normal, CSS::Keyword::Infinite> {
+struct FitTolerance : PrimitiveNumericOrKeyword<LengthPercentage<CSS::Nonnegative>, CSS::Keyword::Normal, CSS::Keyword::Infinite> {
     using Base::Base;
 
     ALWAYS_INLINE bool isNormal() const { return holdsAlternative<CSS::Keyword::Normal>(); }
@@ -41,12 +41,12 @@ struct FlowTolerance : PrimitiveNumericOrKeyword<LengthPercentage<CSS::Nonnegati
 
 // MARK: - Blending
 
-template<> struct Blending<FlowTolerance> {
-    bool NODELETE canBlend(const FlowTolerance&, const FlowTolerance&);
-    auto blend(const FlowTolerance&, const FlowTolerance&, const BlendingContext&) -> FlowTolerance;
+template<> struct Blending<FitTolerance> {
+    bool NODELETE canBlend(const FitTolerance&, const FitTolerance&);
+    auto blend(const FitTolerance&, const FitTolerance&, const BlendingContext&) -> FitTolerance;
 };
 
 } // namespace Style
 } // namespace WebCore
 
-DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::FlowTolerance)
+DEFINE_VARIANT_LIKE_CONFORMANCE(WebCore::Style::FitTolerance)

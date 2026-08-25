@@ -1310,7 +1310,7 @@ webkit.org/b/321932 [ arm64 ] streams/readable-stream-create-after-worker-termin
 
 # Tests expected to crash report Timeout instead on ARM64.
 webkit.org/b/321481 [ arm64 ] fast/css/container-query-orientation-modal-dialog-crash.html [ Crash Pass Timeout ]
-webkit.org/b/321481 [ arm64 ] imported/w3c/web-platform-tests/css/css-grid/grid-lanes/animation/flow-tolerance-interpolation.html [ Crash Timeout ]
+webkit.org/b/321481 [ arm64 ] imported/w3c/web-platform-tests/css/css-grid/grid-lanes/animation/fit-tolerance-interpolation.html [ Crash Timeout ]
 webkit.org/b/321481 [ arm64 ] imported/w3c/web-platform-tests/css/css-grid/grid-lanes/subgrid/grid-subgridded-to-grid-lanes/alignment/row-subgrid-alignment-in-subgridded-axis-002.html [ Crash Timeout ]
 webkit.org/b/321481 [ arm64 ] imported/w3c/web-platform-tests/css/css-grid/grid-lanes/subgrid/grid-subgridded-to-grid-lanes/track-sizing/row-auto-placed-subgrid-inherited-tracks-002.html [ Crash Timeout ]
 webkit.org/b/321481 [ arm64 ] imported/w3c/web-platform-tests/css/css-grid/grid-lanes/subgrid/grid-subgridded-to-grid-lanes/track-sizing/row-auto-placed-subgrid-inherited-tracks-003.html [ Crash Timeout ]

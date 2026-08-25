@@ -5377,24 +5377,6 @@
                 "url": "https://www.w3.org/TR/css-logical/#inset-properties"
             }
         },
-        "flow-tolerance": {
-            "animation-type": "by computed value",
-            "initial": "normal",
-            "values": [
-                "normal",
-                "infinite"
-            ],
-            "codegen-properties": {
-                "computed-style-storage-path": ["m_nonInheritedData", "rareData", "grid"],
-                "computed-style-storage-kind": "reference",
-                "computed-style-type": "Style::FlowTolerance",
-                "parser-grammar": "normal | <length-percentage [0,inf]> | infinite"
-            },
-            "specification": {
-                "category": "css-grid",
-                "url": "https://drafts.csswg.org/css-grid-3/#placement-tolerance"
-            }
-        },
         "left": {
             "animation-type": "by computed value",
             "initial": "auto",
@@ -11173,6 +11155,27 @@
             "specification": {
                 "category": "css-grid",
                 "url": "https://www.w3.org/TR/css-grid-1/#propdef-grid-auto-flow"
+            }
+        },
+        "fit-tolerance": {
+            "animation-type": "by computed value",
+            "initial": "normal",
+            "values": [
+                "normal",
+                "infinite"
+            ],
+            "codegen-properties": {
+                "aliases": [
+                    "flow-tolerance"
+                ],
+                "computed-style-storage-path": ["m_nonInheritedData", "rareData", "grid"],
+                "computed-style-storage-kind": "reference",
+                "computed-style-type": "Style::FitTolerance",
+                "parser-grammar": "normal | <length-percentage [0,inf]> | infinite"
+            },
+            "specification": {
+                "category": "css-grid",
+                "url": "https://drafts.csswg.org/css-grid-3/#placement-tolerance"
             }
         },
         "hyphenate-character": {
