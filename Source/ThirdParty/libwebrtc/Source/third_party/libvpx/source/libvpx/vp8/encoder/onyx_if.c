@@ -2441,6 +2441,11 @@ int vp8_get_reference(VP8_COMP *cpi, enum vpx_ref_frame_type ref_frame_flag,
     return -1;
   }
 
+  if (cm->yv12_fb[ref_fb_idx].y_width != sd->y_width ||
+      cm->yv12_fb[ref_fb_idx].y_height != sd->y_height) {
+    return -1;
+  }
+
   vp8_yv12_copy_frame(&cm->yv12_fb[ref_fb_idx], sd);
 
   return 0;
@@ -2458,6 +2463,11 @@ int vp8_set_reference(VP8_COMP *cpi, enum vpx_ref_frame_type ref_frame_flag,
   } else if (ref_frame_flag == VP8_ALTR_FRAME) {
     ref_fb_idx = cm->alt_fb_idx;
   } else {
+    return -1;
+  }
+
+  if (cm->yv12_fb[ref_fb_idx].y_width != sd->y_width ||
+      cm->yv12_fb[ref_fb_idx].y_height != sd->y_height) {
     return -1;
   }
 

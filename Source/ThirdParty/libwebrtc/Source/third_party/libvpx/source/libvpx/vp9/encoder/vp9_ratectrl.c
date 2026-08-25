@@ -1096,7 +1096,7 @@ static int rc_pick_q_and_bounds_one_pass_cbr(const VP9_COMP *cpi,
 
   // Special case code to try and match quality with forced key frames
   if (frame_is_intra_only(cm) && rc->this_key_frame_forced) {
-    q = rc->last_boosted_qindex;
+    q = clamp(rc->last_boosted_qindex, rc->best_quality, rc->worst_quality);
   } else {
     q = vp9_rc_regulate_q(cpi, rc->this_frame_target, active_best_quality,
                           active_worst_quality);
@@ -1299,7 +1299,7 @@ static int rc_pick_q_and_bounds_one_pass_vbr(const VP9_COMP *cpi,
     q = active_best_quality;
     // Special case code to try and match quality with forced key frames
   } else if ((cm->frame_type == KEY_FRAME) && rc->this_key_frame_forced) {
-    q = rc->last_boosted_qindex;
+    q = clamp(rc->last_boosted_qindex, rc->best_quality, rc->worst_quality);
   } else {
     q = vp9_rc_regulate_q(cpi, rc->this_frame_target, active_best_quality,
                           active_worst_quality);

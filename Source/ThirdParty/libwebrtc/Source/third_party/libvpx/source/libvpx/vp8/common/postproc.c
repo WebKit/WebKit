@@ -25,23 +25,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-/* clang-format off */
-#define RGB_TO_YUV(t)                                     \
-  (unsigned char)((0.257 * (float)(t >> 16)) +            \
-                  (0.504 * (float)(t >> 8 & 0xff)) +      \
-                  (0.098 * (float)(t & 0xff)) + 16),      \
-  (unsigned char)(-(0.148 * (float)(t >> 16)) -           \
-                  (0.291 * (float)(t >> 8 & 0xff)) +      \
-                  (0.439 * (float)(t & 0xff)) + 128),     \
-  (unsigned char)((0.439 * (float)(t >> 16)) -            \
-                  (0.368 * (float)(t >> 8 & 0xff)) -      \
-                  (0.071 * (float)(t & 0xff)) + 128)
-/* clang-format on */
-
-extern void vp8_blit_text(const char *msg, unsigned char *address,
-                          const int pitch);
-extern void vp8_blit_line(int x0, int x1, int y0, int y1, unsigned char *image,
-                          const int pitch);
 /***********************************************************************************************************
  */
 #if CONFIG_POSTPROC
@@ -61,6 +44,7 @@ static void vp8_de_mblock(YV12_BUFFER_CONFIG *post, int q) {
 
 void vp8_deblock(VP8_COMMON *cm, YV12_BUFFER_CONFIG *source,
                  YV12_BUFFER_CONFIG *post, int q) {
+  vpx_clear_system_state();
   double level = 6.0e-05 * q * q * q - .0067 * q * q + .306 * q + .0065;
   int ppl = (int)(level + .5);
 
@@ -116,6 +100,7 @@ void vp8_deblock(VP8_COMMON *cm, YV12_BUFFER_CONFIG *source,
 void vp8_de_noise(VP8_COMMON *cm, YV12_BUFFER_CONFIG *source, int q,
                   int uvfilter) {
   int mbr;
+  vpx_clear_system_state();
   double level = 6.0e-05 * q * q * q - .0067 * q * q + .306 * q + .0065;
   int ppl = (int)(level + .5);
   int mb_rows = cm->mb_rows;
@@ -151,7 +136,7 @@ int vp8_post_proc_frame(VP8_COMMON *oci, YV12_BUFFER_CONFIG *dest,
   int flags = ppflags->post_proc_flag;
   int deblock_level = ppflags->deblocking_level;
   int noise_level = ppflags->noise_level;
-  const int generated_noise_size = oci->Width + 256;
+  const int generated_noise_size = ALIGN_POWER_OF_TWO(oci->Width, 4) + 256;
 
   if (!oci->frame_to_show) return -1;
 

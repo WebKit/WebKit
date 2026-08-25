@@ -207,11 +207,13 @@ static int mfqe_decision(MODE_INFO *mi, BLOCK_SIZE cur_bs) {
 
 // Process each partiton in a super block, recursively.
 static void mfqe_partition(VP9_COMMON *cm, MODE_INFO *mi, BLOCK_SIZE bs,
-                           const uint8_t *y, const uint8_t *u, const uint8_t *v,
-                           int y_stride, int uv_stride, uint8_t *yd,
-                           uint8_t *ud, uint8_t *vd, int yd_stride,
-                           int uvd_stride) {
+                           int mi_row, int mi_col, const uint8_t *y,
+                           const uint8_t *u, const uint8_t *v, int y_stride,
+                           int uv_stride, uint8_t *yd, uint8_t *ud, uint8_t *vd,
+                           int yd_stride, int uvd_stride) {
   int mi_offset, y_offset, uv_offset;
+  const int b_width = num_8x8_blocks_wide_lookup[bs];
+  const int b_height = num_8x8_blocks_high_lookup[bs];
   const BLOCK_SIZE cur_bs = mi->sb_type;
   const int qdiff = cm->base_qindex - cm->postproc_state.last_base_qindex;
   const int bsl = b_width_log2_lookup[bs];
@@ -219,10 +221,17 @@ static void mfqe_partition(VP9_COMMON *cm, MODE_INFO *mi, BLOCK_SIZE bs,
   BLOCK_SIZE subsize;
   BLOCK_SIZE mfqe_bs, bs_tmp;
 
-  if (cur_bs < BLOCK_8X8) {
-    // If there are blocks smaller than 8x8, it must be on the boundary.
+  // Return early if the block is partially outside the frame boundaries.
+  // This avoids reading uninitialized/invalid block sizes outside the frame.
+  // Return also for blocks smaller than 8x8, and note 4x4 subblocks can occur
+  // inside the image (not only on boundary).
+  // The return here is safe as the pixels are pre-copied by vpx_yv12_copy_frame
+  // in vp9_mfqe() before entering the superblock loop.
+  if (mi_row + b_height > cm->mi_rows || mi_col + b_width > cm->mi_cols ||
+      cur_bs < BLOCK_8X8) {
     return;
   }
+
   // No MFQE on blocks smaller than 16x16
   if (bs == BLOCK_16X16) {
     partition = PARTITION_NONE;
@@ -320,17 +329,20 @@ static void mfqe_partition(VP9_COMMON *cm, MODE_INFO *mi, BLOCK_SIZE bs,
     case PARTITION_SPLIT:
       // Recursion on four square partitions, e.g. if bs is 64X64,
       // then look into four 32X32 blocks in it.
-      mfqe_partition(cm, mi, subsize, y, u, v, y_stride, uv_stride, yd, ud, vd,
+      mfqe_partition(cm, mi, subsize, mi_row, mi_col, y, u, v, y_stride,
+                     uv_stride, yd, ud, vd, yd_stride, uvd_stride);
+      mfqe_partition(cm, mi + mi_offset, subsize, mi_row, mi_col + mi_offset,
+                     y + y_offset, u + uv_offset, v + uv_offset, y_stride,
+                     uv_stride, yd + y_offset, ud + uv_offset, vd + uv_offset,
                      yd_stride, uvd_stride);
-      mfqe_partition(cm, mi + mi_offset, subsize, y + y_offset, u + uv_offset,
-                     v + uv_offset, y_stride, uv_stride, yd + y_offset,
-                     ud + uv_offset, vd + uv_offset, yd_stride, uvd_stride);
       mfqe_partition(cm, mi + mi_offset * cm->mi_stride, subsize,
-                     y + y_offset * y_stride, u + uv_offset * uv_stride,
-                     v + uv_offset * uv_stride, y_stride, uv_stride,
-                     yd + y_offset * yd_stride, ud + uv_offset * uvd_stride,
-                     vd + uv_offset * uvd_stride, yd_stride, uvd_stride);
+                     mi_row + mi_offset, mi_col, y + y_offset * y_stride,
+                     u + uv_offset * uv_stride, v + uv_offset * uv_stride,
+                     y_stride, uv_stride, yd + y_offset * yd_stride,
+                     ud + uv_offset * uvd_stride, vd + uv_offset * uvd_stride,
+                     yd_stride, uvd_stride);
       mfqe_partition(cm, mi + mi_offset * cm->mi_stride + mi_offset, subsize,
+                     mi_row + mi_offset, mi_col + mi_offset,
                      y + y_offset * y_stride + y_offset,
                      u + uv_offset * uv_stride + uv_offset,
                      v + uv_offset * uv_stride + uv_offset, y_stride, uv_stride,
@@ -349,6 +361,7 @@ void vp9_mfqe(VP9_COMMON *cm) {
   const YV12_BUFFER_CONFIG *show = cm->frame_to_show;
   // Last decoded frame and will store the MFQE result.
   YV12_BUFFER_CONFIG *dest = &cm->post_proc_buffer;
+  vpx_yv12_copy_frame(show, dest);
   // Loop through each super block.
   for (mi_row = 0; mi_row < cm->mi_rows; mi_row += MI_BLOCK_SIZE) {
     for (mi_col = 0; mi_col < cm->mi_cols; mi_col += MI_BLOCK_SIZE) {
@@ -379,8 +392,8 @@ void vp9_mfqe(VP9_COMMON *cm) {
       } else {
         mi = mi_local;
       }
-      mfqe_partition(cm, mi, BLOCK_64X64, y, u, v, y_stride, uv_stride, yd, ud,
-                     vd, yd_stride, uvd_stride);
+      mfqe_partition(cm, mi, BLOCK_64X64, mi_row, mi_col, y, u, v, y_stride,
+                     uv_stride, yd, ud, vd, yd_stride, uvd_stride);
     }
   }
 }

@@ -118,6 +118,11 @@ ifeq ($(findstring yes,$(CONFIG_VP8_DECODER)$(CONFIG_VP9_DECODER)), yes)
 LIBVPX_TEST_SRCS-yes += invalid_file_test.cc
 endif
 
+ifeq ($(findstring yesyes, $(CONFIG_VP8_DECODER)$(CONFIG_POSTPROC) \
+                           $(CONFIG_VP9_DECODER)$(CONFIG_VP9_POSTPROC)), yesyes)
+LIBVPX_TEST_SRCS-yes += postproc_test.cc
+endif
+
 ##
 ## WHITE BOX TESTS
 ##

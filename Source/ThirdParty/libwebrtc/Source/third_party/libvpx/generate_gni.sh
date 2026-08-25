@@ -111,7 +111,7 @@ function convert_srcs_to_project_files() {
   #    compiler options.
   # 3. Replace .asm.s to .asm because gn will do the conversion.
 
-  local source_list=$(grep -E '(\.c|\.h|\.S|\.s|\.asm)$' $1)
+  local source_list=$(grep -E '(\.c|\.cc|\.h|\.S|\.s|\.asm)$' $1)
 
   # Not sure why vpx_config.c is not included.
   source_list=$(echo "$source_list" | grep -v 'vpx_config\.c')
@@ -124,9 +124,10 @@ function convert_srcs_to_project_files() {
   # are present in $1, hence "gn check" will detect them as invalid includes
   # unless explicitly added.
   source_list=$(echo -e "$source_list\\nvpx_ports/arm.h")
-  source_list=$(echo -e "$source_list\\nvpx_ports/x86.h")
-  source_list=$(echo -e "$source_list\\nvpx_ports/mips.h")
   source_list=$(echo -e "$source_list\\nvpx_ports/loongarch.h")
+  source_list=$(echo -e "$source_list\\nvpx_ports/mips.h")
+  source_list=$(echo -e "$source_list\\nvpx_ports/ppc.h")
+  source_list=$(echo -e "$source_list\\nvpx_ports/x86.h")
   source_list=$(echo "$source_list" | sort -u)
 
   # The actual ARM files end in .asm. We have rules to translate them to .S
@@ -181,7 +182,14 @@ function convert_srcs_to_project_files() {
     write_gni avx2_sources $2_avx2 "$BASE_DIR/libvpx_srcs.gni"
     write_gni avx512_sources $2_avx512 "$BASE_DIR/libvpx_srcs.gni"
   else
-    if [[ `echo $2 | grep loongarch` ]]; then
+    if [[ `echo $2 | egrep 'test_srcs_generic$'` ]]; then
+      local c_sources=$(echo "$source_list" | egrep '\.c$')
+      local c_headers=$(echo "$source_list" | egrep '\.h$')
+      local cc_sources=$(echo "$source_list" | egrep '\.cc$')
+      write_gni c_sources $2 "$BASE_DIR/libvpx_test_srcs.gni"
+      write_gni c_headers $2_headers "$BASE_DIR/libvpx_test_srcs.gni"
+      write_gni cc_sources $2_cc "$BASE_DIR/libvpx_test_srcs.gni"
+    elif [[ `echo $2 | grep loongarch` ]]; then
       local c_sources=$(echo "$source_list" | egrep '\.c$')
       local c_headers=$(echo "$source_list" | egrep '\.h$')
       local lsx_sources=$(echo "$intrinsic_list" | egrep '_lsx\.(c|h)$')
@@ -227,10 +235,9 @@ function make_clean() {
 # Lint a pair of vpx_config.h and vpx_config.asm to make sure they match.
 # $1 - Header file directory.
 function lint_config() {
-  # mips, native and loongarch client do not contain any assembly so the
-  # headers do not need to be compared to the asm.
-  if [[ "$1" != *mipsel && "$1" != *mips64el && "$1" != nacl \
-      && "$1" != *loongarch ]]; then
+  # mips and loongarch do not contain any assembly so the headers do not need
+  # to be compared to the asm.
+  if [[ "$1" != *mipsel && "$1" != *mips64el && "$1" != *loongarch ]]; then
     $BASE_DIR/lint_config.sh \
       -h $BASE_DIR/$LIBVPX_CONFIG_DIR/$1/vpx_config.h \
       -a $BASE_DIR/$LIBVPX_CONFIG_DIR/$1/vpx_config.asm
@@ -269,8 +276,7 @@ function gen_rtcd_header() {
   format="clang-format -i -style=Chromium"
 
   rm -rf $BASE_DIR/$TEMP_DIR/libvpx.config
-  if [[ "$2" == "mipsel" || "$2" == "mips64el" || "$2" == nacl \
-      || "$2" == "loongarch" ]]; then
+  if [[ "$2" == "mipsel" || "$2" == "mips64el" || "$2" == "loongarch" ]]; then
     print_config_basic $1 > $BASE_DIR/$TEMP_DIR/libvpx.config
   else
     $BASE_DIR/lint_config.sh -p \
@@ -342,9 +348,8 @@ function gen_config_files() {
     local ASM_CONV=ads2gas_apple.pl
   fi
 
-  # Generate vpx_config.asm. Do not create one for mips or native client.
-  if [[ "$1" != *mipsel && "$1" != *mips64el && "$1" != nacl \
-      && "$1" != *loongarch ]]; then
+  # Generate vpx_config.asm. Do not create one for mips or loongarch.
+  if [[ "$1" != *mipsel && "$1" != *mips64el && "$1" != *loongarch ]]; then
     if [[ "$1" == *x64* ]] || [[ "$1" == *ia32* ]]; then
       egrep "#define [A-Z0-9_]+ [01]" vpx_config.h \
         | awk '{print "%define " $2 " " $3}' > vpx_config.asm
@@ -391,11 +396,12 @@ all_platforms+=" --enable-postproc"
 all_platforms+=" --enable-multi-res-encoding"
 all_platforms+=" --enable-temporal-denoising"
 all_platforms+=" --enable-vp9-temporal-denoising"
-all_platforms+=" --enable-vp9-postproc"
+all_platforms+=" --disable-vp9-postproc"
 all_platforms+=" --size-limit=16384x16384"
 all_platforms+=" --enable-realtime-only"
 all_platforms+=" --disable-install-docs"
 all_platforms+=" --disable-libyuv"
+all_platforms+=" --enable-unit-tests"
 x86_platforms="--enable-pic --as=yasm $DISABLE_AVX512 $HIGHBD"
 # SVE is disabled for Windows Arm64 due to a limitation with clang-cl-18:
 # third_party\llvm-build\Release+Asserts\lib\clang\18\include\arm_sve.h(271,1):
@@ -406,13 +412,8 @@ gen_config_files linux/ia32 \
   "--target=x86-linux-gcc ${all_platforms} ${x86_platforms}"
 gen_config_files linux/x64 \
   "--target=x86_64-linux-gcc ${all_platforms} ${x86_platforms}"
-gen_config_files linux/arm \
-  "--target=armv7-linux-gcc --disable-neon --disable-runtime-cpu-detect \
-  ${all_platforms}"
 gen_config_files linux/arm-neon "--target=armv7-linux-gcc \
   --disable-runtime-cpu-detect ${all_platforms}"
-gen_config_files linux/arm-neon-cpu-detect \
-  "--target=armv7-linux-gcc --enable-runtime-cpu-detect ${all_platforms}"
 gen_config_files linux/arm64 "--target=armv8-linux-gcc ${all_platforms}"
 gen_config_files linux/arm-neon-highbd \
   "--target=armv7-linux-gcc --disable-runtime-cpu-detect \
@@ -438,7 +439,6 @@ gen_config_files mac/x64 \
 gen_config_files ios/arm-neon "--target=armv7-linux-gcc \
   --disable-runtime-cpu-detect ${all_platforms}"
 gen_config_files ios/arm64 "--target=armv8-linux-gcc ${all_platforms}"
-gen_config_files nacl "--target=generic-gnu $HIGHBD ${all_platforms}"
 
 echo "Remove temporary directory."
 cd $BASE_DIR
@@ -447,9 +447,7 @@ rm -rf $TEMP_DIR
 echo "Lint libvpx configuration."
 lint_config linux/ia32
 lint_config linux/x64
-lint_config linux/arm
 lint_config linux/arm-neon
-lint_config linux/arm-neon-cpu-detect
 lint_config linux/arm64
 lint_config linux/arm-neon-highbd
 lint_config linux/arm64-highbd
@@ -465,7 +463,6 @@ lint_config mac/ia32
 lint_config mac/x64
 lint_config ios/arm-neon
 lint_config ios/arm64
-lint_config nacl
 
 echo "Create temporary directory."
 TEMP_DIR="$LIBVPX_SRC_DIR.temp"
@@ -473,15 +470,14 @@ rm -rf $TEMP_DIR
 cp -R $LIBVPX_SRC_DIR $TEMP_DIR
 cd $TEMP_DIR
 
-# chromium has required sse2 for x86 since 2014
-require_sse2="--require-mmx --require-sse --require-sse2"
+# chromium has required sse3 for x86 since 2020:
+# http://crrev.com/5bb2864fdd57e45c84459520234b37a01e7a015a
+require_sse3="--require-mmx --require-sse --require-sse2 --require-sse3"
 require_neon="--require-neon"
 
-gen_rtcd_header linux/ia32 x86 "${require_sse2}"
+gen_rtcd_header linux/ia32 x86 "${require_sse3}"
 gen_rtcd_header linux/x64 x86_64
-gen_rtcd_header linux/arm armv7 "--disable-neon --disable-neon_asm"
 gen_rtcd_header linux/arm-neon armv7 "${require_neon}"
-gen_rtcd_header linux/arm-neon-cpu-detect armv7
 gen_rtcd_header linux/arm64 armv8 "${require_neon}"
 gen_rtcd_header linux/arm-neon-highbd armv7 "${require_neon}"
 gen_rtcd_header linux/arm64-highbd armv8 "${require_neon}"
@@ -491,22 +487,22 @@ gen_rtcd_header linux/loongarch loongarch
 gen_rtcd_header linux/ppc64 ppc
 gen_rtcd_header linux/generic generic
 gen_rtcd_header win/arm64-highbd armv8 "${require_neon} ${disable_sve}"
-gen_rtcd_header win/ia32 x86 "${require_sse2}"
+gen_rtcd_header win/ia32 x86 "${require_sse3}"
 gen_rtcd_header win/x64 x86_64
-gen_rtcd_header mac/ia32 x86 "${require_sse2}"
+gen_rtcd_header mac/ia32 x86 "${require_sse3}"
 gen_rtcd_header mac/x64 x86_64
 gen_rtcd_header ios/arm-neon armv7 "${require_neon}"
 gen_rtcd_header ios/arm64 armv8 "${require_neon}"
-gen_rtcd_header nacl nacl
 
 echo "Prepare Makefile."
 ./configure --target=generic-gnu > /dev/null
 make_clean
 
 if [[ -z $ONLY_CONFIGS ]]; then
-  # Remove existing .gni file.
-  rm -rf $BASE_DIR/libvpx_srcs.gni
+  # Remove existing .gni files.
+  rm -rf $BASE_DIR/libvpx_srcs.gni $BASE_DIR/libvpx_test_srcs.gni
   write_license $BASE_DIR/libvpx_srcs.gni
+  write_license $BASE_DIR/libvpx_test_srcs.gni
 
   echo "Generate X86 source list."
   config=$(print_config linux/ia32)
@@ -528,23 +524,11 @@ if [[ -z $ONLY_CONFIGS ]]; then
   make libvpx_srcs.txt target=libs $config > /dev/null
   convert_srcs_to_project_files libvpx_srcs.txt libvpx_srcs_x86_64
 
-  echo "Generate ARM source list."
-  config=$(print_config linux/arm)
-  make_clean
-  make libvpx_srcs.txt target=libs $config > /dev/null
-  convert_srcs_to_project_files libvpx_srcs.txt libvpx_srcs_arm
-
   echo "Generate ARM NEON source list."
   config=$(print_config linux/arm-neon)
   make_clean
   make libvpx_srcs.txt target=libs $config > /dev/null
   convert_srcs_to_project_files libvpx_srcs.txt libvpx_srcs_arm_neon
-
-  echo "Generate ARM NEON CPU DETECT source list."
-  config=$(print_config linux/arm-neon-cpu-detect)
-  make_clean
-  make libvpx_srcs.txt target=libs $config > /dev/null
-  convert_srcs_to_project_files libvpx_srcs.txt libvpx_srcs_arm_neon_cpu_detect
 
   echo "Generate ARM64 source list."
   config=$(print_config linux/arm64)
@@ -588,18 +572,12 @@ if [[ -z $ONLY_CONFIGS ]]; then
   make libvpx_srcs.txt target=libs $config > /dev/null
   convert_srcs_to_project_files libvpx_srcs.txt libvpx_srcs_ppc64
 
-
-  echo "Generate NaCl source list."
-  config=$(print_config_basic nacl)
-  make_clean
-  make libvpx_srcs.txt target=libs $config > /dev/null
-  convert_srcs_to_project_files libvpx_srcs.txt libvpx_srcs_nacl
-
   echo "Generate GENERIC source list."
   config=$(print_config_basic linux/generic)
   make_clean
-  make libvpx_srcs.txt target=libs $config > /dev/null
+  make libvpx_srcs.txt libvpx_test_srcs.txt target=libs $config > /dev/null
   convert_srcs_to_project_files libvpx_srcs.txt libvpx_srcs_generic
+  convert_srcs_to_project_files libvpx_test_srcs.txt libvpx_test_srcs_generic
 fi
 
 echo "Remove temporary directory."

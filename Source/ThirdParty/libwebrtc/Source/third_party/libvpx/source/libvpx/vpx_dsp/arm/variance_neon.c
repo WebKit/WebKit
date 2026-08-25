@@ -25,7 +25,6 @@ static INLINE void variance_4xh_neon(const uint8_t *src_ptr, int src_stride,
                                      int h, uint32_t *sse, int *sum) {
   int16x8_t sum_s16 = vdupq_n_s16(0);
   int32x4_t sse_s32 = vdupq_n_s32(0);
-  int i = h;
 
   // Number of rows we can process before 'sum_s16' overflows:
   // 32767 / 255 ~= 128, but we use an 8-wide accumulator; so 256 4-wide rows.
@@ -43,8 +42,8 @@ static INLINE void variance_4xh_neon(const uint8_t *src_ptr, int src_stride,
 
     src_ptr += 2 * src_stride;
     ref_ptr += 2 * ref_stride;
-    i -= 2;
-  } while (i != 0);
+    h -= 2;
+  } while (h != 0);
 
   *sum = horizontal_add_int16x8(sum_s16);
   *sse = (uint32_t)horizontal_add_int32x4(sse_s32);
@@ -56,7 +55,6 @@ static INLINE void variance_8xh_neon(const uint8_t *src_ptr, int src_stride,
                                      int h, uint32_t *sse, int *sum) {
   int16x8_t sum_s16 = vdupq_n_s16(0);
   int32x4_t sse_s32[2] = { vdupq_n_s32(0), vdupq_n_s32(0) };
-  int i = h;
 
   // Number of rows we can process before 'sum_s16' overflows:
   // 32767 / 255 ~= 128
@@ -75,7 +73,7 @@ static INLINE void variance_8xh_neon(const uint8_t *src_ptr, int src_stride,
 
     src_ptr += src_stride;
     ref_ptr += ref_stride;
-  } while (--i != 0);
+  } while (--h != 0);
 
   *sum = horizontal_add_int16x8(sum_s16);
   *sse = (uint32_t)horizontal_add_int32x4(vaddq_s32(sse_s32[0], sse_s32[1]));
@@ -87,7 +85,6 @@ static INLINE void variance_16xh_neon(const uint8_t *src_ptr, int src_stride,
                                       int h, uint32_t *sse, int *sum) {
   int16x8_t sum_s16[2] = { vdupq_n_s16(0), vdupq_n_s16(0) };
   int32x4_t sse_s32[2] = { vdupq_n_s32(0), vdupq_n_s32(0) };
-  int i = h;
 
   // Number of rows we can process before 'sum_s16' accumulators overflow:
   // 32767 / 255 ~= 128, so 128 16-wide rows.
@@ -116,7 +113,7 @@ static INLINE void variance_16xh_neon(const uint8_t *src_ptr, int src_stride,
 
     src_ptr += src_stride;
     ref_ptr += ref_stride;
-  } while (--i != 0);
+  } while (--h != 0);
 
   *sum = horizontal_add_int16x8(vaddq_s16(sum_s16[0], sum_s16[1]));
   *sse = (uint32_t)horizontal_add_int32x4(vaddq_s32(sse_s32[0], sse_s32[1]));
@@ -238,7 +235,6 @@ static INLINE unsigned int vpx_mse8xh_neon(const unsigned char *src_ptr,
                                            int ref_stride, int h) {
   uint32x4_t sse_u32[2] = { vdupq_n_u32(0), vdupq_n_u32(0) };
 
-  int i = h / 2;
   do {
     uint8x8_t s0, s1, r0, r1, diff0, diff1;
     uint16x8_t sse0, sse1;
@@ -259,7 +255,8 @@ static INLINE unsigned int vpx_mse8xh_neon(const unsigned char *src_ptr,
     sse_u32[0] = vpadalq_u16(sse_u32[0], sse0);
     sse1 = vmull_u8(diff1, diff1);
     sse_u32[1] = vpadalq_u16(sse_u32[1], sse1);
-  } while (--i != 0);
+    h -= 2;
+  } while (h != 0);
 
   return horizontal_add_uint32x4(vaddq_u32(sse_u32[0], sse_u32[1]));
 }
@@ -270,7 +267,6 @@ static INLINE unsigned int vpx_mse16xh_neon(const unsigned char *src_ptr,
                                             int ref_stride, int h) {
   uint32x4_t sse_u32[2] = { vdupq_n_u32(0), vdupq_n_u32(0) };
 
-  int i = h;
   do {
     uint8x16_t s, r, diff;
     uint16x8_t sse0, sse1;
@@ -286,7 +282,7 @@ static INLINE unsigned int vpx_mse16xh_neon(const unsigned char *src_ptr,
     sse_u32[0] = vpadalq_u16(sse_u32[0], sse0);
     sse1 = vmull_u8(vget_high_u8(diff), vget_high_u8(diff));
     sse_u32[1] = vpadalq_u16(sse_u32[1], sse1);
-  } while (--i != 0);
+  } while (--h != 0);
 
   return horizontal_add_uint32x4(vaddq_u32(sse_u32[0], sse_u32[1]));
 }

@@ -8,6 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 #include <math.h>
+
+#include <memory>
 #include <tuple>
 
 #include "gtest/gtest.h"
@@ -98,33 +100,35 @@ TEST_P(AddNoiseTest, CheckNoiseAdded) {
 }
 
 TEST_P(AddNoiseTest, CheckCvsAssembly) {
-  const int width = 64;
+  static constexpr int kWidths[] = { 8, 18, 34, 64, 66 };
   const int height = 64;
-  const int image_size = width * height;
   int8_t noise[kNoiseSize];
   const int clamp = vpx_setup_noise(4.4, noise, kNoiseSize);
 
-  uint8_t *const s = reinterpret_cast<uint8_t *>(vpx_calloc(image_size, 1));
-  uint8_t *const d = reinterpret_cast<uint8_t *>(vpx_calloc(image_size, 1));
-  ASSERT_NE(s, nullptr);
-  ASSERT_NE(d, nullptr);
+  for (int width : kWidths) {
+    const int image_size = width * height;
+    std::unique_ptr<uint8_t[], decltype(&vpx_free)> s(
+        reinterpret_cast<uint8_t *>(vpx_calloc(image_size, 1)), vpx_free);
+    std::unique_ptr<uint8_t[], decltype(&vpx_free)> d(
+        reinterpret_cast<uint8_t *>(vpx_calloc(image_size, 1)), vpx_free);
+    ASSERT_NE(s, nullptr);
+    ASSERT_NE(d, nullptr);
 
-  memset(s, 99, image_size);
-  memset(d, 99, image_size);
+    memset(s.get(), 99, image_size);
+    memset(d.get(), 99, image_size);
 
-  srand(0);
-  ASM_REGISTER_STATE_CHECK(
-      GET_PARAM(1)(s, noise, clamp, clamp, width, height, width));
-  srand(0);
-  ASM_REGISTER_STATE_CHECK(
-      vpx_plane_add_noise_c(d, noise, clamp, clamp, width, height, width));
+    srand(0);
+    ASM_REGISTER_STATE_CHECK(
+        GET_PARAM(1)(s.get(), noise, clamp, clamp, width, height, width));
+    srand(0);
+    ASM_REGISTER_STATE_CHECK(vpx_plane_add_noise_c(d.get(), noise, clamp, clamp,
+                                                   width, height, width));
 
-  for (int i = 0; i < image_size; ++i) {
-    EXPECT_EQ(static_cast<int>(s[i]), static_cast<int>(d[i])) << "i = " << i;
+    for (int i = 0; i < image_size; ++i) {
+      EXPECT_EQ(static_cast<int>(s[i]), static_cast<int>(d[i]))
+          << "width = " << width << ", idx = " << i;
+    }
   }
-
-  vpx_free(d);
-  vpx_free(s);
 }
 
 using std::make_tuple;
