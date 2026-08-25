@@ -170,3 +170,62 @@ class UploadContextTest(WaitForDockerTestCase):
             self.assertEqual(0, len(self.model.suite_context.find_by_commit(configurations=[Configuration()], suite='layout-tests')))
             self.assertTrue(self.model.upload_context.do_processing_work())
             self.assertEqual(1, len(self.model.suite_context.find_by_commit(configurations=[Configuration()], suite='layout-tests')))
+
+    def _queue_one_upload(self):
+        configuration_to_search = Configuration(platform='iOS', version='12.0.0', is_simulator=True, style='Asan')
+        configuration, uploads = next(iter(self.model.upload_context.find_test_results(configurations=[configuration_to_search], suite='layout-tests', recent=False).items()))
+        self.model.upload_context.process_test_results(
+            configuration=configuration,
+            commits=uploads[0]['commits'],
+            suite='layout-tests',
+            test_results=uploads[0]['test_results'],
+            timestamp=uploads[0]['timestamp'],
+        )
+        keys = [key.decode('utf-8') for key in self.model.redis.scan_iter(match=f'{UploadContext.QUEUE_NAME}*')]
+        self.assertEqual(1, len(keys))
+        return keys[0]
+
+    @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
+    def test_async_data_written_before_job(self, redis=StrictRedis, cassandra=CassandraContext):
+        self.init_database(redis=redis, cassandra=cassandra, async_processing=True)
+        MockModelFactory.add_mock_results(self.model)
+
+        with MockModelFactory.safari(), MockModelFactory.webkit():
+            key = self._queue_one_upload()
+
+            # A worker which finds a queued upload must always be able to process it.
+            self.assertIsNotNone(self.model.redis.get(f'data_for_{key}'))
+
+    @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
+    def test_async_upload_without_data_is_reported(self, redis=StrictRedis, cassandra=CassandraContext):
+        self.init_database(redis=redis, cassandra=cassandra, async_processing=True)
+        MockModelFactory.add_mock_results(self.model)
+
+        with MockModelFactory.safari(), MockModelFactory.webkit():
+            key = self._queue_one_upload()
+            self.model.redis.delete(f'data_for_{key}')
+
+            self.model.upload_context.do_processing_work()
+            self.assertEqual(0, len(self.model.suite_context.find_by_commit(configurations=[Configuration()], suite='layout-tests')))
+            self.assertIsNone(self.model.redis.get(key))
+
+    @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
+    def test_async_upload_dropped_after_max_attempts(self, redis=StrictRedis, cassandra=CassandraContext):
+        self.init_database(redis=redis, cassandra=cassandra, async_processing=True)
+        MockModelFactory.add_mock_results(self.model)
+
+        with MockModelFactory.safari(), MockModelFactory.webkit():
+            key = self._queue_one_upload()
+
+            def failing_callback(**kwargs):
+                raise RuntimeError('Simulated processing failure')
+
+            self.model.upload_context.register_upload_callback('failing', failing_callback)
+
+            for _ in range(UploadContext.MAX_ATTEMPTS):
+                self.assertIsNotNone(self.model.redis.get(key))
+                with self.assertRaises(RuntimeError):
+                    self.model.upload_context.do_processing_work()
+
+            self.assertIsNone(self.model.redis.get(key))
+            self.assertIsNone(self.model.redis.get(f'data_for_{key}'))
