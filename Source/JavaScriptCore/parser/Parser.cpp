@@ -2872,8 +2872,9 @@ template <class TreeBuilder> bool Parser<LexerType>::parseFunctionInfo(TreeBuild
     const int minimumSourceLengthToCache = functionBodyType == StandardFunctionBodyBlock ? 16 : 8;
     std::unique_ptr<SourceProviderCacheItem> newInfo;
     int sourceLength = functionInfo.endOffset - functionInfo.startOffset;
+    SourceProviderCacheItemCreationParameters parameters;
+    bool hasPrecomputedFreeVariables = false;
     if (TreeBuilder::CanUseFunctionCache && m_functionCache && sourceLength > minimumSourceLengthToCache) {
-        SourceProviderCacheItemCreationParameters parameters;
         parameters.endFunctionOffset = functionInfo.endOffset;
         parameters.lastTokenLine = location.line;
         parameters.lastTokenStartOffset = location.startOffset;
@@ -2888,12 +2889,13 @@ template <class TreeBuilder> bool Parser<LexerType>::parseFunctionInfo(TreeBuild
             parameters.tokenType = m_token.m_type;
         }
         functionScope->fillParametersForSourceProviderCache(parameters, nonLocalCapturesFromParameterExpressions);
+        hasPrecomputedFreeVariables = true;
         newInfo = SourceProviderCacheItem::create(parameters);
     }
 
     bool functionScopeWasStrictMode = functionScope->strictMode();
     
-    popScope(functionScope, TreeBuilder::NeedsFreeVariableInfo);
+    popScope(functionScope, TreeBuilder::NeedsFreeVariableInfo, hasPrecomputedFreeVariables, parameters.freeVariables());
     
     if (functionBodyType != ArrowFunctionBodyExpression)
         consumeOrFail(CLOSEBRACE, "Expected a closing '}' after a ", stringForFunctionMode(mode), " body");

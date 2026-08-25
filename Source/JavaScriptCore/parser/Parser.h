@@ -744,7 +744,7 @@ public:
         }
     }
     
-    void collectFreeVariables(Scope* nestedScope, bool shouldTrackClosedVariables)
+    void collectFreeVariablesFrom(Scope* nestedScope, bool shouldTrackClosedVariables, bool hasPrecomputedFreeVariables = false, std::span<UniquedStringImpl* const> precomputedFreeVariables = { })
     {
         if (nestedScope->m_usesEval)
             m_usesEval = true;
@@ -753,21 +753,36 @@ public:
 
         {
             UniquedStringImplPtrSet& destinationSet = m_usedVariables.last();
-            for (const UniquedStringImplPtrSet& usedVariablesSet : nestedScope->m_usedVariables) {
-                for (UniquedStringImpl* impl : usedVariablesSet) {
-                    if (nestedScope->m_declaredVariables.contains(impl) || nestedScope->m_lexicalVariables.contains(impl))
-                        continue;
+            // If nestedScope is a non-arrow function and there is an "arguments" reference,
+            // we need to filter it because it should not propagate out.
+            UniquedStringImpl* argumentsIdentifierOrNull = nestedScope->isFunctionBoundary() && nestedScope->hasArguments() && !nestedScope->isArrowFunctionBoundary()
+                ? m_vm.propertyNames->arguments.impl() : nullptr;
+            // We don't want a declared variable that is used in an inner scope to be thought of as captured if
+            // that inner scope is both a lexical scope and not a function. Only inner functions and "catch"
+            // statements can cause variables to be captured.
+            bool doTrackClosedVariables = shouldTrackClosedVariables && (nestedScope->m_isFunctionBoundary || !nestedScope->m_isLexicalScope);
+            auto propagateFreeVariable = [&](UniquedStringImpl* impl) ALWAYS_INLINE_LAMBDA {
+                if (impl == argumentsIdentifierOrNull)
+                    return;
+                destinationSet.add(impl);
+                if (doTrackClosedVariables)
+                    m_closedVariableCandidates.add(impl);
+            };
 
-                    // "arguments" reference should be resolved at function boudary.
-                    if (nestedScope->isFunctionBoundary() && nestedScope->hasArguments() && impl == m_vm.propertyNames->arguments.impl() && !nestedScope->isArrowFunctionBoundary())
-                        continue;
-
-                    destinationSet.add(impl);
-                    // We don't want a declared variable that is used in an inner scope to be thought of as captured if
-                    // that inner scope is both a lexical scope and not a function. Only inner functions and "catch" 
-                    // statements can cause variables to be captured.
-                    if (shouldTrackClosedVariables && (nestedScope->m_isFunctionBoundary || !nestedScope->m_isLexicalScope))
-                        m_closedVariableCandidates.add(impl);
+            if (hasPrecomputedFreeVariables) {
+#if ASSERT_ENABLED
+                for (UniquedStringImpl* impl : precomputedFreeVariables)
+                    ASSERT(!nestedScope->m_declaredVariables.contains(impl) && !nestedScope->m_lexicalVariables.contains(impl));
+#endif
+                for (UniquedStringImpl* impl : precomputedFreeVariables)
+                    propagateFreeVariable(impl);
+            } else {
+                for (const UniquedStringImplPtrSet& usedVariablesSet : nestedScope->m_usedVariables) {
+                    for (UniquedStringImpl* impl : usedVariablesSet) {
+                        if (nestedScope->m_declaredVariables.contains(impl) || nestedScope->m_lexicalVariables.contains(impl))
+                            continue;
+                        propagateFreeVariable(impl);
+                    }
                 }
             }
         }
@@ -859,6 +874,7 @@ public:
     void fillParametersForSourceProviderCache(SourceProviderCacheItemCreationParameters& parameters, const UniquedStringImplPtrSet& capturesFromParameterExpressions)
     {
         ASSERT(m_isFunction);
+        ASSERT(parameters.usedVariables.isEmpty());
         parameters.usesEval = m_usesEval;
         parameters.usesImportMeta = m_usesImportMeta;
         parameters.lexicallyScopedFeatures = m_lexicallyScopedFeatures;
@@ -867,6 +883,7 @@ public:
         parameters.needsSuperBinding = m_needsSuperBinding;
         for (const UniquedStringImplPtrSet& set : m_usedVariables)
             copyCapturedVariablesToVector(set, parameters.usedVariables);
+        parameters.freeVariableCount = parameters.usedVariables.size();
 
         // FIXME: https://bugs.webkit.org/show_bug.cgi?id=156962
         // We add these unconditionally because we currently don't keep a separate
@@ -879,6 +896,7 @@ public:
         // is.
         for (UniquedStringImpl* impl : capturesFromParameterExpressions)
             parameters.usedVariables.append(impl);
+        ASSERT(parameters.freeVariableCount + capturesFromParameterExpressions.size() == parameters.usedVariables.size());
     }
 
     void restoreFromSourceProviderCache(const SourceProviderCacheItem* info)
@@ -1361,17 +1379,16 @@ private:
         }
     }
 
-    std::tuple<VariableEnvironment, DeclarationStacks::FunctionStack> popScopeInternal(Scope* scope, bool shouldTrackClosedVariables)
+    std::tuple<VariableEnvironment, DeclarationStacks::FunctionStack> popScopeInternal(Scope* scope, bool shouldTrackClosedVariables, bool hasPrecomputedFreeVariables = false, std::span<UniquedStringImpl* const> precomputedFreeVariables = { })
     {
         EXCEPTION_ASSERT_UNUSED(scope, scope == m_currentScope);
         ASSERT(m_scopeStack.size() > 1);
         Scope* lastScope = m_currentScope;
         Scope* parentScope = lastScope->containingScope();
 
-        // Finalize lexical variables.
         lastScope->finalizeLexicalEnvironment();
 
-        parentScope->collectFreeVariables(lastScope, shouldTrackClosedVariables);
+        parentScope->collectFreeVariablesFrom(lastScope, shouldTrackClosedVariables, hasPrecomputedFreeVariables, precomputedFreeVariables);
 
         if (lastScope->hasSloppyModeFunctionHoistingCandidates())
             lastScope->bubbleSloppyModeFunctionHoistingCandidates(parentScope);
@@ -1395,10 +1412,14 @@ private:
         return popScopeInternal(scope, shouldTrackClosedVariables);
     }
 
-    ALWAYS_INLINE std::tuple<VariableEnvironment, DeclarationStacks::FunctionStack> popScope(AutoPopScope& scope, bool shouldTrackClosedVariables)
+    // If hasPrecomputedFreeVariables is true, precomputedFreeVariables contains nestedScope's
+    // free variables already computed by the caller. Conceptually these two parameters form an
+    // std::optional<std::span>, but we keep them separate so they are passed in registers.
+    // This code is hot enough that it makes a difference.
+    ALWAYS_INLINE std::tuple<VariableEnvironment, DeclarationStacks::FunctionStack> popScope(AutoPopScope& scope, bool shouldTrackClosedVariables, bool hasPrecomputedFreeVariables = false, std::span<UniquedStringImpl* const> precomputedFreeVariables = { })
     {
         scope.setPopped();
-        return popScopeInternal(scope.scope(), shouldTrackClosedVariables);
+        return popScopeInternal(scope.scope(), shouldTrackClosedVariables, hasPrecomputedFreeVariables, precomputedFreeVariables);
     }
 
     ALWAYS_INLINE std::tuple<VariableEnvironment, DeclarationStacks::FunctionStack> popScope(AutoCleanupLexicalScope& cleanupScope, bool shouldTrackClosedVariables)
