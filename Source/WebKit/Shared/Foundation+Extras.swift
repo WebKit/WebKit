@@ -21,10 +21,18 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 // THE POSSIBILITY OF SUCH DAMAGE.
 
+#if os(Windows)
+// FIXME: (rdar://185504483) conflict with Windows Swift Foundation's ICU
+import FoundationEssentials
+
+typealias URL = FoundationEssentials.URL
+#else
 import Foundation
 
-typealias String = Swift.String
 typealias URL = Foundation.URL
+#endif
+
+typealias String = Swift.String
 
 struct UncheckedSendableKeyPathBox<Root, Value>: @unchecked Sendable {
     let keyPath: KeyPath<Root, Value>
