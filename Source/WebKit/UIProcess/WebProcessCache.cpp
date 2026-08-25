@@ -97,6 +97,9 @@ bool WebProcessCache::canCacheProcess(WebProcessProxy& process) const
         return false;
     }
 
+    // The cache is keyed on site, not on group. canBeAddedToWebProcessCache() gates the only caller.
+    ASSERT(process.crossOriginMode() == WebCore::CrossOriginMode::Shared);
+
     if (!capacity()) {
         WEBPROCESSCACHE_RELEASE_LOG("canCacheProcess: Not caching process because the cache has no capacity", process.processID());
         return false;

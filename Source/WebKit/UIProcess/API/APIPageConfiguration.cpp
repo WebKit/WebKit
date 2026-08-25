@@ -263,8 +263,13 @@ BrowsingContextGroup* PageConfiguration::preferredBrowsingContextGroup() const
         return opener->browsingContextGroup.ptr();
 
     if (auto relatedPage = this->relatedPage()) {
-        if (!relatedPage->isClosed())
-            return &relatedPage->browsingContextGroup();
+        if (relatedPage->isClosed())
+            return nullptr;
+        // A related page is only a process-sharing hint, not a browsing context group relationship, so it
+        // must not hand over a cross-origin-isolated group.
+        if (relatedPage->browsingContextGroup().crossOriginMode() == WebCore::CrossOriginMode::Isolated)
+            return nullptr;
+        return &relatedPage->browsingContextGroup();
     }
 
     return nullptr;

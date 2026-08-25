@@ -253,7 +253,6 @@ imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal
 imported/w3c/web-platform-tests/html/browsers/origin/cross-origin-objects/cross-origin-objects.html [ Failure ]
 imported/w3c/web-platform-tests/html/infrastructure/safe-passing-of-structured-data/shared-array-buffers/broadcastchannel-success-and-failure.https.html [ Failure ]
 imported/w3c/web-platform-tests/html/infrastructure/safe-passing-of-structured-data/shared-array-buffers/nested-sharedworker-success.https.html [ Failure ]
-imported/w3c/web-platform-tests/html/infrastructure/safe-passing-of-structured-data/shared-array-buffers/window-failure.https.html [ Skip ]
 imported/w3c/web-platform-tests/html/infrastructure/safe-passing-of-structured-data/shared-array-buffers/window-sharedworker-failure.https.html [ Failure ]
 imported/w3c/web-platform-tests/html/interaction/focus/focus-input-type-switch.html [ Failure ]
 imported/w3c/web-platform-tests/html/rendering/widgets/input-date-no-resize-on-hover.html [ Failure ]

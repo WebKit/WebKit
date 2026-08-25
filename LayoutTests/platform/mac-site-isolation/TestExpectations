@@ -69,7 +69,6 @@ imported/w3c/web-platform-tests/cookies/partitioned-cookies/partitioned-cookies.
 imported/w3c/web-platform-tests/fetch/api/basic/keepalive.any.html
 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/history-traversal/pageswap/pageswap-replace-with-cross-origin-redirect.sub.html [ Failure ]
 imported/w3c/web-platform-tests/content-security-policy/inheritance/history.sub.html [ Failure ]
-imported/w3c/web-platform-tests/html/infrastructure/safe-passing-of-structured-data/shared-array-buffers/window-failure.https.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/event_pause_noautoplay.html [ Failure ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/event_play_noautoplay.html [ Failure ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/loading-the-media-resource/resource-selection-invoke-play.html [ Failure ]
