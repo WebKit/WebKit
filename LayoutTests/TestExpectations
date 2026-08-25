@@ -5147,7 +5147,6 @@ webkit.org/b/320901 webgl/2.0.y/conformance/attribs/gl-get-attrib-location-error
 webkit.org/b/320901 webgl/2.0.y/conformance/glsl/misc/shader-with-double-underscore.html [ Failure ]
 webkit.org/b/320901 webgl/2.0.y/conformance/textures/misc/tex-image-svg-image-no-natural-width-and-height.html [ Failure ]
 webkit.org/b/320901 webgl/2.0.y/conformance/uniforms/gl-get-uniform-location-errors.html [ Failure ]
-webkit.org/b/320901 webgl/2.0.y/conformance2/rendering/blitframebuffer-test.html [ Failure ]
 
 # Until more platforms ship with WebGL GPUP
 webgl/webgl-fail-platform-context-creation-no-crash.html [ Failure Pass ]
