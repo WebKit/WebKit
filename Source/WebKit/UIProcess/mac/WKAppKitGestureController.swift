@@ -101,6 +101,16 @@ extension WKAppKitGestureController {
         self.panGestureRecognizer = panGestureRecognizer
     }
 
+    @objc(makeImageAnalysisDeferringGestureRecognizerWithName:)
+    func makeImageAnalysisDeferringGestureRecognizer(withName name: String) -> WKDeferringGestureRecognizer {
+        let deferringGestureRecognizer = WKDeferringGestureRecognizer(deferringGestureDelegate: self)
+        configure(forImageAnalysisDeferral: deferringGestureRecognizer)
+        deferringGestureRecognizer.name = name
+        deferringGestureRecognizer.delegate = self
+        deferringGestureRecognizer.immediatelyFailsAfterActionEnd = true
+        return deferringGestureRecognizer
+    }
+
     @objc(loggingDescriptionForGestureRecognizer:)
     class func loggingDescription(for gestureRecognizer: NSGestureRecognizer?) -> String {
         guard let gestureRecognizer else {

@@ -65,6 +65,11 @@ public struct ImageAnalysisResult: Codable, Sendable {
 
     /// The lines of text that compose this analysis.
     public let lines: [Line]
+
+    /// Creates a result with the given recognized-text lines.
+    public init(lines: [Line]) {
+        self.lines = lines
+    }
 }
 
 extension ImageAnalysisResult {
@@ -88,12 +93,13 @@ extension ImageAnalysisResult {
 ///   - failureType: The type of the error of the result, if any.
 ///   - delay: An option duration which, if specified, delays the response from being provided by the specified duration.
 ///   - body: The code to execute with the replaced implementation.
-public nonisolated(nonsending) func withMockedImageAnalyzer<Failure>(
-    response: Result<ImageAnalysisResult, Failure>,
-    failureType: Failure.Type = Failure.self,
+/// - Throws: The error thrown by `body`, if any.
+public nonisolated(nonsending) func withMockedImageAnalyzer<ResultFailure, BodyFailure>(
+    response: Result<ImageAnalysisResult, ResultFailure>,
+    failureType: ResultFailure.Type = ResultFailure.self,
     after delay: Duration? = nil,
-    perform body: () async -> sending Void
-) async where Failure: Error {
+    perform body: () async throws(BodyFailure) -> sending Void
+) async throws(BodyFailure) where ResultFailure: Error, BodyFailure: Error {
     typealias ObjCVKImageAnalysisRequestID = Int32
     typealias ObjCVKCImageAnalysis = AnyObject
     typealias ObjCCompletionHandler = @Sendable @convention(block) (ObjCVKCImageAnalysis?, NSError?) -> Void
@@ -124,7 +130,7 @@ public nonisolated(nonsending) func withMockedImageAnalyzer<Failure>(
         return 0
     }
 
-    await withSwizzledObjectiveCInstanceMethod(
+    try await withSwizzledObjectiveCInstanceMethod(
         replacing: analyzerClass,
         name: NSSelectorFromString("processRequest:progressHandler:completionHandler:"),
         with: processRequest,
@@ -141,12 +147,13 @@ public nonisolated(nonsending) func withMockedImageAnalyzer<Failure>(
 ///   - response: The response to provide in place of the Vision framework's normal response.
 ///   - delay: An option duration which, if specified, delays the response from being provided by the specified duration.
 ///   - body: The code to execute with the replaced implementation.
-public nonisolated(nonsending) func withMockedImageAnalyzer(
-    response: Swift.Result<ImageAnalysisResult, Never>,
+/// - Throws: The error thrown by `body`, if any.
+public nonisolated(nonsending) func withMockedImageAnalyzer<BodyFailure>(
+    response: Result<ImageAnalysisResult, Never>,
     after delay: Duration? = nil,
-    perform body: () async -> sending Void
-) async {
-    await withMockedImageAnalyzer(response: response, failureType: Never.self, after: delay, perform: body)
+    perform body: () async throws(BodyFailure) -> sending Void
+) async throws(BodyFailure) {
+    try await withMockedImageAnalyzer(response: response, failureType: Never.self, after: delay, perform: body)
 }
 
 // The following classes stand in for VKC's result types. WebKit reads them purely via

@@ -29,6 +29,7 @@
 
 #if HAVE(APPKIT_GESTURES_SUPPORT)
 
+#import "WKDeferringGestureRecognizer.h"
 #import <AppKit/NSGestureRecognizer.h>
 #import <wtf/Forward.h>
 #import <wtf/ObjectIdentifier.h>
@@ -91,6 +92,7 @@ NS_SWIFT_UI_ACTOR
 @property (nonatomic, readonly, nullable) WKWebView *webView;
 @property (nonatomic, strong, nullable) NSPanGestureRecognizer *panGestureRecognizer;
 - (void)configureForScrolling:(NSPanGestureRecognizer *)gesture;
+- (void)configureForImageAnalysisDeferral:(WKDeferringGestureRecognizer *)gesture;
 - (void)panGestureRecognized:(NSGestureRecognizer *)gesture;
 
 @end
@@ -98,8 +100,13 @@ NS_SWIFT_UI_ACTOR
 @interface WKAppKitGestureController (Swift)
 
 - (void)setUpPanGestureRecognizer;
+- (WKDeferringGestureRecognizer *)makeImageAnalysisDeferringGestureRecognizerWithName:(NSString *)name;
 
 + (NSString *)loggingDescriptionForGestureRecognizer:(nullable NSGestureRecognizer *)gestureRecognizer;
+
+@end
+
+@interface WKAppKitGestureController (WKDeferringGestureRecognizerDelegate) <WKDeferringGestureRecognizerDelegate>
 
 @end
 

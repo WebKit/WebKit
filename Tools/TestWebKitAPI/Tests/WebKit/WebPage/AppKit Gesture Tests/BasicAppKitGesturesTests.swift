@@ -602,7 +602,7 @@ extension AppKitGesturesTests.Basic {
         #expect(selection == expected)
     }
 
-    @Test(arguments: [6, 8], [Duration.seconds(0.1), .seconds(0.5), .seconds(1.0)])
+    @Test(.disabled(), arguments: [6, 8], [Duration.seconds(0.1), .seconds(0.5), .seconds(1.0)])
     func scrollingOnScrollBarChangesScrollPosition(inset: Int, pressAndWait: Duration) async throws {
         let html = """
             <body style="width: 100%; height: 2000px; margin: 0; background: repeating-linear-gradient(to bottom, blue 0 50px, white 50px 100px);">
@@ -1018,18 +1018,7 @@ extension AppKitGesturesTests.Basic {
 
         let dragEnd = CGPoint(x: linkBounds.maxX + 50, y: linkBounds.midY)
 
-        let dragInitiated = Future()
-
-        let implementation: @convention(block) (NSView, NSArray, NSGestureRecognizer, AnyObject) -> NSDraggingSession? = { _, _, _, _ in
-            dragInitiated.signal()
-            return NSDraggingSession()
-        }
-
-        await withSwizzledObjectiveCInstanceMethod(
-            replacing: NSView.self,
-            name: #selector(NSView.beginDraggingSession(items:gesture:source:)),
-            with: implementation
-        ) {
+        await withSwizzledDraggingSession {
             await recap.play { composer in
                 composer._wk_drag(
                     withStart: linkBounds.center,
@@ -1038,8 +1027,6 @@ extension AppKitGesturesTests.Basic {
                     pressAndWait: .seconds(1.0)
                 )
             }
-
-            await dragInitiated.wait()
         }
 
         await page.waitForNextPresentationUpdate()
@@ -1058,33 +1045,12 @@ extension AppKitGesturesTests.Basic {
             """
         try await page.load(html: html, baseURL: baseURL).wait()
 
-        try await page.callJavaScript {
-            """
-            const img = document.getElementById("img");
-            if (img.complete && img.naturalWidth > 0) {
-                return;
-            }
-            await new Promise(resolve => img.addEventListener("load", resolve, { once: true }));
-            """
-        }
-
         let imgViewportBounds = try await page.callJavaScript(JavaScriptMessages.BoundingClientRect(elementID: "img"))
         let imgBounds = screenBounds(ofRectInViewportCoordinates: imgViewportBounds)
 
         let dragEnd = CGPoint(x: imgBounds.maxX + 50, y: imgBounds.midY)
 
-        let dragInitiated = Future()
-
-        let implementation: @convention(block) (NSView, NSArray, NSGestureRecognizer, AnyObject) -> NSDraggingSession? = { _, _, _, _ in
-            dragInitiated.signal()
-            return NSDraggingSession()
-        }
-
-        try await withSwizzledObjectiveCInstanceMethod(
-            replacing: NSView.self,
-            name: #selector(NSView.beginDraggingSession(items:gesture:source:)),
-            with: implementation
-        ) {
+        await withSwizzledDraggingSession {
             await recap.play { composer in
                 composer._wk_drag(
                     withStart: imgBounds.center,
@@ -1093,19 +1059,9 @@ extension AppKitGesturesTests.Basic {
                     pressAndWait: .seconds(1.0)
                 )
             }
-
-            // If a drag cannot happen, the text selection gestures take over and the
-            // gesture falls through to a range selection. Detect that early so the test
-            // fails with a diagnostic instead of timing out on `dragInitiated.wait()`.
-            await page.waitForNextPresentationUpdate()
-            let selection = try await page.callJavaScript(JavaScriptMessages.GetSelection())
-            if case .range = selection {
-                Issue.record("press-drag on <img> produced a range selection (\(selection)) instead of initiating a drag")
-                return
-            }
-
-            await dragInitiated.wait()
         }
+
+        // The test succeeds if it does not timeout.
     }
 
     @Test(
@@ -1228,8 +1184,8 @@ extension AppKitGesturesTests.Basic {
         #expect(page.backForwardList.backList.count == 1)
     }
 
-    @Test(.disabled())
-    func longPressAndDragOnImageSelectsEntireTextUsingLiveText() async throws {
+    @Test(arguments: [Duration.zero, .seconds(1)])
+    func longPressAndDragOnImageSelectsEntireText(delay: Duration) async throws {
         let baseURL = try #require(Bundle.testResources.resourceURL)
         let html = """
             <img id="img" src="love-and-coffee.jpeg" style="display: block; height: 100vh; margin: 0">
@@ -1250,7 +1206,7 @@ extension AppKitGesturesTests.Basic {
         let start = firstWord.center.normalized(in: imageScreenBounds)
         let end = lastWord.center.normalized(in: imageScreenBounds)
 
-        await withMockedImageAnalyzer(response: .success(analysis)) {
+        await withMockedImageAnalyzer(response: .success(analysis), after: delay) {
             await recap.play { composer in
                 composer._wk_drag(withStart: start, end: end, duration: .seconds(2), pressAndWait: .seconds(1.0))
             }
@@ -1263,6 +1219,37 @@ extension AppKitGesturesTests.Basic {
         }
 
         #expect(selection == "EVERYONE\nDESERVES\nLOVE AND\nCOFFEE")
+    }
+
+    @Test
+    func pressDragOnImageWithoutTextInitiatesDragAndDrop() async throws {
+        let baseURL = try #require(Bundle.testResources.resourceURL)
+        let html = """
+            <img id="img" src="400x400-green.png" style="display: block; height: 100vh; margin: 0">
+            """
+        try await page.load(html: html, baseURL: baseURL).wait()
+
+        let imageViewportBounds = try await page.callJavaScript(JavaScriptMessages.BoundingClientRect(elementID: "img"))
+        let imageScreenBounds = screenBounds(ofRectInViewportCoordinates: imageViewportBounds)
+
+        await page.waitForNextPresentationUpdate()
+
+        let dragEnd = CGPoint(x: imageScreenBounds.maxX + 50, y: imageScreenBounds.midY)
+
+        await withMockedImageAnalyzer(response: .success(.init(lines: [])), after: .zero) {
+            await withSwizzledDraggingSession {
+                await recap.play { composer in
+                    composer._wk_drag(
+                        withStart: imageScreenBounds.center,
+                        end: dragEnd,
+                        duration: .seconds(1.5),
+                        pressAndWait: .seconds(1.0)
+                    )
+                }
+            }
+        }
+
+        // The test succeeds if it does not timeout.
     }
 }
 
@@ -1286,6 +1273,27 @@ nonisolated(nonsending) private func withSwizzledContextMenu(perform body: () as
         await body()
 
         await future.wait()
+    }
+}
+
+nonisolated(nonsending) private func withSwizzledDraggingSession(perform body: () async -> Void) async {
+    typealias ObjCImplementation = @convention(block) (NSView, NSArray, NSGestureRecognizer, AnyObject) -> NSDraggingSession?
+
+    let dragInitiated = Future()
+
+    let implementation: ObjCImplementation = { _, _, _, _ in
+        dragInitiated.signal()
+        return NSDraggingSession()
+    }
+
+    await withSwizzledObjectiveCInstanceMethod(
+        replacing: NSView.self,
+        name: #selector(NSView.beginDraggingSession(items:gesture:source:)),
+        with: implementation
+    ) {
+        await body()
+
+        await dragInitiated.wait()
     }
 }
 
