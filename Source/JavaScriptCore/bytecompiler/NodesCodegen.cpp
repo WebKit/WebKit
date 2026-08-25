@@ -5811,6 +5811,11 @@ static void assignDefaultValueIfUndefined(BytecodeGenerator& generator, Register
 
 void ArrayPatternNode::bindValue(BytecodeGenerator& generator, RegisterID* rhs) const
 {
+    if (!generator.vm().isSafeToRecurse()) [[unlikely]] {
+        generator.emitThrowExpressionTooDeepException();
+        return;
+    }
+
     RefPtr<RegisterID> iterable = rhs;
     RefPtr<RegisterID> iterator = generator.newTemporary();
     RefPtr<RegisterID> nextOrIndex = generator.newTemporary();
@@ -6000,6 +6005,11 @@ void ObjectPatternNode::toString(StringBuilder& builder) const
     
 void ObjectPatternNode::bindValue(BytecodeGenerator& generator, RegisterID* rhs) const
 {
+    if (!generator.vm().isSafeToRecurse()) [[unlikely]] {
+        generator.emitThrowExpressionTooDeepException();
+        return;
+    }
+
     const Identifier* firstPropertyName = nullptr;
     if (!m_targetPatterns.isEmpty()) {
         const auto& firstTarget = m_targetPatterns[0];
