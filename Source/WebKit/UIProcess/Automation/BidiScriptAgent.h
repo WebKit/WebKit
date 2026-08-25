@@ -35,6 +35,7 @@
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/SecurityOriginData.h>
 #include <optional>
+#include <utility>
 #include <wtf/CanMakeWeakPtr.h>
 #include <wtf/CheckedRef.h>
 #include <wtf/Forward.h>
@@ -63,9 +64,12 @@ class BidiScriptAgent final : public Inspector::BidiScriptBackendDispatcherHandl
 
 public:
     struct RealmInfo {
-        WebCore::SecurityOriginData origin;
+        String origin;
         Inspector::Protocol::BidiScript::RealmType type;
-        Inspector::Protocol::BidiBrowsingContext::BrowsingContext context;
+        std::optional<Inspector::Protocol::BidiBrowsingContext::BrowsingContext> context;
+        Vector<RealmIdentifier> owners;
+        HashSet<String> associatedBrowsingContexts;
+        bool creationNotified { false };
     };
 
 
@@ -83,6 +87,9 @@ public:
     // Realm lifecycle events.
     void notifyRealmCreated(RealmIdentifier, Inspector::Protocol::BidiBrowsingContext::BrowsingContext, const WebCore::SecurityOriginData&);
     void notifyRealmDestroyed(RealmIdentifier, Inspector::Protocol::BidiBrowsingContext::BrowsingContext);
+    void notifyDedicatedWorkerRealmCreated(const String& workerIdentifier, WebCore::FrameIdentifier ownerFrameIdentifier, Inspector::Protocol::BidiBrowsingContext::BrowsingContext ownerBrowsingContext, const WebCore::SecurityOriginData&);
+    void notifyDedicatedWorkerRealmDestroyed(const String& workerIdentifier, WebCore::FrameIdentifier ownerFrameIdentifier);
+    void removeDedicatedWorkerRealmsForBrowsingContext(const Inspector::Protocol::BidiBrowsingContext::BrowsingContext&);
 
     // Lookup RealmIdentifier from browsing context (for UIProcess-initiated realm destruction).
     std::optional<RealmIdentifier> realmIdentifierForBrowsingContext(const String& browsingContext) const;
@@ -106,12 +113,21 @@ private:
         std::optional<Vector<String>> userContexts;
     };
 
-    void sendRealmCreatedEvent(const String& realmID, const WebCore::SecurityOriginData&, Inspector::Protocol::BidiScript::RealmType, Inspector::Protocol::BidiBrowsingContext::BrowsingContext);
+    using DedicatedWorkerRealmKey = std::pair<WebCore::FrameIdentifier, String>;
+
+    struct PendingDedicatedWorkerRealmInfo {
+        WebCore::SecurityOriginData origin;
+        Inspector::Protocol::BidiBrowsingContext::BrowsingContext ownerBrowsingContext;
+    };
+
+    void sendRealmCreatedEvent(RealmIdentifier, const RealmInfo&);
+    void sendRealmDestroyedEvent(RealmIdentifier, const RealmInfo&);
 
     void processRealmsForPagesAsync(Deque<Ref<WebPageProxy>>&& pagesToProcess, std::optional<Inspector::Protocol::BidiScript::RealmType>&& optionalRealmType, std::optional<String>&& contextHandleFilter, Vector<RefPtr<Inspector::Protocol::BidiScript::RealmInfo>>&& accumulated, Inspector::CommandCallback<Ref<JSON::ArrayOf<Inspector::Protocol::BidiScript::RealmInfo>>>&&);
     void collectExecutionReadyFrameRealms(const FrameTreeNodeData&, Vector<RefPtr<Inspector::Protocol::BidiScript::RealmInfo>>& realms, const std::optional<String>& contextHandleFilter, bool recurseSubframes = true);
     bool NODELETE isFrameExecutionReady(const FrameInfoData&);
     RefPtr<Inspector::Protocol::BidiScript::RealmInfo> createRealmInfoForFrame(const FrameInfoData&);
+    std::optional<RealmIdentifier> registerDedicatedWorkerRealm(const DedicatedWorkerRealmKey&, const Inspector::Protocol::BidiBrowsingContext::BrowsingContext& ownerBrowsingContext, const WebCore::SecurityOriginData&, bool emitCreatedEvent);
     std::optional<String> contextHandleForFrame(const FrameInfoData&);
     RealmIdentifier generateRealmIdForFrame(const FrameInfoData&);
     String generateRealmIdForBrowsingContext(const String& browsingContext);
@@ -132,6 +148,8 @@ private:
 
     // Track realm counters for navigation detection: frame ID -> counter
 
+    HashMap<DedicatedWorkerRealmKey, RealmIdentifier> m_dedicatedWorkerRealmIdentifiers;
+    HashMap<DedicatedWorkerRealmKey, PendingDedicatedWorkerRealmInfo> m_pendingDedicatedWorkerRealms;
     Vector<std::pair<PreloadScriptIdentifier, PreloadScriptInfo>> m_preloadScripts;
 };
 
