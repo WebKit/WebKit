@@ -56,6 +56,7 @@ using WorkerIdentifier = String;
 class WebAutomationSession;
 class WebFrameProxy;
 class WebPageProxy;
+class WebProcessProxy;
 struct FrameTreeNodeData;
 struct FrameInfoData;
 
@@ -70,7 +71,6 @@ public:
         std::optional<Inspector::Protocol::BidiBrowsingContext::BrowsingContext> context;
         Vector<RealmIdentifier> owners;
         HashSet<Inspector::Protocol::BidiBrowsingContext::BrowsingContext> associatedTopLevelContexts;
-        bool creationNotified { false };
         std::optional<WebCore::FrameIdentifier> frameIdentifier;
     };
 
@@ -122,6 +122,8 @@ private:
         WebCore::FrameIdentifier ownerFrameIdentifier { WTF::HashTraits<WebCore::FrameIdentifier>::emptyValue() };
         RealmIdentifier ownerRealmIdentifier { WTF::HashTraits<RealmIdentifier>::emptyValue() };
         Inspector::Protocol::BidiBrowsingContext::BrowsingContext ownerBrowsingContext;
+
+        bool matches(const WorkerIdentifier&, WebCore::FrameIdentifier, RealmIdentifier, const Inspector::Protocol::BidiBrowsingContext::BrowsingContext&) const;
     };
 
     void sendRealmCreatedEvent(RealmIdentifier, const RealmInfo&);
@@ -131,7 +133,9 @@ private:
     void collectExecutionReadyFrames(FrameTreeNodeData&&, Vector<FrameInfoData>& frames, const std::optional<String>& contextHandleFilter);
     NODELETE bool isFrameExecutionReady(const FrameInfoData&);
     static Ref<Inspector::Protocol::BidiScript::RealmInfo> createProtocolRealmInfo(RealmIdentifier, const RealmInfo&);
-    std::optional<RealmIdentifier> registerDedicatedWorkerRealm(const WorkerIdentifier&, WebCore::FrameIdentifier ownerFrameIdentifier, RealmIdentifier, RealmIdentifier ownerRealmIdentifier, const Inspector::Protocol::BidiBrowsingContext::BrowsingContext& ownerBrowsingContext, const WebCore::SecurityOriginData&, bool emitCreatedEvent);
+    bool isCurrentWindowRealm(RealmIdentifier, WebCore::FrameIdentifier, const Inspector::Protocol::BidiBrowsingContext::BrowsingContext&) const;
+    const RealmInfo* findRegisteredDedicatedWorkerRealm(const WorkerIdentifier&, WebCore::FrameIdentifier ownerFrameIdentifier, RealmIdentifier, RealmIdentifier ownerRealmIdentifier, const Inspector::Protocol::BidiBrowsingContext::BrowsingContext& ownerBrowsingContext, WebPageProxy&, WebProcessProxy&) const;
+    void registerDedicatedWorkerRealm(const WorkerIdentifier&, WebCore::FrameIdentifier ownerFrameIdentifier, RealmIdentifier, RealmIdentifier ownerRealmIdentifier, const Inspector::Protocol::BidiBrowsingContext::BrowsingContext& ownerBrowsingContext, const WebCore::SecurityOriginData&);
     void removeDedicatedWorkerRealm(RealmIdentifier);
     void removeDedicatedWorkerRealmsForOwnerRealm(RealmIdentifier);
     std::optional<String> contextHandleForFrame(const FrameInfoData&);
