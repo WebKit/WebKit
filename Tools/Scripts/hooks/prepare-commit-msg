@@ -342,19 +342,21 @@ def amended_message(full_message, combined_tests, combined_changes, amend_change
     if amend_changes and update_changelog:
         try:
             from webkitscmpy.commit_parser import CommitMessageParser
-        except ImportError as e:
+
+            commit_message_parser = CommitMessageParser()
+            commit_message_parser.parse_message(full_message)
+            updated_changelog_lines = commit_message_parser.reconcile_with_changed_files(combined_changes)
+            reviewed_by_lines = (commit_message_parser.reviewed_by_lines or ['Reviewed by NOBODY (OOPS!).'])
+            description_lines = (commit_message_parser.description_lines or ['Explanation of why this fixes the bug (OOPS!).'])
+            reconcile_tests = getattr(commit_message_parser, 'reconcile_tests', None)
+            updated_tests_lines = reconcile_tests(combined_tests) if reconcile_tests else list(commit_message_parser.tests_lines)
+            tests_lines = updated_tests_lines + [''] if updated_tests_lines else []
+            amended_message = commit_message_parser.title_lines + [''] + reviewed_by_lines + [''] + description_lines + [''] + tests_lines + updated_changelog_lines
+            removed_changelog_lines = commit_message_parser.apply_comments_to_modified_files_lines(annotate_deleted_lines(amend_changes, combined_changes), return_deleted=True)
+        except (ImportError, AttributeError) as e:
             sys.stderr.write(f'{e}: Could not update changelog automatically. Falling back to the default template.\n')
             return full_message
 
-        commit_message_parser = CommitMessageParser()
-        commit_message_parser.parse_message(full_message)
-        updated_changelog_lines = commit_message_parser.reconcile_with_changed_files(combined_changes)
-        reviewed_by_lines = (commit_message_parser.reviewed_by_lines or ['Reviewed by NOBODY (OOPS!).'])
-        description_lines = (commit_message_parser.description_lines or ['Explanation of why this fixes the bug (OOPS!).'])
-        updated_tests_lines = commit_message_parser.reconcile_tests(combined_tests)
-        tests_lines = updated_tests_lines + [''] if updated_tests_lines else []
-        amended_message = commit_message_parser.title_lines + [''] + reviewed_by_lines + [''] + description_lines + [''] + tests_lines + updated_changelog_lines
-        removed_changelog_lines = commit_message_parser.apply_comments_to_modified_files_lines(annotate_deleted_lines(amend_changes, combined_changes), return_deleted=True)
         return '''{message_body}
 
 # Your changelog has been updated with the following files/functions:
