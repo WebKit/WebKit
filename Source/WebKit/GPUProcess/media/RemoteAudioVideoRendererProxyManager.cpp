@@ -99,7 +99,16 @@ RemoteAudioVideoRendererProxyManager::RemoteAudioVideoRendererProxyManager(GPUCo
 {
 }
 
-RemoteAudioVideoRendererProxyManager::~RemoteAudioVideoRendererProxyManager() = default;
+RemoteAudioVideoRendererProxyManager::~RemoteAudioVideoRendererProxyManager()
+{
+    ALWAYS_LOG(LOGIDENTIFIER);
+    for (auto& keyValuePair : std::exchange(m_renderers, { })) {
+        if (RefPtr renderer = keyValuePair.value.renderer) {
+            renderer->pause();
+            renderer->flush();
+        }
+    }
+}
 
 void RemoteAudioVideoRendererProxyManager::ref() const
 {
@@ -198,9 +207,15 @@ void RemoteAudioVideoRendererProxyManager::create(RemoteAudioVideoRendererIdenti
 void RemoteAudioVideoRendererProxyManager::shutdown(RemoteAudioVideoRendererIdentifier identifier)
 {
     MESSAGE_CHECK(m_renderers.contains(identifier));
+    ALWAYS_LOG(LOGIDENTIFIER, identifier.loggingString());
 
-    if (auto iterator = m_renderers.find(identifier); iterator != m_renderers.end())
+    if (auto iterator = m_renderers.find(identifier); iterator != m_renderers.end()) {
+        if (RefPtr renderer = iterator->value.renderer) {
+            renderer->pause();
+            renderer->flush();
+        }
         m_renderers.remove(iterator);
+    }
 }
 
 RefPtr<WebCore::AudioVideoRenderer> RemoteAudioVideoRendererProxyManager::rendererFor(RemoteAudioVideoRendererIdentifier identifier) const
