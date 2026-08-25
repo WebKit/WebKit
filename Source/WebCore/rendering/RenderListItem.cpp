@@ -455,10 +455,12 @@ void RenderListItem::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 
 void RenderListItem::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
-    RenderBlockFlow::paintObject(paintInfo, paintOffset);
-
+    // The marker box paints before our content, so content overlapping it (a negative margin pulling the first line
+    // over the marker) covers it rather than the other way around.
     if (CheckedPtr excludedMarker = this->excludedMarker(); excludedMarker && !excludedMarker->hasSelfPaintingLayer())
         excludedMarker->paintAsInlineBlock(paintInfo, flipForWritingModeForChild(*excludedMarker, paintOffset));
+
+    RenderBlockFlow::paintObject(paintInfo, paintOffset);
 }
 
 String RenderListItem::markerText(RenderListMarker::IncludeSuffix includeSuffix) const
