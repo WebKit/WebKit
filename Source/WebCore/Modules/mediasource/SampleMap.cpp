@@ -326,7 +326,10 @@ PresentationOrderSampleMap::iterator_range PresentationOrderSampleMap::findSampl
 {
     if (endTime <= beginTime)
         return { end(), end() };
+<<<<<<< HEAD
 
+=======
+>>>>>>> bd4c91c57d10 (Malformed WebM with non-monotonically increasing presentation timestamps can cause a crash.)
     // startTime is inclusive, so use lower_bound to include samples wich start exactly at startTime.
     // endTime is not inclusive, so use lower_bound to exclude samples which start exactly at endTime.
     auto lower_bound = m_samples.lower_bound(beginTime);
@@ -340,7 +343,10 @@ PresentationOrderSampleMap::iterator_range PresentationOrderSampleMap::findSampl
 {
     if (endTime <= beginTime)
         return { end(), end() };
+<<<<<<< HEAD
 
+=======
+>>>>>>> bd4c91c57d10 (Malformed WebM with non-monotonically increasing presentation timestamps can cause a crash.)
     reverse_iterator rangeEnd = std::find_if(rbegin(), rend(), [&endTime](const auto& value) {
         return value.first < endTime;
     });

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>media-source-webm-reversed-timestamps-crash</title>
+    <script src="webm-generator.js"></script>
+    <script src="../video-test.js"></script>
+    <script>
+    // A WebM SimpleBlock cluster whose block timestamps go backward causes the
+    // WebM parser to compute a negative sample duration. When appended after
+    // abort() (which resets the track buffer's highest presentation timestamp
+    // while preserving its samples), Coded Frame Processing step 1.14 calls
+    // findSamplesBetweenPresentationTimes() with endTime < beginTime; the
+    // resulting reversed iterator range walks past the end of the sample map.
+    // This test passes if it does not crash.
+
+    var source;
+    var sourceBuffer;
+    var initData;
+
+    function simpleBlockCluster(trackNumber, clusterTimecode, blocks)
+    {
+        // Hand-roll a Cluster of SimpleBlocks (no BlockDuration), so the
+        // parser must derive each sample's duration from the gap to the
+        // next block's timestamp.
+        function vintSize(n)
+        {
+            if (n < 0x7F)
+                return new Uint8Array([0x80 | n]);
+            return new Uint8Array([0x40 | (n >> 8), n & 0xFF]);
+        }
+        var body = [new Uint8Array([0xE7, 0x81, clusterTimecode & 0xFF])];
+        for (var block of blocks) {
+            var ts = new Uint8Array(2);
+            new DataView(ts.buffer).setInt16(0, block.timestamp, false);
+            var payload = WebM.concat(new Uint8Array([0x80 | trackNumber]), ts,
+                new Uint8Array([block.isSync ? 0x80 : 0x00]), block.data);
+            body.push(new Uint8Array([0xA3]), vintSize(payload.byteLength), payload);
+        }
+        var clusterBody = WebM.concat(...body);
+        return WebM.concat(new Uint8Array([0x1F, 0x43, 0xB6, 0x75]),
+            vintSize(clusterBody.byteLength), clusterBody);
+    }
+
+    async function runTest()
+    {
+        findMediaElement();
+
+        if (!MediaSource.isTypeSupported(WebM.VIDEO_TYPE)) {
+            consoleWrite('SKIPPED: ' + WebM.VIDEO_TYPE + ' is not supported');
+            return;
+        }
+
+        source = new MediaSource();
+        video.src = URL.createObjectURL(source);
+        await waitFor(source, 'sourceopen');
+
+        sourceBuffer = source.addSourceBuffer(WebM.VIDEO_TYPE);
+
+        initData = WebM.initSegment({ tracks: [{ id: 1, type: 'video', defaultDuration: 0 }] });
+        sourceBuffer.appendBuffer(initData);
+        await waitFor(sourceBuffer, 'updateend');
+
+        var samples = [{ duration: 50, isSync: true }];
+        for (var i = 0; i < 7; ++i)
+            samples.push({ duration: 50, isSync: false });
+        sourceBuffer.appendBuffer(WebM.mediaSegment({
+            tracks: [{ id: 1, type: 'video', baseDecodeTime: 0, samples: samples }]
+        }));
+        await waitFor(sourceBuffer, 'updateend');
+
+        run('sourceBuffer.abort()');
+
+        sourceBuffer.appendBuffer(initData);
+        await waitFor(sourceBuffer, 'updateend');
+
+        sourceBuffer.appendBuffer(simpleBlockCluster(1, 0, [
+            { timestamp: 200, isSync: true, data: new Uint8Array([0x30, 0x12, 0x00, 0x9D, 0x01, 0x2A, 0x40, 0x01, 0xF0, 0x00, 0x00]) },
+            { timestamp: 10, isSync: false, data: new Uint8Array([0xD1, 0x02, 0x00]) },
+            { timestamp: 250, isSync: false, data: new Uint8Array([0xD1, 0x02, 0x00]) },
+        ]));
+        await waitFor(sourceBuffer, 'updateend');
+
+        testExpected('source.readyState', 'open');
+    }
+
+    window.addEventListener('load', () => {
+        runTest().then(endTest).catch(failTest);
+    });
+    </script>
+</head>
+<body>
+    <div>Tests that appending a WebM cluster whose block timestamps decrease, after abort(), does not crash.</div>
+    <video></video>
+</body>
+</html>
