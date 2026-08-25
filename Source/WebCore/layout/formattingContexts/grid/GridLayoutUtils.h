@@ -55,6 +55,8 @@ namespace GridLayoutUtils {
 
 LayoutUnit NODELETE totalGuttersSize(size_t tracksCount, LayoutUnit gapsSize);
 
+UsedMargins usedMarginsForAxis(const PlacedGridItem&, const ComputedSizes&);
+
 LayoutUnit inlinePreferredSize(const PlacedGridItem&, LayoutUnit borderAndPadding, LayoutUnit columnsSize, const IntegrationUtils&, const UsedMargins&);
 LayoutUnit blockPreferredSize(const PlacedGridItem&, LayoutUnit borderAndPadding, LayoutUnit rowsSize, const GridFormattingContext&, LayoutUnit inlineAxisConstraint, const UsedMargins&);
 

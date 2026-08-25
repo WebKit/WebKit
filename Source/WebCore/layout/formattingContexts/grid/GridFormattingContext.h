@@ -119,8 +119,6 @@ public:
 
     const BoxGeometry& geometryForGridItem(const ElementBox&) const LIFETIME_BOUND;
 
-    const Style::ZoomFactor zoomFactor() const { return m_gridBox->style().usedZoomForLength(); }
-
     const WritingMode writingMode() const { return m_gridBox->style().writingMode(); }
 
     // FIXME: This is only here because the integration code needs to know the

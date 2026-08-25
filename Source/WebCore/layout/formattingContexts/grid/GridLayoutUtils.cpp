@@ -49,6 +49,29 @@ LayoutUnit totalGuttersSize(size_t tracksCount, LayoutUnit gapsSize)
     return tracksCount ? gapsSize * (tracksCount - 1) : LayoutUnit { };
 }
 
+// Resolves a grid item's used margins in one axis.
+// FIXME: Resolve percentage and calc() margins against the grid area's inline size.
+UsedMargins usedMarginsForAxis(const PlacedGridItem& gridItem, const ComputedSizes& axisSizes)
+{
+    auto marginStart = [&] -> LayoutUnit {
+        if (auto fixedMarginStart = axisSizes.marginStart.tryFixed())
+            return LayoutUnit { fixedMarginStart->resolveZoom(gridItem.usedZoom()) };
+
+        ASSERT_NOT_IMPLEMENTED_YET();
+        return { };
+    };
+
+    auto marginEnd = [&] -> LayoutUnit {
+        if (auto fixedMarginEnd = axisSizes.marginEnd.tryFixed())
+            return LayoutUnit { fixedMarginEnd->resolveZoom(gridItem.usedZoom()) };
+
+        ASSERT_NOT_IMPLEMENTED_YET();
+        return { };
+    };
+
+    return UsedMargins { marginStart(), marginEnd() };
+}
+
 // https://drafts.csswg.org/css-sizing-4/#aspect-ratio
 std::optional<double> preferredAspectRatio(const ElementBox& gridItem)
 {
@@ -637,24 +660,30 @@ LayoutUnit gridAreaDimensionSize(size_t startLine, size_t endLine, const TrackSi
 
 LayoutUnit inlineAxisMinContentContribution(const PlacedGridItem& gridItem, const IntegrationUtils& integrationUtils)
 {
-    return BorderBoxSize::fromIntegrationFunction(integrationUtils.minContentLogicalWidthContribution(gridItem.layoutBox())).value;
+    auto borderBoxSize = BorderBoxSize::fromIntegrationFunction(integrationUtils.minContentLogicalWidthContribution(gridItem.layoutBox()));
+    auto usedMargins = usedMarginsForAxis(gridItem, gridItem.inlineAxisSizes());
+    return MarginBoxSize { borderBoxSize, usedMargins.marginStart + usedMargins.marginEnd }.value;
 }
 
 LayoutUnit inlineAxisMaxContentContribution(const PlacedGridItem& gridItem, const IntegrationUtils& integrationUtils)
 {
-    return BorderBoxSize::fromIntegrationFunction(integrationUtils.maxContentLogicalWidthContribution(gridItem.layoutBox())).value;
+    auto borderBoxSize = BorderBoxSize::fromIntegrationFunction(integrationUtils.maxContentLogicalWidthContribution(gridItem.layoutBox()));
+    auto usedMargins = usedMarginsForAxis(gridItem, gridItem.inlineAxisSizes());
+    return MarginBoxSize { borderBoxSize, usedMargins.marginStart + usedMargins.marginEnd }.value;
 }
 
-// FIXME: this should be marginBoxHeight().
 LayoutUnit blockAxisMinContentContribution(const PlacedGridItem& gridItem, LayoutUnit inlineAxisConstraint, const GridFormattingContext& formattingContext)
 {
-    return BorderBoxSize::fromIntegrationFunction(formattingContext.integrationUtils().minContentContributionHeightForGridItem(gridItem.layoutBox(), inlineAxisConstraint)).value;
+    auto borderBoxSize = BorderBoxSize::fromIntegrationFunction(formattingContext.integrationUtils().minContentContributionHeightForGridItem(gridItem.layoutBox(), inlineAxisConstraint));
+    auto usedMargins = usedMarginsForAxis(gridItem, gridItem.blockAxisSizes());
+    return MarginBoxSize { borderBoxSize, usedMargins.marginStart + usedMargins.marginEnd }.value;
 }
 
-// FIXME: this should be marginBoxHeight().
 LayoutUnit blockAxisMaxContentContribution(const PlacedGridItem& gridItem, LayoutUnit inlineAxisConstraint, const GridFormattingContext& formattingContext)
 {
-    return BorderBoxSize::fromIntegrationFunction(formattingContext.integrationUtils().maxContentContributionHeightForGridItem(gridItem.layoutBox(), inlineAxisConstraint)).value;
+    auto borderBoxSize = BorderBoxSize::fromIntegrationFunction(formattingContext.integrationUtils().maxContentContributionHeightForGridItem(gridItem.layoutBox(), inlineAxisConstraint));
+    auto usedMargins = usedMarginsForAxis(gridItem, gridItem.blockAxisSizes());
+    return MarginBoxSize { borderBoxSize, usedMargins.marginStart + usedMargins.marginEnd }.value;
 }
 
 // https://www.w3.org/TR/css-sizing-3/#behave-as-auto

@@ -144,9 +144,8 @@ GridLayoutResult GridLayout::layout(const UnplacedGridItems& unplacedGridItems, 
     auto [ usedInlineSizes, usedBlockSizes ] = layoutGridItems(placedGridItems, gridAreaSizes, columnTrackSizingFunctionsList, rowTrackSizingFunctionsList);
 
     // https://drafts.csswg.org/css-grid-1/#alignment
-    const auto& zoomFactor = formattingContext.zoomFactor();
-    auto usedInlineMargins = computeInlineMargins(placedGridItems, zoomFactor);
-    auto usedBlockMargins = computeBlockMargins(placedGridItems, zoomFactor);
+    auto usedInlineMargins = computeInlineMargins(placedGridItems);
+    auto usedBlockMargins = computeBlockMargins(placedGridItems);
 
     // https://drafts.csswg.org/css-grid-1/#alignment
     // After a grid container’s grid tracks have been sized, and the dimensions of all grid items
@@ -441,43 +440,19 @@ UsedTrackSizes GridLayout::performGridSizingAlgorithm(const GridLayoutState& lay
     return { columnSizes, rowSizes };
 }
 
-// Resolves a grid item's used margins in one axis. This is intended to be used only after track
-// sizing is complete — i.e. for grid item sizing and alignment — since the grid area sizes it
-// relies on are not known until then.
-static UsedMargins computeMarginsForAxis(const ComputedSizes& axisSizes, const Style::ZoomFactor& zoomFactor)
-{
-    auto marginStart = [&] -> LayoutUnit {
-        if (auto fixedMarginStart = axisSizes.marginStart.tryFixed())
-            return LayoutUnit { fixedMarginStart->resolveZoom(zoomFactor) };
-
-        ASSERT_NOT_IMPLEMENTED_YET();
-        return { };
-    };
-
-    auto marginEnd = [&] -> LayoutUnit {
-        if (auto fixedMarginEnd = axisSizes.marginEnd.tryFixed())
-            return LayoutUnit { fixedMarginEnd->resolveZoom(zoomFactor) };
-
-        ASSERT_NOT_IMPLEMENTED_YET();
-        return { };
-    };
-
-    return UsedMargins { marginStart(), marginEnd() };
-}
-
 // https://drafts.csswg.org/css-grid-1/#auto-margins
-Vector<UsedMargins> GridLayout::computeInlineMargins(const PlacedGridItems& placedGridItems, const Style::ZoomFactor& zoomFactor)
+Vector<UsedMargins> GridLayout::computeInlineMargins(const PlacedGridItems& placedGridItems)
 {
-    return placedGridItems.map([&zoomFactor](const PlacedGridItem& placedGridItem) {
-        return computeMarginsForAxis(placedGridItem.inlineAxisSizes(), zoomFactor);
+    return placedGridItems.map([](const PlacedGridItem& placedGridItem) {
+        return GridLayoutUtils::usedMarginsForAxis(placedGridItem, placedGridItem.inlineAxisSizes());
     });
 }
 
 // https://drafts.csswg.org/css-grid-1/#auto-margins
-Vector<UsedMargins> GridLayout::computeBlockMargins(const PlacedGridItems& placedGridItems, const Style::ZoomFactor& zoomFactor)
+Vector<UsedMargins> GridLayout::computeBlockMargins(const PlacedGridItems& placedGridItems)
 {
-    return placedGridItems.map([&zoomFactor](const PlacedGridItem& placedGridItem) {
-        return computeMarginsForAxis(placedGridItem.blockAxisSizes(), zoomFactor);
+    return placedGridItems.map([](const PlacedGridItem& placedGridItem) {
+        return GridLayoutUtils::usedMarginsForAxis(placedGridItem, placedGridItem.blockAxisSizes());
     });
 }
 
@@ -497,8 +472,8 @@ std::pair<UsedInlineSizes, UsedBlockSizes> GridLayout::layoutGridItems(const Pla
         auto& gridAreaInlineSize = gridAreaSizes.inlineSizes[gridItemIndex];
         auto& gridAreaBlockSize = gridAreaSizes.blockSizes[gridItemIndex];
 
-        auto inlineMargins = computeMarginsForAxis(gridItem.inlineAxisSizes(), gridItem.usedZoom());
-        auto blockMargins = computeMarginsForAxis(gridItem.blockAxisSizes(), gridItem.usedZoom());
+        auto inlineMargins = GridLayoutUtils::usedMarginsForAxis(gridItem, gridItem.inlineAxisSizes());
+        auto blockMargins = GridLayoutUtils::usedMarginsForAxis(gridItem, gridItem.blockAxisSizes());
 
         auto [inlineBorderAndPadding, blockBorderAndPadding] = integrationUtils.borderAndPaddingForGridItem(gridItem.layoutBox(), gridAreaInlineSize);
 
