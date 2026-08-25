@@ -287,7 +287,7 @@ private:
     bool ticksContinuouslyWhileActive() const final;
     std::optional<double> progressUntilNextStep(double) const final;
     bool preventsAnimationReadiness() const final;
-    void animationProgressBasedTimelineSourceDidChangeMetrics(const Style::SingleAnimationRange&) final;
+    void animationProgressBasedTimelineSourceDidChangeMetrics(const ResolvableTimelineRange&) final;
 
     RefPtr<const ScrollTimeline> activeScrollTimeline() const;
     void updateComputedKeyframeOffsetsIfNeeded();

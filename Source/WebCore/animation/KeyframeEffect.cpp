@@ -256,7 +256,7 @@ static double computedOffset(Style::SingleAnimationRangeName rangeName, Style::P
     if (!animation)
         return computedOffsetWithinNamedRange;
 
-    auto attachmentRange = Ref { *animation }->range();
+    auto attachmentRange = protect(animation)->range();
     if (attachmentRange.isDefault())
         return computedOffsetWithinNamedRange;
 
@@ -3336,7 +3336,7 @@ RefPtr<const ScrollTimeline> KeyframeEffect::activeScrollTimeline() const
     return nullptr;
 }
 
-void KeyframeEffect::animationProgressBasedTimelineSourceDidChangeMetrics(const Style::SingleAnimationRange& animationAttachmentRange)
+void KeyframeEffect::animationProgressBasedTimelineSourceDidChangeMetrics(const ResolvableTimelineRange& animationAttachmentRange)
 {
     AnimationEffect::animationProgressBasedTimelineSourceDidChangeMetrics(animationAttachmentRange);
     m_needsComputedKeyframeOffsetsUpdate = true;

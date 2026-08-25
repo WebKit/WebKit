@@ -38,11 +38,13 @@ namespace Style {
 
 enum class SingleAnimationRangeType : bool { Start, End };
 
+using SingleAnimationRangeEdgeOffset = LengthPercentage<CSS::AllUnzoomed>;
+
 template<SingleAnimationRangeType type>
 struct SingleAnimationRangeEdge {
     using Base = SingleAnimationRangeEdge<type>;
     using Name = SingleAnimationRangeName;
-    using Offset = LengthPercentage<>;
+    using Offset = SingleAnimationRangeEdgeOffset;
 
     SingleAnimationRangeEdge(Offset&& offset)
         : SingleAnimationRangeEdge { Name::Omitted, WTF::move(offset) }
@@ -155,13 +157,13 @@ auto SingleAnimationRangeEdge<type>::defaultOffset() -> Offset
 struct SingleAnimationRangeStart : SingleAnimationRangeEdge<SingleAnimationRangeType::Start> {
     using Base::Base;
 
-    TimelineRangeValue toTimelineRangeValue() const;
+    TimelineRangeValue toTimelineRangeValue(ZoomFactor) const;
 };
 
 struct SingleAnimationRangeEnd : SingleAnimationRangeEdge<SingleAnimationRangeType::End> {
     using Base::Base;
 
-    TimelineRangeValue toTimelineRangeValue() const;
+    TimelineRangeValue toTimelineRangeValue(ZoomFactor) const;
 };
 
 struct SingleAnimationRange {

@@ -42,6 +42,7 @@ class AnimationTimelinesController;
 class Document;
 class Element;
 class ScrollableArea;
+struct ResolvableTimelineRange;
 
 namespace Style {
 class ComputedStyle;
@@ -81,7 +82,7 @@ public:
     void setTimelineScopeElement(const Element&);
     void clearTimelineScopeDeclaredElement() { m_timelineScopeElement = nullptr; }
 
-    virtual std::pair<WebAnimationTime, WebAnimationTime> intervalForAttachmentRange(const Style::SingleAnimationRange&) const;
+    virtual std::pair<WebAnimationTime, WebAnimationTime> intervalForAttachmentRange(const ResolvableTimelineRange&) const;
 
     void removeTimelineFromDocument(Element*);
 
