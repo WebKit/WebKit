@@ -244,15 +244,38 @@ public:
         ASSERT(!child->replacement());
     }
 
+    void allocateTupleSlots(Node* node, const Node* copyFrom = nullptr)
+    {
+        ASSERT(node->isTuple());
+        ASSERT(!copyFrom || copyFrom->op() == node->op());
+        unsigned tupleSize = node->tupleSize();
+        unsigned offset = m_tupleData.size();
+        m_tupleData.grow(offset + tupleSize);
+        if (copyFrom) {
+            unsigned sourceOffset = copyFrom->tupleOffset();
+            // The destination is always freshly appended past the end, and slots are never
+            // recycled, so the two ranges are disjoint and a forward copy is fine.
+            ASSERT(sourceOffset + tupleSize <= offset);
+            for (unsigned i = 0; i < tupleSize; ++i)
+                m_tupleData.at(offset + i) = m_tupleData.at(sourceOffset + i);
+        }
+        node->setTupleOffset(offset);
+    }
+
     Node* cloneAndAdd(const Node& node)
     {
-        return m_nodes.cloneAndAdd(node);
+        Node* clone = m_nodes.cloneAndAdd(node);
+        if (clone->isTuple())
+            allocateTupleSlots(clone, &node);
+        return clone;
     }
 
     template<typename... Params>
     Node* addNode(Params... params)
     {
         Node* node = m_nodes.addNew(params...);
+        if (node->isTuple())
+            allocateTupleSlots(node);
         return node;
     }
 
@@ -313,6 +336,80 @@ public:
     bool NODELETE terminalsAreValid();
     
     enum PhiNodeDumpMode { DumpLivePhisOnly, DumpAllPhis };
+    
+    class NaturalBlockIterable {
+    public:
+        NaturalBlockIterable()
+            : m_graph(nullptr)
+        {
+        }
+        
+        NaturalBlockIterable(const Graph& graph)
+            : m_graph(&graph)
+        {
+        }
+        
+        class iterator {
+        public:
+            iterator()
+                : m_graph(nullptr)
+                , m_index(0)
+            {
+            }
+            
+            iterator(const Graph& graph, BlockIndex index)
+                : m_graph(&graph)
+                , m_index(findNext(index))
+            {
+            }
+            
+            BasicBlock *operator*()
+            {
+                return m_graph->block(m_index);
+            }
+            
+            iterator& operator++()
+            {
+                m_index = findNext(m_index + 1);
+                return *this;
+            }
+            
+            bool operator==(const iterator& other) const
+            {
+                return m_index == other.m_index;
+            }
+            
+        private:
+            BlockIndex findNext(BlockIndex index)
+            {
+                while (index < m_graph->numBlocks() && !m_graph->block(index))
+                    index++;
+                return index;
+            }
+            
+            const Graph* m_graph;
+            BlockIndex m_index;
+        };
+        
+        iterator begin()
+        {
+            return iterator(*m_graph, 0);
+        }
+        
+        iterator end()
+        {
+            return iterator(*m_graph, m_graph->numBlocks());
+        }
+        
+    private:
+        const Graph* m_graph;
+    };
+
+    struct TupleData {
+        uint16_t refCount { 0 };
+        uint16_t resultFlags { 0 };
+        VirtualRegister virtualRegister;
+    };
     void dumpBlockHeader(PrintStream&, const char* prefix, BasicBlock*, PhiNodeDumpMode, DumpContext*);
     void dump(PrintStream&, Edge);
     void dump(PrintStream&, const char* prefix, Node*, DumpContext* = nullptr, bool inIonGraph = false);
@@ -694,6 +791,17 @@ public:
             return varArgChild(node, index);
         return node->children.child(index);
     }
+
+    DesiredIdentifiers& identifiers() LIFETIME_BOUND { return m_plan.identifiers(); }
+    DesiredWatchpoints& watchpoints() LIFETIME_BOUND { return m_plan.watchpoints(); }
+
+    Prefix& prefix() LIFETIME_BOUND { return m_prefix; }
+
+    const UnlinkedSimpleJumpTable& unlinkedSwitchJumpTable(unsigned index) const { return *m_unlinkedSwitchJumpTables[index]; }
+    SimpleJumpTable& switchJumpTable(unsigned index) { return m_switchJumpTables[index]; }
+
+    const UnlinkedStringJumpTable& unlinkedStringSwitchJumpTable(unsigned index) const { return *m_unlinkedStringSwitchJumpTables[index]; }
+    StringJumpTable& stringSwitchJumpTable(unsigned index) { return m_stringSwitchJumpTables[index]; }
     
     void voteNode(Node* node, unsigned ballot, float weight = 1)
     {
@@ -779,74 +887,6 @@ public:
     
     BlockList blocksInPreOrder();
     BlockList blocksInPostOrder(bool isSafeToValidate = true);
-    
-    class NaturalBlockIterable {
-    public:
-        NaturalBlockIterable()
-            : m_graph(nullptr)
-        {
-        }
-        
-        NaturalBlockIterable(const Graph& graph)
-            : m_graph(&graph)
-        {
-        }
-        
-        class iterator {
-        public:
-            iterator()
-                : m_graph(nullptr)
-                , m_index(0)
-            {
-            }
-            
-            iterator(const Graph& graph, BlockIndex index)
-                : m_graph(&graph)
-                , m_index(findNext(index))
-            {
-            }
-            
-            BasicBlock *operator*()
-            {
-                return m_graph->block(m_index);
-            }
-            
-            iterator& operator++()
-            {
-                m_index = findNext(m_index + 1);
-                return *this;
-            }
-            
-            bool operator==(const iterator& other) const
-            {
-                return m_index == other.m_index;
-            }
-            
-        private:
-            BlockIndex findNext(BlockIndex index)
-            {
-                while (index < m_graph->numBlocks() && !m_graph->block(index))
-                    index++;
-                return index;
-            }
-            
-            const Graph* m_graph;
-            BlockIndex m_index;
-        };
-        
-        iterator begin()
-        {
-            return iterator(*m_graph, 0);
-        }
-        
-        iterator end()
-        {
-            return iterator(*m_graph, m_graph->numBlocks());
-        }
-        
-    private:
-        const Graph* m_graph;
-    };
     
     NaturalBlockIterable blocksInNaturalOrder() const
     {
@@ -1089,9 +1129,6 @@ public:
 
     Profiler::Compilation* compilation() { return m_plan.compilation(); }
 
-    DesiredIdentifiers& identifiers() LIFETIME_BOUND { return m_plan.identifiers(); }
-    DesiredWatchpoints& watchpoints() LIFETIME_BOUND { return m_plan.watchpoints(); }
-
     // Returns false if the key is already invalid or unwatchable. If this is a Presence condition,
     // this also makes it cheap to query if the condition holds. Also makes sure that the GC knows
     // what's going on.
@@ -1328,15 +1365,7 @@ public:
         ASSERT(result == m_roots.contains(block));
         return result;
     }
-
-    Prefix& prefix() LIFETIME_BOUND { return m_prefix; }
     void nextPhase() { m_prefix.phaseNumber++; }
-
-    const UnlinkedSimpleJumpTable& unlinkedSwitchJumpTable(unsigned index) const { return *m_unlinkedSwitchJumpTables[index]; }
-    SimpleJumpTable& switchJumpTable(unsigned index) { return m_switchJumpTables[index]; }
-
-    const UnlinkedStringJumpTable& unlinkedStringSwitchJumpTable(unsigned index) const { return *m_unlinkedStringSwitchJumpTables[index]; }
-    StringJumpTable& stringSwitchJumpTable(unsigned index) { return m_stringSwitchJumpTables[index]; }
 
     void appendCatchEntrypoint(BytecodeIndex bytecodeIndex, CodePtr<ExceptionHandlerPtrTag> machineCode, Vector<FlushFormat>&& argumentFormats)
     {
@@ -1365,12 +1394,6 @@ public:
     Vector<std::unique_ptr<BasicBlock>, 8> m_blocks;
     Vector<BasicBlock*, 1> m_roots;
     Vector<Edge, 16> m_varArgChildren;
-
-    struct TupleData {
-        uint16_t refCount { 0 };
-        uint16_t resultFlags { 0 };
-        VirtualRegister virtualRegister;
-    };
 
     Vector<TupleData> m_tupleData;
 
