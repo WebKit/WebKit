@@ -330,7 +330,7 @@ static GInputStream* webkitImageLoad(GLoadableIcon* icon, int size, char** type,
         image->priv->width,
         image->priv->height,
         WebKitImageColorType,
-        kUnpremul_SkAlphaType
+        kPremul_SkAlphaType
     );
 
     static_assert(WebKitImageColorType == kBGRA_8888_SkColorType, "WebKitImage assumes PixelFormat::BGRA8 from WebImage");
