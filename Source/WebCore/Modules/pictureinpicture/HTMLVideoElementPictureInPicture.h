@@ -30,7 +30,6 @@
 
 #include "PictureInPictureObserver.h"
 #include "Supplementable.h"
-#include <wtf/CancellableTask.h>
 #include <wtf/LoggerHelper.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakRef.h>
@@ -56,10 +55,6 @@ public:
     virtual ~HTMLVideoElementPictureInPicture();
 
     static void requestPictureInPicture(HTMLVideoElement&, Ref<DeferredPromise>&&);
-    static bool autoPictureInPicture(HTMLVideoElement&);
-    static void setAutoPictureInPicture(HTMLVideoElement&, bool);
-    static bool disablePictureInPicture(HTMLVideoElement&);
-    static void setDisablePictureInPicture(HTMLVideoElement&, bool);
 
     void exitPictureInPicture(Ref<DeferredPromise>&&);
 
@@ -82,15 +77,10 @@ private:
     static ASCIILiteral supplementName() { return "HTMLVideoElementPictureInPicture"_s; }
     bool isHTMLVideoElementPictureInPicture() const final { return true; }
 
-    bool m_autoPictureInPicture { false };
-    bool m_disablePictureInPicture { false };
-
     WeakRef<HTMLVideoElement> m_videoElement;
     const Ref<PictureInPictureWindow> m_pictureInPictureWindow;
     RefPtr<DeferredPromise> m_enterPictureInPicturePromise;
     RefPtr<DeferredPromise> m_exitPictureInPicturePromise;
-
-    TaskCancellationGroup m_eventTaskGroup;
 
 #if !RELEASE_LOG_DISABLED
     const Ref<const Logger> m_logger;

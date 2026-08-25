@@ -146,26 +146,6 @@ void HTMLVideoElementPictureInPicture::requestPictureInPicture(HTMLVideoElement&
         promise->reject(ExceptionCode::NotSupportedError, "The video element does not support the Picture-in-Picture mode."_s);
 }
 
-bool HTMLVideoElementPictureInPicture::autoPictureInPicture(HTMLVideoElement& videoElement)
-{
-    return HTMLVideoElementPictureInPicture::from(videoElement).m_autoPictureInPicture;
-}
-
-void HTMLVideoElementPictureInPicture::setAutoPictureInPicture(HTMLVideoElement& videoElement, bool autoPictureInPicture)
-{
-    HTMLVideoElementPictureInPicture::from(videoElement).m_autoPictureInPicture = autoPictureInPicture;
-}
-
-bool HTMLVideoElementPictureInPicture::disablePictureInPicture(HTMLVideoElement& videoElement)
-{
-    return HTMLVideoElementPictureInPicture::from(videoElement).m_disablePictureInPicture;
-}
-
-void HTMLVideoElementPictureInPicture::setDisablePictureInPicture(HTMLVideoElement& videoElement, bool disablePictureInPicture)
-{
-    HTMLVideoElementPictureInPicture::from(videoElement).m_disablePictureInPicture = disablePictureInPicture;
-}
-
 void HTMLVideoElementPictureInPicture::exitPictureInPicture(Ref<DeferredPromise>&& promise)
 {
     INFO_LOG(LOGIDENTIFIER);
