@@ -277,6 +277,7 @@ private:
                 }
 
                 if (value.m_structure.isSubsetOf(set)) {
+                    m_graph.trustStructures(value.m_structure);
                     m_interpreter.execute(indexInBlock); // Catch the fact that we may filter on cell.
                     node->remove(m_graph);
                     eliminated = true;
@@ -435,17 +436,24 @@ private:
 
             case CheckArray:
             case Arrayify: {
-                if (!node->arrayMode().alreadyChecked(m_graph, node, m_state.forNode(node->child1())))
+                AbstractValue& value = m_state.forNode(node->child1());
+                if (!node->arrayMode().alreadyChecked(m_graph, node, value))
                     break;
+                // If the array-mode proof relies on a finite structure set, watch those
+                // structures before eliding. When it is structure-independent (proved via
+                // arrayModes/type, so the structure may be infinite) no watchpoint is needed.
+                if (value.m_structure.isFinite())
+                    m_graph.trustStructures(value.m_structure);
                 node->remove(m_graph);
                 eliminated = true;
                 break;
             }
-                
+
             case PutStructure: {
-                if (m_state.forNode(node->child1()).m_structure.onlyStructure() != node->transition()->next)
+                AbstractValue& value = m_state.forNode(node->child1());
+                if (value.m_structure.onlyStructure() != node->transition()->next)
                     break;
-                
+                m_graph.trustStructures(value.m_structure);
                 node->remove(m_graph);
                 eliminated = true;
                 break;
@@ -533,13 +541,12 @@ private:
                             }
                         });
 
-                        if (canFold) {
-                            if (m_graph.isWatchingArrayBufferDetachWatchpoint(node)) {
-                                node->setOp(GetUndetachedTypeArrayLength);
-                                node->setArrayMode(arrayMode.withArrayClass(Array::NonArray));
-                                changed = true;
-                                break;
-                            }
+                        if (canFold && m_graph.isWatchingArrayBufferDetachWatchpoint(node)) {
+                            m_graph.trustStructures(abstractValue.m_structure);
+                            node->setOp(GetUndetachedTypeArrayLength);
+                            node->setArrayMode(arrayMode.withArrayClass(Array::NonArray));
+                            changed = true;
+                            break;
                         }
                     }
                 }
@@ -558,13 +565,12 @@ private:
                         }
                     });
 
-                    if (canFold) {
-                        if (m_graph.isWatchingArrayBufferDetachWatchpoint(node)) {
-                            m_interpreter.execute(indexInBlock); // Catch the fact that we may filter on cell.
-                            node->remove(m_graph);
-                            eliminated = true;
-                            break;
-                        }
+                    if (canFold && m_graph.isWatchingArrayBufferDetachWatchpoint(node)) {
+                        m_graph.trustStructures(abstractValue.m_structure);
+                        m_interpreter.execute(indexInBlock); // Catch the fact that we may filter on cell.
+                        node->remove(m_graph);
+                        eliminated = true;
+                        break;
                     }
                 }
                 break;
@@ -1343,6 +1349,11 @@ private:
                     m_graph.watchpoints().addLazily(globalObject->objectPrototypeChainIsSaneWatchpointSet());
                 }
 
+                // The folded field reads use KnownCellUse on the descriptor (no runtime
+                // CheckStructure), so they rely on the descriptor actually having
+                // descriptorStructure. Watch it before committing to the fold.
+                m_graph.trustStructures(descriptor.m_structure);
+
                 m_interpreter.execute(indexInBlock);
                 alreadyHandled = true;
                 if (!m_state.isValid())
@@ -1665,6 +1676,7 @@ private:
                         ok &= (structure->typeInfo().inlineTypeFlags() & bits) == bits;
                     });
                     if (ok) {
+                        m_graph.trustStructures(abstractValue.m_structure);
                         eliminated = true;
                         node->remove(m_graph);
                         break;
@@ -1692,9 +1704,11 @@ private:
                     });
 
                     if (canFoldToTrue) {
+                        m_graph.trustStructures(child.m_structure);
                         m_graph.convertToConstant(node, jsBoolean(true));
                         changed = true;
                     } else if (canFoldToFalse) {
+                        m_graph.trustStructures(child.m_structure);
                         m_graph.convertToConstant(node, jsBoolean(false));
                         changed = true;
                     }
@@ -2059,6 +2073,7 @@ private:
                             if (m_graph.isWatchingPromiseSpeciesWatchpoint(node)) {
                                 if (auto structure = argument.m_structure.onlyStructure()) {
                                     if (structure.get() == globalObject->promiseStructure()) {
+                                        m_graph.trustStructures(argument.m_structure);
                                         m_interpreter.execute(indexInBlock); // Push CFA over this node after we get the state before.
                                         alreadyHandled = true; // Don't allow the default constant folder to do things to this.
                                         node->convertToIdentityOn(node->child2().node());
@@ -2468,7 +2483,11 @@ private:
                 OpInfo(m_graph.addStructureSet(set.toStructureSet())), node->child1());
             return;
         }
-        
+
+        // We're eliding the CheckStructure because the base's proven structures are a subset of
+        // `set`, so watch those structures to back the elision.
+        m_graph.trustStructures(baseValue.m_structure);
+
         if (baseValue.m_type & ~SpecCell)
             m_insertionSet.insertCheck(indexInBlock, node->origin, node->child1());
     }
@@ -2562,6 +2581,11 @@ private:
         });
         if (!ok)
             return false;
+
+        // The fold's validity (property absent, extensible, non-overriding put, ...) was proven
+        // from baseValue's structures, and the resulting PutByIdDirect uses CellUse rather than a
+        // CheckStructure, so we must watch those structures to trust the fold.
+        m_graph.trustStructures(baseValue.m_structure);
 
         // Execute the original DefineDataProperty (clobbers world) before we mutate the node,
         // so the abstract state we propagate matches post-fold semantics — PutByIdDirect also

@@ -1041,7 +1041,12 @@ void SpeculativeJIT::checkArray(Node* node)
     SpeculateCellOperand base(this, node->child1());
     GPRReg baseReg = base.gpr();
     
-    if (arrayMode.alreadyChecked(m_graph, node, m_state.forNode(node->child1()))) {
+    AbstractValue& child1Value = m_state.forNode(node->child1());
+    if (arrayMode.alreadyChecked(m_graph, node, child1Value)) {
+        // We're eliding the array/structure check. If alreadyChecked relied on a finite
+        // structure set (rather than arrayModes/type), watch those structures.
+        if (child1Value.m_structure.isFinite())
+            m_graph.trustStructures(child1Value.m_structure);
         // We can purge Empty check completely in this case of CheckArrayOrEmpty since CellUse only accepts SpecCell | SpecEmpty.
         ASSERT(typeFilterFor(node->child1().useKind()) & SpecEmpty);
         noResult(m_currentNode);
@@ -9091,7 +9096,8 @@ void SpeculativeJIT::compileSpread(Node* node)
             if (!m_state.forNode(node->child1()).m_structure.isSubsetOf(RegisteredStructureSet { registeredSetStructure })) {
                 load32(Address(argument, JSCell::structureIDOffset()), scratch2GPR);
                 slowPath.append(branch32(NotEqual, scratch2GPR, TrustedImm32(registeredSetStructure->id().bits())));
-            }
+            } else
+                m_graph.trustStructures(m_state.forNode(node->child1()).m_structure);
         }
 
         // Load Set storage pointer.
@@ -9909,8 +9915,10 @@ void SpeculativeJIT::compileArrayIndexOfOrArrayIncludes(Node* node)
                 return false;
             if (auto structure = base.m_structure.onlyStructure()) {
                 JSGlobalObject* globalObject = m_graph.globalObjectFor(node->origin.semantic);
-                if (structure.get() == globalObject->originalArrayStructureForIndexingType(CopyOnWriteArrayWithContiguous))
+                if (structure.get() == globalObject->originalArrayStructureForIndexingType(CopyOnWriteArrayWithContiguous)) {
+                    m_graph.trustStructures(base.m_structure);
                     return true;
+                }
             }
             return false;
         };
@@ -14981,11 +14989,19 @@ void SpeculativeJIT::compileGetPropertyEnumerator(Node* node)
                 if (structure->indexingType() > ArrayWithUndecided)
                     hasIndexing = true;
             });
-            if (!hasIndexing)
-                skipIndexingMaskCheck = true;
-            onlyStructure = baseValue.m_structure.onlyStructure();
-            if (onlyStructure)
-                rareData = onlyStructure->tryRareData();
+            RegisteredStructure only = baseValue.m_structure.onlyStructure();
+            // We only rely on (and thus must watch) the proven structures if we'd skip the
+            // indexing-mask check (relies on their indexing types) or embed the structure /
+            // read its rareData directly (relies on the single structure). rareData derives from
+            // onlyStructure, so gating on `only` covers the rareData path too. If neither
+            // applies we emit the runtime check and load the structure, relying on nothing.
+            if (!hasIndexing || only) {
+                m_graph.trustStructures(baseValue.m_structure);
+                skipIndexingMaskCheck = !hasIndexing;
+                onlyStructure = only;
+                if (onlyStructure)
+                    rareData = onlyStructure->tryRareData();
+            }
         }
 
         if (!skipIndexingMaskCheck) {
@@ -16456,13 +16472,17 @@ void SpeculativeJIT::compileGetPrototypeOf(Node* node)
                     hasMonoProto = true;
             });
 
+            // We only rely on (and watch) the structures when they agree on proto layout, i.e.
+            // when we actually take a fast path. A mixed set falls through to the general path.
             if (hasMonoProto && !hasPolyProto) {
+                m_graph.trustStructures(value.m_structure);
                 loadValue(Address(tempGPR, Structure::prototypeOffset()), resultRegs);
                 jsValueResult(resultRegs, node);
                 return;
             }
 
             if (hasPolyProto && !hasMonoProto) {
+                m_graph.trustStructures(value.m_structure);
                 loadValue(Address(objectGPR, offsetRelativeToBase(knownPolyProtoOffset)), resultRegs);
                 jsValueResult(resultRegs, node);
                 return;

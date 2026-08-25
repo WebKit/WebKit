@@ -1783,6 +1783,30 @@ bool Graph::isWatched(Structure* structure)
     return m_plan.watchpoints().isWatched(structure->transitionWatchpointSet());
 }
 
+void Graph::trustStructures(const StructureAbstractValue& structures)
+{
+    // With the feature off, set()/clobber() already installed the watchpoints eagerly.
+    if (!Options::useDFGLazyStructureWatchpoints())
+        return;
+
+    // Callers only rely on a finite structure set.
+    RELEASE_ASSERT(structures.isFinite());
+
+    // If this finiteness is already guaranteed on the current path (by a dominating runtime
+    // structure check or a fresh allocation) rather than by surviving a clobber / being a
+    // constant, no transition watchpoint is needed.
+    if (!structures.needsWatch())
+        return;
+
+    // Install the transition watchpoints now, at the point of reliance. If a structure was
+    // invalidated by the mutator while we were compiling, we watch it anyway; installing an
+    // already-invalidated watchpoint at finalization invalidates (jettisons) this compilation,
+    // which is correct. That race should be rare (FIXME: measure whether it happens in practice).
+    structures.forEach([&](RegisteredStructure structure) {
+        watch(structure.get());
+    });
+}
+
 void Graph::assertIsRegistered(Structure* structure)
 {
     // It's convenient to be able to call this with a maybe-null structure.
@@ -2102,6 +2126,10 @@ bool Graph::canDoFastSpread(Node* node, const AbstractValue& value)
             && !structure->mayInterceptIndexedAccesses();
     });
 
+    // The fast spread relies on these structures keeping the properties checked above, so we
+    // must watch them (unless the finiteness is already runtime-check-guaranteed).
+    if (allGood)
+        trustStructures(value.m_structure);
     return allGood;
 }
 
