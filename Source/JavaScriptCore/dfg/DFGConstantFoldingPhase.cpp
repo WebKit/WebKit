@@ -437,6 +437,7 @@ private:
             case Arrayify: {
                 if (!node->arrayMode().alreadyChecked(m_graph, node, m_state.forNode(node->child1())))
                     break;
+                m_interpreter.execute(indexInBlock); // Catch the fact that we may filter on cell.
                 node->remove(m_graph);
                 eliminated = true;
                 break;

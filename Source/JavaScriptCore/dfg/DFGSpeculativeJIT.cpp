@@ -963,7 +963,7 @@ JITCompiler::JumpList SpeculativeJIT::jumpSlowForUnwantedArrayMode(GPRReg tempGP
         case Array::OriginalArray:
         case Array::OriginalNonCopyOnWriteArray:
         case Array::OriginalCopyOnWriteArray:
-            RELEASE_ASSERT_NOT_REACHED();
+            DFG_CRASH(m_graph, m_currentNode, "Bad array mode");
             return result;
 
         case Array::Array:

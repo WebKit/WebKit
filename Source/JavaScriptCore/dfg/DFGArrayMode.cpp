@@ -473,7 +473,10 @@ bool ArrayMode::alreadyChecked(Graph& graph, Node* node, const AbstractValue& va
 
     switch (arrayClass()) {
     case Array::Array: {
-        if (arrayModesAlreadyChecked(value.m_arrayModes, asArrayModesIgnoringTypedArrays(shape | IsArray)))
+        ArrayModes expected = asArrayModesIgnoringTypedArrays(shape | IsArray);
+        if (action() == Array::Read)
+            expected |= asArrayModesIgnoringTypedArrays(shape | IsArray | CopyOnWrite);
+        if (arrayModesAlreadyChecked(value.m_arrayModes, expected))
             return true;
         if (!value.m_structure.isFinite())
             return false;

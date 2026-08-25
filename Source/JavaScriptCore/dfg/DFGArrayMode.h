@@ -271,12 +271,29 @@ public:
                 case Array::Double:
                 case Array::Contiguous: {
                     ArrayModes arrayModes = profile->observedArrayModes(locker);
-                    if (hasSeenCopyOnWriteArray(arrayModes) && !hasSeenWritableArray(arrayModes))
+                    if (hasSeenCopyOnWriteArray(arrayModes) && !hasSeenWritableArray(arrayModes)) {
                         myArrayClass = Array::OriginalCopyOnWriteArray;
-                    else if (!hasSeenCopyOnWriteArray(arrayModes) && hasSeenWritableArray(arrayModes))
+                        break;
+                    }
+
+                    if (!hasSeenCopyOnWriteArray(arrayModes) && hasSeenWritableArray(arrayModes)) {
                         myArrayClass = Array::OriginalNonCopyOnWriteArray;
-                    else
-                        myArrayClass = Array::OriginalArray;
+                        break;
+                    }
+
+                    if (action() == Array::Read && conversion() == Array::Convert) {
+                        if ((type() == Array::Int32 && arrayModes & CopyOnWriteArrayWithInt32ArrayMode)
+                            || (type() == Array::Double && arrayModes & CopyOnWriteArrayWithDoubleArrayMode)
+                            || (type() == Array::Contiguous && arrayModes & CopyOnWriteArrayWithContiguousArrayMode)) {
+                            // This site is observing both CoW and non-CoW arrays.
+                            // And we need some conversion if necessary, and there is a chance that CoW array can be used directly.
+                            // Then, instead of requiring original Array, we can just relax it to Array so that we can just use array mode
+                            // and do not need to convert CoW array to non-CoW array while they have the same array modes.
+                            myArrayClass = Array::Array;
+                            break;
+                        }
+                    }
+                    myArrayClass = Array::OriginalArray;
                     break;
                 }
                 case Array::Undecided:
