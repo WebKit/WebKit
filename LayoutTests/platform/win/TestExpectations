@@ -108,6 +108,7 @@ imported/w3c/web-platform-tests/digital-credentials/ [ Skip ]
 
 # WEB_CODECS is disabled
 fast/webcodecs/audio-data-copy-to-crash.html [ Skip ]
+fast/webcodecs/audio-data-copy-to-zero-frames-crash.html [ Skip ]
 
 # WebGPU is disabled
 http/tests/webgpu [ Skip ]
@@ -4805,3 +4806,32 @@ http/wpt/web-locks/back-forward-cache-suspend-test.https.html [ Skip ] # Flaky C
 imported/w3c/web-platform-tests/largest-contentful-paint/contracted-image.html [ Pass Failure ]
 imported/w3c/web-platform-tests/largest-contentful-paint/observe-image.html [ Pass Failure ]
 imported/w3c/web-platform-tests/largest-contentful-paint/repeated-image.html [ Pass Failure ]
+
+# Gardening: unexpected results on the last 20 Win-Tests-EWS runs (98613-98655, 319581@main-319601@main).
+
+# Consistent image failures, in every run. These are all reftests, so they cannot be
+# rebaselined; corner-shape is not applied through the composited path on Windows.
+compositing/corner-shape-ancestor-clip.html [ ImageOnlyFailure ]
+compositing/corner-shape-mask-layer-offset.html [ ImageOnlyFailure ]
+http/tests/canvas/canvas-tainted-image-capture-video-frame.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shape-bevel-overflow-composite.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shape-notch-mixed.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-borders/corner-shape/corner-shape-superellipse-negative-100.html [ ImageOnlyFailure ]
+
+# Consistent text failures, in every run
+compositing/geometry/composited-bounds-single-axis-clip-taller-than-document.html [ Failure ]
+compositing/geometry/composited-bounds-with-single-axis-clip.html [ Failure ]
+editing/input/compositionend-after-clicking-outside-editable.html [ Failure ]
+editing/input/compositionend-data-after-aborting-composition.html [ Failure ]
+fast/dom/navigator-detached-no-crash.html [ Failure ]
+fast/quirks/active-quirks-by-domain.html [ Failure ]
+imported/w3c/web-platform-tests/css/selectors/invalidation/media-loading-pseudo-classes-in-has.sub.html [ Failure ]
+
+# Consistent timeouts, in every run
+fast/canvas/offscreen-isPointInStroke-svg-stroke-bounds-race-crash.html [ Skip ] # Timeout, like offscreen-worker-unsafe-isPointInStroke-call.html above
+fast/text/font-face/css-font-face-setstatus-reentrancy-crash.html [ Skip ] # Timeout
+
+# Crashes
+http/wpt/user-activation/bless-edge-cases.sub.html [ Skip ] # Crash, in 17 of the 20 runs
+http/wpt/user-activation/bless-nested.sub.html [ Skip ] # Crash, unmasked once bless-edge-cases.sub.html above is skipped
+http/wpt/web-locks/lock-name-length-restriction.https.html [ Skip ] # Flaky Crash
