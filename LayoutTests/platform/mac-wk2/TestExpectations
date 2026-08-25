@@ -2607,4 +2607,6 @@ fast/webgpu/forbid-bottom-struct-member.html [ Pass Timeout ]
 imported/w3c/web-platform-tests/web-locks/bfcache/held.tentative.https.html [ Pass Crash ]
 http/tests/webgpu/webgpu/api/operation/render_pass/resolve.html [ Pass Crash ]
 
-webkit.org/b/321298 [ Release ] imported/w3c/web-platform-tests/wasm/serialization/memory/window-success.tentative.https.html [ Skip ]
+# webkit.org/b/321298 [ Release ] REGRESSION(316423@main): [macOS Release] imported/w3c/web-platform-tests/wasm/serialization/memory/window-success.tentative.https.html is a flaky crash
+[ Release ] imported/w3c/web-platform-tests/wasm/serialization/memory/window-nested-dedicated-worker-failure.tentative.https.html [ Skip ]
+[ Release ] imported/w3c/web-platform-tests/wasm/serialization/memory/window-sharedworker-failure.tentative.https.html [ Skip ]
