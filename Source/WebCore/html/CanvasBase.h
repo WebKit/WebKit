@@ -117,7 +117,7 @@ public:
     virtual void queueTaskKeepingObjectAlive(TaskSource, Function<void(CanvasBase&)>&&) = 0;
     virtual void dispatchEvent(Event&) = 0;
 
-    bool postProcessPixelBufferResults(Ref<PixelBuffer>&&) const;
+    bool postProcessPixelBufferResults(PixelBuffer&) const;
     void recordLastFillText(const String&);
 
     void setNoiseInjectionSalt(NoiseInjectionHashSalt salt) { m_canvasNoiseHashSalt = salt; }

@@ -307,10 +307,10 @@ void CanvasBase::removeCanvasNeedingPreparationForDisplayOrFlush()
     // FIXME: WorkerGlobalContext does not have prepare phase yet.
 }
 
-bool CanvasBase::postProcessPixelBufferResults(Ref<PixelBuffer>&& pixelBuffer) const
+bool CanvasBase::postProcessPixelBufferResults(PixelBuffer& pixelBuffer) const
 {
     if (m_canvasNoiseHashSalt)
-        return m_canvasNoiseInjection.postProcessPixelBufferResults(std::forward<Ref<PixelBuffer>>(pixelBuffer), *m_canvasNoiseHashSalt);
+        return m_canvasNoiseInjection.postProcessPixelBufferResults(pixelBuffer, *m_canvasNoiseHashSalt);
     return false;
 }
 
