@@ -101,11 +101,13 @@ private:
 
     // FIXME: Use OptionSet.
     enum class TeardownType { Full, FullAfterShadowRootInsertion, RendererUpdate, RendererUpdateCancelingAnimations };
+    enum class IsRendererReplacement : bool { No, Yes };
     static void tearDownRenderers(Element&, TeardownType);
-    static void tearDownRenderers(Element&, TeardownType, RenderTreeBuilder&);
+    static void tearDownRenderers(Element&, TeardownType, RenderTreeBuilder&, IsRendererReplacement = IsRendererReplacement::No);
+    void tearDownRenderersForNonRenderedFrames();
     static void tearDownDescendantRenderers(Element&, TeardownType, RenderTreeBuilder&);
     enum class TeardownScope { IncludingRoot, DescendantsOnly };
-    template<TeardownScope> static void tearDownRenderersInternal(Element&, TeardownType, RenderTreeBuilder&);
+    template<TeardownScope> static void tearDownRenderersInternal(Element&, TeardownType, RenderTreeBuilder&, IsRendererReplacement);
     enum class NeedsRepaintAndLayout : bool { No, Yes };
     static void tearDownTextRenderer(Text&, const ContainerNode* root, RenderTreeBuilder&, NeedsRepaintAndLayout = NeedsRepaintAndLayout::Yes);
     static void tearDownLeftoverChildrenOfComposedTree(Element&, RenderTreeBuilder&);

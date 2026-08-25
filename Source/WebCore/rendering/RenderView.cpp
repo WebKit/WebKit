@@ -175,6 +175,16 @@ bool RenderView::isChildAllowed(const RenderObject& child, const Style::Computed
     return child.isRenderBox();
 }
 
+bool RenderView::ownerFrameIsRendered() const
+{
+    // <iframe style="display: none"> makes this tree not-rendered.
+    CheckedPtr ownerElement = document().ownerElement();
+    if (!ownerElement || ownerElement->renderer())
+        return true;
+
+    return document().printing() || document().isPluginDocument();
+}
+
 void RenderView::layout()
 {
     StackStats::LayoutCheckPoint layoutCheckPoint;
@@ -857,7 +867,7 @@ FloatSize RenderView::sizeForCSSDefaultViewportUnits() const
 
 Node* RenderView::nodeForHitTest() const
 {
-    return document().documentElement();
+    return ownerFrameIsRendered() ? document().documentElement() : nullptr;
 }
 
 void RenderView::updateHitTestResult(HitTestResult& result, const LayoutPoint& point) const

@@ -185,6 +185,14 @@ bool Extractor::updateStyleIfNeededForProperty(Element& element, CSSPropertyID p
 {
     Ref document = element.document();
 
+    // While the owner element has no renderer this element has none either, and resolving the owner
+    // documents is what would give it one, so they have to resolve before this element's style validity
+    // says anything about whether a resolved value is available. An owner that already has a renderer
+    // needs nothing: losing it later is handled by the layout Document::updateLayout() forces, which
+    // walks owner documents itself.
+    if (RefPtr owner = document->ownerElement(); owner && !owner->renderer())
+        protect(owner->document())->updateStyleIfNeeded();
+
     document->styleScope().flushPendingUpdate();
 
     auto hasValidStyle = [&] {

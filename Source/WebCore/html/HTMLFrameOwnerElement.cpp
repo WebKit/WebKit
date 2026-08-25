@@ -45,7 +45,7 @@ namespace WebCore {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(HTMLFrameOwnerElement);
 
 HTMLFrameOwnerElement::HTMLFrameOwnerElement(const QualifiedName& tagName, Document& document, OptionSet<TypeFlag> constructionType)
-    : HTMLElement(tagName, document, constructionType)
+    : HTMLElement(tagName, document, constructionType | TypeFlag::HasCustomStyleResolveCallbacks)
 {
 }
 
@@ -138,6 +138,17 @@ void HTMLFrameOwnerElement::scheduleInvalidateStyleAndLayerComposition()
         });
     } else
         invalidateStyleAndLayerComposition();
+}
+
+void HTMLFrameOwnerElement::didAttachRenderers()
+{
+    RefPtr contentDocument = this->contentDocument();
+    if (!contentDocument || !contentDocument->documentElement())
+        return;
+
+    RefPtr documentElement = contentDocument->documentElement();
+    if (!documentElement->renderer())
+        documentElement->invalidateStyleAndRenderersForSubtree();
 }
 
 bool HTMLFrameOwnerElement::isProhibitedSelfReference(const URL& completeURL) const

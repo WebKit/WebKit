@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>A resolved value in a subframe reflects a pending display change in the owner document</title>
+<link rel="help" href="https://drafts.csswg.org/cssom/#resolved-values">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<style>
+.wrapper { width: 320px; }
+.wrapper iframe { width: 300px; height: 100px; border: 0; }
+#toShowWrapper { display: none; }
+</style>
+<body>
+<!--
+  Whether a subframe's contents generate boxes depends on the frame's owner element in the parent
+  document, so a resolved value read from the subframe depends on style the parent has not resolved yet.
+  #box has no width of its own, so its computed value is "auto" while its used value is a length, which
+  is what makes it possible to tell which one was returned.
+
+  Each test asserts that a value read straight after the mutation matches the one read once everything
+  has settled, rather than asserting particular values, so nothing here depends on scrollbar widths or
+  on which fallback an implementation reports.
+-->
+<div class="wrapper" id="toHideWrapper"><iframe></iframe></div>
+<div class="wrapper" id="toShowWrapper"><iframe></iframe></div>
+
+<script>
+const frameMarkup = "<style>body { margin: 0 }</style><div id='box' style='height: 40px'></div>";
+
+function boxIn(wrapperId)
+{
+    return document.getElementById(wrapperId).querySelector("iframe").contentDocument.getElementById("box");
+}
+
+function widthOf(wrapperId)
+{
+    return getComputedStyle(boxIn(wrapperId)).width;
+}
+
+// Resolves style and layout in this document, which is what settles whether the frame's owner element
+// generates a box.
+function settleThisDocument()
+{
+    document.documentElement.offsetHeight;
+}
+
+function loadFrames()
+{
+    return Promise.all(Array.from(document.querySelectorAll("iframe"), frame => {
+        return new Promise(resolve => {
+            frame.addEventListener("load", resolve, { once: true });
+            frame.srcdoc = frameMarkup;
+        });
+    }));
+}
+
+promise_setup(loadFrames);
+
+promise_test(async () => {
+    // Displayed, everything settled: a used value, so a length rather than "auto".
+    const beforeHiding = widthOf("toHideWrapper");
+    assert_not_equals(beforeHiding, "auto", "a displayed frame should report a used value");
+
+    document.getElementById("toHideWrapper").style.display = "none";
+    const unsettled = widthOf("toHideWrapper");
+
+    settleThisDocument();
+    assert_equals(unsettled, widthOf("toHideWrapper"),
+        "value read straight after hiding the ancestor should match the settled value");
+}, "Hiding an ancestor of the frame is reflected in a resolved value read from inside it");
+
+promise_test(async () => {
+    document.getElementById("toShowWrapper").style.display = "block";
+    const unsettled = widthOf("toShowWrapper");
+
+    settleThisDocument();
+    const settled = widthOf("toShowWrapper");
+
+    assert_not_equals(settled, "auto", "a displayed frame should report a used value");
+    assert_equals(unsettled, settled,
+        "value read straight after displaying the ancestor should match the settled value");
+}, "Displaying an ancestor of the frame is reflected in a resolved value read from inside it");
+</script>

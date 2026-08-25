@@ -271,6 +271,11 @@ void TreeResolver::resetStyleForNonRenderedDescendants(Element& subtreeRoot)
 
 static bool affectsRenderedSubtree(Element& element, const Style::ComputedStyle& newStyle)
 {
+    if (&element == element.document().documentElement()) {
+        CheckedPtr renderView = element.document().renderView();
+        if (renderView && !renderView->ownerFrameIsRendered())
+            return false;
+    }
     if (newStyle.display() != DisplayType::None)
         return true;
     if (element.renderOrDisplayContentsStyle())

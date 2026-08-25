@@ -33,6 +33,7 @@
 #include "Document.h"
 #include "Element.h"
 #include "FrameSelection.h"
+#include "HTMLFrameOwnerElement.h"
 #include "HTMLSlotElement.h"
 #include "LayoutState.h"
 #include "LayoutTreeBuilder.h"
@@ -146,6 +147,8 @@ void RenderTreeUpdater::commit(std::unique_ptr<Style::Update> styleUpdate)
 
     m_builder.updateAfterDescendants(renderView());
 
+    tearDownRenderersForNonRenderedFrames();
+
     m_styleUpdate = nullptr;
 }
 
@@ -231,6 +234,8 @@ void RenderTreeUpdater::updateRebuildRoots()
 static bool shouldCreateRenderer(const Element& element, const RenderElement& parentRenderer)
 {
     if (!parentRenderer.canHaveChildren() && !(element.isPseudoElement() && parentRenderer.canHaveGeneratedChildren()))
+        return false;
+    if (CheckedPtr renderView = dynamicDowncast<RenderView>(parentRenderer); renderView && !renderView->ownerFrameIsRendered())
         return false;
     if (parentRenderer.element() && !protect(parentRenderer.element())->childShouldCreateRenderer(element))
         return false;
@@ -428,6 +433,13 @@ void RenderTreeUpdater::updateElementRenderer(Element& element, const Style::Ele
 
     auto elementUpdateStyle = Style::ComputedStyle::cloneIncludingPseudoElements(*elementUpdate.style);
 
+    bool hasDisplayContents = elementUpdate.style->display() == Style::DisplayType::Contents;
+    bool hasDisplayNonePreventingRendererCreation = elementUpdate.style->display() == Style::DisplayType::None && !element.rendererIsNeeded(elementUpdateStyle);
+    bool hasDisplayContentsOrNone = hasDisplayContents || hasDisplayNonePreventingRendererCreation;
+
+    bool willHaveRenderer = !hasDisplayContentsOrNone && !(element.isInTopLayer() && renderTreePosition().parent().style().isSkippedRootOrSkippedContent());
+    bool rendererWillBeReplaced = willHaveRenderer && shouldCreateRenderer(element, renderTreePosition().parent()) && element.rendererIsNeeded(elementUpdateStyle);
+
     bool shouldTearDownRenderers = [&]() {
         if (element.isInTopLayer() && elementUpdate.changes.contains(Style::Change::Inherited) && elementUpdate.style->isSkippedRootOrSkippedContent())
             return true;
@@ -447,14 +459,11 @@ void RenderTreeUpdater::updateElementRenderer(Element& element, const Style::Ele
             return TeardownType::RendererUpdate;
         }();
 
-        tearDownRenderers(element, teardownType, m_builder);
+        tearDownRenderers(element, teardownType, m_builder, rendererWillBeReplaced ? IsRendererReplacement::Yes : IsRendererReplacement::No);
 
         renderingParent().didCreateOrDestroyChildRenderer = true;
     }
 
-    bool hasDisplayContents = elementUpdate.style->display() == Style::DisplayType::Contents;
-    bool hasDisplayNonePreventingRendererCreation = elementUpdate.style->display() == Style::DisplayType::None && !element.rendererIsNeeded(elementUpdateStyle);
-    bool hasDisplayContentsOrNone = hasDisplayContents || hasDisplayNonePreventingRendererCreation;
     if (hasDisplayContentsOrNone)
         element.storeDisplayContentsOrNoneStyle(makeUnique<Style::ComputedStyle>(WTF::move(elementUpdateStyle)));
     else
@@ -491,7 +500,7 @@ void RenderTreeUpdater::updateElementRenderer(Element& element, const Style::Ele
         }
     });
 
-    bool shouldCreateNewRenderer = !element.renderer() && !hasDisplayContentsOrNone && !(element.isInTopLayer() && renderTreePosition().parent().style().isSkippedRootOrSkippedContent());
+    bool shouldCreateNewRenderer = !element.renderer() && willHaveRenderer;
     if (shouldCreateNewRenderer) {
         if (element.hasCustomStyleResolveCallbacks())
             element.willAttachRenderers();
@@ -887,7 +896,7 @@ static std::optional<DidRepaintAndMarkContainingBlock> repaintAndMarkContainingB
 }
 
 template<RenderTreeUpdater::TeardownScope scope>
-void RenderTreeUpdater::tearDownRenderersInternal(Element& root, TeardownType teardownType, RenderTreeBuilder& builder)
+void RenderTreeUpdater::tearDownRenderersInternal(Element& root, TeardownType teardownType, RenderTreeBuilder& builder, IsRendererReplacement isRendererReplacement)
 {
     Vector<Element*, 30> teardownStack;
 
@@ -965,6 +974,15 @@ void RenderTreeUpdater::tearDownRenderersInternal(Element& root, TeardownType te
                     builder.destroyAndCleanUpAnonymousWrappers(*backdropRenderer, { });
                 builder.destroyAndCleanUpAnonymousWrappers(*renderer, root.renderer());
                 element->setRenderer(nullptr);
+
+                if (isRendererReplacement == IsRendererReplacement::No) {
+                    if (RefPtr frameOwner = dynamicDowncast<HTMLFrameOwnerElement>(element.get())) {
+                        RefPtr contentDocument = frameOwner->contentDocument();
+                        CheckedPtr contentRenderView = contentDocument ? contentDocument->renderView() : nullptr;
+                        if (contentRenderView && !contentRenderView->ownerFrameIsRendered())
+                            builder.addFrameWithDetachedRenderer(*frameOwner);
+                    }
+                }
             }
 
             if (element->hasCustomStyleResolveCallbacks())
@@ -994,14 +1012,42 @@ void RenderTreeUpdater::tearDownRenderersInternal(Element& root, TeardownType te
         tearDownLeftoverPaginationRenderersIfNeeded(root, builder);
 }
 
-void RenderTreeUpdater::tearDownRenderers(Element& root, TeardownType teardownType, RenderTreeBuilder& builder)
+void RenderTreeUpdater::tearDownRenderers(Element& root, TeardownType teardownType, RenderTreeBuilder& builder, IsRendererReplacement isRendererReplacement)
 {
-    tearDownRenderersInternal<TeardownScope::IncludingRoot>(root, teardownType, builder);
+    tearDownRenderersInternal<TeardownScope::IncludingRoot>(root, teardownType, builder, isRendererReplacement);
+}
+
+void RenderTreeUpdater::tearDownRenderersForNonRenderedFrames()
+{
+    auto frameOwners = copyToVectorOf<Ref<HTMLFrameOwnerElement>>(m_builder.framesWithDetachedRenderers());
+
+    while (!frameOwners.isEmpty()) {
+        Vector<Ref<HTMLFrameOwnerElement>> nestedFrameOwners;
+
+        for (auto& frameOwner : frameOwners) {
+            RefPtr contentDocument = frameOwner->contentDocument();
+            if (!contentDocument || !contentDocument->documentElement() || !contentDocument->renderView()) {
+                ASSERT_NOT_REACHED();
+                continue;
+            }
+            RefPtr documentElement = contentDocument->documentElement();
+            if (!documentElement->renderer()) {
+                ASSERT_NOT_REACHED();
+                continue;
+            }
+
+            RenderTreeBuilder builder(*contentDocument->renderView());
+            tearDownRenderers(*documentElement, TeardownType::RendererUpdate, builder);
+            nestedFrameOwners.appendVector(copyToVectorOf<Ref<HTMLFrameOwnerElement>>(builder.framesWithDetachedRenderers()));
+        }
+
+        frameOwners = WTF::move(nestedFrameOwners);
+    }
 }
 
 void RenderTreeUpdater::tearDownDescendantRenderers(Element& root, TeardownType teardownType, RenderTreeBuilder& builder)
 {
-    tearDownRenderersInternal<TeardownScope::DescendantsOnly>(root, teardownType, builder);
+    tearDownRenderersInternal<TeardownScope::DescendantsOnly>(root, teardownType, builder, IsRendererReplacement::No);
 }
 
 void RenderTreeUpdater::tearDownTextRenderer(Text& text, const ContainerNode* root, RenderTreeBuilder& builder, NeedsRepaintAndLayout needsRepaintAndLayout)

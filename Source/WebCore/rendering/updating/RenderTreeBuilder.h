@@ -27,11 +27,14 @@
 
 #include "RenderTreePosition.h"
 #include "RenderWidget.h"
+#include <wtf/WeakHashSet.h>
 
 namespace WebCore {
 
 class RenderGrid;
 class RenderTreeUpdater;
+class HTMLFrameOwnerElement;
+class WeakPtrImplWithEventTargetData;
 
 class RenderTreeBuilder {
 public:
@@ -67,6 +70,9 @@ public:
     void updateAfterDescendants(RenderElement&);
     void destroyAndCleanUpAnonymousWrappers(RenderObject& child, const RenderElement* destroyRoot);
     void normalizeTreeAfterStyleChange(RenderElement&, Style::ComputedStyle& oldStyle);
+
+    void addFrameWithDetachedRenderer(HTMLFrameOwnerElement&);
+    const WeakHashSet<HTMLFrameOwnerElement, WeakPtrImplWithEventTargetData>& framesWithDetachedRenderers() const LIFETIME_BOUND { return m_framesWithDetachedRenderers; }
 
 private:
     static void markBoxForRelayoutAfterSplit(RenderBoxModelObject&);
@@ -150,6 +156,7 @@ private:
     IsInternalMove m_internalMovesType { IsInternalMove::No };
     TearDownType m_tearDownType { TearDownType::Root };
     CheckedPtr<const RenderElement> m_subtreeDestroyRoot;
+    WeakHashSet<HTMLFrameOwnerElement, WeakPtrImplWithEventTargetData> m_framesWithDetachedRenderers;
     SingleThreadWeakPtr<const RenderObject> m_anonymousDestroyRoot;
 };
 

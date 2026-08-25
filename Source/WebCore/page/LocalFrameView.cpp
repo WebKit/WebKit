@@ -586,7 +586,7 @@ void LocalFrameView::setContentsSize(const IntSize& size)
 void LocalFrameView::adjustViewSize()
 {
     CheckedPtr renderView = this->renderView();
-    if (!renderView)
+    if (!renderView || !renderView->ownerFrameIsRendered())
         return;
 
     ASSERT(m_frame->view() == this);
