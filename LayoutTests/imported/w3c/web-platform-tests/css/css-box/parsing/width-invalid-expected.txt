@@ -8,6 +8,8 @@ PASS e.style['width'] = "-10px" should not set the property value
 PASS e.style['width'] = "-20%" should not set the property value
 PASS e.style['width'] = "60" should not set the property value
 PASS e.style['width'] = "10px 20%" should not set the property value
+PASS e.style['width'] = "calc(1 / 2px)" should not set the property value
+PASS e.style['width'] = "calc(1 / max(2px, 2em))" should not set the property value
 PASS e.style['width'] = "10px border-box" should not set the property value
 PASS e.style['width'] = "content-box 20%" should not set the property value
 

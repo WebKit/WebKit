@@ -39,12 +39,12 @@ item {
             <container>
                 <item></item>
 
-                <!-- This item's block-end margin should be trimmed 
+                <!-- This item's block-end margin should be trimmed
                      since it will collapse through to the outer container-->
                 <container style="margin-block-end: 300px;">
                     <!-- However the margins inside this item cannot collapse through due to
                          the border and should not be trimmed -->
-                    <container class="border"> 
+                    <container class="border">
                         <item style="margin-block-end: 20px;"></item>
                         <item data-offset-y="58" class="collapsed"></item>
                     </container>

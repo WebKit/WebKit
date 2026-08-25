@@ -8397,3 +8397,12 @@ imported/w3c/web-platform-tests/svg/path/distance/path-length-css-zoom.tentative
 imported/w3c/web-platform-tests/svg/linking/reftests/media-fragment-spatial-percent-zero-size.html [ Skip ]
 
 imported/w3c/web-platform-tests/scroll-animations/css/scroll-timeline-on-pseudo-002.html [ ImageOnlyFailure ]
+
+imported/w3c/web-platform-tests/css/css-box/margin-trim/block-container-block-in-inline-001.html [ Crash ]
+imported/w3c/web-platform-tests/css/css-box/margin-trim/block-container-block-in-inline-006.html [ Crash ]
+imported/w3c/web-platform-tests/css/css-box/margin-trim/block-container-block-end-self-collapsing-and-border.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-box/margin-trim/multicol-spanner-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-box/margin-trim/multicol-spanner-003.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-box/margin-trim/multicol-spanner-004.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-box/margin-trim/multicol-spanner-005.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-box/margin-trim/multicol-spanner-007.html [ ImageOnlyFailure ]

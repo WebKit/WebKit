@@ -10,10 +10,9 @@ Do NOT modify or remove this file.
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
 None
-Property values requiring vendor prefixes:
-None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-box/parsing/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/css/css-box/parsing/clear-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-box/parsing/clear-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-box/parsing/clear-valid.html
@@ -25,6 +24,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-box/parsing/margin-computed.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-box/parsing/margin-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-box/parsing/margin-shorthand.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-box/parsing/margin-trim-computed.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-box/parsing/margin-trim.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-box/parsing/margin-valid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-box/parsing/max-height-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-box/parsing/max-height-valid.html
