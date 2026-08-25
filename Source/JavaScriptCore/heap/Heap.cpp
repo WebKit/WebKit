@@ -3434,26 +3434,25 @@ void Heap::removeGCCompletionCallback(const GCCompletionCallback& callback)
     m_gcCompletionCallbacks.removeFirst(callback);
 }
 
-void Heap::setBonusVisitorTask(RefPtr<SharedTask<void(SlotVisitor&)>> task)
-{
-    Locker locker { m_markingMutex };
-    m_bonusVisitorTask = task;
-    m_markingConditionVariable.notifyAll();
-}
-
-
 void Heap::runTaskInParallel(RefPtr<SharedTask<void(SlotVisitor&)>> task)
 {
     unsigned initialRefCount = task->refCount();
-    setBonusVisitorTask(task);
-    task->run(*m_collectorSlotVisitor);
-    setBonusVisitorTask(nullptr);
-    // The constraint solver expects return of this function to imply termination of the task in all
-    // threads. This ensures that property.
     {
         Locker locker { m_markingMutex };
+        m_bonusVisitorTask = task;
+        m_markingConditionVariable.notifyAll();
+    }
+
+    task->run(*m_collectorSlotVisitor);
+
+    {
+        Locker locker { m_markingMutex };
+        m_bonusVisitorTask = nullptr;
+
+        // The constraint solver expects return of this function to imply termination of the task in all
+        // threads. This ensures that property.
         while (task->refCount() > initialRefCount)
-            m_markingConditionVariable.wait(m_markingMutex);
+            m_bonusVisitorTaskConditionVariable.wait(m_markingMutex);
     }
 }
 

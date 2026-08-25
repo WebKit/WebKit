@@ -676,13 +676,12 @@ NEVER_INLINE SlotVisitor::SharedDrainResult SlotVisitor::drainFromShared(SharedD
                 };
 
                 m_heap.m_markingConditionVariable.waitUntil(m_heap.m_markingMutex, timeout, isReady);
-                
-                if (!hasWork(locker)
-                    && m_heap.m_bonusVisitorTask)
-                    bonusTask = m_heap.m_bonusVisitorTask;
-                
+
                 if (m_heap.m_parallelMarkersShouldExit)
                     return SharedDrainResult::Done;
+
+                if (!hasWork(locker) && m_heap.m_bonusVisitorTask)
+                    bonusTask = m_heap.m_bonusVisitorTask;
             }
             
             if (!bonusTask && isEmpty()) {
@@ -701,7 +700,7 @@ NEVER_INLINE SlotVisitor::SharedDrainResult SlotVisitor::drainFromShared(SharedD
         
         if (bonusTask) {
             bonusTask->run(*this);
-            
+
             // The main thread could still be running, and may run for a while. Unless we clear the task
             // ourselves, we will keep looping around trying to run the task.
             {
@@ -709,7 +708,7 @@ NEVER_INLINE SlotVisitor::SharedDrainResult SlotVisitor::drainFromShared(SharedD
                 if (m_heap.m_bonusVisitorTask == bonusTask)
                     m_heap.m_bonusVisitorTask = nullptr;
                 bonusTask = nullptr;
-                m_heap.m_markingConditionVariable.notifyAll();
+                m_heap.m_bonusVisitorTaskConditionVariable.notifyOne();
             }
         } else {
             RELEASE_ASSERT(!isEmpty());
