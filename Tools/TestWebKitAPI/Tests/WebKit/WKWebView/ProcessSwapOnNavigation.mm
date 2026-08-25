@@ -2789,6 +2789,82 @@ TEST(ProcessSwap, ReuseSuspendedProcessOnBackEvenIfPageCacheFails)
     EXPECT_EQ(webkitPID, [webView _webProcessIdentifier]);
 }
 
+// WebProcessPool::processForNavigationInternal reuses the target back/forward item's process without
+// checking that the item is same-site with the navigation's current request. A cross-site server
+// redirect during a back/forward navigation therefore lands the redirect destination in the item's
+// process, and prepareProcessForNavigation grants that process first-party cookie access for the
+// destination's domain.
+TEST(ProcessSwap, CrossSiteServerRedirectDuringBackForwardNavigation)
+{
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
+    RetainPtr processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+
+    RetainPtr webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [webViewConfiguration setProcessPool:processPool.get()];
+    RetainPtr handler = adoptNS([[PSONScheme alloc] init]);
+    [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"PSON"];
+    // Going back must perform a real load rather than restore from the back/forward cache, otherwise
+    // the scheme handler never runs again and the redirect below cannot fire.
+    [[webViewConfiguration preferences] _setUsesPageCache:NO];
+
+    RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    RetainPtr delegate = adoptNS([[PSONNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:delegate.get()];
+
+    failed = false;
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org/main1.html"]]];
+
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    auto webkitPID = [webView _webProcessIdentifier];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.apple.com/main1.html"]]];
+
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    auto applePID = [webView _webProcessIdentifier];
+
+    EXPECT_NE(webkitPID, applePID);
+
+    // Establish the baseline: an unredirected back navigation reuses the target item's process. This
+    // is what makes the cross-site assertion below meaningful rather than vacuous.
+    [webView goBack];
+
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    EXPECT_FALSE(failed);
+    EXPECT_WK_STREQ(@"pson://www.webkit.org/main1.html", [webView URL].absoluteString);
+    EXPECT_EQ(webkitPID, [webView _webProcessIdentifier]);
+
+    [webView goForward];
+
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    EXPECT_FALSE(failed);
+    EXPECT_WK_STREQ(@"pson://www.apple.com/main1.html", [webView URL].absoluteString);
+
+    [handler addRedirectFromURLString:@"pson://www.webkit.org/main1.html" toURLString:@"pson://www.victim.test/main1.html"];
+
+    [webView goBack];
+
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    EXPECT_FALSE(failed);
+    // Confirms the redirect actually fired; without this the process assertion below would pass for
+    // the wrong reason.
+    EXPECT_WK_STREQ(@"pson://www.victim.test/main1.html", [webView URL].absoluteString);
+
+    // victim.test is cross-site with the back/forward item's webkit.org, so it must not be loaded in
+    // the webkit.org process.
+    EXPECT_NE(webkitPID, [webView _webProcessIdentifier]);
+}
+
 static constexpr auto withSubframesTestBytes = R"PSONRESOURCE(
 <body>
 <iframe src="about:blank"></iframe>
