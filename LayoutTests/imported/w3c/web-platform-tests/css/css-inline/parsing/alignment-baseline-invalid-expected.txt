@@ -2,4 +2,7 @@
 PASS e.style['alignment-baseline'] = "auto" should not set the property value
 PASS e.style['alignment-baseline'] = "none" should not set the property value
 PASS e.style['alignment-baseline'] = "baseline text-bottom" should not set the property value
+PASS e.style['alignment-baseline'] = "top" should not set the property value
+PASS e.style['alignment-baseline'] = "center" should not set the property value
+PASS e.style['alignment-baseline'] = "bottom" should not set the property value
 

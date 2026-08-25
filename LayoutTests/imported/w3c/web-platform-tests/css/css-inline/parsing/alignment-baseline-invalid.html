@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <title>CSS Inline Layout: parsing alignment-baseline with invalid values</title>
 <link rel="help" href="https://drafts.csswg.org/css-inline-3/#alignment-baseline-property">
-<meta name="assert" content="alignment-baseline supports only the grammar 'baseline | text-bottom | alphabetic | ideographic | middle | central | mathematical | text-top | bottom | center | top'.">
+<meta name="assert" content="alignment-baseline supports only the grammar 'baseline | text-bottom | alphabetic | ideographic | middle | central | mathematical | hanging | text-top'.">
 <script src="/resources/testharness.js"></script>
 <script src="/resources/testharnessreport.js"></script>
 <script src="/css/support/parsing-testcommon.js"></script>
@@ -17,6 +17,12 @@ test_invalid_value("alignment-baseline", "auto");
 
 test_invalid_value("alignment-baseline", "none");
 test_invalid_value("alignment-baseline", "baseline text-bottom");
+
+// These values were moved to `baseline-shift`
+// https://github.com/w3c/csswg-drafts/issues/5180
+test_invalid_value("alignment-baseline", "top");
+test_invalid_value("alignment-baseline", "center");
+test_invalid_value("alignment-baseline", "bottom");
 </script>
 </body>
 </html>
