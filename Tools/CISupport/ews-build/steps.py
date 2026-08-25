@@ -6496,10 +6496,26 @@ class ExtractTestResults(master.MasterShellCommand):
         step.addURL('view layout test results', self.resultDirectoryURL() + 'results.html')
         step.addURL('download layout test results', self.resultsDownloadURL())
 
+    def archiveSizeText(self):
+        try:
+            size = os.path.getsize(self.zipFile)
+        except OSError:
+            return ''
+        return f' ({size / (1024 * 1024):.1f} MB archive)'
+
     @defer.inlineCallbacks
     def run(self):
-        rc = yield super().run()
+        size_text = self.archiveSizeText()
+        try:
+            rc = yield super().run()
+        except Exception as e:
+            # Extraction just unzips the already-uploaded results archive on the buildmaster; a
+            # stall or kill here (e.g. disk pressure) shouldn't fail the build, the tests already ran.
+            if getattr(self, 'stdio_log', None) is not None:
+                yield self.stdio_log.addStdout(f'\nFailed to extract test results{size_text}: {e}\n')
+            rc = FAILURE
         self.addCustomURLs()
+        self.descriptionDone = [f'Extracted test results{size_text}' if rc == SUCCESS else f'Failed to extract test results{size_text}']
         defer.returnValue(rc)
 
 
