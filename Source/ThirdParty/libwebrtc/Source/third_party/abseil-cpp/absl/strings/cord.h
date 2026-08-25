@@ -100,6 +100,10 @@
 #include "absl/types/optional.h"
 #include "absl/types/span.h"
 
+namespace strings {
+class CordReader;
+}  // namespace strings
+
 namespace absl {
 ABSL_NAMESPACE_BEGIN
 class Cord;
@@ -176,8 +180,7 @@ enum class CordMemoryAccounting {
 class Cord {
  private:
   template <typename T>
-  using EnableIfString =
-      std::enable_if_t<std::is_same<T, std::string>::value, int>;
+  using EnableIfString = std::enable_if_t<std::is_same_v<T, std::string>, int>;
 
  public:
   // Cord::Cord() Constructors.
@@ -438,7 +441,7 @@ class Cord {
 
   // CopyCordToSpan()
   //
-  // Copies up to `dest.size()` bytes starting from the beginning of `src` to
+  // Copies up to `dst.size()` bytes starting from the beginning of `src` to
   // `dst`.  Returns the number of bytes copied.
   friend size_t CopyCordToSpan(const Cord& src, absl::Span<char> dst);
 
@@ -859,6 +862,7 @@ class Cord {
   // public API call causing the cord to be created.
   explicit Cord(absl::string_view src, MethodIdentifier method);
 
+  friend class ::strings::CordReader;
   friend class CordTestPeer;
   friend bool operator==(const Cord& lhs, const Cord& rhs);
   friend bool operator==(const Cord& lhs, absl::string_view rhs);
@@ -1120,11 +1124,6 @@ class Cord {
   void CopyToArrayImpl(char* absl_nonnull dst) const;
 };
 
-ABSL_NAMESPACE_END
-}  // namespace absl
-
-namespace absl {
-ABSL_NAMESPACE_BEGIN
 
 // allow a Cord to be logged
 extern std::ostream& operator<<(std::ostream& out, const Cord& cord);
@@ -1229,6 +1228,35 @@ inline void Cord::InlineRep::Swap(Cord::InlineRep* absl_nonnull rhs) {
 
 inline const char* absl_nullable Cord::InlineRep::data() const {
   return is_tree() ? nullptr : data_.as_chars();
+}
+
+inline char* absl_nonnull Cord::InlineRep::set_data(size_t n) {
+  assert(n <= kMaxInline);
+  ResetToEmpty();
+  set_inline_size(n);
+  return data_.as_chars();
+}
+
+inline void Cord::InlineRep::set_data(const char* absl_nullable data,
+                                      size_t n) {
+  static_assert(kMaxInline == 15, "set_data is hard-coded for a length of 15");
+  assert(data != nullptr || n == 0);
+  data_.set_inline_data(data, n);
+}
+
+inline void Cord::InlineRep::reduce_size(size_t n) {
+  size_t tag = inline_size();
+  assert(tag <= kMaxInline);
+  assert(tag >= n);
+  tag -= n;
+  memset(data_.as_chars() + tag, 0, n);
+  set_inline_size(tag);
+}
+
+inline void Cord::InlineRep::remove_prefix(size_t n) {
+  cord_internal::SmallMemmove(data_.as_chars(), data_.as_chars() + n,
+                              inline_size() - n);
+  reduce_size(n);
 }
 
 inline const char* absl_nonnull Cord::InlineRep::as_chars() const {
@@ -1593,11 +1621,13 @@ inline bool Cord::ChunkIterator::operator!=(const ChunkIterator& other) const {
 
 inline Cord::ChunkIterator::reference Cord::ChunkIterator::operator*() const {
   absl::base_internal::HardeningAssertGT(bytes_remaining_, size_t{0});
+  ABSL_ASSERT(bytes_remaining_ >= current_chunk_.size());
   return current_chunk_;
 }
 
 inline Cord::ChunkIterator::pointer Cord::ChunkIterator::operator->() const {
   absl::base_internal::HardeningAssertGT(bytes_remaining_, size_t{0});
+  ABSL_ASSERT(bytes_remaining_ >= current_chunk_.size());
   return &current_chunk_;
 }
 

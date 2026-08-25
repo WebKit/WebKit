@@ -396,19 +396,19 @@ class StatusOr : private internal_statusor::OperatorBase<T>,
   //    StatusOr<bool> s1 = true;  // s1.ok() && *s1 == true
   //    StatusOr<bool> s2 = false;  // s2.ok() && *s2 == false
   //    s1 = s2;  // ambiguous, `s1 = *s2` or `s1 = bool(s2)`?
-  template <typename U = T,
-            typename std::enable_if<
-                internal_statusor::IsAssignmentValid<T, U, false>::value,
-                int>::type = 0>
+  template <
+      typename U = T,
+      std::enable_if_t<internal_statusor::IsAssignmentValid<T, U, false>::value,
+                       int> = 0>
   StatusOr& operator=(U&& v) {
     this->Assign(std::forward<U>(v));
     return *this;
   }
-  template <typename U = T,
-            typename std::enable_if<
-                internal_statusor::IsAssignmentValid<T, U, true>::value,
-                int>::type = 0>
-  StatusOr& operator=(U&& v ABSL_INTERNAL_ATTRIBUTE_CAPTURED_BY(this)) {
+  template <
+      typename U = T,
+      std::enable_if_t<internal_statusor::IsAssignmentValid<T, U, true>::value,
+                       int> = 0>
+  StatusOr& operator=(U&& v ABSL_INTERNAL_ATTRIBUTE_CAPTURED_BY_THIS) {
     this->Assign(std::forward<U>(v));
     return *this;
   }
@@ -614,28 +614,33 @@ class StatusOr : private internal_statusor::OperatorBase<T>,
   T& emplace(Args&&... args) ABSL_ATTRIBUTE_LIFETIME_BOUND {
     if (ok()) {
       this->Clear();
-      this->MakeValue(std::forward<Args>(args)...);
-    } else {
-      this->MakeValue(std::forward<Args>(args)...);
-      this->status_ = absl::OkStatus();
+      // Temporarily transition to a non-ok status (using the zero-allocation
+      // inlined representation) so that if MakeValue() throws an exception,
+      // ok() returns false during stack unwinding and ~StatusOrData() does not
+      // attempt to destroy uninitialized memory.
+      this->status_ = absl::Status(absl::StatusCode::kInternal);
     }
+    this->MakeValue(std::forward<Args>(args)...);
+    this->status_ = absl::OkStatus();
     return this->data_;
   }
 
-  template <
-      typename U, typename... Args,
-      std::enable_if_t<
-          std::is_constructible<T, std::initializer_list<U>&, Args&&...>::value,
-          int> = 0>
+  template <typename U, typename... Args,
+            std::enable_if_t<std::is_constructible_v<
+                                 T, std::initializer_list<U>&, Args&&...>,
+                             int> = 0>
   T& emplace(std::initializer_list<U> ilist,
              Args&&... args) ABSL_ATTRIBUTE_LIFETIME_BOUND {
     if (ok()) {
       this->Clear();
-      this->MakeValue(ilist, std::forward<Args>(args)...);
-    } else {
-      this->MakeValue(ilist, std::forward<Args>(args)...);
-      this->status_ = absl::OkStatus();
+      // Temporarily transition to a non-ok status (using the zero-allocation
+      // inlined representation) so that if MakeValue() throws an exception,
+      // ok() returns false during stack unwinding and ~StatusOrData() does not
+      // attempt to destroy uninitialized memory.
+      this->status_ = absl::Status(absl::StatusCode::kInternal);
     }
+    this->MakeValue(ilist, std::forward<Args>(args)...);
+    this->status_ = absl::OkStatus();
     return this->data_;
   }
 
@@ -687,8 +692,8 @@ bool operator!=(const StatusOr<T>& lhs, const StatusOr<T>& rhs) {
 //
 // Requires `T` supports `operator<<`.  Do not rely on the output format which
 // may change without notice.
-template <typename T, typename std::enable_if<
-                          absl::HasOstreamOperator<T>::value, int>::type = 0>
+template <typename T,
+          std::enable_if_t<absl::HasOstreamOperator<T>::value, int> = 0>
 std::ostream& operator<<(std::ostream& os, const StatusOr<T>& status_or) {
   if (status_or.ok()) {
     os << status_or.value();
@@ -704,9 +709,8 @@ std::ostream& operator<<(std::ostream& os, const StatusOr<T>& status_or) {
 //
 // Requires `T` has `AbslStringify`.  Do not rely on the output format which
 // may change without notice.
-template <
-    typename Sink, typename T,
-    typename std::enable_if<absl::HasAbslStringify<T>::value, int>::type = 0>
+template <typename Sink, typename T,
+          std::enable_if_t<absl::HasAbslStringify<T>::value, int> = 0>
 void AbslStringify(Sink& sink, const StatusOr<T>& status_or) {
   if (status_or.ok()) {
     absl::Format(&sink, "%v", status_or.value());

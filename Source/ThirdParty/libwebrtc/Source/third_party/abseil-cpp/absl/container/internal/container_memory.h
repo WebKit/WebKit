@@ -80,10 +80,10 @@ void* Allocate(Alloc* alloc, size_t n) {
 template <class Allocator, class ValueType>
 constexpr auto IsDestructionTrivial() {
   constexpr bool result =
-      std::is_trivially_destructible<ValueType>::value &&
-      std::is_same<typename std::allocator_traits<
-                       Allocator>::template rebind_alloc<char>,
-                   std::allocator<char>>::value;
+      std::is_trivially_destructible_v<ValueType> &&
+      std::is_same_v<typename std::allocator_traits<
+                         Allocator>::template rebind_alloc<char>,
+                     std::allocator<char>>;
   return std::integral_constant<bool, result>();
 }
 
@@ -144,12 +144,10 @@ auto TupleRefImpl(T&& t, std::index_sequence<Is...>)
 template <class T>
 auto TupleRef(T&& t) -> decltype(TupleRefImpl(
     std::forward<T>(t),
-    std::make_index_sequence<
-        std::tuple_size<typename std::decay<T>::type>::value>())) {
+    std::make_index_sequence<std::tuple_size<std::decay_t<T>>::value>())) {
   return TupleRefImpl(
       std::forward<T>(t),
-      std::make_index_sequence<
-          std::tuple_size<typename std::decay<T>::type>::value>());
+      std::make_index_sequence<std::tuple_size<std::decay_t<T>>::value>());
 }
 
 template <class F, class K, class V>
@@ -169,8 +167,7 @@ template <class Alloc, class T, class Tuple>
 void ConstructFromTuple(Alloc* alloc, T* ptr, Tuple&& t) {
   memory_internal::ConstructFromTupleImpl(
       alloc, ptr, std::forward<Tuple>(t),
-      std::make_index_sequence<
-          std::tuple_size<typename std::decay<Tuple>::type>::value>());
+      std::make_index_sequence<std::tuple_size<std::decay_t<Tuple>>::value>());
 }
 
 // Constructs T using the args specified in the tuple and calls F with the
@@ -180,8 +177,7 @@ decltype(std::declval<F>()(std::declval<T>())) WithConstructed(Tuple&& t,
                                                                F&& f) {
   return memory_internal::WithConstructedImpl<T>(
       std::forward<Tuple>(t),
-      std::make_index_sequence<
-          std::tuple_size<typename std::decay<Tuple>::type>::value>(),
+      std::make_index_sequence<std::tuple_size<std::decay_t<Tuple>>::value>(),
       std::forward<F>(f));
 }
 

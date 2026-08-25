@@ -117,7 +117,7 @@ inline constexpr IntervalOpenClosedTag IntervalOpenClosed = {};
 //   auto x = absl::Uniform<float>(bitgen, 0, 1);
 //
 template <typename R = void, typename TagType, typename URBG>
-typename std::enable_if_t<!std::is_same<R, void>::value, R>  //
+typename std::enable_if_t<!std::is_same_v<R, void>, R>  //
 Uniform(TagType tag,
         URBG&& urbg,  // NOLINT(runtime/references)
         R lo, R hi) {
@@ -137,7 +137,7 @@ Uniform(TagType tag,
 // Overload of `Uniform()` using the default closed-open interval of [lo, hi),
 // and returning values of type `T`
 template <typename R = void, typename URBG>
-typename std::enable_if_t<!std::is_same<R, void>::value, R>  //
+typename std::enable_if_t<!std::is_same_v<R, void>, R>  //
 Uniform(URBG&& urbg,  // NOLINT(runtime/references)
         R lo, R hi) {
   using gen_t = std::decay_t<URBG>;
@@ -159,8 +159,8 @@ Uniform(URBG&& urbg,  // NOLINT(runtime/references)
 // correctly from the passed types.
 template <typename R = void, typename TagType, typename URBG, typename A,
           typename B>
-typename std::enable_if_t<std::is_same<R, void>::value,
-                           random_internal::uniform_inferred_return_t<A, B>>
+typename std::enable_if_t<std::is_same_v<R, void>,
+                          random_internal::uniform_inferred_return_t<A, B>>
 Uniform(TagType tag,
         URBG&& urbg,  // NOLINT(runtime/references)
         A lo, B hi) {
@@ -183,8 +183,8 @@ Uniform(TagType tag,
 // default closed-open interval of [lo, hi). Note that a compile-error will
 // result if the return type cannot be deduced correctly from the passed types.
 template <typename R = void, typename URBG, typename A, typename B>
-typename std::enable_if_t<std::is_same<R, void>::value,
-                           random_internal::uniform_inferred_return_t<A, B>>
+typename std::enable_if_t<std::is_same_v<R, void>,
+                          random_internal::uniform_inferred_return_t<A, B>>
 Uniform(URBG&& urbg,  // NOLINT(runtime/references)
         A lo, B hi) {
   using gen_t = std::decay_t<URBG>;
@@ -266,7 +266,7 @@ template <typename RealType, typename URBG>
 RealType Beta(URBG&& urbg,  // NOLINT(runtime/references)
               RealType alpha, RealType beta) {
   static_assert(
-      std::is_floating_point<RealType>::value,
+      std::is_floating_point_v<RealType>,
       "Template-argument 'RealType' must be a floating-point type, in "
       "absl::Beta<RealType, URBG>(...)");
 
@@ -283,8 +283,11 @@ RealType Beta(URBG&& urbg,  // NOLINT(runtime/references)
 //
 // `absl::Exponential` produces a floating point number representing the
 // distance (time) between two consecutive events in a point process of events
-// occurring continuously and independently at a constant average rate. `T` must
-// be a floating point type, but may be inferred from the type of `lambda`.
+// occurring continuously and independently at a constant average rate `lambda`.
+// `T` must be a floating point type, but may be inferred from the type of
+// `lambda`.
+//
+// The mean of the distribution is 1/`lambda`.
 //
 // See https://en.wikipedia.org/wiki/Exponential_distribution.
 //
@@ -298,7 +301,7 @@ template <typename RealType, typename URBG>
 RealType Exponential(URBG&& urbg,  // NOLINT(runtime/references)
                      RealType lambda = 1) {
   static_assert(
-      std::is_floating_point<RealType>::value,
+      std::is_floating_point_v<RealType>,
       "Template-argument 'RealType' must be a floating-point type, in "
       "absl::Exponential<RealType, URBG>(...)");
 
@@ -329,7 +332,7 @@ template <typename RealType, typename URBG>
 RealType Gaussian(URBG&& urbg,  // NOLINT(runtime/references)
                   RealType mean = 0, RealType stddev = 1) {
   static_assert(
-      std::is_floating_point<RealType>::value,
+      std::is_floating_point_v<RealType>,
       "Template-argument 'RealType' must be a floating-point type, in "
       "absl::Gaussian<RealType, URBG>(...)");
 

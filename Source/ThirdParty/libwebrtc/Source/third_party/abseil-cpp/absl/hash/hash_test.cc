@@ -192,7 +192,7 @@ TEST(HashValueTest, PointerAlignment) {
     constexpr size_t kMask = (1 << (kLog2NumValues + 7)) - 1;
     size_t stuck_bits = (~bits_or | bits_and) & kMask;
     int stuck_bit_count = absl::popcount(stuck_bits);
-    size_t max_stuck_bits = 5;
+    size_t max_stuck_bits = 8;
     EXPECT_LE(stuck_bit_count, max_stuck_bits)
         << "0x" << std::hex << stuck_bits;
 
@@ -484,6 +484,17 @@ TEST(HashValueTest, WString) {
       std::wstring(L"Iñtërnâtiônàlizætiøn"))));
 }
 
+#ifdef __cpp_char8_t
+TEST(HashValueTest, U8String) {
+  EXPECT_TRUE((is_hashable<std::u8string>::value));
+
+  EXPECT_TRUE(absl::VerifyTypeImplementsAbslHashCorrectly(std::make_tuple(
+      std::u8string(), std::u8string(u8"ABC"), std::u8string(u8"ABC"),
+      std::u8string(u8"Some other different string"),
+      std::u8string(u8"Iñtërnâtiônàlizætiøn"))));
+}
+#endif
+
 TEST(HashValueTest, U16String) {
   EXPECT_TRUE((is_hashable<std::u16string>::value));
 
@@ -510,6 +521,18 @@ TEST(HashValueTest, WStringView) {
       std::wstring_view(L"Some other different string_view"),
       std::wstring_view(L"Iñtërnâtiônàlizætiøn"))));
 }
+
+#ifdef __cpp_char8_t
+TEST(HashValueTest, U8StringView) {
+  EXPECT_TRUE((is_hashable<std::u8string_view>::value));
+
+  EXPECT_TRUE(absl::VerifyTypeImplementsAbslHashCorrectly(
+      std::make_tuple(std::u8string_view(), std::u8string_view(u8"ABC"),
+                      std::u8string_view(u8"ABC"),
+                      std::u8string_view(u8"Some other different string_view"),
+                      std::u8string_view(u8"Iñtërnâtiônàlizætiøn"))));
+}
+#endif
 
 TEST(HashValueTest, U16StringView) {
   EXPECT_TRUE((is_hashable<std::u16string_view>::value));
@@ -558,6 +581,8 @@ TEST(HashValueTest, StdFilesystemPath) {
       std::filesystem::path("c:\\//"),
       std::filesystem::path("c://"),
       std::filesystem::path("c://\\"),
+      std::filesystem::path("c:/a"),
+      std::filesystem::path("c:\\a"),
       std::filesystem::path("/e/p"),
       std::filesystem::path("/s/../e/p"),
       std::filesystem::path("e/p"),
@@ -800,11 +825,11 @@ struct IsAggregateInitializable<T, std::void_t<decltype(T{})>>
 
 TEST(IsHashableTest, ValidHash) {
   EXPECT_TRUE((is_hashable<int>::value));
-  EXPECT_TRUE(std::is_default_constructible<absl::Hash<int>>::value);
-  EXPECT_TRUE(std::is_copy_constructible<absl::Hash<int>>::value);
-  EXPECT_TRUE(std::is_move_constructible<absl::Hash<int>>::value);
-  EXPECT_TRUE(std::is_copy_assignable<absl::Hash<int>>::value);
-  EXPECT_TRUE(std::is_move_assignable<absl::Hash<int>>::value);
+  EXPECT_TRUE(std::is_default_constructible_v<absl::Hash<int>>);
+  EXPECT_TRUE(std::is_copy_constructible_v<absl::Hash<int>>);
+  EXPECT_TRUE(std::is_move_constructible_v<absl::Hash<int>>);
+  EXPECT_TRUE(std::is_copy_assignable_v<absl::Hash<int>>);
+  EXPECT_TRUE(std::is_move_assignable_v<absl::Hash<int>>);
   EXPECT_TRUE(IsHashCallable<int>::value);
   EXPECT_TRUE(IsAggregateInitializable<absl::Hash<int>>::value);
 }
@@ -812,11 +837,11 @@ TEST(IsHashableTest, ValidHash) {
 TEST(IsHashableTest, PoisonHash) {
   struct X {};
   EXPECT_FALSE((is_hashable<X>::value));
-  EXPECT_FALSE(std::is_default_constructible<absl::Hash<X>>::value);
-  EXPECT_FALSE(std::is_copy_constructible<absl::Hash<X>>::value);
-  EXPECT_FALSE(std::is_move_constructible<absl::Hash<X>>::value);
-  EXPECT_FALSE(std::is_copy_assignable<absl::Hash<X>>::value);
-  EXPECT_FALSE(std::is_move_assignable<absl::Hash<X>>::value);
+  EXPECT_FALSE(std::is_default_constructible_v<absl::Hash<X>>);
+  EXPECT_FALSE(std::is_copy_constructible_v<absl::Hash<X>>);
+  EXPECT_FALSE(std::is_move_constructible_v<absl::Hash<X>>);
+  EXPECT_FALSE(std::is_copy_assignable_v<absl::Hash<X>>);
+  EXPECT_FALSE(std::is_move_assignable_v<absl::Hash<X>>);
   EXPECT_FALSE(IsHashCallable<X>::value);
 #if !defined(__GNUC__) || defined(__clang__)
   // TODO(b/144368551): As of GCC 8.4 this does not compile.
@@ -891,8 +916,8 @@ struct CustomHashType {
 
 template <InvokeTag allowed, InvokeTag... tags>
 struct EnableIfContained
-    : std::enable_if<std::disjunction<
-          std::integral_constant<bool, allowed == tags>...>::value> {};
+    : std::enable_if<std::disjunction_v<
+          std::integral_constant<bool, allowed == tags>...>> {};
 
 template <
     typename H, InvokeTag... Tags,
@@ -1016,10 +1041,10 @@ struct StructWithPadding {
 
 static_assert(sizeof(StructWithPadding) > sizeof(char) + sizeof(int),
               "StructWithPadding doesn't have padding");
-static_assert(std::is_standard_layout<StructWithPadding>::value, "");
+static_assert(std::is_standard_layout_v<StructWithPadding>, "");
 
 // This check has to be disabled because libstdc++ doesn't support it.
-// static_assert(std::is_trivially_constructible<StructWithPadding>::value, "");
+// static_assert(std::is_trivially_constructible_v<StructWithPadding>, "");
 
 template <typename T>
 struct ArraySlice {

@@ -36,11 +36,6 @@
 #include "absl/random/internal/traits.h"
 #include "absl/random/mocking_access.h"
 
-// TODO: crbug.com/500291117 - Remove when fuzztest is updated not to rely on
-// random internal symbols.
-#include "absl/random/internal/distribution_caller.h"
-#include "absl/random/internal/mock_helpers.h"
-
 namespace absl {
 ABSL_NAMESPACE_BEGIN
 
@@ -89,8 +84,8 @@ class BitGenRef {
 
   template <typename URBGRef, typename URBG = absl::remove_cvref_t<URBGRef>,
             typename std::enable_if_t<
-                (!std::is_same<URBG, BitGenRef>::value &&
-                 !std::is_base_of<BitGenRef, URBG>::value &&
+                (!std::is_same_v<URBG, BitGenRef> &&
+                 !std::is_base_of_v<BitGenRef, URBG> &&
                  !HasConversionOperator<URBG>::value &&
                  random_internal::is_urbg<URBG>::value &&
                  !RandomMockingAccess::HasInvokeMock<URBG>::value)>* = nullptr>
@@ -101,8 +96,8 @@ class BitGenRef {
 
   template <typename URBGRef, typename URBG = absl::remove_cvref_t<URBGRef>,
             typename std::enable_if_t<
-                (!std::is_same<URBG, BitGenRef>::value &&
-                 !std::is_base_of<BitGenRef, URBG>::value &&
+                (!std::is_same_v<URBG, BitGenRef> &&
+                 !std::is_base_of_v<BitGenRef, URBG> &&
                  !HasConversionOperator<URBG>::value &&
                  random_internal::is_urbg<URBG>::value &&
                  RandomMockingAccess::HasInvokeMock<URBG>::value)>* = nullptr>

@@ -149,6 +149,7 @@ absl_cc_test(
     absl::fixed_array
     absl::config
     absl::exception_testing
+    absl::hardening
     absl::hash_testing
     absl::iterator_traits_test_helper_internal
     absl::memory
@@ -235,6 +236,7 @@ absl_cc_test(
     absl::config
     absl::core_headers
     absl::exception_testing
+    absl::hardening
     absl::hash_testing
     absl::inlined_vector
     absl::memory
@@ -1153,6 +1155,7 @@ absl_cc_test(
     absl::hash_generator_testing
     absl::hash_policy_testing
     absl::string_view
+    absl::test_allocator
     absl::test_instance_tracker
     absl::unordered_set_constructor_test
     absl::unordered_set_lookup_test
@@ -1195,6 +1198,7 @@ absl_cc_test(
     absl::hash_generator_testing
     absl::hash_policy_testing
     absl::string_view
+    absl::test_allocator
     absl::test_instance_tracker
     absl::unordered_set_constructor_test
     absl::unordered_set_lookup_test
@@ -1234,7 +1238,9 @@ absl_cc_test(
     absl::chunked_queue
     absl::config
     absl::core_headers
+    absl::hardening
     absl::strings
     absl::test_allocator
+    absl::throw_delegate
     GTest::gmock_main
 )

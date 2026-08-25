@@ -264,8 +264,7 @@ template <class T, class... Ts>
 using Contains = std::disjunction<std::is_same<T, Ts>...>;
 
 template <class From, class To>
-using CopyConst =
-    typename std::conditional<std::is_const<From>::value, const To, To>::type;
+using CopyConst = std::conditional_t<std::is_const_v<From>, const To, To>;
 
 // Note: We're not qualifying this with absl:: because it doesn't compile under
 // MSVC.
@@ -317,11 +316,12 @@ std::string TypeName() {
 
 // Can `T` be a template argument of `Layout`?
 template <class T>
-using IsLegalElementType = std::integral_constant<
-    bool, !std::is_reference<T>::value && !std::is_volatile<T>::value &&
-              !std::is_reference<typename Type<T>::type>::value &&
-              !std::is_volatile<typename Type<T>::type>::value &&
-              adl_barrier::IsPow2(AlignOf<T>::value)>;
+using IsLegalElementType =
+    std::integral_constant<bool,
+                           !std::is_reference_v<T> && !std::is_volatile_v<T> &&
+                               !std::is_reference_v<typename Type<T>::type> &&
+                               !std::is_volatile_v<typename Type<T>::type> &&
+                               adl_barrier::IsPow2(AlignOf<T>::value)>;
 
 template <class Elements, class StaticSizeSeq, class RuntimeSizeSeq,
           class SizeSeq, class OffsetSeq>
@@ -352,7 +352,7 @@ class LayoutImpl<std::tuple<Elements...>, std::index_sequence<StaticSizeSeq...>,
                  std::index_sequence<OffsetSeq...>> {
  private:
   static_assert(sizeof...(Elements) > 0, "At least one field is required");
-  static_assert(std::conjunction<IsLegalElementType<Elements>...>::value,
+  static_assert(std::conjunction_v<IsLegalElementType<Elements>...>,
                 "Invalid element type (see IsLegalElementType)");
   static_assert(sizeof...(StaticSizeSeq) <= sizeof...(Elements),
                 "Too many static sizes specified");
@@ -494,7 +494,7 @@ class LayoutImpl<std::tuple<Elements...>, std::index_sequence<StaticSizeSeq...>,
   // Requires: `p` is aligned to `Alignment()`.
   template <size_t N, class Char>
   CopyConst<Char, ElementType<N>>* Pointer(Char* p) const {
-    using C = typename std::remove_const<Char>::type;
+    using C = std::remove_const_t<Char>;
     static_assert(
         std::is_same<C, char>() || std::is_same<C, unsigned char>() ||
             std::is_same<C, signed char>(),

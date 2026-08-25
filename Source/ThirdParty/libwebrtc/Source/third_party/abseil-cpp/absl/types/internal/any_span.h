@@ -239,13 +239,13 @@ struct TypeOfData<Container,
 
 // Element type of container based on operator[].
 template <class Container>
-using ElementType = typename std::remove_reference<
-    decltype(std::declval<Container&>()[0])>::type;
+using ElementType =
+    std::remove_reference_t<decltype(std::declval<Container&>()[0])>;
 
 // Element type of container when elements are dereferenced.
 template <class Container>
-using DerefElementType = typename std::remove_reference<
-    decltype(*std::declval<ElementType<Container>>())>::type;
+using DerefElementType =
+    std::remove_reference_t<decltype(*std::declval<ElementType<Container>>())>;
 
 // DataIsValid is true_type if Container has a data() member that returns a
 // pointer to the type returned by operator[], false_type if there is no data()
@@ -260,8 +260,8 @@ struct Getter {
   Getter() {}
 
   // Handle mutable -> const conversion.
-  template <typename LazyT = T, typename = typename std::enable_if<
-                                    std::is_const<LazyT>::value>::type>
+  template <typename LazyT = T,
+            typename = std::enable_if_t<std::is_const_v<LazyT>>>
   explicit Getter(const Getter<std::remove_const_t<T>>& other) {
     using MutableT = std::remove_const_t<T>;
     if (other.fun == &ArrayTag<MutableT>) {
@@ -450,7 +450,7 @@ template <typename T, typename Container, typename Transform>
 Getter<T> MakeContainerGetter(
     Container& container,  // NOLINT(runtime/references)
     const Transform& transform) {
-  static_assert(std::is_reference<decltype(container[0])>::value,
+  static_assert(std::is_reference_v<decltype(container[0])>,
                 "AnySpan only works with containers that return a reference "
                 "(no vector<bool>, or containers that return by value).");
   return MakeContainerGetterImpl<T>(DataIsValid<Container>(), container,
@@ -466,7 +466,7 @@ bool IsCheap(AnySpan<T> s) {
 
 template <typename T>
 bool EqualImpl(AnySpan<T> a, AnySpan<T> b) {
-  static_assert(std::is_const<T>::value, "");
+  static_assert(std::is_const_v<T>, "");
   return std::equal(a.begin(), a.end(), b.begin(), b.end());
 }
 

@@ -72,7 +72,7 @@ ABSL_NAMESPACE_BEGIN
 // designed to cover the same API footprint as covered by `std::vector`.
 template <typename T, size_t N, typename A = std::allocator<T>>
 class ABSL_ATTRIBUTE_WARN_UNUSED InlinedVector {
-  static_assert(N > 0, "`absl::InlinedVector` requires an inlined capacity.");
+  static_assert(N > 0, "absl::InlinedVector requires an inlined capacity.");
 
   using Storage = inlined_vector_internal::Storage<T, N, A>;
 
@@ -135,6 +135,9 @@ class ABSL_ATTRIBUTE_WARN_UNUSED InlinedVector {
   explicit InlinedVector(size_type n,
                          const allocator_type& allocator = allocator_type())
       : storage_(allocator) {
+    if (ABSL_PREDICT_FALSE(n > max_size())) {
+      ThrowStdLengthError("InlinedVector::InlinedVector failed length check");
+    }
     storage_.Initialize(DefaultValueAdapter<A>(), n);
   }
 
@@ -142,6 +145,9 @@ class ABSL_ATTRIBUTE_WARN_UNUSED InlinedVector {
   InlinedVector(size_type n, const_reference v,
                 const allocator_type& allocator = allocator_type())
       : storage_(allocator) {
+    if (ABSL_PREDICT_FALSE(n > max_size())) {
+      ThrowStdLengthError("InlinedVector::InlinedVector failed length check");
+    }
     storage_.Initialize(CopyValueAdapter<A>(std::addressof(v)), n);
   }
 
@@ -161,8 +167,11 @@ class ABSL_ATTRIBUTE_WARN_UNUSED InlinedVector {
   InlinedVector(ForwardIterator first, ForwardIterator last,
                 const allocator_type& allocator = allocator_type())
       : storage_(allocator) {
-    storage_.Initialize(IteratorValueAdapter<A, ForwardIterator>(first),
-                        static_cast<size_t>(std::distance(first, last)));
+    const size_type s = static_cast<size_type>(std::distance(first, last));
+    if (ABSL_PREDICT_FALSE(s > max_size())) {
+      ThrowStdLengthError("InlinedVector::InlinedVector failed length check");
+    }
+    storage_.Initialize(IteratorValueAdapter<A, ForwardIterator>(first), s);
   }
 
   // Creates an inlined vector with elements constructed from the provided input
@@ -193,8 +202,8 @@ class ABSL_ATTRIBUTE_WARN_UNUSED InlinedVector {
     // allocator doesn't do anything fancy, and there is nothing on the heap
     // then we know it is legal for us to simply memcpy the other vector's
     // inlined bytes to form our copy of its elements.
-    if (std::is_trivially_copy_constructible<value_type>::value &&
-        std::is_same<A, std::allocator<value_type>>::value &&
+    if (std::is_trivially_copy_constructible_v<value_type> &&
+        std::is_same_v<A, std::allocator<value_type>> &&
         !other.storage_.GetIsAllocated()) {
       storage_.MemcpyFrom(other.storage_);
       return;
@@ -219,7 +228,7 @@ class ABSL_ATTRIBUTE_WARN_UNUSED InlinedVector {
   // or `value_type`'s move constructor is specified as `noexcept`.
   InlinedVector(InlinedVector&& other) noexcept(
       absl::allocator_is_nothrow<allocator_type>::value ||
-      std::is_nothrow_move_constructible<value_type>::value)
+      std::is_nothrow_move_constructible_v<value_type>)
       : storage_(other.storage_.GetAllocator()) {
     // Fast path: if the value type can be trivially relocated (i.e. moved from
     // and destroyed), and we know the allocator doesn't do anything fancy, then
@@ -227,7 +236,7 @@ class ABSL_ATTRIBUTE_WARN_UNUSED InlinedVector {
     // and remove its own reference to them. It's as if we had individually
     // move-constructed each value and then destroyed the original.
     if (absl::is_trivially_relocatable<value_type>::value &&
-        std::is_same<A, std::allocator<value_type>>::value) {
+        std::is_same_v<A, std::allocator<value_type>>) {
       storage_.MemcpyFrom(other.storage_);
       other.storage_.SetInlinedSize(0);
       return;
@@ -273,7 +282,7 @@ class ABSL_ATTRIBUTE_WARN_UNUSED InlinedVector {
     // and remove its own reference to them. It's as if we had individually
     // move-constructed each value and then destroyed the original.
     if (absl::is_trivially_relocatable<value_type>::value &&
-        std::is_same<A, std::allocator<value_type>>::value) {
+        std::is_same_v<A, std::allocator<value_type>>) {
       storage_.MemcpyFrom(other.storage_);
       other.storage_.SetInlinedSize(0);
       return;
@@ -383,7 +392,7 @@ class ABSL_ATTRIBUTE_WARN_UNUSED InlinedVector {
   // in both debug and non-debug builds, `std::out_of_range` will be thrown.
   reference at(size_type i) ABSL_ATTRIBUTE_LIFETIME_BOUND {
     if (ABSL_PREDICT_FALSE(i >= size())) {
-      ThrowStdOutOfRange("`InlinedVector::at(size_type)` failed bounds check");
+      ThrowStdOutOfRange("InlinedVector::at(size_type) failed bounds check");
     }
     return data()[i];
   }
@@ -395,8 +404,7 @@ class ABSL_ATTRIBUTE_WARN_UNUSED InlinedVector {
   // in both debug and non-debug builds, `std::out_of_range` will be thrown.
   const_reference at(size_type i) const ABSL_ATTRIBUTE_LIFETIME_BOUND {
     if (ABSL_PREDICT_FALSE(i >= size())) {
-      ThrowStdOutOfRange(
-          "`InlinedVector::at(size_type) const` failed bounds check");
+      ThrowStdOutOfRange("InlinedVector::at(size_type) failed bounds check");
     }
     return data()[i];
   }
@@ -558,6 +566,9 @@ class ABSL_ATTRIBUTE_WARN_UNUSED InlinedVector {
   //
   // Replaces the contents of the inlined vector with `n` copies of `v`.
   void assign(size_type n, const_reference v) {
+    if (ABSL_PREDICT_FALSE(n > max_size())) {
+      ThrowStdLengthError("InlinedVector::assign failed length check");
+    }
     storage_.Assign(CopyValueAdapter<A>(std::addressof(v)), n);
   }
 
@@ -574,8 +585,11 @@ class ABSL_ATTRIBUTE_WARN_UNUSED InlinedVector {
   template <typename ForwardIterator,
             EnableIfAtLeastForwardIterator<ForwardIterator> = 0>
   void assign(ForwardIterator first, ForwardIterator last) {
-    storage_.Assign(IteratorValueAdapter<A, ForwardIterator>(first),
-                    static_cast<size_t>(std::distance(first, last)));
+    const size_type s = static_cast<size_type>(std::distance(first, last));
+    if (ABSL_PREDICT_FALSE(s > max_size())) {
+      ThrowStdLengthError("InlinedVector::assign failed length check");
+    }
+    storage_.Assign(IteratorValueAdapter<A, ForwardIterator>(first), s);
   }
 
   // Overload of `InlinedVector::assign(...)` to replace the contents of the
@@ -601,7 +615,9 @@ class ABSL_ATTRIBUTE_WARN_UNUSED InlinedVector {
   // NOTE: If `n` is smaller than `size()`, extra elements are destroyed. If `n`
   // is larger than `size()`, new elements are value-initialized.
   void resize(size_type n) {
-    absl::base_internal::HardeningAssertLE(n, max_size());
+    if (ABSL_PREDICT_FALSE(n > max_size())) {
+      ThrowStdLengthError("InlinedVector::resize failed length check");
+    }
     storage_.Resize(DefaultValueAdapter<A>(), n);
   }
 
@@ -611,7 +627,9 @@ class ABSL_ATTRIBUTE_WARN_UNUSED InlinedVector {
   // NOTE: if `n` is smaller than `size()`, extra elements are destroyed. If `n`
   // is larger than `size()`, new elements are copied-constructed from `v`.
   void resize(size_type n, const_reference v) {
-    absl::base_internal::HardeningAssertLE(n, max_size());
+    if (ABSL_PREDICT_FALSE(n > max_size())) {
+      ThrowStdLengthError("InlinedVector::resize failed length check");
+    }
     storage_.Resize(CopyValueAdapter<A>(std::addressof(v)), n);
   }
 
@@ -638,6 +656,9 @@ class ABSL_ATTRIBUTE_WARN_UNUSED InlinedVector {
                   const_reference v) ABSL_ATTRIBUTE_LIFETIME_BOUND {
     absl::base_internal::HardeningAssertGE(pos, cbegin());
     absl::base_internal::HardeningAssertLE(pos, cend());
+    if (ABSL_PREDICT_FALSE(n > max_size() - size())) {
+      ThrowStdLengthError("InlinedVector::insert failed length check");
+    }
 
     if (ABSL_PREDICT_TRUE(n != 0)) {
       value_type dealias = v;
@@ -679,11 +700,14 @@ class ABSL_ATTRIBUTE_WARN_UNUSED InlinedVector {
                   ForwardIterator last) ABSL_ATTRIBUTE_LIFETIME_BOUND {
     absl::base_internal::HardeningAssertGE(pos, cbegin());
     absl::base_internal::HardeningAssertLE(pos, cend());
+    const size_type s = static_cast<size_type>(std::distance(first, last));
+    if (ABSL_PREDICT_FALSE(s > max_size() - size())) {
+      ThrowStdLengthError("InlinedVector::insert failed length check");
+    }
 
     if (ABSL_PREDICT_TRUE(first != last)) {
       return storage_.Insert(
-          pos, IteratorValueAdapter<A, ForwardIterator>(first),
-          static_cast<size_type>(std::distance(first, last)));
+          pos, IteratorValueAdapter<A, ForwardIterator>(first), s);
     } else {
       return const_cast<iterator>(pos);
     }
@@ -718,6 +742,9 @@ class ABSL_ATTRIBUTE_WARN_UNUSED InlinedVector {
                    Args&&... args) ABSL_ATTRIBUTE_LIFETIME_BOUND {
     absl::base_internal::HardeningAssertGE(pos, cbegin());
     absl::base_internal::HardeningAssertLE(pos, cend());
+    if (ABSL_PREDICT_FALSE(size() == max_size())) {
+      ThrowStdLengthError("InlinedVector::emplace failed length check");
+    }
 
     value_type dealias(std::forward<Args>(args)...);
     // https://gcc.gnu.org/bugzilla/show_bug.cgi?id=102329#c2
@@ -744,6 +771,9 @@ class ABSL_ATTRIBUTE_WARN_UNUSED InlinedVector {
   // `end()`, returning a `reference` to the newly emplaced element.
   template <typename... Args>
   reference emplace_back(Args&&... args) ABSL_ATTRIBUTE_LIFETIME_BOUND {
+    if (ABSL_PREDICT_FALSE(size() == max_size())) {
+      ThrowStdLengthError("InlinedVector::emplace_back failed length check");
+    }
     return storage_.EmplaceBack(std::forward<Args>(args)...);
   }
 
@@ -825,7 +855,12 @@ class ABSL_ATTRIBUTE_WARN_UNUSED InlinedVector {
   // `InlinedVector::reserve(...)`
   //
   // Ensures that there is enough room for at least `n` elements.
-  void reserve(size_type n) { storage_.Reserve(n); }
+  void reserve(size_type n) {
+    if (ABSL_PREDICT_FALSE(n > max_size())) {
+      ThrowStdLengthError("InlinedVector::reserve failed length check");
+    }
+    storage_.Reserve(n);
+  }
 
   // `InlinedVector::shrink_to_fit()`
   //
@@ -858,8 +893,8 @@ class ABSL_ATTRIBUTE_WARN_UNUSED InlinedVector {
     // Assumption check: we shouldn't be told to use memcpy to implement move
     // assignment unless we have trivially destructible elements and an
     // allocator that does nothing fancy.
-    static_assert(std::is_trivially_destructible<value_type>::value, "");
-    static_assert(std::is_same<A, std::allocator<value_type>>::value, "");
+    static_assert(std::is_trivially_destructible_v<value_type>, "");
+    static_assert(std::is_same_v<A, std::allocator<value_type>>, "");
 
     // Throw away our existing heap allocation, if any. There is no need to
     // destroy the existing elements one by one because we know they are
@@ -912,6 +947,12 @@ class ABSL_ATTRIBUTE_WARN_UNUSED InlinedVector {
     inlined_vector_internal::DestroyAdapter<A>::DestroyElements(
         storage_.GetAllocator(), data(), size());
     storage_.DeallocateIfAllocated();
+
+    if constexpr (!std::is_nothrow_move_constructible_v<value_type>) {
+      // Reset the size to zero before moving to avoid leaking freed memory if
+      // an exception is thrown.
+      storage_.SetInlinedSize(0);
+    }
 
     IteratorValueAdapter<A, MoveIterator<A>> other_values(
         MoveIterator<A>(other.storage_.GetInlinedData()));

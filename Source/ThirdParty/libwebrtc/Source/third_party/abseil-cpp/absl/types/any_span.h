@@ -288,8 +288,8 @@ template <typename Iter>
 class Range {
  public:
   static_assert(
-      std::is_same<typename std::iterator_traits<Iter>::iterator_category,
-                   std::random_access_iterator_tag>::value,
+      std::is_same_v<typename std::iterator_traits<Iter>::iterator_category,
+                     std::random_access_iterator_tag>,
       "Iter must be a random access iterator.");
 
   Range(Iter begin, Iter end) {
@@ -339,10 +339,10 @@ class ABSL_ATTRIBUTE_VIEW AnySpan {
   class IteratorBase;
 
   template <typename U>
-  using EnableIfMutable = std::enable_if_t<!std::is_const<T>::value, U>;
+  using EnableIfMutable = std::enable_if_t<!std::is_const_v<T>, U>;
 
   template <typename U>
-  using EnableIfConst = std::enable_if_t<std::is_const<T>::value, U>;
+  using EnableIfConst = std::enable_if_t<std::is_const_v<T>, U>;
 
   static std::true_type CreatesATemporaryImpl(std::decay_t<T>&&);
   static std::false_type CreatesATemporaryImpl(const T&);
@@ -373,8 +373,8 @@ class ABSL_ATTRIBUTE_VIEW AnySpan {
 
   template <typename Element>
   using EnableIfDifferentElementType =
-      std::enable_if_t<!std::is_same<T, Element>::value &&
-                       !std::is_same<T, const Element>::value>;
+      std::enable_if_t<!std::is_same_v<T, Element> &&
+                       !std::is_same_v<T, const Element>>;
 
   template <typename Transform>
   using EnableIfTransformIsByCopy =
@@ -385,7 +385,7 @@ class ABSL_ATTRIBUTE_VIEW AnySpan {
 
  public:
   using element_type = T;
-  using value_type = typename std::remove_const<T>::type;
+  using value_type = std::remove_const_t<T>;
   using size_type = std::size_t;
   using difference_type = std::ptrdiff_t;
   using absl_internal_is_view = std::true_type;
@@ -393,10 +393,10 @@ class ABSL_ATTRIBUTE_VIEW AnySpan {
   static const size_type npos = static_cast<size_type>(-1);  // NOLINT
 
   using reference = T&;
-  using const_reference = typename std::add_const<T>::type&;
+  using const_reference = std::add_const_t<T>&;
 
   using pointer = T*;
-  using const_pointer = typename std::add_const<T>::type*;
+  using const_pointer = std::add_const_t<T>*;
 
   // Note that iterator will be const if T is const.
   class iterator;
@@ -660,7 +660,7 @@ class ABSL_ATTRIBUTE_VIEW AnySpan {
   // TODO(b/179783710): add ABSL_ATTRIBUTE_LIFETIME_BOUND.
   template <typename LazyT = T, typename = EnableIfConst<LazyT>>
   constexpr AnySpan(  // NOLINT(google-explicit-constructor)
-      const AnySpan<typename std::remove_const<T>::type>& other)
+      const AnySpan<std::remove_const_t<T>>& other)
       : getter_(other.getter_), size_(other.size()) {}
 
   // Creates a span that wraps around another span of different type.
@@ -702,29 +702,22 @@ class ABSL_ATTRIBUTE_VIEW AnySpan {
   // subspan, but both the container and transform must remain valid.
   // pos must be non-negative and <= size().
   // len must be non-negative and <= size() - pos, or equal to npos.
-  // If len == npos, the subspan continues till the end of this span.
-
-  constexpr AnySpan subspan(size_type pos, size_type len) const {
+  // If len==npos, the subspan continues till the end of this span.
+  constexpr AnySpan subspan(size_type pos, size_type len = npos) const {
     const size_t this_size = size();
     if (len == AnySpan<T>::npos) {
       len = this_size - pos;
     }
     absl::base_internal::HardeningAssertLE(pos, this_size);
-    absl::base_internal::HardeningAssertLE(len,
-                                           static_cast<size_type>(this_size
-                                                                  - pos));
+    absl::base_internal::HardeningAssertLE(
+        len, static_cast<size_type>(this_size - pos));
     return AnySpan<T>(getter_.Offset(pos), len);
   }
 
-  constexpr AnySpan subspan(size_type pos) const {
-    absl::base_internal::HardeningAssertLE(pos, size());
-    return AnySpan(getter_.Offset(pos), size() - pos);
-  }
-
-  // Returns a `AnySpan` containing first `len` elements. Parameter `len`
-  // must be non-negative and <= size().
+  // Returns a `AnySpan` containing first `len` elements. Parameter `len` must
+  // be non-negative and <= size().
   constexpr AnySpan first(size_type len) const {
-    absl::base_internal::HardeningAssert(len != AnySpan<T>::npos);
+    absl::base_internal::HardeningAssert(len != npos);
     return subspan(0, len);
   }
 
@@ -915,7 +908,7 @@ class ABSL_ATTRIBUTE_VIEW AnySpan<T>::IteratorBase {
 
  public:
   using iterator_category = std::random_access_iterator_tag;
-  using value_type = typename std::remove_const<Value>::type;
+  using value_type = std::remove_const_t<Value>;
   using difference_type = std::ptrdiff_t;
   using reference = Value&;
   using pointer = Value*;
@@ -1035,9 +1028,9 @@ class ABSL_ATTRIBUTE_VIEW AnySpan<T>::iterator
 // but also provides conversion from MutableIterator.
 template <typename T>
 class AnySpan<T>::const_iterator
-    : public IteratorBase<const_iterator, typename std::add_const<T>::type> {
+    : public IteratorBase<const_iterator, std::add_const_t<T>> {
  private:
-  using Base = IteratorBase<const_iterator, typename std::add_const<T>::type>;
+  using Base = IteratorBase<const_iterator, std::add_const_t<T>>;
 
  public:
   using typename Base::difference_type;
