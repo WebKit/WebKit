@@ -4621,11 +4621,11 @@ void TestController::decidePolicyForNavigationAction(WKPageRef page, WKNavigatio
     auto request = adoptWK(WKNavigationActionCopyRequest(navigationAction));
     auto targetFrame = adoptWK(WKNavigationActionCopyTargetFrameInfo(navigationAction));
 
-    // Block access to external URLs in subframe navigations when site isolation is enabled.
-    // With site isolation, the injected bundle's willSendRequestForFrame callback cannot emit
-    // the console message because WKBundleFrameGetJavaScriptContext returns null for provisional
-    // frames in the new process. Without site isolation, the injected bundle handles this.
-    if (targetFrame && !WKFrameInfoGetIsMainFrame(targetFrame.get()) && protectedCurrentInvocation()->options().siteIsolationEnabled()) {
+    // Block access to external URLs in subframe navigations.
+    // The injected bundle's willSendRequestForFrame callback cannot emit the console message because
+    // WKBundleFrameGetJavaScriptContext returns null for provisional frames in the new process when
+    // site isolation is enabled.
+    if (targetFrame && !WKFrameInfoGetIsMainFrame(targetFrame.get())) {
         if (auto url = adoptWK(WKURLRequestCopyURL(request.get()))) {
             auto host = adoptWK(WKURLCopyHostName(url.get()));
             auto scheme = adoptWK(WKURLCopyScheme(url.get()));
