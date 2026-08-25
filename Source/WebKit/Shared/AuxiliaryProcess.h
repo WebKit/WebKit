@@ -38,6 +38,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/RunLoop.h>
 #include <wtf/RuntimeApplicationChecks.h>
+#include <wtf/Threading.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
 
@@ -130,6 +131,10 @@ protected:
     virtual void initializeProcessName(const AuxiliaryProcessInitializationParameters&);
     virtual void initializeSandbox(const AuxiliaryProcessInitializationParameters&, SandboxInitializationParameters&);
     virtual void initializeConnection(IPC::Connection*);
+
+    // Should match the QoS this process gives its main thread, so that the IPC receive queue is
+    // not demoted below the thread it delivers messages to.
+    virtual Thread::QOS connectionReceiveQueueQOS() const { return Thread::QOS::UserInitiated; }
 
 #if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
     void initializeLogForwarding(bool isDebugLoggingEnabled);

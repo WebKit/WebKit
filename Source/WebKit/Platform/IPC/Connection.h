@@ -366,7 +366,7 @@ public:
 #endif
 
     static Ref<Connection> createServerConnection(Identifier&&, ThreadQOS = ThreadQOS::Default);
-    static Ref<Connection> createClientConnection(Identifier&&);
+    static Ref<Connection> createClientConnection(Identifier&&, ThreadQOS = ThreadQOS::Default);
 
     struct ConnectionIdentifierPair {
         IPC::Connection::Identifier server;

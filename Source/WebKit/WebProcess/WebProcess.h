@@ -661,6 +661,7 @@ private:
     void initializeProcessName(const AuxiliaryProcessInitializationParameters&) override;
     void initializeSandbox(const AuxiliaryProcessInitializationParameters&, SandboxInitializationParameters&) override;
     void initializeConnection(IPC::Connection*) override;
+    Thread::QOS connectionReceiveQueueQOS() const override { return Thread::QOS::UserInteractive; }
     bool shouldTerminate() override;
     void terminate() override;
 

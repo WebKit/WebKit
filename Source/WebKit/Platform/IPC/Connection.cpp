@@ -314,9 +314,9 @@ Ref<Connection> Connection::createServerConnection(Identifier&& identifier, Thre
     return adoptRef(*new Connection(WTF::move(identifier), true, receiveQueueQOS));
 }
 
-Ref<Connection> Connection::createClientConnection(Identifier&& identifier)
+Ref<Connection> Connection::createClientConnection(Identifier&& identifier, Thread::QOS receiveQueueQOS)
 {
-    return adoptRef(*new Connection(WTF::move(identifier), false));
+    return adoptRef(*new Connection(WTF::move(identifier), false, receiveQueueQOS));
 }
 
 static HashMap<IPC::Connection::UniqueID, ThreadSafeWeakPtr<Connection>>& NODELETE connectionMap() WTF_REQUIRES_LOCK(s_connectionMapLock)

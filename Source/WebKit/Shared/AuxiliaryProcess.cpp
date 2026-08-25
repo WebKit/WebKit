@@ -116,7 +116,7 @@ void AuxiliaryProcess::initialize(AuxiliaryProcessInitializationParameters&& par
     PAL::SessionID::enableGenerationProtection();
     WebPageProxyIdentifier::enableGenerationProtection();
 
-    Ref connection = IPC::Connection::createClientConnection(WTF::move(parameters.connectionIdentifier));
+    Ref connection = IPC::Connection::createClientConnection(WTF::move(parameters.connectionIdentifier), connectionReceiveQueueQOS());
     lazyInitialize(m_connection, connection.copyRef());
     initializeConnection(connection.ptr());
     connection->open(*this);
