@@ -33,6 +33,7 @@
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/DateMath.h>
 #include <wtf/Lock.h>
+#include <wtf/MathExtras.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
@@ -42,6 +43,8 @@
 
 namespace JSC {
 namespace TemporalCore {
+
+static constexpr double millisecondsPerDay = 86'400'000.0;
 
 CalendarID calendarIDFromString(StringView identifier)
 {
@@ -469,7 +472,6 @@ static std::optional<String> getMonthCode(UCalendar* cal, CalendarID calendarId)
 
 static bool addUTCCalendarDays(UCalendar* cal, int32_t days, UErrorCode& status)
 {
-    static constexpr double millisecondsPerDay = 86'400'000.0;
     double epochMs = ucal_getMillis(cal, &status);
     if (U_FAILURE(status)) [[unlikely]]
         return false;
@@ -547,7 +549,33 @@ static LunisolarMonthAdvanceResult advanceToNextLunisolarMonth(UCalendar* cal, C
     auto currentMonthCode = getMonthCode(cal, calendarId, status);
     if (!currentMonthCode) [[unlikely]]
         return LunisolarMonthAdvanceResult::Error;
-    for (int i = 0; i < 32; ++i) {
+
+    // A lunar month is 29 or 30 days, so day 29 exists and is at most two single-day steps from
+    // day 1 of the next month. Jump there instead of resolving fields once per day.
+    int32_t day = ucal_get(cal, UCAL_DAY_OF_MONTH, &status);
+    if (U_FAILURE(status)) [[unlikely]]
+        return LunisolarMonthAdvanceResult::Error;
+    // From day 29 or later the next month is within three steps. Undoing the jump puts the cursor
+    // back on a day that may still have most of a month ahead of it.
+    int walkLimit = 3;
+    if (day < 29) {
+        double beforeJumpMs = ucal_getMillis(cal, &status);
+        if (U_FAILURE(status)) [[unlikely]]
+            return LunisolarMonthAdvanceResult::Error;
+        if (!addUTCCalendarDays(cal, 29 - day, status)) [[unlikely]]
+            return LunisolarMonthAdvanceResult::Error;
+        auto jumpedMonthCode = getMonthCode(cal, calendarId, status);
+        if (!jumpedMonthCode) [[unlikely]]
+            return LunisolarMonthAdvanceResult::Error;
+        if (*jumpedMonthCode != *currentMonthCode) {
+            // Unreachable while ICU reports 29- or 30-day months; keeps the walk correct if not.
+            ucal_setMillis(cal, beforeJumpMs, &status);
+            if (U_FAILURE(status)) [[unlikely]]
+                return LunisolarMonthAdvanceResult::Error;
+            walkLimit = 32;
+        }
+    }
+    for (int i = 0; i < walkLimit; ++i) {
         if (!addUTCCalendarDays(cal, 1, status)) [[unlikely]]
             return LunisolarMonthAdvanceResult::Error;
         auto adjacentMonthCode = getMonthCode(cal, calendarId, status);
@@ -616,6 +644,34 @@ static std::optional<MonthCodeSearchResult> searchYearForMonthCode(UCalendar* ca
     return std::nullopt;
 }
 
+struct LunisolarWalkMemo {
+    bool valid { false };
+    CalendarID calendarId { 0 };
+    int32_t year { 0 };
+    uint8_t packedMonthCode { 0 };
+    MonthCodeSearchResult result;
+};
+
+struct LunisolarMonthLengthMemo {
+    bool valid { false };
+    CalendarID calendarId { 0 };
+    double startMs { 0 };
+    int32_t length { 0 };
+};
+
+// These tables need their own lock because useLock is per-calendar and chinese/dangi share them.
+// It is taken inside useLock and nothing else is taken while holding it.
+// Entries never go stale: ICU's calendar data is fixed for the process, and a CalendarID keeps its
+// meaning because intlAvailableCalendars() is built once and never reordered.
+static constexpr size_t lunisolarWalkMemoCount = 16;
+static constexpr size_t lunisolarMonthLengthMemoCount = 4;
+static_assert(hasOneBitSet(lunisolarWalkMemoCount), "slot masks below require a power of two");
+static_assert(hasOneBitSet(lunisolarMonthLengthMemoCount), "slot masks below require a power of two");
+
+static Lock lunisolarMemoLock;
+static std::array<LunisolarWalkMemo, lunisolarWalkMemoCount> lunisolarWalkMemos WTF_GUARDED_BY_LOCK(lunisolarMemoLock) { };
+static std::array<LunisolarMonthLengthMemo, lunisolarMonthLengthMemoCount> lunisolarMonthLengthMemos WTF_GUARDED_BY_LOCK(lunisolarMemoLock) { };
+
 static std::optional<int32_t> stableLunisolarYear(UCalendar* cal, CalendarID calendarId, UErrorCode& status)
 {
     auto anchor = lunisolarYearAnchor(cal, calendarId, status);
@@ -643,6 +699,17 @@ static std::optional<int32_t> actualLunisolarMonthLength(UCalendar* cal, Calenda
     double savedMs = ucal_getMillis(cal, &status);
     if (U_FAILURE(status)) [[unlikely]]
         return std::nullopt;
+
+    // Keyed on the cursor rather than the month start: reading UCAL_DAY_OF_MONTH to normalize would
+    // force a field resolution on every hit, which costs more than the misses it would turn into
+    // hits for calendarDaysInMonth.
+    size_t slot = static_cast<size_t>(static_cast<int64_t>(savedMs / millisecondsPerDay) ^ static_cast<int64_t>(calendarId)) & (lunisolarMonthLengthMemoCount - 1);
+    {
+        Locker locker { lunisolarMemoLock };
+        const auto& memo = lunisolarMonthLengthMemos.at(slot);
+        if (memo.valid && memo.calendarId == calendarId && memo.startMs == savedMs)
+            return memo.length;
+    }
 
     auto restoreCalendar = [&] {
         UErrorCode operationStatus = status;
@@ -676,8 +743,14 @@ static std::optional<int32_t> actualLunisolarMonthLength(UCalendar* cal, Calenda
         return std::nullopt;
     if (!operationSucceeded) [[unlikely]]
         return std::nullopt;
-    int32_t length = day - 1 + static_cast<int32_t>((nextMonthStartMs - savedMs) / 86'400'000.0);
-    return length >= 29 && length <= 30 ? std::optional<int32_t> { length } : std::nullopt;
+    int32_t length = day - 1 + static_cast<int32_t>((nextMonthStartMs - savedMs) / millisecondsPerDay);
+    if (length < 29 || length > 30) [[unlikely]]
+        return std::nullopt;
+    {
+        Locker locker { lunisolarMemoLock };
+        lunisolarMonthLengthMemos.at(slot) = { true, calendarId, savedMs, length };
+    }
+    return length;
 }
 
 static bool addLunisolarCalendarDays(UCalendar* cal, CalendarID calendarId, int32_t days, UErrorCode& status)
@@ -2218,11 +2291,10 @@ static TemporalResult<ISO8601::Duration> nonISODateUntil(CalendarID calendarId, 
             return makeUnexpected(rangeError(icuCalendarArithmeticFailed));
 
         // Days: derived from epoch-ms delta between cal (source + years + months) and target.
-        const double msPerDay = 86'400'000.0;
         double finalMs1 = ucal_getMillis(cal, &status);
         if (U_FAILURE(status)) [[unlikely]]
             return makeUnexpected(rangeError(icuCalendarArithmeticFailed));
-        double daysDiff = std::trunc((target.epochMs - finalMs1) / msPerDay);
+        double daysDiff = std::trunc((target.epochMs - finalMs1) / millisecondsPerDay);
 
         // If largestUnit is Month, clear years (months were counted from one + years=0).
         int32_t resultYears = (largestUnit == TemporalUnit::Month) ? 0 : years;
@@ -2650,12 +2722,34 @@ TemporalResult<ISO8601::PlainDate> nonISOCalendarDateToISO(CalendarID calendarId
                 // doesn't expose this data, so we walk. The walk is correct and safe.
                 if (!isValidMonthCodeForCalendar(calendarId, *monthCode)) [[unlikely]]
                     return makeUnexpected(rangeError("monthCode is not valid for this calendar"_s));
-                if (!setCalendarToLunisolarYearStart(cal, calendarId, year, status)) [[unlikely]]
-                    return makeUnexpected(rangeError(icuCalendarArithmeticFailed));
 
-                String targetCode = makeString("M"_s, monthCode->monthNumber < 10 ? "0"_s : ""_s,
-                    monthCode->monthNumber, monthCode->isLeapMonth ? "L"_s : ""_s);
-                auto found = searchYearForMonthCode(cal, calendarId, targetCode);
+                bool memoUsable = year && (calendarId == chineseCalendarID() || calendarId == dangiCalendarID());
+                uint8_t packedMonthCode = static_cast<uint8_t>((monthCode->monthNumber << 1) | (monthCode->isLeapMonth ? 1 : 0));
+                size_t walkSlot = memoUsable ? ((static_cast<size_t>(*year) * 31u) ^ packedMonthCode ^ (calendarId * 7u)) & (lunisolarWalkMemoCount - 1) : 0;
+                std::optional<MonthCodeSearchResult> found;
+                if (memoUsable) {
+                    Locker locker { lunisolarMemoLock };
+                    const auto& walkMemo = lunisolarWalkMemos.at(walkSlot);
+                    if (walkMemo.valid && walkMemo.calendarId == calendarId
+                        && walkMemo.year == *year && walkMemo.packedMonthCode == packedMonthCode)
+                        found = walkMemo.result;
+                }
+                if (found) {
+                    ucal_setMillis(cal, found->stoppedMonthMs, &status);
+                    if (U_FAILURE(status)) [[unlikely]]
+                        return makeUnexpected(rangeError(icuSetCalendarFailed));
+                } else {
+                    if (!setCalendarToLunisolarYearStart(cal, calendarId, year, status)) [[unlikely]]
+                        return makeUnexpected(rangeError(icuCalendarArithmeticFailed));
+
+                    String targetCode = makeString("M"_s, monthCode->monthNumber < 10 ? "0"_s : ""_s,
+                        monthCode->monthNumber, monthCode->isLeapMonth ? "L"_s : ""_s);
+                    found = searchYearForMonthCode(cal, calendarId, targetCode);
+                    if (found && memoUsable) {
+                        Locker locker { lunisolarMemoLock };
+                        lunisolarWalkMemos.at(walkSlot) = { true, calendarId, *year, packedMonthCode, *found };
+                    }
+                }
                 if (!found) [[unlikely]]
                     return makeUnexpected(rangeError(icuCalendarArithmeticFailed));
                 auto rewindToPreviousMonth = [&]() -> bool {
