@@ -317,6 +317,7 @@ UIProcess/soup/WebProcessPoolSoup.cpp
 
 UIProcess/XR/openxr/OpenXRExtensions.cpp
 UIProcess/XR/openxr/OpenXRGraphicsBindingOpenGLES.cpp
+UIProcess/XR/openxr/OpenXRGraphicsBindingVulkan.cpp
 UIProcess/XR/openxr/OpenXRHitTestManager.cpp
 UIProcess/XR/openxr/OpenXRInput.cpp
 UIProcess/XR/openxr/OpenXRInputSource.cpp

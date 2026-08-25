@@ -103,9 +103,18 @@ using WebCore::GraphicsContextGL::ExternalSyncSource = std::tuple<MachSendRight,
 #if !PLATFORM(COCOA)
 #if (PLATFORM(GTK) || PLATFORM(WPE))
 [CustomHeader] struct WebCore::GraphicsContextGLExternalImageSource {
-#if OS(ANDROID)
+#if OS(ANDROID) && !USE(OPENXR_VULKAN)
     RefPtr<AHardwareBuffer> hardwareBuffer;
-#else
+#endif
+#if USE(OPENXR_VULKAN)
+    WTF::UnixFileDescriptor memory;
+    uint64_t allocationSize;
+    GCGLenum internalFormat;
+    WTF::UnixFileDescriptor renderFinishedSemaphore;
+    std::array<uint64_t, 2> deviceUUID;
+    std::array<uint64_t, 2> driverUUID;
+#endif
+#if !OS(ANDROID) && !USE(OPENXR_VULKAN)
     Vector<WTF::UnixFileDescriptor> fds;
     Vector<uint32_t> strides;
     Vector<uint32_t> offsets;
@@ -115,10 +124,11 @@ using WebCore::GraphicsContextGL::ExternalSyncSource = std::tuple<MachSendRight,
     WebCore::IntSize size;
 };
 using WebCore::GraphicsContextGL::ExternalImageSource = WebCore::GraphicsContextGLExternalImageSource;
+using WebCore::GraphicsContextGL::ExternalSyncSource = GCGLExternalImage
 #else
 using WebCore::GraphicsContextGL::ExternalImageSource = int
-#endif
 using WebCore::GraphicsContextGL::ExternalSyncSource = int
+#endif
 #endif
 
 header: <WebCore/GraphicsContextGLAttributes.h>

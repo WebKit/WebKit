@@ -81,9 +81,19 @@ static GL::ExternalImageSource makeExternalImageSource(const PlatformXR::FrameDa
 #else
 static GL::ExternalImageSource makeExternalImageSource(PlatformXR::FrameData::ExternalTexture& imageSource, const IntSize& size)
 {
-#if OS(ANDROID)
+#if OS(ANDROID) && !USE(OPENXR_VULKAN)
     return GraphicsContextGLExternalImageSource {
         .hardwareBuffer = imageSource,
+        .size = size,
+    };
+#elif USE(OPENXR_VULKAN)
+    return GraphicsContextGLExternalImageSource {
+        .memory = WTF::move(imageSource.memory),
+        .allocationSize = imageSource.allocationSize,
+        .internalFormat = imageSource.glInternalFormat,
+        .renderFinishedSemaphore = WTF::move(imageSource.renderFinishedSemaphore),
+        .deviceUUID = imageSource.deviceUUID,
+        .driverUUID = imageSource.driverUUID,
         .size = size,
     };
 #else
@@ -95,7 +105,7 @@ static GL::ExternalImageSource makeExternalImageSource(PlatformXR::FrameData::Ex
         .modifier = imageSource.modifier,
         .size = size
     };
-#endif // OS(ANDROID)
+#endif // OS(ANDROID) && !USE(OPENXR_VULKAN)
 }
 #endif
 
@@ -261,7 +271,8 @@ void WebXROpaqueFramebuffer::endFrame()
         return;
     }
 #else
-    if (auto sync = gl->createExternalSync({ })) {
+    auto* displayAttachmentSet = reusableDisplayAttachmentsAtIndex(m_currentDisplayAttachmentIndex);
+    if (auto sync = gl->createExternalSync(displayAttachmentSet ? GCGLExternalImage { (*displayAttachmentSet)[0].colorBuffer.image } : 0)) {
         m_fenceFD = gl->exportExternalSync(sync);
         gl->deleteExternalSync(sync);
         return;

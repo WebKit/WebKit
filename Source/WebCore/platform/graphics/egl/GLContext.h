@@ -102,11 +102,16 @@ public:
         bool APPLE_sync { false };
         bool OES_packed_depth_stencil { false };
         bool EXT_YUV_target { false };
-#if USE(VULKAN)
         bool EXT_memory_object { false };
-#endif
     };
     const GLExtensions& glExtensions() const;
+
+    struct DeviceIdentity {
+        static constexpr size_t uuidSize = 16; // GL_UUID_SIZE_EXT, checked in GLContext.cpp.
+        std::array<uint8_t, uuidSize> deviceUUID { };
+        std::array<uint8_t, uuidSize> driverUUID { };
+    };
+    std::optional<DeviceIdentity> deviceIdentity() const;
 
     class ScopedGLContext {
         WTF_MAKE_NONCOPYABLE(ScopedGLContext);

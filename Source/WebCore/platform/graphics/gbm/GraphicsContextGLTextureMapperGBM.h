@@ -48,8 +48,9 @@ public:
     DMABufBuffer* displayBuffer() { return m_displayBuffer.dmabuf.get(); }
 
 #if ENABLE(WEBXR)
+#if !USE(OPENXR_VULKAN)
     GCGLExternalImage createExternalImage(ExternalImageSource&&, GCGLenum internalFormat, GCGLint layer) final;
-    void bindExternalImage(GCGLenum target, GCGLExternalImage) final;
+#endif
     bool enableRequiredWebXRExtensions() final;
 #endif
 

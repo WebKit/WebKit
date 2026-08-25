@@ -99,18 +99,25 @@ using GraphicsContextGLExternalSyncSource = std::tuple<MachSendRight, uint64_t>;
 #elif PLATFORM(GTK) || PLATFORM(WPE)
 
 struct GraphicsContextGLExternalImageSource {
-#if OS(ANDROID)
+#if OS(ANDROID) && !USE(OPENXR_VULKAN)
     RefPtr<AHardwareBuffer> hardwareBuffer;
+#elif USE(OPENXR_VULKAN)
+    WTF::UnixFileDescriptor memory;
+    uint64_t allocationSize { 0 };
+    GCGLenum internalFormat { 0 };
+    WTF::UnixFileDescriptor renderFinishedSemaphore;
+    std::array<uint64_t, 2> deviceUUID { };
+    std::array<uint64_t, 2> driverUUID { };
 #else
     Vector<WTF::UnixFileDescriptor> fds;
     Vector<uint32_t> strides;
     Vector<uint32_t> offsets;
     uint32_t fourcc;
     uint64_t modifier;
-#endif // OS(ANDROID)
+#endif
     WebCore::IntSize size;
 };
-using GraphicsContextGLExternalSyncSource = int;
+using GraphicsContextGLExternalSyncSource = GCGLExternalImage;
 
 #else
 
@@ -760,6 +767,11 @@ public:
 
     // GL_EXT_texture_format_BGRA8888 enums
     static constexpr GCGLenum BGRA_EXT = 0x80E1;
+
+    // GL_EXT_memory_object and GL_EXT_semaphore enums
+    static constexpr GCGLenum DEDICATED_MEMORY_OBJECT_EXT = 0x9581;
+    static constexpr GCGLenum HANDLE_TYPE_OPAQUE_FD_EXT = 0x9586;
+    static constexpr GCGLenum LAYOUT_TRANSFER_SRC_EXT = 0x9592;
 
     // GL_ARB_robustness enums
     static constexpr GCGLenum GUILTY_CONTEXT_RESET_ARB = 0x8253;
@@ -1700,7 +1712,6 @@ public:
     // Computes the bytes per image element for a format and type.
     // Returns zero if format or type is an invalid enum.
     WEBCORE_EXPORT static unsigned NODELETE computeBytesPerGroup(GCGLenum format, GCGLenum type);
-
 
     struct PixelRectangleSizes {
         unsigned initialSkipBytes { 0 };

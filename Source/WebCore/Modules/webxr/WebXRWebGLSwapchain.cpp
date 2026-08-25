@@ -135,7 +135,7 @@ void WebXRWebGLSwapchain::clearTextureIfNeeded(const IntRect& viewport, std::opt
 void WebXRWebGLSwapchain::signalEndFrame(GraphicsContextGL& gl, PlatformXR::DeviceLayer& layerData)
 {
 #if PLATFORM(GTK) || PLATFORM(WPE)
-    if (auto sync = gl.createExternalSync({ })) {
+    if (auto sync = gl.createExternalSync(currentExternalImage())) {
         layerData.fenceFD = gl.exportExternalSync(sync);
         gl.deleteExternalSync(sync);
         return;
@@ -222,10 +222,20 @@ static void createAndBindCompositorTexture(GL& gl, WebXRExternalImage& externalI
 static GL::ExternalImageSource makeExternalImageSource(PlatformXR::FrameData::ExternalTexture& imageSource, const IntSize& size)
 {
 #if PLATFORM(GTK) || PLATFORM(WPE)
-#if OS(ANDROID)
+#if OS(ANDROID) && !USE(OPENXR_VULKAN)
     return GraphicsContextGLExternalImageSource {
         .hardwareBuffer = imageSource,
-        .size = size,
+        .size = size
+    };
+#elif USE(OPENXR_VULKAN)
+    return GraphicsContextGLExternalImageSource {
+        .memory = WTF::move(imageSource.memory),
+        .allocationSize = imageSource.allocationSize,
+        .internalFormat = imageSource.glInternalFormat,
+        .renderFinishedSemaphore = WTF::move(imageSource.renderFinishedSemaphore),
+        .deviceUUID = imageSource.deviceUUID,
+        .driverUUID = imageSource.driverUUID,
+        .size = size
     };
 #else
     return GraphicsContextGLExternalImageSource {
@@ -236,12 +246,12 @@ static GL::ExternalImageSource makeExternalImageSource(PlatformXR::FrameData::Ex
         .modifier = imageSource.modifier,
         .size = size
     };
-#endif // OS(ANDROID)
+#endif // OS(ANDROID) && !USE(OPENXR_VULKAN)
 #else
     UNUSED_PARAM(imageSource);
     UNUSED_PARAM(size);
     return GraphicsContextGLExternalImageSource { };
-#endif
+#endif // PLATFORM(GTK) || PLATFORM(WPE)
 }
 
 void WebXRWebGLSharedImageSwapchain::bindCompositorTexturesForDisplay(GraphicsContextGL& gl, PlatformXR::FrameData::LayerData& layerData)
@@ -307,6 +317,15 @@ void WebXRWebGLSharedImageSwapchain::endFrame(PlatformXR::DeviceLayer& layerData
 
     ASSERT(gl->checkFramebufferStatus(GL::FRAMEBUFFER) == GL::FRAMEBUFFER_COMPLETE);
     signalEndFrame(*gl, layerData);
+}
+
+GCGLExternalImage WebXRWebGLSharedImageSwapchain::currentExternalImage() const
+{
+    if (m_displayImagesSets.isEmpty())
+        return 0;
+
+    RELEASE_ASSERT(m_displayImagesSets.size() > m_currentImageIndex);
+    return m_displayImagesSets[m_currentImageIndex].colorBuffer.image;
 }
 
 void WebXRExternalImage::destroyImage(GraphicsContextGL& gl)
@@ -471,6 +490,13 @@ void WebXRWebGLStaticImageSwapchain::endFrame(PlatformXR::DeviceLayer&)
 
 }
 
+GCGLExternalImage WebXRWebGLStaticImageSwapchain::currentExternalImage() const
+{
+    // Nothing here is shared with the compositor, so endFrame() has nothing to hand back and never signals.
+    ASSERT_NOT_REACHED();
+    return 0;
+}
+
 bool WebXRWebGLStaticImageSwapchain::allTexturesAreBound() const
 {
     size_t expected = m_imageAttributes.textureType == GL::TEXTURE_CUBE_MAP ? m_imageCount * m_imageAttributes.arrayLength : m_imageCount;
@@ -575,6 +601,15 @@ void WebXRWebGLMultiTextureSwapchain::endFrame(PlatformXR::DeviceLayer& layerDat
 
     blitToSharedImage(*gl);
     signalEndFrame(*gl, layerData);
+}
+
+GCGLExternalImage WebXRWebGLMultiTextureSwapchain::currentExternalImage() const
+{
+    if (m_textureSets.isEmpty())
+        return 0;
+
+    RELEASE_ASSERT(m_textureSets.size() > m_currentImageIndex);
+    return m_textureSets[m_currentImageIndex].sharedImage.colorBuffer.image;
 }
 
 bool WebXRWebGLMultiTextureSwapchain::allTexturesAreBound() const

@@ -35,8 +35,11 @@
 #include "Logging.h"
 #include "PixelBuffer.h"
 #include "PlatformDisplay.h"
+#include <wtf/HexNumber.h>
+#include <wtf/Scope.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMallocInlines.h>
+#include <wtf/text/StringBuilder.h>
 
 #if ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)
 #include "VideoFrame.h"
@@ -457,11 +460,18 @@ unsigned GraphicsContextGLTextureMapperANGLE::glVersion() const
 }
 
 #if ENABLE(WEBXR)
-GCGLExternalSync GraphicsContextGLTextureMapperANGLE::createExternalSync(ExternalSyncSource&&)
+GCGLExternalSync GraphicsContextGLTextureMapperANGLE::createExternalSync(ExternalSyncSource&& image)
 {
     const auto& display = PlatformDisplay::sharedDisplay();
     if (!display.eglCheckVersion(1, 5) || !display.eglExtensions().ANDROID_native_fence_sync)
         return { };
+
+#if USE(OPENXR_VULKAN)
+    if (!handBackExternalImage(image))
+        return { };
+#else
+    UNUSED_PARAM(image);
+#endif
 
     auto eglSync = EGL_CreateSync(m_displayObj, EGL_SYNC_NATIVE_FENCE_ANDROID, nullptr);
     if (!eglSync) {
@@ -473,6 +483,24 @@ GCGLExternalSync GraphicsContextGLTextureMapperANGLE::createExternalSync(Externa
     auto newName = ++m_nextExternalSyncName;
     m_eglSyncs.add(newName, eglSync);
     return newName;
+}
+
+void GraphicsContextGLTextureMapperANGLE::bindExternalImage(GCGLenum target, GCGLExternalImage image)
+{
+    if (!makeContextCurrent())
+        return;
+    EGLImage eglImage = EGL_NO_IMAGE_KHR;
+    if (image) {
+        eglImage = m_eglImages.get(image);
+        if (!eglImage) {
+            addError(GCGLErrorCode::InvalidOperation);
+            return;
+        }
+    }
+    if (target == RENDERBUFFER)
+        GL_EGLImageTargetRenderbufferStorageOES(RENDERBUFFER, eglImage);
+    else
+        GL_EGLImageTargetTexture2DOES(target, eglImage);
 }
 
 #if USE(OPENXR)
@@ -489,6 +517,136 @@ UnixFileDescriptor GraphicsContextGLTextureMapperANGLE::exportExternalSync(GCGLE
 
     return UnixFileDescriptor { EGL_DupNativeFenceFDANDROID(m_displayObj, eglSync), UnixFileDescriptor::Adopt };
 }
+
+#if USE(OPENXR_VULKAN)
+static bool matchesExternalDeviceIdentity(std::span<const uint64_t, 2> deviceUUID, std::span<const uint64_t, 2> driverUUID)
+{
+    // ANGLE leaves glGetUnsignedBytevEXT unimplemented, so the UUIDs come from the same native EGL display.
+    auto* context = PlatformDisplay::sharedDisplay().sharingGLContext();
+    if (!context)
+        return false;
+
+    GLContext::ScopedGLContextCurrent scopedContext(*context);
+    auto identity = context->deviceIdentity();
+    if (!identity) {
+        RELEASE_LOG_ERROR(XR, "matchesExternalDeviceIdentity: the GL driver does not report device and driver UUIDs, so an opaque fd cannot be imported");
+        return false;
+    }
+
+    if (equalSpans(std::span<const uint8_t> { identity->deviceUUID }, asByteSpan(deviceUUID))
+        && equalSpans(std::span<const uint8_t> { identity->driverUUID }, asByteSpan(driverUUID)))
+        return true;
+
+    auto loggingString = [](std::span<const uint8_t> uuid) {
+        StringBuilder builder;
+        for (auto byte : uuid)
+            builder.append(hex(byte, 2, Lowercase));
+        return builder.toString().utf8();
+    };
+    RELEASE_LOG_ERROR(XR, "matchesExternalDeviceIdentity: exporter device %s driver %s but this GL context is device %s driver %s",
+        loggingString(asByteSpan(deviceUUID)).data(), loggingString(asByteSpan(driverUUID)).data(),
+        loggingString(identity->deviceUUID).data(), loggingString(identity->driverUUID).data());
+    return false;
+}
+
+#define RETURN_IF_GL_ERROR(source, operation) do { \
+        auto error = GL_GetError(); \
+        if (error != NO_ERROR) { \
+            RELEASE_LOG_ERROR(XR, "%s: " operation " failed with GL error 0x%04x (allocationSize %" PRIu64 ", internalFormat 0x%04x, %dx%d)", \
+                __func__, error, (source).allocationSize, (source).internalFormat, (source).size.width(), (source).size.height()); \
+            return { }; \
+        } \
+    } while (0)
+
+GCGLExternalImage GraphicsContextGLTextureMapperANGLE::createExternalImage(ExternalImageSource&& source, GCGLenum, GCGLint)
+{
+    if (!matchesExternalDeviceIdentity(source.deviceUUID, source.driverUUID))
+        return { };
+
+    if (!makeContextCurrent())
+        return { };
+
+    OpaqueFDImageObjects objects;
+    auto deleteObjectsOnError = makeScopeExit([&] {
+        deleteOpaqueFDImageObjects(objects);
+    });
+
+    GL_CreateMemoryObjectsEXT(1, &objects.memoryObject);
+    RETURN_IF_GL_ERROR(source, "glCreateMemoryObjectsEXT");
+
+    // Matches the exporter's dedicated allocation. If the two disagree the import is invalid.
+    GCGLint dedicated = 1;
+    GL_MemoryObjectParameterivEXT(objects.memoryObject, DEDICATED_MEMORY_OBJECT_EXT, &dedicated);
+    RETURN_IF_GL_ERROR(source, "glMemoryObjectParameterivEXT");
+
+    // glImportMemoryFdEXT takes ownership of the descriptor.
+    GL_ImportMemoryFdEXT(objects.memoryObject, source.allocationSize, HANDLE_TYPE_OPAQUE_FD_EXT, source.memory.release());
+    RETURN_IF_GL_ERROR(source, "glImportMemoryFdEXT");
+
+    GL_GenTextures(1, &objects.texture);
+    GL_BindTexture(TEXTURE_2D, objects.texture);
+    GL_TexStorageMem2DEXT(TEXTURE_2D, 1, source.internalFormat, source.size.width(), source.size.height(), objects.memoryObject, 0);
+    RETURN_IF_GL_ERROR(source, "glTexStorageMem2DEXT");
+
+    GL_GenSemaphoresEXT(1, &objects.renderFinishedSemaphore);
+    GL_ImportSemaphoreFdEXT(objects.renderFinishedSemaphore, HANDLE_TYPE_OPAQUE_FD_EXT, source.renderFinishedSemaphore.release());
+    RETURN_IF_GL_ERROR(source, "glImportSemaphoreFdEXT");
+
+    // The texture only exists because GL_EXT_memory_object cannot back a renderbuffer directly. Wrapping it in an EGLImage lets
+    // everything above bind it exactly like an imported dma-buf, at the cost of one extra object per swapchain image.
+    std::array<EGLAttrib, 3> imageAttributes { EGL_GL_TEXTURE_LEVEL, 0, EGL_NONE };
+    auto eglImage = EGL_CreateImage(m_displayObj, m_contextObj, EGL_GL_TEXTURE_2D, reinterpret_cast<EGLClientBuffer>(static_cast<uintptr_t>(objects.texture)), imageAttributes.data());
+    if (!eglImage) {
+        RELEASE_LOG_ERROR(XR, "%s: eglCreateImage failed with EGL error 0x%04x", __func__, EGL_GetError());
+        return { };
+    }
+
+    deleteObjectsOnError.release();
+    auto name = ++m_nextExternalImageName;
+    m_eglImages.add(name, eglImage);
+    m_opaqueFDImages.add(name, objects);
+    return name;
+}
+#undef RETURN_IF_GL_ERROR
+
+void GraphicsContextGLTextureMapperANGLE::deleteOpaqueFDImageObjects(OpaqueFDImageObjects& objects)
+{
+    if (objects.renderFinishedSemaphore)
+        GL_DeleteSemaphoresEXT(1, &objects.renderFinishedSemaphore);
+    if (objects.memoryObject)
+        GL_DeleteMemoryObjectsEXT(1, &objects.memoryObject);
+    if (objects.texture)
+        GL_DeleteTextures(1, &objects.texture);
+}
+
+void GraphicsContextGLTextureMapperANGLE::deleteExternalImage(GCGLExternalImage image)
+{
+    if (image && makeContextCurrent()) {
+        auto objects = m_opaqueFDImages.take(image);
+        deleteOpaqueFDImageObjects(objects);
+    }
+
+    GraphicsContextGLANGLE::deleteExternalImage(image);
+}
+
+bool GraphicsContextGLTextureMapperANGLE::handBackExternalImage(GCGLExternalImage image)
+{
+    auto entry = m_opaqueFDImages.find(image);
+    if (entry == m_opaqueFDImages.end()) {
+        RELEASE_LOG_ERROR(XR, "handBackExternalImage: %u is not an imported image, so this frame cannot be handed back", image);
+        return false;
+    }
+
+    if (!makeContextCurrent())
+        return false;
+
+    // Signals the semaphore the exporting process waits on and names the layout it reads the image in, which GL has no other way of stating.
+    // Nothing acquires it back as the UIProcess does not hand the image out again until it has finished reading it.
+    GCGLenum layout = LAYOUT_TRANSFER_SRC_EXT;
+    GL_SignalSemaphoreEXT(entry->value.renderFinishedSemaphore, 0, nullptr, 1, &entry->value.texture, &layout);
+    return true;
+}
+#endif
 #endif
 
 bool GraphicsContextGLTextureMapperANGLE::addFoveation(IntSize, IntSize, IntSize, std::span<const GCGLfloat>, std::span<const GCGLfloat>, std::span<const GCGLfloat>)
@@ -514,7 +672,13 @@ bool GraphicsContextGLTextureMapperANGLE::enableRequiredWebXRExtensions()
         "GL_ANGLE_framebuffer_blit"_s,
         "GL_EXT_discard_framebuffer"_s,
         "GL_OES_EGL_image"_s,
-        "GL_OES_rgb8_rgba8"_s
+        "GL_OES_rgb8_rgba8"_s,
+#if USE(OPENXR_VULKAN)
+        "GL_EXT_memory_object"_s,
+        "GL_EXT_memory_object_fd"_s,
+        "GL_EXT_semaphore"_s,
+        "GL_EXT_semaphore_fd"_s,
+#endif
     });
 }
 #endif

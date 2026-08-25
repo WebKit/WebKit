@@ -377,29 +377,19 @@ Result<PhysicalDevice> Instance::deviceForDisplay(PlatformDisplay& display)
     //
     if (auto* context = display.sharingGLContext()) {
         GLContext::ScopedGLContextCurrent scopedContext(*context);
-        RELEASE_LOG_DEBUG(Vulkan, "deviceForDisplay: GL_EXT_memory_object = %s", context->glExtensions().EXT_memory_object ? "yes" : "no");
-        if (context->glExtensions().EXT_memory_object) {
-            GLint deviceUUIDCount = 0;
-            glGetIntegerv(GL_NUM_DEVICE_UUIDS_EXT, &deviceUUIDCount);
-            RELEASE_LOG_DEBUG(Vulkan, "deviceForDisplay: found %d device UUIDs", deviceUUIDCount);
-            if (deviceUUIDCount == 1) {
-                std::array<GLubyte, GL_UUID_SIZE_EXT> deviceUUID;
-                glGetUnsignedBytei_vEXT(GL_DEVICE_UUID_EXT, 0, deviceUUID.data());
-
-                std::array<GLubyte, GL_UUID_SIZE_EXT> driverUUID;
-                glGetUnsignedBytei_vEXT(GL_DRIVER_UUID_EXT, 0, driverUUID.data());
-
-                auto index = devices->findIf([&deviceUUID, &driverUUID](const auto& deviceInfo) {
-                    PhysicalDeviceProperties properties;
-                    auto idProperties = properties.next<PhysicalDeviceIDProperties>();
-                    deviceInfo.fillProperties(properties);
-                    return equalSpans(std::span(deviceUUID), idProperties.deviceUUID())
-                        && equalSpans(std::span(driverUUID), idProperties.driverUUID());
-                });
-                if (index != notFound) {
-                    RELEASE_LOG_DEBUG(Vulkan, "deviceForDisplay: matched device/driver UUIDs");
-                    return devices->at(index);
-                }
+        auto identity = context->deviceIdentity();
+        RELEASE_LOG_DEBUG(Vulkan, "deviceForDisplay: GL device identity = %s", identity ? "available" : "unavailable");
+        if (identity) {
+            auto index = devices->findIf([&identity](const auto& deviceInfo) {
+                PhysicalDeviceProperties properties;
+                auto idProperties = properties.next<PhysicalDeviceIDProperties>();
+                deviceInfo.fillProperties(properties);
+                return equalSpans(std::span<const uint8_t> { identity->deviceUUID }, idProperties.deviceUUID())
+                    && equalSpans(std::span<const uint8_t> { identity->driverUUID }, idProperties.driverUUID());
+            });
+            if (index != notFound) {
+                RELEASE_LOG_DEBUG(Vulkan, "deviceForDisplay: matched device/driver UUIDs");
+                return devices->at(index);
             }
         }
     }
