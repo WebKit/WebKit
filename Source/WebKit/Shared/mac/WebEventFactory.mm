@@ -43,23 +43,52 @@ namespace WebKit {
 
 WebEventPhase WebEventFactory::phaseForEvent(NSEvent *event)
 {
+    return phaseForNativeEventPhase([event phase]);
+}
+
+WebEventPhase WebEventFactory::phaseForNativeEventPhase(NSEventPhase nativePhase)
+{
     using enum WebEventPhase;
 
     auto phase = None;
-    if ([event phase] & NSEventPhaseBegan)
+    if (nativePhase & NSEventPhaseBegan)
         phase = Began;
-    if ([event phase] & NSEventPhaseStationary)
+    if (nativePhase & NSEventPhaseStationary)
         phase = Stationary;
-    if ([event phase] & NSEventPhaseChanged)
+    if (nativePhase & NSEventPhaseChanged)
         phase = Changed;
-    if ([event phase] & NSEventPhaseEnded)
+    if (nativePhase & NSEventPhaseEnded)
         phase = Ended;
-    if ([event phase] & NSEventPhaseCancelled)
+    if (nativePhase & NSEventPhaseCancelled)
         phase = Cancelled;
-    if ([event phase] & NSEventPhaseMayBegin)
+    if (nativePhase & NSEventPhaseMayBegin)
         phase = MayBegin;
 
     return phase;
+}
+
+NSEventPhase WebEventFactory::toNativeEventPhase(WebEventPhase phase)
+{
+    switch (phase) {
+    case WebEventPhase::None:
+        return NSEventPhaseNone;
+    case WebEventPhase::Began:
+        return NSEventPhaseBegan;
+    case WebEventPhase::Stationary:
+        return NSEventPhaseStationary;
+    case WebEventPhase::Changed:
+        return NSEventPhaseChanged;
+    case WebEventPhase::Ended:
+        return NSEventPhaseEnded;
+    case WebEventPhase::Cancelled:
+        return NSEventPhaseCancelled;
+    case WebEventPhase::MayBegin:
+    case WebEventPhase::WillBegin:
+        return NSEventPhaseMayBegin;
+    }
+
+    ASSERT_NOT_REACHED();
+    return NSEventPhaseNone;
 }
 
 static WebWheelEvent::Phase momentumPhaseForEvent(NSEvent *event)

@@ -921,6 +921,8 @@ typedef NS_OPTIONS(NSUInteger, _WKWebViewDataType) {
 
 - (void)_gestureEventWasNotHandledByWebCore:(NSEvent *)event WK_API_AVAILABLE(macos(10.13.4));
 
+- (void)_magnificationGestureEventWasNotHandledByWebCoreWithPhase:(NSEventPhase)phase magnification:(CGFloat)magnification locationInWindow:(NSPoint)locationInWindow WK_API_AVAILABLE(macos(WK_MAC_TBA));
+
 - (void)_disableFrameSizeUpdates WK_API_AVAILABLE(macos(10.13.4));
 - (void)_enableFrameSizeUpdates WK_API_AVAILABLE(macos(10.13.4));
 

@@ -1566,6 +1566,11 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     [self _gestureEventWasNotHandledByWebCore:event];
 }
 
+- (void)_web_magnificationGestureEventWasNotHandledByWebCoreWithPhase:(NSEventPhase)phase magnification:(CGFloat)magnification locationInWindow:(NSPoint)locationInWindow
+{
+    [self _magnificationGestureEventWasNotHandledByWebCoreWithPhase:phase magnification:magnification locationInWindow:locationInWindow];
+}
+
 - (void)_takeFindStringFromSelectionInternal:(id)sender
 {
     [self takeFindStringFromSelection:sender];
@@ -2095,6 +2100,11 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 - (void)_gestureEventWasNotHandledByWebCore:(NSEvent *)event
 {
     _impl->gestureEventWasNotHandledByWebCoreFromViewOnly(event);
+}
+
+- (void)_magnificationGestureEventWasNotHandledByWebCoreWithPhase:(NSEventPhase)phase magnification:(CGFloat)magnification locationInWindow:(NSPoint)locationInWindow
+{
+    _impl->magnificationGestureEventWasNotHandledByWebCoreFromViewOnly(phase, magnification, locationInWindow);
 }
 
 - (double)minimumMagnification
