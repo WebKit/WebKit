@@ -183,6 +183,27 @@ static void forEachHBRun(const std::span<const char16_t>& characters, Function<v
     }
 }
 
+static hb_script_t findScriptForVerticalGlyphSubstitution(hb_face_t* face)
+{
+    static const unsigned maxCount = 32;
+
+    unsigned scriptCount = maxCount;
+    std::array<hb_tag_t, maxCount> scriptTags;
+    hb_ot_layout_table_get_script_tags(face, HB_OT_TAG_GSUB, 0, &scriptCount, scriptTags.data());
+    for (unsigned scriptIndex = 0; scriptIndex < scriptCount; ++scriptIndex) {
+        unsigned languageCount = maxCount;
+        std::array<hb_tag_t, maxCount> languageTags;
+        hb_ot_layout_script_get_language_tags(face, HB_OT_TAG_GSUB, scriptIndex, 0, &languageCount, languageTags.data());
+        for (unsigned languageIndex = 0; languageIndex < languageCount; ++languageIndex) {
+            unsigned featureIndex;
+            if (hb_ot_layout_language_find_feature(face, HB_OT_TAG_GSUB, scriptIndex, languageIndex, HB_TAG('v', 'e', 'r', 't'), &featureIndex)
+                || hb_ot_layout_language_find_feature(face, HB_OT_TAG_GSUB, scriptIndex, languageIndex, HB_TAG('v', 'r', 't', '2'), &featureIndex))
+                return hb_ot_tag_to_script(scriptTags[scriptIndex]);
+        }
+    }
+    return HB_SCRIPT_INVALID;
+}
+
 void ComplexTextController::collectComplexTextRunsForCharacters(std::span<const char16_t> characters, unsigned stringLocation, const Font* font)
 {
     ASSERT(!characters.empty());
@@ -194,23 +215,37 @@ void ComplexTextController::collectComplexTextRunsForCharacters(std::span<const 
     }
 
     const auto& fontPlatformData = font->platformData();
+    const bool isVertical = fontPlatformData.orientation() == FontOrientation::Vertical;
     auto* hbFont = fontPlatformData.hbFont();
     RELEASE_ASSERT(hbFont);
 
     const auto& features = fontPlatformData.features();
-    // Kerning is not handled as font features, so only in case it's explicitly disabled
-    // we need to create a new vector to include kern feature.
-    const hb_feature_t* featuresData = features.isEmpty() ? nullptr : features.span().data();
     unsigned featuresSize = features.size();
-    Vector<hb_feature_t> featuresWithKerning;
-    if (!m_fontCascade->enableKerning()) {
-        featuresWithKerning.reserveInitialCapacity(featuresSize + 1);
-        static hb_feature_t kernFeature { HB_TAG('k', 'e', 'r', 'n'), 0, 0, static_cast<unsigned>(-1) };
-        featuresWithKerning.append(kernFeature);
-        featuresWithKerning.appendVector(features);
-        featuresData = featuresWithKerning.span().data();
-        featuresSize = featuresWithKerning.size();
+    const hb_feature_t* featuresData = featuresSize > 0 ? features.span().data() : nullptr;
+
+    // Kerning and vertical text are not handled as font features, so we only need to build a new
+    // features vector when kerning is explicitly disabled or the font is vertically oriented.
+    Vector<hb_feature_t> extraFeatures;
+    if (!m_fontCascade->enableKerning() || isVertical) {
+        extraFeatures.reserveInitialCapacity(featuresSize + 3);
+        if (!m_fontCascade->enableKerning()) {
+            static hb_feature_t kernFeature { HB_TAG('k', 'e', 'r', 'n'), 0, 0, static_cast<unsigned>(-1) };
+            extraFeatures.append(kernFeature);
+        }
+        if (isVertical) {
+            static hb_feature_t vertFeature { HB_TAG('v', 'e', 'r', 't'), 1, 0, static_cast<unsigned>(-1) };
+            static hb_feature_t vrt2Feature { HB_TAG('v', 'r', 't', '2'), 1, 0, static_cast<unsigned>(-1) };
+            extraFeatures.append(vertFeature);
+            extraFeatures.append(vrt2Feature);
+        }
+        extraFeatures.appendVector(features);
+        featuresData = extraFeatures.span().data();
+        featuresSize = extraFeatures.size();
     }
+
+    auto verticalGlyphSubstitutionScript = HB_SCRIPT_INVALID;
+    if (isVertical)
+        verticalGlyphSubstitutionScript = findScriptForVerticalGlyphSubstitution(hb_font_get_face(hbFont));
 
     static thread_local HbUniquePtr<hb_buffer_t> buffer(hb_buffer_create());
 
@@ -223,7 +258,10 @@ void ComplexTextController::collectComplexTextRunsForCharacters(std::span<const 
         hb_buffer_set_cluster_level(buffer.get(), HB_BUFFER_CLUSTER_LEVEL_CHARACTERS);
         hb_buffer_set_language(buffer.get(), language);
 
-        hb_buffer_set_script(buffer.get(), hb_icu_script_to_script(run.script));
+        if (verticalGlyphSubstitutionScript != HB_SCRIPT_INVALID)
+            hb_buffer_set_script(buffer.get(), verticalGlyphSubstitutionScript);
+        else
+            hb_buffer_set_script(buffer.get(), hb_icu_script_to_script(run.script));
 
         if (!m_mayUseNaturalWritingDirection || m_run->directionalOverride())
             hb_buffer_set_direction(buffer.get(), m_run->rtl() ? HB_DIRECTION_RTL : HB_DIRECTION_LTR);
