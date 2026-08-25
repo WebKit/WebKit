@@ -48,7 +48,6 @@ public:
 
     enum class ListMarkerAttribute : uint8_t {
         Image,
-        ShouldCollapseAnonymousBlockParent,
     };
     ElementBox(ElementAttributes&&, EnumSet<ListMarkerAttribute>, Style::ComputedStyle&&, std::unique_ptr<Style::ComputedStyle>&& firstLineStyle = nullptr);
 
@@ -100,7 +99,6 @@ public:
     void setListMarkerAttributes(EnumSet<ListMarkerAttribute> listMarkerAttributes) { m_replacedData->listMarkerAttributes = listMarkerAttributes; }
 
     bool isListMarkerImage() const { return m_replacedData && m_replacedData->listMarkerAttributes.contains(ListMarkerAttribute::Image); }
-    bool shouldCollapseAnonymousBlockParentForListMarker() const { return m_replacedData && m_replacedData->listMarkerAttributes.contains(ListMarkerAttribute::ShouldCollapseAnonymousBlockParent); }
 
     // FIXME: This is temporary until after list marker content is accessible by IFC (webkit.org/b/294342)
     void setListMarkerLayoutBounds(std::pair<float, float> layoutBounds) { m_replacedData->layoutBounds = layoutBounds; }

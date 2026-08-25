@@ -5563,7 +5563,6 @@ imported/w3c/web-platform-tests/css/css-lists/marker-counter.html [ ImageOnlyFai
 # list-style
 
 # list-style bidi support
-webkit.org/b/202849 imported/w3c/web-platform-tests/css/css-lists/list-style-type-string-005b.html [ ImageOnlyFailure ]
 webkit.org/b/249918 imported/w3c/web-platform-tests/css/css-lists/list-marker-symbol-bidi.html [ ImageOnlyFailure ]
 
 

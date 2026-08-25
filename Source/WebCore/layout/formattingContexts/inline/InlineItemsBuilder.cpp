@@ -398,8 +398,10 @@ InlineItemsBuilder::LayoutQueue InlineItemsBuilder::initializeLayoutQueue(Inline
 {
     CheckedRef root = this->root();
     if (!root->firstChild()) {
-        // There should always be at least one inflow child in this inline formatting context.
-        ASSERT_NOT_REACHED();
+        // A list item's outside marker is not in the box tree and takes no part in the line, so a list item with
+        // nothing else in it has no inflow child at all while still needing the line the marker sits on
+        // (see InlineFormattingContext::layout). Nothing else establishes a childless inline formatting context.
+        ASSERT(root->isListItem());
         return { };
     }
 
@@ -745,7 +747,9 @@ static inline void buildBidiParagraph(const Style::ComputedStyle& rootStyle, con
 
 void InlineItemsBuilder::breakAndComputeBidiLevels(InlineItemList& inlineItemList)
 {
-    ASSERT(!inlineItemList.isEmpty());
+    // A list item with nothing but its outside marker has no inline items at all, the marker not being in the box
+    // tree, and still needs the line the marker sits on (see InlineFormattingContext::layout).
+    ASSERT(!inlineItemList.isEmpty() || root().isListItem());
 
     StringBuilder paragraphContentBuilder;
     InlineItemOffsetList inlineItemOffsets;

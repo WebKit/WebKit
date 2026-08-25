@@ -69,6 +69,7 @@
 #include "RenderLayerCompositor.h"
 #include "RenderLayerScrollableArea.h"
 #include "RenderLineBreak.h"
+#include "RenderListItem.h"
 #include "RenderListOutsideMarker.h"
 #include "RenderMultiColumnFlow.h"
 #include "RenderMultiColumnSet.h"
@@ -3150,13 +3151,12 @@ VisibleInViewportState RenderObject::imageFrameAvailable(CachedImage& image, Ima
 bool RenderObject::isExcludedMarker() const
 {
     // An excluded list marker is the direct child of its list item, never wrapped in an anonymous block, and no part of in-flow layout.
-    // Only markers whose first formatted line lives in a descendant block qualify (see childrenInline)
     auto* marker = dynamicDowncast<RenderListOutsideMarker>(*this);
     if (!marker)
         return false;
     if (!document().settings().listMarkerPositionedPostLayoutEnabled())
         return false;
-    return parent() && !parent()->childrenInline();
+    return parent() && parent() == marker->listItem();
 }
 
 #if ENABLE(TREE_DEBUGGING)

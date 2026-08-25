@@ -60,32 +60,19 @@ RenderTreeBuilder::List::List(RenderTreeBuilder& builder)
 {
 }
 
-bool markerNeedsOwnLine(const RenderListItem& listItemRenderer)
-{
-    if (!listItemRenderer.document().inQuirksMode())
-        return false;
-    for (CheckedPtr child = listItemRenderer.firstChild(); child; child = child->nextSibling()) {
-        if (child.get() == listItemRenderer.markerRenderer() || child->isFloatingOrOutOfFlowPositioned() || is<RenderMenuList>(*child))
-            continue;
-        return child->node() && isHTMLListElement(*child->node());
-    }
-    return false;
-}
-
 struct MarkerParentSearchResult {
     CheckedPtr<RenderBlock> parent;
-    bool shouldCollapseAnonymousBlockParent { false };
 };
 
 static MarkerParentSearchResult parentCandidateForMarker(RenderListItem& listItemRenderer, const RenderListOutsideMarker& marker)
 {
-    if (listItemRenderer.document().settings().listMarkerPositionedPostLayoutEnabled() && !markerNeedsOwnLine(listItemRenderer)) {
+    if (listItemRenderer.document().settings().listMarkerPositionedPostLayoutEnabled()) {
         // The outside marker is always the list item's first child and it takes no part in in-flow layout.
-        return { &listItemRenderer, false };
+        return { &listItemRenderer };
     }
 
     auto result = RenderListItem::firstFormattedLineRootFor(listItemRenderer, marker);
-    return { result.parent ? result.parent : result.fallbackParent, result.stoppedAtTableRubyOrReplaced };
+    return { result.parent ? result.parent : result.fallbackParent };
 }
 
 // An inside marker among the list item's own inline content is not a box of its own: it is an anonymous inline box
@@ -180,9 +167,6 @@ void RenderTreeBuilder::List::updateItemMarker(RenderListItem& listItemRenderer)
         markerRenderer->setIsExcludedFromNormalLayout(false);
         if (!searchResult.parent) {
             if (currentParent->isAnonymousBlock()) {
-                // For outside markers, if the search failed because a flex/grid container blockified a replaced
-                // child (e.g., <img>), we should collapse the anonymous block's height so it doesn't inflate the list item.
-                markerRenderer->setShouldCollapseAnonymousBlockParent(searchResult.shouldCollapseAnonymousBlockParent);
                 // If the marker is currently contained inside an anonymous box, we are the only item in that anonymous box
                 // since no line box parent was found. It's ok to just leave the marker where it is in this case.
                 return;
@@ -216,16 +200,12 @@ void RenderTreeBuilder::List::updateItemMarker(RenderListItem& listItemRenderer)
     m_builder.addListItemNeedingMarkerUpdate(listItemRenderer);
     listItemRenderer.setMarkerRenderer(*newMarkerRenderer);
     auto searchResult = parentCandidateForMarker(listItemRenderer, *newMarkerRenderer);
-    auto shouldCollapseAnonymousBlockParent = !searchResult.parent && searchResult.shouldCollapseAnonymousBlockParent;
     if (!searchResult.parent) {
         searchResult.parent = &listItemRenderer;
         if (auto* multiColumnFlow = listItemRenderer.multiColumnFlow())
             searchResult.parent = multiColumnFlow;
     }
     m_builder.attach(*searchResult.parent, WTF::move(newMarkerRenderer), firstNonMarkerChild(*searchResult.parent));
-    // For outside markers, if the search failed because a flex/grid container blockified a replaced
-    // child (e.g., <img>), we should collapse the anonymous block's height so it doesn't inflate the list item.
-    listItemRenderer.markerBox()->setShouldCollapseAnonymousBlockParent(shouldCollapseAnonymousBlockParent);
 
     if (listItemRenderer.markerBox()->needsContentContainer())
         buildMarkerContentRenderers(*listItemRenderer.markerBox());

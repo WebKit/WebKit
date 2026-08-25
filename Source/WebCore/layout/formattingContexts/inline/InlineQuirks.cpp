@@ -245,11 +245,6 @@ bool InlineQuirks::shouldCollapseLineBoxHeight(const Line::RunList& lineContent,
     if (emptyInlineBoxCount && emptyInlineBoxCount == lineContent.size() - 1)
         return true;
 
-    // When an outside marker ends up in an anonymous block because blockification (e.g., by a flex/grid container)
-    // prevented finding a line box parent, collapse the line box so it doesn’t inflate the list item.
-    if (markerBox->shouldCollapseAnonymousBlockParentForListMarker())
-        return true;
-
     auto& rootBox = formattingContext().root();
     if (rootBox.isAnonymous() || rootBox.isListItem())
         return false;

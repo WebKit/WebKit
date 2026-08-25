@@ -77,7 +77,6 @@ public:
 
     RenderBlockFlow* contentContainer() const;
 
-    LayoutUnit lineLogicalOffsetForListItem() const { return m_lineLogicalOffsetForListItem; }
     RenderListItem* NODELETE listItem() const;
 
     std::pair<float, float> layoutBounds() const { return m_layoutBounds; }
@@ -91,16 +90,6 @@ public:
     std::optional<ExcludedPosition> excludedPosition() const { return m_excludedPosition; }
 
     void invalidateExcludedMarkerContainer();
-
-    bool shouldCollapseAnonymousBlockParent() const { return m_shouldCollapseAnonymousBlockParent; }
-    void setShouldCollapseAnonymousBlockParent(bool value)
-    {
-        if (value) {
-            ASSERT(parent());
-            ASSERT(parent()->isAnonymousBlock());
-        }
-        m_shouldCollapseAnonymousBlockParent = value;
-    }
 
 private:
     void willBeDestroyed() final;
@@ -124,7 +113,6 @@ private:
     void updateInlineMargins();
     void updateContent();
     void updateContentContainerText();
-    RenderBox* parentBox(RenderBox&);
     void layoutContentContainer(RenderBlockFlow&);
 
     FloatRect relativeMarkerRect();
@@ -138,11 +126,8 @@ private:
     RefPtr<Style::Image> m_image;
 
     SingleThreadWeakPtr<RenderListItem> m_listItem;
-    LayoutUnit m_lineOffsetForListItem;
-    LayoutUnit m_lineLogicalOffsetForListItem;
     std::pair<float, float> m_layoutBounds;
     std::optional<ExcludedPosition> m_excludedPosition;
-    bool m_shouldCollapseAnonymousBlockParent { false };
 };
 
 // The room an image marker keeps between itself and the content it labels.
