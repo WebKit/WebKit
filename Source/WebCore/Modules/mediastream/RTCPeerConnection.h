@@ -118,7 +118,7 @@ public:
     void createOffer(RTCOfferOptions&&, Ref<DeferredPromise>&&);
     void createAnswer(RTCAnswerOptions&&, Ref<DeferredPromise>&&);
 
-    void setLocalDescription(std::optional<RTCLocalSessionDescriptionInit>&&, Ref<DeferredPromise>&&);
+    void setLocalDescription(RTCLocalSessionDescriptionInit&&, Ref<DeferredPromise>&&);
     RefPtr<RTCSessionDescription> localDescription() const { return m_pendingLocalDescription ? m_pendingLocalDescription.get() : m_currentLocalDescription.get(); }
     RefPtr<RTCSessionDescription> currentLocalDescription() const { return m_currentLocalDescription.get(); }
     RefPtr<RTCSessionDescription> pendingLocalDescription() const { return m_pendingLocalDescription.get(); }
@@ -295,6 +295,8 @@ private:
 
     String m_lastCreatedOffer;
     String m_lastCreatedAnswer;
+    bool m_isLastCreatedOfferFresh { false };
+    bool m_isLastCreatedAnswerFresh { false };
 };
 
 } // namespace WebCore
