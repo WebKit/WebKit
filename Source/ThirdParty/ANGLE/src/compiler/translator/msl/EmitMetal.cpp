@@ -370,7 +370,7 @@ static const char *GetOperatorString(TOperator op,
         case TOperator::EOpLogicalAnd:
             return "&&";
         case TOperator::EOpNegative:
-            return "-";
+            return resultType.isSignedInt() ? "ANGLE_negateInt" : "-";
         case TOperator::EOpPositive:
             if (argType0->isMatrix())
             {
@@ -428,11 +428,13 @@ static const char *GetOperatorString(TOperator op,
 
         case TOperator::EOpDiv:
         case TOperator::EOpDivAssign:
-            return resultType.isSignedInt() ? "ANGLE_div" : "/";
+            return (resultType.isSignedInt() || resultType.getBasicType() == EbtUInt) ? "ANGLE_div"
+                                                                                      : "/";
 
         case TOperator::EOpIMod:
         case TOperator::EOpIModAssign:
-            return resultType.isSignedInt() ? "ANGLE_imod" : "%";
+            return (resultType.isSignedInt() || resultType.getBasicType() == EbtUInt) ? "ANGLE_imod"
+                                                                                      : "%";
 
         case TOperator::EOpEqual:
             if ((argType0->getStruct() && argType1->getStruct()) &&

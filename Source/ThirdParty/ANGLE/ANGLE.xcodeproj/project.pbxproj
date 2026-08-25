@@ -638,6 +638,7 @@
 		44EF4D53A634EA5A0968572B /* es3pStateChangeTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D739486DA5E0126F0D0EF4BB /* es3pStateChangeTests.cpp */; };
 		4557460D814F5DF1D5787863 /* es3sLongRunningShaderTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7134402C9425888101366367 /* es3sLongRunningShaderTests.cpp */; };
 		457CC0343015771C001DE9FC /* angle_end2end_tests_expectations.txt in State Test Expectations */ = {isa = PBXBuildFile; fileRef = 7BD3D2E82FCDBB4E00C386DC /* angle_end2end_tests_expectations.txt */; };
+		4592BD742FC4F27700DC76EB /* IntegerOverflowClampTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4592BD732FC4F27700DC76EB /* IntegerOverflowClampTest.cpp */; };
 		45F4464AB2B8513CB3E3762B /* es3fNegativeStateApiTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2F264D619701179ECB7F6033 /* es3fNegativeStateApiTests.cpp */; };
 		46574F8EBAA668D2A75348A0 /* es3pShaderOperatorTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7F384DF192F867DA1896E9B2 /* es3pShaderOperatorTests.cpp */; };
 		46724657AF064907DE2EA506 /* deThreadTest.c in Sources */ = {isa = PBXBuildFile; fileRef = ADE748218E43074A54016343 /* deThreadTest.c */; };
@@ -3203,6 +3204,7 @@
 		44A549579F74A7BBCF80C243 /* es2fMultisampleTests.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = es2fMultisampleTests.cpp; sourceTree = "<group>"; };
 		44E247508F92F73A06DB9605 /* sglrReferenceContext.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = sglrReferenceContext.cpp; sourceTree = "<group>"; };
 		451D41F7AE0365931A4AA60B /* tes3InfoTests.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = tes3InfoTests.cpp; sourceTree = "<group>"; };
+		4592BD732FC4F27700DC76EB /* IntegerOverflowClampTest.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = IntegerOverflowClampTest.cpp; sourceTree = "<group>"; };
 		45A743169381B27478632DE1 /* glsUniformBlockCase.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = glsUniformBlockCase.cpp; sourceTree = "<group>"; };
 		45DE4E258609976D2067B1DE /* es3sSpecialFloatTests.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = es3sSpecialFloatTests.cpp; sourceTree = "<group>"; };
 		463D416587F5C55E8292E1C8 /* es3fShaderDerivateTests.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = es3fShaderDerivateTests.cpp; sourceTree = "<group>"; };
@@ -6506,6 +6508,7 @@
 				7BFAF5682DE59E0900327F7F /* IndexBufferOffsetTest.cpp */,
 				7BFAF5692DE59E0900327F7F /* IndexedPointsTest.cpp */,
 				7BFAF56A2DE59E0900327F7F /* InstancingTest.cpp */,
+				4592BD732FC4F27700DC76EB /* IntegerOverflowClampTest.cpp */,
 				7BFAF56B2DE59E0900327F7F /* KTXCompressedTextureTest.cpp */,
 				7BFAF56C2DE59E0900327F7F /* LineLoopTest.cpp */,
 				7BFAF56D2DE59E0900327F7F /* LinkAndRelinkTest.cpp */,
@@ -10556,6 +10559,7 @@
 				7BFAF5EE2DE59E0900327F7F /* IndexBufferOffsetTest.cpp in Sources */,
 				7BFAF5F42DE59E0900327F7F /* IndexedPointsTest.cpp in Sources */,
 				7BFAF5CE2DE59E0900327F7F /* InstancingTest.cpp in Sources */,
+				4592BD742FC4F27700DC76EB /* IntegerOverflowClampTest.cpp in Sources */,
 				7BFAF5D82DE59E0900327F7F /* KTXCompressedTextureTest.cpp in Sources */,
 				7BB9723D2DE4827800455D13 /* libEGL_autogen.cpp in Sources */,
 				7BB972362DE480F000455D13 /* libGLESv2_autogen.cpp in Sources */,

@@ -295,6 +295,7 @@ class ProgramPrelude : public TIntermTraverser
     void addAssignInt();
     void subInt();
     void subAssignInt();
+    void negateInt();
     void loopForwardProgress();
 
   private:
@@ -454,8 +455,6 @@ ANGLE_ALWAYS_INLINE X ANGLE_mod(X x, Y y)
 // - the divisor is 0
 // - the dividend is INT_MIN and the divisor is -1 (integer overflow)
 // When the behavior would be undefined the result is `x`.
-// FIXME: This function should also handle INT_MIN / -1, but currently this hits a bug in the metal
-// compiler
 PROGRAM_PRELUDE_DECLARE(div,
                         R"(
 template<typename X, typename Y, typename Z = metal::conditional_t<metal::is_scalar_v<Y>, X, Y>>
@@ -463,8 +462,16 @@ ANGLE_ALWAYS_INLINE Z ANGLE_div(X x, Y y)
 {
     Z zx = Z(x);
     Z zy = Z(y);
-    auto predicate = zy == Z(0);
-    return zx / metal::select(zy, Z(1), predicate);
+    if constexpr (metal::is_signed_v<Z>) {
+        using U = metal::make_unsigned_t<Z>;
+        Z safeY = metal::select(zy, Z(1), zy == Z(0));
+        auto isNegOne = safeY == Z(-1);
+        safeY = metal::select(safeY, Z(1), isNegOne);
+        Z q = zx / safeY;
+        return metal::select(q, as_type<Z>(U(0) - U(zx)), isNegOne);
+    } else {
+        return zx / metal::select(zy, Z(1), zy == Z(0));
+    }
 }
 )")
 
@@ -473,8 +480,6 @@ ANGLE_ALWAYS_INLINE Z ANGLE_div(X x, Y y)
 // - the dividend is INT_MIN and the divisor is -1 (integer overflow)
 // - either of the operands is negative (undefined behavior in Metal)
 // When the behavior would be undefined the result is 0.
-// FIXME: This function should also handle INT_MIN % -1, but currently this hits a bug in the metal
-// compiler
 PROGRAM_PRELUDE_DECLARE(imod,
                         R"(
 template<typename X, typename Y, typename Z = metal::conditional_t<metal::is_scalar_v<Y>, X, Y>>
@@ -482,6 +487,7 @@ ANGLE_ALWAYS_INLINE Z ANGLE_imod(X x, Y y)
 {
     if constexpr (metal::is_signed_v<Z>) {
         Z y_or_one = metal::select(Z(y), Z(1), Z(y) == Z(0));
+        y_or_one = metal::select(y_or_one, Z(1), y_or_one == Z(-1));
         if (metal::any(((Z(x) | y_or_one) & Z(2147483648u)) != Z(0u)))
         {
             return as_type<Z>(
@@ -3046,6 +3052,16 @@ ANGLE_ALWAYS_INLINE thread X &ANGLE_subAssignInt(thread X &x, Y y)
 }
 )")
 
+// Avoid undefined behavior due to integer overflow.
+PROGRAM_PRELUDE_DECLARE(negateInt,
+                        R"(
+template <typename T>
+ANGLE_ALWAYS_INLINE T ANGLE_negateInt(T x)
+{
+    return as_type<T>(metal::make_unsigned_t<T>(0) - metal::make_unsigned_t<T>(x));
+}
+)")
+
 PROGRAM_PRELUDE_DECLARE(loopForwardProgress,
                         R"(
 ANGLE_ALWAYS_INLINE void ANGLE_loopForwardProgress()
@@ -3869,6 +3885,10 @@ void ProgramPrelude::visitOperator(TOperator op,
             if (argType0->isMatrix())
             {
                 negateMatrix();
+            }
+            if (argType0->isSignedInt())
+            {
+                negateInt();
             }
             break;
 
