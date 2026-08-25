@@ -27,6 +27,7 @@ if (ENABLE_WPE_PLATFORM)
     add_subdirectory(WPEPlatform)
 
     ADD_WK2_TEST(TestWebViewEditor ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit/WKWebView/wpe/TestWebViewEditor.cpp)
+    ADD_WK2_TEST(TestWebViewInputEvents ${TOOLS_DIR}/TestWebKitAPI/Tests/WebKit/WKWebView/wpe/TestWebViewInputEvents.cpp)
 endif ()
 
 if (ENABLE_2022_GLIB_API)

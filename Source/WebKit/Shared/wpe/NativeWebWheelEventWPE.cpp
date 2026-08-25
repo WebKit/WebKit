@@ -34,11 +34,13 @@ namespace WebKit {
 
 NativeWebWheelEvent::NativeWebWheelEvent(WPEEvent* event)
     : WebWheelEvent(WebEventFactory::createWebWheelEvent(event))
+    , m_nativeEvent(event)
 {
 }
 
 NativeWebWheelEvent::NativeWebWheelEvent(WPEEvent* event, WebWheelEvent::Phase phase)
     : WebWheelEvent(WebEventFactory::createWebWheelEvent(event, phase))
+    , m_nativeEvent(event)
 {
 }
 

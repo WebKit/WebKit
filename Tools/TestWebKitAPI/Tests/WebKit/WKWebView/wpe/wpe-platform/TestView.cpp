@@ -30,6 +30,7 @@
 #include "WPEScreenMock.h"
 #include "WPEToplevelMock.h"
 #include "WPEViewMock.h"
+#include <wpe/GRefPtrWPE.h>
 
 namespace TestWebKitAPI {
 
@@ -185,12 +186,138 @@ static void testViewToplevelState(WPEMockViewTest* test, gconstpointer)
     g_signal_handler_disconnect(test->view(), viewResizedID);
 }
 
+static GRefPtr<WPEEvent> createKeyEvent(WPEView* view, WPEEventType type)
+{
+    return adoptGRef(wpe_event_keyboard_new(type, view, WPE_INPUT_SOURCE_KEYBOARD, 0, WPE_MODIFIER_KEYBOARD_CONTROL, 41, WPE_KEY_f));
+}
+
+struct ProcessedResult {
+    unsigned count { 0 };
+    WPEEvent* event { nullptr };
+    gboolean handled { FALSE };
+    const char* userData { nullptr };
+};
+
+static void testViewKeyboardEventProcessed(WPEMockViewTest* test, gconstpointer)
+{
+    ProcessedResult result;
+    auto signalID = g_signal_connect(test->view(), "event-processed", G_CALLBACK(+[](WPEView*, WPEEvent* event, gboolean handled, ProcessedResult* result) {
+        result->count++;
+        result->event = event;
+        result->handled = handled;
+        result->userData = static_cast<const char*>(wpe_event_get_user_data(event));
+    }), &result);
+
+    auto event = createKeyEvent(test->view(), WPE_EVENT_KEYBOARD_KEY_DOWN);
+
+    // A platform implementation recognizes the event it sent by the data it
+    // attached to it, so that has to survive the round trip.
+    static const char* platformData = "platform-data";
+    wpe_event_set_user_data(event.get(), const_cast<char*>(platformData), nullptr);
+
+    wpe_view_event_processed(test->view(), event.get(), FALSE);
+    g_assert_cmpuint(result.count, ==, 1);
+    g_assert_true(result.event == event.get());
+    g_assert_false(result.handled);
+    g_assert_cmpstr(result.userData, ==, platformData);
+    g_assert_cmpuint(wpe_event_get_event_type(result.event), ==, WPE_EVENT_KEYBOARD_KEY_DOWN);
+    g_assert_cmpuint(wpe_event_keyboard_get_keyval(result.event), ==, WPE_KEY_f);
+    g_assert_true(wpe_event_get_view(result.event) == test->view());
+
+    // Every processed event is reported, so a consumer can always tell a key
+    // the web content took from one it never got to decide on.
+    wpe_view_event_processed(test->view(), event.get(), TRUE);
+    g_assert_cmpuint(result.count, ==, 2);
+    g_assert_true(result.event == event.get());
+    g_assert_true(result.handled);
+
+    auto keyUpEvent = createKeyEvent(test->view(), WPE_EVENT_KEYBOARD_KEY_UP);
+    wpe_view_event_processed(test->view(), keyUpEvent.get(), FALSE);
+    g_assert_cmpuint(result.count, ==, 3);
+    g_assert_true(result.event == keyUpEvent.get());
+    g_assert_null(result.userData);
+
+    g_signal_handler_disconnect(test->view(), signalID);
+
+    // Reporting a result nobody listens for is not an error.
+    wpe_view_event_processed(test->view(), event.get(), TRUE);
+    g_assert_cmpuint(result.count, ==, 3);
+}
+
+struct EventCounts {
+    unsigned event { 0 };
+    unsigned processed { 0 };
+};
+
+static void testViewKeyboardEventProcessedIsSeparateFromEvent(WPEMockViewTest* test, gconstpointer)
+{
+    EventCounts counts;
+    auto eventID = g_signal_connect(test->view(), "event", G_CALLBACK(+[](WPEView*, WPEEvent*, EventCounts* counts) -> gboolean {
+        counts->event++;
+        return TRUE;
+    }), &counts);
+    auto processedID = g_signal_connect(test->view(), "event-processed", G_CALLBACK(+[](WPEView*, WPEEvent*, gboolean, EventCounts* counts) {
+        counts->processed++;
+    }), &counts);
+
+    auto event = createKeyEvent(test->view(), WPE_EVENT_KEYBOARD_KEY_DOWN);
+
+    // Delivering an event says nothing about what became of it, which is the
+    // whole reason the second signal exists.
+    wpe_view_event(test->view(), event.get());
+    g_assert_cmpuint(counts.event, ==, 1);
+    g_assert_cmpuint(counts.processed, ==, 0);
+
+    wpe_view_event_processed(test->view(), event.get(), FALSE);
+    g_assert_cmpuint(counts.event, ==, 1);
+    g_assert_cmpuint(counts.processed, ==, 1);
+
+    g_signal_handler_disconnect(test->view(), eventID);
+    g_signal_handler_disconnect(test->view(), processedID);
+}
+
+static void testViewEventProcessedScroll(WPEMockViewTest* test, gconstpointer)
+{
+    ProcessedResult result;
+    auto signalID = g_signal_connect(test->view(), "event-processed", G_CALLBACK(+[](WPEView*, WPEEvent* event, gboolean handled, ProcessedResult* result) {
+        result->count++;
+        result->event = event;
+        result->handled = handled;
+    }), &result);
+
+    GRefPtr<WPEEvent> event = adoptGRef(wpe_event_scroll_new(test->view(), WPE_INPUT_SOURCE_MOUSE, 0, WPE_MODIFIER_KEYBOARD_CONTROL,
+        0., -3., FALSE, FALSE, 10., 20.));
+
+    wpe_view_event_processed(test->view(), event.get(), FALSE);
+    g_assert_cmpuint(result.count, ==, 1);
+    g_assert_true(result.event == event.get());
+    g_assert_false(result.handled);
+    g_assert_cmpuint(wpe_event_get_event_type(result.event), ==, WPE_EVENT_SCROLL);
+    g_assert_true(wpe_event_get_modifiers(result.event) & WPE_MODIFIER_KEYBOARD_CONTROL);
+
+    // The deltas have to survive, since what to do with an unused scroll
+    // depends on them.
+    double deltaX, deltaY;
+    wpe_event_scroll_get_deltas(result.event, &deltaX, &deltaY);
+    g_assert_cmpfloat(deltaX, ==, 0.);
+    g_assert_cmpfloat(deltaY, ==, -3.);
+
+    wpe_view_event_processed(test->view(), event.get(), TRUE);
+    g_assert_cmpuint(result.count, ==, 2);
+    g_assert_true(result.handled);
+
+    g_signal_handler_disconnect(test->view(), signalID);
+}
+
 void beforeAll()
 {
     WPEMockViewTest::add("View", "toplevel", testViewToplevel);
     WPEMockViewTest::add("View", "size", testViewSize);
     WPEMockViewTest::add("View", "scale", testViewScale);
     WPEMockViewTest::add("View", "toplevel-state", testViewToplevelState);
+    WPEMockViewTest::add("View", "event-processed", testViewKeyboardEventProcessed);
+    WPEMockViewTest::add("View", "event-processed-is-separate-from-event", testViewKeyboardEventProcessedIsSeparateFromEvent);
+    WPEMockViewTest::add("View", "event-processed-scroll", testViewEventProcessedScroll);
 }
 
 void afterAll()
