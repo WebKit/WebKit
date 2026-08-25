@@ -1133,7 +1133,19 @@ static inline void extractRecursive(Node& node, Item& parentItem, TraversalConte
 
         if (!role.isEmpty()) {
             auto shouldSuppressRole = [&] {
-                static constexpr auto ignoredRoles = WTF::toArray({ "presentation"_s, "none"_s, "generic"_s, "group"_s, "rowgroup"_s, "directory"_s, "complementary"_s, "contentinfo"_s });
+                static constexpr auto ignoredRoles = WTF::toArray({
+                    "presentation"_s,
+                    "none"_s,
+                    "generic"_s,
+                    "group"_s,
+                    "rowgroup"_s,
+                    "directory"_s,
+                    "complementary"_s,
+                    "contentinfo"_s,
+                    "tree"_s,
+                    "treeitem"_s
+                });
+
                 for (auto ignoredRole : ignoredRoles) {
                     if (equalLettersIgnoringASCIICase(role, ignoredRole))
                         return true;

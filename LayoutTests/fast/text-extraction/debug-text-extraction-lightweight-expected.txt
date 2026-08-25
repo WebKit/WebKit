@@ -1,9 +1,8 @@
 root
     'Welcome to Test Page'
     navigation
-        list
-            link 'Section 1'
-            link 'Section 2'
+        link 'Section 1'
+        link 'Section 2'
     'Here’s to the crazy ones…'
     section
         button 'Click Me'
@@ -16,9 +15,8 @@ root
             'January 1, 2024'
             'This is some article content…'
         'Related Links'
-        list
-            link 'Example Link'
-            link 'Test Link'
+        link 'Example Link'
+        link 'Test Link'
         'Ready'
         button 'Update Status'
     'The quick brown fox jumped…'

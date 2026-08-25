@@ -2,9 +2,8 @@ root
     role=banner
         label='Main Page Title' 'Welcome to Test Page' […]
     navigation label='Main navigation'
-        list
-            link uid=… url=mailto:wenson_hsieh@apple.com 'Section 1' […]
-            link uid=… url=https://example.com/ 'Section 2' […]
+        link uid=… url=mailto:wenson_hsieh@apple.com 'Section 1' […]
+        link uid=… url=https://example.com/ 'Section 2' […]
     role=main
         section label='Interactive Elements'
             button uid=… describedby='This button does nothing' label='Test button' 'Click Me' […]
@@ -30,10 +29,9 @@ root
                 'This is some article content with highlighted text.' […]
             label='Related information'
                 'Related Links' […]
-                list
-                    link uid=… url=https://webkit.org/ 'Example Link' […]
-                        canvas uid=… […]
-                    link uid=… url=https://apple.com/ 'Test Link' […]
+                link uid=… url=https://webkit.org/ 'Example Link' […]
+                    canvas uid=… […]
+                link uid=… url=https://apple.com/ 'Test Link' […]
             role=region
                 role=status 'Ready' […]
                 button uid=… 'Update Status' […]
@@ -58,7 +56,6 @@ root
             button uid=… 'Sign In' […]
             button uid=… label=Profile 'YZ' […]
             uid=… role=button class=account-btn
-                image uid=… […]
             input uid=… […] placeholder=Username
     'Footer content with' […]
     role=img label='copyright symbol' '©' […]

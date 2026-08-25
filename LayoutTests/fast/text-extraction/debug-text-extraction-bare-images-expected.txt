@@ -1,0 +1,27 @@
+root
+    label='Inside a control'
+        button uid=… label='Show password'
+        link uid=… url=example.com/settings
+        uid=… role=button
+        button uid=… 'Save'
+    label='No preceding text'
+    label='Mixed case and fallback roles'
+        uid=… role=BUTTON
+            'Edit'
+        role=menuitem
+            'Open'
+            image uid=…
+        role=tab
+            'Details'
+            image uid=…
+    label='False valued aria'
+    label='Following plain text'
+        'Sign-In Password'
+        image uid=…
+    label='Self describing'
+        image uid=… label='Edit password' alt='Edit password'
+        image uid=… alt='Delete account'
+        image uid=… role=img
+        image uid=… clickable
+        image uid=… src=green-256x256.jpg alt='Green square'
+        image uid=… src=green-256x256.jpg

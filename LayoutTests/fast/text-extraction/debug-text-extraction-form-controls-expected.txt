@@ -4,9 +4,8 @@ root
     role=banner
         label='Main Page Title' 'Welcome to Test Page'
     navigation label='Main navigation'
-        list
-            link 'Section 1'
-            link 'Section 2'
+        link 'Section 1'
+        link 'Section 2'
     role=main
         section label='Interactive Elements'
             button describedby='This button does nothing' label='Test button' 'Click Me'
@@ -20,9 +19,8 @@ root
                 'This is some article content with highlighted text.'
             label='Related information'
                 'Related Links'
-                list
-                    link 'Example Link'
-                    link 'Test Link'
+                link 'Example Link'
+                link 'Test Link'
             role=region
                 role=status 'Ready'
                 button 'Update Status'
