@@ -191,7 +191,6 @@ void WebLockManager::request(const String& name, Ref<WebLockGrantedCallback>&& g
 
 void WebLockManager::request(const String& name, Options&& options, Ref<WebLockGrantedCallback>&& grantedCallback, Ref<DeferredPromise>&& releasePromise)
 {
-    UNUSED_PARAM(name);
     RefPtr context = scriptExecutionContext();
     if (!context) {
         releasePromise->reject(ExceptionCode::InvalidStateError, "Context is invalid"_s);
