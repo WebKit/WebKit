@@ -50,6 +50,12 @@ class MacOSInlineMediaControls extends InlineMediaControls
             this.element.classList.add("narrowviewer");
             this.fullscreenButton.isFullscreen = true;
         }
+
+        for (let clickEvent of ["click", "mousedown", "mouseup", "pointerdown", "pointerup", "touchstart", "touchend"]) {
+            this.bottomControlsBar.element.addEventListener(clickEvent, (event) => {
+                event.stopPropagation();
+            });
+        }
     }
 
     _setupVolumeSliderConfiguration()
