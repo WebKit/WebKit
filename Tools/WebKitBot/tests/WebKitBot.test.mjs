@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {buildGitWebkitRevertCommand, extractRevisionsAndReason, extractTextIfMentioned, extractCommandAndArgs} from "../src/WebKitBot.mjs";
+import {buildGitWebkitRevertCommand, extractRevisionsAndReason, extractTextIfMentioned, extractCommandAndArgs} from "../src/CommandParser.mjs";
 const WebKitBotID = 42;
 
 test("buildGitWebkitRevertCommand skips style checks with a reason", () => {
