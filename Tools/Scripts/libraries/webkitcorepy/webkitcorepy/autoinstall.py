@@ -40,7 +40,7 @@ import zipfile
 from collections import defaultdict
 from contextlib import contextmanager
 from logging import NullHandler
-from webkitcorepy import log
+
 from webkitcorepy.version import Version
 from webkitcorepy.file_lock import FileLock
 
@@ -48,6 +48,8 @@ from html.parser import HTMLParser
 from urllib.request import urlopen
 from urllib.error import URLError
 from urllib.parse import urlparse
+
+log = logging.getLogger('webkitcorepy')
 
 
 class SimplyPypiIndexPageParser(HTMLParser):

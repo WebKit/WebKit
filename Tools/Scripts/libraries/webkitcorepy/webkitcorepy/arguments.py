@@ -23,7 +23,8 @@
 import argparse
 import logging
 
-from webkitcorepy import log
+
+log = logging.getLogger('webkitcorepy')
 
 
 class NoAction(argparse.Action):

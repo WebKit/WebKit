@@ -20,6 +20,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import logging
 import bisect
 import collections
 import importlib
@@ -29,8 +30,11 @@ import signal
 import threading
 import time
 
-from webkitcorepy import log, string_utils
+from webkitcorepy import string_utils
+
 from webkitcorepy.call_by_need import CallByNeed
+
+log = logging.getLogger('webkitcorepy')
 
 mock = CallByNeed(lambda: importlib.import_module('unittest.mock'))
 

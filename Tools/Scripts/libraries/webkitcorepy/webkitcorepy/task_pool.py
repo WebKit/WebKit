@@ -28,7 +28,9 @@ import queue as Queue
 import signal
 import sys
 
-from webkitcorepy import OutputCapture, Timeout, log
+from webkitcorepy import OutputCapture, Timeout
+
+log = logging.getLogger('webkitcorepy')
 
 
 class _Message(object):

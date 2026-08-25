@@ -25,8 +25,11 @@ import io
 import logging
 import sys
 
-from webkitcorepy import log, mocks
+from webkitcorepy import mocks
+
 from webkitcorepy.string_utils import StringIO
+
+log = logging.getLogger('webkitcorepy')
 
 
 class LoggerCapture(object):
