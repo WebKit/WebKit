@@ -274,6 +274,7 @@ if (ENABLE_WEBCORE)
         Tests/WebCore/SharedBufferTest.cpp
         Tests/WebCore/StyleGradient.cpp
         Tests/WebCore/TestPlatformStrategies.cpp
+        Tests/WebCore/TextEncoderStreamEncoder.cpp
         Tests/WebCore/TextIterator.cpp
         Tests/WebCore/TimeRanges.cpp
         Tests/WebCore/TransformationMatrix.cpp

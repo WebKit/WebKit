@@ -823,6 +823,7 @@
 				WebCore/TestPlatformStrategies.cpp,
 				WebCore/TextBoundaries.cpp,
 				WebCore/TextCodec.cpp,
+				WebCore/TextEncoderStreamEncoder.cpp,
 				WebCore/TextIterator.cpp,
 				WebCore/TimeRanges.cpp,
 				WebCore/TransformationMatrix.cpp,

@@ -1436,6 +1436,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     dom/StyledElement.h
     dom/TaskSource.h
     dom/Text.h
+    dom/TextEncoderStreamEncoder.h
     dom/TextEvent.h
     dom/TextEventInputType.h
     dom/ToggleEvent.h
