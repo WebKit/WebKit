@@ -276,11 +276,6 @@ bool AudioBufferSourceNode::renderFromBuffer(AudioBus& bus, unsigned destination
         // For a negative playback rate, only an offset before the loop start is clamped, to the
         // loop start. An offset past the loop end is left alone so playback descends into the loop.
         m_virtualReadIndex = virtualMinFrame;
-    } else if (m_virtualReadIndex >= bufferLength) {
-        // The playhead starts past the end of the buffer, e.g. for an offset at the buffer
-        // duration. There is nothing to read, so output silence rather than a partially
-        // written bus.
-        return false;
     }
 
     // Sanity check that our playback rate isn't larger than the loop size.
@@ -297,6 +292,20 @@ bool AudioBufferSourceNode::renderFromBuffer(AudioBus& bus, unsigned destination
     if (startFrameOffset < 0 && pitchRate) {
         double skippedFrames = std::abs(startFrameOffset * pitchRate);
         virtualReadIndex += reverse ? -skippedFrames : skippedFrames;
+    }
+
+    // With a negative playback rate the playhead can start at or past the end of the buffer, since
+    // offset is only clamped to [0, duration]. Those frames are outside the buffer and so are
+    // silent; playback picks up once the playhead descends into the buffer.
+    // https://webaudio.github.io/web-audio-api/#playback-AudioBufferSourceNode
+    if (reverse) {
+        while (framesToProcess > 0 && virtualReadIndex >= bufferLength) {
+            for (unsigned i = 0; i < numberOfChannels; ++i)
+                m_destinationChannels[i][writeIndex] = 0;
+            ++writeIndex;
+            --framesToProcess;
+            virtualReadIndex += pitchRate;
+        }
     }
 
     bool needsInterpolation = virtualReadIndex != floor(virtualReadIndex)
