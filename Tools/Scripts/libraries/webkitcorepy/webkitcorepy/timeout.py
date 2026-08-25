@@ -52,7 +52,7 @@ class Timeout(object):
             if not other:
                 return False
             if not isinstance(other, Timeout.Data):
-                raise ValueError('Expected {} in comparison, received {}').format(Timeout.Data, type(other))
+                raise ValueError('Expected {} in comparison, received {}'.format(Timeout.Data, type(other)))
             return self.alarm_time < other.alarm_time
 
     class Exception(Exception):
@@ -114,6 +114,8 @@ class Timeout(object):
         if cls.difference(current_time=current_time) != 0:
             return
         current = cls.current()
+        if not current:
+            return
         current.triggered = True
         cls.bind()
         current.handler(Timeout.SIGALRM, None)

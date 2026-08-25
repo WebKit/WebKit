@@ -89,7 +89,7 @@ class Editor(object):
         return cls(
             name='vi',
             path=path,
-            command=[path],
+            command=[path] if path else None,
         )
 
     @classmethod
@@ -98,7 +98,7 @@ class Editor(object):
         return cls(
             name='open',
             path=path,
-            command=[path, '-t'],
+            command=[path, '-t'] if path else None,
             wait=['--wait-apps'],
         )
 

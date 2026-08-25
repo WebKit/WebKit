@@ -185,19 +185,31 @@ class Version(object):
     def __lt__(self, other):
         if other is None:
             return False
-        return tuple(self) < tuple(other)
+        try:
+            return tuple(self) < tuple(other)
+        except TypeError:
+            return NotImplemented
 
     def __le__(self, other):
         if other is None:
             return False
-        return tuple(self) <= tuple(other)
+        try:
+            return tuple(self) <= tuple(other)
+        except TypeError:
+            return NotImplemented
 
     def __gt__(self, other):
         if other is None:
             return True
-        return tuple(self) > tuple(other)
+        try:
+            return tuple(self) > tuple(other)
+        except TypeError:
+            return NotImplemented
 
     def __ge__(self, other):
         if other is None:
             return True
-        return tuple(self) >= tuple(other)
+        try:
+            return tuple(self) >= tuple(other)
+        except TypeError:
+            return NotImplemented

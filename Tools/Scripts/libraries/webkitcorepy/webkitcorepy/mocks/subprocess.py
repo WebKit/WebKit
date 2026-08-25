@@ -72,7 +72,7 @@ class Subprocess(ContextStack):
             env = kwargs.pop('env', None)
             generator = kwargs.pop('generator', None)
             if kwargs.keys():
-                raise TypeError('__init__() got an unexpected keyword argument {}'.format(kwargs.keys()[0]))
+                raise TypeError('__init__() got an unexpected keyword argument {}'.format(next(iter(kwargs))))
 
             if isinstance(args, str) or isinstance(args, unicode):
                 self.args = [args]
@@ -91,7 +91,7 @@ class Subprocess(ContextStack):
             input = kwargs.pop('input', None)
             env = kwargs.pop('env', None)
             if kwargs.keys():
-                raise TypeError('matches() got an unexpected keyword argument {}'.format(kwargs.keys()[0]))
+                raise TypeError('matches() got an unexpected keyword argument {}'.format(next(iter(kwargs))))
 
             if len(self.args) > len(args):
                 return False
@@ -123,7 +123,7 @@ class Subprocess(ContextStack):
             input = kwargs.pop('input', None)
             env = kwargs.pop('env', dict())
             if kwargs.keys():
-                raise TypeError('__call__() got an unexpected keyword argument {}'.format(kwargs.keys()[0]))
+                raise TypeError('__call__() got an unexpected keyword argument {}'.format(next(iter(kwargs))))
             return self.generator(*args, cwd=cwd, input=input, env=env)
 
         @classmethod
@@ -177,7 +177,7 @@ class Subprocess(ContextStack):
         if all([isinstance(arg, self.CommandRoute) for arg in args]):
             self.ordered = kwargs.pop('ordered', False)
             if kwargs.keys():
-                raise TypeError('__init__() got an unexpected keyword argument {}'.format(kwargs.keys()[0]))
+                raise TypeError('__init__() got an unexpected keyword argument {}'.format(next(iter(kwargs))))
             self.completions = list(args) if self.ordered else sorted(args, key=cmp_to_key(self.CommandRoute.compare))
         elif any([isinstance(arg, self.CommandRoute) for arg in args]):
             raise TypeError('mocks.Subprocess arguments must be of a consistent type')
