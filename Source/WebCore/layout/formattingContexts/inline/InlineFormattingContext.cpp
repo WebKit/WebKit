@@ -533,8 +533,10 @@ bool InlineFormattingContext::createDisplayContentForLineFromCachedContent(const
         return false;
     }
 
-    lineContent.lineGeometry.logicalTopLeft = { constraints.horizontal().logicalLeft, constraints.logicalTop() };
+    auto logicalTopLeft = InlineLayoutPoint { constraints.horizontal().logicalLeft, constraints.logicalTop() };
+    lineContent.lineGeometry.logicalTopLeft = logicalTopLeft;
     lineContent.lineGeometry.logicalWidth = constraints.horizontal().logicalWidth;
+    lineContent.lineGeometry.initialLogicalTopLeft = logicalTopLeft;
     lineContent.contentGeometry.logicalLeft = InlineFormattingUtils::horizontalAlignmentOffset(root().style(), lineContent.contentGeometry.logicalWidth, lineContent.lineGeometry.logicalWidth, lineContent.hangingContent.logicalWidth, true);
 
     auto canUseSimplifiedDisplayContentBuild = mayUseSimplifiedDisplayContentBuild && lineContent.hasContentfulInFlowContent();
