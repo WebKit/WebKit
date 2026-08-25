@@ -52,8 +52,10 @@ DECLARE_SYSTEM_HEADER
 #endif
 
 #import <AppKit/NSGestureRecognizer_Private.h>
+#import <AppKit/NSMagnificationGestureRecognizer_Private.h>
 #import <AppKit/NSPanGestureRecognizer_Private.h>
 #import <AppKit/NSPressGestureRecognizer_Private.h>
+#import <AppKit/NSRotationGestureRecognizer_Private.h>
 
 #if HAVE(NSVIEW_CORNER_CONFIGURATION)
 #import <AppKit/NSViewCornerConfiguration_Private.h>
