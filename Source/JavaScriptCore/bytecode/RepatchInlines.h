@@ -233,7 +233,8 @@ ALWAYS_INLINE void* virtualForWithFunction(VM& vm, JSCell* owner, CallFrame* cal
     JSValue calleeAsValue = calleeFrame->guaranteedJSValueCallee();
     calleeAsFunctionCell = getJSFunction(calleeAsValue);
     if (!calleeAsFunctionCell) [[unlikely]] {
-        if (jsDynamicCast<InternalFunction*>(calleeAsValue)) {
+        if (auto* internalFunction = jsDynamicCast<InternalFunction*>(calleeAsValue)) {
+            calleeAsFunctionCell = internalFunction;
             CodePtr<JSEntryPtrTag> codePtr = vm.getCTIInternalFunctionTrampolineFor(kind);
             ASSERT(!!codePtr);
             return codePtr.taggedPtr();
