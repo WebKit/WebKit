@@ -12,6 +12,6 @@ FAIL AudioBufferSourceNode handles out-of-bounds start offset correctly assert_e
 PASS AudioBufferSourceNode performs sub-sample interpolation backwards
 PASS AudioBufferSourceNode ran successfully with zero delta and playbackRate 0
 PASS AudioBufferSourceNode loops backwards using entire buffer when loopStart > loopEnd
-FAIL AudioBufferSourceNode loops backwards using clamped loopStart when loopStart < 0 assert_array_equals: expected property 4 to be 2 but got 4 (expected array [4, 3, 2, 1, 2, 1, 2, 1] got object "4,3,2,1,4,3,2,1")
+PASS AudioBufferSourceNode loops backwards using clamped loopStart when loopStart < 0
 PASS AudioBufferSourceNode loops backwards using entire buffer when loopEnd < 0
 

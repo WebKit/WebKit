@@ -32,8 +32,8 @@ PASS   Case 12: illegal loop: loopStartFrame > loopEndFrame is identical to the 
 PASS   Case 12: illegal loop: loopStartFrame > loopEndFrame: tail contains only the constant 0.
 PASS   Case 13: illegal loop: loopStartFrame == loopEndFrame is identical to the array [0,1,2,3,4,5,6,7,0,1,2,3,4,5,6,7...].
 PASS   Case 13: illegal loop: loopStartFrame == loopEndFrame: tail contains only the constant 0.
-PASS   Case 14: illegal loop: loopStartFrame < 0 is identical to the array [0,1,2,3,4,5,6,7,0,1,2,3,4,5,6,7...].
-PASS   Case 14: illegal loop: loopStartFrame < 0: tail contains only the constant 0.
+PASS   Case 14: illegal loop: loopStartFrame < 0 (clamps to 0) is identical to the array [0,1,2,0,1,2,0,1,2,0,1,2,0,1,2,0...].
+PASS   Case 14: illegal loop: loopStartFrame < 0 (clamps to 0): tail contains only the constant 0.
 PASS   Case 15: illegal loop: loopEndFrame > bufferLength is identical to the array [0,1,2,3,4,5,6,7,0,1,2,3,4,5,6,7...].
 PASS   Case 15: illegal loop: loopEndFrame > bufferLength: tail contains only the constant 0.
 PASS   Case 16: loop from 3 -> 6 with offset 1 for 20 frames is identical to the array [1,2,3,4,5,3,4,5,3,4,5,3,4,5,3,4...].
