@@ -139,6 +139,7 @@ function allHandlersShouldThrow(proxy) {
     shouldThrowNullHandler(() => Reflect.deleteProperty(proxy, "x"));
     shouldThrowNullHandler(() => Reflect.defineProperty(proxy, "x", {value: 40, enumerable: true, configurable: true}));
     shouldThrowNullHandler(() => Reflect.ownKeys(proxy));
+    shouldThrowNullHandler(() => Reflect.apply(proxy, this, []));
     shouldThrowNullHandler(() => Reflect.construct(proxy, []));
 }
 
