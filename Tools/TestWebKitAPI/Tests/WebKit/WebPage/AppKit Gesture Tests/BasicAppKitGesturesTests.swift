@@ -1251,6 +1251,68 @@ extension AppKitGesturesTests.Basic {
 
         // The test succeeds if it does not timeout.
     }
+
+    @Test
+    func consecutiveQuickFlicksAccelerateScrolling() async throws {
+        let html = """
+            <body style="margin: 0; width: 100%; height: 200000px;
+                         background: repeating-linear-gradient(to bottom, blue 0 50px, white 50px 100px);">
+            </body>
+            """
+
+        let center = screenBounds(ofPointInWindowCoordinates: window.frame.center)
+        let down = CGPoint(x: center.x, y: center.y - 250)
+        let up = CGPoint(x: center.x, y: center.y + 250)
+
+        func settledScrollY() async throws -> Double {
+            var previous = try await page.callJavaScript(JavaScriptMessages.ScrollPosition()).y
+            var stableSamples = 0
+
+            for _ in 0..<60 {
+                try await Task.sleep(for: .milliseconds(100))
+                let current = try await page.callJavaScript(JavaScriptMessages.ScrollPosition()).y
+
+                if abs(current - previous) < 1 {
+                    stableSamples += 1
+                    if stableSamples >= 2 { return current }
+                } else {
+                    stableSamples = 0
+                }
+
+                previous = current
+            }
+
+            return previous
+        }
+
+        func finalFlingDistance(flicks count: Int, reverseLast: Bool = false) async throws -> Double {
+            try await page.load(html: html).wait()
+            await page.waitForNextPresentationUpdate()
+
+            await recap.play { composer in
+                for i in 0..<count {
+                    let isLast = i == count - 1
+                    composer._wk_scroll(withStart: center, end: (isLast && reverseLast) ? up : down, duration: .seconds(0.08))
+                    if !isLast {
+                        composer.advanceTime(0.05)
+                    }
+                }
+            }
+
+            let flingStart = try await page.callJavaScript(JavaScriptMessages.ScrollPosition()).y
+            let settled = try await settledScrollY()
+            return Swift.abs(settled - flingStart)
+        }
+
+        let single = try await finalFlingDistance(flicks: 1) // count 1 -> multiplier 1
+        let accelerated = try await finalFlingDistance(flicks: 6) // final count 5 -> ~5x
+        let reversed = try await finalFlingDistance(flicks: 6, reverseLast: true) // reversal resets -> ~1x
+
+        // Accelerated final fling travels far beyond an unaccelerated one (actual ratio ~5x).
+        #expect(accelerated > single * 2)
+        // Reversing the final swipe resets the chain, so that fling is not accelerated.
+        #expect(accelerated > reversed * 2)
+    }
 }
 
 nonisolated(nonsending) private func withSwizzledContextMenu(perform body: () async -> Void) async {

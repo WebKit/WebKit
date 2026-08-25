@@ -43,7 +43,7 @@ WebWheelEvent::WebWheelEvent(WebEvent&& event, const IntPoint& position, const I
 }
 
 #if PLATFORM(COCOA)
-WebWheelEvent::WebWheelEvent(WebEvent&& event, const IntPoint& position, const IntPoint& globalPosition, const FloatSize& delta, const FloatSize& wheelTicks, Granularity granularity, bool directionInvertedFromDevice, Phase phase, Phase momentumPhase, bool hasPreciseScrollingDeltas, uint32_t scrollCount, const WebCore::FloatSize& unacceleratedScrollingDelta, MonotonicTime ioHIDEventTimestamp, std::optional<WebCore::FloatSize> rawPlatformDelta, MomentumEndType momentumEndType, WebEventInputSource inputSource)
+WebWheelEvent::WebWheelEvent(WebEvent&& event, const IntPoint& position, const IntPoint& globalPosition, const FloatSize& delta, const FloatSize& wheelTicks, Granularity granularity, bool directionInvertedFromDevice, Phase phase, Phase momentumPhase, bool hasPreciseScrollingDeltas, uint32_t scrollCount, const WebCore::FloatSize& unacceleratedScrollingDelta, MonotonicTime ioHIDEventTimestamp, std::optional<WebCore::FloatSize> rawPlatformDelta, MomentumEndType momentumEndType, WebEventInputSource inputSource, float momentumFastScrollMultiplier)
     : WebEvent(WTF::move(event))
     , m_position(position)
     , m_globalPosition(globalPosition)
@@ -60,6 +60,7 @@ WebWheelEvent::WebWheelEvent(WebEvent&& event, const IntPoint& position, const I
     , m_scrollCount(scrollCount)
     , m_unacceleratedScrollingDelta(unacceleratedScrollingDelta)
     , m_inputSource(inputSource)
+    , m_momentumFastScrollMultiplier(momentumFastScrollMultiplier)
 {
     ASSERT(isWheelEventType(type()));
 }

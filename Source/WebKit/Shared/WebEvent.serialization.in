@@ -263,6 +263,7 @@ class WebKit::WebWheelEvent : WebKit::WebEvent {
     std::optional<WebCore::FloatSize> rawPlatformDelta();
     WebKit::WebWheelEvent::MomentumEndType momentumEndType();
     WebKit::WebEventInputSource inputSource();
+    float momentumFastScrollMultiplier();
 #endif
 };
 
