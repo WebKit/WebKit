@@ -634,6 +634,13 @@ FloatRect LineLayout::constructContent(const Layout::InlineLayoutState& inlineLa
     return damagedRect;
 }
 
+static void relayoutAfterPaginationOffset(RenderBox& renderer)
+{
+    // The box's own content may break differently at the position it moved to.
+    renderer.markForPaginationRelayoutIfNeeded();
+    renderer.layoutIfNeeded();
+}
+
 void LineLayout::updateRenderTreePositions(const Vector<LineAdjustment>& lineAdjustments, const Layout::InlineLayoutState& inlineLayoutState, bool didDiscardContent)
 {
     if (!m_inlineContent && !didDiscardContent)
@@ -654,6 +661,18 @@ void LineLayout::updateRenderTreePositions(const Vector<LineAdjustment>& lineAdj
         for (auto& box : m_inlineContent->displayContent().boxes) {
             if (box.isInlineBox() || box.isTextOrSoftLineBreak())
                 continue;
+
+            if (box.isBlockLevelBox()) {
+                // Block layout laid this box out against the position its line had before pagination moved the line
+                // (see layoutWithFormattingContextForBlockInInline). The line moved, this renderer did not.
+                auto adjustmentOffset = visualAdjustmentOffset(box.lineIndex());
+                if (!adjustmentOffset.isZero()) {
+                    CheckedRef blockRenderer = downcast<RenderBox>(*box.layoutBox().rendererForIntegration());
+                    blockRenderer->move(adjustmentOffset.width(), adjustmentOffset.height());
+                    relayoutAfterPaginationOffset(blockRenderer);
+                }
+                continue;
+            }
 
             auto& layoutBox = box.layoutBox();
             if (!layoutBox.isAtomicInlineBox())
@@ -721,11 +740,8 @@ void LineLayout::updateRenderTreePositions(const Vector<LineAdjustment>& lineAdj
                     renderer->repaint();
             }
 
-            if (paginationOffset) {
-                // Float content may be affected by the new position.
-                renderer->markForPaginationRelayoutIfNeeded();
-                renderer->layoutIfNeeded();
-            }
+            if (paginationOffset)
+                relayoutAfterPaginationOffset(renderer);
 
             continue;
         }
