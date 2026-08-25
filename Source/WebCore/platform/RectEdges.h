@@ -256,6 +256,8 @@ inline RectEdges<bool> operator&=(RectEdges<bool>& a, const RectEdges<bool>& b)
     return a;
 }
 
+using RectEdgesBool = RectEdges<bool>;
+
 template<typename T>
 TextStream& operator<<(TextStream& ts, const RectEdges<T>& edges)
 {

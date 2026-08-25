@@ -1,0 +1,60 @@
+// Copyright (C) 2026 Apple Inc. All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions
+// are met:
+// 1. Redistributions of source code must retain the above copyright
+//    notice, this list of conditions and the following disclaimer.
+// 2. Redistributions in binary form must reproduce the above copyright
+//    notice, this list of conditions and the following disclaimer in the
+//    documentation and/or other materials provided with the distribution.
+//
+// THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
+// EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+// PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
+// CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+// EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+// PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+// PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+// OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+// (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+// OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+PRODUCT_NAME = WebKitSwiftMacros;
+EXECUTABLE_PREFIX = lib;
+MACH_O_TYPE = mh_dylib;
+
+// A Swift macro is a compiler plugin: swiftc dlopens it on the machine running
+// the build. It is therefore always built for the host, even when the rest of
+// the build is cross-compiling to iOS/watchOS/tvOS, and it is never installed.
+// Consumers find it at $(SYMROOT)/$(CONFIGURATION), which is where a macosx
+// target's products land regardless of the enclosing build's platform.
+SDKROOT = macosx;
+SUPPORTED_PLATFORMS = macosx;
+SKIP_INSTALL = YES;
+INSTALL_PATH = /usr/local/lib/webkit-swift-macros;
+
+// The plugin only ever runs on the machine doing the build, and the toolchain's
+// swift-syntax dylibs are single-arch, so building the usual universal slices
+// would fail to link.
+ARCHS = $(NATIVE_ARCH_ACTUAL);
+ONLY_ACTIVE_ARCH = YES;
+
+SWIFT_VERSION = 5.0;
+
+// swift-syntax ships prebuilt inside the toolchain, so WebKit does not vendor
+// it. Only SwiftSyntax and SwiftSyntaxMacros are usable here; the toolchain's
+// SwiftCompilerPluginMessageHandling interface is package-scoped, which is why
+// this is a dylib loaded with -load-plugin-library rather than an executable
+// plugin loaded with -load-plugin-executable.
+WK_SWIFT_SYNTAX_LIBRARY_DIR = $(TOOLCHAIN_DIR)/usr/lib/swift/host;
+SWIFT_INCLUDE_PATHS = $(inherited) $(WK_SWIFT_SYNTAX_LIBRARY_DIR);
+LIBRARY_SEARCH_PATHS = $(inherited) $(WK_SWIFT_SYNTAX_LIBRARY_DIR);
+OTHER_LDFLAGS = -lSwiftSyntax -lSwiftSyntaxMacros -Wl,-rpath,$(WK_SWIFT_SYNTAX_LIBRARY_DIR);
+
+// Deliberately not inherited: the shared Swift flags configure C++ interop and
+// load this very plugin, which would be circular.
+OTHER_SWIFT_FLAGS = ;
+SWIFT_OBJC_INTEROP_MODE = ;
+GCC_PREFIX_HEADER = ;

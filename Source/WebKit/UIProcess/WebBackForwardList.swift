@@ -57,16 +57,7 @@ extension WebKit.VectorBackForwardListItemState: CxxVector {
 }
 
 extension WebKit.WebBackForwardListItem {
-    private borrowing func getUrlCopy() -> WTF.String {
-        // Safety: we immediately make a copy of the string before
-        // it could be freed or mutated. FIXME(rdar://145054011): remove
-        // this.
-        unsafe __urlUnsafe().pointee
-    }
-
-    var url: WTF.String {
-        getUrlCopy()
-    }
+    @CxxCopy var url: WTF.String
 }
 
 // Some of these utility functions would be better in WebBackForwardListSwiftUtilities.h
