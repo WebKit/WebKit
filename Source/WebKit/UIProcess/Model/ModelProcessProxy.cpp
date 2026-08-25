@@ -36,6 +36,7 @@
 #include "ModelProcessProxyMessages.h"
 #include "ProcessTerminationReason.h"
 #include "ProvisionalPageProxy.h"
+#include "SecurityFlagsController.h"
 #include "WebPageGroup.h"
 #include "WebPageMessages.h"
 #include "WebPageProxy.h"
@@ -88,6 +89,7 @@ ModelProcessProxy::ModelProcessProxy()
 
     ModelProcessCreationParameters parameters;
     parameters.auxiliaryProcessParameters = auxiliaryProcessParameters();
+    parameters.securityFlags.replaceWith(SecurityFlagsController::singleton().securityFlags());
     parameters.parentPID = getCurrentProcessID();
 
 #if PLATFORM(COCOA)
@@ -170,6 +172,11 @@ void ModelProcessProxy::createModelProcessConnection(WebProcessProxy& webProcess
 void ModelProcessProxy::sharedPreferencesForWebProcessDidChange(WebProcessProxy& webProcessProxy, SharedPreferencesForWebProcess&& sharedPreferencesForWebProcess, CompletionHandler<void()>&& completionHandler)
 {
     sendWithAsyncReply(Messages::ModelProcess::SharedPreferencesForWebProcessDidChange { webProcessProxy.coreProcessIdentifier(), WTF::move(sharedPreferencesForWebProcess) }, WTF::move(completionHandler));
+}
+
+void ModelProcessProxy::securityFlagsDidChange(const SecurityFlags& securityFlags)
+{
+    send(Messages::ModelProcess::SecurityFlagsDidChange { securityFlags }, 0);
 }
 
 void ModelProcessProxy::modelProcessExited(ProcessTerminationReason reason)

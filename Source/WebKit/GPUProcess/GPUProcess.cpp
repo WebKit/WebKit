@@ -144,6 +144,11 @@ void GPUProcess::sharedPreferencesForWebProcessDidChange(WebCore::ProcessIdentif
     completionHandler();
 }
 
+void GPUProcess::securityFlagsDidChange(SecurityFlags&& securityFlags)
+{
+    m_securityFlags.replaceWith(securityFlags);
+}
+
 void GPUProcess::removeGPUConnectionToWebProcess(GPUConnectionToWebProcess& connection)
 {
     RELEASE_LOG(Process, "%p - GPUProcess::removeGPUConnectionToWebProcess: processIdentifier=%" PRIu64, this, connection.webProcessIdentifier().toUInt64());
@@ -222,6 +227,7 @@ void GPUProcess::initializeGPUProcess(GPUProcessCreationParameters&& parameters,
     CompletionHandlerCallingScope callCompletionHandler(WTF::move(completionHandler));
 
     applyProcessCreationParameters(WTF::move(parameters.auxiliaryProcessParameters));
+    m_securityFlags.replaceWith(parameters.securityFlags);
     RELEASE_LOG(Process, "%p - GPUProcess::initializeGPUProcess:", this);
     WTF::Thread::setCurrentThreadIsUserInitiated();
     WebCore::initializeCommonAtomStrings();

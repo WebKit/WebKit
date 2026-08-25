@@ -23,6 +23,8 @@ $(BUILT_PRODUCTS_DIR)/usr/local/include/wtf/PlatformLegacy.h
 $(BUILT_PRODUCTS_DIR)/usr/local/include/wtf/PlatformOS.h
 $(BUILT_PRODUCTS_DIR)/usr/local/include/wtf/PlatformUse.h
 $(BUILT_PRODUCTS_DIR)/usr/local/include/wtf/Scripts/GeneratePreferences.rb
+$(BUILT_PRODUCTS_DIR)/usr/local/include/wtf/Scripts/GenerateSecurityFlags.rb
+$(BUILT_PRODUCTS_DIR)/usr/local/include/wtf/Scripts/Preferences/SecurityFlags.yaml
 $(BUILT_PRODUCTS_DIR)/usr/local/include/wtf/Scripts/Preferences/UnifiedWebPreferences.yaml
 $(BUILT_PRODUCTS_DIR)/usr/local/include/wtf/Scripts/Preferences/WebPreferences.yaml
 $(BUILT_PRODUCTS_DIR)/usr/local/include/wtf/Scripts/Preferences/WebPreferencesDebug.yaml
@@ -207,6 +209,9 @@ $(PROJECT_DIR)/Scripts/PreferencesTemplates/WebPreferencesGetterSetters.cpp.erb
 $(PROJECT_DIR)/Scripts/PreferencesTemplates/WebPreferencesKeys.cpp.erb
 $(PROJECT_DIR)/Scripts/PreferencesTemplates/WebPreferencesKeys.h.erb
 $(PROJECT_DIR)/Scripts/PreferencesTemplates/WebPreferencesStoreDefaultsMap.cpp.erb
+$(PROJECT_DIR)/Scripts/SecurityFlagsTemplates/SecurityFlags.cpp.erb
+$(PROJECT_DIR)/Scripts/SecurityFlagsTemplates/SecurityFlags.h.erb
+$(PROJECT_DIR)/Scripts/SecurityFlagsTemplates/SecurityFlags.serialization.in.erb
 $(PROJECT_DIR)/Scripts/create-http-header-serialization-interface.py
 $(PROJECT_DIR)/Scripts/generate-derived-log-sources.py
 $(PROJECT_DIR)/Scripts/generate-https-upgrade-database.sh

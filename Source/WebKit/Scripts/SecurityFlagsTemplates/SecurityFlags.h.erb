@@ -1,0 +1,104 @@
+/*
+ * <%= @warning %>
+ *
+ * Copyright (C) 2026 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#include <array>
+#include <optional>
+#include <wtf/BitSet.h>
+#include <wtf/text/StringView.h>
+
+namespace WebKit {
+
+// Generated from Source/WTF/Scripts/Preferences/SecurityFlags.yaml. Stores the *disabled* flags, so zero means every fix is enforced.
+// Reads are atomic per flag, so a check may run on any thread. Never send this to the WebContent process.
+struct SecurityFlags {
+    // A flag's bit is its sorted position and is not stable across versions; the wire form carries names, not bits.
+    static constexpr size_t flagCount = <%= @securityFlags.size %>;
+
+    SecurityFlags() = default;
+    SecurityFlags(const SecurityFlags&) = default;
+
+    // Overwriting the words in place is not safe against a reader on another thread, so replaceWith() is the only way.
+    SecurityFlags& operator=(const SecurityFlags&) = delete;
+
+<% @securityFlags.each do |flag| -%>
+<%- if flag.condition -%>
+#if <%= flag.condition %>
+<%- end -%>
+    // <%= flag.humanReadableDescription %>
+    bool <%= flag.name %>() const { return !m_disabledFlags.concurrentGet(<%= flag.index %>); }
+<%- if flag.condition -%>
+#endif
+<%- end -%>
+<% end -%>
+
+    // False when this build has no flag by that name, which is expected rather than an error.
+    bool disableFlagNamed(StringView);
+
+    // Applies one flag at a time, so a reader on another thread always sees a well-defined value for the flag it asked about.
+    void replaceWith(const SecurityFlags&);
+
+    bool operator==(const SecurityFlags&) const = default;
+
+    // Nullopt if this build has no flag by that name.
+    std::optional<bool> isFlagEnabledNamedForTesting(StringView) const;
+
+    // Plain words rather than the BitSet, so the wire form does not depend on which word type BitSet picked.
+    static constexpr size_t ipcWordCount = (flagCount + 63) / 64;
+
+    std::array<uint64_t, ipcWordCount> disabledFlagsForIPC() const
+    {
+        std::array<uint64_t, ipcWordCount> words { };
+        for (size_t index = 0; index < flagCount; ++index) {
+            if (m_disabledFlags.get(index))
+                words[index / 64] |= 1ULL << (index % 64);
+        }
+        return words;
+    }
+
+    static std::optional<SecurityFlags> fromDisabledFlagsForIPC(std::array<uint64_t, ipcWordCount> words)
+    {
+        // A bit belonging to no flag can only be a sender bug, so reject rather than quietly dropping it.
+        for (size_t index = flagCount; index < ipcWordCount * 64; ++index) {
+            if (words[index / 64] & (1ULL << (index % 64)))
+                return std::nullopt;
+        }
+
+        SecurityFlags flags;
+        for (size_t index = 0; index < flagCount; ++index) {
+            if (words[index / 64] & (1ULL << (index % 64)))
+                flags.m_disabledFlags.set(index);
+        }
+        return flags;
+    }
+
+private:
+    WTF::BitSet<flagCount> m_disabledFlags;
+};
+
+} // namespace WebKit
