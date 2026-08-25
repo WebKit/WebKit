@@ -1,0 +1,161 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ allowTestOnlyIPC=true ] -->
+<html>
+<head>
+    <title>audio-session-category-cross-site-pause-resume</title>
+    <script src="/media-resources/video-test.js"></script>
+    <script src="/media-resources/media-source/mock-media-source.js"></script>
+    <script>
+
+    // rdar://180062104: on iOS with Site Isolation, pausing and resuming a live stream left
+    // it silent. The audio session never took the MediaPlayback category, so playback
+    // produced no audio and the site fell back to muted playback.
+    //
+    // The test stream is modelled on a live stream that starts video-only and gains its audio
+    // track after playback begins, which takes the session from silent to audible.
+
+    let source;
+    let videoSourceBuffer;
+    let audioSourceBuffer;
+    let bufferedTo = 0;
+    let frameResult;
+
+    if (window.internals)
+        internals.initializeMockMediaSource();
+
+    function append(sourceBuffer, buffer)
+    {
+        return new Promise(resolve => {
+            sourceBuffer.addEventListener('updateend', resolve, { once: true });
+            sourceBuffer.appendBuffer(buffer);
+        });
+    }
+
+    function appendSamples(sourceBuffer, trackID, start, end)
+    {
+        return append(sourceBuffer, makeASample(start, start, end - start, 1, trackID, SAMPLE_FLAG.SYNC, 1));
+    }
+
+    async function waitForCategory(category)
+    {
+        // The category is applied asynchronously, so poll rather than checking once.
+        let counter = 0;
+        while (++counter < 500 && internals.audioSessionCategory() != category)
+            await new Promise(resolve => setTimeout(resolve, 10));
+
+        testExpected('internals.audioSessionCategory()', category);
+    }
+
+    async function testSystemCategory(category)
+    {
+        const systemCategory = await internals.systemAudioSessionCategory();
+        reportExpected(systemCategory == category, 'internals.systemAudioSessionCategory()', '==', category, systemCategory);
+    }
+
+    function nextMessage()
+    {
+        return new Promise(resolve => window.addEventListener('message', event => resolve(event.data), { once: true }));
+    }
+
+    async function addAmbientCrossSiteFrame()
+    {
+        consoleWrite('** A cross-site frame starts WebAudio, so its process chooses AmbientSound.');
+        const message = nextMessage();
+        const frame = document.createElement('iframe');
+        frame.src = 'http://localhost:8080/media/resources/ambient-web-audio-frame.html';
+        document.body.appendChild(frame);
+        frameResult = await message;
+        testExpected('frameResult.state', 'running');
+        testExpected('frameResult.category', 'AmbientSound');
+    }
+
+    async function startVideoOnlyPlayback()
+    {
+        consoleWrite('<br>** Start a video-only stream, as a live stream does before its audio arrives.');
+        source = new MediaSource();
+        const sourceOpen = new Promise(resolve => source.addEventListener('sourceopen', resolve, { once: true }));
+        video.src = URL.createObjectURL(source);
+        await sourceOpen;
+
+        videoSourceBuffer = source.addSourceBuffer('video/mock; codecs=mock');
+        await append(videoSourceBuffer, makeAInit(3600, [makeATrack(1, 'mock', TRACK_KIND.VIDEO)]));
+        await appendSamples(videoSourceBuffer, 1, 0, 30);
+        bufferedTo = 30;
+        testExpected('video.audioTracks.length', 0);
+
+        // Matches iPhone behaviour, where the page cannot change the volume.
+        internals.setMediaElementVolumeLocked(video, true);
+
+        const playing = waitFor(video, 'playing', true);
+        runWithKeyDown(() => { run('video.play()') });
+        await playing;
+        testExpected('video.paused', false);
+    }
+
+    async function addAudioTrackMidPlayback()
+    {
+        consoleWrite('<br>** The audio track arrives while already playing.');
+        audioSourceBuffer = source.addSourceBuffer('audio/mock; codecs=mock');
+        await append(audioSourceBuffer, makeAInit(3600, [makeATrack(2, 'mock', TRACK_KIND.AUDIO)]));
+
+        await appendSamples(audioSourceBuffer, 2, 0, bufferedTo);
+        testExpected('video.audioTracks.length', 1);
+
+        consoleWrite('<br>** Unmuting makes it audible, so the category becomes MediaPlayback.');
+        runWithKeyDown(() => { run('video.muted = false') });
+        await waitFor(video, 'volumechange', true);
+        await waitForCategory('MediaPlayback');
+        await testSystemCategory('MediaPlayback');
+    }
+
+    async function pauseAndResume()
+    {
+        consoleWrite('<br>** Pause.');
+        run('video.pause()');
+        await waitFor(video, 'pause', true);
+        await waitForCategory('MediaPlayback');
+
+        consoleWrite('<br>** Resume. The category must come back to MediaPlayback, on this');
+        consoleWrite('** process and on the session the other processes share.');
+
+        await appendSamples(videoSourceBuffer, 1, bufferedTo, bufferedTo + 30);
+        await appendSamples(audioSourceBuffer, 2, bufferedTo, bufferedTo + 30);
+        bufferedTo += 30;
+
+        const playing = waitFor(video, 'playing', true);
+        runWithKeyDown(() => { run('video.play()') });
+        await playing;
+
+        testExpected('video.paused', false);
+        testExpected('video.muted', false);
+        await waitForCategory('MediaPlayback');
+        await testSystemCategory('MediaPlayback');
+    }
+
+    window.addEventListener('load', async () => {
+        if (!window.internals) {
+            failTest('This test requires internals!');
+            return;
+        }
+
+        findMediaElement();
+
+        internals.settings.setShouldManageAudioSessionCategory(true);
+        // Matches iPhone behaviour, where an audible rate change needs a user gesture.
+        internals.setMediaElementRestrictions(video, 'requireusergestureforaudioratechange');
+
+        failTestIn(20000);
+
+        await addAmbientCrossSiteFrame();
+        await startVideoOnlyPlayback();
+        await addAudioTrackMidPlayback();
+        await pauseAndResume();
+
+        endTest();
+    });
+
+    </script>
+</head>
+<body>
+    <video muted></video>
+</body>
+</html>
