@@ -49,6 +49,7 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToWasm(cons
     GPRReg scratch = wasmCallingConvention().prologueScratchGPRs[0];
     ASSERT(scratch != GPRReg::InvalidGPRReg);
     ASSERT(noOverlap(scratch, GPRInfo::wasmContextInstancePointer));
+    static_assert(WasmCallableFunction::offsetOfEntrypointLoadLocation() == WasmCallableFunction::offsetOfTargetInstance() + sizeof(void*));
 
     JIT_COMMENT(jit, "Store Callee's wasm callee for import function ", importIndex);
     jit.loadPtr(JIT::Address(GPRInfo::wasmContextInstancePointer, JSWebAssemblyInstance::offsetOfBoxedCallee(info, importIndex)), scratch);
@@ -56,14 +57,7 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToWasm(cons
     // On ARM64 this doesn't really matter, but on intel we need to worry about the pushed pc.
     jit.storeWasmCalleeToCalleeCallFrame(scratch, safeCast<int>(sizeof(CallerFrameAndPC)) - safeCast<int>(prologueStackPointerDelta()));
 
-    // FIXME: This could be a load pair.
-    // B3's call codegen ensures that the JSCell is a WebAssemblyFunction.
-    // While we're accessing that cacheline, also get the wasm entrypoint so we can tail call to it below.
-
-    jit.loadPtr(JIT::Address(GPRInfo::wasmContextInstancePointer, JSWebAssemblyInstance::offsetOfEntrypointLoadLocation(info, importIndex)), scratch);
-    // Get the callee's JSWebAssemblyInstance and set it as WasmContext's instance. The caller will take care of restoring its own JSWebAssemblyInstance.
-    // This switches the current instance.
-    jit.loadPtr(JIT::Address(GPRInfo::wasmContextInstancePointer, JSWebAssemblyInstance::offsetOfTargetInstance(info, importIndex)), GPRInfo::wasmContextInstancePointer); // JSWebAssemblyInstance*.
+    jit.loadPairPtr(GPRInfo::wasmContextInstancePointer, CCallHelpers::TrustedImm32(JSWebAssemblyInstance::offsetOfTargetInstance(info, importIndex)), GPRInfo::wasmContextInstancePointer, scratch);
 
     // FIXME the following code assumes that all JSWebAssemblyInstance have the same pinned registers. https://bugs.webkit.org/show_bug.cgi?id=162952
     // Set up the callee's baseMemoryPointer register as well as the memory size registers.
