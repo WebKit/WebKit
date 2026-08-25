@@ -5473,7 +5473,7 @@
                 "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/304062"}}
             },
             "test_dedicated_worker": {
-                "expected": { "all": { "status": ["TIMEOUT"], "bug": "webkit.org/b/282981"}}
+                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/304300", "note": "The imported WPT expects the worker script URL instead of the serialized worker origin"}}
             },
             "test_shared_worker": {
                 "expected": { "all": { "status": ["TIMEOUT"], "bug": "webkit.org/b/282981"}}
@@ -5520,7 +5520,7 @@
                 "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/288067"}}
             },
             "test_dedicated_worker": {
-                "expected": { "all": { "status": ["TIMEOUT"], "bug": "webkit.org/b/282981"}}
+                "expected": { "all": { "status": ["PASS"]}}
             },
             "test_shared_worker": {
                 "expected": { "all": { "status": ["TIMEOUT"], "bug": "webkit.org/b/282981"}}

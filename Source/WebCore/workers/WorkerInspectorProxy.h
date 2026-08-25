@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "FrameIdentifier.h"
 #include "PageIdentifier.h"
 #include "ScriptExecutionContextIdentifier.h"
 #include <wtf/CheckedPtr.h>
@@ -43,6 +44,7 @@
 namespace WebCore {
 
 class ScriptExecutionContext;
+class SecurityOriginData;
 class WorkerThread;
 
 enum class WorkerThreadStartMode;
@@ -81,7 +83,9 @@ public:
 
     WorkerThreadStartMode workerStartMode(ScriptExecutionContext&);
     void workerStarted(ScriptExecutionContext&, WorkerThread*, const URL&, const String& name);
+    void workerBecameExecutionReady(const SecurityOriginData&);
     void workerTerminated();
+    bool isExecutionReady() const { return m_isExecutionReady; }
 
     void resumeWorkerIfPaused();
     void connectToWorkerInspectorController(PageChannel&);
@@ -105,6 +109,9 @@ private:
     URL m_url;
     String m_name;
     CheckedPtr<PageChannel> m_pageChannel;
+    bool m_isExecutionReady { false };
+    bool m_wasTerminatedBeforeExecutionReady { false };
+    std::optional<FrameIdentifier> m_automationOwnerFrameIdentifier;
 };
 
 } // namespace WebCore

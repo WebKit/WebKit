@@ -59,6 +59,8 @@ public:
     virtual void addMessageToConsole(const JSC::MessageSource&, const JSC::MessageLevel&, const String&, const JSC::MessageType&, const WallTime&) = 0;
     virtual void scriptRealmCreated(FrameIdentifier, const SecurityOriginData&) = 0;
     virtual void scriptRealmDestroyed(FrameIdentifier) = 0;
+    virtual void scriptDedicatedWorkerRealmCreated(const String& workerIdentifier, FrameIdentifier ownerFrameIdentifier, const SecurityOriginData&) = 0;
+    virtual void scriptDedicatedWorkerRealmDestroyed(const String& workerIdentifier, FrameIdentifier ownerFrameIdentifier) = 0;
 };
 
 
@@ -70,6 +72,8 @@ public:
     static void addMessageToConsole(const std::unique_ptr<Inspector::ConsoleMessage>&);
     static void scriptRealmCreated(FrameIdentifier, const SecurityOriginData&, DOMWrapperWorld&);
     static void scriptRealmDestroyed(FrameIdentifier, DOMWrapperWorld&);
+    static void scriptDedicatedWorkerRealmCreated(const String& workerIdentifier, FrameIdentifier ownerFrameIdentifier, const SecurityOriginData&);
+    static void scriptDedicatedWorkerRealmDestroyed(const String& workerIdentifier, FrameIdentifier ownerFrameIdentifier);
 };
 
 } // namespace WebCore
