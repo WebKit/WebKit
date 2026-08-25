@@ -859,10 +859,6 @@ private:
         m_hasAnyForceOSRExits |= (node->op() == ForceOSRExit);
 
         m_currentBlock->append(node);
-        if (node->isTuple()) {
-            node->setTupleOffset(m_graph.m_tupleData.size());
-            m_graph.m_tupleData.grow(m_graph.m_tupleData.size() + node->tupleSize());
-        }
         if (clobbersExitState(m_graph, node))
             m_exitOK = false;
         return node;
