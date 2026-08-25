@@ -8,6 +8,10 @@ endif ()
 add_subdirectory(bmalloc)
 add_subdirectory(WTF)
 
+if (SWIFT_REQUIRED)
+    add_subdirectory(WebKitSwiftMacros)
+endif ()
+
 if (USE_CAPSTONE)
     add_subdirectory(ThirdParty/capstone)
 endif ()
