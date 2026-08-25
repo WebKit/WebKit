@@ -236,8 +236,12 @@ bool ScrollingEffectsController::handleWheelEvent(const PlatformWheelEvent& whee
     delta += eventDelta;
 
     if (wheelEvent.isGestureEvent()) {
+        // Automation events are already directionally locked upstream in WKAppKitGestureController.
+        auto alreadyDirectionallyLocked = wheelEvent.inputSource() == MouseEventInputSource::Automation;
+
         // FIXME: This axis locking replicates what WheelEventDeltaFilter does. We should apply that to events in all phases, and remove axis locking here (webkit.org/b/231207).
-        delta = deltaAlignedToPredominantGestureAxis(wheelEvent.timestamp(), delta);
+        if (!alreadyDirectionallyLocked)
+            delta = deltaAlignedToPredominantGestureAxis(wheelEvent.timestamp(), delta);
     }
 
     auto momentumPhase = wheelEvent.momentumPhase();

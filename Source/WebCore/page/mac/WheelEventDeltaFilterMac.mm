@@ -81,6 +81,16 @@ void WheelEventDeltaFilterMac::updateFromEvent(const PlatformWheelEvent& event)
 
 void WheelEventDeltaFilterMac::updateCurrentVelocityFromEvent(const PlatformWheelEvent& event)
 {
+    if (event.inputSource() == MouseEventInputSource::Automation) {
+        // Automation events are already directionally locked upstream in WKAppKitGestureController; skip
+        // _NSScrollingPredominantAxisFilter (it would flatten intentional diagonals) and pass the delta and
+        // velocity straight through. The caller updateFromEvent() still updates m_lastIOHIDEventTimestamp.
+        m_currentFilteredDelta = event.delta();
+        auto deltaFromLastEvent = std::max(event.ioHIDEventTimestamp() - m_lastIOHIDEventTimestamp, 1_ms);
+        m_currentFilteredVelocity = event.delta() / deltaFromLastEvent.seconds();
+        return;
+    }
+
     // The absolute value of timestamp doesn't matter; the filter looks at deltas from the previous event.
     auto timestamp = event.timestamp() - m_initialMonotonicTime;
 

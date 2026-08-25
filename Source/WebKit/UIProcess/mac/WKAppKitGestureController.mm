@@ -234,6 +234,7 @@ static NSString *gestureLogDescription(NSGestureRecognizer *gesture)
 
     std::unique_ptr<WebKit::PositionInformationManager> _positionInformationManager;
     std::unique_ptr<WebKit::WKFastScrollTracker> _fastScrollTracker;
+    std::unique_ptr<WebKit::WKDirectionalScrollLockTracker> _directionalScrollLockTracker;
 }
 
 #if __has_include(<WebKitAdditions/WKAppKitGestureControllerAdditionsImpl.mm>)
@@ -251,6 +252,7 @@ static NSString *gestureLogDescription(NSGestureRecognizer *gesture)
     _viewImpl = viewImpl.get();
     _positionInformationManager = makeUnique<WebKit::PositionInformationManager>(page.get());
     _fastScrollTracker = makeUniqueWithoutFastMallocCheck<WebKit::WKFastScrollTracker>(WebKit::WKFastScrollTracker::init());
+    _directionalScrollLockTracker = makeUniqueWithoutFastMallocCheck<WebKit::WKDirectionalScrollLockTracker>(WebKit::WKDirectionalScrollLockTracker::init());
 
     [self setUpGestureRecognizers];
     [self addGesturesToWebView];
@@ -503,6 +505,7 @@ static NSString *gestureLogDescription(NSGestureRecognizer *gesture)
     if ([gesture state] == NSGestureRecognizerStateBegan) {
         viewImpl->dismissContentRelativeChildWindowsWithAnimation(false);
         _fastScrollTracker->didStartGesture([gesture locationInView:nil]);
+        _directionalScrollLockTracker->didStartGesture();
     }
 
 #if HAVE(NSREFRESHCONTROLLER)
@@ -516,6 +519,8 @@ static NSString *gestureLogDescription(NSGestureRecognizer *gesture)
     case NSGestureRecognizerStateEnded:
     case NSGestureRecognizerStateCancelled:
     case NSGestureRecognizerStateFailed:
+        // After the wheel and momentum events above, so both still see this gesture's locked axis.
+        _directionalScrollLockTracker->didEndGesture();
         [self _resetCaughtDeceleratingScroll];
         break;
     default:
@@ -1373,12 +1378,18 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
         return;
 
     auto timestamp = MonotonicTime::fromRawSeconds([gesture timestamp]);
-    WebCore::IntPoint position { [gesture locationInView:webView.get()] };
+    WebCore::FloatPoint locationInView { [gesture locationInView:webView] };
+    WebCore::IntPoint position { locationInView };
     auto globalPosition { WebCore::globalPoint([gesture locationInView:nil], [webView window]) };
     auto gestureDelta { translationInView(gesture, webView.get()) };
 
     if (std::exchange(_suppressNextPanScrollDelta, false))
         gestureDelta = { };
+
+    auto pinnedState = page->pinnedStateIncludingAncestorsAtPoint(locationInView);
+    bool canScrollHorizontally = [_panGestureRecognizer _canPanHorizontally] && !(pinnedState.left() && pinnedState.right());
+    bool canScrollVertically = [_panGestureRecognizer _canPanVertically] && !(pinnedState.top() && pinnedState.bottom());
+    gestureDelta = WebCore::FloatSize { _directionalScrollLockTracker->update(gestureDelta, canScrollHorizontally, canScrollVertically, [gesture timestamp]) };
 
     auto wheelTicks { gestureDelta.scaled(1. / static_cast<float>(WebCore::Scrollbar::pixelsPerLineStep())) };
     auto granularity = WebKit::WebWheelEvent::Granularity::ScrollByPixelWheelEvent;
@@ -1440,17 +1451,35 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     if (gesture.state != NSGestureRecognizerStateEnded)
         return;
 
-    auto velocity = velocityInView(gesture, webView.get());
-    auto velocityMagnitude = std::max(std::abs(velocity.width()), std::abs(velocity.height()));
+    auto unfilteredVelocity = velocityInView(gesture, webView.get());
+
+    // Continue the scroll along the same axis the drag was locked to rather than reintroducing
+    // diagonal drift; also keeps _fastScrollTracker's velocity heuristics off-axis-clean.
+    auto velocity = WebCore::FloatSize { _directionalScrollLockTracker->filterVelocity(unfilteredVelocity) };
+
     static constexpr float minimumVelocityForMomentum = 20;
+
+    auto maximumComponentMagnitude = [](WebCore::FloatSize vector) {
+        return std::max(std::abs(vector.width()), std::abs(vector.height()));
+    };
+
+    // Advance the swipe chain for every gesture that was fast enough to be a swipe, judged on the
+    // unfiltered velocity: the user swiped even if the lock just zeroed the axis they swiped along, and
+    // the tracker has to see it to consume its caughtMomentum and advance its endTime. Slower gestures
+    // leave the tracker alone.
+    double fastScrollMultiplier = 1;
+    if (maximumComponentMagnitude(unfilteredVelocity) >= minimumVelocityForMomentum)
+        fastScrollMultiplier = _fastScrollTracker->update([gesture locationInView:nil], velocity, [gesture timestamp]);
+
+    // Suppressing the gesture itself is judged on the filtered velocity, which can only be smaller, so
+    // anything reaching this point has already been through the tracker above.
+    auto velocityMagnitude = maximumComponentMagnitude(velocity);
     if (velocityMagnitude < minimumVelocityForMomentum)
         return;
 
     auto timestamp = MonotonicTime::fromRawSeconds([gesture timestamp]);
     WebCore::IntPoint position { [gesture locationInView:webView.get()] };
     auto globalPosition = WebCore::globalPoint([gesture locationInView:nil], [webView window]);
-
-    auto fastScrollMultiplier = _fastScrollTracker->update([gesture locationInView:nil], velocity, [gesture timestamp]);
 
     WebKit::WebWheelEvent momentumEvent {
         { WebKit::WebEventType::Wheel, { }, timestamp, WTF::UUID::createVersion4() },
@@ -1501,6 +1530,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
         return;
 
     _fastScrollTracker->didCatchMomentum();
+    _directionalScrollLockTracker->didCatchMomentum();
     _caughtDeceleratingScroll = true;
     _suppressNextPanScrollDelta = true;
 
@@ -1571,6 +1601,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     _isMomentumActive = false;
     [self _resetCaughtDeceleratingScroll];
     _fastScrollTracker->reset();
+    _directionalScrollLockTracker->reset();
     _isSuppressingSingleClickGestureForTextSelection = false;
     _latestClickID.reset();
     _layerTreeTransactionIdAtLastInteractionStart.reset();
