@@ -44,6 +44,19 @@ void PureCSE::clear()
     m_map.clear();
 }
 
+void PureCSE::remove(const ValueKey& key, Value* value)
+{
+    if (!key)
+        return;
+
+    auto iter = m_map.find(key);
+    if (iter == m_map.end())
+        return;
+
+    Matches& matches = iter->value;
+    matches.removeAll(value);
+}
+
 Value* PureCSE::findMatch(const ValueKey& key, BasicBlock* block, Dominators& dominators)
 {
     if (!key)
