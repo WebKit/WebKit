@@ -1,13 +1,16 @@
 Storage/WebStorageNamespaceProvider.cpp
+[ macOS ] WebCoreSupport/WebCryptoClient.mm
 WebCoreSupport/WebResourceLoadScheduler.cpp
 [ iOS ] ios/WebCoreSupport/WebFixedPositionContent.mm
 [ iOS ] mac/DOM/DOM.mm
 mac/DOM/DOMAttr.mm
 mac/DOM/DOMCDATASection.mm
+[ macOS ] mac/DOM/DOMCSSFontFaceRule.mm
 mac/DOM/DOMCSSImportRule.mm
 mac/DOM/DOMCSSMediaRule.mm
 mac/DOM/DOMCSSPageRule.mm
 mac/DOM/DOMCSSPrimitiveValue.mm
+[ macOS ] mac/DOM/DOMCSSStyleRule.mm
 mac/DOM/DOMCSSStyleSheet.mm
 mac/DOM/DOMCSSValueList.mm
 mac/DOM/DOMCharacterData.mm
@@ -26,6 +29,7 @@ mac/DOM/DOMHTMLBodyElement.mm
 mac/DOM/DOMHTMLButtonElement.mm
 mac/DOM/DOMHTMLCanvasElement.mm
 mac/DOM/DOMHTMLDListElement.mm
+[ macOS ] mac/DOM/DOMHTMLDirectoryElement.mm
 mac/DOM/DOMHTMLDivElement.mm
 mac/DOM/DOMHTMLDocument.mm
 mac/DOM/DOMHTMLElement.mm
@@ -37,6 +41,7 @@ mac/DOM/DOMHTMLFrameElement.mm
 mac/DOM/DOMHTMLFrameSetElement.mm
 mac/DOM/DOMHTMLHRElement.mm
 mac/DOM/DOMHTMLHeadElement.mm
+[ macOS ] mac/DOM/DOMHTMLHeadingElement.mm
 mac/DOM/DOMHTMLHtmlElement.mm
 mac/DOM/DOMHTMLIFrameElement.mm
 mac/DOM/DOMHTMLImageElement.mm
@@ -55,6 +60,7 @@ mac/DOM/DOMHTMLOListElement.mm
 mac/DOM/DOMHTMLObjectElement.mm
 mac/DOM/DOMHTMLOptGroupElement.mm
 mac/DOM/DOMHTMLOptionElement.mm
+[ macOS ] mac/DOM/DOMHTMLParagraphElement.mm
 mac/DOM/DOMHTMLParamElement.mm
 mac/DOM/DOMHTMLPreElement.mm
 mac/DOM/DOMHTMLQuoteElement.mm
@@ -86,7 +92,15 @@ mac/DOM/DOMUtility.mm
 mac/DOM/DOMWheelEvent.mm
 mac/DOM/ObjCEventListener.h
 mac/DOM/WebDOMOperations.mm
+[ macOS ] mac/History/WebHistory.mm
+[ macOS ] mac/History/WebHistoryItem.mm
+[ macOS ] mac/History/WebURLsWithTitles.m
 mac/Misc/WebNSViewExtras.m
+[ macOS ] mac/Misc/WebSharingServicePickerController.mm
+[ macOS ] mac/Panels/WebPanelAuthenticationHandler.m
+[ macOS ] mac/Plugins/WebBasePluginPackage.mm
+[ macOS ] mac/Plugins/WebPluginController.mm
+[ macOS ] mac/Storage/WebStorageManager.mm
 [ Mac ] mac/WebCoreSupport/WebChromeClient.mm
 [ Mac ] mac/WebCoreSupport/WebContextMenuClient.mm
 [ Mac ] mac/WebCoreSupport/WebDragClient.mm
@@ -99,6 +113,10 @@ mac/WebView/WebFrame.mm
 mac/WebView/WebFrameView.mm
 mac/WebView/WebHTMLRepresentation.mm
 mac/WebView/WebHTMLView.mm
+[ macOS ] mac/WebView/WebPDFRepresentation.mm
+[ macOS ] mac/WebView/WebPDFView.mm
+[ macOS ] mac/WebView/WebResource.mm
 mac/WebView/WebScriptDebugger.mm
+[ macOS ] mac/WebView/WebTextCompletionController.mm
 [ Mac ] mac/WebView/WebVideoFullscreenController.mm
 mac/WebView/WebView.mm

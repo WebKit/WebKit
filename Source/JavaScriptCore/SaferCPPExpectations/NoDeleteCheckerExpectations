@@ -1,1 +1,14 @@
+[ macOS ] bytecode/CallLinkInfo.cpp
+[ macOS ] bytecode/CodeBlock.cpp
+[ macOS ] bytecode/CodeOrigin.cpp
+[ macOS ] bytecode/ICStatusMap.cpp
+[ macOS ] bytecode/PutByVariant.cpp
+[ macOS ] bytecode/Watchpoint.cpp
+[ macOS ] dfg/DFGByteCodeParser.cpp
+[ macOS ] dfg/DFGFixupPhase.cpp
 dfg/DFGIntegerRangeOptimizationPhase.cpp
+[ macOS ] dfg/DFGTierUpCheckInjectionPhase.cpp
+[ macOS ] ftl/FTLLowerDFGToB3.cpp
+[ macOS ] ftl/FTLPatchpointExceptionHandle.cpp
+[ macOS ] jit/PCToCodeOriginMap.cpp
+[ macOS ] runtime/JSDateMath.cpp

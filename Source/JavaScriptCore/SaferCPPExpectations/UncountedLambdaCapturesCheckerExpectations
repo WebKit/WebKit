@@ -17,4 +17,5 @@ runtime/CachedTypes.cpp
 runtime/SamplingProfiler.cpp
 runtime/WaiterListManager.h
 wasm/WasmCallee.cpp
+[ macOS ] wasm/WasmCalleeGroup.cpp
 wasm/WasmTable.cpp

@@ -1,4 +1,9 @@
 API/JSAPIGlobalObject.mm
+[ macOS ] API/JSManagedValue.mm
+[ macOS ] API/JSScript.mm
 API/JSValue.mm
 API/JSVirtualMachine.mm
+[ macOS ] API/JSWrapperMap.mm
 API/ObjCCallbackFunction.mm
+[ macOS ] inspector/remote/cocoa/RemoteInspectorCocoa.mm
+[ macOS ] inspector/remote/cocoa/RemoteInspectorXPCConnection.mm

@@ -1,2 +1,3 @@
 wtf/Assertions.cpp
+[ macOS ] wtf/MetaAllocator.cpp
 wtf/StdLibExtras.h

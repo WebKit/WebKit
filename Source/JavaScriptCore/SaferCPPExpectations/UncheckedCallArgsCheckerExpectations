@@ -1,2 +1,3 @@
 heap/HeapSnapshotBuilder.cpp
+[ macOS ] inspector/InjectedScriptManager.cpp
 inspector/agents/InspectorConsoleAgent.cpp

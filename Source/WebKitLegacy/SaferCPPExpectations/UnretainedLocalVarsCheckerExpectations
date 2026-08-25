@@ -6,17 +6,73 @@
 [ iOS ] ios/WebView/WebPDFViewIOS.mm
 [ iOS ] ios/WebView/WebPDFViewPlaceholder.mm
 [ iOS ] ios/WebView/WebPlainWhiteView.mm
+[ macOS ] mac/DOM/DOM.mm
+[ macOS ] mac/DOM/DOMCustomXPathNSResolver.mm
+[ macOS ] mac/DOM/WebDOMOperations.mm
+[ macOS ] mac/DefaultDelegates/WebDefaultContextMenuDelegate.mm
+[ macOS ] mac/DefaultDelegates/WebDefaultEditingDelegate.m
+[ macOS ] mac/DefaultDelegates/WebDefaultPolicyDelegate.mm
+[ macOS ] mac/DefaultDelegates/WebDefaultUIDelegate.mm
+[ macOS ] mac/History/WebBackForwardList.mm
+[ macOS ] mac/History/WebHistory.mm
+[ macOS ] mac/History/WebHistoryItem.mm
+[ macOS ] mac/History/WebURLsWithTitles.m
+[ macOS ] mac/Misc/WebDownload.mm
+[ macOS ] mac/Misc/WebElementDictionary.mm
+[ macOS ] mac/Misc/WebKitErrors.m
+[ macOS ] mac/Misc/WebKitNSStringExtras.mm
+[ macOS ] mac/Misc/WebLocalizableStrings.mm
+[ macOS ] mac/Misc/WebNSControlExtras.m
+[ macOS ] mac/Misc/WebNSDataExtras.mm
+[ macOS ] mac/Misc/WebNSDictionaryExtras.m
+[ macOS ] mac/Misc/WebNSEventExtras.m
+[ macOS ] mac/Misc/WebNSFileManagerExtras.mm
+[ macOS ] mac/Misc/WebNSImageExtras.m
+[ macOS ] mac/Misc/WebNSObjectExtras.mm
+[ macOS ] mac/Misc/WebNSPasteboardExtras.mm
+[ macOS ] mac/Misc/WebNSPrintOperationExtras.m
 [ Mac ] mac/Misc/WebNSViewExtras.m
+[ macOS ] mac/Misc/WebSharingServicePickerController.mm
 [ Mac ] mac/Panels/WebAuthenticationPanel.m
 [ Mac ] mac/Panels/WebPanelAuthenticationHandler.m
-[ iOS ] mac/Storage/WebDatabaseManager.mm
+[ macOS ] mac/Plugins/WebBasePluginPackage.mm
+[ macOS ] mac/Plugins/WebPluginContainerCheck.mm
+[ macOS ] mac/Plugins/WebPluginController.mm
+[ macOS ] mac/Plugins/WebPluginDatabase.mm
+[ macOS ] mac/Plugins/WebPluginPackage.mm
+mac/Storage/WebDatabaseManager.mm
 [ iOS ] mac/Storage/WebDatabaseManagerClient.mm
-[ iOS ] mac/WebCoreSupport/WebEditorClient.mm
-[ iOS ] mac/WebCoreSupport/WebFrameLoaderClient.mm
+[ macOS ] mac/Storage/WebStorageManager.mm
+[ macOS ] mac/WebCoreSupport/PopupMenuMac.mm
+[ macOS ] mac/WebCoreSupport/SearchPopupMenuMac.mm
+[ macOS ] mac/WebCoreSupport/WebChromeClient.mm
+[ macOS ] mac/WebCoreSupport/WebContextMenuClient.mm
+[ macOS ] mac/WebCoreSupport/WebDragClient.mm
+mac/WebCoreSupport/WebEditorClient.mm
+mac/WebCoreSupport/WebFrameLoaderClient.mm
+[ macOS ] mac/WebCoreSupport/WebInspectorClient.mm
+[ macOS ] mac/WebCoreSupport/WebJavaScriptTextInputPanel.m
 [ iOS ] mac/WebCoreSupport/WebProgressTrackerClient.mm
-[ iOS ] mac/WebInspector/WebNodeHighlighter.mm
-[ iOS ] mac/WebView/WebFrame.mm
-[ iOS ] mac/WebView/WebFrameView.mm
+mac/WebInspector/WebNodeHighlighter.mm
+[ macOS ] mac/WebView/WebArchive.mm
+[ macOS ] mac/WebView/WebClipView.mm
+[ macOS ] mac/WebView/WebDataSource.mm
 [ iOS ] mac/WebView/WebDelegateImplementationCaching.mm
+[ macOS ] mac/WebView/WebDeviceOrientationProviderMock.mm
+[ macOS ] mac/WebView/WebDynamicScrollBarsView.mm
+[ macOS ] mac/WebView/WebFormDelegate.m
+mac/WebView/WebFrame.mm
+mac/WebView/WebFrameView.mm
+[ macOS ] mac/WebView/WebFullScreenController.mm
+[ macOS ] mac/WebView/WebHTMLRepresentation.mm
 mac/WebView/WebHTMLView.mm
-[ iOS ] mac/WebView/WebView.mm
+[ macOS ] mac/WebView/WebImmediateActionController.mm
+[ macOS ] mac/WebView/WebPDFRepresentation.mm
+[ macOS ] mac/WebView/WebPDFView.mm
+[ macOS ] mac/WebView/WebPreferences.mm
+[ macOS ] mac/WebView/WebResource.mm
+[ macOS ] mac/WebView/WebScriptDebugger.mm
+[ macOS ] mac/WebView/WebTextCompletionController.mm
+[ macOS ] mac/WebView/WebVideoFullscreenController.mm
+mac/WebView/WebView.mm
+[ macOS ] mac/WebView/WebViewRenderingUpdateScheduler.mm
