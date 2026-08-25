@@ -200,12 +200,9 @@ extension AppKitGesturesTests.Embedded {
 
     @Test
     func doubleClickingSelectsWordWhenScrolledToTopWithObscuredContentInset() async throws {
-        // The heading must be full-width so it is not a smart-magnification target; a double click then
-        // selects a word rather than magnifying. (An inline-block heading shrink-wraps to a narrow width
-        // that is a magnification target, and the double click would magnify instead of selecting a word.)
         let html = """
             <body style="margin: 0">
-                <h2 id="div" style="margin: 0; font-size: 30px;">\(Self.text)</h2>
+                <h2 id="div" style="display: inline-block; margin: 0; font-size: 30px;">\(Self.text)</h2>
                 <input id="search" type="search" style="display: block; margin: 0; width: 320px; height: 300px;">
             </body>
             """

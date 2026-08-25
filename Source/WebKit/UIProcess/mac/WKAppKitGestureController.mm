@@ -41,7 +41,6 @@
 #import "ViewGestureController.h"
 #import "WKDeferringGestureRecognizer.h"
 #import "WKWebView.h"
-#import "WebEventFactory.h"
 #import "WebEventModifier.h"
 #import "WebEventType.h"
 #import "WebKit-Swift.h"
@@ -71,7 +70,6 @@
 #import <wtf/RefCounted.h>
 #import <wtf/RefPtr.h>
 #import <wtf/RetainPtr.h>
-#import <wtf/Scope.h>
 #import <wtf/UUID.h>
 #import <wtf/WeakObjCPtr.h>
 #import <wtf/WeakPtr.h>
@@ -198,8 +196,6 @@ static NSString *gestureLogDescription(NSGestureRecognizer *gesture)
     RetainPtr<NSPressGestureRecognizer> _mouseTrackingGestureRecognizer;
     RetainPtr<NSPressGestureRecognizer> _singleClickGestureRecognizer;
     RetainPtr<NSClickGestureRecognizer> _doubleClickGestureRecognizer;
-    RetainPtr<NSClickGestureRecognizer> _nonBlockingDoubleClickGestureRecognizer;
-    RetainPtr<NSClickGestureRecognizer> _doubleClickForDoubleClickGestureRecognizer;
 
     // Auxiliary gesture recognizers to support context menus.
     RetainPtr<NSPressGestureRecognizer> _secondaryClickGestureRecognizer;
@@ -218,9 +214,6 @@ static NSString *gestureLogDescription(NSGestureRecognizer *gesture)
     bool _hasHighlightForPotentialClick;
     bool _isExpectingFastClickCommit;
     bool _isSuppressingSingleClickGestureForTextSelection;
-
-    bool _doubleClickGesturesAreDisabledTemporarilyForFastClick;
-    bool _isDoubleClickPending;
 
     std::optional<WebKit::TransactionID> _layerTreeTransactionIdAtLastInteractionStart;
     Markable<WebKit::ClickIdentifier> _latestClickID;
@@ -290,24 +283,12 @@ static NSString *gestureLogDescription(NSGestureRecognizer *gesture)
     _panGestureRecognizer = recognizer;
 }
 
-- (NSPressGestureRecognizer *)singleClickGestureRecognizer
-{
-    return _singleClickGestureRecognizer.get();
-}
-
-- (void)setSingleClickGestureRecognizer:(NSPressGestureRecognizer *)recognizer
-{
-    _singleClickGestureRecognizer = recognizer;
-}
-
 - (void)setUpGestureRecognizers
 {
     [self setUpPanGestureRecognizer];
     [self setUpMouseTrackingGestureRecognizer];
     [self setUpSingleClickGestureRecognizer];
     [self setUpDoubleClickGestureRecognizer];
-    [self setUpNonBlockingDoubleClickGestureRecognizer];
-    [self setUpDoubleClickForDoubleClickGestureRecognizer];
 
     [self setUpSecondaryClickGestureRecognizer];
     [self setUpSecondaryClickDeferringGestureRecognizer];
@@ -327,31 +308,20 @@ static NSString *gestureLogDescription(NSGestureRecognizer *gesture)
     [_mouseTrackingGestureRecognizer setName:@"WKMouseTrackingGesture"];
 }
 
+- (void)setUpSingleClickGestureRecognizer
+{
+    _singleClickGestureRecognizer = adoptNS([[NSPressGestureRecognizer alloc] initWithTarget:self action:@selector(singleClickGestureRecognized:)]);
+    [self configureForSingleClick:_singleClickGestureRecognizer.get()];
+    [_singleClickGestureRecognizer setDelegate:self];
+    [_singleClickGestureRecognizer setName:@"WKSingleClickGesture"];
+}
+
 - (void)setUpDoubleClickGestureRecognizer
 {
     _doubleClickGestureRecognizer = adoptNS([[NSClickGestureRecognizer alloc] initWithTarget:self action:@selector(doubleClickGestureRecognized:)]);
     [self configureForDoubleClick:_doubleClickGestureRecognizer.get()];
     [_doubleClickGestureRecognizer setDelegate:self];
     [_doubleClickGestureRecognizer setName:@"WKDoubleClickGesture"];
-}
-
-- (void)setUpDoubleClickForDoubleClickGestureRecognizer
-{
-    _doubleClickForDoubleClickGestureRecognizer = adoptNS([[NSClickGestureRecognizer alloc] initWithTarget:self action:@selector(doubleClickForDoubleClickGestureRecognized:)]);
-    [self configureForDoubleClickForDoubleClick:_doubleClickForDoubleClickGestureRecognizer.get()];
-    [_doubleClickForDoubleClickGestureRecognizer setDelegate:self];
-    [_doubleClickForDoubleClickGestureRecognizer setName:@"WKDoubleClickForDoubleClickGesture"];
-}
-
-- (void)setUpNonBlockingDoubleClickGestureRecognizer
-{
-    // This gesture is intentionally not enabled here. Its enablement is
-    // choreographed by -_updateDoubleClickGestureRecognizerEnablement.
-    _nonBlockingDoubleClickGestureRecognizer = adoptNS([[NSClickGestureRecognizer alloc] initWithTarget:self action:@selector(nonBlockingDoubleClickGestureRecognized:)]);
-    [self configureForNonBlockingDoubleClick:_nonBlockingDoubleClickGestureRecognizer];
-    [_nonBlockingDoubleClickGestureRecognizer setDelegate:self];
-    [_nonBlockingDoubleClickGestureRecognizer setName:@"WKNonBlockingDoubleClickGesture"];
-    [_nonBlockingDoubleClickGestureRecognizer setEnabled:NO];
 }
 
 - (void)setUpSecondaryClickGestureRecognizer
@@ -418,8 +388,6 @@ static NSString *gestureLogDescription(NSGestureRecognizer *gesture)
     [webView addGestureRecognizer:_mouseTrackingGestureRecognizer.get()];
     [webView addGestureRecognizer:_singleClickGestureRecognizer.get()];
     [webView addGestureRecognizer:_doubleClickGestureRecognizer.get()];
-    [webView addGestureRecognizer:_nonBlockingDoubleClickGestureRecognizer.get()];
-    [webView addGestureRecognizer:_doubleClickForDoubleClickGestureRecognizer.get()];
 
     [webView addGestureRecognizer:_secondaryClickGestureRecognizer.get()];
     [webView addGestureRecognizer:_secondaryClickDeferringGestureRecognizer.get()];
@@ -438,7 +406,6 @@ static NSString *gestureLogDescription(NSGestureRecognizer *gesture)
     [self enableGestureIfNeeded:_mouseTrackingGestureRecognizer.get()];
     [self enableGestureIfNeeded:_singleClickGestureRecognizer.get()];
     [self enableGestureIfNeeded:_doubleClickGestureRecognizer.get()];
-    [self enableGestureIfNeeded:_doubleClickForDoubleClickGestureRecognizer.get()];
     [self enableGestureIfNeeded:_secondaryClickGestureRecognizer.get()];
     [self enableGestureIfNeeded:_dragPressGestureRecognizer.get()];
     [self enableGestureIfNeeded:_imageAnalysisGestureRecognizer.get()];
@@ -456,8 +423,7 @@ static NSString *gestureLogDescription(NSGestureRecognizer *gesture)
     [_mouseTrackingGestureRecognizer setShouldBeArchived:NO];
     [_singleClickGestureRecognizer setShouldBeArchived:NO];
     [_doubleClickGestureRecognizer setShouldBeArchived:NO];
-    [_nonBlockingDoubleClickGestureRecognizer setShouldBeArchived:NO];
-    [_doubleClickForDoubleClickGestureRecognizer setShouldBeArchived:NO];
+
     [_secondaryClickGestureRecognizer setShouldBeArchived:NO];
     [_secondaryClickDeferringGestureRecognizer setShouldBeArchived:NO];
 
@@ -536,9 +502,6 @@ static NSString *gestureLogDescription(NSGestureRecognizer *gesture)
 
     if ([gesture state] == NSGestureRecognizerStateBegan) {
         viewImpl->dismissContentRelativeChildWindowsWithAnimation(false);
-        // A scroll preempts any pending potential click begun at press-down; cancel it so the stale
-        // click can't block or mis-commit the next click.
-        [self _handleClickCancelled];
         _fastScrollTracker->didStartGesture([gesture locationInView:nil]);
     }
 
@@ -608,6 +571,9 @@ static NSString *gestureLogDescription(NSGestureRecognizer *gesture)
     }
 
     switch (gesture.state) {
+    case NSGestureRecognizerStateBegan:
+        [self _handleClickBegan:gesture];
+        break;
     case NSGestureRecognizerStateEnded:
         [self _handleClickEnded:gesture];
         break;
@@ -638,69 +604,10 @@ static NSString *gestureLogDescription(NSGestureRecognizer *gesture)
 
     RELEASE_ASSERT(_doubleClickGestureRecognizer == gesture);
 
-    [self _handleClickCancelled];
-
     viewImpl->dismissContentRelativeChildWindowsWithAnimation(false);
 
     auto magnificationOrigin = [webView convertPoint:[gesture locationInView:nil] fromView:nil];
     protect(viewImpl->ensureGestureController())->handleSmartMagnificationGesture(magnificationOrigin);
-}
-
-- (void)doubleClickForDoubleClickGestureRecognized:(NSGestureRecognizer *)gesture
-{
-    CheckedPtr viewImpl = _viewImpl.get();
-    if (!viewImpl)
-        return;
-
-    RetainPtr webView = viewImpl->view();
-    if (!webView)
-        return;
-
-    RefPtr page = _page.get();
-    if (!page)
-        return;
-
-    RELEASE_ASSERT(_doubleClickForDoubleClickGestureRecognizer == gesture);
-
-    // The single-click GR begins at press-down, so it may not have snapshotted a transaction id if the
-    // double click arrived without an intervening single-click Began. Re-snapshot if needed.
-    if (!_layerTreeTransactionIdAtLastInteractionStart) {
-        if (RefPtr drawingArea = page->drawingArea()) {
-            if (RefPtr remoteDrawingArea = dynamicDowncast<WebKit::RemoteLayerTreeDrawingAreaProxy>(*drawingArea))
-                _layerTreeTransactionIdAtLastInteractionStart = remoteDrawingArea->lastCommittedMainFrameLayerTreeTransactionID();
-        }
-    }
-    if (!_layerTreeTransactionIdAtLastInteractionStart)
-        return;
-
-ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
-    auto modifierFlags = WebKit::WebEventFactory::toWebEventModifierFlags([gesture modifierFlags]);
-ALLOW_NEW_API_WITHOUT_GUARDS_END
-
-    WebCore::IntPoint location { [gesture locationInView:webView.get()] };
-    WebKit::handleDoubleClickForDoubleClickAtPoint(*page, location, modifierFlags, *_layerTreeTransactionIdAtLastInteractionStart, WebKit::WebEventInputSource::Automation);
-
-    // A recognized double click excluded the single-click GR without it committing; cancel the leaked
-    // potential click so it can't short-circuit the next click. Done AFTER the dispatch above so the
-    // double-click's own click — and the text selection it produces from the clickCount==2 commit — is
-    // not disturbed.
-    [self _handleClickCancelled];
-}
-
-- (void)nonBlockingDoubleClickGestureRecognized:(NSGestureRecognizer *)gesture
-{
-    CheckedPtr viewImpl = _viewImpl.get();
-    if (!viewImpl)
-        return;
-
-    RetainPtr webView = viewImpl->view();
-    if (!webView)
-        return;
-
-    RELEASE_ASSERT(_nonBlockingDoubleClickGestureRecognizer == gesture);
-
-    _lastInteractionLocationInWebView = WebCore::FloatPoint { [gesture locationInView:webView.get()] };
-    _isDoubleClickPending = true;
 }
 
 - (void)secondaryClickGestureRecognized:(NSGestureRecognizer *)gesture
@@ -1199,43 +1106,6 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     return shouldDrag;
 }
 
-- (BOOL)_doubleClickForDoubleClickShouldBeginAtLocation:(NSPoint)locationInViewCoordinates
-{
-    static constexpr int doubleClickForDoubleClickToleranceRadius = 15;
-    bool requestIsValid = [self _positionInformationRequestIsValidAtLocation:locationInViewCoordinates withRadius:doubleClickForDoubleClickToleranceRadius];
-    bool hasListener = _positionInformationManager->currentInformation().hitNodeOrWindowHasDoubleClickListener.value_or(false);
-    bool shouldBegin = requestIsValid && hasListener;
-
-    if (!requestIsValid)
-        _positionInformationManager->doAfterUpdate(WebKit::InteractionInformationRequest { WebCore::IntPoint { locationInViewCoordinates } }, [](const std::optional<WebKit::InteractionInformationAtPosition>&) { });
-
-    return shouldBegin;
-}
-
-- (BOOL)_doubleClickForZoomShouldBeginAtLocation:(NSPoint)locationInViewCoordinates
-{
-    CheckedPtr viewImpl = _viewImpl.get();
-    if (!viewImpl || !viewImpl->allowsMagnification())
-        return NO;
-
-    if (![self _webContentAllowsSmartMagnification])
-        return NO;
-
-    // A dblclick listener at the pressed point suppresses smart magnification:
-    // DOM double-click (and the text selection it produces) happen instead of zoom.
-    // On a position information cache miss we err toward smart magnification (the
-    // default for zoomable content) and refresh for the next double click.
-    static constexpr int doubleClickForZoomToleranceRadius = 15;
-    bool requestIsValid = [self _positionInformationRequestIsValidAtLocation:locationInViewCoordinates withRadius:doubleClickForZoomToleranceRadius];
-    bool hasListener = _positionInformationManager->currentInformation().hitNodeOrWindowHasDoubleClickListener.value_or(false);
-    bool shouldBegin = !(requestIsValid && hasListener);
-
-    if (!requestIsValid)
-        _positionInformationManager->doAfterUpdate(WebKit::InteractionInformationRequest { WebCore::IntPoint { locationInViewCoordinates } }, [](const std::optional<WebKit::InteractionInformationAtPosition>&) { });
-
-    return shouldBegin;
-}
-
 - (BOOL)_panShouldBeginAtLocation:(NSPoint)locationInViewCoordinates
 {
     static constexpr int panPositionInformationToleranceRadius = 15;
@@ -1330,12 +1200,9 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
 
 #pragma mark - Click Handling
 
-- (void)handleClickBegan:(NSGestureRecognizer *)gesture
+- (void)_handleClickBegan:(NSGestureRecognizer *)gesture
 {
     if (_isSuppressingSingleClickGestureForTextSelection)
-        return;
-
-    if (_potentialClickInProgress)
         return;
 
     CheckedPtr viewImpl = _viewImpl.get();
@@ -1362,36 +1229,8 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     _potentialClickInProgress = true;
     _isClickHighlightIDValid = true;
     _isExpectingFastClickCommit = ![_doubleClickGestureRecognizer isEnabled];
-    _isDoubleClickPending = false;
 
-    _positionInformationManager->doAfterUpdate(WebKit::InteractionInformationRequest { WebCore::roundedIntPoint(position) }, [](const std::optional<WebKit::InteractionInformationAtPosition>&) { });
-
-    page->potentialClickAtPosition(std::nullopt, WebCore::FloatPoint(position), true, *_latestClickID, WebKit::WebEventInputSource::Automation);
-}
-
-- (void)_resetClickGestureRecognizersForNextClick
-{
-    // The press-down click recognizer and the mouse-tracking recognizer remain in the recognized state
-    // until their gesture subgraph is reset, and that reset is deferred behind the potential-click round
-    // trip. While they linger they stay in the shared gesture-exclusion group, where a just-recognized
-    // recognizer from a prior press can compete with — and nondeterministically defeat — the text
-    // selection manager's press recognizer for a following press. Toggle enablement to let a subsequent
-    // press arbitrate deterministically.
-    RetainPtr singleClick = _singleClickGestureRecognizer;
-    RetainPtr mouseTracking = _mouseTrackingGestureRecognizer;
-
-    if (RefPtr page = _page.get())
-        WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG_DEBUG(page->logIdentifier(), "Resetting press-down click recognizers after conclusion: singleClick(enabled=%d state=%ld) mouseTracking(enabled=%d state=%ld)", [singleClick isEnabled], (long)[singleClick state], [mouseTracking isEnabled], (long)[mouseTracking state]);
-
-    if ([singleClick isEnabled]) {
-        [singleClick setEnabled:NO];
-        [singleClick setEnabled:YES];
-    }
-
-    if ([mouseTracking isEnabled]) {
-        [mouseTracking setEnabled:NO];
-        [mouseTracking setEnabled:YES];
-    }
+    page->potentialClickAtPosition(std::nullopt, WebCore::FloatPoint(position), false, *_latestClickID, WebKit::WebEventInputSource::Automation);
 }
 
 - (void)_handleClickEnded:(NSGestureRecognizer *)gesture
@@ -1402,13 +1241,6 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     RefPtr page = _page.get();
     if (!page)
         return;
-
-    auto resetClickGesturesForNextClick = makeScopeExit([weakSelf = WeakObjCPtr<WKAppKitGestureController>(self)] {
-        RetainPtr strongSelf = weakSelf.get();
-        if (!strongSelf)
-            return;
-        [strongSelf _resetClickGestureRecognizersForNextClick];
-    });
 
     [self _endPotentialClickAndEnableDoubleClickGesturesIfNecessary];
 
@@ -1442,20 +1274,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
 
 - (void)_setDoubleClickGesturesEnabled:(BOOL)enabled
 {
-    _doubleClickGesturesAreDisabledTemporarilyForFastClick = !enabled;
-    [self _updateDoubleClickGestureRecognizerEnablement];
-}
-
-- (void)_updateDoubleClickGestureRecognizerEnablement
-{
-    CheckedPtr viewImpl = _viewImpl.get();
-    BOOL allowsMagnification = viewImpl && viewImpl->allowsMagnification();
-    [_doubleClickGestureRecognizer setEnabled:!_doubleClickGesturesAreDisabledTemporarilyForFastClick && allowsMagnification];
-    [_nonBlockingDoubleClickGestureRecognizer setEnabled:_doubleClickGesturesAreDisabledTemporarilyForFastClick && allowsMagnification];
-    _isDoubleClickPending = false;
-
-    if (RefPtr page = _page.get())
-        WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG_DEBUG(page->logIdentifier(), "Double-click gesture enablement: disabledForFastClick=%d allowsMagnification=%d blocking=%d nonBlocking=%d dblclick=%d", _doubleClickGesturesAreDisabledTemporarilyForFastClick, allowsMagnification, [_doubleClickGestureRecognizer isEnabled], [_nonBlockingDoubleClickGestureRecognizer isEnabled], [_doubleClickForDoubleClickGestureRecognizer isEnabled]);
+    [_doubleClickGestureRecognizer setEnabled:enabled];
 }
 
 #if ENABLE(TWO_PHASE_CLICKS)
@@ -1487,56 +1306,6 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
 - (void)disableDoubleClickGesturesDuringClickIfNecessary:(WebKit::ClickIdentifier)requestID
 {
     if (_latestClickID != requestID)
-        return;
-
-    [self _setDoubleClickGesturesEnabled:NO];
-}
-
-- (BOOL)wouldSignificantlyZoomForRenderRect:(const WebCore::FloatRect&)renderRect
-{
-    if (renderRect.isEmpty())
-        return NO;
-
-    RefPtr page = _page.get();
-    CheckedPtr viewImpl = _viewImpl.get();
-    if (!page || !viewImpl)
-        return NO;
-
-    RetainPtr webView = viewImpl->view();
-    if (!webView)
-        return NO;
-
-    double currentScale = page->pageScaleFactor();
-    double unobscuredWidth = [webView bounds].size.width;
-    if (currentScale <= 0 || unobscuredWidth <= 0)
-        return NO;
-
-    double minScale = page->minPageZoomFactor();
-    double maxScale = page->maxPageZoomFactor();
-    double targetScale = std::clamp(unobscuredWidth * currentScale / renderRect.width(), minScale, maxScale);
-
-    static constexpr double maximumScaleFactorDeltaForPanScroll = 0.02;
-    static constexpr double fastClickSignificantZoomThreshold = 0.8;
-    double low = std::min(targetScale, currentScale);
-    double high = std::max(targetScale, currentScale);
-    bool significantRatio = high > 0 && (low / high) <= fastClickSignificantZoomThreshold;
-    bool significantDelta = std::abs(targetScale - currentScale) >= maximumScaleFactorDeltaForPanScroll;
-    return significantRatio && significantDelta;
-}
-
-- (void)handleSmartMagnificationInformationForPotentialClick:(WebKit::ClickIdentifier)requestID renderRect:(const WebCore::FloatRect&)renderRect fitEntireRect:(BOOL)fitEntireRect viewportMinimumScale:(double)viewportMinimumScale viewportMaximumScale:(double)viewportMaximumScale nodeIsRootLevel:(BOOL)nodeIsRootLevel nodeIsPluginElement:(BOOL)nodeIsPluginElement
-{
-    if (_latestClickID != requestID)
-        return;
-
-    if (!_potentialClickInProgress)
-        return;
-
-    BOOL webContentAllowsSmartMagnification = [self _webContentAllowsSmartMagnification];
-    BOOL keepSmartMagnificationGesture = webContentAllowsSmartMagnification && (nodeIsRootLevel || nodeIsPluginElement || [self wouldSignificantlyZoomForRenderRect:renderRect]);
-    if (RefPtr page = _page.get())
-        WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG_DEBUG(page->logIdentifier(), "Magnification decision: keepSmartMagnificationGesture=%d webContentAllowsSmartMagnification=%d", keepSmartMagnificationGesture, webContentAllowsSmartMagnification);
-    if (keepSmartMagnificationGesture)
         return;
 
     [self _setDoubleClickGesturesEnabled:NO];
@@ -1582,16 +1351,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
 
     WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG(page->logIdentifier(), "Click at (%d, %d) was not handled as click", point.x(), point.y());
 
-    if (!_isDoubleClickPending)
-        return;
-
-    _isDoubleClickPending = false;
-
-    CheckedPtr viewImpl = _viewImpl.get();
-    if (!viewImpl)
-        return;
-
-    protect(viewImpl->ensureGestureController())->handleSmartMagnificationGesture(_lastInteractionLocationInWebView);
+    // FIXME: Consider smart magnification here if a double-click is pending and the point hasn't moved significantly.
 }
 
 #endif
@@ -1855,26 +1615,6 @@ static inline bool isSamePair(NSGestureRecognizer *a, NSGestureRecognizer *b, NS
     if (isSamePair(gestureRecognizer, otherGestureRecognizer, _dragPressGestureRecognizer.get(), _mouseTrackingGestureRecognizer.get()))
         return YES;
 
-    // Recognize the double-click-for-double-click GR alongside the single-click press, magnification
-    // double-click, and mouse-tracking GRs; otherwise they exclude it and it never counts its second click.
-    if (isSamePair(gestureRecognizer, otherGestureRecognizer, _doubleClickForDoubleClickGestureRecognizer.get(), _singleClickGestureRecognizer.get()))
-        return YES;
-
-    if (isSamePair(gestureRecognizer, otherGestureRecognizer, _doubleClickForDoubleClickGestureRecognizer.get(), _doubleClickGestureRecognizer.get()))
-        return YES;
-
-    if (isSamePair(gestureRecognizer, otherGestureRecognizer, _doubleClickForDoubleClickGestureRecognizer.get(), _mouseTrackingGestureRecognizer.get()))
-        return YES;
-
-    if (isSamePair(gestureRecognizer, otherGestureRecognizer, _nonBlockingDoubleClickGestureRecognizer.get(), _singleClickGestureRecognizer.get()))
-        return YES;
-
-    if (isSamePair(gestureRecognizer, otherGestureRecognizer, _nonBlockingDoubleClickGestureRecognizer.get(), _doubleClickForDoubleClickGestureRecognizer.get()))
-        return YES;
-
-    if (isSamePair(gestureRecognizer, otherGestureRecognizer, _nonBlockingDoubleClickGestureRecognizer.get(), _mouseTrackingGestureRecognizer.get()))
-        return YES;
-
     if (gestureRecognizer == _singleClickGestureRecognizer
         && isBuiltInScrollViewPanGestureRecognizer(otherGestureRecognizer)
         && [otherGestureRecognizer.view isKindOfClass:NSScrollView.class])
@@ -1892,26 +1632,12 @@ static inline bool isSamePair(NSGestureRecognizer *a, NSGestureRecognizer *b, NS
     if (!webView)
         return NO;
 
-    // Allow the single-click, mouse-tracking, and double-click recognizers to recognize simultaneously
-    // with the text selection manager's gestures. Without this, the text selection manager's press
-    // recognizer mutually-excludes the double-click recognizers, so they never recognize a double click.
-    for (NSGestureRecognizer *textSelectionGesture in [[webView textSelectionManager] gesturesForFailureRequirements]) {
-        if (isSamePair(gestureRecognizer, otherGestureRecognizer, _singleClickGestureRecognizer.get(), textSelectionGesture))
+    // Allow the single click or mouse tracking GRs to be simultaneously
+    // recognized with any of those from the text selection manager.
+    for (NSGestureRecognizer *gestureForFailureRequirements in [[webView textSelectionManager] gesturesForFailureRequirements]) {
+        if (isSamePair(gestureRecognizer, otherGestureRecognizer, _singleClickGestureRecognizer.get(), gestureForFailureRequirements))
             return YES;
-        if (isSamePair(gestureRecognizer, otherGestureRecognizer, _mouseTrackingGestureRecognizer.get(), textSelectionGesture))
-            return YES;
-        // FIXME: Granting the smart-magnification double-click recognizers simultaneity with the text
-        // selection manager's gestures lets both a smart magnification and a text selection happen for a
-        // single double click, because nothing couples the two: a double click over a magnifiable target
-        // can end as either a word-range selection or a caret depending on which recognizes first. When a
-        // smart magnification is warranted the text selection should be suppressed instead of racing it.
-        // These should be made mutually exclusive when the pressed point is selectable and would magnify
-        // (e.g. scope this grant, or add a prevention edge) rather than always recognizing simultaneously.
-        if (isSamePair(gestureRecognizer, otherGestureRecognizer, _doubleClickGestureRecognizer.get(), textSelectionGesture))
-            return YES;
-        if (isSamePair(gestureRecognizer, otherGestureRecognizer, _nonBlockingDoubleClickGestureRecognizer.get(), textSelectionGesture))
-            return YES;
-        if (isSamePair(gestureRecognizer, otherGestureRecognizer, _doubleClickForDoubleClickGestureRecognizer.get(), textSelectionGesture))
+        if (isSamePair(gestureRecognizer, otherGestureRecognizer, _mouseTrackingGestureRecognizer.get(), gestureForFailureRequirements))
             return YES;
     }
 
@@ -1957,15 +1683,6 @@ static inline bool isSamePair(NSGestureRecognizer *a, NSGestureRecognizer *b, NS
     if (gestureRecognizer == _singleClickGestureRecognizer && otherGestureRecognizer == _doubleClickGestureRecognizer)
         return YES;
 
-    // Gate this on the pressed point having a dblclick listener: only there does the single click wait
-    // for the double-click-for-double-click recognizer to fail. That recognizer is a two-click
-    // NSClickGestureRecognizer that is never disabled, so an unconditional requirement would make every
-    // single click wait the full double-click timeout. On listener content the delay is correct: it lets
-    // a real double click exclude the single click, avoiding a clickCount=1 click that would collapse the
-    // double click's text selection to a caret.
-    if (gestureRecognizer == _singleClickGestureRecognizer && otherGestureRecognizer == _doubleClickForDoubleClickGestureRecognizer)
-        return _positionInformationManager->currentInformation().hitNodeOrWindowHasDoubleClickListener.value_or(false);
-
     if (gestureRecognizer == _mouseTrackingGestureRecognizer && otherGestureRecognizer == _panGestureRecognizer) {
         bool panCanScroll = [self panGestureRecognizerCanScroll];
         WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG_DEBUG(RefPtr { _page.get() }->logIdentifier(), "Mouse tracking requires pan to fail: %d", panCanScroll);
@@ -2010,11 +1727,8 @@ static inline bool isSamePair(NSGestureRecognizer *a, NSGestureRecognizer *b, NS
         return NO;
     }
 
-    if (gestureRecognizer == _doubleClickGestureRecognizer || gestureRecognizer == _nonBlockingDoubleClickGestureRecognizer)
-        return [self _doubleClickForZoomShouldBeginAtLocation:locationInViewCoordinates];
-
-    if (gestureRecognizer == _doubleClickForDoubleClickGestureRecognizer)
-        return [self _doubleClickForDoubleClickShouldBeginAtLocation:locationInViewCoordinates];
+    if (gestureRecognizer == _doubleClickGestureRecognizer)
+        return viewImpl->allowsMagnification();
 
     // Live Text (see the Image Analysis design note): the preflight is a passive observer and is only
     // enabled when Live Text is available, so it's always allowed to begin to measure the press.
@@ -2081,17 +1795,6 @@ static inline bool isSamePair(NSGestureRecognizer *a, NSGestureRecognizer *b, NS
 
     if (!isOurClickGesture)
         return YES;
-
-    // Don't let our click gestures prevent the double-click-for-double-click GR or either smart
-    // magnification GR: like the single click, they recognize alongside gestures that begin at press-down
-    // (the single-click press GR and mouse tracking), which would otherwise prevent them from counting
-    // their second click.
-    if (preventedGestureRecognizer == _doubleClickForDoubleClickGestureRecognizer)
-        return NO;
-
-    if (preventedGestureRecognizer == _doubleClickGestureRecognizer
-        || preventedGestureRecognizer == _nonBlockingDoubleClickGestureRecognizer)
-        return NO;
 
     // Don't let other click gestures prevent the secondary click GR; it must be allowed to fire its
     // press timer (0.72s) without being short-circuited by gestures that recognize earlier

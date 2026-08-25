@@ -80,7 +80,6 @@ NS_SWIFT_UI_ACTOR
 #if !__has_feature(modules)
 - (void)didGetClickHighlightForRequest:(WebKit::ClickIdentifier)requestID color:(const WebCore::Color&)color quads:(const Vector<WebCore::FloatQuad>&)highlightedQuads topLeftRadius:(const WebCore::IntSize&)topLeftRadius topRightRadius:(const WebCore::IntSize&)topRightRadius bottomLeftRadius:(const WebCore::IntSize&)bottomLeftRadius bottomRightRadius:(const WebCore::IntSize&)bottomRightRadius nodeHasBuiltInClickHandling:(BOOL)nodeHasBuiltInClickHandling;
 - (void)disableDoubleClickGesturesDuringClickIfNecessary:(WebKit::ClickIdentifier)requestID;
-- (void)handleSmartMagnificationInformationForPotentialClick:(WebKit::ClickIdentifier)requestID renderRect:(const WebCore::FloatRect&)renderRect fitEntireRect:(BOOL)fitEntireRect viewportMinimumScale:(double)viewportMinimumScale viewportMaximumScale:(double)viewportMaximumScale nodeIsRootLevel:(BOOL)nodeIsRootLevel nodeIsPluginElement:(BOOL)nodeIsPluginElement;
 - (void)commitPotentialClickFailed;
 - (void)didCompleteSyntheticClick;
 - (void)didHandleClickAsHover;
@@ -92,20 +91,16 @@ NS_SWIFT_UI_ACTOR
 // Exposed for Swift
 @property (nonatomic, readonly, nullable) WKWebView *webView;
 @property (nonatomic, strong, nullable) NSPanGestureRecognizer *panGestureRecognizer;
-@property (nonatomic, strong, nullable) NSPressGestureRecognizer *singleClickGestureRecognizer;
 - (void)configureForScrolling:(NSPanGestureRecognizer *)gesture;
 - (void)configureForImageAnalysisDeferral:(WKDeferringGestureRecognizer *)gesture;
 - (void)panGestureRecognized:(NSGestureRecognizer *)gesture;
-- (void)configureForSingleClick:(NSPressGestureRecognizer *)gesture;
-- (void)singleClickGestureRecognized:(NSGestureRecognizer *)gesture;
-- (void)handleClickBegan:(NSGestureRecognizer *)gesture;
+
 @end
 
 @interface WKAppKitGestureController (Swift)
 
 - (void)setUpPanGestureRecognizer;
 - (WKDeferringGestureRecognizer *)makeImageAnalysisDeferringGestureRecognizerWithName:(NSString *)name;
-- (void)setUpSingleClickGestureRecognizer;
 
 + (NSString *)loggingDescriptionForGestureRecognizer:(nullable NSGestureRecognizer *)gestureRecognizer;
 
