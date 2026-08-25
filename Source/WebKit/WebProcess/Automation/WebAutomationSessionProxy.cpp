@@ -1241,6 +1241,22 @@ void WebAutomationSessionProxy::scriptDedicatedWorkerRealmDestroyed(const String
     protect(WebProcess::singleton().parentProcessConnection())->send(Messages::WebAutomationSession::ScriptDedicatedWorkerRealmDestroyed(workerIdentifier, ownerFrameIdentifier), 0);
 }
 
+void WebAutomationSessionProxy::getDedicatedWorkerRealms(WebCore::PageIdentifier pageID, CompletionHandler<void(Vector<DedicatedWorkerRealmData>&&)>&& completionHandler)
+{
+    Vector<DedicatedWorkerRealmData> result;
+
+    RefPtr page = WebProcess::singleton().webPage(pageID);
+    RefPtr corePage = page ? page->corePage() : nullptr;
+    if (!corePage || !corePage->isControlledByAutomation()) {
+        completionHandler(WTF::move(result));
+        return;
+    }
+
+    result = AutomationInstrumentation::dedicatedWorkerRealms(pageID);
+
+    completionHandler(WTF::move(result));
+}
+
 void WebAutomationSessionProxy::ensureRealmForInitialEmptyDocument(WebCore::PageIdentifier pageID)
 {
     RefPtr page = WebProcess::singleton().webPage(pageID);

@@ -34,6 +34,9 @@
 #if ENABLE(WEBDRIVER_BIDI)
 
 #include "DOMWrapperWorld.h"
+#include "DocumentPage.h"
+#include "FrameDestructionObserverInlines.h"
+#include "WorkerInspectorProxy.h"
 #include <JavaScriptCore/ConsoleMessage.h>
 #include <JavaScriptCore/ConsoleTypes.h>
 #include <wtf/NeverDestroyed.h>
@@ -125,6 +128,38 @@ void AutomationInstrumentation::scriptDedicatedWorkerRealmDestroyed(const String
         if (RefPtr client = automationClient().get())
             client->scriptDedicatedWorkerRealmDestroyed(workerIdentifier, ownerFrameIdentifier);
     });
+}
+
+Vector<AutomationInstrumentation::DedicatedWorkerRealmData> AutomationInstrumentation::dedicatedWorkerRealms(PageIdentifier pageIdentifier)
+{
+    Vector<DedicatedWorkerRealmData> result;
+
+    for (Ref worker : WorkerInspectorProxy::proxiesForPage(pageIdentifier)) {
+        if (!worker->isExecutionReady())
+            continue;
+
+        const auto& origin = worker->automationSecurityOrigin();
+        if (!origin)
+            continue;
+
+        RefPtr context = worker->scriptExecutionContext();
+        RefPtr document = dynamicDowncast<Document>(context.get());
+        if (!document)
+            continue;
+
+        RefPtr frame = document->frame();
+        RefPtr page = document->page();
+        if (!frame || !frame->isMainFrame() || !page || !page->isControlledByAutomation())
+            continue;
+
+        result.append(DedicatedWorkerRealmData {
+            worker->identifier().isolatedCopy(),
+            frame->frameID(),
+            origin->isolatedCopy()
+        });
+    }
+
+    return result;
 }
 
 } // namespace WebCore

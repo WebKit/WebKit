@@ -33,6 +33,7 @@
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/PageIdentifier.h>
+#include <tuple>
 #include <wtf/RefCounted.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
@@ -41,6 +42,7 @@
 #include "IdentifierTypes.h"
 #include <JavaScriptCore/ConsoleMessage.h>
 #include <WebCore/AutomationInstrumentation.h>
+#include <WebCore/SecurityOriginData.h>
 #endif
 
 namespace WebCore {
@@ -120,6 +122,9 @@ private:
     void scriptDedicatedWorkerRealmCreated(const String& workerIdentifier, WebCore::FrameIdentifier ownerFrameIdentifier, const WebCore::SecurityOriginData&) override;
     void scriptDedicatedWorkerRealmDestroyed(const String& workerIdentifier, WebCore::FrameIdentifier ownerFrameIdentifier) override;
     void ensureRealmForInitialEmptyDocument(WebCore::PageIdentifier);
+
+    using DedicatedWorkerRealmData = std::tuple<String, WebCore::FrameIdentifier, WebCore::SecurityOriginData>;
+    void getDedicatedWorkerRealms(WebCore::PageIdentifier, CompletionHandler<void(Vector<DedicatedWorkerRealmData>&&)>&&);
 #endif
 
     String m_sessionIdentifier;

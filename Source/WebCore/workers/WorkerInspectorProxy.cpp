@@ -179,6 +179,7 @@ void WorkerInspectorProxy::workerStarted(ScriptExecutionContext& scriptExecution
     m_isExecutionReady = false;
     m_wasTerminatedBeforeExecutionReady = false;
     m_automationOwnerFrameIdentifier = std::nullopt;
+    m_automationSecurityOrigin = std::nullopt;
 #if ENABLE(WEBDRIVER_BIDI)
     m_automationOwnerFrameIdentifier = automationOwnerFrameIdentifier(*this);
 #endif
@@ -194,22 +195,28 @@ void WorkerInspectorProxy::workerBecameExecutionReady(const SecurityOriginData& 
     if (m_isExecutionReady)
         return;
 
+#if ENABLE(WEBDRIVER_BIDI)
+    if (m_automationOwnerFrameIdentifier)
+        m_automationSecurityOrigin = origin.isolatedCopy();
+#else
+    UNUSED_PARAM(origin);
+#endif
+
     m_isExecutionReady = true;
 
 #if ENABLE(WEBDRIVER_BIDI)
     if (m_automationOwnerFrameIdentifier) {
-        AutomationInstrumentation::scriptDedicatedWorkerRealmCreated(m_identifier, *m_automationOwnerFrameIdentifier, origin);
+        AutomationInstrumentation::scriptDedicatedWorkerRealmCreated(m_identifier, *m_automationOwnerFrameIdentifier, *m_automationSecurityOrigin);
         if (m_wasTerminatedBeforeExecutionReady)
             AutomationInstrumentation::scriptDedicatedWorkerRealmDestroyed(m_identifier, *m_automationOwnerFrameIdentifier);
     }
-#else
-    UNUSED_PARAM(origin);
 #endif
 
     if (m_wasTerminatedBeforeExecutionReady) {
         m_isExecutionReady = false;
         m_wasTerminatedBeforeExecutionReady = false;
         m_automationOwnerFrameIdentifier = std::nullopt;
+        m_automationSecurityOrigin = std::nullopt;
     }
 }
 
@@ -227,8 +234,10 @@ void WorkerInspectorProxy::workerTerminated()
         m_wasTerminatedBeforeExecutionReady = true;
 
     m_isExecutionReady = false;
-    if (!m_wasTerminatedBeforeExecutionReady)
+    if (!m_wasTerminatedBeforeExecutionReady) {
         m_automationOwnerFrameIdentifier = std::nullopt;
+        m_automationSecurityOrigin = std::nullopt;
+    }
     InspectorInstrumentation::workerTerminated(*this);
     removeFromProxyMap();
 

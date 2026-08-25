@@ -28,6 +28,7 @@
 #include "FrameIdentifier.h"
 #include "PageIdentifier.h"
 #include "ScriptExecutionContextIdentifier.h"
+#include "SecurityOriginData.h"
 #include <wtf/CheckedPtr.h>
 #include <wtf/CheckedRef.h>
 #include <wtf/FastMalloc.h>
@@ -86,6 +87,7 @@ public:
     void workerBecameExecutionReady(const SecurityOriginData&);
     void workerTerminated();
     bool isExecutionReady() const { return m_isExecutionReady; }
+    const std::optional<SecurityOriginData>& automationSecurityOrigin() const { return m_automationSecurityOrigin; }
 
     void resumeWorkerIfPaused();
     void connectToWorkerInspectorController(PageChannel&);
@@ -112,6 +114,7 @@ private:
     bool m_isExecutionReady { false };
     bool m_wasTerminatedBeforeExecutionReady { false };
     std::optional<FrameIdentifier> m_automationOwnerFrameIdentifier;
+    std::optional<SecurityOriginData> m_automationSecurityOrigin;
 };
 
 } // namespace WebCore

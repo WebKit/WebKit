@@ -128,6 +128,7 @@ private:
     bool NODELETE isFrameExecutionReady(const FrameInfoData&);
     RefPtr<Inspector::Protocol::BidiScript::RealmInfo> createRealmInfoForFrame(const FrameInfoData&);
     std::optional<RealmIdentifier> registerDedicatedWorkerRealm(const DedicatedWorkerRealmKey&, const Inspector::Protocol::BidiBrowsingContext::BrowsingContext& ownerBrowsingContext, const WebCore::SecurityOriginData&, bool emitCreatedEvent);
+    RefPtr<Inspector::Protocol::BidiScript::RealmInfo> createProtocolRealmInfo(RealmIdentifier, const RealmInfo&);
     std::optional<String> contextHandleForFrame(const FrameInfoData&);
     RealmIdentifier generateRealmIdForFrame(const FrameInfoData&);
     String generateRealmIdForBrowsingContext(const String& browsingContext);
