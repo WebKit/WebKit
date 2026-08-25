@@ -55,8 +55,8 @@ void GridLanesLayout::performGridLanesPlacement(const GridTrackSizingAlgorithm& 
 {
     initializeGridLanes(gridAxisTracks, stackingAxisDirection);
 
-    m_renderGrid->populateGridPositionsForDirection(algorithm, Style::GridTrackSizingDirection::Columns);
-    m_renderGrid->populateGridPositionsForDirection(algorithm, Style::GridTrackSizingDirection::Rows);
+    m_renderGrid->populateGridPositionsForDirection(algorithm, Style::GridTrackSizingDirection::Columns, std::cref(*this));
+    m_renderGrid->populateGridPositionsForDirection(algorithm, Style::GridTrackSizingDirection::Rows, std::cref(*this));
 
     // 4.4 Grid Lanes Layout and Placement Algorithm
     // https://drafts.csswg.org/css-grid-3/#grid-lanes-layout-algorithm

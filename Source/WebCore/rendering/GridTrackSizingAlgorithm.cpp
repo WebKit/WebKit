@@ -234,8 +234,10 @@ void GridTrackSizingAlgorithm::setAvailableSpace(Style::GridTrackSizingDirection
 
 LayoutUnit GridTrackSizingAlgorithm::computeTrackBasedSize() const
 {
-    if (isDirectionInStackingAxis())
-        return m_renderGrid->gridLanesContentSize();
+    // A grid lanes container's content size in the stacking axis comes from placement rather than from
+    // track sizing, and run() returns early for the stacking axis, so no caller reaches this in that
+    // direction. The callers which need the placed size read it from the GridLanesLayout directly.
+    ASSERT(!isDirectionInStackingAxis());
 
     WTF::Range<size_t> rangeToIgnore;
     if (m_renderGrid->shouldCheckExplicitIntrinsicInnerLogicalSize(m_direction) && m_renderGrid->autoRepeatType(m_direction) == AutoRepeatType::Fit)

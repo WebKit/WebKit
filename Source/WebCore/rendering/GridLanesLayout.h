@@ -52,13 +52,13 @@ public:
         MaxContent
     };
 
-    void initializeGridLanes(unsigned gridAxisTracks, Style::GridTrackSizingDirection stackingAxisDirection);
     void performGridLanesPlacement(const GridTrackSizingAlgorithm&, unsigned gridAxisTracks, Style::GridTrackSizingDirection stackingAxisDirection, Phase);
     LayoutUnit NODELETE offsetForGridItem(const RenderBox&) const;
     LayoutUnit gridContentSize() const { return m_gridContentSize; };
-    LayoutUnit gridGap() const { return m_stackingAxisGridGap; };
 
 private:
+    void initializeGridLanes(unsigned gridAxisTracks, Style::GridTrackSizingDirection stackingAxisDirection);
+
     GridArea gridAreaForIndefiniteGridAxisItem(const RenderBox& item);
     GridArea gridAreaForDefiniteGridAxisItem(const RenderBox&) const;
 
@@ -78,7 +78,7 @@ private:
     GridArea NODELETE gridAreaFromGridAxisSpan(const GridSpan&) const;
     GridSpan NODELETE gridAxisSpanFromArea(const GridArea&) const;
 
-    unsigned m_gridAxisTracksCount;
+    unsigned m_gridAxisTracksCount { 0 };
 
     Vector<LayoutUnit> m_runningPositions;
     HashMap<SingleThreadWeakRef<const RenderBox>, LayoutUnit> m_itemOffsets;
@@ -86,10 +86,10 @@ private:
     LayoutUnit m_stackingAxisGridGap;
     LayoutUnit m_gridContentSize;
 
-    Style::GridTrackSizingDirection m_stackingAxisDirection;
+    Style::GridTrackSizingDirection m_stackingAxisDirection { };
     const GridSpan m_stackingAxisSpan = GridSpan::stackingAxisTranslatedDefiniteGridSpan();
 
-    unsigned m_autoFlowNextCursor;
+    unsigned m_autoFlowNextCursor { 0 };
 };
 
 } // end namespace WebCore

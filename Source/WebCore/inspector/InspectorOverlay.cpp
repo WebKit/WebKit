@@ -1573,7 +1573,7 @@ std::optional<InspectorOverlay::Highlight::GridHighlightOverlay> InspectorOverla
     if (!columnPositions.size() || !rowPositions.size())
         return { };
 
-    LayoutUnit gridLanesContentSize = renderGrid->gridLanesContentSize();
+    LayoutUnit gridLanesContentSize = renderGrid->gridLanesContentSizeForWebInspectorOverlay();
 
     // There are no actual rows or columns in the stacking axis of a grid lanes layout.
     // But we can borrow the concept to draw the two lines at the start and end of the stacking axis.
