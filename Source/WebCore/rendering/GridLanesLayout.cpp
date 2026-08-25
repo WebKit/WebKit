@@ -34,39 +34,25 @@
 
 namespace WebCore {
 
-void GridLanesLayout::initializeGridLanes(unsigned gridAxisTracks, Style::GridTrackSizingDirection stackingAxisDirection)
+GridLanesLayout::GridLanesLayout(RenderGrid& renderGrid, unsigned gridAxisTracksCount, Style::GridTrackSizingDirection stackingAxisDirection)
+    : m_gridAxisTracksCount(gridAxisTracksCount)
+    , m_runningPositions(gridAxisTracksCount)
+    , m_renderGrid(renderGrid)
+    , m_stackingAxisGridGap(renderGrid.gridGap(stackingAxisDirection))
+    , m_stackingAxisDirection(stackingAxisDirection)
 {
-    // Reset global variables as they may contain state from previous runs of grid lanes layout.
-    m_stackingAxisDirection = stackingAxisDirection;
-    m_stackingAxisGridGap = m_renderGrid->gridGap(m_stackingAxisDirection);
-    m_gridAxisTracksCount = gridAxisTracks;
-    m_gridContentSize = 0;
-    m_itemOffsets.clear();
-
     m_renderGrid->currentGrid().setupForGridLanesLayout();
     m_renderGrid->populateExplicitGridAndOrderIterator();
-
-    resizeAndResetRunningPositions();
 }
 
-void GridLanesLayout::performGridLanesPlacement(const GridTrackSizingAlgorithm& algorithm, unsigned gridAxisTracks, Style::GridTrackSizingDirection stackingAxisDirection, ResolvedFitTolerance fitTolerance, Phase layoutPhase)
+void GridLanesLayout::performGridLanesPlacement(const GridTrackSizingAlgorithm& algorithm, ResolvedFitTolerance fitTolerance, Phase layoutPhase)
 {
-    initializeGridLanes(gridAxisTracks, stackingAxisDirection);
-
     m_renderGrid->populateGridPositionsForDirection(algorithm, Style::GridTrackSizingDirection::Columns, std::cref(*this));
     m_renderGrid->populateGridPositionsForDirection(algorithm, Style::GridTrackSizingDirection::Rows, std::cref(*this));
 
     // 4.4 Grid Lanes Layout and Placement Algorithm
     // https://drafts.csswg.org/css-grid-3/#grid-lanes-layout-algorithm
-    // the insertIntoGridAndLayoutItem() will modify the m_autoFlowNextCursor, so m_autoFlowNextCursor needs to be reset.
-    m_autoFlowNextCursor = 0;
-
     placeGridLanesItems(algorithm, fitTolerance, layoutPhase);
-}
-
-void GridLanesLayout::resizeAndResetRunningPositions()
-{
-    m_runningPositions.fill(LayoutUnit(), m_gridAxisTracksCount);
 }
 
 void GridLanesLayout::placeGridLanesItems(const GridTrackSizingAlgorithm& algorithm, ResolvedFitTolerance fitTolerance, Phase layoutPhase)

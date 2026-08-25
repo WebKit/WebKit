@@ -629,6 +629,8 @@ static GridLanesLayout::ResolvedFitTolerance resolveFitTolerance(const RenderGri
 
 void RenderGrid::layoutGridLanes(RelayoutChildren relayoutChildren)
 {
+    ASSERT(isGridLanes());
+
     LayoutRepainter repainter(*this);
     {
         LayoutStateMaintainer statePusher(*this, locationOffset(), isTransformed() || hasReflection() || writingMode().isBlockFlipped());
@@ -686,24 +688,17 @@ void RenderGrid::layoutGridLanes(RelayoutChildren relayoutChildren)
         } else
             computeTrackSizesForDefiniteSize(Style::GridTrackSizingDirection::Rows, availableLogicalHeight(AvailableLogicalHeightType::ExcludeMarginBorderPadding), gridLayoutState);
 
-        auto gridLanesLayout = GridLanesLayout { *this };
+        auto stackingAxisDirection = hasStackingAxisRows() ? Style::GridTrackSizingDirection::Rows : Style::GridTrackSizingDirection::Columns;
+        auto gridAxisTracksBeforeAutoPlacement = currentGrid().numTracks(orthogonalDirection(stackingAxisDirection));
+        auto fitTolerance = resolveFitTolerance(*this, stackingAxisDirection);
 
-        auto performGridLanesPlacement = [&](const Style::GridTrackSizingDirection stackingAxisDirection) {
-            auto gridAxisDirection = stackingAxisDirection == Style::GridTrackSizingDirection::Rows ? Style::GridTrackSizingDirection::Columns : Style::GridTrackSizingDirection::Rows;
-            unsigned gridAxisTracksBeforeAutoPlacement = currentGrid().numTracks(gridAxisDirection);
+        auto gridLanesLayout = GridLanesLayout { *this, gridAxisTracksBeforeAutoPlacement, stackingAxisDirection };
+        gridLanesLayout.performGridLanesPlacement(m_trackSizingAlgorithm, fitTolerance, GridLanesLayout::Phase::Layout);
 
-            gridLanesLayout.performGridLanesPlacement(m_trackSizingAlgorithm, gridAxisTracksBeforeAutoPlacement, stackingAxisDirection, resolveFitTolerance(*this, stackingAxisDirection), GridLanesLayout::Phase::Layout);
-
-            // Only the layout phase records this. computeIntrinsicLogicalWidths() also performs
-            // placement, but its min-content and max-content results are not what the overlay should
-            // be drawing.
-            m_gridLanesContentSizeForWebInspectorOverlay = gridLanesLayout.gridContentSize();
-        };
-
-        if (hasStackingAxisRows())
-            performGridLanesPlacement(Style::GridTrackSizingDirection::Rows);
-        else if (hasStackingAxisColumns())
-            performGridLanesPlacement(Style::GridTrackSizingDirection::Columns);
+        // Only the layout phase records this. computeIntrinsicLogicalWidths() also performs
+        // placement, but its min-content and max-content results are not what the overlay should
+        // be drawing.
+        m_gridLanesContentSizeForWebInspectorOverlay = gridLanesLayout.gridContentSize();
 
         LayoutUnit trackBasedLogicalHeight = borderAndPaddingLogicalHeight() + scrollbarLogicalHeight();
         if (auto size = explicitIntrinsicInnerLogicalSize(Style::GridTrackSizingDirection::Rows))
@@ -901,14 +896,17 @@ std::pair<LayoutUnit, LayoutUnit> RenderGrid::computeIntrinsicLogicalWidths() co
 
         // To determine the width of the grid when we have a grid lanes layout in the column direction we need to perform a layout with the min and max
         // content sizes. We will override the grid items widths to accomplish this and then calculate the final grid content size after placement.
-        auto gridLanesLayout = GridLanesLayout { const_cast<RenderGrid&>(*this) };
         auto fitTolerance = resolveFitTolerance(*this, Style::GridTrackSizingDirection::Columns);
 
-        gridLanesLayout.performGridLanesPlacement(algorithm, gridAxisTracksCountBeforeAutoPlacement, Style::GridTrackSizingDirection::Columns, fitTolerance, GridLanesLayout::Phase::MinContent);
-        minLogicalWidth = gridLanesLayout.gridContentSize();
+        // Constructing a GridLanesLayout clears the grid, so the track count both runs are given
+        // has to be the one taken before either of them placed anything.
+        auto minContentLayout = GridLanesLayout { const_cast<RenderGrid&>(*this), gridAxisTracksCountBeforeAutoPlacement, Style::GridTrackSizingDirection::Columns };
+        minContentLayout.performGridLanesPlacement(algorithm, fitTolerance, GridLanesLayout::Phase::MinContent);
+        minLogicalWidth = minContentLayout.gridContentSize();
 
-        gridLanesLayout.performGridLanesPlacement(algorithm, gridAxisTracksCountBeforeAutoPlacement, Style::GridTrackSizingDirection::Columns, fitTolerance, GridLanesLayout::Phase::MaxContent);
-        maxLogicalWidth = gridLanesLayout.gridContentSize();
+        auto maxContentLayout = GridLanesLayout { const_cast<RenderGrid&>(*this), gridAxisTracksCountBeforeAutoPlacement, Style::GridTrackSizingDirection::Columns };
+        maxContentLayout.performGridLanesPlacement(algorithm, fitTolerance, GridLanesLayout::Phase::MaxContent);
+        maxLogicalWidth = maxContentLayout.gridContentSize();
     }
 
     m_grid.resetCurrentGrid();
