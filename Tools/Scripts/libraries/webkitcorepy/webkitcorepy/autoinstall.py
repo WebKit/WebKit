@@ -27,8 +27,6 @@ import json
 import logging
 import math
 import os
-import platform
-import re
 import shutil
 import ssl
 import subprocess
@@ -42,8 +40,11 @@ from collections import defaultdict
 from contextlib import contextmanager
 from logging import NullHandler
 from webkitcorepy import log
-from webkitcorepy.version import Version
+from webkitcorepy._vendored.packaging.version import Version, InvalidVersion
 from webkitcorepy.file_lock import FileLock
+from webkitcorepy._vendored.packaging import tags
+from webkitcorepy._vendored.packaging.specifiers import SpecifierSet, InvalidSpecifier
+from webkitcorepy._vendored.packaging.utils import parse_wheel_filename, InvalidWheelFilename, parse_sdist_filename, InvalidSdistFilename
 
 from html.parser import HTMLParser
 from urllib.request import urlopen
@@ -90,7 +91,7 @@ class Package(object):
             self.extension = extension or 'tar.gz'
 
         def __repr__(self):
-            return '{}-{}.{}.{}'.format(self.name, self.version.major, self.version.minor, self.version.tiny)
+            return '{}-{}.{}.{}'.format(self.name, self.version.major, self.version.minor, self.version.micro)
 
         @property
         def path(self):
@@ -153,7 +154,7 @@ class Package(object):
 
     def __init__(self, import_name, version=None, pypi_name=None, slow_install=False, wheel=None, aliases=None, implicit_deps=None):
         self.name = import_name
-        self.version = version
+        self.version = Version(str(version)) if version is not None else None
         self._archives = []
         self.pypi_name = pypi_name or self.name
         self.slow_install = slow_install
@@ -201,52 +202,39 @@ class Package(object):
 
                 for package in reversed(packages):
                     if self.wheel or self.wheel is None and package['name'].endswith('.whl'):
-                        match = re.search(r'.+-([^-]+-[^-]+-[^-]+).whl', package['name'])
-                        if not match:
+                        try:
+                            _, version, _, wheel_tags = parse_wheel_filename(package['name'])
+                        except InvalidWheelFilename:
                             continue
 
-                        # Temporarily disable AutoInstall so we don't try to AutoInstall
-                        # packaging via the below import while installing packaging.
-                        with AutoInstall.temporarily_disable():
-                            try:
-                                from packaging import tags
-                            except ImportError:
-                                # This is a subset of compatible tags, but these are the
-                                # only ones that are particularly common; we need these
-                                # to be able to install packaging and its dependencies.
-                                generic_tags = [
-                                    "py2.py3-none-any",
-                                    "py3.py2-none-any",
-                                    "py3-none-any",
-                                ]
+                        if not cached_tags:
+                            cached_tags = set(AutoInstall.tags())
 
-                                if match.group(1) not in generic_tags:
-                                    continue
-                            else:
-                                if not cached_tags:
-                                    cached_tags = set(AutoInstall.tags())
-
-                                if all([tag not in cached_tags for tag in tags.parse_tag(match.group(1))]):
-                                    continue
+                        if all(tag not in cached_tags for tag in wheel_tags):
+                            continue
 
                         extension = 'whl'
 
-                    else:
-                        if package['name'].endswith(('.tar.gz', '.tar.bz2')):
-                            extension = 'tar.gz'
-                        elif package['name'].endswith('.zip'):
-                            extension = 'zip'
-                        else:
+                    elif package['name'].endswith(('.tar.gz', '.zip')):
+                        try:
+                            _, version = parse_sdist_filename(package['name'])
+                        except InvalidSdistFilename:
                             continue
 
-                    requires = package.get('data-requires-python')
-                    if requires and not AutoInstall.version.matches(requires):
+                        extension = 'tar.gz' if package['name'].endswith('.tar.gz') else 'zip'
+
+                    else:
                         continue
 
-                    version_candidate = re.search(r'\d+\.\d+(\.\d+)?', package["name"])
-                    if not version_candidate:
-                        continue
-                    version = Version(*version_candidate.group().split('.'))
+                    requires = package.get('data-requires-python')
+                    if requires:
+                        try:
+                            version_matches = AutoInstall.version in SpecifierSet(requires)
+                        except InvalidSpecifier:
+                            version_matches = True  # be permissive on unparsable metadata, matching old behavior
+                        if not version_matches:
+                            continue
+
                     if self.version and version != self.version:
                         continue
 
@@ -287,8 +275,13 @@ class Package(object):
             return False
         if not manifest.get('version'):
             return False
-        if self.version and Version(*manifest.get('version').split('.')) not in self.version:
-            return False
+        if self.version:
+            try:
+                manifest_version = Version(manifest.get('version'))
+            except InvalidVersion:
+                return False
+            if manifest_version != self.version:
+                return False
         if not all(pkg.is_cached() for dep in self.implicit_deps for pkg in AutoInstall.packages[dep]):
             return False
         return True
@@ -512,7 +505,7 @@ class AutoInstall(importlib.abc.MetaPathFinder):
     index = _indexes[-1]
     timeout = 30
     times_to_retry = 1
-    version = Version(sys.version_info[0], sys.version_info[1], sys.version_info[2])
+    version = Version('{}.{}.{}'.format(sys.version_info[0], sys.version_info[1], sys.version_info[2]))
     packages = defaultdict(list)
     manifest = {}
 
@@ -754,18 +747,7 @@ class AutoInstall(importlib.abc.MetaPathFinder):
 
     @classmethod
     def tags(cls):
-        from packaging import tags
-
-        for tag in tags.sys_tags():
-            yield tag
-
-        # FIXME: Work around for https://github.com/pypa/packaging/pull/319 and Big Sur
-        if sys.platform == 'darwin' and Version.from_string(platform.mac_ver()[0]) > Version(10):
-            for override in tags.mac_platforms(version=(10, 16)):
-                for tag in tags.sys_tags():
-                    if not tag.platform:
-                        pass
-                    yield tags.Tag(tag.interpreter, tag.abi, override)
+        yield from tags.sys_tags()
 
     @classmethod
     def log(cls, message, level=logging.WARNING):
