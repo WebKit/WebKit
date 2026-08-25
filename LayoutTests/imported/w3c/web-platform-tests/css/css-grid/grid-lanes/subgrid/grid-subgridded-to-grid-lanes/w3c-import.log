@@ -25,6 +25,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/subgrid/grid-subgridded-to-grid-lanes/column-subgrid-abs-pos-002-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/subgrid/grid-subgridded-to-grid-lanes/column-subgrid-abs-pos-002-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/subgrid/grid-subgridded-to-grid-lanes/column-subgrid-abs-pos-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/subgrid/grid-subgridded-to-grid-lanes/column-subgrid-button-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/subgrid/grid-subgridded-to-grid-lanes/column-subgrid-button-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/subgrid/grid-subgridded-to-grid-lanes/column-subgrid-button.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/subgrid/grid-subgridded-to-grid-lanes/column-subgrid-ignores-width-001-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/subgrid/grid-subgridded-to-grid-lanes/column-subgrid-ignores-width-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/subgrid/grid-subgridded-to-grid-lanes/column-subgrid-orthogonal-writing-mode-001-expected.html
@@ -78,6 +81,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/subgrid/grid-subgridded-to-grid-lanes/row-subgrid-abs-pos-002-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/subgrid/grid-subgridded-to-grid-lanes/row-subgrid-abs-pos-002-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/subgrid/grid-subgridded-to-grid-lanes/row-subgrid-abs-pos-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/subgrid/grid-subgridded-to-grid-lanes/row-subgrid-button-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/subgrid/grid-subgridded-to-grid-lanes/row-subgrid-button-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/subgrid/grid-subgridded-to-grid-lanes/row-subgrid-button.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/subgrid/grid-subgridded-to-grid-lanes/row-subgrid-ignores-height-001-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/subgrid/grid-subgridded-to-grid-lanes/row-subgrid-ignores-height-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/subgrid/grid-subgridded-to-grid-lanes/row-subgrid-orthogonal-writing-mode-001-expected.html
@@ -100,3 +106,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/subgrid/grid-subgridded-to-grid-lanes/row-subgrid-standalone-column-axis-size-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/subgrid/grid-subgridded-to-grid-lanes/sibling-nested-subgrids-overflow-hidden-contribution.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/subgrid/grid-subgridded-to-grid-lanes/subgrid-in-wrong-axis-with-atuo-repeat-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/subgrid/grid-subgridded-to-grid-lanes/subgrid-item-with-margin-left-auto-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/subgrid/grid-subgridded-to-grid-lanes/subgrid-item-with-margin-left-auto.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/subgrid/grid-subgridded-to-grid-lanes/subgrid-sticky-item-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-lanes/subgrid/grid-subgridded-to-grid-lanes/subgrid-sticky-item.html

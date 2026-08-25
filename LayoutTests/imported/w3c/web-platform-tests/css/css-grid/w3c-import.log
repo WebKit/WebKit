@@ -42,6 +42,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/firefox-bug-1881495-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/firefox-bug-1881495.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/firefox-bug-1958131-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/firefox-bug-2063893-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-calc-margin-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-calc-margin-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-calc-margin.html
@@ -95,6 +96,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-overflowing-item-below-container-is-painted-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-overflowing-item-below-container-is-painted-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-overflowing-item-below-container-is-painted.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-overflowing-item-content-is-painted-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-overflowing-item-content-is-painted.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-overflowing-item-in-both-axes-is-painted-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-overflowing-item-in-both-axes-is-painted-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-overflowing-item-in-both-axes-is-painted.html

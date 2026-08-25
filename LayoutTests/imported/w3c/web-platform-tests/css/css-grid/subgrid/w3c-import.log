@@ -261,6 +261,12 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/subgrid-baseline-011.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/subgrid-baseline-012-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/subgrid-baseline-012.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/subgrid-baseline-013.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/subgrid-baseline-014.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/subgrid-baseline-015.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/subgrid-baseline-016.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/subgrid-baseline-017.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/subgrid-baseline-018.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/subgrid-button-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/subgrid-button-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/subgrid-button.html
@@ -273,6 +279,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/subgrid-no-items-on-edges-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/subgrid-no-items-on-edges-002-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/subgrid-no-items-on-edges-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/subgrid-own-column-gap-does-not-inflate-intrinsic-width.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/subgrid-paint-containment-change-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/subgrid-scroller-auto-height-padding-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/subgrid-scroller-auto-height-padding-ref.html
@@ -280,6 +287,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/subgrid-stretch-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/subgrid-stretch-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/subgrid-stretch.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/subgridded-axis-content-distribution-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/writing-directions-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/writing-directions-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/subgrid/writing-directions-001.html

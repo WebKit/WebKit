@@ -1,0 +1,34 @@
+X
+y
+A
+B
+C
+d
+E
+F
+
+FAIL .item 1 assert_equals:
+<div class="item axis-item big" style="grid-column: 1;" data-offset-x="0" data-offset-y="0">X</div>
+offsetTop expected 0 but got 4
+FAIL .item 2 assert_equals:
+<div class="item axis-item small" style="grid-column: 2;" data-offset-x="60" data-offset-y="16">y</div>
+offsetTop expected 16 but got 4
+FAIL .item 3 assert_equals:
+<div class="item big" data-offset-x="0" data-offset-y="30">A</div>
+offsetTop expected 30 but got 34
+FAIL .item 4 assert_equals:
+<div class="item mid" data-offset-x="30" data-offset-y="38">B</div>
+offsetTop expected 38 but got 42
+FAIL .item 5 assert_equals:
+<div class="item small" data-offset-x="50" data-offset-y="46">C</div>
+offsetTop expected 46 but got 50
+FAIL .item 6 assert_equals:
+<div class="item" data-offset-x="60" data-offset-y="42">d</div>
+offsetTop expected 42 but got 46
+FAIL .item 7 assert_equals:
+<div class="item big" data-offset-x="75" data-offset-y="30">E</div>
+offsetTop expected 30 but got 34
+FAIL .item 8 assert_equals:
+<div class="item mid" data-offset-x="105" data-offset-y="38">F</div>
+offsetTop expected 38 but got 42
+

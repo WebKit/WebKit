@@ -119,6 +119,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-definition/grid-template-columns-rows-changes-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-definition/grid-template-columns-rows-resolved-values-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-definition/grid-template-columns-rows-resolved-values-001.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-definition/grid-template-columns-rows-resolved-values-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-definition/grid-template-rows-fit-content-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-definition/grid-template-rows-fit-content-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-definition/grid-template-rows-fit-content-001.html

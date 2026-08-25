@@ -3729,6 +3729,9 @@ imported/w3c/web-platform-tests/css/css-grid/alignment/grid-self-baseline-not-ap
 imported/w3c/web-platform-tests/css/css-grid/subgrid/alignment-in-subgridded-axes-001.html [ Skip ]
 webkit.org/b/266091 imported/w3c/web-platform-tests/css/css-grid/grid-lanes/intrinsic-sizing/grid-lanes-intrinsic-sizing-cols-006.html
 
+imported/w3c/web-platform-tests/css/css-grid/layout-algorithm/flex-sizing-rows-indefinite-height.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-grid/layout-algorithm/grid-template-flexible-rerun-track-sizing.html [ ImageOnlyFailure ]
+
 
 fast/text/text-styles/-apple-system [ Pass ]
 

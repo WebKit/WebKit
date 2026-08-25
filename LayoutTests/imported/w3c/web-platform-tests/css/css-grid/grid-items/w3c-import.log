@@ -119,6 +119,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-direction-rtl-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-direction-rtl-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-dynamic-min-contribution-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-fixed-max-height-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-fixed-max-width-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-flex-container-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-inline-contribution-001-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-inline-contribution-001.html
@@ -128,10 +130,14 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-inline-contribution-003.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-inline-contribution-004-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-inline-contribution-004.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-inline-contribution-005-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-inline-contribution-005.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-margins-and-writing-modes-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-margins-and-writing-modes-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-margins-and-writing-modes-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-min-auto-size-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-min-contribution-behaves-as-auto-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-min-contribution-fit-content-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-min-height-overrides-fixed-height-001-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-min-height-overrides-fixed-height-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-grid/grid-items/grid-item-min-width-overrides-fixed-width-001-expected.xht
