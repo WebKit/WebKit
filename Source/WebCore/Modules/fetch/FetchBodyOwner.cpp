@@ -414,34 +414,21 @@ ExceptionOr<void> FetchBodyOwner::createReadableStream(JSC::JSGlobalObject& stat
     }
 
     RefPtr context = scriptExecutionContext();
-    if (context && context->settingsValues().readableByteStreamFetchSourceEnabled) {
-        Ref readableStreamSource = FetchBodySource::createByteSource(*this);
-        Ref readableStream = ReadableStream::createReadableByteStream(globalObject, [readableStreamSource](auto& globalObject, auto& controller) {
-            return readableStreamSource->pull(globalObject, controller);
-        }, [readableStreamSource](auto& globalObject, auto& controller, auto&& value) {
-            return readableStreamSource->cancel(globalObject, controller, WTF::move(value));
-        }, {
-            .highwaterMark = 1,
-            .startSynchronously = ReadableStream::StartSynchronously::Yes,
-            .isSourceReachableFromOpaqueRoot = ReadableStream::IsSourceReachableFromOpaqueRoot::Yes
-        });
+    Ref readableStreamSource = FetchBodySource::create(*this);
+    Ref readableStream = ReadableStream::createReadableByteStream(globalObject, [readableStreamSource](auto& globalObject, auto& controller) {
+        return readableStreamSource->pull(globalObject, controller);
+    }, [readableStreamSource](auto& globalObject, auto& controller, auto&& value) {
+        return readableStreamSource->cancel(globalObject, controller, WTF::move(value));
+    }, {
+        .highwaterMark = 1,
+        .startSynchronously = ReadableStream::StartSynchronously::Yes,
+        .isSourceReachableFromOpaqueRoot = ReadableStream::IsSourceReachableFromOpaqueRoot::Yes
+    });
 
-        m_readableStreamSource = readableStreamSource.ptr();
-        readableStreamSource->setByteController(*readableStream->controller());
-        m_body->setReadableStream(WTF::move(readableStream));
+    m_readableStreamSource = readableStreamSource.ptr();
+    readableStreamSource->setByteController(*readableStream->controller());
+    m_body->setReadableStream(WTF::move(readableStream));
 
-        return { };
-    }
-
-    auto [fetchBodySource, readableStreamSource] = FetchBodySource::createNonByteSource(*this);
-    m_readableStreamSource = WTF::move(fetchBodySource);
-
-    auto streamOrException = ReadableStream::create(downcast<JSDOMGlobalObject>(state), readableStreamSource);
-    if (streamOrException.hasException()) [[unlikely]] {
-        m_readableStreamSource = nullptr;
-        return streamOrException.releaseException();
-    }
-    m_body->setReadableStream(streamOrException.releaseReturnValue());
     return { };
 }
 

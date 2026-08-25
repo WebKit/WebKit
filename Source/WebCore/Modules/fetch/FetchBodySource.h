@@ -44,8 +44,7 @@ class ReadableByteStreamController;
 
 class FetchBodySource final : public RefCountedAndCanMakeWeakPtr<FetchBodySource> {
 public:
-    static std::pair<Ref<FetchBodySource>, Ref<RefCountedReadableStreamSource>> createNonByteSource(FetchBodyOwner&);
-    static Ref<FetchBodySource> createByteSource(FetchBodyOwner&);
+    static Ref<FetchBodySource> create(FetchBodyOwner&);
 
     ~FetchBodySource();
 
@@ -54,7 +53,7 @@ public:
     void error(const Exception&);
 
     bool NODELETE isPulling() const;
-    bool NODELETE isCancelling() const;
+    bool NODELETE isCancelling() const { return m_isCancelling; }
 
     void resolvePullPromise();
     void detach();
@@ -68,44 +67,10 @@ public:
     void setFormDataConsumer(Ref<FormDataConsumer>&&);
 
 private:
-    class NonByteSource;
-    FetchBodySource(FetchBodyOwner&, RefPtr<NonByteSource>&& = { });
-
-    class NonByteSource : public RefCountedReadableStreamSource {
-    public:
-        static Ref<NonByteSource> create(FetchBodyOwner& owner) { return adoptRef(*new NonByteSource(owner)); }
-
-        bool enqueue(RefPtr<JSC::ArrayBuffer>&& chunk) { return controller().enqueue(WTF::move(chunk)); }
-        void close();
-        void error(const Exception&);
-
-        bool isCancelling() const { return m_isCancelling; }
-
-        void resolvePullPromise() { pullFinished(); }
-        void detach() { m_bodyOwner = nullptr; }
-
-    private:
-        explicit NonByteSource(FetchBodyOwner&);
-
-        void doStart() final;
-        void doPull() final;
-        void doCancel(JSC::JSValue) final;
-        void setActive() final;
-        void setInactive() final;
-
-        WeakPtr<FetchBodyOwner> m_bodyOwner;
-
-        bool m_isCancelling { false };
-#if ASSERT_ENABLED
-        bool m_isClosed { false };
-#endif
-        RefPtr<ActiveDOMObject::PendingActivity<FetchBodyOwner>> m_pendingActivity;
-    };
+    explicit FetchBodySource(FetchBodyOwner&);
 
     WeakPtr<FetchBodyOwner> m_bodyOwner;
     bool m_isCancelling { false };
-
-    const RefPtr<NonByteSource> m_nonByteSource;
 
     WeakPtr<ReadableByteStreamController> m_byteController;
     RefPtr<DeferredPromise> m_pullPromise;

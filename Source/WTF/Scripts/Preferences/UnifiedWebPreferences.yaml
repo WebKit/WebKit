@@ -7168,20 +7168,6 @@ ReadableByteStreamAPIEnabled:
     WebKit:
       default: true
 
-ReadableByteStreamFetchSourceEnabled:
-  type: bool
-  status: stable
-  category: dom
-  humanReadableName: "ReadableByteStream for fetch API"
-  humanReadableDescription: "Enable Readable Byte Streams for fetch API"
-  defaultValue:
-    WebCore:
-      default: true
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
-
 ReadableStreamFromEnabled:
   type: bool
   status: stable

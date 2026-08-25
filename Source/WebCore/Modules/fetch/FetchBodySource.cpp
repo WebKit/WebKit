@@ -39,21 +39,13 @@
 
 namespace WebCore {
 
-std::pair<Ref<FetchBodySource>, Ref<RefCountedReadableStreamSource>> FetchBodySource::createNonByteSource(FetchBodyOwner& bodyOwner)
-{
-    Ref nonByteSource = NonByteSource::create(bodyOwner);
-    Ref source = adoptRef(*new FetchBodySource(bodyOwner, nonByteSource.ptr()));
-    return { WTF::move(source), WTF::move(nonByteSource) };
-}
-
-Ref<FetchBodySource> FetchBodySource::createByteSource(FetchBodyOwner& bodyOwner)
+Ref<FetchBodySource> FetchBodySource::create(FetchBodyOwner& bodyOwner)
 {
     return adoptRef(*new FetchBodySource(bodyOwner));
 }
 
-FetchBodySource::FetchBodySource(FetchBodyOwner& bodyOwner, RefPtr<NonByteSource>&& nonByteSource)
+FetchBodySource::FetchBodySource(FetchBodyOwner& bodyOwner)
     : m_bodyOwner(bodyOwner)
-    , m_nonByteSource(WTF::move(nonByteSource))
 {
 }
 
@@ -61,7 +53,6 @@ FetchBodySource::~FetchBodySource() = default;
 
 void FetchBodySource::setByteController(ReadableByteStreamController& controller)
 {
-    ASSERT(!m_nonByteSource);
     ASSERT(!m_byteController);
     m_byteController = controller;
 
@@ -110,9 +101,6 @@ static JSDOMGlobalObject* globalObjectFromBodyOwner(RefPtr<FetchBodyOwner>&& bod
 // FIXME: We should be able to take a FragmentedSharedBuffer
 bool FetchBodySource::enqueue(RefPtr<JSC::ArrayBuffer>&& chunk)
 {
-    if (m_nonByteSource)
-        return m_nonByteSource->enqueue(WTF::move(chunk));
-
     if (!chunk)
         return false;
 
@@ -131,11 +119,6 @@ bool FetchBodySource::enqueue(RefPtr<JSC::ArrayBuffer>&& chunk)
 
 void FetchBodySource::close()
 {
-    if (m_nonByteSource) {
-        m_nonByteSource->close();
-        return;
-    }
-
     RefPtr controller = m_byteController.get();
     if (!controller)
         return;
@@ -149,11 +132,6 @@ void FetchBodySource::close()
 
 void FetchBodySource::error(const Exception& exception)
 {
-    if (m_nonByteSource) {
-        m_nonByteSource->error(exception);
-        return;
-    }
-
     RefPtr controller = m_byteController.get();
     if (!controller)
         return;
@@ -167,107 +145,22 @@ void FetchBodySource::error(const Exception& exception)
 
 bool FetchBodySource::isPulling() const
 {
-    if (m_nonByteSource)
-        return m_nonByteSource->isPulling();
     if (m_formDataConsumer)
         return m_formDataConsumer->hasPendingPull();
     return !!m_pullPromise;
 }
 
-bool FetchBodySource::isCancelling() const
-{
-    return m_nonByteSource ? m_nonByteSource->isCancelling() : m_isCancelling;
-}
-
 void FetchBodySource::resolvePullPromise()
 {
-    if (m_nonByteSource) {
-        m_nonByteSource->resolvePullPromise();
-        return;
-    }
-
     if (auto pullPromise = std::exchange(m_pullPromise, { }))
         pullPromise->resolve();
 }
 
 void FetchBodySource::detach()
 {
-    if (m_nonByteSource) {
-        m_nonByteSource->detach();
-        return;
-    }
-
     m_bodyOwner = nullptr;
     m_byteController = nullptr;
     m_pullPromise = nullptr;
-}
-
-FetchBodySource::NonByteSource::NonByteSource(FetchBodyOwner& owner)
-    : m_bodyOwner(owner)
-{
-}
-
-void FetchBodySource::NonByteSource::setActive()
-{
-    ASSERT(m_bodyOwner);
-    ASSERT(!m_pendingActivity);
-    if (RefPtr bodyOwner = m_bodyOwner.get())
-        m_pendingActivity = bodyOwner->makePendingActivity(*bodyOwner);
-}
-
-void FetchBodySource::NonByteSource::setInactive()
-{
-    ASSERT(m_bodyOwner);
-    ASSERT(m_pendingActivity);
-    m_pendingActivity = nullptr;
-}
-
-void FetchBodySource::NonByteSource::doStart()
-{
-    ASSERT(m_bodyOwner);
-    if (RefPtr bodyOwner = m_bodyOwner.get())
-        bodyOwner->consumeBodyAsStream();
-}
-
-void FetchBodySource::NonByteSource::doPull()
-{
-    ASSERT(m_bodyOwner);
-    if (RefPtr bodyOwner = m_bodyOwner.get())
-        bodyOwner->feedStream();
-}
-
-void FetchBodySource::NonByteSource::doCancel(JSC::JSValue)
-{
-    auto scope = makeScopeExit([&] {
-        cancelFinished();
-    });
-
-    m_isCancelling = true;
-    RefPtr bodyOwner = m_bodyOwner.get();
-    if (!bodyOwner)
-        return;
-
-    bodyOwner->cancel();
-    m_bodyOwner = nullptr;
-}
-
-void FetchBodySource::NonByteSource::close()
-{
-#if ASSERT_ENABLED
-    ASSERT(!m_isClosed);
-    m_isClosed = true;
-#endif
-
-    controller().close();
-    clean();
-    m_bodyOwner = nullptr;
-}
-
-void FetchBodySource::NonByteSource::error(const Exception& value)
-{
-    controller().error(value);
-    clean();
-    m_bodyOwner = nullptr;
 }
 
 } // namespace WebCore
