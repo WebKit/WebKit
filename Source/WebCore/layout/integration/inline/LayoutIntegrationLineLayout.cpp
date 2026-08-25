@@ -218,8 +218,11 @@ LineLayout::~LineLayout()
             return false;
         return !m_inlineContentCache.inlineItems().isPopulatedFromCache();
     };
-    if (shouldPopulateBreakingPositionCache())
-        Layout::InlineItemsBuilder::populateBreakingPositionCache(m_inlineContentCache.inlineItems().content(), protect(rootRenderer->document()));
+    if (shouldPopulateBreakingPositionCache()) {
+        auto& inlineItems = m_inlineContentCache.inlineItems();
+        auto contentMayAdjustWidths = inlineItems.requiresVisualReordering() || inlineItems.hasTextAutospace();
+        Layout::InlineItemsBuilder::populateBreakingPositionCache(inlineItems.content(), protect(rootRenderer->document()), contentMayAdjustWidths);
+    }
 
     auto prepareAndDetachInlineContent = [&] {
         if (!m_inlineContent)

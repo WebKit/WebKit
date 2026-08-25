@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Inline item widths cached per font cascade must not survive a font cache invalidation</title>
+<style>
+#container {
+    width: 900px;
+    font-family: system-ui;
+    font-size: 20px;
+}
+</style>
+</head>
+<body>
+<div id="container"><span id="text">aaaa bbbb cccc dddd eeee</span></div>
+<pre id="log"></pre>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+const results = [];
+
+function rebuildInlineItemsAndMeasure()
+{
+    container.style.display = "none";
+    document.body.offsetHeight;
+    container.style.display = "";
+    document.body.offsetHeight;
+    return text.getBoundingClientRect().width;
+}
+
+if (!window.internals)
+    results.push("FAIL this test requires window.internals.");
+else {
+    internals.settings.setShouldMockBoldSystemFontForAccessibility(false);
+    const normalWidth = rebuildInlineItemsAndMeasure();
+
+    internals.settings.setShouldMockBoldSystemFontForAccessibility(true);
+    const widthFromCache = rebuildInlineItemsAndMeasure();
+
+    internals.releaseMemoryNow();
+    const widthMeasuredFresh = rebuildInlineItemsAndMeasure();
+
+    results.push(widthMeasuredFresh !== normalWidth
+        ? "PASS the accessibility bold system font measures differently from the normal system font."
+        : "FAIL inconclusive: the accessibility bold system font measures the same as the normal system font (" + normalWidth + ").");
+
+    results.push(widthFromCache === widthMeasuredFresh
+        ? "PASS the width measured after the font cache invalidation does not come from a stale cache."
+        : "FAIL stale cached widths were reused: got " + widthFromCache + ", expected " + widthMeasuredFresh + " (the width before the invalidation was " + normalWidth + ").");
+}
+
+log.textContent = results.join("\n");
+</script>
+</body>
+</html>

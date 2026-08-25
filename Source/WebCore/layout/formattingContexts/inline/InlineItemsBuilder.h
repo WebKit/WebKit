@@ -47,7 +47,7 @@ public:
     InlineItemsBuilder(InlineContentCache&, const ElementBox& root, const SecurityOrigin&);
     void build(InlineItemPosition startPosition);
 
-    static void populateBreakingPositionCache(const InlineItemList&, const Document&);
+    static void populateBreakingPositionCache(const InlineItemList&, const Document&, bool contentMayAdjustWidths);
 
 private:
     void collectInlineItems(InlineItemList&, InlineItemPosition startPosition);

@@ -101,7 +101,7 @@ void FontCascadeCache::pruneSystemFallbackFonts()
         Ref { entry->fonts }->pruneSystemFallbacks();
 }
 
-static FontCascadeCacheKey makeFontCascadeCacheKey(const FontCascadeDescription& description, FontSelector* fontSelector)
+FontCascadeCacheKey makeFontCascadeCacheKey(const FontCascadeDescription& description, FontSelector* fontSelector)
 {
     unsigned familyCount = description.familyCount();
     auto hasComplexFontSelector = fontSelector && !fontSelector->isSimpleFontSelectorForDescription();

@@ -26,6 +26,7 @@
 #include "config.h"
 #include "TextBreakingPositionCache.h"
 
+#include "FontCache.h"
 #include "StyleComputedStyle+GettersInlines.h"
 #include <wtf/TZoneMallocInlines.h>
 
@@ -33,8 +34,9 @@ namespace WebCore {
 namespace Layout {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(TextBreakingPositionCache);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(TextBreakingPositionCache::Entry);
 
-static constexpr size_t evictionSoftThreshold = 500000; // At this amount of content (string + breaking position list) we should start evicting
+static constexpr size_t evictionSoftThreshold = 500000; // At this amount of content (string + breaking position list + width lists) we should start evicting
 static constexpr size_t evictionHardCapMultiplier = 5; // Do not let the cache grow beyond this
 static constexpr Seconds idleIntervalForEviction { 10_s };
 
@@ -49,11 +51,75 @@ TextBreakingPositionCache::TextBreakingPositionCache()
 {
 }
 
+static size_t widthsBytes(const TextBreakingPositionCache::Entry& entry)
+{
+    size_t bytes = 0;
+    for (auto& cascadeWidths : entry.widthsByFontCascade)
+        bytes += sizeof(float) * cascadeWidths.widths.size() + sizeof(FontCascadeCacheKey);
+    return bytes;
+}
+
+bool TextBreakingPositionCache::clearWidthsIfGenerationChanged()
+{
+    auto currentGeneration = FontCache::forCurrentThread().generation();
+    if (m_widthsGeneration == currentGeneration)
+        return false;
+    m_widthsGeneration = currentGeneration;
+    for (auto& entry : m_breakingPositionMap.values()) {
+        m_cachedContentSize -= widthsBytes(*entry);
+        entry->widthsByFontCascade.clear();
+    }
+    return true;
+}
+
+const TextBreakingPositionCache::WidthList* TextBreakingPositionCache::widths(const Entry& entry, const FontCascadeCacheKey& fontCascade)
+{
+    if (clearWidthsIfGenerationChanged())
+        return nullptr;
+
+    for (auto& cascadeWidths : entry.widthsByFontCascade) {
+        if (cascadeWidths.fontCascade == fontCascade)
+            return &cascadeWidths.widths;
+    }
+    return nullptr;
+}
+
+void TextBreakingPositionCache::addWidths(const Key& key, const FontCascadeCacheKey& fontCascade, WidthList&& widthList)
+{
+    auto iterator = m_breakingPositionMap.find(key);
+    if (iterator == m_breakingPositionMap.end())
+        return;
+    auto& entry = *iterator->value;
+
+    ASSERT(m_cachedContentSize >= widthsBytes(entry));
+    m_cachedContentSize -= widthsBytes(entry);
+
+    auto replaced = false;
+    for (auto& cascadeWidths : entry.widthsByFontCascade) {
+        if (cascadeWidths.fontCascade == fontCascade) {
+            cascadeWidths.widths = WTF::move(widthList);
+            replaced = true;
+            break;
+        }
+    }
+    if (!replaced)
+        entry.widthsByFontCascade.append(Entry::FontCascadeWidths { fontCascade, WTF::move(widthList) });
+
+    m_cachedContentSize += widthsBytes(entry);
+}
+
+size_t TextBreakingPositionCache::approximateEntrySizeBytes(const String& text, const Entry& entry)
+{
+    return text.length() + sizeof(unsigned) * entry.breakingPositions.size() + widthsBytes(entry);
+}
+
 void TextBreakingPositionCache::evict()
 {
     while (m_cachedContentSize > evictionSoftThreshold && !m_breakingPositionMap.isEmpty()) {
         auto evictedEntry = m_breakingPositionMap.random();
-        m_cachedContentSize -= (std::get<0>(evictedEntry->key).length() + 4 * evictedEntry->value.size());
+        auto entrySize = approximateEntrySizeBytes(std::get<0>(evictedEntry->key), *evictedEntry->value);
+        ASSERT(m_cachedContentSize >= entrySize);
+        m_cachedContentSize -= entrySize;
         m_breakingPositionMap.remove(evictedEntry->key);
     }
 }
@@ -76,16 +142,17 @@ void TextBreakingPositionCache::set(const Key& key, List&& breakingPositionList)
     };
     evictIfNeeded();
 
-    m_cachedContentSize += (std::get<0>(key).length() + 4 * breakingPositionList.size());
-    m_breakingPositionMap.set(key, WTF::move(breakingPositionList));
+    auto entry = makeUnique<Entry>(WTF::move(breakingPositionList));
+    m_cachedContentSize += approximateEntrySizeBytes(std::get<0>(key), *entry);
+    m_breakingPositionMap.set(key, WTF::move(entry));
 }
 
-const TextBreakingPositionCache::List* TextBreakingPositionCache::get(const Key& key) const
+const TextBreakingPositionCache::Entry* TextBreakingPositionCache::get(const Key& key) const
 {
     auto iterator = m_breakingPositionMap.find(key);
     if (iterator == m_breakingPositionMap.end())
-        return { };
-    return &iterator->value;
+        return nullptr;
+    return iterator->value.get();
 }
 
 void TextBreakingPositionCache::clear()

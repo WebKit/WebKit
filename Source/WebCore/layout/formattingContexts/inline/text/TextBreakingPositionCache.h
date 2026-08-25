@@ -26,6 +26,7 @@
 #pragma once
 
 #include "Document.h"
+#include "FontCascadeCache.h"
 #include "SecurityOriginData.h"
 #include "TextBreakingPositionContext.h"
 #include "Timer.h"
@@ -46,19 +47,42 @@ public:
     TextBreakingPositionCache();
 
     using Key = std::tuple<String, TextBreakingPositionContext, SecurityOriginData>;
-    using List = Vector<size_t, 8>;
+    using List = Vector<unsigned, 8>;
+    using WidthList = Vector<float>;
+
+    struct Entry {
+        WTF_MAKE_STRUCT_TZONE_ALLOCATED(Entry);
+
+        explicit Entry(List&& positions)
+            : breakingPositions(WTF::move(positions))
+        { }
+
+        const List breakingPositions;
+
+        struct FontCascadeWidths {
+            FontCascadeCacheKey fontCascade;
+            WidthList widths;
+        };
+        Vector<FontCascadeWidths> widthsByFontCascade;
+    };
+
     void set(const Key&, List&& breakingPositionList);
-    const List* get(const Key&) const;
+    const Entry* get(const Key&) const;
+    const WidthList* widths(const Entry&, const FontCascadeCacheKey&);
+    void addWidths(const Key&, const FontCascadeCacheKey&, WidthList&&);
 
     void clear();
 
 private:
     void evict();
+    bool clearWidthsIfGenerationChanged();
+    static size_t approximateEntrySizeBytes(const String& text, const Entry&);
 
 private:
-    using TextBreakingPositionMap = HashMap<Key, List>;
+    using TextBreakingPositionMap = HashMap<Key, std::unique_ptr<Entry>>;
     TextBreakingPositionMap m_breakingPositionMap;
     size_t m_cachedContentSize { 0 };
+    unsigned short m_widthsGeneration { 0 };
     Timer m_delayedEvictionTimer;
 };
 
