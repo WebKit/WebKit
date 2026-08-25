@@ -29,7 +29,6 @@
 #include "AsyncImageDecoder.h"
 #include "ImageFrame.h"
 #include "ScalableImageDecoder.h"
-#include <wtf/NeverDestroyed.h>
 #include <wtf/TZoneMallocInlines.h>
 
 #if USE(CG)
@@ -37,7 +36,7 @@
 #endif
 
 #if HAVE(AVASSETREADER)
-#include "ImageDecoderAVFObjC.h"
+#include "ImageDecoderFactoryAVF.h"
 #endif
 
 #if USE(GSTREAMER) && ENABLE(VIDEO)
@@ -48,75 +47,14 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ImageDecoder);
 
-#if ENABLE(GPU_PROCESS) && HAVE(AVASSETREADER)
-using FactoryVector = Vector<ImageDecoder::ImageDecoderFactory>;
-
-static RefPtr<ImageDecoder> createInProcessImageDecoderAVFObjC(FragmentedSharedBuffer& buffer, const String& mimeType, AlphaOption alphaOption, GammaAndColorProfileOption gammaOption)
-{
-    return ImageDecoderAVFObjC::create(buffer, mimeType, alphaOption, gammaOption, ProcessIdentity { ProcessIdentity::CurrentProcess });
-}
-
-static RefPtr<AsyncImageDecoder> createInProcessAsyncImageDecoderAVFObjC(FragmentedSharedBuffer& buffer, const String& mimeType, AlphaOption alphaOption, GammaAndColorProfileOption gammaOption, ImageDecoderClient& client)
-{
-    RefPtr decoder = createInProcessImageDecoderAVFObjC(buffer, mimeType, alphaOption, gammaOption);
-    if (!decoder)
-        return nullptr;
-    return AsyncImageDecoder::create(decoder.releaseNonNull(), client);
-}
-
-static void platformRegisterFactories(FactoryVector& factories)
-{
-    factories.append({
-        ImageDecoderAVFObjC::supportsMediaType,
-        ImageDecoderAVFObjC::canDecodeType,
-        createInProcessImageDecoderAVFObjC,
-        createInProcessAsyncImageDecoderAVFObjC
-    });
-}
-
-static FactoryVector& installedFactories()
-{
-    static NeverDestroyed<FactoryVector> factories;
-    static std::once_flag registerDefaults;
-    std::call_once(registerDefaults, [&] {
-        platformRegisterFactories(factories);
-    });
-
-    return factories;
-}
-
-void ImageDecoder::installFactory(ImageDecoder::ImageDecoderFactory&& factory)
-{
-    installedFactories().append(WTF::move(factory));
-}
-
-void ImageDecoder::resetFactories()
-{
-    installedFactories().clear();
-    platformRegisterFactories(installedFactories());
-}
-
-void ImageDecoder::clearFactories()
-{
-    installedFactories().clear();
-}
-#endif
-
 RefPtr<ImageDecoder> ImageDecoder::create(FragmentedSharedBuffer& data, const String& mimeType, AlphaOption alphaOption, GammaAndColorProfileOption gammaAndColorProfileOption)
 {
     UNUSED_PARAM(mimeType);
 
 #if HAVE(AVASSETREADER)
     if (!ImageDecoderCG::canDecodeType(mimeType)) {
-#if ENABLE(GPU_PROCESS)
-        for (auto& factory : installedFactories()) {
-            if (factory.canDecodeType(mimeType))
-                return factory.createImageDecoder(data, mimeType, alphaOption, gammaAndColorProfileOption);
-        }
-#else
-        if (ImageDecoderAVFObjC::canDecodeType(mimeType))
-            return ImageDecoderAVFObjC::create(data, mimeType, alphaOption, gammaAndColorProfileOption);
-#endif
+        if (RefPtr imageDecoder = ImageDecoderFactoryAVF::singleton().createImageDecoder(data, mimeType, alphaOption, gammaAndColorProfileOption))
+            return imageDecoder;
     }
 #endif
 
@@ -125,14 +63,16 @@ RefPtr<ImageDecoder> ImageDecoder::create(FragmentedSharedBuffer& data, const St
         return ImageDecoderGStreamer::create(data, mimeType, alphaOption, gammaAndColorProfileOption);
 #endif
 
-#if USE(CG)
     // ScalableImageDecoder is used on CG ports for some specific image formats which the platform doesn't support directly.
-    if (auto imageDecoder = ScalableImageDecoder::create(data, alphaOption, gammaAndColorProfileOption))
+    if (RefPtr imageDecoder = ScalableImageDecoder::create(data, alphaOption, gammaAndColorProfileOption))
         return imageDecoder;
-    return ImageDecoderCG::create(data, alphaOption, gammaAndColorProfileOption);
-#else
-    return ScalableImageDecoder::create(data, alphaOption, gammaAndColorProfileOption);
+
+#if USE(CG)
+    if (RefPtr imageDecoder = ImageDecoderCG::create(data, alphaOption, gammaAndColorProfileOption))
+        return imageDecoder;
 #endif
+
+    return nullptr;
 }
 
 ImageDecoder::ImageDecoder() = default;
@@ -141,28 +81,22 @@ ImageDecoder::~ImageDecoder() = default;
 
 bool ImageDecoder::supportsMediaType(MediaType type)
 {
-#if USE(CG)
-    if (ImageDecoderCG::supportsMediaType(type))
-        return true;
-#else
-    if (ScalableImageDecoder::supportsMediaType(type))
-        return true;
-#endif
-
 #if HAVE(AVASSETREADER)
-#if ENABLE(GPU_PROCESS)
-    for (auto& factory : installedFactories()) {
-        if (factory.supportsMediaType(type))
-            return true;
-    }
-#else
-    if (ImageDecoderAVFObjC::supportsMediaType(type))
+    if (ImageDecoderFactoryAVF::singleton().supportsMediaType(type))
         return true;
-#endif
 #endif
 
 #if USE(GSTREAMER) && ENABLE(VIDEO)
     if (ImageDecoderGStreamer::supportsMediaType(type))
+        return true;
+#endif
+
+    // ScalableImageDecoder is used on CG ports for some specific image formats which the platform doesn't support directly.
+    if (ScalableImageDecoder::supportsMediaType(type))
+        return true;
+
+#if USE(CG)
+    if (ImageDecoderCG::supportsMediaType(type))
         return true;
 #endif
 

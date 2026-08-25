@@ -70,24 +70,6 @@ public:
 
     static bool supportsMediaType(MediaType);
 
-#if ENABLE(GPU_PROCESS)
-    using SupportsMediaTypeFunc = Function<bool(MediaType)>;
-    using CanDecodeTypeFunc = Function<bool(const String&)>;
-    using CreateImageDecoderFunc = Function<RefPtr<ImageDecoder>(FragmentedSharedBuffer&, const String&, AlphaOption, GammaAndColorProfileOption)>;
-    using CreateAsyncImageDecoderFunc = Function<RefPtr<AsyncImageDecoder>(FragmentedSharedBuffer&, const String&, AlphaOption, GammaAndColorProfileOption, ImageDecoderClient&)>;
-
-    struct ImageDecoderFactory {
-        SupportsMediaTypeFunc supportsMediaType;
-        CanDecodeTypeFunc canDecodeType;
-        CreateImageDecoderFunc createImageDecoder;
-        CreateAsyncImageDecoderFunc createAsyncImageDecoder;
-    };
-
-    WEBCORE_EXPORT static void installFactory(ImageDecoderFactory&&);
-    WEBCORE_EXPORT static void resetFactories();
-    WEBCORE_EXPORT static void clearFactories();
-#endif
-
     virtual size_t bytesDecodedToDetermineProperties() const = 0;
 
     virtual EncodedDataStatus encodedDataStatus() const = 0;
