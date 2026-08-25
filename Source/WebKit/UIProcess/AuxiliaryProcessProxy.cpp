@@ -510,6 +510,9 @@ void AuxiliaryProcessProxy::shutDownProcess()
 {
     auto scopeExit = WTF::makeScopeExit([protectedThis = Ref { *this }] {
         protect(protectedThis->throttler())->didDisconnectFromProcess();
+#if USE(RUNNINGBOARD) && PLATFORM(MAC)
+        protectedThis->m_boostedJetsamAssertion = nullptr;
+#endif
     });
 
     switch (state()) {
