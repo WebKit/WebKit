@@ -40,6 +40,8 @@ ASCIILiteral processAssertionTypeDescription(ProcessAssertionType type)
         return "near-suspended"_s;
     case ProcessAssertionType::Background:
         return "background"_s;
+    case ProcessAssertionType::BackgroundIdleJetsam:
+        return "background-idle-jetsam"_s;
     case ProcessAssertionType::UnboundedNetworking:
         return "unbounded-networking"_s;
     case ProcessAssertionType::Foreground:

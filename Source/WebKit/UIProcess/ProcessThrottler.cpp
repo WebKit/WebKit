@@ -262,6 +262,8 @@ String ProcessThrottler::assertionName(ProcessAssertionType type) const
             return "Foreground"_s;
         case ProcessAssertionType::Background:
             return "Background"_s;
+        case ProcessAssertionType::BackgroundIdleJetsam:
+            return "BackgroundIdleJetsam"_s;
         case ProcessAssertionType::NearSuspended:
             return "NearSuspended"_s;
         case ProcessAssertionType::UnboundedNetworking:
@@ -284,7 +286,7 @@ ProcessAssertionType ProcessThrottler::assertionTypeForState(ProcessThrottleStat
     case ProcessThrottleState::Foreground:
         return ProcessAssertionType::Foreground;
     case ProcessThrottleState::Background:
-        return ProcessAssertionType::Background;
+        return m_shouldBackgroundActivitiesUseIdleJetsamBand ? ProcessAssertionType::BackgroundIdleJetsam : ProcessAssertionType::Background;
     case ProcessThrottleState::Suspended:
         return ProcessAssertionType::NearSuspended;
     }
@@ -296,10 +298,19 @@ void ProcessThrottler::setThrottleState(ProcessThrottleState newState)
 {
     assertIfCalledFromBackgroundThread();
 
+    bool didChange = m_state != newState;
     m_state = newState;
 
-    ProcessAssertionType newType = assertionTypeForState(newState);
+    // It's possible for the throttle state to be unchanged but the assertion type to change due to
+    // m_shouldBackgroundActivitiesUseIdleJetsamBand, so this has to be called unconditionally.
+    acquireAssertion(assertionTypeForState(newState));
 
+    if (didChange && m_isConnectedToProcess)
+        protect(m_process)->didChangeThrottleState(newState);
+}
+
+void ProcessThrottler::acquireAssertion(ProcessAssertionType newType)
+{
     if (m_assertion && m_assertion->isValid() && m_assertion->type() == newType)
         return;
 
@@ -338,8 +349,6 @@ void ProcessThrottler::setThrottleState(ProcessThrottleState newState)
             m_dropNearSuspendedAssertionTimer.startOneShot(removeAllAssertionsTimeout);
     } else
         m_dropNearSuspendedAssertionTimer.stop();
-
-    process->didChangeThrottleState(newState);
 }
 
 void ProcessThrottler::ref() const
@@ -502,6 +511,17 @@ void ProcessThrottler::setAllowsActivities(bool allow)
     ASSERT(m_foregroundActivities.isEmptyIgnoringNullReferences());
     ASSERT(m_backgroundActivities.isEmptyIgnoringNullReferences());
     m_allowsActivities = allow;
+}
+
+void ProcessThrottler::setShouldBackgroundActivitiesUseIdleJetsamBand(bool shouldBackgroundActivitiesUseIdleJetsamBand)
+{
+    if (m_shouldBackgroundActivitiesUseIdleJetsamBand == shouldBackgroundActivitiesUseIdleJetsamBand)
+        return;
+    m_shouldBackgroundActivitiesUseIdleJetsamBand = shouldBackgroundActivitiesUseIdleJetsamBand;
+
+    // This looks redundant, but forces a throttle state => process assertion type recomputation.
+    if (m_state == ProcessThrottleState::Background)
+        setThrottleState(ProcessThrottleState::Background);
 }
 
 void ProcessThrottler::setShouldTakeNearSuspendedAssertion(bool shouldTakeNearSuspendedAssertion)

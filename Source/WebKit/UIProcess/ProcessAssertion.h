@@ -69,6 +69,7 @@ enum class ProcessAssertionType : uint8_t {
     FinishTaskCanSleep,
     FinishTaskInterruptable,
     BoostedJetsam,
+    BackgroundIdleJetsam,
 };
 
 ASCIILiteral processAssertionTypeDescription(ProcessAssertionType);

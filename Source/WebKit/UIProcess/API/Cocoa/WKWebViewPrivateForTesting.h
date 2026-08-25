@@ -129,6 +129,8 @@ typedef NSVisualEffectView _WKPlatformVisualEffectView;
 @property (nonatomic, readonly) BOOL _hasServiceWorkerBackgroundActivityForTesting;
 @property (nonatomic, readonly) BOOL _hasServiceWorkerForegroundActivityForTesting;
 - (void)_setThrottleStateForTesting:(int)type;
+@property (nonatomic, readonly, copy) NSString *_processAssertionTypeForTesting;
+- (void)_setJetsamBoostEnabledForTesting:(BOOL)enabled;
 
 - (void)_doAfterProcessingAllPendingMouseEvents:(dispatch_block_t)action;
 - (void)_doAfterProcessingAllPendingKeyEvents:(dispatch_block_t)action;

@@ -483,6 +483,28 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
     protect(_page->legacyMainFrameProcess())->setThrottleStateForTesting(static_cast<WebKit::ProcessThrottleState>(value));
 }
 
+- (NSString *)_processAssertionTypeForTesting
+{
+    if (!_page)
+        return nil;
+
+    auto assertionType = protect(_page->legacyMainFrameProcess())->throttler().assertionTypeForTesting();
+    if (!assertionType)
+        return nil;
+
+    return WebKit::processAssertionTypeDescription(*assertionType).createNSString().autorelease();
+}
+
+- (void)_setJetsamBoostEnabledForTesting:(BOOL)enabled
+{
+#if PLATFORM(MAC) && USE(RUNNINGBOARD)
+    if (_page)
+        protect(_page->legacyMainFrameProcess())->setJetsamBoostEnabled(enabled);
+#else
+    UNUSED_PARAM(enabled);
+#endif
+}
+
 - (BOOL)_hasServiceWorkerBackgroundActivityForTesting
 {
     return _page && protect(_page->configuration().processPool())->hasServiceWorkerBackgroundActivityForTesting();

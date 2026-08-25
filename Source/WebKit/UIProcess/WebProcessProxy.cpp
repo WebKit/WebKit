@@ -357,6 +357,11 @@ void WebProcessProxy::addAllowedFirstPartyForCookies(const WebCore::RegistrableD
 Ref<WebProcessProxy> WebProcessProxy::create(WebProcessPool& processPool, WebsiteDataStore* websiteDataStore, LockdownMode lockdownMode, EnhancedSecurity enhancedSecurity, IsPrewarmed isPrewarmed, CrossOriginMode crossOriginMode, ShouldLaunchProcess shouldLaunchProcess)
 {
     Ref proxy = adoptRef(*new WebProcessProxy(processPool, websiteDataStore, isPrewarmed, crossOriginMode, lockdownMode, enhancedSecurity));
+#if PLATFORM(MAC) && USE(RUNNINGBOARD)
+    // FIXME: disable jetsam boost on prewarmed processes always, not just when SI is enabled.
+    if (isPrewarmed == IsPrewarmed::Yes && WebProcessPool::hasAnyProcessPoolUsedSiteIsolation())
+        proxy->setJetsamBoostEnabled(false);
+#endif
     if (shouldLaunchProcess == ShouldLaunchProcess::Yes) {
         proxy->didStartRunningProcess();
         proxy->connect();
@@ -547,6 +552,12 @@ void WebProcessProxy::setIsInProcessCache(bool value, WillShutDown willShutDown)
     ASSERT(willShutDown == WillShutDown::No || !value);
     if (willShutDown == WillShutDown::Yes)
         return;
+
+#if PLATFORM(MAC) && USE(RUNNINGBOARD)
+    // FIXME: disable jetsam boost on cached processes always, not just when SI is enabled.
+    if (WebProcessPool::hasAnyProcessPoolUsedSiteIsolation())
+        setJetsamBoostEnabled(!m_isInProcessCache);
+#endif
 
     // The WebProcess might be task_suspended at this point, so use sendWithAsyncReply to resume
     // the process via a background activity long enough to process the IPC if necessary.
@@ -1038,6 +1049,10 @@ void WebProcessProxy::markIsNoLongerInPrewarmedPool()
     m_isPrewarmed = false;
     RELEASE_ASSERT(m_processPool);
     m_processPool.setIsWeak(IsWeak::No);
+
+#if PLATFORM(MAC) && USE(RUNNINGBOARD)
+    setJetsamBoostEnabled(true);
+#endif
 
     send(Messages::WebProcess::MarkIsNoLongerPrewarmed(), 0);
 

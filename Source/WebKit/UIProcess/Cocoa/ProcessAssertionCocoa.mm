@@ -338,8 +338,6 @@ namespace WebKit {
 static ASCIILiteral runningBoardNameForAssertionType(ProcessAssertionType assertionType)
 {
     switch (assertionType) {
-    case ProcessAssertionType::NearSuspended:
-        return "Suspended"_s; // FIXME: This name is confusing since it doesn't cause suspension.
     case ProcessAssertionType::Background:
 #if PLATFORM(MAC)
         // The background assertions time out after 30 seconds on iOS but not macOS.
@@ -347,6 +345,12 @@ static ASCIILiteral runningBoardNameForAssertionType(ProcessAssertionType assert
 #else
         return "Background"_s;
 #endif
+    case ProcessAssertionType::NearSuspended:
+    case ProcessAssertionType::BackgroundIdleJetsam:
+        // FIXME: We should rename this assertion in the SDK, as the name doesn't make sense.
+        // Despite being called "suspended", this assertion type *does* allow the process to run.
+        // However, it runs at the idle jetsam band.
+        return "Suspended"_s;
     case ProcessAssertionType::UnboundedNetworking:
         return "UnboundedNetworking"_s;
     case ProcessAssertionType::Foreground:
@@ -371,6 +375,7 @@ static ASCIILiteral runningBoardDomainForAssertionType(ProcessAssertionType asse
     case ProcessAssertionType::Foreground:
     case ProcessAssertionType::MediaPlayback:
     case ProcessAssertionType::BoostedJetsam:
+    case ProcessAssertionType::BackgroundIdleJetsam:
         return "com.apple.webkit"_s;
     case ProcessAssertionType::FinishTaskCanSleep:
     case ProcessAssertionType::FinishTaskInterruptable:
@@ -584,7 +589,7 @@ ProcessAndUIAssertion::~ProcessAndUIAssertion()
 #if PLATFORM(IOS_FAMILY)
 void ProcessAndUIAssertion::updateRunInBackgroundCount()
 {
-    bool shouldHoldBackgroundTask = isValid() && type() != ProcessAssertionType::NearSuspended;
+    bool shouldHoldBackgroundTask = isValid() && (type() != ProcessAssertionType::NearSuspended && type() != ProcessAssertionType::BackgroundIdleJetsam);
     if (m_isHoldingBackgroundTask == shouldHoldBackgroundTask)
         return;
 

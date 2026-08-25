@@ -463,7 +463,7 @@ void AuxiliaryProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::C
 #if USE(RUNNINGBOARD)
     protect(throttler())->didConnectToProcess(*this);
 #if PLATFORM(MAC)
-    m_boostedJetsamAssertion = ProcessAssertion::create(*this, "Jetsam Boost"_s, ProcessAssertionType::BoostedJetsam);
+    updateJetsamBoostAssertion();
 #endif
 #if USE(EXTENSIONKIT)
     ASSERT(launcher);
@@ -704,6 +704,28 @@ void AuxiliaryProcessProxy::setRunningBoardThrottlingEnabled()
 bool AuxiliaryProcessProxy::runningBoardThrottlingEnabled()
 {
     return !m_lifetimeActivity;
+}
+
+void AuxiliaryProcessProxy::setJetsamBoostEnabled(bool enabled)
+{
+    if (m_isJetsamBoostEnabled == enabled)
+        return;
+    m_isJetsamBoostEnabled = enabled;
+
+    updateJetsamBoostAssertion();
+    protect(throttler())->setShouldBackgroundActivitiesUseIdleJetsamBand(!enabled);
+}
+
+void AuxiliaryProcessProxy::updateJetsamBoostAssertion()
+{
+    bool shouldHoldAssertion = m_isJetsamBoostEnabled && processID();
+    if (shouldHoldAssertion == !!m_boostedJetsamAssertion)
+        return;
+
+    if (shouldHoldAssertion)
+        m_boostedJetsamAssertion = ProcessAssertion::create(*this, "Jetsam Boost"_s, ProcessAssertionType::BoostedJetsam);
+    else
+        m_boostedJetsamAssertion = nullptr;
 }
 #endif
 

@@ -141,6 +141,9 @@ public:
     bool isSuspended() const { return m_isConnectedToProcess && !m_assertion; }
     ProcessThrottleState currentState() const { return m_state; }
     bool isHoldingNearSuspendedAssertion() const { return m_assertion && m_assertion->type() == ProcessAssertionType::NearSuspended; }
+    std::optional<ProcessAssertionType> assertionTypeForTesting() const { return m_assertion ? std::optional { m_assertion->type() } : std::nullopt; }
+
+    void setShouldBackgroundActivitiesUseIdleJetsamBand(bool);
 
     void invalidateAllActivitiesAndDropAssertion();
 
@@ -151,8 +154,8 @@ private:
     ProcessThrottleState NODELETE expectedThrottleState();
     void updateThrottleStateIfNeeded(ASCIILiteral);
     void updateThrottleStateNow();
-    void setAssertionType(ProcessAssertionType);
     void setThrottleState(ProcessThrottleState);
+    void acquireAssertion(ProcessAssertionType);
     void prepareToSuspendTimeoutTimerFired();
     void dropNearSuspendedAssertionTimerFired();
     void prepareToDropLastAssertionTimeoutTimerFired();
@@ -188,6 +191,7 @@ private:
     bool m_shouldDropNearSuspendedAssertionAfterDelay { false };
     const bool m_shouldTakeUIBackgroundAssertion { false };
     bool m_shouldTakeNearSuspendedAssertion { true };
+    bool m_shouldBackgroundActivitiesUseIdleJetsamBand { false };
     bool m_allowsActivities { true };
     bool m_isConnectedToProcess { false };
 };

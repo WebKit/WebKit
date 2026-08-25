@@ -212,6 +212,7 @@ public:
 #if PLATFORM(MAC) && USE(RUNNINGBOARD)
     bool runningBoardThrottlingEnabled();
     void setRunningBoardThrottlingEnabled();
+    void setJetsamBoostEnabled(bool);
 #endif
 
     enum class UseLazyStop : bool { No, Yes };
@@ -344,6 +345,10 @@ private:
     Vector<String> platformOverrideLanguages() const;
     void platformStartConnectionTerminationWatchdog();
 
+#if PLATFORM(MAC) && USE(RUNNINGBOARD)
+    void updateJetsamBoostAssertion();
+#endif
+
     // Connection::Client
     void requestRemoteProcessTermination() final;
 
@@ -372,6 +377,7 @@ private:
 #if PLATFORM(MAC)
     RefPtr<ProcessThrottler::ForegroundActivity> m_lifetimeActivity;
     RefPtr<ProcessAssertion> m_boostedJetsamAssertion;
+    bool m_isJetsamBoostEnabled { true };
 #endif
 #endif
 #if ENABLE(EXTENSION_CAPABILITIES)
