@@ -42,32 +42,68 @@ SecurityFlagsController& SecurityFlagsController::singleton()
     return controller.get();
 }
 
-void SecurityFlagsController::setDisabledFlagsNamed(const Vector<String>& names)
+// No propagation: every path that launches a privileged child process reads this singleton, so nothing can
+// have launched yet.
+SecurityFlagsController::SecurityFlagsController()
+    : m_persistentlyDisabledNames(platformPersistentlyDisabledFlagNames())
 {
-    ASSERT(RunLoop::isMain());
+    m_securityFlags.replaceWith(flagsWithNamesDisabled({ }, IncludePersistentNames::Yes));
 
-    SecurityFlags newFlags;
-    Vector<String> knownNames;
+    for (auto& name : m_persistentlyDisabledNames) {
+        UNUSED_VARIABLE(name);
+        RELEASE_LOG(Process, "SecurityFlagsController: security flag %" PUBLIC_LOG_STRING " is disabled by a user default and cannot be enforced again at runtime", name.utf8().data());
+    }
+}
+
+SecurityFlags SecurityFlagsController::flagsWithNamesDisabled(const Vector<String>& names, IncludePersistentNames includePersistentNames) const
+{
+    SecurityFlags flags;
+    size_t unknownNameCount = 0;
+
     for (auto& name : names) {
-        if (newFlags.disableFlagNamed(name))
-            knownNames.append(name);
+        if (!flags.disableFlagNamed(name))
+            ++unknownNameCount;
     }
 
-    // Logged even when nothing changes, because that is the case to diagnose when a disablement does not take effect.
-    if (knownNames.size() < names.size())
-        RELEASE_LOG(Process, "SecurityFlagsController: ignoring %zu of %zu names, which no flag in this build has", names.size() - knownNames.size(), names.size());
+    // Logged before the caller's early return, because a disablement that does not take effect is the case to diagnose.
+    if (unknownNameCount)
+        RELEASE_LOG(Process, "SecurityFlagsController: ignoring %zu of %zu names, which no flag in this build has", unknownNameCount, names.size());
+
+    if (includePersistentNames == IncludePersistentNames::Yes) {
+        for (auto& name : m_persistentlyDisabledNames)
+            flags.disableFlagNamed(name);
+    }
+
+    return flags;
+}
+
+void SecurityFlagsController::setDisabledFlagsNamed(const Vector<String>& names)
+{
+    apply(flagsWithNamesDisabled(names, IncludePersistentNames::Yes));
+}
+
+void SecurityFlagsController::setDisabledFlagsNamedForTesting(const Vector<String>& names)
+{
+    apply(flagsWithNamesDisabled(names, IncludePersistentNames::No));
+}
+
+void SecurityFlagsController::apply(const SecurityFlags& newFlags)
+{
+    ASSERT(RunLoop::isMain());
 
     if (newFlags == m_securityFlags)
         return;
 
-    for (auto& name : knownNames) {
-        UNUSED_VARIABLE(name);
-        RELEASE_LOG(Process, "SecurityFlagsController: security flag %" PUBLIC_LOG_STRING " is disabled", name.utf8().data());
-    }
-
     m_securityFlags.replaceWith(newFlags);
     propagateToChildProcesses();
 }
+
+#if !PLATFORM(COCOA)
+Vector<String> SecurityFlagsController::platformPersistentlyDisabledFlagNames()
+{
+    return { };
+}
+#endif
 
 void SecurityFlagsController::propagateToChildProcesses()
 {
