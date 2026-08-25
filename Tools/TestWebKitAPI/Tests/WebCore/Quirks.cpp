@@ -25,6 +25,7 @@
 
 #include "config.h"
 
+#include <WebCore/QuirkMatch.h>
 #include <WebCore/Quirks.h>
 #include <wtf/MainThread.h>
 #include <wtf/URL.h>
@@ -43,6 +44,25 @@ public:
 static std::optional<String> customUserAgentFor(ASCIILiteral urlString)
 {
     return WebCore::Quirks::needsCustomUserAgentOverride(URL { urlString }, "TestApp"_s, "TestBase/1.0 (KHTML, like Gecko) Trailer/1.0"_s);
+}
+
+static WebCore::QuirksData resolveQuirksForTopURL(ASCIILiteral urlString)
+{
+    return WebCore::resolveSiteSpecificQuirks({ URL { urlString }, URL { urlString } });
+}
+
+TEST_F(QuirksTest, SiteSpecificQuirksResolveWithoutADocument)
+{
+    using SiteSpecificQuirk = WebCore::QuirksData::SiteSpecificQuirk;
+
+    EXPECT_TRUE(resolveQuirksForTopURL("https://www.airindiaexpress.com/"_s).quirkIsEnabled(SiteSpecificQuirk::NeedsAirIndiaExpressLayeringQuirk));
+    EXPECT_TRUE(resolveQuirksForTopURL("https://www.scribd.com/"_s).quirkIsEnabled(SiteSpecificQuirk::NeedsReuseLiveRangeForSelectionUpdateQuirk));
+
+    EXPECT_TRUE(resolveQuirksForTopURL("https://www.iheart.com/"_s).isSite(WebCore::QuirkSite::IHeart));
+
+    auto unrelatedSiteQuirks = resolveQuirksForTopURL("https://www.example.com/"_s);
+    EXPECT_TRUE(unrelatedSiteQuirks.activeQuirks.isEmpty());
+    EXPECT_FALSE(unrelatedSiteQuirks.isSite(WebCore::QuirkSite::IHeart));
 }
 
 TEST_F(QuirksTest, NeedsIPadMiniUserAgent)

@@ -14,12 +14,16 @@ https://www.airindiaexpress.com/
     NeedsAirIndiaExpressLayeringQuirk
 https://www.amazon.com/
     ShouldDispatchSimulatedMouseEventsAssumeDefaultPreventedQuirk
+    ShouldDispatchSimulatedMouseEventsQuirk
 https://sub.amazon.com/
     ShouldDispatchSimulatedMouseEventsAssumeDefaultPreventedQuirk
+    ShouldDispatchSimulatedMouseEventsQuirk
 https://www.amazon.co.uk/
     ShouldDispatchSimulatedMouseEventsAssumeDefaultPreventedQuirk
+    ShouldDispatchSimulatedMouseEventsQuirk
 https://amazon.design/
     ShouldDispatchSimulatedMouseEventsAssumeDefaultPreventedQuirk
+    ShouldDispatchSimulatedMouseEventsQuirk
 https://www.apple.com/
     EnsureCaptionVisibilityInFullscreenAndPictureInPicture
 https://as.com/
@@ -75,6 +79,7 @@ https://www.espn.com/
 https://www.facebook.com/
     NeedsFacebookRemoveNotSupportedQuirk
     ShouldDispatchSimulatedMouseEventsAssumeDefaultPreventedQuirk
+    ShouldDispatchSimulatedMouseEventsQuirk
     ShouldEnableCameraAndMicrophonePermissionStateQuirk
     ShouldEnableEnumerateDeviceQuirk
     ShouldEnableFacebookFlagQuirk
@@ -91,9 +96,11 @@ https://www.google.com/
 https://www.google.com/maps/
     MaybeBypassBackForwardCache
     ShouldAvoidResizingWhenInputViewBoundsChangeQuirk
+    ShouldDispatchSimulatedMouseEventsQuirk
 https://maps.google.com/maps/
     MaybeBypassBackForwardCache
     ShouldAvoidResizingWhenInputViewBoundsChangeQuirk
+    ShouldDispatchSimulatedMouseEventsQuirk
 https://docs.google.com/
     InputMethodUsesCorrectKeyEventOrder
     MaybeBypassBackForwardCache
@@ -226,6 +233,7 @@ https://www.sharepoint.com/
     ShouldAvoidResizingWhenInputViewBoundsChangeQuirk
 https://soundcloud.com/
     ShouldDispatchSimulatedMouseEventsAssumeDefaultPreventedQuirk
+    ShouldDispatchSimulatedMouseEventsQuirk
     ShouldExposeShowModalDialog
 https://soylent.com/
     ShouldDispatchPointerOutAndLeaveAfterHandlingSyntheticClick
@@ -251,6 +259,7 @@ https://www.thesaurus.com/
 https://www.tiktok.com/
     NeedsTikTokOverflowingContentQuirk
     ShouldDispatchSimulatedMouseEventsAssumeDefaultPreventedQuirk
+    ShouldDispatchSimulatedMouseEventsQuirk
 https://trix-editor.org/
     (none)
 https://www.twitch.tv/

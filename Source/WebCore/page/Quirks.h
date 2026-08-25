@@ -403,6 +403,19 @@ private:
 
     mutable QuirksData m_quirksData;
 
+    mutable QuirksData::QuirkBitSet m_probedQuirks;
+
+    template<typename Probe>
+    bool quirkIsEnabledAfterProbing(QuirksData::SiteSpecificQuirk quirk, NOESCAPE Probe&& probe) const
+    {
+        auto index = static_cast<size_t>(quirk);
+        if (!m_probedQuirks.get(index)) {
+            m_probedQuirks.set(index);
+            m_quirksData.setQuirkState(quirk, probe());
+        }
+        return m_quirksData.quirkIsEnabled(quirk);
+    }
+
     bool m_needsConfigurableIndexedPropertiesQuirk { false };
     bool m_needsToCopyUserSelectNoneQuirk { false };
 

@@ -43,11 +43,13 @@ static bool matchesURL(const QuirkMatch& match, ASCIILiteral urlString)
 
 static bool matchesEmbeddedURL(const QuirkMatch& match, ASCIILiteral topURLString, ASCIILiteral documentURLString)
 {
-    return match.matches(QuirkMatchContext { URL { topURLString }, URL { documentURLString } });
+    return match.matches(QuirkMatchContext { URL { topURLString }, URL { documentURLString }, WebCore::IsTopDocument::No });
 }
 
 static constexpr std::array expediaGroupDomains { "hotels.com"_s, "orbitz.com"_s, "wotif.co.nz"_s };
 static constexpr std::array youTubeEmbedDomains { "youtube.com"_s, "youtube-nocookie.com"_s };
+static constexpr std::array vimeoDomains { "vimeo.com"_s };
+static constexpr std::array excludedNaverHosts { "tv.naver.com"_s, "mail.naver.com"_s, "m.naver.com"_s };
 
 TEST(QuirkMatchTest, DomainMatchesRegistrableDomain)
 {
@@ -221,6 +223,94 @@ TEST(QuirkMatchTest, DocumentDomainIsOneOfMatchesEmbeddedDocuments)
 
     EXPECT_FALSE(matchesEmbeddedURL(match, "https://www.example.com/"_s, "https://www.youtube.com/embed/abc"_s));
     EXPECT_FALSE(matchesEmbeddedURL(match, "https://www.youtube.com/"_s, "https://www.theguardian.com/film"_s));
+}
+
+TEST(QuirkMatchTest, DocumentDomainIsMatchesASingleEmbeddedDomain)
+{
+    auto match = QuirkMatch::anySite().onlyIfEmbedded().documentDomainIs("x.com"_s);
+
+    EXPECT_TRUE(matchesEmbeddedURL(match, "https://www.theguardian.com/film"_s, "https://x.com/i/status/123"_s));
+    EXPECT_TRUE(matchesEmbeddedURL(match, "https://www.example.com/"_s, "https://platform.x.com/embed/Tweet.html"_s));
+
+    EXPECT_FALSE(matchesEmbeddedURL(match, "https://www.example.com/"_s, "https://vimeo.com/12345"_s));
+    EXPECT_FALSE(matchesURL(match, "https://x.com/i/status/123"_s));
+}
+
+TEST(QuirkMatchTest, AnySiteWithOnlyIfEmbeddedMatchesEmbedsAnywhereButNeverTheTopDocument)
+{
+    auto match = QuirkMatch::anySite().onlyIfEmbedded().documentDomainIsOneOf<youTubeEmbedDomains>();
+
+    EXPECT_TRUE(matchesEmbeddedURL(match, "https://www.theguardian.com/film"_s, "https://www.youtube.com/embed/abc"_s));
+    EXPECT_TRUE(matchesEmbeddedURL(match, "https://www.example.com/"_s, "https://www.youtube-nocookie.com/embed/abc"_s));
+
+    EXPECT_FALSE(matchesEmbeddedURL(match, "https://www.example.com/"_s, "https://vimeo.com/12345"_s));
+    // youtube.com at the top level, and youtube.com embedded in itself, are both the top document.
+    EXPECT_FALSE(matchesURL(match, "https://www.youtube.com/watch?v=abc"_s));
+}
+
+TEST(QuirkMatchTest, AnySiteMatchesEverySiteWithoutFurtherRefinement)
+{
+    auto match = QuirkMatch::anySite();
+
+    EXPECT_TRUE(matchesURL(match, "https://www.example.com/"_s));
+    EXPECT_TRUE(matchesURL(match, "https://webkit.org/"_s));
+    EXPECT_FALSE(matchesURL(match, "about:blank"_s));
+}
+
+TEST(QuirkMatchTest, ExceptWhenCarvesOutPagesOfAMatchedSite)
+{
+    auto match = QuirkMatch::domain("wix.com"_s).exceptWhen().pathStartsWith("/website/templates/"_s);
+
+    EXPECT_TRUE(matchesURL(match, "https://www.wix.com/"_s));
+    EXPECT_TRUE(matchesURL(match, "https://www.wix.com/website/other"_s));
+    // The exception reuses pathStartsWith(), so it is anchored the same way.
+    EXPECT_TRUE(matchesURL(match, "https://www.wix.com/x/website/templates/blank"_s));
+
+    EXPECT_FALSE(matchesURL(match, "https://www.wix.com/website/templates/"_s));
+    EXPECT_FALSE(matchesURL(match, "https://www.wix.com/website/templates/blank"_s));
+
+    // The exception only ever narrows: a page it describes on another site is still no match.
+    EXPECT_FALSE(matchesURL(match, "https://www.example.com/website/other"_s));
+}
+
+TEST(QuirkMatchTest, ExceptWhenCarvesOutHostsOfAMatchedSite)
+{
+    auto match = QuirkMatch::hostOrSubdomainOf("naver.com"_s).exceptWhen().hostIsOneOf<excludedNaverHosts>();
+
+    EXPECT_TRUE(matchesURL(match, "https://naver.com/"_s));
+    EXPECT_TRUE(matchesURL(match, "https://news.naver.com/"_s));
+
+    EXPECT_FALSE(matchesURL(match, "https://tv.naver.com/"_s));
+    EXPECT_FALSE(matchesURL(match, "https://m.naver.com/"_s));
+    // hostIsOneOf() names exact hosts, so subdomains of an excluded host are not excluded.
+    EXPECT_TRUE(matchesURL(match, "https://sub.tv.naver.com/"_s));
+}
+
+TEST(QuirkMatchTest, ExceptWhenTakesEveryRefinementIncludingEmbeddedDocuments)
+{
+    auto match = QuirkMatch::domain("theguardian.com"_s).exceptWhen().onlyIfEmbedded().documentDomainIsOneOf<vimeoDomains>();
+
+    EXPECT_TRUE(matchesURL(match, "https://www.theguardian.com/film"_s));
+    EXPECT_TRUE(matchesEmbeddedURL(match, "https://www.theguardian.com/film"_s, "https://www.youtube.com/embed/abc"_s));
+
+    EXPECT_FALSE(matchesEmbeddedURL(match, "https://www.theguardian.com/film"_s, "https://vimeo.com/12345"_s));
+}
+
+TEST(QuirkMatchTest, ExceptWhenAndTheMatchKeepSeparateRefinements)
+{
+    auto match = QuirkMatch::domain("example.com"_s).pathStartsWith("/app"_s).exceptWhen().pathStartsWith("/app/legacy"_s);
+
+    EXPECT_TRUE(matchesURL(match, "https://www.example.com/app/main"_s));
+    EXPECT_FALSE(matchesURL(match, "https://www.example.com/other"_s));
+    EXPECT_FALSE(matchesURL(match, "https://www.example.com/app/legacy/page"_s));
+}
+
+TEST(QuirkMatchTest, ExceptWhenWithNothingChainedIsANoOp)
+{
+    auto match = QuirkMatch::domain("example.com"_s).exceptWhen();
+
+    EXPECT_TRUE(matchesURL(match, "https://www.example.com/"_s));
+    EXPECT_FALSE(matchesURL(match, "https://webkit.org/"_s));
 }
 
 TEST(QuirkMatchTest, MatchesIgnoreTheDocumentURLByDefault)

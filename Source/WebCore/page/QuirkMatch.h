@@ -50,15 +50,20 @@ enum class QuirkCondition : uint8_t {
 
 WEBCORE_EXPORT bool evaluateQuirkCondition(QuirkCondition);
 
+enum class IsTopDocument : bool { No, Yes };
+
 class QuirkMatchContext {
 public:
-    QuirkMatchContext(URL topURL, URL documentURL)
+    QuirkMatchContext(URL topURL, URL documentURL, IsTopDocument isTopDocument = IsTopDocument::Yes)
         : m_topURL(WTF::move(topURL))
         , m_documentURL(WTF::move(documentURL))
+        , m_isTopDocument(isTopDocument)
     {
     }
 
     const URL& topURL() const LIFETIME_BOUND { return m_topURL; }
+
+    bool isTopDocument() const { return m_isTopDocument == IsTopDocument::Yes; }
 
     StringView host() const LIFETIME_BOUND { return m_topURL.host(); }
 
@@ -86,6 +91,7 @@ public:
 private:
     const URL m_topURL;
     const URL m_documentURL;
+    const IsTopDocument m_isTopDocument;
     mutable std::optional<String> m_registrableDomain;
     mutable std::optional<String> m_domainWithoutPublicSuffix;
     mutable std::optional<String> m_documentDomain;
@@ -132,6 +138,11 @@ public:
         return QuirkMatch { Kind::AnyTopLevelDomain, name };
     }
 
+    static constexpr QuirkMatch anySite()
+    {
+        return QuirkMatch { Kind::AnySite };
+    }
+
     constexpr QuirkMatch&& pathContains(ASCIILiteral substring) &&
     {
         return WTF::move(*this).setPathConstraint(PathConstraintKind::PathContains, substring);
@@ -149,14 +160,39 @@ public:
 
     constexpr QuirkMatch&& onlyIf(QuirkCondition condition) &&
     {
-        m_condition = condition;
+        currentRefinements().condition = condition;
+        return WTF::move(*this);
+    }
+
+    constexpr QuirkMatch&& documentDomainIs(ASCIILiteral pattern) &&
+    {
+        currentRefinements().documentDomains = PatternList { pattern };
         return WTF::move(*this);
     }
 
     template<const auto& patterns> constexpr QuirkMatch&& documentDomainIsOneOf() &&
     {
         static_assert(std::size(patterns), "A quirk must match at least one document domain.");
-        m_documentDomains = std::span<const ASCIILiteral> { patterns };
+        currentRefinements().documentDomains = PatternList { std::span<const ASCIILiteral> { patterns } };
+        return WTF::move(*this);
+    }
+
+    template<const auto& patterns> constexpr QuirkMatch&& hostIsOneOf() &&
+    {
+        static_assert(std::size(patterns), "A quirk must match at least one host.");
+        currentRefinements().hosts = std::span<const ASCIILiteral> { patterns };
+        return WTF::move(*this);
+    }
+
+    constexpr QuirkMatch&& onlyIfEmbedded() &&
+    {
+        currentRefinements().requiresEmbeddedDocument = true;
+        return WTF::move(*this);
+    }
+
+    constexpr QuirkMatch&& exceptWhen() &&
+    {
+        m_refiningException = true;
         return WTF::move(*this);
     }
 
@@ -165,13 +201,10 @@ public:
         if (!matchesSite(context)) [[likely]]
             return false;
 
-        if (m_pathConstraint && !matchesPathConstraint(context.topURL()))
+        if (!matchesRefinements(m_refinements, context))
             return false;
 
-        if (m_condition && !evaluateQuirkCondition(*m_condition))
-            return false;
-
-        if (!m_documentDomains.empty() && !matchesDocumentDomain(context))
+        if (!m_exception.isEmpty() && matchesRefinements(m_exception, context))
             return false;
 
         return true;
@@ -184,6 +217,7 @@ private:
         HostOrSubdomainOf,
         HostEndingWith,
         AnyTopLevelDomain,
+        AnySite,
     };
 
     enum class PathConstraintKind : uint8_t {
@@ -194,6 +228,8 @@ private:
 
     class PatternList {
     public:
+        constexpr PatternList() = default;
+
         constexpr explicit PatternList(ASCIILiteral pattern)
             : m_single(pattern)
         {
@@ -208,13 +244,38 @@ private:
 
         std::span<const ASCIILiteral> span() const LIFETIME_BOUND
         {
-            return m_multiple.empty() ? singleElementSpan(m_single) : m_multiple;
+            if (!m_multiple.empty())
+                return m_multiple;
+            if (m_single.isNull())
+                return { };
+            return singleElementSpan(m_single);
         }
+
+        constexpr bool isEmpty() const { return m_multiple.empty() && m_single.isNull(); }
 
     private:
         ASCIILiteral m_single;
         std::span<const ASCIILiteral> m_multiple;
     };
+
+    struct Refinements {
+        PathConstraintKind pathConstraintKind { PathConstraintKind::PathContains };
+        ASCIILiteral pathConstraint;
+        std::optional<QuirkCondition> condition;
+        PatternList documentDomains;
+        std::span<const ASCIILiteral> hosts;
+        bool requiresEmbeddedDocument { false };
+
+        constexpr bool isEmpty() const
+        {
+            return !requiresEmbeddedDocument && pathConstraint.isNull() && !condition && documentDomains.isEmpty() && hosts.empty();
+        }
+    };
+
+    constexpr explicit QuirkMatch(Kind kind)
+        : m_kind(kind)
+    {
+    }
 
     constexpr QuirkMatch(Kind kind, ASCIILiteral pattern)
         : m_kind(kind)
@@ -228,10 +289,16 @@ private:
     {
     }
 
+    constexpr Refinements& currentRefinements() LIFETIME_BOUND
+    {
+        return m_refiningException ? m_exception : m_refinements;
+    }
+
     constexpr QuirkMatch&& setPathConstraint(PathConstraintKind kind, ASCIILiteral value) &&
     {
-        m_pathConstraintKind = kind;
-        m_pathConstraint = value;
+        auto& refinements = currentRefinements();
+        refinements.pathConstraintKind = kind;
+        refinements.pathConstraint = value;
         return WTF::move(*this);
     }
 
@@ -253,42 +320,59 @@ private:
             return anyPattern([&](ASCIILiteral pattern) { return context.host().endsWithIgnoringASCIICase(pattern); });
         case Kind::AnyTopLevelDomain:
             return anyPattern([&](ASCIILiteral pattern) { return context.domainWithoutPublicSuffix() == pattern; });
+        case Kind::AnySite:
+            return !context.host().isEmpty();
         }
 
         ASSERT_NOT_REACHED();
         return false;
     }
 
-    bool matchesPathConstraint(const URL& topURL) const
+    bool matchesRefinements(const Refinements& refinements, const QuirkMatchContext& context) const
     {
-        switch (m_pathConstraintKind) {
+        if (!refinements.pathConstraint.isNull() && !matchesPathConstraint(refinements, context.topURL()))
+            return false;
+
+        if (refinements.condition && !evaluateQuirkCondition(*refinements.condition))
+            return false;
+
+        if (refinements.requiresEmbeddedDocument && context.isTopDocument())
+            return false;
+
+        if (!refinements.documentDomains.isEmpty() && !anyOf(refinements.documentDomains.span(), context.documentDomain()))
+            return false;
+
+        if (!refinements.hosts.empty() && !anyOf(refinements.hosts, context.host()))
+            return false;
+
+        return true;
+    }
+
+    template<typename StringType> static bool anyOf(std::span<const ASCIILiteral> patterns, const StringType& value)
+    {
+        return std::ranges::any_of(patterns, [&](ASCIILiteral pattern) { return value == pattern; });
+    }
+
+    bool matchesPathConstraint(const Refinements& refinements, const URL& topURL) const
+    {
+        switch (refinements.pathConstraintKind) {
         case PathConstraintKind::PathContains:
-            return topURL.path().contains(m_pathConstraint);
+            return topURL.path().contains(refinements.pathConstraint);
         case PathConstraintKind::PathStartsWith:
-            return startsWithLettersIgnoringASCIICase(topURL.path(), m_pathConstraint);
+            return startsWithLettersIgnoringASCIICase(topURL.path(), refinements.pathConstraint);
         case PathConstraintKind::PathOrFragmentContains:
-            return topURL.path().contains(m_pathConstraint) || topURL.fragmentIdentifier().contains(m_pathConstraint);
+            return topURL.path().contains(refinements.pathConstraint) || topURL.fragmentIdentifier().contains(refinements.pathConstraint);
         }
 
         ASSERT_NOT_REACHED();
-        return false;
-    }
-
-    bool matchesDocumentDomain(const QuirkMatchContext& context) const
-    {
-        for (auto pattern : m_documentDomains) {
-            if (context.documentDomain() == pattern)
-                return true;
-        }
         return false;
     }
 
     Kind m_kind;
-    PathConstraintKind m_pathConstraintKind { PathConstraintKind::PathContains };
     PatternList m_patterns;
-    ASCIILiteral m_pathConstraint;
-    std::span<const ASCIILiteral> m_documentDomains;
-    std::optional<QuirkCondition> m_condition;
+    Refinements m_refinements;
+    Refinements m_exception;
+    bool m_refiningException { false };
 };
 
 consteval QuirksData::QuirkBitSet quirkBehaviors(std::initializer_list<QuirksData::SiteSpecificQuirk> quirks)
@@ -303,7 +387,6 @@ struct Quirk {
     QuirkMatch match;
     QuirksData::QuirkBitSet behaviors { };
     std::optional<QuirkSite> site { };
-    bool disablesElementFullscreen { false };
 
     void apply(QuirksData& quirksData) const
     {
@@ -311,10 +394,9 @@ struct Quirk {
 
         if (site)
             quirksData.addSite(*site);
-
-        if (disablesElementFullscreen)
-            quirksData.shouldDisableElementFullscreen = true;
     }
 };
+
+WEBCORE_EXPORT QuirksData resolveSiteSpecificQuirks(const QuirkMatchContext&);
 
 } // namespace WebCore

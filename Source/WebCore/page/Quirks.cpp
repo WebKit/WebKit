@@ -501,14 +501,7 @@ bool Quirks::shouldDisableElementFullscreenQuirk() const
     // (Ref: rdar://121473410)
     // YouTube.com does not provide AirPlay controls in fullscreen
     // (Ref: rdar://121471373)
-    if (m_quirksData.shouldDisableElementFullscreen)
-        return true;
-
-    if (protect(m_document)->isTopDocument())
-        return false;
-
-    return isEmbedDomain("x.com"_s)
-        || (PAL::currentUserInterfaceIdiomIsSmallScreen() && isYoutubeEmbedDomain());
+    return m_quirksData.quirkIsEnabled(QuirksData::SiteSpecificQuirk::ShouldDisableElementFullscreenQuirk);
 #else
     return false;
 #endif
@@ -521,6 +514,15 @@ bool Quirks::shouldDisableElementFullscreenQuirk() const
 // soundcloud.com rdar://52915981
 // naver.com rdar://48068610
 // mybinder.org rdar://51770057
+template<typename Predicate> static bool targetOrAncestorMatches(const EventTarget* target, NOESCAPE Predicate&& predicate)
+{
+    for (RefPtr node = dynamicDowncast<Node>(target); node; node = node->parentNode()) {
+        if (auto* element = dynamicDowncast<Element>(*node); element && predicate(*element))
+            return true;
+    }
+    return false;
+}
+
 bool Quirks::shouldDispatchSimulatedMouseEvents(const EventTarget* target) const
 {
     if (m_document->settings().mouseEventsSimulationEnabled())
@@ -528,91 +530,29 @@ bool Quirks::shouldDispatchSimulatedMouseEvents(const EventTarget* target) const
 
     QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
 
-    auto doShouldDispatchChecks = [this] () -> QuirksData::ShouldDispatchSimulatedMouseEvents {
-        auto* loader = m_document->loader();
-        if (!loader || loader->simulatedMouseEventsDispatchPolicy() != SimulatedMouseEventsDispatchPolicy::Allow)
-            return QuirksData::ShouldDispatchSimulatedMouseEvents::No;
-
-        if (m_quirksData.isSite(QuirkSite::Amazon))
-            return QuirksData::ShouldDispatchSimulatedMouseEvents::Yes;
-        if (m_quirksData.isSite(QuirkSite::GoogleMaps))
-            return QuirksData::ShouldDispatchSimulatedMouseEvents::Yes;
-        if (m_quirksData.isSite(QuirkSite::SoundCloud))
-            return QuirksData::ShouldDispatchSimulatedMouseEvents::Yes;
-        // facebook.com rdar://174179871
-        if (m_quirksData.isSite(QuirkSite::Facebook))
-            return QuirksData::ShouldDispatchSimulatedMouseEvents::DependingOnTargetWithSliderRole;
-        // tiktok.com rdar://174179805
-        if (m_quirksData.isSite(QuirkSite::TikTok))
-            return QuirksData::ShouldDispatchSimulatedMouseEvents::DependingOnTargetWithSliderRole;
-
-        const URL& topDocumentURL = this->topDocumentURL();
-        const auto registrableDomainString = RegistrableDomain(topDocumentURL).string();
-
-        if (registrableDomainString == "wix.com"_s) {
-            // Disable simulated mouse dispatching for template selection.
-            return startsWithLettersIgnoringASCIICase(topDocumentURL.path(), "/website/templates/"_s) ? QuirksData::ShouldDispatchSimulatedMouseEvents::No : QuirksData::ShouldDispatchSimulatedMouseEvents::Yes;
-        }
-
-        if (registrableDomainString == "airtable.com"_s)
-            return QuirksData::ShouldDispatchSimulatedMouseEvents::Yes;
-        if (registrableDomainString == "flipkart.com"_s)
-            return QuirksData::ShouldDispatchSimulatedMouseEvents::Yes;
-        if (registrableDomainString == "mybinder.org"_s)
-            return QuirksData::ShouldDispatchSimulatedMouseEvents::DependingOnTargetFor_mybinder_org;
-
-        auto host = topDocumentURL.host();
-        if (host == "naver.com"_s)
-            return QuirksData::ShouldDispatchSimulatedMouseEvents::Yes;
-        if (host.endsWith(".naver.com"_s)) {
-            // Disable the quirk for tv.naver.com subdomain to be able to simulate hover on videos.
-            if (host == "tv.naver.com"_s)
-                return QuirksData::ShouldDispatchSimulatedMouseEvents::No;
-            // Disable the quirk for mail.naver.com subdomain to be able to tap on mail subjects.
-            if (host == "mail.naver.com"_s)
-                return QuirksData::ShouldDispatchSimulatedMouseEvents::No;
-            // Disable the quirk on the mobile site.
-            // FIXME: Maybe this quirk should be disabled for "m." subdomains on all sites? These are generally mobile sites that don't need mouse events.
-            if (host == "m.naver.com"_s)
-                return QuirksData::ShouldDispatchSimulatedMouseEvents::No;
-            return QuirksData::ShouldDispatchSimulatedMouseEvents::Yes;
-        }
-
-        return QuirksData::ShouldDispatchSimulatedMouseEvents::No;
-    };
-
-    if (m_quirksData.shouldDispatchSimulatedMouseEventsQuirk == QuirksData::ShouldDispatchSimulatedMouseEvents::Unknown)
-        m_quirksData.shouldDispatchSimulatedMouseEventsQuirk = doShouldDispatchChecks();
-
-    switch (m_quirksData.shouldDispatchSimulatedMouseEventsQuirk) {
-    case QuirksData::ShouldDispatchSimulatedMouseEvents::Unknown:
-        ASSERT_NOT_REACHED();
+    if (!m_quirksData.quirkIsEnabled(QuirksData::SiteSpecificQuirk::ShouldDispatchSimulatedMouseEventsQuirk))
         return false;
 
-    case QuirksData::ShouldDispatchSimulatedMouseEvents::No:
+    auto* loader = m_document->loader();
+    if (!loader || loader->simulatedMouseEventsDispatchPolicy() != SimulatedMouseEventsDispatchPolicy::Allow)
         return false;
 
-    case QuirksData::ShouldDispatchSimulatedMouseEvents::DependingOnTargetWithSliderRole:
-        for (RefPtr node = dynamicDowncast<Node>(target); node; node = node->parentNode()) {
-            if (RefPtr element = dynamicDowncast<Element>(*node); element && element->attributeWithoutSynchronization(HTMLNames::roleAttr) == "slider"_s)
-                return true;
-        }
-        return false;
-
-    case QuirksData::ShouldDispatchSimulatedMouseEvents::DependingOnTargetFor_mybinder_org:
-        for (RefPtr node = dynamicDowncast<Node>(target); node; node = node->parentNode()) {
-            // This uses auto* instead of RefPtr as otherwise GCC does not compile.
-            if (auto* element = dynamicDowncast<Element>(*node); element && element->hasClassName("lm-DockPanel-tabBar"_s))
-                return true;
-        }
-        return false;
-
-    case QuirksData::ShouldDispatchSimulatedMouseEvents::Yes:
-        return true;
+    // facebook.com rdar://174179871
+    // tiktok.com rdar://174179805
+    if (m_quirksData.isSite(QuirkSite::Facebook) || m_quirksData.isSite(QuirkSite::TikTok)) {
+        return targetOrAncestorMatches(target, [](auto& element) {
+            return element.attributeWithoutSynchronization(HTMLNames::roleAttr) == "slider"_s;
+        });
     }
 
-    ASSERT_NOT_REACHED();
-    return false;
+    // mybinder.org rdar://51770057
+    if (m_quirksData.isSite(QuirkSite::MyBinder)) {
+        return targetOrAncestorMatches(target, [](auto& element) {
+            return element.hasClassName("lm-DockPanel-tabBar"_s);
+        });
+    }
+
+    return true;
 }
 
 bool Quirks::shouldPreventDispatchOfTouchEvent(const AtomString& touchEventType, EventTarget* target) const
@@ -1944,10 +1884,7 @@ bool Quirks::needsDisableDOMPasteAccessQuirk() const
 {
     QUIRKS_EARLY_RETURN_IF_DISABLED_WITH_VALUE(false);
 
-    if (m_quirksData.needsDisableDOMPasteAccessQuirk)
-        return *m_quirksData.needsDisableDOMPasteAccessQuirk;
-
-    m_quirksData.needsDisableDOMPasteAccessQuirk = [&] {
+    return quirkIsEnabledAfterProbing(QuirksData::SiteSpecificQuirk::NeedsDisableDOMPasteAccessQuirk, [&] {
         RefPtr document = m_document.get();
         if (!document)
             return false;
@@ -1959,9 +1896,7 @@ bool Quirks::needsDisableDOMPasteAccessQuirk() const
         JSC::JSLockHolder lock(vm);
         auto tableauPrepProperty = JSC::Identifier::fromString(vm, "tableauPrep"_s);
         return globalObject->hasProperty(globalObject, tableauPrepProperty);
-    }();
-
-    return *m_quirksData.needsDisableDOMPasteAccessQuirk;
+    });
 }
 
 // rdar://133423460
@@ -2942,6 +2877,9 @@ static constexpr std::array expediaGroupDomains {
     "hotels.com"_s, "mrjet.se"_s, "orbitz.com"_s, "travelocity.ca"_s,
     "travelocity.com"_s, "wotif.co.nz"_s, "wotif.com"_s
 };
+#if ENABLE(TOUCH_EVENTS) || ENABLE(TOUCH_EVENT_REGIONS)
+static constexpr std::array naverHostsWithoutSimulatedMouseEvents { "tv.naver.com"_s, "mail.naver.com"_s, "m.naver.com"_s };
+#endif
 #if PLATFORM(IOS_FAMILY)
 static constexpr std::array claudeDomains { "claude.ai"_s, "claude.com"_s };
 static constexpr std::array youTubeEmbedDomains { "youtube.com"_s, "youtube-nocookie.com"_s };
@@ -2968,6 +2906,12 @@ static constexpr Quirk table[] = {
         .behaviors = quirkBehaviors({ NeedsAirIndiaExpressLayeringQuirk }) },
 
     // Note: There is a userAgent override for rdar://117771731, see needsCustomUserAgentOverride()
+#if ENABLE(TOUCH_EVENTS) || ENABLE(TOUCH_EVENT_REGIONS)
+    // airtable.com rdar://49124313
+    { .match = QuirkMatch::domain("airtable.com"_s),
+        .behaviors = quirkBehaviors({ ShouldDispatchSimulatedMouseEventsQuirk }) },
+#endif
+
     { .match = QuirkMatch::anyTopLevelDomain("amazon"_s),
         .behaviors = quirkBehaviors({
             // amazon.com rdar://49124529
@@ -2975,6 +2919,10 @@ static constexpr Quirk table[] = {
 #if PLATFORM(MAC)
             // amazon.com rdar://128962002
             NeedsPrimeVideoUserSelectNoneQuirk,
+#endif
+#if ENABLE(TOUCH_EVENTS) || ENABLE(TOUCH_EVENT_REGIONS)
+            // amazon.com rdar://49124313
+            ShouldDispatchSimulatedMouseEventsQuirk,
 #endif
         }),
         .site = QuirkSite::Amazon },
@@ -2996,7 +2944,7 @@ static constexpr Quirk table[] = {
 #if PLATFORM(IOS_FAMILY)
     // as.com: rdar://121014613
     { .match = QuirkMatch::domain("as.com"_s).onlyIf(QuirkCondition::SmallScreen),
-        .disablesElementFullscreen = true },
+        .behaviors = quirkBehaviors({ ShouldDisableElementFullscreenQuirk }) },
 
     // att.com rdar://55185021
     { .match = QuirkMatch::domain("att.com"_s),
@@ -3124,7 +3072,7 @@ static constexpr Quirk table[] = {
 #if PLATFORM(IOS_FAMILY)
     // digitaltrends.com rdar://121014613
     { .match = QuirkMatch::domain("digitaltrends.com"_s).onlyIf(QuirkCondition::SmallScreen),
-        .disablesElementFullscreen = true },
+        .behaviors = quirkBehaviors({ ShouldDisableElementFullscreenQuirk }) },
 
     // discord.com rdar://162719481
     { .match = QuirkMatch::domain("discord.com"_s),
@@ -3191,8 +3139,18 @@ static constexpr Quirk table[] = {
             // facebook.com rdar://158736355
             ShouldEnableRTCEncodedStreamsQuirk,
 #endif
+#if ENABLE(TOUCH_EVENTS) || ENABLE(TOUCH_EVENT_REGIONS)
+            // facebook.com rdar://174179871
+            ShouldDispatchSimulatedMouseEventsQuirk,
+#endif
         }),
         .site = QuirkSite::Facebook },
+
+#if ENABLE(TOUCH_EVENTS) || ENABLE(TOUCH_EVENT_REGIONS)
+    // flipkart.com rdar://49648520
+    { .match = QuirkMatch::domain("flipkart.com"_s),
+        .behaviors = quirkBehaviors({ ShouldDispatchSimulatedMouseEventsQuirk }) },
+#endif
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)
     // forbes.com rdar://67273166
@@ -3228,6 +3186,10 @@ static constexpr Quirk table[] = {
 #endif
             // maps.google.com https://bugs.webkit.org/show_bug.cgi?id=214945
             ShouldAvoidResizingWhenInputViewBoundsChangeQuirk,
+#if ENABLE(TOUCH_EVENTS) || ENABLE(TOUCH_EVENT_REGIONS)
+            // maps.google.com rdar://49124313
+            ShouldDispatchSimulatedMouseEventsQuirk,
+#endif
         }),
         .site = QuirkSite::GoogleMaps },
 
@@ -3343,7 +3305,7 @@ static constexpr Quirk table[] = {
 #if PLATFORM(IOS_FAMILY)
     // instagram.com rdar://121014613
     { .match = QuirkMatch::domain("instagram.com"_s),
-        .disablesElementFullscreen = true },
+        .behaviors = quirkBehaviors({ ShouldDisableElementFullscreenQuirk }) },
 #endif
 
     // invideo.io rdar://171741842 https://webkit.org/b/311602
@@ -3455,6 +3417,17 @@ static constexpr Quirk table[] = {
 #endif
 #endif
 
+#if ENABLE(TOUCH_EVENTS) || ENABLE(TOUCH_EVENT_REGIONS)
+    // mybinder.org rdar://51770057
+    { .match = QuirkMatch::domain("mybinder.org"_s),
+        .behaviors = quirkBehaviors({ ShouldDispatchSimulatedMouseEventsQuirk }),
+        .site = QuirkSite::MyBinder },
+
+    // naver.com rdar://48068610
+    { .match = QuirkMatch::hostOrSubdomainOf("naver.com"_s).exceptWhen().hostIsOneOf<naverHostsWithoutSimulatedMouseEvents>(),
+        .behaviors = quirkBehaviors({ ShouldDispatchSimulatedMouseEventsQuirk }) },
+#endif
+
     { .match = QuirkMatch::domain("netflix.com"_s),
         .behaviors = quirkBehaviors({
             // netflix.com https://bugs.webkit.org/show_bug.cgi?id=173030
@@ -3551,6 +3524,10 @@ static constexpr Quirk table[] = {
             ShouldDispatchSimulatedMouseEventsAssumeDefaultPreventedQuirk,
             // Soundcloud: rdar://102913500
             ShouldExposeShowModalDialog,
+#if ENABLE(TOUCH_EVENTS) || ENABLE(TOUCH_EVENT_REGIONS)
+            // soundcloud.com rdar://52915981
+            ShouldDispatchSimulatedMouseEventsQuirk,
+#endif
         }),
         .site = QuirkSite::SoundCloud },
 
@@ -3605,6 +3582,10 @@ static constexpr Quirk table[] = {
             NeedsTikTokOverflowingContentQuirk,
             // tiktok.com rdar://174179805
             ShouldDispatchSimulatedMouseEventsAssumeDefaultPreventedQuirk,
+#if ENABLE(TOUCH_EVENTS) || ENABLE(TOUCH_EVENT_REGIONS)
+            // tiktok.com rdar://174179805
+            ShouldDispatchSimulatedMouseEventsQuirk,
+#endif
         }),
         .site = QuirkSite::TikTok },
 
@@ -3652,7 +3633,7 @@ static constexpr Quirk table[] = {
 #if PLATFORM(IOS_FAMILY)
     // rdar://116531089
     { .match = QuirkMatch::domain("vimeo.com"_s).onlyIf(QuirkCondition::SmallScreen),
-        .disablesElementFullscreen = true },
+        .behaviors = quirkBehaviors({ ShouldDisableElementFullscreenQuirk }) },
 #endif
 
 #if ENABLE(TWO_PHASE_CLICKS)
@@ -3693,6 +3674,12 @@ static constexpr Quirk table[] = {
         }) },
 
     // rdar://170412045, https://bugs.webkit.org/show_bug.cgi?id=307933
+#if ENABLE(TOUCH_EVENTS) || ENABLE(TOUCH_EVENT_REGIONS)
+    // wix.com rdar://49124313, except while picking a template.
+    { .match = QuirkMatch::domain("wix.com"_s).exceptWhen().pathStartsWith("/website/templates/"_s),
+        .behaviors = quirkBehaviors({ ShouldDispatchSimulatedMouseEventsQuirk }) },
+#endif
+
     { .match = QuirkMatch::domain("workspaces.xyz"_s),
         .behaviors = quirkBehaviors({ ShouldComparareUsedValuesForBorderWidthForTriggeringTransitions }) },
 
@@ -3761,7 +3748,14 @@ static constexpr Quirk table[] = {
     // YouTube.com does not provide AirPlay controls in fullscreen
     // (Ref: rdar://121471373)
     { .match = QuirkMatch::domain("youtube.com"_s).onlyIf(QuirkCondition::SmallScreen),
-        .disablesElementFullscreen = true },
+        .behaviors = quirkBehaviors({ ShouldDisableElementFullscreenQuirk }) },
+
+    // tiny. (Ref: rdar://121471373, rdar://121473410)
+    { .match = QuirkMatch::anySite().onlyIfEmbedded().documentDomainIsOneOf<youTubeEmbedDomains>().onlyIf(QuirkCondition::SmallScreen),
+        .behaviors = quirkBehaviors({ ShouldDisableElementFullscreenQuirk }) },
+
+    { .match = QuirkMatch::anySite().onlyIfEmbedded().documentDomainIs("x.com"_s),
+        .behaviors = quirkBehaviors({ ShouldDisableElementFullscreenQuirk }) },
 
     // youtube.com rdar://49582231
     { .match = QuirkMatch::host("www.youtube.com"_s),
@@ -3812,10 +3806,20 @@ static constexpr Quirk table[] = {
 
 } // namespace SiteSpecificQuirks
 
+QuirksData resolveSiteSpecificQuirks(const QuirkMatchContext& context)
+{
+    QuirksData quirksData;
+    for (auto& quirk : SiteSpecificQuirks::table)
+        if (quirk.match.matches(context))
+            quirk.apply(quirksData);
+    return quirksData;
+}
+
 void Quirks::determineRelevantQuirks()
 {
     RELEASE_ASSERT(m_document);
     m_quirksData = { };
+    m_probedQuirks = { };
 
 #if PLATFORM(IOS_FAMILY)
     static const bool shouldDisableLazyIframeLoadingQuirk = !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::NoUNIQLOLazyIframeLoadingQuirk) && WTF::IOSApplication::isUNIQLOApp();
@@ -3846,16 +3850,9 @@ void Quirks::determineRelevantQuirks()
     if (quirksURL.isEmpty())
         return;
 
-    QuirkMatchContext context { quirksURL, protect(m_document)->url() };
-    for (auto& quirk : SiteSpecificQuirks::table) {
-        if (quirk.match.matches(context))
-            quirk.apply(m_quirksData);
-    }
+    Ref document = *protect(m_document);
+    m_quirksData.merge(resolveSiteSpecificQuirks({ quirksURL, document->url(), document->isTopDocument() ? IsTopDocument::Yes : IsTopDocument::No }));
 
-    // Note: `needsDisableDOMPasteAccessQuirk` needs a live document to assess
-    // Note: `shouldDisableElementFullscreen` needs a live document for embedded sites
-
-    // FIXME: The below quirks should be handled more efficiently in a
 #if ENABLE(FLIP_SCREEN_DIMENSIONS_QUIRKS)
     // rdar://133423460
     m_quirksData.setQuirkState(QuirksData::SiteSpecificQuirk::ShouldFlipScreenDimensionsQuirk, shouldFlipScreenDimensionsInternal(quirksURL));

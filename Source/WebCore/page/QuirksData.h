@@ -47,6 +47,7 @@ enum class QuirkSite : uint8_t {
     IHeart,
     InVideo,
     LinkedIn,
+    MyBinder,
     NBA,
     Netflix,
     Outlook,
@@ -99,6 +100,7 @@ struct QuirksData {
 #if PLATFORM(IOS_FAMILY)
         NeedsDeferKeyDownAndKeyPressTimersUntilNextEditingCommandQuirk,
 #endif
+        NeedsDisableDOMPasteAccessQuirk,
         NeedsFacebookRemoveNotSupportedQuirk,
 #if PLATFORM(COCOA)
         NeedsAnchorToBeMouseFocusableQuirk,
@@ -176,6 +178,9 @@ struct QuirksData {
 #endif
         ShouldDisableDataURLPaddingValidation,
         ShouldDisableDOMAudioSession,
+#if PLATFORM(IOS_FAMILY)
+        ShouldDisableElementFullscreenQuirk,
+#endif
 #if ENABLE(VIDEO_PRESENTATION_MODE)
         ShouldDisableEndFullscreenEventWhenEnteringPictureInPictureFromFullscreenQuirk,
 #endif
@@ -204,6 +209,9 @@ struct QuirksData {
 #endif
         ShouldDispatchSyntheticMouseEventsWhenModifyingSelectionQuirk,
         ShouldDispatchSimulatedMouseEventsAssumeDefaultPreventedQuirk,
+#if ENABLE(TOUCH_EVENTS) || ENABLE(TOUCH_EVENT_REGIONS)
+        ShouldDispatchSimulatedMouseEventsQuirk,
+#endif
 #if ENABLE(MEDIA_STREAM)
         ShouldEnableCameraAndMicrophonePermissionStateQuirk,
         ShouldEnableCameraBackgroundPlayback,
@@ -334,20 +342,12 @@ struct QuirksData {
         return activeQuirks.set(static_cast<size_t>(quirk), state);
     }
 
-    // Requires check at moment of use
-    std::optional<bool> needsDisableDOMPasteAccessQuirk;
-    bool shouldDisableElementFullscreen { false };
-
-#if ENABLE(TOUCH_EVENTS) || ENABLE(TOUCH_EVENT_REGIONS)
-    enum class ShouldDispatchSimulatedMouseEvents : uint8_t {
-        Unknown,
-        No,
-        DependingOnTargetWithSliderRole,
-        DependingOnTargetFor_mybinder_org,
-        Yes,
-    };
-    ShouldDispatchSimulatedMouseEvents shouldDispatchSimulatedMouseEventsQuirk { ShouldDispatchSimulatedMouseEvents::Unknown };
-#endif
+    constexpr void merge(const QuirksData& other)
+    {
+        auto& [otherActiveQuirks, otherSites] = other;
+        activeQuirks.merge(otherActiveQuirks);
+        sites.merge(otherSites);
+    }
 };
 
 } // namespace WebCore
