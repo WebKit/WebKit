@@ -202,6 +202,9 @@ private:
 @property bool allowSOAuthorizationLoad;
 @property bool isAsyncExecution;
 @property bool disableExtensibleSSODuringPolicyDecision;
+#if PLATFORM(MAC)
+@property (nonatomic, retain) NSViewController *presentingViewController;
+#endif
 - (instancetype)init;
 @end
 
@@ -281,6 +284,11 @@ private:
 - (UIViewController *)_presentingViewControllerForWebView:(WKWebView *)webView
 {
     return nil;
+}
+#elif PLATFORM(MAC)
+- (NSViewController *)_presentingViewControllerForWebView:(WKWebView *)webView
+{
+    return self.presentingViewController;
 }
 #endif
 
@@ -1830,6 +1838,48 @@ TEST(SOAuthorizationRedirect, InterceptionSucceedWithUI)
     Util::run(&navigationCompleted);
     EXPECT_WK_STREQ(redirectURL.get().absoluteString, finalURL);
     EXPECT_FALSE(uiShowed);
+}
+
+TEST(SOAuthorizationRedirect, InterceptionSucceedWithUIViaPresentingViewController)
+{
+    resetState();
+    SWIZZLE_SOAUTH(PAL::getSOAuthorizationClassSingleton());
+
+    RetainPtr<NSURL> testURL = [NSBundle.test_resourcesBundle URLForResource:@"simple" withExtension:@"html"];
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    RetainPtr delegate = adoptNS([[TestSOAuthorizationDelegate alloc] init]);
+    configureSOAuthorizationWebView(webView.get(), delegate.get(), OpenExternalSchemesPolicy::Allow);
+
+    RetainPtr presentingViewController = adoptNS([[NSViewController alloc] init]);
+    RetainPtr presentingView = adoptNS([[NSView alloc] initWithFrame:NSZeroRect]);
+    [presentingViewController setView:presentingView.get()];
+    [[webView hostWindow].contentView addSubview:presentingView.get()];
+    [delegate setPresentingViewController:presentingViewController.get()];
+
+    [webView loadRequest:[NSURLRequest requestWithURL:testURL.get()]];
+    Util::run(&authorizationPerformed);
+    EXPECT_TRUE(policyForAppSSOPerformed);
+
+    RetainPtr viewController = adoptNS([[TestSOAuthorizationViewController alloc] init]);
+    RetainPtr view = adoptNS([[NSView alloc] initWithFrame:NSZeroRect]);
+    [viewController setView:view.get()];
+
+    [gDelegate authorization:gAuthorization presentViewController:viewController.get() withCompletion:^(BOOL success, NSError *) {
+        EXPECT_TRUE(success);
+    }];
+    Util::run(&uiShowed);
+
+    // The view controller should be presented on the client-supplied presenting view controller rather than in a WebKit-owned window.
+    EXPECT_TRUE([[presentingViewController presentedViewControllers] containsObject:viewController.get()]);
+
+    RetainPtr<NSURL> redirectURL = [NSBundle.test_resourcesBundle URLForResource:@"simple2" withExtension:@"html"];
+    RetainPtr response = adoptNS([[NSHTTPURLResponse alloc] initWithURL:testURL.get() statusCode:302 HTTPVersion:@"HTTP/1.1" headerFields:@{ @"Location" : [redirectURL absoluteString] }]);
+    [gDelegate authorization:gAuthorization didCompleteWithHTTPResponse:response.get() httpBody:adoptNS([[NSData alloc] init]).get()];
+    Util::run(&navigationCompleted);
+    EXPECT_WK_STREQ(redirectURL.get().absoluteString, finalURL);
+    EXPECT_FALSE(uiShowed);
+    EXPECT_FALSE([[presentingViewController presentedViewControllers] containsObject:viewController.get()]);
 }
 
 TEST(SOAuthorizationRedirect, InterceptionCancelWithUI)
