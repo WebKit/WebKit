@@ -4136,7 +4136,9 @@ class RunWebKitTests(shell.Test, ResultsDBReportMixin, AddToLogMixin, ShellMixin
             yield self._addToLog(
                 self.results_db_log_name,
                 f"\n{test}: pass_rate: {data['pass_rate']}, pre-existing-failure={data['is_existing_failure']}\n"
-                f"Response from results-db: {data['raw_data']}\n{data['logs']}\npre-existing-flake={flake_summary}"
+                f"Response from results-db: {data['raw_data']}\n"
+                f"{data['logs']}"
+                f"pre-existing-flake={flake_summary}\n"
             )
 
         if self.flaky_failures_in_results_db:
