@@ -285,9 +285,10 @@ ${escapeForSlackText(stderr)}\`\`\`` : ""),
             return;
         }
 
+        dataLogLn("Failed to parse revision and reason from: ", args);
         await this.postMessage({
             channel: event.channel,
-            text: `<@${event.user}> Failed to parse revision and reason`,
+            text: `<@${event.user}> Failed to parse revision and reason: \`${escapeForSlackText(args.join(" "))}\``,
         });
     }
 

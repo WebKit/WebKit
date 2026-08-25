@@ -59,6 +59,9 @@ function extractRevision(text)
         if (!candidate)
             continue;
 
+        // Accept identifiers pasted as commits.webkit.org links, which is what webkitbot itself posts.
+        candidate = candidate.replace(/^https?:\/\/commits\.webkit\.org\//, "");
+
         let match = candidate.match(/^r?(\d{5,6}|\d+@[^:\s]+|[0-9a-f]{6,40}):?$/);
         if (!match)
             return null;
@@ -143,6 +146,11 @@ export function extractTextIfMentioned(text, id)
 
     // 3. Strip Slack's auto-linked URLs: <https://url> → https://url, <https://url|label> → https://url
     text = text.replace(/<(https?:\/\/[^|>]+)(?:\|[^>]*)?>/g, "$1");
+
+    // 4. Strip Slack's auto-linked email addresses: <mailto:target|label> → target.
+    //    Slack mistakes commit identifiers for email addresses, so "319186@main" arrives as
+    //    <mailto:319186@main|319186@main>.
+    text = text.replace(/<mailto:([^|>\s]+)(?:\|[^>]*)?>/g, "$1");
 
     return text;
 }

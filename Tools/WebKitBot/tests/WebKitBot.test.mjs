@@ -148,6 +148,72 @@ test("multiple revisions with spaces", () => {
     expect(revisions).toEqual(["263483", "263484", "263485", "263486"]);
 });
 
+test("identifier linkified by Slack as an email address", () => {
+    let message = `<@${WebKitBotID}> revert <mailto:319186@main|319186@main> Causes MotionMark regression`;
+
+    let text = extractTextIfMentioned(message, WebKitBotID);
+    expect(text).toBe(" revert 319186@main Causes MotionMark regression");
+
+    let {command, args} = extractCommandAndArgs(text);
+    expect(command).toBe("revert");
+    expect(args).toEqual(["319186@main", "Causes", "MotionMark", "regression"]);
+
+    let {revisions, reason} = extractRevisionsAndReason(args);
+    expect(reason).toBe("Causes MotionMark regression");
+    expect(revisions).toEqual(["319186@main"]);
+});
+
+test("multiple identifiers linkified by Slack as email addresses", () => {
+    let message = `<@${WebKitBotID}> revert <mailto:319186@main|319186@main>, <mailto:319187@main|319187@main>: testing revert`;
+
+    let text = extractTextIfMentioned(message, WebKitBotID);
+    expect(text).toBe(" revert 319186@main, 319187@main: testing revert");
+
+    let {command, args} = extractCommandAndArgs(text);
+    expect(command).toBe("revert");
+    expect(args).toEqual(["319186@main,", "319187@main:", "testing", "revert"]);
+
+    let {revisions, reason} = extractRevisionsAndReason(args);
+    expect(reason).toBe("testing revert");
+    expect(revisions).toEqual(["319186@main", "319187@main"]);
+});
+
+test("identifier pasted as a commits.webkit.org link", () => {
+    let message = `<@${WebKitBotID}> revert <https://commits.webkit.org/319186@main> testing revert`;
+
+    let text = extractTextIfMentioned(message, WebKitBotID);
+    expect(text).toBe(" revert https://commits.webkit.org/319186@main testing revert");
+
+    let {command, args} = extractCommandAndArgs(text);
+    expect(command).toBe("revert");
+
+    let {revisions, reason} = extractRevisionsAndReason(args);
+    expect(reason).toBe("testing revert");
+    expect(revisions).toEqual(["319186@main"]);
+});
+
+test("revision pasted as a labelled commits.webkit.org link", () => {
+    let message = `<@${WebKitBotID}> revert <https://commits.webkit.org/r263483|r263483> testing revert`;
+
+    let text = extractTextIfMentioned(message, WebKitBotID);
+    expect(text).toBe(" revert https://commits.webkit.org/r263483 testing revert");
+
+    let {revisions, reason} = extractRevisionsAndReason(extractCommandAndArgs(text).args);
+    expect(reason).toBe("testing revert");
+    expect(revisions).toEqual(["263483"]);
+});
+
+test("user mentions in the reason are left intact", () => {
+    let message = `<@${WebKitBotID}> revert 263483 breaks the build, see <@U12345678>`;
+
+    let text = extractTextIfMentioned(message, WebKitBotID);
+    expect(text).toBe(" revert 263483 breaks the build, see <@U12345678>");
+
+    let {revisions, reason} = extractRevisionsAndReason(extractCommandAndArgs(text).args);
+    expect(reason).toBe("breaks the build, see <@U12345678>");
+    expect(revisions).toEqual(["263483"]);
+});
+
 test("mention in different place", () => {
     let message = `revert 263483, 263484, r263485, r263486: testing revert <@${WebKitBotID}>`;
 
