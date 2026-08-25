@@ -310,11 +310,12 @@ protected:
 
     // CSSPrimitiveValue:
     uint8_t m_primitiveUnitType : 7 { 0 }; // CSSUnitType
-    mutable uint8_t m_hasCachedCSSText : 1 { false };
     uint8_t m_isImplicitInitialValue : 1 { false };
 
     // CSSValueList and CSSValuePair:
     ValueSeparator m_valueSeparator : ValueSeparatorBits { ValueSeparator::Space };
+
+    mutable uint8_t m_hasCachedCSSText { false };
 
 private:
     ClassType m_classType : ClassTypeBits;

@@ -44,7 +44,9 @@
 #include "StyleComputedStyle.h"
 #include "StyleLengthResolution.h"
 #include "StylePrimitiveNumericTypes+Rounding.h"
+#include <type_traits>
 #include <wtf/Hasher.h>
+#include <wtf/MainThread.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/MakeString.h>
@@ -166,6 +168,7 @@ CSSPrimitiveValue::~CSSPrimitiveValue()
         break;
     }
     if (m_hasCachedCSSText) {
+        ASSERT(isMainThread());
         ASSERT(serializedPrimitiveValues().contains(this));
         serializedPrimitiveValues().remove(this);
     }
@@ -350,11 +353,20 @@ String CSSPrimitiveValue::customCSSText(const CSS::SerializationContext& context
     case CSSUnitType::Unknown:
         return String();
     default:
+        // The memoization map and m_hasCachedCSSText are not thread-safe, and worker threads can
+        // serialize FontFace descriptors concurrently with the main thread. Only memoize on the
+        // main thread; other threads serialize without touching the shared state.
+        if (!isMainThread())
+            return serializeInternal(context);
         auto& map = serializedPrimitiveValues();
         ASSERT(map.contains(this) == m_hasCachedCSSText);
         if (m_hasCachedCSSText)
             return map.get(this);
         String serializedValue = serializeInternal(context);
+        // m_hasCachedCSSText is written here without synchronization, so it must live in its own
+        // memory location (not a bit-field packed with concurrently-read members).
+        static_assert(std::is_member_object_pointer_v<decltype(&CSSPrimitiveValue::m_hasCachedCSSText)>,
+            "m_hasCachedCSSText must not be a bit-field");
         m_hasCachedCSSText = true;
         map.add(this, serializedValue);
         return serializedValue;
