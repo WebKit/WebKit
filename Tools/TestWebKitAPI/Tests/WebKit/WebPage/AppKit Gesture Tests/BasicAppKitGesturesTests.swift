@@ -1351,6 +1351,44 @@ extension AppKitGesturesTests.Basic {
         #expect(selection == .collapsed(.init(in: "editor", at: 1)))
     }
 
+    @Test(
+        .bug("https://webkit.org/b/322453", "Clicking over <attachment> does not select the element in Mail compose"),
+        arguments: [false, true],
+        [false, true]
+    )
+    func singleClickOverAttachmentSelectsTheWholeAttachment(contentEditable: Bool, wideLayout: Bool) async throws {
+        page.setWebFeature("AttachmentElementEnabled", enabled: true)
+        page.setWebFeature("AttachmentWideLayoutEnabled", enabled: wideLayout)
+
+        let html = """
+            <body style="margin: 0">
+            <div id="root" \(contentEditable ? "contenteditable" : "") style="font-size: 20px; padding: 20px;">\
+            <div id="content">\
+            <span id="before">before</span>\
+            <attachment id="attachment" onclick="void(0)" title="document.ips" type="public.data" subtitle="83 KB"></attachment>\
+            <span id="after">after</span>\
+            </div>\
+            </div>
+            </body>
+            """
+
+        try await page.load(html: html).wait()
+
+        await page.waitForNextPresentationUpdate()
+
+        let attachmentBounds = try await screenBounds(ofElementWithID: "attachment")
+
+        await recap.play { composer in
+            composer._wk_click(at: attachmentBounds.center, for: .seconds(0.1))
+        }
+
+        await page.waitForPendingMouseEvents()
+        await page.waitForNextPresentationUpdate()
+
+        let selection = try await page.callJavaScript(JavaScriptMessages.GetSelection())
+        #expect(selection == .range(base: .init(in: "before", at: 6), extent: .init(in: "after", at: 0)))
+    }
+
     @Test(.disabled("This test takes an unavoidable ~10 seconds to run"))
     func consecutiveQuickFlicksAccelerateScrolling() async throws {
         let html = """

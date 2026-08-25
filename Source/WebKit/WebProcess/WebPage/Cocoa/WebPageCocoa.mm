@@ -2471,7 +2471,7 @@ bool WebPage::shouldAllowSingleClickToChangeSelection(WebCore::Node& targetNode,
     if (RefPtr editableRoot = newSelection.rootEditableElement(); editableRoot && editableRoot == targetNode.rootEditableElement()) {
         // FIXME: This logic should be made consistent for both macOS and iOS.
 #if PLATFORM(MAC)
-        return inputSource != WebCore::MouseEventInputSource::Automation;
+        return targetNode.shouldSelectOnMouseDown() || inputSource != WebCore::MouseEventInputSource::Automation;
 #else
         // Text interaction gestures will handle selection in the case where we are already editing the node. In the case where we're
         // just starting to focus an editable element by tapping on it, only change the selection if we weren't already showing an
