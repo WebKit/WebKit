@@ -33,6 +33,7 @@
 #import "InteractionInformationAtPosition.h"
 #import "InteractionInformationRequest.h"
 #import "NativeWebWheelEvent.h"
+#import "PositionInformationManager.h"
 #import "RemoteLayerTreeDrawingAreaProxy.h"
 #import "ScrollingAccelerationCurve.h"
 #import "ViewGestureController.h"
@@ -110,13 +111,6 @@ static WebCore::FloatSize toRawPlatformDelta(WebCore::FloatSize delta)
     return -delta;
 }
 
-using InteractionInformationCallback = Function<void(const WebKit::InteractionInformationAtPosition&)>;
-
-struct InteractionInformationRequestAndCallback {
-    WebKit::InteractionInformationRequest request;
-    InteractionInformationCallback callback;
-};
-
 static bool representsDraggableElement(const WebKit::InteractionInformationAtPosition& info)
 {
     return info.isLink || info.isImage || info.isAttachment || info.isDHTMLDraggable || info.isColorInput || info.prefersDraggingOverTextSelection;
@@ -170,11 +164,7 @@ static NSString *gestureLogDescription(NSGestureRecognizer *gesture)
     BlockPtr<void(NSDraggingSession *)> _textSelectionDragCompletionHandler;
     bool _dragGestureHasSentMouseDown;
 
-    WebKit::InteractionInformationAtPosition _positionInformation;
-    std::optional<WebKit::InteractionInformationRequest> _lastOutstandingPositionInformationRequest;
-    Vector<std::optional<InteractionInformationRequestAndCallback>> _pendingPositionInformationHandlers;
-    uint64_t _positionInformationCallbackDepth;
-    bool _hasValidPositionInformation;
+    std::unique_ptr<WebKit::PositionInformationManager> _positionInformationManager;
 }
 
 #if __has_include(<WebKitAdditions/WKAppKitGestureControllerAdditionsImpl.mm>)
@@ -190,6 +180,7 @@ static NSString *gestureLogDescription(NSGestureRecognizer *gesture)
 
     _page = page.get();
     _viewImpl = viewImpl.get();
+    _positionInformationManager = makeUnique<WebKit::PositionInformationManager>(page.get());
 
     [self setUpGestureRecognizers];
     [self addGesturesToWebView];
@@ -709,7 +700,11 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG_DEBUG(RefPtr { _page.get() }->logIdentifier(), "deferral: deferring; awaiting position info at %@", NSStringFromPoint(locationInView));
 
     WebKit::InteractionInformationRequest request { WebCore::IntPoint { locationInView } };
-    [self doAfterPositionInformationUpdate:[weakSelf = WeakObjCPtr<WKAppKitGestureController>(self), weakDeferring = WeakObjCPtr<WKDeferringGestureRecognizer>(deferringGestureRecognizer), isInScrollbar](const auto &info) {
+    _positionInformationManager->doAfterUpdate(request, [weakSelf = WeakObjCPtr<WKAppKitGestureController>(self), weakDeferring = WeakObjCPtr<WKDeferringGestureRecognizer>(deferringGestureRecognizer), isInScrollbar](const std::optional<WebKit::InteractionInformationAtPosition>& optionalInfo) {
+        if (!optionalInfo)
+            return;
+        const auto& info = *optionalInfo;
+
         RetainPtr strongSelf = weakSelf.get();
         RetainPtr strongDeferring = weakDeferring.get();
         if (!strongSelf || !strongDeferring)
@@ -746,7 +741,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
         }();
 
         [strongDeferring endDeferralShouldPreventGestures:shouldPreventGestures];
-    } forRequest:request];
+    });
 
     return YES;
 }
@@ -757,12 +752,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
         return;
 
     WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG(RefPtr { _page.get() }->logIdentifier(), "deferral: press ended before position info arrived; unblocking text selection");
-    if (auto abandonedRequest = std::exchange(_lastOutstandingPositionInformationRequest, std::nullopt)) {
-        for (auto& slot : _pendingPositionInformationHandlers) {
-            if (slot && slot->request.isValidForRequest(*abandonedRequest))
-                slot.reset();
-        }
-    }
+    _positionInformationManager->abandonOutstandingRequest();
 
     [deferringGestureRecognizer endDeferralShouldPreventGestures:NO];
 }
@@ -773,100 +763,17 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
 
 #pragma mark - Position Information
 
-- (void)_invalidateCurrentPositionInformation
-{
-    _hasValidPositionInformation = false;
-    _positionInformation = { };
-}
-
 - (void)didCommitLoadForMainFrame
 {
-    [self _invalidateCurrentPositionInformation];
-}
-
-- (void)requestAsynchronousPositionInformationUpdate:(WebKit::InteractionInformationRequest)request
-{
-    if ([self _currentPositionInformationIsValidForRequest:request])
-        return;
-
-    RefPtr page = _page.get();
-    if (!page || !page->hasRunningProcess())
-        return;
-
-    _lastOutstandingPositionInformationRequest = request;
-    page->requestPositionInformation(request);
-}
-
-- (void)doAfterPositionInformationUpdate:(Function<void(const WebKit::InteractionInformationAtPosition&)>&&)handler forRequest:(WebKit::InteractionInformationRequest)request
-{
-    if ([self _currentPositionInformationIsValidForRequest:request]) {
-        handler(_positionInformation);
-        return;
-    }
-
-    _pendingPositionInformationHandlers.constructAndAppend(std::in_place, request, WTF::move(handler));
-
-    if (![self _hasValidOutstandingPositionInformationRequest:request])
-        [self requestAsynchronousPositionInformationUpdate:request];
-}
-
-- (BOOL)_currentPositionInformationIsValidForRequest:(const WebKit::InteractionInformationRequest&)request
-{
-    return _hasValidPositionInformation && _positionInformation.request.isValidForRequest(request);
-}
-
-- (BOOL)_hasValidOutstandingPositionInformationRequest:(const WebKit::InteractionInformationRequest&)request
-{
-    return _lastOutstandingPositionInformationRequest.and_then([&request](const auto& outstandingRequest) -> std::optional<bool> {
-        return outstandingRequest.isValidForRequest(request);
-    }).value_or(false);
-}
-
-- (void)_invokeAndRemovePendingHandlersValidForCurrentPositionInformation
-{
-    ASSERT(_hasValidPositionInformation);
-
-    ++_positionInformationCallbackDepth;
-    auto updatedPositionInformation = _positionInformation;
-
-    for (size_t index = 0; index < _pendingPositionInformationHandlers.size(); ++index) {
-        auto& slot = _pendingPositionInformationHandlers[index];
-        if (!slot)
-            continue;
-        if (![self _currentPositionInformationIsValidForRequest:slot->request])
-            continue;
-
-        auto requestAndHandler = std::exchange(slot, std::nullopt);
-        if (requestAndHandler->callback)
-            requestAndHandler->callback(updatedPositionInformation);
-    }
-
-    if (--_positionInformationCallbackDepth)
-        return;
-
-    for (int index = _pendingPositionInformationHandlers.size() - 1; index >= 0; --index) {
-        if (!_pendingPositionInformationHandlers[index])
-            _pendingPositionInformationHandlers.removeAt(index);
-    }
+    _positionInformationManager->invalidate();
 }
 
 - (void)positionInformationDidChange:(const WebKit::InteractionInformationAtPosition&)info
 {
-    // Handlers run in `_invokeAndRemovePendingHandlersValidForCurrentPositionInformation`
-    // can re-enter into client code (e.g. UI delegate callbacks), which may release
-    // the WKWebView and tear `self` down before this method returns.
+    // Resolving queued callbacks can re-enter into client code (e.g. UI delegate callbacks), which
+    // may release the WKWebView and tear `self` down before this method returns.
     RetainPtr protectedSelf = self;
-
-    if (_lastOutstandingPositionInformationRequest && info.request.isValidForRequest(*_lastOutstandingPositionInformationRequest))
-        _lastOutstandingPositionInformationRequest = std::nullopt;
-
-    auto newInfo = info;
-    newInfo.mergeCompatibleOptionalInformation(_positionInformation);
-
-    _positionInformation = newInfo;
-    _hasValidPositionInformation = _positionInformation.canBeValid;
-
-    [self _invokeAndRemovePendingHandlersValidForCurrentPositionInformation];
+    _positionInformationManager->didChange(info);
 }
 
 - (BOOL)_isPointInScrollbar:(NSPoint)locationInViewCoordinates
@@ -879,9 +786,9 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
 {
     WebKit::InteractionInformationRequest request { WebCore::IntPoint { locationInViewCoordinates } };
 
-    bool requestIsValid = _hasValidPositionInformation && _positionInformation.request.isValidForRequest(request);
-    bool isSelectable = _positionInformation.isSelectable();
-    bool isOverSelectableText = _positionInformation.isOverSelectableText;
+    bool requestIsValid = _positionInformationManager->currentIsValid(request);
+    bool isSelectable = _positionInformationManager->currentInformation().isSelectable();
+    bool isOverSelectableText = _positionInformationManager->currentInformation().isOverSelectableText;
 
     // The secondary click owns selectable points that are not over actual text (e.g. the page
     // background). Over a run of selectable text, the text selection manager should win so that a
@@ -889,7 +796,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     bool shouldBegin = requestIsValid && isSelectable && !isOverSelectableText;
 
     if (!requestIsValid)
-        [self _invalidateCurrentPositionInformation];
+        _positionInformationManager->invalidate();
 
     return shouldBegin;
 }
@@ -897,16 +804,18 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
 - (BOOL)_positionInformationRequestIsValidAtLocation:(NSPoint)locationInViewCoordinates withRadius:(NSInteger)radius
 {
     WebKit::InteractionInformationRequest request { WebCore::IntPoint { locationInViewCoordinates } };
-    return _hasValidPositionInformation && _positionInformation.request.isApproximatelyValidForRequest(request, radius);
+    return _positionInformationManager->currentIsApproximatelyValid(request, radius);
 }
 
 - (BOOL)_dragPressShouldBeginAtLocation:(NSPoint)locationInViewCoordinates
 {
     int radius = static_cast<int>(std::ceil([_dragPressGestureRecognizer allowableMovement]));
 
+    const auto& information = _positionInformationManager->currentInformation();
+
     // FIXME: Migrate to requestDragStart: IPC for an authoritative decision.
     // The heuristic below approximates DragController::draggableElement() by consulting the same element-type and style signals.
-    bool isDraggable = representsDraggableElement(_positionInformation);
+    bool isDraggable = representsDraggableElement(information);
     bool requestIsValid = [self _positionInformationRequestIsValidAtLocation:locationInViewCoordinates withRadius:radius];
     bool shouldDrag = requestIsValid && isDraggable;
 
@@ -914,18 +823,18 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
         RefPtr { _page.get() }->logIdentifier(),
         "Drag-press shouldBegin → %d (hasInfo=%d link=%d image=%d attachment=%d dhtml=%d color=%d prefersDrag=%d radius=%d)",
         shouldDrag,
-        _hasValidPositionInformation,
-        _positionInformation.isLink,
-        _positionInformation.isImage,
-        _positionInformation.isAttachment,
-        _positionInformation.isDHTMLDraggable,
-        _positionInformation.isColorInput,
-        _positionInformation.prefersDraggingOverTextSelection,
+        _positionInformationManager->hasValidCurrentInformation(),
+        information.isLink,
+        information.isImage,
+        information.isAttachment,
+        information.isDHTMLDraggable,
+        information.isColorInput,
+        information.prefersDraggingOverTextSelection,
         radius
     );
 
     if (!requestIsValid)
-        [self _invalidateCurrentPositionInformation];
+        _positionInformationManager->invalidate();
 
     return shouldDrag;
 }
@@ -935,15 +844,17 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     static constexpr int panPositionInformationToleranceRadius = 15;
     bool requestIsValid = [self _positionInformationRequestIsValidAtLocation:locationInViewCoordinates withRadius:panPositionInformationToleranceRadius];
 
+    const auto& information = _positionInformationManager->currentInformation();
+
     // FIXME: (rdar://181964604) Because of this logic, vertically scrolling over these elements likely will not work.
-    bool prefersInteraction = _positionInformation.isRangeInput || _positionInformation.isARIASlider;
+    bool prefersInteraction = information.isRangeInput || information.isARIASlider;
     bool yieldToContent = requestIsValid && prefersInteraction;
 
     WK_APPKIT_GESTURE_CONTROLLER_RELEASE_LOG(
         RefPtr { _page.get() }->logIdentifier(),
         "Pan shouldBegin → %d (hasInfo=%d valid=%d prefersInteraction=%d)",
         !yieldToContent,
-        _hasValidPositionInformation,
+        _positionInformationManager->hasValidCurrentInformation(),
         requestIsValid,
         prefersInteraction
     );
@@ -1391,9 +1302,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     _isSuppressingSingleClickGestureForTextSelection = false;
     _latestClickID.reset();
     _layerTreeTransactionIdAtLastInteractionStart.reset();
-    [self _invalidateCurrentPositionInformation];
-    _lastOutstandingPositionInformationRequest.reset();
-    _pendingPositionInformationHandlers.clear();
+    _positionInformationManager->reset();
 }
 
 #pragma mark - NSGestureRecognizerDelegate
