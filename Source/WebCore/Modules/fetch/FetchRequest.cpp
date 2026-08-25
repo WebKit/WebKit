@@ -211,7 +211,7 @@ ExceptionOr<void> FetchRequest::initializeWith(const String& url, Init&& init)
     m_request.setInitiatorIdentifier(context->resourceRequestIdentifier());
 
     if (RefPtr document = dynamicDowncast<Document>(scriptExecutionContext()); document && document->settings().localNetworkAccessEnabled())
-        m_targetAddressSpace = updateTargetAddressSpaceIfNeeded(m_targetAddressSpace, m_request.url());
+        m_targetAddressSpace = updateTargetAddressSpaceIfNeeded(init.targetAddressSpace.value_or(m_targetAddressSpace), m_request.url());
 
     auto optionsResult = initializeOptions(init);
     if (optionsResult.hasException())
