@@ -58,6 +58,7 @@ class Factory(factory.BuildFactory):
         if self.findModifiedLayoutTests:
             self.addStep(GetTestExpectationsBaseline())
         self.addStep(ShowIdentifier())
+        self.addStep(ShowWebKitVersion())
         self.addStep(CheckOutPullRequest())
         self.addStep(ValidateChangeContent())
         if self.requiresUserValidation:
@@ -79,6 +80,7 @@ class StyleFactory(factory.BuildFactory):
         self.addStep(FetchBranches())
         self.addStep(UpdateWorkingDirectory())
         self.addStep(ShowIdentifier())
+        self.addStep(ShowWebKitVersion())
         self.addStep(CheckOutPullRequest())
         self.addStep(ValidateChangeContent())
         self.addStep(CheckStyle())
@@ -100,6 +102,7 @@ class SaferCPPStaticAnalyzerFactory(factory.BuildFactory):
         self.addStep(CheckOutSource())
         self.addStep(FetchBranches())
         self.addStep(ShowIdentifier())
+        self.addStep(ShowWebKitVersion())
         self.addStep(CheckOutPullRequest())
         self.addStep(ValidateChangeContent())
         self.addStep(KillOldProcesses())
@@ -390,6 +393,7 @@ class MergeQueueFactoryBase(factory.BuildFactory):
         self.addStep(MapBranchAlias())
         self.addStep(UpdateWorkingDirectory())
         self.addStep(ShowIdentifier())
+        self.addStep(ShowWebKitVersion())
         self.addStep(InstallHooks())
         self.addStep(CheckOutPullRequest())
         self.addStep(ValidateChangeContent(block_pr_on_failure=True))

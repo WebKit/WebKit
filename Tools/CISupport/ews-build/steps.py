@@ -1124,6 +1124,50 @@ class ShowIdentifier(shell.ShellCommand):
         return results == SUCCESS
 
 
+class ShowWebKitVersion(shell.ShellCommand, ShellMixin):
+    """The GTK and WPE port release, which is what results.webkit.org stores for those platforms.
+
+    Its own step rather than part of ShowIdentifier: the version comes from the checkout, so a
+    failure to resolve an identifier says nothing about whether it can be read, and neither
+    failure should hide the other in a shared log.
+    """
+    name = 'show-webkit-version'
+    flunkOnFailure = False
+    haltOnFailure = False
+    warnOnFailure = False
+    SUPPORTED_PLATFORMS = ('gtk', 'wpe')
+
+    def __init__(self, **kwargs):
+        super().__init__(timeout=60, logEnviron=False, **kwargs)
+
+    def doStepIf(self, step):
+        return self.getProperty('platform', '') in self.SUPPORTED_PLATFORMS
+
+    def hideStepIf(self, results, step):
+        return not self.doStepIf(step)
+
+    @defer.inlineCallbacks
+    def run(self):
+        self.log_observer = logobserver.BufferLogObserver()
+        self.addLogObserver('stdio', self.log_observer)
+
+        platform = self.getProperty('platform', '')
+        self.command = ['grep', 'SET_PROJECT_VERSION', f'Source/cmake/Options{platform.upper()}.cmake']
+
+        rc = yield super().run()
+        if rc != SUCCESS:
+            return defer.returnValue(rc)
+
+        # GLibPort uploads the port release rather than the OS version, and drops the micro version.
+        if match := re.search(r'SET_PROJECT_VERSION\((\d+)\s+(\d+)\s+(\d+)\)', self.log_observer.getStdout()):
+            self.setProperty('webkit_version', f'{match.group(1)}.{match.group(2)}')
+        return defer.returnValue(rc)
+
+    def getResultSummary(self):
+        version = self.getProperty('webkit_version', None)
+        return {'step': f'WebKit version: {version}' if version else 'Failed to find WebKit version'}
+
+
 class InstallHooks(steps.ShellSequence):
     name = 'install-hooks'
     flunkOnFailure = False
@@ -6467,8 +6511,8 @@ class PrintConfiguration(steps.ShellSequence, ShellMixin):
     warnOnFailure = False
     logEnviron = False
     command_list_generic = [['hostname']]
-    command_list_apple = [['df', '-hl'], ['date'], ['sw_vers'], ['system_profiler', 'SPSoftwareDataType', 'SPHardwareDataType'], ['cat', '/usr/share/zoneinfo/+VERSION'], ['xcodebuild', '-sdk', '-version']]
-    command_list_linux = [['df', '-hl', '--exclude-type=fuse.portal'], ['date'], ['uname', '-a'], ['uptime']]
+    command_list_apple = [['df', '-hl'], ['date'], ['sw_vers'], ['uname', '-m'], ['system_profiler', 'SPSoftwareDataType', 'SPHardwareDataType'], ['cat', '/usr/share/zoneinfo/+VERSION'], ['xcodebuild', '-sdk', '-version']]
+    command_list_linux = [['df', '-hl', '--exclude-type=fuse.portal'], ['date'], ['uname', '-a'], ['uname', '-m'], ['uptime']]
 
     def __init__(self, **kwargs):
         super().__init__(timeout=60, **kwargs)
@@ -6514,6 +6558,11 @@ class PrintConfiguration(steps.ShellSequence, ShellMixin):
 
     def parseAndValidate(self, logText):
         os_version, os_name, xcode_version = '', '', ''
+
+        # GlibPort.architecture maps aarch64 to arm64, which is the name results.webkit.org stores.
+        if match := re.search(r'^(arm64|arm64_32|aarch64|x86_64)$', logText, re.MULTILINE):
+            self.setProperty('machine_architecture', 'arm64' if match.group(1) == 'aarch64' else match.group(1))
+
         match = re.search('ProductVersion:[ \t]*(.+?)\n', logText)
         if match:
             os_version = match.group(1).strip()
