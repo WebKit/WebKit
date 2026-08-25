@@ -5586,7 +5586,7 @@
                 "expected": { "all": { "status": ["PASS", "FAIL"], "bug": "webkit.org/b/288061 - Passes individually, timing issues in parallel execution"}}
             },
             "test_dedicated_worker": {
-                "expected": {"mac": {"status": ["TIMEOUT"], "note": "Fails on Mac, not investigated yet"}}
+                "expected": { "all": { "status": ["FAIL"], "bug": "https://github.com/web-platform-tests/wpt/issues/63009", "note": "Upstream WPT compares RealmInfo.origin with the full worker script URL; WebDriver BiDi requires the serialized worker origin."}, "mac": {"status": ["TIMEOUT"], "note": "Fails on Mac, not investigated yet"}}
             },
             "test_dedicated_worker_with_context": {
                 "expected": {"mac": {"status": ["TIMEOUT"], "note": "Fails on Mac, not investigated yet"}}
@@ -5633,7 +5633,7 @@
                 "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/304062"}}
             },
             "test_dedicated_worker": {
-                "expected": { "all": { "status": ["FAIL"], "bug": "webkit.org/b/304300", "note": "The imported WPT expects the worker script URL instead of the serialized worker origin"}}
+                "expected": { "all": { "status": ["FAIL"], "bug": "https://github.com/web-platform-tests/wpt/issues/63009", "note": "Upstream WPT compares RealmInfo.origin with the full worker script URL; WebDriver BiDi requires the serialized worker origin."}}
             },
             "test_shared_worker": {
                 "expected": { "all": { "status": ["TIMEOUT"], "bug": "webkit.org/b/282981"}}
@@ -7087,7 +7087,7 @@
     "imported/w3c/webdriver/tests/bidi/script/get_realms/type.py": {
         "subtests": {
             "test_dedicated_worker": {
-                "expected": {"mac": {"status": ["TIMEOUT"], "note": "Fails on Mac, not investigated yet"}}
+                "expected": { "all": { "status": ["FAIL"], "bug": "https://github.com/web-platform-tests/wpt/issues/63009", "note": "Upstream WPT compares RealmInfo.origin with the full worker script URL; WebDriver BiDi requires the serialized worker origin."}, "mac": {"status": ["TIMEOUT"], "note": "Fails on Mac, not investigated yet"}}
             },
             "test_service_worker": {
                 "expected": {"mac": {"status": ["TIMEOUT"], "note": "Fails on Mac, not investigated yet"}}

@@ -39,6 +39,8 @@
 
 #if ENABLE(WEBDRIVER_BIDI)
 #include "FrameIdentifier.h"
+#include "SecurityOriginData.h"
+#include <wtf/OptionSet.h>
 #endif
 
 // All of these methods should be called on the Main Thread.
@@ -47,9 +49,6 @@
 namespace WebCore {
 
 class ScriptExecutionContext;
-#if ENABLE(WEBDRIVER_BIDI)
-class SecurityOriginData;
-#endif
 class WorkerThread;
 
 enum class WorkerThreadStartMode;
@@ -90,7 +89,6 @@ public:
     void workerStarted(ScriptExecutionContext&, WorkerThread*, const URL&, const String& name);
 #if ENABLE(WEBDRIVER_BIDI)
     void workerBecameExecutionReady(const SecurityOriginData&);
-    bool isExecutionReady() const { return m_isExecutionReady; }
 #endif
     void workerTerminated();
 
@@ -117,18 +115,23 @@ private:
     String m_name;
     CheckedPtr<PageChannel> m_pageChannel;
 #if ENABLE(WEBDRIVER_BIDI)
-    struct AutomationOwner {
+    struct AutomationOwnerData {
         FrameIdentifier frameIdentifier;
+        // ScriptExecutionContextIdentifier already includes the WebContent process identifier.
         ScriptExecutionContextIdentifier documentIdentifier;
-
-        friend bool operator==(const AutomationOwner&, const AutomationOwner&) = default;
+        std::optional<SecurityOriginData> origin;
     };
 
-    std::optional<AutomationOwner> automationOwner() const;
+    enum class AutomationStateFlag : uint8_t {
+        IsExecutionReady = 1 << 0,
+        WasTerminatedBeforeExecutionReady = 1 << 1,
+    };
 
-    bool m_isExecutionReady { false };
-    bool m_wasTerminatedBeforeExecutionReady { false };
-    std::optional<AutomationOwner> m_automationOwner;
+    std::optional<AutomationOwnerData> automationOwnerData() const;
+    bool automationOwnerIsCurrent() const;
+
+    OptionSet<AutomationStateFlag> m_automationStateFlags;
+    std::optional<AutomationOwnerData> m_automationOwnerData;
 #endif
 };
 

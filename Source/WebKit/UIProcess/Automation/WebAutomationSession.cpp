@@ -3545,10 +3545,11 @@ void WebAutomationSession::scriptDedicatedWorkerRealmCreated(IPC::Connection& co
     MESSAGE_CHECK_BASE(ownerRealmIterator->value.frameIdentifier == ownerFrameIdentifier, connection);
     MESSAGE_CHECK_BASE(ownerRealmIterator->value.context == ownerBrowsingContextIterator->value, connection);
 
-    if (auto existingWorkerMatches = scriptAgent.dedicatedWorkerRealmMatches(realmIdentifier, workerIdentifier, ownerFrameIdentifier, ownerRealmIdentifier))
+    if (auto existingWorkerMatches = scriptAgent.dedicatedWorkerRealmMatches(realmIdentifier, workerIdentifier, ownerFrameIdentifier, ownerRealmIdentifier)) {
         MESSAGE_CHECK_BASE(*existingWorkerMatches, connection);
-    else
-        MESSAGE_CHECK_BASE(!scriptAgent.activeRealms().contains(realmIdentifier), connection);
+        return;
+    }
+    MESSAGE_CHECK_BASE(!scriptAgent.activeRealms().contains(realmIdentifier), connection);
 
     // Not security sensitive because it labels a realm for the automation client which already has full control of the browser.
     auto origin = WTF::move(untrustedOrigin).unsafeExtractWithoutValidation(IPC::UnvalidatedReason::NotSecuritySensitive);
