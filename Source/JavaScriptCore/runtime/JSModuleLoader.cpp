@@ -338,11 +338,11 @@ void JSModuleLoader::provideFetch(JSGlobalObject* globalObject, const Identifier
         entry->provideFetch(globalObject, WTF::move(sourceCode)); // can throw
 }
 
-void JSModuleLoader::provideFetch(JSGlobalObject* globalObject, const Identifier& key, ScriptFetchParameters::Type type, JSSourceCode* jsSourceCode)
+void JSModuleLoader::provideFetch(JSGlobalObject* globalObject, const Identifier& key, ScriptFetchParameters::Type type, JSValue moduleData)
 {
     ModuleRegistryEntry* entry = ensureRegistered(globalObject, key, type);
     if (entry->status() == ModuleRegistryEntry::Status::New)
-        entry->provideFetch(globalObject, jsSourceCode); // can throw
+        entry->provideFetch(globalObject, moduleData); // can throw
 }
 
 JSPromise* JSModuleLoader::loadModule(JSGlobalObject* globalObject, const Identifier& specifier, RefPtr<ScriptFetchParameters> parameters, RefPtr<ScriptFetcher> scriptFetcher, OptionSet<ModuleLoadFlag> flags)
@@ -452,6 +452,29 @@ JSPromise* JSModuleLoader::requestImportModule(JSGlobalObject* globalObject, con
     return resultPromise;
 }
 
+static UNUSED_FUNCTION bool NODELETE moduleTypeCanBeLoaded(JSGlobalObject* globalObject, ScriptFetchParameters::Type type)
+{
+    bool moduleTypeCanBeLoadedByJSC = [type] () {
+        switch (type) {
+        case ScriptFetchParameters::JavaScript:
+        case ScriptFetchParameters::WebAssembly:
+        case ScriptFetchParameters::JSON:
+        case ScriptFetchParameters::Text:
+        case ScriptFetchParameters::None:
+            return true;
+
+        default:
+            return false;
+        }
+    } ();
+
+    bool moduleTypeCanBeLoadedByHost = false;
+    if (globalObject->globalObjectMethodTable()->moduleTypeCanBeLoaded)
+        moduleTypeCanBeLoadedByHost = globalObject->globalObjectMethodTable()->moduleTypeCanBeLoaded(type);
+
+    return moduleTypeCanBeLoadedByJSC || moduleTypeCanBeLoadedByHost;
+}
+
 JSPromise* JSModuleLoader::importModule(JSGlobalObject* globalObject, JSString* moduleName, JSValue parameters, const SourceOrigin& referrer, bool deferred)
 {
     dataLogLnIf(Options::dumpModuleLoadingState(), "Loader [import] ", printableModuleKey(globalObject, moduleName));
@@ -465,6 +488,15 @@ JSPromise* JSModuleLoader::importModule(JSGlobalObject* globalObject, JSString* 
     auto type = retrieveTypeImportAttribute(globalObject, attributes);
     RETURN_IF_EXCEPTION(scope, nullptr);
 
+    auto* promise = JSPromise::create(vm, globalObject->promiseStructure());
+
+    if (type) {
+        if (!moduleTypeCanBeLoaded(globalObject, *type)) {
+            promise->reject(vm, createTypeError(globalObject, "Module type not supported by environment"_s));
+            RELEASE_AND_RETURN(scope, promise);
+        }
+    }
+
     RefPtr<ScriptFetchParameters> fetchParams;
     if (type)
         fetchParams = ScriptFetchParameters::create(type.value());
@@ -472,7 +504,6 @@ JSPromise* JSModuleLoader::importModule(JSGlobalObject* globalObject, JSString* 
     if (globalObject->globalObjectMethodTable()->moduleLoaderImportModule)
         RELEASE_AND_RETURN(scope, globalObject->globalObjectMethodTable()->moduleLoaderImportModule(globalObject, this, moduleName, WTF::move(fetchParams), referrer, deferred));
 
-    auto* promise = JSPromise::create(vm, globalObject->promiseStructure());
     auto moduleNameString = moduleName->value(globalObject);
     RETURN_IF_EXCEPTION(scope, promise->rejectWithCaughtException(vm, scope));
 
@@ -594,6 +625,24 @@ JSPromise* JSModuleLoader::hostLoadImportedModule(JSGlobalObject* globalObject, 
     ModuleRegistryEntry* mapEntry = nullptr;
     const Identifier& specifier = moduleRequest.m_specifier;
     auto type = moduleRequest.type();
+
+    // 7.4 Let moduleType be the result of running the module type from module request steps given requested.
+    // 7.5 If the result of running the module type allowed steps given moduleType and settingsObject is false:
+    // 7.5.1 Let error be a new TypeError exception.
+    // 7.5.2 If loadState is not undefined and loadState.[[ErrorToRethrow]] is null, set loadState.[[ErrorToRethrow]] to error.
+    // 7.5.3 Perform FinishLoadingImportedModule(referrer, moduleRequest, payload, ThrowCompletion(error)).
+    // 7.5.4 Return.
+    if (!moduleTypeCanBeLoaded(globalObject, type)) {
+        JSPromise* promise = JSPromise::create(vm, globalObject->promiseStructure());
+
+        auto error = createTypeError(globalObject, "Module type not supported by environment"_s);
+        promise->reject(vm, error);
+
+        auto exception = Exception::create(vm, error);
+        finishLoadingImportedModule(globalObject, referrer, moduleRequest, payload, exception, scriptFetcher);
+
+        RELEASE_AND_RETURN(scope, promise);
+    }
 
     ModuleMapKey moduleMapKey { specifier.impl(), type };
 
@@ -1045,10 +1094,20 @@ JSValue JSModuleLoader::ModuleReferrer::toJSValue() const
     return std::get<JSGlobalObject*>(*this);
 }
 
-JSPromise* JSModuleLoader::makeModule(JSGlobalObject* globalObject, const Identifier& moduleKey, JSSourceCode* jsSourceCode)
+JSPromise* JSModuleLoader::makeModule(JSGlobalObject* globalObject, const Identifier& moduleKey, JSValue moduleData)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
+
+    JSSourceCode* jsSourceCode = dynamicDowncast<JSSourceCode>(moduleData);
+    if (!jsSourceCode) {
+        JSPromise* promise = JSPromise::create(vm, globalObject->promiseStructure());
+        promise->markAsHandled();
+        auto* moduleRecord = SyntheticModuleRecord::tryCreateDefaultExportSyntheticModule(globalObject, moduleKey, moduleData, SourceProviderSourceType::CSS);
+        RETURN_IF_EXCEPTION(scope, promise->rejectWithCaughtException(vm, scope));
+        promise->fulfill(vm, moduleRecord);
+        RELEASE_AND_RETURN(scope, promise);
+    }
 
     const SourceCode& sourceCode = jsSourceCode->sourceCode();
 

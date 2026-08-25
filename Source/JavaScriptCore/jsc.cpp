@@ -996,6 +996,7 @@ const GlobalObjectMethodTable GlobalObject::s_globalObjectMethodTable = {
     &codeForEval,
     &canCompileStrings,
     &trustedScriptStructure,
+    nullptr // moduleTypeCanBeLoaded
 };
 
 GlobalObject::GlobalObject(VM& vm, Structure* structure)
@@ -1515,6 +1516,8 @@ JSPromise* GlobalObject::moduleLoaderFetch(JSGlobalObject* globalObject, JSModul
             promise->resolve(globalObject, vm, sourceCode);
             return promise;
         }
+        case ScriptFetchParameters::Type::CSS:
+            RELEASE_AND_RETURN(scope, rejectWithError(createError(globalObject, "Loading CSS as modules is not supported in this environment"_s)));
         default:
             break;
         }

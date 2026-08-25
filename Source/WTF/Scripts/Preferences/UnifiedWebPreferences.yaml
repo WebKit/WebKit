@@ -1441,7 +1441,23 @@ CSSMathDepthEnabled:
       default: true
     WebCore:
       default: true
-      
+
+CSSModuleScriptsEnabled:
+  type: bool
+  status: testable
+  category: css
+  humanReadableName: "CSS Module Scripts"
+  humanReadableDescription: "Enable importing CSS into JavaScript using 'import'"
+  jscOptionName: useCSSModuleScripts
+  sharedPreferenceForWebProcess: true
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 CSSObjectViewBoxEnabled:
   type: bool
   status: stable

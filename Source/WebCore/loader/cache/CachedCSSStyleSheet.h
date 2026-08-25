@@ -39,7 +39,11 @@ public:
     virtual ~CachedCSSStyleSheet();
 
     enum class MIMETypeCheckHint { Strict, Lax };
-    const String sheetText(MIMETypeCheckHint = MIMETypeCheckHint::Strict, bool* hasValidMIMEType = nullptr, bool* hasHTTPStatusOK = nullptr) const;
+    // This flag control whether to always decode the CSS using UTF-8, ignoring all
+    // other encoding hints. This is needed for loading a CSS stylesheet as a JavaScript
+    // module, as the spec requires assuming UTF-8 encoding.
+    enum class ForceUTF8Encoding : bool { No, Yes };
+    String sheetText(MIMETypeCheckHint = MIMETypeCheckHint::Strict, ForceUTF8Encoding = ForceUTF8Encoding::No, bool* hasValidMIMEType = nullptr, bool* hasHTTPStatusOK = nullptr) const;
 
     RefPtr<StyleSheetContents> restoreParsedStyleSheet(const CSSParserContext&, CachePolicy, FrameLoader&);
     void saveParsedStyleSheet(Ref<StyleSheetContents>&&);

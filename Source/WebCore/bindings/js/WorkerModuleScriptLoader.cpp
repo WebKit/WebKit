@@ -85,6 +85,10 @@ void WorkerModuleScriptLoader::load(ScriptExecutionContext& context, URL&& sourc
     fetchOptions.destination = static_cast<WorkerScriptFetcher&>(scriptFetcher()).destination();
     fetchOptions.referrerPolicy = static_cast<WorkerScriptFetcher&>(scriptFetcher()).referrerPolicy();
 
+    // CSS modules aren't allowed in workers/worklets.
+    // It should've been blocked elsewhere before reaching here.
+    RELEASE_ASSERT(fetchOptions.destination != FetchOptions::Destination::Style);
+
     bool cspCheckFailed = false;
     ContentSecurityPolicyEnforcement contentSecurityPolicyEnforcement = ContentSecurityPolicyEnforcement::DoNotEnforce;
     if (!context.shouldBypassMainWorldContentSecurityPolicy()) {
@@ -93,7 +97,7 @@ void WorkerModuleScriptLoader::load(ScriptExecutionContext& context, URL&& sourc
             sourcePosition = document->currentParserSourcePosition();
 
         CheckedPtr contentSecurityPolicy = context.contentSecurityPolicy();
-        // Worklets and scripts are governed by script-src; JSON and text modules by connect-src; workers by worker-src.
+        // Worklets and scripts are governed by script-src; Text modules by connect-src; workers by worker-src.
         bool shouldEnforceScriptSrc = fetchOptions.destination == FetchOptions::Destination::Script
             || isWorkletDestination(fetchOptions.destination);
         if (shouldEnforceScriptSrc) {

@@ -403,7 +403,7 @@ bool StyleSheetContents::parseAuthorStyleSheet(const CachedCSSStyleSheet* cached
     CachedCSSStyleSheet::MIMETypeCheckHint mimeTypeCheckHint = isStrictParserMode(m_parserContext.mode) || !isSameOriginRequest ? CachedCSSStyleSheet::MIMETypeCheckHint::Strict : CachedCSSStyleSheet::MIMETypeCheckHint::Lax;
     bool hasValidMIMEType = true;
     bool hasHTTPStatusOK = true;
-    String sheetText = cachedStyleSheet->sheetText(mimeTypeCheckHint, &hasValidMIMEType, &hasHTTPStatusOK);
+    String sheetText = cachedStyleSheet->sheetText(mimeTypeCheckHint, CachedCSSStyleSheet::ForceUTF8Encoding::No, &hasValidMIMEType, &hasHTTPStatusOK);
 
     if (!hasHTTPStatusOK) {
         ASSERT(sheetText.isNull());

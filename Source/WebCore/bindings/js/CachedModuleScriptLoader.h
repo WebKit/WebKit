@@ -28,6 +28,7 @@
 #include <WebCore/CachedResourceClient.h>
 #include <WebCore/CachedResourceHandle.h>
 #include <WebCore/CachedScriptFetcher.h>
+#include <WebCore/CachedStyleSheetClient.h>
 #include <WebCore/ModuleScriptLoader.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
@@ -45,7 +46,7 @@ class DeferredPromise;
 class Document;
 class JSDOMGlobalObject;
 
-class CachedModuleScriptLoader final : public ModuleScriptLoader, private CachedResourceClient {
+class CachedModuleScriptLoader final : public ModuleScriptLoader, private CachedStyleSheetClient {
 public:
     static Ref<CachedModuleScriptLoader> create(ModuleScriptLoaderClient&, DeferredPromise&, CachedScriptFetcher&, RefPtr<JSC::ScriptFetchParameters>&&);
 
@@ -57,7 +58,7 @@ public:
 
     bool load(Document&, URL&& sourceURL, std::optional<ServiceWorkersMode>);
 
-    CachedScript* cachedScript() { return m_cachedScript.get(); }
+    CachedResource* cachedResource() { return m_cachedResource.get(); }
     CachedScriptFetcher& scriptFetcher() { return static_cast<CachedScriptFetcher&>(ModuleScriptLoader::scriptFetcher()); }
 
 private:
@@ -66,8 +67,11 @@ private:
     bool isCachedModuleScriptLoader() const final { return true; }
 
     void notifyFinished(CachedResource&, const NetworkLoadMetrics&, LoadWillContinueInAnotherProcess) final;
+    // For whatever reasons, CachedStyleSheetClient clients uses setCSSStyleSheet, not notifyFinished.
+    void setCSSStyleSheet(const String&, const URL&, ASCIILiteral, const CachedCSSStyleSheet*) final;
+    void notifyFinishedInternal(const CachedResource*);
 
-    CachedResourceHandle<CachedScript> m_cachedScript;
+    CachedResourceHandle<CachedResource> m_cachedResource;
     URL m_sourceURL;
 };
 

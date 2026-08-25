@@ -73,6 +73,7 @@ const GlobalObjectMethodTable* JSShadowRealmGlobalScopeBase::globalObjectMethodT
         &codeForEval,
         &canCompileStrings,
         &trustedScriptStructure,
+        nullptr, // moduleTypeCanBeLoaded
     };
     return &table;
 };
