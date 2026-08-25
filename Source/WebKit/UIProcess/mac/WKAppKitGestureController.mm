@@ -1514,6 +1514,11 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
         return toRawPlatformDelta(initialMomentumDelta);
     }());
 
+#if HAVE(NSREFRESHCONTROLLER)
+    // The refresh controller should not track synthetic momentum scrolling.
+    viewImpl->clearRefreshControllerTracking();
+#endif
+
     page->handleNativeWheelEvent(nativeMomentumEvent);
     _isMomentumActive = true;
 
