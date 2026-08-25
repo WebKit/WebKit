@@ -1403,7 +1403,32 @@ void UniqueIDBDatabase::enqueueTransaction(Ref<UniqueIDBDatabaseTransaction>&& t
 
 void UniqueIDBDatabase::handleTransactions()
 {
-    LOG(IndexedDB, "UniqueIDBDatabase::handleTransactions - There are %zu pending", m_pendingTransactions.size());
+    // Starting transactions can abort the in-progress transactions of a suspended client, which in
+    // turn makes more transactions runnable. Drive that from a single loop instead of letting the
+    // nested calls recurse: with enough queued transactions the recursion overflows the stack.
+    if (m_isHandlingTransactions) {
+        m_shouldHandleTransactionsAgain = true;
+        return;
+    }
+
+    SetForScope handlingTransactionsScope(m_isHandlingTransactions, true);
+    do {
+        m_shouldHandleTransactionsAgain = false;
+        startRunnableTransactions();
+
+        // In-progress transactions of a suspended client process can never finish while the client
+        // stays suspended, so transactions queued behind them would be blocked indefinitely.
+        if (abortInProgressTransactionsBlockedOnSuspendedClients() == DidAbortTransactions::Yes) {
+            // Previously blocked operations and transactions might be runnable.
+            handleDatabaseOperations();
+            m_shouldHandleTransactionsAgain = true;
+        }
+    } while (m_shouldHandleTransactionsAgain);
+}
+
+void UniqueIDBDatabase::startRunnableTransactions()
+{
+    LOG(IndexedDB, "UniqueIDBDatabase::startRunnableTransactions - There are %zu pending", m_pendingTransactions.size());
 
     bool hadDeferredTransactions = false;
     RefPtr transaction = takeNextRunnableTransaction(hadDeferredTransactions);
@@ -1423,11 +1448,7 @@ void UniqueIDBDatabase::handleTransactions()
             break;
         transaction = takeNextRunnableTransaction(hadDeferredTransactions);
     }
-    LOG(IndexedDB, "UniqueIDBDatabase::handleTransactions - There are %zu pending after this round of handling", m_pendingTransactions.size());
-
-    // In-progress transactions of a suspended client process can never finish while the client
-    // stays suspended, so transactions queued behind them would be blocked indefinitely.
-    abortInProgressTransactionsBlockedOnSuspendedClients();
+    LOG(IndexedDB, "UniqueIDBDatabase::startRunnableTransactions - There are %zu pending after this round of handling", m_pendingTransactions.size());
 }
 
 void UniqueIDBDatabase::activateTransactionInBackingStore(UniqueIDBDatabaseTransaction& transaction)
@@ -1639,14 +1660,17 @@ bool UniqueIDBDatabase::transactionBlocksPendingTransactions(UniqueIDBDatabaseTr
     return false;
 }
 
-void UniqueIDBDatabase::abortInProgressTransactionsBlockedOnSuspendedClients()
+void UniqueIDBDatabase::didSuspendClientProcess()
+{
+    // handleTransactions() aborts the in-progress transactions of suspended clients and starts the
+    // transactions those aborts unblock.
+    handleTransactions();
+}
+
+auto UniqueIDBDatabase::abortInProgressTransactionsBlockedOnSuspendedClients() -> DidAbortTransactions
 {
     if (m_pendingTransactions.isEmpty() || m_inProgressTransactions.isEmpty())
-        return;
-
-    SetForScope recursionScope(m_abortInProgressTransactionsBlockedOnSuspendedClientsRecursionDepth, m_abortInProgressTransactionsBlockedOnSuspendedClientsRecursionDepth + 1);
-    if (m_abortInProgressTransactionsBlockedOnSuspendedClientsRecursionDepth > 5)
-        RELEASE_LOG_ERROR(IndexedDB, "UniqueIDBDatabase::abortInProgressTransactionsBlockedOnSuspendedClients - recursion depth reaches %u", m_abortInProgressTransactionsBlockedOnSuspendedClientsRecursionDepth);
+        return DidAbortTransactions::No;
 
     Vector<Ref<UniqueIDBDatabaseTransaction>> transactionsToAbort;
     for (auto& transaction : m_inProgressTransactions.values()) {
@@ -1691,10 +1715,7 @@ void UniqueIDBDatabase::abortInProgressTransactionsBlockedOnSuspendedClients()
         abortedAnyTransaction = true;
     }
 
-    if (abortedAnyTransaction) {
-        handleDatabaseOperations();
-        handleTransactions();
-    }
+    return abortedAnyTransaction ? DidAbortTransactions::Yes : DidAbortTransactions::No;
 }
 
 void UniqueIDBDatabase::close()

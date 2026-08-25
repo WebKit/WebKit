@@ -121,7 +121,7 @@ public:
 
     bool NODELETE hasActiveTransactions() const;
     WEBCORE_EXPORT void abortActiveTransactions();
-    void abortInProgressTransactionsBlockedOnSuspendedClients();
+    void didSuspendClientProcess();
     WEBCORE_EXPORT bool tryClose();
 
     WEBCORE_EXPORT String filePath() const;
@@ -147,10 +147,14 @@ private:
     void notifyCurrentRequestConnectionClosedOrFiredVersionChangeEvent(IDBDatabaseConnectionIdentifier);
 
     void handleTransactions();
+    void startRunnableTransactions();
     RefPtr<UniqueIDBDatabaseTransaction> takeNextRunnableTransaction(bool& hadDeferredTransactions);
     bool transactionBlocksPendingTransactions(UniqueIDBDatabaseTransaction&);
 
     void activateTransactionInBackingStore(UniqueIDBDatabaseTransaction&);
+
+    enum class DidAbortTransactions : bool { No, Yes };
+    DidAbortTransactions abortInProgressTransactionsBlockedOnSuspendedClients();
 
     enum class ShouldStartRunnableWork : bool { No, Yes };
     void transactionCompleted(RefPtr<UniqueIDBDatabaseTransaction>&&, ShouldStartRunnableWork = ShouldStartRunnableWork::Yes);
@@ -189,7 +193,9 @@ private:
     // These sets help to decide which transactions can be started and which must be deferred.
     HashCountedSet<IDBObjectStoreIdentifier> m_objectStoreTransactionCounts;
     HashSet<IDBObjectStoreIdentifier> m_objectStoreWriteTransactions;
-    unsigned m_abortInProgressTransactionsBlockedOnSuspendedClientsRecursionDepth { 0 };
+
+    bool m_isHandlingTransactions { false };
+    bool m_shouldHandleTransactionsAgain { false };
 };
 
 } // namespace IDBServer
