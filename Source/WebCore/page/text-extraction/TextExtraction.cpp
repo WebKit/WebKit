@@ -2078,6 +2078,47 @@ static std::optional<SimpleRange> searchForText(Node& node, const String& search
     return searchForText(makeRangeSelectingNodeContents(node), searchText);
 }
 
+static RefPtr<Element> nearestNonInlineAncestor(const Element& element)
+{
+    static constexpr unsigned maximumAncestorsToTraverse = 4;
+
+    unsigned traversedAncestors = 0;
+    for (RefPtr ancestor = element.parentElementInComposedTree(); !!ancestor && traversedAncestors <= maximumAncestorsToTraverse; ancestor = ancestor->parentElementInComposedTree(), ++traversedAncestors) {
+        CheckedPtr renderer = ancestor->renderer();
+        if (!renderer)
+            continue;
+
+        if (!renderer->isInline())
+            return ancestor;
+    }
+
+    return { };
+}
+
+enum class InteractionTextSearchKind : bool { ClickTarget, Text };
+
+static std::optional<SimpleRange> searchForInteractionTargetText(Node& target, const String& searchText, InteractionTextSearchKind kind)
+{
+    auto search = [kind, searchText](Node& container) {
+        if (kind == InteractionTextSearchKind::ClickTarget)
+            return searchForClickTarget(container, searchText);
+        return searchForText(container, searchText);
+    };
+
+    if (auto range = search(target))
+        return range;
+
+    RefPtr element = dynamicDowncast<Element>(target);
+    if (!element)
+        return std::nullopt;
+
+    RefPtr ancestor = nearestNonInlineAncestor(*element);
+    if (!ancestor)
+        return std::nullopt;
+
+    return search(*ancestor);
+}
+
 static String invalidNodeIdentifierDescription(std::optional<NodeIdentifier>&& identifier)
 {
     if (!identifier)
@@ -2245,7 +2286,7 @@ static Expected<ResolvedMouseTarget, String> resolveMouseTarget(Node& targetNode
 
     std::optional<SimpleRange> foundRange;
     if (!searchText.isEmpty()) {
-        foundRange = searchForClickTarget(*element, searchText);
+        foundRange = searchForInteractionTargetText(*element, searchText, InteractionTextSearchKind::ClickTarget);
         if (!foundRange) {
             bool targetIsWholePage = element == document->body() || element.get() == document->documentElement();
             bool matched = targetIsWholePage ? normalizedLabelText(*element).containsIgnoringASCIICase(normalizeText(searchText)) : searchTextMatchesElementLabelOrRenderedText(*element, searchText);
@@ -2484,15 +2525,28 @@ static bool containsLetterOrDigit(StringView text)
     });
 }
 
-static String precedingRenderedTextLabel(const Element& element)
+enum class AdjacentTextSearchDirection : bool { Backward, Forward };
+
+static String adjacentRenderedTextLabel(const Element& element, AdjacentTextSearchDirection direction, const Node* stayWithin)
 {
-    static constexpr unsigned maximumPrecedingTextNodesToSearch = 16;
+    static constexpr unsigned maximumAdjacentTextNodesToSearch = 16;
     static constexpr unsigned maximumAdjacentTextLength = 40;
 
-    RefPtr stayWithin = element.document().documentElement();
+    auto advance = [direction, stayWithin](const Node& current) -> Node* {
+        if (direction == AdjacentTextSearchDirection::Backward)
+            return NodeTraversal::previous(current, stayWithin);
+        return NodeTraversal::next(current, stayWithin);
+    };
+
+    auto firstNodeToExamine = [&element, direction, stayWithin]() -> Node* {
+        if (direction == AdjacentTextSearchDirection::Backward)
+            return NodeTraversal::previous(element, stayWithin);
+        return NodeTraversal::nextSkippingChildren(element, stayWithin);
+    };
+
     unsigned examinedTextNodes = 0;
-    Vector<String> collectedInReverse;
-    for (RefPtr node = NodeTraversal::previous(element, stayWithin.get()); node; node = NodeTraversal::previous(*node, stayWithin.get())) {
+    Vector<String> collected;
+    for (RefPtr node = firstNodeToExamine(); node; node = advance(*node)) {
         RefPtr text = dynamicDowncast<Text>(*node);
         if (!text || !text->renderer())
             continue;
@@ -2500,23 +2554,25 @@ static String precedingRenderedTextLabel(const Element& element)
         if (shouldTreatAsPasswordField(text->shadowHost()))
             continue;
 
-        if (++examinedTextNodes > maximumPrecedingTextNodesToSearch)
+        if (++examinedTextNodes > maximumAdjacentTextNodesToSearch)
             break;
 
         auto normalized = normalizeText(text->data());
         if (normalized.isEmpty())
             continue;
 
-        collectedInReverse.append(normalized);
+        collected.append(normalized);
         if (containsLetterOrDigit(normalized))
             break;
     }
 
-    collectedInReverse.reverse();
-    if (collectedInReverse.isEmpty())
+    if (direction == AdjacentTextSearchDirection::Backward)
+        collected.reverse();
+
+    if (collected.isEmpty())
         return { };
 
-    auto joined = makeStringByJoining(collectedInReverse, " "_s);
+    auto joined = makeStringByJoining(collected, " "_s);
     if (!containsLetterOrDigit(joined))
         return { };
 
@@ -2524,6 +2580,49 @@ static String precedingRenderedTextLabel(const Element& element)
         joined = makeString(StringView { joined }.left(maximumAdjacentTextLength - 3), "..."_s);
 
     return joined;
+}
+
+static String adjacentRenderedTextLabelDescription(const Element& element, Vector<String>& stringsToValidate)
+{
+    auto describe = [&](ASCIILiteral prefix, String&& text) {
+        stringsToValidate.append(text);
+        return makeString(prefix, wrapWithDoubleQuotes(WTF::move(text)));
+    };
+
+    if (RefPtr bound = nearestNonInlineAncestor(element)) {
+        auto textBefore = adjacentRenderedTextLabel(element, AdjacentTextSearchDirection::Backward, bound.get());
+        auto textAfter = adjacentRenderedTextLabel(element, AdjacentTextSearchDirection::Forward, bound.get());
+
+        if (!textBefore.isEmpty() && !textAfter.isEmpty()) {
+            stringsToValidate.append(textBefore);
+            stringsToValidate.append(textAfter);
+            return makeString(" between rendered text "_s, wrapWithDoubleQuotes(WTF::move(textBefore)), " and "_s, wrapWithDoubleQuotes(WTF::move(textAfter)));
+        }
+
+        if (!textBefore.isEmpty())
+            return describe(" after rendered text "_s, WTF::move(textBefore));
+
+        if (!textAfter.isEmpty())
+            return describe(" before rendered text "_s, WTF::move(textAfter));
+    }
+
+    if (auto textBefore = adjacentRenderedTextLabel(element, AdjacentTextSearchDirection::Backward, protect(element.document().documentElement()).get()); !textBefore.isEmpty())
+        return describe(" after rendered text "_s, WTF::move(textBefore));
+
+    return { };
+}
+
+static bool hasNoRenderedTextOrLabeledChild(Element& element)
+{
+    if (containsLetterOrDigit(normalizeText(plainText(makeRangeSelectingNodeContents(element), behaviorsForTextExtraction))))
+        return false;
+
+    for (Ref child : descendantsOfType<Element>(element)) {
+        if (!normalizedLabelText(child).isEmpty())
+            return false;
+    }
+
+    return true;
 }
 
 static String textDescription(Element& element, Vector<String>& stringsToValidate, bool isTargetElement = true)
@@ -2632,32 +2731,33 @@ static String textDescription(Element& element, Vector<String>& stringsToValidat
         }
     }
 
-    if (isTargetElement && !hasAccessibleName && (is<HTMLImageElement>(element) || element.isSVGElement())) {
+    String neighborTextDescription;
+    if (isTargetElement && !hasAccessibleName && (is<HTMLImageElement>(element) || element.isSVGElement() || hasNoRenderedTextOrLabeledChild(element))) {
         bool hasImageAltText = false;
         if (RefPtr image = dynamicDowncast<HTMLImageElement>(element))
             hasImageAltText = !normalizeText(image->altText()).isEmpty();
 
-        if (!hasImageAltText) {
-            if (auto neighborText = precedingRenderedTextLabel(element); !neighborText.isEmpty()) {
-                stringsToValidate.append(neighborText);
-                return makeString(WTF::move(elementDescription), " after rendered text "_s, wrapWithDoubleQuotes(WTF::move(neighborText)));
-            }
-        }
+        if (!hasImageAltText)
+            neighborTextDescription = adjacentRenderedTextLabelDescription(element, stringsToValidate);
     }
 
+    auto describedElement = [&] {
+        return makeString(elementDescription, neighborTextDescription);
+    };
+
     if (!needsParentContext)
-        return elementDescription;
+        return describedElement();
 
     RefPtr parent = element.parentElementInComposedTree();
     if (!parent)
-        return elementDescription;
+        return describedElement();
 
     auto parentDescription = textDescription(*parent, stringsToValidate, false);
     if (parentDescription.isEmpty())
-        return elementDescription;
+        return describedElement();
 
     if (isTargetElement)
-        return makeString(WTF::move(elementDescription), " under "_s, WTF::move(parentDescription));
+        return makeString(describedElement(), " under "_s, WTF::move(parentDescription));
 
     return parentDescription;
 }
@@ -2730,7 +2830,7 @@ static String textDescription(LocalFrame& frame, std::optional<NodeIdentifier> i
 
     auto searchTextPrefix = emptyString();
     if (!searchText.isEmpty()) {
-        auto range = action == Action::Click ? searchForClickTarget(*target, searchText) : searchForText(*target, searchText);
+        auto range = searchForInteractionTargetText(*target, searchText, action == Action::Click ? InteractionTextSearchKind::ClickTarget : InteractionTextSearchKind::Text);
         if (range) {
             target = commonInclusiveAncestor<ComposedTree>(*range);
             if (!target)

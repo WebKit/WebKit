@@ -431,6 +431,48 @@ TEST(TextExtractionTests, InteractionDescriptionUsesAdjacentTextForUnlabeledIcon
     EXPECT_NULL(error);
 }
 
+TEST(TextExtractionTests, InteractionDescriptionAndSearchTextForLabellessIcons)
+{
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [[configuration preferences] _setTextExtractionEnabled:YES];
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration]);
+    [webView synchronouslyLoadHTMLString:@"<style>i, button { display: inline-block; width: 16px; height: 16px }</style>"
+        "<div class='group-one'><div class='head-one'><i class='chevron-one' onclick=''></i><i class='lock-icon'></i><span>Notifications</span></div>"
+        "<div class='sub-one' style='max-height: 0; overflow: hidden'><div>Email notifications</div></div></div>"
+        "<div class='group-two'><div class='head-two'><i class='chevron-two' onclick=''></i><i class='lock-icon'></i><span>Security</span></div>"
+        "<div class='sub-two' style='max-height: 0; overflow: hidden'><div>Change password</div></div></div>"
+        "<div class='row-sort'><span>Sort</span><i class='sort-caret' onclick=''></i><span>ascending</span></div>"
+        "<div class='row-space'><i class='icon-space' onclick=''> </i><span>Space Case</span></div>"
+        "<div class='row-bravo'><span>Bravo Label</span><button onclick=''></button></div>"];
+
+    RetainPtr debugText = [webView synchronouslyGetDebugText:nil];
+    auto clickDescription = [&](NSString *className, NSString *searchText) -> NSString * {
+        RetainPtr identifier = extractNodeIdentifier(debugText, className);
+        EXPECT_NOT_NULL(identifier);
+
+        RetainPtr interaction = adoptNS([[_WKTextExtractionInteraction alloc] initWithAction:_WKTextExtractionActionClick]);
+        [interaction setNodeIdentifier:identifier];
+        if (searchText)
+            [interaction setText:searchText];
+
+        NSError *error = nil;
+        NSString *description = [interaction debugDescriptionInWebView:webView error:&error];
+        EXPECT_NULL(error);
+        return description;
+    };
+
+    EXPECT_WK_STREQ("Click on i with class “chevron-one” before rendered text “Notifications”", clickDescription(@"chevron-one", nil));
+    EXPECT_WK_STREQ("Click on i with class “chevron-two” before rendered text “Security”", clickDescription(@"chevron-two", nil));
+    EXPECT_WK_STREQ("Click on i with class “sort-caret” between rendered text “Sort” and “ascending”", clickDescription(@"sort-caret", nil));
+    EXPECT_WK_STREQ("Click on i with class “icon-space” before rendered text “Space Case”", clickDescription(@"icon-space", nil));
+    EXPECT_WK_STREQ("Click on button after rendered text “Bravo Label” under div with class “row-bravo”", clickDescription(@"button", nil));
+
+    EXPECT_WK_STREQ("Click on “Security” in child node of span under div with class “head-two”, with rendered text “Security”", clickDescription(@"chevron-two", @"Security"));
+    EXPECT_WK_STREQ("Click", clickDescription(@"chevron-two", @"Notifications"));
+    EXPECT_WK_STREQ("Click", clickDescription(@"chevron-two", @"Nonexistent"));
+}
+
 TEST(TextExtractionTests, InteractionDescriptionIncludesAssociatedLabelText)
 {
     RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
