@@ -131,7 +131,7 @@ public:
 
     TouchAction touchAction;
 
-    WebkitInitialLetter initialLetter;
+    WebkitInitialLetter webkitInitialLetter;
 
     DataRef<MarqueeData> marquee;
     DataRef<BackdropFilterData> backdropFilter;
