@@ -201,8 +201,7 @@ NetworkConnectionToWebProcess::~NetworkConnectionToWebProcess()
     // This may call hasUploadStateChanged().
     m_networkResourceLoaders.clear();
 
-    for (auto& port : m_processEntangledPorts)
-        protect(m_networkProcess->messagePortChannelRegistry())->didCloseMessagePort(port);
+    closeAllEntangledMessagePorts();
 
     auto completionHandlers = std::exchange(m_messageBatchDeliveryCompletionHandlers, { });
     for (auto& completionHandler : completionHandlers.values())
@@ -482,8 +481,16 @@ bool NetworkConnectionToWebProcess::dispatchSyncMessage(IPC::Connection& connect
     return false;
 }
 
+void NetworkConnectionToWebProcess::closeAllEntangledMessagePorts()
+{
+    for (auto& port : std::exchange(m_processEntangledPorts, { }))
+        protect(m_networkProcess->messagePortChannelRegistry())->didCloseMessagePort(port, MessagePortStatus::Unclaimed);
+}
+
 void NetworkConnectionToWebProcess::didClose(IPC::Connection& connection)
 {
+    closeAllEntangledMessagePorts();
+
     if (RefPtr connection = std::exchange(m_swContextConnection, nullptr))
         connection->stop();
 
@@ -1898,7 +1905,8 @@ void NetworkConnectionToWebProcess::messagePortClosed(const MessagePortIdentifie
     if (RefPtr channel = registry->existingChannelContainingPort(port))
         MESSAGE_CHECK(channel->processForPort(port) == m_webProcessIdentifier);
 
-    registry->didCloseMessagePort(port);
+    m_processEntangledPorts.remove(port);
+    registry->didCloseMessagePort(port, MessagePortStatus::Closed);
 }
 
 MessageBatchIdentifier NetworkConnectionToWebProcess::nextMessageBatchIdentifier(CompletionHandler<void()>&& deliveryCallback)

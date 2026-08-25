@@ -72,7 +72,7 @@ void MessagePortChannelProviderImpl::messagePortClosed(const MessagePortIdentifi
 {
     ensureOnMainThread([weakRegistry = WeakPtr { m_registry }, local] {
         if (CheckedPtr registry = weakRegistry.get())
-            registry->didCloseMessagePort(local);
+            registry->didCloseMessagePort(local, MessagePortStatus::Closed);
     });
 }
 
