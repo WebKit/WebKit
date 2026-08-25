@@ -2008,8 +2008,7 @@ void CanvasRenderingContext2DBase::clearCanvas()
 Path CanvasRenderingContext2DBase::transformAreaToDevice(const Path& path) const
 {
     Path transformed(path);
-    transformed.transform(state().transform);
-    transformed.transform(baseTransform());
+    transformed.transform(baseTransform() * state().transform);
     return transformed;
 }
 
