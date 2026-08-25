@@ -160,12 +160,7 @@ void MarkedBlock::Handle::stopAllocating(const FreeList& freeList, StopAllocatin
     
     blockHeader().m_newlyAllocated.clearAll();
     blockHeader().m_newlyAllocatedVersion = heap()->objectSpace().newlyAllocatedVersion();
-
-    forEachCell(
-        [&] (size_t, HeapCell* cell, HeapCell::Kind) -> IterationStatus {
-            block().setNewlyAllocated(cell);
-            return IterationStatus::Continue;
-        });
+    blockHeader().m_newlyAllocated.setEachNthBit(m_atomsPerCell, m_startAtom, endAtom);
 
     freeList.forEach(
         [&] (HeapCell* cell) {

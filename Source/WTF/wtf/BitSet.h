@@ -453,18 +453,26 @@ inline void BitSet<bitSetSize, WordType>::setEachNthBit(size_t n, size_t start, 
     size_t endWordIndex = end / wordSize;
     size_t index = start - wordIndex * wordSize;
     while (wordIndex < endWordIndex) {
-        while (index < wordSize) {
-            bits[wordIndex] |= (one << index);
-            index += n;
+        if (index < wordSize) {
+            WordType word = bits[wordIndex];
+            do {
+                word |= (one << index);
+                index += n;
+            } while (index < wordSize);
+            bits[wordIndex] = word;
         }
         index -= wordSize;
         wordIndex++;
     }
 
     size_t endIndex = end - endWordIndex * wordSize;
-    while (index < endIndex) {
-        bits[wordIndex] |= (one << index);
-        index += n;
+    if (index < endIndex) {
+        WordType word = bits[wordIndex];
+        do {
+            word |= (one << index);
+            index += n;
+        } while (index < endIndex);
+        bits[wordIndex] = word;
     }
 
     cleanseLastWord();
